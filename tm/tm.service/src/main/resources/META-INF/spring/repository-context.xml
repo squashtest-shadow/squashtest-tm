@@ -129,13 +129,16 @@
         <!-- Custom Fields -->
         <value>org.squashtest.tm.domain.customfield.CustomField</value>
         <value>org.squashtest.tm.domain.customfield.SingleSelectField</value>
+        <value>org.squashtest.tm.domain.customfield.RichTextField</value>
         <value>org.squashtest.tm.domain.customfield.CustomFieldOption</value>
         <value>org.squashtest.tm.domain.customfield.CustomFieldBinding</value>
         <value>org.squashtest.tm.domain.customfield.CustomFieldValue</value>
+        <value>org.squashtest.tm.domain.customfield.RichTextValue</value>
 		        
 		 <!-- Denormalized Fields -->
         <value>org.squashtest.tm.domain.denormalizedfield.DenormalizedFieldValue</value>
         <value>org.squashtest.tm.domain.denormalizedfield.DenormalizedSingleSelectField</value>
+        <value>org.squashtest.tm.domain.denormalizedfield.DenormalizedRichValue</value>
                 
         <!--  library plugins -->
         <value>org.squashtest.tm.domain.project.LibraryPluginBinding</value>

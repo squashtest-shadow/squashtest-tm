@@ -18,7 +18,8 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ "jquery", "squash.translator", "datepicker/jquery.squash.datepicker-locales" ], function($, translator, regionale) {
+define([ "jquery", "squash.translator", "datepicker/jquery.squash.datepicker-locales", "squash.dateutils" ], 
+		function($, translator, regionale, dateutils) {
 
 	function stdCkeditor() {
 		var lang = translator.get('rich-edit.language.value');
@@ -92,12 +93,20 @@ define([ "jquery", "squash.translator", "datepicker/jquery.squash.datepicker-loc
 		);
 	}
 	
+	function destroyCkeditor(target){
+		var t = (target instanceof jQuery) ? target : $(target);
+		var ckInstance = CKEDITOR.instances[t.attr('id')];
+		if (ckInstance) {
+			ckInstance.destroy(true);
+		}		
+	}
+	
 	/*
 	 * @params (optionals)
 	 *	format : a string date format that datepicker understands
 	 *	locale : a locale, used for datepicker internationalization
 	 */
-	function stdDatepicker(format, locale){
+	function stdDatepicker(url, format, locale){
 		
 		// fetch the optional parameters if unspecified
 		var fetchmeta = {},
@@ -114,13 +123,47 @@ define([ "jquery", "squash.translator", "datepicker/jquery.squash.datepicker-loc
 		
 		return $.extend(true, {}, {dateFormat : conf.format}, language);	
 	}
+	
+	/*
+	 * EXPERIMENTAL
+	 * @params
+	 * 	postfunction : function(value) => xhr : a function that just posts the data and returns the xhr object(required)
+	 *	format : a string date format that datepicker understands (optional)
+	 *	locale : a locale, used for datepicker internationalization (optional);
+	 */
+	function jeditableDatepicker(postfn, format, locale){
+		
+		var conf = stdJeditable();
+		
+		var datepickerconf = stdDatepicker(format, locale);
+		
+		conf.target = function(value){
+			var date = $("form input", this).datepicker("getDate");
+			var toAtom = dateutils.format(date);
+			
+			postfn(toAtom)
+			.done(function(){
+				return value;
+			})
+			.fail(function(){
+				return self.revert;
+			});
+		};
+		
+		conf.type = "datepicker";
+		conf.datepicker = datepickerconf;
+		
+		return conf;
+	};
 
 	return {
 		getStdCkeditor : stdCkeditor,
+		destroyCkeditor : destroyCkeditor,
 		getStdJeditable : stdJeditable,
 		getStdDatepicker : stdDatepicker,
 		getJeditableCkeditor : jeditableCkeditor,
-		getJeditableSelect : jeditableSelect
+		getJeditableSelect : jeditableSelect,
+		getJeditableDatepicker : jeditableDatepicker	// experimental
 	};
 
 });

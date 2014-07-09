@@ -58,8 +58,9 @@ $.editable.addInputType('ckeditor', {
         }
     },
     submit : function(settings, original) {
-        $('textarea', this).val(CKEDITOR.instances[$('textarea', this).attr('id')].getData());
-	CKEDITOR.instances[$('textarea', this).attr('id')].destroy();
+    	var area = $('textarea', this);
+        area.val(CKEDITOR.instances[area.attr('id')].getData());
+        CKEDITOR.instances[area.attr('id')].destroy();
     }
 });
 })(jQuery);

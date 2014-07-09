@@ -32,6 +32,10 @@ public class RichTextField extends CustomField {
 	private String longDefaultValue;
 
 
+	public RichTextField(){
+		super(InputType.RICH_TEXT);
+	}
+
 	@Override
 	public void setDefaultValue(String defaultValue) {
 		longDefaultValue = defaultValue;

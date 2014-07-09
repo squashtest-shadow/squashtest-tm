@@ -19,11 +19,11 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 define([ "jquery", "./NewCustomFieldOptionDialog", "backbone", "underscore",
-	"jeditable.simpleJEditable", "jeditable.selectJEditable",
-	"app/util/StringUtil", "app/lnf/Forms", "jquery.squash.oneshotdialog" , "jquery.squash", "jqueryui",
-	"jquery.squash.togglepanel", "squashtable", "jquery.squash.messagedialog", "jquery.squash.confirmdialog",
-	"jeditable.datepicker", "datepicker/jquery.squash.datepicker-locales", "squashtest/jquery.squash.popuperror" ],
-	function($, NewCustomFieldOptionDialog, Backbone, _, SimpleJEditable,SelectJEditable, StringUtil, Forms, oneshot) {
+	"jeditable.simpleJEditable", "jeditable.selectJEditable", "app/util/StringUtil", "app/lnf/Forms", 
+	"jquery.squash.oneshotdialog", "squash.configmanager", "app/ws/squashtm.notification",
+	"jquery.squash", "jqueryui",
+	"jquery.squash.togglepanel", "squashtable", "jquery.squash.confirmdialog", "jeditable.datepicker" ],
+	function($, NewCustomFieldOptionDialog, Backbone, _, SimpleJEditable,SelectJEditable, StringUtil, Forms, oneshot, confman, notification) {
 		var cfMod = squashtm.app.cfMod;
 		/*
 		 * Defines the controller for the custom fields table.
@@ -99,9 +99,7 @@ define([ "jquery", "./NewCustomFieldOptionDialog", "backbone", "underscore",
 					if (StringUtil.isBlank(defaultValue) ||
 						defaultValue === cfMod.richEditPlaceHolder ||
 						defaultValue === cfMod.noDateLabel) {
-							$.squash.openMessage(cfMod.popupErrorTitle,
-									cfMod.mandatoryNeedsDefaultMessage,
-									350);
+							notification.showError(cfMod.mandatoryNeedsDefaultMessage);
 							event.target.checked = true;
 							return;
 					}
@@ -166,33 +164,26 @@ define([ "jquery", "./NewCustomFieldOptionDialog", "backbone", "underscore",
 				var defaultValue = checkbox.checked ? option : "";
 				if (defaultValue === "" && this.isFieldMandatory()) {
 					checkbox.checked = true;
-					$.squash.openMessage(cfMod.popupErrorTitle,
-							cfMod.defaultOptionMandatoryMessage);
+					notification.showError(cfMod.defaultOptionMandatoryMessage);
 					return;
 				}
 				var uncheckSelector = ".is-default>input:checkbox" + (checkbox.checked ? "[value!='" + option + "']" : "");
 
-				this.sendDefaultValue(defaultValue).done(
-						function() {
-							self.optionsTable.find(uncheckSelector)
-									.attr("checked", false);
-						}).fail(function() {
-					checkbox.checked = !checkbox.checked;
-				});
-
-			},
-
-			sendDefaultValue : function(defaultValue) {
-				return $.ajax({
+				
+				$.ajax({
 					url : cfMod.customFieldUrl + "/defaultValue",
 					type : 'POST',
 					data : {
 						'value' : defaultValue
-					},
-					dataType : 'json'
+					}
+				}).done(function() {
+					self.optionsTable.find(uncheckSelector).attr("checked", false);
+				}).fail(function() {
+					checkbox.checked = !checkbox.checked;
 				});
 			},
 
+			
 			openRenameOptionPopup : function(event) {
 				var self = this;
 				var labelCell = event.currentTarget;
@@ -247,15 +238,14 @@ define([ "jquery", "./NewCustomFieldOptionDialog", "backbone", "underscore",
 						"#change-cuf-option-code-label").text();
 				var newValue = self.changeOptionCodePopup.find(
 						"#change-cuf-option-code").val();
-				$.ajax(
-						{
-							type : 'POST',
-							data : {
-								'value' : newValue
-							},
-							dataType : "json",
-							url : cfMod.optionsTable.ajaxSource	+ "/" + label + "/code"
-						}).done(function(data) {
+				$.ajax({
+					type : 'POST',
+					data : {
+						'value' : newValue
+					},
+					dataType : "json",
+					url : cfMod.optionsTable.ajaxSource	+ "/" + label + "/code"
+				}).done(function(data) {
 					self.optionsTable.refresh();
 				});
 
@@ -296,88 +286,117 @@ define([ "jquery", "./NewCustomFieldOptionDialog", "backbone", "underscore",
 				} else if (this.inputType === "DATE_PICKER") {
 					this.makeDefaultDatePickerEditable();
 				}
+				else if (this.inputType === "RICH_TEXT"){
+					this.makeDefaultRichTextEditable();
+				}
 
 			},
 			makeDefaultSimpleJEditable : function() {
 				var self = this;
-				new SimpleJEditable(
-						{
-							targetUrl : function(value, settings) {
-								if (self
-										.changeDefaultValueText(value)) {
-									return value;
-								} else {
-									return this.revert;
-								}
-							},
-							componentId : "cuf-default-value",
-							jeditableSettings : {
-								callback : self.enableOptionalChange
-							}
-						});
+				new SimpleJEditable({
+					targetUrl : cfMod.customFieldUrl + "/defaultValue",
+					componentId : "cuf-default-value",
+					jeditableSettings : {
+						name : "value",
+						callback : self.enableOptionalChange,
+						onsubmit : function(){
+							return self._validate(this);
+						}
+					}
+				});
 			},
 			makeDefaultSelectJEditable : function() {
 				var self = this;
-				new SelectJEditable(
-						{
-							language : {
-								richEditPlaceHolder : cfMod.richEditPlaceHolder,
-								okLabel : cfMod.okLabel,
-								cancelLabel : cfMod.cancelLabel
-							},
-							target : cfMod.customFieldUrl,
-							componentId : "cuf-default-value",
-							jeditableSettings : {
-								callback : self.enableOptionalChange,
-								data : JSON
-										.stringify(cfMod.checkboxJsonDefaultValues)
-							}
-						});
+				new SelectJEditable({
+					language : {
+						richEditPlaceHolder : cfMod.richEditPlaceHolder,
+						okLabel : cfMod.okLabel,
+						cancelLabel : cfMod.cancelLabel
+					},
+					target : cfMod.customFieldUrl,
+					componentId : "cuf-default-value",
+					jeditableSettings : {
+						callback : self.enableOptionalChange,
+						data : JSON.stringify(cfMod.checkboxJsonDefaultValues),
+						name : "value",
+						onsubmit : function(){
+							return self._validate(this);
+						}
+					}
+				});
 			},
 			makeDefaultDatePickerEditable : function(inputId) {
 				var self = this;
 				var datepick = this.$("#cuf-default-value");
 
 				// configure editable datepicker settings :
-				var dateSettings = {
-					dateFormat : cfMod.dateFormat
-				};
-				var locale = datepick.data('locale');
-				var confLocale = $.datepicker.regional[locale];
-				if (!!confLocale) {
-					$.extend(dateSettings, confLocale);
-				}
+				var dateSettings = confman.getStdDatepicker();
 
-				// function to be called by the editable
-				var onDatepickerChanged = function(value) {
+				// we need a custom post function
+				var postfn = function(value){
+					var revert = this.revert;
 					var localizedDate = value;
 					var postDateFormat = $.datepicker.ATOM;
-					var date = $.datepicker.parseDate(
-							cfMod.dateFormat, localizedDate);
-					var postDate = $.datepicker.formatDate(
-							postDateFormat, date);
-
-					if (self.changeDefaultValueText(postDate)) {
-						if (value === "") {
-							return cfMod.noDateLabel;
-						} else {
-							return value;
-						}
-					} else {
-						return this.revert;
-					}
+					var date = $.datepicker.parseDate(cfMod.dateFormat, localizedDate);
+					var postDate = $.datepicker.formatDate(postDateFormat, date);
+				
+					return $.ajax({
+						url : cfMod.customFieldUrl + "/defaultValue",
+						type : 'POST',
+						data : { value : postDate }
+					})
+					.done(function(){
+						$("#cuf-default-value").text(value);
+					})
+					.fail(function(){
+						$("#cuf-default-value").text(revert);
+					})
+					
 				};
 
+				
 				// make editable
-				datepick.editable(function(value, settings) {
-					return onDatepickerChanged.call(this, value);
-				}, {
+				datepick.editable(postfn, {
 					type : 'datepicker',
 					tooltip : cfMod.richEditPlaceHolder,
-					datepicker : dateSettings
+					datepicker : dateSettings,
+					name : "value",
+					onsubmit : function(){
+						return self._validate(this);
+					}
 				});
 
+				
 			},
+			
+			makeDefaultRichTextEditable : function(){
+				
+				var area = this.$("#cuf-default-value"),
+					self = this;
+				
+				var conf = confman.getJeditableCkeditor();
+				conf.onsubmit = function(settings, ed){
+					var cked = CKEDITOR.instances[$("textarea", ed).attr('id')];
+					return self._validate(cked.getData());
+				};
+				conf.name = "value";
+				
+				area.editable(cfMod.customFieldUrl + "/defaultValue",conf);
+				
+			},
+			
+			// accepts a string or the editor itself
+			_validate : function(arg){
+				var value = (typeof arg === "string") ? arg : $(arg).val().value; 
+				var validated = true;
+				
+				if (this.isFieldMandatory()	&& StringUtil.isBlank(value)) {
+					notification.showError(cfMod.defaultValueMandatoryMessage);
+					validated = false;
+				}	
+				return validated;
+			},
+			
 			disableOptionalChange : function() {
 				$("#cf-optional").attr("disabled", true);
 			},
@@ -393,19 +412,13 @@ define([ "jquery", "./NewCustomFieldOptionDialog", "backbone", "underscore",
 				opt.prop("checked", ! active);
 			},
 
-			changeDefaultValueText : function(value) {
-				if (this.isFieldMandatory()	&& StringUtil.isBlank(value)) {
-					$.squash.openMessage(cfMod.popupErrorTitle,
-							cfMod.defaultValueMandatoryMessage);
-					return false;
-				} else {
-					this.sendDefaultValue(value);
-					return true;
-				}
-			},
-
 			isFieldMandatory : function() {
-				return !this.optionalCheckbox.checked;
+				if (!! this.optionalCheckbox){
+					return !this.optionalCheckbox.checked;
+				}
+				else{
+					return false;
+				}
 			},
 
 			renameCuf : function() {
@@ -461,11 +474,9 @@ define([ "jquery", "./NewCustomFieldOptionDialog", "backbone", "underscore",
 				var self = this;
 
 				var onerror = function(settings, original, xhr) {
-					var json = JSON.parse(xhr.responseText);
 					xhr.errorIsHandled = true;
-					if (!!json.fieldValidationErrors && !!json.fieldValidationErrors[0].errorMessage) {
-						Forms.input(self.$("#" + inputId)).setState("error", json.fieldValidationErrors[0].errorMessage);
-					}
+					var errormsg = notification.getErrorMessage(xhr);
+					Forms.input(self.$("#" + inputId)).setState("error", errormsg);					
 					return ($.editable.types[settings.type].reset || $.editable.types.defaults.reset).apply(this, arguments);
 				};
 

@@ -144,10 +144,10 @@
               <span class="not-displayed toogle-panel-buttons"></span>
               <div id="cuf-info-panel" class="information-panel toggle-panel-main">
                 <div class="display-table" id="cuf-infos-table">
-                  <div class="display-table-row">
+                  <div class="display-table-row controls control-group" >
                     <label for="cuf-label" th:text="#{label.Label}">Label</label>
                     <div id="cuf-label" class="display-table-cell" th:text="${customField.label}">Description</div>
-
+                    <span class="help-inline">&nbsp;</span>
                   </div>
                   <div class="display-table-row controls control-group">
                     <label for="cuf-code" class="control-label" th:text="#{label.code}">Code</label>
@@ -173,6 +173,9 @@
                     
                     <div th:if="${customField.inputType.name() == 'PLAIN_TEXT'}" id="cuf-default-value"
                       class="display-table-cell" th:text="${customField.defaultValue}">false</div>
+                      
+                    <div th:if="${customField.inputType.name() == 'RICH_TEXT'}" id="cuf-default-value"
+                      class="display-table-cell" th:utext="${customField.defaultValue}">false</div>                      
                       
                     <div th:if="${customField.inputType.name() == 'CHECKBOX'}" id="cuf-default-value"
                       class="display-table-cell" th:text="#{'label.'+${customField.defaultValue}}">false</div>

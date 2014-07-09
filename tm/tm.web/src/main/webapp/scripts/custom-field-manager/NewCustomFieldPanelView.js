@@ -19,15 +19,17 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 define(
-		[ "jquery", "backbone", "handlebars", "app/lnf/SquashDatatablesLnF", "app/lnf/Forms",
+		[ "jquery", "backbone", "handlebars", "app/lnf/SquashDatatablesLnF", "app/lnf/Forms", "squash.configmanager",
 				"jquery.squash.confirmdialog", "datepicker/jquery.squash.datepicker-locales" ],
-		function($, Backbone, Handlebars, SD, Forms) {
+		function($, Backbone, Handlebars, SD, Forms, confman) {
 			/*
 			 * Defines the controller for the new custom field panel.
 			 */
 			var NewCustomFieldPanelView = Backbone.View
 					.extend({
 						el : "#new-cf-pane",
+						defaultWidth : 600,
+						richWidth : 1000,
 						initialize : function() {
 							var self = this;
 							var model = this.model;
@@ -50,6 +52,7 @@ define(
 									self.cancel.call(self);
 								}
 							});
+							this._resize();
 
 						},
 
@@ -58,6 +61,10 @@ define(
 							var source = $("#" + inputType + "-default-tpl").html();
 							var template = Handlebars.compile(source);
 							this.$("#default-value-pane").html(template(this.model.toJSON()));
+							
+							// in case the input type was previously rich text.
+							confman.destroyCkeditor("#defaultValue");
+							
 							switch (inputType) {
 							case "DROPDOWN_LIST":
 								this.renderOptionsTable();
@@ -74,9 +81,27 @@ define(
 								$("#defaultValue").datepicker({
 									dateFormat : squashtm.app.localizedDateFormat
 								});
+								break;								
+							case "RICH_TEXT" :
+								this.renderOptional(true);
+								var conf = confman.getStdCkeditor();
+								$("#defaultValue").ckeditor(function(){}, conf);
+								// the following reroute the blur event from the ckeditor and relocate it as thrown by the textarea 
+								CKEDITOR.instances["defaultValue"].on('change', function(){
+									$("#defaultValue").trigger('change');
+								});
 								break;
 							}
+							this._resize();
 							return this;
+						},
+						
+						_resize : function(){
+							if (this.$el.data().confirmDialog !== undefined){
+								var type = this.model.get("inputType");
+								var width = (type === "RICH_TEXT") ? this.richWidth : this.defaultWidth;
+								this.$el.confirmDialog("option", "width", width);
+							}
 						},
 
 						events : {
@@ -85,6 +110,7 @@ define(
 							"blur input:text.strprop" : "changeStrProp",
 							"change select.optprop" : "changeOptProp",
 							"change input:text.dateprop" : "changeDateProp",
+							"change textarea.richprop" : "changeRichProp",
 							"change select[name='inputType']" : "changeInputType",
 							"click input:checkbox[name='optional']" : "changeOptional",
 							"confirmdialogcancel" : "cancel",
@@ -109,6 +135,10 @@ define(
 							var option = event.target;
 							this.model.set(option.name, option.value);
 						},
+						changeRichProp : function(event){
+							var area = $("#defaultValue");
+							this.model.set(area.attr('id'), area.val());
+						},
 
 						changeInputType : function(event) {
 							var model = this.model;
@@ -117,8 +147,8 @@ define(
 							model.resetDefaultValue();
 
 							this.render();
-
 						},
+						
 
 						changeOptional : function(event) {
 							this.model.set("optional", event.target.checked);

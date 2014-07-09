@@ -230,10 +230,9 @@ public class CustomFieldController {
 	 */
 	@RequestMapping(value = "/{customFieldId}/defaultValue", method = RequestMethod.POST, params = { JEditablePostParams.VALUE })
 	@ResponseBody
-	@ResponseStatus(value = HttpStatus.NO_CONTENT)
-	public void changeDefaultValue(@PathVariable long customFieldId, @RequestParam(JEditablePostParams.VALUE) String defaultValue) {
+	public String changeDefaultValue(@PathVariable long customFieldId, @RequestParam(JEditablePostParams.VALUE) String defaultValue) {
 		customFieldManager.changeDefaultValue(customFieldId, defaultValue);
-
+		return defaultValue;
 	}
 
 	/**
