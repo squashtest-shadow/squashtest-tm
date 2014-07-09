@@ -46,6 +46,7 @@ import org.squashtest.tm.service.project.ProjectFinder;
 import org.squashtest.tm.web.internal.helper.JsonHelper;
 import org.squashtest.tm.web.internal.model.jquery.FilterModel;
 import org.squashtest.tm.web.internal.report.ReportsRegistry;
+import org.squashtest.tm.web.internal.report.criteria.ConciseFormToCriteriaConverter;
 import org.squashtest.tm.web.internal.report.criteria.FormToCriteriaConverter;
 
 /**
@@ -62,7 +63,7 @@ public class ReportController {
 
 	@Inject
 	private ProjectFinder projectFinder;
-	
+
 	@Inject
 	@Value("${report.criteria.project.multiselect:false}")
 	private boolean projectMultiselect;
@@ -80,6 +81,8 @@ public class ReportController {
 	@RequestMapping(value = "/panel", method = RequestMethod.GET)
 	public String showReportPanel(@PathVariable String namespace, @PathVariable int index, Model model) {
 		populateModelWithReport(namespace, index, model);
+		// XXX shouldnt these 2 lines go in populateMWR ? check if "report viewer" works as expected (see
+		// showReportViexwer)
 		model.addAttribute("projectMultiselect", projectMultiselect);
 		model.addAttribute("projectFilterModel", findProjectsModels());
 		return "report-panel.html";
@@ -112,7 +115,6 @@ public class ReportController {
 		return "report-viewer.html";
 	}
 
-
 	/**
 	 * Generates report view from a standard post with a data attribute containing a serialized JSON form.
 	 * 
@@ -125,17 +127,32 @@ public class ReportController {
 	 * @throws JsonParseException
 	 * @throws JsonMappingException
 	 * @throws IOException
+	 * @deprecated since #3762 #getReportView should be called by gui
 	 */
+	@Deprecated
 	@RequestMapping(value = "/views/{viewIndex}/formats/{format}", method = RequestMethod.GET, params = { "parameters" })
 	public ModelAndView generateReportViewUsingGet(@PathVariable String namespace, @PathVariable int index,
 			@PathVariable int viewIndex, @PathVariable String format, @RequestParam("parameters") String parameters)
-			throws JsonParseException, JsonMappingException, IOException {
+					throws JsonParseException, JsonMappingException, IOException {
 		Map<String, Object> form = JsonHelper.deserialize(parameters);
 		Map<String, Criteria> crit = (new FormToCriteriaConverter()).convert(form);
-		
+
 		Report report = reportsRegistry.findReport(namespace, index);
 		return report.buildModelAndView(viewIndex, format, crit);
-		
+
+	}
+
+	@RequestMapping(value = "/views/{viewIndex}/formats/{format}", method = RequestMethod.GET, params = { "json" })
+	public ModelAndView getReportView(@PathVariable String namespace, @PathVariable int index,
+			@PathVariable int viewIndex, @PathVariable String format, @RequestParam("json") String parameters)
+					throws JsonParseException, JsonMappingException, IOException {
+		Map<String, Object> form = JsonHelper.deserialize(parameters);
+		Report report = reportsRegistry.findReport(namespace, index);
+		List<Project> projects = projectFinder.findAllOrderedByName();
+		Map<String, Criteria> crit = (new ConciseFormToCriteriaConverter(report, projects)).convert(form);
+
+		return report.buildModelAndView(viewIndex, format, crit);
+
 	}
 
 }

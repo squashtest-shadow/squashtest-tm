@@ -42,7 +42,7 @@ requirejs.config({
 				"test-case-management",
 				"test-case-folder-management",
 				"test-case-library-management",
-				"iteration-management",	
+				"iteration-management",
 				"test-suite-management",
 				"campaign-management",
 				//workspaces
@@ -51,8 +51,8 @@ requirejs.config({
 				"camp-workspace"
 			],
 			/*
-			 * rules for paths naming: 
-			 * * third party lib: unversionned lib name 
+			 * rules for paths naming:
+			 * * third party lib: unversionned lib name
 			 * * non AMD squash lib: replace "squashtm" by "squash" in js file name and remove any unrequired "ext" suffix.
 			 */
 			paths : {
@@ -72,8 +72,8 @@ requirejs.config({
 				"handlebars" : "lib/handlebars/handlebars-1.0.0.rc3",
 //				"underscore" : "lib/underscore/underscore-1.4.4",
 				"underscore" : "lib/underscore/underscore-1.4.4-min",
-//				"backbone" : "lib/backbone/backbone-1.0.0",
-				"backbone" : "lib/backbone/backbone-1.0.0-min",
+				"backbone" : "lib/backbone/backbone-1.0.0",
+//				"backbone" : "lib/backbone/backbone-1.0.0-min",
 //				"jqplot-core" : "lib/jqplot/jquery.jqplot",
 				"jqplot-core" : "lib/jqplot/jquery.jqplot.min",
 //				"jqplot-pie" : "lib/jqplot/plugins/jqplot.pieRenderer",
@@ -193,11 +193,11 @@ requirejs.config({
 					exports : "squashtm.popup"
 				},
 				"jquery.squash.datepicker" : {
-					deps : [ "jquery", "jqueryui" ], 
+					deps : [ "jquery", "jqueryui" ],
 					exports : "SquashDatePicker" // this is a constructor
-				}, 
+				},
 				"jquery.squash.datepicker-auto" : {
-					deps : [ "jquery", "jqueryui" ], 
+					deps : [ "jquery", "jqueryui" ],
 					exports : "DatePickerAuto" // this is a constructor
 				},
 				"jquery.squash.togglepanel" : {
@@ -260,9 +260,9 @@ requirejs.config({
 						$.jqplot.config.enablePlugins = true;
 						return $;
 					}
-				}, 
+				},
 				"squash.KeyEventListener" : {
-					deps : [ "jquery" ], 
+					deps : [ "jquery" ],
 					exports : "KeyEventListener" // this is a constructor
 				}
 			}
