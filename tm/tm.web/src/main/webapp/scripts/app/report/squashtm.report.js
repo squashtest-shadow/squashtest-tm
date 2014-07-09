@@ -21,14 +21,16 @@
 var squashtm = squashtm || {};
 /**
  * Controller for the report panel
- * 
+ *
  * depends on : jquery jquery ui jquery.jeditable.js jquery.jeditable.datepicker.js jquery.squash.plugin.js
  * jquery.squash.linkabletree.js squash.reportworkspace.js
- * 
+ *
  * @author Gregory Fouquet
  */
-define([ "jquery", "app/report/squashtm.reportworkspace", "tree", "underscore", "./ProjectsPickerPopup", "./SingleProjectPickerPopup","app/util/ButtonUtil", "jqueryui", "jeditable", "jeditable.datepicker",
-		"jquery.squash", "jquery.cookie", "datepicker/jquery.squash.datepicker-locales" ], function($, RWS, treebuilder, _, ProjectsPickerPopup, SingleProjectPickerPopup, ButtonUtil) {
+define([ "jquery", "app/report/squashtm.reportworkspace", "tree", "underscore", "./ProjectsPickerPopup", "./SingleProjectPickerPopup","app/util/ButtonUtil", "./ReportCriteriaPanel", "./ConciseFormModel", "jqueryui", "jeditable", "jeditable.datepicker",
+		"jquery.squash", "jquery.cookie", "datepicker/jquery.squash.datepicker-locales" ], function($, RWS, treebuilder, _, ProjectsPickerPopup, SingleProjectPickerPopup, ButtonUtil, ReportCriteriaPanel, FormModel) {
+	"use strict";
+
 	var config = {
 		contextPath : "",
 		dateFormat : "dd/mm/yy",
@@ -37,406 +39,79 @@ define([ "jquery", "app/report/squashtm.reportworkspace", "tree", "underscore", 
 		cancelLabel : "Cancel"
 	};
 
-	var preferences = null;
-	var formState = {};
-	var selectedTab = false;
+	var formState = {
+		restore: function() {
+			var stored = sessionStorage[config.reportUrl + "-formerState"];
+			if (!!stored) return JSON.parse(stored);
+			return {};
+		},
 
-	var postDateFormat = $.datepicker.ATOM;
-	var postNoDate = "--";
+		save: function() {
+			sessionStorage[config.reportUrl + "-formerState"] = stringModel();
+		}
+	};
+
+	var selectedTab = false;
+	var formModel, criteriaPanel;
 
 	function resetState() {
-		formState = {};
 		selectedTab = false;
 	}
 
-	function onSingleCheckboxChanged() {
-		var option = this;
-		var name = option.name;
-
-		formState[name] = {
-			value : option.value,
-			selected : option.checked,
-			type : "CHECKBOX"
-		};
-	}
-
-	function onGroupedCheckboxesChanged() {
-		var option = this;
-		var name = option.name;
-		var value = option.value;
-
-		var groupState = formState[name] || [];
-		formState[name] = groupState;
-
-		var res = $(groupState).filter(function(index) {
-			return this.value === value;
-		});
-
-		if (res[0]) {
-			res[0].selected = this.checked;
-		} else {
-			groupState.push({
-				value : value,
-				selected : option.checked,
-				type : "CHECKBOXES_GROUP"
-			});
-		}
-	}
-
-	function onGroupedRadiosChanged() {
-		var option = this;
-		var name = option.name;
-		var value = option.value;
-		var givesAccessTo = (option.id).replace("-binder", "");
-
-		$(formState[name]).each(function() {
-			if (this.value === value) {
-				this.selected = option.checked;
-			} else {
-				this.selected = false;
-			}
-		});
-
-		// deactivate all elements which are linked to other options in
-		// the group
-		deactivateAllAssociatedButtons(name);
-
-		// if the option has an associated element
-		if (givesAccessTo !== undefined && givesAccessTo !== "none") {
-			// find the right element and activate it
-			ButtonUtil.enable($("#" + givesAccessTo + "-open"));
-
-		}
-
-	}
-
-	function deactivateAllAssociatedButtons(name) {
-
-		var list = $("li [name=" + name + "]");
-		var givesAccessTo;
-
-		list.each(function() {
-
-			givesAccessTo = (this.id).replace("-binder", "");
-
-			if (givesAccessTo !== undefined && givesAccessTo !== "none") {
-				// find the right element and deactivate it
-				ButtonUtil.disable($("#" + givesAccessTo + "-open"));
-			}
-		});
-	}
-
-	function onListItemSelected(listType) {
-		return function() {
-			var dropdown = $(this);
-			var options = dropdown.find("option");
-	
-			formState[this.name] =  _.map(options, function(option) {
-				return {
-					value : option.value,
-					selected : option.selected,
-					type : listType
-				};
-			});
-		};
-	}
-	
-
-	function onTextBlurred() {
-		formState[this.name] = {
-			value : this.value,
-			type : "TEXT"
-		};
-	}
-
-	function onDatepickerChanged(value) {
-		var localizedDate = value;
-
-		var postDate;
-
-		if (config.noDateLabel === value) {
-			postDate = postNoDate;
-		} else {
-			var date = $.datepicker.parseDate(config.dateFormat, localizedDate);
-			postDate = $.datepicker.formatDate(postDateFormat, date);
-		}
-
-		if (value === "" || value === undefined || value === null){
-			delete formState[this.id];
-		}
-		else{
-			formState[this.id] = {
-				value : postDate,
-				type : "DATE"
-			};
-		}
-	}
-
-	function initDropdowns(panel) {
-		var dropdowns = panel.find(".rpt-drop select");
-		dropdowns.change(onListItemSelected("DROPDOWN_LIST"));
-		dropdowns.change();
-
-		if (preferences) {
-			$.each(dropdowns, function(index, dropdown) {
-				var name = dropdown.name;
-				var preferenceForName = preferences[name];
-				if (preferenceForName) {
-					$.each(preferenceForName, function(index, element) {
-						var value = element.value;
-						var options = $("option", dropdown);
-						// TODO change below with _.filter then _.each
-						$.each(options, function(index, option) {
-							if (option.value == value) {
-								$(option).prop("selected", element.selected);
-							}
-						});
-					});
-				}
-			});
-			dropdowns.change();
-		}
-	}
-
-	function initTexts(panel) {
-		var texts = panel.find("input:text");
-		texts.blur(onTextBlurred);
-		texts.blur();
-	}
-
-	function initDatepickers(panel) {
-		var dateSettings = {
-			dateFormat : config.dateFormat
-		};
-
-		var datepickers = panel.find(".rpt-date-crit");
-
-		// setting the locale
-		var locale = datepickers.data("locale");
-		var confLocale = $.datepicker.regional[locale];
-
-		if (!!confLocale) {
-			$.extend(dateSettings, confLocale);
-		}
-
-		// rest of the init
-		datepickers.editable(function(value, settings) {
-			var self = this;
-			onDatepickerChanged.apply(self, [ value ]);
-
-			return value;
-		}, {
-			type : "datepicker",
-			tooltip : "Click to edit...",
-			datepicker : dateSettings
-		});
-
-		datepickers.each(function() {
-			var self = this;
-			var date = self.innerText || config.noDateLabel;
-			onDatepickerChanged.apply(self, [ date ]);
-		});
-
-		if (preferences) {
-			$.each(datepickers, function(index, datepicker) {
-				var name = datepicker.id;
-				var preferenceForName = preferences[name];
-				if (preferenceForName && preferenceForName.value.length > 5) {
-					var date = $.datepicker.parseDate("yy-mm-dd", preferenceForName.value);
-					if (date) {
-						$(datepicker).text($.datepicker.formatDate(config.dateFormat, date));
-						var postDate = $.datepicker.formatDate(postDateFormat, date);
-						formState[this.id] = {
-							value : postDate,
-							type : "DATE"
-						};
-					}
-				}
-			});
-
-			datepickers.change();
-		}
-	}
-
-	function initRadios(panel) {
-		var radios = panel.find("input:radio");
-
-		radios.change(onGroupedRadiosChanged).each(function() {
-			var option = this;
-			var name = option.name;
-			var givesAccessTo = (option.id).replace("-binder", "");
-
-			formState[name] = formState[name] || [];
-			formState[name].push({
-				name : name,
-				value : option.value,
-				selected : option.checked,
-				type : "RADIO_BUTTONS_GROUP"
-			});
-
-			if (givesAccessTo !== undefined && givesAccessTo !== "none") {
-				// find the right element and deactivate it
-				ButtonUtil.disable($("#" + givesAccessTo + "-open"));
-			}
-		});
-
-		if (preferences) {
-			$.each(radios, function(index, radio) {
-				var name = radio.name;
-				var givesAccessTo = (radio.id).replace("-binder", "");
-				var preferenceForName = preferences[name];
-				if (preferenceForName) {
-					$.each(preferenceForName, function(index, element) {
-						var value = element.value;
-						
-						if (radio.value == value && element.selected) {
-							$(radio).prop("checked", true);
-							
-							$.each(formState[name], function(index, state) {
-								if (state.value == radio.value) {
-									state.selected = true;
-									if (givesAccessTo !== undefined && givesAccessTo !== "none") {
-										ButtonUtil.enable($("#" + givesAccessTo + "-open"));
-									}
-								}
-							});
-						} else if (radio.value == value && !element.selected) {
-							$.each(formState[name], function(index, state) {
-								if (state.value == radio.value) {
-									state.selected = false;
-
-								}
-							});
-						}
-					});
-				}
-			});
-		}else{
-			var checkedRadios = _.where(radios, {checked:true});
-			$.each(checkedRadios, function(index, radio){
-				var givesAccessTo = (radio.id).replace("-binder", "");
-				if (givesAccessTo !== undefined && givesAccessTo !== "none") {
-					ButtonUtil.enable($("#" + givesAccessTo + "-open"));
-				}
-			});
-				
-		}
-	}
-
-	function initCheckboxes(panel) {
-		var checkboxes = panel.find("input:checkbox");
-
-		var groupedCheckboxes = checkboxes.filter(function(index) {
-			var item = $(this);
-			return item.data("grouped");
-		});
-		groupedCheckboxes.change(onGroupedCheckboxesChanged);
-		groupedCheckboxes.change();
-
-		var singleCheckboxes = checkboxes.filter(function(index) {
-			var item = $(this);
-			return !$(item).data("grouped");
-		});
-		singleCheckboxes.change(onSingleCheckboxChanged);
-		singleCheckboxes.change();
-
-		if (preferences) {
-			$.each(checkboxes, function(index, checkbox) {
-				var name = checkbox.name;
-				var preferenceForName = preferences[name];
-				if (preferenceForName) {
-					// TODO change below with _.filter then _.each
-					$.each(preferenceForName, function(index, element) {
-						var value = element.value;
-						
-						if (checkbox.value == value) {
-							$(checkbox).prop("checked", element.selected);
-							$.each(formState[name], function(index, state) {
-								if (state.value == checkbox.value) {
-									state.selected = element.selected;
-								}
-							});
-						}
-					});
-				}
-			});
-		}
+	function stringModel() {
+		return JSON.stringify(formModel.toJSON());
 	}
 
 	function buildViewUrl(index, format) {
 		// see [Issue 1205] for why "document.location.protocol"
 		return document.location.protocol + "//" + document.location.host + config.reportUrl + "/views/" + index +
 				"/formats/" + format;
-
 	}
 
 	function loadTab(tab) {
-		var url = buildViewUrl(tab.newTab.index(), "html"),
-			params = JSON.stringify(formState);
-		
+		var url = buildViewUrl(tab.newTab.index(), "html");
+
 		$.ajax({
 			type : "get",
 			url : url,
 			dataType : "html",
-			data : { parameters : params }
+			data : { json : stringModel() }
 		}).done(function(html) {
 			tab.newPanel.html(html);
 		});
 	}
 
-	function isPerimeterValid(formState) {
-		// first pass : do we have pickers bound to radiobuttons
-		var selectedPicker = reduceToSelectedPicker(formState);
-		
-		var checkerByControl = buildPerimeterCheckerByControl(selectedPicker);
-		
-		return undefined !== _.find(formState, function(value, key) {
-			var checker = value && value[0] ? checkerByControl[value[0].type] : undefined;
-			return !!checker && checker.call(this, value);
-		});
-	}
-	
-	function reduceToSelectedPicker(formState) {
-		return _.reduceRight(formState, function(memo, control) {
-			if (!!memo) {
-				return memo;
-			}
-			
-			var found = _.find(control, function(item) {
-				return item.type === "RADIO_BUTTONS_GROUP" && item.selected === true && (item.value === "PROJECT_PICKER" || item.value === "TREE_PICKER");
-			});
-			
-			return !!found ? found.value : undefined;
-		}, undefined);	
-	}
-
 	function buildPerimeterCheckerByControl(selectedPicker) {
 		function hasProjectPicked(pp) {
-			return _.where(pp, { selected : true }).length !== 0;
+			return undefined !== _.find(pp, function(element) {
+				return element.selected === true;
+			});
 		}
-		
+
 		function hasEverythingSelected(rg) {
-			return _.where(rg, { selected : true, value : "EVERYTHING"	}).length !== 0;
+			return undefined !== _.find(rg, function(element) {
+				return element.selected === true && element.value == "EVERYTHING";
+			});
 		}
-		
+
 		function hasNodePicked(tp) {
 			return undefined !== _.find(tp, function(element) {
 				return !!element.value;
 			});
 		}
-		
+
 		var checkerByControl = {
-				"PROJECT_PICKER" : hasProjectPicked, 
+				"PROJECT_PICKER" : hasProjectPicked,
 				"RADIO_BUTTONS_GROUP" : hasEverythingSelected,
 				"TREE_PICKER" : hasNodePicked
-				
+
 		};
-		
+
 		var res = checkerByControl;
-		
+
 		if (!!selectedPicker) {
 			var actualChecker = checkerByControl[selectedPicker];
-			
+
 			if (!!actualChecker) {
 				res = {};
 				res[selectedPicker] = actualChecker;
@@ -445,15 +120,14 @@ define([ "jquery", "app/report/squashtm.reportworkspace", "tree", "underscore", 
 
 		return res;
 	}
-	
+
 	function generateView() {
 
-		if (isPerimeterValid(formState)) {
-			// stores preferences in browser datastore
-			sessionStorage[config.reportUrl + "-prefs"] = JSON.stringify(formState);
+		if (formModel.hasBoundary()) {
+			formState.save();
 
 			// collapses the form
-			$("#report-criteria-panel").togglePanel("closeContent");
+			$("#report-criteria-panel.expand .tg-head").click();
 			// collapses the sidebar
 			RWS.setReportWorkspaceExpandState();
 
@@ -489,11 +163,9 @@ define([ "jquery", "app/report/squashtm.reportworkspace", "tree", "underscore", 
 		var format = $("#view-format-cmb-" + viewIndex).val();
 
 		var url = buildViewUrl(viewIndex, format);
-		var data = JSON.stringify(formState);
-		data = encodeURIComponent(data);
-		
-		window.open(url+"?parameters="+data, "_blank", "resizable=yes, scrollbars=yes");
+		data = encodeURIComponent(stringModel());
 
+		window.open(url+"?parameters="+data, "_blank", "resizable=yes, scrollbars=yes");
 	}
 
 	function initViewTabs() {
@@ -504,164 +176,16 @@ define([ "jquery", "app/report/squashtm.reportworkspace", "tree", "underscore", 
 			activate : onViewTabSelected
 		});
 	}
-	/** ==================================================================== TREE PIKER */
-	/**
-	 * Converts a NODE_TYPE into a workspace-type
-	 */
-	function nodeTypeToWorkspaceType(nodeType) {
-		return nodeType.toLowerCase().replace(/_/g, "-");
-	}
-	/**
-	 * Fetches the workspace type from the given jquery object pointing to a treepicker
-	 */
-	function getWorkspaceType(treePicker) {
-		return nodeTypeToWorkspaceType(treePicker.data("node-type"));
-	}
-
-	function setTreeState(tree, nodes) {
-		var name = tree.attr("id");
-
-		formState[name] = [];
-
-		if (nodes && nodes.length === 0) {
-			formState[name].push({
-				value : "",
-				nodeType : "",
-				type : "TREE_PICKER"
-			});
-			return;
-		}
-
-		$(nodes).each(function() {
-			var node = $(this);
-			formState[name].push({
-				value : node.attr("resid"),
-				nodeType : node.attr("restype"),
-				type : "TREE_PICKER"
-			});
-		});
-	}
-
-	function initTreePickerCallback() {
-		var tree = $(this);
-		var treeid = this.id;
-		var workspaceType = getWorkspaceType(tree);
-
-		$.get(config.contextPath + "/" + workspaceType + "-browser/drives", "linkables", "json").done(function(data) {
-			var settings = $.extend({}, config);
-			settings.workspace = workspaceType;
-			settings.model = data;
-			settings.treeselector = "#" + treeid;
-			treebuilder.initLinkableTree(settings);
-		});
-
-		setTreeState(tree, []);
-	}
-
-	function onConfirmTreePickerDialog() {
-		var self = $(this);
-		self.dialog("close");
-		var tree = self.find(".rpt-tree-crit");
-		var nodes = tree.jstree("get_selected");
-
-		setTreeState(tree, nodes);
-	}
-
-	function onCancelTreePickerDialog() {
-		$(this).dialog("close");
-	}
-
-	function initTreePickerDialogCallback() {
-		var dialog = $(this);
-
-		dialog.createPopup({
-			height : 500,
-			closeOnSuccess: false, 
-			buttons : [ {
-				text : config.okLabel,
-				click : onConfirmTreePickerDialog
-			}, {
-				text : config.cancelLabel,
-				click : onCancelTreePickerDialog
-			} ]
-		});
-	}
-
-	function initTreePickers(panel) {
-		panel.find(".rpt-tree-crit-open").click(function() {
-			var dialogId = $(this).data("id-opened");
-			var treePickerPopup = $("#" + dialogId);
-			treePickerPopup.dialog("open");
-		});
-
-		panel.find(".rpt-tree-crit").each(initTreePickerCallback);
-
-		panel.find(".rpt-tree-crit-dialog").each(initTreePickerDialogCallback);
-
-		if (preferences) {
-
-			var pickers = panel.find(".rpt-tree-crit-open");
-
-			$.each(pickers, function(index, picker) {
-				var id = picker.id;
-				var real_id = id.substr(0, id.length - 5);
-				formState[real_id] = preferences[real_id];
-			});
-		}
-	}
-	
-	
-	/** ==================================================================== / TREE PIKER */
-	/** ==================================================================== PROJECT PIKER */
-	function initProjectPickers(panel) {
-		panel.find(".rpt-projects-crit-open").each(function(){
-			var dialogId = $(this).data("id-opened");
-			var dialogSelect = "#" + dialogId;
-			var resultId = $(this).data("id-result");
-			var resultSelect = "#" + resultId;
-			var $result = $(resultSelect);
-			var $dialog = $(dialogSelect);
-			var multiSelect = $dialog.data("multi-select");
-			var projectPickerPopup ;
-			if(multiSelect){
-				projectPickerPopup = new ProjectsPickerPopup({el : dialogSelect, attributes :{ formState : formState, preferences : preferences, $result : $result } });
-			}
-			else{
-				projectPickerPopup = new SingleProjectPickerPopup({el : dialogSelect,  attributes :{ formState : formState,  preferences : preferences, $result : $result  }});
-			}
-			$(this).click(function(){projectPickerPopup.open();});
-		});
-		
-	}
-	
-/** ==================================================================== /PROJECT PIKER */
 
 	function init(settings) {
-
 		resetState();
 		config = $.extend(config, settings);
-		// Get user preferences if they exist
-		// TODO essayer de set le formstate avec les preferences
-		var stored = sessionStorage[config.reportUrl + "-prefs"];
-		if (!!stored) {
-			preferences = JSON.parse(stored);
-		}
 
-		var panel = $("#report-criteria-panel");
-		panel.togglePanel({});
-
-		$("#contextual-content").decorateButtons();
-
-		initCheckboxes(panel);
-		initRadios(panel);
-		initDropdowns(panel);
-		initTexts(panel);
-		initDatepickers(panel);
-		initTreePickers(panel);
+		formModel = new FormModel();
+		criteriaPanel = new ReportCriteriaPanel({el: "#report-criteria-panel", model: formModel }, { formerState: formState.restore(), config: config });
 		initViewTabs();
-		initProjectPickers(panel);
 
-		$("#generate-view").click(generateView);
+		$("#generate-view").click(generateView); // perfect world -> in ReportCritPanel
 		$("#export").click(doExport);
 	}
 
@@ -669,10 +193,5 @@ define([ "jquery", "app/report/squashtm.reportworkspace", "tree", "underscore", 
 		init : init
 	};
 
-	squashtm.report._private = {
-			isPerimeterValid : isPerimeterValid, 
-			reduceToSelectedPicker : reduceToSelectedPicker
-	};
-	
 	return squashtm.report;
 });

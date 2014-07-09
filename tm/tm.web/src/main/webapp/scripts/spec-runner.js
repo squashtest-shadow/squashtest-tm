@@ -19,9 +19,10 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 require([ "common", "require" ], function(common) {
-	var specs = [ 
-	'specs/PlayerSpec', 
-	"specs/report/squashtm.report"
+	var specs = [
+	'specs/PlayerSpec',
+	"specs/report/ReportCriteriaPanelSpec",
+	"specs/report/ConciseFormModelSpec"
 	];
 
 	// expands require config for jasmine usage
@@ -46,7 +47,7 @@ require([ "common", "require" ], function(common) {
 		}
 
 	});
-	
+
 	// shit breaks otherwise
 	window.squashtm = window.squashtm || {};
 	window.squashtm.app = window.squashtm.app || {};

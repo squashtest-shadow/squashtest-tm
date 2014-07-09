@@ -60,7 +60,7 @@
   <!-- TEXT INPUT -->
   <!--  params = input -->
   <div th:fragment="text">
-    <label for="rpt-text-crit" th:for="${input.name}" th:text="${input.label}">Text criteria</label>
+    <label for="rpt-text-crit" th:for="${input.name}" th:text="${input.label}" class="rpt-text-crit">Text criteria</label>
     <input name="rpt-text-crit" th:id="${input.name}" th:name="${input.name}" type="text" value="" />
   </div>
 
@@ -78,8 +78,8 @@
   <!--  params = input -->
   <div th:fragment="datepicker">
     <label th:for="${input.name}" th:text="${input.label}">Date criteria</label>
-    <span class="rpt-date-crit" th:id="${input.name}" th:name="${input.name}" th:text="#{squashtm.nodata}"
-      data-locale="fr" th:attr="data-locale=#{squashtm.locale}">01-02-2012</span>
+    <span class="rpt-date-crit small" th:id="${input.name}" th:name="${input.name}" th:text="#{squashtm.nodata}"
+      data-locale="fr" data-nodate="no date" th:attr="data-locale=#{squashtm.locale}, data-nodate=#{squashtm.nodata}">01-02-2012</span>
   </div>
 
 
@@ -101,12 +101,12 @@
       th:title="#{report.form.tree-picker.dialog.title}"
       class="rpt-tree-crit-dialog popup-dialog is-contextual not-displayed">
       <div id="rpt-tree-crit" th:id="${input.name}" class="rpt-tree-crit tree selection-tree"
-        th:attr="data-node-type=${input.pickedNodeType}" data-node-type="CAMPAIGN">NODES</div>
+        th:attr="data-nodetype=${input.pickedNodeType}" data-nodetype="CAMPAIGN">NODES</div>
     </div>
     <label th:if="${hasLabel}" for="rpt-tree-crit-open" th:for="${input.name} + '-open'" th:text="${input.label}">Nodes</label>
-    <input id="rpt-tree-crit-open" th:id="${input.name} + '-open'" type="button" class="button rpt-tree-crit-open"
-      th:value="#{report.form.tree-picker.button.label}" value="Pick nodes" data-id-opened="rpt-tree-crit-dialog"
-      th:attr="data-id-opened=${input.name} + '-dialog'" />
+    <input id="rpt-tree-crit-open" th:id="${input.name} + '-open'" type="button" class="sq-btn btn-sm rpt-tree-crit-open"
+      th:value="#{report.form.tree-picker.button.label}" value="Pick nodes" data-idopened="rpt-tree-crit-dialog"
+      th:attr="data-idopened=${input.name} + '-dialog'" />
   </div>
 
 
@@ -114,12 +114,11 @@
   <!--  params = input , hasLabel -->
   <div th:fragment="projectpicker">
     <!-- project picker popup -->
-    <div id="rpt-project-crit" th:id="${input.name}" title="Projects"
-      th:title="${projectMultiselect} ? #{report.form.project-picker.dialog.title} : #{report.form.project-picker.dialog.title.single}"
-      class="rpt-projects-crit-container project-picker popup-dialog not-displayed" data-multi-select="true"
-      th:attr="data-multi-select=${projectMultiselect}">
-      <div id="dialog-settings-filter-maincontent">
-        <div id="dialog-settings-filter-projectlist" class="project-filter-list dataTables_wrapper">
+    <div id="rpt-project-crit" th:id="${input.name}" class="project-picker popup-dialog not-displayed"  
+      title="Projects" th:title="${projectMultiselect} ? #{report.form.project-picker.dialog.title} : #{report.form.project-picker.dialog.title.single}"
+      data-multiselect="true" th:attr="data-multiselect=${projectMultiselect}, data-idresult='rpt-project-crit-result'+${input.name}">
+      <div class="cf">
+        <div class="project-filter-list dataTables_wrapper">
           <span class="filter-warning not-displayed" th:text="${projectMultiselect} ? #{message.projectPicker.warnFilterOn} : #{message.projectPicker.warnFilterOn.single}"></span>
           <table>
             <thead>
@@ -134,7 +133,7 @@
                 <td class="td-check">
                   <input th:type="${projectMultiselect} ? 'checkbox' : 'radio'" type="checkbox" class="project-checkbox"
                     id="project-checkbox-1" th:id="'project-checkbox-'+${projectData[0]}" name="rpt-project-crit"
-                    th:name="${input.name}" value="1" th:value="${projectData[0]}" data-previous-checked="false" />
+                    th:name="${input.name}" value="1" th:value="${projectData[0]}" data-previouschecked="false" />
                 </td>
                 <td class="project-name" th:text="${projectData[1]}">P1</td>
                 <td class="project-label" th:text="${projectData[3]}">P1 label</td>
@@ -142,7 +141,8 @@
             </tbody>
           </table>
         </div>
-        <div th:if="${projectMultiselect}" id="dialog-settings-filter-controls" class="project-filter-controls">
+        
+        <div th:if="${projectMultiselect}" class="project-filter-controls">
           <ul>
             <li id="dialog-settings-filter-selectall" class="project-picker-selall cursor-pointer"
               th:text="#{dialog.settings.filter.controls.selectall}">Select all</li>
@@ -152,7 +152,6 @@
               th:text="#{dialog.settings.filter.controls.invertselect}">Invert selection</li>
           </ul>
         </div>
-        <div class="unsnap not-displayed"></div>
       </div>
       <div class="popup-dialog-buttonpane">
         <input type="button" th:value="#{label.Confirm}" />
@@ -161,11 +160,11 @@
     </div>
     <!-- /project picker popup  -->
     <label th:if="${hasLabel}" for="rpt-project-crit-open" th:for="${input.name} + '-open'" th:text="${input.label}">Projects</label>
-    <span th:attr="data-multiple-value-text=#{label.multipleProjects}" data-multiple-value-text="Multiple projects"
-      id="rpt-project-crit-result" th:id="'rpt-project-crit-result'+${input.name}" class="rpt-projects-crit-result"></span>
-    <input id="rpt-project-crit-open" th:id="${input.name} + '-open'" type="button"
-      class="button rpt-projects-crit-open" th:value="#{report.form.project-picker.button.label}" value="Pick projects"
-      th:attr="data-id-opened=${input.name}, data-id-result='rpt-project-crit-result'+${input.name}" data-id-result="rpt-project-crit-result" data-id-opened="rpt-project-crit" />
+    <span id="rpt-project-crit-result" th:id="'rpt-project-crit-result'+${input.name}" class="rpt-projects-crit-result small"
+      th:attr="data-multiplevaluetext=#{label.multipleProjects}" data-multiplevaluetext="Multiple projects"></span>
+    <input id="rpt-project-crit-open" th:id="${input.name} + '-open'" type="button" class="sq-btn btn-sm rpt-projects-crit-open" 
+      th:value="#{report.form.project-picker.button.label}" value="Pick projects"
+      th:attr="data-idopened=${input.name}" data-idopened="rpt-project-crit" />
   </div>
 
 

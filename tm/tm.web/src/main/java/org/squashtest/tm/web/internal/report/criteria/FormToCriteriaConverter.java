@@ -41,18 +41,10 @@ import org.squashtest.tm.api.report.form.InputType;
  * 
  */
 public class FormToCriteriaConverter {
-	/**
-	 * 
-	 */
 	private static final String INPUT_SELECTED = "selected";
-	/**
-	 * 
-	 */
 	private static final String INPUT_VALUE = "value";
-	/**
-	 * 
-	 */
 	private static final String INPUT_TYPE = "type";
+
 	private static final Logger LOGGER = LoggerFactory.getLogger(FormToCriteriaConverter.class);
 
 	private final Map<InputType, SimpleEntryConverter> simpleEntryConverterByType;
@@ -143,7 +135,7 @@ public class FormToCriteriaConverter {
 	private Criteria createNodeMapCriteria(String name, Collection<Map<String, Object>> multiValued,
 			InputType inputType) {
 		MultiValuesCriteria crit = new MultiValuesCriteria(name, inputType);
-		
+
 		for (Map<String, Object> valueItem : multiValued) {
 			String nodeType = (String) valueItem.get("nodeType");
 			Object value = valueItem.get(INPUT_VALUE);
@@ -166,7 +158,7 @@ public class FormToCriteriaConverter {
 	private Criteria createMultiOptionsCriteria(String name, Collection<Map<String, Object>> multiValued,
 			InputType inputType) {
 		MultiOptionsCriteria crit = new MultiOptionsCriteria(name, inputType);
-		
+
 		for (Map<String, Object> valueItem : multiValued) {
 			Boolean selected = (Boolean) valueItem.get(INPUT_SELECTED);
 			Object value =  valueItem.get(INPUT_VALUE);
