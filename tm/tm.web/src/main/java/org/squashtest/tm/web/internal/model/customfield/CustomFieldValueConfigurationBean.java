@@ -61,6 +61,9 @@ public class CustomFieldValueConfigurationBean {
 			case DATE_PICKER:
 				newConf = new DatePickerItem(value);
 				break;
+			case RICH_TEXT :
+				newConf = new RichTextItem(value);
+				break;
 			default:
 				newConf = new PlainTextItem(value);
 				break;
@@ -90,6 +93,9 @@ public class CustomFieldValueConfigurationBean {
 				break;
 			case DATE_PICKER:
 				newConf = new DatePickerItem(value);
+				break;
+			case RICH_TEXT :
+				newConf = new RichTextItem(value);
 				break;
 			default:
 				newConf = new PlainTextItem(value);
@@ -224,6 +230,29 @@ public class CustomFieldValueConfigurationBean {
 
 		@Override
 		public String getType() {
+			return INPUT_TYPE;
+		}
+
+	}
+
+	public static class RichTextItem extends DefaultItem{
+
+		private static final String INPUT_TYPE = "ckeditor";
+
+		public RichTextItem(){
+			super();
+		}
+
+		public RichTextItem(CustomFieldValue value){
+			super(value);
+		}
+
+		public RichTextItem(DenormalizedFieldValue value){
+			super(value);
+		}
+
+		@Override
+		public String getType(){
 			return INPUT_TYPE;
 		}
 

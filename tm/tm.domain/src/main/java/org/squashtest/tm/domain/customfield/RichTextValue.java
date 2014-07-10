@@ -49,4 +49,12 @@ public class RichTextValue extends CustomFieldValue {
 		return (longValue != null) ? longValue : "";
 	}
 
+	@Override
+	public CustomFieldValue copy(){
+		CustomFieldValue copy = new RichTextValue();
+		copy.setBinding(getBinding());
+		copy.setValue(getValue());
+		return copy;
+	}
+
 }

@@ -66,6 +66,9 @@
 			th:id="'cuf-value-'+${confBeanStat.count}" class="cuf-value-control"
 			th:text="${confBean.valueAsDate}? ${#dates.format(confBean.valueAsDate,'__#{squashtm.dateformatShort}__')} : #{squashtm.nodata}">
 			01-02-2012</span> 
+        <div th:case="'ckeditor'" 
+            th:id="'cuf-value-'+${confBeanStat.count}" class="cuf-value-control"
+            th:utext="${confBean.fieldValue}"> <p>rich text</p></div>
 		<span th:case="*"
 			th:id="'cuf-value-'+${confBeanStat.count}" class="cuf-value-control"
 			th:text="${confBean.fieldValue}">maximum</span>
@@ -76,10 +79,10 @@
 	th:inline="javascript">
 	//<![CDATA[
 	require(
-			[ 'domReady', 'jquery', 'jquery.squash.jeditable',
-					"jeditable.datepicker",
-					"datepicker/jquery.squash.datepicker-locales" ],
-			function(domReady, $) {
+			[ 'domReady', 'jquery', 'squash.configmanager', 'app/ws/squashtm.notification',
+			  'jquery.squash.jeditable', "jeditable.datepicker",
+				"datepicker/jquery.squash.datepicker-locales" ],
+			function(domReady, $, confman, notification) {
 
 				var imgUrl = /*[[@{/scripts/jquery/indicator.gif}]]*/"../../scripts/jquery/indicator.gif";
 				var fieldMandatoryMessage = /*[[#{message.cuf.value.mandatory}]]*/'The custom field is mandatory';
@@ -89,21 +92,11 @@
 				var localizedDateFormat = /*[[ #{squashtm.dateformatShort.datepicker} ]]*/"dd/mm/yy"
 				var noDateString = /*[[ #{squashtm.nodata} ]]*/"-";
 				
-				var baseConf = {
-					submit : /*[[#{rich-edit.button.ok.label}]]*/"ok",
-					cancel : /*[[#{label.Cancel}]]*/"cancel",
-					placeholder : /*[[#{rich-edit.placeholder}]]*/"say something",
-					cols : 80,
-					max_size : 20,
-					onblur : function() {
-					},
-					maxlength : 255,
-					indicator : '<div class="processing-indicator"/>'
-				};
+				var baseConf = confman.getStdJeditable();
 
 				var postFunction = function(value, settings) {
 					if (!settings.optional && $.trim(value) === "") {
-						$.squash.openMessage(errorTitle, fieldMandatoryMessage);
+						notification.showError(fieldMandatoryMessage);
 						return this.revert;
 					}
 					var url = cufValuesUrl + settings.fieldId;
@@ -112,20 +105,19 @@
 					});
 					return value;
 				};
+				
+				/**************** code for CkEditor   ***************/
+				
+				var ckeBaseConf = confman.getJeditableCkeditor();
+				
+				/**************** code for CkEditor   ***************/
 
 				/**************** code for DatePicker ***************/
+				
 				//DatePickerBaseConf
-				var dateSettings = {
-					dateFormat : localizedDateFormat
-				};				
-				var confLocale = $.datepicker.regional[locale];
-				if (!!confLocale) {
-					$.extend(dateSettings, confLocale);
-				}
-				var datePickBaseConf = {
-					datepicker : dateSettings
-				}
-				$.extend(datePickBaseConf, baseConf);
+				var datePickBaseConf = $.extend({
+					datepicker : confman.getStdDatepicker()
+				}, baseConf);
 
 				//Post Function
 				var datePickerPostFunction = function(value, settings) {
@@ -157,6 +149,7 @@
 					for ( var i = 0; i < count; i++) {
 						var widget = widgets.eq(i);
 						var conf = settings[i];
+						console.log(conf.type);
 						//non-jeditable inputs
 						if (conf.type === 'checkbox') {
 							var checkbox_conf = conf;
@@ -169,6 +162,10 @@
 							var effective = $.extend({}, datePickBaseConf, conf);
 							widget.editable(datePickerPostFunction, effective);
 						} 
+						else if (conf.type === 'ckeditor'){
+							var effective = $.extend({}, ckeBaseConf, conf);
+							widget.editable(postFunction, effective);
+						}
 						else {
 							var effective = $.extend({}, baseConf, conf);
 							widget.editable(postFunction, effective);
