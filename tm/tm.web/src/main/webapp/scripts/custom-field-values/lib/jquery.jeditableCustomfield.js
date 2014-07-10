@@ -129,22 +129,21 @@ define(
 
 				};
 
-				elts
-						.each(function() {
+				elts.each(function() {
 
-							var jqThis = $(this);
-							var selected = jqThis.text();
+					var jqThis = $(this);
+					var selected = jqThis.text();
 
-							var conf = getBasicConf();
-							conf.type = 'select';
-							conf.data = prepareSelectData(
-									cufDefinitions.options, selected);
+					var conf = getBasicConf();
+					conf.type = 'select';
+					conf.data = prepareSelectData(
+							cufDefinitions.options, selected);
 
-							var postFunction = buildPostFunction(idOrURLOrPostfunction);
+					var postFunction = buildPostFunction(idOrURLOrPostfunction);
 
-							jqThis.editable(postFunction, conf);
+					jqThis.editable(postFunction, conf);
 
-						});
+				});
 			}
 
 			function initAsPlainText(elts, cufDefinition, idOrURLOrPostfunction) {
@@ -172,27 +171,27 @@ define(
 					postFunction.call(jqThis, checked);
 				};
 
-				elts
-						.each(function() {
+				elts.each(function() {
 
-							var jqThis = $(this);
-							var chkbx;
+					var jqThis = $(this);
+					var chkbx;
 
-							if (jqThis.is('input[type="checkbox"]')) {
-								chkbx = jqThis;
-							} else if (jqThis.find('input[type="checkbox"]').length > 0) {
-								chkbx = jqThis.find('input[type="checkbox"]');
-							} else {
-								chkbx = utils.appendCheckbox(jqThis);
-							}
+					if (jqThis.is('input[type="checkbox"]')) {
+						chkbx = jqThis;
+					} else if (jqThis.find('input[type="checkbox"]').length > 0) {
+						chkbx = jqThis.find('input[type="checkbox"]');
+					} else {
+						chkbx = utils.appendCheckbox(jqThis);
+					}
 
-							chkbx.enable(true);
-							chkbx.click(clickFn);
+					chkbx.enable(true);
+					chkbx.click(clickFn);
 
-						});
+				});
 
 			}
 
+			
 			$.fn.customField = function(cufDefinition, idOrURLOrPostfunction) {
 
 				var type = cufDefinition.inputType.enumName;

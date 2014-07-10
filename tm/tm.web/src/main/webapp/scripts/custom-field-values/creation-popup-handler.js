@@ -27,38 +27,27 @@
  */
 
 define(
-		[ "jquery", "./cuf-values-utils", "squash.configmanager", "jqueryui",
-				"jquery.squash.jeditable", "jeditable.datepicker"],
-		function($, utils, confman) {
+		[ "jquery", "handlebars", "jqueryui", "./lib/jquery.editableCustomfield"],
+		function($, handlebars) {
 
-			function noPostFn(value) {
-				return value;
-			}
-
-			function initDatepicker(input) {
-
-				var conf = {
-					type : 'datepicker',
-					datepicker : confman.getStdDatepicker()
-				};
-
-				input.editable(noPostFn, conf);
-
-			}
-			
-			function initCkeditor(input){
-				var conf = confman.getStdCkeditor();
-				input.ckeditor(function(){}, conf);
-			}
+			var template = 
+				'{{#each this}}' +
+				'{{#unless optional}}' +
+				'<tr class="create-node-custom-field-row">' +
+					'<td><label>{{label}}</label></td>' +
+					'<td id="customFields[{{id}}]" class="create-node-custom-field" >{{defaultValue}}</td>' +
+				'</tr>' +
+				'{{/unless}}' +
+				'{{/each}}';
 
 			/*
-			 * settings : - url : the url where to fetch the creator panel -
-			 * table : the <table/> element that (will) hold the elements, as a
+			 * settings : - url : the url where to fetch the creator panel 
 			 * jQuery object (but not as a jQuery.DataTable)
 			 */
 			function CUFValuesCreator(settings) {
 
 				this.table = settings.table;
+				this.rowTemplate = handlebars.compile(template);
 
 				if (this.table === undefined || !this.table.is('table')) {
 					throw "illegal argument : the settings must provide an attribute 'table' referencing " + 
@@ -72,7 +61,7 @@ define(
 				 * url also stores that url for future reference
 				 */
 				this.loadPanel = function(url) {
-					var pleaseWait = $('<tr class="cuf-wait" style="line-height:10px;"><td colspan="2" class="waiting-loading"></td></tr>');
+					var pleaseWait = $('<tr class="cuf-wait" style="line-height:50px;"><td colspan="2" style="height : 50px;" class="waiting-loading"></td></tr>');
 					var table = this.table;
 
 					// cleanup of the previous calls (if any)
@@ -82,44 +71,33 @@ define(
 
 					var self = this;
 
-					$.get(url, null, null, "html").success(
-							function(html) {
-								table.find(".cuf-wait").remove();
+					$.getJSON(url).success(function(jsonDef) {
+						table.find(".cuf-wait").remove();
+						self.cufDefs = jsonDef;
+						self.init();
 
-								// because it wouldn't work otherwise, we must
-								// strip the result of the license header
-								var fixed = $.trim(html.replace(
-										/<\!--[\s\S]*--\>/, ''));
-								table.append(fixed);
-								self.init(table);
-
-								this.url = url;
-							});
+						this.url = url;
+					});
 				};
 
 				/* reload the custom field values using the last used url */
 				this.reloadPanel = function() {
 					this.loadPanel(this.url);
 				};
+				
+
 
 				/* init the widgets used by the custom field values */
 				this.init = function() {
-					var table = this.table;
+					var table = this.table,
+						cufDefs = this.cufDefs;
 					
-					var bindings = table.find(".create-node-custom-field");
-					if (bindings.length > 0) {
-						bindings.each(function() {
-
-							var input = $(this);
-							var defValue = input.data('default-value');
-							var inputType = input.data('input-type');
-
-							if (inputType === "DATE_PICKER") {
-								initDatepicker(input);
-							}
-							else if (inputType === "RICH_TEXT"){
-								initCkeditor(input);
-							}
+					table.append(this.rowTemplate(cufDefs));
+					
+					var fields = table.find(".create-node-custom-field");
+					if (fields.length > 0) {
+						fields.each(function(idx) {
+							$(this).editableCustomfield(cufDefs[idx]);
 						});
 
 						this.reset(table);
@@ -132,48 +110,26 @@ define(
 				 * reinitialise the widgets themselves.
 				 */
 				this.reset = function() {
-					var table = this.table;
-					var bindings = table.find(".create-node-custom-field");
-					if (bindings.length > 0) {
-						bindings.each(function() {
-							var input = $(this);
-							var defValue = input.data('default-value');
-							var inputType = input.data('input-type');
-
-							if (inputType === "CHECKBOX") {
-								input.prop('checked', (defValue === true));
-							} else if (inputType === "DATE_PICKER") {
-								var format = input.data('format');
-								var displayedDate = utils.convertStrDate(
-										$.datepicker.ATOM, format, defValue);
-								input.text(displayedDate);
-							} else {
-								input.val(defValue);
-							}
+					var table = this.table,
+						cufDefs = this.cufDefs;
+					
+					var fields = table.find(".create-node-custom-field");
+					if (fields.length > 0) {
+						fields.each(function(idx) {
+							var defValue = cufDefs[idx].defaultValue;
+							$(this).editableCustomfield("value", defValue);
 						});
 					}
 				};
 				
 				this.destroy = function(){
-					var table = this.table;
+					var table = this.table,
+						cufDefs = this.cufDefs;
 					
-					var bindings = table.find(".create-node-custom-field");
-					if (bindings.length > 0) {
-						bindings.each(function() {
-
-							var input = $(this);
-							var inputType = input.data('input-type');
-
-							if (inputType === "DATE_PICKER") {
-								input.editable("destroy");
-							}
-							else if (inputType === "RICH_TEXT"){
-								var id = input.attr('id');
-								var inst = CKEDITOR.instances[id];
-								if (!!inst){
-									inst.destroy(true);
-								}
-							}
+					var field = table.find(".create-node-custom-field");
+					if (field.length > 0) {
+						field.each(function(idx) {
+							$(this).editableCustomfield("destroy");
 						});
 					}			
 				};
@@ -184,24 +140,13 @@ define(
 				 */
 				this.readValues = function() {
 					var result = {};
-					var table = this.table;
+					var table = this.table,
+						cufDefs = this.cufDefs;
 
-					var cufs = table.find(".create-node-custom-field");
-					if (cufs.length > 0) {
-						cufs.each(function() {
-							var input = $(this);
-							var inputType = input.data('input-type');
-							var value = null;
-							if (inputType === "CHECKBOX") {
-								value = input.prop('checked');
-							} else if (inputType === "DATE_PICKER") {
-								var format = input.data('format');
-								value = utils.convertStrDate(format,
-										$.datepicker.ATOM, input.text());
-							} else {
-								value = input.val();
-							}
-							result[this.id] = value;
+					var fields = table.find(".create-node-custom-field");
+					if (fields.length > 0) {
+						fields.each(function(idx) {
+							result[this.id] = $(this).editableCustomfield("value");
 						});
 					}
 					return result;

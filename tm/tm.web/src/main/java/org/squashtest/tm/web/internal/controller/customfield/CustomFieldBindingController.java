@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.web.internal.controller.customfield;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
@@ -91,6 +92,7 @@ public class CustomFieldBindingController {
 
 	}
 
+	@Deprecated
 	@RequestMapping(method = RequestMethod.GET, params = { PROJECT_ID, "bindableEntity", "!sEcho", "optional=false" }, headers = "Accept=text/html")
 	public String findRequiredAtCreationTime(@RequestParam(PROJECT_ID) Long projectId,
 			@RequestParam("bindableEntity") BindableEntity bindableEntity, Model model) {
@@ -99,6 +101,24 @@ public class CustomFieldBindingController {
 		model.addAttribute("bindings", bindings);
 
 		return "treepopups/create-node-custom-fields-editor.html";
+
+	}
+
+	@RequestMapping(method = RequestMethod.GET, params = { PROJECT_ID, "bindableEntity", "!sEcho", "optional=false" }, produces="application/json")
+	@ResponseBody
+	public List<CustomFieldModel> findJsonRequiredAtCreationTime(@RequestParam(PROJECT_ID) Long projectId,
+			@RequestParam("bindableEntity") BindableEntity bindableEntity, Model model) {
+
+		List<CustomFieldBinding> bindings = service.findCustomFieldsForProjectAndEntity(projectId, bindableEntity);
+		model.addAttribute("bindings", bindings);
+
+		List<CustomField> fields = new ArrayList<CustomField>(bindings.size());
+
+		for (CustomFieldBinding binding : bindings){
+			fields.add(binding.getCustomField());
+		}
+
+		return fieldToJson(fields);
 
 	}
 

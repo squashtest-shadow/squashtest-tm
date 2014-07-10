@@ -18,7 +18,8 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ "jquery", "./cuf-values-utils", "./jquery-cuf-values" ], function($, utils) {
+define([ "jquery", "./lib/cuf-values-utils", "./lib/jquery.staticCustomfields", "./lib/jquery.jeditableCustomfield" ], 
+		function($, utils) {
 	/*********************************************************************************************************************
 	 * 
 	 * JS DATATABLE CONFIGURATION
