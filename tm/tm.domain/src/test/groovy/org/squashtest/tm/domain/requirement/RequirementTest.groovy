@@ -110,7 +110,7 @@ class RequirementTest extends Specification {
 		requirement.setStatus(OBSOLETE)
 
 		when :
-		requirement.property = valueToSet
+		requirement[property] = valueToSet
 
 		then :
 		thrown(IllegalRequirementModificationException)
@@ -148,7 +148,6 @@ class RequirementTest extends Specification {
 		
 		
 		then :
-		"requirement" == "reqirement"
 		thrown(IllegalRequirementModificationException)
 	}
 
