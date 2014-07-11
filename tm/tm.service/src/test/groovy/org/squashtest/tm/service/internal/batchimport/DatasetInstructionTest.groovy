@@ -57,7 +57,7 @@ class DatasetInstructionTest extends Specification {
 		target.getTestCase() >> tcTarget
 		tcTarget.getPath() >> ""
 		instruction.mode = ImportMode.CREATE
-
+		
 		when:
 		def lt = instruction.execute(f)
 

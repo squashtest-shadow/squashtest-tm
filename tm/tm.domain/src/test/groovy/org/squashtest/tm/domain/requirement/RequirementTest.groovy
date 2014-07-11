@@ -110,7 +110,7 @@ class RequirementTest extends Specification {
 		requirement.setStatus(OBSOLETE)
 
 		when :
-		requirement[property] = valueToSet
+		requirement.property = valueToSet
 
 		then :
 		thrown(IllegalRequirementModificationException)
@@ -140,11 +140,15 @@ class RequirementTest extends Specification {
 	}
 
 	def "should not allow status change for OBSOLETE"(){
-		given :
+		given : "an obsolete requirement"
 		def req = prepareRequirement(OBSOLETE)
+				
 		when :
 		req.setStatus(OBSOLETE)
+		
+		
 		then :
+		"requirement" == "reqirement"
 		thrown(IllegalRequirementModificationException)
 	}
 
@@ -438,6 +442,4 @@ class RequirementTest extends Specification {
 	def newRequirement(String name){
 		return new Requirement(new RequirementVersion(name:name))	
 	}
-	
-
 }
