@@ -43,7 +43,7 @@ public class CustomBugTrackerModificationServiceImpl implements CustomBugTracker
 		String trimedNewName = newName.trim();
 		BugTracker bugTracker = bugTrackerDao.findById(bugtrackerId);
 		if(!bugTracker.getName().equals(trimedNewName)){
-			bugTrackerDao.checkNameAvailability(bugTracker.getName());
+			bugTrackerDao.checkNameAvailability(trimedNewName);
 			bugTracker.setName(trimedNewName);
 		}
 		

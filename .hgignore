@@ -133,6 +133,7 @@ core/core.application.api/META-INF/*
 .*/\.groovy/
 tm/tm.web/static/*
 tm/tm.web.static/*
+core/core.jasper.fragment/META-INF/*
 syntax: glob
 integration-tests/log/IT.log
 integration-tests/src/it/resources/log4j.properties
