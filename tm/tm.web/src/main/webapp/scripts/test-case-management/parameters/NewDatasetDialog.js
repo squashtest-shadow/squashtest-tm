@@ -49,7 +49,7 @@ define([ "jquery", "backbone", "underscore", "app/lnf/Forms", "./NewDatasetModel
 			"blur input:text.strprop" : "changeStrProp",
 			"blur input:text.paramValue" : "changeParamProp",
 			"confirmdialogcancel" : "cancel",
-			"confirmdialogclose" : "cancel",
+			"confirmdialogclose" : "close",
 			"confirmdialogvalidate" : "validate",
 			"confirmdialogconfirm" : "confirm"
 		},
@@ -70,6 +70,9 @@ define([ "jquery", "backbone", "underscore", "app/lnf/Forms", "./NewDatasetModel
 		cancel : function(event) {
 			this.cleanup();
 			this.trigger("newDataset.cancel");
+		},
+		
+		close : function(event) {
 		},
 
 		confirm : function(event) {
