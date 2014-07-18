@@ -131,10 +131,7 @@ public class ConciseFormToCriteriaConverter {
 			break;
 		}
 		case CHECKBOX: {
-			Map exp = new HashMap();
-			exp.put(EXP_TYPE, concise.get(CON_TYPE));
-			exp.put(EXP_SEL, concise.get(CON_VAL));
-			exp.put(EXP_VALUE, "");
+			Map exp = expandedCheckbox(concise);
 			expanded = exp;
 			break;
 		}
@@ -190,6 +187,15 @@ public class ConciseFormToCriteriaConverter {
 		expandedForm.put(inputName, expanded);
 	}
 
+	@SuppressWarnings("unchecked")
+	private Map expandedCheckbox(Map concise) {
+		Map exp = new HashMap();
+		exp.put(EXP_TYPE, concise.get(CON_TYPE));
+		exp.put(EXP_SEL, concise.get(CON_VAL));
+		exp.put(EXP_VALUE, "");
+		return exp;
+	}
+
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private List expandedProjectPicker(Map concise) {
 		List exp = new ArrayList();
@@ -198,7 +204,7 @@ public class ConciseFormToCriteriaConverter {
 		for (Project p : projects) {
 			Map expOpt = new HashMap();
 			expOpt.put(EXP_TYPE, concise.get(CON_TYPE));
-			expOpt.put(EXP_VALUE, p.getId());
+			expOpt.put(EXP_VALUE, String.valueOf(p.getId()));
 			expOpt.put(EXP_SEL, selVals.contains(String.valueOf(p.getId())));
 
 			exp.add(expOpt);

@@ -240,9 +240,9 @@ class ConciseFormToCriteriaConverterTest extends Specification {
 
 		then:
 		expanded == [projects: [
-				[value: 10L, selected: true, type: "PROJECT_PICKER"],
-				[value: 20L, selected: false, type: "PROJECT_PICKER"],
-				[value: 30L, selected: true, type: "PROJECT_PICKER"]
+				[value: "10", selected: true, type: "PROJECT_PICKER"],
+				[value: "20", selected: false, type: "PROJECT_PICKER"],
+				[value: "30", selected: true, type: "PROJECT_PICKER"]
 			]]
 	}
 }
