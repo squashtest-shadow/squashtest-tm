@@ -27,7 +27,9 @@ define([ "backbone", "underscore", "jquery", "jeditable.datepicker" ], function(
 	var EVERYTHING = "EVERYTHING";
 
 	var dateChecker = function(val) {
-		if (val === "--") return true;
+		if (val === "--") {
+			return true;
+		}
 
 		var caught = false;
 		try {
@@ -46,7 +48,7 @@ define([ "backbone", "underscore", "jquery", "jeditable.datepicker" ], function(
 		"CHECKBOX": _.isBoolean,
 		"CHECKBOXES_GROUP": _.isArray,
 		"TREE_PICKER": _.isArray,
-		"PROJECT_PICKER": _.isArray,
+		"PROJECT_PICKER": _.isArray
 	};
 
 	/**
@@ -81,8 +83,12 @@ define([ "backbone", "underscore", "jquery", "jeditable.datepicker" ], function(
 		setVal: function(key, value, options) {
 			var cur = this.get(key);
 
-			if(_.isUndefined(cur)) throw "Attribute " + key + " undefined, did you forget to initialize it ?";
-			if(!_.has(cur, "val")) throw "Attribute " + key + " has no val property, did you forget to initialize it ?";
+			if(_.isUndefined(cur)) {
+				throw "Attribute " + key + " undefined, did you forget to initialize it ?";
+			}
+			if(!_.has(cur, "val")) {
+				throw "Attribute " + key + " has no val property, did you forget to initialize it ?";
+			}
 
 			var next = _.clone(cur);
 			next.val = value;
@@ -105,8 +111,6 @@ define([ "backbone", "underscore", "jquery", "jeditable.datepicker" ], function(
 				};
 			};
 
-			console.log("boundart selector", boundarySelector)
-
 			if(!_.isUndefined(boundarySelector)) {
 				boundary = _.some(this.values(), pickedBoundary(boundarySelector.val));
 			} else {
@@ -115,7 +119,7 @@ define([ "backbone", "underscore", "jquery", "jeditable.datepicker" ], function(
 				_.some(this.values(), function(attr) { return attr.type === RADIO_BUTTONS_GROUP && attr.val === EVERYTHING; });
 			}
 
-			return boundary
+			return boundary;
 		},
 
 	});
