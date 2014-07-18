@@ -31,7 +31,7 @@
  *
  * Methods : open, close
  */
- define([ "jquery", "underscore", "squashtable", "jqueryui", "jquery.squash.confirmdialog"], function($, _) {
+ define([ "jquery", "backbone", "underscore", "squashtable", "jqueryui", "jquery.squash.confirmdialog"], function($, Backbone, _) {
 	 "use strict";
 
 	//TODO mutualize what can be with ProjectFilterPopup and ProjectsPickerPopup
@@ -94,6 +94,7 @@
 		},
 
 		updateChecked : function(){
+			var self = this;
 			//To fix problem when check another radio button while previously checked was hidden.
 			this.$("table tbody tr .project-checkbox").each(function() {
 				var checkbox = this;

@@ -42,7 +42,9 @@ define([ "jquery", "app/report/squashtm.reportworkspace", "tree", "underscore", 
 	var formState = {
 		restore: function() {
 			var stored = sessionStorage[config.reportUrl + "-formerState"];
-			if (!!stored) return JSON.parse(stored);
+			if (!!stored) {
+				return JSON.parse(stored);
+			}
 			return {};
 		},
 
@@ -149,9 +151,11 @@ define([ "jquery", "app/report/squashtm.reportworkspace", "tree", "underscore", 
 		}
 	}
 
+	/*jshint validthis: true */
 	function onViewTabSelected(event, ui) {
+		/*jshint validthis: true */
 		selectedTab = ui;
-		var tabs = $(this);
+		var tabs = $(this); // jshint shit bricks here in strict mode because "this" is possibly not bound
 		tabs.find(".view-format-cmb").addClass("not-displayed");
 		tabs.find("#view-format-cmb-" + ui.newTab.index()).removeClass("not-displayed");
 
@@ -163,7 +167,7 @@ define([ "jquery", "app/report/squashtm.reportworkspace", "tree", "underscore", 
 		var format = $("#view-format-cmb-" + viewIndex).val();
 
 		var url = buildViewUrl(viewIndex, format);
-		data = encodeURIComponent(stringModel());
+		var data = encodeURIComponent(stringModel());
 
 		window.open(url+"?parameters="+data, "_blank", "resizable=yes, scrollbars=yes");
 	}
