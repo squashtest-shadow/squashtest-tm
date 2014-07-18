@@ -35,8 +35,9 @@ define([ "jquery" ], function($) {
 	 * input has 2 methods : clearState setState(cssClass, messageKey)
 	 */
 	function input($dom) {
-		var $input = $dom, $controlGroup = $input.closest(".control-group"), $help = $input.parent(".controls").find(
-				".help-inline");
+		var $input = $dom, 
+			$controlGroup = $input.closest(".control-group"), 
+			$help = $input.closest(".controls").find(".help-inline");
 
 		/**
 		 * Shows the message read from squashtm.app.messages using the given css class

@@ -21,15 +21,6 @@
 define([ "jquery", "squash.translator", "datepicker/jquery.squash.datepicker-locales", "squash.dateutils" ], 
 		function($, translator, regionale, dateutils) {
 
-	function stdCkeditor() {
-		var lang = translator.get('rich-edit.language.value');
-
-		return {
-			customConfig : squashtm.app.contextRoot + '/styles/ckeditor/ckeditor-config.js',
-			lang : lang
-		};
-	}
-	
 	function stdJeditable(){
 		
 		var lang = translator.get({
@@ -77,6 +68,17 @@ define([ "jquery", "squash.translator", "datepicker/jquery.squash.datepicker-loc
 			}
 		});
 	}
+	
+
+	function stdCkeditor() {
+		var lang = translator.get('rich-edit.language.value');
+
+		return {
+			customConfig : squashtm.app.contextRoot + '/styles/ckeditor/ckeditor-config.js',
+			lang : lang
+		};
+	}
+	
 	
 	function jeditableCkeditor(){
 		var ckconf = stdCkeditor(),

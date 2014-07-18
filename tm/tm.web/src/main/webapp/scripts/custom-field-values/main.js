@@ -18,8 +18,8 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ "./creation-popup-handler", "./table-handler" ], function(
-		CreationPopupCUFHandler, tableHandler) {
+define([ "./creation-popup-handler", "./table-handler", "./information-panels-handlers" ], function(
+		CreationPopupCUFHandler, tableHandler, infoHandler) {
 
 	return {
 
@@ -27,8 +27,9 @@ define([ "./creation-popup-handler", "./table-handler" ], function(
 			return new CreationPopupCUFHandler(settings);
 		},
 
-		cufTableSupport : tableHandler
+		cufTableSupport : tableHandler,
 
+		infoSupport : infoHandler
 	};
 
 });

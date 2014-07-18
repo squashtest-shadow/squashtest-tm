@@ -88,7 +88,7 @@ define(["jquery", "./cuf-values-utils", "underscore"], function($, utils, _){
 			}
 		},
 			
-		'DROPDOWN_LIST ' : {
+		'DROPDOWN_LIST' : {
 			_build : function(elt, def){
 				
 			},
@@ -105,7 +105,9 @@ define(["jquery", "./cuf-values-utils", "underscore"], function($, utils, _){
 		
 		'DATE_PICKER' : {
 			_build : function(elt, def){
-				
+				var date = elt.text();
+				var formatted = utils.convertStrDate($.datepicker.ATOM, def.format, date);
+				elt.text(formatted);
 			},
 			_set : function(elt, def, value){
 				var formatted = utils.convertStrDate($.datepicker.ATOM, def.format, value);
@@ -113,10 +115,11 @@ define(["jquery", "./cuf-values-utils", "underscore"], function($, utils, _){
 			},
 			_get : function(elt, def){
 				var content = elt.text();
-				return utils.convertStrDate(def.format, $.datepicker.ATOM, content, txt);
+				return utils.convertStrDate(def.format, $.datepicker.ATOM, content);
 			},
 			_destroy : function(elt, def){
-				
+				var date = this._get(elt, def);
+				elt.text(date);
 			}
 		},
 		
@@ -154,7 +157,7 @@ define(["jquery", "./cuf-values-utils", "underscore"], function($, utils, _){
 				// save the configuration
 				$(this).data("cufdef", def);
 				
-				var widg = widget[def.inputType.enumName];
+				var widg = widgets[def.inputType.enumName];
 				widg._build($this, def);
 				
 			});			

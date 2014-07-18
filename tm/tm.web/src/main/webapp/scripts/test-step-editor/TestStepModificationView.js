@@ -18,11 +18,15 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ "jquery", "backbone", "./TestStepInfoModel", "../verified-requirements/TestStepVerifiedRequirementsPanel",
-		"app/lnf/Forms", "jquery.squash", "jqueryui", "jquery.ckeditor", "jeditable",
+define([ "jquery", "backbone", "./TestStepInfoModel", 
+         "../verified-requirements/TestStepVerifiedRequirementsPanel",
+		"app/lnf/Forms", "custom-field-values", "squash.configmanager",
+		"app/ws/squashtm.notification",
+		"jquery.squash", "jqueryui", "jquery.ckeditor", "jeditable",
 		"ckeditor", "jeditable.ckeditor", "jquery.squash.jeditable", "jquery.squash.squashbutton",
 		"datepicker/jquery.squash.datepicker-locales" ], function($, Backbone, TestStepInfoModel,
-		VerifiedRequirementsPanel, Forms) {
+		VerifiedRequirementsPanel, Forms, cufValues, confman) {
+	
 	var editTCS = squashtm.app.editTCS;
 	/*
 	 * Defines the controller for the custom fields table.
@@ -52,11 +56,12 @@ define([ "jquery", "backbone", "./TestStepInfoModel", "../verified-requirements/
 				modelAttributes[$(value).attr("name")] = $(value).val();
 			});
 
-			var cufValuesValues = this.$(".cuf-value-control");
+			var cufValuesValues = this.$(".custom-field");
 			if (cufValuesValues.length > 0) {
 				modelAttributes.cufValues = {};
-				$.each(cufValuesValues, function(index, value) {
-					modelAttributes.cufValues[$(value).attr("name")] = self.getInputValue(value);
+				cufValuesValues.each(function(index, elt) {
+					var $elt = $(elt);
+					modelAttributes.cufValues[$elt.data("value-id")] = self.getInputValue($elt);
 				});
 			}
 		},
@@ -94,56 +99,48 @@ define([ "jquery", "backbone", "./TestStepInfoModel", "../verified-requirements/
 
 		
 		configureCUFs : function() {
-			var dateSettings = {
-				dateFormat : editTCS.localizedDateFormat
-			};
-			var widgets = this.$(".cuf-value-control");
-			var count = widgets.length;
-			for ( var i = 0; i < count; i++) {
-				var widget = widgets.eq(i);
-				var conf = editTCS.CUFsettings[i];
-
-				if (conf.type === 'datepicker') {
-					widget.datepicker(dateSettings);
-				} else if (conf.type === 'select') {
-					for ( var val in conf.data) {
-						if (val === 'selected') {
-						} else {
-							var option = $('<option />', {
-								value : val,
-								text : conf.data[val]
-							});
-							if (conf.data[val] === conf.data.selected) {
-								option.attr("selected", "");
-							}
-							option.appendTo(widget);
-						}
-					}
-				}
-
+			var self = this,
+				cufDefinitions = editTCS.cufDefinitions,
+				editable = editTCS.writable;
+			
+			if (cufDefinitions.length>0){
+				var mode = (editable) ? "editable" : "static";
+				cufValues.infoSupport.init("#test-step-infos-table", cufDefinitions, mode);
 			}
+			
+			// also, like for configureCKEs below, the onChange event 
+			// must be treated unconventionnaly. We need this for RICH_TEXT cufs.
+			var areas = $(".custom-field textarea").each(function(){
+				var area = this;
+				var id = this.id;
+				CKEDITOR.instances[id].on('change', function(){
+					self.updateModelCufAttr({currentTarget : $(area).parent().eq(0)});
+				});
+			});
 		},
 
 		configureCKEs : function() {
 			var self = this;
-			var textareas = this.$el.find("textarea");
+			var textareas = this.$el.find("textarea"),
+				ckconf = confman.getStdCkeditor();
+			
 			textareas.each(function() {
 				$(this).ckeditor(function() {
-				}, squashtm.app.ckeditorSettings.ckeditor);
+				}, ckconf);
 
 				CKEDITOR.instances[$(this).attr("id")].on('change', function(e) {
 					self.updateCKEModelAttr.call(self, e);
 				});
 			});
 		},
-
+		
 		events : {
 			"click #previous-test-step-button" : "goPrevious",
 			"click #next-test-step-button" : "goNext",
 			// "change .test-step-attr" : "updateCKEModelAttr",
 			// did not work because of _CKE instances (cf method
 			// configureCKEs to see how manual binding is done.
-			"change .cuf-value-control" : "updateModelCufAttr"
+			"change .custom-field" : "updateModelCufAttr"
 
 		},
 
@@ -161,9 +158,10 @@ define([ "jquery", "backbone", "./TestStepInfoModel", "../verified-requirements/
 			this.model.set(attrName, attrValue);
 		},
 		updateModelCufAttr : function(event) {
-			var input = event.target;
-			var name = $(input).attr("name");
-			var value = this.getInputValue(input);
+			var input = event.currentTarget;
+			var $input = $(input);
+			var name = $input.data("value-id");
+			var value = this.getInputValue($input);
 			var cufValues = this.model.get("cufValues");
 			cufValues[name] = value;
 			this.model.set({
@@ -171,18 +169,38 @@ define([ "jquery", "backbone", "./TestStepInfoModel", "../verified-requirements/
 			});
 		},
 		getInputValue : function(input) {
-			if ($(input).hasClass("hasDatepicker")) {
-				var date = $(input).datepicker("getDate");
-				return $.datepicker.formatDate($.datepicker.ATOM, date);
-			} else if ($(input).attr("type") === "checkbox") {
-				return $(input).is(":checked");
-			} else {
-				return $(input).val();
+			var editable = editTCS.writable;
+			if (editable){
+				return input.editableCustomfield("value");
+			}
+			else{
+				return input.staticCustomfield("value");
 			}
 		},
 		saveStep : function(event) {
 			this.clean();
-			this.model.save();
+			this.model.save(null, {
+			
+				// TODO : unfortunately the error handling must be hand made
+				error : function(model, xhr, options){
+					try{
+						var errmsg = JSON.parse(xhr.responseText);
+						for (var i=0, errors = errmsg.fieldValidationErrors, len = errors.length; i<len; i++){
+							var err = errors[i];
+							var id = err.objectName+'-'+err.fieldName,
+								msg = err.errorMessage;
+							
+							var errdiv = $('#'+id);
+							Forms.input(errdiv).setState("error", msg);
+						}
+						
+						xhr.errorIsHandled = true;
+					}
+					catch(ex){
+						// let the exception go and the generic handler kick in
+					}
+				}
+			});
 		},
 		clean : function() {
 			Forms.form(this.$el).clearState();

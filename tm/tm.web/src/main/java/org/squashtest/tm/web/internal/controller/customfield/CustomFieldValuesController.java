@@ -74,6 +74,7 @@ public class CustomFieldValuesController {
 
 	}
 
+	@Deprecated
 	@RequestMapping(method = RequestMethod.GET, params = { BOUND_ENTITY_ID, BOUND_ENTITY_TYPE })
 	public ModelAndView getCustomFieldValuesPanel(@RequestParam(BOUND_ENTITY_ID) long id,
 			@RequestParam(BOUND_ENTITY_TYPE) BindableEntity entityType, Locale locale) {

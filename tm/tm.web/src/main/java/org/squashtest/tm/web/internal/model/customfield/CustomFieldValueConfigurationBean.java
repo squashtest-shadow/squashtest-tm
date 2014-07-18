@@ -40,6 +40,7 @@ import org.squashtest.tm.domain.customfield.SingleSelectField;
 import org.squashtest.tm.domain.denormalizedfield.DenormalizedFieldValue;
 import org.squashtest.tm.domain.denormalizedfield.DenormalizedSingleSelectField;
 
+@Deprecated
 public class CustomFieldValueConfigurationBean {
 	private static final Logger LOGGER = LoggerFactory.getLogger(CustomFieldValueConfigurationBean.class);
 

@@ -26,8 +26,10 @@ define([ "jquery", "backbone", "underscore",
          "bugtracker/bugtracker-panel",
          "workspace.event-bus",
          "squash.translator",
+         "custom-field-values",
          "squashtable"], function($,
-		Backbone, _, GeneralInfosPanel, PrerequisitePanel, testcaseTestAutomation,  TestCaseVerifiedRequirementsPanel, bugtrackerPanel, eventBus, translator) {
+		Backbone, _, GeneralInfosPanel, PrerequisitePanel, testcaseTestAutomation,  
+		TestCaseVerifiedRequirementsPanel, bugtrackerPanel, eventBus, translator, cufvalues) {
 
 
 	var InfoTab = Backbone.View.extend({
@@ -69,9 +71,10 @@ define([ "jquery", "backbone", "underscore",
 
 			// CUFs
 			if (this.settings.hasCufs){
-				$.get(this.settings.urls.cufValuesUrl)
-				.success(function(data){
-					$("#test-case-description-table").append(data);
+				$.getJSON(this.settings.urls.cufValuesUrl)
+				.success(function(jsonCufs){
+					var mode = (self.settings.writable) ? "jeditable" : "static";
+					cufvalues.infoSupport.init("#test-case-description-table", jsonCufs, mode);
 				});
 			}
 

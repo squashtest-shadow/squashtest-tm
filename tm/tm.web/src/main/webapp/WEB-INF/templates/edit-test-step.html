@@ -42,17 +42,8 @@
 			nextId : /*[[ ${testStepView.nextStep}? ${testStepView.nextStep.id} : -1 ]]*/-1,
 			writable : /*[[ ${writable} ]]*/true,
 			localizedDateFormat : /*[[ #{squashtm.dateformatShort.datepicker} ]]*/"dd/mm/yy",
-			CUFsettings : /*[[${configuration.configurationBeans}]]*/[],
+			cufDefinitions : /*[[${cufDefinitions}]]*/[],
 			
-		},
-		ckeditorSettings : {
-			ckeditor :  { customConfig : /*[[ @{/styles/ckeditor/ckeditor-config.js} ]]*/'http://localhost:8080/squash/styles/ckeditor/ckeditor-config.js', 
-				language: /*[[#{rich-edit.language.value}]]*/'en' 
-				},
-			placeholder: /*[[#{rich-edit.placeholder}]]*/'Click to edit ...',
-			submit: /*[[#{rich-edit.button.ok.label}]]*/'OK',
-			cancel: /*[[#{label.Cancel}]]*/'Cancel',
-			indicator : '<div class="processing-indicator"/>'
 		},
 		menuBarConf: {
     	}
@@ -140,38 +131,7 @@
                     <label for="test-step-id" >Id</label>
                     <div id="test-step-id" class="display-table-cell" th:utext="${testStepView.id} ">1</div>
                  </div>
-<!--    ================================CUSTOM FIELDS============================= -->
-				<div class="display-table-row control-group" th:if="${hasCUF}" 
-						th:each="confBean : ${configuration.configurationBeans}">
-					<label class="display-table-cell" th:text="${confBean.fieldLabel}"
-							th:for="'cuf-value-'+${confBean.fieldId}">quantité de café</label>
-<!-- EDITABLE-->	
-                    <div th:if="${writable}" class="display-table-cell controls" th:switch="${confBean.type}">
-						<input th:case="'checkbox'" type="checkbox" th:checked="${confBean.valueAsBoolean}"
-								th:id="'cuf-value-'+${confBean.fieldId}" th:name="${confBean.fieldId}" class="cuf-value-control" />
-						<input type="text" th:case="'datepicker'"
-								th:id="'cuf-value-'+${confBean.fieldId}" th:name="${confBean.fieldId}" class="cuf-value-control"
-								th:value="${confBean.valueAsDate}? ${#dates.format(confBean.valueAsDate,'__#{squashtm.dateformatShort}__')} : #{squashtm.nodata}"/>
-						<select th:case="'select'"
-								th:id="'cuf-value-'+${confBean.fieldId}" th:name="${confBean.fieldId}" class="cuf-value-control"></select>
-						<input th:case="*"
-								th:id="'cuf-value-'+${confBean.fieldId}" th:name="${confBean.fieldId}" class="cuf-value-control"
-								th:value="${confBean.fieldValue}"/>
-						<span class="help-inline">&nbsp;</span>
-					</div>
-<!-- NON EDITABLE-->
-                    <div th:if="${!writable}" class="display-table-cell" th:switch="${confBean.type}">
-						<input th:case="'checkbox'" type="checkbox" th:checked="${confBean.valueAsBoolean}" disabled="disabled"
-								th:id="'cuf-value-'+${confBean.fieldId}" class="cuf-value" />
-						<span th:case="'datepicker'"
-								th:id="'cuf-value-'+${confBean.fieldId}" class="cuf-value"
-								th:text="${confBean.valueAsDate}? ${#dates.format(confBean.valueAsDate,'__#{squashtm.dateformatShort}__')} : #{squashtm.nodata}">12/12/2012</span>
-						<span th:case="*"
-								th:id="'cuf-value-'+${confBean.fieldId}" class="cuf-value"
-								th:text="${confBean.fieldValue}">value</span>
-					</div>
-				</div>
-<!-- 	============================END CUSTOM FIELDS===============================  -->
+
 
                 <div class="display-table-row control-group" th:if="${testStepView.actionStep}" th:switch="${writable}" >
                   <label for="test-step-action" class="control-label" th:text="#{label.action}">Action</label>

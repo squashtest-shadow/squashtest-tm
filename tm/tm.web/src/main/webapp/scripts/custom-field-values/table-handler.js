@@ -18,7 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ "jquery", "./lib/cuf-values-utils", "./lib/jquery.staticCustomfields", "./lib/jquery.jeditableCustomfield" ], 
+define([ "jquery", "./lib/cuf-values-utils", "./lib/jquery.staticCustomfield", "./lib/jquery.jeditableCustomfield" ], 
 		function($, utils) {
 	/*********************************************************************************************************************
 	 * 
@@ -167,11 +167,12 @@ define([ "jquery", "./lib/cuf-values-utils", "./lib/jquery.staticCustomfields", 
 				var def = defMap[code];
 				var spans = table.find('td.custom-field-' + code + '>span');
 
-				utils.staticRendering(spans, def);
-
 				if (isEditable) {
 					var postFunction = makePostFunction(code, table);
-					spans.customField(def, postFunction);
+					spans.jeditableCustomfield(def, postFunction);
+				}
+				else{
+					spans.staticCustomfield(def);
 				}
 
 			}
@@ -189,11 +190,12 @@ define([ "jquery", "./lib/cuf-values-utils", "./lib/jquery.staticCustomfields", 
 				var def1 = defMap[code1];
 				var spans1 = table.find('td.denormalized-field-' + code1 + '>span');
 
-				utils.staticRendering(spans1, def1);
-
 				if (isEditable) {
 					var postFunction1 = makeDenormalizedPostFunction(code1, table);
-					spans1.customField(def1, postFunction1);
+					spans1.jeditableCustomfield(def1, postFunction1);
+				}
+				else{
+					spans1.staticCustomfield(def1);
 				}
 
 			}

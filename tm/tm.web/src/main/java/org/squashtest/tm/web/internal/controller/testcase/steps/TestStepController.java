@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.web.internal.controller.testcase.steps;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -45,7 +46,8 @@ import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.testcase.TestStepModificationService;
 import org.squashtest.tm.web.internal.controller.generic.ServiceAwareAttachmentTableModelHelper;
 import org.squashtest.tm.web.internal.controller.testcase.requirement.RequirementVerifierView;
-import org.squashtest.tm.web.internal.model.customfield.CustomFieldValueConfigurationBean;
+import org.squashtest.tm.web.internal.model.customfield.CustomFieldJsonConverter;
+import org.squashtest.tm.web.internal.model.customfield.CustomFieldValueModel;
 
 @Controller
 @RequestMapping("/test-steps/{testStepId}")
@@ -60,12 +62,14 @@ public class TestStepController {
 
 	@Inject
 	private PermissionEvaluationService permissionEvaluationService;
-	
+
 
 	@Inject
 	private ServiceAwareAttachmentTableModelHelper attachmentHelper;
-	
-	
+
+	@Inject
+	private CustomFieldJsonConverter cufJsonConverter;
+
 
 	/**
 	 * Shows the step modification page.
@@ -112,13 +116,17 @@ public class TestStepController {
 			// verified requirements
 			RequirementVerifierView requirementVerifierView = new RequirementVerifierView(testStepView.getActionStep());
 			model.addAttribute("requirementVerifier", requirementVerifierView);
-			
+
 		} else {
 			values = Collections.emptyList();
 		}
-		
-		CustomFieldValueConfigurationBean conf = CustomFieldValueConfigurationBean.createFromValues(values);
-		model.addAttribute("configuration", conf);
+
+
+		List<CustomFieldValueModel> cufModels = new ArrayList<CustomFieldValueModel>(values.size());
+		for (CustomFieldValue value : values){
+			cufModels.add(cufJsonConverter.toJson(value));
+		}
+		model.addAttribute("cufDefinitions", cufModels);
 
 		model.addAttribute("hasCUF", hasCUF);
 

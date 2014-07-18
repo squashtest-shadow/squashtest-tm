@@ -130,22 +130,34 @@ define(["jquery", "squash.configmanager", "./cuf-values-utils", "jquery.squash.j
 		// locally (hence the dumb submit function)
 		'DATE_PICKER' : {
 			_build : function(elt, def){
-				var conf = {
-					type : 'datepicker',
-					datepicker : confman.getStdDatepicker()
-				};
-				elt.editable(function(value){return value}, conf);
+				var date = elt.text();
+				var formatted = utils.convertStrDate($.datepicker.ATOM, def.format, date);
+				
+				var input = $('<input type="text" value="'+formatted+'"/>');
+				
+				elt.empty();
+				elt.append(input);
+				
+				var conf = confman.getStdDatepicker();
+				
+				input.datepicker(conf);
 			},
 			_set : function(elt, def, value){
 				var formatted = utils.convertStrDate($.datepicker.ATOM, def.format, value);
-				elt.text(formatted);
+				var input = elt.find('input');
+				input.val(formatted);
 			},
 			_get : function(elt, def){
-				var txt = elt.text();
+				var input = elt.find('input');
+				var txt = input.val();
 				return utils.convertStrDate(def.format, $.datepicker.ATOM, txt);
 			},
 			_destroy : function(elt, def){
-				elt.editable("destroy");
+				var input = elt.find('input');
+				var date = this._get(elt, def);
+				input.datepicker("destroy");
+				elt.empty();
+				elt.text(date);
 			}
 		},
 		
@@ -201,7 +213,7 @@ define(["jquery", "squash.configmanager", "./cuf-values-utils", "jquery.squash.j
 				var $this = $(elt);
 				
 				// save the configuration
-				$(this).data("cufdef", def);
+				$this.data("cufdef", def);
 				
 				var widg = widgets[def.inputType.enumName];
 				widg._build($this, def);

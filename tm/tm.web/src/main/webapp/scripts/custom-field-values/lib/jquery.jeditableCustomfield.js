@@ -92,9 +92,14 @@ define(
 				var locale = cufDefinition.locale;
 
 				conf.type = 'datepicker';
-				conf.datepicker = $.extend({
-					dateFormat : format
-				}, $.datepicker.regional[locale]);
+				conf.datepicker = confman.getStdDatepicker();
+				
+				elts.each(function(idx, el){
+					var $el = $(el);
+					var raw = $el.text();
+					var formatted = utils.convertStrDate($.datepicker.ATOM, format, raw);
+					$el.text(formatted);
+				});
 
 				var postProcess = function(value, settings) {
 					return utils.convertStrDate(format, $.datepicker.ATOM,
@@ -181,7 +186,11 @@ define(
 					} else if (jqThis.find('input[type="checkbox"]').length > 0) {
 						chkbx = jqThis.find('input[type="checkbox"]');
 					} else {
-						chkbx = utils.appendCheckbox(jqThis);
+						var checked = (jqThis.text().toLowerCase() === "true") ? true : false;
+						jqThis.empty();
+						var chkbx = $('<input type="checkbox"/>');
+						chkbx.prop('checked', checked);
+						jqThis.append(chkbx);
 					}
 
 					chkbx.enable(true);
@@ -190,9 +199,24 @@ define(
 				});
 
 			}
+			
+			
+			function initAsRichtext(elts, cufDefinition, idOrURLOrPostfunction) {
+
+				if (elts.length === 0){
+					return;
+				}
+				
+				var postFunction = buildPostFunction(idOrURLOrPostfunction);
+				
+				var conf = confman.getJeditableCkeditor();
+				
+				elts.editable(postFunction, conf);			
+				
+			}
 
 			
-			$.fn.customField = function(cufDefinition, idOrURLOrPostfunction) {
+			$.fn.jeditableCustomfield = function(cufDefinition, idOrURLOrPostfunction) {
 
 				var type = cufDefinition.inputType.enumName;
 
@@ -202,8 +226,11 @@ define(
 					initAsList(this, cufDefinition, idOrURLOrPostfunction);
 				} else if (type === "PLAIN_TEXT") {
 					initAsPlainText(this, cufDefinition, idOrURLOrPostfunction);
-				} else {
+				} else if (type === "CHECKBOX"){
 					initAsCheckbox(this, cufDefinition, idOrURLOrPostfunction);
+				}
+				else if (type === "RICH_TEXT"){
+					initAsRichtext(this, cufDefinition, idOrURLOrPostfunction);
 				}
 
 			};
