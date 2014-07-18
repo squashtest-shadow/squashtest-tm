@@ -34,6 +34,7 @@ import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
@@ -63,7 +64,7 @@ import org.squashtest.tm.domain.customfield.RenderingLocation;
 		@NamedQuery(name = "DenormalizedFieldValue.findDFVForEntities", query = "select dfv from DenormalizedFieldValue dfv where dfv.denormalizedFieldHolderId in (:entityIds) and dfv.denormalizedFieldHolderType = :entityType order by dfv.position"),
 		@NamedQuery(name = "DenormalizedFieldValue.findDFVForEntitiesAndLocations", query = "select dfv from DenormalizedFieldValue dfv join dfv.renderingLocations rl where dfv.denormalizedFieldHolderId in (:entityIds) and dfv.denormalizedFieldHolderType = :entityType and rl in (:locations) order by dfv.position"),
 		@NamedQuery(name = "DenormalizedFieldValue.countDenormalizedFields", query = "select count(dfv) from DenormalizedFieldValue dfv where dfv.denormalizedFieldHolderId = ?1 and dfv.denormalizedFieldHolderType = ?2")
-		})
+})
 @Entity
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "FIELD_TYPE", discriminatorType = DiscriminatorType.STRING)
@@ -76,7 +77,7 @@ public class DenormalizedFieldValue {
 	@Column(name = "DFV_ID")
 	private Long id;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "CFV_ID", nullable = true)
 	private CustomFieldValue customFieldValue;
 
@@ -100,7 +101,7 @@ public class DenormalizedFieldValue {
 	private String label = "";
 
 	private int position;
-	
+
 	@Size(min = 0, max = 255)
 	private String value;
 
@@ -239,7 +240,7 @@ public class DenormalizedFieldValue {
 		}
 		return toReturn;
 	}
-	
+
 	public Set<RenderingLocation> getRenderingLocations() {
 		return renderingLocations;
 	}
@@ -251,7 +252,7 @@ public class DenormalizedFieldValue {
 	public void accept(DenormalizedFieldVisitor visitor) {
 		visitor.visit(this);
 	}
-	
+
 
 	public void setValue(String value) {
 		this.value = value;
