@@ -4,7 +4,7 @@
 	<parent>
 		<artifactId>squashtest-csp-core</artifactId>
 		<groupId>org.squashtest.tm</groupId>
-		<version>1.10.1.RELEASE</version>
+		<version>1.10.2.RELEASE-SNAPSHOT</version>
 	</parent>
 	<groupId>org.squashtest.tm</groupId>
 	<artifactId>org.squashtest.csp.core.log4j</artifactId>
