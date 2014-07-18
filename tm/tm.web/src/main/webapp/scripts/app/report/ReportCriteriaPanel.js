@@ -226,7 +226,6 @@ function(Backbone, _, FormModel, ButtonUtil, treeBuilder, ProjectsPickerPopup, S
 					pickerView = new SingleProjectPickerPopup({ el : dom, model: self.model });
 				}
 				self.projectPickers[dom.id] = pickerView;
-//				self.listenTo("project-picker:picked", this.onProjectPicked);
 			});
 		},
 
@@ -302,12 +301,10 @@ function(Backbone, _, FormModel, ButtonUtil, treeBuilder, ProjectsPickerPopup, S
 		},
 
 		_initPickers: function(selector, pickerType) {
-			console.log("init pickers ", selector, pickerType);
 			var self = this;
 
 			this.$(selector).each(function() {
 				self.model.set(this.id, new FormModel.Input(pickerType, []));
-				console.log("picker found", this)
 			});
 		},
 
@@ -353,7 +350,6 @@ function(Backbone, _, FormModel, ButtonUtil, treeBuilder, ProjectsPickerPopup, S
 		},
 
 		setBoundButtonState: function(operation, binding) {
-			console.log("BU op", operation, binding, ButtonUtil)
 			ButtonUtil[operation].call(this, $("#" + binding + "-open"));
 		},
 
@@ -388,10 +384,6 @@ function(Backbone, _, FormModel, ButtonUtil, treeBuilder, ProjectsPickerPopup, S
 
 				return localizedDate;
 			};
-		},
-
-		onProjectPicked: function(event) {
-			concole.log("onProjectPicked TODO");
 		},
 
 		/**
