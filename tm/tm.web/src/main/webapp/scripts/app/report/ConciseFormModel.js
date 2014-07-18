@@ -120,7 +120,7 @@ define([ "backbone", "underscore", "jquery", "jeditable.datepicker" ], function(
 			}
 
 			return boundary;
-		},
+		}
 
 	});
 
