@@ -188,7 +188,7 @@ define(
 					} else {
 						var checked = (jqThis.text().toLowerCase() === "true") ? true : false;
 						jqThis.empty();
-						var chkbx = $('<input type="checkbox"/>');
+						chkbx = $('<input type="checkbox"/>');
 						chkbx.prop('checked', checked);
 						jqThis.append(chkbx);
 					}

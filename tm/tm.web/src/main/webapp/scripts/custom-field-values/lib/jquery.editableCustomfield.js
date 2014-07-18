@@ -97,14 +97,14 @@ define(["jquery", "squash.configmanager", "./cuf-values-utils", "jquery.squash.j
 				var content = elt.text();
 				
 				var select = $("<select>");
-				var options = def.options
+				var options = def.options;
 				for (var i in def.options){
 					var attrs = {
 						'text' : options[i].label,
 						'value' : options[i].label
 					};
 					if (options[i].label === content){
-						attrs.selected = "selected"
+						attrs.selected = "selected";
 					}
 					var opt = $('<option/>',attrs);
 					select.append(opt);
@@ -196,7 +196,7 @@ define(["jquery", "squash.configmanager", "./cuf-values-utils", "jquery.squash.j
 			}
 		} 
 	
-	}
+	};
 	
 	
 	$.fn.editableCustomfield = function(){
@@ -205,9 +205,11 @@ define(["jquery", "squash.configmanager", "./cuf-values-utils", "jquery.squash.j
 			throw "cannot invoke staticCustomfield with no arguments";
 		}
 		
+		var def, widg;
+		
 		// case constructor
 		if (arguments.length === 1 && _.isObject(arguments[0])){
-			var def= arguments[0];
+			def= arguments[0];
 			this.each(function(idx, elt){
 				
 				var $this = $(elt);
@@ -215,7 +217,7 @@ define(["jquery", "squash.configmanager", "./cuf-values-utils", "jquery.squash.j
 				// save the configuration
 				$this.data("cufdef", def);
 				
-				var widg = widgets[def.inputType.enumName];
+				widg = widgets[def.inputType.enumName];
 				widg._build($this, def);
 				
 			});			
@@ -223,15 +225,15 @@ define(["jquery", "squash.configmanager", "./cuf-values-utils", "jquery.squash.j
 		
 		// case getter
 		else if (arguments.length === 1 && arguments[0] === "value") {
-			var def = this.data('cufdef');
-			var widg = widgets[def.inputType.enumName];
+			def = this.data('cufdef');
+			widg = widgets[def.inputType.enumName];
 			return widg._get(this, def);
 		}
 		
 		// case setter
 		else if (arguments.length === 2 && arguments[0] === "value"){
-			var def = this.data("cufdef");
-			var widg = widgets[def.inputType.enumName];
+			def = this.data("cufdef");
+			widg = widgets[def.inputType.enumName];
 			widg._set(this, def, arguments[1]);
 		}
 		
@@ -239,8 +241,8 @@ define(["jquery", "squash.configmanager", "./cuf-values-utils", "jquery.squash.j
 		else if (arguments.length === 1 && arguments[0] === "destroy"){			
 			this.each(function(idx, elt){
 				var $this = $(elt);				
-				var def = $this.data('cufdef');
-				var widg = widgets[def.inputType.enumName];
+				def = $this.data('cufdef');
+				widg = widgets[def.inputType.enumName];
 				widg._destroy($this, def);
 			});
 		}

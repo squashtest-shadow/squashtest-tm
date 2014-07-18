@@ -80,7 +80,6 @@ define(["jquery", "handlebars", "jqueryui", "./lib/jquery.staticCustomfield", ".
 						break;
 						
 					case "jeditable" :
-						var cufValue = cufValues[idx];
 						$(elt).jeditableCustomfield(cufValue.binding.customField, cufValue.id);
 						break;
 					}
@@ -90,6 +89,6 @@ define(["jquery", "handlebars", "jqueryui", "./lib/jquery.staticCustomfield", ".
 		} 
 		
 		
-	}
+	};
 	
 });

@@ -138,7 +138,7 @@ define(["jquery", "./cuf-values-utils", "underscore"], function($, utils, _){
 			}
 		} 
 			
-	}
+	};
 	
 	
 	$.fn.staticCustomfield = function(){
@@ -147,9 +147,11 @@ define(["jquery", "./cuf-values-utils", "underscore"], function($, utils, _){
 			throw "cannot invoke staticCustomfield with no arguments";
 		}
 		
+		var def, widg;
+		
 		// case constructor
 		if (arguments.length === 1 && _.isObject(arguments[0])){
-			var def= arguments[0];
+			def= arguments[0];
 			this.each(function(idx, elt){
 				
 				var $this = $(elt);
@@ -157,7 +159,7 @@ define(["jquery", "./cuf-values-utils", "underscore"], function($, utils, _){
 				// save the configuration
 				$(this).data("cufdef", def);
 				
-				var widg = widgets[def.inputType.enumName];
+				widg = widgets[def.inputType.enumName];
 				widg._build($this, def);
 				
 			});			
@@ -165,15 +167,15 @@ define(["jquery", "./cuf-values-utils", "underscore"], function($, utils, _){
 		
 		// case getter
 		else if (arguments.length === 1 && arguments[0] === "value") {
-			var def = this.data('cufdef');
-			var widg = widgets[def.inputType.enumName];
+			def = this.data('cufdef');
+			widg = widgets[def.inputType.enumName];
 			return widg._get(this, def);
 		}
 		
 		// case setter
 		else if (arguments.length === 2 && arguments[0] === "value"){
-			var def = this.data("cufdef");
-			var widg = widgets[def.inputType.enumName];
+			def = this.data("cufdef");
+			widg = widgets[def.inputType.enumName];
 			widg._set(this, def, arguments[1]);
 		}
 		
@@ -181,8 +183,8 @@ define(["jquery", "./cuf-values-utils", "underscore"], function($, utils, _){
 		else if (arguments.length === 1 && arguments[0] === "destroy"){			
 			this.each(function(idx, elt){
 				var $this = $(elt);				
-				var def = $this.data('cufdef');
-				var widg = widgets[def.inputType.enumName];
+				def = $this.data('cufdef');
+				widg = widgets[def.inputType.enumName];
 				widg._destroy($this, def);
 			});
 		}
