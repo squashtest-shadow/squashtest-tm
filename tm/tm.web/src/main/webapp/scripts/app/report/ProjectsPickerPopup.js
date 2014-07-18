@@ -31,8 +31,8 @@
  *
  * Methods : open, close
  */
- define([ "jquery",  "./ProjectsPickerModel", "underscore", "squashtable", "jqueryui", "jquery.squash.confirmdialog"],
-		function($, ProjectFilterModel, _) {
+ define([ "jquery",  "backbone", "./ProjectsPickerModel", "underscore", "squashtable", "jqueryui", "jquery.squash.confirmdialog"],
+		function($, Backbone, ProjectFilterModel, _) {
 	 "use strict";
 
 	 //TODO mutualize what can be with ProjectFilterPopup and SingleProjectPickerPopup
@@ -163,7 +163,7 @@
 			var selectIds = [];
 			var deselectIds = [];
 			eachCheckbox(this.$el, function() {
-				$checkbox = $(this);
+				var $checkbox = $(this);
 				if($checkbox.is(":checked")){
 					$checkbox.attr("checked",false);
 					deselectIds.push(this.value);
@@ -181,7 +181,7 @@
 		notifyModel : function(event){
 			var $checkbox = $(event.currentTarget);
 			this.filterModel.changeProjectState($checkbox.val(), $checkbox.is(":checked"));
-		},
+		}
 
 	});
 

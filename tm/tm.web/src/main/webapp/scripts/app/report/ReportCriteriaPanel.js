@@ -41,7 +41,9 @@ function(Backbone, _, FormModel, ButtonUtil, treeBuilder, ProjectsPickerPopup, S
 	function radioBinding(radio) {
 		var binding = (radio.id).replace("-binder", "");
 
-		if (_.isUndefined(binding) || binding === "none") return undefined;
+		if (_.isUndefined(binding) || binding === "none") {
+			return undefined;
+		}
 
 		return binding;
 	}
@@ -63,7 +65,9 @@ function(Backbone, _, FormModel, ButtonUtil, treeBuilder, ProjectsPickerPopup, S
 
 			// model init
 			this._initModel();
-			if(options.formerState) this.model.applyFormerState(options.formerState);
+			if(options.formerState) {
+				this.model.applyFormerState(options.formerState);
+			}
 
 			this.render();
 		},
@@ -88,7 +92,7 @@ function(Backbone, _, FormModel, ButtonUtil, treeBuilder, ProjectsPickerPopup, S
 			"change .rpt-drop select": "changeValuedInput",
 			"change input:radio": "changeRadioButtonGroup",
 			"click .rpt-tree-crit-open": "openTreePicker",
-			"click .rpt-projects-crit-open": "openProjectPicker",
+			"click .rpt-projects-crit-open": "openProjectPicker"
 		},
 
 		_renderTexts: function() {
@@ -97,7 +101,9 @@ function(Backbone, _, FormModel, ButtonUtil, treeBuilder, ProjectsPickerPopup, S
 			this.$("input:text").each(function() {
 				var dom = this;
 				var attr = self.model.get(dom.name);
-				if (!!attr && !_.isUndefined(attr.val)) dom.value = attr.val;
+				if (!!attr && !_.isUndefined(attr.val)) {
+					dom.value = attr.val;
+				}
 			});
 		},
 
@@ -107,7 +113,9 @@ function(Backbone, _, FormModel, ButtonUtil, treeBuilder, ProjectsPickerPopup, S
 			this.$("input:checkbox[data-grouped!='true']").each(function() {
 				var dom = this;
 				var attr = self.model.get(dom.name);
-				if (!!attr && _.isBoolean(attr.val)) dom.checked = attr.val;
+				if (!!attr && _.isBoolean(attr.val)) {
+					dom.checked = attr.val;
+				}
 			});
 		},
 
@@ -400,7 +408,7 @@ function(Backbone, _, FormModel, ButtonUtil, treeBuilder, ProjectsPickerPopup, S
 				var nodes = $tree.jstree("get_selected");
 
 				self.setPickedNodes($tree.attr("id"), nodes);
-			}
+			};
 		},
 
 		/**
