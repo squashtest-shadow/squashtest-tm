@@ -182,8 +182,8 @@ public class TreeNodeCopier  implements NodeVisitor, PasteOperation {
 	public void visit(Iteration source) {
 		Iteration copyIteration = source.createCopy();
 		persitIteration(copyIteration);
-		copyCustomFields(source, copyIteration);
 		copyIterationTestSuites(source, copyIteration);
+		copyCustomFields(source, copyIteration);
 		this.okToGoDeeper = false;
 		if(projectChanged){
 			for(TestSuite suite : source.getTestSuites()){
@@ -283,6 +283,17 @@ public class TreeNodeCopier  implements NodeVisitor, PasteOperation {
 			testPlanItemsToBind.add(testPlanItemToBind);
 		}
 		testSuiteCopy.bindTestPlanItems(testPlanItemsToBind);
+	}
+
+	private void copyCustomFields(Iteration original, Iteration copy){
+		// copy the cufs for both iterations
+		copyCustomFields(original,  copy);
+
+		// now copy the cufs for the test suites
+		for (TestSuite ts : original.getTestSuites()){
+			TestSuite ts2 = copy.getTestSuiteByName(ts.getName());
+			copyCustomFields(ts, ts2);
+		}
 	}
 
 	/**

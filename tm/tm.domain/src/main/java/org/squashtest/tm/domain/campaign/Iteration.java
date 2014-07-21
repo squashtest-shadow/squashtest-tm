@@ -71,7 +71,7 @@ import org.squashtest.tm.security.annotation.AclConstrainedObject;
 @Auditable
 @Entity
 public class Iteration implements AttachmentHolder, NodeContainer<TestSuite>, TreeNode, Copiable, Identified,
-		BoundEntity {
+BoundEntity {
 	public static final int MAX_NAME_SIZE = 255;
 	private static final String ITERATION_ID = "ITERATION_ID";
 
@@ -434,6 +434,16 @@ public class Iteration implements AttachmentHolder, NodeContainer<TestSuite>, Tr
 		return testSuites;
 	}
 
+	public TestSuite getTestSuiteByName(String tsName){
+		for (TestSuite ts : testSuites){
+			if (ts.getName().equals(tsName)){
+				return ts;
+			}
+		}
+
+		throw new RuntimeException("Iteration "+id+" : cannot find test suite named '"+tsName+"'");
+	}
+
 	public void addTestSuite(TestSuite suite) {
 		if (!checkSuiteNameAvailable(suite.getName())) {
 			throw new DuplicateNameException("cannot add suite to iteration " + getName() + " : suite named "
@@ -452,7 +462,7 @@ public class Iteration implements AttachmentHolder, NodeContainer<TestSuite>, Tr
 		suite.setIteration(this);
 	}
 
-	
+
 	public boolean checkSuiteNameAvailable(String name) {
 		for (TestSuite suite : testSuites) {
 			if (suite.getName().equals(name)) {
@@ -625,7 +635,7 @@ public class Iteration implements AttachmentHolder, NodeContainer<TestSuite>, Tr
 
 			for (IterationTestPlanItem iterationTestPlanItem : testSuiteTestPlan) {
 				int testPlanItemIndex = testPlanWithoutDeletedTestCases.indexOf(iterationTestPlanItem);
-				
+
 				if (testPlanItemIndex > -1) {
 					testPlanIndex.add(testPlanItemIndex);
 				} // otherwise, test case was deleted
@@ -714,7 +724,7 @@ public class Iteration implements AttachmentHolder, NodeContainer<TestSuite>, Tr
 		this.addTestSuite((TestSuite) testSuite, position);
 
 	}
-	
+
 	@Override
 	public boolean isContentNameAvailable(String name) {
 		return checkSuiteNameAvailable(name);
@@ -735,8 +745,8 @@ public class Iteration implements AttachmentHolder, NodeContainer<TestSuite>, Tr
 		return getTestSuites();
 	}
 
-	
-	
+
+
 	/**
 	 * @return true if there are test suites
 	 * @see org.squashtest.tm.domain.library.NodeContainer#hasContent()
@@ -761,5 +771,5 @@ public class Iteration implements AttachmentHolder, NodeContainer<TestSuite>, Tr
 		return testSuitesNames;
 	}
 
-	
+
 }
