@@ -167,9 +167,9 @@ define([ "jquery", "app/report/squashtm.reportworkspace", "tree", "underscore", 
 		var format = $("#view-format-cmb-" + viewIndex).val();
 
 		var url = buildViewUrl(viewIndex, format);
-		var data = encodeURIComponent(stringModel());
+		var data = stringModel();
 
-		window.open(url+"?parameters="+data, "_blank", "resizable=yes, scrollbars=yes");
+		window.open(url+"?json="+data, "_blank", "resizable=yes, scrollbars=yes");
 	}
 
 	function initViewTabs() {
