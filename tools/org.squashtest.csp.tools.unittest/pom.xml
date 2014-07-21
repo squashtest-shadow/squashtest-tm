@@ -4,7 +4,7 @@
 	<parent>
 		<artifactId>squashtest-csp-tools</artifactId>
 		<groupId>org.squashtest.tm</groupId>
-		<version>1.10.2.RC1</version>
+		<version>1.10.2.RC2-SNAPSHOT</version>
 	</parent>
 	<artifactId>org.squashtest.csp.tools.unittest</artifactId>
 	<name>Squashtest CSP - Tools module - Unit tests library</name>
