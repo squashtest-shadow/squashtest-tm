@@ -61,7 +61,10 @@
 	<s:param name="testSuiteId" value="${testSuite.id}" />
 </s:url>
 
-<c:url var="customFieldsValuesURL" value="/custom-fields/values" />
+<s:url var="customFieldsValuesURL" value="/custom-fields/values">
+  <s:param name="boundEntityId" value="${testSuite.boundEntityId}" />
+  <s:param name="boundEntityType" value="${testSuite.boundEntityType}" />
+</s:url>
 
 
 <f:message var='deleteMessageStart' key='dialog.label.delete-node.label.start'/>
@@ -114,6 +117,7 @@
   config.api = {
 		copy: "${duplicateTestSuiteUrl}"		
   };
+  config.writable = ${writable};
 </script>
 
 <div
@@ -228,9 +232,9 @@
 			open="${hasCUF}">
 			<jsp:attribute name="body">
 				<div id="test-suite-custom-fields-content" class="display-table">
-<c:if test="${hasCUF}">				
-				<comp:waiting-pane/>
-</c:if>
+                <c:if test="${hasCUF}">				
+				  <comp:waiting-pane/>
+                </c:if>
 				</div>
 			</jsp:attribute>
 		</comp:toggle-panel>

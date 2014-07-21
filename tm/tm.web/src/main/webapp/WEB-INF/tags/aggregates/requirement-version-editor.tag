@@ -375,8 +375,9 @@ var identity = { resid : ${requirementVersion.id}, restype : "requirements"  };
 
 		require(["domReady", "require"], function(domReady, require){
 			domReady(function(){
-				require(["jquery", "squash.basicwidgets", "contextual-content-handlers", "workspace.event-bus"], 
-						function($, basic, contentHandlers, eventBus){
+				require(["jquery", "squash.basicwidgets", "contextual-content-handlers", "workspace.event-bus", 
+				         "custom-field-values"], 
+						function($, basic, contentHandlers, eventBus, cufvalues){
 					
 					basic.init();
 					
@@ -410,14 +411,16 @@ var identity = { resid : ${requirementVersion.id}, restype : "requirements"  };
 			document.location.href="${ verifyingTCManagerUrl }" ;	
 		});
 		
+		
 		<c:if test="${hasCUF}">
-		<%-- loading the custom field panel --%>
-		$.get("${customFieldsValuesURL}?boundEntityId=${requirementVersion.boundEntityId}&boundEntityType=${requirementVersion.boundEntityType}")
-		.success(function(data){
-			$("#edit-requirement-table").append(data);
-		});			
-		</c:if>
-    	
+		<%-- loading the custom fields --%>
+		$.getJSON("${customFieldsValuesURL}?boundEntityId=${requirement.currentVersion.boundEntityId}&boundEntityType=${requirement.currentVersion.boundEntityType}")
+		.success(function(jsonCufs){	
+			var mode = <c:out value="${writable ? 'jeditable' : 'static'}"/>;
+			cufvalues.infoSupport.init("#edit-requirement-table", jsonCufs, mode);
+		});
+    	</c:if>
+		    	
 		
 
 	});

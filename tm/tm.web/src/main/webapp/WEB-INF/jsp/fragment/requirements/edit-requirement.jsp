@@ -486,8 +486,9 @@ require([ "common" ], function() {
 	var identity = { resid : ${requirement.id}, restype : "requirements"  };
 	
 	require(["common"], function(){
-		require(["jquery", "squash.basicwidgets", "contextual-content-handlers", "workspace.event-bus", "jquery.squash.fragmenttabs"], 
-					function($, basicwidg,  contentHandlers, eventBus, Frag){
+		require(["jquery", "squash.basicwidgets", "contextual-content-handlers", 
+		         "workspace.event-bus", "jquery.squash.fragmenttabs", "custom-field-values"], 
+					function($, basicwidg,  contentHandlers, eventBus, Frag, cufvalues){
 		$(function(){
 				basicwidg.init();
 				
@@ -498,8 +499,7 @@ require([ "common" ], function() {
 				nameHandler.nameHidden = "#requirement-raw-name";
 				nameHandler.referenceHidden = "#requirement-raw-reference";
 				
-		
-
+	
 				//****** tabs configuration *******
 	
 				Frag.init();
@@ -514,13 +514,17 @@ require([ "common" ], function() {
 					$("#verifying-test-cases-table").squashTable().refresh();					
 				});
 				
+			
 				<c:if test="${hasCUF}">
 				<%-- loading the custom fields --%>
-				$.get("${customFieldsValuesURL}?boundEntityId=${requirement.currentVersion.boundEntityId}&boundEntityType=${requirement.currentVersion.boundEntityType}")
-				.success(function(data){
-					$("#edit-requirement-table").append(data);
+				$.getJSON("${customFieldsValuesURL}?boundEntityId=${requirement.currentVersion.boundEntityId}&boundEntityType=${requirement.currentVersion.boundEntityType}")
+				.success(function(jsonCufs){	
+					var mode = '<c:out value="${writable ? 'jeditable' : 'static'}"/>';					
+					cufvalues.infoSupport.init("#edit-requirement-table", jsonCufs, mode);
 				});
 		    	</c:if>
+
+				
 			});
 		});
 	});

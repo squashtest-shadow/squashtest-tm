@@ -168,7 +168,7 @@ define([ "jquery", "app/pubsub", "squash.translator", "app/lnf/Forms", "jquery.s
 		}
 
 		$input = $("input[name='" + inputName + "'], input[id='" + inputName + "'],  textarea[name='" + inputName +
-				"']");
+				"'], #"+inputName);
 		input = Forms.input($input);
 
 		input.setState("error", fieldValidationError.errorMessage);

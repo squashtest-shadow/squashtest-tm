@@ -45,11 +45,11 @@ define(["jquery", "handlebars", "jqueryui", "./lib/jquery.staticCustomfield", ".
 			'<label class="display-table-cell">{{binding.customField.label}}</label>' +
 			'<div class="display-table-cell controls">' +
 			'{{#ifequals binding.customField.inputType.enumName "RICH_TEXT"}}' +
-				'<div id="cuf-value-{{id}}" class="custom-field" data-value-id="{{id}}">{{{value}}}</div>' +
+				'<span id="cuf-value-{{id}}" class="custom-field" data-value-id="{{id}}">{{{value}}}</span>' +
 			'{{else}}' +
-				'<div id="cuf-value-{{id}}" class="custom-field" data-value-id="{{id}}">{{value}}</div>' +
+				'<span id="cuf-value-{{id}}" class="custom-field" data-value-id="{{id}}">{{value}}</span>' +
 			'{{/ifequals}}' +
-			'<span class="help-inline">&nbsp;</span>' +
+			'<span class="help-inline not-displayed">&nbsp;</span>' +
 			'</div>' +			
 		'</div>' +
 		'{{/each}}'

@@ -93,7 +93,7 @@ public class RequirementVersionManagerController {
 	private Provider<InternationalizableLabelFormatter> internationalizableFormatterProvider;
 	@Inject
 	private InternationalizationHelper i18nHelper;
-	
+
 	@Inject
 	private VerifyingTestCaseManagerService verifyingTestCaseManager;
 
@@ -102,7 +102,7 @@ public class RequirementVersionManagerController {
 
 	@Inject
 	private CustomFieldHelperService cufHelperService;
-	
+
 	@Inject
 	private RequirementVersionManagerService requirementVersionManager;
 
@@ -168,7 +168,7 @@ public class RequirementVersionManagerController {
 		populateRequirementEditorModel(requirementVersionId, model, locale);
 		return "fragment/requirements/requirement-version-editor";
 	}
-	
+
 
 	@RequestMapping(value = "/info", method = RequestMethod.GET)
 	public String showRequirementVersionEditor(@PathVariable long requirementVersionId, Model model, Locale locale) {
@@ -177,11 +177,11 @@ public class RequirementVersionManagerController {
 	}
 
 	private void populateRequirementEditorModel(long requirementVersionId, Model model, Locale locale) {
-		
+
 		RequirementVersion requirementVersion = requirementVersionManager.findById(requirementVersionId);
 		String criticalities = buildMarshalledCriticalities(locale);
 		boolean hasCUF = cufValueService.hasCustomFields(requirementVersion);
-		String categories = buildMarshalledCategories(locale);		
+		String categories = buildMarshalledCategories(locale);
 		DataTableModel verifyingTCModel = getVerifyingTCModel(requirementVersion);
 		DataTableModel attachmentsModel = attachmentsHelper.findPagedAttachments(requirementVersion);
 		DataTableModel auditTrailModel = getEventsTableModel(requirementVersion);
@@ -193,13 +193,14 @@ public class RequirementVersionManagerController {
 		model.addAttribute("verifyingTestCaseModel", verifyingTCModel);
 		model.addAttribute("attachmentsModel", attachmentsModel);
 		model.addAttribute("auditTrailModel", auditTrailModel);
+		model.addAttribute("hasCUF", hasCUF);
 	}
-	
+
 	private DataTableModel getVerifyingTCModel(RequirementVersion version){
 		PagedCollectionHolder<List<TestCase>> holder = verifyingTestCaseManager.findAllByRequirementVersion(
 				version.getId(), new DefaultPagingAndSorting("Project.name"));
-		
-		return new VerifyingTestCasesTableModelHelper(i18nHelper).buildDataModel(holder, "0");		
+
+		return new VerifyingTestCasesTableModelHelper(i18nHelper).buildDataModel(holder, "0");
 	}
 
 	@RequestMapping(method = RequestMethod.GET, value = "/next-status")
@@ -217,7 +218,7 @@ public class RequirementVersionManagerController {
 	public JsonGeneralInfo refreshGeneralInfos(@PathVariable long requirementVersionId){
 		RequirementVersion version = requirementVersionManager.findById(requirementVersionId);
 		return new JsonGeneralInfo((AuditableMixin)version);
-		
+
 	}
 
 	private String buildMarshalledCriticalities(Locale locale) {
@@ -235,7 +236,7 @@ public class RequirementVersionManagerController {
 		return new  RenameModel(newName);
 	}
 
-	
+
 	private DataTableModel getEventsTableModel(RequirementVersion requirementVersion){
 		PagedCollectionHolder<List<RequirementAuditEvent>> auditTrail = auditTrailService
 				.findAllByRequirementVersionIdOrderedByDate(requirementVersion.getId(), new DefaultPagingAndSorting());
@@ -245,8 +246,8 @@ public class RequirementVersionManagerController {
 		return builder.buildDataModel(auditTrail, "");
 
 	}
-	
-	
+
+
 
 	/**
 	 * Returns a map of all requirement version's siblings, including itself. The map will be filled with strings:<br>

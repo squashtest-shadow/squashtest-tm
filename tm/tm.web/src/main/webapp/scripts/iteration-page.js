@@ -23,8 +23,8 @@ require([ "common" ], function() {
 
 	require([ "jquery", "underscore", "app/pubsub", "squash.basicwidgets", "contextual-content-handlers",
 			"jquery.squash.fragmenttabs", "bugtracker/bugtracker-panel", "workspace.event-bus", "iteration-management",
-			"app/ws/squashtm.workspace", "test-automation/auto-execution-buttons-panel", "jquery.squash.formdialog" ],
-			function($, _, ps, basicwidg, contentHandlers, Frag, bugtracker, eventBus, itermanagement, WS) {
+			"app/ws/squashtm.workspace", "custom-field-values", "test-automation/auto-execution-buttons-panel", "jquery.squash.formdialog" ],
+			function($, _, ps, basicwidg, contentHandlers, Frag, bugtracker, eventBus, itermanagement, WS, cufvalues) {
 
 		// *********** event handler ***************
 
@@ -75,8 +75,15 @@ require([ "common" ], function() {
 			}
 
 			if (config.hasFields) {
-				$("#iteration-custom-fields").load(config.customFields.url);
+				var url = config.customFields.url;
+				$.getJSON(url)
+				.success(function(jsonCufs){
+					$("#iteration-custom-fields-content .waiting-loading").hide();
+					var mode = (config.writable) ? "jeditable" : "static";
+					cufvalues.infoSupport.init("#iteration-custom-fields-content", jsonCufs, mode);
+				});
 			}
+			
 			
 			// ******** rename popup *************
 			

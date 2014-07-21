@@ -110,6 +110,7 @@
 	squashtm.page = squashtm.page || {};
 	var config = squashtm.page;
 	config.isFullPage = ${ not empty param.isInfoPage and param.isInfoPage };
+	config.writable = ${writable};
 	config.hasFields = ${ hasCUF };
 	config.hasBugtracker = ${ iteration.project.bugtrackerConnected };
 	config.identity = { resid: ${iteration.id}, restype : "iterations" };

@@ -39,9 +39,10 @@
 define(["jquery", "squash.basicwidgets", "contextual-content-handlers", "jquery.squash.fragmenttabs", 
         "bugtracker/bugtracker-panel", "workspace.event-bus",  "squash.translator",  
         "dashboard/campaigns-dashboard/main", "../planning/main", "../test-plan-panel/main",
+        "custom-field-values",
         "jqueryui", "jquery.squash.formdialog"], 
         function($, basicwidg, contentHandlers, Frag, bugtrackerPanel, eventBus, translator, 
-        dashboard, planning, testplan){
+        dashboard, planning, testplan, cufvalues){
 	
 	
 	function init(conf){
@@ -71,7 +72,12 @@ define(["jquery", "squash.basicwidgets", "contextual-content-handlers", "jquery.
 	function initCufs(conf){
 		if (conf.features.hasCUF){
 			var url = conf.data.cufValuesUrl + "?boundEntityId="+conf.data.campaignId+"&boundEntityType=CAMPAIGN";
-			$("#campaign-custom-fields-content").load(url);
+			$.getJSON(url)
+			.success(function(jsonCufs){
+				$("#campaign-custom-fields-content .waiting-loading").hide();
+				var mode = (conf.features.writable) ? "jeditable" : "static";
+				cufvalues.infoSupport.init("#campaign-custom-fields-content", jsonCufs, mode);
+			});
 		}
 	}
 	

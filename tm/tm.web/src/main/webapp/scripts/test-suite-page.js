@@ -21,9 +21,9 @@
 require([ "common" ], function() {
 	require(["jquery", "app/pubsub", "squash.translator", "squash.basicwidgets", "workspace.event-bus",
 	         "app/ws/squashtm.workspace", "contextual-content-handlers", "jquery.squash.fragmenttabs",
-	         "bugtracker/bugtracker-panel", "test-suite-management", "test-suite/execution-buttons-panel",
+	         "bugtracker/bugtracker-panel", "test-suite-management", "custom-field-values", "test-suite/execution-buttons-panel",
 	         "test-automation/auto-execution-buttons-panel", "jquery.cookie"],
-			function($, ps, messages, basicwidg, eventBus, WS, contentHandlers, Frag, bugtracker, tsmanagement){
+			function($, ps, messages, basicwidg, eventBus, WS, contentHandlers, Frag, bugtracker, tsmanagement, cufvalues){
 		"use strict";
 
 		$(document).on("click", "#duplicate-test-suite-button", function() {
@@ -125,9 +125,15 @@ require([ "common" ], function() {
 				bugtracker.load(config.bugtracker);
 			}
 
-			if (config.hasFields) {
-				$("#test-suite-custom-fields-content").load(config.customFields.url+"?boundEntityId="+config.identity.resid+"&boundEntityType=TEST_SUITE");
-			}
+		/*	if (config.hasFields) {
+				var url = config.customFields.url;
+				$.getJSON(url)
+				.success(function(jsonCufs){
+					$("#test-suite-custom-fields-content .waiting-loading").hide();
+					var mode = (config.writable) ? "jeditable" : "static";
+					cufvalues.infoSupport.init("#test-suite-custom-fields-content", jsonCufs, mode);
+				});
+			}*/
 
 			var dialog = $( "#confirm-duplicate-test-suite-dialog" );
 
