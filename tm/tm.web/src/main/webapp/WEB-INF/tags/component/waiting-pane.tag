@@ -24,6 +24,9 @@
 
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
  		
+<%--
 <div class="waiting-loading full-size-hack centered minimal-height" >
+ --%>
+<div class="waiting-loading centered minimal-height" >
 	<div style="font-size: 1.5em; margin-top : 300px;"><f:message key="squashtm.processing" /></div>
 </div>	

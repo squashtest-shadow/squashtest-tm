@@ -182,7 +182,7 @@
 		<comp:toggle-panel id="campaign-custom-fields" 
 			titleKey="generics.customfieldvalues.title"	open="${hasCUF}">
 			<jsp:attribute name="body">
-				<div id="campaign-custom-fields-content" class="display-table">
+				<div id="campaign-custom-fields-content">
 <c:if test="${hasCUF}">
 				<comp:waiting-pane/>
 </c:if>

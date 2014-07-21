@@ -201,7 +201,7 @@
 
       <comp:toggle-panel id="iteration-custom-fields" titleKey="generics.customfieldvalues.title" open="${hasCUF}">
         <jsp:attribute name="body">
-				<div id="iteration-custom-fields-content" class="display-table">
+				<div id="iteration-custom-fields-content" >
                 <c:if test="${hasCUF}">
 			     	<comp:waiting-pane />
                 </c:if>

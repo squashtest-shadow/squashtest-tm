@@ -231,7 +231,7 @@
 			titleKey="generics.customfieldvalues.title" 
 			open="${hasCUF}">
 			<jsp:attribute name="body">
-				<div id="test-suite-custom-fields-content" class="display-table">
+				<div id="test-suite-custom-fields-content" >
                 <c:if test="${hasCUF}">				
 				  <comp:waiting-pane/>
                 </c:if>

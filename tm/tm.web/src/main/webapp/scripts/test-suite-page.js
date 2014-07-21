@@ -125,7 +125,7 @@ require([ "common" ], function() {
 				bugtracker.load(config.bugtracker);
 			}
 
-		/*	if (config.hasFields) {
+			if (config.hasFields) {
 				var url = config.customFields.url;
 				$.getJSON(url)
 				.success(function(jsonCufs){
@@ -133,7 +133,7 @@ require([ "common" ], function() {
 					var mode = (config.writable) ? "jeditable" : "static";
 					cufvalues.infoSupport.init("#test-suite-custom-fields-content", jsonCufs, mode);
 				});
-			}*/
+			}
 
 			var dialog = $( "#confirm-duplicate-test-suite-dialog" );
 
