@@ -275,6 +275,8 @@ define(
 				// table.
 				var tableSettings = {
 
+					bFilter : true,	
+					
 					fnRowCallback : function(row, data, displayIndex) {
 
 						var $row = $(row);

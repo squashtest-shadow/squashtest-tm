@@ -102,6 +102,7 @@ define(['jquery', '../../test-plan-panel/sortmode', '../../test-plan-panel/filte
 		};
 
 		var tableSettings = {
+			bFilter : true,
 			"aLengthMenu" : [[10, 25, 50, 100, -1], [10, 25, 50, 100, conf.messages.allLabel]],
 			fnDrawCallback : drawCallback,
 			fnRowCallback :  rowCallback
