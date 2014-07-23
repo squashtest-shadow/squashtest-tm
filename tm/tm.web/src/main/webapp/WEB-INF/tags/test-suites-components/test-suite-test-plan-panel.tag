@@ -136,7 +136,7 @@
     <c:if test="${editable}">
       <c:set var="deleteBtnClause" value=", delete-button=#ts-test-plan-delete-dialog" />
     </c:if>
-    <table id="test-suite-test-plans-table" class="test-plan-table unstyled-table" data-def="ajaxsource=${tableModelUrl}, filter"  data-entity-id="${testSuite.id}" data-entity-type="testSuite">
+    <table id="test-suite-test-plans-table" class="test-plan-table unstyled-table" data-def="ajaxsource=${tableModelUrl}"  data-entity-id="${testSuite.id}" data-entity-type="testSuite">
       <thead>
         <tr>
           <th class="no-user-select"

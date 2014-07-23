@@ -159,7 +159,7 @@
       <c:set var="deleteBtnClause" value=", delete-button=#iter-test-plan-delete-dialog" />
     </c:if>
     <table id="iteration-test-plans-table" class="test-plan-table unstyled-table"
-      data-def="ajaxsource=${tableModelUrl}, filter"  data-entity-id="${iteration.id}" data-entity-type="iteration">
+      data-def="ajaxsource=${tableModelUrl}"  data-entity-id="${iteration.id}" data-entity-type="iteration">
       <thead>
         <tr>
           <th class="no-user-select"

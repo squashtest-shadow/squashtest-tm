@@ -257,6 +257,8 @@ define(
 				// basic table configuration. Much of it is in the DOM of the
 				// table.
 				var tableSettings = {
+						
+					bFilter : true,
 
 					fnRowCallback : function(row, data, displayIndex) {
 
