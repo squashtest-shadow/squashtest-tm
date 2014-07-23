@@ -287,12 +287,12 @@ public class TreeNodeCopier  implements NodeVisitor, PasteOperation {
 
 	private void copyCustomFields(Iteration original, Iteration copy){
 		// copy the cufs for both iterations
-		copyCustomFields(original,  copy);
+		customFieldValueManagerService.copyCustomFieldValues(original, copy);
 
 		// now copy the cufs for the test suites
-		for (TestSuite ts : original.getTestSuites()){
-			TestSuite ts2 = copy.getTestSuiteByName(ts.getName());
-			copyCustomFields(ts, ts2);
+		for (TestSuite originaTestSuite : original.getTestSuites()){
+			TestSuite copyTestSuite = copy.getTestSuiteByName(originaTestSuite.getName());
+			customFieldValueManagerService.copyCustomFieldValuesContent(originaTestSuite, copyTestSuite);
 		}
 	}
 
