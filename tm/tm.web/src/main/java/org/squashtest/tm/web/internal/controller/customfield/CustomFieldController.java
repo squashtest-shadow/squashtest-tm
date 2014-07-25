@@ -90,7 +90,7 @@ public class CustomFieldController {
 	@RequestMapping(value = "/new", method = RequestMethod.POST)
 	@ResponseStatus(HttpStatus.CREATED)
 	@ResponseBody
-	public void createNew(@Valid @RequestBody NewCustomField field) {
+	public void createNew(@RequestBody NewCustomField field) {
 		LOGGER.info(ToStringBuilder.reflectionToString(field));
 		customFieldManager.persist(field.createTransientEntity());
 	}
