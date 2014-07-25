@@ -30,6 +30,7 @@ import org.squashtest.tm.domain.campaign.CampaignFolder
 import org.squashtest.tm.domain.campaign.CampaignLibraryNode
 import org.squashtest.tm.domain.campaign.Iteration
 import org.squashtest.tm.domain.campaign.TestSuite
+import org.squashtest.tm.domain.customfield.CustomFieldValue
 import org.squashtest.tm.domain.project.GenericProject
 import org.squashtest.tm.domain.project.Project
 import org.squashtest.tm.exception.DuplicateNameException
@@ -37,6 +38,7 @@ import org.squashtest.tm.exception.library.CannotMoveInHimselfException;
 import org.squashtest.tm.service.DbunitServiceSpecification;
 import org.squashtest.tm.service.campaign.CampaignLibrariesCrudService
 import org.squashtest.tm.service.campaign.CampaignLibraryNavigationService
+import org.squashtest.tm.service.customfield.CustomFieldValueFinderService;
 import org.squashtest.tm.service.project.GenericProjectManagerService
 import org.unitils.dbunit.annotation.DataSet
 import org.unitils.dbunit.annotation.ExpectedDataSet;
@@ -61,6 +63,8 @@ class CampaignLibraryNavigationServiceIT extends DbunitServiceSpecification {
 	
 	@Inject GenericProjectManagerService genericProjectManager
 	
+	@Inject
+	CustomFieldValueFinderService customFieldValueService
 	
 	private Long libId=-1
 	private Long campId=-1;
@@ -303,6 +307,30 @@ class CampaignLibraryNavigationServiceIT extends DbunitServiceSpecification {
 		iteration1.getTestSuites().find {it.getName() == "testSuite2"} != null
 		TestSuite testsSuite2 = iteration1.getTestSuites().find {it.getName() == "testSuite2"}
 		testsSuite2.getTestPlan().size() == 0
+	}
+	
+	@DataSet("CampaignLibraryNavigationServiceIT.should copy paste iterations with testSuites containing CUF.xml")
+	def "should copy paste iterations with testSuites containing CUF"(){
+		given:
+		Long iteration = 10012L
+		Long targetCampaignId = 11
+		Long customFieldValueId = 42l
+		
+		when:
+		List<Iteration> iterations = navService.copyIterationsToCampaign(targetCampaignId , iteration )
+		Iteration iteration1 = iterations.find {it.name == "iter - tc1" }
+		TestSuite copiedTestSuite = iteration1.getTestSuites().get(0)
+		List<CustomFieldValue> customFieldValues = customFieldValueService.findAllCustomFieldValues(copiedTestSuite)
+		CustomFieldValue updatedCustomField =  customFieldValues.get(0)
+		
+		then: "an iterations is copied"
+		iterations.size() == 1
+		and: "the copy 'iter-tc1' has 1 test-suite"
+		iterations.find {it.getName()== "iter - tc1" } != null
+		iteration1.getTestSuites().size() == 1
+		and: "the test-suite has a CUF (plain text) with an updated value"
+		updatedCustomField.getValue().equals("updated value")
+		
 	}
 	
 	@DataSet("CampaignLibraryNavigationServiceIT.should copy paste campaigns with iterations.xml")
