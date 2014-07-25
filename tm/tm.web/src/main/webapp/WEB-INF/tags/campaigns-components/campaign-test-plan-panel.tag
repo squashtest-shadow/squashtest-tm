@@ -112,7 +112,7 @@
   <c:if test="${editable}">
     <c:set var="deleteBtnClause" value=", delete-button=#delete-multiple-test-cases-dialog" />
   </c:if>
-  <table id="test-cases-table" data-def="ajaxsource=${tablemodel}, filter" class="unstyled-table test-plan-table"
+  <table id="test-cases-table" data-def="ajaxsource=${tablemodel}" class="unstyled-table test-plan-table"
     data-entity-id="${campaign.id}" data-entity-type="campaign">
     <thead>
       <tr>
