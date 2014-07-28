@@ -31,8 +31,7 @@ public class RichTextField extends CustomField {
 	@Lob
 	private String longDefaultValue;
 
-
-	public RichTextField(){
+	public RichTextField() {
 		super(InputType.RICH_TEXT);
 	}
 
@@ -41,10 +40,13 @@ public class RichTextField extends CustomField {
 		longDefaultValue = defaultValue;
 	}
 
-
 	@Override
 	public String getDefaultValue() {
-		return (longDefaultValue != null) ? longDefaultValue : "";
+		if (longDefaultValue != null) {
+			return longDefaultValue;
+		} else {
+			return "";
+		}
 	}
 
 }
