@@ -75,5 +75,24 @@
   	</addColumn>
   
   </changeSet>
+  
+  
+  	<changeSet id="tm-1.11.0.feature-3556-4" author="kdrifi">
+		<comment>Cleaning duplicates of column ROLE_USER in table core_group _authority</comment>
+
+		<delete tableName="CORE_GROUP_AUTHORITY">
+			<where>
+				AUTHORITY='ROLE_USER'
+			</where>
+		</delete>
+		
+		<delete tableName="CORE_GROUP_AUTHORITY">
+			<where>
+				GROUP_ID = 1
+				and AUTHORITY='ROLE_TM_USER'
+			</where>
+		</delete>
+	</changeSet>
+  
 
 </databaseChangeLog>
