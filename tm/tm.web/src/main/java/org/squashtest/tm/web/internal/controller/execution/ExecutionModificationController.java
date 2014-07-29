@@ -251,8 +251,10 @@ public class ExecutionModificationController {
 			res.put(DataTableModelConstants.DEFAULT_NB_ATTACH_KEY, item.getAttachmentList().size());
 			res.put(DataTableModelConstants.DEFAULT_ATTACH_LIST_ID_KEY, item.getAttachmentList().getId());
 			res.put("run-step-button", "");
+
 			List<DenormalizedFieldValue> dfvValues = dfvFinder.findAllForEntityAndRenderingLocation(item, RenderingLocation.STEP_TABLE);
 			List<CustomFieldValue> cufValues = cufValueService.findAllForEntityAndRenderingLocation(item, RenderingLocation.STEP_TABLE);
+
 			usingCustomFields(cufValues, cufValues.size());
 			usingDenormalizedFields(dfvValues, dfvValues.size());
 			appendCustomFields(res);
@@ -287,6 +289,7 @@ public class ExecutionModificationController {
 
 			}
 		}
+
 
 		public void usingCustomFields(List<CustomFieldValue> cufValues, int nbFieldsPerEntity) {
 			customFieldValuesById = new HashMap<Long, Map<String, CustomFieldValueTableModel>>();

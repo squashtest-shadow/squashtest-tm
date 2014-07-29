@@ -95,37 +95,6 @@ define(
 					break;
 				
 				}
-			/*	
-				// case : the argument is already a post function in its own rights
-				if (typeof idOrURLOrPostfunction === "function") {
-					postFunction = idOrURLOrPostfunction;
-				} 
-				
-				// case : the argument is a tryc
-				else if (typeof idOrURLOrPostfunction === "string") {
-					postFunction = function(value) {
-						ajaxconf.url = idOrURLOrPostfunction;
-						ajaxconf.data.value = value;
-						return $.ajax(ajaxconf);
-					};
-				} 
-				else if (typeof idOrURLOrPostfunction === undefined) {
-					postFunction = function(value) {
-						var id = $(this).data('value-id');
-						ajaxconf.url = baseURL + id;
-						ajaxconf.data.value = value;
-						return $.ajax(ajaxconf);
-					};
-				} 
-				else {
-					// assumed to be an integer
-					postFunction = function(value) {
-						ajaxconf.url = baseURL + idOrURLOrPostfunction;
-						ajaxconf.data.value = value;
-						return $.ajax(ajaxconf);
-					};
-				}
-				*/
 
 				return function(value, settings) {
 					var data = postProcessFn(value, settings);
@@ -137,8 +106,7 @@ define(
 			
 			/* *********************************************************************
 			 * 
-			 * Define the custom fields themselves now
-			 * 
+			 * 		Define the custom fields now
 			 * 
 			 * *********************************************************************/
 

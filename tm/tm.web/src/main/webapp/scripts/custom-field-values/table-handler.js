@@ -106,13 +106,28 @@ define([ "jquery", "./lib/cuf-values-utils", "./lib/jquery.staticCustomfield", "
 		return resultMap;
 	}
 
+	// we have to make a post function for our jeditable custom fields. Indeed 
+	// we can't know at creation time what the id of the selected cuf will be (obviously).
+	// hence this function, that can fetch it at runtime.
 	function makePostFunction(cufCode, table) {
 		return function(value) {
 
-			var row = $(this).parents('tr').get(0);
-			var cufId = table.fnGetData(row).customFields[cufCode].id;
-
-			var url = squashtm.app.contextRoot + "/custom-fields/values/" + cufId;
+			var $this = $(this),
+				cell = $this.closest('td'),
+				row = $this.closest('tr').get(0);
+			
+			var cufId,
+				url = squashtm.app.contextRoot,
+				isDenormalized = cell.hasClass('denormalized-field-value');
+			
+			if (isDenormalized){
+				cufId = table.fnGetData(row).denormalizedFields[cufCode].id
+				url += "/denormalized-fields/values/" + cufId;
+			}
+			else{
+				cufId = table.fnGetData(row).customFields[cufCode].id;
+				url += "/custom-fields/values/" + cufId;
+			}
 
 			return $.ajax({
 				url : url,
@@ -124,23 +139,6 @@ define([ "jquery", "./lib/cuf-values-utils", "./lib/jquery.staticCustomfield", "
 		};
 	}
 	
-	function makeDenormalizedPostFunction(cufCode, table) {
-		return function(value) {
-
-			var row = $(this).parents('tr').get(0);
-			var cufId = table.fnGetData(row).denormalizedFields[cufCode].id;
-
-			var url = squashtm.app.contextRoot + "/denormalized-fields/values/" + cufId;
-
-			return $.ajax({
-				url : url,
-				type : 'POST',
-				data : {
-					value : value
-				}
-			});
-		};
-	}
 
 	function createCufValuesDrawCallback(cufDefinitions, editable) {
 
@@ -154,8 +152,9 @@ define([ "jquery", "./lib/cuf-values-utils", "./lib/jquery.staticCustomfield", "
 
 			// A cell holds a custom field value if it has the class
 			// .custom-field-value, and if the data model is not empty
-			// for that one.
-			var cufCells = table.find('td.custom-field-value').filter(function() {
+			// for that one. Same goes for denormalized custom field, which 
+			// has a class .denormalized-field-value
+			var cufCells = table.find('td.custom-field-value, td.denormalized-field-value').filter(function() {
 				return (table.fnGetData(this) !== null);
 			});
 
@@ -165,7 +164,7 @@ define([ "jquery", "./lib/cuf-values-utils", "./lib/jquery.staticCustomfield", "
 			for ( var code in defMap) {
 
 				var def = defMap[code];
-				var spans = table.find('td.custom-field-' + code + '>span');
+				var spans = table.find('td.custom-field-' + code + '>span, td.denormalized-field-' + code + '>span');
 
 				if (isEditable) {
 					var postFunction = makePostFunction(code, table);
@@ -177,28 +176,6 @@ define([ "jquery", "./lib/cuf-values-utils", "./lib/jquery.staticCustomfield", "
 
 			}
 
-		
-			var dfvCells = table.find('td.denormalized-field-value').filter(function() {
-				return (table.fnGetData(this) !== null);
-			});
-
-			// now wrap the content with a span
-			dfvCells.wrapInner('<span/>');
-
-			for ( var code1 in defMap) {
-
-				var def1 = defMap[code1];
-				var spans1 = table.find('td.denormalized-field-' + code1 + '>span');
-
-				if (isEditable) {
-					var postFunction1 = makeDenormalizedPostFunction(code1, table);
-					spans1.jeditableCustomfield(def1, postFunction1);
-				}
-				else{
-					spans1.staticCustomfield(def1);
-				}
-
-			}
 		};
 	}
 
