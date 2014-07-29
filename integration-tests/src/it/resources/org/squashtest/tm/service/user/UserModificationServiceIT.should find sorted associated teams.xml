@@ -1,0 +1,62 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- This file is part of the Squashtest platform. Copyright (C) 2010 - 2012 
+	Henix, henix.fr See the NOTICE file distributed with this work for additional 
+	information regarding copyright ownership. This is free software: you can 
+	redistribute it and/or modify it under the terms of the GNU Lesser General 
+	Public License as published by the Free Software Foundation, either version 
+	3 of the License, or (at your option) any later version. this software is 
+	distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; 
+	without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+	PURPOSE. See the GNU Lesser General Public License for more details. You 
+	should have received a copy of the GNU Lesser General Public License along 
+	with this software. If not, see <http://www.gnu.org/licenses/>. -->
+<!DOCTYPE dataset SYSTEM "../../../../../dtd/squash-tm.1.9.10.dtd">
+
+<dataset>
+
+	<CORE_GROUP ID="123" QUALIFIED_NAME="driver" />
+	<CORE_GROUP_AUTHORITY AUTHORITY="drive" GROUP_ID="123" />
+
+	<CORE_PARTY PARTY_ID="1" />
+	<CORE_TEAM PARTY_ID="1" NAME="ONE" CREATED_BY="dbunit" CREATED_ON="2013-02-01" />
+	<CORE_PARTY PARTY_ID="2" />
+	<CORE_TEAM PARTY_ID="2" NAME="TWO" CREATED_BY="dbunit" CREATED_ON="2013-02-01" />
+	<CORE_PARTY PARTY_ID="3" />
+	<CORE_TEAM PARTY_ID="3" NAME="THREE" CREATED_BY="dbunit" CREATED_ON="2013-02-01" />
+	<CORE_PARTY PARTY_ID="4" />
+	<CORE_TEAM PARTY_ID="4" NAME="FOUR" CREATED_BY="dbunit" CREATED_ON="2013-02-01" />
+	<CORE_PARTY PARTY_ID="5" />
+	<CORE_TEAM PARTY_ID="5" NAME="FIVE" CREATED_BY="dbunit"	CREATED_ON="2013-02-01" />
+	<CORE_PARTY PARTY_ID="6" />
+	<CORE_TEAM PARTY_ID="6" NAME="SIX" CREATED_BY="dbunit"	CREATED_ON="2013-02-01" />
+	<CORE_PARTY PARTY_ID="7" />
+	<CORE_TEAM PARTY_ID="7" NAME="SEVEN" CREATED_BY="dbunit" CREATED_ON="2013-02-01" />
+	<CORE_PARTY PARTY_ID="8" />
+	<CORE_TEAM PARTY_ID="8" NAME="EIGHT" CREATED_BY="dbunit" CREATED_ON="2013-02-01" />
+	<CORE_PARTY PARTY_ID="9" />
+	<CORE_TEAM PARTY_ID="9" NAME="NINE" CREATED_BY="dbunit"	CREATED_ON="2013-02-01" />
+	<CORE_PARTY PARTY_ID="10" />
+	<CORE_TEAM PARTY_ID="10" NAME="TEN" CREATED_BY="dbunit"	CREATED_ON="2013-02-01" />
+
+
+	<CORE_PARTY PARTY_ID="20" />
+	<CORE_USER PARTY_ID="20" LOGIN="batman" LAST_NAME="batman"
+		CREATED_BY="dbu" CREATED_ON="2011-03-19" />
+	<CORE_GROUP_MEMBER PARTY_ID="20" GROUP_ID="123" />
+
+	<CORE_TEAM_MEMBER TEAM_ID="1" USER_ID="20" />
+	<CORE_TEAM_MEMBER TEAM_ID="2" USER_ID="20" />
+	<CORE_TEAM_MEMBER TEAM_ID="3" USER_ID="20" />
+	<CORE_TEAM_MEMBER TEAM_ID="5" USER_ID="20" />
+	<CORE_TEAM_MEMBER TEAM_ID="6" USER_ID="20" />
+	<CORE_TEAM_MEMBER TEAM_ID="7" USER_ID="20" />
+	<CORE_TEAM_MEMBER TEAM_ID="8" USER_ID="20" />
+	<CORE_TEAM_MEMBER TEAM_ID="9" USER_ID="20" />
+	<CORE_TEAM_MEMBER TEAM_ID="10" USER_ID="20" />
+
+	<core_user />
+
+
+
+
+</dataset>

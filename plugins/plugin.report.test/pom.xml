@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<artifactId>squash-tm-plugins</artifactId>
+		<groupId>org.squashtest.tm</groupId>
+		<version>1.11.0.M1-SNAPSHOT</version>
+	</parent>
+	<artifactId>plugin.report.test</artifactId>
+	<description>Fake report plugin for integration tests purpose</description>
+	<packaging>bundle</packaging>
+
+	<dependencies>
+		<!-- ====== DEPENDENCY POMS ====== -->
+		<dependency>
+			<groupId>org.squashtest.tm</groupId>
+			<artifactId>springdm-bundle-dependencies</artifactId>
+			<version>${project.version}</version>
+			<type>pom</type>
+		</dependency>
+		<dependency>
+			<groupId>org.squashtest.tm</groupId>
+			<artifactId>spock-test-dependencies</artifactId>
+			<version>${project.version}</version>
+			<type>pom</type>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.squashtest.tm</groupId>
+			<artifactId>hibernate-dependencies</artifactId>
+			<version>${project.version}</version>
+			<type>pom</type>
+		</dependency>
+		<dependency>
+			<groupId>org.squashtest.tm</groupId>
+			<artifactId>org.squashtest.csp.tools.unittest</artifactId>
+			<version>${project.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<!-- ====== /DEPENDENCY POMS ====== -->
+
+		<!--======= SQUASHTEST MODULES ======== -->
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>core.api</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>core.report.api</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<!--======= /SQUASHTEST MODULES ======== -->
+
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>org.springframework.beans</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+
+	</dependencies>
+
+	<build>
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+				<filtering>true</filtering>
+			</resource>
+		</resources>
+
+		<testResources>
+			<testResource>
+				<directory>src/test/resources</directory>
+				<filtering>false</filtering>
+			</testResource>
+		</testResources>
+
+		<testSourceDirectory>src/test/groovy</testSourceDirectory>
+
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.felix</groupId>
+				<artifactId>maven-bundle-plugin</artifactId>
+				<extensions>true</extensions>
+				<configuration>
+					<instructions>
+						<_include>bnd.bnd</_include>
+					</instructions>
+				</configuration>
+			</plugin>
+
+			<!-- ====== SPOCK TESTS ====== -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+			</plugin>
+			<!-- ====== /SPOCK TESTS ====== -->
+		</plugins>
+	</build>
+</project>

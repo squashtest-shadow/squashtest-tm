@@ -1,0 +1,55 @@
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) 2010 - 2014 Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-transitional-thymeleaf-spring3-3.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+	<link rel="stylesheet" type="text/css" media="all" href="../../../../../../../tm/tm.web/src/main/webapp/styles/squash.core.css" sq:css="squash.core.css" />
+	<link rel="stylesheet" type="text/css" media="all" href="../../../../../../../tm/tm.web/src/main/webapp/styles/squash.blue.css" sq:css="squash.blue.css" />
+</head>
+<body>
+	<div id="workspace" th:fragment="navbar" th:attr="data-hilight=${hilightedWorkspace}" >
+		<div id="test_mgt_nav" th:with="bugtrackers = ${#workspace.visibleBugtrackers()}">
+			<a id="home-link" 			class="navigation-link navigation-home" 			href="home-workspace.html" th:href="@{/home-workspace/}" th:title="#{workspace.home.button.label}"></a>
+			<a id="requirement-link" 	class="navigation-link navigation-requirement" 		href="requirement-workspace.html" th:href="@{/requirement-workspace/}" th:title="#{workspace.requirement.button.label}"></a>
+			<a id="test-case-link" 		class="navigation-link navigation-test-case" 		href="test-case-workspace.html" th:href="@{/test-case-workspace/}" th:title="#{workspace.test-case.button.label}" ></a>
+			<a id="campaign-link" 		class="navigation-link navigation-campaign" 		href="campaign-workspace.html" th:href="@{/campaign-workspace/}" th:title="#{workspace.campaign.button.label}" ></a>
+			
+			<a id="bugtracker-link"	 	class="navigation-link navigation-bugtracker" 		th:classappend="${#lists.isEmpty(bugtrackers)} ? 'not-displayed'" th:title="#{workspace.bugtracker.button.label}"></a>
+			<ul class="not-displayed width:130px;">			
+				<li th:each="bugtracker : ${bugtrackers}" >
+					<a th:id="'bugtracker-'+${bugtracker.id}" th:href="${bugtracker.iframeFriendly} ? @{/bugtracker/}+${bugtracker.id}+'/workspace' : ${bugtracker.URL}" 
+															  th:target="${bugtracker.iframeFriendly} ? '_blank' : ''" 
+															  th:text="${bugtracker.name}">mantis</a>			
+				</li>			
+			</ul>					
+			
+			<a id="report-link" 		class="navigation-link navigation-report"  			href="report-workspace.html" th:href="@{/report-workspace}" th:title="#{workspace.report.button.label}" ></a>
+		</div>
+		
+		<div id="nav_logo" class="vertical-logo"></div>
+<script type="text/javascript">
+publish("load.navBar");
+</script>
+	</div>
+</body>
+</html>

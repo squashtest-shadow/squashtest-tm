@@ -1,0 +1,21 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<artifactId>squashtest-parent-pom</artifactId>
+		<groupId>org.squashtest.tm</groupId>
+		<version>1.11.0.M1-SNAPSHOT</version>
+		<relativePath>../parent-pom</relativePath>
+	</parent>
+	<artifactId>squash-tm-plugins</artifactId>
+	<packaging>pom</packaging>
+	<name>squash-tm-plugins</name>
+	<description>This module builds standard Squash TM plugins</description>
+
+	<modules>
+		<module>plugin.bugtracker.mantis</module>
+		<module>plugin.report.std</module>
+		<module>plugin.report.test</module>
+		<module>plugin.testautomation.jenkins</module>
+		<module>plugin.workspacewizard.test</module>
+	</modules>
+</project>

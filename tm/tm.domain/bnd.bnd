@@ -1,0 +1,7 @@
+-include: pom.xml
+-nouses: true
+DynamicImport-Package: *
+Import-Package: org.hibernate.proxy,\
+	javassist.util.proxy,\
+    org.springframework.beans.factory.aspectj,\
+	*

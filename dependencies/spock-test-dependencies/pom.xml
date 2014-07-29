@@ -1,0 +1,56 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <artifactId>squashtest-csp-dependencies</artifactId>
+    <groupId>org.squashtest.tm</groupId>
+    <version>1.11.0.M1-SNAPSHOT</version>
+  </parent>
+
+  <artifactId>spock-test-dependencies</artifactId>
+  <packaging>pom</packaging>
+  <name>spock-test-dependencies</name>
+  <description>Defines dependencies for Spock-based tests.</description>
+
+  <dependencies>
+		<!-- ====== JUNIT ====== -->
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.hamcrest</groupId>
+      <artifactId>hamcrest-all</artifactId>
+      <scope>compile</scope>
+    </dependency>
+		<!-- ====== /JUNIT ====== -->
+		
+		<!-- ====== SPOCK TESTS ====== -->
+    <dependency>
+      <groupId>org.spockframework</groupId>
+      <artifactId>spock-core</artifactId>
+      <scope>compile</scope>
+    </dependency>
+		<!-- Required to mock classes -->
+    <dependency>
+      <groupId>net.sourceforge.cglib</groupId>
+      <artifactId>com.springsource.net.sf.cglib</artifactId>
+      <version>${cglib.version}</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.objenesis</groupId>
+      <artifactId>objenesis</artifactId>
+      <scope>compile</scope>
+    </dependency>
+		<!-- ====== /SPOCK TESTS ====== -->
+		
+		<!-- ====== GROOVY ====== -->
+    <dependency>
+      <groupId>org.codehaus.groovy</groupId>
+      <artifactId>groovy-all</artifactId>
+      <scope>compile</scope>
+    </dependency>
+		<!-- ====== /GROOVY ====== -->
+  </dependencies>
+</project>

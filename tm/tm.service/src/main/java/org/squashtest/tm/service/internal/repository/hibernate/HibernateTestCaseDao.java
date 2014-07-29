@@ -1,0 +1,695 @@
+/**
+ *     This file is part of the Squashtest platform.
+ *     Copyright (C) 2010 - 2014 Henix, henix.fr
+ *
+ *     See the NOTICE file distributed with this work for additional
+ *     information regarding copyright ownership.
+ *
+ *     This is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU Lesser General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     this software is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU Lesser General Public License for more details.
+ *
+ *     You should have received a copy of the GNU Lesser General Public License
+ *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
+ */
+package org.squashtest.tm.service.internal.repository.hibernate;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.ListIterator;
+import java.util.Map;
+
+import org.apache.commons.collections.ListUtils;
+import org.hibernate.Criteria;
+import org.hibernate.Hibernate;
+import org.hibernate.Query;
+import org.hibernate.SQLQuery;
+import org.hibernate.Session;
+import org.hibernate.criterion.DetachedCriteria;
+import org.hibernate.criterion.MatchMode;
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Restrictions;
+import org.hibernate.sql.JoinType;
+import org.hibernate.type.LongType;
+import org.springframework.stereotype.Repository;
+import org.squashtest.tm.core.foundation.collection.DefaultSorting;
+import org.squashtest.tm.core.foundation.collection.Paging;
+import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
+import org.squashtest.tm.core.foundation.collection.Sorting;
+import org.squashtest.tm.domain.IdentifiedUtil;
+import org.squashtest.tm.domain.NamedReference;
+import org.squashtest.tm.domain.NamedReferencePair;
+import org.squashtest.tm.domain.execution.Execution;
+import org.squashtest.tm.domain.requirement.RequirementSearchCriteria;
+import org.squashtest.tm.domain.testcase.ExportTestCaseData;
+import org.squashtest.tm.domain.testcase.TestCase;
+import org.squashtest.tm.domain.testcase.TestCaseFolder;
+import org.squashtest.tm.domain.testcase.TestCaseImportance;
+import org.squashtest.tm.domain.testcase.TestCaseLibraryNode;
+import org.squashtest.tm.domain.testcase.TestCaseSearchCriteria;
+import org.squashtest.tm.domain.testcase.TestStep;
+import org.squashtest.tm.service.internal.foundation.collection.PagingUtils;
+import org.squashtest.tm.service.internal.foundation.collection.SortingUtils;
+import org.squashtest.tm.service.internal.repository.CustomTestCaseDao;
+
+/**
+ * DAO for org.squashtest.tm.domain.testcase.TestCase
+ * 
+ * @author bsiri
+ * 
+ */
+
+@Repository("CustomTestCaseDao")
+public class HibernateTestCaseDao extends HibernateEntityDao<TestCase> implements CustomTestCaseDao {
+	/**
+	 * "Standard" name for a query parameter representing a test case id.
+	 */
+	private static final String TEST_CASE_ID_PARAM_NAME = "testCaseId";
+	private static final String PROJECT = "project";
+
+	private static final String FIND_DESCENDANT_QUERY = "select DESCENDANT_ID from TCLN_RELATIONSHIP where ANCESTOR_ID in (:list)";
+
+	private static final String FIND_ALL_DESCENDANT_TESTCASE_QUERY = "select tc.tcln_id from TCLN_RELATIONSHIP_CLOSURE tclnrc "+
+			"inner join TEST_CASE tc on tclnrc.DESCENDANT_ID = tc.tcln_id "+
+			"where tclnrc.ANCESTOR_ID in (:nodeIds)";
+
+	private static final String FIND_ALL_FOR_LIBRARY_QUERY = "select distinct testCase.TCLN_ID"
+			+ " from TEST_CASE testCase " + " join TEST_CASE_LIBRARY_NODE tcln on tcln.TCLN_ID = testCase.TCLN_ID"
+			+ " join PROJECT project on project.PROJECT_ID = tcln.PROJECT_ID" + " where project.TCL_ID = :libraryId";
+	private static final String FIND_ALL_CALLING_TEST_CASE_MAIN_HQL = "select TestCase from TestCase as TestCase left join TestCase.project as Project "
+			+ " join TestCase.steps as Steps where Steps.calledTestCase.id = :testCaseId group by TestCase ";
+
+	private static List<DefaultSorting> defaultVerifiedTcSorting;
+
+	static {
+		defaultVerifiedTcSorting = new LinkedList<DefaultSorting>();
+		defaultVerifiedTcSorting.add(new DefaultSorting("TestCase.reference"));
+		defaultVerifiedTcSorting.add(new DefaultSorting("TestCase.name"));
+		ListUtils.unmodifiableList(defaultVerifiedTcSorting);
+	}
+
+	@Override
+	public void safePersist(TestCase testCase) {
+
+		if (testCase.getSteps().isEmpty()) {
+			super.persist(testCase);
+		} else {
+			persistTestCaseAndSteps(testCase);
+		}
+	}
+
+	@Override
+	public void persistTestCaseAndSteps(TestCase testCase) {
+		for (TestStep step : testCase.getSteps()) {
+			super.persistEntity(step);
+		}
+		super.persistEntity(testCase);
+	}
+
+	@Override
+	// FIXME Uh, should be init'd by a query !
+	public TestCase findAndInit(Long testCaseId) {
+		Session session = currentSession();
+		TestCase tc = (TestCase) session.get(TestCase.class, testCaseId);
+		if (tc == null) {
+			return null;
+		}
+		Hibernate.initialize(tc.getSteps());
+
+		return tc;
+	}
+
+	private SetQueryParametersCallback idParameter(final long testCaseId) {
+		return new SetIdParameter(TEST_CASE_ID_PARAM_NAME, testCaseId);
+	}
+
+	private static final class SetIdsParameter implements SetQueryParametersCallback {
+		private Collection<Long> testCasesIds;
+
+		private SetIdsParameter(Collection<Long> testCasesIds) {
+			this.testCasesIds = testCasesIds;
+		}
+
+		@Override
+		public void setQueryParameters(Query query) {
+			query.setParameterList("testCasesIds", testCasesIds);
+		}
+	}
+
+	@Override
+	public List<TestStep> findAllStepsByIdFiltered(final long testCaseId, final Paging filter) {
+		/*
+		 * we can't use the Criteria API because we need to get the ordered list and we can't access the join table to sort
+		 * them (again).
+		 */
+		final int firstIndex = filter.getFirstItemIndex();
+		final int lastIndex = filter.getFirstItemIndex() + filter.getPageSize() - 1;
+
+		SetQueryParametersCallback callback = new SetIdsIndexesParameters(testCaseId, firstIndex, lastIndex);
+
+		return executeListNamedQuery("testCase.findAllStepsByIdFiltered", callback);
+	}
+
+	private static final class SetIdsIndexesParameters implements SetQueryParametersCallback {
+		private int firstIndex;
+		private long testCaseId;
+		private int lastIndex;
+
+		private SetIdsIndexesParameters(long testCaseId, int firstIndex, int lastIndex) {
+			this.testCaseId = testCaseId;
+			this.firstIndex = firstIndex;
+			this.lastIndex = lastIndex;
+		}
+
+		@Override
+		public void setQueryParameters(Query query) {
+
+			query.setParameter("testCaseId", testCaseId);
+			query.setParameter("firstIndex", firstIndex);
+			query.setParameter("lastIndex", lastIndex);
+
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<TestCaseLibraryNode> findAllByNameContaining(final String tokenInName, boolean groupByProject) {
+		List<TestCaseLibraryNode> result;
+
+		Criteria criteria = currentSession().createCriteria(TestCaseLibraryNode.class, "testCaseLibraryNode")
+				.createAlias("testCaseLibraryNode.project", PROJECT)
+				.add(Restrictions.ilike("testCaseLibraryNode.name", tokenInName, MatchMode.ANYWHERE));
+
+		if (groupByProject) {
+			criteria = criteria.addOrder(Order.asc("project.id"));
+
+		}
+
+		criteria = criteria.addOrder(Order.asc("testCaseLibraryNode.name"));
+
+		result = criteria.list();
+
+		return result;
+	}
+
+	// dynamic
+	@Override
+	public TestCase findTestCaseByTestStepId(final long testStepId) {
+		Query query = currentSession().getNamedQuery("testStep.findParentNode");
+		query.setParameter("childId", testStepId);
+		return (TestCase) query.uniqueResult();
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Long> findTestCasesHavingCaller(Collection<Long> testCasesIds) {
+		Query query = currentSession().getNamedQuery("testCase.findTestCasesHavingCaller");
+		query.setParameterList("testCasesIds", testCasesIds);
+		return query.list();
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Long> findAllTestCasesIdsCalledByTestCases(Collection<Long> testCasesIds) {
+		Query query = currentSession().getNamedQuery("testCase.findAllTestCasesIdsCalledByTestCases");
+		query.setParameterList("testCasesIds", testCasesIds);
+		return query.list();
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Long> findAllTestCasesIdsCallingTestCases(List<Long> testCasesIds) {
+		if(testCasesIds.isEmpty()){
+			return Collections.emptyList();
+		}
+		Query query = currentSession().getNamedQuery("testCase.findAllTestCasesIdsCallingTestCases");
+		query.setParameterList("testCasesIds", testCasesIds);
+		return query.list();
+	}
+
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<TestCase> findAllCallingTestCases(final long testCaseId, final PagingAndSorting sorting) {
+		String orderBy = "";
+
+		if (sorting != null) {
+			orderBy = " order by " + sorting.getSortedAttribute() + ' ' + sorting.getSortOrder().getCode();
+		}
+
+		Query query = currentSession().createQuery(FIND_ALL_CALLING_TEST_CASE_MAIN_HQL + orderBy);
+		query.setParameter("testCaseId", testCaseId);
+
+		if (sorting != null) {
+			query.setMaxResults(sorting.getPageSize());
+			query.setFirstResult(sorting.getFirstItemIndex());
+		}
+		return query.list();
+
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<TestCase> findAllCallingTestCases(long calleeId) {
+		Query query = currentSession().createQuery(FIND_ALL_CALLING_TEST_CASE_MAIN_HQL);
+		query.setParameter("testCaseId", calleeId);
+		return query.list();
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<NamedReference> findTestCaseDetails(Collection<Long> ids){
+		if (ids.isEmpty()){
+			return Collections.emptyList();
+		}
+		Query q = currentSession().getNamedQuery("testCase.findTestCaseDetails");
+		q.setParameterList("testCaseIds", ids, LongType.INSTANCE);
+		return q.list();
+	}
+
+
+	@Override
+	/*
+	 * implementation note : the following query could not use a right outer join. So we'll do the job manually. Hence
+	 * the weird things done below.
+	 */
+	public List<NamedReferencePair> findTestCaseCallsUpstream(final Collection<Long> testCaseIds) {
+
+		// get the node pairs when a caller/called pair was found.
+		List<NamedReferencePair> result =  findTestCaseCallsDetails(testCaseIds, "testCase.findTestCasesHavingCallerDetails");
+
+		// now we must also add dummy Object[] for the test case ids that hadn't any caller
+		Collection<Long> remainingIds = new HashSet<Long>(testCaseIds);
+		for (NamedReferencePair pair : result){
+			remainingIds.remove(pair.getCalled().getId());
+		}
+
+		List<NamedReference> noncalledReferences = findTestCaseDetails(remainingIds);
+
+		for (NamedReference ref : noncalledReferences){
+			result.add(new NamedReferencePair(null, null, ref.getId(), ref.getName()));
+		}
+
+		return result;
+
+	}
+
+
+	public List<NamedReferencePair> findTestCaseCallsDownstream(final Collection<Long> testCaseIds) {
+
+		// get the node pairs when a caller/called pair was found.
+		List<NamedReferencePair> result = findTestCaseCallsDetails(testCaseIds, "testCase.findTestCasesHavingCallStepsDetails");
+
+		// now we must also add dummy Object[] for the test case ids that hadn't any caller
+		Collection<Long> remainingIds = new HashSet<Long>(testCaseIds);
+		for (NamedReferencePair pair : result){
+			remainingIds.remove(pair.getCaller().getId());
+		}
+
+		List<NamedReference> noncalledReferences = findTestCaseDetails(remainingIds);
+
+		for (NamedReference ref : noncalledReferences){
+			result.add(new NamedReferencePair(ref.getId(), ref.getName(), null, null));
+		}
+
+		return result;
+	}
+
+
+	private List<NamedReferencePair> findTestCaseCallsDetails(final Collection<Long> testCaseIds, String mainQuery){
+		if (testCaseIds.isEmpty()) {
+			return Collections.emptyList();
+		}
+
+		// the easy part : fetch the informations for those who are called
+		SetQueryParametersCallback queryCallback = new SetQueryParametersCallback() {
+			@Override
+			public void setQueryParameters(Query query) {
+				query.setParameterList("testCaseIds", testCaseIds, new LongType());
+				query.setReadOnly(true);
+			}
+		};
+
+		return executeListNamedQuery(mainQuery,	queryCallback);
+
+	}
+
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<TestCase> findAllByRequirement(RequirementSearchCriteria criteria, boolean isProjectOrdered) {
+
+		DetachedCriteria crit = createFindAllByRequirementCriteria(criteria);
+
+		if (isProjectOrdered) {
+			crit.addOrder(Order.asc(PROJECT));
+		}
+
+		return crit.getExecutableCriteria(currentSession()).list();
+	}
+
+
+	private DetachedCriteria createFindAllByRequirementCriteria(RequirementSearchCriteria criteria) {
+		DetachedCriteria crit = DetachedCriteria.forClass(TestCase.class);
+		crit.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+		crit.createAlias("requirementVersionCoverages", "rvc");
+		DetachedCriteria reqCrit = crit.createCriteria("rvc.verifiedRequirementVersion");
+
+		if (criteria.getName() != null) {
+			reqCrit.add(Restrictions.ilike("name", criteria.getName(), MatchMode.ANYWHERE));
+		}
+
+		if (criteria.getReference() != null) {
+			reqCrit.add(Restrictions.ilike("reference", criteria.getReference(), MatchMode.ANYWHERE));
+		}
+		if (!criteria.getCriticalities().isEmpty()) {
+			reqCrit.add(Restrictions.in("criticality", criteria.getCriticalities()));
+		}
+		if (!criteria.getCategories().isEmpty()) {
+			reqCrit.add(Restrictions.in("category", criteria.getCategories()));
+		}
+		return crit;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Long> findCalledTestCaseOfCallSteps(List<Long> testStepsIds) {
+		Query query = currentSession().getNamedQuery("testCase.findCalledTestCaseOfCallSteps");
+		query.setParameterList("testStepsIds", testStepsIds);
+		return query.list();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.squashtest.csp.tm.internal.repository.TestCaseDao#findAllVerifyingRequirementVersion(long,
+	 * org.squashtest.tm.core.foundation.collection.PagingAndSorting)
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<TestCase> findAllByVerifiedRequirementVersion(long verifiedId, PagingAndSorting sorting) {
+		Criteria crit = createFindAllVerifyingCriteria(sorting);
+
+		crit.add(Restrictions.eq("RequirementVersion.id", Long.valueOf(verifiedId)));
+
+		return crit.list();
+	}
+
+	/**
+	 * @param sorting
+	 * @return
+	 */
+	/*
+	 * Issue #1629
+	 * 
+	 * Observed problem : test cases sorted by references are indeed sorted by reference, but no more by name. Actual
+	 * problem : We always want them to be sorted by reference and name, even when we want primarily sort them by
+	 * project or execution type or else. Solution : The resultset will be sorted on all the attributes (ascending), and
+	 * the Sorting specified by the user will have an higher priority.
+	 * 
+	 * See #createEffectiveSorting(Sorting sorting), just below
+	 */
+	private Criteria createFindAllVerifyingCriteria(PagingAndSorting sorting) {
+
+		Criteria crit = currentSession().createCriteria(TestCase.class, "TestCase");
+		crit.createAlias("requirementVersionCoverages", "rvc");
+		crit.createAlias("rvc.verifiedRequirementVersion", "RequirementVersion");
+		crit.createAlias("RequirementVersion.requirement", "Requirement", JoinType.LEFT_OUTER_JOIN);
+		crit.createAlias("project", "Project", JoinType.LEFT_OUTER_JOIN);
+
+		List<Sorting> effectiveSortings = createEffectiveSorting(sorting);
+		if(!sorting.shouldDisplayAll()){
+			PagingUtils.addPaging(crit, sorting);
+		}
+		SortingUtils.addOrders(crit, effectiveSortings);
+
+		return crit;
+	}
+
+	private List<Sorting> createEffectiveSorting(Sorting userSorting) {
+
+		LinkedList<Sorting> sortings = new LinkedList<Sorting>(defaultVerifiedTcSorting);
+
+		// from that list we filter out the redundant element, considering the argument.
+		// note that the sorting order is irrelevant here.
+		ListIterator<Sorting> iterator = sortings.listIterator();
+		while (iterator.hasNext()) {
+			Sorting defaultSorting = iterator.next();
+			if (defaultSorting.getSortedAttribute().equals(userSorting.getSortedAttribute())) {
+				iterator.remove();
+				break;
+			}
+		}
+
+		// now we can set the Sorting specified by the user in first position
+		sortings.addFirst(userSorting);
+
+		return sortings;
+	}
+
+	/**
+	 * @see org.squashtest.tm.service.internal.repository.TestCaseDao#countByVerifiedRequirementVersion(long)
+	 */
+	@Override
+	public long countByVerifiedRequirementVersion(final long verifiedId) {
+		return (Long) executeEntityNamedQuery("testCase.countByVerifiedRequirementVersion", new SetVerifiedIdParameter(
+				verifiedId));
+	}
+
+	private static final class SetVerifiedIdParameter implements SetQueryParametersCallback {
+		private long verifiedId;
+
+		private SetVerifiedIdParameter(long verifiedId) {
+			this.verifiedId = verifiedId;
+		}
+
+		@Override
+		public void setQueryParameters(Query query) {
+			query.setLong("verifiedId", verifiedId);
+
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<TestCase> findUnsortedAllByVerifiedRequirementVersion(long requirementVersionId) {
+		Query query = currentSession().getNamedQuery("testCase.findUnsortedAllByVerifiedRequirementVersion");
+		query.setParameter("requirementVersionId", requirementVersionId);
+		return query.list();
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<TestCaseLibraryNode> findBySearchCriteria(TestCaseSearchCriteria criteria) {
+
+		Criteria hCriteria;
+
+		if (criteria.includeFoldersInResult()) {
+			hCriteria = currentSession().createCriteria(TestCaseLibraryNode.class);
+		} else {
+			hCriteria = currentSession().createCriteria(TestCase.class);
+		}
+
+		if (criteria.usesNameFilter()) {
+			hCriteria.add(Restrictions.ilike("name", criteria.getNameFilter(), MatchMode.ANYWHERE));
+		}
+
+		if (criteria.usesImportanceFilter()) {
+			hCriteria.add(Restrictions.in("importance", criteria.getImportanceFilterSet()));
+		}
+
+		if (criteria.usesNatureFilter()) {
+			hCriteria.add(Restrictions.in("nature", criteria.getNatureFilterSet()));
+		}
+
+		if (criteria.usesTypeFilter()) {
+			hCriteria.add(Restrictions.in("type", criteria.getTypeFilterSet()));
+		}
+
+		if (criteria.usesStatusFilter()) {
+			hCriteria.add(Restrictions.in("status", criteria.getStatusFilterSet()));
+		}
+
+		if (criteria.isGroupByProject()) {
+			hCriteria.addOrder(Order.asc(PROJECT));
+		}
+
+		hCriteria.addOrder(Order.asc("name"));
+
+		return hCriteria.list();
+
+	}
+
+	@Override
+	public List<Execution> findAllExecutionByTestCase(Long tcId) {
+		SetQueryParametersCallback callback = idParameter(tcId);
+		return executeListNamedQuery("testCase.findAllExecutions", callback);
+	}
+
+	/* ----------------------------------------------------EXPORT METHODS----------------------------------------- */
+	// TODO try to avoid duplicate code with requirementExport
+	// XXX actually it helps Ctrl-F'ing for multiple occurences of the same bug because they use the exact same pieces of code :P Just kidding of course.
+	@Override
+	public List<ExportTestCaseData> findTestCaseToExportFromLibrary(List<Long> projectIds) {
+		if (!projectIds.isEmpty()) {
+			SetLibraryIdsCallback newCallBack1 = new SetLibraryIdsCallback(projectIds);
+			List<Long> result = executeListNamedQuery("testCase.findAllRootContent", newCallBack1);
+
+			return findTestCaseToExportFromNodes(result);
+		} else {
+			return Collections.emptyList();
+		}
+	}
+
+	@Override
+	public List<ExportTestCaseData> findTestCaseToExportFromNodes(List<Long> params) {
+		if (!params.isEmpty()) {
+			return doFindTestCaseToExportFromNodes(params);
+
+		} else {
+			return Collections.emptyList();
+
+		}
+	}
+
+	private List<ExportTestCaseData> doFindTestCaseToExportFromNodes(List<Long> params) {
+		// find root leafs
+		List<TestCase> rootTestCases = findRootContentTestCase(params);
+		// find all leafs contained in ids and contained by folders in ids
+		List<Long> descendantIds = findDescendantIds(params, FIND_DESCENDANT_QUERY);
+
+		// Case 1. Only root leafs are found
+		if (descendantIds == null || descendantIds.isEmpty()) {
+			List<Object[]> testCasesWithParentFolder = new ArrayList<Object[]>();
+			return formatExportResult(mergeRootWithTestCasesWithParentFolder(rootTestCases, testCasesWithParentFolder));
+		}
+
+		// Case 2. More than root leafs are found
+		List<Long> tcIds = findTestCaseIdsInIdList(descendantIds);
+		List<Object[]> testCasesWithParentFolder = findTestCaseAndParentFolder(tcIds);
+
+		if (!rootTestCases.isEmpty()) {
+			mergeRootWithTestCasesWithParentFolder(rootTestCases, testCasesWithParentFolder);
+		}
+
+		return formatExportResult(testCasesWithParentFolder);
+	}
+
+	private List<Object[]> findTestCaseAndParentFolder(List<Long> tcIds) {
+		if (!tcIds.isEmpty()) {
+			SetQueryParametersCallback newCallBack1 = new SetIdsParameter(tcIds);
+			return executeListNamedQuery("testCase.findTestCasesWithParentFolder", newCallBack1);
+
+		} else {
+			return Collections.emptyList();
+		}
+	}
+
+	private List<Long> findTestCaseIdsInIdList(List<Long> nodesIds) {
+		if (!nodesIds.isEmpty()) {
+
+			List<TestCase> resultList = findAllByIds(nodesIds);
+			return IdentifiedUtil.extractIds(resultList);
+
+		} else {
+			return Collections.emptyList();
+		}
+	}
+
+	private List<Object[]> mergeRootWithTestCasesWithParentFolder(List<TestCase> rootTestCases,
+			List<Object[]> testCasesWithParentFolder) {
+		for (TestCase testCase : rootTestCases) {
+			Object[] testCaseWithNullParentFolder = { testCase, null };
+			testCasesWithParentFolder.add(testCaseWithNullParentFolder);
+		}
+		return testCasesWithParentFolder;
+	}
+
+	private List<TestCase> findRootContentTestCase(final List<Long> params) {
+		if (!params.isEmpty()) {
+			SetQueryParametersCallback newCallBack1 = new SetParamIdsParametersCallback(params);
+			return executeListNamedQuery("testCase.findRootContentTestCase", newCallBack1);
+
+		} else {
+			return Collections.emptyList();
+
+		}
+	}
+
+	private List<ExportTestCaseData> formatExportResult(List<Object[]> list) {
+		if (!list.isEmpty()) {
+			List<ExportTestCaseData> exportList = new ArrayList<ExportTestCaseData>();
+
+			for (Object[] tuple : list) {
+				TestCase tc = (TestCase) tuple[0];
+				TestCaseFolder folder = (TestCaseFolder) tuple[1];
+				ExportTestCaseData etcd = new ExportTestCaseData(tc, folder);
+				exportList.add(etcd);
+			}
+
+			return exportList;
+		} else {
+			return Collections.emptyList();
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Long> findAllTestCaseIdsByNodeIds(Collection<Long> nodeIds) {
+		if (nodeIds.isEmpty()){
+			return Collections.emptyList();
+		}
+
+		Query query = currentSession().createSQLQuery(FIND_ALL_DESCENDANT_TESTCASE_QUERY);
+		query.setParameterList("nodeIds", nodeIds, LongType.INSTANCE);
+		query.setResultTransformer(new SqLIdResultTransformer());
+
+		return query.list();
+	}
+
+	/* ----------------------------------------------------/EXPORT METHODS----------------------------------------- */
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Long> findAllTestCasesIdsByLibrary(long libraryId) {
+		Session session = currentSession();
+		SQLQuery query = session.createSQLQuery(FIND_ALL_FOR_LIBRARY_QUERY);
+		query.setParameter("libraryId", Long.valueOf(libraryId));
+		query.setResultTransformer(new SqLIdResultTransformer());
+		return query.list();
+	}
+
+
+
+	@Override
+	public List<TestCase> findAllLinkedToIteration(List<Long> nodeIds) {
+		return executeListNamedQuery("testCase.findAllLinkedToIteration", new SetIdsParameter(nodeIds));
+	}
+
+	@Override
+	public Map<Long, TestCaseImportance> findAllTestCaseImportanceWithImportanceAuto(Collection<Long> testCaseIds) {
+		Map<Long, TestCaseImportance> resultMap = new HashMap<Long, TestCaseImportance>();
+		if(testCaseIds.isEmpty()){
+			return resultMap;
+		}
+		List<Object[]> resultList = executeListNamedQuery("testCase.findAllTCImpWithImpAuto", new SetIdsParameter(testCaseIds));
+		for(Object [] resultEntry : resultList){
+			Long id = (Long) resultEntry[0];
+			TestCaseImportance imp = (TestCaseImportance) resultEntry[1];
+			resultMap.put(id, imp);
+		}
+		return resultMap;
+	}
+
+
+
+}

@@ -1,0 +1,14 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE dataset SYSTEM "../../../../../../../dtd/squash-tm.1.9.10.dtd">
+<dataset>
+	<core_group />
+	<core_group_authority />
+	<core_group_member />
+	
+	<ACL_CLASS ID="1000" CLASSNAME="batmobile" />
+	<ACL_OBJECT_IDENTITY ID="900" IDENTITY="1000" CLASS_ID="1000" />
+
+	<acl_group_permission />
+	<acl_responsibility_scope_entry />
+
+</dataset>

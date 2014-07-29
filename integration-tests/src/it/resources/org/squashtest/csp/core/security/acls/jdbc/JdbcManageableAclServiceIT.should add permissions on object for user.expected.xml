@@ -1,0 +1,14 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE dataset SYSTEM "../../../../../../../dtd/squash-tm.1.9.10.result.dtd">
+<dataset>
+	<CORE_PARTY PARTY_ID="10" />
+	<CORE_USER PARTY_ID="10" LOGIN="batman" LAST_NAME="batman" CREATED_BY="dbu" CREATED_ON="2011-03-19" />
+	
+	<ACL_CLASS ID="1000" CLASSNAME="batmobile" />
+	<ACL_OBJECT_IDENTITY ID="1000" IDENTITY="1000" CLASS_ID="1000" />
+
+	<ACL_GROUP ID="100" QUALIFIED_NAME="driver" />
+
+	<ACL_RESPONSIBILITY_SCOPE_ENTRY PARTY_ID="10" ACL_GROUP_ID="100" OBJECT_IDENTITY_ID="1000" />
+
+</dataset>

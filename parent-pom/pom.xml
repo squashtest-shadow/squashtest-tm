@@ -1,0 +1,192 @@
+<?xml version="1.0"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>org.squashtest.tm</groupId>
+    <artifactId>squash-tm</artifactId>
+    <version>1.11.0.M1-SNAPSHOT</version>
+  </parent>
+
+  <artifactId>squashtest-parent-pom</artifactId>
+  <packaging>pom</packaging>
+  <name>Squashtest - Parent POM</name>
+  <description>This POM should be used as parent by modules which produce jars and wars</description>
+
+  <dependencies>
+		<!-- ====== LOGGING ====== -->
+		<!-- Enforces logger dependencies in java projects -->
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>log4j</groupId>
+      <artifactId>log4j</artifactId>
+    </dependency>
+		<!-- ====== /LOGGING ====== -->
+  </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+			  <!-- We add license and copyright information in jars -->
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-remote-resources-plugin</artifactId>
+        <executions>
+          <execution>
+            <goals>
+              <goal>process</goal>
+            </goals>
+            <configuration>
+              <resourceBundles>
+                <resourceBundle>org.squashtest.tm:squashtest-license-resources:${project.version}</resourceBundle>
+              </resourceBundles>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+
+  <profiles>
+    <profile>
+			<!-- When activated, this profile copies files required by Eclipse PDE to launch the bundles -->
+      <id>eclipse</id>
+      <activation>
+        <file>
+          <exists>${basedir}\.project</exists>
+        </file>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <artifactId>maven-clean-plugin</artifactId>
+            <configuration>
+              <filesets>
+                <fileset>
+                  <directory>META-INF</directory>
+                </fileset>
+                <fileset>
+                  <directory>WEB-INF</directory>
+                </fileset>
+                <fileset>
+                  <directory>images</directory>
+                </fileset>
+                <fileset>
+                  <directory>styles</directory>
+                </fileset>
+                <fileset>
+                  <directory>scripts</directory>
+                </fileset>
+              </filesets>
+            </configuration>
+          </plugin>
+
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-resources-plugin</artifactId>
+            <executions>
+              <execution>
+								<!-- MANIFEST.MF is generated at package lifecycle so we cannot copy it before -->
+                <id>copy-manifest</id>
+                <phase>package</phase>
+                <goals>
+                  <goal>copy-resources</goal>
+                </goals>
+                <configuration>
+                  <outputDirectory>${basedir}/META-INF</outputDirectory>
+                  <resources>
+                    <resource>
+                      <directory>${basedir}/src/main/resources/META-INF</directory>
+                    </resource>
+                    <resource>
+                      <directory>${project.build.outputDirectory}/META-INF</directory>
+                    </resource>
+                  </resources>
+                </configuration>
+              </execution>
+
+
+              <execution>
+								<!-- webapp/WEB-INF content should be copied at project root. We can do this at compile lifecycle -->
+                <id>copy-web-inf</id>
+                <phase>process-resources</phase>
+                <goals>
+                  <goal>copy-resources</goal>
+                </goals>
+                <configuration>
+                  <outputDirectory>${basedir}/WEB-INF</outputDirectory>
+                  <nonFilteredFileExtensions>
+                    <nonFilteredFileExtension>tag</nonFilteredFileExtension>
+                    <nonFilteredFileExtension>jsp</nonFilteredFileExtension>
+                  </nonFilteredFileExtensions>
+                  <resources>
+
+                    <resource>
+                      <directory>${basedir}/src/main/webapp/WEB-INF</directory>
+                      <filtering>true</filtering>
+                    </resource>
+                  </resources>
+                </configuration>
+              </execution>
+
+              <execution>
+								<!-- webapp/scripts content should be copied at project root. We can do this at compile lifecycle -->
+                <id>copy-scripts</id>
+                <phase>process-resources</phase>
+                <goals>
+                  <goal>copy-resources</goal>
+                </goals>
+                <configuration>
+                  <outputDirectory>${basedir}/scripts</outputDirectory>
+                  <resources>
+                    <resource>
+                      <directory>${basedir}/src/main/webapp/scripts</directory>
+                      <filtering>true</filtering>
+                    </resource>
+                  </resources>
+                </configuration>
+              </execution>
+
+              <execution>
+				<!-- webapp/styles content should be copied at project root. We can do this at compile lifecycle -->
+                <id>copy-styles</id>
+                <phase>process-resources</phase>
+                <goals>
+                  <goal>copy-resources</goal>
+                </goals>
+                <configuration>
+                  <outputDirectory>${basedir}/styles</outputDirectory>
+                  <resources>
+                    <resource>
+                      <directory>${basedir}/src/main/webapp/styles</directory>
+                      <filtering>true</filtering>
+                    </resource>
+                  </resources>
+                </configuration>
+              </execution>
+
+              <execution>
+								<!-- webapp/images content should be copied at project root. We can do this at compile lifecycle -->
+                <id>copy-images</id>
+                <phase>process-resources</phase>
+                <goals>
+                  <goal>copy-resources</goal>
+                </goals>
+                <configuration>
+                  <outputDirectory>${basedir}/images</outputDirectory>
+                  <resources>
+                    <resource>
+                      <directory>${basedir}/src/main/webapp/images</directory>
+                    </resource>
+                  </resources>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
+
+</project>
