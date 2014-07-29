@@ -33,6 +33,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -77,6 +78,7 @@ import org.squashtest.tm.web.internal.http.ContentTypes;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.customfield.CustomFieldJsonConverter;
 import org.squashtest.tm.web.internal.model.customfield.CustomFieldModel;
+import org.squashtest.tm.web.internal.model.customfield.CustomFieldValueModel;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelBuilder;
@@ -124,57 +126,40 @@ public class ExecutionModificationController {
 		Execution execution = executionModService.findAndInitExecution(executionId);
 		int rank = executionModService.findExecutionRank(executionId);
 		LOGGER.trace("ExecutionModService : getting execution {}, rank {}", executionId, rank);
-		List<DenormalizedFieldValue> values = denormalizedFieldValueFinder.findAllForEntity(execution);
+
+		// custom field values - own and denormalized
+		List<CustomFieldValueModel> customValueModels = getExecutionCustomFieldValueModels(execution);
+		List<CustomFieldValueModel> denoValueModels = getExecutionDenormalizedFieldValueModels(execution);
+
 
 		// step properties
 		List<AoColumnDef> columnDefs;
 
-		boolean hasCUF = cufHelperService.hasCustomFields(execution);
-		List<CustomFieldValue> customFieldValues = cufHelperService.newHelper(execution).getCustomFieldValues();
 		columnDefs = findColumnDefForSteps(execution);
-		List<CustomFieldModel> dfvDefinitions = Collections.emptyList();
+		List<CustomFieldModel> stepCufsModels = new LinkedList<CustomFieldModel>();
 
 		if (!execution.getSteps().isEmpty()) {
 
-			CustomFieldHelper<ExecutionStep> helper = cufHelperService.newHelper(execution.getSteps())
-					.setRenderingLocations(RenderingLocation.STEP_TABLE).restrictToCommonFields();
+			stepCufsModels.addAll(getStepDenormalizedFieldModels(execution));
+			stepCufsModels.addAll(getStepCustomFieldModels(execution));
 
-			List<CustomFieldModel> cufDefinitions = convertToJsonCustomField(helper.getCustomFieldConfiguration());
-
-			List<DenormalizedFieldValue> firstStepDfv = denormalizedFieldValueFinder.findAllForEntityAndRenderingLocation(execution.getSteps().get(0), RenderingLocation.STEP_TABLE);
-			dfvDefinitions = convertToJsonCustomField(firstStepDfv);
-			dfvDefinitions.addAll(cufDefinitions);
 		}
 
 		ModelAndView mav = new ModelAndView("page/campaign-libraries/show-execution");
 		mav.addObject("execution", execution);
 		mav.addObject("executionRank", Integer.valueOf(rank + 1));
-		mav.addObject("denormalizedFieldValues", values);
-		mav.addObject("stepsAoColumnDefs", JsonHelper.serialize(columnDefs));
 		mav.addObject("attachmentSet", attachmentHelper.findAttachments(execution));
-		mav.addObject("hasCUF", hasCUF);
-		mav.addObject("executionCufValues", customFieldValues);
 
-		mav.addObject("cufDefinitions", dfvDefinitions);
+		mav.addObject("executionCufValues", customValueModels);
+		mav.addObject("executionDenormalizedValues", denoValueModels);
+
+		mav.addObject("stepsAoColumnDefs", JsonHelper.serialize(columnDefs));
+		mav.addObject("stepsCufDefinitions", stepCufsModels);
+
 		return mav;
 
 	}
 
-	private List<CustomFieldModel> convertToJsonCustomField(Collection<CustomField> customFields) {
-		List<CustomFieldModel> models = new ArrayList<CustomFieldModel>(customFields.size());
-		for (CustomField field : customFields) {
-			models.add(converter.toJson(field));
-		}
-		return models;
-	}
-
-	private List<CustomFieldModel> convertToJsonCustomField(List<DenormalizedFieldValue> denormalizedFields) {
-		List<CustomFieldModel> models = new ArrayList<CustomFieldModel>(denormalizedFields.size());
-		for (DenormalizedFieldValue field : denormalizedFields) {
-			models.add(converter.toCustomFieldJsonModel(field));
-		}
-		return models;
-	}
 
 
 	private List<AoColumnDef> findColumnDefForSteps(Execution execution) {
@@ -521,6 +506,50 @@ public class ExecutionModificationController {
 
 
 	// ************* private stuffs *************
+
+
+	private List<CustomFieldModel> getStepDenormalizedFieldModels(Execution exec){
+		List<DenormalizedFieldValue> firstStepDfv = denormalizedFieldValueFinder.findAllForEntityAndRenderingLocation(exec.getSteps().get(0), RenderingLocation.STEP_TABLE);
+		List<CustomFieldModel> models = new ArrayList<CustomFieldModel>(firstStepDfv.size());
+		for (DenormalizedFieldValue field : firstStepDfv) {
+			models.add(converter.toCustomFieldJsonModel(field));
+		}
+		return models;
+	}
+
+	private List<CustomFieldModel> getStepCustomFieldModels(Execution exec){
+		CustomFieldHelper<ExecutionStep> helper = cufHelperService.newHelper(exec.getSteps())
+				.setRenderingLocations(RenderingLocation.STEP_TABLE).restrictToCommonFields();
+
+		List<CustomField> stepCufs = helper.getCustomFieldConfiguration();
+
+		List<CustomFieldModel> models = new ArrayList<CustomFieldModel>(stepCufs.size());
+
+		for (CustomField field : stepCufs) {
+			models.add(converter.toJson(field));
+		}
+
+		return models;
+	}
+
+
+	private List<CustomFieldValueModel> getExecutionCustomFieldValueModels(Execution exec){
+		List<CustomFieldValue> customFieldValues = cufHelperService.newHelper(exec).getCustomFieldValues();
+		List<CustomFieldValueModel> cufModels = new ArrayList<CustomFieldValueModel>(customFieldValues.size());
+		for (CustomFieldValue v : customFieldValues){
+			cufModels.add(converter.toJson(v));
+		}
+		return cufModels;
+	}
+
+	private List<CustomFieldValueModel> getExecutionDenormalizedFieldValueModels(Execution exec){
+		List<DenormalizedFieldValue> values = denormalizedFieldValueFinder.findAllForEntity(exec);
+		List<CustomFieldValueModel> denoModels = new ArrayList<CustomFieldValueModel>(values.size());
+		for (DenormalizedFieldValue deno : values){
+			denoModels.add(converter.toJson(deno));
+		}
+		return denoModels;
+	}
 
 	private JsonExecutionInfo toJson(Execution exec){
 		if (exec.isAutomated()){

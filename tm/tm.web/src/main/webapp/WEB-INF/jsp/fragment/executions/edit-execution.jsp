@@ -308,7 +308,8 @@
 	var squashtm = squashtm || {};
 	
 	require(["common"], function() {
-		require(["jquery", "page-components/execution-information-panel", "custom-field-values", "squashtable", "jquery.squash.jeditable"], function($, infopanel, cufValuesManager) {			
+		require(["jquery", "page-components/execution-information-panel", "custom-field-values", "squashtable", 
+		         "jquery.squash.jeditable"], function($, infopanel, cufValuesManager) {			
 			/* display the execution name. Used for extern calls (like from the page who will include this fragment)
 			*  will refresh the general informations as well*/
 			function nodeSetName(name){
@@ -349,7 +350,7 @@
 			var tableSettings = {
 				"sAjaxSource": "${executionStepsUrl}", 
 				"aoColumnDefs": ${stepsAoColumnDefs}, 
-				"cufDefinitions": ${ json:marshall(cufDefinitions) }
+				"cufDefinitions": ${ json:marshall(stepsCufDefinitions) }
 			};
 			
 			var squashSettings = {
@@ -422,20 +423,19 @@
 			$("#execution-execution-steps-table").squashTable(tableSettings, squashSettings);
 			
 			
-			//==== cuf sections ====
+			//==== cuf sections (if any)====
 
-			//load the custom fields
-			$.get("${denormalizedFieldsValuesURL}?denormalizedFieldHolderId=${execution.boundEntityId}&denormalizedFieldHolderType=${execution.boundEntityType}")
-			.success(function(data){
-				$("#execution-information-table").append(data);
-				<c:if test="${hasCUF}">
-				//load the custom fields
-				$.get("${customFieldsValuesURL}?boundEntityId=${execution.boundEntityId}&boundEntityType=${execution.boundEntityType}")
-				.success(function(data){
-					$("#execution-information-table").append(data);
-				});
-				</c:if>
-			});		
+			<c:set var="cufdisplaymode" value="${editable ? 'jeditable' : 'static'}"/>
+			
+			<c:if test="${not empty executionDenormalizedValues}">
+			var denoCufs = ${json:marshall(executionDenormalizedValues)};
+			cufValuesManager.infoSupport.init("#execution-information-table", denoCufs, "${cufdisplaymode}");
+			</c:if>
+			
+			<c:if test="${not empty executionCufValues}">
+			var cufs = ${json:marshall(executionCufValues)};
+			cufValuesManager.infoSupport.init("#execution-information-table", cufs, "${cufdisplaymode}");	
+			</c:if>
 			
 			// ==== bugtracker section ====
 		 	

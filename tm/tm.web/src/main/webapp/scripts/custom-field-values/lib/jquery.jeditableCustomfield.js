@@ -24,52 +24,108 @@ define(
 				"datepicker/jquery.squash.datepicker-locales" ],
 		function($, utils, confman) {
 
-			function buildPostFunction(idOrURLOrPostfunction, postProcess) {
+			/* ***************************************************************************************************
+			 * 
+			 * The following is a builder of postfunction for a jeditable. Its purpose is to  
+			 * 
+			 * It accepts three parameters :
+			 * - idOrURLOrPostFunction : can be either 
+			 * 		- the id of a custom field, 
+			 * 		- an url that will be used as is,
+			 * 		- a function, that will be used as is,
+			 * 		- nothing, in which case the value of an attribute data-value-id on the element will be used
+			 * 
+			 * - postProcess : if defined, postProcess will be invoked upon xhr completion
+			 * - isDernomalized : if defined and true, the custom field will be treated as a denormalized cuf.
+			 * 
+			 * ***************************************************************************************************/
+			
+			function buildPostFunction(idOrURLOrPostfunction, postProcess, isDenormalized) {
 
 				var postProcessFn = postProcess || function(value) {
 					return value;
 				};
+				
+				var baseURL  = squashtm.app.contextRoot;
+					baseURL += (isDenormalized) ? "/denormalized-fields/values/" : "/custom-fields/values/";
+					
+				var ajaxconf = {
+					data : {},
+					type : 'POST'
+				};
 
 				var postFunction;
-
-				if (typeof idOrURLOrPostfunction === "function") {
+				
+				
+				switch(typeof idOrURLOrPostfunction){
+				
+				// case : the argument is already a post function in its own rights
+				case "function" : 
 					postFunction = idOrURLOrPostfunction;
-				} else if (typeof idOrURLOrPostfunction === "string") {
+					break;
+					
+				// case : the argument is a url. It will be used as is, along with the usual parameters
+				case "string" :
 					postFunction = function(value) {
-						return $.ajax({
-							url : idOrURLOrPostfunction,
-							data : {
-								'value' : value
-							},
-							type : 'POST'
-						});
+						ajaxconf.url = idOrURLOrPostfunction;
+						ajaxconf.data.value = value;
+						return $.ajax(ajaxconf);
 					};
-				} else if (typeof idOrURLOrPostfunction === undefined) {
+					break;
+					
+				// case empty : the element must define an attribute 'data-value-id' and that ID will be used 
+				// just like in the default clause.
+				case undefined :
 					postFunction = function(value) {
 						var id = $(this).data('value-id');
-						var url = squashtm.app.contextRoot	+ "/custom-fields/values/" + id;
-						return $.ajax({
-							url : url,
-							data : {
-								'value' : value
-							},
-							type : 'POST'
-						});
+						ajaxconf.url = baseURL + id;
+						ajaxconf.data.value = value;
+						return $.ajax(ajaxconf);
+					};		
+					break;
+					
+				// case : the argument is assumed to be a number, specifically the ID. We can then 
+				// define at which url we need to post.
+				default : 					
+					postFunction = function(value) {
+						ajaxconf.url = baseURL + idOrURLOrPostfunction;
+						ajaxconf.data.value = value;
+						return $.ajax(ajaxconf);
+					};			
+					break;
+				
+				}
+			/*	
+				// case : the argument is already a post function in its own rights
+				if (typeof idOrURLOrPostfunction === "function") {
+					postFunction = idOrURLOrPostfunction;
+				} 
+				
+				// case : the argument is a tryc
+				else if (typeof idOrURLOrPostfunction === "string") {
+					postFunction = function(value) {
+						ajaxconf.url = idOrURLOrPostfunction;
+						ajaxconf.data.value = value;
+						return $.ajax(ajaxconf);
 					};
-				} else {
+				} 
+				else if (typeof idOrURLOrPostfunction === undefined) {
+					postFunction = function(value) {
+						var id = $(this).data('value-id');
+						ajaxconf.url = baseURL + id;
+						ajaxconf.data.value = value;
+						return $.ajax(ajaxconf);
+					};
+				} 
+				else {
 					// assumed to be an integer
 					postFunction = function(value) {
-						var url = squashtm.app.contextRoot	+ "/custom-fields/values/"	+ idOrURLOrPostfunction;
-						return $.ajax({
-							url : url,
-							data : {
-								'value' : value
-							},
-							type : 'POST'
-						});
+						ajaxconf.url = baseURL + idOrURLOrPostfunction;
+						ajaxconf.data.value = value;
+						return $.ajax(ajaxconf);
 					};
 				}
-				
+				*/
 
 				return function(value, settings) {
 					var data = postProcessFn(value, settings);
@@ -78,11 +134,20 @@ define(
 				};
 
 			}
+			
+			/* *********************************************************************
+			 * 
+			 * Define the custom fields themselves now
+			 * 
+			 * 
+			 * *********************************************************************/
 
 			function getBasicConf() {
 				return confman.getStdJeditable();
 			}
 
+			
+			
 			function initAsDatePicker(elts, cufDefinition,
 					idOrURLOrPostfunction) {
 
@@ -106,13 +171,14 @@ define(
 							value);
 				};
 
-				var postFunction = buildPostFunction(idOrURLOrPostfunction,
-						postProcess);
+				var postFunction = buildPostFunction(idOrURLOrPostfunction,	postProcess, cufDefinition.denormalized);
 
 				elts.editable(postFunction, conf);
 
 			}
 
+			
+			
 			function initAsList(elts, cufDefinitions, idOrURLOrPostfunction) {
 				if (elts.length === 0){
 					return;
@@ -144,31 +210,35 @@ define(
 					conf.data = prepareSelectData(
 							cufDefinitions.options, selected);
 
-					var postFunction = buildPostFunction(idOrURLOrPostfunction);
+					var postFunction = buildPostFunction(idOrURLOrPostfunction, undefined, cufDefinitions.denormalized);
 
 					jqThis.editable(postFunction, conf);
 
 				});
 			}
 
+			
+			
 			function initAsPlainText(elts, cufDefinition, idOrURLOrPostfunction) {
 
 				var conf = getBasicConf();
 				conf.type = 'text';
 
-				var postFunction = buildPostFunction(idOrURLOrPostfunction);
+				var postFunction = buildPostFunction(idOrURLOrPostfunction, undefined, cufDefinition.denormalized);
 
 				elts.editable(postFunction, conf);
 
 			}
 
+			
+			
 			function initAsCheckbox(elts, cufDefinition, idOrURLOrPostfunction) {
 
 				if (elts.length === 0){
 					return;
 				}
 				
-				var postFunction = buildPostFunction(idOrURLOrPostfunction);
+				var postFunction = buildPostFunction(idOrURLOrPostfunction, undefined, cufDefinition.denormalized);
 
 				var clickFn = function() {
 					var jqThis = $(this);
@@ -207,7 +277,7 @@ define(
 					return;
 				}
 				
-				var postFunction = buildPostFunction(idOrURLOrPostfunction);
+				var postFunction = buildPostFunction(idOrURLOrPostfunction, undefined, cufDefinition.denormalized);
 				
 				var conf = confman.getJeditableCkeditor();
 				
@@ -215,6 +285,14 @@ define(
 				
 			}
 
+			
+			
+			
+			/* ***************************************************************************
+			 * 
+			 * 										MAIN 
+			 * 
+			 * ***************************************************************************/
 			
 			$.fn.jeditableCustomfield = function(cufDefinition, idOrURLOrPostfunction) {
 
@@ -228,8 +306,7 @@ define(
 					initAsPlainText(this, cufDefinition, idOrURLOrPostfunction);
 				} else if (type === "CHECKBOX"){
 					initAsCheckbox(this, cufDefinition, idOrURLOrPostfunction);
-				}
-				else if (type === "RICH_TEXT"){
+				} else if (type === "RICH_TEXT"){
 					initAsRichtext(this, cufDefinition, idOrURLOrPostfunction);
 				}
 

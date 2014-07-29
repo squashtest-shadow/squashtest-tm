@@ -27,8 +27,10 @@
  * can edit or not 
  * 
  */
-define(["jquery", "handlebars", "jqueryui", "./lib/jquery.staticCustomfield", "./lib/jquery.jeditableCustomfield"], 
-		function($, handlebars){
+define(["jquery", "handlebars", "squash.translator", "jqueryui", "./lib/jquery.staticCustomfield", "./lib/jquery.jeditableCustomfield"], 
+		function($, handlebars, translator){
+	
+	var fromTestCase = " ("+translator.get("label.fromTestCase")+") ";
 	
 	/*
 	 * little helper thanks to stack overflow !
@@ -39,15 +41,32 @@ define(["jquery", "handlebars", "jqueryui", "./lib/jquery.staticCustomfield", ".
 	  return (cuftype === expected) ? options.fn(this) : options.inverse(this);
 	});
 	
+	handlebars.registerHelper('cuflabel', function(value){
+		var cuf = value.binding.customField,
+			lbl = cuf.label;
+		return (cuf.denormalized) ? lbl+fromTestCase : lbl; 
+	});
+
+	handlebars.registerHelper('cufid', function(value){
+		var prefix = (value.binding.customField.denormalized) ? "denormalized-cuf-value-" : "cuf-value-";
+		return prefix + value.id;
+	});
+	
+	handlebars.registerHelper('cufclass', function(value){
+		return (value.binding.customField.denormalized) ? "denormalized-custom-field" : "custom-field";
+	});
+
+	
+	
 	var template = handlebars.compile(
 		'{{#each this}}' +
 		'<div class="display-table-row control-group">' +
-			'<label class="display-table-cell">{{binding.customField.label}}</label>' +
+			'<label class="display-table-cell">{{cuflabel this}}</label>' +
 			'<div class="display-table-cell controls">' +
 			'{{#ifequals binding.customField.inputType.enumName "RICH_TEXT"}}' +
-				'<span id="cuf-value-{{id}}" class="custom-field" data-value-id="{{id}}">{{{value}}}</span>' +
+				'<span id="{{cufid this}}" class="{{cufclass this}}" data-value-id="{{id}}">{{{value}}}</span>' +
 			'{{else}}' +
-				'<span id="cuf-value-{{id}}" class="custom-field" data-value-id="{{id}}">{{value}}</span>' +
+				'<span id="{{cufid this}}" class="{{cufclass this}}" data-value-id="{{id}}">{{value}}</span>' +
 			'{{/ifequals}}' +
 			'<span class="help-inline not-displayed">&nbsp;</span>' +
 			'</div>' +			
@@ -66,25 +85,31 @@ define(["jquery", "handlebars", "jqueryui", "./lib/jquery.staticCustomfield", ".
 			var container = $(containerSelector);
 						
 			container.append(html);
-			
-			var allFields = container.find('.custom-field');
-			if (allFields.length > 0){
-				allFields.each(function(idx, elt){
-					var cufValue = cufValues[idx];
-					switch(mode){
-					case "static": 
-						$(elt).staticCustomfield(cufValue.binding.customField);
-						break;
-					case "editable" : 
-						$(elt).editableCustomfield(cufValue.binding.customField);
-						break;
-						
-					case "jeditable" :
-						$(elt).jeditableCustomfield(cufValue.binding.customField, cufValue.id);
-						break;
-					}
-				});
+	
+			for (var idx in cufValues){
+				
+				var cufValue = cufValues[idx],
+					selector = (cufValue.binding.customField.denormalized) ? 
+							"#denormalized-cuf-value-"+cufValue.id : 
+							"#cuf-value-"+cufValue.id;
+				
+				var elt = container.find(selector);
+				
+				switch(mode){
+				case "static": 
+					elt.staticCustomfield(cufValue.binding.customField);
+					break;
+				case "editable" : 
+					elt.editableCustomfield(cufValue.binding.customField);
+					break;
+					
+				case "jeditable" :
+					elt.jeditableCustomfield(cufValue.binding.customField, cufValue.id);
+					break;
+				}
 			}
+			
+			
 			
 		} 
 		

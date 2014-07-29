@@ -101,7 +101,7 @@ public class DenormalizedFieldValuesController {
 		List<CustomFieldValueModel> models = new LinkedList<CustomFieldValueModel>();
 
 		for (DenormalizedFieldValue value : values) {
-			CustomFieldValueModel model = converter.toCustomFieldValueJsonModel(value);
+			CustomFieldValueModel model = converter.toJson(value);
 			models.add(model);
 		}
 
