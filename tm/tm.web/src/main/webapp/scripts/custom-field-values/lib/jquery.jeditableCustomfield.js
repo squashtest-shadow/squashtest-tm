@@ -30,10 +30,10 @@ define(
 			 * 
 			 * It accepts three parameters :
 			 * - idOrURLOrPostFunction : can be either 
-			 * 		- the id of a custom field, 
-			 * 		- an url that will be used as is,
-			 * 		- a function, that will be used as is,
-			 * 		- nothing, in which case the value of an attribute data-value-id on the element will be used
+			 *		- the id of a custom field, 
+			 *		- an url that will be used as is,
+			 *		- a function, that will be used as is,
+			 *		- nothing, in which case the value of an attribute data-value-id on the element will be used
 			 * 
 			 * - postProcess : if defined, postProcess will be invoked upon xhr completion
 			 * - isDernomalized : if defined and true, the custom field will be treated as a denormalized cuf.
@@ -86,7 +86,7 @@ define(
 					
 				// case : the argument is assumed to be a number, specifically the ID. We can then 
 				// define at which url we need to post.
-				default : 					
+				default :
 					postFunction = function(value) {
 						ajaxconf.url = baseURL + idOrURLOrPostfunction;
 						ajaxconf.data.value = value;
@@ -106,7 +106,7 @@ define(
 			
 			/* *********************************************************************
 			 * 
-			 * 		Define the custom fields now
+			 *		Define the custom fields now
 			 * 
 			 * *********************************************************************/
 
@@ -257,10 +257,10 @@ define(
 			
 			
 			/* ***************************************************************************
-			 * 
-			 * 										MAIN 
-			 * 
-			 * ***************************************************************************/
+			* 
+			*										MAIN 
+			* 
+			* ***************************************************************************/
 			
 			$.fn.jeditableCustomfield = function(cufDefinition, idOrURLOrPostfunction) {
 

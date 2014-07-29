@@ -121,7 +121,7 @@ define([ "jquery", "./lib/cuf-values-utils", "./lib/jquery.staticCustomfield", "
 				isDenormalized = cell.hasClass('denormalized-field-value');
 			
 			if (isDenormalized){
-				cufId = table.fnGetData(row).denormalizedFields[cufCode].id
+				cufId = table.fnGetData(row).denormalizedFields[cufCode].id;
 				url += "/denormalized-fields/values/" + cufId;
 			}
 			else{
