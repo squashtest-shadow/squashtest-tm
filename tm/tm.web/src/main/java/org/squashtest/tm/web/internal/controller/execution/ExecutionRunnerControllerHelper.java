@@ -113,22 +113,23 @@ public class ExecutionRunnerControllerHelper {
 		int stepOrder = 0;
 		int total = execution.getSteps().size();
 
-		List<DenormalizedFieldValue> denormalizedFieldValues = Collections.emptyList();
-		List<CustomFieldValue> customFieldValues = Collections.emptyList();
 		Set<Attachment> attachments = Collections.emptySet();
+
+		boolean hasDenormFields = false;
+		boolean hasCustomFields = false;
 
 		//TODO : check why we could want to process that page while part of the model is null (it should fail earlier when the DB cannot find this step)
 		if (executionStep != null) {
 			stepOrder = executionStep.getExecutionStepOrder();
-			denormalizedFieldValues = denormalizedFieldValueFinder.findAllForEntity(executionStep);
-			customFieldValues = customFieldValueFinderService.findAllCustomFieldValues(executionStep);
+			hasDenormFields = denormalizedFieldValueFinder.hasDenormalizedFields(executionStep);
+			hasCustomFields = customFieldValueFinderService.hasCustomFields(executionStep);
 			attachments = attachmentHelper.findAttachments(executionStep);
 		}
 
 		model.addAttribute("execution", execution);
 		model.addAttribute("executionStep", executionStep);
-		model.addAttribute("denormalizedFieldValues", denormalizedFieldValues);
-		model.addAttribute("customFieldValues", customFieldValues);
+		model.addAttribute("hasDenormFields", hasDenormFields);
+		model.addAttribute("hasCustomFields", hasCustomFields);
 		model.addAttribute("totalSteps", total);
 		model.addAttribute("hasNextStep", stepOrder != (total - 1));
 		model.addAttribute("attachments", attachments);

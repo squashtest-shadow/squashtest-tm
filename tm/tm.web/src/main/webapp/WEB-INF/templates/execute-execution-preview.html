@@ -59,8 +59,8 @@ documentation :
 	squashtm.app = squashtm.app || {};
 	squashtm.app.contextRoot = /*[[@{/}]]*/ "http://localhost:8080/squash";
 	squashtm.page = squashtm.page || {};
-	squashtm.page.hasFields = /*[[#{hasCustomFields}]]*/ false;
-	squashtm.page.hasDenormFields = /*[[#{hasDenormalizedFields}]]*/ false;
+	squashtm.page.hasFields = /*[[${hasCustomFields}]]*/ false;
+	squashtm.page.hasDenormFields = /*[[${hasDenormFields}]]*/ false;
 //]]>
 </script>
 <script type="text/javascript" th:src="@{/scripts/require-min.js}"></script>
@@ -155,8 +155,6 @@ documentation :
             th:text="${execution.status.level}+'-'+#{${execution.status.getI18nKey()}}">0 - a specifier</div>
         </div>
         
-        <div th:if="${hasDenormFields}" id="denorm-fields-pnl" ></div>
-        <div th:if="${hasCustomFields}" id="custom-fields-pnl" ></div>
       </div>
       
     </div>
@@ -184,7 +182,8 @@ documentation :
 	<script type="text/javascript" th:inline="javascript">
 	//<![CDATA[
 	require(["common"], function() {
-    	require(["jquery", "execution-processing", 'squash.basicwidgets'], function($, executionProcessing, basic){
+    	require(["jquery", "execution-processing", 'squash.basicwidgets', 'custom-field-values'], 
+    			function($, executionProcessing, basic, cufValues){
   			requirejs.config({
   				config : {
   					"execution-processing/init-preview" : /*[[${config}]]*/{}
@@ -194,26 +193,26 @@ documentation :
     		$(function(){
     			executionProcessing.initPreview();
     			basic.init();
+    			
     			/* we dont append in parent because order would not be guaranteed
     			 * we dont append in placeholder because it breaks layout aux petits oignons
     			 * hence the replaceWith
     			 */ 
+    			 
+    			var selector = "#execute-informations-panel > div.display-table";
     			if (squashtm.page.hasFields) {
     				var fieldsUrl = /*[[@{/custom-fields/values(boundEntityId=${execution.boundEntityId},boundEntityType=${execution.boundEntityType})}]]*/ "";
-    				$.get(fieldsUrl)
-    				.success(function(data) {
-    					$("#custom-fields-pnl").replaceWith(data);
+    				$.getJSON(fieldsUrl)
+    				.success(function(jsonCufs) {
+    					cufValues.infoSupport.init(selector, jsonCufs, "jeditable");
     				});
     				
     			}
     			if (squashtm.page.hasDenormFields) {
     				var denormsUrl = /*[[@{/denormalized-fields/values(denormalizedFieldHolderId=${execution.boundEntityId},denormalizedFieldHolderType=${execution.boundEntityType})}]]*/ "";
-        			$.get(denormsUrl)
-        			.success(function(data) {
-        				var postlabel = /*[[' ('+#{label.fromTestCase}+')']]*/ " (from test case)";
-      					var $data = $(data)
-      					$data.find("label").append(postlabel);
-        				$("#denorm-fields-pnl").replaceWith($data);
+        			$.getJSON(denormsUrl)
+        			.success(function(jsonDenorm) {
+        				cufValues.infoSupport.init(selector, jsonDenorm, "jeditable");
         			});
     			}
     			

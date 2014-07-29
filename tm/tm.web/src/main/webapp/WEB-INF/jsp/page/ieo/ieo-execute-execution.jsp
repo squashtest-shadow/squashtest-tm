@@ -90,7 +90,8 @@
 		require(["jquery", "squash.basicwidgets", 
 		         "iesupport/am-I-ie8",
 		         "execution-processing/ie8-no-close-on-enter",
-		         "jqueryui"], function($, basicwidg, isIE, noCloseOnEnter){
+		         'custom-field-values',
+		         "jqueryui"], function($, basicwidg, isIE, noCloseOnEnter, cufValues){
 			$(function(){
 				basicwidg.init();
 				
@@ -146,21 +147,19 @@
 					
 			});
 	
-            <c:if test="${not empty denormalizedFieldValues }">
-            $.get("${denormalizedFieldsValuesURL}?denormalizedFieldHolderId=${executionStep.boundEntityId}&denormalizedFieldHolderType=${executionStep.boundEntityType}")
-              .success(function(data){
-                $("#dfv-information-table")
-                  .append(data)
-                  .find("label")
-                  .append(' (<f:message key="label.fromTestCase"/>)');
-            });
+            <c:if test="${hasDenormFields}">
+            $.getJSON("${denormalizedFieldsValuesURL}?denormalizedFieldHolderId=${executionStep.boundEntityId}&denormalizedFieldHolderType=${executionStep.boundEntityType}")
+              .success(function(jsonDenorm){
+               	 cufValues.infoSupport.init("#dfv-information-table", jsonDenorm, "jeditable");
+              });
             </c:if>
-			
-			<c:if test="${not empty customFieldValues }">
-			$.get("${customFieldsValuesURL}?boundEntityId=${executionStep.boundEntityId}&boundEntityType=${executionStep.boundEntityType}")
-				.success(function(data){$("#cuf-information-table").append(data);
-			});
-			</c:if>
+
+            <c:if test="${hasCustomFields}">
+            $.getJSON("${customFieldsValuesURL}?boundEntityId=${executionStep.boundEntityId}&boundEntityType=${executionStep.boundEntityType}")
+              .success(function(jsonCufs){
+                cufValues.infoSupport.init("#cuf-information-table", jsonCufs, 'jeditable');
+              });
+            </c:if>
 		
 			// 2195
 			if (isIE){
@@ -196,7 +195,7 @@
 			<comp:step-information-panel auditableEntity="${executionStep}" />			
 		</div>
 		
-        <c:if test="${ (not empty customFieldValues) or (not empty denormalizedFieldValues) }">
+        <c:if test="${ hasCustomFields or hasDenormFields }">
           <comp:toggle-panel id="custom-fields-panel" titleKey="title.step.fields" open="true">
             <jsp:attribute name="body"> 
               <div id="dfv-information-table" class="display-table"></div>

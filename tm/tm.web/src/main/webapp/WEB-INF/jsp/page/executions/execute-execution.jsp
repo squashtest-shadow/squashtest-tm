@@ -108,8 +108,9 @@
 				require(['jquery', 'squash.basicwidgets', 
 				         'iesupport/am-I-ie8',
 				         'execution-processing/ie8-no-close-on-enter',
-				         'page-components/step-information-panel', 'workspace.event-bus', 'app/util/ComponentUtil', "jquery.squash.oneshotdialog" , 'jquery.squash'], 
-				         function($, basicwidg, isIE, noCloseOnEnter, infopanel, eventBus, ComponentUtil, oneshot ) {
+				         'page-components/step-information-panel', 'workspace.event-bus', 'app/util/ComponentUtil', 
+				         "jquery.squash.oneshotdialog" , 'custom-field-values', 'jquery.squash'], 
+				         function($, basicwidg, isIE, noCloseOnEnter, infopanel, eventBus, ComponentUtil, oneshot, cufValues ) {
 			
 				var isOer = ${ not empty hasNextTestCase };
 				var hasNextTestCase = ${ (not empty hasNextTestCase) and hasNextTestCase };
@@ -331,20 +332,17 @@
 						eventBus.onContextual('context.bug-reported', function(event, json){
 							window.opener.squashtm.workspace.eventBus.trigger(event, json )
 						});
-	                    <c:if test="${not empty denormalizedFieldValues }">
-	                    $.get("${denormalizedFieldsValuesURL}?denormalizedFieldHolderId=${executionStep.boundEntityId}&denormalizedFieldHolderType=${executionStep.boundEntityType}")
-	                      .success(function(data){
-	                       	 $("#dfv-information-table")
-	                          .append(data)
-	                          .find("label")
-	                          .append(' (<f:message key="label.fromTestCase"/>)');
+	                    <c:if test="${hasDenormFields}">
+	                    $.getJSON("${denormalizedFieldsValuesURL}?denormalizedFieldHolderId=${executionStep.boundEntityId}&denormalizedFieldHolderType=${executionStep.boundEntityType}")
+	                      .success(function(jsonDenorm){
+	                       	 cufValues.infoSupport.init("#dfv-information-table", jsonDenorm, "jeditable");
 	                      });
 	                    </c:if>
 	
-	                    <c:if test="${not empty customFieldValues }">
-	                    $.get("${customFieldsValuesURL}?boundEntityId=${executionStep.boundEntityId}&boundEntityType=${executionStep.boundEntityType}")
-	                      .success(function(data){
-	                        $("#cuf-information-table").append(data);
+	                    <c:if test="${hasCustomFields}">
+	                    $.getJSON("${customFieldsValuesURL}?boundEntityId=${executionStep.boundEntityId}&boundEntityType=${executionStep.boundEntityType}")
+	                      .success(function(jsonCufs){
+	                        cufValues.infoSupport.init("#cuf-information-table", jsonCufs, 'jeditable');
 	                      });
 	                    </c:if>
 				
@@ -412,7 +410,7 @@
 			</div>
 
 			<div id="execute-body" class="execute-fragment-body">
-        <c:if test="${ (not empty customFieldValues) or (not empty denormalizedFieldValues) }">
+        <c:if test="${ hasCustomFields or hasDenormFields }">
           <comp:toggle-panel id="custom-fields-panel" titleKey="title.step.fields" open="true">
             <jsp:attribute name="body"> 
               <div id="dfv-information-table" class="display-table"></div>
