@@ -27,7 +27,6 @@ import org.squashtest.tm.domain.denormalizedfield.DenormalizedFieldHolder;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.testcase.ActionTestStep;
 import org.squashtest.tm.domain.testcase.TestStep;
-import org.squashtest.tm.service.internal.customfield.DenormalizedFieldHelper;
 
 public interface CustomFieldHelperService {
 

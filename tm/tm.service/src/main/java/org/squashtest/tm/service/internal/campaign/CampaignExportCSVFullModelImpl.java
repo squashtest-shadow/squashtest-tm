@@ -51,7 +51,7 @@ import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.service.bugtracker.BugTrackersLocalService;
 import org.squashtest.tm.service.customfield.CustomFieldHelper;
 import org.squashtest.tm.service.customfield.CustomFieldHelperService;
-import org.squashtest.tm.service.internal.customfield.DenormalizedFieldHelper;
+import org.squashtest.tm.service.customfield.DenormalizedFieldHelper;
 
 /*
  * TODO :

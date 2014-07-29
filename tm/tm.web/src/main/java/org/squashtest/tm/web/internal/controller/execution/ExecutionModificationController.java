@@ -27,15 +27,11 @@ package org.squashtest.tm.web.internal.controller.execution;
  */
 import static org.squashtest.tm.web.internal.helper.JEditablePostParams.VALUE;
 
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 
 import javax.inject.Inject;
 
@@ -51,7 +47,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.Paging;
-import org.squashtest.tm.core.foundation.lang.DateUtils;
 import org.squashtest.tm.domain.bugtracker.Issue;
 import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
@@ -65,6 +60,7 @@ import org.squashtest.tm.domain.execution.ExecutionStep;
 import org.squashtest.tm.service.customfield.CustomFieldHelper;
 import org.squashtest.tm.service.customfield.CustomFieldHelperService;
 import org.squashtest.tm.service.customfield.CustomFieldValueFinderService;
+import org.squashtest.tm.service.customfield.DenormalizedFieldHelper;
 import org.squashtest.tm.service.denormalizedfield.DenormalizedFieldValueManager;
 import org.squashtest.tm.service.execution.ExecutionModificationService;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
@@ -79,8 +75,6 @@ import org.squashtest.tm.web.internal.model.customfield.CustomFieldJsonConverter
 import org.squashtest.tm.web.internal.model.customfield.CustomFieldModel;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
-import org.squashtest.tm.web.internal.model.datatable.DataTableModelBuilder;
-import org.squashtest.tm.web.internal.model.datatable.DataTableModelConstants;
 import org.squashtest.tm.web.internal.model.datatable.DataTablePaging;
 import org.squashtest.tm.web.internal.model.json.JsonExecutionInfo;
 
@@ -189,17 +183,55 @@ public class ExecutionModificationController {
 	@ResponseBody
 	public DataTableModel getStepsTableModel(@PathVariable long executionId, DataTableDrawParameters params,
 			final Locale locale) {
-		LOGGER.trace("ExecutionModificationController: getStepsTableModel called ");
+		LOGGER.trace("execsteps table : entering controller");
 
+		Execution exec = executionModService.findById(executionId);
 		Paging filter = createPaging(params);
 
+		LOGGER.trace("execsteps table : fetching steps");
 		PagedCollectionHolder<List<ExecutionStep>> holder = executionModService.findExecutionSteps(executionId,
 				filter);
-
-		return new ManualExecutionStepDataTableModelHelper(locale, messageSource, denormalizedFieldValueFinder, cufValueService)
-		.buildDataModel(holder,  params.getsEcho());
+		LOGGER.trace("execsteps table : finished steps");
+		
+		
+		LOGGER.trace("execsteps table : fetching cufs / deno");
+		CustomFieldHelper<ExecutionStep> cufHelper = cufHelperService.newHelper(holder.getPagedItems())
+																	.setRenderingLocations(RenderingLocation.STEP_TABLE).
+																	restrictToCommonFields();
+		
+		List<CustomFieldValue> cufValues = cufHelper.getCustomFieldValues();
+		int nbCufs = cufHelper.getCustomFieldConfiguration().size();
+		
+		DenormalizedFieldHelper<ExecutionStep> denoHelper = cufHelperService.newDenormalizedHelper(holder.getPagedItems())
+																	.setRenderingLocations(RenderingLocation.STEP_TABLE);
+		
+		List<DenormalizedFieldValue> denoValues = denoHelper.getDenormalizedFieldValues();
+		int nbDeno = denoHelper.getCustomFieldConfiguration().size();
+		
+		LOGGER.trace("execsteps table : finished cufs / deno");
+		
+		
+		LOGGER.trace("execsteps table : creating model");
+		ExecutionStepDataTableModelHelper tableHelper = new ExecutionStepDataTableModelHelper(locale, messageSource, exec.isAutomated());
+		tableHelper.usingCustomFields(cufValues, nbCufs);
+		tableHelper.usingDenormalizedFields(denoValues, nbDeno);
+	
+		DataTableModel model = tableHelper.buildDataModel(holder,  params.getsEcho());
+		LOGGER.trace("execsteps table : finished model");
+		
+		return model;
 
 	}
+	
+
+	@RequestMapping(value = "/auto-steps", method = RequestMethod.GET, params = RequestParams.S_ECHO_PARAM)
+	@ResponseBody
+	public DataTableModel getAutoStepsTableModel(@PathVariable long executionId, DataTableDrawParameters params,
+			final Locale locale) {
+		
+		return getStepsTableModel(executionId, params, locale);
+	}
+
 
 	private static final class ExecutionStepTableColumnDefHelper extends DataTableColumnDefHelper {
 		private static final List<AoColumnDef> baseColumns = new ArrayList<AoColumnDef>(5);
@@ -234,216 +266,7 @@ public class ExecutionModificationController {
 		}
 	}
 
-	private static class ExecutionStepDataTableModelHelper extends DataTableModelBuilder<ExecutionStep> { // NOSONAR this cannot be made final because there are subclasses of it already
-		private Locale locale;
-		private InternationalizationHelper messageSource;
-		private DenormalizedFieldValueManager dfvFinder;
-		private CustomFieldValueFinderService cufValueService;
-		private Map<Long, Map<String, CustomFieldValueTableModel>> customFieldValuesById;
-		private Map<Long, Map<String, CustomFieldValueTableModel>> denormalizedFieldValuesById;
-
-		private ExecutionStepDataTableModelHelper(Locale locale, InternationalizationHelper messageSource,
-				DenormalizedFieldValueManager dfvFinder, CustomFieldValueFinderService cufValueService) {
-			this.locale = locale;
-			this.messageSource = messageSource;
-			this.dfvFinder = dfvFinder;
-			this.cufValueService = cufValueService;
-
-		}
-
-		@Override
-		public Map<String, Object> buildItemData(ExecutionStep item) {
-			Map<String, Object> res = new HashMap<String, Object>();
-			res.put(DataTableModelConstants.DEFAULT_ENTITY_ID_KEY, item.getId());
-			res.put(DataTableModelConstants.DEFAULT_ENTITY_INDEX_KEY, item.getExecutionStepOrder() + 1);
-			res.put("action", item.getAction());
-			res.put("expected", item.getExpectedResult());
-			res.put("last-exec-on", formatDate(item.getLastExecutedOn(), locale));
-			res.put("last-exec-by", item.getLastExecutedBy());
-			res.put("comment", item.getComment());
-			res.put("bug-list", createBugList(item));
-			res.put("bug-button", "");
-			res.put(DataTableModelConstants.DEFAULT_NB_ATTACH_KEY, item.getAttachmentList().size());
-			res.put(DataTableModelConstants.DEFAULT_ATTACH_LIST_ID_KEY, item.getAttachmentList().getId());
-			res.put("run-step-button", "");
-			List<DenormalizedFieldValue> dfvValues = dfvFinder.findAllForEntityAndRenderingLocation(item, RenderingLocation.STEP_TABLE);
-			List<CustomFieldValue> cufValues = cufValueService.findAllForEntityAndRenderingLocation(item, RenderingLocation.STEP_TABLE);
-			usingCustomFields(cufValues, cufValues.size());
-			usingDenormalizedFields(dfvValues, dfvValues.size());
-			appendCustomFields(res);
-			appendDenormalizedFields(res);
-			return res;
-		}
-
-		private void appendCustomFields(Map<String, Object> item) {
-			Map<String, CustomFieldValueTableModel> cufValues = getCustomFieldsFor((Long) item.get("entity-id"));
-			item.put("customFields", cufValues);
-
-		}
-
-		private void appendDenormalizedFields(Map<String, Object> item) {
-			Map<String, CustomFieldValueTableModel> denormalizedValues = getDenormalizedFieldsFor((Long) item.get("entity-id"));
-			item.put("denormalizedFields", denormalizedValues);
-		}
-
-		public void usingDenormalizedFields(Collection<DenormalizedFieldValue> dfvValues, int nbFieldsPerEntity) {
-			denormalizedFieldValuesById = new HashMap<Long, Map<String, CustomFieldValueTableModel>>();
-
-			for (DenormalizedFieldValue value : dfvValues) {
-				Long entityId = value.getDenormalizedFieldHolderId();
-				Map<String, CustomFieldValueTableModel> values = denormalizedFieldValuesById.get(entityId);
-
-				if (values == null) {
-					values = new HashMap<String, CustomFieldValueTableModel>(nbFieldsPerEntity);
-					denormalizedFieldValuesById.put(entityId, values);
-				}
-
-				values.put(value.getCode(), new CustomFieldValueTableModel(value));
-
-			}
-		}
-
-		public void usingCustomFields(List<CustomFieldValue> cufValues, int nbFieldsPerEntity) {
-			customFieldValuesById = new HashMap<Long, Map<String, CustomFieldValueTableModel>>();
-
-			for (CustomFieldValue value : cufValues) {
-				Long entityId = value.getBoundEntityId();
-				Map<String, CustomFieldValueTableModel> values =  customFieldValuesById.get(entityId);
-
-				if (values == null) {
-					values = new HashMap<String, CustomFieldValueTableModel>(nbFieldsPerEntity);
-					customFieldValuesById.put(entityId, values);
-				}
-
-				values.put(value.getCustomField().getCode(), new CustomFieldValueTableModel(value));
-
-			}
-		}
-
-		private Map<String, CustomFieldValueTableModel> getCustomFieldsFor(Long id) {
-			if (customFieldValuesById == null) {
-				return new HashMap<String, CustomFieldValueTableModel>();
-			}
-
-			Map<String, CustomFieldValueTableModel> values = customFieldValuesById.get(id);
-
-			if (values == null) {
-				values = new HashMap<String, CustomFieldValueTableModel>();
-			}
-			return values;
-
-		}
-
-		private Map<String, CustomFieldValueTableModel> getDenormalizedFieldsFor(Long id) {
-			if (denormalizedFieldValuesById == null) {
-				return new HashMap<String, CustomFieldValueTableModel>();
-			}
-
-			Map<String, CustomFieldValueTableModel> values = denormalizedFieldValuesById.get(id);
-
-			if (values == null) {
-				values = new HashMap<String, CustomFieldValueTableModel>();
-			}
-			return values;
-
-		}
-
-		protected static class CustomFieldValueTableModel {
-			private static final Logger LOGGER = LoggerFactory.getLogger(CustomFieldValueTableModel.class);
-
-			private String value;
-			private Long id;
-
-			@SuppressWarnings("unused")
-			public String getValue() {
-				return value;
-			}
-
-			@SuppressWarnings("unused")
-			public Long getId() {
-				return id;
-			}
-
-			@SuppressWarnings("unused")
-			public CustomFieldValueTableModel() {
-				super();
-			}
-
-			@SuppressWarnings("unused")
-			public Date getValueAsDate() {
-				try {
-					return DateUtils.parseIso8601Date(value);
-				} catch (ParseException e) {
-					LOGGER.debug("Unable to parse date {} of custom field #{}", value, id);
-				}
-
-				return null;
-			}
-
-			private CustomFieldValueTableModel(CustomFieldValue value) {
-				this.id = value.getId();
-				this.value = value.getValue();
-			}
-
-			private CustomFieldValueTableModel(DenormalizedFieldValue value) {
-				this.id = value.getId();
-				this.value = value.getValue();
-			}
-		}
-
-		private String formatDate(Date date, Locale locale) {
-			return messageSource.localizeDate(date, locale);
-		}
-
-	}
-
-	private static final class ManualExecutionStepDataTableModelHelper extends ExecutionStepDataTableModelHelper {
-		private ManualExecutionStepDataTableModelHelper(Locale locale, InternationalizationHelper messageSource,
-				DenormalizedFieldValueManager dfvFinder, CustomFieldValueFinderService cufValueService) {
-			super(locale, messageSource, dfvFinder, cufValueService);
-		}
-
-		@Override
-		public Map<String, Object> buildItemData(ExecutionStep item) {
-			Map<String, Object> res = super.buildItemData(item);
-
-			res.put("status", localizedStatus(item.getExecutionStatus(), super.locale, super.messageSource));
-			return res;
-
-		}
-	}
-
-	@RequestMapping(value = "/auto-steps", method = RequestMethod.GET, params = RequestParams.S_ECHO_PARAM)
-	@ResponseBody
-	public DataTableModel getAutoStepsTableModel(@PathVariable long executionId, DataTableDrawParameters params,
-			final Locale locale) {
-		LOGGER.trace("ExecutionModificationController: getStepsTableModel called ");
-
-		Paging filter = createPaging(params);
-
-		PagedCollectionHolder<List<ExecutionStep>> holder = executionModService.findExecutionSteps(executionId,
-				filter);
-
-		return new AutomatedExecutionStepDataTableModelHelper(locale, messageSource, denormalizedFieldValueFinder, cufValueService)
-		.buildDataModel(holder,  params.getsEcho());
-
-	}
-
-	private static final class AutomatedExecutionStepDataTableModelHelper extends ExecutionStepDataTableModelHelper {
-		private AutomatedExecutionStepDataTableModelHelper(Locale locale, InternationalizationHelper messageSource,
-				DenormalizedFieldValueManager dfvFinder, CustomFieldValueFinderService cufValueService) {
-			super(locale, messageSource, dfvFinder, cufValueService);
-		}
-
-		@Override
-		public Map<String, Object> buildItemData(ExecutionStep item) {
-			Map<String, Object> res = super.buildItemData(item);
-			res.put("status", "--");
-			return res;
-		}
-	}
-
-	private static String createBugList(ExecutionStep item) {
+	static String createBugList(ExecutionStep item) {
 		StringBuffer toReturn = new StringBuffer();
 		List<Issue> issueList = item.getIssueList().getAllIssues();
 		if (issueList.size() > 0) {
@@ -474,7 +297,7 @@ public class ExecutionModificationController {
 		return executionModService.findExecutionStepById(stepId).getExecutionStatus().toString();
 	}
 
-	private static String localizedStatus(ExecutionStatus status, Locale locale, MessageSource messageSource) {
+	static String localizedStatus(ExecutionStatus status, Locale locale, MessageSource messageSource) {
 		return messageSource.getMessage(status.getI18nKey(), null, locale);
 	}
 
