@@ -199,7 +199,7 @@
 				+ "from TestCaseLibrary tcl join tcl.rootContent tc join tc.project p inner join tc.attachmentList atlist left join atlist.attachments attach left join tc.requirementVersionCoverages req "
 				+ "where tc.id in (:testCaseIds) " + "group by tc"),
 
-		@NamedQuery(name = "testCase.excelExportCUF", query = "select cfv.boundEntityId, cfv.boundEntityType, cf.code, cfv.value, cf.inputType "
+		@NamedQuery(name = "testCase.excelExportCUF", query = "select cfv.boundEntityId, cfv.boundEntityType, cf.code, cfv.value, cfv.longValue, cf.inputType "
 				+ "from CustomFieldValue cfv join cfv.binding binding join binding.customField cf "
 				+ "where cfv.boundEntityId in (:testCaseIds) and cfv.boundEntityType = 'TEST_CASE'"),
 
@@ -232,7 +232,7 @@
 				+ "from TestCase tc inner join tc.steps st "
 				+ "where st.class = CallTestStep "
 				+ "and tc.id in (:testCaseIds) " + "group by st"),
-		@NamedQuery(name = "testStep.excelExportCUF", query = "select cfv.boundEntityId, cfv.boundEntityType, cf.code, cfv.value, cf.inputType "
+		@NamedQuery(name = "testStep.excelExportCUF", query = "select cfv.boundEntityId, cfv.boundEntityType, cf.code, cfv.value, cfv.longValue, cf.inputType "
 				+ "from CustomFieldValue cfv join cfv.binding binding join binding.customField cf "
 				+ "where cfv.boundEntityId in ("
 				+ "select st.id from TestCase tc inner join tc.steps st where tc.id in (:testCaseIds)"

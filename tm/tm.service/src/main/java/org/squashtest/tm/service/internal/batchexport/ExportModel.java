@@ -25,6 +25,7 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.squashtest.tm.domain.customfield.BindableEntity;
 import org.squashtest.tm.domain.customfield.InputType;
 import org.squashtest.tm.domain.testcase.TestCaseImportance;
@@ -624,12 +625,12 @@ public class ExportModel {
 		private String value;
 		private InputType type;
 
-		public CustomField(Long ownerId, BindableEntity ownerType, String code, String value, InputType type) {
+		public CustomField(Long ownerId, BindableEntity ownerType, String code, String value, String longValue, InputType type) {
 			super();
 			this.ownerId = ownerId;
 			this.ownerType = ownerType;
 			this.code = code;
-			this.value = value;
+			this.value = (! StringUtils.isBlank(longValue)) ? longValue : value;
 			this.type = type;
 		}
 
