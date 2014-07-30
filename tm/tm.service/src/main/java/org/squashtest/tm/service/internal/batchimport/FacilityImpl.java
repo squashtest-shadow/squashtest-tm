@@ -77,6 +77,8 @@ import org.squashtest.tm.service.testcase.TestStepModificationService;
 @Component
 @Scope("prototype")
 public class FacilityImpl implements Facility {
+	
+	private static final String EXCEL_ERR_PREFIX = "Excel import : ";
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(FacilityImpl.class);
 
@@ -153,13 +155,13 @@ public class FacilityImpl implements Facility {
 
 			remember(target);
 
-			LOGGER.debug("Excel import : Created Test Case \t'" + target + "'");
+			LOGGER.debug(EXCEL_ERR_PREFIX+"Created Test Case \t'" + target + "'");
 
 		} catch (Exception ex) {
 			train.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_UNEXPECTED_ERROR,
 					new Object[] { ex.getClass().getName() }));
 			validator.getModel().setNotExists(target);
-			LOGGER.error("Excel import : unexpected error while importing " + target + " : ", ex);
+			LOGGER.error(EXCEL_ERR_PREFIX+"unexpected error while importing " + target + " : ", ex);
 		}
 
 		return train;
@@ -195,12 +197,12 @@ public class FacilityImpl implements Facility {
 
 					remember(target);
 
-					LOGGER.debug("Excel import : Updated Test Case \t'" + target + "'");
+					LOGGER.debug(EXCEL_ERR_PREFIX+"Updated Test Case \t'" + target + "'");
 
 				} catch (Exception ex) {
 					train.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_UNEXPECTED_ERROR,
 							new Object[] { ex.getClass().getName() }));
-					LOGGER.error("Excel import : unexpected error while updating " + target + " : ", ex);
+					LOGGER.error(EXCEL_ERR_PREFIX+"unexpected error while updating " + target + " : ", ex);
 				}
 
 			}
@@ -221,13 +223,13 @@ public class FacilityImpl implements Facility {
 				doDeleteTestCase(target);
 				validator.getModel().setDeleted(target);
 
-				LOGGER.debug("Excel import : Deleted Test Case \t'" + target + "'");
+				LOGGER.debug(EXCEL_ERR_PREFIX+"Deleted Test Case \t'" + target + "'");
 
 			} catch (Exception ex) {
 				train.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_UNEXPECTED_ERROR,
 						new Object[] { ex.getClass().getName() }));
 
-				LOGGER.error("Excel import : unexpected error while deleting " + target + " : ", ex);
+				LOGGER.error(EXCEL_ERR_PREFIX+"unexpected error while deleting " + target + " : ", ex);
 			}
 		}
 
@@ -247,13 +249,13 @@ public class FacilityImpl implements Facility {
 				doAddActionStep(target, testStep, cufValues);
 				validator.getModel().addActionStep(target);
 
-				LOGGER.debug("Excel import : Created Action Step \t'" + target + "'");
+				LOGGER.debug(EXCEL_ERR_PREFIX+"Created Action Step \t'" + target + "'");
 
 			} catch (Exception ex) {
 				train.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_UNEXPECTED_ERROR,
 						new Object[] { ex.getClass().getName() }));
 
-				LOGGER.error("Excel import : unexpected error while creating step " + target + " : ", ex);
+				LOGGER.error(EXCEL_ERR_PREFIX+"unexpected error while creating step " + target + " : ", ex);
 			}
 		}
 
@@ -280,12 +282,12 @@ public class FacilityImpl implements Facility {
 					remember(target.getTestCase());
 					validator.getModel().addCallStep(target, calledTestCase);
 
-					LOGGER.debug("Excel import : Created Call Step \t'" + target + "' -> '" + calledTestCase + "'");
+					LOGGER.debug(EXCEL_ERR_PREFIX+"Created Call Step \t'" + target + "' -> '" + calledTestCase + "'");
 				}
 			} catch (Exception ex) {
 				train.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_UNEXPECTED_ERROR,
 						new Object[] { ex.getClass().getName() }));
-				LOGGER.error("Excel import : unexpected error while creating step " + target + " : ", ex);
+				LOGGER.error(EXCEL_ERR_PREFIX+"unexpected error while creating step " + target + " : ", ex);
 			}
 		}
 
@@ -302,11 +304,11 @@ public class FacilityImpl implements Facility {
 				helper.truncate(testStep, cufValues);
 				doUpdateActionStep(target, testStep, cufValues);
 
-				LOGGER.debug("Excel import : Updated Action Step \t'" + target + "'");
+				LOGGER.debug(EXCEL_ERR_PREFIX+"Updated Action Step \t'" + target + "'");
 			} catch (Exception ex) {
 				train.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_UNEXPECTED_ERROR,
 						new Object[] { ex.getClass().getName() }));
-				LOGGER.error("Excel import : unexpected error while updating step " + target + " : ", ex);
+				LOGGER.error(EXCEL_ERR_PREFIX+"unexpected error while updating step " + target + " : ", ex);
 			}
 		}
 
@@ -324,11 +326,11 @@ public class FacilityImpl implements Facility {
 				doUpdateCallStep(target, calledTestCase);
 				validator.getModel().updateCallStepTarget(target, calledTestCase);
 
-				LOGGER.debug("Excel import : Created Call Step \t'" + target + "' -> '" + calledTestCase + "'");
+				LOGGER.debug(EXCEL_ERR_PREFIX+"Created Call Step \t'" + target + "' -> '" + calledTestCase + "'");
 			} catch (Exception ex) {
 				train.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_UNEXPECTED_ERROR,
 						new Object[] { ex.getClass().getName() }));
-				LOGGER.error("Excel import : unexpected error while updating step " + target + " : ", ex);
+				LOGGER.error(EXCEL_ERR_PREFIX+"unexpected error while updating step " + target + " : ", ex);
 			}
 		}
 
@@ -345,12 +347,12 @@ public class FacilityImpl implements Facility {
 				doDeleteTestStep(target);
 				validator.getModel().remove(target);
 
-				LOGGER.debug("Excel import : Deleted Step \t'" + target + "'");
+				LOGGER.debug(EXCEL_ERR_PREFIX+"Deleted Step \t'" + target + "'");
 
 			} catch (Exception ex) {
 				train.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_UNEXPECTED_ERROR,
 						new Object[] { ex.getClass().getName() }));
-				LOGGER.error("Excel import : unexpected error while deleting step " + target + " : ", ex);
+				LOGGER.error(EXCEL_ERR_PREFIX+"unexpected error while deleting step " + target + " : ", ex);
 			}
 		}
 
@@ -368,11 +370,11 @@ public class FacilityImpl implements Facility {
 				validator.getModel().addParameter(target);
 				remember(target.getOwner());
 
-				LOGGER.debug("Excel import : Created Parameter \t'" + target + "'");
+				LOGGER.debug(EXCEL_ERR_PREFIX+"Created Parameter \t'" + target + "'");
 			} catch (Exception ex) {
 				train.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_UNEXPECTED_ERROR,
 						new Object[] { ex.getClass().getName() }));
-				LOGGER.error("Excel import : unexpected error while adding parameter " + target + " : ", ex);
+				LOGGER.error(EXCEL_ERR_PREFIX+"unexpected error while adding parameter " + target + " : ", ex);
 			}
 		}
 
@@ -391,11 +393,11 @@ public class FacilityImpl implements Facility {
 				// Double-insertion proof.
 				remember(target.getOwner());
 
-				LOGGER.debug("Excel import : Updated Parameter \t'" + target + "'");
+				LOGGER.debug(EXCEL_ERR_PREFIX+"Updated Parameter \t'" + target + "'");
 			} catch (Exception ex) {
 				train.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_UNEXPECTED_ERROR,
 						new Object[] { ex.getClass().getName() }));
-				LOGGER.error("Excel import : unexpected error while updating parameter " + target + " : ", ex);
+				LOGGER.error(EXCEL_ERR_PREFIX+"unexpected error while updating parameter " + target + " : ", ex);
 			}
 		}
 
@@ -412,12 +414,12 @@ public class FacilityImpl implements Facility {
 				doDeleteParameter(target);
 				validator.getModel().removeParameter(target);
 
-				LOGGER.debug("Excel import : Deleted Parameter \t'" + target + "'");
+				LOGGER.debug(EXCEL_ERR_PREFIX+"Deleted Parameter \t'" + target + "'");
 			} catch (Exception ex) {
 				train.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_UNEXPECTED_ERROR,
 						new Object[] { ex.getClass().getName() }));
 
-				LOGGER.error("Excel import : unexpected error while deleting parameter " + target + " : ", ex);
+				LOGGER.error(EXCEL_ERR_PREFIX+"unexpected error while deleting parameter " + target + " : ", ex);
 			}
 		}
 
@@ -437,12 +439,12 @@ public class FacilityImpl implements Facility {
 				remember(dataset.getTestCase());
 				remember(param.getOwner());
 
-				LOGGER.debug("Excel import : Updated Param Value for param \t'" + param + "' in dataset '" + dataset
+				LOGGER.debug(EXCEL_ERR_PREFIX+"Updated Param Value for param \t'" + param + "' in dataset '" + dataset
 						+ "'");
 			} catch (Exception ex) {
 				train.addEntry(new LogEntry(dataset, ImportStatus.FAILURE, Messages.ERROR_UNEXPECTED_ERROR,
 						new Object[] { ex.getClass().getName() }));
-				LOGGER.error("Excel import : unexpected error while setting parameter " + param + " in dataset "
+				LOGGER.error(EXCEL_ERR_PREFIX+"unexpected error while setting parameter " + param + " in dataset "
 						+ dataset + " : ", ex);
 			}
 		}
@@ -462,12 +464,12 @@ public class FacilityImpl implements Facility {
 				validator.getModel().removeDataset(dataset);
 				remember(dataset.getTestCase());
 
-				LOGGER.debug("Excel import : Deleted Dataset '" + dataset + "'");
+				LOGGER.debug(EXCEL_ERR_PREFIX+"Deleted Dataset '" + dataset + "'");
 
 			} catch (Exception ex) {
 				train.addEntry(new LogEntry(dataset, ImportStatus.FAILURE, Messages.ERROR_UNEXPECTED_ERROR,
 						new Object[] { ex.getClass().getName() }));
-				LOGGER.error("Excel import : unexpected error while deleting dataset " + dataset + " in dataset "
+				LOGGER.error(EXCEL_ERR_PREFIX+"unexpected error while deleting dataset " + dataset + " in dataset "
 						+ dataset + " : ", ex);
 			}
 		}
@@ -766,7 +768,7 @@ public class FacilityImpl implements Facility {
 			helper.truncate(newds);
 			datasetService.persist(newds, tcid);
 
-			LOGGER.debug("Excel import : Created Dataset \t'" + dataset + "'");
+			LOGGER.debug(EXCEL_ERR_PREFIX+"Created Dataset \t'" + dataset + "'");
 
 			return newds;
 		}

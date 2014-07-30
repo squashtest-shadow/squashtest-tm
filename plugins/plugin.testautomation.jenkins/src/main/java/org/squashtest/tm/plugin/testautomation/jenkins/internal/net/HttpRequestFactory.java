@@ -47,29 +47,31 @@ public class HttpRequestFactory {
 	private static final Logger LOGGER = LoggerFactory.getLogger(HttpRequestFactory.class);
 
 	private static final String API_URI = "/api/json";
+	
+	private static final String TREE = "tree";
 
 	public static final String SYMBOLIC_BUILDFILENAME = "testsuite.json";
 	public static final String MULTIPART_BUILDFILENAME = "file0";
 	public static final String MULTIPART_JENKINSARGS = "json";
 
 	private static final NameValuePair[] JOB_LIST_QUERY = new NameValuePair[] {
-		new NameValuePair("tree", "jobs[name,color]")
+		new NameValuePair(TREE, "jobs[name,color]")
 	};
 
 	private static final NameValuePair[] QUEUED_BUILDS_QUERY = new NameValuePair[] {
-		new NameValuePair("tree", "items[id,actions[parameters[name,value]],task[name]]")
+		new NameValuePair(TREE, "items[id,actions[parameters[name,value]],task[name]]")
 	};
 
 	private static final NameValuePair[] EXISTING_BUILDS_QUERY = new NameValuePair[] {
-		new NameValuePair("tree", "builds[building,number,actions[parameters[name,value]]]")
+		new NameValuePair(TREE, "builds[building,number,actions[parameters[name,value]]]")
 	};
 
 	private static final NameValuePair[] SINGLE_BUILD_QUERY = new NameValuePair[] {
-		new NameValuePair("tree", "building,number,actions[parameters[name,value]]")
+		new NameValuePair(TREE, "building,number,actions[parameters[name,value]]")
 	};
 
 	private static final NameValuePair[] BUILD_RESULT_QUERY = new NameValuePair[] {
-		new NameValuePair("tree", "suites[name,cases[name,status]]")
+		new NameValuePair(TREE, "suites[name,cases[name,status]]")
 	};
 
 	private JsonParser jsonParser = new JsonParser();

@@ -32,7 +32,7 @@ import org.squashtest.csp.launcher.ihm.window.SimpleWindow;
 public class Starter {
 
 	//Squash url
-	static String squashUrl = "http://127.0.0.1:8080/squash/";
+	private static final String SQUASH_URL = "http://127.0.0.1:8080/squash/";
 	//Number of milliseconds until new http request
 	static int intervals = 5000;
 
@@ -57,7 +57,7 @@ public class Starter {
 		}
 		if(stop){
 			try {
-				Desktop.getDesktop().browse(new URI(squashUrl));
+				Desktop.getDesktop().browse(new URI(Starter.SQUASH_URL));
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -74,7 +74,7 @@ public class Starter {
 		HttpURLConnection http = null;
 		String response = "";
 		try {
-			http = (HttpURLConnection) new URL(squashUrl).openConnection();
+			http = (HttpURLConnection) new URL(Starter.SQUASH_URL).openConnection();
 			http.setRequestMethod("GET");
 			http.connect();
 			response = http.getResponseMessage();
