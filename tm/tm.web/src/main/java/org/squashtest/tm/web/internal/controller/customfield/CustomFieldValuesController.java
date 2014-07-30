@@ -74,23 +74,6 @@ public class CustomFieldValuesController {
 
 	}
 
-	@Deprecated
-	@RequestMapping(method = RequestMethod.GET, params = { BOUND_ENTITY_ID, BOUND_ENTITY_TYPE })
-	public ModelAndView getCustomFieldValuesPanel(@RequestParam(BOUND_ENTITY_ID) long id,
-			@RequestParam(BOUND_ENTITY_TYPE) BindableEntity entityType, Locale locale) {
-
-		List<CustomFieldValue> values = managerService.findAllCustomFieldValues(id, entityType);
-		boolean editable = managerService.areValuesEditable(id, entityType);
-
-		CustomFieldValueConfigurationBean conf = CustomFieldValueConfigurationBean.createFromValues(values);
-
-		ModelAndView mav = new ModelAndView("custom-field-values-panel.html");
-		mav.addObject("editable", editable);
-		mav.addObject("configuration", conf);
-
-		return mav;
-
-	}
 
 	@RequestMapping(value = "/{id}", method = RequestMethod.POST, params = JEditablePostParams.VALUE)
 	@ResponseBody

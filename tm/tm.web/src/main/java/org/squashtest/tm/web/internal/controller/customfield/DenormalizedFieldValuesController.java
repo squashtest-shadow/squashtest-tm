@@ -76,20 +76,6 @@ public class DenormalizedFieldValuesController {
 
 	}
 
-	@RequestMapping(method = RequestMethod.GET, params = { DENORMALIZED_FIELD_HOLDER_ID, DENORMALIZED_FIELD_HOLDER_TYPE })
-	public ModelAndView getCustomFieldValuesPanel(@RequestParam(DENORMALIZED_FIELD_HOLDER_ID) long id,
-			@RequestParam(DENORMALIZED_FIELD_HOLDER_TYPE) DenormalizedFieldHolderType entityType, Locale locale) {
-
-		List<DenormalizedFieldValue> values = denormalizedFieldValueFinder.findAllForEntity(id, entityType);
-		CustomFieldValueConfigurationBean conf = CustomFieldValueConfigurationBean.createFromDenormalized(values);
-
-		ModelAndView mav = new ModelAndView("denormalized-field-values-panel.html");
-		mav.addObject("editable", true);
-		mav.addObject("configuration", conf);
-
-		return mav;
-
-	}
 
 	@RequestMapping(value = "/{id}", method = RequestMethod.POST, params = JEditablePostParams.VALUE)
 	@ResponseBody
