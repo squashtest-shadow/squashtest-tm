@@ -20,9 +20,12 @@
  */
 package org.squashtest.tm.service.internal.denormalizedField;
 
+import java.util.List;
+
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.customfield.BoundEntity;
 import org.squashtest.tm.domain.denormalizedfield.DenormalizedFieldHolder;
+import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.execution.ExecutionStep;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.testcase.ActionTestStep;
@@ -67,4 +70,13 @@ public interface PrivateDenormalizedFieldValueService extends DenormalizedFieldV
 	 */
 	void createAllDenormalizedFieldValues(ActionTestStep sourceStep, ExecutionStep step, Project project);
 	
+	
+	/**
+	 * Will create the custom field values of all the execution steps in that execution in a lot. 
+	 * If some execution steps come from call steps that belong to a different project, 
+	 * will apply the reordering as requested and implemented in {@link #createAllDenormalizedFieldValues(ActionTestStep, ExecutionStep, Project)}
+	 *
+	 * @param execution
+	 */
+	void createAllDenormalizedFieldValuesForSteps(Execution execution);
 }

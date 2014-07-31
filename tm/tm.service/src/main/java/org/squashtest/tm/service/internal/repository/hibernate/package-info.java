@@ -268,13 +268,18 @@
 		@NamedQuery(name = "CampaignTestPlanItem.findPlannedTestCasesIdsByCampaignId", query = "select distinct tc.id from Campaign c join c.testPlan tpi join tpi.referencedTestCase tc where c.id = ?1"),
 
 		//Execution
+		@NamedQuery(name = "execution.findSteps", query = "select steps from Execution exec inner join exec.steps steps where exec.id = :executionId"),		
 		@NamedQuery(name = "execution.countStatus", query = "select count(exSteps.executionStatus) from Execution as execution join execution.steps as exSteps where execution.id =:execId and exSteps.executionStatus=:status"),
 		@NamedQuery(name = "execution.countSteps", query = "select count(steps) from Execution ex join ex.steps as steps where ex.id = :executionId"),
 		@NamedQuery(name = "execution.findAllByTestCaseIdOrderByRunDate", query = "select e from Execution e inner join e.referencedTestCase tc where tc.id = :testCaseId order by e.lastExecutedOn desc"),
 		@NamedQuery(name = "execution.countByTestCaseId", query = "select count(e) from Execution e inner join e.referencedTestCase tc where tc.id = :testCaseId"),
 		@NamedQuery(name = "execution.countAllStatus", query = "select count(ex) from Execution ex where ex.executionStatus = :status and ex.testPlan.iteration.campaign.project.id = :projectId"),
 		@NamedQuery(name = "execution.findExecutionIdsHavingStepStatus", query = "select distinct exec.id from Execution exec join exec.steps steps where steps.executionStatus = :status and exec.testPlan.iteration.campaign.project.id = :projectId"),
+		@NamedQuery(name = "execution.findOriginalSteps", query = "select st from Execution exec inner join exec.steps steps inner join steps.referencedTestStep st where exec.id = :executionId and st.class = ActionTestStep"),
+		@NamedQuery(name = "execution.findOriginalStepIds", query = "select st.id from Execution exec inner join exec.steps steps inner join steps.referencedTestStep st where exec.id = :executionId and st.class = ActionTestStep"),
 
+		
+		
 		//ExecutionStep
 		@NamedQuery(name = "executionStep.findParentNode", query = "select execution from Execution as execution join execution.steps exSteps where exSteps.id= :childId "),
 		@NamedQuery(name = "executionStep.countAllStatus", query = "select count(step) from ExecutionStep step where step.executionStatus = :status and step.execution.testPlan.iteration.campaign.project.id = :projectId"),
@@ -402,6 +407,7 @@
 		@NamedQuery(name = "CustomFieldValue.findBoundEntityId", query = "select cfv.boundEntityId from CustomFieldValue cfv where cfv.id = :customFieldValueId"),
 		@NamedQuery(name = "CustomFieldValue.findAllCustomValues", query = "select cfv from CustomFieldValue cfv join cfv.binding cfb where cfv.boundEntityId = ?1 and cfv.boundEntityType = ?2 order by cfb.position asc"),
 		@NamedQuery(name = "CustomFieldValue.batchedFindAllCustomValuesFor", query = "select cfv from CustomFieldValue cfv join cfv.binding cfb where cfv.boundEntityId in (:entityIds) and cfv.boundEntityType = :entityType order by cfv.boundEntityId asc, cfb.position asc"),
+		@NamedQuery(name = "CustomFieldValue.batchedInitializedFindAllCustomValuesFor", query = "select cfv from CustomFieldValue cfv join fetch cfv.binding cfb join fetch cfb.customField where cfv.boundEntityId in (:entityIds) and cfv.boundEntityType = :entityType order by cfv.boundEntityId asc, cfb.position asc"),
 		@NamedQuery(name = "CustomFieldValue.batchedRestrictedFindAllCustomValuesFor", query = "select cfv from CustomFieldValue cfv join cfv.binding cfb join cfb.customField cf where cfv.boundEntityId in (:entityIds) and cfv.boundEntityType = :entityType "
 				+ "and cf in (:customFields) " + "order by cfv.boundEntityId , cfb.position asc"),
 		@NamedQuery(name = "CustomFieldValue.findAllCustomValuesOfBinding", query = "select cfv from CustomFieldValue cfv join cfv.binding cfb where cfb.id = ?1 order by cfb.position asc"),

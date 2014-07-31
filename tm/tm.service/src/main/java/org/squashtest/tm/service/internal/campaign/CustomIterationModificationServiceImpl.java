@@ -332,22 +332,11 @@ IterationTestPlanManager {
 
 	private void createDenormalizedFieldsForExecutionAndExecutionSteps(Execution execution) {
 		LOGGER.debug("Create denormalized fields for Execution {}", execution.getId());
+		
 		TestCase sourceTC = execution.getReferencedTestCase();
 		denormalizedFieldValueService.createAllDenormalizedFieldValues(sourceTC, execution);
-		for (ExecutionStep step : execution.getSteps()) {
-			TestStep sourceStep = step.getReferencedTestStep();
-			if (stepIsFromSameProjectAsTC(sourceTC, (ActionTestStep) sourceStep)) {
-				denormalizedFieldValueService.createAllDenormalizedFieldValues((ActionTestStep) sourceStep, step);
-			} else {
-				denormalizedFieldValueService.createAllDenormalizedFieldValues((ActionTestStep) sourceStep, step,
-						sourceTC.getProject());
-			}
-		}
+		denormalizedFieldValueService.createAllDenormalizedFieldValuesForSteps(execution);
 
-	}
-
-	private boolean stepIsFromSameProjectAsTC(TestCase sourceTC, ActionTestStep sourceStep) {
-		return sourceStep.getProject().getId().equals(sourceTC.getProject().getId());
 	}
 
 

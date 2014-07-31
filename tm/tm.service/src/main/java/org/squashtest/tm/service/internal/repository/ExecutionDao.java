@@ -30,11 +30,16 @@ import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.domain.execution.ExecutionStatusReport;
 import org.squashtest.tm.domain.execution.ExecutionStep;
+import org.squashtest.tm.domain.testcase.ActionTestStep;
 
 public interface ExecutionDao extends EntityDao<Execution> {
 
 	List<ExecutionStep> findExecutionSteps(long executionId);
-
+	
+	List<ActionTestStep> findOriginalSteps(long executionId);	
+	
+	List<Long> findOriginalStepIds(long executionId);
+	
 	Execution findAndInit(long executionId);
 
 	int findExecutionRank(long executionId);
@@ -60,6 +65,7 @@ public interface ExecutionDao extends EntityDao<Execution> {
 	void replaceExecutionStepStatus(long projectId, ExecutionStatus oldStatus, ExecutionStatus newStatus);
 	
 	void replaceTestPlanStatus(long projectId, ExecutionStatus oldStatus, ExecutionStatus newStatus);
+	
 	
 	// ************* /special execution status deactivation section ***************
 	
