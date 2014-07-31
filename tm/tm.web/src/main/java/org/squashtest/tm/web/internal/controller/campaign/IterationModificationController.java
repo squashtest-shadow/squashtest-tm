@@ -373,10 +373,13 @@ public class IterationModificationController {
 	@RequestMapping(value = "/test-plan/{testPlanItemId}/executions/new", method = RequestMethod.POST, params = { "mode=manual" })
 	public @ResponseBody
 	String addManualExecution(@PathVariable long testPlanItemId, @PathVariable long iterationId) {
-		iterationModService.addExecution(testPlanItemId);
-		List<Execution> executionList = iterationModService.findExecutionsByTestPlan(iterationId, testPlanItemId);
+		LOGGER.trace("Add manual execution : creating execution");
+		
+		Execution newExecution = iterationModService.addExecution(testPlanItemId);
+		
+		LOGGER.trace("Add manual execution : completed in");
 
-		return executionList.get(executionList.size() - 1).getId().toString();
+		return newExecution.getId().toString();
 
 	}
 

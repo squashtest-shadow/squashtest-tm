@@ -64,9 +64,22 @@ public interface PrivateCustomFieldValueService extends CustomFieldValueManagerS
 	 * Will create all the custom field values for one entity.
 	 * 
 	 * @param entity
+	 * @param project. If null, the project of the given entity will be used. 
 	 */
 	void createAllCustomFieldValues(BoundEntity entity, Project project);
 
+	
+	/**
+	 * batched version of {@link #createAllCustomFieldValues(BoundEntity, Project)}. 
+	 * The entities are assumed to be all of the same concrete class and of the 
+	 * same project.
+	 * 
+	 * 
+	 * @param entities
+	 * @param project
+	 */
+	void createAllCustomFieldValues(Collection<? extends BoundEntity> entities, Project project);
+	
 	/**
 	 * will delete all the custom field vales for one entity
 	 * 

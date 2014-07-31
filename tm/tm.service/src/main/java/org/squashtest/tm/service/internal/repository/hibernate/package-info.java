@@ -393,7 +393,11 @@
 				+ "and cfb1.boundProject = cfb2.boundProject and cfb1.position >= cfb2.position group by cfb1.id"),
 		@NamedQuery(name = "CustomFielBinding.updateBindingPosition", query = "update CustomFieldBinding cfb set cfb.position = :newPos where cfb.id = :id"),
 		@NamedQuery(name = "CustomFieldBinding.findAllAlike", query = "select cfb2 from CustomFieldBinding cfb1, CustomFieldBinding cfb2 where cfb1.id = ?1 and cfb1.boundProject = cfb2.boundProject and cfb1.boundEntity = cfb2.boundEntity order by cfb2.position"),
+		@NamedQuery(name = "CustomFieldBinding.findEffectiveBindingsForEntity", query = "select cfb from CustomFieldValue cfv inner join cfv.binding cfb where cfv.boundEntityId = :entityId and cfv.boundEntityType = :entityType "),
+		@NamedQuery(name = "CustomFieldBinding.findEffectiveBindingsForEntities", query = "select cfv.boundEntityId, cfb from CustomFieldValue cfv inner join cfv.binding cfb where cfv.boundEntityId in (:entityIds) and cfv.boundEntityType = :entityType "),
 
+		
+		
 		//CustomFieldValue
 		@NamedQuery(name = "CustomFieldValue.findBoundEntityId", query = "select cfv.boundEntityId from CustomFieldValue cfv where cfv.id = :customFieldValueId"),
 		@NamedQuery(name = "CustomFieldValue.findAllCustomValues", query = "select cfv from CustomFieldValue cfv join cfv.binding cfb where cfv.boundEntityId = ?1 and cfv.boundEntityType = ?2 order by cfb.position asc"),
