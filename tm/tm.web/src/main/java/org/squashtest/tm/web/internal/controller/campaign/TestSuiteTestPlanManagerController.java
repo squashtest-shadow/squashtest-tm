@@ -337,10 +337,9 @@ public class TestSuiteTestPlanManagerController {
 		TestSuite testSuite = service.findById(suiteId);
 		Long iterationId = testSuite.getIteration().getId();
 
-		service.addExecution(itemId);
-		List<Execution> executionList = iterationFinder.findExecutionsByTestPlan(iterationId, itemId);
-
-		return executionList.get(executionList.size() - 1).getId().toString();
+		Execution newExecution = service.addExecution(itemId);
+		
+		return newExecution.getId().toString();
 
 	}
 

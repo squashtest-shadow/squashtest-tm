@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.service.internal.campaign;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -41,6 +42,7 @@ import org.squashtest.tm.domain.campaign.CampaignTestPlanItem;
 import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.campaign.TestSuite;
+import org.squashtest.tm.domain.customfield.BoundEntity;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.execution.ExecutionStep;
 import org.squashtest.tm.domain.testcase.ActionTestStep;
@@ -325,9 +327,7 @@ IterationTestPlanManager {
 
 	private void createCustomFieldsForExecutionAndExecutionSteps(Execution execution){
 		customFieldValuesService.createAllCustomFieldValues(execution, execution.getProject());
-		for (ExecutionStep step : execution.getSteps()) {
-			customFieldValuesService.createAllCustomFieldValues(step, execution.getProject());
-		}
+		customFieldValuesService.createAllCustomFieldValues(execution.getSteps(), execution.getProject());
 	}
 
 	private void createDenormalizedFieldsForExecutionAndExecutionSteps(Execution execution) {
