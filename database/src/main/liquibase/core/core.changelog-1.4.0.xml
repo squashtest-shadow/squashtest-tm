@@ -29,8 +29,8 @@
 		<sql>
 			<![CDATA[
 				update CORE_USER
-					set ACTIVE = 1
-					where CORE_USER.LOGIN in (select AUTH_USER.LOGIN from AUTH_USER where AUTH_USER.ACTIVE = 1) ;
+					set ACTIVE = true
+					where CORE_USER.LOGIN in (select AUTH_USER.LOGIN from AUTH_USER where AUTH_USER.ACTIVE = true) ;
 			]]> 
 			
 		</sql>

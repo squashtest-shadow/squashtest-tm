@@ -87,10 +87,10 @@
 		
 		<sql>
 			CREATE TEMPORARY TABLE `MIGRATION_CAMPAIGN_TEST_PLAN` (
-			`TEST_PLAN_ORDER` BIGINT(20) NULL DEFAULT NULL,
-			`CAMPAIGN_ID` BIGINT(20) NULL DEFAULT NULL,
-			`TEST_CASE_ID` BIGINT(20) NULL DEFAULT NULL,
-			`DUMMY` BIGINT(20) NULL DEFAULT NULL
+			`TEST_PLAN_ORDER` BIGINT NULL DEFAULT NULL,
+			`CAMPAIGN_ID` BIGINT NULL DEFAULT NULL,
+			`TEST_CASE_ID` BIGINT NULL DEFAULT NULL,
+			`DUMMY` BIGINT NULL DEFAULT NULL
 			);
 			
 			set @rn=-1;
@@ -116,10 +116,10 @@
 		
 		<sql>
 			CREATE TEMPORARY TABLE `MIGRATION_CAMPAIGN_TEST_PLAN` (
-			`TEST_PLAN_ORDER` BIGINT(20) NULL DEFAULT NULL,
-			`CAMPAIGN_ID` BIGINT(20) NULL DEFAULT NULL,
-			`TEST_CASE_ID` BIGINT(20) NULL DEFAULT NULL,
-			`DUMMY` BIGINT(20) NULL DEFAULT NULL
+			`TEST_PLAN_ORDER` BIGINT NULL DEFAULT NULL,
+			`CAMPAIGN_ID` BIGINT NULL DEFAULT NULL,
+			`TEST_CASE_ID` BIGINT NULL DEFAULT NULL,
+			`DUMMY` BIGINT NULL DEFAULT NULL
 			);
 			
 			insert into MIGRATION_CAMPAIGN_TEST_PLAN (TEST_PLAN_ORDER, CAMPAIGN_ID, TEST_CASE_ID, DUMMY)
@@ -134,7 +134,62 @@
 		</sql>
 
 	 </changeSet>
-	
+   
+	 <changeSet id="tm-0.19.0.04-postgres" author="mpagnon">
+    <preConditions onError="CONTINUE" onFail="CONTINUE" onSqlOutput="TEST">
+    <dbms type="postgresql"/>
+    </preConditions>
+    <comment> Calculate and insert and add Not null constraint on order for Campaign Test Plan for postgresql </comment>
+     <sql>
+      CREATE  TABLE MIGRATION_CAMPAIGN_TEST_PLAN (
+      TEST_PLAN_ORDER BIGINT NULL DEFAULT NULL,
+      CAMPAIGN_ID BIGINT NULL DEFAULT NULL,
+      TEST_CASE_ID BIGINT NULL DEFAULT NULL
+      );
+      </sql>
+    <createProcedure>
+
+CREATE OR REPLACE FUNCTION testfunction() RETURNS text AS 
+$$
+DECLARE rn integer := 0-1;
+rn2 integer := 0;
+prevcamp bigint := 0;
+r record;
+BEGIN
+FOR r in (select ctp.CAMPAIGN_ID, ctp.TEST_CASE_ID  from CAMPAIGN_TEST_PLAN_ITEM ctp order by CAMPAIGN_ID)
+LOOP
+	IF prevcamp  = r.CAMPAIGN_ID 
+        THEN 
+             rn2 := rn ;
+             rn := rn2 + 1;
+        ELSE rn := 0 ; 
+             prevcamp := r.CAMPAIGN_ID;
+        END IF;
+	  insert into MIGRATION_CAMPAIGN_TEST_PLAN (TEST_PLAN_ORDER, CAMPAIGN_ID, TEST_CASE_ID)
+       select rn, r.CAMPAIGN_ID , r.TEST_CASE_ID  ;
+      
+       
+
+END LOOP;
+return 'ok';
+END
+$$ LANGUAGE plpgsql;
+
+select testfunction();
+DROP FUNCTION TestFunction();
+        </createProcedure>
+        
+    <sql>
+      update CAMPAIGN_TEST_PLAN_ITEM citp set TEST_PLAN_ORDER 
+      = 
+        (select mctp.TEST_PLAN_ORDER from MIGRATION_CAMPAIGN_TEST_PLAN mctp 
+        where mctp.CAMPAIGN_ID = citp.CAMPAIGN_ID 
+        and mctp.TEST_CASE_ID = citp.TEST_CASE_ID);
+        
+        drop table MIGRATION_CAMPAIGN_TEST_PLAN;
+    </sql>
+
+   </changeSet>
 	 <changeSet id="tm-0.19.0.06" author="ramoussou">
 		<comment>Drop table CAMPAIGN_TEST_PLAN</comment>
 		<dropTable tableName="CAMPAIGN_TEST_PLAN"/>

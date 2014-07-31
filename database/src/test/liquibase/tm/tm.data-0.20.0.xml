@@ -28,5 +28,19 @@
 	<changeSet id="tm-data-0.20.0.01" author="bsiri">
 		<sqlFile path="tm.data-0.20.0.sql" relativeToChangelogFile="true" endDelimiter=";"/>
 	</changeSet>
+  <changeSet id="tm-data-0.20.0.02-postgresql" author="mpagnon" dbms="postgresql">
+  <sql>
+       SELECT setval('acl_class_id_seq', (SELECT MAX(id) from acl_class));
+       SELECT setval('acl_object_identity_id_seq', (SELECT MAX(id) from acl_object_identity));
+       SELECT setval('acl_responsibility_scope_entry_id_seq', (SELECT MAX(id) from acl_responsibility_scope_entry));
+       SELECT setval('campaign_library_cl_id_seq', (SELECT MAX(cl_id) from campaign_library));
+       SELECT setval('core_group_id_seq', (SELECT MAX(id) from core_group));
+       SELECT setval('core_user_id_seq', (SELECT MAX(id) from core_user));
+       SELECT setval('project_project_id_seq', (SELECT MAX(project_id) from project));
+       SELECT setval('requirement_library_rl_id_seq', (SELECT MAX(rl_id) from requirement_library));
+       SELECT setval('test_case_library_tcl_id_seq', (SELECT MAX(tcl_id) from test_case_library));
+  </sql>
+  </changeSet>
+  
 </databaseChangeLog>
  

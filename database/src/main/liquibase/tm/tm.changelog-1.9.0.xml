@@ -460,7 +460,7 @@
   </changeSet>
       
   <changeSet id="tm-1.9.0.feature-3138-8" author="flaurens">
-    <dropNotNullConstraint tableName="REQUIREMENT_VERSION_COVERAGE" columnName="VERIFIED_REQ_VERSION_ID" columnDataType="BIGINT(20)"/>
+    <dropNotNullConstraint tableName="REQUIREMENT_VERSION_COVERAGE" columnName="VERIFIED_REQ_VERSION_ID" columnDataType="BIGINT"/>
   </changeSet>
 
   <changeSet id="tm-1.9.0.feature-3211-1" author="flaurens">
@@ -494,9 +494,9 @@
    
     <changeSet id="tm-1.9.0-issue-3236-01" author="flaurens">
       <sql><![CDATA[
-		update DENORMALIZED_FIELD_VALUE dfv
-		set dfv.FIELD_TYPE = 'CF'
-		where dfv.FIELD_TYPE = ''
+		update DENORMALIZED_FIELD_VALUE
+		set FIELD_TYPE = 'CF'
+		where FIELD_TYPE = ''
 	]]>
     </sql>
   </changeSet>

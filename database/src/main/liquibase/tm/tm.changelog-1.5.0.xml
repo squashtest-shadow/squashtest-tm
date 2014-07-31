@@ -95,7 +95,7 @@
 		<createTable tableName="DENORMALIZED_FIELD_VALUE">
 			<column name="DFV_ID" type="BIGINT" autoIncrement="true">
 				<constraints primaryKey="true" nullable="false"
-					primaryKeyName="pk_custom_field" />
+					primaryKeyName="pk_denormalized_field" />
 			</column>
 			<column name="CFV_ID" type="BIGINT"
 				remarks="the custom field value where the denormalized field is copied from">
@@ -377,8 +377,8 @@
 				<constraints references="TEST_CASE(TCLN_ID)" foreignKeyName="fk_verifying_test_case" />
 			</column>
 		</createTable>
-		<addNotNullConstraint tableName="REQUIREMENT_VERSION_COVERAGE" columnName="VERIFIED_REQ_VERSION_ID" columnDataType="BIGINT(20)"/>
-		<addNotNullConstraint tableName="REQUIREMENT_VERSION_COVERAGE" columnName="VERIFYING_TEST_CASE_ID" columnDataType="BIGINT(20)"/>
+		<addNotNullConstraint tableName="REQUIREMENT_VERSION_COVERAGE" columnName="VERIFIED_REQ_VERSION_ID" columnDataType="BIGINT"/>
+		<addNotNullConstraint tableName="REQUIREMENT_VERSION_COVERAGE" columnName="VERIFYING_TEST_CASE_ID" columnDataType="BIGINT"/>
 		<addUniqueConstraint tableName="REQUIREMENT_VERSION_COVERAGE" columnNames="VERIFIED_REQ_VERSION_ID, VERIFYING_TEST_CASE_ID" constraintName="uc_tc_verifies_req_version"/>
 	</changeSet>
 	<changeSet id="tm-1.5.0.00-feat-2003.02" author="mpagnon">

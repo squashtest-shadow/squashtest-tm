@@ -30,10 +30,10 @@
 	<changeSet id="1.1.0.save-requirement-folders-before-versionning" author="gfouquet">
 		<comment>We save requirement folders data</comment>
 		<sql>
-			CREATE TEMPORARY TABLE `OLD_REQ_FOLDER` (
-				`FOLDER_ID` BIGINT(20) NULL DEFAULT NULL,
-				`NAME` VARCHAR(255) NULL DEFAULT NULL,
-				`DESCRIPTION` TEXT NULL DEFAULT NULL
+			CREATE TEMPORARY TABLE OLD_REQ_FOLDER (
+				FOLDER_ID BIGINT NULL DEFAULT NULL,
+				NAME VARCHAR(255) NULL DEFAULT NULL,
+				DESCRIPTION TEXT NULL DEFAULT NULL
 			);		
 		</sql>
 		<sql>
@@ -48,13 +48,13 @@
 	<changeSet id="1.1.0.save-requirements-before-versionning" author="gfouquet">
 		<comment>We save requirement data. Note : there is no status in requirement table at this point</comment>
 		<sql>
-			CREATE TEMPORARY TABLE `OLD_REQ` (
-				`REQUIREMENT_ID` BIGINT(20) NULL DEFAULT NULL,
-				`NAME` VARCHAR(255) NULL DEFAULT NULL,
-				`DESCRIPTION` TEXT NULL DEFAULT NULL,
-				`REFERENCE` VARCHAR(20) NULL DEFAULT NULL,
-				`CRITICALITY` VARCHAR(255) NULL DEFAULT NULL,
-				`ATT_LIST_ID` BIGINT(20) NULL DEFAULT NULL
+			CREATE TEMPORARY TABLE OLD_REQ (
+				REQUIREMENT_ID BIGINT NULL DEFAULT NULL,
+				NAME VARCHAR(255) NULL DEFAULT NULL,
+				DESCRIPTION TEXT NULL DEFAULT NULL,
+				REFERENCE VARCHAR(20) NULL DEFAULT NULL,
+				CRITICALITY VARCHAR(255) NULL DEFAULT NULL,
+				ATT_LIST_ID BIGINT NULL DEFAULT NULL
 			);		
 		</sql>
 		<sql>
@@ -69,9 +69,9 @@
 	<changeSet id="1.1.0.save-req-test-case-verif-before-versionning" author="gfouquet">
 		<comment>We save test case verification relationship</comment>
 		<sql>
-			CREATE TEMPORARY TABLE `REQUIREMENT_VERIFICATION` (
-				`REQUIREMENT_ID` BIGINT(20) NULL DEFAULT NULL,
-				`TEST_CASE_ID` BIGINT(20) NULL DEFAULT NULL
+			CREATE TEMPORARY TABLE REQUIREMENT_VERIFICATION (
+				REQUIREMENT_ID BIGINT NULL DEFAULT NULL,
+				TEST_CASE_ID BIGINT NULL DEFAULT NULL
 			);		
 		</sql>
 		<sql>
@@ -83,6 +83,18 @@
 
 	<include file="../../../main/liquibase/tm/tm.changelog-1.1.0.xml" relativeToChangelogFile="true" />
 	
+  
+      <changeSet id="tm.changelog-1.10.0-test-fix-postgre-seq.xml" author="mpagnon" dbms="postgresql">
+    <comment>fix sequence values </comment>
+    <sql>
+        SELECT setval('resource_res_id_seq', (SELECT MAX(res_id) from resource));
+        SELECT setval('requirement_library_node_rln_id_seq', (SELECT MAX(rln_id) from requirement_library_node));
+        SELECT setval('requirement_audit_event_event_id_seq', (SELECT MAX(event_id) from requirement_audit_event));
+    </sql>
+    
+    </changeSet>
+    
+    
 	<changeSet id="1.1.0.check-no-BLOQUED-in-executions" author="gfouquet">
 		<preConditions>
 			<sqlCheck expectedResult="0">

@@ -33,7 +33,7 @@
   
   
   
-  <!--  testing the dataset -->
+  <!--  testing the dataset --> 
 	<changeSet id="tm-data-1.8.0-feat-2699-test-00-1.7.0" author="bsiri">
 		<preConditions>
 			<sqlCheck expectedResult="2">
@@ -49,14 +49,14 @@
 	
 	<changeSet id="tm-data-1.8.0-issue-2899-test-00-1.7.1" author="bsiri">
 		<preConditions>
-			<!-- count how many lists have at least one attachment : 3 are guenuine and 5 are ghost we want out of the DB.-->
+<!--  			count how many lists have at least one attachment : 3 are guenuine and 5 are ghost we want out of the DB.  -->
 			<sqlCheck expectedResult="23">
 				select count(al.ATTACHMENT_LIST_ID) from ATTACHMENT_LIST al
 				inner join ATTACHMENT a on a.ATTACHMENT_LIST_ID = al.ATTACHMENT_LIST_ID
 				inner join ATTACHMENT_CONTENT ac on a.CONTENT_ID = ac.ATTACHMENT_CONTENT_ID
 			</sqlCheck>	
 			
-			<!--  count undead resources -->
+			<!--  count undead resources --> 
 			<sqlCheck expectedResult="3">
 				select count(r.res_id) from SIMPLE_RESOURCE sr 
 				inner join RESOURCE r on sr.res_id = r.res_id
@@ -67,9 +67,9 @@
 	</changeSet>
   
 
-	<!-- ========================================INCLUDE CHANGELOG================================================ -->
+ 	<!-- ========================================INCLUDE CHANGELOG================================================ -->
 	<include file="../../../main/liquibase/tm/tm.changelog-upgrade-to-1.8.0.xml" relativeToChangelogFile="true" />
-	<!-- ========================================================================================================= -->
+ 	<!-- ========================================================================================================= --> 
 	
 	<changeSet id="tm-1.8.0.issue-2688-test-01" author="mpagnon">
 		<preConditions>
@@ -120,7 +120,7 @@
 	</changeSet>
 	
 	
-	<!--  check that the core_group for Users is correctly renamed -->
+	<!--  check that the core_group for Users is correctly renamed --> 
 	<changeSet id="tm-data-1.8.0-feat-2699-test-01-1.7.0" author="bsiri">
 		<preConditions>
 			<sqlCheck expectedResult="1">
@@ -135,7 +135,7 @@
 		</preConditions>
 	</changeSet>
 	
-	<!--  check that there are no more references to the core_group ProjectManager and that previous instances are now demoted to Users -->
+ 	<!--  check that there are no more references to the core_group ProjectManager and that previous instances are now demoted to Users --> 
 	<changeSet id="tm-data-1.8.0-feat-2699-test-02-1.7.0" author="bsiri">
 		<preConditions>		
 			<sqlCheck expectedResult="0">
@@ -154,8 +154,8 @@
 	</changeSet>
 	
 	
-	<!--  checks that users being project leader directly or via a team on at least one concrete project have received the 
-	personal authority ROLE_TM_PROJECT_MANAGER -->
+ 	<!--  checks that users being project leader directly or via a team on at least one concrete project have received the  
+ 	personal authority ROLE_TM_PROJECT_MANAGER --> 
 	<changeSet id="tm-data-1.8.0-feat-2699-test-03-1.7.0" author="bsiri">
 		<preConditions>
 			<sqlCheck expectedResult="3">
@@ -171,17 +171,17 @@
 		</preConditions>	
 	</changeSet>
 	
-	<!--  also check that previously deactivated users are actually deleted -->
+ 	<!--  also check that previously deactivated users are actually deleted -->
 	<changeSet id="tm-data-1.7.0-feat-2699-test-04" author="bsiri">
 		<preConditions>
 			<sqlCheck expectedResult="0">
 				select count(*) from AUTH_USER
-				where active=0	;		
+				where active=false	;		
 			</sqlCheck>
 			
 			<sqlCheck expectedResult="0">
 				select count(*) from CORE_USER
-				where active=0;
+				where active=false;
 			</sqlCheck>
 		
 		</preConditions>
@@ -189,10 +189,10 @@
 	</changeSet>
 	
 	
-	<!--  run after the cleanup. We perform the same tests than in tm-data-1.8.0-issue-2899-test-00-1.7.1, but we expect the counts to be different -->		
+ 	<!--  run after the cleanup. We perform the same tests than in tm-data-1.8.0-issue-2899-test-00-1.7.1, but we expect the counts to be different -->		
 	<changeSet id="tm-data-1.8.0-issue-2899-test-01-1.7.1" author="bsiri">
 		<preConditions onFailMessage="Has more than expected Attachment lists with attachments">			
-			<!-- count how many lists have at least one attachment : only 12 remain.-->
+ 			<!-- count how many lists have at least one attachment : only 12 remain.--> 
 			<sqlCheck expectedResult="12">
 				select count(al.ATTACHMENT_LIST_ID) from ATTACHMENT_LIST al
 				inner join ATTACHMENT a on a.ATTACHMENT_LIST_ID = al.ATTACHMENT_LIST_ID
@@ -203,7 +203,7 @@
 	
 	<changeSet id="tm-data-1.8.0-issue-2899-test-02-1.7.1" author="bsiri">
 		<preConditions onFailMessage="Exists orphan simple resources">
-			<!--  count undead resources : not anymore ! -->
+ 			<!--  count undead resources : not anymore ! -->
 			<sqlCheck expectedResult="0">
 				select count(r.res_id) from SIMPLE_RESOURCE sr 
 				inner join RESOURCE r on sr.res_id = r.res_id
@@ -215,7 +215,7 @@
 
 	<changeSet id="tm-data-1.8.0-issue-2899-test-03-1.7.1" author="bsiri">
 		<preConditions onFailMessage="Exists orphan attachment lists">
-		<!--  additional test : check that no orphan attachment list is actually left  -->
+ 		<!--  additional test : check that no orphan attachment list is actually left  --> 
 				<sqlCheck expectedResult="0">
 					select count(ATTACHMENT_LIST_ID) from ATTACHMENT_LIST al
 					where al.ATTACHMENT_LIST_ID not in (

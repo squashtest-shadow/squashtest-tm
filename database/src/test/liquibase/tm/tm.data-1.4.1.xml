@@ -28,5 +28,20 @@
 	<changeSet id="tm-data-1.4.1.01" author="mpagnon">
 			<sqlFile path="tm.data-1.4.1.sql" relativeToChangelogFile="true" endDelimiter=";"/>
 	</changeSet>
+  
+  <changeSet id="tm-data-1.4.1.02-postgresql" author="mpagnon" dbms="postgresql">
+    <comment>fix sequence values after insert</comment>
+    <sql>
+        SELECT setval('custom_field_cf_id_seq', (SELECT MAX(cf_id) from custom_field));
+        SELECT setval('custom_field_binding_cfb_id_seq', (SELECT MAX(cfb_id) from custom_field_binding));
+        SELECT setval('custom_field_value_cfv_id_seq', (SELECT MAX(cfv_id) from custom_field_value));
+        SELECT setval('attachment_list_attachment_list_id_seq', (SELECT MAX(attachment_list_id) from attachment_list));
+        SELECT setval('test_case_library_node_tcln_id_seq', (SELECT MAX(tcln_id) from test_case_library_node));
+        SELECT setval('test_step_test_step_id_seq', (SELECT MAX(test_step_id) from test_step));
+        SELECT setval('test_suite_id_seq', (SELECT MAX(id) from test_suite));
+        SELECT setval('item_test_plan_item_test_plan_id_seq', (SELECT MAX(item_test_plan_id) from iteration_test_plan_item));
+    </sql>
+    
+    </changeSet>
 </databaseChangeLog>
  

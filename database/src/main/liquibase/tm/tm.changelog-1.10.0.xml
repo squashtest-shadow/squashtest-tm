@@ -85,7 +85,7 @@
   		
   		<sql>
   			update TEST_CASE tc 
-  			set tc.ta_test = null
+  			set ta_test = null
   			where tc.ta_test in (
   				select tatest.test_id 
   				from AUTOMATED_TEST tatest 
@@ -274,7 +274,7 @@
 		-->
 		<sql>
 			update PROJECT as project
-			set project.ta_server_id = (
+			set ta_server_id = (
 				select max(server.server_id) 
 				from TEST_AUTOMATION_SERVER server 
 				inner join TEST_AUTOMATION_PROJECT taproj on server.server_id = taproj.server_id

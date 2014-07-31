@@ -26,6 +26,6 @@
 	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog 
      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
 	<changeSet id="tm.data-1.7.1-remove-deleted-on" author="mpagnon">
-			<sqlFile path="tm.data-1.7.1-remove-deleted-on.sql" relativeToChangelogFile="true" endDelimiter=";"/>
+ <sqlFile path="tm.data-1.7.1-remove-deleted-on.sql" relativeToChangelogFile="true" endDelimiter=";"/>
 	</changeSet>
 </databaseChangeLog>

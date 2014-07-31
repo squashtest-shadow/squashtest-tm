@@ -28,9 +28,9 @@
 	<changeSet id="save-attachment-list-0.20.0" author="gfouquet">
 		<comment>We save data from ATTACHMENT_LIST_CONTENT before it is migrated</comment>
 		<sql>
-			CREATE TEMPORARY TABLE `OLD_ATT_LIST_CONTENT` (
-				`AL_ID` BIGINT(20) NULL DEFAULT NULL,
-				`ATTACHMENT_ID` BIGINT(20) NULL DEFAULT NULL
+			CREATE TEMPORARY TABLE OLD_ATT_LIST_CONTENT (
+				AL_ID BIGINT NULL DEFAULT NULL,
+				ATTACHMENT_ID BIGINT NULL DEFAULT NULL
 			)		
 		</sql>
 		<sql>
@@ -42,9 +42,9 @@
 	<changeSet id="save-issue-list-0.20.0" author="gfouquet">
 		<comment>We save data from ISSUE_LIST_CONTENT before it is migrated</comment>
 		<sql>
-			CREATE TEMPORARY TABLE `OLD_ISSUE_LIST_CONTENT` (
-				`ISSUE_LIST_ID` BIGINT(20) NULL DEFAULT NULL,
-				`ISSUE_ID` BIGINT(20) NULL DEFAULT NULL
+			CREATE TEMPORARY TABLE OLD_ISSUE_LIST_CONTENT (
+				ISSUE_LIST_ID BIGINT NULL DEFAULT NULL,
+				ISSUE_ID BIGINT NULL DEFAULT NULL
 			)		
 		</sql>
 		<sql>

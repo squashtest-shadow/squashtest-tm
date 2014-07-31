@@ -35,7 +35,7 @@
 			<column name="TCL_ID" valueComputed="(select max(TCL_ID) from TEST_CASE_LIBRARY)" />
 			<column name="RL_ID" valueComputed="(select max(RL_ID) from REQUIREMENT_LIBRARY)" />
 			<column name="CL_ID" valueComputed="(select max(CL_ID) from CAMPAIGN_LIBRARY)" />
-			<column name="CREATED_ON" valueComputed="CURRENT_TIMESTAMP()" />
+			<column name="CREATED_ON" valueComputed="CURRENT_TIMESTAMP" />
 			<column name="CREATED_BY" value="liquibase" />
 		</insert>
 <!-- 		PROJECT -->
@@ -223,7 +223,7 @@
 			<column name="TCL_ID" valueComputed="(select max(TCL_ID) from TEST_CASE_LIBRARY)" />
 			<column name="RL_ID" valueComputed="(select max(RL_ID) from REQUIREMENT_LIBRARY)" />
 			<column name="CL_ID" valueComputed="(select max(CL_ID) from CAMPAIGN_LIBRARY)" />
-			<column name="CREATED_ON" valueComputed="CURRENT_TIMESTAMP()" />
+			<column name="CREATED_ON" valueComputed="CURRENT_TIMESTAMP" />
 			<column name="CREATED_BY" value="liquibase" />
 		</insert>
 
@@ -392,7 +392,7 @@
 			<column name="TCL_ID" valueComputed="(select max(TCL_ID) from TEST_CASE_LIBRARY)" />
 			<column name="RL_ID" valueComputed="(select max(RL_ID) from REQUIREMENT_LIBRARY)" />
 			<column name="CL_ID" valueComputed="(select max(CL_ID) from CAMPAIGN_LIBRARY)" />
-			<column name="CREATED_ON" valueComputed="CURRENT_TIMESTAMP()" />
+			<column name="CREATED_ON" valueComputed="CURRENT_TIMESTAMP" />
 			<column name="CREATED_BY" value="liquibase" />
 		</insert>
 		
@@ -541,7 +541,7 @@
 			<column name="TCL_ID" valueComputed="(select max(TCL_ID) from TEST_CASE_LIBRARY)" />
 			<column name="RL_ID" valueComputed="(select max(RL_ID) from REQUIREMENT_LIBRARY)" />
 			<column name="CL_ID" valueComputed="(select max(CL_ID) from CAMPAIGN_LIBRARY)" />
-			<column name="CREATED_ON" valueComputed="CURRENT_TIMESTAMP()" />
+			<column name="CREATED_ON" valueComputed="CURRENT_TIMESTAMP" />
 			<column name="CREATED_BY" value="liquibase" />
 		</insert>
 <!-- PROJECT -->

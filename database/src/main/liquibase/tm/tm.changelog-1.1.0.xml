@@ -202,8 +202,9 @@
 		<comment>Adds the 'latest version' relationship between REQUIREMENT and REQUIREMENT_VERSION tables</comment>
 
 		<addColumn tableName="REQUIREMENT">
-			<column name="CURRENT_VERSION_ID" type="BIGINT(20)" remarks="FK to REQUIREMENT_VERSION linking to the requirement's latest version. Should not be null but the column is nullable because of cyclic relationship between the tables.">
-				<constraints foreignKeyName="fk_requirement_current_version" references="REQUIREMENT_VERSION(RES_ID)" nullable="true" />					
+			<column name="CURRENT_VERSION_ID" type="BIGINT"  remarks="FK to REQUIREMENT_VERSION linking to the requirement's latest version. Should not be null but the column is nullable because of cyclic relationship between the tables.">
+				<constraints foreignKeyName="fk_requirement_current_version" references="REQUIREMENT_VERSION(RES_ID)" nullable="true" />		
+        			
 			</column>
 		</addColumn>
 		
@@ -235,8 +236,8 @@
 			from TEST_CASE_REQUIREMENT_LINK tcrl
 			inner join REQUIREMENT_VERSION rv on rv.REQUIREMENT_ID = tcrl.REQUIREMENT_ID
 		</sql>
-		<addNotNullConstraint tableName="TEST_CASE_VERIFIED_REQUIREMENT_VERSION" columnName="VERIFIED_REQ_VERSION_ID" columnDataType="BIGINT(20)"/>
-		<addNotNullConstraint tableName="TEST_CASE_VERIFIED_REQUIREMENT_VERSION" columnName="VERIFYING_TEST_CASE_ID" columnDataType="BIGINT(20)"/>
+		<addNotNullConstraint tableName="TEST_CASE_VERIFIED_REQUIREMENT_VERSION" columnName="VERIFIED_REQ_VERSION_ID" columnDataType="BIGINT"/>
+		<addNotNullConstraint tableName="TEST_CASE_VERIFIED_REQUIREMENT_VERSION" columnName="VERIFYING_TEST_CASE_ID" columnDataType="BIGINT"/>
 		<addUniqueConstraint tableName="TEST_CASE_VERIFIED_REQUIREMENT_VERSION" columnNames="VERIFIED_REQ_VERSION_ID, VERIFYING_TEST_CASE_ID" constraintName="uc_tc_verifies_req_version"/>
 	</changeSet>
 

@@ -28,5 +28,10 @@
 	<changeSet id="tm-data-0.23.0.01" author="bsiri">
 			<sqlFile path="tm.data-0.23.0.sql" relativeToChangelogFile="true" endDelimiter=";"/>
 	</changeSet>
+    <changeSet id="tm-data-0.23.0.02-postgresql" author="mpagnon" dbms="postgresql">
+  <sql>
+       SELECT setval('requirement_library_node_rln_id_seq', (SELECT MAX(rln_id) from requirement_library_node));
+  </sql>
+  </changeSet>
 </databaseChangeLog>
  

@@ -28,4 +28,14 @@
 	<changeSet id="tm-data-1.5.1.01" author="flaurens">
 			<sqlFile path="tm.data-1.5.1.sql" relativeToChangelogFile="true" endDelimiter=";"/>
 	</changeSet>
+  <changeSet id="tm-data-1.5.1.01-postgresql" author="mpagnon" dbms="postgresql">
+    <comment>fix sequence values after insert</comment>
+    <sql>
+        SELECT setval('core_party_party_id_seq', (SELECT MAX(party_id) from core_party));
+        SELECT setval('acl_responsibility_scope_entry_id_seq', (SELECT MAX(id) from acl_responsibility_scope_entry));
+        SELECT setval('custom_field_binding_cfb_id_seq', (SELECT MAX(cfb_id) from custom_field_binding));
+        SELECT setval('custom_field_value_cfv_id_seq', (SELECT MAX(cfv_id) from custom_field_value));
+    </sql>
+    
+    </changeSet>
 </databaseChangeLog>

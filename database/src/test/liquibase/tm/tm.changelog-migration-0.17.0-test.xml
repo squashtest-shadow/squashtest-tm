@@ -32,11 +32,11 @@
 		<comment>We save data from TEST_STEP before it is migrated</comment>
 		<comment>createTable tag with "#temptable" as name creates a regular table in mysql so we use regular sql as fallback</comment>
 		<sql>
-			CREATE TEMPORARY TABLE `OLDSTEPS` (
-				`TEST_STEP_ID` BIGINT(20) NULL DEFAULT NULL,
-				`ACTION` TEXT NULL,
-				`EXPECTED_RESULT` TEXT NULL,
-				`ATTACHMENT_LIST_ID` BIGINT(20) NULL DEFAULT NULL
+			CREATE TEMPORARY TABLE OLDSTEPS (
+				TEST_STEP_ID BIGINT NULL DEFAULT NULL,
+				ACTION TEXT NULL,
+				EXPECTED_RESULT TEXT NULL,
+				ATTACHMENT_LIST_ID BIGINT NULL DEFAULT NULL
 			)		
 		</sql>
 		<sql>

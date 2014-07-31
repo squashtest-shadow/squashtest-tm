@@ -28,4 +28,14 @@
 	<changeSet id="tm.data-1.7.1-undeleted-resources-and-attachmentlist" author="bsiri">
 			<sqlFile path="tm.data-1.7.1-undeleted-resources-and-attachmentlist.sql" relativeToChangelogFile="true" endDelimiter=";"/>
 	</changeSet>
+  <changeSet id="tm-data-1.7.1-undeleted-resources-and-attachmentlist-postgresql" author="mpagnon" dbms="postgresql">
+    <comment>fix sequence values after insert</comment>
+    <sql>
+        SELECT setval('attachment_content_attachment_content_id_seq', (SELECT MAX(attachment_content_id) from attachment_content));
+        SELECT setval('attachment_list_attachment_list_id_seq', (SELECT MAX(attachment_list_id) from attachment_list));
+        SELECT setval('attachment_attachment_id_seq', (SELECT MAX(attachment_id) from attachment));
+        SELECT setval('resource_res_id_seq', (SELECT MAX(res_id) from resource));
+    </sql>
+    
+    </changeSet>
 </databaseChangeLog>

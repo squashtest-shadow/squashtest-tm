@@ -28,4 +28,15 @@
 	<changeSet id="tm.data-1.7.0-add-automated-tests" author="mpagnon">
 			<sqlFile path="tm.data-1.7.0-add-automated-tests.sql" relativeToChangelogFile="true" endDelimiter=";"/>
 	</changeSet>
+  <changeSet id="tm-data-1.7.0-add-automated-tests-postgresql" author="mpagnon" dbms="postgresql">
+    <comment>fix sequence values after insert</comment>
+    <sql>
+        SELECT setval('test_automation_server_server_id_seq', (SELECT MAX(server_id) from test_automation_server));
+        SELECT setval('test_automation_project_project_id_seq', (SELECT MAX(project_id) from test_automation_project));
+        SELECT setval('automated_test_test_id_seq', (SELECT MAX(test_id) from automated_test));
+        SELECT setval('automated_execution_extender_extender_id_seq', (SELECT MAX(extender_id) from automated_execution_extender));
+        SELECT setval('issue_issue_id_seq', (SELECT MAX(issue_id) from issue));
+    </sql>
+    
+    </changeSet>
 </databaseChangeLog>

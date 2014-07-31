@@ -1565,7 +1565,7 @@
 		</insert>
 
 		<insert tableName="CORE_GROUP_AUTHORITY">
-			<column name="GROUP_ID" valueComputed="LAST_INSERT_ID()" />
+			<column name="GROUP_ID" valueComputed="(select max(ID) from CORE_GROUP)" />
 			<column name="AUTHORITY" value="ROLE_TM_USER" />
 		</insert>
 		<insert tableName="CORE_GROUP">
@@ -1573,7 +1573,7 @@
 		</insert>
 
 		<insert tableName="CORE_GROUP_AUTHORITY">
-			<column name="GROUP_ID" valueComputed="LAST_INSERT_ID()" />
+			<column name="GROUP_ID" valueComputed="(select max(ID) from CORE_GROUP)" />
 			<column name="AUTHORITY" value="ROLE_TM_USER" />
 			<column name="AUTHORITY" value="ROLE_TM_PROJECT_MANAGER" />
 		</insert>

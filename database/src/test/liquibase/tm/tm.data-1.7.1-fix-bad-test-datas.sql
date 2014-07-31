@@ -2,7 +2,7 @@
 
 /*fix test-steps attached to different test-cases. */
 create table TEST_CASE_STEPS2 (  
-`ID` bigint(20) NOT NULL 
+ID bigint NOT NULL 
 );
 
 insert into TEST_CASE_STEPS2 

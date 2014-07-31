@@ -28,5 +28,14 @@
 	<changeSet id="tm-data-1.4.0.01" author="mpagnon">
 			<sqlFile path="tm.data-1.4.0.sql" relativeToChangelogFile="true" endDelimiter=";"/>
 	</changeSet>
+    <changeSet id="tm-data-1.4.0.02-postgresql" author="mpagnon" dbms="postgresql">
+    <comment>fix sequence values after insert</comment>
+    <sql>
+       SELECT setval('attachment_list_attachment_list_id_seq', (SELECT MAX(attachment_list_id) from attachment_list));
+       SELECT setval('execution_execution_id_seq', (SELECT MAX(execution_id) from execution));
+       SELECT setval('issue_list_issue_list_id_seq', (SELECT MAX(issue_list_id) from issue_list));
+    </sql>
+    
+    </changeSet>
 </databaseChangeLog>
  

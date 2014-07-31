@@ -28,5 +28,10 @@
 	<changeSet id="tm-data-1.2.0.01" author="bsiri">
 			<sqlFile path="tm.data-1.2.0.sql" relativeToChangelogFile="true" endDelimiter=";"/>
 	</changeSet>
+   <changeSet id="tm-data-1.2.0.01-postgresql" author="mpagnon" dbms="postgresql">
+  <sql>
+       SELECT setval('issue_issue_id_seq', (SELECT MAX(issue_id) from issue));
+  </sql>
+  </changeSet>
 </databaseChangeLog>
  

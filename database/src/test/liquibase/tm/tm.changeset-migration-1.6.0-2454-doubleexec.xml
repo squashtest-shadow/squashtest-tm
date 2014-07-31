@@ -155,7 +155,87 @@
 
 			]]>
 		</sql>
-	</changeSet>			
+	</changeSet>	
+  
+    <changeSet id="tm-1.6.0.issue-2454-doubleexec-fix.02-postgresql" author="mpagnon" >
+   <preConditions onError="CONTINUE" onFail="CONTINUE" onSqlOutput="TEST">
+    <dbms type="postgresql" />
+    </preConditions>
+    <comment> cleaning test suite test plan ordering : some collections have non-contiguous elements. This 
+    is due to issue #2454, because of shortcomings in the code in charge of deleting test cases and dependent 
+    entities.
+      It looks pretty much like tm-1.5.0.issue-2261-01 (in the 1.5.1 changelog), except we're not dealing with order = null.
+      
+      Note : this script might already have been executed if at some point Squash 1.5.2 was used.</comment>
+    
+    <sql>
+      
+      
+      create table TEMP_DISCONTINUOUS_SUITE_ITEM(
+      ITEM_ID BIGINT NOT NULL, 
+      SUITE_ID BIGINT NOT NULL);        
+          
+      create table TEMP_CONTINUOUS_SUITE_ITEM(
+      ITEM_ID BIGINT NOT NULL,
+       SUITE_ID BIGINT NOT NULL, 
+       TP_ORDER INT NOT NULL);
+      
+      insert into TEMP_DISCONTINUOUS_SUITE_ITEM (SUITE_ID, ITEM_ID) 
+      select tstpitem.suite_id, tstpitem.tpi_id 
+      from TEST_SUITE_TEST_PLAN_ITEM tstpitem
+      ;
+        
+</sql>
+<createProcedure>
+        
+        CREATE OR REPLACE FUNCTION ordersuites() RETURNS text AS 
+        $$
+        DECLARE rn integer := 0-1;
+        rn2 integer := 0;
+        prevsuite bigint := 0;
+        r record;
+        BEGIN
+        FOR r in (select tdsi.SUITE_ID, tdsi.ITEM_ID from TEMP_DISCONTINUOUS_SUITE_ITEM tdsi order by tdsi.SUITE_ID, tdsi.ITEM_ID)
+        LOOP
+              IF prevsuite  = r.SUITE_ID 
+                THEN 
+                     rn2 := rn ;
+                     rn := rn2 + 1;
+                ELSE rn := 0 ; 
+                     prevsuite := r.SUITE_ID;
+              END IF;
+           insert into TEMP_CONTINUOUS_SUITE_ITEM (TP_ORDER, SUITE_ID, ITEM_ID)
+               select rn, r.SUITE_ID , r.ITEM_ID  ;
+              
+               
+        
+        END LOOP;
+        return 'ok';
+        END
+        $$ LANGUAGE plpgsql;
+        
+        select ordersuites();
+        drop function ordersuites();  
+    </createProcedure>
+    <sql>
+    
+      
+      update TEST_SUITE_TEST_PLAN_ITEM tstpi
+      set TEST_PLAN_ORDER = 
+        (select tcsi.TP_ORDER
+        from  TEMP_CONTINUOUS_SUITE_ITEM tcsi
+        where tcsi.SUITE_ID = tstpi.SUITE_ID
+        and tstpi.TPI_ID = tcsi.ITEM_ID)
+      ;
+      
+     
+      drop table TEMP_DISCONTINUOUS_SUITE_ITEM;
+      drop table TEMP_CONTINUOUS_SUITE_ITEM;
+
+      
+    </sql>
+  </changeSet>      
+  		
 
 </databaseChangeLog>
  

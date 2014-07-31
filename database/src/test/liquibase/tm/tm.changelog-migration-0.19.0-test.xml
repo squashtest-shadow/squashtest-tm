@@ -29,13 +29,13 @@
 
 	<changeSet id="check-table-CAMPAIGN_TEST_PLAN_ITEM-content-0.19.0" author="gfouquet">
 		<preConditions>
-			<!-- TESTS_STEPS should have been migrated to ACTION_TEST_STEP -->
+			<!-- We check that there is no duplicate of the CAMPAIGN_ID + TEST_PLAN_ORDER -->
 			<sqlCheck expectedResult="1">
 				select max(ct) 
 				from (select count(*) ct from CAMPAIGN_TEST_PLAN_ITEM group by CAMPAIGN_ID, TEST_PLAN_ORDER) counts
 	 		</sqlCheck>
 		</preConditions>
-		<comment>We check that ACTION_TEST_STEP table contains all of TEST_STEP data</comment>
+		<comment>We check that there is no duplicate of the CAMPAIGN_ID + TEST_PLAN_ORDER</comment>
 	</changeSet>
 	<changeSet id="check-table-CAMPAIGN_TEST_PLAN_ITEM-order-0.19.1" author="gfouquet">
 		<preConditions>

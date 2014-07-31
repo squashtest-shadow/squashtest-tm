@@ -31,7 +31,7 @@
 			<column name="FIRST_NAME" value="Project" />
 			<column name="LAST_NAME" value="de Manager" />
 			<column name="EMAIL" value="unknown" />
-			<column name="CREATED_ON" valueComputed="CURRENT_TIMESTAMP()" />
+			<column name="CREATED_ON" valueComputed="CURRENT_TIMESTAMP" />
 			<column name="CREATED_BY" value="liquibase" />
 		</insert>
 		<insert tableName="CORE_GROUP_MEMBER">
@@ -43,7 +43,7 @@
 			<column name="FIRST_NAME" value="Gest"/>
 			<column name="LAST_NAME" value="Viewer" />
 			<column name="EMAIL" value="unknown" />
-			<column name="CREATED_ON" valueComputed="CURRENT_TIMESTAMP()" />
+			<column name="CREATED_ON" valueComputed="CURRENT_TIMESTAMP" />
 			<column name="CREATED_BY" value="liquibase" />
 		</insert>
 		<insert tableName="CORE_GROUP_MEMBER">
@@ -54,7 +54,7 @@
 			<column name="LOGIN" value="test.editor" />
 			<column name="LAST_NAME" value="A Test Editor" />
 			<column name="EMAIL" value="unknown" />
-			<column name="CREATED_ON" valueComputed="CURRENT_TIMESTAMP()" />
+			<column name="CREATED_ON" valueComputed="CURRENT_TIMESTAMP" />
 			<column name="CREATED_BY" value="liquibase" />
 		</insert>
 		<insert tableName="CORE_GROUP_MEMBER">
@@ -65,7 +65,7 @@
 			<column name="LOGIN" value="test.runner" />
 			<column name="LAST_NAME" value="A Test Runner" />
 			<column name="EMAIL" value="unknown" />
-			<column name="CREATED_ON" valueComputed="CURRENT_TIMESTAMP()" />
+			<column name="CREATED_ON" valueComputed="CURRENT_TIMESTAMP" />
 			<column name="CREATED_BY" value="liquibase" />
 		</insert>
 		<insert tableName="CORE_GROUP_MEMBER">
@@ -76,7 +76,7 @@
 			<column name="LOGIN" value="test.designer" />
 			<column name="LAST_NAME" value="A Test Designer" />
 			<column name="EMAIL" value="unknown" />
-			<column name="CREATED_ON" valueComputed="CURRENT_TIMESTAMP()" />
+			<column name="CREATED_ON" valueComputed="CURRENT_TIMESTAMP" />
 			<column name="CREATED_BY" value="liquibase" />
 		</insert>
 		<insert tableName="CORE_GROUP_MEMBER">
@@ -87,7 +87,7 @@
 			<column name="LOGIN" value="advance.tester" />
 			<column name="LAST_NAME" value="an advance test runner" />
 			<column name="EMAIL" value="unknown" />
-			<column name="CREATED_ON" valueComputed="CURRENT_TIMESTAMP()" />
+			<column name="CREATED_ON" valueComputed="CURRENT_TIMESTAMP" />
 			<column name="CREATED_BY" value="liquibase" />
 		</insert>
 		<insert tableName="CORE_GROUP_MEMBER">
@@ -98,7 +98,7 @@
 			<column name="LOGIN" value="validator" />
 			<column name="LAST_NAME" value="somebody with very few permissions" />
 			<column name="EMAIL" value="unknown" />
-			<column name="CREATED_ON" valueComputed="CURRENT_TIMESTAMP()" />
+			<column name="CREATED_ON" valueComputed="CURRENT_TIMESTAMP" />
 			<column name="CREATED_BY" value="liquibase" />
 		</insert>
 		<insert tableName="CORE_GROUP_MEMBER">
@@ -109,7 +109,7 @@
 			<column name="LOGIN" value="average.joe" />
 			<column name="LAST_NAME" value="Somebody w/o permissions" />
 			<column name="EMAIL" value="unknown" />
-			<column name="CREATED_ON" valueComputed="CURRENT_TIMESTAMP()" />
+			<column name="CREATED_ON" valueComputed="CURRENT_TIMESTAMP" />
 			<column name="CREATED_BY" value="liquibase" />
 		</insert>
 		<insert tableName="CORE_GROUP_MEMBER">

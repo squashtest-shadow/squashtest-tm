@@ -29,4 +29,13 @@
 	<changeSet id="tm-data-1.7.1-feat-2699-dataset" author="bsiri">
 			<sqlFile path="tm.data-1.7.1-core-user-project-manager.sql" relativeToChangelogFile="true" endDelimiter=";"/>
 	</changeSet>
+  
+    <changeSet id="tm-data-1.7.1-feat-2699-postgresql" author="mpagnon" dbms="postgresql">
+    <comment>fix sequence values after insert</comment>
+    <sql>
+        SELECT setval('core_party_party_id_seq', (SELECT MAX(party_id) from core_party));
+        SELECT setval('acl_responsibility_scope_entry_id_seq', (SELECT MAX(id) from acl_responsibility_scope_entry));
+    </sql>
+    
+    </changeSet>
 </databaseChangeLog>

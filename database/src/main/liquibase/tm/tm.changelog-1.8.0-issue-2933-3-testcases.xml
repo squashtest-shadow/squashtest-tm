@@ -364,6 +364,86 @@
 			drop table CAMPAIGN_TEST_PLAN_ITEM_TEMP2;
 		</sql>
 	</changeSet>
+  
+  <changeSet id="tm-1.8.0.issue-2933-tc-05-postgre" author="mpagnon">
+    <preConditions onError="CONTINUE" onFail="CONTINUE" onSqlOutput="TEST" onFailMessage="Not postgre database ">
+      
+        <dbms type="postgresql" />
+        
+    </preConditions>
+    <comment>delete campaign_test_plan_item</comment>
+    <sql>
+      delete from CAMPAIGN_TEST_PLAN_ITEM
+      where exists (select 1 from ENTITIES_TO_DELETE where NAME = 'TEST_CASE' and CAMPAIGN_TEST_PLAN_ITEM.TEST_CASE_ID = ID);
+    </sql>
+    <comment>reorder test plan of campaign where deletion of campaign_test_plan_item occurred</comment>
+    <sql>
+      create table CAMPAIGN_TEST_PLAN_ITEM_TEMP
+      (
+      CAMPAIGN_ID
+      BIGINT NOT NULL,
+      CTPI_ID BIGINT NOT NULL,
+      TEST_PLAN_ORDER INT NOT NULL
+      );
+</sql><createProcedure>
+CREATE OR REPLACE FUNCTION orderctpi() RETURNS text AS 
+$$
+DECLARE rn integer := 0-1;
+rn2 integer := 0;
+prevcamp bigint := 0;
+r record;
+BEGIN
+FOR r in (select ctp.CAMPAIGN_ID, ctp.CTPI_ID from CAMPAIGN_TEST_PLAN_ITEM ctp where exists (select 1 from ENTITIES_TO_DELETE where NAME = 'CTPI_CAMPAIGN' and ID = ctp.CAMPAIGN_ID)
+      order by ctp.CAMPAIGN_ID, ctp.TEST_PLAN_ORDER)
+LOOP
+  IF prevcamp  = r.CAMPAIGN_ID 
+        THEN 
+             rn2 := rn ;
+             rn := rn2 + 1;
+        ELSE rn := 0 ; 
+             prevcamp := r.CAMPAIGN_ID;
+        END IF;
+    insert into CAMPAIGN_TEST_PLAN_ITEM_TEMP (TEST_PLAN_ORDER, CAMPAIGN_ID, CTPI_ID)
+       select rn, r.CAMPAIGN_ID , r.CTPI_ID  ;
+      
+       
+
+END LOOP;
+return 'ok';
+END
+$$ LANGUAGE plpgsql;
+
+select orderctpi();
+DROP FUNCTION orderctpi();
+
+</createProcedure>
+<sql>
+      create table CAMPAIGN_TEST_PLAN_ITEM_TEMP2 
+      (
+      CAMPAIGN_ID
+      BIGINT NOT NULL,
+      CTPI_ID BIGINT NOT NULL,
+      TEST_PLAN_ORDER INT NOT NULL
+      );
+      
+      insert into CAMPAIGN_TEST_PLAN_ITEM_TEMP2
+      select * from CAMPAIGN_TEST_PLAN_ITEM_TEMP;
+
+      update CAMPAIGN_TEST_PLAN_ITEM ctpi
+      set TEST_PLAN_ORDER = (
+        select count( ctpit2.CTPI_ID )
+        from CAMPAIGN_TEST_PLAN_ITEM_TEMP ctpit1,CAMPAIGN_TEST_PLAN_ITEM_TEMP2 ctpit2
+        where ctpit1.CTPI_ID = ctpi.CTPI_ID
+        and ctpit2.CAMPAIGN_ID = ctpit1.CAMPAIGN_ID
+        and ctpit1.TEST_PLAN_ORDER > ctpit2.TEST_PLAN_ORDER
+      )
+      where ctpi.CTPI_ID in (select DISTINCT ctpi3.CTPI_ID from CAMPAIGN_TEST_PLAN_ITEM_TEMP ctpi3);
+
+
+      drop table CAMPAIGN_TEST_PLAN_ITEM_TEMP;
+      drop table CAMPAIGN_TEST_PLAN_ITEM_TEMP2;
+    </sql>
+  </changeSet>
 	
 	<!-- =========== DATASET - PARAMETERS =========== -->
 		<changeSet id="tm-1.8.0.issue-2933-tc-06" author="mpagnon">
@@ -387,32 +467,7 @@
 	</changeSet>
 	
 	<changeSet id="tm-1.8.0.issue-2933-tc-07" author="mpagnon">
-		<preConditions onFail="CONTINUE" onFailMessage="No parameter to delete">
-			<and>
-			<tableExists tableName="ENTITIES_TO_DELETE" />
-			<tableExists tableName="IS_TO_DELETE" />
-				<not>
-					<sqlCheck expectedResult="0">
-						select TOTAL from IS_TO_DELETE
-						where NAME = 'TEST_CASE_FOLDER'
-						;
-					</sqlCheck>
-				</not>
-				<not>
-					<sqlCheck expectedResult="0">
-						select TOTAL from IS_TO_DELETE
-						where NAME = 'TEST_CASE'
-						;
-					</sqlCheck>
-				</not>
-				<not>
-					<sqlCheck expectedResult="0">
-						select count(1) from ENTITIES_TO_DELETE
-						where NAME = 'PARAMETER';
-					</sqlCheck>
-				</not>
-			</and>
-		</preConditions>
+		
 		<comment>delete dataset_param_value where param_id</comment>
 		<sql>
 			delete from DATASET_PARAM_VALUE
@@ -622,6 +677,75 @@
 			drop table TEST_CASE_STEPS_TEMP2;
 		</sql>
 	</changeSet>
+  
+  <changeSet id="tm-1.8.0.issue-2933-tc-11-postgresql" author="mpagnon">
+    <preConditions onError="CONTINUE" onFail="CONTINUE" onSqlOutput="TEST" onFailMessage="Not postgresql ">
+        <dbms type="postgresql" />
+    </preConditions>
+    <comment>reorder steps of calling test case</comment>
+    <sql>
+      create table TEST_CASE_STEPS_TEMP(
+      TEST_CASE_ID BIGINT NOT NULL,
+      STEP_ID BIGINT NOT NULL,
+      STEP_ORDER INT NOT NULL
+      );
+    </sql>
+    <createProcedure>
+      
+      CREATE OR REPLACE FUNCTION orderstep() RETURNS text AS 
+      $$
+      DECLARE rn integer := 0-1;
+      rn2 integer := 0;
+      prevtest bigint := 0;
+      r record;
+      BEGIN
+      FOR r in (select tcs.TEST_CASE_ID, tcs.STEP_ID from TEST_CASE_STEPS tcs
+            where exists (select 1 from ENTITIES_TO_DELETE where NAME = 'CALLING_TEST_CASE' and tcs.TEST_CASE_ID = ID )
+            order by tcs.TEST_CASE_ID, tcs.STEP_ORDER )
+      LOOP
+              IF prevtest  = r.TEST_CASE_ID 
+              THEN 
+                   rn2 := rn ;
+                   rn := rn2 + 1;
+              ELSE rn := 0 ; 
+                   prevtest := r.TEST_CASE_ID;
+              END IF;
+          insert into TEST_CASE_STEPS_TEMP (STEP_ORDER, TEST_CASE_ID , STEP_ID )
+             select rn, r.TEST_CASE_ID , r.STEP_ID  ;
+      
+      END LOOP;
+      return 'ok';
+      END
+      $$ LANGUAGE plpgsql;
+      
+      select orderstep();
+      DROP FUNCTION orderstep();
+
+   </createProcedure>
+   <sql>
+      create table TEST_CASE_STEPS_TEMP2 (
+      TEST_CASE_ID BIGINT NOT NULL,
+      STEP_ID BIGINT NOT NULL,
+      STEP_ORDER INT NOT NULL
+      );
+      insert into TEST_CASE_STEPS_TEMP2
+      select * from
+      TEST_CASE_STEPS_TEMP;
+
+      update TEST_CASE_STEPS tcs
+      set STEP_ORDER = (
+        select count( tcst2.STEP_ID )
+        from TEST_CASE_STEPS_TEMP tcst1,TEST_CASE_STEPS_TEMP2 tcst2
+        where tcst1.STEP_ID = tcs.STEP_ID
+        and tcst2.TEST_CASE_ID = tcst1.TEST_CASE_ID
+        and tcst1.STEP_ORDER > tcst2.STEP_ORDER
+      )
+      where tcs.STEP_ID in (select DISTINCT tcst3.STEP_ID from TEST_CASE_STEPS_TEMP tcst3);
+
+      drop table TEST_CASE_STEPS_TEMP;
+      drop table TEST_CASE_STEPS_TEMP2;
+    </sql>
+  </changeSet>
 	
 	
 	<!-- =========== TEST CASE =========== -->

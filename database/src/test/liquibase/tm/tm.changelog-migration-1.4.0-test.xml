@@ -30,41 +30,41 @@
      
 		<comment>We save data from ISSUE before it is migrated</comment>
 		<sql>
-			CREATE TABLE `KEYVAL` (
-			`NAME` VARCHAR(25) NULL DEFAULT NULL,
-			`TOT` BIGINT(20) NULL DEFAULT 0
+			CREATE TABLE KEYVAL (
+			NAME VARCHAR(25) NULL DEFAULT NULL,
+			TOT BIGINT NULL DEFAULT 0
 			);
 		</sql>
 		<sql>
-			insert into KEYVAL (`NAME`, `TOT`)
+			insert into KEYVAL (NAME, TOT)
 			select ('TCF'), count(*) from TEST_CASE_FOLDER;
 		</sql>
 		<sql>
-			insert into KEYVAL (`NAME`, `TOT`)
+			insert into KEYVAL (NAME, TOT)
 			select ('CF'), count(*) from CAMPAIGN_FOLDER;
 		</sql>
 		<sql>
-			insert into KEYVAL (`NAME`, `TOT`)
+			insert into KEYVAL (NAME, TOT)
 			select ('SR'), count(*) from SIMPLE_RESOURCE;
 		</sql>
 		<sql>
-			insert into KEYVAL (`NAME`, `TOT`)
+			insert into KEYVAL (NAME, TOT)
 			select ('PROJECT'), count(*) from PROJECT;
 		</sql>
 		<sql>
-			insert into KEYVAL (`NAME`, `TOT`)
+			insert into KEYVAL (NAME, TOT)
 			select ('CLIB'), count(*) from CAMPAIGN_LIBRARY;
 		</sql>
 		<sql>
-			insert into KEYVAL (`NAME`, `TOT`)
+			insert into KEYVAL (NAME, TOT)
 			select ('RLIB'), count(*) from REQUIREMENT_LIBRARY;
 		</sql>
 		<sql>
-			insert into KEYVAL (`NAME`, `TOT`)
+			insert into KEYVAL (NAME, TOT)
 			select ('TCLIB'), count(*) from TEST_CASE_LIBRARY;
 		</sql>
 		<sql>
-			insert into KEYVAL (`NAME`, `TOT`)
+			insert into KEYVAL (NAME, TOT)
 			select ('ATTLIST'), count(*) from ATTACHMENT_LIST;
 		</sql>
 	</changeSet>
@@ -86,12 +86,12 @@
 			and clib.NAME = 'CLIB'
 			and rlib.NAME = 'RLIB'
 			and tclib.NAME = 'TCLIB'
-			;
+			group by prevAttlist.TOT , simpleResource.TOT , campaignFolder.TOT , testCaseFolder.TOT , project.TOT , clib.TOT , rlib.TOT , tclib.TOT;
 			</sqlCheck>
 		</preConditions>
 		<comment>We check that each attachable entity has a unique attachment list</comment>
 		<sql>
-			drop table `KEYVAL`;
+			drop table KEYVAL;
 		</sql>
 	</changeSet>
 	
