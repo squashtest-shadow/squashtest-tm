@@ -51,17 +51,17 @@ public class CustomFieldValue implements Identified {
 	@Column(name = "CFV_ID")
 	private Long id;
 
-	private Long boundEntityId;
+	protected Long boundEntityId;
 
 	@Enumerated(EnumType.STRING)
-	private BindableEntity boundEntityType;
+	protected BindableEntity boundEntityType;
 
 	@ManyToOne
 	@JoinColumn(name = "CFB_ID")
-	private CustomFieldBinding binding;
+	protected CustomFieldBinding binding;
 
 	@Size(min = 0, max = MAX_SIZE)
-	private String value;
+	protected String value;
 
 	public CustomFieldValue() {
 		super();

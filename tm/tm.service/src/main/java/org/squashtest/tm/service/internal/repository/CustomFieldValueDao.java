@@ -119,6 +119,16 @@ public interface CustomFieldValueDao {
 	
 	
 	/**
+	 * Same as above, and initialiazes the bindings and custom fields.
+	 * 
+	 * @param entityIds
+	 * @param entityType
+	 * @return
+	 */
+	List<CustomFieldValue> batchedInitializedFindAllCustomValuesFor(@QueryParam("entityIds") List<Long> entityIds, @QueryParam("entityType") BindableEntity entityType);
+	
+	
+	/**
 	 * Same as above, will restrict to the custom fields specified as arguments
 	 * 
 	 * @return

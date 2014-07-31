@@ -23,6 +23,7 @@ package org.squashtest.tm.service.internal.customfield;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -475,5 +476,27 @@ public class PrivateCustomFieldValueServiceImpl implements PrivateCustomFieldVal
 	private void deleteCustomFieldValues(List<CustomFieldValue> values) {
 		List<Long> valueIds = IdentifiedUtil.extractIds(values);
 		customFieldValueDao.deleteAll(valueIds);
+	}
+	
+	// because Hibernate creates different objects from the same data each time it is fetched
+	// we can't rely on the method Collection.contains. 
+	// so we need to search bindings by their id;
+	private Collection<CustomFieldBinding> substract(Collection<CustomFieldBinding> a, Collection<CustomFieldBinding> b){
+		
+		Collection<CustomFieldBinding> res = new ArrayList<CustomFieldBinding>(a);
+		
+		for (CustomFieldBinding tosubstract : b){
+			Iterator<CustomFieldBinding> iter = res.iterator();
+			while (iter.hasNext()){
+				CustomFieldBinding candidate = iter.next();
+				if (tosubstract.getId().equals(candidate.getId())){
+					iter.remove();
+					break;
+				}
+			}
+		}
+		
+		return res;
+		
 	}
 }

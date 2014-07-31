@@ -166,7 +166,6 @@ public class DenormalizedFieldValue {
 
 	/**
 	 * Will create a DenormalizedFieldValue with the value param. The position will be valorized with the given param.
-	 * No rendering location is added.
 	 * 
 	 * @param customFieldValue
 	 * @param newBindingPosition
@@ -183,6 +182,9 @@ public class DenormalizedFieldValue {
 		this.label = cuf.getLabel();
 		this.value = customFieldValue.getValue();
 		this.position = newBindingPosition;
+		if (customFieldValue.getBinding() != null){
+			this.renderingLocations = customFieldValue.getBinding().copyRenderingLocations();
+		}
 		this.denormalizedFieldHolderId = denormalizedFieldHolderId;
 		this.denormalizedFieldHolderType = denormalizedFieldHolderType;
 	}

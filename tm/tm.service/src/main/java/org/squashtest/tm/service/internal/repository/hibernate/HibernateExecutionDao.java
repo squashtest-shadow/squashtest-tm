@@ -39,6 +39,7 @@ import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.domain.execution.ExecutionStatusReport;
 import org.squashtest.tm.domain.execution.ExecutionStep;
+import org.squashtest.tm.domain.testcase.ActionTestStep;
 import org.squashtest.tm.service.internal.foundation.collection.PagingUtils;
 import org.squashtest.tm.service.internal.foundation.collection.SortingUtils;
 import org.squashtest.tm.service.internal.repository.ExecutionDao;
@@ -68,17 +69,26 @@ public class HibernateExecutionDao extends HibernateEntityDao<Execution> impleme
 	 */
 	@Override
 	public List<ExecutionStep> findExecutionSteps(long executionId) {
-		Execution execution = findById(executionId);
-		List<ExecutionStep> toReturn = new LinkedList<ExecutionStep>();
-
-		for (ExecutionStep step : execution.getSteps()) {
-			Hibernate.initialize(step);
-			toReturn.add(step);
-		}
-
-		return toReturn;
+		Query q = currentSession().getNamedQuery("execution.findSteps");
+		q.setParameter("executionId", executionId);
+		return q.list();
 	}
-
+	
+	@Override
+	public List<ActionTestStep> findOriginalSteps(long executionId) {
+		Query q = currentSession().getNamedQuery("execution.findOriginalSteps");
+		q.setParameter("executionId", executionId);
+		return q.list();
+	}
+	
+	@Override
+	public List<Long> findOriginalStepIds(long executionId) {
+		Query q = currentSession().getNamedQuery("execution.findOriginalStepIds");
+		q.setParameter("executionId", executionId);
+		return q.list();
+	}
+	
+	
 	@Override
 	public Execution findAndInit(long executionId) {
 		Execution execution = findById(executionId);
