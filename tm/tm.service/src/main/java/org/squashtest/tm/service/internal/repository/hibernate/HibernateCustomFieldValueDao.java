@@ -18,18 +18,13 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.domain.customfield;
+package org.squashtest.tm.service.internal.repository.hibernate;
 
-import org.squashtest.tm.domain.Identified;
-import org.squashtest.tm.domain.project.Project;
+import org.springframework.stereotype.Repository;
+import org.squashtest.tm.domain.customfield.CustomFieldValue;
+import org.squashtest.tm.service.internal.repository.CustomCustomFieldValueDao;
 
-
-public interface BoundEntity extends Identified {
-
-	Long getBoundEntityId();
-
-	BindableEntity getBoundEntityType();
-
-	Project getProject();
-
+@Repository("CustomCustomFieldValueDao")
+public class HibernateCustomFieldValueDao extends HibernateEntityDao<CustomFieldValue> implements CustomCustomFieldValueDao {
+	//just for using already implemented generic dao methods from HibernateEntityDao
 }

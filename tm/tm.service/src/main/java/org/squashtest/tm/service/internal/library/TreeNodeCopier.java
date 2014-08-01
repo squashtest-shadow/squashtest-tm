@@ -21,6 +21,7 @@
 package org.squashtest.tm.service.internal.library;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -35,6 +36,7 @@ import org.squashtest.tm.domain.campaign.CampaignFolder;
 import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.campaign.TestSuite;
+import org.squashtest.tm.domain.customfield.BindableEntity;
 import org.squashtest.tm.domain.customfield.BoundEntity;
 import org.squashtest.tm.domain.library.Copiable;
 import org.squashtest.tm.domain.library.Folder;
@@ -47,6 +49,7 @@ import org.squashtest.tm.domain.requirement.Requirement;
 import org.squashtest.tm.domain.requirement.RequirementFolder;
 import org.squashtest.tm.domain.requirement.RequirementLibraryNode;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
+import org.squashtest.tm.domain.testcase.ActionStepCollector;
 import org.squashtest.tm.domain.testcase.ActionTestStep;
 import org.squashtest.tm.domain.testcase.CallTestStep;
 import org.squashtest.tm.domain.testcase.RequirementVersionCoverage;
@@ -306,36 +309,20 @@ public class TreeNodeCopier  implements NodeVisitor, PasteOperation {
 	private void copyCustomFields(TestCase source, TestCase copy) {
 		customFieldValueManagerService.copyCustomFieldValues(source, copy);
 		// do the same for the steps if any
-		int total = copy.getSteps().size();
+		ActionStepCollector collector = new ActionStepCollector();
+		List<ActionTestStep> copySteps = collector.collect(copy.getSteps());
+		List<ActionTestStep> sourceSteps = collector.collect(source.getSteps());
+		int total = copySteps.size();
+		Map<Long, BoundEntity> copiedStepsIdsBySource = new HashMap<Long, BoundEntity>(total);
 		for (int i = 0; i < total; i++) {
-			TestStep copyStep = copy.getSteps().get(i);
-			TestStep sourceStep = source.getSteps().get(i);
-			copyStep.accept(new TestStepCufCopier(customFieldValueManagerService, sourceStep));
+			ActionTestStep copyStep = copySteps.get(i);
+			ActionTestStep sourceStep = sourceSteps.get(i);
+			copiedStepsIdsBySource.put(sourceStep.getId(), copyStep);
 		}
+		customFieldValueManagerService.copyCustomFieldValues(copiedStepsIdsBySource, BindableEntity.TEST_STEP);
 	}
 
-	private static final class TestStepCufCopier implements TestStepVisitor {
-		private PrivateCustomFieldValueService customFieldValueManagerService;
-		private TestStep sourceStep;
 
-		private TestStepCufCopier(PrivateCustomFieldValueService customFieldValueManagerService, TestStep sourceStep) {
-			this.customFieldValueManagerService = customFieldValueManagerService;
-			this.sourceStep = sourceStep;
-		}
-
-		@Override
-		public void visit(ActionTestStep visited) {
-			customFieldValueManagerService.copyCustomFieldValues((ActionTestStep) sourceStep, visited);
-
-		}
-
-		@Override
-		public void visit(CallTestStep visited) {
-			// do nothing
-
-		}
-
-	}
 
 	@SuppressWarnings("unchecked")
 	private <T extends TreeNode> void persistCopy(T copyParam, EntityDao<T> dao, int nameMaxSize) {

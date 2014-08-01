@@ -18,18 +18,12 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.domain.customfield;
+package org.squashtest.tm.service.internal.repository;
 
-import org.squashtest.tm.domain.Identified;
-import org.squashtest.tm.domain.project.Project;
+import org.squashtest.tm.domain.customfield.CustomFieldValue;
+
+public interface CustomCustomFieldValueDao extends EntityDao<CustomFieldValue> {
 
 
-public interface BoundEntity extends Identified {
-
-	Long getBoundEntityId();
-
-	BindableEntity getBoundEntityType();
-
-	Project getProject();
 
 }

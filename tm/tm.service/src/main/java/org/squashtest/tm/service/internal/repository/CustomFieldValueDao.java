@@ -32,43 +32,43 @@ import org.squashtest.tm.domain.customfield.CustomFieldBinding;
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
 import org.squashtest.tm.domain.customfield.RenderingLocation;
 
-@DynamicDao(entity = CustomFieldValue.class, hasCustomImplementation = false)
-public interface CustomFieldValueDao {
+@DynamicDao(entity = CustomFieldValue.class)
+public interface CustomFieldValueDao extends CustomCustomFieldValueDao{
 
-	
+
 	/**
 	 * 'nuff said.
 	 * @param newValue
 	 */
 	void persist(CustomFieldValue newValue);
-	
 
-	
+
+
 	/**
 	 * 
 	 * 'nuff said.
 	 * @param value
 	 */
 	void delete(CustomFieldValue value);
-	
-	
+
+
 	/**
 	 * Delete all the CustomFieldValue, given their ids.
 	 * 
 	 * @param ids
 	 */
 	void deleteAll(@QueryParam("ids") List<Long> ids);
-	
-	
-	
+
+
+
 	/**
 	 * Delete all the CustomFieldValue related to a {@link CustomFieldBinding}, given its id.
 	 * 
 	 * @param bindingId
 	 */
 	void deleteAllForBinding(@QueryParam("bindingId") Long bindingId);
-	
-	
+
+
 	/**
 	 * Delete all the custom field values related to a BoundEntity, identified by its id and BindableEntity
 	 * 
@@ -77,7 +77,7 @@ public interface CustomFieldValueDao {
 	 */
 	void deleteAllForEntity(@QueryParam("entityId") Long entityId, @QueryParam("entityType") BindableEntity entity);
 
-	
+
 	/**
 	 * Delete all the custom field values related to a bunch of bound entities
 	 * 
@@ -85,20 +85,20 @@ public interface CustomFieldValueDao {
 	 * @param entityIds
 	 */
 	void deleteAllForEntities(@QueryParam("entityType") BindableEntity entityType, @QueryParam("entityIds") List<Long> entityIds);
-	
 
-	
+
+
 	/**
-	 * 'nuff said. 
+	 * 'nuff said.
 	 * @param id
 	 * @return
 	 */
 	CustomFieldValue findById(Long id);
-	
-	
-	
+
+
+
 	/**
-	 * returns the list of {@link CustomFieldValue} for the given entity, sorted according to the 
+	 * returns the list of {@link CustomFieldValue} for the given entity, sorted according to the
 	 * order specified in their respective {@link CustomFieldBinding}.
 	 * 
 	 * @param entityId
@@ -107,7 +107,7 @@ public interface CustomFieldValueDao {
 	 */
 	List<CustomFieldValue> findAllCustomValues(long entityId, BindableEntity entityType);
 
-	
+
 	/**
 	 * Same as above, list version.
 	 * 
@@ -115,19 +115,19 @@ public interface CustomFieldValueDao {
 	 * @param entityType
 	 * @return
 	 */
-	List<CustomFieldValue> batchedFindAllCustomValuesFor(@QueryParam("entityIds") List<Long> entityIds, @QueryParam("entityType") BindableEntity entityType);
-	
-	
+	List<CustomFieldValue> batchedFindAllCustomValuesFor(@QueryParam("entityIds") Collection<Long> entityIds, @QueryParam("entityType") BindableEntity entityType);
+
+
 	/**
 	 * Same as above, will restrict to the custom fields specified as arguments
 	 * 
 	 * @return
 	 */
-	List<CustomFieldValue> batchedRestrictedFindAllCustomValuesFor(@QueryParam("entityIds") List<Long> entityIds, 
-																   @QueryParam("entityType") BindableEntity entityType,
-																   @QueryParam("customFields") Collection<CustomField> customFields);
-	
-	
+	List<CustomFieldValue> batchedRestrictedFindAllCustomValuesFor(@QueryParam("entityIds") List<Long> entityIds,
+			@QueryParam("entityType") BindableEntity entityType,
+			@QueryParam("customFields") Collection<CustomField> customFields);
+
+
 	/**
 	 * returns all the {@link CustomFieldValue} related to a given {@link CustomFieldBinding}, sorted according to
 	 * their custom field binding order.
@@ -137,19 +137,19 @@ public interface CustomFieldValueDao {
 	 */
 	List<CustomFieldValue> findAllCustomValuesOfBinding(long customFieldBindingId);
 
-	
+
 	/**
 	 * returns all the CustomFieldValue related to a list of CustomFieldBinding, the resulting elements will be
 	 * returned in unspecified order
 	 * @param customFieldBindingIds
 	 * @return
 	 */
-	List<CustomFieldValue> findAllCustomValuesOfBindings(@QueryParam("bindingIds") List<Long>customFieldBindingIds);	
-	
+	List<CustomFieldValue> findAllCustomValuesOfBindings(@QueryParam("bindingIds") List<Long>customFieldBindingIds);
+
 
 	/**
 	 * Will return instances of {@link CustomFieldValuesPair}, that will pair two {@link CustomFieldValue} that represents the same
-	 * CustomFieldBinding. Those two CustomFieldValue belongs to two BoundEntity as specified by the parameters. 
+	 * CustomFieldBinding. Those two CustomFieldValue belongs to two BoundEntity as specified by the parameters.
 	 * One of them is considered as the original and the other one is the copy.
 	 * 
 	 * @param entity
@@ -157,10 +157,10 @@ public interface CustomFieldValueDao {
 	 * @param copyEntityId
 	 * @return
 	 */
-	List<CustomFieldValuesPair> findPairedCustomFieldValues(@QueryParam("entityType") BindableEntity entity, 
-								@QueryParam("origEntityId") Long origEntityId, @QueryParam("copyEntityId") Long copyEntityId);
-	
-	
+	List<CustomFieldValuesPair> findPairedCustomFieldValues(@QueryParam("entityType") BindableEntity entity,
+			@QueryParam("origEntityId") Long origEntityId, @QueryParam("copyEntityId") Long copyEntityId);
+
+
 	/**
 	 * return the custom field value matchine the given params.
 	 * 
@@ -173,25 +173,25 @@ public interface CustomFieldValueDao {
 			long customFieldBindingId,
 			long boundEntityId,
 			BindableEntity bindableEntity);
-	
-	
+
+
 	public static final class CustomFieldValuesPair{
-		
+
 		private CustomFieldValue original;
 		private CustomFieldValue recipient;
-		
+
 		public CustomFieldValuesPair(){
 			super();
 		}
-		
+
 		public CustomFieldValuesPair(CustomFieldValue original,
 				CustomFieldValue recipient) {
 			super();
 			this.original = original;
 			this.recipient = recipient;
 		}
-		
-		
+
+
 		public void setOriginal(CustomFieldValue original) {
 			this.original = original;
 		}
@@ -200,7 +200,7 @@ public interface CustomFieldValueDao {
 			this.recipient = recipient;
 		}
 
-		
+
 		public CustomFieldValue getOriginal() {
 			return original;
 		}
@@ -222,4 +222,6 @@ public interface CustomFieldValueDao {
 
 
 	List<CustomFieldValue> findAllForEntityAndRenderingLocation(long entityId, BindableEntity entityType, RenderingLocation renderingLocation);
+
+
 }

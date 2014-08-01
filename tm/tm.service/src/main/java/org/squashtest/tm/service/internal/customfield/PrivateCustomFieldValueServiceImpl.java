@@ -26,6 +26,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -207,16 +208,16 @@ public class PrivateCustomFieldValueServiceImpl implements PrivateCustomFieldVal
 
 		for (CustomFieldBinding binding : bindings) {
 			if (!foundValue(binding, entity)) {
-				CustomFieldValue value = binding.createNewValue();
-				value.setBoundEntity(entity);
-				customFieldValueDao.persist(value);
+			CustomFieldValue value = binding.createNewValue();
+			value.setBoundEntity(entity);
+			customFieldValueDao.persist(value);
 
-				if (BindableEntity.TEST_CASE.equals(entity.getBoundEntityType())) {
-					indexationService.reindexTestCase(entity.getBoundEntityId());
-				}
-				if (BindableEntity.REQUIREMENT_VERSION.equals(entity.getBoundEntityType())) {
-					indexationService.reindexRequirementVersion(entity.getBoundEntityId());
-				}
+			if (BindableEntity.TEST_CASE.equals(entity.getBoundEntityType())) {
+				indexationService.reindexTestCase(entity.getBoundEntityId());
+			}
+			if (BindableEntity.REQUIREMENT_VERSION.equals(entity.getBoundEntityType())) {
+				indexationService.reindexRequirementVersion(entity.getBoundEntityId());
+			}
 			}
 		}
 
@@ -247,15 +248,34 @@ public class PrivateCustomFieldValueServiceImpl implements PrivateCustomFieldVal
 
 		List<CustomFieldValue> sourceValues = customFieldValueDao.findAllCustomValues(source.getBoundEntityId(),
 				source.getBoundEntityType());
-
+		List<CustomFieldValue> copies = new ArrayList<CustomFieldValue>(sourceValues.size());
 		for (CustomFieldValue value : sourceValues) {
 			CustomFieldValue copy = value.copy();
 			copy.setBoundEntity(recipient);
-			customFieldValueDao.persist(copy);
+			copies.add(copy);
 		}
+		customFieldValueDao.persist(copies);
 
 	}
 
+	/**
+	 * @see PrivateCustomFieldValueService#copyCustomFieldValues(Map, BindableEntity)
+	 */
+	@Override
+	public void copyCustomFieldValues(Map<Long, BoundEntity> copiedEntityBySourceId, BindableEntity bindableEntityType) {
+		Set<Long> sourceEntitiesIds =  copiedEntityBySourceId.keySet();
+		List<CustomFieldValue> sourceValues = customFieldValueDao.batchedFindAllCustomValuesFor(sourceEntitiesIds,
+				bindableEntityType);
+		List<CustomFieldValue> copies = new ArrayList<CustomFieldValue>(sourceValues.size());
+		for(CustomFieldValue cufSource : sourceValues){
+			BoundEntity targetCopy = copiedEntityBySourceId.get(cufSource.getBoundEntityId());
+			CustomFieldValue copy = cufSource.copy();
+			copy.setBoundEntity(targetCopy);
+			copies.add(copy);
+		}
+		customFieldValueDao.persist(copies);
+
+	}
 	@Override
 	public void copyCustomFieldValuesContent(BoundEntity source, BoundEntity recipient) {
 
