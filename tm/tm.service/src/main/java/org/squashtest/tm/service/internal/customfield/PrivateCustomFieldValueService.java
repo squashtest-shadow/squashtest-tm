@@ -22,6 +22,7 @@ package org.squashtest.tm.service.internal.customfield;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import org.squashtest.tm.domain.customfield.BindableEntity;
 import org.squashtest.tm.domain.customfield.BoundEntity;
@@ -64,14 +65,14 @@ public interface PrivateCustomFieldValueService extends CustomFieldValueManagerS
 	 * Will create all the custom field values for one entity.
 	 * 
 	 * @param entity
-	 * @param project. If null, the project of the given entity will be used. 
+	 * @param project
+	 *            . If null, the project of the given entity will be used.
 	 */
 	void createAllCustomFieldValues(BoundEntity entity, Project project);
 
-	
 	/**
-	 * batched version of {@link #createAllCustomFieldValues(BoundEntity, Project)}. 
-	 * The entities are assumed to be all of the same concrete class and of the 
+	 * batched version of {@link #createAllCustomFieldValues(BoundEntity, Project)}.
+	 * The entities are assumed to be all of the same concrete class and of the
 	 * same project.
 	 * 
 	 * 
@@ -79,7 +80,7 @@ public interface PrivateCustomFieldValueService extends CustomFieldValueManagerS
 	 * @param project
 	 */
 	void createAllCustomFieldValues(Collection<? extends BoundEntity> entities, Project project);
-	
+
 	/**
 	 * will delete all the custom field vales for one entity
 	 * 
@@ -100,9 +101,24 @@ public interface PrivateCustomFieldValueService extends CustomFieldValueManagerS
 	/**
 	 * Will copy the custom field values from an entity to another entity, creating them in the process
 	 * 
-	 * @param entity
+	 * @param source : the {@link BoundEntity} from witch the cuf are copied
+	 * @param recipient : the BoundEntity
 	 */
 	void copyCustomFieldValues(BoundEntity source, BoundEntity recipient);
+
+	/**
+	 * *Will copy the custom field values from entities to others, creating them in the process
+	 * 
+	 * @param copiedEntityBySource
+	 *            : a Map with
+	 *            <ul>
+	 *            <li>key : the source BoundEntity id</li>
+	 *            <li>value : the copy BoundEntity  to add the cufs to</li>
+	 *            </ul>
+	 * @param bindableEntityType
+	 *            : the {@link BindableEntity} type for all BoundEntity in the "copiedEntityBySource" map.
+	 */
+	void copyCustomFieldValues(Map<Long, BoundEntity> copiedEntityBySource, BindableEntity bindableEntityType);
 
 	/**
 	 * Will copy the custom field values from an entity to another entity. It assumes that the custom field values

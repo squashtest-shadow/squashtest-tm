@@ -25,14 +25,18 @@ import javax.inject.Inject
 import org.hibernate.Query
 import org.junit.runner.RunWith
 import org.spockframework.runtime.Sputnik
+import org.springframework.osgi.blueprint.config.internal.support.InstanceEqualityRuntimeBeanReference
 import org.springframework.transaction.annotation.Transactional
 import org.squashtest.tm.domain.customfield.BindableEntity
+import org.squashtest.tm.domain.customfield.CustomFieldValue
+import org.squashtest.tm.domain.testcase.CallTestStep
 import org.squashtest.tm.domain.testcase.Dataset
 import org.squashtest.tm.domain.testcase.Parameter
 import org.squashtest.tm.domain.testcase.TestCase
 import org.squashtest.tm.domain.testcase.TestCaseFolder
 import org.squashtest.tm.domain.testcase.TestCaseLibrary
 import org.squashtest.tm.domain.testcase.TestCaseLibraryNode
+import org.squashtest.tm.domain.testcase.TestStep
 import org.squashtest.tm.exception.library.CannotMoveInHimselfException
 import org.squashtest.tm.service.DbunitServiceSpecification
 import org.squashtest.tm.service.internal.repository.TestCaseFolderDao
@@ -81,8 +85,8 @@ class TestCaseLibraryNavigationServiceIT extends DbunitServiceSpecification {
 		navService.moveNodesToFolder(destinationId, sourceIds, 0)
 
 		then:
-		TestCaseFolder parentFolder = (TestCaseFolder) libraryDao.findById(2L);
-		parentFolder.content.collect {it.id} == [1L, 20L, 21L];
+		TestCaseFolder parentFolder = (TestCaseFolder) libraryDao.findById(2L)
+		parentFolder.content.collect {it.id} == [1L, 20L, 21L]
 	}
 
 	@DataSet("TestCaseLibraryNavigationServiceIT.should move to same project at right position.xml")
@@ -95,8 +99,8 @@ class TestCaseLibraryNavigationServiceIT extends DbunitServiceSpecification {
 		navService.moveNodesToFolder(destinationId, sourceIds, 1)
 
 		then:
-		TestCaseFolder parentFolder = (TestCaseFolder) libraryDao.findById(2L);
-		parentFolder.content.collect {it.id} == [20L, 1L, 21L];
+		TestCaseFolder parentFolder = (TestCaseFolder) libraryDao.findById(2L)
+		parentFolder.content.collect {it.id} == [20L, 1L, 21L]
 	}
 
 	@DataSet("TestCaseLibraryNavigationServiceIT.countsiblings.xml")
@@ -128,8 +132,8 @@ class TestCaseLibraryNavigationServiceIT extends DbunitServiceSpecification {
 		navService.moveNodesToFolder(destinationId, sourceIds, 2)
 
 		then:
-		TestCaseFolder parentFolder = (TestCaseFolder) libraryDao.findById(2L);
-		parentFolder.content.collect {it.id} == [20L, 21L, 1L];
+		TestCaseFolder parentFolder = (TestCaseFolder) libraryDao.findById(2L)
+		parentFolder.content.collect {it.id} == [20L, 21L, 1L]
 	}
 
 
@@ -156,18 +160,18 @@ class TestCaseLibraryNavigationServiceIT extends DbunitServiceSpecification {
 		and: "it has copies of datasets"
 		testCaseCopy.datasets.size() == 2
 		Dataset dataset1copy = testCaseCopy.datasets.find{it.name == "dataset_1"}
-		dataset1copy  != null;
+		dataset1copy  != null
 		dataset1copy.id != 1L
 		Dataset dataset2copy = testCaseCopy.datasets.find{it.name == "dataset_2"}
 		dataset2copy != null
 		dataset2copy.id != 2L
 		and: "it has copies of datasets-param-values"
 		dataset1copy.parameterValues.size() == 2
-		dataset1copy.parameterValues.collect {it.parameter}.containsAll([param1copy, param2copy]);
-		dataset1copy.parameterValues.collect {it.paramValue}.containsAll(["val", "val"]);
+		dataset1copy.parameterValues.collect {it.parameter}.containsAll([param1copy, param2copy])
+		dataset1copy.parameterValues.collect {it.paramValue}.containsAll(["val", "val"])
 		dataset2copy.parameterValues.size() == 2
-		dataset2copy.parameterValues.collect {it.parameter}.containsAll([param1copy, param2copy]);
-		dataset2copy.parameterValues.collect {it.paramValue}.containsAll(["val", "val"]);
+		dataset2copy.parameterValues.collect {it.parameter}.containsAll([param1copy, param2copy])
+		dataset2copy.parameterValues.collect {it.paramValue}.containsAll(["val", "val"])
 	}
 
 	@DataSet("TestCaseLibraryNavigationServiceIT.should copy tc with datasetParamValues of called step.xml")
@@ -187,12 +191,41 @@ class TestCaseLibraryNavigationServiceIT extends DbunitServiceSpecification {
 		testCaseCopy.parameters.size() == 1
 		Parameter param1copy = testCaseCopy.parameters.find{it.name == "parameter_1"}
 		and: "it has copies of datasetParamValues even for called param"
-		Parameter calledParam = session.get(Parameter.class, 2L);
+		Parameter calledParam = session.get(Parameter.class, 2L)
 		dataset1copy.parameterValues.size() == 2
-		dataset1copy.parameterValues.collect {it.parameter}.containsAll([param1copy, calledParam]);
+		dataset1copy.parameterValues.collect {it.parameter}.containsAll([param1copy, calledParam])
 
 	}
 
+	@Unroll
+	@DataSet("TestCaseLibraryNavigationServiceID.should copy tc with steps and cufs.xml")
+	def "should copy cufs of tc steps #copiedStepId"(){
+		given : "a test case with steps and 4 cufs bound to the steps"
+		Long[] sourceIds = [11L]
+		Long destinationId = 2L
+
+		when:"this test case is copied into another folder"
+		List<TestCaseLibraryNode> nodes = navService.copyNodesToFolder(destinationId, sourceIds)
+
+		then:"the test case is copied"
+		nodes.get(0) instanceof TestCase
+		TestCase testCaseCopy = (TestCase) nodes.get(0)
+		and:"the steps are copied"
+		List<TestStep> copiedSteps = testCaseCopy.getSteps()
+		copiedSteps.size() == 5
+		and: "the step's cufs are copied"
+		TestStep secondCopiedStep = copiedSteps.get(1)
+		List<CustomFieldValue> cufValues = findCufValuesForEntity(BindableEntity.TEST_STEP, copiedStepId)
+		cufValues.collect {it.value}.containsAll(copiedValues)
+
+		where:
+		copiedStepId | copiedValues
+		1 | [] // is a call step
+		2 | ["step2-value1", "step2-value2", "step2-value3", "step2-value4"]
+		3 | ["step3-value1", "step3-value2", "step3-value3", "step3-value4"]
+		4 | ["step4-value1", "step4-value2", "step4-value3", "step4-value4"]
+		5 | ["step5-value1", "step5-value2", "step5-value3", "step5-value4"]
+	}
 	@DataSet("TestCaseLibraryNavigationServiceIT.should copy to other project.xml")
 	def "should copy paste to other project"(){
 		given:
@@ -285,7 +318,7 @@ class TestCaseLibraryNavigationServiceIT extends DbunitServiceSpecification {
 
 		when :
 		def id = navService.mkdirs(path)
-		getSession().flush();
+		getSession().flush()
 
 		then :
 		navService.findNodeIdByPath("/some project/big") != null
@@ -302,7 +335,7 @@ class TestCaseLibraryNavigationServiceIT extends DbunitServiceSpecification {
 
 		when :
 		def id = navService.mkdirs(path)
-		getSession().flush();
+		getSession().flush()
 
 		then :
 		navService.findNodeIdByPath("/some project/another folder/bob") != null

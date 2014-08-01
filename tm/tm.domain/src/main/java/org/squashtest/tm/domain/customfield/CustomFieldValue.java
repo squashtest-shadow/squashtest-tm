@@ -70,8 +70,8 @@ public class CustomFieldValue implements Identified {
 	public CustomFieldValue(Long boundEntityId, BindableEntity boundEntityType, CustomFieldBinding binding, String value) {
 		super();
 		this.boundEntityId = boundEntityId;
-		this.boundEntityType = boundEntityType;
 		this.binding = binding;
+		doSetBoundEntityType(boundEntityType);
 		doSetValue(value);
 	}
 
@@ -130,13 +130,20 @@ public class CustomFieldValue implements Identified {
 	}
 
 	public void setBoundEntity(BoundEntity entity) {
-		if (entity.getBoundEntityType() != binding.getBoundEntity()) {
-			throw new BindableEntityMismatchException("attempted to bind '" + entity.getBoundEntityType()
+		this.boundEntityId = entity.getBoundEntityId();
+		doSetBoundEntityType(entity.getBoundEntityType());
+	}
+
+	public void doSetBoundEntityType(BindableEntity entityType) {
+		if (entityType != binding.getBoundEntity()) {
+			throw new BindableEntityMismatchException("attempted to bind '" + entityType
 					+ "' while expected '" + binding.getBoundEntity() + "'");
 		}
-		this.boundEntityId = entity.getBoundEntityId();
-		this.boundEntityType = entity.getBoundEntityType();
+
+		this.boundEntityType = entityType;
 	}
+
+
 
 	public CustomFieldValue copy() {
 		CustomFieldValue copy = new CustomFieldValue();
