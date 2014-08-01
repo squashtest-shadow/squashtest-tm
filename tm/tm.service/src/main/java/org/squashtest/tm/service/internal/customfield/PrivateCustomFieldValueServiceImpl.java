@@ -55,10 +55,10 @@ import org.squashtest.tm.service.security.PermissionEvaluationService;
 @Service("squashtest.tm.service.CustomFieldValueManagerService")
 @Transactional
 public class PrivateCustomFieldValueServiceImpl implements PrivateCustomFieldValueService {
-	
+
 	@Inject @Named("defaultEditionStatusStrategy")
 	private ValueEditionStatusStrategy defaultEditionStatusStrategy;
-	
+
 	@Inject @Named("requirementBoundEditionStatusStrategy")
 	private ValueEditionStatusStrategy requirementBoundEditionStatusStrategy;
 
@@ -80,7 +80,7 @@ public class PrivateCustomFieldValueServiceImpl implements PrivateCustomFieldVal
 	public void setPermissionService(PermissionEvaluationService permissionService) {
 		this.permissionService = permissionService;
 	}
-	
+
 
 	@Override
 	@Transactional(readOnly = true)
@@ -207,29 +207,29 @@ public class PrivateCustomFieldValueServiceImpl implements PrivateCustomFieldVal
 
 	@Override
 	public void createAllCustomFieldValues(BoundEntity entity, Project project) {
-		
+
 		if(project == null){
 			project = entity.getProject();
 		}
-		
+
 		List<CustomFieldBinding> bindings = customFieldBindingDao.findAllForProjectAndEntity(project.getId(), entity.getBoundEntityType());
-		
+
 		/* **************************************************************************************************
 		 * [Issue 3808]
 		 * 
-		 * It seems that after #2061 (revision 9540a9a08c49) a defensive block of code was added in order to 
+		 * It seems that after #2061 (revision 9540a9a08c49) a defensive block of code was added in order to
 		 * prevent the creation of a custom field if it exists already for the target entity.
 		 * 
-		 * I don't know really why it was needed but it killed performances, so I'm rewriting it 
-		 * and hope it makes it faster. Best should be to get rid of it completely. 
+		 * I don't know really why it was needed but it killed performances, so I'm rewriting it
+		 * and hope it makes it faster. Best should be to get rid of it completely.
 		 ************************************************************************************************* */
-		List<CustomFieldBinding> whatIsAlreadyBound = 
+		List<CustomFieldBinding> whatIsAlreadyBound =
 				customFieldBindingDao.findEffectiveBindingsForEntity(entity.getBoundEntityId(), entity.getBoundEntityType());
 
 		bindings.removeAll(whatIsAlreadyBound);
 
 		/* **** /[Issue 3808]  ************/
-		
+
 		for (CustomFieldBinding binding : bindings) {
 			CustomFieldValue value = binding.createNewValue();
 			value.setBoundEntity(entity);
@@ -244,49 +244,49 @@ public class PrivateCustomFieldValueServiceImpl implements PrivateCustomFieldVal
 		}
 
 	}
-	
+
 	@Override
 	public void createAllCustomFieldValues(Collection<? extends BoundEntity> entities, Project p) {
 
 		if (entities.isEmpty()){
 			return;
 		}
-		
+
 		BoundEntity firstEntity = entities.iterator().next();
-		
+
 		Project project = p;
 		if (p == null){
 			project = firstEntity.getProject();
 		}
-		
+
 		List<CustomFieldBinding> bindings = customFieldBindingDao.findAllForProjectAndEntity(project.getId(), firstEntity.getBoundEntityType());
-		
+
 		/* **************************************************************************************************
 		 * [Issue 3808]
 		 * 
-		 * It seems that after #2061 (revision 9540a9a08c49) a defensive block of code was added in order to 
+		 * It seems that after #2061 (revision 9540a9a08c49) a defensive block of code was added in order to
 		 * prevent the creation of a custom field if it exists already for the target entity.
 		 * 
-		 * I don't know really why it was needed but it killed performances, so I'm rewriting it 
+		 * I don't know really why it was needed but it killed performances, so I'm rewriting it
 		 * and hope it makes it faster. Best should be to get rid of it completely. Its inefficient and ugly.
 		 ************************************************************************************************* */
-		
+
 		MultiValueMap bindingPerEntities = findEffectiveBindings(entities);
 
 		/* **** /[Issue 3808]  ************/
-		
+
 		// main loop
 		for (BoundEntity entity : entities){
-			
+
 			Collection<CustomFieldBinding> toBeBound = bindings;
-			
-			Collection<CustomFieldBinding> effectiveBindings = 
+
+			Collection<CustomFieldBinding> effectiveBindings =
 					bindingPerEntities.getCollection(entity.getBoundEntityId());
-					
-			if (effectiveBindings != null){		
+
+			if (effectiveBindings != null){
 				toBeBound = CollectionUtils.subtract(bindings, effectiveBindings);
 			}
-			
+
 			for (CustomFieldBinding toBind : toBeBound){
 				CustomFieldValue value = toBind.createNewValue();
 				value.setBoundEntity(entity);
@@ -297,10 +297,10 @@ public class PrivateCustomFieldValueServiceImpl implements PrivateCustomFieldVal
 				}
 				if (BindableEntity.REQUIREMENT_VERSION.equals(entity.getBoundEntityType())) {
 					indexationService.reindexRequirementVersion(entity.getBoundEntityId());
-				}		
+				}
 			}
 		}
-		
+
 	}
 
 
@@ -329,7 +329,7 @@ public class PrivateCustomFieldValueServiceImpl implements PrivateCustomFieldVal
 		customFieldValueDao.persist(copies);
 
 	}
-	
+
 	/**
 	 * @see org.squashtest.tm.service.customfield.CustomFieldValueFinderService#areValuesEditable(long,
 	 *      org.squashtest.tm.domain.customfield.BindableEntity)
@@ -338,12 +338,13 @@ public class PrivateCustomFieldValueServiceImpl implements PrivateCustomFieldVal
 	public boolean areValuesEditable(long boundEntityId, BindableEntity bindableEntity) {
 		return editableStrategy(bindableEntity).isEditable(boundEntityId, bindableEntity);
 	}
-	
+
 
 	@Override
 	public List<CustomFieldValue> findAllForEntityAndRenderingLocation(BoundEntity boundEntity, RenderingLocation renderingLocation) {
 		return customFieldValueDao.findAllForEntityAndRenderingLocation(boundEntity.getBoundEntityId(), boundEntity.getBoundEntityType(), renderingLocation);
 	}
+
 
 	/**
 	 * @see PrivateCustomFieldValueService#copyCustomFieldValues(Map, BindableEntity)
@@ -433,20 +434,9 @@ public class PrivateCustomFieldValueServiceImpl implements PrivateCustomFieldVal
 		}
 	}
 
-	/**
-	 * @see org.squashtest.tm.service.customfield.CustomFieldValueFinderService#areValuesEditable(long,
-	 *      org.squashtest.tm.domain.customfield.BindableEntity)
-	 */
-	@Override
-	public boolean areValuesEditable(long boundEntityId, BindableEntity bindableEntity) {
-		return editableStrategy(bindableEntity).isEditable(boundEntityId, bindableEntity);
-	}
 
 
-	@Override
-	public List<CustomFieldValue> findAllForEntityAndRenderingLocation(BoundEntity boundEntity, RenderingLocation renderingLocation) {
-		return customFieldValueDao.findAllForEntityAndRenderingLocation(boundEntity.getBoundEntityId(), boundEntity.getBoundEntityType(), renderingLocation);
-	}
+
 
 	// *********************** private convenience methods ********************
 
@@ -470,15 +460,15 @@ public class PrivateCustomFieldValueServiceImpl implements PrivateCustomFieldVal
 
 	// will break if the collection is empty so use it responsible
 	private MultiValueMap findEffectiveBindings(Collection<? extends BoundEntity> entities) {
-		
-		
+
+
 		Map<BindableEntity, List<Long>> compositeIds = breakEntitiesIntoCompositeIds(entities);
-		Entry<BindableEntity, List<Long>> firstEntry = compositeIds.entrySet().iterator().next(); 		
-		
+		Entry<BindableEntity, List<Long>> firstEntry = compositeIds.entrySet().iterator().next();
+
 		List<Long> entityIds = firstEntry.getValue();
 		BindableEntity type = firstEntry.getKey();
-		
-		
+
+
 		List<Object[]> whatIsAlreadyBound = customFieldBindingDao.findEffectiveBindingsForEntities(entityIds, type);
 
 		MultiValueMap bindingsPerEntity = new MultiValueMap();
@@ -487,7 +477,7 @@ public class PrivateCustomFieldValueServiceImpl implements PrivateCustomFieldVal
 			CustomFieldBinding binding = (CustomFieldBinding)tuple[1];
 			bindingsPerEntity.put(entityId, binding);
 		}
-		
+
 		return bindingsPerEntity;
 	}
 
@@ -511,6 +501,6 @@ public class PrivateCustomFieldValueServiceImpl implements PrivateCustomFieldVal
 		List<Long> valueIds = IdentifiedUtil.extractIds(values);
 		customFieldValueDao.deleteAll(valueIds);
 	}
-	
-		
+
+
 }

@@ -260,15 +260,17 @@ public class PrivateDenormalizedFieldValueServiceImpl implements PrivateDenormal
 		return null;
 	}
 
-	/*
-	 * 1 - values that corresponds to a custom field referenced by the given bindings are inserted first
-	 * with their value, according to the position of the binding, and respect their display location
-	 * 2 - insert a dummy custom field value for each custom field that wasn't represented in the collection 'values'
-	 *  according to the position and the display location
-	 *  (XXX : is that a real functional requirement or just to make the datatable work ? Seems the later to me)
-	 * 3 - insert the other custom fields with no specific display location
-	 * 
-	 */
+	/**
+	 * <ul>
+	 * <li>
+	 * 1 - values that corresponds to a custom field referenced by the given bindings are inserted first with their
+	 * value, according to the position of the binding, and respect their display location</li>
+	 * <li>2 - insert a dummy custom field value for each custom field that wasn't represented in the collection
+	 * 'values' according to the position and the display location (XXX : is that a real functional requirement or just
+	 * to make the datatable work ? Seems the later to me)</li>
+	 * <li>3 - insert the other custom fields with no specific display location</li>
+	 * </ul>
+	 **/
 	private List<CustomFieldValue> normalizedValues(ExecutionStep step, List<CustomFieldValue> values, Collection<CustomFieldBinding >bindings){
 
 		List<CustomFieldValue> res = new LinkedList<CustomFieldValue>();
@@ -295,6 +297,7 @@ public class PrivateDenormalizedFieldValueServiceImpl implements PrivateDenormal
 			CustomFieldBinding dummyBinding = new CustomFieldBinding();
 			dummyBinding.setCustomField(v.getBinding().getCustomField());
 			dummyBinding.setPosition(position);
+			dummyBinding.setBoundEntity(BindableEntity.EXECUTION_STEP);
 
 			res.add(new CustomFieldValue(step.getBoundEntityId(), step.getBoundEntityType(), dummyBinding, v.getValue()));
 
