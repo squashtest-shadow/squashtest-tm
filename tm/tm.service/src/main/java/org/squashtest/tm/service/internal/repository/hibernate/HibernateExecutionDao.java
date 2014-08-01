@@ -58,6 +58,7 @@ public class HibernateExecutionDao extends HibernateEntityDao<Execution> impleme
 	private static final String PROJECT_ID = "Project.id";
 	private static final String ITERATION_CAMPAIGN = "Iteration.campaign";
 	private static final String EXECUTION_STATUS = "executionStatus";
+	private static final String EXECUTION_ID = "executionId";
 
 	/*
 	 * as long as the ordering of a collection is managed by @OrderColumn, but you can't explicitely reference the
@@ -70,25 +71,25 @@ public class HibernateExecutionDao extends HibernateEntityDao<Execution> impleme
 	@Override
 	public List<ExecutionStep> findExecutionSteps(long executionId) {
 		Query q = currentSession().getNamedQuery("execution.findSteps");
-		q.setParameter("executionId", executionId);
+		q.setParameter(EXECUTION_ID, executionId);
 		return q.list();
 	}
-	
+
 	@Override
 	public List<ActionTestStep> findOriginalSteps(long executionId) {
 		Query q = currentSession().getNamedQuery("execution.findOriginalSteps");
-		q.setParameter("executionId", executionId);
+		q.setParameter(EXECUTION_ID, executionId);
 		return q.list();
 	}
-	
+
 	@Override
 	public List<Long> findOriginalStepIds(long executionId) {
 		Query q = currentSession().getNamedQuery("execution.findOriginalStepIds");
-		q.setParameter("executionId", executionId);
+		q.setParameter(EXECUTION_ID, executionId);
 		return q.list();
 	}
-	
-	
+
+
 	@Override
 	public Execution findAndInit(long executionId) {
 		Execution execution = findById(executionId);
@@ -295,7 +296,7 @@ public class HibernateExecutionDao extends HibernateEntityDao<Execution> impleme
 	 */
 	@Override
 	public long countExecutionSteps(long executionId) {
-		return (Long) executeEntityNamedQuery("execution.countSteps", "executionId", executionId);
+		return (Long) executeEntityNamedQuery("execution.countSteps", EXECUTION_ID, executionId);
 	}
 
 	/**

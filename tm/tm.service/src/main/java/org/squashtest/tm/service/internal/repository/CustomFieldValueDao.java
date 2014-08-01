@@ -34,7 +34,7 @@ import org.squashtest.tm.domain.customfield.RenderingLocation;
 
 @DynamicDao(entity = CustomFieldValue.class)
 public interface CustomFieldValueDao extends CustomCustomFieldValueDao{
-
+	String ENTITY_TYPE = "entityType";
 
 	/**
 	 * 'nuff said.
@@ -84,7 +84,7 @@ public interface CustomFieldValueDao extends CustomCustomFieldValueDao{
 	 * @param entityTpe
 	 * @param entityIds
 	 */
-	void deleteAllForEntities(@QueryParam("entityType") BindableEntity entityType, @QueryParam("entityIds") List<Long> entityIds);
+	void deleteAllForEntities(@QueryParam(ENTITY_TYPE) BindableEntity entityType, @QueryParam("entityIds") List<Long> entityIds);
 
 
 
@@ -115,7 +115,7 @@ public interface CustomFieldValueDao extends CustomCustomFieldValueDao{
 	 * @param entityType
 	 * @return
 	 */
-	List<CustomFieldValue> batchedFindAllCustomValuesFor(@QueryParam("entityIds") Collection<Long> entityIds, @QueryParam("entityType") BindableEntity entityType);
+	List<CustomFieldValue> batchedFindAllCustomValuesFor(@QueryParam("entityIds") Collection<Long> entityIds, @QueryParam(ENTITY_TYPE) BindableEntity entityType);
 
 
 	/**
@@ -125,7 +125,7 @@ public interface CustomFieldValueDao extends CustomCustomFieldValueDao{
 	 * @param entityType
 	 * @return
 	 */
-	List<CustomFieldValue> batchedInitializedFindAllCustomValuesFor(@QueryParam("entityIds") List<Long> entityIds, @QueryParam("entityType") BindableEntity entityType);
+	List<CustomFieldValue> batchedInitializedFindAllCustomValuesFor(@QueryParam("entityIds") List<Long> entityIds, @QueryParam(ENTITY_TYPE) BindableEntity entityType);
 	
 	
 	/**
@@ -134,7 +134,7 @@ public interface CustomFieldValueDao extends CustomCustomFieldValueDao{
 	 * @return
 	 */
 	List<CustomFieldValue> batchedRestrictedFindAllCustomValuesFor(@QueryParam("entityIds") List<Long> entityIds,
-			@QueryParam("entityType") BindableEntity entityType,
+			@QueryParam(ENTITY_TYPE) BindableEntity entityType,
 			@QueryParam("customFields") Collection<CustomField> customFields);
 
 
@@ -167,7 +167,7 @@ public interface CustomFieldValueDao extends CustomCustomFieldValueDao{
 	 * @param copyEntityId
 	 * @return
 	 */
-	List<CustomFieldValuesPair> findPairedCustomFieldValues(@QueryParam("entityType") BindableEntity entity,
+	List<CustomFieldValuesPair> findPairedCustomFieldValues(@QueryParam(ENTITY_TYPE) BindableEntity entity,
 			@QueryParam("origEntityId") Long origEntityId, @QueryParam("copyEntityId") Long copyEntityId);
 
 
