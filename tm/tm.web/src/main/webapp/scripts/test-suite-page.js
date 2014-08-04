@@ -32,18 +32,6 @@ require([ "common" ], function() {
 			return false;
 		});
 
-		$(document).on("dialogopen", "#rename-test-suite-dialog", function(event, ui) {
-			console.log("dialogopen", "#rename-test-suite-dialog");
-			var name = $.trim($('#test-suite-name').text());
-			$("#rename-test-suite-name").val(name);
-		});
-
-		/* should be put in global ns and referenced someplace */
-		/* WTF could not find that func name anywhere*/
-		function renameTestSuiteSuccess(data) {
-			eventBus.trigger("node.rename", {identity : squashtm.page.identity, newName : data.newName});
-		}
-
 		/* post a request to duplicate the test suite */
 		/* should be put in global ns and referenced someplace */
 		function duplicateTestSuite(){
@@ -54,6 +42,42 @@ require([ "common" ], function() {
 				dataType : "json"
 			});
 		}
+		
+		// ******** rename popup *************
+		
+		var renameDialog = $("#rename-testsuite-dialog");
+		renameDialog.formDialog();
+		
+		renameDialog.on('formdialogopen', function(){
+			var name = $.trim($("#test-suite-name").text());
+			$("#rename-test-suite-name").val(name);			
+		});
+		
+		renameDialog.on('formdialogconfirm', function(){
+			$.ajax({
+				url : config.testSuiteURL,
+				type : 'POST',
+				dataType : 'json',
+				data : { "newName" : $("#rename-test-suite-name").val() }
+			})
+			.done(function(json){
+				renameDialog.formDialog('close');
+				
+				eventBus.trigger("node.rename", {
+					identity : config.identity,
+					newName : json.newName
+				});
+			});
+		});
+		
+		renameDialog.on('formdialogcancel', function(){
+			renameDialog.formDialog('close');
+		});
+		
+		$("#rename-test-suite-button").on('click', function(){
+			alert("here");
+			renameDialog.formDialog('open');
+		});		
 
 		/* duplication sucess handler */
 		/* should be put in global ns and referenced someplace */
