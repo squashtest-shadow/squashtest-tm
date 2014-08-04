@@ -71,6 +71,8 @@
 <f:message var="deleteMessage" key="dialog.label.delete-nodes.test-suite.label" />
 <f:message var='deleteMessageCantBeUndone' key='dialog.label.delete-node.label.cantbeundone'/>
 <f:message var='deleteMessageConfirm' key='dialog.label.delete-node.label.confirm'/>
+<f:message var="labelConfirm" key="label.Confirm"/>
+<f:message var="labelCancel" key="label.Cancel"/>
 
 <c:set var="servContext" value="${ pageContext.servletContext.contextPath }"/>
 
@@ -114,6 +116,7 @@
   config.parentIdentity = { resid : ${testSuite.iteration.id}, restype : "iteration" };
   config.bugtracker = { url: "${btEntityUrl}", label: "${tabIssueLabel}" };
   config.customFields = { url: "${customFieldsValuesURL}" };
+  config.testSuiteURL = "${testSuiteUrl}";
   config.api = {
 		copy: "${duplicateTestSuiteUrl}"		
   };
@@ -130,33 +133,6 @@
 		</h2>
 	</div>
 
-	<c:if test="${ writable }">
-		<pop:popup id="rename-test-suite-dialog"
-			titleKey="dialog.testsuites.rename.title" isContextual="true"
-			openedBy="rename-test-suite-button">
-			<jsp:attribute name="buttons">
-			
-				<f:message var="label" key="dialog.testsuites.rename.title" />
-				'${ label }': function() {
-					var url = "${ testSuiteUrl }";
-					$.ajax({
-						url : url, 
-						dataType : 'json', 
-						type : 'POST',
-						data : { newName : $("#rename-test-suite-name").val() }
-					});				
-				},			
-				<pop:cancel-button />
-			</jsp:attribute>
-			<jsp:attribute name="body">
-				<label><f:message key="dialog.rename.label" />
-				</label>
-				<input type="text" id="rename-test-suite-name" maxlength="255" size="50" />
-				<br />
-				<comp:error-message forField="name" />	
-			</jsp:attribute>
-		</pop:popup>
-	</c:if>
 </div>
 
 <div id="test-suite-toolbar" class="toolbar-class ui-corner-all cf">
@@ -193,6 +169,23 @@
 	</c:if>
 </div>
 
+  <c:if test="${ writable }">
+    <f:message var="renameDialogTitle" key="dialog.testsuites.rename.title" />
+    <div id="rename-testsuite-dialog" title="${renameDialogTitle}" class="not-displayed popup-dialog">
+        <div>
+          <label><f:message key="dialog.rename.label" /></label>
+          <input type="text" id="rename-test-suite-name" maxlength="255" size="50" />
+          <br/>
+          <comp:error-message forField="name"/>
+        </div>
+      
+        <div class="popup-dialog-buttonpane">
+          <input type="button" value="${labelConfirm}" data-def="evt=confirm, mainbtn" />
+          <input type="button" value="${labelCancel}" data-def="evt=cancel" />        
+        </div>
+    </div>
+    
+  </c:if>
 
 <csst:jq-tab>
 <div class="fragment-tabs fragment-body">
