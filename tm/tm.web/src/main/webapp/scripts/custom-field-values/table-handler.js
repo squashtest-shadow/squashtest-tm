@@ -234,7 +234,7 @@ define([ "jquery", "./cuf-values-utils", "./jquery-cuf-values" ], function($, ut
 				id : null, 
 				value : null,
 				code : null
-			}
+			};
 			
 		}
 
