@@ -59,18 +59,7 @@ public interface PrivateDenormalizedFieldValueService extends DenormalizedFieldV
 	 */
 	void deleteAllDenormalizedFieldValues(DenormalizedFieldHolder entity);
 
-	/**
-	 * Will create denormalized field values for Called Execution Step.
-	 * Will add first all step-cuf parametrized in project, then add remaining cufs in source step.
-	 * If sourceStep do not have cuf that is parametrized for step in given project, will create one with blank value.
-	 * 
-	 * @param sourceStep
-	 * @param step
-	 * @param project
-	 */
-	void createAllDenormalizedFieldValues(ActionTestStep sourceStep, ExecutionStep step, Project project);
-	
-	
+
 	/**
 	 * Will create the custom field values of all the execution steps in that execution in a lot. 
 	 * If some execution steps come from call steps that belong to a different project, 
