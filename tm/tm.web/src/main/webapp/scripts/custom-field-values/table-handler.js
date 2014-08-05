@@ -192,37 +192,45 @@ define([ "jquery", "./lib/cuf-values-utils", "./lib/jquery.staticCustomfield", "
 		});
 	}
 
+	/*
+	 *
+	 */
 	function createDefaultDefinitions(cufDefinitions) {
-		var i = 0, length = cufDefinitions.length, code, result = {};
+		var i = 0, 
+			length = cufDefinitions.length,
+			cufCode, 
+			cufOrDeno,
+			result = {
+				customFields : {},
+				denormalizedFields : {}
+			};
 
 		for (i = 0; i < length; i++) {
-			code = cufDefinitions[i].code;
-			result[code] = {
-				id : null,
+			
+			cufCode = cufDefinitions[i].code,
+			cufOrDeno = (cufDefinitions[i].denormalized) ? "denormalizedFields" : "customFields";
+			
+			result[cufOrDeno][cufCode]= {
+				id : null, 
 				value : null,
 				code : null
-			};
+			}
+			
 		}
 
 		return result;
 	}
 
-	function fillMissingCustomFields(aaData, defaultDefinitions) {
+	function fillMissingCustomFields(aaData, defaults) {
 
-		var length = aaData.length, i = 0;
+		var length = aaData.length, i = 0, data;
 
 		for (i = 0; i < length; i++) {
 
-			var copyDefaults = $.extend({}, defaultDefinitions);
-
-			// create the field 'customFields' if doesn't exist
-			if (aaData[i].customFields === undefined) {
-				aaData[i].customFields = copyDefaults;
-			}
-			// else we merge the defaults with the existing field
-			else {
-				aaData[i].customFields = $.extend(copyDefaults, aaData[i].customFields);
-			}
+			data = aaData[i];
+			data.customFields = $.extend({}, defaults.customFields, data.customFields);
+			data.denormalizedFields = $.extend({}, defaults.denormalizedFields, data.denormalizedFields);
+				
 		}
 
 		return aaData;
