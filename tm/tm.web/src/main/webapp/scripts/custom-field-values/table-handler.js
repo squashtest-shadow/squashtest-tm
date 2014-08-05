@@ -214,7 +214,7 @@ define([ "jquery", "./lib/cuf-values-utils", "./lib/jquery.staticCustomfield", "
 				id : null, 
 				value : null,
 				code : null
-			}
+			};
 			
 		}
 
