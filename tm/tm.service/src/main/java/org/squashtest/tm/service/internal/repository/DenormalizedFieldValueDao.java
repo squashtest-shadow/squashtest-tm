@@ -37,8 +37,8 @@ import org.squashtest.tm.domain.denormalizedfield.DenormalizedFieldValue;
  * @author mpagnon
  * 
  */
-@DynamicDao(entity = DenormalizedFieldValue.class, hasCustomImplementation = false)
-public interface DenormalizedFieldValueDao {
+@DynamicDao(entity = DenormalizedFieldValue.class)
+public interface DenormalizedFieldValueDao extends CustomDenormalizedFieldValueDao {
 
 	void persist(DenormalizedFieldValue newValue);
 

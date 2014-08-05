@@ -253,4 +253,86 @@ public final class NativeQueries {
 			"on clos.ancestor_id = rln.rln_id "+
 			"where clos.descendant_id = :nodeId "+
 			"order by clos.depth desc";
+	
+	
+	// ********************************************** DENORMALIZED field values **********************************************************
+	
+	/*
+	 * GENERAL COMMENT ON DENORMALIZED FIELD VALUES QUERIES :
+	 * 
+	 * Here are some definitions used in the comments below :
+	 * 
+	 * "root test case" :
+	 * ------------------ 
+	 * 	the test case referenced by the execution being processed. The custom field binding
+	 * 	defined for the steps in the project of this test case may override the bindings of steps 
+	 * that depends on another project (and this might happen with inter-project call steps).
+	 * 						
+	 */
+	
+	
+	public static final String FAST_CREATE_EXECUTION_STEP_DENORMALIZED_VALUES = 
+			"insert into DENORMALIZED_FIELD_VALUE (code, denormalized_field_holder_id, denormalized_field_holder_type, " +
+			"	input_type, label, value, position, field_type) " +
+			"select	cf.code,  " +
+			"		exstep.execution_step_id,  " +
+			"		'EXECUTION_STEP', " +
+			"		cf.input_type,  " +
+			"		cf.label,  " +
+			"		cfv.value,  " +
+			"		cfb.position, " +
+			"		cf.field_type " +
+
+			"from EXECUTION_EXECUTION_STEPS eesteps  " +
+			"inner join EXECUTION_STEP exstep on eesteps.execution_step_id = exstep.execution_step_id  " +
+			"inner join CUSTOM_FIELD_VALUE cfv on exstep.test_step_id = cfv.bound_entity_id and cfv.bound_entity_type = 'TEST_STEP'  " +
+			"inner join CUSTOM_FIELD_BINDING cfb on cfv.cfb_id = cfb.cfb_id  " +
+			"inner join CUSTOM_FIELD cf on cfb.cf_id = cf.cf_id  " +
+			"where eesteps.execution_id = :executionId";
+	
+	/*
+	 * The following query assigns the rendering locations to the newly created denormalized field values. 
+	 * 
+	 * Furthermore, according to the specs : only the denormalized values that represent a custom field bound to the project of the root test case
+	 * will get their rendering locations, the other one will just get the default one
+	 * 
+	 *  (/me hides behind the specs)
+	 *  
+	 */
+	public static final String FAST_CREATE_EXECUTION_STEP_DENORMALIZED_LOCATION =
+			"insert into DENORMALIZED_FIELD_RENDERING_LOCATION (dfv_id, rendering_location) "+
+			"select dfv.dfv_id, locations.rendering_location " +
+			"from EXECUTION exec " +
+			
+			// get the custom fields of the "root test case"
+			"inner join TEST_CASE_LIBRARY_NODE tcln on exec.tcln_id = tcln.tcln_id " +
+			"inner join CUSTOM_FIELD_BINDING cfb on tcln.project_id = cfb.bound_project_id  " +
+			"	and cfb.bound_entity = 'TEST_STEP' " +
+			"inner join CUSTOM_FIELD_RENDERING_LOCATION locations on cfb.cfb_id = locations.cfb_id " +
+			"inner join CUSTOM_FIELD cf on cfb.cf_id = cf.cf_id " +
+			
+			// now get the denormalized values that represent such custom fields
+			"inner join EXECUTION_EXECUTION_STEPS eesteps on exec.execution_id = eesteps.execution_id " +
+			"inner join EXECUTION_STEP exstep on eesteps.execution_step_id = exstep.execution_step_id " +
+			"inner join DENORMALIZED_FIELD_VALUE dfv on exstep.execution_step_id = dfv.denormalized_field_holder_id " +
+			"	and dfv.denormalized_field_holder_type = 'EXECUTION_STEP' " +
+			"	and dfv.code = cf.code " +				
+			"where exec.execution_id = :executionId ";
+
+	public static final String FAST_CREATE_EXECTUTION_STEP_DENORMALIZED_OPTIONS = 
+			
+			"insert into DENORMALIZED_FIELD_OPTION (dfv_id, label, position, code) "+
+			"select dfv.dfv_id, cfo.label, cfo.position, cfo.code  "+
+		
+			"from EXECUTION_EXECUTION_STEPS eesteps "+
+			"inner join EXECUTION_STEP exstep on eesteps.execution_step_id = exstep.execution_step_id "+		
+			"inner join DENORMALIZED_FIELD_VALUE dfv on exstep.execution_step_id = dfv.denormalized_field_holder_id "+
+			"	and denormalized_field_holder_type = 'EXECUTION_STEP' "+
+			
+			"inner join CUSTOM_FIELD cf on dfv.code = cf.code "+
+			"inner join CUSTOM_FIELD_OPTION cfo on cf.cf_id = cfo.cf_id  "+
+			
+			"where eesteps.execution_id = :executionId ";
+				
+			
 }

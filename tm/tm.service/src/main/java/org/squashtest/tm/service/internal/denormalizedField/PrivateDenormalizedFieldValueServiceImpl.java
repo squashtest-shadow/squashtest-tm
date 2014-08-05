@@ -103,75 +103,10 @@ public class PrivateDenormalizedFieldValueServiceImpl implements PrivateDenormal
 
 
 	@Override
-	public void createAllDenormalizedFieldValues(ActionTestStep sourceStep, ExecutionStep destinationStep, Project project){
-
-		final List<CustomFieldBinding> bindings = customFieldBindingDao.findAllForProjectAndEntity(project.getId(), BindableEntity.TEST_STEP);
-
-		List<CustomFieldValue> stepCufs = customFieldValueDao.findAllCustomValues(sourceStep.getBoundEntityId(), sourceStep.getBoundEntityType());
-
-		createDenormalizedFieldValuesForStep(destinationStep, stepCufs, bindings);
-
-	}
-
-
-	@Override
 	public void createAllDenormalizedFieldValuesForSteps(Execution execution) {
-
-		Project testcaseProject = execution.getReferencedTestCase().getProject();
-
-		// fetch execution steps
-		List<ExecutionStep> executionSteps = execDao.findExecutionSteps(execution.getId());
-		if (executionSteps.isEmpty()){
-			return;
-		}
-
-		// fetch the custom fields of the original steps
-		List<Long> originalIds = execDao.findOriginalStepIds(execution.getId());
-		List<CustomFieldValue> originalValues = customFieldValueDao.batchedInitializedFindAllCustomValuesFor(originalIds, BindableEntity.TEST_STEP);
-
-		// sort them by original step id
-		MultiValueMap cufsPerStepId = new MultiValueMap();
-		for (CustomFieldValue value : originalValues){
-			cufsPerStepId.put(value.getBoundEntityId(), value);
-		}
-
-		// fetch the custom field binding used as reference for the new ordering
-		List<CustomFieldBinding> projectBindings = customFieldBindingDao.findAllForProjectAndEntity(testcaseProject.getId(), BindableEntity.TEST_STEP);
-
-		// main loop
-		for (ExecutionStep estep : executionSteps){
-			@SuppressWarnings("unchecked")
-			Collection<CustomFieldValue> cufValues = cufsPerStepId.getCollection(estep.getReferencedTestStep().getId());
-			if (cufValues != null){ // might be null when there are no custom fields
-				List<CustomFieldValue> values = new ArrayList<CustomFieldValue>(cufValues);
-				createDenormalizedFieldValuesForStep(estep, values, projectBindings);
-			}
-		}
-
+		denormalizedFieldValueDao.fastCreateDenormalizedValuesForSteps(execution.getId());
 	}
 
-
-	// will create the denormalized custom field values for a given exec steps. It takes care of
-	// a specific reordering, putting first the cufs that references one of the bindings suppplied in the collection
-	// and the others remain last.
-	private void createDenormalizedFieldValuesForStep(ExecutionStep step, List<CustomFieldValue> values, Collection<CustomFieldBinding> bindings){
-
-		List<CustomFieldValue> normalized = normalizedValues(step, values, bindings);
-
-		// now loop and create the custom fields;
-		for (CustomFieldValue cfv : normalized ){
-
-			if(cfv.getCustomField().getInputType().equals(InputType.DROPDOWN_LIST)){
-				DenormalizedSingleSelectField dfv = new DenormalizedSingleSelectField(cfv.getValue(), cfv.getBinding(),  step.getDenormalizedFieldHolderId(), step.getDenormalizedFieldHolderType());
-				denormalizedFieldValueDao.persist(dfv);
-			} else {
-				DenormalizedFieldValue dfv = new DenormalizedFieldValue(cfv.getValue(), cfv.getBinding(),  step.getDenormalizedFieldHolderId(), step.getDenormalizedFieldHolderType());
-				denormalizedFieldValueDao.persist(dfv);
-			}
-
-		}
-
-	}
 
 
 	@Override
@@ -243,92 +178,6 @@ public class PrivateDenormalizedFieldValueServiceImpl implements PrivateDenormal
 
 
 
-	// ************************* private stuffs *****************************
-
-
-	private CustomFieldValue removeCustomFieldValueCorrespondingToBinding(CustomFieldBinding binding,
-			List<CustomFieldValue> customFieldValues) {
-		Iterator<CustomFieldValue> iterator = customFieldValues.iterator();
-
-		while(iterator.hasNext()){
-			CustomFieldValue cufValue = iterator.next();
-			if(cufValue.getCustomField().getId().equals(binding.getCustomField().getId())){
-				iterator.remove();
-				return cufValue;
-			}
-		}
-		return null;
-	}
-
-	/**
-	 * <ul>
-	 * <li>
-	 * 1 - values that corresponds to a custom field referenced by the given bindings are inserted first with their
-	 * value, according to the position of the binding, and respect their display location</li>
-	 * <li>2 - insert a dummy custom field value for each custom field that wasn't represented in the collection
-	 * 'values' according to the position and the display location (XXX : is that a real functional requirement or just
-	 * to make the datatable work ? Seems the later to me)</li>
-	 * <li>3 - insert the other custom fields with no specific display location</li>
-	 * </ul>
-	 **/
-	private List<CustomFieldValue> normalizedValues(ExecutionStep step, List<CustomFieldValue> values, Collection<CustomFieldBinding >bindings){
-
-		List<CustomFieldValue> res = new LinkedList<CustomFieldValue>();
-
-		List<CustomFieldValue> remainingValues = new ArrayList<CustomFieldValue>(values);
-
-		// bullets 1 and 2
-		int position = 0;
-		for (CustomFieldBinding b : bindings){
-
-			CustomFieldValue value = removeCustomFieldValueCorrespondingToBinding(b, remainingValues);
-
-			if (value == null){
-				value = new EmptyCustomFieldValue(step.getBoundEntityId(), step.getBoundEntityType(), b);
-			}
-
-			res.add(value);
-
-			position++;
-		}
-
-		// bullets 3
-		for (CustomFieldValue v : remainingValues){
-			CustomFieldBinding dummyBinding = new CustomFieldBinding();
-			dummyBinding.setCustomField(v.getBinding().getCustomField());
-			dummyBinding.setPosition(position);
-			dummyBinding.setBoundEntity(BindableEntity.EXECUTION_STEP);
-
-			res.add(new CustomFieldValue(step.getBoundEntityId(), step.getBoundEntityType(), dummyBinding, v.getValue()));
-
-			position++;
-		}
-
-		return res;
-
-
-	}
-
-	// that class doesn't care of empty values
-	private static final class EmptyCustomFieldValue extends CustomFieldValue{
-
-		public String getValue(){
-			return "";
-		}
-
-		public void setValue(String v){
-
-		}
-
-		public EmptyCustomFieldValue(Long boundEntityId, BindableEntity boundEntityType, CustomFieldBinding binding){
-
-			this.boundEntityId = boundEntityId;
-			this.boundEntityType = boundEntityType;
-			this.binding = binding;
-
-		}
-
-	}
 
 
 }
