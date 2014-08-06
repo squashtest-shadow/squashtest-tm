@@ -34,11 +34,11 @@ import org.springframework.stereotype.Service;
 import org.squashtest.tm.domain.customfield.BindableEntity;
 import org.squashtest.tm.domain.customfield.BoundEntity;
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
-import org.squashtest.tm.domain.customfield.InputType;
 import org.squashtest.tm.domain.customfield.RenderingLocation;
 import org.squashtest.tm.domain.denormalizedfield.DenormalizedFieldHolder;
 import org.squashtest.tm.domain.denormalizedfield.DenormalizedFieldHolderType;
 import org.squashtest.tm.domain.denormalizedfield.DenormalizedFieldValue;
+import org.squashtest.tm.domain.denormalizedfield.DenormalizedRichValue;
 import org.squashtest.tm.domain.denormalizedfield.DenormalizedSingleSelectField;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.execution.ExecutionStep;
@@ -86,26 +86,26 @@ public class PrivateDenormalizedFieldValueServiceImpl implements PrivateDenormal
 	}
 
 
-	
+
 	@Override
 	public void createAllDenormalizedFieldValuesForSteps(Execution execution) {
-	
+
 		// fetch execution steps
 		List<ExecutionStep> executionSteps = execDao.findExecutionSteps(execution.getId());
 		if (executionSteps.isEmpty()){
 			return;
 		}
-		
+
 		// fetch the custom fields of the original steps
 		List<Long> originalIds = execDao.findOriginalStepIds(execution.getId());
 		List<CustomFieldValue> originalValues = customFieldValueDao.batchedInitializedFindAllCustomValuesFor(originalIds, BindableEntity.TEST_STEP);
-		
+
 		// sort them by original step id
 		MultiValueMap cufsPerStepId = new MultiValueMap();
 		for (CustomFieldValue value : originalValues){
 			cufsPerStepId.put(value.getBoundEntityId(), value);
 		}
-	
+
 		// main loop
 		for (ExecutionStep estep : executionSteps){
 			Collection _values = cufsPerStepId.getCollection(estep.getReferencedTestStep().getId());
@@ -114,27 +114,33 @@ public class PrivateDenormalizedFieldValueServiceImpl implements PrivateDenormal
 				createDenormalizedFieldValues(estep, values);
 			}
 		}
-		
+
 	}
-	
+
 	private void createDenormalizedFieldValues(DenormalizedFieldHolder entity, List<CustomFieldValue> values){
 
-		// now loop and create the custom fields;		
+		// now loop and create the custom fields;
 		for (CustomFieldValue cfv : values ){
-			
-			if(cfv.getCustomField().getInputType().equals(InputType.DROPDOWN_LIST)){
-				DenormalizedSingleSelectField dfv = new DenormalizedSingleSelectField(cfv, entity.getDenormalizedFieldHolderId(), entity.getDenormalizedFieldHolderType());
-				denormalizedFieldValueDao.persist(dfv);
-			} else {
-				DenormalizedFieldValue dfv = new DenormalizedFieldValue(cfv, entity.getDenormalizedFieldHolderId(), entity.getDenormalizedFieldHolderType());
-				denormalizedFieldValueDao.persist(dfv);
+			DenormalizedFieldValue dfv;
+
+			switch(cfv.getCustomField().getInputType()){
+			case DROPDOWN_LIST :
+				dfv = new DenormalizedSingleSelectField(cfv, entity.getDenormalizedFieldHolderId(), entity.getDenormalizedFieldHolderType());
+				break;
+			case RICH_TEXT :
+				dfv = new DenormalizedRichValue(cfv, entity.getDenormalizedFieldHolderId(), entity.getDenormalizedFieldHolderType());
+				break;
+			default :
+				dfv = new DenormalizedFieldValue(cfv, entity.getDenormalizedFieldHolderId(), entity.getDenormalizedFieldHolderType());
 			}
-			
+
+			denormalizedFieldValueDao.persist(dfv);
+
 		}
-		
+
 	}
-	
-	
+
+
 	@Override
 	public void deleteAllDenormalizedFieldValues(DenormalizedFieldHolder entity) {
 		List<DenormalizedFieldValue> dfvs = denormalizedFieldValueDao.findDFVForEntity(entity.getDenormalizedFieldHolderId(), entity.getDenormalizedFieldHolderType());
@@ -201,7 +207,7 @@ public class PrivateDenormalizedFieldValueServiceImpl implements PrivateDenormal
 	public boolean hasDenormalizedFields(DenormalizedFieldHolder entity) {
 		return denormalizedFieldValueDao.countDenormalizedFields(entity.getDenormalizedFieldHolderId(), entity.getDenormalizedFieldHolderType()) > 0;
 	}
-	
+
 
 
 

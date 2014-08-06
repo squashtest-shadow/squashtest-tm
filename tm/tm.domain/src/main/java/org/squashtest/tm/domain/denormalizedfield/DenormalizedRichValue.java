@@ -24,6 +24,10 @@ import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.Lob;
 
+import org.squashtest.tm.domain.customfield.CustomField;
+import org.squashtest.tm.domain.customfield.CustomFieldValue;
+import org.squashtest.tm.domain.customfield.RichTextField;
+
 
 @Entity
 @DiscriminatorValue("RTF")
@@ -31,6 +35,29 @@ public class DenormalizedRichValue extends DenormalizedFieldValue {
 
 	@Lob
 	private String longValue;
+
+
+	public DenormalizedRichValue(){
+		super();
+	}
+
+
+	public DenormalizedRichValue(CustomFieldValue customFieldValue, Long denormalizedFieldHolderId,
+			DenormalizedFieldHolderType denormalizedFieldHolderType) {
+
+		this.customFieldValue = customFieldValue;
+		CustomField cuf = customFieldValue.getCustomField();
+		this.code = cuf.getCode();
+		this.inputType = cuf.getInputType();
+		this.label = cuf.getLabel();
+		this.value = "";
+		this.longValue = customFieldValue.getValue();
+		this.position = customFieldValue.getBinding().getPosition();
+		this.renderingLocations = customFieldValue.getBinding().copyRenderingLocations();
+		this.denormalizedFieldHolderId = denormalizedFieldHolderId;
+		this.denormalizedFieldHolderType = denormalizedFieldHolderType;
+	}
+
 
 	@Override
 	public void setValue(String value){

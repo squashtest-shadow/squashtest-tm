@@ -78,23 +78,6 @@ public class DenormalizedSingleSelectField extends DenormalizedFieldValue {
 		}
 	}
 
-	public DenormalizedSingleSelectField(String value, CustomFieldBinding binding, Long denormalizedFieldHolderId,
-			DenormalizedFieldHolderType denormalizedFieldHolderType) {
-		super(value, binding, denormalizedFieldHolderId, denormalizedFieldHolderType);
-		SingleSelectField singleSelectField = (SingleSelectField) binding.getCustomField();
-		for(CustomFieldOption option : singleSelectField.getOptions()){
-			this.addOption(option);
-		}
-	}
-
-	public DenormalizedSingleSelectField(CustomFieldValue customFieldValue, int newBindingPosition,
-			Long denormalizedFieldHolderId, DenormalizedFieldHolderType denormalizedFieldHolderType) {
-		super(customFieldValue, newBindingPosition, denormalizedFieldHolderId, denormalizedFieldHolderType);
-		SingleSelectField singleSelectField = (SingleSelectField) customFieldValue.getCustomField();
-		for(CustomFieldOption option : singleSelectField.getOptions()){
-			this.addOption(option);
-		}
-	}
 
 	/**
 	 * Will check if label and the code are available among the existing options. If so, will add the new option at the

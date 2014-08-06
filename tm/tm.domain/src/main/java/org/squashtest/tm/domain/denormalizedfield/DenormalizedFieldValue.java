@@ -75,41 +75,41 @@ public class DenormalizedFieldValue {
 	@Id
 	@GeneratedValue
 	@Column(name = "DFV_ID")
-	private Long id;
+	protected Long id;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "CFV_ID", nullable = true)
-	private CustomFieldValue customFieldValue;
+	protected CustomFieldValue customFieldValue;
 
 	@NotBlank
 	@Size(min = CustomField.MIN_CODE_SIZE, max = CustomField.MAX_CODE_SIZE)
 	@Pattern(regexp = CustomField.CODE_REGEXP)
-	private String code = "";
+	protected String code = "";
 
-	private Long denormalizedFieldHolderId;
+	protected Long denormalizedFieldHolderId;
 
 	@Enumerated(EnumType.STRING)
-	private DenormalizedFieldHolderType denormalizedFieldHolderType;
+	protected DenormalizedFieldHolderType denormalizedFieldHolderType;
 
 	@NotNull
 	@Enumerated(EnumType.STRING)
 	@Column(updatable = false)
-	private InputType inputType;
+	protected InputType inputType;
 
 	@NotBlank
 	@Size(min = 0, max = 255)
-	private String label = "";
+	protected String label = "";
 
-	private int position;
+	protected int position;
 
 	@Size(min = 0, max = 255)
-	private String value;
+	protected String value;
 
 	@ElementCollection
 	@CollectionTable(name = "DENORMALIZED_FIELD_RENDERING_LOCATION", joinColumns = @JoinColumn(name = "DFV_ID"))
 	@Enumerated(EnumType.STRING)
 	@Column(name = "RENDERING_LOCATION")
-	private Set<RenderingLocation> renderingLocations = new HashSet<RenderingLocation>(5);
+	protected Set<RenderingLocation> renderingLocations = new HashSet<RenderingLocation>(5);
 
 	/**
 	 * For ORM purposes.
@@ -142,52 +142,7 @@ public class DenormalizedFieldValue {
 		this.denormalizedFieldHolderType = denormalizedFieldHolderType;
 	}
 
-	/**
-	 * Create DenormalizedFieldValue with value param. All positions params are copied from the given binding.
-	 * 
-	 * @param value
-	 * @param binding
-	 * @param denormalizedFieldHolderId
-	 * @param denormalizedFieldHolderType
-	 */
-	public DenormalizedFieldValue(String value, CustomFieldBinding binding, Long denormalizedFieldHolderId,
-			DenormalizedFieldHolderType denormalizedFieldHolderType) {
-		super();
-		CustomField cuf = binding.getCustomField();
-		this.code = cuf.getCode();
-		this.inputType = cuf.getInputType();
-		this.label = cuf.getLabel();
-		this.value = value;
-		this.position = binding.getPosition();
-		this.renderingLocations = binding.copyRenderingLocations();
-		this.denormalizedFieldHolderId = denormalizedFieldHolderId;
-		this.denormalizedFieldHolderType = denormalizedFieldHolderType;
-	}
 
-	/**
-	 * Will create a DenormalizedFieldValue with the value param. The position will be valorized with the given param.
-	 * 
-	 * @param customFieldValue
-	 * @param newBindingPosition
-	 * @param denormalizedFieldHolderId
-	 * @param denormalizedFieldHolderType
-	 */
-	public DenormalizedFieldValue(CustomFieldValue customFieldValue, int newBindingPosition,
-			Long denormalizedFieldHolderId, DenormalizedFieldHolderType denormalizedFieldHolderType) {
-		super();
-		this.customFieldValue = customFieldValue;
-		CustomField cuf = customFieldValue.getCustomField();
-		this.code = cuf.getCode();
-		this.inputType = cuf.getInputType();
-		this.label = cuf.getLabel();
-		this.value = customFieldValue.getValue();
-		this.position = newBindingPosition;
-		if (customFieldValue.getBinding() != null){
-			this.renderingLocations = customFieldValue.getBinding().copyRenderingLocations();
-		}
-		this.denormalizedFieldHolderId = denormalizedFieldHolderId;
-		this.denormalizedFieldHolderType = denormalizedFieldHolderType;
-	}
 
 	public Long getId() {
 		return id;
