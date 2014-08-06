@@ -4,7 +4,7 @@
   <parent>
     <artifactId>squash-tm-plugins</artifactId>
     <groupId>org.squashtest.tm</groupId>
-    <version>1.10.3.RC2</version>
+    <version>1.10.3.RC3-SNAPSHOT</version>
   </parent>
   <artifactId>plugin.bugtracker.mantis</artifactId>
   <name>plugin.bugtracker.mantis</name>
