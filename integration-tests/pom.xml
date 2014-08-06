@@ -470,6 +470,27 @@
         <database.typefactory>org.dbunit.ext.mysql.MySqlDataTypeFactory</database.typefactory>
       </properties>
     </profile>
+    
+    <profile>
+      <id>postgresql</id>
+      <properties>
+        <dbunit-database.url>jdbc:postgresql://localhost:5432/squashtest_it</dbunit-database.url>
+        <non-dbunit-database.url>jdbc:postgresql://localhost:5432/squashtest_it</non-dbunit-database.url>
+        <hibernate.dialect>org.hibernate.dialect.PostgreSQLDialect</hibernate.dialect>
+        <database.dialect>postgresql</database.dialect>
+        <database.drivername>org.postgresql.Driver</database.drivername>
+        <database.schemaName>public</database.schemaName>
+        <database.username>postgres</database.username>
+        <database.password>password</database.password>
+        <database.typefactory>org.dbunit.ext.postgresql.PostgresqlDataTypeFactory</database.typefactory>
+      </properties>
+       <dependencies>
+        <dependency>
+          <groupId>org.postgresql</groupId>
+          <artifactId>com.springsource.org.postgresql.jdbc4</artifactId>
+        </dependency>
+      </dependencies>
+    </profile>
 
     <profile>
       <activation>

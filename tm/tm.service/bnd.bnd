@@ -2,6 +2,7 @@
 -nouses: true
 DynamicImport-Package: *
 Import-Package: com.mysql.jdbc;resolution:=optional,\
+	org.postgresql;resolution:=optional,\
 	!org.squashtest.tm.service.security.acls,\
 	org.squashtest.tm.aspect.validation,\
 	org.squashtest.tm.domain.resource,\
