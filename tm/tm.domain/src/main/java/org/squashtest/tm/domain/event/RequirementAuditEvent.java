@@ -25,11 +25,13 @@ import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
@@ -42,20 +44,21 @@ import org.squashtest.tm.domain.requirement.RequirementVersion;
 public abstract class RequirementAuditEvent {
 
 	@Id
-	@GeneratedValue
 	@Column(name = "EVENT_ID")
+	@GeneratedValue(strategy = GenerationType.AUTO, generator = "requirement_audit_event_event_id_seq")
+	@SequenceGenerator(name = "requirement_audit_event_event_id_seq", sequenceName = "requirement_audit_event_event_id_seq")
 	private Long id;
-	
+
 	@ManyToOne
 	@JoinColumn(name = "REQ_VERSION_ID")
 	@NotNull
 	private RequirementVersion requirementVersion;
-	
+
 	@Temporal(TemporalType.TIMESTAMP)
 	@NotNull
 	@Column(name = "EVENT_DATE")
 	private Date date;
-	
+
 	@NotNull
 	@Size(min = 0, max = 255)
 	private String author;
@@ -91,8 +94,8 @@ public abstract class RequirementAuditEvent {
 		this.date = new Date();
 	}
 
-	
+
 	public abstract void accept(RequirementAuditEventVisitor visitor);
-	
-	
+
+
 }

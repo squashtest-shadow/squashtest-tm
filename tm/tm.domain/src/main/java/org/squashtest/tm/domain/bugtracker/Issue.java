@@ -23,10 +23,12 @@ package org.squashtest.tm.domain.bugtracker;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
+import javax.persistence.SequenceGenerator;
 
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.NamedQueries;
@@ -39,23 +41,24 @@ import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 				+ "(select ei.id from Iteration it join it.testPlans itp join itp.executions e join e.issueList eil join eil.issues ei where it.id = :id)"
 				+ " or i.id in "
 				+ "(select esi.id from Iteration it join it.testPlans itp join itp.executions e join e.steps es join es.issueList esil join esil.issues esi where it.id = :id) "),
-		@NamedQuery(name = "Issue.findAllForTestSuite", query = "select i from Issue i where i.id in "
-				+"(select ei.id from IterationTestPlanItem itp join itp.testSuites ts join itp.executions e join e.issueList eil join eil.issues ei where :id in (select suites.id from itp.testSuites suites))"
-				+" or id.id in "
-				+"(select esi.id from IterationTestPlanItem itp join itp.testSuites ts join itp.executions e join e.steps es join es.issueList esil join esil.issues esi where :id in (select suites.id from itp.testSuites suites))"),
-		@NamedQuery(name="Issue.findExecution", query = "select exec " +
-				"from Execution exec join exec.issueList eil join eil.issues issue " +
-				"where issue.id = :id "
-				),
-		@NamedQuery(name="Issue.findExecutionStep", query = "select execStep " +
-				"from ExecutionStep execStep join execStep.issueList esil join esil.issues issue " +
-				"where  issue.id = :id "
-				)
+				@NamedQuery(name = "Issue.findAllForTestSuite", query = "select i from Issue i where i.id in "
+						+"(select ei.id from IterationTestPlanItem itp join itp.testSuites ts join itp.executions e join e.issueList eil join eil.issues ei where :id in (select suites.id from itp.testSuites suites))"
+						+" or id.id in "
+						+"(select esi.id from IterationTestPlanItem itp join itp.testSuites ts join itp.executions e join e.steps es join es.issueList esil join esil.issues esi where :id in (select suites.id from itp.testSuites suites))"),
+						@NamedQuery(name="Issue.findExecution", query = "select exec " +
+								"from Execution exec join exec.issueList eil join eil.issues issue " +
+								"where issue.id = :id "
+								),
+								@NamedQuery(name="Issue.findExecutionStep", query = "select execStep " +
+										"from ExecutionStep execStep join execStep.issueList esil join esil.issues issue " +
+										"where  issue.id = :id "
+										)
 })
 public class Issue {
 	@Id
-	@GeneratedValue
 	@Column(name = "ISSUE_ID")
+	@GeneratedValue(strategy = GenerationType.AUTO, generator = "issue_issue_id_seq")
+	@SequenceGenerator(name = "issue_issue_id_seq", sequenceName = "issue_issue_id_seq")
 	private Long id;
 
 	@ManyToOne
@@ -88,7 +91,7 @@ public class Issue {
 	void setIssueList(IssueList issueList) {
 		this.issueList = issueList;
 	}
-	
+
 	public BugTracker getBugtracker() {
 		return bugtracker;
 	}
@@ -97,5 +100,5 @@ public class Issue {
 		this.bugtracker = bugtracker;
 	}
 
-	
+
 }

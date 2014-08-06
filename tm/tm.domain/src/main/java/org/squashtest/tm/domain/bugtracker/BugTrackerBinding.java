@@ -23,9 +23,11 @@ package org.squashtest.tm.domain.bugtracker;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.Size;
 
@@ -44,28 +46,29 @@ import org.squashtest.tm.domain.project.GenericProject;
 @Table(name = "BUGTRACKER_BINDING")
 public class BugTrackerBinding {
 	@Id
-	@GeneratedValue
 	@Column(name = "BUGTRACKER_BINDING_ID")
+	@GeneratedValue(strategy = GenerationType.AUTO, generator = "bugtracker_binding_bugtracker_binding_id_seq")
+	@SequenceGenerator(name = "bugtracker_binding_bugtracker_binding_id_seq", sequenceName = "bugtracker_binding_bugtracker_binding_id_seq")
 	private Long id;
-	
+
 	@Column(name = "PROJECT_NAME")
 	@NotBlank
 	@Size(min = 0, max = 255)
 	private String projectName;
-	
+
 	@OneToOne(optional = false)
 	@ForeignKey(name="FK_BugtrackerBinding_Bugtracker")
 	@JoinColumn(name="BUGTRACKER_ID")
 	private BugTracker bugtracker;
-	
+
 	@OneToOne(optional = false)
 	@JoinColumn(name="PROJECT_ID")
 	private GenericProject project;
-	
+
 	public BugTrackerBinding(){
-		
+
 	}
-	
+
 	public BugTrackerBinding(String projectName, BugTracker newBugtracker, GenericProject project) {
 		super();
 		this.projectName = projectName;
@@ -88,7 +91,7 @@ public class BugTrackerBinding {
 	public BugTracker getBugtracker() {
 		return bugtracker;
 	}
-	
+
 	public void setBugtracker(BugTracker bugtracker) {
 		this.bugtracker = bugtracker;
 	}
@@ -104,9 +107,9 @@ public class BugTrackerBinding {
 	public void setProject(GenericProject project) {
 		this.project = project;
 	}
-	
-	
-	
-	
-	
+
+
+
+
+
 }

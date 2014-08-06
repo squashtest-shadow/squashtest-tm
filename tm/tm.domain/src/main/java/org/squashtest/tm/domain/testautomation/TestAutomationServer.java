@@ -25,9 +25,11 @@ import java.net.URL;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.SequenceGenerator;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -65,8 +67,9 @@ public class TestAutomationServer {
 	 * 
 	 */
 	@Id
-	@GeneratedValue
 	@Column(name = "SERVER_ID")
+	@GeneratedValue(strategy = GenerationType.AUTO, generator = "test_automation_server_server_id_seq")
+	@SequenceGenerator(name = "test_automation_server_server_id_seq", sequenceName = "test_automation_server_server_id_seq")
 	private Long id;
 
 	@Column(unique=true)

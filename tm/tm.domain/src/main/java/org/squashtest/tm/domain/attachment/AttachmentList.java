@@ -28,16 +28,19 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
+import javax.persistence.SequenceGenerator;
 
 @Entity
 public class AttachmentList {
 
 	@Id
-	@GeneratedValue
 	@Column(name = "ATTACHMENT_LIST_ID")
+	@GeneratedValue(strategy = GenerationType.AUTO, generator = "attachment_list_attachment_list_id_seq")
+	@SequenceGenerator(name = "attachment_list_attachment_list_id_seq", sequenceName = "attachment_list_attachment_list_id_seq")
 	private Long id;
 
 	@OneToMany(cascade = { CascadeType.ALL })
@@ -83,7 +86,7 @@ public class AttachmentList {
 	public boolean hasAttachments() {
 		return !attachments.isEmpty();
 	}
-	
+
 	/**
 	 * Identical to {@link #hasAttachments()} but can be reached through EL...
 	 * @return

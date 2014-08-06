@@ -23,11 +23,13 @@ package org.squashtest.tm.domain.testautomation;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.SequenceGenerator;
 import javax.validation.constraints.Size;
 
 @NamedQueries({
@@ -42,8 +44,9 @@ import javax.validation.constraints.Size;
 public class AutomatedTest {
 
 	@Id
-	@GeneratedValue
 	@Column(name="TEST_ID")
+	@GeneratedValue(strategy = GenerationType.AUTO, generator = "automated_test_test_id_seq")
+	@SequenceGenerator(name = "automated_test_test_id_seq", sequenceName = "automated_test_test_id_seq")
 	private Long id;
 
 	@ManyToOne

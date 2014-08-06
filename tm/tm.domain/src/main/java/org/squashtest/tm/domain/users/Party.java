@@ -23,12 +23,14 @@ package org.squashtest.tm.domain.users;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.OneToOne;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import org.squashtest.tm.domain.Identified;
@@ -37,18 +39,19 @@ import org.squashtest.tm.domain.Identified;
 @Table(name = "CORE_PARTY")
 @Inheritance(strategy = InheritanceType.JOINED)
 public abstract class Party implements Identified{
-	
+
 	private final static String TYPE = "PARTY";
-	
+
 	@Id
-	@GeneratedValue
 	@Column(name = "PARTY_ID")
+	@GeneratedValue(strategy = GenerationType.AUTO, generator = "core_party_party_id_seq")
+	@SequenceGenerator(name = "core_party_party_id_seq", sequenceName = "core_party_party_id_seq")
 	protected Long id;
-	
+
 	@OneToOne
 	@JoinTable(name = "CORE_GROUP_MEMBER", joinColumns = @JoinColumn(name = "PARTY_ID"), inverseJoinColumns = @JoinColumn(name = "GROUP_ID"))
 	private UsersGroup group;
-	
+
 	public UsersGroup getGroup() {
 		return group;
 	}
@@ -63,12 +66,12 @@ public abstract class Party implements Identified{
 	public String getName(){
 		return "";
 	}
-	
+
 	public String getType(){
 		return TYPE;
 	}
-	
+
 	abstract void accept(PartyVisitor visitor);
-	
-	
+
+
 }

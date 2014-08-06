@@ -31,9 +31,11 @@ import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
+import javax.persistence.SequenceGenerator;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
@@ -66,8 +68,9 @@ public class CustomField {
 	public static final int MAX_CODE_SIZE = 30;
 
 	@Id
-	@GeneratedValue
 	@Column(name = "CF_ID")
+	@GeneratedValue(strategy = GenerationType.AUTO, generator = "custom_field_cf_id_seq")
+	@SequenceGenerator(name = "custom_field_cf_id_seq", sequenceName = "custom_field_cf_id_seq")
 	protected Long id;
 
 	@NotBlank

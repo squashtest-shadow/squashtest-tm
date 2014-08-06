@@ -28,11 +28,13 @@ import java.util.Set;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
+import javax.persistence.SequenceGenerator;
 import javax.validation.constraints.NotNull;
 
 import org.apache.commons.lang.StringUtils;
@@ -69,7 +71,8 @@ public class AutomatedExecutionExtender {
 
 	@Id
 	@Column(name = "EXTENDER_ID")
-	@GeneratedValue
+	@GeneratedValue(strategy = GenerationType.AUTO, generator = "automated_execution_extender_extender_id_seq")
+	@SequenceGenerator(name = "automated_execution_extender_extender_id_seq", sequenceName = "automated_execution_extender_extender_id_seq")
 	private Long id;
 
 	@ManyToOne()

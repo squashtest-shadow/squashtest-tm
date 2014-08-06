@@ -24,9 +24,11 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -35,8 +37,9 @@ import org.squashtest.tm.domain.Identified;
 @Entity
 public class DatasetParamValue implements Identified {
 	@Id
-	@GeneratedValue
 	@Column(name = "DATASET_PARAM_VALUE_ID")
+	@GeneratedValue(strategy = GenerationType.AUTO, generator = "dataset_param_value_dataset_param_value_id_seq")
+	@SequenceGenerator(name = "dataset_param_value_dataset_param_value_id_seq", sequenceName = "dataset_param_value_dataset_param_value_id_seq")
 	private Long id;
 
 	@NotNull

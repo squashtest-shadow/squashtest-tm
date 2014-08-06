@@ -30,12 +30,14 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.OrderColumn;
+import javax.persistence.SequenceGenerator;
 
 import org.hibernate.annotations.Where;
 import org.squashtest.tm.domain.library.NodeContainerVisitor;
@@ -50,8 +52,9 @@ public class RequirementLibrary extends GenericLibrary<RequirementLibraryNode>  
 	private static final String SIMPLE_CLASS_NAME = "RequirementLibrary";
 
 	@Id
-	@GeneratedValue
 	@Column(name = "RL_ID")
+	@GeneratedValue(strategy = GenerationType.AUTO, generator = "requirement_library_rl_id_seq")
+	@SequenceGenerator(name = "requirement_library_rl_id_seq", sequenceName = "requirement_library_rl_id_seq")
 	private Long id;
 
 	@OneToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE})
@@ -60,13 +63,13 @@ public class RequirementLibrary extends GenericLibrary<RequirementLibraryNode>  
 	private List<RequirementLibraryNode> rootContent = new ArrayList<RequirementLibraryNode>();
 
 	@OneToOne(mappedBy = "requirementLibrary")
-	private GenericProject project;	
-	
+	private GenericProject project;
+
 	@OneToMany(cascade = { CascadeType.ALL}, orphanRemoval=true)
 	@JoinColumn(name="LIBRARY_ID")
 	@Where(clause="LIBRARY_TYPE = 'R'")
 	private Set<RequirementLibraryPluginBinding> enabledPlugins = new HashSet<RequirementLibraryPluginBinding>(5);
-	
+
 	public void setId(Long id) {
 		this.id = id;
 	}
@@ -81,7 +84,7 @@ public class RequirementLibrary extends GenericLibrary<RequirementLibraryNode>  
 		return rootContent;
 
 	}
-	
+
 	public List<RequirementLibraryNode> getRootContent() {
 		return rootContent;
 
@@ -102,10 +105,10 @@ public class RequirementLibrary extends GenericLibrary<RequirementLibraryNode>  
 		rootContent.remove(node);
 		rootContent = new ArrayList<RequirementLibraryNode>(rootContent);
 	}
-	
-	
+
+
 	// ***************************** PluginReferencer section ****************************
-	
+
 	@Override
 	public Set<String> getEnabledPlugins() {
 		Set<String> pluginIds = new HashSet<String>(enabledPlugins.size());
@@ -115,12 +118,12 @@ public class RequirementLibrary extends GenericLibrary<RequirementLibraryNode>  
 		return pluginIds;
 	}
 
-	
+
 	@Override
 	public Set<RequirementLibraryPluginBinding> getAllPluginBindings() {
 		return enabledPlugins;
-	}	
-	
+	}
+
 	@Override
 	public void enablePlugin(String pluginId) {
 		if (! isPluginEnabled(pluginId)){
@@ -128,7 +131,7 @@ public class RequirementLibrary extends GenericLibrary<RequirementLibraryNode>  
 			enabledPlugins.add(newBinding);
 		}
 	}
-	
+
 	@Override
 	public void disablePlugin(String pluginId) {
 		RequirementLibraryPluginBinding binding = getPluginBinding(pluginId);
@@ -136,7 +139,7 @@ public class RequirementLibrary extends GenericLibrary<RequirementLibraryNode>  
 			enabledPlugins.remove(binding);
 		}
 	}
-	
+
 	@Override
 	public RequirementLibraryPluginBinding getPluginBinding(String pluginId) {
 		for (RequirementLibraryPluginBinding binding : enabledPlugins){
@@ -146,7 +149,7 @@ public class RequirementLibrary extends GenericLibrary<RequirementLibraryNode>  
 		}
 		return null;
 	}
-	
+
 	@Override
 	public boolean isPluginEnabled(String pluginId) {
 		return (getPluginBinding(pluginId) != null);
@@ -168,11 +171,11 @@ public class RequirementLibrary extends GenericLibrary<RequirementLibraryNode>  
 	public boolean hasContent() {
 		return (rootContent.size() > 0);
 	}
-	
+
 	@Override
 	public void accept(NodeContainerVisitor visitor) {
 		visitor.visit(this);
-		
+
 	}
 
 	@Override

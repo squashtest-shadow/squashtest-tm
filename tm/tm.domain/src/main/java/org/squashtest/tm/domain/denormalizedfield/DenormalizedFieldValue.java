@@ -36,11 +36,13 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
@@ -73,8 +75,9 @@ public class DenormalizedFieldValue {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(DenormalizedFieldValue.class);
 	@Id
-	@GeneratedValue
 	@Column(name = "DFV_ID")
+	@GeneratedValue(strategy = GenerationType.AUTO, generator = "denormalized_field_value_dfv_id_seq")
+	@SequenceGenerator(name = "denormalized_field_value_dfv_id_seq", sequenceName = "denormalized_field_value_dfv_id_seq")
 	private Long id;
 
 	@ManyToOne(fetch = FetchType.LAZY)

@@ -25,9 +25,11 @@ import java.util.Set;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
+import javax.persistence.SequenceGenerator;
 
 import org.hibernate.search.annotations.Analyze;
 import org.hibernate.search.annotations.DocumentId;
@@ -51,10 +53,11 @@ import org.squashtest.tm.security.annotation.AclConstrainedObject;
 @Auditable
 public abstract class TestCaseLibraryNode extends GenericLibraryNode implements SelfClassAware {
 	@Id
-	@GeneratedValue
 	@DocumentId
 	@Field(analyze=Analyze.NO, store=Store.YES)
 	@Column(name = "TCLN_ID")
+	@GeneratedValue(strategy = GenerationType.AUTO, generator = "test_case_library_node_tcln_id_seq")
+	@SequenceGenerator(name = "test_case_library_node_tcln_id_seq", sequenceName = "test_case_library_node_tcln_id_seq")
 	private Long id;
 
 	public TestCaseLibraryNode() {

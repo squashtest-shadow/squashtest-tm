@@ -24,12 +24,14 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.OneToOne;
+import javax.persistence.SequenceGenerator;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -58,10 +60,11 @@ import org.squashtest.tm.domain.search.UpperCasedStringBridge;
 @Auditable
 public abstract class Resource implements AttachmentHolder, Identified{
 	@Id
-	@GeneratedValue
 	@Column(name = "RES_ID")
 	@DocumentId
 	@Field
+	@GeneratedValue(strategy = GenerationType.AUTO, generator = "resource_res_id_seq")
+	@SequenceGenerator(name = "resource_res_id_seq", sequenceName = "resource_res_id_seq")
 	private Long id;
 
 	@NotBlank
@@ -70,11 +73,11 @@ public abstract class Resource implements AttachmentHolder, Identified{
 		@Field,
 		@Field(name="label", analyze=Analyze.NO, store=Store.YES),
 		@Field(
-				name="labelUpperCased", 
-				analyze=Analyze.NO, 
+				name="labelUpperCased",
+				analyze=Analyze.NO,
 				store=Store.YES,
 				bridge=@FieldBridge(impl = UpperCasedStringBridge.class)
-			),
+				),
 	})
 	private String name;
 
@@ -82,21 +85,21 @@ public abstract class Resource implements AttachmentHolder, Identified{
 	@Fields({
 		@Field(),
 		@Field(
-			name="hasDescription", 
-			analyze=Analyze.NO, 
-			store=Store.YES,
-			bridge=@FieldBridge(impl = RequirementVersionDescriptionBridge.class)
-		),
-		
+				name="hasDescription",
+				analyze=Analyze.NO,
+				store=Store.YES,
+				bridge=@FieldBridge(impl = RequirementVersionDescriptionBridge.class)
+				),
+
 	})
 
 	private String description;
-	
+
 	@NotNull
 	@OneToOne(cascade = { CascadeType.ALL }, orphanRemoval = true)
 	@JoinColumn(name = "ATTACHMENT_LIST_ID")
 	private final AttachmentList attachmentList = new AttachmentList();
-	
+
 	@Override
 	public Long getId() {
 		return id;
@@ -128,16 +131,16 @@ public abstract class Resource implements AttachmentHolder, Identified{
 
 
 	// ******************* other utilities ****************************
-	
+
 	/*
 	 * Issue 1713
 	 * 
-	 * Due to the mixed use of actual instances and javassist proxies, comparisons may fail. Thus the 
-	 * redefinition of hashCode() and equals() below, that take account of the lazy loading and 
-	 * the fact that the compared objects may be of different classes. 
+	 * Due to the mixed use of actual instances and javassist proxies, comparisons may fail. Thus the
+	 * redefinition of hashCode() and equals() below, that take account of the lazy loading and
+	 * the fact that the compared objects may be of different classes.
 	 * 
 	 */
-	
+
 	@Override
 	public int hashCode() {
 		final int prime = 61;
@@ -153,37 +156,48 @@ public abstract class Resource implements AttachmentHolder, Identified{
 
 	@Override//NOSONAR code generation, assumed to be safe
 	public boolean equals(Object obj) { // GENERATED:START
-		if (this == obj)
+		if (this == obj) {
 			return true;
-		if (obj == null)
+		}
+		if (obj == null) {
 			return false;
-		if (! ( this.getClass().isAssignableFrom(obj.getClass()) || obj.getClass().isAssignableFrom(getClass()) ))
+		}
+		if (! ( this.getClass().isAssignableFrom(obj.getClass()) || obj.getClass().isAssignableFrom(getClass()) )) {
 			return false;
+		}
 		Resource other = (Resource) obj;
 		if (getAttachmentList() == null) {
-			if (other.getAttachmentList() != null)
+			if (other.getAttachmentList() != null) {
 				return false;
-		} else if (!getAttachmentList().equals(other.getAttachmentList()))
+			}
+		} else if (!getAttachmentList().equals(other.getAttachmentList())) {
 			return false;
+		}
 		if (getDescription() == null) {
-			if (other.getDescription() != null)
+			if (other.getDescription() != null) {
 				return false;
-		} else if (!getDescription().equals(other.getDescription()))
+			}
+		} else if (!getDescription().equals(other.getDescription())) {
 			return false;
+		}
 		if (getId() == null) {
-			if (other.getId() != null)
+			if (other.getId() != null) {
 				return false;
-		} else if (!getId().equals(other.getId()))
+			}
+		} else if (!getId().equals(other.getId())) {
 			return false;
+		}
 		if (getName() == null) {
-			if (other.getName() != null)
+			if (other.getName() != null) {
 				return false;
-		} else if (!getName().equals(other.getName()))
+			}
+		} else if (!getName().equals(other.getName())) {
 			return false;
+		}
 		return true;
 	} // GENERATED:END
 
 
-	
+
 
 }

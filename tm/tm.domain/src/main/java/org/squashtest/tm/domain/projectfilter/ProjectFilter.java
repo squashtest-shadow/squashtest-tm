@@ -28,10 +28,12 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.SequenceGenerator;
 
 import org.squashtest.tm.domain.project.GenericProject;
 import org.squashtest.tm.domain.project.Project;
@@ -39,8 +41,9 @@ import org.squashtest.tm.domain.project.Project;
 @Entity
 public class ProjectFilter {
 	@Id
-	@GeneratedValue
 	@Column(name = "PROJECT_FILTER_ID")
+	@GeneratedValue(strategy = GenerationType.AUTO, generator = "project_filter_project_filter_id_seq")
+	@SequenceGenerator(name = "project_filter_project_filter_id_seq", sequenceName = "project_filter_project_filter_id_seq")
 	private Long id;
 
 	private String userLogin;
@@ -75,7 +78,7 @@ public class ProjectFilter {
 	public Boolean getActivated() {
 		return activated;
 	}
-	
+
 	// alias for getActivated()
 	public boolean isEnabled(){
 		return activated;

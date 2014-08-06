@@ -30,11 +30,13 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
@@ -60,8 +62,9 @@ public class Parameter implements Identified {
 			+ "\\E";
 
 	@Id
-	@GeneratedValue
 	@Column(name = "PARAM_ID")
+	@GeneratedValue(strategy = GenerationType.AUTO, generator = "parameter_param_id_seq")
+	@SequenceGenerator(name = "parameter_param_id_seq", sequenceName = "parameter_param_id_seq")
 	private Long id;
 
 	@NotBlank

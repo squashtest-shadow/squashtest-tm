@@ -27,8 +27,10 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Lob;
+import javax.persistence.SequenceGenerator;
 
 import org.hibernate.annotations.Type;
 
@@ -44,8 +46,9 @@ import org.hibernate.annotations.Type;
 public class AttachmentContent {
 
 	@Id
-	@GeneratedValue
 	@Column(name = "ATTACHMENT_CONTENT_ID")
+	@GeneratedValue(strategy = GenerationType.AUTO, generator = "attachment_content_attachment_content_id_seq")
+	@SequenceGenerator(name = "attachment_content_attachment_content_id_seq", sequenceName = "attachment_content_attachment_content_id_seq")
 	private Long id;
 
 	@Lob

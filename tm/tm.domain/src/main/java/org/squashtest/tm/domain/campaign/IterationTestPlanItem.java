@@ -35,6 +35,7 @@ import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
@@ -44,6 +45,7 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderColumn;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
@@ -87,8 +89,9 @@ public class IterationTestPlanItem implements HasExecutionStatus, Identified {
 	}
 
 	@Id
-	@GeneratedValue
 	@Column(name = "ITEM_TEST_PLAN_ID")
+	@GeneratedValue(strategy = GenerationType.AUTO, generator = "item_test_plan_item_test_plan_id_seq")
+	@SequenceGenerator(name = "item_test_plan_item_test_plan_id_seq", sequenceName = "item_test_plan_item_test_plan_id_seq")
 	private Long id;
 
 	@Enumerated(EnumType.STRING)

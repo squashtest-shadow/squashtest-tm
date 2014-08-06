@@ -22,7 +22,9 @@ package org.squashtest.tm.domain.users;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 @Entity
@@ -30,7 +32,8 @@ import javax.persistence.Table;
 public class UsersGroup {
 
 	@Id
-	@GeneratedValue
+	@GeneratedValue(strategy = GenerationType.AUTO, generator = "core_group_id_seq")
+	@SequenceGenerator(name = "core_group_id_seq", sequenceName = "core_group_id_seq")
 	private Long id;
 	private String qualifiedName;
 	private transient String simpleName;

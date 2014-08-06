@@ -36,6 +36,7 @@ import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
@@ -44,6 +45,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.OrderColumn;
+import javax.persistence.SequenceGenerator;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -76,8 +78,9 @@ BoundEntity {
 	private static final String ITERATION_ID = "ITERATION_ID";
 
 	@Id
-	@GeneratedValue
 	@Column(name = ITERATION_ID)
+	@GeneratedValue(strategy = GenerationType.AUTO, generator = "iteration_iteration_id_seq")
+	@SequenceGenerator(name = "iteration_iteration_id_seq", sequenceName = "iteration_iteration_id_seq")
 	private Long id;
 
 	@Lob

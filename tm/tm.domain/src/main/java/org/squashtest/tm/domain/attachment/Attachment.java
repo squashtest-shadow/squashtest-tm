@@ -28,9 +28,11 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
@@ -42,8 +44,9 @@ public class Attachment {
 	private static final float MEGA_BYTE = 1048576.000f;
 
 	@Id
-	@GeneratedValue
 	@Column(name = "ATTACHMENT_ID")
+	@GeneratedValue(strategy = GenerationType.AUTO, generator = "attachment_attachment_id_seq")
+	@SequenceGenerator(name = "attachment_attachment_id_seq", sequenceName = "attachment_attachment_id_seq")
 	private Long id;
 
 	@NotEmpty

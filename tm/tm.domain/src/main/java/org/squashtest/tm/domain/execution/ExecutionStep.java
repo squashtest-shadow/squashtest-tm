@@ -38,12 +38,14 @@ import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
@@ -95,8 +97,9 @@ public class ExecutionStep implements AttachmentHolder, IssueDetector, TestStepV
 
 
 	@Id
-	@GeneratedValue
 	@Column(name = "EXECUTION_STEP_ID")
+	@GeneratedValue(strategy = GenerationType.AUTO, generator = "execution_step_execution_step_id_seq")
+	@SequenceGenerator(name = "execution_step_execution_step_id_seq", sequenceName = "execution_step_execution_step_id_seq")
 	private Long id;
 
 	@Lob

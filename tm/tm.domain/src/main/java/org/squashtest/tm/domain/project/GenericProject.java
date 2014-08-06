@@ -32,6 +32,7 @@ import javax.persistence.DiscriminatorType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
@@ -40,6 +41,7 @@ import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.Size;
 
@@ -76,9 +78,10 @@ import org.squashtest.tm.exception.NoBugTrackerBindingException;
 @Table(name = "PROJECT")
 public abstract class GenericProject implements Identified, AttachmentHolder {
 	@Id
-	@GeneratedValue
 	@DocumentId
 	@Column(name = "PROJECT_ID")
+	@GeneratedValue(strategy = GenerationType.AUTO, generator = "project_project_id_seq")
+	@SequenceGenerator(name = "project_project_id_seq", sequenceName = "project_project_id_seq")
 	private Long id;
 
 	@Lob

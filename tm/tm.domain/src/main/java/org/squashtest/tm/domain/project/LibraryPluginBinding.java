@@ -31,11 +31,13 @@ import javax.persistence.DiscriminatorType;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.MapKeyColumn;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 
@@ -46,25 +48,26 @@ import javax.persistence.Table;
 public abstract class LibraryPluginBinding  {
 
 	@Id
-	@GeneratedValue
 	@Column(name = "PLUGIN_BINDING_ID")
+	@GeneratedValue(strategy = GenerationType.AUTO, generator = "library_plugin_binding_plugin_binding_id_seq")
+	@SequenceGenerator(name = "library_plugin_binding_plugin_binding_id_seq", sequenceName = "library_plugin_binding_plugin_binding_id_seq")
 	private long id;
-	
+
 	@Column
-	private String pluginId;	
-	
-	
+	private String pluginId;
+
+
 	@ElementCollection
 	@CollectionTable(name = "LIBRARY_PLUGIN_BINDING_PROPERTY", joinColumns = @JoinColumn(name = "PLUGIN_BINDING_ID"))
 	@MapKeyColumn(name = "PLUGIN_BINDING_KEY")
 	@Column(name = "PLUGIN_BINDING_VALUE")
 	private Map<String, String> properties = new HashMap<String, String>(2);
 
-	
+
 	public LibraryPluginBinding(){
 		super();
 	}
-	
+
 	public LibraryPluginBinding(String pluginId){
 		super();
 		this.pluginId = pluginId;
@@ -87,19 +90,19 @@ public abstract class LibraryPluginBinding  {
 	public String getProperty(String propertyName){
 		return properties.get(propertyName);
 	}
-	
+
 	public void setProperty(String propertyName, String propertyValue){
 		properties.put(propertyName, propertyValue);
 	}
-	
+
 	public void setProperties(Map<String, String> properties){
 		this.properties = properties;
 	}
-	
+
 	public Set<String> listProperties(){
 		return properties.keySet();
 	}
-	
+
 	public Map<String, String> getProperties(){
 		return properties;
 	}

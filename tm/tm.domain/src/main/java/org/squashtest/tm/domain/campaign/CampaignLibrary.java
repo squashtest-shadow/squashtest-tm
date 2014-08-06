@@ -33,12 +33,14 @@ import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.OrderColumn;
+import javax.persistence.SequenceGenerator;
 
 import org.apache.commons.lang.NullArgumentException;
 import org.hibernate.annotations.Where;
@@ -54,8 +56,9 @@ public class CampaignLibrary extends GenericLibrary<CampaignLibraryNode> {
 	private static final String SIMPLE_CLASS_NAME = "CampaignLibrary";
 
 	@Id
-	@GeneratedValue
 	@Column(name = "CL_ID")
+	@GeneratedValue(strategy = GenerationType.AUTO, generator = "campaign_library_cl_id_seq")
+	@SequenceGenerator(name = "campaign_library_cl_id_seq", sequenceName = "campaign_library_cl_id_seq")
 	private Long id;
 
 	@OneToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE})
@@ -65,10 +68,10 @@ public class CampaignLibrary extends GenericLibrary<CampaignLibraryNode> {
 
 	@OneToOne(mappedBy = "campaignLibrary")
 	private GenericProject project;
-	
+
 	@OneToMany(cascade = { CascadeType.ALL}, orphanRemoval=true)
 	@JoinColumn(name="LIBRARY_ID")
-	@Where(clause="LIBRARY_TYPE = 'C'")	
+	@Where(clause="LIBRARY_TYPE = 'C'")
 	private Set<CampaignLibraryPluginBinding> enabledPlugins = new HashSet<CampaignLibraryPluginBinding>(5);
 
 	@ElementCollection
@@ -76,8 +79,8 @@ public class CampaignLibrary extends GenericLibrary<CampaignLibraryNode> {
 	@JoinTable(name = "DISABLED_EXECUTION_STATUS", joinColumns= @JoinColumn(name = "CL_ID"))
 	@Column(name = "EXECUTION_STATUS")
 	private Set<ExecutionStatus> disabledStatuses = new HashSet<ExecutionStatus>(ExecutionStatus.DEFAULT_DISABLED_STATUSES);
-	
-	
+
+
 	public void setId(Long id) {
 		this.id = id;
 	}
@@ -90,7 +93,7 @@ public class CampaignLibrary extends GenericLibrary<CampaignLibraryNode> {
 	public List<CampaignLibraryNode> getRootContent() {
 		return rootContent;
 	}
-	
+
 	@Override
 	public List<CampaignLibraryNode> getContent(){
 		return getRootContent();
@@ -122,26 +125,26 @@ public class CampaignLibrary extends GenericLibrary<CampaignLibraryNode> {
 	public void setDisabledStatuses(Set<ExecutionStatus> disabledStatuses) {
 		this.disabledStatuses = disabledStatuses;
 	}
-	
+
 	public void enableStatus(ExecutionStatus executionStatus){
 		if(executionStatus.canBeDisabled()){
 			this.disabledStatuses.remove(executionStatus);
 		}
 	}
-	
+
 	public void disableStatus(ExecutionStatus executionStatus){
 		if(executionStatus.canBeDisabled()){
 			this.disabledStatuses.add(executionStatus);
 		}
 	}
-	
+
 	public boolean allowsStatus(ExecutionStatus executionStatus){
 		return !this.disabledStatuses.contains(executionStatus);
 	}
-	
+
 	// ***************************** PluginReferencer section ****************************
-	
-	
+
+
 	@Override
 	public Set<String> getEnabledPlugins() {
 		Set<String> pluginIds = new HashSet<String>(enabledPlugins.size());
@@ -151,12 +154,12 @@ public class CampaignLibrary extends GenericLibrary<CampaignLibraryNode> {
 		return pluginIds;
 	}
 
-	
+
 	@Override
 	public Set<CampaignLibraryPluginBinding> getAllPluginBindings() {
 		return enabledPlugins;
-	}	
-	
+	}
+
 	@Override
 	public void enablePlugin(String pluginId) {
 		if (! isPluginEnabled(pluginId)){
@@ -164,7 +167,7 @@ public class CampaignLibrary extends GenericLibrary<CampaignLibraryNode> {
 			enabledPlugins.add(newBinding);
 		}
 	}
-	
+
 	@Override
 	public void disablePlugin(String pluginId) {
 		CampaignLibraryPluginBinding binding = getPluginBinding(pluginId);
@@ -172,7 +175,7 @@ public class CampaignLibrary extends GenericLibrary<CampaignLibraryNode> {
 			enabledPlugins.remove(binding);
 		}
 	}
-	
+
 	@Override
 	public CampaignLibraryPluginBinding getPluginBinding(String pluginId) {
 		for (CampaignLibraryPluginBinding binding : enabledPlugins){
@@ -182,12 +185,12 @@ public class CampaignLibrary extends GenericLibrary<CampaignLibraryNode> {
 		}
 		return null;
 	}
-	
+
 	@Override
 	public boolean isPluginEnabled(String pluginId) {
 		return (getPluginBinding(pluginId) != null);
 	}
-	
+
 	/* ***************************** SelfClassAware section ******************************* */
 
 	@Override
@@ -208,7 +211,7 @@ public class CampaignLibrary extends GenericLibrary<CampaignLibraryNode> {
 	@Override
 	public void accept(NodeContainerVisitor visitor) {
 		visitor.visit(this);
-		
+
 	}
 
 	@Override

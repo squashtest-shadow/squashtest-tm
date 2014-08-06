@@ -23,9 +23,11 @@ package org.squashtest.tm.domain.campaign;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
+import javax.persistence.SequenceGenerator;
 
 import org.squashtest.tm.domain.audit.Auditable;
 import org.squashtest.tm.domain.library.GenericLibraryNode;
@@ -37,10 +39,11 @@ import org.squashtest.tm.security.annotation.AclConstrainedObject;
 @Auditable
 public abstract class CampaignLibraryNode extends GenericLibraryNode {
 	@Id
-	@GeneratedValue
 	@Column(name = "CLN_ID")
-	private Long id;	
-	
+	@GeneratedValue(strategy = GenerationType.AUTO, generator = "campaign_library_node_cln_id_seq")
+	@SequenceGenerator(name = "campaign_library_node_cln_id_seq", sequenceName = "campaign_library_node_cln_id_seq")
+	private Long id;
+
 	public CampaignLibraryNode() {
 		super();
 	}
@@ -51,7 +54,7 @@ public abstract class CampaignLibraryNode extends GenericLibraryNode {
 	}
 
 	public abstract void accept(CampaignLibraryNodeVisitor visitor);
-	
+
 	@Override
 	@AclConstrainedObject
 	public Library<?> getLibrary() {

@@ -30,10 +30,12 @@ import java.util.Set;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.NamedQueries;
@@ -64,8 +66,9 @@ import org.squashtest.tm.exception.testcase.StepDoesNotBelongToTestCaseException
 @Entity
 public class RequirementVersionCoverage implements Identified {
 	@Id
-	@GeneratedValue
 	@Column(name = "REQUIREMENT_VERSION_COVERAGE_ID")
+	@GeneratedValue(strategy = GenerationType.AUTO, generator = "requirement_version_coverage_requirement_version_coverage_i_seq")
+	@SequenceGenerator(name = "requirement_version_coverage_requirement_version_coverage_i_seq", sequenceName = "requirement_version_coverage_requirement_version_coverage_i_seq")
 	@DocumentId
 	private Long id;
 

@@ -26,12 +26,14 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.Persister;
@@ -58,30 +60,31 @@ import org.squashtest.tm.security.annotation.InheritsAcls;
 @InheritsAcls(constrainedClass = TestCase.class, collectionName = "steps")
 @Persister(impl=TestStepPersister.class)
 public abstract class TestStep implements Identified {
-	
+
 	@Id
-	@GeneratedValue
 	@Column(name = "TEST_STEP_ID")
+	@GeneratedValue(strategy = GenerationType.AUTO, generator = "test_step_test_step_id_seq")
+	@SequenceGenerator(name = "test_step_test_step_id_seq", sequenceName = "test_step_test_step_id_seq")
 	private Long id;
-	
+
 
 	@ManyToOne(fetch=FetchType.LAZY)
 	@JoinTable(name = "TEST_CASE_STEPS", joinColumns = @JoinColumn(name = "STEP_ID", updatable = false, insertable = false), inverseJoinColumns = @JoinColumn(name = "TEST_CASE_ID", updatable = false, insertable = false))
 	private TestCase testCase;
-	
+
 	public Long getId() {
 		return id;
 	}
-	
-	
+
+
 	public void setTestCase(@NotNull TestCase testCase){
 		this.testCase = testCase;
 	}
-	
+
 	public TestCase getTestCase(){
 		return testCase;
 	}
-	
+
 	@AclConstrainedObject
 	public TestCaseLibrary getLibrary(){
 		if(testCase != null){
@@ -89,7 +92,7 @@ public abstract class TestStep implements Identified {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * @see {@link TestCase#getPositionOfStep(long)}
 	 * @return {@link TestCase#getPositionOfStep(long)} or -1 if testCase is null
@@ -112,7 +115,7 @@ public abstract class TestStep implements Identified {
 	public abstract TestStep createCopy();
 
 	public abstract void accept(TestStepVisitor visitor);
-	
+
 	public abstract List<ExecutionStep> createExecutionSteps(Dataset dataset);
-	
+
 }

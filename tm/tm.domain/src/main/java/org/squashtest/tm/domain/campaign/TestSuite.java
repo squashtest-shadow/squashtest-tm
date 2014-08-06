@@ -27,6 +27,7 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
@@ -35,6 +36,7 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.OrderColumn;
+import javax.persistence.SequenceGenerator;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -66,8 +68,9 @@ public class TestSuite implements Identified, Copiable, TreeNode, BoundEntity, A
 	}
 
 	@Id
-	@GeneratedValue
 	@Column(name = "ID")
+	@GeneratedValue(strategy = GenerationType.AUTO, generator = "test_suite_id_seq")
+	@SequenceGenerator(name = "test_suite_id_seq", sequenceName = "test_suite_id_seq")
 	private Long id;
 
 	@NotBlank
@@ -113,7 +116,7 @@ public class TestSuite implements Identified, Copiable, TreeNode, BoundEntity, A
 		}
 		this.name = trimedName;
 	}
-	
+
 	public String getDescription() {
 		return description;
 	}
@@ -183,7 +186,7 @@ public class TestSuite implements Identified, Copiable, TreeNode, BoundEntity, A
 
 		throw new EmptyTestSuiteTestPlanException(this);
 	}
-	
+
 	public IterationTestPlanItem getFirstTestPlanItem(String testerLogin) {
 		for (IterationTestPlanItem item : this.getTestPlan()) {
 			if(testerLogin == null || item.isAssignedToUser(testerLogin)){
@@ -315,7 +318,7 @@ public class TestSuite implements Identified, Copiable, TreeNode, BoundEntity, A
 	public boolean isLastExecutableTestPlanItem(long itemId) {
 		return isLastExecutableTestPlanItem(itemId, null);
 	}
-	
+
 	public boolean isLastExecutableTestPlanItem(long itemId, String userLogin) {
 		for (int i = testPlan.size() - 1; i >= 0; i--) {
 			IterationTestPlanItem item = testPlan.get(i);
@@ -345,14 +348,14 @@ public class TestSuite implements Identified, Copiable, TreeNode, BoundEntity, A
 
 		for (IterationTestPlanItem iterationTestPlanItem : this.testPlan) {
 			if (boundToThisSuite(iterationTestPlanItem) && !iterationTestPlanItem.isTestCaseDeleted()) { // &&
-																											// iterationTestPlanItem.isExecutableThroughTestSuite()
+				// iterationTestPlanItem.isExecutableThroughTestSuite()
 				return itemId == iterationTestPlanItem.getId();
 			}
 		}
 
 		return false;
 	}
-	
+
 	/**
 	 * Determines if the item is the first of the test plan of the test suite
 	 * 
@@ -388,7 +391,7 @@ public class TestSuite implements Identified, Copiable, TreeNode, BoundEntity, A
 		return findNextExecutableTestPlanItem(testPlanItemId, null);
 
 	}
-	
+
 	/**
 	 * finds next item (that last execution has unexecuted step) or (has no execution and is not test case deleted) and that is assigned to the current user if he is a tester.<br>
 	 * <em>NB: can return item linked to test-case with no step</em>
@@ -420,7 +423,7 @@ public class TestSuite implements Identified, Copiable, TreeNode, BoundEntity, A
 	public IterationTestPlanItem findFirstExecutableTestPlanItem() {
 		return findFirstExecutableTestPlanItem(null);
 	}
-	
+
 	/**
 	 * @throws {@link TestPlanItemNotExecutableException}
 	 * @throws {@link EmptyTestSuiteTestPlanException}
@@ -435,7 +438,7 @@ public class TestSuite implements Identified, Copiable, TreeNode, BoundEntity, A
 		}
 
 	}
-	
+
 
 	private List<IterationTestPlanItem> getRemainingPlanById(long testPlanItemId) {
 		for (int i = 0; i < testPlan.size(); i++) {
@@ -482,5 +485,5 @@ public class TestSuite implements Identified, Copiable, TreeNode, BoundEntity, A
 		this.testPlan = testPlan;
 	}
 
-	
+
 }
