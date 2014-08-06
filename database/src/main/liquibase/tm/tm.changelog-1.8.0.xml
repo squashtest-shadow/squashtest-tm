@@ -285,7 +285,7 @@
 
       delete from SIMPLE_RESOURCE
       where RES_ID not in(
-       select RES_ID from REQUIREMENT_FOLDER UNION
+       select RES_ID from REQUIREMENT_FOLDER
       );
 
       delete from RESOURCE
@@ -295,7 +295,9 @@
       );
 
       create table atlid (ID BIGINT NOT NULL);
-      insert into atlid values (ATTACHMENT_LIST_ID) 
+      
+      insert into atlid(ID) 
+      select ATTACHMENT_LIST_ID 
       from ATTACHMENT_LIST 
       where ATTACHMENT_LIST_ID not in (
       select ATTACHMENT_LIST_ID from ACTION_TEST_STEP UNION
