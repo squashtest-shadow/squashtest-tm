@@ -30,6 +30,7 @@ import org.springframework.transaction.annotation.Transactional
 import org.squashtest.tm.domain.campaign.Iteration
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem
 import org.squashtest.tm.domain.campaign.TestSuite
+import org.squashtest.tm.domain.customfield.RenderingLocation;
 import org.squashtest.tm.domain.denormalizedfield.DenormalizedFieldHolderType
 import org.squashtest.tm.domain.execution.Execution
 import org.squashtest.tm.domain.execution.ExecutionStatus
@@ -157,32 +158,22 @@ class IterationModificationServiceIT extends DbunitServiceSpecification {
 		query.list().size() == 3
 		query.setParameter("id", exec.steps.get(0).id)
 		query.setParameter("type", DenormalizedFieldHolderType.EXECUTION_STEP)
-		query.list().size() == 2
+		def step1denofields = query.list()
+		step1denofields.size() == 2
+		step1denofields.collect { it.code } == ["cufUprim", "cufT" ]
+		step1denofields.collect { it.value } == ["Uprim", "T"]
+		step1denofields.collect { it.renderingLocations } == [[RenderingLocation.STEP_TABLE] as Set,[] as Set]
+
+
 		query.setParameter("id", exec.steps.get(1).id)
 		query.setParameter("type", DenormalizedFieldHolderType.EXECUTION_STEP)
-		query.list().size() == 3
+		def step2denofields = query.list()
+		step2denofields.size() == 2
+		step2denofields.collect { it.code } == ["cufT", "cufU"]
+		step2denofields.collect { it.value } == ["T", "U"]
+		step2denofields.collect { it.renderingLocations } == [ [RenderingLocation.STEP_TABLE] as Set, [RenderingLocation.STEP_TABLE] as Set]
 	}
 
-	@DataSet("IterationModificationServiceIT.denormalizedField.xml")
-	def "should copy cuf for call step with reference locations of non call steps"(){
-
-		when :
-		Execution exec = iterService.addExecution(-2L)
-
-		then : "call step has 3 denormalized fields"
-		Query query = getSession().createQuery("from DenormalizedFieldValue dfv where dfv.denormalizedFieldHolderId = :id and dfv.denormalizedFieldHolderType = :type order by dfv.position")
-		query.setParameter("id", exec.steps.get(1).id)
-		query.setParameter("type", DenormalizedFieldHolderType.EXECUTION_STEP)
-		def result = query.list()
-		result.size() == 3
-		and : "first value is a value from calling tc's project, set to '' because it doesn't exist in called tc's project "
-		result.get(0).value == ""
-		and : "second value is a value existing in both projects but with position set in calling project."
-		result.get(1).value == "T"
-		and : "last value is only from call step and has no rendering location"
-		result.get(2).value == "U"
-		result.get(2).renderingLocations.isEmpty()
-	}
 
 	@DataSet("IterationModificationServiceIT.should create a suite with custom fields.xml")
 	@ExpectedDataSet("IterationModificationServiceIT.should create a suite with custom fields.expected.xml")
