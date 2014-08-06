@@ -18,7 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.core.api.repository;
+package org.squashtest.core.api.repository
 
 import javax.inject.Inject;
 
@@ -47,7 +47,8 @@ class SqlQueryRunnerIT extends Specification {
 	@DataSet("SqlQueryRunnerIT.should select all active core users.xml")
 	def "should select all active core user logins"() {
 		when:
-		def res = runner.executeSelect("select LOGIN from CORE_USER where ACTIVE <> 0")
+
+		def res = runner.executeSelect("select LOGIN from CORE_USER where ACTIVE = true")
 
 		then:
 		res == [
@@ -59,7 +60,7 @@ class SqlQueryRunnerIT extends Specification {
 	@DataSet("SqlQueryRunnerIT.should select all active core users.xml")
 	def "should select all active core user logins and names"() {
 		when:
-		def res = runner.executeSelect("select LOGIN, LAST_NAME from CORE_USER where ACTIVE <> 0")
+		def res = runner.executeSelect("select LOGIN, LAST_NAME from CORE_USER where ACTIVE = true")
 
 		then:
 		res == [
@@ -71,7 +72,7 @@ class SqlQueryRunnerIT extends Specification {
 	@DataSet("SqlQueryRunnerIT.should select all active core users.xml")
 	def "should select all active core user aliased logins and names"() {
 		when:
-		def res = runner.executeSelect('select LOGIN "logname", LAST_NAME "name" from CORE_USER where ACTIVE <> 0')
+		def res = runner.executeSelect('select LOGIN "logname", LAST_NAME "name" from CORE_USER where ACTIVE = true')
 
 		then:
 		res == [
@@ -83,7 +84,7 @@ class SqlQueryRunnerIT extends Specification {
 	@DataSet("SqlQueryRunnerIT.should select all active core users.xml")
 	def "should select single inactive core user"() {
 		when:
-		def res = runner.executeUniqueSelect("select LOGIN from CORE_USER where ACTIVE = 0")
+		def res = runner.executeUniqueSelect("select LOGIN from CORE_USER where ACTIVE = false")
 
 		then:
 		res == "shawn.michaels"
