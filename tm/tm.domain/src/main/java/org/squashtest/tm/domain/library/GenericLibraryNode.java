@@ -29,6 +29,7 @@ import javax.persistence.MappedSuperclass;
 import javax.persistence.OneToOne;
 import javax.validation.constraints.Size;
 
+import org.hibernate.annotations.Type;
 import org.hibernate.search.annotations.Analyze;
 import org.hibernate.search.annotations.Field;
 import org.hibernate.search.annotations.FieldBridge;
@@ -63,6 +64,7 @@ public abstract class GenericLibraryNode implements LibraryNode, AttachmentHolde
 	private String name;
 
 	@Lob
+	@Type(type="org.hibernate.type.StringClobType")
 	@Field
 	private String description;
 

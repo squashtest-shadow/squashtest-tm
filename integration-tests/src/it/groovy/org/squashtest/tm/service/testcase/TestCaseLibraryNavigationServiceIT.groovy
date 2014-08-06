@@ -57,8 +57,8 @@ class TestCaseLibraryNavigationServiceIT extends DbunitServiceSpecification {
 	@DataSet("TestCaseLibraryNavigationServiceIT.should copy paste folder with test-cases.xml")
 	def "should copy paste folder with test-cases"(){
 		given:
-		Long[] sourceIds = [1L]
-		Long destinationId = 2L
+		Long[] sourceIds = [100L]
+		Long destinationId = 20L
 
 		when:
 		List<TestCaseLibraryNode> nodes = navService.copyNodesToFolder(destinationId, sourceIds)
@@ -81,8 +81,8 @@ class TestCaseLibraryNavigationServiceIT extends DbunitServiceSpecification {
 		navService.moveNodesToFolder(destinationId, sourceIds, 0)
 
 		then:
-		TestCaseFolder parentFolder = (TestCaseFolder) libraryDao.findById(2L);
-		parentFolder.content.collect {it.id} == [1L, 20L, 21L];
+		TestCaseFolder parentFolder = (TestCaseFolder) libraryDao.findById(2L)
+		parentFolder.content.collect {it.id} == [1L, 20L, 21L]
 	}
 
 	@DataSet("TestCaseLibraryNavigationServiceIT.should move to same project at right position.xml")
@@ -95,8 +95,8 @@ class TestCaseLibraryNavigationServiceIT extends DbunitServiceSpecification {
 		navService.moveNodesToFolder(destinationId, sourceIds, 1)
 
 		then:
-		TestCaseFolder parentFolder = (TestCaseFolder) libraryDao.findById(2L);
-		parentFolder.content.collect {it.id} == [20L, 1L, 21L];
+		TestCaseFolder parentFolder = (TestCaseFolder) libraryDao.findById(2L)
+		parentFolder.content.collect {it.id} == [20L, 1L, 21L]
 	}
 
 	@DataSet("TestCaseLibraryNavigationServiceIT.countsiblings.xml")
@@ -128,8 +128,8 @@ class TestCaseLibraryNavigationServiceIT extends DbunitServiceSpecification {
 		navService.moveNodesToFolder(destinationId, sourceIds, 2)
 
 		then:
-		TestCaseFolder parentFolder = (TestCaseFolder) libraryDao.findById(2L);
-		parentFolder.content.collect {it.id} == [20L, 21L, 1L];
+		TestCaseFolder parentFolder = (TestCaseFolder) libraryDao.findById(2L)
+		parentFolder.content.collect {it.id} == [20L, 21L, 1L]
 	}
 
 
@@ -156,18 +156,18 @@ class TestCaseLibraryNavigationServiceIT extends DbunitServiceSpecification {
 		and: "it has copies of datasets"
 		testCaseCopy.datasets.size() == 2
 		Dataset dataset1copy = testCaseCopy.datasets.find{it.name == "dataset_1"}
-		dataset1copy  != null;
+		dataset1copy  != null
 		dataset1copy.id != 1L
 		Dataset dataset2copy = testCaseCopy.datasets.find{it.name == "dataset_2"}
 		dataset2copy != null
 		dataset2copy.id != 2L
 		and: "it has copies of datasets-param-values"
 		dataset1copy.parameterValues.size() == 2
-		dataset1copy.parameterValues.collect {it.parameter}.containsAll([param1copy, param2copy]);
-		dataset1copy.parameterValues.collect {it.paramValue}.containsAll(["val", "val"]);
+		dataset1copy.parameterValues.collect {it.parameter}.containsAll([param1copy, param2copy])
+		dataset1copy.parameterValues.collect {it.paramValue}.containsAll(["val", "val"])
 		dataset2copy.parameterValues.size() == 2
-		dataset2copy.parameterValues.collect {it.parameter}.containsAll([param1copy, param2copy]);
-		dataset2copy.parameterValues.collect {it.paramValue}.containsAll(["val", "val"]);
+		dataset2copy.parameterValues.collect {it.parameter}.containsAll([param1copy, param2copy])
+		dataset2copy.parameterValues.collect {it.paramValue}.containsAll(["val", "val"])
 	}
 
 	@DataSet("TestCaseLibraryNavigationServiceIT.should copy tc with datasetParamValues of called step.xml")
@@ -187,9 +187,9 @@ class TestCaseLibraryNavigationServiceIT extends DbunitServiceSpecification {
 		testCaseCopy.parameters.size() == 1
 		Parameter param1copy = testCaseCopy.parameters.find{it.name == "parameter_1"}
 		and: "it has copies of datasetParamValues even for called param"
-		Parameter calledParam = session.get(Parameter.class, 2L);
+		Parameter calledParam = session.get(Parameter.class, 2L)
 		dataset1copy.parameterValues.size() == 2
-		dataset1copy.parameterValues.collect {it.parameter}.containsAll([param1copy, calledParam]);
+		dataset1copy.parameterValues.collect {it.parameter}.containsAll([param1copy, calledParam])
 
 	}
 
@@ -285,7 +285,7 @@ class TestCaseLibraryNavigationServiceIT extends DbunitServiceSpecification {
 
 		when :
 		def id = navService.mkdirs(path)
-		getSession().flush();
+		getSession().flush()
 
 		then :
 		navService.findNodeIdByPath("/some project/big") != null
@@ -302,7 +302,7 @@ class TestCaseLibraryNavigationServiceIT extends DbunitServiceSpecification {
 
 		when :
 		def id = navService.mkdirs(path)
-		getSession().flush();
+		getSession().flush()
 
 		then :
 		navService.findNodeIdByPath("/some project/another folder/bob") != null

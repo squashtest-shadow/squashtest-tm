@@ -48,6 +48,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.apache.commons.lang.StringUtils;
+import org.hibernate.annotations.Type;
 import org.hibernate.search.annotations.Analyze;
 import org.hibernate.search.annotations.ClassBridge;
 import org.hibernate.search.annotations.ClassBridges;
@@ -110,6 +111,7 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	private String reference = "";
 
 	@Lob
+	@Type(type="org.hibernate.type.StringClobType")
 	@Field
 	private String prerequisite = "";
 
