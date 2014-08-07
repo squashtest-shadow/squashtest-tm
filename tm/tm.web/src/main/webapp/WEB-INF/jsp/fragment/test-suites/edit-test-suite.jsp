@@ -165,23 +165,6 @@
 	</c:if>
 </div>
 
-  <c:if test="${ writable }">
-    <f:message var="renameDialogTitle" key="dialog.testsuites.rename.title" />
-    <div id="rename-testsuite-dialog" title="${renameDialogTitle}" class="not-displayed popup-dialog">
-        <div>
-          <label><f:message key="dialog.rename.label" /></label>
-          <input type="text" id="rename-test-suite-name" maxlength="255" size="50" />
-          <br/>
-          <comp:error-message forField="name"/>
-        </div>
-      
-        <div class="popup-dialog-buttonpane">
-          <input type="button" value="${labelConfirm}" data-def="evt=confirm, mainbtn" />
-          <input type="button" value="${labelCancel}" data-def="evt=cancel" />        
-        </div>
-    </div>
-    
-  </c:if>
 
 <csst:jq-tab>
 <div class="fragment-tabs fragment-body">
@@ -256,6 +239,25 @@
 <%------------------------------------------/automated suite overview --------------------------------------------%>
 
 
+<div class="not-displayed">
+  <c:if test="${ writable }">
+    <f:message var="renameDialogTitle" key="dialog.testsuites.rename.title" />
+    <div id="rename-testsuite-dialog" title="${renameDialogTitle}" class="not-displayed popup-dialog">
+        <div>
+          <label><f:message key="dialog.rename.label" /></label>
+          <input type="text" id="rename-test-suite-name" maxlength="255" size="50" />
+          <br/>
+          <comp:error-message forField="name"/>
+        </div>
+      
+        <div class="popup-dialog-buttonpane">
+          <input type="button" value="${labelConfirm}" data-def="evt=confirm, mainbtn" />
+          <input type="button" value="${labelCancel}" data-def="evt=cancel" />        
+        </div>
+    </div>
+    
+  </c:if>
+</div>
 
 <%------------------------------ /bugs section -------------------------------%>
 
