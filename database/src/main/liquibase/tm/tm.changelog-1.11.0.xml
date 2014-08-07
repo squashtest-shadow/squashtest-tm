@@ -41,7 +41,7 @@
   	</comment>
 
   	<addColumn tableName="CUSTOM_FIELD">
-  		<column name="LONG_DEFAULT_VALUE" defaultValue="NULL" type="TEXT" remarks="this column is used by rich text cufs. It contains HTML data."></column>
+  		<column name="LONG_DEFAULT_VALUE" defaultValue="NULL" type="CLOB" remarks="this column is used by rich text cufs. It contains HTML data."></column>
   	</addColumn>
   	
   </changeSet>
@@ -52,7 +52,7 @@
   	<comment>prepares the table CUSTOM_FIELD_VALUE for values of type CLOB, and adds support for inheritance to that end.</comment>
 
   	<addColumn tableName="CUSTOM_FIELD_VALUE">
-  		<column name="LONG_VALUE" defaultValue="NULL" type="TEXT" remarks="this column is used by rich text cufs. It contains HTML data."></column>
+  		<column name="LONG_VALUE" defaultValue="NULL" type="CLOB" remarks="this column is used by rich text cufs. It contains HTML data."></column>
   		
         <column name="FIELD_TYPE" type="CHAR(3)" defaultValue="CF" remarks="CF : simple, RTF : rich text field">
             <constraints nullable="false" />
@@ -70,7 +70,7 @@
   		
 
   	<addColumn tableName="DENORMALIZED_FIELD_VALUE">
-  		<column name="LONG_VALUE" defaultValue="NULL" type="TEXT" remarks="this column is used by rich text cufs. It contains HTML data."></column>
+  		<column name="LONG_VALUE" defaultValue="NULL" type="CLOB" remarks="this column is used by rich text cufs. It contains HTML data."></column>
 
   	</addColumn>
   

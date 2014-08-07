@@ -50,7 +50,7 @@ public class DenormalizedRichValue extends DenormalizedFieldValue {
 		this.code = cuf.getCode();
 		this.inputType = cuf.getInputType();
 		this.label = cuf.getLabel();
-		this.value = "";
+		this.value = null;
 		this.longValue = customFieldValue.getValue();
 		this.position = customFieldValue.getBinding().getPosition();
 		this.renderingLocations = customFieldValue.getBinding().copyRenderingLocations();
