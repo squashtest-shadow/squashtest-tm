@@ -45,38 +45,41 @@ require([ "common" ], function() {
 		
 		// ******** rename popup *************
 		
-		var renameDialog = $("#rename-testsuite-dialog");
-		renameDialog.formDialog();
-		
-		renameDialog.on('formdialogopen', function(){
-			var name = $.trim($("#test-suite-name").text());
-			$("#rename-test-suite-name").val(name);			
-		});
-		
-		renameDialog.on('formdialogconfirm', function(){
-			$.ajax({
-				url : config.testSuiteURL,
-				type : 'POST',
-				dataType : 'json',
-				data : { "newName" : $("#rename-test-suite-name").val() }
-			})
-			.done(function(json){
-				renameDialog.formDialog('close');
-				
-				eventBus.trigger("node.rename", {
-					identity : config.identity,
-					newName : json.newName
+		function initRenameDialog(){
+			
+			var renameDialog = $("#rename-testsuite-dialog");
+			renameDialog.formDialog();
+			
+			renameDialog.on('formdialogopen', function(){
+				var name = $.trim($("#test-suite-name").text());
+				$("#rename-test-suite-name").val(name);			
+			});
+			
+			renameDialog.on('formdialogconfirm', function(){
+				$.ajax({
+					url : config.testSuiteURL,
+					type : 'POST',
+					dataType : 'json',
+					data : { "newName" : $("#rename-test-suite-name").val() }
+				})
+				.done(function(json){
+					renameDialog.formDialog('close');
+					
+					eventBus.trigger("node.rename", {
+						identity : config.identity,
+						newName : json.newName
+					});
 				});
 			});
-		});
-		
-		renameDialog.on('formdialogcancel', function(){
-			renameDialog.formDialog('close');
-		});
-		
-		$("#rename-test-suite-button").on('click', function(){
-			renameDialog.formDialog('open');
-		});
+			
+			renameDialog.on('formdialogcancel', function(){
+				renameDialog.formDialog('close');
+			});
+			
+			$("#rename-test-suite-button").on('click', function(){
+				renameDialog.formDialog('open');
+			});
+		}
 
 		/* duplication sucess handler */
 		/* should be put in global ns and referenced someplace */
@@ -116,6 +119,9 @@ require([ "common" ], function() {
 
 			WS.init();
 			basicwidg.init();
+			
+			// test suite dialog init
+			initRenameDialog()
 
 			// registers contextual events
 			// TODO should be unregistered before ?
