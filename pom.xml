@@ -9,7 +9,7 @@
   </parent>
 
   <artifactId>squash-tm</artifactId>
-  <version>1.10.3.RC6-SNAPSHOT</version>
+  <version>1.10.3.RELEASE</version>
   <packaging>pom</packaging>
 
   <name>squash-tm</name>
