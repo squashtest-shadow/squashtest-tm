@@ -75,9 +75,8 @@ require([ "common" ], function() {
 		});
 		
 		$("#rename-test-suite-button").on('click', function(){
-			alert("here");
 			renameDialog.formDialog('open');
-		});		
+		});
 
 		/* duplication sucess handler */
 		/* should be put in global ns and referenced someplace */
