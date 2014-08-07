@@ -35,7 +35,7 @@ import javax.persistence.ManyToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.PrimaryKeyJoinColumn;
 
-import org.hibernate.validator.constraints.NotBlank;
+import org.hibernate.annotations.Type;
 import org.squashtest.tm.domain.attachment.Attachment;
 import org.squashtest.tm.domain.attachment.AttachmentHolder;
 import org.squashtest.tm.domain.attachment.AttachmentList;
@@ -49,9 +49,11 @@ import org.squashtest.tm.domain.requirement.RequirementVersion;
 @PrimaryKeyJoinColumn(name = "TEST_STEP_ID")
 public class ActionTestStep extends TestStep implements BoundEntity, AttachmentHolder {
 	@Lob
+	@Type(type="org.hibernate.type.StringClobType")
 	private String action = "";
 
 	@Lob
+	@Type(type="org.hibernate.type.StringClobType")
 	private String expectedResult = "";
 
 	@OneToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE })

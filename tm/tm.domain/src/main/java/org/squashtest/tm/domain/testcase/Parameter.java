@@ -43,6 +43,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
+import org.hibernate.annotations.Type;
 import org.hibernate.validator.constraints.NotBlank;
 import org.squashtest.tm.domain.Identified;
 import org.squashtest.tm.exception.DuplicateNameException;
@@ -73,6 +74,7 @@ public class Parameter implements Identified {
 	private String name;
 
 	@Lob
+	@Type(type="org.hibernate.type.StringClobType")
 	private String description = "";
 
 	@ManyToOne

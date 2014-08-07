@@ -29,6 +29,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.apache.commons.lang.ObjectUtils;
+import org.hibernate.annotations.Type;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 
 /**
@@ -41,7 +42,7 @@ import org.squashtest.tm.domain.requirement.RequirementVersion;
 @Entity
 @PrimaryKeyJoinColumn(name = "EVENT_ID")
 public class RequirementLargePropertyChange extends RequirementAuditEvent implements RequirementVersionModification,
-		ChangedProperty {
+ChangedProperty {
 	public static RequirementPropertyChangeEventBuilder<RequirementLargePropertyChange> builder() {
 		return new Builder();
 	}
@@ -65,10 +66,12 @@ public class RequirementLargePropertyChange extends RequirementAuditEvent implem
 	private String propertyName;
 
 	@Lob
+	@Type(type="org.hibernate.type.StringClobType")
 	@Basic(fetch = FetchType.LAZY)
 	private String oldValue;
 
 	@Lob
+	@Type(type="org.hibernate.type.StringClobType")
 	@Basic(fetch = FetchType.LAZY)
 	private String newValue;
 

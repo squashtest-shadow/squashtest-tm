@@ -54,6 +54,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.Formula;
+import org.hibernate.annotations.Type;
 import org.hibernate.validator.constraints.NotBlank;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.tm.domain.Identified;
@@ -122,15 +123,18 @@ DenormalizedFieldHolder, BoundEntity {
 	protected TestCaseExecutionMode executionMode = TestCaseExecutionMode.MANUAL;
 
 	@Lob
+	@Type(type="org.hibernate.type.StringClobType")
 	private String description;
 
 	@Lob
+	@Type(type="org.hibernate.type.StringClobType")
 	private String prerequisite = "";
 
 	@NotNull
 	private String reference = "";
 
 	@Lob
+	@Type(type="org.hibernate.type.StringClobType")
 	@Column(name = "TC_DESCRIPTION")
 	private String tcdescription;
 

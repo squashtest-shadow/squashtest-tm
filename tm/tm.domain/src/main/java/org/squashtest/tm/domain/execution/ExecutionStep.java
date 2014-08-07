@@ -51,6 +51,7 @@ import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
 import org.hibernate.annotations.Formula;
+import org.hibernate.annotations.Type;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.tm.domain.Identified;
 import org.squashtest.tm.domain.attachment.Attachment;
@@ -103,16 +104,19 @@ public class ExecutionStep implements AttachmentHolder, IssueDetector, TestStepV
 	private Long id;
 
 	@Lob
+	@Type(type="org.hibernate.type.StringClobType")
 	@Basic(optional = false)
 	private String action;
 
 	@Lob
+	@Type(type="org.hibernate.type.StringClobType")
 	private String expectedResult;
 
 	@Enumerated(EnumType.STRING)
 	private ExecutionStatus executionStatus = ExecutionStatus.READY;
 
 	@Lob
+	@Type(type="org.hibernate.type.StringClobType")
 	private String comment;
 
 	@Column(insertable = false)

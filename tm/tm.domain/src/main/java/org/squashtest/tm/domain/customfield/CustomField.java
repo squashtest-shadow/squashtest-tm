@@ -35,11 +35,14 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
+import javax.persistence.PrimaryKeyJoinColumn;
+import javax.persistence.SecondaryTable;
 import javax.persistence.SequenceGenerator;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
+import org.hibernate.annotations.DiscriminatorOptions;
 import org.hibernate.annotations.NamedQueries;
 import org.hibernate.annotations.NamedQuery;
 import org.hibernate.validator.constraints.NotBlank;
@@ -57,6 +60,7 @@ import org.squashtest.tm.validation.constraint.HasDefaultAsRequired;
 	@NamedQuery(name = "CustomField.findByCode", query = "from CustomField where code = ?1") })
 @Entity
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorOptions(force=true)
 @DiscriminatorColumn(name = "FIELD_TYPE", discriminatorType = DiscriminatorType.STRING)
 @DiscriminatorValue("CF")
 @HasDefaultAsRequired

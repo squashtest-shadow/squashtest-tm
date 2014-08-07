@@ -35,6 +35,7 @@ import javax.persistence.SequenceGenerator;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.hibernate.annotations.Type;
 import org.hibernate.search.annotations.Analyze;
 import org.hibernate.search.annotations.DocumentId;
 import org.hibernate.search.annotations.Field;
@@ -82,6 +83,7 @@ public abstract class Resource implements AttachmentHolder, Identified{
 	private String name;
 
 	@Lob
+	@Type(type="org.hibernate.type.StringClobType")
 	@Fields({
 		@Field(),
 		@Field(
@@ -92,7 +94,6 @@ public abstract class Resource implements AttachmentHolder, Identified{
 				),
 
 	})
-
 	private String description;
 
 	@NotNull

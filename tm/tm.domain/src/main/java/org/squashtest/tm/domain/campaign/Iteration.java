@@ -50,6 +50,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.apache.commons.lang.NullArgumentException;
+import org.hibernate.annotations.Type;
 import org.hibernate.validator.constraints.NotBlank;
 import org.squashtest.tm.domain.Identified;
 import org.squashtest.tm.domain.attachment.Attachment;
@@ -84,6 +85,7 @@ BoundEntity {
 	private Long id;
 
 	@Lob
+	@Type(type="org.hibernate.type.StringClobType")
 	private String description;
 
 	@NotBlank

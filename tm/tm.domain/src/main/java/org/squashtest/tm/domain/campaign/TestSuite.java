@@ -40,6 +40,7 @@ import javax.persistence.SequenceGenerator;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.hibernate.annotations.Type;
 import org.hibernate.validator.constraints.NotBlank;
 import org.squashtest.tm.domain.Identified;
 import org.squashtest.tm.domain.attachment.Attachment;
@@ -78,6 +79,7 @@ public class TestSuite implements Identified, Copiable, TreeNode, BoundEntity, A
 	private String name;
 
 	@Lob
+	@Type(type="org.hibernate.type.StringClobType")
 	private String description;
 
 	@ManyToOne

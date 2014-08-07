@@ -45,6 +45,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.Size;
 
+import org.hibernate.annotations.Type;
 import org.hibernate.search.annotations.Analyze;
 import org.hibernate.search.annotations.DocumentId;
 import org.hibernate.search.annotations.Field;
@@ -85,6 +86,7 @@ public abstract class GenericProject implements Identified, AttachmentHolder {
 	private Long id;
 
 	@Lob
+	@Type(type="org.hibernate.type.StringClobType")
 	private String description;
 
 	@Size(min = 0, max = 255)

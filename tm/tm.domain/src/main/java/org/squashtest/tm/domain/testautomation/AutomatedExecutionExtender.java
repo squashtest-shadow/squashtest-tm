@@ -38,6 +38,7 @@ import javax.persistence.SequenceGenerator;
 import javax.validation.constraints.NotNull;
 
 import org.apache.commons.lang.StringUtils;
+import org.hibernate.annotations.Type;
 import org.squashtest.tm.domain.campaign.CampaignLibrary;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
@@ -90,6 +91,7 @@ public class AutomatedExecutionExtender {
 	private AutomatedSuite automatedSuite;
 
 	@Lob
+	@Type(type="org.hibernate.type.StringClobType")
 	private String resultSummary = "";
 
 	/**
