@@ -27,14 +27,14 @@ import org.squashtest.tm.domain.project.Project
 import org.squashtest.tm.domain.testcase.TestCase
 import org.squashtest.tm.domain.testcase.TestCaseFolder
 import org.squashtest.tm.exception.DuplicateNameException
-import org.squashtest.tm.service.HibernateServiceSpecification;
+import org.squashtest.tm.service.HibernateServiceSpecification
 import org.squashtest.tm.service.project.GenericProjectManagerService
 import org.squashtest.tm.service.testcase.TestCaseLibrariesCrudService
 import org.squashtest.tm.service.testcase.TestCaseLibraryNavigationService
 import org.squashtest.tm.service.testcase.TestCaseModificationService
 
 
-class TestCaseModificationServiceImp2lIT extends HibernateServiceSpecification {
+class TestCaseModificationServiceImp2LIT extends HibernateServiceSpecification {
 
 	@Inject
 	private TestCaseModificationService service
@@ -46,8 +46,8 @@ class TestCaseModificationServiceImp2lIT extends HibernateServiceSpecification {
 	private TestCaseLibrariesCrudService libcrud
 	@Inject GenericProjectManagerService projectService
 
-	private int testCaseId=-1;
-	private int folderId = -1;
+	private int testCaseId=-1
+	private int folderId = -1
 
 	def setup(){
 		projectService.persist(createProject())
@@ -55,7 +55,7 @@ class TestCaseModificationServiceImp2lIT extends HibernateServiceSpecification {
 		def libList= libcrud.findAllLibraries()
 
 
-		def lib = libList.get(libList.size()-1);
+		def lib = libList.get(libList.size()-1)
 
 		def folder =  new TestCaseFolder(name:"folder")
 		def testCase = new TestCase(name: "test case 1", description: "the first test case")
@@ -63,8 +63,8 @@ class TestCaseModificationServiceImp2lIT extends HibernateServiceSpecification {
 		navService.addFolderToLibrary(lib.id,folder)
 		navService.addTestCaseToFolder (folder.id, testCase, null )
 
-		folderId = folder.id;
-		testCaseId= testCase.id;
+		folderId = folder.id
+		testCaseId= testCase.id
 	}
 
 
@@ -84,8 +84,8 @@ class TestCaseModificationServiceImp2lIT extends HibernateServiceSpecification {
 
 
 	def GenericProject createProject(){
-		Project p = new Project();
-		p.name = Double.valueOf(Math.random()).toString();
+		Project p = new Project()
+		p.name = Double.valueOf(Math.random()).toString()
 		p.description = "eaerazer"
 		return p
 	}

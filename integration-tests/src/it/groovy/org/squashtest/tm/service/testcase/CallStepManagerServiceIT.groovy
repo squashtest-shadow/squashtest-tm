@@ -59,7 +59,7 @@ class CallStepManagerServiceIT extends DbunitServiceSpecification {
 		given :
 			
 		when :
-			callStepService.addCallTestStep(1l, 1l)	;
+			callStepService.addCallTestStep(-1L, -1L)	;
 		
 		then :
 			thrown(CyclicStepCallException);
@@ -72,7 +72,7 @@ class CallStepManagerServiceIT extends DbunitServiceSpecification {
 		given :
 		
 		when :
-			callStepService.addCallTestStep(31l, 1l)
+			callStepService.addCallTestStep(-31L, -1L)
 			
 		then :
 			thrown(CyclicStepCallException);
@@ -83,12 +83,12 @@ class CallStepManagerServiceIT extends DbunitServiceSpecification {
 	def "should successfully create a call step"(){
 		
 		given :
-			def expectedTree = [1l, 11l, 21l, 22l, 31l, 32l]
+			def expectedTree = [-1L, -11L, -21L, -22L, -31L, -32L]
 			
 			
 		when :
-			callStepService.addCallTestStep(10l, 1l)
-			def callTree = callTreeFinder.getTestCaseCallTree(10l)
+			callStepService.addCallTestStep(-10L, -1L)
+			def callTree = callTreeFinder.getTestCaseCallTree(-10L)
 			
 		
 		then :
@@ -100,7 +100,7 @@ class CallStepManagerServiceIT extends DbunitServiceSpecification {
 	def "should throw CyclicStepCallException because the destination test case is somewhere in the test case call tree of the pasted steps"(){
 		given :
 			def pastedStepsIds = ['11','1000', '101'] as String[]
-			def destinationTestCaseid = 32L
+			def destinationTestCaseid = -32L
 		when :
 			callStepService.checkForCyclicStepCallBeforePaste(destinationTestCaseid, pastedStepsIds)
 			
@@ -112,7 +112,7 @@ class CallStepManagerServiceIT extends DbunitServiceSpecification {
 	def "should throw CyclicStepCallException because the destination test case is called by one of the pasted steps"(){
 		given :
 			def pastedStepsIds = ['32','1000'] as String[]
-			def destinationTestCaseid = 32L
+			def destinationTestCaseid = -32L
 		when :
 			callStepService.checkForCyclicStepCallBeforePaste(destinationTestCaseid, pastedStepsIds)
 			

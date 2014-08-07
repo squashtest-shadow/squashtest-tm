@@ -53,35 +53,35 @@ public class HibernateAutomatedSuiteDaoIT extends DbunitDaoSpecification {
 			def extenders = suiteDao.findAllExtenders(suiteid)
 			
 		then :
-			extenders.collect { it.id } as Set == [110l, 120l, 130l, 210l, 220l] as Set
+			extenders.collect { it.id } as Set == [-110L, -120L, -130L, -210L, -220L] as Set
 		
 	}
 	
 	def "should find all the extenders of executions waiting to be run"(){
 		
 		expect :
-			suiteDao.findAllWaitingExtenders(suiteid).collect { it.id } == [ 210l ]
+			suiteDao.findAllWaitingExtenders(suiteid).collect { it.id } == [ -210L ]
 		
 	}
 	
 	def "should find all the extenders of executions currently running"(){
 		
 		expect :
-		suiteDao.findAllRunningExtenders(suiteid).collect { it.id } == [ 130l ]
+		suiteDao.findAllRunningExtenders(suiteid).collect { it.id } == [ -130L ]
 		
 	}
 	
 	def "should find all completed executions"(){
 		
 		expect :
-			suiteDao.findAllCompletedExtenders(suiteid).collect{ it.id } as Set == [ 110l, 120l, 220l] as Set
+			suiteDao.findAllCompletedExtenders(suiteid).collect{ it.id } as Set == [ -110L, -120L, -220L] as Set
 		
 	}
 	
 	def "should find all extenders by statys"(){
 		
 		expect :
-		suiteDao.findAllExtendersByStatus(suiteid, [FAILURE, RUNNING]).collect {it.id} as Set == [220l, 130l] as Set
+		suiteDao.findAllExtendersByStatus(suiteid, [FAILURE, RUNNING]).collect {it.id} as Set == [-220L, -130L] as Set
 		
 	}
 	

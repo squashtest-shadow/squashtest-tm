@@ -49,11 +49,11 @@ class EntityDaoIT extends DbunitDaoSpecification {
 	def "should find a list of entity"(){
 	
 		when :
-			def res = entityDao.findAllByIds([ 1L, 3L, 4L, 6L ])
+			def res = entityDao.findAllByIds([ -1L, -3L, -4L, -6L ])
 		
 		then :
 			res.size() == 4
-			res.collect {it.id } == [1L, 3L, 4L, 6L]
+			res.collect {it.id } == [-1L, -3L, -4L, -6L]
 			res.collect {it.name } == ["proj1", "proj3", "proj4", "proj6"]
 	}
 	

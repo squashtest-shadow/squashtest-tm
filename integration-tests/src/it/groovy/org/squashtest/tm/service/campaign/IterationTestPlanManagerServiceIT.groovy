@@ -78,7 +78,7 @@ class IterationTestPlanManagerServiceIT extends DbunitServiceSpecification {
 			def columnsorting = DefaultColumnFiltering.NO_FILTERING
 			
 		when :
-			List items = service.findAssignedTestPlan(84l, pagingsorting, columnsorting).pagedItems
+			List items = service.findAssignedTestPlan(-84L, pagingsorting, columnsorting).pagedItems
 			List itemIds = items.collect { it.item.id }
 		
 		then :
@@ -143,37 +143,37 @@ class IterationTestPlanManagerServiceIT extends DbunitServiceSpecification {
 		@DataSet("IterationTestPlanManagerServiceIT.1execution.xml")
 		def "should remove executed Test plan from iteration because has admin rights"(){
 			given :
-			def iterationId = 1L
-			def testPlanItem = 1L
+			def iterationId = -1L
+			def testPlanItem = -1L
 			when :
 			service.removeTestPlanFromIteration(testPlanItem)
 	 
 			then :
-			!found(IterationTestPlanItem.class, 1L)
+			!found(IterationTestPlanItem.class, -1L)
 		}
 		
 //		TODO make it work
 //		@DataSet("IterationTestPlanManagerServiceIT.1execution.noEDRight.xml")
 //		def "should remove executed Test plan from iteration because has not EXTENDED_DELETE rights"(){
 //			given :
-//			def iterationId = 1L
-//			def testPlanItem = 1L
+//			def iterationId = -1L
+//			def testPlanItem = -1L
 //			when :
 //			service.removeTestPlanFromIteration(testPlanItem)
 //	 
 //			then :
-//			found(IterationTestPlanItem.class, 1L)
+//			found(IterationTestPlanItem.class, -1L)
 //		}
 		
 		@DataSet("IterationTestPlanManagerServiceIT.0execution.xml")
 		def "should remove not executed Test plan from iteration"(){
 			given :
-			def iterationId = 1L
-			def testPlanItem = 1L
+			def iterationId = -1L
+			def testPlanItem = -1L
 			when :
 			service.removeTestPlanFromIteration(testPlanItem)
 	 
 			then :
-			!found(IterationTestPlanItem.class, 1L)
+			!found(IterationTestPlanItem.class, -1L)
 		}
 }

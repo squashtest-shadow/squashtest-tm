@@ -41,10 +41,10 @@ class HibernateTestAutomationServerDaoIT extends DbunitDaoSpecification {
 	def "should find a server by id"(){
 
 		when :
-		def res = serverDao.findById(1l)
+		def res = serverDao.findById(-1L)
 
 		then :
-		res.id==1l
+		res.id==-1L
 		res.name == "Roberto-1"
 		res.baseURL.equals(new URL("http://www.roberto.com"))
 		res.login == "roberto"
@@ -61,7 +61,7 @@ class HibernateTestAutomationServerDaoIT extends DbunitDaoSpecification {
 		def res = serverDao.findByName("Roberto-1")
 
 		then :
-		res.id==1l
+		res.id==-1L
 		res.name == "Roberto-1"
 		res.baseURL.equals(new URL("http://www.roberto.com"))
 		res.login == "roberto"

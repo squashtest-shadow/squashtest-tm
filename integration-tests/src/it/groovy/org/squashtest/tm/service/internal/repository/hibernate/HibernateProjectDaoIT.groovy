@@ -57,7 +57,7 @@ class HibernateProjectDaoIT extends DbunitDaoSpecification {
 	@DataSet("HibernateProjectDaoIT.should count non folders 1.xml")
 	def "should count non folders 1" () {
 		when:
-		Long count = projectDao.countNonFoldersInProject(1L)
+		Long count = projectDao.countNonFoldersInProject(-1L)
 
 		then:
 		count == 0
@@ -65,7 +65,7 @@ class HibernateProjectDaoIT extends DbunitDaoSpecification {
 	@DataSet("HibernateProjectDaoIT.should count non folders 2.xml")
 	def "should count non folders 2" () {
 		when:
-		Long count = projectDao.countNonFoldersInProject(1L)
+		Long count = projectDao.countNonFoldersInProject(-1L)
 
 		then:
 		count == 3
@@ -73,7 +73,7 @@ class HibernateProjectDaoIT extends DbunitDaoSpecification {
 	@DataSet("HibernateProjectDaoIT.should count non folders 3.xml")
 	def "should count non folders 3" () {
 		when:
-		Long count = projectDao.countNonFoldersInProject(1L)
+		Long count = projectDao.countNonFoldersInProject(-1L)
 
 		then:
 		count == 2

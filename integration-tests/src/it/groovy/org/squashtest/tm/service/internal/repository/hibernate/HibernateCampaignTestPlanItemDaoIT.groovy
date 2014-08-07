@@ -41,14 +41,14 @@ class HibernateCampaignTestPlanItemDaoIT extends DbunitDaoSpecification {
 	@DataSet("HibernateCampaignTestPlanItemDaoIT.should find test case ids.xml")
 	def "should find test cases ids"(){
 		given :
-		def campaignId = 1L
+		def campaignId = -1L
 		
 		when : 
 		def result = campaignTestPlanItemDao.findPlannedTestCasesIdsByCampaignId(campaignId)
 		
 		then : 
 		result.size() == 2;
-		result.containsAll([1L, 2L]);
+		result.containsAll([-1L, -2L]);
 	}
 	
 }

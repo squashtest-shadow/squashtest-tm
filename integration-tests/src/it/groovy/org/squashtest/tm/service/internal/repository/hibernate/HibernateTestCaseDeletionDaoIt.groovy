@@ -62,26 +62,26 @@ class HibernateTestCaseDeletionDaoIT extends DbunitDaoSpecification{
 	def "should cascade-remove an attachment list"(){
 
 		when :
-		deletionDao.removeAttachmentsLists([1l, 4l]);
+		deletionDao.removeAttachmentsLists([-1L, -4L]);
 
 		then :
 
-		found("attachment_content", "attachment_content_id", 121l)
-		found("attachment_content", "attachment_content_id", 1111l)
-		!found("attachment_content", "attachment_content_id", 111l)
-		!found("attachment_content", "attachment_content_id", 1211l)
-		!found("attachment_content", "attachment_content_id", 1212l)
+		found("attachment_content", "attachment_content_id", -121L)
+		found("attachment_content", "attachment_content_id", -1111L)
+		!found("attachment_content", "attachment_content_id", -111L)
+		!found("attachment_content", "attachment_content_id", -1211L)
+		!found("attachment_content", "attachment_content_id", -1212L)
 
-		found("attachment", "attachment_id", 121l)
-		found("attachment", "attachment_id", 1111l)
-		!found("attachment", "attachment_id", 111l)
-		!found("attachment", "attachment_id", 1211l)
-		!found("attachment", "attachment_id", 1212l)
+		found("attachment", "attachment_id", -121L)
+		found("attachment", "attachment_id", -1111L)
+		!found("attachment", "attachment_id", -111L)
+		!found("attachment", "attachment_id", -1211L)
+		!found("attachment", "attachment_id", -1212L)
 
-		found("attachment_list", "attachment_list_id", 2l)
-		found("attachment_list", "attachment_list_id", 3l)
-		!found("attachment_list", "attachment_list_id", 1l)
-		!found("attachment_list", "attachment_list_id", 4l)
+		found("attachment_list", "attachment_list_id", -2L)
+		found("attachment_list", "attachment_list_id", -3L)
+		!found("attachment_list", "attachment_list_id", -1L)
+		!found("attachment_list", "attachment_list_id", -4L)
 	}
 
 
@@ -90,18 +90,18 @@ class HibernateTestCaseDeletionDaoIT extends DbunitDaoSpecification{
 	def "should remove a test case from its folder"(){
 
 		when :
-		deletionDao.removeEntities([11l])
+		deletionDao.removeEntities([-11L])
 		getSession().flush()
 		getSession().clear()
 
-		def folder = findEntity(TestCaseFolder.class, 1l)
+		def folder = findEntity(TestCaseFolder.class, -1L)
 
 		then :
-		found ("test_case", "tcln_id", 12l)
-		!found("test_case", "tcln_id", 11l)
+		found ("test_case", "tcln_id", -12L)
+		!found("test_case", "tcln_id", -11L)
 
 
-		folder.content.containsExactlyIds([12l])
+		folder.content.containsExactlyIds([-12L])
 	}
 
 
@@ -109,15 +109,15 @@ class HibernateTestCaseDeletionDaoIT extends DbunitDaoSpecification{
 	def "should remove a folder from the root content"(){
 		when :
 
-		deletionDao.removeEntities([13l])
+		deletionDao.removeEntities([-13L])
 
 		getSession().flush()
 		getSession().clear()
 
-		def library = findEntity(TestCaseLibrary.class, 1l)
+		def library = findEntity(TestCaseLibrary.class, -1L)
 
 		then :
-		library.rootContent.containsExactlyIds([11l])
+		library.rootContent.containsExactlyIds([-11L])
 	}
 
 
@@ -125,9 +125,9 @@ class HibernateTestCaseDeletionDaoIT extends DbunitDaoSpecification{
 	def "should have two steps"(){
 
 		when :
-		def tc = findEntity(TestCase.class, 11l)
+		def tc = findEntity(TestCase.class, -11L)
 		then:
-		tc.steps.containsExactlyIds([111l, 112l])
+		tc.steps.containsExactlyIds([-111L, -112L])
 	}
 
 
@@ -140,22 +140,22 @@ class HibernateTestCaseDeletionDaoIT extends DbunitDaoSpecification{
 
 
 		when :
-		deletionDao.removeAllSteps([111l, 112l])
+		deletionDao.removeAllSteps([-111L, -112L])
 
 		getSession().flush()
 		getSession().clear()
 
-		def testCaseAfter = findEntity(TestCase.class, 11l)
+		def testCaseAfter = findEntity(TestCase.class, -11L)
 
 		then :
-		! found("test_step", "test_step_id", 111l)
-		! found("test_step", "test_step_id", 112l)
+		! found("test_step", "test_step_id", -111L)
+		! found("test_step", "test_step_id", -112L)
 
-		! found("action_test_step", "test_step_id", 111l)
-		! found("call_test_step", "test_step_id", 112l)
+		! found("action_test_step", "test_step_id", -111L)
+		! found("call_test_step", "test_step_id", -112L)
 
-		! found("test_case_steps", "step_id", 111l)
-		! found("test_case_steps", "step_id", 112l)
+		! found("test_case_steps", "step_id", -111L)
+		! found("test_case_steps", "step_id", -112L)
 
 		testCaseAfter.steps.size()==0
 	}
@@ -167,36 +167,36 @@ class HibernateTestCaseDeletionDaoIT extends DbunitDaoSpecification{
 
 		when :
 
-		deletionDao.removeFromVerifyingTestCaseLists([11l])
+		deletionDao.removeFromVerifyingTestCaseLists([-11L])
 
 		getSession().flush()
 		getSession().clear()
 
-		def requirement=findEntity( Requirement.class, 21l)
+		def requirement=findEntity( Requirement.class, -21L)
 
 		then :
 
-		found ("test_case", "tcln_id", 12l)
-		requirement.currentVersion.verifyingTestCases.containsExactlyIds([12L])
+		found ("test_case", "tcln_id", -12L)
+		requirement.currentVersion.verifyingTestCases.containsExactlyIds([-12L])
 	}
 
 
 	@DataSet("NodeDeletionDaoTest.should disassociate a test case from iteration test plan and execution.xml")
 	def "should disassociate a test case from iteration test plan and execution"(){
 		given :
-		def itemTestPlan_1 = findEntity(IterationTestPlanItem.class, 51l)
-		def execution_1 = findEntity(Execution.class, 61l)
+		def itemTestPlan_1 = findEntity(IterationTestPlanItem.class, -51L)
+		def execution_1 = findEntity(Execution.class, -61L)
 
 		when :
 
-		deletionDao.removeOrSetIterationTestPlanInboundReferencesToNull([11l])
-		deletionDao.setExecutionInboundReferencesToNull([11l])
+		deletionDao.removeOrSetIterationTestPlanInboundReferencesToNull([-11L])
+		deletionDao.setExecutionInboundReferencesToNull([-11L])
 
 		getSession().flush()
 		getSession().clear()
 
-		def itemTestPlan_2 = findEntity(IterationTestPlanItem.class, 51l)
-		def execution_2 = findEntity(Execution.class, 61l)
+		def itemTestPlan_2 = findEntity(IterationTestPlanItem.class, -51L)
+		def execution_2 = findEntity(Execution.class, -61L)
 
 		then :
 
@@ -211,33 +211,33 @@ class HibernateTestCaseDeletionDaoIT extends DbunitDaoSpecification{
 	@DataSet("NodeDeletionHandlerTest.should disassociate from two item test plan and remove two.xml")
 	def "should disassociate from two item test plan having executions and remove two other having no executions, for two iterations "(){
 		when :
-		deletionDao.removeOrSetIterationTestPlanInboundReferencesToNull([2l, 3l]);
+		deletionDao.removeOrSetIterationTestPlanInboundReferencesToNull([-2L, -3L]);
 
 		then :
 
-		found("iteration_test_plan_item", "item_test_plan_id", 11l)
-		found("iteration_test_plan_item", "item_test_plan_id", 14l)
-		found("iteration_test_plan_item", "item_test_plan_id", 21l)
-		found("iteration_test_plan_item", "item_test_plan_id", 22l)
-		found("iteration_test_plan_item", "item_test_plan_id", 24l)
+		found("iteration_test_plan_item", "item_test_plan_id", -11L)
+		found("iteration_test_plan_item", "item_test_plan_id", -14L)
+		found("iteration_test_plan_item", "item_test_plan_id", -21L)
+		found("iteration_test_plan_item", "item_test_plan_id", -22L)
+		found("iteration_test_plan_item", "item_test_plan_id", -24L)
 
-		!found("iteration_test_plan_item", "item_test_plan_id", 12l)
-		!found("iteration_test_plan_item", "item_test_plan_id", 13l)
-		!found("iteration_test_plan_item", "item_test_plan_id", 23l)
+		!found("iteration_test_plan_item", "item_test_plan_id", -12L)
+		!found("iteration_test_plan_item", "item_test_plan_id", -13L)
+		!found("iteration_test_plan_item", "item_test_plan_id", -23L)
 
-		def it1 = findEntity(Iteration.class, 1l)
-		def it2 = findEntity(Iteration.class, 2l)
+		def it1 = findEntity(Iteration.class, -1L)
+		def it2 = findEntity(Iteration.class, -2L)
 
 		it1.testPlans.size() == 2
 		it2.testPlans.size() == 3
 
-		it1.testPlans.containsExactlyIds([14l, 11l])
-		it2.testPlans.containsExactlyIds([21l, 22l, 24l])
+		it1.testPlans.containsExactlyIds([-14L, -11L])
+		it2.testPlans.containsExactlyIds([-21L, -22L, -24L])
 
-		def randomItp = findEntity(IterationTestPlanItem.class, 11l)
-		randomItp.referencedTestCase.id == 1l
+		def randomItp = findEntity(IterationTestPlanItem.class, -11L)
+		randomItp.referencedTestCase.id == -1L
 
-		def itp2 = findEntity(IterationTestPlanItem.class, 22l )
+		def itp2 = findEntity(IterationTestPlanItem.class, -22L )
 		itp2.referencedTestCase == null
 	}
 
@@ -247,18 +247,18 @@ class HibernateTestCaseDeletionDaoIT extends DbunitDaoSpecification{
 	def "should disassociate a test step from calling exec steps"(){
 
 		when :
-		deletionDao.setExecStepInboundReferencesToNull([11l, 14l])
+		deletionDao.setExecStepInboundReferencesToNull([-11L, -14L])
 
 
 		then :
-		findEntity(ExecutionStep.class, 11l).referencedTestStep == null
-		findEntity(ExecutionStep.class, 12l).referencedTestStep.id == 12l
-		findEntity(ExecutionStep.class, 13l).referencedTestStep.id == 13l
-		findEntity(ExecutionStep.class, 14l).referencedTestStep == null
-		findEntity(ExecutionStep.class, 21l).referencedTestStep == null
-		findEntity(ExecutionStep.class, 22l).referencedTestStep.id == 12l
-		findEntity(ExecutionStep.class, 23l).referencedTestStep.id == 13l
-		findEntity(ExecutionStep.class, 24l).referencedTestStep == null
+		findEntity(ExecutionStep.class, -11L).referencedTestStep == null
+		findEntity(ExecutionStep.class, -12L).referencedTestStep.id == -12L
+		findEntity(ExecutionStep.class, -13L).referencedTestStep.id == -13L
+		findEntity(ExecutionStep.class, -14L).referencedTestStep == null
+		findEntity(ExecutionStep.class, -21L).referencedTestStep == null
+		findEntity(ExecutionStep.class, -22L).referencedTestStep.id == -12L
+		findEntity(ExecutionStep.class, -23L).referencedTestStep.id == -13L
+		findEntity(ExecutionStep.class, -24L).referencedTestStep == null
 	}
 
 
@@ -266,34 +266,34 @@ class HibernateTestCaseDeletionDaoIT extends DbunitDaoSpecification{
 	def "should delete and reorder campaign item test plans that were calling deleted test cases"(){
 
 		when :
-		deletionDao.removeCampaignTestPlanInboundReferences([2l, 3l])
+		deletionDao.removeCampaignTestPlanInboundReferences([-2L, -3L])
 
 		then :
-		found("campaign_test_plan_item", "ctpi_id", 11l)
-		found("campaign_test_plan_item", "ctpi_id", 14l)
-		found("campaign_test_plan_item", "ctpi_id", 21l)
-		found("campaign_test_plan_item", "ctpi_id", 24l)
-		found("campaign_test_plan_item", "ctpi_id", 31l)
-		found("campaign_test_plan_item", "ctpi_id", 34l)
+		found("campaign_test_plan_item", "ctpi_id", -11L)
+		found("campaign_test_plan_item", "ctpi_id", -14L)
+		found("campaign_test_plan_item", "ctpi_id", -21L)
+		found("campaign_test_plan_item", "ctpi_id", -24L)
+		found("campaign_test_plan_item", "ctpi_id", -31L)
+		found("campaign_test_plan_item", "ctpi_id", -34L)
 
-		!found("campaign_test_plan_item", "ctpi_id", 12l)
-		!found("campaign_test_plan_item", "ctpi_id", 13l)
-		!found("campaign_test_plan_item", "ctpi_id", 22l)
-		!found("campaign_test_plan_item", "ctpi_id", 23l)
-		!found("campaign_test_plan_item", "ctpi_id", 32l)
-		!found("campaign_test_plan_item", "ctpi_id", 33l)
+		!found("campaign_test_plan_item", "ctpi_id", -12L)
+		!found("campaign_test_plan_item", "ctpi_id", -13L)
+		!found("campaign_test_plan_item", "ctpi_id", -22L)
+		!found("campaign_test_plan_item", "ctpi_id", -23L)
+		!found("campaign_test_plan_item", "ctpi_id", -32L)
+		!found("campaign_test_plan_item", "ctpi_id", -33L)
 
-		def c1 = findEntity(Campaign.class, 1l)
-		def c2 = findEntity(Campaign.class, 2l)
-		def c3 = findEntity(Campaign.class, 3l)
+		def c1 = findEntity(Campaign.class, -1L)
+		def c2 = findEntity(Campaign.class, -2L)
+		def c3 = findEntity(Campaign.class, -3L)
 
 		c1.testPlan.size() ==2
 		c2.testPlan.size() ==2
 		c3.testPlan.size() ==2
 
-		c1.testPlan.containsExactlyIds([11l, 14l])
-		c2.testPlan.containsExactlyIds([24l, 21l])
-		c3.testPlan.containsExactlyIds([31l, 34l])
+		c1.testPlan.containsExactlyIds([-11L, -14L])
+		c2.testPlan.containsExactlyIds([-24L, -21L])
+		c3.testPlan.containsExactlyIds([-31L, -34L])
 	}
 
 

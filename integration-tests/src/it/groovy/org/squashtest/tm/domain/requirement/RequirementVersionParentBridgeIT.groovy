@@ -55,8 +55,8 @@ class RequirementVersionParentBridgeIT extends BridgeSpecification {
 		
 		where:
 		reqId  | parent
-		10L    | "0"
-		402L   | "1"
-		60L    | "0"
+		-10L    | "0"
+		-402L   | "1"
+		-60L    | "0"
 	}
 }

@@ -241,7 +241,7 @@ public class FacilityImplIT extends DbunitServiceSpecification {
 		storedcufs.hasCuf "TXT_TC" ,"changed the cuf value"
 
 		// the unmodified values
-		t.id == 245l
+		t.id == -245L
 		t.importanceAuto == false
 		t.nature == TestCaseNature.BUSINESS_TESTING
 		t.status == TestCaseStatus.WORK_IN_PROGRESS
@@ -311,7 +311,7 @@ public class FacilityImplIT extends DbunitServiceSpecification {
 
 
 		found.id != null
-		found.id != 242l
+		found.id != -242L
 		found.name == "test case 1 (1)"	// means test case 1 with at least one extra character
 		found.description == "special description"
 	}
@@ -334,7 +334,7 @@ public class FacilityImplIT extends DbunitServiceSpecification {
 
 		then :
 		train.hasCriticalErrors() == false
-		allDeleted("TestCase", [246l])
+		allDeleted("TestCase", [-246L])
 		impl.validator.model.getStatus(target).status == Existence.NOT_EXISTS
 	}
 
@@ -430,7 +430,7 @@ public class FacilityImplIT extends DbunitServiceSpecification {
 		TestCase found = (TestCase)finder.findNodeByPath("/Test Project-1/dossier 1/test case 2")
 
 		found.steps.size() == 3
-		found.steps[1].calledTestCase.id == 248l
+		found.steps[1].calledTestCase.id == -248L
 
 		impl.validator.model.isCalledBy(calledtc, callertc)
 	}
@@ -484,7 +484,7 @@ public class FacilityImplIT extends DbunitServiceSpecification {
 
 		flush()
 
-		def updatedstep = getSession().get(ActionTestStep, 168l)
+		def updatedstep = getSession().get(ActionTestStep, -168L)
 		def updatedcufs = cufFinder.findAllCustomFieldValues updatedstep
 
 		then :
@@ -557,7 +557,7 @@ public class FacilityImplIT extends DbunitServiceSpecification {
 		TestCase found = (TestCase)finder.findNodeByPath("/autre project/TEST A")
 
 		found.steps.size() == 3
-		found.steps[2].calledTestCase.id == 248l
+		found.steps[2].calledTestCase.id == -248L
 
 		impl.validator.model.isCalledBy(calledtc, callertc)
 	}
@@ -591,7 +591,7 @@ public class FacilityImplIT extends DbunitServiceSpecification {
 		TestCase found = sessionFactory.currentSession.load(TestCase, id)
 
 		found.steps.size() == 3
-		found.steps[1].calledTestCase.id == 242l // and not 246l
+		found.steps[1].calledTestCase.id == -242L // and not -246L
 
 		! impl.validator.model.isCalledBy(calledtc, callertc)
 
@@ -624,7 +624,7 @@ public class FacilityImplIT extends DbunitServiceSpecification {
 		TestCase found = sessionFactory.currentSession.load(TestCase, id)
 
 		found.getSteps().size() == 3
-		found.getSteps()[1].calledTestCase.id == 242l // and not 246l
+		found.getSteps()[1].calledTestCase.id == -242L // and not -246L
 
 		! impl.validator.model.isCalledBy(calledtc, callertc)
 

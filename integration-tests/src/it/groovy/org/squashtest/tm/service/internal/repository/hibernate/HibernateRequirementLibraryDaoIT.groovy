@@ -41,11 +41,11 @@ class HibernateRequirementLibraryDaoIT extends DbunitServiceSpecification {
 
 	def "should find root content of requirement library"() {
 		when:
-		def content = dao.findAllRootContentById(110L)
+		def content = dao.findAllRootContentById(-110L)
 
 		then:
 		content.size() == 1
-		content[0].id == 1110L
+		content[0].id == -1110L
 
 	}
 
@@ -59,7 +59,7 @@ class HibernateRequirementLibraryDaoIT extends DbunitServiceSpecification {
 
 	def "should find library by id"() {
 		when:
-		def found = dao.findById(120L)
+		def found = dao.findById(-120L)
 
 		then:
 		found != null

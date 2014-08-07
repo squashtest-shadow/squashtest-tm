@@ -62,7 +62,7 @@ class HibernateExecutionDaoIT extends DbunitDaoSpecification {
 		pas.sortOrder >> SortOrder.ASCENDING
 		
 		when: 
-		def res = executionDao.findAllByTestCaseId(500L, pas)
+		def res = executionDao.findAllByTestCaseId(-500L, pas)
 		
 		then:
 		res*.id == [580, 627, 718, 752, 953]
@@ -81,7 +81,7 @@ class HibernateExecutionDaoIT extends DbunitDaoSpecification {
 		pas.sortOrder >> sortOrder
 		
 		when: 
-		def res = executionDao.findAllByTestCaseId(500L, pas)
+		def res = executionDao.findAllByTestCaseId(-500L, pas)
 		
 		then:
 		res*.id == expectedIds

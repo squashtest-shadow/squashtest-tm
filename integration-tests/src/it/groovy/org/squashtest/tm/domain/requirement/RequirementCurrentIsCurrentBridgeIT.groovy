@@ -64,9 +64,9 @@ class RequirementCurrentIsCurrentBridgeIT extends BridgeSpecification {
 		
 		where:
 		reqVerId | current
-		2010L    | "1"
-		2020L    | "0"
-		3010L    | "0"
+		-2010L    | "1"
+		-2020L    | "0"
+		-3010L    | "0"
 	}
 
 }

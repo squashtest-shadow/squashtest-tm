@@ -58,11 +58,11 @@ public class TestCaseNodeDeletionHandlerIT extends DbunitServiceSpecification {
 	def "should not delete the test case because of a step call"(){
 
 		when :
-		def result = deletionHandler.deleteNodes([12L])
+		def result = deletionHandler.deleteNodes([-12L])
 
 		then :
 		result.removed  == []		
-		found(TestCase.class, 12l)
+		found(TestCase.class, -12L)
 		
 	}
 
@@ -70,22 +70,22 @@ public class TestCaseNodeDeletionHandlerIT extends DbunitServiceSpecification {
 	def "should delete the test case and cascade to its steps"(){
 		
 		when :
-		def result = deletionHandler.deleteNodes([11L]);
+		def result = deletionHandler.deleteNodes([-11L]);
 
 		then :
-		result.removed.collect{it.resid} == [11L]
+		result.removed.collect{it.resid} == [-11L]
 
-		! found(TestCase.class, 11l)
-		! found(TestStep.class, 111l)
-		! found(TestStep.class, 112l)
-		! found(CallTestStep.class, 112l)
-		! found(Dataset.class, 112l)
-		! found(Parameter.class, 112l)
-		! found(DatasetParamValue.class, 112l)
-		found (TestCase.class, 12l)
+		! found(TestCase.class, -11L)
+		! found(TestStep.class, -111L)
+		! found(TestStep.class, -112L)
+		! found(CallTestStep.class, -112L)
+		! found(Dataset.class, -112L)
+		! found(Parameter.class, -112L)
+		! found(DatasetParamValue.class, -112L)
+		found (TestCase.class, -12L)
 		
-		allDeleted("CustomFieldValue", [11l, 12L])
-		allNotDeleted("CustomFieldValue", [21L, 22L])
+		allDeleted("CustomFieldValue", [-11L, -12L])
+		allNotDeleted("CustomFieldValue", [-21L, -22L])
 	}
 
 
@@ -93,13 +93,13 @@ public class TestCaseNodeDeletionHandlerIT extends DbunitServiceSpecification {
 	def "should not delete a folder because one child is called by a non-deleted test case, the other test case is removed normally"(){
 
 		when :
-		def result = deletionHandler.deleteNodes([1L]);
+		def result = deletionHandler.deleteNodes([-1L]);
 
 		then :
-		result.removed.collect{it.resid} == [11L]
-		found (TestCaseFolder.class, 1l)
-		found (TestCase.class, 12l)			//that one is the test case called by the external caller test case
-		! found (TestCase.class, 11l)
+		result.removed.collect{it.resid} == [-11L]
+		found (TestCaseFolder.class, -1L)
+		found (TestCase.class, -12L)			//that one is the test case called by the external caller test case
+		! found (TestCase.class, -11L)
 	}
 
 
@@ -107,67 +107,67 @@ public class TestCaseNodeDeletionHandlerIT extends DbunitServiceSpecification {
 	def "should delete a folder and all its dependencies, Called tc are removed successfully because the caller is removed along it, so are the custom field values"(){
 
 		when :
-		def result = deletionHandler.deleteNodes([1L]);
+		def result = deletionHandler.deleteNodes([-1L]);
 
 		then :
-		result.removed.collect{it.resid}.containsAll([1L, 11L, 12L])
+		result.removed.collect{it.resid}.containsAll([-1L, -11L, -12L])
 
-		allDeleted("TestCase", [11L, 12L])
-		allDeleted("TestStep", [111L, 112L, 121L])
-		allDeleted("TestCaseFolder", [1L])
+		allDeleted("TestCase", [-11L, -12L])
+		allDeleted("TestStep", [-111L, -112L, -121L])
+		allDeleted("TestCaseFolder", [-1L])
 
 		allDeleted("Attachment", [
-			111L,
-			121L,
-			1111L,
-			1211L,
-			1212l
+			-111L,
+			-121L,
+			-1111L,
+			-1211L,
+			-1212L
 		])
 		allDeleted("AttachmentContent", [
-			111L,
-			121L,
-			1111L,
-			1211L,
-			1212l
+			-111L,
+			-121L,
+			-1111L,
+			-1211L,
+			-1212L
 		])
-		allDeleted("AttachmentList", [11L, 12L, 111L, 121L, 123l])	//issue 2899 : now checks that the attachment lists for folders are also deleted
+		allDeleted("AttachmentList", [-11L, -12L, -111L, -121L, -123L])	//issue 2899 : now checks that the attachment lists for folders are also deleted
 		
-		allDeleted("CustomFieldValue", [11L, 12L, 21L, 22L])
+		allDeleted("CustomFieldValue", [-11L, -12L, -21L, -22L])
 
-		def lib = findEntity(TestCaseLibrary.class, 1l)
+		def lib = findEntity(TestCaseLibrary.class, -1L)
 		lib.rootContent.size() == 0
 	}
 	
 	@DataSet("TestCaseNodeDeletionHandlerIT.should delete a test-step along with its attachments.xml")
 	def "should delete a test-step along with its attachments"(){
 		given:
-		TestCase owner = findEntity(TestCase.class, 11L);
-		TestStep tStep = findEntity (TestStep.class, 111L);
+		TestCase owner = findEntity(TestCase.class, -11L);
+		TestStep tStep = findEntity (TestStep.class, -111L);
 		
 		
 		when :
 		deletionHandler.deleteStep (owner, tStep);
 		
 		then : 
-		allDeleted("TestStep", [111L])
-		allDeleted("AttachmentList", [111L])
-		allDeleted("Attachment", [1111L])
-		allDeleted("AttachmentContent", [1111L])
+		allDeleted("TestStep", [-111L])
+		allDeleted("AttachmentList", [-111L])
+		allDeleted("Attachment", [-1111L])
+		allDeleted("AttachmentContent", [-1111L])
 		
 	}
 	
 	@DataSet("TestCaseNodeDeletionHandlerIT.should delete a test-step along with its attachments.xml")
 	def "should delete a call step "(){
 		given:
-		TestCase owner = findEntity(TestCase.class, 11L)
-		TestStep tStep = findEntity (TestStep.class, 112L)
+		TestCase owner = findEntity(TestCase.class, -11L)
+		TestStep tStep = findEntity (TestStep.class, -112L)
 		
 		
 		when :
 		deletionHandler.deleteStep (owner, tStep)
 		
 		then :
-		allDeleted("TestStep", [112L])
+		allDeleted("TestStep", [-112L])
 		
 	}
 	
@@ -175,7 +175,7 @@ public class TestCaseNodeDeletionHandlerIT extends DbunitServiceSpecification {
 	def "should delete a test case and reorder the (non executed) test plans that includes it"(){
 
 		when :
-			deletionHandler.deleteNodes([100L])
+			deletionHandler.deleteNodes([-100L])
 			session.flush();
 		
 			def tsMaxOrder = session.createSQLQuery("select max(test_plan_order) from TEST_SUITE_TEST_PLAN_ITEM where suite_id = 1").uniqueResult()

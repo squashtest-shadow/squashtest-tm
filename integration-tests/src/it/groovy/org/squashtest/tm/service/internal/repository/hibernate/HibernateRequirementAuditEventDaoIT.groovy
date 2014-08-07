@@ -51,7 +51,7 @@ class HibernateRequirementAuditEventDaoIT extends DbunitDaoSpecification {
 	@DataSet("HibernateRequirementAuditEventDaoIT.should persist various events.xml")
 	def "should persist a RequirementCreation event"(){
 		given :
-		RequirementVersion requirement = getSession().load(RequirementVersion.class, 1l);
+		RequirementVersion requirement = getSession().load(RequirementVersion.class, -1L);
 
 		when :
 		def createEvent = new RequirementCreation(requirement, requirement.createdBy);
@@ -71,7 +71,7 @@ class HibernateRequirementAuditEventDaoIT extends DbunitDaoSpecification {
 	@DataSet("HibernateRequirementAuditEventDaoIT.should persist various events.xml")
 	def "should persist a RequirementPropertyChange event"(){
 		given :
-		RequirementVersion requirement = getSession().load(RequirementVersion.class, 1l);
+		RequirementVersion requirement = getSession().load(RequirementVersion.class, -1L);
 
 		when :
 		RequirementPropertyChange pptChangeEvent = RequirementPropertyChange.builder()
@@ -100,7 +100,7 @@ class HibernateRequirementAuditEventDaoIT extends DbunitDaoSpecification {
 	@DataSet("HibernateRequirementAuditEventDaoIT.should persist various events.xml")
 	def "should persist a RequirementLargeProperty event"(){
 		given :
-		RequirementVersion requirement = getSession().load(RequirementVersion.class, 1l);
+		RequirementVersion requirement = getSession().load(RequirementVersion.class, -1L);
 
 		when :
 		def pptChangeEvent = RequirementLargePropertyChange.builder()
@@ -130,7 +130,7 @@ class HibernateRequirementAuditEventDaoIT extends DbunitDaoSpecification {
 	@DataSet("HibernateRequirementAuditEventDaoIT.should fetch lists of events.xml")
 	def "should fetch list of event for a requirement sorted by date"(){
 		given :
-		def requirementId=1l
+		def requirementId=-1L
 
 		and:
 		Paging paging = Mock()
@@ -172,7 +172,7 @@ class HibernateRequirementAuditEventDaoIT extends DbunitDaoSpecification {
 	@DataSet("HibernateRequirementAuditEventDaoIT.should fetch lists of events.xml")
 	def "should fetch paged list of event for a requirement"(){
 		given :
-		def requirementId=1L
+		def requirementId=-1L
 
 		and:
 		Paging paging = Mock()
@@ -183,16 +183,16 @@ class HibernateRequirementAuditEventDaoIT extends DbunitDaoSpecification {
 		List<RequirementAuditEvent> events = eventDao.findAllByRequirementVersionIdOrderedByDate(requirementId, paging);
 
 		then :
-		events.collect { it.id } == [ 12L, 14L ]
+		events.collect { it.id } == [ -12L, -14L ]
 	}
 
 	@DataSet("HibernateRequirementAuditEventDaoIT.should fetch lists of events.xml")
 	def "should count events for a requirement"(){
 		given :
-		def requirementId=1L
+		def requirementId=-1L
 
 		when :
-		def res = eventDao.countByRequirementVersionId(1L)
+		def res = eventDao.countByRequirementVersionId(-1L)
 		
 
 		then :

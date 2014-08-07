@@ -2,11 +2,11 @@
 <!DOCTYPE dataset SYSTEM "../../../../../../../dtd/squash-tm.1.9.10.dtd">
 
 <dataset>
-  <ACL_CLASS ID="100" CLASSNAME="foo.Bar" />  
-  <ACL_CLASS ID="200" CLASSNAME="super.Dragon" />  
-	<ACL_OBJECT_IDENTITY CLASS_ID="100" IDENTITY="10" />
-  <ACL_OBJECT_IDENTITY CLASS_ID="100" IDENTITY="11" />
-  <ACL_OBJECT_IDENTITY CLASS_ID="200" IDENTITY="20" />
+  <ACL_CLASS ID="-100" CLASSNAME="foo.Bar" />  
+  <ACL_CLASS ID="-200" CLASSNAME="super.Dragon" />  
+	<ACL_OBJECT_IDENTITY CLASS_ID="-100" IDENTITY="-10" />
+  <ACL_OBJECT_IDENTITY CLASS_ID="-100" IDENTITY="-11" />
+  <ACL_OBJECT_IDENTITY CLASS_ID="-200" IDENTITY="-20" />
   <acl_group_permission />
   <acl_responsibility_scope_entry />
 </dataset>

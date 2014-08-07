@@ -47,7 +47,7 @@ class RequirementNodeWalkerIT extends DbunitServiceSpecification {
 		def RequirementNodeWalker walker = new RequirementNodeWalker()
 
 		and:
-		def selectedNodeId = 10L
+		def selectedNodeId = -10L
 		RequirementLibraryNode node = getSession().get(RequirementLibraryNode.class, selectedNodeId)
 
 		when :
@@ -66,7 +66,7 @@ class RequirementNodeWalkerIT extends DbunitServiceSpecification {
 		def RequirementNodeWalker walker = new RequirementNodeWalker()
 
 		and:
-		def selectedNodeId = 1L
+		def selectedNodeId = -1L
 		RequirementLibraryNode node = getSession().get(RequirementLibraryNode.class, selectedNodeId)
 
 		when :
@@ -81,6 +81,6 @@ class RequirementNodeWalkerIT extends DbunitServiceSpecification {
 			retrieveNodes[3].getId()
 		]
 		retrievedId.sort()
-		retrievedId == [10L, 11L, 12L, 13L]
+		retrievedId == [-10L, -11L, -12L, -13L]
 	}
 }

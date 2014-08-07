@@ -47,7 +47,7 @@ class ExecutionModificationServiceIT extends DbunitServiceSpecification {
 	def "should update execution description"(){
 
 		given :
-		def executionId = 1L
+		def executionId = -1L
 		def updatedDescription = "wooohooo I just updated the description here !"
 		
 		when :
@@ -63,7 +63,7 @@ class ExecutionModificationServiceIT extends DbunitServiceSpecification {
 	def "should tell that the requested execution is the second one of the set"(){
 
 		given :
-		def executionId = 3L
+		def executionId = -3L
 
 		when :
 		def rank = execService.findExecutionRank(executionId)

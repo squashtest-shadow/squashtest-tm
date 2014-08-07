@@ -48,7 +48,7 @@ class RequirementAuditTrailServiceIT extends DbunitServiceSpecification {
 	@DataSet("RequirementAuditTrailServiceIT.should fetch lists of events.xml")
 	def "should fetch list of event for a requirement sorted by date"(){
 		given :
-		def requirementId=1L
+		def requirementId=-1L
 			
 		and:
 		Paging paging = Mock()
@@ -59,7 +59,7 @@ class RequirementAuditTrailServiceIT extends DbunitServiceSpecification {
 		PagedCollectionHolder paged = service.findAllByRequirementVersionIdOrderedByDate(requirementId, paging);
 		
 		then :
-		paged.items.collect { it.id } == [ 12L , 14L]
+		paged.items.collect { it.id } == [ -12L , -14L]
 		paged.firstItemIndex == 1
 		paged.totalNumberOfItems == 4
 	}

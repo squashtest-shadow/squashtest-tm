@@ -47,9 +47,9 @@ class CustomCustomFieldManagerServiceIT extends DbunitServiceSpecification {
 	def "should add default value to custom fields without a value"(){
 
 		when :
-		service.changeOptional(1l,false)
-		CustomFieldValue value1 = findEntity(CustomFieldValue.class, 1111l)
-		CustomFieldValue value2 = findEntity(CustomFieldValue.class, 1112l)
+		service.changeOptional(-1L,false)
+		CustomFieldValue value1 = findEntity(CustomFieldValue.class, -1111L)
+		CustomFieldValue value2 = findEntity(CustomFieldValue.class, -1112L)
 
 		then :
 		value1.getValue().equals("NOSEC")

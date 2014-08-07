@@ -18,7 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.csp.core.security.acls.jdbc;
+package org.squashtest.csp.core.security.acls.jdbc
 
 import javax.inject.Inject
 import javax.sql.DataSource
@@ -31,9 +31,9 @@ import org.springframework.test.context.transaction.TransactionConfiguration
 import org.springframework.transaction.annotation.Transactional
 import org.squashtest.tm.service.security.StubAuthentication
 import org.squashtest.tm.service.security.acls.jdbc.JdbcManageableAclService
-import org.squashtest.tm.service.security.acls.jdbc.ManageableAclService;
+import org.squashtest.tm.service.security.acls.jdbc.ManageableAclService
 import org.squashtest.tm.service.security.acls.jdbc.UnknownAclClassException
-import org.squashtest.tm.service.security.acls.model.ObjectAclService;
+import org.squashtest.tm.service.security.acls.model.ObjectAclService
 import org.unitils.dbunit.annotation.DataSet
 import org.unitils.dbunit.annotation.ExpectedDataSet
 
@@ -57,7 +57,7 @@ class JdbcManageableAclServiceIT extends Specification {
 	@ExpectedDataSet("JdbcManageableAclServiceIT.should create OID for a project.expected.xml")
 	def "should create OID for a project"() {
 		given:
-		ObjectIdentity oid = new ObjectIdentityImpl("foo.Bar", 10L)
+		ObjectIdentity oid = new ObjectIdentityImpl("foo.Bar", -10L)
 
 		when:
 		manageableService.createObjectIdentity oid
@@ -70,7 +70,7 @@ class JdbcManageableAclServiceIT extends Specification {
 	@ExpectedDataSet("JdbcManageableAclServiceIT.should delete OID for a project.expected.xml")
 	def "should delete OID for a project"() {
 		given:
-		ObjectIdentity oid = new ObjectIdentityImpl("foo.Bar", 10L)
+		ObjectIdentity oid = new ObjectIdentityImpl("foo.Bar", -10L)
 
 		when:
 		manageableService.removeObjectIdentity(oid)
@@ -82,7 +82,7 @@ class JdbcManageableAclServiceIT extends Specification {
 	@DataSet(value = "JdbcManageableAclServiceIT.should create OID for a project.xml")
 	def "should not create OID for an unknown class"() {
 		given:
-		ObjectIdentity oid = new ObjectIdentityImpl("foo.Unknown", 10L)
+		ObjectIdentity oid = new ObjectIdentityImpl("foo.Unknown", -10L)
 
 		when:
 		manageableService.createObjectIdentity oid
@@ -97,7 +97,7 @@ class JdbcManageableAclServiceIT extends Specification {
 		def groups = service.findAllPermissionGroupsByNamespace("foo")
 
 		then:
-		groups.collect { it.id } == [10L, 20L]
+		groups.collect { it.id } == [-10L, -20L]
 		groups.collect { it.qualifiedName } == ["foo.Bar", "foo.Baz"]
 	}
 
@@ -113,7 +113,7 @@ class JdbcManageableAclServiceIT extends Specification {
 	//	@DataSet("JdbcManageableAclServiceIT.should find object Identity for project.xml")
 	//	def "should find object Identity for project"(){
 	//		given:
-	//			ObjectIdentity oid = new ObjectIdentityImpl("batmobile", 1000L)
+	//			ObjectIdentity oid = new ObjectIdentityImpl("batmobile", -1000L)
 	//		when:
 	//		def res = manageableService.retrieveObjectIdentityPrimaryKey(oid)
 	//
@@ -124,35 +124,35 @@ class JdbcManageableAclServiceIT extends Specification {
 	@DataSet("JdbcManageableAclServiceIT.should retrieve acl group user.xml")
 	def "should retrieve acl group for user"() {
 		when:
-		def res = service.retrieveClassAclGroupFromPartyId(10, "batmobile")
+		def res = service.retrieveClassAclGroupFromPartyId(-10, "batmobile")
 
 
 		then:
 		res != null
 		!res.isEmpty()
-		res[0][0] == 101
-		res[1][0] == 102
+		res[0][0] == -101
+		res[1][0] == -102
 	}
 
 	@DataSet("JdbcManageableAclServiceIT.should retrieve acl group user.xml")
 	def "sould fiind object without permission"() {
 		when:
-		def res = service.findObjectWithoutPermissionByPartyId (10, "batmobile")
-		System.out.println(res.toString());
+		def res = service.findObjectWithoutPermissionByPartyId (-10, "batmobile")
+		System.out.println(res.toString())
 
 		then:
 		res != null
 		!res.isEmpty()
-		res[0] == 103
+		res[0] == -103
 
 	}
 
 	@DataSet("JdbcManageableAclServiceIT.should find user with write permission on a specific object.xml")
 	def "should find user with write permission on a specific object"() {
 		given:
-		ObjectIdentity oid = new ObjectIdentityImpl("batmobile", 1000L)
-		List<ObjectIdentity> entityRefs = new ArrayList<ObjectIdentity>();
-		entityRefs.add(oid);
+		ObjectIdentity oid = new ObjectIdentityImpl("batmobile", -1000L)
+		List<ObjectIdentity> entityRefs = new ArrayList<ObjectIdentity>()
+		entityRefs.add(oid)
 
 		when:
 		def res = service.findUsersWithWritePermission(entityRefs)

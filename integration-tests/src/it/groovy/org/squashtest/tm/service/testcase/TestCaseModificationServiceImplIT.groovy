@@ -206,14 +206,14 @@ class TestCaseModificationServiceImplIT extends DbunitServiceSpecification {
 	@DataSet("TestCaseModificationServiceImplIT.should update a test step action.xml")
 	def "should update a test step action "(){
 		given :
-		def stepId = 2L
+		def stepId = -2L
 		and:
 		def newAction = "manmana"
 		when :
 		service.updateTestStepAction(stepId, newAction)
 
 		then :
-		ActionTestStep step = findEntity(ActionTestStep.class, 2L);
+		ActionTestStep step = findEntity(ActionTestStep.class, -2L);
 		step.action == newAction;
 	}
 
@@ -416,7 +416,7 @@ class TestCaseModificationServiceImplIT extends DbunitServiceSpecification {
 	@DataSet("TestCaseModificationServiceImplIT.should remove automated script link.xml")
 	def "should remove automated script link"(){
 		given :
-		def testCaseId = 11L
+		def testCaseId = -11L
 
 		when :
 		service.removeAutomation(testCaseId)
@@ -436,10 +436,10 @@ class TestCaseModificationServiceImplIT extends DbunitServiceSpecification {
 	@DataSet("TestCaseModificationServiceImplIT.should find test cases.xml")
 	def "should find all test cases by ids"(){
 		when :
-		def res = service.findAllByIds([10L, 30L])
+		def res = service.findAllByIds([-10L, -30L])
 
 		then:
-		res*.getId() == [10L, 30L]
+		res*.getId() == [-10L, -30L]
 	}
 
 	@DataSet("TestCaseModificationServiceImplIT.should find test cases.xml")
@@ -452,9 +452,9 @@ class TestCaseModificationServiceImplIT extends DbunitServiceSpecification {
 
 		where:
 		ancestors | expected
-		[10L]     | [10L]
-		[50L]     | [30L]
-		[40L]     | [30L,20L]
-		[20L, 40L]     | [20L, 30L]
+		[-10L]     | [-10L]
+		[-50L]     | [-30L]
+		[-40L]     | [-30L,-20L]
+		[-20L, -40L]     | [-20L, -30L]
 	}
 }

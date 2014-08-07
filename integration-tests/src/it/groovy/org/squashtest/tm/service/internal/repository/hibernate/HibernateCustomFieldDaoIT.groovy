@@ -92,22 +92,22 @@ class HibernateCustomFieldDaoIT extends DbunitDaoSpecification {
 //	@DataSet("HibernateCustomFieldDeletionDaoIT.should delete custom field.xml")
 //	def "should delete custom field" () {
 //		given:
-//		CustomField cuf =  findEntity(CustomField.class, 1L)
+//		CustomField cuf =  findEntity(CustomField.class, -1L)
 //		when:
 //		customFieldDao.remove(cuf)
 //		then:
-//		!found(CustomField.class, 1L)
-//		found(CustomField.class, 2L)
+//		!found(CustomField.class, -1L)
+//		found(CustomField.class, -2L)
 //	}
 //	
 //	@DataSet("HibernateCustomFieldDeletionDaoIT.should delete custom field and option.xml")
 //	def "should delete custom field and options" () {
 //		given:
-//		CustomField cuf =  findEntity(CustomField.class, 1L)
+//		CustomField cuf =  findEntity(CustomField.class, -1L)
 //		when:
 //		customFieldDao.remove(cuf)
 //		then:
-//		!found(CustomField.class, 1L)
+//		!found(CustomField.class, -1L)
 //		!foundCustomFieldOption("first")
 //		!foundCustomFieldOption("second")
 //		!foundCustomFieldOption("third")
@@ -117,13 +117,13 @@ class HibernateCustomFieldDaoIT extends DbunitDaoSpecification {
 //	@DataSet("HibernateCustomFieldDeletionDaoIT.should delete custom field and binding.xml")
 //	def "should delete custom field and binding " () {
 //		given:
-//		CustomField cuf =  findEntity(CustomField.class, 1L)
+//		CustomField cuf =  findEntity(CustomField.class, -1L)
 //		when:
 //		customFieldDao.remove(cuf)
 //		then:
-//		!found(CustomField.class, 1L)
-//		!found(CustomFieldBinding.class, 1L)
-//		!found(CustomFieldBinding.class, 2L)
+//		!found(CustomField.class, -1L)
+//		!found(CustomFieldBinding.class, -1L)
+//		!found(CustomFieldBinding.class, -2L)
 //	}
 //	
 //	

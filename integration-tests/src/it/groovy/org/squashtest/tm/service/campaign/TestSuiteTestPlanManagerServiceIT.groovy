@@ -60,11 +60,11 @@ class TestSuiteTestPlanManagerServiceIT extends DbunitServiceSpecification {
 	def "should add the test plan items to the iteration as they are bound to the test suite"(){
 		
 		given :
-			long testSuiteId = 1L
+			long testSuiteId = -1L
 
 		when :
-			service.addTestCasesToIterationAndTestSuite([1L, 2L, 3L, 4L], testSuiteId);
-			TestSuite ts = testSuiteDao.findById(1L)
+			service.addTestCasesToIterationAndTestSuite([-1L, -2L, -3L, -4L], testSuiteId);
+			TestSuite ts = testSuiteDao.findById(-1L)
 			Iteration iter = ts.getIteration()
 		
 		then :
@@ -76,11 +76,11 @@ class TestSuiteTestPlanManagerServiceIT extends DbunitServiceSpecification {
 	def "should keep test plan on iteration"(){
 		
 		given :
-			long testSuiteId = 1L
+			long testSuiteId = -1L
 
 		when :
-			service.detachTestPlanFromTestSuite([1L, 2L], testSuiteId)
-			TestSuite ts = testSuiteDao.findById(1L)
+			service.detachTestPlanFromTestSuite([-1L, -2L], testSuiteId)
+			TestSuite ts = testSuiteDao.findById(-1L)
 			Iteration iter = ts.getIteration()
 		
 		then :
@@ -92,11 +92,11 @@ class TestSuiteTestPlanManagerServiceIT extends DbunitServiceSpecification {
 	def "should take away test plan from iteration as well as test suite"(){
 		
 		given :
-			long testSuiteId = 1L
+			long testSuiteId = -1L
 
 		when :
-			service.detachTestPlanFromTestSuiteAndRemoveFromIteration([1L, 2L], testSuiteId)
-			TestSuite ts = testSuiteDao.findById(1L)
+			service.detachTestPlanFromTestSuiteAndRemoveFromIteration([-1L, -2L], testSuiteId)
+			TestSuite ts = testSuiteDao.findById(-1L)
 			Iteration iter = ts.getIteration()
 		
 		then :
@@ -110,9 +110,9 @@ class TestSuiteTestPlanManagerServiceIT extends DbunitServiceSpecification {
 		
 		given:
 		
-		long testSuiteId1 = 1L
-		long testSuiteId2 = 2L
-		long itemId = 1L
+		long testSuiteId1 = -1L
+		long testSuiteId2 = -2L
+		long itemId = -1L
 		 
 		when:
 		
@@ -127,10 +127,10 @@ class TestSuiteTestPlanManagerServiceIT extends DbunitServiceSpecification {
 		
 		then:
 		
-		TestSuite suite1 = testSuiteDao.findById(1L);
+		TestSuite suite1 = testSuiteDao.findById(-1L);
 		suite1.getTestPlan().size() == 1;
 		
-		TestSuite suite2 = testSuiteDao.findById(2L);
+		TestSuite suite2 = testSuiteDao.findById(-2L);
 		suite2.getTestPlan().size() == 1;
 	}
 	
@@ -139,10 +139,10 @@ class TestSuiteTestPlanManagerServiceIT extends DbunitServiceSpecification {
 		
 		given:
 		
-		long testSuiteId1 = 1L
-		long testSuiteId2 = 2L
-		long itemId1 = 1L
-		long itemId2 = 2L
+		long testSuiteId1 = -1L
+		long testSuiteId2 = -2L
+		long itemId1 = -1L
+		long itemId2 = -2L
 		
 		when:
 		
@@ -158,10 +158,10 @@ class TestSuiteTestPlanManagerServiceIT extends DbunitServiceSpecification {
 		
 		then:
 		
-		TestSuite suite1 = testSuiteDao.findById(1L);
+		TestSuite suite1 = testSuiteDao.findById(-1L);
 		suite1.getTestPlan().size() == 2;
 		
-		TestSuite suite2 = testSuiteDao.findById(2L);
+		TestSuite suite2 = testSuiteDao.findById(-2L);
 		suite2.getTestPlan().size() == 2;
 	}
 	
@@ -170,10 +170,10 @@ class TestSuiteTestPlanManagerServiceIT extends DbunitServiceSpecification {
 		
 		given:
 		
-		long testSuiteId1 = 1L
-		long testSuiteId2 = 2L
-		long itemId1 = 1L
-		long itemId2 = 2L
+		long testSuiteId1 = -1L
+		long testSuiteId2 = -2L
+		long itemId1 = -1L
+		long itemId2 = -2L
 
 		when:
 		
@@ -189,13 +189,13 @@ class TestSuiteTestPlanManagerServiceIT extends DbunitServiceSpecification {
 		
 		then:
 		
-		TestSuite suite1 = testSuiteDao.findById(1L);
+		TestSuite suite1 = testSuiteDao.findById(-1L);
 		suite1.getTestPlan().size() == 3;
 		
-		TestSuite suite2 = testSuiteDao.findById(2L);
+		TestSuite suite2 = testSuiteDao.findById(-2L);
 		suite2.getTestPlan().size() == 3;
 		
-		Iteration iteration = iterationDao.findById(1L);
+		Iteration iteration = iterationDao.findById(-1L);
 		iteration.getTestPlans().size() == 4;
 		iteration.getTestSuites().size() == 2;
 	}

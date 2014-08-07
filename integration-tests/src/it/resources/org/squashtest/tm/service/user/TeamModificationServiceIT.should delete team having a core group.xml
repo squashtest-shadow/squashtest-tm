@@ -24,11 +24,11 @@
 <!DOCTYPE dataset SYSTEM "../../../../../dtd/squash-tm.1.9.10.dtd">
 
 <dataset>
-	<CORE_GROUP ID="123" QUALIFIED_NAME="driver"/>
-	<CORE_GROUP_AUTHORITY AUTHORITY="drive" GROUP_ID="123"/>
-	<CORE_PARTY PARTY_ID="10" />
-	<CORE_TEAM PARTY_ID="10" NAME="team1" CREATED_BY="dbunit" CREATED_ON="2013-02-01" />
-	<CORE_GROUP_MEMBER PARTY_ID="10" GROUP_ID="123" />
+	<CORE_GROUP ID="-123" QUALIFIED_NAME="driver"/>
+	<CORE_GROUP_AUTHORITY AUTHORITY="drive" GROUP_ID="-123"/>
+	<CORE_PARTY PARTY_ID="-10" />
+	<CORE_TEAM PARTY_ID="-10" NAME="team1" CREATED_BY="dbunit" CREATED_ON="2013-02-01" />
+	<CORE_GROUP_MEMBER PARTY_ID="-10" GROUP_ID="-123" />
 	
 	<acl_class  />
 	<acl_object_identity/>

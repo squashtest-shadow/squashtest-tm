@@ -24,7 +24,7 @@
 <!DOCTYPE dataset SYSTEM "../../../../../dtd/squash-tm.1.9.0.result.dtd">
 <dataset>
   <TEST_SUITE NAME="fishnet" />
-  <ITERATION_TEST_SUITE ITERATION_ID="1" />
+  <ITERATION_TEST_SUITE ITERATION_ID="-1" />
   
-  <CUSTOM_FIELD_VALUE BOUND_ENTITY_TYPE="TEST_SUITE" CFB_ID="1" VALUE="winklepicker" />
+  <CUSTOM_FIELD_VALUE BOUND_ENTITY_TYPE="TEST_SUITE" CFB_ID="-1" VALUE="winklepicker" />
 </dataset>

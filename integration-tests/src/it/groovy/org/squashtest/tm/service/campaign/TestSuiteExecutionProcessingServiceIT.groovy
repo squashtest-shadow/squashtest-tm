@@ -49,7 +49,7 @@ class TestSuiteExecutionProcessingServiceIT extends DbunitServiceSpecification {
 	@DataSet("TestSuiteExecutionProcessingServiceIT.should not find exec step cause no item.xml")
 	def "should try to start and not find execution because test plan empty"(){
 		given :
-		long testSuiteId = 1L
+		long testSuiteId = -1L
 		when :
 		Execution execution = service.startResume(testSuiteId)
 
@@ -60,8 +60,8 @@ class TestSuiteExecutionProcessingServiceIT extends DbunitServiceSpecification {
 	@DataSet("TestSuiteExecutionProcessingServiceIT.should not find exec step cause no item for tester.xml")
 	def "should try to start and not find execution because test plan empty for tester"(){
 		given : 
-		def testSuiteId = 1L
-		stubPermissionEvaluationService.addPermissionToRefuse("READ_UNASSIGNED", TestSuite.class.getName(), 1L)
+		def testSuiteId = -1L
+		stubPermissionEvaluationService.addPermissionToRefuse("READ_UNASSIGNED", TestSuite.class.getName(), -1L)
 		
 		when: 
 		Execution execution = service.startResume(testSuiteId)
@@ -74,7 +74,7 @@ class TestSuiteExecutionProcessingServiceIT extends DbunitServiceSpecification {
 	@DataSet("TestSuiteExecutionProcessingServiceIT.should not find exec step cause all term.xml")
 	def "should try to resume and not find execution because all terminated"(){
 		given :
-		long testSuiteId = 1L
+		long testSuiteId = -1L
 		
 		when :
 		Execution execution = service.startResume(testSuiteId)
@@ -86,8 +86,8 @@ class TestSuiteExecutionProcessingServiceIT extends DbunitServiceSpecification {
 	@DataSet("TestSuiteExecutionProcessingServiceIT.should not find exec step cause all term for tester.xml")
 	def "should try to resume and not find execution because all terminated for tester"(){
 		given :
-		long testSuiteId = 1L
-		stubPermissionEvaluationService.addPermissionToRefuse("READ_UNASSIGNED", TestSuite.class.getName(), 1L)
+		long testSuiteId = -1L
+		stubPermissionEvaluationService.addPermissionToRefuse("READ_UNASSIGNED", TestSuite.class.getName(), -1L)
 
 		when :
 		Execution execution = service.startResume(testSuiteId)
@@ -100,7 +100,7 @@ class TestSuiteExecutionProcessingServiceIT extends DbunitServiceSpecification {
 	@DataSet("TestSuiteExecutionProcessingServiceIT.should not find exec step cause no step.xml")
 	def "should try to resume and not find execution because all have no step"(){
 		given :
-		long testSuiteId = 1L
+		long testSuiteId = -1L
 
 		when :
 		Execution execution = service.startResume(testSuiteId)
@@ -112,8 +112,8 @@ class TestSuiteExecutionProcessingServiceIT extends DbunitServiceSpecification {
 	@DataSet("TestSuiteExecutionProcessingServiceIT.should not find exec step cause no step for tester.xml")
 	def "should try to resume and not find execution because all have no step for tester"(){
 		given :
-		long testSuiteId = 1L
-		stubPermissionEvaluationService.addPermissionToRefuse("READ_UNASSIGNED", TestSuite.class.getName(), 1L)
+		long testSuiteId = -1L
+		stubPermissionEvaluationService.addPermissionToRefuse("READ_UNASSIGNED", TestSuite.class.getName(), -1L)
 		
 		when :
 		Execution execution = service.startResume(testSuiteId)
@@ -126,7 +126,7 @@ class TestSuiteExecutionProcessingServiceIT extends DbunitServiceSpecification {
 	@DataSet("TestSuiteExecutionProcessingServiceIT.should find exec step through new exec.xml")
 	def "should try to resume and create new execution"(){
 		given :
-		long testSuiteId = 1L
+		long testSuiteId = -1L
 
 		when :
 		Execution execution = service.startResume(testSuiteId)
@@ -139,7 +139,7 @@ class TestSuiteExecutionProcessingServiceIT extends DbunitServiceSpecification {
 	@DataSet("TestSuiteExecutionProcessingServiceIT.should find exec step through old exec.xml")
 	def "should try to resume and find old execution"(){
 		given :
-		long testSuiteId = 1L
+		long testSuiteId = -1L
 
 		when :
 		Execution execution = service.startResume(testSuiteId)

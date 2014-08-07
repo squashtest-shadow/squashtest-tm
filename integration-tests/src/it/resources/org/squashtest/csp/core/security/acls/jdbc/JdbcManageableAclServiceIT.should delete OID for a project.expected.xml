@@ -2,6 +2,6 @@
 <!DOCTYPE dataset SYSTEM "../../../../../../../dtd/squash-tm.1.9.10.result.dtd">
 
 <dataset>
-  <ACL_OBJECT_IDENTITY CLASS_ID="100" IDENTITY="11" />
-  <ACL_OBJECT_IDENTITY CLASS_ID="200" IDENTITY="20" />
+  <ACL_OBJECT_IDENTITY CLASS_ID="-100" IDENTITY="-11" />
+  <ACL_OBJECT_IDENTITY CLASS_ID="-200" IDENTITY="-20" />
 </dataset>

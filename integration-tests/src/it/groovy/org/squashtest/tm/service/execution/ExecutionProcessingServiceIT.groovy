@@ -52,7 +52,7 @@ class ExecutionProcessingServiceIT extends DbunitServiceSpecification {
 	def "should iterate over the 5 steps of the referenced test case"(){
 
 		given :
-		def executionId = 1L
+		def executionId = -1L
 
 		when :
 		ExecutionStep step = procservice.findStepAt(executionId, order)
@@ -73,7 +73,7 @@ class ExecutionProcessingServiceIT extends DbunitServiceSpecification {
 	@DataSet("ExecutionModificationServiceIT.execution.xml")
 	def "should raise an out of bound exception"(){
 		given :
-		def executionId = 1L
+		def executionId = -1L
 
 		when :
 		def fails = procservice.findStepAt(executionId, 10)
@@ -87,7 +87,7 @@ class ExecutionProcessingServiceIT extends DbunitServiceSpecification {
 	def "should update execution step comment"(){
 
 		given :
-		def executionStepId = 1L
+		def executionStepId = -1L
 		def newComment = "Wooooohooo I did that here too !"
 
 		when :
@@ -102,7 +102,7 @@ class ExecutionProcessingServiceIT extends DbunitServiceSpecification {
 	@DataSet("ExecutionModificationServiceIT.execution.xml")
 	def "should get me the first and third step"(){
 		given :
-		def executionId = 1L
+		def executionId = -1L
 
 		when :
 
@@ -118,7 +118,7 @@ class ExecutionProcessingServiceIT extends DbunitServiceSpecification {
 	def "should return the current step of the execution"(){
 
 		given :
-		def executionId = 1L
+		def executionId = -1L
 
 		when :
 
@@ -132,7 +132,7 @@ class ExecutionProcessingServiceIT extends DbunitServiceSpecification {
 	@DataSet("ExecutionModificationServiceIT.execution.xml")
 	def "should bring an execution report"(){
 		given :
-		def executionId = 1L
+		def executionId = -1L
 		when :
 		def report = procservice.getExecutionStatusReport(executionId)
 
@@ -143,7 +143,7 @@ class ExecutionProcessingServiceIT extends DbunitServiceSpecification {
 	@DataSet("ExecutionModificationServiceIT.execution.xml")
 	def "should set an execution status for an execution to UNTESTABLE"(){
 		given :
-		def executionId = 1L
+		def executionId = -1L
 		ExecutionStatusReport report = new ExecutionStatusReport()
 		report.set(UNTESTABLE, 1)
 
@@ -158,7 +158,7 @@ class ExecutionProcessingServiceIT extends DbunitServiceSpecification {
 	@DataSet("ExecutionModificationServiceIT.execution.xml")
 	def "should set an execution status for an execution to BLOCKED"(){
 		given :
-		def executionId = 1L
+		def executionId = -1L
 
 		and : ExecutionStatusReport report = new ExecutionStatusReport()
 		report.set(UNTESTABLE, 1)
@@ -176,7 +176,7 @@ class ExecutionProcessingServiceIT extends DbunitServiceSpecification {
 	@DataSet("ExecutionModificationServiceIT.execution.xml")
 	def "should set an execution status for an execution to FAILURE"(){
 		given :
-		def executionId = 1L
+		def executionId = -1L
 
 		and : ExecutionStatusReport report = new ExecutionStatusReport()
 		report.set(UNTESTABLE, 1)
@@ -194,7 +194,7 @@ class ExecutionProcessingServiceIT extends DbunitServiceSpecification {
 	@DataSet("ExecutionModificationServiceIT.execution.xml")
 	def "should set an execution status for an execution to SUCCESS"(){
 		given :
-		def executionId = 1L
+		def executionId = -1L
 
 		and : ExecutionStatusReport report = new ExecutionStatusReport()
 		report.set(UNTESTABLE, 1)
@@ -211,7 +211,7 @@ class ExecutionProcessingServiceIT extends DbunitServiceSpecification {
 	@DataSet("ExecutionModificationServiceIT.execution.xml")
 	def "should set an execution status for an execution to RUNNING"(){
 		given :
-		def executionId = 1L
+		def executionId = -1L
 
 		and :ExecutionStatusReport report = new ExecutionStatusReport()
 		report.set(UNTESTABLE, 1)
@@ -229,7 +229,7 @@ class ExecutionProcessingServiceIT extends DbunitServiceSpecification {
 	@DataSet("ExecutionModificationServiceIT.execution.xml")
 	def "should set an execution status for an execution to READY"(){
 		given :
-		def executionId = 1L
+		def executionId = -1L
 
 		and : ExecutionStatusReport report = new ExecutionStatusReport()
 		report.set(UNTESTABLE, 1)
@@ -249,8 +249,8 @@ class ExecutionProcessingServiceIT extends DbunitServiceSpecification {
 	def "should update executionStep status and accordingly update the status of its parent execution to BLOCKED"(){
 
 		given :
-		def executionStepId = 2L
-		def executionId = 1L
+		def executionStepId = -2L
+		def executionId = -1L
 
 
 		when :
@@ -265,8 +265,8 @@ class ExecutionProcessingServiceIT extends DbunitServiceSpecification {
 	def "should update executionStep status and accordingly update the status of its parent execution to FAILURE"(){
 
 		given :
-		def executionStepId = 2L
-		def executionId = 1L
+		def executionStepId = -2L
+		def executionId = -1L
 
 		when :
 		procservice.changeExecutionStepStatus(executionStepId, ExecutionStatus.FAILURE)
@@ -280,8 +280,8 @@ class ExecutionProcessingServiceIT extends DbunitServiceSpecification {
 	def "should update executionStep status and accordingly update the status of its parent execution to SUCCESS"(){
 
 		given :
-		def executionStepsIds = [1L, 2L, 3L, 4L, 5L]
-		def executionId = 1L
+		def executionStepsIds = [-1L, -2L, -3L, -4L, -5L]
+		def executionId = -1L
 
 		when :
 		for (def stepId : executionStepsIds){
@@ -297,8 +297,8 @@ class ExecutionProcessingServiceIT extends DbunitServiceSpecification {
 	def "should update executionStep status and accordingly update the status of its parent execution to RUNNING"(){
 
 		given :
-		def executionId = 1L
-		def executionStepId = 2L
+		def executionId = -1L
+		def executionStepId = -2L
 
 		when :
 		procservice.changeExecutionStepStatus(executionStepId, ExecutionStatus.SUCCESS)
@@ -313,8 +313,8 @@ class ExecutionProcessingServiceIT extends DbunitServiceSpecification {
 	def "should update executionStep status and accordingly update the status of its parent execution to READY"(){
 
 		given :
-		def executionStepId = 2L
-		def executionId = 1L
+		def executionStepId = -2L
+		def executionId = -1L
 
 		when :
 		procservice.changeExecutionStepStatus(executionStepId, ExecutionStatus.READY)
@@ -332,8 +332,8 @@ class ExecutionProcessingServiceIT extends DbunitServiceSpecification {
 	def "after step update, execution status should swap from BLOCKED to RUNNING"(){
 
 		given :
-		def executionId = 1L
-		def executionStepId = 1L
+		def executionId = -1L
+		def executionStepId = -1L
 		def exec = findEntity(Execution.class, executionId)
 
 		when :
@@ -353,8 +353,8 @@ class ExecutionProcessingServiceIT extends DbunitServiceSpecification {
 	def "after step update, execution status should swap from BLOCKED to READY"(){
 
 		given :
-		def executionId = 1L
-		def executionStepId = 1L
+		def executionId = -1L
+		def executionStepId = -1L
 		def exec = findEntity(Execution.class, executionId)
 
 		when :
@@ -375,9 +375,9 @@ class ExecutionProcessingServiceIT extends DbunitServiceSpecification {
 	def "after step update, execution status should stay BLOCKED"(){
 
 		given :
-		def executionStep1Id = 1L
-		def executionStep2Id = 2L
-		def executionId = 1L
+		def executionStep1Id = -1L
+		def executionStep2Id = -2L
+		def executionId = -1L
 		def exec = findEntity(Execution.class, 1)
 
 		when :
@@ -400,9 +400,9 @@ class ExecutionProcessingServiceIT extends DbunitServiceSpecification {
 	def "after step update, execution status should swap from BLOCKED to FAILURE"(){
 
 		given :
-		def executionStep1Id = 1L
-		def executionStep2Id = 2L
-		def executionId = 1L
+		def executionStep1Id = -1L
+		def executionStep2Id = -2L
+		def executionId = -1L
 		def exec = findEntity(Execution.class, 1)
 
 		when :
@@ -423,8 +423,8 @@ class ExecutionProcessingServiceIT extends DbunitServiceSpecification {
 	@DataSet("ExecutionProcessingServiceIT.execution.allStepsSuccess.xml")
 	def "after step update, execution status should swap from BLOCKED to SUCCESS"(){
 		given :
-		def executionStepId = 2L
-		def executionId = 1L
+		def executionStepId = -2L
+		def executionId = -1L
 		def exec = findEntity(Execution.class, executionId)
 
 		when :
@@ -444,8 +444,8 @@ class ExecutionProcessingServiceIT extends DbunitServiceSpecification {
 	@DataSet("ExecutionProcessingServiceIT.execution.allStepsSuccess.xml")
 	def "after step update, execution status should swap from SUCCESS to RUNNING"(){
 		given :
-		def executionStepId = 2L
-		def executionId = 1L
+		def executionStepId = -2L
+		def executionId = -1L
 		def exec = findEntity(Execution.class, executionId)
 		
 		when :
@@ -458,8 +458,8 @@ class ExecutionProcessingServiceIT extends DbunitServiceSpecification {
 	@DataSet("ExecutionProcessingServiceIT.execution.allStepsSuccess.xml")
 	def "after step update, execution status should swap from SUCCESS to READY"(){
 		given :
-		def executionStepsIds = [1L, 2L, 3L, 4L, 5L]
-		def executionId = 1L
+		def executionStepsIds = [-1L, -2L, -3L, -4L, -5L]
+		def executionId = -1L
 		def exec = findEntity(Execution.class, executionId)
 
 		when :
@@ -474,8 +474,8 @@ class ExecutionProcessingServiceIT extends DbunitServiceSpecification {
 	@DataSet("ExecutionProcessingServiceIT.execution.allStepsFailure.xml")
 	def "after step update, execution status should swap from FAILURE to SUCCESS"(){
 		given :
-		def executionStepsIds = [1L, 2L, 3L, 4L, 5L]
-		def executionId = 1L
+		def executionStepsIds = [-1L, -2L, -3L, -4L, -5L]
+		def executionId = -1L
 		def exec = findEntity(Execution.class, executionId)
 
 		when :
@@ -499,8 +499,8 @@ class ExecutionProcessingServiceIT extends DbunitServiceSpecification {
 	@DataSet("ExecutionModificationServiceIT update Item Plan with last execution data.xml")
 	def "Should update Item Plan with last execution data 1"(){
 		given:
-		def exec1 = findEntity(Execution.class, 1L)
-		def exec1Step1Id = 1L
+		def exec1 = findEntity(Execution.class, -1L)
+		def exec1Step1Id = -1L
 
 
 		when:
@@ -525,8 +525,8 @@ class ExecutionProcessingServiceIT extends DbunitServiceSpecification {
 	def "Should update Item Plan with last execution data 2"(){
 		given:
 		
-		def exec3 = findEntity(Execution.class, 3L)
-		def exec3Step1Id = 7L
+		def exec3 = findEntity(Execution.class, -3L)
+		def exec3Step1Id = -7L
 
 		when:
 		//you change the status of a step in the last execution, the item test plan is updated
@@ -547,8 +547,8 @@ class ExecutionProcessingServiceIT extends DbunitServiceSpecification {
 	@DataSet("ExecutionModificationServiceIT update Item Plan with last execution data.xml")
 	def "Should update Item Plan with last execution data 3"(){
 		given:
-		def exec3 = findEntity(Execution.class, 3L)
-		def exec3Step1Id = 7L
+		def exec3 = findEntity(Execution.class, -3L)
+		def exec3Step1Id = -7L
 
 		when:
 

@@ -41,17 +41,17 @@ class IterationTestPlanDaoIT extends DbunitDaoSpecification {
 	@DataSet("IterationTestPlanItemDao.test plan without suite.xml")
 	def "should fetch test plan items ordered according to iteration"() {
 		when:
-		def res = dao.findAllByIdsOrderedByIterationTestPlan([113L, 112L, 111L])
+		def res = dao.findAllByIdsOrderedByIterationTestPlan([-113L, -112L, -111L])
 
 		then:
-		res*.id == [112L, 111L, 113L]
+		res*.id == [-112L, -111L, -113L]
 	}
 	@DataSet("IterationTestPlanItemDao.test plan with suite.xml")
 	def "should fetch test plan items ordered according to test suite"() {
 		when:
-		def res = dao.findAllByIdsOrderedBySuiteTestPlan([111L, 112L, 113L], 1101L)
+		def res = dao.findAllByIdsOrderedBySuiteTestPlan([-111L, -112L, -113L], -1101L)
 
 		then:
-		res*.id == [113L, 111L, 112L]
+		res*.id == [-113L, -111L, -112L]
 	}
 }

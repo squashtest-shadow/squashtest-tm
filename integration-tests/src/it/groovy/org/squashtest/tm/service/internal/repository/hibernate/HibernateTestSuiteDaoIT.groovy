@@ -60,8 +60,8 @@ class HibernateTestSuiteDaoIT extends DbunitDaoSpecification {
 		paging.getPageSize() >> 100
 
 		when :
-		List<IterationTestPlanItem> listTPI1 = testSuiteDao.findAllTestPlanItemsPaged (1L, paging)
-		List<IterationTestPlanItem> listTPI2 = testSuiteDao.findAllTestPlanItemsPaged (2L, paging)
+		List<IterationTestPlanItem> listTPI1 = testSuiteDao.findAllTestPlanItemsPaged (-1L, paging)
+		List<IterationTestPlanItem> listTPI2 = testSuiteDao.findAllTestPlanItemsPaged (-2L, paging)
 
 		then :	
 		listTPI1.size()==4
@@ -73,7 +73,7 @@ class HibernateTestSuiteDaoIT extends DbunitDaoSpecification {
 	@DataSet("HibernateTestSuiteDaoIT.should return list of executions.xml")
 	def "should return list of executions"(){
 		when:
-		def result = testSuiteDao.findAllExecutionByTestSuite(2l)
+		def result = testSuiteDao.findAllExecutionByTestSuite(-2L)
 		
 		then:
 		result.size() == 3
@@ -83,7 +83,7 @@ class HibernateTestSuiteDaoIT extends DbunitDaoSpecification {
 	@DataSet("HibernateTestSuiteDaoIT.should find test suite statistics.xml")
 	def "should find test suite statistics DONE"(){
 		when:
-		TestPlanStatistics result = testSuiteDao.getTestSuiteStatistics(1L)
+		TestPlanStatistics result = testSuiteDao.getTestSuiteStatistics(-1L)
 		
 		then:
 		result != null
@@ -102,7 +102,7 @@ class HibernateTestSuiteDaoIT extends DbunitDaoSpecification {
 	@DataSet("HibernateTestSuiteDaoIT.should find test suite statistics.xml")
 	def "should find test suite statistics READY"(){
 		when:
-		TestPlanStatistics result = testSuiteDao.getTestSuiteStatistics(2L)
+		TestPlanStatistics result = testSuiteDao.getTestSuiteStatistics(-2L)
 		
 		then:
 		result != null
@@ -132,11 +132,11 @@ class HibernateTestSuiteDaoIT extends DbunitDaoSpecification {
 			getSession().flush();
 
 		when :
-			TestPlanStatistics stats1 = testSuiteDao.getTestSuiteStatistics(1L)
-			TestPlanStatistics stats2 = testSuiteDao.getTestSuiteStatistics(2L)
+			TestPlanStatistics stats1 = testSuiteDao.getTestSuiteStatistics(-1L)
+			TestPlanStatistics stats2 = testSuiteDao.getTestSuiteStatistics(-2L)
 
 		then :
-			stats1.getNbTestCases() == 4L
+			stats1.getNbTestCases() == -4L
 			stats1.getNbBlocked() == 1
 			stats1.getNbDone() == 1
 			stats1.getNbFailure() == 0
@@ -145,7 +145,7 @@ class HibernateTestSuiteDaoIT extends DbunitDaoSpecification {
 			stats1.getNbSuccess() == 0
 			stats1.getStatus() == TestPlanStatus.RUNNING
 			
-			stats2.getNbTestCases() == 6L
+			stats2.getNbTestCases() == -6L
 			stats2.getNbBlocked() == 1
 			stats2.getNbDone() == 5
 			stats2.getNbFailure() == 2
@@ -158,26 +158,26 @@ class HibernateTestSuiteDaoIT extends DbunitDaoSpecification {
 	@DataSet ("HibernateTestSuiteDaoIT.should find project id.xml")
 	def "should find project id"(){
 		given : 
-		def suiteid = 20L
+		def suiteid = -20L
 		
 		when :
 		def projectId = testSuiteDao.findProjectIdBySuiteId(suiteid);
 		
 		then :
-		projectId == 2L;
+		projectId == -2L;
 	}
 	
 	@DataSet("HibernateTestSuiteDaoIT.should find test case ids.xml")
 	def "should find test cases ids"(){
 		given :
-		def suiteId = 1L
+		def suiteId = -1L
 		
 		when : 
 		def result = testSuiteDao.findPlannedTestCasesIds(suiteId)
 		
 		then : 
 		result.size() == 2;
-		result.containsAll([1L, 2L]);
+		result.containsAll([-1L, -2L]);
 	}
 	
 }

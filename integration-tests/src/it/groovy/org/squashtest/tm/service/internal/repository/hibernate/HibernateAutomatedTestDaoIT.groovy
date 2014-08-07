@@ -45,7 +45,7 @@ public class HibernateAutomatedTestDaoIT extends DbunitDaoSpecification {
 	def "should persist a new test"(){
 
 		given :
-		def newtest = new AutomatedTest("new test", getProject(1l))
+		def newtest = new AutomatedTest("new test", getProject(-1L))
 
 		when :
 		def persisted = testDao.persistOrAttach(newtest)
@@ -58,13 +58,13 @@ public class HibernateAutomatedTestDaoIT extends DbunitDaoSpecification {
 	def "should attach a new test because another test matches it exactly"(){
 
 		given :
-		def exist= new AutomatedTest("both", getProject(2l))
+		def exist= new AutomatedTest("both", getProject(-2L))
 
 		when :
 		def persisted = testDao.persistOrAttach(exist)
 
 		then :
-		persisted.id == 22l
+		persisted.id == -22L
 	}
 
 
@@ -76,13 +76,13 @@ public class HibernateAutomatedTestDaoIT extends DbunitDaoSpecification {
 
 		where :
 		id	| cnt
-		11l	| 1l
-		12l | 3l
-		13l | 1l
-		21l | 1l
-		22l	| 2l
-		23l	| 0l
-		14l	| 0l
+		-11L	| -1L
+		-12L | -3L
+		-13L | -1L
+		-21L | -1L
+		-22L	| -2L
+		-23L	| -0L
+		-14L	| -0L
 	}
 
 	@Unroll("should #_neg remove automated test #id because it is referenced by #_referers")
@@ -101,10 +101,10 @@ public class HibernateAutomatedTestDaoIT extends DbunitDaoSpecification {
 		where :
 
 		_neg	| 	res		|	id	|	_referers
-		"not"	|	true	|	11l	|	"1 execution"
-		"not"	|	true	|	12l	|	"1 execution and 2 test cases"
-		"not"	|	true	|	21l	|	"1 test case"
-		""		|	false	|	23l	|	"nothing"
+		"not"	|	true	|	-11L	|	"1 execution"
+		"not"	|	true	|	-12L	|	"1 execution and 2 test cases"
+		"not"	|	true	|	-21L	|	"1 test case"
+		""		|	false	|	-23L	|	"nothing"
 
 	}
 
@@ -114,9 +114,9 @@ public class HibernateAutomatedTestDaoIT extends DbunitDaoSpecification {
 		testDao.pruneOrphans()
 		getSession().flush()
 		then :
-		! found("AUTOMATED_TEST", "TEST_ID", 23l)
-		! found("AUTOMATED_TEST", "TEST_ID", 14l)
-		getSession().createQuery("from AutomatedTest").list().collect{it.id} as Set == [11l, 12l, 13l, 21l, 22l, ] as Set
+		! found("AUTOMATED_TEST", "TEST_ID", -23L)
+		! found("AUTOMATED_TEST", "TEST_ID", -14L)
+		getSession().createQuery("from AutomatedTest").list().collect{it.id} as Set == [-11L, -12L, -13L, -21L, -22L, ] as Set
 	}
 
 

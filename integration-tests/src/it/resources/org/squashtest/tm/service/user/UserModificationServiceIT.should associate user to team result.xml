@@ -24,5 +24,5 @@
 <!DOCTYPE dataset SYSTEM "../../../../../dtd/squash-tm.1.9.10.dtd">
 
 <dataset>
-	<CORE_TEAM_MEMBER TEAM_ID="10" USER_ID="20"/>
+	<CORE_TEAM_MEMBER TEAM_ID="-10" USER_ID="-20"/>
 </dataset>

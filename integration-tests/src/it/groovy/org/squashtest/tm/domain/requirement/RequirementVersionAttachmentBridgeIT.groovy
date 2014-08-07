@@ -46,7 +46,7 @@ class RequirementVersionAttachmentBridgeIT extends BridgeSpecification {
 	@DataSet("RequirementVersionBridgeIT.dataset.xml")
 	def "should count requirement's attachments"() {
 		given:
-		RequirementVersion req = session.load(RequirementVersion, 10L)
+		RequirementVersion req = session.load(RequirementVersion, -10L)
 		
 		when:
 		bridge.writeFieldToDocument("foo", session, req, doc, lucene)

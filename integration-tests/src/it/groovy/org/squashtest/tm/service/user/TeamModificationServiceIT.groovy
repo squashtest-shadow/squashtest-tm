@@ -66,12 +66,12 @@ class TeamModificationServiceIT extends DbunitServiceSpecification {
 	@DataSet("TeamModificationServiceIT.should delete team with acls.xml")
 	def"should delete a team along with it's acls"(){
 		given:
-		def teamId = 10L
+		def teamId = -10L
 		when:
 		service.deleteTeam(teamId)
 		then:
-		!found(Team.class, 10L)
-		!found("ACL_RESPONSIBILITY_SCOPE_ENTRY", "ID", 240L)		
+		!found(Team.class, -10L)
+		!found("ACL_RESPONSIBILITY_SCOPE_ENTRY", "ID", -240L)		
 	}
 	
 	@DataSet("TeamModificationServiceIT.should not persist team homonyme.xml")
@@ -89,25 +89,25 @@ class TeamModificationServiceIT extends DbunitServiceSpecification {
 	@DataSet("TeamModificationServiceIT.should delete team but no user.xml")
 	def"should delete a team but no user"(){
 		given:
-		def teamId = 10L
+		def teamId = -10L
 		when:
 		service.deleteTeam(teamId)
 		then:
-		!found(Team.class, 10L)
-		found(User.class, 20L)
-		found(User.class, 30L)
-		found("ACL_RESPONSIBILITY_SCOPE_ENTRY", "ID", 241L)
-		found("ACL_RESPONSIBILITY_SCOPE_ENTRY", "ID", 242L)
+		!found(Team.class, -10L)
+		found(User.class, -20L)
+		found(User.class, -30L)
+		found("ACL_RESPONSIBILITY_SCOPE_ENTRY", "ID", -241L)
+		found("ACL_RESPONSIBILITY_SCOPE_ENTRY", "ID", -242L)
 	}
 	
 	@DataSet("TeamModificationServiceIT.should delete team having a core group.xml")
 	def"should delete team having a core group"(){
 		given:
-		def teamId = 10L
+		def teamId = -10L
 		when:
 		service.deleteTeam(teamId)
 		then:
-		!found(Team.class, 10L)
+		!found(Team.class, -10L)
 		
 	}
 }

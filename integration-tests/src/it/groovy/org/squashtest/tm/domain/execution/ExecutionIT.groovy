@@ -50,15 +50,15 @@ class ExecutionIT extends DbunitServiceSpecification {
 	@DataSet("ExecutionIT.3executions.xml")
 	def "should correctly update an item test plan status when the status of an execution is updated "(){
 		given :
-		def iterationId = 1L
-		def testPlanItemId = 2L
+		def iterationId = -1L
+		def testPlanItemId = -2L
 
 
-		def exec1 = findEntity(Execution.class, 2L)
-		def exec2 = findEntity(Execution.class, 3L)
-		def exec3 = findEntity(Execution.class, 4L)
+		def exec1 = findEntity(Execution.class, -2L)
+		def exec2 = findEntity(Execution.class, -3L)
+		def exec3 = findEntity(Execution.class, -4L)
 
-		def testPlanItem = findEntity(IterationTestPlanItem.class, 2L)
+		def testPlanItem = findEntity(IterationTestPlanItem.class, -2L)
 
 		when :
 		def status0 = testPlanItem.getExecutionStatus()
@@ -100,8 +100,8 @@ class ExecutionIT extends DbunitServiceSpecification {
 		
 		where :
 		idExec |testPlanId
-		1L | 1L
-		2L | 2L
-		3L | 2L
+		-1L | -1L
+		-2L | -2L
+		-3L | -2L
 	}
 }

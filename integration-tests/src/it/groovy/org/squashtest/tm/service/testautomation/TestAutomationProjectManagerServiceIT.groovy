@@ -48,9 +48,9 @@ public class TestAutomationProjectManagerServiceIT extends DbunitServiceSpecific
 	def "should persist a new TestAutomationProject"(){
 
 		given :
-		def server = getServer(1l)
+		def server = getServer(-1L)
 		def project = new TestAutomationProject("roberto5","Project Roberto 5" , server)
-		def tmproject = getProject(1l)
+		def tmproject = getProject(-1L)
 		project.setTmProject(tmproject)
 
 		when :
@@ -59,16 +59,16 @@ public class TestAutomationProjectManagerServiceIT extends DbunitServiceSpecific
 		project.id != null
 		project.label == "Project Roberto 5"
 		project.jobName == "roberto5"
-		project.server.id == 1l
+		project.server.id == -1L
 	}
 
 
 	@DataSet("TestAutomationService.sandbox.xml")
 	def "should say that a project label is ok"(){
 		given :
-		def server  = getServer(2l)
+		def server  = getServer(-2L)
 		def project = new TestAutomationProject("whatever","Project Mike 2",  server)
-		def tmproject = getProject(1l)
+		def tmproject = getProject(-1L)
 		project.setTmProject(tmproject)
 
 		when :
@@ -80,9 +80,9 @@ public class TestAutomationProjectManagerServiceIT extends DbunitServiceSpecific
 	@DataSet("TestAutomationService.sandbox.xml")
 	def "should say that a project label is not unique"(){
 		given :
-		def server  = getServer(2l)
+		def server  = getServer(-2L)
 		def project = new TestAutomationProject("whatever","Project Mike 2",  server)
-		def tmproject = getProject(2l)
+		def tmproject = getProject(-2L)
 		project.setTmProject(tmproject)
 
 		when :

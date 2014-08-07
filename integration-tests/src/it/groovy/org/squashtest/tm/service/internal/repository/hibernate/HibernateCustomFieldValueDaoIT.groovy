@@ -70,11 +70,11 @@ class HibernateCustomFieldValueDaoIT extends DbunitDaoSpecification{
 	def "should find all the custom field values for test case 1"(){
 		
 		when :
-			List<CustomFieldValue> values = dao.findAllCustomValues(111l, BindableEntity.TEST_CASE);
+			List<CustomFieldValue> values = dao.findAllCustomValues(-111L, BindableEntity.TEST_CASE);
 			
 		then :
 			values.size()==2
-			values.collect {it.id} == [1111l, 1112l]
+			values.collect {it.id} == [-1111L, -1112L]
 		
 	}
 	
@@ -82,21 +82,21 @@ class HibernateCustomFieldValueDaoIT extends DbunitDaoSpecification{
 	def "should find all the custom field values that are instances of a given custom field binding"(){
 		
 		when :
-			List<CustomFieldValue> values = dao.findAllCustomValuesOfBinding(112l)
+			List<CustomFieldValue> values = dao.findAllCustomValuesOfBinding(-112L)
 			
 		then :
 			values.size()==2
-			values.collect {it.id} == [1112l, 1122l]
+			values.collect {it.id} == [-1112L, -1122L]
 		
 	}
 	
 	def "should find pairs of custom field values"(){
 		
 		when :
-			List<CustomFieldValuesPair> pairs = dao.findPairedCustomFieldValues(BindableEntity.TEST_CASE, 111l,112l )
+			List<CustomFieldValuesPair> pairs = dao.findPairedCustomFieldValues(BindableEntity.TEST_CASE, -111L,-112L )
 			
 		then :
-			pairs.collect{ return [it.original.id, it.recipient.id] } as Set == [ [1111l, 1121l], [1112l, 1122l] ] as Set
+			pairs.collect{ return [it.original.id, it.recipient.id] } as Set == [ [-1111L, -1121L], [-1112L, -1122L] ] as Set
 			
 		
 	}

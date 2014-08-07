@@ -77,18 +77,18 @@ public class RequirementNodeDeletionHandlerIT extends DbunitServiceSpecification
 		fixForDeleteCascadeDataset()
 		
 		when :
-		def result = deletionHandler.deleteNodes([11L])
+		def result = deletionHandler.deleteNodes([-11L])
 
 		then :
-		result.removed.collect{it.resid} == [11L]
+		result.removed.collect{it.resid} == [-11L]
 		
-		allDeleted("Requirement", [11L])
-		allDeleted("RequirementVersion", [111L, 112L])
+		allDeleted("Requirement", [-11L])
+		allDeleted("RequirementVersion", [-111L, -112L])
 		
-		found (Requirement.class, 12L)
+		found (Requirement.class, -12L)
 		
-		allDeleted("CustomFieldValue", [1111L, 1112L, 1121L, 1122L])
-		allNotDeleted("CustomFieldValue", [1211L, 1212L]);
+		allDeleted("CustomFieldValue", [-1111L, -1112L, -1121L, -1122L])
+		allNotDeleted("CustomFieldValue", [-1211L, -1212L]);
 	}
 
 	@DataSet("RequirementNodeDeletionHandlerIT.should cascade delete.xml")
@@ -97,17 +97,17 @@ public class RequirementNodeDeletionHandlerIT extends DbunitServiceSpecification
 		fixForDeleteCascadeDataset()
 		
 		when :
-		def result = deletionHandler.deleteNodes([1L])
+		def result = deletionHandler.deleteNodes([-1L])
 
 		then :
-		result.removed.collect{it.resid}.containsAll([1L])
+		result.removed.collect{it.resid}.containsAll([-1L])
 
-		allDeleted("Requirement", [11L, 12L])
-		allDeleted("RequirementVersion", [111L, 112L, 121L])
+		allDeleted("Requirement", [-11L, -12L])
+		allDeleted("RequirementVersion", [-111L, -112L, -121L])
 		
-		def lib = findEntity(RequirementLibrary.class, 1l)
+		def lib = findEntity(RequirementLibrary.class, -1L)
 		lib.rootContent.size() == 1	//that is, requirement 3
-		allDeleted("CustomFieldValue", [1111L, 1112L, 1121L, 1122L, 1211L, 1212L])
+		allDeleted("CustomFieldValue", [-1111L, -1112L, -1121L, -1122L, -1211L, -1212L])
 	}
 	
 	@DataSet("RequirementNodeDeletionHandlerIT.should cascade delete.xml")
@@ -117,14 +117,14 @@ public class RequirementNodeDeletionHandlerIT extends DbunitServiceSpecification
 		fixForDeleteCascadeDataset()
 		
 		when :
-		def result = deletionHandler.deleteNodes([1L])
+		def result = deletionHandler.deleteNodes([-1L])
 
 		then :
-		result.removed.collect{it.resid}.containsAll([1L])
+		result.removed.collect{it.resid}.containsAll([-1L])
 
-		allDeleted("Attachment", [111L, 112L, 121L])
-		allDeleted("AttachmentContent", [111L, 112L, 121L])
-		allDeleted("AttachmentList", [111L, 112L, 121L])
+		allDeleted("Attachment", [-111L, -112L, -121L])
+		allDeleted("AttachmentContent", [-111L, -112L, -121L])
+		allDeleted("AttachmentList", [-111L, -112L, -121L])
 
 	}
 	@DataSet("RequirementNodeDeletionHandlerIT.should cascade delete.xml")
@@ -134,28 +134,28 @@ public class RequirementNodeDeletionHandlerIT extends DbunitServiceSpecification
 		fixForDeleteCascadeDataset()
 		
 		when :
-		def result = deletionHandler.deleteNodes([1L])
+		def result = deletionHandler.deleteNodes([-1L])
 
 		then :
-		result.removed.collect{it.resid}.containsAll([1L])
+		result.removed.collect{it.resid}.containsAll([-1L])
 
-		allDeleted("RequirementAuditEvent", [111L, 112L, 121L, 122L, 123L])
-		allDeleted("RequirementCreation", [111L, 112L, 121L])
-		allDeleted("RequirementPropertyChange", [122L])
-		allDeleted("RequirementLargePropertyChange", [123L])
-		allDeleted("AttachmentList", [1l, 111l, 112l, 121l])	//requested after issue 2899
+		allDeleted("RequirementAuditEvent", [-111L, -112L, -121L, -122L, -123L])
+		allDeleted("RequirementCreation", [-111L, -112L, -121L])
+		allDeleted("RequirementPropertyChange", [-122L])
+		allDeleted("RequirementLargePropertyChange", [-123L])
+		allDeleted("AttachmentList", [-1L, -111L, -112L, -121L])	//requested after issue 2899
 	}
 	
 	@DataSet("RequirementNodeDeletionHandlerIT.should update tc importance.xml")
 	def "should update test case importance when requirement is deleted"(){
 		
 		when :
-		def result = deletionHandler.deleteNodes([11L])
+		def result = deletionHandler.deleteNodes([-11L])
 		
 		then :
-		result.removed.collect{it.resid} == [11L]
-		allDeleted("Requirement", [11L])
-		TestCase testCase = testCaseDao.findById(31L)
+		result.removed.collect{it.resid} == [-11L]
+		allDeleted("Requirement", [-11L])
+		TestCase testCase = testCaseDao.findById(-31L)
 		testCase.getImportance()== TestCaseImportance.LOW
 		
 	}
@@ -169,22 +169,22 @@ public class RequirementNodeDeletionHandlerIT extends DbunitServiceSpecification
 		fixForDeleteCascadeDataset()
 		
 		when :
-		def lib = findEntity(RequirementLibrary.class, 1l)
-		def result = deletionHandler.deleteNodes([3L])
+		def lib = findEntity(RequirementLibrary.class, -1L)
+		def result = deletionHandler.deleteNodes([-3L])
 
 		then :
-		result.removed.collect{it.resid}.containsAll([3L])
+		result.removed.collect{it.resid}.containsAll([-3L])
 		
-		result.moved.collect{ [it.dest.resid, it.dest.rel] } == [[1L, "drive"]]
-		result.moved.collect{ it.moved.collect {it.resid }  } == [[31L,32L]] 
+		result.moved.collect{ [it.dest.resid, it.dest.rel] } == [[-1L, "drive"]]
+		result.moved.collect{ it.moved.collect {it.resid }  } == [[-31L,-32L]] 
 		
 		result.renamed == []
 
-		allDeleted("Requirement", [3L])
-		allNotDeleted("Requirement", [31L, 32L, 311L]);
+		allDeleted("Requirement", [-3L])
+		allNotDeleted("Requirement", [-31L, -32L, -311L]);
 		
-		Requirement r31 = findEntity(Requirement.class, 31L)
-		Requirement r32 = findEntity(Requirement.class, 32L)
+		Requirement r31 = findEntity(Requirement.class, -31L)
+		Requirement r32 = findEntity(Requirement.class, -32L)
 		lib.rootContent.containsAll([r31, r32])
 
 	}
@@ -196,13 +196,13 @@ public class RequirementNodeDeletionHandlerIT extends DbunitServiceSpecification
 		fixForDeleteCascadeDataset()
 		
 		when :
-			deletionHandler.deleteNodes([1l])
+			deletionHandler.deleteNodes([-1L])
 			
 		then :
-			! found(RequirementFolder.class, 1l)
-			! found("SIMPLE_RESOURCE", "RES_ID", 1l)
-			! found("RESOURCE", "RES_ID", 1l)
-			! found(AttachmentList.class, 1l)
+			! found(RequirementFolder.class, -1L)
+			! found("SIMPLE_RESOURCE", "RES_ID", -1L)
+			! found("RESOURCE", "RES_ID", -1L)
+			! found(AttachmentList.class, -1L)
 		
 	}
 	
@@ -218,25 +218,25 @@ public class RequirementNodeDeletionHandlerIT extends DbunitServiceSpecification
 		fixForDeleteCascadeDataset()
 
 		when :
-		def lib = findEntity(RequirementLibrary.class, 1l)
-		def result = deletionHandler.deleteNodes([31L])
+		def lib = findEntity(RequirementLibrary.class, -1L)
+		def result = deletionHandler.deleteNodes([-31L])
 
 		then :
 		
 		// test the report
-		result.removed.collect{it.resid}.containsAll([31L])
+		result.removed.collect{it.resid}.containsAll([-31L])
 		
-		result.moved.collect{ [it.dest.resid, it.dest.rel] } == [[3L, "requirement"]]
-		result.moved.collect{ it.moved.collect {it.resid }} == [[311L]]
+		result.moved.collect{ [it.dest.resid, it.dest.rel] } == [[-3L, "requirement"]]
+		result.moved.collect{ it.moved.collect {it.resid }} == [[-311L]]
 		
-		result.renamed.collect{[it.node.resid, it.node.rel]} == [[311L, "requirement"]]
+		result.renamed.collect{[it.node.resid, it.node.rel]} == [[-311L, "requirement"]]
 
 		
 		// test the behavior
-		allNotDeleted("Requirement", [311L]);
+		allNotDeleted("Requirement", [-311L]);
 		
-		def req32 = findEntity(Requirement.class, 32L)
-		def req311 = findEntity(Requirement.class, 311L)
+		def req32 = findEntity(Requirement.class, -32L)
+		def req311 = findEntity(Requirement.class, -311L)
 		
 		req32.name == "possible nameclash"
 		req311.name ==~ /possible nameclash-\d.*/
@@ -246,9 +246,9 @@ public class RequirementNodeDeletionHandlerIT extends DbunitServiceSpecification
 	@DataSet("RequirementNodeDeletionHandlerIT.should cascade delete.xml")
 	def "should delete a requirement in a hierarchy"(){
 		when :
-		deletionHandler.deleteNodes([15l])
+		deletionHandler.deleteNodes([-15L])
 		then :
-		! found(Requirement.class, 15l)
+		! found(Requirement.class, -15L)
 	}
 	
 

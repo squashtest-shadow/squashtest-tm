@@ -40,10 +40,10 @@ class HibernateTestStepDaoIT extends DbunitDaoSpecification {
 	@DataSet("HibernateTestCaseDaoIT.should find filtered steps by test case id.xml")
 	def "should load a step with its test case"() {
 		when :
-			ActionTestStep st = stepDao.findById(200l)
+			ActionTestStep st = stepDao.findById(-200L)
 			
 		then :
-			st.testCase.id == 10l
+			st.testCase.id == -10L
 	}
 	
 
@@ -63,11 +63,11 @@ class HibernateTestStepDaoIT extends DbunitDaoSpecification {
 			
 		where : 
 			testCaseId | resultForTestCase
-			10L        | true
-			20L        | true 
-			30L        | false
-			40L        | true
-			50L        | false
+			-10L        | true
+			-20L        | true 
+			-30L        | false
+			-40L        | true
+			-50L        | false
 		
 	}
 	
@@ -76,7 +76,7 @@ class HibernateTestStepDaoIT extends DbunitDaoSpecification {
 	def "should find the index of a step"(){
 		
 		when :
-			def index = stepDao.findPositionOfStep(300l)
+			def index = stepDao.findPositionOfStep(-300L)
 			
 		then :
 			index == 2

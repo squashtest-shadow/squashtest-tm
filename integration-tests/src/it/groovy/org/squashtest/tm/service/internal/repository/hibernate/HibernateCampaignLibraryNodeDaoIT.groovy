@@ -42,7 +42,7 @@ class HibernateCampaignLibraryNodeDaoIT extends DbunitDaoSpecification {
 	def "should return the list of the parents names"(){
 
 		when :
-			def res = dao.getParentsName(30l)
+			def res = dao.getParentsName(-30L)
 			
 		then :
 			res == ["elder", "grandpa", "pa", "son"]

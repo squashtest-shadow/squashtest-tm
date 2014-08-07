@@ -54,6 +54,6 @@ class TestCaseExcelBatchImporterIT extends DbunitServiceSpecification{
 		summary != null
 		//TODO make it work
 		//		summary.testStepSuccesses == 1
-		//		!found(TestStep.class, 2L)
+		//		!found(TestStep.class, -2L)
 	}
 }

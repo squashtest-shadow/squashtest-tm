@@ -128,7 +128,7 @@ class HibernateRequirementDaoIT extends DbunitDaoSpecification {
 
 		then:
 		res.size() == 1
-		res.collect({ it.id }).contains(10L)
+		res.collect({ it.id }).contains(-10L)
 	}
 
 	@DataSet("HibernateRequirementDaoIT.should find verified requirements.xml")
@@ -144,7 +144,7 @@ class HibernateRequirementDaoIT extends DbunitDaoSpecification {
 
 		then:
 		res.size() == 1
-		res.collect({ it.id }).contains(20L)
+		res.collect({ it.id }).contains(-20L)
 	}
 
 	@DataSet("HibernateRequirementDaoIT.should not find folders when searching non verified requirements.xml")

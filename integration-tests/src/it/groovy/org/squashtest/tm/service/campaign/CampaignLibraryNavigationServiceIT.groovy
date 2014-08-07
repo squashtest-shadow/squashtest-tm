@@ -270,8 +270,8 @@ class CampaignLibraryNavigationServiceIT extends DbunitServiceSpecification {
 	@DataSet("CampaignLibraryNavigationServiceIT.should copy paste iterations to campaign.xml")
 	def "should copy paste iterations to campaign"(){
 		given:
-		Long[] iterationList = [1L,2L] 
-		Long targetCampaignId = 11L
+		Long[] iterationList = [-1L,-2L] 
+		Long targetCampaignId = -11L
 		
 		when: 
 		
@@ -286,8 +286,8 @@ class CampaignLibraryNavigationServiceIT extends DbunitServiceSpecification {
 	@DataSet("CampaignLibraryNavigationServiceIT.should copy paste iterations with testSuites.xml")
 	def "should copy paste iterations with testSuites"(){
 		given:
-		Long[] iterationList = [10012L,2L]
-		Long targetCampaignId = 11L
+		Long[] iterationList = [-10012L,-2L]
+		Long targetCampaignId = -11L
 		
 		when:
 		List<Iteration> iterations = navService.copyIterationsToCampaign(targetCampaignId , iterationList )
@@ -312,9 +312,9 @@ class CampaignLibraryNavigationServiceIT extends DbunitServiceSpecification {
 	@DataSet("CampaignLibraryNavigationServiceIT.should copy paste iterations with testSuites containing CUF.xml")
 	def "should copy paste iterations with testSuites containing CUF"(){
 		given:
-		Long iteration = 10012L
+		Long iteration = -10012L
 		Long targetCampaignId = 11
-		Long customFieldValueId = 42l
+		Long customFieldValueId = -42L
 		
 		when:
 		List<Iteration> iterations = navService.copyIterationsToCampaign(targetCampaignId , iteration )
@@ -336,8 +336,8 @@ class CampaignLibraryNavigationServiceIT extends DbunitServiceSpecification {
 	@DataSet("CampaignLibraryNavigationServiceIT.should copy paste campaigns with iterations.xml")
 	def "should copy paste campaigns with iterations"(){
 		given:
-		Long[] sourceIds = [10L]
-		Long destinationId = 1L
+		Long[] sourceIds = [-10L]
+		Long destinationId = -1L
 		
 		when:
 		List<Campaign> campaigns = navService.copyNodesToFolder(destinationId, sourceIds)
@@ -352,8 +352,8 @@ class CampaignLibraryNavigationServiceIT extends DbunitServiceSpecification {
 	@DataSet("CampaignLibraryNavigationServiceIT.should copy paste campaigns with testSuites.xml")
 	def "should copy paste campaigns with testSuites"(){
 		given:
-			Long[] targetIds = [10L]
-		Long destinationId = 1L
+			Long[] targetIds = [-10L]
+		Long destinationId = -1L
 		
 		when:
 		List<Campaign> campaigns = navService.copyNodesToFolder(destinationId, targetIds)
@@ -376,8 +376,8 @@ class CampaignLibraryNavigationServiceIT extends DbunitServiceSpecification {
 	@DataSet("CampaignLibraryNavigationServiceIT.should copy paste folder with campaigns, iterations, suite.xml")
 	def "should copy paste folder with campaigns, iterations, suites"(){
 		given:
-		Long[] sourceIds = [1L]
-		Long destinationId = 2L
+		Long[] sourceIds = [-1L]
+		Long destinationId = -2L
 		
 		when:
 		List<CampaignLibraryNode> campaignNodes = navService.copyNodesToFolder(destinationId, sourceIds)
@@ -414,8 +414,8 @@ class CampaignLibraryNavigationServiceIT extends DbunitServiceSpecification {
 	@ExpectedDataSet("CampaignLibraryNavigationServiceIT.should move to same project f+c-result.xml")
 	def "should move folder + campaigns to same project"(){
 		given : 
-		Long[] sourceIds = [1L]
-		Long destinationId = 2L
+		Long[] sourceIds = [-1L]
+		Long destinationId = -2L
 		
 		when: navService.moveNodesToFolder(destinationId, sourceIds)
 		
@@ -426,8 +426,8 @@ class CampaignLibraryNavigationServiceIT extends DbunitServiceSpecification {
 	@DataSet("CampaignLibraryNavigationServiceIT.should not move in himself.xml")
 	def "should not move in himself"(){
 		given :
-		Long[] sourceIds = [1L]
-		Long destinationId = 1L
+		Long[] sourceIds = [-1L]
+		Long destinationId = -1L
 		
 		when: navService.moveNodesToFolder(destinationId, sourceIds)
 		
@@ -437,8 +437,8 @@ class CampaignLibraryNavigationServiceIT extends DbunitServiceSpecification {
 	@DataSet("CampaignLibraryNavigationServiceIT.should not move in himself.xml")
 	def "should not move in his decendents"(){
 		given :
-		Long[] sourceIds = [13L]
-		Long destinationId = 1L
+		Long[] sourceIds = [-13L]
+		Long destinationId = -1L
 		
 		when: navService.moveNodesToFolder(destinationId, sourceIds)
 		
@@ -450,8 +450,8 @@ class CampaignLibraryNavigationServiceIT extends DbunitServiceSpecification {
 	@ExpectedDataSet("CampaignLibraryNavigationServiceIT.should move to another project f+c-result.xml")
 	def "should move folder + campaigns to another project"(){
 		given :
-		Long[] sourceIds = [1L]
-		Long destinationId = 2L
+		Long[] sourceIds = [-1L]
+		Long destinationId = -2L
 		
 		when: navService.moveNodesToFolder(destinationId, sourceIds)
 		
@@ -463,8 +463,8 @@ class CampaignLibraryNavigationServiceIT extends DbunitServiceSpecification {
 	@ExpectedDataSet("CampaignLibraryNavigationServiceIT.should move to another project f+c + cufs-result.xml")
 	def "should move folder + campaigns  with cufs to another project"(){
 		given :
-		Long[] sourceIds = [1L]
-		Long destinationId = 2L
+		Long[] sourceIds = [-1L]
+		Long destinationId = -2L
 		
 		when: navService.moveNodesToFolder(destinationId, sourceIds)
 		
@@ -476,8 +476,8 @@ class CampaignLibraryNavigationServiceIT extends DbunitServiceSpecification {
 	@ExpectedDataSet("CampaignLibraryNavigationServiceIT.should move to another project f+c+i+s + cufs + execs-result.xml")
 	def "should move folder + campaigns + iterations + suites with cufs and issues to another project"(){
 		given :
-		Long[] sourceIds = [1L]
-		Long destinationId = 2L
+		Long[] sourceIds = [-1L]
+		Long destinationId = -2L
 		
 		when: navService.moveNodesToFolder(destinationId, sourceIds)
 		
@@ -489,8 +489,8 @@ class CampaignLibraryNavigationServiceIT extends DbunitServiceSpecification {
 	@ExpectedDataSet("CampaignLibraryNavigationServiceIT.should move to another project and keep issues-result.xml")
 	def "should move to another project and keep issues"(){
 		given :"a dataset with 2 projects having the same bugtracker"
-		Long[] sourceIds = [1L]
-		Long destinationId = 2L
+		Long[] sourceIds = [-1L]
+		Long destinationId = -2L
 		
 		when: navService.moveNodesToFolder(destinationId, sourceIds)
 		
@@ -502,8 +502,8 @@ class CampaignLibraryNavigationServiceIT extends DbunitServiceSpecification {
 	@ExpectedDataSet("CampaignLibraryNavigationServiceIT.should move to another project and remove issues-result.xml")
 	def "should move to another project and remove issues"(){
 		given :"a dataset with 2 projects having different bugtrackers"
-		Long[] sourceIds = [1L]
-		Long destinationId = 2L
+		Long[] sourceIds = [-1L]
+		Long destinationId = -2L
 		
 		when: navService.moveNodesToFolder(destinationId, sourceIds)
 		
@@ -521,43 +521,43 @@ class CampaignLibraryNavigationServiceIT extends DbunitServiceSpecification {
 	@DataSet("CampaignLibraryNavigationServiceIT.should move to same project at right position.xml")
 	def "should move folder with campaigns to the right position - first"(){
 		given:
-		Long[] sourceIds = [1L]
-		Long destinationId = 2L
+		Long[] sourceIds = [-1L]
+		Long destinationId = -2L
 		
 		when:
 		navService.moveNodesToFolder(destinationId, sourceIds, 0)
 		
 		then:
-		CampaignFolder parentFolder = (CampaignFolder) folderDao.findById(2L);
-		parentFolder.content.collect {it.id} == [1L, 20L, 21L];
+		CampaignFolder parentFolder = (CampaignFolder) folderDao.findById(-2L);
+		parentFolder.content.collect {it.id} == [-1L, -20L, -21L];
 	}
 	
 	@DataSet("CampaignLibraryNavigationServiceIT.should move to same project at right position.xml")
 	def "should move folder with campaigns to the right position - middle"(){
 		given:
-		Long[] sourceIds = [1L]
-		Long destinationId = 2L
+		Long[] sourceIds = [-1L]
+		Long destinationId = -2L
 		
 		when:
 		navService.moveNodesToFolder(destinationId, sourceIds, 1)
 		
 		then:
-		CampaignFolder parentFolder = (CampaignFolder) folderDao.findById(2L);
-		parentFolder.content.collect {it.id} == [20L, 1L, 21L];
+		CampaignFolder parentFolder = (CampaignFolder) folderDao.findById(-2L);
+		parentFolder.content.collect {it.id} == [-20L, -1L, -21L];
 	}
 	
 	@DataSet("CampaignLibraryNavigationServiceIT.should move to same project at right position.xml")
 	def "should move folder with campaigns to the right position - last"(){
 		given:
-		Long[] sourceIds = [1L]
-		Long destinationId = 2L
+		Long[] sourceIds = [-1L]
+		Long destinationId = -2L
 		
 		when:
 		navService.moveNodesToFolder(destinationId, sourceIds, 2)
 		
 		then:
-		CampaignFolder parentFolder = (CampaignFolder) folderDao.findById(2L);
-		parentFolder.content.collect {it.id} == [20L, 21L, 1L];
+		CampaignFolder parentFolder = (CampaignFolder) folderDao.findById(-2L);
+		parentFolder.content.collect {it.id} == [-20L, -21L, -1L];
 	}
 	
 }

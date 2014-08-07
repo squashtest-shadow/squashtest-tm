@@ -53,8 +53,8 @@ class IterationFinderServiceIT extends DbunitServiceSpecification {
 	@DataSet("IterationFinderServiceIT.3executions.xml")
 	def "should find test plan executions"(){
 		given :
-		def iterationId = 1L
-		def testPlanItemId = 2L
+		def iterationId = -1L
+		def testPlanItemId = -2L
 		
 		when :
 		List<Execution> execList = iterService.findExecutionsByTestPlan(iterationId, testPlanItemId)
@@ -76,7 +76,7 @@ class IterationFinderServiceIT extends DbunitServiceSpecification {
 	def "should fetch executions in the correct order"(){
 
 		given :
-		def iterationId = 1L
+		def iterationId = -1L
 
 		when :
 		List<Execution> executions = iterService.findAllExecutions(iterationId)
@@ -94,7 +94,7 @@ class IterationFinderServiceIT extends DbunitServiceSpecification {
 //	def "should get the list of planned test cases of an iteration"(){
 //
 //		given :
-//		iterationId = 1L
+//		iterationId = -1L
 //TODO change dataset and do not use services in the given block
 //		TestCase tc1 = new TestCase(name:"tc1");
 //		TestCase tc2 = new TestCase(name:"tc2");

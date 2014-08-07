@@ -45,11 +45,11 @@ class HibernateTestAutomationProjectDaoIT extends DbunitDaoSpecification {
 	def "should find a project by id"(){
 
 		when :
-		def res = projectDao.findById(11l)
+		def res = projectDao.findById(-11L)
 
 		then :
-		res.id==11l
-		res.server.id==1l
+		res.id==-11L
+		res.server.id==-1L
 		res.jobName=="roberto1"
 
 	}
@@ -58,14 +58,14 @@ class HibernateTestAutomationProjectDaoIT extends DbunitDaoSpecification {
 	@DataSet("HibernateTestAutomationDao.sandbox.xml")
 	def "should find a project by example"(){
 		given :
-		TestAutomationServer server = serverDao.findById(1l)
+		TestAutomationServer server = serverDao.findById(-1L)
 		TestAutomationProject project = new TestAutomationProject("roberto1", "Project Roberto 1",  server)
 
 		when :
 		def res = projectDao.findByExample(project)
 
 		then :
-		res.id==11l
+		res.id==-11L
 	}
 
 
@@ -86,7 +86,7 @@ class HibernateTestAutomationProjectDaoIT extends DbunitDaoSpecification {
 	@DataSet("HibernateTestAutomationDao.sandbox.xml")
 	def "should rant because too many matches for the given example"(){
 		given :
-		TestAutomationServer server = serverDao.findById(1l)
+		TestAutomationServer server = serverDao.findById(-1L)
 		TestAutomationProject project = new TestAutomationProject(null, server)
 
 		when :
@@ -100,7 +100,7 @@ class HibernateTestAutomationProjectDaoIT extends DbunitDaoSpecification {
 	def "should list the automation projects hosted on a given server"(){
 
 		when :
-		def res = projectDao.findAllHostedProjects(1l)
+		def res = projectDao.findAllHostedProjects(-1L)
 
 		then :
 		res.size()==3

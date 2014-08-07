@@ -45,8 +45,8 @@ class AutomatedSuiteManagerServiceIT extends DbunitServiceSpecification {
 		when:
 		def res = service.findExecutionsByAutomatedTestSuiteId("suite1")
 		then:
-		res[0].id == 40l
-		res[1].id == 41l
+		res[0].id == -40L
+		res[1].id == -41L
 	}
 
 	def getServer(id){

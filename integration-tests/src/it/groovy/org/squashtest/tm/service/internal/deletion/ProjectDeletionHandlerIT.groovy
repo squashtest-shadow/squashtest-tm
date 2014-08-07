@@ -56,10 +56,10 @@ public class ProjectDeletionHandlerIT extends DbunitServiceSpecification {
 		def result = deletionHandler.deleteProject(1)
 
 		then :
-		!found(Project.class, 1l)
-		allDeleted ("RequirementLibrary", [12L])
-		allDeleted ("TestCaseLibrary", [13L])
-		allDeleted ("CampaignLibrary", [14L])
+		!found(Project.class, -1L)
+		allDeleted ("RequirementLibrary", [-12L])
+		allDeleted ("TestCaseLibrary", [-13L])
+		allDeleted ("CampaignLibrary", [-14L])
 	}
 	
 	@DataSet("ProjectDeletionHandlerTest.should delete project and libraries.xml")
@@ -69,18 +69,18 @@ public class ProjectDeletionHandlerIT extends DbunitServiceSpecification {
 		def result = deletionHandler.deleteProject(1)
 		getSession().flush();
 		then :
-		! found(Project.class, 1l)
-		! found ("ACL_RESPONSIBILITY_SCOPE_ENTRY", "ID",6L)
-		! found ("ACL_RESPONSIBILITY_SCOPE_ENTRY", "ID",7L)
-		! found ("ACL_RESPONSIBILITY_SCOPE_ENTRY", "ID",8L)
-		! found ("ACL_RESPONSIBILITY_SCOPE_ENTRY", "ID",9L)
+		! found(Project.class, -1L)
+		! found ("ACL_RESPONSIBILITY_SCOPE_ENTRY", "ID",-6L)
+		! found ("ACL_RESPONSIBILITY_SCOPE_ENTRY", "ID",-7L)
+		! found ("ACL_RESPONSIBILITY_SCOPE_ENTRY", "ID",-8L)
+		! found ("ACL_RESPONSIBILITY_SCOPE_ENTRY", "ID",-9L)
 		
 //		In integration test context ObjectIdentityService is as stub
 //		this is why i use a mock here
-		1*objectIdentityService.removeObjectIdentity(12L,RequirementLibrary.class)
-		1*objectIdentityService.removeObjectIdentity(13L,TestCaseLibrary.class)
-		1*objectIdentityService.removeObjectIdentity(14L,CampaignLibrary.class)
-		1*objectIdentityService.removeObjectIdentity(1L,Project.class)
+		1*objectIdentityService.removeObjectIdentity(-12L,RequirementLibrary.class)
+		1*objectIdentityService.removeObjectIdentity(-13L,TestCaseLibrary.class)
+		1*objectIdentityService.removeObjectIdentity(-14L,CampaignLibrary.class)
+		1*objectIdentityService.removeObjectIdentity(-1L,Project.class)
 	}
 	
 	@DataSet("ProjectDeletionHandlerTest.should delete project and libraries.xml")
@@ -91,9 +91,9 @@ public class ProjectDeletionHandlerIT extends DbunitServiceSpecification {
 			def result = deletionHandler.deleteProject(1)
 			
 		then :
-			allDeleted ("RequirementLibraryPluginBinding", [12L])
-			allDeleted ("TestCaseLibraryPluginBinding", [11L, 12L])
-			allDeleted ("CampaignLibraryPluginBinding", [31L])
+			allDeleted ("RequirementLibraryPluginBinding", [-12L])
+			allDeleted ("TestCaseLibraryPluginBinding", [-11L, -12L])
+			allDeleted ("CampaignLibraryPluginBinding", [-31L])
 			
 			newSQLQuery("select * from LIBRARY_PLUGIN_BINDING_PROPERTY").list().size() == 0
 			

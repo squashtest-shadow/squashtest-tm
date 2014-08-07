@@ -55,8 +55,8 @@ class IterationModificationServiceIT extends DbunitServiceSpecification {
 	@DataSet("IterationModificationServiceIT.should copy-paste a TestSuite.xml")
 	def "should copy-paste a TestSuite"(){
 		given:
-		def testSuiteId = 1L
-		def iterationId = 10L
+		def testSuiteId = -1L
+		def iterationId = -10L
 
 		when :
 		TestSuite copyOfSuite = iterService.copyPasteTestSuiteToIteration (testSuiteId, iterationId)
@@ -65,7 +65,7 @@ class IterationModificationServiceIT extends DbunitServiceSpecification {
 		copyOfSuite.getIteration().getId() == iterationId
 		copyOfSuite.getTestPlan().size() == 2
 		copyOfSuite.getName() == "suite de test 1"
-		copyOfSuite.getId()!= 1L
+		copyOfSuite.getId()!= -1L
 		copyOfSuite.getId()!= null
 		copyOfSuite.getTestPlan().each {it.getExecutions().size()==0 }
 		copyOfSuite.getTestPlan().each {it.getExecutionStatus()== ExecutionStatus.READY }
@@ -75,8 +75,8 @@ class IterationModificationServiceIT extends DbunitServiceSpecification {
 	@DataSet("IterationModificationServiceIT.should copy-paste a TestSuite and rename it.xml")
 	def "should copy-paste a TestSuite and rename it depending on TestSuites at destination"(){
 		given:
-		def testSuiteId = 1L
-		def iterationId = 1L
+		def testSuiteId = -1L
+		def iterationId = -1L
 
 		when :
 		TestSuite copyOfSuite = iterService.copyPasteTestSuiteToIteration (testSuiteId, iterationId)
@@ -88,9 +88,9 @@ class IterationModificationServiceIT extends DbunitServiceSpecification {
 	@DataSet("IterationModificationServiceIT.should copy-paste 2 TestSuites.xml")
 	def "should copy-paste 2 TestSuites"(){
 		given:
-		def testSuite1Id = 1L
-		def testSuite2Id = 2L
-		def iterationId = 10L
+		def testSuite1Id = -1L
+		def testSuite2Id = -2L
+		def iterationId = -10L
 		def Long[] testSuiteIds = new Long[2]
 		testSuiteIds[0] = testSuite1Id
 		testSuiteIds[1] = testSuite2Id
@@ -103,14 +103,14 @@ class IterationModificationServiceIT extends DbunitServiceSpecification {
 		copyOfSuites.get(0).getIteration().getId() == iterationId
 		copyOfSuites.get(0).getTestPlan().size() == 2
 		copyOfSuites.get(0).getName() == "suite de test 1"
-		copyOfSuites.get(0).getId()!= 1L
+		copyOfSuites.get(0).getId()!= -1L
 		copyOfSuites.get(0).getId()!= null
 		copyOfSuites.get(0).getTestPlan().each {it.getExecutions().size()==0 }
 		copyOfSuites.get(0).getTestPlan().each {it.getExecutionStatus()== ExecutionStatus.READY }
 		copyOfSuites.get(0).getTestPlan().each {it.getIteration().getId() == iterationId }
 		copyOfSuites.get(1).getIteration().getId() == iterationId
 		copyOfSuites.get(1).getName() == "suite de test 2"
-		copyOfSuites.get(1).getId()!= 2L
+		copyOfSuites.get(1).getId()!= -2L
 		copyOfSuites.get(1).getId()!= null
 	}
 
@@ -119,7 +119,7 @@ class IterationModificationServiceIT extends DbunitServiceSpecification {
 	def "should create an execution and copy the custom fields"(){
 
 		when :
-		Execution exec = iterService.addExecution(1l)
+		Execution exec = iterService.addExecution(-1L)
 
 		then : "5 denormalized fields are created"
 		Query query1 = getSession().createQuery("from DenormalizedFieldValue dfv")
@@ -148,7 +148,7 @@ class IterationModificationServiceIT extends DbunitServiceSpecification {
 	def "should create an execution with call steps and copy the custom fields"(){
 
 		when :
-		Execution exec = iterService.addExecution(2l)
+		Execution exec = iterService.addExecution(-2L)
 
 		then :
 		Query query = getSession().createQuery("from DenormalizedFieldValue dfv where dfv.denormalizedFieldHolderId = :id and dfv.denormalizedFieldHolderType = :type order by dfv.position")
@@ -167,7 +167,7 @@ class IterationModificationServiceIT extends DbunitServiceSpecification {
 	def "should copy cuf for call step with reference locations of non call steps"(){
 
 		when :
-		Execution exec = iterService.addExecution(2l)
+		Execution exec = iterService.addExecution(-2L)
 
 		then : "call step has 3 denormalized fields"
 		Query query = getSession().createQuery("from DenormalizedFieldValue dfv where dfv.denormalizedFieldHolderId = :id and dfv.denormalizedFieldHolderType = :type order by dfv.position")
@@ -191,7 +191,7 @@ class IterationModificationServiceIT extends DbunitServiceSpecification {
 		TestSuite suite = new TestSuite(name: "fishnet")
 
 		def createSuite = {
-			iterService.addTestSuite(1L, suite)
+			iterService.addTestSuite(-1L, suite)
 			sessionFactory.currentSession.flush()
 			true
 		}
@@ -203,8 +203,8 @@ class IterationModificationServiceIT extends DbunitServiceSpecification {
 	@DataSet("IterationModificationServiceIT.add exec to itp.xml")
 	def "should create a new execution for the test case in the iteration"(){
 		given :
-		def iterationId = 1L
-		def itemTestPlanId= 1L
+		def iterationId = -1L
+		def itemTestPlanId= -1L
 
 		when :
 		iterService.addExecution(itemTestPlanId)
@@ -219,8 +219,8 @@ class IterationModificationServiceIT extends DbunitServiceSpecification {
 	@DataSet("IterationModificationServiceIT update Item Plan with last execution data.xml")
 	def "Should update Item Plan with last execution data 4"(){
 		given:
-		def exec3 = findEntity(Execution.class, 3L)
-		def testPlanId = 1L
+		def exec3 = findEntity(Execution.class, -3L)
+		def testPlanId = -1L
 
 		when:
 		//you add an execution, the values are still null
@@ -242,7 +242,7 @@ class IterationModificationServiceIT extends DbunitServiceSpecification {
 		given :
 		def suite = new TestSuite()
 		suite.name="suite"
-		def iterationId = 1L
+		def iterationId = -1L
 
 		when :
 		iterService.addTestSuite(iterationId, suite)
@@ -258,7 +258,7 @@ class IterationModificationServiceIT extends DbunitServiceSpecification {
 	def "should rant because there is a conflict in suite names"(){
 
 		given :
-		def iterationId = 1L
+		def iterationId = -1L
 
 		and :
 		def resuite = new TestSuite()

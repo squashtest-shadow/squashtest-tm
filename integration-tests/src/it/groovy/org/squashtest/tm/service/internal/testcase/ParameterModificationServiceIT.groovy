@@ -65,7 +65,7 @@ class ParameterModificationServiceIT extends DbunitServiceSpecification {
 	def "should return the parameter list for a given test case"(){
 
 		when :
-		List<Parameter> params = service.findAllforTestCase(100L);
+		List<Parameter> params = service.findAllforTestCase(-100L);
 		then :
 		params.size() == 1;
 	}
@@ -75,7 +75,7 @@ class ParameterModificationServiceIT extends DbunitServiceSpecification {
 
 
 		when :
-		List<Parameter> params = service.findAllforTestCase(101L);
+		List<Parameter> params = service.findAllforTestCase(-101L);
 		then :
 		params.size() == 3;
 	}
@@ -84,20 +84,20 @@ class ParameterModificationServiceIT extends DbunitServiceSpecification {
 	def "should change parameter name"(){
 
 		when :
-		service.changeName(10100L, "newName")
+		service.changeName(-10100L, "newName")
 		then :
-		parameterDao.findById(10100L).name == "newName"
+		parameterDao.findById(-10100L).name == "newName"
 	}
 
 	@DataSet("ParameterModificationServiceIT.should change parameter name.xml")
 	def "should change parameter name and update step"(){
 		given : "a test step with one parameter that ocurs once in it's steps"
-		long parameterId = 1L
+		long parameterId = -1L
 		String newParamName = "newName"
 		when : 
 		service.changeName(parameterId,newParamName)
 		then : 
-		ActionTestStep editedStep = session.get(ActionTestStep.class, 1L)
+		ActionTestStep editedStep = session.get(ActionTestStep.class, -1L)
 		String newStep = "do this \${newName}"
 		editedStep.action.equals(newStep)
 	}
@@ -106,17 +106,17 @@ class ParameterModificationServiceIT extends DbunitServiceSpecification {
 	def "should change parameter description"(){
 
 		when :
-		service.changeDescription(10100L, "newDescription");
+		service.changeDescription(-10100L, "newDescription");
 		then :
-		parameterDao.findById(10100L).description == "newDescription";
+		parameterDao.findById(-10100L).description == "newDescription";
 	}
 
 	@DataSet("ParameterModificationServiceIT.xml")
 	def "should remove parameter"(){
 
 		when :
-		TestCase testCase = testCaseDao.findById(100L);
-		Parameter param = parameterDao.findById(10100L);
+		TestCase testCase = testCaseDao.findById(-100L);
+		Parameter param = parameterDao.findById(-10100L);
 		parameterDao.remove(param);
 		then :
 		session.flush();
@@ -126,9 +126,9 @@ class ParameterModificationServiceIT extends DbunitServiceSpecification {
 	@DataSet("ParameterModificationServiceIT.xml")
 	def "should find parameter in step"(){
 		when :
-		service.createParamsForStep(101L);
+		service.createParamsForStep(-101L);
 		then :
-		TestCase testCase = session.get(TestCase.class, 100L)
+		TestCase testCase = session.get(TestCase.class, -100L)
 		testCase.parameters.collect {it.name}.contains("parameter");
 	
 	}
@@ -144,9 +144,9 @@ class ParameterModificationServiceIT extends DbunitServiceSpecification {
 		result == paramResult;
 		where:
 		paramId | paramResult
-		1L	    | true
-		2L      | false
-		3L      |false
+		-1L	    | true
+		-2L      | false
+		-3L      |false
 		
 	}
 
@@ -154,14 +154,14 @@ class ParameterModificationServiceIT extends DbunitServiceSpecification {
 	def "should update datasets when a parameter is created"(){
 		given :"a test case with a datataset"
 		Dataset dataset = new Dataset(name:"dataset2")
-		datasetService.persist(dataset, 100L)
+		datasetService.persist(dataset, -100L)
 		and : "a new parameter"
 		Parameter parameter = new Parameter()
 		parameter.name = "parameter2"
 		when :
-		service.addNewParameterToTestCase(parameter, 100L)
+		service.addNewParameterToTestCase(parameter, -100L)
 		then :
-		TestCase testCase = testCaseDao.findById(100L)
+		TestCase testCase = testCaseDao.findById(-100L)
 		testCase.getDatasets().size() == 1;
 		for(Dataset data : testCase.getDatasets()){
 			data.parameterValues.size() == 1;

@@ -2,7 +2,7 @@
 <!DOCTYPE dataset SYSTEM "../../../../../../../dtd/squash-tm.1.9.10.dtd">
 
 <dataset>
-	<ACL_CLASS ID="100" CLASSNAME="foo.Bar" />	
+	<ACL_CLASS ID="-100" CLASSNAME="foo.Bar" />	
 	<acl_object_identity />
 	<acl_group_permission />
 	<acl_responsibility_scope_entry />

@@ -75,25 +75,25 @@ class HibernateRequirementDeletionDaoIT extends DbunitDaoSpecification {
 
 		when:
 		//remove
-		List<Long> requirementAttachmentIds = deletionDao.findRequirementAttachmentListIds([10L, 30L]);
+		List<Long> requirementAttachmentIds = deletionDao.findRequirementAttachmentListIds([-10L, -30L]);
 		
-		deletionDao.removeFromVerifiedRequirementLists([10L, 30L])
+		deletionDao.removeFromVerifiedRequirementLists([-10L, -30L])
 		
-		deletionDao.deleteRequirementAuditEvents([10L, 30L])
+		deletionDao.deleteRequirementAuditEvents([-10L, -30L])
 		
-		deletionDao.removeEntities([10L, 30L])
+		deletionDao.removeEntities([-10L, -30L])
 		
 		//deletionDao.removeAttachmentsLists(requirementAttachmentIds)
 		
 		//then find all
-		def resReqVers = versionDao.findAllByIds([10L, 11L, 12L, 13L, 14L, 15L, 20L, 21L, 22L, 23L, 24L, 25L, 30L, 40L])
-		def resReq = requirementDao.findAllByIds([10L, 20L, 30L, 40L])
+		def resReqVers = versionDao.findAllByIds([-10L, -11L, -12L, -13L, -14L, -15L, -20L, -21L, -22L, -23L, -24L, -25L, -30L, -40L])
+		def resReq = requirementDao.findAllByIds([-10L, -20L, -30L, -40L])
 		
 		String sql_select_resource = "select res_id from resource where res_id in (10, 11, 12, 13, 14, 15, 20, 21, 22, 23, 24, 25, 30, 40)";
 		Query query_select_resource = getSession().createSQLQuery(sql_select_resource);
 		def resources = query_select_resource.list()
 		
-		def resAttachList = attachmentListDao.findAllByIds([10L, 11L, 12L, 13L, 14L, 15L, 20L, 21L, 22L, 23L, 24L, 25L, 30L, 40L])
+		def resAttachList = attachmentListDao.findAllByIds([-10L, -11L, -12L, -13L, -14L, -15L, -20L, -21L, -22L, -23L, -24L, -25L, -30L, -40L])
 		
 		String sql_select_librairy_node = "select rln_id from requirement_library_node where rln_id in (10, 20, 30, 40)";
 		Query query_select_librairy_node = getSession().createSQLQuery(sql_select_librairy_node);
@@ -121,10 +121,10 @@ class HibernateRequirementDeletionDaoIT extends DbunitDaoSpecification {
 		
 		//should remain only the elements not linked to the removed requirements
 		then:
-		resReqVers.containsExactlyIds([20L, 21L, 22L, 23L, 24L, 25L, 40L])
-		resReq.containsExactlyIds([20L, 40L])
+		resReqVers.containsExactlyIds([-20L, -21L, -22L, -23L, -24L, -25L, -40L])
+		resReq.containsExactlyIds([-20L, -40L])
 		resources.containsExactly([20G, 21G, 22G, 23G, 24G, 25G, 40G])
-		resAttachList.containsExactlyIds([20L, 21L, 22L, 23L, 24L, 25L, 40L])
+		resAttachList.containsExactlyIds([-20L, -21L, -22L, -23L, -24L, -25L, -40L])
 		resLibrairy_node.containsExactly([20G, 40G])
 		resTestCaseVerifiedReqVers.containsExactly([25G, 40G])
 		resRequirementAuditEvent.containsExactly([20G, 21G, 22G, 23G, 24G, 25G, 40G])

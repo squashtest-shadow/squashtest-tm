@@ -55,10 +55,10 @@ class TestCaseCallTreefinderIT extends DbunitServiceSpecification {
 	def "should return the test case call tree of a test case"(){
 
 		given :
-			Set<Long> expectedTree = [11l, 21l, 22l, 31l, 32l]
+			Set<Long> expectedTree = [-11L, -21L, -22L, -31L, -32L]
 		
 		when :
-			Set<Long> callTree = callTreeFinder.getTestCaseCallTree(1l);
+			Set<Long> callTree = callTreeFinder.getTestCaseCallTree(-1L);
 		
 		then :				
 			callTree.containsAll(expectedTree)	
@@ -76,7 +76,7 @@ class TestCaseCallTreefinderIT extends DbunitServiceSpecification {
 		 */
 		
 		when :
-			def graph = callTreeFinder.getCallerGraph([31l])
+			def graph = callTreeFinder.getCallerGraph([-31L])
 		
 		then :
 			def node1 = graph.getNode(ref(1, "top test case"))
@@ -103,7 +103,7 @@ class TestCaseCallTreefinderIT extends DbunitServiceSpecification {
 		 */
 		
 		when :
-			def graph = callTreeFinder.getCallerGraph([32l])
+			def graph = callTreeFinder.getCallerGraph([-32L])
 		
 		then :
 			def node1 = graph.getNode(ref(1, "top test case"))
@@ -129,7 +129,7 @@ class TestCaseCallTreefinderIT extends DbunitServiceSpecification {
 	def "should find the extended call graph starting from 1 node"(){
 		
 		given :
-			def seed = 21l
+			def seed = -21L
 			
 		when :
 			def graph = callTreeFinder.getExtendedGraph([seed])
@@ -164,7 +164,7 @@ class TestCaseCallTreefinderIT extends DbunitServiceSpecification {
 	def "should find the same extended call graph starting from 3 node"(){
 		
 		given :
-			def seeds = [21l, 1l, 22l ]
+			def seeds = [-21L, -1L, -22L ]
 			
 		when :
 			def graph = callTreeFinder.getExtendedGraph(seeds)

@@ -43,7 +43,7 @@ class HibernateIterationDaoIT extends DbunitDaoSpecification {
 	@DataSet("HibernateIterationDaoIT.should return list of executions.xml")
 	def "should return list of executions"(){
 		when:
-		def result = iterationDao.findAllExecutionByIterationId (2l)
+		def result = iterationDao.findAllExecutionByIterationId (-2L)
 
 		then:
 		result.size() == 3
@@ -53,7 +53,7 @@ class HibernateIterationDaoIT extends DbunitDaoSpecification {
 	@DataSet("HibernateIterationDaoIT.should find iteration statistics.xml")
 	def "should find test suite statistics READY"(){
 		when:
-		TestPlanStatistics result = iterationDao.getIterationStatistics(1L)
+		TestPlanStatistics result = iterationDao.getIterationStatistics(-1L)
 
 		then:
 		result != null
@@ -84,7 +84,7 @@ class HibernateIterationDaoIT extends DbunitDaoSpecification {
 		filtering.isDefined() >> hasFiltering
 		 
 		when:
-		def res = iterationDao.findIndexedTestPlan(1L, sorting, filtering, columnFiltering)
+		def res = iterationDao.findIndexedTestPlan(-1L, sorting, filtering, columnFiltering)
 		
 		then:
 		notThrown(HibernateException)
@@ -108,7 +108,7 @@ class HibernateIterationDaoIT extends DbunitDaoSpecification {
 		filtering.isDefined() >> hasFiltering
 		 
 		when:
-		def res = iterationDao.findTestPlan(1L, sorting, filtering, columnFiltering)
+		def res = iterationDao.findTestPlan(-1L, sorting, filtering, columnFiltering)
 		
 		then:
 		notThrown(HibernateException)

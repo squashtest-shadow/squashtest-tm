@@ -54,12 +54,12 @@ public class PrivateCustomFieldValueServiceIT extends DbunitServiceSpecification
 	def "should create and copy the custom fields from one entity to another"(){
 
 		given :
-		def src = tcDao.findById(112l)
-		def dest = tcDao.findById(113l)
+		def src = tcDao.findById(-112L)
+		def dest = tcDao.findById(-113L)
 
 		when :
 		service.copyCustomFieldValues(src, dest)
-		def fields = cfvDao.findAllCustomValues(113l, BindableEntity.TEST_CASE)
+		def fields = cfvDao.findAllCustomValues(-113L, BindableEntity.TEST_CASE)
 
 		then :
 		fields.collect{it.value} == ["SEC-2", "false"]
@@ -69,12 +69,12 @@ public class PrivateCustomFieldValueServiceIT extends DbunitServiceSpecification
 	def "should copy content of the custom fields from one entity to another"(){
 
 		given :
-		def src = tcDao.findById(112l)
-		def dest = tcDao.findById(111l)
+		def src = tcDao.findById(-112L)
+		def dest = tcDao.findById(-111L)
 
 		when :
 		service.copyCustomFieldValuesContent(src, dest)
-		def fields = cfvDao.findAllCustomValues(111l, BindableEntity.TEST_CASE)
+		def fields = cfvDao.findAllCustomValues(-111L, BindableEntity.TEST_CASE)
 
 		then :
 		fields.collect{it.value} == ["SEC-2", "false"]

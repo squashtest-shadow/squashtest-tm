@@ -39,7 +39,7 @@ public class HibernateDenormalizedFieldValueDaoIT  extends DbunitDaoSpecificatio
 	@DataSet("HibernateDenormalizedFieldValueDaoIT.dfvs.xml")
 	def "should find all dfv for entity"(){
 		given: 
-		def entityId = 500L
+		def entityId = -500L
 		def entityType = DenormalizedFieldHolderType.EXECUTION
 		
 		when : 
@@ -54,7 +54,7 @@ public class HibernateDenormalizedFieldValueDaoIT  extends DbunitDaoSpecificatio
 	@DataSet("HibernateDenormalizedFieldValueDaoIT.dfvs.xml")
 	def "should count all dfv for entity"(){
 		given: 
-		def entityId = 500L
+		def entityId = -500L
 		def entityType = DenormalizedFieldHolderType.EXECUTION
 		
 		when : 
@@ -67,7 +67,7 @@ public class HibernateDenormalizedFieldValueDaoIT  extends DbunitDaoSpecificatio
 		@DataSet("HibernateDenormalizedFieldValueDaoIT.dfvs.xml")
 	def "should find all dfv for entity and renderingLocation"(){
 		given:
-		def entityId = 6001L
+		def entityId = -6001L
 		def entityType = DenormalizedFieldHolderType.EXECUTION_STEP
 		
 		when :

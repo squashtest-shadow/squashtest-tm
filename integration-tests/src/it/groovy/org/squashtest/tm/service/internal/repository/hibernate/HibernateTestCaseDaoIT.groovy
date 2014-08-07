@@ -81,7 +81,7 @@ class HibernateTestCaseDaoIT extends DbunitDaoSpecification {
 	@DataSet("HibernateTestCaseDaoIT.should count calling test steps.xml")
 	def "should count calling test steps"() {
 		when:
-		def callers = testCaseDao.countCallingTestSteps(10L)
+		def callers = testCaseDao.countCallingTestSteps(-10L)
 
 		then:
 		callers == 1
@@ -90,7 +90,7 @@ class HibernateTestCaseDaoIT extends DbunitDaoSpecification {
 	@DataSet("HibernateTestCaseDaoIT.should count calling test steps.xml")
 	def "should count no calling test steps"() {
 		when:
-		def callers = testCaseDao.countCallingTestSteps(20L)
+		def callers = testCaseDao.countCallingTestSteps(-20L)
 
 		then:
 		callers == 0
@@ -99,16 +99,16 @@ class HibernateTestCaseDaoIT extends DbunitDaoSpecification {
 	@DataSet("HibernateTestCaseDaoIT.should find called test cases.xml")
 	def "should find called test cases"() {
 		when:
-		def calleds = testCaseDao.findTestCasesHavingCaller([10L, 30L])
+		def calleds = testCaseDao.findTestCasesHavingCaller([-10L, -30L])
 
 		then:
-		calleds == [10L]
+		calleds == [-10L]
 	}
 
 	@DataSet("HibernateTestCaseDaoIT.should find called test cases.xml")
 	def "should find no called test cases"() {
 		when:
-		def calleds = testCaseDao.findTestCasesHavingCaller([30L])
+		def calleds = testCaseDao.findTestCasesHavingCaller([-30L])
 
 		then:
 		calleds == []
@@ -117,19 +117,19 @@ class HibernateTestCaseDaoIT extends DbunitDaoSpecification {
 	@DataSet("HibernateTestCaseDaoIT.should find ids of test cases called by several test cases.xml")
 	def "should find ids of test cases called by several test cases"() {
 		when:
-		def callees = testCaseDao.findAllTestCasesIdsCalledByTestCases([110L, 120L])
+		def callees = testCaseDao.findAllTestCasesIdsCalledByTestCases([-110L, -120L])
 
 		then:
-		callees == [10L, 20L]
+		callees == [-10L, -20L]
 	}
 
 	@DataSet("HibernateTestCaseDaoIT.should find distinct ids of test cases called by several test cases.xml")
 	def "should find distinct ids of test cases called by several test cases"() {
 		when:
-		def callees = testCaseDao.findAllTestCasesIdsCalledByTestCases([110L, 120L])
+		def callees = testCaseDao.findAllTestCasesIdsCalledByTestCases([-110L, -120L])
 
 		then:
-		callees == [10L]
+		callees == [-10L]
 	}
 
 	@DataSet("HibernateTestCaseDaoIT.should find the calling test cases.xml")
@@ -169,11 +169,11 @@ class HibernateTestCaseDaoIT extends DbunitDaoSpecification {
 			"second test case",
 			"third test case"
 		]
-		def resultIds = [101l, 102l, 103l]
+		def resultIds = [-101L, -102L, -103L]
 
 
 		when :
-		def testCaseList = testCaseDao.findAllCallingTestCases(100l, sorting);
+		def testCaseList = testCaseDao.findAllCallingTestCases(-100L, sorting);
 
 		then :
 		testCaseList.collect{it.id} == resultIds
@@ -189,7 +189,7 @@ class HibernateTestCaseDaoIT extends DbunitDaoSpecification {
 	def "should find the callers of a couple of test cases, returning results as pairs of caller/called details"(){
 
 		when :
-		def result = testCaseDao.findTestCaseCallsUpstream([100l, 50l]);
+		def result = testCaseDao.findTestCaseCallsUpstream([-100L, -50L]);
 		then :
 		result.size == 9
 
@@ -200,39 +200,39 @@ class HibernateTestCaseDaoIT extends DbunitDaoSpecification {
 
 
 		def call1 = tcrefPair(
-				101l,
+				-101L,
 				"first test case",
-				50l,
+				-50L,
 				"other bottom test case"
 				);
 		def call2 = tcrefPair(
-				102l,
+				-102L,
 				"second test case",
-				50l,
+				-50L,
 				"other bottom test case"
 				);
 		def call3 = tcrefPair(
-				103l,
+				-103L,
 				"third test case",
-				50l,
+				-50L,
 				"other bottom test case"
 				);
 		def call4 = tcrefPair(
-				101l,
+				-101L,
 				"first test case",
-				100l,
+				-100L,
 				"bottom test case"
 				);
 		def call5 = tcrefPair(
-				102l,
+				-102L,
 				"second test case",
-				100l,
+				-100L,
 				"bottom test case"
 				);
 		def call6 = tcrefPair(
-				103l,
+				-103L,
 				"third test case",
-				100l,
+				-100L,
 				"bottom test case"
 				);
 
@@ -253,7 +253,7 @@ class HibernateTestCaseDaoIT extends DbunitDaoSpecification {
 	def "should find no callers of a couple of test cases, returning results as pairs of caller/called details with null values"(){
 
 		when :
-		def result = testCaseDao.findTestCaseCallsUpstream([101l, 102l, 103l]);
+		def result = testCaseDao.findTestCaseCallsUpstream([-101L, -102L, -103L]);
 		then :
 		result.size == 3
 
@@ -262,19 +262,19 @@ class HibernateTestCaseDaoIT extends DbunitDaoSpecification {
 		def call1 = tcrefPair(
 				null,
 				null,
-				101l,
+				-101L,
 				"first test case"
 				);
 		def call2 = tcrefPair(
 				null,
 				null,
-				102l,
+				-102L,
 				"second test case"
 				);
 		def call3 = tcrefPair(
 				null,
 				null,
-				103l,
+				-103L,
 				"third test case"
 				);
 
@@ -289,7 +289,7 @@ class HibernateTestCaseDaoIT extends DbunitDaoSpecification {
 	def "should find the called test cases of a couple of test cases, returning results as pairs of caller/called details"(){
 
 		when :
-		def result = testCaseDao.findTestCaseCallsDownstream([101l, 103l]);
+		def result = testCaseDao.findTestCaseCallsDownstream([-101L, -103L]);
 		then :
 		result.size == 7
 
@@ -301,34 +301,34 @@ class HibernateTestCaseDaoIT extends DbunitDaoSpecification {
 
 
 		def call1 = tcrefPair(
-				101l,
+				-101L,
 				"first test case",
-				50l,
+				-50L,
 				"other bottom test case"
 				);
 
 		def call2 = tcrefPair(
-				103l,
+				-103L,
 				"third test case",
-				50l,
+				-50L,
 				"other bottom test case"
 				);
 		def call3 = tcrefPair(
-				101l,
+				-101L,
 				"first test case",
-				100l,
+				-100L,
 				"bottom test case"
 				);
 		def call4 = tcrefPair(
-				103l,
+				-103L,
 				"third test case",
-				100l,
+				-100L,
 				"bottom test case"
 				);
 		def call5 = tcrefPair(
-				103l,
+				-103L,
 				"third test case",
-				5l,
+				-5L,
 				"ultra bottom test case"
 				);
 
@@ -350,20 +350,20 @@ class HibernateTestCaseDaoIT extends DbunitDaoSpecification {
 
 
 		when :
-		def result = testCaseDao.findTestCaseCallsDownstream([100l, 5l]);
+		def result = testCaseDao.findTestCaseCallsDownstream([-100L, -5L]);
 		then :
 		result.size == 2
 
 
 
 		def call1 = tcrefPair(
-				100l,
+				-100L,
 				"bottom test case",
 				null,
 				null
 				);
 		def call2 = tcrefPair(
-				5l,
+				-5L,
 				"ultra bottom test case",
 				null,
 				null
@@ -380,10 +380,10 @@ class HibernateTestCaseDaoIT extends DbunitDaoSpecification {
 	def "should delete a test case and cascade-remove some relationships"(){
 
 		when :
-		def tc = testCaseDao.findById(1l)
+		def tc = testCaseDao.findById(-1L)
 		testCaseDao.remove(tc)
 
-		def retc = testCaseDao.findById(1l)
+		def retc = testCaseDao.findById(-1L)
 
 		then :
 
@@ -409,7 +409,7 @@ class HibernateTestCaseDaoIT extends DbunitDaoSpecification {
 		def res = testCaseDao.findAllByRequirement(req, false);
 
 		then:
-		res.containsSameIdentifiers([202L, 102L, 103L])
+		res.containsSameIdentifiers([-202L, -102L, -103L])
 	}
 
 	@DataSet("HibernateTestCaseDaoIT.should find test cases by requirement reference token.xml")
@@ -424,7 +424,7 @@ class HibernateTestCaseDaoIT extends DbunitDaoSpecification {
 		def res = testCaseDao.findAllByRequirement(req, false);
 
 		then:
-		res.containsSameIdentifiers([202L, 102L, 103L])
+		res.containsSameIdentifiers([-202L, -102L, -103L])
 	}
 
 	@DataSet("HibernateTestCaseDaoIT.should find test cases by requirement reference and name token.xml")
@@ -441,7 +441,7 @@ class HibernateTestCaseDaoIT extends DbunitDaoSpecification {
 
 		then:
 		res.size() == 2
-		res.containsSameIdentifiers([103L, 102L])
+		res.containsSameIdentifiers([-103L, -102L])
 	}
 
 	@DataSet("HibernateTestCaseDaoIT.should find test cases by requirement criticalities.xml")
@@ -458,7 +458,7 @@ class HibernateTestCaseDaoIT extends DbunitDaoSpecification {
 
 		then:
 		res.size() == 3
-		res.containsSameIdentifiers([302L, 103L, 102L])
+		res.containsSameIdentifiers([-302L, -103L, -102L])
 	}
 
 	@DataSet("HibernateTestCaseDaoIT.should find test cases by requirement categories.xml")
@@ -472,7 +472,7 @@ class HibernateTestCaseDaoIT extends DbunitDaoSpecification {
 
 		then:
 		res.size() == 3
-		res.containsSameIdentifiers([302L, 103L, 102L])
+		res.containsSameIdentifiers([-302L, -103L, -102L])
 	}
 
 	@DataSet("HibernateTestCaseDaoIT.search-by-criteria-setup.xml")
@@ -574,7 +574,7 @@ class HibernateTestCaseDaoIT extends DbunitDaoSpecification {
 	@DataSet("HibernateTestCaseDaoIT.should return list of executions.xml")
 	def "should return list of executions"(){
 		when:
-		def id = 10L;
+		def id = -10L;
 		def result = testCaseDao.findAllExecutionByTestCase(id)
 
 		then:
@@ -612,13 +612,13 @@ class HibernateTestCaseDaoIT extends DbunitDaoSpecification {
 
 	@DataSet("HibernateTestCaseDaoIT.should find tc imp w impAuto.xml")
 	def "should find tc imp w impAuto"(){
-		given : def testIds = [1L, 2L, 3L, 4L]
+		given : def testIds = [-1L, -2L, -3L, -4L]
 		when : Map<Long, TestCaseImportance> result = testCaseDao.findAllTestCaseImportanceWithImportanceAuto(testIds)
-		then : result.size() == 2L
-		result.containsKey(1L)
-		result.containsKey(3L)
-		result.get(1L) == TestCaseImportance.LOW
-		result.get(3L) == TestCaseImportance.MEDIUM
+		then : result.size() == -2L
+		result.containsKey(-1L)
+		result.containsKey(-3L)
+		result.get(-1L) == TestCaseImportance.LOW
+		result.get(-3L) == TestCaseImportance.MEDIUM
 	}
 
 	// ************* scaffolding ************

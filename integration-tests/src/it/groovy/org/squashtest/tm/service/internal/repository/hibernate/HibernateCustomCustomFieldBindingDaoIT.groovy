@@ -50,15 +50,15 @@ class HibernateCustomCustomFieldBindingDaoIT extends DbunitDaoSpecification {
 		then :
 			def collected = newPositions.collect { return [ it.bindingId, it.formerPosition, it.newPosition] } 
 			def expected = [
-				[121l, 5, 3],
-				[131l, 1 ,1],
-				[111l, 2, 2],
-				[221l, 8, 3],
-				[122l, 10, 3],	
-				[241l, 1, 1],
-				[132l, 2, 2],
-				[211l, 3, 2],
-				[112l, 0, 1]
+				[-121L, 5, 3],
+				[-131L, 1 ,1],
+				[-111L, 2, 2],
+				[-221L, 8, 3],
+				[-122L, 10, 3],	
+				[-241L, 1, 1],
+				[-132L, 2, 2],
+				[-211L, 3, 2],
+				[-112L, 0, 1]
 			] 
 		
 			collected as Set == expected as Set
@@ -68,9 +68,9 @@ class HibernateCustomCustomFieldBindingDaoIT extends DbunitDaoSpecification {
 		
 		given :
 			def newPositions = [
-					newPosition(241l, 1, 1l),
-					newPosition(221l, 8, 3l),
-					newPosition(211l, 3, 2l),
+					newPosition(-241L, 1, -1L),
+					newPosition(-221L, 8, -3L),
+					newPosition(-211L, 3, -2L),
 				]
 		
 		when :
@@ -87,10 +87,10 @@ class HibernateCustomCustomFieldBindingDaoIT extends DbunitDaoSpecification {
 	def "should find all the cfb having the same project and bound entity as this one"(){
 		
 		when :
-			def res = dynamicDao.findAllAlike(221l)
+			def res = dynamicDao.findAllAlike(-221L)
 			
 		then :
-			res.collect{it.id} as Set == [211l, 221l, 241l] as Set 
+			res.collect{it.id} as Set == [-211L, -221L, -241L] as Set 
 			
 			
 		

@@ -39,7 +39,7 @@ class HibernateDatasetDaoIT extends DbunitDaoSpecification {
 	@ExpectedDataSet("HibernateDatasetDaoIT.should remove dataset-result.xml")
 	def "should remove used dataset"(){
 		given : "a dataset "
-		Dataset dataset = session.get(Dataset.class, 1L)
+		Dataset dataset = session.get(Dataset.class, -1L)
 		when : 		
 		datasetDao.remove(dataset)
 		session.flush()

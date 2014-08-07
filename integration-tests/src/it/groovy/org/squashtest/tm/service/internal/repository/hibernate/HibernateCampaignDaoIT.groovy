@@ -49,7 +49,7 @@ class HibernateCampaignDaoIT extends DbunitDaoSpecification {
 	@DataSet("HibernateCampaignDaoIT.should return list of executions.xml")
 	def "should return list of executions"(){
 		when:
-		def result = campaignDao.findAllExecutionsByCampaignId(1L)
+		def result = campaignDao.findAllExecutionsByCampaignId(-1L)
 		
 		then:
 		result.size() == 5
@@ -59,7 +59,7 @@ class HibernateCampaignDaoIT extends DbunitDaoSpecification {
 	@DataSet("HibernateCampaignDaoIT.should find campaign statistics.xml")
 	def "should find campaign statistics READY"(){
 		when:
-		TestPlanStatistics result = campaignDao.findCampaignStatistics(1L);
+		TestPlanStatistics result = campaignDao.findCampaignStatistics(-1L);
 		
 		then:
 		result != null
@@ -88,13 +88,13 @@ class HibernateCampaignDaoIT extends DbunitDaoSpecification {
 		filt.getFilter(HibernateCampaignDao.MODE_DATA) >> filter
 		
 		expect:
-		campaignDao.findFilteredIndexedTestPlan(10L, sort, filt).collect { it.item.id } == expectedId
+		campaignDao.findFilteredIndexedTestPlan(-10L, sort, filt).collect { it.item.id } == expectedId
 		
 		where:
 		active   | filter                          | expectedId
-		true	 | TestCaseExecutionMode.AUTOMATED | [1010L]
-		true	 | TestCaseExecutionMode.MANUAL    | [1020L]
-		false	 | null                            | [1010L, 1020L]
+		true	 | TestCaseExecutionMode.AUTOMATED | [-1010L]
+		true	 | TestCaseExecutionMode.MANUAL    | [-1020L]
+		false	 | null                            | [-1010L, -1020L]
 	} 
 }	
 

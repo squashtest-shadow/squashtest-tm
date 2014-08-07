@@ -57,8 +57,8 @@ class TestCaseLibraryNavigationServiceIT extends DbunitServiceSpecification {
 	@DataSet("TestCaseLibraryNavigationServiceIT.should copy paste folder with test-cases.xml")
 	def "should copy paste folder with test-cases"(){
 		given:
-		Long[] sourceIds = [100L]
-		Long destinationId = 20L
+		Long[] sourceIds = [-1L]
+		Long destinationId = -2L
 
 		when:
 		List<TestCaseLibraryNode> nodes = navService.copyNodesToFolder(destinationId, sourceIds)
@@ -74,29 +74,29 @@ class TestCaseLibraryNavigationServiceIT extends DbunitServiceSpecification {
 	@DataSet("TestCaseLibraryNavigationServiceIT.should move to same project at right position.xml")
 	def "should move folder with test-cases to the right position - first"(){
 		given:
-		Long[] sourceIds = [1L]
-		Long destinationId = 2L
+		Long[] sourceIds = [-1L]
+		Long destinationId = -2L
 
 		when:
 		navService.moveNodesToFolder(destinationId, sourceIds, 0)
 
 		then:
-		TestCaseFolder parentFolder = (TestCaseFolder) libraryDao.findById(2L)
-		parentFolder.content.collect {it.id} == [1L, 20L, 21L]
+		TestCaseFolder parentFolder = (TestCaseFolder) libraryDao.findById(-2L)
+		parentFolder.content.collect {it.id} == [-1L, -20L, -21L]
 	}
 
 	@DataSet("TestCaseLibraryNavigationServiceIT.should move to same project at right position.xml")
 	def "should move folder with test-cases to the right position - middle"(){
 		given:
-		Long[] sourceIds = [1L]
-		Long destinationId = 2L
+		Long[] sourceIds = [-1L]
+		Long destinationId = -2L
 
 		when:
 		navService.moveNodesToFolder(destinationId, sourceIds, 1)
 
 		then:
-		TestCaseFolder parentFolder = (TestCaseFolder) libraryDao.findById(2L)
-		parentFolder.content.collect {it.id} == [20L, 1L, 21L]
+		TestCaseFolder parentFolder = (TestCaseFolder) libraryDao.findById(-2L)
+		parentFolder.content.collect {it.id} == [-20L, -1L, -21L]
 	}
 
 	@DataSet("TestCaseLibraryNavigationServiceIT.countsiblings.xml")
@@ -108,12 +108,12 @@ class TestCaseLibraryNavigationServiceIT extends DbunitServiceSpecification {
 
 		where :
 		id		|	num		|	container
-		1l		|	2		|	"library"
-		2l		|	2		|	"library"
-		10l		|	1		|	"folder"
-		20l		|	3		|	"folder"
-		21l		|	3		|	"folder"
-		22l		|	3		|	"folder"
+		-1L		|	2		|	"library"
+		-2L		|	2		|	"library"
+		-10L		|	1		|	"folder"
+		-20L		|	3		|	"folder"
+		-21L		|	3		|	"folder"
+		-22L		|	3		|	"folder"
 
 
 	}
@@ -121,23 +121,23 @@ class TestCaseLibraryNavigationServiceIT extends DbunitServiceSpecification {
 	@DataSet("TestCaseLibraryNavigationServiceIT.should move to same project at right position.xml")
 	def "should move folder with test-cases to the right position - last"(){
 		given:
-		Long[] sourceIds = [1L]
-		Long destinationId = 2L
+		Long[] sourceIds = [-1L]
+		Long destinationId = -2L
 
 		when:
 		navService.moveNodesToFolder(destinationId, sourceIds, 2)
 
 		then:
-		TestCaseFolder parentFolder = (TestCaseFolder) libraryDao.findById(2L)
-		parentFolder.content.collect {it.id} == [20L, 21L, 1L]
+		TestCaseFolder parentFolder = (TestCaseFolder) libraryDao.findById(-2L)
+		parentFolder.content.collect {it.id} == [-20L, -21L, -1L]
 	}
 
 
 	@DataSet("TestCaseLibraryNavigationServiceIT.should copy paste tc with parameters and datasets.xml")
 	def "should copy paste tc with parameters and datasets"(){
 		given:"a test case with parameters and dataset"
-		Long[] sourceIds = [11L]
-		Long destinationId = 2L
+		Long[] sourceIds = [-11L]
+		Long destinationId = -2L
 
 		when:"this test case is copied into another folder"
 		List<TestCaseLibraryNode> nodes = navService.copyNodesToFolder(destinationId, sourceIds)
@@ -149,18 +149,18 @@ class TestCaseLibraryNavigationServiceIT extends DbunitServiceSpecification {
 		testCaseCopy.parameters.size() == 2
 		Parameter param1copy = testCaseCopy.parameters.find{it.name == "parameter_1"}
 		param1copy!= null
-		param1copy.id != 1L
+		param1copy.id != -1L
 		Parameter param2copy = testCaseCopy.parameters.find{it.name == "parameter_2"}
 		param2copy != null
-		param2copy.id != 2L
+		param2copy.id != -2L
 		and: "it has copies of datasets"
 		testCaseCopy.datasets.size() == 2
 		Dataset dataset1copy = testCaseCopy.datasets.find{it.name == "dataset_1"}
 		dataset1copy  != null
-		dataset1copy.id != 1L
+		dataset1copy.id != -1L
 		Dataset dataset2copy = testCaseCopy.datasets.find{it.name == "dataset_2"}
 		dataset2copy != null
-		dataset2copy.id != 2L
+		dataset2copy.id != -2L
 		and: "it has copies of datasets-param-values"
 		dataset1copy.parameterValues.size() == 2
 		dataset1copy.parameterValues.collect {it.parameter}.containsAll([param1copy, param2copy])
@@ -173,8 +173,8 @@ class TestCaseLibraryNavigationServiceIT extends DbunitServiceSpecification {
 	@DataSet("TestCaseLibraryNavigationServiceIT.should copy tc with datasetParamValues of called step.xml")
 	def "should copy tc with datasetParamValues of called step"(){
 		given:"a test case with parameters and dataset"
-		Long[] sourceIds = [11L]
-		Long destinationId = 2L
+		Long[] sourceIds = [-11L]
+		Long destinationId = -2L
 
 		when:"this test case is copied into another folder"
 		List<TestCaseLibraryNode> nodes = navService.copyNodesToFolder(destinationId, sourceIds)
@@ -187,7 +187,7 @@ class TestCaseLibraryNavigationServiceIT extends DbunitServiceSpecification {
 		testCaseCopy.parameters.size() == 1
 		Parameter param1copy = testCaseCopy.parameters.find{it.name == "parameter_1"}
 		and: "it has copies of datasetParamValues even for called param"
-		Parameter calledParam = session.get(Parameter.class, 2L)
+		Parameter calledParam = session.get(Parameter.class, -2L)
 		dataset1copy.parameterValues.size() == 2
 		dataset1copy.parameterValues.collect {it.parameter}.containsAll([param1copy, calledParam])
 
@@ -196,8 +196,8 @@ class TestCaseLibraryNavigationServiceIT extends DbunitServiceSpecification {
 	@DataSet("TestCaseLibraryNavigationServiceIT.should copy to other project.xml")
 	def "should copy paste to other project"(){
 		given:
-		Long[] sourceIds = [1L]
-		Long destinationId = 2L
+		Long[] sourceIds = [-1L]
+		Long destinationId = -2L
 
 		when:
 		List<TestCaseLibraryNode> nodes = navService.copyNodesToFolder(destinationId, sourceIds)
@@ -212,19 +212,19 @@ class TestCaseLibraryNavigationServiceIT extends DbunitServiceSpecification {
 		!tc11.isAutomated()
 		and:"cufs are updated to match destination project's config"
 		def values10 = findCufValuesForEntity(BindableEntity.TEST_CASE, tc10.id)
-		values10.find {it.getBinding().id == 2L}.value == "tc-10-cuf1"
-		values10.find {it.getBinding().id == 4L}.value == "default"
+		values10.find {it.getBinding().id == -2L}.value == "tc-10-cuf1"
+		values10.find {it.getBinding().id == -4L}.value == "default"
 		def values11 = findCufValuesForEntity(BindableEntity.TEST_CASE, tc11.id)
-		values11.find {it.getBinding().id == 2L}.value == "tc-11-cuf1"
-		values11.find {it.getBinding().id == 4L}.value == "default"
+		values11.find {it.getBinding().id == -2L}.value == "tc-11-cuf1"
+		values11.find {it.getBinding().id == -4L}.value == "default"
 	}
 
 	@DataSet("TestCaseLibraryNavigationServiceIT.should move to same project.xml")
 	@ExpectedDataSet("TestCaseLibraryNavigationServiceIT.should move to same project-result.xml")
 	def "should move to same project"(){
 		given:
-		Long[] sourceIds = [1L]
-		Long destinationId = 2L
+		Long[] sourceIds = [-1L]
+		Long destinationId = -2L
 
 		when:
 		navService.moveNodesToFolder(destinationId, sourceIds)
@@ -236,8 +236,8 @@ class TestCaseLibraryNavigationServiceIT extends DbunitServiceSpecification {
 	@DataSet("TestCaseLibraryNavigationServiceIT.should not move in himself.xml")
 	def "should not move in himself"(){
 		given:
-		Long[] sourceIds = [1L]
-		Long destinationId = 1L
+		Long[] sourceIds = [-1L]
+		Long destinationId = -1L
 
 		when:
 		navService.moveNodesToFolder(destinationId, sourceIds)
@@ -255,9 +255,9 @@ class TestCaseLibraryNavigationServiceIT extends DbunitServiceSpecification {
 
 		where :
 		path								| 	id
-		"/some project/super folder"		| 	13l
-		"/some project/another folder/"		|	2l
-		"/some project/super folder/robert"	|	1l
+		"/some project/super folder"		| 	-13L
+		"/some project/another folder/"		|	-2L
+		"/some project/super folder/robert"	|	-1L
 	}
 
 
@@ -314,8 +314,8 @@ class TestCaseLibraryNavigationServiceIT extends DbunitServiceSpecification {
 	@DataSet("TestCaseLibraryNavigationServiceIT.should not move in himself.xml")
 	def "should not move in his hierarchy"(){
 		given:
-		Long[] sourceIds = [13L]
-		Long destinationId = 1L
+		Long[] sourceIds = [-13L]
+		Long destinationId = -1L
 
 		when:
 		navService.moveNodesToFolder(destinationId, sourceIds)
@@ -328,8 +328,8 @@ class TestCaseLibraryNavigationServiceIT extends DbunitServiceSpecification {
 	@ExpectedDataSet("TestCaseLibraryNavigationServiceIT.should move to other project-result.xml")
 	def "should move to another project"(){
 		given:
-		Long[] sourceIds = [1L]
-		Long destinationId = 2L
+		Long[] sourceIds = [-1L]
+		Long destinationId = -2L
 
 		when:
 		navService.moveNodesToFolder(destinationId, sourceIds)
@@ -342,8 +342,8 @@ class TestCaseLibraryNavigationServiceIT extends DbunitServiceSpecification {
 	@ExpectedDataSet("TestCaseLibraryNavigationServiceIT.should move and update cufs-result.xml")
 	def "should move and update cufs"(){
 		given:
-		Long[] sourceIds = [1L]
-		Long destinationId = 2L
+		Long[] sourceIds = [-1L]
+		Long destinationId = -2L
 
 		when:
 		navService.moveNodesToFolder(destinationId, sourceIds)
@@ -355,16 +355,16 @@ class TestCaseLibraryNavigationServiceIT extends DbunitServiceSpecification {
 	@DataSet("TestCaseLibraryNavigationServiceIT.should move and remove or keep scripts.xml")
 	def "should move and remove or keep scripts"(){
 		given:"project with diffrent associations to automated projects"
-		Long[] sourceIds = [1L]
-		Long destinationId = 2L
+		Long[] sourceIds = [-1L]
+		Long destinationId = -2L
 
 		when:
 		navService.moveNodesToFolder(destinationId, sourceIds)
 
 		then:"expected dataset is verified"
-		TestCase keep = findEntity(TestCase.class, 10L)
+		TestCase keep = findEntity(TestCase.class, -10L)
 		keep.isAutomated()
-		TestCase remove = findEntity(TestCase.class, 11L)
+		TestCase remove = findEntity(TestCase.class, -11L)
 		!remove.isAutomated()
 
 	}
@@ -373,18 +373,18 @@ class TestCaseLibraryNavigationServiceIT extends DbunitServiceSpecification {
 	@ExpectedDataSet("TestCaseLibraryNavigationServiceIT.should move from folder to library-result.xml")
 	def "should move from folder to library"(){
 		given:"dataset"
-		Long[] sourceIds = [1L]
-		Long destinationId = 1L
+		Long[] sourceIds = [-1L]
+		Long destinationId = -1L
 
 		when:
 		navService.moveNodesToLibrary(destinationId, sourceIds)
 
 		then:"expected dataset is verified"
 		session.flush()
-		TestCaseFolder tcf = findEntity(TestCaseFolder.class, 13L)
+		TestCaseFolder tcf = findEntity(TestCaseFolder.class, -13L)
 		tcf.content.isEmpty()
-		TestCaseLibrary tcl = findEntity(TestCaseLibrary.class, 1L)
-		tcl.content.find({it.id == 1L})
+		TestCaseLibrary tcl = findEntity(TestCaseLibrary.class, -1L)
+		tcl.content.find({it.id == -1L})
 	}
 
 
@@ -397,10 +397,10 @@ class TestCaseLibraryNavigationServiceIT extends DbunitServiceSpecification {
 
 		where :
 		libIds				|		nodeIds				|	expectedNumber
-		[14L, 15L] 			|		[]					|	12
-		[]					| [252L, 258L, 237L ]		|	8
-		[]					| [252L, 239L]				|	3
-		[15L]				| [237L, 249L]				|	9
+		[-14L, -15L] 			|		[]					|	12
+		[]					| [-252L, -258L, -237L ]		|	8
+		[]					| [-252L, -239L]				|	3
+		[-15L]				| [-237L, -249L]				|	9
 
 	}
 

@@ -69,8 +69,8 @@ class RequirementLibraryNavigationServiceIT extends DbunitServiceSpecification {
 
 		given:
 		List<Long> listReq = new ArrayList()
-		listReq.add(1l)
-		listReq.add(250l)
+		listReq.add(-1L)
+		listReq.add(-250L)
 
 		when :
 		def reqs = navService.findRequirementsToExportFromNodes (listReq)
@@ -101,8 +101,8 @@ class RequirementLibraryNavigationServiceIT extends DbunitServiceSpecification {
 	@DataSet("RequirementLibraryNavigationServiceIT.should not copy paste obsolete.xml")
 	def "should not copy paste selection containing obsolete"(){
 		given:
-		Long[] sourceIds = [1L]
-		Long destinationId = 2L
+		Long[] sourceIds = [-1L]
+		Long destinationId = -2L
 
 		when:
 		List<RequirementLibraryNode> nodes = navService.copyNodesToFolder(destinationId, sourceIds)
@@ -114,8 +114,8 @@ class RequirementLibraryNavigationServiceIT extends DbunitServiceSpecification {
 	@DataSet("RequirementLibraryNavigationServiceIT.should move selection containing obsolete.xml")
 	def "should move selection containing obsolete"(){
 		given:
-		Long[] sourceIds = [1L]
-		Long destinationId = 2L
+		Long[] sourceIds = [-1L]
+		Long destinationId = -2L
 
 		when:
 		navService.moveNodesToFolder(destinationId, sourceIds);
@@ -127,8 +127,8 @@ class RequirementLibraryNavigationServiceIT extends DbunitServiceSpecification {
 	@DataSet("RequirementLibraryNavigationServiceIT.should not move in himself.xml")
 	def "should not move in himself"(){
 		given:
-		Long[] sourceIds = [1L]
-		Long destinationId = 1L
+		Long[] sourceIds = [-1L]
+		Long destinationId = -1L
 
 		when:
 		navService.moveNodesToFolder(destinationId, sourceIds);
@@ -140,8 +140,8 @@ class RequirementLibraryNavigationServiceIT extends DbunitServiceSpecification {
 	@DataSet("RequirementLibraryNavigationServiceIT.should not move in himself.xml")
 	def "should not move in his descendent"(){
 		given:
-		Long[] sourceIds = [13L]
-		Long destinationId = 1L
+		Long[] sourceIds = [-13L]
+		Long destinationId = -1L
 
 		when:
 		navService.moveNodesToFolder(destinationId, sourceIds);
@@ -153,8 +153,8 @@ class RequirementLibraryNavigationServiceIT extends DbunitServiceSpecification {
 	@DataSet("RequirementLibraryNavigationServiceIT.should copy paste folder with requirements.xml")
 	def "should copy paste a folder into itself"(){
 		given:
-		Long[] sourceIds = [1L]
-		Long destinationId = 1L
+		Long[] sourceIds = [-1L]
+		Long destinationId = -1L
 
 		when:
 		List<RequirementLibraryNode> nodes = navService.copyNodesToFolder(destinationId, sourceIds)
@@ -168,23 +168,23 @@ class RequirementLibraryNavigationServiceIT extends DbunitServiceSpecification {
 	@DataSet("RequirementLibraryNavigationServiceIT.should copy paste a requirement into itself.xml")
 	def "should copy paste a requirement into itself"(){
 		given :
-		Long[] sourceIds = [10L]
-		long destinationId = 10L
+		Long[] sourceIds = [-10L]
+		long destinationId = -10L
 		
 		when :
 		List<Requirement> result = navService.copyNodesToRequirement(destinationId, sourceIds)
 		
 		then:
 		//expected dataset is verified
-		Requirement destination = findEntity(Requirement.class, 10L)
+		Requirement destination = findEntity(Requirement.class, -10L)
 		destination.content.size() == 1
 	}
 
 	@DataSet("RequirementLibraryNavigationServiceIT.should copy paste folder with requirements.xml")
 	def "should copy paste folder with requirements"(){
 		given:
-		Long[] sourceIds = [1L]
-		Long destinationId = 2L
+		Long[] sourceIds = [-1L]
+		Long destinationId = -2L
 
 		when:
 		List<RequirementLibraryNode> nodes = navService.copyNodesToFolder(destinationId, sourceIds)
@@ -200,25 +200,25 @@ class RequirementLibraryNavigationServiceIT extends DbunitServiceSpecification {
 	@DataSet("RequirementLibraryNavigationServiceIT.should move folder with requirements.xml")
 	def "should move folder with requirements"(){
 		given:
-		Long[] sourceIds = [1L]
-		Long destinationId = 2L
+		Long[] sourceIds = [-1L]
+		Long destinationId = -2L
 
 		when:
 		navService.moveNodesToFolder(destinationId, sourceIds)
 
 		then:"requirement folder is moved"
-		RequirementFolder destination = findEntity(RequirementFolder.class, 2L)
-		destination.getContent().collectAll({it.id}).containsAll([1L])
+		RequirementFolder destination = findEntity(RequirementFolder.class, -2L)
+		destination.getContent().collectAll({it.id}).containsAll([-1L])
 		and : "it's requirements are moved too"
-		RequirementFolder movedFolder = findEntity(RequirementFolder.class, 1L)
-		movedFolder.getContent().collectAll({it.id}).containsAll([10L, 11L])
+		RequirementFolder movedFolder = findEntity(RequirementFolder.class, -1L)
+		movedFolder.getContent().collectAll({it.id}).containsAll([-10L, -11L])
 	}
 
 	@DataSet("RequirementLibraryNavigationServiceIT.should copy paste requirement with non obsolete versions.xml")
 	def "should copy paste requirement with non obsolete versions"(){
 		given:
-		Long[] sourceIds = [10L]
-		Long destinationId = 2L
+		Long[] sourceIds = [-10L]
+		Long destinationId = -2L
 
 		when:
 		List<RequirementLibraryNode> nodes = navService.copyNodesToFolder(destinationId, sourceIds)
@@ -234,8 +234,8 @@ class RequirementLibraryNavigationServiceIT extends DbunitServiceSpecification {
 	@DataSet("RequirementLibraryNavigationServiceIT.should copy paste requirement with non obsolete versions.xml")
 	def "should move requirement with non obsolete versions"(){
 		given:
-		Long[] sourceIds = [10L]
-		Long destinationId = 2L
+		Long[] sourceIds = [-10L]
+		Long destinationId = -2L
 
 		when: navService.moveNodesToFolder(destinationId, sourceIds)
 
@@ -246,8 +246,8 @@ class RequirementLibraryNavigationServiceIT extends DbunitServiceSpecification {
 	@DataSet("RequirementLibraryNavigationServiceIT.should copy paste requirement versions with cuf.xml")
 	def "should copy paste requirement versions with cufs"(){
 		given:
-		Long[] sourceIds = [10L]
-		Long destinationId = 2L
+		Long[] sourceIds = [-10L]
+		Long destinationId = -2L
 
 		when:
 		List<RequirementLibraryNode> nodes = navService.copyNodesToFolder(destinationId, sourceIds)
@@ -265,17 +265,17 @@ class RequirementLibraryNavigationServiceIT extends DbunitServiceSpecification {
 	@DataSet("RequirementLibraryNavigationServiceIT.should move reqs to other project.xml")
 	def "should move req to other project"(){
 		given:
-		Long[] sourceIds = [1L]
-		Long destinationId = 2L
+		Long[] sourceIds = [-1L]
+		Long destinationId = -2L
 
 		when:
 		navService.moveNodesToFolder(destinationId, sourceIds)
 
 		then:"hierarchy is moved"
-		RequirementFolder destination = findEntity(RequirementFolder.class, 2L)
-		destination.getContent().collectAll({it.id}).containsAll([1L])
-		RequirementFolder movedFolder = findEntity(RequirementFolder.class, 1L)
-		movedFolder.getContent().collectAll({it.id}).containsAll([10L, 11L])
+		RequirementFolder destination = findEntity(RequirementFolder.class, -2L)
+		destination.getContent().collectAll({it.id}).containsAll([-1L])
+		RequirementFolder movedFolder = findEntity(RequirementFolder.class, -1L)
+		movedFolder.getContent().collectAll({it.id}).containsAll([-10L, -11L])
 		and: "they all know their rightfull project"
 		movedFolder.getProject() == destination.getProject();
 		movedFolder.getContent().each( {it.getProject() == destination.getProject()});
@@ -285,14 +285,14 @@ class RequirementLibraryNavigationServiceIT extends DbunitServiceSpecification {
 	@ExpectedDataSet("RequirementLibraryNavigationServiceIT.should move reqs to project with cufs-result.xml")
 	def "should move req to other project and update cufs"(){
 		given:
-		Requirement req = findEntity(Requirement.class, 10L)
+		Requirement req = findEntity(Requirement.class, -10L)
 		RequirementVersion cur = req.getCurrentVersion()
 		use(ReflectionCategory){
 			RequirementVersion.set field: "requirement", of:cur, to: req
 		}
 		req.getCurrentVersion().setRequirement(req)
-		Long[] sourceIds = [1L]
-		Long destinationId = 2L
+		Long[] sourceIds = [-1L]
+		Long destinationId = -2L
 
 		when:
 		navService.moveNodesToFolder(destinationId, sourceIds)
@@ -312,93 +312,93 @@ class RequirementLibraryNavigationServiceIT extends DbunitServiceSpecification {
 	def "should remove requirement without move 1"(){
 
 		when:
-		deletionHandler.deleteNodes([10L]);
+		deletionHandler.deleteNodes([-10L]);
 		
 		then:
-		! found("requirement", "rln_id", 10L);
+		! found("requirement", "rln_id", -10L);
 	}
 	
 	@DataSet("RequirementLibraryNavigationServiceIT.should remove reqs after move.xml")
 	def "should remove requirement without move 2"(){
 
 		when:
-		deletionHandler.deleteNodes([20L]);
+		deletionHandler.deleteNodes([-20L]);
 		
 		then:
-		! found("requirement", "rln_id", 20L);
+		! found("requirement", "rln_id", -20L);
 	}
 	
 	
 	@DataSet("RequirementLibraryNavigationServiceIT.should remove reqs after move.xml")
 	def "should remove requirement after move 1"(){
 		given:
-		Long[] reqIds = [20L]
-		navService.moveNodesToRequirement(10L, reqIds);
-		reqIds = [30L]
-		navService.moveNodesToRequirement(20L, reqIds);
+		Long[] reqIds = [-20L]
+		navService.moveNodesToRequirement(-10L, reqIds);
+		reqIds = [-30L]
+		navService.moveNodesToRequirement(-20L, reqIds);
 		
 		when:
-		deletionHandler.deleteNodes([20L]);
+		deletionHandler.deleteNodes([-20L]);
 		
 		then:
-		! found("requirement", "rln_id", 20L);
+		! found("requirement", "rln_id", -20L);
 	}
 	
 	@DataSet("RequirementLibraryNavigationServiceIT.should remove reqs after move.xml")
 	def "should remove requirement after move 2"(){
 		given:
-		Long[] reqIds = [10L]
-		navService.moveNodesToRequirement(20L, reqIds);
-		reqIds = [30L]
-		navService.moveNodesToRequirement(10L, reqIds);
+		Long[] reqIds = [-10L]
+		navService.moveNodesToRequirement(-20L, reqIds);
+		reqIds = [-30L]
+		navService.moveNodesToRequirement(-10L, reqIds);
 		
 		when:
-		deletionHandler.deleteNodes([10L]);
+		deletionHandler.deleteNodes([-10L]);
 		
 		then:
-		! found("requirement", "rln_id", 10L);
+		! found("requirement", "rln_id", -10L);
 	}
 	
 	@DataSet("RequirementLibraryNavigationServiceIT.should move to same project at right position.xml")
 	def "should move folder with requirements to the right position - first"(){
 		given:
-		Long[] sourceIds = [1L]
-		Long destinationId = 2L
+		Long[] sourceIds = [-1L]
+		Long destinationId = -2L
 		
 		when:
 		navService.moveNodesToFolder(destinationId, sourceIds, 0)
 		
 		then:
-		RequirementFolder parentFolder = (RequirementFolder) folderDao.findById(2L);
-		parentFolder.content.collect {it.id} == [1L, 20L, 21L];
+		RequirementFolder parentFolder = (RequirementFolder) folderDao.findById(-2L);
+		parentFolder.content.collect {it.id} == [-1L, -20L, -21L];
 	}
 	
 	@DataSet("RequirementLibraryNavigationServiceIT.should move to same project at right position.xml")
 	def "should move folder with requirements to the right position - middle"(){
 		given:
-		Long[] sourceIds = [1L]
-		Long destinationId = 2L
+		Long[] sourceIds = [-1L]
+		Long destinationId = -2L
 		
 		when:
 		navService.moveNodesToFolder(destinationId, sourceIds, 1)
 		
 		then:
-		RequirementFolder parentFolder = (RequirementFolder) folderDao.findById(2L);
-		parentFolder.content.collect {it.id} == [20L, 1L, 21L];
+		RequirementFolder parentFolder = (RequirementFolder) folderDao.findById(-2L);
+		parentFolder.content.collect {it.id} == [-20L, -1L, -21L];
 	}
 	
 	@DataSet("RequirementLibraryNavigationServiceIT.should move to same project at right position.xml")
 	def "should move folder with requirements to the right position - last"(){
 		given:
-		Long[] sourceIds = [1L]
-		Long destinationId = 2L
+		Long[] sourceIds = [-1L]
+		Long destinationId = -2L
 		
 		when:
 		navService.moveNodesToFolder(destinationId, sourceIds, 2)
 		
 		then:
-		RequirementFolder parentFolder = (RequirementFolder) folderDao.findById(2L);
-		parentFolder.content.collect {it.id} == [20L, 21L, 1L];
+		RequirementFolder parentFolder = (RequirementFolder) folderDao.findById(-2L);
+		parentFolder.content.collect {it.id} == [-20L, -21L, -1L];
 	}
 	
 

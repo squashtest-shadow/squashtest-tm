@@ -45,13 +45,13 @@ class ProjectManagerServiceIT extends DbunitServiceSpecification {
 		project.setName("name");
 		 
 		when : 
-		service.addProjectAndCopySettingsFromTemplate(project, 1000L, true, true, true, true)
+		service.addProjectAndCopySettingsFromTemplate(project, -1000L, true, true, true, true)
 		
 		then: 
 		project.isTestAutomationEnabled() == true
 		project.isBugtrackerConnected() == true
-		project.getBugtrackerBinding().getId() != 11L
-		project.getBugtrackerBinding().getBugtracker().getId() == 10L
+		project.getBugtrackerBinding().getId() != -11L
+		project.getBugtrackerBinding().getBugtracker().getId() == -10L
 		project.getTestAutomationProjects().size() == 1
 		
 		

@@ -32,31 +32,31 @@
 
 	<!--  ============================    attachment_content ======================================== -->
 
-	<ATTACHMENT_CONTENT ATTACHMENT_CONTENT_ID="111" STREAM_CONTENT="abcde" /> 		<!--  for test case 1 -->
-	<ATTACHMENT_CONTENT ATTACHMENT_CONTENT_ID="121" STREAM_CONTENT="abcde" /> 		<!--  for test case 2 -->
-	<ATTACHMENT_CONTENT ATTACHMENT_CONTENT_ID="1111" STREAM_CONTENT="abcde" />		<!--  for test step 1 of test case 1 -->
-	<ATTACHMENT_CONTENT ATTACHMENT_CONTENT_ID="1211" STREAM_CONTENT="abcde" />		<!--  for test step 1 of test case 2 -->
-	<ATTACHMENT_CONTENT ATTACHMENT_CONTENT_ID="1212" STREAM_CONTENT="abcde" />		<!--  for test step 1 of test case 2 -->
+	<ATTACHMENT_CONTENT ATTACHMENT_CONTENT_ID="-111" STREAM_CONTENT="abcde" /> 		<!--  for test case 1 -->
+	<ATTACHMENT_CONTENT ATTACHMENT_CONTENT_ID="-121" STREAM_CONTENT="abcde" /> 		<!--  for test case 2 -->
+	<ATTACHMENT_CONTENT ATTACHMENT_CONTENT_ID="-1111" STREAM_CONTENT="abcde" />		<!--  for test step 1 of test case 1 -->
+	<ATTACHMENT_CONTENT ATTACHMENT_CONTENT_ID="-1211" STREAM_CONTENT="abcde" />		<!--  for test step 1 of test case 2 -->
+	<ATTACHMENT_CONTENT ATTACHMENT_CONTENT_ID="-1212" STREAM_CONTENT="abcde" />		<!--  for test step 1 of test case 2 -->
 	
 
 	
 	<!--  ============================ attachment lists (unattached to anything) ===================== -->
 	
-	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="1" />
-	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="2" />
-	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="3" />
-	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="4" />
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="-1" />
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="-2" />
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="-3" />
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="-4" />
 	
 	
 	
 	<!--  ============================ attachments ==================================================== -->
 	
 	
-	<ATTACHMENT ATTACHMENT_ID="111" NAME="test case 1 attach 1" TYPE="txt" SIZE="5" ADDED_ON="2011-08-08" CONTENT_ID="111" ATTACHMENT_LIST_ID="1"/>
-	<ATTACHMENT ATTACHMENT_ID="121" NAME="test case 2 attach 1" TYPE="txt" SIZE="5" ADDED_ON="2011-08-08" CONTENT_ID="121" ATTACHMENT_LIST_ID="2"/>
-	<ATTACHMENT ATTACHMENT_ID="1111" NAME="test case 1 test step 1 attach 1" TYPE="txt" SIZE="5" ADDED_ON="2011-08-08" CONTENT_ID="1111" ATTACHMENT_LIST_ID="3"/>
-	<ATTACHMENT ATTACHMENT_ID="1211" NAME="test case 2 test step 1 attach 1" TYPE="txt" SIZE="5" ADDED_ON="2011-08-08" CONTENT_ID="1211" ATTACHMENT_LIST_ID="4"/>
-	<ATTACHMENT ATTACHMENT_ID="1212" NAME="test case 2 test step 1 attach 2" TYPE="txt" SIZE="5" ADDED_ON="2011-08-08" CONTENT_ID="1212" ATTACHMENT_LIST_ID="4"/>	
+	<ATTACHMENT ATTACHMENT_ID="-111" NAME="test case 1 attach 1" TYPE="txt" SIZE="5" ADDED_ON="2011-08-08" CONTENT_ID="-111" ATTACHMENT_LIST_ID="-1"/>
+	<ATTACHMENT ATTACHMENT_ID="-121" NAME="test case 2 attach 1" TYPE="txt" SIZE="5" ADDED_ON="2011-08-08" CONTENT_ID="-121" ATTACHMENT_LIST_ID="-2"/>
+	<ATTACHMENT ATTACHMENT_ID="-1111" NAME="test case 1 test step 1 attach 1" TYPE="txt" SIZE="5" ADDED_ON="2011-08-08" CONTENT_ID="-1111" ATTACHMENT_LIST_ID="-3"/>
+	<ATTACHMENT ATTACHMENT_ID="-1211" NAME="test case 2 test step 1 attach 1" TYPE="txt" SIZE="5" ADDED_ON="2011-08-08" CONTENT_ID="-1211" ATTACHMENT_LIST_ID="-4"/>
+	<ATTACHMENT ATTACHMENT_ID="-1212" NAME="test case 2 test step 1 attach 2" TYPE="txt" SIZE="5" ADDED_ON="2011-08-08" CONTENT_ID="-1212" ATTACHMENT_LIST_ID="-4"/>	
 
 
 </dataset>

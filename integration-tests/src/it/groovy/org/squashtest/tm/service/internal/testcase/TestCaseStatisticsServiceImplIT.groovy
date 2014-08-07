@@ -52,7 +52,7 @@ class TestCaseStatisticsServiceImplIT extends DbunitServiceSpecification {
 	def "should count how many test cases have 0 steps, upto 10, upto 20, then above"(){
 		
 		given :
-			def tcIds = 238L..253L as List
+			def tcIds = -238L..-253L as List
 		
 		when :
 			TestCaseSizeStatistics stats = service.gatherTestCaseSizeStatistics(tcIds)
@@ -69,7 +69,7 @@ class TestCaseStatisticsServiceImplIT extends DbunitServiceSpecification {
 	def "should count how many test case verify requirements and how many don't"(){
 		
 		given :
-			def tcIds = 243L..247L
+			def tcIds = -243L..-247L
 			
 		when :
 			TestCaseBoundRequirementsStatistics stats = service.gatherBoundRequirementStatistics(tcIds)
@@ -85,7 +85,7 @@ class TestCaseStatisticsServiceImplIT extends DbunitServiceSpecification {
 	def "should count how many test case for each importance"(){
 		
 		given :
-			def tcIds = 238L..248L
+			def tcIds = -238L..-248L
 		
 		when :
 			TestCaseImportanceStatistics stats = service.gatherTestCaseImportanceStatistics(tcIds)
@@ -104,7 +104,7 @@ class TestCaseStatisticsServiceImplIT extends DbunitServiceSpecification {
 	def "should count how many test case for each status"(){
 		
 		given :
-			def tcIds = 238L..248L
+			def tcIds = -238L..-248L
 		
 		when :
 			TestCaseStatusesStatistics stats = service.gatherTestCaseStatusesStatistics(tcIds)

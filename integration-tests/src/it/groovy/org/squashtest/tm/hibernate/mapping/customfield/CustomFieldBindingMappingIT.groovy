@@ -45,49 +45,49 @@ import spock.unitils.UnitilsSupport
 @DataSet
 class CustomFieldBindingMappingIT extends DbunitDaoSpecification {
 	@Inject SessionFactory sessionFactory
-	
+
 	Session getSession() {
 		sessionFactory.currentSession
 	}
-	
+
 	def "should persist and fetch a custom field binding"() {
-		given: 
-		Project p = session.load(Project, 1L)
-		CustomField cf = session.load(CustomField, 10L)
-		
-		when: 
-		CustomFieldBinding cfb = new CustomFieldBinding();
+		given:
+		Project p = session.load(Project, -1L)
+		CustomField cf = session.load(CustomField, -10L)
+
+		when:
+		CustomFieldBinding cfb = new CustomFieldBinding()
 		cfb.boundEntity = BindableEntity.TEST_CASE
 		cfb.boundProject = p
 		cfb.customField = cf
-		
+
 		session.persist cfb
 		session.flush()
 		session.clear()
-		
+
 		and:
-		CustomFieldBinding res = session.get(CustomFieldBinding, cfb.id) 
-			
-		then: 
+		CustomFieldBinding res = session.get(CustomFieldBinding, cfb.id)
+
+		then:
 		res.boundEntity == BindableEntity.TEST_CASE
-		res.boundProject.id == 1
-		res.customField.id == 10
-		res.renderingLocations == Collections.emptySet() 
+		res.boundProject.id == -1L
+		res.customField.id == -10L
+		res.renderingLocations == Collections.emptySet()
 	}
-	
+
 	def "should add rendering locations to a custom field binding"() {
 		given:
-		CustomFieldBinding cfb = session.load(CustomFieldBinding, 202L)
-		
+		CustomFieldBinding cfb = session.load(CustomFieldBinding, -202L)
+
 		when:
 		cfb.renderingLocations.add(RenderingLocation.TEST_PLAN)
-		
+
 		session.flush()
 		session.clear()
-		
+
 		and:
-		CustomFieldBinding res = session.get(CustomFieldBinding, 202L)
-			
+		CustomFieldBinding res = session.get(CustomFieldBinding, -202L)
+
 		then:
 		println res.renderingLocations
 		res.renderingLocations == new HashSet([RenderingLocation.TEST_PLAN])

@@ -55,7 +55,7 @@ class AdministrationServiceIT extends DbunitServiceSpecification {
 	def "should deassociate user to team"(){
 		given : "the dataset"
 		when : 
-		service.deassociateTeams(20L, new ArrayList<Long>([10L]))
+		service.deassociateTeams(-20L, new ArrayList<Long>([-10L]))
 		then : "expected dataset is verified"
 		getSession().flush();
 	}
@@ -65,7 +65,7 @@ class AdministrationServiceIT extends DbunitServiceSpecification {
 	def "should associate user to team"(){
 		given : "the dataset"
 		when :
-		service.associateToTeams(20L, new ArrayList<Long>([10L]))
+		service.associateToTeams(-20L, new ArrayList<Long>([-10L]))
 		then : "expected dataset is verified"
 		getSession().flush();
 	}
@@ -74,11 +74,11 @@ class AdministrationServiceIT extends DbunitServiceSpecification {
 	def "should find non associated teams"(){
 		given : "the dataset"
 		when :
-		def result = service.findAllNonAssociatedTeams(30L)
+		def result = service.findAllNonAssociatedTeams(-30L)
 		then :
 		result.size() == 2
-		result.find({it.id == 12L}) != null
-		result.find({it.id == 11L}) != null
+		result.find({it.id == -12L}) != null
+		result.find({it.id == -11L}) != null
 	}
 	
 	@DataSet("UserModificationServiceIT.should find sorted associated teams.xml")
@@ -95,7 +95,7 @@ class AdministrationServiceIT extends DbunitServiceSpecification {
 		filtering.isDefined()>> filterDefined
 		
 		when :
-		PagedCollectionHolder<List<Team>> result = service.findSortedAssociatedTeams(20L, paging, filtering)
+		PagedCollectionHolder<List<Team>> result = service.findSortedAssociatedTeams(-20L, paging, filtering)
 		
 		then :
 		result.items*.name == expected

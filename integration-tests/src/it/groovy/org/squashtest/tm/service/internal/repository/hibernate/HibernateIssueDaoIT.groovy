@@ -45,8 +45,8 @@ class HibernateIssueDaoIT extends DbunitDaoSpecification {
 	@DataSet("HibernateIssueDaoIT.xml")
 	def "should return sorted issues from execs/exec-steps"(){
 		given:
-		List<Long> execIds = [101L, 400L, 201L, 100L]
-		List<Long> execStepIds = [1010L, 1011L, 2010L, 1000L]
+		List<Long> execIds = [-101L, -400L, -201L, -100L]
+		List<Long> execStepIds = [-1010L, -1011L, -2010L, -1000L]
 		PagingAndSorting sorter = new PagingAndSorting() {
 
 					@Override
@@ -82,16 +82,16 @@ class HibernateIssueDaoIT extends DbunitDaoSpecification {
 		def issue1 = result[0]
 		def issue2 = result[1]
 		
-		expected (issue1, [100L, "11", 1L, 1L])
-		expected (issue2, [1000L, "22", 2L, 1L])
+		expected (issue1, [-100L, "11", -1L, -1L])
+		expected (issue2, [-1000L, "22", -2L, -1L])
 		
 	}
 
 	@DataSet("HibernateIssueDaoIT.xml")
 	def "should return sorted issues from execs/exec-steps2"(){
 		given:
-		List<Long> execIds = [101L, 400L, 201L, 100L]
-		List<Long> execStepIds = [1010L, 1011L, 2010L, 1000L]
+		List<Long> execIds = [-101L, -400L, -201L, -100L]
+		List<Long> execStepIds = [-1010L, -1011L, -2010L, -1000L]
 		PagingAndSorting sorter = new PagingAndSorting() {
 
 					@Override
@@ -127,17 +127,17 @@ class HibernateIssueDaoIT extends DbunitDaoSpecification {
 		def issue2 = result[1]
 		def issue3 = result[2]
 		
-		expected (issue1, [1000L, "22", 2L, 1L])
-		expected (issue2, [1011L, "33", 3L, 1L])
-		expected (issue3, [2010L, "66", 6L, 1L])
+		expected (issue1, [-1000L, "22", -2L, -1L])
+		expected (issue2, [-1011L, "33", -3L, -1L])
+		expected (issue3, [-2010L, "66", -6L, -1L])
 		
 	}
 
 	@DataSet("HibernateIssueDaoIT.xml")
 	def "should count issues for execution and execution steps"(){
 		given:
-		List<Long> execIds = [101L, 400L, 201L, 100L]
-		List<Long> execStepIds = [1010L, 1011L, 2010L, 1000L]
+		List<Long> execIds = [-101L, -400L, -201L, -100L]
+		List<Long> execStepIds = [-1010L, -1011L, -2010L, -1000L]
 
 		when: def result = issueDao.countIssuesfromExecutionAndExecutionSteps(execIds, execStepIds)
 
@@ -149,15 +149,15 @@ class HibernateIssueDaoIT extends DbunitDaoSpecification {
 	def "should return sorted issues from issue list ids"(){
 		given:
 		List<Long> issueListIds = [
-			101L,
-			400L,
-			201L,
-			100L,
-			1011L,
-			2010L,
-			1000L
+			-101L,
+			-400L,
+			-201L,
+			-100L,
+			-1011L,
+			-2010L,
+			-1000L
 		]
-		def bugTrackerId = 1L
+		def bugTrackerId = -1L
 		PagingAndSorting sorter = new PagingAndSorting() {
 
 					@Override
@@ -193,9 +193,9 @@ class HibernateIssueDaoIT extends DbunitDaoSpecification {
 		def issue2 = result[1]
 		def issue3 = result[2]
 		
-		expected (issue1, [1000L, "22", 2L])
-		expected (issue2, [1011L, "33", 3L])
-		expected (issue3, [2010L, "66", 6L])
+		expected (issue1, [-1000L, "22", -2L])
+		expected (issue2, [-1011L, "33", -3L])
+		expected (issue3, [-2010L, "66", -6L])
 
 	}
 
@@ -203,16 +203,16 @@ class HibernateIssueDaoIT extends DbunitDaoSpecification {
 	def "should count issues for issue list ids and bugtracker id"(){
 		given:
 		List<Long> issueListIds = [
-			101L,
-			400L,
-			201L,
-			100L,
-			1010L,
-			1011L,
-			2010L,
-			1000L
+			-101L,
+			-400L,
+			-201L,
+			-100L,
+			-1010L,
+			-1011L,
+			-2010L,
+			-1000L
 		]
-		def bugTrackerId = 1L
+		def bugTrackerId = -1L
 
 		when: def result = issueDao.countIssuesfromIssueList(issueListIds, bugTrackerId)
 
@@ -223,48 +223,48 @@ class HibernateIssueDaoIT extends DbunitDaoSpecification {
 	@DataSet("HibernateIssueDaoIT.xml")
 	def "should return issues for iteration"(){
 		given :
-		def iterationId = 1L
+		def iterationId = -1L
 
 		when : def result = issueDao.findAllForIteration(iterationId)
 
 		then :
 		result.size() == 3;
-		result.collect({it.id}).containsAll([1L, 2L, 3L]);
+		result.collect({it.id}).containsAll([-1L, -2L, -3L]);
 	}
 
 	@DataSet("HibernateIssueDaoIT.test suite.xml")
 	def "should return issues for test suite"(){
 		given :
-		def testSuiteId = 30L
+		def testSuiteId = -30L
 
 		when : def result = issueDao.findAllForTestSuite(testSuiteId)
 
 		then :
 		result.size() == 3;
-		result.collect({it.id}).containsAll([1L, 2L, 3L]);
+		result.collect({it.id}).containsAll([-1L, -2L, -3L]);
 	}
 	
 	@DataSet("HibernateIssueDaoIT.xml")
 	def "should return execution as issue detector"(){
 		given :
-		def issueId = 7L
+		def issueId = -7L
 
 		when : def result = issueDao.findIssueDetectorByIssue(issueId)
 
 		then :
 		result != null
-		result.issueListId == 400L
+		result.issueListId == -400L
 	}
 	
 	@DataSet("HibernateIssueDaoIT.xml")
 	def "should return execution step as issue detector"(){
 		given :
-		def issueId = 5L
+		def issueId = -5L
 
 		when : def result = issueDao.findIssueDetectorByIssue(issueId)
 
 		then :
 		result != null
-		result.issueListId == 2010L
+		result.issueListId == -2010L
 	}
 }

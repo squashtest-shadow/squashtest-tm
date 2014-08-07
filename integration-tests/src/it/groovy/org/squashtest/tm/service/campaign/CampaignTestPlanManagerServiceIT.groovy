@@ -39,7 +39,7 @@ class CampaignTestPlanManagerServiceIT extends DbunitServiceSpecification {
 	@DataSet("CampaignTestPlanManagerServiceImplIT.should add to test plan a test case already in test plan.xml")
 	def "should add to test plan a test case already in test plan"() {
 		when:
-		service.addTestCasesToCampaignTestPlan([100L], 10)
+		service.addTestCasesToCampaignTestPlan([-100L], 10)
 
 		then:
 		notThrown(HibernateException)

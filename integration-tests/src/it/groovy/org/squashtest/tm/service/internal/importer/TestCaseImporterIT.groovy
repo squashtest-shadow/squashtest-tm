@@ -66,7 +66,7 @@ class TestCaseImporterIT extends DbunitServiceSpecification {
 			InputStream stream = this.getClass().getClassLoader().getResourceAsStream("import/import-cas-test.zip") 
 		
 		when :
-			def summary = importer.importExcelTestCases(stream, 1l, "Cp858")
+			def summary = importer.importExcelTestCases(stream, -1L, "Cp858")
 		
 		then :
 			summary.getTotal() == 13
@@ -74,7 +74,7 @@ class TestCaseImporterIT extends DbunitServiceSpecification {
 			summary.getModified() == 49
 			summary.getFailures() == 0
 	
-			def rContent = service.findLibrary(1l).rootContent
+			def rContent = service.findLibrary(-1L).rootContent
 			
 			def names = rContent*.name as Set			
 			names ==  ["configuration pas de tir", "prerequis", "échec de la connexion", "succès de la connexion" ] as Set
@@ -96,7 +96,7 @@ class TestCaseImporterIT extends DbunitServiceSpecification {
 			InputStream stream = this.getClass().getClassLoader().getResourceAsStream("import/import-cas-test.zip")
 		
 		when :
-			def summary = service.importZipTestCase(stream, 1l, "Cp858")
+			def summary = service.importZipTestCase(stream, -1L, "Cp858")
 			def stringquery = "select  count(*) "+
 			" from TEST_CASE tc"+
 			" join TEST_CASE_LIBRARY_NODE tcln on tc.TCLN_ID = tcln.TCLN_ID"+
@@ -124,7 +124,7 @@ class TestCaseImporterIT extends DbunitServiceSpecification {
 			InputStream stream = this.getClass().getClassLoader().getResourceAsStream("import/import-cas-test.zip")
 		
 		when :
-			def summary = service.importZipTestCase(stream, 1l, "Cp858")
+			def summary = service.importZipTestCase(stream, -1L, "Cp858")
 			
 			def stringquery = "select count(*) from CUSTOM_FIELD_VALUE where BOUND_ENTITY_TYPE = 'TEST_CASE' group by BOUND_ENTITY_ID"
 			SQLQuery sqlquery = getSession().createSQLQuery(stringquery);
@@ -162,7 +162,7 @@ class TestCaseImporterIT extends DbunitServiceSpecification {
 			InputStream stream = this.getClass().getClassLoader().getResourceAsStream("import/import-cas-test.zip") 
 		
 		when :
-			def summary = importer.importExcelTestCases(stream, 2l, "Cp858")
+			def summary = importer.importExcelTestCases(stream, -2L, "Cp858")
 		
 		then :
 			summary.getTotal() == 13
@@ -171,7 +171,7 @@ class TestCaseImporterIT extends DbunitServiceSpecification {
 			summary.getRenamed() == 4
 			summary.getFailures() == 0
 	
-			def rContent = service.findLibrary(2l).rootContent
+			def rContent = service.findLibrary(-2L).rootContent
 			
 			def names = rContent*.name as Set			
 			names ==  ["configuration pas de tir",  "prerequis", "prerequis-import1", "échec de la connexion", "succès de la connexion" ] as Set
@@ -196,8 +196,8 @@ class TestCaseImporterIT extends DbunitServiceSpecification {
 		
 		when :
 			
-			def summary = importer.importExcelTestCases(stream, 1l, "Cp858")
-			def rContent = service.findLibrary(1l).rootContent
+			def summary = importer.importExcelTestCases(stream, -1L, "Cp858")
+			def rContent = service.findLibrary(-1L).rootContent
 			def testcase = rContent.find{it.name=="prerequis"}
 			
 		then :
@@ -222,7 +222,7 @@ class TestCaseImporterIT extends DbunitServiceSpecification {
 			//those are all the encoding supported by java.io and java.lang API for java 1.6.
 			//should try the names for java.nio since Apache uses its own charset.
 			def encodings = ["Cp858", "Cp437", "Cp775", "Cp850", "Cp852", "Cp855", "Cp857", "Cp862", "Cp866", "ISO8859_1", "ISO8859_2", "ISO8859_4", "ISO8859_5", "ISO8859_7", "ISO8859_9", "ISO8859_13", 
-				"ISO8859_15", "KOI8_R", "KOI8_U", "ASCII", "UTF8", "UTF-16", "UnicodeBigUnmarked", "UnicodeLittleUnmarked", "UTF_32", "UTF_32BE", "UTF_32LE", "UTF_32BE_BOM", "UTF_32LE_BOM", "Cp1250", 
+				"ISO8859_15", "KOI8_R", "KOI8_U", "ASCII", "UTF8", "UTF-16", "UnicodeBigUnmarked", "UnicodeLittleUnmarked", "UTF_32", "UTF_32BE", "UTF_-32LE", "UTF_32BE_BOM", "UTF_-32LE_BOM", "Cp1250", 
 				"Cp1251", "Cp1252", "Cp1253", "Cp1254", "Cp1257", "UnicodeBig", "Cp737", "Cp874", "UnicodeLittle", "Big5", "Big5_HKSCS", "EUC_JP", "EUC_KR", "GB18030", "EUC_CN", "GBK", "Cp838", "Cp1140", 
 				"Cp1141", "Cp1142", "Cp1143", "Cp1144", "Cp1145", "Cp1146", "Cp1147", "Cp1148", "Cp1149", "Cp037", "Cp1026", "Cp1047", "Cp273", "Cp277", "Cp278", "Cp280", "Cp284", "Cp285", "Cp297", 
 				"Cp420", "Cp424", "Cp500", "Cp860", "Cp861", "Cp863", "Cp864", "Cp865", "Cp868", "Cp869", "Cp870", "Cp871", "Cp918", "ISO2022CN", "ISO2022JP", "ISO2022KR", "ISO8859_3", "ISO8859_6", 

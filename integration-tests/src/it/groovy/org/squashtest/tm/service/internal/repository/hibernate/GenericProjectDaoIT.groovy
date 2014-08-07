@@ -70,7 +70,7 @@ class GenericProjectDaoIT extends DbunitDaoSpecification {
 	@DataSet("GenericProjectDaoIT.xml")
 	def "should find project by id ordered by name"(){
 		given :
-		def ids = [1L, 2L, 3L, 4L, 5L]
+		def ids = [-1L, -2L, -3L, -4L, -5L]
 		when :
 		List<GenericProject> result = dao.findAllByIds(ids, new DefaultSorting("name"))
 		then:
@@ -80,7 +80,7 @@ class GenericProjectDaoIT extends DbunitDaoSpecification {
 	@DataSet("GenericProjectDaoIT.xml")
 	def "should count existing projects" () {
 		expect:
-		dao.countGenericProjects() == 5L
+		dao.countGenericProjects() == -5L
 	}
 
 	@Unroll
@@ -91,8 +91,8 @@ class GenericProjectDaoIT extends DbunitDaoSpecification {
 
 		where:
 		name       | count
-		"whatever" | 0L
-		"ONE"      | 1L
+		"whatever" | -0L
+		"ONE"      | -1L
 	}
 
 	@DataSet("GenericProjectDaoIT.xml")
@@ -112,23 +112,23 @@ class GenericProjectDaoIT extends DbunitDaoSpecification {
 		res == dao.isProjectTemplate(pId)
 		where :
 		pId	| res
-		1l	| false
-		4l	| true
+		-1L	| false
+		-4L	| true
 	}
 
 	@DataSet("GenericProjectDaoIT.server.xml")
 	def "should find a project's server"(){
-		given: def pId = 1L
+		given: def pId = -1L
 		when :
 		def res = dao.findTestAutomationServer(pId)
 		then :
 		res != null
-		res.id == 11L
+		res.id == -11L
 	}
 
 	@DataSet("GenericProjectDaoIT.taprojects.xml")
 	def "should find a project's taprojects jobNames"(){
-		given: def pId = 1L
+		given: def pId = -1L
 		when :
 		Collection<String> res = dao.findBoundTestAutomationProjectJobNames(pId)
 		then :

@@ -48,7 +48,7 @@ class CustomFieldBindingModificationServiceIT extends DbunitServiceSpecification
 	def "when creating a new custom field binding, should cascade the create of cuf values for concerned entities"(){
 
 		when :
-		service.addNewCustomFieldBinding(1l, BindableEntity.TEST_CASE, 3l, new CustomFieldBinding())
+		service.addNewCustomFieldBinding(-1L, BindableEntity.TEST_CASE, -3L, new CustomFieldBinding())
 		def customFields = listQuery("from CustomFieldValue")
 
 
@@ -59,9 +59,9 @@ class CustomFieldBindingModificationServiceIT extends DbunitServiceSpecification
 						it.boundEntityId]
 				} as Set
 
-		allValuesDef.containsAll([3l, BindableEntity.TEST_CASE, 111l],
-		[3l, BindableEntity.TEST_CASE, 112l],
-		[3l, BindableEntity.TEST_CASE, 113l]
+		allValuesDef.containsAll([-3L, BindableEntity.TEST_CASE, -111L],
+		[-3L, BindableEntity.TEST_CASE, -112L],
+		[-3L, BindableEntity.TEST_CASE, -113L]
 
 
 		)
@@ -72,7 +72,7 @@ class CustomFieldBindingModificationServiceIT extends DbunitServiceSpecification
 	def "when removing a custom field binding, should cascade delete the concerned custom field values"(){
 
 		when :
-		service.removeCustomFieldBindings([111l, 112l])
+		service.removeCustomFieldBindings([-111L, -112L])
 		def customFields = listQuery("from CustomFieldValue")
 
 
@@ -84,11 +84,11 @@ class CustomFieldBindingModificationServiceIT extends DbunitServiceSpecification
 	def "should reorder the bindings"(){
 
 		when :
-		service.moveCustomFieldbindings([112l], 0)
+		service.moveCustomFieldbindings([-112L], 0)
 		def bindings = listQuery("from CustomFieldBinding")
 
 		then :
-		bindings.collect{return [it.id, it.position]} as Set == [[111l, 2], [112l, 1]] as Set
+		bindings.collect{return [it.id, it.position]} as Set == [[-111L, 2], [-112L, 1]] as Set
 
 	}
 

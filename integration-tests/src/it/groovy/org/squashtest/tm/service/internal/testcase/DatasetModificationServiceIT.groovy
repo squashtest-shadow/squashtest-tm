@@ -57,10 +57,10 @@ class DatasetModificationServiceIT extends DbunitServiceSpecification {
 		when : 
 			Dataset dataset = new Dataset();
 			dataset.name = "newDataset";
-			datasetService.persist(dataset, 100L);
+			datasetService.persist(dataset, -100L);
 			
 		then : 
-			TestCase testcase = session.get(TestCase.class, 100L);
+			TestCase testcase = session.get(TestCase.class, -100L);
 			testcase.datasets.size() == 2;
 			testcase.parameters.size() == 1;
 			
@@ -82,20 +82,20 @@ class DatasetModificationServiceIT extends DbunitServiceSpecification {
 //	def "should remove a dataset"(){
 //		
 //		when :
-//			Dataset dataset = session.get(Dataset.class, 100L)
+//			Dataset dataset = session.get(Dataset.class, -100L)
 //			datasetService.remove(dataset)
 //		then :
 //		
-//			!found(Dataset.class, 100L)
+//			!found(Dataset.class, -100L)
 //	}
 	
 	@DataSet("DatasetModificationServiceIT.xml")
 	def "should change the name of a dataset"(){
 		
 		when :
-			datasetService.changeName(100L,"newName")
+			datasetService.changeName(-100L,"newName")
 		then :
-			Dataset dataset = session.get(Dataset.class, 100L)
+			Dataset dataset = session.get(Dataset.class, -100L)
 			dataset.name == "newName";
 	}
 	
@@ -103,9 +103,9 @@ class DatasetModificationServiceIT extends DbunitServiceSpecification {
 	def "should change the param value of a dataset"(){
 		
 		when :
-			DatasetParamValue paramValue = session.get(DatasetParamValue.class, 100L);
+			DatasetParamValue paramValue = session.get(DatasetParamValue.class, -100L);
 			paramValue.paramValue == "";	
-			datasetService.changeParamValue(100L, "newValue");
+			datasetService.changeParamValue(-100L, "newValue");
 		then :
 			paramValue.paramValue == "newValue";		
 	}
@@ -116,7 +116,7 @@ class DatasetModificationServiceIT extends DbunitServiceSpecification {
 		Dataset dataset = new Dataset();
 		dataset.name = "newDataset";
 		dataset.parameterValues = new HashSet<DatasetParamValue>();
-		datasetService.persist(dataset, 100L);
+		datasetService.persist(dataset, -100L);
 		
 		and :"a new param"
 		Parameter param = new Parameter();
@@ -124,10 +124,10 @@ class DatasetModificationServiceIT extends DbunitServiceSpecification {
 		param.description = ""
 		
 		when :			
-			paramService.addNewParameterToTestCase(param ,100L );
+			paramService.addNewParameterToTestCase(param ,-100L );
 			
 		then : 
-			TestCase testcase = session.get(TestCase.class, 100L);
+			TestCase testcase = session.get(TestCase.class, -100L);
 			testcase.datasets.size() == 2;
 			testcase.parameters.size() == 2;
 		

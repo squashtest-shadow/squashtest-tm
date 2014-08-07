@@ -53,7 +53,7 @@ public class TestAutomationServerManagerServiceIT extends DbunitServiceSpecifica
 	@DataSet("TestAutomationServerManagerServiceIT.not bound.xml")
 	def "should find has not bound project" (){
 		given :
-		def serverId = 1L
+		def serverId = -1L
 		when :
 		boolean result = service.hasBoundProjects(serverId)
 		then:
@@ -63,7 +63,7 @@ public class TestAutomationServerManagerServiceIT extends DbunitServiceSpecifica
 	@DataSet("TestAutomationServerManagerServiceIT.not bound.xml")
 	def "should find has no execution1" (){
 		given :
-		def serverId = 1L
+		def serverId = -1L
 		when :
 		boolean result = service.hasExecutedTests(serverId)
 		then:
@@ -73,7 +73,7 @@ public class TestAutomationServerManagerServiceIT extends DbunitServiceSpecifica
 	@DataSet("TestAutomationServerManagerServiceIT.bound.xml")
 	def "should find has no execution2" (){
 		given :
-		def serverId = 1L
+		def serverId = -1L
 		when :
 		boolean result = service.hasExecutedTests(serverId)
 		then:
@@ -84,7 +84,7 @@ public class TestAutomationServerManagerServiceIT extends DbunitServiceSpecifica
 	@DataSet("TestAutomationServerManagerServiceIT.bound.xml")
 	def "should find has bound1" (){
 		given :
-		def serverId = 1L
+		def serverId = -1L
 		when :
 		boolean result = service.hasBoundProjects(serverId)
 		then:
@@ -94,7 +94,7 @@ public class TestAutomationServerManagerServiceIT extends DbunitServiceSpecifica
 	@DataSet("TestAutomationServerManagerServiceIT.executed.xml")
 	def "should find has bound2" (){
 		given :
-		def serverId = 11L
+		def serverId = -11L
 		when :
 		boolean result = service.hasBoundProjects(serverId)
 		then:
@@ -104,7 +104,7 @@ public class TestAutomationServerManagerServiceIT extends DbunitServiceSpecifica
 	@DataSet("TestAutomationServerManagerServiceIT.executed.xml")
 	def "should find has execution" (){
 		given :
-		def serverId = 11L
+		def serverId = -11L
 		when :
 		boolean result = service.hasExecutedTests(serverId)
 		then:
@@ -113,7 +113,7 @@ public class TestAutomationServerManagerServiceIT extends DbunitServiceSpecifica
 	@DataSet("TestAutomationServerManagerServiceIT.not bound.xml")
 	def "should change description" (){
 		given :
-		def serverId = 1L
+		def serverId = -1L
 		def newDesc = "new description"
 		when :
 		service.changeDescription(serverId, newDesc)
@@ -126,7 +126,7 @@ public class TestAutomationServerManagerServiceIT extends DbunitServiceSpecifica
 	@DataSet("TestAutomationServerManagerServiceIT.not bound.xml")
 	def "should change login" (){
 		given :
-		def serverId = 1L
+		def serverId = -1L
 		def newLogin = "newLogin"
 		when :
 		service.changeLogin(serverId, newLogin)
@@ -138,7 +138,7 @@ public class TestAutomationServerManagerServiceIT extends DbunitServiceSpecifica
 	@DataSet("TestAutomationServerManagerServiceIT.not bound.xml")
 	def "should change password" (){
 		given :
-		def serverId = 1L
+		def serverId = -1L
 		def newPassword = "password"
 		when :
 		service.changePassword(serverId, newPassword)
@@ -150,7 +150,7 @@ public class TestAutomationServerManagerServiceIT extends DbunitServiceSpecifica
 	@DataSet("TestAutomationServerManagerServiceIT.not bound.xml")
 	def "should change name" (){
 		given :
-		def serverId = 1L
+		def serverId = -1L
 		def newName = "new name"
 		when :
 		service.changeName(serverId, newName)
@@ -162,7 +162,7 @@ public class TestAutomationServerManagerServiceIT extends DbunitServiceSpecifica
 	@DataSet("TestAutomationServerManagerServiceIT.2 not bound.xml")
 	def "should throw name already in use exception" (){
 		given :
-		def serverId = 1L
+		def serverId = -1L
 		def newName = "new name"
 		when :
 		service.changeName(serverId, newName)
@@ -173,7 +173,7 @@ public class TestAutomationServerManagerServiceIT extends DbunitServiceSpecifica
 	@DataSet("TestAutomationServerManagerServiceIT.not bound.xml")
 	def "should not throw name already in use exception" (){
 		given :
-		def serverId = 1L
+		def serverId = -1L
 		def sameName = "Roberto-1"
 		when :
 		service.changeName(serverId, sameName)
@@ -184,7 +184,7 @@ public class TestAutomationServerManagerServiceIT extends DbunitServiceSpecifica
 	@DataSet("TestAutomationServerManagerServiceIT.not bound.xml")
 	def "should delete a test automation server" (){
 		given :
-		def serverId = 1L
+		def serverId = -1L
 		when :
 		service.deleteServer(serverId)
 		then:
@@ -194,9 +194,9 @@ public class TestAutomationServerManagerServiceIT extends DbunitServiceSpecifica
 	@DataSet("TestAutomationServerManagerServiceIT.bound.xml")
 	def "should delete a tas bound to a project" (){
 		given :
-		def serverId = 1L
-		def taProjectId = 1L
-		def tmProjectId = 1L
+		def serverId = -1L
+		def taProjectId = -1L
+		def tmProjectId = -1L
 		when :
 		service.deleteServer(serverId)
 		then:
@@ -210,14 +210,14 @@ public class TestAutomationServerManagerServiceIT extends DbunitServiceSpecifica
 	@DataSet("TestAutomationServerManagerServiceIT.executed.xml")
 	def "should delete a tas with executions" (){
 		given :
-		def serverId = 11L
-		def taProjectId = 10L
-		def tmProjectId = 1L
-		def tmTestId = 13L
-		def taTestId = 12L
-		def executionId = 15L
+		def serverId = -11L
+		def taProjectId = -10L
+		def tmProjectId = -1L
+		def tmTestId = -13L
+		def taTestId = -12L
+		def executionId = -15L
 		def automatedSuiteId = "16"
-		def automatedExecutionExtenderId = 17L
+		def automatedExecutionExtenderId = -17L
 		when :
 		service.deleteServer(serverId)
 		then:

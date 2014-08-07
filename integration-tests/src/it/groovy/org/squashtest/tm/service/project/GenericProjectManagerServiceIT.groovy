@@ -43,9 +43,9 @@ class GenericProjectManagerServiceIT extends DbunitServiceSpecification {
 	@DataSet("ProjectModificationServiceIT.xml")
 	def "should delete bugtrackerProject" () {
 		given :
-		Project project = findEntity(Project.class, 1l)
+		Project project = findEntity(Project.class, -1L)
 		when:
-		modService.removeBugTracker(1L)
+		modService.removeBugTracker(-1L)
 
 		then:
 		!project.isBugtrackerConnected()
@@ -54,9 +54,9 @@ class GenericProjectManagerServiceIT extends DbunitServiceSpecification {
 	@DataSet("ProjectModificationServiceIT.xml")
 	def "should change bugtrackerProjectName" () {
 		given :
-		Project project = findEntity(Project.class, 1l)
+		Project project = findEntity(Project.class, -1L)
 		when:
-		modService.changeBugTrackerProjectName(1L, "this")
+		modService.changeBugTrackerProjectName(-1L, "this")
 
 		then:
 		project.getBugtrackerBinding().getProjectName() == "this"
@@ -65,12 +65,12 @@ class GenericProjectManagerServiceIT extends DbunitServiceSpecification {
 	@DataSet("ProjectModificationServiceIT.xml")
 	def "should change bugtracker" () {
 		given :
-		Project project = findEntity(Project.class, 1l)
+		Project project = findEntity(Project.class, -1L)
 		when:
-		modService.changeBugTracker(1L, 2L)
+		modService.changeBugTracker(-1L, -2L)
 
 		then:
-		project.getBugtrackerBinding().getBugtracker().getId() == 2L
+		project.getBugtrackerBinding().getBugtracker().getId() == -2L
 	}
 
 	@DataSet("/org/squashtest/tm/service/testautomation/TestAutomationService.sandbox.xml")
@@ -84,12 +84,12 @@ class GenericProjectManagerServiceIT extends DbunitServiceSpecification {
 		] as Collection
 
 		when :
-		modService.bindTestAutomationProjects(1l, taprojects)
+		modService.bindTestAutomationProjects(-1L, taprojects)
 
 		then :
-		def proj = modService.findById(1l)
+		def proj = modService.findById(-1L)
 		proj.testAutomationProjects.collect { it.jobName} as Set == ["job1", "job25", "roberto1", "roberto2", "roberto3"] as Set
-		proj.testAutomationProjects.collect { it.server.id }.unique() == [1l] as Collection
+		proj.testAutomationProjects.collect { it.server.id }.unique() == [-1L] as Collection
 
 	}
 

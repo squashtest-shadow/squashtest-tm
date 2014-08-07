@@ -74,8 +74,8 @@ class ModelIT  extends DbunitServiceSpecification {
 			model.testCaseStatusByTarget[targets[2]].status == NOT_EXISTS
 			model.testCaseStatusByTarget[targets[3]].status == NOT_EXISTS
 			
-			model.testCaseStatusByTarget[targets[0]].id == 248l
-			model.testCaseStatusByTarget[targets[1]].id == 244l
+			model.testCaseStatusByTarget[targets[0]].id == -248L
+			model.testCaseStatusByTarget[targets[1]].id == -244L
 			model.testCaseStatusByTarget[targets[2]].id == null
 			model.testCaseStatusByTarget[targets[3]].id == null
 				
@@ -91,8 +91,8 @@ class ModelIT  extends DbunitServiceSpecification {
 			model.projectStatusByName["autre project"].status == EXISTS
 			model.projectStatusByName["nonexistant"].status == NOT_EXISTS
 			
-			model.projectStatusByName["autre project"].id == 15l
-			model.projectStatusByName["Test Project-1"].id == 14l
+			model.projectStatusByName["autre project"].id == -15L
+			model.projectStatusByName["Test Project-1"].id == -14L
 			model.projectStatusByName["nonexistant"].id == null
 			
 			// now check the custom fields
@@ -125,7 +125,7 @@ class ModelIT  extends DbunitServiceSpecification {
 			def status = model.getStatus(targets[0])
 		
 		then :
-			status.id == 245l
+			status.id == -245L
 			status.status == EXISTS
 			
 			def steps = model.testCaseStepsByTarget.get(targets[0]);

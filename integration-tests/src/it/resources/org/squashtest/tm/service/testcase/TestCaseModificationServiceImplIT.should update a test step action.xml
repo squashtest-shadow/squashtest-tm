@@ -23,9 +23,9 @@
 -->
 <!DOCTYPE dataset SYSTEM "../../../../../dtd/squash-tm.1.9.10.dtd">
 <dataset>
-<ATTACHMENT_LIST ATTACHMENT_LIST_ID="1"/>
-<TEST_STEP TEST_STEP_ID="2" />
-<ACTION_TEST_STEP TEST_STEP_ID="2" ACTION="blabla" ATTACHMENT_LIST_ID="1"/>
+<ATTACHMENT_LIST ATTACHMENT_LIST_ID="-1"/>
+<TEST_STEP TEST_STEP_ID="-2" />
+<ACTION_TEST_STEP TEST_STEP_ID="-2" ACTION="blabla" ATTACHMENT_LIST_ID="-1"/>
 <call_test_step/>
 <test_case_steps/>
 <parameter/>

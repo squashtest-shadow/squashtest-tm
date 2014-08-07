@@ -55,7 +55,7 @@ class TestCaseAttachmentBridgeIT extends DbunitDaoSpecification {
 	def "should index the test case's attachemnt count"() {
 		given:
 		Session session = sessionFactory.currentSession
-		TestCase tc = session.load(TestCase, 10L)
+		TestCase tc = session.load(TestCase, -10L)
 		
 		and:
 		lucene.getStore() >> Mock(Store)
