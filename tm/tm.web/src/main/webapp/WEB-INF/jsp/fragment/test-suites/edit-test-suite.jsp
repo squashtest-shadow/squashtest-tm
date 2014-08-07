@@ -21,7 +21,8 @@
 
 --%>
 <?xml version="1.0" encoding="utf-8" ?>
-<%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
+<%@ page language="java" contentType="text/html; charset=utf-8"
+	pageEncoding="utf-8"%>
 
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="s" uri="http://www.springframework.org/tags"%>
@@ -31,7 +32,8 @@
 <%@ taglib prefix="authz" tagdir="/WEB-INF/tags/authz"%>
 <%@ taglib prefix="at" tagdir="/WEB-INF/tags/attachments"%>
 <%@ taglib prefix="ts" tagdir="/WEB-INF/tags/test-suites-components"%>
-<%@ taglib prefix="csst" uri="http://org.squashtest.tm/taglib/css-transform" %>
+<%@ taglib prefix="csst"
+	uri="http://org.squashtest.tm/taglib/css-transform"%>
 
 
 <f:message var="squashlocale" key="squashtm.locale" />
@@ -57,24 +59,30 @@
 	<s:param name="suiteId" value="${testSuite.id}" />
 </s:url>
 
-<s:url var="testSuiteExecButtonsUrl" value="/test-suites/{testSuiteId}/exec-button">
+<s:url var="testSuiteExecButtonsUrl"
+	value="/test-suites/{testSuiteId}/exec-button">
 	<s:param name="testSuiteId" value="${testSuite.id}" />
 </s:url>
 
 <s:url var="customFieldsValuesURL" value="/custom-fields/values">
-  <s:param name="boundEntityId" value="${testSuite.boundEntityId}" />
-  <s:param name="boundEntityType" value="${testSuite.boundEntityType}" />
+	<s:param name="boundEntityId" value="${testSuite.boundEntityId}" />
+	<s:param name="boundEntityType" value="${testSuite.boundEntityType}" />
 </s:url>
 
 
-<f:message var='deleteMessageStart' key='dialog.label.delete-node.label.start'/>
-<f:message var="deleteMessage" key="dialog.label.delete-nodes.test-suite.label" />
-<f:message var='deleteMessageCantBeUndone' key='dialog.label.delete-node.label.cantbeundone'/>
-<f:message var='deleteMessageConfirm' key='dialog.label.delete-node.label.confirm'/>
-<f:message var="labelConfirm" key="label.Confirm"/>
-<f:message var="labelCancel" key="label.Cancel"/>
+<f:message var='deleteMessageStart'
+	key='dialog.label.delete-node.label.start' />
+<f:message var="deleteMessage"
+	key="dialog.label.delete-nodes.test-suite.label" />
+<f:message var='deleteMessageCantBeUndone'
+	key='dialog.label.delete-node.label.cantbeundone' />
+<f:message var='deleteMessageConfirm'
+	key='dialog.label.delete-node.label.confirm' />
+<f:message var="labelConfirm" key="label.Confirm" />
+<f:message var="labelCancel" key="label.Cancel" />
 
-<c:set var="servContext" value="${ pageContext.servletContext.contextPath }"/>
+<c:set var="servContext"
+	value="${ pageContext.servletContext.contextPath }" />
 
 <%-- ----------------------------------- Authorization ----------------------------------------------%>
 <authz:authorized hasRole="ROLE_ADMIN" hasPermission="WRITE"
@@ -104,7 +112,7 @@
 	<c:set var="moreThanReadOnly" value="${ true }" />
 </authz:authorized>
 
-<f:message key="tabs.label.issues" var="tabIssueLabel"/>
+<f:message key="tabs.label.issues" var="tabIssueLabel" />
 <script type="text/javascript">
   squashtm = squashtm || {};
   squashtm.page = squashtm.page || {};
@@ -143,12 +151,13 @@
 	</div>
 	<div class="toolbar-button-panel btn-toolbar right">
 		<c:if test="${ executable }">
-			<div id="test-suite-exec-btn-group" class="btn-group" data-content-url="${ testSuiteExecButtonsUrl }">
+			<div id="test-suite-exec-btn-group" class="btn-group"
+				data-content-url="${ testSuiteExecButtonsUrl }">
 				<comp:test-suite-execution-button testSuiteId="${ testSuite.id }"
 					statisticsEntity="${ statistics }" />
 			</div>
 			<c:if test="${ testSuite.iteration.project.testAutomationEnabled }">
-			<comp:execute-auto-button url="${ testSuiteUrl }" />
+				<comp:execute-auto-button url="${ testSuiteUrl }" />
 			</c:if>
 		</c:if>
 		<c:if test="${ writable }">
@@ -165,76 +174,76 @@
 	<div class="unsnap"></div>
 	<c:if test="${ moreThanReadOnly }">
 		<comp:opened-object otherViewers="${ otherViewers }"
-			objectUrl="${ testSuiteUrl }"  />
+			objectUrl="${ testSuiteUrl }" />
 	</c:if>
 </div>
 
 
 <csst:jq-tab>
-<div class="fragment-tabs fragment-body">
-	<ul class="tab-menu">
-		<li><a href="#tabs-1"><f:message key="tabs.label.information" />
-		</a>
-		</li>
-		<li><a href="#test-suite-test-plans-panel"><f:message key="tabs.label.test-plan" />
-		</a>
-		</li>
-		<li><a href="#tabs-3"><f:message key="label.Attachments" />
-				<c:if test="${ testSuite.attachmentList.notEmpty }">
-					<span class="hasAttach">!</span>
-				</c:if>
-		</a>
-		</li>
-	</ul>
-	<div id="tabs-1">
-		<c:if test="${ writable }">
-			<comp:rich-jeditable targetUrl="${ testSuiteUrl }"
-				componentId="test-suite-description"/>
-		</c:if>
+	<div class="fragment-tabs fragment-body">
+		<ul class="tab-menu">
+			<li><a href="#tabs-1"><f:message
+						key="tabs.label.information" /> </a></li>
+			<li><a href="#test-suite-test-plans-panel"><f:message
+						key="tabs.label.test-plan" /> </a></li>
+			<li><a href="#tabs-3"><f:message key="label.Attachments" />
+					<c:if test="${ testSuite.attachmentList.notEmpty }">
+						<span class="hasAttach">!</span>
+					</c:if> </a></li>
+		</ul>
+		<div id="tabs-1">
+			<c:if test="${ writable }">
+				<comp:rich-jeditable targetUrl="${ testSuiteUrl }"
+					componentId="test-suite-description" />
+			</c:if>
 
-		<comp:toggle-panel id="test-suite-description-panel"
-			titleKey="label.Description" 
-			open="${ not empty testSuite.description }">
-			<jsp:attribute name="body">
+			<comp:toggle-panel id="test-suite-description-panel"
+				titleKey="label.Description"
+				open="${ not empty testSuite.description }">
+				<jsp:attribute name="body">
 				<div id="test-suite-description">${ testSuite.description }</div>
 			</jsp:attribute>
-		</comp:toggle-panel>
-		
-		
-		<%----------------------------------- Custom Fields -----------------------------------------------%>
-		
-		<comp:toggle-panel id="test-suite-custom-fields"
-			titleKey="generics.customfieldvalues.title" 
-			open="${hasCUF}">
-			<jsp:attribute name="body">
-				<div id="test-suite-custom-fields-content" >
+			</comp:toggle-panel>
+
+
+			<%----------------------------------- Custom Fields -----------------------------------------------%>
+
+			<comp:toggle-panel id="test-suite-custom-fields"
+				titleKey="generics.customfieldvalues.title" open="${hasCUF}">
+				<jsp:attribute name="body">
+				<div id="test-suite-custom-fields-content">
                 <c:if test="${hasCUF}">				
-				  <comp:waiting-pane/>
+				  <comp:waiting-pane />
                 </c:if>
 				</div>
 			</jsp:attribute>
-		</comp:toggle-panel>
-		
-			
+			</comp:toggle-panel>
 
-		<%-- ------------------ statistiques --------------------------- --%>
-		<comp:statistics-panel statisticsEntity="${ statistics }" statisticsUrl="${ testSuiteStatisticsUrl }"/>
-		
-	</div>
-	
+
+
+			<%-- ------------------ statistiques --------------------------- --%>
+			<comp:statistics-panel statisticsEntity="${ statistics }"
+				statisticsUrl="${ testSuiteStatisticsUrl }" />
+
+		</div>
+
 		<%-- ------------------ test plan ------------------------------ --%>
-	
 
-	<ts:test-suite-test-plan-panel assignableUsers="${assignableUsers}" testSuite="${testSuite}" weights="${weights}" modes="${modes}" statuses="${statuses}"
-									editable="${writable}" executable="${executable}" linkable="${linkable}" reorderable="${linkable}"	/>
+
+		<ts:test-suite-test-plan-panel assignableUsers="${assignableUsers}"
+			testSuite="${testSuite}" weights="${weights}" modes="${modes}"
+			statuses="${statuses}" editable="${writable}"
+			executable="${executable}" linkable="${linkable}"
+			reorderable="${linkable}" />
 
 
 		<%------------------------------ Attachments bloc ------------------------------------------- --%>
-	
-	<at:attachment-tab tabId="tabs-3" entity="${ testSuite }"	editable="${ executable }" tableModel="${attachmentsModel}"/>
-	
 
-</div>
+		<at:attachment-tab tabId="tabs-3" entity="${ testSuite }"
+			editable="${ executable }" tableModel="${attachmentsModel}" />
+
+
+	</div>
 </csst:jq-tab>
 <%------------------------------------------automated suite overview --------------------------------------------%>
 <c:if test="${ testSuite.iteration.project.testAutomationEnabled }">
@@ -244,35 +253,43 @@
 
 
 <div class="not-displayed">
-  <c:if test="${ writable }">
-    <f:message var="renameDialogTitle" key="dialog.testsuites.rename.title" />
-    <div id="rename-testsuite-dialog" title="${renameDialogTitle}" class="not-displayed popup-dialog">
-        <div>
-          <label><f:message key="dialog.rename.label" /></label>
-          <input type="text" id="rename-test-suite-name" maxlength="255" size="50" />
-          <br/>
-          <comp:error-message forField="name"/>
-        </div>
-      
-        <div class="popup-dialog-buttonpane">
-          <input type="button" value="${labelConfirm}" data-def="evt=confirm, mainbtn" />
-          <input type="button" value="${labelCancel}" data-def="evt=cancel" />        
-        </div>
-    </div>
-    
-  </c:if>
+	<c:if test="${ writable }">
+		<f:message var="renameDialogTitle"
+			key="dialog.testsuites.rename.title" />
+		<div id="rename-testsuite-dialog" title="${renameDialogTitle}"
+			class="not-displayed popup-dialog">
+			<div>
+				<label><f:message key="dialog.rename.label" /></label> <input
+					type="text" id="rename-test-suite-name" maxlength="255" size="50" />
+				<br />
+				<comp:error-message forField="name" />
+			</div>
+
+			<div class="popup-dialog-buttonpane">
+				<input type="button" value="${labelConfirm}"
+					data-def="evt=confirm, mainbtn" /> <input type="button"
+					value="${labelCancel}" data-def="evt=cancel" />
+			</div>
+		</div>
+
+	</c:if>
 </div>
 
 <%------------------------------ /bugs section -------------------------------%>
+<div class="not-displayed">
+	<c:if test="${ creatable }">
+		<div id="confirm-duplicate-test-suite-dialog"
+			class="not-displayed popup-dialog"
+			title="<f:message key="title.DuplicateTestSuite" />">
+			<strong><f:message key="message.DuplicateTestSuite" />
+				"${testSuite.name}" ?</strong>
+			<input:ok />
+			<input:cancel />
+		</div>
 
-<c:if test="${ creatable }">
-	<div id="confirm-duplicate-test-suite-dialog" class="not-displayed popup-dialog" title="<f:message key="title.DuplicateTestSuite" />">
-		<strong><f:message key="message.DuplicateTestSuite" /> "${testSuite.name}" ?</strong>
-		<input:ok />
-		<input:cancel />
-	</div>
+	</c:if>
+</div>
 
-</c:if>
 <script type="text/javascript">
 publish("reload.test-suite");
 if (!squashtm.page.isFullPage) {
