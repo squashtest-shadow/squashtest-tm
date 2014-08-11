@@ -338,14 +338,22 @@
         <db.username>${dev.postgres.username}</db.username>
         <db.password>${dev.postgres.password}</db.password>
         <!-- for database generation only -->
-        <db.create.user>root</db.create.user>
-        <db.create.password></db.create.password>
+        <db.create.user>${dev.postgres.username}</db.create.user>
+        <db.create.password>${dev.postgres.password}</db.create.password>
       </properties>
       <dependencies>
           <dependency>
-  <groupId>org.ancoron.postgresql</groupId>
-  <artifactId>org.postgresql.osgi</artifactId>
-</dependency>
+          <groupId>org.ancoron.postgresql</groupId>
+          <artifactId>org.postgresql.osgi</artifactId>
+      </dependency>
+       <dependency>
+        <groupId>org.ancoron.postgresql</groupId>
+        <artifactId>org.postgresql</artifactId>
+      </dependency>
+      <dependency>
+        <groupId>org.ancoron.postgresql</groupId>
+        <artifactId>org.postgresql.net</artifactId>
+      </dependency>
       </dependencies>
     </profile>
   </profiles>

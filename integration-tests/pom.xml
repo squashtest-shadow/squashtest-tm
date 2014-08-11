@@ -267,6 +267,16 @@
   <artifactId>org.postgresql.osgi</artifactId>
       <scope>runtime</scope>
     </dependency>
+     <dependency>
+        <groupId>org.ancoron.postgresql</groupId>
+        <artifactId>org.postgresql</artifactId>
+         <scope>runtime</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.ancoron.postgresql</groupId>
+        <artifactId>org.postgresql.net</artifactId>
+         <scope>runtime</scope>
+      </dependency>
     <!-- ====== SPOCK-SPRING-TEST BRIDGE ====== -->
     <dependency>
       <groupId>org.spockframework</groupId>
@@ -488,6 +498,14 @@
   <groupId>org.ancoron.postgresql</groupId>
   <artifactId>org.postgresql.osgi</artifactId>
         </dependency>
+         <dependency>
+        <groupId>org.ancoron.postgresql</groupId>
+        <artifactId>org.postgresql</artifactId>
+      </dependency>
+      <dependency>
+        <groupId>org.ancoron.postgresql</groupId>
+        <artifactId>org.postgresql.net</artifactId>
+      </dependency>
       </dependencies>
     </profile>
 

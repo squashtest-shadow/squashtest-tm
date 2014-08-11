@@ -41,6 +41,16 @@
       <artifactId>org.postgresql.osgi</artifactId>
       <scope>test</scope>
     </dependency>
+     <dependency>
+        <groupId>org.ancoron.postgresql</groupId>
+        <artifactId>org.postgresql</artifactId>
+         <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.ancoron.postgresql</groupId>
+        <artifactId>org.postgresql.net</artifactId>
+         <scope>test</scope>
+      </dependency>
   </dependencies>
 
   <properties>
