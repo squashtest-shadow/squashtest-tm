@@ -37,9 +37,8 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.postgresql</groupId>
-      <artifactId>com.springsource.org.postgresql.jdbc4</artifactId>
-      
+      <groupId>org.ancoron.postgresql</groupId>
+      <artifactId>org.postgresql.osgi</artifactId>
       <scope>test</scope>
     </dependency>
   </dependencies>

@@ -342,10 +342,10 @@
         <db.create.password></db.create.password>
       </properties>
       <dependencies>
-        <dependency>
-          <groupId>org.postgresql</groupId>
-          <artifactId>com.springsource.org.postgresql.jdbc4</artifactId>
-        </dependency>
+          <dependency>
+  <groupId>org.ancoron.postgresql</groupId>
+  <artifactId>org.postgresql.osgi</artifactId>
+</dependency>
       </dependencies>
     </profile>
   </profiles>

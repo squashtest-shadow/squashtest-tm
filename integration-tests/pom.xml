@@ -262,10 +262,9 @@
       <artifactId>com.springsource.com.mysql.jdbc</artifactId>
       <scope>runtime</scope>
     </dependency>
-    
-     <dependency>
-      <groupId>org.postgresql</groupId>
-      <artifactId>com.springsource.org.postgresql.jdbc4</artifactId>
+        <dependency>
+  <groupId>org.ancoron.postgresql</groupId>
+  <artifactId>org.postgresql.osgi</artifactId>
       <scope>runtime</scope>
     </dependency>
     <!-- ====== SPOCK-SPRING-TEST BRIDGE ====== -->
@@ -485,9 +484,9 @@
         <database.typefactory>org.dbunit.ext.postgresql.PostgresqlDataTypeFactory</database.typefactory>
       </properties>
        <dependencies>
-        <dependency>
-          <groupId>org.postgresql</groupId>
-          <artifactId>com.springsource.org.postgresql.jdbc4</artifactId>
+           <dependency>
+  <groupId>org.ancoron.postgresql</groupId>
+  <artifactId>org.postgresql.osgi</artifactId>
         </dependency>
       </dependencies>
     </profile>
