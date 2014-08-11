@@ -33,8 +33,7 @@
     <comment>fix sequence values after insert</comment>
     <sql>
         SELECT setval('automated_test_test_id_seq', (SELECT MAX(test_id) from automated_test));
-        SELECT setval('automated_suite_suite_id_seq', (SELECT MAX(suite_id) from automated_suite
-        SELECT setval('automated_execution_extender_extender_id_seq', (SELECT MAX(extender_id) from automated_execution_extender)););
+        SELECT setval('automated_execution_extender_extender_id_seq', (SELECT MAX(extender_id) from automated_execution_extender));
         SELECT setval('test_automation_project_project_id_seq', (SELECT MAX(project_id) from test_automation_project));
         SELECT setval('test_automation_server_server_id_seq', (SELECT MAX(server_id) from test_automation_server));
         

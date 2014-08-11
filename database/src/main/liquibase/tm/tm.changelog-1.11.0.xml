@@ -94,5 +94,11 @@
 		</delete>
 	</changeSet>
   
+  
+  <changeSet id="tm-1.11.0.feature-3577-1" author="mpagnon">
+    <comment>Fix columns with CHAR(X) types to VARCHAR(X) type to avoid blank space filling by Postgresql</comment>
+    <modifyDataType tableName="CUSTOM_FIELD" columnName="INPUT_TYPE" newDataType="VARCHAR(30)"/>
+    <modifyDataType tableName="CUSTOM_FIELD" columnName="FIELD_TYPE" newDataType="VARCHAR(3)"/>
+  </changeSet>
 
 </databaseChangeLog>

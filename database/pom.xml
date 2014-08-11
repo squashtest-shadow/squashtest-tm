@@ -334,7 +334,7 @@
 
 
     <profile>
-      <id>postgresql-tests</id>
+      <id>postgresql</id>
       <activation>
         <property>
           <name>stage</name>

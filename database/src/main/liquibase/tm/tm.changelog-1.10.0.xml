@@ -373,5 +373,62 @@
 
     </sql>
     </changeSet>
+    
+    
+    <changeSet id="tm-1.10.0.feature-3481-postgresql" author="mpagnon">
+    <preConditions onError="CONTINUE" onFail="CONTINUE" onSqlOutput="TEST">
+      <dbms type="postgresql" />
+    </preConditions>
+    <comment>Creating default order which is identical with the alphabetical order</comment>
+    <sql>
+            create table TEMP_EXECUTION_EXTENDER_ORDER(
+          EXECUTION_EXTENDER_ORDER BIGINT NOT NULL, 
+          SUITE_ID TEXT NOT NULL, 
+          EXTENDER_ID BIGINT NOT NULL
+        );
+        </sql>
+        <createProcedure>
         
+        CREATE OR REPLACE FUNCTION orderExecExtender() RETURNS text AS 
+        $$
+        DECLARE rn integer := 0-1;
+        rn2 integer := 0;
+        prevSuite text := '';
+        r record;
+        BEGIN
+        FOR r in (select cr.SUITE_ID, cr.EXTENDER_ID from AUTOMATED_EXECUTION_EXTENDER cr order by cr.SUITE_ID, cr.EXTENDER_ID)
+        LOOP
+          IF prevSuite  = r.SUITE_ID 
+                THEN 
+                     rn2 := rn ;
+                     rn := rn2 + 1;
+                ELSE rn := 0 ; 
+                     prevSuite := r.SUITE_ID;
+                END IF;
+            insert into TEMP_EXECUTION_EXTENDER_ORDER ( EXECUTION_EXTENDER_ORDER, SUITE_ID, EXTENDER_ID)
+               select rn, r.SUITE_ID , r.EXTENDER_ID  ;
+              
+               
+        
+        END LOOP;
+        return 'ok';
+        END
+        $$ LANGUAGE plpgsql;
+        
+        select orderExecExtender();
+        DROP FUNCTION orderExecExtender();
+        
+        </createProcedure>
+       <sql>
+       
+        update AUTOMATED_EXECUTION_EXTENDER
+        set EXECUTION_EXTENDER_ORDER = (
+          select TEMP_EXECUTION_EXTENDER_ORDER.EXECUTION_EXTENDER_ORDER
+          from TEMP_EXECUTION_EXTENDER_ORDER
+          where TEMP_EXECUTION_EXTENDER_ORDER.SUITE_ID = AUTOMATED_EXECUTION_EXTENDER.SUITE_ID
+            and TEMP_EXECUTION_EXTENDER_ORDER.EXTENDER_ID = AUTOMATED_EXECUTION_EXTENDER.EXTENDER_ID
+        );
+
+    </sql>
+    </changeSet>
 </databaseChangeLog>
