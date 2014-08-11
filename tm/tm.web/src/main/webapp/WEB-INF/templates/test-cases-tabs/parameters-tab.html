@@ -181,25 +181,33 @@
       </div>
     </div>
 
-    <div id="add-dataset-dialog" class="not-displayed popup-dialog form-horizontal" title="Add Dataset"
+    <div id="add-dataset-dialog" class="control-group not-displayed popup-dialog form-horizontal" title="Add Dataset"
       th:title="#{title.addDataset}">
-      <table class="form-horizontal">
-        <tr class="control-group">
-          <td>
-            <label class="control-label" for="add-dataset-name" th:text="#{label.Name}">Name</label>
-          </td>
-          <td class="controls">
-            <input id="add-dataset-name" class="strprop" name="name" type="text" size="50" maxlength="255" />
-            <span class="help-inline">&nbsp;</span>
-          </td>
-        </tr>
-      </table>
+      	<label class="control-label" for="add-dataset-name" th:text="#{label.Name}">Name</label>
+      	<div class="controls">
+        <input id="add-dataset-name" name="add-dataset-name" type="text" size="50" maxlength="255" />
+        <br />
+        <div class="help-inline">&nbsp;</div>
+        </div>
+		<table id="add-dataset-dialog-table" th:attr="data-def='ajaxsource='+@{/test-cases/__${testCase.id}__/parameters}+', pre-sort=1'">
+			<thead>			
+				<th data-def="map=entity-index, select">#</th>
+				<th data-def="map=name">name</th>
+				<th data-def="map=description">description</th>
+				<th data-def="map=empty-delete-holder, sClass=add-parameter-input centered">value</th>
+			</thead>
+			<tbody>
+			
+			</tbody>	
+		</table>
 
       <div class="popup-dialog-buttonpane">
         <input class="confirm" type="button" value="Add" th:value="#{label.Add}" />
         <input class="cancel" type="button" value="Cancel" th:value="#{label.Cancel}" />
       </div>
     </div>
+    
+    
   </div>
   <!-- ==================== initialisation ==================== -->
 

@@ -81,9 +81,10 @@ public class TestCaseParametersController {
 	
 	
 
-	private DatatableMapper<String> parametersTableMapper = new NameBasedMapper(3)
-																.mapAttribute(DataTableModelConstants.DEFAULT_ENTITY_NAME_KEY,"name", Parameter.class)
-																.mapAttribute("test-case-name", "name", TestCase.class);
+	private DatatableMapper<String> parametersTableMapper = 
+			new NameBasedMapper(3)
+				.mapAttribute(DataTableModelConstants.DEFAULT_ENTITY_NAME_KEY,"name", Parameter.class)
+				.mapAttribute("test-case-name", "name", TestCase.class);
 	
 	/**
 	 * 

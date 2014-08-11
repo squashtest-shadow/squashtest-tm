@@ -67,6 +67,7 @@ define([ "jquery", "backbone", "underscore", "./DatasetsTable", "./NewDatasetDia
 					var self = this;
 
 					function discard() {
+						self.newDatasetDialog.destroy();
 						self.newDatasetDialog.off("newDataset.cancel newDataset.confirm");
 						self.newDatasetDialog.undelegateEvents();
 						self.newDatasetDialog = null;
@@ -84,6 +85,7 @@ define([ "jquery", "backbone", "underscore", "./DatasetsTable", "./NewDatasetDia
 				
 				refresh: function() {
 					this.table.reDraw();
+//					this.newDatasetDialog.refresh();
 				}
 			});
 			return DatasetsPanel;

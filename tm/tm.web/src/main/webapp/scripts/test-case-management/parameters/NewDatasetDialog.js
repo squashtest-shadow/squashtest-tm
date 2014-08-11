@@ -18,164 +18,142 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ "jquery", "backbone", "underscore", "app/lnf/Forms", "./NewDatasetModel", "jquery.squash.confirmdialog" ], function($,
-		Backbone, _, Forms, NewDatasetModel) {
+define([ "jquery", "backbone", "underscore", "app/lnf/Forms", "app/util/StringUtil", "jquery.squash.confirmdialog", "squashtable"], 
+		function($,	Backbone, _, Forms, StringUtil) {
+	
 	var NewDatasetDialog = Backbone.View.extend({
+		
 		el : "#add-dataset-dialog",
 		paramInputIdPrefix : "add-dataset-paramValue",
 		paramRowClass : "parameterRow",
 		inputClass : "paramValue",
+		
 		initialize : function() {
-			this.settings = this.options.settings;
-			var self = this;
-			this.getAndAddParamterInputs = $.proxy(this._getAndAddParamterInputs, this);
-			this.addParamterInputs = $.proxy(this._addParamterInputs, this);
-			this.removeParameterInputs = $.proxy(this._removeParameterInputs, this);
+			this.$textFields = this.$el.find("input:text");
+			this._initializeDialog();
+			this._initializeTable();
 
-			// add parameter value inputs
-			this.getAndAddParamterInputs();
-
-			// initialize popup
-			this.$el.find("input:text").val("");
-			$("span.error-message", $(self.el)).text("");
-
+		},
+		
+		_initializeDialog : function(){
 			this.$el.confirmDialog({
-				autoOpen : true
+				autoOpen : true,
+				width : 1000
 			});
-
+			
+		},
+		
+		_initializeTable : function(){
+			
+			var table = $("#add-dataset-dialog-table");
+			
+			var tableSettings = {
+					
+				bPaginate : false,
+				
+				fnRowCallback : function(nRow){
+					$(nRow).find(".add-parameter-input").append('<input type="text" maxlength="255" size="50"/>');
+				}
+			};
+			
+			var squashSettings = {};
+			
+			table.squashTable(tableSettings, squashSettings);
+			table.fnDraw();
 		},
 
 		events : {
-			"blur input:text.strprop" : "changeStrProp",
-			"blur input:text.paramValue" : "changeParamProp",
 			"confirmdialogcancel" : "cancel",
 			"confirmdialogclose" : "close",
 			"confirmdialogvalidate" : "validate",
 			"confirmdialogconfirm" : "confirm"
 		},
 
-		changeStrProp : function(event) {
-			var textbox = event.target;
-			this.model.set(textbox.name, _.escape(textbox.value));
-		},
-
-		changeParamProp : function(event) {
-			var self = this;
-			var textbox = event.target;
-			var nameLength = textbox.name.lenght;
-			var id = parseInt(textbox.name.substring(self.inputClass.length, nameLength), 10);
-			this.model.paramValueChanged(id, textbox.value);
-		},
-
 		cancel : function(event) {
 			this.cleanup();
 			this.trigger("newDataset.cancel");
+		},	
+		
+		confirm : function(event) {
 		},
 		
-		close : function(event) {
-		},
-
-		confirm : function(event) {
-			this.cleanup();
-			this.trigger("newDataset.confirm");
+		close : function(){
 		},
 
 		validate : function(event) {
-			var res = true, validationErrors = this.model.validateAll();
-
+			var self = this;
+			var res = true, validationErrors = this.validateAll();
 			Forms.form(this.$el).clearState();
 
 			if (validationErrors !== null) {
 				for ( var key in validationErrors) {
-					Forms.input(this.$("input[name='" + key + "']")).setState("error", validationErrors[key]);
+					Forms.input(this.$("input[name='add-dataset-" + key + "']")).setState("error", validationErrors[key]);
 				}
-
-				return false;
-			}
-
-			this.model.save(null, {
-				async : false,
-				error : function() {
-					res = false;
-					event.preventDefault();
-				}
+				res = false;
+				return res;
+			}			
+			
+			var table = $("#add-dataset-dialog-table").squashTable();
+			
+			var parameters = [];
+		
+			table.find('tbody tr').each(function(){
+				
+				var $row = $(this);
+				var paramValue = $row.find(".add-parameter-input input").val();
+				var paramId = table.fnGetData(this)['entity-index'];
+				
+				var paramData = [paramId, paramValue];
+				
+				parameters.push(paramData);
 			});
-		},
-
-		_getAndAddParamterInputs : function() {
-			var self = this;
+			
+			var params = {name:$("#add-dataset-name").val(), paramValues:parameters};
+			
 			$.ajax({
-				url : self.settings.basic.testCaseUrl + "/parameters",
-				type : "get"
-			}).done(self.addParamterInputs);
-
-		},
-
-		_addParamterInputs : function(json) {
-			var self = this;
-			var content = this.$("table.form-horizontal > tbody");
-			// CREATE MODEL
-			var paramValues = [];
-			for ( var i = 0; i < json.length; i++) {
-				paramValues.push([ json[i].id, "" ]);
-			}
-			this.model = new NewDatasetModel({
-				name : "",
-				paramValues : paramValues
-			}, {
-				url : self.settings.basic.testCaseDatasetsUrl + "/new"
+				url : self.options.settings.basic.testCaseDatasetsUrl + '/new',
+				type : 'POST',
+				contentType : "application/json",
+				async : false,
+				data : JSON.stringify(params),
+				dataType : 'json',
+				success : function(){
+					self.trigger("newDataset.confirm");
+					self.cleanup();			
+					res = true;
+				},
+				error : function(jqXHR, textStatus, errorThrown){
+					event.preventDefault();
+					res = false;
+				}
 			});
-
-			// CREATE INPUTS
-			var newTemplate = function(param) {
-				var row = $("<tr/>", {
-					'class' : 'control-group ' + self.paramRowClass
-				});
-				// label
-				var labelCell = $("<td/>");
-				var label = $("<label/>", {
-					'class' : 'control-label',
-					'for' : self.paramInputIdPrefix + param.id
-				});
-				label.text(param.name);
-				labelCell.append(label);
-				row.append(labelCell);
-				// input
-				var inputCell = $("<td/>", {
-					'class' : 'controls'
-				});
-				var input = $("<input/>", {
-					'type' : 'text',
-					'class' : self.inputClass,
-					'id' : self.paramInputIdPrefix + param.id,
-					'name' : self.inputClass + param.id,
-					'maxlength' : 255
-				});
-				input.attr("size", 50);
-				inputCell.append(input);
-				row.append(inputCell);
-				content.append(row);
-			};
-			for ( var j = 0; j < json.length; j++) {
-				var row = newTemplate(json[j]);
+			return res;			
+		},
+		
+		validateAll : function() {
+			var name = $("#add-dataset-name").val(), errors = null;							
+			if (StringUtil.isBlank(name)) {
+				errors = errors || {};
+				errors.name = "message.notBlank";
 			}
-
+			return errors;
 		},
-
-		_removeParameterInputs : function() {
-			var selector = "tr." + this.paramRowClass;
-			this.$(selector).remove();
-		},
+		
 		cleanup : function() {
 			this.$el.addClass("not-displayed");
-			this.model = {
-				name : ""
-			};
+			this._resetForm();
+		},
+
+		_resetForm : function() {
+			this.$textFields.val("");
 			Forms.form(this.$el).clearState();
-			this.removeParameterInputs();
-			this.$el.confirmDialog("destroy");
+		},
+		
+		destroy : function(){
+			this.$el.confirmDialog('destroy');
 		}
 
 	});
+		
 	return NewDatasetDialog;
 });
