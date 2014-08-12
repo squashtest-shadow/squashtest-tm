@@ -40,6 +40,9 @@ class IterationMappingIT extends HibernateMappingSpecification {
 		then:
 		res.createdOn != null
 		res.createdBy != null
+
+		cleanup:
+		deleteFixture iteration
 	}
 
 	def "should persist actual and scheduled date periods"() {
@@ -61,6 +64,9 @@ class IterationMappingIT extends HibernateMappingSpecification {
 		res.actualEndDate != null
 		res.scheduledStartDate != null
 		res.scheduledEndDate != null
+
+		cleanup:
+		deleteFixture iteration
 	}
 
 	def "hibernate should not nullify scheduled date when its fields are null"() {
@@ -77,5 +83,8 @@ class IterationMappingIT extends HibernateMappingSpecification {
 
 		then:
 		res.scheduledPeriod != null
+
+		cleanup:
+		deleteFixture iteration
 	}
 }

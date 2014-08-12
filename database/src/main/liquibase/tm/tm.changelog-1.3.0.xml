@@ -352,18 +352,17 @@
 		<sql>
 			create trigger detach_rln_before before delete on
 			RLN_RELATIONSHIP
-			for each row delete clos1 from
-			RLN_RELATIONSHIP_CLOSURE clos1
-			join RLN_RELATIONSHIP_CLOSURE clos2
-			on
-			clos1.descendant_id=clos2.descendant_id
-			left join
-			RLN_RELATIONSHIP_CLOSURE clos3
-			on clos3.ancestor_id =
-			clos2.ancestor_id
+			for each row delete clos1 
+            from RLN_RELATIONSHIP_CLOSURE clos1
+			
+            join RLN_RELATIONSHIP_CLOSURE clos2
+			on clos1.descendant_id=clos2.descendant_id
+			
+            left join RLN_RELATIONSHIP_CLOSURE clos3
+			on clos3.ancestor_id = clos2.ancestor_id
 			and clos3.descendant_id = clos1.ancestor_id
-			where
-			clos2.ancestor_id = old.descendant_id
+			
+            where clos2.ancestor_id = old.descendant_id
 			and clos3.ancestor_id is null;
 		</sql>
 	</changeSet>
@@ -404,8 +403,7 @@
 			CLN_RELATIONSHIP_CLOSURE c1
 			cross join CLN_RELATIONSHIP_CLOSURE c2
 			where c1.descendant_id = new.ancestor_id
-			and c2.ancestor_id =
-			new.descendant_id;		
+			and c2.ancestor_id = new.descendant_id;		
 		</sql>
 
 
@@ -420,8 +418,7 @@
 			clos1.descendant_id=clos2.descendant_id
 			left join
 			CLN_RELATIONSHIP_CLOSURE clos3
-			on clos3.ancestor_id =
-			clos2.ancestor_id
+			on clos3.ancestor_id = clos2.ancestor_id
 			and clos3.descendant_id = clos1.ancestor_id
 			where
 			clos2.ancestor_id = old.descendant_id
@@ -641,14 +638,12 @@
       drop function if exists detach_tcln_before();
       create function detach_tcln_before() returns trigger as $detach_tcln_before$
       begin
-        delete from TCLN_RELATIONSHIP  
-        using  TCLN_RELATIONSHIP_CLOSURE clos2 , TCLN_RELATIONSHIP_CLOSURE clos3
-        where TCLN_RELATIONSHIP.descendant_id = clos2.descendant_id 
-        and clos2.ancestor_id = old.descendant_id
-        and clos3.ancestor_id = clos2.ancestor_id 
-        and clos3.descendant_id = TCLN_RELATIONSHIP.ancestor_id
-        and clos3.ancestor_id is null;    
+        delete from TCLN_RELATIONSHIP_CLOSURE 
+        where descendant_id in ( select descendant_id from TCLN_RELATIONSHIP_CLOSURE where ancestor_id = old.descendant_id )
+        and ancestor_id not in ( select descendant_id from TCLN_RELATIONSHIP_CLOSURE where ancestor_id = old.descendant_id )
+        ;
         return old;
+      
       end;
       $detach_tcln_before$ language plpgsql;
       
@@ -730,13 +725,10 @@
       drop function if exists detach_rln_before();
       create function detach_rln_before() returns trigger as $detach_rln_before$
       begin
-        delete from RLN_RELATIONSHIP_CLOSURE 
-        using RLN_RELATIONSHIP_CLOSURE clos2, RLN_RELATIONSHIP_CLOSURE clos3          
-        where clos2.ancestor_id = old.descendant_id
-        and RLN_RELATIONSHIP_CLOSURE.descendant_id = clos2.descendant_id
-        and clos3.ancestor_id = clos2.ancestor_id
-        and clos3.descendant_id = RLN_RELATIONSHIP_CLOSURE.ancestor_id
-        and clos3.ancestor_id is null;
+      delete from RLN_RELATIONSHIP_CLOSURE 
+        where descendant_id in ( select descendant_id from RLN_RELATIONSHIP_CLOSURE where ancestor_id = old.descendant_id )
+        and ancestor_id not in ( select descendant_id from RLN_RELATIONSHIP_CLOSURE where ancestor_id = old.descendant_id )
+        ;
         return old;
       end;
       $detach_rln_before$ language plpgsql;
@@ -817,13 +809,10 @@
       drop function if exists detach_cln_before();
       create function detach_cln_before() returns trigger as $detach_cln_before$
       begin
-        delete from CLN_RELATIONSHIP_CLOSURE
-        using CLN_RELATIONSHIP_CLOSURE clos2 , CLN_RELATIONSHIP_CLOSURE clos3 
-        where clos2.ancestor_id = old.descendant_id
-        and CLN_RELATIONSHIP_CLOSURE.descendant_id = clos2.descendant_id
-        and clos3.descendant_id = CLN_RELATIONSHIP_CLOSURE.ancestor_id
-        and clos3.ancestor_id = clos2.ancestor_id
-        and clos3.ancestor_id is null;
+        delete from CLN_RELATIONSHIP_CLOSURE 
+        where descendant_id in ( select descendant_id from CLN_RELATIONSHIP_CLOSURE where ancestor_id = old.descendant_id )
+        and ancestor_id not in ( select descendant_id from CLN_RELATIONSHIP_CLOSURE where ancestor_id = old.descendant_id )
+        ;
         return old;
       end;
       $detach_cln_before$ language plpgsql;

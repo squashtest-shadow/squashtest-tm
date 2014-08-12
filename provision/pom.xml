@@ -323,7 +323,7 @@
     </profile>
   
   <profile>
-      <id>postgresqlDev</id>
+      <id>postgresql</id>
       <activation>
         <activeByDefault>false</activeByDefault>
         <property>

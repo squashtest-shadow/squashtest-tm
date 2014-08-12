@@ -59,6 +59,8 @@ class CampaignMappingIT extends HibernateMappingSpecification {
 		loadedIters[1].name == "it2"
 
 		cleanup:
+		deleteFixture it1
+		deleteFixture it2
 		deleteFixture campaign
 	}
 	def "should not add null iteration top campaign"() {
@@ -72,38 +74,32 @@ class CampaignMappingIT extends HibernateMappingSpecification {
 	}
 
 	/*def "Should add a test case to a campaign"(){
-		given :
-		def tc1 = new TestCase(name: "tc1")
-		persistFixture tc1
+	 given :
+	 def tc1 = new TestCase(name: "tc1")
+	 persistFixture tc1
+	 and:
+	 def cpgn1 = new Campaign(name: "cpgn1")
+	 persistFixture cpgn1
+	 when :
+	 doInTransaction{
+	 def tc2 = it.get(TestCase, tc1.id)
+	 Campaign cpgn2 = it.get(Campaign, cpgn1.id)
+	 CampaignTestPlanItem item = new CampaignTestPlanItem(referencedTestCase: tc2)
+	 it.persist item
+	 cpgn2.addToTestPlan(item)
+	 }
+	 Campaign cmpgn = doInTransaction {
+	 Campaign cmpgns = it.get(Campaign, cpgn1.id)
+	 Hibernate.initialize(cmpgns.testPlan)
+	 return cmpgns
+	 }
+	 then :
+	 cmpgn.testPlan.size() == 1
+	 }
+	 */
 
-		and:
-		def cpgn1 = new Campaign(name: "cpgn1")
-		persistFixture cpgn1
 
-		when :
-		doInTransaction{
-			def tc2 = it.get(TestCase, tc1.id)
-			Campaign cpgn2 = it.get(Campaign, cpgn1.id)
 
-			CampaignTestPlanItem item = new CampaignTestPlanItem(referencedTestCase: tc2)
 
-			it.persist item
-			cpgn2.addToTestPlan(item)
-		}
 
-		Campaign cmpgn = doInTransaction {
-			Campaign cmpgns = it.get(Campaign, cpgn1.id)
-			Hibernate.initialize(cmpgns.testPlan)
-			return cmpgns
-		}
-
-		then :
-		cmpgn.testPlan.size() == 1
-	}
-	*/
-	
-
-	
-	
-	
 }

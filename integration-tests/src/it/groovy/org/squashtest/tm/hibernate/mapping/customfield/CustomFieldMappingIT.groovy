@@ -19,7 +19,7 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.squashtest.tm.hibernate.mapping.customfield
- 
+
 import org.squashtest.tm.hibernate.mapping.HibernateMappingSpecification
 import org.squashtest.csp.tools.unittest.hibernate.HibernateOperationCategory
 import org.squashtest.tm.domain.customfield.CustomField
@@ -28,100 +28,112 @@ import org.squashtest.tm.domain.customfield.InputType
 import org.squashtest.tm.domain.customfield.SingleSelectField
 
 /**
-  * @author Gregory Fouquet
-  */
+ * @author Gregory Fouquet
+ */
 class CustomFieldMappingIT extends HibernateMappingSpecification {
-    def "should persist and retrieve a custom field"() {
-        given:
-        def cf = new CustomField();
-        cf.name = "batman"
+	def "should persist and retrieve a custom field"() {
+		given:
+		def cf = new CustomField()
+		cf.name = "batman"
 		cf.code="code1"
-        cf.inputType = InputType.PLAIN_TEXT
+		cf.inputType = InputType.PLAIN_TEXT
 
-        when:
-        persistFixture cf
-        def res = use (HibernateOperationCategory) {
-            sessionFactory.doInSession { it.get(CustomField, cf.id) }
-        }
+		when:
+		persistFixture cf
+		def res = use (HibernateOperationCategory) {
+			sessionFactory.doInSession { it.get(CustomField, cf.id) }
+		}
 
-        then:
-        res != null
-    }
+		then:
+		res != null
 
-    def "should persist and retrieve a single select field"() {
-        given:
-        def cf = new SingleSelectField();
-        cf.name = "batman"
+		cleanup :
+		deleteFixture cf
+	}
 
-        when:
-        persistFixture cf
-        def res = use (HibernateOperationCategory) {
-            sessionFactory.doInSession { it.get(CustomField, cf.id) }
-        }
+	def "should persist and retrieve a single select field"() {
+		given:
+		def cf = new SingleSelectField()
+		cf.name = "batman"
 
-        then:
-        res != null
-    }
+		when:
+		persistFixture cf
+		def res = use (HibernateOperationCategory) {
+			sessionFactory.doInSession { it.get(CustomField, cf.id) }
+		}
 
-    def "should add options to a single select field"() {
-        given:
-        def cf = new SingleSelectField();
-        cf.name = "batman"
+		then:
+		res != null
+
+		cleanup :
+		deleteFixture cf
+	}
+
+	def "should add options to a single select field"() {
+		given:
+		def cf = new SingleSelectField()
+		cf.name = "batman"
 		cf.code="code1"
-        cf.addOption(new CustomFieldOption("leatherpants", "code2"))
-        cf.addOption(new CustomFieldOption("batarang", "code3"))
-        persistFixture cf
+		cf.addOption(new CustomFieldOption("leatherpants", "code2"))
+		cf.addOption(new CustomFieldOption("batarang", "code3"))
+		persistFixture cf
 
-        when:
-        def res = use (HibernateOperationCategory) {
-            sessionFactory.doInSession {
-                def r = it.get(CustomField, cf.id)
-                r.options.each { it.label }
-                return r
-            }
-        }
+		when:
+		def res = use (HibernateOperationCategory) {
+			sessionFactory.doInSession {
+				def r = it.get(CustomField, cf.id)
+				r.options.each { it.label }
+				return r
+			}
+		}
 
-        then:
-        res.options*.label == ["leatherpants", "batarang"]
-    }
+		then:
+		res.options*.label == ["leatherpants", "batarang"]
 
-    def "should remove options from a single select field"() {
-        given:
-        def cf = new SingleSelectField();
-        cf.name = "batman"
+		cleanup :
+		deleteFixture cf
+	}
+
+	def "should remove options from a single select field"() {
+		given:
+		def cf = new SingleSelectField()
+		cf.name = "batman"
 		cf.code="code1"
-        cf.addOption(new CustomFieldOption("leatherpants", "code2"))
-        cf.addOption(new CustomFieldOption("batarang", "code3"))
-        persistFixture cf
+		cf.addOption(new CustomFieldOption("leatherpants", "code2"))
+		cf.addOption(new CustomFieldOption("batarang", "code3"))
+		persistFixture cf
 
-        when:
+		when:
 		def removeOption = {
-            def res = it.get(CustomField, cf.id)
+			def res = it.get(CustomField, cf.id)
 			res.removeOption("batarang")
 		}
-		
+
 		def loadFixture = {
-            def res = it.get(CustomField, cf.id)
-            res.options.each { it.label }
-            return res
+			def res = it.get(CustomField, cf.id)
+			res.options.each { it.label }
+			return res
 		}
-		
-        def res = use (HibernateOperationCategory) {
-            sessionFactory.doInSession removeOption
-            sessionFactory.doInSession(loadFixture)
-       }
+
+		def res = use (HibernateOperationCategory) {
+			sessionFactory.doInSession removeOption
+			sessionFactory.doInSession(loadFixture)
+		}
 
 		then:
 		res.options*.label == ["leatherpants"]
-    }
-	
+
+		cleanup :
+		deleteFixture cf
+	}
+
 	def "should change the label of a single select field's option"() {
 		given:
 		def cf = new SingleSelectField()
 		cf.name="batman"
 		cf.code = "code1"
-        cf.addOption(new CustomFieldOption("leatherpants", "code2"))
-        cf.addOption(new CustomFieldOption("batarang", "code3"))
+		cf.addOption(new CustomFieldOption("leatherpants", "code2"))
+		cf.addOption(new CustomFieldOption("batarang", "code3"))
 		persistFixture cf
 
 		when:
@@ -129,11 +141,11 @@ class CustomFieldMappingIT extends HibernateMappingSpecification {
 			def r = it.get(CustomField, cf.id)
 			r.options[1].label = "bataring"
 		}
-		
+
 		def loadFixture = {
-            def res = it.get(CustomField, cf.id)
-            res.options.each { it.label }
-            return res
+			def res = it.get(CustomField, cf.id)
+			res.options.each { it.label }
+			return res
 		}
 
 		def res = use (HibernateOperationCategory) {
@@ -143,7 +155,10 @@ class CustomFieldMappingIT extends HibernateMappingSpecification {
 
 		then:
 		res.options*.label == ["leatherpants", "bataring"]
+
+		cleanup :
+		deleteFixture cf
 	}
-	
+
 }
 

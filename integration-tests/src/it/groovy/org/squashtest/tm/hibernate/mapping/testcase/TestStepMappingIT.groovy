@@ -30,7 +30,7 @@ import org.squashtest.tm.domain.testcase.ActionTestStep
 import org.squashtest.tm.domain.testcase.TestCase
 
 class TestStepMappingIT extends HibernateMappingSpecification {
-	@Inject SessionFactory sessionFactory;
+
 
 	def "shoud persist and retrieve a test step"() {
 		given:
@@ -49,29 +49,24 @@ class TestStepMappingIT extends HibernateMappingSpecification {
 	}
 
 	/*def "should cascade step persistence from test case"() {
-		given:
-		TestCase tc = new TestCase(name: "foo")
-		ActionTestStep s = new ActionTestStep(action: "do something")
-
-		tc.steps << s
-
-		when:
-		use (HibernateOperationCategory) {
-			sessionFactory.doInSession { it.persist tc }
-		}
-
-		def res = {
-			use (HibernateOperationCategory) {
-				sessionFactory.doInSession {
-					it.createQuery("select tc from TestCase tc join fetch tc.steps where tc.id = ${tc.id}").uniqueResult()
-				}
-			}
-		}
-
-		then:
-		res().steps.size() == 1
-
-		cleanup:
-		deleteFixture tc, s
-	}*/
+	 given:
+	 TestCase tc = new TestCase(name: "foo")
+	 ActionTestStep s = new ActionTestStep(action: "do something")
+	 tc.steps << s
+	 when:
+	 use (HibernateOperationCategory) {
+	 sessionFactory.doInSession { it.persist tc }
+	 }
+	 def res = {
+	 use (HibernateOperationCategory) {
+	 sessionFactory.doInSession {
+	 it.createQuery("select tc from TestCase tc join fetch tc.steps where tc.id = ${tc.id}").uniqueResult()
+	 }
+	 }
+	 }
+	 then:
+	 res().steps.size() == 1
+	 cleanup:
+	 deleteFixture tc, s
+	 }*/
 }

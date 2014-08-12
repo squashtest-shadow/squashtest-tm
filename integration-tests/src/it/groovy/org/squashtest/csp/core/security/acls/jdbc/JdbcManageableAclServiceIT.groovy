@@ -47,7 +47,6 @@ import spock.unitils.UnitilsSupport
 class JdbcManageableAclServiceIT extends Specification {
 	@Inject ManageableAclService manageableService
 	@Inject ObjectAclService service
-	@Inject DataSource dataSource
 
 	def setup() {
 		SecurityContextHolder.getContext().setAuthentication(new StubAuthentication())

@@ -35,105 +35,103 @@ class RequirementFolderMappingIT extends HibernateMappingSpecification {
 		given:
 		def f = new RequirementFolder(name:"folder mapping test")
 		persistFixture f
-		
+
 		when:
 		def res = doInTransaction({Session s -> s.get(RequirementFolder, f.id)
 		})
-		
+
 		then:
 		res != null
-		
+
 		cleanup:
 		deleteFixture f
 	}
-	
-	def "should not persist folder withouit name"() {
+
+	def "should not persist folder without name"() {
 		given:
 		def f = new RequirementFolder()
-		
+
 		when:
 		persistFixture f
-		
+
 		then:
 		thrown(ConstraintViolationException)
 	}
-	
-	
+
+
 	def "should persist and retrieve folders"(){
 		given :
-		def folder = new RequirementFolder(name : "folder")			
+		def folder = new RequirementFolder(name : "folder")
 		def tosave = new RequirementFolder(name : "tosave")
-		
-		
-		
+
+
+
 		folder.addContent tosave
-		
+
 		persistFixture folder
-		
-		
-		when :		
+
+
+		when :
 		def obj1
-		def contentIds = doInTransaction {			
+		def contentIds = doInTransaction {
 			obj1 = it.get(RequirementFolder, folder.id)
 			obj1.content.collect { it.id
 			}
 		}
-		
+
 		then :
 		contentIds.size() == 1
 		contentIds.containsAll([tosave.id])
-		
-		cleanup : 
+
+		cleanup :
 		deleteFixture folder
 
-		
+
 	}
-	
-	
+
+
 	def "should not retrieve deleted requirements"(){
 		given :
 		RequirementFolder refolder = new RequirementFolder(name: "ref")
 		def req1 = new Requirement(new RequirementVersion(name: "req1"))
 		def req2 = new Requirement(new RequirementVersion(name: "req2"))
 		def req3 = new Requirement(new RequirementVersion(name: "req3"))
-		
+
 		refolder.addContent req1
 		refolder.addContent req2
 		refolder.addContent req3
-		
+
 		persistFixture refolder
-		
+
 		when :
-		
+
 		def obj
 		def content
-		
-		
+
+
 		//delete 1 requirement
 		doInTransaction {
 			obj = it.get(RequirementFolder, refolder.id)
 			Hibernate.initialize(obj.getContent())
 			content = obj.getContent()
-			
+
 			def truc = it.get(Requirement, req1.id)
-			
-			
-			obj.removeContent(truc);
+
+
+			obj.removeContent(truc)
 			it.delete truc
 		}
-		
+
 		//refetch the collection
 		def contentNames = doInTransaction {
 			it.enableFilter("filter.entity.deleted")
 			obj = it.get(RequirementFolder, refolder.id)
 			obj.content.collect { it.name }
 		}
-		
+
 		then :
 		contentNames.size() == 2
 		contentNames.containsAll(["req2", "req3"])
-		
-		//cleanup :
-		//deleteFixture refolder
+
 	}
-}	
+}

@@ -30,26 +30,26 @@ import org.squashtest.tm.domain.requirement.RequirementLibrary
 import org.squashtest.tm.domain.testcase.TestCaseLibrary
 
 class RequirementLibraryMappingIT extends HibernateMappingSpecification {
-	
-	def "should crate a not-null Requirement Library"() {
+
+	def "should create a not-null Requirement Library"() {
 		given:
 		RequirementLibrary library = new RequirementLibrary()
 		persistFixture(library)
-		
+
 		when:
-		def findLibrary = {Session session -> 
+		def findLibrary = {Session session ->
 			Object obj = session.get(RequirementLibrary.class, library.id)
 			return obj
 		}
 		def res = doInTransaction(findLibrary)
-		
+
 		then:
 		res != null
-		
+
 		cleanup:
 		deleteFixture(library)
-	}	
-	
+	}
+
 	def "should add a folder to a library"() {
 		given:
 		Project p = new Project(name: "foo")
@@ -58,42 +58,41 @@ class RequirementLibraryMappingIT extends HibernateMappingSpecification {
 		p.campaignLibrary = new CampaignLibrary()
 		p.testCaseLibrary = new TestCaseLibrary()
 		persistFixture p, library
-		
-		and:		
+
+		and:
 		RequirementFolder folder = new RequirementFolder(name: "add")
-		
+
 		when:
-		def addFolder = {Session session -> 
+		def addFolder = {Session session ->
 			RequirementLibrary l = session.get(RequirementLibrary.class, library.id)
 			l.addContent(folder)
 			session.persist(folder)
 		}
-		
+
 		doInTransaction addFolder
-		
-		def findLibrary = {Session session -> 
+
+		def findLibrary = {Session session ->
 			return session.createQuery("from RequirementLibrary l join fetch l.rootContent where l.id = " + library.id).uniqueResult()
 		}
-		
+
 		def res = doInTransaction(findLibrary)
-		
+
 		then:
 		res.rootContent.size() == 1
 		res.rootContent.collect { it.id } == [folder.id]
-		
+
 		cleanup:
 		deleteRootContent library
-		//deleteFixture p, library
-		
+		deleteFixture folder, p, library
+
 	}
 
-	
+
 	def deleteRootContent(RequirementLibrary library) {
 		doInTransaction {
 			Session s ->
 			def lib = s.get(RequirementLibrary, library.id)
 			lib.rootContent.clear()
-			lib.rootContent.each { s.delete(it) }
 		}
 	}
 

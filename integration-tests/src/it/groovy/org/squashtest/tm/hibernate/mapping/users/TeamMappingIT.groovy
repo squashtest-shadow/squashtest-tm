@@ -19,31 +19,32 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.squashtest.tm.hibernate.mapping.users
- 
+
 import org.apache.poi.hssf.record.formula.functions.T
 import org.squashtest.tm.domain.users.Team
 import org.squashtest.tm.hibernate.mapping.HibernateMappingSpecification
 import org.squashtest.csp.tools.unittest.hibernate.HibernateOperationCategory
 
 /**
-  * @author mpagnon
-  */
+ * @author mpagnon
+ */
 class TeamMappingIT extends HibernateMappingSpecification {
-    def "should persist and retrieve a team"() {
-        given:
-        def team = new Team();
-        team.name = "avengers"
+	def "should persist and retrieve a team"() {
+		given:
+		def team = new Team()
+		team.name = "avengers"
 		team.description ="code1"
 
-        when:
-        persistFixture team
-        def res = use (HibernateOperationCategory) {
-            sessionFactory.doInSession { it.get(Team, team.id) }
-        }
+		when:
+		persistFixture team
+		def res = use (HibernateOperationCategory) {
+			sessionFactory.doInSession { it.get(Team, team.id) }
+		}
 
-        then:
-        res != null
-    }
+		then:
+		res != null
+
+	}
 
 
 }

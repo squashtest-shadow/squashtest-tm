@@ -242,7 +242,12 @@
 			select PARTY_ID from CORE_USER;
 		</sql>
 	</changeSet>
-
+    <changeSet id="tm-1.5.0.00-feat-1864.postgresql" author="mpagnon" dbms="postgresql">
+      <comment>Update party sequence after inserts</comment>
+      <sql>
+        SELECT setval('core_party_party_id_seq', (SELECT MAX(party_id) from core_party));
+      </sql>
+    </changeSet>
 
 	<changeSet id="tm-1.5.0.00-feat-1864.05" author="mpagnon">
 		<comment>Replace reference on user with reference on party</comment>

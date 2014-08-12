@@ -20,18 +20,18 @@
  */
 package org.squashtest.core.api.repository
 
-import javax.inject.Inject;
+import javax.inject.Inject
 
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.transaction.TransactionConfiguration;
-import org.springframework.transaction.annotation.Isolation;
-import org.springframework.transaction.annotation.Transactional;
-import org.squashtest.tm.service.internal.repository.hibernate.DbunitDaoSpecification;
-import org.squashtest.tm.api.repository.SqlQueryRunner;
-import org.unitils.dbunit.annotation.DataSet;
+import org.springframework.test.context.ContextConfiguration
+import org.springframework.test.context.transaction.TransactionConfiguration
+import org.springframework.transaction.annotation.Isolation
+import org.springframework.transaction.annotation.Transactional
+import org.squashtest.tm.service.internal.repository.hibernate.DbunitDaoSpecification
+import org.squashtest.tm.api.repository.SqlQueryRunner
+import org.unitils.dbunit.annotation.DataSet
 
-import spock.lang.Specification;
-import spock.unitils.UnitilsSupport;
+import spock.lang.Specification
+import spock.unitils.UnitilsSupport
 
 /**
  * @author Gregory Fouquet
@@ -41,10 +41,10 @@ import spock.unitils.UnitilsSupport;
 @ContextConfiguration(["classpath:repository/dependencies-scan-context.xml", "classpath:unitils-datasource-context.xml", "classpath*:META-INF/**/repository-context.xml"])
 @TransactionConfiguration(transactionManager = "squashtest.tm.hibernate.TransactionManager", defaultRollback = true)
 @Transactional(isolation=Isolation.READ_UNCOMMITTED)
+@DataSet("SqlQueryRunnerIT.should select all active core users.xml")
 class SqlQueryRunnerIT extends Specification {
 	@Inject SqlQueryRunner runner
 
-	@DataSet("SqlQueryRunnerIT.should select all active core users.xml")
 	def "should select all active core user logins"() {
 		when:
 
@@ -69,7 +69,6 @@ class SqlQueryRunnerIT extends Specification {
 		]
 	}
 
-	@DataSet("SqlQueryRunnerIT.should select all active core users.xml")
 	def "should select all active core user aliased logins and names"() {
 		when:
 		def res = runner.executeSelect('select LOGIN "logname", LAST_NAME "name" from CORE_USER where ACTIVE = true')
@@ -81,7 +80,6 @@ class SqlQueryRunnerIT extends Specification {
 		]
 	}
 
-	@DataSet("SqlQueryRunnerIT.should select all active core users.xml")
 	def "should select single inactive core user"() {
 		when:
 		def res = runner.executeUniqueSelect("select LOGIN from CORE_USER where ACTIVE = false")
@@ -90,7 +88,6 @@ class SqlQueryRunnerIT extends Specification {
 		res == "shawn.michaels"
 	}
 
-	@DataSet("SqlQueryRunnerIT.should select all active core users.xml")
 	def "should select core user by last_name named parameter"() {
 		when:
 		def res = runner.executeSelect("select LOGIN from CORE_USER where LAST_NAME = :name", [name: "bryan"])
@@ -99,7 +96,6 @@ class SqlQueryRunnerIT extends Specification {
 		res == ["daniel.bryan"]
 	}
 
-	@DataSet("SqlQueryRunnerIT.should select all active core users.xml")
 	def "should select core user by last_name named list parameter"() {
 		when:
 		def res = runner.executeSelect("select LOGIN from CORE_USER where LAST_NAME in ( :names )", [names: ["bryan", "jericho"]])
@@ -108,7 +104,6 @@ class SqlQueryRunnerIT extends Specification {
 		res == ["daniel.bryan", "chris.jericho"]
 	}
 
-	@DataSet("SqlQueryRunnerIT.should select all active core users.xml")
 	def "should select unique core user by last_name named parameter"() {
 		when:
 		def res = runner.executeUniqueSelect("select LOGIN from CORE_USER where LAST_NAME = :name", [name: "bryan"])

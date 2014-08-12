@@ -26,9 +26,9 @@ import org.squashtest.tm.hibernate.mapping.HibernateMappingSpecification
 import org.squashtest.tm.domain.requirement.Requirement
 import org.squashtest.tm.domain.requirement.RequirementStatus
 import org.squashtest.tm.domain.requirement.RequirementVersion
-import org.squashtest.tm.domain.testcase.RequirementVersionCoverage;
+import org.squashtest.tm.domain.testcase.RequirementVersionCoverage
 import org.squashtest.tm.domain.testcase.TestCase
-import org.squashtest.tm.exception.requirement.IllegalRequirementModificationException;
+import org.squashtest.tm.exception.requirement.IllegalRequirementModificationException
 
 class RequirementMappingIT extends HibernateMappingSpecification {
 
@@ -63,13 +63,16 @@ class RequirementMappingIT extends HibernateMappingSpecification {
 
 		when :
 		persistFixture requirement
-		def refetch = doInTransaction({session -> session.get(Requirement, requirement.id)});
+		def refetch = doInTransaction({session -> session.get(Requirement, requirement.id)})
 
 		then :
 		notThrown IllegalRequirementModificationException
 		refetch.name =="req 2"
 		refetch.description == "this is an obsolete requirement"
 		refetch.status == RequirementStatus.OBSOLETE
+
+		cleanup :
+		deleteFixture requirement
 	}
 
 
@@ -84,5 +87,5 @@ class RequirementMappingIT extends HibernateMappingSpecification {
 		thrown (JDBCException)
 	}
 
-	
+
 }
