@@ -177,8 +177,6 @@
 		<comment>
 			The associative table TM_TA_PROJECTS is totally re-purposed as TEST_AUTOMATION_PROJECT 
 			(and the former table is ditched). 
-			
-			Gosh, that's so unnatural. We then do so by creating a whole new table, that will be renamed afterward.
 		</comment>
 	
 	
@@ -212,15 +210,19 @@
 				<constraints nullable="false"/>	
 			</column>
 			
+			<column name="FORMER_ID" type="BIGINT" remarks="the former primary key" >
+				<constraints nullable="false" />
+			</column>
 		</createTable>
 		
 		<!-- insert the data -->
 		<sql>
-			insert into PROTO_TEST_AUTOMATION_PROJECT(TM_PROJECT_ID, LABEL, REMOTE_NAME, SERVER_ID) 
+			insert into PROTO_TEST_AUTOMATION_PROJECT(TM_PROJECT_ID, LABEL, REMOTE_NAME, SERVER_ID, FORMER_ID) 
 			select binding.tm_project_id, 
 				   concat_ws('-', proj.name, binding.tm_project_id, binding.ta_project_id),
 				   proj.name,
-				   proj.server_id
+				   proj.server_id, 
+				   proj.project_id
 			from TM_TA_PROJECTS binding
 			inner join TEST_AUTOMATION_PROJECT proj on binding.ta_project_id = proj.project_id;		
 		</sql>
@@ -237,8 +239,24 @@
 	
 		<!-- all hail the new table TEST_AUTOMATION_PROJECT ! -->
 		<renameTable oldTableName="PROTO_TEST_AUTOMATION_PROJECT" newTableName="TEST_AUTOMATION_PROJECT" />
-	
+
+		<!-- Rebinds automated tests to the right ta project id -->
+		<sql>
+			update AUTOMATED_TEST at 
+			set at.PROJECT_ID = (
+				select tap.TA_PROJECT_ID 
+				from TEST_AUTOMATION_PROJECT tap
+                  inner join TEST_CASE_LIBRARY_NODE tcln on tcln.PROJECT_ID = tap.TM_PROJECT_ID
+                  inner join TEST_CASE tc on tc.TCLN_ID = tcln.TCLN_ID
+				where at.PROJECT_ID = tap.FORMER_ID
+				  and at.TEST_ID = tc.TA_TEST
+				group by tc.TA_TEST, tap.TA_PROJECT_ID 
+			);
+		</sql>
 		
+		<!-- drops the now useless former_id column -->
+		<dropColumn tableName="TEST_AUTOMATION_PROJECT" columnName="FORMER_ID" />
+
 		<!-- reinstatiate the foreign keys to the new table -->
 		<addForeignKeyConstraint constraintName="fk_automated_test_project" 
 				baseTableName="AUTOMATED_TEST" baseColumnNames="PROJECT_ID" 
@@ -246,8 +264,7 @@
 		
 		<addUniqueConstraint tableName="TEST_AUTOMATION_PROJECT" columnNames="TM_PROJECT_ID, REMOTE_NAME, SERVER_ID" constraintName="uniq_tm_ta_project_job"/>
 		<addUniqueConstraint tableName="TEST_AUTOMATION_PROJECT" columnNames="TM_PROJECT_ID, LABEL" constraintName="uniq_tm_ta_project_label"/>
-		
-		
+
 	</changeSet>
 	
 	
