@@ -18,14 +18,14 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.campaign;
+package org.squashtest.tm.service.campaign
 
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.annotation.Transactional
 import javax.inject.Inject
 
 import org.hibernate.HibernateException
 import org.springframework.transaction.annotation.Transactional
-import org.squashtest.tm.service.DbunitServiceSpecification;
+import org.squashtest.tm.service.DbunitServiceSpecification
 import org.squashtest.tm.service.campaign.CampaignTestPlanManagerService
 import org.unitils.dbunit.annotation.DataSet
 
@@ -39,7 +39,7 @@ class CampaignTestPlanManagerServiceIT extends DbunitServiceSpecification {
 	@DataSet("CampaignTestPlanManagerServiceImplIT.should add to test plan a test case already in test plan.xml")
 	def "should add to test plan a test case already in test plan"() {
 		when:
-		service.addTestCasesToCampaignTestPlan([-100L], 10)
+		service.addTestCasesToCampaignTestPlan([-100L], -10L)
 
 		then:
 		notThrown(HibernateException)
