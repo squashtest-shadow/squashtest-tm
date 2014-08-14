@@ -64,7 +64,8 @@ public class GroupConcatFunction extends StandardSQLFunction {
 		else{
 			try{
 				// validation
-				String direction = (arguments.size()==4) ? ((String)arguments.get(3)).replaceAll("'", "") : "asc";
+				String direction = (arguments.size()>=4) ? ((String)arguments.get(3)).replaceAll("'", "") : "asc";
+				String separator = (arguments.size()>=5) ? ((String)arguments.get(4)).replaceAll("'", "") : ",";
 				if (! (direction.equalsIgnoreCase("asc") || direction.equalsIgnoreCase("desc") )){
 					throw new IllegalArgumentException();
 				}
@@ -73,13 +74,17 @@ public class GroupConcatFunction extends StandardSQLFunction {
 				}
 
 				// expression
-				return "group_concat("+arguments.get(0)+" order by "+arguments.get(2)+" "+direction+")";
+				return createSqlQuery(arguments, direction, separator);
 			}
 			catch(IllegalArgumentException ex){
 				throw new IllegalArgumentException("usage of custom hql group_concat : group_concat(col id, [ 'order by', col id2, ['asc|desc']]", ex);
 			}
 		}
 
+	}
+
+	public String createSqlQuery(List arguments, String direction, String separator) {
+		return "group_concat("+arguments.get(0)+" order by "+arguments.get(2)+" "+direction+" separator '"+separator+"')";
 	}
 
 }

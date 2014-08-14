@@ -26,6 +26,7 @@ import java.util.Properties;
 
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
+import org.hibernate.dialect.function.SQLFunction;
 import org.hibernate.type.StringType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,9 +43,16 @@ public class RicherDialectSessionFactoryBean extends LocalSessionFactoryBean {
 	private static final Logger LOGGER = LoggerFactory.getLogger(RicherDialectSessionFactoryBean.class);
 
 	private static final String HIBERNATE_PROPERTIES_DIALECT = "hibernate.dialect";
-	
+
 	private List<String> dialectsSupportingGroupConcat = new ArrayList<String>();
-	
+	private List<String> dialectsSupportingStringAgg = new ArrayList<String>();
+	public void setDialectsSupportingStringAgg(List<String> dialectsSupportingStringAgg) {
+		this.dialectsSupportingStringAgg = dialectsSupportingStringAgg;
+	}
+
+	public List<String> getDialectsSupportingStringAgg() {
+		return dialectsSupportingStringAgg;
+	}
 	public void setDialectsSupportingGroupConcat(List<String> dialectsSupportingGroupConcat) {
 		this.dialectsSupportingGroupConcat = dialectsSupportingGroupConcat;
 	}
@@ -52,49 +60,48 @@ public class RicherDialectSessionFactoryBean extends LocalSessionFactoryBean {
 	public List<String> getDialectsSupportingGroupConcat() {
 		return dialectsSupportingGroupConcat;
 	}
-	
+
 	protected SessionFactory buildSessionFactory(LocalSessionFactoryBuilder sfb) {
-		
+
 		// check that the underlying base supports the dialect extensions : let's see what's the dialect is
-		checkDialectSupport();
-		
-		// add the support for group concat
+		SQLFunction sqlFunction = getSQLFunctionForDialect();
 		Configuration config = getConfiguration();
-		config.addSqlFunction("group_concat", new GroupConcatFunction("group_concat", new StringType()));
-		
-		
+		if(sqlFunction != null){
+			// add the support for group concat
+			config.addSqlFunction("group_concat", sqlFunction);
+		}else{
+			config.addSqlFunction("group_concat", new GroupConcatFunction("group_concat", new StringType()));
+		}
+
 		// resume normal session factory initialization
 		return super.buildSessionFactory(sfb);
 	}
 
-	
-	private void checkDialectSupport() throws IllegalArgumentException{
-		
-		Properties hibernateProperties = getHibernateProperties(); 
+
+	private SQLFunction getSQLFunctionForDialect() throws IllegalArgumentException{
+
+		Properties hibernateProperties = getHibernateProperties();
 		String choosenDialect = hibernateProperties.getProperty(HIBERNATE_PROPERTIES_DIALECT);
 
-		boolean supported = false;
 		for (String supportingDialect : dialectsSupportingGroupConcat){
 			if (choosenDialect.equals(supportingDialect)){
-				supported = true;
-				break;
+				return new GroupConcatFunction("group_concat", new StringType());
 			}
 		}
-		
-		if (! supported){
-			LOGGER.warn("RicherDialectSessionFactory : selected hibernate Dialect '"+choosenDialect+
-					   "' is not reputed to support the sql function 'group_concat()'. If you "+
-					   "are sure that your dialect (and the underlying database) supports this function,"+
-					   " please add to RicherDialectSessionFactory.dalectsSupportingGroupConcat"+
-					   "(see xml configuration)");
-//			throw new IllegalArgumentException("RicherDialectSessionFactory : selected hibernate Dialect '"+choosenDialect+
-//											   "' is not reputed to support the sql function 'group_concat()'. If you "+
-//											   "are sure that your dialect (and the underlying database) supports this function,"+
-//											   " please add to RicherDialectSessionFactory.dalectsSupportingGroupConcat"+
-//											   "(see xml configuration)");
+		for (String supportingDialect : dialectsSupportingStringAgg){
+			if (choosenDialect.equals(supportingDialect)){
+				return new StringAggFunction("group_concat", new StringType());
+			}
 		}
-	}
-	
 
-	
+		LOGGER.warn("RicherDialectSessionFactory : selected hibernate Dialect '"+choosenDialect+
+				"' is not reputed to support the sql function 'group_concat()'. If you "+
+				"are sure that your dialect (and the underlying database) supports this function,"+
+				" please add to RicherDialectSessionFactory.dalectsSupportingGroupConcat"+
+				"(see xml configuration)");
+		return null;
+	}
+
+
+
 }

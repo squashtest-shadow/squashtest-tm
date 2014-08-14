@@ -164,6 +164,11 @@
     		<value>org.hibernate.dialect.MySQLDialect</value>
     	</list>
     </property>
+    <property name="dialectsSupportingStringAgg">
+      <list>
+            <value>org.hibernate.dialect.PostgreSQLDialect</value>
+      </list>
+    </property>
 
 
   </bean>
