@@ -84,6 +84,7 @@ class RequirementFolderMappingIT extends HibernateMappingSpecification {
 		contentIds.containsAll([tosave.id])
 
 		cleanup :
+
 		deleteFixture folder
 
 
@@ -132,6 +133,19 @@ class RequirementFolderMappingIT extends HibernateMappingSpecification {
 		then :
 		contentNames.size() == 2
 		contentNames.containsAll(["req2", "req3"])
+
+		cleanup :
+		doInTransaction {
+			Session s ->
+			def folder = s.get(RequirementFolder, refolder.id)
+			folder.content.clear()
+			s.delete(folder)
+			def reqt = s.get(Requirement, req3.id)
+			s.delete(reqt)
+			def reqd = s.get(Requirement, req2.id)
+			s.delete(reqd)
+		}
+
 
 	}
 }
