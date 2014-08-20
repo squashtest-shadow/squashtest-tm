@@ -94,5 +94,48 @@
 		</delete>
 	</changeSet>
   
+  
+  
+  <!-- 
+  	The Call steps now drives how the parameters of the called test case will be handled. As of 1.11.0 the following scenarii are supported :
+  	
+  	1 - use a dataset from the called test case : 	the parameter values from the called test case will be set according to one of the datasets available in the 
+  													called test case.
+  	2 - delegate to the caller test case 		: 	the parameter values from the called test case will be set according to one of the datasets available in the 
+  													caller test case. This may be overriden if the caller test case is itself called by a third one, which chooses 
+  													to delegate too.
+  	3 - nothing									:	neither of the above, the values will be set at later time.
+  
+  	
+  	It could be interesting (in the future) to have an Enum dealing explicitly with this (a strategy like 'CALLED_DATASET', 'CALLER_DATASET', 'NOTHING'). 
+  	For now, here is how it is implemented :
+  	
+  	strategy 		|	CALLED_DATASET	|	DELEGATE_PARAMETER_VALUE
+  	- - - - - - - - + - - - - - - - - - + - - - - - - - - - - - - - 
+  	'NOTHING'		|		NULL		|			false
+  	'CALLED_DATASET'|		non null	|			false
+  	'CALLER_DATASET'|		NULL		|			true
+  
+   -->
+
+  	<changeSet id="tm-1.11.0.feature-3693-1" author="bsiri">
+		<comment>Adding support for call-step level management of datasets</comment>
+
+		<addColumn tableName="CALL_TEST_STEP">
+		
+			<column name="CALLED_DATASET" type="BIGINT" defaultValue="NULL" 
+			 remarks="A reference to the called dataset (if any)" >
+			 	<constraints nullable="true" foreignKeyName="fk_call_step_dataset" references="DATASET(DATASET_ID)"/>
+			</column>
+			
+			<column name="DELEGATE_PARAMETER_VALUES" type="BOOLEAN" defaultValueBoolean="false"
+			  remarks="Says whether the parameters of the called test case must be set by the caller test case or not">
+			  	<constraints nullable="false"/>
+			  </column> 
+		
+		</addColumn>
+
+	</changeSet>
+
 
 </databaseChangeLog>
