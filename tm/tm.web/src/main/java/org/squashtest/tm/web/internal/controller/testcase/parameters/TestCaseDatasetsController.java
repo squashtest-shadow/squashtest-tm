@@ -147,7 +147,7 @@ public class TestCaseDatasetsController {
 	}
 
 	private List<Parameter> getSortedDirectAndCalledParameters(long testCaseId) {
-		List<Parameter> directAndCalledParameters = parameterFinder.findAllforTestCase(testCaseId);
+		List<Parameter> directAndCalledParameters = parameterFinder.findAllParameters(testCaseId);
 		Collections.sort(directAndCalledParameters, new TestCaseParametersController.ParameterNameComparator(
 				SortOrder.ASCENDING));
 		return directAndCalledParameters;

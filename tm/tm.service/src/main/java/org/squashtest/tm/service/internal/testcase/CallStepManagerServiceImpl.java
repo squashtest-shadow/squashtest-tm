@@ -30,6 +30,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.testcase.CallTestStep;
+import org.squashtest.tm.domain.testcase.Dataset;
+import org.squashtest.tm.domain.testcase.ParameterAssignationMode;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.exception.CyclicStepCallException;
 import org.squashtest.tm.service.internal.repository.TestCaseDao;
@@ -84,7 +86,10 @@ public class CallStepManagerServiceImpl implements CallStepManagerService, TestC
 
 		parentTestCase.addStep(newStep);
 
-		datasetModificationService.updateDatasetParameters(parentTestCaseId);
+		/*
+		 * Feat 3693 : no need for that anymore : by default a call step doesn't delegate the parameters of the called test case anymore
+		 *	datasetModificationService.updateDatasetParameters(parentTestCaseId);
+		 */
 		testCaseImportanceManagerService.changeImportanceIfCallStepAddedToTestCases(calledTestCase, parentTestCase);
 	}
 
@@ -166,6 +171,45 @@ public class CallStepManagerServiceImpl implements CallStepManagerService, TestC
 				throw new CyclicStepCallException();
 			}
 		}
+	}
+
+
+	@Override
+	public void setParameterAssignationMode(long callStepId, ParameterAssignationMode mode, Long datasetId) {
+
+		// a class cast exception would be welcome if the call step id is not appropriate
+		// so I let it out of a try block.
+		CallTestStep step = (CallTestStep) testStepDao.findById(callStepId);
+		Long callerId = step.getTestCase().getId();
+
+		switch(mode){
+		case NOTHING :
+			step.setCalledDataset(null);
+			step.setDelegateParameterValues(false);
+			break;
+
+		case DELEGATE :
+			step.setCalledDataset(null);
+			step.setDelegateParameterValues(true);
+			break;
+
+		case CALLED_DATASET :
+			if (datasetId == null){
+				throw new RuntimeException("attempted to bind no dataset (datasetid is null) to a call step, yet the parameter assignation mode is 'CALLED_DATASET'");
+			}
+
+			Dataset ds = datasetModificationService.findById(datasetId);
+			step.setCalledDataset(ds);
+			break;
+
+		default :
+			throw new RuntimeException("ParameterAssignationMode '"+mode+"' is not handled here, please find a dev and make him do the job");
+
+		}
+
+
+		datasetModificationService.cascadeDatasetsUpdate(callerId);
+
 	}
 
 }

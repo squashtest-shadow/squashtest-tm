@@ -65,7 +65,7 @@ class ParameterModificationServiceIT extends DbunitServiceSpecification {
 	def "should return the parameter list for a given test case"(){
 
 		when :
-		List<Parameter> params = service.findAllforTestCase(100L);
+		List<Parameter> params = service.findAllParameters(100L);
 		then :
 		params.size() == 1;
 	}
@@ -75,7 +75,7 @@ class ParameterModificationServiceIT extends DbunitServiceSpecification {
 
 
 		when :
-		List<Parameter> params = service.findAllforTestCase(101L);
+		List<Parameter> params = service.findAllParameters(101L);
 		then :
 		params.size() == 3;
 	}

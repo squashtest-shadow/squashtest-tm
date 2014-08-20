@@ -26,13 +26,27 @@ import org.squashtest.tm.domain.testcase.Parameter;
 
 public interface CustomParameterDao {
 
-	// XXX the name of that method is very misleading when compared with ParameterFinder#findAllforTestCase because unlike the service the dao
-	// method will NOT bring up the inherited parameters
-	List<Parameter> findAllByTestCase(Long testcaseId);
+	/**
+	 * Given a test case ID, returns the list of parameters that directly belong to that test case
+	 * (inherited parameters are ignored).
+	 * 
+	 * @param testcaseId
+	 * @return
+	 */
+	List<Parameter> findOwnParametersByTestCase(Long testcaseId);
 
-	List<Parameter> findAllByTestCases(List<Long> testcaseIds);
+	List<Parameter> findOwnParametersByTestCases(List<Long> testcaseIds);
 
-	List<Parameter> findAllByNameAndTestCases(String name, List<Long> testcaseIds);
+	/**
+	 * Given a test case ID, return the list of parameters that belongs to that test case
+	 * AND thoses (transitively) delegated via call steps using the parameter delegation mode
+	 * 
+	 * @param testcaseIds
+	 * @return
+	 */
+	List<Parameter> findAllParametersByTestCase(Long testcaseId);
 
-	Parameter findParameterByNameAndTestCase(String name, Long testcaseId);
+	List<Parameter> findOwnParametersByNameAndTestCases(String name, List<Long> testcaseIds);
+
+	Parameter findOwnParameterByNameAndTestCase(String name, Long testcaseId);
 }

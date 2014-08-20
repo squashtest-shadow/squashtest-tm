@@ -23,6 +23,7 @@ package org.squashtest.tm.domain.testcase;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -33,9 +34,17 @@ import org.squashtest.tm.domain.execution.ExecutionStep;
 @Entity
 @PrimaryKeyJoinColumn(name = "TEST_STEP_ID")
 public class CallTestStep extends TestStep {
+
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "CALLED_TEST_CASE_ID")
 	private TestCase calledTestCase;
+
+	@ManyToOne
+	@JoinColumn(name="CALLED_DATASET")
+	private Dataset calledDataset;
+
+	@Column(name="DELEGATE_PARAMETER_VALUES")
+	private boolean delegateParameterValues = false;
 
 	@Override
 	public CallTestStep createCopy() {
@@ -50,7 +59,7 @@ public class CallTestStep extends TestStep {
 
 	}
 
-	
+
 	public void setCalledTestCase(TestCase calledTestCase) {
 		this.calledTestCase = calledTestCase;
 	}
@@ -58,16 +67,50 @@ public class CallTestStep extends TestStep {
 	public TestCase getCalledTestCase() {
 		return calledTestCase;
 	}
-	
+
+
+
+	public Dataset getCalledDataset() {
+		return calledDataset;
+	}
+
+	public void setCalledDataset(Dataset calledDataset) {
+
+		if (calledDataset != null && ! calledTestCase.getDatasets().contains(calledDataset)){
+			throw new RuntimeException("attempted to bind to a call step a dataset that doesn't belong to the called test case");
+		}
+		this.calledDataset = calledDataset;
+	}
+
+	public boolean isDelegateParameterValues() {
+		return delegateParameterValues;
+	}
+
+	public void setDelegateParameterValues(boolean delegateParameterValues) {
+		this.delegateParameterValues = delegateParameterValues;
+	}
+
+	public ParameterAssignationMode getParameterAssignationStrategy(){
+		if (calledDataset != null){
+			return ParameterAssignationMode.CALLED_DATASET;
+		}
+		else if (delegateParameterValues == true){
+			return ParameterAssignationMode.DELEGATE;
+		} else {
+			return ParameterAssignationMode.NOTHING;
+		}
+	}
+
+
 	@Override
-	public List<ExecutionStep> createExecutionSteps(Dataset dataset){		
+	public List<ExecutionStep> createExecutionSteps(Dataset dataset){
 		List<TestStep> testSteps = this.getCalledTestCase().getSteps();
 		List<ExecutionStep> returnList = new ArrayList<ExecutionStep>(testSteps.size());
-		
+
 		for (TestStep testStep : testSteps) {
 			returnList.addAll(testStep.createExecutionSteps(dataset));
 		}
-		
+
 		return returnList;
 	}
 

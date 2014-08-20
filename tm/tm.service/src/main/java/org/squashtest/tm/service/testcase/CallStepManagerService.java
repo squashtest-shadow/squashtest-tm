@@ -22,6 +22,7 @@ package org.squashtest.tm.service.testcase;
 
 import java.util.List;
 
+import org.squashtest.tm.domain.testcase.ParameterAssignationMode;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.exception.CyclicStepCallException;
 
@@ -36,6 +37,16 @@ public interface CallStepManagerService {
 	 * @param calledTestCaseId being called
 	 */
 	void addCallTestStep(long parentTestCaseId, long calledTestCaseId);
+
+
+	/**
+	 * Says how the given call step should handle the parameters of the called test case.
+	 * 
+	 * @param callStepId
+	 * @param mode
+	 * @param datasetId, may be null if we choose mode.NOTHING, and must not be null if mode.CALLED_DATASET
+	 */
+	void setParameterAssignationMode(long callStepId, ParameterAssignationMode mode, Long datasetId);
 
 	/**
 	 * Used to check if the destination test case id is found in the calling tree of the pasted steps

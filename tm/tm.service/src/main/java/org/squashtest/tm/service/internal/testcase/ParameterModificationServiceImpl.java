@@ -37,6 +37,7 @@ import org.squashtest.tm.service.internal.repository.DatasetParamValueDao;
 import org.squashtest.tm.service.internal.repository.ParameterDao;
 import org.squashtest.tm.service.internal.repository.TestCaseDao;
 import org.squashtest.tm.service.internal.repository.TestStepDao;
+import org.squashtest.tm.service.testcase.DatasetModificationService;
 import org.squashtest.tm.service.testcase.ParameterModificationService;
 
 @Service("squashtest.tm.service.ParameterModificationService")
@@ -58,22 +59,30 @@ public class ParameterModificationServiceImpl implements ParameterModificationSe
 	private DatasetParamValueDao datasetParamValueDao;
 
 	@Inject
-	private TestCaseCallTreeFinder callTreeFinder;
+	private DatasetModificationService datasetModificationService;
 
 
+
+	/**
+	 * Returns the parameters that belongs to this test case only.
+	 * 
+	 */
 	@Override
-	public List<Parameter> findForTestCase(long testCaseId) {
-		return parameterDao.findAllByTestCase(testCaseId);
+	public List<Parameter> findOwnParameters(long testCaseId) {
+		return parameterDao.findOwnParametersByTestCase(testCaseId);
 	}
 
 	/**
+	 * 
+	 * Returns a list of parameters that either belongs to this test case, either belongs to
+	 * test cases being called by a call step that uses the parameter delegation mode.
+	 * 
 	 * @see
 	 */
 	@Override
-	public List<Parameter> findAllforTestCase(long testCaseId) {
-		List<Long> testCaseIds = new ArrayList<Long>(this.callTreeFinder.getTestCaseCallTree(testCaseId));
-		testCaseIds.add(testCaseId);
-		return parameterDao.findAllByTestCases(testCaseIds);
+	public List<Parameter> findAllParameters(long testCaseId) {
+
+		return parameterDao.findAllParametersByTestCase(testCaseId);
 	}
 
 	/**
@@ -87,8 +96,21 @@ public class ParameterModificationServiceImpl implements ParameterModificationSe
 
 	private void addNewParameterToTestCase(Parameter parameter, TestCase testCase) {
 		parameter.setTestCase(testCase);
-		updateDatasetsForParameterCreation(parameter, parameter.getTestCase().getId());
+		updateDatasetsForParameterCreation(parameter, testCase.getId());
 	}
+
+	private void updateDatasetsForParameterCreation(Parameter parameter, long testCaseId) {
+
+		List<Dataset> datasets = datasetDao.findAllDatasetsByTestCase(testCaseId);
+		datasets.addAll( datasetDao.findAllDelegateDatasets(testCaseId));
+
+		// add parameter entry to these datasets
+		for (Dataset dataset : datasets) {
+			DatasetParamValue datasetParamValue = new DatasetParamValue(parameter, dataset, "");
+			dataset.addParameterValue(datasetParamValue);
+		}
+	}
+
 
 	/**
 	 * @see ParameterModificationService#addNewParameterToTestCase(Parameter, long)
@@ -183,21 +205,6 @@ public class ParameterModificationServiceImpl implements ParameterModificationSe
 		Parameter parameter = this.parameterDao.findById(parameterId);
 		long testCaseId = parameter.getTestCase().getId();
 		return testStepDao.stringIsFoundInStepsOfTestCase(parameter.getParamStringAsUsedInStep(), testCaseId);
-	}
-
-	private void updateDatasetsForParameterCreation(Parameter parameter, long testCaseId) {
-
-		// get all test cases who call this test case
-		List<Long> testCaseIds = new ArrayList<Long>(this.callTreeFinder.getTestCaseCallers(testCaseId));
-		testCaseIds.add(testCaseId);
-		// get all datasets for local test case or test case who call this test case
-		List<Dataset> datasets = datasetDao.findAllDatasetsByTestCases(testCaseIds);
-
-		// add parameter entry to these datasets
-		for (Dataset dataset : datasets) {
-			DatasetParamValue datasetParamValue = new DatasetParamValue(parameter, dataset, "");
-			dataset.addParameterValue(datasetParamValue);
-		}
 	}
 
 	/**

@@ -20,12 +20,16 @@
  */
 package org.squashtest.tm.service.internal.repository.hibernate;
 
+import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import javax.inject.Inject;
 
 import org.hibernate.Query;
 import org.hibernate.SessionFactory;
+import org.hibernate.type.LongType;
 import org.springframework.stereotype.Repository;
 import org.squashtest.tm.domain.testcase.Parameter;
 import org.squashtest.tm.service.internal.repository.CustomParameterDao;
@@ -35,40 +39,70 @@ public class HibernateParameterDao implements CustomParameterDao {
 
 	@Inject
 	private SessionFactory sessionFactory;
-	
 
-	public List<Parameter> findAllByTestCase(Long testcaseId) {
-		
-		Query query = sessionFactory.getCurrentSession().getNamedQuery("parameter.findAllByTestCase");
+
+	public List<Parameter> findOwnParametersByTestCase(Long testcaseId) {
+
+		Query query = sessionFactory.getCurrentSession().getNamedQuery("parameter.findOwnParameters");
 		query.setParameter("testCaseId", testcaseId);
 		return (List<Parameter>) query.list();
 	}
 
 
 	@Override
-	public List<Parameter> findAllByTestCases(List<Long> testcaseIds) {
+	public List<Parameter> findOwnParametersByTestCases(List<Long> testcaseIds) {
 
-		Query query = sessionFactory.getCurrentSession().getNamedQuery("parameter.findAllByTestCases");
+		Query query = sessionFactory.getCurrentSession().getNamedQuery("parameter.findOwnParametersForList");
 		query.setParameterList("testCaseIds", testcaseIds);
 		return (List<Parameter>) query.list();
+	}
+
+	@Override
+	public List<Parameter> findAllParametersByTestCase(Long testcaseId) {
+
+		List<Parameter> allParameters = new LinkedList<Parameter>();
+
+		Set<Long> exploredTc = new HashSet<Long>();
+		List<Long> srcTc = new LinkedList<Long>();
+		List<Long> destTc;
+
+		Query next = sessionFactory.getCurrentSession().getNamedQuery("parameter.findTestCasesThatDelegatesParameters");
+
+		srcTc.add(testcaseId);
+
+		while(! srcTc.isEmpty()){
+
+			allParameters.addAll( findOwnParametersByTestCases(srcTc));
+
+			next.setParameterList("srcIds", srcTc, LongType.INSTANCE);
+			destTc = next.list();
+
+			exploredTc.addAll(srcTc);
+			srcTc = destTc;
+			srcTc.removeAll(exploredTc);
+
+		}
+
+		return allParameters;
+
 	}
 
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Parameter> findAllByNameAndTestCases(String name, List<Long> testcaseIds){
+	public List<Parameter> findOwnParametersByNameAndTestCases(String name, List<Long> testcaseIds){
 
-			Query query = sessionFactory.getCurrentSession().getNamedQuery("parameter.findAllByNameAndTestCases");
-			query.setParameter("name", name);
-			query.setParameterList("testCaseIds", testcaseIds);
-			return (List<Parameter>) query.list();
+		Query query = sessionFactory.getCurrentSession().getNamedQuery("parameter.findOwnParametersByNameAndTestCases");
+		query.setParameter("name", name);
+		query.setParameterList("testCaseIds", testcaseIds);
+		return (List<Parameter>) query.list();
 	}
 
 
 	@Override
-	public Parameter findParameterByNameAndTestCase(String name, Long testcaseId){
-			
-		Query query = sessionFactory.getCurrentSession().getNamedQuery("parameter.findParameterByNameAndTestCase");
+	public Parameter findOwnParameterByNameAndTestCase(String name, Long testcaseId){
+
+		Query query = sessionFactory.getCurrentSession().getNamedQuery("parameter.findOwnParametersByNameAndTestCase");
 		query.setParameter("name", name);
 		query.setParameter("testCaseId", testcaseId);
 		return (Parameter) query.uniqueResult();

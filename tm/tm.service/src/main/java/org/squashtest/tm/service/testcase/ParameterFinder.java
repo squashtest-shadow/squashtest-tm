@@ -36,20 +36,21 @@ public interface ParameterFinder {
 
 	/**
 	 * Given a test case id, will find the parameters that are proper to that test case. Inherited parameters
-	 * will not be returned, for this see {@link #findAllforTestCase(long)} instead.
+	 * will not be returned, for this see {@link #findAllParameters(long)} instead.
 	 * 
 	 * @param testCaseId
 	 * @return returns a list of parameters ordered by name
 	 */
-	List<Parameter> findForTestCase(long testCaseId);
+	List<Parameter> findOwnParameters(long testCaseId);
 
 	/**
-	 * Will find all parameters for the test case along with all parameters found for the call steps.
+	 * Will find all parameters for the test case along with all parameters found for the call steps that
+	 * uses the parameter delegation mode.
 	 * 
 	 * @param testCaseId
 	 * @return returns a list of parameters ordered by test case and name
 	 */
-	List<Parameter> findAllforTestCase(long testCaseId);
+	List<Parameter> findAllParameters(long testCaseId);
 
 
 	/**

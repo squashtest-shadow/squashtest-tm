@@ -245,13 +245,15 @@
 		@NamedQuery(name = "testStep.findByTestCaseAndPosition", query = "select st from TestCase tc join tc.steps st where tc.id = :tcId and index(st) = :position"),
 
 		//TestParameters
-		@NamedQuery(name = "parameter.findAllByTestCases", query = "select parameter from Parameter as parameter join parameter.testCase testCase where testCase.id in (:testCaseIds) order by testCase.name,  parameter.name "),
-		@NamedQuery(name = "parameter.findAllByTestCase", query = "select parameter from Parameter as parameter join parameter.testCase testCase where testCase.id = :testCaseId order by parameter.name "),
-		@NamedQuery(name = "parameter.findParameterByNameAndTestCase", query = "select parameter from Parameter as parameter join parameter.testCase testCase where testCase.id = :testCaseId and parameter.name = :name "),
-		@NamedQuery(name = "parameter.findAllByNameAndTestCases", query = "select parameter from Parameter as parameter join parameter.testCase testCase where testCase.id in (:testCaseIds) and parameter.name = :name "),
+		@NamedQuery(name = "parameter.findOwnParametersForList", query = "select parameter from Parameter as parameter join parameter.testCase testCase where testCase.id in (:testCaseIds) order by testCase.name,  parameter.name "),
+		@NamedQuery(name = "parameter.findOwnParameters", query = "select parameter from Parameter as parameter join parameter.testCase testCase where testCase.id = :testCaseId order by parameter.name "),
+		@NamedQuery(name = "parameter.findOwnParametersByNameAndTestCase", query = "select parameter from Parameter as parameter join parameter.testCase testCase where testCase.id = :testCaseId and parameter.name = :name "),
+		@NamedQuery(name = "parameter.findOwnParametersByNameAndTestCases", query = "select parameter from Parameter as parameter join parameter.testCase testCase where testCase.id in (:testCaseIds) and parameter.name = :name "),
 		@NamedQuery(name = "Parameter.removeAllByTestCaseIds", query = "delete Parameter pm where pm.testCase.id in (:testCaseIds)"),
 		@NamedQuery(name = "Parameter.removeAllValuesByTestCaseIds", query = "delete DatasetParamValue dpv where dpv.parameter in (select pm from Parameter pm where pm.testCase.id in (:testCaseIds))"),
 		@NamedQuery(name = "parameter.excelExport", query = "select tc.id, param.id, param.name, param.description from TestCase tc inner join tc.parameters param where tc.id in (:testCaseIds)"),
+		@NamedQuery(name = "parameter.findTestCasesThatDelegatesParameters", query="select distinct called.id from TestCase src join src.steps steps join steps.calledTestCase called " +
+																					"where steps.class=CallTestStep and steps.delegateParameterValues = true and src.id in (:srcIds)"),
 
 		//Datasets
 		@NamedQuery(name = "dataset.findAllDatasetsByTestCase", query = "select dataset from Dataset as dataset join dataset.testCase testCase where testCase.id = :testCaseId order by dataset.name "),
@@ -263,6 +265,8 @@
 		@NamedQuery(name = "dataset.excelExport", query = "select tc.id, ds.id, ds.name, tcown.id, param.name, pvalue.paramValue from TestCase tc "
 				+ "join tc.datasets ds join ds.parameterValues pvalue join pvalue.parameter param join param.testCase tcown "
 				+ "where tc.id in (:testCaseIds)"),
+		@NamedQuery(name = "dataset.findTestCasesThatInheritParameters", query="select distinct caller.id from TestCase caller inner join caller.steps steps inner join steps.calledTestCase src " +
+																				"where steps.class = CallTestStep and steps.delegateParameterValues=true and src.id in (:srcIds)"),
 
 		//CampaignTestPlanItem
 		@NamedQuery(name = "CampaignTestPlanItem.findPlannedTestCasesIdsByCampaignId", query = "select distinct tc.id from Campaign c join c.testPlan tpi join tpi.referencedTestCase tc where c.id = ?1"),

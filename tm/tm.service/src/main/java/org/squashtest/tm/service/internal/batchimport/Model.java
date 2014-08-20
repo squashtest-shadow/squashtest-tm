@@ -702,7 +702,7 @@ public class Model {
 			TargetStatus status = getStatus(t);
 
 			if (status.id != null && status.status != Existence.TO_BE_DELETED) {
-				Collection<Parameter> params = paramFinder.findForTestCase(status.id);
+				Collection<Parameter> params = paramFinder.findOwnParameters(status.id);
 				Collection<ParameterTarget> parameters = new HashSet<ParameterTarget>(params.size());
 				for (Parameter p : params) {
 					parameters.add(new ParameterTarget(t, p.getName()));

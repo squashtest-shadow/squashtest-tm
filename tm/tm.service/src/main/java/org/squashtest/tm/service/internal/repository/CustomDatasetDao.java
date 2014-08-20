@@ -29,7 +29,7 @@ import org.squashtest.tm.domain.testcase.Dataset;
  *
  */
 public interface CustomDatasetDao {
-	
+
 	/**
 	 * Will return all datasets for the given test case.
 	 * @param testCaseId
@@ -37,7 +37,29 @@ public interface CustomDatasetDao {
 	 * @return the list of all test cases's datasets.
 	 */
 	List<Dataset> findAllDatasetsByTestCase(Long testCaseId);
-	
+
+
+
+	/**
+	 * Given a test case TC, will return all the datasets that directly inherits
+	 * from parameters of this test case.
+	 * Note that the datasets that belong to this TC are NOT included.
+	 * 
+	 * @param testCaseId
+	 * @return
+	 */
+	List<Dataset> findImmediateDelegateDatasets(Long testCaseId);
+
+	/**
+	 * Given a test case TC, will return all the datasets
+	 * that inherits directly and transitively some parameters from TC.
+	 * Note that the datasets that belong to this TC are NOT included.
+	 * 
+	 * @param testCaseId
+	 * @return
+	 */
+	List<Dataset> findAllDelegateDatasets(Long testCaseId);
+
 	/**
 	 * Will return all datasets found for the given test cases ids.
 	 * 
@@ -45,7 +67,7 @@ public interface CustomDatasetDao {
 	 * @return the list of all given test cases's datasets
 	 */
 	List<Dataset> findAllDatasetsByTestCases(List<Long> testCaseIds);
-	
+
 	/**
 	 * Will return the dataset matching the given name and belonging to the test case matchine the given id.
 	 * 
@@ -54,8 +76,8 @@ public interface CustomDatasetDao {
 	 * @return the test case's dataset matching the given id or <code>null</code>
 	 */
 	Dataset findDatasetByTestCaseAndByName(Long testCaseId, String name);
-	
-	
+
+
 	/**
 	 * TODO
 	 * @param datasetId

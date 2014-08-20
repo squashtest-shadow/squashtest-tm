@@ -543,7 +543,7 @@ public class TestCaseModificationController {
 		mav.addObject("cufDefinitions", cufDefinitions);
 
 		// ================PARAMETERS
-		List<Parameter> parameters = parameterFinder.findAllforTestCase(testCaseId);
+		List<Parameter> parameters = parameterFinder.findAllParameters(testCaseId);
 		Collections.sort(parameters, new ParameterNameComparator(SortOrder.ASCENDING));
 
 		ParametersDataTableModelHelper paramHelper = new ParametersDataTableModelHelper(testCaseId, messageSource,

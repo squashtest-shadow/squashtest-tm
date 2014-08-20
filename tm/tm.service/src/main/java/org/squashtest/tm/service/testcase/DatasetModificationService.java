@@ -28,37 +28,39 @@ import org.squashtest.tm.domain.testcase.Dataset;
 @Transactional
 public interface DatasetModificationService {
 
+	Dataset findById(long datasetId);
+
 	/**
 	 * 
 	 * @param dataset
 	 * @param testCaseId
 	 */
 	void persist(Dataset dataset, long testCaseId);
-	
+
 	/**
 	 * 
 	 * @param dataset
 	 */
 	void remove(Dataset dataset);
-	
-	
+
+
 	/**
 	 * 
 	 * @param datasetId
 	 */
 	void removeById(long datasetId);
-	
+
 
 	void removeAllByTestCaseIds(List<Long> testCaseIds);
-	
-	
+
+
 	/**
 	 * 
 	 * @param datasetId
 	 * @param name
 	 */
 	void changeName(long datasetId, String name);
-	
+
 	/**
 	 * 
 	 * @param datasetId
@@ -67,5 +69,12 @@ public interface DatasetModificationService {
 	 */
 	void changeParamValue(long datasetParamValueId, String value);
 
-	void updateDatasetParameters(long testCaseId);
+	/**
+	 * This method makes what you want it to : it ensures that the datasets of this test case will have a value
+	 * for all the (own and delegate) parameters for this test case, then do the same for any dataset that inherits
+	 * parameters of this test case.
+	 * 
+	 * @param testCaseId
+	 */
+	void cascadeDatasetsUpdate(long testCaseId);
 }

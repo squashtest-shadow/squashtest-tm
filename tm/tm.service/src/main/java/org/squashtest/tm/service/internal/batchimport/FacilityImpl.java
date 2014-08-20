@@ -484,7 +484,7 @@ public class FacilityImpl implements Facility {
 	public void postprocess() {
 
 		for (Long id : modifiedTestCases) {
-			datasetService.updateDatasetParameters(id);
+			datasetService.cascadeDatasetsUpdate(id);
 		}
 
 	}
@@ -650,7 +650,7 @@ public class FacilityImpl implements Facility {
 
 	private void doDeleteParameter(ParameterTarget target) {
 		Long testcaseId = validator.getModel().getId(target.getOwner());
-		List<Parameter> allparams = parameterService.findAllforTestCase(testcaseId);
+		List<Parameter> allparams = parameterService.findAllParameters(testcaseId);
 
 		Parameter param = null;
 		for (Parameter p : allparams) {
@@ -745,7 +745,7 @@ public class FacilityImpl implements Facility {
 	private Parameter findParameter(ParameterTarget param) {
 		Long testcaseId = validator.getModel().getId(param.getOwner());
 
-		Parameter found = paramDao.findParameterByNameAndTestCase(param.getName(), testcaseId);
+		Parameter found = paramDao.findOwnParameterByNameAndTestCase(param.getName(), testcaseId);
 
 		if (found != null) {
 			return found;

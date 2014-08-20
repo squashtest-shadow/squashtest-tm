@@ -21,12 +21,16 @@
 package org.squashtest.tm.service.internal.repository.hibernate;
 
 import java.util.Collections;
+import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import javax.inject.Inject;
 
 import org.hibernate.Query;
 import org.hibernate.SessionFactory;
+import org.hibernate.type.LongType;
 import org.springframework.stereotype.Repository;
 import org.squashtest.tm.domain.testcase.Dataset;
 import org.squashtest.tm.service.internal.repository.CustomDatasetDao;
@@ -45,6 +49,49 @@ public class HibernateDatasetDao extends HibernateEntityDao<Dataset> implements 
 		query.setParameter("testCaseId", testCaseId);
 		return (List<Dataset>) query.list();
 	}
+
+
+	@Override
+	public List<Dataset> findImmediateDelegateDatasets(Long testCaseId) {
+
+		Query q = sessionFactory.getCurrentSession().getNamedQuery("dataset.findTestCasesThatInheritParameters");
+		q.setParameter("srcIds", LongType.INSTANCE);
+
+		List<Long> tcids = q.list();
+
+		return findAllDatasetsByTestCases(tcids);
+	}
+
+	@Override
+	public List<Dataset> findAllDelegateDatasets(Long testCaseId) {
+		List<Dataset> allDatasets = new LinkedList<Dataset>();
+
+		Set<Long> exploredTc = new HashSet<Long>();
+		List<Long> srcTc = new LinkedList<Long>();
+		List<Long> destTc;
+
+		Query next = sessionFactory.getCurrentSession().getNamedQuery("dataset.findTestCasesThatInheritParameters");
+
+		srcTc.add(testCaseId);
+
+		while(! srcTc.isEmpty()){
+
+			next.setParameterList("srcIds", srcTc, LongType.INSTANCE);
+			destTc = next.list();
+
+			if (! destTc.isEmpty()){
+				allDatasets.addAll( findAllDatasetsByTestCases(destTc) );
+			}
+
+			exploredTc.addAll(srcTc);
+			srcTc = destTc;
+			srcTc.removeAll(exploredTc);
+
+		}
+
+		return allDatasets;
+	}
+
 
 	@SuppressWarnings("unchecked")
 	@Override
