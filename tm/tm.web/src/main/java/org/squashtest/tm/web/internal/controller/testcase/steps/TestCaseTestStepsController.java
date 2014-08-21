@@ -51,6 +51,7 @@ import org.squashtest.tm.domain.customfield.CustomFieldValue;
 import org.squashtest.tm.domain.customfield.RenderingLocation;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.testcase.ActionTestStep;
+import org.squashtest.tm.domain.testcase.ParameterAssignationMode;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestStep;
 import org.squashtest.tm.service.customfield.CustomFieldHelper;
@@ -77,6 +78,7 @@ public class TestCaseTestStepsController {
 	private static final String TEST_CASE = "testCase";
 
 	private static final String TEST_CASE_ = "test case ";
+
 	@Inject
 	private CustomFieldHelperService cufHelperService;
 
@@ -88,12 +90,10 @@ public class TestCaseTestStepsController {
 
 	@Inject
 	private CallStepManagerService callStepManager;
+
+	@Inject
 	private TestCaseModificationService testCaseModificationService;
 
-	@ServiceReference
-	public void setTestCaseModificationService(TestCaseModificationService testCaseModificationService) {
-		this.testCaseModificationService = testCaseModificationService;
-	}
 
 	private static final String COPIED_STEP_ID_PARAM = "copiedStepId[]";
 	private static final Logger LOGGER = LoggerFactory.getLogger(TestCaseModificationController.class);
@@ -248,6 +248,17 @@ public class TestCaseTestStepsController {
 		testCaseModificationService.updateTestStepExpectedResult(stepId, newResult);
 		LOGGER.trace("TestCaseModificationController : updated action for step {}", stepId);
 		return newResult;
+	}
+
+
+	@RequestMapping(value = "{stepId}/parameter-assignation-mode", method = RequestMethod.POST, params = {"mode"/*,"datasetId" (optional)*/})
+	@ResponseBody
+	public void changeParameterAssignationMode(@PathVariable("stepId") Long stepId,
+			@RequestParam(value="mode", required=true) ParameterAssignationMode mode,
+			@RequestParam(value="datasetId", required=false) Long datasetId){
+
+		callStepManager.setParameterAssignationMode(stepId, mode, datasetId);
+
 	}
 
 	private List<CustomFieldModel> convertToJsonCustomField(Collection<CustomField> customFields) {

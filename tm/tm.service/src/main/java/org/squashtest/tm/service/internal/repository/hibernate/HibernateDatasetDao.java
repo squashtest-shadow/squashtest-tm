@@ -43,11 +43,25 @@ public class HibernateDatasetDao extends HibernateEntityDao<Dataset> implements 
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Dataset> findAllDatasetsByTestCase(Long testCaseId) {
+	public List<Dataset> findOwnDatasetsByTestCase(Long testCaseId) {
 
-		Query query = sessionFactory.getCurrentSession().getNamedQuery("dataset.findAllDatasetsByTestCase");
+		Query query = sessionFactory.getCurrentSession().getNamedQuery("dataset.findOwnDatasetsByTestCase");
 		query.setParameter("testCaseId", testCaseId);
 		return (List<Dataset>) query.list();
+	}
+
+
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Dataset> findOwnDatasetsByTestCases(List<Long> testCaseIds) {
+		if (!testCaseIds.isEmpty()) {
+			Query query = sessionFactory.getCurrentSession().getNamedQuery("dataset.findOwnDatasetsByTestCases");
+			query.setParameterList("testCaseIds", testCaseIds);
+			return (List<Dataset>) query.list();
+		} else {
+			return Collections.emptyList();
+		}
 	}
 
 
@@ -59,7 +73,7 @@ public class HibernateDatasetDao extends HibernateEntityDao<Dataset> implements 
 
 		List<Long> tcids = q.list();
 
-		return findAllDatasetsByTestCases(tcids);
+		return findOwnDatasetsByTestCases(tcids);
 	}
 
 	@Override
@@ -80,7 +94,7 @@ public class HibernateDatasetDao extends HibernateEntityDao<Dataset> implements 
 			destTc = next.list();
 
 			if (! destTc.isEmpty()){
-				allDatasets.addAll( findAllDatasetsByTestCases(destTc) );
+				allDatasets.addAll( findOwnDatasetsByTestCases(destTc) );
 			}
 
 			exploredTc.addAll(srcTc);
@@ -93,22 +107,20 @@ public class HibernateDatasetDao extends HibernateEntityDao<Dataset> implements 
 	}
 
 
-	@SuppressWarnings("unchecked")
 	@Override
-	public List<Dataset> findAllDatasetsByTestCases(List<Long> testCaseIds) {
-		if (!testCaseIds.isEmpty()) {
-			Query query = sessionFactory.getCurrentSession().getNamedQuery("dataset.findAllDatasetsByTestCases");
-			query.setParameterList("testCaseIds", testCaseIds);
-			return (List<Dataset>) query.list();
-		} else {
-			return Collections.emptyList();
-		}
+	public List<Dataset> findOwnAndDelegateDatasets(Long testCaseId) {
+		List<Dataset> allDatasets = findOwnDatasetsByTestCase(testCaseId);
+		allDatasets.addAll(findAllDelegateDatasets(testCaseId));
+		return allDatasets;
 	}
+
+
+
 
 	@Override
 	public Dataset findDatasetByTestCaseAndByName(Long testCaseId, String name) {
 
-		Query query = sessionFactory.getCurrentSession().getNamedQuery("dataset.findAllDatasetsByTestCaseAndByName");
+		Query query = sessionFactory.getCurrentSession().getNamedQuery("dataset.findDatasetsByTestCaseAndByName");
 		query.setParameter("testCaseId", testCaseId);
 		query.setParameter("name", name);
 		return (Dataset) query.uniqueResult();

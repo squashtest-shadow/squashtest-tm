@@ -98,7 +98,7 @@ public class DatasetModificationServiceImpl implements DatasetModificationServic
 
 	@Override
 	public void removeAllByTestCaseIds(List<Long> testCaseIds) {
-		List<Dataset> datasets = this.datasetDao.findAllDatasetsByTestCases(testCaseIds);
+		List<Dataset> datasets = this.datasetDao.findOwnDatasetsByTestCases(testCaseIds);
 		for(Dataset dataset : datasets){
 			remove(dataset);
 		}
@@ -123,7 +123,7 @@ public class DatasetModificationServiceImpl implements DatasetModificationServic
 	}
 
 	public List<Dataset> getAllDatasetByTestCase(long testCaseId){
-		return this.datasetDao.findAllDatasetsByTestCase(testCaseId);
+		return this.datasetDao.findOwnDatasetsByTestCase(testCaseId);
 	}
 
 
@@ -147,19 +147,8 @@ public class DatasetModificationServiceImpl implements DatasetModificationServic
 		return datasetParamValue;
 	}
 
-	private void removeDeadParameters(Dataset dataset, Collection<Parameter> parameters){
-		Iterator<DatasetParamValue> iter = dataset.getParameterValues().iterator();
-
-		while (iter.hasNext()){
-			if (! parameters.contains(iter.next().getParameter())){
-				iter.remove();
-			}
-		}
-	}
 
 	private void updateDatasetParameters(Dataset dataset, Collection<Parameter> parameters){
-
-		removeDeadParameters(dataset, parameters);
 
 		for(Parameter parameter : parameters){
 			findOrAddParameter(dataset, parameter);
@@ -171,14 +160,11 @@ public class DatasetModificationServiceImpl implements DatasetModificationServic
 	@Override
 	public void cascadeDatasetsUpdate(long testCaseId) {
 
-		Collection<Dataset> datasets = datasetDao.findAllDelegateDatasets(testCaseId);
-		MultiValueMap parametersByTestCase = new MultiValueMap();
+		Collection<Dataset> allDataset = datasetDao.findOwnAndDelegateDatasets(testCaseId);
+		Collection<Parameter> params = parameterDao.findAllParametersByTestCase(testCaseId);
 
-		for(Dataset dataset : datasets){
-
-			Collection<Parameter> params =
-
-					this.updateDatasetParameters(dataset);
+		for(Dataset dataset : allDataset){
+			this.updateDatasetParameters(dataset, params);
 		}
 	}
 }

@@ -20,15 +20,12 @@
  */
 package org.squashtest.tm.service.internal.testcase;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
 import javax.inject.Inject;
 
 import org.springframework.stereotype.Service;
-import org.squashtest.tm.domain.testcase.Dataset;
-import org.squashtest.tm.domain.testcase.DatasetParamValue;
 import org.squashtest.tm.domain.testcase.Parameter;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestStep;
@@ -96,19 +93,7 @@ public class ParameterModificationServiceImpl implements ParameterModificationSe
 
 	private void addNewParameterToTestCase(Parameter parameter, TestCase testCase) {
 		parameter.setTestCase(testCase);
-		updateDatasetsForParameterCreation(parameter, testCase.getId());
-	}
-
-	private void updateDatasetsForParameterCreation(Parameter parameter, long testCaseId) {
-
-		List<Dataset> datasets = datasetDao.findAllDatasetsByTestCase(testCaseId);
-		datasets.addAll( datasetDao.findAllDelegateDatasets(testCaseId));
-
-		// add parameter entry to these datasets
-		for (Dataset dataset : datasets) {
-			DatasetParamValue datasetParamValue = new DatasetParamValue(parameter, dataset, "");
-			dataset.addParameterValue(datasetParamValue);
-		}
+		datasetModificationService.cascadeDatasetsUpdate(testCase.getId());
 	}
 
 
@@ -223,10 +208,6 @@ public class ParameterModificationServiceImpl implements ParameterModificationSe
 			createParamsForStep(step);
 		}
 
-	}
-
-	public static List<String> findUsedParamsNamesTestCaseSteps(TestCase testCase) {
-		return null;
 	}
 
 }

@@ -70,9 +70,13 @@ public interface DatasetModificationService {
 	void changeParamValue(long datasetParamValueId, String value);
 
 	/**
-	 * This method makes what you want it to : it ensures that the datasets of this test case will have a value
-	 * for all the (own and delegate) parameters for this test case, then do the same for any dataset that inherits
-	 * parameters of this test case.
+	 * <p>This method updates the dataset of this test case, and every dataset upstream that inherits
+	 * from this test case, by creating the missing parameter values.</p>
+	 * 
+	 * <p>
+	 * 	However in its current state it won't delete the values from the datasets when some delegated parameters
+	 * 	aren't accessible anymore (ie a call step was deleted, or is no more in parameter delegation mode).
+	 * </p>
 	 * 
 	 * @param testCaseId
 	 */

@@ -213,7 +213,7 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 	}
 
 	private void addTestCaseToTestPlan(TestCase testCase, List<IterationTestPlanItem> testPlan) {
-		List<Dataset> datasets = datasetDao.findAllDatasetsByTestCase(testCase.getId());
+		List<Dataset> datasets = datasetDao.findOwnDatasetsByTestCase(testCase.getId());
 
 		if (datasets != null && !datasets.isEmpty()) {
 			testPlan.addAll(IterationTestPlanItem.createTestPlanItems(testCase, datasets));

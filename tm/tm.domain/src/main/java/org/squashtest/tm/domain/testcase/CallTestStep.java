@@ -90,7 +90,7 @@ public class CallTestStep extends TestStep {
 		this.delegateParameterValues = delegateParameterValues;
 	}
 
-	public ParameterAssignationMode getParameterAssignationStrategy(){
+	public ParameterAssignationMode getParameterAssignationMode(){
 		if (calledDataset != null){
 			return ParameterAssignationMode.CALLED_DATASET;
 		}

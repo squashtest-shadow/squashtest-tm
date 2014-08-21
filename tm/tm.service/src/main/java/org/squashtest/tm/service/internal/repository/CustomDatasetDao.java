@@ -36,8 +36,16 @@ public interface CustomDatasetDao {
 	 * 
 	 * @return the list of all test cases's datasets.
 	 */
-	List<Dataset> findAllDatasetsByTestCase(Long testCaseId);
+	List<Dataset> findOwnDatasetsByTestCase(Long testCaseId);
 
+
+	/**
+	 * Will return all datasets found for the given test cases ids.
+	 * 
+	 * @param testCaseIds : the concerned test cases ids.
+	 * @return the list of all given test cases's datasets
+	 */
+	List<Dataset> findOwnDatasetsByTestCases(List<Long> testCaseIds);
 
 
 	/**
@@ -61,12 +69,15 @@ public interface CustomDatasetDao {
 	List<Dataset> findAllDelegateDatasets(Long testCaseId);
 
 	/**
-	 * Will return all datasets found for the given test cases ids.
+	 * equivalent to findOwnDatasetsByTestCase(id) + findAllDelegateDatasets(id)
 	 * 
-	 * @param testCaseIds : the concerned test cases ids.
-	 * @return the list of all given test cases's datasets
+	 * @param testCaseId
+	 * @return
 	 */
-	List<Dataset> findAllDatasetsByTestCases(List<Long> testCaseIds);
+	List<Dataset> findOwnAndDelegateDatasets(Long testCaseId);
+
+
+
 
 	/**
 	 * Will return the dataset matching the given name and belonging to the test case matchine the given id.

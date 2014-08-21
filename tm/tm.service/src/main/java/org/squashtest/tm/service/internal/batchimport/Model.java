@@ -725,7 +725,7 @@ public class Model {
 			TargetStatus status = getStatus(t);
 
 			if (status.id != null && status.status != Existence.TO_BE_DELETED) {
-				Collection<Dataset> datasets = dsDao.findAllDatasetsByTestCase(status.id);
+				Collection<Dataset> datasets = dsDao.findOwnDatasetsByTestCase(status.id);
 				Collection<DatasetTarget> dstargets = new HashSet<DatasetTarget>(datasets.size());
 				for (Dataset ds : datasets) {
 					dstargets.add(new DatasetTarget(t, ds.getName()));

@@ -130,7 +130,7 @@ public class IterationTestPlanManagerServiceImplTest extends Specification {
 		User user = Mock()
 
 		and:
-		datasetDao.findAllDatasetsByTestCase(_) >> datasets
+		datasetDao.findOwnDatasetsByTestCase(_) >> datasets
 
 		and:
 		def expectedFragSize = Math.max(datasets.size(), 1) // on empty dataset there should be one item

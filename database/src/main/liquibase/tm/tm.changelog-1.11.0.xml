@@ -107,7 +107,6 @@
   	3 - nothing									:	neither of the above, the values will be set at later time.
   
   	
-  	It could be interesting (in the future) to have an Enum dealing explicitly with this (a strategy like 'CALLED_DATASET', 'CALLER_DATASET', 'NOTHING'). 
   	For now, here is how it is implemented :
   	
   	strategy 		|	CALLED_DATASET	|	DELEGATE_PARAMETER_VALUE

@@ -175,6 +175,7 @@ public class CallStepManagerServiceImpl implements CallStepManagerService, TestC
 
 
 	@Override
+	@PreAuthorize("hasPermission(#callStepId, 'org.squashtest.tm.domain.testcase.CallTestStep', 'WRITE') or hasRole('ROLE_ADMIN')")
 	public void setParameterAssignationMode(long callStepId, ParameterAssignationMode mode, Long datasetId) {
 
 		// a class cast exception would be welcome if the call step id is not appropriate
@@ -200,13 +201,13 @@ public class CallStepManagerServiceImpl implements CallStepManagerService, TestC
 
 			Dataset ds = datasetModificationService.findById(datasetId);
 			step.setCalledDataset(ds);
+			step.setDelegateParameterValues(false);
 			break;
 
 		default :
 			throw new RuntimeException("ParameterAssignationMode '"+mode+"' is not handled here, please find a dev and make him do the job");
 
 		}
-
 
 		datasetModificationService.cascadeDatasetsUpdate(callerId);
 
