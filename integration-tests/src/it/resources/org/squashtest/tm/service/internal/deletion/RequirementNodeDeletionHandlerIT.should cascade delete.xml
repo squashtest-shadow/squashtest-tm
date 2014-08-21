@@ -25,7 +25,7 @@
 	depends on NodeDeletionDao.general.dbsetup.xml
 
  -->
-<!DOCTYPE dataset SYSTEM "../../../../../../dtd/squash-tm.1.9.10.dtd">
+<!DOCTYPE dataset SYSTEM "../../../../../../dtd/squash-tm.1.11.0.dtd">
 <dataset>
 
 	<!--  ============================ attachment lists (unattached to anything) ===================== -->

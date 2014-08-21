@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='UTF-8'?>
 
 <!-- see org.squashtest.tm.service.internal.batchimport.FacilityImplIT for dataset description -->
-<!DOCTYPE dataset SYSTEM "../../../../../../dtd/squash-tm.1.9.10.dtd">
+<!DOCTYPE dataset SYSTEM "../../../../../../dtd/squash-tm.1.11.0.dtd">
 <dataset>
   <ACL_CLASS ID="1" CLASSNAME="org.squashtest.tm.domain.project.Project" />
   <ACL_CLASS ID="2" CLASSNAME="org.squashtest.tm.domain.requirement.RequirementLibrary" />
