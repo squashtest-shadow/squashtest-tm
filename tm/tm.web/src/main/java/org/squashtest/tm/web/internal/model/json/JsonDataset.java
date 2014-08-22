@@ -18,31 +18,33 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.internal.repository;
+package org.squashtest.tm.web.internal.model.json;
 
-import java.util.Collection;
-import java.util.List;
+public class JsonDataset {
 
-import org.squashtest.tm.core.dynamicmanager.annotation.DynamicDao;
-import org.squashtest.tm.core.dynamicmanager.annotation.QueryParam;
-import org.squashtest.tm.domain.testcase.Dataset;
+	private Long id;
+	private String name;
+	private String uri;
 
-@DynamicDao(entity = Dataset.class)
-public interface DatasetDao extends CustomDatasetDao{
+	public Long getId() {
+		return id;
+	}
 
-	void persist(Dataset newValue);
+	public void setId(Long id) {
+		this.id = id;
+		this.uri = "/datasets/"+id;
+	}
+	public String getName() {
+		return name;
+	}
+	public void setName(String name) {
+		this.name = name;
+	}
+	public String getUri() {
+		return uri;
+	}
+	public void setUri(String uri) {
+		this.uri = uri;
+	}
 
-	Dataset findById(Long id);
-
-	void removeAllByTestCaseIds(@QueryParam("testCaseIds") List<Long> testCaseIds);
-
-	void removeAllValuesByTestCaseIds(@QueryParam("testCaseIds") List<Long> testCaseIds);
-	/**
-	 * Simply remove the given dataset
-	 * 
-	 * @param dataset : the dataset to remove
-	 */
-	void remove(Dataset dataset);
-
-	Collection<Dataset> findAllByTestCase(@QueryParam("testCaseId") Long testCaseId);
 }

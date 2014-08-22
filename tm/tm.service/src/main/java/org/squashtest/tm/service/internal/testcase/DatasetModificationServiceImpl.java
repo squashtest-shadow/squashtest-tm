@@ -21,13 +21,11 @@
 package org.squashtest.tm.service.internal.testcase;
 
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
 import javax.inject.Inject;
 
-import org.apache.commons.collections.map.MultiValueMap;
 import org.springframework.stereotype.Service;
 import org.squashtest.tm.domain.testcase.Dataset;
 import org.squashtest.tm.domain.testcase.DatasetParamValue;
@@ -39,7 +37,6 @@ import org.squashtest.tm.service.internal.repository.DatasetParamValueDao;
 import org.squashtest.tm.service.internal.repository.ParameterDao;
 import org.squashtest.tm.service.internal.repository.TestCaseDao;
 import org.squashtest.tm.service.testcase.DatasetModificationService;
-import org.squashtest.tm.service.testcase.ParameterModificationService;
 
 @Service("squashtest.tm.service.DatasetModificationService")
 public class DatasetModificationServiceImpl implements DatasetModificationService {
@@ -80,6 +77,11 @@ public class DatasetModificationServiceImpl implements DatasetModificationServic
 			Collection<Parameter> parameters = parameterDao.findAllParametersByTestCase(testCaseId);
 			updateDatasetParameters(dataset, parameters);
 		}
+	}
+
+	@Override
+	public Collection<Dataset> findAllForTestCase(long testCaseId) {
+		return datasetDao.findAllByTestCase(testCaseId);
 	}
 
 

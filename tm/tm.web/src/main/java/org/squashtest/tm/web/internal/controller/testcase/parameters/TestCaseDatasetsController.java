@@ -22,6 +22,7 @@ package org.squashtest.tm.web.internal.controller.testcase.parameters;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -64,6 +65,7 @@ import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelBuilder;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelConstants;
 import org.squashtest.tm.web.internal.model.datatable.DataTableSorting;
+import org.squashtest.tm.web.internal.model.json.JsonDataset;
 import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
 import org.squashtest.tm.web.internal.model.viewmapper.NameBasedMapper;
 
@@ -89,7 +91,28 @@ public class TestCaseDatasetsController {
 
 	private DatatableMapper<String> datasetsTableMapper = new NameBasedMapper(3).mapAttribute(DataTableModelConstants.DEFAULT_ENTITY_ID_KEY, "id",
 			Dataset.class).mapAttribute(DataTableModelConstants.DEFAULT_ENTITY_NAME_KEY, "name",
-			Dataset.class);
+					Dataset.class);
+
+
+
+
+	@RequestMapping(method = RequestMethod.GET)
+	@ResponseBody
+	public Collection<JsonDataset> getAvailableDatasets(@PathVariable("testCaseId") long testCaseId){
+
+		Collection<Dataset> datasets = datasetModificationService.findAllForTestCase(testCaseId);
+
+		Collection<JsonDataset> result = new ArrayList<JsonDataset>(datasets.size());
+
+		for (Dataset ds : datasets){
+			JsonDataset jds = new JsonDataset();
+			jds.setId(ds.getId());
+			jds.setName(ds.getName());
+			result.add(jds);
+		}
+
+		return result;
+	}
 
 	/**
 	 * Return the datas to fill the datasets table in the test case view

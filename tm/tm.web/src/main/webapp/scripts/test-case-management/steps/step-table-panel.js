@@ -133,7 +133,7 @@ define([ "jquery", "squashtable/squashtable.collapser", "custom-field-values", "
 		alllang = translator.get({
 			template : 'test-case.call-step.action.template',
 			none : 'label.None',
-			choose : 'label.PickDataset'
+			choose : 'label.callstepdataset.PickDataset'
 		});
 		
 		
@@ -398,7 +398,14 @@ define([ "jquery", "squashtable/squashtable.collapser", "custom-field-values", "
 			$.extend(squashSettings, moreSettings);
 			
 			table.on('click', '.called-dataset-link', function(evt){
-				console.log(evt);
+				var sqtable = table.squashTable(),
+					popup = $("#pick-call-step-dataset-dialog");
+				
+				var $row = $(evt.currentTarget).closest('tr');
+				var data = sqtable.fnGetData($row.get(0));
+				popup.data('opener-id', data['step-id']);
+				
+				popup.formDialog('open');
 			});
 
 		}
@@ -413,6 +420,7 @@ define([ "jquery", "squashtable/squashtable.collapser", "custom-field-values", "
 
 		// Commenting out the 'refresh' just below, see https://ci.squashtest.org/mantis/view.php?id=2627#c4959
 		//$("#test-steps-table-"+urls.testCaseId).squashTable().refresh();
+		
 	}
 
 	// ************************************ toolbar utility functions
@@ -520,6 +528,9 @@ define([ "jquery", "squashtable/squashtable.collapser", "custom-field-values", "
 			cufValuesSupport.reset();
 		});
 	}
+	
+
+	
 
 	// ************************* other buttons code
 	// **********************************
@@ -767,6 +778,7 @@ define([ "jquery", "squashtable/squashtable.collapser", "custom-field-values", "
 		conf.testCaseId = settings.basic.testCaseId;
 		conf.stepsTablePanel = this;
 		popups.init(conf);
+		
 
 		// toolbar
 		if (permissions.isWritable) {

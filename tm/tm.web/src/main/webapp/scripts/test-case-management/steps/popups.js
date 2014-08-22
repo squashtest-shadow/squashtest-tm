@@ -18,7 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define(['jquery', 'workspace.event-bus', 'jqueryui', 'jquery.squash.confirmdialog', 'jquery.squash.formdialog' ], function($, eventBus) {
+define(['jquery', 'workspace.event-bus', 'squash.translator', 'jqueryui', 'jquery.squash.confirmdialog', 'jquery.squash.formdialog' ], function($, eventBus, translator) {
 
 
 	function _initDeleteStep(conf){
@@ -91,6 +91,69 @@ define(['jquery', 'workspace.event-bus', 'jqueryui', 'jquery.squash.confirmdialo
 		return false;
 	}
 	
+	
+	
+	
+	// ************************* call step dataset dialog 
+	// *************************
+	
+	function _initCallStepDatasetDialog(conf){
+		
+		var dialog = $("#pick-call-step-dataset-dialog"),
+			table = $("#test-steps-table-"+conf.testCaseId).squashTable();
+		
+		
+		dialog.formDialog();
+		
+		dialog.on('formdialogopen', function(){
+			var openerId = dialog.data('opener-id'),
+				tblrow = table.getRowsByIds([openerId]);
+				rowdata = table.fnGetData(tblrow.get(0)),
+				stepInfo = rowdata['call-step-info'],
+				thisTcName = $("#test-case-name").text(); // oooh that's ugly
+			
+			// display the content of pick-call-step-dataset-consequence
+			var spanConsequence = $("#pick-call-step-dataset-consequence"),
+				template = spanConsequence.data('template');
+			
+			var txtConsequence = template.replace('{0}', stepInfo.calledTcName)
+										.replace('{1}', thisTcName);
+			
+			spanConsequence.text(txtConsequence);
+			
+			// now populate the combo
+			var fetchDatasetsUrl = squashtm.app.contextRoot + '/test-cases/'+stepInfo.calledTcId+'/datasets';
+			
+			$.getJSON(fetchDatasetsUrl)
+			.success(function(json){
+				if (json.length == 0){
+					$("#pick-call-step-dataset-nonavailable").show();
+					$("#pick-call-step-dataset-select").hide();
+				}
+				else{
+					var select = $("#pick-call-step-dataset-select");
+					select.show();
+					$("#pick-call-step-dataset-nonavailable").hide();
+					
+					var noneOption = $('<option value="0">'+translator.get('label.None')+'</option>')
+					select.append(noneOption);
+					
+					$.each(json, function(idx, ds){
+						var opt = $('<option value="'+ds.id+'">'+ds.name+'</option>');
+						select.append(opt);
+					});
+
+					// TODO : now preselect the selected option
+				}
+			});
+			
+		});
+		
+		
+	}
+	
+	
+	
 	/*
 	 * needs :
 	 * 
@@ -103,6 +166,7 @@ define(['jquery', 'workspace.event-bus', 'jqueryui', 'jquery.squash.confirmdialo
 		init : function(conf){
 			if (conf.permissions.writable){
 				_initDeleteStep(conf);
+				_initCallStepDatasetDialog(conf);
 			}
 		}
 	};

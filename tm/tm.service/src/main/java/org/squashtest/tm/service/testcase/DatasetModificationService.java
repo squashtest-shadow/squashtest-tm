@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.service.testcase;
 
+import java.util.Collection;
 import java.util.List;
 
 import org.springframework.transaction.annotation.Transactional;
@@ -27,6 +28,8 @@ import org.squashtest.tm.domain.testcase.Dataset;
 
 @Transactional
 public interface DatasetModificationService {
+
+	Collection<Dataset> findAllForTestCase(long testCaseId);
 
 	Dataset findById(long datasetId);
 
