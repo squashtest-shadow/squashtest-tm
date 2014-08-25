@@ -85,7 +85,6 @@ define([ "jquery", "backbone", "underscore", "./DatasetsTable", "./NewDatasetDia
 				
 				refresh: function() {
 					this.table.reDraw();
-//					this.newDatasetDialog.refresh();
 				}
 			});
 			return DatasetsPanel;

@@ -101,7 +101,7 @@ define([ "jquery", "backbone", "underscore", "app/lnf/Forms", "app/util/StringUt
 				
 				var $row = $(this);
 				var paramValue = $row.find(".add-parameter-input input").val();
-				var paramId = table.fnGetData(this)['entity-index'];
+				var paramId = table.fnGetData(this)['entity-id'];
 				
 				var paramData = [paramId, paramValue];
 				
