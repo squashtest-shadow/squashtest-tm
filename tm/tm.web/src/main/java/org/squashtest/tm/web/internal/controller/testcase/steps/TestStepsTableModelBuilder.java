@@ -103,8 +103,6 @@ public class TestStepsTableModelBuilder extends DataTableModelBuilder<TestStep> 
 
 	@Override
 	public void visit(CallTestStep visited) {
-		TestCase called = visited.getCalledTestCase();
-
 		Map<Object, Object> item = new HashMap<Object, Object>(11);
 
 		item.put("step-id", visited.getId());

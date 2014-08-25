@@ -18,7 +18,8 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define(['jquery', 'workspace.event-bus', 'squash.translator', 'jqueryui', 'jquery.squash.confirmdialog', 'jquery.squash.formdialog' ], function($, eventBus, translator) {
+define(['jquery', 'workspace.event-bus', 'squash.translator', 'jqueryui', 'jquery.squash.confirmdialog', 'jquery.squash.formdialog' ], 
+		function($, eventBus, translator) {
 
 
 	function _initDeleteStep(conf){
@@ -106,49 +107,137 @@ define(['jquery', 'workspace.event-bus', 'squash.translator', 'jqueryui', 'jquer
 		dialog.formDialog();
 		
 		dialog.on('formdialogopen', function(){
+			
+			dialog.formDialog('setState', 'loading');
+			
+			// init variables
 			var openerId = dialog.data('opener-id'),
 				tblrow = table.getRowsByIds([openerId]);
 				rowdata = table.fnGetData(tblrow.get(0)),
 				stepInfo = rowdata['call-step-info'],
-				thisTcName = $("#test-case-name").text(); // oooh that's ugly
-			
-			// display the content of pick-call-step-dataset-consequence
-			var spanConsequence = $("#pick-call-step-dataset-consequence"),
-				template = spanConsequence.data('template');
-			
-			var txtConsequence = template.replace('{0}', stepInfo.calledTcName)
-										.replace('{1}', thisTcName);
-			
-			spanConsequence.text(txtConsequence);
-			
-			// now populate the combo
+				thisTcName = $.trim($("#test-case-name").text()); // oooh that's ugly
+				
+				
+			// fetch the dataset available for this test case. We'll then 
+			// proceed to the initialization of the popup
+
 			var fetchDatasetsUrl = squashtm.app.contextRoot + '/test-cases/'+stepInfo.calledTcId+'/datasets';
-			
-			$.getJSON(fetchDatasetsUrl)
-			.success(function(json){
-				if (json.length == 0){
+				
+			$.getJSON(fetchDatasetsUrl).success(function(json){	
+				
+				/*
+				 * Populate the dataset combo box.
+				 * 
+				 *  Note that the "none" option is always important, even when no dataset is available
+				 *  (ie the span pick-call-step-dataset-nonavailable) : in that later case the select should 
+				 *  return the "none" option.
+				 *  
+				 */
+				// add the none option
+				var select = $("#pick-call-step-dataset-select");
+				select.empty();
+				var noneOption = $('<option value="0" selected>'+translator.get('label.None')+'</option>');
+				select.append(noneOption);		
+				
+				// add the datasets fetched from the server
+				if (json.length === 0){
 					$("#pick-call-step-dataset-nonavailable").show();
-					$("#pick-call-step-dataset-select").hide();
+					select.hide();
 				}
-				else{
-					var select = $("#pick-call-step-dataset-select");
+				else{					
 					select.show();
 					$("#pick-call-step-dataset-nonavailable").hide();
-					
-					var noneOption = $('<option value="0">'+translator.get('label.None')+'</option>')
-					select.append(noneOption);
-					
+
 					$.each(json, function(idx, ds){
 						var opt = $('<option value="'+ds.id+'">'+ds.name+'</option>');
 						select.append(opt);
 					});
-
-					// TODO : now preselect the selected option
 				}
+				
+			
+				// create the content of pick-call-step-dataset-consequence
+				var spanConsequence = $("#pick-call-step-dataset-consequence"),
+					template = spanConsequence.data('template');
+				
+				var txtConsequence = template.replace('{0}', stepInfo.calledTcName)
+											.replace('{1}', thisTcName);
+				
+				spanConsequence.text(txtConsequence);
+				
+				// last, we can configure the initial state of the popup according to stepInfo
+				switch (stepInfo.paramMode){
+				case 'DELEGATE' :
+					dialog.find('input[name="param-mode"][value="choice2"]').prop('checked', true);
+					select.val(0);
+					break;
+				case 'CALLED_DATASET' :
+					dialog.find('input[name="param-mode"][value="choice1"]').prop('checked', true);
+					select.val(stepInfo.calledDatasetId);
+					break;
+				case 'NOTHING' :
+					dialog.find('input[name="param-mode"][value="choice1"]').prop('checked', true);
+					select.val(0);
+				}
+				
+				// now we can unveil the popup
+				dialog.formDialog('setState', 'main');
+				
 			});
 			
 		});
+
+		dialog.on('formdialogconfirm', function(){
+			
+			var select = dialog.find('select');
+			var stepId = dialog.data('opener-id'),
+				choice = dialog.find('input[name="param-mode"]:checked').val(),
+				mode,
+				datasetId,
+				dsName;
+
+
+			if (choice === "choice2"){
+				mode="DELEGATE";
+				datasetId = null;
+				dsName = null;
+			}
+			else{
+				var ds = select.val();
+				datasetId = (ds === "0") ? null : ds; 
+				mode = (ds === "0") ? 'NOTHING' : 'CALLED_DATASET';
+				dsName = (ds === "0") ? null : select.find('option:selected').text();
+			}
+			
+			// now we can post
+			var postURL = squashtm.app.contextRoot + '/test-cases/'+conf.testCaseId+'/steps/'+stepId+'/parameter-assignation-mode';
+			$.ajax({
+				url : postURL,
+				type : 'POST', 
+				data : { mode : mode, datasetId : datasetId}
+			}).success(function(){
+				dialog.formDialog('close');
+				var evt = jQuery.Event("testStepsTable.changedCallStepParamMode");
+				eventBus.trigger(evt, {
+					stepId : stepId, 
+					mode : mode, 
+					datasetId : datasetId,
+					datasetName : dsName
+				});
+			});
+		});		
 		
+		dialog.on('formdialogcancel', function(){
+			dialog.formDialog('close');
+		});
+		
+		// last hooks for convenience only : clicking a label or select would trigger a click on the radio button next to it
+		dialog.on('click', 'label', function(evt){
+			$(evt.currentTarget).parent().prev().click();
+		});
+		
+		dialog.on('click', 'select', function(){
+			dialog.find('input[name="param-mode"][value="choice1"]').prop('checked', true);
+		});
 		
 	}
 	

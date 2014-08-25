@@ -90,6 +90,7 @@ define([ "jquery", "backbone", "underscore",
 
 			eventBus.onContextual("testStepsTable.pastedCallSteps", this.verifiedRequirementsPanel.table.refreshRestore);
 			eventBus.onContextual("testStepsTable.deletedCallSteps", this.verifiedRequirementsPanel.table.refreshRestore);
+			eventBus.onContextual("testStepsTable.changedCallStepParamMode", this.verifiedRequirementsPanel.table.refreshRestore);
 			eventBus.onContextual("testStepsTable.noMoreSteps", function(){self.sendUpdateHasStepsToTree(false);});
 			eventBus.onContextual("testStepsTable.stepAdded", function(){self.sendUpdateHasStepsToTree(true);});
 			eventBus.onContextual('tc-req-links-updated', function(){

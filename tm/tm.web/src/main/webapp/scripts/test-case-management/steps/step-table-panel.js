@@ -127,33 +127,34 @@ define([ "jquery", "squashtable/squashtable.collapser", "custom-field-values", "
 	}
 	
 	
-	function setCallStepContent(table){
-		
-		var callRows = table.find('tr.call-step-row'),
-		alllang = translator.get({
+	function setCallStepsContent(table){
+		table.find('tr.call-step-row').each(function(){
+			_callStepContent(table, this);	
+		});
+	}
+
+	
+	function _callStepContent(table, row){
+		var alllang = translator.get({
 			template : 'test-case.call-step.action.template',
 			none : 'label.None',
 			choose : 'label.callstepdataset.PickDataset'
 		});
 		
+		var data = table.fnGetData(row);
+		var stepinfo = data['call-step-info'];
 		
-		callRows.each(function(){
-			var data = table.fnGetData(this);
-			var stepinfo = data['call-step-info'];
-			
-			var tcUrl = squashtm.app.contextRoot + '/test-cases/'+stepinfo.calledTcId+'/info',
-				dsName = (stepinfo.paramMode === 'NOTHING') ? alllang.none :
-						(stepinfo.paramMode === 'DELEGATE') ? alllang.choose :
-						stepinfo.calledDatasetName;
-			
-			var	tcLink = '<a href="'+tcUrl+'">'+stepinfo.calledTcName+'</a>',
-				dsLink = '<span class="called-dataset-link cursor-pointer" style="text-decoration:underline;">'+dsName+'</span>';
-			
-			var text = alllang.template.replace('{0}', tcLink).replace('{1}', dsLink);
-			
-			$(this).find('td.called-tc-cell').html(text);
-			
-		})
+		var tcUrl = squashtm.app.contextRoot + '/test-cases/'+stepinfo.calledTcId+'/info',
+			dsName = (stepinfo.paramMode === 'NOTHING') ? alllang.none :
+					(stepinfo.paramMode === 'DELEGATE') ? alllang.choose :
+					stepinfo.calledDatasetName;
+		
+		var	tcLink = '<a href="'+tcUrl+'">'+stepinfo.calledTcName+'</a>',
+			dsLink = '<span class="called-dataset-link cursor-pointer" style="text-decoration:underline;">'+dsName+'</span>';
+		
+		var text = alllang.template.replace('{0}', tcLink).replace('{1}', dsLink);
+		
+		$(row).find('td.called-tc-cell').html(text);
 	}
 
 	function save_dt_view (oSettings, oData, testCaseId) {
@@ -178,7 +179,7 @@ define([ "jquery", "squashtable/squashtable.collapser", "custom-field-values", "
 		specializeCellClasses(this);
 		
 		// handles the content of the call step rows
-		setCallStepContent(this);
+		setCallStepsContent(this);
 
 		// collapser
 		var collapser = this.data("collapser");
@@ -421,6 +422,17 @@ define([ "jquery", "squashtable/squashtable.collapser", "custom-field-values", "
 		// Commenting out the 'refresh' just below, see https://ci.squashtest.org/mantis/view.php?id=2627#c4959
 		//$("#test-steps-table-"+urls.testCaseId).squashTable().refresh();
 		
+		// also listen to the parameter assignation mode of its own steps
+		eventBus.onContextual('testStepsTable.changedCallStepParamMode', function(evt, params){
+			var row = table.getRowsByIds([params.stepId]).get(0);
+			if (row !== undefined){
+				var stepInfo = table.fnGetData(row)['call-step-info'];
+				stepInfo.calledDatasetId = params.datasetId;
+				stepInfo.paramMode = params.mode;
+				stepInfo.calledDatasetName = params.datasetName;
+				_callStepContent(table, row);
+			}
+		});
 	}
 
 	// ************************************ toolbar utility functions

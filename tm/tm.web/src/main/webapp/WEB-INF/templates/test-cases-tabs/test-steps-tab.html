@@ -148,24 +148,36 @@
 	</div>
 	<!-- ==================== /Remove Test Step Row Dialog ==================== -->
     <!-- ==================== Pick call step dataset Dialog ==================== -->
-    <div id="pick-call-step-dataset-dialog" class="not-displayed popup-dialog" th:title="#{label.callstepdataset.PickDataset}">
+    <div id="pick-call-step-dataset-dialog" class="not-displayed popup-dialog" th:title="#{title.callstepdataset.PickDataset}">
     
-      <div>
-        <input type="radio" name="param-mode" th:value="#{label.callstepdataset.PickDatasetAmongAvailable}"/>
-        <br/>
-        <select id="pick-call-step-dataset-select"></select>
-        <span id="pick-call-step-dataset-nonavailable" class="not-displayed" th:text="#{label.callstepdataset.NoDatasetAvailable}"></span>
-      <div>
-      
+      <div data-def="state=loading" th:include="fragments-utils/static-panels :: custom-please-wait" th:with="height='200px'">
+        please wait
       </div>
-        <input type="radio" name="param-mode" th:value="#{label.callstepdataset.PickNoDataset}" />
-        <br/>
-        <span id="pick-call-step-dataset-consequence" th:attr="data-template=#{label.callstepdataset.PickNoDatasetConsequences}"></span>
+      
+      <div data-def="state=main">
+        <div class="display-table-row">
+          <input type="radio" name="param-mode" value="choice1" class="display-table-cell"/>
+          <div class="display-table-cell">
+            <label th:text="#{label.callstepdataset.PickDatasetAmongAvailable}">choose your dataset</label>
+            <br/>
+            <select id="pick-call-step-dataset-select"></select>
+            <span id="pick-call-step-dataset-nonavailable" class="not-displayed" th:text="#{label.callstepdataset.NoDatasetAvailable}"></span>
+          </div>
+        </div>
+        
+        <div class="display-table-row">
+          <input type="radio" name="param-mode" value="choice2" class="display-table-cell"/>
+          <div class="display-table-cell">
+            <label th:text="#{label.callstepdataset.PickNoDataset}">choose none and delegate</label>
+            <br/>
+            <span id="pick-call-step-dataset-consequence" th:attr="data-template=#{label.callstepdataset.PickNoDatasetConsequences}"></span>
+          </div>
+        </div>
       </div>
     
       <div class="popup-dialog-buttonpane">
-          <input type="button" th:value="#{label.Confirm}" data-def="mainbtn, evt=confirm"/>
-          <input type="button" th:value="#{label.Cancel}" data-def="evt=cancel"/>
+          <input type="button" th:value="#{label.Confirm}" data-def="mainbtn, evt=confirm, state=main"/>
+          <input type="button" th:value="#{label.Cancel}" data-def="evt=cancel, state=main loading"/>
       </div>
     </div>    
     <!-- ==================== /Pick call step dataset Dialog =================== -->

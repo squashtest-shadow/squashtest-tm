@@ -251,7 +251,7 @@ public class TestCaseTestStepsController {
 	}
 
 
-	@RequestMapping(value = "{stepId}/parameter-assignation-mode", method = RequestMethod.POST, params = {"mode"/*,"datasetId" (optional)*/})
+	@RequestMapping(value = "{stepId}/parameter-assignation-mode", method = RequestMethod.POST, params = {"mode","datasetId"})
 	@ResponseBody
 	public void changeParameterAssignationMode(@PathVariable("stepId") Long stepId,
 			@RequestParam(value="mode", required=true) ParameterAssignationMode mode,
