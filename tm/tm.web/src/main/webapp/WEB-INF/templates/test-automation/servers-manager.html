@@ -249,8 +249,8 @@
                 serveur d'exécution ?</p>
             </div>
             <!-- _____________Progression_______________ -->
-            <div data-def="state=progression">
-              <div class="wait please-wait-message waiting-loading full-size-hack" th:text="#{message.PleaseWait}">zzz</div>
+            <div data-def="state=progression" th:include="fragments-utils/static-panels :: small-please-wait" >
+              zzz
             </div>
             <div class="popup-dialog-buttonpane">
               <input class="confirm" type="button" value="confirm" th:value="#{label.Confirm}"

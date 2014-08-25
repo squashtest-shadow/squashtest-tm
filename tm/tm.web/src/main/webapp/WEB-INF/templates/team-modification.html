@@ -278,8 +278,9 @@
 								<label for="add-members-input" th:text="#{label.User}">which
 									one </label> <input type="text" id="add-member-input" />
 							</div>
-							<div class="wait please-wait-message waiting-loading full-size-hack"
-								th:text="#{message.PleaseWait}">zzz</div>
+							<div class="wait" th:include="fragments-utils/static-panels :: small-please-wait" >
+                                zzz
+                            </div>
 							<div class="no-more-users"
 								th:text="#{message.AllUsersAlreadyLinkedToTeam}">no more
 								users to bind</div>
@@ -338,8 +339,9 @@
 			</table>
 		</div>
 		
-		<div class="wait please-wait-message waiting-loading full-size-hack"
-			th:text="#{message.PleaseWait}">zzz</div>
+		<div class="wait" th:include="fragments-utils/static-panels :: small-please-wait" >
+              zzz
+        </div>
 			
 		<div class="no-more-projects"
 			th:text="#{message.AllProjectsAlreadyLinkedToUser}">no more teams to bind

@@ -329,7 +329,7 @@
       <label for="add-teams-input" th:text="#{label.team}">which one </label>
       <input type="text" id="add-team-input" />
     </div>
-    <div class="wait please-wait-message waiting-loading full-size-hack" th:text="#{message.PleaseWait}">zzz</div>
+    <div class="wait" th:include="fragments-utils/static-panels :: small-please-wait" >zzz</div>
     <div class="no-more-teams" th:text="#{message.allTeamsAlreadyLinkedToUser}">no more teams to bind</div>
     <div class="no-team" th:text="#{message.user.link.noTeam}">no teams to bind</div>
     <div class="no-selected-teams" th:text="#{message.noTeamSelected}">no selected team</div>
@@ -397,7 +397,7 @@
         </tr>
       </table>
     </div>
-    <div class="wait please-wait-message waiting-loading full-size-hack" th:text="#{message.PleaseWait}">zzz</div>
+    <div class="wait" th:include="fragments-utils/static-panels :: small-please-wait" >zzz</div>
     <div class="no-more-projects" th:text="#{message.AllProjectsAlreadyLinkedToUser}">no more teams to bind</div>
 
     <div class="popup-dialog-buttonpane">
