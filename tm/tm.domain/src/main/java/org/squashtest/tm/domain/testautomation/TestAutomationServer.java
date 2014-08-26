@@ -52,7 +52,7 @@ import org.squashtest.tm.domain.audit.Auditable;
 	@NamedQuery(name="testAutomationServer.findAllHostedProjects", query="select p from TestAutomationProject p join p.server s where s.id = :serverId"),
 	@NamedQuery(name="testAutomationServer.hasBoundProjects", query="select count(*) from TestAutomationProject where server.id = :serverId"),
 	@NamedQuery(name="testAutomationServer.countAll", query="select count(*) from TestAutomationServer"),
-	@NamedQuery(name="testAutomationServer.dereferenceProjects", query="update GenericProject gp set gp.testAutomationServer = null where gp.testAutomationServer.id = :serverId"),
+	@NamedQuery(name="testAutomationServer.dereferenceProjects", query="update GenericProject set testAutomationServer = null where testAutomationServer.id = :serverId"),
 	@NamedQuery(name="testAutomationServer.deleteServer", query="delete from TestAutomationServer serv where serv.id = :serverId")
 })
 @Entity

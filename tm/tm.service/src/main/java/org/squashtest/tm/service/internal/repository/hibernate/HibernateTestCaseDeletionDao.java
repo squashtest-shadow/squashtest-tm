@@ -281,7 +281,7 @@ public class HibernateTestCaseDeletionDao extends HibernateDeletionDao implement
 	@Override
 	public void setExecStepInboundReferencesToNull(List<Long> testStepIds) {
 		if (!testStepIds.isEmpty()) {
-			Query query = getSession().createSQLQuery(NativeQueries.TESTCASE_SQL_SETNULLCALLINGEXECUTIONSTEPS);
+			Query query = getSession().createSQLQuery(NativeQueries.TESTCASE_SQL_SET_NULL_CALLING_EXECUTION_STEPS);
 			query.setParameterList(TEST_STEP_IDS, testStepIds, LongType.INSTANCE);
 			query.executeUpdate();
 		}

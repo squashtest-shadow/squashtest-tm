@@ -62,8 +62,8 @@ public final class NativeQueries {
 	public static final String SIMPLE_RESOURCE_FIND_ID_FROM_FOLDER = "select folder.res_id from REQUIREMENT_FOLDER folder where folder.rln_id in (:folderIds)";
 
 
-	public static final String REQUIREMENT_SET_NULL_REQUIREMENT_VERSION = "update REQUIREMENT req set req.current_version_id = null where req.rln_id in (:requirementIds);";
-	public static final String REQUIREMENT_FOLDER_SET_NULL_SIMPLE_RESOURCE = "update REQUIREMENT_FOLDER folder set folder.res_id = null where folder.rln_id in (:folderIds)";
+	public static final String REQUIREMENT_SET_NULL_REQUIREMENT_VERSION = "update REQUIREMENT set current_version_id = null where rln_id in (:requirementIds);";
+	public static final String REQUIREMENT_FOLDER_SET_NULL_SIMPLE_RESOURCE = "update REQUIREMENT_FOLDER set res_id = null where rln_id in (:folderIds)";
 
 
 	public static final String REQUIREMENT_VERSION_SQL_REMOVE = "delete from REQUIREMENT_VERSION where res_id in (:requirementVersionIds)";
@@ -103,8 +103,8 @@ public final class NativeQueries {
 			+ " and ctpi1.test_case_id not in (:removedItemIds2) "
 			+ " group by ctpi1.ctpi_id";
 
-	public static final String TESTCASE_SQL_UPDATECALLINGCAMPAIGNITEMTESTPLAN = "update CAMPAIGN_TEST_PLAN_ITEM as ctpi1 "
-			+ " set ctpi1.test_plan_order = ctpi1.test_plan_order - :offset" + " where ctpi1.ctpi_id in (:reorderedItemIds)";
+	public static final String TESTCASE_SQL_UPDATECALLINGCAMPAIGNITEMTESTPLAN = "update CAMPAIGN_TEST_PLAN_ITEM "
+			+ " set test_plan_order = test_plan_order - :offset" + " where ctpi_id in (:reorderedItemIds)";
 
 	public static final String TESTCASE_SQL_REMOVECALLINGCAMPAIGNITEMTESTPLAN = "delete from CAMPAIGN_TEST_PLAN_ITEM where test_case_id in (:testCaseIds)";
 
@@ -121,8 +121,8 @@ public final class NativeQueries {
 			+ " where itp.tcln_id in (:testCaseIds) "
 			+ " and itp.item_test_plan_id not in (select distinct itpe.item_test_plan_id from ITEM_TEST_PLAN_EXECUTION itpe)";
 
-	public static final String TESTCASE_SQL_SETNULLCALLINGITERATIONITEMTESTPLANHAVINGEXECUTIONS = " update ITERATION_TEST_PLAN_ITEM itp set itp.tcln_id = NULL "
-			+ " where itp.item_test_plan_id in (:itpHavingExecIds) ";
+	public static final String TESTCASE_SQL_SETNULLCALLINGITERATIONITEMTESTPLANHAVINGEXECUTIONS = " update ITERATION_TEST_PLAN_ITEM set tcln_id = NULL "
+			+ " where item_test_plan_id in (:itpHavingExecIds) ";
 
 
 
@@ -135,9 +135,9 @@ public final class NativeQueries {
 			+ " and itp2.item_test_plan_id in (:removedItemIds1) "
 			+ " and itp1.item_test_plan_id not in (:removedItemIds2) " + " group by itp1.item_test_plan_id";
 
-	public static final String TESTCASE_SQL_UPDATECALLINGITERATIONITEMTESTPLANORDER = " update ITEM_TEST_PLAN_LIST as itp1 "
-			+ " set itp1.item_test_plan_order = itp1.item_test_plan_order - :offset "
-			+ " where itp1.item_test_plan_id in (:reorderedItemIds)";
+	public static final String TESTCASE_SQL_UPDATECALLINGITERATIONITEMTESTPLANORDER = " update ITEM_TEST_PLAN_LIST "
+			+ " set item_test_plan_order = item_test_plan_order - :offset "
+			+ " where item_test_plan_id in (:reorderedItemIds)";
 
 
 	// ************ reordering test plan for test suites
@@ -149,9 +149,9 @@ public final class NativeQueries {
 			+ " and itp2.tpi_id in (:removedItemIds1) "
 			+ " and itp1.tpi_id not in (:removedItemIds2) " + " group by itp1.tpi_id";
 
-	public static final String TESTCASE_SQL_UPDATECALLINGTESTSUITEITEMTESTPLANORDER = " update TEST_SUITE_TEST_PLAN_ITEM as itp1 "
-			+ " set itp1.test_plan_order = itp1.test_plan_order - :offset "
-			+ " where itp1.tpi_id in (:reorderedItemIds)";
+	public static final String TESTCASE_SQL_UPDATECALLINGTESTSUITEITEMTESTPLANORDER = " update TEST_SUITE_TEST_PLAN_ITEM "
+			+ " set test_plan_order = test_plan_order - :offset "
+			+ " where tpi_id in (:reorderedItemIds)";
 
 	public static final String TESTCASE_SQL_REMOVECALLINGTESTSUITEITEMTESTPLAN = "delete from TEST_SUITE_TEST_PLAN_ITEM where tpi_id in (:itpHavingNoExecIds)";
 	public static final String TESTCASE_SQL_REMOVECALLINGITERATIONITEMTESTPLANFROMLIST = "delete from ITEM_TEST_PLAN_LIST  where item_test_plan_id in (:itpHavingNoExecIds)";
@@ -161,9 +161,9 @@ public final class NativeQueries {
 	/* ************************************ /consequences of test case deletion on item test plans  ******************************************************* */
 
 
-	public static final String TESTCASE_SQL_SETNULLCALLINGEXECUTIONS = "update EXECUTION exec set exec.tcln_id = null where exec.tcln_id in (:testCaseIds)";
+	public static final String TESTCASE_SQL_SETNULLCALLINGEXECUTIONS = "update EXECUTION set tcln_id = null where tcln_id in (:testCaseIds)";
 
-	public static final String TESTCASE_SQL_SETNULLCALLINGEXECUTIONSTEPS = "update EXECUTION_STEP step set step.test_step_id = null where step.test_step_id in (:testStepIds)";
+	public static final String TESTCASE_SQL_SET_NULL_CALLING_EXECUTION_STEPS = "update EXECUTION_STEP set test_step_id = null where test_step_id in (:testStepIds)";
 
 	public static final String TESTCASE_SQL_REMOVEVERIFYINGTESTCASELIST = "delete from REQUIREMENT_VERSION_COVERAGE where verifying_test_case_id in (:testCaseIds)";
 

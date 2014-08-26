@@ -117,7 +117,7 @@
 
 		// IterationTestPlanItem
 		@NamedQuery(name = "iterationTestPlanItem.countAllStatus", query = "select count(itpi) from IterationTestPlanItem itpi where itpi.executionStatus = :status and itpi.iteration.campaign.project.id = :projectId"),
-		@NamedQuery(name = "iterationTestPlanItem.replaceStatus", query = "update IterationTestPlanItem item set item.executionStatus = :newStatus where item.executionStatus = :oldStatus and item.id in "
+		@NamedQuery(name = "iterationTestPlanItem.replaceStatus", query = "update IterationTestPlanItem set executionStatus = :newStatus where executionStatus = :oldStatus and id in "
 				+ "(select itpi.id from IterationTestPlanItem itpi where itpi.iteration.campaign.project.id = :projectId)"),
 
 		// TestSuite
@@ -278,7 +278,7 @@
 		//ExecutionStep
 		@NamedQuery(name = "executionStep.findParentNode", query = "select execution from Execution as execution join execution.steps exSteps where exSteps.id= :childId "),
 		@NamedQuery(name = "executionStep.countAllStatus", query = "select count(step) from ExecutionStep step where step.executionStatus = :status and step.execution.testPlan.iteration.campaign.project.id = :projectId"),
-		@NamedQuery(name = "executionStep.replaceStatus", query = "update ExecutionStep step set step.executionStatus = :newStatus where step.executionStatus = :oldStatus and step.id in "
+		@NamedQuery(name = "executionStep.replaceStatus", query = "update ExecutionStep set executionStatus = :newStatus where executionStatus = :oldStatus and id in "
 				+ "(select estep.id from ExecutionStep estep where estep.execution.testPlan.iteration.campaign.project.id = :projectId)"),
 
 		//Generic Project
@@ -391,7 +391,7 @@
 		@NamedQuery(name = "CustomFieldBinding.removeCustomFieldBindings", query = "delete CustomFieldBinding cfb where cfb.id in (:cfbIds)"),
 		@NamedQuery(name = "CustomFieldBinding.recomputeBindingPositions", query = "select cfb1.id as bindingId, cfb1.position as formerPosition, count(cfb1.id) as newPosition from CustomFieldBinding cfb1, CustomFieldBinding cfb2 where cfb1.boundEntity=cfb2.boundEntity "
 				+ "and cfb1.boundProject = cfb2.boundProject and cfb1.position >= cfb2.position group by cfb1.id"),
-		@NamedQuery(name = "CustomFielBinding.updateBindingPosition", query = "update CustomFieldBinding cfb set cfb.position = :newPos where cfb.id = :id"),
+		@NamedQuery(name = "CustomFielBinding.updateBindingPosition", query = "update CustomFieldBinding set position = :newPos where id = :id"),
 		@NamedQuery(name = "CustomFieldBinding.findAllAlike", query = "select cfb2 from CustomFieldBinding cfb1, CustomFieldBinding cfb2 where cfb1.id = ?1 and cfb1.boundProject = cfb2.boundProject and cfb1.boundEntity = cfb2.boundEntity order by cfb2.position"),
 
 		//CustomFieldValue
