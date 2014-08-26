@@ -87,8 +87,8 @@ public class HibernateTestCaseDao extends HibernateEntityDao<TestCase> implement
 	private static final String FIND_ALL_FOR_LIBRARY_QUERY = "select distinct testCase.TCLN_ID"
 			+ " from TEST_CASE testCase " + " join TEST_CASE_LIBRARY_NODE tcln on tcln.TCLN_ID = testCase.TCLN_ID"
 			+ " join PROJECT project on project.PROJECT_ID = tcln.PROJECT_ID" + " where project.TCL_ID = :libraryId";
-	private static final String FIND_ALL_CALLING_TEST_CASE_MAIN_HQL = "select TestCase from TestCase as TestCase left join TestCase.project as Project "
-			+ " join TestCase.steps as Steps where Steps.calledTestCase.id = :testCaseId group by TestCase ";
+	private static final String FIND_ALL_CALLING_TEST_CASE_MAIN_HQL = "select distinct TestCase from TestCase as TestCase left join TestCase.project as Project "
+			+ " join TestCase.steps as Steps where Steps.calledTestCase.id = :testCaseId ";
 
 	private static List<DefaultSorting> defaultVerifiedTcSorting;
 
