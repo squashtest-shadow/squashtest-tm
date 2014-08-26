@@ -25,6 +25,7 @@ import javax.inject.Inject
 
 import org.spockframework.util.NotThreadSafe
 import org.springframework.transaction.annotation.Transactional
+import org.squashtest.tm.domain.testcase.ParameterAssignationMode;
 import org.squashtest.tm.exception.CyclicStepCallException
 import org.squashtest.tm.service.DbunitServiceSpecification;
 import org.squashtest.tm.service.internal.testcase.TestCaseCallTreeFinder;
@@ -41,13 +42,20 @@ class CallStepManagerServiceIT extends DbunitServiceSpecification {
 
 	@Inject
 	CallStepManagerService callStepService
-	
+
+	@Inject
+	ParameterFinder paramService
+
+	@Inject
+	DatasetModificationService datasetService
+
 	@Inject
 	TestCaseModificationService testCaseService;
-	
-	@Inject TestCaseCallTreeFinder callTreeFinder
-	
-	
+
+	@Inject
+	TestCaseCallTreeFinder callTreeFinder
+
+
 	def setupSpec(){
 		Collection.metaClass.matches ={ arg ->
 			delegate.containsAll(arg) && arg.containsAll(delegate)
@@ -57,68 +65,162 @@ class CallStepManagerServiceIT extends DbunitServiceSpecification {
 	@DataSet("CallStepManagerServiceIT.dataset.xml")
 	def "should deny step call creation because the callse and calling test cases are the same"(){
 		given :
-			
+
 		when :
-			callStepService.addCallTestStep(1l, 1l)	;
-		
+		callStepService.addCallTestStep(1l, 1l)	;
+
 		then :
-			thrown(CyclicStepCallException);
+		thrown(CyclicStepCallException);
 	}
-	
-	
-	
+
+
+
 	@DataSet("CallStepManagerServiceIT.dataset.xml")
 	def "should deny step call creation because the caller is somewhere in the test case call tree of the called test case"(){
 		given :
-		
+
 		when :
-			callStepService.addCallTestStep(31l, 1l)
-			
+		callStepService.addCallTestStep(31l, 1l)
+
 		then :
-			thrown(CyclicStepCallException);
+		thrown(CyclicStepCallException);
 	}
-	
-	
+
+
 	@DataSet("CallStepManagerServiceIT.dataset.xml")
 	def "should successfully create a call step"(){
-		
+
 		given :
-			def expectedTree = [1l, 11l, 21l, 22l, 31l, 32l]
-			
-			
+		def expectedTree = [1l, 11l, 21l, 22l, 31l, 32l]
+
+
 		when :
-			callStepService.addCallTestStep(10l, 1l)
-			def callTree = callTreeFinder.getTestCaseCallTree(10l)
-			
-		
+		callStepService.addCallTestStep(10l, 1l)
+		def callTree = callTreeFinder.getTestCaseCallTree(10l)
+
+
 		then :
-			callTree.matches expectedTree		
-		
+		callTree.matches expectedTree
+
 	}
-	
+
 	@DataSet("CallStepManagerServiceIT.dataset.xml")
 	def "should throw CyclicStepCallException because the destination test case is somewhere in the test case call tree of the pasted steps"(){
 		given :
-			def pastedStepsIds = ['11','1000', '101'] as String[]
-			def destinationTestCaseid = 32L
+		def pastedStepsIds = ['11','1000', '101'] as String[]
+		def destinationTestCaseid = 32L
 		when :
-			callStepService.checkForCyclicStepCallBeforePaste(destinationTestCaseid, pastedStepsIds)
-			
+		callStepService.checkForCyclicStepCallBeforePaste(destinationTestCaseid, pastedStepsIds)
+
 		then :
-			thrown(CyclicStepCallException);
+		thrown(CyclicStepCallException);
 	}
-	
+
 	@DataSet("CallStepManagerServiceIT.dataset.xml")
 	def "should throw CyclicStepCallException because the destination test case is called by one of the pasted steps"(){
 		given :
-			def pastedStepsIds = ['32','1000'] as String[]
-			def destinationTestCaseid = 32L
+		def pastedStepsIds = ['32','1000'] as String[]
+		def destinationTestCaseid = 32L
 		when :
-			callStepService.checkForCyclicStepCallBeforePaste(destinationTestCaseid, pastedStepsIds)
-			
+		callStepService.checkForCyclicStepCallBeforePaste(destinationTestCaseid, pastedStepsIds)
+
 		then :
-			thrown(CyclicStepCallException);
+		thrown(CyclicStepCallException);
 	}
 
 
+	@DataSet("CallStepManagerServiceIT.dataset.xml")
+	def "setting call step to parameter delegation should delegate more parameters to upstream test cases"(){
+
+		given: 	"checking initial conditions"
+
+		def initialTc1IsTrue = theTestCase(1l).canAccessParameters ( [ 321l, 221l ] )
+		def initialTc11IsTrue = theTestCase(11l).canAccessParameters ( [321l, 221l] )
+
+
+		and : "the call step that will change that"
+
+		def callstepId = 21l;
+
+		when : "changing the assignation mode of a step to DELEGATE"
+		callStepService.setParameterAssignationMode callstepId, ParameterAssignationMode.DELEGATE, null
+
+		then :
+
+		initialTc1IsTrue
+		initialTc11IsTrue
+
+		theTestCase(1l).canAccessParameters ( [321l, 221l, 211l, 212l ] )
+		theTestCase(11l).canAccessParameters (  [321l, 221l, 211l, 212l ] )
+
+	}
+
+
+	@DataSet("CallStepManagerServiceIT.dataset.xml")
+	def "settings call step to nothing would remove parameter delegation from upstream test cases"(){
+		given: 	"checking initial conditions"
+
+		def initialTc1IsTrue = theTestCase(1l).canAccessParameters ( [ 321l, 221l ] )
+		def initialTc11IsTrue = theTestCase(11l).canAccessParameters ( [321l, 221l] )
+
+
+		and : "the call step that will change that"
+
+		def callstepId = 22l;
+
+		when : "changing the assignation mode of a step to NOTHING"
+		callStepService.setParameterAssignationMode callstepId, ParameterAssignationMode.NOTHING, null
+
+		then :
+
+		initialTc1IsTrue
+		initialTc11IsTrue
+
+		theTestCase(1l).canAccessParameters ( [] )
+		theTestCase(11l).canAccessParameters (  [] )
+	}
+
+
+
+	@DataSet("CallStepManagerServiceIT.dataset.xml")
+	def "setting call step to parameter delegation should delegate more parameters to upstream test cases until a test case choose otherwise"(){
+
+		given: 	"checking initial conditions"
+
+		def initialTc1IsTrue = theTestCase(1l).canAccessParameters ( [ 321l, 221l ] )
+		def initialTc11IsTrue = theTestCase(11l).canAccessParameters ( [321l, 221l] )
+		def initialTc21IsTrue = theTestCase(21l).canAccessParameters ( [211l, 212l] )
+
+
+		and : "the call step that will change that"
+
+		def callstepId = 31l;
+
+		when : "changing the assignation mode of a step to DELEGATE"
+		callStepService.setParameterAssignationMode callstepId, ParameterAssignationMode.DELEGATE, null
+
+		then :
+
+		initialTc1IsTrue
+		initialTc11IsTrue
+		initialTc21IsTrue
+
+		theTestCase(1l).canAccessParameters ( [ 321l, 221l ]  )	// has not changed
+		theTestCase(11l).canAccessParameters (  [ 321l, 221l ]  ) // has not changed
+		theTestCase(21l).canAccessParameters (  [211l, 212l, 311l, 312l, 313l] )	// has changed
+	}
+
+
+
+	def theTestCase = { id ->
+		def bob = [
+			tcId : id,
+			canAccessParameters : { ids ->
+				def params = paramService.findAllParameters(id)
+				params.collect { it.id } as Set == ids as Set
+			}
+		]
+
+		return bob;
+	}
 }

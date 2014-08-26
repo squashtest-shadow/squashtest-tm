@@ -136,7 +136,14 @@
 		
 		<addForeignKeyConstraint constraintName="fk_call_step_dataset" baseTableName="CALL_TEST_STEP" 
 		baseColumnNames="CALLED_DATASET" referencedTableName="DATASET"  referencedColumnNames="DATASET_ID" onDelete="SET NULL"/>
-
+		
+	</changeSet>
+	
+	<changeSet id="tm-1.11.0.feature-3693-2" author="bsiri">
+		<comment>For back compatibility, the call steps migrating from an existing DB will now be set to delegate the parameters</comment>
+	    <update tableName="CALL_TEST_STEP">
+	        <column name="DELEGATE_PARAMETER_VALUES" value="true" type="BOOLEAN"/>
+	    </update>
 	</changeSet>
 
 
