@@ -34,28 +34,28 @@ import spock.unitils.UnitilsSupport
 class EntityDaoIT extends DbunitDaoSpecification {
 
 	//EntityDao is a generic class. Let's use the Project as the specific implementation.
-	
+
 	@Inject
 	private HibernateProjectDao projectDao;
-	
+
 	private EntityDao<Project> entityDao;
-	
+
 	def setup(){
-		entityDao = projectDao;		
-	} 
-	
-	
+		entityDao = projectDao;
+	}
+
+
 	@DataSet("EntityDaoIT.should find a list of entity.xml")
 	def "should find a list of entity"(){
-	
+
 		when :
-			def res = entityDao.findAllByIds([ -1L, -3L, -4L, -6L ])
-		
+		def res = entityDao.findAllByIds([ -1L, -3L, -4L, -6L ])
+
 		then :
-			res.size() == 4
-			res.collect {it.id } == [-1L, -3L, -4L, -6L]
-			res.collect {it.name } == ["proj1", "proj3", "proj4", "proj6"]
+		res.size() == 4
+		res*.id.containsAll([-6L, -4L, -3L, -1L])
+		res*.name.containsAll(["proj6", "proj4", "proj3", "proj1"])
 	}
-	
-	
+
+
 }
