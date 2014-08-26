@@ -96,8 +96,8 @@ class JdbcManageableAclServiceIT extends Specification {
 		def groups = service.findAllPermissionGroupsByNamespace("foo")
 
 		then:
-		groups.collect { it.id } == [-10L, -20L]
-		groups.collect { it.qualifiedName } == ["foo.Bar", "foo.Baz"]
+		groups*.id.containsAll([-10L, -20L])
+		groups*.qualifiedName.containsAll(["foo.Bar", "foo.Baz"])
 	}
 
 	@DataSet(value = "JdbcManageableAclServiceIT.should find permission groups by namespace.xml")

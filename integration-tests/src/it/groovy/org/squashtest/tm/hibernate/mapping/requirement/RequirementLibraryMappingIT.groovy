@@ -79,7 +79,7 @@ class RequirementLibraryMappingIT extends HibernateMappingSpecification {
 
 		then:
 		res.rootContent.size() == 1
-		res.rootContent.collect { it.id } == [folder.id]
+		res.rootContent*.id.containsAll([folder.id])
 
 		cleanup:
 		deleteRootContent library

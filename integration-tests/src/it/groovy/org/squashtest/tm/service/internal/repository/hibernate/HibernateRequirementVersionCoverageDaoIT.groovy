@@ -156,7 +156,7 @@ class HibernateRequirementVersionCoverageDaoIT extends DbunitDaoSpecification {
 		pas.sortOrder >> SortOrder.ASCENDING
 
 		when:
-		def res = dao.findAllByTestCaseId(100, pas)
+		def res = dao.findAllByTestCaseId(-100, pas)
 
 		then:
 		res.collect({it.verifiedRequirementVersion}).idsEqual([-20L, -10L])
@@ -165,7 +165,7 @@ class HibernateRequirementVersionCoverageDaoIT extends DbunitDaoSpecification {
 	@DataSet("HibernateTestCaseDaoIT.should find requirement versions directly verified by a test case sorted by name.xml")
 	def "should count coverage verified by a test case"() {
 		when:
-		def count = dao.numberByTestCase(100)
+		def count = dao.numberByTestCase(-100)
 
 		then:
 		count == 2

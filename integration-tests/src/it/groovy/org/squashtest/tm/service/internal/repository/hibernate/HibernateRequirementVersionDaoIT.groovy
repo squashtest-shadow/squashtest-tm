@@ -47,7 +47,7 @@ class HibernateRequirementVersionDaoIT extends DbunitDaoSpecification {
 	@DataSet("HibernateTestCaseDaoIT.should find requirement versions directly verified by a test case sorted by name.xml")
 	def "should count requirements verified by a test case"() {
 		when:
-		def count = versionDao.countVerifiedByTestCase(100)
+		def count = versionDao.countVerifiedByTestCase(-100)
 
 		then:
 		count == 2
@@ -56,7 +56,7 @@ class HibernateRequirementVersionDaoIT extends DbunitDaoSpecification {
 	@DataSet("HibernateTestCaseDaoIT.should count versions of requirement.xml")
 	def "should count versions of requirement"() {
 		expect:
-		versionDao.countByRequirement(1) == 2
+		versionDao.countByRequirement(-1) == 2
 	}
 
 	@DataSet("HibernateTestCaseDaoIT.should count versions of requirement.xml")
@@ -69,12 +69,12 @@ class HibernateRequirementVersionDaoIT extends DbunitDaoSpecification {
 		paging.sortOrder >> SortOrder.ASCENDING
 
 		when:
-		def res = versionDao.findAllByRequirement(1, paging)
+		def res = versionDao.findAllByRequirement(-1, paging)
 
 		then:
 		res*.id == [-20L]
 	}
-	
+
 	@DataSet("HibernateRequirementVersionDaoIT.should find all requirements versions by id.xml")
 	def "should find all requirements versions by id"() {
 		when:

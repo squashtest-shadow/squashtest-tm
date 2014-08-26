@@ -48,22 +48,22 @@ class HibernateRequirementDaoIT extends DbunitDaoSpecification {
 
 		then:
 		res.size() == 1
-		res[0].id == 10
+		res[0].id == -10
 	}
-	
+
 
 	@DataSet("HibernateRequirementDaoIT.should find requirements by reference token.xml")
 	def "should find requirements by reference token"() {
 		given:
 		def req = aLabelBasedCriteria()
 		req.reference >> "token"
-		
+
 		when:
 		def res = requirementDao.findAllBySearchCriteria(req)
 
 		then:
 		res.size() == 1
-		res[0].id == 10
+		res[0].id == -10
 	}
 
 	@DataSet("HibernateRequirementDaoIT.should find requirements by reference and name token.xml")
@@ -78,7 +78,7 @@ class HibernateRequirementDaoIT extends DbunitDaoSpecification {
 
 		then:
 		res.size() == 1
-		res[0].id == 10
+		res[0].id == -10
 	}
 
 	@DataSet("HibernateRequirementDaoIT.should find requirements by criticalities.xml")
@@ -97,7 +97,7 @@ class HibernateRequirementDaoIT extends DbunitDaoSpecification {
 
 		then:
 		res.size() == 2
-		!res.collect({ it.id }).contains(30)
+		!res.collect({ it.id }).contains(-30)
 	}
 	@DataSet("HibernateRequirementDaoIT.should find requirements by categories.xml")
 	def "should find requirements by categories"() {
@@ -112,7 +112,7 @@ class HibernateRequirementDaoIT extends DbunitDaoSpecification {
 
 		then:
 		res.size() == 2
-		!res.collect({ it.id }).contains(30)
+		!res.collect({ it.id }).contains(-30)
 	}
 
 	@DataSet("HibernateRequirementDaoIT.should find verified requirements.xml")
@@ -198,13 +198,13 @@ class HibernateRequirementDaoIT extends DbunitDaoSpecification {
 		def req = aLabelBasedCriteria()
 		req.name >> "token"
 		req.libeleIsOnlyCriteria() >> true
-		
+
 		when:
 		def res = requirementDao.findAllBySearchCriteria(req)
 
 		then:
 		res.size() == 1
-		res[0].id == 50
+		res[0].id == -50
 	}
 
 	def aLabelBasedCriteria() {

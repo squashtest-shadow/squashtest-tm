@@ -75,14 +75,14 @@ public class HibernateAutomatedTestDaoIT extends DbunitDaoSpecification {
 		testDao.countReferences(id) == cnt
 
 		where :
-		id	| cnt
-		-11L	| -1L
-		-12L | -3L
-		-13L | -1L
-		-21L | -1L
-		-22L	| -2L
-		-23L	| -0L
-		-14L	| -0L
+		id		| cnt
+		-11L	| 1
+		-12L	| 3
+		-13L	| 1
+		-21L	| 1
+		-22L	| 2
+		-23L	| 0
+		-14L	| 0
 	}
 
 	@Unroll("should #_neg remove automated test #id because it is referenced by #_referers")

@@ -62,7 +62,7 @@ public class PrivateCustomFieldValueServiceIT extends DbunitServiceSpecification
 		def fields = cfvDao.findAllCustomValues(-113L, BindableEntity.TEST_CASE)
 
 		then :
-		fields.collect{it.value} == ["SEC-2", "false"]
+		fields*.value.containsAll(["SEC-2", "false"])
 
 	}
 
@@ -77,7 +77,7 @@ public class PrivateCustomFieldValueServiceIT extends DbunitServiceSpecification
 		def fields = cfvDao.findAllCustomValues(-111L, BindableEntity.TEST_CASE)
 
 		then :
-		fields.collect{it.value} == ["SEC-2", "false"]
+		fields*.value.containsAll(["SEC-2", "false"])
 
 
 	}

@@ -160,18 +160,18 @@ class IterationModificationServiceIT extends DbunitServiceSpecification {
 		query.setParameter("type", DenormalizedFieldHolderType.EXECUTION_STEP)
 		def step1denofields = query.list()
 		step1denofields.size() == 2
-		step1denofields.collect { it.code } == ["cufUprim", "cufT" ]
-		step1denofields.collect { it.value } == ["Uprim", "T"]
-		step1denofields.collect { it.renderingLocations } == [[RenderingLocation.STEP_TABLE] as Set,[] as Set]
+		step1denofields*.code == ["cufUprim", "cufT" ]
+		step1denofields*.value == ["Uprim", "T"]
+		step1denofields*.renderingLocations == [[RenderingLocation.STEP_TABLE] as Set,[] as Set]
 
 
 		query.setParameter("id", exec.steps.get(1).id)
 		query.setParameter("type", DenormalizedFieldHolderType.EXECUTION_STEP)
 		def step2denofields = query.list()
 		step2denofields.size() == 2
-		step2denofields.collect { it.code } == ["cufT", "cufU"]
-		step2denofields.collect { it.value } == ["T", "U"]
-		step2denofields.collect { it.renderingLocations } == [ [RenderingLocation.STEP_TABLE] as Set, [RenderingLocation.STEP_TABLE] as Set]
+		step2denofields*.code == ["cufT", "cufU"]
+		step2denofields*.value == ["T", "U"]
+		step2denofields*.renderingLocations == [ [RenderingLocation.STEP_TABLE] as Set, [RenderingLocation.STEP_TABLE] as Set]
 	}
 
 

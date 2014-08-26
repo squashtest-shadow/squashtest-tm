@@ -37,20 +37,20 @@ import spock.unitils.UnitilsSupport
 @UnitilsSupport
 class HibernateCampaignDaoIT extends DbunitDaoSpecification {
 	@Inject CampaignDao campaignDao
-	
+
 	@DataSet("HibernateCampaignDaoIT.should return list of copies in folder.xml")
 	def "should return list of copies in folder"() {
 		when:
-		def res = campaignDao.findNamesInFolderStartingWith(1, "foo-Copie")
-		then: 
+		def res = campaignDao.findNamesInFolderStartingWith(-1, "foo-Copie")
+		then:
 		res == ["foo-Copie1", "foo-Copie10"]
 	}
-	
+
 	@DataSet("HibernateCampaignDaoIT.should return list of executions.xml")
 	def "should return list of executions"(){
 		when:
 		def result = campaignDao.findAllExecutionsByCampaignId(-1L)
-		
+
 		then:
 		result.size() == 5
 		result.each {it.name == "campaign1-execution"}
@@ -60,7 +60,7 @@ class HibernateCampaignDaoIT extends DbunitDaoSpecification {
 	def "should find campaign statistics READY"(){
 		when:
 		TestPlanStatistics result = campaignDao.findCampaignStatistics(-1L);
-		
+
 		then:
 		result != null
 		result.nbBlocked == 0
@@ -74,29 +74,29 @@ class HibernateCampaignDaoIT extends DbunitDaoSpecification {
 		result.nbFailure == 0
 		result.status == TestPlanStatus.READY
 	}
-	
+
 	@Unroll
 	@DataSet("HibernateCampaignDaoIT.campaign with test plan.xml")
 	def "should find test plan filtered by auto-mode: #autoMode"() {
-		given: 
+		given:
 		PagingAndMultiSorting sort = Mock()
 		sort.sortings >> []
-		
+
 		and:
 		ColumnFiltering filt = Mock()
 		filt.hasFilter(HibernateCampaignDao.MODE_DATA) >> active
 		filt.getFilter(HibernateCampaignDao.MODE_DATA) >> filter
-		
+
 		expect:
 		campaignDao.findFilteredIndexedTestPlan(-10L, sort, filt).collect { it.item.id } == expectedId
-		
+
 		where:
 		active   | filter                          | expectedId
 		true	 | TestCaseExecutionMode.AUTOMATED | [-1010L]
 		true	 | TestCaseExecutionMode.MANUAL    | [-1020L]
 		false	 | null                            | [-1010L, -1020L]
-	} 
-}	
+	}
+}
 
 
 

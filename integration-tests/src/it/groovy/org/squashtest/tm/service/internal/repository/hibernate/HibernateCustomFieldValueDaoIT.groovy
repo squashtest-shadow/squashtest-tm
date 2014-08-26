@@ -74,7 +74,7 @@ class HibernateCustomFieldValueDaoIT extends DbunitDaoSpecification{
 			
 		then :
 			values.size()==2
-			values.collect {it.id} == [-1111L, -1112L]
+			values*.id.containsAll([-1111L, -1112L])
 		
 	}
 	
@@ -86,7 +86,7 @@ class HibernateCustomFieldValueDaoIT extends DbunitDaoSpecification{
 			
 		then :
 			values.size()==2
-			values.collect {it.id} == [-1112L, -1122L]
+			values*.id.containsAll([-1112L, -1122L])
 		
 	}
 	

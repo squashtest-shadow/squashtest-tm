@@ -37,68 +37,68 @@ class HibernateCustomCustomFieldBindingDaoIT extends DbunitDaoSpecification {
 
 	@Inject
 	HibernateCustomCustomFieldBindingDao dao
-	
+
 	@Inject
 	CustomFieldBindingDao dynamicDao;
 
-	
+
 	def "should get correct indexes from a messed up table"(){
 
 		when :
-			List<NewBindingPosition> newPositions = dao.recomputeBindingPositions();
-			
+		List<NewBindingPosition> newPositions = dao.recomputeBindingPositions();
+
 		then :
-			def collected = newPositions.collect { return [ it.bindingId, it.formerPosition, it.newPosition] } 
-			def expected = [
-				[-121L, 5, 3],
-				[-131L, 1 ,1],
-				[-111L, 2, 2],
-				[-221L, 8, 3],
-				[-122L, 10, 3],	
-				[-241L, 1, 1],
-				[-132L, 2, 2],
-				[-211L, 3, 2],
-				[-112L, 0, 1]
-			] 
-		
-			collected as Set == expected as Set
+		def collected = newPositions.collect { return [ it.bindingId, it.formerPosition, it.newPosition] }
+		def expected = [
+			[-121L, 5, 3],
+			[-131L, 1 ,1],
+			[-111L, 2, 2],
+			[-221L, 8, 3],
+			[-122L, 10, 3],
+			[-241L, 1, 1],
+			[-132L, 2, 2],
+			[-211L, 3, 2],
+			[-112L, 0, 1]
+		]
+
+		collected as Set == expected as Set
 	}
-	
+
 	def "should update the position of some cuf binding"(){
-		
+
 		given :
-			def newPositions = [
-					newPosition(-241L, 1, -1L),
-					newPosition(-221L, 8, -3L),
-					newPosition(-211L, 3, -2L),
-				]
-		
+		def newPositions = [
+			newPosition(-241L, 1, 1),
+			newPosition(-221L, 8, 3),
+			newPosition(-211L, 3, 2),
+		]
+
 		when :
-			dao.updateBindingPositions(newPositions);
-			
-			Query q = getSession().createQuery("from CustomFieldBinding where id in (241, 221, 211)")
-			List<CustomFieldBinding> bindings = q.list();
-			
+		dao.updateBindingPositions(newPositions);
+
+		Query q = getSession().createQuery("from CustomFieldBinding where id in (-241, -221, -211)")
+		List<CustomFieldBinding> bindings = q.list();
+
 		then :
-			bindings.collect{it.position} as Set == [1, 3, 2] as Set
+		bindings*.position as Set == [1, 3, 2] as Set
 	}
-	
-	
+
+
 	def "should find all the cfb having the same project and bound entity as this one"(){
-		
+
 		when :
-			def res = dynamicDao.findAllAlike(-221L)
-			
+		def res = dynamicDao.findAllAlike(-221L)
+
 		then :
-			res.collect{it.id} as Set == [-211L, -221L, -241L] as Set 
-			
-			
-		
+		res*.id as Set == [-211L, -221L, -241L] as Set
+
+
+
 	}
-		
-	
+
+
 	NewBindingPosition newPosition(id, former, newp){
 		return new NewBindingPosition(bindingId : id, formerPosition : former, newPosition : newp);
 	}
-	
+
 }

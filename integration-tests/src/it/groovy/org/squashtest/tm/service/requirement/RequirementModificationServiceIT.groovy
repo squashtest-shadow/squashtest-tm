@@ -39,7 +39,7 @@ class RequirementModificationServiceIT extends DbunitServiceSpecification {
 	@Inject
 	RequirementModificationService modService;
 
-	long requirementId = 10
+	long requirementId = -10
 
 	@DataSet("RequirementModificationServiceIT.should successfully rename a requirement.xml")
 	def "should successfully rename a requirement"(){
@@ -53,7 +53,7 @@ class RequirementModificationServiceIT extends DbunitServiceSpecification {
 		rereq.id != null
 		rereq.name == "new req"
 
-		
+
 	}
 
 	@DataSet("RequirementModificationServiceIT.should change requirement criticality.xml")
@@ -65,7 +65,7 @@ class RequirementModificationServiceIT extends DbunitServiceSpecification {
 		then:
 		requirement.criticality == RequirementCriticality.CRITICAL
 	}
-	
+
 	@DataSet("RequirementModificationServiceIT.should change requirement category.xml")
 	def "should change requirement category"(){
 		when:

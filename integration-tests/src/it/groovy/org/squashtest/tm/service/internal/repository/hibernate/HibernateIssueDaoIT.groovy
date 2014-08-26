@@ -32,14 +32,20 @@ import spock.unitils.UnitilsSupport
 @UnitilsSupport
 class HibernateIssueDaoIT extends DbunitDaoSpecification {
 	@Inject IssueDao issueDao
-	
-	
+
+
 	def expected(issue, ppt){
-		def b1 = issue.issueList.id = ppt[0] 
-		def b2 = issue.remoteIssueId == ppt[1] 
-		def b3 = issue.id == ppt[2] 
-		def b4 = (ppt[3] != null) ? (issue.bugtracker.id == ppt[3]) : true
-		return b1 && b2 && b3 && b4
+		assert issue.issueList.id == ppt[0]
+		assert issue.remoteIssueId == ppt[1]
+		assert issue.id == ppt[2]
+		if (ppt[3] != null) {
+			assert issue.bugtracker.id == ppt[3]
+		}
+		//		def b1 = issue.issueList.id = ppt[0]
+		//		def b2 = issue.remoteIssueId == ppt[1]
+		//		def b3 = issue.id == ppt[2]
+		//		def b4 = (ppt[3] != null) ? (issue.bugtracker.id == ppt[3]) : true
+		//		return b1 && b2 && b3 && b4
 	}
 
 	@DataSet("HibernateIssueDaoIT.xml")
@@ -78,13 +84,13 @@ class HibernateIssueDaoIT extends DbunitDaoSpecification {
 
 		then:
 		result.size() <= 2
-		
+
 		def issue1 = result[0]
 		def issue2 = result[1]
-		
+
 		expected (issue1, [-100L, "11", -1L, -1L])
 		expected (issue2, [-1000L, "22", -2L, -1L])
-		
+
 	}
 
 	@DataSet("HibernateIssueDaoIT.xml")
@@ -122,15 +128,15 @@ class HibernateIssueDaoIT extends DbunitDaoSpecification {
 
 		then:
 		result.size() == 3
-		
+
 		def issue1 = result[0]
 		def issue2 = result[1]
 		def issue3 = result[2]
-		
+
 		expected (issue1, [-1000L, "22", -2L, -1L])
 		expected (issue2, [-1011L, "33", -3L, -1L])
 		expected (issue3, [-2010L, "66", -6L, -1L])
-		
+
 	}
 
 	@DataSet("HibernateIssueDaoIT.xml")
@@ -188,11 +194,11 @@ class HibernateIssueDaoIT extends DbunitDaoSpecification {
 
 		then:
 		result.size() == 3
-		
+
 		def issue1 = result[0]
 		def issue2 = result[1]
 		def issue3 = result[2]
-		
+
 		expected (issue1, [-1000L, "22", -2L])
 		expected (issue2, [-1011L, "33", -3L])
 		expected (issue3, [-2010L, "66", -6L])
@@ -229,7 +235,7 @@ class HibernateIssueDaoIT extends DbunitDaoSpecification {
 
 		then :
 		result.size() == 3;
-		result.collect({it.id}).containsAll([-1L, -2L, -3L]);
+		result*.id.containsAll([-1L, -2L, -3L]);
 	}
 
 	@DataSet("HibernateIssueDaoIT.test suite.xml")
@@ -241,9 +247,9 @@ class HibernateIssueDaoIT extends DbunitDaoSpecification {
 
 		then :
 		result.size() == 3;
-		result.collect({it.id}).containsAll([-1L, -2L, -3L]);
+		result*.id.containsAll([-1L, -2L, -3L]);
 	}
-	
+
 	@DataSet("HibernateIssueDaoIT.xml")
 	def "should return execution as issue detector"(){
 		given :
@@ -255,7 +261,7 @@ class HibernateIssueDaoIT extends DbunitDaoSpecification {
 		result != null
 		result.issueListId == -400L
 	}
-	
+
 	@DataSet("HibernateIssueDaoIT.xml")
 	def "should return execution step as issue detector"(){
 		given :

@@ -216,7 +216,7 @@ public class TestAutomationServerManagerServiceIT extends DbunitServiceSpecifica
 		def tmTestId = -13L
 		def taTestId = -12L
 		def executionId = -15L
-		def automatedSuiteId = "16"
+		def automatedSuiteId = "-16"
 		def automatedExecutionExtenderId = -17L
 		when :
 		service.deleteServer(serverId)

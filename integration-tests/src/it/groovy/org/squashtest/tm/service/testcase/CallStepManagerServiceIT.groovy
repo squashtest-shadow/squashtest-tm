@@ -41,13 +41,13 @@ class CallStepManagerServiceIT extends DbunitServiceSpecification {
 
 	@Inject
 	CallStepManagerService callStepService
-	
+
 	@Inject
 	TestCaseModificationService testCaseService;
-	
+
 	@Inject TestCaseCallTreeFinder callTreeFinder
-	
-	
+
+
 	def setupSpec(){
 		Collection.metaClass.matches ={ arg ->
 			delegate.containsAll(arg) && arg.containsAll(delegate)
@@ -57,67 +57,67 @@ class CallStepManagerServiceIT extends DbunitServiceSpecification {
 	@DataSet("CallStepManagerServiceIT.dataset.xml")
 	def "should deny step call creation because the callse and calling test cases are the same"(){
 		given :
-			
+
 		when :
-			callStepService.addCallTestStep(-1L, -1L)	;
-		
+		callStepService.addCallTestStep(-1L, -1L)	;
+
 		then :
-			thrown(CyclicStepCallException);
+		thrown(CyclicStepCallException);
 	}
-	
-	
-	
+
+
+
 	@DataSet("CallStepManagerServiceIT.dataset.xml")
 	def "should deny step call creation because the caller is somewhere in the test case call tree of the called test case"(){
 		given :
-		
+
 		when :
-			callStepService.addCallTestStep(-31L, -1L)
-			
+		callStepService.addCallTestStep(-31L, -1L)
+
 		then :
-			thrown(CyclicStepCallException);
+		thrown(CyclicStepCallException);
 	}
-	
-	
+
+
 	@DataSet("CallStepManagerServiceIT.dataset.xml")
 	def "should successfully create a call step"(){
-		
+
 		given :
-			def expectedTree = [-1L, -11L, -21L, -22L, -31L, -32L]
-			
-			
+		def expectedTree = [-1L, -11L, -21L, -22L, -31L, -32L]
+
+
 		when :
-			callStepService.addCallTestStep(-10L, -1L)
-			def callTree = callTreeFinder.getTestCaseCallTree(-10L)
-			
-		
+		callStepService.addCallTestStep(-10L, -1L)
+		def callTree = callTreeFinder.getTestCaseCallTree(-10L)
+
+
 		then :
-			callTree.matches expectedTree		
-		
+		callTree.matches expectedTree
+
 	}
-	
+
 	@DataSet("CallStepManagerServiceIT.dataset.xml")
 	def "should throw CyclicStepCallException because the destination test case is somewhere in the test case call tree of the pasted steps"(){
 		given :
-			def pastedStepsIds = ['11','1000', '101'] as String[]
-			def destinationTestCaseid = -32L
+		def pastedStepsIds = ['-11','-1000', '-101'] as String[]
+		def destinationTestCaseid = -32L
 		when :
-			callStepService.checkForCyclicStepCallBeforePaste(destinationTestCaseid, pastedStepsIds)
-			
+		callStepService.checkForCyclicStepCallBeforePaste(destinationTestCaseid, pastedStepsIds)
+
 		then :
-			thrown(CyclicStepCallException);
+		thrown(CyclicStepCallException);
 	}
-	
+
 	@DataSet("CallStepManagerServiceIT.dataset.xml")
 	def "should throw CyclicStepCallException because the destination test case is called by one of the pasted steps"(){
 		given :
-			def pastedStepsIds = ['32','1000'] as String[]
-			def destinationTestCaseid = -32L
+		def pastedStepsIds = ['-32','-1000'] as String[]
+		def destinationTestCaseid = -32L
 		when :
-			callStepService.checkForCyclicStepCallBeforePaste(destinationTestCaseid, pastedStepsIds)
-			
+		callStepService.checkForCyclicStepCallBeforePaste(destinationTestCaseid, pastedStepsIds)
+
 		then :
-			thrown(CyclicStepCallException);
+		thrown(CyclicStepCallException);
 	}
 
 

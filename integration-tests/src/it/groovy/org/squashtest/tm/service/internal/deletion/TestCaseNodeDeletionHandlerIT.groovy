@@ -73,7 +73,7 @@ public class TestCaseNodeDeletionHandlerIT extends DbunitServiceSpecification {
 		def result = deletionHandler.deleteNodes([-11L]);
 
 		then :
-		result.removed.collect{it.resid} == [-11L]
+		result.removed*.resid.containsAll([-11L])
 
 		! found(TestCase.class, -11L)
 		! found(TestStep.class, -111L)
@@ -96,7 +96,7 @@ public class TestCaseNodeDeletionHandlerIT extends DbunitServiceSpecification {
 		def result = deletionHandler.deleteNodes([-1L]);
 
 		then :
-		result.removed.collect{it.resid} == [-11L]
+		result.removed*.resid.containsAll([-11L])
 		found (TestCaseFolder.class, -1L)
 		found (TestCase.class, -12L)			//that one is the test case called by the external caller test case
 		! found (TestCase.class, -11L)

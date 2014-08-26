@@ -91,8 +91,8 @@ class GenericProjectDaoIT extends DbunitDaoSpecification {
 
 		where:
 		name       | count
-		"whatever" | -0L
-		"ONE"      | -1L
+		"whatever" | 0
+		"ONE"      | 1
 	}
 
 	@DataSet("GenericProjectDaoIT.xml")

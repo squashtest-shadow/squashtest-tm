@@ -39,21 +39,21 @@ import spock.unitils.UnitilsSupport
 @Transactional
 class HibernateTestSuiteDaoIT extends DbunitDaoSpecification {
 	@Inject TestSuiteDao testSuiteDao
-	
+
 	@DataSet("HibernateTestSuiteDaoIT.should find testplanitems given the test suite id.xml")
 	def "should retrieve the list of test plan items associated with a test suite"(){
 
 		given :
-//		we associate the last test case to the test suite via an iteration test plan item
+		//		we associate the last test case to the test suite via an iteration test plan item
 		String sql = "insert into TEST_SUITE_TEST_PLAN_ITEM ( TPI_ID , SUITE_ID , TEST_PLAN_ORDER ) values ( :test_plan_id , :test_suite_id , :order )";
-		
+
 		Query query = getSession().createSQLQuery(sql);
-		query.setParameter("test_suite_id", 1);
-		query.setParameter("test_plan_id", 5);
+		query.setParameter("test_suite_id", -1);
+		query.setParameter("test_plan_id", -5);
 		query.setParameter("order", 1);
 		query.executeUpdate();
 		getSession().flush();
-		
+
 		and :
 		Paging paging = Mock()
 		paging.getFirstItemIndex() >> 0
@@ -63,28 +63,28 @@ class HibernateTestSuiteDaoIT extends DbunitDaoSpecification {
 		List<IterationTestPlanItem> listTPI1 = testSuiteDao.findAllTestPlanItemsPaged (-1L, paging)
 		List<IterationTestPlanItem> listTPI2 = testSuiteDao.findAllTestPlanItemsPaged (-2L, paging)
 
-		then :	
+		then :
 		listTPI1.size()==4
-		listTPI1.collect { it.id } == [2, 5, 6, 9]
+		listTPI1*.id.containsAll([-2L, -5L, -6L, -9L])
 		listTPI2.size()==6
-		listTPI2.collect { it.id } == [3, 4, 7, 8, 10, 11]
+		listTPI2*.id.containsAll([-3L, -4L, -7L, -8L, -10L, -11L])
 	}
-	
+
 	@DataSet("HibernateTestSuiteDaoIT.should return list of executions.xml")
 	def "should return list of executions"(){
 		when:
 		def result = testSuiteDao.findAllExecutionByTestSuite(-2L)
-		
+
 		then:
 		result.size() == 3
 		result.each {it.name == "testSuite2-execution"}
 	}
-	
+
 	@DataSet("HibernateTestSuiteDaoIT.should find test suite statistics.xml")
 	def "should find test suite statistics DONE"(){
 		when:
 		TestPlanStatistics result = testSuiteDao.getTestSuiteStatistics(-1L)
-		
+
 		then:
 		result != null
 		result.nbBlocked == 1
@@ -98,12 +98,12 @@ class HibernateTestSuiteDaoIT extends DbunitDaoSpecification {
 		result.nbFailure == 1
 		result.status == TestPlanStatus.DONE
 	}
-	
+
 	@DataSet("HibernateTestSuiteDaoIT.should find test suite statistics.xml")
 	def "should find test suite statistics READY"(){
 		when:
 		TestPlanStatistics result = testSuiteDao.getTestSuiteStatistics(-2L)
-		
+
 		then:
 		result != null
 		result.nbBlocked == 0
@@ -117,67 +117,67 @@ class HibernateTestSuiteDaoIT extends DbunitDaoSpecification {
 		result.nbFailure == 0
 		result.status == TestPlanStatus.READY
 	}
-	
+
 	@DataSet("HibernateTestSuiteDaoIT.should find testplanitems given the test suite id.xml")
 	def "should find test suite statistics RUNNING"(){
 
 		given :
-	//		we associate the last test case to the test suite via an iteration test plan item
-			String sql = "insert into TEST_SUITE_TEST_PLAN_ITEM ( TPI_ID , SUITE_ID , TEST_PLAN_ORDER ) values ( :test_plan_id , :test_suite_id , :order )";
-			Query query = getSession().createSQLQuery(sql);
-			query.setParameter("test_suite_id", 1);
-			query.setParameter("test_plan_id", 5);
-			query.setParameter("order", 1);
-			query.executeUpdate();
-			getSession().flush();
+		//		we associate the last test case to the test suite via an iteration test plan item
+		String sql = "insert into TEST_SUITE_TEST_PLAN_ITEM ( TPI_ID , SUITE_ID , TEST_PLAN_ORDER ) values ( :test_plan_id , :test_suite_id , :order )";
+		Query query = getSession().createSQLQuery(sql);
+		query.setParameter("test_suite_id", -1);
+		query.setParameter("test_plan_id", -5);
+		query.setParameter("order", 1);
+		query.executeUpdate();
+		getSession().flush();
 
 		when :
-			TestPlanStatistics stats1 = testSuiteDao.getTestSuiteStatistics(-1L)
-			TestPlanStatistics stats2 = testSuiteDao.getTestSuiteStatistics(-2L)
+		TestPlanStatistics stats1 = testSuiteDao.getTestSuiteStatistics(-1L)
+		TestPlanStatistics stats2 = testSuiteDao.getTestSuiteStatistics(-2L)
 
 		then :
-			stats1.getNbTestCases() == -4L
-			stats1.getNbBlocked() == 1
-			stats1.getNbDone() == 1
-			stats1.getNbFailure() == 0
-			stats1.getNbReady() == 1
-			stats1.getNbRunning() == 2
-			stats1.getNbSuccess() == 0
-			stats1.getStatus() == TestPlanStatus.RUNNING
-			
-			stats2.getNbTestCases() == -6L
-			stats2.getNbBlocked() == 1
-			stats2.getNbDone() == 5
-			stats2.getNbFailure() == 2
-			stats2.getNbReady() == 1
-			stats2.getNbRunning() == 0
-			stats2.getNbSuccess() == 2
-			stats2.getStatus() == TestPlanStatus.RUNNING
+		stats1.getNbTestCases() == 4
+		stats1.getNbBlocked() == 1
+		stats1.getNbDone() == 1
+		stats1.getNbFailure() == 0
+		stats1.getNbReady() == 1
+		stats1.getNbRunning() == 2
+		stats1.getNbSuccess() == 0
+		stats1.getStatus() == TestPlanStatus.RUNNING
+
+		stats2.getNbTestCases() == 6
+		stats2.getNbBlocked() == 1
+		stats2.getNbDone() == 5
+		stats2.getNbFailure() == 2
+		stats2.getNbReady() == 1
+		stats2.getNbRunning() == 0
+		stats2.getNbSuccess() == 2
+		stats2.getStatus() == TestPlanStatus.RUNNING
 	}
-	
+
 	@DataSet ("HibernateTestSuiteDaoIT.should find project id.xml")
 	def "should find project id"(){
-		given : 
+		given :
 		def suiteid = -20L
-		
+
 		when :
 		def projectId = testSuiteDao.findProjectIdBySuiteId(suiteid);
-		
+
 		then :
 		projectId == -2L;
 	}
-	
+
 	@DataSet("HibernateTestSuiteDaoIT.should find test case ids.xml")
 	def "should find test cases ids"(){
 		given :
 		def suiteId = -1L
-		
-		when : 
+
+		when :
 		def result = testSuiteDao.findPlannedTestCasesIds(suiteId)
-		
-		then : 
+
+		then :
 		result.size() == 2;
 		result.containsAll([-1L, -2L]);
 	}
-	
+
 }

@@ -56,7 +56,7 @@ class HibernateTestCaseDaoIT extends DbunitDaoSpecification {
 	def setupSpec() {
 		List.metaClass.containsSameIdentifiers << { ids ->
 			assert delegate.size() == ids.size()
-			assert (delegate.collect { it.id }).containsAll(ids)
+			assert (delegate*.id).containsAll(ids)
 			true
 		}
 
@@ -72,10 +72,11 @@ class HibernateTestCaseDaoIT extends DbunitDaoSpecification {
 		filter.pageSize >> 2
 
 		when:
-		def steps = testCaseDao.findAllStepsByIdFiltered(10, filter)
+		def steps = testCaseDao.findAllStepsByIdFiltered(-10, filter)
 
 		then:
-		steps.collect { it.id } == [200, 300]
+		steps.size() == 2
+		steps*.id.containsAll([-200L, -300L])
 	}
 
 	@DataSet("HibernateTestCaseDaoIT.should count calling test steps.xml")
@@ -176,8 +177,8 @@ class HibernateTestCaseDaoIT extends DbunitDaoSpecification {
 		def testCaseList = testCaseDao.findAllCallingTestCases(-100L, sorting);
 
 		then :
-		testCaseList.collect{it.id} == resultIds
-		testCaseList.collect{it.name} == resultNames
+		testCaseList*.id == resultIds
+		testCaseList*.name == resultNames
 	}
 
 
@@ -496,15 +497,16 @@ class HibernateTestCaseDaoIT extends DbunitDaoSpecification {
 		def result = testCaseDao.findBySearchCriteria(criteria)
 
 		then :
-		result.collect{it.id} == [ 211,121,  112, 221, 212, 111 ]
-		result.collect{it.name} == [
+		result*.id.containsAll([ -211L,-121L, - 112L, -221L, -212L, -111L ])
+		result*.name.containsAll([
 			"aaa project Ed test case 1",
 			"aaa project Ion folder 1",
 			"aaa project Ion test case 2",
 			"bbb project Ed folder 1",
 			"bbb project Ed test case 2",
 			"bbb project Ion test case 1"
-		]
+		])
+		result.size() == 6
 	}
 
 
@@ -528,15 +530,16 @@ class HibernateTestCaseDaoIT extends DbunitDaoSpecification {
 		def result = testCaseDao.findBySearchCriteria(criteria)
 
 		then :
-		result.collect{it.id} == [ 121, 112, 111, 211, 221, 212]
-		result.collect{it.name} == [
+		result*.id.containsAll([ -121L, -112L, -111L, -211L, -221L, -212L])
+		result*.name.containsAll([
 			"aaa project Ion folder 1",
 			"aaa project Ion test case 2",
 			"bbb project Ion test case 1",
 			"aaa project Ed test case 1",
 			"bbb project Ed folder 1",
 			"bbb project Ed test case 2",
-		]
+		])
+		result.size() == 6
 	}
 
 	@DataSet("HibernateTestCaseDaoIT.search-by-criteria-setup.xml")
@@ -559,10 +562,11 @@ class HibernateTestCaseDaoIT extends DbunitDaoSpecification {
 
 		then :
 
-		result.collect{it.id} == [ 112, 212 ]
-		result.collect{it.name} == [
+		result.size() == 2
+		result*.id.containsAll([ -112L, -212L ])
+		result*.name.containsAll([
 			"aaa project Ion test case 2", "bbb project Ed test case 2"
-		]
+		])
 
 	}
 
@@ -614,7 +618,7 @@ class HibernateTestCaseDaoIT extends DbunitDaoSpecification {
 	def "should find tc imp w impAuto"(){
 		given : def testIds = [-1L, -2L, -3L, -4L]
 		when : Map<Long, TestCaseImportance> result = testCaseDao.findAllTestCaseImportanceWithImportanceAuto(testIds)
-		then : result.size() == -2L
+		then : result.size() == 2
 		result.containsKey(-1L)
 		result.containsKey(-3L)
 		result.get(-1L) == TestCaseImportance.LOW

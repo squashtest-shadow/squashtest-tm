@@ -35,86 +35,86 @@ import org.squashtest.tm.domain.execution.ExecutionStatus;
 @UnitilsSupport
 class HibernateExecutionDaoIT extends DbunitDaoSpecification {
 	@Inject ExecutionDao executionDao
-	
+
 	@DataSet("HibernateExecutionDaoIT.should find executions by test case.xml")
 	@Unroll("should count #expectedCount executions for test case #testCaseId")
 	def "should count #expectedCount executions for test case #testCaseId"() {
-		when: 
+		when:
 		def count = executionDao.countByTestCaseId(testCaseId)
-		
+
 		then:
 		count == expectedCount
-		
-		where: 
-		testCaseId | expectedCount
-		500        | 11
-		550        | 0
-		 
+
+		where:
+		testCaseId  | expectedCount
+		-500        | 11
+		-550        | 0
+
 	}
-	
+
 	@DataSet("HibernateExecutionDaoIT.should find executions by test case.xml")
 	def "should find 5 paged executions for test case 500"() {
-		given: 
+		given:
 		PagingAndSorting pas = Mock()
 		pas.firstItemIndex >> 1
 		pas.pageSize >> 5
 		pas.sortedAttribute >> "Execution.lastExecutedOn"
 		pas.sortOrder >> SortOrder.ASCENDING
-		
-		when: 
+
+		when:
 		def res = executionDao.findAllByTestCaseId(-500L, pas)
-		
+
 		then:
-		res*.id == [580, 627, 718, 752, 953]
-		
+		res*.id == [-580, -627, -718, -752, -953]
+
 	}
-	
-	
+
+
 	@DataSet("HibernateExecutionDaoIT.should find executions by test case.xml")
 	@Unroll("should find executions #expectedIds sorted by #sortedAttribute")
 	def "should find executions sorted by .."() {
-		given: 
+		given:
 		PagingAndSorting pas = Mock()
 		pas.firstItemIndex >> 0
 		pas.pageSize >> expectedIds.size()
 		pas.sortedAttribute >> sortedAttribute
 		pas.sortOrder >> sortOrder
-		
-		when: 
+
+		when:
 		def res = executionDao.findAllByTestCaseId(-500L, pas)
-		
+
 		then:
 		res*.id == expectedIds
-		
+
 		where:
 		sortedAttribute             | sortOrder            | expectedIds
-//		"Project.name"              | SortOrder.ASCENDING  | [494, 580, 627] // dataset too complex, cannot manage to have the test work
-		"Campaign.name"             | SortOrder.ASCENDING  | [718, 494, 580] // null, camp a, camp b */
-		"Iteration.name"            | SortOrder.ASCENDING  | [718, 494, 580]
-		"Execution.name"            | SortOrder.ASCENDING  | [494, 580, 627]
-		"Execution.executionMode"   | SortOrder.ASCENDING  | [627, 718]
-		"Execution.executionStatus" | SortOrder.ASCENDING  | [953, 1110, 1556]
-		"Execution.lastExecutedBy"  | SortOrder.ASCENDING  | [2150, 2562, 2971]
-		"Execution.lastExecutedOn"  | SortOrder.ASCENDING  | [494, 580, 627] 
+		//		"Project.name"              | SortOrder.ASCENDING  | [-494, -580, -627] // dataset too complex, cannot manage to have the test work
+		"Campaign.name"             | SortOrder.ASCENDING  | [-718, -494, -580] // null, camp a, camp b */
+		"Iteration.name"            | SortOrder.ASCENDING  | [-718, -494, -580]
+		"Execution.name"            | SortOrder.ASCENDING  | [-494, -580, -627]
+		"Execution.executionMode"   | SortOrder.ASCENDING  | [-627, -718]
+		"Execution.executionStatus" | SortOrder.ASCENDING  | [-953, -1110, -1556]
+		"Execution.lastExecutedBy"  | SortOrder.ASCENDING  | [-2150, -2562, -2971]
+		"Execution.lastExecutedOn"  | SortOrder.ASCENDING  | [-494, -580, -627]
 	}
-	
-	
+
+
 	@DataSet("HibernateExecutionDaoIT.should find if project uses exec status.xml")
 	@Unroll("should find if project #projectId uses exec status #execStatus")
 	def"should find if project uses exec status"(){
 		when:
 		def res = executionDao.projectUsesExecutionStatus(projectId, execStatus)
-		
-		then : 
+
+		then :
 		res == expectedResult
-		
+
 		where :
-		projectId | execStatus                  | expectedResult
-		1         | ExecutionStatus.SETTLED  	| true // in execution step
-		1         | ExecutionStatus.UNTESTABLE	| true // in iteration test plan item
-		2		  | ExecutionStatus.UNTESTABLE  | false 
-		2         | ExecutionStatus.SETTLED 	| true // in iteration test plan
-		
-		
+		projectId  | execStatus                  | expectedResult
+		-1         | ExecutionStatus.SETTLED  	 | true // in execution step
+		-1         | ExecutionStatus.UNTESTABLE	 | true // in iteration test plan item
+		-2		   | ExecutionStatus.UNTESTABLE  | false
+		-2         | ExecutionStatus.SETTLED 	 | true // in iteration test plan
+
+
 	}
 }

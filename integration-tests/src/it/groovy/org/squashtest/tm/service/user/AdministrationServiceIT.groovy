@@ -49,17 +49,17 @@ class AdministrationServiceIT extends DbunitServiceSpecification {
 
 	@Inject
 	AdministrationService service
-	
+
 	@DataSet("UserModificationServiceIT.should deassociate user to team.xml")
 	@ExpectedDataSet("UserModificationServiceIT.should deassociate user to team result.xml")
 	def "should deassociate user to team"(){
 		given : "the dataset"
-		when : 
+		when :
 		service.deassociateTeams(-20L, new ArrayList<Long>([-10L]))
 		then : "expected dataset is verified"
 		getSession().flush();
 	}
-	
+
 	@DataSet("UserModificationServiceIT.should associate user to team.xml")
 	@ExpectedDataSet("UserModificationServiceIT.should associate user to team result.xml")
 	def "should associate user to team"(){
@@ -69,7 +69,7 @@ class AdministrationServiceIT extends DbunitServiceSpecification {
 		then : "expected dataset is verified"
 		getSession().flush();
 	}
-	
+
 	@DataSet("UserModificationServiceIT.should find non associated teams.xml")
 	def "should find non associated teams"(){
 		given : "the dataset"
@@ -80,7 +80,7 @@ class AdministrationServiceIT extends DbunitServiceSpecification {
 		result.find({it.id == -12L}) != null
 		result.find({it.id == -11L}) != null
 	}
-	
+
 	@DataSet("UserModificationServiceIT.should find sorted associated teams.xml")
 	def "should find sorted associated teams"(){
 		given : "the dataset , a paging"
@@ -88,25 +88,26 @@ class AdministrationServiceIT extends DbunitServiceSpecification {
 		paging.firstItemIndex >> start
 		paging.pageSize >> pageSize
 		paging.sortedAttribute >> sortAttr
-		paging.sortOrder >> sortOrder 
+		paging.sortOrder >> sortOrder
 		and :"a filtering"
 		Filtering filtering = Mock()
 		filtering.filter >> filter
 		filtering.isDefined()>> filterDefined
-		
+
 		when :
 		PagedCollectionHolder<List<Team>> result = service.findSortedAssociatedTeams(-20L, paging, filtering)
-		
+
 		then :
-		result.items*.name == expected
-		
-		where : 
+		result.items.size() == expected.size()
+		result.items*.name.containsAll(expected)
+
+		where :
 		start | pageSize | sortAttr | sortOrder  | filterDefined |filter | expected
 		0     | 4        | "id"     | ASCENDING  |     false     | ""    |["ONE", "TWO", "THREE", "FIVE"]
 		0     | 4        | "name"   | DESCENDING |     false     | ""    |["TWO", "THREE", "TEN", "SIX"]
 		0     | 4        | "name"   | ASCENDING  |     true      | "T"   |["EIGHT","TEN", "THREE", "TWO"]
 		0     | 2        | "id"     | ASCENDING  |     false     | ""    |["ONE", "TWO"]
 		2     | 4        | "id"     | ASCENDING  |     false     | ""    |["THREE", "FIVE", "SIX", "SEVEN"]
-		}
-	
+	}
+
 }

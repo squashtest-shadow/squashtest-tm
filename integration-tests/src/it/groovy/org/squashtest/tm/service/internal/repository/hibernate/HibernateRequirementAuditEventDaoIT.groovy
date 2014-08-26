@@ -183,7 +183,7 @@ class HibernateRequirementAuditEventDaoIT extends DbunitDaoSpecification {
 		List<RequirementAuditEvent> events = eventDao.findAllByRequirementVersionIdOrderedByDate(requirementId, paging);
 
 		then :
-		events.collect { it.id } == [ -12L, -14L ]
+		events*.id.containsAll([ -12L, -14L ])
 	}
 
 	@DataSet("HibernateRequirementAuditEventDaoIT.should fetch lists of events.xml")

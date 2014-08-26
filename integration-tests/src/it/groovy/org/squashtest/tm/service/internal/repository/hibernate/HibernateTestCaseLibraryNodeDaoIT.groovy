@@ -162,7 +162,7 @@ class HibernateTestCaseLibraryNodeDaoIT extends DbunitServiceSpecification {
 		def res = dao.findNodesByPath(tclnpaths)
 
 		then :
-		res.collect{ it.id } == [-237L,-252L]
+		res*.id.containsAll([-237L,-252L])
 	}
 
 

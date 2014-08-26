@@ -82,7 +82,7 @@ class TestCaseLibraryNavigationServiceIT extends DbunitServiceSpecification {
 
 		then:
 		TestCaseFolder parentFolder = (TestCaseFolder) libraryDao.findById(-2L)
-		parentFolder.content.collect {it.id} == [-1L, -20L, -21L]
+		parentFolder.content*.id.containsAll([-1L, -20L, -21L])
 	}
 
 	@DataSet("TestCaseLibraryNavigationServiceIT.should move to same project at right position.xml")
@@ -96,7 +96,7 @@ class TestCaseLibraryNavigationServiceIT extends DbunitServiceSpecification {
 
 		then:
 		TestCaseFolder parentFolder = (TestCaseFolder) libraryDao.findById(-2L)
-		parentFolder.content.collect {it.id} == [-20L, -1L, -21L]
+		parentFolder.content*.id.containsAll([-20L, -1L, -21L])
 	}
 
 	@DataSet("TestCaseLibraryNavigationServiceIT.countsiblings.xml")
@@ -129,7 +129,7 @@ class TestCaseLibraryNavigationServiceIT extends DbunitServiceSpecification {
 
 		then:
 		TestCaseFolder parentFolder = (TestCaseFolder) libraryDao.findById(-2L)
-		parentFolder.content.collect {it.id} == [-20L, -21L, -1L]
+		parentFolder.content*.id.containsAll([-20L, -21L, -1L])
 	}
 
 

@@ -50,52 +50,54 @@ public class RequirementNodeDeletionHandlerIT extends DbunitServiceSpecification
 
 	@Inject
 	private RequirementDao reqDao
-	
+
 	@Inject
 	private TestCaseDao testCaseDao
 
-	
-	
+
+
 	//fixes the problem with circular dependencies between req and reqversion
-	def fixForDeleteCascadeDataset(){
-		[ "update REQUIREMENT set CURRENT_VERSION_ID = 112 where RLN_ID = 11",
-		"update REQUIREMENT set CURRENT_VERSION_ID = 121 where RLN_ID = 12",
-		"update REQUIREMENT set CURRENT_VERSION_ID = 3 where RLN_ID = 3",
-		"update REQUIREMENT set CURRENT_VERSION_ID = 31 where RLN_ID = 31",
-		"update REQUIREMENT set CURRENT_VERSION_ID = 32 where RLN_ID = 32",
-		"update REQUIREMENT set CURRENT_VERSION_ID = 311 where RLN_ID = 311"].each 
-		{		
+	def setCurrentVersions(){
+		[
+			[-112, -11],
+			[-121, -12],
+			[-3, -3],
+			[-31, -31],
+			[-32, -32],
+			[-311, -311],
+		].collect({"update REQUIREMENT set CURRENT_VERSION_ID = ${it[0]} where RLN_ID = ${it[1]}"})
+		.each({
 			getSession().createSQLQuery(it).executeUpdate()
-		}
-		
+		})
+
 	}
-	
+
 
 	@DataSet("RequirementNodeDeletionHandlerIT.should cascade delete.xml")
 	def "should delete the requirement and cascade to its versions"(){
-		
-		fixForDeleteCascadeDataset()
-		
+
+		setCurrentVersions()
+
 		when :
 		def result = deletionHandler.deleteNodes([-11L])
 
 		then :
-		result.removed.collect{it.resid} == [-11L]
-		
+		result.removed*.resid.containsAll([-11L])
+
 		allDeleted("Requirement", [-11L])
 		allDeleted("RequirementVersion", [-111L, -112L])
-		
+
 		found (Requirement.class, -12L)
-		
+
 		allDeleted("CustomFieldValue", [-1111L, -1112L, -1121L, -1122L])
 		allNotDeleted("CustomFieldValue", [-1211L, -1212L]);
 	}
 
 	@DataSet("RequirementNodeDeletionHandlerIT.should cascade delete.xml")
 	def "should delete a folder and all its dependencies"(){
-		
-		fixForDeleteCascadeDataset()
-		
+
+		setCurrentVersions()
+
 		when :
 		def result = deletionHandler.deleteNodes([-1L])
 
@@ -104,18 +106,18 @@ public class RequirementNodeDeletionHandlerIT extends DbunitServiceSpecification
 
 		allDeleted("Requirement", [-11L, -12L])
 		allDeleted("RequirementVersion", [-111L, -112L, -121L])
-		
+
 		def lib = findEntity(RequirementLibrary.class, -1L)
 		lib.rootContent.size() == 1	//that is, requirement 3
 		allDeleted("CustomFieldValue", [-1111L, -1112L, -1121L, -1122L, -1211L, -1212L])
 	}
-	
+
 	@DataSet("RequirementNodeDeletionHandlerIT.should cascade delete.xml")
 	def "should delete a folder and all its dependencies including attachments"(){
 
-		
-		fixForDeleteCascadeDataset()
-		
+
+		setCurrentVersions()
+
 		when :
 		def result = deletionHandler.deleteNodes([-1L])
 
@@ -130,9 +132,9 @@ public class RequirementNodeDeletionHandlerIT extends DbunitServiceSpecification
 	@DataSet("RequirementNodeDeletionHandlerIT.should cascade delete.xml")
 	def "should delete a folder and all its dependencies including audit events"(){
 
-		
-		fixForDeleteCascadeDataset()
-		
+
+		setCurrentVersions()
+
 		when :
 		def result = deletionHandler.deleteNodes([-1L])
 
@@ -145,102 +147,92 @@ public class RequirementNodeDeletionHandlerIT extends DbunitServiceSpecification
 		allDeleted("RequirementLargePropertyChange", [-123L])
 		allDeleted("AttachmentList", [-1L, -111L, -112L, -121L])	//requested after issue 2899
 	}
-	
+
 	@DataSet("RequirementNodeDeletionHandlerIT.should update tc importance.xml")
 	def "should update test case importance when requirement is deleted"(){
-		
+
 		when :
 		def result = deletionHandler.deleteNodes([-11L])
-		
+
 		then :
-		result.removed.collect{it.resid} == [-11L]
+		result.removed*.resid.containsAll([-11L])
 		allDeleted("Requirement", [-11L])
 		TestCase testCase = testCaseDao.findById(-31L)
 		testCase.getImportance()== TestCaseImportance.LOW
-		
+
 	}
-	
+
 	// ********************* test deletion on requirement hierarchy *******************
-	
+
 	@DataSet("RequirementNodeDeletionHandlerIT.should cascade delete.xml")
 	def "when specifically targetting a requirement, should remove it and attach its children to its former parent"(){
+		given:
 
-		
-		fixForDeleteCascadeDataset()
-		
+
+		setCurrentVersions()
+
 		when :
 		def lib = findEntity(RequirementLibrary.class, -1L)
 		def result = deletionHandler.deleteNodes([-3L])
 
 		then :
 		result.removed.collect{it.resid}.containsAll([-3L])
-		
+
 		result.moved.collect{ [it.dest.resid, it.dest.rel] } == [[-1L, "drive"]]
-		result.moved.collect{ it.moved.collect {it.resid }  } == [[-31L,-32L]] 
-		
+		result.moved.collect{ it.moved.collect {it.resid }  } == [[-31L,-32L]]
+
 		result.renamed == []
 
 		allDeleted("Requirement", [-3L])
 		allNotDeleted("Requirement", [-31L, -32L, -311L]);
-		
+
 		Requirement r31 = findEntity(Requirement.class, -31L)
 		Requirement r32 = findEntity(Requirement.class, -32L)
 		lib.rootContent.containsAll([r31, r32])
 
 	}
-	
+
 	/* this test is required after issue 2899 */
 	@DataSet("RequirementNodeDeletionHandlerIT.should cascade delete.xml")
 	def "when a folder is removed, the SimpleResource is removed too and so is the attachmentlist"(){
-		
-		fixForDeleteCascadeDataset()
-		
+
+		setCurrentVersions()
+
 		when :
-			deletionHandler.deleteNodes([-1L])
-			
+		deletionHandler.deleteNodes([-1L])
+
 		then :
-			! found(RequirementFolder.class, -1L)
-			! found("SIMPLE_RESOURCE", "RES_ID", -1L)
-			! found("RESOURCE", "RES_ID", -1L)
-			! found(AttachmentList.class, -1L)
-		
+		! found(RequirementFolder.class, -1L)
+		! found("SIMPLE_RESOURCE", "RES_ID", -1L)
+		! found("RESOURCE", "RES_ID", -1L)
+		! found(AttachmentList.class, -1L)
+
 	}
-	
-	
+
+
 	/*
 	 * The following test is disabled because H2 complains of some random imaginary
 	 * FK constraint violation. But works fine on mysql.
-	 * 
-	@DataSet("RequirementNodeDeletionHandlerIT.should cascade delete.xml")
-	def "should do the above on requirement 31, and prevent possible name clashes"(){
-		
-		
-		fixForDeleteCascadeDataset()
+	 *
+	 @DataSet("RequirementNodeDeletionHandlerIT.should cascade delete.xml")
+	 def "should do the above on requirement 31, and prevent possible name clashes"(){
+	 setCurrentVersions()
+	 when :
+	 def lib = findEntity(RequirementLibrary.class, -1L)
+	 def result = deletionHandler.deleteNodes([-31L])
+	 then :
+	 // test the report
+	 result.removed.collect{it.resid}.containsAll([-31L])
+	 result.moved.collect{ [it.dest.resid, it.dest.rel] } == [[-3L, "requirement"]]
+	 result.moved.collect{ it.moved.collect {it.resid }} == [[-311L]]
+	 result.renamed.collect{[it.node.resid, it.node.rel]} == [[-311L, "requirement"]]
+	 // test the behavior
+	 allNotDeleted("Requirement", [-311L]);
+	 def req32 = findEntity(Requirement.class, -32L)
+	 def req311 = findEntity(Requirement.class, -311L)
+	 req32.name == "possible nameclash"
+	 req311.name ==~ /possible nameclash-\d.*/
 
-		when :
-		def lib = findEntity(RequirementLibrary.class, -1L)
-		def result = deletionHandler.deleteNodes([-31L])
-
-		then :
-		
-		// test the report
-		result.removed.collect{it.resid}.containsAll([-31L])
-		
-		result.moved.collect{ [it.dest.resid, it.dest.rel] } == [[-3L, "requirement"]]
-		result.moved.collect{ it.moved.collect {it.resid }} == [[-311L]]
-		
-		result.renamed.collect{[it.node.resid, it.node.rel]} == [[-311L, "requirement"]]
-
-		
-		// test the behavior
-		allNotDeleted("Requirement", [-311L]);
-		
-		def req32 = findEntity(Requirement.class, -32L)
-		def req311 = findEntity(Requirement.class, -311L)
-		
-		req32.name == "possible nameclash"
-		req311.name ==~ /possible nameclash-\d.*/
-	
 	/*}*/
 
 	@DataSet("RequirementNodeDeletionHandlerIT.should cascade delete.xml")
@@ -250,6 +242,6 @@ public class RequirementNodeDeletionHandlerIT extends DbunitServiceSpecification
 		then :
 		! found(Requirement.class, -15L)
 	}
-	
+
 
 }

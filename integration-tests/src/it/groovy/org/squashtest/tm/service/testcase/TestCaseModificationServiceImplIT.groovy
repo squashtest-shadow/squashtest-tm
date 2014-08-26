@@ -377,7 +377,7 @@ class TestCaseModificationServiceImplIT extends DbunitServiceSpecification {
 
 		then :
 		obj.steps.size()==2
-		obj.steps.collect {it.action } == ["action1", "action2"]
+		obj.steps*.action.containsAll(["action1", "action2"])
 	}
 
 
@@ -410,7 +410,7 @@ class TestCaseModificationServiceImplIT extends DbunitServiceSpecification {
 
 		then :
 		obj.size()==2
-		obj.collect {it.action } == ["action2", "action4"]
+		obj*.action.containsAll(["action2", "action4"])
 	}
 
 	@DataSet("TestCaseModificationServiceImplIT.should remove automated script link.xml")
