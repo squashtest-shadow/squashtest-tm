@@ -47,7 +47,7 @@ class LookupStrategyConfigIT extends Specification {
 	def "should read acl on an object identity for a user"() {
 		given:
 		ObjectIdentity oid = Mock()
-		oid.identifier >> 1000
+		oid.identifier >> -1000
 		oid.type >> "newspaper.content.Photo"
 
 		and:
@@ -65,7 +65,7 @@ class LookupStrategyConfigIT extends Specification {
 	def "should read no acl on an object identity for a user with no permissions"() {
 		given:
 		ObjectIdentity oid = Mock()
-		oid.identifier >> 1000
+		oid.identifier >> -1000
 		oid.type >> "newspaper.content.Article"
 
 		and:
@@ -79,12 +79,12 @@ class LookupStrategyConfigIT extends Specification {
 		then:
 		acls.size() == 0
 	}
-	
+
 	@DataSet(value="LookupStrategyConfigIT.should read no acl for deactivated user.xml", loadStrategy=DeleteInsertLoadStrategy)
 	def "should read no acl on an object identity for a deactivated user"() {
 		given:
 		ObjectIdentity oid = Mock()
-		oid.identifier >> 1000
+		oid.identifier >> -1000
 		oid.type >> "newspaper.content.Photo"
 
 		and:

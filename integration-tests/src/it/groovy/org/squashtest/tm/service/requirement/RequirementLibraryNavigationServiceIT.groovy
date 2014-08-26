@@ -53,10 +53,10 @@ class RequirementLibraryNavigationServiceIT extends DbunitServiceSpecification {
 
 	@Inject
 	RequirementFolderDao folderDao;
-	
+
 	@Inject
 	private RequirementNodeDeletionHandler deletionHandler;
-	
+
 	private int requirementId = 10
 
 	def setup() {
@@ -68,13 +68,10 @@ class RequirementLibraryNavigationServiceIT extends DbunitServiceSpecification {
 	def "should return all the requirements in a hierarchy given some ids"(){
 
 		given:
-		List<Long> listReq = new ArrayList()
-		listReq.add(-1L)
-		listReq.add(-250L)
+		List<Long> listReq = [-1L, -250L]
 
 		when :
-		def reqs = navService.findRequirementsToExportFromNodes (listReq)
-		println reqs.toString()
+		def reqs = navService.findRequirementsToExportFromNodes(listReq)
 
 		then :
 		reqs != null
@@ -95,8 +92,8 @@ class RequirementLibraryNavigationServiceIT extends DbunitServiceSpecification {
 		export3.name == "req3"
 		export3.folderName == ""
 	}
-	
-	
+
+
 
 	@DataSet("RequirementLibraryNavigationServiceIT.should not copy paste obsolete.xml")
 	def "should not copy paste selection containing obsolete"(){
@@ -170,10 +167,10 @@ class RequirementLibraryNavigationServiceIT extends DbunitServiceSpecification {
 		given :
 		Long[] sourceIds = [-10L]
 		long destinationId = -10L
-		
+
 		when :
 		List<Requirement> result = navService.copyNodesToRequirement(destinationId, sourceIds)
-		
+
 		then:
 		//expected dataset is verified
 		Requirement destination = findEntity(Requirement.class, -10L)
@@ -307,28 +304,28 @@ class RequirementLibraryNavigationServiceIT extends DbunitServiceSpecification {
 
 		return query.list()
 	}
-	
+
 	@DataSet("RequirementLibraryNavigationServiceIT.should remove reqs after move.xml")
 	def "should remove requirement without move 1"(){
 
 		when:
 		deletionHandler.deleteNodes([-10L]);
-		
+
 		then:
 		! found("requirement", "rln_id", -10L);
 	}
-	
+
 	@DataSet("RequirementLibraryNavigationServiceIT.should remove reqs after move.xml")
 	def "should remove requirement without move 2"(){
 
 		when:
 		deletionHandler.deleteNodes([-20L]);
-		
+
 		then:
 		! found("requirement", "rln_id", -20L);
 	}
-	
-	
+
+
 	@DataSet("RequirementLibraryNavigationServiceIT.should remove reqs after move.xml")
 	def "should remove requirement after move 1"(){
 		given:
@@ -336,14 +333,14 @@ class RequirementLibraryNavigationServiceIT extends DbunitServiceSpecification {
 		navService.moveNodesToRequirement(-10L, reqIds);
 		reqIds = [-30L]
 		navService.moveNodesToRequirement(-20L, reqIds);
-		
+
 		when:
 		deletionHandler.deleteNodes([-20L]);
-		
+
 		then:
 		! found("requirement", "rln_id", -20L);
 	}
-	
+
 	@DataSet("RequirementLibraryNavigationServiceIT.should remove reqs after move.xml")
 	def "should remove requirement after move 2"(){
 		given:
@@ -351,56 +348,56 @@ class RequirementLibraryNavigationServiceIT extends DbunitServiceSpecification {
 		navService.moveNodesToRequirement(-20L, reqIds);
 		reqIds = [-30L]
 		navService.moveNodesToRequirement(-10L, reqIds);
-		
+
 		when:
 		deletionHandler.deleteNodes([-10L]);
-		
+
 		then:
 		! found("requirement", "rln_id", -10L);
 	}
-	
+
 	@DataSet("RequirementLibraryNavigationServiceIT.should move to same project at right position.xml")
 	def "should move folder with requirements to the right position - first"(){
 		given:
 		Long[] sourceIds = [-1L]
 		Long destinationId = -2L
-		
+
 		when:
 		navService.moveNodesToFolder(destinationId, sourceIds, 0)
-		
+
 		then:
 		RequirementFolder parentFolder = (RequirementFolder) folderDao.findById(-2L);
 		parentFolder.content*.id.containsAll([-1L, -20L, -21L]);
 	}
-	
+
 	@DataSet("RequirementLibraryNavigationServiceIT.should move to same project at right position.xml")
 	def "should move folder with requirements to the right position - middle"(){
 		given:
 		Long[] sourceIds = [-1L]
 		Long destinationId = -2L
-		
+
 		when:
 		navService.moveNodesToFolder(destinationId, sourceIds, 1)
-		
+
 		then:
 		RequirementFolder parentFolder = (RequirementFolder) folderDao.findById(-2L);
 		parentFolder.content*.id.containsAll([-20L, -1L, -21L]);
 	}
-	
+
 	@DataSet("RequirementLibraryNavigationServiceIT.should move to same project at right position.xml")
 	def "should move folder with requirements to the right position - last"(){
 		given:
 		Long[] sourceIds = [-1L]
 		Long destinationId = -2L
-		
+
 		when:
 		navService.moveNodesToFolder(destinationId, sourceIds, 2)
-		
+
 		then:
 		RequirementFolder parentFolder = (RequirementFolder) folderDao.findById(-2L);
 		parentFolder.content*.id.containsAll([-20L, -21L, -1L]);
 	}
-	
+
 
 }
 

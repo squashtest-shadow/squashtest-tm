@@ -198,7 +198,7 @@ class DerivedPermissionsManagerIT extends DbunitServiceSpecification {
 
 		then :
 		executeSQL(""" select PARTY_ID from CORE_PARTY_AUTHORITY
-						where AUTHORITY='ROLE_TM_PROJECT_MANAGER' """).contains -34L
+						where AUTHORITY='ROLE_TM_PROJECT_MANAGER' """).containsAll([-34L])
 	}
 
 	@DataSet("DerivedPermissionsManagerIT.setup.xml")

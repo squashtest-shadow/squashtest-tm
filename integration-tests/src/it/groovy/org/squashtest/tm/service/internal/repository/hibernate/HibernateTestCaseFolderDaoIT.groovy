@@ -41,9 +41,9 @@ import spock.unitils.UnitilsSupport;
 @UnitilsSupport
 @Transactional
 class HibernateTestCaseFolderDaoIT  extends DbunitServiceSpecification{
-	
+
 	@Inject TestCaseFolderDao dao
-	
+
 
 
 	def "should find content of folder"() {
@@ -68,26 +68,25 @@ class HibernateTestCaseFolderDaoIT  extends DbunitServiceSpecification{
 	def "should find the children of a folder paired with their parents"(){
 
 		given :
-		ArrayList<Long> startlist = new ArrayList<Long>()
-		startlist.add(new Long(1))
+		List<Long> startlist = [-1L]
 
 		and :
 		def expected = [
-			[1, 11],
-			[1, 12],
-			[1, 13],
-			[1, 14]
+			[-1, -11],
+			[-1, -12],
+			[-1, -13],
+			[-1, -14]
 		]
 
 		when :
-		List<Long[]> result = ((FolderDao) dao).findPairedContentForList(((List<Long>) startlist))
+		def result = ((FolderDao) dao).findPairedContentForList(((List<Long>) startlist))
 
 		then :
 		result == expected
 	}
-	
-	
 
-	
-	
+
+
+
+
 }

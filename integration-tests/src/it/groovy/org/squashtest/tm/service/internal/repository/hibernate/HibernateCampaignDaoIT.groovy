@@ -94,7 +94,7 @@ class HibernateCampaignDaoIT extends DbunitDaoSpecification {
 		active   | filter                          | expectedId
 		true	 | TestCaseExecutionMode.AUTOMATED | [-1010L]
 		true	 | TestCaseExecutionMode.MANUAL    | [-1020L]
-		false	 | null                            | [-1010L, -1020L]
+		false	 | null                            | [-1020L, -1010L]
 	}
 }
 

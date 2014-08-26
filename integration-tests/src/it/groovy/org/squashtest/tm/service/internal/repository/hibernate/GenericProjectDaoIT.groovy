@@ -59,18 +59,18 @@ class GenericProjectDaoIT extends DbunitDaoSpecification {
 		list*.name == expected
 
 		where:
-		start | pageSize | sortAttr | sortOrder  | expected
-		0     | 4        | "id"     | ASCENDING  | ["ONE", "TWO", "THREE", "FOUR"]
-		0     | 4        | "name"   | DESCENDING | ["twobis", "TWO", "THREE", "ONE"]
-		0     | 2        | "id"     | ASCENDING  | ["ONE", "TWO"]
-		2     | 4        | "id"     | ASCENDING  | ["THREE", "FOUR", "twobis"]
+		start | pageSize | sortAttr | sortOrder		| expected
+		0     | 4        | "id"     | ASCENDING		| ["ONE", "TWO", "THREE", "FOUR"]
+		0     | 4        | "name"   | DESCENDING	| ["twobis", "TWO", "THREE", "ONE"]
+		0     | 2        | "id"     | ASCENDING		| ["ONE", "TWO"]
+		2     | 4        | "id"     | ASCENDING		| ["THREE", "FOUR", "twobis"]
 
 	}
 
 	@DataSet("GenericProjectDaoIT.xml")
 	def "should find project by id ordered by name"(){
 		given :
-		def ids = [-1L, -2L, -3L, -4L, -5L]
+		def ids = [100001L, 100002L, 100003L, 100004L, 100005L]
 		when :
 		List<GenericProject> result = dao.findAllByIds(ids, new DefaultSorting("name"))
 		then:
@@ -80,7 +80,7 @@ class GenericProjectDaoIT extends DbunitDaoSpecification {
 	@DataSet("GenericProjectDaoIT.xml")
 	def "should count existing projects" () {
 		expect:
-		dao.countGenericProjects() == -5L
+		dao.countGenericProjects() == 5
 	}
 
 	@Unroll
@@ -98,7 +98,7 @@ class GenericProjectDaoIT extends DbunitDaoSpecification {
 	@DataSet("GenericProjectDaoIT.xml")
 	def "should coerce template into a project" () {
 		when:
-		GenericProject res = dao.coerceTemplateIntoProject(4)
+		GenericProject res = dao.coerceTemplateIntoProject(100004)
 
 		then:
 		res instanceof Project
@@ -112,27 +112,27 @@ class GenericProjectDaoIT extends DbunitDaoSpecification {
 		res == dao.isProjectTemplate(pId)
 		where :
 		pId	| res
-		-1L	| false
-		-4L	| true
+		100001L	| false
+		100004L	| true
 	}
 
 	@DataSet("GenericProjectDaoIT.server.xml")
 	def "should find a project's server"(){
-		given: def pId = -1L
+		given: def pId = 100001L
 		when :
 		def res = dao.findTestAutomationServer(pId)
 		then :
 		res != null
-		res.id == -11L
+		res.id == 1000011L
 	}
 
 	@DataSet("GenericProjectDaoIT.taprojects.xml")
 	def "should find a project's taprojects jobNames"(){
-		given: def pId = -1L
+		given: def pId = 100001L
 		when :
 		Collection<String> res = dao.findBoundTestAutomationProjectJobNames(pId)
 		then :
-		res.containsAll(["job-1", "job-2"])
+		res.containsAll(["job100001", "job100002"])
 	}
 
 

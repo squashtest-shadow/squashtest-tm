@@ -97,7 +97,7 @@ class CampaignLibraryNavigationServiceIT extends DbunitServiceSpecification {
 		navService.addCampaignToCampaignLibrary(libId, camp)
 
 		then :
-		thrown (RuntimeException)
+		thrown RuntimeException
 	}
 
 	def "should not persist a nameless iteration"(){

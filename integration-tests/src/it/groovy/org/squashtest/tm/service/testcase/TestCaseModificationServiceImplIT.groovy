@@ -439,7 +439,8 @@ class TestCaseModificationServiceImplIT extends DbunitServiceSpecification {
 		def res = service.findAllByIds([-10L, -30L])
 
 		then:
-		res*.getId() == [-10L, -30L]
+		res*.getId().containsAll([-10L, -30L])
+		res.size() == 2
 	}
 
 	@DataSet("TestCaseModificationServiceImplIT.should find test cases.xml")
@@ -448,13 +449,14 @@ class TestCaseModificationServiceImplIT extends DbunitServiceSpecification {
 		def res = service.findAllByAncestorIds(ancestors)
 
 		then:
-		res*.getId() == expected
+		res*.getId().containsAll(expected)
+		res.size() == expected.size()
 
 		where:
-		ancestors | expected
-		[-10L]     | [-10L]
-		[-50L]     | [-30L]
-		[-40L]     | [-30L,-20L]
-		[-20L, -40L]     | [-20L, -30L]
+		ancestors 		| expected
+		[-10L]	     	| [-10L]
+		[-50L]  	   	| [-30L]
+		[-40L]     		| [-30L,-20L]
+		[-20L, -40L]    | [-20L, -30L]
 	}
 }

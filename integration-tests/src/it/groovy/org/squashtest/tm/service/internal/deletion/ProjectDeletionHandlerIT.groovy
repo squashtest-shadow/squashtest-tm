@@ -40,9 +40,9 @@ public class ProjectDeletionHandlerIT extends DbunitServiceSpecification {
 
 	@Inject
 	private ProjectDeletionHandlerImpl deletionHandler
-	
+
 	private ObjectIdentityService objectIdentityService = Mock()
-	
+
 	def setup(){
 		deletionHandler.objectIdentityService = objectIdentityService;
 	}
@@ -51,9 +51,9 @@ public class ProjectDeletionHandlerIT extends DbunitServiceSpecification {
 
 	@DataSet("ProjectDeletionHandlerTest.should delete project and libraries.xml")
 	def "should delete project and libraries"(){
-		
+
 		when :
-		def result = deletionHandler.deleteProject(1)
+		def result = deletionHandler.deleteProject(-1)
 
 		then :
 		!found(Project.class, -1L)
@@ -61,12 +61,12 @@ public class ProjectDeletionHandlerIT extends DbunitServiceSpecification {
 		allDeleted ("TestCaseLibrary", [-13L])
 		allDeleted ("CampaignLibrary", [-14L])
 	}
-	
+
 	@DataSet("ProjectDeletionHandlerTest.should delete project and libraries.xml")
 	def "should delete project acls"(){
-		
-		when : 
-		def result = deletionHandler.deleteProject(1)
+
+		when :
+		def result = deletionHandler.deleteProject(-1)
 		getSession().flush();
 		then :
 		! found(Project.class, -1L)
@@ -74,30 +74,30 @@ public class ProjectDeletionHandlerIT extends DbunitServiceSpecification {
 		! found ("ACL_RESPONSIBILITY_SCOPE_ENTRY", "ID",-7L)
 		! found ("ACL_RESPONSIBILITY_SCOPE_ENTRY", "ID",-8L)
 		! found ("ACL_RESPONSIBILITY_SCOPE_ENTRY", "ID",-9L)
-		
-//		In integration test context ObjectIdentityService is as stub
-//		this is why i use a mock here
+
+		//		In integration test context ObjectIdentityService is as stub
+		//		this is why i use a mock here
 		1*objectIdentityService.removeObjectIdentity(-12L,RequirementLibrary.class)
 		1*objectIdentityService.removeObjectIdentity(-13L,TestCaseLibrary.class)
 		1*objectIdentityService.removeObjectIdentity(-14L,CampaignLibrary.class)
 		1*objectIdentityService.removeObjectIdentity(-1L,Project.class)
 	}
-	
+
 	@DataSet("ProjectDeletionHandlerTest.should delete project and libraries.xml")
 	def "should delete project and plugins"(){
-		
+
 		when :
-			newSQLQuery("select * from LIBRARY_PLUGIN_BINDING_PROPERTY").list().size() == 3
-			def result = deletionHandler.deleteProject(1)
-			
+		newSQLQuery("select * from LIBRARY_PLUGIN_BINDING_PROPERTY").list().size() == 3
+		def result = deletionHandler.deleteProject(-1)
+
 		then :
-			allDeleted ("RequirementLibraryPluginBinding", [-12L])
-			allDeleted ("TestCaseLibraryPluginBinding", [-11L, -12L])
-			allDeleted ("CampaignLibraryPluginBinding", [-31L])
-			
-			newSQLQuery("select * from LIBRARY_PLUGIN_BINDING_PROPERTY").list().size() == 0
-			
-		
+		allDeleted ("RequirementLibraryPluginBinding", [-12L])
+		allDeleted ("TestCaseLibraryPluginBinding", [-11L, -12L])
+		allDeleted ("CampaignLibraryPluginBinding", [-31L])
+
+		newSQLQuery("select * from LIBRARY_PLUGIN_BINDING_PROPERTY").list().size() == 0
+
+
 	}
-	
+
 }

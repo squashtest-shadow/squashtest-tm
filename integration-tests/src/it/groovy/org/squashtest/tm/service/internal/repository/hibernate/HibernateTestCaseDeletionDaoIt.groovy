@@ -200,8 +200,8 @@ class HibernateTestCaseDeletionDaoIT extends DbunitDaoSpecification{
 
 		then :
 
-		itemTestPlan_1.referencedTestCase.id == 11
-		execution_1.referencedTestCase.id == 11
+		itemTestPlan_1.referencedTestCase.id == -11
+		execution_1.referencedTestCase.id == -11
 
 		itemTestPlan_2.referencedTestCase == null
 		execution_2.referencedTestCase == null
@@ -299,7 +299,7 @@ class HibernateTestCaseDeletionDaoIT extends DbunitDaoSpecification{
 
 
 
-	
+
 
 }
 

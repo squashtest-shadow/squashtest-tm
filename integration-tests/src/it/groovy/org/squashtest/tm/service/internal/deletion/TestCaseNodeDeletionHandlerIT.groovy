@@ -45,7 +45,7 @@ public class TestCaseNodeDeletionHandlerIT extends DbunitServiceSpecification {
 
 	@Inject
 	private TestCaseNodeDeletionHandler deletionHandler;
-	
+
 	@Inject
 	private TestCaseLibraryNavigationService tcNavService;
 
@@ -61,14 +61,14 @@ public class TestCaseNodeDeletionHandlerIT extends DbunitServiceSpecification {
 		def result = deletionHandler.deleteNodes([-12L])
 
 		then :
-		result.removed  == []		
+		result.removed  == []
 		found(TestCase.class, -12L)
-		
+
 	}
 
 	@DataSet("NodeDeletionHandlerTest.delete_tc_cascade_steps.xml")
 	def "should delete the test case and cascade to its steps"(){
-		
+
 		when :
 		def result = deletionHandler.deleteNodes([-11L]);
 
@@ -83,7 +83,7 @@ public class TestCaseNodeDeletionHandlerIT extends DbunitServiceSpecification {
 		! found(Parameter.class, -112L)
 		! found(DatasetParamValue.class, -112L)
 		found (TestCase.class, -12L)
-		
+
 		allDeleted("CustomFieldValue", [-11L, -12L])
 		allNotDeleted("CustomFieldValue", [-21L, -22L])
 	}
@@ -131,58 +131,58 @@ public class TestCaseNodeDeletionHandlerIT extends DbunitServiceSpecification {
 			-1212L
 		])
 		allDeleted("AttachmentList", [-11L, -12L, -111L, -121L, -123L])	//issue 2899 : now checks that the attachment lists for folders are also deleted
-		
+
 		allDeleted("CustomFieldValue", [-11L, -12L, -21L, -22L])
 
 		def lib = findEntity(TestCaseLibrary.class, -1L)
 		lib.rootContent.size() == 0
 	}
-	
+
 	@DataSet("TestCaseNodeDeletionHandlerIT.should delete a test-step along with its attachments.xml")
 	def "should delete a test-step along with its attachments"(){
 		given:
 		TestCase owner = findEntity(TestCase.class, -11L);
 		TestStep tStep = findEntity (TestStep.class, -111L);
-		
-		
+
+
 		when :
 		deletionHandler.deleteStep (owner, tStep);
-		
-		then : 
+
+		then :
 		allDeleted("TestStep", [-111L])
 		allDeleted("AttachmentList", [-111L])
 		allDeleted("Attachment", [-1111L])
 		allDeleted("AttachmentContent", [-1111L])
-		
+
 	}
-	
+
 	@DataSet("TestCaseNodeDeletionHandlerIT.should delete a test-step along with its attachments.xml")
 	def "should delete a call step "(){
 		given:
 		TestCase owner = findEntity(TestCase.class, -11L)
 		TestStep tStep = findEntity (TestStep.class, -112L)
-		
-		
+
+
 		when :
 		deletionHandler.deleteStep (owner, tStep)
-		
+
 		then :
 		allDeleted("TestStep", [-112L])
-		
+
 	}
-	
+
 	@DataSet("NodeDeletionHandlerTest.should delete testSuites.xml")
 	def "should delete a test case and reorder the (non executed) test plans that includes it"(){
 
 		when :
-			deletionHandler.deleteNodes([-100L])
-			session.flush();
-		
-			def tsMaxOrder = session.createSQLQuery("select max(test_plan_order) from TEST_SUITE_TEST_PLAN_ITEM where suite_id = 1").uniqueResult()
-			def itMaxOrder = session.createSQLQuery("select max(item_test_plan_order) from ITEM_TEST_PLAN_LIST where iteration_id=11").uniqueResult()
+		deletionHandler.deleteNodes([-100L])
+		session.flush();
+
+		def tsMaxOrder = session.createSQLQuery("select max(test_plan_order) from TEST_SUITE_TEST_PLAN_ITEM where suite_id = -1").uniqueResult()
+		def itMaxOrder = session.createSQLQuery("select max(item_test_plan_order) from ITEM_TEST_PLAN_LIST where iteration_id=-11").uniqueResult()
 		then :
-			tsMaxOrder == 0	//only one element, max index 0
-			itMaxOrder == 0 //only one element too because this test case was included twice
+		tsMaxOrder == 0	//only one element, max index 0
+		itMaxOrder == 0 //only one element too because this test case was included twice
 	}
 
 }

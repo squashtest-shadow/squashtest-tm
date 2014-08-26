@@ -37,6 +37,7 @@ import org.squashtest.tm.service.user.AdministrationService
 import org.unitils.dbunit.annotation.DataSet
 import org.unitils.dbunit.annotation.ExpectedDataSet
 
+import spock.lang.Unroll;
 import spock.unitils.UnitilsSupport
 
 /**
@@ -82,6 +83,7 @@ class AdministrationServiceIT extends DbunitServiceSpecification {
 	}
 
 	@DataSet("UserModificationServiceIT.should find sorted associated teams.xml")
+	@Unroll
 	def "should find sorted associated teams"(){
 		given : "the dataset , a paging"
 		PagingAndSorting paging = Mock()
@@ -89,13 +91,14 @@ class AdministrationServiceIT extends DbunitServiceSpecification {
 		paging.pageSize >> pageSize
 		paging.sortedAttribute >> sortAttr
 		paging.sortOrder >> sortOrder
+
 		and :"a filtering"
 		Filtering filtering = Mock()
 		filtering.filter >> filter
 		filtering.isDefined()>> filterDefined
 
 		when :
-		PagedCollectionHolder<List<Team>> result = service.findSortedAssociatedTeams(-20L, paging, filtering)
+		PagedCollectionHolder<List<Team>> result = service.findSortedAssociatedTeams(1000020L, paging, filtering)
 
 		then :
 		result.items.size() == expected.size()

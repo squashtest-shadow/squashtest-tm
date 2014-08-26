@@ -41,6 +41,7 @@ class HibernateIssueDaoIT extends DbunitDaoSpecification {
 		if (ppt[3] != null) {
 			assert issue.bugtracker.id == ppt[3]
 		}
+		true
 		//		def b1 = issue.issueList.id = ppt[0]
 		//		def b2 = issue.remoteIssueId == ppt[1]
 		//		def b3 = issue.id == ppt[2]
@@ -51,8 +52,8 @@ class HibernateIssueDaoIT extends DbunitDaoSpecification {
 	@DataSet("HibernateIssueDaoIT.xml")
 	def "should return sorted issues from execs/exec-steps"(){
 		given:
-		List<Long> execIds = [-101L, -400L, -201L, -100L]
-		List<Long> execStepIds = [-1010L, -1011L, -2010L, -1000L]
+		List<Long> execIds = [10000101L, 10000400L, 10000201L, 10000100L]
+		List<Long> execStepIds = [100001010L, 100001011L, 100002010L, 100001000L]
 		PagingAndSorting sorter = new PagingAndSorting() {
 
 					@Override
@@ -88,16 +89,16 @@ class HibernateIssueDaoIT extends DbunitDaoSpecification {
 		def issue1 = result[0]
 		def issue2 = result[1]
 
-		expected (issue1, [-100L, "11", -1L, -1L])
-		expected (issue2, [-1000L, "22", -2L, -1L])
+		expected (issue1, [10000100L, "1000011", 100001L, 100001L])
+		expected (issue2, [100001000L, "1000022", 100002L, 100001L])
 
 	}
 
 	@DataSet("HibernateIssueDaoIT.xml")
 	def "should return sorted issues from execs/exec-steps2"(){
 		given:
-		List<Long> execIds = [-101L, -400L, -201L, -100L]
-		List<Long> execStepIds = [-1010L, -1011L, -2010L, -1000L]
+		List<Long> execIds = [10000101L, 10000400L, 10000201L, 10000100L]
+		List<Long> execStepIds = [100001010L, 100001011L, 100002010L, 100001000L]
 		PagingAndSorting sorter = new PagingAndSorting() {
 
 					@Override
@@ -133,17 +134,17 @@ class HibernateIssueDaoIT extends DbunitDaoSpecification {
 		def issue2 = result[1]
 		def issue3 = result[2]
 
-		expected (issue1, [-1000L, "22", -2L, -1L])
-		expected (issue2, [-1011L, "33", -3L, -1L])
-		expected (issue3, [-2010L, "66", -6L, -1L])
+		expected (issue1, [100001000L, "1000022", 100002L, 100001L])
+		expected (issue2, [100001011L, "1000033", 100003L, 100001L])
+		expected (issue3, [100002010L, "1000066", 100006L, 100001L])
 
 	}
 
 	@DataSet("HibernateIssueDaoIT.xml")
 	def "should count issues for execution and execution steps"(){
 		given:
-		List<Long> execIds = [-101L, -400L, -201L, -100L]
-		List<Long> execStepIds = [-1010L, -1011L, -2010L, -1000L]
+		List<Long> execIds = [10000101L, 10000400L, 10000201L, 10000100L]
+		List<Long> execStepIds = [100001010L, 100001011L, 100002010L, 100001000L]
 
 		when: def result = issueDao.countIssuesfromExecutionAndExecutionSteps(execIds, execStepIds)
 
@@ -155,15 +156,15 @@ class HibernateIssueDaoIT extends DbunitDaoSpecification {
 	def "should return sorted issues from issue list ids"(){
 		given:
 		List<Long> issueListIds = [
-			-101L,
-			-400L,
-			-201L,
-			-100L,
-			-1011L,
-			-2010L,
-			-1000L
+			10000101L,
+			10000400L,
+			10000201L,
+			10000100L,
+			100001011L,
+			100002010L,
+			100001000L
 		]
-		def bugTrackerId = -1L
+		def bugTrackerId = 100001L
 		PagingAndSorting sorter = new PagingAndSorting() {
 
 					@Override
@@ -199,9 +200,9 @@ class HibernateIssueDaoIT extends DbunitDaoSpecification {
 		def issue2 = result[1]
 		def issue3 = result[2]
 
-		expected (issue1, [-1000L, "22", -2L])
-		expected (issue2, [-1011L, "33", -3L])
-		expected (issue3, [-2010L, "66", -6L])
+		expected (issue1, [100001000L, "1000022", 100002L])
+		expected (issue2, [100001011L, "1000033", 100003L])
+		expected (issue3, [100002010L, "1000066", 100006L])
 
 	}
 
@@ -209,16 +210,16 @@ class HibernateIssueDaoIT extends DbunitDaoSpecification {
 	def "should count issues for issue list ids and bugtracker id"(){
 		given:
 		List<Long> issueListIds = [
-			-101L,
-			-400L,
-			-201L,
-			-100L,
-			-1010L,
-			-1011L,
-			-2010L,
-			-1000L
+			10000101L,
+			10000400L,
+			10000201L,
+			10000100L,
+			100001010L,
+			100001011L,
+			100002010L,
+			100001000L
 		]
-		def bugTrackerId = -1L
+		def bugTrackerId = 100001L
 
 		when: def result = issueDao.countIssuesfromIssueList(issueListIds, bugTrackerId)
 
@@ -229,48 +230,48 @@ class HibernateIssueDaoIT extends DbunitDaoSpecification {
 	@DataSet("HibernateIssueDaoIT.xml")
 	def "should return issues for iteration"(){
 		given :
-		def iterationId = -1L
+		def iterationId = 100001L
 
 		when : def result = issueDao.findAllForIteration(iterationId)
 
 		then :
 		result.size() == 3;
-		result*.id.containsAll([-1L, -2L, -3L]);
+		result*.id.containsAll([100001L, 100002L, 100003L]);
 	}
 
 	@DataSet("HibernateIssueDaoIT.test suite.xml")
 	def "should return issues for test suite"(){
 		given :
-		def testSuiteId = -30L
+		def testSuiteId = 1000030L
 
 		when : def result = issueDao.findAllForTestSuite(testSuiteId)
 
 		then :
 		result.size() == 3;
-		result*.id.containsAll([-1L, -2L, -3L]);
+		result*.id.containsAll([100001L, 100002L, 100003L]);
 	}
 
 	@DataSet("HibernateIssueDaoIT.xml")
 	def "should return execution as issue detector"(){
 		given :
-		def issueId = -7L
+		def issueId = 100007L
 
 		when : def result = issueDao.findIssueDetectorByIssue(issueId)
 
 		then :
 		result != null
-		result.issueListId == -400L
+		result.issueListId == 10000400L
 	}
 
 	@DataSet("HibernateIssueDaoIT.xml")
 	def "should return execution step as issue detector"(){
 		given :
-		def issueId = -5L
+		def issueId = 100005L
 
 		when : def result = issueDao.findIssueDetectorByIssue(issueId)
 
 		then :
 		result != null
-		result.issueListId == -2010L
+		result.issueListId == 100002010L
 	}
 }

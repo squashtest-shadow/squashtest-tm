@@ -125,53 +125,63 @@ class IterationModificationServiceIT extends DbunitServiceSpecification {
 		then : "5 denormalized fields are created"
 		Query query1 = getSession().createQuery("from DenormalizedFieldValue dfv")
 		query1.list().size() == 5
+
 		and: "3 denormalized fields are linked to execution"
 		Query query = getSession().createQuery("from DenormalizedFieldValue dfv where dfv.denormalizedFieldHolderId = :id and dfv.denormalizedFieldHolderType = :type order by dfv.position")
 		query.setParameter("id", exec.id)
 		query.setParameter("type", DenormalizedFieldHolderType.EXECUTION)
 		def result = query.list()
 		result.size() == 3
+
 		and : "denormalized fields are in right order"
 		result.get(0).value == "T"
 		result.get(1).value == "U"
 		result.get(2).value == "V"
+
 		and : "2 denormalized fields are linked to execution"
 		query.setParameter("id", exec.steps.get(0).id)
 		query.setParameter("type", DenormalizedFieldHolderType.EXECUTION_STEP)
 		def result2 = query.list()
 		result2.size() == 2
+
 		and : "denormalized fields are in right order"
 		result.get(0).value == "T"
 		result.get(1).value == "U"
 	}
 
 	@DataSet("IterationModificationServiceIT.denormalizedField.xml")
-	def "should create an execution with call steps and copy the custom fields"(){
-
+	def "should denormalize execution step fields"(){
 		when :
 		Execution exec = iterService.addExecution(-2L)
 
-		then :
 		Query query = getSession().createQuery("from DenormalizedFieldValue dfv where dfv.denormalizedFieldHolderId = :id and dfv.denormalizedFieldHolderType = :type order by dfv.position")
 		query.setParameter("id", exec.id)
 		query.setParameter("type", DenormalizedFieldHolderType.EXECUTION)
+
+		then :
 		query.list().size() == 3
+
+		and:
 		query.setParameter("id", exec.steps.get(0).id)
 		query.setParameter("type", DenormalizedFieldHolderType.EXECUTION_STEP)
 		def step1denofields = query.list()
-		step1denofields.size() == 2
+
+		then: "fields from test step should be denormalized"
 		step1denofields*.code == ["cufUprim", "cufT" ]
 		step1denofields*.value == ["Uprim", "T"]
 		step1denofields*.renderingLocations == [[RenderingLocation.STEP_TABLE] as Set,[] as Set]
+		step1denofields.size() == 2
 
-
+		and: "fields from test step and called test step should be denormalized"
 		query.setParameter("id", exec.steps.get(1).id)
 		query.setParameter("type", DenormalizedFieldHolderType.EXECUTION_STEP)
 		def step2denofields = query.list()
-		step2denofields.size() == 2
-		step2denofields*.code == ["cufT", "cufU"]
-		step2denofields*.value == ["T", "U"]
-		step2denofields*.renderingLocations == [ [RenderingLocation.STEP_TABLE] as Set, [RenderingLocation.STEP_TABLE] as Set]
+
+		then:
+		step2denofields*.code == ["cufUprim", "cufT", "cufU"]
+		step2denofields*.value == ["", "T", "U"]
+		step2denofields*.renderingLocations == [ [RenderingLocation.STEP_TABLE] as Set, [] as Set, [] as Set]
+		step2denofields.size() == 3
 	}
 
 

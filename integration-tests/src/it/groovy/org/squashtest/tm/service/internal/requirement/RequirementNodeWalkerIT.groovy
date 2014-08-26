@@ -70,17 +70,10 @@ class RequirementNodeWalkerIT extends DbunitServiceSpecification {
 		RequirementLibraryNode node = getSession().get(RequirementLibraryNode.class, selectedNodeId)
 
 		when :
-		List retrieveNodes = walker.walk([node])
+		List retrievedNodes = walker.walk([node])
 
 		then :
-		retrieveNodes.size() == 4
-		List retrievedId  = [
-			retrieveNodes[0].getId(),
-			retrieveNodes[1].getId(),
-			retrieveNodes[2].getId(),
-			retrieveNodes[3].getId()
-		]
-		retrievedId.sort()
-		retrievedId == [-10L, -11L, -12L, -13L]
+		retrievedNodes.size() == 4
+		retrievedNodes*.getId().sort() == [-10L, -11L, -12L, -13L].reverse()
 	}
 }
