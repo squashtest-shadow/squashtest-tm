@@ -123,8 +123,8 @@
 		<addColumn tableName="CALL_TEST_STEP">
 		
 			<column name="CALLED_DATASET" type="BIGINT" defaultValue="NULL" 
-			 remarks="A reference to the called dataset (if any)" >
-			 	<constraints nullable="true" foreignKeyName="fk_call_step_dataset" references="DATASET(DATASET_ID)"/>
+			 remarks="A reference to the called dataset (if any). The fk constraint must set null when the dataset is deleted." >
+			 	<constraints nullable="true"/>
 			</column>
 			
 			<column name="DELEGATE_PARAMETER_VALUES" type="BOOLEAN" defaultValueBoolean="false"
@@ -133,6 +133,9 @@
 			  </column> 
 		
 		</addColumn>
+		
+		<addForeignKeyConstraint constraintName="fk_call_step_dataset" baseTableName="CALL_TEST_STEP" 
+		baseColumnNames="CALLED_DATASET" referencedTableName="DATASET"  referencedColumnNames="DATASET_ID" onDelete="SET NULL"/>
 
 	</changeSet>
 
