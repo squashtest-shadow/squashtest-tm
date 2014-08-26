@@ -77,7 +77,9 @@ import org.squashtest.tm.service.testcase.TestStepModificationService;
 @Component
 @Scope("prototype")
 public class FacilityImpl implements Facility {
-	
+
+	private static final String UNEXPECTED_ERROR_WHILE_IMPORTING = "unexpected error while importing ";
+
 	private static final String EXCEL_ERR_PREFIX = "Excel import : ";
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(FacilityImpl.class);
@@ -161,7 +163,7 @@ public class FacilityImpl implements Facility {
 			train.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_UNEXPECTED_ERROR,
 					new Object[] { ex.getClass().getName() }));
 			validator.getModel().setNotExists(target);
-			LOGGER.error(EXCEL_ERR_PREFIX+"unexpected error while importing " + target + " : ", ex);
+			LOGGER.error(EXCEL_ERR_PREFIX+UNEXPECTED_ERROR_WHILE_IMPORTING + target + " : ", ex);
 		}
 
 		return train;
@@ -492,8 +494,7 @@ public class FacilityImpl implements Facility {
 	// ************************* private (and hairy) code *********************************
 
 	// because this time we're not toying around man, this is the real thing
-	private void doCreateTestcase(TestCaseTarget target, TestCase testCase, Map<String, String> cufValues)
-			throws Exception {
+	private void doCreateTestcase(TestCaseTarget target, TestCase testCase, Map<String, String> cufValues) {
 
 		Map<Long, String> acceptableCufs = toAcceptableCufs(cufValues);
 
@@ -525,8 +526,7 @@ public class FacilityImpl implements Facility {
 		}
 	}
 
-	private void doUpdateTestcase(TestCaseTarget target, TestCase testCase, Map<String, String> cufValues)
-			throws Exception {
+	private void doUpdateTestcase(TestCaseTarget target, TestCase testCase, Map<String, String> cufValues) {
 
 		TestCase orig = validator.getModel().get(target);
 		Long origId = orig.getId();
@@ -553,13 +553,12 @@ public class FacilityImpl implements Facility {
 
 	}
 
-	private void doDeleteTestCase(TestCaseTarget target) throws Exception {
+	private void doDeleteTestCase(TestCaseTarget target) {
 		TestCase tc = validator.getModel().get(target);
 		navigationService.deleteNodes(Arrays.asList(tc.getId()));
 	}
 
-	private void doAddActionStep(TestStepTarget target, ActionTestStep testStep, Map<String, String> cufValues)
-			throws Exception {
+	private void doAddActionStep(TestStepTarget target, ActionTestStep testStep, Map<String, String> cufValues) {
 
 		Map<Long, String> acceptableCufs = toAcceptableCufs(cufValues);
 
@@ -723,7 +722,7 @@ public class FacilityImpl implements Facility {
 		}
 
 		Boolean newImportanceAuto = testCase.isImportanceAuto();
-		if (newImportanceAuto != null && orig.isImportanceAuto() != newImportanceAuto) {
+		if (newImportanceAuto != null && orig.isImportanceAuto().equals(newImportanceAuto)) {
 			testcaseModificationService.changeImportanceAuto(origId, newImportanceAuto);
 		}
 	}
