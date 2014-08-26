@@ -31,84 +31,85 @@
       <where>STR_KEY = 'squashtest.tm.database.version'</where>
     </update>
   </changeSet>
-  
-  
+
+
   <changeSet id="tm-1.11.0.feature-3576-1" author="bsiri">
-  	
-  	<comment>
+
+    <comment>
   		Prepares the table CUSTOM_FIELD for possible default_values of type CLOB.
   		Also accepts now a new value for the column FIELD_TYPE : RTF (for rich text fields) - no structural changes for that though.
   	</comment>
 
-  	<addColumn tableName="CUSTOM_FIELD">
-  		<column name="LONG_DEFAULT_VALUE" defaultValue="NULL" type="TEXT" remarks="this column is used by rich text cufs. It contains HTML data."></column>
-  	</addColumn>
-  	
+    <addColumn tableName="CUSTOM_FIELD">
+      <column name="LONG_DEFAULT_VALUE" defaultValue="NULL" type="TEXT"
+        remarks="this column is used by rich text cufs. It contains HTML data."></column>
+    </addColumn>
+
   </changeSet>
-  	
+
 
   <changeSet id="tm-1.11.0.feature-3576-2" author="bsiri">
-    	
-  	<comment>prepares the table CUSTOM_FIELD_VALUE for values of type CLOB, and adds support for inheritance to that end.</comment>
 
-  	<addColumn tableName="CUSTOM_FIELD_VALUE">
-  		<column name="LONG_VALUE" defaultValue="NULL" type="TEXT" remarks="this column is used by rich text cufs. It contains HTML data."></column>
-  		
-        <column name="FIELD_TYPE" type="CHAR(3)" defaultValue="CF" remarks="CF : simple, RTF : rich text field">
-            <constraints nullable="false" />
-        </column>
-  	</addColumn>
-  
+    <comment>prepares the table CUSTOM_FIELD_VALUE for values of type CLOB, and adds support for inheritance to that end.</comment>
+    <addColumn tableName="CUSTOM_FIELD_VALUE">
+      <column name="LONG_VALUE" defaultValue="NULL" type="TEXT"
+        remarks="this column is used by rich text cufs. It contains HTML data."></column>
+
+      <column name="FIELD_TYPE" type="VARCHAR(3)" defaultValue="CF" remarks="CF : simple, RTF : rich text field">
+        <constraints nullable="false" />
+      </column>
+    </addColumn>
+
   </changeSet>
-  
+
   <changeSet id="tm-1.11.0.feature-3576-3" author="bsiri">
-    	
-  	<comment>
+
+    <comment>
   		Prepares the table DENORMALIZED_FIELD_VALUE for values of type CLOB, and adds support for inheritance to that end.
   		Also accepts now a new value for the column FIELD_TYPE : RTF (for rich text fields) - no structural changes for that though.
   	</comment>
-  		
 
-  	<addColumn tableName="DENORMALIZED_FIELD_VALUE">
-  		<column name="LONG_VALUE" defaultValue="NULL" type="TEXT" remarks="this column is used by rich text cufs. It contains HTML data."></column>
 
-  	</addColumn>
-  
+    <addColumn tableName="DENORMALIZED_FIELD_VALUE">
+      <column name="LONG_VALUE" defaultValue="NULL" type="TEXT"
+        remarks="this column is used by rich text cufs. It contains HTML data."></column>
+
+    </addColumn>
+
   </changeSet>
-  
-  
-  	<changeSet id="tm-1.11.0.feature-3556-4" author="kdrifi">
-		<comment>Cleaning duplicates of column ROLE_USER in table core_group _authority</comment>
 
-		<delete tableName="CORE_GROUP_AUTHORITY">
-			<where>
-				AUTHORITY='ROLE_USER'
-			</where>
-		</delete>
-		
-		<delete tableName="CORE_GROUP_AUTHORITY">
-			<where>
-				GROUP_ID = 1
-				and AUTHORITY='ROLE_TM_USER'
-			</where>
-		</delete>
-	</changeSet>
-  
-  
+
+  <changeSet id="tm-1.11.0.feature-3556-4" author="kdrifi">
+    <comment>Cleaning duplicates of column ROLE_USER in table core_group _authority</comment>
+
+    <delete tableName="CORE_GROUP_AUTHORITY">
+      <where>
+        AUTHORITY='ROLE_USER'
+      </where>
+    </delete>
+
+    <delete tableName="CORE_GROUP_AUTHORITY">
+      <where>
+        GROUP_ID = 1
+        and AUTHORITY='ROLE_TM_USER'
+      </where>
+    </delete>
+  </changeSet>
+
+
   <changeSet id="tm-1.11.0.feature-3577-1" author="mpagnon">
     <comment>Fix columns with CHAR(X) types to VARCHAR(X) type to avoid blank space filling by Postgresql</comment>
-    <modifyDataType tableName="CUSTOM_FIELD" columnName="INPUT_TYPE" newDataType="VARCHAR(30)"/>
-    <modifyDataType tableName="CUSTOM_FIELD" columnName="FIELD_TYPE" newDataType="VARCHAR(3)"/>
-     <modifyDataType tableName="CUSTOM_FIELD_VALUE" columnName="FIELD_TYPE" newDataType="VARCHAR(3)"/>
-     <modifyDataType tableName="DENORMALIZED_FIELD_VALUE" columnName="FIELD_TYPE" newDataType="VARCHAR(3)"/>
-     <modifyDataType tableName="DENORMALIZED_FIELD_VALUE" columnName="INPUT_TYPE" newDataType="VARCHAR(30)"/>
-     
+    <modifyDataType tableName="CUSTOM_FIELD" columnName="INPUT_TYPE" newDataType="VARCHAR(30)" />
+    <modifyDataType tableName="CUSTOM_FIELD" columnName="FIELD_TYPE" newDataType="VARCHAR(3)" />
+    <modifyDataType tableName="DENORMALIZED_FIELD_VALUE" columnName="FIELD_TYPE" newDataType="VARCHAR(3)" />
+    <modifyDataType tableName="DENORMALIZED_FIELD_VALUE" columnName="INPUT_TYPE" newDataType="VARCHAR(30)" />
+
   </changeSet>
   <changeSet id="tm-1.11.0.feature-3577-2" author="mpagnon" dbms="postgresql">
     <comment>add agregate group concat</comment>
     <sql>
-    
+
     </sql>
-     
+
   </changeSet>
 </databaseChangeLog>
