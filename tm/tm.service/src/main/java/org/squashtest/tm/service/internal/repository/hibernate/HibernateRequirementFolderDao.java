@@ -72,7 +72,7 @@ public class HibernateRequirementFolderDao extends HibernateEntityDao<Requiremen
 		}
 
 		SQLQuery query = currentSession().createSQLQuery(
-				NativeQueries.REQUIREMENT_FOLDER_SQL_FIND_PAIRED_COTENT_FOR_FOLDERS);
+				NativeQueries.REQUIREMENT_FOLDER_SQL_FIND_PAIRED_CONTENT_FOR_FOLDERS);
 		query.setParameterList("folderIds", ids, LongType.INSTANCE);
 		query.addScalar("ancestor_id", LongType.INSTANCE);
 		query.addScalar("descendant_id", LongType.INSTANCE);

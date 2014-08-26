@@ -35,13 +35,13 @@ public final class NativeQueries {
 
 	public static final String ATTACHMENT_LIST_SQL_REMOVE_FROM_ATTACHMENT_LIST_CONTENT = " delete from ATTACHMENT_LIST_CONTENT where al_id in (:alIds)";
 
-	public static final String TEST_CASE_FOLDER_SQL_FIND_PAIRED_CONTENT_FOR_FOLDERS = "select * from TCLN_RELATIONSHIP where ancestor_id in (:folderIds) group by ancestor_id, descendant_id";
+	public static final String TEST_CASE_FOLDER_SQL_FIND_PAIRED_CONTENT_FOR_FOLDERS = "select * from TCLN_RELATIONSHIP where ancestor_id in (:folderIds)";
 	public static final String TEST_CASE_FOLDER_SQL_FIND_CONTENT_FOR_FOLDER = "select * from TCLN_RELATIONSHIP where ancestor_id in (:folderIds)";
 
-	public static final String REQUIREMENT_FOLDER_SQL_FIND_PAIRED_COTENT_FOR_FOLDERS = "select * from RLN_RELATIONSHIP where ancestor_id in (:folderIds) group by ancestor_id, descendant_id";
+	public static final String REQUIREMENT_FOLDER_SQL_FIND_PAIRED_CONTENT_FOR_FOLDERS = "select * from RLN_RELATIONSHIP where ancestor_id in (:folderIds)";
 	public static final String REQUIREMENT_FOLDER_SQL_FIND_CONTENT_FOR_FOLDER = "select * from RLN_RELATIONSHIP where ancestor_id in (:folderIds)";
 
-	public static final String CAMPAIGN_FOLDER_SQL_FIND_PAIRED_CONTENT_FOR_FOLDERS = "select * from CLN_RELATIONSHIP where ancestor_id in (:folderIds) group by ancestor_id, descendant_id";
+	public static final String CAMPAIGN_FOLDER_SQL_FIND_PAIRED_CONTENT_FOR_FOLDERS = "select * from CLN_RELATIONSHIP where ancestor_id in (:folderIds)";
 	public static final String CAMPAIGN_FOLDER_SQL_FIND_CONTENT_FOR_FOLDER = "select * from CLN_RELATIONSHIP where ancestor_id in (:folderIds)";
 
 	/* ***************************** deletion queries ************************************** */
