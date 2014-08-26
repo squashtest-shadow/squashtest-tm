@@ -121,7 +121,8 @@ class HibernateTestCaseDaoIT extends DbunitDaoSpecification {
 		def callees = testCaseDao.findAllTestCasesIdsCalledByTestCases([-110L, -120L])
 
 		then:
-		callees == [-10L, -20L]
+		callees.containsAll([-10L, -20L])
+		callees.size() == 2
 	}
 
 	@DataSet("HibernateTestCaseDaoIT.should find distinct ids of test cases called by several test cases.xml")
