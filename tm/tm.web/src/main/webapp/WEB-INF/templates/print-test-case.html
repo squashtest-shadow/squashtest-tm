@@ -201,31 +201,39 @@
 						<td
 							th:text="*{['step-type'] == 'call' ?  '' : ['nb-requirements']}">0</td>
 
-            <td th:each="cufModel : ${cufDefinitions}" th:object="${step['customFields']['__${cufModel['code']}__']}">
-              <span th:if="${step['step-type'] == 'action'}" th:switch="${cufModel.inputType.enumName}" th:remove="tag">
-                <span th:remove="tag" th:case="'DATE_PICKER'"
-                  th:text="*{valueAsDate == null ? #messages.msg('squashtm.nodata') : #dates.format(valueAsDate ,#messages.msg('squashtm.dateformatShort'))}">12/02/2012</span>
-                <span th:remove="tag" th:case="'CHECKBOX'" th:text="#{label.__*{value}__}">true</span> <span
-                  th:remove="tag" th:case="*" th:text="*{value}">value</span>
-            </span>
-            </td>
-            <td th:if="*{['step-type'] == 'call'}"
-							th:text="*{['step-action']}">Cas de Test : Machin truc
-							chouette</td>
-						<td th:if="*{['step-type'] == 'action'}"
-							sq:unsafe-html="*{['step-action']}">Lorem ipsum dolor sit amet,
-							consectetur adipiscing elit. Nullam felis ante, accumsan quis
-							tincidunt vel, iacu lis in purus. Pellentesque habitant morbi
-							tristique senectus et netus et malesuada fames ac turpis egestas.
-							Morbi at nisl et est egestas venenatis . Nullam venenatis, justo
-							ac hendrerit auctor, dolor velit adipiscing lacus, sed gravida
-							enim elit dictum lorem. Suspendisse eu lectus ac metus lo bortis
-							vulputate at id purus. Proin dapibus commodo velit sit amet</td>
-						<td sq:unsafe-html="*{['step-type'] == 'call'  ?  '' : ['step-result']}">
-							Morbi at nisl et est egestas venenatis . Nullam venenatis, justo
-							ac hendrerit auctor, dolor velit adipiscing lacus, sed gravida
-							enim elit dictum lorem. Suspendisse eu lectus ac metus lo bortis
-							vulputate at id purus. Proin dapibus commodo velit sit amet</td>
+                        <td th:each="cufModel : ${cufDefinitions}" th:object="${step['customFields']['__${cufModel['code']}__']}">
+                          <span th:if="${step['step-type'] == 'action'}" th:switch="${cufModel.inputType.enumName}" th:remove="tag">
+                            <span th:remove="tag" th:case="'DATE_PICKER'"
+                              th:text="*{valueAsDate == null ? #messages.msg('squashtm.nodata') : #dates.format(valueAsDate ,#messages.msg('squashtm.dateformatShort'))}">12/02/2012</span>
+                            <span th:remove="tag" th:case="'CHECKBOX'" th:text="#{label.__*{value}__}">true</span> <span
+                              th:remove="tag" th:case="*" th:text="*{value}">value</span>
+                        </span>
+                        </td>
+                        
+                        <!--  spring EL is a good language but sometimes WTF hits you right in the face -->
+                        <td th:if="*{['step-type'] == 'call'}" 
+                             th:with="tcname = *{['call-step-info'].calledTcName},
+                                      dsname = *{['call-step-info'].paramMode == 'DELEGATE' ? '__#{label.callstepdataset.PickDataset}__' :  
+                                                 ['call-step-info'].paramMode == 'CALLED_DATASET' ? ['call-step-info'].calledDatasetName :  
+                                                 '__#{label.None}__' 
+                                                }"
+                             colspan="2"        
+                             th:text="#{test-case.call-step.action.template(${tcname}, ${dsname})}">Cas de Test : Machin truc chouette</td>
+                    
+            			<td th:if="*{['step-type'] == 'action'}"
+            				sq:unsafe-html="*{['step-action']}">Lorem ipsum dolor sit amet,
+            				consectetur adipiscing elit. Nullam felis ante, accumsan quis
+            				tincidunt vel, iacu lis in purus. Pellentesque habitant morbi
+            				tristique senectus et netus et malesuada fames ac turpis egestas.
+            				Morbi at nisl et est egestas venenatis . Nullam venenatis, justo
+            				ac hendrerit auctor, dolor velit adipiscing lacus, sed gravida
+            				enim elit dictum lorem. Suspendisse eu lectus ac metus lo bortis
+            				vulputate at id purus. Proin dapibus commodo velit sit amet</td>
+            			<td th:if="*{['step-type'] == 'action'}" sq:unsafe-html="*{['step-result']}">
+            				Morbi at nisl et est egestas venenatis . Nullam venenatis, justo
+            				ac hendrerit auctor, dolor velit adipiscing lacus, sed gravida
+            				enim elit dictum lorem. Suspendisse eu lectus ac metus lo bortis
+            				vulputate at id purus. Proin dapibus commodo velit sit amet</td>
 					</tr>
 				</tbody>
 			</table>
