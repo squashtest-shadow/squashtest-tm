@@ -30,7 +30,7 @@
     <db.resources.dir>${project.build.directory}/database-archive-resources</db.resources.dir>
 
     <config.resources.dir>${project.build.directory}/config-archive-resources</config.resources.dir>
-    
+
     <lucene.dir>${project.build.directory}/luceneindexes</lucene.dir>
 
     <master.changelog>${db.resources.dir}/sample/sample-db.changelog.xml</master.changelog>
@@ -321,8 +321,8 @@
         </dependency>
       </dependencies>
     </profile>
-  
-  <profile>
+
+    <profile>
       <id>postgresql</id>
       <activation>
         <activeByDefault>false</activeByDefault>
@@ -342,18 +342,14 @@
         <db.create.password>${dev.postgres.password}</db.create.password>
       </properties>
       <dependencies>
-          <dependency>
+        <dependency>
           <groupId>org.ancoron.postgresql</groupId>
-          <artifactId>org.postgresql.osgi</artifactId>
-      </dependency>
-       <dependency>
-        <groupId>org.ancoron.postgresql</groupId>
-        <artifactId>org.postgresql</artifactId>
-      </dependency>
-      <dependency>
-        <groupId>org.ancoron.postgresql</groupId>
-        <artifactId>org.postgresql.net</artifactId>
-      </dependency>
+          <artifactId>org.postgresql</artifactId>
+        </dependency>
+        <!-- <dependency>
+          <groupId>org.ancoron.postgresql</groupId>
+          <artifactId>org.postgresql.net</artifactId>
+        </dependency> -->
       </dependencies>
     </profile>
   </profiles>

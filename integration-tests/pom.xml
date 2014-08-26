@@ -12,10 +12,6 @@
   <name>Squashtest TM - Integration tests module</name>
 
   <properties>
-    <!-- On Jenkins server these relative paths are not interpreted in the same way by liquibase and the datasource. These 
-      props should be overridden with absolute paths (which don't work under windows...) -->
-    <dbunit-database.url>jdbc:h2:target/database/squash-it-dbunit/squash-it</dbunit-database.url>
-    <non-dbunit-database.url>jdbc:h2:target/database/squash-it-non-dbunit/squash-it</non-dbunit-database.url>
 
     <hibernate.dialect>org.hibernate.dialect.H2Dialect</hibernate.dialect>
     <database.dialect>h2</database.dialect>
@@ -54,6 +50,28 @@
     </testResources>
 
     <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-enforcer-plugin</artifactId>
+        <executions>
+          <execution>
+            <goals>
+              <goal>enforce</goal>
+            </goals>
+            <configuration>
+              <rules>
+                <requireProperty>
+                  <property>dbunit-database.url</property>
+                </requireProperty>
+                <requireProperty>
+                  <property>non-dbunit-database.url</property>
+                </requireProperty>
+              </rules>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
@@ -262,21 +280,16 @@
       <artifactId>com.springsource.com.mysql.jdbc</artifactId>
       <scope>runtime</scope>
     </dependency>
-        <dependency>
-  <groupId>org.ancoron.postgresql</groupId>
-  <artifactId>org.postgresql.osgi</artifactId>
+    <dependency>
+      <groupId>org.ancoron.postgresql</groupId>
+      <artifactId>org.postgresql</artifactId>
       <scope>runtime</scope>
     </dependency>
-     <dependency>
-        <groupId>org.ancoron.postgresql</groupId>
-        <artifactId>org.postgresql</artifactId>
-         <scope>runtime</scope>
-      </dependency>
-      <dependency>
-        <groupId>org.ancoron.postgresql</groupId>
-        <artifactId>org.postgresql.net</artifactId>
-         <scope>runtime</scope>
-      </dependency>
+    <!-- <dependency>
+      <groupId>org.ancoron.postgresql</groupId>
+      <artifactId>org.postgresql.net</artifactId>
+      <scope>runtime</scope>
+    </dependency> -->
     <!-- ====== SPOCK-SPRING-TEST BRIDGE ====== -->
     <dependency>
       <groupId>org.spockframework</groupId>
@@ -464,49 +477,140 @@
         </pluginManagement>
       </build>
     </profile>
+
+    <profile>
+      <id>h2.windows</id>
+      <activation>
+        <os>
+          <family>windows</family>
+        </os>
+      </activation>
+
+      <properties>
+    <!-- On Jenkins server these relative paths are not interpreted in the same way by liquibase and the datasource. These 
+      props should be overridden with absolute paths (which don't work under windows...) -->
+        <dbunit-database.url>jdbc:h2:target/database/squash-it-dbunit/squash-it</dbunit-database.url>
+        <non-dbunit-database.url>jdbc:h2:target/database/squash-it-non-dbunit/squash-it</non-dbunit-database.url>
+      </properties>
+    </profile>
+
+    <profile>
+      <id>h2.unix</id>
+      <activation>
+        <os>
+          <family>!windows</family>
+        </os>
+      </activation>
+
+      <properties>
+    <!-- On Jenkins server these relative paths are not interpreted in the same way by liquibase and the datasource. These 
+      props should be overridden with absolute paths (which don't work under windows...) -->
+        <dbunit-database.url>jdbc:h2:${project.basedir}/target/database/squash-it-dbunit</dbunit-database.url>
+        <non-dbunit-database.url>jdbc:h2:${project.basedir}/target/database/squash-it-non-dbunit</non-dbunit-database.url>
+      </properties>
+    </profile>
+
     <profile>
       <id>mysql</id>
       <properties>
-        <dbunit-database.url>jdbc:mysql://localhost/squashtest_it</dbunit-database.url>
-        <non-dbunit-database.url>jdbc:mysql://localhost/squashtest_it</non-dbunit-database.url>
+        <dbunit-database.url>${it.database.url}</dbunit-database.url>
+        <non-dbunit-database.url>${it.database.url}</non-dbunit-database.url>
 
         <hibernate.dialect>org.hibernate.dialect.MySQLDialect</hibernate.dialect>
         <database.dialect>mysql</database.dialect>
         <database.drivername>com.mysql.jdbc.Driver</database.drivername>
-        <database.schemaName>squashtest_it</database.schemaName>
-        <database.username>root</database.username>
-        <database.password></database.password>
+        <database.schemaName>${it.database.schemaName}</database.schemaName>
+        <database.username>${it.database.username}</database.username>
+        <database.password>${it.database.password}</database.password>
         <database.typefactory>org.dbunit.ext.mysql.MySqlDataTypeFactory</database.typefactory>
       </properties>
+
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-enforcer-plugin</artifactId>
+            <executions>
+              <execution>
+                <goals>
+                  <goal>enforce</goal>
+                </goals>
+                <configuration>
+                  <rules>
+                    <requireProperty>
+                      <property>it.database.url</property>
+                    </requireProperty>
+                    <requireProperty>
+                      <property>it.database.schemaName</property>
+                    </requireProperty>
+                    <requireProperty>
+                      <property>it.database.username</property>
+                    </requireProperty>
+                    <requireProperty>
+                      <property>it.database.password</property>
+                    </requireProperty>
+                  </rules>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
     </profile>
-    
+
     <profile>
       <id>postgresql</id>
       <properties>
-        <dbunit-database.url>jdbc:postgresql://localhost:5432/squashtest_it</dbunit-database.url>
-        <non-dbunit-database.url>jdbc:postgresql://localhost:5432/squashtest_it</non-dbunit-database.url>
+        <dbunit-database.url>${it.database.url}</dbunit-database.url>
+        <non-dbunit-database.url>${it.database.url}</non-dbunit-database.url>
         <hibernate.dialect>org.hibernate.dialect.PostgreSQLDialect</hibernate.dialect>
         <database.dialect>postgresql</database.dialect>
         <database.drivername>org.postgresql.Driver</database.drivername>
         <database.schemaName>public</database.schemaName>
-        <database.username>postgres</database.username>
-        <database.password>password</database.password>
+        <database.username>${it.database.username}</database.username>
+        <database.password>${it.database.password}</database.password>
         <database.typefactory>org.dbunit.ext.postgresql.PostgresqlDataTypeFactory</database.typefactory>
       </properties>
-       <dependencies>
-           <dependency>
-  <groupId>org.ancoron.postgresql</groupId>
-  <artifactId>org.postgresql.osgi</artifactId>
+
+      <dependencies>
+        <dependency>
+          <groupId>org.ancoron.postgresql</groupId>
+          <artifactId>org.postgresql</artifactId>
         </dependency>
-         <dependency>
-        <groupId>org.ancoron.postgresql</groupId>
-        <artifactId>org.postgresql</artifactId>
-      </dependency>
-      <dependency>
-        <groupId>org.ancoron.postgresql</groupId>
-        <artifactId>org.postgresql.net</artifactId>
-      </dependency>
+       <!--  <dependency>
+          <groupId>org.ancoron.postgresql</groupId>
+          <artifactId>org.postgresql.net</artifactId>
+        </dependency> -->
       </dependencies>
+
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-enforcer-plugin</artifactId>
+            <executions>
+              <execution>
+                <goals>
+                  <goal>enforce</goal>
+                </goals>
+                <configuration>
+                  <rules>
+                    <requireProperty>
+                      <property>it.database.url</property>
+                    </requireProperty>
+                    <requireProperty>
+                      <property>it.database.username</property>
+                    </requireProperty>
+                    <requireProperty>
+                      <property>it.database.password</property>
+                    </requireProperty>
+                  </rules>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
     </profile>
 
     <profile>
@@ -575,14 +679,8 @@
               </execution>
             </executions>
           </plugin>
-
-
-
         </plugins>
-
-
       </build>
-
 
     </profile>
   </profiles>
