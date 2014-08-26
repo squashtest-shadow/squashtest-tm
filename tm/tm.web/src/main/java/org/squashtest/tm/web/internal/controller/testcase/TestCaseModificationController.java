@@ -536,7 +536,7 @@ public class TestCaseModificationController {
 		List<CustomFieldModel> cufDefinitions = convertToJsonCustomField(helper.getCustomFieldConfiguration());
 		List<CustomFieldValue> stepCufValues = helper.getCustomFieldValues();
 
-		TestStepsTableModelBuilder builder = new TestStepsTableModelBuilder(internationalizationHelper, locale);
+		TestStepsTableModelBuilder builder = new TestStepsTableModelBuilder();
 		builder.usingCustomFields(stepCufValues, cufDefinitions.size());
 		Collection<Object> stepsData = builder.buildRawModel(steps, 1);
 		mav.addObject("stepsData", stepsData);

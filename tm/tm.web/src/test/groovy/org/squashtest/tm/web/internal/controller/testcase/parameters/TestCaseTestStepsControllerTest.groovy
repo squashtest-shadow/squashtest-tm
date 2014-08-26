@@ -41,12 +41,12 @@ import spock.lang.Specification
 
 class TestCaseTestStepsControllerTest extends Specification {
 	TestCaseTestStepsController controller = new TestCaseTestStepsController()
-	
+
 	TestCaseModificationService testCaseModificationService = Mock()
 	HttpServletRequest request = Mock()
-	InternationalizationHelper messageSource = Mock()	
+	InternationalizationHelper messageSource = Mock()
 	CustomFieldHelperService cufHelperService = Mock()
-	
+
 	def setup() {
 		controller.testCaseModificationService = testCaseModificationService
 		request.getCharacterEncoding() >> "ISO-8859-1"
@@ -54,8 +54,8 @@ class TestCaseTestStepsControllerTest extends Specification {
 		controller.cufHelperService = cufHelperService
 	}
 
-	
-	
+
+
 	def "should build table model for test case steps"() {
 		given:
 		AttachmentList al = Mock()
@@ -80,7 +80,7 @@ class TestCaseTestStepsControllerTest extends Specification {
 		and:
 		PagedCollectionHolder<List<ActionTestStep>> holder = new SinglePageCollectionHolder<List<ActionTestStep>>([step1, step2])
 		testCaseModificationService.findStepsByTestCaseIdFiltered(10, _) >> holder
-		
+
 		and:
 		TestCase tc = Mock()
 		tc.project >> Mock(Project)
@@ -93,11 +93,11 @@ class TestCaseTestStepsControllerTest extends Specification {
 		params.setsEcho("echo");
 
 		and:
-		CustomFieldHelper cufhelper = Mock() 
+		CustomFieldHelper cufhelper = Mock()
 		cufhelper.getCustomFieldValues() >> []
 		cufhelper.restrictToCommonFields() >> cufhelper
 		cufhelper.setRenderingLocations(_) >> cufhelper
-		
+
 		cufHelperService.newStepsHelper(_, _) >> cufhelper
 
 		when:
@@ -113,14 +113,14 @@ class TestCaseTestStepsControllerTest extends Specification {
 				"nb-attachments":1,
 				"empty-requirements-holder":null,
 				"nb-requirements":0,
-				"step-index":1, 
+				"step-index":1,
 				"step-type":"action",
 				"attach-list-id":5L,
 				"step-result":"r1",
 				"has-requirements":false,
-				"called-tc-id":null,
 				"empty-delete-holder":null,
-				"step-action":"a1"
+				"step-action":"a1",
+				"call-step-info" : null
 			],
 			[
 				"step-id":2L,
@@ -134,7 +134,7 @@ class TestCaseTestStepsControllerTest extends Specification {
 				"attach-list-id":5L,
 				"step-result":"r2",
 				"has-requirements":false,
-				"called-tc-id":null,
+				"call-step-info":null,
 				"empty-delete-holder":null,
 				"step-action":"a2"
 			]]

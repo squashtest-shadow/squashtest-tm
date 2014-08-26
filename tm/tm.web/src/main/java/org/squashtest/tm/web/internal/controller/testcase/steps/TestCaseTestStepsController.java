@@ -114,7 +114,7 @@ public class TestCaseTestStepsController {
 		List<CustomFieldValue> cufValues = helper.getCustomFieldValues();
 
 		// process the data
-		TestStepsTableModelBuilder builder = new TestStepsTableModelBuilder(internationalizationHelper, locale);
+		TestStepsTableModelBuilder builder = new TestStepsTableModelBuilder();
 		builder.usingCustomFields(cufValues, cufDefinitions.size());
 		Collection<Object> stepsData = builder.buildRawModel(steps, 1);
 
@@ -149,7 +149,7 @@ public class TestCaseTestStepsController {
 		List<CustomFieldValue> cufValues = helper.getCustomFieldValues();
 
 		// generate the model
-		TestStepsTableModelBuilder builder = new TestStepsTableModelBuilder(internationalizationHelper, locale);
+		TestStepsTableModelBuilder builder = new TestStepsTableModelBuilder();
 		builder.usingCustomFields(cufValues);
 		return builder.buildDataModel(holder, params.getsEcho());
 

@@ -26,6 +26,8 @@ import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory
 import org.squashtest.tm.domain.attachment.AttachmentList
 import org.squashtest.tm.domain.testcase.ActionTestStep
 import org.squashtest.tm.domain.testcase.CallTestStep
+import org.squashtest.tm.domain.testcase.Dataset;
+import org.squashtest.tm.domain.testcase.ParameterAssignationMode;
 import org.squashtest.tm.domain.testcase.TestCase
 import org.squashtest.tm.domain.testcase.TestCaseLibraryNode
 import org.squashtest.tm.domain.testcase.TestStep
@@ -36,7 +38,7 @@ import spock.lang.Specification
 class TestStepsTableModelBuilderTest extends Specification {
 	MessageSource messageSource = Mock()
 	Locale locale = Locale.FRENCH
-	TestStepsTableModelBuilder builder = new TestStepsTableModelBuilder(messageSource, locale)
+	TestStepsTableModelBuilder builder = new TestStepsTableModelBuilder()
 
 	def "Should build model for an ActionTestStep"() {
 		given:
@@ -65,10 +67,10 @@ class TestStepsTableModelBuilderTest extends Specification {
 			"attach-list-id":100L,
 			"step-result": "expected",
 			"has-requirements":false,
-			"called-tc-id":null,
+			"call-step-info":null,
 			"empty-delete-holder":null,
 			"step-action": "action"
-			]
+		]
 
 
 
@@ -78,35 +80,46 @@ class TestStepsTableModelBuilderTest extends Specification {
 		given:
 		TestCase callee = new TestCase(name: "callee")
 		CallTestStep step = new CallTestStep(calledTestCase: callee)
+		Dataset ds = new Dataset(name : "dataset")
+		ds.testCase = callee
+		callee.addDataset ds
+
 		int stepIndex = 0
 
 		use(ReflectionCategory) {
 			TestCaseLibraryNode.set field: "id", of: callee, to: 100L
 			TestStep.set field: 'id', of: step, to: 10L
+			Dataset.set field : 'id', of: ds, to : 5L
 		}
 
-		and:
-		messageSource.getMessage("test-case.call-step.action.template", ["callee"], _) >> "Call : callee"
+		step.delegateParameterValues = false
+		step.calledDataset = ds
 
 		when:
 		def data = builder.buildItemData(step);
 
 		then:
-		
-		data == ["step-id":10L, 
-			"empty-browse-holder":null, 
-			"customFields":[:], 
-			"nb-attachments":null, 
+
+		data == ["step-id":10L,
+			"empty-browse-holder":null,
+			"customFields":[:],
+			"nb-attachments":null,
 			"empty-requirements-holder":null,
 			"nb-requirements":null,
-			"step-index":0, 
-			"step-type":"call", 
-			"attach-list-id":null, 
-			"step-result":null, 
+			"step-index":0,
+			"step-type":"call",
+			"attach-list-id":null,
+			"step-result":null,
 			"has-requirements":false,
-			"called-tc-id":100L, 
-			"empty-delete-holder":null, 
-			"step-action":"Call : callee"
-			]
+			"call-step-info": data["call-step-info"],	// that one will be tested later
+			"empty-delete-holder":null,
+			"step-action": null
+		]
+
+		data["call-step-info"].calledTcId == 100L
+		data["call-step-info"].calledTcName == "callee"
+		data["call-step-info"].calledDatasetId == 5L
+		data["call-step-info"].calledDatasetName == "dataset"
+		data["call-step-info"].paramMode == "CALLED_DATASET"
 	}
 }

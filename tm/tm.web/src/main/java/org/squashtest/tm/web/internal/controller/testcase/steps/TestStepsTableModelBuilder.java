@@ -24,12 +24,10 @@ import java.text.ParseException;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.MessageSource;
 import org.squashtest.tm.core.foundation.lang.DateUtils;
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
 import org.squashtest.tm.domain.testcase.ActionTestStep;
@@ -54,13 +52,10 @@ public class TestStepsTableModelBuilder extends DataTableModelBuilder<TestStep> 
 
 	private Map<Long, Map<String, CustomFieldValueTableModel>> customFieldValuesById;
 
-	private final MessageSource messageSource;
-	private final Locale locale;
 	private Map<?, ?> lastBuiltItem;
 
-	public TestStepsTableModelBuilder(MessageSource messageSource, Locale locale) {
-		this.messageSource = messageSource;
-		this.locale = locale;
+	public TestStepsTableModelBuilder() {
+		super();
 	}
 
 	/**
