@@ -357,6 +357,13 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	}
 
 	@Override
+	public PagedCollectionHolder<List<CallTestStep>> findCallingTestSteps(long testCaseId, PagingAndSorting sorting) {
+		List<CallTestStep> callers = testCaseDao.findAllCallingTestSteps(testCaseId, sorting);
+		Long countCallers = testCaseDao.countCallingTestSteps(testCaseId);
+		return new PagingBackedPagedCollectionHolder<List<CallTestStep>>(sorting, countCallers, callers);
+	}
+
+	@Override
 	@PreAuthorize(WRITE_TC_OR_ROLE_ADMIN)
 	public void changeImportanceAuto(long testCaseId, boolean auto) {
 		TestCase testCase = testCaseDao.findById(testCaseId);

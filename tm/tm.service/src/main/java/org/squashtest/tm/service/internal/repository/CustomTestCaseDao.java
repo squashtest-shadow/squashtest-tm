@@ -29,6 +29,7 @@ import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.NamedReferencePair;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.requirement.RequirementSearchCriteria;
+import org.squashtest.tm.domain.testcase.CallTestStep;
 import org.squashtest.tm.domain.testcase.ExportTestCaseData;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseImportance;
@@ -153,6 +154,18 @@ public interface CustomTestCaseDao extends EntityDao<TestCase> {
 	 * @return the test cases calling the test case matching the given id param.
 	 */
 	List<TestCase> findAllCallingTestCases(long calleeId);
+
+	/**
+	 * returns all the call test step that reference the test case given its id.
+	 * Note that like in {@link #findAllCallingTestCases(long, PagingAndSorting)},
+	 * the paging and sorting can sort on attributes that belong to the caller
+	 * TestCases
+	 * 
+	 * @param testCaseId
+	 * @param sorting
+	 * @return
+	 */
+	List<CallTestStep> findAllCallingTestSteps(long testCaseId, PagingAndSorting sorting);
 
 	/***
 	 * Returns the test cases associated with at least a requirement that meets the criteria

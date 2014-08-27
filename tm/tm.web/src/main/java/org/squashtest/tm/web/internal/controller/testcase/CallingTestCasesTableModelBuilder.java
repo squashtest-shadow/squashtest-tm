@@ -25,34 +25,60 @@ import java.util.Locale;
 import java.util.Map;
 
 import org.springframework.context.i18n.LocaleContextHolder;
+import org.squashtest.tm.domain.testcase.CallTestStep;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelBuilder;
 
-class CallingTestCasesTableModelBuilder extends DataTableModelBuilder<TestCase> {
+class CallingTestCasesTableModelBuilder extends DataTableModelBuilder<CallTestStep> {
 
 	private InternationalizationHelper i18nHelper;
 	private Locale locale = LocaleContextHolder.getLocale();
-	
+
 	CallingTestCasesTableModelBuilder(InternationalizationHelper i18nHelper){
 		this.i18nHelper = i18nHelper;
 	}
-	
+
 	@Override
-	protected Map<String, String> buildItemData(TestCase tc) {
-		
-		Map<String, String> row = new HashMap<String, String>(6);
-		String executionMode = i18nHelper.internationalize(tc.getExecutionMode(), locale);
-		
-		row.put("tc-id", Long.toString(tc.getId()));
+	protected Map<String, Object> buildItemData(CallTestStep step) {
+
+		Map<String, Object> row = new HashMap<String, Object>(8);
+
+		TestCase caller = step.getTestCase();
+		String dsName = findDatasetName(step);
+
+		String executionMode = i18nHelper.internationalize(caller.getExecutionMode(), locale);
+
+		row.put("tc-id", Long.toString(caller.getId()));
 		row.put("tc-index", Long.toString(getCurrentIndex()));
-		row.put("project-name", tc.getProject().getName());
-		row.put("tc-reference", tc.getReference());
-		row.put("tc-name", tc.getName());
+		row.put("project-name", caller.getProject().getName());
+		row.put("tc-reference", caller.getReference());
+		row.put("tc-name", caller.getName());
 		row.put("tc-mode", executionMode);
-		
+		row.put("ds-name", dsName);
+		row.put("step-no", step.getIndex()+1);
+
 		return row;
-		
+
+	}
+
+	protected String findDatasetName(CallTestStep step){
+		String name;
+		switch (step.getParameterAssignationMode()){
+		case NOTHING :
+			name = "--";
+			break;
+		case DELEGATE :
+			name = i18nHelper.getMessage("label.callstepdataset.Delegate", null, "label.callstepdataset.Delegate", locale);
+			break;
+		case CALLED_DATASET :
+			name = step.getCalledDataset().getName();
+			break;
+		default :
+			throw new IllegalArgumentException("the ParameterAssignationMode '"+step.getParameterAssignationMode()+"' is not supported");
+		}
+
+		return name;
 	}
 
 }

@@ -52,6 +52,7 @@ import org.squashtest.tm.domain.NamedReference;
 import org.squashtest.tm.domain.NamedReferencePair;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.requirement.RequirementSearchCriteria;
+import org.squashtest.tm.domain.testcase.CallTestStep;
 import org.squashtest.tm.domain.testcase.ExportTestCaseData;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseFolder;
@@ -87,8 +88,13 @@ public class HibernateTestCaseDao extends HibernateEntityDao<TestCase> implement
 	private static final String FIND_ALL_FOR_LIBRARY_QUERY = "select distinct testCase.TCLN_ID"
 			+ " from TEST_CASE testCase " + " join TEST_CASE_LIBRARY_NODE tcln on tcln.TCLN_ID = testCase.TCLN_ID"
 			+ " join PROJECT project on project.PROJECT_ID = tcln.PROJECT_ID" + " where project.TCL_ID = :libraryId";
-	private static final String FIND_ALL_CALLING_TEST_CASE_MAIN_HQL = "select TestCase from TestCase as TestCase left join TestCase.project as Project "
+
+	private static final String FIND_ALL_CALLING_TEST_CASE_MAIN_HQL = "select TestCase from TestCase as TestCase join TestCase.project as Project "
 			+ " join TestCase.steps as Steps where Steps.calledTestCase.id = :testCaseId group by TestCase ";
+
+	// in that query we only want the steps, but we join also on the caller test cases and projects because we can sort on them
+	private static final String FIND_ALL_CALLING_TEST_STEPS_MAIN_HQL = "select Steps from TestCase as TestCase join TestCase.project as Project " +
+			"join TestCase.steps as Steps where Steps.calledTestCase.id = :testCaseId ";
 
 	private static List<DefaultSorting> defaultVerifiedTcSorting;
 
@@ -265,6 +271,28 @@ public class HibernateTestCaseDao extends HibernateEntityDao<TestCase> implement
 		query.setParameter("testCaseId", calleeId);
 		return query.list();
 	}
+
+
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<CallTestStep> findAllCallingTestSteps(long testCaseId, PagingAndSorting sorting) {
+		String orderBy = "";
+
+		if (sorting != null) {
+			orderBy = " order by " + sorting.getSortedAttribute() + ' ' + sorting.getSortOrder().getCode();
+		}
+
+		Query query = currentSession().createQuery(FIND_ALL_CALLING_TEST_STEPS_MAIN_HQL + orderBy);
+		query.setParameter("testCaseId", testCaseId);
+
+		if (sorting != null) {
+			query.setMaxResults(sorting.getPageSize());
+			query.setFirstResult(sorting.getFirstItemIndex());
+		}
+		return query.list();
+	}
+
+
 
 	@SuppressWarnings("unchecked")
 	public List<NamedReference> findTestCaseDetails(Collection<Long> ids){

@@ -30,6 +30,7 @@ import javax.validation.constraints.NotNull;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.Paging;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
+import org.squashtest.tm.domain.testcase.CallTestStep;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseImportance;
 import org.squashtest.tm.domain.testcase.TestStep;
@@ -56,8 +57,15 @@ public interface CustomTestCaseFinder {
 	 * @param sorting
 	 *            the sorting parameters.
 	 * @return a non null but possibly empty PagedCollectionHolder wrapping the list of first-level calling test cases.
+	 * 
+	 * @deprecated use {@link #findCallingTestSteps(long, PagingAndSorting)} instead
 	 */
+	@Deprecated
 	PagedCollectionHolder<List<TestCase>> findCallingTestCases(long testCaseId, PagingAndSorting sorting);
+
+
+
+	PagedCollectionHolder<List<CallTestStep>> findCallingTestSteps(long testCaseId, PagingAndSorting sorting);
 
 	/**
 	 * Fetches all the test cases which have at least one ancestor from the given list. If ancestorID is a folder id,

@@ -65,6 +65,7 @@ import org.squashtest.tm.domain.customfield.RenderingLocation;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.testcase.ActionTestStep;
+import org.squashtest.tm.domain.testcase.CallTestStep;
 import org.squashtest.tm.domain.testcase.Dataset;
 import org.squashtest.tm.domain.testcase.DatasetParamValue;
 import org.squashtest.tm.domain.testcase.Parameter;
@@ -453,7 +454,7 @@ public class TestCaseModificationController {
 
 	private DataTableModel getCallingTestCaseTableModel(long testCaseId, PagingAndSorting paging, String sEcho){
 
-		PagedCollectionHolder<List<TestCase>> holder = testCaseModificationService.findCallingTestCases(testCaseId,
+		PagedCollectionHolder<List<CallTestStep>> holder = testCaseModificationService.findCallingTestSteps(testCaseId,
 				paging);
 
 		return new CallingTestCasesTableModelBuilder(internationalizationHelper).buildDataModel(holder, sEcho);
