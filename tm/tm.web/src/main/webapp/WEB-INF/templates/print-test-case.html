@@ -213,9 +213,10 @@
                         <!--  spring EL is a good language but sometimes WTF hits you right in the face -->
                         <td th:if="*{['step-type'] == 'call'}" 
                              th:with="tcname = *{['call-step-info'].calledTcName},
-                                      dsname = *{['call-step-info'].paramMode == 'DELEGATE' ? '__#{label.callstepdataset.PickDataset}__' :  
-                                                 ['call-step-info'].paramMode == 'CALLED_DATASET' ? ['call-step-info'].calledDatasetName :  
-                                                 '__#{label.None}__' 
+                                      dsname = *{
+                                                  ['call-step-info'].paramMode == 'DELEGATE' ? '__#{label.callstepdataset.Delegate}__' :  
+                                                  ['call-step-info'].paramMode == 'CALLED_DATASET' ? ['call-step-info'].calledDatasetName :  
+                                                  '__#{label.callstepdataset.PickDataset}__' 
                                                 }"
                              colspan="2"        
                              th:text="#{test-case.call-step.action.template(${tcname}, ${dsname})}">Cas de Test : Machin truc chouette</td>

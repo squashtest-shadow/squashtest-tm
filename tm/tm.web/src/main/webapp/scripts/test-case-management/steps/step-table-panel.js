@@ -137,8 +137,8 @@ define([ "jquery", "squashtable/squashtable.collapser", "custom-field-values", "
 	function _callStepContent(table, row){
 		var alllang = translator.get({
 			template : 'test-case.call-step.action.template',
-			none : 'label.None',
-			choose : 'label.callstepdataset.PickDataset'
+			none : 'label.callstepdataset.PickDataset',
+			delegate : 'label.callstepdataset.Delegate'
 		});
 		
 		var data = table.fnGetData(row);
@@ -146,7 +146,7 @@ define([ "jquery", "squashtable/squashtable.collapser", "custom-field-values", "
 		
 		var tcUrl = squashtm.app.contextRoot + '/test-cases/'+stepinfo.calledTcId+'/info',
 			dsName = (stepinfo.paramMode === 'NOTHING') ? alllang.none :
-					(stepinfo.paramMode === 'DELEGATE') ? alllang.choose :
+					(stepinfo.paramMode === 'DELEGATE') ? alllang.delegate :
 					stepinfo.calledDatasetName;
 		
 		var	tcLink = '<a href="'+tcUrl+'">'+stepinfo.calledTcName+'</a>',
