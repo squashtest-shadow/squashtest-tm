@@ -28,6 +28,7 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.squashtest.tm.domain.customfield.BindableEntity;
 import org.squashtest.tm.domain.customfield.InputType;
+import org.squashtest.tm.domain.testcase.Dataset;
 import org.squashtest.tm.domain.testcase.TestCaseImportance;
 import org.squashtest.tm.domain.testcase.TestCaseNature;
 import org.squashtest.tm.domain.testcase.TestCaseStatus;
@@ -355,10 +356,15 @@ public class ExportModel {
 		private String result;
 		private Long nbReq;
 		private Long nbAttach;
+		private String calledDsName;
+		private boolean delegateParameters;
 		private List<CustomField> cufs = new LinkedList<CustomField>();
 
+
+		// about delegateParameters : when fetching an action step we want to select the literal 'false'. However Hibernate
+		// can't do that, hence it is here shipped as int before casting to Boolean.
 		public TestStepModel(long tcOwnerId, long id, int order, Integer isCallStep, String action, String result,
-				Long nbReq, Long nbAttach) {
+				Long nbReq, Long nbAttach, String calledDsName, Integer delegateParameters) {
 
 			super();
 			this.tcOwnerId = tcOwnerId;
@@ -369,6 +375,8 @@ public class ExportModel {
 			this.result = result;
 			this.nbReq = nbReq;
 			this.nbAttach = nbAttach;
+			this.calledDsName = calledDsName;	// special call steps
+			this.delegateParameters = (delegateParameters==1) ? true : false; // special call steps
 		}
 
 		public String getTcOwnerPath() {
@@ -449,6 +457,19 @@ public class ExportModel {
 
 		public List<CustomField> getCufs() {
 			return cufs;
+		}
+
+		public String getDsName(){
+			String name;
+			if (delegateParameters){
+				name = "INHERITS";
+			}
+			else {
+				//inexact (we should explicitly treat the no-dataset scenario,
+				// but conveniently sufficient here
+				name = calledDsName;
+			}
+			return name;
 		}
 
 	}

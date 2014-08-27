@@ -146,6 +146,7 @@ class ExcelExporter {
 			r.createCell(cIdx++).setCellValue(tsm.getId());
 			r.createCell(cIdx++).setCellValue(tsm.getOrder());
 			r.createCell(cIdx++).setCellValue(tsm.getIsCallStep());
+			r.createCell(cIdx++).setCellValue(tsm.getDsName());
 			r.createCell(cIdx++).setCellValue(tsm.getAction());
 			r.createCell(cIdx++).setCellValue(tsm.getResult());
 			r.createCell(cIdx++).setCellValue(tsm.getNbReq());
@@ -307,6 +308,7 @@ class ExcelExporter {
 		h.createCell(cIdx++).setCellValue(StepSheetColumn.TC_STEP_ID.header);
 		h.createCell(cIdx++).setCellValue(StepSheetColumn.TC_STEP_NUM.header);
 		h.createCell(cIdx++).setCellValue(StepSheetColumn.TC_STEP_IS_CALL_STEP.header);
+		h.createCell(cIdx++).setCellValue(StepSheetColumn.TC_STEP_CALL_DATASET.header);
 		h.createCell(cIdx++).setCellValue(StepSheetColumn.TC_STEP_ACTION.header);
 		h.createCell(cIdx++).setCellValue(StepSheetColumn.TC_STEP_EXPECTED_RESULT.header);
 		h.createCell(cIdx++).setCellValue(StepSheetColumn.TC_STEP_NB_REQ.header);
