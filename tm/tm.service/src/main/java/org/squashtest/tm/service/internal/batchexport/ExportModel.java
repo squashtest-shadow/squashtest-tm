@@ -462,7 +462,7 @@ public class ExportModel {
 		public String getDsName(){
 			String name;
 			if (delegateParameters){
-				name = "INHERITS";
+				name = "INHERIT";
 			}
 			else {
 				//inexact (we should explicitly treat the no-dataset scenario,

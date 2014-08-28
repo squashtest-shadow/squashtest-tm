@@ -115,9 +115,9 @@ public class SimulationFacility implements Facility {
 
 
 	@Override
-	public LogTrain addCallStep(TestStepTarget target, CallTestStep testStep, TestCaseTarget calledTestCase, ActionTestStep actionBackupStep) {
+	public LogTrain addCallStep(TestStepTarget target, CallTestStep testStep, TestCaseTarget calledTestCase, CallStepParamsInfo paramInfo, ActionTestStep actionBackupStep) {
 
-		LogTrain logs = validator.addCallStep(target, testStep, calledTestCase, actionBackupStep);
+		LogTrain logs = validator.addCallStep(target, testStep, calledTestCase, paramInfo, actionBackupStep);
 
 		// update the model if no fatal flaws were detected
 		if (!logs.hasCriticalErrors()) {
@@ -144,9 +144,10 @@ public class SimulationFacility implements Facility {
 	}
 
 	@Override
-	public LogTrain updateCallStep(TestStepTarget target, CallTestStep testStep, TestCaseTarget calledTestCase, ActionTestStep actionStepBackup) {
+	public LogTrain updateCallStep(TestStepTarget target, CallTestStep testStep, TestCaseTarget calledTestCase,
+			CallStepParamsInfo paramInfo, ActionTestStep actionStepBackup) {
 
-		LogTrain logs = validator.updateCallStep(target, testStep, calledTestCase, actionStepBackup);
+		LogTrain logs = validator.updateCallStep(target, testStep, calledTestCase, paramInfo, actionStepBackup);
 
 		// if all is ok, update the target of this call step then return
 		if (!logs.hasCriticalErrors()) {

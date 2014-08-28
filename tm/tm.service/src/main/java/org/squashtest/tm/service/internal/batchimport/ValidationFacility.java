@@ -301,7 +301,8 @@ public class ValidationFacility implements Facility, ModelProvider {
 	}
 
 	@Override
-	public LogTrain addCallStep(TestStepTarget target, CallTestStep testStep, TestCaseTarget calledTestCase, ActionTestStep actionStepBackup) {
+	public LogTrain addCallStep(TestStepTarget target, CallTestStep testStep, TestCaseTarget calledTestCase,
+			CallStepParamsInfo paramInfo, ActionTestStep actionStepBackup) {
 
 		LogTrain logs;
 
@@ -309,7 +310,7 @@ public class ValidationFacility implements Facility, ModelProvider {
 		logs = entityValidator.basicTestStepChecks(target, testStep);
 
 		// 2 - call step specific checks
-		logs.append(entityValidator.validateCallStep(target, testStep, calledTestCase, ImportMode.CREATE));
+		logs.append(entityValidator.validateCallStep(target, testStep, calledTestCase, paramInfo, ImportMode.CREATE));
 
 		// 3 - cufs : call steps have no cufs -> skip
 
@@ -374,7 +375,7 @@ public class ValidationFacility implements Facility, ModelProvider {
 	}
 
 	@Override
-	public LogTrain updateCallStep(TestStepTarget target, CallTestStep testStep, TestCaseTarget calledTestCase, ActionTestStep actionStepBackup) {
+	public LogTrain updateCallStep(TestStepTarget target, CallTestStep testStep, TestCaseTarget calledTestCase, CallStepParamsInfo paramInfos, ActionTestStep actionStepBackup) {
 
 		LogTrain logs;
 
@@ -382,7 +383,7 @@ public class ValidationFacility implements Facility, ModelProvider {
 		logs = entityValidator.basicTestStepChecks(target);
 
 		// 2 - call step specific checks
-		logs.append(entityValidator.validateCallStep(target, testStep, calledTestCase, ImportMode.UPDATE));
+		logs.append(entityValidator.validateCallStep(target, testStep, calledTestCase, paramInfos, ImportMode.UPDATE));
 
 		// 3 - cufs : call steps have no cufs -> skip
 

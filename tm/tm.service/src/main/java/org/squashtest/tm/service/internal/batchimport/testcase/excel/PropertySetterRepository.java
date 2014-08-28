@@ -126,6 +126,9 @@ final class PropertySetterRepository<COL extends Enum<COL> & TemplateColumn> {
 		stepWorksheetRepo.propSetterByColumn.put(StepSheetColumn.TC_STEP_ACTION, StepActionPropSetter.INSTANCE);
 		stepWorksheetRepo.propSetterByColumn.put(StepSheetColumn.TC_STEP_EXPECTED_RESULT, StepResultPropSetter.INSTANCE);
 
+		// call step prop only (will rant if the other step shows up)
+		stepWorksheetRepo.propSetterByColumn.put(StepSheetColumn.TC_STEP_CALL_DATASET, ParamAssignationModeSetter.INSTANCE);
+
 		return stepWorksheetRepo;
 	}
 

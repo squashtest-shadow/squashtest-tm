@@ -204,6 +204,9 @@ final class PropertyHolderFinderRepository<COL extends Enum<COL> & TemplateColum
 				throw new IllegalArgumentException("Cannot process this type of instruction : " + instruction);
 			}
 		};
+
+		stepsWorksheetRepo.finderByColumn.put(StepSheetColumn.TC_STEP_CALL_DATASET, instructionFinder);
+
 		stepsWorksheetRepo.finderByColumn.put(StepSheetColumn.TC_STEP_ACTION, actionResultHolderFinder);
 		stepsWorksheetRepo.finderByColumn.put(StepSheetColumn.TC_STEP_EXPECTED_RESULT, actionResultHolderFinder);
 
@@ -222,8 +225,6 @@ final class PropertyHolderFinderRepository<COL extends Enum<COL> & TemplateColum
 		};
 
 		stepsWorksheetRepo.defaultFinder = stepFinder;
-
-
 
 		return stepsWorksheetRepo;
 	}

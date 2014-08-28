@@ -27,6 +27,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.squashtest.tm.domain.testcase.ActionTestStep;
 import org.squashtest.tm.service.internal.batchimport.ActionStepInstruction;
 import org.squashtest.tm.service.internal.batchimport.CallStepInstruction;
+import org.squashtest.tm.service.internal.batchimport.CallStepParamsInfo;
 import org.squashtest.tm.service.internal.batchimport.StepInstruction;
 import org.squashtest.tm.service.internal.batchimport.TestCaseTarget;
 import org.squashtest.tm.service.internal.batchimport.TestStepTarget;
@@ -52,7 +53,7 @@ class StepInstructionBuilder extends InstructionBuilder<StepSheetColumn, StepIns
 		if (isActionStepRow(row)) {
 			instruction = new ActionStepInstruction(new TestStepTarget(), ActionTestStep.createBlankActionStep());
 		} else {
-			instruction = new CallStepInstruction(new TestStepTarget(), new TestCaseTarget(), ActionTestStep.createBlankActionStep());
+			instruction = new CallStepInstruction(new TestStepTarget(), new TestCaseTarget(), ActionTestStep.createBlankActionStep(), new CallStepParamsInfo());
 		}
 		return instruction;
 	}

@@ -230,6 +230,7 @@ class EntityValidatorTest extends Specification {
 		TestStepTarget target  = new TestStepTarget(new TestCaseTarget("/project/test-case"), 2)
 		TestCaseTarget called = new TestCaseTarget("/project/called")
 		TestStep cstep = new CallTestStep()
+		CallStepParamsInfo info = new CallStepParamsInfo()
 
 		and :
 		model.getStatus(_) >> new TargetStatus(EXISTS, 10l)
@@ -238,7 +239,7 @@ class EntityValidatorTest extends Specification {
 
 
 		when :
-		LogTrain train = validator.validateCallStep(target, cstep, called, mode)
+		LogTrain train = validator.validateCallStep(target, cstep, called, info, mode)
 
 
 		then :
@@ -263,10 +264,11 @@ class EntityValidatorTest extends Specification {
 		def target = steptarget("/project/test-case", 5)
 		def called = tar("/project/autre")
 		def cstep = cst()
+		CallStepParamsInfo info = new CallStepParamsInfo()
 
 
 		when :
-		LogTrain train = validator.validateCallStep(target, cstep, called, mode)
+		LogTrain train = validator.validateCallStep(target, cstep, called, info, mode)
 
 		then :
 

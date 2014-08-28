@@ -37,6 +37,7 @@ import org.squashtest.tm.service.internal.batchimport.excel.OptionalBooleanCellC
 import org.squashtest.tm.service.internal.batchimport.excel.OptionalDateCellCoercer;
 import org.squashtest.tm.service.internal.batchimport.excel.OptionalEnumCellCoercer;
 import org.squashtest.tm.service.internal.batchimport.excel.OptionalOneBasedIndexCellCoercer;
+import org.squashtest.tm.service.internal.batchimport.excel.ParamAssignationModeCellCoercer;
 import org.squashtest.tm.service.internal.batchimport.excel.StringCellCoercer;
 
 /**
@@ -100,6 +101,7 @@ final class CellValueCoercerRepository<COL extends Enum<COL> & TemplateColumn> {
 		repo.coercerByColumn.put(StepSheetColumn.ACTION, ImportModeCellCoercer.INSTANCE);
 		repo.coercerByColumn.put(StepSheetColumn.TC_STEP_NUM, OptionalOneBasedIndexCellCoercer.INSTANCE);
 		repo.coercerByColumn.put(StepSheetColumn.TC_STEP_IS_CALL_STEP, OptionalBooleanCellCoercer.INSTANCE);
+		repo.coercerByColumn.put(StepSheetColumn.TC_STEP_CALL_DATASET, ParamAssignationModeCellCoercer.INSTANCE);
 
 		return repo;
 	}

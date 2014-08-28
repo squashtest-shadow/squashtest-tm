@@ -52,8 +52,9 @@ class StepInstructionTest extends Specification {
 	TestStepTarget target = Mock()
 	ActionTestStep step = Mock()
 	TestCaseTarget tct = Mock()
+	CallStepParamsInfo paraminfo = new CallStepParamsInfo()
 	ActionStepInstruction instruction = new ActionStepInstruction(target, step)
-	CallStepInstruction callInstruction = new CallStepInstruction(target, tct, step)
+	CallStepInstruction callInstruction = new CallStepInstruction(target, tct, step, paraminfo)
 	Facility f = Mock()
 
 	def setup() {
@@ -117,7 +118,7 @@ class StepInstructionTest extends Specification {
 		def lt = callInstruction.execute(f)
 
 		then:
-		1 * f.addCallStep(target, null, tct, step) >> new LogTrain()
+		1 * f.addCallStep(target, null, tct, paraminfo, step) >> new LogTrain()
 	}
 
 	@Unroll
@@ -129,7 +130,7 @@ class StepInstructionTest extends Specification {
 		def lt = callInstruction.execute(f)
 
 		then:
-		1 * f.updateCallStep(target, null, tct, step) >> new LogTrain()
+		1 * f.updateCallStep(target, null, tct, paraminfo, step) >> new LogTrain()
 
 		where:
 		mode << [ImportMode.UPDATE, null]

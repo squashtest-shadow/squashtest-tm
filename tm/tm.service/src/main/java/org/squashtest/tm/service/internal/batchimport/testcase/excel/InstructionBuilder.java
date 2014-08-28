@@ -33,6 +33,7 @@ import org.squashtest.tm.service.internal.batchimport.Instruction;
 import org.squashtest.tm.service.internal.batchimport.Messages;
 import org.squashtest.tm.service.internal.batchimport.TestCaseInstruction;
 import org.squashtest.tm.service.internal.batchimport.excel.CannotCoerceException;
+import org.squashtest.tm.service.internal.batchimport.excel.InvalidTargetException;
 import org.squashtest.tm.service.internal.batchimport.excel.NullMandatoryValueException;
 import org.squashtest.tm.service.internal.batchimport.excel.PropertySetter;
 
@@ -135,6 +136,8 @@ public abstract class InstructionBuilder<COL extends Enum<COL> & TemplateColumn,
 
 		} catch (NullMandatoryValueException e) {
 			log(colDef, instruction);
+		} catch (InvalidTargetException e){
+			instruction.addLogEntry(e.getStatus(), e.getErrori18nMessage(), e.getImpacti18nMessage());
 		}
 	}
 

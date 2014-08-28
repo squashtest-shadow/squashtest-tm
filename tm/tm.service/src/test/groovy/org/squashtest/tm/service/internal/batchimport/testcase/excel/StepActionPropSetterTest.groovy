@@ -24,6 +24,7 @@ package org.squashtest.tm.service.internal.batchimport.testcase.excel
 
 import org.squashtest.tm.domain.testcase.ActionTestStep
 import org.squashtest.tm.service.internal.batchimport.CallStepInstruction
+import org.squashtest.tm.service.internal.batchimport.CallStepParamsInfo;
 import org.squashtest.tm.service.internal.batchimport.TestCaseTarget
 import org.squashtest.tm.service.internal.batchimport.TestStepTarget
 
@@ -61,8 +62,9 @@ class StepActionPropSetterTest extends Specification {
 		TestStepTarget  stepTarget = new TestStepTarget()
 		TestCaseTarget calledTestCase = new TestCaseTarget()
 		ActionTestStep actionStepBackup = new ActionTestStep()
+		CallStepParamsInfo paramInfo = new CallStepParamsInfo()
 
-		CallStepInstruction target = new CallStepInstruction(stepTarget, calledTestCase, actionStepBackup)
+		CallStepInstruction target = new CallStepInstruction(stepTarget, calledTestCase, actionStepBackup, paramInfo)
 
 		when:
 		setter.set(action, target)

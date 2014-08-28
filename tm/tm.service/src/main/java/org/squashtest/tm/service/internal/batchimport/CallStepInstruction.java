@@ -26,12 +26,14 @@ public class CallStepInstruction extends StepInstruction {
 
 	private final TestCaseTarget calledTC;
 	private final ActionTestStep actionStepBackup;
+	private CallStepParamsInfo datasetInfo;
 
 
-	public CallStepInstruction(TestStepTarget target, TestCaseTarget calledTestCase, ActionTestStep actionStepBackup) {
+	public CallStepInstruction(TestStepTarget target, TestCaseTarget calledTestCase, ActionTestStep actionStepBackup, CallStepParamsInfo datasetInfo) {
 		super(target);
 		this.calledTC = calledTestCase;
 		this.actionStepBackup = actionStepBackup;
+		this.datasetInfo = datasetInfo;
 	}
 
 	public TestCaseTarget getCalledTC() {
@@ -45,7 +47,7 @@ public class CallStepInstruction extends StepInstruction {
 	 */
 	@Override
 	protected LogTrain executeUpdate(Facility facility) {
-		return facility.updateCallStep(getTarget(), null, calledTC, actionStepBackup);
+		return facility.updateCallStep(getTarget(), null, calledTC, datasetInfo, actionStepBackup);
 	}
 
 	/**
@@ -53,7 +55,17 @@ public class CallStepInstruction extends StepInstruction {
 	 */
 	@Override
 	protected LogTrain executeCreate(Facility facility) {
-		return facility.addCallStep(getTarget(), null, calledTC, actionStepBackup);
+		return facility.addCallStep(getTarget(), null, calledTC, datasetInfo, actionStepBackup);
+	}
+
+
+	public CallStepParamsInfo getDatasetInfo() {
+		return datasetInfo;
+	}
+
+
+	public void setDatasetInfo(CallStepParamsInfo datasetInfo) {
+		this.datasetInfo = datasetInfo;
 	}
 
 }
