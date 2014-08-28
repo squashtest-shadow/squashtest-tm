@@ -416,10 +416,11 @@ public class FacilityImplIT extends DbunitServiceSpecification {
 		TestStepTarget steptarget = new TestStepTarget(callertc, 1)
 		CallTestStep callstep = new CallTestStep()
 		ActionTestStep actionStepBackup = new ActionTestStep()
+		CallStepParamsInfo paraminfo = new CallStepParamsInfo()
 
 
 		when :
-		LogTrain train = impl.addCallStep(steptarget, callstep, calledtc, actionStepBackup)
+		LogTrain train = impl.addCallStep(steptarget, callstep, calledtc, paraminfo, actionStepBackup)
 
 		flush()
 
@@ -450,9 +451,10 @@ public class FacilityImplIT extends DbunitServiceSpecification {
 		TestStepTarget steptarget = new TestStepTarget(callertc, 1)
 		CallTestStep callstep = new CallTestStep()
 		ActionTestStep actionStepBackup = new ActionTestStep()
+		CallStepParamsInfo paraminfo = new CallStepParamsInfo()
 
 		when :
-		LogTrain train = impl.addCallStep(steptarget, callstep, calledtc, actionStepBackup)
+		LogTrain train = impl.addCallStep(steptarget, callstep, calledtc, paraminfo, actionStepBackup)
 
 		flush()
 
@@ -544,9 +546,11 @@ public class FacilityImplIT extends DbunitServiceSpecification {
 		TestStepTarget steptarget = new TestStepTarget(callertc, 2)
 		CallTestStep callstep = new CallTestStep()
 		ActionTestStep actionStepBackup = new ActionTestStep()
+		CallStepParamsInfo paraminfo = new CallStepParamsInfo()
+
 
 		when :
-		LogTrain train = impl.updateCallStep(steptarget, callstep, calledtc, actionStepBackup)
+		LogTrain train = impl.updateCallStep(steptarget, callstep, calledtc, paraminfo, actionStepBackup)
 
 		flush()
 
@@ -577,9 +581,10 @@ public class FacilityImplIT extends DbunitServiceSpecification {
 		TestStepTarget steptarget = new TestStepTarget(callertc, 1)
 		CallTestStep callstep = new CallTestStep()
 		ActionTestStep actionTestStepBackup = new ActionTestStep()
+		CallStepParamsInfo paraminfo = new CallStepParamsInfo()
 
 		when :
-		LogTrain train = impl.updateCallStep(steptarget, callstep, calledtc, actionTestStepBackup)
+		LogTrain train = impl.updateCallStep(steptarget, callstep, calledtc, paraminfo, actionTestStepBackup)
 
 		flush()
 
@@ -610,9 +615,10 @@ public class FacilityImplIT extends DbunitServiceSpecification {
 		TestStepTarget steptarget = new TestStepTarget(callertc, 1)
 		CallTestStep callstep = new CallTestStep()
 		ActionTestStep actionTestStepBackup = new ActionTestStep()
+		CallStepParamsInfo paraminfo = new CallStepParamsInfo()
 
 		when :
-		LogTrain train = impl.updateCallStep(steptarget, callstep, calledtc, actionTestStepBackup)
+		LogTrain train = impl.updateCallStep(steptarget, callstep, calledtc, paraminfo, actionTestStepBackup)
 
 		flush()
 

@@ -20,23 +20,25 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
-<!DOCTYPE dataset SYSTEM "../../../../../../../dtd/squash-tm.1.9.10.dtd">
+<!DOCTYPE dataset SYSTEM "../../../../../../../dtd/squash-tm.1.11.0.dtd">
 <dataset>
 
 	<!--  dummy attachment list, the same for everyone that need one. -->
 	
 	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="1" />
 
+	<!--  some project -->
+	  <PROJECT PROJECT_ID="20" ATTACHMENT_LIST_ID="1" CREATED_ON="2014-08-28" CREATED_BY="dbu" NAME="P20" />
 
 	<!--  test case library nodes ... -->
 
 
-	<TEST_CASE_LIBRARY_NODE TCLN_ID="5" NAME="ultra bottom test case" CREATED_BY="IT" CREATED_ON="2014-04-03" ATTACHMENT_LIST_ID="1"/>		
-	<TEST_CASE_LIBRARY_NODE TCLN_ID="50" NAME="other bottom test case" CREATED_BY="IT" CREATED_ON="2011-07-26" ATTACHMENT_LIST_ID="1"/>		
-	<TEST_CASE_LIBRARY_NODE TCLN_ID="100" NAME="bottom test case" CREATED_BY="IT" CREATED_ON="2011-07-26" ATTACHMENT_LIST_ID="1"/>	
-	<TEST_CASE_LIBRARY_NODE TCLN_ID="101" NAME="first test case" CREATED_BY="IT" CREATED_ON="2011-07-26" ATTACHMENT_LIST_ID="1"/>	
-	<TEST_CASE_LIBRARY_NODE TCLN_ID="102" NAME="second test case" CREATED_BY="IT" CREATED_ON="2011-07-26" ATTACHMENT_LIST_ID="1"/>		
-	<TEST_CASE_LIBRARY_NODE TCLN_ID="103" NAME="third test case" CREATED_BY="IT" CREATED_ON="2011-07-26" ATTACHMENT_LIST_ID="1"/>
+	<TEST_CASE_LIBRARY_NODE TCLN_ID="5" NAME="ultra bottom test case" CREATED_BY="IT" CREATED_ON="2014-04-03" ATTACHMENT_LIST_ID="1" PROJECT_ID="20"/>		
+	<TEST_CASE_LIBRARY_NODE TCLN_ID="50" NAME="other bottom test case" CREATED_BY="IT" CREATED_ON="2011-07-26" ATTACHMENT_LIST_ID="1" PROJECT_ID="20"/>		
+	<TEST_CASE_LIBRARY_NODE TCLN_ID="100" NAME="bottom test case" CREATED_BY="IT" CREATED_ON="2011-07-26" ATTACHMENT_LIST_ID="1" PROJECT_ID="20"/>	
+	<TEST_CASE_LIBRARY_NODE TCLN_ID="101" NAME="first test case" CREATED_BY="IT" CREATED_ON="2011-07-26" ATTACHMENT_LIST_ID="1" PROJECT_ID="20"/>	
+	<TEST_CASE_LIBRARY_NODE TCLN_ID="102" NAME="second test case" CREATED_BY="IT" CREATED_ON="2011-07-26" ATTACHMENT_LIST_ID="1" PROJECT_ID="20"/>		
+	<TEST_CASE_LIBRARY_NODE TCLN_ID="103" NAME="third test case" CREATED_BY="IT" CREATED_ON="2011-07-26" ATTACHMENT_LIST_ID="1" PROJECT_ID="20"/>
 	
 	
 	<!-- ... being all test cases -->
