@@ -97,12 +97,34 @@ public class TestCaseExcelBatchImporter {
 		case DATASET:
 			instructions.addAll(parser.getDatasetInstructions());
 			break;
+		case DATASET_PARAM_VALUES :
+			instructions.addAll(parser.getDatasetParamValuesInstructions());
+			break;
 		default:
 
 		}
 		return instructions;
 	}
 
+
+
+
+	/*
+	 * 
+	 *  Feat 3695 :
+	 * 
+	 *   'datasets' and 'dataset param values' have been processed separately but still need to be reported together. So
+	 *   we should be doing some post processing here to pair the logs together.
+	 * 
+	 *   However due to how ImportLog works (it sorts by the type of the target of the instruction, and DatasetParamValuesInstructions
+	 *   happen to use a DatasetTarget), the instructions will be logged correctly so no change in code is required. BUT, it could
+	 *   have been so.
+	 * 
+	 *   I'm glad you read this until the end because while good code comes along good comments,
+	 *   good absence of code implies even more so requires good comments.
+	 * 
+	 * 
+	 */
 	private ImportLog run(List<Instruction<?>> instructions, Facility facility) {
 
 		ImportLog importLog = new ImportLog();
@@ -119,6 +141,7 @@ public class TestCaseExcelBatchImporter {
 
 			importLog.appendLogTrain(logs);
 		}
+
 
 		return importLog;
 	}

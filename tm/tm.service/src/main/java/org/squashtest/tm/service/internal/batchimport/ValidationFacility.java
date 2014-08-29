@@ -512,37 +512,57 @@ public class ValidationFacility implements Facility, ModelProvider {
 	@Override
 	public LogTrain failsafeUpdateParameterValue(DatasetTarget dataset, ParameterTarget param, String value, boolean isUpdate) {
 
+		/*
+		 * Feat 3695 in this method we must assume that all the checks on the dataset were already logged.
+		 * For our purpose here we still need to check if the dataset is correct (because the rest depends on it),
+		 * but we don't need to log it twice. That's why we keep ther log trains appart.
+		 * 
+		 */
 		LogTrain logs;
+		LogTrain junk;
 
-		// 1 - is the dataset correctly identifed ?
-		logs = entityValidator.basicDatasetCheck(dataset);
+		// 0 - is the dataset correctly identifed ?
+		junk = entityValidator.basicDatasetCheck(dataset);
 
-		// 2 - is the parameter correctly identified ?
-		logs.append(entityValidator.basicParameterValueChecks(param));
+		// 1 - is the parameter correctly identified ?
+		logs = (entityValidator.basicParameterValueChecks(param));
 
 		// in this context specifically we set the target explicitly as being the dataset, not the parameter
 		// (or the logs will be reported at the wrong place)
 		logs.setForAll(dataset);
 
 		// go further if no blocking errors are detected
-		if (!logs.hasCriticalErrors()) {
-			// 3 - does the dataset exists ?
-			if (!model.doesDatasetExists(dataset) && isUpdate) {
-				logs.addEntry(new LogEntry(dataset, ImportStatus.FAILURE, Messages.ERROR_DATASET_NOT_FOUND));
+		if (!(logs.hasCriticalErrors() || junk.hasCriticalErrors())) {
 
-			}
-
-			// 4 - is such parameter available for this dataset ?
+			// 2 - is such parameter available for this dataset ?
 			if (!model.isParamInDataset(param, dataset)) {
 				logs.addEntry(new LogEntry(dataset, ImportStatus.FAILURE, Messages.ERROR_DATASET_PARAMETER_MISMATCH));
 			}
 
-			// 5 - is the user allowed to do so ?
+			// 3 - is the user allowed to do so ?
 			LogEntry hasNoPermission = checkPermissionOnProject(PERM_WRITE, dataset.getTestCase(), dataset);
 			if (hasNoPermission != null) {
 				logs.addEntry(hasNoPermission);
 			}
 		}
+		return logs;
+	}
+
+	@Override
+	public LogTrain createDataset(DatasetTarget dataset) {
+
+		LogTrain logs;
+
+		// 1 - is the dataset correctly identifed ?
+		logs = entityValidator.basicDatasetCheck(dataset);
+
+
+		// 2 - is the user allowed to do so ?
+		LogEntry hasNoPermission = checkPermissionOnProject(PERM_WRITE, dataset.getTestCase(), dataset);
+		if (hasNoPermission != null) {
+			logs.addEntry(hasNoPermission);
+		}
+
 		return logs;
 	}
 

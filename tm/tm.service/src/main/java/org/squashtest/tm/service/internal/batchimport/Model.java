@@ -135,7 +135,7 @@ public class Model {
 	/**
 	 * keeps track of which datasets are defined for which test cases
 	 */
-	private Map<TestCaseTarget, Collection<DatasetTarget>> datasetsByTestCase = new HashMap<TestCaseTarget, Collection<DatasetTarget>>();
+	private Map<TestCaseTarget, Set<DatasetTarget>> datasetsByTestCase = new HashMap<TestCaseTarget, Set<DatasetTarget>>();
 
 	/**
 	 * This property keeps track of the test case call graph. It is not initialized like the rest, it's rather
@@ -726,7 +726,7 @@ public class Model {
 
 			if (status.id != null && status.status != Existence.TO_BE_DELETED) {
 				Collection<Dataset> datasets = dsDao.findOwnDatasetsByTestCase(status.id);
-				Collection<DatasetTarget> dstargets = new HashSet<DatasetTarget>(datasets.size());
+				Set<DatasetTarget> dstargets = new HashSet<DatasetTarget>(datasets.size());
 				for (Dataset ds : datasets) {
 					dstargets.add(new DatasetTarget(t, ds.getName()));
 				}

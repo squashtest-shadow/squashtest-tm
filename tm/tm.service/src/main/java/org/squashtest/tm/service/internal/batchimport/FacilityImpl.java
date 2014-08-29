@@ -129,9 +129,6 @@ public class FacilityImpl implements Facility {
 
 	private Map<String, Long> cufIdByCode = new HashMap<String, Long>();
 
-	// for post processing
-	private Collection<DeferredCallStepParametersUpdate> deferredCallstepUpdates = new LinkedList<FacilityImpl.DeferredCallStepParametersUpdate>();
-
 	// ************************ public (and nice looking) code **************************************
 
 	@Override
@@ -449,6 +446,31 @@ public class FacilityImpl implements Facility {
 		return train;
 	}
 
+
+	@Override
+	public LogTrain createDataset(DatasetTarget dataset) {
+
+		LogTrain train = validator.createDataset(dataset);
+
+		if (!train.hasCriticalErrors()) {
+			try {
+				doCreateDataset(dataset);
+
+				validator.getModel().addDataset(dataset);
+
+				LOGGER.debug(EXCEL_ERR_PREFIX+"Created Dataset '" + dataset + "'");
+
+			} catch (Exception ex) {
+				train.addEntry(new LogEntry(dataset, ImportStatus.FAILURE, Messages.ERROR_UNEXPECTED_ERROR,
+						new Object[] { ex.getClass().getName() }));
+				LOGGER.error(EXCEL_ERR_PREFIX+"unexpected error while creating dataset " + dataset + " : ", ex);
+			}
+		}
+
+		return train;
+	}
+
+
 	@Override
 	public LogTrain deleteDataset(DatasetTarget dataset) {
 
@@ -465,8 +487,7 @@ public class FacilityImpl implements Facility {
 			} catch (Exception ex) {
 				train.addEntry(new LogEntry(dataset, ImportStatus.FAILURE, Messages.ERROR_UNEXPECTED_ERROR,
 						new Object[] { ex.getClass().getName() }));
-				LOGGER.error(EXCEL_ERR_PREFIX+"unexpected error while deleting dataset " + dataset + " in dataset "
-						+ dataset + " : ", ex);
+				LOGGER.error(EXCEL_ERR_PREFIX+"unexpected error while deleting dataset " + dataset + " : ", ex);
 			}
 		}
 
@@ -478,12 +499,7 @@ public class FacilityImpl implements Facility {
 	 * 
 	 */
 	public void postprocess() {
-
-		for (DeferredCallStepParametersUpdate update : deferredCallstepUpdates){
-
-			changeParameterAssignation(update.getStepId(), update.getCalledTestCase(), update.getParamInfo());
-		}
-
+		// NOOP yet
 	}
 
 	// ************************* private (and hairy) code *********************************
@@ -579,7 +595,7 @@ public class FacilityImpl implements Facility {
 		CallTestStep created = (CallTestStep) tc.getSteps().get(tc.getSteps().size() - 1);
 
 		// handle the parameter assignation
-		deferOrPerformParameterAssignation(created, calledTestCase, paramInfo);
+		changeParameterAssignation(created.getId(), calledTestCase, paramInfo);
 
 		// change position if possible and required
 		Integer index = target.getIndex();
@@ -618,7 +634,7 @@ public class FacilityImpl implements Facility {
 		((CallTestStep) actualStep).setCalledTestCase(newCalled);
 
 		// update the parameter assignation
-		deferOrPerformParameterAssignation(((CallTestStep) actualStep), calledTestCase, paramInfo);
+		changeParameterAssignation(actualStep.getId(), calledTestCase, paramInfo);
 
 	}
 
@@ -667,6 +683,17 @@ public class FacilityImpl implements Facility {
 		DatasetParamValue dpv = findParamValue(dataset, param);
 		String trValue = helper.truncate(value, 255);
 		dpv.setParamValue(trValue);
+	}
+
+
+	// here we care of double insertion of dataset
+	private void doCreateDataset(DatasetTarget dataset){
+		Dataset ds = findDataset(dataset);
+		if (ds == null){
+			TestCase tc = validator.getModel().get(dataset.getTestCase());
+			ds = new Dataset(dataset.getName(), tc);
+			datasetService.persist(ds, tc.getId());
+		}
 	}
 
 	private void doDeleteDataset(DatasetTarget dataset) {
@@ -776,24 +803,6 @@ public class FacilityImpl implements Facility {
 
 
 	/**
-	 * If the parameter assignation mode is DELEGATE or NOTHING, we can perform it now.
-	 * However if we call a dataset we must wait for the datasets to be processed beforehand,
-	 * otherwise we might call a dataset that doesn't exist yet.
-	 * 
-	 * @param testStep
-	 * @param tc
-	 * @param paramInfo
-	 */
-	private void deferOrPerformParameterAssignation(CallTestStep testStep, TestCaseTarget tc, CallStepParamsInfo paramInfo){
-		if (paramInfo.getParamMode() == ParameterAssignationMode.CALLED_DATASET){
-			remember(new DeferredCallStepParametersUpdate(testStep.getId(), tc, paramInfo));
-		}
-		else{
-			changeParameterAssignation(testStep.getId(), tc, paramInfo);
-		}
-	}
-
-	/**
 	 * 
 	 * @param testStep
 	 * @param tc
@@ -801,18 +810,27 @@ public class FacilityImpl implements Facility {
 	 */
 	private void changeParameterAssignation(Long stepId, TestCaseTarget tc, CallStepParamsInfo paramInfo){
 		Long dsId = null;
+		ParameterAssignationMode mode  = paramInfo.getParamMode();
 
 		if (paramInfo.getParamMode() == ParameterAssignationMode.CALLED_DATASET){
 
 			Long tcid = validator.getModel().getId(tc);
 			String dsname = helper.truncate(paramInfo.getCalledDatasetName(), 255);
 			Dataset ds = datasetDao.findDatasetByTestCaseAndByName(tcid, dsname);
+
+			// if the dataset exists we can actually bind the step to it.
+			// otherwise we fallback to the default mode (nothing).
+			// This later case has been dutifully reported by the
+			// validator facility of course.
 			if (ds != null){
 				dsId = ds.getId();
 			}
+			else{
+				mode = ParameterAssignationMode.NOTHING;
+			}
 
 		}
-		callstepService.setParameterAssignationMode(stepId, paramInfo.getParamMode(), dsId);
+		callstepService.setParameterAssignationMode(stepId, mode, dsId);
 	}
 
 	private DatasetParamValue findParamValue(DatasetTarget dataset, ParameterTarget param) {
@@ -869,38 +887,6 @@ public class FacilityImpl implements Facility {
 		}
 
 		return result;
-
-	}
-
-
-	private void remember(DeferredCallStepParametersUpdate callstepUpdate){
-		deferredCallstepUpdates.add(callstepUpdate);
-	}
-
-
-	private static final class DeferredCallStepParametersUpdate{
-
-		Long stepId;
-		TestCaseTarget calledTestCase;
-		CallStepParamsInfo paramInfo;
-		public DeferredCallStepParametersUpdate(Long stepId, TestCaseTarget calledTestCase, CallStepParamsInfo paramInfo) {
-			super();
-			this.stepId = stepId;
-			this.calledTestCase = calledTestCase;
-			this.paramInfo = paramInfo;
-		}
-		public Long getStepId() {
-			return stepId;
-		}
-		public TestCaseTarget getCalledTestCase() {
-			return calledTestCase;
-		}
-		public CallStepParamsInfo getParamInfo() {
-			return paramInfo;
-		}
-
-
-
 
 	}
 

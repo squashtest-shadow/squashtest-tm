@@ -216,11 +216,26 @@ public class SimulationFacility implements Facility {
 		LogTrain logs = validator.failsafeUpdateParameterValue(dataset, param, value, isUpdate);
 
 		if (!logs.hasCriticalErrors()) {
+			// when a parameter is created or updated, the dataset must be created on the fly
 			// note that this operation can be invoked multiple times, a given dataset will be created only once
 			validator.getModel().addDataset(dataset);
 		}
 
 		return logs;
+	}
+
+	@Override
+	public LogTrain createDataset(DatasetTarget dataset) {
+
+		LogTrain logs = validator.createDataset(dataset);
+
+		// if ok, update the model
+		if (!logs.hasCriticalErrors()) {
+			validator.getModel().addDataset(dataset);
+		}
+
+		return logs;
+
 	}
 
 	@Override

@@ -32,6 +32,7 @@ import org.squashtest.tm.service.importer.Target;
 import org.squashtest.tm.service.internal.batchimport.ActionStepInstruction;
 import org.squashtest.tm.service.internal.batchimport.CallStepInstruction;
 import org.squashtest.tm.service.internal.batchimport.DatasetInstruction;
+import org.squashtest.tm.service.internal.batchimport.DatasetParamValueInstruction;
 import org.squashtest.tm.service.internal.batchimport.DatasetTarget;
 import org.squashtest.tm.service.internal.batchimport.DatasetValue;
 import org.squashtest.tm.service.internal.batchimport.Instruction;
@@ -58,6 +59,7 @@ final class PropertyHolderFinderRepository<COL extends Enum<COL> & TemplateColum
 		FINDER_REPO_BY_WORKSHEET.put(TemplateWorksheet.STEPS_SHEET, createStepsWorksheetRepo());
 		FINDER_REPO_BY_WORKSHEET.put(TemplateWorksheet.PARAMETERS_SHEET, createParamsWorksheetRepo());
 		FINDER_REPO_BY_WORKSHEET.put(TemplateWorksheet.DATASETS_SHEET, createDatasetsWorksheetRepo());
+		FINDER_REPO_BY_WORKSHEET.put(TemplateWorksheet.DATASET_PARAM_VALUES_SHEET, createDatasetParamValuesWorksheetRepo());
 	}
 
 	private static PropertyHolderFinderRepository<TestCaseSheetColumn> createTestCasesWorksheetRepo() {
@@ -118,9 +120,40 @@ final class PropertyHolderFinderRepository<COL extends Enum<COL> & TemplateColum
 
 		r.finderByColumn.put(DatasetSheetColumn.ACTION, instructionFinder);
 
-		PropertyHolderFinder<DatasetInstruction, DatasetValue> paramFinder = new PropertyHolderFinder<DatasetInstruction, DatasetValue>() {
+
+		r.defaultFinder = targetFinder;
+
+		return r;
+	}
+
+	/**
+	 * @return
+	 */
+	private static PropertyHolderFinderRepository<?> createDatasetParamValuesWorksheetRepo() {
+		PropertyHolderFinderRepository<DatasetParamValuesSheetColumn> r = new PropertyHolderFinderRepository<DatasetParamValuesSheetColumn>();
+
+		PropertyHolderFinder<DatasetParamValueInstruction, DatasetTarget> targetFinder = new PropertyHolderFinder<DatasetParamValueInstruction, DatasetTarget>() {
 			@Override
-			public DatasetValue find(DatasetInstruction instruction) {
+			public DatasetTarget find(DatasetParamValueInstruction instruction) {
+				return instruction.getTarget();
+			}
+		};
+
+		r.finderByColumn.put(DatasetParamValuesSheetColumn.TC_OWNER_PATH, targetFinder);
+		r.finderByColumn.put(DatasetParamValuesSheetColumn.TC_DATASET_NAME, targetFinder);
+
+		PropertyHolderFinder<DatasetParamValueInstruction, DatasetParamValueInstruction> instructionFinder = new PropertyHolderFinder<DatasetParamValueInstruction, DatasetParamValueInstruction>() {
+			@Override
+			public DatasetParamValueInstruction find(DatasetParamValueInstruction instruction) {
+				return instruction;
+			}
+		};
+
+		r.finderByColumn.put(DatasetParamValuesSheetColumn.ACTION, instructionFinder);
+
+		PropertyHolderFinder<DatasetParamValueInstruction, DatasetValue> paramFinder = new PropertyHolderFinder<DatasetParamValueInstruction, DatasetValue>() {
+			@Override
+			public DatasetValue find(DatasetParamValueInstruction instruction) {
 				return instruction.getDatasetValue();
 			}
 		};

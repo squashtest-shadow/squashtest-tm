@@ -28,6 +28,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -150,21 +151,24 @@ class ExcelWorkbookParserBuilder {
 			int iSheet) {
 		Sheet ws = wb.getSheetAt(iSheet);
 		String sheetName = ws.getSheetName();
-		TemplateWorksheet sheetType = TemplateWorksheet.coerceFromSheetName(sheetName);
 
-		if (sheetType != null) {
-			LOGGER.trace("Worksheet named '{}' will be added to metamodel as standard worksheet {}", sheetName,
-					sheetType);
+		Collection<TemplateWorksheet> sheetTypes = TemplateWorksheet.coerceFromSheetName(sheetName);
 
-			WorksheetDef<?> wd = new WorksheetDef(sheetType);
-			wmd.addWorksheetDef(wd);
-			WorksheetFormatStatus workSheetFormatStatus = populateColumnDefs(wd, ws);
-			if (!workSheetFormatStatus.isFormatOk()) {
-				worksheetKOStatuses.add(workSheetFormatStatus);
+		for (TemplateWorksheet sheetType : sheetTypes){
+			if (sheetType != null) {
+				LOGGER.trace("Worksheet named '{}' will be added to metamodel as standard worksheet {}", sheetName,
+						sheetType);
+
+				WorksheetDef<?> wd = new WorksheetDef(sheetType);
+				wmd.addWorksheetDef(wd);
+				WorksheetFormatStatus workSheetFormatStatus = populateColumnDefs(wd, ws);
+				if (!workSheetFormatStatus.isFormatOk()) {
+					worksheetKOStatuses.add(workSheetFormatStatus);
+				}
+			} else {
+				LOGGER.trace("Skipping unrecognized worksheet named '{}'", ws.getSheetName());
+
 			}
-		} else {
-			LOGGER.trace("Skipping unrecognized worksheet named '{}'", ws.getSheetName());
-
 		}
 	}
 

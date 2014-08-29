@@ -22,6 +22,7 @@
 package org.squashtest.tm.service.internal.batchimport.testcase.excel;
 
 import static org.squashtest.tm.service.internal.batchimport.testcase.excel.TemplateWorksheet.DATASETS_SHEET;
+import static org.squashtest.tm.service.internal.batchimport.testcase.excel.TemplateWorksheet.DATASET_PARAM_VALUES_SHEET;
 import static org.squashtest.tm.service.internal.batchimport.testcase.excel.TemplateWorksheet.PARAMETERS_SHEET;
 import static org.squashtest.tm.service.internal.batchimport.testcase.excel.TemplateWorksheet.STEPS_SHEET;
 import static org.squashtest.tm.service.internal.batchimport.testcase.excel.TemplateWorksheet.TEST_CASES_SHEET;
@@ -44,7 +45,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.squashtest.tm.exception.SheetCorruptedException;
 import org.squashtest.tm.service.batchimport.excel.MaxNumberOfLinesExceededException;
 import org.squashtest.tm.service.batchimport.excel.TemplateMismatchException;
-import org.squashtest.tm.service.internal.batchimport.DatasetInstruction;
+import org.squashtest.tm.service.internal.batchimport.DatasetParamValueInstruction;
 import org.squashtest.tm.service.internal.batchimport.Instruction;
 import org.squashtest.tm.service.internal.batchimport.ParameterInstruction;
 import org.squashtest.tm.service.internal.batchimport.StepInstruction;
@@ -108,9 +109,9 @@ public class ExcelWorkbookParser {
 	private final WorkbookMetaData wmd;
 
 	private final Map<TemplateWorksheet, List<Instruction<?>>> instructionsByWorksheet = new HashMap<TemplateWorksheet, List<Instruction<?>>>(
-			4);
+			5);
 	private final Map<TemplateWorksheet, Factory<?>> instructionBuilderFactoryByWorksheet = new HashMap<TemplateWorksheet, Factory<?>>(
-			4);
+			5);
 
 	/**
 	 * Should be used by ExcelWorkbookParserBuilder only.
@@ -127,6 +128,7 @@ public class ExcelWorkbookParser {
 		instructionsByWorksheet.put(STEPS_SHEET, new ArrayList<Instruction<?>>());
 		instructionsByWorksheet.put(PARAMETERS_SHEET, new ArrayList<Instruction<?>>());
 		instructionsByWorksheet.put(DATASETS_SHEET, new ArrayList<Instruction<?>>());
+		instructionsByWorksheet.put(DATASET_PARAM_VALUES_SHEET, new ArrayList<Instruction<?>>());
 
 		instructionBuilderFactoryByWorksheet.put(TEST_CASES_SHEET, new Factory<TestCaseSheetColumn>() {
 			@Override
@@ -152,6 +154,13 @@ public class ExcelWorkbookParser {
 			@Override
 			public InstructionBuilder<?, ?> create(WorksheetDef<DatasetSheetColumn> wd) {
 				return new DatasetInstructionBuilder(wd);
+			}
+
+		});
+		instructionBuilderFactoryByWorksheet.put(DATASET_PARAM_VALUES_SHEET, new Factory<DatasetParamValuesSheetColumn>() {
+			@Override
+			public InstructionBuilder<?, ?> create(WorksheetDef<DatasetParamValuesSheetColumn> wd) {
+				return new DatasetParamValueInstructionBuilder(wd);
 			}
 
 		});
@@ -235,9 +244,16 @@ public class ExcelWorkbookParser {
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public List<DatasetInstruction> getDatasetInstructions() {
+	public List<DatasetParamValueInstruction> getDatasetInstructions() {
 		return (List) instructionsByWorksheet.get(DATASETS_SHEET); // useless (List) cast required for compiler not to
 		// whine
 	}
+
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public List<DatasetParamValueInstruction> getDatasetParamValuesInstructions() {
+		return (List) instructionsByWorksheet.get(DATASET_PARAM_VALUES_SHEET); // useless (List) cast required for compiler not to
+		// whine
+	}
+
 
 }

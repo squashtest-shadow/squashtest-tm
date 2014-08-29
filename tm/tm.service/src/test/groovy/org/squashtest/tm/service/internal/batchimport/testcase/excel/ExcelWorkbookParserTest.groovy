@@ -159,10 +159,26 @@ class ExcelWorkbookParserTest extends Specification {
 		then:
 		datasetInstructions*.target.path == datasetPaths
 		datasetInstructions*.target.name == datasetNames
-		datasetInstructions*.datasetValue.parameterOwnerPath == datasetParamOwnerPaths
-		datasetInstructions*.datasetValue.parameterName == datasetParamNames
-		datasetInstructions*.datasetValue.value == datasetValues
 		datasetInstructions*.mode == datasetActions
+
+		when:
+		def datasetParamValuesInstructions = parser.getDatasetParamValuesInstructions()
+
+		and:
+		def datasetParamValuesPaths = (1..8).collect { "owner/path/$it/datasets/name$it" }
+		def datasetParamValuesParamOwnerPaths = (1..8).collect { "param/owner/path/$it" }
+		def datasetParamValuesNames = (1..8).collect { "name$it" }
+		def datasetParamValuesParamNames = (1..8).collect { "paramName$it" }
+		def datasetParamValuesValues = (1..8).collect { "value$it" }
+		def datasetParamValuesActions = [CREATE, CREATE, UPDATE, UPDATE, DELETE, DELETE, UPDATE, UPDATE]
+
+		then:
+		datasetParamValuesInstructions*.target.path == datasetPaths
+		datasetParamValuesInstructions*.target.name == datasetNames
+		datasetParamValuesInstructions*.datasetValue.parameterOwnerPath == datasetParamOwnerPaths
+		datasetParamValuesInstructions*.datasetValue.parameterName == datasetParamNames
+		datasetParamValuesInstructions*.datasetValue.value == datasetValues
+		datasetParamValuesInstructions*.mode == datasetActions
 
 	}
 

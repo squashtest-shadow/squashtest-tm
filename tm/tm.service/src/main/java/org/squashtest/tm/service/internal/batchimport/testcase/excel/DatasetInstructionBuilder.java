@@ -24,9 +24,10 @@ package org.squashtest.tm.service.internal.batchimport.testcase.excel;
 import org.apache.poi.ss.usermodel.Row;
 import org.squashtest.tm.service.internal.batchimport.DatasetInstruction;
 import org.squashtest.tm.service.internal.batchimport.DatasetTarget;
-import org.squashtest.tm.service.internal.batchimport.DatasetValue;
 
 /**
+ * 
+ * 
  * @author Gregory Fouquet
  *
  */
@@ -41,7 +42,7 @@ class DatasetInstructionBuilder extends InstructionBuilder<DatasetSheetColumn, D
 	 */
 	@Override
 	protected DatasetInstruction createInstruction(Row row) {
-		return new DatasetInstruction(new DatasetTarget(), new DatasetValue());
+		return new DatasetInstruction(new DatasetTarget());
 	}
 
 }

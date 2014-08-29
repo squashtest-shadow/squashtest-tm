@@ -21,29 +21,27 @@
 
 package org.squashtest.tm.service.internal.batchimport.testcase.excel;
 
-import spock.lang.Specification;
-import spock.lang.Unroll;
-
-import static org.squashtest.tm.service.internal.batchimport.testcase.excel.TemplateWorksheet.*
-
+import org.apache.poi.ss.usermodel.Row;
+import org.squashtest.tm.service.internal.batchimport.DatasetParamValueInstruction;
+import org.squashtest.tm.service.internal.batchimport.DatasetTarget;
+import org.squashtest.tm.service.internal.batchimport.DatasetValue;
 
 /**
  * @author Gregory Fouquet
  *
  */
-class TemplateWorksheetTest extends Specification {
+class DatasetParamValueInstructionBuilder extends InstructionBuilder<DatasetParamValuesSheetColumn, DatasetParamValueInstruction> {
 
-	@Unroll("ws name #énum should coerce as #humanmsg")
-	def "ws name #énum.sheetName should coerce as enum #énum"() {
-		expect:
-		TemplateWorksheet.coerceFromSheetName(sheetname) as Set == templates as Set
-
-		where:
-		sheetname 		| humanmsg										|	templates
-		"TEST_CASES"	|	"TEST_CASES_SHEET"							|	[TEST_CASES_SHEET]
-		"STEPS"			|	"STEPS_SHEET"								|	[STEPS_SHEET]
-		"PARAMETERS"	|	"PARAMETERS_SHEET"							|	[PARAMETERS_SHEET]
-		"DATASETS"		|	"DATASETS_SHEET, DATASET_PARAM_VALUES_SHEET"|	[DATASETS_SHEET, DATASET_PARAM_VALUES_SHEET]
-
+	public DatasetParamValueInstructionBuilder(WorksheetDef<DatasetParamValuesSheetColumn> worksheetDef) {
+		super(worksheetDef);
 	}
+
+	/**
+	 * @see org.squashtest.tm.service.internal.batchimport.testcase.excel.InstructionBuilder#createInstruction(org.apache.poi.ss.usermodel.Row)
+	 */
+	@Override
+	protected DatasetParamValueInstruction createInstruction(Row row) {
+		return new DatasetParamValueInstruction(new DatasetTarget(), new DatasetValue());
+	}
+
 }

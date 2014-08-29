@@ -36,7 +36,12 @@ import org.squashtest.tm.service.importer.EntityType;
  */
 public interface Facility {
 
-	final List<EntityType> ENTITIES_ORDERED_BY_INSTRUCTION_ORDER = Arrays.asList(EntityType.TEST_CASE, EntityType.PARAMETER, EntityType.TEST_STEP, EntityType.DATASET);
+	final List<EntityType> ENTITIES_ORDERED_BY_INSTRUCTION_ORDER =
+			Arrays.asList(EntityType.TEST_CASE,
+					EntityType.PARAMETER,
+					EntityType.DATASET,
+					EntityType.TEST_STEP,
+					EntityType.DATASET_PARAM_VALUES);
 
 	LogTrain createTestCase(TestCaseTarget target, TestCase testCase, Map<String, String> cufValues);
 	LogTrain updateTestCase(TestCaseTarget target, TestCase testCaseData, Map<String, String> cufValues);
@@ -55,6 +60,14 @@ public interface Facility {
 
 
 	/**
+	 * The creation of a dataset is idempotent (if such dataset exists it wont be created twice)
+	 * @param target
+	 * @return
+	 */
+	LogTrain createDataset(DatasetTarget target);
+	LogTrain deleteDataset(DatasetTarget dataset);
+
+	/**
 	 * Will update the value for the given parameter in the given dataset. If the dataset doesn't exist for this dataset, it will be created.
 	 * If the parameter doesn't exist or is not available to this dataset the method fails. In all cases the methods returns a log.
 	 * 
@@ -67,12 +80,5 @@ public interface Facility {
 
 
 
-	/**
-	 * Deletes a dataset.
-	 * 
-	 * @param dataset
-	 * @return
-	 */
-	LogTrain deleteDataset(DatasetTarget dataset);
 }
 

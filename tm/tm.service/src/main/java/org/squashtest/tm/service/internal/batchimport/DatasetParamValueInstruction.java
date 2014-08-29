@@ -23,34 +23,33 @@ package org.squashtest.tm.service.internal.batchimport;
 
 import javax.validation.constraints.NotNull;
 
-/**
- * As for 1.11.0 a DatasetInstruction just does handle datasets. The parameter values are handled by another kind of instruction
- * (see {@link DatasetParamValueInstruction} )
- * 
- * @author bsiri
- *
- */
-public class DatasetInstruction extends Instruction<DatasetTarget> {
+public class DatasetParamValueInstruction extends Instruction<DatasetTarget> {
 
+	private final DatasetValue datasetValue;
 
-	public DatasetInstruction(@NotNull DatasetTarget target) {
+	public DatasetParamValueInstruction(@NotNull DatasetTarget target, @NotNull DatasetValue datasetValue) {
 		super(target);
+		this.datasetValue = datasetValue;
 	}
 
+
+	/**
+	 * @return the datasetParamValue
+	 */
+	public DatasetValue getDatasetValue() {
+		return datasetValue;
+	}
 
 	/**
 	 * @see org.squashtest.tm.service.internal.batchimport.Instruction#executeUpdate(org.squashtest.tm.service.internal.batchimport.Facility)
 	 */
 	@Override
 	protected LogTrain executeUpdate(Facility facility) {
-		/*
-		 * NOOP
-		 * 
-		 * As of TM 1.11.0 the 'update' will be handled by the DatasetParamValueInstruction. Today there are no update on a Dataset
-		 * (we can't rename a dataset for instance), only DatasetParamValueInstruction have a use for the 'update' action.
-		 * 
-		 */
-		return new LogTrain();
+		ParameterTarget parameterTarget = new ParameterTarget();
+		setParameterOwnerPath(parameterTarget);
+		parameterTarget.setName(datasetValue.getParameterName());
+
+		return facility.failsafeUpdateParameterValue(getTarget(), parameterTarget, datasetValue.getValue(), true);
 	}
 
 	/**
@@ -58,7 +57,16 @@ public class DatasetInstruction extends Instruction<DatasetTarget> {
 	 */
 	@Override
 	protected LogTrain executeDelete(Facility facility) {
-		return facility.deleteDataset(getTarget());
+		//return facility.deleteDataset(getTarget());
+		/*
+		 * NOOP : As for TM 1.11.0 the DATASET sheet is now split in two phases : the datasets and the parameter values
+		 * are now treated in two distinct phases. Please see Facility#ENTITIES_ORDERED_BY_INSTRUCTION_ORDER to see
+		 * how.
+		 * 
+		 * In particular the deletion of a dataset now happens in the DATASET phase so we don't double process it in the
+		 * param value phase.
+		 */
+		return new LogTrain();
 	}
 
 	/**
@@ -66,7 +74,20 @@ public class DatasetInstruction extends Instruction<DatasetTarget> {
 	 */
 	@Override
 	protected LogTrain executeCreate(Facility facility) {
-		return facility.createDataset(getTarget());
+		ParameterTarget parameterTarget = new ParameterTarget();
+		setParameterOwnerPath(parameterTarget);
+		parameterTarget.setName(datasetValue.getParameterName());
+
+		return facility.failsafeUpdateParameterValue(getTarget(), parameterTarget, datasetValue.getValue(), false);
+	}
+
+
+	private void setParameterOwnerPath(ParameterTarget parameterTarget) {
+		String parameterOwnerPath = datasetValue.getParameterOwnerPath();
+		if(parameterOwnerPath == null){
+			parameterOwnerPath = getTarget().getTestCase().getPath();
+		}
+		parameterTarget.setPath(parameterOwnerPath);
 	}
 
 
