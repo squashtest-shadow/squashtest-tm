@@ -711,13 +711,8 @@ define(["jquery",
 			$(cells).each(function(i, cell) {
 				var row = cell.parentNode
 				var data = self.fnGetData(row);
-				var url;
-				if(_.isString(targets[css])){
-					url = _resolvePlaceholders.call(self, targets[css], data);
-				}
-				else{
-					url = _resolvePlaceholders.call(self, targets[css]['url'], data);
-				}
+				var editableConf_url = _.isString(targets[css]) ? targets[css] : targets[css]['url'];
+				var url = _resolvePlaceholders.call(self, editableConf_url, data);
 				var finalConf = $.extend(true, {
 					"url" : url
 				}, baseconf);
