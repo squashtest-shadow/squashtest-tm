@@ -20,16 +20,21 @@
  */
 package org.squashtest.tm.web.internal.controller.testcase.parameters;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
 import org.springframework.context.MessageSource;
+import org.squashtest.tm.core.foundation.collection.SortOrder;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.testcase.Parameter;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelBuilder;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelConstants;
+import org.squashtest.tm.web.internal.util.HTMLCleanupUtils;
 
 /**
  * Helps create the datas (for the jQuery DataTable) for the parameters table in the test case view.
@@ -37,13 +42,13 @@ import org.squashtest.tm.web.internal.model.datatable.DataTableModelConstants;
  * @author mpagnon
  * 
  */
-public final class ParametersDataTableModelHelper extends DataTableModelBuilder<Parameter> {
+public final class ParametersModelHelper extends DataTableModelBuilder<Parameter> {
 
 	private long ownerId;
 	private MessageSource messageSource;
 	private Locale locale;
 
-	public ParametersDataTableModelHelper(long ownerId, MessageSource messageSource, Locale locale) {
+	public ParametersModelHelper(long ownerId, MessageSource messageSource, Locale locale) {
 		super();
 
 		this.ownerId = ownerId;
@@ -58,7 +63,7 @@ public final class ParametersDataTableModelHelper extends DataTableModelBuilder<
 		res.put(DataTableModelConstants.DEFAULT_ENTITY_ID_KEY, item.getId());
 		res.put(DataTableModelConstants.DEFAULT_ENTITY_INDEX_KEY, getCurrentIndex());
 		res.put(DataTableModelConstants.DEFAULT_ENTITY_NAME_KEY,
-				ParametersDataTableModelHelper.buildParameterName(item, ownerId, messageSource, locale));
+				ParametersModelHelper.buildParameterName(item, ownerId, messageSource, locale));
 		res.put("description", item.getDescription());
 		res.put("test-case-name", testCaseName);
 		res.put("directly-associated", Long.valueOf(ownerId).equals(item.getTestCase().getId()));
@@ -91,5 +96,35 @@ public final class ParametersDataTableModelHelper extends DataTableModelBuilder<
 		}
 		return testCaseName;
 	}
+	
+
+	/**
+	 * Returns the list of column headers names, descriptions and ids for parameters in the Datasets table ordered by parameter name.
+	 * 
+	 * 
+	 * @param testCaseId
+	 *            : the concerned test case id
+	 * @param locale
+	 *            : the browser's locale
+	 * @param directAndCalledParameters
+	 *            : the list of parameters directly associated or associated through call steps
+	 * @param messageSource
+	 *            : the message source to internationalize suffix
+	 * @return
+	 */
+	public static List<HashMap<String, String>> findDatasetParamHeaders(long testCaseId, final Locale locale,
+			List<Parameter> directAndCalledParameters, MessageSource messageSource) {
+		Collections.sort(directAndCalledParameters, new ParameterNameComparator(SortOrder.ASCENDING));
+		List<HashMap<String, String>> result = new ArrayList<HashMap<String, String>>(directAndCalledParameters.size());
+		for (Parameter param : directAndCalledParameters) {
+			HashMap<String, String> map = new HashMap<String, String>();
+			map.put("name",  ParametersModelHelper.buildParameterName(param, testCaseId, messageSource, locale));
+			map.put("description",  HTMLCleanupUtils.htmlToText(param.getDescription()));
+			map.put("id", param.getId().toString());
+			result.add(map);
+		}
+		return result;
+	}
+
 
 }

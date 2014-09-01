@@ -124,7 +124,7 @@ public class TestCaseParametersController {
 		List<Long> paramIds = IdentifiedUtil.extractIds(directAndCalledParameters);
 		boolean editable = permissionEvaluationService.hasRoleOrPermissionOnObject("ROLE_ADMIN", "WRITE", testCase);
 		List<AoColumnDef> columnDefs = new DatasetsTableColumnDefHelper().getAoColumnDefs(paramIds, editable);
-		List<HashMap<String, String>> paramHeaders = TestCaseDatasetsController.findDatasetParamHeaders(testCaseId, locale, directAndCalledParameters, messageSource);
+		List<HashMap<String, String>> paramHeaders = ParametersModelHelper.findDatasetParamHeaders(testCaseId, locale, directAndCalledParameters, messageSource);
 		// populate the model
 		model.addAttribute(TEST_CASE, testCase);
 		model.addAttribute("datasetsAoColumnDefs", JsonHelper.serialize(columnDefs));
@@ -144,7 +144,7 @@ public class TestCaseParametersController {
 	 *            : the DataTable parameters
 	 * @param locale
 	 *            : the browser's locale
-	 * @return the parmeters tab view.
+	 * @return the parameters tab view.
 	 */
 	@RequestMapping(method = RequestMethod.GET, params = RequestParams.S_ECHO_PARAM)
 	@ResponseBody
@@ -156,7 +156,7 @@ public class TestCaseParametersController {
 		sortParams(sorting, parameters);
 		PagedCollectionHolder<List<Parameter>> holder = new SinglePageCollectionHolder<List<Parameter>>(parameters);
 
-		return new ParametersDataTableModelHelper(testCaseId, messageSource, locale).buildDataModel(holder,
+		return new ParametersModelHelper(testCaseId, messageSource, locale).buildDataModel(holder,
 				params.getsEcho());
 	}
 
@@ -185,37 +185,10 @@ public class TestCaseParametersController {
 	}
 
 	/**
-	 * Will compare {@link Parameter} on their name in the given {@link SortOrder}
-	 * 
-	 * @author mpagnon
-	 * 
-	 */
-	@SuppressWarnings("serial")
-	public static final class ParameterNameComparator implements Comparator<Parameter>, Serializable {
-
-		private SortOrder sortOrder;
-
-		public  ParameterNameComparator(SortOrder sortOrder) {
-			this.sortOrder = sortOrder;
-		}
-
-		@Override
-		public int compare(Parameter o1, Parameter o2) {
-			int ascResult = o1.getName().compareTo(o2.getName());
-			if (sortOrder.equals(SortOrder.ASCENDING)) {
-				return ascResult;
-			} else {
-				return -ascResult;
-			}
-		}
-
-	}
-
-	/**
 	 * Will compare {@link Parameter} on their test case name in the given {@link SortOrder}. The compared test case
 	 * name is the one displayed in the parameter table on the test case view.
 	 * 
-	 * @see {@link ParametersDataTableModelHelper#buildTestCaseName(Parameter)}
+	 * @see {@link ParametersModelHelper#buildTestCaseName(Parameter)}
 	 * 
 	 * @author mpagnon
 	 * 
@@ -231,8 +204,8 @@ public class TestCaseParametersController {
 
 		@Override
 		public int compare(Parameter o1, Parameter o2) {
-			int ascResult = ParametersDataTableModelHelper.buildTestCaseName(o1).compareTo(
-					ParametersDataTableModelHelper.buildTestCaseName(o2));
+			int ascResult = ParametersModelHelper.buildTestCaseName(o1).compareTo(
+					ParametersModelHelper.buildTestCaseName(o2));
 			if (sortOrder.equals(SortOrder.ASCENDING)) {
 				return ascResult;
 			} else {

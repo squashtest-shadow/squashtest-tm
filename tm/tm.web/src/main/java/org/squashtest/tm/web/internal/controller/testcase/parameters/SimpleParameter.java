@@ -82,7 +82,7 @@ public class SimpleParameter {
 	public static List<SimpleParameter> convertToSimpleParameters(List<Parameter> parameters, Long ownerId2, MessageSource messageSource2, Locale locale2){
 		List<SimpleParameter> result = new ArrayList<SimpleParameter>(parameters.size());
 		for(Parameter param : parameters){
-			String newName = ParametersDataTableModelHelper.buildParameterName(param, ownerId2, messageSource2, locale2);
+			String newName = ParametersModelHelper.buildParameterName(param, ownerId2, messageSource2, locale2);
 			
 			SimpleParameter simpleParameter = new SimpleParameter(param);
 			simpleParameter.setName(newName);

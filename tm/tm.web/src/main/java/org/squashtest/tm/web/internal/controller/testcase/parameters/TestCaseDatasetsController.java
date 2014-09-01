@@ -58,7 +58,6 @@ import org.squashtest.tm.service.testcase.DatasetModificationService;
 import org.squashtest.tm.service.testcase.ParameterFinder;
 import org.squashtest.tm.service.testcase.TestCaseFinder;
 import org.squashtest.tm.web.internal.controller.RequestParams;
-import org.squashtest.tm.web.internal.controller.testcase.parameters.TestCaseParametersController.ParameterNameComparator;
 import org.squashtest.tm.web.internal.controller.widget.AoColumnDef;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
@@ -68,7 +67,6 @@ import org.squashtest.tm.web.internal.model.datatable.DataTableSorting;
 import org.squashtest.tm.web.internal.model.json.JsonDataset;
 import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
 import org.squashtest.tm.web.internal.model.viewmapper.NameBasedMapper;
-import org.squashtest.tm.web.internal.util.HTMLCleanupUtils;
 
 /**
  * Controller to handle requests for datasets of a given test case.
@@ -166,43 +164,15 @@ public class TestCaseDatasetsController {
 	@ResponseBody
 	public List<HashMap<String, String>> getDatasetsTableParametersHeaders(@PathVariable long testCaseId, final Locale locale) {
 		List<Parameter> directAndCalledParameters = getSortedDirectAndCalledParameters(testCaseId);
-		return findDatasetParamHeaders(testCaseId, locale, directAndCalledParameters, messageSource);
+		return ParametersModelHelper.findDatasetParamHeaders(testCaseId, locale, directAndCalledParameters, messageSource);
 
 	}
 
 	private List<Parameter> getSortedDirectAndCalledParameters(long testCaseId) {
 		List<Parameter> directAndCalledParameters = parameterFinder.findAllParameters(testCaseId);
-		Collections.sort(directAndCalledParameters, new TestCaseParametersController.ParameterNameComparator(
+		Collections.sort(directAndCalledParameters, new ParameterNameComparator(
 				SortOrder.ASCENDING));
 		return directAndCalledParameters;
-	}
-
-	/**
-	 * Returns the list of column headers names, descriptions and ids for parameters in the Datasets table ordered by parameter name.
-	 * 
-	 * 
-	 * @param testCaseId
-	 *            : the concerned test case id
-	 * @param locale
-	 *            : the browser's locale
-	 * @param directAndCalledParameters
-	 *            : the list of parameters directly associated or associated through call steps
-	 * @param messageSource
-	 *            : the message source to internationalize suffix
-	 * @return
-	 */
-	public static List<HashMap<String, String>> findDatasetParamHeaders(long testCaseId, final Locale locale,
-			List<Parameter> directAndCalledParameters, MessageSource messageSource) {
-		Collections.sort(directAndCalledParameters, new ParameterNameComparator(SortOrder.ASCENDING));
-		List<HashMap<String, String>> result = new ArrayList<HashMap<String, String>>(directAndCalledParameters.size());
-		for (Parameter param : directAndCalledParameters) {
-			HashMap<String, String> map = new HashMap<String, String>();
-			map.put("name",  ParametersDataTableModelHelper.buildParameterName(param, testCaseId, messageSource, locale));
-			map.put("description",  HTMLCleanupUtils.htmlToText(param.getDescription()));
-			map.put("id", param.getId().toString());
-			result.add(map);
-		}
-		return result;
 	}
 
 	/**
@@ -248,7 +218,7 @@ public class TestCaseDatasetsController {
 		Map<String, String> result = new HashMap<String, String>(directAndCalledParameters.size());
 		for (Parameter param : directAndCalledParameters) {
 			result.put(param.getId().toString(),
-					ParametersDataTableModelHelper.buildParameterName(param, testCaseId, messageSource, locale));
+					ParametersModelHelper.buildParameterName(param, testCaseId, messageSource, locale));
 		}
 		return result;
 	}

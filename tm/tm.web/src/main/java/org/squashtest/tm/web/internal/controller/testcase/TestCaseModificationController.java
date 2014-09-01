@@ -88,9 +88,9 @@ import org.squashtest.tm.service.testcase.TestCaseModificationService;
 import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.controller.bugtracker.BugTrackerControllerHelper;
 import org.squashtest.tm.web.internal.controller.generic.ServiceAwareAttachmentTableModelHelper;
-import org.squashtest.tm.web.internal.controller.testcase.parameters.ParametersDataTableModelHelper;
+import org.squashtest.tm.web.internal.controller.testcase.parameters.ParameterNameComparator;
+import org.squashtest.tm.web.internal.controller.testcase.parameters.ParametersModelHelper;
 import org.squashtest.tm.web.internal.controller.testcase.parameters.TestCaseDatasetsController;
-import org.squashtest.tm.web.internal.controller.testcase.parameters.TestCaseParametersController.ParameterNameComparator;
 import org.squashtest.tm.web.internal.controller.testcase.steps.TestStepsTableModelBuilder;
 import org.squashtest.tm.web.internal.helper.InternationalizableLabelFormatter;
 import org.squashtest.tm.web.internal.helper.LevelLabelFormatter;
@@ -547,7 +547,7 @@ public class TestCaseModificationController {
 		List<Parameter> parameters = parameterFinder.findAllParameters(testCaseId);
 		Collections.sort(parameters, new ParameterNameComparator(SortOrder.ASCENDING));
 
-		ParametersDataTableModelHelper paramHelper = new ParametersDataTableModelHelper(testCaseId, messageSource,
+		ParametersModelHelper paramHelper = new ParametersModelHelper(testCaseId, messageSource,
 				locale);
 		Collection<Object> parameterDatas = paramHelper.buildRawModel(parameters);
 		mav.addObject("paramDatas", parameterDatas);
