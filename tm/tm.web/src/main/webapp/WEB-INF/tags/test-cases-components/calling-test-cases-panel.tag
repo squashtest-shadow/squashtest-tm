@@ -47,14 +47,16 @@
 
 
 	<jsp:attribute name="body">
-		<table id="calling-test-case-table" class="unstyled-table" data-def="ajaxsource=${modelUrl}, 
-													  datakeys-id=tc-id, pagesize=50, pre-sort=4, deferloading=${model.iTotalRecords}">
+		<table id="calling-test-case-table" class="unstyled-table" 
+               data-def="ajaxsource=${modelUrl}, datakeys-id=tc-id, pagesize=50, pre-sort=4, deferloading=${model.iTotalRecords}">
 			<thead>
 				<tr>
 					<th data-def="map=tc-index, select">#</th>
 					<th data-def="map=project-name, sortable"><f:message key="label.project" /></th>
 					<th data-def="map=tc-reference, sortable"><f:message key="test-case.reference.label" /></th>
 					<th data-def="map=tc-name, sortable, sWidth=15em, link=${callingTCUrl}"><f:message key="label.Name" /></th>
+                    <th data-def="map=ds-name"><f:message key="label.dataset"/></th>
+                    <th data-def="map=step-no"><f:message key="label.stepNumber"/></th>
 					<th data-def="map=tc-mode, sortable"><f:message key="test-case.calling-test-cases.table.execmode.label" /></th>				
 				</tr>
 			</thead>
