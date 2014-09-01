@@ -23,6 +23,7 @@ package org.squashtest.tm.web.internal.controller.testcase.parameters;
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
@@ -123,7 +124,7 @@ public class TestCaseParametersController {
 		List<Long> paramIds = IdentifiedUtil.extractIds(directAndCalledParameters);
 		boolean editable = permissionEvaluationService.hasRoleOrPermissionOnObject("ROLE_ADMIN", "WRITE", testCase);
 		List<AoColumnDef> columnDefs = new DatasetsTableColumnDefHelper().getAoColumnDefs(paramIds, editable);
-		List<String> paramHeaders = TestCaseDatasetsController.findDatasetParamHeaders(testCaseId, locale, directAndCalledParameters, messageSource);
+		List<HashMap<String, String>> paramHeaders = TestCaseDatasetsController.findDatasetParamHeaders(testCaseId, locale, directAndCalledParameters, messageSource);
 		// populate the model
 		model.addAttribute(TEST_CASE, testCase);
 		model.addAttribute("datasetsAoColumnDefs", JsonHelper.serialize(columnDefs));

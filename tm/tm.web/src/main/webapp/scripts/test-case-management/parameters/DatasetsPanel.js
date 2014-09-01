@@ -29,7 +29,8 @@ define([ "jquery", "backbone", "underscore", "./DatasetsTable", "./NewDatasetDia
 				this.settings = this.options.settings;
 					this.language = this.settings.language;
 					
-					_.bindAll(this, "showNewDialog", "refresh");
+					_.bindAll(this, "showNewDialog", "refresh",
+							"refreshDataSetParameterDescription");
 					
 					this.makeTogglePanel();
 					this.table = new DatasetsTable({settings : this.settings, parentTab : this.options.parentTab});
@@ -85,6 +86,12 @@ define([ "jquery", "backbone", "underscore", "./DatasetsTable", "./NewDatasetDia
 				
 				refresh: function() {
 					this.table.reDraw();
+				},
+				
+				refreshDataSetParameterDescription : function(parameters){
+					this.table.refreshDataSetParameterDescription(
+							parameters['id'],
+							parameters['description']);
 				}
 			});
 			return DatasetsPanel;

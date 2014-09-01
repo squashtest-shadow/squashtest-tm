@@ -210,10 +210,16 @@ define([ "jquery", "backbone", "jeditable.simpleJEditable", "app/util/StringUtil
 						var th = $("<th/>", {
 							"class" : "parameter"
 						});
-						th.text(paramHeaders[i]);
+						th.text(paramHeaders[i]['name']);
+						th.attr('title', paramHeaders[i]['description']);
 						thAfter.after(th);
 						thAfter = th;
 					}
+				},
+				
+				refreshDataSetParameterDescription : function(parameterId, parameterDescription){
+					var th = this.$("[data-id=" + parameterId + "]");
+					th.attr('title', parameterDescription);
 				}
 			});
 

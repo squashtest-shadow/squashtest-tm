@@ -38,7 +38,8 @@ define([ "jquery", "backbone", "underscore", "./ParametersPanel", "./DatasetsPan
 			});
 
 			this.listenTo(this.parametersPanel, "parameter.created parameter.removed", this.datasetsPanel.refresh);
-
+			this.listenTo(this.parametersPanel, "parameter.description.update", this.datasetsPanel.refreshDataSetParameterDescription);
+						
 			// content is refreshed where this tab becomes visible. should be in a parent view if it existed
 			$("div.fragment-tabs").on("tabsshow", function(event, ui) {
 				if (ui.index === self.settings.parameters.tabIndex) {

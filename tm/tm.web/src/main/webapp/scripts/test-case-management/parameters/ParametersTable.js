@@ -29,10 +29,12 @@ define([ "jquery", "backbone", "jeditable.simpleJEditable", "jquery.squash.confi
 			this.removeRowParameter = $.proxy(this._removeRowParameter, this);
 			this.parametersTableRowCallback = $.proxy(this._parametersTableRowCallback, this);
 			this.confirmRemoveParameter = $.proxy(this._confirmRemoveParameter, this);
-
+			this.updateParameterDescription = $.proxy(this._updateParameterDescription, this);
 			this.refresh = $.proxy(this._refresh, this);
 			this._configureTable.call(this);
 			this._configureRemoveParametersDialogs.call(this);
+			
+			this.table.on("parameter.description.update", this.updateParameterDescription);
 		},
 
 		events : {
@@ -66,8 +68,12 @@ define([ "jquery", "backbone", "jeditable.simpleJEditable", "jquery.squash.confi
 					} ],
 
 					richEditables : {
-						'parameter-description' : self.settings.basic.parametersUrl + '/{entity-id}/description'					
+						'parameter-description' : {
+							'url' : self.settings.basic.parametersUrl + '/{entity-id}/description',
+							'oncomplete' : 'parameter.description.update'
+						}
 					}
+
 				};
 			}
 
@@ -155,7 +161,20 @@ define([ "jquery", "backbone", "jeditable.simpleJEditable", "jquery.squash.confi
 
 		_refresh : function() {
 			this.table.fnDraw(false);
+		},
+		
+		_updateParameterDescription : function(event, result){
+			var id = result['id'];
+			
+			// get parameter description (richEditable) from the squashTable and converts it to a simple String
+			var description = $.trim(this.table.getRowsByIds([id]).eq(0).find('td.parameter-description').text());
+			
+			this.trigger('parameter.description.update', {
+				id : id, 
+				description : description
+				});
 		}
+
 	});
 
 	return ParametersTable;
