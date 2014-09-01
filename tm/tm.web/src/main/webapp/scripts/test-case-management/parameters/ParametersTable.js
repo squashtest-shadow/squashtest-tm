@@ -29,6 +29,7 @@ define([ "jquery", "backbone", "jeditable.simpleJEditable", "jquery.squash.confi
 			this.removeRowParameter = $.proxy(this._removeRowParameter, this);
 			this.parametersTableRowCallback = $.proxy(this._parametersTableRowCallback, this);
 			this.confirmRemoveParameter = $.proxy(this._confirmRemoveParameter, this);
+			this.addSimpleJEditableToName = $.proxy(this.addSimpleJEditableToName, this);
 			this.updateParameterDescription = $.proxy(this._updateParameterDescription, this);
 			this.refresh = $.proxy(this._refresh, this);
 			this._configureTable.call(this);
@@ -155,7 +156,18 @@ define([ "jquery", "backbone", "jeditable.simpleJEditable", "jquery.squash.confi
 			new SimpleJEditable({
 				targetUrl : urlPOST,
 				component : component,
-				jeditableSettings : {}
+				jeditableSettings : {
+					ajaxoptions : {
+						complete : function(jqXHR, textStatus){
+							self.trigger("parameter.name.update",
+									{
+										id : data['entity-id'],
+										name : jqXHR.responseText
+									}
+							);
+						}
+					}
+				}
 			});
 		},
 

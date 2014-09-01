@@ -38,6 +38,7 @@ define([ "jquery", "backbone", "underscore", "./ParametersPanel", "./DatasetsPan
 			});
 
 			this.listenTo(this.parametersPanel, "parameter.created parameter.removed", this.datasetsPanel.refresh);
+			this.listenTo(this.parametersPanel, "parameter.name.update", this.datasetsPanel.refreshDataSetParameterName);
 			this.listenTo(this.parametersPanel, "parameter.description.update", this.datasetsPanel.refreshDataSetParameterDescription);
 						
 			// content is refreshed where this tab becomes visible. should be in a parent view if it existed

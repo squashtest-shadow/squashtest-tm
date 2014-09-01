@@ -217,6 +217,13 @@ define([ "jquery", "backbone", "jeditable.simpleJEditable", "app/util/StringUtil
 					}
 				},
 				
+				refreshDataSetParameterName : function(parameterId, parameterName){
+					var th = this.$("[data-id=" + parameterId + "]");
+					th.attr('aria-label', parameterName);
+					th = this.$("[data-id=" + parameterId + "] div");
+					th.text(parameterName);
+				},
+				
 				refreshDataSetParameterDescription : function(parameterId, parameterDescription){
 					var th = this.$("[data-id=" + parameterId + "]");
 					th.attr('title', parameterDescription);

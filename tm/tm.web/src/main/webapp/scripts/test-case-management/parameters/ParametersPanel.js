@@ -30,7 +30,8 @@ define([ "jquery", "backbone", "underscore", "./ParametersTable", "./NewParamete
 			this.language = this.settings.language;
 			
 			_.bindAll(this, "showNewParameterDialog", "_onNewParameterConfirmed", 
-					"_onParameterRemoved", "refresh", "refreshDataSetParameterDescription");
+					"_onParameterRemoved", "refresh", "refreshDataSetParameterName", 
+					"refreshDataSetParameterDescription");
 
 			this.makeTogglePanel();
 			this.table = new ParametersTable({
@@ -49,6 +50,7 @@ define([ "jquery", "backbone", "underscore", "./ParametersTable", "./NewParamete
 			this.configureButtons();
 			this.listenTo(this.newParameterDialog, "newparameterdialog.confirm", this._onNewParameterConfirmed);
 			this.listenTo(this.table, "parameterstable.removed", this._onParameterRemoved);
+			this.listenTo(this.table, "parameter.name.update", this.refreshDataSetParameterName);
 			this.listenTo(this.table, "parameter.description.update", this.refreshDataSetParameterDescription);
 		},
 
@@ -104,7 +106,11 @@ define([ "jquery", "backbone", "underscore", "./ParametersTable", "./NewParamete
 		
 		/**
 		 * handles parameter update events. triggers an event.
-		 */		
+		 */
+		refreshDataSetParameterName : function(parameters){
+			this.trigger("parameter.name.update", parameters);
+		},
+		
 		refreshDataSetParameterDescription : function(parameters){
 			this.trigger("parameter.description.update", parameters);
 		}

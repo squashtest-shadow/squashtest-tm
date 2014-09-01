@@ -30,6 +30,7 @@ define([ "jquery", "backbone", "underscore", "./DatasetsTable", "./NewDatasetDia
 					this.language = this.settings.language;
 					
 					_.bindAll(this, "showNewDialog", "refresh",
+							"refreshDataSetParameterName", 
 							"refreshDataSetParameterDescription");
 					
 					this.makeTogglePanel();
@@ -86,6 +87,10 @@ define([ "jquery", "backbone", "underscore", "./DatasetsTable", "./NewDatasetDia
 				
 				refresh: function() {
 					this.table.reDraw();
+				},
+				
+				refreshDataSetParameterName : function(parameters){
+					this.table.refreshDataSetParameterName(parameters['id'], parameters['name']);
 				},
 				
 				refreshDataSetParameterDescription : function(parameters){
