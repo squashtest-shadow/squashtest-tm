@@ -20,27 +20,37 @@
  */
 package org.squashtest.tm.service.importer;
 
+
 public enum ImportStatus {
 
-	OK(){
+	OK(1){
 		@Override
 		public String shortName() {
 			return "OK";
 		}
 	},
-	FAILURE(){
+	FAILURE(2){
 		@Override
 		public String shortName() {
 			return "F";
 		}
 	},
-	WARNING(){
+	WARNING(3){
 		@Override
 		public String shortName() {
 			return "W";
 		}
 	};
-	
-	
+
+	private final int level;
+
+	private ImportStatus(int level) {
+		this.level = level;
+	}
+
+	public int getLevel(){
+		return this.level;
+	}
+
 	public abstract String shortName();
 }

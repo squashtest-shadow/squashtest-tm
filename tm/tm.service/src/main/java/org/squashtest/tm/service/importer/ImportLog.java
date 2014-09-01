@@ -24,10 +24,13 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.ListIterator;
 import java.util.TreeSet;
 
 import org.apache.commons.collections.map.MultiValueMap;
 import org.squashtest.tm.service.internal.batchimport.LogTrain;
+import static org.squashtest.tm.service.importer.EntityType.*;
 
 public class ImportLog{
 
@@ -73,11 +76,61 @@ public class ImportLog{
 		}
 	}
 
+
+	/**
+	 * 
+	 * <p>The logs for the datasets also contain the logs for the dataset parameter values.
+	 * Since they were inserted separately we need to purge them from redundant informations.</p>
+	 * 
+	 * <p>To ensure consistency we need to check that, for each imported line, there can be
+	 *   a log entry with status OK if this is the unique log entry for that line.
+	 *   From a procedural point of view we need, for each imported lines, to remove a log entry
+	 *   if it has a status OK and :
+	 * <ul>
+	 * 	<li>there was already a status OK for that line, or</li>
+	 * 	<li>there is at least 1 warning or error</li>
+	 * </ul>
+	 * </p>
+	 * 
+	 */
+
+	/*
+	 * This code relies on the fact that the log entries are grouped by (imported) line number.
+	 */
+	public void packLogs(){
+
+		LinkedList<LogEntry> listLogs = new LinkedList<LogEntry>(findAllFor(DATASET));
+
+		Integer curLine = null;
+
+		boolean okFoundOnCurline = false;
+
+		ListIterator<LogEntry> iter =listLogs.listIterator();
+
+		while (iter.hasNext()){
+
+			LogEntry entry = iter.next();
+
+			// if the next entry treats a new line we reset our flags.
+			if (! entry.getLine().equals(curLine)){
+				okFoundOnCurline = false;
+			}
+
+			// else,
+
+
+			curLine = entry.getLine();
+		}
+
+
+	}
+
+
 	public void recompute() {
-		recomputeFor(EntityType.TEST_CASE);
-		recomputeFor(EntityType.TEST_STEP);
-		recomputeFor(EntityType.PARAMETER);
-		recomputeFor(EntityType.DATASET);
+		recomputeFor(TEST_CASE);
+		recomputeFor(TEST_STEP);
+		recomputeFor(PARAMETER);
+		recomputeFor(DATASET);
 	}
 
 

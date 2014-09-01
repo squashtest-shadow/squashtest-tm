@@ -160,12 +160,8 @@ public class LogEntry implements Comparable<LogEntry> {
 	public int compareTo(LogEntry o) {
 		if (!line.equals(o.line)) {
 			return line - o.line;
-		} else if (status != o.status) {
-			return (status == ImportStatus.WARNING) ? -1 : 1;
 		} else {
-			return -1; // even when two instances have strictly same content we don't want to consider them equal.
-			// note that returning -1 is not an ideal solution because it violates the Comparable contract
-			// x.compareTo(y) == - y.compareTo(x) but it's good enough here
+			return (status.getLevel() - o.getStatus().getLevel());
 		}
 	}
 
