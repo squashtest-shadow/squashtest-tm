@@ -95,8 +95,9 @@ class CampaignLibraryNavigationServiceIT extends DbunitServiceSpecification {
 		Campaign camp = new Campaign()
 		when :
 		navService.addCampaignToCampaignLibrary(libId, camp)
-
+		session.flush()
 		then :
+
 		thrown RuntimeException
 	}
 
