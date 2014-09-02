@@ -79,14 +79,14 @@ public class TestCaseParametersController {
 	private PermissionEvaluationService permissionEvaluationService;
 	@Inject
 	private MessageSource messageSource;
-	
-	
 
-	private DatatableMapper<String> parametersTableMapper = 
+
+
+	private DatatableMapper<String> parametersTableMapper =
 			new NameBasedMapper(3)
-				.mapAttribute(DataTableModelConstants.DEFAULT_ENTITY_NAME_KEY,"name", Parameter.class)
-				.mapAttribute("test-case-name", "name", TestCase.class);
-	
+	.mapAttribute(DataTableModelConstants.DEFAULT_ENTITY_NAME_KEY,"name", Parameter.class)
+	.mapAttribute("test-case-name", "name", TestCase.class);
+
 	/**
 	 * 
 	 */
@@ -153,7 +153,7 @@ public class TestCaseParametersController {
 
 		List<Parameter> parameters = parameterModificationService.findAllParameters(testCaseId);
 		Sorting sorting = new DataTableSorting(params, parametersTableMapper);
-		sortParams(sorting, parameters);
+		sortParams(sorting, parameters, testCaseId);
 		PagedCollectionHolder<List<Parameter>> holder = new SinglePageCollectionHolder<List<Parameter>>(parameters);
 
 		return new ParametersModelHelper(testCaseId, messageSource, locale).buildDataModel(holder,
@@ -168,8 +168,9 @@ public class TestCaseParametersController {
 	 *            : the {@link DataTableDrawParameters}
 	 * @param parameters
 	 *            : a list of {@link Parameter}
+	 *            @param testCaseId : the id of the test case that displays the table of parameters
 	 */
-	private void sortParams(Sorting sorting, List<Parameter> parameters) {		
+	private void sortParams(Sorting sorting, List<Parameter> parameters, Long testCaseId) {
 		String sortedAttribute = sorting.getSortedAttribute();
 		SortOrder sortOrder = sorting.getSortOrder();
 
@@ -177,7 +178,7 @@ public class TestCaseParametersController {
 
 			Collections.sort(parameters, new ParameterNameComparator(sortOrder));
 		} else if (sortedAttribute != null && sortedAttribute.equals("TestCase.name")) {
-			Collections.sort(parameters, new ParameterTestCaseNameComparator(sortOrder));
+			Collections.sort(parameters, new ParameterTestCaseNameComparator(sortOrder, testCaseId));
 		} else {
 			Collections.sort(parameters, new ParameterNameComparator(SortOrder.ASCENDING));
 		}
@@ -197,15 +198,19 @@ public class TestCaseParametersController {
 	private static final class ParameterTestCaseNameComparator implements Comparator<Parameter>, Serializable {
 
 		private SortOrder sortOrder;
+		private Long testCaseId;
 
-		private ParameterTestCaseNameComparator(SortOrder sortOrder) {
+		private ParameterTestCaseNameComparator(SortOrder sortOrder, Long testCaseId) {
 			this.sortOrder = sortOrder;
+			this.testCaseId = testCaseId;
 		}
 
 		@Override
 		public int compare(Parameter o1, Parameter o2) {
-			int ascResult = ParametersModelHelper.buildTestCaseName(o1).compareTo(
-					ParametersModelHelper.buildTestCaseName(o2));
+			boolean o1DirectParam = testCaseId.equals(o1.getTestCase().getId());
+			boolean o2DirectParam = testCaseId.equals(o2.getTestCase().getId());
+			int ascResult = ParametersModelHelper.buildTestCaseName(o1, o1DirectParam).compareTo(
+					ParametersModelHelper.buildTestCaseName(o2, o2DirectParam));
 			if (sortOrder.equals(SortOrder.ASCENDING)) {
 				return ascResult;
 			} else {
@@ -227,9 +232,9 @@ public class TestCaseParametersController {
 	@ResponseStatus(HttpStatus.CREATED)
 	@ResponseBody
 	public void newParameter(@PathVariable long testCaseId, @Valid @ModelAttribute("add-parameter") Parameter parameter) {
-		
+
 		try{
-		parameterModificationService.addNewParameterToTestCase(parameter, testCaseId);
+			parameterModificationService.addNewParameterToTestCase(parameter, testCaseId);
 		}catch (DomainException e) {
 			e.setObjectName("add-parameter");
 			throw e;

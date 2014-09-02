@@ -59,14 +59,15 @@ public final class ParametersModelHelper extends DataTableModelBuilder<Parameter
 	@Override
 	public Map<String, Object> buildItemData(Parameter item) {
 		Map<String, Object> res = new HashMap<String, Object>();
-		String testCaseName = buildTestCaseName(item);
+		boolean isDirectParam = Long.valueOf(ownerId).equals(item.getTestCase().getId());
+		String testCaseName = buildTestCaseName(item, isDirectParam);
 		res.put(DataTableModelConstants.DEFAULT_ENTITY_ID_KEY, item.getId());
 		res.put(DataTableModelConstants.DEFAULT_ENTITY_INDEX_KEY, getCurrentIndex());
 		res.put(DataTableModelConstants.DEFAULT_ENTITY_NAME_KEY,
 				ParametersModelHelper.buildParameterName(item, ownerId, messageSource, locale));
 		res.put("description", item.getDescription());
 		res.put("test-case-name", testCaseName);
-		res.put("directly-associated", Long.valueOf(ownerId).equals(item.getTestCase().getId()));
+		res.put("directly-associated", isDirectParam);
 		res.put(DataTableModelConstants.DEFAULT_EMPTY_DELETE_HOLDER_KEY, "");
 		return res;
 	}
@@ -85,9 +86,13 @@ public final class ParametersModelHelper extends DataTableModelBuilder<Parameter
 	 * Will build the test case name for display in the table. The name will be : tReference-tcName (tcProjectName)
 	 * 
 	 * @param item
+	 * @param isDirectParam : if the parameter is shown in it's direct test case owner
 	 * @return
 	 */
-	public static String buildTestCaseName(Parameter item) {
+	public static String buildTestCaseName(Parameter item, boolean isDirectParam) {
+		if(isDirectParam){
+			return "";
+		}
 		TestCase testCase = item.getTestCase();
 		Project project = testCase.getProject();
 		String testCaseName = testCase.getName() + " (" + project.getName() + ')';
@@ -96,7 +101,7 @@ public final class ParametersModelHelper extends DataTableModelBuilder<Parameter
 		}
 		return testCaseName;
 	}
-	
+
 
 	/**
 	 * Returns the list of column headers names, descriptions and ids for parameters in the Datasets table ordered by parameter name.
