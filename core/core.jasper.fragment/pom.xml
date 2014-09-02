@@ -3,7 +3,7 @@
   <parent>
     <groupId>org.squashtest.tm</groupId>
     <artifactId>squashtest-csp-core</artifactId>
-    <version>1.11.0.M1-SNAPSHOT</version>
+    <version>1.11.0.FEAT3577-SNAPSHOT</version>
   </parent>
   <artifactId>core.jasper.fragment</artifactId>
   <name>${project.groupId}.${project.artifactId}</name>
