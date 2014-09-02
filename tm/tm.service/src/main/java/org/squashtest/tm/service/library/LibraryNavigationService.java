@@ -69,7 +69,7 @@ public interface LibraryNavigationService<LIBRARY extends Library<? extends NODE
 	void moveNodesToFolder(long destinationId, Long[] targetId, int position);
 
 	void moveNodesToLibrary(long destinationId, Long[] targetId, int position);
-	
+
 	void addFolderToLibrary(long destinationId, FOLDER newFolder);
 
 	void addFolderToFolder(long destinationId, FOLDER newFolder);
@@ -80,7 +80,7 @@ public interface LibraryNavigationService<LIBRARY extends Library<? extends NODE
 
 	/**
 	 * Returns the content of the folder designated by its id.
-	 * 
+	 * <
 	 * @param folderId
 	 * @return
 	 */

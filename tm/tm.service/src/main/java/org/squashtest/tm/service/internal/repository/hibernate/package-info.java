@@ -478,6 +478,15 @@
 				+ "where iter.id = :id and tp.testSuites is empty "
 				+ "group by tp.executionStatus, tc.importance, iter.scheduledPeriod.scheduledStartDate, iter.scheduledPeriod.scheduledEndDate "
 				+ "order by tp.executionStatus, tc.importance"),
+				
+		@NamedQuery(name="TestCasePathEdge.findPathById", query="select concat('\u241E', p.name, '\u241E', group_concat(n.name, 'order by', edge.depth, 'desc', '\u241E')) from TestCasePathEdge edge, TestCaseLibraryNode n join n.project p " +
+				"where n.id = edge.ancestorId " +
+				"and edge.descendantId = :nodeId " +
+				"group by edge.descendantId, p.id"), 
+		@NamedQuery(name="TestCasePathEdge.findPathsByIds", query="select edge.descendantId, concat('\u241E', p.name, '\u241E', group_concat(n.name, 'order by', edge.depth, 'desc', '\u241E')) from TestCasePathEdge edge, TestCaseLibraryNode n join n.project p " +
+				"where n.id = edge.ancestorId " +
+				"and edge.descendantId in (:nodeIds) " +
+				"group by edge.descendantId, p.id")
 
 })
 package org.squashtest.tm.service.internal.repository.hibernate;

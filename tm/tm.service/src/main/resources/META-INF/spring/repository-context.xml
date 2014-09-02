@@ -67,6 +67,7 @@
         <value>org.squashtest.tm.domain.testcase.Parameter</value>
         <value>org.squashtest.tm.domain.testcase.Dataset</value>
         <value>org.squashtest.tm.domain.testcase.DatasetParamValue</value>
+        <value>org.squashtest.tm.domain.testcase.TestCasePathEdge</value>
 
         <value>org.squashtest.tm.domain.requirement.RequirementLibrary</value>
         <value>org.squashtest.tm.domain.requirement.Requirement</value>

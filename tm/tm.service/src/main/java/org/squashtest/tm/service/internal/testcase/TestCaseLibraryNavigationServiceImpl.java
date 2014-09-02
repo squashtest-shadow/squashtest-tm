@@ -23,7 +23,6 @@ package org.squashtest.tm.service.internal.testcase;
 import java.io.File;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -55,6 +54,7 @@ import org.squashtest.tm.service.internal.library.AbstractLibraryNavigationServi
 import org.squashtest.tm.service.internal.library.LibrarySelectionStrategy;
 import org.squashtest.tm.service.internal.library.NodeDeletionHandler;
 import org.squashtest.tm.service.internal.library.PasteStrategy;
+import org.squashtest.tm.service.internal.library.PathService;
 import org.squashtest.tm.service.internal.repository.FolderDao;
 import org.squashtest.tm.service.internal.repository.LibraryDao;
 import org.squashtest.tm.service.internal.repository.ProjectDao;
@@ -116,6 +116,8 @@ TestCaseLibraryNavigationService {
 	@Inject
 	private TestCaseExcelBatchImporter batchImporter;
 
+	@Inject private PathService pathService;
+
 	@Override
 	protected NodeDeletionHandler<TestCaseLibraryNode, TestCaseFolder> getDeletionHandler() {
 		return deletionHandler;
@@ -149,7 +151,7 @@ TestCaseLibraryNavigationService {
 	@Override
 	@Transactional(readOnly = true)
 	public String getPathAsString(long entityId) {
-		return (getPathsAsString(Arrays.asList(new Long[] { entityId }))).get(0);
+		return pathService.buildTestCasePath(entityId);
 	}
 
 	/**
@@ -160,7 +162,7 @@ TestCaseLibraryNavigationService {
 	@Override
 	@Transactional(readOnly = true)
 	public List<String> getPathsAsString(List<Long> ids) {
-		return getLibraryNodeDao().getPathsAsString(ids);
+		return pathService.buildTestCasesPaths(ids);
 	}
 
 	/**

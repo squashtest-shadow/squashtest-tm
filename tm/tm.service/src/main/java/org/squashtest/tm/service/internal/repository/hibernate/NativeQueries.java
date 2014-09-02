@@ -216,16 +216,6 @@ public final class NativeQueries {
 	 */
 	public static final String PATH_SEPARATOR = "\u001F";
 
-	public static final String TCLN_GET_PATHS_AS_STRING =
-			"select clos.descendant_id, concat('"+PATH_SEPARATOR+"', p.name, '"+PATH_SEPARATOR+"', "+
-					"group_concat(tcln.name order by clos.depth desc separator '"+PATH_SEPARATOR+"')) as path "+
-					"from TEST_CASE_LIBRARY_NODE tcln "+
-					"inner join PROJECT p on tcln.project_id = p.project_id "+
-					"inner join TCLN_RELATIONSHIP_CLOSURE clos on clos.ancestor_id = tcln.tcln_id "+
-					"where clos.descendant_id in (:nodeIds) "+
-					"group by clos.descendant_id";
-
-
 	// note that in this query we don't want escaped '/' like in query TCLN_GET_PATHS_AS_STRING
 	public static final String TCLN_FIND_NODE_IDS_BY_PATH =
 			"select concat('/', p.name, '/', "+

@@ -54,36 +54,6 @@ TestCaseLibraryNodeDao {
 		return query.list();
 	}
 
-	@SuppressWarnings("unchecked")
-	@Override
-	public List<String> getPathsAsString(List<Long> ids) {
-
-		if (!ids.isEmpty()) {
-			SQLQuery query = currentSession().createSQLQuery(NativeQueries.TCLN_GET_PATHS_AS_STRING);
-			query.setParameterList("nodeIds", ids, LongType.INSTANCE);
-			List<Object[]> result = query.list();
-
-			// now ensures that the results are returned in the correct order
-			// also post process the resulting string to escape the '/' in
-			// node names and reinstate '/' as the legitimate path separator
-
-			// See NativeQueries.PATH_SEPARATOR and the associated comment
-			String[] toReturn = new String[ids.size()];
-
-			for (Object[] res : result) {
-				Long id = ((BigInteger) res[0]).longValue();
-				String path = (String) res[1];
-				path = path.replaceAll("\\/", "\\\\/").replaceAll(NativeQueries.PATH_SEPARATOR, "/");
-				toReturn[ids.indexOf(id)] = path;
-			}
-
-			return Arrays.asList(toReturn);
-		} else {
-
-			return Collections.emptyList();
-		}
-	}
-
 	@Override
 	public List<TestCaseLibraryNode> findNodesByPath(List<String> path) {
 		List<Long> ids = findNodeIdsByPath(path);

@@ -26,6 +26,7 @@ import org.junit.runner.RunWith
 import org.spockframework.runtime.Sputnik
 import org.springframework.transaction.annotation.Transactional
 import org.squashtest.tm.service.DbunitServiceSpecification
+import org.squashtest.tm.service.testcase.TestCaseLibraryNavigationService;
 import org.unitils.dbunit.annotation.DataSet
 
 import spock.unitils.UnitilsSupport
@@ -36,9 +37,8 @@ import spock.unitils.UnitilsSupport
 @RunWith(Sputnik)
 class HibernateTestCaseLibraryNodeDaoIT extends DbunitServiceSpecification {
 
-
 	@Inject
-	HibernateTestCaseLibraryNodeDao dao
+	TestCaseLibraryNavigationService service
 
 	@DataSet("HibernateTestCaseLibraryNodeDaoIT.sample.xml")
 	def "should fetch the pathes of some test case library nodes"(){
@@ -47,7 +47,7 @@ class HibernateTestCaseLibraryNodeDaoIT extends DbunitServiceSpecification {
 		def tclnids = [-242L,-237L,-257L]
 
 		when :
-		def res = dao.getPathsAsString(tclnids)
+		def res = service.getPathsAsString(tclnids)
 
 		then :
 		res == ["/Test Project-1/super 1/sub1/sub 11", "/Test Project-1/super 1", "/autre projet/mickaelito/roberto"]
@@ -61,7 +61,7 @@ class HibernateTestCaseLibraryNodeDaoIT extends DbunitServiceSpecification {
 		def tclnids = [-237L,-257L, -242L]
 
 		when :
-		def res = dao.getPathsAsString(tclnids)
+		def res = service.getPathsAsString(tclnids)
 
 		then :
 		res == [ "/Test Project-1/super 1", "/autre projet/mickaelito/roberto", "/Test Project-1/super 1/sub1/sub 11"]
@@ -74,7 +74,7 @@ class HibernateTestCaseLibraryNodeDaoIT extends DbunitServiceSpecification {
 		def tclnids = [-252L]
 
 		when :
-		def res = dao.getPathsAsString(tclnids)
+		def res = service.getPathsAsString(tclnids)
 
 		then :
 		res == [ "/Test Project-1/other folder/subother with slash \\/ here"]
@@ -88,7 +88,7 @@ class HibernateTestCaseLibraryNodeDaoIT extends DbunitServiceSpecification {
 		def tclnids = [-237L,-1L, -242L]
 
 		when :
-		def res = dao.getPathsAsString(tclnids)
+		def res = service.getPathsAsString(tclnids)
 
 		then :
 		res == [ "/Test Project-1/super 1", null, "/Test Project-1/super 1/sub1/sub 11"]
@@ -103,7 +103,7 @@ class HibernateTestCaseLibraryNodeDaoIT extends DbunitServiceSpecification {
 		def tclnpaths = [ "/Test Project-1/super 1", "/autre projet/mickaelito/roberto", "/Test Project-1/super 1/sub1/sub 11"]
 
 		when :
-		def res = dao.findNodeIdsByPath(tclnpaths)
+		def res = service.findNodeIdsByPath(tclnpaths)
 
 		then :
 		res == [-237L,-257L, -242L]
@@ -117,7 +117,7 @@ class HibernateTestCaseLibraryNodeDaoIT extends DbunitServiceSpecification {
 		def tclnpaths = [ "/Test Project-1/other folder/subother with slash \\/ here"]
 
 		when :
-		def res = dao.findNodeIdsByPath(tclnpaths)
+		def res = service.findNodeIdsByPath(tclnpaths)
 
 		then :
 		res == [-252L]
@@ -130,7 +130,7 @@ class HibernateTestCaseLibraryNodeDaoIT extends DbunitServiceSpecification {
 		def tclnpaths = [ "/Test Project-1/other folder/subother with slash / here"]
 
 		when :
-		def res = dao.findNodeIdsByPath(tclnpaths)
+		def res = service.findNodeIdsByPath(tclnpaths)
 
 		then :
 		res == [-252L]
@@ -144,7 +144,7 @@ class HibernateTestCaseLibraryNodeDaoIT extends DbunitServiceSpecification {
 		def tclnpaths = [ "/Test Project-1/super 1", "inexistant", "/Test Project-1/super 1/sub1/sub 11"]
 
 		when :
-		def res = dao.findNodeIdsByPath(tclnpaths)
+		def res = service.findNodeIdsByPath(tclnpaths)
 
 		then :
 		res == [-237L,null, -242L]
@@ -159,7 +159,7 @@ class HibernateTestCaseLibraryNodeDaoIT extends DbunitServiceSpecification {
 		def tclnpaths = [ "/Test Project-1/super 1", "/Test Project-1/other folder/subother with slash / here"]
 
 		when :
-		def res = dao.findNodesByPath(tclnpaths)
+		def res = service.findNodesByPath(tclnpaths)
 
 		then :
 		res*.id.containsAll([-237L,-252L])
@@ -174,7 +174,7 @@ class HibernateTestCaseLibraryNodeDaoIT extends DbunitServiceSpecification {
 		def tclnpaths = [ "/Test Project-1/super 1", "inexistant", "/Test Project-1/super 1/sub1/sub 11"]
 
 		when :
-		def res = dao.findNodesByPath(tclnpaths)
+		def res = service.findNodesByPath(tclnpaths)
 
 		then :
 		res.size() == 3

@@ -35,6 +35,7 @@ import org.squashtest.tm.service.internal.batchexport.ExportModel.DatasetModel;
 import org.squashtest.tm.service.internal.batchexport.ExportModel.ParameterModel;
 import org.squashtest.tm.service.internal.batchexport.ExportModel.TestCaseModel;
 import org.squashtest.tm.service.internal.batchexport.ExportModel.TestStepModel;
+import org.squashtest.tm.service.internal.library.PathService;
 import org.squashtest.tm.service.internal.repository.TestCaseLibraryNodeDao;
 
 @Service
@@ -42,6 +43,8 @@ public class TestCaseExcelExporterService {
 
 	@Inject
 	private ExportDao exportDao;
+
+	@Inject private PathService pathService;
 
 
 	@Inject
@@ -80,7 +83,7 @@ public class TestCaseExcelExporterService {
 
 	private void populatePathsCache(Map<Long, String> pathById, List<Long> ids){
 
-		List<String> paths = nodeDao.getPathsAsString(ids);
+		List<String> paths = pathService.buildTestCasesPaths(ids);
 
 		for (int i=0; i< ids.size(); i++){
 			pathById.put(ids.get(i), paths.get(i));

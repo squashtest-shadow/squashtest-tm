@@ -34,10 +34,11 @@ import org.springframework.orm.hibernate4.LocalSessionFactoryBean;
 import org.springframework.orm.hibernate4.LocalSessionFactoryBuilder;
 
 /**
- * The purpose of this class is to add more things to the config of the session factory, when there is no other way to do so.
+ * The purpose of this class is to add more things to the config of the session factory, when there is no other way to
+ * do so.
  * 
  * @author bsiri
- *
+ * 
  */
 public class RicherDialectSessionFactoryBean extends LocalSessionFactoryBean {
 	private static final Logger LOGGER = LoggerFactory.getLogger(RicherDialectSessionFactoryBean.class);
@@ -46,6 +47,7 @@ public class RicherDialectSessionFactoryBean extends LocalSessionFactoryBean {
 
 	private List<String> dialectsSupportingGroupConcat = new ArrayList<String>();
 	private List<String> dialectsSupportingStringAgg = new ArrayList<String>();
+
 	public void setDialectsSupportingStringAgg(List<String> dialectsSupportingStringAgg) {
 		this.dialectsSupportingStringAgg = dialectsSupportingStringAgg;
 	}
@@ -53,6 +55,7 @@ public class RicherDialectSessionFactoryBean extends LocalSessionFactoryBean {
 	public List<String> getDialectsSupportingStringAgg() {
 		return dialectsSupportingStringAgg;
 	}
+
 	public void setDialectsSupportingGroupConcat(List<String> dialectsSupportingGroupConcat) {
 		this.dialectsSupportingGroupConcat = dialectsSupportingGroupConcat;
 	}
@@ -66,10 +69,10 @@ public class RicherDialectSessionFactoryBean extends LocalSessionFactoryBean {
 		// check that the underlying base supports the dialect extensions : let's see what's the dialect is
 		SQLFunction sqlFunction = getSQLFunctionForDialect();
 		Configuration config = getConfiguration();
-		if(sqlFunction != null){
+		if (sqlFunction != null) {
 			// add the support for group concat
 			config.addSqlFunction("group_concat", sqlFunction);
-		}else{
+		} else {
 			config.addSqlFunction("group_concat", new GroupConcatFunction("group_concat", new StringType()));
 		}
 
@@ -77,31 +80,25 @@ public class RicherDialectSessionFactoryBean extends LocalSessionFactoryBean {
 		return super.buildSessionFactory(sfb);
 	}
 
-
-	private SQLFunction getSQLFunctionForDialect() throws IllegalArgumentException{
+	private SQLFunction getSQLFunctionForDialect() throws IllegalArgumentException {
 
 		Properties hibernateProperties = getHibernateProperties();
 		String choosenDialect = hibernateProperties.getProperty(HIBERNATE_PROPERTIES_DIALECT);
 
-		for (String supportingDialect : dialectsSupportingGroupConcat){
-			if (choosenDialect.equals(supportingDialect)){
+		for (String supportingDialect : dialectsSupportingGroupConcat) {
+			if (choosenDialect.equals(supportingDialect)) {
 				return new GroupConcatFunction("group_concat", new StringType());
 			}
 		}
-		for (String supportingDialect : dialectsSupportingStringAgg){
-			if (choosenDialect.equals(supportingDialect)){
+		for (String supportingDialect : dialectsSupportingStringAgg) {
+			if (choosenDialect.equals(supportingDialect)) {
 				return new StringAggFunction("group_concat", new StringType());
 			}
 		}
 
-		LOGGER.warn("RicherDialectSessionFactory : selected hibernate Dialect '"+choosenDialect+
-				"' is not reputed to support the sql function 'group_concat()'. If you "+
-				"are sure that your dialect (and the underlying database) supports this function,"+
-				" please add to RicherDialectSessionFactory.dalectsSupportingGroupConcat"+
-				"(see xml configuration)");
+		LOGGER.warn("RicherDialectSessionFactory : selected hibernate Dialect '{}' is not reputed to support the sql function 'group_concat()'. If you are sure that your dialect (and the underlying database) supports this function, please add to RicherDialectSessionFactory.dalectsSupportingGroupConcat (see xml configuration)", choosenDialect);
+
 		return null;
 	}
-
-
 
 }
