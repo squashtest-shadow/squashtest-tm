@@ -22,6 +22,7 @@
 package org.squashtest.tm.service.importer;
 
 import static org.junit.Assert.*;
+import static org.squashtest.tm.service.importer.ImportStatus.*
 
 import org.junit.Test;
 
@@ -67,6 +68,36 @@ class LogEntryTest extends Specification {
 		entry.i18nError == msg
 		entry.errorArgs == [ arg1, arg2 ]
 
+	}
+
+
+	def "should compare nicely with each others"(){
+
+		given :
+		def s11 = logentry(1, OK)
+		def s12 = logentry(1, FAILURE)
+		def s13 = logentry(1, WARNING)
+		def s14 = logentry(1, WARNING)
+
+		def s21 = logentry(5, OK)
+
+		def s31 = logentry(17, FAILURE)
+		def s32 = logentry(17, WARNING)
+
+		and :
+		def randomThenSorted = [s31, s13, s21, s14, s12, s32, s11]
+
+		when :
+		Collections.sort(randomThenSorted)
+
+		then :
+		randomThenSorted == [s11, s12, s13, s14, s21, s31, s32]
+
+	}
+
+
+	def logentry(Integer line, ImportStatus status){
+		return new LogEntry(line, null, null, status, null, null)
 	}
 
 }
