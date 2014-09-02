@@ -107,9 +107,18 @@
   </changeSet>
   <changeSet id="tm-1.11.0.feature-3577-2" author="mpagnon" dbms="postgresql">
     <comment>add agregate group concat</comment>
-    <sql>
-
-    </sql>
-
+    <createProcedure>
+      DROP AGGREGATE IF EXISTS group_concat(text,text);
+      DROP FUNCTION IF EXISTS group_concat_func(text, text, text);
+      CREATE FUNCTION group_concat_func(text, text, text)
+          RETURNS text LANGUAGE SQL AS
+      $func$ SELECT $1 || $3 || $2 ;$func$;
+      
+      CREATE AGGREGATE group_concat(text, text) (
+          SFUNC     = group_concat_func
+         ,STYPE     = text
+         ,INITCOND = ''
+      );
+    </createProcedure>
   </changeSet>
 </databaseChangeLog>
