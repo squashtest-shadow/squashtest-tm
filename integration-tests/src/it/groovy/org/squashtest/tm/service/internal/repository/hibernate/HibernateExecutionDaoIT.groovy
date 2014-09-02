@@ -31,7 +31,98 @@ import org.squashtest.tm.core.foundation.collection.SortOrder
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting
 import org.squashtest.tm.domain.execution.ExecutionStatus
 
-
+/**
+ * Dataset "HibernateExecutionDaoIT.should find executions by test case.xml" explained
+ * 3 Campaigns
+ * <ul>
+ * 	<li>Campaign A #-121 owned by Project B #-2
+ * 		<ol><li>IT A #-132
+ * 				<ol>
+ * 					<li>a bunch of itp with no TC linked</li>
+ * 					<li>ITP #-1109 linked to TC #-500 with one Exec #-494
+ * 					</li>
+ * 				</ol>
+ * 			</li>
+ * 		</ol>
+ * 	</li>
+ * 	<li>Campaign B #-199 owned by Project A #-1
+ * 		<ol>
+ * 			<li>IT B #-146
+ * 				<ol>
+ * 					<li>a bunch of itp with no TC linked</li>
+ * 					<li>ITP #-1248linked to TC #-500 with one Exec #-580
+ * 					</li>
+ * 				</ol>
+ * 			</li>
+ * 		</ol>
+ * 	</li>
+ * 	<li>Campaign C #-200 not owned by any project
+ * 		<ol>
+ * 			<li>IT C #-151
+ * 				<ol>
+ * 					<li>a bunch of itp with no TC linked</li>
+ * 					<li>ITP #-1291linked to TC #-500 with one Exec #-627
+ * 					</li>
+ * 				</ol>
+ * 			</li>
+ * 			<li>IT D #-152
+ * 				<ol>
+ * 					<li>a bunch of itp with no TC linked</li>
+ * 					<li>ITP #-1324 linked to TC #-500 with no exec</li>
+ * 				</ol>
+ * 			</li>
+ * 			<li>IT E #-158
+ * 				<ol>
+ * 					<li>a bunch of itp with no TC linked</li>
+ * 					<li>ITP #-1491 linked to TC #-500 with no exec</li>
+ * 				</ol>
+ * 			</li>
+ * 			<li>IT F #-161
+ * 				<ol>
+ * 					<li>a bunch of itp with no TC linked</li>
+ * 					<li>ITP #-1568 linked to TC #-500 with one Exec #-953
+ * 					</li>
+ * 				</ol>
+ * 			</li>
+ * 			<li>IT G #-198
+ * 				<ol>
+ * 					<li>a bunch of itp with no TC linked</li>
+ * 					<li>ITP #-1951 linked to TC #-500 with one Exec #-1110
+ * 					</li>
+ * 				</ol>
+ * 			</li>
+ * 			<li>IT H #-261
+ * 				<ol>
+ * 					<li>a bunch of itp with no TC linked</li>
+ * 					<li>ITP #-2946 linked to TC #-500 with one Exec #-1556
+ * 					</li>
+ * 				</ol>
+ * 			</li>
+ * 			<li>IT I #-299
+ * 				<ol>
+ * 					<li>a bunch of itp with no TC linked</li>
+ * 					<li>ITP #-3766 linked to TC #-500 with one Exec #-2150
+ * 					</li>
+ * 				</ol>
+ * 			</li>
+ * 			<li>IT J #-339
+ * 				<ol>
+ * 					<li>a bunch of itp with no TC linked</li>
+ * 					<li>ITP #-4601 linked to TC #-500 with one Exec #-2562
+ * 					</li>
+ * 				</ol>
+ * 			</li>
+ * 			<li>IT K #-348
+ * 				<ol>
+ * 					<li>a bunch of itp with no TC linked</li>
+ * 					<li>ITP #-4852 linked to TC #-500 with one  Exec #-2971
+ * 					</li>
+ * 				</ol>
+ * 			</li>
+ * 		</ol>
+ * 	</li>
+ * </ul>
+ **/
 @UnitilsSupport
 class HibernateExecutionDaoIT extends DbunitDaoSpecification {
 	@Inject ExecutionDao executionDao
@@ -50,7 +141,6 @@ class HibernateExecutionDaoIT extends DbunitDaoSpecification {
 		testCaseId  | expectedCount
 		-500        | 11
 		-550        | 0
-
 	}
 
 	@DataSet("HibernateExecutionDaoIT.should find executions by test case.xml")
@@ -67,7 +157,6 @@ class HibernateExecutionDaoIT extends DbunitDaoSpecification {
 
 		then:
 		res*.id == [-580, -627, -718, -752, -953]
-
 	}
 
 
@@ -89,7 +178,7 @@ class HibernateExecutionDaoIT extends DbunitDaoSpecification {
 
 		where:
 		sortedAttribute             | sortOrder            | expectedIds
-		//		"Project.name"              | SortOrder.ASCENDING  | [-494, -580, -627] // dataset too complex, cannot manage to have the test work
+		"Project.name"              | SortOrder.DESCENDING | [-580,-494, -627] // project a, project b, null
 		"Campaign.name"             | SortOrder.ASCENDING  | [-718, -494, -580] // null, camp a, camp b */
 		"Iteration.name"            | SortOrder.ASCENDING  | [-718, -494, -580]
 		"Execution.name"            | SortOrder.ASCENDING  | [-494, -580, -627]
