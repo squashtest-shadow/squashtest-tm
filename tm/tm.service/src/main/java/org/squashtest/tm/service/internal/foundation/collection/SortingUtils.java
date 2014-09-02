@@ -26,6 +26,7 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.Criteria;
+import org.hibernate.NullPrecedence;
 import org.hibernate.criterion.Order;
 import org.squashtest.tm.core.foundation.collection.MultiSorting;
 import org.squashtest.tm.core.foundation.collection.Sorting;
@@ -56,10 +57,10 @@ public final class SortingUtils {
 		if (!StringUtils.isBlank(sorting.getSortedAttribute())) {
 			switch (sorting.getSortOrder()) {
 			case ASCENDING:
-				criteria.addOrder(Order.asc(sorting.getSortedAttribute()));
+				criteria.addOrder(Order.asc(sorting.getSortedAttribute()).nulls(NullPrecedence.FIRST));
 				break;
 			case DESCENDING:
-				criteria.addOrder(Order.desc(sorting.getSortedAttribute()));
+				criteria.addOrder(Order.desc(sorting.getSortedAttribute()).nulls(NullPrecedence.LAST));
 				break;
 			}
 		}
@@ -119,7 +120,7 @@ public final class SortingUtils {
 			Sorting sorting = iter.next();
 
 			hqlbuilder.append(sorting.getSortedAttribute()).append(" ").append(sorting.getSortOrder().getCode())
-					.append(" ");
+			.append(" ");
 
 			if (iter.hasNext()) {
 				hqlbuilder.append(", ");

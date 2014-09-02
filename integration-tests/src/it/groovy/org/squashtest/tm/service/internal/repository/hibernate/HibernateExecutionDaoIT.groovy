@@ -20,21 +20,22 @@
  */
 package org.squashtest.tm.service.internal.repository.hibernate
 
-import javax.inject.Inject;
+import javax.inject.Inject
 
-import org.squashtest.tm.service.internal.repository.ExecutionDao;
-import org.unitils.dbunit.annotation.DataSet;
+import org.squashtest.tm.service.internal.repository.ExecutionDao
+import org.unitils.dbunit.annotation.DataSet
 
-import spock.lang.Unroll;
-import spock.unitils.UnitilsSupport;
-import org.squashtest.tm.core.foundation.collection.SortOrder;
-import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
-import org.squashtest.tm.domain.execution.ExecutionStatus;
+import spock.lang.Unroll
+import spock.unitils.UnitilsSupport
+import org.squashtest.tm.core.foundation.collection.SortOrder
+import org.squashtest.tm.core.foundation.collection.PagingAndSorting
+import org.squashtest.tm.domain.execution.ExecutionStatus
 
 
 @UnitilsSupport
 class HibernateExecutionDaoIT extends DbunitDaoSpecification {
 	@Inject ExecutionDao executionDao
+
 
 	@DataSet("HibernateExecutionDaoIT.should find executions by test case.xml")
 	@Unroll("should count #expectedCount executions for test case #testCaseId")

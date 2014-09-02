@@ -22,16 +22,16 @@ package org.squashtest.tm.service.internal.repository.hibernate
 
 import javax.inject.Inject
 
-import org.squashtest.tm.core.foundation.collection.ColumnFiltering;
-import org.squashtest.tm.core.foundation.collection.PagingAndMultiSorting;
+import org.squashtest.tm.core.foundation.collection.ColumnFiltering
+import org.squashtest.tm.core.foundation.collection.PagingAndMultiSorting
 import org.squashtest.tm.domain.campaign.Campaign
-import org.squashtest.tm.domain.campaign.TestPlanStatistics;
-import org.squashtest.tm.domain.campaign.TestPlanStatus;
-import org.squashtest.tm.domain.testcase.TestCaseExecutionMode;
+import org.squashtest.tm.domain.campaign.TestPlanStatistics
+import org.squashtest.tm.domain.campaign.TestPlanStatus
+import org.squashtest.tm.domain.testcase.TestCaseExecutionMode
 import org.squashtest.tm.service.internal.repository.CampaignDao
 import org.unitils.dbunit.annotation.DataSet
 
-import spock.lang.Unroll;
+import spock.lang.Unroll
 import spock.unitils.UnitilsSupport
 
 @UnitilsSupport
@@ -59,7 +59,7 @@ class HibernateCampaignDaoIT extends DbunitDaoSpecification {
 	@DataSet("HibernateCampaignDaoIT.should find campaign statistics.xml")
 	def "should find campaign statistics READY"(){
 		when:
-		TestPlanStatistics result = campaignDao.findCampaignStatistics(-1L);
+		TestPlanStatistics result = campaignDao.findCampaignStatistics(-1L)
 
 		then:
 		result != null
@@ -94,7 +94,7 @@ class HibernateCampaignDaoIT extends DbunitDaoSpecification {
 		active   | filter                          | expectedId
 		true	 | TestCaseExecutionMode.AUTOMATED | [-1010L]
 		true	 | TestCaseExecutionMode.MANUAL    | [-1020L]
-		false	 | null                            | [-1020L, -1010L]
+		false	 | null                            | [-1010L, -1020L]
 	}
 }
 
