@@ -561,8 +561,8 @@ public class TestCaseModificationController {
 		mav.addObject("datasetsparamValuesById", datasetsparamValuesById);
 
 		// =====================CALLING TC
-		List<TestCase> callingTCs = testCaseModificationService.findAllCallingTestCases(testCaseId);
-		mav.addObject("callingTCs", callingTCs);
+		List<CallTestStep> callingSteps = testCaseModificationService.findAllCallingTestSteps(testCaseId);
+		mav.addObject("callingSteps", callingSteps);
 
 		// ========================VERIFIED REQUIREMENTS
 		List<VerifiedRequirement> verifReq = verifiedRequirementsManagerService

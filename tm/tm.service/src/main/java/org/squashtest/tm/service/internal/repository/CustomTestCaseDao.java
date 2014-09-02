@@ -167,6 +167,14 @@ public interface CustomTestCaseDao extends EntityDao<TestCase> {
 	 */
 	List<CallTestStep> findAllCallingTestSteps(long testCaseId, PagingAndSorting sorting);
 
+
+	/**
+	 * invokes #findAllCallingTestSteps, sorting by project name, test case reference, test case name and step no
+	 * 
+	 * @param testCaseId
+	 * @return
+	 */
+	List<CallTestStep> findAllCallingTestSteps(long testCaseId);
 	/***
 	 * Returns the test cases associated with at least a requirement that meets the criteria
 	 * 

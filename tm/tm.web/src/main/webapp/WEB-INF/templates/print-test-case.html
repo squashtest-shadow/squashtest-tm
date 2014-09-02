@@ -336,27 +336,33 @@
 				test cases</h3>
 			<table id="calling-test-case-table" class="greystyle-table">
 				<thead>
-					<tr>
-						<th class="small">#</th>
-						<th th:text="#{ label.project }">Project</th>
-						<th th:text="#{ test-case.reference.label}">Reference</th>
-						<th th:text="#{ label.Name }">Name</th>
-						<th
-							th:text="#{ test-case.calling-test-cases.table.execmode.label }">Exec
-							mode</th>
-					</tr>
+    				<tr>
+    					<th>#</th>
+    					<th th:text="#{label.project}">project</th>
+    					<th th:text="#{test-case.reference.label}">reference</th>
+    					<th th:text="#{label.Name}">name</th>
+                        <th th:text="#{label.dataset}">dataset</th>
+                        <th th:text="#{label.stepNumber}">step no</th>
+    					<th th:text="#{test-case.calling-test-cases.table.execmode.label}">mode</th>				
+    				</tr>
 				</thead>
 				<tbody>
-					<tr th:each="calling, iterStat : ${callingTCs}"
+					<tr th:each="calling, iterStat : ${callingSteps}"
 						th:object="${calling}">
 						<td th:text="${iterStat.count}">1</td>
-						<td th:text="*{project.name}">ProjectA</td>
-						<td th:text="*{reference}">TC006</td>
-						<td th:text="*{name}">Connexion à l'application</td>
-						<td th:text="#{__*{executionMode.i18nKey}__}">manual</td>
+						<td th:text="*{testCase.project.name}">ProjectA</td>
+						<td th:text="*{testCase.reference}">TC006</td>
+						<td th:text="*{testCase.name}">Connexion à l'application</td>
+                        <td th:text="*{
+                            calledDataset != null ? calledDataset.name : 
+                            delegateParameterValues ? '__#{label.callstepdataset.Delegate}__' :
+                            '__#{label.callstepdataset.PickDataset}__'}">--</td>
+                        <td th:text="${calling.getIndex()+1}">5</td>
+						<td th:text="#{__*{testCase.executionMode.i18nKey}__}">manual</td>
 					</tr>
 				</tbody>
 			</table>
+
 		</div>
 
 		<!-- ===========================================ATTACHMENTS ===================================================-->

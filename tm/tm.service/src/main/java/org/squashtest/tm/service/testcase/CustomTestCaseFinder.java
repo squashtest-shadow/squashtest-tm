@@ -67,6 +67,8 @@ public interface CustomTestCaseFinder {
 
 	PagedCollectionHolder<List<CallTestStep>> findCallingTestSteps(long testCaseId, PagingAndSorting sorting);
 
+	List<CallTestStep> findAllCallingTestSteps(long testCaseId);
+
 	/**
 	 * Fetches all the test cases which have at least one ancestor from the given list. If ancestorID is a folder id,
 	 * fetches all its descendant test cases. If it is a test cases id, fetches the given test case.

@@ -42,10 +42,13 @@ import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.squashtest.tm.core.foundation.collection.DefaultPagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.Paging;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.PagingBackedPagedCollectionHolder;
+import org.squashtest.tm.core.foundation.collection.Pagings;
+import org.squashtest.tm.core.foundation.collection.SortOrder;
 import org.squashtest.tm.core.foundation.lang.Couple;
 import org.squashtest.tm.core.foundation.lang.PathUtils;
 import org.squashtest.tm.domain.customfield.BoundEntity;
@@ -361,6 +364,11 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 		List<CallTestStep> callers = testCaseDao.findAllCallingTestSteps(testCaseId, sorting);
 		Long countCallers = testCaseDao.countCallingTestSteps(testCaseId);
 		return new PagingBackedPagedCollectionHolder<List<CallTestStep>>(sorting, countCallers, callers);
+	}
+
+	@Override
+	public List<CallTestStep> findAllCallingTestSteps(long testCaseId) {
+		return testCaseDao.findAllCallingTestSteps(testCaseId);
 	}
 
 	@Override

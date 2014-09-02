@@ -292,7 +292,19 @@ public class HibernateTestCaseDao extends HibernateEntityDao<TestCase> implement
 		return query.list();
 	}
 
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<CallTestStep> findAllCallingTestSteps(long testCaseId) {
 
+		// TODO : maybe move this to package-info.java along the other queries if
+		// the use cases calling this prove to be stable
+		String orderBy = " order by Project.name asc, TestCase.reference asc, TestCase.name asc, index(Steps) asc";
+
+		Query query = currentSession().createQuery(FIND_ALL_CALLING_TEST_STEPS_MAIN_HQL + orderBy);
+		query.setParameter("testCaseId", testCaseId);
+
+		return query.list();
+	}
 
 	@SuppressWarnings("unchecked")
 	public List<NamedReference> findTestCaseDetails(Collection<Long> ids){
