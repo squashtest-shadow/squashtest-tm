@@ -161,7 +161,7 @@ public class FacilityImpl implements Facility {
 			train.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_UNEXPECTED_ERROR,
 					new Object[] { ex.getClass().getName() }));
 			validator.getModel().setNotExists(target);
-			LOGGER.error(EXCEL_ERR_PREFIX+UNEXPECTED_ERROR_WHILE_IMPORTING + target + " : ", ex);
+			LOGGER.error(EXCEL_ERR_PREFIX + UNEXPECTED_ERROR_WHILE_IMPORTING + target + " : ", ex);
 		}
 
 		return train;
