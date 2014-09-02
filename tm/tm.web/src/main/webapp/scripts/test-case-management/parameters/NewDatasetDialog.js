@@ -101,11 +101,15 @@ define([ "jquery", "backbone", "underscore", "app/lnf/Forms", "app/util/StringUt
 				
 				var $row = $(this);
 				var paramValue = $row.find(".add-parameter-input input").val();
-				var paramId = table.fnGetData(this)['entity-id'];
+				var data = table.fnGetData(this);
 				
-				var paramData = [paramId, paramValue];
-				
-				parameters.push(paramData);
+				// 'null' might happen if there is no parameters in the table (but still one row saying that 
+				// the table is empty)
+				if (data !== null){
+					var paramId = data['entity-id'];					
+					var paramData = [paramId, paramValue];					
+					parameters.push(paramData);
+				}
 			});
 			
 			var params = {name:$("#add-dataset-name").val(), paramValues:parameters};
