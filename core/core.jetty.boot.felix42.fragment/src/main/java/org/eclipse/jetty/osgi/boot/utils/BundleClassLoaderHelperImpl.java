@@ -25,8 +25,6 @@ import java.lang.reflect.Method;
 import java.util.List;
 
 import org.osgi.framework.Bundle;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * @author Gregory Fouquet
@@ -36,11 +34,9 @@ public class BundleClassLoaderHelperImpl implements BundleClassLoaderHelper {
 
 	private static boolean identifiedOsgiImpl;
 	private static boolean isFelix;
-	private static Method getRevisionMethod;
-	private static Method getWiringMethod;
-	private static Method getClassLoaderMethod;
-
-	private static final Logger LOGGER = LoggerFactory.getLogger(BundleClassLoaderHelper.class);
+	private static Method getRevisions_method;
+	private static Method getWiring_method;
+	private static Method getClassLoader_method;
 
 	/**
 	 * 
@@ -64,7 +60,7 @@ public class BundleClassLoaderHelperImpl implements BundleClassLoaderHelper {
 			} catch (ClassNotFoundException e) {
 				// should not happen as we are called if the bundle is started
 				// anyways.
-				LOGGER.error(e.getMessage(), e);
+				e.printStackTrace();
 			}
 		}
 		// resort to introspection
@@ -81,7 +77,7 @@ public class BundleClassLoaderHelperImpl implements BundleClassLoaderHelper {
 		identifiedOsgiImpl = true;
 		try {
 			isFelix = bundle.getClass().getClassLoader().loadClass("org.apache.felix.framework.BundleImpl") != null;
-		} catch (Exception t) {
+		} catch (Throwable t) {
 			throw new IllegalStateException(
 					"'org.apache.felix.framework.BundleImpl' could not be loaded. Does this bundle run inside a Felix 4.2 container ?",
 					t);
@@ -94,49 +90,49 @@ public class BundleClassLoaderHelperImpl implements BundleClassLoaderHelper {
 		try {
 			// now get the current module from the bundle.
 			// and return the private field m_classLoader of ModuleImpl
-			if (getRevisionMethod == null) {
+			if (getRevisions_method == null) {
 				try {
-					getRevisionMethod = loadClass(bundle, "org.apache.felix.framework.BundleImpl").getDeclaredMethod(
+					getRevisions_method = loadClass(bundle, "org.apache.felix.framework.BundleImpl").getDeclaredMethod(
 							"getRevisions");
 				} catch (NoSuchMethodException e) {
 					throw new IllegalStateException(
 							"BundleImpl.getRevsions() method could not be found. Does this bundle run inside a Felix 4.2 container ?",
 							e);
 				}
-				getRevisionMethod.setAccessible(true);
+				getRevisions_method.setAccessible(true);
 			}
 
 			// Figure out which version of the modules is exported
-			List<?> revisions = (List<?>) getRevisionMethod.invoke(bundle);
+			List<?> revisions = (List<?>) getRevisions_method.invoke(bundle);
 			Object currentRevision = revisions.get(0);
 
-			if (getWiringMethod == null && currentRevision != null) {
+			if (getWiring_method == null && currentRevision != null) {
 				try {
-					getWiringMethod = loadClass(bundle, "org.osgi.framework.wiring.BundleRevision").getDeclaredMethod(
+					getWiring_method = loadClass(bundle, "org.osgi.framework.wiring.BundleRevision").getDeclaredMethod(
 							"getWiring");
 				} catch (NoSuchMethodException e) {
 					throw new IllegalStateException(
 							"BundleRevision.getWiring() method could not be found. Does this bundle run inside a Felix 4.2 container ?",
 							e);
 				}
-				getWiringMethod.setAccessible(true);
+				getWiring_method.setAccessible(true);
 			}
 
-			Object wiring = getWiringMethod.invoke(currentRevision);	// NOSONAR the code above guarantees that an exception would be thrown before that line
+			Object wiring = getWiring_method.invoke(currentRevision);	// NOSONAR the code above guarantees that an exception would be thrown before that line
 
-			if (getClassLoaderMethod == null && wiring != null) {
+			if (getClassLoader_method == null && wiring != null) {
 				try {
-					getClassLoaderMethod = loadClass(bundle, "org.osgi.framework.wiring.BundleWiring")
+					getClassLoader_method = loadClass(bundle, "org.osgi.framework.wiring.BundleWiring")
 							.getDeclaredMethod("getClassLoader");
 				} catch (NoSuchMethodException e) {
 					throw new IllegalStateException(
 							"BundleWiring.getClassLoader() method could not be found. Does this bundle run inside a Felix 4.2 container ?",
 							e);
 				}
-				getClassLoaderMethod.setAccessible(true);
+				getClassLoader_method.setAccessible(true);
 			}
 
-			ClassLoader cl = (ClassLoader) getClassLoaderMethod.invoke(wiring);
+			ClassLoader cl = (ClassLoader) getClassLoader_method.invoke(wiring);
 
 			return cl;
 
