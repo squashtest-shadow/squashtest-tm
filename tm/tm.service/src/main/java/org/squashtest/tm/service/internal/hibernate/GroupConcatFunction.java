@@ -55,7 +55,7 @@ public class GroupConcatFunction extends StandardSQLFunction {
 	}
 
 	@Override
-	public String render(Type firstArgumentType, List arguments, SessionFactoryImplementor sessionFactory) {
+	public final String render(Type firstArgumentType, List arguments, SessionFactoryImplementor sessionFactory) {
 
 		if (arguments.size()==1){
 			return super.render(firstArgumentType, arguments, sessionFactory);
@@ -83,7 +83,7 @@ public class GroupConcatFunction extends StandardSQLFunction {
 
 	}
 
-	public String createSqlQuery(List arguments, String direction, String separator) {
+	protected String createSqlQuery(List<?> arguments, String direction, String separator) {
 		return "group_concat("+arguments.get(0)+" order by "+arguments.get(2)+" "+direction+" separator '"+separator+"')";
 	}
 
