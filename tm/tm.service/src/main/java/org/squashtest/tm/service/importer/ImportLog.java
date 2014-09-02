@@ -113,12 +113,12 @@ public class ImportLog{
 	 */
 	public void packLogs(){
 
-		LinkedList<LogEntry> listLogs = new LinkedList<LogEntry>(findAllFor(DATASET));
+		LinkedList<LogEntry> listiterableLogs = new LinkedList<LogEntry>(findAllFor(DATASET));
 
 		Integer precLine = null;
-		boolean okFoundOnPrecLine = false;
+		boolean okFoundOnPrecEntry = false;
 
-		ListIterator<LogEntry> iter =listLogs.listIterator();
+		ListIterator<LogEntry> iter =listiterableLogs.listIterator();
 
 		while (iter.hasNext()){
 
@@ -131,7 +131,7 @@ public class ImportLog{
 			 * and the current entry concerns the same line and
 			 * remove it.
 			 */
-			if (okFoundOnPrecLine && curLine.equals(precLine)){
+			if (okFoundOnPrecEntry && curLine.equals(precLine)){
 
 				// finding the previous element actually means
 				// to backtrack twice (because the cursor points
@@ -150,13 +150,13 @@ public class ImportLog{
 
 			// now we set our flag according to the status of the
 			// current entry and update precLine
-			okFoundOnPrecLine = (curStatus == OK);
+			okFoundOnPrecEntry = (curStatus == OK);
 			precLine = curLine;
 		}
 
 		// once complete we replace the original list with the filtered one
-		logEntriesPerType.getCollection(DATASET).clear();
-		logEntriesPerType.putAll(DATASET, listLogs);
+		findAllFor(DATASET).clear();
+		logEntriesPerType.putAll(DATASET, listiterableLogs);
 
 
 	}
