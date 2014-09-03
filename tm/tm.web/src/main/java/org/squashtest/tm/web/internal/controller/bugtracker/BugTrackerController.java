@@ -78,7 +78,6 @@ import org.squashtest.tm.service.campaign.CampaignFinder;
 import org.squashtest.tm.service.campaign.IterationFinder;
 import org.squashtest.tm.service.campaign.TestSuiteFinder;
 import org.squashtest.tm.service.execution.ExecutionFinder;
-import org.squashtest.tm.service.project.ProjectFinder;
 import org.squashtest.tm.service.testcase.TestCaseFinder;
 import org.squashtest.tm.web.internal.controller.bugtracker.BugTrackerControllerHelper.ExecutionIssuesTableModel;
 import org.squashtest.tm.web.internal.controller.bugtracker.BugTrackerControllerHelper.IterationIssuesTableModel;
@@ -100,7 +99,6 @@ public class BugTrackerController {
 	private TestSuiteFinder testSuiteFinder;
 	private ExecutionFinder executionFinder;
 	private TestCaseFinder testCaseFinder;
-	private ProjectFinder projectFinder;
 	private BugTrackerFinderService bugTrackerFinderService;
 
 	private static final String EXECUTION_STEP_TYPE = "execution-step";
@@ -114,15 +112,10 @@ public class BugTrackerController {
 
 	private static final String STYLE = "style";
 	private static final String TOGGLE = "toggle";
-	private static final String DELEGATE_POPUP = "useParentContextPopup";
 
 	@Inject
 	private MessageSource messageSource;
 
-	@ServiceReference
-	public void setProjectFinder(ProjectFinder projectFinder) {
-		this.projectFinder = projectFinder;
-	}
 
 	@ServiceReference
 	public void setCampaignFinder(CampaignFinder campaignFinder) {
@@ -195,8 +188,8 @@ public class BugTrackerController {
 	 * that the report bug dialog will be populated later.
 	 * </p>
 	 * <p>
-	 * Note : accepts as optional parameter : 
-	 * <ul><li>useParentContextPopup : will tell the panel to use a delegate report issue popup (that's how the OER works)  
+	 * Note : accepts as optional parameter :
+	 * <ul><li>useParentContextPopup : will tell the panel to use a delegate report issue popup (that's how the OER works)
 	 * </p>
 	 * @param stepId
 	 * @return

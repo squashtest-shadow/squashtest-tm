@@ -441,14 +441,14 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 		List<Issue> localIssues = issueDao.findSortedIssuesFromIssuesLists(issueListIds,
 				sorter, bugTracker.getId());
 
-		MultiMap localIdByRemoteId = mapLocalIssuesByRemoteIssue(localIssues);
+		MultiMap localIdsByRemoteId = mapLocalIssuesByRemoteIssue(localIssues);
 
-		Collection<String> issuesRemoteIds = (Collection<String>)localIdByRemoteId.keySet();
+		Collection<String> issuesRemoteIds = (Collection<String>)localIdsByRemoteId.keySet();
 
 		// Find the BT issues out of the remote ids
 		List<RemoteIssue> btIssues = remoteBugTrackersService.getIssues(issuesRemoteIds, bugTracker);
 
-		List<RemoteIssueDecorator> btIssueDecorators = decorateRemoteIssues(btIssues, localIdByRemoteId);
+		List<RemoteIssueDecorator> btIssueDecorators = decorateRemoteIssues(btIssues, localIdsByRemoteId);
 
 		// Bind the BT issues to their owner with the kept informations
 		List<IssueOwnership<RemoteIssueDecorator>> ownerships = bindBTIssuesToOwner(btIssueDecorators,

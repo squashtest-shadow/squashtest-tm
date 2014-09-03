@@ -71,7 +71,7 @@ public class HibernateIterationDao extends HibernateEntityDao<Iteration> impleme
 			+ "left outer join IterationTestPlanItem.testSuites as TestSuite "
 			+ "where Iteration.id = :iterationId {whereClause} ";
 
-	private static final String HQL_INDEXED_TEST_PLAN_TEMPLATE_END = "group by index(IterationTestPlanItem), IterationTestPlanItem.id ";
+	private static final String HQL_INDEXED_TEST_PLAN_TEMPLATE_END = "group by Iteration.id, IterationTestPlanItem.id ";
 	private static final String HQL_INDEXED_TEST_PLAN_TESTSUITE_FILTER = "having group_concat(TestSuite.name, 'order by', TestSuite.name) like :testsuiteFilter ";
 
 	/**
