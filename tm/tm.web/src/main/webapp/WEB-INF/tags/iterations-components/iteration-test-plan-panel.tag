@@ -180,8 +180,6 @@
           <th class="no-user-select tp-th-suite" data-def="map=suite, tooltip-target=suitesTot, sortable, sWidth=10%">
             <f:message key="iteration.executions.table.column-header.suite.label" />
           </th>
-          <th class="no-user-select" data-def="map=suitesTot, invisible"></th>
-          <th class="no-user-select" data-def="map=suiteIds, invisible"></th>
           <th class="no-user-select tp-th-status" data-def="map=status, sortable, sWidth=10%, sClass=status-combo">
             <f:message key="iteration.executions.table.column-header.status.label" />
           </th>

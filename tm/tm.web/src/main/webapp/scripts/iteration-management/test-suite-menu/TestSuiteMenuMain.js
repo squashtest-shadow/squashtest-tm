@@ -42,9 +42,7 @@ define(
 			 * 
 			 * menuSettings = { instanceSelector : menu id , datatableSelector :
 			 * datatable id, isContextual : boolean value indicating whether the
-			 * menu is contextual or not, emptySelectionMessageSelector: empty
-			 * selection message id, emptySuiteSelectionMessageSelector: empty
-			 * suite selection message id, }
+			 * menu is contextual or not }
 			 * 
 			 */
 			return function(settings) {

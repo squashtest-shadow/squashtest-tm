@@ -23,15 +23,7 @@
 <%@ tag description="managment of iteration test suites" body-content="empty" %>
 <%@ tag language="java" pageEncoding="utf-8"%>
 
-<%@ attribute name="popupId" required="true" description="the id of the managment popup. Just supply the name and it will be generated." %>
-<%@ attribute name="popupOpener" required="true" description="the id of the button that will open the popup. Must exist prior to the call to this tag." %>
-<%@ attribute name="menuId" required="true" description="the id of the button opening the menu. Must exists." %>
-<%@ attribute name="suiteList" type="java.lang.Object" required="true" description="the list of the suites that exist already" %>
-<%@ attribute name="testSuitesUrl" required="true" description="url representing the current iteration" %>
-<%@ attribute name="datatableId" required="true" description="the id of the test plan datatable"%>
-<%@ attribute name="emptySelectionMessageId" required="true" description="the id of the div representing the message shown when nothing is selected"%>
-<%@ attribute name="creatable" required="true" type="java.lang.Boolean" description="if the user has creation rights on the iteration" %>
-<%@ attribute name="deletable" required="true" type="java.lang.Boolean" description="if the user has deletion rights on the iteration" %>
+<%@ attribute name="iteration" type="java.lang.Object" required="true" description="the iteration object of which we manage the test suites" %>
 
 <%@ taglib prefix="pop" 	tagdir="/WEB-INF/tags/popup" %>
 <%@ taglib prefix="f" 		uri="http://java.sun.com/jsp/jstl/fmt"%>
@@ -39,14 +31,26 @@
 <%@ taglib prefix="s"		uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="comp" 	tagdir="/WEB-INF/tags/component" %>	
 <%@ taglib prefix="fn"		uri="http://java.sun.com/jsp/jstl/functions" %>
-<%@ taglib prefix="json" uri="http://org.squashtest.tm/taglib/json" %>
+<%@ taglib prefix="authz" tagdir="/WEB-INF/tags/authz"%>
 
  
 <s:url var="baseSuiteUrl" value="/test-suites" /> 
+<s:url var="testSuitesUrl" value="/iterations/{iterId}/test-suites">
+  <s:param name="iterId" value="${iteration.id}" />
+</s:url>
+ 
+<authz:authorized hasRole="ROLE_ADMIN" hasPermission="DELETE" domainObject="${ iteration }">
+  <c:set var="deletable" value="${true}" />
+</authz:authorized> 
+
+<authz:authorized hasRole="ROLE_ADMIN" hasPermission="CREATE" domainObject="${ iteration }">
+  <c:set var="creatable" value="${true}" />
+</authz:authorized>
+ 
  
  <%-- ====================== POPUP STRUCTURE DEFINITION ========================= --%>
  
-<pop:popup id="${popupId}" isContextual="true"  openedBy="manage-test-suites-button" closeOnSuccess="false" titleKey="dialog.testsuites.title">
+<pop:popup id="manage-test-suites-popup" isContextual="true"  openedBy="manage-test-suites-button" closeOnSuccess="false" titleKey="dialog.testsuites.title">
 
 	<jsp:attribute name="buttons">
 	<f:message var="closeLabel" key="label.Close" />
@@ -92,11 +96,11 @@
 </pop:popup>
 
 <div id="suite-menu-empty-selection-popup" class="not-visible"
-				title="<f:message key='title.suite.menu.emptySelection' />">
-				<div>
-					<f:message key="message.suite.menu.emptySelection" />
-				</div>
-			</div>
+	title="<f:message key='title.suite.menu.emptySelection' />">
+	<div>
+		<f:message key="message.suite.menu.emptySelection" />
+	</div>
+</div>
 <%-- ====================== /POPUP STRUCTURE DEFINITION  ========================= --%>
 
 
@@ -109,8 +113,11 @@ require( ["common"], function(){
 	require(["jquery","iteration-management"], function($,main){
 $(function(){	
 		
+		<%-- for this JSON serialisation is not an option because we don't iterate over pojos here : these
+          are full fledged hibernate entities 
+		--%> 
 		var initData = [
-						<c:forEach var="suite" items="${suiteList}" varStatus="status">
+						<c:forEach var="suite" items="${iteration.testSuites}" varStatus="status">
 							{ id : '${suite.id}', name : '${fn:replace(suite.name, "'", "\\'")}' }<c:if test="${not status.last}">,</c:if>
 						</c:forEach>
 					];
@@ -133,16 +140,14 @@ $(function(){
 			};
 		
 		var managerSettings = {
-				instance : $("#${popupId} .main-div-suites"),
+				instance : $("#manage-test-suites-popup .main-div-suites"),
 				deleteConfirmMessage : "${deleteMessage}",
 				deleteConfirmTitle : "${deleteTitle}"
 			};
 		
 		var menuSettings = {
-				instanceSelector : "#${menuId}",
-				datatableSelector : "#${datatableId}",
-				emptySelectionMessageSelector: "#${ emptySelectionMessageId }",
-				emptySuiteSelectionMessageSelector: "#suite-menu-empty-selection-popup",
+				instanceSelector : "#manage-test-suites-buttonmenu",
+				datatableSelector : "#iteration-test-plans-table"
 			};
 		
 		var config = {
@@ -155,7 +160,7 @@ $(function(){
 		main.initTestSuiteMenu(config);
 
 		//now we can make reappear
-		$("#${popupId} .main-div-suites").removeClass("not-displayed");
+		$("#manage-test-suites-popup .main-div-suites").removeClass("not-displayed");
 	});
 });
 });
