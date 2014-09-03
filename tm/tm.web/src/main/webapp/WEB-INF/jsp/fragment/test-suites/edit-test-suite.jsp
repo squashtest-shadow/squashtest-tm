@@ -128,7 +128,7 @@
   config.api = {
 		copy: "${duplicateTestSuiteUrl}"		
   };
-  config.writable = ${writable};
+  config.writable = ${not empty writable and writable};
 </script>
 
 <div
