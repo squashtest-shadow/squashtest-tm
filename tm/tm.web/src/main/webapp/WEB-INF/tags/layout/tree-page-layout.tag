@@ -66,8 +66,6 @@
 
 <%@ attribute name="isSubPaged" required="false"  
 	description="boolean. if set to true, the layout will be applied in a sub-paged form. Basically it will insert sub-page-layout.tag between the top template and this one." %>
-<%@ attribute name="isRequirementPaneSearchOn" required="false" 
-	description="boolean. If set to true, activate the test plan manager pane which allows to search test cases by requirement" %>
 
 
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>

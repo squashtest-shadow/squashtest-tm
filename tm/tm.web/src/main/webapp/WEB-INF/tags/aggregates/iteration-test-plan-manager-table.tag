@@ -156,7 +156,7 @@
           <th class="no-user-select tp-th-suite" data-def="map=suite, tooltip-target=suitesTot, sortable, sWidth=10%">
             <f:message key="iteration.executions.table.column-header.suite.label" />
           </th>
-          <th class="no-user-select tp-th-status" data-def="map=status, sortable, sWidth=10%, sClass=status-combo">
+          <th class="no-user-select tp-th-status" data-def="map=status, sortable, sWidth=10%, sClass=status-display">
             <f:message key="iteration.executions.table.column-header.status.label" />
           </th>
           <th class="no-user-select" data-def="map=empty-delete-holder, delete-button=#iter-test-plan-delete-dialog">&nbsp;</th>

@@ -44,7 +44,6 @@
 															  from which it will build more specifics url according to the nodes it'll try
 															  to fetch. typical pattern : resource-name-browser"%>
 
-<%@ attribute name="isRequirementPaneSearchOn" required="false" description="boolean. If set to true, activate the test plan manager pane which allows to search test cases by requirement" %>
 <%@ attribute name="isSubPaged" required="false"  description="boolean. if set to true, the layout will be applied in a sub-paged form. Basically
 it will insert sub-page-layout.tag between the top template and this one." %>
 
@@ -56,7 +55,7 @@ it will insert sub-page-layout.tag between the top template and this one." %>
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component"%>
 <%@ taglib prefix="dt" tagdir="/WEB-INF/tags/datatables" %>
 
-<layout:tree-page-layout titleKey="squashtm" highlightedWorkspace="${ highlightedWorkspace }" isRequirementPaneSearchOn="${ isRequirementPaneSearchOn }" linkable="${linkable}" isSubPaged="${isSubPaged}">
+<layout:tree-page-layout titleKey="squashtm" highlightedWorkspace="${ highlightedWorkspace }" linkable="${linkable}" isSubPaged="${isSubPaged}">
 	
 	<jsp:attribute name="head">
 		<%-- tree population callbacks --%>

@@ -83,7 +83,7 @@ define(
 
 				// execution status (read)
 				var status = data.status;
-				var	$statustd = $row.find('.status-combo');
+				var	$statustd = $row.find('.status-display');
 				var	html = statusfactory.getHtmlFor(status);
 
 				$statustd.html(html); // remember : this will insert a <span>

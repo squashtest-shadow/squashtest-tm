@@ -45,7 +45,8 @@
 <layout:tree-picker-layout  workspaceTitleKey="workspace.campaign.title" 
 							highlightedWorkspace="campaign"
 							treeBaseUrl="${treeBaseUrl}"
-							isRequirementPaneSearchOn="true" linkable="test-case" isSubPaged="true">
+							linkable="test-case" 
+                            isSubPaged="true">
 	<jsp:attribute name="head">
 		<comp:sq-css name="squash.purple.css" />
 
@@ -97,7 +98,7 @@ require(["common"], function(){
 		</script>
 	</jsp:attribute>
 	
-		<jsp:attribute name="subPageTitle">
+	<jsp:attribute name="subPageTitle">
 		<h2>${campaign.name}&nbsp;:&nbsp;<f:message key="squashtm.library.verifying-test-cases.title" /></h2>
 	</jsp:attribute>
 	
