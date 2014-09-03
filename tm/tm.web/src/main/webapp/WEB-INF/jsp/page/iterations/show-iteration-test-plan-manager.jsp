@@ -22,13 +22,13 @@
 --%>
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="s" uri="http://www.springframework.org/tags" %>
 <%@ taglib prefix="layout" tagdir="/WEB-INF/tags/layout"%>
 <%@ taglib prefix="tree" tagdir="/WEB-INF/tags/jstree"%>
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component"%>
-<%@ taglib prefix="jq" tagdir="/WEB-INF/tags/jquery"%>
 <%@ taglib prefix="aggr" tagdir="/WEB-INF/tags/aggregates"%>
-<%@ taglib prefix="dt" tagdir="/WEB-INF/tags/datatables" %>
-<%@ taglib prefix="s" uri="http://www.springframework.org/tags" %>
+<%@ taglib prefix="it" tagdir="/WEB-INF/tags/iterations-components"%>
+
 <%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
 
 <c:url var="backUrl" value="/campaign-workspace/" />
@@ -55,7 +55,7 @@
 				if (ids.length > 0) {
 					$.post('${ testPlanUrl }', { testCasesIds: ids})
 					.done(function(){
-						$("#test-plans-table").squashTable().refresh();
+						$("#iteration-test-plans-table").squashTable().refresh();
 					})
 				}
 				tree.jstree('deselect_all'); //todo : each panel should define that method too.
@@ -167,6 +167,7 @@
 				<comp:opened-object otherViewers="${ otherViewers }" objectUrl="${ iterationUrl }" />
 				<aggr:iteration-test-plan-manager-table iteration="${iteration}"/>
 			
+                <it:test-suite-managment  iteration="${iteration}"/>
 			</div>
 		</div>
 	</div>
@@ -177,8 +178,11 @@
 		<f:message var ="removeLabel" key="subpage.association.button.disassociate.label" />
 		<script type="text/javascript">
 require([ "common" ], function() {
-	require([ "jquery", "jqueryui" ], function($) {
-		$(function(){				
+	require([ "jquery", "iteration-management", "jqueryui" ], function($, iterManager) {
+		$(function(){		
+			
+			iterManager.initEvents({});
+			
 			$("#add-items-button").button({
 				disabled : false,
 				text : "${addLabel}",
