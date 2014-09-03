@@ -155,7 +155,7 @@
           <th class="no-user-select tp-th-importance" data-def="map=importance, sortable">
             <f:message key="iteration.executions.table.column-header.importance.label" />
           </th>
-          <th class="no-user-select tp-th-dataset" data-def="map=dataset, sortable, sWidth=10%">
+          <th class="no-user-select tp-th-dataset" data-def="map=dataset.selected.name, sortable, sWidth=10%">
             <f:message key="label.Dataset" />
           </th>
           <th class="no-user-select tp-th-status" data-def="map=status, sortable, sWidth=10%, sClass=status-combo">

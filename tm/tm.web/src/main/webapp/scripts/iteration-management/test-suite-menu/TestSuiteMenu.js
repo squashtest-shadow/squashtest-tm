@@ -272,7 +272,7 @@ define([ "jquery", "underscore", "app/ws/squashtm.notification", "squash.transla
 				var self = this;
 				$('#suite-manager-menu-ok-button').on('click',function(evt) {
 						if (!self.testPlanItemIds.length) {
-							notification.showError(translator.get('iteration.test-plan.action.empty-selection.message'));
+							notification.showError(translator.get('message.suite.menu.emptySelection'));
 						} else {
 							var toSend = {};
 							var checkedSuiteIds = self.testSuiteNewStatuses.getChecked();
@@ -327,7 +327,7 @@ define([ "jquery", "underscore", "app/ws/squashtm.notification", "squash.transla
 						// no item selected: close menu and warn
 						self.menucontrol.buttonmenu('close');
 						evt.stopImmediatePropagation();
-						notification.showError(translator.get('message.suite.menu.emptySelection'));
+						notification.showError(translator.get('iteration.test-plan.action.empty-selection.message'));
 
 					} else {
 						var suites = self.model.getData();

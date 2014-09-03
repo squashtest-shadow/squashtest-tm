@@ -25,7 +25,8 @@
   As of Squash TM 1.11 the content of this tag was wiped then replaced by a fork of 
   tags/iteration-components/iteration-test-plan-panel.tag
 
-  Some features were then removed
+  Some features were then removed. See comments in the js initialization bloc at the end of this file.
+  
  --%>
 <%@ tag body-content="empty" description="the test plan panel of an iteration when displayed in the test plan manager" %>
 
@@ -41,6 +42,7 @@
 <s:url var="tableModelUrl" value="/iterations/{iterId}/test-plan">
   <s:param name="iterId" value="${iteration.id}" />
 </s:url>
+<s:url var="testcaseUrl"  value="/test-cases/{tc-id}/info" />
 
 <f:message var="cannotCreateExecutionException" key="squashtm.action.exception.cannotcreateexecution.label" />
 <f:message var="unauthorizedDeletion" key="dialog.remove-testcase-association.unauthorized-deletion.message" />
@@ -142,7 +144,7 @@
           <th class="no-user-select tp-th-reference" data-def="map=reference, sortable">
             <f:message key="label.Reference" />
           </th>
-          <th class="no-user-select tp-th-name" data-def="map=tc-name, sortable, sClass=toggle-row">
+          <th class="no-user-select tp-th-name" data-def="map=tc-name, sortable, link=${testcaseUrl}"">
             <f:message key="iteration.executions.table.column-header.test-case.label" />
           </th>
           <th class="no-user-select tp-th-importance" data-def="map=importance, sortable">
@@ -177,14 +179,11 @@
       <span data-def="state=multiple-tp" style="font-weight: bold;">
         <f:message key="dialog.remove-testcase-associations.message" />
       </span>
-      <span data-def="state=empty-selec">
-        <f:message key="message.EmptyTableSelection" />
-      </span>
 
       <div class="popup-dialog-buttonpane">
         <input type="button" value="${confirmLabel}"
           data-def="state=single-tp multiple-tp, mainbtn=single-tp multiple-tp, evt=confirm" />
-        <input type="button" value="${cancelLabel}" data-def="mainbtn=empty-selec, evt=cancel" />
+        <input type="button" value="${cancelLabel}" data-def="evt=cancel" />
       </div>
     </div>
 
@@ -206,6 +205,23 @@
   require(["common"], function(){
     require(["domReady", "iteration-management"], function(domReady, iterInit){
       
+    <%--
+      Note about module 'iteration-management' :
+      
+      This module is usually used for the test plan of an iteration in the context of 
+      the view on that iteration. There are much less features for this table in
+      the context of the test plan manager. For instance one could potentially unroll the 
+      list of execution, or execute them, or assign users etc : the javascript is all 
+      there and are all executed.
+      
+      The only thing preventing those features to appear is the lack of valid targets :
+      some columns in the table are missing, or doesn't have the correct css classes.
+      Still, remember that the javascript here is not tailormade, nor configured with 
+      specific flags, it just happens to work as is.   
+      
+      So, your guess : Is it cool, or risky ?
+    --%>
+    	
       domReady(function(){
         var conf = {
         	// permissions are hard coded because a user accessing that page 
