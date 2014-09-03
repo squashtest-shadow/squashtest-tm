@@ -168,4 +168,6 @@ public interface IterationTestPlanManagerService extends IterationTestPlanFinder
 	 */
 	Collection<IterationTestPlanItem> createTestPlanFragment(TestCase testCase, User assignee);
 
+	void changeDataset(long itemId, long datasetId);
+
 }

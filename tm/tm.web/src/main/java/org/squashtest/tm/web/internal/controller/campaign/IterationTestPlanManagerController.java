@@ -248,6 +248,12 @@ public class IterationTestPlanManagerController {
 
 	}
 
+	@RequestMapping(value = "/iterations/{iterationId}/test-plan/{testPlanId}", method = RequestMethod.POST, params = {"dataset"})
+	public @ResponseBody
+	void setDataset(@PathVariable("testPlanId") long testPlanId, @RequestParam("dataset") long datasetId){
+		iterationTestPlanManagerService.changeDataset(testPlanId, datasetId);
+	}
+
 	private String formatUnassigned(Locale locale) {
 		return messageSource.internationalize("label.Unassigned", locale);
 	}

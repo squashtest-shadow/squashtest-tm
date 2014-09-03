@@ -524,4 +524,22 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 
 		return fragment;
 	}
+
+	@Override
+	@PreAuthorize("hasPermission(#itemId, 'org.squashtest.tm.domain.campaign.IterationTestPlanItem', 'WRITE') "
+			+ OR_HAS_ROLE_ADMIN)
+	public void changeDataset(long itemId, long datasetId) {
+		IterationTestPlanItem item = iterationTestPlanDao.findById(itemId);
+
+		if (! item.isTestCaseDeleted()){
+			TestCase tc = item.getReferencedTestCase();
+			Dataset ds = datasetDao.findById(datasetId);
+			if (! ds.getTestCase().equals(tc)){
+				throw new IllegalArgumentException("dataset [id:'"+ds.getId()+"', name:'"+ds.getName()+
+						"'] doesn't belong to test case [id:'"+tc.getId()+"', name:'"+tc.getName()+"']");
+			}
+			item.setReferencedDataset(ds);
+		}
+
+	}
 }

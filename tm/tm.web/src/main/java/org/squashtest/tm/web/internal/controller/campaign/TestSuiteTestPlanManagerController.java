@@ -209,6 +209,13 @@ public class TestSuiteTestPlanManagerController {
 		return assignee;
 	}
 
+
+	@RequestMapping(value = "/test-suites/{suiteId}/test-plan/{testPlanId}", method = RequestMethod.POST, params = {"dataset"})
+	public @ResponseBody
+	void setDataset(@PathVariable("testPlanId") long testPlanId, @RequestParam("dataset") long datasetId){
+		iterationTestPlanManagerService.changeDataset(testPlanId, datasetId);
+	}
+
 	@RequestMapping(value = "/test-suites/{suiteId}/test-plan/{itemIds}/position/{newIndex}", method = RequestMethod.POST)
 	@ResponseBody
 	public void changeTestPlanIndex(@PathVariable(TEST_SUITE_ID) long suiteId, @PathVariable("newIndex") int newIndex,

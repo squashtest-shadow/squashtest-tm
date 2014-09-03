@@ -102,6 +102,12 @@ define(
 				// assignee (read)
 				var $assigneetd = $row.find('.assignee-combo');
 				$assigneetd.wrapInner('<span/>');
+				
+				// dataset : we create the 'button' part of a menu, but not actual menu.
+				if (data['dataset'].available.length>0){
+					var $dstd = $row.find('.dataset-menu');
+					$dstd.wrapInner('<a class="buttonmenu cursor-pointer"><span></span></a>');
+				}
 			}
 
 			function _rowCallbackWriteFeatures($row, data, _conf) {
@@ -134,6 +140,28 @@ define(
 						callback : _conf.submitAssigneeClbk
 					});
 
+				// datasets : we build here a full menu. Note that the read features
+				// already ensured that a <a class="buttonmenu"> exists.
+				var $dstd = $row.find('.dataset-menu'),
+					dsInfos = data['dataset'],
+					dsurl = _conf.testplanUrl + data['entity-id'],
+					$dsul = $('<ul class="not-displayed"></ul>');
+				
+				if (dsInfos.available.length>0){
+					$.each(dsInfos.available, function(){						
+						var $dsli = $('<li class="cursor-pointer">')
+									.append($('<a/>', {
+										'text' : this.name,
+										'class' : 'cursor-pointer dataset-menu-item',
+										'data-id' : this.id
+									}));
+						$dsul.append($dsli);
+					});
+					
+					$dstd.append($dsul);
+					$dstd.find('a.buttonmenu').buttonmenu();
+					$dstd.on('click', '.dataset-menu-item', function(evt){_conf.changeDataset(evt, dsurl)});
+				}
 			}
 
 			function _rowCallbackExecFeatures($row, data, _conf) {
@@ -142,10 +170,10 @@ define(
 				var isTcDel = data['is-tc-deleted'],
 					isManual = (data['exec-mode'] === "M");
 
-				var tpId = data['entity-id'], $td = $row
-						.find('.execute-button'), strmenu = $(
-						"#shortcut-exec-menu-template").html().replace(
-						/#placeholder-tpid#/g, tpId);
+				var tpId = data['entity-id'], 
+					$td = $row.find('.execute-button'), 
+					strmenu = $("#shortcut-exec-menu-template").html()
+							.replace(/#placeholder-tpid#/g, tpId);
 
 				$td.empty();
 				$td.append(strmenu);
@@ -217,6 +245,21 @@ define(
 					submitAssigneeClbk : function(value, settings) {
 						var assignableUsers = JSON.parse(settings.data);
 						$(this).text(assignableUsers[value]);
+					},
+					
+					changeDataset : function(evt, url){
+						var $a = $(evt.currentTarget);
+						var dsid = $a.data('id'),
+							name = $a.text();
+						
+						$.ajax({
+							url : url,
+							type : 'POST',
+							data : {'dataset' : dsid }
+						})
+						.success(function(){
+							$a.closest('ul').prev().find('span').text(name);							
+						});
 					}
 				};
 
