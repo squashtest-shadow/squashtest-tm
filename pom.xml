@@ -55,7 +55,7 @@
     <verbose.compiler>false</verbose.compiler>
     <hibernate.version>4.2.2.Final</hibernate.version>
     <groovy.version>2.0.7</groovy.version>
-    <provisionBom.version>1.3-SNAPSHOT</provisionBom.version>
+    <provisionBom.version>1.4-SNAPSHOT</provisionBom.version>
   </properties>
 
   <dependencyManagement>
