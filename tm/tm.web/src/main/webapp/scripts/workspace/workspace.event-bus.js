@@ -50,6 +50,16 @@ define([ "jquery" ], function($) {
 
 		squashtm.workspace.eventBus = $.extend($({}), {
 
+			// override trigger : it works just the same, but can log if asked to 
+			trigger : function(){
+				if (squashtm.workspace.eventBus.debug === true){
+					console.log("triggering event : ", arguments);
+					console.log("at : ");
+					console.trace();
+				}
+				$.fn.trigger.apply (this, arguments);
+			},
+			
 
 			contextualListeners : [],
 			

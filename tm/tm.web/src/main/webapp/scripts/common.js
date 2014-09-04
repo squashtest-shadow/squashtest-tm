@@ -26,6 +26,9 @@ if (window.console === undefined) {
 if (window.console.log === undefined) {
 	window.console.log = function() {/*NOOP*/};
 }
+if (window.console.trace === undefined){
+	window.console.trace = function() {/*NOOP*/};
+}
 
 requirejs.config({
 			packages : [
