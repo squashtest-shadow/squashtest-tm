@@ -60,8 +60,9 @@ define(
 		[ 'jquery', 'squash.translator', '../../test-plan-panel/exec-runner', '../../test-plan-panel/sortmode', '../../test-plan-panel/filtermode',
 		 'squash.dateutils', 'squash.statusfactory',
 		  'test-automation/automated-suite-overview',
+			'squash.configmanager',
 		  'squashtable', 'jeditable', 'jquery.squash.buttonmenu' ],
-		function($, translator, execrunner, smode, filtermode, dateutils, statusfactory, autosuitedialog) {
+		function($, translator, execrunner, smode, filtermode, dateutils, statusfactory, autosuitedialog, confman) {
 
 			// ****************** TABLE CONFIGURATION **************
 
@@ -81,7 +82,7 @@ define(
 							_conf.autoexecutionTooltip);
 				}
 
-				// execution status (read)
+				// execution status (read, thus selected using .status-display)
 				var status = data.status;
 				var	$statustd = $row.find('.status-display');
 				var	html = statusfactory.getHtmlFor(status);
@@ -105,14 +106,15 @@ define(
 				
 				// dataset : we create the 'button' part of a menu, but not actual menu.
 				if (data['dataset'].available.length>0){
-					var $dstd = $row.find('.dataset-menu');
-					$dstd.wrapInner('<a class="buttonmenu cursor-pointer"><span></span></a>');
+					var $dstd = $row.find('.dataset-combo');
+					$dstd.wrapInner('<span/>');
 				}
 			}
 
 			function _rowCallbackWriteFeatures($row, data, _conf) {
 
-				// execution status (edit). Note : the children().first() thing
+				// execution status (edit, thus selected as .status-combo). 
+				// Note : the children().first() thing
 				// will return the span element.
 				var statusurl = _conf.testplanUrl + data['entity-id'];
 				var statusElt = $row.find('.status-combo').children().first();
@@ -142,25 +144,19 @@ define(
 
 				// datasets : we build here a full menu. Note that the read features
 				// already ensured that a <a class="buttonmenu"> exists.
-				var $dstd = $row.find('.dataset-menu'),
+				var $dsspan = $row.find('.dataset-combo').children().first(),
 					dsInfos = data['dataset'],
-					dsurl = _conf.testplanUrl + data['entity-id'],
-					$dsul = $('<ul class="not-displayed"></ul>');
+					dsurl = _conf.testplanUrl + data['entity-id'];										
 				
 				if (dsInfos.available.length>0){
-					$.each(dsInfos.available, function(){						
-						var $dsli = $('<li class="cursor-pointer">')
-									.append($('<a/>', {
-										'text' : this.name,
-										'class' : 'cursor-pointer dataset-menu-item',
-										'data-id' : this.id
-									}));
-						$dsul.append($dsli);
-					});
-					
-					$dstd.append($dsul);
-					$dstd.find('a.buttonmenu').buttonmenu();
-					$dstd.on('click', '.dataset-menu-item', function(evt){_conf.changeDataset(evt, dsurl)});
+					$dsspan.addClass('cursor-arrow');
+					$dsspan.editable(dsurl, {
+						type : 'select',
+						data : confman.toJeditableSelectFormat(dsInfos.available),
+						name : 'dataset',
+						onblur : 'cancel',
+						callback : _conf.submitDatasetClbk
+					});					
 				}
 			}
 
@@ -247,19 +243,8 @@ define(
 						$(this).text(assignableUsers[value]);
 					},
 					
-					changeDataset : function(evt, url){
-						var $a = $(evt.currentTarget);
-						var dsid = $a.data('id'),
-							name = $a.text();
-						
-						$.ajax({
-							url : url,
-							type : 'POST',
-							data : {'dataset' : dsid }
-						})
-						.success(function(){
-							$a.closest('ul').prev().find('span').text(name);							
-						});
+					submitDatasetClbk : function(value, settings){
+						$(this).text(settings.data[value]);
 					}
 				};
 

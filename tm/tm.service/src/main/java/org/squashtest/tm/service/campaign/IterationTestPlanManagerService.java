@@ -168,6 +168,14 @@ public interface IterationTestPlanManagerService extends IterationTestPlanFinder
 	 */
 	Collection<IterationTestPlanItem> createTestPlanFragment(TestCase testCase, User assignee);
 
-	void changeDataset(long itemId, long datasetId);
+	/**
+	 * Attach a dataset to an item. If the ID of the dataset is null the item will reference
+	 * no dataset instead.
+	 * 
+	 * 
+	 * @param itemId
+	 * @param datasetId (may be null)
+	 */
+	void changeDataset(long itemId, Long datasetId);
 
 }

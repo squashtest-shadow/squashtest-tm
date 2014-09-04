@@ -23,7 +23,7 @@
  * Clients should require this module. The module subscribes to the "reload.exec-btns-panel" event
  * to initialize the panel.
  */
-define(["jquery", "../app/pubsub", "jquery.squash.buttonmenu"], function($, ps) {
+define(["jquery", "../app/pubsub", "jquery.squash.buttonmenu", "jquery.squash.confirmdialog", "jquery.squash"], function($, ps) {
 	"use strict";
 
 	function runnerUrl() {

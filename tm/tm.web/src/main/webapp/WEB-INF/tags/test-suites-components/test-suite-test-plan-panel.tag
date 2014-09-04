@@ -155,10 +155,10 @@
           <th class="no-user-select tp-th-importance" data-def="map=importance, sortable">
             <f:message key="iteration.executions.table.column-header.importance.label" />
           </th>
-          <th class="no-user-select tp-th-dataset" data-def="map=dataset.selected.name, sortable, sWidth=10%">
+          <th class="no-user-select tp-th-dataset" data-def="map=dataset.selected.name, sortable, sWidth=10%, sClass=dataset-combo">
             <f:message key="label.Dataset" />
           </th>
-          <th class="no-user-select tp-th-status" data-def="map=status, sortable, sWidth=10%, sClass=status-combo">
+          <th class="no-user-select tp-th-status" data-def="map=status, sortable, sWidth=10%, sClass=status-display status-combo">
             <f:message key="iteration.executions.table.column-header.status.label" />
           </th>
           <th class="no-user-select tp-th-assignee"
@@ -205,15 +205,12 @@
       <span data-def="state=multiple-tp" style="font-weight: bold;">
         <f:message key="dialog.remove-testcase-testsuite-associations.message" />
       </span>
-      <span data-def="state=empty-selec">
-        <f:message key="message.EmptyTableSelection" />
-      </span>
 
       <div class="popup-dialog-buttonpane">
         <input type="button" value="${removeLabel}"
           data-def="state=single-tp multiple-tp, mainbtn=single-tp multiple-tp, evt=confirm" />
         <input type="button" value="${removeEverywhereLabel}" data-def="state=single-tp multiple-tp, evt=confirmall" />
-        <input type="button" value="${cancelLabel}" data-def="mainbtn=empty-selec, evt=cancel" />
+        <input type="button" value="${cancelLabel}" data-def="evt=cancel" />
       </div>
     </div>
 
@@ -239,13 +236,10 @@
           </c:forEach>
         </select>
       </div>
-      <span data-def="state=empty-selec">
-        <f:message key="message.EmptyTableSelection" />
-      </span>
 
       <div class="popup-dialog-buttonpane">
         <input type="button" value="${assignLabel}" data-def="state=assign, mainbtn=assign, evt=confirm" />
-        <input type="button" value="${cancelLabel}" data-def="mainbtn=empty-select, evt=cancel" />
+        <input type="button" value="${cancelLabel}" data-def="evt=cancel" />
       </div>
     </div>
     <div id="ts-test-plan-batch-edit-status" class="not-displayed popup-dialog"
@@ -260,13 +254,10 @@
           </c:forEach>
         </select>
       </div>
-      <span data-def="state=empty-selec">
-        <f:message key="message.EmptyTableSelection" />
-      </span>
 
       <div class="popup-dialog-buttonpane">
         <input type="button" value="${confirmLabel}" data-def="state=edit, mainbtn=edit, evt=confirm" />
-        <input type="button" value="${cancelLabel}" data-def="mainbtn=empty-select, evt=cancel" />
+        <input type="button" value="${cancelLabel}" data-def="evt=cancel" />
       </div>
     </div>
     <div id="ts-test-plan-reorder-dialog" class="not-displayed popup-dialog" title="${reorderLabel}">

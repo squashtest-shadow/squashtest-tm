@@ -250,8 +250,9 @@ public class IterationTestPlanManagerController {
 
 	@RequestMapping(value = "/iterations/{iterationId}/test-plan/{testPlanId}", method = RequestMethod.POST, params = {"dataset"})
 	public @ResponseBody
-	void setDataset(@PathVariable("testPlanId") long testPlanId, @RequestParam("dataset") long datasetId){
+	Long setDataset(@PathVariable("testPlanId") long testPlanId, @RequestParam("dataset") Long datasetId){
 		iterationTestPlanManagerService.changeDataset(testPlanId, datasetId);
+		return datasetId;
 	}
 
 	private String formatUnassigned(Locale locale) {

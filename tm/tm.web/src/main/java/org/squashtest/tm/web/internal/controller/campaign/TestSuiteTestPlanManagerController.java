@@ -20,7 +20,6 @@
  */
 package org.squashtest.tm.web.internal.controller.campaign;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -50,7 +49,6 @@ import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.campaign.TestSuite;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.project.Project;
-import org.squashtest.tm.domain.testautomation.AutomatedSuite;
 import org.squashtest.tm.domain.testcase.Dataset;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseLibrary;
@@ -63,8 +61,6 @@ import org.squashtest.tm.service.campaign.TestSuiteModificationService;
 import org.squashtest.tm.service.campaign.TestSuiteTestPlanManagerService;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.web.internal.controller.RequestParams;
-import org.squashtest.tm.web.internal.controller.execution.AutomatedExecutionViewUtils;
-import org.squashtest.tm.web.internal.controller.execution.AutomatedExecutionViewUtils.AutomatedSuiteOverview;
 import org.squashtest.tm.web.internal.helper.JsTreeHelper;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.builder.DriveNodeBuilder;
@@ -212,8 +208,9 @@ public class TestSuiteTestPlanManagerController {
 
 	@RequestMapping(value = "/test-suites/{suiteId}/test-plan/{testPlanId}", method = RequestMethod.POST, params = {"dataset"})
 	public @ResponseBody
-	void setDataset(@PathVariable("testPlanId") long testPlanId, @RequestParam("dataset") long datasetId){
+	Long setDataset(@PathVariable("testPlanId") long testPlanId, @RequestParam("dataset") Long datasetId){
 		iterationTestPlanManagerService.changeDataset(testPlanId, datasetId);
+		return datasetId;
 	}
 
 	@RequestMapping(value = "/test-suites/{suiteId}/test-plan/{itemIds}/position/{newIndex}", method = RequestMethod.POST)

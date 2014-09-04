@@ -50,8 +50,9 @@ define(
 		[ 'jquery', 'squash.translator', '../../test-plan-panel/exec-runner', '../../test-plan-panel/sortmode', '../../test-plan-panel/filtermode',
 				'squash.dateutils', 'squash.statusfactory',
 				'test-automation/automated-suite-overview',
+				'squash.configmanager',
 				'jeditable.datepicker', 'squashtable', 'jeditable', 'jquery.squash.buttonmenu' ],
-		function($, translator, execrunner, smode, filtermode, dateutils, statusfactory, autosuitedialog) {
+		function($, translator, execrunner, smode, filtermode, dateutils, statusfactory, autosuitedialog, confman) {
 
 			// ****************** TABLE CONFIGURATION **************
 
@@ -71,9 +72,9 @@ define(
 							_conf.autoexecutionTooltip);
 				}
 
-				// execution status (read)
+				// execution status (read, thus selected using .status-display)
 				var status = data['status'],
-					$statustd = $row.find('.status-combo'),
+					$statustd = $row.find('.status-display'),
 					html = statusfactory.getHtmlFor(status);
 
 				$statustd.html(html); // remember : this will insert a <span>
@@ -92,11 +93,17 @@ define(
 				// assignee (read)
 				var $assigneetd = $row.find('.assignee-combo');
 				$assigneetd.wrapInner('<span/>');
+				
+				// dataset : we create the 'button' part of a menu, but not actual menu.
+				if (data['dataset'].available.length>0){
+					var $dstd = $row.find('.dataset-combo');
+					$dstd.wrapInner('<span/>');
+				}
 			}
 
 			function _rowCallbackWriteFeatures($row, data, _conf) {
 
-				// execution status (edit)
+				// execution status (edit, thus selected as .status-combo)
 				var statusurl = _conf.testplanUrl + data['entity-id'];
 				var statusElt = $row.find('.status-combo').children().first();
 				statusElt.addClass('cursor-arrow');
@@ -122,6 +129,22 @@ define(
 					callback : _conf.submitAssigneeClbk
 				});
 
+				// datasets (edit)
+				var $dsspan = $row.find('.dataset-combo').children().first(),
+					dsInfos = data['dataset'],
+					dsurl = _conf.testplanUrl + data['entity-id'];										
+				
+				if (dsInfos.available.length>0){
+					$dsspan.addClass('cursor-arrow');
+					$dsspan.editable(dsurl, {
+						type : 'select',
+						data : confman.toJeditableSelectFormat(dsInfos.available),
+						name : 'dataset',
+						onblur : 'cancel',
+						callback : _conf.submitDatasetClbk
+					});					
+				}
+				
 			}
 
 			function _rowCallbackExecFeatures($row, data, _conf) {
@@ -202,6 +225,10 @@ define(
 					submitAssigneeClbk : function(value, settings) {
 						var assignableUsers = JSON.parse(settings.data);
 						$(this).text(assignableUsers[value]);
+					},
+					
+					submitDatasetClbk : function(value, settings){
+						$(this).text(settings.data[value]);
 					}
 				};
 

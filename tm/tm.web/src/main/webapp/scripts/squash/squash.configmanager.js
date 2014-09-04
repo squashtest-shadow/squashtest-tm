@@ -18,8 +18,8 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ "jquery", "squash.translator", "datepicker/jquery.squash.datepicker-locales", "squash.dateutils" ], 
-		function($, translator, regionale, dateutils) {
+define([ "jquery", "squash.translator", "datepicker/jquery.squash.datepicker-locales", "squash.dateutils", "underscore" ], 
+		function($, translator, regionale, dateutils, _) {
 
 	function stdJeditable(){
 		
@@ -157,6 +157,57 @@ define([ "jquery", "squash.translator", "datepicker/jquery.squash.datepicker-loc
 		
 		return conf;
 	}
+	
+	/*
+	 *	Useful when creating the options for a jeditable select.  
+	 *  This function will turn an array of [{ id : <id1>, name : <name1>}, {id : <id2>, name : <name2>}] 
+	 *  into something acceptable for a jeditable select, like { <id1> : <name1>, <id2> : <name2> }.
+	 * 
+	 *  The objects in the input array must define 
+	 *  - id : mandatory. Will be the 'value' of the 'option' object that'll be created from this object.
+	 *  - name : (optional) if found, will be used as a 'label' for that option.
+	 *  - value : (optional) if found, will be used as a 'label' for that option.
+	 *  - (anything else) : if none of 'name' or 'value' are found, that third property will be used instead.
+	 *  					Works only of the objects have 2 own properties only (one of which being 'id'),
+	 *  					and must not be an object nor an array.
+	 *  
+	 *  if none of 'name', 'value' or the 'anything else' is satified the script will crash and tell you why.
+	 *  
+	 *
+	 */
+	function _toJeditableSelectFormat(data){
+		
+		if (data.length===0){
+			return {};
+		}
+		
+		// let's analyze the input data and check if they are suitable.
+		var sample = data[0],
+			keys = _.keys(sample);
+		
+		var hasID = (sample.id !== undefined),
+			usableLabel = 	(sample.name !== undefined) ? 'name' :
+							(sample.value !== undefined) ? 'value' :
+							(keys.length === 2 && hasID) ? keys[ (_.indexOf(keys, 'id') +1) % 2] :
+							undefined;
+
+		if (hasID === false || usableLabel === undefined){
+			throw "configmanager : unable to convert input data to jeditable select format. Please supply "+
+				"an array of { id : <id>, value : <value> }"
+		}
+		
+		// now we can work
+		var result = {};
+		for (var i=0; i<data.length; i++){
+			var elt = data[i];
+			result[elt['id']] = elt[usableLabel];
+		}
+		
+		// TODO FIXME XXX
+		result[""] = result[null]
+		delete result[null];
+		return result;
+	}
 
 	return {
 		getStdCkeditor : stdCkeditor,
@@ -165,6 +216,7 @@ define([ "jquery", "squash.translator", "datepicker/jquery.squash.datepicker-loc
 		getStdDatepicker : stdDatepicker,
 		getJeditableCkeditor : jeditableCkeditor,
 		getJeditableSelect : jeditableSelect,
+		toJeditableSelectFormat : _toJeditableSelectFormat,
 		getJeditableDatepicker : jeditableDatepicker	// experimental
 	};
 

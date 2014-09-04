@@ -528,10 +528,13 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 	@Override
 	@PreAuthorize("hasPermission(#itemId, 'org.squashtest.tm.domain.campaign.IterationTestPlanItem', 'WRITE') "
 			+ OR_HAS_ROLE_ADMIN)
-	public void changeDataset(long itemId, long datasetId) {
+	public void changeDataset(long itemId, Long datasetId) {
 		IterationTestPlanItem item = iterationTestPlanDao.findById(itemId);
 
-		if (! item.isTestCaseDeleted()){
+		if (datasetId == null){
+			item.setReferencedDataset(null);
+		}
+		else if (! item.isTestCaseDeleted()){
 			TestCase tc = item.getReferencedTestCase();
 			Dataset ds = datasetDao.findById(datasetId);
 			if (! ds.getTestCase().equals(tc)){

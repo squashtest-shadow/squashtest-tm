@@ -170,6 +170,7 @@ class TestPlanTableModelHelper extends DataTableModelBuilder<IndexedIterationTes
 		public Collection<JsonDataset> getAvailable() {
 			return available;
 		}
+
 	}
 
 	/* ***************** data formatter *************************** */
@@ -184,7 +185,8 @@ class TestPlanTableModelHelper extends DataTableModelBuilder<IndexedIterationTes
 			Collection<Dataset> available = item.getReferencedTestCase().getDatasets();
 
 			JsonDataset jsonSelected = convert(selected);
-			Collection<JsonDataset> jsonAvailable = new ArrayList<JsonDataset>(available.size());
+			Collection<JsonDataset> jsonAvailable = new ArrayList<JsonDataset>(available.size()+1);
+			jsonAvailable.add(convert(null));	// that one corresponds to dataset 'None'
 			for (Dataset ds : available){
 				jsonAvailable.add(convert(ds));
 			}
@@ -193,10 +195,12 @@ class TestPlanTableModelHelper extends DataTableModelBuilder<IndexedIterationTes
 		}
 	}
 
+
 	private JsonDataset convert(Dataset ds){
 		JsonDataset jsds = new JsonDataset();
 		if (ds == null){
-			jsds.setName("--");
+			jsds.setName(messageSource.getMessage("label.None", null, "label.None", locale));
+			jsds.setId(null);
 		}else{
 			jsds.setName(ds.getName());
 			jsds.setId(ds.getId());
