@@ -52,13 +52,14 @@
  
 <%@ attribute name="tree" fragment="true" required="true" description="Tree definition" %>
 <%@ attribute name="contextualContent" fragment="true" description="Optional contextual content" %>
+<%@ attribute name="i18nLibraryTabTitle" required="false" description="a i18n key that should be displayed on the first tab above the tree.
+                                                                     If not specified, will use 'tabbed_panel.tree.pane.label' as default" %>
 
 
 <%-- from sub-page-layout --%>
 
 <%@ attribute name="subPageTitle" fragment="true" description="the sub page has its own title. Define it there."%>
-<%@ attribute name="subPageButtons" fragment="true" 
-	description="Unlike a regular workspace, a sub page exists to perform 
+<%@ attribute name="subPageButtons" fragment="true" description="Unlike a regular workspace, a sub page exists to perform 
 		a one shot operation. Those operations are proposed in a dedicated action panel.
 		That action panel already propose a 'go back' button."	 %>
 
@@ -77,6 +78,7 @@
 <c:url var="path" value="${ pageContext.servletContext.contextPath }"/>
 
 <c:set var="usesObsoleteSearch" value="${(highlightedWorkspace == 'campaign') and (empty linkable)}" />
+<f:message var="libraryTabTitle" key="${not empty i18nLibraryTabTitle ? i18nLibraryTabTitle : 'tabbed_panel.tree.pane.label'}"/>
 
 <c:set var="tabbedPaneScript" >
 	<script type="text/javascript">
@@ -157,9 +159,9 @@
 			<div class="position-layout-fix">
 				<div id="tabbed-pane">
 					<ul>
-						<li class="tab" > <a href="#tree-pane"><f:message key="tabbed_panel.tree.pane.label"/></a></li>
+						<li class="tab" > <a href="#tree-pane">${libraryTabTitle}</a></li>
 						<c:if test="${usesObsoleteSearch}">						
-						<li class="tab"> <a href="#search-pane"><f:message key="tabbed_panel.search.pane.label"/></a></li>	
+						<li class="tab"> <a href="#search-pane">${libraryTabTitle}</a></li>	
 						</c:if>
 					</ul>
 					
@@ -225,9 +227,9 @@
 			<div class="position-layout-fix">
 				<div id="tabbed-pane">
 					<ul>
-						<li class="tab" > <a href="#tree-pane"><f:message key="tabbed_panel.tree.pane.label"/></a></li>
+						<li class="tab" > <a href="#tree-pane">${libraryTabTitle}</a></li>
 						<c:if test="${usesObsoleteSearch}">						
-						<li class="tab"> <a href="#search-pane"><f:message key="tabbed_panel.search.pane.label"/></a></li>						
+						<li class="tab"> <a href="#search-pane">${libraryTabTitle}</a></li>						
 						</c:if>
 					</ul>
 

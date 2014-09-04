@@ -39,9 +39,10 @@
 <%-- TODO : why is that no tree-picker-layout like the rest of association interface  ? --%>
 
 <layout:tree-picker-layout workspaceTitleKey="workspace.campaign.title" 
-                          highlightedWorkspace="campaign" 
-                          linkable="test-case" 
-                          isSubPaged="true">
+                           i18nLibraryTabTitle="squashtm.library.test-case.title" 
+                           highlightedWorkspace="campaign" 
+                           linkable="test-case" 
+                           isSubPaged="true">
 	
   <jsp:attribute name="head">
 	<comp:sq-css name="squash.purple.css" />

@@ -36,10 +36,8 @@
 <c:url var="iterationUrl" value="/iterations/${iteration.id}/" />
 <c:url var="iterationTestPlanUrl" value="/iterations/${iteration.id}/info" />
 
-<f:message var="unauthorizedDeletion" key="dialog.remove-testcase-association.unauthorized-deletion.message"  />
-<%-- TODO : why is that no tree-picker-layout like the rest of association interface  ? --%>
-
-<layout:tree-picker-layout  workspaceTitleKey="workspace.campaign.title" 
+<layout:tree-picker-layout  workspaceTitleKey="workspace.campaign.title"
+                            i18nLibraryTabTitle="squashtm.library.test-case.title" 
                             highlightedWorkspace="campaign" 
                             linkable="test-case" 
                             isSubPaged="true">

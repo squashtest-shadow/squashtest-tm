@@ -37,6 +37,8 @@
 
 
 <%@ attribute name="workspaceTitleKey" description="key of page title" required="true" %>
+<%@ attribute name="i18nLibraryTabTitle" required="false" description="boiler plate for layout:tree-page-layout#i18nLibraryTabTitle" %>
+
 <%@ attribute name="tree" fragment="true" required="true" description="Tree definition" %>
 <%@ attribute name="linkable" required="true" %>
 <%@ attribute name="highlightedWorkspace" required="true" %>
@@ -55,6 +57,7 @@ it will insert sub-page-layout.tag between the top template and this one." %>
 <layout:tree-page-layout 
   titleKey="squashtm" 
   highlightedWorkspace="${ highlightedWorkspace }" 
+  i18nLibraryTabTitle="${i18nLibraryTabTitle}"
   linkable="${linkable}" 
   isSubPaged="${isSubPaged}">
 	
