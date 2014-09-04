@@ -31,11 +31,17 @@
 	
 	<context:annotation-config />
 		
-	<bean id="messageSource"
-		class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
-		<property name="basename" value="classpath:i18n/messages" /> 
+		<context:property-placeholder/>
+	<bean id="messageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
+		<property name="basenames">
+		<list>
+		<value>file:${bundles.configuration.location}\lang\plugin.report.test\messages</value>
+        <value>classpath:i18n/messages</value>
+        </list>
+        </property>
+		  <property name="cacheSeconds" value="1"/> 
 	</bean>
-
+	
 	<bean name="squash.tm.plugin.report.test" class="org.squashtest.tm.api.report.ReportPlugin">
 		<property name="report" ref="testReport" />
 	</bean>

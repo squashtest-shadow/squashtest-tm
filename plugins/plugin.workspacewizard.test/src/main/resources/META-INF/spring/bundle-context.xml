@@ -32,14 +32,17 @@
 
 	<!--  ========================= message source ============================ -->
 
-	<bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource">
-		<property name="basenames">
-			<list>
-				<value>/META-INF/i18n/testwizards</value>
-			</list>
-		</property>
-	</bean>
 	
+		<context:property-placeholder/>
+	<bean id="messageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
+		<property name="basenames">
+		<list>
+		<value>file:${bundles.configuration.location}\lang\plugin.workspacewizard.test\testwizards</value>
+        <value>/META-INF/i18n/testwizards</value>
+        </list>
+        </property>
+		  <property name="cacheSeconds" value="1"/> 
+	</bean>
 
 
 	<!--  ========================= wizards ============================ -->

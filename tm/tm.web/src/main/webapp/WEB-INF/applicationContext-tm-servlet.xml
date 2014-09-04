@@ -91,11 +91,13 @@
     <property name="basenames">
       <list>
     <!-- TODO merge core and tm files -->
+<value>file:${bundles.configuration.location}/messages/core/messages</value>
         <value>/WEB-INF/messages/core/messages</value>
         <value>/WEB-INF/messages/tm/messages</value>
         <value>org/springframework/security/messages</value>
       </list>
     </property>
+  <property name="cacheSeconds" value="1"/> 
   </bean>
 
   <beans profile="eclipse">
