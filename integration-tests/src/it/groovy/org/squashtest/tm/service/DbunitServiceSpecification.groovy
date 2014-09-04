@@ -61,6 +61,9 @@ abstract class DbunitServiceSpecification extends Specification {
 		return (result != 0)
 	}
 
+	protected Integer countAll(String className){
+		return (Integer) getSession().createQuery("select count(entity) from "+className+" entity").uniqueResult()
+	}
 
 	protected boolean found(Class<?> entityClass, Object id){
 		boolean found = false
