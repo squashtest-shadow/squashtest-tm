@@ -32,7 +32,6 @@
 <%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
 
 <c:url var="backUrl" value="/campaign-workspace/" />
-<c:url var="treeBaseUrl" value="/test-case-browser"/>
 <c:url var="campaignUrl" value="/campaigns/${ campaign.id }" />
 <c:url var="campaignTestPlanUrl" value="/campaigns/${ campaign.id }/info" />
 
@@ -44,7 +43,6 @@
 
 <layout:tree-picker-layout  workspaceTitleKey="workspace.campaign.title" 
 							highlightedWorkspace="campaign"
-							treeBaseUrl="${treeBaseUrl}"
 							linkable="test-case" 
                             isSubPaged="true">
 	<jsp:attribute name="head">

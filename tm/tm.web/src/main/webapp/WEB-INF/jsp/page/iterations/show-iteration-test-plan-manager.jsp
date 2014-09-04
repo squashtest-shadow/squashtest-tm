@@ -35,14 +35,12 @@
 <c:url var="testPlanUrl" value="/iterations/${iteration.id}/test-plan/" />
 <c:url var="iterationUrl" value="/iterations/${iteration.id}/" />
 <c:url var="iterationTestPlanUrl" value="/iterations/${iteration.id}/info" />
-<c:url var="treeBaseUrl" value="/test-case-browser"/>
 
 <f:message var="unauthorizedDeletion" key="dialog.remove-testcase-association.unauthorized-deletion.message"  />
 <%-- TODO : why is that no tree-picker-layout like the rest of association interface  ? --%>
 
 <layout:tree-picker-layout  workspaceTitleKey="workspace.campaign.title" 
                             highlightedWorkspace="campaign" 
-                            treeBaseUrl="${treeBaseUrl}"
                             linkable="test-case" 
                             isSubPaged="true">
                             
@@ -51,8 +49,7 @@
     
     	<script type="text/javascript">
     	require(["common"], function() {
-    		require(["jquery", "tree"], function($, zetree) {
-            	selection = [];
+    		require(["jquery", "tree", "workspace.event-bus"], function($, zetree, eventBus) {
             	$(function(){
             		
             		$( '#add-items-button' ).on('click', function() {
@@ -61,10 +58,10 @@
             			if (ids.length > 0) {
             				$.post('${ testPlanUrl }', { testCasesIds: ids})
             				.done(function(){
-            					$("#iteration-test-plans-table").squashTable().refresh();
+            					eventBus.trigger('context.content-modified');
             				})
             			}
-            			tree.jstree('deselect_all'); //todo : each panel should define that method too.
+            			tree.jstree('deselect_all'); 
             		});
             		
             		$("#remove-items-button").on('click', function(){

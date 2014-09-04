@@ -30,12 +30,13 @@
 <%@ taglib prefix="dt" tagdir="/WEB-INF/tags/datatables" %>
 <%@ taglib prefix="tc" tagdir="/WEB-INF/tags/test-cases-components" %>
 <%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
-<c:url var="treeBaseUrl" value="/requirement-browser/"/>
+
+
 <c:url var="testCaseUrl" value="/requirements/${ testStep.testCase.id }" />
 
 <layout:tree-picker-layout workspaceTitleKey="workspace.test-case.title" 
 						   highlightedWorkspace="test-case"
-						   treeBaseUrl="${treeBaseUrl}" linkable="requirement" isSubPaged="true">
+						   linkable="requirement" isSubPaged="true">
 						   
 	<jsp:attribute name="head">
 		<comp:sq-css name="squash.green.css" />

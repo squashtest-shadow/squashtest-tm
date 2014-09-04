@@ -44,12 +44,7 @@
 </s:url>
 <s:url var="testcaseUrl"  value="/test-cases/{tc-id}/info" />
 
-<f:message var="cannotCreateExecutionException" key="squashtm.action.exception.cannotcreateexecution.label" />
-<f:message var="unauthorizedDeletion" key="dialog.remove-testcase-association.unauthorized-deletion.message" />
-<f:message var="confirmLabel" key="label.Confirm" />
-<f:message var="cancelLabel" key="label.Cancel" />
-<f:message var="assignLabel" key="label.Assign" />
-<f:message var="okLabel" key="label.Ok" />
+
 
 
 
@@ -65,17 +60,15 @@
     <f:message var="filterLabel" key="label.Filter" />
     <f:message var="filterTooltip" key="tooltips.FilterTestPlan" />
     <f:message var="reorderTooltip" key="tooltips.ReorderTestPlan" />
-    <f:message var="associateLabel" key="label.Add" />
     <f:message var="removeLabel" key="label.Remove" />
-    <f:message var="statusLabel" key="label.Status" />
-    <f:message var="assignLabel" key="label.Assign" />
     <f:message var="manageTS" key='menu.test-suites.button.main' />
-    <f:message var="tooltipStatus" key="tooltips.changeExecutionStatuses" />
-    <f:message var="tooltipAddTPI" key="tooltips.AddTPIToTP" />
-    <f:message var="tooltipRemoveTPI" key="tooltips.RemoveTPIFromTP" />
-    <f:message var="tooltipAssign" key="tooltips.AssignUserToTPI" />
     <f:message var="tooltipAddSuite" key="tooltips.AddTSToTPI" />
-    
+    <f:message var="confirmLabel" key="label.Confirm" />
+    <f:message var="cancelLabel" key="label.Cancel" />
+    <f:message var="assignLabel" key="label.Assign" />
+    <f:message var="okLabel" key="label.Ok" />
+
+
     <div class="left btn-toolbar">
       <span class="btn-group">
         <button id="filter-test-plan-button" class="sq-btn btn-sm" title="${filterTooltip}">
@@ -144,13 +137,13 @@
           <th class="no-user-select tp-th-reference" data-def="map=reference, sortable">
             <f:message key="label.Reference" />
           </th>
-          <th class="no-user-select tp-th-name" data-def="map=tc-name, sortable, link=${testcaseUrl}"">
+          <th class="no-user-select tp-th-name" data-def="map=tc-name, sortable, link=${testcaseUrl}">
             <f:message key="iteration.executions.table.column-header.test-case.label" />
           </th>
           <th class="no-user-select tp-th-importance" data-def="map=importance, sortable">
             <f:message key="iteration.executions.table.column-header.importance.label" />
           </th>
-          <th class="no-user-select tp-th-dataset" data-def="map=dataset.selected.name, sortable, sWidth=10%, sClass=dataset-menu">
+          <th class="no-user-select tp-th-dataset" data-def="map=dataset.selected.name, sortable, sWidth=10%, sClass=dataset-combo">
             <f:message key="label.Dataset" />
           </th>
           <th class="no-user-select tp-th-suite" data-def="map=suite, tooltip-target=suitesTot, sortable, sWidth=10%">

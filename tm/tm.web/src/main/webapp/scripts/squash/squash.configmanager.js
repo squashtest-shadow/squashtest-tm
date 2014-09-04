@@ -168,8 +168,8 @@ define([ "jquery", "squash.translator", "datepicker/jquery.squash.datepicker-loc
 	 *  - name : (optional) if found, will be used as a 'label' for that option.
 	 *  - value : (optional) if found, will be used as a 'label' for that option.
 	 *  - (anything else) : if none of 'name' or 'value' are found, that third property will be used instead.
-	 *  					Works only of the objects have 2 own properties only (one of which being 'id'),
-	 *  					and must not be an object nor an array.
+	 *						Works only of the objects have 2 own properties only (one of which being 'id'),
+	 *						and must not be an object nor an array.
 	 *  
 	 *  if none of 'name', 'value' or the 'anything else' is satified the script will crash and tell you why.
 	 *  
@@ -186,14 +186,14 @@ define([ "jquery", "squash.translator", "datepicker/jquery.squash.datepicker-loc
 			keys = _.keys(sample);
 		
 		var hasID = (sample.id !== undefined),
-			usableLabel = 	(sample.name !== undefined) ? 'name' :
+			usableLabel =	(sample.name !== undefined) ? 'name' :
 							(sample.value !== undefined) ? 'value' :
 							(keys.length === 2 && hasID) ? keys[ (_.indexOf(keys, 'id') +1) % 2] :
 							undefined;
 
 		if (hasID === false || usableLabel === undefined){
 			throw "configmanager : unable to convert input data to jeditable select format. Please supply "+
-				"an array of { id : <id>, value : <value> }"
+				"an array of { id : <id>, value : <value> }";
 		}
 		
 		// now we can work
@@ -203,8 +203,8 @@ define([ "jquery", "squash.translator", "datepicker/jquery.squash.datepicker-loc
 			result[elt['id']] = elt[usableLabel];
 		}
 		
-		// TODO FIXME XXX
-		result[""] = result[null]
+		// jeditable doesn't like much 'null' as a key
+		result[""] = result[null];
 		delete result[null];
 		return result;
 	}

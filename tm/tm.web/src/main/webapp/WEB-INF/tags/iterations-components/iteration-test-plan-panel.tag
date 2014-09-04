@@ -45,13 +45,6 @@
   <s:param name="iterId" value="${iteration.id}" />
 </s:url>
 
-<f:message var="cannotCreateExecutionException" key="squashtm.action.exception.cannotcreateexecution.label" />
-<f:message var="unauthorizedDeletion" key="dialog.remove-testcase-association.unauthorized-deletion.message" />
-<f:message var="confirmLabel" key="label.Confirm" />
-<f:message var="cancelLabel" key="label.Cancel" />
-<f:message var="assignLabel" key="label.Assign" />
-<f:message var="okLabel" key="label.Ok" />
-
 
 
 <div id="iteration-test-plans-panel" class="table-tab">
@@ -76,6 +69,13 @@
     <f:message var="tooltipRemoveTPI" key="tooltips.RemoveTPIFromTP" />
     <f:message var="tooltipAssign" key="tooltips.AssignUserToTPI" />
     <f:message var="tooltipAddSuite" key="tooltips.AddTSToTPI" />
+    <f:message var="confirmLabel" key="label.Confirm" />
+    <f:message var="cancelLabel" key="label.Cancel" />
+    <f:message var="okLabel" key="label.Ok" />
+
+    
+    
+    
     <c:if test="${ reorderable }">
       <div class="left btn-toolbar">
         <span class="btn-group">

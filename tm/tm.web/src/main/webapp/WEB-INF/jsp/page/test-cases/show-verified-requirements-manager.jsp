@@ -34,12 +34,11 @@
 
 <c:url var="backUrl" value="/test-case-workspace/" />
 <c:url var="testCaseUrl" value="/requirements/${ testCase.id }" />
-<c:url var="treeBaseUrl" value="/requirement-browser/"/>
 <c:url var="verifiedRequirementsUrl" value="/test-cases/${ testCase.id }/verified-requirement-versions" />
 
 <layout:tree-picker-layout workspaceTitleKey="workspace.test-case.title" 
 						   highlightedWorkspace="test-case"
-						   treeBaseUrl="${treeBaseUrl}" linkable="requirement" isSubPaged="true">
+						   linkable="requirement" isSubPaged="true">
 						   
 	<jsp:attribute name="head">
 		<comp:sq-css name="squash.green.css" />

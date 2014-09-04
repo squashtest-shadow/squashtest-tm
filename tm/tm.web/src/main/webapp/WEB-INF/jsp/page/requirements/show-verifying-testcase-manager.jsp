@@ -29,14 +29,15 @@
 <%@ taglib prefix="aggr" tagdir="/WEB-INF/tags/aggregates" %>
 <%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
 
-<c:url var="treeBaseUrl" value="/test-case-browser"/>
+
 <c:url var="backUrl" value="/requirement-workspace/" />
 <c:url var="requirementUrl" value="/requirements/${ requirement.id }" />
 <c:url var="verifyingTestCasesUrl" value="/requirement-versions/${ requirementVersion.id }/verifying-test-cases" />
 
 <layout:tree-picker-layout  workspaceTitleKey="workspace.requirement.title" 
               highlightedWorkspace="requirement"
-              treeBaseUrl="${treeBaseUrl}" linkable="test-case" isSubPaged="true">
+              linkable="test-case" 
+              isSubPaged="true">
               
   <jsp:attribute name="head">
     <comp:sq-css name="squash.blue.css" />
