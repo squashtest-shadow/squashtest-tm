@@ -30,6 +30,7 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
 import org.squashtest.tm.domain.project.Project;
+import org.squashtest.tm.domain.testcase.Dataset;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.security.annotation.InheritsAcls;
@@ -51,6 +52,10 @@ public class CampaignTestPlanItem {
 	@ManyToOne
 	@JoinColumn(name = "TEST_CASE_ID")
 	private TestCase referencedTestCase;
+
+	@ManyToOne
+	@JoinColumn(name = "DATASET_ID", referencedColumnName = "DATASET_ID")
+	private Dataset referencedDataset;
 
 	@ManyToOne
 	@JoinColumn(name = "CAMPAIGN_ID", insertable = false, updatable = false)
@@ -96,6 +101,7 @@ public class CampaignTestPlanItem {
 
 		copy.setUser(this.getUser());
 		copy.setReferencedTestCase(this.getReferencedTestCase());
+		copy.setReferencedDataset(this.getReferencedDataset());
 
 		return copy;
 	}
@@ -106,6 +112,14 @@ public class CampaignTestPlanItem {
 
 	public Campaign getCampaign() {
 		return campaign;
+	}
+
+	public Dataset getReferencedDataset() {
+		return referencedDataset;
+	}
+
+	public void setReferencedDataset(Dataset referencedDataset) {
+		this.referencedDataset = referencedDataset;
 	}
 
 	/**

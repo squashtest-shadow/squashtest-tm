@@ -127,8 +127,12 @@ public class HibernateDatasetDao extends HibernateEntityDao<Dataset> implements 
 	}
 
 	@Override
-	public void removeDatasetFromIterationTestPlanItems(Long datasetId) {
+	public void removeDatasetFromTestPlanItems(Long datasetId) {
 		Query query = sessionFactory.getCurrentSession().getNamedQuery("dataset.removeDatasetFromItsIterationTestPlanItems");
+		query.setParameter("datasetId", datasetId);
+		query.executeUpdate();
+
+		Query query2 = sessionFactory.getCurrentSession().getNamedQuery("dataset.removeDatasetFromItsIterationTestPlanItems");
 		query.setParameter("datasetId", datasetId);
 		query.executeUpdate();
 	}

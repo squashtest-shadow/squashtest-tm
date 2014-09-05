@@ -146,5 +146,15 @@
 	    </update>
 	</changeSet>
 
+	<changeSet id="tm-1.11.0.feature-3700-3" author="bsiri">
+		<comment>Items of a campaign test plan can now reference Datasets</comment>
+		<addColumn tableName="CAMPAIGN_TEST_PLAN_ITEM">
+			<column name="DATASET_ID" type="BIGINT"
+				remarks="the dataset the test plan item should use so that new iterations will now use those datasets">
+				<constraints nullable="true"
+					foreignKeyName="fk_camp_test_plan_item_dataset" references="DATASET(DATASET_ID)" />
+			</column>		
+		</addColumn>
+	</changeSet>
 
 </databaseChangeLog>

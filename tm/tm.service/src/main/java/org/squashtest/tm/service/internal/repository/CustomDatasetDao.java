@@ -93,5 +93,5 @@ public interface CustomDatasetDao {
 	 * TODO
 	 * @param datasetId
 	 */
-	void removeDatasetFromIterationTestPlanItems(Long datasetId);
+	void removeDatasetFromTestPlanItems(Long datasetId);
 }
