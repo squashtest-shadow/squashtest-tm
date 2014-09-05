@@ -34,5 +34,8 @@
 		class="org.squashtest.csp.core.bugtracker.web.BugTrackerContextPersistenceFilter">
 		<property name="contextHolder"
 			ref="squashtest.core.bugtracker.BugTrackerContextHolder" />
+				<property name="excludePatterns" >
+			<value>/isSquashAlive</value>
+			</property>
 	</bean>
 </beans>

@@ -23,6 +23,8 @@ package org.squashtest.tm.web.internal.filter;
 import java.io.IOException;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -32,6 +34,7 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import javax.xml.ws.ResponseWrapper;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,10 +52,11 @@ public class UserConcurrentRequestLockFilter implements Filter {
 	 * Key used do store lock in http session.
 	 */
 	public static final String READ_WRITE_LOCK_SESSION_KEY = "squashtest.core.ReadWriteLock";
+    private String excludePatterns;
 
 	@Override
 	public void init(FilterConfig filterConfig) throws ServletException {
-		// NOOP
+	    this.excludePatterns = filterConfig.getInitParameter("excludePatterns");
 	}
 
 	/**
@@ -63,6 +67,8 @@ public class UserConcurrentRequestLockFilter implements Filter {
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException,
 			ServletException {
 
+	    String url = ((HttpServletRequest) request).getPathInfo();
+	    if (!matchExcludePatterns(url)) {
 		ReadWriteLock lock = loadLock(request);
 
 		try {
@@ -70,7 +76,22 @@ public class UserConcurrentRequestLockFilter implements Filter {
 		} finally {
 			storeLockInExistingSession(request, lock);
 		}
+	    } else {
+	        chain.doFilter(request, response);
+	    }
 	}
+	
+	private boolean matchExcludePatterns(String url) {
+	   
+	    boolean result= false;
+	    if (excludePatterns != null){
+	        Pattern p = Pattern.compile(excludePatterns);
+	        Matcher m = p.matcher(url);
+	        result = m.matches();
+	    }
+   
+        return result;
+}
 
 	private void handleRequest(ServletRequest request, ServletResponse response, FilterChain chain, ReadWriteLock lock)
 			throws IOException, ServletException {

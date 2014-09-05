@@ -36,6 +36,7 @@
   <http pattern="/styles/**" security="none" />
   <http pattern="/styles-*/**" security="none" />
   <http pattern="/scripts/**" security="none" />
+   <http pattern="/isSquashAlive"  create-session="stateless" security="none" />
 
   <http auto-config="true" use-expressions="true" entry-point-ref="authenticationProcessingFilterEntryPoint">
 		<!-- Login page config -->
