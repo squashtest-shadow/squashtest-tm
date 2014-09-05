@@ -24,6 +24,7 @@
  *	translate(statusName) -> returns the i18n version of this status name
  *	reverseTranslate(i18n) -> return the real name of the status given its translation
  *	getHtmlFor(status) -> given a statusname OR its translation, returns a html string to render it
+ *	getIconFor(status) -> given a statusname OR its translation, returns the corresponding icon
  *
  */
 define(["squash.translator"], function(translator){
@@ -44,8 +45,11 @@ define(["squash.translator"], function(translator){
 
 	// async init of messages
 	translator.load(statusKeys);
+	
+
 
 	return {
+		
 
 		/*
 		 * PUBLIC API
@@ -58,12 +62,7 @@ define(["squash.translator"], function(translator){
 				text;
 
 			// lets check whether the argument is a real status name or a translation
-			var realStatusName;
-			if (statusKeys[status.toUpperCase()] !== undefined) {
-				realStatusName = status;
-			} else {
-				realStatusName = this.reverseTranslate(status);
-			}
+			var realStatusName = this._findRealStatusName(status);
 
 			// process if found
 			if (!! realStatusName){
@@ -73,6 +72,23 @@ define(["squash.translator"], function(translator){
 				return '<span class="exec-status-label ' + css + '">' + text + '</span>';
 			} else {
 				return status;
+			}
+		},
+		
+		getIconFor : function(status){
+
+			var css,
+				text;
+
+			// lets check whether the argument is a real status name or a translation
+			var realStatusName = this._findRealStatusName(status);
+
+			// process if found
+			if (!! realStatusName){
+				css = 'exec-status-' + realStatusName.toLowerCase();
+				return '<span class="exec-status-label ' + css + '"></span>';
+			} else {
+				return "NOT_FOUND";
 			}
 		},
 
@@ -87,6 +103,16 @@ define(["squash.translator"], function(translator){
 				}
 			}
 			return undefined;
+		},
+		
+
+		/*
+		 * PRIVATE
+		 * 
+		 */
+		
+		_findRealStatusName : function(status){
+			return (statusKeys[status.toUpperCase()] !== undefined) ? status : this.reverseTranslate(status);
 		}
 	};
 });

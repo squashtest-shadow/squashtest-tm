@@ -30,7 +30,6 @@
  *		basic : {
  *			iterationId : the id of the current iteration
  *			assignableUsers : [ { 'id' : id, 'login' : login } ]
- *			weights : []
  *		},
  *		messages : {
  *			executionStatus : {
@@ -82,10 +81,17 @@ define(
 							_conf.autoexecutionTooltip);
 				}
 
-				// execution status (read, thus selected using .status-display)
+				// execution status (read, thus selected using .status-display or .status-display-short depending on the style we want)
 				var status = data.status;
+				var html;
 				var	$statustd = $row.find('.status-display');
-				var	html = statusfactory.getHtmlFor(status);
+				if ($statustd.is('.status-display-short')){
+					html = statusfactory.getIconFor(status);
+				}
+				else{
+					html = statusfactory.getHtmlFor(status);
+				}
+				
 
 				$statustd.html(html); // remember : this will insert a <span>
 										// in the process

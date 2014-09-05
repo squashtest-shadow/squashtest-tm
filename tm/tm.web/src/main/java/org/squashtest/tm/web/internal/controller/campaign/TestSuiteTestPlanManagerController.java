@@ -120,7 +120,7 @@ public class TestSuiteTestPlanManagerController {
 	// index is a special case which means : no sorting.
 	.mapAttribute("project-name", NAME, Project.class).mapAttribute(REFERENCE, REFERENCE, TestCase.class)
 	.mapAttribute("tc-name", NAME, TestCase.class).mapAttribute(IMPORTANCE, IMPORTANCE, TestCase.class)
-	.mapAttribute("dataset", NAME, Dataset.class)
+	.mapAttribute("dataset.selected.name", NAME, Dataset.class)
 	.mapAttribute("status", "executionStatus", IterationTestPlanItem.class)
 	.mapAttribute("assignee-login", "login", User.class)
 	.mapAttribute("last-exec-on", "lastExecutedOn", IterationTestPlanItem.class)
