@@ -42,6 +42,7 @@ import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndMultiSorting;
 import org.squashtest.tm.domain.campaign.Campaign;
 import org.squashtest.tm.domain.project.Project;
+import org.squashtest.tm.domain.testcase.Dataset;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseLibrary;
 import org.squashtest.tm.domain.testcase.TestCaseLibraryNode;
@@ -89,6 +90,7 @@ public class CampaignTestPlanManagerController {
 	.mapAttribute("project-name", 	"name", 			Project.class)
 	.mapAttribute("reference", 		"reference", 		TestCase.class)
 	.mapAttribute("tc-name", 		"name", 			TestCase.class)
+	.mapAttribute("dataset.selected.name", "name", 		Dataset.class)
 	.mapAttribute("assigned-user", 	"login", 			User.class)
 	.mapAttribute("importance",		"importance", 		TestCase.class)
 	.mapAttribute("exec-mode", 		"automatedTest", 	TestCase.class);
