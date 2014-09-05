@@ -142,7 +142,7 @@
 	<changeSet id="tm-1.11.0.feature-3693-2" author="bsiri">
 		<comment>For back compatibility, the call steps migrating from an existing DB will now be set to delegate the parameters</comment>
 	    <update tableName="CALL_TEST_STEP">
-	        <column name="DELEGATE_PARAMETER_VALUES" value="true" type="BOOLEAN"/>
+	        <column name="DELEGATE_PARAMETER_VALUES"  valueBoolean="true" type="BOOLEAN" />
 	    </update>
 	</changeSet>
 
