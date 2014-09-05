@@ -73,6 +73,11 @@ public class CampaignTestPlanItem {
 		this.referencedTestCase = testCase;
 	}
 
+	public CampaignTestPlanItem(TestCase testCase, Dataset dataset){
+		this.referencedTestCase = testCase;
+		this.referencedDataset = dataset;
+	}
+
 	public TestCase getReferencedTestCase() {
 		return this.referencedTestCase;
 	}

@@ -47,7 +47,9 @@ import org.squashtest.tm.core.foundation.collection.Pagings;
 import org.squashtest.tm.domain.IdentifiersOrderComparator;
 import org.squashtest.tm.domain.campaign.Campaign;
 import org.squashtest.tm.domain.campaign.CampaignTestPlanItem;
+import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.projectfilter.ProjectFilter;
+import org.squashtest.tm.domain.testcase.Dataset;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseLibrary;
 import org.squashtest.tm.domain.testcase.TestCaseLibraryNode;
@@ -57,6 +59,7 @@ import org.squashtest.tm.service.campaign.IndexedCampaignTestPlanItem;
 import org.squashtest.tm.service.internal.library.LibrarySelectionStrategy;
 import org.squashtest.tm.service.internal.repository.CampaignDao;
 import org.squashtest.tm.service.internal.repository.CampaignTestPlanItemDao;
+import org.squashtest.tm.service.internal.repository.DatasetDao;
 import org.squashtest.tm.service.internal.repository.LibraryNodeDao;
 import org.squashtest.tm.service.internal.repository.TestCaseLibraryDao;
 import org.squashtest.tm.service.internal.repository.UserDao;
@@ -76,11 +79,11 @@ public class CampaignTestPlanManagerServiceImpl implements CampaignTestPlanManag
 	 * Permission string for linking campaigns to TP / Users based on campaignId param.
 	 */
 	private static final String CAN_LINK_CAMPAIGN_BY_ID = "hasPermission(#campaignId, 'org.squashtest.tm.domain.campaign.Campaign', 'LINK') or hasRole('ROLE_ADMIN')";
-	
-	private static final String CAN_REORDER_TEST_PLAN	= "hasPermission(#campaignId, 'org.squashtest.tm.domain.campaign.Campaign', 'LINK') or hasRole('ROLE_ADMIN')"; 
+
+	private static final String CAN_REORDER_TEST_PLAN	= "hasPermission(#campaignId, 'org.squashtest.tm.domain.campaign.Campaign', 'LINK') or hasRole('ROLE_ADMIN')";
 
 	private static final String CAN_READ_TEST_PLAN	=	"hasPermission(#campaignId, 'org.squashtest.tm.domain.campaign.Campaign' ,'READ') or hasRole('ROLE_ADMIN')";
-	
+
 	@Inject
 	private TestCaseLibraryDao testCaseLibraryDao;
 
@@ -102,6 +105,9 @@ public class CampaignTestPlanManagerServiceImpl implements CampaignTestPlanManag
 
 	@Inject
 	private UserDao userDao;
+
+	@Inject
+	private DatasetDao datasetDao;
 
 	@Inject
 	@Qualifier("squashtest.core.security.ObjectIdentityRetrievalStrategy")
@@ -132,7 +138,7 @@ public class CampaignTestPlanManagerServiceImpl implements CampaignTestPlanManag
 				.findAll();
 
 	}
-	
+
 
 	@Override
 	@PreAuthorize(CAN_READ_TEST_PLAN)
@@ -167,12 +173,25 @@ public class CampaignTestPlanManagerServiceImpl implements CampaignTestPlanManag
 
 		Campaign campaign = campaignDao.findById(campaignId);
 
+		/*
+		 * Feat 3700 campaign test plans are now popuplated the same way than iteration
+		 * are
+		 */
 		for (TestCase testCase : testCases) {
-			CampaignTestPlanItem itp = new CampaignTestPlanItem(testCase);
-			campaignTestPlanItemDao.persist(itp);
-			campaign.addToTestPlan(itp);
+
+			List<Dataset> datasets = datasetDao.findOwnDatasetsByTestCase(testCase.getId());
+			if (datasets.isEmpty()){
+				datasets.add(null);
+			}
+
+			for (Dataset ds : datasets){
+				CampaignTestPlanItem itp = new CampaignTestPlanItem(testCase, ds);
+				campaignTestPlanItemDao.persist(itp);
+				campaign.addToTestPlan(itp);
+			}
 		}
 	}
+
 
 	@Override
 	@Transactional(readOnly = true)
@@ -234,21 +253,21 @@ public class CampaignTestPlanManagerServiceImpl implements CampaignTestPlanManag
 		Campaign campaign = campaignDao.findById(campaignId);
 		campaign.moveTestPlanItems(targetIndex, itemIds);
 	}
-	
+
 	@Override
 	@PreAuthorize(CAN_REORDER_TEST_PLAN)
 	public void reorderTestPlan(long campaignId, MultiSorting newSorting) {
 		Paging noPaging = Pagings.NO_PAGING;
 		PagingAndMultiSorting sorting = new DelegatePagingAndMultiSorting(noPaging, newSorting);
-		
+
 		List<CampaignTestPlanItem> items = campaignDao.findTestPlan(campaignId, sorting);
-		
+
 		Campaign campaign = campaignDao.findById(campaignId);
-		
+
 		campaign.getTestPlan().clear();
 		campaign.getTestPlan().addAll(items);
 	}
-	
+
 
 	/**
 	 * @see org.squashtest.tm.service.campaign.CampaignTestPlanManagerService#removeTestPlanItem(long, long)

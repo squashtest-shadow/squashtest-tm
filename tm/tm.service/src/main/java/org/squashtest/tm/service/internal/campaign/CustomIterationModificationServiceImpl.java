@@ -42,6 +42,7 @@ import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.campaign.TestSuite;
 import org.squashtest.tm.domain.execution.Execution;
+import org.squashtest.tm.domain.testcase.Dataset;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.exception.execution.TestPlanItemNotExecutableException;
@@ -141,21 +142,18 @@ IterationTestPlanManager {
 	 */
 	private void populateTestPlan(Iteration iteration, List<CampaignTestPlanItem> campaignTestPlan) {
 		for (CampaignTestPlanItem campaignItem : campaignTestPlan) {
-			TestCase referenced = campaignItem.getReferencedTestCase();
+
+			TestCase testcase = campaignItem.getReferencedTestCase();
+			Dataset dataset = campaignItem.getReferencedDataset();
 			User assignee = campaignItem.getUser();
 
-			Collection<IterationTestPlanItem> testPlanFragment = iterationTestPlanManager.createTestPlanFragment(
-					referenced, assignee);
+			IterationTestPlanItem item = new IterationTestPlanItem(testcase, dataset, assignee);
 
-			appendFragmentToTestPlan(iteration, testPlanFragment);
-		}
-	}
-
-	private void appendFragmentToTestPlan(Iteration iteration, Collection<IterationTestPlanItem> testPlanFragment) {
-		for (IterationTestPlanItem item : testPlanFragment) {
 			iteration.addTestPlan(item);
 		}
 	}
+
+
 
 	@Override
 	@PreAuthorize("hasPermission(#campaignId, 'org.squashtest.tm.domain.campaign.Campaign', 'READ') "
@@ -304,17 +302,17 @@ IterationTestPlanManager {
 
 		long before;
 		long after;
-		
-		
+
+
 		before = System.currentTimeMillis();
 		testCaseCyclicCallChecker.checkNoCyclicCall(item.getReferencedTestCase());
 		after = System.currentTimeMillis();
 		LOGGER.trace("add execution : checked for potential circular references done in "+(after-before)+" ms");
 
-		
+
 		// if passes, let's move to the next step
 		before = System.currentTimeMillis();
-		Execution execution = item.createExecution();		
+		Execution execution = item.createExecution();
 		after = System.currentTimeMillis();
 		LOGGER.trace("add execution : execution and steps done in "+(after-before)+" ms");
 
@@ -324,29 +322,29 @@ IterationTestPlanManager {
 		executionDao.persist(execution);
 		after = System.currentTimeMillis();
 		LOGGER.trace("add execution : saving execution done in "+(after-before)+" ms");
-		
+
 		before = System.currentTimeMillis();
 		item.addExecution(execution);
 		after = System.currentTimeMillis();
 		LOGGER.trace("add execution : adding execution to test plan done in "+(after-before)+" ms");
-		
-		
+
+
 		before = System.currentTimeMillis();
 		createCustomFieldsForExecutionAndExecutionSteps(execution);
 		after = System.currentTimeMillis();
-		LOGGER.trace("add execution : creating custom fields for execution and steps done in "+(after-before)+" ms");		
-		
-		
+		LOGGER.trace("add execution : creating custom fields for execution and steps done in "+(after-before)+" ms");
+
+
 		before = System.currentTimeMillis();
 		createDenormalizedFieldsForExecutionAndExecutionSteps(execution);
 		after = System.currentTimeMillis();
-		LOGGER.trace("add execution : creating denormalized fields for execution and steps done in "+(after-before)+" ms");			
-		
-		
+		LOGGER.trace("add execution : creating denormalized fields for execution and steps done in "+(after-before)+" ms");
+
+
 		before = System.currentTimeMillis();
 		indexationService.reindexTestCase(item.getReferencedTestCase().getId());
 		after = System.currentTimeMillis();
-		LOGGER.trace("add execution : test case reindexation done in "+(after-before)+" ms");	
+		LOGGER.trace("add execution : test case reindexation done in "+(after-before)+" ms");
 
 		return execution;
 	}
@@ -358,7 +356,7 @@ IterationTestPlanManager {
 
 	private void createDenormalizedFieldsForExecutionAndExecutionSteps(Execution execution) {
 		LOGGER.debug("Create denormalized fields for Execution {}", execution.getId());
-		
+
 		TestCase sourceTC = execution.getReferencedTestCase();
 		denormalizedFieldValueService.createAllDenormalizedFieldValues(sourceTC, execution);
 		denormalizedFieldValueService.createAllDenormalizedFieldValuesForSteps(execution);

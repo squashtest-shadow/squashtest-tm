@@ -131,16 +131,21 @@ public class IterationTestPlanItem implements HasExecutionStatus, Identified {
 		super();
 	}
 
-	private IterationTestPlanItem(TestCase testCase) {
+	public IterationTestPlanItem(TestCase testCase) {
 		referencedTestCase = testCase;
 		referencedDataset = null;
 		label = testCase.getName();
 	}
 
-	private IterationTestPlanItem(TestCase testCase, Dataset dataset) {
+	public IterationTestPlanItem(TestCase testCase, Dataset dataset) {
 		referencedTestCase = testCase;
 		referencedDataset = dataset;
 		label = testCase.getName();
+	}
+
+	public IterationTestPlanItem(TestCase testCase, Dataset dataset, User assignee){
+		this(testCase, dataset);
+		this.user = assignee;
 	}
 
 	public Iteration getIteration() {
