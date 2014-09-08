@@ -31,6 +31,7 @@ import org.squashtest.tm.domain.customfield.CustomField
 import org.squashtest.tm.domain.library.structures.LibraryGraph
 import org.squashtest.tm.domain.library.structures.LibraryGraph.SimpleNode
 import org.squashtest.tm.domain.project.Project
+import org.squashtest.tm.domain.testcase.ParameterAssignationMode;
 import org.squashtest.tm.service.internal.batchimport.Model.Existence
 import org.squashtest.tm.service.internal.batchimport.Model.InternalStepModel
 import org.squashtest.tm.service.internal.batchimport.Model.StepType
@@ -348,7 +349,10 @@ public class ModelTest extends Specification{
 		def tc = new TestCaseTarget("/project/bob")
 		def ctc = new TestCaseTarget("whatever")
 		def st  = new TestStepTarget(tc, 1)
-		def delegate = false
+		
+		def paramInfo = new CallStepParamsInfo()
+		paramInfo.getParamMode() >> ParameterAssignationMode.DELEGATE
+
 		
 		model.testCaseStatusByTarget[tc] = new TargetStatus(EXISTS, 10l)
 		model.testCaseStatusByTarget[ctc] = new TargetStatus(EXISTS, 20l)
@@ -363,7 +367,7 @@ public class ModelTest extends Specification{
 		finderService.getPathsAsString(_) >> []
 
 		when :
-		model.addCallStep(st, ctc, delegate)
+		model.addCallStep(st, ctc, paramInfo)
 
 		then :
 		model.testCaseStepsByTarget[tc].collect{it.type} == [StepType.ACTION, StepType.CALL, StepType.ACTION, StepType.ACTION]
@@ -377,7 +381,8 @@ public class ModelTest extends Specification{
 		def tc = new TestCaseTarget("/project/bob")
 		def ctc = new TestCaseTarget("whatever")
 		def st  = new TestStepTarget(tc, null)
-		def delegate = false
+		def paramInfo = new CallStepParamsInfo()
+		paramInfo.getParamMode() >> ParameterAssignationMode.DELEGATE
 		
 		model.testCaseStatusByTarget[tc] = new TargetStatus(EXISTS, 10l)
 		model.testCaseStatusByTarget[ctc] = new TargetStatus(EXISTS, 20l)
@@ -392,7 +397,7 @@ public class ModelTest extends Specification{
 		finderService.getPathsAsString(_) >> []
 
 		when :
-		model.addCallStep(st, ctc, delegate)
+		model.addCallStep(st, ctc, paramInfo)
 
 		then :
 		model.testCaseStepsByTarget[tc].collect {it.type} == [StepType.ACTION, StepType.ACTION, StepType.ACTION, StepType.CALL]
@@ -406,7 +411,8 @@ public class ModelTest extends Specification{
 		def tc = new TestCaseTarget("/project/bob")
 		def ctc = new TestCaseTarget("whatever")
 		def st  = new TestStepTarget(tc, 18)
-		def delegate = false
+		def paramInfo = new CallStepParamsInfo()
+		paramInfo.getParamMode() >> ParameterAssignationMode.DELEGATE
 		
 		model.testCaseStatusByTarget[tc] = new TargetStatus(EXISTS, 10l)
 		model.testCaseStatusByTarget[ctc] = new TargetStatus(EXISTS, 20l)
@@ -421,7 +427,7 @@ public class ModelTest extends Specification{
 		finderService.getPathsAsString(_) >> []
 
 		when :
-		model.addCallStep(st, ctc, delegate)
+		model.addCallStep(st, ctc, paramInfo)
 
 		then :
 		model.testCaseStepsByTarget[tc].collect{ it.type} == [StepType.ACTION, StepType.ACTION, StepType.ACTION, StepType.CALL]
