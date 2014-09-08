@@ -95,7 +95,7 @@ define(['squash.translator', './table', './popups', 'app/util/ButtonUtil' ], fun
 		
 		
 		$("#filter-test-plan-button").on('click', function(){
-			var domtable =  $("#campaign-test-plans-table")
+			var domtable =  $("#campaign-test-plans-table");
 			if(filterOn){
 				filterOn = false;
 				table.hideFilterFields();
