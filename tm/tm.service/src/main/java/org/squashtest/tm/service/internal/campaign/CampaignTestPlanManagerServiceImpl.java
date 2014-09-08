@@ -23,6 +23,7 @@ package org.squashtest.tm.service.internal.campaign;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
@@ -47,7 +48,6 @@ import org.squashtest.tm.core.foundation.collection.Pagings;
 import org.squashtest.tm.domain.IdentifiersOrderComparator;
 import org.squashtest.tm.domain.campaign.Campaign;
 import org.squashtest.tm.domain.campaign.CampaignTestPlanItem;
-import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.projectfilter.ProjectFilter;
 import org.squashtest.tm.domain.testcase.Dataset;
 import org.squashtest.tm.domain.testcase.TestCase;
@@ -59,7 +59,6 @@ import org.squashtest.tm.service.campaign.IndexedCampaignTestPlanItem;
 import org.squashtest.tm.service.internal.library.LibrarySelectionStrategy;
 import org.squashtest.tm.service.internal.repository.CampaignDao;
 import org.squashtest.tm.service.internal.repository.CampaignTestPlanItemDao;
-import org.squashtest.tm.service.internal.repository.DatasetDao;
 import org.squashtest.tm.service.internal.repository.LibraryNodeDao;
 import org.squashtest.tm.service.internal.repository.TestCaseLibraryDao;
 import org.squashtest.tm.service.internal.repository.UserDao;
@@ -106,8 +105,6 @@ public class CampaignTestPlanManagerServiceImpl implements CampaignTestPlanManag
 	@Inject
 	private UserDao userDao;
 
-	@Inject
-	private DatasetDao datasetDao;
 
 	@Inject
 	@Qualifier("squashtest.core.security.ObjectIdentityRetrievalStrategy")
@@ -179,15 +176,18 @@ public class CampaignTestPlanManagerServiceImpl implements CampaignTestPlanManag
 		 */
 		for (TestCase testCase : testCases) {
 
-			List<Dataset> datasets = datasetDao.findOwnDatasetsByTestCase(testCase.getId());
-			if (datasets.isEmpty()){
-				datasets.add(null);
-			}
+			Set<Dataset> datasets = testCase.getDatasets();
 
-			for (Dataset ds : datasets){
-				CampaignTestPlanItem itp = new CampaignTestPlanItem(testCase, ds);
+			if (datasets.isEmpty()){
+				CampaignTestPlanItem itp = new CampaignTestPlanItem(testCase);
 				campaignTestPlanItemDao.persist(itp);
 				campaign.addToTestPlan(itp);
+			} else {
+				for (Dataset ds : datasets){
+					CampaignTestPlanItem itp = new CampaignTestPlanItem(testCase, ds);
+					campaignTestPlanItemDao.persist(itp);
+					campaign.addToTestPlan(itp);
+				}
 			}
 		}
 	}

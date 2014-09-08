@@ -132,7 +132,7 @@ public class HibernateDatasetDao extends HibernateEntityDao<Dataset> implements 
 		query.setParameter("datasetId", datasetId);
 		query.executeUpdate();
 
-		Query query2 = sessionFactory.getCurrentSession().getNamedQuery("dataset.removeDatasetFromItsIterationTestPlanItems");
+		Query query2 = sessionFactory.getCurrentSession().getNamedQuery("dataset.removeDatasetFromItsCampaignTestPlanItems");
 		query.setParameter("datasetId", datasetId);
 		query.executeUpdate();
 	}

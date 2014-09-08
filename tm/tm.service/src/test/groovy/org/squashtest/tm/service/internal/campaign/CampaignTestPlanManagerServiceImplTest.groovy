@@ -36,9 +36,11 @@ import org.squashtest.tm.service.internal.library.LibrarySelectionStrategy
 import org.squashtest.tm.service.internal.project.ProjectFilterModificationServiceImpl;
 import org.squashtest.tm.service.internal.repository.CampaignDao
 import org.squashtest.tm.service.internal.repository.CampaignTestPlanItemDao
+import org.squashtest.tm.service.internal.repository.DatasetDao;
 import org.squashtest.tm.service.internal.repository.LibraryNodeDao
 import org.squashtest.tm.service.internal.repository.TestCaseLibraryDao
 import org.squashtest.tm.service.internal.repository.UserDao
+import org.squashtest.tm.domain.testcase.Dataset
 
 import spock.lang.Specification
 
@@ -88,10 +90,62 @@ class CampaignTestPlanManagerServiceImplTest extends Specification {
 
 		when:
 		def res =
-		service.findLinkableTestCaseLibraries()
+				service.findLinkableTestCaseLibraries()
 
 		then:
 		res == [lib]
+	}
+
+
+	def "should add a test case only once to a campaign because of no dataset"() {
+
+		given: "a campaign"
+		Campaign camp = new Campaign()
+		campaignDao.findById(10) >> camp
+
+		and: "some test cases"
+		def tc1 = new MockTC(1L)
+
+		and : "the dao"
+		nodeDao.findAllByIds([1L]) >> [tc1]
+
+		when: "the test case is added to the campaign test plan"
+		service.addTestCasesToCampaignTestPlan([1L], 10)
+
+		then: "the campaign contains one test case, only once"
+		camp.testPlan.size() == 1
+		tc1 == camp.testPlan[0].referencedTestCase
+		null == camp.testPlan[0].referencedDataset
+
+	}
+
+	def "should add a test case three times to a campaign because of it has datasets"() {
+
+		given: "a campaign"
+		Campaign camp = new Campaign()
+		campaignDao.findById(10) >> camp
+
+		and: "some test cases"
+		def tc1 = new MockTC(1L)
+
+		and : "the dao"
+		nodeDao.findAllByIds([1L]) >> [tc1]
+
+		and : "the datasets"
+
+		["like this", "like that", "alternative"].each{
+			tc1.addDataset(new Dataset(name:it))
+		}
+
+		when: "the test case is added to the campaign test plan"
+		service.addTestCasesToCampaignTestPlan([1L], 10)
+
+		then: "the campaign contains one test case, only once"
+		camp.testPlan.size() == 3
+		camp.testPlan.collect { it.referencedTestCase }.unique() == [tc1]
+		camp.testPlan.collect { it.referencedDataset.name } as Set == ["like this", "like that", "alternative"] as Set
+
+
 	}
 
 	def "should add a list of test cases to a campaign"() {
@@ -102,22 +156,32 @@ class CampaignTestPlanManagerServiceImplTest extends Specification {
 
 		and: "some test cases"
 		def tc1 = new MockTC(1L)
-		def tc3 = new MockTC(3L)
+		def tc2 = new MockTC(2l)
+		def tc3 = new MockTC(3l)
 
 
 		and : "the dao"
-		nodeDao.findAllByIds([1L, 3L]) >> [tc1, tc3]
+		nodeDao.findAllByIds([1L, 2L, 3L]) >> [tc1, tc2, tc3]
+
+		and : "the datasets"
+		tc2.addDataset new Dataset(name:"when it works")
+		["low grade", "medium grade", "high grade"].each{
+			tc3.addDataset(new Dataset(name:it))
+		}
 
 		when: "the test cases are added to the campaign"
-		service.addTestCasesToCampaignTestPlan([1L, 3L], 10)
-		System.out.println(camp.testPlan)
+		service.addTestCasesToCampaignTestPlan([1L, 2L, 3L], 10)
 
 		then: "the campaign contains the test cases added"
-		camp.getTestPlan().size() == 2
-		def refered1 = camp.getTestPlan().get(0).getReferencedTestCase()
-		def refered3 = camp.getTestPlan().get(1).getReferencedTestCase()
-		refered1 == tc1
-		refered3 == tc3
+		camp.testPlan.size() ==5
+
+		camp.testPlan.findAll { it.referencedTestCase == tc1 }.size() == 1
+		camp.testPlan.findAll { it.referencedTestCase == tc2 }.size() == 1
+		camp.testPlan.findAll { it.referencedTestCase == tc3 }.size() == 3
+
+		camp.testPlan.findAll { it.referencedTestCase == tc1 }.collect { it.referencedDataset }== [null]
+		camp.testPlan.findAll { it.referencedTestCase == tc2 }.collect { it.referencedDataset.name } == ["when it works"]
+		camp.testPlan.findAll { it.referencedTestCase == tc3 }.collect { it.referencedDataset.name } as Set == ["low grade", "medium grade", "high grade"] as Set
 	}
 
 
@@ -155,14 +219,14 @@ class CampaignTestPlanManagerServiceImplTest extends Specification {
 	}
 
 	def "should remove a single test plan item from a campaign"() {
-		given: 
+		given:
 		TestCase tc = Mock()
 		tc.id >> 2
 
 		and:
 		Campaign camp = new Campaign()
 		campaignDao.findById(10) >> camp
-			
+
 		CampaignTestPlanItem itp1 = new CampaignTestPlanItem(tc)
 		CampaignTestPlanItem itp2 = new CampaignTestPlanItem(tc)
 		CampaignTestPlanItem itp3 = new CampaignTestPlanItem(tc)
@@ -170,14 +234,14 @@ class CampaignTestPlanManagerServiceImplTest extends Specification {
 		use (ReflectionCategory) {
 			CampaignTestPlanItem.set field: "id", of: itp1, to: 1L
 			camp.testPlan << itp1
-			
+
 			CampaignTestPlanItem.set field: "id", of: itp2, to: 2L
 			camp.testPlan << itp2
-	
+
 			CampaignTestPlanItem.set field: "id", of: itp3, to: 3L
 			camp.testPlan << itp3
 		}
-		
+
 		when: "a test case is removed from the campaign"
 		service.removeTestPlanItem 10, 2
 
@@ -186,14 +250,14 @@ class CampaignTestPlanManagerServiceImplTest extends Specification {
 	}
 
 	def "should remove test plan items from a campaign"() {
-		given: 
+		given:
 		TestCase tc = Mock()
 		tc.id >> 2
 
 		and:
 		Campaign camp = new Campaign()
 		campaignDao.findById(10) >> camp
-			
+
 		CampaignTestPlanItem itp1 = new CampaignTestPlanItem(tc)
 		CampaignTestPlanItem itp2 = new CampaignTestPlanItem(tc)
 		CampaignTestPlanItem itp3 = new CampaignTestPlanItem(tc)
@@ -201,14 +265,14 @@ class CampaignTestPlanManagerServiceImplTest extends Specification {
 		use (ReflectionCategory) {
 			CampaignTestPlanItem.set field: "id", of: itp1, to: 1L
 			camp.testPlan << itp1
-			
+
 			CampaignTestPlanItem.set field: "id", of: itp2, to: 2L
 			camp.testPlan << itp2
-	
+
 			CampaignTestPlanItem.set field: "id", of: itp3, to: 3L
 			camp.testPlan << itp3
 		}
-		
+
 		when: "a test case is removed from the campaign"
 		service.removeTestPlanItems 10, [1L, 3L]
 
@@ -281,37 +345,37 @@ class CampaignTestPlanManagerServiceImplTest extends Specification {
 		public Long getId(){return overId}
 		public void setId(Long newId){overId=newId}
 	}
-	
+
 	def "should assign user to test plan items"() {
 		given:
 		User u = Mock()
 		userDao.findById(10L) >> u
-		
+
 		and:
 		CampaignTestPlanItem i100 = Mock()
 		CampaignTestPlanItem i200 = Mock()
 		itemDao.findAllByIds([100L, 200L]) >> [i100, i200]
-		
+
 		when:
 		service.assignUserToTestPlanItems([100L, 200L], 10000L, 10L)
-		
+
 		then:
 		1 * i100.setUser(u)
 		1 * i200.setUser(u)
 	}
-	
+
 	def "should assign user to test plan item"() {
 		given:
 		User u = Mock()
 		userDao.findById(10L) >> u
-		
+
 		and:
 		CampaignTestPlanItem item = Mock()
 		itemDao.findById(100L) >> item
-		
+
 		when:
 		service.assignUserToTestPlanItem(100L, 10000L, 10L)
-		
+
 		then:
 		1 * item.setUser(u)
 	}
