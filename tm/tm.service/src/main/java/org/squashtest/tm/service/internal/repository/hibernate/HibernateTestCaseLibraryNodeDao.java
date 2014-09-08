@@ -97,7 +97,7 @@ TestCaseLibraryNodeDao {
 				String path = (String) res[0];
 				int idx = effectiveParameters.indexOf(path);
 				if (idx>-1) {
-					toReturn[effectiveParameters.indexOf(path)] = ((BigInteger) res[1]).longValue();
+					toReturn[effectiveParameters.indexOf(path)] = ((Long) res[1]);
 				}
 			}
 
@@ -124,8 +124,7 @@ TestCaseLibraryNodeDao {
 			return null;
 		}
 
-		BigInteger id = (BigInteger) result.get(0)[1];
-		return id.longValue();
+		return (Long) result.get(0)[1];
 
 	}
 

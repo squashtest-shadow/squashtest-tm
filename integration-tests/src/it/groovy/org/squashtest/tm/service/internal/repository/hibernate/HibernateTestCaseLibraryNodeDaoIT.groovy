@@ -106,7 +106,7 @@ class HibernateTestCaseLibraryNodeDaoIT extends DbunitServiceSpecification {
 		def res = service.findNodeIdsByPath(tclnpaths)
 
 		then :
-		res == [-257L,-242L, -237L]
+		res == [-237L,-257L, -242L]
 	}
 
 
