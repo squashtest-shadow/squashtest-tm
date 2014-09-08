@@ -23,8 +23,6 @@ package org.squashtest.tm.service.internal.batchimport;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -266,7 +264,7 @@ public class FacilityImpl implements Facility {
 			CallStepParamsInfo paramInfo, ActionTestStep actionStepBackup) {
 
 		LogTrain train = validator.addCallStep(target, testStep, calledTestCase, paramInfo, actionStepBackup);
-
+		
 		if (!train.hasCriticalErrors()) {
 			String mustImportCallAsActionStepErrorI18n = FacilityUtils.mustImportCallAsActionStep(train);
 			try {
@@ -278,7 +276,7 @@ public class FacilityImpl implements Facility {
 
 					doAddCallStep(target, calledTestCase, paramInfo);
 
-					validator.getModel().addCallStep(target, calledTestCase);
+					validator.getModel().addCallStep(target, calledTestCase, paramInfo);
 
 					LOGGER.debug(EXCEL_ERR_PREFIX+"Created Call Step \t'" + target + "' -> '" + calledTestCase + "'");
 				}
@@ -322,7 +320,7 @@ public class FacilityImpl implements Facility {
 		if (!train.hasCriticalErrors()) {
 			try {
 				doUpdateCallStep(target, calledTestCase, paramInfo);
-				validator.getModel().updateCallStepTarget(target, calledTestCase);
+				validator.getModel().updateCallStepTarget(target, calledTestCase, paramInfo);
 
 				LOGGER.debug(EXCEL_ERR_PREFIX+"Created Call Step \t'" + target + "' -> '" + calledTestCase + "'");
 			} catch (Exception ex) {

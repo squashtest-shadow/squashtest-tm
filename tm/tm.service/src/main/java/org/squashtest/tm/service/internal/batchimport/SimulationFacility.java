@@ -29,6 +29,7 @@ import org.springframework.stereotype.Component;
 import org.squashtest.tm.domain.testcase.ActionTestStep;
 import org.squashtest.tm.domain.testcase.CallTestStep;
 import org.squashtest.tm.domain.testcase.Parameter;
+import org.squashtest.tm.domain.testcase.ParameterAssignationMode;
 import org.squashtest.tm.domain.testcase.TestCase;
 
 /**
@@ -125,7 +126,7 @@ public class SimulationFacility implements Facility {
 			if (mustImportCallAsActionStepErrorI18n != null) {
 				validator.getModel().addActionStep(target);
 			} else {
-				validator.getModel().addCallStep(target, calledTestCase);
+				validator.getModel().addCallStep(target, calledTestCase, paramInfo);
 			}
 		}
 		return logs;
@@ -151,7 +152,7 @@ public class SimulationFacility implements Facility {
 
 		// if all is ok, update the target of this call step then return
 		if (!logs.hasCriticalErrors()) {
-			validator.getModel().updateCallStepTarget(target, calledTestCase);
+			validator.getModel().updateCallStepTarget(target, calledTestCase, paramInfo);
 		}
 
 		return logs;
