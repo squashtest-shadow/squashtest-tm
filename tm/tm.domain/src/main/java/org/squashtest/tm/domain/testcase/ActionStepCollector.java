@@ -25,10 +25,10 @@ import java.util.List;
 
 public final class ActionStepCollector implements TestStepVisitor {
 
-	private List<ActionTestStep> actionSteps = new ArrayList<ActionTestStep>();
+	private List<ActionTestStep> actionSteps ;
 
 	public List<ActionTestStep> collect(List<TestStep> steps) {
-		this.actionSteps.clear();
+		this.actionSteps = new ArrayList<ActionTestStep>();
 		for (TestStep step : steps) {
 			step.accept(this);
 		}
