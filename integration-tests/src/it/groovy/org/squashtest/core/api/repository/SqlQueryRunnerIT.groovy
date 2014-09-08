@@ -28,19 +28,22 @@ import org.springframework.transaction.annotation.Isolation
 import org.springframework.transaction.annotation.Transactional
 import org.squashtest.tm.service.internal.repository.hibernate.DbunitDaoSpecification
 import org.squashtest.tm.api.repository.SqlQueryRunner
+import org.unitils.database.util.TransactionMode;
 import org.unitils.dbunit.annotation.DataSet
 
 import spock.lang.Specification
 import spock.unitils.UnitilsSupport
 
 /**
+ * Nore : isolation=Isolation.READ_UNCOMMITTED because SqlQueryRunner explicitely opens a tx and does not contribute to theone opened by test method. Which means it is not able to see injected data otherwise.
+ *
  * @author Gregory Fouquet
  *
  */
 @UnitilsSupport
 @ContextConfiguration(["classpath:repository/dependencies-scan-context.xml", "classpath:unitils-datasource-context.xml", "classpath*:META-INF/**/repository-context.xml"])
 @TransactionConfiguration(transactionManager = "squashtest.tm.hibernate.TransactionManager", defaultRollback = true)
-@Transactional(isolation=Isolation.READ_UNCOMMITTED)
+@org.unitils.database.annotations.Transactional(TransactionMode.DISABLED)
 @DataSet("SqlQueryRunnerIT.should select all active core users.xml")
 class SqlQueryRunnerIT extends Specification {
 	@Inject SqlQueryRunner runner
@@ -57,7 +60,6 @@ class SqlQueryRunnerIT extends Specification {
 		]
 	}
 
-	@DataSet("SqlQueryRunnerIT.should select all active core users.xml")
 	def "should select all active core user logins and names"() {
 		when:
 		def res = runner.executeSelect("select LOGIN, LAST_NAME from CORE_USER where ACTIVE = true")
@@ -65,7 +67,9 @@ class SqlQueryRunnerIT extends Specification {
 		then:
 		res == [
 			["daniel.bryan", "bryan"],
-			["chris.jericho", "jericho"]
+			[
+				"chris.jericho",
+				"jericho"]
 		]
 	}
 
@@ -76,7 +80,9 @@ class SqlQueryRunnerIT extends Specification {
 		then:
 		res == [
 			["daniel.bryan", "bryan"],
-			["chris.jericho", "jericho"]
+			[
+				"chris.jericho",
+				"jericho"]
 		]
 	}
 
@@ -101,7 +107,10 @@ class SqlQueryRunnerIT extends Specification {
 		def res = runner.executeSelect("select LOGIN from CORE_USER where LAST_NAME in ( :names )", [names: ["bryan", "jericho"]])
 
 		then:
-		res == ["daniel.bryan", "chris.jericho"]
+		res == [
+			"daniel.bryan",
+			"chris.jericho"
+		]
 	}
 
 	def "should select unique core user by last_name named parameter"() {

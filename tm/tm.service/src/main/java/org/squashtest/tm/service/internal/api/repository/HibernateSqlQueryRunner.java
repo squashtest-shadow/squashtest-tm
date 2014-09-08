@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
+import javax.sql.DataSource;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
@@ -32,7 +33,6 @@ import org.hibernate.SessionFactory;
 import org.hibernate.StatelessSession;
 import org.hibernate.Transaction;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.api.repository.SqlQueryRunner;
 
 /**
@@ -43,8 +43,10 @@ import org.squashtest.tm.api.repository.SqlQueryRunner;
  * 
  */
 @Service("squash.api.repository.SqlQueryRunner")
-@Transactional(readOnly = true)
 public class HibernateSqlQueryRunner implements SqlQueryRunner {
+	@Inject
+	private DataSource dataSource;
+
 	private static final QueryExecution<Query> EXECUTE_LIST = new QueryExecution<Query>() {
 		@SuppressWarnings("unchecked")
 		public <R> R executeQuery(Query query) {
