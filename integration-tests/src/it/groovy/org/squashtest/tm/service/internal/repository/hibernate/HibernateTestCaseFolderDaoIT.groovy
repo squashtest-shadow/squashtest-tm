@@ -82,7 +82,7 @@ class HibernateTestCaseFolderDaoIT  extends DbunitServiceSpecification{
 		def result = ((FolderDao) dao).findPairedContentForList(((List<Long>) startlist))
 
 		then :
-		result.collect(it[1]).containsAll(-11L, -12L, -13L, -14L)
+		result.collectAll{it[1]}.containsAll(-11L, -12L, -13L, -14L)
 		result.every {it[0] == -1L}
 	}
 
