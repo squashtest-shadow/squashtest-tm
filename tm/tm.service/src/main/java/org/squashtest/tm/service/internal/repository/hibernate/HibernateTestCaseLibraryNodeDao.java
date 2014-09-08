@@ -40,17 +40,16 @@ TestCaseLibraryNodeDao {
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<String> getParentsName(long entityId) {
-		SQLQuery query = currentSession().createSQLQuery(NativeQueries.TCLN_FIND_SORTED_PARENT_NAMES);
-		query.setParameter("nodeId", entityId, LongType.INSTANCE);
+		Query query = currentSession().getNamedQuery("TestCasePathEdge.findSortedParentNames");
+		query.setParameter("nodeId", entityId);
 		return query.list();
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Long> getParentsIds(long entityId) {
-		SQLQuery query = currentSession().createSQLQuery(NativeQueries.TCLN_FIND_SORTED_PARENT_IDS);
-		query.setResultTransformer(new SqLIdResultTransformer());
-		query.setParameter("nodeId", entityId, LongType.INSTANCE);
+		Query query = currentSession().getNamedQuery("TestCasePathEdge.findSortedParentIds");
+		query.setParameter("nodeId", entityId);
 		return query.list();
 	}
 
@@ -74,8 +73,7 @@ TestCaseLibraryNodeDao {
 		if (!paths.isEmpty()) {
 			// process the paths parameter : we don't want escaped '/' in there
 			List<String> effectiveParameters = unescapeSlashes(paths);
-
-			SQLQuery query = currentSession().createSQLQuery(NativeQueries.TCLN_FIND_NODE_IDS_BY_PATH);
+			Query query = currentSession().getNamedQuery("TestCasePathEdge.findNodeIdsByPath");
 			query.setParameterList("paths", effectiveParameters);
 			List<Object[]> result = query.list();
 
@@ -118,8 +116,7 @@ TestCaseLibraryNodeDao {
 	@Override
 	public Long findNodeIdByPath(String path) {
 		String effectiveParameters = unescapeSlashes(path);
-
-		SQLQuery query = currentSession().createSQLQuery(NativeQueries.TCLN_FIND_NODE_IDS_BY_PATH);
+		Query query = currentSession().getNamedQuery("TestCasePathEdge.findNodeIdsByPath");
 		query.setParameterList("paths", new String[] { effectiveParameters });
 		List<Object[]> result = query.list();
 

@@ -486,8 +486,16 @@
 		@NamedQuery(name="TestCasePathEdge.findPathsByIds", query="select edge.descendantId, concat('\u241E', p.name, '\u241E', group_concat(n.name, 'order by', edge.depth, 'desc', '\u241E')) from TestCasePathEdge edge, TestCaseLibraryNode n join n.project p " +
 				"where n.id = edge.ancestorId " +
 				"and edge.descendantId in (:nodeIds) " +
-				"group by edge.descendantId, p.id")
-
+				"group by edge.descendantId, p.id"),
+		@NamedQuery(name="TestCasePathEdge.findSortedParentIds", query="select n.id  from TestCasePathEdge edge, TestCaseLibraryNode n where edge.descendantId = :nodeId and edge.ancestorId = n.id order by edge.depth desc"),
+		@NamedQuery(name="TestCasePathEdge.findSortedParentNames", query="select n.name  from TestCasePathEdge edge, TestCaseLibraryNode n where edge.descendantId = :nodeId and edge.ancestorId = n.id order by edge.depth desc"),
+		@NamedQuery(name="TestCasePathEdge.findNodeIdsByPath", query="select distinct clos.descendantId  , concat('/', p.name, '/', group_concat(tcln.name, 'order by', clos.depth, 'desc', '/')) cp "+
+					"from TestCasePathEdge clos, TestCaseLibraryNode tcln "+
+					"join tcln.project p "+
+					"where clos.ancestorId = tcln.id "+
+					"group by  clos.descendantId, p.name "+
+					"having cp  in :paths")
+		
 })
 package org.squashtest.tm.service.internal.repository.hibernate;
 

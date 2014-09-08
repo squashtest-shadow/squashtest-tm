@@ -26,7 +26,7 @@ import org.junit.runner.RunWith
 import org.spockframework.runtime.Sputnik
 import org.springframework.transaction.annotation.Transactional
 import org.squashtest.tm.service.DbunitServiceSpecification
-import org.squashtest.tm.service.testcase.TestCaseLibraryNavigationService;
+import org.squashtest.tm.service.testcase.TestCaseLibraryNavigationService
 import org.unitils.dbunit.annotation.DataSet
 
 import spock.unitils.UnitilsSupport
@@ -106,7 +106,7 @@ class HibernateTestCaseLibraryNodeDaoIT extends DbunitServiceSpecification {
 		def res = service.findNodeIdsByPath(tclnpaths)
 
 		then :
-		res == [-237L,-257L, -242L]
+		res == [-257L,-242L, -237L]
 	}
 
 

@@ -196,8 +196,6 @@ public final class NativeQueries {
 			"where clos.descendant_id = :nodeId "+
 			"order by clos.depth desc";
 
-	public static final String TCLN_FIND_SORTED_PARENT_NAMES = "select tcln.name "+TCLN_FIND_SORTED_PARENTS;
-	public static final String TCLN_FIND_SORTED_PARENT_IDS = "select tcln.tcln_id " +TCLN_FIND_SORTED_PARENTS;
 
 
 	/*
