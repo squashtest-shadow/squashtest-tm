@@ -120,9 +120,26 @@
 	<is:issue-add-popup id="issue-report-dialog" interfaceDescriptor="${interfaceDescriptor}"  bugTrackerId="${bugTracker.id}"/>		
 	</c:if>
 	
+	<f:message var="errorTitle" key="popup.title.error"/>
+	<f:message var="okLabel" key="label.Ok"/>
+	<div id="generic-error-dialog" class="not-displayed popup-dialog" title="${errorTitle}">
+	  <div>
+	     <div class="display-table-row">
+	        <div class="display-table-cell warning-cell">
+	          <div class="generic-error-signal"></div>
+	        </div>
+	        <div class="generic-error-main display-table-cell" style="padding-top:20px">
+	        
+	        </div>
+	      </div>
+	  </div>
+	  <input type="button" value="${okLabel}"/>  
+	</div>
+	
 	<script type="text/javascript">
 	require(["common"], function() {
-		require(["jquery", "domReady", "execution-processing"], function($, domReady, execProcessing){
+		require(["jquery", "domReady", "execution-processing", "jquery.squash.messagedialog"], 
+				function($, domReady, execProcessing){
 			requirejs.config({
 				config : {
 					'execution-processing/init-ieo' : ${json:serialize(config)}
@@ -131,9 +148,11 @@
 			
 			domReady(function(){
 				$("#open-address-dialog-button").button();
-				
+				$("#generic-error-dialog").messageDialog();
 				execProcessing.initIEO();
 			});
+			
+			
 		});
 	});
 	</script>

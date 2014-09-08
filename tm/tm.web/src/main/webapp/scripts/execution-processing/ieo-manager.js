@@ -28,7 +28,8 @@
  * 
  */
 
-define([ "jquery", "jquery.squash.messagedialog" ], function($) {
+define([ "jquery", "app/ws/squashtm.notification", "squash.translator", "jquery.squash.messagedialog"], 
+		function($, notification, translator) {
 
 	/* this is a constructor */
 	return function(settings) {
@@ -106,11 +107,25 @@ define([ "jquery", "jquery.squash.messagedialog" ], function($) {
 		}, this);
 
 		// ************ public functions ****************
-
+	
 		this.fillRightPane = function(url) {
 			try {
-				this.rightPane.find('iframe').attr('src', url);
+
+				url = (url.indexOf('://') == -1) ? 'http://' + url : url;
+				var iframeBody = this.rightPane.find('iframe body');
+			    var iframe = this.rightPane.find('iframe');
+		
+					$.post(squashtm.app.contextRoot+ "/checkXFO/", {URL:url} , function(xframeAllowed) {
+					if (! xframeAllowed){
+						iframe.attr('src', "about:blank");
+						notification.showError(translator.get('message.exception.IEO.XFODoNotPermitIFrame'))
+					} else {
+						iframe.attr('src', url);
+					}
+				});
+			
 			} catch (ex) {
+			
 				this.rightPane.find('iframe body').text(ex);
 			}
 
