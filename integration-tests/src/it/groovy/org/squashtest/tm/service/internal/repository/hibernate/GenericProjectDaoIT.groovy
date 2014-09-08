@@ -132,7 +132,7 @@ class GenericProjectDaoIT extends DbunitDaoSpecification {
 		when :
 		Collection<String> res = dao.findBoundTestAutomationProjectJobNames(pId)
 		then :
-		res.containsAll(["job100001", "job100002"])
+		res.containsAll(["job-1", "job-2"])
 	}
 
 

@@ -178,7 +178,7 @@ class HibernateExecutionDaoIT extends DbunitDaoSpecification {
 
 		where:
 		sortedAttribute             | sortOrder            | expectedIds
-		"Project.name"              | SortOrder.DESCENDING | [-580,-494, -627] // project a, project b, null
+		"Project.name"              | SortOrder.DESCENDING | [-580,-494, -2971] // project a, project b, null
 		"Campaign.name"             | SortOrder.ASCENDING  | [-718, -494, -580] // null, camp a, camp b */
 		"Iteration.name"            | SortOrder.ASCENDING  | [-718, -494, -580]
 		"Execution.name"            | SortOrder.ASCENDING  | [-494, -580, -627]

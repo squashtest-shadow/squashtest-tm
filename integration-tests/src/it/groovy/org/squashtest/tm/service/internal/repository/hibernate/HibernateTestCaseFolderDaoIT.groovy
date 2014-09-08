@@ -22,20 +22,20 @@ package org.squashtest.tm.service.internal.repository.hibernate
 
 
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.ArrayList
+import java.util.List
 
-import javax.inject.Inject;
+import javax.inject.Inject
 
-import org.spockframework.util.NotThreadSafe;
-import org.springframework.transaction.annotation.Transactional;
-import org.squashtest.tm.domain.testcase.TestCaseFolder;
-import org.squashtest.tm.service.internal.repository.FolderDao;
-import org.squashtest.tm.service.internal.repository.TestCaseFolderDao;
-import org.squashtest.tm.service.DbunitServiceSpecification;
+import org.spockframework.util.NotThreadSafe
+import org.springframework.transaction.annotation.Transactional
+import org.squashtest.tm.domain.testcase.TestCaseFolder
+import org.squashtest.tm.service.internal.repository.FolderDao
+import org.squashtest.tm.service.internal.repository.TestCaseFolderDao
+import org.squashtest.tm.service.DbunitServiceSpecification
 import org.unitils.dbunit.annotation.DataSet
 
-import spock.unitils.UnitilsSupport;
+import spock.unitils.UnitilsSupport
 
 @NotThreadSafe
 @UnitilsSupport
@@ -52,7 +52,7 @@ class HibernateTestCaseFolderDaoIT  extends DbunitServiceSpecification{
 		TestCaseFolder	content = new TestCaseFolder(name: "content")
 		container.addContent(content)
 
-		dao.persist(container);
+		dao.persist(container)
 
 		when:
 		def res  = dao.findAllContentById(container.id)
@@ -72,17 +72,18 @@ class HibernateTestCaseFolderDaoIT  extends DbunitServiceSpecification{
 
 		and :
 		def expected = [
-			[-1, -11],
-			[-1, -12],
-			[-1, -13],
-			[-1, -14]
+			[-1L, -11L],
+			[-1L, -12L],
+			[-1L, -13L],
+			[-1L, -14L]
 		]
 
 		when :
 		def result = ((FolderDao) dao).findPairedContentForList(((List<Long>) startlist))
 
 		then :
-		result == expected
+		result.collect(it[1]).containsAll(-11L, -12L, -13L, -14L)
+		result.every {it[0] == -1L}
 	}
 
 

@@ -129,8 +129,8 @@ class JdbcManageableAclServiceIT extends Specification {
 		then:
 		res != null
 		!res.isEmpty()
-		res[0][0] == -101
-		res[1][0] == -102
+		res[0][0] == -102
+		res[1][0] == -101
 	}
 
 	@DataSet("JdbcManageableAclServiceIT.should retrieve acl group user.xml")

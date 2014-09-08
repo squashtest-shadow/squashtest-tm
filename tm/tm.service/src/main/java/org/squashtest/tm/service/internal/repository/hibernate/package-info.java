@@ -291,7 +291,7 @@
 		@NamedQuery(name = "GenericProject.countByName", query = "select count(p) from GenericProject p where p.name = ?1"),
 		@NamedQuery(name = "GenericProject.findTestAutomationServer", query = "select p.testAutomationServer from GenericProject p where p.id = :projectId"),
 		@NamedQuery(name = "GenericProject.findBoundTestAutomationProjectLabels", query = "select tap.label from GenericProject p join p.testAutomationProjects tap where p.id = :projectId"),
-		
+
 		//Project
 		@NamedQuery(name = "Project.findByName", query = "from Project where name = ?1"),
 		@NamedQuery(name = "Project.findAllByName", query = "from Project where name in (:names)"),
@@ -478,27 +478,28 @@
 				+ "where iter.id = :id and tp.testSuites is empty "
 				+ "group by tp.executionStatus, tc.importance, iter.scheduledPeriod.scheduledStartDate, iter.scheduledPeriod.scheduledEndDate "
 				+ "order by tp.executionStatus, tc.importance"),
-				
-		@NamedQuery(name="TestCasePathEdge.findPathById", query="select concat('\u241E', p.name, '\u241E', group_concat(n.name, 'order by', edge.depth, 'desc', '\u241E')) from TestCasePathEdge edge, TestCaseLibraryNode n join n.project p " +
-				"where n.id = edge.ancestorId " +
-				"and edge.descendantId = :nodeId " +
-				"group by edge.descendantId, p.id"), 
-		@NamedQuery(name="TestCasePathEdge.findPathsByIds", query="select edge.descendantId, concat('\u241E', p.name, '\u241E', group_concat(n.name, 'order by', edge.depth, 'desc', '\u241E')) from TestCasePathEdge edge, TestCaseLibraryNode n join n.project p " +
-				"where n.id = edge.ancestorId " +
-				"and edge.descendantId in (:nodeIds) " +
-				"group by edge.descendantId, p.id"),
-		@NamedQuery(name="TestCasePathEdge.findSortedParentIds", query="select n.id  from TestCasePathEdge edge, TestCaseLibraryNode n where edge.descendantId = :nodeId and edge.ancestorId = n.id order by edge.depth desc"),
-		@NamedQuery(name="TestCasePathEdge.findSortedParentNames", query="select n.name  from TestCasePathEdge edge, TestCaseLibraryNode n where edge.descendantId = :nodeId and edge.ancestorId = n.id order by edge.depth desc"),
-		@NamedQuery(name="TestCasePathEdge.findNodeIdsByPath", query="select distinct  concat('/', p.name, '/', group_concat(tcln.name, 'order by', clos.depth, 'desc', '/')) as cp, clos.descendantId  "+
-					"from TestCasePathEdge clos, TestCaseLibraryNode tcln "+
-					"join tcln.project p "+
-					"where clos.ancestorId = tcln.id "+
-					"group by  clos.descendantId, p.name "+
-					"having concat('/', p.name, '/', group_concat(tcln.name, 'order by', clos.depth, 'desc', '/')) in :paths")
-		
+
+		@NamedQuery(name = "TestCasePathEdge.findPathById", query = "select concat('"+HibernatePathService.PATH_SEPARATOR+"', p.name, '"+HibernatePathService.PATH_SEPARATOR+"', group_concat(n.name, 'order by', edge.depth, 'desc', '"+HibernatePathService.PATH_SEPARATOR+"')) from TestCasePathEdge edge, TestCaseLibraryNode n join n.project p "
+				+ "where n.id = edge.ancestorId "
+				+ "and edge.descendantId = :nodeId "
+				+ "group by edge.descendantId, p.id"),
+		@NamedQuery(name = "TestCasePathEdge.findPathsByIds", query = "select edge.descendantId, concat('"+HibernatePathService.PATH_SEPARATOR+"', p.name, '"+HibernatePathService.PATH_SEPARATOR+"', group_concat(n.name, 'order by', edge.depth, 'desc', '"+HibernatePathService.PATH_SEPARATOR+"')) from TestCasePathEdge edge, TestCaseLibraryNode n join n.project p "
+				+ "where n.id = edge.ancestorId "
+				+ "and edge.descendantId in (:nodeIds) "
+				+ "group by edge.descendantId, p.id"),
+		@NamedQuery(name = "TestCasePathEdge.findSortedParentIds", query = "select n.id  from TestCasePathEdge edge, TestCaseLibraryNode n where edge.descendantId = :nodeId and edge.ancestorId = n.id order by edge.depth desc"),
+		@NamedQuery(name = "TestCasePathEdge.findSortedParentNames", query = "select n.name  from TestCasePathEdge edge, TestCaseLibraryNode n where edge.descendantId = :nodeId and edge.ancestorId = n.id order by edge.depth desc"),
+		@NamedQuery(name = "TestCasePathEdge.findNodeIdsByPath", query = "select distinct  concat('/', p.name, '/', group_concat(tcln.name, 'order by', clos.depth, 'desc', '/')) as cp, clos.descendantId   "
+				+ "from TestCasePathEdge clos, TestCaseLibraryNode tcln "
+				+ "join tcln.project p "
+				+ "where clos.ancestorId = tcln.id "
+				+ "group by  clos.descendantId, p.name "
+				+ "having concat('/', p.name, '/', group_concat(tcln.name, 'order by', clos.depth, 'desc', '/')) in :paths")
+
 })
 package org.squashtest.tm.service.internal.repository.hibernate;
 
 import org.hibernate.annotations.NamedQueries;
 import org.hibernate.annotations.NamedQuery;
+import org.squashtest.tm.service.internal.library.HibernatePathService;
 

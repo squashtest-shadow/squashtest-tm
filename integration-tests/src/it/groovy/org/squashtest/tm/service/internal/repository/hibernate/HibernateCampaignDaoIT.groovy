@@ -43,7 +43,7 @@ class HibernateCampaignDaoIT extends DbunitDaoSpecification {
 		when:
 		def res = campaignDao.findNamesInFolderStartingWith(-1, "foo-Copie")
 		then:
-		res == ["foo-Copie1", "foo-Copie10"]
+		res.containsAll("foo-Copie1", "foo-Copie10")
 	}
 
 	@DataSet("HibernateCampaignDaoIT.should return list of executions.xml")
@@ -94,7 +94,7 @@ class HibernateCampaignDaoIT extends DbunitDaoSpecification {
 		active   | filter                          | expectedId
 		true	 | TestCaseExecutionMode.AUTOMATED | [-1010L]
 		true	 | TestCaseExecutionMode.MANUAL    | [-1020L]
-		false	 | null                            | [-1010L, -1020L]
+		false	 | null                            | [-1020L, -1010L]
 	}
 }
 

@@ -44,9 +44,20 @@ import org.squashtest.tm.service.internal.repository.hibernate.HibernateTestCase
 @Transactional(readOnly = true)
 public class HibernatePathService implements PathService {
 	/**
-	 * Path separator as returned by the queries - because edges name can contain "/" which shall be escaped.
-	 */
-	private static final String PATH_SEP = "\u241E";
+	 * The PATH_SEPARATOR is not '/' because we couldn't distinguish with slashes guenuinely part of
+	 * a name. Of course to disambiguate we could have used MySQL / H2 function replace(targetstr, orig, replace)
+	 * and escape the '/' but the functions don't work the same way on both database and what works in one
+	 * doesn't work on the other.
+	 * 
+	 * So the separator is not / but some other improbable character, that I hope
+	 * improbable enough in the context of a normal use of Squash.
+	 * Currently it's the ASCII character "US", or "Unit separator", aka "Information separator one",
+	 * that was precisely intended for similar purpose back in the prehistoric era.
+	 * 
+	 * It's up to the caller to then post process the chain and replace that character
+	 * by anything it sees fit.
+	 **/
+	public static final String PATH_SEPARATOR = "\u001F";
 
 	@Inject
 	private SessionFactory sessionFactory;
@@ -73,7 +84,7 @@ public class HibernatePathService implements PathService {
 			return null;
 		}
 
-		return paths.get(0).replace("/", "\\/").replace(PATH_SEP, "/");
+		return paths.get(0).replace("/", "\\/").replace(PATH_SEPARATOR, "/");
 	}
 
 	/**
@@ -99,7 +110,7 @@ public class HibernatePathService implements PathService {
 	 * @return
 	 */
 	private String escapePath(String fetchedPath) {
-		return fetchedPath != null ? fetchedPath.replace("/", "\\/").replace(PATH_SEP, "/") : null;
+		return fetchedPath != null ? fetchedPath.replace("/", "\\/").replace(PATH_SEPARATOR, "/") : null;
 	}
 
 	/**

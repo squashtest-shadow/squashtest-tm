@@ -24,22 +24,22 @@ import javax.inject.Inject
 
 import org.hibernate.Query
 import org.springframework.transaction.annotation.Transactional
-import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory;
+import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory
 import org.squashtest.tm.domain.customfield.BindableEntity
 import org.squashtest.tm.domain.customfield.CustomFieldValue
 import org.squashtest.tm.domain.requirement.Requirement
 import org.squashtest.tm.domain.requirement.RequirementFolder
 import org.squashtest.tm.domain.requirement.RequirementLibraryNode
 import org.squashtest.tm.domain.requirement.RequirementVersion
-import org.squashtest.tm.exception.library.CannotMoveInHimselfException;
-import org.squashtest.tm.exception.requirement.CopyPasteObsoleteException;
-import org.squashtest.tm.exception.requirement.IllegalRequirementModificationException;
-import org.squashtest.tm.service.DbunitServiceSpecification;
-import org.squashtest.tm.service.internal.requirement.RequirementNodeDeletionHandler;
+import org.squashtest.tm.exception.library.CannotMoveInHimselfException
+import org.squashtest.tm.exception.requirement.CopyPasteObsoleteException
+import org.squashtest.tm.exception.requirement.IllegalRequirementModificationException
+import org.squashtest.tm.service.DbunitServiceSpecification
+import org.squashtest.tm.service.internal.requirement.RequirementNodeDeletionHandler
 import org.squashtest.tm.service.requirement.RequirementLibraryNavigationService
 import org.unitils.dbunit.annotation.DataSet
-import org.unitils.dbunit.annotation.ExpectedDataSet;
-import org.squashtest.tm.service.internal.repository.RequirementFolderDao;
+import org.unitils.dbunit.annotation.ExpectedDataSet
+import org.squashtest.tm.service.internal.repository.RequirementFolderDao
 
 import spock.unitils.UnitilsSupport
 
@@ -49,13 +49,13 @@ class RequirementLibraryNavigationServiceIT extends DbunitServiceSpecification {
 
 
 	@Inject
-	RequirementLibraryNavigationService navService;
+	RequirementLibraryNavigationService navService
 
 	@Inject
-	RequirementFolderDao folderDao;
+	RequirementFolderDao folderDao
 
 	@Inject
-	private RequirementNodeDeletionHandler deletionHandler;
+	private RequirementNodeDeletionHandler deletionHandler
 
 	private int requirementId = 10
 
@@ -68,7 +68,7 @@ class RequirementLibraryNavigationServiceIT extends DbunitServiceSpecification {
 	def "should return all the requirements in a hierarchy given some ids"(){
 
 		given:
-		List<Long> listReq = [-1L, -250L]
+		List<Long> listReq = [-3L, -250L]
 
 		when :
 		def reqs = navService.findRequirementsToExportFromNodes(listReq)
@@ -77,9 +77,9 @@ class RequirementLibraryNavigationServiceIT extends DbunitServiceSpecification {
 		reqs != null
 		reqs.size() == 3
 
-		def export1 = reqs.findAll{r -> r.name == "1req"}[0];
-		def export2 = reqs.findAll{r -> r.name == "req2"}[0];
-		def export3 = reqs.findAll{r -> r.name == "req3"}[0];
+		def export1 = reqs.findAll{r -> r.name == "1req"}[0]
+		def export2 = reqs.findAll{r -> r.name == "req2"}[0]
+		def export3 = reqs.findAll{r -> r.name == "req3"}[0]
 
 		export1.name == "1req"
 		export1.folderName == "folder"
@@ -115,7 +115,7 @@ class RequirementLibraryNavigationServiceIT extends DbunitServiceSpecification {
 		Long destinationId = -2L
 
 		when:
-		navService.moveNodesToFolder(destinationId, sourceIds);
+		navService.moveNodesToFolder(destinationId, sourceIds)
 
 		then:"no exception is thrown"
 		true
@@ -128,7 +128,7 @@ class RequirementLibraryNavigationServiceIT extends DbunitServiceSpecification {
 		Long destinationId = -1L
 
 		when:
-		navService.moveNodesToFolder(destinationId, sourceIds);
+		navService.moveNodesToFolder(destinationId, sourceIds)
 
 		then:
 		thrown (CannotMoveInHimselfException)
@@ -141,7 +141,7 @@ class RequirementLibraryNavigationServiceIT extends DbunitServiceSpecification {
 		Long destinationId = -1L
 
 		when:
-		navService.moveNodesToFolder(destinationId, sourceIds);
+		navService.moveNodesToFolder(destinationId, sourceIds)
 
 		then:
 		thrown (CannotMoveInHimselfException)
@@ -158,7 +158,7 @@ class RequirementLibraryNavigationServiceIT extends DbunitServiceSpecification {
 
 		then:"requirement folder is copied"
 		nodes.get(0) instanceof RequirementFolder
-		RequirementFolder folder = findEntity(RequirementFolder.class, destinationId);
+		RequirementFolder folder = findEntity(RequirementFolder.class, destinationId)
 		folder.content.size() == 3
 	}
 
@@ -274,8 +274,8 @@ class RequirementLibraryNavigationServiceIT extends DbunitServiceSpecification {
 		RequirementFolder movedFolder = findEntity(RequirementFolder.class, -1L)
 		movedFolder.getContent().collectAll({it.id}).containsAll([-10L, -11L])
 		and: "they all know their rightfull project"
-		movedFolder.getProject() == destination.getProject();
-		movedFolder.getContent().each( {it.getProject() == destination.getProject()});
+		movedFolder.getProject() == destination.getProject()
+		movedFolder.getContent().each( {it.getProject() == destination.getProject()})
 	}
 
 	@DataSet("RequirementLibraryNavigationServiceIT.should move reqs to project with cufs.xml")
@@ -309,20 +309,20 @@ class RequirementLibraryNavigationServiceIT extends DbunitServiceSpecification {
 	def "should remove requirement without move 1"(){
 
 		when:
-		deletionHandler.deleteNodes([-10L]);
+		deletionHandler.deleteNodes([-10L])
 
 		then:
-		! found("requirement", "rln_id", -10L);
+		! found("requirement", "rln_id", -10L)
 	}
 
 	@DataSet("RequirementLibraryNavigationServiceIT.should remove reqs after move.xml")
 	def "should remove requirement without move 2"(){
 
 		when:
-		deletionHandler.deleteNodes([-20L]);
+		deletionHandler.deleteNodes([-20L])
 
 		then:
-		! found("requirement", "rln_id", -20L);
+		! found("requirement", "rln_id", -20L)
 	}
 
 
@@ -330,30 +330,30 @@ class RequirementLibraryNavigationServiceIT extends DbunitServiceSpecification {
 	def "should remove requirement after move 1"(){
 		given:
 		Long[] reqIds = [-20L]
-		navService.moveNodesToRequirement(-10L, reqIds);
+		navService.moveNodesToRequirement(-10L, reqIds)
 		reqIds = [-30L]
-		navService.moveNodesToRequirement(-20L, reqIds);
+		navService.moveNodesToRequirement(-20L, reqIds)
 
 		when:
-		deletionHandler.deleteNodes([-20L]);
+		deletionHandler.deleteNodes([-20L])
 
 		then:
-		! found("requirement", "rln_id", -20L);
+		! found("requirement", "rln_id", -20L)
 	}
 
 	@DataSet("RequirementLibraryNavigationServiceIT.should remove reqs after move.xml")
 	def "should remove requirement after move 2"(){
 		given:
 		Long[] reqIds = [-10L]
-		navService.moveNodesToRequirement(-20L, reqIds);
+		navService.moveNodesToRequirement(-20L, reqIds)
 		reqIds = [-30L]
-		navService.moveNodesToRequirement(-10L, reqIds);
+		navService.moveNodesToRequirement(-10L, reqIds)
 
 		when:
-		deletionHandler.deleteNodes([-10L]);
+		deletionHandler.deleteNodes([-10L])
 
 		then:
-		! found("requirement", "rln_id", -10L);
+		! found("requirement", "rln_id", -10L)
 	}
 
 	@DataSet("RequirementLibraryNavigationServiceIT.should move to same project at right position.xml")
@@ -366,8 +366,8 @@ class RequirementLibraryNavigationServiceIT extends DbunitServiceSpecification {
 		navService.moveNodesToFolder(destinationId, sourceIds, 0)
 
 		then:
-		RequirementFolder parentFolder = (RequirementFolder) folderDao.findById(-2L);
-		parentFolder.content*.id.containsAll([-1L, -20L, -21L]);
+		RequirementFolder parentFolder = (RequirementFolder) folderDao.findById(-2L)
+		parentFolder.content*.id.containsAll([-1L, -20L, -21L])
 	}
 
 	@DataSet("RequirementLibraryNavigationServiceIT.should move to same project at right position.xml")
@@ -380,8 +380,8 @@ class RequirementLibraryNavigationServiceIT extends DbunitServiceSpecification {
 		navService.moveNodesToFolder(destinationId, sourceIds, 1)
 
 		then:
-		RequirementFolder parentFolder = (RequirementFolder) folderDao.findById(-2L);
-		parentFolder.content*.id.containsAll([-20L, -1L, -21L]);
+		RequirementFolder parentFolder = (RequirementFolder) folderDao.findById(-2L)
+		parentFolder.content*.id.containsAll([-20L, -1L, -21L])
 	}
 
 	@DataSet("RequirementLibraryNavigationServiceIT.should move to same project at right position.xml")
@@ -394,8 +394,8 @@ class RequirementLibraryNavigationServiceIT extends DbunitServiceSpecification {
 		navService.moveNodesToFolder(destinationId, sourceIds, 2)
 
 		then:
-		RequirementFolder parentFolder = (RequirementFolder) folderDao.findById(-2L);
-		parentFolder.content*.id.containsAll([-20L, -21L, -1L]);
+		RequirementFolder parentFolder = (RequirementFolder) folderDao.findById(-2L)
+		parentFolder.content*.id.containsAll([-20L, -21L, -1L])
 	}
 
 

@@ -198,21 +198,7 @@ public final class NativeQueries {
 
 
 
-	/*
-	 * The PATH_SEPARATOR is not '/' because we couldn't distinguish with slashes guenuinely part of
-	 * a name. Of course to disambiguate we could have used MySQL / H2 function replace(targetstr, orig, replace)
-	 * and escape the '/' but the functions don't work the same way on both database and what works in one
-	 * doesn't work on the other.
-	 * 
-	 * So the separator is not / but some other improbable character, that I hope
-	 * improbable enough in the context of a normal use of Squash.
-	 * Currently it's the ASCII character "US", or "Unit separator", aka "Information separator one",
-	 * that was precisely intended for similar purpose back in the prehistoric era.
-	 * 
-	 * It's up to the caller to then post process the chain and replace that character
-	 * by anything it sees fit.
-	 */
-	public static final String PATH_SEPARATOR = "\u001F";
+
 
 	// note that in this query we don't want escaped '/' like in query TCLN_GET_PATHS_AS_STRING
 	public static final String TCLN_FIND_NODE_IDS_BY_PATH =
