@@ -39,15 +39,15 @@
 	<CUSTOM_FIELD CODE="1" LABEL="1" FIELD_TYPE="CF" NAME="1" INPUT_TYPE="PLAIN_TEXT" CF_ID="-1"/>
 	<CUSTOM_FIELD_BINDING BOUND_ENTITY="TEST_CASE" CFB_ID="-1" POSITION="1" BOUND_PROJECT_ID="-1" CF_ID="-1"/>
 	
-	<custom_field_value/>
-	<test_case_library />
-	<campaign_library/>
-	<requirement_library />
-	<project />
-	<attachment_list />
-	<test_case_library_node />
-	<test_case_folder />
-	<test_case />
-	<tcln_relationship />
+	<CUSTOM_FIELD_VALUE/>
+	<TEST_CASE_LIBRARY />
+	<CAMPAIGN_LIBRARY/>
+	<REQUIREMENT_LIBRARY />
+	<PROJECT />
+	<ATTACHMENT_LIST />
+	<TEST_CASE_LIBRARY_NODE />
+	<TEST_CASE_FOLDER />
+	<TEST_CASE />
+	<TCLN_RELATIONSHIP />
 		
 </dataset>

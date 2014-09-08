@@ -58,6 +58,6 @@
 	<ITERATION_TEST_SUITE ITERATION_ID="-1" TEST_SUITE_ID="-1" />
 	
 	<!-- TEST PLAN = NONE -->
-	<item_test_plan_list/>
-	<iteration_test_plan_item/>
+	<ITEM_TEST_PLAN_LIST/>
+	<ITERATION_TEST_PLAN_ITEM/>
 </dataset>

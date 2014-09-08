@@ -106,6 +106,6 @@
 	
 	<ITEM_TEST_PLAN_EXECUTION ITEM_TEST_PLAN_ID="-23" EXECUTION_ID="-230" EXECUTION_ORDER="0"/>
 	
-	<iteration_test_plan_item />
-	<test_case />
+	<ITERATION_TEST_PLAN_ITEM />
+	<TEST_CASE />
 </dataset>

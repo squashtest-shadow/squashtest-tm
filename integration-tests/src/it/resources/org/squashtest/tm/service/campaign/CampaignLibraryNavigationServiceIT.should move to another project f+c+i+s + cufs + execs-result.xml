@@ -113,6 +113,6 @@
 	<CAMPAIGN_FOLDER CLN_ID="-2" />
 	<CAMPAIGN_LIBRARY_CONTENT LIBRARY_ID="-2" CONTENT_ID="-2" />
 
-	<custom_field_value />
-	<issue/>
+	<CUSTOM_FIELD_VALUE />
+	<ISSUE/>
 </dataset>

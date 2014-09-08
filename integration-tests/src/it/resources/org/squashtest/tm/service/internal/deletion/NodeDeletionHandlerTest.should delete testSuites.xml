@@ -58,12 +58,12 @@
 	<ITEM_TEST_PLAN_LIST ITEM_TEST_PLAN_ORDER="1" ITEM_TEST_PLAN_ID="-122" ITERATION_ID="-11"/>	
 	<ITEM_TEST_PLAN_LIST ITEM_TEST_PLAN_ORDER="2" ITEM_TEST_PLAN_ID="-123" ITERATION_ID="-11"/>	
 	
-	<test_step/>
-	<action_test_step/>
-	<call_test_step/>
-	<test_case_steps/>
-	<test_case_folder/>
-	<tcln_relationship/>
-	<test_case_library_content/>
+	<TEST_STEP/>
+	<ACTION_TEST_STEP/>
+	<CALL_TEST_STEP/>
+	<TEST_CASE_STEPS/>
+	<TEST_CASE_FOLDER/>
+	<TCLN_RELATIONSHIP/>
+	<TEST_CASE_LIBRARY_CONTENT/>
 	
 </dataset>

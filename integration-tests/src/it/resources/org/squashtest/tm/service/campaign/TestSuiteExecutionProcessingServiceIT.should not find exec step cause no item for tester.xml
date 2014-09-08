@@ -88,5 +88,5 @@
   	<TEST_SUITE_TEST_PLAN_ITEM TPI_ID="-4" SUITE_ID="-1" TEST_PLAN_ORDER="3"/>
   	
   	
-	<core_group_member/>
+	<CORE_GROUP_MEMBER/>
 </dataset>

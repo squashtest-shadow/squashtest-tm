@@ -91,16 +91,16 @@
 	<CLN_RELATIONSHIP DESCENDANT_ID="-32" ANCESTOR_ID="-21" CONTENT_ORDER="1"/>
 	
 	
-	<test_case_library_node/>
-	<test_case/>
-	<test_case_folder/>
-	<tcln_relationship/>
-	<test_case_library_content/>
+	<TEST_CASE_LIBRARY_NODE/>
+	<TEST_CASE/>
+	<TEST_CASE_FOLDER/>
+	<TCLN_RELATIONSHIP/>
+	<TEST_CASE_LIBRARY_CONTENT/>
 	
-	<test_step/>
-	<action_test_step/>
-	<call_test_step/>
-	<test_case_steps/>
+	<TEST_STEP/>
+	<ACTION_TEST_STEP/>
+	<CALL_TEST_STEP/>
+	<TEST_CASE_STEPS/>
 	
 
 </dataset>

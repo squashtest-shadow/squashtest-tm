@@ -141,10 +141,10 @@
 	
 	<!-- cleanup -->
 
-	<call_test_step />
-	<attachment_content />
-	<attachment />
+	<CALL_TEST_STEP />
+	<ATTACHMENT_CONTENT />
+	<ATTACHMENT />
 	
-	<test_case_folder/>
-	<tcln_relationship/>
+	<TEST_CASE_FOLDER/>
+	<TCLN_RELATIONSHIP/>
 </dataset>

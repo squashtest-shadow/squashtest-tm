@@ -26,7 +26,7 @@
 <dataset>
 	<CORE_PARTY PARTY_ID="-10" />
 	<CORE_TEAM PARTY_ID="-10" NAME="team1" CREATED_BY="dbunit" CREATED_ON="2013-02-01" />	
-	<acl_group_permission />
-	<core_user/>
-	<core_group_member />
+	<ACL_GROUP_PERMISSION />
+	<CORE_USER/>
+	<CORE_GROUP_MEMBER />
 </dataset>

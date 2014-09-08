@@ -27,7 +27,7 @@
 	<ACL_GROUP ID="-10" QUALIFIED_NAME="foo.Bar" />
 	<ACL_GROUP ID="-20" QUALIFIED_NAME="foo.Baz" />
 	<ACL_GROUP ID="-30" QUALIFIED_NAME="fee.Bar" />
-	<acl_object_identity />
-	<acl_group_permission />
-	<acl_responsibility_scope_entry />
+	<ACL_OBJECT_IDENTITY />
+	<ACL_GROUP_PERMISSION />
+	<ACL_RESPONSIBILITY_SCOPE_ENTRY />
 </dataset>

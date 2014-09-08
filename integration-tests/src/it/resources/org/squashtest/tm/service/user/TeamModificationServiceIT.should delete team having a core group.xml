@@ -31,11 +31,11 @@
 	<CORE_GROUP_MEMBER PARTY_ID="-10" GROUP_ID="-123" />
 	
 	<acl_class  />
-	<acl_object_identity/>
-	<acl_group/>
-	<acl_responsibility_scope_entry/>	
-	<acl_group_permission />
-	<core_user/>
-	<core_group_member />
+	<ACL_OBJECT_IDENTITY/>
+	<ACL_GROUP/>
+	<ACL_RESPONSIBILITY_SCOPE_ENTRY/>	
+	<ACL_GROUP_PERMISSION />
+	<CORE_USER/>
+	<CORE_GROUP_MEMBER />
 	
 </dataset>

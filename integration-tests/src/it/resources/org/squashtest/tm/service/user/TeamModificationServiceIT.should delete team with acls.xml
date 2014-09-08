@@ -34,8 +34,8 @@
 
 	<ACL_RESPONSIBILITY_SCOPE_ENTRY ID="-240" PARTY_ID="-10" ACL_GROUP_ID="-100" OBJECT_IDENTITY_ID="-1000" />
 	
-	<acl_group_permission />
-	<core_user/>
-	<core_group_member />
+	<ACL_GROUP_PERMISSION />
+	<CORE_USER/>
+	<CORE_GROUP_MEMBER />
 	
 </dataset>
