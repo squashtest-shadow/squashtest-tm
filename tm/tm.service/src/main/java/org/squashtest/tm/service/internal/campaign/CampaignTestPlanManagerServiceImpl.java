@@ -48,6 +48,7 @@ import org.squashtest.tm.core.foundation.collection.Pagings;
 import org.squashtest.tm.domain.IdentifiersOrderComparator;
 import org.squashtest.tm.domain.campaign.Campaign;
 import org.squashtest.tm.domain.campaign.CampaignTestPlanItem;
+import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.projectfilter.ProjectFilter;
 import org.squashtest.tm.domain.testcase.Dataset;
 import org.squashtest.tm.domain.testcase.TestCase;
@@ -59,6 +60,7 @@ import org.squashtest.tm.service.campaign.IndexedCampaignTestPlanItem;
 import org.squashtest.tm.service.internal.library.LibrarySelectionStrategy;
 import org.squashtest.tm.service.internal.repository.CampaignDao;
 import org.squashtest.tm.service.internal.repository.CampaignTestPlanItemDao;
+import org.squashtest.tm.service.internal.repository.DatasetDao;
 import org.squashtest.tm.service.internal.repository.LibraryNodeDao;
 import org.squashtest.tm.service.internal.repository.TestCaseLibraryDao;
 import org.squashtest.tm.service.internal.repository.UserDao;
@@ -104,6 +106,9 @@ public class CampaignTestPlanManagerServiceImpl implements CampaignTestPlanManag
 
 	@Inject
 	private UserDao userDao;
+
+	@Inject
+	private DatasetDao datasetDao;
 
 
 	@Inject
@@ -304,6 +309,27 @@ public class CampaignTestPlanManagerServiceImpl implements CampaignTestPlanManag
 	@Transactional(readOnly = true)
 	public List<Long> findPlannedTestCasesIds(Long campaignId) {
 		return campaignTestPlanItemDao.findPlannedTestCasesIdsByCampaignId(campaignId);
+	}
+
+
+	@Override
+	@PreAuthorize("hasPermission(#itemId, 'org.squashtest.tm.domain.campaign.CampaignTestPlanItem', 'WRITE') or hasRole('ROLE_ADMIN')")
+	public void changeDataset(long itemId, Long datasetId) {
+		CampaignTestPlanItem item = campaignTestPlanItemDao.findById(itemId);
+
+		if (datasetId == null){
+			item.setReferencedDataset(null);
+		}
+		else{
+			TestCase tc = item.getReferencedTestCase();
+			Dataset ds = datasetDao.findById(datasetId);
+			if (! ds.getTestCase().equals(tc)){
+				throw new IllegalArgumentException("dataset [id:'"+ds.getId()+"', name:'"+ds.getName()+
+						"'] doesn't belong to test case [id:'"+tc.getId()+"', name:'"+tc.getName()+"']");
+			}
+			item.setReferencedDataset(ds);
+		}
+
 	}
 
 }

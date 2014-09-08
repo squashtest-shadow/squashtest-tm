@@ -33,7 +33,8 @@
 
 <c:url var="backUrl" value="/campaign-workspace/" />
 <c:url var="campaignUrl" value="/campaigns/${ campaign.id }" />
-<c:url var="campaignTestPlanUrl" value="/campaigns/${ campaign.id }/info" />
+<c:url var="testPlanUrl" value="/campaigns/${campaign.id}/test-plan"/>
+
 
 <%-- ----------------------------------- Authorization ----------------------------------------------%>
 <c:set var="editable" value="${ false }" /> 
@@ -42,58 +43,12 @@
 </authz:authorized>
 
 <layout:tree-picker-layout  workspaceTitleKey="workspace.campaign.title" 
-							highlightedWorkspace="campaign"
+							highlightedWorkspace="campaign" 
+                            i18nLibraryTabTitle="squashtm.library.test-case.title"                             
 							linkable="test-case" 
                             isSubPaged="true">
 	<jsp:attribute name="head">
 		<comp:sq-css name="squash.purple.css" />
-
-		<script type="text/javascript">
-require(["common"], function(){
-	require(["jquery", "jqueryui"], function($){
-			//todo : get that wtf thing straight. 
-			//each panel (tree, search tc, search by req) should define a method getSelected()
-			//the present function should only call the one belonging to the currently selected panel.
-			function getTestCasesIds(){
-				var selected = $( "#tabbed-pane" ).tabs('option', 'selected');
-				var tree = $( '#linkable-test-cases-tree' );
-
-				var tab = tree.jstree('get_selected')
-						  .not(':library')
-						  .collect(function(elt){return $(elt).attr('resid');});
-
-				return tab;
-			}
-			
-
-			
-			$(function() {
-
-				<%-- back button --%>
-				
-				$("#back").click(function(){
-					history.back();
-				});
-				
-				<%-- test-case addition --%>
-				$( '#add-items-button' ).click(function() {
-					
-					var tree = $( '#linkable-test-cases-tree' );
-					var ids = getTestCasesIds();
-					if (ids.length > 0) {
-						$.post('<c:url value="/campaigns/${ campaign.id }/test-plan" />', { testCasesIds: ids })
-						.done(function(){
-							$("#test-cases-table").squashTable().refresh();
-						});
-					}
-					tree.jstree('deselect_all'); //todo : each panel should define that method too.
-					firstIndex = null;
-					lastIndex = null;
-				});
-			});
-		});
-	});
-		</script>
 	</jsp:attribute>
 	
 	<jsp:attribute name="subPageTitle">
@@ -122,12 +77,50 @@ require(["common"], function(){
 	<jsp:attribute name="tablePane">
 		<comp:opened-object otherViewers="${ otherViewers }" objectUrl="${ campaignUrl }" />
 		
-		<aggr:campaign-test-plan-manager-table 
-			campaignUrl="${ campaignUrl }" 
-			batchRemoveButtonId="remove-items-button" 
-			editable="${editable}"
-			campaign="${campaign}"/>
+		<aggr:campaign-test-plan-manager-table campaign="${campaign}"/>
 		
 	</jsp:attribute>
+  
+  
+  <jsp:attribute name="foot">
+    <script type="text/javascript">
+        require(["common"], function(){
+          require(["jquery", "tree", "workspace.event-bus"], function($, zetree, eventBus){
+              
+              $(function() {
+        
+                <%-- back button --%>
+                
+                $("#back").on('click', function(){
+                  history.back();
+                });
+                
+                <%-- test-case addition --%>
+                $( '#add-items-button' ).click(function() {
+                      var tree = zetree.get();
+                      var ids = tree.jstree('get_selected').all('getResId');
+                      if (ids.length > 0) {
+                        $.post('${ testPlanUrl }', { testCasesIds: ids})
+                        .done(function(){
+                          eventBus.trigger('context.content-modified');
+                        })
+                      }
+                      tree.jstree('deselect_all'); 
+                });
+                
+                $("#remove-items-button").on('click', function(){
+                  $("#remove-test-plan-button").click();
+                });
+                
+                eventBus.onContextual("context.content-modified", function() {
+                  $("#campaign-test-plans-table").squashTable().refresh();
+                });
+                    
+              });
+            });
+          });
+    </script>
+  </jsp:attribute>
+  
 </layout:tree-picker-layout>
 

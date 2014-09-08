@@ -88,20 +88,20 @@ define(['squash.translator', './table', './popups', 'app/util/ButtonUtil' ], fun
 			});
 			
 			
-			$("#remove-test-case-button").on('click', function(){
+			$("#remove-test-plan-button").on('click', function(){
 				$("#delete-multiple-test-cases-dialog").formDialog('open');
 			});
 		}
 		
 		
 		$("#filter-test-plan-button").on('click', function(){
-			
+			var domtable =  $("#campaign-test-plans-table")
 			if(filterOn){
 				filterOn = false;
 				table.hideFilterFields();
 				table.unlockSortMode();
 				$("#test-plan-sort-mode-message").show();
-				$("#test-cases-table").find('.select-handle').removeClass('drag-handle');
+				domtable.find('.select-handle').removeClass('drag-handle');
 				if (this.reorderable){
 					ButtonUtil.enable($("#reorder-test-plan-button"));
 				}
@@ -111,7 +111,7 @@ define(['squash.translator', './table', './popups', 'app/util/ButtonUtil' ], fun
 				table.showFilterFields();
 				table.lockSortMode();
 				$("#test-plan-sort-mode-message").hide();
-				$("#test-cases-table").find('.select-handle').addClass('drag-handle');
+				domtable.find('.select-handle').addClass('drag-handle');
 				ButtonUtil.disable($("#reorder-test-plan-button"));
 
 			}

@@ -44,38 +44,6 @@
                             
 	<jsp:attribute name="head">
     	<comp:sq-css name="squash.purple.css" />
-    
-    	<script type="text/javascript">
-    	require(["common"], function() {
-    		require(["jquery", "tree", "workspace.event-bus"], function($, zetree, eventBus) {
-            	$(function(){
-            		
-            		$( '#add-items-button' ).on('click', function() {
-            			var tree = zetree.get();
-            			var ids = tree.jstree('get_selected').all('getResId');
-            			if (ids.length > 0) {
-            				$.post('${ testPlanUrl }', { testCasesIds: ids})
-            				.done(function(){
-            					eventBus.trigger('context.content-modified');
-            				})
-            			}
-            			tree.jstree('deselect_all'); 
-            		});
-            		
-            		$("#remove-items-button").on('click', function(){
-            			$("#remove-test-plan-button").click();
-            		});
-            		
-    				$("#back").click(function(){
-    					document.location.href="${backUrl}";
-    				});
-    				
-    				
-            		
-            	});
-    		});
-    	});
-    	</script>	
 	</jsp:attribute>
     
       
@@ -110,15 +78,37 @@
   </jsp:attribute>
 
 
-  <jsp:attribute name="foot">
+  <jsp:attribute name="foot"> 
   	<script type="text/javascript">
-          require([ "common" ], function() {
-          	require(["jquery", "iteration-management"], function($, iterManager) {
-          		$(function(){				
+    	require([ "common" ], function() {
+          	require(["jquery", "iteration-management", "tree", "workspace.event-bus"], function($, iterManager, zetree, eventBus) {
+          		$(function(){
+          			
+          			 $( '#add-items-button' ).on('click', function() {
+                       var tree = zetree.get();
+                       var ids = tree.jstree('get_selected').all('getResId');
+                       if (ids.length > 0) {
+                         $.post('${ testPlanUrl }', { testCasesIds: ids})
+                         .done(function(){
+                           eventBus.trigger('context.content-modified');
+                         })
+                       }
+                       tree.jstree('deselect_all'); 
+                     });
+                     
+                     $("#remove-items-button").on('click', function(){
+                       $("#remove-test-plan-button").click();
+                     });
+                       
+                     $("#back").click(function(){
+                       document.location.href="${backUrl}";
+                     });
+                   
           			iterManager.initEvents({});
+          			
           		});
           	});
-          });
+    	});
   	</script>
   </jsp:attribute>
 

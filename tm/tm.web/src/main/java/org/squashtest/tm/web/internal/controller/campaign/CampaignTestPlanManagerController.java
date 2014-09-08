@@ -69,8 +69,6 @@ import org.squashtest.tm.web.internal.model.viewmapper.NameBasedMapper;
 @Controller
 public class CampaignTestPlanManagerController {
 
-	private static final String ITEMS_IDS_REQUEST_PARAM = "itemIds[]";
-
 	private static final String TESTCASES_IDS_REQUEST_PARAM = "testCasesIds[]";
 
 	@Inject
@@ -112,7 +110,7 @@ public class CampaignTestPlanManagerController {
 	}
 
 
-	@RequestMapping(value = "campaigns/{campaignId}/test-plan/table", params = RequestParams.S_ECHO_PARAM)
+	@RequestMapping(value = "campaigns/{campaignId}/test-plan", params = RequestParams.S_ECHO_PARAM)
 	public @ResponseBody
 	DataTableModel getTestCasesTableModel(@PathVariable("campaignId") long campaignId,
 			final DataTableDrawParameters params, final Locale locale) {
@@ -191,6 +189,14 @@ public class CampaignTestPlanManagerController {
 	@ResponseBody
 	public void moveTestPlanItems(@PathVariable("campaignId") long campaignId, @PathVariable("newIndex") int newIndex, @PathVariable("itemIds") List<Long> itemIds) {
 		testPlanManager.moveTestPlanItems(campaignId, newIndex, itemIds);
+	}
+
+
+	@RequestMapping(value = "/campaigns/{campaignId}/test-plan/{testPlanId}", method = RequestMethod.POST, params = {"dataset"})
+	public @ResponseBody
+	Long setDataset(@PathVariable("testPlanId") long testPlanId, @RequestParam("dataset") Long datasetId){
+		testPlanManager.changeDataset(testPlanId, datasetId);
+		return datasetId;
 	}
 
 

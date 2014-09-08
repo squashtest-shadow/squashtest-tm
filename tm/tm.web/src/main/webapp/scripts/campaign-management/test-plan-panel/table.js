@@ -47,8 +47,9 @@
  *
  */
 
-define(['jquery', '../../test-plan-panel/sortmode', '../../test-plan-panel/filtermode', 'squashtable', 'jeditable'],
-        function($, smode, filtermode) {
+define(['jquery', '../../test-plan-panel/sortmode', 'squash.configmanager',
+        '../../test-plan-panel/filtermode', 'squashtable', 'jeditable'],
+        function($, smode, confman, filtermode) {
 
 	function createTableConfiguration(conf){
 
@@ -56,6 +57,8 @@ define(['jquery', '../../test-plan-panel/sortmode', '../../test-plan-panel/filte
 
 			var $row = $(row);
 
+			// ********* first, treat the read-permission features *********
+			
 			var $exectd = $row.find('.exec-mode').text('');
 			if (data['exec-mode'] === "M") {
 				$exectd.append('<span class="exec-mode-icon exec-mode-manual"/>').attr('title', '');
@@ -67,7 +70,17 @@ define(['jquery', '../../test-plan-panel/sortmode', '../../test-plan-panel/filte
 			// assignee
 			$row.find('.assignee-combo').wrapInner('<span/>');
 
+			// dataset : we create the 'button' part of a menu, but not actual menu.
+			if (data['dataset'].available.length>0){
+				var $dstd = $row.find('.dataset-combo');
+				$dstd.wrapInner('<span/>');
+			}
+			
+			// ****** now the write permission features *********************
+			
 			if (conf.features.editable){
+				
+				// assignable users
 				var assignableUsers = conf.data.assignableUsers;
 				var assigneeurl = conf.urls.testplanUrl + data['entity-id'];
 				var $assigneeelt = $row.find('.assignee-combo').children().first();
@@ -82,6 +95,26 @@ define(['jquery', '../../test-plan-panel/sortmode', '../../test-plan-panel/filte
 							$(this).text(assignableUsers[value]);
 						}
 				});
+				
+				// datasets : we build here a full menu. Note that the read features
+				// already ensured that a <a class="buttonmenu"> exists.
+				var $dsspan = $row.find('.dataset-combo').children().first(),
+					dsInfos = data['dataset'],
+					dsurl = conf.urls.testplanUrl + data['entity-id'];										
+				
+				if (dsInfos.available.length>0){
+					$dsspan.addClass('cursor-arrow');
+					$dsspan.editable(dsurl, {
+						type : 'select',
+						data : confman.toJeditableSelectFormat(dsInfos.available),
+						name : 'dataset',
+						onblur : 'cancel',
+						callback : function(value, settings){
+							$(this).text(settings.data[value]);
+						}
+					});					
+				}
+				
 			}
 
 
@@ -117,7 +150,7 @@ define(['jquery', '../../test-plan-panel/sortmode', '../../test-plan-panel/filte
 					var ids = dropData.itemIds.join(',');
 					var url	= conf.urls.testplanUrl + '/' + ids + '/position/' + dropData.newIndex;
 					$.post(url, function(){
-						$("#test-cases-table").squashTable().refresh();
+						$("#campaign-test-plans-table").squashTable().refresh();
 					});
 
 				}
@@ -141,7 +174,7 @@ define(['jquery', '../../test-plan-panel/sortmode', '../../test-plan-panel/filte
 			var sortmode = smode.newInst(enhconf);
 			tableconf.tconf.aaSorting = sortmode.loadaaSorting();
 
-			var table = $("#test-cases-table").squashTable(tableconf.tconf, tableconf.sconf);
+			var table = $("#campaign-test-plans-table").squashTable(tableconf.tconf, tableconf.sconf);
 			table.data('sortmode', sortmode);
 			this.lockSortMode = sortmode._lockSortMode;
 			this.unlockSortMode = sortmode._unlockSortMode;

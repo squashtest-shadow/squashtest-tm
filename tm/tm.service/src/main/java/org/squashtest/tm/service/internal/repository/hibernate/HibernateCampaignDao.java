@@ -77,6 +77,7 @@ public class HibernateCampaignDao extends HibernateEntityDao<Campaign> implement
 			"select index(CampaignTestPlanItem), CampaignTestPlanItem "+
 					"from Campaign as Campaign inner join Campaign.testPlan as CampaignTestPlanItem "+
 					"left outer join CampaignTestPlanItem.referencedTestCase as TestCase " +
+					"left outer join CampaignTestPlanItem.referencedDataset as Dataset " +
 					"left outer join TestCase.project as Project " +
 					"left outer join CampaignTestPlanItem.user as User "+
 					"where Campaign.id = :campaignId ";

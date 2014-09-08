@@ -46,44 +46,6 @@
 	
   <jsp:attribute name="head">
 	<comp:sq-css name="squash.purple.css" />
-
-	<script type="text/javascript">
-	require(["common"], function() {
-		require(["jquery", "tree", "workspace.event-bus"], function($, zetree, eventBus) {
-			$(function(){
-	
-        		$( '#add-items-button' ).on('click', function() {
-        			var tree = zetree.get();
-        			var ids = tree.jstree('get_selected').all('getResId');
-        			if (ids.length > 0) {
-        				$.post('${ testPlanUrl }', { testCasesIds: ids})
-        				.done(function(){
-        					eventBus.trigger('context.content-modified');
-						})
-					}
-					tree.jstree('deselect_all'); //todo : each panel should define that method too.
-					firstIndex = null;
-					lastIndex = null;
-				});
-				
-        		$("#remove-items-button").on('click', function(){
-        			$("#remove-test-plan-button").click();
-        		});
-        		
-				$("#back").click(function(){
-					document.location.href="${backUrl}";
-				});
-				
-				eventBus.onContextual("context.content-modified", function() {
-					$("#test-suite-test-plans-table").squashTable().refresh();
-				});
-				
-			});
-		});
-	});
-		
-	</script>	
-			
 	</jsp:attribute>
 	
   <jsp:attribute name="subPageTitle">
@@ -118,6 +80,44 @@
     </jsp:attribute>
 
   <jsp:attribute name="foot">
+
+  <script type="text/javascript">
+  require(["common"], function() {
+    require(["jquery", "tree", "workspace.event-bus"], function($, zetree, eventBus) {
+      $(function(){
+  
+            $( '#add-items-button' ).on('click', function() {
+              var tree = zetree.get();
+              var ids = tree.jstree('get_selected').all('getResId');
+              if (ids.length > 0) {
+                $.post('${ testPlanUrl }', { testCasesIds: ids})
+                .done(function(){
+                  eventBus.trigger('context.content-modified');
+            })
+          }
+          tree.jstree('deselect_all'); //todo : each panel should define that method too.
+          firstIndex = null;
+          lastIndex = null;
+        });
+        
+            $("#remove-items-button").on('click', function(){
+              $("#remove-test-plan-button").click();
+            });
+            
+        $("#back").click(function(){
+          document.location.href="${backUrl}";
+        });
+        
+        eventBus.onContextual("context.content-modified", function() {
+          $("#test-suite-test-plans-table").squashTable().refresh();
+        });
+        
+      });
+    });
+  });
+    
+  </script> 
+      
   </jsp:attribute>
 
 </layout:tree-picker-layout>

@@ -20,94 +20,212 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 --%>
-<%@ tag body-content="empty" description="jqueryfies a campaign test case table" %>
-<%@ attribute name="campaignUrl" required="true" description="the url to the campaign that hold all of these test cases" %>
-<%@ attribute name="batchRemoveButtonId" required="true" description="html id of button for batch removal of test cases" %>
-<%@ attribute name="editable" type="java.lang.Boolean" description="Right to edit content. Default to false." %>
-<%@ attribute name="campaign" type="java.lang.Object" description="The campaign." %>
+<%-- 
+  As of Squash TM 1.11 the content of this tag was wiped then replaced by a fork of 
+  tags/iteration-components/iteration-test-plan-panel.tag
 
-<%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt"%>
-<%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component" %>
-<%@ taglib prefix="dt" tagdir="/WEB-INF/tags/datatables" %>
+  Some features were then removed. See comments in the js initialization bloc at the end of this file.
+  
+ --%>
+<%@ tag body-content="empty" description="the test plan panel of a campaign when displayed in the test plan manager" %>
+
+<%@ attribute name="campaign" type="java.lang.Object" description="the instance of campaign"%>
+
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="s" uri="http://www.springframework.org/tags"%>
+<%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt"%>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%@ taglib prefix="json" uri="http://org.squashtest.tm/taglib/json"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 
-<c:url var="testCaseUrl" value="/test-cases/{tc-id}/info" />
-<c:url var="testplanUrl"  value="/campaigns/${campaign.id}/test-plan" />
-<c:url var="dtMessagesUrl" value="/datatables/messages" />
+<s:url var="dtMessagesUrl" value="/datatables/messages" />
+<s:url var="tableModelUrl" value="/campaigns/{campId}/test-plan">
+  <s:param name="campId" value="${campaign.id}" />
+</s:url>
+<s:url var="testcaseUrl"  value="/test-cases/{tc-id}/info" />
 
-<%-- be careful that the variable below is a 'var', not a 'url'. It's so because 'campaignUrl' is already an URL. Just another detail to get straight one day... --%>
-<c:set var="tablemodel" value="${campaignUrl}/test-plan/table" />
 
-<table id="test-cases-table" data-def="ajaxsource=${tablemodel}">
-	<thead>
-		<tr>
-			<th data-def="map=entity-index, select,center, sClass=drag-handle">#</th>
-			<th data-def="map=project-name"><f:message key="label.project" /></th>
-			<th data-def="map=exec-mode, center, visible=${iteration.project.testAutomationEnabled}, sClass=exec-mode"><f:message key="label.Mode" /></th>
-			<th data-def="map=reference"><f:message key="label.Reference"/></th>
-			<th data-def="map=tc-name, link=${testCaseUrl}"><f:message key="test-case.name.label" /></th>
-			<th data-def="map=assigned-user, sWidth=10%"><f:message key="test-case.user.combo.label" /></th>
-			<th data-def="map=importance"><f:message key="test-case.importance.combo.label" /></th>
-		</tr>
-	</thead>
-	<tbody><%-- Will be populated through ajax --%></tbody>
-</table>
-<div id="test-case-row-buttons" class="not-displayed">
-	<a id="delete-test-case-button"  class="delete-test-case-button"><f:message key="test-case.verified_requirement_item.remove.button.label" /></a>
-</div> 
+
+
+
+<div id="campaign-test-plans-panel" class="table-tab">
+
+  <%-- ==================== THE TOOLBAR ==================== --%>
+
+  <div class="cf">
+
+    <f:message var="tooltipSortmode" key="tooltips.TestPlanSortMode" />
+    <f:message var="messageSortmode" key="message.TestPlanSortMode" />
+    <f:message var="reorderLabel" key="label.Reorder" />
+    <f:message var="filterLabel" key="label.Filter" />
+    <f:message var="filterTooltip" key="tooltips.FilterTestPlan" />
+    <f:message var="reorderTooltip" key="tooltips.ReorderTestPlan" />
+    <f:message var="removeLabel" key="label.Remove" />
+    <f:message var="manageTS" key='menu.test-suites.button.main' />
+    <f:message var="tooltipAddSuite" key="tooltips.AddTSToTPI" />
+    <f:message var="confirmLabel" key="label.Confirm" />
+    <f:message var="cancelLabel" key="label.Cancel" />
+    <f:message var="assignLabel" key="label.Assign" />
+    <f:message var="okLabel" key="label.Ok" />
+
+
+    <div class="left btn-toolbar">
+      <span class="btn-group">
+        <button id="filter-test-plan-button" class="sq-btn btn-sm" title="${filterTooltip}">
+          <span class="ui-icon ui-icon-refresh"></span>
+          ${filterLabel}
+        </button>
+        <button id="reorder-test-plan-button" class="sq-btn btn-sm" title="${reorderTooltip}">
+          <span class="ui-icon ui-icon-refresh"></span>
+          ${reorderLabel}
+        </button>
+        <span id="test-plan-sort-mode-message" class="not-displayed sort-mode-message small"
+          title="${tooltipSortmode}">${messageSortmode}</span>
+      </span>
+    </div>
+
+    <div class="right btn-toolbar">
+
+        <span class="btn-group">
+          <button id="remove-test-plan-button" class="sq-btn btn-sm" title="${tooltipRemoveTPI}">
+            <span class="ui-icon ui-icon-trash"></span>
+            ${removeLabel}
+          </button>
+        </span>
+
+    </div>
+    
+  </div>
+
+  <%-- ===================== THE TABLE ===================== --%>
+
+  <div class="table-tab-wrap">
+
+    <table id="campaign-test-plans-table" class="test-plan-table unstyled-table"
+      data-def="ajaxsource=${tableModelUrl}"  data-entity-id="${campaign.id}" data-entity-type="campaign">
+      <thead>
+        <tr>
+          <th class="no-user-select"
+            data-def="map=entity-index, select, sortable, center, sClass=drag-handle, sWidth=2.5em">#</th>
+          <th class="no-user-select tp-th-filter tp-th-project-name" data-def="map=project-name, sortable">
+            <f:message key="label.project" />
+          </th>
+          <th class="no-user-select tp-th-filter tp-th-reference" data-def="map=reference, sortable">
+            <f:message key="label.Reference" />
+          </th>
+          <th class="no-user-select tp-th-filter tp-th-name" data-def="map=tc-name, sortable, link=${testcaseUrl}">
+            <f:message key="iteration.executions.table.column-header.test-case.label" />
+          </th>
+          <th class="no-user-select tp-th-filter tp-th-importance" data-def="map=importance, sortable">
+            <f:message key="iteration.executions.table.column-header.importance.label" />
+          </th>
+          <th class="no-user-select tp-th-filter tp-th-dataset" data-def="map=dataset.selected.name, sortable, sWidth=10%, sClass=dataset-combo">
+            <f:message key="label.Dataset" />
+          </th>       
+          <th class="no-user-select" data-def="map=empty-delete-holder, delete-button=#delete-multiple-test-cases-dialog">&nbsp;</th>
+        </tr>
+      </thead>
+      <tbody>
+        <%-- Will be populated through ajax --%>
+      </tbody>
+    </table>
+
+
+    <%-- ============================== THE DIALOGS ========================= --%>
+
+
+  <div id="camp-test-plan-reorder-dialog" class="not-displayed popup-dialog" title="${reorderLabel}">
+    <span><f:message key="message.ReorderTestPlan" /></span>
+    <div class="popup-dialog-buttonpane">
+      <input type="button" value="${confirmLabel}" />
+      <input type="button" value="${cancelLabel}" />
+    </div>
+  </div>
+
+
+
+  <div id="camp-test-plan-batch-assign" class="not-displayed popup-dialog" title="<f:message key="label.AssignUser"/>">
+    <div data-def="state=assign">
+      <span><f:message key="message.AssignTestCaseToUser" /></span>
+      <select class="batch-select">
+        <c:forEach var="user" items="${assignableUsers}">
+          <option value="${user.key}">${user.value}</option>
+        </c:forEach>
+      </select>
+    </div>
+
+    <div class="popup-dialog-buttonpane">
+      <input type="button" value="${assignLabel}" data-def="state=assign, mainbtn=assign, evt=confirm" />
+      <input type="button" value="${cancelLabel}" data-def="evt=cancel" />
+    </div>
+  </div>
+  
+  
+  <div id="delete-multiple-test-cases-dialog" class="not-displayed popup-dialog" title="<f:message key='dialog.remove-testcase-associations.title'/>">
+  
+    <div data-def="state=confirm-deletion">
+      <span><f:message key="dialog.remove-testcase-associations.message"/></span>
+    </div>
+
+    
+    <div class="popup-dialog-buttonpane">
+      <input type="button" class="button" value="${okLabel}" data-def="state=confirm-deletion, evt=confirm, mainbtn=confirm-deletion"/>
+      <input type="button" class="button" value="${cancelLabel}" data-def="evt=cancel"/>
+    </div>
+  
+  </div>
+
+  </div>
+</div>
+<!-- /test plan panel end -->
+
 <script type="text/javascript">
-require(["common"], function(){
-require(["jquery","squashtable"], function($){
-	var tableSettings = { 
-		"fnRowCallback" : function(row, data, displayIndex) {
-			
-			var $row = $(row);
-			
-			var $exectd = $row.find('.exec-mode').text('');
-			if (data['exec-mode'] === "A") {
-				$exectd.append('<span class"exec-mode-icon exec-mode-manual"/>').attr('title', '');
-			} else {
-				var label =  "<f:message key="label.automatedExecution"/>";
-				$exectd.append('<span class="exec-mode-icon exec-mode-automated"/>').attr('title',
-						label);
-			}
-			
-		}
-	};	
-	
-	var squashSettings = {
-		enableDnD : true,
-		functions : {
-			dropHandler : function(dropData){
-				var ids = dropData.itemIds.join(',');
-				var url	= "${testplanUrl}/" + ids + '/position/' + dropData.newIndex;		
-				$.post(url, function(){
-					$("#test-cases-table").squashTable().refresh();
-				});
-			}
-		}
-	}
+  require(["common"], function(){
+    require(["domReady", "campaign-management"], function(domReady, campInit){
+      
+    <%--
+      Note about module 'campaign-management' :
+      
+      This module is usually used for the test plan of an campaign in the context of 
+      the view on that campaign. There are much less features for this table in
+      the context of the test plan manager. The javascript is all 
+      there and are all executed.
+      
+      The only thing preventing those features to appear is the lack of valid targets :
+      some columns in the table are missing, or doesn't have the correct css classes.
+      Still, remember that the javascript here is not tailormade, nor configured with 
+      specific flags, it just happens to work as is.   
+      
+      So, your guess : Is it cool, or risky ?
+    --%>
+    	
+      domReady(function(){
+        var conf = {
+        	// permissions are hard coded because a user accessing that page 
+        	// should have this following profile
+        	
+        	// (also remember that the campaigns have a conf object that differs 
+        	// slightly from the one for the iterations. That's why we have here 
+        	// 'features' instead of 'permissions' and 'data' instead of 'basic')
+        	//  
+            features : {
+              linkable : true,
+              editable : true,
+              executable : false,
+              reorderable : true
+            },
+            data : {
+              campaignId : ${campaign.id}
+            }
+          };
+          
+        campInit.initTestPlanPanel(conf);
+      });
+      
+    });
+  });
 
-	$(function() {
 
-		
-			$("#test-cases-table").squashTable(tableSettings, squashSettings);
-			
-			<%-- selected test-case removal --%>
-			$( '#${ batchRemoveButtonId }' ).click(function() {
-				var table = $( '#test-cases-table' ).squashTable();
-				var ids = table.getSelectedIds();
-				
-				if (ids.length > 0) {
-					$.post('${ campaignUrl }/test-plan', { action: 'remove', itemIds: ids }).done(function(){
-						table.refresh();
-					});
-				}
-			});
-			
-		});
-	});
-});
-	
 </script>
+
 

@@ -98,14 +98,14 @@ define(['squash.translator', './table', './popups', 'app/util/ButtonUtil'], func
 		}
 		
 		$("#filter-test-plan-button").on('click', function(){
-		
+			var domtable = $("#iteration-test-plans-table").squashTable();
 			if(filterOn){
 				table.hideFilterFields();
 				table.unlockSortMode();
 				filterOn=false;
-				$("#iteration-test-plans-table").squashTable().refresh();
+				domtable.refresh();
 				$("#test-plan-sort-mode-message").show();
-				$("#test-cases-table").find('.select-handle').removeClass('drag-handle');
+				domtable.find('.select-handle').removeClass('drag-handle');
 				if (this.reorderable){
 					ButtonUtil.enable($("#reorder-test-plan-button"));
 				}
@@ -115,7 +115,7 @@ define(['squash.translator', './table', './popups', 'app/util/ButtonUtil'], func
 				table.lockSortMode();
 				filterOn=true;
 				$("#test-plan-sort-mode-message").hide();
-				$("#test-cases-table").find('.select-handle').addClass('drag-handle');
+				domtable.find('.select-handle').addClass('drag-handle');
 				ButtonUtil.disable($("#reorder-test-plan-button"));
 
 			}

@@ -98,13 +98,14 @@ define(['squash.translator', './table', './popups','app/util/ButtonUtil'], funct
 		}
 		
 		$("#filter-test-plan-button").on('click', function(){
+			var domtable = $("#test-suite-test-plans-table").squashTable();
 			if(filterOn){
 				filterOn=false;
 				table.hideFilterFields();
 				table.unlockSortMode();
-				$("#test-suite-test-plans-table").squashTable().refresh();
+				domtable.refresh();
 				$("#test-plan-sort-mode-message").show();
-				$("#test-cases-table").find('.select-handle').removeClass('drag-handle');
+				domtable.find('.select-handle').removeClass('drag-handle');
 				if (this.reorderable){
 					ButtonUtil.enable($("#reorder-test-plan-button"));
 				}
@@ -113,7 +114,7 @@ define(['squash.translator', './table', './popups','app/util/ButtonUtil'], funct
 				table.showFilterFields();
 				table.lockSortMode();
 				$("#test-plan-sort-mode-message").hide();
-				$("#test-cases-table").find('.select-handle').addClass('drag-handle');
+				domtable.find('.select-handle').addClass('drag-handle');
 				ButtonUtil.disable($("#reorder-test-plan-button"));
 			}
 		});
