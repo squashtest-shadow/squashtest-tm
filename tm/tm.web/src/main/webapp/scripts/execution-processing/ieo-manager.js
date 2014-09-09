@@ -118,7 +118,7 @@ define([ "jquery", "app/ws/squashtm.notification", "squash.translator", "jquery.
 					$.post(squashtm.app.contextRoot+ "/checkXFO/", {URL:url} , function(xframeAllowed) {
 					if (! xframeAllowed){
 						iframe.attr('src', "about:blank");
-						notification.showError(translator.get('message.exception.IEO.XFODoNotPermitIFrame'))
+						notification.showError(translator.get('message.exception.IEO.XFODoNotPermitIFrame'));
 					} else {
 						iframe.attr('src', url);
 					}
