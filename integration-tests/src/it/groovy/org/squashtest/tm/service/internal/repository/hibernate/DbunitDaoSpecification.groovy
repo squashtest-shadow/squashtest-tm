@@ -33,7 +33,7 @@ import org.unitils.database.util.TransactionMode
 import spock.lang.Specification
 
 /**
- * Superclass for a DB-driven DAO test. The test will populate the database using a DBUnit dataset with the same name as the test. 
+ * Superclass for a DB-driven DAO test. The test will populate the database using a DBUnit dataset with the same name as the test.
  * Subclasses should be annotated @UnitilsSupport
  */
 @ContextConfiguration(["classpath:repository/dependencies-scan-context.xml", "classpath:unitils-datasource-context.xml", "classpath*:META-INF/**/repository-context.xml", "classpath*:META-INF/**/dynamicdao-context.xml"])
@@ -41,22 +41,20 @@ import spock.lang.Specification
 @Transactional
 abstract class DbunitDaoSpecification extends Specification {
 
-
-
 	@Inject
 	private SessionFactory sessionFactory;
 
 	protected Session getSession(){
 		return sessionFactory.getCurrentSession();
 	}
-	
+
 	protected boolean found(Class<?> entityClass, Long id){
 		return (getSession().get(entityClass, id) != null)
 	}
 	protected Object findEntity(Class<?> entityClass, Long id){
 		return getSession().get(entityClass, id);
 	}
-	
+
 	protected boolean found(String tableName, String idColumnName, Long id){
 		String sql = "select count(*) from "+tableName+" where "+idColumnName+" = :id";
 		Query query = getSession().createSQLQuery(sql);

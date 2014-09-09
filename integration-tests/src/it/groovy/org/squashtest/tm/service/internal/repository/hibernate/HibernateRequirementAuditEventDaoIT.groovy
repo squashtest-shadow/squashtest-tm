@@ -44,7 +44,7 @@ class HibernateRequirementAuditEventDaoIT extends DbunitDaoSpecification {
 
 
 	def setupSpec(){
-		List.metaClass.init = { howmany, item -> return (1..howmany).collect{return item
+		List.metaClass.init = { howmany, item -> return (1..howmany).collect{ return item
 			} }
 	}
 
@@ -57,10 +57,11 @@ class HibernateRequirementAuditEventDaoIT extends DbunitDaoSpecification {
 		def createEvent = new RequirementCreation(requirement, requirement.createdBy);
 		eventDao.persist(createEvent);
 
-		getSession().evict(createEvent);
+		session.flush()
+		session.evict(createEvent)
 
-		def revent = getSession().createQuery("from RequirementCreation rc where rc.requirementVersion=:req")
-				.setParameter("req", requirement)
+		def revent = getSession().createQuery("from RequirementCreation rc where rc.requirementVersion.id=:req")
+				.setParameter("req", requirement.id)
 				.uniqueResult();
 
 		then :
@@ -75,15 +76,16 @@ class HibernateRequirementAuditEventDaoIT extends DbunitDaoSpecification {
 
 		when :
 		RequirementPropertyChange pptChangeEvent = RequirementPropertyChange.builder()
-		.setSource(requirement)
-		.setAuthor(requirement.createdBy)
-		.setModifiedProperty("property")
-		.setOldValue("oldValue")
-		.setNewValue("newValue")
-		.build()
+				.setSource(requirement)
+				.setAuthor(requirement.createdBy)
+				.setModifiedProperty("property")
+				.setOldValue("oldValue")
+				.setNewValue("newValue")
+				.build()
 		eventDao.persist(pptChangeEvent);
 
-		getSession().evict(pptChangeEvent);
+		session.flush()
+		session.evict(pptChangeEvent)
 
 		def revent = getSession().createQuery("from RequirementPropertyChange rpc where rpc.requirementVersion=:req")
 				.setParameter("req", requirement)
@@ -104,15 +106,16 @@ class HibernateRequirementAuditEventDaoIT extends DbunitDaoSpecification {
 
 		when :
 		def pptChangeEvent = RequirementLargePropertyChange.builder()
-		.setSource(requirement)
-		.setAuthor(requirement.createdBy)
-		.setModifiedProperty("property")
-		.setOldValue("oldValue")
-		.setNewValue("newValue")
-		.build()
+				.setSource(requirement)
+				.setAuthor(requirement.createdBy)
+				.setModifiedProperty("property")
+				.setOldValue("oldValue")
+				.setNewValue("newValue")
+				.build()
 		eventDao.persist(pptChangeEvent);
 
-		getSession().evict(pptChangeEvent);
+		session.flush()
+		session.evict(pptChangeEvent);
 
 		def revent = getSession().createQuery("from RequirementLargePropertyChange rpc where rpc.requirementVersion=:req")
 				.setParameter("req", requirement)
@@ -149,11 +152,11 @@ class HibernateRequirementAuditEventDaoIT extends DbunitDaoSpecification {
 			parse("2010-06-03"),
 			parse("2010-04-02"),
 			parse("2010-02-01")
-			
-			
-			
+
+
+
 		]
-		
+
 		events*.author == [
 			"editor 13",
 			"editor 12",
@@ -193,7 +196,7 @@ class HibernateRequirementAuditEventDaoIT extends DbunitDaoSpecification {
 
 		when :
 		def res = eventDao.countByRequirementVersionId(-1L)
-		
+
 
 		then :
 		res == 4
