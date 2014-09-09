@@ -1,0 +1,134 @@
+/**
+ *     This file is part of the Squashtest platform.
+ *     Copyright (C) 2010 - 2014 Henix, henix.fr
+ *
+ *     See the NOTICE file distributed with this work for additional
+ *     information regarding copyright ownership.
+ *
+ *     This is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU Lesser General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     this software is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU Lesser General Public License for more details.
+ *
+ *     You should have received a copy of the GNU Lesser General Public License
+ *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
+ */
+package org.squashtest.tm.domain.execution;
+
+import org.apache.commons.lang.NullArgumentException
+import org.squashtest.tm.domain.execution.Execution
+import org.squashtest.tm.domain.execution.ExecutionStatus
+import org.squashtest.tm.domain.execution.ExecutionStep
+import org.squashtest.tm.domain.testcase.ActionTestStep
+import org.squashtest.tm.domain.testcase.TestCase
+import org.squashtest.tm.domain.testcase.TestCaseImportance
+import org.squashtest.tm.domain.testcase.TestCaseNature
+import org.squashtest.tm.domain.testcase.TestCaseStatus
+import org.squashtest.tm.domain.testcase.TestCaseType
+
+import spock.lang.Specification
+
+class ExecutionTest extends Specification {
+	def "should copy test steps as execution steps"() {
+		given :
+		Execution execution = new Execution()
+		ActionTestStep ts1 = new ActionTestStep(action:"action1",expectedResult:"result1")
+		ActionTestStep ts2 = new ActionTestStep(action:"action2",expectedResult:"result2")
+		ActionTestStep ts3 = new ActionTestStep(action:"action3",expectedResult:"result3")
+
+		when :
+		ExecutionStep exs1 = new ExecutionStep(ts1, null)
+		ExecutionStep exs2 = new ExecutionStep(ts2, null)
+		ExecutionStep exs3 = new ExecutionStep(ts3, null)
+
+		execution.addStep(exs1)
+		execution.addStep(exs2)
+		execution.addStep(exs3)
+
+		List<ExecutionStep> list = execution.getSteps();
+
+		then :
+		list.collect { it.action } == [
+			"action1",
+			"action2",
+			"action3"
+		]
+		list.collect { it.expectedResult } == [
+			"result1",
+			"result2",
+			"result3"
+		]
+		list.collect { it.executionStatus } == [
+			ExecutionStatus.READY,
+			ExecutionStatus.READY,
+			ExecutionStatus.READY
+		]
+	}
+	
+	def "should not find first unexecuted step because has no steps"(){
+		given : Execution execution = new Execution()
+		when : ExecutionStep executionStep = execution.findFirstUnexecutedStep()
+		then :
+		executionStep == null
+	}
+	
+	def "should not find first unexecuted step because all executed"(){
+		given : Execution execution = new Execution()
+		ExecutionStep step1 = new ExecutionStep()
+		step1.setExecutionStatus ExecutionStatus.SUCCESS
+		execution.addStep step1
+		ExecutionStep step2 = new ExecutionStep()
+		step2.setExecutionStatus ExecutionStatus.FAILURE
+		execution.addStep step2
+		ExecutionStep step3 = new ExecutionStep()
+		step3.setExecutionStatus ExecutionStatus.BLOCKED
+		execution.addStep step3
+
+		when :def executionStep = execution.findFirstUnexecutedStep()
+		then :
+		executionStep == null
+	}
+	
+	def "should find first unexecuted step "(){
+		given : Execution execution = new Execution()
+		ExecutionStep step1 = new ExecutionStep()
+		step1.setExecutionStatus ExecutionStatus.SUCCESS
+		execution.addStep step1
+		ExecutionStep step2 = new ExecutionStep()
+		step2.setExecutionStatus ExecutionStatus.READY
+		execution.addStep step2
+		ExecutionStep step3 = new ExecutionStep()
+		step3.setExecutionStatus ExecutionStatus.BLOCKED
+		execution.addStep step3
+
+		when :
+		def executionStep = execution.findFirstUnexecutedStep()
+		
+		then :
+		executionStep == step2
+	}
+	
+	def "should create a valid execution from a test case without prerequisite"() {
+		given: 
+		TestCase testCase = Mock()
+		testCase.name >> "peter parker"
+		testCase.steps >> []
+		testCase.allAttachments >> []
+		testCase.importance >> TestCaseImportance.LOW
+		testCase.nature >> TestCaseNature.UNDEFINED
+		testCase.type >> TestCaseType.UNDEFINED
+		testCase.status >> TestCaseStatus.WORK_IN_PROGRESS
+		
+		when:
+		Execution res = new Execution(testCase)
+		
+		then:
+		notThrown NullArgumentException
+		
+	}
+}

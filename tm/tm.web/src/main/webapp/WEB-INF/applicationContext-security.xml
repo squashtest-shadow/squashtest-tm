@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) 2010 - 2014 Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<beans:beans xmlns="http://www.springframework.org/schema/security" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:beans="http://www.springframework.org/schema/beans" xmlns:context="http://www.springframework.org/schema/context"
+  xmlns:util="http://www.springframework.org/schema/util"
+  xsi:schemaLocation="
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd
+		http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc-3.1.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd
+		http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.1.xsd">
+
+    <!--  images and stuff dont need authentication -->
+  <http pattern="/images/**" security="none" />
+  <http pattern="/styles/**" security="none" />
+  <http pattern="/styles-*/**" security="none" />
+  <http pattern="/scripts/**" security="none" />
+
+  <http auto-config="true" use-expressions="true" entry-point-ref="authenticationProcessingFilterEntryPoint">
+		<!-- Login page config -->
+    <intercept-url pattern="/login" access="permitAll" />
+
+		<!-- Logout page config; we have to set "home-workspace" instead of "/" for logout url to avoid "/null" url -->
+    <logout invalidate-session="true" logout-success-url="/home-workspace/" logout-url="/logout" />
+
+    <request-cache ref="httpSessionRequestCache" />
+
+		<!-- Pages restricted to admins -->
+    <intercept-url requires-channel="${authentication.application.securablechannels:http}" pattern="/admin"
+      access="hasRole('ROLE_ADMIN')" />
+    <intercept-url requires-channel="${authentication.application.securablechannels:http}" pattern="/admin/**"
+      access="hasRole('ROLE_ADMIN')" />
+    <intercept-url requires-channel="${authentication.application.securablechannels:http}" pattern="/administration"
+      access="hasRole('ROLE_TM_PROJECT_MANAGER') or hasRole('ROLE_ADMIN')" />
+    <intercept-url requires-channel="${authentication.application.securablechannels:http}" pattern="/administration/bugtrackers"
+      access="hasRole('ROLE_ADMIN')" />
+    <intercept-url requires-channel="${authentication.application.securablechannels:http}" pattern="/administration/bugtrackers/**"
+      access="hasRole('ROLE_ADMIN')" />
+      <intercept-url requires-channel="${authentication.application.securablechannels:http}" pattern="/administration/test-automation-servers"
+      access="hasRole('ROLE_ADMIN')" />
+     <intercept-url requires-channel="${authentication.application.securablechannels:http}" pattern="/administration/test-automation-servers/**"
+      access="hasRole('ROLE_ADMIN')" />
+     <intercept-url requires-channel="${authentication.application.securablechannels:http}" pattern="/administration/indexes"
+      access="hasRole('ROLE_ADMIN')" />
+    <intercept-url requires-channel="${authentication.application.securablechannels:http}" pattern="/administration/projects"
+      access="hasRole('ROLE_TM_PROJECT_MANAGER') or hasRole('ROLE_ADMIN')" />
+    <intercept-url requires-channel="${authentication.application.securablechannels:http}" pattern="/administration/projects/**"
+      access="hasRole('ROLE_TM_PROJECT_MANAGER') or hasRole('ROLE_ADMIN')" />
+    <intercept-url requires-channel="${authentication.application.securablechannels:http}" pattern="/administration/users"
+      access="hasRole('ROLE_ADMIN')" />
+    <intercept-url requires-channel="${authentication.application.securablechannels:http}" pattern="/administration/users/**"
+      access="hasRole('ROLE_ADMIN')" />
+    <intercept-url requires-channel="${authentication.application.securablechannels:http}" pattern="/configuration"
+      access="hasRole('ROLE_ADMIN')" />
+    <intercept-url requires-channel="${authentication.application.securablechannels:http}" pattern="/configuration/**"
+      access="hasRole('ROLE_ADMIN')" />
+    <intercept-url requires-channel="${authentication.application.securablechannels:http}" pattern="/platform/**"
+      access="hasRole('ROLE_ADMIN')" />
+        
+		<!-- One must log in to access the application -->
+    <intercept-url pattern="/**" access="isAuthenticated()" />
+		
+		<!-- API for test automation clients -->
+    <intercept-url requires-channel="${authentication.application.securablechannels:http}" pattern="/resultUpdate/**"
+      access="hasRole('ROLE_TA_API_CLIENT')" />
+
+		<!-- we must specify this to force redirect to login page when failure happens
+		and avoid unstyled login error page generated by spring -->
+
+    <form-login authentication-failure-url="/login.jsp?login-error" authentication-success-handler-ref="accessGrantedHandler" />
+
+    <access-denied-handler ref="accessDeniedHandler" />
+
+    <custom-filter ref="htmlSanitizationFilter" position="FIRST" />
+
+  </http>
+
+
+  <beans:bean id="exceptionTranslationFilter" class="org.springframework.security.web.access.ExceptionTranslationFilter">
+    <beans:property name="authenticationEntryPoint" ref="authenticationProcessingFilterEntryPoint" />
+    <beans:property name="accessDeniedHandler" ref="accessDeniedHandler" />
+  </beans:bean>
+
+  <beans:bean id="httpSessionRequestCache"
+    class="org.squashtest.tm.web.internal.controller.authentication.HttpSessionRequestCacheWithExceptions">
+    <!-- beans:property name="justUseSavedRequestOnGet" value="true" /-->
+    <beans:property name="exceptions">
+    	<beans:list>
+    		<beans:value>/login.jsp</beans:value>
+    		<beans:value>/localization/filler</beans:value>
+    	</beans:list>
+    </beans:property>
+  </beans:bean>
+
+  <beans:bean id="accessDeniedHandler" class="org.squashtest.tm.web.internal.security.authentication.SquashAccessDeniedHandler">
+    <beans:property name="errorPage" value="/squash/accessDenied" />
+  </beans:bean>
+
+  <beans:bean id="accessGrantedHandler"
+    class="org.squashtest.tm.web.internal.security.authentication.AuthenticationSuccessCallbacksHandler">
+    <beans:property name="callbacks">
+      <beans:list>
+        <beans:bean class="org.squashtest.tm.web.internal.security.authentication.BugTrackerAutoconnectCallback">
+          <beans:property name="bugTrackersLocalService" ref="squashtest.tm.service.BugTrackersLocalService" />
+          <beans:property name="projectFinder" ref="squashtest.tm.service.ProjectManagerService" />
+          <beans:property name="bugTrackerFinder" ref="squashtest.tm.service.BugTrackerManagerService" />
+          <beans:property name="taskExecutor" ref="core.executor.service" />
+        </beans:bean>
+      </beans:list>
+    </beans:property>
+  </beans:bean>
+
+  <beans:bean id="authenticationProcessingFilterEntryPoint" class="org.squashtest.tm.web.internal.security.authentication.RedirectEntryPoint">
+    <beans:property name="loginFormUrl" value="/login" />
+    <beans:property name="forceHttps" value="${authentication.application.forcehttps:false}" />
+  </beans:bean>
+
+  <beans:bean id="htmlSanitizationFilter" class="org.squashtest.tm.web.internal.filter.HtmlSanitizationFilter" />
+
+  <authentication-manager alias="squashtest.core.security.AuthenticationManager">
+    <authentication-provider ref="authenticationProvider.${authentication.provider:internal}" />
+  </authentication-manager>
+
+  <!-- 
+		the following bean provide a link to the credentials, both reading and editing. 
+		todo : create a bean configurable via a .properties file, in case we need to switch 
+		to an LDAP provider. 
+	  -->
+
+
+  <beans:bean id="permissionFactory" class="org.squashtest.tm.security.acls.CustomPermissionFactory" />
+
+</beans:beans>

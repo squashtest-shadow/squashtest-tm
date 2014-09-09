@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) 2010 - 2014 Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<web-app xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/jee/web-app_2_5.xsd" version="2.5">
+	<!-- ====== SPRING FRONT CONTROLLER ====== -->
+	<servlet>
+		<!-- CoC will lookup ${servlet-name}-servlet.xml for MVC conf -->
+		<servlet-name>squash-tm</servlet-name>
+		<servlet-class>
+			org.springframework.web.servlet.DispatcherServlet
+		</servlet-class>
+		<load-on-startup>1</load-on-startup>
+		<init-param>
+			<param-name>contextClass</param-name>
+			<param-value>
+				org.springframework.osgi.web.context.support.OsgiBundleXmlWebApplicationContext
+			</param-value>
+		</init-param>
+		<description>
+			Spring MVC front controller configured to use a
+			Spring-DM-integrated application context
+		</description>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>squash-tm</servlet-name>
+		<url-pattern>/app/*</url-pattern>
+	</servlet-mapping>
+	<!-- ====== /SPRING FRONT CONTROLLER ====== -->
+
+<!--  ========================= encoding set to utf-8 =========================== -->
+    <filter>
+        <filter-name>encoding-filter</filter-name>
+        <filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
+        <init-param>
+            <param-name>encoding</param-name>
+            <param-value>utf-8</param-value>
+        </init-param>
+        <!--  we force the encoding because we want the encoding to be set for both request and response -->
+        <init-param>
+            <param-name>forceEncoding</param-name>
+            <param-value>true</param-value>
+        </init-param>        
+
+    </filter>
+
+    <filter-mapping>
+        <filter-name>encoding-filter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+	<!-- ====== SPRING SECURITY ====== -->
+	<filter>
+		<filter-name>springSecurityFilterChain</filter-name>
+		<filter-class>
+			org.springframework.web.filter.DelegatingFilterProxy
+		</filter-class>
+	</filter>
+
+	<filter-mapping>
+		<filter-name>springSecurityFilterChain</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+	<!-- ====== /SPRING SECURITY ====== -->
+
+	<!-- ====== URL REWRITE ====== -->
+	<!-- Enables clean URLs with JSP views e.g. /welcome instead of /app/welcome -->
+	<!-- THIS FILTER BREAKS THE FILTER CHAIN ! EITHER PUT IT LAST OR ADD -->
+	<!-- A DISPATCHER DIRECTIVE TO THE OTHER FILTERS -->
+	<!-- For config, look at WEB-INF/urlrewrite.xml -->
+	<filter>
+		<filter-name>UrlRewriteFilter</filter-name>
+		<filter-class>
+			org.tuckey.web.filters.urlrewrite.UrlRewriteFilter
+		</filter-class>
+		<init-param>
+			<param-name>logLevel</param-name>
+			<param-value>${logger.urlRewriteFilter}</param-value>
+		</init-param>
+	</filter>
+
+	<filter-mapping>
+		<filter-name>UrlRewriteFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+	<!-- ====== /URL REWRITE ====== -->
+
+	<!-- ====== BUG TRACKER CONTEXT PERSISTER ====== -->
+	<filter>
+		<filter-name>bugTrackerContextPersister</filter-name>
+		<filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+	</filter>
+
+	<filter-mapping>
+		<filter-name>bugTrackerContextPersister</filter-name>
+		<servlet-name>squash-tm</servlet-name>
+		<dispatcher>FORWARD</dispatcher>
+	</filter-mapping>
+	<!-- ====== /BUG TRACKER CONTEXT PERSISTER ====== -->
+
+	<!-- ====== USER CONCURRENT REQUEST QUEUE ====== -->
+	<filter>
+		<filter-name>userConcurrentRequestLocker</filter-name>
+		<filter-class>org.squashtest.tm.web.internal.filter.UserConcurrentRequestLockFilter</filter-class>
+	</filter>
+
+	<filter-mapping>
+		<filter-name>userConcurrentRequestLocker</filter-name>
+		<servlet-name>squash-tm</servlet-name>
+		<dispatcher>FORWARD</dispatcher>
+	</filter-mapping>
+	<!-- ====== /USER CONCURRENT REQUEST QUEUE ====== -->
+  
+  <!-- ====== FIXES IE8 ACCEPT HEADER ====== -->
+  <filter>
+    <filter-name>IE8AcceptHeaderFixerFilter</filter-name>
+    <filter-class>org.squashtest.tm.web.internal.filter.IE8AcceptHeaderFixerFilter</filter-class>
+  </filter>
+
+  <filter-mapping>
+    <filter-name>IE8AcceptHeaderFixerFilter</filter-name>
+    <servlet-name>squash-tm</servlet-name>
+    <dispatcher>FORWARD</dispatcher>
+  </filter-mapping>
+  <!-- ====== /FIXES IE8 ACCEPT HEADER ====== -->  
+  
+  <filter>
+    <filter-name>httpPutFormContentFilter</filter-name>
+    <filter-class>org.springframework.web.filter.HttpPutFormContentFilter</filter-class>
+  </filter>
+
+  <filter-mapping>
+    <filter-name>httpPutFormContentFilter</filter-name>
+    <servlet-name>squash-tm</servlet-name>
+    <dispatcher>FORWARD</dispatcher>
+  </filter-mapping>
+  
+
+	<!-- ====== SPRING BOOTSTRAPPER ====== -->
+	<context-param>
+		<param-name>contextClass</param-name>
+		<param-value>
+			org.springframework.osgi.web.context.support.OsgiBundleXmlWebApplicationContext
+		</param-value>
+		<description>
+			This webapp uses a Spring-DM-integrated application
+			context
+		</description>
+	</context-param>
+
+	<context-param>
+		<param-name>contextConfigLocation</param-name>
+		<param-value>/WEB-INF/applicationContext-*.xml</param-value>
+	</context-param>
+  
+<context-param>
+      <param-name>cacheControl</param-name>
+      <param-value>max-age=3600,public</param-value>
+    </context-param>  
+
+
+	<listener>
+		<listener-class>
+			org.springframework.web.context.ContextLoaderListener
+		</listener-class>
+		<description>Spring application context bootstrapper</description>
+	</listener>
+
+	<listener>
+		<listener-class>
+			org.squashtest.tm.web.internal.listener.DelegatingServletContextListenerMulticaster
+		</listener-class>
+	</listener>
+	<!-- ====== /SPRING BOOTSTRAPPER ====== -->
+
+	<listener>
+		<listener-class>
+			org.squashtest.tm.web.internal.listener.HttpSessionLifecycleLogger
+		</listener-class>
+	</listener>
+
+	<jsp-property-group>
+		<!-- Scriptlets are forbidden because they enable bad practices -->
+		<scripting-invalid>true</scripting-invalid>
+	</jsp-property-group>
+	
+
+
+	<welcome-file-list>
+		<welcome-file>/test-case-workspace</welcome-file>
+	</welcome-file-list>
+
+	<session-config>
+		<session-timeout>60</session-timeout>
+	</session-config>
+
+	<!-- ================ Squash version variable ====================== -->
+
+	<context-param>
+		<param-name>squashTMVersion</param-name>
+		<param-value>${project.version}</param-value>
+	</context-param>
+	
+	<context-param>
+		<param-name>stage</param-name>
+		<param-value>${project.stage}</param-value><!--  ensure that the values are DEV or RELEASE -->
+	</context-param>	
+	 <!-- ================ Listener ====================== -->
+  <listener>
+    <listener-class>org.squashtest.tm.web.internal.listener.OpenedEntitiesLifecycleListener</listener-class>
+  </listener>
+</web-app>
