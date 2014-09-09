@@ -514,7 +514,7 @@
       <id>mysql</id>
       <properties>
         <dbunit-database.url>${it.database.url}</dbunit-database.url>
-        <non-dbunit-database.url>${it.database.url}</non-dbunit-database.url>
+        <non-dbunit-database.url>${it.legacy.database.url}</non-dbunit-database.url>
 
         <hibernate.dialect>org.hibernate.dialect.MySQLDialect</hibernate.dialect>
         <database.dialect>mysql</database.dialect>
@@ -541,6 +541,9 @@
                       <property>it.database.url</property>
                     </requireProperty>
                     <requireProperty>
+                      <property>it.legacy.database.url</property>
+                    </requireProperty>
+                    <requireProperty>
                       <property>it.database.schemaName</property>
                     </requireProperty>
                     <requireProperty>
@@ -562,7 +565,7 @@
       <id>postgresql</id>
       <properties>
         <dbunit-database.url>${it.database.url}</dbunit-database.url>
-        <non-dbunit-database.url>${it.database.url}</non-dbunit-database.url>
+        <non-dbunit-database.url>${it.legacy.database.url}</non-dbunit-database.url>
         <hibernate.dialect>org.hibernate.dialect.PostgreSQLDialect</hibernate.dialect>
         <database.dialect>postgresql</database.dialect>
         <database.drivername>org.postgresql.Driver</database.drivername>
@@ -597,6 +600,9 @@
                   <rules>
                     <requireProperty>
                       <property>it.database.url</property>
+                    </requireProperty>
+                    <requireProperty>
+                      <property>it.legacy.database.url</property>
                     </requireProperty>
                     <requireProperty>
                       <property>it.database.username</property>
