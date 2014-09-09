@@ -143,53 +143,57 @@ class ExecutionTest extends Specification {
 		given: "a simple test case b"
 
 		TestCase tcB = new TestCase(name:"b")
-		tcB.addStep new ActionTestStep(action:"${login} / ${password}")
+		tcB.addStep new ActionTestStep(action:"\${login} / \${password}")
 
-		tcB.addParameter new Parameter("login")
-		tcB.addParameter new Parameter("password")
+		def p1 = addParameter("login", tcB)
+		def p2 = addParameter("password", tcB)
 
-		addDataset "TCB-Dataset1", tcB, "spongebob", "glouglouglou"
-		addDataset "TCB-Dataset2", tcB, "mclane", "yippeekaiyay"
+		def ds1 = addDataset("TCB-Dataset1", tcB, [ (p1) :"spongebob", (p2) :"glouglouglou"])
+		def ds2 = addDataset("TCB-Dataset2", tcB, [ (p1) : "mclane", (p2) : "yippeekaiyay"])
 
 
 		and : "some test case A calls it"
 
 		TestCase tcA = new TestCase(name:"a")
 
-		tcA.addStep newCallStep(tcB,tcB.datasets[0], false)
-		tcA.addStep newCallStep(tcB,tcB.datasets[1], false)
+		tcA.addStep newCallStep(tcB,ds1, false)
+		tcA.addStep newCallStep(tcB,ds2, false)
 		tcA.addStep newCallStep(tcB, null, true)
 		tcA.addStep newCallStep(tcB, null, false)
 
-		addDataset "TCADS", tcA, tcB.parameters, "toxie", "mopavanger"
+		def dsA = addDataset ("TCADS", tcA, [(p1) : "toxie", (p2) : "mopavenger"])
 
 		when :
 
-		Execution execWithDS = new Execution(tcA, tcA.datasets[0])
+		Execution execWithDS = new Execution(tcA, dsA)
 		Execution execNoDS = new Execution(tcA)
 
 		then :
 
-		execWithDS.steps.collect{ it.action }.join(", ") ==
-		"spongebob / glouglouglou, mclane / yippeekaiyay, toxie / mopavenger, <novalue> / <novalue>, "
+		def stepsWithDS = execWithDS.steps.collect{ it.action }.join(", ")
+
+		println stepsWithDS
+		stepsWithDS == "spongebob / glouglouglou, mclane / yippeekaiyay, toxie / mopavenger, &lt;no_value&gt; / &lt;no_value&gt;"
 
 		execNoDS.steps.collect { it.action }.join(", ") ==
-		"spongebob / glouglouglou, mclane / yippeekaiyay, <novalue> / <novalue>, <novalue> / <novalue>, "
+		"spongebob / glouglouglou, mclane / yippeekaiyay, &lt;no_value&gt; / &lt;no_value&gt;, &lt;no_value&gt; / &lt;no_value&gt;"
 
 	}
 
-	def addDataset (String dsname, TestCase tc, String... values){
-		addDataset(dsname, tc, tc.parameters, values)
+	Parameter addParameter(String name, TestCase tc){
+		def p = new Parameter(name)
+		tc.addParameter p
+		p
 	}
 
-	def addDataset (String dsname, TestCase tc, Parameter[] parameters, String... values){
+	Dataset addDataset (String dsname, TestCase tc, Map<Parameter, String> paramvalues){
 		Dataset ds = new Dataset(dsname, tc);
-		parameters.eachWithIndex {it, idx ->  ds.addParameterValue(it, ds, values[idx]) }
+		paramvalues.each {k, v ->  ds.addParameterValue(new DatasetParamValue(k, ds, v)) }
 		tc.addDataset ds
 		ds
 	}
 
-	def newCallStep (TestCase tc, Dataset ds, Boolean delegate){
+	CallTestStep newCallStep (TestCase tc, Dataset ds, Boolean delegate){
 		new CallTestStep(calledTestCase:tc, calledDataset:ds, delegateParameterValues:delegate)
 	}
 

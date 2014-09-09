@@ -154,6 +154,10 @@ DenormalizedFieldHolder, BoundEntity {
 	@Size(min = 0, max = 255)
 	private String name;
 
+	@NotBlank
+	@Size(min = 0, max = 255)
+	private String datasetLabel;
+
 	// TODO rename as testPlanItem
 	@ManyToOne
 	@JoinTable(name = "ITEM_TEST_PLAN_EXECUTION", joinColumns = @JoinColumn(name = "EXECUTION_ID", insertable = false, updatable = false), inverseJoinColumns = @JoinColumn(name = "ITEM_TEST_PLAN_ID", insertable = false, updatable = false))
@@ -388,6 +392,16 @@ DenormalizedFieldHolder, BoundEntity {
 
 	private void addStep(@NotNull ExecutionStep step) {
 		steps.add(step);
+	}
+
+
+
+	public String getDatasetLabel() {
+		return datasetLabel;
+	}
+
+	public void setDatasetLabel(String dsLabel) {
+		this.datasetLabel = dsLabel;
 	}
 
 	/**
