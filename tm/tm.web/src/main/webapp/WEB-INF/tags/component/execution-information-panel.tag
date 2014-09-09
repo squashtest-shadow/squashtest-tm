@@ -57,6 +57,17 @@
     <span id="execmode-label"><f:message key="${ auditableEntity.executionMode.i18nKey }" /></span>
   </div>
 
+  <c:if test="${execution.datasetLabel != null}">
+  <div id="general-info-dataset" style="display: inline-block; margin-right: 2em; vertical-align: top">
+    <label>
+      <f:message key="label.dataset" />
+    </label>  
+    <span>    
+      <f:message var="noneLabel" key="label.None" />
+      <c:out value="${(fn:length(execution.datasetLabel) == 0) ? noneLabel : execution.datasetLabel}"/>
+    </span>
+  </div>
+  </c:if>
 
   <div id="general-info-execstatus" style="display: inline-block; margin-right: 2em; vertical-align: top">
     <label>

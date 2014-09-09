@@ -95,6 +95,9 @@ DenormalizedFieldHolder, BoundEntity {
 
 	static final Set<ExecutionStatus> LEGAL_EXEC_STATUS;
 
+	public static final String NO_DATASET_USED_LABEL = "";
+	public static final String NO_DATASET_APPLICABLE_LABEL = null;
+
 	static {
 		Set<ExecutionStatus> set = new HashSet<ExecutionStatus>();
 		set.add(ExecutionStatus.SUCCESS);
@@ -154,8 +157,7 @@ DenormalizedFieldHolder, BoundEntity {
 	@Size(min = 0, max = 255)
 	private String name;
 
-	@NotBlank
-	@Size(min = 0, max = 255)
+	@Column
 	private String datasetLabel;
 
 	// TODO rename as testPlanItem
@@ -216,13 +218,32 @@ DenormalizedFieldHolder, BoundEntity {
 	 * @param testPlanItem
 	 */
 	public Execution(TestCase testCase) {
-		this(testCase, new Dataset());
+		this(testCase, null);
 	}
 
 	public Execution(TestCase testCase, Dataset dataset) {
 		setReferencedTestCase(testCase);
 		populateSteps(dataset);
 		populateAttachments();
+		setDatasetLabel(testCase, dataset);
+	}
+
+	private void setDatasetLabel(TestCase testCase, Dataset dataset){
+		String label = null;
+
+		// case one : there was no dataset whatsoever
+		if (testCase.getDatasets().isEmpty()){
+			label = null;
+		}
+		// case two : there are datasets available but none was choosen for that execution
+		else if (dataset == null){
+			label = "";
+		}
+		else{
+			label = dataset.getName();
+		}
+
+		datasetLabel =  label;
 	}
 
 	private void populateAttachments() {
@@ -400,9 +421,6 @@ DenormalizedFieldHolder, BoundEntity {
 		return datasetLabel;
 	}
 
-	public void setDatasetLabel(String dsLabel) {
-		this.datasetLabel = dsLabel;
-	}
 
 	/**
 	 * <p>

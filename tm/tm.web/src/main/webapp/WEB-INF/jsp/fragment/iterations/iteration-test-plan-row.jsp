@@ -25,7 +25,7 @@
 <%@ taglib prefix="s" uri="http://www.springframework.org/tags"%>
 
 <%@ taglib prefix="s" uri="http://www.springframework.org/tags"%>
-<%@ taglib prefix="jq" tagdir="/WEB-INF/tags/jquery"%>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 <%@ taglib prefix="authz" tagdir="/WEB-INF/tags/authz" %>
 
 <authz:authorized hasRole="ROLE_ADMIN" hasPermission="EXECUTE" domainObject="${ iteration }">
@@ -41,6 +41,9 @@
 
 <c:set var="textcolor" value="#555555" />
 
+<f:message var="labelNodata" key="squashtm.nodata" />
+<f:message var="labelNone" key="label.None" />
+
 <td colspan="13">
 	<table class="executions-table" id="item-test-plan-${testPlanItem.id}">
 		<c:forEach items="${ executions }" var="execution" varStatus="status">
@@ -52,20 +55,14 @@
 					</a>
 				</td>
 				<td style="width: 10%;">
-					<span style="color: ${textcolor}">
-					<c:choose>
-						<c:when test="${  execution.testPlan != null &&  execution.testPlan.referencedDataset != null }">
-							<i>${execution.testPlan.referencedDataset.name}</i>
-						</c:when>
-						<c:otherwise>
-							<i><f:message key="squashtm.nodata" /> </i>
-						</c:otherwise>
-					</c:choose>
+					<span style="color: ${textcolor}; text-decoration:italic;">
+                      <c:out value="${(execution.datasetLabel == null) ? labelNodata :
+                                      (fn:length(execution.datasetLabel) == 0) ? labelNone : execution.datasetLabel}" />
 					</span>
 				</td>
 				<td style="width: 10%;"></td>
-				<td style="width: 10%; color: ${textcolor} font-style:italic;"><f:message
-						key="execution.execution-status.${execution.executionStatus}" />
+				<td style="width: 10%; color: ${textcolor} font-style:italic;">
+                    <f:message key="execution.execution-status.${execution.executionStatus}" />
 				</td>
 				<td style="width: 10%;">
 					<span style="color: ${textcolor}">
