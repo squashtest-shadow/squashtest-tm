@@ -300,51 +300,20 @@ IterationTestPlanManager {
 	@Override
 	public Execution addExecution(IterationTestPlanItem item) throws TestPlanItemNotExecutableException {
 
-		long before;
-		long after;
-
-
-		before = System.currentTimeMillis();
 		testCaseCyclicCallChecker.checkNoCyclicCall(item.getReferencedTestCase());
-		after = System.currentTimeMillis();
-		LOGGER.trace("add execution : checked for potential circular references done in "+(after-before)+" ms");
 
 
 		// if passes, let's move to the next step
-		before = System.currentTimeMillis();
 		Execution execution = item.createExecution();
-		after = System.currentTimeMillis();
-		LOGGER.trace("add execution : execution and steps done in "+(after-before)+" ms");
 
 		// if we don't persist before we add, add will trigger an update of item.testPlan which fail because execution
 		// has no id yet. this is caused by weird mapping (https://hibernate.onjira.com/browse/HHH-5732)
-		before = System.currentTimeMillis();
 		executionDao.persist(execution);
-		after = System.currentTimeMillis();
-		LOGGER.trace("add execution : saving execution done in "+(after-before)+" ms");
 
-		before = System.currentTimeMillis();
 		item.addExecution(execution);
-		after = System.currentTimeMillis();
-		LOGGER.trace("add execution : adding execution to test plan done in "+(after-before)+" ms");
-
-
-		before = System.currentTimeMillis();
 		createCustomFieldsForExecutionAndExecutionSteps(execution);
-		after = System.currentTimeMillis();
-		LOGGER.trace("add execution : creating custom fields for execution and steps done in "+(after-before)+" ms");
-
-
-		before = System.currentTimeMillis();
 		createDenormalizedFieldsForExecutionAndExecutionSteps(execution);
-		after = System.currentTimeMillis();
-		LOGGER.trace("add execution : creating denormalized fields for execution and steps done in "+(after-before)+" ms");
-
-
-		before = System.currentTimeMillis();
 		indexationService.reindexTestCase(item.getReferencedTestCase().getId());
-		after = System.currentTimeMillis();
-		LOGGER.trace("add execution : test case reindexation done in "+(after-before)+" ms");
 
 		return execution;
 	}

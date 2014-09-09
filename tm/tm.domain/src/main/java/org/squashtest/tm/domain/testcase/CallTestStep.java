@@ -104,11 +104,22 @@ public class CallTestStep extends TestStep {
 
 	@Override
 	public List<ExecutionStep> createExecutionSteps(Dataset dataset){
+
 		List<TestStep> testSteps = this.getCalledTestCase().getSteps();
 		List<ExecutionStep> returnList = new ArrayList<ExecutionStep>(testSteps.size());
 
+
+		Dataset effective;
+		switch(getParameterAssignationMode()){
+		case CALLED_DATASET : effective = calledDataset; break;
+		case DELEGATE : effective = dataset; break;
+		case NOTHING : effective = null;break;
+		default : effective = dataset;
+		}
+
+
 		for (TestStep testStep : testSteps) {
-			returnList.addAll(testStep.createExecutionSteps(dataset));
+			returnList.addAll(testStep.createExecutionSteps(effective));
 		}
 
 		return returnList;

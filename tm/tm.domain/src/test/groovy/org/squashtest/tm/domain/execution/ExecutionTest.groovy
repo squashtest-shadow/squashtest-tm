@@ -25,6 +25,10 @@ import org.squashtest.tm.domain.execution.Execution
 import org.squashtest.tm.domain.execution.ExecutionStatus
 import org.squashtest.tm.domain.execution.ExecutionStep
 import org.squashtest.tm.domain.testcase.ActionTestStep
+import org.squashtest.tm.domain.testcase.CallTestStep;
+import org.squashtest.tm.domain.testcase.Dataset;
+import org.squashtest.tm.domain.testcase.DatasetParamValue;
+import org.squashtest.tm.domain.testcase.Parameter;
 import org.squashtest.tm.domain.testcase.TestCase
 import org.squashtest.tm.domain.testcase.TestCaseImportance
 import org.squashtest.tm.domain.testcase.TestCaseNature
@@ -69,14 +73,14 @@ class ExecutionTest extends Specification {
 			ExecutionStatus.READY
 		]
 	}
-	
+
 	def "should not find first unexecuted step because has no steps"(){
 		given : Execution execution = new Execution()
 		when : ExecutionStep executionStep = execution.findFirstUnexecutedStep()
 		then :
 		executionStep == null
 	}
-	
+
 	def "should not find first unexecuted step because all executed"(){
 		given : Execution execution = new Execution()
 		ExecutionStep step1 = new ExecutionStep()
@@ -93,7 +97,7 @@ class ExecutionTest extends Specification {
 		then :
 		executionStep == null
 	}
-	
+
 	def "should find first unexecuted step "(){
 		given : Execution execution = new Execution()
 		ExecutionStep step1 = new ExecutionStep()
@@ -108,13 +112,13 @@ class ExecutionTest extends Specification {
 
 		when :
 		def executionStep = execution.findFirstUnexecutedStep()
-		
+
 		then :
 		executionStep == step2
 	}
-	
+
 	def "should create a valid execution from a test case without prerequisite"() {
-		given: 
+		given:
 		TestCase testCase = Mock()
 		testCase.name >> "peter parker"
 		testCase.steps >> []
@@ -123,12 +127,70 @@ class ExecutionTest extends Specification {
 		testCase.nature >> TestCaseNature.UNDEFINED
 		testCase.type >> TestCaseType.UNDEFINED
 		testCase.status >> TestCaseStatus.WORK_IN_PROGRESS
-		
+
 		when:
 		Execution res = new Execution(testCase)
-		
+
 		then:
 		notThrown NullArgumentException
-		
+
 	}
+
+	// *************** DATASET TESTS ***************************
+
+	def "should create the execution steps with the correct parameter values according to which dataset is used"(){
+
+		given: "a simple test case b"
+
+		TestCase tcB = new TestCase(name:"b")
+		tcB.addStep new ActionTestStep(action:"${login} / ${password}")
+
+		tcB.addParameter new Parameter("login")
+		tcB.addParameter new Parameter("password")
+
+		addDataset "TCB-Dataset1", tcB, "spongebob", "glouglouglou"
+		addDataset "TCB-Dataset2", tcB, "mclane", "yippeekaiyay"
+
+
+		and : "some test case A calls it"
+
+		TestCase tcA = new TestCase(name:"a")
+
+		tcA.addStep newCallStep(tcB,tcB.datasets[0], false)
+		tcA.addStep newCallStep(tcB,tcB.datasets[1], false)
+		tcA.addStep newCallStep(tcB, null, true)
+		tcA.addStep newCallStep(tcB, null, false)
+
+		addDataset "TCADS", tcA, tcB.parameters, "toxie", "mopavanger"
+
+		when :
+
+		Execution execWithDS = new Execution(tcA, tcA.datasets[0])
+		Execution execNoDS = new Execution(tcA)
+
+		then :
+
+		execWithDS.steps.collect{ it.action }.join(", ") ==
+		"spongebob / glouglouglou, mclane / yippeekaiyay, toxie / mopavenger, <novalue> / <novalue>, "
+
+		execNoDS.steps.collect { it.action }.join(", ") ==
+		"spongebob / glouglouglou, mclane / yippeekaiyay, <novalue> / <novalue>, <novalue> / <novalue>, "
+
+	}
+
+	def addDataset (String dsname, TestCase tc, String... values){
+		addDataset(dsname, tc, tc.parameters, values)
+	}
+
+	def addDataset (String dsname, TestCase tc, Parameter[] parameters, String... values){
+		Dataset ds = new Dataset(dsname, tc);
+		parameters.eachWithIndex {it, idx ->  ds.addParameterValue(it, ds, values[idx]) }
+		tc.addDataset ds
+		ds
+	}
+
+	def newCallStep (TestCase tc, Dataset ds, Boolean delegate){
+		new CallTestStep(calledTestCase:tc, calledDataset:ds, delegateParameterValues:delegate)
+	}
+
 }
