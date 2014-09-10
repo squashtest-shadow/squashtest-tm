@@ -8,16 +8,16 @@
         information regarding copyright ownership.
 
         This is free software: you can redistribute it and/or modify
-        it under the terms of the GNU Lesser General Public License as published by
+        it under the terms of the GNU General Public License as published by
         the Free Software Foundation, either version 3 of the License, or
         (at your option) any later version.
 
         this software is distributed in the hope that it will be useful,
         but WITHOUT ANY WARRANTY; without even the implied warranty of
         MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-        GNU Lesser General Public License for more details.
+        GNU General Public License for more details.
 
-        You should have received a copy of the GNU Lesser General Public License
+        You should have received a copy of the GNU General Public License
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
@@ -59,10 +59,7 @@
     <dropTable tableName="cuf_values_to_save" />
   </changeSet>
 
-  <changeSet id="tm-1.10.5-issue-3860-2" author="mpagnon">
-    <comment>add unique constraint on CUSTOM_FIELD_VALUE</comment>
-    <addUniqueConstraint tableName="CUSTOM_FIELD_VALUE" columnNames="CFB_ID, BOUND_ENTITY_TYPE, BOUND_ENTITY_ID" />
-  </changeSet>
+  
 
   <changeSet id="tm-1.10.5-issue-3860-3" author="mpagnon">
     <comment>add missing custom field values </comment>
