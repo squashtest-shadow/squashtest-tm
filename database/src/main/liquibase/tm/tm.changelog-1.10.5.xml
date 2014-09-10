@@ -39,20 +39,23 @@
     <createTable tableName="cuf_values_to_save">
       <column name="id" type="BIGINT"></column>
     </createTable>
-
+    <createIndex unique="true" tableName="cuf_values_to_save" indexName="idx_cuf_values_to_save">
+      <column name="id" type="BIGINT" />
+    </createIndex>
     <sql>
       insert into cuf_values_to_save (id)
       select min(CFV_ID)
       from CUSTOM_FIELD_VALUE cfv
-      group by cfv.BOUND_ENTITY_ID,
-      cfv.BOUND_ENTITY_TYPE, cfv.CFB_ID;
+      where cfv.BOUND_ENTITY_TYPE = 'TEST_STEP'
+      group by cfv.BOUND_ENTITY_ID, cfv.CFB_ID;
     </sql>
 
     <sql>
       delete from CUSTOM_FIELD_VALUE
-      where cfv_id not in (select id from cuf_values_to_save);
+      where BOUND_ENTITY_TYPE = 'TEST_STEP' and
+      not exists (select 1 from cuf_values_to_save cfvts where cfvts.id = cfv_id);
     </sql>
-
+    <dropIndex tableName="cuf_values_to_save" indexName="idx_cuf_values_to_save" />
     <dropTable tableName="cuf_values_to_save" />
   </changeSet>
 
@@ -71,10 +74,13 @@
     </createTable>
     <sql>
       insert into steps_should_have_cuf_values (cuf_binding_id , step_id , default_value , optional )
-      select cfb.CFB_ID, ats.TEST_STEP_ID, cf.default_value, cf.optional
-      from ACTION_TEST_STEP ats, TEST_CASE_STEPS tcs, TEST_CASE_LIBRARY_NODE tcln, CUSTOM_FIELD_BINDING cfb, CUSTOM_FIELD cf
+      select
+      cfb.CFB_ID, ats.TEST_STEP_ID, cf.default_value, cf.optional
+      from ACTION_TEST_STEP ats, TEST_CASE_STEPS tcs,
+      TEST_CASE_LIBRARY_NODE tcln, CUSTOM_FIELD_BINDING cfb, CUSTOM_FIELD cf
       where ats.TEST_STEP_ID = tcs.STEP_ID
-      and tcln.TCLN_ID = tcs.TEST_CASE_ID
+      and
+      tcln.TCLN_ID = tcs.TEST_CASE_ID
       and tcln.PROJECT_ID = cfb.BOUND_PROJECT_ID
       and cfb.CF_ID = cf.CF_ID
       and not exists (
@@ -82,25 +88,29 @@
       from CUSTOM_FIELD_VALUE cfv
       where cfv.CFB_ID = cfb.CFB_ID
       and cfv.BOUND_ENTITY_TYPE = 'TEST_STEP'
-      and cfv.BOUND_ENTITY_ID = ats.TEST_STEP_ID
+      and
+      cfv.BOUND_ENTITY_ID = ats.TEST_STEP_ID
       );
     </sql>
 
     <sql>
       insert into CUSTOM_FIELD_VALUE ( BOUND_ENTITY_ID, BOUND_ENTITY_TYPE, CFB_ID, VALUE)
-      select sshcv.step_id , 'TEST_STEP', sshcv.cuf_binding_id, ''
+      select sshcv.step_id ,
+      'TEST_STEP', sshcv.cuf_binding_id, ''
       from steps_should_have_cuf_values sshcv
       where sshcv.optional = true;
     </sql>
 
     <sql>
       insert into CUSTOM_FIELD_VALUE ( BOUND_ENTITY_ID, BOUND_ENTITY_TYPE, CFB_ID, VALUE)
-      select sshcv.step_id , 'TEST_STEP', sshcv.cuf_binding_id, sshcv.default_value
+      select sshcv.step_id ,
+      'TEST_STEP', sshcv.cuf_binding_id, sshcv.default_value
       from steps_should_have_cuf_values sshcv
-      where sshcv.optional = false;
+      where sshcv.optional
+      = false;
     </sql>
-    
-    <dropTable tableName="steps_should_have_cuf_values"/>
+
+    <dropTable tableName="steps_should_have_cuf_values" />
 
   </changeSet>
 
