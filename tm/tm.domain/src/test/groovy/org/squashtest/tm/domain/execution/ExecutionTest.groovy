@@ -127,6 +127,7 @@ class ExecutionTest extends Specification {
 		testCase.nature >> TestCaseNature.UNDEFINED
 		testCase.type >> TestCaseType.UNDEFINED
 		testCase.status >> TestCaseStatus.WORK_IN_PROGRESS
+		testCase.getDatasets() >> []
 
 		when:
 		Execution res = new Execution(testCase)
