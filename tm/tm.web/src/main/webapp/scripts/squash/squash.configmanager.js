@@ -208,6 +208,12 @@ define([ "jquery", "squash.translator", "datepicker/jquery.squash.datepicker-loc
 		delete result[null];
 		return result;
 	}
+	
+	function stdTagit(){
+		return {
+			
+		};
+	}
 
 	return {
 		getStdCkeditor : stdCkeditor,
@@ -217,6 +223,7 @@ define([ "jquery", "squash.translator", "datepicker/jquery.squash.datepicker-loc
 		getJeditableCkeditor : jeditableCkeditor,
 		getJeditableSelect : jeditableSelect,
 		toJeditableSelectFormat : _toJeditableSelectFormat,
+		getStdTagit : stdTagit,
 		getJeditableDatepicker : jeditableDatepicker	// experimental
 	};
 

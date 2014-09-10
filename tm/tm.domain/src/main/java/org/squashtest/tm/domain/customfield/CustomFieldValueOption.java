@@ -1,3 +1,23 @@
+/**
+ *     This file is part of the Squashtest platform.
+ *     Copyright (C) 2010 - 2014 Henix, henix.fr
+ *
+ *     See the NOTICE file distributed with this work for additional
+ *     information regarding copyright ownership.
+ *
+ *     This is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     this software is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package org.squashtest.tm.domain.customfield;
 
 import javax.persistence.Embeddable;
@@ -9,11 +29,20 @@ import org.hibernate.validator.constraints.NotBlank;
 @Embeddable
 public class CustomFieldValueOption {
 	public static final int MAX_SIZE = 255;
-	
+
 	@NotBlank
 	@Size(min = 0, max = MAX_SIZE)
 	@Pattern(regexp = CustomField.OPTION_REGEXP)
 	private String option;
+
+	public CustomFieldValueOption(){
+		super();
+	}
+
+	public CustomFieldValueOption(String option){
+		super();
+		this.option = option;
+	}
 
 	public String getOption() {
 		return option;
@@ -22,5 +51,37 @@ public class CustomFieldValueOption {
 	public void setOption(String option) {
 		this.option = option;
 	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((option == null) ? 0 : option.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
+			return false;
+		}
+		if (getClass() != obj.getClass()) {
+			return false;
+		}
+		CustomFieldValueOption other = (CustomFieldValueOption) obj;
+		if (option == null) {
+			if (other.option != null) {
+				return false;
+			}
+		} else if (!option.equals(other.option)) {
+			return false;
+		}
+		return true;
+	}
+
+
 
 }

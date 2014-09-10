@@ -20,7 +20,9 @@
  */
 package org.squashtest.tm.web.internal.model.customfield;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Locale;
 
 import javax.inject.Inject;
@@ -33,7 +35,10 @@ import org.squashtest.tm.domain.customfield.CustomField;
 import org.squashtest.tm.domain.customfield.CustomFieldBinding;
 import org.squashtest.tm.domain.customfield.CustomFieldOption;
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
+import org.squashtest.tm.domain.customfield.CustomFieldValueOption;
 import org.squashtest.tm.domain.customfield.InputType;
+import org.squashtest.tm.domain.customfield.MultiSelectField;
+import org.squashtest.tm.domain.customfield.MultiSelectFieldValue;
 import org.squashtest.tm.domain.customfield.RenderingLocation;
 import org.squashtest.tm.domain.customfield.SingleSelectField;
 import org.squashtest.tm.domain.denormalizedfield.DenormalizedFieldValue;
@@ -136,6 +141,9 @@ public class CustomFieldJsonConverter {
 			model = createSingleSelectFieldModel((SingleSelectField) field); //NOSONAR a CustomField which has InputType == DROPDOWN_LIST is always a SingleSelectField
 			break;
 
+		case TAG :
+			model = createMultiSelectFieldModel((MultiSelectField) field);	// NOSONAR a CustomField which has InputType == TAG is always a MultiSelectField
+
 		default:
 			model = createDefaultCustomFieldModel(field);
 			break;
@@ -144,7 +152,6 @@ public class CustomFieldJsonConverter {
 		return model;
 
 	}
-
 
 	public CustomFieldValueModel toJson(CustomFieldValue value) {
 
@@ -163,6 +170,15 @@ public class CustomFieldJsonConverter {
 
 	}
 
+	public CustomFieldValueModel toJson(MultiSelectFieldValue value){
+		CustomFieldValueModel model = toJson((CustomFieldValue)value);
+		List<String>  options = new ArrayList<String>(value.getOptions().size());
+		for (CustomFieldValueOption option : value.getOptions()){
+			options.add(option.getOption());
+		}
+		model.setOptionValues(options);
+		return model;
+	}
 
 	private CustomFieldModel createDefaultCustomFieldModel(CustomField field) {
 		CustomFieldModel model = new CustomFieldModel();
@@ -185,6 +201,25 @@ public class CustomFieldJsonConverter {
 		return model;
 	}
 
+
+	// note : for now this is mostly the same than for the SingleSelectField.
+	private MultiSelectFieldModel createMultiSelectFieldModel(MultiSelectField field){
+
+		MultiSelectFieldModel model = new MultiSelectFieldModel();
+
+		populateCustomFieldModel(model, field);
+
+		for (CustomFieldOption option : field.getOptions()){
+			CustomFieldOptionModel newOption = new CustomFieldOptionModel();
+			newOption.setLabel(option.getLabel());
+			model.addOption(newOption);
+		}
+
+		return model;
+
+	}
+
+
 	private DatePickerFieldModel createDatePickerFieldModel(CustomField field){
 
 		Locale locale = LocaleContextHolder.getLocale();
@@ -198,8 +233,6 @@ public class CustomFieldJsonConverter {
 		return model;
 
 	}
-
-
 
 
 	private CustomFieldModel populateCustomFieldModel(CustomFieldModel model, CustomField field) {

@@ -32,7 +32,7 @@
  * .staticCustomfield("destroy") : destroys the custom field.
  * 
  */
-define(["jquery", "./cuf-values-utils", "underscore"], function($, utils, _){
+define(["jquery", "./cuf-values-utils", "underscore", "squash.configmanager"], function($, utils, _, confman){
 	
 	if ($.fn.staticCustomfield !== undefined){
 		return;
@@ -121,7 +121,7 @@ define(["jquery", "./cuf-values-utils", "underscore"], function($, utils, _){
 				elt.text(date);
 			}
 		},
-		
+	
 		'RICH_TEXT' : {
 			_build : function(elt, def){
 				
@@ -134,6 +134,29 @@ define(["jquery", "./cuf-values-utils", "underscore"], function($, utils, _){
 			},
 			_destroy : function(elt, def){
 				
+			}
+		},
+		
+		'TAG' : {
+			_build : function(elt, def){
+				var conf = confman
+				elt.squashTagit(conf);
+				elt.squashTagit('disable');
+			},
+			
+			_set : function(elt, def, value){
+				elt.squashTagit('removeAll');
+				$.each(value.split(';'), function(i, newtag){
+					elt.squashTagit("createTag", newtag);
+				});
+			},
+			
+			_get : function(elt, def){
+				return elt.squashTagit("assignedTags").join(';');
+			},
+			
+			_destroy : function(elt, def){
+				elt.squashTagit('destroy');
 			}
 		} 
 			

@@ -20,26 +20,38 @@
  */
 package org.squashtest.tm.web.internal.model.customfield;
 
+import java.util.List;
+
 public class CustomFieldValueModel {
-	
+
 	private long id;
-	
+
 	private long boundEntityId;
-	
+
 	private BindableEntityModel boundEntityType;
-	
+
 	private CustomFieldBindingModel binding;
 
+	// for custom fields having only one value
 	private String value;
-	
-	
-	
+
+	// for custom fields having multiple simultaneous values
+	private List<String> optionValues;
+
 	public String getValue() {
 		return value;
 	}
 
 	public void setValue(String value) {
 		this.value = value;
+	}
+
+	public List<String> getOptionValues() {
+		return optionValues;
+	}
+
+	public void setOptionValues(List<String> optionValues) {
+		this.optionValues = optionValues;
 	}
 
 	public long getId() {
@@ -73,9 +85,9 @@ public class CustomFieldValueModel {
 	public void setBinding(CustomFieldBindingModel binding) {
 		this.binding = binding;
 	}
-	
-	
-	
-	
-	
+
+
+
+
+
 }

@@ -193,7 +193,25 @@ define(["jquery", "squash.configmanager", "./cuf-values-utils", "jquery.squash.j
 				elt.empty();
 				elt.html(content);
 			}
-		} 
+		},
+		
+		'TAG' : {
+			_build : function(elf, def){
+				
+			},
+			
+			_set : function(elt, def, value){
+				
+			},
+			
+			_get : function(elt, def){
+				
+			},
+			
+			_destroy : function(elt, def){
+				
+			}
+		}
 	
 	};
 	
