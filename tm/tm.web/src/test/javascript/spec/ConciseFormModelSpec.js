@@ -18,11 +18,11 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-
-                 
+            
                     	
-define([ "app/report/ConciseFormModel" ], function(FormModel) {
+define(["common", "app/report/ConciseFormModel"], function(_, FormModel) {
 	"use strict";
+
 	describe("ConciseFormModel", function() {
 		function fixtureModel(type, value) {
 			return new FormModel({batman: {type: type, val: value}});
@@ -37,6 +37,7 @@ define([ "app/report/ConciseFormModel" ], function(FormModel) {
 		}
 
 		it("should apply former state to uninitialized attribute", function() {
+
 			var model = new FormModel();
 
 			// when

@@ -806,6 +806,36 @@
               </execution>
             </executions>
           </plugin>
+          
+            <plugin>
+                <groupId>com.github.searls</groupId>
+                <artifactId>jasmine-maven-plugin</artifactId>
+                <version>2.0-alpha-01</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>test</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <debug>true</debug>
+                    <specRunnerTemplate>REQUIRE_JS</specRunnerTemplate>
+                    <jsSrcDir>${project.basedir}/src/main/webapp/scripts</jsSrcDir>
+                    <jsTestSrcDir>${project.basedir}/src/test/javascript</jsTestSrcDir>
+                          <webDriverClassName>org.openqa.selenium.firefox.FirefoxDriver</webDriverClassName>
+                    <preloadSources>
+                    		<source>scripts/require.js</source>
+                    				<source>scripts/sinon.js</source>
+                    			<source>scripts/lib/jquery/jquery-1.8.3.js</source>
+                    			<source>scripts/lib/underscore/underscore-1.4.4.js</source>
+                    		<source>scripts/lib/backbone/backbone-1.0.0.js</source>
+                    </preloadSources>                 
+                        <specIncludes>
+                        <include>spec/*</include>
+                    </specIncludes>
+                </configuration>
+            </plugin>
         </plugins>
       </build>
     </profile>
@@ -1028,7 +1058,7 @@
               
             </executions>
           </plugin>
-        </plugins>
+</plugins>
       </build>
     </profile>
   </profiles>
