@@ -61,7 +61,8 @@ import org.squashtest.tm.validation.constraint.HasDefaultAsRequired;
 public class CustomField {
 	private static final Logger LOGGER = LoggerFactory.getLogger(CustomField.class);
 
-	public static final String CODE_REGEXP = "^[A-Za-z0-9_]*$";
+	public static final String CODE_REGEXP = "^[A-Za-z0-9_^;]*$";
+	public static final String OPTION_REGEXP = "^[A-Za-z0-9_]*$";
 	public static final int MIN_CODE_SIZE = 1;
 	public static final int MAX_CODE_SIZE = 30;
 

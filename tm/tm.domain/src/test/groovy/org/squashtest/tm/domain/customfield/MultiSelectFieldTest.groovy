@@ -20,26 +20,37 @@
  */
 package org.squashtest.tm.domain.customfield;
 
-import org.squashtest.tm.core.foundation.i18n.Internationalizable;
+import org.squashtest.tm.domain.customfield.CustomFieldOption;
+import org.squashtest.tm.domain.customfield.SingleSelectField;
+
+import spock.lang.Specification
+
 
 /**
- * The type of the input shown when rendering a custom field.
- * 
- * @author Gregory Fouquet
+ * @author kdrifi
+ *
  */
-public enum InputType implements Internationalizable {
-	PLAIN_TEXT,
-	CHECKBOX,
-	DROPDOWN_LIST,
-	RICH_TEXT,
-	DATE_PICKER,
-	TAG;
+class MultiSelectFieldTest extends Specification {
+	def "should add and remove options"() {
+		given: 
+		MultiSelectField field = new MultiSelectField()
+		//field.inputType = InputType.Tag
+		
+		when:
+		field.addOption(new CustomFieldOption("batman", "code1"))
+		
+		field.addOption(new CustomFieldOption("robin", "code2"))
+		 
+		then:
+		field.options*.label == ["batman", "robin"]
+		field.options*.code == ["code1", "code2"]
 
-	/**
-	 * @see org.squashtest.tm.core.foundation.i18n.Internationalizable#getI18nKey()
-	 */
-	@Override
-	public String getI18nKey() {
-		return "customField.inputType." + name();
+		when:
+		field.removeOption("batman")
+		
+		then:
+		field.options*.label == ["robin"]
+		
 	}
+
 }
