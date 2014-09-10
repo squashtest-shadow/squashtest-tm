@@ -26,36 +26,12 @@
  * can edit or not 
  * 
  */
-define(["jquery", "handlebars", "squash.translator", "jqueryui", "./lib/jquery.staticCustomfield", "./lib/jquery.jeditableCustomfield"], 
-		function($, handlebars, translator){
+define(["jquery", "handlebars", "squash.translator", "./lib/cuf-values-utils","jqueryui", "./lib/jquery.staticCustomfield", "./lib/jquery.jeditableCustomfield"], 
+		function($, handlebars, translator, utils){
 	
 	var fromTestCase = " ("+translator.get("label.fromTestCase")+") ";
 	
-	/*
-	 * little helper thanks to stack overflow !
-	 * 
-	 */
-	
-	handlebars.registerHelper('ifequals', function(cuftype, expected, options) {
-	  return (cuftype === expected) ? options.fn(this) : options.inverse(this);
-	});
-	
-	handlebars.registerHelper('cuflabel', function(value){
-		var cuf = value.binding.customField,
-			lbl = cuf.label;
-		return (cuf.denormalized) ? lbl+fromTestCase : lbl; 
-	});
-
-	handlebars.registerHelper('cufid', function(value){
-		var prefix = (value.binding.customField.denormalized) ? "denormalized-cuf-value-" : "cuf-value-";
-		return prefix + value.id;
-	});
-	
-	handlebars.registerHelper('cufclass', function(value){
-		return (value.binding.customField.denormalized) ? "denormalized-custom-field" : "custom-field";
-	});
-
-	
+	utils.registerHandlebarHelpers(handlebars);
 	
 	var template = handlebars.compile(
 		'{{#each this}}' +

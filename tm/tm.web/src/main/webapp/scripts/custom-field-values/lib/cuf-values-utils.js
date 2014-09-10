@@ -25,9 +25,42 @@ define([ "jquery", "squash.configmanager", "jqueryui" ],
 		var date = $.datepicker.parseDate(fromFormat, strFromValue);
 		return $.datepicker.formatDate(toFormat, date);
 	}
+	
+	
+	/*
+	 * little helper thanks to stack overflow !
+	 * 
+	 */
+	
+	function registerHandlebarHelpers(handlebars){
 
+		handlebars.registerHelper('ifequals', function(cuftype, expected, options) {
+		  return (cuftype === expected) ? options.fn(this) : options.inverse(this);
+		});
+		
+		handlebars.registerHelper('cuflabel', function(value){
+			var cuf = value.binding.customField,
+				lbl = cuf.label;
+			return (cuf.denormalized) ? lbl+fromTestCase : lbl; 
+		});
+
+		handlebars.registerHelper('cufid', function(value){
+			var prefix = (value.binding.customField.denormalized) ? "denormalized-cuf-value-" : "cuf-value-";
+			return prefix + value.id;
+		});
+		
+		handlebars.registerHelper('cufclass', function(value){
+			return (value.binding.customField.denormalized) ? "denormalized-custom-field" : "custom-field";
+		});
+
+	}
+	
+	
 	return {
-		convertStrDate : convertStrDate
+		convertStrDate : convertStrDate,
+		registerHandlebarHelpers : registerHandlebarHelpers
 	};
 
+	
+	
 });

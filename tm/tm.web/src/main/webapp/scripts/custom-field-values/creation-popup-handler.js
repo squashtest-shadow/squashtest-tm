@@ -27,15 +27,27 @@
  */
 
 define(
-		[ "jquery", "handlebars", "jqueryui", "./lib/jquery.editableCustomfield"],
-		function($, handlebars) {
+		[ "jquery", "handlebars", "./lib/cuf-values-utils", "jqueryui", "./lib/jquery.editableCustomfield"],
+		function($, handlebars, utils) {
 
+			utils.registerHandlebarHelpers(handlebars);
+			
 			var template = 
 				'{{#each this}}' +
 				'{{#unless optional}}' +
 				'<tr class="create-node-custom-field-row">' +
 					'<td><label>{{label}}</label></td>' +
-					'<td id="customFields[{{id}}]" class="create-node-custom-field" >{{defaultValue}}</td>' +
+					'<td id="customFields[{{id}}]" class="create-node-custom-field" >' +
+					'{{#ifequals inputType.enumName "TAG"}}' +
+						'<ul>' +
+						'{{#each defaultValueSelectedOptions}}' +
+							'<li>{{label}}</li>' +
+						'{{/each}}' +
+						'</ul>' +
+					'{{else}}' +
+						'{{defaultValue}}' + 
+					'{{/ifequals}}' +
+				'</td>' +
 				'</tr>' +
 				'{{/unless}}' +
 				'{{/each}}';

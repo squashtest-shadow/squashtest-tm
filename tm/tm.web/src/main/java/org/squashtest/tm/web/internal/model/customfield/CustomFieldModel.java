@@ -20,26 +20,29 @@
  */
 package org.squashtest.tm.web.internal.model.customfield;
 
+
 public class CustomFieldModel {
 
 	private long id;
-	
+
 	private String name;
-	
+
 	private String label;
-	
+
 	private boolean optional;
-	
+
 	private String friendlyOptional;
-	
+
+	// for single valued values
 	private String defaultValue;
-	
+
+
 	private String code;
-	
+
 	private InputTypeModel inputType;
 
 	private boolean isDenormalized;
-	
+
 	public long getId() {
 		return id;
 	}
@@ -80,6 +83,7 @@ public class CustomFieldModel {
 		this.defaultValue = defaultValue;
 	}
 
+
 	public InputTypeModel getInputType() {
 		return inputType;
 	}
@@ -88,9 +92,7 @@ public class CustomFieldModel {
 		this.inputType = inputType;
 	}
 
-	
-	
-	
+
 	public String getCode() {
 		return code;
 	}
@@ -114,8 +116,8 @@ public class CustomFieldModel {
 	public void setDenormalized(boolean isDenormalized) {
 		this.isDenormalized = isDenormalized;
 	}
-	
-	
-	
+
+
+
 }
 

@@ -24,6 +24,15 @@ public class CustomFieldOptionModel {
 
 	private String label;
 
+	public CustomFieldOptionModel(){
+		super();
+	}
+
+	public CustomFieldOptionModel(String label){
+		super();
+		this.label = label;
+	}
+
 	public String getLabel() {
 		return label;
 	}
@@ -31,7 +40,7 @@ public class CustomFieldOptionModel {
 	public void setLabel(String label) {
 		this.label = label;
 	}
-	
-	
-	
+
+
+
 }

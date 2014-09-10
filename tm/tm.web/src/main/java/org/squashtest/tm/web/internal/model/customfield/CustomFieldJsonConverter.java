@@ -143,6 +143,7 @@ public class CustomFieldJsonConverter {
 
 		case TAG :
 			model = createMultiSelectFieldModel((MultiSelectField) field);	// NOSONAR a CustomField which has InputType == TAG is always a MultiSelectField
+			break;
 
 		default:
 			model = createDefaultCustomFieldModel(field);
@@ -186,6 +187,7 @@ public class CustomFieldJsonConverter {
 		return populateCustomFieldModel(model, field);
 	}
 
+
 	private SingleSelectFieldModel createSingleSelectFieldModel(SingleSelectField field) {
 
 		SingleSelectFieldModel model = new SingleSelectFieldModel();
@@ -209,10 +211,14 @@ public class CustomFieldJsonConverter {
 
 		populateCustomFieldModel(model, field);
 
-		for (CustomFieldOption option : field.getOptions()){
+		for (CustomFieldOption option : field.getOptions()) {
 			CustomFieldOptionModel newOption = new CustomFieldOptionModel();
 			newOption.setLabel(option.getLabel());
 			model.addOption(newOption);
+		}
+
+		for (String value : field.getDefaultValue().split(";")){
+			model.addDefaultValueSelectedOption(value);
 		}
 
 		return model;
@@ -250,7 +256,6 @@ public class CustomFieldJsonConverter {
 
 		return model;
 	}
-
 
 	// *********************** denormalized field values **************************
 
