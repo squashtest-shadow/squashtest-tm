@@ -23,20 +23,20 @@ package org.squashtest.tm.web.internal.model.customfield;
 import java.util.LinkedList;
 import java.util.List;
 
-public class MultiSelectFieldModel extends CustomFieldModel{
+public class MultiSelectFieldModel extends SingleSelectFieldModel{
 
-	private List<CustomFieldOptionModel> options = new LinkedList<CustomFieldOptionModel>();
+	private List<CustomFieldOptionModel> defaultValueSelectedOptions = new LinkedList<CustomFieldOptionModel>();
 
-	public List<CustomFieldOptionModel> getOptions(){
-		return options;
+	public List<CustomFieldOptionModel> getDefaultValueSelectedOptions() {
+		return defaultValueSelectedOptions;
 	}
 
-	public void setOptions(List<CustomFieldOptionModel> options) {
-		this.options = options;
+	public void setDefaultValueSelectedOptions(List<CustomFieldOptionModel> defaultValueSelectedOptions) {
+		this.defaultValueSelectedOptions = defaultValueSelectedOptions;
 	}
 
-	public void addOption(CustomFieldOptionModel option){
-		options.add(option);
+	public void addDefaultValueSelectedOption(String option){
+		defaultValueSelectedOptions.add(new CustomFieldOptionModel(option));
 	}
 
 
