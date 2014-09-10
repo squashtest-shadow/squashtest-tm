@@ -63,11 +63,24 @@ define(["jquery", "handlebars", "squash.translator", "jqueryui", "./lib/jquery.s
 		'<div class="display-table-row control-group">' +
 			'<label class="display-table-cell">{{cuflabel this}}</label>' +
 			'<div class="display-table-cell controls">' +
+			
 			'{{#ifequals binding.customField.inputType.enumName "RICH_TEXT"}}' +
+			
 				'<span id="{{cufid this}}" class="{{cufclass this}}" data-value-id="{{id}}">{{{value}}}</span>' +
+			
+			'{{else}} {{#ifequals binding.customField.inputType.enumName "TAG"}}' +
+			
+				'<ul id="{{cufid this}}" class="{{cufclass this}}" data-value-id="{{id}}">'+
+				'{{#each optionValues}}' +
+					'<li>{{this}}</li>' +
+				'{{/each}}' +
+				'</ul>' +
+			
 			'{{else}}' +
+			
 				'<span id="{{cufid this}}" class="{{cufclass this}}" data-value-id="{{id}}">{{value}}</span>' +
-			'{{/ifequals}}' +
+			
+			'{{/ifequals}} {{/ifequals}}' +
 			'<span class="help-inline not-displayed">&nbsp;</span>' +
 			'</div>' +
 		'</div>' +
