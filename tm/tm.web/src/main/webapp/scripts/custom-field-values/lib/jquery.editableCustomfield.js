@@ -196,7 +196,25 @@ define([ "jquery", "underscore", "ckeditor",  "squash.configmanager", "./cuf-val
 				elt.empty();
 				elt.html(content);
 			}
-		} 
+		},
+		
+		'TAG' : {
+			_build : function(elf, def){
+				
+			},
+			
+			_set : function(elt, def, value){
+				
+			},
+			
+			_get : function(elt, def){
+				
+			},
+			
+			_destroy : function(elt, def){
+				
+			}
+		}
 	
 	};
 	
