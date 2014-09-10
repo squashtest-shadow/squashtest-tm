@@ -139,7 +139,7 @@ define(["jquery", "./cuf-values-utils", "underscore", "squash.configmanager"], f
 		
 		'TAG' : {
 			_build : function(elt, def){
-				var conf = confman
+				var conf = confman;
 				elt.squashTagit(conf);
 				elt.squashTagit('disable');
 			},
