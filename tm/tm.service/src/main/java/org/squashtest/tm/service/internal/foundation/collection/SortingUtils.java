@@ -93,7 +93,7 @@ public final class SortingUtils {
 		handlePreviousOrderClauses(hqlbuilder);
 
 		// now add the clause
-		hqlbuilder.append(sorting.getSortedAttribute()).append(" ").append(sorting.getSortOrder().getCode());
+		hqlbuilder.append(sorting.getSortedAttribute()).append(" ").append(sorting.getSortOrder().getCode()).append(" nulls first");
 
 	}
 
@@ -120,7 +120,7 @@ public final class SortingUtils {
 			Sorting sorting = iter.next();
 
 			hqlbuilder.append(sorting.getSortedAttribute()).append(" ").append(sorting.getSortOrder().getCode())
-			.append(" ");
+			.append(" nulls first ");
 
 			if (iter.hasNext()) {
 				hqlbuilder.append(", ");

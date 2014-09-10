@@ -77,9 +77,15 @@ class IterationTestPlanManagerServiceIT extends DbunitServiceSpecification {
 		def pagingsorting = new TestPagingMultiSorting(attributes)
 		def columnsorting = DefaultColumnFiltering.NO_FILTERING
 
+		and:
+
+
+
 		when :
-		List items = service.findAssignedTestPlan(-84L, pagingsorting, columnsorting).pagedItems
+		List items = service.findAssignedTestPlan(7000084L, pagingsorting, columnsorting).pagedItems
 		List itemIds = items.collect { it.item.id }
+
+		println items.collect { it.item.id  + it.item.testSuiteNames }
 
 		then :
 		CollectionComparisonUtils.matchesPartialOrder(itemIds , expectedItemIds)
@@ -88,13 +94,13 @@ class IterationTestPlanManagerServiceIT extends DbunitServiceSpecification {
 		where :
 
 		attributes																|	expectedItemIds
-		"TestCase.name asc"														|	[-280L, -277L, -276L, -275L, -274L, -279L, -278L, -269L, -268L, -267L, -266L, -273L, -272L, -271L, -270L]
-		"suitenames asc"														|	[[-266L, -269L, -272L, -275L], [-267L, -276L, -278L], -277L, -268L, [-270L, -273L], [-274L, -279L], [-271L, -280L]]
-		"TestCase.importance asc"												|	[[-266L, -272L, -275L, -277L], [-269L, -273L, -280L], [-268L, -270L, -276L, -278L], [-267L, -271L, -274L, -279L]]
-		"IterationTestPlanItem.executionStatus asc"								|	[-270L, [-266L, -271L, -273L, -274L, -280L], [-267L, -272L, -279L], [-268L, -275L, -277L], [-269L, -276L, -278L]]
-		"suitenames desc, TestCase.importance asc"								|	[-280L, -271L, [-274L, -279L], -273L, -270L, -268L, -277L, [-276L, -278L], -267L, [-266L, -272L, -275L], -269L]
-		"TestCase.importance asc, TestCase.name desc"							|	[-272L, -266L, -275L, -277L, -273L, -269L, -280L, -270L, -268L, -278L, -276L, -271L, -267L, -279L, -274L]
-		"TestCase.importance asc, IterationTestPlanItem.executionStatus desc"	|	[[-275L, -277L], -272L, -266L, -269L, [-273L, -280L], [-276L, -278L], -268L, -270L, [-267L, -279L], [-271L, -274L]]
+		"TestCase.name asc"														|	[70000280L, 70000277L, 70000276L, 70000275L, 70000274L, 70000279L, 70000278L, 70000269L, 70000268L, 70000267L, 70000266L, 70000273L, 70000272L, 70000271L, 70000270L]
+		"suitenames asc"														|	[[70000266L, 70000269L, 70000272L, 70000275L], [70000267L, 70000276L, 70000278L], 70000277L, 70000268L, [70000270L, 70000273L], [70000274L, 70000279L], [70000271L, 70000280L]]
+		"TestCase.importance asc"												|	[[70000266L, 70000272L, 70000275L, 70000277L], [70000269L, 70000273L, 70000280L], [70000268L, 70000270L, 70000276L, 70000278L], [70000267L, 70000271L, 70000274L, 70000279L]]
+		"IterationTestPlanItem.executionStatus asc"								|	[70000270L, [70000266L, 70000271L, 70000273L, 70000274L, 70000280L], [70000267L, 70000272L, 70000279L], [70000268L, 70000275L, 70000277L], [70000269L, 70000276L, 70000278L]]
+		"suitenames desc, TestCase.importance asc"								|	[70000280L, 70000271L, [70000274L, 70000279L], 70000273L, 70000270L, 70000268L, 70000277L, [70000276L, 70000278L], 70000267L, [70000266L, 70000272L, 70000275L], 70000269L]
+		"TestCase.importance asc, TestCase.name desc"							|	[70000272L, 70000266L, 70000275L, 70000277L, 70000273L, 70000269L, 70000280L, 70000270L, 70000268L, 70000278L, 70000276L, 70000271L, 70000267L, 70000279L, 70000274L]
+		"TestCase.importance asc, IterationTestPlanItem.executionStatus desc"	|	[[70000275L, 70000277L], 70000272L, 70000266L, 70000269L, [70000273L, 70000280L], [70000276L, 70000278L], 70000268L, 70000270L, [70000267L, 70000279L], [70000271L, 70000274L]]
 	}
 
 

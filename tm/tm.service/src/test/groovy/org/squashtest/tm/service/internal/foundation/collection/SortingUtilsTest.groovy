@@ -33,9 +33,9 @@ import spock.lang.Specification;
 public class SortingUtilsTest extends Specification {
 
 	def "should add multiple order by clause to query" () {
-		given: 
+		given:
 		String query = "from Bar"
-		
+
 		and:
 		MultiSorting ms = Mock()
 		Sorting s = Mock()
@@ -45,27 +45,27 @@ public class SortingUtilsTest extends Specification {
 		s2.sortedAttribute >> "Bar.bar"
 		s2.sortOrder >> SortOrder.DESCENDING
 		ms.getSortings() >> [s, s2]
-		
+
 		when:
 		def res = SortingUtils.addOrder(query, ms);
-		
-		then: 
-		res == "from Bar order by Bar.foo asc , Bar.bar desc "
+
+		then:
+		res == "from Bar order by Bar.foo asc nulls first , Bar.bar desc nulls first "
 	}
-	
+
 	def "should add single order by clause to query" () {
-		given: 
+		given:
 		String query = "from Bar"
-		
+
 		and:
 		Sorting s = Mock()
 		s.sortedAttribute >> "Bar.foo"
 		s.sortOrder >> SortOrder.ASCENDING
-		
+
 		when:
 		def res = SortingUtils.addOrder(query, s);
-		
-		then: 
-		res == "from Bar order by Bar.foo asc"
+
+		then:
+		res == "from Bar order by Bar.foo asc nulls first"
 	}
 }

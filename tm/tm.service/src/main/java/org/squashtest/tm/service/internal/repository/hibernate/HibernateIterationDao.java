@@ -21,6 +21,7 @@
 package org.squashtest.tm.service.internal.repository.hibernate;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.ListIterator;
@@ -37,9 +38,11 @@ import org.springframework.stereotype.Repository;
 import org.squashtest.tm.core.foundation.collection.ColumnFiltering;
 import org.squashtest.tm.core.foundation.collection.DefaultFiltering;
 import org.squashtest.tm.core.foundation.collection.Filtering;
+import org.squashtest.tm.core.foundation.collection.MultiSorting;
 import org.squashtest.tm.core.foundation.collection.PagingAndMultiSorting;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.SingleToMultiSortingAdapter;
+import org.squashtest.tm.core.foundation.collection.Sorting;
 import org.squashtest.tm.domain.campaign.Campaign;
 import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
@@ -62,7 +65,7 @@ public class HibernateIterationDao extends HibernateEntityDao<Iteration> impleme
 	 * Because it is impossible to sort over the indices of ordered collection in a criteria query we must then build an
 	 * hql string which will let us do that.
 	 */
-	private static final String HQL_INDEXED_TEST_PLAN_TEMPLATE_START = "select index(IterationTestPlanItem), IterationTestPlanItem, group_concat(TestSuite.name, 'order by', TestSuite.name) as suitenames "
+	private static final String HQL_INDEXED_TEST_PLAN_TEMPLATE_START = "select index(IterationTestPlanItem), IterationTestPlanItem, coalesce(group_concat(TestSuite.name, 'order by', TestSuite.name), '') as suitenames "
 			+ "from Iteration as Iteration inner join Iteration.testPlans as IterationTestPlanItem "
 			+ "left outer join IterationTestPlanItem.referencedTestCase as TestCase "
 			+ "left outer join TestCase.project as Project "
@@ -71,7 +74,13 @@ public class HibernateIterationDao extends HibernateEntityDao<Iteration> impleme
 			+ "left outer join IterationTestPlanItem.testSuites as TestSuite "
 			+ "where Iteration.id = :iterationId {whereClause} ";
 
-	private static final String HQL_INDEXED_TEST_PLAN_TEMPLATE_END = "group by Iteration.id, IterationTestPlanItem.id ";
+	/*
+	 * note : group by Iteration, ITPI is broken : produces `GROUP BY ITERATION.ID, null` SQL (HHH-1615)
+	 * note : we have to group by Iteration.id *and* ITPI.iteration.id, otherwise a group by clause on the join table is
+	 * missing. This may be a side effect of Iteration<->ITPI mapping : because of issue HHH-TBD, this is mapped as 2
+	 * unidirectional associations instead of 1 bidi association.
+	 */
+	private static final String HQL_INDEXED_TEST_PLAN_TEMPLATE_END = "group by IterationTestPlanItem.iteration.id, IterationTestPlanItem.id, Iteration.id, index(IterationTestPlanItem) ";
 	private static final String HQL_INDEXED_TEST_PLAN_TESTSUITE_FILTER = "having group_concat(TestSuite.name, 'order by', TestSuite.name) like :testsuiteFilter ";
 
 	/**
@@ -259,10 +268,10 @@ public class HibernateIterationDao extends HibernateEntityDao<Iteration> impleme
 	public List<IterationTestPlanItem> findTestPlan(long iterationId, PagingAndMultiSorting sorting,
 			Filtering filtering, ColumnFiltering columnFiltering) {
 
-		/* get the data */
+		// get the data
 		List<Object[]> tuples = findIndexedTestPlanData(iterationId, sorting, filtering, columnFiltering);
 
-		/* filter them */
+		// filter them
 		List<IterationTestPlanItem> items = new ArrayList<IterationTestPlanItem>(tuples.size());
 
 		for (Object[] tuple : tuples) {
@@ -315,14 +324,15 @@ public class HibernateIterationDao extends HibernateEntityDao<Iteration> impleme
 
 	}
 
-	private StringBuilder buildTestPlanQueryBody(Filtering filtering, ColumnFiltering columnFiltering) {
-		StringBuilder hqlbuilder = new StringBuilder();
+	private StringBuilder buildTestPlanQueryBody(Filtering filtering, ColumnFiltering columnFiltering,
+			MultiSorting multiSorting) {
+		StringBuilder hqlBuilder = new StringBuilder();
 
 		String hql = filtering.isDefined() ? hqlUserFilteredIndexedTestPlan : hqlFullIndexedTestPlan;
-		hqlbuilder.append(hql);
+		hqlBuilder.append(hql);
 
 		// additional where clauses
-		TestPlanFilteringHelper.appendFilteringRestrictions(hqlbuilder, columnFiltering);
+		TestPlanFilteringHelper.appendFilteringRestrictions(hqlBuilder, columnFiltering);
 
 		for (Entry<String, Map<String, String>> valueDependantFilterClause : VALUE_DEPENDENT_FILTER_CLAUSES.entrySet()) {
 			String filterName = valueDependantFilterClause.getKey();
@@ -333,24 +343,31 @@ public class HibernateIterationDao extends HibernateEntityDao<Iteration> impleme
 				if (clause == null) {
 					clause = clausesByValues.get(VDFC_DEFAULT_KEY);
 				}
-				hqlbuilder.append(clause);
+				hqlBuilder.append(clause);
 			}
 		}
 
 		// group by
-		hqlbuilder.append(HQL_INDEXED_TEST_PLAN_TEMPLATE_END);
+		hqlBuilder.append(HQL_INDEXED_TEST_PLAN_TEMPLATE_END);
 
-		if (columnFiltering.hasFilter(TestPlanFilteringHelper.TESTSUITE_DATA)) {
-			hqlbuilder.append(HQL_INDEXED_TEST_PLAN_TESTSUITE_FILTER);
+		// Strict SQL (postgres) : sort colums have to appear in group by clause.
+		for (Sorting sorting : multiSorting.getSortings()) {
+			if (!"suitenames".equals(sorting.getSortedAttribute())) {
+				hqlBuilder.append(", ").append(sorting.getSortedAttribute());
+			}
 		}
 
-		return hqlbuilder;
+		if (columnFiltering.hasFilter(TestPlanFilteringHelper.TESTSUITE_DATA)) {
+			hqlBuilder.append(HQL_INDEXED_TEST_PLAN_TESTSUITE_FILTER);
+		}
+
+		return hqlBuilder;
 	}
 
 	private String buildIndexedTestPlanQueryString(PagingAndMultiSorting sorting, Filtering filtering,
 			ColumnFiltering columnFiltering) {
 
-		StringBuilder hqlbuilder = buildTestPlanQueryBody(filtering, columnFiltering);
+		StringBuilder hqlbuilder = buildTestPlanQueryBody(filtering, columnFiltering, sorting);
 
 		// tune the sorting to make hql happy
 		LevelImplementorSorter wrapper = new LevelImplementorSorter(sorting);
@@ -396,7 +413,13 @@ public class HibernateIterationDao extends HibernateEntityDao<Iteration> impleme
 	@Override
 	public long countTestPlans(Long iterationId, Filtering filtering, ColumnFiltering columnFiltering) {
 
-		StringBuilder hqlbuilder = buildTestPlanQueryBody(filtering, columnFiltering);
+		StringBuilder hqlbuilder = buildTestPlanQueryBody(filtering, columnFiltering, new MultiSorting() {
+
+			@Override
+			public List<Sorting> getSortings() {
+				return Collections.emptyList();
+			}
+		});
 
 		Query query = assignParameterValuesToTestPlanQuery(hqlbuilder.toString(), iterationId, filtering,
 				columnFiltering);
