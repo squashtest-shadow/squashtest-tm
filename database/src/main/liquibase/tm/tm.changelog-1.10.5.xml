@@ -49,7 +49,7 @@
     </sql>
 
     <sql>
-      delete from custom_field_value
+      delete from CUSTOM_FIELD_VALUE
       where cfv_id not in (select id from cuf_values_to_save);
     </sql>
 
