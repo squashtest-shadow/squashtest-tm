@@ -53,8 +53,8 @@
       </resource>
     </resources>
 
-    <!-- fetch the database generation module -->
     <plugins>
+    <!-- fetch the database generation module -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-remote-resources-plugin</artifactId>
@@ -278,7 +278,6 @@
               </execution>
             </executions>
           </plugin>
-
         </plugins>
       </build>
     </profile>
@@ -294,6 +293,7 @@
     </profile>
 
     <profile>
+    <!-- legact, use -Pmysql instead -->
       <id>mysqlDev</id>
       <activation>
         <activeByDefault>false</activeByDefault>
@@ -323,34 +323,113 @@
     </profile>
 
     <profile>
+      <id>mysql</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-enforcer-plugin</artifactId>
+            <executions>
+              <execution>
+                <goals>
+                  <goal>enforce</goal>
+                </goals>
+                <configuration>
+                  <rules>
+                    <requireProperty>
+                      <property>dev.database.url</property>
+                    </requireProperty>
+                    <requireProperty>
+                      <property>dev.database.username</property>
+                    </requireProperty>
+                    <requireProperty>
+                      <property>dev.database.password</property>
+                    </requireProperty>
+                  </rules>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+
+      <properties>
+        <db.dialect>org.hibernate.dialect.MySQLDialect</db.dialect>
+        <db.driver>com.mysql.jdbc.Driver</db.driver>
+        <db.url>${dev.database.url}</db.url>
+        <db.username>${dev.database.username}</db.username>
+        <db.password>${dev.database.password}</db.password>
+        <!-- for database generation only -->
+        <db.create.user>${dev.database.username}</db.create.user>
+        <db.create.password>${dev.database.password}</db.create.password>
+      </properties>
+
+      <dependencies>
+        <dependency>
+          <groupId>com.mysql.jdbc</groupId>
+          <artifactId>com.springsource.com.mysql.jdbc</artifactId>
+        </dependency>
+      </dependencies>
+    </profile>
+
+    <profile>
       <id>postgresql</id>
+
       <activation>
         <activeByDefault>false</activeByDefault>
         <property>
+        <!-- kind of legacy. use regular -Ppostgresql instead -->
           <name>environment.type</name>
           <value>postgresqlDev</value>
         </property>
       </activation>
+
       <properties>
         <db.dialect>org.hibernate.dialect.PostgreSQLDialect</db.dialect>
         <db.driver>org.postgresql.Driver</db.driver>
-        <db.url>${dev.postgres.url}</db.url>
-        <db.username>${dev.postgres.username}</db.username>
-        <db.password>${dev.postgres.password}</db.password>
+        <db.url>${dev.database.url}</db.url>
+        <db.username>${dev.database.username}</db.username>
+        <db.password>${dev.database.password}</db.password>
         <!-- for database generation only -->
-        <db.create.user>${dev.postgres.username}</db.create.user>
-        <db.create.password>${dev.postgres.password}</db.create.password>
+        <db.create.user>${dev.database.username}</db.create.user>
+        <db.create.password>${dev.database.password}</db.create.password>
       </properties>
+
       <dependencies>
         <dependency>
           <groupId>org.ancoron.postgresql</groupId>
           <artifactId>org.postgresql</artifactId>
         </dependency>
-        <!-- <dependency>
-          <groupId>org.ancoron.postgresql</groupId>
-          <artifactId>org.postgresql.net</artifactId>
-        </dependency> -->
       </dependencies>
+
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-enforcer-plugin</artifactId>
+            <executions>
+              <execution>
+                <goals>
+                  <goal>enforce</goal>
+                </goals>
+                <configuration>
+                  <rules>
+                    <requireProperty>
+                      <property>dev.database.url</property>
+                    </requireProperty>
+                    <requireProperty>
+                      <property>dev.database.username</property>
+                    </requireProperty>
+                    <requireProperty>
+                      <property>dev.database.password</property>
+                    </requireProperty>
+                  </rules>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
     </profile>
   </profiles>
 
