@@ -24,7 +24,7 @@
 <beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xmlns:p="http://www.springframework.org/schema/p" xmlns:context="http://www.springframework.org/schema/context"
   xmlns:aop="http://www.springframework.org/schema/aop" xmlns:util="http://www.springframework.org/schema/util"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+  xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd
 		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.1.xsd
 		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd">
@@ -56,13 +56,13 @@
     <property name="defaultEncoding" value="UTF-8" />
   </bean>
 
-    <!-- This bean is referenced by an osgi:list, so it has to be instanciated in appContext*xml (not visible when in *servlet.xml) -->	
-	<bean id="squash.tm.report.WorkspaceWizardManager" class="org.squashtest.tm.web.internal.wizard.WorkspaceWizardManagerImpl" >
-		<property name="projectFinder" ref="squashtest.tm.service.GenericProjectManagerService" />
-	</bean>
+    <!-- This bean is referenced by an osgi:list, so it has to be instanciated in appContext*xml (not visible when in *servlet.xml) -->
+  <bean id="squash.tm.report.WorkspaceWizardManager" class="org.squashtest.tm.web.internal.wizard.WorkspaceWizardManagerImpl">
+    <property name="projectFinder" ref="squashtest.tm.service.GenericProjectManagerService" />
+  </bean>
 	
-	<!-- same thing for this one -->	
-	<bean id="squash.tm.report.ExportPluginManager" class="org.squashtest.tm.web.internal.export.ExportPluginManagerImpl" />
+	<!-- same thing for this one -->
+  <bean id="squash.tm.report.ExportPluginManager" class="org.squashtest.tm.web.internal.export.ExportPluginManagerImpl" />
 	
 	<!--  TODO
 		once everyting it takes is implemented, replace the class of this resolver by the following :
@@ -91,18 +91,19 @@
     <property name="basenames">
       <list>
     <!-- TODO merge core and tm files -->
-<value>file:${bundles.configuration.location}/messages/core/messages</value>
+        <value>file:${bundles.configuration.location}/messages/core/messages</value>
         <value>/WEB-INF/messages/core/messages</value>
         <value>/WEB-INF/messages/tm/messages</value>
         <value>org/springframework/security/messages</value>
       </list>
     </property>
-  <property name="cacheSeconds" value="1"/> 
+    <property name="cacheSeconds" value="60" />
   </bean>
 
   <beans profile="eclipse">
     <context:component-scan base-package="target/classes/org.squashtest.tm" use-default-filters="false">
-      <context:include-filter type="annotation" expression="org.squashtest.tm.web.internal.annotation.ApplicationComponent" />
-    </context:component-scan>    
+      <context:include-filter type="annotation"
+        expression="org.squashtest.tm.web.internal.annotation.ApplicationComponent" />
+    </context:component-scan>
   </beans>
 </beans>

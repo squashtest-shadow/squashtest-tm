@@ -43,7 +43,7 @@
         <value>mantis-bugmessages</value>
         </list>
         </property>
-		  <property name="cacheSeconds" value="1"/> 
+		  <property name="cacheSeconds" value="60" /> 
 	</bean>
 	
 </beans>

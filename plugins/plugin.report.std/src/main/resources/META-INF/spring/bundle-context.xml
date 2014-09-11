@@ -42,7 +42,7 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
         <value>classpath:i18n/messages</value>
         </list>
         </property>
-		  <property name="cacheSeconds" value="1"/> 
+		  <property name="cacheSeconds" value="60" /> 
 	</bean>
 	
 	
