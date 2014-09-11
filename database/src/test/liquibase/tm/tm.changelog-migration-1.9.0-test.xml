@@ -31,4 +31,47 @@
 		relativeToChangelogFile="true" />
 	<!-- ========================================================================================================= -->
 	
+	
+	  <!--  testing the dataset --> 
+	<changeSet id="tm-1.9.0.feature-3138-2-test-00-1" author="jsimon">
+		<preConditions>
+			<sqlCheck expectedResult="0">
+				select count(*) from CAMPAIGN_LIBRARY_CONTENT
+				where content_order = null
+			</sqlCheck>
+			<sqlCheck expectedResult="0">
+				select count(*) from CLN_RELATIONSHIP
+					where content_order = null
+			</sqlCheck>
+		</preConditions>
+	</changeSet>
+	
+		  <!--  testing the dataset --> 
+	<changeSet id="tm-1.9.0.feature-3138-4-test-00-1" author="jsimon">
+		<preConditions>
+			<sqlCheck expectedResult="0">
+				select count(*) from RLN_RELATIONSHIP
+				where content_order = null
+			</sqlCheck>
+			<sqlCheck expectedResult="0">
+				select count(*) from REQUIREMENT_LIBRARY_CONTENT
+					where content_order = null
+			</sqlCheck>
+		</preConditions>
+	</changeSet>
+	
+			  <!--  testing the dataset --> 
+	<changeSet id="tm-1.9.0.feature-3138-6-test-00-1" author="jsimon">
+		<preConditions>
+			<sqlCheck expectedResult="0">
+				select count(*) from TCLN_RELATIONSHIP
+				where content_order = null
+			</sqlCheck>
+			<sqlCheck expectedResult="0">
+				select count(*) from TEST_CASE_LIBRARY_CONTENT
+					where content_order = null
+			</sqlCheck>
+		</preConditions>
+	</changeSet>
+	
 </databaseChangeLog>
