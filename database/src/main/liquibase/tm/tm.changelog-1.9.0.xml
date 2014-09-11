@@ -127,9 +127,6 @@ LOOP
        insert into TEMP_CLN_CONTENT_ORDER (CONTENT_ORDER, ANCESTOR_ID, DESCENDANT_ID)
        select rn, r.LIBRARY_ID , r.CONTENT_ID  ;
 END LOOP;
-
-
-
 return 'ok';
 END
 $$ LANGUAGE plpgsql;
@@ -294,7 +291,7 @@ DROP FUNCTION TestFunction();
     <comment>Creating default order which is identical with the alphabetical order</comment>
     <sql>
 	create table TEMP_RLN_CONTENT_ORDER(CONTENT_ORDER BIGINT NOT NULL, ANCESTOR_ID BIGINT NOT NULL, DESCENDANT_ID BIGINT NOT
-	      NULL, DUMMY BIGINT NOT NULL);
+	      NULL);
 	
 		  
 	create table TMP_MAP_RLN_RESOURCE(RLN_ID BIGINT NOT NULL, 
@@ -358,11 +355,12 @@ LOOP
  	   insert into TEMP_RLN_CONTENT_ORDER (CONTENT_ORDER, ANCESTOR_ID, DESCENDANT_ID)
        select rn, r.LIBRARY_ID , r.CONTENT_ID  ;
 END LOOP;
-
-
 return 'ok';
 END
-$$ LANGUAGE plpgsql;	  
+$$ LANGUAGE plpgsql;	
+select testfunction();
+DROP FUNCTION TestFunction(); 
+  
 	</createProcedure>
 	<sql>
 	update RLN_RELATIONSHIP
