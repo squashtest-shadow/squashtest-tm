@@ -20,7 +20,7 @@
  */
 define(
 		[ "jquery", "backbone", "handlebars", "app/lnf/SquashDatatablesLnF", "app/lnf/Forms", "squash.configmanager",
-				"jquery.squash.confirmdialog", "datepicker/jquery.squash.datepicker-locales" ],
+				"jquery.squash.confirmdialog", "datepicker/jquery.squash.datepicker-locales", "jquery.squash.tagit" ],
 		function($, Backbone, Handlebars, SD, Forms, confman) {
 			/*
 			 * Defines the controller for the new custom field panel.
@@ -91,6 +91,24 @@ define(
 									$("#defaultValue").trigger('change');
 								});
 								break;
+							case "TAG" :
+								this.renderOptional(true);
+								$("#defaultValue").tagit({
+									beforeTagAdded:  function(event, ui){
+										if(!(ui.tagLabel.indexOf(";") == -1)){
+											$("#defaultValue").trigger('invalidtag');
+											return false;
+										}
+									},									
+									afterTagAdded:  function(event, ui){
+										$("#defaultValue").trigger('change');
+									},
+									afterTagRemoved:  function(event, ui){
+										$("#defaultValue").trigger('change');
+									}
+								}
+								);
+								break;
 							}
 							this._resize();
 							return this;
@@ -111,6 +129,8 @@ define(
 							"change select.optprop" : "changeOptProp",
 							"change input:text.dateprop" : "changeDateProp",
 							"change textarea.richprop" : "changeRichProp",
+							"change ul.tagprop" : "changeTagProp",
+							"invalidtag ul.tagprop" : "invalidTag",
 							"change select[name='inputType']" : "changeInputType",
 							"click input:checkbox[name='optional']" : "changeOptional",
 							"confirmdialogcancel" : "cancel",
@@ -139,7 +159,10 @@ define(
 							var area = $("#defaultValue");
 							this.model.set(area.attr('id'), area.val());
 						},
-
+						changeTagProp : function(event){
+							tags = $("#defaultValue").tagit("assignedTags").join(";");
+							this.model.set("defaultValue", tags);
+						},
 						changeInputType : function(event) {
 							var model = this.model;
 
@@ -163,7 +186,14 @@ define(
 							this.cleanup();
 							this.trigger("newcustomfield.confirm");
 						},
-
+						
+						invalidTag : function(event) {
+							var res = true, invalidTag = this.model.invalidTag();
+							Forms.form(this.$el).clearState();
+							Forms.input(this.$("ul[name='" + "defaultValue" + "']")).setState("error", invalidTag["tagCode"]);
+							return false;
+						},
+						
 						validate : function(event) {
 							var res = true, validationErrors = this.model.validateAll();
 
