@@ -39,9 +39,9 @@ define(
 					'<td><label>{{label}}</label></td>' +
 					'<td id="customFields[{{id}}]" class="create-node-custom-field" >' +
 					'{{#ifequals inputType.enumName "TAG"}}' +
-						'<ul>' +
-						'{{#each defaultValueSelectedOptions}}' +
-							'<li>{{label}}</li>' +
+						'<ul class="abort-key-enter">' +
+						'{{#each defaultValue}}' +
+							'<li>{{this}}</li>' +
 						'{{/each}}' +
 						'</ul>' +
 					'{{else}}' +
@@ -103,6 +103,13 @@ define(
 					table.append(this.rowTemplate(cufDefs));
 
 					var fields = table.find(".create-node-custom-field");
+					fields.find('.abort-key-enter').on('keydown', function(event) {
+						if (event.keyCode === 13) {
+							event.preventDefault();
+							event.stopPropagation();
+						}
+					});
+					
 					if (fields.length > 0) {
 						fields.each(function(idx) {
 							$(this).editableCustomfield(cufDefs[idx]);
