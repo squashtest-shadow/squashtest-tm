@@ -290,6 +290,7 @@
             <exclude>**/styles/switchButton/*.*</exclude>
             <exclude>**/styles/**/thymol.js</exclude>
             <exclude>**/r.js</exclude>
+            <exclude>**/scripts/sinon*.js</exclude>
             <exclude>**/styles/**/bootstrap*.css</exclude> 
             <exclude>**/pubsub-boot.js</exclude> 
             
