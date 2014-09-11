@@ -64,6 +64,7 @@ class CustomFieldMappingIT extends HibernateMappingSpecification {
         res != null
     }
 
+/*
 		def "should persist and retrieve a multiple select field"() {
 		given:
 		def cf = new MultiSelectField();
@@ -78,7 +79,7 @@ class CustomFieldMappingIT extends HibernateMappingSpecification {
 		then:
 		res != null
 	}
-		
+*/		
     def "should add options to a single select field"() {
         given:
         def cf = new SingleSelectField();
@@ -100,7 +101,7 @@ class CustomFieldMappingIT extends HibernateMappingSpecification {
         then:
         res.options*.label == ["leatherpants", "batarang"]
     }
-	
+/*	
 	def "should add options to a multiple select field"() {
 		given:
 		def cf = new MultiSelectField();
@@ -122,7 +123,7 @@ class CustomFieldMappingIT extends HibernateMappingSpecification {
 		then:
 		res.options*.label == ["leatherpants", "batarang"]
 	}
-
+*/
     def "should remove options from a single select field"() {
         given:
         def cf = new SingleSelectField();
@@ -152,7 +153,7 @@ class CustomFieldMappingIT extends HibernateMappingSpecification {
 		then:
 		res.options*.label == ["leatherpants"]
     }
-	
+/*	
 	def "should remove options from a multiple select field"() {
 		given:
 		def cf = new MultiSelectField();
@@ -182,7 +183,7 @@ class CustomFieldMappingIT extends HibernateMappingSpecification {
 		then:
 		res.options*.label == ["leatherpants"]
 	}
-
+*/
 	def "should change the label of a single select field's option"() {
 		given:
 		def cf = new SingleSelectField()
@@ -212,7 +213,7 @@ class CustomFieldMappingIT extends HibernateMappingSpecification {
 		then:
 		res.options*.label == ["leatherpants", "bataring"]
 	}
-	
+/*	
 	def "should change the label of a multiple select field's option"() {
 		given:
 		def cf = new MultiSelectField()
@@ -242,6 +243,6 @@ class CustomFieldMappingIT extends HibernateMappingSpecification {
 		then:
 		res.options*.label == ["leatherpants", "bataring"]
 	}
-
+*/
 }
 
