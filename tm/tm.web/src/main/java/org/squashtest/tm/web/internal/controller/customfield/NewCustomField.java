@@ -23,6 +23,7 @@ package org.squashtest.tm.web.internal.controller.customfield;
 import org.squashtest.tm.domain.customfield.CustomField;
 import org.squashtest.tm.domain.customfield.CustomFieldOption;
 import org.squashtest.tm.domain.customfield.InputType;
+import org.squashtest.tm.domain.customfield.MultiSelectField;
 import org.squashtest.tm.domain.customfield.RichTextField;
 import org.squashtest.tm.domain.customfield.SingleSelectField;
 
@@ -43,10 +44,12 @@ public class NewCustomField extends CustomField {
 		switch (inputType) {
 		case DROPDOWN_LIST:
 			res = createSingleSelectField();
-
 			break;
 		case RICH_TEXT :
 			res = createRichTextField();
+			break;
+		case TAG :
+			res = createTag();
 			break;
 		default:
 			res = new CustomField(inputType);
@@ -76,6 +79,20 @@ public class NewCustomField extends CustomField {
 
 	private CustomField createRichTextField(){
 		return new RichTextField();
+	}
+
+	private CustomField createTag(){
+		CustomField res;
+		MultiSelectField msf = new MultiSelectField();
+
+		for(String[] option : options) {
+			String label = option[0];
+			String code = option[1];
+			msf.addOption(new CustomFieldOption(label, code) );
+		}
+		
+		res = msf;
+		return res;
 	}
 
 	/**
