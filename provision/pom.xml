@@ -212,116 +212,60 @@
         </configuration>
       </plugin>
       <!-- end clean datasource properties -->
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <configuration>
+          <skipAssembly>${assembly.skip}</skipAssembly>
+        </configuration>
+        <executions>
+          <execution>
+            <id>provision-eclipse-platform</id>
+            <phase>package</phase>
+            <goals>
+              <goal>single</goal>
+            </goals>
+            <configuration>
+              <descriptors>
+                <descriptor>src/main/assembly/eclipse-provision.xml</descriptor>
+              </descriptors>
+              <appendAssemblyId>false</appendAssemblyId>
+              <finalName>eclipse-provision</finalName>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <!-- Populates provision database data -->
+      <plugin>
+        <groupId>org.liquibase</groupId>
+        <artifactId>liquibase-maven-plugin</artifactId>
+        <configuration>
+          <skip>${db.nopopulate}</skip>
+        </configuration>
+        <executions>
+          <execution>
+            <id>populate-dev-data</id>
+                <!-- this phase should be after schema generation -->
+            <phase>generate-test-resources</phase>
+            <goals>
+              <goal>update</goal>
+            </goals>
+            <configuration>
+              <changeLogFile>${master.changelog}</changeLogFile>
+              <driver>${db.driver}</driver>
+              <url>${db.url}</url>
+              <username>${db.create.user}</username>
+              <password>${db.create.password}</password>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
     </plugins>
   </build>
 
-  <!-- Provisioning is for dev environment only -->
   <profiles>
-    <profile>
-      <id>development</id>
-      <activation>
-        <activeByDefault>true</activeByDefault>
-        <property>
-          <name>env.type</name>
-          <value>dev</value>
-        </property>
-      </activation>
-
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-assembly-plugin</artifactId>
-            <configuration>
-              <skipAssembly>${assembly.skip}</skipAssembly>
-            </configuration>
-            <executions>
-              <execution>
-                <id>provision-eclipse-platform</id>
-                <phase>package</phase>
-                <goals>
-                  <goal>single</goal>
-                </goals>
-                <configuration>
-                  <descriptors>
-                    <descriptor>src/main/assembly/eclipse-provision.xml</descriptor>
-                  </descriptors>
-                  <appendAssemblyId>false</appendAssemblyId>
-                  <finalName>eclipse-provision</finalName>
-                </configuration>
-              </execution>
-            </executions>
-          </plugin>
-
-          <!-- Populates provision database data -->
-          <plugin>
-            <groupId>org.liquibase</groupId>
-            <artifactId>liquibase-maven-plugin</artifactId>
-            <configuration>
-              <skip>${db.nopopulate}</skip>
-            </configuration>
-            <executions>
-              <execution>
-                <id>populate-dev-data</id>
-                <!-- this phase should be after schema generation -->
-                <phase>generate-test-resources</phase>
-                <goals>
-                  <goal>update</goal>
-                </goals>
-                <configuration>
-                  <changeLogFile>${master.changelog}</changeLogFile>
-                  <driver>${db.driver}</driver>
-                  <url>${db.url}</url>
-                  <username>${db.create.user}</username>
-                  <password>${db.create.password}</password>
-                </configuration>
-              </execution>
-            </executions>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-
-    <profile>
-      <id>continuous-integration</id>
-      <activation>
-        <property>
-          <name>env.type</name>
-          <value>ci</value>
-        </property>
-      </activation>
-    </profile>
-
-    <profile>
-    <!-- legact, use -Pmysql instead -->
-      <id>mysqlDev</id>
-      <activation>
-        <activeByDefault>false</activeByDefault>
-        <property>
-          <name>environment.type</name>
-          <value>mysqlDev</value>
-        </property>
-      </activation>
-      <properties>
-        <db.dialect>org.hibernate.dialect.MySQLDialect</db.dialect>
-        <db.driver>com.mysql.jdbc.Driver</db.driver>
-        <db.url>
-          jdbc:mysql://localhost/squashtest
-        </db.url>
-        <db.username>root</db.username>
-        <db.password></db.password>
-        <!-- for database generation only -->
-        <db.create.user>root</db.create.user>
-        <db.create.password></db.create.password>
-      </properties>
-      <dependencies>
-        <dependency>
-          <groupId>com.mysql.jdbc</groupId>
-          <artifactId>com.springsource.com.mysql.jdbc</artifactId>
-        </dependency>
-      </dependencies>
-    </profile>
-
     <profile>
       <id>mysql</id>
       <build>
@@ -394,13 +338,6 @@
         <db.create.user>${dev.database.username}</db.create.user>
         <db.create.password>${dev.database.password}</db.create.password>
       </properties>
-
-      <dependencies>
-        <dependency>
-          <groupId>org.ancoron.postgresql</groupId>
-          <artifactId>org.postgresql</artifactId>
-        </dependency>
-      </dependencies>
 
       <build>
         <plugins>
@@ -693,6 +630,11 @@
       <groupId>org.osgi</groupId>
       <artifactId>org.osgi.enterprise</artifactId>
       <version>4.2.0</version>
+    </dependency>
+    
+    <dependency>
+      <groupId>org.ancoron.postgresql</groupId>
+      <artifactId>org.postgresql</artifactId>
     </dependency>
     <!-- ====== /DATABASE ====== -->
 
