@@ -80,6 +80,7 @@
       tcln.TCLN_ID = tcs.TEST_CASE_ID
       and tcln.PROJECT_ID = cfb.BOUND_PROJECT_ID
       and cfb.CF_ID = cf.CF_ID
+      and cfb.BOUND_ENTITY = 'TEST_STEP'
       and not exists (
       select 1
       from CUSTOM_FIELD_VALUE cfv
