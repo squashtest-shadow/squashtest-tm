@@ -211,7 +211,7 @@ define([ "jquery", "squash.translator", "datepicker/jquery.squash.datepicker-loc
 	
 	function stdTagit(){
 		return {
-			
+
 		};
 	}
 

@@ -31,7 +31,8 @@
  * .editableCustomfield("destroy") : destroys the custom field.
  * 
  */
-define(["jquery", "squash.configmanager", "./cuf-values-utils", "jquery.squash.jeditable", "jquery.generateId"], 
+define(["jquery", "squash.configmanager", "./cuf-values-utils", "jquery.squash.jeditable", 
+        "jquery.generateId", "jquery.squash.tagit"], 
 		function($, confman, utils){
 	
 	if ($.fn.editableCustomfield !== undefined){
@@ -196,20 +197,40 @@ define(["jquery", "squash.configmanager", "./cuf-values-utils", "jquery.squash.j
 		},
 		
 		'TAG' : {
-			_build : function(elf, def){
-				
+			_build : function(elt, def){
+				var conf = confman.getStdTagit();
+				$.extend(conf, {
+					autocomplete: {
+						delay: 0, 
+						source : def.options
+					}
+				})
+				var ul = elt.find('>ul');
+				ul.squashTagit(conf);
 			},
 			
 			_set : function(elt, def, value){
-				
+				var ul = elt.find('>ul');
+				if (ul.data('squashTagit') === undefined){
+					ul.empty();
+					for (var i=0;i<value.length;i++){
+						ul.append('<li>'+ value[i] +'</li>');
+					}
+				}
+				else{
+					ul.squashTagit('removeAll');
+					for (var i=0;i<value.length;i++){
+						ul.squashTagit('createTag', value[i]);
+					}
+				}
 			},
 			
 			_get : function(elt, def){
-				
+				return elt.find('>ul').squashTagit('assignedTags').join(',');
 			},
 			
 			_destroy : function(elt, def){
-				
+				elt.find('>ul').squashTagit('destroy');
 			}
 		}
 	

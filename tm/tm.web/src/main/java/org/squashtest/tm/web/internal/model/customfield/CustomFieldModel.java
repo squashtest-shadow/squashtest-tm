@@ -21,7 +21,7 @@
 package org.squashtest.tm.web.internal.model.customfield;
 
 
-public class CustomFieldModel {
+public abstract class CustomFieldModel<VALUETYPE> {
 
 	private long id;
 
@@ -33,15 +33,19 @@ public class CustomFieldModel {
 
 	private String friendlyOptional;
 
-	// for single valued values
-	private String defaultValue;
-
-
 	private String code;
 
 	private InputTypeModel inputType;
 
 	private boolean isDenormalized;
+
+
+	/* ************** abstract thing : here is all you have to do ******/
+	abstract public VALUETYPE getDefaultValue();
+
+	abstract void setDefaultValue(VALUETYPE defaultValue);
+
+	/* ************* /abstract thing ***********************************/
 
 	public long getId() {
 		return id;
@@ -74,15 +78,6 @@ public class CustomFieldModel {
 	public void setOptional(boolean optional) {
 		this.optional = optional;
 	}
-
-	public String getDefaultValue() {
-		return defaultValue;
-	}
-
-	public void setDefaultValue(String defaultValue) {
-		this.defaultValue = defaultValue;
-	}
-
 
 	public InputTypeModel getInputType() {
 		return inputType;
