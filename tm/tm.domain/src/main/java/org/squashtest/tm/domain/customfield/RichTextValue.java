@@ -32,25 +32,25 @@ import org.squashtest.tm.exception.customfield.MandatoryCufException;
 public class RichTextValue extends CustomFieldValue {
 
 	@Lob
-	private String longValue;
+	private String largeValue;
 
 	@Override
-	public void setValue(String value){
+	public void setValue(String value) {
 		CustomField field = getCustomField();
-		if (field != null && field.isOptional() && StringUtils.isBlank(value)){
+		if (field != null && field.isOptional() && StringUtils.isBlank(value)) {
 			throw new MandatoryCufException(this);
 		}
 
-		this.longValue = value;
+		this.largeValue = value;
 	}
 
 	@Override
-	public String getValue(){
-		return (longValue != null) ? longValue : "";
+	public String getValue() {
+		return (largeValue != null) ? largeValue : "";
 	}
 
 	@Override
-	public CustomFieldValue copy(){
+	public CustomFieldValue copy() {
 		CustomFieldValue copy = new RichTextValue();
 		copy.setBinding(getBinding());
 		copy.setValue(getValue());

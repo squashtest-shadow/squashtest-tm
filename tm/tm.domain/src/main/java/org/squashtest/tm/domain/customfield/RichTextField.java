@@ -29,7 +29,7 @@ import javax.persistence.Lob;
 public class RichTextField extends CustomField {
 
 	@Lob
-	private String longDefaultValue;
+	private String largeDefaultValue;
 
 	public RichTextField() {
 		super(InputType.RICH_TEXT);
@@ -37,13 +37,13 @@ public class RichTextField extends CustomField {
 
 	@Override
 	public void setDefaultValue(String defaultValue) {
-		longDefaultValue = defaultValue;
+		largeDefaultValue = defaultValue;
 	}
 
 	@Override
 	public String getDefaultValue() {
-		if (longDefaultValue != null) {
-			return longDefaultValue;
+		if (largeDefaultValue != null) {
+			return largeDefaultValue;
 		} else {
 			return "";
 		}
