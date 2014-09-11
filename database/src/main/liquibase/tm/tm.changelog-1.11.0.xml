@@ -121,4 +121,20 @@
       );
     </createProcedure>
   </changeSet>
+  
+  	<changeSet id="tm-1.9.0.feature-3138-2" author="jsimon">
+  	<addNotNullConstraint tableName="CAMPAIGN_LIBRARY_CONTENT" columnName="CONTENT_ORDER" columnDataType="INTEGER"/>
+  	<addNotNullConstraint tableName="CLN_RELATIONSHIP" columnName="CONTENT_ORDER" columnDataType="INTEGER"/>
+  	</changeSet>
+  	
+  	<changeSet id="tm-1.9.0.feature-3138-4" author="jsimon">
+  	<addNotNullConstraint tableName="RLN_RELATIONSHIP" columnName="CONTENT_ORDER" columnDataType="INTEGER"/>
+  	<addNotNullConstraint tableName="REQUIREMENT_LIBRARY_CONTENT" columnName="CONTENT_ORDER" columnDataType="INTEGER"/>
+  	</changeSet>
+  	
+  		<changeSet id="tm-1.9.0.feature-3138-6" author="jsimon">
+  	<addNotNullConstraint tableName="TCLN_RELATIONSHIP" columnName="CONTENT_ORDER" columnDataType="INTEGER"/>
+  	<addNotNullConstraint tableName="TEST_CASE_LIBRARY_CONTENT" columnName="CONTENT_ORDER" columnDataType="INTEGER"/>
+  	</changeSet>
+  
 </databaseChangeLog>
