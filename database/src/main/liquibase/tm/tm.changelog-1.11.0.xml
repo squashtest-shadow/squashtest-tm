@@ -24,7 +24,7 @@
 <databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
 
-  <changeSet id="tm-1.11.0-1" author="flaurens">
+  <changeSet id="tm-1.11.0" author="flaurens">
     <comment>Update TM database version number</comment>
     <update tableName="CORE_CONFIG">
       <column name="VALUE" value="1.11.0" />
@@ -170,23 +170,5 @@
 			</column>		
 		</addColumn>
 	</changeSet>
-
-	<changeSet id="tm-1.11.0.feat-3823-1" author="kdrifi">
-		<comment>Add table to handle test Custom fields of type tag</comment>
-        <createTable tableName="CUSTOM_FIELD_VALUE_OPTION">
-            <column name="CFV_ID" type="BIGINT">
-                <constraints nullable="false" references="CUSTOM_FIELD_VALUE(CFV_ID)" foreignKeyName="fk_cfv_value_cfv"/>
-            </column>
-
-            <column name="OPTION" type="VARCHAR(255)">
-                <constraints nullable="false" />
-            </column>
-
-            <column name="POSITION" type="INT">
-                <constraints nullable="false" />
-            </column>
-        </createTable>
-	</changeSet>
-
 
 </databaseChangeLog>
