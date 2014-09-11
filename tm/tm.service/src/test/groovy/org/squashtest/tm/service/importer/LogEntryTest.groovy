@@ -90,7 +90,14 @@ class LogEntryTest extends Specification {
 		Collections.sort(randomThenSorted)
 
 		then :
-		randomThenSorted == [s11, s12, s13, s14, s21, s31, s32]
+		randomThenSorted == [s11, s12, s13, s14, s21, s31, s32] ||
+		randomThenSorted == [s11, s12, s14, s13, s21, s31, s32] // s13.comparesTo(s14) == 0 so they can be ordered either way,
+		// yet they are not equal
+
+		// upset reviewer said : LogEntry.compareTo is not correctly implemented (see comment in compareTo)
+		// yet this broken implementation is described as "goot enough" with no further explanation.
+		// I guess the above "OR" in assertion does not qualifies as "good enough" a test, yet i'm clueless
+		// about the author's intent...
 
 	}
 

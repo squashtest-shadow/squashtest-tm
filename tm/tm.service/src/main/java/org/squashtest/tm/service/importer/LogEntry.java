@@ -120,10 +120,6 @@ public class LogEntry implements Comparable<LogEntry> {
 		this.impactArgs = impactArgs;
 	}
 
-
-
-
-
 	@Override
 	public int compareTo(LogEntry o) {
 		if (!line.equals(o.line)) {
@@ -135,6 +131,7 @@ public class LogEntry implements Comparable<LogEntry> {
 			// even when two instances have strictly same content we don't want to consider them equal.
 			// note that returning -1 is not an ideal solution because it violates the Comparable contract
 			// x.compareTo(y) == - y.compareTo(x) but it's good enough here
+			// rem : what does good enough means ? it randomly breaks the "should compare nicely with each others" test, FFS
 			return -1;
 		}
 	}
