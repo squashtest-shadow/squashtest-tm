@@ -26,7 +26,8 @@ define(
 				CHECKBOX : "false",
 				DROPDOWN_LIST : "",
 				DATE_PICKER : "",
-				RICH_TEXT : ""
+				RICH_TEXT : "",
+				TAG : ""
 			};
 
 			function isBlank(val) {
@@ -57,7 +58,7 @@ define(
 						},
 
 						/**
-						 * Validates an option and then addds it.
+						 * Validates an option and then adds it.
 						 * 
 						 * @throws an
 						 *             exception when option does not validate.
@@ -66,6 +67,25 @@ define(
 						addOption : function(option) {
 							var options = this.attributes.options, errors = this
 									.validateOption(option);
+							if (errors) {
+								throw {
+									name : "ValidationException",
+									validationErrors : errors
+								};
+							}
+							options.push(option);
+						},
+
+						/**
+						 * Validates a tag and then adds it.
+						 * 
+						 * @throws an
+						 *             exception when option does not validate.
+						 *             exception.name === "ValidationException"
+						 */
+						addTag : function(option) {
+							var options = this.attributes.options, errors = this
+									.validateTag(option);
 							if (errors) {
 								throw {
 									name : "ValidationException",
@@ -194,9 +214,18 @@ define(
 								errors.optionCode = "message.optionCodeAlreadyDefined";
 
 							}
-
+							
+						},
+						
+												
+						invalidTag : function(option) {
+							var errors = null;
+							errors = errors || {};
+							errors.tagCode = "message.customFieldTag.add.notValid";
 							return errors;
 						}
+	
+					
 					});
 
 			return NewCustomFieldModel;

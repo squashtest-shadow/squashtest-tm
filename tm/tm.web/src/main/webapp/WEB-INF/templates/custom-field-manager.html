@@ -57,6 +57,7 @@
 			"message.defaultOptionMandatory": /*[[ #{message.defaultOptionMandatory} ]]*/ "Default option is mandatory when field is not optional", 
 			"message.defaultValueMandatory": /*[[ #{message.defaultValueMandatory} ]]*/ "Default value is mandatory when field is not optional", 
 			"message.notBlank": /*[[ #{message.notBlank} ]]*/ "Value should not be blank", 
+			"message.customFieldTag.add.notValid": /*[[ #{message.customFieldTag.add.notValid} ]]*/ "Tags cannot contain semicolon", 
 		},
 		menuBarConf: {
     	}
@@ -275,6 +276,14 @@
 			<span id="defaultValue-label" style="color:#4297d7;font-weight: bold "></span>
 			<span class="help-inline">&nbsp;</span>		
 		</div>
+      	</script>
+ 
+        <script id="TAG-default-tpl" type="text/x-handlebars-template" th:inline="text">
+       	 <label class="control-label" for="defaultValue" th:text="#{label.defaultValue}">Default value</label>
+					<div class="controls">
+        		<ul id="defaultValue" name="defaultValue" class="tagprop" value=""/>		
+						<span class="help-inline">&nbsp;</span>
+					</div>
       	</script>
       	
         <script id="remove-cell-tpl" type="text/x-handlebars-template" th:inline="text">
