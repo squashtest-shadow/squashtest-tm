@@ -81,7 +81,7 @@ public class HibernateIterationDao extends HibernateEntityDao<Iteration> impleme
 	 * unidirectional associations instead of 1 bidi association.
 	 */
 	private static final String HQL_INDEXED_TEST_PLAN_TEMPLATE_END = "group by IterationTestPlanItem.iteration.id, IterationTestPlanItem.id, Iteration.id, index(IterationTestPlanItem) ";
-	private static final String HQL_INDEXED_TEST_PLAN_TESTSUITE_FILTER = "having group_concat(TestSuite.name, 'order by', TestSuite.name) like :testsuiteFilter ";
+	private static final String HQL_INDEXED_TEST_PLAN_TESTSUITE_FILTER = " having group_concat(TestSuite.name, 'order by', TestSuite.name) like :testsuiteFilter ";
 
 	/**
 	 * HQL query which looks up the whole iteration test plan
