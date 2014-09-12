@@ -42,10 +42,12 @@ import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.squashtest.tm.domain.customfield.RawValue;
 import org.squashtest.tm.domain.testcase.ExportTestCaseData;
 import org.squashtest.tm.domain.testcase.ExportTestStepData;
 import org.squashtest.tm.domain.testcase.TestCase;
@@ -114,14 +116,14 @@ LibraryNavigationController<TestCaseLibrary, TestCaseFolder, TestCaseLibraryNode
 
 
 
-	@RequestMapping(value = "/drives/{libraryId}/content/new-test-case", method = RequestMethod.POST)
+	@RequestMapping(value = "/drives/{libraryId}/content/new-test-case", method = RequestMethod.POST, consumes="application/json")
 	public @ResponseBody
 	JsTreeNode addNewTestCaseToLibraryRootContent(@PathVariable long libraryId,
-			@Valid @ModelAttribute(ADD_TEST_CASE) TestCaseFormModel testCaseModel){
+			/*@Valid @ModelAttribute(ADD_TEST_CASE)*/ @RequestBody TestCaseFormModel testCaseModel){
 
 		TestCase testCase = testCaseModel.getTestCase();
 
-		Map<Long, String> customFieldValues = testCaseModel.getCustomFields();
+		Map<Long, RawValue> customFieldValues = testCaseModel.getCufs();
 
 		testCaseLibraryNavigationService.addTestCaseToLibrary(libraryId, testCase, customFieldValues, null);
 
@@ -129,13 +131,13 @@ LibraryNavigationController<TestCaseLibrary, TestCaseFolder, TestCaseLibraryNode
 	}
 
 
-	@RequestMapping(value = "/folders/{folderId}/content/new-test-case", method = RequestMethod.POST)
+	@RequestMapping(value = "/folders/{folderId}/content/new-test-case", method = RequestMethod.POST, consumes="application/json")
 	public @ResponseBody JsTreeNode addNewTestCaseToFolder(@PathVariable long folderId,
-			@Valid @ModelAttribute(ADD_TEST_CASE) TestCaseFormModel testCaseModel){
+			/*@Valid @ModelAttribute(ADD_TEST_CASE)*/ @RequestBody TestCaseFormModel testCaseModel){
 
 		TestCase testCase = testCaseModel.getTestCase();
 
-		Map<Long, String> customFieldValues = testCaseModel.getCustomFields();
+		Map<Long, RawValue> customFieldValues = testCaseModel.getCufs();
 
 		testCaseLibraryNavigationService.addTestCaseToFolder(folderId, testCase, customFieldValues, null);
 

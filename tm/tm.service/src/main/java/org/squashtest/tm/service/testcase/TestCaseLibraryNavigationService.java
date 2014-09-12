@@ -27,6 +27,7 @@ import java.util.Map;
 
 import org.squashtest.tm.domain.customfield.CustomField;
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
+import org.squashtest.tm.domain.customfield.RawValue;
 import org.squashtest.tm.domain.testcase.ExportTestCaseData;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseFolder;
@@ -65,7 +66,7 @@ LibraryNavigationService<TestCaseLibrary, TestCaseFolder, TestCaseLibraryNode>, 
 	 * @param customFieldValues
 	 * @param position if non-null and non-negative, the test case will be inserted at that index.
 	 */
-	void addTestCaseToLibrary(long libraryId, TestCase testCase, Map<Long, String> customFieldValues, Integer position);
+	void addTestCaseToLibrary(long libraryId, TestCase testCase, Map<Long, RawValue> customFieldValues, Integer position);
 
 
 
@@ -86,10 +87,10 @@ LibraryNavigationService<TestCaseLibrary, TestCaseFolder, TestCaseLibraryNode>, 
 	 * 
 	 * @param libraryId
 	 * @param testCase
-	 * @param customFieldValues
+	 * @param customFieldValues Map&lt;String, String||String[]&gt;
 	 * @param position if non-null and non-negative, the test case will be inserted at that index.
 	 */
-	void addTestCaseToFolder(long folderId, TestCase testCase, Map<Long, String> customFieldValues, Integer position);
+	void addTestCaseToFolder(long folderId, TestCase testCase, Map<Long, RawValue> customFieldValues, Integer position);
 
 
 	/**

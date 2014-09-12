@@ -35,6 +35,7 @@ import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.customfield.BoundEntity;
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
+import org.squashtest.tm.domain.customfield.RawValue;
 import org.squashtest.tm.domain.library.ExportData;
 import org.squashtest.tm.domain.library.Folder;
 import org.squashtest.tm.domain.library.Library;
@@ -96,7 +97,7 @@ import org.squashtest.tm.service.security.SecurityCheckableObject;
 
 @Transactional
 public abstract class AbstractLibraryNavigationService<LIBRARY extends Library<NODE>, FOLDER extends Folder<NODE>, NODE extends LibraryNode>
-		implements LibraryNavigationService<LIBRARY, FOLDER, NODE> {
+implements LibraryNavigationService<LIBRARY, FOLDER, NODE> {
 	private static final Logger LOGGER = LoggerFactory.getLogger(AbstractLibraryNavigationService.class);
 	private static final String CREATE = "CREATE";
 	private static final String READ = "READ";
@@ -255,7 +256,8 @@ public abstract class AbstractLibraryNavigationService<LIBRARY extends Library<N
 	// that BoundEntity.
 	// read it again until it makes sense.
 	// it assumes that the CustomFieldValues instances already exists.
-	protected void initCustomFieldValues(BoundEntity entity, Map<Long, String> initialCustomFieldValues) {
+	// TODO : Find a way to remove the downcasts below, make something smarter
+	protected void initCustomFieldValues(BoundEntity entity, Map<Long, RawValue> initialCustomFieldValues) {
 
 		List<CustomFieldValue> persistentValues = customFieldValuesService.findAllCustomFieldValues(entity);
 
@@ -263,8 +265,8 @@ public abstract class AbstractLibraryNavigationService<LIBRARY extends Library<N
 			Long customFieldId = value.getCustomField().getId();
 
 			if (initialCustomFieldValues.containsKey(customFieldId)) {
-				String newValue = initialCustomFieldValues.get(customFieldId);
-				value.setValue(newValue);
+				RawValue newValue = initialCustomFieldValues.get(customFieldId);
+				newValue.setValueFor(value);
 			}
 
 		}
@@ -345,7 +347,7 @@ public abstract class AbstractLibraryNavigationService<LIBRARY extends Library<N
 		PasteStrategy<FOLDER, NODE> pasteStrategy = getPasteToFolderStrategy();
 		makeCopierStrategy(pasteStrategy);
 		return pasteStrategy.pasteNodes(destinationId, Arrays.asList(sourceNodesIds));
-		
+
 	}
 
 	@Override
@@ -353,10 +355,10 @@ public abstract class AbstractLibraryNavigationService<LIBRARY extends Library<N
 		PasteStrategy<LIBRARY, NODE> pasteStrategy = getPasteToLibraryStrategy();
 		makeCopierStrategy(pasteStrategy);
 		return pasteStrategy.pasteNodes(destinationId, Arrays.asList(targetIds));
-		
+
 	}
 
-	
+
 
 
 

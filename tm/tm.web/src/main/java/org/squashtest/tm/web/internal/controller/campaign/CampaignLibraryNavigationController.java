@@ -59,6 +59,7 @@ import org.squashtest.tm.domain.campaign.CampaignLibrary;
 import org.squashtest.tm.domain.campaign.CampaignLibraryNode;
 import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.campaign.TestSuite;
+import org.squashtest.tm.domain.customfield.RawValue;
 import org.squashtest.tm.service.campaign.CampaignFinder;
 import org.squashtest.tm.service.campaign.CampaignLibraryNavigationService;
 import org.squashtest.tm.service.campaign.IterationModificationService;
@@ -127,7 +128,7 @@ LibraryNavigationController<CampaignLibrary, CampaignFolder, CampaignLibraryNode
 			@Valid @ModelAttribute("add-campaign") CampaignFormModel campaignForm) {
 
 		Campaign newCampaign = campaignForm.getCampaign();
-		Map<Long, String> customFieldValues = campaignForm.getCustomFields();
+		Map<Long, RawValue> customFieldValues = campaignForm.getCufs();
 
 		campaignLibraryNavigationService.addCampaignToCampaignLibrary(libraryId, newCampaign, customFieldValues);
 
@@ -141,7 +142,7 @@ LibraryNavigationController<CampaignLibrary, CampaignFolder, CampaignLibraryNode
 			@Valid @ModelAttribute("add-campaign") CampaignFormModel campaignForm) {
 
 		Campaign newCampaign = campaignForm.getCampaign();
-		Map<Long, String> customFieldValues = campaignForm.getCustomFields();
+		Map<Long, RawValue> customFieldValues = campaignForm.getCufs();
 
 		campaignLibraryNavigationService.addCampaignToCampaignFolder(folderId, newCampaign, customFieldValues);
 
@@ -170,7 +171,7 @@ LibraryNavigationController<CampaignLibrary, CampaignFolder, CampaignLibraryNode
 			@Valid @ModelAttribute("add-iteration") IterationFormModel iterationForm) {
 
 		Iteration newIteration = iterationForm.getIteration();
-		Map<Long, String> customFieldValues = iterationForm.getCustomFields();
+		Map<Long, RawValue> customFieldValues = iterationForm.getCufs();
 		boolean copyTestPlan = iterationForm.isCopyTestPlan();
 
 		int newIterationIndex = campaignLibraryNavigationService.addIterationToCampaign(newIteration, campaignId,

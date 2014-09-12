@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.domain.customfield;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.CollectionTable;
@@ -32,7 +33,7 @@ import javax.validation.Valid;
 
 @Entity
 @DiscriminatorValue("MFV")
-public class MultiSelectFieldValue extends CustomFieldValue {
+public class MultiSelectFieldValue extends CustomFieldValue implements MultiValuedCustomFieldValue {
 
 	@ElementCollection
 	@CollectionTable(name = "CUSTOM_FIELD_VALUE_OPTION", joinColumns = @JoinColumn(name = "CFV_ID"))
@@ -51,6 +52,24 @@ public class MultiSelectFieldValue extends CustomFieldValue {
 	public void removeCUFValueOption(CustomFieldValueOption cufVO){
 		options.remove(cufVO);
 	}
+
+	@Override
+	public void setValues(List<String> values) {
+		options.clear();
+		for (String option : values){
+			options.add(new CustomFieldValueOption(option));
+		}
+	}
+
+	@Override
+	public List<String> getValues() {
+		List<String> result = new ArrayList<String>(options.size());
+		for (CustomFieldValueOption option : options){
+			result.add(option.getOption());
+		}
+		return result;
+	}
+
 
 
 	@Override
@@ -92,4 +111,6 @@ public class MultiSelectFieldValue extends CustomFieldValue {
 
 		return copy;
 	}
+
+
 }

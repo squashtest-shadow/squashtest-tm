@@ -38,6 +38,7 @@ import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.squashtest.tm.domain.customfield.RawValue;
 import org.squashtest.tm.domain.projectfilter.ProjectFilter;
 import org.squashtest.tm.domain.testcase.ExportTestCaseData;
 import org.squashtest.tm.domain.testcase.TestCase;
@@ -243,7 +244,7 @@ TestCaseLibraryNavigationService {
 	@Override
 	@PreAuthorize("hasPermission(#libraryId, 'org.squashtest.tm.domain.testcase.TestCaseLibrary' , 'CREATE' )"
 			+ "or hasRole('ROLE_ADMIN')")
-	public void addTestCaseToLibrary(long libraryId, TestCase testCase, Map<Long, String> customFieldValues, Integer position) {
+	public void addTestCaseToLibrary(long libraryId, TestCase testCase, Map<Long, RawValue> customFieldValues, Integer position) {
 		addTestCaseToLibrary(libraryId, testCase, position);
 		initCustomFieldValues(testCase, customFieldValues);
 	}
@@ -271,7 +272,7 @@ TestCaseLibraryNavigationService {
 	@Override
 	@PreAuthorize("hasPermission(#folderId, 'org.squashtest.tm.domain.testcase.TestCaseFolder' , 'CREATE') "
 			+ "or hasRole('ROLE_ADMIN')")
-	public void addTestCaseToFolder(long folderId, TestCase testCase, Map<Long, String> customFieldValues, Integer position) {
+	public void addTestCaseToFolder(long folderId, TestCase testCase, Map<Long, RawValue> customFieldValues, Integer position) {
 		addTestCaseToFolder(folderId, testCase, position);
 		initCustomFieldValues(testCase, customFieldValues);
 	}

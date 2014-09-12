@@ -22,6 +22,7 @@ package org.squashtest.tm.web.internal.controller.requirement;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.rmi.activation.UnknownObjectException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -73,12 +74,12 @@ import org.squashtest.tm.web.internal.model.jstree.JsTreeNode;
 @Controller
 @RequestMapping(value = "/requirement-browser")
 public class RequirementLibraryNavigationController extends
-		LibraryNavigationController<RequirementLibrary, RequirementFolder, RequirementLibraryNode> {
+LibraryNavigationController<RequirementLibrary, RequirementFolder, RequirementLibraryNode> {
 
 	private static final String MODEL_ATTRIBUTE_ADD_REQUIREMENT = "add-requirement";
 
 	private static final String JASPER_EXPORT_FILE = "/WEB-INF/reports/requirement-export.jasper";
-	
+
 	@Inject
 	@Named("requirement.driveNodeBuilder")
 	private Provider<DriveNodeBuilder<RequirementLibraryNode>> driveNodeBuilder;
@@ -102,10 +103,12 @@ public class RequirementLibraryNavigationController extends
 	JsTreeNode addNewRequirementToLibraryRootContent(@PathVariable long libraryId,
 			@Valid @ModelAttribute(MODEL_ATTRIBUTE_ADD_REQUIREMENT) NewRequirementVersionDto firstVersion) {
 
-		Requirement req = requirementLibraryNavigationService.addRequirementToRequirementLibrary(libraryId,
+		throw new UnsupportedOperationException("a faire : le form bean pour qu'il gère les custom fields");
+
+		/*	Requirement req = requirementLibraryNavigationService.addRequirementToRequirementLibrary(libraryId,
 				firstVersion);
 
-		return createTreeNodeFromLibraryNode(req);
+		return createTreeNodeFromLibraryNode(req);*/
 
 	}
 
@@ -114,9 +117,11 @@ public class RequirementLibraryNavigationController extends
 	JsTreeNode addNewRequirementToFolderContent(@PathVariable long folderId,
 			@Valid @ModelAttribute(MODEL_ATTRIBUTE_ADD_REQUIREMENT) NewRequirementVersionDto firstVersion) {
 
-		Requirement req = requirementLibraryNavigationService.addRequirementToRequirementFolder(folderId, firstVersion);
+		throw new UnsupportedOperationException("a faire : le form bean pour qu'il gère les custom fields");
 
-		return createTreeNodeFromLibraryNode(req);
+		/*Requirement req = requirementLibraryNavigationService.addRequirementToRequirementFolder(folderId, firstVersion);
+
+		return createTreeNodeFromLibraryNode(req);*/
 
 	}
 
@@ -125,9 +130,11 @@ public class RequirementLibraryNavigationController extends
 	JsTreeNode addNewRequirementToRequirementContent(@PathVariable("requirementId") long requirementId,
 			@Valid @ModelAttribute(MODEL_ATTRIBUTE_ADD_REQUIREMENT) NewRequirementVersionDto firstVersion) {
 
-		Requirement req = requirementLibraryNavigationService.addRequirementToRequirement(requirementId, firstVersion);
+		throw new UnsupportedOperationException("a faire : le form bean pour qu'il gère les custom fields");
 
-		return createTreeNodeFromLibraryNode(req);
+		/*Requirement req = requirementLibraryNavigationService.addRequirementToRequirement(requirementId, firstVersion);
+
+		return createTreeNodeFromLibraryNode(req);*/
 
 	}
 
@@ -167,7 +174,7 @@ public class RequirementLibraryNavigationController extends
 			throw new RightsUnsuficientsForOperationException(ade);
 		}
 	}
-	
+
 	@RequestMapping(value = "/requirements/{requirementId}/content", method = RequestMethod.GET)
 	public @ResponseBody
 	List<JsTreeNode> getChildrenRequirementsTreeModel(@PathVariable("requirementId") long requirementId) {
@@ -194,12 +201,12 @@ public class RequirementLibraryNavigationController extends
 	public @ResponseBody
 	void exportRequirements(@PathVariable("nodeIds") List<Long> ids, @RequestParam("name") String filename, @PathVariable("exportformat") String exportformat,
 			HttpServletResponse response, Locale locale) {
-		
+
 		List<ExportRequirementData> dataSource = requirementLibraryNavigationService.findRequirementsToExportFromNodes(ids);
 		printExport(dataSource, filename,JASPER_EXPORT_FILE, response, locale, exportformat);
 
 	}
-	
+
 
 
 	@RequestMapping(value = "/drives/{libIds}/{exportformat}", method = RequestMethod.GET, params="name")

@@ -41,6 +41,7 @@ import org.squashtest.tm.domain.campaign.CampaignLibrary;
 import org.squashtest.tm.domain.campaign.CampaignLibraryNode;
 import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.campaign.TestSuite;
+import org.squashtest.tm.domain.customfield.RawValue;
 import org.squashtest.tm.domain.projectfilter.ProjectFilter;
 import org.squashtest.tm.exception.DuplicateNameException;
 import org.squashtest.tm.service.campaign.CampaignLibraryNavigationService;
@@ -63,8 +64,8 @@ import org.squashtest.tm.service.security.SecurityCheckableObject;
 @Service("squashtest.tm.service.CampaignLibraryNavigationService")
 @Transactional
 public class CampaignLibraryNavigationServiceImpl extends
-		AbstractLibraryNavigationService<CampaignLibrary, CampaignFolder, CampaignLibraryNode> implements
-		CampaignLibraryNavigationService {
+AbstractLibraryNavigationService<CampaignLibrary, CampaignFolder, CampaignLibraryNode> implements
+CampaignLibraryNavigationService {
 
 	private static final String OR_HAS_ROLE_ADMIN = "or hasRole('ROLE_ADMIN')";
 
@@ -95,13 +96,13 @@ public class CampaignLibraryNavigationServiceImpl extends
 
 	@Inject
 	private CampaignNodeDeletionHandler deletionHandler;
-	
+
 	@Inject
 	private Provider<SimpleCampaignExportCSVModelImpl> simpleCampaignExportCSVModelProvider;
 
 	@Inject
 	private Provider<CampaignExportCSVModelImpl> standardCampaignExportCSVModelProvider;
-	
+
 	@Inject
 	private Provider<CampaignExportCSVFullModelImpl> fullCampaignExportCSVModelProvider;
 
@@ -168,7 +169,7 @@ public class CampaignLibraryNavigationServiceImpl extends
 	@PreAuthorize("hasPermission(#campaignId, 'org.squashtest.tm.domain.campaign.Campaign', 'CREATE') "
 			+ OR_HAS_ROLE_ADMIN)
 	public int addIterationToCampaign(Iteration iteration, long campaignId, boolean copyTestPlan,
-			Map<Long, String> customFieldValues) {
+			Map<Long, RawValue> customFieldValues) {
 		int iterIndex = addIterationToCampaign(iteration, campaignId, copyTestPlan);
 		initCustomFieldValues(iteration, customFieldValues);
 		return iterIndex;
@@ -223,7 +224,7 @@ public class CampaignLibraryNavigationServiceImpl extends
 	@Override
 	@PreAuthorize("hasPermission(#libraryId, 'org.squashtest.tm.domain.campaign.CampaignLibrary', 'CREATE')"
 			+ OR_HAS_ROLE_ADMIN)
-	public void addCampaignToCampaignLibrary(long libraryId, Campaign campaign, Map<Long, String> customFieldValues) {
+	public void addCampaignToCampaignLibrary(long libraryId, Campaign campaign, Map<Long, RawValue> customFieldValues) {
 		addCampaignToCampaignLibrary(libraryId, campaign);
 		initCustomFieldValues(campaign, customFieldValues);
 
@@ -247,7 +248,7 @@ public class CampaignLibraryNavigationServiceImpl extends
 	@Override
 	@PreAuthorize("hasPermission(#folderId, 'org.squashtest.tm.domain.campaign.CampaignFolder', 'CREATE')"
 			+ OR_HAS_ROLE_ADMIN)
-	public void addCampaignToCampaignFolder(long folderId, Campaign campaign, Map<Long, String> customFieldValues) {
+	public void addCampaignToCampaignFolder(long folderId, Campaign campaign, Map<Long, RawValue> customFieldValues) {
 
 		addCampaignToCampaignFolder(folderId, campaign);
 		initCustomFieldValues(campaign, customFieldValues);
@@ -319,15 +320,15 @@ public class CampaignLibraryNavigationServiceImpl extends
 		return deletionHandler.deleteSuites(targetIds);
 	}
 
-	
+
 	@Override
 	@PreAuthorize("hasPermission(#campaignId, 'org.squashtest.tm.domain.campaign.Campaign' ,'EXPORT') or hasRole('ROLE_ADMIN')")
 	public CampaignExportCSVModel exportCampaignToCSV(Long campaignId, String exportType) {
-		
+
 		Campaign campaign = campaignDao.findById(campaignId);
-		
+
 		WritableCampaignCSVModel model;
-		
+
 		if ("L".equals(exportType)){
 			model = simpleCampaignExportCSVModelProvider.get();
 		}
@@ -337,7 +338,7 @@ public class CampaignLibraryNavigationServiceImpl extends
 		else{
 			model = standardCampaignExportCSVModelProvider.get();
 		}
-		
+
 		model.setCampaign(campaign);
 		model.init();
 
@@ -349,13 +350,13 @@ public class CampaignLibraryNavigationServiceImpl extends
 	//TODO make it work for iteration and test suites
 	public List<String> getParentNodesAsStringList(Long nodeId) {
 		List<Long> ids = campaignLibraryNodeDao.getParentsIds(nodeId);
-		
+
 		CampaignLibraryNode node = campaignLibraryNodeDao.findById(nodeId);
-		
+
 		Long librabryId = node.getLibrary().getId();
-		
+
 		List<String> parents = new ArrayList<String>();
-		
+
 		parents.add("#CampaignLibrary-"+librabryId);
 
 		if(ids.size() > 1){
@@ -365,9 +366,9 @@ public class CampaignLibraryNavigationServiceImpl extends
 				parents.add(currentNode.getClass().getSimpleName()+"-"+String.valueOf(currentId));
 			}
 		}
-		
+
 		return parents;
 	}
-	
+
 
 }

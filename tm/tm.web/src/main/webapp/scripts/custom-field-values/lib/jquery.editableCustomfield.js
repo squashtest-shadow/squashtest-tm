@@ -226,7 +226,7 @@ define(["jquery", "squash.configmanager", "./cuf-values-utils", "jquery.squash.j
 			},
 			
 			_get : function(elt, def){
-				return elt.find('>ul').squashTagit('assignedTags').join(',');
+				return elt.find('>ul').squashTagit('assignedTags');
 			},
 			
 			_destroy : function(elt, def){

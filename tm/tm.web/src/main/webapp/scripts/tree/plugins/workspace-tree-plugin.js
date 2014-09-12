@@ -74,10 +74,10 @@ define(['jquery', 'workspace.tree-node-copier', 'workspace.permissions-rules-bro
 		var postNode = function() {
 			return $.ajax({
 				url : url,
-				data : postParameters,
+				data : JSON.stringify(postParameters),
 				type : 'POST',
 				dataType : 'json',
-				contentType : "application/x-www-form-urlencoded;charset=UTF-8"
+				contentType : "application/json;charset=UTF-8"
 			});
 		};
 
