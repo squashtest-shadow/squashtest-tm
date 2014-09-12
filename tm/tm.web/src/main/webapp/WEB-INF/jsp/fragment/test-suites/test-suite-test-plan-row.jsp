@@ -23,10 +23,9 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ taglib prefix="s" uri="http://www.springframework.org/tags"%>
-<%@ taglib prefix="s" uri="http://www.springframework.org/tags"%>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 <%@ taglib prefix="authz" tagdir="/WEB-INF/tags/authz" %>
 
-<%@ taglib prefix="jq" tagdir="/WEB-INF/tags/jquery"%>
 <s:url var="newExecutionUrl"
 	value="/iterations/{iterId}/test-plan/{tpId}/executions/new">
 	<s:param name="iterId" value="${iterationId}" />
@@ -39,37 +38,65 @@
 	<c:set var="executable" value="${ true }" />
 </authz:authorized>
 
-<c:set var="textcolor" value="#555555" />
 
+<f:message var="labelNodata" key="squashtm.nodata" />
+<f:message var="labelNone" key="label.None" />
 
-<td colspan="14">
-	<table>
-		<!-- -----------------------------------------------ROW OF EXECUTION -->
+<%-- 
+
+Note : below we define colspan and width for the columns of the nested table, that must match the columns of 
+the host test plan table. Please refer to iteration-test-plan-panel.tag to check those definitions.
+
+We can set totalColspan arbitrarily high to be sure that this td will be as long as one row whatever the actual 
+number of columns. 
+--%>
+
+<c:set var="totalColspan" value="26"/> 
+
+<td colspan="${totalColspan}"> 
+	<table class="executions-table" id="item-test-plan-${testPlanItem.id}">
+      <thead>
+        <tr class="executions-table-header">
+          <th></th>
+          <th class="width-tenperc"></th>
+          <th class="width-tenperc"></th>
+          <th class="width-tenperc"></th>
+          <th class="width-tenperc"></th>
+          <th class="narrow"></th>
+          <th class="narrow"></th>
+        </tr>
+      </thead>
+      <tbody>
+    <!-- ------------------------------------------ ROWS OF EXECUTION -->
 		<c:forEach items="${ executions }" var="execution" varStatus="status">
 			<tr>
-				<td style="color: ${textcolor}; font-style:italic; text-decoration: underline">
+				<td>
 					<a href="${showExecutionUrl}/${execution.id}">
-						<span style="font-weight:bold;">Exec. ${status.index + 1} :</span><span> ${ execution.name }</span>
+						<span style="font-weight:bold;">Exec. ${status.index + 1} :</span>
+                        <span> ${ execution.name }</span>
 					</a>
 				</td>
-				<td style="width: 7.5em;color: ${textcolor}; font-style:italic;"><f:message
-						key="${ execution.executionMode.i18nKey }" />
+                <td>
+                  <span >
+                        <c:out value="${(execution.datasetLabel == null) ? labelNodata :
+                                        (fn:length(execution.datasetLabel) == 0) ? labelNone : 
+                                        execution.datasetLabel}" />
+                  </span>
+                </td>
+				<td >
+                  <f:message key="execution.execution-status.${execution.executionStatus}" />
 				</td>
-				<td style="width: 10em; color: ${textcolor} font-style:italic;"><f:message
-						key="execution.execution-status.${execution.executionStatus}" />
-
-				</td>
-				<td style="width: 12em; color: ${textcolor}">
+				<td >
 				<c:choose>
 					<c:when test="${ execution.lastExecutedBy != null }">
-						<span style="font-style:italic;">${ execution.lastExecutedBy }</span>
+						<span >${ execution.lastExecutedBy }</span>
 					</c:when>
 					<c:otherwise>
-						<span style="font-style:italic;"><f:message key="squashtm.nodata" /> </span>
+						<span ><f:message key="squashtm.nodata" /> </span>
 					</c:otherwise>
 				</c:choose>
 				</td>
-				<td style="width: 12em; color: ${textcolor}">
+				<td>
 				<c:choose>
 					<c:when test="${ execution.lastExecutedOn != null }">
 						<f:message var="dateFormat" key="squashtm.dateformat" />
@@ -81,20 +108,21 @@
 					</c:otherwise>
 				</c:choose>
 				</td>
-				<td style="width: 2em;"><!-- todo : run the execution button --></td>
-				<td style="width: 2em;" class="centered"><authz:authorized hasRole="ROLE_ADMIN" hasPermission="EXECUTE" domainObject="${ execution }">
+				<td></td>
+				<td style="text-align:center;">
+                    <authz:authorized hasRole="ROLE_ADMIN" hasPermission="EXECUTE" domainObject="${ execution }">
 						<a id="delete-execution-table-button-${execution.id}" 
 							class="delete-execution-table-button" title='<f:message key="label.removeExecution"/>' ></a>
 					</authz:authorized>
 				</td>
 			</tr>
 		</c:forEach>
-		<!-- ------------------------------------------END ROW OF EXECUTION -->
+		<!-- ------------------------------------------END ROWS OF EXECUTION -->
 
 		<!-- ---------------------------------------------ROW NEW EXECUTION -->
 		<c:if test="${ executable && !testPlanItem.testCaseDeleted }">
 			<tr>
-				<td colspan="12" style="text-align: left;"> 
+				<td colspan="${totalColspan }" style="color:white; font-style=normal"> 
 					<a id="new-exec-${testPlanItem.id}" style="font-size:0.8em;" class="button new-exec"  data-new-exec="${newExecutionUrl}">
 						<f:message key="execution.iteration-test-plan-row.new" /> 
 					</a> 
