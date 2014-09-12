@@ -192,9 +192,9 @@
 		<table id="add-dataset-dialog-table" th:attr="data-def='ajaxsource='+@{/test-cases/__${testCase.id}__/parameters}+', pre-sort=1'">
 			<thead>			
 				<th data-def="map=entity-index, select">#</th>
-				<th data-def="map=name">name</th>
-				<th data-def="map=description">description</th>
-				<th data-def="map=empty-delete-holder, sClass=add-parameter-input centered">value</th>
+				<th data-def="map=name" th:text="#{label.Name}">name</th>
+				<th data-def="map=description" th:text="#{label.Description}">description</th>
+				<th data-def="map=empty-delete-holder, sClass=add-parameter-input centered" th:text="#{label.Value}">value</th>
 			</thead>
 			<tbody>
 			
