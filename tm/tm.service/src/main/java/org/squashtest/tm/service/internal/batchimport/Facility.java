@@ -6,16 +6,16 @@
  *     information regarding copyright ownership.
  *
  *     This is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU Lesser General Public License as published by
+ *     it under the terms of the GNU General Public License as published by
  *     the Free Software Foundation, either version 3 of the License, or
  *     (at your option) any later version.
  *
  *     this software is distributed in the hope that it will be useful,
  *     but WITHOUT ANY WARRANTY; without even the implied warranty of
  *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU Lesser General Public License for more details.
+ *     GNU General Public License for more details.
  *
- *     You should have received a copy of the GNU Lesser General Public License
+ *     You should have received a copy of the GNU General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.squashtest.tm.service.internal.batchimport;
@@ -36,7 +36,12 @@ import org.squashtest.tm.service.importer.EntityType;
  */
 public interface Facility {
 
-	final List<EntityType> ENTITIES_ORDERED_BY_INSTRUCTION_ORDER = Arrays.asList(EntityType.TEST_CASE, EntityType.PARAMETER, EntityType.TEST_STEP, EntityType.DATASET);
+	final List<EntityType> ENTITIES_ORDERED_BY_INSTRUCTION_ORDER =
+			Arrays.asList(EntityType.TEST_CASE,
+					EntityType.PARAMETER,
+					EntityType.DATASET,
+					EntityType.TEST_STEP,
+					EntityType.DATASET_PARAM_VALUES);
 
 	LogTrain createTestCase(TestCaseTarget target, TestCase testCase, Map<String, String> cufValues);
 	LogTrain updateTestCase(TestCaseTarget target, TestCase testCaseData, Map<String, String> cufValues);
@@ -44,15 +49,23 @@ public interface Facility {
 
 
 	LogTrain addActionStep(TestStepTarget target, ActionTestStep testStep, Map<String, String> cufValues);
-	LogTrain addCallStep(TestStepTarget target, CallTestStep testStep, TestCaseTarget calledTestCase, ActionTestStep actionStepBackup);
+	LogTrain addCallStep(TestStepTarget target, CallTestStep testStep, TestCaseTarget calledTestCase, CallStepParamsInfo paramInfo, ActionTestStep actionStepBackup);
 	LogTrain updateActionStep(TestStepTarget target, ActionTestStep testStep, Map<String, String> cufValues);
-	LogTrain updateCallStep(TestStepTarget target, CallTestStep testStep, TestCaseTarget calledTestCase, ActionTestStep actionStepBackup);
+	LogTrain updateCallStep(TestStepTarget target, CallTestStep testStep, TestCaseTarget calledTestCase, CallStepParamsInfo paramInfo, ActionTestStep actionStepBackup);
 	LogTrain deleteTestStep(TestStepTarget target);
 
 	LogTrain createParameter(ParameterTarget target, Parameter param);
 	LogTrain updateParameter(ParameterTarget target, Parameter param);
 	LogTrain deleteParameter(ParameterTarget target);
 
+
+	/**
+	 * The creation of a dataset is idempotent (if such dataset exists it wont be created twice)
+	 * @param target
+	 * @return
+	 */
+	LogTrain createDataset(DatasetTarget target);
+	LogTrain deleteDataset(DatasetTarget dataset);
 
 	/**
 	 * Will update the value for the given parameter in the given dataset. If the dataset doesn't exist for this dataset, it will be created.
@@ -67,12 +80,5 @@ public interface Facility {
 
 
 
-	/**
-	 * Deletes a dataset.
-	 * 
-	 * @param dataset
-	 * @return
-	 */
-	LogTrain deleteDataset(DatasetTarget dataset);
 }
 

@@ -6,16 +6,16 @@
  *     information regarding copyright ownership.
  *
  *     This is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU Lesser General Public License as published by
+ *     it under the terms of the GNU General Public License as published by
  *     the Free Software Foundation, either version 3 of the License, or
  *     (at your option) any later version.
  *
  *     this software is distributed in the hope that it will be useful,
  *     but WITHOUT ANY WARRANTY; without even the implied warranty of
  *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU Lesser General Public License for more details.
+ *     GNU General Public License for more details.
  *
- *     You should have received a copy of the GNU Lesser General Public License
+ *     You should have received a copy of the GNU General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 /*
@@ -88,20 +88,20 @@ define(['squash.translator', './table', './popups', 'app/util/ButtonUtil' ], fun
 			});
 			
 			
-			$("#remove-test-case-button").on('click', function(){
+			$("#remove-test-plan-button").on('click', function(){
 				$("#delete-multiple-test-cases-dialog").formDialog('open');
 			});
 		}
 		
 		
 		$("#filter-test-plan-button").on('click', function(){
-			
+			var domtable =  $("#campaign-test-plans-table");
 			if(filterOn){
 				filterOn = false;
 				table.hideFilterFields();
 				table.unlockSortMode();
 				$("#test-plan-sort-mode-message").show();
-				$("#test-cases-table").find('.select-handle').removeClass('drag-handle');
+				domtable.find('.select-handle').removeClass('drag-handle');
 				if (this.reorderable){
 					ButtonUtil.enable($("#reorder-test-plan-button"));
 				}
@@ -111,7 +111,7 @@ define(['squash.translator', './table', './popups', 'app/util/ButtonUtil' ], fun
 				table.showFilterFields();
 				table.lockSortMode();
 				$("#test-plan-sort-mode-message").hide();
-				$("#test-cases-table").find('.select-handle').addClass('drag-handle');
+				domtable.find('.select-handle').addClass('drag-handle');
 				ButtonUtil.disable($("#reorder-test-plan-button"));
 
 			}

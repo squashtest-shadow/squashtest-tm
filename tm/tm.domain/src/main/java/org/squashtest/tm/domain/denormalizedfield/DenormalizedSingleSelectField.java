@@ -6,16 +6,16 @@
  *     information regarding copyright ownership.
  *
  *     This is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU Lesser General Public License as published by
+ *     it under the terms of the GNU General Public License as published by
  *     the Free Software Foundation, either version 3 of the License, or
  *     (at your option) any later version.
  *
  *     this software is distributed in the hope that it will be useful,
  *     but WITHOUT ANY WARRANTY; without even the implied warranty of
  *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU Lesser General Public License for more details.
+ *     GNU General Public License for more details.
  *
- *     You should have received a copy of the GNU Lesser General Public License
+ *     You should have received a copy of the GNU General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.squashtest.tm.domain.denormalizedfield;
@@ -78,23 +78,6 @@ public class DenormalizedSingleSelectField extends DenormalizedFieldValue {
 		}
 	}
 
-	public DenormalizedSingleSelectField(String value, CustomFieldBinding binding, Long denormalizedFieldHolderId,
-			DenormalizedFieldHolderType denormalizedFieldHolderType) {
-		super(value, binding, denormalizedFieldHolderId, denormalizedFieldHolderType);
-		SingleSelectField singleSelectField = (SingleSelectField) binding.getCustomField();
-		for(CustomFieldOption option : singleSelectField.getOptions()){
-			this.addOption(option);
-		}
-	}
-
-	public DenormalizedSingleSelectField(CustomFieldValue customFieldValue, int newBindingPosition,
-			Long denormalizedFieldHolderId, DenormalizedFieldHolderType denormalizedFieldHolderType) {
-		super(customFieldValue, newBindingPosition, denormalizedFieldHolderId, denormalizedFieldHolderType);
-		SingleSelectField singleSelectField = (SingleSelectField) customFieldValue.getCustomField();
-		for(CustomFieldOption option : singleSelectField.getOptions()){
-			this.addOption(option);
-		}
-	}
 
 	/**
 	 * Will check if label and the code are available among the existing options. If so, will add the new option at the

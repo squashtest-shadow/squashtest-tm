@@ -7,16 +7,16 @@
         information regarding copyright ownership.
 
         This is free software: you can redistribute it and/or modify
-        it under the terms of the GNU Lesser General Public License as published by
+        it under the terms of the GNU General Public License as published by
         the Free Software Foundation, either version 3 of the License, or
         (at your option) any later version.
 
         this software is distributed in the hope that it will be useful,
         but WITHOUT ANY WARRANTY; without even the implied warranty of
         MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-        GNU Lesser General Public License for more details.
+        GNU General Public License for more details.
 
-        You should have received a copy of the GNU Lesser General Public License
+        You should have received a copy of the GNU General Public License
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 --%>
@@ -120,9 +120,26 @@
 	<is:issue-add-popup id="issue-report-dialog" interfaceDescriptor="${interfaceDescriptor}"  bugTrackerId="${bugTracker.id}"/>		
 	</c:if>
 	
+	<f:message var="errorTitle" key="popup.title.error"/>
+	<f:message var="okLabel" key="label.Ok"/>
+	<div id="generic-error-dialog" class="not-displayed popup-dialog" title="${errorTitle}">
+	  <div>
+	     <div class="display-table-row">
+	        <div class="display-table-cell warning-cell">
+	          <div class="generic-error-signal"></div>
+	        </div>
+	        <div class="generic-error-main display-table-cell" style="padding-top:20px">
+	        
+	        </div>
+	      </div>
+	  </div>
+	  <input type="button" value="${okLabel}"/>  
+	</div>
+	
 	<script type="text/javascript">
 	require(["common"], function() {
-		require(["jquery", "domReady", "execution-processing"], function($, domReady, execProcessing){
+		require(["jquery", "domReady", "execution-processing", "jquery.squash.messagedialog"], 
+				function($, domReady, execProcessing){
 			requirejs.config({
 				config : {
 					'execution-processing/init-ieo' : ${json:serialize(config)}
@@ -131,9 +148,11 @@
 			
 			domReady(function(){
 				$("#open-address-dialog-button").button();
-				
+				$("#generic-error-dialog").messageDialog();
 				execProcessing.initIEO();
 			});
+			
+			
 		});
 	});
 	</script>

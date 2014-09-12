@@ -7,16 +7,16 @@
         information regarding copyright ownership.
 
         This is free software: you can redistribute it and/or modify
-        it under the terms of the GNU Lesser General Public License as published by
+        it under the terms of the GNU General Public License as published by
         the Free Software Foundation, either version 3 of the License, or
         (at your option) any later version.
 
         this software is distributed in the hope that it will be useful,
         but WITHOUT ANY WARRANTY; without even the implied warranty of
         MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-        GNU Lesser General Public License for more details.
+        GNU General Public License for more details.
 
-        You should have received a copy of the GNU Lesser General Public License
+        You should have received a copy of the GNU General Public License
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 --%>
@@ -51,15 +51,6 @@
 </s:url>
 
 
-<f:message var="cannotCreateExecutionException" key="squashtm.action.exception.cannotcreateexecution.label" />
-<f:message var="unauthorizedDeletion" key="dialog.remove-testcase-association.unauthorized-deletion.message" />
-<f:message var="confirmLabel" key="label.Confirm" />
-<f:message var="cancelLabel" key="label.Cancel" />
-<f:message var="assignLabel" key="label.Assign" />
-<f:message var="modeLabel" key="label.Mode" />
-
-
-
 <div id="test-suite-test-plans-panel" class="table-tab">
 
   <%-- ==================== THE TOOLBAR ==================== --%>
@@ -81,6 +72,9 @@
     <f:message var="tooltipAddTPI" key="tooltips.AddTPIToTP" />
     <f:message var="tooltipRemoveTPI" key="tooltips.RemoveTPIFromTP" />
     <f:message var="tooltipAssign" key="tooltips.AssignUserToTPI" />
+    <f:message var="confirmLabel" key="label.Confirm" />
+    <f:message var="cancelLabel" key="label.Cancel" />
+    <f:message var="modeLabel" key="label.Mode" />
 
     <c:if test="${ reorderable }">
       <div class="left btn-toolbar">
@@ -141,31 +135,31 @@
         <tr>
           <th class="no-user-select"
             data-def="map=entity-index, select, sortable, center, sClass=drag-handle, sWidth=2.5em">#</th>
-          <th class="no-user-select tp-th-project-name" data-def="map=project-name, sortable">
+          <th class="no-user-select tp-th-filter tp-th-project-name" data-def="map=project-name, sortable">
             <f:message key="label.project" />
           </th>
-          <th title=<f:message key="label.Mode" /> class="no-user-select tp-th-exec-mode"
+          <th title=<f:message key="label.Mode" /> class="no-user-select tp-th-filter tp-th-exec-mode"
             data-def="map=exec-mode, sortable, narrow, center, visible=${testSuite.project.testAutomationEnabled}, sClass=exec-mode">&nbsp;</th>
-          <th class="no-user-select tp-th-reference" data-def="map=reference, sortable">
+          <th class="no-user-select tp-th-filter tp-th-reference" data-def="map=reference, sortable">
             <f:message key="label.Reference" />
           </th>
-          <th class="no-user-select tp-th-name" data-def="map=tc-name, sortable, sClass=toggle-row">
+          <th class="no-user-select tp-th-filter tp-th-name" data-def="map=tc-name, sortable, sClass=toggle-row">
             <f:message key="iteration.executions.table.column-header.test-case.label" />
           </th>
-          <th class="no-user-select tp-th-importance" data-def="map=importance, sortable">
+          <th class="no-user-select tp-th-filter tp-th-importance" data-def="map=importance, sortable">
             <f:message key="iteration.executions.table.column-header.importance.label" />
           </th>
-          <th class="no-user-select tp-th-dataset" data-def="map=dataset, sortable, sWidth=10%">
+          <th class="no-user-select tp-th-filter tp-th-dataset" data-def="map=dataset.selected.name, sortable, sWidth=10%, sClass=dataset-combo">
             <f:message key="label.Dataset" />
           </th>
-          <th class="no-user-select tp-th-status" data-def="map=status, sortable, sWidth=10%, sClass=status-combo">
+          <th class="no-user-select tp-th-filter tp-th-status" data-def="map=status, sortable, sWidth=10%, sClass=status-display status-combo">
             <f:message key="iteration.executions.table.column-header.status.label" />
           </th>
-          <th class="no-user-select tp-th-assignee"
+          <th class="no-user-select tp-th-filter tp-th-assignee"
             data-def="map=assignee-login, sortable, sWidth=10%, sClass=assignee-combo">
             <f:message key="iteration.executions.table.column-header.user.label" />
           </th>
-          <th class="no-user-select tp-th-exec-on" data-def="map=last-exec-on, sortable, sWidth=10%, sClass=exec-on">
+          <th class="no-user-select tp-th-filter tp-th-exec-on" data-def="map=last-exec-on, sortable, sWidth=10%, sClass=exec-on">
             <f:message key="iteration.executions.table.column-header.execution-date.label" />
           </th>
           <th class="no-user-select" data-def="map=empty-execute-holder, narrow, center, sClass=execute-button">&nbsp;</th>
@@ -205,15 +199,12 @@
       <span data-def="state=multiple-tp" style="font-weight: bold;">
         <f:message key="dialog.remove-testcase-testsuite-associations.message" />
       </span>
-      <span data-def="state=empty-selec">
-        <f:message key="message.EmptyTableSelection" />
-      </span>
 
       <div class="popup-dialog-buttonpane">
         <input type="button" value="${removeLabel}"
           data-def="state=single-tp multiple-tp, mainbtn=single-tp multiple-tp, evt=confirm" />
         <input type="button" value="${removeEverywhereLabel}" data-def="state=single-tp multiple-tp, evt=confirmall" />
-        <input type="button" value="${cancelLabel}" data-def="mainbtn=empty-selec, evt=cancel" />
+        <input type="button" value="${cancelLabel}" data-def="evt=cancel" />
       </div>
     </div>
 
@@ -239,13 +230,10 @@
           </c:forEach>
         </select>
       </div>
-      <span data-def="state=empty-selec">
-        <f:message key="message.EmptyTableSelection" />
-      </span>
 
       <div class="popup-dialog-buttonpane">
         <input type="button" value="${assignLabel}" data-def="state=assign, mainbtn=assign, evt=confirm" />
-        <input type="button" value="${cancelLabel}" data-def="mainbtn=empty-select, evt=cancel" />
+        <input type="button" value="${cancelLabel}" data-def="evt=cancel" />
       </div>
     </div>
     <div id="ts-test-plan-batch-edit-status" class="not-displayed popup-dialog"
@@ -260,13 +248,10 @@
           </c:forEach>
         </select>
       </div>
-      <span data-def="state=empty-selec">
-        <f:message key="message.EmptyTableSelection" />
-      </span>
 
       <div class="popup-dialog-buttonpane">
         <input type="button" value="${confirmLabel}" data-def="state=edit, mainbtn=edit, evt=confirm" />
-        <input type="button" value="${cancelLabel}" data-def="mainbtn=empty-select, evt=cancel" />
+        <input type="button" value="${cancelLabel}" data-def="evt=cancel" />
       </div>
     </div>
     <div id="ts-test-plan-reorder-dialog" class="not-displayed popup-dialog" title="${reorderLabel}">

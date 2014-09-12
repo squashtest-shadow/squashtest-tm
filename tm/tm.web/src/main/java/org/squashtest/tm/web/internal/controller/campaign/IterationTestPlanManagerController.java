@@ -6,16 +6,16 @@
  *     information regarding copyright ownership.
  *
  *     This is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU Lesser General Public License as published by
+ *     it under the terms of the GNU General Public License as published by
  *     the Free Software Foundation, either version 3 of the License, or
  *     (at your option) any later version.
  *
  *     this software is distributed in the hope that it will be useful,
  *     but WITHOUT ANY WARRANTY; without even the implied warranty of
  *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU Lesser General Public License for more details.
+ *     GNU General Public License for more details.
  *
- *     You should have received a copy of the GNU Lesser General Public License
+ *     You should have received a copy of the GNU General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.squashtest.tm.web.internal.controller.campaign;
@@ -99,7 +99,7 @@ public class IterationTestPlanManagerController {
 	// index is a special case which means : no sorting.
 	.mapAttribute("project-name", "name", Project.class).mapAttribute("reference", "reference", TestCase.class)
 	.mapAttribute("tc-name", "name", TestCase.class).mapAttribute("importance", "importance", TestCase.class)
-	.mapAttribute("dataset", "name", Dataset.class)
+	.mapAttribute("dataset.selected.name", "name", Dataset.class)
 	.mapAttribute("status", "executionStatus", IterationTestPlanItem.class)
 	.mapAttribute("assignee-login", "login", User.class)
 	.mapAttribute("last-exec-on", "lastExecutedOn", IterationTestPlanItem.class)
@@ -246,6 +246,13 @@ public class IterationTestPlanManagerController {
 		List<IterationTestPlanItem> itpis = iterationTestPlanManagerService.forceExecutionStatus(testPlanIds, status);
 		return createJsonITPI(itpis.get(0));
 
+	}
+
+	@RequestMapping(value = "/iterations/{iterationId}/test-plan/{testPlanId}", method = RequestMethod.POST, params = {"dataset"})
+	public @ResponseBody
+	Long setDataset(@PathVariable("testPlanId") long testPlanId, @RequestParam("dataset") Long datasetId){
+		iterationTestPlanManagerService.changeDataset(testPlanId, datasetId);
+		return datasetId;
 	}
 
 	private String formatUnassigned(Locale locale) {

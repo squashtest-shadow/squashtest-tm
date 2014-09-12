@@ -6,16 +6,16 @@
  *     information regarding copyright ownership.
  *
  *     This is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU Lesser General Public License as published by
+ *     it under the terms of the GNU General Public License as published by
  *     the Free Software Foundation, either version 3 of the License, or
  *     (at your option) any later version.
  *
  *     this software is distributed in the hope that it will be useful,
  *     but WITHOUT ANY WARRANTY; without even the implied warranty of
  *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU Lesser General Public License for more details.
+ *     GNU General Public License for more details.
  *
- *     You should have received a copy of the GNU Lesser General Public License
+ *     You should have received a copy of the GNU General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 define([ "jquery", "backbone", "jeditable.simpleJEditable", "jquery.squash.confirmdialog",
@@ -29,10 +29,13 @@ define([ "jquery", "backbone", "jeditable.simpleJEditable", "jquery.squash.confi
 			this.removeRowParameter = $.proxy(this._removeRowParameter, this);
 			this.parametersTableRowCallback = $.proxy(this._parametersTableRowCallback, this);
 			this.confirmRemoveParameter = $.proxy(this._confirmRemoveParameter, this);
-
+			this.addSimpleJEditableToName = $.proxy(this.addSimpleJEditableToName, this);
+			this.updateParameterDescription = $.proxy(this._updateParameterDescription, this);
 			this.refresh = $.proxy(this._refresh, this);
 			this._configureTable.call(this);
 			this._configureRemoveParametersDialogs.call(this);
+			
+			this.table.on("parameter.description.update", this.updateParameterDescription);
 		},
 
 		events : {
@@ -66,8 +69,12 @@ define([ "jquery", "backbone", "jeditable.simpleJEditable", "jquery.squash.confi
 					} ],
 
 					richEditables : {
-						'parameter-description' : self.settings.basic.parametersUrl + '/{entity-id}/description'					
+						'parameter-description' : {
+							'url' : self.settings.basic.parametersUrl + '/{entity-id}/description',
+							'oncomplete' : 'parameter.description.update'
+						}
 					}
+
 				};
 			}
 
@@ -149,13 +156,37 @@ define([ "jquery", "backbone", "jeditable.simpleJEditable", "jquery.squash.confi
 			new SimpleJEditable({
 				targetUrl : urlPOST,
 				component : component,
-				jeditableSettings : {}
+				jeditableSettings : {
+					ajaxoptions : {
+						complete : function(jqXHR, textStatus){
+							self.trigger("parameter.name.update",
+									{
+										id : data['entity-id'],
+										name : jqXHR.responseText
+									}
+							);
+						}
+					}
+				}
 			});
 		},
 
 		_refresh : function() {
 			this.table.fnDraw(false);
+		},
+		
+		_updateParameterDescription : function(event, result){
+			var id = result['id'];
+			
+			// get parameter description (richEditable) from the squashTable and converts it to a simple String
+			var description = $.trim(this.table.getRowsByIds([id]).eq(0).find('td.parameter-description').text());
+			
+			this.trigger('parameter.description.update', {
+				id : id, 
+				description : description
+				});
 		}
+
 	});
 
 	return ParametersTable;

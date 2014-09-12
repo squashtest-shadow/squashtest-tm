@@ -8,21 +8,22 @@
         information regarding copyright ownership.
 
         This is free software: you can redistribute it and/or modify
-        it under the terms of the GNU Lesser General Public License as published by
+        it under the terms of the GNU General Public License as published by
         the Free Software Foundation, either version 3 of the License, or
         (at your option) any later version.
 
         this software is distributed in the hope that it will be useful,
         but WITHOUT ANY WARRANTY; without even the implied warranty of
         MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-        GNU Lesser General Public License for more details.
+        GNU General Public License for more details.
 
-        You should have received a copy of the GNU Lesser General Public License
+        You should have received a copy of the GNU General Public License
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
 <web-app xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/jee/web-app_2_5.xsd" version="2.5">
+	xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/jee/web-app_2_5.xsd"
+	version="2.5">
 	<!-- ====== SPRING FRONT CONTROLLER ====== -->
 	<servlet>
 		<!-- CoC will lookup ${servlet-name}-servlet.xml for MVC conf -->
@@ -49,26 +50,27 @@
 	</servlet-mapping>
 	<!-- ====== /SPRING FRONT CONTROLLER ====== -->
 
-<!--  ========================= encoding set to utf-8 =========================== -->
-    <filter>
-        <filter-name>encoding-filter</filter-name>
-        <filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
-        <init-param>
-            <param-name>encoding</param-name>
-            <param-value>utf-8</param-value>
-        </init-param>
-        <!--  we force the encoding because we want the encoding to be set for both request and response -->
-        <init-param>
-            <param-name>forceEncoding</param-name>
-            <param-value>true</param-value>
-        </init-param>        
+	<!-- ========================= encoding set to utf-8 =========================== -->
+	<filter>
+		<filter-name>encoding-filter</filter-name>
+		<filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
+		<init-param>
+			<param-name>encoding</param-name>
+			<param-value>utf-8</param-value>
+		</init-param>
+		<!-- we force the encoding because we want the encoding to be set for both 
+			request and response -->
+		<init-param>
+			<param-name>forceEncoding</param-name>
+			<param-value>true</param-value>
+		</init-param>
 
-    </filter>
+	</filter>
 
-    <filter-mapping>
-        <filter-name>encoding-filter</filter-name>
-        <url-pattern>/*</url-pattern>
-    </filter-mapping>
+	<filter-mapping>
+		<filter-name>encoding-filter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
 	<!-- ====== SPRING SECURITY ====== -->
 	<filter>
 		<filter-name>springSecurityFilterChain</filter-name>
@@ -122,6 +124,10 @@
 	<filter>
 		<filter-name>userConcurrentRequestLocker</filter-name>
 		<filter-class>org.squashtest.tm.web.internal.filter.UserConcurrentRequestLockFilter</filter-class>
+		<init-param>
+			<param-name>excludePatterns</param-name>
+			<param-value>/isSquashAlive</param-value>
+		</init-param>
 	</filter>
 
 	<filter-mapping>
@@ -130,31 +136,31 @@
 		<dispatcher>FORWARD</dispatcher>
 	</filter-mapping>
 	<!-- ====== /USER CONCURRENT REQUEST QUEUE ====== -->
-  
-  <!-- ====== FIXES IE8 ACCEPT HEADER ====== -->
-  <filter>
-    <filter-name>IE8AcceptHeaderFixerFilter</filter-name>
-    <filter-class>org.squashtest.tm.web.internal.filter.IE8AcceptHeaderFixerFilter</filter-class>
-  </filter>
 
-  <filter-mapping>
-    <filter-name>IE8AcceptHeaderFixerFilter</filter-name>
-    <servlet-name>squash-tm</servlet-name>
-    <dispatcher>FORWARD</dispatcher>
-  </filter-mapping>
-  <!-- ====== /FIXES IE8 ACCEPT HEADER ====== -->  
-  
-  <filter>
-    <filter-name>httpPutFormContentFilter</filter-name>
-    <filter-class>org.springframework.web.filter.HttpPutFormContentFilter</filter-class>
-  </filter>
+	<!-- ====== FIXES IE8 ACCEPT HEADER ====== -->
+	<filter>
+		<filter-name>IE8AcceptHeaderFixerFilter</filter-name>
+		<filter-class>org.squashtest.tm.web.internal.filter.IE8AcceptHeaderFixerFilter</filter-class>
+	</filter>
 
-  <filter-mapping>
-    <filter-name>httpPutFormContentFilter</filter-name>
-    <servlet-name>squash-tm</servlet-name>
-    <dispatcher>FORWARD</dispatcher>
-  </filter-mapping>
-  
+	<filter-mapping>
+		<filter-name>IE8AcceptHeaderFixerFilter</filter-name>
+		<servlet-name>squash-tm</servlet-name>
+		<dispatcher>FORWARD</dispatcher>
+	</filter-mapping>
+	<!-- ====== /FIXES IE8 ACCEPT HEADER ====== -->
+
+	<filter>
+		<filter-name>httpPutFormContentFilter</filter-name>
+		<filter-class>org.springframework.web.filter.HttpPutFormContentFilter</filter-class>
+	</filter>
+
+	<filter-mapping>
+		<filter-name>httpPutFormContentFilter</filter-name>
+		<servlet-name>squash-tm</servlet-name>
+		<dispatcher>FORWARD</dispatcher>
+	</filter-mapping>
+
 
 	<!-- ====== SPRING BOOTSTRAPPER ====== -->
 	<context-param>
@@ -172,11 +178,11 @@
 		<param-name>contextConfigLocation</param-name>
 		<param-value>/WEB-INF/applicationContext-*.xml</param-value>
 	</context-param>
-  
-<context-param>
-      <param-name>cacheControl</param-name>
-      <param-value>max-age=3600,public</param-value>
-    </context-param>  
+
+	<context-param>
+		<param-name>cacheControl</param-name>
+		<param-value>max-age=3600,public</param-value>
+	</context-param>
 
 
 	<listener>
@@ -203,7 +209,7 @@
 		<!-- Scriptlets are forbidden because they enable bad practices -->
 		<scripting-invalid>true</scripting-invalid>
 	</jsp-property-group>
-	
+
 
 
 	<welcome-file-list>
@@ -220,13 +226,14 @@
 		<param-name>squashTMVersion</param-name>
 		<param-value>${project.version}</param-value>
 	</context-param>
-	
+
 	<context-param>
 		<param-name>stage</param-name>
-		<param-value>${project.stage}</param-value><!--  ensure that the values are DEV or RELEASE -->
-	</context-param>	
-	 <!-- ================ Listener ====================== -->
-  <listener>
-    <listener-class>org.squashtest.tm.web.internal.listener.OpenedEntitiesLifecycleListener</listener-class>
-  </listener>
+		<param-value>${project.stage}</param-value><!-- ensure that the values 
+			are DEV or RELEASE -->
+	</context-param>
+	<!-- ================ Listener ====================== -->
+	<listener>
+		<listener-class>org.squashtest.tm.web.internal.listener.OpenedEntitiesLifecycleListener</listener-class>
+	</listener>
 </web-app>

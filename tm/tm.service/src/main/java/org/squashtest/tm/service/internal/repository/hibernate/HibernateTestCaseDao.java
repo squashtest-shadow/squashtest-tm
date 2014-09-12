@@ -6,16 +6,16 @@
  *     information regarding copyright ownership.
  *
  *     This is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU Lesser General Public License as published by
+ *     it under the terms of the GNU General Public License as published by
  *     the Free Software Foundation, either version 3 of the License, or
  *     (at your option) any later version.
  *
  *     this software is distributed in the hope that it will be useful,
  *     but WITHOUT ANY WARRANTY; without even the implied warranty of
  *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU Lesser General Public License for more details.
+ *     GNU General Public License for more details.
  *
- *     You should have received a copy of the GNU Lesser General Public License
+ *     You should have received a copy of the GNU General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.squashtest.tm.service.internal.repository.hibernate;
@@ -52,6 +52,7 @@ import org.squashtest.tm.domain.NamedReference;
 import org.squashtest.tm.domain.NamedReferencePair;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.requirement.RequirementSearchCriteria;
+import org.squashtest.tm.domain.testcase.CallTestStep;
 import org.squashtest.tm.domain.testcase.ExportTestCaseData;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseFolder;
@@ -89,6 +90,10 @@ public class HibernateTestCaseDao extends HibernateEntityDao<TestCase> implement
 			+ " join PROJECT project on project.PROJECT_ID = tcln.PROJECT_ID" + " where project.TCL_ID = :libraryId";
 	private static final String FIND_ALL_CALLING_TEST_CASE_MAIN_HQL = "select distinct TestCase from TestCase as TestCase left join TestCase.project as Project "
 			+ " join TestCase.steps as Steps where Steps.calledTestCase.id = :testCaseId ";
+
+	// in that query we only want the steps, but we join also on the caller test cases and projects because we can sort on them
+	private static final String FIND_ALL_CALLING_TEST_STEPS_MAIN_HQL = "select Steps from TestCase as TestCase join TestCase.project as Project " +
+			"join TestCase.steps as Steps where Steps.calledTestCase.id = :testCaseId ";
 
 	private static List<DefaultSorting> defaultVerifiedTcSorting;
 
@@ -263,6 +268,40 @@ public class HibernateTestCaseDao extends HibernateEntityDao<TestCase> implement
 	public List<TestCase> findAllCallingTestCases(long calleeId) {
 		Query query = currentSession().createQuery(FIND_ALL_CALLING_TEST_CASE_MAIN_HQL);
 		query.setParameter("testCaseId", calleeId);
+		return query.list();
+	}
+
+
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<CallTestStep> findAllCallingTestSteps(long testCaseId, PagingAndSorting sorting) {
+		String orderBy = "";
+
+		if (sorting != null) {
+			orderBy = " order by " + sorting.getSortedAttribute() + ' ' + sorting.getSortOrder().getCode();
+		}
+
+		Query query = currentSession().createQuery(FIND_ALL_CALLING_TEST_STEPS_MAIN_HQL + orderBy);
+		query.setParameter("testCaseId", testCaseId);
+
+		if (sorting != null) {
+			query.setMaxResults(sorting.getPageSize());
+			query.setFirstResult(sorting.getFirstItemIndex());
+		}
+		return query.list();
+	}
+
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<CallTestStep> findAllCallingTestSteps(long testCaseId) {
+
+		// TODO : maybe move this to package-info.java along the other queries if
+		// the use cases calling this prove to be stable
+		String orderBy = " order by Project.name asc, TestCase.reference asc, TestCase.name asc, index(Steps) asc";
+
+		Query query = currentSession().createQuery(FIND_ALL_CALLING_TEST_STEPS_MAIN_HQL + orderBy);
+		query.setParameter("testCaseId", testCaseId);
+
 		return query.list();
 	}
 

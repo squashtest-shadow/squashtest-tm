@@ -6,16 +6,16 @@
  *     information regarding copyright ownership.
  *
  *     This is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU Lesser General Public License as published by
+ *     it under the terms of the GNU General Public License as published by
  *     the Free Software Foundation, either version 3 of the License, or
  *     (at your option) any later version.
  *
  *     this software is distributed in the hope that it will be useful,
  *     but WITHOUT ANY WARRANTY; without even the implied warranty of
  *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU Lesser General Public License for more details.
+ *     GNU General Public License for more details.
  *
- *     You should have received a copy of the GNU Lesser General Public License
+ *     You should have received a copy of the GNU General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.squashtest.tm.domain.customfield;
@@ -62,17 +62,17 @@ public class CustomFieldValue implements Identified {
 	@SequenceGenerator(name = "custom_field_value_cfv_id_seq", sequenceName = "custom_field_value_cfv_id_seq")
 	private Long id;
 
-	private Long boundEntityId;
+	protected Long boundEntityId;
 
 	@Enumerated(EnumType.STRING)
-	private BindableEntity boundEntityType;
+	protected BindableEntity boundEntityType;
 
 	@ManyToOne
 	@JoinColumn(name = "CFB_ID")
-	private CustomFieldBinding binding;
+	protected CustomFieldBinding binding;
 
 	@Size(min = 0, max = MAX_SIZE)
-	private String value;
+	protected String value;
 
 	public CustomFieldValue() {
 		super();
@@ -81,8 +81,8 @@ public class CustomFieldValue implements Identified {
 	public CustomFieldValue(Long boundEntityId, BindableEntity boundEntityType, CustomFieldBinding binding, String value) {
 		super();
 		this.boundEntityId = boundEntityId;
-		this.boundEntityType = boundEntityType;
 		this.binding = binding;
+		doSetBoundEntityType(boundEntityType);
 		doSetValue(value);
 	}
 
@@ -141,13 +141,20 @@ public class CustomFieldValue implements Identified {
 	}
 
 	public void setBoundEntity(BoundEntity entity) {
-		if (entity.getBoundEntityType() != binding.getBoundEntity()) {
-			throw new BindableEntityMismatchException("attempted to bind '" + entity.getBoundEntityType()
+		this.boundEntityId = entity.getBoundEntityId();
+		doSetBoundEntityType(entity.getBoundEntityType());
+	}
+
+	public void doSetBoundEntityType(BindableEntity entityType) {
+		if (entityType != binding.getBoundEntity()) {
+			throw new BindableEntityMismatchException("attempted to bind '" + entityType
 					+ "' while expected '" + binding.getBoundEntity() + "'");
 		}
-		this.boundEntityId = entity.getBoundEntityId();
-		this.boundEntityType = entity.getBoundEntityType();
+
+		this.boundEntityType = entityType;
 	}
+
+
 
 	public CustomFieldValue copy() {
 		CustomFieldValue copy = new CustomFieldValue();

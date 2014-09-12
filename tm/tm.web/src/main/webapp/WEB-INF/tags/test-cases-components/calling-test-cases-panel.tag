@@ -7,16 +7,16 @@
         information regarding copyright ownership.
 
         This is free software: you can redistribute it and/or modify
-        it under the terms of the GNU Lesser General Public License as published by
+        it under the terms of the GNU General Public License as published by
         the Free Software Foundation, either version 3 of the License, or
         (at your option) any later version.
 
         this software is distributed in the hope that it will be useful,
         but WITHOUT ANY WARRANTY; without even the implied warranty of
         MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-        GNU Lesser General Public License for more details.
+        GNU General Public License for more details.
 
-        You should have received a copy of the GNU Lesser General Public License
+        You should have received a copy of the GNU General Public License
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 --%>
@@ -47,14 +47,16 @@
 
 
 	<jsp:attribute name="body">
-		<table id="calling-test-case-table" class="unstyled-table" data-def="ajaxsource=${modelUrl}, 
-													  datakeys-id=tc-id, pagesize=50, pre-sort=4, deferloading=${model.iTotalRecords}">
+		<table id="calling-test-case-table" class="unstyled-table" 
+               data-def="ajaxsource=${modelUrl}, datakeys-id=tc-id, pagesize=50, pre-sort=4, deferloading=${model.iTotalRecords}">
 			<thead>
 				<tr>
 					<th data-def="map=tc-index, select">#</th>
 					<th data-def="map=project-name, sortable"><f:message key="label.project" /></th>
 					<th data-def="map=tc-reference, sortable"><f:message key="test-case.reference.label" /></th>
 					<th data-def="map=tc-name, sortable, sWidth=15em, link=${callingTCUrl}"><f:message key="label.Name" /></th>
+                    <th data-def="map=ds-name"><f:message key="label.dataset"/></th>
+                    <th data-def="map=step-no"><f:message key="label.stepNumber"/></th>
 					<th data-def="map=tc-mode, sortable"><f:message key="test-case.calling-test-cases.table.execmode.label" /></th>				
 				</tr>
 			</thead>

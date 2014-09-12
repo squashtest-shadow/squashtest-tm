@@ -6,16 +6,16 @@
  *     information regarding copyright ownership.
  *
  *     This is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU Lesser General Public License as published by
+ *     it under the terms of the GNU General Public License as published by
  *     the Free Software Foundation, either version 3 of the License, or
  *     (at your option) any later version.
  *
  *     this software is distributed in the hope that it will be useful,
  *     but WITHOUT ANY WARRANTY; without even the implied warranty of
  *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU Lesser General Public License for more details.
+ *     GNU General Public License for more details.
  *
- *     You should have received a copy of the GNU Lesser General Public License
+ *     You should have received a copy of the GNU General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.squashtest.tm.service.internal.campaign;
@@ -23,6 +23,7 @@ package org.squashtest.tm.service.internal.campaign;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
@@ -47,7 +48,9 @@ import org.squashtest.tm.core.foundation.collection.Pagings;
 import org.squashtest.tm.domain.IdentifiersOrderComparator;
 import org.squashtest.tm.domain.campaign.Campaign;
 import org.squashtest.tm.domain.campaign.CampaignTestPlanItem;
+import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.projectfilter.ProjectFilter;
+import org.squashtest.tm.domain.testcase.Dataset;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseLibrary;
 import org.squashtest.tm.domain.testcase.TestCaseLibraryNode;
@@ -57,6 +60,7 @@ import org.squashtest.tm.service.campaign.IndexedCampaignTestPlanItem;
 import org.squashtest.tm.service.internal.library.LibrarySelectionStrategy;
 import org.squashtest.tm.service.internal.repository.CampaignDao;
 import org.squashtest.tm.service.internal.repository.CampaignTestPlanItemDao;
+import org.squashtest.tm.service.internal.repository.DatasetDao;
 import org.squashtest.tm.service.internal.repository.LibraryNodeDao;
 import org.squashtest.tm.service.internal.repository.TestCaseLibraryDao;
 import org.squashtest.tm.service.internal.repository.UserDao;
@@ -76,11 +80,11 @@ public class CampaignTestPlanManagerServiceImpl implements CampaignTestPlanManag
 	 * Permission string for linking campaigns to TP / Users based on campaignId param.
 	 */
 	private static final String CAN_LINK_CAMPAIGN_BY_ID = "hasPermission(#campaignId, 'org.squashtest.tm.domain.campaign.Campaign', 'LINK') or hasRole('ROLE_ADMIN')";
-	
-	private static final String CAN_REORDER_TEST_PLAN	= "hasPermission(#campaignId, 'org.squashtest.tm.domain.campaign.Campaign', 'LINK') or hasRole('ROLE_ADMIN')"; 
+
+	private static final String CAN_REORDER_TEST_PLAN	= "hasPermission(#campaignId, 'org.squashtest.tm.domain.campaign.Campaign', 'LINK') or hasRole('ROLE_ADMIN')";
 
 	private static final String CAN_READ_TEST_PLAN	=	"hasPermission(#campaignId, 'org.squashtest.tm.domain.campaign.Campaign' ,'READ') or hasRole('ROLE_ADMIN')";
-	
+
 	@Inject
 	private TestCaseLibraryDao testCaseLibraryDao;
 
@@ -102,6 +106,10 @@ public class CampaignTestPlanManagerServiceImpl implements CampaignTestPlanManag
 
 	@Inject
 	private UserDao userDao;
+
+	@Inject
+	private DatasetDao datasetDao;
+
 
 	@Inject
 	@Qualifier("squashtest.core.security.ObjectIdentityRetrievalStrategy")
@@ -132,7 +140,7 @@ public class CampaignTestPlanManagerServiceImpl implements CampaignTestPlanManag
 				.findAll();
 
 	}
-	
+
 
 	@Override
 	@PreAuthorize(CAN_READ_TEST_PLAN)
@@ -167,12 +175,28 @@ public class CampaignTestPlanManagerServiceImpl implements CampaignTestPlanManag
 
 		Campaign campaign = campaignDao.findById(campaignId);
 
+		/*
+		 * Feat 3700 campaign test plans are now popuplated the same way than iteration
+		 * are
+		 */
 		for (TestCase testCase : testCases) {
-			CampaignTestPlanItem itp = new CampaignTestPlanItem(testCase);
-			campaignTestPlanItemDao.persist(itp);
-			campaign.addToTestPlan(itp);
+
+			Set<Dataset> datasets = testCase.getDatasets();
+
+			if (datasets.isEmpty()){
+				CampaignTestPlanItem itp = new CampaignTestPlanItem(testCase);
+				campaignTestPlanItemDao.persist(itp);
+				campaign.addToTestPlan(itp);
+			} else {
+				for (Dataset ds : datasets){
+					CampaignTestPlanItem itp = new CampaignTestPlanItem(testCase, ds);
+					campaignTestPlanItemDao.persist(itp);
+					campaign.addToTestPlan(itp);
+				}
+			}
 		}
 	}
+
 
 	@Override
 	@Transactional(readOnly = true)
@@ -234,21 +258,21 @@ public class CampaignTestPlanManagerServiceImpl implements CampaignTestPlanManag
 		Campaign campaign = campaignDao.findById(campaignId);
 		campaign.moveTestPlanItems(targetIndex, itemIds);
 	}
-	
+
 	@Override
 	@PreAuthorize(CAN_REORDER_TEST_PLAN)
 	public void reorderTestPlan(long campaignId, MultiSorting newSorting) {
 		Paging noPaging = Pagings.NO_PAGING;
 		PagingAndMultiSorting sorting = new DelegatePagingAndMultiSorting(noPaging, newSorting);
-		
+
 		List<CampaignTestPlanItem> items = campaignDao.findTestPlan(campaignId, sorting);
-		
+
 		Campaign campaign = campaignDao.findById(campaignId);
-		
+
 		campaign.getTestPlan().clear();
 		campaign.getTestPlan().addAll(items);
 	}
-	
+
 
 	/**
 	 * @see org.squashtest.tm.service.campaign.CampaignTestPlanManagerService#removeTestPlanItem(long, long)
@@ -285,6 +309,27 @@ public class CampaignTestPlanManagerServiceImpl implements CampaignTestPlanManag
 	@Transactional(readOnly = true)
 	public List<Long> findPlannedTestCasesIds(Long campaignId) {
 		return campaignTestPlanItemDao.findPlannedTestCasesIdsByCampaignId(campaignId);
+	}
+
+
+	@Override
+	@PreAuthorize("hasPermission(#itemId, 'org.squashtest.tm.domain.campaign.CampaignTestPlanItem', 'WRITE') or hasRole('ROLE_ADMIN')")
+	public void changeDataset(long itemId, Long datasetId) {
+		CampaignTestPlanItem item = campaignTestPlanItemDao.findById(itemId);
+
+		if (datasetId == null){
+			item.setReferencedDataset(null);
+		}
+		else{
+			TestCase tc = item.getReferencedTestCase();
+			Dataset ds = datasetDao.findById(datasetId);
+			if (! ds.getTestCase().equals(tc)){
+				throw new IllegalArgumentException("dataset [id:'"+ds.getId()+"', name:'"+ds.getName()+
+						"'] doesn't belong to test case [id:'"+tc.getId()+"', name:'"+tc.getName()+"']");
+			}
+			item.setReferencedDataset(ds);
+		}
+
 	}
 
 }

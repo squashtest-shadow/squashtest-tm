@@ -6,16 +6,16 @@
  *     information regarding copyright ownership.
  *
  *     This is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU Lesser General Public License as published by
+ *     it under the terms of the GNU General Public License as published by
  *     the Free Software Foundation, either version 3 of the License, or
  *     (at your option) any later version.
  *
  *     this software is distributed in the hope that it will be useful,
  *     but WITHOUT ANY WARRANTY; without even the implied warranty of
  *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU Lesser General Public License for more details.
+ *     GNU General Public License for more details.
  *
- *     You should have received a copy of the GNU Lesser General Public License
+ *     You should have received a copy of the GNU General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.squashtest.tm.service.internal.batchimport
@@ -230,6 +230,7 @@ class EntityValidatorTest extends Specification {
 		TestStepTarget target  = new TestStepTarget(new TestCaseTarget("/project/test-case"), 2)
 		TestCaseTarget called = new TestCaseTarget("/project/called")
 		TestStep cstep = new CallTestStep()
+		CallStepParamsInfo info = new CallStepParamsInfo()
 
 		and :
 		model.getStatus(_) >> new TargetStatus(EXISTS, 10l)
@@ -238,7 +239,7 @@ class EntityValidatorTest extends Specification {
 
 
 		when :
-		LogTrain train = validator.validateCallStep(target, cstep, called, mode)
+		LogTrain train = validator.validateCallStep(target, cstep, called, info, mode)
 
 
 		then :
@@ -263,10 +264,11 @@ class EntityValidatorTest extends Specification {
 		def target = steptarget("/project/test-case", 5)
 		def called = tar("/project/autre")
 		def cstep = cst()
+		CallStepParamsInfo info = new CallStepParamsInfo()
 
 
 		when :
-		LogTrain train = validator.validateCallStep(target, cstep, called, mode)
+		LogTrain train = validator.validateCallStep(target, cstep, called, info, mode)
 
 		then :
 

@@ -6,19 +6,20 @@
  *     information regarding copyright ownership.
  *
  *     This is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU Lesser General Public License as published by
+ *     it under the terms of the GNU General Public License as published by
  *     the Free Software Foundation, either version 3 of the License, or
  *     (at your option) any later version.
  *
  *     this software is distributed in the hope that it will be useful,
  *     but WITHOUT ANY WARRANTY; without even the implied warranty of
  *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU Lesser General Public License for more details.
+ *     GNU General Public License for more details.
  *
- *     You should have received a copy of the GNU Lesser General Public License
+ *     You should have received a copy of the GNU General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define(['jquery', 'jquery.squash.confirmdialog', 'jquery.squash.formdialog' ], function($) {
+define(['jquery', 'squash.translator', 'app/ws/squashtm.notification', 'jquery.squash.confirmdialog', 'jquery.squash.formdialog' ], 
+		function($, translator, notification) {
 
 	function _initBatchAssignUsers(conf){
 		
@@ -27,10 +28,11 @@ define(['jquery', 'jquery.squash.confirmdialog', 'jquery.squash.formdialog' ], f
 		batchAssignUsersDialog.formDialog();
 		
 		batchAssignUsersDialog.on('formdialogopen', function(){
-			var selIds = $("#test-cases-table").squashTable().getSelectedIds();
+			var selIds = $("#campaign-test-plans-table").squashTable().getSelectedIds();
 			
 			if (selIds.length === 0){			
-				$(this).formDialog('setState','empty-selec');
+				$(this).formDialog('close');
+				notification.showError(translator.get('campaign.test-plan.action.empty-selection.message'));
 			}
 			else{
 				$(this).formDialog('setState','assign');				
@@ -40,7 +42,7 @@ define(['jquery', 'jquery.squash.confirmdialog', 'jquery.squash.formdialog' ], f
 		
 		batchAssignUsersDialog.on('formdialogconfirm', function(){
 			
-			var table = $("#test-cases-table").squashTable(),
+			var table = $("#campaign-test-plans-table").squashTable(),
 				select = $('.batch-select', this);
 			
 			var rowIds = table.getSelectedIds(),
@@ -68,7 +70,7 @@ define(['jquery', 'jquery.squash.confirmdialog', 'jquery.squash.formdialog' ], f
 		dialog.confirmDialog();
 		
 		dialog.on('confirmdialogconfirm', function(){
-			var table = $("#test-cases-table").squashTable();
+			var table = $("#campaign-test-plans-table").squashTable();
 			var drawParameters = table.getAjaxParameters();
 			
 			var url = conf.urls.testplanUrl+'/order';
@@ -94,7 +96,7 @@ define(['jquery', 'jquery.squash.confirmdialog', 'jquery.squash.formdialog' ], f
 		dialog.on('formdialogopen', function(){
 			
 			// read the ids from the table selection
-			var ids = $("#test-cases-table").squashTable().getSelectedIds();
+			var ids = $("#campaign-test-plans-table").squashTable().getSelectedIds();
 			
 			if (ids.length === 0){	
 				// if empty, try to see if the delete buttons embedded in the table rows 
@@ -107,7 +109,8 @@ define(['jquery', 'jquery.squash.confirmdialog', 'jquery.squash.formdialog' ], f
 			}
 			
 			if (ids.length === 0){
-				dialog.formDialog("setState", "empty-selec");
+				$(this).formDialog('close');
+				notification.showError(translator.get('iteration.test-plan.action.empty-selection.message'));
 			}
 			else{
 				this.selIds = ids;
@@ -129,7 +132,7 @@ define(['jquery', 'jquery.squash.confirmdialog', 'jquery.squash.formdialog' ], f
 					dataType : 'json'
 				})
 				.done(function(){
-					$("#test-cases-table").squashTable().refresh();
+					$("#campaign-test-plans-table").squashTable().refresh();
 					dialog.formDialog('close');
 				});
 			}

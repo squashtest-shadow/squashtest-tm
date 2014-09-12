@@ -6,20 +6,22 @@
  *     information regarding copyright ownership.
  *
  *     This is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU Lesser General Public License as published by
+ *     it under the terms of the GNU General Public License as published by
  *     the Free Software Foundation, either version 3 of the License, or
  *     (at your option) any later version.
  *
  *     this software is distributed in the hope that it will be useful,
  *     but WITHOUT ANY WARRANTY; without even the implied warranty of
  *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU Lesser General Public License for more details.
+ *     GNU General Public License for more details.
  *
- *     You should have received a copy of the GNU Lesser General Public License
+ *     You should have received a copy of the GNU General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.squashtest.tm.web.internal.controller.campaign;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -30,11 +32,13 @@ import org.springframework.web.util.HtmlUtils;
 import org.squashtest.tm.core.foundation.lang.DateUtils;
 import org.squashtest.tm.domain.IdentifiedUtil;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
+import org.squashtest.tm.domain.testcase.Dataset;
 import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.service.campaign.IndexedIterationTestPlanItem;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelBuilder;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelConstants;
+import org.squashtest.tm.web.internal.model.json.JsonDataset;
 
 class TestPlanTableModelHelper extends DataTableModelBuilder<IndexedIterationTestPlanItem> {
 
@@ -51,9 +55,9 @@ class TestPlanTableModelHelper extends DataTableModelBuilder<IndexedIterationTes
 
 		Integer index = indexedItem.getIndex() + 1;
 		IterationTestPlanItem item = indexedItem.getItem();
-		
+
 		Map<String, Object> res = new HashMap<String, Object>();
-		
+
 		//automation mode
 		final String automationMode = item.isAutomated() ? "A" : "M";
 
@@ -61,13 +65,13 @@ class TestPlanTableModelHelper extends DataTableModelBuilder<IndexedIterationTes
 		//String assigneeLogin = formatString(item.getLastExecutedBy(), locale); commented because of 3009
 		String assigneeLogin = formatString(null, locale);	// we want the "null" login before checking if there is an actual assignee
 		Long assigneeId = User.NO_USER_ID;
-		User assignee = item.getUser();	
+		User assignee = item.getUser();
 		if  (assignee  != null) {
 			assigneeId = assignee.getId();
 			assigneeLogin = assignee.getLogin();
 		}
-		
-		//if test case deleted 
+
+		//if test case deleted
 		String projectName;
 		String testCaseName;
 		Long tcId;
@@ -90,15 +94,12 @@ class TestPlanTableModelHelper extends DataTableModelBuilder<IndexedIterationTes
 			}
 			importance = messageSource.internationalize(item.getReferencedTestCase().getImportance(), locale);
 		}
-		
-		
+
+
 		//dataset
-		String datasetName;
-		if (item.getReferencedDataset() == null) {
-			datasetName = formatNoData(locale);
-		} else {
-			datasetName = item.getReferencedDataset().getName();
-		}
+
+		DatasetInfos dsIndos = makeDatasetInfo (item);
+
 		// test suite name
 		String testSuiteNameList = "";
 		String testSuiteNameListTot = "";
@@ -113,8 +114,8 @@ class TestPlanTableModelHelper extends DataTableModelBuilder<IndexedIterationTes
 			testSuiteNameListTot = TestSuiteHelper.buildSuiteNameList(item.getTestSuites());
 			testSuiteIdsList = IdentifiedUtil.extractIds(item.getTestSuites());
 		}
-		
-		
+
+
 
 		res.put(DataTableModelConstants.DEFAULT_ENTITY_ID_KEY, item.getId());
 		res.put(DataTableModelConstants.DEFAULT_ENTITY_INDEX_KEY, index);
@@ -134,12 +135,79 @@ class TestPlanTableModelHelper extends DataTableModelBuilder<IndexedIterationTes
 		res.put(DataTableModelConstants.DEFAULT_EMPTY_EXECUTE_HOLDER_KEY, " ");
 		res.put(DataTableModelConstants.DEFAULT_EMPTY_DELETE_HOLDER_KEY, " ");
 		res.put("exec-mode", automationMode);
-		res.put("dataset", datasetName);
+		res.put("dataset", dsIndos);
 
 		return res;
 	}
 
+	/* **************** other private stufs ********************** */
+
+	public static final class DatasetInfos{
+
+		static {
+			JsonDataset emptyDs = new JsonDataset();
+			emptyDs.setId(null);
+			emptyDs.setName("--");
+
+			// I would prefer Collections.emptylist but the fracking compiler would not let met cast.
+			EMPTY_INFOS = new DatasetInfos(emptyDs, new ArrayList<JsonDataset>());
+		}
+
+		public static final DatasetInfos EMPTY_INFOS;
+
+		private JsonDataset selected;
+		private Collection<JsonDataset> available;
+
+		DatasetInfos(JsonDataset selected, Collection<JsonDataset> available){
+			this.selected = selected;
+			this.available = available;
+		}
+
+		public JsonDataset getSelected() {
+			return selected;
+		}
+
+		public Collection<JsonDataset> getAvailable() {
+			return available;
+		}
+
+	}
+
 	/* ***************** data formatter *************************** */
+
+	private DatasetInfos makeDatasetInfo(IterationTestPlanItem item){
+		if (item.isTestCaseDeleted() || item.getReferencedTestCase().getDatasets().isEmpty()){
+			return DatasetInfos.EMPTY_INFOS;
+		}
+		else{
+
+			Dataset selected = item.getReferencedDataset();
+			Collection<Dataset> available = item.getReferencedTestCase().getDatasets();
+
+			JsonDataset jsonSelected = convert(selected);
+			Collection<JsonDataset> jsonAvailable = new ArrayList<JsonDataset>(available.size()+1);
+			jsonAvailable.add(convert(null));	// that one corresponds to dataset 'None'
+			for (Dataset ds : available){
+				jsonAvailable.add(convert(ds));
+			}
+
+			return new DatasetInfos(jsonSelected, jsonAvailable);
+		}
+	}
+
+
+	private JsonDataset convert(Dataset ds){
+		JsonDataset jsds = new JsonDataset();
+		if (ds == null){
+			jsds.setName(messageSource.getMessage("label.None", null, "label.None", locale));
+			jsds.setId(null);
+		}else{
+			jsds.setName(ds.getName());
+			jsds.setId(ds.getId());
+		}
+		return jsds;
+	}
+
 
 	private String formatString(String arg, Locale locale) {
 		return messageSource.messageOrNoData(arg, locale);

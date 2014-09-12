@@ -6,16 +6,16 @@
  *     information regarding copyright ownership.
  *
  *     This is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU Lesser General Public License as published by
+ *     it under the terms of the GNU General Public License as published by
  *     the Free Software Foundation, either version 3 of the License, or
  *     (at your option) any later version.
  *
  *     this software is distributed in the hope that it will be useful,
  *     but WITHOUT ANY WARRANTY; without even the implied warranty of
  *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU Lesser General Public License for more details.
+ *     GNU General Public License for more details.
  *
- *     You should have received a copy of the GNU Lesser General Public License
+ *     You should have received a copy of the GNU General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 define([ "jquery", "backbone", "underscore", "./ParametersTable", "./NewParameterDialog", "jquery.squash.confirmdialog",
@@ -29,7 +29,9 @@ define([ "jquery", "backbone", "underscore", "./ParametersTable", "./NewParamete
 			this.settings = this.options.settings;
 			this.language = this.settings.language;
 			
-			_.bindAll(this, "showNewParameterDialog", "_onNewParameterConfirmed", "_onParameterRemoved", "refresh");
+			_.bindAll(this, "showNewParameterDialog", "_onNewParameterConfirmed", 
+					"_onParameterRemoved", "refresh", "refreshDataSetParameterName", 
+					"refreshDataSetParameterDescription");
 
 			this.makeTogglePanel();
 			this.table = new ParametersTable({
@@ -48,6 +50,8 @@ define([ "jquery", "backbone", "underscore", "./ParametersTable", "./NewParamete
 			this.configureButtons();
 			this.listenTo(this.newParameterDialog, "newparameterdialog.confirm", this._onNewParameterConfirmed);
 			this.listenTo(this.table, "parameterstable.removed", this._onParameterRemoved);
+			this.listenTo(this.table, "parameter.name.update", this.refreshDataSetParameterName);
+			this.listenTo(this.table, "parameter.description.update", this.refreshDataSetParameterDescription);
 		},
 
 		events : {
@@ -98,6 +102,17 @@ define([ "jquery", "backbone", "underscore", "./ParametersTable", "./NewParamete
 		
 		refresh: function() {
 			this.table.refresh();
+		},
+		
+		/**
+		 * handles parameter update events. triggers an event.
+		 */
+		refreshDataSetParameterName : function(parameters){
+			this.trigger("parameter.name.update", parameters);
+		},
+		
+		refreshDataSetParameterDescription : function(parameters){
+			this.trigger("parameter.description.update", parameters);
 		}
 	});
 	return ParametersPanel;

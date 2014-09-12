@@ -6,16 +6,16 @@
  *     information regarding copyright ownership.
  *
  *     This is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU Lesser General Public License as published by
+ *     it under the terms of the GNU General Public License as published by
  *     the Free Software Foundation, either version 3 of the License, or
  *     (at your option) any later version.
  *
  *     this software is distributed in the hope that it will be useful,
  *     but WITHOUT ANY WARRANTY; without even the implied warranty of
  *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU Lesser General Public License for more details.
+ *     GNU General Public License for more details.
  *
- *     You should have received a copy of the GNU Lesser General Public License
+ *     You should have received a copy of the GNU General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 define([ "jquery", "backbone", "jeditable.simpleJEditable", "app/util/StringUtil", "jquery.squash.confirmdialog",
@@ -210,10 +210,23 @@ define([ "jquery", "backbone", "jeditable.simpleJEditable", "app/util/StringUtil
 						var th = $("<th/>", {
 							"class" : "parameter"
 						});
-						th.text(paramHeaders[i]);
+						th.text(paramHeaders[i]['name']);
+						th.attr('title', paramHeaders[i]['description']);
 						thAfter.after(th);
 						thAfter = th;
 					}
+				},
+				
+				refreshDataSetParameterName : function(parameterId, parameterName){
+					var th = this.$("[data-id=" + parameterId + "]");
+					th.attr('aria-label', parameterName);
+					th = this.$("[data-id=" + parameterId + "] div");
+					th.text(parameterName);
+				},
+				
+				refreshDataSetParameterDescription : function(parameterId, parameterDescription){
+					var th = this.$("[data-id=" + parameterId + "]");
+					th.attr('title', parameterDescription);
 				}
 			});
 

@@ -7,16 +7,16 @@
         information regarding copyright ownership.
 
         This is free software: you can redistribute it and/or modify
-        it under the terms of the GNU Lesser General Public License as published by
+        it under the terms of the GNU General Public License as published by
         the Free Software Foundation, either version 3 of the License, or
         (at your option) any later version.
 
         this software is distributed in the hope that it will be useful,
         but WITHOUT ANY WARRANTY; without even the implied warranty of
         MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-        GNU Lesser General Public License for more details.
+        GNU General Public License for more details.
 
-        You should have received a copy of the GNU Lesser General Public License
+        You should have received a copy of the GNU General Public License
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 --%>
@@ -29,14 +29,15 @@
 <%@ taglib prefix="aggr" tagdir="/WEB-INF/tags/aggregates" %>
 <%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
 
-<c:url var="treeBaseUrl" value="/test-case-browser"/>
+
 <c:url var="backUrl" value="/requirement-workspace/" />
 <c:url var="requirementUrl" value="/requirements/${ requirement.id }" />
 <c:url var="verifyingTestCasesUrl" value="/requirement-versions/${ requirementVersion.id }/verifying-test-cases" />
 
 <layout:tree-picker-layout  workspaceTitleKey="workspace.requirement.title" 
               highlightedWorkspace="requirement"
-              treeBaseUrl="${treeBaseUrl}" linkable="test-case" isSubPaged="true">
+              linkable="test-case" 
+              isSubPaged="true">
               
   <jsp:attribute name="head">
     <comp:sq-css name="squash.blue.css" />

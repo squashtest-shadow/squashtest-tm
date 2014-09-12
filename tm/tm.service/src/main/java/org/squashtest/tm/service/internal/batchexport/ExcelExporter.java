@@ -6,16 +6,16 @@
  *     information regarding copyright ownership.
  *
  *     This is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU Lesser General Public License as published by
+ *     it under the terms of the GNU General Public License as published by
  *     the Free Software Foundation, either version 3 of the License, or
  *     (at your option) any later version.
  *
  *     this software is distributed in the hope that it will be useful,
  *     but WITHOUT ANY WARRANTY; without even the implied warranty of
  *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU Lesser General Public License for more details.
+ *     GNU General Public License for more details.
  *
- *     You should have received a copy of the GNU Lesser General Public License
+ *     You should have received a copy of the GNU General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.squashtest.tm.service.internal.batchexport;
@@ -146,6 +146,7 @@ class ExcelExporter {
 			r.createCell(cIdx++).setCellValue(tsm.getId());
 			r.createCell(cIdx++).setCellValue(tsm.getOrder());
 			r.createCell(cIdx++).setCellValue(tsm.getIsCallStep());
+			r.createCell(cIdx++).setCellValue(tsm.getDsName());
 			r.createCell(cIdx++).setCellValue(tsm.getAction());
 			r.createCell(cIdx++).setCellValue(tsm.getResult());
 			r.createCell(cIdx++).setCellValue(tsm.getNbReq());
@@ -307,6 +308,7 @@ class ExcelExporter {
 		h.createCell(cIdx++).setCellValue(StepSheetColumn.TC_STEP_ID.header);
 		h.createCell(cIdx++).setCellValue(StepSheetColumn.TC_STEP_NUM.header);
 		h.createCell(cIdx++).setCellValue(StepSheetColumn.TC_STEP_IS_CALL_STEP.header);
+		h.createCell(cIdx++).setCellValue(StepSheetColumn.TC_STEP_CALL_DATASET.header);
 		h.createCell(cIdx++).setCellValue(StepSheetColumn.TC_STEP_ACTION.header);
 		h.createCell(cIdx++).setCellValue(StepSheetColumn.TC_STEP_EXPECTED_RESULT.header);
 		h.createCell(cIdx++).setCellValue(StepSheetColumn.TC_STEP_NB_REQ.header);

@@ -6,24 +6,35 @@
  *     information regarding copyright ownership.
  *
  *     This is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU Lesser General Public License as published by
+ *     it under the terms of the GNU General Public License as published by
  *     the Free Software Foundation, either version 3 of the License, or
  *     (at your option) any later version.
  *
  *     this software is distributed in the hope that it will be useful,
  *     but WITHOUT ANY WARRANTY; without even the implied warranty of
  *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU Lesser General Public License for more details.
+ *     GNU General Public License for more details.
  *
- *     You should have received a copy of the GNU Lesser General Public License
+ *     You should have received a copy of the GNU General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.squashtest.tm.service.importer;
 
+import static org.squashtest.tm.service.importer.EntityType.DATASET;
+import static org.squashtest.tm.service.importer.EntityType.PARAMETER;
+import static org.squashtest.tm.service.importer.EntityType.TEST_CASE;
+import static org.squashtest.tm.service.importer.EntityType.TEST_STEP;
+import static org.squashtest.tm.service.importer.ImportStatus.FAILURE;
+import static org.squashtest.tm.service.importer.ImportStatus.OK;
+import static org.squashtest.tm.service.importer.ImportStatus.WARNING;
+
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.ListIterator;
 import java.util.TreeSet;
 
 import org.apache.commons.collections.map.MultiValueMap;
@@ -73,11 +84,89 @@ public class ImportLog{
 		}
 	}
 
+
+	/**
+	 * 
+	 * <p>The logs for the datasets also contain the logs for the dataset parameter values.
+	 * Since they were inserted separately we need to purge them from redundant informations.</p>
+	 * 
+	 * <p>To ensure consistency we need to check that, for each imported line, there can be
+	 *   a log entry with status OK if this is the unique log entry for that line.
+	 *   From a procedural point of view we need, for each imported lines, to remove a log entry
+	 *   if it has a status OK and :
+	 * <ul>
+	 * 	<li>there was already a status OK for that line, or</li>
+	 * 	<li>there is at least 1 warning or error</li>
+	 * </ul>
+	 * </p>
+	 * 
+	 */
+
+	/*
+	 * NB : This code relies on the fact that the log entries are sorted by import line number then by status,
+	 * and that the status OK comes first.
+	 * 
+	 * Basically the job boils down to the following rules :
+	 * 
+	 * for each line, for each entry, if there was a previous element with status OK on this line -> remove it.
+	 * 
+	 */
+	public void packLogs(){
+
+		LinkedList<LogEntry> listiterableLogs = new LinkedList<LogEntry>(findAllFor(DATASET));
+
+		Integer precLine = null;
+		boolean okFoundOnPrecEntry = false;
+
+		ListIterator<LogEntry> iter =listiterableLogs.listIterator();
+
+		while (iter.hasNext()){
+
+			LogEntry entry = iter.next();
+			Integer curLine = entry.getLine();
+			ImportStatus curStatus = entry.getStatus();
+
+			/*
+			 * if we found an occurence on the previous entry
+			 * and the current entry concerns the same line and
+			 * remove it.
+			 */
+			if (okFoundOnPrecEntry && curLine.equals(precLine)){
+
+				// finding the previous element actually means
+				// to backtrack twice (because the cursor points
+				// to the next element already)
+
+				iter.previous();
+				iter.previous();
+
+				iter.remove();
+
+				// now we replace the cursor where it was before
+				// the 'if'.
+				iter.next();
+
+			}
+
+			// now we set our flag according to the status of the
+			// current entry and update precLine
+			okFoundOnPrecEntry = (curStatus == OK);
+			precLine = curLine;
+		}
+
+		// once complete we replace the original list with the filtered one
+		findAllFor(DATASET).clear();
+		logEntriesPerType.putAll(DATASET, listiterableLogs);
+
+
+	}
+
+
 	public void recompute() {
-		recomputeFor(EntityType.TEST_CASE);
-		recomputeFor(EntityType.TEST_STEP);
-		recomputeFor(EntityType.PARAMETER);
-		recomputeFor(EntityType.DATASET);
+		recomputeFor(TEST_CASE);
+		recomputeFor(TEST_STEP);
+		recomputeFor(PARAMETER);
+		recomputeFor(DATASET);
 	}
 
 
@@ -112,8 +201,8 @@ public class ImportLog{
 			LogEntry entry = iter.next();
 			Integer precLine = entry.getLine();	// we move the iterator forward purposedly
 
-			errors = (entry.getStatus() == ImportStatus.FAILURE);
-			warnings = (entry.getStatus() == ImportStatus.WARNING);
+			errors = (entry.getStatus() == FAILURE);
+			warnings = (entry.getStatus() == WARNING);
 
 			while(iter.hasNext()){
 				entry = iter.next();
@@ -124,12 +213,12 @@ public class ImportLog{
 					countForEntity(type, errors, warnings);
 
 					// reset
-					errors = (entry.getStatus() == ImportStatus.FAILURE);
-					warnings = (entry.getStatus() == ImportStatus.WARNING);
+					errors = (entry.getStatus() == FAILURE);
+					warnings = (entry.getStatus() == WARNING);
 				}
 				else{
-					errors = (entry.getStatus() == ImportStatus.FAILURE || errors);
-					warnings = (entry.getStatus() == ImportStatus.WARNING || warnings);
+					errors = (entry.getStatus() == FAILURE || errors);
+					warnings = (entry.getStatus() == WARNING || warnings);
 				}
 
 				precLine = curLine;

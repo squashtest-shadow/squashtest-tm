@@ -6,16 +6,16 @@
  *     information regarding copyright ownership.
  *
  *     This is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU Lesser General Public License as published by
+ *     it under the terms of the GNU General Public License as published by
  *     the Free Software Foundation, either version 3 of the License, or
  *     (at your option) any later version.
  *
  *     this software is distributed in the hope that it will be useful,
  *     but WITHOUT ANY WARRANTY; without even the implied warranty of
  *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU Lesser General Public License for more details.
+ *     GNU General Public License for more details.
  *
- *     You should have received a copy of the GNU Lesser General Public License
+ *     You should have received a copy of the GNU General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 /*
@@ -155,7 +155,8 @@
  * If set, will attempt to turn some cells to rich editables. If undefined, nothing will happen. the property
  * 'richEditables' is an compound object and must define at least 1 member for 'target'. 
  * 
- * conf : a map of key-values. A key represents a css class and the value represents an url supporting placeholders. 
+ * conf : a map of key-values. A key represents a css class and the value can either represents an url supporting
+ * placeholders or an url and an event name to trigger when editing the cell. 
  * Any td having the given css class will be turned to a rich jeditable configured with the standard condiguration 
  * and posting to the supplied url.
  * 
@@ -269,6 +270,7 @@
  */
 
 define(["jquery",
+        "underscore",
         "squash.KeyEventListener", 
         "squash.statusfactory",  
         "squash.configmanager",
@@ -277,7 +279,7 @@ define(["jquery",
         "./squashtable.defaults", 
         "./squashtable.pagination", 
         "./squashtable.dnd"
-        ], function($, KeyEventListener, statusfactory, confman, oneshot){
+        ], function($, _, KeyEventListener, statusfactory, confman, oneshot){
 	
 	if (!! $.fn.squashTable ){
 		return ;
@@ -696,7 +698,6 @@ define(["jquery",
 
 		var targets = this.squashSettings.richEditables;
 		var self = this;
-
 		if (!targets) {
 			return;
 		}
@@ -708,11 +709,26 @@ define(["jquery",
 			var cells = $('td.' + css, this);
 
 			$(cells).each(function(i, cell) {
-				var data = self.fnGetData(cell.parentNode);
-				var url = _resolvePlaceholders.call(self, targets[css], data);
+				var row = cell.parentNode
+				var data = self.fnGetData(row);
+				var editableConf_url = _.isString(targets[css]) ? targets[css] : targets[css]['url'];
+				var url = _resolvePlaceholders.call(self, editableConf_url, data);
 				var finalConf = $.extend(true, {
 					"url" : url
 				}, baseconf);
+				
+				if(!_.isString(targets[css])){
+					var evt = targets[css]['oncomplete'];
+					finalConf.ajaxoptions = {
+							complete : function(){
+								self.trigger(evt, {
+									id : self.getODataId(row), 
+									responseText : arguments[0].responseText
+								});
+							}
+					};
+				}
+				
 				$(cell).richEditable(finalConf);
 			});
 		}

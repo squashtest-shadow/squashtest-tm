@@ -6,16 +6,16 @@
  *     information regarding copyright ownership.
  *
  *     This is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU Lesser General Public License as published by
+ *     it under the terms of the GNU General Public License as published by
  *     the Free Software Foundation, either version 3 of the License, or
  *     (at your option) any later version.
  *
  *     this software is distributed in the hope that it will be useful,
  *     but WITHOUT ANY WARRANTY; without even the implied warranty of
  *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU Lesser General Public License for more details.
+ *     GNU General Public License for more details.
  *
- *     You should have received a copy of the GNU Lesser General Public License
+ *     You should have received a copy of the GNU General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.squashtest.tm.domain.campaign;
@@ -32,6 +32,7 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
 import org.squashtest.tm.domain.project.Project;
+import org.squashtest.tm.domain.testcase.Dataset;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.security.annotation.InheritsAcls;
@@ -56,6 +57,10 @@ public class CampaignTestPlanItem {
 	private TestCase referencedTestCase;
 
 	@ManyToOne
+	@JoinColumn(name = "DATASET_ID", referencedColumnName = "DATASET_ID")
+	private Dataset referencedDataset;
+
+	@ManyToOne
 	@JoinColumn(name = "CAMPAIGN_ID", insertable = false, updatable = false)
 	private Campaign campaign;
 
@@ -69,6 +74,11 @@ public class CampaignTestPlanItem {
 
 	public CampaignTestPlanItem(TestCase testCase) {
 		this.referencedTestCase = testCase;
+	}
+
+	public CampaignTestPlanItem(TestCase testCase, Dataset dataset){
+		this.referencedTestCase = testCase;
+		this.referencedDataset = dataset;
 	}
 
 	public TestCase getReferencedTestCase() {
@@ -99,6 +109,7 @@ public class CampaignTestPlanItem {
 
 		copy.setUser(this.getUser());
 		copy.setReferencedTestCase(this.getReferencedTestCase());
+		copy.setReferencedDataset(this.getReferencedDataset());
 
 		return copy;
 	}
@@ -109,6 +120,14 @@ public class CampaignTestPlanItem {
 
 	public Campaign getCampaign() {
 		return campaign;
+	}
+
+	public Dataset getReferencedDataset() {
+		return referencedDataset;
+	}
+
+	public void setReferencedDataset(Dataset referencedDataset) {
+		this.referencedDataset = referencedDataset;
 	}
 
 	/**

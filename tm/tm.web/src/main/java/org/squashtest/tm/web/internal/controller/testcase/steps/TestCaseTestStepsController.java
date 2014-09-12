@@ -6,16 +6,16 @@
  *     information regarding copyright ownership.
  *
  *     This is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU Lesser General Public License as published by
+ *     it under the terms of the GNU General Public License as published by
  *     the Free Software Foundation, either version 3 of the License, or
  *     (at your option) any later version.
  *
  *     this software is distributed in the hope that it will be useful,
  *     but WITHOUT ANY WARRANTY; without even the implied warranty of
  *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU Lesser General Public License for more details.
+ *     GNU General Public License for more details.
  *
- *     You should have received a copy of the GNU Lesser General Public License
+ *     You should have received a copy of the GNU General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.squashtest.tm.web.internal.controller.testcase.steps;
@@ -51,6 +51,7 @@ import org.squashtest.tm.domain.customfield.CustomFieldValue;
 import org.squashtest.tm.domain.customfield.RenderingLocation;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.testcase.ActionTestStep;
+import org.squashtest.tm.domain.testcase.ParameterAssignationMode;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestStep;
 import org.squashtest.tm.service.customfield.CustomFieldHelper;
@@ -77,6 +78,7 @@ public class TestCaseTestStepsController {
 	private static final String TEST_CASE = "testCase";
 
 	private static final String TEST_CASE_ = "test case ";
+
 	@Inject
 	private CustomFieldHelperService cufHelperService;
 
@@ -88,12 +90,10 @@ public class TestCaseTestStepsController {
 
 	@Inject
 	private CallStepManagerService callStepManager;
+
+	@Inject
 	private TestCaseModificationService testCaseModificationService;
 
-	@ServiceReference
-	public void setTestCaseModificationService(TestCaseModificationService testCaseModificationService) {
-		this.testCaseModificationService = testCaseModificationService;
-	}
 
 	private static final String COPIED_STEP_ID_PARAM = "copiedStepId[]";
 	private static final Logger LOGGER = LoggerFactory.getLogger(TestCaseModificationController.class);
@@ -114,7 +114,7 @@ public class TestCaseTestStepsController {
 		List<CustomFieldValue> cufValues = helper.getCustomFieldValues();
 
 		// process the data
-		TestStepsTableModelBuilder builder = new TestStepsTableModelBuilder(internationalizationHelper, locale);
+		TestStepsTableModelBuilder builder = new TestStepsTableModelBuilder();
 		builder.usingCustomFields(cufValues, cufDefinitions.size());
 		Collection<Object> stepsData = builder.buildRawModel(steps, 1);
 
@@ -149,7 +149,7 @@ public class TestCaseTestStepsController {
 		List<CustomFieldValue> cufValues = helper.getCustomFieldValues();
 
 		// generate the model
-		TestStepsTableModelBuilder builder = new TestStepsTableModelBuilder(internationalizationHelper, locale);
+		TestStepsTableModelBuilder builder = new TestStepsTableModelBuilder();
 		builder.usingCustomFields(cufValues);
 		return builder.buildDataModel(holder, params.getsEcho());
 
@@ -248,6 +248,17 @@ public class TestCaseTestStepsController {
 		testCaseModificationService.updateTestStepExpectedResult(stepId, newResult);
 		LOGGER.trace("TestCaseModificationController : updated action for step {}", stepId);
 		return newResult;
+	}
+
+
+	@RequestMapping(value = "{stepId}/parameter-assignation-mode", method = RequestMethod.POST, params = {"mode","datasetId"})
+	@ResponseBody
+	public void changeParameterAssignationMode(@PathVariable("stepId") Long stepId,
+			@RequestParam(value="mode", required=true) ParameterAssignationMode mode,
+			@RequestParam(value="datasetId", required=false) Long datasetId){
+
+		callStepManager.setParameterAssignationMode(stepId, mode, datasetId);
+
 	}
 
 	private List<CustomFieldModel> convertToJsonCustomField(Collection<CustomField> customFields) {

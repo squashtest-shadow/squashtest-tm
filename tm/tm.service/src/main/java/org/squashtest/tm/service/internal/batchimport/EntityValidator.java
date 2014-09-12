@@ -6,16 +6,16 @@
  *     information regarding copyright ownership.
  *
  *     This is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU Lesser General Public License as published by
+ *     it under the terms of the GNU General Public License as published by
  *     the Free Software Foundation, either version 3 of the License, or
  *     (at your option) any later version.
  *
  *     this software is distributed in the hope that it will be useful,
  *     but WITHOUT ANY WARRANTY; without even the implied warranty of
  *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU Lesser General Public License for more details.
+ *     GNU General Public License for more details.
  *
- *     You should have received a copy of the GNU Lesser General Public License
+ *     You should have received a copy of the GNU General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.squashtest.tm.service.internal.batchimport;
@@ -30,6 +30,7 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
 import org.squashtest.tm.domain.testcase.Parameter;
+import org.squashtest.tm.domain.testcase.ParameterAssignationMode;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestStep;
 import org.squashtest.tm.service.importer.ImportMode;
@@ -37,6 +38,7 @@ import org.squashtest.tm.service.importer.ImportStatus;
 import org.squashtest.tm.service.importer.LogEntry;
 import org.squashtest.tm.service.internal.batchimport.Model.Existence;
 import org.squashtest.tm.service.internal.batchimport.Model.TargetStatus;
+import org.squashtest.tm.service.internal.batchimport.testcase.excel.StepSheetColumn;
 
 class EntityValidator {
 
@@ -164,7 +166,9 @@ class EntityValidator {
 
 	}
 
-	LogTrain validateCallStep(TestStepTarget target, TestStep testStep, TestCaseTarget calledTestCase, ImportMode mode) {
+
+	LogTrain validateCallStep(TestStepTarget target, TestStep testStep, TestCaseTarget calledTestCase,
+			CallStepParamsInfo paramInfos, ImportMode mode) {
 
 		LogTrain logs = new LogTrain();
 
@@ -177,15 +181,36 @@ class EntityValidator {
 		} else if (!calledTestCase.isWellFormed()) {
 			mustExistAndBeValidMessage = Messages.ERROR_CALLED_STEP_WRONG_FORMAT;
 		}
+
 		if (mustExistAndBeValidMessage != null) {
 			logMustExistAndBeValidCalledTest(target, mode, logs, mustExistAndBeValidMessage);
 		}
 
-		// 2 - there must be no cyclic calls
-		else if (getModel().wouldCreateCycle(target, calledTestCase)) {
-			logs.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_CYCLIC_STEP_CALLS, new Object[] {
-					target.getTestCase().getPath(), calledTestCase.getPath() }));
+		else {
+			// 2 - there must be no cyclic calls
+			if (getModel().wouldCreateCycle(target, calledTestCase)) {
+				logs.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_CYCLIC_STEP_CALLS, new Object[] {
+						target.getTestCase().getPath(), calledTestCase.getPath() }));
+			}
+
+			// 3 - check a called dataset
+			if (paramInfos.getParamMode() == ParameterAssignationMode.CALLED_DATASET){
+				String dsname = paramInfos.getCalledDatasetName();
+
+				// 3.1 - if a dataset is specified, the name must not exceed the max limit
+				if (dsname.length() > 255){
+					logs.addEntry(new LogEntry(target, ImportStatus.WARNING, Messages.ERROR_MAX_SIZE,
+							new String[]{StepSheetColumn.TC_STEP_CALL_DATASET.name()},	Messages.IMPACT_MAX_SIZE, null));
+				}
+
+				// 3.2 - if a dataset is specified, it must be owned by the called test case
+				DatasetTarget dsTarget = new DatasetTarget(calledTestCase, dsname);
+				if (! getModel().doesDatasetExists(dsTarget)){
+					logs.addEntry(new LogEntry(target, ImportStatus.WARNING, Messages.ERROR_DATASET_NOT_FOUND_ST, Messages.IMPACT_NO_CALL_DATASET));
+				}
+			}
 		}
+
 
 		return logs;
 

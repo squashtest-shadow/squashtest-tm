@@ -6,19 +6,18 @@
  *     information regarding copyright ownership.
  *
  *     This is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU Lesser General Public License as published by
+ *     it under the terms of the GNU General Public License as published by
  *     the Free Software Foundation, either version 3 of the License, or
  *     (at your option) any later version.
  *
  *     this software is distributed in the hope that it will be useful,
  *     but WITHOUT ANY WARRANTY; without even the implied warranty of
  *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU Lesser General Public License for more details.
+ *     GNU General Public License for more details.
  *
- *     You should have received a copy of the GNU Lesser General Public License
+ *     You should have received a copy of the GNU General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package org.squashtest.tm.service.internal.batchimport.testcase.excel;
 
 import java.io.BufferedInputStream;
@@ -28,6 +27,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -150,21 +150,24 @@ class ExcelWorkbookParserBuilder {
 			int iSheet) {
 		Sheet ws = wb.getSheetAt(iSheet);
 		String sheetName = ws.getSheetName();
-		TemplateWorksheet sheetType = TemplateWorksheet.coerceFromSheetName(sheetName);
 
-		if (sheetType != null) {
-			LOGGER.trace("Worksheet named '{}' will be added to metamodel as standard worksheet {}", sheetName,
-					sheetType);
+		Collection<TemplateWorksheet> sheetTypes = TemplateWorksheet.coerceFromSheetName(sheetName);
 
-			WorksheetDef<?> wd = new WorksheetDef(sheetType);
-			wmd.addWorksheetDef(wd);
-			WorksheetFormatStatus workSheetFormatStatus = populateColumnDefs(wd, ws);
-			if (!workSheetFormatStatus.isFormatOk()) {
-				worksheetKOStatuses.add(workSheetFormatStatus);
+		for (TemplateWorksheet sheetType : sheetTypes){
+			if (sheetType != null) {
+				LOGGER.trace("Worksheet named '{}' will be added to metamodel as standard worksheet {}", sheetName,
+						sheetType);
+
+				WorksheetDef<?> wd = new WorksheetDef(sheetType);
+				wmd.addWorksheetDef(wd);
+				WorksheetFormatStatus workSheetFormatStatus = populateColumnDefs(wd, ws);
+				if (!workSheetFormatStatus.isFormatOk()) {
+					worksheetKOStatuses.add(workSheetFormatStatus);
+				}
+			} else {
+				LOGGER.trace("Skipping unrecognized worksheet named '{}'", ws.getSheetName());
+
 			}
-		} else {
-			LOGGER.trace("Skipping unrecognized worksheet named '{}'", ws.getSheetName());
-
 		}
 	}
 

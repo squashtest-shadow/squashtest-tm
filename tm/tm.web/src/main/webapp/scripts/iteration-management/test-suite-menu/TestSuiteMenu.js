@@ -6,19 +6,20 @@
  *     information regarding copyright ownership.
  *
  *     This is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU Lesser General Public License as published by
+ *     it under the terms of the GNU General Public License as published by
  *     the Free Software Foundation, either version 3 of the License, or
  *     (at your option) any later version.
  *
  *     this software is distributed in the hope that it will be useful,
  *     but WITHOUT ANY WARRANTY; without even the implied warranty of
  *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU Lesser General Public License for more details.
+ *     GNU General Public License for more details.
  *
- *     You should have received a copy of the GNU Lesser General Public License
+ *     You should have received a copy of the GNU General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ "jquery", "underscore", "jquery.squash.messagedialog", "jqueryui" ], function($, _) {
+define([ "jquery", "underscore", "app/ws/squashtm.notification", "squash.translator", 
+         "jquery.squash.messagedialog", "jqueryui" ], function($, _, notification, translator) {
 
 	function TestSuiteMenuNewStatuses() {
 
@@ -271,7 +272,7 @@ define([ "jquery", "underscore", "jquery.squash.messagedialog", "jqueryui" ], fu
 				var self = this;
 				$('#suite-manager-menu-ok-button').on('click',function(evt) {
 						if (!self.testPlanItemIds.length) {
-							$(settings.emptySelectionMessageSelector).openMessage();
+							notification.showError(translator.get('message.suite.menu.emptySelection'));
 						} else {
 							var toSend = {};
 							var checkedSuiteIds = self.testSuiteNewStatuses.getChecked();
@@ -326,7 +327,7 @@ define([ "jquery", "underscore", "jquery.squash.messagedialog", "jqueryui" ], fu
 						// no item selected: close menu and warn
 						self.menucontrol.buttonmenu('close');
 						evt.stopImmediatePropagation();
-						$(settings.emptySelectionMessageSelector).openMessage();
+						notification.showError(translator.get('iteration.test-plan.action.empty-selection.message'));
 
 					} else {
 						var suites = self.model.getData();

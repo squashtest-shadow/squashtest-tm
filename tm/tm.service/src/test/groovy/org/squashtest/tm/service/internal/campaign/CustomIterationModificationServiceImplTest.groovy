@@ -6,16 +6,16 @@
  *     information regarding copyright ownership.
  *
  *     This is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU Lesser General Public License as published by
+ *     it under the terms of the GNU General Public License as published by
  *     the Free Software Foundation, either version 3 of the License, or
  *     (at your option) any later version.
  *
  *     this software is distributed in the hope that it will be useful,
  *     but WITHOUT ANY WARRANTY; without even the implied warranty of
  *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU Lesser General Public License for more details.
+ *     GNU General Public License for more details.
  *
- *     You should have received a copy of the GNU Lesser General Public License
+ *     You should have received a copy of the GNU General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.squashtest.tm.service.internal.campaign
@@ -57,13 +57,13 @@ class CustomIterationModificationServiceImplTest extends Specification {
 	TestCaseDao testCaseDao= Mock()
 
 	TestCaseCyclicCallChecker cyclicCallChecker = Mock()
-	
+
 	PrivateCustomFieldValueService customFieldService = Mock()
 	PrivateDenormalizedFieldValueService denormalizedFieldValueService = Mock();
-	
+
 	IterationTestPlanManagerService iterationTestPlanManager = Mock()
 	IndexationService indexationService = Mock()
-	
+
 	def setup() {
 		service.executionDao = execDao
 		service.campaignDao = campaignDao
@@ -94,14 +94,14 @@ class CustomIterationModificationServiceImplTest extends Specification {
 		campaign.addToTestPlan(itp1)
 		campaign.addToTestPlan(itp2)
 		campaignDao.findById(10) >> campaign
-		
+
 		and:
 		def frag1 = IterationTestPlanItem.createTestPlanItems(tc1, null)
-		iterationTestPlanManager.createTestPlanFragment(tc1, user) >> frag1 
+		iterationTestPlanManager.createTestPlanFragment(tc1, user) >> frag1
 
 		and:
 		def frag2 = IterationTestPlanItem.createTestPlanItems(tc2, null)
-		iterationTestPlanManager.createTestPlanFragment(tc2, user) >> frag2 
+		iterationTestPlanManager.createTestPlanFragment(tc2, user) >> frag2
 
 		when:
 		service.addIterationToCampaign(iteration, 10, true)
@@ -112,23 +112,29 @@ class CustomIterationModificationServiceImplTest extends Specification {
 		iteration.testPlans*.referencedTestCase == [tc1, tc2]
 	}
 
-	def "should add parameterized iteration to campaign with test plan"() {
+	def "should build an iteration test plan based on campaign test plan"() {
 		given:
 		Iteration iteration = new Iteration()
 		TestCase tc1 = Mock()
+		TestCase tc2 = Mock()
 
 		and:
 		User user = Mock()
 		Campaign campaign = new Campaign()
-		CampaignTestPlanItem itp1 = new CampaignTestPlanItem(tc1)
-		itp1.setUser(user)
-		campaign.addToTestPlan(itp1)
+		CampaignTestPlanItem ctp1 = new CampaignTestPlanItem(tc1)	// no dataset for this one
+		ctp1.setUser(user)
+		campaign.addToTestPlan(ctp1)
+
+		CampaignTestPlanItem ctp21 = new CampaignTestPlanItem(tc2, Mock(Dataset))
+		ctp21.setUser(user)
+		campaign.addToTestPlan(ctp21)
+
+		CampaignTestPlanItem ctp22 = new CampaignTestPlanItem(tc2, Mock(Dataset))
+		ctp22.setUser(user)
+		campaign.addToTestPlan(ctp22)
+
 		campaignDao.findById(10) >> campaign
-		
-		and:
-		def datasets = [Mock(Dataset), Mock(Dataset)]
-		def frag1 = IterationTestPlanItem.createTestPlanItems(tc1, datasets)
-		iterationTestPlanManager.createTestPlanFragment(tc1, user) >> frag1 
+
 
 		when:
 		service.addIterationToCampaign(iteration, 10, true)
@@ -136,10 +142,12 @@ class CustomIterationModificationServiceImplTest extends Specification {
 		then:
 		campaign.iterations.contains(iteration)
 		1 * iterationDao.persistIterationAndTestPlan(iteration)
-		iteration.plannedTestCase == [tc1, tc1] // there should be only 1 item, i think plannedTestCase is broken
+		iteration.plannedTestCase == [tc1, tc2, tc2]
+		iteration.testPlans.collect { it.referencedTestCase} == [tc1, tc2, tc2]
+		iteration.testPlans.collect { it.referencedDataset != null} == [false, true, true]
 	}
 
-		def "should add iteration to campaign without test plan"() {
+	def "should add iteration to campaign without test plan"() {
 		given:
 		Iteration iteration = new Iteration()
 
@@ -151,7 +159,7 @@ class CustomIterationModificationServiceImplTest extends Specification {
 		itp1.setUser(user)
 		campaign.addToTestPlan(itp1)
 		campaignDao.findById(10) >> campaign
-		
+
 		when:
 		service.addIterationToCampaign(iteration, 10, false)
 
@@ -165,7 +173,7 @@ class CustomIterationModificationServiceImplTest extends Specification {
 		given:
 		Iteration iteration = Mock()
 		iteration.getName()>>"iteration"
-		and : 
+		and :
 		Iteration alreadyInCampaign = Mock();
 		alreadyInCampaign.getName()>>"alreadyInCampaign"
 		and:
@@ -182,48 +190,41 @@ class CustomIterationModificationServiceImplTest extends Specification {
 
 
 	/*
-	def "should add and retrieve an ordered list of executions"(){
-		given :
-		def iteration = new MockIteration()
-		TestCase testCase = Mock()
-
-
-		testCase.getId()>> 1
-		testCase.getSteps() >> []
-		testCase.getExecutionMode() >> TestCaseExecutionMode.AUTOMATED
-		testCase.getName() >> "test case"
-		testCase.getAllAttachments() >> new HashSet<Attachment>()
-		testCase.getPrerequisite() >> "prerequisite"
-		testCase.getImportance() >> TestCaseImportance.LOW
-		testCase.getNature() >> TestCaseNature.UNDEFINED
-		testCase.getType() >> TestCaseType.UNDEFINED
-		testCase.getStatus() >> TestCaseStatus.WORK_IN_PROGRESS
-		
-		IterationTestPlanItem testPlan = new IterationTestPlanItem(id:1L, iteration : iteration)
-		testPlan.setReferencedTestCase(testCase)
-
-		iteration.addTestPlan testPlan
-
-		and :
-		testPlanDao.findTestPlanItem(1L) >> testPlan
-		testCaseDao.findById(1) >> testCase
-		testCaseDao.findAndInit(1) >> testCase
-
-		when :
-		service.addExecution(1L)
-		service.addExecution(1L)
-
-		then :
-		iteration.getExecutions().size()==2
-		iteration.getTestPlans().size()==1
-	}*/
+	 def "should add and retrieve an ordered list of executions"(){
+	 given :
+	 def iteration = new MockIteration()
+	 TestCase testCase = Mock()
+	 testCase.getId()>> 1
+	 testCase.getSteps() >> []
+	 testCase.getExecutionMode() >> TestCaseExecutionMode.AUTOMATED
+	 testCase.getName() >> "test case"
+	 testCase.getAllAttachments() >> new HashSet<Attachment>()
+	 testCase.getPrerequisite() >> "prerequisite"
+	 testCase.getImportance() >> TestCaseImportance.LOW
+	 testCase.getNature() >> TestCaseNature.UNDEFINED
+	 testCase.getType() >> TestCaseType.UNDEFINED
+	 testCase.getStatus() >> TestCaseStatus.WORK_IN_PROGRESS
+	 IterationTestPlanItem testPlan = new IterationTestPlanItem(id:1L, iteration : iteration)
+	 testPlan.setReferencedTestCase(testCase)
+	 iteration.addTestPlan testPlan
+	 and :
+	 testPlanDao.findTestPlanItem(1L) >> testPlan
+	 testCaseDao.findById(1) >> testCase
+	 testCaseDao.findAndInit(1) >> testCase
+	 when :
+	 service.addExecution(1L)
+	 service.addExecution(1L)
+	 then :
+	 iteration.getExecutions().size()==2
+	 iteration.getTestPlans().size()==1
+	 }*/
 
 	class  MockIteration extends Iteration{
-		
+
 		MockIteration(){
-			
+
 		}
-		
+
 		public Project getProject(){
 			Project project = new Project();
 			return project;

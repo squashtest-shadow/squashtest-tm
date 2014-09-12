@@ -6,16 +6,16 @@
  *     information regarding copyright ownership.
  *
  *     This is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU Lesser General Public License as published by
+ *     it under the terms of the GNU General Public License as published by
  *     the Free Software Foundation, either version 3 of the License, or
  *     (at your option) any later version.
  *
  *     this software is distributed in the hope that it will be useful,
  *     but WITHOUT ANY WARRANTY; without even the implied warranty of
  *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU Lesser General Public License for more details.
+ *     GNU General Public License for more details.
  *
- *     You should have received a copy of the GNU Lesser General Public License
+ *     You should have received a copy of the GNU General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.squashtest.tm.web.internal.controller.testcase.steps;
@@ -24,16 +24,15 @@ import java.text.ParseException;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.MessageSource;
 import org.squashtest.tm.core.foundation.lang.DateUtils;
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
 import org.squashtest.tm.domain.testcase.ActionTestStep;
 import org.squashtest.tm.domain.testcase.CallTestStep;
+import org.squashtest.tm.domain.testcase.ParameterAssignationMode;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestStep;
 import org.squashtest.tm.domain.testcase.TestStepVisitor;
@@ -53,13 +52,10 @@ public class TestStepsTableModelBuilder extends DataTableModelBuilder<TestStep> 
 
 	private Map<Long, Map<String, CustomFieldValueTableModel>> customFieldValuesById;
 
-	private final MessageSource messageSource;
-	private final Locale locale;
 	private Map<?, ?> lastBuiltItem;
 
-	public TestStepsTableModelBuilder(MessageSource messageSource, Locale locale) {
-		this.messageSource = messageSource;
-		this.locale = locale;
+	public TestStepsTableModelBuilder() {
+		super();
 	}
 
 	/**
@@ -87,7 +83,7 @@ public class TestStepsTableModelBuilder extends DataTableModelBuilder<TestStep> 
 		item.put("step-result", visited.getExpectedResult());
 		item.put("nb-attachments", visited.getAttachmentList().size());
 		item.put("step-type", "action");
-		item.put("called-tc-id", null);
+		item.put("call-step-info", null);
 		item.put("empty-requirements-holder", null);
 		item.put("empty-browse-holder", null);
 		item.put("empty-delete-holder", null);
@@ -102,21 +98,16 @@ public class TestStepsTableModelBuilder extends DataTableModelBuilder<TestStep> 
 
 	@Override
 	public void visit(CallTestStep visited) {
-		TestCase called = visited.getCalledTestCase();
-
-		String action = messageSource.getMessage("test-case.call-step.action.template",
-				new Object[] { called.getName() }, locale);
-
 		Map<Object, Object> item = new HashMap<Object, Object>(11);
 
 		item.put("step-id", visited.getId());
 		item.put("step-index", getCurrentIndex());
 		item.put("attach-list-id", null);
-		item.put("step-action", action);
+		item.put("step-action", null);
 		item.put("step-result", null);
 		item.put("nb-attachments", null);
 		item.put("step-type", "call");
-		item.put("called-tc-id", called.getId());
+		item.put("call-step-info", new CallStepInfo(visited));
 		item.put("empty-requirements-holder", null);
 		item.put("empty-browse-holder", null);
 		item.put("empty-delete-holder", null);
@@ -211,6 +202,52 @@ public class TestStepsTableModelBuilder extends DataTableModelBuilder<TestStep> 
 
 	public void usingCustomFields(Collection<CustomFieldValue> cufValues) {
 		usingCustomFields(cufValues, DEFAULT_MAP_CAPACITY);
+	}
+
+
+	public static final class CallStepInfo{
+
+		private Long calledTcId;
+		private String calledTcName;
+
+		private Long calledDatasetId;
+		private String calledDatasetName;
+
+		private String paramMode;
+
+		CallStepInfo(CallTestStep step){
+			this.calledTcId = step.getCalledTestCase().getId();
+			this.calledTcName = step.getCalledTestCase().getName();
+
+			this.paramMode = step.getParameterAssignationMode().toString();
+
+			if (step.getParameterAssignationMode() == ParameterAssignationMode.CALLED_DATASET){
+				this.calledDatasetId = step.getCalledDataset().getId();
+				this.calledDatasetName = step.getCalledDataset().getName();
+			}
+
+		}
+
+		public Long getCalledTcId() {
+			return calledTcId;
+		}
+
+		public String getCalledTcName() {
+			return calledTcName;
+		}
+
+		public Long getCalledDatasetId() {
+			return calledDatasetId;
+		}
+
+		public String getCalledDatasetName() {
+			return calledDatasetName;
+		}
+
+		public String getParamMode() {
+			return paramMode;
+		}
+
 	}
 
 }

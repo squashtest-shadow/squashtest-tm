@@ -46,11 +46,35 @@
 	
 	the ids for the test steps equals the ids of the calling test case.
 	
+4) Parameters and datasets
 
+This table declares which test case own which datasets and parameters
 
+	TCLN_ID		|	PARAM_IDS		|	DS_IDS
+	============+===================+==============
+	21			|	211, 212		|	211, 212
+	22			|	221				|	221, 222
+	31			|	311, 312, 313	|	(none)
+	32			|	321				|	321
+	1			|	(none)			|	1
+	
+	
+5) initial call step assignation modes
+
+	This table says how the testcases handle the parameters downstream. Some inherits 
+	them, while some other call a test case with one of its own datasets.
+
+	CALLEE_ID	|	CALLED_ID	|	CALLED_DS_ID	|	DELEGATE	|	COMMENT
+	============+===============+===================+===============+===================
+	1			|	11			|	NULL			|	true		|	delegation mode
+	11			|	21			|	212				|	false		|	call DS mode
+	11			|	22			|	NULL			|	true		|	delegation mode
+	21			|	31			|	NULL			|	false		|	nothing mode
+	22			|	32			|	NULL			|	true		|	delegation mode
+	
 
  -->
-<!DOCTYPE dataset SYSTEM "../../../../../dtd/squash-tm.1.9.10.dtd">
+<!DOCTYPE dataset SYSTEM "../../../../../dtd/squash-tm.1.11.0.dtd">
 <dataset>
 
 	<!--  dummy attachment list, the same for everyone that need one. -->
@@ -90,6 +114,48 @@
 	<TEST_CASE PREREQUISITE="" TCLN_ID="-102" VERSION="1" />
 	<TEST_CASE PREREQUISITE="" TCLN_ID="-103" VERSION="1" />
 	
+	
+	<!--  the parameters -->
+	
+	<PARAMETER DESCRIPTION="" TEST_CASE_ID="21" PARAM_ID="211" NAME="param 211"/>
+	<PARAMETER DESCRIPTION="" TEST_CASE_ID="21" PARAM_ID="212" NAME="param 212"/>
+	<PARAMETER DESCRIPTION="" TEST_CASE_ID="22" PARAM_ID="221" NAME="param 221"/>
+	<PARAMETER DESCRIPTION="" TEST_CASE_ID="31" PARAM_ID="311" NAME="param 311"/>
+	<PARAMETER DESCRIPTION="" TEST_CASE_ID="31" PARAM_ID="312" NAME="param 312"/>
+	<PARAMETER DESCRIPTION="" TEST_CASE_ID="31" PARAM_ID="313" NAME="param 313"/>
+	<PARAMETER DESCRIPTION="" TEST_CASE_ID="32" PARAM_ID="321" NAME="param 321"/>
+	
+	<!-- the datasets -->
+	
+	<DATASET TEST_CASE_ID="21" DATASET_ID="211" NAME="ds 211"/>
+	<DATASET TEST_CASE_ID="21" DATASET_ID="212" NAME="ds 212"/>
+	<DATASET TEST_CASE_ID="22" DATASET_ID="221" NAME="ds 221"/>
+	<DATASET TEST_CASE_ID="22" DATASET_ID="222" NAME="ds 222"/>
+	<DATASET TEST_CASE_ID="32" DATASET_ID="321" NAME="ds 321"/>
+	<DATASET TEST_CASE_ID="1"  DATASET_ID="1"   NAME="ds 1"/>
+	
+	<!--  dataset param values (including the inherited ones) -->
+	
+	<!-- params for datasets of test case 21 -->
+	<DATASET_PARAM_VALUE DATASET_PARAM_VALUE_ID="2111" DATASET_ID="211" PARAM_ID="211" PARAM_VALUE="own param 211" />
+	<DATASET_PARAM_VALUE DATASET_PARAM_VALUE_ID="2112" DATASET_ID="211" PARAM_ID="212" PARAM_VALUE="own param 212" />
+	<DATASET_PARAM_VALUE DATASET_PARAM_VALUE_ID="2121" DATASET_ID="212" PARAM_ID="211" PARAM_VALUE="own param 211" />
+	<DATASET_PARAM_VALUE DATASET_PARAM_VALUE_ID="2122" DATASET_ID="212" PARAM_ID="212" PARAM_VALUE="own param 212" />
+	
+	
+	<!-- params for datasets of test case 22 -->
+	<DATASET_PARAM_VALUE DATASET_PARAM_VALUE_ID="2211" DATASET_ID="221" PARAM_ID="221" PARAM_VALUE="own param 221" />
+	<DATASET_PARAM_VALUE DATASET_PARAM_VALUE_ID="2212" DATASET_ID="221" PARAM_ID="321" PARAM_VALUE="inherits from 32 -> 321" />
+	<DATASET_PARAM_VALUE DATASET_PARAM_VALUE_ID="2221" DATASET_ID="222" PARAM_ID="221" PARAM_VALUE="own param 221" />
+	<DATASET_PARAM_VALUE DATASET_PARAM_VALUE_ID="2222" DATASET_ID="222" PARAM_ID="321" PARAM_VALUE="inherits from 32 -> 321" />
+	
+	<!--  params for datasets of test case 32 -->
+	<DATASET_PARAM_VALUE DATASET_PARAM_VALUE_ID="3211" DATASET_ID="321" PARAM_ID="321" PARAM_VALUE="own param 321" />
+	
+	<!--  params for dataset of test case 1 -->
+	<DATASET_PARAM_VALUE DATASET_PARAM_VALUE_ID="11" DATASET_ID="1" PARAM_ID="321" PARAM_VALUE="inherits from 32 -> 321" />
+	<DATASET_PARAM_VALUE DATASET_PARAM_VALUE_ID="12" DATASET_ID="1" PARAM_ID="221" PARAM_VALUE="inherits from 22 -> 221" />
+	
 	<!--  the test steps -->
 	
 	<TEST_STEP TEST_STEP_ID="-11" />
@@ -107,15 +173,15 @@
 	
 	<!--  the call test steps -->
 	
-	<CALL_TEST_STEP TEST_STEP_ID="-11" CALLED_TEST_CASE_ID="-11"/>
-	<CALL_TEST_STEP TEST_STEP_ID="-21" CALLED_TEST_CASE_ID="-21"/>
-	<CALL_TEST_STEP TEST_STEP_ID="-22" CALLED_TEST_CASE_ID="-22"/>
-	<CALL_TEST_STEP TEST_STEP_ID="-31" CALLED_TEST_CASE_ID="-31"/>
-	<CALL_TEST_STEP TEST_STEP_ID="-32" CALLED_TEST_CASE_ID="-32"/>
+	<CALL_TEST_STEP TEST_STEP_ID="-11" CALLED_TEST_CASE_ID="-11" DELEGATE_PARAMETER_VALUES="true"/>
+	<CALL_TEST_STEP TEST_STEP_ID="-21" CALLED_TEST_CASE_ID="-21" CALLED_DATASET="-212"  DELEGATE_PARAMETER_VALUES="false"/>
+	<CALL_TEST_STEP TEST_STEP_ID="-22" CALLED_TEST_CASE_ID="-22" DELEGATE_PARAMETER_VALUES="true"/>
+	<CALL_TEST_STEP TEST_STEP_ID="-31" CALLED_TEST_CASE_ID="-31" DELEGATE_PARAMETER_VALUES="false"/>
+	<CALL_TEST_STEP TEST_STEP_ID="-32" CALLED_TEST_CASE_ID="-32" DELEGATE_PARAMETER_VALUES="true"/>
 	
-	<CALL_TEST_STEP TEST_STEP_ID="-101" CALLED_TEST_CASE_ID="-100" />
-	<CALL_TEST_STEP TEST_STEP_ID="-102" CALLED_TEST_CASE_ID="-100"/>
-	<CALL_TEST_STEP TEST_STEP_ID="-103" CALLED_TEST_CASE_ID="-100"/>		
+	<CALL_TEST_STEP TEST_STEP_ID="-101" CALLED_TEST_CASE_ID="-100" DELEGATE_PARAMETER_VALUES="false"/>
+	<CALL_TEST_STEP TEST_STEP_ID="-102" CALLED_TEST_CASE_ID="-100" DELEGATE_PARAMETER_VALUES="false"/>
+	<CALL_TEST_STEP TEST_STEP_ID="-103" CALLED_TEST_CASE_ID="-100" DELEGATE_PARAMETER_VALUES="false"/>		
 	
 	<!--  the only one action test step -->
 	<ACTION_TEST_STEP TEST_STEP_ID="-1000" ACTION="the one and only action test step"/>

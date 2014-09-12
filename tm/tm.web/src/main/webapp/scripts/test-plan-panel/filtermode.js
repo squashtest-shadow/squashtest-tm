@@ -6,32 +6,54 @@
  *     information regarding copyright ownership.
  *
  *     This is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU Lesser General Public License as published by
+ *     it under the terms of the GNU General Public License as published by
  *     the Free Software Foundation, either version 3 of the License, or
  *     (at your option) any later version.
  *
  *     this software is distributed in the hope that it will be useful,
  *     but WITHOUT ANY WARRANTY; without even the implied warranty of
  *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU Lesser General Public License for more details.
+ *     GNU General Public License for more details.
  *
- *     You should have received a copy of the GNU Lesser General Public License
+ *     You should have received a copy of the GNU General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define(["jquery",  "jquery.squash.rangedatepicker" ], function($, rangedatepicker){
+define(["jquery",  "jquery.squash.rangedatepicker", "squash.translator" ], 
+		function($, rangedatepicker, translator){
 	"use strict";
 
 	var tableSelector = ".test-plan-table";
+	
+	/*
+	 * Prepare some default values 
+	 */
+	var _weights = translator.get({
+		'VERY_HIGH' : 'test-case.importance.VERY_HIGH',
+		'HIGH' : 'test-case.importance.HIGH',
+		'MEDIUM' : 'test-case.importance.MEDIUM',
+		'LOW' : 'test-case.importance.LOW'		
+	});
+	// add the level
+	_weights['VERY_HIGH'] 	= '1-'+_weights['VERY_HIGH']; 
+	_weights['HIGH'] 		= '2-'+_weights['HIGH']; 
+	_weights['MEDIUM']		= '3-'+_weights['MEDIUM']; 
+	_weights['LOW'] 		= '4-'+_weights['VERY_HIGH']; 
+	
 
+	/*
+	 * functions 
+	 * 
+	 */
+	
 	function _hideFilterFields(_bNoredraw) {
 		var table = $(tableSelector).squashTable(),
 			settings = table.fnSettings();
+		
 		table.find(".th_input").hide();
 
-		var inputs = table.find(".filter_input");
-		inputs.each(function(index){
-			settings.aoPreSearchCols[index].sSearch = '';
-		});
+		for (var i=0;i<settings.aoPreSearchCols.length; i++){
+			settings.aoPreSearchCols[i].sSearch = '';
+		}
 
 		if ( _bNoredraw !== true){
 			table.refresh();
@@ -44,9 +66,12 @@ define(["jquery",  "jquery.squash.rangedatepicker" ], function($, rangedatepicke
 
 		table.find(".th_input").show();
 
-		var inputs = table.find(".filter_input");
-		inputs.each(function(index){
-			settings.aoPreSearchCols[index].sSearch = this.value;
+		$.each(settings.aoColumns, function(idx){
+			var column = settings.aoColumns[idx];
+			var $th = $(column.nTh);
+			if (column.bVisible && $th.is('.tp-th-filter')){
+				column.sSearch = $th.find('.filter_input').val();
+			}
 		});
 
 		table.refresh();
@@ -81,9 +106,13 @@ define(["jquery",  "jquery.squash.rangedatepicker" ], function($, rangedatepicke
 		var table = $(tableSelector);
 		$(table.attr("id") + "_filter").hide();
 
+		/*
+		 * some of fields below can use some defaults values in case they were 
+		 * not overriden in the conf 
+		 */
 		var users = initconf.basic.assignableUsers,
 			statuses = initconf.messages.executionStatus,
-			weights = initconf.basic.weights,
+			weights = initconf.basic.weights || _weights,	
 			modes = initconf.basic.modes;
 
 

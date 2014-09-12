@@ -6,16 +6,16 @@
  *     information regarding copyright ownership.
  *
  *     This is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU Lesser General Public License as published by
+ *     it under the terms of the GNU General Public License as published by
  *     the Free Software Foundation, either version 3 of the License, or
  *     (at your option) any later version.
  *
  *     this software is distributed in the hope that it will be useful,
  *     but WITHOUT ANY WARRANTY; without even the implied warranty of
  *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU Lesser General Public License for more details.
+ *     GNU General Public License for more details.
  *
- *     You should have received a copy of the GNU Lesser General Public License
+ *     You should have received a copy of the GNU General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 /**
@@ -28,7 +28,8 @@
  * 
  */
 
-define([ "jquery", "jquery.squash.messagedialog" ], function($) {
+define([ "jquery", "app/ws/squashtm.notification", "squash.translator", "jquery.squash.messagedialog"], 
+		function($, notification, translator) {
 
 	/* this is a constructor */
 	return function(settings) {
@@ -106,11 +107,25 @@ define([ "jquery", "jquery.squash.messagedialog" ], function($) {
 		}, this);
 
 		// ************ public functions ****************
-
+	
 		this.fillRightPane = function(url) {
 			try {
-				this.rightPane.find('iframe').attr('src', url);
+
+				url = (url.indexOf('://') == -1) ? 'http://' + url : url;
+				var iframeBody = this.rightPane.find('iframe body');
+			    var iframe = this.rightPane.find('iframe');
+		
+					$.post(squashtm.app.contextRoot+ "/checkXFO/", {URL:url} , function(xframeAllowed) {
+					if (! xframeAllowed){
+						iframe.attr('src', "about:blank");
+						notification.showError(translator.get('message.exception.IEO.XFODoNotPermitIFrame'));
+					} else {
+						iframe.attr('src', url);
+					}
+				});
+			
 			} catch (ex) {
+			
 				this.rightPane.find('iframe body').text(ex);
 			}
 

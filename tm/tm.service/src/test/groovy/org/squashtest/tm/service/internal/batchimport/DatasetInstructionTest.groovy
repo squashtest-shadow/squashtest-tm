@@ -6,19 +6,18 @@
  *     information regarding copyright ownership.
  *
  *     This is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU Lesser General Public License as published by
+ *     it under the terms of the GNU General Public License as published by
  *     the Free Software Foundation, either version 3 of the License, or
  *     (at your option) any later version.
  *
  *     this software is distributed in the hope that it will be useful,
  *     but WITHOUT ANY WARRANTY; without even the implied warranty of
  *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU Lesser General Public License for more details.
+ *     GNU General Public License for more details.
  *
- *     You should have received a copy of the GNU Lesser General Public License
+ *     You should have received a copy of the GNU General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package org.squashtest.tm.service.internal.batchimport
 
 import org.junit.Test
@@ -26,7 +25,7 @@ import org.squashtest.tm.domain.testcase.Parameter
 import org.squashtest.tm.domain.testcase.TestCase
 import org.squashtest.tm.service.importer.ImportMode
 import org.squashtest.tm.service.importer.ImportStatus
-import org.squashtest.tm.service.internal.batchimport.DatasetInstruction
+import org.squashtest.tm.service.internal.batchimport.DatasetParamValueInstruction
 import org.squashtest.tm.service.internal.batchimport.DatasetTarget
 import org.squashtest.tm.service.internal.batchimport.DatasetValue
 import org.squashtest.tm.service.internal.batchimport.Facility
@@ -46,44 +45,41 @@ import spock.lang.Unroll
  */
 class DatasetInstructionTest extends Specification {
 	DatasetTarget target = Mock()
-	DatasetValue datasetValue = Mock()
 
-	DatasetInstruction instruction = new DatasetInstruction(target, datasetValue)
+	DatasetInstruction instruction = new DatasetInstruction(target)
 	Facility f = Mock()
 
-	def "should create test case"() {
+	def "should create dataset"() {
 		given:
 		TestCaseTarget tcTarget = Mock()
 		target.getTestCase() >> tcTarget
 		tcTarget.getPath() >> ""
 		instruction.mode = ImportMode.CREATE
-		
+
 		when:
 		def lt = instruction.execute(f)
 
 		then:
-		1 * f.failsafeUpdateParameterValue(target, _, _, _) >> new LogTrain()
+		1 * f.createDataset(target) >> new LogTrain()
 	}
 
-	@Unroll
-	def "should update test case using mode #mode"() {
+
+	def "should not update dataset because it's not its job"() {
 		given:
 		TestCaseTarget tcTarget = Mock()
 		target.getTestCase() >> tcTarget
 		tcTarget.getPath() >> ""
-		instruction.mode = mode
+		instruction.mode = ImportMode.UPDATE
 
 		when:
 		def lt = instruction.execute(f)
 
 		then:
-		1 * f.failsafeUpdateParameterValue(target, _, _, _) >> new LogTrain()
+		0 * f._
 
-		where:
-		mode << [ImportMode.UPDATE, null]
 	}
 
-	def "should delete test case"() {
+	def "should delete dataset"() {
 		given:
 		instruction.mode = ImportMode.DELETE
 

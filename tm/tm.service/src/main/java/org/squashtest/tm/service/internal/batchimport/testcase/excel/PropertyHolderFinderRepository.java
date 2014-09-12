@@ -6,19 +6,18 @@
  *     information regarding copyright ownership.
  *
  *     This is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU Lesser General Public License as published by
+ *     it under the terms of the GNU General Public License as published by
  *     the Free Software Foundation, either version 3 of the License, or
  *     (at your option) any later version.
  *
  *     this software is distributed in the hope that it will be useful,
  *     but WITHOUT ANY WARRANTY; without even the implied warranty of
  *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU Lesser General Public License for more details.
+ *     GNU General Public License for more details.
  *
- *     You should have received a copy of the GNU Lesser General Public License
+ *     You should have received a copy of the GNU General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package org.squashtest.tm.service.internal.batchimport.testcase.excel;
 
 import java.util.HashMap;
@@ -32,6 +31,7 @@ import org.squashtest.tm.service.importer.Target;
 import org.squashtest.tm.service.internal.batchimport.ActionStepInstruction;
 import org.squashtest.tm.service.internal.batchimport.CallStepInstruction;
 import org.squashtest.tm.service.internal.batchimport.DatasetInstruction;
+import org.squashtest.tm.service.internal.batchimport.DatasetParamValueInstruction;
 import org.squashtest.tm.service.internal.batchimport.DatasetTarget;
 import org.squashtest.tm.service.internal.batchimport.DatasetValue;
 import org.squashtest.tm.service.internal.batchimport.Instruction;
@@ -58,6 +58,7 @@ final class PropertyHolderFinderRepository<COL extends Enum<COL> & TemplateColum
 		FINDER_REPO_BY_WORKSHEET.put(TemplateWorksheet.STEPS_SHEET, createStepsWorksheetRepo());
 		FINDER_REPO_BY_WORKSHEET.put(TemplateWorksheet.PARAMETERS_SHEET, createParamsWorksheetRepo());
 		FINDER_REPO_BY_WORKSHEET.put(TemplateWorksheet.DATASETS_SHEET, createDatasetsWorksheetRepo());
+		FINDER_REPO_BY_WORKSHEET.put(TemplateWorksheet.DATASET_PARAM_VALUES_SHEET, createDatasetParamValuesWorksheetRepo());
 	}
 
 	private static PropertyHolderFinderRepository<TestCaseSheetColumn> createTestCasesWorksheetRepo() {
@@ -118,9 +119,40 @@ final class PropertyHolderFinderRepository<COL extends Enum<COL> & TemplateColum
 
 		r.finderByColumn.put(DatasetSheetColumn.ACTION, instructionFinder);
 
-		PropertyHolderFinder<DatasetInstruction, DatasetValue> paramFinder = new PropertyHolderFinder<DatasetInstruction, DatasetValue>() {
+
+		r.defaultFinder = targetFinder;
+
+		return r;
+	}
+
+	/**
+	 * @return
+	 */
+	private static PropertyHolderFinderRepository<?> createDatasetParamValuesWorksheetRepo() {
+		PropertyHolderFinderRepository<DatasetParamValuesSheetColumn> r = new PropertyHolderFinderRepository<DatasetParamValuesSheetColumn>();
+
+		PropertyHolderFinder<DatasetParamValueInstruction, DatasetTarget> targetFinder = new PropertyHolderFinder<DatasetParamValueInstruction, DatasetTarget>() {
 			@Override
-			public DatasetValue find(DatasetInstruction instruction) {
+			public DatasetTarget find(DatasetParamValueInstruction instruction) {
+				return instruction.getTarget();
+			}
+		};
+
+		r.finderByColumn.put(DatasetParamValuesSheetColumn.TC_OWNER_PATH, targetFinder);
+		r.finderByColumn.put(DatasetParamValuesSheetColumn.TC_DATASET_NAME, targetFinder);
+
+		PropertyHolderFinder<DatasetParamValueInstruction, DatasetParamValueInstruction> instructionFinder = new PropertyHolderFinder<DatasetParamValueInstruction, DatasetParamValueInstruction>() {
+			@Override
+			public DatasetParamValueInstruction find(DatasetParamValueInstruction instruction) {
+				return instruction;
+			}
+		};
+
+		r.finderByColumn.put(DatasetParamValuesSheetColumn.ACTION, instructionFinder);
+
+		PropertyHolderFinder<DatasetParamValueInstruction, DatasetValue> paramFinder = new PropertyHolderFinder<DatasetParamValueInstruction, DatasetValue>() {
+			@Override
+			public DatasetValue find(DatasetParamValueInstruction instruction) {
 				return instruction.getDatasetValue();
 			}
 		};
@@ -204,6 +236,9 @@ final class PropertyHolderFinderRepository<COL extends Enum<COL> & TemplateColum
 				throw new IllegalArgumentException("Cannot process this type of instruction : " + instruction);
 			}
 		};
+
+		stepsWorksheetRepo.finderByColumn.put(StepSheetColumn.TC_STEP_CALL_DATASET, instructionFinder);
+
 		stepsWorksheetRepo.finderByColumn.put(StepSheetColumn.TC_STEP_ACTION, actionResultHolderFinder);
 		stepsWorksheetRepo.finderByColumn.put(StepSheetColumn.TC_STEP_EXPECTED_RESULT, actionResultHolderFinder);
 
@@ -222,8 +257,6 @@ final class PropertyHolderFinderRepository<COL extends Enum<COL> & TemplateColum
 		};
 
 		stepsWorksheetRepo.defaultFinder = stepFinder;
-
-
 
 		return stepsWorksheetRepo;
 	}

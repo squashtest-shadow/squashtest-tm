@@ -6,21 +6,21 @@
  *     information regarding copyright ownership.
  *
  *     This is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU Lesser General Public License as published by
+ *     it under the terms of the GNU General Public License as published by
  *     the Free Software Foundation, either version 3 of the License, or
  *     (at your option) any later version.
  *
  *     this software is distributed in the hope that it will be useful,
  *     but WITHOUT ANY WARRANTY; without even the implied warranty of
  *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU Lesser General Public License for more details.
+ *     GNU General Public License for more details.
  *
- *     You should have received a copy of the GNU Lesser General Public License
+ *     You should have received a copy of the GNU General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 define([ 'jquery', 'workspace.event-bus', 'app/util/ComponentUtil', 'squash.statusfactory', 'squash.translator',
-		'squash.dateutils', 'jqueryui', 'jquery.squash.confirmdialog', 'jquery.squash.formdialog' ], function($,
-		eventBus, ComponentUtil, statusfactory, translator, dateutils) {
+		'squash.dateutils', 'app/ws/squashtm.notification', 'jqueryui', 'jquery.squash.confirmdialog', 'jquery.squash.formdialog' ], 
+		function($, eventBus, ComponentUtil, statusfactory, translator, dateutils, notification) {
 
 	function _initDeleteExecutionPopup(conf) {
 
@@ -89,7 +89,8 @@ define([ 'jquery', 'workspace.event-bus', 'app/util/ComponentUtil', 'squash.stat
 
 			switch (selIds.length) {
 			case 0:
-				$(this).formDialog('setState', 'empty-selec');
+				$(this).formDialog('close');
+				notification.showError(translator.get('iteration.test-plan.action.empty-selection.message'));
 				break;
 			case 1:
 				$(this).formDialog('setState', 'single-tp');
@@ -126,7 +127,8 @@ define([ 'jquery', 'workspace.event-bus', 'app/util/ComponentUtil', 'squash.stat
 			var selIds = $("#test-suite-test-plans-table").squashTable().getSelectedIds();
 
 			if (selIds.length === 0) {
-				$(this).formDialog('setState', 'empty-selec');
+				$(this).formDialog('close');
+				notification.showError(translator.get('iteration.test-plan.action.empty-selection.message'));
 			} else {
 				$(this).formDialog('setState', 'assign');
 			}
@@ -170,7 +172,8 @@ define([ 'jquery', 'workspace.event-bus', 'app/util/ComponentUtil', 'squash.stat
 			var cbox = $(this).find(".execution-status-combo-class");
 			ComponentUtil.updateStatusCboxIcon(cbox);
 			if (selIds.length === 0) {
-				$(this).formDialog('setState', 'empty-selec');
+				$(this).formDialog('close');
+				notification.showError(translator.get('iteration.test-plan.action.empty-selection.message'));
 			} else {
 				$(this).formDialog('setState', 'edit');
 			}

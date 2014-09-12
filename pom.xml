@@ -9,7 +9,7 @@
   </parent>
 
   <artifactId>squash-tm</artifactId>
-  <version>1.11.0.FEAT3577-SNAPSHOT</version>
+  <version>1.11.1.RC2-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <name>squash-tm</name>
@@ -20,7 +20,7 @@
   </organization>
   <licenses>
     <license>
-      <name>GNU Lesser General Public License V3</name>
+      <name>GNU General Public License V3</name>
     </license>
   </licenses>
 
@@ -290,6 +290,7 @@
             <exclude>**/styles/switchButton/*.*</exclude>
             <exclude>**/styles/**/thymol.js</exclude>
             <exclude>**/r.js</exclude>
+            <exclude>**/scripts/sinon*.js</exclude>
             <exclude>**/styles/**/bootstrap*.css</exclude> 
             <exclude>**/pubsub-boot.js</exclude> 
             

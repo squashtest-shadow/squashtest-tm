@@ -6,16 +6,16 @@
  *     information regarding copyright ownership.
  *
  *     This is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU Lesser General Public License as published by
+ *     it under the terms of the GNU General Public License as published by
  *     the Free Software Foundation, either version 3 of the License, or
  *     (at your option) any later version.
  *
  *     this software is distributed in the hope that it will be useful,
  *     but WITHOUT ANY WARRANTY; without even the implied warranty of
  *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU Lesser General Public License for more details.
+ *     GNU General Public License for more details.
  *
- *     You should have received a copy of the GNU Lesser General Public License
+ *     You should have received a copy of the GNU General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.squashtest.tm.service.internal.testcase;
@@ -42,10 +42,13 @@ import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.squashtest.tm.core.foundation.collection.DefaultPagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.Paging;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.PagingBackedPagedCollectionHolder;
+import org.squashtest.tm.core.foundation.collection.Pagings;
+import org.squashtest.tm.core.foundation.collection.SortOrder;
 import org.squashtest.tm.core.foundation.lang.Couple;
 import org.squashtest.tm.core.foundation.lang.PathUtils;
 import org.squashtest.tm.domain.customfield.BoundEntity;
@@ -354,6 +357,18 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 		Long countCallers = testCaseDao.countCallingTestSteps(testCaseId);
 		return new PagingBackedPagedCollectionHolder<List<TestCase>>(sorting, countCallers, callers);
 
+	}
+
+	@Override
+	public PagedCollectionHolder<List<CallTestStep>> findCallingTestSteps(long testCaseId, PagingAndSorting sorting) {
+		List<CallTestStep> callers = testCaseDao.findAllCallingTestSteps(testCaseId, sorting);
+		Long countCallers = testCaseDao.countCallingTestSteps(testCaseId);
+		return new PagingBackedPagedCollectionHolder<List<CallTestStep>>(sorting, countCallers, callers);
+	}
+
+	@Override
+	public List<CallTestStep> findAllCallingTestSteps(long testCaseId) {
+		return testCaseDao.findAllCallingTestSteps(testCaseId);
 	}
 
 	@Override

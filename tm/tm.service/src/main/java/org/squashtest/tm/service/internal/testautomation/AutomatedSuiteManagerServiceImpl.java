@@ -6,16 +6,16 @@
  *     information regarding copyright ownership.
  *
  *     This is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU Lesser General Public License as published by
+ *     it under the terms of the GNU General Public License as published by
  *     the Free Software Foundation, either version 3 of the License, or
  *     (at your option) any later version.
  *
  *     this software is distributed in the hope that it will be useful,
  *     but WITHOUT ANY WARRANTY; without even the implied warranty of
  *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU Lesser General Public License for more details.
+ *     GNU General Public License for more details.
  *
- *     You should have received a copy of the GNU Lesser General Public License
+ *     You should have received a copy of the GNU General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.squashtest.tm.service.internal.testautomation;
@@ -62,8 +62,10 @@ import org.squashtest.tm.domain.testcase.ActionTestStep;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestStep;
 import org.squashtest.tm.exception.execution.TestPlanItemNotExecutableException;
+import org.squashtest.tm.service.advancedsearch.IndexationService;
 import org.squashtest.tm.service.customfield.CustomFieldValueFinderService;
 import org.squashtest.tm.service.internal.campaign.CampaignNodeDeletionHandler;
+import org.squashtest.tm.service.internal.customfield.PrivateCustomFieldValueService;
 import org.squashtest.tm.service.internal.denormalizedField.PrivateDenormalizedFieldValueService;
 import org.squashtest.tm.service.internal.repository.AutomatedSuiteDao;
 import org.squashtest.tm.service.internal.repository.ExecutionDao;
@@ -130,6 +132,12 @@ public class AutomatedSuiteManagerServiceImpl implements AutomatedSuiteManagerSe
 
 	@Inject
 	private CampaignNodeDeletionHandler deletionHandler;
+	
+
+	@Inject private IndexationService indexationService;
+	
+	@Inject private PrivateCustomFieldValueService customFieldValuesService;
+
 
 
 	public int getTimeoutMillis() {
@@ -357,31 +365,26 @@ public class AutomatedSuiteManagerServiceImpl implements AutomatedSuiteManagerSe
 
 		executionDao.persist(execution);
 		item.addExecution(execution);
+
+		createCustomFieldsForExecutionAndExecutionSteps(execution);
 		createDenormalizedFieldsForExecutionAndExecutionSteps(execution);
+		indexationService.reindexTestCase(item.getReferencedTestCase().getId());
 
 		return execution;
-
 	}
 
+	private void createCustomFieldsForExecutionAndExecutionSteps(Execution execution){
+		customFieldValuesService.createAllCustomFieldValues(execution, execution.getProject());
+		customFieldValuesService.createAllCustomFieldValues(execution.getSteps(), execution.getProject());
+	}
 
 	private void createDenormalizedFieldsForExecutionAndExecutionSteps(Execution execution) {
 		LOGGER.debug("Create denormalized fields for Execution {}", execution.getId());
+		
 		TestCase sourceTC = execution.getReferencedTestCase();
 		denormalizedFieldValueService.createAllDenormalizedFieldValues(sourceTC, execution);
-		for (ExecutionStep step : execution.getSteps()) {
-			TestStep sourceStep = step.getReferencedTestStep();
-			if (stepIsFromSameProjectAsTC(sourceTC, (ActionTestStep) sourceStep)) {
-				denormalizedFieldValueService.createAllDenormalizedFieldValues((ActionTestStep) sourceStep, step);
-			} else {
-				denormalizedFieldValueService.createAllDenormalizedFieldValues((ActionTestStep) sourceStep, step,
-						sourceTC.getProject());
-			}
-		}
+		denormalizedFieldValueService.createAllDenormalizedFieldValuesForSteps(execution);
 
-	}
-
-	private boolean stepIsFromSameProjectAsTC(TestCase sourceTC, ActionTestStep sourceStep) {
-		return sourceStep.getProject().getId().equals(sourceTC.getProject().getId());
 	}
 
 

@@ -6,20 +6,21 @@
  *     information regarding copyright ownership.
  *
  *     This is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU Lesser General Public License as published by
+ *     it under the terms of the GNU General Public License as published by
  *     the Free Software Foundation, either version 3 of the License, or
  *     (at your option) any later version.
  *
  *     this software is distributed in the hope that it will be useful,
  *     but WITHOUT ANY WARRANTY; without even the implied warranty of
  *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU Lesser General Public License for more details.
+ *     GNU General Public License for more details.
  *
- *     You should have received a copy of the GNU Lesser General Public License
+ *     You should have received a copy of the GNU General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.squashtest.tm.service.internal.testcase;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -36,7 +37,6 @@ import org.squashtest.tm.service.internal.repository.DatasetParamValueDao;
 import org.squashtest.tm.service.internal.repository.ParameterDao;
 import org.squashtest.tm.service.internal.repository.TestCaseDao;
 import org.squashtest.tm.service.testcase.DatasetModificationService;
-import org.squashtest.tm.service.testcase.ParameterModificationService;
 
 @Service("squashtest.tm.service.DatasetModificationService")
 public class DatasetModificationServiceImpl implements DatasetModificationService {
@@ -46,54 +46,69 @@ public class DatasetModificationServiceImpl implements DatasetModificationServic
 
 	@Inject
 	private ParameterDao parameterDao;
-	
-	@Inject 
+
+	@Inject
 	private DatasetParamValueDao datasetParamValueDao;
 
-	@Inject 
-	private ParameterModificationService parameterModificationService;
-		
+
 	@Inject
 	private TestCaseDao testCaseDao;
 
+
 	@Override
-	public void persist(Dataset dataset, long testCaseId) {	
+	public Dataset findById(long datasetId) {
+		return datasetDao.findById(datasetId);
+	}
+
+	@Override
+	public void persist(Dataset dataset, long testCaseId) {
 		Dataset sameName = datasetDao.findDatasetByTestCaseAndByName(testCaseId, dataset.getName());
+
 		if(sameName != null ){
 			throw new DuplicateNameException(dataset.getName(), dataset.getName());
-		} else {
+		}
+		else {
+
 			TestCase testCase = testCaseDao.findById(testCaseId);
+
 			dataset.setTestCase(testCase);
 			testCase.addDataset(dataset);
-			updateDatasetParameters(dataset);
+
+			Collection<Parameter> parameters = parameterDao.findAllParametersByTestCase(testCaseId);
+			updateDatasetParameters(dataset, parameters);
 		}
 	}
-	
-	
+
 	@Override
-	public void remove(Dataset dataset) {		
-		this.datasetDao.removeDatasetFromIterationTestPlanItems(dataset.getId());
+	public Collection<Dataset> findAllForTestCase(long testCaseId) {
+		return datasetDao.findAllByTestCase(testCaseId);
+	}
+
+
+	@Override
+	public void remove(Dataset dataset) {
+		this.datasetDao.removeDatasetFromTestPlanItems(dataset.getId());
 		this.datasetDao.remove(dataset);
 	}
 
 
 	@Override
-	public void removeById(long datasetId) {	
+	public void removeById(long datasetId) {
 		Dataset dataset = this.datasetDao.findById(datasetId);
 		remove(dataset);
 	}
-	
+
 	@Override
 	public void removeAllByTestCaseIds(List<Long> testCaseIds) {
-		List<Dataset> datasets = this.datasetDao.findAllDatasetsByTestCases(testCaseIds);
+		List<Dataset> datasets = this.datasetDao.findOwnDatasetsByTestCases(testCaseIds);
 		for(Dataset dataset : datasets){
 			remove(dataset);
 		}
 	}
-	
+
 	@Override
 	public void changeName(long datasetId, String newName) {
-		
+
 		Dataset dataset = this.datasetDao.findById(datasetId);
 		Dataset sameName = datasetDao.findDatasetByTestCaseAndByName(dataset.getTestCase().getId(), dataset.getName());
 		if(sameName != null && (! sameName.getId().equals(dataset.getId()))){
@@ -102,19 +117,20 @@ public class DatasetModificationServiceImpl implements DatasetModificationServic
 			dataset.setName(newName);
 		}
 	}
-	
+
 	@Override
 	public void changeParamValue(long datasetParamValueId, String value) {
 		DatasetParamValue paramValue = this.datasetParamValueDao.findById(datasetParamValueId);
 		paramValue.setParamValue(value);
 	}
-	
+
 	public List<Dataset> getAllDatasetByTestCase(long testCaseId){
-		return this.datasetDao.findAllDatasetsByTestCase(testCaseId);
+		return this.datasetDao.findOwnDatasetsByTestCase(testCaseId);
 	}
-	
+
+
 	private DatasetParamValue findDatasetParamValue(Dataset dataset, Parameter parameter){
-		
+
 		DatasetParamValue result = null;
 		Set<DatasetParamValue> datasetParamValues = dataset.getParameterValues();
 		for(DatasetParamValue datasetParamValue : datasetParamValues){
@@ -124,7 +140,7 @@ public class DatasetModificationServiceImpl implements DatasetModificationServic
 		}
 		return result;
 	}
-	
+
 	private DatasetParamValue findOrAddParameter(Dataset dataset, Parameter parameter){
 		DatasetParamValue datasetParamValue = findDatasetParamValue(dataset, parameter);
 		if(datasetParamValue == null){
@@ -132,20 +148,25 @@ public class DatasetModificationServiceImpl implements DatasetModificationServic
 		}
 		return datasetParamValue;
 	}
-	
-	private void updateDatasetParameters(Dataset dataset){
-		Long testCaseId = dataset.getTestCase().getId();
-		List<Parameter> parameters = parameterModificationService.findAllforTestCase(testCaseId);
+
+
+	private void updateDatasetParameters(Dataset dataset, Collection<Parameter> parameters){
+
 		for(Parameter parameter : parameters){
 			findOrAddParameter(dataset, parameter);
 		}
+
 	}
 
+
 	@Override
-	public void updateDatasetParameters(long testCaseId) {
-		TestCase testCase = this.testCaseDao.findById(testCaseId);
-		for(Dataset dataset : testCase.getDatasets()){
-			this.updateDatasetParameters(dataset);
+	public void cascadeDatasetsUpdate(long testCaseId) {
+
+		Collection<Dataset> allDataset = datasetDao.findOwnAndDelegateDatasets(testCaseId);
+		Collection<Parameter> params = parameterDao.findAllParametersByTestCase(testCaseId);
+
+		for(Dataset dataset : allDataset){
+			this.updateDatasetParameters(dataset, params);
 		}
 	}
 }

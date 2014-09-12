@@ -6,19 +6,18 @@
  *     information regarding copyright ownership.
  *
  *     This is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU Lesser General Public License as published by
+ *     it under the terms of the GNU General Public License as published by
  *     the Free Software Foundation, either version 3 of the License, or
  *     (at your option) any later version.
  *
  *     this software is distributed in the hope that it will be useful,
  *     but WITHOUT ANY WARRANTY; without even the implied warranty of
  *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU Lesser General Public License for more details.
+ *     GNU General Public License for more details.
  *
- *     You should have received a copy of the GNU Lesser General Public License
+ *     You should have received a copy of the GNU General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package org.squashtest.tm.service.internal.batchimport
 
 import org.junit.Test
@@ -29,7 +28,7 @@ import org.squashtest.tm.service.importer.ImportMode
 import org.squashtest.tm.service.importer.ImportStatus
 import org.squashtest.tm.service.internal.batchimport.ActionStepInstruction
 import org.squashtest.tm.service.internal.batchimport.CallStepInstruction
-import org.squashtest.tm.service.internal.batchimport.DatasetInstruction
+import org.squashtest.tm.service.internal.batchimport.DatasetParamValueInstruction
 import org.squashtest.tm.service.internal.batchimport.DatasetTarget
 import org.squashtest.tm.service.internal.batchimport.DatasetValue
 import org.squashtest.tm.service.internal.batchimport.Facility
@@ -52,8 +51,9 @@ class StepInstructionTest extends Specification {
 	TestStepTarget target = Mock()
 	ActionTestStep step = Mock()
 	TestCaseTarget tct = Mock()
+	CallStepParamsInfo paraminfo = new CallStepParamsInfo()
 	ActionStepInstruction instruction = new ActionStepInstruction(target, step)
-	CallStepInstruction callInstruction = new CallStepInstruction(target, tct, step)
+	CallStepInstruction callInstruction = new CallStepInstruction(target, tct, step, paraminfo)
 	Facility f = Mock()
 
 	def setup() {
@@ -117,7 +117,7 @@ class StepInstructionTest extends Specification {
 		def lt = callInstruction.execute(f)
 
 		then:
-		1 * f.addCallStep(target, null, tct, step) >> new LogTrain()
+		1 * f.addCallStep(target, null, tct, paraminfo, step) >> new LogTrain()
 	}
 
 	@Unroll
@@ -129,7 +129,7 @@ class StepInstructionTest extends Specification {
 		def lt = callInstruction.execute(f)
 
 		then:
-		1 * f.updateCallStep(target, null, tct, step) >> new LogTrain()
+		1 * f.updateCallStep(target, null, tct, paraminfo, step) >> new LogTrain()
 
 		where:
 		mode << [ImportMode.UPDATE, null]

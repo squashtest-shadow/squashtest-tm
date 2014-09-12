@@ -6,16 +6,16 @@
  *     information regarding copyright ownership.
  *
  *     This is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU Lesser General Public License as published by
+ *     it under the terms of the GNU General Public License as published by
  *     the Free Software Foundation, either version 3 of the License, or
  *     (at your option) any later version.
  *
  *     this software is distributed in the hope that it will be useful,
  *     but WITHOUT ANY WARRANTY; without even the implied warranty of
  *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU Lesser General Public License for more details.
+ *     GNU General Public License for more details.
  *
- *     You should have received a copy of the GNU Lesser General Public License
+ *     You should have received a copy of the GNU General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.squashtest.tm.web.internal.controller.campaign;
@@ -42,6 +42,7 @@ import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndMultiSorting;
 import org.squashtest.tm.domain.campaign.Campaign;
 import org.squashtest.tm.domain.project.Project;
+import org.squashtest.tm.domain.testcase.Dataset;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseLibrary;
 import org.squashtest.tm.domain.testcase.TestCaseLibraryNode;
@@ -68,8 +69,6 @@ import org.squashtest.tm.web.internal.model.viewmapper.NameBasedMapper;
 @Controller
 public class CampaignTestPlanManagerController {
 
-	private static final String ITEMS_IDS_REQUEST_PARAM = "itemIds[]";
-
 	private static final String TESTCASES_IDS_REQUEST_PARAM = "testCasesIds[]";
 
 	@Inject
@@ -89,6 +88,7 @@ public class CampaignTestPlanManagerController {
 	.mapAttribute("project-name", 	"name", 			Project.class)
 	.mapAttribute("reference", 		"reference", 		TestCase.class)
 	.mapAttribute("tc-name", 		"name", 			TestCase.class)
+	.mapAttribute("dataset.selected.name", "name", 		Dataset.class)
 	.mapAttribute("assigned-user", 	"login", 			User.class)
 	.mapAttribute("importance",		"importance", 		TestCase.class)
 	.mapAttribute("exec-mode", 		"automatedTest", 	TestCase.class);
@@ -110,7 +110,7 @@ public class CampaignTestPlanManagerController {
 	}
 
 
-	@RequestMapping(value = "campaigns/{campaignId}/test-plan/table", params = RequestParams.S_ECHO_PARAM)
+	@RequestMapping(value = "campaigns/{campaignId}/test-plan", params = RequestParams.S_ECHO_PARAM)
 	public @ResponseBody
 	DataTableModel getTestCasesTableModel(@PathVariable("campaignId") long campaignId,
 			final DataTableDrawParameters params, final Locale locale) {
@@ -189,6 +189,14 @@ public class CampaignTestPlanManagerController {
 	@ResponseBody
 	public void moveTestPlanItems(@PathVariable("campaignId") long campaignId, @PathVariable("newIndex") int newIndex, @PathVariable("itemIds") List<Long> itemIds) {
 		testPlanManager.moveTestPlanItems(campaignId, newIndex, itemIds);
+	}
+
+
+	@RequestMapping(value = "/campaigns/{campaignId}/test-plan/{testPlanId}", method = RequestMethod.POST, params = {"dataset"})
+	public @ResponseBody
+	Long setDataset(@PathVariable("testPlanId") long testPlanId, @RequestParam("dataset") Long datasetId){
+		testPlanManager.changeDataset(testPlanId, datasetId);
+		return datasetId;
 	}
 
 

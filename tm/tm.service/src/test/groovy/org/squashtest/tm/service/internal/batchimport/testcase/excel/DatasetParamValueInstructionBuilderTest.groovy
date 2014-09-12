@@ -6,19 +6,18 @@
  *     information regarding copyright ownership.
  *
  *     This is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU Lesser General Public License as published by
+ *     it under the terms of the GNU General Public License as published by
  *     the Free Software Foundation, either version 3 of the License, or
  *     (at your option) any later version.
  *
  *     this software is distributed in the hope that it will be useful,
  *     but WITHOUT ANY WARRANTY; without even the implied warranty of
  *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU Lesser General Public License for more details.
+ *     GNU General Public License for more details.
  *
- *     You should have received a copy of the GNU Lesser General Public License
+ *     You should have received a copy of the GNU General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package org.squashtest.tm.service.internal.batchimport.testcase.excel;
 
 
@@ -26,25 +25,25 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.junit.Test;
 import org.squashtest.tm.service.importer.ImportMode;
-import org.squashtest.tm.service.internal.batchimport.DatasetInstruction;
+import org.squashtest.tm.service.internal.batchimport.DatasetParamValueInstruction;
 
 import spock.lang.Specification;
 import spock.lang.Unroll;
 
-import static org.squashtest.tm.service.internal.batchimport.testcase.excel.DatasetSheetColumn.*;
+import static org.squashtest.tm.service.internal.batchimport.testcase.excel.DatasetParamValuesSheetColumn.*;
 
 /**
  * @author Gregory Fouquet
  *
  */
-class DatasetInstructionBuilderTest extends Specification {
+class DatasetParamValueInstructionBuilderTest extends Specification {
 	WorksheetDef wd = Mock();
 	Row row = Mock()
-	DatasetInstructionBuilder builder
+	DatasetParamValueInstructionBuilder builder
 
 	def setup() {
-		wd.getWorksheetType() >> TemplateWorksheet.DATASETS_SHEET
-		builder = new DatasetInstructionBuilder(wd)
+		wd.getWorksheetType() >> TemplateWorksheet.DATASET_PARAM_VALUES_SHEET
+		builder = new DatasetParamValueInstructionBuilder(wd)
 	}
 
 	private Cell mockCell(cellType, cellValue) {
@@ -61,7 +60,7 @@ class DatasetInstructionBuilderTest extends Specification {
 	}
 
 	@Unroll
-	def "should create test step target from row with this bunch of data : #col #cellType #cellValue #propName #propValue"() {
+	def "should populate a dataset target from row with this bunch of data : #col #cellType #cellValue #propName #propValue"() {
 		given:
 		Cell cell = mockCell(cellType, cellValue)
 		row.getCell(30, _) >> cell
@@ -71,7 +70,7 @@ class DatasetInstructionBuilderTest extends Specification {
 		wd.getCustomFieldDefs() >> []
 
 		when:
-		DatasetInstruction instruction = builder.build(row)
+		DatasetParamValueInstruction instruction = builder.build(row)
 
 		then:
 		instruction.target[propName] == propValue
@@ -96,7 +95,7 @@ class DatasetInstructionBuilderTest extends Specification {
 		wd.getCustomFieldDefs() >> []
 
 		when:
-		DatasetInstruction instruction = builder.build(row)
+		DatasetParamValueInstruction instruction = builder.build(row)
 
 		then:
 		instruction[propName] == propValue
@@ -120,7 +119,7 @@ class DatasetInstructionBuilderTest extends Specification {
 		wd.getCustomFieldDefs() >> []
 
 		when:
-		DatasetInstruction instruction = builder.build(row)
+		DatasetParamValueInstruction instruction = builder.build(row)
 
 		then:
 		instruction.datasetValue[propName] == propValue

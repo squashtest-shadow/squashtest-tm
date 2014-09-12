@@ -6,19 +6,18 @@
  *     information regarding copyright ownership.
  *
  *     This is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU Lesser General Public License as published by
+ *     it under the terms of the GNU General Public License as published by
  *     the Free Software Foundation, either version 3 of the License, or
  *     (at your option) any later version.
  *
  *     this software is distributed in the hope that it will be useful,
  *     but WITHOUT ANY WARRANTY; without even the implied warranty of
  *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU Lesser General Public License for more details.
+ *     GNU General Public License for more details.
  *
- *     You should have received a copy of the GNU Lesser General Public License
+ *     You should have received a copy of the GNU General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package org.squashtest.tm.service.internal.batchimport.testcase.excel
 
 import static org.squashtest.tm.service.importer.ImportMode.*
@@ -159,10 +158,26 @@ class ExcelWorkbookParserTest extends Specification {
 		then:
 		datasetInstructions*.target.path == datasetPaths
 		datasetInstructions*.target.name == datasetNames
-		datasetInstructions*.datasetValue.parameterOwnerPath == datasetParamOwnerPaths
-		datasetInstructions*.datasetValue.parameterName == datasetParamNames
-		datasetInstructions*.datasetValue.value == datasetValues
 		datasetInstructions*.mode == datasetActions
+
+		when:
+		def datasetParamValuesInstructions = parser.getDatasetParamValuesInstructions()
+
+		and:
+		def datasetParamValuesPaths = (1..8).collect { "owner/path/$it/datasets/name$it" }
+		def datasetParamValuesParamOwnerPaths = (1..8).collect { "param/owner/path/$it" }
+		def datasetParamValuesNames = (1..8).collect { "name$it" }
+		def datasetParamValuesParamNames = (1..8).collect { "paramName$it" }
+		def datasetParamValuesValues = (1..8).collect { "value$it" }
+		def datasetParamValuesActions = [CREATE, CREATE, UPDATE, UPDATE, DELETE, DELETE, UPDATE, UPDATE]
+
+		then:
+		datasetParamValuesInstructions*.target.path == datasetPaths
+		datasetParamValuesInstructions*.target.name == datasetNames
+		datasetParamValuesInstructions*.datasetValue.parameterOwnerPath == datasetParamOwnerPaths
+		datasetParamValuesInstructions*.datasetValue.parameterName == datasetParamNames
+		datasetParamValuesInstructions*.datasetValue.value == datasetValues
+		datasetParamValuesInstructions*.mode == datasetActions
 
 	}
 

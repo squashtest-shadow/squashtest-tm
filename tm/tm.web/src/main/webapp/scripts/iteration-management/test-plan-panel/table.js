@@ -6,16 +6,16 @@
  *     information regarding copyright ownership.
  *
  *     This is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU Lesser General Public License as published by
+ *     it under the terms of the GNU General Public License as published by
  *     the Free Software Foundation, either version 3 of the License, or
  *     (at your option) any later version.
  *
  *     this software is distributed in the hope that it will be useful,
  *     but WITHOUT ANY WARRANTY; without even the implied warranty of
  *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU Lesser General Public License for more details.
+ *     GNU General Public License for more details.
  *
- *     You should have received a copy of the GNU Lesser General Public License
+ *     You should have received a copy of the GNU General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 /*
@@ -30,7 +30,6 @@
  *		basic : {
  *			iterationId : the id of the current iteration
  *			assignableUsers : [ { 'id' : id, 'login' : login } ]
- *			weights : []
  *		},
  *		messages : {
  *			executionStatus : {
@@ -60,8 +59,9 @@ define(
 		[ 'jquery', 'squash.translator', '../../test-plan-panel/exec-runner', '../../test-plan-panel/sortmode', '../../test-plan-panel/filtermode',
 		 'squash.dateutils', 'squash.statusfactory',
 		  'test-automation/automated-suite-overview',
+			'squash.configmanager',
 		  'squashtable', 'jeditable', 'jquery.squash.buttonmenu' ],
-		function($, translator, execrunner, smode, filtermode, dateutils, statusfactory, autosuitedialog) {
+		function($, translator, execrunner, smode, filtermode, dateutils, statusfactory, autosuitedialog, confman) {
 
 			// ****************** TABLE CONFIGURATION **************
 
@@ -81,10 +81,17 @@ define(
 							_conf.autoexecutionTooltip);
 				}
 
-				// execution status (read)
+				// execution status (read, thus selected using .status-display or .status-display-short depending on the style we want)
 				var status = data.status;
-				var	$statustd = $row.find('.status-combo');
-				var	html = statusfactory.getHtmlFor(status);
+				var html;
+				var	$statustd = $row.find('.status-display');
+				if ($statustd.is('.status-display-short')){
+					html = statusfactory.getIconFor(status);
+				}
+				else{
+					html = statusfactory.getHtmlFor(status);
+				}
+				
 
 				$statustd.html(html); // remember : this will insert a <span>
 										// in the process
@@ -102,11 +109,18 @@ define(
 				// assignee (read)
 				var $assigneetd = $row.find('.assignee-combo');
 				$assigneetd.wrapInner('<span/>');
+				
+				// dataset : we create the 'button' part of a menu, but not actual menu.
+				if (data['dataset'].available.length>0){
+					var $dstd = $row.find('.dataset-combo');
+					$dstd.wrapInner('<span/>');
+				}
 			}
 
 			function _rowCallbackWriteFeatures($row, data, _conf) {
 
-				// execution status (edit). Note : the children().first() thing
+				// execution status (edit, thus selected as .status-combo). 
+				// Note : the children().first() thing
 				// will return the span element.
 				var statusurl = _conf.testplanUrl + data['entity-id'];
 				var statusElt = $row.find('.status-combo').children().first();
@@ -134,6 +148,22 @@ define(
 						callback : _conf.submitAssigneeClbk
 					});
 
+				// datasets : we build here a full menu. Note that the read features
+				// already ensured that a <a class="buttonmenu"> exists.
+				var $dsspan = $row.find('.dataset-combo').children().first(),
+					dsInfos = data['dataset'],
+					dsurl = _conf.testplanUrl + data['entity-id'];										
+				
+				if (dsInfos.available.length>0){
+					$dsspan.addClass('cursor-arrow');
+					$dsspan.editable(dsurl, {
+						type : 'select',
+						data : confman.toJeditableSelectFormat(dsInfos.available),
+						name : 'dataset',
+						onblur : 'cancel',
+						callback : _conf.submitDatasetClbk
+					});					
+				}
 			}
 
 			function _rowCallbackExecFeatures($row, data, _conf) {
@@ -142,10 +172,10 @@ define(
 				var isTcDel = data['is-tc-deleted'],
 					isManual = (data['exec-mode'] === "M");
 
-				var tpId = data['entity-id'], $td = $row
-						.find('.execute-button'), strmenu = $(
-						"#shortcut-exec-menu-template").html().replace(
-						/#placeholder-tpid#/g, tpId);
+				var tpId = data['entity-id'], 
+					$td = $row.find('.execute-button'), 
+					strmenu = $("#shortcut-exec-menu-template").html()
+							.replace(/#placeholder-tpid#/g, tpId);
 
 				$td.empty();
 				$td.append(strmenu);
@@ -217,6 +247,10 @@ define(
 					submitAssigneeClbk : function(value, settings) {
 						var assignableUsers = JSON.parse(settings.data);
 						$(this).text(assignableUsers[value]);
+					},
+					
+					submitDatasetClbk : function(value, settings){
+						$(this).text(settings.data[value]);
 					}
 				};
 

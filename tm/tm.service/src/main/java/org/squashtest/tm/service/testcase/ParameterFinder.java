@@ -6,16 +6,16 @@
  *     information regarding copyright ownership.
  *
  *     This is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU Lesser General Public License as published by
+ *     it under the terms of the GNU General Public License as published by
  *     the Free Software Foundation, either version 3 of the License, or
  *     (at your option) any later version.
  *
  *     this software is distributed in the hope that it will be useful,
  *     but WITHOUT ANY WARRANTY; without even the implied warranty of
  *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU Lesser General Public License for more details.
+ *     GNU General Public License for more details.
  *
- *     You should have received a copy of the GNU Lesser General Public License
+ *     You should have received a copy of the GNU General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.squashtest.tm.service.testcase;
@@ -36,20 +36,21 @@ public interface ParameterFinder {
 
 	/**
 	 * Given a test case id, will find the parameters that are proper to that test case. Inherited parameters
-	 * will not be returned, for this see {@link #findAllforTestCase(long)} instead.
+	 * will not be returned, for this see {@link #findAllParameters(long)} instead.
 	 * 
 	 * @param testCaseId
 	 * @return returns a list of parameters ordered by name
 	 */
-	List<Parameter> findForTestCase(long testCaseId);
+	List<Parameter> findOwnParameters(long testCaseId);
 
 	/**
-	 * Will find all parameters for the test case along with all parameters found for the call steps.
+	 * Will find all parameters for the test case along with all parameters found for the call steps that
+	 * uses the parameter delegation mode.
 	 * 
 	 * @param testCaseId
 	 * @return returns a list of parameters ordered by test case and name
 	 */
-	List<Parameter> findAllforTestCase(long testCaseId);
+	List<Parameter> findAllParameters(long testCaseId);
 
 
 	/**

@@ -6,16 +6,16 @@
  *     information regarding copyright ownership.
  *
  *     This is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU Lesser General Public License as published by
+ *     it under the terms of the GNU General Public License as published by
  *     the Free Software Foundation, either version 3 of the License, or
  *     (at your option) any later version.
  *
  *     this software is distributed in the hope that it will be useful,
  *     but WITHOUT ANY WARRANTY; without even the implied warranty of
  *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU Lesser General Public License for more details.
+ *     GNU General Public License for more details.
  *
- *     You should have received a copy of the GNU Lesser General Public License
+ *     You should have received a copy of the GNU General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.squashtest.tm.service.internal.campaign;
@@ -42,10 +42,9 @@ import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.campaign.TestSuite;
 import org.squashtest.tm.domain.execution.Execution;
-import org.squashtest.tm.domain.execution.ExecutionStep;
-import org.squashtest.tm.domain.testcase.ActionTestStep;
+import org.squashtest.tm.domain.testcase.Dataset;
+import org.squashtest.tm.domain.testcase.Parameter;
 import org.squashtest.tm.domain.testcase.TestCase;
-import org.squashtest.tm.domain.testcase.TestStep;
 import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.exception.execution.TestPlanItemNotExecutableException;
 import org.squashtest.tm.service.advancedsearch.IndexationService;
@@ -69,6 +68,8 @@ import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.security.PermissionsUtils;
 import org.squashtest.tm.service.security.SecurityCheckableObject;
 import org.squashtest.tm.service.statistics.iteration.IterationStatisticsBundle;
+import org.squashtest.tm.service.testcase.ParameterFinder;
+import org.squashtest.tm.service.testcase.ParameterModificationService;
 import org.squashtest.tm.service.testcase.TestCaseCyclicCallChecker;
 
 @Service("CustomIterationModificationService")
@@ -117,6 +118,7 @@ IterationTestPlanManager {
 
 	@Inject private UnsecuredAutomatedTestManagerService testAutomationService;
 
+
 	@Override
 	@PreAuthorize("hasPermission(#campaignId, 'org.squashtest.tm.domain.campaign.Campaign', 'CREATE') "
 			+ OR_HAS_ROLE_ADMIN)
@@ -144,21 +146,18 @@ IterationTestPlanManager {
 	 */
 	private void populateTestPlan(Iteration iteration, List<CampaignTestPlanItem> campaignTestPlan) {
 		for (CampaignTestPlanItem campaignItem : campaignTestPlan) {
-			TestCase referenced = campaignItem.getReferencedTestCase();
+
+			TestCase testcase = campaignItem.getReferencedTestCase();
+			Dataset dataset = campaignItem.getReferencedDataset();
 			User assignee = campaignItem.getUser();
 
-			Collection<IterationTestPlanItem> testPlanFragment = iterationTestPlanManager.createTestPlanFragment(
-					referenced, assignee);
+			IterationTestPlanItem item = new IterationTestPlanItem(testcase, dataset, assignee);
 
-			appendFragmentToTestPlan(iteration, testPlanFragment);
-		}
-	}
-
-	private void appendFragmentToTestPlan(Iteration iteration, Collection<IterationTestPlanItem> testPlanFragment) {
-		for (IterationTestPlanItem item : testPlanFragment) {
 			iteration.addTestPlan(item);
 		}
 	}
+
+
 
 	@Override
 	@PreAuthorize("hasPermission(#campaignId, 'org.squashtest.tm.domain.campaign.Campaign', 'READ') "
@@ -305,17 +304,18 @@ IterationTestPlanManager {
 	@Override
 	public Execution addExecution(IterationTestPlanItem item) throws TestPlanItemNotExecutableException {
 
-		testCaseCyclicCallChecker.checkNoCyclicCall(item.getReferencedTestCase());
+		TestCase testCase = item.getReferencedTestCase();
+		testCaseCyclicCallChecker.checkNoCyclicCall(testCase);
+
 
 		// if passes, let's move to the next step
-
 		Execution execution = item.createExecution();
 
 		// if we don't persist before we add, add will trigger an update of item.testPlan which fail because execution
 		// has no id yet. this is caused by weird mapping (https://hibernate.onjira.com/browse/HHH-5732)
 		executionDao.persist(execution);
-		item.addExecution(execution);
 
+		item.addExecution(execution);
 		createCustomFieldsForExecutionAndExecutionSteps(execution);
 		createDenormalizedFieldsForExecutionAndExecutionSteps(execution);
 		indexationService.reindexTestCase(item.getReferencedTestCase().getId());
@@ -325,29 +325,16 @@ IterationTestPlanManager {
 
 	private void createCustomFieldsForExecutionAndExecutionSteps(Execution execution){
 		customFieldValuesService.createAllCustomFieldValues(execution, execution.getProject());
-		for (ExecutionStep step : execution.getSteps()) {
-			customFieldValuesService.createAllCustomFieldValues(step, execution.getProject());
-		}
+		customFieldValuesService.createAllCustomFieldValues(execution.getSteps(), execution.getProject());
 	}
 
 	private void createDenormalizedFieldsForExecutionAndExecutionSteps(Execution execution) {
 		LOGGER.debug("Create denormalized fields for Execution {}", execution.getId());
+
 		TestCase sourceTC = execution.getReferencedTestCase();
 		denormalizedFieldValueService.createAllDenormalizedFieldValues(sourceTC, execution);
-		for (ExecutionStep step : execution.getSteps()) {
-			TestStep sourceStep = step.getReferencedTestStep();
-			if (stepIsFromSameProjectAsTC(sourceTC, (ActionTestStep) sourceStep)) {
-				denormalizedFieldValueService.createAllDenormalizedFieldValues((ActionTestStep) sourceStep, step);
-			} else {
-				denormalizedFieldValueService.createAllDenormalizedFieldValues((ActionTestStep) sourceStep, step,
-						sourceTC.getProject());
-			}
-		}
+		denormalizedFieldValueService.createAllDenormalizedFieldValuesForSteps(execution);
 
-	}
-
-	private boolean stepIsFromSameProjectAsTC(TestCase sourceTC, ActionTestStep sourceStep) {
-		return sourceStep.getProject().getId().equals(sourceTC.getProject().getId());
 	}
 
 

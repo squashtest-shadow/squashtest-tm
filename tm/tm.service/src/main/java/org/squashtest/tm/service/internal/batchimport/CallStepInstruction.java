@@ -6,16 +6,16 @@
  *     information regarding copyright ownership.
  *
  *     This is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU Lesser General Public License as published by
+ *     it under the terms of the GNU General Public License as published by
  *     the Free Software Foundation, either version 3 of the License, or
  *     (at your option) any later version.
  *
  *     this software is distributed in the hope that it will be useful,
  *     but WITHOUT ANY WARRANTY; without even the implied warranty of
  *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU Lesser General Public License for more details.
+ *     GNU General Public License for more details.
  *
- *     You should have received a copy of the GNU Lesser General Public License
+ *     You should have received a copy of the GNU General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.squashtest.tm.service.internal.batchimport;
@@ -26,12 +26,14 @@ public class CallStepInstruction extends StepInstruction {
 
 	private final TestCaseTarget calledTC;
 	private final ActionTestStep actionStepBackup;
+	private CallStepParamsInfo datasetInfo;
 
 
-	public CallStepInstruction(TestStepTarget target, TestCaseTarget calledTestCase, ActionTestStep actionStepBackup) {
+	public CallStepInstruction(TestStepTarget target, TestCaseTarget calledTestCase, ActionTestStep actionStepBackup, CallStepParamsInfo datasetInfo) {
 		super(target);
 		this.calledTC = calledTestCase;
 		this.actionStepBackup = actionStepBackup;
+		this.datasetInfo = datasetInfo;
 	}
 
 	public TestCaseTarget getCalledTC() {
@@ -45,7 +47,7 @@ public class CallStepInstruction extends StepInstruction {
 	 */
 	@Override
 	protected LogTrain executeUpdate(Facility facility) {
-		return facility.updateCallStep(getTarget(), null, calledTC, actionStepBackup);
+		return facility.updateCallStep(getTarget(), null, calledTC, datasetInfo, actionStepBackup);
 	}
 
 	/**
@@ -53,7 +55,17 @@ public class CallStepInstruction extends StepInstruction {
 	 */
 	@Override
 	protected LogTrain executeCreate(Facility facility) {
-		return facility.addCallStep(getTarget(), null, calledTC, actionStepBackup);
+		return facility.addCallStep(getTarget(), null, calledTC, datasetInfo, actionStepBackup);
+	}
+
+
+	public CallStepParamsInfo getDatasetInfo() {
+		return datasetInfo;
+	}
+
+
+	public void setDatasetInfo(CallStepParamsInfo datasetInfo) {
+		this.datasetInfo = datasetInfo;
 	}
 
 }
