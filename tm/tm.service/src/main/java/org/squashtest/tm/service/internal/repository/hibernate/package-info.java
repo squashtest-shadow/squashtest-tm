@@ -179,25 +179,26 @@
 		@NamedQuery(name = "testCase.removeAllCallSteps", query = "delete CallTestStep cts where  cts.id in (:stepIds)"),
 		@NamedQuery(name = "testCase.removeAllActionSteps", query = "delete ActionTestStep ats where ats.id in (:stepIds)"),
 
-		@NamedQuery(name = "testCase.excelExportDataFromFolder", query = "select p.id, p.name, index(tc)+1, tc.id, tc.reference, tc.name, tc.importanceAuto, tc.importance, tc.nature, "
-				+ "tc.type, tc.status, tc.description, tc.prerequisite, count(req), "
+		@NamedQuery(name = "testCase.excelExportDataFromFolder", query = "select p.id, p.name, index(content)+1, tc.id, tc.reference, content.name, tc.importanceAuto, tc.importance, tc.nature, "
+				+ "tc.type, tc.status, content.description, tc.prerequisite, count(req), "
 				+ "("
 				+ "select count(distinct caller) from TestCase caller join caller.steps steps join steps.calledTestCase called where steps.class = CallTestStep and called.id = tc.id"
 				+ "), "
-				+ "count(attach), tc.audit.createdOn, tc.audit.createdBy, tc.audit.lastModifiedOn, tc.audit.lastModifiedBy "
-				+ "from TestCaseFolder f join f.content tc join tc.project p inner join tc.attachmentList atlist left join atlist.attachments attach left join tc.requirementVersionCoverages req "
-				+ "where tc.id in (:testCaseIds) " + "group by tc"
+				+ "count(attach), content.audit.createdOn, content.audit.createdBy, content.audit.lastModifiedOn, content.audit.lastModifiedBy "
+				+ "from TestCaseFolder f join f.content content, TestCase tc join tc.project p inner join tc.attachmentList atlist left join atlist.attachments attach left join tc.requirementVersionCoverages req  "
+				+ " where content.id = tc.id and tc.id in (:testCaseIds) group by p.id, tc.id, index(content)+1 , content.id  "
 
 		),
 
-		@NamedQuery(name = "testCase.excelExportDataFromLibrary", query = "select p.id, p.name, index(tc)+1, tc.id, tc.reference, tc.name, tc.importanceAuto, tc.importance, tc.nature, "
-				+ "tc.type, tc.status, tc.description, tc.prerequisite, count(req), "
+		@NamedQuery(name = "testCase.excelExportDataFromLibrary", query = "select p.id, p.name, index(content)+1, tc.id, tc.reference, content.name, tc.importanceAuto, tc.importance, tc.nature, "
+				+ "tc.type, tc.status, content.description, tc.prerequisite, count(req), "
 				+ "("
 				+ "select count(distinct caller) from TestCase caller join caller.steps steps join steps.calledTestCase called where steps.class = CallTestStep and called.id = tc.id"
 				+ "), "
-				+ "count(attach), tc.audit.createdOn, tc.audit.createdBy, tc.audit.lastModifiedOn, tc.audit.lastModifiedBy "
-				+ "from TestCaseLibrary tcl join tcl.rootContent tc join tc.project p inner join tc.attachmentList atlist left join atlist.attachments attach left join tc.requirementVersionCoverages req "
-				+ "where tc.id in (:testCaseIds) " + "group by tc"),
+				+ "count(attach), content.audit.createdOn, content.audit.createdBy, content.audit.lastModifiedOn, content.audit.lastModifiedBy "
+				+ "from TestCaseLibrary tcl join tcl.rootContent content, TestCase tc join tc.project p inner join tc.attachmentList atlist left join atlist.attachments attach left join tc.requirementVersionCoverages req "
+				+ "where content.id = tc.id and  tc.id in (:testCaseIds) "
+				+ "group by p.id, tc.id, index(content)+1 , content.id  "),
 
 		@NamedQuery(name = "testCase.excelExportCUF", query = "select cfv.boundEntityId, cfv.boundEntityType, cf.code, cfv.value, cfv.longValue, cf.inputType "
 				+ "from CustomFieldValue cfv join cfv.binding binding join binding.customField cf "
@@ -225,19 +226,25 @@
 		@NamedQuery(name = "testStep.findPositionOfStep", query = "select index(tsteps) from TestCase tc join tc.steps tsteps where tsteps.id = :stepId"),
 		@NamedQuery(name = "testStep.stringIsFoundInStepsOfTestCase", query = "select count(steps) from TestCase tc join tc.steps steps where tc.id = :testCaseId and (steps.action like :stringToFind or steps.expectedResult like :stringToFind ) "),
 		@NamedQuery(name = "testStep.findAllAttachmentLists", query = "select step.attachmentList.id from ActionTestStep step where step.id in (:testStepIds)"),
+
 		@NamedQuery(name = "testStep.excelExportActionSteps", query = "select tc.id, st.id, index(st)+1, 0, st.action, st.expectedResult, count(distinct req), count(attach) "
 				+ "from TestCase tc inner join tc.steps st inner join st.attachmentList atlist left join atlist.attachments attach left join st.requirementVersionCoverages req "
-				+ "where st.class = ActionTestStep " + "and tc.id in (:testCaseIds) " + "group by st"),
+				+ "where st.class = ActionTestStep "
+				+ "and tc.id in (:testCaseIds) "
+				+ "group by  tc.id, st.id, index(st)+1,  st.action, st.expectedResult "),
+
 		@NamedQuery(name = "testStep.excelExportCallSteps", query = "select tc.id, st.id, index(st)+1, 1, cast(st.calledTestCase.id as string), '', 0l, 0l "
 				+ "from TestCase tc inner join tc.steps st "
 				+ "where st.class = CallTestStep "
-				+ "and tc.id in (:testCaseIds) " + "group by st"),
+				+ "and tc.id in (:testCaseIds) " + "group by tc.id, st.id, index(st)+1 , st.calledTestCase.id "),
+
 		@NamedQuery(name = "testStep.excelExportCUF", query = "select cfv.boundEntityId, cfv.boundEntityType, cf.code, cfv.value, cfv.longValue, cf.inputType "
 				+ "from CustomFieldValue cfv join cfv.binding binding join binding.customField cf "
 				+ "where cfv.boundEntityId in ("
 				+ "select st.id from TestCase tc inner join tc.steps st where tc.id in (:testCaseIds)"
 				+ ") "
 				+ "and cfv.boundEntityType = 'TEST_STEP'"),
+
 		@NamedQuery(name = "testStep.findBasicInfosByTcId", query = "select case when st.class = ActionTestStep then 'ACTION' else 'CALL' end as steptype, "
 				+ "case when st.class = CallTestStep then st.calledTestCase.id else null end as calledTC "
 				+ "from TestCase tc join tc.steps st where tc.id = :tcId order by index(st)"),
@@ -479,13 +486,17 @@
 				+ "group by tp.executionStatus, tc.importance, iter.scheduledPeriod.scheduledStartDate, iter.scheduledPeriod.scheduledEndDate "
 				+ "order by tp.executionStatus, tc.importance"),
 
-		@NamedQuery(name = "TestCasePathEdge.findPathById", query = "select concat('"+HibernatePathService.PATH_SEPARATOR+"', p.name, '"+HibernatePathService.PATH_SEPARATOR+"', group_concat(n.name, 'order by', edge.depth, 'desc', '"+HibernatePathService.PATH_SEPARATOR+"')) from TestCasePathEdge edge, TestCaseLibraryNode n join n.project p "
-				+ "where n.id = edge.ancestorId "
-				+ "and edge.descendantId = :nodeId "
+		@NamedQuery(name = "TestCasePathEdge.findPathById", query = "select concat('"
+				+ HibernatePathService.PATH_SEPARATOR + "', p.name, '" + HibernatePathService.PATH_SEPARATOR
+				+ "', group_concat(n.name, 'order by', edge.depth, 'desc', '" + HibernatePathService.PATH_SEPARATOR
+				+ "')) from TestCasePathEdge edge, TestCaseLibraryNode n join n.project p "
+				+ "where n.id = edge.ancestorId " + "and edge.descendantId = :nodeId "
 				+ "group by edge.descendantId, p.id"),
-		@NamedQuery(name = "TestCasePathEdge.findPathsByIds", query = "select edge.descendantId, concat('"+HibernatePathService.PATH_SEPARATOR+"', p.name, '"+HibernatePathService.PATH_SEPARATOR+"', group_concat(n.name, 'order by', edge.depth, 'desc', '"+HibernatePathService.PATH_SEPARATOR+"')) from TestCasePathEdge edge, TestCaseLibraryNode n join n.project p "
-				+ "where n.id = edge.ancestorId "
-				+ "and edge.descendantId in (:nodeIds) "
+		@NamedQuery(name = "TestCasePathEdge.findPathsByIds", query = "select edge.descendantId, concat('"
+				+ HibernatePathService.PATH_SEPARATOR + "', p.name, '" + HibernatePathService.PATH_SEPARATOR
+				+ "', group_concat(n.name, 'order by', edge.depth, 'desc', '" + HibernatePathService.PATH_SEPARATOR
+				+ "')) from TestCasePathEdge edge, TestCaseLibraryNode n join n.project p "
+				+ "where n.id = edge.ancestorId " + "and edge.descendantId in (:nodeIds) "
 				+ "group by edge.descendantId, p.id"),
 		@NamedQuery(name = "TestCasePathEdge.findSortedParentIds", query = "select n.id  from TestCasePathEdge edge, TestCaseLibraryNode n where edge.descendantId = :nodeId and edge.ancestorId = n.id order by edge.depth desc"),
 		@NamedQuery(name = "TestCasePathEdge.findSortedParentNames", query = "select n.name  from TestCasePathEdge edge, TestCaseLibraryNode n where edge.descendantId = :nodeId and edge.ancestorId = n.id order by edge.depth desc"),
