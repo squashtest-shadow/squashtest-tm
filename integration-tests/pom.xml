@@ -12,6 +12,10 @@
   <name>Squashtest TM - Integration tests module</name>
 
   <properties>
+    <!-- On Jenkins server these relative paths are not interpreted in the same way by liquibase and the datasource. These 
+      props should be overridden with absolute paths (which don't work under windows...) -->
+    <dbunit-database.url>jdbc:h2:target/database/squash-it-dbunit/squash-it</dbunit-database.url>
+    <non-dbunit-database.url>jdbc:h2:target/database/squash-it-non-dbunit/squash-it</non-dbunit-database.url>
 
     <hibernate.dialect>org.hibernate.dialect.H2Dialect</hibernate.dialect>
     <database.dialect>h2</database.dialect>
