@@ -646,12 +646,12 @@ public class ExportModel {
 		private String value;
 		private InputType type;
 
-		public CustomField(Long ownerId, BindableEntity ownerType, String code, String value, String longValue, InputType type) {
+		public CustomField(Long ownerId, BindableEntity ownerType, String code, String value, String largeValue, InputType type) {
 			super();
 			this.ownerId = ownerId;
 			this.ownerType = ownerType;
 			this.code = code;
-			this.value = (! StringUtils.isBlank(longValue)) ? longValue : value;
+			this.value = (! StringUtils.isBlank(largeValue)) ? largeValue : value;
 			this.type = type;
 		}
 
