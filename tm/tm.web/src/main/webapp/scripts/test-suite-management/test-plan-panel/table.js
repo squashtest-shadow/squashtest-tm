@@ -284,6 +284,24 @@ define(
 				var tableSettings = {
 
 					bFilter : true,
+					
+					fnPreDrawCallback : function(settings){
+						
+						// hide the Dataset column if all is empty
+						var alldata = this.fnGetData();
+						var havingDataset = $.grep(alldata, function(model){ return model.dataset.available.length !== 0 });
+						var dsColVis = (havingDataset.length !== 0);
+						
+						var dsColIdx;
+						$.each(settings.aoColumns, function(idx, col){ 
+							if (col.mDataProp.search(/dataset/) > -1) {
+								dsColIdx = idx; 
+								return false;
+							}
+						});
+						this.fnSetColumnVis(dsColIdx, dsColVis);
+						
+					},
 
 					fnRowCallback : function(row, data, displayIndex) {
 
@@ -320,7 +338,7 @@ define(
 
 						this.data('sortmode').manage(aaSorting);
 
-						// hide the Dataset column if all is empty
+
 
 					}
 				};

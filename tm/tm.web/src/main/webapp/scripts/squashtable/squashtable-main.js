@@ -1082,6 +1082,7 @@ define(["jquery",
 				this.find(selector).each(function(idx,cell){
 					var link = table.addHLinkToCellText(cell, 'javascript:void(0)');
 					link.addClass('toggle-row-label');
+					$(cell).empty();
 					template.clone().append(link).appendTo(cell);
 				});
 			});
