@@ -37,7 +37,7 @@ define(["jquery",  "jquery.squash.rangedatepicker", "squash.translator" ],
 	_weights['VERY_HIGH'] 	= '1-'+_weights['VERY_HIGH']; 
 	_weights['HIGH'] 		= '2-'+_weights['HIGH']; 
 	_weights['MEDIUM']		= '3-'+_weights['MEDIUM']; 
-	_weights['LOW'] 		= '4-'+_weights['VERY_HIGH']; 
+	_weights['LOW'] 		= '4-'+_weights['LOW']; 
 	
 
 	/*

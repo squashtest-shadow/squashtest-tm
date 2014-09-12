@@ -1111,12 +1111,18 @@ td.button-cell, th.button-cell, td.icon-cell, th.icon-cell {
 	
 }
 
-.requirement-indirect-verification,.requirement-indirect-verification td>a
+
+.requirement-indirect-verification td>a
 	{
 	font-style: italic;
 	color: gray;
 }
 
+.inherited-parameter-verification td>
+	{
+	font-style: italic;
+	color: gray;
+}
 
 div#project-description-table .projectInactive {
 	margin:0;

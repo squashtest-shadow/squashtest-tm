@@ -82,6 +82,13 @@ define([ "jquery", "backbone", "jeditable.simpleJEditable", "jquery.squash.confi
 
 		},
 
+		discriminateInheritedVerifications : function(row, data, displayIndex) {
+			if (!data["directly-associated"]) {
+				$(row).addClass("inherited-parameter-verification");
+				$('td.delete-button', row).html(''); // remove the delete button
+			}
+		},
+		
 		_configureTable : function() {
 			var self = this;
 			$(this.el).squashTable(self._dataTableSettings(self), self._squashSettings(self));
@@ -89,10 +96,10 @@ define([ "jquery", "backbone", "jeditable.simpleJEditable", "jquery.squash.confi
 		},
 
 		_parametersTableRowCallback : function(row, data, displayIndex) {
-			if (this.settings.permissions.isWritable) {
+			if (data["directly-associated"] && this.settings.permissions.isWritable) {
 				this.addSimpleJEditableToName(row, data);
 			}
-
+			this.discriminateInheritedVerifications(row, data, displayIndex);
 			return row;
 		},
 
