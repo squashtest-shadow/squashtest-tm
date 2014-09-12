@@ -25,10 +25,10 @@ import javax.inject.Inject
 
 import org.spockframework.util.NotThreadSafe
 import org.springframework.transaction.annotation.Transactional
-import org.squashtest.tm.domain.testcase.ParameterAssignationMode;
+import org.squashtest.tm.domain.testcase.ParameterAssignationMode
 import org.squashtest.tm.exception.CyclicStepCallException
-import org.squashtest.tm.service.DbunitServiceSpecification;
-import org.squashtest.tm.service.internal.testcase.TestCaseCallTreeFinder;
+import org.squashtest.tm.service.DbunitServiceSpecification
+import org.squashtest.tm.service.internal.testcase.TestCaseCallTreeFinder
 import org.squashtest.tm.service.testcase.CallStepManagerService
 import org.squashtest.tm.service.testcase.TestCaseModificationService
 import org.unitils.dbunit.annotation.DataSet
@@ -50,7 +50,7 @@ class CallStepManagerServiceIT extends DbunitServiceSpecification {
 	DatasetModificationService datasetService
 
 	@Inject
-	TestCaseModificationService testCaseService;
+	TestCaseModificationService testCaseService
 
 	@Inject
 	TestCaseCallTreeFinder callTreeFinder
@@ -67,10 +67,10 @@ class CallStepManagerServiceIT extends DbunitServiceSpecification {
 		given :
 
 		when :
-		callStepService.addCallTestStep(-1L, -1L)	;
+		callStepService.addCallTestStep(-1L, -1L)	
 
 		then :
-		thrown(CyclicStepCallException);
+		thrown(CyclicStepCallException)
 	}
 
 
@@ -83,7 +83,7 @@ class CallStepManagerServiceIT extends DbunitServiceSpecification {
 		callStepService.addCallTestStep(-31L, -1L)
 
 		then :
-		thrown(CyclicStepCallException);
+		thrown(CyclicStepCallException)
 	}
 
 
@@ -113,7 +113,7 @@ class CallStepManagerServiceIT extends DbunitServiceSpecification {
 		callStepService.checkForCyclicStepCallBeforePaste(destinationTestCaseid, pastedStepsIds)
 
 		then :
-		thrown(CyclicStepCallException);
+		thrown(CyclicStepCallException)
 	}
 
 	@DataSet("CallStepManagerServiceIT.dataset.xml")
@@ -125,7 +125,7 @@ class CallStepManagerServiceIT extends DbunitServiceSpecification {
 		callStepService.checkForCyclicStepCallBeforePaste(destinationTestCaseid, pastedStepsIds)
 
 		then :
-		thrown(CyclicStepCallException);
+		thrown(CyclicStepCallException)
 	}
 
 
@@ -134,13 +134,13 @@ class CallStepManagerServiceIT extends DbunitServiceSpecification {
 
 		given: 	"checking initial conditions"
 
-		def initialTc1IsTrue = theTestCase(1l).canAccessParameters ( [ 321l, 221l ] )
-		def initialTc11IsTrue = theTestCase(11l).canAccessParameters ( [321l, 221l] )
+		def initialTc1IsTrue = theTestCase(-1l).canAccessParameters ( [ -321l, -221l ] )
+		def initialTc11IsTrue = theTestCase(-11l).canAccessParameters ( [-321l, -221l] )
 
 
 		and : "the call step that will change that"
 
-		def callstepId = 21l;
+		def callstepId = -21l
 
 		when : "changing the assignation mode of a step to DELEGATE"
 		callStepService.setParameterAssignationMode callstepId, ParameterAssignationMode.DELEGATE, null
@@ -150,8 +150,8 @@ class CallStepManagerServiceIT extends DbunitServiceSpecification {
 		initialTc1IsTrue
 		initialTc11IsTrue
 
-		theTestCase(1l).canAccessParameters ( [321l, 221l, 211l, 212l ] )
-		theTestCase(11l).canAccessParameters (  [321l, 221l, 211l, 212l ] )
+		theTestCase(-1l).canAccessParameters ( [-321l, -221l, -211l, -212l ] )
+		theTestCase(-11l).canAccessParameters (  [-321l, -221l, -211l, -212l ] )
 
 	}
 
@@ -160,13 +160,13 @@ class CallStepManagerServiceIT extends DbunitServiceSpecification {
 	def "settings call step to nothing would remove parameter delegation from upstream test cases"(){
 		given: 	"checking initial conditions"
 
-		def initialTc1IsTrue = theTestCase(1l).canAccessParameters ( [ 321l, 221l ] )
-		def initialTc11IsTrue = theTestCase(11l).canAccessParameters ( [321l, 221l] )
+		def initialTc1IsTrue = theTestCase(-1l).canAccessParameters ( [ -321l, -221l ] )
+		def initialTc11IsTrue = theTestCase(-11l).canAccessParameters ( [-321l, -221l] )
 
 
 		and : "the call step that will change that"
 
-		def callstepId = 22l;
+		def callstepId = -22l
 
 		when : "changing the assignation mode of a step to NOTHING"
 		callStepService.setParameterAssignationMode callstepId, ParameterAssignationMode.NOTHING, null
@@ -176,8 +176,8 @@ class CallStepManagerServiceIT extends DbunitServiceSpecification {
 		initialTc1IsTrue
 		initialTc11IsTrue
 
-		theTestCase(1l).canAccessParameters ( [] )
-		theTestCase(11l).canAccessParameters (  [] )
+		theTestCase(-1l).canAccessParameters ( [] )
+		theTestCase(-11l).canAccessParameters (  [] )
 	}
 
 
@@ -187,14 +187,14 @@ class CallStepManagerServiceIT extends DbunitServiceSpecification {
 
 		given: 	"checking initial conditions"
 
-		def initialTc1IsTrue = theTestCase(1l).canAccessParameters ( [ 321l, 221l ] )
-		def initialTc11IsTrue = theTestCase(11l).canAccessParameters ( [321l, 221l] )
-		def initialTc21IsTrue = theTestCase(21l).canAccessParameters ( [211l, 212l] )
+		def initialTc1IsTrue = theTestCase(-1l).canAccessParameters ( [ -321l, -221l ] )
+		def initialTc11IsTrue = theTestCase(-11l).canAccessParameters ( [-321l, -221l] )
+		def initialTc21IsTrue = theTestCase(-21l).canAccessParameters ( [-211l, -212l] )
 
 
 		and : "the call step that will change that"
 
-		def callstepId = 31l;
+		def callstepId = -31l
 
 		when : "changing the assignation mode of a step to DELEGATE"
 		callStepService.setParameterAssignationMode callstepId, ParameterAssignationMode.DELEGATE, null
@@ -205,9 +205,9 @@ class CallStepManagerServiceIT extends DbunitServiceSpecification {
 		initialTc11IsTrue
 		initialTc21IsTrue
 
-		theTestCase(1l).canAccessParameters ( [ 321l, 221l ]  )	// has not changed
-		theTestCase(11l).canAccessParameters (  [ 321l, 221l ]  ) // has not changed
-		theTestCase(21l).canAccessParameters (  [211l, 212l, 311l, 312l, 313l] )	// has changed
+		theTestCase(-1l).canAccessParameters ( [ -321l, -221l ]  )	// has not changed
+		theTestCase(-11l).canAccessParameters (  [ -321l, -221l ]  ) // has not changed
+		theTestCase(-21l).canAccessParameters (  [-211l, -212l, -311l, -312l, -313l] )	// has changed
 	}
 
 
@@ -221,6 +221,6 @@ class CallStepManagerServiceIT extends DbunitServiceSpecification {
 			}
 		]
 
-		return bob;
+		return bob
 	}
 }

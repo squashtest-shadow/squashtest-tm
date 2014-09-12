@@ -241,14 +241,14 @@
 
 		<!-- Rebinds automated tests to the right ta project id -->
 		<sql>
-			update AUTOMATED_TEST at 
-			set at.PROJECT_ID = (
+			update AUTOMATED_TEST  
+			set PROJECT_ID = (
 				select tap.TA_PROJECT_ID 
 				from TEST_AUTOMATION_PROJECT tap
                   inner join TEST_CASE_LIBRARY_NODE tcln on tcln.PROJECT_ID = tap.TM_PROJECT_ID
                   inner join TEST_CASE tc on tc.TCLN_ID = tcln.TCLN_ID
-				where at.PROJECT_ID = tap.FORMER_ID
-				  and at.TEST_ID = tc.TA_TEST
+				where PROJECT_ID = tap.FORMER_ID
+				  and TEST_ID = tc.TA_TEST
 				group by tc.TA_TEST, tap.TA_PROJECT_ID 
 			);
 		</sql>
@@ -289,12 +289,12 @@
 			is bound to multiple TA project hosted by multiple TA server, only one will be picked up. 
 		-->
 		<sql>
-			update PROJECT as project
+			update PROJECT 
 			set ta_server_id = (
 				select max(server.server_id) 
 				from TEST_AUTOMATION_SERVER server 
 				inner join TEST_AUTOMATION_PROJECT taproj on server.server_id = taproj.server_id
-				where taproj.tm_project_id = project.project_id
+				where taproj.tm_project_id = project_id
 			);					
 		</sql>
 		

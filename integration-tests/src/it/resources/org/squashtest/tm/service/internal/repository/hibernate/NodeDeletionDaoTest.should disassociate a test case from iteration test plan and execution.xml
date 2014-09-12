@@ -5,7 +5,7 @@
 
  -->
 
-<!DOCTYPE dataset SYSTEM "../../../../../../../dtd/squash-tm.1.9.10.dtd">
+<!DOCTYPE dataset SYSTEM "../../../../../../../dtd/squash-tm.1.11.0.dtd">
 <dataset>
 
 
@@ -54,7 +54,7 @@
 	<TCLN_RELATIONSHIP ANCESTOR_ID="-1" DESCENDANT_ID="-11" CONTENT_ORDER="0"/> <!--  TCFOLDER 1 CONTAINS TC1 -->
 	<TCLN_RELATIONSHIP ANCESTOR_ID="-1" DESCENDANT_ID="-12" CONTENT_ORDER="1"/> <!--  TCFOLDER 1 CONTAINS T2 -->
 
-	<TEST_CASE_LIBRARY_CONTENT/>
+	<test_case_library_content/>
 	
 	<TEST_STEP TEST_STEP_ID="-111" /> <!-- TEST CASE 1 STEP 1  -->
 	<TEST_STEP TEST_STEP_ID="-112" /> <!-- TEST CASE 1 STEP 2  -->
@@ -70,7 +70,7 @@
 	<CALL_TEST_STEP TEST_STEP_ID="-112" CALLED_TEST_CASE_ID="-12" />
 
 
-	<TEST_CASE_STEPS/>
+	<test_case_steps/>
 
 
 	<!--  ============================ CAMPAIGN LIBRARY NODE ========================================= -->

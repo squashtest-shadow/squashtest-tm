@@ -21,7 +21,7 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
-<!DOCTYPE dataset SYSTEM "../../../../../dtd/squash-tm.1.9.10.dtd">
+<!DOCTYPE dataset SYSTEM "../../../../../dtd/squash-tm.1.11.0.dtd">
 <dataset>
   <ATTACHMENT_LIST ATTACHMENT_LIST_ID="-1" />
   <ATTACHMENT_LIST ATTACHMENT_LIST_ID="-2" />
@@ -70,6 +70,6 @@
     CREATED_BY="DBU" CREATED_ON="2011-01-01" />
   <ITEM_TEST_PLAN_LIST ITERATION_ID="-1" ITEM_TEST_PLAN_ID="-1" ITEM_TEST_PLAN_ORDER="0" />
   
-  <CUSTOM_FIELD_VALUE/>
+  <custom_field_value/>
   
 </dataset>

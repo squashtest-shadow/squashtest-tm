@@ -20,7 +20,7 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
-<!DOCTYPE dataset SYSTEM "../../../../../../../dtd/squash-tm.1.9.10.dtd">
+<!DOCTYPE dataset SYSTEM "../../../../../../../dtd/squash-tm.1.11.0.dtd">
 <dataset>
 	<!-- TEST CASE 1 -->
 	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="-1000" />
@@ -106,6 +106,6 @@
 	
 	<ITEM_TEST_PLAN_EXECUTION ITEM_TEST_PLAN_ID="-23" EXECUTION_ID="-230" EXECUTION_ORDER="0"/>
 	
-	<ITERATION_TEST_PLAN_ITEM />
-	<TEST_CASE />
+	<iteration_test_plan_item />
+	<test_case />
 </dataset>

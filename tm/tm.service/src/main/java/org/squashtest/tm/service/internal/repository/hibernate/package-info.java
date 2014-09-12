@@ -233,12 +233,12 @@
 				+ "group by  tc.id, st.id, index(st)+1,  st.action, st.expectedResult "),
 
 	@NamedQuery(name = "testStep.excelExportCallSteps", query = "select tc.id, st.id, index(st)+1, 1, cast(st.calledTestCase.id as string), '', 0l, 0l, dataset.name," +
-	"													case st.delegateParameterValues when true then 1 else 0 end "
+	" case st.delegateParameterValues when true then 1 else 0 end "
 	+ "from TestCase tc inner join tc.steps st left join st.calledDataset dataset "
 	+ "where st.class = CallTestStep "
-				+ "and tc.id in (:testCaseIds) " + "group by tc.id, st.id, index(st)+1 , st.calledTestCase.id "),
+	+ "and tc.id in (:testCaseIds) " + "group by tc.id, st.id, index(st)+1 , st.calledTestCase.id , dataset.name, st.delegateParameterValues "),
 
-		@NamedQuery(name = "testStep.excelExportCUF", query = "select cfv.boundEntityId, cfv.boundEntityType, cf.code, cfv.value, cfv.longValue, cf.inputType "
+		@NamedQuery(name = "testStep.excelExportCUF", query = "select cfv.boundEntityId, cfv.boundEntityType, cf.code, cfv.value, cfv.largeValue, cf.inputType "
 				+ "from CustomFieldValue cfv join cfv.binding binding join binding.customField cf "
 				+ "where cfv.boundEntityId in ("
 				+ "select st.id from TestCase tc inner join tc.steps st where tc.id in (:testCaseIds)"

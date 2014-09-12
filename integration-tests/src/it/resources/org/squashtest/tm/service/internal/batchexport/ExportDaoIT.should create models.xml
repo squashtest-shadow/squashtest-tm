@@ -21,7 +21,7 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
-<!DOCTYPE dataset SYSTEM "../../../../../../dtd/squash-tm.1.9.10.dtd">
+<!DOCTYPE dataset SYSTEM "../../../../../../dtd/squash-tm.1.11.0.dtd">
 <dataset>
 
 <ATTACHMENT_LIST ATTACHMENT_LIST_ID="-1"/>
@@ -90,7 +90,7 @@
 <CUSTOM_FIELD_VALUE BOUND_ENTITY_ID="-11" CFV_ID="-6" BOUND_ENTITY_TYPE="TEST_CASE" CFB_ID="-3" VALUE="tc-11-cuf2"/>
 
 <TEST_STEP TEST_STEP_ID="-102"/>
-<CALL_TEST_STEP TEST_STEP_ID="-102" CALLED_TEST_CASE_ID="-11"/>
+<CALL_TEST_STEP TEST_STEP_ID="-102" CALLED_TEST_CASE_ID="-11" />
 <TEST_CASE_STEPS STEP_ID="-102" TEST_CASE_ID="-10" STEP_ORDER="1"/>
 
 <!-- FOLDER 2 -->

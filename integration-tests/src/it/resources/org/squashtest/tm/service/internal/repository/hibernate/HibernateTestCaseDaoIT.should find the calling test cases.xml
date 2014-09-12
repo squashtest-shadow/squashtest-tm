@@ -28,7 +28,7 @@
 	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="-1" />
 
 	<!--  some project -->
-	  <PROJECT PROJECT_ID="-20" ATTACHMENT_LIST_ID="1" CREATED_ON="2014-08-28" CREATED_BY="dbu" NAME="P20" />
+	  <PROJECT PROJECT_ID="-20" ATTACHMENT_LIST_ID="-1" CREATED_ON="2014-08-28" CREATED_BY="dbu" NAME="P20" />
 
 	<!--  test case library nodes ... -->
 

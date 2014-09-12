@@ -21,7 +21,7 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
-<!DOCTYPE dataset SYSTEM "../../../../../dtd/squash-tm.1.9.10.dtd">
+<!DOCTYPE dataset SYSTEM "../../../../../dtd/squash-tm.1.11.0.dtd">
 
 <dataset>
 
@@ -49,8 +49,8 @@
 	<ACL_RESPONSIBILITY_SCOPE_ENTRY ID="-241" PARTY_ID="-20" ACL_GROUP_ID="-100" OBJECT_IDENTITY_ID="-1000" />
 	<ACL_RESPONSIBILITY_SCOPE_ENTRY ID="-242" PARTY_ID="-30" ACL_GROUP_ID="-100" OBJECT_IDENTITY_ID="-1000" />
 	
-	<ACL_GROUP_PERMISSION />
-	<CORE_USER/>
+	<acl_group_permission />
+	<core_user/>
 	
 	
 	
