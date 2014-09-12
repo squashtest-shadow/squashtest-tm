@@ -67,9 +67,10 @@ define(["jquery",  "jquery.squash.rangedatepicker", "squash.translator" ],
 		table.find(".th_input").show();
 
 		$.each(settings.aoColumns, function(idx){
-			var $th = $(settings.aoColumns[idx].nTh);
-			if ($th.is('.tp-th-filter')){
-				settings.aoPreSearchCols[idx].sSearch = $th.find('.filter_input').val();
+			var column = settings.aoColumns[idx];
+			var $th = $(column.nTh);
+			if (column.bVisible && $th.is('.tp-th-filter')){
+				column.sSearch = $th.find('.filter_input').val();
 			}
 		});
 

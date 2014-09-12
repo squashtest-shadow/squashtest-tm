@@ -321,6 +321,9 @@ define(
 						var aaSorting = settings.aaSorting;
 
 						this.data('sortmode').manage(aaSorting);
+						
+						// hide the Dataset column if all is empty
+						
 					}
 				};
 
