@@ -37,7 +37,7 @@ define(
 				'{{#each this}}' +
 				'<tr class="create-node-custom-field-row">' +
 					'<td><label>{{label}}</label></td>' +
-					'<td id="customFields[{{id}}]" class="create-node-custom-field" >' +
+					'<td data-cuf-id="{{id}}" class="create-node-custom-field" >' +
 					'{{#ifequals inputType.enumName "TAG"}}' +
 						'<ul class="abort-key-enter">' +
 						'{{#each defaultValue}}' +
@@ -152,19 +152,25 @@ define(
 				 * the rest of the entity model
 				 */
 				this.readValues = function() {
-					var result = {};
-					var table = this.table;
+					var result = {
+						customFields : {}
+					};
+					var table = this.table,
+						cufDefs = this.cufDefs;
 
 					var fields = table.find(".create-node-custom-field");
 					if (fields.length > 0) {
 						fields.each(function(idx) {
-							result[this.id] = $(this).editableCustomfield("value");
+							$this = $(this);
+							result.customFields[$this.data('cuf-id')] = $this.editableCustomfield("value");
 						});
 					}
 					return result;
 				};
 
 			}
+
+			
 
 			return CUFValuesCreator;
 

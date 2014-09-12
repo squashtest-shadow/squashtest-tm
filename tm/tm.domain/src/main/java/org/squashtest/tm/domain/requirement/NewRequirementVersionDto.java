@@ -30,6 +30,7 @@ import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
+import org.squashtest.tm.domain.customfield.RawValue;
 
 /**
  * Data holder for requirement version creation. We cannot use a requirement version because of its contrained
@@ -62,7 +63,7 @@ public class NewRequirementVersionDto {
 	public void setCriticality(RequirementCriticality criticality) {
 		this.criticality = criticality;
 	}
-	
+
 	public RequirementCategory getCategory() {
 		return category;
 	}
@@ -78,12 +79,12 @@ public class NewRequirementVersionDto {
 	public void setReference(String reference) {
 		this.reference = reference;
 	}
-	
-	public Map<Long, String> getCustomFields() {
+
+	public Map<Long, RawValue> getCustomFields() {
 		return customFields;
 	}
 
-	public void setCustomFields(Map<Long, String> customFields) {
+	public void setCustomFields(Map<Long, RawValue> customFields) {
 		this.customFields = customFields;
 	}
 
@@ -91,23 +92,23 @@ public class NewRequirementVersionDto {
 
 	/*@NotBlank*/
 	private String name;
-	
+
 	private String description;
-	
+
 	/*@NotNull*/
 	private RequirementCriticality criticality = RequirementCriticality.UNDEFINED;
-	
+
 	/*@NotNull*/
 	private RequirementCategory category = RequirementCategory.UNDEFINED;
-	
+
 	/*@Length(max=50)*/
 	private String reference;
-	
-	/*@NotNull 
+
+	/*@NotNull
 	@NotEmpty*/
 	//maps a CustomField id to the value of a corresponding CustomFieldValue
-	private Map<Long, String> customFields = new HashMap<Long, String>();
-	
+	private Map<Long, RawValue> customFields = new HashMap<Long, RawValue>();
+
 
 	public RequirementVersion toRequirementVersion() {
 		RequirementVersion version = new RequirementVersion();
@@ -123,8 +124,8 @@ public class NewRequirementVersionDto {
 
 		return version;
 	}
-	
-	
+
+
 	public static class NewRequirementVersionDaoValidator implements Validator{
 
 		/**
@@ -135,13 +136,13 @@ public class NewRequirementVersionDto {
 		 * 
 		 */
 		private static final String MESSAGE_NOT_BLANK = "message.notBlank";
-		
+
 		private MessageSource messageSource;
-		
+
 		public void setMessageSource(MessageSource messageSource) {
 			this.messageSource = messageSource;
 		}
-		
+
 
 		@Override
 		public boolean supports(Class<?> clazz) {
@@ -153,33 +154,33 @@ public class NewRequirementVersionDto {
 			Locale locale = LocaleContextHolder.getLocale();
 			String notBlank = messageSource.getMessage(MESSAGE_NOT_BLANK, null, locale);
 			String lengthMax = messageSource.getMessage(MESSAGE_LENGTH_MAX, new Object[]{"50"}, locale);
-			
+
 			NewRequirementVersionDto model = (NewRequirementVersionDto) target;
-			
+
 			ValidationUtils.rejectIfEmptyOrWhitespace(errors, "name", MESSAGE_NOT_BLANK, notBlank);
-			
+
 			if (model.criticality==null){
 				errors.rejectValue("criticality", MESSAGE_NOT_BLANK, notBlank);
 			}
-			
+
 			if (model.category==null){
 				errors.rejectValue("category", MESSAGE_NOT_BLANK, notBlank);
 			}
-			
+
 			if (model.reference.length()>50){
 				errors.rejectValue("reference", MESSAGE_LENGTH_MAX, lengthMax);
 			}
-			
-			
-			for (Entry<Long, String> entry : model.getCustomFields().entrySet()){
-				String value = entry.getValue();
-				if (value.trim().isEmpty()){
+
+
+			for (Entry<Long, RawValue> entry : model.getCustomFields().entrySet()){
+				RawValue value = entry.getValue();
+				if (value.isEmpty()){
 					errors.rejectValue("customFields["+entry.getKey()+"]", MESSAGE_NOT_BLANK, notBlank);
 				}
 			}
 		}
-		
+
 	}
-	
-	
+
+
 }

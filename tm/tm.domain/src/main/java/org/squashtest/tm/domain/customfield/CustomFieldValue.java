@@ -53,7 +53,7 @@ import org.squashtest.tm.exception.customfield.WrongCufDateFormatException;
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "FIELD_TYPE", discriminatorType = DiscriminatorType.STRING)
 @DiscriminatorValue("CF")
-public class CustomFieldValue implements Identified {
+public class CustomFieldValue implements Identified, SingleValuedCustomFieldValue {
 	private static final Logger LOGGER = LoggerFactory.getLogger(CustomFieldValue.class);
 	public static final int MAX_SIZE = 255;
 	@Id
@@ -94,12 +94,16 @@ public class CustomFieldValue implements Identified {
 		this.id = id;
 	}
 
+	@Override
 	public String getValue() {
 		return value;
 	}
+
+	@Override
 	public void setValue(String value){
 		doSetValue(value);
 	}
+
 	private void doSetValue(String value) {
 		CustomField cuf = getCustomField();
 		if (cuf != null) {

@@ -50,6 +50,7 @@ import org.squashtest.tm.core.foundation.lang.Couple;
 import org.squashtest.tm.core.foundation.lang.PathUtils;
 import org.squashtest.tm.domain.customfield.BoundEntity;
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
+import org.squashtest.tm.domain.customfield.RawValue;
 import org.squashtest.tm.domain.project.GenericProject;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.testautomation.AutomatedTest;
@@ -163,7 +164,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	@Override
 	@PreAuthorize("hasPermission(#parentTestCaseId, 'org.squashtest.tm.domain.testcase.TestCase' , 'WRITE') or hasRole('ROLE_ADMIN')")
 	public ActionTestStep addActionTestStep(long parentTestCaseId, ActionTestStep newTestStep,
-			Map<Long, String> customFieldValues) {
+			Map<Long, RawValue> customFieldValues) {
 
 		ActionTestStep step = addActionTestStep(parentTestCaseId, newTestStep);
 		initCustomFieldValues((ActionTestStep) step, customFieldValues);
@@ -443,7 +444,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	 * @param entity
 	 * @param initialCustomFieldValues
 	 */
-	protected void initCustomFieldValues(BoundEntity entity, Map<Long, String> initialCustomFieldValues) {
+	protected void initCustomFieldValues(BoundEntity entity, Map<Long, RawValue> initialCustomFieldValues) {
 
 		List<CustomFieldValue> persistentValues = customFieldValuesService.findAllCustomFieldValues(entity);
 
@@ -451,8 +452,8 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 			Long customFieldId = value.getCustomField().getId();
 
 			if (initialCustomFieldValues.containsKey(customFieldId)) {
-				String newValue = initialCustomFieldValues.get(customFieldId);
-				value.setValue(newValue);
+				RawValue newValue = initialCustomFieldValues.get(customFieldId);
+				newValue.setValueFor(value);
 			}
 
 		}

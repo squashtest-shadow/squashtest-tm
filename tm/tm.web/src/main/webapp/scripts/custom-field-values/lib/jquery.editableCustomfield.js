@@ -228,7 +228,7 @@ define([ "jquery", "underscore", "ckeditor",  "squash.configmanager", "./cuf-val
 			},
 			
 			_get : function(elt, def){
-				return elt.find('>ul').squashTagit('assignedTags').join(',');
+				return elt.find('>ul').squashTagit('assignedTags');
 			},
 			
 			_destroy : function(elt, def){
