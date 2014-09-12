@@ -132,6 +132,19 @@ public class LogEntry implements Comparable<LogEntry> {
 			// note that returning -1 is not an ideal solution because it violates the Comparable contract
 			// x.compareTo(y) == - y.compareTo(x) but it's good enough here
 			// rem : what does good enough means ? it randomly breaks the "should compare nicely with each others" test, FFS
+			/*
+			 * Re : meaning of "good enough" :
+			 * 
+			 * According to specs as long as two log entries report things related to a same entity we don't bother in which order they appear.
+			 * Thus, formally they compare to each other according to a partial order : for {x,y} € LogEntry the comparison is defined if
+			 * they reference different lines or have different status, otherwise the comparison is undecided.
+			 * However the constraint x.compareTo(y) == - y.compareTo(x) suggests that Comparable requires an implementation of a total order.
+			 * I don't need that so I return an arbitrary value instead, which is good enough.
+			 * 
+			 * Consequently this implementation doesn't break the aforementioned test because it is not required to sort every pair of LogEntry
+			 * in a deterministic way. Rather, the test itself is ill-designed.
+			 * 
+			 */
 			return -1;
 		}
 	}
