@@ -312,7 +312,7 @@ class RequirementLibraryNavigationServiceIT extends DbunitServiceSpecification {
 		deletionHandler.deleteNodes([-10L])
 
 		then:
-		! found("requirement", "rln_id", -10L)
+		! found("REQUIREMENT", "rln_id", -10L)
 	}
 
 	@DataSet("RequirementLibraryNavigationServiceIT.should remove reqs after move.xml")
@@ -322,7 +322,7 @@ class RequirementLibraryNavigationServiceIT extends DbunitServiceSpecification {
 		deletionHandler.deleteNodes([-20L])
 
 		then:
-		! found("requirement", "rln_id", -20L)
+		! found("REQUIREMENT", "rln_id", -20L)
 	}
 
 
@@ -338,7 +338,7 @@ class RequirementLibraryNavigationServiceIT extends DbunitServiceSpecification {
 		deletionHandler.deleteNodes([-20L])
 
 		then:
-		! found("requirement", "rln_id", -20L)
+		! found("REQUIREMENT", "rln_id", -20L)
 	}
 
 	@DataSet("RequirementLibraryNavigationServiceIT.should remove reqs after move.xml")
@@ -353,7 +353,7 @@ class RequirementLibraryNavigationServiceIT extends DbunitServiceSpecification {
 		deletionHandler.deleteNodes([-10L])
 
 		then:
-		! found("requirement", "rln_id", -10L)
+		! found("REQUIREMENT", "rln_id", -10L)
 	}
 
 	@DataSet("RequirementLibraryNavigationServiceIT.should move to same project at right position.xml")

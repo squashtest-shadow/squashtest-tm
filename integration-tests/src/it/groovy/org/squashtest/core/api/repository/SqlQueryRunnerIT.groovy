@@ -54,10 +54,11 @@ class SqlQueryRunnerIT extends Specification {
 		def res = runner.executeSelect("select LOGIN from CORE_USER where ACTIVE = true")
 
 		then:
-		res == [
+		res.containsAll([
 			"daniel.bryan",
 			"chris.jericho"
-		]
+		])
+		res.size() == 2
 	}
 
 	def "should select all active core user logins and names"() {
@@ -65,12 +66,13 @@ class SqlQueryRunnerIT extends Specification {
 		def res = runner.executeSelect("select LOGIN, LAST_NAME from CORE_USER where ACTIVE = true")
 
 		then:
-		res == [
+		res.containsAll([
 			["daniel.bryan", "bryan"],
 			[
 				"chris.jericho",
 				"jericho"]
-		]
+		])
+		res.size() == 2
 	}
 
 	def "should select all active core user aliased logins and names"() {
@@ -78,12 +80,14 @@ class SqlQueryRunnerIT extends Specification {
 		def res = runner.executeSelect('select LOGIN "logname", LAST_NAME "name" from CORE_USER where ACTIVE = true')
 
 		then:
-		res == [
+		res.containsAll([
 			["daniel.bryan", "bryan"],
 			[
 				"chris.jericho",
 				"jericho"]
-		]
+		])
+		res.size() == 2
+
 	}
 
 	def "should select single inactive core user"() {
@@ -107,10 +111,10 @@ class SqlQueryRunnerIT extends Specification {
 		def res = runner.executeSelect("select LOGIN from CORE_USER where LAST_NAME in ( :names )", [names: ["bryan", "jericho"]])
 
 		then:
-		res == [
+		res.containsAll([
 			"daniel.bryan",
 			"chris.jericho"
-		]
+		])
 	}
 
 	def "should select unique core user by last_name named parameter"() {
