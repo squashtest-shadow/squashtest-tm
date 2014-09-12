@@ -26,6 +26,7 @@ import java.util.Map;
 
 import org.squashtest.tm.domain.customfield.CustomField;
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
+import org.squashtest.tm.domain.customfield.RawValue;
 import org.squashtest.tm.domain.testautomation.AutomatedTest;
 import org.squashtest.tm.domain.testcase.ActionTestStep;
 import org.squashtest.tm.domain.testcase.TestStep;
@@ -52,7 +53,7 @@ public interface CustomTestCaseModificationService extends CustomTestCaseFinder 
 	 * @param testCase
 	 * @param customFieldValues
 	 */
-	ActionTestStep addActionTestStep(long parentTestCaseId, ActionTestStep newTestStep, Map<Long, String> customFieldValues);
+	ActionTestStep addActionTestStep(long parentTestCaseId, ActionTestStep newTestStep, Map<Long, RawValue> customFieldValues);
 
 	void updateTestStepAction(long testStepId, String newAction);
 

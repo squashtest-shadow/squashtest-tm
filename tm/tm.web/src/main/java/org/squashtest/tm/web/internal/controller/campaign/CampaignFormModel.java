@@ -30,66 +30,80 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
 import org.squashtest.tm.domain.campaign.Campaign;
+import org.squashtest.tm.domain.customfield.RawValue;
+import org.squashtest.tm.web.internal.model.customfield.RawValueModel;
+import org.squashtest.tm.web.internal.model.customfield.RawValueModel.RawValueModelMap;
 
 public class CampaignFormModel {
 	/**
 	 * Note : the following validation annotations are never called, a custom validator will be invoked for this.
 	 * 
 	 */
-	
+
 	/*@NotBlank
 	@NotNull*/
-	private String name;	
-	
+	private String name;
+
 	private String description;
 
-	
-	
+
+
 	/*@NotNull
 	@NotEmpty*/
-	private Map<Long, String> customFields = new HashMap<Long, String>();
-	
-	
+	private RawValueModelMap customFields = new RawValueModelMap();
+
+
 	public String getName() {
 		return name;
 	}
-	
-	
+
+
 	public void setName(String name) {
 		this.name = name;
 	}
 
-	
+
 	public String getDescription() {
 		return description;
 	}
-	
+
 	public void setDescription(String description) {
 		this.description = description;
 	}
-	
-	
-	public Map<Long, String> getCustomFields() {
+
+
+	public RawValueModelMap getCustomFields() {
 		return customFields;
 	}
-	
-	public void setCustomFields(Map<Long, String> customFields) {
+
+
+	public void setCustomFields(RawValueModelMap customFields) {
 		this.customFields = customFields;
 	}
-	
+
+
+
 	public Campaign getCampaign(){
 		Campaign newCampaign = new Campaign();
 		newCampaign.setName(name);
 		newCampaign.setDescription(description);
 		return newCampaign;
 	}
-	
-	
-	
+
+
+	public Map<Long, RawValue> getCufs(){
+		Map<Long, RawValue> cufs = new HashMap<Long, RawValue>(customFields.size());
+		for (Entry<Long, RawValueModel> entry : customFields.entrySet()){
+			cufs.put(entry.getKey(), entry.getValue().toRawValue());
+		}
+		return cufs;
+	}
+
+
 	public static class CampaignFormModelValidator implements Validator {
-		
+
 		private MessageSource messageSource;
-		
+
 		public void setMessageSource(MessageSource messageSource){
 			this.messageSource = messageSource;
 		}
@@ -101,25 +115,25 @@ public class CampaignFormModel {
 
 		@Override
 		public void validate(Object target, Errors errors) {
-			
+
 			String notBlank = messageSource.getMessage("message.notBlank", null, LocaleContextHolder.getLocale());
-			
+
 			CampaignFormModel model = (CampaignFormModel) target;
-			
+
 			ValidationUtils.rejectIfEmptyOrWhitespace(errors, "name", "message.notBlank", notBlank);
-		
-			
-			for (Entry<Long, String> entry : model.getCustomFields().entrySet()){
-				String value = entry.getValue();
-				if (value.trim().isEmpty()){
+
+
+			for (Entry<Long, RawValueModel> entry : model.getCustomFields().entrySet()){
+				RawValueModel value = entry.getValue();
+				if (value.isEmpty()){
 					errors.rejectValue("customFields["+entry.getKey()+"]", "message.notBlank", notBlank);
 				}
 			}
-			
+
 
 		}
 
 	}
-	
-	
+
+
 }

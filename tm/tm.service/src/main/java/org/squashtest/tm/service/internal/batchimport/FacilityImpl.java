@@ -39,6 +39,7 @@ import org.springframework.stereotype.Component;
 import org.squashtest.tm.domain.customfield.BoundEntity;
 import org.squashtest.tm.domain.customfield.CustomField;
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
+import org.squashtest.tm.domain.customfield.RawValue;
 import org.squashtest.tm.domain.testcase.ActionTestStep;
 import org.squashtest.tm.domain.testcase.CallTestStep;
 import org.squashtest.tm.domain.testcase.Dataset;
@@ -503,7 +504,7 @@ public class FacilityImpl implements Facility {
 	// because this time we're not toying around man, this is the real thing
 	private void doCreateTestcase(TestCaseTarget target, TestCase testCase, Map<String, String> cufValues) {
 
-		Map<Long, String> acceptableCufs = toAcceptableCufs(cufValues);
+		Map<Long, RawValue> acceptableCufs = toAcceptableCufs(cufValues);
 
 		// case 1 : this test case lies at the root of the project
 		if (target.isRootTestCase()) {
@@ -567,7 +568,7 @@ public class FacilityImpl implements Facility {
 
 	private void doAddActionStep(TestStepTarget target, ActionTestStep testStep, Map<String, String> cufValues) {
 
-		Map<Long, String> acceptableCufs = toAcceptableCufs(cufValues);
+		Map<Long, RawValue> acceptableCufs = toAcceptableCufs(cufValues);
 
 		// add the step
 		TestCase tc = validator.getModel().get(target.getTestCase());
@@ -846,9 +847,9 @@ public class FacilityImpl implements Facility {
 	 * because the service identifies cufs by their id, not their code<br/>
 	 * also populates the cache (cufIdByCode)
 	 */
-	private Map<Long, String> toAcceptableCufs(Map<String, String> origCufs) {
+	private Map<Long, RawValue> toAcceptableCufs(Map<String, String> origCufs) {
 
-		Map<Long, String> result = new HashMap<Long, String>(origCufs.size());
+		Map<Long, RawValue> result = new HashMap<Long, RawValue>(origCufs.size());
 
 		for (Entry<String, String> origCuf : origCufs.entrySet()) {
 			String cufCode = origCuf.getKey();
@@ -871,7 +872,7 @@ public class FacilityImpl implements Facility {
 			// does not exist and therefore wont be included.
 			Long cufId = cufIdByCode.get(cufCode);
 			if (cufId != null) {
-				result.put(cufId, origCuf.getValue());
+				result.put(cufId, new RawValue(origCuf.getValue()));
 			}
 		}
 
