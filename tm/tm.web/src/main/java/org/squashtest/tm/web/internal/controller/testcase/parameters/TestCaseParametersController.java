@@ -120,7 +120,25 @@ public class TestCaseParametersController {
 
 		// the main entities
 		TestCase testCase = testCaseFinder.findById(testCaseId);
+
 		List<Parameter> directAndCalledParameters = parameterModificationService.findAllParameters(testCaseId);
+
+		/*
+		 * Issue 3871
+		 * 
+		 * The problem comes from the configuration of the datatable, which is splitted in two parts :
+		 * the aoColumnDefs (that binds the model to the columns ) and the paramHeaders (that binds
+		 * some label to the columns). Those informations are extracted from the same original collection
+		 * 'directAndCalledParameters'.
+		 * 
+		 * It happens that 'paramHeaders' is sorted when generated, while 'aoColumnDefs' is not, hence
+		 * the discrepency.
+		 * 
+		 * A simple solution is then to sort 'directAndCalledParameters' before deriving the informations
+		 * so that they remain consistent.
+		 */
+		Collections.sort(directAndCalledParameters, new ParameterNameComparator(SortOrder.ASCENDING));
+
 		List<Long> paramIds = IdentifiedUtil.extractIds(directAndCalledParameters);
 		boolean editable = permissionEvaluationService.hasRoleOrPermissionOnObject("ROLE_ADMIN", "WRITE", testCase);
 		List<AoColumnDef> columnDefs = new DatasetsTableColumnDefHelper().getAoColumnDefs(paramIds, editable);
