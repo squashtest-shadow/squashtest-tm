@@ -23,8 +23,6 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ taglib prefix="s" uri="http://www.springframework.org/tags"%>
-
-<%@ taglib prefix="s" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 <%@ taglib prefix="authz" tagdir="/WEB-INF/tags/authz" %>
 
@@ -39,33 +37,58 @@
 
 <s:url var="showExecutionUrl" value="/executions" />
 
-<c:set var="textcolor" value="#555555" />
 
 <f:message var="labelNodata" key="squashtm.nodata" />
 <f:message var="labelNone" key="label.None" />
 
-<td colspan="13">
+<%-- 
+
+Note : below we define colspan and width for the columns of the nested table, that must match the columns of 
+the host test plan table. Please refer to iteration-test-plan-panel.tag to check those definitions.
+
+We can set totalColspan arbitrarily high to be sure that this td will be as long as one row whatever the actual 
+number of columns. 
+--%>
+
+<c:set var="totalColspan" value="26"/> 
+
+
+
+<td colspan="${totalColspan}"> 
 	<table class="executions-table" id="item-test-plan-${testPlanItem.id}">
+      <thead>
+        <tr class="executions-table-header">
+          <th></th>
+          <th class="width-tenperc"></th>
+          <th class="width-tenperc"></th>
+          <th class="width-tenperc"></th>
+          <th class="width-tenperc"></th>
+          <th class="width-tenperc"></th>
+          <th class="narrow"></th>
+          <th class="narrow"></th>
+        </tr>
+      </thead>
+      <tbody>
 		<c:forEach items="${ executions }" var="execution" varStatus="status">
 			<tr>
-				<td colspan="5"
-					style="text-align:left;color: ${textcolor}; font-style:italic; text-decoration: underline">
+				<td >
 					<a href="${showExecutionUrl}/${execution.id}">
-						<b>Exec. ${status.index + 1} :</b> ${ execution.name }
+						<span style="font-weight:bold;">Exec. ${status.index + 1} :</span>
+                        <span> ${ execution.name }</span>
 					</a>
 				</td>
-				<td style="width: 10%;">
-					<span style="color: ${textcolor}; text-decoration:italic;">
+				<td>
+					<span >
                       <c:out value="${(execution.datasetLabel == null) ? labelNodata :
                                       (fn:length(execution.datasetLabel) == 0) ? labelNone : execution.datasetLabel}" />
 					</span>
 				</td>
-				<td style="width: 10%;"></td>
-				<td style="width: 10%; color: ${textcolor} font-style:italic;">
+				<td></td>
+				<td>
                     <f:message key="execution.execution-status.${execution.executionStatus}" />
 				</td>
-				<td style="width: 10%;">
-					<span style="color: ${textcolor}">
+				<td>
+					<span>
 					<c:choose>
 						<c:when test="${ execution.lastExecutedBy != null }">
 							<i>${ execution.lastExecutedBy }</i>
@@ -76,7 +99,7 @@
 					</c:choose>
 					</span>
 				</td>
-				<td style="width: 10%;color: ${textcolor}">
+				<td>
 				<c:choose>
 					<c:when test="${ execution.lastExecutedOn != null }">
 						<f:message var="dateFormat" key="squashtm.dateformat" />
@@ -88,9 +111,8 @@
 					</c:otherwise>
 				</c:choose>
 				</td>
-				<td style="width: 2.5em;">
-				</td>
-				<td style="width: 1.5em;" class="centered">
+                <td></td>
+				<td style="text-align:center;">
 					<authz:authorized hasRole="ROLE_ADMIN" hasPermission="EXECUTE" domainObject="${ execution }">
 					<f:message var="labelRemoveExec" key="label.removeExecution"/>
 					<a id="delete-execution-table-button-${execution.id}"  class="delete-execution-table-button" title="${labelRemoveExec}"></a>
@@ -100,7 +122,7 @@
 		</c:forEach>
 		<c:if test="${ executable && !testPlanItem.testCaseDeleted }">
 			<tr>
-				<td colspan="13" style="text-align: left;">
+				<td colspan="${totalColspan}" style="color:white; font-style:normal;">
 					<strong>
 						<a class="button new-exec" style="font-size:0.8em;" id="new-exec-${ testPlanItem.id }"  data-new-exec="${ newExecutionUrl }">
 							<f:message key="execution.iteration-test-plan-row.new" />
@@ -116,5 +138,6 @@
 			</tr>
 			
 		</c:if>
+    </tbody>
 	</table>
 </td>

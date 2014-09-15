@@ -73,14 +73,10 @@ define([ "jquery", "tree", "handlebars", "underscore", "workspace/workspace.impo
 
 			this.onOwnBtn("ok", function() {
 				var tree = zetree.get();
-				var projectId = self.element.find("select[name='projectId']").val();
-				var lib = tree.jstree("findNodes", {
-					rel : "drive",
-					resid : projectId
-				});
-				if (lib.size() > 0) {
-					tree.jstree("refresh", lib);
-				}
+				tree.find('[restype="test-case-libraries"]').each(
+						function(idx, elt){
+							tree.jstree("refresh", this);
+							})
 			});
 
 			this.onOwnBtn("simulate", function() {

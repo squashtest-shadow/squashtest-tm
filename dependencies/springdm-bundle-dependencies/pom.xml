@@ -3,7 +3,7 @@
   <parent>
     <artifactId>squashtest-csp-dependencies</artifactId>
     <groupId>org.squashtest.tm</groupId>
-    <version>1.11.1.RC2-SNAPSHOT</version>
+    <version>1.11.0.RC2-SNAPSHOT</version>
   </parent>
 
   <artifactId>springdm-bundle-dependencies</artifactId>

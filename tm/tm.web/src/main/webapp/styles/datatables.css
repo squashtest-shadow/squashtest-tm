@@ -184,3 +184,24 @@ table#requirement-search-result-table tr.nonEditable td.editable{
 table tr td.nonEditable{
 	cursor : not-allowed;
 }
+
+/* ******************
+
+test plan execution nested tables
+
+******************* */
+
+ tr.executions-table-header {
+   height:0;
+   line-height:0;
+ } 
+ 
+ table.executions-table tbody td{
+   text-align:left;
+   font-style:italic; 
+   color : #555555;
+ }
+ 
+ table.executions-table tbody td.exec-name{
+   text-decoration: underline;
+ }

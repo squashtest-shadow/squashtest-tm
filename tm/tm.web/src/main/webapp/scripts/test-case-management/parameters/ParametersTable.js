@@ -28,6 +28,7 @@ define([ "jquery", "backbone", "jeditable.simpleJEditable", "jquery.squash.confi
 			this.settings = this.options.settings;
 			this.removeRowParameter = $.proxy(this._removeRowParameter, this);
 			this.parametersTableRowCallback = $.proxy(this._parametersTableRowCallback, this);
+			this.parametersTableDrawCallback = $.proxy(this._parametersTableDrawCallback, this);
 			this.confirmRemoveParameter = $.proxy(this._confirmRemoveParameter, this);
 			this.addSimpleJEditableToName = $.proxy(this.addSimpleJEditableToName, this);
 			this.updateParameterDescription = $.proxy(this._updateParameterDescription, this);
@@ -47,7 +48,8 @@ define([ "jquery", "backbone", "jeditable.simpleJEditable", "jquery.squash.confi
 				// has Dom configuration
 				"bPaginate" : false,
 				"aaSorting" : [ [ 3, 'asc' ] ],
-				"fnRowCallback" : self.parametersTableRowCallback
+				"fnRowCallback" : self.parametersTableRowCallback,
+				"fnDrawCallback" : self.parametersTableDrawCallback
 			};
 		},
 
@@ -82,6 +84,13 @@ define([ "jquery", "backbone", "jeditable.simpleJEditable", "jquery.squash.confi
 
 		},
 
+		discriminateInheritedVerifications : function(row, data, displayIndex) {
+			if (!data["directly-associated"]) {
+				$(row).addClass("inherited-parameter-verification");
+				$('td.delete-button', row).html(''); // remove the delete button
+			}
+		},
+		
 		_configureTable : function() {
 			var self = this;
 			$(this.el).squashTable(self._dataTableSettings(self), self._squashSettings(self));
@@ -89,11 +98,18 @@ define([ "jquery", "backbone", "jeditable.simpleJEditable", "jquery.squash.confi
 		},
 
 		_parametersTableRowCallback : function(row, data, displayIndex) {
-			if (this.settings.permissions.isWritable) {
+			if (data["directly-associated"] && this.settings.permissions.isWritable) {
 				this.addSimpleJEditableToName(row, data);
 			}
-
+			this.discriminateInheritedVerifications(row, data, displayIndex);
 			return row;
+		},
+		
+		_parametersTableDrawCallback : function(oSettings){
+			var table = $("#"+oSettings.sInstance);
+			// prevent parameter-description cells to turn into editable
+			// if they map to an inherited parameter
+			table.find('tr.inherited-parameter-verification td.parameter-description').removeClass('parameter-description');
 		},
 
 		_removeRowParameter : function(table, cell) {

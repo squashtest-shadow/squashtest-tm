@@ -235,12 +235,16 @@ span.little-text {
 	font-size: 8px;
 }
 
-td.narrow{
+th.narrow, td.narrow{
 	width : 2em;	
 }
 
-td.double-narrow{
+th.double-narrow, td.double-narrow{
 	width : 4em;	
+}
+
+th.width-tenperc, td.width-tenperc {
+  width : 10%;
 }
 
 .blue-borders{
