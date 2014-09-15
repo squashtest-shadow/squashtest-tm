@@ -119,8 +119,7 @@ public final class SortingUtils {
 		for (Iterator<Sorting> iter = sortings.getSortings().iterator(); iter.hasNext();) {
 			Sorting sorting = iter.next();
 
-			hqlbuilder.append(sorting.getSortedAttribute()).append(" ").append(sorting.getSortOrder().getCode())
-			.append(" nulls first ");
+			hqlbuilder.append(sorting.getSortedAttribute()).append(" ").append(sorting.getSortOrder().getCode());
 
 			if (iter.hasNext()) {
 				hqlbuilder.append(", ");

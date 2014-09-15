@@ -28,7 +28,7 @@ import org.springframework.transaction.annotation.Isolation
 import org.springframework.transaction.annotation.Transactional
 import org.squashtest.tm.service.internal.repository.hibernate.DbunitDaoSpecification
 import org.squashtest.tm.api.repository.SqlQueryRunner
-import org.unitils.database.util.TransactionMode;
+import org.unitils.database.util.TransactionMode
 import org.unitils.dbunit.annotation.DataSet
 
 import spock.lang.Specification
@@ -66,12 +66,8 @@ class SqlQueryRunnerIT extends Specification {
 		def res = runner.executeSelect("select LOGIN, LAST_NAME from CORE_USER where ACTIVE = true")
 
 		then:
-		res.containsAll([
-			["daniel.bryan", "bryan"],
-			[
-				"chris.jericho",
-				"jericho"]
-		])
+		res.find{it[0] == "daniel.bryan"}[1] == "bryan"
+		res.find{it[0] == "chris.jericho"}[1] =="jericho"
 		res.size() == 2
 	}
 
@@ -80,12 +76,8 @@ class SqlQueryRunnerIT extends Specification {
 		def res = runner.executeSelect('select LOGIN "logname", LAST_NAME "name" from CORE_USER where ACTIVE = true')
 
 		then:
-		res.containsAll([
-			["daniel.bryan", "bryan"],
-			[
-				"chris.jericho",
-				"jericho"]
-		])
+		res.find{it[0] == "daniel.bryan"}[1] == "bryan"
+		res.find{it[0] == "chris.jericho"}[1] =="jericho"
 		res.size() == 2
 
 	}
