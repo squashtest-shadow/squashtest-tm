@@ -154,6 +154,12 @@ documentation :
           <div id="testcase-status" class="display-table-cell"
             th:text="${execution.status.level}+'-'+#{${execution.status.getI18nKey()}}">0 - a specifier</div>
         </div>
+ 
+         <div class="display-table-row">
+          <label class="display-table-cell" th:text="#{label.Dataset}">status</label>
+          <div id="execute-dataset" class="display-table-cell"
+            th:text="${execution.datasetLabel}">dataset name</div>
+        </div>
         
       </div>
       
