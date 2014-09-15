@@ -1,0 +1,693 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <artifactId>squash-tm</artifactId>
+    <groupId>org.squashtest.tm</groupId>
+    <version>1.11.0.FEAT3577-SNAPSHOT</version>
+  </parent>
+
+  <artifactId>squashtest-integration-tests</artifactId>
+  <packaging>pom</packaging>
+  <name>Squashtest TM - Integration tests module</name>
+
+  <properties>
+
+    <hibernate.dialect>org.hibernate.dialect.H2Dialect</hibernate.dialect>
+    <database.dialect>h2</database.dialect>
+    <database.drivername>org.h2.Driver</database.drivername>
+    <database.schemaName>public</database.schemaName>
+    <database.username>sa</database.username>
+    <database.password>sa</database.password>
+    <database.typefactory>org.dbunit.ext.h2.H2DataTypeFactory</database.typefactory>
+
+    <database.changelog>../database/src/main/liquibase/global.changelog-master.xml</database.changelog>
+    <squashtest.rootDir>${project.build.directory}</squashtest.rootDir>
+  </properties>
+
+  <build>
+    <testSourceDirectory>src/it/groovy</testSourceDirectory>
+
+    <testResources>
+      <testResource>
+        <directory>src/it/resources</directory>
+        <filtering>true</filtering>
+        <excludes>
+          <exclude>**/*.xls</exclude>
+          <exclude>**/*.xlsx</exclude>
+          <exclude>**/*.zip</exclude>
+        </excludes>
+      </testResource>
+      <testResource>
+        <directory>src/it/resources</directory>
+        <filtering>false</filtering>
+        <includes>
+          <include>**/*.xls</include>
+          <include>**/*.xlsx</include>
+          <include>**/*.zip</include>
+        </includes>
+      </testResource>
+    </testResources>
+
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-enforcer-plugin</artifactId>
+        <executions>
+          <execution>
+            <goals>
+              <goal>enforce</goal>
+            </goals>
+            <configuration>
+              <rules>
+                <requireProperty>
+                  <property>dbunit-database.url</property>
+                </requireProperty>
+                <requireProperty>
+                  <property>non-dbunit-database.url</property>
+                </requireProperty>
+              </rules>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <executions>
+          <execution>
+            <phase>pre-integration-test</phase>
+            <goals>
+              <goal>testCompile</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-resources-plugin</artifactId>
+        <executions>
+          <execution>
+            <phase>pre-integration-test</phase>
+            <goals>
+              <goal>testResources</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>build-helper-maven-plugin</artifactId>
+        <executions>
+          <!-- Adds more source directories to the pom -->
+          <execution>
+            <id>add-integration-test-source</id>
+            <phase>pre-integration-test</phase>
+            <goals>
+              <goal>add-source</goal>
+            </goals>
+            <configuration>
+              <sources>
+                <source>src/it/groovy</source>
+              </sources>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-failsafe-plugin</artifactId>
+        <version>2.14</version>
+        <configuration>
+          <parallel>false</parallel>
+          <threadCount>1</threadCount>
+          <!-- We can run ITs and skip unit tests with -DskipTests=true -->
+          <skipTests>${skipITs}</skipTests>
+        </configuration>
+
+        <executions>
+          <execution>
+            <id>integration-tests</id>
+            <phase>integration-test</phase>
+            <goals>
+              <goal>integration-test</goal>
+              <goal>verify</goal>
+            </goals>
+          </execution>
+        </executions>
+
+        <dependencies>
+          <dependency>
+            <artifactId>database.h2.fragment</artifactId>
+            <groupId>org.squashtest.tm</groupId>
+            <version>${project.version}</version>
+          </dependency>
+          <dependency>
+            <artifactId>core.aspect</artifactId>
+            <groupId>org.squashtest.tm</groupId>
+            <version>${project.version}</version>
+          </dependency>
+        </dependencies>
+      </plugin>
+
+
+    </plugins>
+  </build>
+
+
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <artifactId>provision-bom</artifactId>
+        <groupId>org.squashtest.tm</groupId>
+        <version>${provisionBom.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
+  <dependencies>
+    <!-- ====== SQUASHTEST ====== -->
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>tm.service</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <artifactId>core.aspect</artifactId>
+      <groupId>org.squashtest.tm</groupId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>core.testautomation.api</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>org.squashtest.csp.tools.unittest</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <!-- ====== /SQUASHTEST ====== -->
+
+    <!-- ====== SPOCK TESTS SUPPORT ====== -->
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>spock-test-dependencies</artifactId>
+      <version>${project.version}</version>
+      <type>pom</type>
+      <scope>test</scope>
+    </dependency>
+    <!-- ====== /SPOCK TESTS SUPPORT ====== -->
+
+    <!-- ====== HIBERNATE SUPPORT ====== -->
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>hibernate-dependencies</artifactId>
+      <version>${project.version}</version>
+      <type>pom</type>
+      <scope>test</scope>
+    </dependency>
+    <!-- ====== /HIBERNATE SUPPORT ====== -->
+
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>springdm-bundle-dependencies</artifactId>
+      <version>${project.version}</version>
+      <type>pom</type>
+      <scope>test</scope>
+    </dependency>
+
+    <!-- ====== SPRING INTEGRATION TEST SUPPORT ====== -->
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>org.springframework.test</artifactId>
+    </dependency>
+    <!-- ====== /SPRING INTEGRATION TEST SUPPORT ====== -->
+
+    <!-- ====== SPRING FRAMEWORK ====== -->
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>org.springframework.transaction</artifactId>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>org.springframework.aop</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.aopalliance</groupId>
+      <artifactId>com.springsource.org.aopalliance</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>org.springframework.aspects</artifactId>
+    </dependency>
+    <!-- ====== /SPRING FRAMEWORK ====== -->
+
+    <!-- ====== SPRING ====== -->
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>org.springframework.expression</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+
+    <!-- ====== /SPRING ====== -->
+
+    <!-- ====== DB AND CONNECTION POOL ====== -->
+    <dependency>
+      <groupId>commons-dbcp</groupId>
+      <artifactId>commons-dbcp</artifactId>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.h2database</groupId>
+      <artifactId>h2</artifactId>
+      <scope>runtime</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>com.mysql.jdbc</groupId>
+      <artifactId>com.springsource.com.mysql.jdbc</artifactId>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.ancoron.postgresql</groupId>
+      <artifactId>org.postgresql</artifactId>
+      <scope>runtime</scope>
+    </dependency>
+    <!-- <dependency>
+      <groupId>org.ancoron.postgresql</groupId>
+      <artifactId>org.postgresql.net</artifactId>
+      <scope>runtime</scope>
+    </dependency> -->
+    <!-- ====== SPOCK-SPRING-TEST BRIDGE ====== -->
+    <dependency>
+      <groupId>org.spockframework</groupId>
+      <artifactId>spock-spring</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.spockframework</groupId>
+      <artifactId>spock-unitils</artifactId>
+    </dependency>
+    <!-- ====== /SPOCK-SPRING-TEST BRIDGE ====== -->
+
+    <dependency>
+      <groupId>org.unitils</groupId>
+      <artifactId>unitils-core</artifactId>
+      <version>3.1</version>
+      <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>commons-lang</groupId>
+          <artifactId>commons-lang</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>commons-logging</groupId>
+          <artifactId>commons-logging</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.slf4j</groupId>
+          <artifactId>slf4j-api</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.slf4j</groupId>
+          <artifactId>slf4j-nop</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.unitils</groupId>
+      <artifactId>unitils-database</artifactId>
+      <version>3.1</version>
+      <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>commons-lang</groupId>
+          <artifactId>commons-lang</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>commons-logging</groupId>
+          <artifactId>commons-logging</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.slf4j</groupId>
+          <artifactId>slf4j-api</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.slf4j</groupId>
+          <artifactId>slf4j-nop</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.unitils</groupId>
+      <artifactId>unitils-dbunit</artifactId>
+      <version>3.1</version>
+      <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>commons-lang</groupId>
+          <artifactId>commons-lang</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>commons-logging</groupId>
+          <artifactId>commons-logging</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.slf4j</groupId>
+          <artifactId>slf4j-api</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.slf4j</groupId>
+          <artifactId>slf4j-nop</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.unitils</groupId>
+      <artifactId>unitils-spring</artifactId>
+      <version>3.1</version>
+      <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>commons-lang</groupId>
+          <artifactId>commons-lang</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>commons-logging</groupId>
+          <artifactId>commons-logging</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.slf4j</groupId>
+          <artifactId>slf4j-api</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.slf4j</groupId>
+          <artifactId>slf4j-nop</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.dbunit</groupId>
+      <artifactId>dbunit</artifactId>
+      <version>2.2.2</version>
+      <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>commons-lang</groupId>
+          <artifactId>commons-lang</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>commons-logging</groupId>
+          <artifactId>commons-logging</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.slf4j</groupId>
+          <artifactId>slf4j-api</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.slf4j</groupId>
+          <artifactId>slf4j-nop</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>poi</groupId>
+          <artifactId>poi</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <!-- ====== FOUNDATION ====== -->
+    <dependency>
+      <groupId>commons-lang</groupId>
+      <artifactId>commons-lang</artifactId>
+      <scope>runtime</scope>
+    </dependency>
+    <!-- ====== /FOUNDATION ====== -->
+
+    <!-- ====== JTA ====== -->
+    <dependency>
+      <groupId>javax.transaction</groupId>
+      <artifactId>com.springsource.javax.transaction</artifactId>
+    </dependency>
+    <!-- ====== JTA ====== -->
+
+    <!-- ====== JSE DI API ====== -->
+    <dependency>
+      <groupId>javax.inject</groupId>
+      <artifactId>com.springsource.javax.inject</artifactId>
+    </dependency>
+    <!-- ====== /JSE DI API ====== -->
+
+    <dependency>
+      <groupId>org.squashtest.tm</groupId>
+      <artifactId>database.h2.fragment</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-log4j12</artifactId>
+      <scope>compile</scope>
+    </dependency>
+  </dependencies>
+
+  <profiles>
+    <profile>
+      <id>sonar</id>
+      <build>
+        <pluginManagement>
+          <plugins>
+            <plugin>
+              <groupId>org.apache.maven.plugins</groupId>
+              <artifactId>maven-failsafe-plugin</artifactId>
+              <configuration>
+                <argLine>-javaagent:${jacoco.agent.path}=destfile=${jacoco.file.path}</argLine>
+              </configuration>
+            </plugin>
+          </plugins>
+        </pluginManagement>
+      </build>
+    </profile>
+
+    <profile>
+      <id>h2.windows</id>
+      <activation>
+        <os>
+          <family>windows</family>
+        </os>
+      </activation>
+
+      <properties>
+    <!-- On Jenkins server these relative paths are not interpreted in the same way by liquibase and the datasource. These 
+      props should be overridden with absolute paths (which don't work under windows...) -->
+        <dbunit-database.url>jdbc:h2:target/database/squash-it-dbunit/squash-it</dbunit-database.url>
+        <non-dbunit-database.url>jdbc:h2:target/database/squash-it-non-dbunit/squash-it</non-dbunit-database.url>
+      </properties>
+    </profile>
+
+    <profile>
+      <id>h2.unix</id>
+      <activation>
+        <os>
+          <family>!windows</family>
+        </os>
+      </activation>
+
+      <properties>
+    <!-- On Jenkins server these relative paths are not interpreted in the same way by liquibase and the datasource. These 
+      props should be overridden with absolute paths (which don't work under windows...) -->
+        <dbunit-database.url>jdbc:h2:${project.basedir}/target/database/squash-it-dbunit</dbunit-database.url>
+        <non-dbunit-database.url>jdbc:h2:${project.basedir}/target/database/squash-it-non-dbunit</non-dbunit-database.url>
+      </properties>
+    </profile>
+
+    <profile>
+      <id>mysql</id>
+      <properties>
+        <dbunit-database.url>${it.database.url}</dbunit-database.url>
+        <non-dbunit-database.url>${it.legacy.database.url}</non-dbunit-database.url>
+
+        <hibernate.dialect>org.hibernate.dialect.MySQLDialect</hibernate.dialect>
+        <database.dialect>mysql</database.dialect>
+        <database.drivername>com.mysql.jdbc.Driver</database.drivername>
+        <database.schemaName>${it.database.schemaName}</database.schemaName>
+        <database.username>${it.database.username}</database.username>
+        <database.password>${it.database.password}</database.password>
+        <database.typefactory>org.dbunit.ext.mysql.MySqlDataTypeFactory</database.typefactory>
+      </properties>
+
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-enforcer-plugin</artifactId>
+            <executions>
+              <execution>
+                <goals>
+                  <goal>enforce</goal>
+                </goals>
+                <configuration>
+                  <rules>
+                    <requireProperty>
+                      <property>it.database.url</property>
+                    </requireProperty>
+                    <requireProperty>
+                      <property>it.legacy.database.url</property>
+                    </requireProperty>
+                    <requireProperty>
+                      <property>it.database.schemaName</property>
+                    </requireProperty>
+                    <requireProperty>
+                      <property>it.database.username</property>
+                    </requireProperty>
+                    <requireProperty>
+                      <property>it.database.password</property>
+                    </requireProperty>
+                  </rules>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
+    <profile>
+      <id>postgresql</id>
+      <properties>
+        <dbunit-database.url>${it.database.url}</dbunit-database.url>
+        <non-dbunit-database.url>${it.legacy.database.url}</non-dbunit-database.url>
+        <hibernate.dialect>org.hibernate.dialect.PostgreSQLDialect</hibernate.dialect>
+        <database.dialect>postgresql</database.dialect>
+        <database.drivername>org.postgresql.Driver</database.drivername>
+        <database.schemaName>public</database.schemaName>
+        <database.username>${it.database.username}</database.username>
+        <database.password>${it.database.password}</database.password>
+        <database.typefactory>org.dbunit.ext.postgresql.PostgresqlDataTypeFactory</database.typefactory>
+      </properties>
+
+      <dependencies>
+        <dependency>
+          <groupId>org.ancoron.postgresql</groupId>
+          <artifactId>org.postgresql</artifactId>
+        </dependency>
+       <!--  <dependency>
+          <groupId>org.ancoron.postgresql</groupId>
+          <artifactId>org.postgresql.net</artifactId>
+        </dependency> -->
+      </dependencies>
+
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-enforcer-plugin</artifactId>
+            <executions>
+              <execution>
+                <goals>
+                  <goal>enforce</goal>
+                </goals>
+                <configuration>
+                  <rules>
+                    <requireProperty>
+                      <property>it.database.url</property>
+                    </requireProperty>
+                    <requireProperty>
+                      <property>it.legacy.database.url</property>
+                    </requireProperty>
+                    <requireProperty>
+                      <property>it.database.username</property>
+                    </requireProperty>
+                    <requireProperty>
+                      <property>it.database.password</property>
+                    </requireProperty>
+                  </rules>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
+    <profile>
+      <activation>
+        <property>
+          <name>!database.nocreate</name>
+        </property>
+      </activation>
+      <build>
+        <plugins>
+          <!-- Create and populate a database integration tests -->
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>aspectj-maven-plugin</artifactId>
+            <configuration>
+              <showWeaveInfo>${verbose.compiler}</showWeaveInfo>
+              <source>${jdk.version}</source>
+              <target>${jdk.version}</target>
+              <compatibilityLevel>${jdk.version}</compatibilityLevel>
+              <aspectLibraries>
+                <aspectLibrary>
+                  <!-- For @Configurable. Not sure we need it in this module -->
+                  <groupId>org.springframework</groupId>
+                  <artifactId>org.springframework.aspects</artifactId>
+                </aspectLibrary>
+              </aspectLibraries>
+            </configuration>
+          </plugin>
+
+          <plugin>
+            <groupId>org.liquibase</groupId>
+            <artifactId>liquibase-maven-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>create-dbunit-database</id>
+                <phase>generate-test-resources</phase>
+                <goals>
+                  <goal>update</goal>
+                </goals>
+                <configuration>
+                  <dropFirst>true</dropFirst>
+                  <clearCheckSums>true</clearCheckSums>
+                  <changeLogFile>${database.changelog}</changeLogFile>
+                  <driver>${database.drivername}</driver>
+                  <url>${dbunit-database.url}</url>
+                  <username>${database.username}</username>
+                  <password>${database.password}</password>
+                </configuration>
+              </execution>
+
+              <execution>
+                <id>create-non-dbunit-database</id>
+                <phase>generate-test-resources</phase>
+                <goals>
+                  <goal>update</goal>
+                </goals>
+                <configuration>
+                  <dropFirst>true</dropFirst>
+                  <clearCheckSums>true</clearCheckSums>
+                  <changeLogFile>${database.changelog}</changeLogFile>
+                  <driver>${database.drivername}</driver>
+                  <url>${non-dbunit-database.url}</url>
+                  <username>${database.username}</username>
+                  <password>${database.password}</password>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+
+    </profile>
+  </profiles>
+</project>

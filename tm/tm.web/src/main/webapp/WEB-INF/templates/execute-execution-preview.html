@@ -1,0 +1,228 @@
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) 2010 - 2014 Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-transitional-thymeleaf-spring3-3.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	th:with=
+	   "titleWindow = #{title.ExecutionPopupPreview(${execution.executionOrder + 1 }, ${execution.name})},
+		title = #{title.ExecutionPopup(${execution.executionOrder + 1 }, ${execution.name})}">
+
+<head>
+
+<style th:remove="all" type="text/css">
+/**
+documentation : 
+			Parameters :
+				- execution : the execution object of which we display the preview
+
+*/
+</style>
+
+<title th:text="${titleWindow}">Exec #3 : test interface
+	(preview)</title>
+
+<link rel="stylesheet" type="text/css"
+	href="../../../../../../../tm/tm.web/src/main/webapp/styles/squash.purple.css"
+	sq:css="squash.purple.css" />
+
+<link rel="stylesheet" type="text/css" media="all" href="../../../../../../../tm/tm.web/src/main/webapp/styles/squash.core.css"
+	sq:css="squash.core.css" />
+
+<script type="text/javascript" th:inline="javascript">
+//<![CDATA[
+	var require = {
+		baseUrl : /*[[@{/scripts/}]]*/'../../scripts/'
+	};
+	
+	var squashtm = squashtm || {};
+	squashtm.app = squashtm.app || {};
+	squashtm.app.contextRoot = /*[[@{/}]]*/ "http://localhost:8080/squash";
+	squashtm.page = squashtm.page || {};
+	squashtm.page.hasFields = /*[[${hasCustomFields}]]*/ false;
+	squashtm.page.hasDenormFields = /*[[${hasDenormFields}]]*/ false;
+//]]>
+</script>
+<script type="text/javascript" th:src="@{/scripts/require-min.js}"></script>
+<script type="text/javascript" th:src="@{/scripts/common.js}"></script>
+
+
+<script th:remove="all" type="text/javascript" src="../../scripts/lib/jquery/jquery-1.8.3.min.js"></script>
+<script th:remove="all" type="text/javascript" src="../../js/thymol.js"></script>
+<script th:remove="all" type="text/javascript" src="../../scripts/require.js"></script>
+<script th:remove="all" type="text/javascript" src="../../scripts/common.js"></script>
+</head>
+
+<body class="execute-html-body">
+
+  <div id="execute-header">
+    <div class="snap-left">
+      <button id="execute-stop-button" th:text="#{execute.header.button.stop.title}" data-icon="ui-icon-power">stop</button>
+    </div>
+    <div style="margin-left:25%;" class="snap-left">
+      <span id="execute-header-numbers-label" th:text="'0 / '+${totalSteps}">0 / 3</span>
+    </div>
+    <div class="snap-right">
+      <a data-icon="ui-icon-triangle-1-e" id="execute-begin-button" th:text="#{label.Begin}"
+        th:href="@{__${currentStepsUrl}__/index/0(optimized=${config.optimized})}" href="#">
+        begin
+      </a>
+    </div>
+  </div>
+
+
+
+	<div id="execute-body" class="execute-fragment-body">
+
+    <div id="execute-title-div" class="ui-widget-header ui-state-default ui-corner-all fragment-header">
+      <h2 th:text="${title}">Exec #3 : test interface</h2>
+    </div>
+
+    <div id="execute-informations-panel" class="toggle-panel-main is-contextual load-links-right-frame"
+      data-title="Informations" th:attr="data-title=#{generics.information.title}">
+
+      <div class="display-table">
+        <div class="display-table-row">
+
+          <label class="display-table-cell" th:text="#{label.Description}">description</label>
+
+          <div id="testcase-description" class="display-table-cell" sq:unsafe-html="${execution.tcdescription}">
+
+            <p th:remove="all">Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque
+              laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae
+              vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit,
+              sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est,
+              qui dolorem ipsum quia dolor sit amet,</p>
+
+            <p th:remove="all">consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut
+              labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem
+              ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur? Quis autem vel eum iure
+              reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum
+              fugiat quo voluptas nulla pariatur?</p>
+          </div>
+        </div>
+
+        <div class="display-table-row">
+
+          <label class="display-table-cell" th:text="#{test-case.reference.label}">reference</label>
+
+          <div id="testcase-reference" class="display-table-cell" th:text="${execution.reference}">REF01</div>
+        </div>
+
+        <div class="display-table-row">
+          <label class="display-table-cell" th:text="#{test-case.importance.label}">importance</label>
+
+          <div id="testcase-importance" class="display-table-cell"
+            th:text="${execution.importance.level}+'-'+#{${execution.importance.getI18nKey()}}">0 - most important
+            of all</div>
+        </div>
+
+        <div class="display-table-row">
+          <label class="display-table-cell" th:text="#{test-case.nature.label}">nature</label>
+          <div id="testcase-nature" class="display-table-cell"
+            th:text="${execution.nature.level}+'-'+#{${execution.nature.getI18nKey()}}">0 - supernatural</div>
+        </div>
+
+        <div class="display-table-row">
+          <label class="display-table-cell" th:text="#{test-case.type.label}">type</label>
+          <div id="testcase-type" class="display-table-cell"
+            th:text="${execution.type.level}+'-'+#{${execution.type.getI18nKey()}}">0 - R</div>
+        </div>
+
+        <div class="display-table-row">
+          <label class="display-table-cell" th:text="#{test-case.status.label}">status</label>
+          <div id="testcase-status" class="display-table-cell"
+            th:text="${execution.status.level}+'-'+#{${execution.status.getI18nKey()}}">0 - a specifier</div>
+        </div>
+        
+      </div>
+      
+    </div>
+
+
+    <div id="execute-prerequisite-panel" class="toggle-panel-main is-contextual load-links-right-frame" data-title="Prerequisite" th:attr="data-title=#{generics.prerequisite.title}">
+			<div class="display-table">
+			<div class="display-table-row">			
+				<div class="display-table-cell" sq:unsafe-html="${execution.prerequisite}">					
+					<p th:remove="all"> 
+						consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam 
+						quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, 
+						nisi ut aliquid ex ea commodi consequatur? Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse 
+						quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur?	
+					</p>	
+				</div>				
+			</div>
+			</div>
+		</div>
+		
+		<div th:with="attachable = ${false}, attachableEntity=${execution}, attachmentSet = ${attachments}" id="attachment-bloc-frag" th:include="attachment-bloc.frag :: attachment-bloc">ATTACHMENT-BLOC</div>
+		
+	</div>
+	
+	<script type="text/javascript" th:inline="javascript">
+	//<![CDATA[
+	require(["common"], function() {
+    	require(["jquery", "execution-processing", 'squash.basicwidgets', 'custom-field-values'], 
+    			function($, executionProcessing, basic, cufValues){
+  			requirejs.config({
+  				config : {
+  					"execution-processing/init-preview" : /*[[${config}]]*/{}
+  				}
+  			});
+  			
+    		$(function(){
+    			executionProcessing.initPreview();
+    			basic.init();
+    			
+    			/* we dont append in parent because order would not be guaranteed
+    			 * we dont append in placeholder because it breaks layout aux petits oignons
+    			 * hence the replaceWith
+    			 */ 
+    			 
+    			var selector = "#execute-informations-panel > div.display-table";
+    			if (squashtm.page.hasFields) {
+    				var fieldsUrl = /*[[@{/custom-fields/values(boundEntityId=${execution.boundEntityId},boundEntityType=${execution.boundEntityType})}]]*/ "";
+    				$.getJSON(fieldsUrl)
+    				.success(function(jsonCufs) {
+    					cufValues.infoSupport.init(selector, jsonCufs, "jeditable");
+    				});
+    				
+    			}
+    			if (squashtm.page.hasDenormFields) {
+    				var denormsUrl = /*[[@{/denormalized-fields/values(denormalizedFieldHolderId=${execution.boundEntityId},denormalizedFieldHolderType=${execution.boundEntityType})}]]*/ "";
+        			$.getJSON(denormsUrl)
+        			.success(function(jsonDenorm) {
+        				cufValues.infoSupport.init(selector, jsonDenorm, "jeditable");
+        			});
+    			}
+    			
+    		});		
+    	});
+	});
+	//]]>
+	</script>
+
+	
+</body>
+
+</html>
