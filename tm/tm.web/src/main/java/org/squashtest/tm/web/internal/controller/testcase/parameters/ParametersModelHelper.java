@@ -59,14 +59,17 @@ public final class ParametersModelHelper extends DataTableModelBuilder<Parameter
 	@Override
 	public Map<String, Object> buildItemData(Parameter item) {
 		Map<String, Object> res = new HashMap<String, Object>();
-		boolean isDirectParam = Long.valueOf(ownerId).equals(item.getTestCase().getId());
+
+		Long tcId = item.getTestCase().getId();
+		boolean isDirectParam = Long.valueOf(ownerId).equals(tcId);
 		String testCaseName = buildTestCaseName(item, isDirectParam);
+
 		res.put(DataTableModelConstants.DEFAULT_ENTITY_ID_KEY, item.getId());
 		res.put(DataTableModelConstants.DEFAULT_ENTITY_INDEX_KEY, getCurrentIndex());
-		res.put(DataTableModelConstants.DEFAULT_ENTITY_NAME_KEY,
-				ParametersModelHelper.buildParameterName(item, ownerId, messageSource, locale));
+		res.put(DataTableModelConstants.DEFAULT_ENTITY_NAME_KEY, ParametersModelHelper.buildParameterName(item, ownerId, messageSource, locale));
 		res.put("description", item.getDescription());
 		res.put("test-case-name", testCaseName);
+		res.put("tc-id", tcId);
 		res.put("directly-associated", isDirectParam);
 		res.put(DataTableModelConstants.DEFAULT_EMPTY_DELETE_HOLDER_KEY, "");
 		return res;
