@@ -76,7 +76,7 @@ define([ "jquery", "tree", "handlebars", "underscore", "workspace/workspace.impo
 				tree.find('[restype="test-case-libraries"]').each(
 						function(idx, elt){
 							tree.jstree("refresh", this);
-							})
+							});
 			});
 
 			this.onOwnBtn("simulate", function() {
