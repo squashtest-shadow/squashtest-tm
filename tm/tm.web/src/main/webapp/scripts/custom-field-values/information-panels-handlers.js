@@ -100,10 +100,12 @@ define(["jquery", "handlebars", "squash.translator", "jqueryui", "./lib/jquery.s
 					break;
 				case "editable" : 
 					elt.editableCustomfield(cufValue.binding.customField);
+					elt[0].getElementsByTagName("p")[0].className += " editable";
 					break;
 					
 				case "jeditable" :
 					elt.jeditableCustomfield(cufValue.binding.customField, cufValue.id);
+					elt[0].getElementsByTagName("p")[0].className += " editable";
 					break;
 				}
 			}
