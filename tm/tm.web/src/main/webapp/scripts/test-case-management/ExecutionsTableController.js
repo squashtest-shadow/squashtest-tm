@@ -111,6 +111,10 @@ define([ "jquery", "squashtable", "jqueryui" ],
 						"bSortable" : true,
 						"aTargets" : [ 10 ],
 						"mDataProp" : "last-exec-on"
+					}, {
+						"bSortable" : true,
+						"aTargets" : [ 11 ],
+						"mDataProp" : "dataset"
 					} ]
 				});
 

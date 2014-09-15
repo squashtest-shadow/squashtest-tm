@@ -72,6 +72,7 @@
   						<th th:text="#{label.execution.status}">Status</th>
   						<th th:text="#{label.execution.lastRunBy}">Run by</th>
   						<th th:text="#{label.execution.lastRunOn}">Run on</th>
+  						<th th:text="#{label.Dataset}">Dataset</th>
   					</tr>
   				</thead>
   				<tbody>
@@ -87,6 +88,7 @@
   						<td th:text="#{*{executionStatus.i18nKey}}" class="exec-status" >Status ??</td>
   						<td th:text="*{lastExecutedBy}">Peter Parker</td>
   						<td th:text="*{lastExecutedOn == null ? #messages.msg('squashtm.nodata') : #dates.format(lastExecutedOn,#messages.msg('squashtm.dateformatShort'))}">01/02/2013</td>
+  						<td th:text="*{datasetLabel}">my dataset</td>
   					</tr>
   					<tr th:remove="all">
   						<td class="not-displayed exec-id">1</td>
