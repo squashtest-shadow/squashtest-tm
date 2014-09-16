@@ -580,10 +580,6 @@
           <groupId>org.ancoron.postgresql</groupId>
           <artifactId>org.postgresql</artifactId>
         </dependency>
-       <!--  <dependency>
-          <groupId>org.ancoron.postgresql</groupId>
-          <artifactId>org.postgresql.net</artifactId>
-        </dependency> -->
       </dependencies>
 
       <build>

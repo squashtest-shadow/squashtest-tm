@@ -42,14 +42,14 @@ import org.squashtest.tm.service.internal.repository.GenericDao;
  */
 public abstract class HibernateDao<ENTITY_TYPE> implements GenericDao<ENTITY_TYPE>{
 	protected final Class<ENTITY_TYPE> entityType;
-	
+
 	@SuppressWarnings("unchecked")
 	public HibernateDao() {
 		super();
 		ParameterizedType type = (ParameterizedType) getClass().getGenericSuperclass();
 		entityType = (Class<ENTITY_TYPE>) type.getActualTypeArguments()[0];
 	}
-	
+
 	@Inject
 	private SessionFactory sessionFactory;
 
@@ -60,17 +60,17 @@ public abstract class HibernateDao<ENTITY_TYPE> implements GenericDao<ENTITY_TYP
 	@Override
 	public void persist(List<ENTITY_TYPE> transientEntities) {
 		for (ENTITY_TYPE transientEntity : transientEntities) {
-			persistEntity(transientEntity);
+			persist(transientEntity);
 		}
 	}
-	
+
 	@Override
-	public final void  persist(ENTITY_TYPE transientEntity) {
+	public void persist(ENTITY_TYPE transientEntity) {
 		persistEntity(transientEntity);
 	}
 
 	@Override
-	public final void remove(ENTITY_TYPE entity) {
+	public void remove(ENTITY_TYPE entity) {
 		removeEntity(entity);
 	}
 
@@ -82,21 +82,21 @@ public abstract class HibernateDao<ENTITY_TYPE> implements GenericDao<ENTITY_TYP
 	@Override
 	public void clearFromCache(ENTITY_TYPE entity) {
 		currentSession().evict(entity);
-		
+
 	}
 
 	@Override
 	public void clearFromCache(Collection<ENTITY_TYPE> entities) {
 		for(ENTITY_TYPE entity: entities){
 			clearFromCache(entity);
-		}		
+		}
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	protected final ENTITY_TYPE getEntity(long objectId) {
 		return (ENTITY_TYPE) currentSession().get(entityType, objectId);
 	}
-	
+
 	protected final void persistEntity(Object entity) {
 		currentSession().persist(entity);
 	}
@@ -149,7 +149,7 @@ public abstract class HibernateDao<ENTITY_TYPE> implements GenericDao<ENTITY_TYP
 
 		Query q = session.getNamedQuery(queryName);
 		q.setParameter(0, queryParam);
-		
+
 		if (! filter.shouldDisplayAll()){
 			q.setFirstResult(filter.getFirstItemIndex());
 			q.setMaxResults(filter.getPageSize());
@@ -157,8 +157,8 @@ public abstract class HibernateDao<ENTITY_TYPE> implements GenericDao<ENTITY_TYP
 
 		return q.list();
 	}
-	
-	
+
+
 	/**
 	 * Executes a named query with parameters. The parameters should be set by the callback object.
 	 * 
@@ -169,12 +169,12 @@ public abstract class HibernateDao<ENTITY_TYPE> implements GenericDao<ENTITY_TYP
 	 */
 	@SuppressWarnings("unchecked")
 	protected final <R> List<R> executeListNamedQuery(String queryName, SetQueryParametersCallback setParams, Paging paging) {
-		
+
 		Session session = currentSession();
 
 		Query q = session.getNamedQuery(queryName);
 		setParams.setQueryParameters(q);
-		
+
 		if (!paging.shouldDisplayAll()){
 			q.setFirstResult(paging.getFirstItemIndex());
 			q.setMaxResults(paging.getPageSize());
@@ -182,7 +182,7 @@ public abstract class HibernateDao<ENTITY_TYPE> implements GenericDao<ENTITY_TYP
 
 		return q.list();
 	}
-	
+
 
 	/**
 	 * Runs a named query which returns a single entity / tuple / scalar and which accepts a unique parameter.
@@ -209,7 +209,7 @@ public abstract class HibernateDao<ENTITY_TYPE> implements GenericDao<ENTITY_TYP
 		setParams.setQueryParameters(q);
 		return (R) q.uniqueResult();
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	protected final <R> R executeEntityNamedQuery(String queryName) {
 		Query q = currentSession().getNamedQuery(queryName);
@@ -219,18 +219,18 @@ public abstract class HibernateDao<ENTITY_TYPE> implements GenericDao<ENTITY_TYP
 	protected final void executeUpdateListQuery(String queryName, SetQueryParametersCallback params){
 		Query q = currentSession().getNamedQuery(queryName);
 		params.setQueryParameters(q);
-		q.executeUpdate();	
+		q.executeUpdate();
 	}
-	
+
 	protected final void removeEntity(ENTITY_TYPE entity) {
 		currentSession().delete(entity);
 	}
-	
+
 	@Override
 	public void removeAll(List<ENTITY_TYPE> entities) {
 		for (ENTITY_TYPE entity : entities) {
 			this.removeEntity(entity);
 		}
-		
+
 	}
 }

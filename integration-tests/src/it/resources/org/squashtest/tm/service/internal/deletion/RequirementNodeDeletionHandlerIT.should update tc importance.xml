@@ -36,8 +36,8 @@
 	
 	<!--  ============================ attachment_content ============================================ -->
 
-	<ATTACHMENT_CONTENT ATTACHMENT_CONTENT_ID="-111"  STREAM_CONTENT="abcde"  /> <!--  FOR REQVERSION 111 OF REQ 11-->
-	<ATTACHMENT_CONTENT ATTACHMENT_CONTENT_ID="-31" STREAM_CONTENT="abcde" /> <!--  FOR TC 31 -->
+	<ATTACHMENT_CONTENT ATTACHMENT_CONTENT_ID="-111"    /> <!--  FOR REQVERSION 111 OF REQ 11-->
+	<ATTACHMENT_CONTENT ATTACHMENT_CONTENT_ID="-31"  /> <!--  FOR TC 31 -->
 	
 	<!--  ============================ attachments =================================================== -->
 	

@@ -20,6 +20,10 @@
  */
 package org.squashtest.tm.service
 
+import javax.inject.Inject;
+
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,9 +34,12 @@ import spock.lang.Specification;
 import spock.unitils.UnitilsSupport;
 
 /**
- * Superclass for a Hibernate based service integration test. Should not be used anymore, use DbunitServiceSpecification instead.  
+ * Superclass for a Hibernate based service integration test. Should not be used anymore, use DbunitServiceSpecification instead.
  */
 @ContextConfiguration(["classpath:service/dependencies-scan-context.xml", "classpath:no-validation-config-context.xml", "classpath*:META-INF/**/bundle-context.xml", "classpath*:META-INF/**/repository-context.xml", "classpath*:META-INF/**/datasource-context.xml", "classpath*:META-INF/**/dynamicdao-context.xml", "classpath*:META-INF/**/dynamicmanager-context.xml"])
 @TransactionConfiguration(transactionManager = "squashtest.tm.hibernate.TransactionManager")
 abstract class HibernateServiceSpecification extends Specification {
+	@Inject SessionFactory sessionFactory
+	Session getCurrentSession() { sessionFactory.currentSession }
+
 }

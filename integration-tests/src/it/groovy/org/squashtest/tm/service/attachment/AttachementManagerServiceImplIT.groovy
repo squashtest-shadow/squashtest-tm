@@ -22,7 +22,11 @@ package org.squashtest.tm.service.attachment
 
 import javax.inject.Inject
 
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
+import org.hibernate.SessionFactory;
 import org.spockframework.util.NotThreadSafe
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.transaction.annotation.Transactional
 import org.squashtest.tm.domain.attachment.Attachment
 import org.squashtest.tm.domain.attachment.AttachmentContent
@@ -37,14 +41,12 @@ import org.squashtest.tm.service.testcase.TestCaseLibrariesCrudService
 import org.squashtest.tm.service.testcase.TestCaseLibraryNavigationService
 import org.squashtest.tm.service.testcase.TestCaseModificationService
 
-@NotThreadSafe
+@Transactional
 class AttachmentManagerServiceImplIT extends HibernateServiceSpecification {
 
 	@Inject	TestCaseModificationService service
 
 	@Inject TestCaseLibraryNavigationService navService
-
-	@Inject TestCaseLibrariesCrudService libcrud
 
 	@Inject AttachmentManagerService attachService;
 
@@ -58,7 +60,7 @@ class AttachmentManagerServiceImplIT extends HibernateServiceSpecification {
 	def setup(){
 		genericProjectManager.persist(createProject())
 
-		def libList= libcrud.findAllLibraries()
+		def libList= currentSession.createQuery("from TestCaseLibrary").list()
 
 
 		def lib = libList.get(libList.size()-1);
@@ -74,7 +76,6 @@ class AttachmentManagerServiceImplIT extends HibernateServiceSpecification {
 		attachListId = testCase.attachmentList.id;
 	}
 
-	@Transactional
 	def "should create an AttachmentList along with a TestCase"(){
 		given :
 
@@ -89,132 +90,146 @@ class AttachmentManagerServiceImplIT extends HibernateServiceSpecification {
 	}
 
 
-	/*def "should add a new attachment empty and retrieve it"(){
-	 given :
-	 Attachment attachment = new Attachment("attachment.doc");
-	 attachment.setType();
-	 when :
-	 Long id = attachService.addAttachment(attachListId, attachment)
-	 Attachment attach =  attachService.findAttachment(id);
-	 then :
-	 attach.name == "attachment.doc"
-	 attach.type == "doc"
-	 }
-	 def "should add and retrieve a lot of attachment headers"(){
-	 given :
-	 Attachment attachment = new Attachment("attachment.doc");
-	 Attachment attachment2 = new Attachment("attachment2.doc");
-	 Attachment attachment3 = new Attachment("attachment3.doc");
-	 when :
-	 List<Long> ids = []
-	 ids << attachService.addAttachment(attachListId, attachment)
-	 ids << attachService.addAttachment(attachListId, attachment2)
-	 ids << attachService.addAttachment(attachListId, attachment3)
-	 Set<Attachment> attached = attachService.findAttachments(attachListId)
-	 then :
-	 attached.collect{it.id}.containsAll (ids);
-	 attached.collect {it.name}.containsAll([
-	 "attachment.doc",
-	 "attachment2.doc",
-	 "attachment3.doc"
-	 ])
-	 attached.collect {it.type}.containsAll(["doc", "doc", "doc"])
-	 }
-	 def "should create and add content to an attachment"(){
-	 given :
-	 Attachment attachment = new Attachment("attachment.doc");
-	 attachment.setType();
-	 byte[] bytes = new String("new long string just for the purpose of test").getBytes();
-	 when :
-	 Long id = attachService.addAttachment(attachListId, attachment)
-	 InputStream stream = new ByteArrayInputStream(bytes);
-	 attachService.setAttachmentContent(stream, id);
-	 then :
-	 notThrown(Exception)
-	 }
-	 byte[] randomBytes(int howMany){
-	 byte [] result = new byte[howMany];
-	 for (int i=0;i<howMany;i++){
-	 result[i]=Math.round(Math.random()*255);
-	 }
-	 return result;
-	 }
-	 def "should create an attachment, add content, retrieve the attachment and reread the content"(){
-	 given :
-	 Attachment attachment = new Attachment("attachment.doc");
-	 attachment.setType();
-	 byte[] bytes = randomBytes(100000)
-	 when :
-	 Long id = attachService.addAttachment(attachListId, attachment)
-	 InputStream stream = new ByteArrayInputStream(bytes);
-	 attachService.setAttachmentContent(stream, id);
-	 Attachment reattachment = attachService.findAttachment(id);
-	 InputStream restream = attachService.getAttachmentContent(id);
-	 byte[] res = new byte[100000]
-	 restream.read(res,0,100000)
-	 then :
-	 reattachment.name == "attachment.doc"
-	 reattachment.type == "doc"
-	 res == bytes
-	 }
-	 def "should create a complete attachment and persist it"(){
-	 given :
-	 Attachment attachment = new Attachment("attachment.doc");
-	 byte[] bytes = randomBytes(100000)
-	 when :
-	 AttachmentContent content = new AttachmentContent()
-	 InputStream stream = new ByteArrayInputStream(bytes);
-	 content.setContent(stream);
-	 attachment.setContent(content);
-	 Long id = attachService.addAttachment(attachListId, attachment)
-	 Attachment reattachment = attachService.findAttachment(id);
-	 InputStream restream = attachService.getAttachmentContent(id);
-	 byte[] res = new byte[100000]
-	 restream.read(res,0,100000)
-	 then :
-	 reattachment.name == "attachment.doc"
-	 reattachment.type == "doc"
-	 res == bytes
-	 }
-	 def "should remove an attachment"(){
-	 given :
-	 Attachment attachment = new Attachment("attachment.doc");
-	 attachment.setType();
-	 byte[] bytes = randomBytes(100000)
-	 AttachmentContent content = new AttachmentContent()
-	 InputStream stream = new ByteArrayInputStream(bytes);
-	 content.setContent(stream);
-	 attachment.setContent(content);
-	 Long id = attachService.addAttachment(attachListId, attachment)
-	 when :
-	 attachService.removeAttachmentFromList(attachListId, id)
-	 Set<Attachment> attached = attachService.findAttachments(attachListId)
-	 then :
-	 attached.size()==0
-	 }*/
+	def "should add a new attachment and retrieve it"(){
+		given :
+		ClassPathResource res = new ClassPathResource("/org/squashtest/tm/service/attachment/attachment.jpg")
+		File source = res.getFile()
+		FileInputStream fis = new FileInputStream(source)
 
-	/*@Transactional
-	 def "should correctly tell if a test case have attachments or not"(){
-	 given :
-	 Attachment attachment = new Attachment("attachment.doc");
-	 attachment.setType();
-	 byte[] bytes = randomBytes(100000)
-	 AttachmentContent content = new AttachmentContent()
-	 InputStream stream = new ByteArrayInputStream(bytes);
-	 content.setContent(stream);
-	 attachment.setContent(content);
-	 when :
-	 // works because method marked transactional ! it should throw a lazy ex because fetch does not initialize attachments !
-	 TestCase testCase = service.findById(testCaseId);
-	 def shouldBeFalse = testCase.attachmentList.hasAttachments()
-	 attachService.addAttachment(attachListId, attachment);
-	 TestCase testCase2 = service.findById(testCaseId);
-	 def shouldBeTrue = testCase2.attachmentList.hasAttachments()
-	 then :
-	 shouldBeFalse == false;
-	 shouldBeTrue == true;
-	 }*/
+		RawAttachment raw = new RawAttachment() {
+					String getName() {
+						"attachment.jpg"
+					}
+					InputStream getStream() {
+						fis
+					}
+					long getSizeInBytes() {
+						source.length()
+					}
+				}
 
+
+		when :
+		Long id = attachService.addAttachment(attachListId, raw)
+		currentSession.flush()
+
+		Attachment attach =  currentSession.load(Attachment, id)
+
+		then : "attachment correctly created"
+		attach.name == "attachment.jpg"
+		attach.type == "jpg"
+
+		and:
+		currentSession.clear()
+		File stored = File.createTempFile("yuno", "storeblobs")
+		OutputStream os = new FileOutputStream(stored)
+
+		when:
+		attachService.writeContent(id, os)
+		IOUtils.closeQuietly(os);
+
+		then: "attachment content is same as source file"
+		FileUtils.contentEquals(source, stored)
+	}
+
+	RawAttachment rawAttachment(file, name) {
+		new RawAttachment() {
+					FileInputStream fis = new FileInputStream(file)
+
+					String getName() {
+						name
+					}
+					InputStream getStream() {
+						fis
+					}
+					long getSizeInBytes() {
+						file.length()
+					}
+				}
+	}
+
+	def "should add and retrieve a lot of attachment headers"(){
+		given :
+		File source = sourceFile()
+
+		def raws = []
+		raws << rawAttachment(source, "att1.jpg")
+		raws << rawAttachment(source, "att2.jpg")
+		raws << rawAttachment(source, "att3.jpg")
+
+		when :
+		List<Long> ids = []
+
+		raws.each {
+			ids << attachService.addAttachment(attachListId, it)
+		}
+
+		currentSession.flush()
+		currentSession.clear()
+
+		Set<Attachment> attached = attachService.findAttachments(attachListId)
+
+		then :
+		attached*.id.containsAll (ids);
+		attached*.name.containsAll([
+			"att1.jpg",
+			"att2.jpg",
+			"att3.jpg"
+		])
+		attached*.type.containsAll(["jpg", "jpg", "jpg"])
+	}
+
+	private File sourceFile() {
+		ClassPathResource res = new ClassPathResource("/org/squashtest/tm/service/attachment/attachment.jpg")
+		File source = res.getFile()
+		return source
+	}
+
+
+
+	byte[] randomBytes(int howMany){
+		byte [] result = new byte[howMany];
+		for (int i=0;i<howMany;i++){
+			result[i]=Math.round(Math.random()*255);
+		}
+		return result;
+	}
+
+	def "should remove an attachment"(){
+		given :
+		File source = sourceFile()
+		RawAttachment raw = rawAttachment(source, "image.jpg")
+		Long id = attachService.addAttachment(attachListId, raw)
+		currentSession.flush()
+
+		when :
+		attachService.removeAttachmentFromList(attachListId, id)
+		currentSession.flush()
+		Set<Attachment> attached = attachService.findAttachments(attachListId)
+
+		then :
+		attached.size()==0
+	}
+
+	def "should correctly tell if a test case have attachments or not"(){
+		when :
+		TestCase testCase = service.findById(testCaseId);
+
+		then:
+		!testCase.attachmentList.hasAttachments()
+
+		and:
+		File source = sourceFile()
+		RawAttachment raw = rawAttachment(source, "image.jpg")
+
+		when:
+		attachService.addAttachment(attachListId, raw);
+		currentSession.flush()
+		TestCase testCase2 = service.findById(testCaseId);
+
+		then:
+		testCase2.attachmentList.hasAttachments()
+	}
 
 	def GenericProject createProject(){
 		Project p = new Project();

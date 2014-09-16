@@ -18,10 +18,47 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.internal.repository;
+package org.squashtest.tm.web.internal.controller.attachment;
 
-import org.squashtest.tm.domain.attachment.AttachmentContent;
+import java.io.InputStream;
 
-public interface AttachmentContentDao extends EntityDao<AttachmentContent> {
+import org.squashtest.tm.service.attachment.RawAttachment;
+
+/**
+ * @author Gregory Fouquet
+ * 
+ */
+public class UploadedData implements RawAttachment {
+	public final InputStream stream;
+	public final String name;
+	public final long sizeInBytes;
+
+	public UploadedData(InputStream stream, String name, long sizeInBytes) {
+		super();
+		this.stream = stream;
+		this.name = name;
+		this.sizeInBytes = sizeInBytes;
+	}
+
+	/**
+	 * @return the stream
+	 */
+	public InputStream getStream() {
+		return stream;
+	}
+
+	/**
+	 * @return the name
+	 */
+	public String getName() {
+		return name;
+	}
+
+	/**
+	 * @return the sizeInBytes
+	 */
+	public long getSizeInBytes() {
+		return sizeInBytes;
+	}
 
 }

@@ -21,6 +21,8 @@
 package org.squashtest.tm.domain.attachment;
 
 import java.io.InputStream;
+import java.sql.Blob;
+import java.sql.SQLException;
 
 import javax.persistence.Basic;
 import javax.persistence.Column;
@@ -32,14 +34,15 @@ import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.SequenceGenerator;
 
-import org.hibernate.annotations.Type;
+import org.hibernate.JDBCException;
 
 /**
- * the BLOB part of the attachment was kept apart from the Attachment class itself to enforce the lazy loading of potentially large data.
+ * the BLOB part of the attachment was kept apart from the Attachment class itself to enforce the lazy loading of
+ * potentially large data.
  * 
  * 
  * @author bsiri
- *
+ * 
  */
 
 @Entity
@@ -53,14 +56,17 @@ public class AttachmentContent {
 
 	@Lob
 	@Basic(fetch = FetchType.LAZY)
-	@Type(type = "org.squashtest.tm.infrastructure.hibernate.BlobUserType")
-	private InputStream streamContent;
+	private Blob streamContent;
 
-	public InputStream getContent() {
-		return streamContent;
+	public InputStream getStream() {
+		try {
+			return streamContent.getBinaryStream();
+		} catch (SQLException e) {
+			throw new JDBCException("Cannot read blob property as a stream", e);
+		}
 	}
 
-	public void setContent(InputStream content) {
+	public void setContent(Blob content) {
 		this.streamContent = content;
 	}
 

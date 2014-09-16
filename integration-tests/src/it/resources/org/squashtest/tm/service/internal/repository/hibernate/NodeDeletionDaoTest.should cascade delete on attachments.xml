@@ -32,11 +32,11 @@
 
 	<!--  ============================    attachment_content ======================================== -->
 
-	<ATTACHMENT_CONTENT ATTACHMENT_CONTENT_ID="-111" STREAM_CONTENT="abcde" /> 		<!--  for test case 1 -->
-	<ATTACHMENT_CONTENT ATTACHMENT_CONTENT_ID="-121" STREAM_CONTENT="abcde" /> 		<!--  for test case 2 -->
-	<ATTACHMENT_CONTENT ATTACHMENT_CONTENT_ID="-1111" STREAM_CONTENT="abcde" />		<!--  for test step 1 of test case 1 -->
-	<ATTACHMENT_CONTENT ATTACHMENT_CONTENT_ID="-1211" STREAM_CONTENT="abcde" />		<!--  for test step 1 of test case 2 -->
-	<ATTACHMENT_CONTENT ATTACHMENT_CONTENT_ID="-1212" STREAM_CONTENT="abcde" />		<!--  for test step 1 of test case 2 -->
+	<ATTACHMENT_CONTENT ATTACHMENT_CONTENT_ID="-111"  /> 		<!--  for test case 1 -->
+	<ATTACHMENT_CONTENT ATTACHMENT_CONTENT_ID="-121"  /> 		<!--  for test case 2 -->
+	<ATTACHMENT_CONTENT ATTACHMENT_CONTENT_ID="-1111"  />		<!--  for test step 1 of test case 1 -->
+	<ATTACHMENT_CONTENT ATTACHMENT_CONTENT_ID="-1211"  />		<!--  for test step 1 of test case 2 -->
+	<ATTACHMENT_CONTENT ATTACHMENT_CONTENT_ID="-1212"  />		<!--  for test step 1 of test case 2 -->
 	
 
 	

@@ -79,11 +79,12 @@ import org.squashtest.tm.service.campaign.IterationFinder;
 import org.squashtest.tm.service.campaign.TestSuiteFinder;
 import org.squashtest.tm.service.execution.ExecutionFinder;
 import org.squashtest.tm.service.testcase.TestCaseFinder;
+import org.squashtest.tm.web.internal.controller.attachment.UploadedData;
+import org.squashtest.tm.web.internal.controller.attachment.UploadedDataPropertyEditorSupport;
 import org.squashtest.tm.web.internal.controller.bugtracker.BugTrackerControllerHelper.ExecutionIssuesTableModel;
 import org.squashtest.tm.web.internal.controller.bugtracker.BugTrackerControllerHelper.IterationIssuesTableModel;
 import org.squashtest.tm.web.internal.controller.bugtracker.BugTrackerControllerHelper.StepIssuesTableModel;
 import org.squashtest.tm.web.internal.controller.bugtracker.BugTrackerControllerHelper.TestCaseIssuesTableModel;
-import org.squashtest.tm.web.internal.model.customeditor.AttachmentPropertyEditorSupport;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 
@@ -158,7 +159,7 @@ public class BugTrackerController {
 	@InitBinder
 	public void initBinder(HttpServletRequest request, ServletRequestDataBinder binder) throws ServletException {
 		binder.registerCustomEditor(org.squashtest.tm.domain.attachment.Attachment.class,
-				new AttachmentPropertyEditorSupport());
+				new UploadedDataPropertyEditorSupport());
 	}
 
 	/* **************************************************************************************************************
@@ -653,12 +654,11 @@ public class BugTrackerController {
 	public @ResponseBody
 	void forwardAttachmentsToIssue(@PathVariable("btName") String btName,
 			@PathVariable("remoteIssueId") String remoteIssueId,
-			@RequestParam("attachment[]") List<org.squashtest.tm.domain.attachment.Attachment> attachments) {
+			@RequestParam("attachment[]") List<UploadedData> uploads) {
 
-		List<Attachment> issueAttachments = new ArrayList<Attachment>(attachments.size());
-		for (org.squashtest.tm.domain.attachment.Attachment attach : attachments) {
-			Attachment newAttachment = new Attachment(attach.getName(), attach.getSize(), attach.getContent()
-					.getContent());
+		List<Attachment> issueAttachments = new ArrayList<Attachment>(uploads.size());
+		for (UploadedData upload : uploads) {
+			Attachment newAttachment = new Attachment(upload.name, upload.sizeInBytes, upload.stream);
 			issueAttachments.add(newAttachment);
 		}
 

@@ -117,9 +117,9 @@ public class HibernateTestCaseDao extends HibernateEntityDao<TestCase> implement
 	@Override
 	public void persistTestCaseAndSteps(TestCase testCase) {
 		for (TestStep step : testCase.getSteps()) {
-			super.persistEntity(step);
+			persistEntity(step);
 		}
-		super.persistEntity(testCase);
+		persistEntity(testCase);
 	}
 
 	@Override

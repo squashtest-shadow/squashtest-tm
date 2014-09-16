@@ -29,18 +29,16 @@ import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.attachment.Attachment;
 import org.squashtest.tm.domain.attachment.AttachmentHolder;
 
-@Transactional
+@Transactional(readOnly = true)
 public interface AttachmentFinderService {
-
-
 	PagedCollectionHolder<List<Attachment>> findPagedAttachments(long attachmentListId, PagingAndSorting pas);
-	
+
 	PagedCollectionHolder<List<Attachment>> findPagedAttachments(AttachmentHolder attached, PagingAndSorting pas);
-	
+
 	Attachment findAttachment(Long attachmentId);
-	
+
 	Set<Attachment> findAttachments(Long attachmentListId);
-	
+
 	String findAttachmentShortName(Long attachmentId);
-	
+
 }

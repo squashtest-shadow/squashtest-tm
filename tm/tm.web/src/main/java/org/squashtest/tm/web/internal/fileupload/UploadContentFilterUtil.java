@@ -20,33 +20,27 @@
  */
 package org.squashtest.tm.web.internal.fileupload;
 
-
-
-import org.squashtest.tm.domain.attachment.Attachment;
-
+import org.apache.commons.io.FilenameUtils;
+import org.squashtest.tm.web.internal.controller.attachment.UploadedData;
 
 public class UploadContentFilterUtil {
-	
-	private String whiteList;
-	
+
+	private String[] allowed;
+
 	public void setWhiteList(String whiteList) {
-		this.whiteList = whiteList;
+		allowed = whiteList.split(",");
 	}
 
-	public UploadContentFilterUtil(){
+	public boolean isTypeAllowed(UploadedData upload) {
 
-	}
-	
-	public boolean isTypeAllowed(Attachment attachment){
-		
-		String fileType=attachment.getType();
-		
-		for(String type : whiteList.split(",")){
-			if (type.trim().equalsIgnoreCase(fileType)){
+		String fileType = FilenameUtils.getExtension(upload.name);
+
+		for (String type : allowed) {
+			if (type.trim().equalsIgnoreCase(fileType)) {
 				return true;
 			}
 		}
-		
+
 		return false;
 	}
 }

@@ -56,9 +56,7 @@ class HibernateTestCaseDeletionDaoIT extends DbunitDaoSpecification{
 
 
 
-	@DataSet(value=[
-		"NodeDeletionDaoTest.should cascade delete on attachments.xml"
-	])
+	@DataSet("NodeDeletionDaoTest.should cascade delete on attachments.xml")
 	def "should cascade-remove an attachment list"(){
 
 		when :

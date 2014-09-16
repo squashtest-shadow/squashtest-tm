@@ -54,7 +54,6 @@ import org.squashtest.tm.web.internal.fileupload.UploadProgressListener;
 import org.squashtest.tm.web.internal.fileupload.UploadProgressListenerUtils;
 import org.squashtest.tm.web.internal.fileupload.UploadSummary;
 import org.squashtest.tm.web.internal.http.ContentTypes;
-import org.squashtest.tm.web.internal.model.customeditor.AttachmentPropertyEditorSupport;
 
 @Controller
 @RequestMapping("/attach-list/{attachListId}/attachments")
@@ -68,7 +67,6 @@ public class AttachmentController {
 	@Inject
 	private AttachmentManagerService attachmentManagerService;
 
-
 	@Inject
 	private MessageSource messageSource;
 
@@ -80,7 +78,7 @@ public class AttachmentController {
 
 	@InitBinder
 	public void initBinder(HttpServletRequest request, ServletRequestDataBinder binder) throws ServletException {
-		binder.registerCustomEditor(Attachment.class, new AttachmentPropertyEditorSupport());
+		binder.registerCustomEditor(Attachment.class, new UploadedDataPropertyEditorSupport());
 	}
 
 	/* ****************************** attachments *************************************** */
@@ -117,32 +115,26 @@ public class AttachmentController {
 	// uploads the file themselves and build the upload summary on the fly
 	@RequestMapping(value = UPLOAD_URL, method = RequestMethod.POST, params = "upload-ticket")
 	public ModelAndView uploadAttachment(HttpServletRequest servletRequest,
-			@RequestParam("attachment[]") List<Attachment> attachments, @PathVariable long attachListId, Locale locale)
-			throws IOException {
+			@RequestParam("attachment[]") List<UploadedData> attachments, @PathVariable long attachListId,
+			Locale locale)
+					throws IOException {
 
 		List<UploadSummary> summary = new LinkedList<UploadSummary>();
 
-		for (Attachment attachment : attachments) {
+		for (UploadedData upload : attachments) {
 
-			LOGGER.trace("AttachmentController : adding attachment " + attachment.getName());
+			LOGGER.trace("AttachmentController : adding attachment " + upload.name);
 
 			// file type checking
-			boolean shouldProceed = filterUtil.isTypeAllowed(attachment);
+			boolean shouldProceed = filterUtil.isTypeAllowed(upload);
 			if (!shouldProceed) {
-				summary.add(new UploadSummary(attachment.getName(), getUploadSummary(STR_UPLOAD_STATUS_WRONGFILETYPE,
+				summary.add(new UploadSummary(upload.name, getUploadSummary(STR_UPLOAD_STATUS_WRONGFILETYPE,
 						locale), UploadSummary.INT_UPLOAD_STATUS_WRONGFILETYPE));
 			} else {
-				try {
-					attachmentManagerService.addAttachment(attachListId, attachment);
-					attachment.getContent().getContent().close();
+				attachmentManagerService.addAttachment(attachListId, upload);
 
-					summary.add(new UploadSummary(attachment.getName(), getUploadSummary(STR_UPLOAD_STATUS_OK, locale),
-							UploadSummary.INT_UPLOAD_STATUS_OK));
-
-				} catch (IOException e) {
-					LOGGER.trace("AttachmentController : couldn't add attachment, validation failed " + e);
-					throw e;
-				}
+				summary.add(new UploadSummary(upload.name, getUploadSummary(STR_UPLOAD_STATUS_OK, locale),
+						UploadSummary.INT_UPLOAD_STATUS_OK));
 			}
 		}
 
@@ -231,60 +223,22 @@ public class AttachmentController {
 	@RequestMapping(value = "/download/{attachemendId}", method = RequestMethod.GET)
 	public @ResponseBody
 	void downloadAttachment(@PathVariable("attachemendId") long attachmentId, HttpServletResponse response) {
-		InputStream inStream = null;
-		ServletOutputStream outStream = null;
 
 		try {
 			Attachment attachment = attachmentManagerService.findAttachment(attachmentId);
-			inStream = attachmentManagerService.getAttachmentContent(attachmentId);
-			outStream = response.getOutputStream();
-
 			response.setContentType("application/octet-stream");
 			response.setHeader("Content-Disposition",
 					"attachment; filename=" + attachment.getName().replace(" ", "_"));
 
-			flushOutputStream(inStream, outStream);
+			ServletOutputStream outStream = response.getOutputStream();
 
+			attachmentManagerService.writeContent(attachmentId, outStream);
 		} catch (IOException e) {
 			LOGGER.warn("Error happened during attachment download : " + e.getMessage(), e);
 			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 
 		} finally {
-			closeStreams(inStream, outStream);
 		}
-	}
-
-	private void closeStreams(InputStream inStream, ServletOutputStream outStream) {
-		if (inStream != null) {
-			try {
-				inStream.close();
-			} catch (IOException e) {
-				LOGGER.warn(e.getMessage(), e);
-			}
-		}
-
-		if (outStream != null) {
-			try {
-				outStream.close();
-			} catch (IOException e) {
-				LOGGER.warn(e.getMessage(), e);
-			}
-		}
-	}
-
-	/* ************************ other stuffs *********************************** */
-
-	private void flushOutputStream(InputStream inStream, ServletOutputStream outStream) throws IOException {
-		int readByte;
-
-		do {
-			readByte = inStream.read();
-
-			if (readByte != EOF) {
-				outStream.write(readByte);
-			}
-		} while (readByte != EOF);
-
 	}
 
 	private String getUploadSummary(String key, Locale locale) {

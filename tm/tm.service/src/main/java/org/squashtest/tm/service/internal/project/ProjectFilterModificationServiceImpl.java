@@ -89,36 +89,36 @@ public class ProjectFilterModificationServiceImpl implements ProjectFilterModifi
 	public List<Project> getAllProjects() {
 		return projectManager.findAllOrderedByName();
 	}
-	
-	
+
+
 	// ****************************** private stuffs *******************************
-	
+
 	private ProjectFilter findPersistentProjectFilter(){
 		String userLogin = userContextService.getUsername();
 		return projectFilterDao.findProjectFilterByUserLogin(userLogin);
 	}
-	
+
 	private ProjectFilter createDefaultProjectFilter(){
 		ProjectFilter toReturn = new ProjectFilter();
-		
+
 		String userLogin = userContextService.getUsername();
 		toReturn.setProjects(getAllProjects());
 		toReturn.setUserLogin(userLogin);
-		toReturn.setActivated(false);		
-		
+		toReturn.setActivated(false);
+
 		return toReturn;
 	}
-	
+
 	private ProjectFilter findOrCreateProjectFilter(){
-		
+
 		ProjectFilter filter = findPersistentProjectFilter();
-		
+
 		if (filter == null) {
 			filter = createDefaultProjectFilter();
-			projectFilterDao.persistProjectFilter(filter);
+			projectFilterDao.persist(filter);
 		}
-		
-		return filter; 
+
+		return filter;
 	}
 
 }

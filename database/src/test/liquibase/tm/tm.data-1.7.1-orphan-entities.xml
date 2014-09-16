@@ -25,12 +25,14 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog 
      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
-	<changeSet id="tm.data-1.7.1-orphan-entities" author="mpagnon">
+	<changeSet id="tm.data-1.7.1-orphan-entities" author="mpagnon" dbms="h2,mysql">
 			<sqlFile path="tm.data-1.7.1-fix-bad-test-datas.sql" relativeToChangelogFile="true" endDelimiter=";"/>
 			<sqlFile path="tm.data-1.7.1-orphan-entities.sql" relativeToChangelogFile="true" endDelimiter=";"/>
 	</changeSet>
   <changeSet id="tm-data-1.7.1-orphan-entities-postgresql" author="mpagnon" dbms="postgresql">
     <comment>fix sequence values after insert</comment>
+      <sqlFile path="tm.data-1.7.1-fix-bad-test-datas.sql" relativeToChangelogFile="true" endDelimiter=";"/>
+    <sqlFile path="tm.data-1.7.1-orphan-entities-pg.sql" relativeToChangelogFile="true" endDelimiter=";"/>
     <sql>
         SELECT setval('test_step_test_step_id_seq', (SELECT MAX(test_step_id) from test_step));
         SELECT setval('item_test_plan_item_test_plan_id_seq', (SELECT MAX(item_test_plan_id) from iteration_test_plan_item));

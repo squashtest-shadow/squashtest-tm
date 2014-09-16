@@ -20,25 +20,32 @@
  */
 package org.squashtest.tm.service.attachment;
 
-import java.io.InputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.List;
 
 import org.springframework.transaction.annotation.Transactional;
-import org.squashtest.tm.domain.attachment.Attachment;
 
 @Transactional
-public interface AttachmentManagerService extends AttachmentFinderService{
-	//returns the ID of the newly created Attachment
-	Long addAttachment(Long attachmentListId, Attachment attachment);
-	
-	void setAttachmentContent(InputStream stream, Long attachmentId);
-	
-	InputStream getAttachmentContent(Long attachmentId);
-	
-	void removeAttachmentFromList(Long attachmentListId, Long attachmentId);
-	
-	void removeListOfAttachments(Long attachmentListId, List<Long> attachmentIds);
-	
-	void renameAttachment(Long attachmentId, String newName);
-	
+public interface AttachmentManagerService extends AttachmentFinderService {
+	/**
+	 * @param attachmentListId
+	 * @param rawAttachment
+	 * @return the ID of the newly created Attachment
+	 */
+	Long addAttachment(long attachmentListId, RawAttachment rawAttachment);
+
+	void removeAttachmentFromList(long attachmentListId, long attachmentId);
+
+	void removeListOfAttachments(long attachmentListId, List<Long> attachmentIds);
+
+	void renameAttachment(long attachmentId, String newName);
+
+	/**
+	 * Writes attachment content into the given stream.
+	 * @param attachmentId
+	 * @param os
+	 * @throws IOException
+	 */
+	void writeContent(long attachmentId, OutputStream os) throws IOException;
 }

@@ -20,7 +20,10 @@
  */
 package org.squashtest.tm.service.internal.attachment;
 
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.sql.Blob;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -29,6 +32,9 @@ import java.util.Set;
 
 import javax.inject.Inject;
 
+import org.hibernate.HibernateException;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
 import org.springframework.stereotype.Service;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
@@ -41,7 +47,7 @@ import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.service.advancedsearch.IndexationService;
 import org.squashtest.tm.service.attachment.AttachmentManagerService;
-import org.squashtest.tm.service.internal.repository.AttachmentContentDao;
+import org.squashtest.tm.service.attachment.RawAttachment;
 import org.squashtest.tm.service.internal.repository.AttachmentDao;
 import org.squashtest.tm.service.internal.repository.AttachmentListDao;
 
@@ -60,49 +66,73 @@ import org.squashtest.tm.service.internal.repository.AttachmentListDao;
  */
 @Service("squashtest.tm.service.AttachmentManagerService")
 public class AttachmentManagerServiceImpl implements AttachmentManagerService {
+	/**
+	 * 
+	 */
+	private static final int EOF = -1;
+
+	@Inject
+	private SessionFactory sessionFactory;
 
 	@Inject
 	private AttachmentDao attachmentDao;
 
 	@Inject
-	private AttachmentContentDao contentDao;
+	private AttachmentListDao attachmentListDao;
 
 	@Inject
-	private AttachmentListDao attachmentListDao;
-	
-	@Inject
-	private IndexationService indexationService; 
+	private IndexationService indexationService;
 
 	@Override
-	public Long addAttachment(Long attachmentListId, Attachment attachment) {
-		attachment.setAddedOn(new Date());
-		AttachmentList list = attachmentListDao.findById(attachmentListId);
+	public Long addAttachment(long attachmentListId, RawAttachment rawAttachment) {
+		AttachmentContent content = new AttachmentContent();
 
+		Blob blob = currentSession().getLobHelper().createBlob(rawAttachment.getStream(),
+				rawAttachment.getSizeInBytes());
+		content.setContent(blob);
+		currentSession().persist(content);
+
+		Attachment attachment = new Attachment();
+
+		AttachmentList list = attachmentListDao.findById(attachmentListId);
 		list.addAttachment(attachment);
 
-		// check first if content is provided along.
-		AttachmentContent content = attachment.getContent();
-		if (content != null) {
-			contentDao.persist(content);
-		}
-		
+		attachment.setContent(content);
+		attachment.setAddedOn(new Date());
+		attachment.setName(rawAttachment.getName());
+		attachment.setSize(rawAttachment.getSizeInBytes());
 		attachmentDao.persist(attachment);
-		
-		TestCase testCase = attachmentListDao.findAssociatedTestCaseIfExists(attachmentListId);
-		if(testCase != null){
-			this.indexationService.reindexTestCase(testCase.getId());
-		}
-		
-		RequirementVersion requirementVersion = attachmentListDao.findAssociatedRequirementVersionIfExists(attachmentListId);
-		if( requirementVersion != null){
-			this.indexationService.reindexRequirementVersion(requirementVersion.getId());
-		}
-		
+
+
+		reindexBoundEntities(attachmentListId);
+
 		return attachment.getId();
+	}
+
+	private void reindexBoundEntities(long attachmentListId) {
+		TestCase testCase = attachmentListDao.findAssociatedTestCaseIfExists(attachmentListId);
+		if (testCase != null) {
+			indexationService.reindexTestCase(testCase.getId());
+			return; // lists can't be shared, don't bother looking up requirement
+		}
+
+		RequirementVersion requirementVersion = attachmentListDao
+				.findAssociatedRequirementVersionIfExists(attachmentListId);
+		if (requirementVersion != null) {
+			indexationService.reindexRequirementVersion(requirementVersion.getId());
+		}
+	}
+
+	private Session currentSession() throws HibernateException {
+		return sessionFactory.getCurrentSession();
 	}
 
 	@Override
 	public Attachment findAttachment(Long attachmentId) {
+		return findById(attachmentId);
+	}
+
+	private Attachment findById(Long attachmentId) {
 		return attachmentDao.findById(attachmentId);
 	}
 
@@ -112,48 +142,18 @@ public class AttachmentManagerServiceImpl implements AttachmentManagerService {
 	}
 
 	@Override
-	public void setAttachmentContent(InputStream stream, Long attachmentId) {
-		Attachment attachment = attachmentDao.findAttachmentWithContent(attachmentId);
-
-		AttachmentContent content = attachment.getContent();
-
-		if (content == null) {
-			content = new AttachmentContent();
-			content.setContent(stream);
-			contentDao.persist(content);
-			attachment.setContent(content);
-		}
-
-		content.setContent(stream);
-	}
-
-	@Override
-	public InputStream getAttachmentContent(Long attachmentId) {
-		Attachment attachment = attachmentDao.findAttachmentWithContent(attachmentId);
-		return attachment.getContent().getContent();
-	}
-
-	@Override
-	public void removeAttachmentFromList(Long attachmentListId, Long attachmentId) {
+	public void removeAttachmentFromList(long attachmentListId, long attachmentId) {
 		AttachmentList list = attachmentListDao.findById(attachmentListId);
 		Attachment attachment = attachmentDao.findById(attachmentId);
 
 		list.removeAttachment(attachment);
 		attachmentDao.removeAttachment(attachment.getId());
-		
-		TestCase testCase = attachmentListDao.findAssociatedTestCaseIfExists(attachmentListId);
-		if(testCase != null){
-			this.indexationService.reindexTestCase(testCase.getId());
-		}
-		
-		RequirementVersion requirementVersion = attachmentListDao.findAssociatedRequirementVersionIfExists(attachmentListId);
-		if( requirementVersion != null){
-			this.indexationService.reindexRequirementVersion(requirementVersion.getId());
-		}
+
+		reindexBoundEntities(attachmentListId);
 	}
 
 	@Override
-	public void removeListOfAttachments(Long attachmentListId, List<Long> attachmentIds) {
+	public void removeListOfAttachments(long attachmentListId, List<Long> attachmentIds) {
 
 		Iterator<Attachment> iterAttach = attachmentListDao.findById(attachmentListId).getAllAttachments().iterator();
 
@@ -174,43 +174,53 @@ public class AttachmentManagerServiceImpl implements AttachmentManagerService {
 				break;
 			}
 		}
-		
-		TestCase testCase = attachmentListDao.findAssociatedTestCaseIfExists(attachmentListId);
-		if(testCase != null){
-			this.indexationService.reindexTestCase(testCase.getId());
-		}
-		
-		RequirementVersion requirementVersion = attachmentListDao.findAssociatedRequirementVersionIfExists(attachmentListId);
-		if( requirementVersion != null){
-			this.indexationService.reindexRequirementVersion(requirementVersion.getId());
-		}
-		
+
+		reindexBoundEntities(attachmentListId);
+
 	}
 
 	@Override
-	public void renameAttachment(Long attachmentId, String newName) {
+	public void renameAttachment(long attachmentId, String newName) {
 		Attachment attachment = attachmentDao.findById(attachmentId);
 		attachment.setShortName(newName);
 	}
 
 	@Override
 	public String findAttachmentShortName(Long attachmentId) {
-		Attachment attachment = attachmentDao.findById(attachmentId);
+		Attachment attachment = findById(attachmentId);
 		return attachment.getShortName();
 	}
 
 	@Override
-	public PagedCollectionHolder<List<Attachment>> findPagedAttachments(long attachmentListId,
-			PagingAndSorting pas) {
+	public PagedCollectionHolder<List<Attachment>> findPagedAttachments(long attachmentListId, PagingAndSorting pas) {
 		List<Attachment> atts = attachmentDao.findAllAttachmentsFiltered(attachmentListId, pas);
 		long count = attachmentDao.findAllAttachments(attachmentListId).size();
 		return new PagingBackedPagedCollectionHolder<List<Attachment>>(pas, count, atts);
 	}
-	
+
 	@Override
-	public PagedCollectionHolder<List<Attachment>> findPagedAttachments(
-			AttachmentHolder attached, PagingAndSorting pas) {
+	public PagedCollectionHolder<List<Attachment>> findPagedAttachments(AttachmentHolder attached, PagingAndSorting pas) {
 		return findPagedAttachments(attached.getAttachmentList().getId(), pas);
+	}
+
+	/**
+	 * @see org.squashtest.tm.service.attachment.AttachmentManagerService#writeContent(long,
+	 *      javax.servlet.ServletOutputStream)
+	 */
+	@Override
+	public void writeContent(long attachmentId, OutputStream outStream) throws IOException {
+		InputStream is = findById(attachmentId).getContent().getStream();
+
+		int readByte;
+
+		do {
+			readByte = is.read();
+
+			if (readByte != EOF) {
+				outStream.write(readByte);
+			}
+		} while (readByte != EOF);
+
 	}
 
 }

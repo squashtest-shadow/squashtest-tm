@@ -23,6 +23,8 @@ package org.squashtest.tm.domain.attachment;
 import java.util.Date;
 import java.util.Locale;
 
+import javax.persistence.Access;
+import javax.persistence.AccessType;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -54,6 +56,7 @@ public class Attachment {
 
 	private String type;
 
+	/** attachment size in bytes */
 	private Long size = 0L;
 
 	@OneToOne(fetch = FetchType.LAZY, cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE })
@@ -121,6 +124,7 @@ public class Attachment {
 	 *            represents the filename without extension
 	 */
 	public void setShortName(String shortName) {
+		// OMFG what if type is null !
 		name = shortName + '.' + type;
 	}
 

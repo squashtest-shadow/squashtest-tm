@@ -18,16 +18,18 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.internal.repository.hibernate;
+package org.squashtest.tm.service.attachment;
 
-import org.springframework.stereotype.Repository;
-import org.squashtest.tm.domain.attachment.AttachmentContent;
-import org.squashtest.tm.service.internal.repository.AttachmentContentDao;
+import java.io.InputStream;
 
+/**
+ * @author Gregory Fouquet
+ * 
+ */
+public interface RawAttachment {
+	InputStream getStream();
 
-@Repository
-public class HibernateAttachmentContentDao extends
-		HibernateEntityDao<AttachmentContent> implements AttachmentContentDao {
+	String getName();
 
-
+	long getSizeInBytes();
 }

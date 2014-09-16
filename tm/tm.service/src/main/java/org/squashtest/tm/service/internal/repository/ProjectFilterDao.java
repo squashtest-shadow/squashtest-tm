@@ -23,19 +23,13 @@ package org.squashtest.tm.service.internal.repository;
 import org.squashtest.tm.domain.projectfilter.ProjectFilter;
 
 public interface ProjectFilterDao {
-	
+
 	/***
-	 * Method which returns a given user single ProjectFilter 
+	 * Method which returns a given user single ProjectFilter
 	 * @param givenUserLogin the user login (String)
 	 * @return null or a ProjectFilter
 	 */
 	ProjectFilter findProjectFilterByUserLogin(String givenUserLogin);
-	
-	/***
-	 * Method which creates a project filter 
-	 * @param givenProjectFilter
-	 */
-	void persistProjectFilter(ProjectFilter givenProjectFilter);
-	
-	
+
+	void persist(ProjectFilter transientFilter);
 }

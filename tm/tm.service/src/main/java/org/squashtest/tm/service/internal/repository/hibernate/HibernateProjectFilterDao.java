@@ -39,17 +39,12 @@ public class HibernateProjectFilterDao extends HibernateEntityDao<ProjectFilter>
 	public ProjectFilter findProjectFilterByUserLogin(final String givenUserLogin) {
 		//first set the parameter
 		SetQueryParametersCallback newCallBack = new GivenUserParametersCallback(givenUserLogin);
-		
+
 		return executeEntityNamedQuery("projectFilter.findByUserLogin", newCallBack);
 	}
 
-	@Override
-	public void persistProjectFilter(ProjectFilter givenProjectFilter) {
-		persistEntity(givenProjectFilter);
-	}
-	
 	private static final class GivenUserParametersCallback implements SetQueryParametersCallback{
-		
+
 		private String givenUserLogin;
 		private GivenUserParametersCallback(String givenUserLogin){
 			this.givenUserLogin = givenUserLogin;
