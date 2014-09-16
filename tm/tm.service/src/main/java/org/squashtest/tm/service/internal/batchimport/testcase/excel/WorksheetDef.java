@@ -21,6 +21,7 @@
 package org.squashtest.tm.service.internal.batchimport.testcase.excel;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -45,6 +46,7 @@ class WorksheetDef<COL extends TemplateColumn> {
 	private final TemplateWorksheet worksheetType;
 	private final Map<COL, StdColumnDef<COL>> stdColumnDefs = new HashMap<COL, StdColumnDef<COL>>();
 	private final List<CustomFieldColumnDef> customFieldDefs = new ArrayList<CustomFieldColumnDef>();
+	private final List<UnknownColumnDef> unknownColumnDefs = new ArrayList<UnknownColumnDef>();
 
 	public WorksheetDef(@NotNull TemplateWorksheet worksheetType) {
 		super();
@@ -85,6 +87,11 @@ class WorksheetDef<COL extends TemplateColumn> {
 		return worksheetStatus;
 	}
 
+
+	public Collection<UnknownColumnDef> getUnknownColumns(){
+		return unknownColumnDefs;
+	}
+
 	private boolean isMandatory(TemplateColumn col) {
 		return ColumnProcessingMode.MANDATORY.equals(col.getProcessingMode());
 	}
@@ -123,9 +130,12 @@ class WorksheetDef<COL extends TemplateColumn> {
 			duplicate = cufDefs.contains((CustomFieldColumnDef) res);
 			cufDefs.add((CustomFieldColumnDef) res);
 
-		} else {
+		} /*else if (TemplateColumnUtils){
 			LOGGER.trace("Column named '{}' will be ignored", header);
-			// else unknown columns are ditched
+
+		}*/ else {
+			LOGGER.trace("Column named '{}' is unknown", header);
+			unknownColumnDefs.add(new UnknownColumnDef(colIndex, header));
 		}
 		if (duplicate) {
 			throw new ColumnMismatchException(ColumnMismatch.DUPLICATE, colType);

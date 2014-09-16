@@ -33,7 +33,7 @@ public class LogTrain {
 	private List<LogEntry> entries = new LinkedList<LogEntry>();
 	private boolean criticalErrors = false;
 
-	void addEntry(LogEntry entry){
+	public void addEntry(LogEntry entry){
 		if (entry != null){
 			entries.add(entry);
 			if (entry.getStatus() == ImportStatus.FAILURE){

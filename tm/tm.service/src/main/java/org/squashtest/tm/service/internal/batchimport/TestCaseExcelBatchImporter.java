@@ -51,9 +51,15 @@ public class TestCaseExcelBatchImporter {
 
 		ExcelWorkbookParser parser = ExcelWorkbookParser.createParser(excelFile);
 		parser.parse().releaseResources();
-		List<Instruction<?>> instructions = buildOrderedInstruction(parser);
 
-		return run(instructions, simulator);
+		LogTrain unknownHeaders = parser.logUnknownHeaders();
+
+		List<Instruction<?>> instructions = buildOrderedInstruction(parser);
+		ImportLog importLog = run(instructions, simulator);
+
+		importLog.appendLogTrain(unknownHeaders);
+		return importLog;
+
 	}
 
 	public ImportLog performImport(File excelFile) {
@@ -62,12 +68,15 @@ public class TestCaseExcelBatchImporter {
 
 		ExcelWorkbookParser parser = ExcelWorkbookParser.createParser(excelFile);
 		parser.parse().releaseResources();
-		List<Instruction<?>> instructions = buildOrderedInstruction(parser);
 
+		LogTrain unknownHeaders = parser.logUnknownHeaders();
+
+		List<Instruction<?>> instructions = buildOrderedInstruction(parser);
 		ImportLog importLog = run(instructions, impl);
 
 		impl.postprocess();
 
+		importLog.appendLogTrain(unknownHeaders);
 		return importLog;
 
 	}

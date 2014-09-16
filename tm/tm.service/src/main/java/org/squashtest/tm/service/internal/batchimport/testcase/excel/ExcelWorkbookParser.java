@@ -28,6 +28,7 @@ import static org.squashtest.tm.service.internal.batchimport.testcase.excel.Temp
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -44,11 +45,20 @@ import org.springframework.beans.factory.annotation.Value;
 import org.squashtest.tm.exception.SheetCorruptedException;
 import org.squashtest.tm.service.batchimport.excel.MaxNumberOfLinesExceededException;
 import org.squashtest.tm.service.batchimport.excel.TemplateMismatchException;
+import org.squashtest.tm.service.importer.ImportStatus;
+import org.squashtest.tm.service.importer.LogEntry;
+import org.squashtest.tm.service.importer.Target;
 import org.squashtest.tm.service.internal.batchimport.DatasetParamValueInstruction;
+import org.squashtest.tm.service.internal.batchimport.DatasetTarget;
 import org.squashtest.tm.service.internal.batchimport.Instruction;
+import org.squashtest.tm.service.internal.batchimport.LogTrain;
+import org.squashtest.tm.service.internal.batchimport.Messages;
 import org.squashtest.tm.service.internal.batchimport.ParameterInstruction;
+import org.squashtest.tm.service.internal.batchimport.ParameterTarget;
 import org.squashtest.tm.service.internal.batchimport.StepInstruction;
 import org.squashtest.tm.service.internal.batchimport.TestCaseInstruction;
+import org.squashtest.tm.service.internal.batchimport.TestCaseTarget;
+import org.squashtest.tm.service.internal.batchimport.TestStepTarget;
 
 /**
  * <p>
@@ -163,6 +173,49 @@ public class ExcelWorkbookParser {
 			}
 
 		});
+	}
+
+	public LogTrain logUnknownHeaders(){
+
+		LogTrain logs = new LogTrain();
+
+		for (WorksheetDef<?> wd : wmd.getWorksheetDefs()) {
+			Collection<UnknownColumnDef> unknowns = wd.getUnknownColumns();
+			for (UnknownColumnDef unknown : unknowns){
+				LogEntry.Builder builder = LogEntry.failure()
+						.atLine(0)
+						.forTarget(createDummyTarget(wd))
+						.withMessage(Messages.ERROR_UNKNOWN_COLUMN_HEADER, new Object[]{unknown.getHeader()})
+						.withImpact(Messages.IMPACT_COLUMN_IGNORED, (Object[])null);
+				logs.addEntry(builder.build());
+			}
+		}
+
+		return logs;
+
+	}
+
+	// quick and dirty. LogEntries need a target because ImportLog sorts the entries by the EntityType
+	// of the target of the log entry.
+	private Target createDummyTarget(WorksheetDef def){
+		Target target = null;
+		switch (def.getWorksheetType()){
+		case TEST_CASES_SHEET :
+			target = new TestCaseTarget();
+			break;
+		case STEPS_SHEET :
+			target = new TestStepTarget();
+			break;
+		case DATASET_PARAM_VALUES_SHEET :
+		case DATASETS_SHEET:
+			target = new DatasetTarget();
+			break;
+		case PARAMETERS_SHEET :
+			target = new ParameterTarget();
+			break;
+		default : throw new IllegalArgumentException("sheet '"+def.getSheetName()+"' is unknown and contains errors in its column headers");
+		}
+		return target;
 	}
 
 	/**
