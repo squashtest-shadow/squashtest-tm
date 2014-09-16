@@ -147,7 +147,7 @@ class TestPlanTableModelHelper extends DataTableModelBuilder<IndexedIterationTes
 		static {
 			JsonDataset emptyDs = new JsonDataset();
 			emptyDs.setId(null);
-			emptyDs.setName("--");
+			emptyDs.setName("-");
 
 			// I would prefer Collections.emptylist but the fracking compiler would not let met cast.
 			EMPTY_INFOS = new DatasetInfos(emptyDs, new ArrayList<JsonDataset>());
