@@ -30,12 +30,15 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
 
+import org.apache.commons.lang.StringUtils;
+import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -257,7 +260,7 @@ public class ExcelWorkbookParser {
 		for (int i = 1; i <= sheet.getLastRowNum(); i++) {
 			LOGGER.trace("Creating instruction for row {}", i);
 			Row row = sheet.getRow(i);
-			if (row != null) {
+			if (! isEmpty(row)) {
 				Instruction instruction = instructionBuilder.build(row);
 				instructionsByWorksheet.get(worksheetDef.getWorksheetType()).add(instruction);
 			}
@@ -307,5 +310,22 @@ public class ExcelWorkbookParser {
 		// whine
 	}
 
+	public boolean isEmpty(Row row){
+		boolean isEmpty = true;
+
+		if (row != null){
+			Iterator<Cell> iterator = row.cellIterator();
+			while(iterator.hasNext()){
+				Cell c = iterator.next();
+				if (! StringUtils.isBlank(c.getStringCellValue())){
+					isEmpty = false;
+					break;
+				}
+			}
+		}
+
+		return isEmpty;
+
+	}
 
 }
