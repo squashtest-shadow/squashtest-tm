@@ -146,14 +146,14 @@ class HibernateTestCaseDeletionDaoIT extends DbunitDaoSpecification{
 		def testCaseAfter = findEntity(TestCase.class, -11L)
 
 		then :
-		! found("test_step", "test_step_id", -111L)
-		! found("test_step", "test_step_id", -112L)
+		! found("TEST_STEP", "TEST_STEP_id", -111L)
+		! found("TEST_STEP", "TEST_STEP_id", -112L)
 
-		! found("action_test_step", "test_step_id", -111L)
-		! found("call_test_step", "test_step_id", -112L)
+		! found("ACTION_TEST_STEP", "TEST_STEP_id", -111L)
+		! found("CALL_TEST_STEP", "TEST_STEP_id", -112L)
 
-		! found("test_case_steps", "step_id", -111L)
-		! found("test_case_steps", "step_id", -112L)
+		! found("TEST_CASE_STEPS", "STEP_ID", -111L)
+		! found("TEST_CASE_STEPS", "STEP_ID", -112L)
 
 		testCaseAfter.steps.size()==0
 	}
