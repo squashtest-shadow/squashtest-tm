@@ -21,7 +21,6 @@
 package org.squashtest.tm.web.internal.controller.attachment;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
@@ -59,7 +58,6 @@ import org.squashtest.tm.web.internal.http.ContentTypes;
 @RequestMapping("/attach-list/{attachListId}/attachments")
 public class AttachmentController {
 
-	private static final int EOF = -1;
 	private static final int NO_PROGRESS = -1;
 	private static final String UPLOAD_URL = "/upload";
 	private static final Logger LOGGER = LoggerFactory.getLogger(AttachmentController.class);
@@ -78,7 +76,7 @@ public class AttachmentController {
 
 	@InitBinder
 	public void initBinder(HttpServletRequest request, ServletRequestDataBinder binder) throws ServletException {
-		binder.registerCustomEditor(Attachment.class, new UploadedDataPropertyEditorSupport());
+		binder.registerCustomEditor(UploadedData.class, new UploadedDataPropertyEditorSupport());
 	}
 
 	/* ****************************** attachments *************************************** */

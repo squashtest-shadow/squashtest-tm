@@ -158,7 +158,7 @@ public class BugTrackerController {
 
 	@InitBinder
 	public void initBinder(HttpServletRequest request, ServletRequestDataBinder binder) throws ServletException {
-		binder.registerCustomEditor(org.squashtest.tm.domain.attachment.Attachment.class,
+		binder.registerCustomEditor(UploadedData.class,
 				new UploadedDataPropertyEditorSupport());
 	}
 
