@@ -26,7 +26,7 @@ function(Backbone, _, FormModel, ButtonUtil, treeBuilder, ProjectsPickerPopup, S
 	var postNoDate = "--";
 
 	function workspaceType(domTree) {
-		var type = domTree.dataset["nodetype"];
+		var type = $(domTree).data("nodetype");
 		return type.toLowerCase().replace(/_/g, "-");
 	}
 
@@ -177,7 +177,7 @@ function(Backbone, _, FormModel, ButtonUtil, treeBuilder, ProjectsPickerPopup, S
 				var dom = this;
 				var attr = self.model.get(dom.id);
 				if (_.isUndefined(attr.val) || attr.val === postNoDate) {
-					dom.innerHTML = dom.dataset["nodate"];
+					dom.innerHTML = $(dom).data("nodate");
 				} else {
 					dom.innerHTML = reformatDate(postDateFormat, settings.dateFormat)(attr.val);
 				}
@@ -192,8 +192,7 @@ function(Backbone, _, FormModel, ButtonUtil, treeBuilder, ProjectsPickerPopup, S
 			var self = this;
 			var config = self.config;
 
-			this.$(".rpt-tree-crit").each(function() {
-				var dom = this;
+			this.$(".rpt-tree-crit").each(function(i, dom) {
 				var type = workspaceType(dom);
 				var url = config.contextPath + "/" + type + "-browser/drives";
 
@@ -225,10 +224,9 @@ function(Backbone, _, FormModel, ButtonUtil, treeBuilder, ProjectsPickerPopup, S
 
 		_renderProjectPickers: function() {
 			var self = this;
-			this.$(".project-picker").each(function() {
-				var dom = this;
+			this.$(".project-picker").each(function(i, dom) {
 				var pickerView;
-				if (dom.dataset["multiselect"] === "true") {
+				if ($(dom).data("multiselect") === "true") {
 					pickerView = new ProjectsPickerPopup({ el : dom, model: self.model });
 				} else {
 					pickerView = new SingleProjectPickerPopup({ el : dom, model: self.model });
@@ -295,13 +293,12 @@ function(Backbone, _, FormModel, ButtonUtil, treeBuilder, ProjectsPickerPopup, S
 
 		_initDatePickers: function() {
 			var self = this;
-			this.$(".rpt-date-crit").each(function() {
-				var dom = this;
+			this.$(".rpt-date-crit").each(function(it, dom) {
 				// TODO slap this ugly "reformat" stuff into a function ffs
 				var date = postNoDate;
 
 				try {
-					date = reformatDate(dom.dataset["locale"] || "dd/mm/yy", postDateFormat)(dom.innerHTML);
+					date = reformatDate($(dom).data("locale") || "dd/mm/yy", postDateFormat)(dom.innerHTML);
 				} catch (ex) { /*noop*/ }
 
 				self.model.set(dom.id, new FormModel.Input("DATE", date === "" ? postNoDate : date));
@@ -362,12 +359,14 @@ function(Backbone, _, FormModel, ButtonUtil, treeBuilder, ProjectsPickerPopup, S
 		},
 
 		openTreePicker: function(event) {
-			var dialogId = event.currentTarget.dataset["idopened"];
+			var target = event.currentTarget;
+			var dialogId = $(target).data("idopened");
 			$("#" + dialogId).dialog("open"); // $() instead of this.$() because dialog was removed from its location
 		},
 
 		openProjectPicker: function(event) {
-			var dialogId = event.currentTarget.dataset["idopened"];
+			var target = event.currentTarget;
+			var dialogId = $(target).data("idopened");
 			this.projectPickers[dialogId].open();
 		},
 
@@ -382,7 +381,7 @@ function(Backbone, _, FormModel, ButtonUtil, treeBuilder, ProjectsPickerPopup, S
 				var origDom = this;
 				var postDate;
 
-				if (localizedDate === "" || origDom.dataset["nodate"] === localizedDate) {
+				if (localizedDate === "" || $(origDom).data("nodate") === localizedDate) {
 					postDate = postNoDate;
 				} else {
 					postDate = reformatDate(settings.datepicker.dateFormat, postDateFormat)(localizedDate);
