@@ -264,7 +264,7 @@ public class FacilityImpl implements Facility {
 			CallStepParamsInfo paramInfo, ActionTestStep actionStepBackup) {
 
 		LogTrain train = validator.addCallStep(target, testStep, calledTestCase, paramInfo, actionStepBackup);
-		
+
 		if (!train.hasCriticalErrors()) {
 			String mustImportCallAsActionStepErrorI18n = FacilityUtils.mustImportCallAsActionStep(train);
 			try {
@@ -679,7 +679,7 @@ public class FacilityImpl implements Facility {
 
 	private void doFailsafeUpdateParameterValue(DatasetTarget dataset, ParameterTarget param, String value) {
 		DatasetParamValue dpv = findParamValue(dataset, param);
-		String trValue = helper.truncate(value, 255);
+		String trValue = helper.truncate(value);
 		dpv.setParamValue(trValue);
 	}
 
@@ -782,7 +782,8 @@ public class FacilityImpl implements Facility {
 	private Dataset findDataset(DatasetTarget dataset) {
 		Long tcid = validator.getModel().getId(dataset.getTestCase());
 
-		Dataset found = datasetDao.findDatasetByTestCaseAndByName(tcid, dataset.getName());
+		String truncated = helper.truncate(dataset.getName());
+		Dataset found = datasetDao.findDatasetByTestCaseAndByName(tcid, truncated);
 
 		if (found != null) {
 			return found;
@@ -813,7 +814,7 @@ public class FacilityImpl implements Facility {
 		if (paramInfo.getParamMode() == ParameterAssignationMode.CALLED_DATASET){
 
 			Long tcid = validator.getModel().getId(tc);
-			String dsname = helper.truncate(paramInfo.getCalledDatasetName(), 255);
+			String dsname = helper.truncate(paramInfo.getCalledDatasetName());
 			Dataset ds = datasetDao.findDatasetByTestCaseAndByName(tcid, dsname);
 
 			// if the dataset exists we can actually bind the step to it.

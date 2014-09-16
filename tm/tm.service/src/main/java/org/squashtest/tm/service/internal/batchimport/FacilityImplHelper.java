@@ -35,6 +35,9 @@ import org.squashtest.tm.domain.testcase.TestCaseType;
 
 final class FacilityImplHelper {
 
+	static final int STD_TRUNCATE_SIZE = 255;
+
+
 	FacilityImplHelper() {
 		super();
 	}
@@ -149,6 +152,10 @@ final class FacilityImplHelper {
 		} else {
 			return null;
 		}
+	}
+
+	String truncate(String str){
+		return truncate(str, STD_TRUNCATE_SIZE);
 	}
 
 
