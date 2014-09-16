@@ -42,9 +42,6 @@ class AttachmentControllerTest extends Specification {
 		attachment.getName() >> "attachment"
 		service.findAttachment(_) >> attachment
 
-		InputStream contentStream = new ByteArrayInputStream("content".bytes)
-		service.getAttachmentContent(_) >> contentStream
-
 		and:
 		HttpServletResponse response = Mock()
 		ServletOutputStream downloadStream = new ServletOutputStream() {
@@ -59,6 +56,6 @@ class AttachmentControllerTest extends Specification {
 		attachmentController.downloadAttachment 10, response
 
 		then:
-		downloadStream.bytes.toByteArray() == "content".bytes
+		1 * service.writeContent(10, downloadStream)
 	}
 }
