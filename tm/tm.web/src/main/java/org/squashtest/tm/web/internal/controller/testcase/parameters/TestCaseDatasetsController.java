@@ -6,22 +6,23 @@
  *     information regarding copyright ownership.
  *
  *     This is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU Lesser General Public License as published by
+ *     it under the terms of the GNU General Public License as published by
  *     the Free Software Foundation, either version 3 of the License, or
  *     (at your option) any later version.
  *
  *     this software is distributed in the hope that it will be useful,
  *     but WITHOUT ANY WARRANTY; without even the implied warranty of
  *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU Lesser General Public License for more details.
+ *     GNU General Public License for more details.
  *
- *     You should have received a copy of the GNU Lesser General Public License
+ *     You should have received a copy of the GNU General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.squashtest.tm.web.internal.controller.testcase.parameters;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -57,13 +58,13 @@ import org.squashtest.tm.service.testcase.DatasetModificationService;
 import org.squashtest.tm.service.testcase.ParameterFinder;
 import org.squashtest.tm.service.testcase.TestCaseFinder;
 import org.squashtest.tm.web.internal.controller.RequestParams;
-import org.squashtest.tm.web.internal.controller.testcase.parameters.TestCaseParametersController.ParameterNameComparator;
 import org.squashtest.tm.web.internal.controller.widget.AoColumnDef;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelBuilder;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelConstants;
 import org.squashtest.tm.web.internal.model.datatable.DataTableSorting;
+import org.squashtest.tm.web.internal.model.json.JsonDataset;
 import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
 import org.squashtest.tm.web.internal.model.viewmapper.NameBasedMapper;
 
@@ -89,7 +90,28 @@ public class TestCaseDatasetsController {
 
 	private DatatableMapper<String> datasetsTableMapper = new NameBasedMapper(3).mapAttribute(DataTableModelConstants.DEFAULT_ENTITY_ID_KEY, "id",
 			Dataset.class).mapAttribute(DataTableModelConstants.DEFAULT_ENTITY_NAME_KEY, "name",
-			Dataset.class);
+					Dataset.class);
+
+
+
+
+	@RequestMapping(method = RequestMethod.GET)
+	@ResponseBody
+	public Collection<JsonDataset> getAvailableDatasets(@PathVariable("testCaseId") long testCaseId){
+
+		Collection<Dataset> datasets = datasetModificationService.findAllForTestCase(testCaseId);
+
+		Collection<JsonDataset> result = new ArrayList<JsonDataset>(datasets.size());
+
+		for (Dataset ds : datasets){
+			JsonDataset jds = new JsonDataset();
+			jds.setId(ds.getId());
+			jds.setName(ds.getName());
+			result.add(jds);
+		}
+
+		return result;
+	}
 
 	/**
 	 * Return the datas to fill the datasets table in the test case view
@@ -140,21 +162,21 @@ public class TestCaseDatasetsController {
 	 */
 	@RequestMapping(value = "/table/param-headers", method = RequestMethod.GET)
 	@ResponseBody
-	public List<String> getDatasetsTableParametersHeaders(@PathVariable long testCaseId, final Locale locale) {
+	public List<HashMap<String, String>> getDatasetsTableParametersHeaders(@PathVariable long testCaseId, final Locale locale) {
 		List<Parameter> directAndCalledParameters = getSortedDirectAndCalledParameters(testCaseId);
-		return findDatasetParamHeaders(testCaseId, locale, directAndCalledParameters, messageSource);
+		return ParametersModelHelper.findDatasetParamHeaders(testCaseId, locale, directAndCalledParameters, messageSource);
 
 	}
 
 	private List<Parameter> getSortedDirectAndCalledParameters(long testCaseId) {
-		List<Parameter> directAndCalledParameters = parameterFinder.findAllforTestCase(testCaseId);
-		Collections.sort(directAndCalledParameters, new TestCaseParametersController.ParameterNameComparator(
+		List<Parameter> directAndCalledParameters = parameterFinder.findAllParameters(testCaseId);
+		Collections.sort(directAndCalledParameters, new ParameterNameComparator(
 				SortOrder.ASCENDING));
 		return directAndCalledParameters;
 	}
 
 	/**
-	 * Returns the list of column headers names for parameters in the Datasets table orderd by parameter name.
+	 * Returns the list of parameter description for parameters in the Datasets table ordered by parameter name.
 	 * 
 	 * 
 	 * @param testCaseId
@@ -167,12 +189,12 @@ public class TestCaseDatasetsController {
 	 *            : the message source to internationalize suffix
 	 * @return
 	 */
-	public static List<String> findDatasetParamHeaders(long testCaseId, final Locale locale,
+	public static List<String> findDatasetParamDescriptions(long testCaseId, final Locale locale,
 			List<Parameter> directAndCalledParameters, MessageSource messageSource) {
 		Collections.sort(directAndCalledParameters, new ParameterNameComparator(SortOrder.ASCENDING));
 		List<String> result = new ArrayList<String>(directAndCalledParameters.size());
 		for (Parameter param : directAndCalledParameters) {
-			result.add(ParametersDataTableModelHelper.buildParameterName(param, testCaseId, messageSource, locale));
+			result.add(param.getDescription());
 		}
 		return result;
 	}
@@ -196,7 +218,7 @@ public class TestCaseDatasetsController {
 		Map<String, String> result = new HashMap<String, String>(directAndCalledParameters.size());
 		for (Parameter param : directAndCalledParameters) {
 			result.put(param.getId().toString(),
-					ParametersDataTableModelHelper.buildParameterName(param, testCaseId, messageSource, locale));
+					ParametersModelHelper.buildParameterName(param, testCaseId, messageSource, locale));
 		}
 		return result;
 	}

@@ -31,7 +31,7 @@
 
 -->
 
-<!DOCTYPE dataset SYSTEM "../../../../../../dtd/squash-tm.1.9.10.dtd">
+<!DOCTYPE dataset SYSTEM "../../../../../../dtd/squash-tm.1.11.0.dtd">
 <dataset>
 
 	<!--  =========================== custom fields ==================================================== -->
@@ -95,9 +95,9 @@
 	<TEST_CASE_STEPS TEST_CASE_ID="-11" STEP_ID="-112" STEP_ORDER="1" /> <!-- TEST CASE 1 STEP 2  -->
 	
 	
-	<TEST_CASE_FOLDER/>
-	<TCLN_RELATIONSHIP/>
-	<TEST_CASE_LIBRARY_CONTENT/>
+	<test_case_folder/>
+	<tcln_relationship/>
+	<test_case_library_content/>
 	
 </dataset>
 

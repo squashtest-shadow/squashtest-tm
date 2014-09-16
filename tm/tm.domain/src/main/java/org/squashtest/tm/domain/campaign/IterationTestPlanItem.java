@@ -6,16 +6,16 @@
  *     information regarding copyright ownership.
  *
  *     This is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU Lesser General Public License as published by
+ *     it under the terms of the GNU General Public License as published by
  *     the Free Software Foundation, either version 3 of the License, or
  *     (at your option) any later version.
  *
  *     this software is distributed in the hope that it will be useful,
  *     but WITHOUT ANY WARRANTY; without even the implied warranty of
  *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU Lesser General Public License for more details.
+ *     GNU General Public License for more details.
  *
- *     You should have received a copy of the GNU Lesser General Public License
+ *     You should have received a copy of the GNU General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.squashtest.tm.domain.campaign;
@@ -134,16 +134,21 @@ public class IterationTestPlanItem implements HasExecutionStatus, Identified {
 		super();
 	}
 
-	private IterationTestPlanItem(TestCase testCase) {
+	public IterationTestPlanItem(TestCase testCase) {
 		referencedTestCase = testCase;
 		referencedDataset = null;
 		label = testCase.getName();
 	}
 
-	private IterationTestPlanItem(TestCase testCase, Dataset dataset) {
+	public IterationTestPlanItem(TestCase testCase, Dataset dataset) {
 		referencedTestCase = testCase;
 		referencedDataset = dataset;
 		label = testCase.getName();
+	}
+
+	public IterationTestPlanItem(TestCase testCase, Dataset dataset, User assignee){
+		this(testCase, dataset);
+		this.user = assignee;
 	}
 
 	public Iteration getIteration() {

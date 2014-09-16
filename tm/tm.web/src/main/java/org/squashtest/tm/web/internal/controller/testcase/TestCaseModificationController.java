@@ -6,16 +6,16 @@
  *     information regarding copyright ownership.
  *
  *     This is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU Lesser General Public License as published by
+ *     it under the terms of the GNU General Public License as published by
  *     the Free Software Foundation, either version 3 of the License, or
  *     (at your option) any later version.
  *
  *     this software is distributed in the hope that it will be useful,
  *     but WITHOUT ANY WARRANTY; without even the implied warranty of
  *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU Lesser General Public License for more details.
+ *     GNU General Public License for more details.
  *
- *     You should have received a copy of the GNU Lesser General Public License
+ *     You should have received a copy of the GNU General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.squashtest.tm.web.internal.controller.testcase;
@@ -65,6 +65,7 @@ import org.squashtest.tm.domain.customfield.RenderingLocation;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.testcase.ActionTestStep;
+import org.squashtest.tm.domain.testcase.CallTestStep;
 import org.squashtest.tm.domain.testcase.Dataset;
 import org.squashtest.tm.domain.testcase.DatasetParamValue;
 import org.squashtest.tm.domain.testcase.Parameter;
@@ -87,9 +88,9 @@ import org.squashtest.tm.service.testcase.TestCaseModificationService;
 import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.controller.bugtracker.BugTrackerControllerHelper;
 import org.squashtest.tm.web.internal.controller.generic.ServiceAwareAttachmentTableModelHelper;
-import org.squashtest.tm.web.internal.controller.testcase.parameters.ParametersDataTableModelHelper;
+import org.squashtest.tm.web.internal.controller.testcase.parameters.ParameterNameComparator;
+import org.squashtest.tm.web.internal.controller.testcase.parameters.ParametersModelHelper;
 import org.squashtest.tm.web.internal.controller.testcase.parameters.TestCaseDatasetsController;
-import org.squashtest.tm.web.internal.controller.testcase.parameters.TestCaseParametersController.ParameterNameComparator;
 import org.squashtest.tm.web.internal.controller.testcase.steps.TestStepsTableModelBuilder;
 import org.squashtest.tm.web.internal.helper.InternationalizableLabelFormatter;
 import org.squashtest.tm.web.internal.helper.LevelLabelFormatter;
@@ -453,7 +454,7 @@ public class TestCaseModificationController {
 
 	private DataTableModel getCallingTestCaseTableModel(long testCaseId, PagingAndSorting paging, String sEcho){
 
-		PagedCollectionHolder<List<TestCase>> holder = testCaseModificationService.findCallingTestCases(testCaseId,
+		PagedCollectionHolder<List<CallTestStep>> holder = testCaseModificationService.findCallingTestSteps(testCaseId,
 				paging);
 
 		return new CallingTestCasesTableModelBuilder(internationalizationHelper).buildDataModel(holder, sEcho);
@@ -536,17 +537,17 @@ public class TestCaseModificationController {
 		List<CustomFieldModel> cufDefinitions = convertToJsonCustomField(helper.getCustomFieldConfiguration());
 		List<CustomFieldValue> stepCufValues = helper.getCustomFieldValues();
 
-		TestStepsTableModelBuilder builder = new TestStepsTableModelBuilder(internationalizationHelper, locale);
+		TestStepsTableModelBuilder builder = new TestStepsTableModelBuilder();
 		builder.usingCustomFields(stepCufValues, cufDefinitions.size());
 		Collection<Object> stepsData = builder.buildRawModel(steps, 1);
 		mav.addObject("stepsData", stepsData);
 		mav.addObject("cufDefinitions", cufDefinitions);
 
 		// ================PARAMETERS
-		List<Parameter> parameters = parameterFinder.findAllforTestCase(testCaseId);
+		List<Parameter> parameters = parameterFinder.findAllParameters(testCaseId);
 		Collections.sort(parameters, new ParameterNameComparator(SortOrder.ASCENDING));
 
-		ParametersDataTableModelHelper paramHelper = new ParametersDataTableModelHelper(testCaseId, messageSource,
+		ParametersModelHelper paramHelper = new ParametersModelHelper(testCaseId, messageSource,
 				locale);
 		Collection<Object> parameterDatas = paramHelper.buildRawModel(parameters);
 		mav.addObject("paramDatas", parameterDatas);
@@ -560,8 +561,8 @@ public class TestCaseModificationController {
 		mav.addObject("datasetsparamValuesById", datasetsparamValuesById);
 
 		// =====================CALLING TC
-		List<TestCase> callingTCs = testCaseModificationService.findAllCallingTestCases(testCaseId);
-		mav.addObject("callingTCs", callingTCs);
+		List<CallTestStep> callingSteps = testCaseModificationService.findAllCallingTestSteps(testCaseId);
+		mav.addObject("callingSteps", callingSteps);
 
 		// ========================VERIFIED REQUIREMENTS
 		List<VerifiedRequirement> verifReq = verifiedRequirementsManagerService

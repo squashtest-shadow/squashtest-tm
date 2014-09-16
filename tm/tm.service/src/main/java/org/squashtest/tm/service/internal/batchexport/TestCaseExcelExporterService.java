@@ -6,26 +6,29 @@
  *     information regarding copyright ownership.
  *
  *     This is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU Lesser General Public License as published by
+ *     it under the terms of the GNU General Public License as published by
  *     the Free Software Foundation, either version 3 of the License, or
  *     (at your option) any later version.
  *
  *     this software is distributed in the hope that it will be useful,
  *     but WITHOUT ANY WARRANTY; without even the implied warranty of
  *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU Lesser General Public License for more details.
+ *     GNU General Public License for more details.
  *
- *     You should have received a copy of the GNU Lesser General Public License
+ *     You should have received a copy of the GNU General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.squashtest.tm.service.internal.batchexport;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.inject.Inject;
 
@@ -81,6 +84,12 @@ public class TestCaseExcelExporterService {
 	}
 
 
+	private void populatePathsCache(Map<Long, String> pathById, Set<Long> ids){
+
+		populatePathsCache(pathById, new ArrayList<Long>(ids));
+
+	}
+
 	private void populatePathsCache(Map<Long, String> pathById, List<Long> ids){
 
 		List<String> paths = pathService.buildTestCasesPaths(ids);
@@ -114,7 +123,7 @@ public class TestCaseExcelExporterService {
 
 
 		List<TestStepModel> callsteps = new LinkedList<TestStepModel>();
-		List<Long> calledTC = new LinkedList<Long>();
+		Set<Long> calledTC = new HashSet<Long>();
 
 		for (TestStepModel model : models.getTestSteps()){
 

@@ -21,7 +21,7 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
-<!DOCTYPE dataset SYSTEM "../../../../../dtd/squash-tm.1.9.10.dtd">
+<!DOCTYPE dataset SYSTEM "../../../../../dtd/squash-tm.1.11.0.dtd">
 <dataset>
 	<!-- test case -->
 	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="-1" />
@@ -141,10 +141,10 @@
 	
 	<!-- cleanup -->
 
-	<CALL_TEST_STEP />
-	<ATTACHMENT_CONTENT />
-	<ATTACHMENT />
+	<call_test_step />
+	<attachment_content />
+	<attachment />
 	
-	<TEST_CASE_FOLDER/>
-	<TCLN_RELATIONSHIP/>
+	<test_case_folder/>
+	<tcln_relationship/>
 </dataset>

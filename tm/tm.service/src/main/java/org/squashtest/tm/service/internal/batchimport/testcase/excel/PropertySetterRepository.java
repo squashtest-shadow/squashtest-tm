@@ -6,19 +6,18 @@
  *     information regarding copyright ownership.
  *
  *     This is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU Lesser General Public License as published by
+ *     it under the terms of the GNU General Public License as published by
  *     the Free Software Foundation, either version 3 of the License, or
  *     (at your option) any later version.
  *
  *     this software is distributed in the hope that it will be useful,
  *     but WITHOUT ANY WARRANTY; without even the implied warranty of
  *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU Lesser General Public License for more details.
+ *     GNU General Public License for more details.
  *
- *     You should have received a copy of the GNU Lesser General Public License
+ *     You should have received a copy of the GNU General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package org.squashtest.tm.service.internal.batchimport.testcase.excel;
 
 import java.util.HashMap;
@@ -46,6 +45,7 @@ final class PropertySetterRepository<COL extends Enum<COL> & TemplateColumn> {
 		FINDER_REPO_BY_WORKSHEET.put(TemplateWorksheet.STEPS_SHEET, createStepsWorksheetRepo());
 		FINDER_REPO_BY_WORKSHEET.put(TemplateWorksheet.PARAMETERS_SHEET, createParamsWorksheetRepo());
 		FINDER_REPO_BY_WORKSHEET.put(TemplateWorksheet.DATASETS_SHEET, createDatasetsWorksheetRepo());
+		FINDER_REPO_BY_WORKSHEET.put(TemplateWorksheet.DATASET_PARAM_VALUES_SHEET, createDatasetParamValuesWorksheetRepo());
 	}
 
 	/**
@@ -74,15 +74,42 @@ final class PropertySetterRepository<COL extends Enum<COL> & TemplateColumn> {
 		r.propSetterByColumn.put(DatasetSheetColumn.ACTION, ReflectionFieldSetter.forOptionalField("mode"));
 
 		// datasetvalue
-		r.propSetterByColumn.put(DatasetSheetColumn.TC_PARAM_OWNER_PATH,
+		// None of the following columns actually need processing (because they will be treated
+		// in DatasetParamValuesWorksheetRepo).
+		r.propSetterByColumn.put(DatasetSheetColumn.TC_PARAM_OWNER_PATH, NullPropertySetter.INSTANCE );
+		r.propSetterByColumn.put(DatasetSheetColumn.TC_DATASET_PARAM_NAME,NullPropertySetter.INSTANCE);
+		r.propSetterByColumn.put(DatasetSheetColumn.TC_DATASET_PARAM_VALUE,NullPropertySetter.INSTANCE);
+
+
+		return r;
+	}
+
+
+	/**
+	 * @return
+	 */
+	private static PropertySetterRepository<?> createDatasetParamValuesWorksheetRepo() {
+		PropertySetterRepository<DatasetParamValuesSheetColumn> r = new PropertySetterRepository<DatasetParamValuesSheetColumn>();
+
+		// target
+		r.propSetterByColumn.put(DatasetParamValuesSheetColumn.TC_OWNER_PATH,
+				ReflectionMutatorSetter.forProperty("path", String.class));
+		r.propSetterByColumn.put(DatasetParamValuesSheetColumn.TC_DATASET_NAME, ReflectionFieldSetter.forField("name"));
+
+		// instruction
+		r.propSetterByColumn.put(DatasetParamValuesSheetColumn.ACTION, ReflectionFieldSetter.forOptionalField("mode"));
+
+		// datasetvalue
+		r.propSetterByColumn.put(DatasetParamValuesSheetColumn.TC_PARAM_OWNER_PATH,
 				ReflectionFieldSetter.forOptionalField("parameterOwnerPath"));
-		r.propSetterByColumn.put(DatasetSheetColumn.TC_DATASET_PARAM_NAME,
+		r.propSetterByColumn.put(DatasetParamValuesSheetColumn.TC_DATASET_PARAM_NAME,
 				ReflectionFieldSetter.forField("parameterName"));
-		r.propSetterByColumn.put(DatasetSheetColumn.TC_DATASET_PARAM_VALUE,
+		r.propSetterByColumn.put(DatasetParamValuesSheetColumn.TC_DATASET_PARAM_VALUE,
 				ReflectionFieldSetter.forOptionalField("value"));
 
 		return r;
 	}
+
 
 	/**
 	 * @return
@@ -125,6 +152,9 @@ final class PropertySetterRepository<COL extends Enum<COL> & TemplateColumn> {
 
 		stepWorksheetRepo.propSetterByColumn.put(StepSheetColumn.TC_STEP_ACTION, StepActionPropSetter.INSTANCE);
 		stepWorksheetRepo.propSetterByColumn.put(StepSheetColumn.TC_STEP_EXPECTED_RESULT, StepResultPropSetter.INSTANCE);
+
+		// call step prop only (will rant if the other step shows up)
+		stepWorksheetRepo.propSetterByColumn.put(StepSheetColumn.TC_STEP_CALL_DATASET, ParamAssignationModeSetter.INSTANCE);
 
 		return stepWorksheetRepo;
 	}

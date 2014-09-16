@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<!DOCTYPE dataset SYSTEM "../../../../../../../dtd/squash-tm.1.9.10.dtd">
+<!DOCTYPE dataset SYSTEM "../../../../../../../dtd/squash-tm.1.11.0.dtd">
 <dataset>
 
 <TEST_AUTOMATION_SERVER KIND="jenkins" SERVER_ID="1000011" LOGIN="login" CREATED_ON="2014-06-04" CREATED_BY="mpagnon" BASE_URL="http://localhost:8181/stub-ta-server" PASSWORD="password" NAME="name"/>

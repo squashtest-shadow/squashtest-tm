@@ -6,16 +6,16 @@
  *     information regarding copyright ownership.
  *
  *     This is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU Lesser General Public License as published by
+ *     it under the terms of the GNU General Public License as published by
  *     the Free Software Foundation, either version 3 of the License, or
  *     (at your option) any later version.
  *
  *     this software is distributed in the hope that it will be useful,
  *     but WITHOUT ANY WARRANTY; without even the implied warranty of
  *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU Lesser General Public License for more details.
+ *     GNU General Public License for more details.
  *
- *     You should have received a copy of the GNU Lesser General Public License
+ *     You should have received a copy of the GNU General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 define([ "jquery", "./lib/cuf-values-utils", "./lib/jquery.staticCustomfield", "./lib/jquery.jeditableCustomfield" ], 
@@ -192,37 +192,45 @@ define([ "jquery", "./lib/cuf-values-utils", "./lib/jquery.staticCustomfield", "
 		});
 	}
 
+	/*
+	 *
+	 */
 	function createDefaultDefinitions(cufDefinitions) {
-		var i = 0, length = cufDefinitions.length, code, result = {};
+		var i = 0, 
+			length = cufDefinitions.length,
+			cufCode, 
+			cufOrDeno,
+			result = {
+				customFields : {},
+				denormalizedFields : {}
+			};
 
 		for (i = 0; i < length; i++) {
-			code = cufDefinitions[i].code;
-			result[code] = {
-				id : null,
+			
+			cufCode = cufDefinitions[i].code,
+			cufOrDeno = (cufDefinitions[i].denormalized) ? "denormalizedFields" : "customFields";
+			
+			result[cufOrDeno][cufCode]= {
+				id : null, 
 				value : null,
 				code : null
 			};
+			
 		}
 
 		return result;
 	}
 
-	function fillMissingCustomFields(aaData, defaultDefinitions) {
+	function fillMissingCustomFields(aaData, defaults) {
 
-		var length = aaData.length, i = 0;
+		var length = aaData.length, i = 0, data;
 
 		for (i = 0; i < length; i++) {
 
-			var copyDefaults = $.extend({}, defaultDefinitions);
-
-			// create the field 'customFields' if doesn't exist
-			if (aaData[i].customFields === undefined) {
-				aaData[i].customFields = copyDefaults;
-			}
-			// else we merge the defaults with the existing field
-			else {
-				aaData[i].customFields = $.extend(copyDefaults, aaData[i].customFields);
-			}
+			data = aaData[i];
+			data.customFields = $.extend({}, defaults.customFields, data.customFields);
+			data.denormalizedFields = $.extend({}, defaults.denormalizedFields, data.denormalizedFields);
+				
 		}
 
 		return aaData;

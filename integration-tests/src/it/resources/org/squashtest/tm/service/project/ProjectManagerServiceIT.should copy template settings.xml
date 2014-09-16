@@ -21,16 +21,16 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
-<!DOCTYPE dataset SYSTEM "../../../../../dtd/squash-tm.1.9.10.dtd">
+<!DOCTYPE dataset SYSTEM "../../../../../dtd/squash-tm.1.11.0.dtd">
 <dataset>
 <CORE_PARTY PARTY_ID="-10"/>
 <CORE_PARTY PARTY_ID="-12"/>
 	<CORE_USER PARTY_ID="-10" LOGIN="batman" LAST_NAME="batman" CREATED_BY="dbu" CREATED_ON="2011-03-19" />
 	<CORE_USER PARTY_ID="-12" LOGIN="robin" LAST_NAME="robin" CREATED_BY="dbu" CREATED_ON="2011-03-19" />
 	
-	<CORE_GROUP />
-	<CORE_GROUP_AUTHORITY />
-	<CORE_GROUP_MEMBER />
+	<core_group />
+	<core_group_authority />
+	<core_group_member />
 	
 	<ACL_CLASS ID="-1001" CLASSNAME="org.squashtest.tm.domain.project.ProjectTemplate" />
 	<ACL_CLASS ID="-1002" CLASSNAME="org.squashtest.tm.domain.project.Project" />
@@ -80,9 +80,9 @@
 	<CUSTOM_FIELD CODE="" LABEL="" FIELD_TYPE="CF" NAME="cuf1" INPUT_TYPE="PLAIN_TEXT" CF_ID="-1"/>
 	<CUSTOM_FIELD_BINDING BOUND_ENTITY="TEST_CASE" CFB_ID="-1" POSITION="0" BOUND_PROJECT_ID="-1000" CF_ID="-1"/>
 	
-	<ACL_GROUP/>
-	<ACL_GROUP_PERMISSION />
-	<ACL_RESPONSIBILITY_SCOPE_ENTRY/>
+	<acl_group/>
+	<acl_group_permission />
+	<acl_responsibility_scope_entry/>
 	<project />
 	<test_case_library_node/>
 </dataset>

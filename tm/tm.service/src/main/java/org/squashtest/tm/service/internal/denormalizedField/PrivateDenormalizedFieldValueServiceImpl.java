@@ -6,47 +6,47 @@
  *     information regarding copyright ownership.
  *
  *     This is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU Lesser General Public License as published by
+ *     it under the terms of the GNU General Public License as published by
  *     the Free Software Foundation, either version 3 of the License, or
  *     (at your option) any later version.
  *
  *     this software is distributed in the hope that it will be useful,
  *     but WITHOUT ANY WARRANTY; without even the implied warranty of
  *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU Lesser General Public License for more details.
+ *     GNU General Public License for more details.
  *
- *     You should have received a copy of the GNU Lesser General Public License
+ *     You should have received a copy of the GNU General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.squashtest.tm.service.internal.denormalizedField;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 
 import javax.inject.Inject;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Transformer;
+import org.apache.commons.collections.map.MultiValueMap;
 import org.springframework.stereotype.Service;
 import org.squashtest.tm.domain.customfield.BindableEntity;
 import org.squashtest.tm.domain.customfield.BoundEntity;
-import org.squashtest.tm.domain.customfield.CustomFieldBinding;
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
-import org.squashtest.tm.domain.customfield.InputType;
 import org.squashtest.tm.domain.customfield.RenderingLocation;
 import org.squashtest.tm.domain.denormalizedfield.DenormalizedFieldHolder;
 import org.squashtest.tm.domain.denormalizedfield.DenormalizedFieldHolderType;
 import org.squashtest.tm.domain.denormalizedfield.DenormalizedFieldValue;
+import org.squashtest.tm.domain.denormalizedfield.DenormalizedRichValue;
 import org.squashtest.tm.domain.denormalizedfield.DenormalizedSingleSelectField;
+import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.execution.ExecutionStep;
-import org.squashtest.tm.domain.project.Project;
-import org.squashtest.tm.domain.testcase.ActionTestStep;
 import org.squashtest.tm.service.internal.repository.CustomFieldBindingDao;
 import org.squashtest.tm.service.internal.repository.CustomFieldValueDao;
 import org.squashtest.tm.service.internal.repository.DenormalizedFieldValueDao;
 import org.squashtest.tm.service.internal.repository.DenormalizedFieldValueDeletionDao;
+import org.squashtest.tm.service.internal.repository.ExecutionDao;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 
 /**
@@ -58,14 +58,21 @@ import org.squashtest.tm.service.security.PermissionEvaluationService;
 public class PrivateDenormalizedFieldValueServiceImpl implements PrivateDenormalizedFieldValueService {
 	@Inject
 	private CustomFieldValueDao customFieldValueDao;
+
 	@Inject
 	private CustomFieldBindingDao customFieldBindingDao;
+
 	@Inject
 	private DenormalizedFieldValueDao denormalizedFieldValueDao;
+
 	@Inject
 	private DenormalizedFieldValueDeletionDao denormalizedFieldValueDeletionDao;
+
 	@Inject
 	private PermissionEvaluationService permissionService;
+
+	@Inject
+	private ExecutionDao execDao;
 
 
 	public void setPermissionService(PermissionEvaluationService permissionService) {
@@ -75,16 +82,64 @@ public class PrivateDenormalizedFieldValueServiceImpl implements PrivateDenormal
 	@Override
 	public void createAllDenormalizedFieldValues(BoundEntity source, DenormalizedFieldHolder destination) {
 		List<CustomFieldValue> customFieldValues = customFieldValueDao.findAllCustomValues(source.getBoundEntityId(), source.getBoundEntityType());
-		for (CustomFieldValue customFieldValue : customFieldValues) {
-			if(customFieldValue.getCustomField().getInputType().equals(InputType.DROPDOWN_LIST)){
-				DenormalizedSingleSelectField dfv = new DenormalizedSingleSelectField(customFieldValue, destination.getDenormalizedFieldHolderId(), destination.getDenormalizedFieldHolderType());
-				denormalizedFieldValueDao.persist(dfv);
-			} else {
-				DenormalizedFieldValue dfv = new DenormalizedFieldValue(customFieldValue, destination.getDenormalizedFieldHolderId(), destination.getDenormalizedFieldHolderType());
-				denormalizedFieldValueDao.persist(dfv);
+		createDenormalizedFieldValues(destination, customFieldValues);
+	}
+
+
+
+	@Override
+	public void createAllDenormalizedFieldValuesForSteps(Execution execution) {
+
+		// fetch execution steps
+		List<ExecutionStep> executionSteps = execDao.findExecutionSteps(execution.getId());
+		if (executionSteps.isEmpty()){
+			return;
+		}
+
+		// fetch the custom fields of the original steps
+		List<Long> originalIds = execDao.findOriginalStepIds(execution.getId());
+		List<CustomFieldValue> originalValues = customFieldValueDao.batchedInitializedFindAllCustomValuesFor(originalIds, BindableEntity.TEST_STEP);
+
+		// sort them by original step id
+		MultiValueMap cufsPerStepId = new MultiValueMap();
+		for (CustomFieldValue value : originalValues){
+			cufsPerStepId.put(value.getBoundEntityId(), value);
+		}
+
+		// main loop
+		for (ExecutionStep estep : executionSteps){
+			Collection _values = cufsPerStepId.getCollection(estep.getReferencedTestStep().getId());
+			if (_values != null){ // might be null when there are no custom fields
+				List<CustomFieldValue> values = new ArrayList<CustomFieldValue>(_values);
+				createDenormalizedFieldValues(estep, values);
 			}
 		}
+
 	}
+
+	private void createDenormalizedFieldValues(DenormalizedFieldHolder entity, List<CustomFieldValue> values){
+
+		// now loop and create the custom fields;
+		for (CustomFieldValue cfv : values ){
+			DenormalizedFieldValue dfv;
+
+			switch(cfv.getCustomField().getInputType()){
+			case DROPDOWN_LIST :
+				dfv = new DenormalizedSingleSelectField(cfv, entity.getDenormalizedFieldHolderId(), entity.getDenormalizedFieldHolderType());
+				break;
+			case RICH_TEXT :
+				dfv = new DenormalizedRichValue(cfv, entity.getDenormalizedFieldHolderId(), entity.getDenormalizedFieldHolderType());
+				break;
+			default :
+				dfv = new DenormalizedFieldValue(cfv, entity.getDenormalizedFieldHolderId(), entity.getDenormalizedFieldHolderType());
+			}
+
+			denormalizedFieldValueDao.persist(dfv);
+
+		}
+
+	}
+
 
 	@Override
 	public void deleteAllDenormalizedFieldValues(DenormalizedFieldHolder entity) {
@@ -94,58 +149,7 @@ public class PrivateDenormalizedFieldValueServiceImpl implements PrivateDenormal
 		}
 	}
 
-	@Override
-	public void createAllDenormalizedFieldValues(ActionTestStep sourceStep, ExecutionStep destinationStep, Project project) {
-		List<CustomFieldBinding> bindings = customFieldBindingDao.findAllForProjectAndEntity(project.getId(), BindableEntity.TEST_STEP);
-		List<CustomFieldValue> sourceStepCustomFieldValues = customFieldValueDao.findAllCustomValues(sourceStep.getBoundEntityId(), sourceStep.getBoundEntityType());
-		int lastBindingPosition = 0;
-		//create all field corresponding to project
-		for(CustomFieldBinding binding : bindings){
-			String value = "";
-			CustomFieldValue projectCufValue = removeCustomFieldValueCorrespondingToBinding(binding, sourceStepCustomFieldValues);
-			if(projectCufValue != null){
-				value = projectCufValue.getValue();
-			}
-			lastBindingPosition = binding.getPosition();
 
-			if(binding.getCustomField().getInputType().equals(InputType.DROPDOWN_LIST)){
-				DenormalizedSingleSelectField dfv = new DenormalizedSingleSelectField(value, binding, destinationStep.getDenormalizedFieldHolderId(), destinationStep.getDenormalizedFieldHolderType());
-				denormalizedFieldValueDao.persist(dfv);
-			} else {
-				DenormalizedFieldValue dfv = new DenormalizedFieldValue(value, binding, destinationStep.getDenormalizedFieldHolderId(), destinationStep.getDenormalizedFieldHolderType());
-				denormalizedFieldValueDao.persist(dfv);
-			}
-		}
-		//add remaining fields
-		int newBindingPosition = lastBindingPosition +1;
-		for(CustomFieldValue remainingCufValue : sourceStepCustomFieldValues){
-
-			if(remainingCufValue.getCustomField().getInputType().equals(InputType.DROPDOWN_LIST)){
-				DenormalizedSingleSelectField dfv = new DenormalizedSingleSelectField(remainingCufValue, newBindingPosition,  destinationStep.getDenormalizedFieldHolderId(), destinationStep.getDenormalizedFieldHolderType());
-				denormalizedFieldValueDao.persist(dfv);
-			} else {
-				DenormalizedFieldValue dfv = new DenormalizedFieldValue(remainingCufValue, newBindingPosition,  destinationStep.getDenormalizedFieldHolderId(), destinationStep.getDenormalizedFieldHolderType());
-				denormalizedFieldValueDao.persist(dfv);
-			}
-
-			newBindingPosition++;
-		}
-
-	}
-
-	private CustomFieldValue removeCustomFieldValueCorrespondingToBinding(CustomFieldBinding binding,
-			List<CustomFieldValue> customFieldValues) {
-		Iterator<CustomFieldValue> iterator = customFieldValues.iterator();
-
-		while(iterator.hasNext()){
-			CustomFieldValue cufValue = iterator.next();
-			if(cufValue.getCustomField().getId().equals(binding.getCustomField().getId())){
-				iterator.remove();
-				return cufValue;
-			}
-		}
-		return null;
-	}
 
 	@Override
 	public List<DenormalizedFieldValue> findAllForEntity(DenormalizedFieldHolder denormalizedFieldHolder) {
@@ -203,5 +207,8 @@ public class PrivateDenormalizedFieldValueServiceImpl implements PrivateDenormal
 	public boolean hasDenormalizedFields(DenormalizedFieldHolder entity) {
 		return denormalizedFieldValueDao.countDenormalizedFields(entity.getDenormalizedFieldHolderId(), entity.getDenormalizedFieldHolderType()) > 0;
 	}
+
+
+
 
 }

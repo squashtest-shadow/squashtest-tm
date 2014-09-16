@@ -7,16 +7,16 @@
         information regarding copyright ownership.
 
         This is free software: you can redistribute it and/or modify
-        it under the terms of the GNU Lesser General Public License as published by
+        it under the terms of the GNU General Public License as published by
         the Free Software Foundation, either version 3 of the License, or
         (at your option) any later version.
 
         this software is distributed in the hope that it will be useful,
         but WITHOUT ANY WARRANTY; without even the implied warranty of
         MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-        GNU Lesser General Public License for more details.
+        GNU General Public License for more details.
 
-        You should have received a copy of the GNU Lesser General Public License
+        You should have received a copy of the GNU General Public License
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 --%>
@@ -50,10 +50,6 @@
 </s:url>
 
 <c:url var="iterationStatisticsPrintUrl" value="/iterations/${iteration.id}/dashboard"/>
-
-<s:url var="testSuitesUrl" value="/iterations/{iterId}/test-suites">
-	<s:param name="iterId" value="${iteration.id}" />
-</s:url>
 
 <s:url var="btEntityUrl" value="/bugtracker/iteration/{id}">
 	<s:param name="id" value="${iteration.id}" />
@@ -110,7 +106,7 @@
 	squashtm.page = squashtm.page || {};
 	var config = squashtm.page;
 	config.isFullPage = ${ not empty param.isInfoPage and param.isInfoPage };
-	config.writable = ${writable};
+	config.writable = ${not empty writable and writable};
 	config.hasFields = ${ hasCUF };
 	config.hasBugtracker = ${ iteration.project.bugtrackerConnected };
 	config.identity = { resid: ${iteration.id}, restype : "iterations" };
@@ -312,21 +308,7 @@
   	
 	<%-- ----------------------------------- Test Suite Management -------------------------------------------------- --%>
 	<c:if test="${ writable }">
-		<!-- here the deletable attribute concern the iteration because it has the same impact so far on the appearance the deletion button for a test suite. -->
-		<!-- it is unlikely but for more specific right management we will have to check the right of the user on the selected test suites in the popup -->
-		<it:test-suite-managment suiteList="${iteration.testSuites}"
-			popupOpener="manage-test-suites-button" creatable="${ creatable }"
-			deletable="${ deletable }" popupId="manage-test-suites-popup"
-			menuId="manage-test-suites-buttonmenu" testSuitesUrl="${testSuitesUrl}"
-			datatableId="iteration-test-plans-table"
-			emptySelectionMessageId="test-plan-empty-sel-msg" />
-
-		<div id="test-plan-empty-sel-msg" class="not-visible"
-			title="<f:message key='iteration.test-plan.action.title' />">
-			<div>
-				<f:message key="iteration.test-plan.action.empty-selection.message" />
-			</div>
-		</div>
+		<it:test-suite-managment iteration="${iteration}"/>
 	</c:if>
 	<%-- ----------------------------------- /Test Suite Management -------------------------------------------------- --%>
 

@@ -6,16 +6,16 @@
  *     information regarding copyright ownership.
  *
  *     This is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU Lesser General Public License as published by
+ *     it under the terms of the GNU General Public License as published by
  *     the Free Software Foundation, either version 3 of the License, or
  *     (at your option) any later version.
  *
  *     this software is distributed in the hope that it will be useful,
  *     but WITHOUT ANY WARRANTY; without even the implied warranty of
  *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU Lesser General Public License for more details.
+ *     GNU General Public License for more details.
  *
- *     You should have received a copy of the GNU Lesser General Public License
+ *     You should have received a copy of the GNU General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.squashtest.tm.service.internal.campaign;
@@ -213,7 +213,7 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 	}
 
 	private void addTestCaseToTestPlan(TestCase testCase, List<IterationTestPlanItem> testPlan) {
-		List<Dataset> datasets = datasetDao.findAllDatasetsByTestCase(testCase.getId());
+		List<Dataset> datasets = datasetDao.findOwnDatasetsByTestCase(testCase.getId());
 
 		if (datasets != null && !datasets.isEmpty()) {
 			testPlan.addAll(IterationTestPlanItem.createTestPlanItems(testCase, datasets));
@@ -523,5 +523,26 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 		}
 
 		return fragment;
+	}
+
+	@Override
+	@PreAuthorize("hasPermission(#itemId, 'org.squashtest.tm.domain.campaign.IterationTestPlanItem', 'WRITE') "
+			+ OR_HAS_ROLE_ADMIN)
+	public void changeDataset(long itemId, Long datasetId) {
+		IterationTestPlanItem item = iterationTestPlanDao.findById(itemId);
+
+		if (datasetId == null){
+			item.setReferencedDataset(null);
+		}
+		else if (! item.isTestCaseDeleted()){
+			TestCase tc = item.getReferencedTestCase();
+			Dataset ds = datasetDao.findById(datasetId);
+			if (! ds.getTestCase().equals(tc)){
+				throw new IllegalArgumentException("dataset [id:'"+ds.getId()+"', name:'"+ds.getName()+
+						"'] doesn't belong to test case [id:'"+tc.getId()+"', name:'"+tc.getName()+"']");
+			}
+			item.setReferencedDataset(ds);
+		}
+
 	}
 }

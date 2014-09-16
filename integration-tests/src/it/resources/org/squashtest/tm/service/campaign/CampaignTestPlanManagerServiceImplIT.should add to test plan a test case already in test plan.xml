@@ -21,7 +21,7 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
-<!DOCTYPE dataset SYSTEM "../../../../../dtd/squash-tm.1.9.10.dtd">
+<!DOCTYPE dataset SYSTEM "../../../../../dtd/squash-tm.1.11.0.dtd">
 <dataset>
 	<!--  given a campaign -->
 	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="-10" />
@@ -44,12 +44,12 @@
 	
 	
 	<!--  cleanup -->
-	<TEST_CASE_FOLDER/>
-	<TCLN_RELATIONSHIP/>
-	<PROJECT/>
+	<test_case_folder/>
+	<tcln_relationship/>
+	<project/>
 	
-	<TEST_STEP/>
-	<ACTION_TEST_STEP/>
-	<CALL_TEST_STEP/>
-	<TEST_CASE_STEPS/>
+	<test_step/>
+	<action_test_step/>
+	<call_test_step/>
+	<test_case_steps/>
 </dataset>

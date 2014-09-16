@@ -6,16 +6,16 @@
  *     information regarding copyright ownership.
  *
  *     This is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU Lesser General Public License as published by
+ *     it under the terms of the GNU General Public License as published by
  *     the Free Software Foundation, either version 3 of the License, or
  *     (at your option) any later version.
  *
  *     this software is distributed in the hope that it will be useful,
  *     but WITHOUT ANY WARRANTY; without even the implied warranty of
  *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU Lesser General Public License for more details.
+ *     GNU General Public License for more details.
  *
- *     You should have received a copy of the GNU Lesser General Public License
+ *     You should have received a copy of the GNU General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.squashtest.tm.service.campaign;
@@ -51,16 +51,16 @@ public interface CampaignTestPlanManagerService {
 	 */
 	List<TestCaseLibrary> findLinkableTestCaseLibraries();
 
-	
+
 
 
 	PagedCollectionHolder<List<CampaignTestPlanItem>> findTestPlanByCampaignId(long campaignId,
 			PagingAndSorting filter);
-	
+
 	PagedCollectionHolder<List<IndexedCampaignTestPlanItem>> findTestPlan(long campaignId, PagingAndMultiSorting sorting, ColumnFiltering filtering);
 
-	
-	
+
+
 	/**
 	 * Adds a list of test cases to a campaign.
 	 * 
@@ -76,10 +76,10 @@ public interface CampaignTestPlanManagerService {
 	 * @param campaignId
 	 */
 	List<User> findAssignableUserForTestPlan(long campaignId);
-	
-	
-	
-	
+
+
+
+
 
 	/**
 	 * Assign a user to the given test plan items
@@ -115,8 +115,8 @@ public interface CampaignTestPlanManagerService {
 	 *            the ids of the items we want to move.
 	 */
 	void moveTestPlanItems(long campaignId, int targetIndex, List<Long> itemIds);
-	
-	
+
+
 	void reorderTestPlan(long campaignId, MultiSorting newSorting);
 
 	/**
@@ -139,11 +139,21 @@ public interface CampaignTestPlanManagerService {
 	 * @return
 	 */
 	CampaignTestPlanItem findById(long itemId);
-	
+
 	/**
 	 * Will find the distinct ids of test cases referenced in the campaign test plan.
 	 * @param campaignId : the id of the concerned Campaign
 	 * @return : the distinct ids of the TestCases referenced by the campaign.
 	 */
 	List<Long> findPlannedTestCasesIds(Long campaignId);
+
+	/**
+	 * Attach a dataset to an item. If the ID of the dataset is null the item will reference
+	 * no dataset instead.
+	 * 
+	 * 
+	 * @param itemId
+	 * @param datasetId (may be null)
+	 */
+	void changeDataset(long itemId, Long datasetId);
 }

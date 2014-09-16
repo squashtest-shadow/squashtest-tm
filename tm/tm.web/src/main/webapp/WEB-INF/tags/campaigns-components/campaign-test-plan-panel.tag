@@ -7,16 +7,16 @@
         information regarding copyright ownership.
 
         This is free software: you can redistribute it and/or modify
-        it under the terms of the GNU Lesser General Public License as published by
+        it under the terms of the GNU General Public License as published by
         the Free Software Foundation, either version 3 of the License, or
         (at your option) any later version.
 
         this software is distributed in the hope that it will be useful,
         but WITHOUT ANY WARRANTY; without even the implied warranty of
         MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-        GNU Lesser General Public License for more details.
+        GNU General Public License for more details.
 
-        You should have received a copy of the GNU Lesser General Public License
+        You should have received a copy of the GNU General Public License
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 --%>
@@ -27,8 +27,6 @@
 <%@ attribute name="reorderable" type="java.lang.Boolean"    description="Right to reorder the test plan. Default to false."%>
 <%@ attribute name="linkable" type="java.lang.Boolean"       description="Right to add test cases to the test plan. Default to false."%>
 
-<%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component"%>
-<%@ taglib prefix="dt" tagdir="/WEB-INF/tags/datatables"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt"%>
 
@@ -37,7 +35,7 @@
 <c:url var="assignableUsersUrl"   value="/campaigns/${campaign.id}/assignable-users" />
 <c:url var="testCaseUrl"          value="/test-cases/{tc-id}/info" />
 <c:url var="dtMessagesUrl"        value="/datatables/messages" />
-<c:url var="tablemodel"           value="/campaigns/${campaign.id}/test-plan/table" />
+<c:url var="tablemodel"           value="/campaigns/${campaign.id}/test-plan" />
 
 
 <f:message var="okLabel"          key="label.Ok" />
@@ -45,7 +43,6 @@
 
 <f:message var="assignLabel"      key="label.Assign" />
 <f:message var="confirmLabel"     key="label.Confirm" />
-<f:message var="cancelLabel"      key="label.Cancel" />
 <f:message var="reorderLabel"     key="label.Reorder" />
 
 <f:message var="tooltipSortmode"  key="tooltips.TestPlanSortMode" />
@@ -94,7 +91,7 @@
           <button id="add-test-case-button" class="sq-btn btn-sm" title="${tooltipAddTPI}">
             <span class="ui-icon ui-icon-plusthick"></span>${associateLabel}
           </button>
-          <button id="remove-test-case-button" class="sq-btn btn-sm" title="${tooltipRemoveTPI}">
+          <button id="remove-test-plan-button" class="sq-btn btn-sm" title="${tooltipRemoveTPI}">
             <span class="ui-icon ui-icon-trash"></span>${removeLabel}
           </button>
         </span>
@@ -112,31 +109,34 @@
   <c:if test="${editable}">
     <c:set var="deleteBtnClause" value=", delete-button=#delete-multiple-test-cases-dialog" />
   </c:if>
-  <table id="test-cases-table" data-def="ajaxsource=${tablemodel}" class="unstyled-table test-plan-table"
+  <table id="campaign-test-plans-table" data-def="ajaxsource=${tablemodel}" class="unstyled-table test-plan-table"
     data-entity-id="${campaign.id}" data-entity-type="campaign">
     <thead>
       <tr>
         <th class="no-user-select"
           data-def="map=entity-index, select, sortable, center, sClass=drag-handle, sWidth=2.5em">#</th>
-        <th class="no-user-select tp-th-project-name" data-def="map=project-name, sortable">
+        <th class="no-user-select tp-th-filter tp-th-project-name" data-def="map=project-name, sortable">
           <f:message key="label.project" />
         </th>
-        <th class="no-user-select tp-th-exec-mode"
+        <th class="no-user-select tp-th-filter tp-th-exec-mode"
           data-def="map=exec-mode, sortable, center, visible=${campaign.project.testAutomationEnabled}, sClass=exec-mode">
           <f:message key="label.Mode" />
         </th>
-        <th class="no-user-select tp-th-reference" data-def="map=reference, sortable">
+        <th class="no-user-select tp-th-filter tp-th-reference" data-def="map=reference, sortable">
           <f:message key="label.Reference" />
         </th>
-        <th class="no-user-select tp-th-name" data-def="map=tc-name, sortable, link=${testCaseUrl}">
+        <th class="no-user-select tp-th-filter tp-th-name" data-def="map=tc-name, sortable, link=${testCaseUrl}">
           <f:message key="test-case.name.label" />
+        </th>        
+        <th class="no-user-select tp-th-filter tp-th-importance" data-def="map=importance, sortable">
+          <f:message key="test-case.importance.combo.label" />
         </th>
-        <th class="no-user-select tp-th-assignee"
+        <th class="no-user-select tp-th-filter tp-th-dataset" data-def="map=dataset.selected.name, sortable, sWidth=10%, sClass=dataset-combo">
+            <f:message key="label.Dataset" />
+          </th>        
+        <th class="no-user-select tp-th-filter tp-th-assignee"
           data-def="map=assigned-user, sortable, sWidth=10%, sClass=assignee-combo">
           <f:message key="test-case.user.combo.label" />
-        </th>
-        <th class="no-user-select tp-th-importance" data-def="map=importance, sortable">
-          <f:message key="test-case.importance.combo.label" />
         </th>
         <th class="no-user-select" data-def="map=empty-delete-holder${deleteBtnClause}">&nbsp;</th>
       </tr>
@@ -173,11 +173,10 @@
         </c:forEach>
       </select>
     </div>
-    <span data-def="state=empty-selec"><f:message key="message.EmptyTableSelection" /></span>
 
     <div class="popup-dialog-buttonpane">
       <input type="button" value="${assignLabel}" data-def="state=assign, mainbtn=assign, evt=confirm" />
-      <input type="button" value="${cancelLabel}" data-def="mainbtn=empty-select, evt=cancel" />
+      <input type="button" value="${cancelLabel}" data-def="evt=cancel" />
     </div>
   </div>
   
@@ -187,14 +186,11 @@
     <div data-def="state=confirm-deletion">
       <span><f:message key="dialog.remove-testcase-associations.message"/></span>
     </div>
-    
-    <div data-def="state=empty-selec">
-      <span><f:message key="message.EmptyTableSelection" /></span>
-    </div>
+
     
     <div class="popup-dialog-buttonpane">
       <input type="button" class="button" value="${okLabel}" data-def="state=confirm-deletion, evt=confirm, mainbtn=confirm-deletion"/>
-      <input type="button" class="button" value="${cancelLabel}" data-def="evt=cancel, mainbtn=empty-select"/>
+      <input type="button" class="button" value="${cancelLabel}" data-def="evt=cancel"/>
     </div>
   
   </div>

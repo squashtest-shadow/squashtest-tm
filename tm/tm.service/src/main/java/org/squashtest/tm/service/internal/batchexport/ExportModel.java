@@ -6,16 +6,16 @@
  *     information regarding copyright ownership.
  *
  *     This is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU Lesser General Public License as published by
+ *     it under the terms of the GNU General Public License as published by
  *     the Free Software Foundation, either version 3 of the License, or
  *     (at your option) any later version.
  *
  *     this software is distributed in the hope that it will be useful,
  *     but WITHOUT ANY WARRANTY; without even the implied warranty of
  *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU Lesser General Public License for more details.
+ *     GNU General Public License for more details.
  *
- *     You should have received a copy of the GNU Lesser General Public License
+ *     You should have received a copy of the GNU General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.squashtest.tm.service.internal.batchexport;
@@ -28,6 +28,7 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.squashtest.tm.domain.customfield.BindableEntity;
 import org.squashtest.tm.domain.customfield.InputType;
+import org.squashtest.tm.domain.testcase.Dataset;
 import org.squashtest.tm.domain.testcase.TestCaseImportance;
 import org.squashtest.tm.domain.testcase.TestCaseNature;
 import org.squashtest.tm.domain.testcase.TestCaseStatus;
@@ -355,10 +356,15 @@ public class ExportModel {
 		private String result;
 		private Long nbReq;
 		private Long nbAttach;
+		private String calledDsName;
+		private boolean delegateParameters;
 		private List<CustomField> cufs = new LinkedList<CustomField>();
 
+
+		// about delegateParameters : when fetching an action step we want to select the literal 'false'. However Hibernate
+		// can't do that, hence it is here shipped as int before casting to Boolean.
 		public TestStepModel(long tcOwnerId, long id, int order, Integer isCallStep, String action, String result,
-				Long nbReq, Long nbAttach) {
+				Long nbReq, Long nbAttach, String calledDsName, Integer delegateParameters) {
 
 			super();
 			this.tcOwnerId = tcOwnerId;
@@ -369,6 +375,8 @@ public class ExportModel {
 			this.result = result;
 			this.nbReq = nbReq;
 			this.nbAttach = nbAttach;
+			this.calledDsName = calledDsName;	// special call steps
+			this.delegateParameters = (delegateParameters==1) ? true : false; // special call steps
 		}
 
 		public String getTcOwnerPath() {
@@ -449,6 +457,19 @@ public class ExportModel {
 
 		public List<CustomField> getCufs() {
 			return cufs;
+		}
+
+		public String getDsName(){
+			String name;
+			if (delegateParameters){
+				name = "INHERIT";
+			}
+			else {
+				//inexact (we should explicitly treat the no-dataset scenario,
+				// but conveniently sufficient here
+				name = calledDsName;
+			}
+			return name;
 		}
 
 	}
@@ -625,12 +646,12 @@ public class ExportModel {
 		private String value;
 		private InputType type;
 
-		public CustomField(Long ownerId, BindableEntity ownerType, String code, String value, String longValue, InputType type) {
+		public CustomField(Long ownerId, BindableEntity ownerType, String code, String value, String largeValue, InputType type) {
 			super();
 			this.ownerId = ownerId;
 			this.ownerType = ownerType;
 			this.code = code;
-			this.value = (! StringUtils.isBlank(longValue)) ? longValue : value;
+			this.value = (! StringUtils.isBlank(largeValue)) ? largeValue : value;
 			this.type = type;
 		}
 

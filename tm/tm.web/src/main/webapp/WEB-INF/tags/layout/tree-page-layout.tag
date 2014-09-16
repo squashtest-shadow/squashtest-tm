@@ -7,16 +7,16 @@
         information regarding copyright ownership.
 
         This is free software: you can redistribute it and/or modify
-        it under the terms of the GNU Lesser General Public License as published by
+        it under the terms of the GNU General Public License as published by
         the Free Software Foundation, either version 3 of the License, or
         (at your option) any later version.
 
         this software is distributed in the hope that it will be useful,
         but WITHOUT ANY WARRANTY; without even the implied warranty of
         MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-        GNU Lesser General Public License for more details.
+        GNU General Public License for more details.
 
-        You should have received a copy of the GNU Lesser General Public License
+        You should have received a copy of the GNU General Public License
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 --%>
@@ -52,13 +52,14 @@
  
 <%@ attribute name="tree" fragment="true" required="true" description="Tree definition" %>
 <%@ attribute name="contextualContent" fragment="true" description="Optional contextual content" %>
+<%@ attribute name="i18nLibraryTabTitle" required="false" description="a i18n key that should be displayed on the first tab above the tree.
+                                                                     If not specified, will use 'tabbed_panel.tree.pane.label' as default" %>
 
 
 <%-- from sub-page-layout --%>
 
 <%@ attribute name="subPageTitle" fragment="true" description="the sub page has its own title. Define it there."%>
-<%@ attribute name="subPageButtons" fragment="true" 
-	description="Unlike a regular workspace, a sub page exists to perform 
+<%@ attribute name="subPageButtons" fragment="true" description="Unlike a regular workspace, a sub page exists to perform 
 		a one shot operation. Those operations are proposed in a dedicated action panel.
 		That action panel already propose a 'go back' button."	 %>
 
@@ -66,8 +67,6 @@
 
 <%@ attribute name="isSubPaged" required="false"  
 	description="boolean. if set to true, the layout will be applied in a sub-paged form. Basically it will insert sub-page-layout.tag between the top template and this one." %>
-<%@ attribute name="isRequirementPaneSearchOn" required="false" 
-	description="boolean. If set to true, activate the test plan manager pane which allows to search test cases by requirement" %>
 
 
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
@@ -79,6 +78,7 @@
 <c:url var="path" value="${ pageContext.servletContext.contextPath }"/>
 
 <c:set var="usesObsoleteSearch" value="${(highlightedWorkspace == 'campaign') and (empty linkable)}" />
+<f:message var="libraryTabTitle" key="${not empty i18nLibraryTabTitle ? i18nLibraryTabTitle : 'tabbed_panel.tree.pane.label'}"/>
 
 <c:set var="tabbedPaneScript" >
 	<script type="text/javascript">
@@ -159,9 +159,9 @@
 			<div class="position-layout-fix">
 				<div id="tabbed-pane">
 					<ul>
-						<li class="tab" > <a href="#tree-pane"><f:message key="tabbed_panel.tree.pane.label"/></a></li>
+						<li class="tab" > <a href="#tree-pane">${libraryTabTitle}</a></li>
 						<c:if test="${usesObsoleteSearch}">						
-						<li class="tab"> <a href="#search-pane"><f:message key="tabbed_panel.search.pane.label"/></a></li>	
+						<li class="tab"> <a href="#search-pane">${libraryTabTitle}</a></li>	
 						</c:if>
 					</ul>
 					
@@ -227,9 +227,9 @@
 			<div class="position-layout-fix">
 				<div id="tabbed-pane">
 					<ul>
-						<li class="tab" > <a href="#tree-pane"><f:message key="tabbed_panel.tree.pane.label"/></a></li>
+						<li class="tab" > <a href="#tree-pane">${libraryTabTitle}</a></li>
 						<c:if test="${usesObsoleteSearch}">						
-						<li class="tab"> <a href="#search-pane"><f:message key="tabbed_panel.search.pane.label"/></a></li>						
+						<li class="tab"> <a href="#search-pane">${libraryTabTitle}</a></li>						
 						</c:if>
 					</ul>
 

@@ -4,7 +4,7 @@
   <parent>
     <artifactId>squashtest-csp-tm</artifactId>
     <groupId>org.squashtest.tm</groupId>
-    <version>1.11.0.FEAT3577-SNAPSHOT</version>
+    <version>1.11.0.RC2-SNAPSHOT</version>
   </parent>
 
   <artifactId>tm.web</artifactId>
@@ -476,7 +476,7 @@
               <targetPath>${js.packageDirectory}</targetPath>
               <filtering>true</filtering>
             </resource>
-             <resource>
+            <resource>
               <!-- includes rjs-optimized javascript -->
               <directory>src/main/webapp/static</directory>
               <targetPath>static</targetPath>
@@ -492,88 +492,16 @@
         </configuration>
       </plugin>
 
-	<!-- =========== web resources optimization (spritemap, css minification etc in that order) ============= -->
+	<!-- =========== 
+	
+		web resources optimization (spritemap, css minification etc in that order) 
+		were all moved to profile 'weboptimization'
+	============= -->
 
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-resources-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>prepare-web-resources-optimization</id>
-            <phase>process-sources</phase>
-            <goals>
-              <goal>copy-resources</goal>
-            </goals>
-
-            <configuration>
-              <outputDirectory>${smartprites-wro4j-exchangedir}</outputDirectory>
-              <resources>
-                <resource>
-                  <directory>src/main/webapp</directory>
-                  <includes>
-                    <include>images/**</include>
-                    <include>styles/**</include>
-                  </includes>
-                </resource>
-              </resources>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-
-      <plugin>
-        <groupId>net.jangaroo</groupId>
-        <artifactId>smartsprites-maven-plugin</artifactId>
-
-        <configuration>
-          <rootDirPath>${smartsprites.inputDir}</rootDirPath>
-          <outputDirPath>${smartsprites.outputDir}/styles</outputDirPath>
-        </configuration>
-
-        <executions>
-          <execution>
-            <id>smartsprites</id>
-            <phase>process-sources</phase>
-            <goals>
-              <goal>createSprites</goal>
-            </goals>
-          </execution>
-        </executions>
-
-      </plugin>
+	
 
 
-      <plugin>
-        <groupId>ro.isdc.wro4j</groupId>
-        <artifactId>wro4j-maven-plugin</artifactId>
 
-        <executions>
-          <execution>
-            <id>wro</id>
-            <phase>process-sources</phase>
-            <goals>
-              <goal>run</goal>
-            </goals>
-            <configuration>
-              <skip>${wro4j.skip}</skip>
-              <!-- dont break line or add spaces or maven will scream in horror -->
-              <targetGroups>squash.core,squash.blue,squash.green,squash.grey,squash.purple,squash.wine,squash.blue.green,squash.green.blue,squash.tree,squash.core.override,squash.subpage.override,squash.print</targetGroups>
-              <minimize>true</minimize>
-              <contextFolder>${wro4j.inputDir}</contextFolder>
-              <cssDestinationFolder>${wro4j.css.outputDirectory}</cssDestinationFolder>
-              <!-- ConfigurableWroManagerFactory is configured (d'uh) through wro.properties -->
-              <wroManagerFactory>ro.isdc.wro.maven.plugin.manager.factory.ConfigurableWroManagerFactory</wroManagerFactory>
-            </configuration>
-          </execution>
-        </executions>
-        <dependencies>
-          <dependency>
-            <groupId>ro.isdc.wro4j</groupId>
-            <artifactId>wro4j-extensions</artifactId>
-            <version>${wro4j.version}</version>
-          </dependency>
-        </dependencies>
-      </plugin>
 
       <!-- ====== INTEGRATION TESTS ====== -->
       <plugin>
@@ -647,40 +575,7 @@
 
       <!-- ====== /INTEGRATION TESTS ====== -->
 
-      <plugin>
-        <groupId>com.github.skwakman.nodejs-maven-plugin</groupId>
-        <artifactId>nodejs-maven-plugin</artifactId>
-        <executions>
-          <execution>
-            <goals>
-              <goal>extract</goal>
-            </goals>
-          </execution>
-        </executions>
-        <configuration>
-          <targetDirectory>
-            ${project.build.directory}/nodejs/
-          </targetDirectory>
-        </configuration>
-      </plugin>
-      <plugin>
-        <!-- r.js optimization. can be skipped with -Drequirejs.optimize.skip=true -->
-        <groupId>com.github.bringking</groupId>
-        <artifactId>requirejs-maven-plugin</artifactId>
-        <executions>
-          <execution>
-            <goals>
-              <goal>optimize</goal>
-            </goals>
-            <phase>prepare-package</phase>
-            <configuration>
-              <filterConfig>true</filterConfig>
-              <configFile>src/main/webapp/app.build.js</configFile>
-              <nodeExecutable>${project.build.directory}/nodejs/${node.executable}</nodeExecutable>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
+
     </plugins>
   </build>
 
@@ -812,10 +707,12 @@
           <exists>${basedir}\.project</exists>
         </file>
       </activation>
+      
       <properties>
         <is.dev.stage>true</is.dev.stage>
         <is.war.deploy>false</is.war.deploy>
       </properties>
+      
       <build>
         <plugins>
           <plugin>
@@ -855,8 +752,8 @@
                   </resources>
                 </configuration>
               </execution>
-              
-               <execution>
+
+              <execution>
                 <id>copy-static-to-web-inf</id>
                 <phase>process-resources</phase>
                 <goals>
@@ -872,7 +769,7 @@
                   </resources>
                 </configuration>
               </execution>
-              
+
 
               <execution>
                 <id>copy-processed-css</id>
@@ -891,7 +788,7 @@
                   </resources>
                 </configuration>
               </execution>
-              
+
               <execution>
                 <id>copy-optimized-js</id>
                 <phase>package</phase>
@@ -910,6 +807,36 @@
                 </configuration>
               </execution>
             </executions>
+          </plugin>
+
+          <plugin>
+            <groupId>com.github.searls</groupId>
+            <artifactId>jasmine-maven-plugin</artifactId>
+            <version>2.0-alpha-01</version>
+            <executions>
+              <execution>
+                <goals>
+                  <goal>test</goal>
+                </goals>
+              </execution>
+            </executions>
+            <configuration>
+              <debug>true</debug>
+              <specRunnerTemplate>REQUIRE_JS</specRunnerTemplate>
+              <jsSrcDir>${project.basedir}/src/main/webapp/scripts</jsSrcDir>
+              <jsTestSrcDir>${project.basedir}/src/test/javascript</jsTestSrcDir>
+              <webDriverClassName>org.openqa.selenium.firefox.FirefoxDriver</webDriverClassName>
+              <preloadSources>
+                <source>scripts/require.js</source>
+                <source>scripts/sinon.js</source>
+                <source>scripts/lib/jquery/jquery-1.8.3.js</source>
+                <source>scripts/lib/underscore/underscore-1.4.4.js</source>
+                <source>scripts/lib/backbone/backbone-1.0.0.js</source>
+              </preloadSources>
+              <specIncludes>
+                <include>spec/*</include>
+              </specIncludes>
+            </configuration>
           </plugin>
         </plugins>
       </build>
@@ -937,6 +864,137 @@
       <properties>
         <node.executable>node</node.executable>
       </properties>
+    </profile>
+
+    <profile>
+      <id>weboptimization</id>
+      <activation>
+        <property>
+          <name>webopt.skip</name>
+          <value>!true</value>
+        </property>
+      </activation>
+
+      <build>
+        <plugins>
+
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-resources-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>prepare-web-resources-optimization</id>
+                <phase>process-sources</phase>
+                <goals>
+                  <goal>copy-resources</goal>
+                </goals>
+
+                <configuration>
+                  <outputDirectory>${smartprites-wro4j-exchangedir}</outputDirectory>
+                  <resources>
+                    <resource>
+                      <directory>src/main/webapp</directory>
+                      <includes>
+                        <include>images/**</include>
+                        <include>styles/**</include>
+                      </includes>
+                    </resource>
+                  </resources>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+
+
+          <plugin>
+            <groupId>net.jangaroo</groupId>
+            <artifactId>smartsprites-maven-plugin</artifactId>
+
+            <configuration>
+              <rootDirPath>${smartsprites.inputDir}</rootDirPath>
+              <outputDirPath>${smartsprites.outputDir}/styles</outputDirPath>
+            </configuration>
+
+            <executions>
+              <execution>
+                <id>smartsprites</id>
+                <phase>process-sources</phase>
+                <goals>
+                  <goal>createSprites</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+
+
+          <plugin>
+            <groupId>ro.isdc.wro4j</groupId>
+            <artifactId>wro4j-maven-plugin</artifactId>
+
+            <executions>
+              <execution>
+                <id>wro</id>
+                <phase>process-sources</phase>
+                <goals>
+                  <goal>run</goal>
+                </goals>
+                <configuration>
+                  <skip>${wro4j.skip}</skip>
+              <!-- dont break line or add spaces or maven will scream in horror -->
+                  <targetGroups>squash.core,squash.blue,squash.green,squash.grey,squash.purple,squash.wine,squash.blue.green,squash.green.blue,squash.tree,squash.core.override,squash.subpage.override,squash.print</targetGroups>
+                  <minimize>true</minimize>
+                  <contextFolder>${wro4j.inputDir}</contextFolder>
+                  <cssDestinationFolder>${wro4j.css.outputDirectory}</cssDestinationFolder>
+              <!-- ConfigurableWroManagerFactory is configured (d'uh) through wro.properties -->
+                  <wroManagerFactory>ro.isdc.wro.maven.plugin.manager.factory.ConfigurableWroManagerFactory</wroManagerFactory>
+                </configuration>
+              </execution>
+            </executions>
+            <dependencies>
+              <dependency>
+                <groupId>ro.isdc.wro4j</groupId>
+                <artifactId>wro4j-extensions</artifactId>
+                <version>${wro4j.version}</version>
+              </dependency>
+            </dependencies>
+          </plugin>
+
+          <plugin>
+            <groupId>com.github.skwakman.nodejs-maven-plugin</groupId>
+            <artifactId>nodejs-maven-plugin</artifactId>
+            <executions>
+              <execution>
+                <goals>
+                  <goal>extract</goal>
+                </goals>
+              </execution>
+            </executions>
+            <configuration>
+              <targetDirectory>
+                ${project.build.directory}/nodejs/
+              </targetDirectory>
+            </configuration>
+          </plugin>
+          <plugin>
+        <!-- r.js optimization. can be skipped with -Drequirejs.optimize.skip=true -->
+            <groupId>com.github.bringking</groupId>
+            <artifactId>requirejs-maven-plugin</artifactId>
+            <executions>
+              <execution>
+                <goals>
+                  <goal>optimize</goal>
+                </goals>
+                <phase>prepare-package</phase>
+                <configuration>
+                  <filterConfig>true</filterConfig>
+                  <configFile>src/main/webapp/app.build.js</configFile>
+                  <nodeExecutable>${project.build.directory}/nodejs/${node.executable}</nodeExecutable>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
     </profile>
 
     <profile>
@@ -992,7 +1050,7 @@
                   </nonFilteredFileExtensions>
                 </configuration>
               </execution>
-              
+
             </executions>
           </plugin>
         </plugins>

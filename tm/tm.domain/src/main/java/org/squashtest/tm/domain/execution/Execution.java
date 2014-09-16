@@ -6,16 +6,16 @@
  *     information regarding copyright ownership.
  *
  *     This is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU Lesser General Public License as published by
+ *     it under the terms of the GNU General Public License as published by
  *     the Free Software Foundation, either version 3 of the License, or
  *     (at your option) any later version.
  *
  *     this software is distributed in the hope that it will be useful,
  *     but WITHOUT ANY WARRANTY; without even the implied warranty of
  *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU Lesser General Public License for more details.
+ *     GNU General Public License for more details.
  *
- *     You should have received a copy of the GNU Lesser General Public License
+ *     You should have received a copy of the GNU General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.squashtest.tm.domain.execution;
@@ -98,6 +98,9 @@ DenormalizedFieldHolder, BoundEntity {
 
 	static final Set<ExecutionStatus> LEGAL_EXEC_STATUS;
 
+	public static final String NO_DATASET_USED_LABEL = "";
+	public static final String NO_DATASET_APPLICABLE_LABEL = null;
+
 	static {
 		Set<ExecutionStatus> set = new HashSet<ExecutionStatus>();
 		set.add(ExecutionStatus.SUCCESS);
@@ -161,6 +164,9 @@ DenormalizedFieldHolder, BoundEntity {
 	@Size(min = 0, max = 255)
 	private String name;
 
+	@Column
+	private String datasetLabel;
+
 	// TODO rename as testPlanItem
 	@ManyToOne
 	@JoinTable(name = "ITEM_TEST_PLAN_EXECUTION", joinColumns = @JoinColumn(name = "EXECUTION_ID", insertable = false, updatable = false), inverseJoinColumns = @JoinColumn(name = "ITEM_TEST_PLAN_ID", insertable = false, updatable = false))
@@ -219,13 +225,32 @@ DenormalizedFieldHolder, BoundEntity {
 	 * @param testPlanItem
 	 */
 	public Execution(TestCase testCase) {
-		this(testCase, new Dataset());
+		this(testCase, null);
 	}
 
 	public Execution(TestCase testCase, Dataset dataset) {
 		setReferencedTestCase(testCase);
 		populateSteps(dataset);
 		populateAttachments();
+		setDatasetLabel(testCase, dataset);
+	}
+
+	private void setDatasetLabel(TestCase testCase, Dataset dataset){
+		String label = null;
+
+		// case one : there was no dataset whatsoever
+		if (testCase.getDatasets().isEmpty()){
+			label = null;
+		}
+		// case two : there are datasets available but none was choosen for that execution
+		else if (dataset == null){
+			label = "";
+		}
+		else{
+			label = dataset.getName();
+		}
+
+		datasetLabel =  label;
 	}
 
 	private void populateAttachments() {
@@ -396,6 +421,13 @@ DenormalizedFieldHolder, BoundEntity {
 	private void addStep(@NotNull ExecutionStep step) {
 		steps.add(step);
 	}
+
+
+
+	public String getDatasetLabel() {
+		return datasetLabel;
+	}
+
 
 	/**
 	 * <p>

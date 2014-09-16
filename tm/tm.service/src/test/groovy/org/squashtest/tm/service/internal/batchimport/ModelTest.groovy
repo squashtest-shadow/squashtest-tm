@@ -6,39 +6,41 @@
  *     information regarding copyright ownership.
  *
  *     This is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU Lesser General Public License as published by
+ *     it under the terms of the GNU General Public License as published by
  *     the Free Software Foundation, either version 3 of the License, or
  *     (at your option) any later version.
  *
  *     this software is distributed in the hope that it will be useful,
  *     but WITHOUT ANY WARRANTY; without even the implied warranty of
  *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU Lesser General Public License for more details.
+ *     GNU General Public License for more details.
  *
- *     You should have received a copy of the GNU Lesser General Public License
+ *     You should have received a copy of the GNU General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.squashtest.tm.service.internal.batchimport
 
-import org.apache.commons.collections.CollectionUtils;
-import org.hibernate.SessionFactory;
-import org.squashtest.tm.domain.NamedReference;
-import org.squashtest.tm.domain.customfield.BindableEntity;
-import org.squashtest.tm.domain.customfield.CustomField;
-import org.squashtest.tm.domain.library.structures.LibraryGraph;
-import org.squashtest.tm.domain.library.structures.LibraryGraph.SimpleNode;
-import org.squashtest.tm.domain.project.Project;
-import org.squashtest.tm.service.internal.batchimport.Model.Existence;
-import org.squashtest.tm.service.internal.batchimport.Model.InternalStepModel;
-import org.squashtest.tm.service.internal.batchimport.Model.StepType;
-import org.squashtest.tm.service.internal.batchimport.Model.TargetStatus;
-import org.squashtest.tm.service.internal.repository.CustomFieldDao;
-import org.squashtest.tm.service.internal.testcase.TestCaseCallTreeFinder;
-import org.squashtest.tm.service.testcase.TestCaseLibraryFinderService;
-import org.hibernate.Query;
-import spock.lang.Specification;
-import org.hibernate.Session;
-import static org.squashtest.tm.service.internal.batchimport.Model.Existence.*;
+import static org.squashtest.tm.service.internal.batchimport.Model.Existence.*
+
+import org.hibernate.Query
+import org.hibernate.Session
+import org.hibernate.SessionFactory
+import org.squashtest.tm.domain.NamedReference
+import org.squashtest.tm.domain.customfield.BindableEntity
+import org.squashtest.tm.domain.customfield.CustomField
+import org.squashtest.tm.domain.library.structures.LibraryGraph
+import org.squashtest.tm.domain.library.structures.LibraryGraph.SimpleNode
+import org.squashtest.tm.domain.project.Project
+import org.squashtest.tm.domain.testcase.ParameterAssignationMode;
+import org.squashtest.tm.service.internal.batchimport.Model.Existence
+import org.squashtest.tm.service.internal.batchimport.Model.InternalStepModel
+import org.squashtest.tm.service.internal.batchimport.Model.StepType
+import org.squashtest.tm.service.internal.batchimport.Model.TargetStatus
+import org.squashtest.tm.service.internal.repository.CustomFieldDao
+import org.squashtest.tm.service.internal.testcase.TestCaseCallTreeFinder
+import org.squashtest.tm.service.testcase.TestCaseLibraryFinderService
+
+import spock.lang.Specification
 
 
 public class ModelTest extends Specification{
@@ -64,6 +66,7 @@ public class ModelTest extends Specification{
 		model.finderService = finderService
 		model.calltreeFinder = calltreeFinder
 		model.callGraph = new TestCaseCallGraph()
+		
 
 	}
 
@@ -141,7 +144,11 @@ public class ModelTest extends Specification{
 		model.testCaseStatusByTarget[targets[1]] = new TargetStatus(EXISTS, 10l)
 		model.testCaseStatusByTarget[targets[2]] = new TargetStatus(TO_BE_DELETED, 20l)
 		and :
-		mockSessionQuery([["ACTION", null] as Object[], ["CALL", 17l] as Object[], ["ACTION", null] as Object[]])
+		mockSessionQuery([
+			["ACTION", null, true] as Object[], 
+			["CALL", 17l, true] as Object[], 
+			["ACTION", null, true] as Object[]
+		])
 		finderService.getPathAsString(17l) >> "/project/bob"
 
 		when :
@@ -150,9 +157,14 @@ public class ModelTest extends Specification{
 
 		then :
 		model.testCaseStepsByTarget[targets[0]] == []
-		model.testCaseStepsByTarget[targets[1]].collect {it.type} == [StepType.ACTION, StepType.CALL, StepType.ACTION]
-		model.testCaseStepsByTarget[targets[1]].collect {it.calledTC} == [null, new TestCaseTarget("/project/bob"), null]
+		
+		Collection<InternalStepModel> stepsTC1 = model.testCaseStepsByTarget[targets[1]]
+		stepsTC1.collect {it.type} == [StepType.ACTION, StepType.CALL, StepType.ACTION]
+		stepsTC1.collect {it.calledTC} == [null, new TestCaseTarget("/project/bob"), null]
+		stepsTC1.collect {it.delegates} == [false, true, false]
+		
 		model.testCaseStepsByTarget[targets[2]] == []
+		
 
 
 	}
@@ -337,7 +349,11 @@ public class ModelTest extends Specification{
 		def tc = new TestCaseTarget("/project/bob")
 		def ctc = new TestCaseTarget("whatever")
 		def st  = new TestStepTarget(tc, 1)
+		
+		def paramInfo = new CallStepParamsInfo()
+		paramInfo.getParamMode() >> ParameterAssignationMode.DELEGATE
 
+		
 		model.testCaseStatusByTarget[tc] = new TargetStatus(EXISTS, 10l)
 		model.testCaseStatusByTarget[ctc] = new TargetStatus(EXISTS, 20l)
 		model.testCaseStepsByTarget[tc] =  [
@@ -351,7 +367,7 @@ public class ModelTest extends Specification{
 		finderService.getPathsAsString(_) >> []
 
 		when :
-		model.addCallStep(st, ctc)
+		model.addCallStep(st, ctc, paramInfo)
 
 		then :
 		model.testCaseStepsByTarget[tc].collect{it.type} == [StepType.ACTION, StepType.CALL, StepType.ACTION, StepType.ACTION]
@@ -365,7 +381,9 @@ public class ModelTest extends Specification{
 		def tc = new TestCaseTarget("/project/bob")
 		def ctc = new TestCaseTarget("whatever")
 		def st  = new TestStepTarget(tc, null)
-
+		def paramInfo = new CallStepParamsInfo()
+		paramInfo.getParamMode() >> ParameterAssignationMode.DELEGATE
+		
 		model.testCaseStatusByTarget[tc] = new TargetStatus(EXISTS, 10l)
 		model.testCaseStatusByTarget[ctc] = new TargetStatus(EXISTS, 20l)
 		model.testCaseStepsByTarget[tc] =  [
@@ -379,7 +397,7 @@ public class ModelTest extends Specification{
 		finderService.getPathsAsString(_) >> []
 
 		when :
-		model.addCallStep(st, ctc)
+		model.addCallStep(st, ctc, paramInfo)
 
 		then :
 		model.testCaseStepsByTarget[tc].collect {it.type} == [StepType.ACTION, StepType.ACTION, StepType.ACTION, StepType.CALL]
@@ -393,7 +411,9 @@ public class ModelTest extends Specification{
 		def tc = new TestCaseTarget("/project/bob")
 		def ctc = new TestCaseTarget("whatever")
 		def st  = new TestStepTarget(tc, 18)
-
+		def paramInfo = new CallStepParamsInfo()
+		paramInfo.getParamMode() >> ParameterAssignationMode.DELEGATE
+		
 		model.testCaseStatusByTarget[tc] = new TargetStatus(EXISTS, 10l)
 		model.testCaseStatusByTarget[ctc] = new TargetStatus(EXISTS, 20l)
 		model.testCaseStepsByTarget[tc] =  [
@@ -407,7 +427,7 @@ public class ModelTest extends Specification{
 		finderService.getPathsAsString(_) >> []
 
 		when :
-		model.addCallStep(st, ctc)
+		model.addCallStep(st, ctc, paramInfo)
 
 		then :
 		model.testCaseStepsByTarget[tc].collect{ it.type} == [StepType.ACTION, StepType.ACTION, StepType.ACTION, StepType.CALL]
@@ -534,6 +554,11 @@ public class ModelTest extends Specification{
 		model.callGraph.addEdge(bob, robert)
 		model.callGraph.addEdge(robert, mike)
 		model.callGraph.addEdge(bob, mike)
+		
+		and :
+		model.testCaseStepsByTarget.put bob, [new InternalStepModel(StepType.CALL, robert, true), new InternalStepModel(StepType.CALL, mike, true)] as List
+		model.testCaseStepsByTarget.put robert, [new InternalStepModel(StepType.CALL, mike, true)] as List
+		
 
 		and :
 
@@ -568,10 +593,12 @@ public class ModelTest extends Specification{
 		model.callGraph.addEdge(bob, robert)
 		model.callGraph.addEdge(robert, mike)
 		model.callGraph.addEdge(bob, mike)
-
+	
+		and:
+		model.testCaseStepsByTarget.put bob, [new InternalStepModel(StepType.CALL, robert, true), new InternalStepModel(StepType.CALL, mike, true)] as List
+		model.testCaseStepsByTarget.put robert, [new InternalStepModel(StepType.CALL, mike, true)] as List
+		
 		and :
-
-
 		model.parametersByTestCase.put	 bob, [ p1, p2 ] as Set
 		model.parametersByTestCase.put	 robert, [ p3 ] as Set
 		model.parametersByTestCase.put	 mike,  [p4, p5] as Set
@@ -581,6 +608,42 @@ public class ModelTest extends Specification{
 
 		then :
 		allparams as Set == [p3, p4, p5] as Set
+
+	}
+
+	def "should retrieve only inherited parameters available to a test case"(){
+
+		given :
+		def bob = new TestCaseTarget("/project/bob")
+		def robert = new TestCaseTarget("/project/robert")
+		def mike = new TestCaseTarget("/project/mike")
+
+		and :
+		def p1 = new ParameterTarget(bob, "meal")
+		def p2 = new ParameterTarget(bob, "couch")
+		def p3 = new ParameterTarget(robert, "basement surface")
+		def p4 = new ParameterTarget(mike, "tv size")
+		def p5 = new ParameterTarget(mike, "beer stocks")
+
+		and :
+		model.callGraph.addEdge(bob, robert)
+		model.callGraph.addEdge(robert, mike)
+		model.callGraph.addEdge(bob, mike)
+	
+		and:
+		model.testCaseStepsByTarget.put bob, [new InternalStepModel(StepType.CALL, robert, true), new InternalStepModel(StepType.CALL, mike, false)] as List
+		model.testCaseStepsByTarget.put robert, [new InternalStepModel(StepType.CALL, mike, false)] as List
+	
+		and :
+		model.parametersByTestCase.put	 bob, [ p1, p2 ] as Set
+		model.parametersByTestCase.put	 robert, [ p3 ] as Set
+		model.parametersByTestCase.put	 mike,  [p4, p5] as Set
+
+		when :
+		Collection<ParameterTarget> allparams = model.getAllParameters(bob);
+
+		then :
+		allparams as Set == [p1, p2, p3] as Set
 
 	}
 

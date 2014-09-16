@@ -6,19 +6,18 @@
  *     information regarding copyright ownership.
  *
  *     This is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU Lesser General Public License as published by
+ *     it under the terms of the GNU General Public License as published by
  *     the Free Software Foundation, either version 3 of the License, or
  *     (at your option) any later version.
  *
  *     this software is distributed in the hope that it will be useful,
  *     but WITHOUT ANY WARRANTY; without even the implied warranty of
  *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU Lesser General Public License for more details.
+ *     GNU General Public License for more details.
  *
- *     You should have received a copy of the GNU Lesser General Public License
+ *     You should have received a copy of the GNU General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package org.squashtest.tm.service.internal.batchimport.testcase.excel;
 
 
@@ -62,7 +61,8 @@ class ExcelWorkbookParserBuilderTest extends Specification {
 		wmd.worksheetDefByType[PARAMETERS_SHEET].stdColumnDefs.values()*.type as Set == ParameterSheetColumn.values() as Set
 		wmd.worksheetDefByType[DATASETS_SHEET]
 		wmd.worksheetDefByType[DATASETS_SHEET].stdColumnDefs.values()*.type as Set == DatasetSheetColumn.values() as Set
-
+		wmd.worksheetDefByType[DATASET_PARAM_VALUES_SHEET]
+		wmd.worksheetDefByType[DATASET_PARAM_VALUES_SHEET].stdColumnDefs.values()*.type as Set == DatasetParamValuesSheetColumn.values() as Set
 		(wmd.worksheetDefByType[TEST_CASES_SHEET].stdColumnDefs.values().collect{ it.type.name()}).contains("ACTION")
 
 		cleanup:

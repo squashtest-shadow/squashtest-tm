@@ -4,7 +4,7 @@
   <parent>
     <artifactId>squashtest-csp-tm</artifactId>
     <groupId>org.squashtest.tm</groupId>
-    <version>1.11.0.FEAT3577-SNAPSHOT</version>
+    <version>1.11.0.RC2-SNAPSHOT</version>
   </parent>
 
   <artifactId>tm.service</artifactId>
@@ -89,13 +89,7 @@
       <artifactId>core.aspect</artifactId>
       <version>${project.version}</version>
     </dependency>
-    
-    <dependency>
-        <groupId>org.codehaus.groovy</groupId>
-        <artifactId>groovy-all</artifactId>
-        <version>2.0.6</version>
-        <scope>test</scope>
-      </dependency>
+ 
     
 		<!--======= /SQUASHTEST MODULES ======== -->
 

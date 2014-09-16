@@ -6,16 +6,16 @@
  *     information regarding copyright ownership.
  *
  *     This is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU Lesser General Public License as published by
+ *     it under the terms of the GNU General Public License as published by
  *     the Free Software Foundation, either version 3 of the License, or
  *     (at your option) any later version.
  *
  *     this software is distributed in the hope that it will be useful,
  *     but WITHOUT ANY WARRANTY; without even the implied warranty of
  *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU Lesser General Public License for more details.
+ *     GNU General Public License for more details.
  *
- *     You should have received a copy of the GNU Lesser General Public License
+ *     You should have received a copy of the GNU General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 define([ "jquery", "tree", "handlebars", "underscore", "workspace/workspace.import-popup" ], function($, zetree, Handlebars, _) {
@@ -73,14 +73,10 @@ define([ "jquery", "tree", "handlebars", "underscore", "workspace/workspace.impo
 
 			this.onOwnBtn("ok", function() {
 				var tree = zetree.get();
-				var projectId = self.element.find("select[name='projectId']").val();
-				var lib = tree.jstree("findNodes", {
-					rel : "drive",
-					resid : projectId
-				});
-				if (lib.size() > 0) {
-					tree.jstree("refresh", lib);
-				}
+				tree.find('[restype="test-case-libraries"]').each(
+						function(idx, elt){
+							tree.jstree("refresh", this);
+							});
 			});
 
 			this.onOwnBtn("simulate", function() {

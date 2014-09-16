@@ -6,16 +6,16 @@
  *     information regarding copyright ownership.
  *
  *     This is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU Lesser General Public License as published by
+ *     it under the terms of the GNU General Public License as published by
  *     the Free Software Foundation, either version 3 of the License, or
  *     (at your option) any later version.
  *
  *     this software is distributed in the hope that it will be useful,
  *     but WITHOUT ANY WARRANTY; without even the implied warranty of
  *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU Lesser General Public License for more details.
+ *     GNU General Public License for more details.
  *
- *     You should have received a copy of the GNU Lesser General Public License
+ *     You should have received a copy of the GNU General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.squashtest.tm.service.internal.repository.hibernate
@@ -66,22 +66,22 @@ class HibernateTestCaseDeletionDaoIT extends DbunitDaoSpecification{
 
 		then :
 
-		found("attachment_content", "attachment_content_id", -121L)
-		found("attachment_content", "attachment_content_id", -1111L)
-		!found("attachment_content", "attachment_content_id", -111L)
-		!found("attachment_content", "attachment_content_id", -1211L)
-		!found("attachment_content", "attachment_content_id", -1212L)
+		found("ATTACHMENT_CONTENT", "attachment_content_id", -121L)
+		found("ATTACHMENT_CONTENT", "attachment_content_id", -1111L)
+		!found("ATTACHMENT_CONTENT", "attachment_content_id", -111L)
+		!found("ATTACHMENT_CONTENT", "attachment_content_id", -1211L)
+		!found("ATTACHMENT_CONTENT", "attachment_content_id", -1212L)
 
-		found("attachment", "attachment_id", -121L)
-		found("attachment", "attachment_id", -1111L)
-		!found("attachment", "attachment_id", -111L)
-		!found("attachment", "attachment_id", -1211L)
-		!found("attachment", "attachment_id", -1212L)
+		found("ATTACHMENT", "attachment_id", -121L)
+		found("ATTACHMENT", "attachment_id", -1111L)
+		!found("ATTACHMENT", "attachment_id", -111L)
+		!found("ATTACHMENT", "attachment_id", -1211L)
+		!found("ATTACHMENT", "attachment_id", -1212L)
 
-		found("attachment_list", "attachment_list_id", -2L)
-		found("attachment_list", "attachment_list_id", -3L)
-		!found("attachment_list", "attachment_list_id", -1L)
-		!found("attachment_list", "attachment_list_id", -4L)
+		found("ATTACHMENT_LIST", "attachment_list_id", -2L)
+		found("ATTACHMENT_LIST", "attachment_list_id", -3L)
+		!found("ATTACHMENT_LIST", "attachment_list_id", -1L)
+		!found("ATTACHMENT_LIST", "attachment_list_id", -4L)
 	}
 
 
@@ -97,8 +97,8 @@ class HibernateTestCaseDeletionDaoIT extends DbunitDaoSpecification{
 		def folder = findEntity(TestCaseFolder.class, -1L)
 
 		then :
-		found ("test_case", "tcln_id", -12L)
-		!found("test_case", "tcln_id", -11L)
+		found ("TEST_CASE", "tcln_id", -12L)
+		!found("TEST_CASE", "tcln_id", -11L)
 
 
 		folder.content.containsExactlyIds([-12L])
@@ -176,7 +176,7 @@ class HibernateTestCaseDeletionDaoIT extends DbunitDaoSpecification{
 
 		then :
 
-		found ("test_case", "tcln_id", -12L)
+		found ("TEST_CASE", "tcln_id", -12L)
 		requirement.currentVersion.verifyingTestCases.containsExactlyIds([-12L])
 	}
 
@@ -215,15 +215,15 @@ class HibernateTestCaseDeletionDaoIT extends DbunitDaoSpecification{
 
 		then :
 
-		found("iteration_test_plan_item", "item_test_plan_id", -11L)
-		found("iteration_test_plan_item", "item_test_plan_id", -14L)
-		found("iteration_test_plan_item", "item_test_plan_id", -21L)
-		found("iteration_test_plan_item", "item_test_plan_id", -22L)
-		found("iteration_test_plan_item", "item_test_plan_id", -24L)
+		found("ITERATION_TEST_PLAN_ITEM", "item_test_plan_id", -11L)
+		found("ITERATION_TEST_PLAN_ITEM", "item_test_plan_id", -14L)
+		found("ITERATION_TEST_PLAN_ITEM", "item_test_plan_id", -21L)
+		found("ITERATION_TEST_PLAN_ITEM", "item_test_plan_id", -22L)
+		found("ITERATION_TEST_PLAN_ITEM", "item_test_plan_id", -24L)
 
-		!found("iteration_test_plan_item", "item_test_plan_id", -12L)
-		!found("iteration_test_plan_item", "item_test_plan_id", -13L)
-		!found("iteration_test_plan_item", "item_test_plan_id", -23L)
+		!found("ITERATION_TEST_PLAN_ITEM", "item_test_plan_id", -12L)
+		!found("ITERATION_TEST_PLAN_ITEM", "item_test_plan_id", -13L)
+		!found("ITERATION_TEST_PLAN_ITEM", "item_test_plan_id", -23L)
 
 		def it1 = findEntity(Iteration.class, -1L)
 		def it2 = findEntity(Iteration.class, -2L)
@@ -269,19 +269,19 @@ class HibernateTestCaseDeletionDaoIT extends DbunitDaoSpecification{
 		deletionDao.removeCampaignTestPlanInboundReferences([-2L, -3L])
 
 		then :
-		found("campaign_test_plan_item", "ctpi_id", -11L)
-		found("campaign_test_plan_item", "ctpi_id", -14L)
-		found("campaign_test_plan_item", "ctpi_id", -21L)
-		found("campaign_test_plan_item", "ctpi_id", -24L)
-		found("campaign_test_plan_item", "ctpi_id", -31L)
-		found("campaign_test_plan_item", "ctpi_id", -34L)
+		found("CAMPAIGN_TEST_PLAN_ITEM", "ctpi_id", -11L)
+		found("CAMPAIGN_TEST_PLAN_ITEM", "ctpi_id", -14L)
+		found("CAMPAIGN_TEST_PLAN_ITEM", "ctpi_id", -21L)
+		found("CAMPAIGN_TEST_PLAN_ITEM", "ctpi_id", -24L)
+		found("CAMPAIGN_TEST_PLAN_ITEM", "ctpi_id", -31L)
+		found("CAMPAIGN_TEST_PLAN_ITEM", "ctpi_id", -34L)
 
-		!found("campaign_test_plan_item", "ctpi_id", -12L)
-		!found("campaign_test_plan_item", "ctpi_id", -13L)
-		!found("campaign_test_plan_item", "ctpi_id", -22L)
-		!found("campaign_test_plan_item", "ctpi_id", -23L)
-		!found("campaign_test_plan_item", "ctpi_id", -32L)
-		!found("campaign_test_plan_item", "ctpi_id", -33L)
+		!found("CAMPAIGN_TEST_PLAN_ITEM", "ctpi_id", -12L)
+		!found("CAMPAIGN_TEST_PLAN_ITEM", "ctpi_id", -13L)
+		!found("CAMPAIGN_TEST_PLAN_ITEM", "ctpi_id", -22L)
+		!found("CAMPAIGN_TEST_PLAN_ITEM", "ctpi_id", -23L)
+		!found("CAMPAIGN_TEST_PLAN_ITEM", "ctpi_id", -32L)
+		!found("CAMPAIGN_TEST_PLAN_ITEM", "ctpi_id", -33L)
 
 		def c1 = findEntity(Campaign.class, -1L)
 		def c2 = findEntity(Campaign.class, -2L)

@@ -6,16 +6,16 @@
  *     information regarding copyright ownership.
  *
  *     This is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU Lesser General Public License as published by
+ *     it under the terms of the GNU General Public License as published by
  *     the Free Software Foundation, either version 3 of the License, or
  *     (at your option) any later version.
  *
  *     this software is distributed in the hope that it will be useful,
  *     but WITHOUT ANY WARRANTY; without even the implied warranty of
  *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU Lesser General Public License for more details.
+ *     GNU General Public License for more details.
  *
- *     You should have received a copy of the GNU Lesser General Public License
+ *     You should have received a copy of the GNU General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.squashtest.tm.service.internal.repository;
@@ -29,6 +29,7 @@ import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.NamedReferencePair;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.requirement.RequirementSearchCriteria;
+import org.squashtest.tm.domain.testcase.CallTestStep;
 import org.squashtest.tm.domain.testcase.ExportTestCaseData;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseImportance;
@@ -154,6 +155,26 @@ public interface CustomTestCaseDao extends EntityDao<TestCase> {
 	 */
 	List<TestCase> findAllCallingTestCases(long calleeId);
 
+	/**
+	 * returns all the call test step that reference the test case given its id.
+	 * Note that like in {@link #findAllCallingTestCases(long, PagingAndSorting)},
+	 * the paging and sorting can sort on attributes that belong to the caller
+	 * TestCases
+	 * 
+	 * @param testCaseId
+	 * @param sorting
+	 * @return
+	 */
+	List<CallTestStep> findAllCallingTestSteps(long testCaseId, PagingAndSorting sorting);
+
+
+	/**
+	 * invokes #findAllCallingTestSteps, sorting by project name, test case reference, test case name and step no
+	 * 
+	 * @param testCaseId
+	 * @return
+	 */
+	List<CallTestStep> findAllCallingTestSteps(long testCaseId);
 	/***
 	 * Returns the test cases associated with at least a requirement that meets the criteria
 	 * 

@@ -7,16 +7,16 @@
         information regarding copyright ownership.
 
         This is free software: you can redistribute it and/or modify
-        it under the terms of the GNU Lesser General Public License as published by
+        it under the terms of the GNU General Public License as published by
         the Free Software Foundation, either version 3 of the License, or
         (at your option) any later version.
 
         this software is distributed in the hope that it will be useful,
         but WITHOUT ANY WARRANTY; without even the implied warranty of
         MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-        GNU Lesser General Public License for more details.
+        GNU General Public License for more details.
 
-        You should have received a copy of the GNU Lesser General Public License
+        You should have received a copy of the GNU General Public License
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 --%>
@@ -32,9 +32,9 @@
 <%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
 
 <c:url var="backUrl" value="/campaign-workspace/" />
-<c:url var="treeBaseUrl" value="/test-case-browser"/>
 <c:url var="campaignUrl" value="/campaigns/${ campaign.id }" />
-<c:url var="campaignTestPlanUrl" value="/campaigns/${ campaign.id }/info" />
+<c:url var="testPlanUrl" value="/campaigns/${campaign.id}/test-plan"/>
+
 
 <%-- ----------------------------------- Authorization ----------------------------------------------%>
 <c:set var="editable" value="${ false }" /> 
@@ -43,61 +43,15 @@
 </authz:authorized>
 
 <layout:tree-picker-layout  workspaceTitleKey="workspace.campaign.title" 
-							highlightedWorkspace="campaign"
-							treeBaseUrl="${treeBaseUrl}"
-							isRequirementPaneSearchOn="true" linkable="test-case" isSubPaged="true">
+							highlightedWorkspace="campaign" 
+                            i18nLibraryTabTitle="squashtm.library.test-case.title"                             
+							linkable="test-case" 
+                            isSubPaged="true">
 	<jsp:attribute name="head">
 		<comp:sq-css name="squash.purple.css" />
-
-		<script type="text/javascript">
-require(["common"], function(){
-	require(["jquery", "jqueryui"], function($){
-			//todo : get that wtf thing straight. 
-			//each panel (tree, search tc, search by req) should define a method getSelected()
-			//the present function should only call the one belonging to the currently selected panel.
-			function getTestCasesIds(){
-				var selected = $( "#tabbed-pane" ).tabs('option', 'selected');
-				var tree = $( '#linkable-test-cases-tree' );
-
-				var tab = tree.jstree('get_selected')
-						  .not(':library')
-						  .collect(function(elt){return $(elt).attr('resid');});
-
-				return tab;
-			}
-			
-
-			
-			$(function() {
-
-				<%-- back button --%>
-				
-				$("#back").click(function(){
-					history.back();
-				});
-				
-				<%-- test-case addition --%>
-				$( '#add-items-button' ).click(function() {
-					
-					var tree = $( '#linkable-test-cases-tree' );
-					var ids = getTestCasesIds();
-					if (ids.length > 0) {
-						$.post('<c:url value="/campaigns/${ campaign.id }/test-plan" />', { testCasesIds: ids })
-						.done(function(){
-							$("#test-cases-table").squashTable().refresh();
-						});
-					}
-					tree.jstree('deselect_all'); //todo : each panel should define that method too.
-					firstIndex = null;
-					lastIndex = null;
-				});
-			});
-		});
-	});
-		</script>
 	</jsp:attribute>
 	
-		<jsp:attribute name="subPageTitle">
+	<jsp:attribute name="subPageTitle">
 		<h2>${campaign.name}&nbsp;:&nbsp;<f:message key="squashtm.library.verifying-test-cases.title" /></h2>
 	</jsp:attribute>
 	
@@ -123,12 +77,50 @@ require(["common"], function(){
 	<jsp:attribute name="tablePane">
 		<comp:opened-object otherViewers="${ otherViewers }" objectUrl="${ campaignUrl }" />
 		
-		<aggr:campaign-test-plan-manager-table 
-			campaignUrl="${ campaignUrl }" 
-			batchRemoveButtonId="remove-items-button" 
-			editable="${editable}"
-			campaign="${campaign}"/>
+		<aggr:campaign-test-plan-manager-table campaign="${campaign}"/>
 		
 	</jsp:attribute>
+  
+  
+  <jsp:attribute name="foot">
+    <script type="text/javascript">
+        require(["common"], function(){
+          require(["jquery", "tree", "workspace.event-bus"], function($, zetree, eventBus){
+              
+              $(function() {
+        
+                <%-- back button --%>
+                
+                $("#back").on('click', function(){
+                  history.back();
+                });
+                
+                <%-- test-case addition --%>
+                $( '#add-items-button' ).click(function() {
+                      var tree = zetree.get();
+                      var ids = tree.jstree('get_selected').all('getResId');
+                      if (ids.length > 0) {
+                        $.post('${ testPlanUrl }', { testCasesIds: ids})
+                        .done(function(){
+                          eventBus.trigger('context.content-modified');
+                        })
+                      }
+                      tree.jstree('deselect_all'); 
+                });
+                
+                $("#remove-items-button").on('click', function(){
+                  $("#remove-test-plan-button").click();
+                });
+                
+                eventBus.onContextual("context.content-modified", function() {
+                  $("#campaign-test-plans-table").squashTable().refresh();
+                });
+                    
+              });
+            });
+          });
+    </script>
+  </jsp:attribute>
+  
 </layout:tree-picker-layout>
 

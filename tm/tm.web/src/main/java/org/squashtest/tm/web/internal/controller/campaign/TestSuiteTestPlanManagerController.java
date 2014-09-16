@@ -6,21 +6,20 @@
  *     information regarding copyright ownership.
  *
  *     This is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU Lesser General Public License as published by
+ *     it under the terms of the GNU General Public License as published by
  *     the Free Software Foundation, either version 3 of the License, or
  *     (at your option) any later version.
  *
  *     this software is distributed in the hope that it will be useful,
  *     but WITHOUT ANY WARRANTY; without even the implied warranty of
  *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU Lesser General Public License for more details.
+ *     GNU General Public License for more details.
  *
- *     You should have received a copy of the GNU Lesser General Public License
+ *     You should have received a copy of the GNU General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.squashtest.tm.web.internal.controller.campaign;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -50,7 +49,6 @@ import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.campaign.TestSuite;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.project.Project;
-import org.squashtest.tm.domain.testautomation.AutomatedSuite;
 import org.squashtest.tm.domain.testcase.Dataset;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseLibrary;
@@ -63,8 +61,6 @@ import org.squashtest.tm.service.campaign.TestSuiteModificationService;
 import org.squashtest.tm.service.campaign.TestSuiteTestPlanManagerService;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.web.internal.controller.RequestParams;
-import org.squashtest.tm.web.internal.controller.execution.AutomatedExecutionViewUtils;
-import org.squashtest.tm.web.internal.controller.execution.AutomatedExecutionViewUtils.AutomatedSuiteOverview;
 import org.squashtest.tm.web.internal.helper.JsTreeHelper;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.builder.DriveNodeBuilder;
@@ -101,7 +97,7 @@ public class TestSuiteTestPlanManagerController {
 	private static final String STATUS = "status";
 	private static final String ITEM_ID = "itemId";
 	private static final String TESTPLAN_IDS = "testPlanIds";
-	
+
 	@Inject
 	private TestSuiteModificationService service;
 
@@ -120,15 +116,15 @@ public class TestSuiteTestPlanManagerController {
 	private static final Logger LOGGER = LoggerFactory.getLogger(TestSuiteModificationController.class);
 
 	private final DatatableMapper<String> testPlanMapper = new NameBasedMapper()
-			.map("entity-index", "index(IterationTestPlanItem)")
-			// index is a special case which means : no sorting.
-			.mapAttribute("project-name", NAME, Project.class).mapAttribute(REFERENCE, REFERENCE, TestCase.class)
-			.mapAttribute("tc-name", NAME, TestCase.class).mapAttribute(IMPORTANCE, IMPORTANCE, TestCase.class)
-			.mapAttribute("dataset", NAME, Dataset.class)
-			.mapAttribute("status", "executionStatus", IterationTestPlanItem.class)
-			.mapAttribute("assignee-login", "login", User.class)
-			.mapAttribute("last-exec-on", "lastExecutedOn", IterationTestPlanItem.class)
-			.mapAttribute("exec-mode", "automatedTest", TestCase.class);
+	.map("entity-index", "index(IterationTestPlanItem)")
+	// index is a special case which means : no sorting.
+	.mapAttribute("project-name", NAME, Project.class).mapAttribute(REFERENCE, REFERENCE, TestCase.class)
+	.mapAttribute("tc-name", NAME, TestCase.class).mapAttribute(IMPORTANCE, IMPORTANCE, TestCase.class)
+	.mapAttribute("dataset.selected.name", NAME, Dataset.class)
+	.mapAttribute("status", "executionStatus", IterationTestPlanItem.class)
+	.mapAttribute("assignee-login", "login", User.class)
+	.mapAttribute("last-exec-on", "lastExecutedOn", IterationTestPlanItem.class)
+	.mapAttribute("exec-mode", "automatedTest", TestCase.class);
 
 	@Inject
 	private InternationalizationHelper messageSource;
@@ -170,9 +166,9 @@ public class TestSuiteTestPlanManagerController {
 			final Locale locale) {
 
 		PagingAndMultiSorting paging = new DataTableMultiSorting(params, testPlanMapper);
-		
+
 		ColumnFiltering filter = new DataTableColumnFiltering(params);
-		
+
 		PagedCollectionHolder<List<IndexedIterationTestPlanItem>> holder = testSuiteTestPlanManagerService
 				.findAssignedTestPlan(suiteId, paging, filter);
 
@@ -207,6 +203,14 @@ public class TestSuiteTestPlanManagerController {
 			@PathVariable(TEST_SUITE_ID) long suiteId, @RequestParam("assignee") long assignee) {
 		iterationTestPlanManagerService.assignUserToTestPlanItems(testPlanIds, assignee);
 		return assignee;
+	}
+
+
+	@RequestMapping(value = "/test-suites/{suiteId}/test-plan/{testPlanId}", method = RequestMethod.POST, params = {"dataset"})
+	public @ResponseBody
+	Long setDataset(@PathVariable("testPlanId") long testPlanId, @RequestParam("dataset") Long datasetId){
+		iterationTestPlanManagerService.changeDataset(testPlanId, datasetId);
+		return datasetId;
 	}
 
 	@RequestMapping(value = "/test-suites/{suiteId}/test-plan/{itemIds}/position/{newIndex}", method = RequestMethod.POST)
@@ -276,7 +280,7 @@ public class TestSuiteTestPlanManagerController {
 		testSuiteTestPlanManagerService.bindTestPlanToMultipleSuites(boundTestSuitesIds, itpIds);
 		testSuiteTestPlanManagerService.unbindTestPlanToMultipleSuites(unboundTestSuiteIds, itpIds);
 	}
-	
+
 	@RequestMapping(value = "/test-suites/test-plan", method = RequestMethod.POST, params = { ITEM_IDS, UNBOUND_SUITE_IDS })
 	public @ResponseBody
 	void unbindTestPlans(@RequestParam(ITEM_IDS) List<Long> itpIds,
@@ -284,9 +288,9 @@ public class TestSuiteTestPlanManagerController {
 		LOGGER.debug(BIND_TEST_PLAN_ITEMS_TO_TEST_SUITES);
 		testSuiteTestPlanManagerService.unbindTestPlanToMultipleSuites(unboundTestSuiteIds, itpIds);
 	}
-	
+
 	@RequestMapping(value = "/test-suites/test-plan", method = RequestMethod.POST, params = { ITEM_IDS,
-	BOUND_SUITE_IDS })
+			BOUND_SUITE_IDS })
 	public @ResponseBody
 	void bindTestPlans(@RequestParam(ITEM_IDS) List<Long> itpIds,
 			@RequestParam(BOUND_SUITE_IDS) List<Long> boundTestSuitesIds) {
@@ -334,13 +338,8 @@ public class TestSuiteTestPlanManagerController {
 	public @ResponseBody
 	String addManualExecution(@PathVariable(TEST_SUITE_ID) long suiteId, @PathVariable(ITEM_ID) long itemId) {
 		LOGGER.debug("add manual execution to item #{}", itemId);
-		TestSuite testSuite = service.findById(suiteId);
-		Long iterationId = testSuite.getIteration().getId();
-
-		service.addExecution(itemId);
-		List<Execution> executionList = iterationFinder.findExecutionsByTestPlan(iterationId, itemId);
-
-		return executionList.get(executionList.size() - 1).getId().toString();
+		Execution newExecution = service.addExecution(itemId);
+		return newExecution.getId().toString();
 
 	}
 
@@ -348,19 +347,19 @@ public class TestSuiteTestPlanManagerController {
 	private String formatUnassigned(Locale locale) {
 		return messageSource.internationalize("label.Unassigned", locale);
 	}
-	
+
 
 	private JsonIterationTestPlanItem createJsonITPI(IterationTestPlanItem item){
 		String name = (item.isTestCaseDeleted()) ? null : item.getReferencedTestCase().getName();
 		return new JsonIterationTestPlanItem(
-					item.getId(),
-					item.getExecutionStatus(),
-					name,
-					item.getLastExecutedOn(),
-					item.getLastExecutedBy(),
-					item.getUser(),
-					item.isTestCaseDeleted(),
-					item.isAutomated()
+				item.getId(),
+				item.getExecutionStatus(),
+				name,
+				item.getLastExecutedOn(),
+				item.getLastExecutedBy(),
+				item.getUser(),
+				item.isTestCaseDeleted(),
+				item.isAutomated()
 				);
 	}
 

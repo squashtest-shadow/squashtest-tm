@@ -21,7 +21,7 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
-<!DOCTYPE dataset SYSTEM "../../../../../dtd/squash-tm.1.9.10.dtd">
+<!DOCTYPE dataset SYSTEM "../../../../../dtd/squash-tm.1.11.0.dtd">
 <dataset>
 	<CORE_PARTY PARTY_ID="-1"/>
  	<CORE_USER LOGIN="StubUserContextService" CREATED_ON="2013-10-07" CREATED_BY="mp" PARTY_ID="-1"/>
@@ -121,6 +121,6 @@
 		EXECUTION_ID="-1" EXECUTION_ORDER="0" />
 	<ITEM_TEST_PLAN_EXECUTION ITEM_TEST_PLAN_ID="-1"
 		EXECUTION_ID="-3" EXECUTION_ORDER="1" />
-	<CORE_GROUP_MEMBER/>
+	<core_group_member/>
 	
 </dataset>

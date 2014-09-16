@@ -6,16 +6,16 @@
  *     information regarding copyright ownership.
  *
  *     This is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU Lesser General Public License as published by
+ *     it under the terms of the GNU General Public License as published by
  *     the Free Software Foundation, either version 3 of the License, or
  *     (at your option) any later version.
  *
  *     this software is distributed in the hope that it will be useful,
  *     but WITHOUT ANY WARRANTY; without even the implied warranty of
  *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU Lesser General Public License for more details.
+ *     GNU General Public License for more details.
  *
- *     You should have received a copy of the GNU Lesser General Public License
+ *     You should have received a copy of the GNU General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.squashtest.tm.web.internal.controller.testcase.parameters;
@@ -23,6 +23,7 @@ package org.squashtest.tm.web.internal.controller.testcase.parameters;
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
@@ -78,13 +79,14 @@ public class TestCaseParametersController {
 	private PermissionEvaluationService permissionEvaluationService;
 	@Inject
 	private MessageSource messageSource;
-	
-	
 
-	private DatatableMapper<String> parametersTableMapper = new NameBasedMapper(3)
-																.mapAttribute(DataTableModelConstants.DEFAULT_ENTITY_NAME_KEY,"name", Parameter.class)
-																.mapAttribute("test-case-name", "name", TestCase.class);
-	
+
+
+	private DatatableMapper<String> parametersTableMapper =
+			new NameBasedMapper(3)
+	.mapAttribute(DataTableModelConstants.DEFAULT_ENTITY_NAME_KEY,"name", Parameter.class)
+	.mapAttribute("test-case-name", "name", TestCase.class);
+
 	/**
 	 * 
 	 */
@@ -101,7 +103,7 @@ public class TestCaseParametersController {
 	@RequestMapping(method = RequestMethod.GET)
 	@ResponseBody
 	public List<SimpleParameter> getParameters(@PathVariable("testCaseId") long testCaseId, Locale locale) {
-		List<Parameter> parameters = parameterModificationService.findAllforTestCase(testCaseId);
+		List<Parameter> parameters = parameterModificationService.findAllParameters(testCaseId);
 		return SimpleParameter.convertToSimpleParameters(parameters,testCaseId, messageSource, locale );
 	}
 
@@ -118,11 +120,29 @@ public class TestCaseParametersController {
 
 		// the main entities
 		TestCase testCase = testCaseFinder.findById(testCaseId);
-		List<Parameter> directAndCalledParameters = parameterModificationService.findAllforTestCase(testCaseId);
+
+		List<Parameter> directAndCalledParameters = parameterModificationService.findAllParameters(testCaseId);
+
+		/*
+		 * Issue 3871
+		 * 
+		 * The problem comes from the configuration of the datatable, which is splitted in two parts :
+		 * the aoColumnDefs (that binds the model to the columns ) and the paramHeaders (that binds
+		 * some label to the columns). Those informations are extracted from the same original collection
+		 * 'directAndCalledParameters'.
+		 * 
+		 * It happens that 'paramHeaders' is sorted when generated, while 'aoColumnDefs' is not, hence
+		 * the discrepency.
+		 * 
+		 * A simple solution is then to sort 'directAndCalledParameters' before deriving the informations
+		 * so that they remain consistent.
+		 */
+		Collections.sort(directAndCalledParameters, new ParameterNameComparator(SortOrder.ASCENDING));
+
 		List<Long> paramIds = IdentifiedUtil.extractIds(directAndCalledParameters);
 		boolean editable = permissionEvaluationService.hasRoleOrPermissionOnObject("ROLE_ADMIN", "WRITE", testCase);
 		List<AoColumnDef> columnDefs = new DatasetsTableColumnDefHelper().getAoColumnDefs(paramIds, editable);
-		List<String> paramHeaders = TestCaseDatasetsController.findDatasetParamHeaders(testCaseId, locale, directAndCalledParameters, messageSource);
+		List<HashMap<String, String>> paramHeaders = ParametersModelHelper.findDatasetParamHeaders(testCaseId, locale, directAndCalledParameters, messageSource);
 		// populate the model
 		model.addAttribute(TEST_CASE, testCase);
 		model.addAttribute("datasetsAoColumnDefs", JsonHelper.serialize(columnDefs));
@@ -142,19 +162,19 @@ public class TestCaseParametersController {
 	 *            : the DataTable parameters
 	 * @param locale
 	 *            : the browser's locale
-	 * @return the parmeters tab view.
+	 * @return the parameters tab view.
 	 */
 	@RequestMapping(method = RequestMethod.GET, params = RequestParams.S_ECHO_PARAM)
 	@ResponseBody
 	public DataTableModel getParametersTable(@PathVariable long testCaseId, final DataTableDrawParameters params,
 			final Locale locale) {
 
-		List<Parameter> parameters = parameterModificationService.findAllforTestCase(testCaseId);
+		List<Parameter> parameters = parameterModificationService.findAllParameters(testCaseId);
 		Sorting sorting = new DataTableSorting(params, parametersTableMapper);
-		sortParams(sorting, parameters);
+		sortParams(sorting, parameters, testCaseId);
 		PagedCollectionHolder<List<Parameter>> holder = new SinglePageCollectionHolder<List<Parameter>>(parameters);
 
-		return new ParametersDataTableModelHelper(testCaseId, messageSource, locale).buildDataModel(holder,
+		return new ParametersModelHelper(testCaseId, messageSource, locale).buildDataModel(holder,
 				params.getsEcho());
 	}
 
@@ -166,8 +186,9 @@ public class TestCaseParametersController {
 	 *            : the {@link DataTableDrawParameters}
 	 * @param parameters
 	 *            : a list of {@link Parameter}
+	 *            @param testCaseId : the id of the test case that displays the table of parameters
 	 */
-	private void sortParams(Sorting sorting, List<Parameter> parameters) {		
+	private void sortParams(Sorting sorting, List<Parameter> parameters, Long testCaseId) {
 		String sortedAttribute = sorting.getSortedAttribute();
 		SortOrder sortOrder = sorting.getSortOrder();
 
@@ -175,36 +196,9 @@ public class TestCaseParametersController {
 
 			Collections.sort(parameters, new ParameterNameComparator(sortOrder));
 		} else if (sortedAttribute != null && sortedAttribute.equals("TestCase.name")) {
-			Collections.sort(parameters, new ParameterTestCaseNameComparator(sortOrder));
+			Collections.sort(parameters, new ParameterTestCaseNameComparator(sortOrder, testCaseId));
 		} else {
 			Collections.sort(parameters, new ParameterNameComparator(SortOrder.ASCENDING));
-		}
-
-	}
-
-	/**
-	 * Will compare {@link Parameter} on their name in the given {@link SortOrder}
-	 * 
-	 * @author mpagnon
-	 * 
-	 */
-	@SuppressWarnings("serial")
-	public static final class ParameterNameComparator implements Comparator<Parameter>, Serializable {
-
-		private SortOrder sortOrder;
-
-		public  ParameterNameComparator(SortOrder sortOrder) {
-			this.sortOrder = sortOrder;
-		}
-
-		@Override
-		public int compare(Parameter o1, Parameter o2) {
-			int ascResult = o1.getName().compareTo(o2.getName());
-			if (sortOrder.equals(SortOrder.ASCENDING)) {
-				return ascResult;
-			} else {
-				return -ascResult;
-			}
 		}
 
 	}
@@ -213,7 +207,7 @@ public class TestCaseParametersController {
 	 * Will compare {@link Parameter} on their test case name in the given {@link SortOrder}. The compared test case
 	 * name is the one displayed in the parameter table on the test case view.
 	 * 
-	 * @see {@link ParametersDataTableModelHelper#buildTestCaseName(Parameter)}
+	 * @see {@link ParametersModelHelper#buildTestCaseName(Parameter)}
 	 * 
 	 * @author mpagnon
 	 * 
@@ -222,15 +216,19 @@ public class TestCaseParametersController {
 	private static final class ParameterTestCaseNameComparator implements Comparator<Parameter>, Serializable {
 
 		private SortOrder sortOrder;
+		private Long testCaseId;
 
-		private ParameterTestCaseNameComparator(SortOrder sortOrder) {
+		private ParameterTestCaseNameComparator(SortOrder sortOrder, Long testCaseId) {
 			this.sortOrder = sortOrder;
+			this.testCaseId = testCaseId;
 		}
 
 		@Override
 		public int compare(Parameter o1, Parameter o2) {
-			int ascResult = ParametersDataTableModelHelper.buildTestCaseName(o1).compareTo(
-					ParametersDataTableModelHelper.buildTestCaseName(o2));
+			boolean o1DirectParam = testCaseId.equals(o1.getTestCase().getId());
+			boolean o2DirectParam = testCaseId.equals(o2.getTestCase().getId());
+			int ascResult = ParametersModelHelper.buildTestCaseName(o1, o1DirectParam).compareTo(
+					ParametersModelHelper.buildTestCaseName(o2, o2DirectParam));
 			if (sortOrder.equals(SortOrder.ASCENDING)) {
 				return ascResult;
 			} else {
@@ -252,9 +250,9 @@ public class TestCaseParametersController {
 	@ResponseStatus(HttpStatus.CREATED)
 	@ResponseBody
 	public void newParameter(@PathVariable long testCaseId, @Valid @ModelAttribute("add-parameter") Parameter parameter) {
-		
+
 		try{
-		parameterModificationService.addNewParameterToTestCase(parameter, testCaseId);
+			parameterModificationService.addNewParameterToTestCase(parameter, testCaseId);
 		}catch (DomainException e) {
 			e.setObjectName("add-parameter");
 			throw e;

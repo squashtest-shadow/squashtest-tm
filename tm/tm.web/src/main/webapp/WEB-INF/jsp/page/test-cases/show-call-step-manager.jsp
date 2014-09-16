@@ -7,16 +7,16 @@
         information regarding copyright ownership.
 
         This is free software: you can redistribute it and/or modify
-        it under the terms of the GNU Lesser General Public License as published by
+        it under the terms of the GNU General Public License as published by
         the Free Software Foundation, either version 3 of the License, or
         (at your option) any later version.
 
         this software is distributed in the hope that it will be useful,
         but WITHOUT ANY WARRANTY; without even the implied warranty of
         MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-        GNU Lesser General Public License for more details.
+        GNU General Public License for more details.
 
-        You should have received a copy of the GNU Lesser General Public License
+        You should have received a copy of the GNU General Public License
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 --%>
@@ -65,6 +65,7 @@
 		
 			domReady(function(){
 				$("#call-step-associate-button").click(associationAction);
+				$("#call-step-back-button").click(navigateBackFromCallStepManager);
 			});
 			
 
@@ -127,7 +128,7 @@
 		<f:message var="associateButtonLabel" key="subpage.test-case.callstep.button.call.label" />
 		<input id="call-step-associate-button" type="button" class="button" value="${associateButtonLabel}" />
 		<f:message var="backButtonLabel" key="label.Back" />
-		<input type="button" class="button" value="${backButtonLabel}" onClick="navigateBackFromCallStepManager();"/> 
+		<input id="call-step-back-button" type="button" class="button" value="${backButtonLabel}" onclick="navigateBackFromCallStepManager();"/> 
 	</jsp:attribute>	
 
 	<jsp:attribute name="tree">

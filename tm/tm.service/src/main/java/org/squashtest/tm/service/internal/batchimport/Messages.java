@@ -6,16 +6,16 @@
  *     information regarding copyright ownership.
  *
  *     This is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU Lesser General Public License as published by
+ *     it under the terms of the GNU General Public License as published by
  *     the Free Software Foundation, either version 3 of the License, or
  *     (at your option) any later version.
  *
  *     this software is distributed in the hope that it will be useful,
  *     but WITHOUT ANY WARRANTY; without even the implied warranty of
  *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU Lesser General Public License for more details.
+ *     GNU General Public License for more details.
  *
- *     You should have received a copy of the GNU Lesser General Public License
+ *     You should have received a copy of the GNU General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.squashtest.tm.service.internal.batchimport;
@@ -58,9 +58,11 @@ public final class Messages {
 	public static final String ERROR_PARAMETER_CONTAINS_FORBIDDEN_CHARACTERS = "message.import.log.error.tc.param.wrongFormat";
 	public static final String ERROR_PARAMETER_NOT_FOUND = "message.import.log.error.tc.param.notFound";
 	public static final String ERROR_DATASET_NOT_FOUND = "message.import.log.error.tc.dataset.notFound";
+	public static final String ERROR_DATASET_NOT_FOUND_ST = "message.import.log.error.tc.callStep.calledDatasetNotFound";
 	public static final String ERROR_DATASET_PARAMETER_MISMATCH = "message.import.log.error.tc.dataset.paramOwnerNotFound";
 	public static final String ERROR_TC_USER_NOT_FOUND = "message.import.log.error.tc.userNotFound";
 	public static final String ERROR_CALL_NOT_READABLE = "message.import.log.error.tc.callStep.calledTcNotReadable";
+	public static final String ERROR_ACTION_STEP_HAS_DATASET = "message.import.log.error.tc.tcStep.actionStepYetHasDataset";
 
 	public static final String IMPACT_MAX_SIZE = "message.import.log.impact.truncatedValue";
 	public static final String IMPACT_DEFAULT_VALUE = "message.import.log.impact.useDefaultValue";
@@ -76,6 +78,10 @@ public final class Messages {
 	public static final String IMPACT_USE_CURRENT_LOGIN = "message.import.log.impact.useCurrentLogin";
 	public static final String IMPACT_FIELD_NOT_CHANGED = "message.import.log.impact.fieldNotChange";
 	public static final String IMPACT_DEFAULT_ACTION = "message.import.log.impact.defaultAction";
+	public static final String IMPACT_NO_CALL_DATASET = "message.import.log.impact.callStepCallsNoDataset";
+	public static final String IMPACT_COLUMN_IGNORED = "message.import.log.impact.columnIgnored";
+
+
 	private Messages(){
 		super();
 	}

@@ -6,19 +6,18 @@
  *     information regarding copyright ownership.
  *
  *     This is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU Lesser General Public License as published by
+ *     it under the terms of the GNU General Public License as published by
  *     the Free Software Foundation, either version 3 of the License, or
  *     (at your option) any later version.
  *
  *     this software is distributed in the hope that it will be useful,
  *     but WITHOUT ANY WARRANTY; without even the implied warranty of
  *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU Lesser General Public License for more details.
+ *     GNU General Public License for more details.
  *
- *     You should have received a copy of the GNU Lesser General Public License
+ *     You should have received a copy of the GNU General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package org.squashtest.tm.service.internal.batchimport.testcase.excel;
 
 import java.util.HashMap;
@@ -37,6 +36,7 @@ import org.squashtest.tm.service.internal.batchimport.excel.OptionalBooleanCellC
 import org.squashtest.tm.service.internal.batchimport.excel.OptionalDateCellCoercer;
 import org.squashtest.tm.service.internal.batchimport.excel.OptionalEnumCellCoercer;
 import org.squashtest.tm.service.internal.batchimport.excel.OptionalOneBasedIndexCellCoercer;
+import org.squashtest.tm.service.internal.batchimport.excel.ParamAssignationModeCellCoercer;
 import org.squashtest.tm.service.internal.batchimport.excel.StringCellCoercer;
 
 /**
@@ -55,6 +55,7 @@ final class CellValueCoercerRepository<COL extends Enum<COL> & TemplateColumn> {
 		COERCER_REPO_BY_WORKSHEET.put(TemplateWorksheet.STEPS_SHEET, createStepsSheetRepo());
 		COERCER_REPO_BY_WORKSHEET.put(TemplateWorksheet.PARAMETERS_SHEET, createParamsSheetRepo());
 		COERCER_REPO_BY_WORKSHEET.put(TemplateWorksheet.DATASETS_SHEET, createDatasetsSheetRepo());
+		COERCER_REPO_BY_WORKSHEET.put(TemplateWorksheet.DATASET_PARAM_VALUES_SHEET, createDatasetParamValuesSheetRepo());
 	}
 
 	/**
@@ -83,6 +84,17 @@ final class CellValueCoercerRepository<COL extends Enum<COL> & TemplateColumn> {
 	/**
 	 * @return
 	 */
+	private static CellValueCoercerRepository<?> createDatasetParamValuesSheetRepo() {
+		CellValueCoercerRepository<DatasetParamValuesSheetColumn> repo = new CellValueCoercerRepository<DatasetParamValuesSheetColumn>();
+
+		repo.coercerByColumn.put(DatasetParamValuesSheetColumn.ACTION, ImportModeCellCoercer.INSTANCE);
+
+		return repo;
+	}
+
+	/**
+	 * @return
+	 */
 	private static CellValueCoercerRepository<ParameterSheetColumn> createParamsSheetRepo() {
 		CellValueCoercerRepository<ParameterSheetColumn> repo = new CellValueCoercerRepository<ParameterSheetColumn>();
 
@@ -100,6 +112,7 @@ final class CellValueCoercerRepository<COL extends Enum<COL> & TemplateColumn> {
 		repo.coercerByColumn.put(StepSheetColumn.ACTION, ImportModeCellCoercer.INSTANCE);
 		repo.coercerByColumn.put(StepSheetColumn.TC_STEP_NUM, OptionalOneBasedIndexCellCoercer.INSTANCE);
 		repo.coercerByColumn.put(StepSheetColumn.TC_STEP_IS_CALL_STEP, OptionalBooleanCellCoercer.INSTANCE);
+		repo.coercerByColumn.put(StepSheetColumn.TC_STEP_CALL_DATASET, ParamAssignationModeCellCoercer.INSTANCE);
 
 		return repo;
 	}

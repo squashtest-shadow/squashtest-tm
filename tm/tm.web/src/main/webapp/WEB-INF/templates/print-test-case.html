@@ -7,16 +7,16 @@
         information regarding copyright ownership.
 
         This is free software: you can redistribute it and/or modify
-        it under the terms of the GNU Lesser General Public License as published by
+        it under the terms of the GNU General Public License as published by
         the Free Software Foundation, either version 3 of the License, or
         (at your option) any later version.
 
         this software is distributed in the hope that it will be useful,
         but WITHOUT ANY WARRANTY; without even the implied warranty of
         MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-        GNU Lesser General Public License for more details.
+        GNU General Public License for more details.
 
-        You should have received a copy of the GNU Lesser General Public License
+        You should have received a copy of the GNU General Public License
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
@@ -201,31 +201,40 @@
 						<td
 							th:text="*{['step-type'] == 'call' ?  '' : ['nb-requirements']}">0</td>
 
-            <td th:each="cufModel : ${cufDefinitions}" th:object="${step['customFields']['__${cufModel['code']}__']}">
-              <span th:if="${step['step-type'] == 'action'}" th:switch="${cufModel.inputType.enumName}" th:remove="tag">
-                <span th:remove="tag" th:case="'DATE_PICKER'"
-                  th:text="*{valueAsDate == null ? #messages.msg('squashtm.nodata') : #dates.format(valueAsDate ,#messages.msg('squashtm.dateformatShort'))}">12/02/2012</span>
-                <span th:remove="tag" th:case="'CHECKBOX'" th:text="#{label.__*{value}__}">true</span> <span
-                  th:remove="tag" th:case="*" th:text="*{value}">value</span>
-            </span>
-            </td>
-            <td th:if="*{['step-type'] == 'call'}"
-							th:text="*{['step-action']}">Cas de Test : Machin truc
-							chouette</td>
-						<td th:if="*{['step-type'] == 'action'}"
-							sq:unsafe-html="*{['step-action']}">Lorem ipsum dolor sit amet,
-							consectetur adipiscing elit. Nullam felis ante, accumsan quis
-							tincidunt vel, iacu lis in purus. Pellentesque habitant morbi
-							tristique senectus et netus et malesuada fames ac turpis egestas.
-							Morbi at nisl et est egestas venenatis . Nullam venenatis, justo
-							ac hendrerit auctor, dolor velit adipiscing lacus, sed gravida
-							enim elit dictum lorem. Suspendisse eu lectus ac metus lo bortis
-							vulputate at id purus. Proin dapibus commodo velit sit amet</td>
-						<td sq:unsafe-html="*{['step-type'] == 'call'  ?  '' : ['step-result']}">
-							Morbi at nisl et est egestas venenatis . Nullam venenatis, justo
-							ac hendrerit auctor, dolor velit adipiscing lacus, sed gravida
-							enim elit dictum lorem. Suspendisse eu lectus ac metus lo bortis
-							vulputate at id purus. Proin dapibus commodo velit sit amet</td>
+                        <td th:each="cufModel : ${cufDefinitions}" th:object="${step['customFields']['__${cufModel['code']}__']}">
+                          <span th:if="${step['step-type'] == 'action'}" th:switch="${cufModel.inputType.enumName}" th:remove="tag">
+                            <span th:remove="tag" th:case="'DATE_PICKER'"
+                              th:text="*{valueAsDate == null ? #messages.msg('squashtm.nodata') : #dates.format(valueAsDate ,#messages.msg('squashtm.dateformatShort'))}">12/02/2012</span>
+                            <span th:remove="tag" th:case="'CHECKBOX'" th:text="#{label.__*{value}__}">true</span> <span
+                              th:remove="tag" th:case="*" th:text="*{value}">value</span>
+                        </span>
+                        </td>
+                        
+                        <!--  spring EL is a good language but sometimes WTF hits you right in the face -->
+                        <td th:if="*{['step-type'] == 'call'}" 
+                             th:with="tcname = *{['call-step-info'].calledTcName},
+                                      dsname = *{
+                                                  ['call-step-info'].paramMode == 'DELEGATE' ? '__#{label.callstepdataset.Delegate}__' :  
+                                                  ['call-step-info'].paramMode == 'CALLED_DATASET' ? ['call-step-info'].calledDatasetName :  
+                                                  '__#{label.callstepdataset.PickDataset}__' 
+                                                }"
+                             colspan="2"        
+                             th:text="#{test-case.call-step.action.template(${tcname}, ${dsname})}">Cas de Test : Machin truc chouette</td>
+                    
+            			<td th:if="*{['step-type'] == 'action'}"
+            				sq:unsafe-html="*{['step-action']}">Lorem ipsum dolor sit amet,
+            				consectetur adipiscing elit. Nullam felis ante, accumsan quis
+            				tincidunt vel, iacu lis in purus. Pellentesque habitant morbi
+            				tristique senectus et netus et malesuada fames ac turpis egestas.
+            				Morbi at nisl et est egestas venenatis . Nullam venenatis, justo
+            				ac hendrerit auctor, dolor velit adipiscing lacus, sed gravida
+            				enim elit dictum lorem. Suspendisse eu lectus ac metus lo bortis
+            				vulputate at id purus. Proin dapibus commodo velit sit amet</td>
+            			<td th:if="*{['step-type'] == 'action'}" sq:unsafe-html="*{['step-result']}">
+            				Morbi at nisl et est egestas venenatis . Nullam venenatis, justo
+            				ac hendrerit auctor, dolor velit adipiscing lacus, sed gravida
+            				enim elit dictum lorem. Suspendisse eu lectus ac metus lo bortis
+            				vulputate at id purus. Proin dapibus commodo velit sit amet</td>
 					</tr>
 				</tbody>
 			</table>
@@ -327,27 +336,33 @@
 				test cases</h3>
 			<table id="calling-test-case-table" class="greystyle-table">
 				<thead>
-					<tr>
-						<th class="small">#</th>
-						<th th:text="#{ label.project }">Project</th>
-						<th th:text="#{ test-case.reference.label}">Reference</th>
-						<th th:text="#{ label.Name }">Name</th>
-						<th
-							th:text="#{ test-case.calling-test-cases.table.execmode.label }">Exec
-							mode</th>
-					</tr>
+    				<tr>
+    					<th>#</th>
+    					<th th:text="#{label.project}">project</th>
+    					<th th:text="#{test-case.reference.label}">reference</th>
+    					<th th:text="#{label.Name}">name</th>
+                        <th th:text="#{label.dataset}">dataset</th>
+                        <th th:text="#{label.stepNumber}">step no</th>
+    					<th th:text="#{test-case.calling-test-cases.table.execmode.label}">mode</th>				
+    				</tr>
 				</thead>
 				<tbody>
-					<tr th:each="calling, iterStat : ${callingTCs}"
+					<tr th:each="calling, iterStat : ${callingSteps}"
 						th:object="${calling}">
 						<td th:text="${iterStat.count}">1</td>
-						<td th:text="*{project.name}">ProjectA</td>
-						<td th:text="*{reference}">TC006</td>
-						<td th:text="*{name}">Connexion à l'application</td>
-						<td th:text="#{__*{executionMode.i18nKey}__}">manual</td>
+						<td th:text="*{testCase.project.name}">ProjectA</td>
+						<td th:text="*{testCase.reference}">TC006</td>
+						<td th:text="*{testCase.name}">Connexion à l'application</td>
+                        <td th:text="*{
+                            calledDataset != null ? calledDataset.name : 
+                            delegateParameterValues ? '__#{label.callstepdataset.Delegate}__' :
+                            '__#{label.callstepdataset.PickDataset}__'}">--</td>
+                        <td th:text="${calling.getIndex()+1}">5</td>
+						<td th:text="#{__*{testCase.executionMode.i18nKey}__}">manual</td>
 					</tr>
 				</tbody>
 			</table>
+
 		</div>
 
 		<!-- ===========================================ATTACHMENTS ===================================================-->

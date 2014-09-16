@@ -6,16 +6,16 @@
  *     information regarding copyright ownership.
  *
  *     This is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU Lesser General Public License as published by
+ *     it under the terms of the GNU General Public License as published by
  *     the Free Software Foundation, either version 3 of the License, or
  *     (at your option) any later version.
  *
  *     this software is distributed in the hope that it will be useful,
  *     but WITHOUT ANY WARRANTY; without even the implied warranty of
  *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU Lesser General Public License for more details.
+ *     GNU General Public License for more details.
  *
- *     You should have received a copy of the GNU Lesser General Public License
+ *     You should have received a copy of the GNU General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 define([ "jquery", "backbone", "underscore", "./DatasetsTable", "./NewDatasetDialog", 
@@ -29,7 +29,9 @@ define([ "jquery", "backbone", "underscore", "./DatasetsTable", "./NewDatasetDia
 				this.settings = this.options.settings;
 					this.language = this.settings.language;
 					
-					_.bindAll(this, "showNewDialog", "refresh");
+					_.bindAll(this, "showNewDialog", "refresh",
+							"refreshDataSetParameterName", 
+							"refreshDataSetParameterDescription");
 					
 					this.makeTogglePanel();
 					this.table = new DatasetsTable({settings : this.settings, parentTab : this.options.parentTab});
@@ -67,6 +69,7 @@ define([ "jquery", "backbone", "underscore", "./DatasetsTable", "./NewDatasetDia
 					var self = this;
 
 					function discard() {
+						self.newDatasetDialog.destroy();
 						self.newDatasetDialog.off("newDataset.cancel newDataset.confirm");
 						self.newDatasetDialog.undelegateEvents();
 						self.newDatasetDialog = null;
@@ -84,6 +87,16 @@ define([ "jquery", "backbone", "underscore", "./DatasetsTable", "./NewDatasetDia
 				
 				refresh: function() {
 					this.table.reDraw();
+				},
+				
+				refreshDataSetParameterName : function(parameters){
+					this.table.refreshDataSetParameterName(parameters['id'], parameters['name']);
+				},
+				
+				refreshDataSetParameterDescription : function(parameters){
+					this.table.refreshDataSetParameterDescription(
+							parameters['id'],
+							parameters['description']);
 				}
 			});
 			return DatasetsPanel;

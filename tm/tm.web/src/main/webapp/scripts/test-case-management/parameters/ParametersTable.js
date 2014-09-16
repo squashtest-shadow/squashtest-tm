@@ -6,16 +6,16 @@
  *     information regarding copyright ownership.
  *
  *     This is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU Lesser General Public License as published by
+ *     it under the terms of the GNU General Public License as published by
  *     the Free Software Foundation, either version 3 of the License, or
  *     (at your option) any later version.
  *
  *     this software is distributed in the hope that it will be useful,
  *     but WITHOUT ANY WARRANTY; without even the implied warranty of
  *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU Lesser General Public License for more details.
+ *     GNU General Public License for more details.
  *
- *     You should have received a copy of the GNU Lesser General Public License
+ *     You should have received a copy of the GNU General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 define([ "jquery", "backbone", "jeditable.simpleJEditable", "jquery.squash.confirmdialog",
@@ -28,11 +28,15 @@ define([ "jquery", "backbone", "jeditable.simpleJEditable", "jquery.squash.confi
 			this.settings = this.options.settings;
 			this.removeRowParameter = $.proxy(this._removeRowParameter, this);
 			this.parametersTableRowCallback = $.proxy(this._parametersTableRowCallback, this);
+			this.parametersTableDrawCallback = $.proxy(this._parametersTableDrawCallback, this);
 			this.confirmRemoveParameter = $.proxy(this._confirmRemoveParameter, this);
-
+			this.addSimpleJEditableToName = $.proxy(this.addSimpleJEditableToName, this);
+			this.updateParameterDescription = $.proxy(this._updateParameterDescription, this);
 			this.refresh = $.proxy(this._refresh, this);
 			this._configureTable.call(this);
 			this._configureRemoveParametersDialogs.call(this);
+			
+			this.table.on("parameter.description.update", this.updateParameterDescription);
 		},
 
 		events : {
@@ -44,7 +48,8 @@ define([ "jquery", "backbone", "jeditable.simpleJEditable", "jquery.squash.confi
 				// has Dom configuration
 				"bPaginate" : false,
 				"aaSorting" : [ [ 3, 'asc' ] ],
-				"fnRowCallback" : self.parametersTableRowCallback
+				"fnRowCallback" : self.parametersTableRowCallback,
+				"fnDrawCallback" : self.parametersTableDrawCallback
 			};
 		},
 
@@ -66,8 +71,12 @@ define([ "jquery", "backbone", "jeditable.simpleJEditable", "jquery.squash.confi
 					} ],
 
 					richEditables : {
-						'parameter-description' : self.settings.basic.parametersUrl + '/{entity-id}/description'					
+						'parameter-description' : {
+							'url' : self.settings.basic.parametersUrl + '/{entity-id}/description',
+							'oncomplete' : 'parameter.description.update'
+						}
 					}
+
 				};
 			}
 
@@ -75,6 +84,13 @@ define([ "jquery", "backbone", "jeditable.simpleJEditable", "jquery.squash.confi
 
 		},
 
+		discriminateInheritedVerifications : function(row, data, displayIndex) {
+			if (!data["directly-associated"]) {
+				$(row).addClass("inherited-parameter-verification");
+				$('td.delete-button', row).html(''); // remove the delete button
+			}
+		},
+		
 		_configureTable : function() {
 			var self = this;
 			$(this.el).squashTable(self._dataTableSettings(self), self._squashSettings(self));
@@ -82,11 +98,18 @@ define([ "jquery", "backbone", "jeditable.simpleJEditable", "jquery.squash.confi
 		},
 
 		_parametersTableRowCallback : function(row, data, displayIndex) {
-			if (this.settings.permissions.isWritable) {
+			if (data["directly-associated"] && this.settings.permissions.isWritable) {
 				this.addSimpleJEditableToName(row, data);
 			}
-
+			this.discriminateInheritedVerifications(row, data, displayIndex);
 			return row;
+		},
+		
+		_parametersTableDrawCallback : function(oSettings){
+			var table = $("#"+oSettings.sInstance);
+			// prevent parameter-description cells to turn into editable
+			// if they map to an inherited parameter
+			table.find('tr.inherited-parameter-verification td.parameter-description').removeClass('parameter-description');
 		},
 
 		_removeRowParameter : function(table, cell) {
@@ -149,13 +172,37 @@ define([ "jquery", "backbone", "jeditable.simpleJEditable", "jquery.squash.confi
 			new SimpleJEditable({
 				targetUrl : urlPOST,
 				component : component,
-				jeditableSettings : {}
+				jeditableSettings : {
+					ajaxoptions : {
+						complete : function(jqXHR, textStatus){
+							self.trigger("parameter.name.update",
+									{
+										id : data['entity-id'],
+										name : jqXHR.responseText
+									}
+							);
+						}
+					}
+				}
 			});
 		},
 
 		_refresh : function() {
 			this.table.fnDraw(false);
+		},
+		
+		_updateParameterDescription : function(event, result){
+			var id = result['id'];
+			
+			// get parameter description (richEditable) from the squashTable and converts it to a simple String
+			var description = $.trim(this.table.getRowsByIds([id]).eq(0).find('td.parameter-description').text());
+			
+			this.trigger('parameter.description.update', {
+				id : id, 
+				description : description
+				});
 		}
+
 	});
 
 	return ParametersTable;

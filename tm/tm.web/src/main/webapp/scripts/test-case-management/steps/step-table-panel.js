@@ -6,16 +6,16 @@
  *     information regarding copyright ownership.
  *
  *     This is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU Lesser General Public License as published by
+ *     it under the terms of the GNU General Public License as published by
  *     the Free Software Foundation, either version 3 of the License, or
  *     (at your option) any later version.
  *
  *     this software is distributed in the hope that it will be useful,
  *     but WITHOUT ANY WARRANTY; without even the implied warranty of
  *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU Lesser General Public License for more details.
+ *     GNU General Public License for more details.
  *
- *     You should have received a copy of the GNU Lesser General Public License
+ *     You should have received a copy of the GNU General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 /*
@@ -64,10 +64,10 @@
  *
  */
 
-define([ "jquery", "squashtable/squashtable.collapser", "custom-field-values", "squash.translator", "workspace.event-bus",
-         "./popups", 'workspace.storage', "jquery.squash.oneshotdialog", 
+define([ "jquery", "squashtable/squashtable.collapser", "custom-field-values", "workspace.event-bus",
+         "./popups", 'workspace.storage', 'squash.translator', "jquery.squash.oneshotdialog", 
          "jquery.squash.formdialog", "squashtable" ], function($, TableCollapser,
-		cufValuesManager, translator, eventBus, popups, storage, oneshot) {
+		cufValuesManager, eventBus, popups, storage, translator, oneshot) {
 
 	// ************************* configuration functions
 	// ************************************
@@ -121,9 +121,40 @@ define([ "jquery", "squashtable/squashtable.collapser", "custom-field-values", "
 		callRows.find("td.rich-edit-action").removeClass("rich-edit-action");
 		callRows.find("td.rich-edit-result").removeClass("rich-edit-result");
 		callRows.find("td.has-attachment-cell").removeClass("has-attachment-cell");
-		callRows.find("td.custom-field-value").removeClass(); // remove
+		callRows.find("td.custom-field-value").removeClass(); 
 
 		callRows.find("td.called-tc-cell").next().remove().end().attr("colspan", 2);
+	}
+	
+	
+	function setCallStepsContent(table){
+		table.find('tr.call-step-row').each(function(){
+			_callStepContent(table, this);	
+		});
+	}
+
+	
+	function _callStepContent(table, row){
+		var alllang = translator.get({
+			template : 'test-case.call-step.action.template',
+			none : 'label.callstepdataset.PickDataset',
+			delegate : 'label.callstepdataset.Delegate'
+		});
+		
+		var data = table.fnGetData(row);
+		var stepinfo = data['call-step-info'];
+		
+		var tcUrl = squashtm.app.contextRoot + '/test-cases/'+stepinfo.calledTcId+'/info',
+			dsName = (stepinfo.paramMode === 'NOTHING') ? alllang.none :
+					(stepinfo.paramMode === 'DELEGATE') ? alllang.delegate :
+					stepinfo.calledDatasetName;
+		
+		var	tcLink = '<a href="'+tcUrl+'">'+stepinfo.calledTcName+'</a>',
+			dsLink = '<span class="called-dataset-link cursor-pointer" style="text-decoration:underline;">'+dsName+'</span>';
+		
+		var text = alllang.template.replace('{0}', tcLink).replace('{1}', dsLink);
+		
+		$(row).find('td.called-tc-cell').html(text);
 	}
 
 	function save_dt_view (oSettings, oData, testCaseId) {
@@ -146,6 +177,9 @@ define([ "jquery", "squashtable/squashtable.collapser", "custom-field-values", "
 		// rework the td css classes to inhibit some post processing on
 		// them when not relevant
 		specializeCellClasses(this);
+		
+		// handles the content of the call step rows
+		setCallStepsContent(this);
 
 		// collapser
 		var collapser = this.data("collapser");
@@ -167,13 +201,17 @@ define([ "jquery", "squashtable/squashtable.collapser", "custom-field-values", "
 	// *****************************
 
 	function initTable(settings) {
+		
+		
 		var cufColumnPosition = 4;
 		var language = settings.language, urls = makeTableUrls(settings), permissions = settings.permissions;
+		
+		var table = $("#test-steps-table-"+urls.testCaseId);
 
 		var cufTableHandler = cufValuesManager.cufTableSupport;
 
 		// first we must process the DOM table for cufs
-		cufTableHandler.decorateDOMTable($("#test-steps-table-"+urls.testCaseId), settings.basic.cufDefinitions, cufColumnPosition);
+		cufTableHandler.decorateDOMTable(table, settings.basic.cufDefinitions, cufColumnPosition);
 
 		// now let's move to the datatable configuration
 		// in order to enable/disable some features regarding the
@@ -247,39 +285,19 @@ define([ "jquery", "squashtable/squashtable.collapser", "custom-field-values", "
 				'mDataProp' : "step-result",
 				'sClass' : "collapsible " + editResultClass
 			}, {
-				'bVisible' : false,
-				'bSortable' : false,
-				'aTargets' : [ 6 ],
-				'mDataProp' : "nb-attachments"
-			}, {
-				'bVisible' : false,
-				'bSortable' : false,
-				'aTargets' : [ 7 ],
-				'mDataProp' : "step-type"
-			}, {
-				'bVisible' : false,
-				'bSortable' : false,
-				'aTargets' : [ 8 ],
-				'mDataProp' : "called-tc-id"
-			}, {
 				'bVisible' : true,
 				'bSortable' : false,
-				'aTargets' : [ 9 ],
+				'aTargets' : [ 6 ],
 				'mDataProp' : "empty-browse-holder",
 				'sClass' : "centered browse-button",
 				'sWidth' : "2em"
 			}, {
 				'bVisible' : true,
 				'bSortable' : false,
-				'aTargets' : [ 10 ],
+				'aTargets' : [ 7 ],
 				'mDataProp' : "empty-delete-holder",
 				'sClass' : "centered " + deleteClass,
 				'sWidth' : "2em"
-			}, {
-				'bVisible' : false,
-				'bSortable' : false,
-				'aTargets' : [ 11 ],
-				'mDataProp' : "has-requirements"
 			} ]
 
 		};
@@ -322,14 +340,7 @@ define([ "jquery", "squashtable/squashtable.collapser", "custom-field-values", "
 			attachments : {
 				url : "#"
 			},
-
-			bindLinks : {
-				list : [ {
-					targetClass : "called-tc-cell",
-					url : urls.callTC
-				} ]
-			},
-
+			
 			buttons : [ {
 				tooltip : language.edit,
 				tdSelector : "td.browse-button",
@@ -386,6 +397,17 @@ define([ "jquery", "squashtable/squashtable.collapser", "custom-field-values", "
 			};
 
 			$.extend(squashSettings, moreSettings);
+			
+			table.on('click', '.called-dataset-link', function(evt){
+				var sqtable = table.squashTable(),
+					popup = $("#pick-call-step-dataset-dialog");
+				
+				var $row = $(evt.currentTarget).closest('tr');
+				var data = sqtable.fnGetData($row.get(0));
+				popup.data('opener-id', data['step-id']);
+				
+				popup.formDialog('open');
+			});
 
 		}
 
@@ -395,10 +417,22 @@ define([ "jquery", "squashtable/squashtable.collapser", "custom-field-values", "
 			};
 		}
 
-		$("#test-steps-table-"+urls.testCaseId).squashTable(datatableSettings, squashSettings);
+		table.squashTable(datatableSettings, squashSettings);
 
 		// Commenting out the 'refresh' just below, see https://ci.squashtest.org/mantis/view.php?id=2627#c4959
 		//$("#test-steps-table-"+urls.testCaseId).squashTable().refresh();
+		
+		// also listen to the parameter assignation mode of its own steps
+		eventBus.onContextual('testStepsTable.changedCallStepParamMode', function(evt, params){
+			var row = table.getRowsByIds([params.stepId]).get(0);
+			if (row !== undefined){
+				var stepInfo = table.fnGetData(row)['call-step-info'];
+				stepInfo.calledDatasetId = params.datasetId;
+				stepInfo.paramMode = params.mode;
+				stepInfo.calledDatasetName = params.datasetName;
+				_callStepContent(table, row);
+			}
+		});
 	}
 
 	// ************************************ toolbar utility functions
@@ -506,6 +540,9 @@ define([ "jquery", "squashtable/squashtable.collapser", "custom-field-values", "
 			cufValuesSupport.reset();
 		});
 	}
+	
+
+	
 
 	// ************************* other buttons code
 	// **********************************
@@ -753,6 +790,7 @@ define([ "jquery", "squashtable/squashtable.collapser", "custom-field-values", "
 		conf.testCaseId = settings.basic.testCaseId;
 		conf.stepsTablePanel = this;
 		popups.init(conf);
+		
 
 		// toolbar
 		if (permissions.isWritable) {

@@ -21,7 +21,7 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
-<!DOCTYPE dataset SYSTEM "../../../../../../../dtd/squash-tm.1.9.10.dtd">
+<!DOCTYPE dataset SYSTEM "../../../../../../../dtd/squash-tm.1.11.0.dtd">
 
 <dataset>
   <CORE_PARTY PARTY_ID="-10" />
@@ -31,9 +31,9 @@
   <CORE_USER PARTY_ID="-20" LOGIN="robin" LAST_NAME="robin" CREATED_BY="regis" CREATED_ON="2011-07-28 16:00:20.047"
     ACTIVE="1" />
 
-  <CORE_GROUP />
-  <CORE_GROUP_AUTHORITY />
-  <CORE_GROUP_MEMBER />
+  <core_group />
+  <core_group_authority />
+  <core_group_member />
 
   <ACL_CLASS ID="-1000" CLASSNAME="batmobile" />
   <ACL_OBJECT_IDENTITY ID="-1000" IDENTITY="-1000" CLASS_ID="-1000" />

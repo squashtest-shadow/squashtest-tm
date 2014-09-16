@@ -6,16 +6,16 @@
  *     information regarding copyright ownership.
  *
  *     This is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU Lesser General Public License as published by
+ *     it under the terms of the GNU General Public License as published by
  *     the Free Software Foundation, either version 3 of the License, or
  *     (at your option) any later version.
  *
  *     this software is distributed in the hope that it will be useful,
  *     but WITHOUT ANY WARRANTY; without even the implied warranty of
  *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU Lesser General Public License for more details.
+ *     GNU General Public License for more details.
  *
- *     You should have received a copy of the GNU Lesser General Public License
+ *     You should have received a copy of the GNU General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.squashtest.tm.service.campaign
@@ -30,7 +30,7 @@ import org.springframework.transaction.annotation.Transactional
 import org.squashtest.tm.domain.campaign.Iteration
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem
 import org.squashtest.tm.domain.campaign.TestSuite
-import org.squashtest.tm.domain.customfield.RenderingLocation;
+import org.squashtest.tm.domain.customfield.RenderingLocation
 import org.squashtest.tm.domain.denormalizedfield.DenormalizedFieldHolderType
 import org.squashtest.tm.domain.execution.Execution
 import org.squashtest.tm.domain.execution.ExecutionStatus
@@ -167,10 +167,10 @@ class IterationModificationServiceIT extends DbunitServiceSpecification {
 		def step1denofields = query.list()
 
 		then: "fields from test step should be denormalized"
+		step1denofields.size() == 2
 		step1denofields*.code == ["cufUprim", "cufT" ]
 		step1denofields*.value == ["Uprim", "T"]
 		step1denofields*.renderingLocations == [[RenderingLocation.STEP_TABLE] as Set,[] as Set]
-		step1denofields.size() == 2
 
 		and: "fields from test step and called test step should be denormalized"
 		query.setParameter("id", exec.steps.get(1).id)
@@ -178,11 +178,12 @@ class IterationModificationServiceIT extends DbunitServiceSpecification {
 		def step2denofields = query.list()
 
 		then:
-		step2denofields*.code == ["cufUprim", "cufT", "cufU"]
-		step2denofields*.value == ["", "T", "U"]
-		step2denofields*.renderingLocations == [ [RenderingLocation.STEP_TABLE] as Set, [] as Set, [] as Set]
-		step2denofields.size() == 3
+		step2denofields.size() == 2
+		step2denofields.collect { it.code } == ["cufT", "cufU"]
+		step2denofields.collect { it.value } == ["T", "U"]
+		step2denofields.collect { it.renderingLocations } == [ [RenderingLocation.STEP_TABLE] as Set, [RenderingLocation.STEP_TABLE] as Set]
 	}
+
 
 
 	@DataSet("IterationModificationServiceIT.should create a suite with custom fields.xml")

@@ -6,21 +6,23 @@
  *     information regarding copyright ownership.
  *
  *     This is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU Lesser General Public License as published by
+ *     it under the terms of the GNU General Public License as published by
  *     the Free Software Foundation, either version 3 of the License, or
  *     (at your option) any later version.
  *
  *     this software is distributed in the hope that it will be useful,
  *     but WITHOUT ANY WARRANTY; without even the implied warranty of
  *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU Lesser General Public License for more details.
+ *     GNU General Public License for more details.
  *
- *     You should have received a copy of the GNU Lesser General Public License
+ *     You should have received a copy of the GNU General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.squashtest.csp.core.bugtracker.web;
 
 import java.io.IOException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -53,10 +55,11 @@ public final class BugTrackerContextPersistenceFilter implements Filter {
 	public static final String BUG_TRACKER_CONTEXT_SESSION_KEY = "squashtest.bugtracker.BugTrackerContext";
 
 	private BugTrackerContextHolder contextHolder;
+	private String excludePatterns;
 
 	@Override
 	public void init(FilterConfig filterConfig) throws ServletException {
-		// NOOP
+	   //NOP
 	}
 
 	/**
@@ -66,7 +69,8 @@ public final class BugTrackerContextPersistenceFilter implements Filter {
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException,
 			ServletException {
-
+	    String url = ((HttpServletRequest) request).getPathInfo();
+        if (!matchExcludePatterns(url)) {
 		BugTrackerContext context = loadContext(request);
 
 		try {
@@ -75,9 +79,22 @@ public final class BugTrackerContextPersistenceFilter implements Filter {
 		} finally {
 			contextHolder.clearContext();
 			storeContextInExistingSession(request, context);
-		}
+		}   } else {
+            chain.doFilter(request, response);
+        }
 	}
 
+	   private boolean matchExcludePatterns(String url) {
+	       
+	        boolean result= false;
+	        if (excludePatterns != null){
+	            Pattern p = Pattern.compile(excludePatterns);
+	            Matcher m = p.matcher(url);
+	            result = m.matches();
+	        }
+	   
+	        return result;
+	}
 	private void storeContextInExistingSession(ServletRequest request, BugTrackerContext context) {
 		HttpSession session = ((HttpServletRequest) request).getSession(false);
 
@@ -117,4 +134,9 @@ public final class BugTrackerContextPersistenceFilter implements Filter {
 	public void setContextHolder(BugTrackerContextHolder contextHolder) {
 		this.contextHolder = contextHolder;
 	}
+
+    public void setExcludePatterns(String excludePatterns) {
+        this.excludePatterns = excludePatterns;
+    }
+	
 }

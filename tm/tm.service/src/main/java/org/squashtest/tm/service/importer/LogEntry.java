@@ -6,16 +6,16 @@
  *     information regarding copyright ownership.
  *
  *     This is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU Lesser General Public License as published by
+ *     it under the terms of the GNU General Public License as published by
  *     the Free Software Foundation, either version 3 of the License, or
  *     (at your option) any later version.
  *
  *     this software is distributed in the hope that it will be useful,
  *     but WITHOUT ANY WARRANTY; without even the implied warranty of
  *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU Lesser General Public License for more details.
+ *     GNU General Public License for more details.
  *
- *     You should have received a copy of the GNU Lesser General Public License
+ *     You should have received a copy of the GNU General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.squashtest.tm.service.importer;
@@ -120,52 +120,32 @@ public class LogEntry implements Comparable<LogEntry> {
 		this.impactArgs = impactArgs;
 	}
 
-
-
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((line == null) ? 0 : line.hashCode());
-		result = prime * result + ((status == null) ? 0 : status.hashCode());
-		return result;
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj) {
-			return true;
-		}
-		if (obj == null) {
-			return false;
-		}
-		if (getClass() != obj.getClass()) {
-			return false;
-		}
-		LogEntry other = (LogEntry) obj;
-		if (line == null) {
-			if (other.line != null) {
-				return false;
-			}
-		} else if (!line.equals(other.line)) {
-			return false;
-		}
-		if (status != other.status) {
-			return false;
-		}
-		return true;
-	}
-
 	@Override
 	public int compareTo(LogEntry o) {
 		if (!line.equals(o.line)) {
 			return line - o.line;
-		} else if (status != o.status) {
-			return (status == ImportStatus.WARNING) ? -1 : 1;
-		} else {
-			return -1; // even when two instances have strictly same content we don't want to consider them equal.
+		} else if (status != o.getStatus()){
+			return (status.getLevel() - o.getStatus().getLevel());
+		}
+		else{
+			// even when two instances have strictly same content we don't want to consider them equal.
 			// note that returning -1 is not an ideal solution because it violates the Comparable contract
 			// x.compareTo(y) == - y.compareTo(x) but it's good enough here
+			// rem : what does good enough means ? it randomly breaks the "should compare nicely with each others" test, FFS
+			/*
+			 * Re : meaning of "good enough" :
+			 * 
+			 * According to specs as long as two log entries report things related to a same entity we don't bother in which order they appear.
+			 * Thus, formally they compare to each other according to a partial order : for {x,y} € LogEntry the comparison is defined if
+			 * they reference different lines or have different status, otherwise the comparison is undecided.
+			 * However the constraint x.compareTo(y) == - y.compareTo(x) suggests that Comparable requires an implementation of a total order.
+			 * I don't need that so I return an arbitrary value instead, which is good enough.
+			 * 
+			 * Consequently this implementation doesn't break the aforementioned test because it is not required to sort every pair of LogEntry
+			 * in a deterministic way. Rather, the test itself is ill-designed.
+			 * 
+			 */
+			return -1;
 		}
 	}
 

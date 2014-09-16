@@ -6,16 +6,16 @@
  *     information regarding copyright ownership.
  *
  *     This is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU Lesser General Public License as published by
+ *     it under the terms of the GNU General Public License as published by
  *     the Free Software Foundation, either version 3 of the License, or
  *     (at your option) any later version.
  *
  *     this software is distributed in the hope that it will be useful,
  *     but WITHOUT ANY WARRANTY; without even the implied warranty of
  *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU Lesser General Public License for more details.
+ *     GNU General Public License for more details.
  *
- *     You should have received a copy of the GNU Lesser General Public License
+ *     You should have received a copy of the GNU General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 require([ "common" ], function() {
@@ -32,18 +32,6 @@ require([ "common" ], function() {
 			return false;
 		});
 
-		$(document).on("dialogopen", "#rename-test-suite-dialog", function(event, ui) {
-			console.log("dialogopen", "#rename-test-suite-dialog");
-			var name = $.trim($('#test-suite-name').text());
-			$("#rename-test-suite-name").val(name);
-		});
-
-		/* should be put in global ns and referenced someplace */
-		/* WTF could not find that func name anywhere*/
-		function renameTestSuiteSuccess(data) {
-			eventBus.trigger("node.rename", {identity : squashtm.page.identity, newName : data.newName});
-		}
-
 		/* post a request to duplicate the test suite */
 		/* should be put in global ns and referenced someplace */
 		function duplicateTestSuite(){
@@ -52,6 +40,44 @@ require([ "common" ], function() {
 				type : "POST",
 				data : [],
 				dataType : "json"
+			});
+		}
+		
+		// ******** rename popup *************
+		
+		function initRenameDialog(){
+			
+			var renameDialog = $("#rename-testsuite-dialog");
+			renameDialog.formDialog();
+			
+			renameDialog.on('formdialogopen', function(){
+				var name = $.trim($("#test-suite-name").text());
+				$("#rename-test-suite-name").val(name);			
+			});
+			
+			renameDialog.on('formdialogconfirm', function(){
+				$.ajax({
+					url : config.testSuiteURL,
+					type : 'POST',
+					dataType : 'json',
+					data : { "newName" : $("#rename-test-suite-name").val() }
+				})
+				.done(function(json){
+					renameDialog.formDialog('close');
+					
+					eventBus.trigger("node.rename", {
+						identity : config.identity,
+						newName : json.newName
+					});
+				});
+			});
+			
+			renameDialog.on('formdialogcancel', function(){
+				renameDialog.formDialog('close');
+			});
+			
+			$("#rename-test-suite-button").on('click', function(){
+				renameDialog.formDialog('open');
 			});
 		}
 
@@ -93,6 +119,9 @@ require([ "common" ], function() {
 
 			WS.init();
 			basicwidg.init();
+			
+			// test suite dialog init
+			initRenameDialog()
 
 			// registers contextual events
 			// TODO should be unregistered before ?

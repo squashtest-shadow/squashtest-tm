@@ -6,16 +6,16 @@
  *     information regarding copyright ownership.
  *
  *     This is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU Lesser General Public License as published by
+ *     it under the terms of the GNU General Public License as published by
  *     the Free Software Foundation, either version 3 of the License, or
  *     (at your option) any later version.
  *
  *     this software is distributed in the hope that it will be useful,
  *     but WITHOUT ANY WARRANTY; without even the implied warranty of
  *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU Lesser General Public License for more details.
+ *     GNU General Public License for more details.
  *
- *     You should have received a copy of the GNU Lesser General Public License
+ *     You should have received a copy of the GNU General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.squashtest.tm.service.testcase
@@ -25,14 +25,18 @@ import javax.inject.Inject
 import org.hibernate.Query
 import org.junit.runner.RunWith
 import org.spockframework.runtime.Sputnik
+import org.springframework.osgi.blueprint.config.internal.support.InstanceEqualityRuntimeBeanReference
 import org.springframework.transaction.annotation.Transactional
 import org.squashtest.tm.domain.customfield.BindableEntity
+import org.squashtest.tm.domain.customfield.CustomFieldValue
+import org.squashtest.tm.domain.testcase.CallTestStep
 import org.squashtest.tm.domain.testcase.Dataset
 import org.squashtest.tm.domain.testcase.Parameter
 import org.squashtest.tm.domain.testcase.TestCase
 import org.squashtest.tm.domain.testcase.TestCaseFolder
 import org.squashtest.tm.domain.testcase.TestCaseLibrary
 import org.squashtest.tm.domain.testcase.TestCaseLibraryNode
+import org.squashtest.tm.domain.testcase.TestStep
 import org.squashtest.tm.exception.library.CannotMoveInHimselfException
 import org.squashtest.tm.service.DbunitServiceSpecification
 import org.squashtest.tm.service.internal.repository.TestCaseFolderDao
@@ -193,6 +197,35 @@ class TestCaseLibraryNavigationServiceIT extends DbunitServiceSpecification {
 
 	}
 
+	@Unroll
+	@DataSet("TestCaseLibraryNavigationServiceID.should copy tc with steps and cufs.xml")
+	def "should copy cufs of tc steps #copiedStepId"(){
+		given : "a test case with steps and 4 cufs bound to the steps"
+		Long[] sourceIds = [11L]
+		Long destinationId = 2L
+
+		when:"this test case is copied into another folder"
+		List<TestCaseLibraryNode> nodes = navService.copyNodesToFolder(destinationId, sourceIds)
+
+		then:"the test case is copied"
+		nodes.get(0) instanceof TestCase
+		TestCase testCaseCopy = (TestCase) nodes.get(0)
+		and:"the steps are copied"
+		List<TestStep> copiedSteps = testCaseCopy.getSteps()
+		copiedSteps.size() == 5
+		and: "the step's cufs are copied"
+		TestStep secondCopiedStep = copiedSteps.get(1)
+		List<CustomFieldValue> cufValues = findCufValuesForEntity(BindableEntity.TEST_STEP, copiedStepId)
+		cufValues.collect {it.value}.containsAll(copiedValues)
+
+		where:
+		copiedStepId | copiedValues
+		1 | [] // is a call step
+		2 | ["step2-value1", "step2-value2", "step2-value3", "step2-value4"]
+		3 | ["step3-value1", "step3-value2", "step3-value3", "step3-value4"]
+		4 | ["step4-value1", "step4-value2", "step4-value3", "step4-value4"]
+		5 | ["step5-value1", "step5-value2", "step5-value3", "step5-value4"]
+	}
 	@DataSet("TestCaseLibraryNavigationServiceIT.should copy to other project.xml")
 	def "should copy paste to other project"(){
 		given:

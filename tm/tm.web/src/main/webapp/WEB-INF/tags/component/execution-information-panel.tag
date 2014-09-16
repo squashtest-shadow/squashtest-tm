@@ -7,16 +7,16 @@
         information regarding copyright ownership.
 
         This is free software: you can redistribute it and/or modify
-        it under the terms of the GNU Lesser General Public License as published by
+        it under the terms of the GNU General Public License as published by
         the Free Software Foundation, either version 3 of the License, or
         (at your option) any later version.
 
         this software is distributed in the hope that it will be useful,
         but WITHOUT ANY WARRANTY; without even the implied warranty of
         MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-        GNU Lesser General Public License for more details.
+        GNU General Public License for more details.
 
-        You should have received a copy of the GNU Lesser General Public License
+        You should have received a copy of the GNU General Public License
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 --%>
@@ -57,6 +57,17 @@
     <span id="execmode-label"><f:message key="${ auditableEntity.executionMode.i18nKey }" /></span>
   </div>
 
+  <c:if test="${execution.datasetLabel != null}">
+  <div id="general-info-dataset" style="display: inline-block; margin-right: 2em; vertical-align: top">
+    <label>
+      <f:message key="label.dataset" />
+    </label>  
+    <span>    
+      <f:message var="noneLabel" key="label.None" />
+      <c:out value="${(fn:length(execution.datasetLabel) == 0) ? noneLabel : execution.datasetLabel}"/>
+    </span>
+  </div>
+  </c:if>
 
   <div id="general-info-execstatus" style="display: inline-block; margin-right: 2em; vertical-align: top">
     <label>

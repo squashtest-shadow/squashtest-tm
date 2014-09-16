@@ -6,16 +6,16 @@
  *     information regarding copyright ownership.
  *
  *     This is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU Lesser General Public License as published by
+ *     it under the terms of the GNU General Public License as published by
  *     the Free Software Foundation, either version 3 of the License, or
  *     (at your option) any later version.
  *
  *     this software is distributed in the hope that it will be useful,
  *     but WITHOUT ANY WARRANTY; without even the implied warranty of
  *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU Lesser General Public License for more details.
+ *     GNU General Public License for more details.
  *
- *     You should have received a copy of the GNU Lesser General Public License
+ *     You should have received a copy of the GNU General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.squashtest.tm.domain.execution;
@@ -25,6 +25,10 @@ import org.squashtest.tm.domain.execution.Execution
 import org.squashtest.tm.domain.execution.ExecutionStatus
 import org.squashtest.tm.domain.execution.ExecutionStep
 import org.squashtest.tm.domain.testcase.ActionTestStep
+import org.squashtest.tm.domain.testcase.CallTestStep;
+import org.squashtest.tm.domain.testcase.Dataset;
+import org.squashtest.tm.domain.testcase.DatasetParamValue;
+import org.squashtest.tm.domain.testcase.Parameter;
 import org.squashtest.tm.domain.testcase.TestCase
 import org.squashtest.tm.domain.testcase.TestCaseImportance
 import org.squashtest.tm.domain.testcase.TestCaseNature
@@ -69,14 +73,14 @@ class ExecutionTest extends Specification {
 			ExecutionStatus.READY
 		]
 	}
-	
+
 	def "should not find first unexecuted step because has no steps"(){
 		given : Execution execution = new Execution()
 		when : ExecutionStep executionStep = execution.findFirstUnexecutedStep()
 		then :
 		executionStep == null
 	}
-	
+
 	def "should not find first unexecuted step because all executed"(){
 		given : Execution execution = new Execution()
 		ExecutionStep step1 = new ExecutionStep()
@@ -93,7 +97,7 @@ class ExecutionTest extends Specification {
 		then :
 		executionStep == null
 	}
-	
+
 	def "should find first unexecuted step "(){
 		given : Execution execution = new Execution()
 		ExecutionStep step1 = new ExecutionStep()
@@ -108,13 +112,13 @@ class ExecutionTest extends Specification {
 
 		when :
 		def executionStep = execution.findFirstUnexecutedStep()
-		
+
 		then :
 		executionStep == step2
 	}
-	
+
 	def "should create a valid execution from a test case without prerequisite"() {
-		given: 
+		given:
 		TestCase testCase = Mock()
 		testCase.name >> "peter parker"
 		testCase.steps >> []
@@ -123,12 +127,75 @@ class ExecutionTest extends Specification {
 		testCase.nature >> TestCaseNature.UNDEFINED
 		testCase.type >> TestCaseType.UNDEFINED
 		testCase.status >> TestCaseStatus.WORK_IN_PROGRESS
-		
+		testCase.getDatasets() >> []
+
 		when:
 		Execution res = new Execution(testCase)
-		
+
 		then:
 		notThrown NullArgumentException
-		
+
 	}
+
+	// *************** DATASET TESTS ***************************
+
+	def "should create the execution steps with the correct parameter values according to which dataset is used"(){
+
+		given: "a simple test case b"
+
+		TestCase tcB = new TestCase(name:"b")
+		tcB.addStep new ActionTestStep(action:"\${login} / \${password}")
+
+		def p1 = addParameter("login", tcB)
+		def p2 = addParameter("password", tcB)
+
+		def ds1 = addDataset("TCB-Dataset1", tcB, [ (p1) :"spongebob", (p2) :"glouglouglou"])
+		def ds2 = addDataset("TCB-Dataset2", tcB, [ (p1) : "mclane", (p2) : "yippeekaiyay"])
+
+
+		and : "some test case A calls it"
+
+		TestCase tcA = new TestCase(name:"a")
+
+		tcA.addStep newCallStep(tcB,ds1, false)
+		tcA.addStep newCallStep(tcB,ds2, false)
+		tcA.addStep newCallStep(tcB, null, true)
+		tcA.addStep newCallStep(tcB, null, false)
+
+		def dsA = addDataset ("TCADS", tcA, [(p1) : "toxie", (p2) : "mopavenger"])
+
+		when :
+
+		Execution execWithDS = new Execution(tcA, dsA)
+		Execution execNoDS = new Execution(tcA)
+
+		then :
+
+		def stepsWithDS = execWithDS.steps.collect{ it.action }.join(", ")
+
+		println stepsWithDS
+		stepsWithDS == "spongebob / glouglouglou, mclane / yippeekaiyay, toxie / mopavenger, &lt;no_value&gt; / &lt;no_value&gt;"
+
+		execNoDS.steps.collect { it.action }.join(", ") ==
+		"spongebob / glouglouglou, mclane / yippeekaiyay, &lt;no_value&gt; / &lt;no_value&gt;, &lt;no_value&gt; / &lt;no_value&gt;"
+
+	}
+
+	Parameter addParameter(String name, TestCase tc){
+		def p = new Parameter(name)
+		tc.addParameter p
+		p
+	}
+
+	Dataset addDataset (String dsname, TestCase tc, Map<Parameter, String> paramvalues){
+		Dataset ds = new Dataset(dsname, tc);
+		paramvalues.each {k, v ->  ds.addParameterValue(new DatasetParamValue(k, ds, v)) }
+		tc.addDataset ds
+		ds
+	}
+
+	CallTestStep newCallStep (TestCase tc, Dataset ds, Boolean delegate){
+		new CallTestStep(calledTestCase:tc, calledDataset:ds, delegateParameterValues:delegate)
+	}
+
 }

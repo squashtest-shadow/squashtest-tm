@@ -6,16 +6,16 @@
  *     information regarding copyright ownership.
  *
  *     This is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU Lesser General Public License as published by
+ *     it under the terms of the GNU General Public License as published by
  *     the Free Software Foundation, either version 3 of the License, or
  *     (at your option) any later version.
  *
  *     this software is distributed in the hope that it will be useful,
  *     but WITHOUT ANY WARRANTY; without even the implied warranty of
  *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU Lesser General Public License for more details.
+ *     GNU General Public License for more details.
  *
- *     You should have received a copy of the GNU Lesser General Public License
+ *     You should have received a copy of the GNU General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.squashtest.tm.service.internal.batchimport;
@@ -23,7 +23,6 @@ package org.squashtest.tm.service.internal.batchimport;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -45,6 +44,7 @@ import org.squashtest.tm.domain.testcase.CallTestStep;
 import org.squashtest.tm.domain.testcase.Dataset;
 import org.squashtest.tm.domain.testcase.DatasetParamValue;
 import org.squashtest.tm.domain.testcase.Parameter;
+import org.squashtest.tm.domain.testcase.ParameterAssignationMode;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseImportance;
 import org.squashtest.tm.domain.testcase.TestCaseNature;
@@ -77,7 +77,9 @@ import org.squashtest.tm.service.testcase.TestStepModificationService;
 @Component
 @Scope("prototype")
 public class FacilityImpl implements Facility {
-	
+
+	private static final String UNEXPECTED_ERROR_WHILE_IMPORTING = "unexpected error while importing ";
+
 	private static final String EXCEL_ERR_PREFIX = "Excel import : ";
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(FacilityImpl.class);
@@ -125,8 +127,6 @@ public class FacilityImpl implements Facility {
 
 	private Map<String, Long> cufIdByCode = new HashMap<String, Long>();
 
-	private Collection<Long> modifiedTestCases = new HashSet<Long>();
-
 	// ************************ public (and nice looking) code **************************************
 
 	@Override
@@ -153,15 +153,13 @@ public class FacilityImpl implements Facility {
 			doCreateTestcase(target, testCase, cufValues);
 			validator.getModel().setExists(target, testCase.getId());
 
-			remember(target);
-
 			LOGGER.debug(EXCEL_ERR_PREFIX+"Created Test Case \t'" + target + "'");
 
 		} catch (Exception ex) {
 			train.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_UNEXPECTED_ERROR,
 					new Object[] { ex.getClass().getName() }));
 			validator.getModel().setNotExists(target);
-			LOGGER.error(EXCEL_ERR_PREFIX+"unexpected error while importing " + target + " : ", ex);
+			LOGGER.error(EXCEL_ERR_PREFIX + UNEXPECTED_ERROR_WHILE_IMPORTING + target + " : ", ex);
 		}
 
 		return train;
@@ -195,7 +193,6 @@ public class FacilityImpl implements Facility {
 					helper.truncate(testCase, cufValues);
 					doUpdateTestcase(target, testCase, cufValues);
 
-					remember(target);
 
 					LOGGER.debug(EXCEL_ERR_PREFIX+"Updated Test Case \t'" + target + "'");
 
@@ -264,10 +261,10 @@ public class FacilityImpl implements Facility {
 
 	@Override
 	public LogTrain addCallStep(TestStepTarget target, CallTestStep testStep, TestCaseTarget calledTestCase,
-			ActionTestStep actionStepBackup) {
+			CallStepParamsInfo paramInfo, ActionTestStep actionStepBackup) {
 
-		LogTrain train = validator.addCallStep(target, testStep, calledTestCase, actionStepBackup);
-
+		LogTrain train = validator.addCallStep(target, testStep, calledTestCase, paramInfo, actionStepBackup);
+		
 		if (!train.hasCriticalErrors()) {
 			String mustImportCallAsActionStepErrorI18n = FacilityUtils.mustImportCallAsActionStep(train);
 			try {
@@ -277,10 +274,9 @@ public class FacilityImpl implements Facility {
 					validator.getModel().addActionStep(target);
 				} else {
 
-					doAddCallStep(target, calledTestCase);
+					doAddCallStep(target, calledTestCase, paramInfo);
 
-					remember(target.getTestCase());
-					validator.getModel().addCallStep(target, calledTestCase);
+					validator.getModel().addCallStep(target, calledTestCase, paramInfo);
 
 					LOGGER.debug(EXCEL_ERR_PREFIX+"Created Call Step \t'" + target + "' -> '" + calledTestCase + "'");
 				}
@@ -317,14 +313,14 @@ public class FacilityImpl implements Facility {
 
 	@Override
 	public LogTrain updateCallStep(TestStepTarget target, CallTestStep testStep, TestCaseTarget calledTestCase,
-			ActionTestStep actionStepBackup) {
+			CallStepParamsInfo paramInfo, ActionTestStep actionStepBackup) {
 
-		LogTrain train = validator.updateCallStep(target, testStep, calledTestCase, actionStepBackup);
+		LogTrain train = validator.updateCallStep(target, testStep, calledTestCase, paramInfo, actionStepBackup);
 
 		if (!train.hasCriticalErrors()) {
 			try {
-				doUpdateCallStep(target, calledTestCase);
-				validator.getModel().updateCallStepTarget(target, calledTestCase);
+				doUpdateCallStep(target, calledTestCase, paramInfo);
+				validator.getModel().updateCallStepTarget(target, calledTestCase, paramInfo);
 
 				LOGGER.debug(EXCEL_ERR_PREFIX+"Created Call Step \t'" + target + "' -> '" + calledTestCase + "'");
 			} catch (Exception ex) {
@@ -368,7 +364,6 @@ public class FacilityImpl implements Facility {
 			try {
 				doCreateParameter(target, param);
 				validator.getModel().addParameter(target);
-				remember(target.getOwner());
 
 				LOGGER.debug(EXCEL_ERR_PREFIX+"Created Parameter \t'" + target + "'");
 			} catch (Exception ex) {
@@ -391,7 +386,6 @@ public class FacilityImpl implements Facility {
 				doUpdateParameter(target, param);
 				validator.getModel().addParameter(target); // create the parameter if didn't exist already.
 				// Double-insertion proof.
-				remember(target.getOwner());
 
 				LOGGER.debug(EXCEL_ERR_PREFIX+"Updated Parameter \t'" + target + "'");
 			} catch (Exception ex) {
@@ -436,8 +430,6 @@ public class FacilityImpl implements Facility {
 				doFailsafeUpdateParameterValue(dataset, param, value);
 
 				validator.getModel().addDataset(dataset);
-				remember(dataset.getTestCase());
-				remember(param.getOwner());
 
 				LOGGER.debug(EXCEL_ERR_PREFIX+"Updated Param Value for param \t'" + param + "' in dataset '" + dataset
 						+ "'");
@@ -452,6 +444,31 @@ public class FacilityImpl implements Facility {
 		return train;
 	}
 
+
+	@Override
+	public LogTrain createDataset(DatasetTarget dataset) {
+
+		LogTrain train = validator.createDataset(dataset);
+
+		if (!train.hasCriticalErrors()) {
+			try {
+				doCreateDataset(dataset);
+
+				validator.getModel().addDataset(dataset);
+
+				LOGGER.debug(EXCEL_ERR_PREFIX+"Created Dataset '" + dataset + "'");
+
+			} catch (Exception ex) {
+				train.addEntry(new LogEntry(dataset, ImportStatus.FAILURE, Messages.ERROR_UNEXPECTED_ERROR,
+						new Object[] { ex.getClass().getName() }));
+				LOGGER.error(EXCEL_ERR_PREFIX+"unexpected error while creating dataset " + dataset + " : ", ex);
+			}
+		}
+
+		return train;
+	}
+
+
 	@Override
 	public LogTrain deleteDataset(DatasetTarget dataset) {
 
@@ -462,15 +479,13 @@ public class FacilityImpl implements Facility {
 				doDeleteDataset(dataset);
 
 				validator.getModel().removeDataset(dataset);
-				remember(dataset.getTestCase());
 
 				LOGGER.debug(EXCEL_ERR_PREFIX+"Deleted Dataset '" + dataset + "'");
 
 			} catch (Exception ex) {
 				train.addEntry(new LogEntry(dataset, ImportStatus.FAILURE, Messages.ERROR_UNEXPECTED_ERROR,
 						new Object[] { ex.getClass().getName() }));
-				LOGGER.error(EXCEL_ERR_PREFIX+"unexpected error while deleting dataset " + dataset + " in dataset "
-						+ dataset + " : ", ex);
+				LOGGER.error(EXCEL_ERR_PREFIX+"unexpected error while deleting dataset " + dataset + " : ", ex);
 			}
 		}
 
@@ -482,18 +497,13 @@ public class FacilityImpl implements Facility {
 	 * 
 	 */
 	public void postprocess() {
-
-		for (Long id : modifiedTestCases) {
-			datasetService.updateDatasetParameters(id);
-		}
-
+		// NOOP yet
 	}
 
 	// ************************* private (and hairy) code *********************************
 
 	// because this time we're not toying around man, this is the real thing
-	private void doCreateTestcase(TestCaseTarget target, TestCase testCase, Map<String, String> cufValues)
-			throws Exception {
+	private void doCreateTestcase(TestCaseTarget target, TestCase testCase, Map<String, String> cufValues) {
 
 		Map<Long, String> acceptableCufs = toAcceptableCufs(cufValues);
 
@@ -525,8 +535,7 @@ public class FacilityImpl implements Facility {
 		}
 	}
 
-	private void doUpdateTestcase(TestCaseTarget target, TestCase testCase, Map<String, String> cufValues)
-			throws Exception {
+	private void doUpdateTestcase(TestCaseTarget target, TestCase testCase, Map<String, String> cufValues) {
 
 		TestCase orig = validator.getModel().get(target);
 		Long origId = orig.getId();
@@ -553,13 +562,12 @@ public class FacilityImpl implements Facility {
 
 	}
 
-	private void doDeleteTestCase(TestCaseTarget target) throws Exception {
+	private void doDeleteTestCase(TestCaseTarget target) {
 		TestCase tc = validator.getModel().get(target);
 		navigationService.deleteNodes(Arrays.asList(tc.getId()));
 	}
 
-	private void doAddActionStep(TestStepTarget target, ActionTestStep testStep, Map<String, String> cufValues)
-			throws Exception {
+	private void doAddActionStep(TestStepTarget target, ActionTestStep testStep, Map<String, String> cufValues) {
 
 		Map<Long, String> acceptableCufs = toAcceptableCufs(cufValues);
 
@@ -575,7 +583,7 @@ public class FacilityImpl implements Facility {
 
 	}
 
-	private void doAddCallStep(TestStepTarget target, TestCaseTarget calledTestCase) {
+	private void doAddCallStep(TestStepTarget target, TestCaseTarget calledTestCase, CallStepParamsInfo paramInfo) {
 
 		// add the step
 		TestCase tc = validator.getModel().get(target.getTestCase());
@@ -583,6 +591,9 @@ public class FacilityImpl implements Facility {
 
 		callstepService.addCallTestStep(tc.getId(), called.getId());
 		CallTestStep created = (CallTestStep) tc.getSteps().get(tc.getSteps().size() - 1);
+
+		// handle the parameter assignation
+		changeParameterAssignation(created.getId(), calledTestCase, paramInfo);
 
 		// change position if possible and required
 		Integer index = target.getIndex();
@@ -612,13 +623,16 @@ public class FacilityImpl implements Facility {
 
 	}
 
-	private void doUpdateCallStep(TestStepTarget target, TestCaseTarget calledTestCase) {
+	private void doUpdateCallStep(TestStepTarget target, TestCaseTarget calledTestCase, CallStepParamsInfo paramInfo) {
 
 		// update the step
 		TestStep actualStep = validator.getModel().getStep(target);
 		TestCase newCalled = validator.getModel().get(calledTestCase);
 		callstepService.checkForCyclicStepCallBeforePaste(actualStep.getTestCase().getId(),newCalled.getId());
 		((CallTestStep) actualStep).setCalledTestCase(newCalled);
+
+		// update the parameter assignation
+		changeParameterAssignation(actualStep.getId(), calledTestCase, paramInfo);
 
 	}
 
@@ -650,7 +664,7 @@ public class FacilityImpl implements Facility {
 
 	private void doDeleteParameter(ParameterTarget target) {
 		Long testcaseId = validator.getModel().getId(target.getOwner());
-		List<Parameter> allparams = parameterService.findAllforTestCase(testcaseId);
+		List<Parameter> allparams = parameterService.findAllParameters(testcaseId);
 
 		Parameter param = null;
 		for (Parameter p : allparams) {
@@ -667,6 +681,17 @@ public class FacilityImpl implements Facility {
 		DatasetParamValue dpv = findParamValue(dataset, param);
 		String trValue = helper.truncate(value, 255);
 		dpv.setParamValue(trValue);
+	}
+
+
+	// here we care of double insertion of dataset
+	private void doCreateDataset(DatasetTarget dataset){
+		Dataset ds = findDataset(dataset);
+		if (ds == null){
+			TestCase tc = validator.getModel().get(dataset.getTestCase());
+			ds = new Dataset(dataset.getName(), tc);
+			datasetService.persist(ds, tc.getId());
+		}
 	}
 
 	private void doDeleteDataset(DatasetTarget dataset) {
@@ -723,7 +748,7 @@ public class FacilityImpl implements Facility {
 		}
 
 		Boolean newImportanceAuto = testCase.isImportanceAuto();
-		if (newImportanceAuto != null && orig.isImportanceAuto() != newImportanceAuto) {
+		if (newImportanceAuto != null && orig.isImportanceAuto().equals(newImportanceAuto)) {
 			testcaseModificationService.changeImportanceAuto(origId, newImportanceAuto);
 		}
 	}
@@ -745,7 +770,7 @@ public class FacilityImpl implements Facility {
 	private Parameter findParameter(ParameterTarget param) {
 		Long testcaseId = validator.getModel().getId(param.getOwner());
 
-		Parameter found = paramDao.findParameterByNameAndTestCase(param.getName(), testcaseId);
+		Parameter found = paramDao.findOwnParameterByNameAndTestCase(param.getName(), testcaseId);
 
 		if (found != null) {
 			return found;
@@ -772,6 +797,38 @@ public class FacilityImpl implements Facility {
 
 			return newds;
 		}
+	}
+
+
+	/**
+	 * 
+	 * @param testStep
+	 * @param tc
+	 * @param paramInfo
+	 */
+	private void changeParameterAssignation(Long stepId, TestCaseTarget tc, CallStepParamsInfo paramInfo){
+		Long dsId = null;
+		ParameterAssignationMode mode  = paramInfo.getParamMode();
+
+		if (paramInfo.getParamMode() == ParameterAssignationMode.CALLED_DATASET){
+
+			Long tcid = validator.getModel().getId(tc);
+			String dsname = helper.truncate(paramInfo.getCalledDatasetName(), 255);
+			Dataset ds = datasetDao.findDatasetByTestCaseAndByName(tcid, dsname);
+
+			// if the dataset exists we can actually bind the step to it.
+			// otherwise we fallback to the default mode (nothing).
+			// This later case has been dutifully reported by the
+			// validator facility of course.
+			if (ds != null){
+				dsId = ds.getId();
+			}
+			else{
+				mode = ParameterAssignationMode.NOTHING;
+			}
+
+		}
+		callstepService.setParameterAssignationMode(stepId, mode, dsId);
 	}
 
 	private DatasetParamValue findParamValue(DatasetTarget dataset, ParameterTarget param) {
@@ -829,13 +886,6 @@ public class FacilityImpl implements Facility {
 
 		return result;
 
-	}
-
-	private void remember(TestCaseTarget target) {
-		TestCase tc = validator.getModel().get(target);
-		if (tc.getId() != null) {
-			modifiedTestCases.add(tc.getId());
-		}
 	}
 
 }

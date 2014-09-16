@@ -6,16 +6,16 @@
  *     information regarding copyright ownership.
  *
  *     This is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU Lesser General Public License as published by
+ *     it under the terms of the GNU General Public License as published by
  *     the Free Software Foundation, either version 3 of the License, or
  *     (at your option) any later version.
  *
  *     this software is distributed in the hope that it will be useful,
  *     but WITHOUT ANY WARRANTY; without even the implied warranty of
  *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU Lesser General Public License for more details.
+ *     GNU General Public License for more details.
  *
- *     You should have received a copy of the GNU Lesser General Public License
+ *     You should have received a copy of the GNU General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.squashtest.tm.service.internal.testcase;
@@ -30,6 +30,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.testcase.CallTestStep;
+import org.squashtest.tm.domain.testcase.Dataset;
+import org.squashtest.tm.domain.testcase.ParameterAssignationMode;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.exception.CyclicStepCallException;
 import org.squashtest.tm.service.internal.repository.TestCaseDao;
@@ -84,7 +86,10 @@ public class CallStepManagerServiceImpl implements CallStepManagerService, TestC
 
 		parentTestCase.addStep(newStep);
 
-		datasetModificationService.updateDatasetParameters(parentTestCaseId);
+		/*
+		 * Feat 3693 : no need for that anymore : by default a call step doesn't delegate the parameters of the called test case anymore
+		 *	datasetModificationService.updateDatasetParameters(parentTestCaseId);
+		 */
 		testCaseImportanceManagerService.changeImportanceIfCallStepAddedToTestCases(calledTestCase, parentTestCase);
 	}
 
@@ -166,6 +171,46 @@ public class CallStepManagerServiceImpl implements CallStepManagerService, TestC
 				throw new CyclicStepCallException();
 			}
 		}
+	}
+
+
+	@Override
+	@PreAuthorize("hasPermission(#callStepId, 'org.squashtest.tm.domain.testcase.CallTestStep', 'WRITE') or hasRole('ROLE_ADMIN')")
+	public void setParameterAssignationMode(long callStepId, ParameterAssignationMode mode, Long datasetId) {
+
+		// a class cast exception would be welcome if the call step id is not appropriate
+		// so I let it out of a try block.
+		CallTestStep step = (CallTestStep) testStepDao.findById(callStepId);
+		Long callerId = step.getTestCase().getId();
+
+		switch(mode){
+		case NOTHING :
+			step.setCalledDataset(null);
+			step.setDelegateParameterValues(false);
+			break;
+
+		case DELEGATE :
+			step.setCalledDataset(null);
+			step.setDelegateParameterValues(true);
+			break;
+
+		case CALLED_DATASET :
+			if (datasetId == null){
+				throw new RuntimeException("attempted to bind no dataset (datasetid is null) to a call step, yet the parameter assignation mode is 'CALLED_DATASET'");
+			}
+
+			Dataset ds = datasetModificationService.findById(datasetId);
+			step.setCalledDataset(ds);
+			step.setDelegateParameterValues(false);
+			break;
+
+		default :
+			throw new RuntimeException("ParameterAssignationMode '"+mode+"' is not handled here, please find a dev and make him do the job");
+
+		}
+
+		datasetModificationService.cascadeDatasetsUpdate(callerId);
+
 	}
 
 }

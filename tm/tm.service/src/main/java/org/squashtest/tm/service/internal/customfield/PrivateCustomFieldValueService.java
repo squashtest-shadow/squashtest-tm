@@ -6,22 +6,23 @@
  *     information regarding copyright ownership.
  *
  *     This is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU Lesser General Public License as published by
+ *     it under the terms of the GNU General Public License as published by
  *     the Free Software Foundation, either version 3 of the License, or
  *     (at your option) any later version.
  *
  *     this software is distributed in the hope that it will be useful,
  *     but WITHOUT ANY WARRANTY; without even the implied warranty of
  *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU Lesser General Public License for more details.
+ *     GNU General Public License for more details.
  *
- *     You should have received a copy of the GNU Lesser General Public License
+ *     You should have received a copy of the GNU General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.squashtest.tm.service.internal.customfield;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import org.squashtest.tm.domain.customfield.BindableEntity;
 import org.squashtest.tm.domain.customfield.BoundEntity;
@@ -64,9 +65,23 @@ public interface PrivateCustomFieldValueService extends CustomFieldValueManagerS
 	 * Will create all the custom field values for one entity.
 	 * 
 	 * @param entity
+	 * @param project
+	 *            . If null, the project of the given entity will be used.
 	 */
 	void createAllCustomFieldValues(BoundEntity entity, Project project);
 
+	
+	/**
+	 * batched version of {@link #createAllCustomFieldValues(BoundEntity, Project)}. 
+	 * The entities are assumed to be all of the same concrete class and of the 
+	 * same project.
+	 * 
+	 * 
+	 * @param entities
+	 * @param project
+	 */
+	void createAllCustomFieldValues(Collection<? extends BoundEntity> entities, Project project);
+	
 	/**
 	 * will delete all the custom field vales for one entity
 	 * 
@@ -87,9 +102,24 @@ public interface PrivateCustomFieldValueService extends CustomFieldValueManagerS
 	/**
 	 * Will copy the custom field values from an entity to another entity, creating them in the process
 	 * 
-	 * @param entity
+	 * @param source : the {@link BoundEntity} from witch the cuf are copied
+	 * @param recipient : the BoundEntity
 	 */
 	void copyCustomFieldValues(BoundEntity source, BoundEntity recipient);
+
+	/**
+	 * *Will copy the custom field values from entities to others, creating them in the process
+	 * 
+	 * @param copiedEntityBySource
+	 *            : a Map with
+	 *            <ul>
+	 *            <li>key : the source BoundEntity id</li>
+	 *            <li>value : the copy BoundEntity  to add the cufs to</li>
+	 *            </ul>
+	 * @param bindableEntityType
+	 *            : the {@link BindableEntity} type for all BoundEntity in the "copiedEntityBySource" map.
+	 */
+	void copyCustomFieldValues(Map<Long, BoundEntity> copiedEntityBySource, BindableEntity bindableEntityType);
 
 	/**
 	 * Will copy the custom field values from an entity to another entity. It assumes that the custom field values

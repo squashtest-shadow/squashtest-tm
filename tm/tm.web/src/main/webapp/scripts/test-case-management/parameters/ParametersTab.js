@@ -6,16 +6,16 @@
  *     information regarding copyright ownership.
  *
  *     This is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU Lesser General Public License as published by
+ *     it under the terms of the GNU General Public License as published by
  *     the Free Software Foundation, either version 3 of the License, or
  *     (at your option) any later version.
  *
  *     this software is distributed in the hope that it will be useful,
  *     but WITHOUT ANY WARRANTY; without even the implied warranty of
  *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU Lesser General Public License for more details.
+ *     GNU General Public License for more details.
  *
- *     You should have received a copy of the GNU Lesser General Public License
+ *     You should have received a copy of the GNU General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 define([ "jquery", "backbone", "underscore", "./ParametersPanel", "./DatasetsPanel", "jquery.squash.confirmdialog" ], function($,
@@ -38,7 +38,9 @@ define([ "jquery", "backbone", "underscore", "./ParametersPanel", "./DatasetsPan
 			});
 
 			this.listenTo(this.parametersPanel, "parameter.created parameter.removed", this.datasetsPanel.refresh);
-
+			this.listenTo(this.parametersPanel, "parameter.name.update", this.datasetsPanel.refreshDataSetParameterName);
+			this.listenTo(this.parametersPanel, "parameter.description.update", this.datasetsPanel.refreshDataSetParameterDescription);
+						
 			// content is refreshed where this tab becomes visible. should be in a parent view if it existed
 			$("div.fragment-tabs").on("tabsshow", function(event, ui) {
 				if (ui.index === self.settings.parameters.tabIndex) {

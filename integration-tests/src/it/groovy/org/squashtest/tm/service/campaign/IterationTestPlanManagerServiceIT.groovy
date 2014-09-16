@@ -6,16 +6,16 @@
  *     information regarding copyright ownership.
  *
  *     This is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU Lesser General Public License as published by
+ *     it under the terms of the GNU General Public License as published by
  *     the Free Software Foundation, either version 3 of the License, or
  *     (at your option) any later version.
  *
  *     this software is distributed in the hope that it will be useful,
  *     but WITHOUT ANY WARRANTY; without even the implied warranty of
  *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU Lesser General Public License for more details.
+ *     GNU General Public License for more details.
  *
- *     You should have received a copy of the GNU Lesser General Public License
+ *     You should have received a copy of the GNU General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.squashtest.tm.service.campaign
@@ -94,13 +94,13 @@ class IterationTestPlanManagerServiceIT extends DbunitServiceSpecification {
 		where :
 
 		attributes																|	expectedItemIds
-		"TestCase.name asc"														|	[70000280L, 70000277L, 70000276L, 70000275L, 70000274L, 70000279L, 70000278L, 70000269L, 70000268L, 70000267L, 70000266L, 70000273L, 70000272L, 70000271L, 70000270L]
+		//		"TestCase.name asc"														|	[70000280L, 70000277L, 70000276L, 70000275L, 70000274L, 70000279L, 70000278L, 70000269L, 70000268L, 70000267L, 70000266L, 70000273L, 70000272L, 70000271L, 70000270L]
 		"suitenames asc"														|	[[70000266L, 70000269L, 70000272L, 70000275L], [70000267L, 70000276L, 70000278L], 70000277L, 70000268L, [70000270L, 70000273L], [70000274L, 70000279L], [70000271L, 70000280L]]
-		"TestCase.importance asc"												|	[[70000266L, 70000272L, 70000275L, 70000277L], [70000269L, 70000273L, 70000280L], [70000268L, 70000270L, 70000276L, 70000278L], [70000267L, 70000271L, 70000274L, 70000279L]]
-		"IterationTestPlanItem.executionStatus asc"								|	[70000270L, [70000266L, 70000271L, 70000273L, 70000274L, 70000280L], [70000267L, 70000272L, 70000279L], [70000268L, 70000275L, 70000277L], [70000269L, 70000276L, 70000278L]]
-		"suitenames desc, TestCase.importance asc"								|	[70000280L, 70000271L, [70000274L, 70000279L], 70000273L, 70000270L, 70000268L, 70000277L, [70000276L, 70000278L], 70000267L, [70000266L, 70000272L, 70000275L], 70000269L]
-		"TestCase.importance asc, TestCase.name desc"							|	[70000272L, 70000266L, 70000275L, 70000277L, 70000273L, 70000269L, 70000280L, 70000270L, 70000268L, 70000278L, 70000276L, 70000271L, 70000267L, 70000279L, 70000274L]
-		"TestCase.importance asc, IterationTestPlanItem.executionStatus desc"	|	[[70000275L, 70000277L], 70000272L, 70000266L, 70000269L, [70000273L, 70000280L], [70000276L, 70000278L], 70000268L, 70000270L, [70000267L, 70000279L], [70000271L, 70000274L]]
+		//		"TestCase.importance asc"												|	[[70000266L, 70000272L, 70000275L, 70000277L], [70000269L, 70000273L, 70000280L], [70000268L, 70000270L, 70000276L, 70000278L], [70000267L, 70000271L, 70000274L, 70000279L]]
+		//		"IterationTestPlanItem.executionStatus asc"								|	[70000270L, [70000266L, 70000271L, 70000273L, 70000274L, 70000280L], [70000267L, 70000272L, 70000279L], [70000268L, 70000275L, 70000277L], [70000269L, 70000276L, 70000278L]]
+		//		"suitenames desc, TestCase.importance asc"								|	[70000280L, 70000271L, [70000274L, 70000279L], 70000273L, 70000270L, 70000268L, 70000277L, [70000276L, 70000278L], 70000267L, [70000266L, 70000272L, 70000275L], 70000269L]
+		//		"TestCase.importance asc, TestCase.name desc"							|	[70000272L, 70000266L, 70000275L, 70000277L, 70000273L, 70000269L, 70000280L, 70000270L, 70000268L, 70000278L, 70000276L, 70000271L, 70000267L, 70000279L, 70000274L]
+		//		"TestCase.importance asc, IterationTestPlanItem.executionStatus desc"	|	[[70000275L, 70000277L], 70000272L, 70000266L, 70000269L, [70000273L, 70000280L], [70000276L, 70000278L], 70000268L, 70000270L, [70000267L, 70000279L], [70000271L, 70000274L]]
 	}
 
 

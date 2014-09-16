@@ -7,16 +7,16 @@
         information regarding copyright ownership.
 
         This is free software: you can redistribute it and/or modify
-        it under the terms of the GNU Lesser General Public License as published by
+        it under the terms of the GNU General Public License as published by
         the Free Software Foundation, either version 3 of the License, or
         (at your option) any later version.
 
         this software is distributed in the hope that it will be useful,
         but WITHOUT ANY WARRANTY; without even the implied warranty of
         MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-        GNU Lesser General Public License for more details.
+        GNU General Public License for more details.
 
-        You should have received a copy of the GNU Lesser General Public License
+        You should have received a copy of the GNU General Public License
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 --%>
@@ -37,14 +37,12 @@
 
 
 <%@ attribute name="workspaceTitleKey" description="key of page title" required="true" %>
+<%@ attribute name="i18nLibraryTabTitle" required="false" description="boiler plate for layout:tree-page-layout#i18nLibraryTabTitle" %>
+
 <%@ attribute name="tree" fragment="true" required="true" description="Tree definition" %>
 <%@ attribute name="linkable" required="true" %>
 <%@ attribute name="highlightedWorkspace" required="true" %>
-<%@ attribute name="treeBaseUrl" required="true" description="the base url of the library browser. The tree will use it as a base url 
-															  from which it will build more specifics url according to the nodes it'll try
-															  to fetch. typical pattern : resource-name-browser"%>
 
-<%@ attribute name="isRequirementPaneSearchOn" required="false" description="boolean. If set to true, activate the test plan manager pane which allows to search test cases by requirement" %>
 <%@ attribute name="isSubPaged" required="false"  description="boolean. if set to true, the layout will be applied in a sub-paged form. Basically
 it will insert sub-page-layout.tag between the top template and this one." %>
 
@@ -56,20 +54,14 @@ it will insert sub-page-layout.tag between the top template and this one." %>
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component"%>
 <%@ taglib prefix="dt" tagdir="/WEB-INF/tags/datatables" %>
 
-<layout:tree-page-layout titleKey="squashtm" highlightedWorkspace="${ highlightedWorkspace }" isRequirementPaneSearchOn="${ isRequirementPaneSearchOn }" linkable="${linkable}" isSubPaged="${isSubPaged}">
+<layout:tree-page-layout 
+  titleKey="squashtm" 
+  highlightedWorkspace="${ highlightedWorkspace }" 
+  i18nLibraryTabTitle="${i18nLibraryTabTitle}"
+  linkable="${linkable}" 
+  isSubPaged="${isSubPaged}">
 	
 	<jsp:attribute name="head">
-		<%-- tree population callbacks --%>
-			<script type="text/javascript">
-				function libraryContentUrl(node) {
-					return nodeContentUrl('${ treeBaseUrl }', node);
-				}
-				
-				function folderContentUrl(node) {
-					return nodeContentUrl('${ treeBaseUrl }', node);
-				}
-			</script>
-			
 		<jsp:invoke fragment="head" />
 	</jsp:attribute>
 	

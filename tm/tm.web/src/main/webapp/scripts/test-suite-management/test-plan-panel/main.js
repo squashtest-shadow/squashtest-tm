@@ -6,16 +6,16 @@
  *     information regarding copyright ownership.
  *
  *     This is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU Lesser General Public License as published by
+ *     it under the terms of the GNU General Public License as published by
  *     the Free Software Foundation, either version 3 of the License, or
  *     (at your option) any later version.
  *
  *     this software is distributed in the hope that it will be useful,
  *     but WITHOUT ANY WARRANTY; without even the implied warranty of
  *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU Lesser General Public License for more details.
+ *     GNU General Public License for more details.
  *
- *     You should have received a copy of the GNU Lesser General Public License
+ *     You should have received a copy of the GNU General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 /*
@@ -98,13 +98,14 @@ define(['squash.translator', './table', './popups','app/util/ButtonUtil'], funct
 		}
 		
 		$("#filter-test-plan-button").on('click', function(){
+			var domtable = $("#test-suite-test-plans-table").squashTable();
 			if(filterOn){
 				filterOn=false;
 				table.hideFilterFields();
 				table.unlockSortMode();
-				$("#test-suite-test-plans-table").squashTable().refresh();
+				domtable.refresh();
 				$("#test-plan-sort-mode-message").show();
-				$("#test-cases-table").find('.select-handle').removeClass('drag-handle');
+				domtable.find('.select-handle').removeClass('drag-handle');
 				if (this.reorderable){
 					ButtonUtil.enable($("#reorder-test-plan-button"));
 				}
@@ -113,7 +114,7 @@ define(['squash.translator', './table', './popups','app/util/ButtonUtil'], funct
 				table.showFilterFields();
 				table.lockSortMode();
 				$("#test-plan-sort-mode-message").hide();
-				$("#test-cases-table").find('.select-handle').addClass('drag-handle');
+				domtable.find('.select-handle').addClass('drag-handle');
 				ButtonUtil.disable($("#reorder-test-plan-button"));
 			}
 		});

@@ -1,4 +1,4 @@
-<!DOCTYPE dataset SYSTEM "../../../../../../dtd/squash-tm.1.9.10.dtd">
+<!DOCTYPE dataset SYSTEM "../../../../../../dtd/squash-tm.1.11.0.dtd">
 <dataset>
 
 	<!--  dummy attachment list, the same for everyone that need one. -->
@@ -48,9 +48,9 @@
 	
 	<!-- ... call steps -->
 	
-	<CALL_TEST_STEP TEST_STEP_ID="-105" CALLED_TEST_CASE_ID="-102" />
-	<CALL_TEST_STEP TEST_STEP_ID="-106" CALLED_TEST_CASE_ID="-103"/>
-	<CALL_TEST_STEP TEST_STEP_ID="-107" CALLED_TEST_CASE_ID="-104"/>	
+	<CALL_TEST_STEP TEST_STEP_ID="-105" CALLED_TEST_CASE_ID="-102" DELEGATE_PARAMETER_VALUES="true"/>
+	<CALL_TEST_STEP TEST_STEP_ID="-106" CALLED_TEST_CASE_ID="-103" DELEGATE_PARAMETER_VALUES="true"/>
+	<CALL_TEST_STEP TEST_STEP_ID="-107" CALLED_TEST_CASE_ID="-104" DELEGATE_PARAMETER_VALUES="true"/>	
 	
 	<!--  test case steps association -->
 	<TEST_CASE_STEPS TEST_CASE_ID="-100" STEP_ID="-101" STEP_ORDER="0"/>

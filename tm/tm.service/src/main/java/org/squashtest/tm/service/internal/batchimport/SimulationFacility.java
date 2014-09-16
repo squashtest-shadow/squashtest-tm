@@ -6,16 +6,16 @@
  *     information regarding copyright ownership.
  *
  *     This is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU Lesser General Public License as published by
+ *     it under the terms of the GNU General Public License as published by
  *     the Free Software Foundation, either version 3 of the License, or
  *     (at your option) any later version.
  *
  *     this software is distributed in the hope that it will be useful,
  *     but WITHOUT ANY WARRANTY; without even the implied warranty of
  *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU Lesser General Public License for more details.
+ *     GNU General Public License for more details.
  *
- *     You should have received a copy of the GNU Lesser General Public License
+ *     You should have received a copy of the GNU General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.squashtest.tm.service.internal.batchimport;
@@ -29,6 +29,7 @@ import org.springframework.stereotype.Component;
 import org.squashtest.tm.domain.testcase.ActionTestStep;
 import org.squashtest.tm.domain.testcase.CallTestStep;
 import org.squashtest.tm.domain.testcase.Parameter;
+import org.squashtest.tm.domain.testcase.ParameterAssignationMode;
 import org.squashtest.tm.domain.testcase.TestCase;
 
 /**
@@ -115,9 +116,9 @@ public class SimulationFacility implements Facility {
 
 
 	@Override
-	public LogTrain addCallStep(TestStepTarget target, CallTestStep testStep, TestCaseTarget calledTestCase, ActionTestStep actionBackupStep) {
+	public LogTrain addCallStep(TestStepTarget target, CallTestStep testStep, TestCaseTarget calledTestCase, CallStepParamsInfo paramInfo, ActionTestStep actionBackupStep) {
 
-		LogTrain logs = validator.addCallStep(target, testStep, calledTestCase, actionBackupStep);
+		LogTrain logs = validator.addCallStep(target, testStep, calledTestCase, paramInfo, actionBackupStep);
 
 		// update the model if no fatal flaws were detected
 		if (!logs.hasCriticalErrors()) {
@@ -125,7 +126,7 @@ public class SimulationFacility implements Facility {
 			if (mustImportCallAsActionStepErrorI18n != null) {
 				validator.getModel().addActionStep(target);
 			} else {
-				validator.getModel().addCallStep(target, calledTestCase);
+				validator.getModel().addCallStep(target, calledTestCase, paramInfo);
 			}
 		}
 		return logs;
@@ -144,13 +145,14 @@ public class SimulationFacility implements Facility {
 	}
 
 	@Override
-	public LogTrain updateCallStep(TestStepTarget target, CallTestStep testStep, TestCaseTarget calledTestCase, ActionTestStep actionStepBackup) {
+	public LogTrain updateCallStep(TestStepTarget target, CallTestStep testStep, TestCaseTarget calledTestCase,
+			CallStepParamsInfo paramInfo, ActionTestStep actionStepBackup) {
 
-		LogTrain logs = validator.updateCallStep(target, testStep, calledTestCase, actionStepBackup);
+		LogTrain logs = validator.updateCallStep(target, testStep, calledTestCase, paramInfo, actionStepBackup);
 
 		// if all is ok, update the target of this call step then return
 		if (!logs.hasCriticalErrors()) {
-			validator.getModel().updateCallStepTarget(target, calledTestCase);
+			validator.getModel().updateCallStepTarget(target, calledTestCase, paramInfo);
 		}
 
 		return logs;
@@ -215,11 +217,26 @@ public class SimulationFacility implements Facility {
 		LogTrain logs = validator.failsafeUpdateParameterValue(dataset, param, value, isUpdate);
 
 		if (!logs.hasCriticalErrors()) {
+			// when a parameter is created or updated, the dataset must be created on the fly
 			// note that this operation can be invoked multiple times, a given dataset will be created only once
 			validator.getModel().addDataset(dataset);
 		}
 
 		return logs;
+	}
+
+	@Override
+	public LogTrain createDataset(DatasetTarget dataset) {
+
+		LogTrain logs = validator.createDataset(dataset);
+
+		// if ok, update the model
+		if (!logs.hasCriticalErrors()) {
+			validator.getModel().addDataset(dataset);
+		}
+
+		return logs;
+
 	}
 
 	@Override

@@ -21,16 +21,16 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
-<!DOCTYPE dataset SYSTEM "../../../../../../../dtd/squash-tm.1.9.10.dtd">
+<!DOCTYPE dataset SYSTEM "../../../../../../../dtd/squash-tm.1.11.0.dtd">
 <dataset>
-	<CORE_GROUP />
-	<CORE_GROUP_AUTHORITY />
-	<CORE_GROUP_MEMBER />
+	<core_group />
+	<core_group_authority />
+	<core_group_member />
 	
 	<ACL_CLASS ID="-1000" CLASSNAME="batmobile" />
 	<ACL_OBJECT_IDENTITY ID="-900" IDENTITY="-1000" CLASS_ID="-1000" />
 
-	<ACL_GROUP_PERMISSION />
-	<ACL_RESPONSIBILITY_SCOPE_ENTRY />
+	<acl_group_permission />
+	<acl_responsibility_scope_entry />
 
 </dataset>

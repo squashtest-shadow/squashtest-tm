@@ -6,16 +6,16 @@
  *     information regarding copyright ownership.
  *
  *     This is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU Lesser General Public License as published by
+ *     it under the terms of the GNU General Public License as published by
  *     the Free Software Foundation, either version 3 of the License, or
  *     (at your option) any later version.
  *
  *     this software is distributed in the hope that it will be useful,
  *     but WITHOUT ANY WARRANTY; without even the implied warranty of
  *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU Lesser General Public License for more details.
+ *     GNU General Public License for more details.
  *
- *     You should have received a copy of the GNU Lesser General Public License
+ *     You should have received a copy of the GNU General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.squashtest.tm.plugin.testautomation.jenkins.internal.net;
@@ -41,13 +41,16 @@ import org.squashtest.tm.plugin.testautomation.jenkins.beans.Parameter;
 import org.squashtest.tm.plugin.testautomation.jenkins.beans.ParameterArray;
 import org.squashtest.tm.plugin.testautomation.jenkins.internal.JsonParser;
 import org.squashtest.tm.service.testautomation.spi.BadConfiguration;
+import org.squashtest.tm.service.testautomation.spi.TestAutomationException;
 
 public class HttpRequestFactory {
+
+	private static final String JOB_PATH = "/job/";
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(HttpRequestFactory.class);
 
 	private static final String API_URI = "/api/json";
-	
+
 	private static final String TREE = "tree";
 
 	public static final String SYMBOLIC_BUILDFILENAME = "testsuite.json";
@@ -175,7 +178,7 @@ public class HttpRequestFactory {
 
 	public GetMethod newGetBuildsForProject(TestAutomationProject project) {
 
-		String path = toUrlPath(project.getServer(), "/job/" + project.getJobName() + API_URI);
+		String path = toUrlPath(project.getServer(), JOB_PATH + project.getJobName() + API_URI);
 
 		GetMethod method = new GetMethod();
 		method.setPath(path);
@@ -189,7 +192,7 @@ public class HttpRequestFactory {
 
 	public GetMethod newGetBuild(TestAutomationProject project, int buildId) {
 
-		String path = toUrlPath(project.getServer(), "/job/" + project.getJobName() + "/" + buildId + "/" + API_URI);
+		String path = toUrlPath(project.getServer(), JOB_PATH + project.getJobName() + "/" + buildId + "/" + API_URI);
 
 		GetMethod method = new GetMethod();
 		method.setPath(path);
@@ -202,7 +205,7 @@ public class HttpRequestFactory {
 
 	public GetMethod newGetBuildResults(TestAutomationProject project, int buildId) {
 
-		String path = toUrlPath(project.getServer(), "/job/" + project.getJobName() + "/" + buildId + "/testReport/"
+		String path = toUrlPath(project.getServer(), JOB_PATH + project.getJobName() + "/" + buildId + "/testReport/"
 				+ API_URI);
 
 		GetMethod method = new GetMethod();
@@ -217,7 +220,7 @@ public class HttpRequestFactory {
 
 	public GetMethod newGetJsonTestList(TestAutomationProject project){
 
-		String path = toUrlPath(project.getServer(), "/job/" + project.getJobName() + "/Test_list/testTree.json");
+		String path = toUrlPath(project.getServer(), JOB_PATH + project.getJobName() + "/Test_list/testTree.json");
 
 		GetMethod method = new GetMethod();
 		method.setPath(path);
@@ -233,7 +236,7 @@ public class HttpRequestFactory {
 		TestAutomationProject project = test.getProject();
 
 		String relativePath = toRelativePath(test);
-		String urlPath = toUrlPath(project.getServer(), "/job/" + project.getJobName() + "/" + buildID + "/testReport/"
+		String urlPath = toUrlPath(project.getServer(), JOB_PATH + project.getJobName() + "/" + buildID + "/testReport/"
 				+ relativePath);
 
 		return urlPath;
@@ -244,7 +247,7 @@ public class HttpRequestFactory {
 
 	protected PostMethod newStartBuild(TestAutomationProject project, ParameterArray params) {
 
-		String path = toUrlPath(project.getServer(), "/job/" + project.getJobName() + "/build");
+		String path = toUrlPath(project.getServer(), JOB_PATH + project.getJobName() + "/build");
 
 		String jsonParam = jsonParser.toJson(params);
 
@@ -277,12 +280,12 @@ public class HttpRequestFactory {
 			if (LOGGER.isErrorEnabled()) {
 				LOGGER.error("HttpRequestFactory : the URI is invalid, and that was not supposed to happen.");
 			}
-			throw new RuntimeException(ex);
+			throw new TestAutomationException(ex);
 		} catch (MalformedURLException ex) {
 			if (LOGGER.isErrorEnabled()) {
 				LOGGER.error("HttpRequestFactory : the URI corresponds to an invalid URL, and that was not supposed to happen.");
 			}
-			throw new RuntimeException(ex);
+			throw new TestAutomationException(ex);
 		}
 	}
 
@@ -309,14 +312,13 @@ public class HttpRequestFactory {
 
 			try {
 
-				URL url = new URL(strURL);
-				return url;
+				return new URL(strURL);
 
 			} catch (MalformedURLException ex) {
 
 				BadConfiguration bc = new BadConfiguration(
 						"Test Automation configuration : The test could not be started because the service is not configured properly. The url '" + strURL + "' specified at property '" + callback.getConfPropertyName()
-						+ "' in configuration file 'tm.testautomation.conf.properties' is malformed. Please contact the administration team.");
+						+ "' in configuration file 'tm.testautomation.conf.properties' is malformed. Please contact the administration team.", ex);
 
 				bc.setPropertyName(callback.getConfPropertyName());
 

@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 
-<!DOCTYPE dataset SYSTEM "../../../../../../../dtd/squash-tm.1.9.10.dtd">
+<!DOCTYPE dataset SYSTEM "../../../../../../../dtd/squash-tm.1.11.0.dtd">
 <!-- 
 ReqCoverage.id | TestCase.id |TestSteps.ids |ReqVersion.id |ReqVersion.ref | ReqVersion.name |ReqVersion.crit |ReqVersion.cat    |ReqVersion.number | Req Project.name 
 1              | 1           | 11           | 1            | zero          | UN              | UNDEFINED      | BUSINESS         | 2                | A
@@ -96,20 +96,20 @@ ReqCoverage.id | TestCase.id |TestSteps.ids |ReqVersion.id |ReqVersion.ref | Req
   <REQUIREMENT_VERSION_COVERAGE REQUIREMENT_VERSION_COVERAGE_ID="-6" VERIFYING_TEST_CASE_ID="-2" VERIFIED_REQ_VERSION_ID="-3"/>
   <VERIFYING_STEPS REQUIREMENT_VERSION_COVERAGE_ID="-3" TEST_STEP_ID="-21"/>
   
-  <REQUIREMENT_LIBRARY/>
-  <PROJECT />  
-  <REQUIREMENT_LIBRARY_NODE />
-  <RESOURCE />
-  <REQUIREMENT_LIBRARY_NODE />
-  <REQUIREMENT_VERSION />
-  <REQUIREMENT />
-  <REQUIREMENT_LIBRARY_CONTENT/>
-  <TEST_CASE_LIBRARY_NODE/>
-  <TEST_CASE/>
-  <TEST_STEP/>
-  <ACTION_TEST_STEP/>
-  <TEST_CASE_STEPS/>
-  <REQUIREMENT_VERSION_COVERAGE/>
-  <VERIFYING_STEPS/>
+  <requirement_library/>
+  <project />  
+  <requirement_library_node />
+  <resource />
+  <requirement_library_node />
+  <requirement_version />
+  <requirement />
+  <requirement_library_content/>
+  <test_case_library_node/>
+  <test_case/>
+  <test_step/>
+  <action_test_step/>
+  <test_case_steps/>
+  <requirement_version_coverage/>
+  <verifying_steps/>
   
  </dataset>

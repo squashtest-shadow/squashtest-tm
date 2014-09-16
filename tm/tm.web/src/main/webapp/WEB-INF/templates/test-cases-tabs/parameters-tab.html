@@ -7,16 +7,16 @@
         information regarding copyright ownership.
 
         This is free software: you can redistribute it and/or modify
-        it under the terms of the GNU Lesser General Public License as published by
+        it under the terms of the GNU General Public License as published by
         the Free Software Foundation, either version 3 of the License, or
         (at your option) any later version.
 
         this software is distributed in the hope that it will be useful,
         but WITHOUT ANY WARRANTY; without even the implied warranty of
         MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-        GNU Lesser General Public License for more details.
+        GNU General Public License for more details.
 
-        You should have received a copy of the GNU Lesser General Public License
+        You should have received a copy of the GNU General Public License
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
@@ -70,7 +70,7 @@
               <th th:attr="data-def='select, map=entity-index'">#</th>
               <th th:attr="data-def='sortable, map=name, sClass=parameter-name'" th:text="#{label.Name}">Name</th>
               <th th:attr="data-def='map=description, sClass=parameter-description'" th:text="#{label.Description}">Description</th>
-              <th th:attr="data-def='sortable, map=test-case-name'" th:text="#{test-case.name.label}">Cas de Test</th>
+              <th th:attr="data-def='sortable, map=test-case-name, link='+ @{/test-cases} +'/{tc-id}/info'" th:text="#{test-case.source.label}">Cas de Test</th>
               <th th:attr="data-def='invisible, map=directly-associated'">directly-associated</th>
               <th th:attr="data-def='sWidth=2em, map=empty-delete-holder, sClass=delete-button'"></th>
             </tr>
@@ -115,7 +115,7 @@
               <th>id (masked)</th>
               <th>#</th>
               <th th:text="#{label.dataset}">Dataset</th>
-              <th th:each="param : ${paramHeaders}" th:text="${param}">param1</th>
+              <th th:each="param : ${paramHeaders}" th:text="${param['name']}" th:title="${param['description']}" th:attr="data-id=${param['id']}" class="set-title">param1</th>
               <th></th>
             </tr>
           </thead>
@@ -181,25 +181,33 @@
       </div>
     </div>
 
-    <div id="add-dataset-dialog" class="not-displayed popup-dialog form-horizontal" title="Add Dataset"
+    <div id="add-dataset-dialog" class="control-group not-displayed popup-dialog form-horizontal" title="Add Dataset"
       th:title="#{title.addDataset}">
-      <table class="form-horizontal">
-        <tr class="control-group">
-          <td>
-            <label class="control-label" for="add-dataset-name" th:text="#{label.Name}">Name</label>
-          </td>
-          <td class="controls">
-            <input id="add-dataset-name" class="strprop" name="name" type="text" size="50" maxlength="255" />
-            <span class="help-inline">&nbsp;</span>
-          </td>
-        </tr>
-      </table>
+      	<label class="control-label" for="add-dataset-name" th:text="#{label.Name}">Name</label>
+      	<div class="controls">
+        <input id="add-dataset-name" name="add-dataset-name" type="text" size="50" maxlength="255" />
+        <br />
+        <div class="help-inline">&nbsp;</div>
+        </div>
+		<table id="add-dataset-dialog-table" th:attr="data-def='ajaxsource='+@{/test-cases/__${testCase.id}__/parameters}+', pre-sort=1'">
+			<thead>			
+				<th data-def="map=entity-index, select">#</th>
+				<th data-def="map=name" th:text="#{label.Name}">name</th>
+				<th data-def="map=description" th:text="#{label.Description}">description</th>
+				<th data-def="map=empty-delete-holder, sClass=add-parameter-input centered" th:text="#{label.Value}">value</th>
+			</thead>
+			<tbody>
+			
+			</tbody>	
+		</table>
 
       <div class="popup-dialog-buttonpane">
         <input class="confirm" type="button" value="Add" th:value="#{label.Add}" />
         <input class="cancel" type="button" value="Cancel" th:value="#{label.Cancel}" />
       </div>
     </div>
+    
+    
   </div>
   <!-- ==================== initialisation ==================== -->
 
