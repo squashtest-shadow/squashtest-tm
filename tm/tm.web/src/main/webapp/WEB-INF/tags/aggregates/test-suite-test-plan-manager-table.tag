@@ -123,9 +123,6 @@
           <th class="no-user-select tp-th-filter tp-th-dataset" data-def="map=dataset.selected.name, sortable, sWidth=10%, sClass=dataset-combo">
             <f:message key="label.Dataset" />
           </th>
-          <th class="no-user-select tp-th-filter tp-th-suite" data-def="map=suite, tooltip-target=suitesTot, sortable, sWidth=10%">
-            <f:message key="iteration.executions.table.column-header.suite.label" />
-          </th>
           <th class="no-user-select tp-th-filter tp-th-status" data-def="map=status, sortable, sWidth=10%, sClass=status-display">
             <f:message key="iteration.executions.table.column-header.status.label" />
           </th>
