@@ -138,7 +138,8 @@ define(['jquery', '../../test-plan-panel/sortmode', 'squash.configmanager',
 			bFilter : true,
 			"aLengthMenu" : [[10, 25, 50, 100, -1], [10, 25, 50, 100, conf.messages.allLabel]],
 			fnDrawCallback : drawCallback,
-			fnRowCallback :  rowCallback
+			fnRowCallback :  rowCallback,
+			"aaSorting" : [ [ 2, "asc" ] ]
 		};
 
 		var squashSettings = {};
