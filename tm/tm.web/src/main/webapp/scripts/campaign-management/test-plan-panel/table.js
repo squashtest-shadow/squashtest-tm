@@ -73,7 +73,7 @@ define(['jquery', '../../test-plan-panel/sortmode', 'squash.configmanager',
 			// dataset : we create the 'button' part of a menu, but not actual menu.
 			if (data['dataset'].available.length>0){
 				var $dstd = $row.find('.dataset-combo');
-				$dstd.wrapInner('<span/>');
+				$dstd.wrapInner('<span style="text-decoration:underline;"/>');
 			}
 			
 			// ****** now the write permission features *********************
