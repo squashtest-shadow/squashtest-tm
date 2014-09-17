@@ -220,4 +220,12 @@
       </column>
     </addColumn>
   </changeSet>
+  
+    <changeSet id="tm-1.11.0.issue-3914" author="mpagnon" dbms="postgresql">
+    <comment>for some reason in postgresql generated scripts the column "VERSION" is in uppercase instead of lowercase like all other columns
+    </comment>
+    <sql>
+      ALTER TABLE test_case RENAME COLUMN "VERSION" TO version;
+    </sql>
+  </changeSet>
 </databaseChangeLog>
