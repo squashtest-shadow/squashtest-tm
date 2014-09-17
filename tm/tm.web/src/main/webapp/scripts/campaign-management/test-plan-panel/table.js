@@ -110,7 +110,7 @@ define(['jquery', '../../test-plan-panel/sortmode', 'squash.configmanager',
 						name : 'dataset',
 						onblur : 'cancel',
 						callback : function(value, settings){
-							$(this).text(settings.data[value]);
+							$(this).html(settings.data[value]);
 						}
 					});					
 				}

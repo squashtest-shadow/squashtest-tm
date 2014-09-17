@@ -152,16 +152,19 @@ define(
 				// already ensured that a <a class="buttonmenu"> exists.
 				var $dsspan = $row.find('.dataset-combo').children().first(),
 					dsInfos = data['dataset'],
-					dsurl = _conf.testplanUrl + data['entity-id'];										
+					dsurl = _conf.testplanUrl + data['entity-id'];				
 				
 				if (dsInfos.available.length>0){
+					jeditData = confman.toJeditableSelectFormat(dsInfos.available);
 					$dsspan.addClass('cursor-arrow');
 					$dsspan.editable(dsurl, {
 						type : 'select',
-						data : confman.toJeditableSelectFormat(dsInfos.available),
+						data : jeditData,
 						name : 'dataset',
 						onblur : 'cancel',
-						callback : _conf.submitDatasetClbk
+						callback : function(value, settings){
+							$(this).html(settings.data[value]);
+						}
 					});					
 				}
 			}
@@ -247,10 +250,6 @@ define(
 					submitAssigneeClbk : function(value, settings) {
 						var assignableUsers = JSON.parse(settings.data);
 						$(this).text(assignableUsers[value]);
-					},
-					
-					submitDatasetClbk : function(value, settings){
-						$(this).text(settings.data[value]);
 					}
 				};
 
