@@ -72,6 +72,8 @@ define([ "jquery", "squashtable/squashtable.collapser", "custom-field-values", "
 	// ************************* configuration functions
 	// ************************************
 
+	var COOKIE_NAME = "testcase-tab-cookie";
+	
 	function makeTableUrls(conf) {
 		var tcUrl = conf.basic.testCaseUrl;
 		var ctxUrl = conf.basic.rootContext;
@@ -186,7 +188,14 @@ define([ "jquery", "squashtable/squashtable.collapser", "custom-field-values", "
 		if (collapser) {
 			collapser.refreshTable();
 		}
-
+		
+		// the cookie used when navigating back from the attachment manager. This solution is crap  
+		// and I hope we come up with something better.
+		this.on('click', 'td.has-attachment-cell > a', function(evt){
+			$.cookie(COOKIE_NAME, 1, { expires: 1, path: '/' });
+			return true;
+		});
+		
 	}
 
 	function stepDropHandlerFactory(dropUrl) {
@@ -302,8 +311,7 @@ define([ "jquery", "squashtable/squashtable.collapser", "custom-field-values", "
 
 		};
 
-		var cookieName = "testcase-tab-cookie";
-		var cookie = $.cookie(cookieName);
+		var cookie = $.cookie(COOKIE_NAME);
 
 		if(!!savedData & !!cookie){
 			datatableSettings.aaSorting = savedData.aaSorting;
@@ -314,7 +322,7 @@ define([ "jquery", "squashtable/squashtable.collapser", "custom-field-values", "
 			datatableSettings.iLength = savedData.iLength;
 			datatableSettings.iStart = savedData.iStart;
 			datatableSettings.oSearch = savedData.oSearch;
-			$.cookie(cookieName, null, { path: '/' });
+			$.cookie(COOKIE_NAME, null, { path: '/' });
 		} else {
 			storage.remove('DataTables_'+window.location.pathname+"_"+id);
 		}
@@ -364,7 +372,7 @@ define([ "jquery", "squashtable/squashtable.collapser", "custom-field-values", "
 				},
 				onClick : function(table, cell) {
 					if (permissions.isLinkable){
-						$.cookie("testcase-tab-cookie", 1, { expires: 1, path: '/' });
+						$.cookie(COOKIE_NAME, 1, { expires: 1, path: '/' });
 						var row = cell.parentNode.parentNode;
 						var stepId = table.getODataId(row);
 						var url = urls.steps + stepId + "/verified-requirement-versions/manager";

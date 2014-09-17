@@ -24,81 +24,15 @@
  * requires : - jquery - jqueryui - jquery cookie plugin
  */
 
-
-
-/*
- * 13/06/2014, TM 1.10.0.SNAPSHOT
- * 
- * DEPRECATION NOTICE : 
- * 
- * the code calculating the offset, namely 'calculateTopTableWrap' and 'calculateTopPositionsOfTabs', 
- * is candidate to removal. Their original motive are now lost today, but their observable effect were 
- * to move the tab container up ward so that the UI looked more packed.  
- * 
- * Disabling those functions doesn't seem to affect much the look of the application, and the same purpose 
- * should be reached using CSS only. I don't know if there is any gotcha that led to the creation of 
- * these functions but we'll submit the 1.10.0 to QA without them and check if the application passes 
- * without them.
- * 
- */
 define(["jquery", "jqueryui", "jquery.cookie"], function($){
 	
 	
 	squashtm = squashtm || {};
-	
-	/*
-	 * See Deprecation Notice above
-	 */
-	
-	/*
-	function calculateTopTableWrap() {
-		var tableWrap = $(
-				' div.fragment-tabs > div.table-tab > div.table-tab-wrap ')
-				.not(':hidden');
 
-		if (tableWrap) {
-			var tablePrev = tableWrap.prevAll().not(':hidden');
-
-			if (tablePrev) {
-				var topPos = 0;
-
-				for ( var k = 0; k < tablePrev.length; k++) {
-					topPos += $(tablePrev[k]).outerHeight();
-				}
-				tableWrap.css('top', topPos);
-			}
-		}
-	}
-
-	function calculateTopPositionsOfTabs() {
-		var selectors = [ '.fragment-tabs', '.fragment-tabs .ui-tabs-panel' ];
-
-		for ( var i = 0; i < selectors.length; i++) {
-			var selectedElements = $(selectors[i]);
-
-			for ( var j = 0; j < selectedElements.length; j++) {
-				var element = $(selectedElements[j]);
-				var previous = element.prevAll().not(':hidden').not(
-						'.ui-tabs-panel');
-				var topPos = 0;
-
-				for ( var k = 0; k < previous.length; k++) {
-					topPos += $(previous[k]).outerHeight();
-				}
-				element.css('top', topPos);
-			}
-		}
-		calculateTopTableWrap();
-	}
-	*/
 
 	return {
 		init : function() {
-			/*window.onresize = function() {
-				setTimeout(calculateTopPositionsOfTabs, 200);
-			};
-			calculateTopPositionsOfTabs();*/
-			
+
 			var cookieName;
 			if (arguments.length > 0){
 				cookieName = arguments[0].cookie;
@@ -107,7 +41,6 @@ define(["jquery", "jqueryui", "jquery.cookie"], function($){
 				
 			var args = {
 					cache : true,
-					//show : calculateTopTableWrap,
 					active: 0
 				};
 			
