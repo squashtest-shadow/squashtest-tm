@@ -161,7 +161,7 @@
 					<ul>
 						<li class="tab" > <a href="#tree-pane">${libraryTabTitle}</a></li>
 						<c:if test="${usesObsoleteSearch}">						
-						<li class="tab"> <a href="#search-pane">${libraryTabTitle}</a></li>	
+						<li class="tab"> <a href="#search-pane"><f:message key="tabbed_panel.search.pane.label"/></a></li>	
 						</c:if>
 					</ul>
 					
@@ -229,7 +229,7 @@
 					<ul>
 						<li class="tab" > <a href="#tree-pane">${libraryTabTitle}</a></li>
 						<c:if test="${usesObsoleteSearch}">						
-						<li class="tab"> <a href="#search-pane">${libraryTabTitle}</a></li>						
+						<li class="tab"> <a href="#search-pane"><f:message key="tabbed_panel.search.pane.label"/></a></li>						
 						</c:if>
 					</ul>
 
