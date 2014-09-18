@@ -389,6 +389,7 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 		this.type = source.getType();
 		this.status = source.getStatus();
 		this.reference = source.getReference();
+		this.importanceAuto = source.isImportanceAuto();
 	}
 
 	/**
