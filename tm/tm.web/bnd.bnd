@@ -80,6 +80,7 @@ Import-Package: javax.servlet.jsp.jstl.core;version=${jstl.version},\
 	org.hibernate,\
 	org.h2;resolution:=optional,\
 	com.mysql.jdbc;resolution:=optional,\
+	org.postgresql;resolution:=optional,\
 	org.thymeleaf.templateresolver,\
 	org.thymeleaf.spring3,\
 	org.thymeleaf.spring3.view,\
