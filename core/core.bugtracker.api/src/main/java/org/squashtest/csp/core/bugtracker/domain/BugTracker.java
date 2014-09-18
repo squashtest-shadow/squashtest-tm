@@ -35,28 +35,20 @@ import org.hibernate.validator.constraints.NotBlank;
 @Entity
 @Table(name = "BUGTRACKER")
 public class BugTracker  {
-	public static final BugTracker NOT_DEFINED = new BugTracker("", "none", "", true);
-	
+	public static final BugTracker NOT_DEFINED;
+
+	static {
+		NOT_DEFINED = new BugTracker();
+		NOT_DEFINED.url = "";
+		NOT_DEFINED.kind = "none";
+		NOT_DEFINED.name = "";
+		NOT_DEFINED.iframeFriendly = true;
+	}
+
 	public BugTracker() {
-
-	}
-
-	public BugTracker(long id, String bugTrackerUrl, String connectorKind, String name, boolean iframeFriendly) {
 		super();
-		this.id = id;
-		this.url = bugTrackerUrl;
-		this.kind = connectorKind;
-		doSetName(name);
-		this.iframeFriendly = iframeFriendly;
 	}
 
-	public BugTracker(String bugTrackerUrl, String connectorKind, String name, boolean iframeFriendly) {
-		super();
-		this.url = bugTrackerUrl;
-		this.kind = connectorKind;
-		doSetName(name);
-		this.iframeFriendly = iframeFriendly;
-	}
 	private void doSetName(String name){
 		this.name = name.trim();
 	}
@@ -64,22 +56,22 @@ public class BugTracker  {
 	@GeneratedValue
 	@Column(name = "BUGTRACKER_ID")
 	private Long id;
-	
+
 	@NotBlank
 	@Size(min = 0, max = 50)
 	private String name;
-	
+
 	@NotBlank
 	@org.hibernate.validator.constraints.URL
 	@Size(min = 0, max = 255)
 	private String url;
-	
+
 	@NotBlank
 	@Size(min = 0, max = 50)
 	private String kind;
-	
+
 	private boolean iframeFriendly;
-	
+
 	public String getName() {
 		return name;
 	}
@@ -91,7 +83,7 @@ public class BugTracker  {
 	public String getUrl() {
 		return url;
 	}
-	
+
 	/**
 	 * returns the URL of the registered bugtracker. That url is nothing less than the one defined
 	 * in the configuration files so there is no warranty that that URL will be valid.
@@ -101,9 +93,9 @@ public class BugTracker  {
 		URL bugTrackerUrl = null;
 
 		try {
-			
+
 			bugTrackerUrl = new URL(url);
-			
+
 		} catch (MalformedURLException mue) {
 			// XXX should throw an exception
 			bugTrackerUrl = null;
@@ -126,8 +118,8 @@ public class BugTracker  {
 	public Long getId() {
 		return id;
 	}
-	
-	
+
+
 	public boolean isIframeFriendly() {
 		return iframeFriendly;
 	}
@@ -137,8 +129,13 @@ public class BugTracker  {
 	}
 
 	public BugTracker getDetachedBugTracker(){
-		return new BugTracker(id, url, kind, name, iframeFriendly);
+		BugTracker detached = new BugTracker();
+		detached.url = this.url;
+		detached.kind = this.kind;
+		detached.name = this.name;
+		detached.iframeFriendly = this.iframeFriendly;
+		return detached;
 	}
-	
+
 
 }
