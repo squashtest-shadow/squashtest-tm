@@ -112,7 +112,8 @@
       FUNCTION group_concat_func(field1 TEXT, field2 TEXT)
       RETURNS TEXT AS $$
       BEGIN
-      RETURN COALESCE(field1||','||field2, field2, field1);
+      RETURN
+      COALESCE(field1||','||field2, field2, field1);
       END;
       $$ LANGUAGE plpgsql;
 
@@ -146,28 +147,16 @@
     <addNotNullConstraint tableName="TEST_CASE_LIBRARY_CONTENT" columnName="CONTENT_ORDER"
       columnDataType="INTEGER" />
   </changeSet>
-  
-  
-  <!-- 
-  	The Call steps now drives how the parameters of the called test case will be handled. As of 1.11.0 the following scenarii are supported :
-  	
-  	1 - use a dataset from the called test case : 	the parameter values from the called test case will be set according to one of the datasets available in the 
-  													called test case.
-  	2 - delegate to the caller test case 		: 	the parameter values from the called test case will be set according to one of the datasets available in the 
-  													caller test case. This may be overriden if the caller test case is itself called by a third one, which chooses 
-  													to delegate too.
-  	3 - nothing									:	neither of the above, the values will be set at later time.
-  
-  	
-  	For now, here is how it is implemented :
-  	
-  	strategy 		|	CALLED_DATASET	|	DELEGATE_PARAMETER_VALUE
-  	- - - - - - - - + - - - - - - - - - + - - - - - - - - - - - - - 
-  	'NOTHING'		|		NULL		|			false
-  	'CALLED_DATASET'|		non null	|			false
-  	'CALLER_DATASET'|		NULL		|			true
-  
-   -->
+
+
+  <!-- The Call steps now drives how the parameters of the called test case will be handled. As of 1.11.0 the following scenarii 
+    are supported : 1 - use a dataset from the called test case : the parameter values from the called test case will be set 
+    according to one of the datasets available in the called test case. 2 - delegate to the caller test case : the parameter 
+    values from the called test case will be set according to one of the datasets available in the caller test case. This may 
+    be overriden if the caller test case is itself called by a third one, which chooses to delegate too. 3 - nothing : neither 
+    of the above, the values will be set at later time. For now, here is how it is implemented : strategy | CALLED_DATASET | 
+    DELEGATE_PARAMETER_VALUE - - - - - - - - + - - - - - - - - - + - - - - - - - - - - - - - 'NOTHING' | NULL | false 'CALLED_DATASET'| 
+    non null | false 'CALLER_DATASET'| NULL | true -->
 
   <changeSet id="tm-1.11.0.feature-3693-1" author="bsiri">
     <comment>Adding support for call-step level management of datasets</comment>
@@ -220,12 +209,13 @@
       </column>
     </addColumn>
   </changeSet>
-  
-    <changeSet id="tm-1.11.0.issue-3914" author="mpagnon" dbms="postgresql">
+
+  <changeSet id="tm-1.11.0.issue-3914" author="mpagnon" dbms="postgresql">
+    <preConditions onFail="CONTINUE">
+      <columnExists tableName="test_case" columnName="VERSION" />
+    </preConditions>
     <comment>for some reason in postgresql generated scripts the column "VERSION" is in uppercase instead of lowercase like all other columns
     </comment>
-    <sql>
-      ALTER TABLE test_case RENAME COLUMN "VERSION" TO version;
-    </sql>
+    <renameColumn tableName="test_case" oldColumnName="VERSION" newColumnName="version" />
   </changeSet>
 </databaseChangeLog>
