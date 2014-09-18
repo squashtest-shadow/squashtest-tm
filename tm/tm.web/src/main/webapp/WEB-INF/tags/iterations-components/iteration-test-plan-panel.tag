@@ -63,7 +63,7 @@
     <f:message var="removeLabel" key="label.Remove" />
     <f:message var="statusLabel" key="label.Status" />
     <f:message var="assignLabel" key="label.Assign" />
-    <f:message var="manageTS" key='menu.test-suites.button.main' />
+    <f:message var="manageTS" key='iteration.test-plan.testsuite.manage.label' />
     <f:message var="tooltipStatus" key="tooltips.changeExecutionStatuses" />
     <f:message var="tooltipAddTPI" key="tooltips.AddTPIToTP" />
     <f:message var="tooltipRemoveTPI" key="tooltips.RemoveTPIFromTP" />

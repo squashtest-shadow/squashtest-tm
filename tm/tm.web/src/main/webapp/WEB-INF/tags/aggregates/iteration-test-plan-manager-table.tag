@@ -61,7 +61,7 @@
     <f:message var="filterTooltip" key="tooltips.FilterTestPlan" />
     <f:message var="reorderTooltip" key="tooltips.ReorderTestPlan" />
     <f:message var="removeLabel" key="label.Remove" />
-    <f:message var="manageTS" key='menu.test-suites.button.main' />
+    <f:message var="manageTS" key='iteration.test-plan.testsuite.manage.label' />
     <f:message var="tooltipAddSuite" key="tooltips.AddTSToTPI" />
     <f:message var="confirmLabel" key="label.Confirm" />
     <f:message var="cancelLabel" key="label.Cancel" />
