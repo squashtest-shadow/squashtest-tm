@@ -130,7 +130,6 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 	@Inject
 	private TestAutomationProjectManagerService taProjectService;
 
-
 	private static final Logger LOGGER = LoggerFactory.getLogger(CustomGenericProjectManagerImpl.class);
 
 	// ************************* finding projects wrt user role ****************************
@@ -146,11 +145,11 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 			Filtering filter) {
 		/*
 		 * Implementation note :
-		 *
+		 * 
 		 * Here for once the paging will not be handled by the database, but programmatically. The reason is that we
 		 * want to filter the projects according to the caller's permissions, something that isn't doable using hql
 		 * alone (the acl system isn't part of the domain and thus wasn't modeled).
-		 *
+		 * 
 		 * So, we just load all the projects and apply paging on the resultset
 		 */
 
@@ -200,8 +199,7 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 	public void persist(GenericProject project) {
 		Session session = sessionFactory.getCurrentSession();
 
-		if (
-				genericProjectDao.countByName(project.getName()) > 0) {
+		if (genericProjectDao.countByName(project.getName()) > 0) {
 			throw new NameAlreadyInUseException(project.getClass().getSimpleName(), project.getName());
 		}
 
@@ -304,13 +302,12 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 		taProjectService.deleteAllForTMProject(tmProjectId);
 
 		TestAutomationServer taServer = null;
-		if (serverId != null){
+		if (serverId != null) {
 			taServer = taServerService.findById(serverId);
 		}
 
 		genericProject.setTestAutomationServer(taServer);
 	}
-
 
 	@Override
 	public void bindTestAutomationProject(long projectId, TestAutomationProject taProject) {
@@ -330,33 +327,31 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 		genericProject.bindTestAutomationProject(taProject);
 	}
 
-
-	public void bindTestAutomationProjects(long projectId, Collection<TestAutomationProject> taProjects){
+	public void bindTestAutomationProjects(long projectId, Collection<TestAutomationProject> taProjects) {
 		checkTAProjectNames(taProjects, projectId);
-		for (TestAutomationProject p : taProjects){
-			bindTestAutomationProject( projectId, p);
+		for (TestAutomationProject p : taProjects) {
+			bindTestAutomationProject(projectId, p);
 		}
 	}
-
 
 	private void checkTAProjectNames(Collection<TestAutomationProject> taProjects, long projectId) {
 		List<DuplicateTMLabelException> dnes = new ArrayList<DuplicateTMLabelException>();
 		List<String> taProjectNames = genericProjectDao.findBoundTestAutomationProjectLabels(projectId);
-		for(TestAutomationProject taProject : taProjects){
-			try{
+		for (TestAutomationProject taProject : taProjects) {
+			try {
 				checkTAProjecTName(taProject, taProjectNames);
-			}catch(DuplicateTMLabelException dne){
+			} catch (DuplicateTMLabelException dne) {
 				LOGGER.error(dne.getMessage(), dne);
 				dnes.add(dne);
 			}
 		}
-		if(!dnes.isEmpty()){
+		if (!dnes.isEmpty()) {
 			throw new CompositeDomainException(dnes);
 		}
 	}
 
 	private void checkTAProjecTName(TestAutomationProject taProject, List<String> projectNames) {
-		if(projectNames.contains(taProject.getLabel())){
+		if (projectNames.contains(taProject.getLabel())) {
 			throw new DuplicateTMLabelException(taProject.getLabel());
 		}
 
@@ -530,7 +525,6 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 	public Set<ExecutionStatus> enabledExecutionStatuses(long projectId) {
 		GenericProject project = genericProjectDao.findById(projectId);
 		checkManageProjectOrAdmin(project);
-
 
 		Set<ExecutionStatus> statuses = new HashSet<ExecutionStatus>();
 		statuses.addAll(Arrays.asList(ExecutionStatus.values()));
