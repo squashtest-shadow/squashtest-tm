@@ -85,20 +85,35 @@ public class RicherDialectSessionFactoryBean extends LocalSessionFactoryBean {
 		Properties hibernateProperties = getHibernateProperties();
 		String choosenDialect = hibernateProperties.getProperty(HIBERNATE_PROPERTIES_DIALECT);
 
-		for (String supportingDialect : dialectsSupportingGroupConcat) {
-			if (choosenDialect.equals(supportingDialect)) {
-				return new GroupConcatFunction("group_concat", new StringType());
+		if (isPlaceholder(choosenDialect)) {
+			String propName = choosenDialect.substring(2, choosenDialect.length() - 1);
+			String sysProp = System.getProperty(propName);
+
+			if (sysProp != null) {
+				choosenDialect = sysProp;
+			} else {
+				LOGGER.warn("Could not find {} in system properties, HQL function 'group_concat' will not ba available. Did you correctly configure db dialect ?");
 			}
-		}
-		for (String supportingDialect : dialectsSupportingStringAgg) {
-			if (choosenDialect.equals(supportingDialect)) {
-				return new StringAggFunction("group_concat", new StringType());
-			}
+
 		}
 
-		LOGGER.warn("RicherDialectSessionFactory : selected hibernate Dialect '{}' is not reputed to support the sql function 'group_concat()'. If you are sure that your dialect (and the underlying database) supports this function, please add to RicherDialectSessionFactory.dalectsSupportingGroupConcat (see xml configuration)", choosenDialect);
+		if (dialectsSupportingGroupConcat.contains(choosenDialect)) {
+			return new GroupConcatFunction("group_concat", new StringType());
+		}
+		if (dialectsSupportingStringAgg.contains(choosenDialect)) {
+			return new StringAggFunction("group_concat", new StringType());
+		}
+
+		LOGGER.error(
+				"RicherDialectSessionFactory : selected hibernate Dialect '{}' is not reputed to support the sql function 'group_concat()'. If you are sure that your dialect (and the underlying database) supports this function, please add to RicherDialectSessionFactory.dalectsSupportingGroupConcat (see xml configuration)",
+				choosenDialect);
 
 		return null;
+	}
+
+	private boolean isPlaceholder(String str) {
+		return str.indexOf('$') == 0 && str.indexOf('{') == 1
+				&& str.indexOf('}') == str.length() - 1;
 	}
 
 }

@@ -40,11 +40,11 @@
     SesionFactory instanciates @Configurable objects so we need to enforce init of @Configurable manager aspect 
     through the "depends-on" explicit dependency 
   -->
-  <bean id="squashtest.tm.persistence.hibernate.SessionFactory" class="org.squashtest.tm.service.internal.hibernate.RicherDialectSessionFactoryBean" 
+  <bean id="squashtest.tm.persistence.hibernate.SessionFactory" class="org.squashtest.tm.service.internal.hibernate.RicherDialectSessionFactoryBean"
     depends-on="org.springframework.context.config.internalBeanConfigurerAspect">
-    
+
     <property name="dataSource" ref="squashtest.core.persistence.jdbc.DataSource" />
-    
+
     <property name="annotatedPackages">
       <list>
         <value>org.squashtest.tm.service.internal.repository.hibernate</value>
@@ -53,7 +53,7 @@
         <value>org.squashtest.tm.domain.search</value>
       </list>
     </property>
-   
+
     <property name="annotatedClasses">
       <list>
         <value>org.squashtest.tm.domain.testcase.TestCaseLibrary</value>
@@ -148,26 +148,26 @@
         <value>org.squashtest.tm.domain.requirement.RequirementLibraryPluginBinding</value>
       </list>
     </property>
-    
+
     <property name="namingStrategy">
       <bean class="org.squashtest.tm.infrastructure.hibernate.UppercaseUnderscoreNamingStrategy" />
     </property>
-    
+
     <property name="entityInterceptor">
       <bean class="org.squashtest.tm.service.internal.hibernate.AuditLogInterceptor" />
     </property>
-   
+
     <property name="hibernateProperties" ref="squashtest.tm.hibernate.config" />
-   
+
     <property name="dialectsSupportingGroupConcat">
-    	<list>
-    		<value>org.hibernate.dialect.H2Dialect</value>
-    		<value>org.hibernate.dialect.MySQLDialect</value>
-    	</list>
+      <list>
+        <value>org.hibernate.dialect.H2Dialect</value>
+        <value>org.hibernate.dialect.MySQLDialect</value>
+      </list>
     </property>
     <property name="dialectsSupportingStringAgg">
       <list>
-            <value>org.hibernate.dialect.PostgreSQLDialect</value>
+        <value>org.hibernate.dialect.PostgreSQLDialect</value>
       </list>
     </property>
 
@@ -175,9 +175,9 @@
   </bean>
 
   <bean id="squashtest.tm.hibernate.TransactionManager" class="org.springframework.orm.hibernate4.HibernateTransactionManager">
-    <property name="sessionFactory" ref="squashtest.tm.persistence.hibernate.SessionFactory"/>
+    <property name="sessionFactory" ref="squashtest.tm.persistence.hibernate.SessionFactory" />
   </bean>
 	<!-- ====== / RDBMS / ORM INTEGRATION ====== -->
-	
+
 </beans>
 
