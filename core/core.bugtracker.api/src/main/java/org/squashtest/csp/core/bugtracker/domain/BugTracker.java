@@ -27,6 +27,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.Size;
 
@@ -34,7 +35,7 @@ import org.hibernate.validator.constraints.NotBlank;
 
 @Entity
 @Table(name = "BUGTRACKER")
-public class BugTracker  {
+public class BugTracker {
 	public static final BugTracker NOT_DEFINED;
 
 	static {
@@ -49,11 +50,13 @@ public class BugTracker  {
 		super();
 	}
 
-	private void doSetName(String name){
+	private void doSetName(String name) {
 		this.name = name.trim();
 	}
+
 	@Id
-	@GeneratedValue
+	@GeneratedValue(generator="bugtracker_bugtracker_id_seq")
+	@SequenceGenerator(name="bugtracker_bugtracker_id_seq", sequenceName="bugtracker_bugtracker_id_seq")
 	@Column(name = "BUGTRACKER_ID")
 	private Long id;
 
@@ -87,6 +90,7 @@ public class BugTracker  {
 	/**
 	 * returns the URL of the registered bugtracker. That url is nothing less than the one defined
 	 * in the configuration files so there is no warranty that that URL will be valid.
+	 * 
 	 * @return the URL of that bugtracker or null if no bugtracker is defined or if malformed.
 	 */
 	public URL getURL() {
@@ -103,6 +107,7 @@ public class BugTracker  {
 
 		return bugTrackerUrl;
 	}
+
 	public void setUrl(String url) {
 		this.url = url;
 	}
@@ -119,7 +124,6 @@ public class BugTracker  {
 		return id;
 	}
 
-
 	public boolean isIframeFriendly() {
 		return iframeFriendly;
 	}
@@ -128,7 +132,7 @@ public class BugTracker  {
 		this.iframeFriendly = iframeFriendly;
 	}
 
-	public BugTracker getDetachedBugTracker(){
+	public BugTracker getDetachedBugTracker() {
 		BugTracker detached = new BugTracker();
 		detached.url = this.url;
 		detached.kind = this.kind;
@@ -136,6 +140,5 @@ public class BugTracker  {
 		detached.iframeFriendly = this.iframeFriendly;
 		return detached;
 	}
-
 
 }
