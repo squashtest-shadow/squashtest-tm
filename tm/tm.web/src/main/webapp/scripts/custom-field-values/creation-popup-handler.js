@@ -19,18 +19,19 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 /*
- * 
+ *
  * The CUFValuesCreator handles CustomFieldValues for entities that are being created.
  * They differ from the standard handling of the custom field values because, since they are
  * being created, they don't have an id yet. That's why we have a separate manager here.
- *  
+ *
  */
 
 define(
 		[ "jquery", "handlebars", "jqueryui", "./lib/jquery.editableCustomfield"],
 		function($, handlebars) {
+			"use strict";
 
-			var template = 
+			var template =
 				'{{#each this}}' +
 				'{{#unless optional}}' +
 				'<tr class="create-node-custom-field-row">' +
@@ -41,7 +42,7 @@ define(
 				'{{/each}}';
 
 			/*
-			 * settings : - url : the url where to fetch the creator panel 
+			 * settings : - url : the url where to fetch the creator panel
 			 * jQuery object (but not as a jQuery.DataTable)
 			 */
 			function CUFValuesCreator(settings) {
@@ -50,8 +51,7 @@ define(
 				this.rowTemplate = handlebars.compile(template);
 
 				if (this.table === undefined || !this.table.is('table')) {
-					throw "illegal argument : the settings must provide an attribute 'table' referencing " + 
-					"a jquery table";
+					throw "illegal argument : the settings must provide an attribute 'table' referencing  a jquery table";
 				}
 
 				this.url = settings.url;
@@ -65,7 +65,7 @@ define(
 					var table = this.table;
 
 					// cleanup of the previous calls (if any)
-					table.find('.create-node-custom-field-row').remove(); 
+					table.find('.create-node-custom-field-row').remove();
 
 					table.append(pleaseWait);
 
@@ -84,16 +84,13 @@ define(
 				this.reloadPanel = function() {
 					this.loadPanel(this.url);
 				};
-				
-
 
 				/* init the widgets used by the custom field values */
 				this.init = function() {
-					var table = this.table,
-						cufDefs = this.cufDefs;
-					
+					var table = this.table, cufDefs = this.cufDefs;
+
 					table.append(this.rowTemplate(cufDefs));
-					
+
 					var fields = table.find(".create-node-custom-field");
 					if (fields.length > 0) {
 						fields.each(function(idx) {
@@ -102,7 +99,7 @@ define(
 
 						this.reset(table);
 					}
-					
+
 				};
 
 				/*
@@ -110,9 +107,8 @@ define(
 				 * reinitialise the widgets themselves.
 				 */
 				this.reset = function() {
-					var table = this.table,
-						cufDefs = this.cufDefs;
-					
+					var table = this.table, cufDefs = this.cufDefs;
+
 					var fields = table.find(".create-node-custom-field");
 					if (fields.length > 0) {
 						fields.each(function(idx) {
@@ -121,17 +117,16 @@ define(
 						});
 					}
 				};
-				
-				this.destroy = function(){
-					var table = this.table,
-						cufDefs = this.cufDefs;
-					
+
+				this.destroy = function() {
+					var table = this.table;
+
 					var field = table.find(".create-node-custom-field");
 					if (field.length > 0) {
 						field.each(function(idx) {
 							$(this).editableCustomfield("destroy");
 						});
-					}			
+					}
 				};
 
 				/*
@@ -140,8 +135,7 @@ define(
 				 */
 				this.readValues = function() {
 					var result = {};
-					var table = this.table,
-						cufDefs = this.cufDefs;
+					var table = this.table;
 
 					var fields = table.find(".create-node-custom-field");
 					if (fields.length > 0) {
@@ -153,7 +147,6 @@ define(
 				};
 
 			}
-			
 
 			return CUFValuesCreator;
 

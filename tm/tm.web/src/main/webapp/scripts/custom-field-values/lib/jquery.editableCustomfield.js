@@ -18,236 +18,232 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-/* 
- * Turns each elements in the matched set to an editable custom field (always displayed in edit mode). 
- * 
+/*
+ * Turns each elements in the matched set to an editable custom field (always displayed in edit mode).
+ *
  *
  * .editableCustomfield({conf}) : the constructor, conf must be a CustomFieldModel.
- * 
- * .editableCustomfield("value") : gets the value 
- * 
- * .editableCustomfield("value", value) : sets the value 
- * 
+ *
+ * .editableCustomfield("value") : gets the value
+ *
+ * .editableCustomfield("value", value) : sets the value
+ *
  * .editableCustomfield("destroy") : destroys the custom field.
- * 
+ *
  */
-define(["jquery", "squash.configmanager", "./cuf-values-utils", "jquery.squash.jeditable", "jquery.generateId"], 
-		function($, confman, utils){
-	
-	if ($.fn.editableCustomfield !== undefined){
-		return;
-	}
-	
-	
-	var widgets = {
-		
-		'PLAIN_TEXT' : {
-			_build : function(elt, def){
-				var content = elt.text();
-				var input = $('<input type="text" value="'+content+'" />');
-				elt.empty();
-				elt.append(input);
-			},
-			_set : function(elt, def, value){
-				elt.find('input').val(value);
-			},
-			_get : function(elt, def){
-				return elt.find('input').val();
-			},
-			_destroy : function(elt, def){
-				var content = elt.find('input').val();
-				elt.empty();
-				elt.text(content);
+define([ "jquery", "squash.configmanager", "./cuf-values-utils", "jquery.squash.jeditable", "jquery.generateId" ],
+		function($, confman, utils) {
+			"use strict";
+
+			if ($.fn.editableCustomfield !== undefined) {
+				return;
 			}
-				
-		},
-		
-		'CHECKBOX' : {
-			_build : function(elt, def){
-				var checked = (elt.text().toLowerCase() === "true") ? true : false;
-				elt.empty();
-				var chkbx = $('<input type="checkbox"/>');
-				chkbx.prop('checked', checked);
-				elt.append(chkbx);
-			},
-			_set : function(elt, def, value){
-				var chkbx = elt.find('input[type="checkbox"]'); 
-				if (value === true || value === "true"){
-					chkbx.prop("checked", true);
-				}
-				else{
-					chkbx.prop("checked", false);
-				}
-			},
-			_get : function(elt, def){
-				var chkbx =  elt.find('input[type="checkbox"]');
-				return chkbx.prop('checked'); 
-			},
-			_destroy : function(elt, def){
-				var chkbx =  elt.find('input[type="checkbox"]');
-				var checked = chkbx.prop('checked');
-				elt.empty();
-				elt.text(checked);
-			}
-		},
-			
-		'DROPDOWN_LIST' : {
-			_build : function(elt, def){
-				var content = elt.text();
-				
-				var select = $("<select>");
-				var options = def.options;
-				for (var i in def.options){
-					var attrs = {
-						'text' : options[i].label,
-						'value' : options[i].label
-					};
-					if (options[i].label === content){
-						attrs.selected = "selected";
+
+			var widgets = {
+
+				'PLAIN_TEXT' : {
+					_build : function(elt, def) {
+						var content = elt.text();
+						var input = $('<input type="text" value="' + content + '" />');
+						elt.empty();
+						elt.append(input);
+					},
+					_set : function(elt, def, value) {
+						elt.find('input').val(value);
+					},
+					_get : function(elt, def) {
+						return elt.find('input').val();
+					},
+					_destroy : function(elt, def) {
+						var content = elt.find('input').val();
+						elt.empty();
+						elt.text(content);
 					}
-					var opt = $('<option/>',attrs);
-					select.append(opt);
+
+				},
+
+				'CHECKBOX' : {
+					_build : function(elt, def) {
+						var checked = (elt.text().toLowerCase() === "true") ? true : false;
+						elt.empty();
+						var chkbx = $('<input type="checkbox"/>');
+						chkbx.prop('checked', checked);
+						elt.append(chkbx);
+					},
+					_set : function(elt, def, value) {
+						var chkbx = elt.find('input[type="checkbox"]');
+						if (value === true || value === "true") {
+							chkbx.prop("checked", true);
+						} else {
+							chkbx.prop("checked", false);
+						}
+					},
+					_get : function(elt, def) {
+						var chkbx = elt.find('input[type="checkbox"]');
+						return chkbx.prop('checked');
+					},
+					_destroy : function(elt, def) {
+						var chkbx = elt.find('input[type="checkbox"]');
+						var checked = chkbx.prop('checked');
+						elt.empty();
+						elt.text(checked);
+					}
+				},
+
+				'DROPDOWN_LIST' : {
+					_build : function(elt, def) {
+						var content = elt.text();
+
+						var select = $("<select>");
+						var options = def.options;
+						for ( var i in def.options) {
+							var attrs = {
+								'text' : options[i].label,
+								'value' : options[i].label
+							};
+							if (options[i].label === content) {
+								attrs.selected = "selected";
+							}
+							var opt = $('<option/>', attrs);
+							select.append(opt);
+						}
+						elt.empty();
+						elt.append(select);
+					},
+					_set : function(elt, def, value) {
+						elt.find('select').val(value);
+					},
+					_get : function(elt, def) {
+						return elt.find('select').val();
+					},
+					_destroy : function(elt, def) {
+						var selected = elt.find('select').val();
+						elt.empty();
+						elt.text(selected);
+					}
+				},
+
+				// datepickers are special : they are always jeditable, except that
+				// we don't want them to post to the server but rather keep the value
+				// locally (hence the dumb submit function)
+				'DATE_PICKER' : {
+					_build : function(elt, def) {
+						var date = elt.text();
+						var formatted = utils.convertStrDate($.datepicker.ATOM, def.format, date);
+
+						var input = $('<input type="text" value="' + formatted + '"/>');
+
+						elt.empty();
+						elt.append(input);
+
+						var conf = confman.getStdDatepicker();
+
+						input.datepicker(conf);
+					},
+					_set : function(elt, def, value) {
+						var formatted = utils.convertStrDate($.datepicker.ATOM, def.format, value);
+						var input = elt.find('input');
+						input.val(formatted);
+					},
+					_get : function(elt, def) {
+						var input = elt.find('input');
+						var txt = input.val();
+						return utils.convertStrDate(def.format, $.datepicker.ATOM, txt);
+					},
+					_destroy : function(elt, def) {
+						var input = elt.find('input');
+						var date = this._get(elt, def);
+						input.datepicker("destroy");
+						elt.empty();
+						elt.text(date);
+					}
+				},
+
+				'RICH_TEXT' : {
+					_build : function(elt, def) {
+						var html = elt.html();
+						var area = $("<textarea/>");
+						area.generateId();
+						elt.empty();
+						elt.append(area);
+						area.html(html);
+
+						var conf = confman.getStdCkeditor();
+						area.ckeditor(function() {
+						}, conf);
+					},
+					_set : function(elt, def, value) {
+						var cked = CKEDITOR.instances[elt.find('>textarea').attr('id')];
+						if (!!cked) {
+							cked.setData(value);
+						}
+					},
+					_get : function(elt, def) {
+						var cked = CKEDITOR.instances[elt.find('>textarea').attr('id')];
+						if (!!cked) {
+							return cked.getData();
+						}
+					},
+					_destroy : function(elt, def) {
+						var cked = CKEDITOR.instances[elt.find('>textarea').attr('id')];
+						var content = cked.getData();
+						if (!!cked) {
+							cked.destroy(true);
+						}
+						elt.empty();
+						elt.html(content);
+					}
 				}
-				elt.empty();
-				elt.append(select);
-			},
-			_set : function(elt, def, value){
-				elt.find('select').val(value);
-			},
-			_get : function(elt, def){
-				return elt.find('select').val();
-			},
-			_destroy : function(elt, def){
-				var selected = elt.find('select').val();
-				elt.empty();
-				elt.text(selected);
-			}
-		},
-		
-		// datepickers are special : they are always jeditable, except that
-		// we don't want them to post to the server but rather keep the value
-		// locally (hence the dumb submit function)
-		'DATE_PICKER' : {
-			_build : function(elt, def){
-				var date = elt.text();
-				var formatted = utils.convertStrDate($.datepicker.ATOM, def.format, date);
-				
-				var input = $('<input type="text" value="'+formatted+'"/>');
-				
-				elt.empty();
-				elt.append(input);
-				
-				var conf = confman.getStdDatepicker();
-				
-				input.datepicker(conf);
-			},
-			_set : function(elt, def, value){
-				var formatted = utils.convertStrDate($.datepicker.ATOM, def.format, value);
-				var input = elt.find('input');
-				input.val(formatted);
-			},
-			_get : function(elt, def){
-				var input = elt.find('input');
-				var txt = input.val();
-				return utils.convertStrDate(def.format, $.datepicker.ATOM, txt);
-			},
-			_destroy : function(elt, def){
-				var input = elt.find('input');
-				var date = this._get(elt, def);
-				input.datepicker("destroy");
-				elt.empty();
-				elt.text(date);
-			}
-		},
-		
-		'RICH_TEXT' : {
-			_build : function(elt, def){
-				var html = elt.html();
-				var area = $("<textarea/>");
-				area.generateId();
-				elt.empty();
-				elt.append(area);
-				area.html(html);
-				
-				var conf = confman.getStdCkeditor();
-				area.ckeditor(function(){}, conf);
-			},
-			_set : function(elt, def, value){
-				var cked = CKEDITOR.instances[elt.find('>textarea').attr('id')];
-				if (!! cked){
-					cked.setData(value);
+
+			};
+
+			$.fn.editableCustomfield = function() {
+
+				if (arguments.lenghth === 0) {
+					throw "cannot invoke staticCustomfield with no arguments";
 				}
-			},
-			_get : function(elt, def){
-				var cked = CKEDITOR.instances[elt.find('>textarea').attr('id')];
-				if (!! cked){
-					return cked.getData();
+
+				var def, widg;
+
+				// case constructor
+				if (arguments.length === 1 && _.isObject(arguments[0])) {
+					def = arguments[0];
+					this.each(function(idx, elt) {
+
+						var $this = $(elt);
+
+						// save the configuration
+						$this.data("cufdef", def);
+
+						widg = widgets[def.inputType.enumName];
+						widg._build($this, def);
+
+					});
 				}
-			},
-			_destroy : function(elt, def){
-				var cked = CKEDITOR.instances[elt.find('>textarea').attr('id')];
-				var content = cked.getData();
-				if (!! cked){
-					cked.destroy(true);
+
+				// case getter
+				else if (arguments.length === 1 && arguments[0] === "value") {
+					def = this.data('cufdef');
+					widg = widgets[def.inputType.enumName];
+					return widg._get(this, def);
 				}
-				elt.empty();
-				elt.html(content);
-			}
-		} 
-	
-	};
-	
-	
-	$.fn.editableCustomfield = function(){
-		
-		if (arguments.lenghth === 0){
-			throw "cannot invoke staticCustomfield with no arguments";
-		}
-		
-		var def, widg;
-		
-		// case constructor
-		if (arguments.length === 1 && _.isObject(arguments[0])){
-			def= arguments[0];
-			this.each(function(idx, elt){
-				
-				var $this = $(elt);
-				
-				// save the configuration
-				$this.data("cufdef", def);
-				
-				widg = widgets[def.inputType.enumName];
-				widg._build($this, def);
-				
-			});			
-		}
-		
-		// case getter
-		else if (arguments.length === 1 && arguments[0] === "value") {
-			def = this.data('cufdef');
-			widg = widgets[def.inputType.enumName];
-			return widg._get(this, def);
-		}
-		
-		// case setter
-		else if (arguments.length === 2 && arguments[0] === "value"){
-			def = this.data("cufdef");
-			widg = widgets[def.inputType.enumName];
-			widg._set(this, def, arguments[1]);
-		}
-		
-		// case destroy
-		else if (arguments.length === 1 && arguments[0] === "destroy"){			
-			this.each(function(idx, elt){
-				var $this = $(elt);				
-				def = $this.data('cufdef');
-				widg = widgets[def.inputType.enumName];
-				widg._destroy($this, def);
-			});
-		}
-	};
-	
-	
-	
-	
-});
+
+				// case setter
+				else if (arguments.length === 2 && arguments[0] === "value") {
+					def = this.data("cufdef");
+					widg = widgets[def.inputType.enumName];
+					widg._set(this, def, arguments[1]);
+				}
+
+				// case destroy
+				else if (arguments.length === 1 && arguments[0] === "destroy") {
+					this.each(function(idx, elt) {
+						var $this = $(elt);
+						def = $this.data('cufdef');
+						widg = widgets[def.inputType.enumName];
+						widg._destroy($this, def);
+					});
+				}
+			};
+
+		});

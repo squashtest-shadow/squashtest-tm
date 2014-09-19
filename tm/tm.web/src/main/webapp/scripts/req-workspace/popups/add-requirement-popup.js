@@ -18,77 +18,76 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define(['jquery', 'tree', 'custom-field-values', 'jquery.squash.formdialog'], function($, zetree, cufValuesManager){
-	
-	
+define([ 'jquery', 'tree', 'custom-field-values', 'jquery.squash.formdialog' ], function($, zetree, cufValuesManager) {
+	"use strict";
 
-	function postNode(dialog, tree){
-		
+	function postNode(dialog, tree) {
+
 		var params = {
 			name : dialog.find('#add-requirement-name').val(),
 			reference : dialog.find('#add-requirement-reference').val(),
 			description : dialog.find('#add-requirement-description').val(),
 			criticality : dialog.find("#add-requirement-criticality").val(),
-			category : dialog.find("#add-requirement-category").val()			
+			category : dialog.find("#add-requirement-category").val()
 		};
-		
+
 		var cufParams = dialog.data('cuf-values-support').readValues();
-		
+
 		$.extend(params, cufParams);
-		
+
 		return tree.jstree('postNewNode', 'new-requirement', params, false);
 	}
-	
-	
-	function addCufHandler(dialog, tree){
+
+	function addCufHandler(dialog, tree) {
 		var table = dialog.find('table.add-node-attributes');
-		var cufHandler = cufValuesManager.newCreationPopupCUFHandler({table : table});
-		
-		dialog.on('formdialogopen', function(){
-			var projectId = tree.jstree('get_selected').getProjectId();
-			var bindingsUrl = squashtm.app.contextRoot+"/custom-fields-binding?projectId="+projectId+"&bindableEntity=REQUIREMENT_VERSION&optional=false";
-					
-			cufHandler.loadPanel(bindingsUrl);		
+		var cufHandler = cufValuesManager.newCreationPopupCUFHandler({
+			table : table
 		});
-		
-		dialog.on('formdialogcleanup', function(){
+
+		dialog.on('formdialogopen', function() {
+			var projectId = tree.jstree('get_selected').getProjectId();
+			var bindingsUrl = squashtm.app.contextRoot + "/custom-fields-binding?projectId=" + projectId +
+					"&bindableEntity=REQUIREMENT_VERSION&optional=false";
+
+			cufHandler.loadPanel(bindingsUrl);
+		});
+
+		dialog.on('formdialogcleanup', function() {
 			cufHandler.reset();
 		});
-		
-		dialog.on('formdialogclose', function(){
+
+		dialog.on('formdialogclose', function() {
 			cufHandler.destroy();
 		});
-		
+
 		dialog.data('cuf-values-support', cufHandler);
 	}
-	
-	function init(){
-		
+
+	function init() {
+
 		var dialog = $("#add-requirement-dialog").formDialog();
 		var tree = zetree.get();
-		
-		
-		dialog.on('formdialogadd-close', function(){
-			postNode(dialog,tree).then(function(){
+
+		dialog.on('formdialogadd-close', function() {
+			postNode(dialog, tree).then(function() {
 				dialog.formDialog('close');
-			});			
+			});
 		});
-		
-		dialog.on('formdialogadd-another', function(){
-			postNode(dialog, tree).then(function(){
+
+		dialog.on('formdialogadd-another', function() {
+			postNode(dialog, tree).then(function() {
 				dialog.formDialog('cleanup');
-			}) ;		
+			});
 		});
-		
-		dialog.on('formdialogcancel', function(){
+
+		dialog.on('formdialogcancel', function() {
 			dialog.formDialog('close');
 		});
-		
-		
+
 		addCufHandler(dialog, tree);
-		
+
 	}
-	
+
 	return {
 		init : init
 	};
