@@ -46,7 +46,7 @@ define([ 'jquery', 'tree', 'custom-field-values', 'jquery.squash.formdialog' ], 
 
 		dialog.on('formdialogopen', function() {
 			var projectId = tree.jstree('get_selected').getProjectId();
-			var bindingsUrl = squashtm.app.contextRoot + "/custom-fields-binding?projectId=" + projectId +
+			var bindingsUrl = window.squashtm.app.contextRoot + "/custom-fields-binding?projectId=" + projectId +
 					"&bindableEntity=REQUIREMENT_VERSION&optional=false";
 
 			cufHandler.loadPanel(bindingsUrl);
