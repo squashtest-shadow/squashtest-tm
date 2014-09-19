@@ -63,6 +63,9 @@ import org.springframework.web.servlet.view.jasperreports.JasperReportsXlsView;
  * 
  */
 public class JasperReportsExtMultiFormatView extends JasperReportsMultiFormatView {
+	private static final Pattern EL_TIMESTAMP_PATTERN = Pattern.compile("(\\Q${\\E([A-Za-z:]+)\\Q}\\E)");
+	private static final Pattern MUSTACHE_TIMESTAMP_PATTERN = Pattern.compile("(\\Q{{\\E([A-Za-z:]+)\\Q}}\\E)");
+
 	public JasperReportsExtMultiFormatView() {
 		super();
 		configureFormatMappings();
@@ -105,20 +108,40 @@ public class JasperReportsExtMultiFormatView extends JasperReportsMultiFormatVie
 	protected void renderReport(JasperPrint populatedReport, Map<String, Object> model, HttpServletResponse response)
 			throws Exception {
 		if (reportFileName != null) {
-			Pattern pattern = Pattern.compile("(\\Q${\\E([A-Za-z:]+)\\Q}\\E)");
-			Matcher matcher1 = pattern.matcher(reportFileName);
-			Properties contentDispositionMappings = getContentDispositionMappings();
-			Properties safeCopy = (Properties) contentDispositionMappings.clone();
-			if (matcher1.find()) {
-				for (Entry<Object, Object> mappingsEntry : contentDispositionMappings.entrySet()) {
-					String val = processPlaceHolders(pattern, mappingsEntry);
-					mappingsEntry.setValue(val);
-				}
-			}
+			// TODO if users complain about weird file names, consider thread competition on contentDispositionMapping
+			Properties contentDispositionMappings = addTimestampToFilename();
+			Properties previousCDM = copyContentDispositionMappings();
 			setContentDispositionMappings(contentDispositionMappings);
 			super.renderReport(populatedReport, model, response);
-			setContentDispositionMappings(safeCopy);
+			setContentDispositionMappings(previousCDM);
 		}
+	}
+
+	private Properties addTimestampToFilename() {
+		Properties contentDispositionMappings;
+		if (EL_TIMESTAMP_PATTERN.matcher(reportFileName).find()) {
+			contentDispositionMappings = addTimestampToFilename(EL_TIMESTAMP_PATTERN);
+		} else if (MUSTACHE_TIMESTAMP_PATTERN.matcher(reportFileName).find()) {
+			contentDispositionMappings = addTimestampToFilename(MUSTACHE_TIMESTAMP_PATTERN);
+		} else {
+			contentDispositionMappings = copyContentDispositionMappings();
+		}
+		return contentDispositionMappings;
+	}
+
+	private Properties copyContentDispositionMappings() {
+		Properties previousCDM = (Properties) getContentDispositionMappings().clone();
+		return previousCDM;
+	}
+
+	private Properties addTimestampToFilename(Pattern timestampPattern) {
+		Properties contentDispositionMappings = copyContentDispositionMappings();
+
+		for (Entry<Object, Object> mappingsEntry : contentDispositionMappings.entrySet()) {
+			String val = processPlaceHolders(timestampPattern, mappingsEntry);
+			mappingsEntry.setValue(val);
+		}
+		return contentDispositionMappings;
 	}
 
 	private String processPlaceHolders(Pattern pattern, Entry<Object, Object> mappingsEntry) {
@@ -156,16 +179,29 @@ public class JasperReportsExtMultiFormatView extends JasperReportsMultiFormatVie
 		return val;
 	}
 
+	/**
+	 * The name of the report when it is generated and downloaded.
+	 * 
+	 * It can follow any of there pattern :
+	 * <ul>
+	 * <li>MyReport-${date:yyyyMMdd}
+	 * <li>MyReport-{{date:yyyyMMdd}}
+	 * </ul>
+	 * 
+	 * <strong>Caveat : </strong> The <code>${}</code> pattern CANNOT be used with a <code><property-placeholder/></code> directive. It is kept for backward compatibility.
+	 * 
+	 */
 	public void setReportFileName(String reportFileName) {
 		if (reportFileName != null) {
+			// considering we will fiddle with filename later, is this really necessary here ?
 			Properties contentDispositionMappings = getContentDispositionMappings();
-			
+
 			for (Entry<Object, Object> mappingsEntry : contentDispositionMappings.entrySet()) {
 				String val = (String) mappingsEntry.getValue();
-				String val2 = val.replace("report", reportFileName);
-				mappingsEntry.setValue(val2);
+				String newVal = val.replace("report", reportFileName);
+				mappingsEntry.setValue(newVal);
 			}
-			
+
 		}
 		this.reportFileName = reportFileName;
 	}

@@ -22,18 +22,35 @@ package org.squashtest.tm.api.report.spring.view.jasperreports;
 
 import static org.junit.Assert.*;
 import spock.lang.Specification;
+import spock.lang.Unroll;
 
 /**
- * @author Gregory
+ * @author Gregory Fouquet
  *
  */
 class JasperReportsExtMultiFormatViewTest extends Specification {
 	def "should load content disposition mappings properties file"() {
 		when:
 		new JasperReportsExtMultiFormatView()
-		
+
 		then:
 		notThrown IllegalArgumentException
+	}
+
+	@Unroll
+	def "[Issue 3927] should replace #placeholder with date"() {
+		given :
+		JasperReportsExtMultiFormatView view = new JasperReportsExtMultiFormatView();
+		view.setReportFileName("whatever-${placeholder}")
+
+		when:
+		def name = view.addTimestampToFilename()['pdf']
+
+		then:
+		name ==~ /.*\"whatever-\d{6}\.pdf\"/;
+
+		where:
+		placeholder << ['${date:yyyyMM}', '{{date:yyyyMM}}']
 	}
 
 }
