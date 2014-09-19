@@ -27,8 +27,8 @@
  */
 
 define(
-		[ "jquery", "handlebars", "jqueryui", "./lib/jquery.editableCustomfield"],
-		function($, handlebars) {
+		[ "jquery", "handlebars", "underscore", "jqueryui", "./lib/jquery.editableCustomfield"],
+		function($, handlebars, _) {
 			"use strict";
 
 			var template =

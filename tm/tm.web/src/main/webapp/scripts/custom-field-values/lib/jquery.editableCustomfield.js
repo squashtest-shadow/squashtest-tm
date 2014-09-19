@@ -31,8 +31,8 @@
  * .editableCustomfield("destroy") : destroys the custom field.
  *
  */
-define([ "jquery", "squash.configmanager", "./cuf-values-utils", "jquery.squash.jeditable", "jquery.generateId" ],
-		function($, confman, utils) {
+define([ "jquery", "underscore", "ckeditor",  "squash.configmanager", "./cuf-values-utils", "jquery.squash.jeditable", "jquery.generateId" ],
+		function($, _, CKEDITOR, confman, utils) {
 			"use strict";
 
 			if ($.fn.editableCustomfield !== undefined) {
