@@ -33,12 +33,10 @@ define(
 
 			var template =
 				'{{#each this}}' +
-				'{{#unless optional}}' +
 				'<tr class="create-node-custom-field-row">' +
 					'<td><label>{{label}}</label></td>' +
 					'<td id="customFields[{{id}}]" class="create-node-custom-field" >{{defaultValue}}</td>' +
 				'</tr>' +
-				'{{/unless}}' +
 				'{{/each}}';
 
 			/*
@@ -73,7 +71,8 @@ define(
 
 					$.getJSON(url).success(function(jsonDef) {
 						table.find(".cuf-wait").remove();
-						self.cufDefs = jsonDef;
+						// only required fields are shown in creation popup
+						self.cufDefs = _.where(jsonDef, {optional: false});
 						self.init();
 
 						this.url = url;
