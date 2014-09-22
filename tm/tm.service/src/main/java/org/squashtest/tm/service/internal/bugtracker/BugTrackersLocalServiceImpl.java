@@ -609,8 +609,9 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 
 			Long localId = (Long) issue.getId();
 			RemoteIssueDecorator ish = remoteIssueByLocalId.get(localId);
-
-			bindings.add(new IssueOwnership<RemoteIssueDecorator>(ish, detector));
+			if(ish != null){
+				bindings.add(new IssueOwnership<RemoteIssueDecorator>(ish, detector));
+			}
 		}
 
 		return bindings;
