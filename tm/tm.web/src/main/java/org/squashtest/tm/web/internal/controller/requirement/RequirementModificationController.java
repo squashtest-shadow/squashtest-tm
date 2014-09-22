@@ -324,7 +324,9 @@ public class RequirementModificationController {
 		model.addAttribute("jsonCategories", buildMarshalledCategories(locale));
 		model.addAttribute("verifyingTestCaseModel", getVerifyingTCModel(req.getCurrentVersion()));
 		model.addAttribute("auditTrailModel", getEventsTableModel(req));
+		boolean hasCUF = cufValueService.hasCustomFields(req.getCurrentVersion());
 
+		model.addAttribute("hasCUF", hasCUF);
 		return "page/requirements/versions-manager";
 	}
 
