@@ -24,6 +24,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
+import javax.validation.ValidatorFactory;
+
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.dialect.function.SQLFunction;
@@ -40,13 +42,72 @@ import org.springframework.orm.hibernate4.LocalSessionFactoryBuilder;
  * @author bsiri
  * 
  */
-public class RicherDialectSessionFactoryBean extends LocalSessionFactoryBean {
-	private static final Logger LOGGER = LoggerFactory.getLogger(RicherDialectSessionFactoryBean.class);
+public class SquashSessionFactoryBean extends LocalSessionFactoryBean {
+	private static final Logger LOGGER = LoggerFactory.getLogger(SquashSessionFactoryBean.class);
 
 	private static final String HIBERNATE_PROPERTIES_DIALECT = "hibernate.dialect";
+	private static final String JAVAX_VALIDATION_FACTORY = "javax.persistence.validation.factory";
 
 	private List<String> dialectsSupportingGroupConcat = new ArrayList<String>();
 	private List<String> dialectsSupportingStringAgg = new ArrayList<String>();
+
+	private ValidatorFactory validatorFactory;
+
+
+	protected SessionFactory buildSessionFactory(LocalSessionFactoryBuilder sfb) {
+
+		// the validator factory
+		addValidatorFactory();
+
+		// group concat
+		addGroupConcatToConfiguration();
+
+		// resume normal session factory initialization
+		return super.buildSessionFactory(sfb);
+	}
+
+
+
+	/* ********************************************************************
+	 * 		About ValidatorFactory
+	 ******************************************************************* */
+
+
+	protected void addValidatorFactory(){
+		Configuration config = getConfiguration();
+		Properties p = config.getProperties();
+		p.put(JAVAX_VALIDATION_FACTORY, validatorFactory);
+	}
+
+
+	public ValidatorFactory getValidatorFactory() {
+		return validatorFactory;
+	}
+
+	public void setValidatorFactory(ValidatorFactory validatorFactory) {
+		this.validatorFactory = validatorFactory;
+	}
+
+
+	/* ********************************************************************
+	 * 		About GroupConcat
+	 ******************************************************************* */
+
+
+
+	protected void addGroupConcatToConfiguration(){
+
+		// check that the underlying base supports the dialect extensions : let's see what's the dialect is
+		SQLFunction sqlFunction = getSQLFunctionForDialect();
+		Configuration config = getConfiguration();
+
+		if (sqlFunction != null) {
+			// add the support for group concat
+			config.addSqlFunction("group_concat", sqlFunction);
+		} else {
+			config.addSqlFunction("group_concat", new GroupConcatFunction("group_concat", new StringType()));
+		}
+	}
 
 	public void setDialectsSupportingStringAgg(List<String> dialectsSupportingStringAgg) {
 		this.dialectsSupportingStringAgg = dialectsSupportingStringAgg;
@@ -64,21 +125,7 @@ public class RicherDialectSessionFactoryBean extends LocalSessionFactoryBean {
 		return dialectsSupportingGroupConcat;
 	}
 
-	protected SessionFactory buildSessionFactory(LocalSessionFactoryBuilder sfb) {
 
-		// check that the underlying base supports the dialect extensions : let's see what's the dialect is
-		SQLFunction sqlFunction = getSQLFunctionForDialect();
-		Configuration config = getConfiguration();
-		if (sqlFunction != null) {
-			// add the support for group concat
-			config.addSqlFunction("group_concat", sqlFunction);
-		} else {
-			config.addSqlFunction("group_concat", new GroupConcatFunction("group_concat", new StringType()));
-		}
-
-		// resume normal session factory initialization
-		return super.buildSessionFactory(sfb);
-	}
 
 	private SQLFunction getSQLFunctionForDialect() throws IllegalArgumentException {
 

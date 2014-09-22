@@ -29,8 +29,8 @@ import java.util.Properties
  * @author Gregory Fouquet
  *
  */
-class RicherDialectSessionFactoryBeanTest extends Specification {
-	RicherDialectSessionFactoryBean factoryBean = new RicherDialectSessionFactoryBean()
+class SquashSessionFactoryBeanTest extends Specification {
+	SquashSessionFactoryBean factoryBean = new SquashSessionFactoryBean()
 	Properties hibernateProps = Mock()
 
 	def setup() {

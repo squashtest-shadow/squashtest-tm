@@ -40,7 +40,7 @@
     SesionFactory instanciates @Configurable objects so we need to enforce init of @Configurable manager aspect 
     through the "depends-on" explicit dependency 
   -->
-  <bean id="squashtest.tm.persistence.hibernate.SessionFactory" class="org.squashtest.tm.service.internal.hibernate.RicherDialectSessionFactoryBean"
+  <bean id="squashtest.tm.persistence.hibernate.SessionFactory" class="org.squashtest.tm.service.internal.hibernate.SquashSessionFactoryBean"
     depends-on="org.springframework.context.config.internalBeanConfigurerAspect">
 
     <property name="dataSource" ref="squashtest.core.persistence.jdbc.DataSource" />
@@ -171,6 +171,7 @@
       </list>
     </property>
 
+	<property name="validatorFactory" ref="javax.validation.ValidatorFactory" />
 
   </bean>
 
