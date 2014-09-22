@@ -69,9 +69,12 @@ public class TestCaseExecutionsController {
 			.mapAttribute("test-suite-name", NAME, TestSuite.class)
 			.mapAttribute("exec-status", "executionStatus", Execution.class)
 			.mapAttribute("last-exec-by", "lastExecutedBy", Execution.class)
-			.mapAttribute("last-exec-on", "lastExecutedOn", Execution.class);
+			.mapAttribute("last-exec-on", "lastExecutedOn", Execution.class)
+			.mapAttribute("dataset", "datasetLabel", Execution.class);
+
 
 	private ExecutionFinder executionFinder;
+			
 	@Inject
 	private MessageSource messageSource;
 	

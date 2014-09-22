@@ -88,7 +88,7 @@
   						<td th:text="#{*{executionStatus.i18nKey}}" class="exec-status" >Status ??</td>
   						<td th:text="*{lastExecutedBy}">Peter Parker</td>
   						<td th:text="*{lastExecutedOn == null ? #messages.msg('squashtm.nodata') : #dates.format(lastExecutedOn,#messages.msg('squashtm.dateformatShort'))}">01/02/2013</td>
-  						<td th:text="*{datasetLabel}">my dataset</td>
+  						<td th:text="${#strings.isEmpty(exec.datasetLabel) ? '__#{label.noneDS}__' : exec.datasetLabel }">my dataset</td>
   					</tr>
   					<tr th:remove="all">
   						<td class="not-displayed exec-id">1</td>
