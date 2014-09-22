@@ -20,43 +20,43 @@
  */
 /*
  * accepts as parameter (in that order) :
- * - a jquery selector to append to, 
- * - an array of CustomFieldValueModel, 
+ * - a jquery selector to append to,
+ * - an array of CustomFieldValueModel,
  * - a mode : "static", "editable", "jeditable"
- * can edit or not 
- * 
+ * can edit or not
+ *
  */
-define(["jquery", "handlebars", "squash.translator", "jqueryui", "./lib/jquery.staticCustomfield", "./lib/jquery.jeditableCustomfield"], 
+define(["jquery", "handlebars", "squash.translator", "jqueryui", "./lib/jquery.staticCustomfield", "./lib/jquery.jeditableCustomfield"],
 		function($, handlebars, translator){
-	
+	"use strict";
+
 	var fromTestCase = " ("+translator.get("label.fromTestCase")+") ";
-	
+
 	/*
 	 * little helper thanks to stack overflow !
-	 * 
+	 *
 	 */
-	
+
 	handlebars.registerHelper('ifequals', function(cuftype, expected, options) {
-	  return (cuftype === expected) ? options.fn(this) : options.inverse(this);
-	});
-	
-	handlebars.registerHelper('cuflabel', function(value){
-		var cuf = value.binding.customField,
-			lbl = cuf.label;
-		return (cuf.denormalized) ? lbl+fromTestCase : lbl; 
+		return (cuftype === expected) ? options.fn(this) : options.inverse(this);
 	});
 
-	handlebars.registerHelper('cufid', function(value){
+	handlebars.registerHelper('cuflabel', function(value) {
+		var cuf = value.binding.customField, lbl = cuf.label;
+		return (cuf.denormalized) ? lbl + fromTestCase : lbl;
+	});
+
+	handlebars.registerHelper('cufid', function(value) {
 		var prefix = (value.binding.customField.denormalized) ? "denormalized-cuf-value-" : "cuf-value-";
 		return prefix + value.id;
 	});
-	
-	handlebars.registerHelper('cufclass', function(value){
+
+	handlebars.registerHelper('cufclass', function(value) {
 		return (value.binding.customField.denormalized) ? "denormalized-custom-field" : "custom-field";
 	});
 
-	
-	
+
+
 	var template = handlebars.compile(
 		'{{#each this}}' +
 		'<div class="display-table-row control-group">' +
@@ -68,53 +68,51 @@ define(["jquery", "handlebars", "squash.translator", "jqueryui", "./lib/jquery.s
 				'<span id="{{cufid this}}" class="{{cufclass this}}" data-value-id="{{id}}">{{value}}</span>' +
 			'{{/ifequals}}' +
 			'<span class="help-inline not-displayed">&nbsp;</span>' +
-			'</div>' +			
+			'</div>' +
 		'</div>' +
 		'{{/each}}'
 		);
-	
-	
-	
+
+
+
 	return {
-		
-		init : function(containerSelector, cufValues, mode){
-			
-			var html = template(cufValues);
-			
-			var container = $(containerSelector);
-						
-			container.append(html);
-	
-			for (var idx in cufValues){
-				
-				var cufValue = cufValues[idx],
-					selector = (cufValue.binding.customField.denormalized) ? 
-							"#denormalized-cuf-value-"+cufValue.id : 
-							"#cuf-value-"+cufValue.id;
-				
-				var elt = container.find(selector);
-				
-				switch(mode){
-				case "static": 
-					elt.staticCustomfield(cufValue.binding.customField);
-					break;
-				case "editable" : 
-					elt.editableCustomfield(cufValue.binding.customField);
-					elt[0].getElementsByTagName("p")[0].className += " editable";
-					break;
-					
-				case "jeditable" :
-					elt.jeditableCustomfield(cufValue.binding.customField, cufValue.id);
-					elt[0].getElementsByTagName("p")[0].className += " editable";
-					break;
-				}
+
+		init : function(containerSelector, cufValues, mode) {
+
+		var html = template(cufValues);
+
+		var container = $(containerSelector);
+
+		container.append(html);
+
+		var addEditableStyle = function(dom) {
+			$(dom).find("p:first").addClass("editable");
+		};
+
+		for ( var idx in cufValues) {
+			var cufValue = cufValues[idx], selector = (cufValue.binding.customField.denormalized) ? "#denormalized-cuf-value-" +
+					cufValue.id
+					: "#cuf-value-" + cufValue.id;
+
+			var elt = container.find(selector);
+
+			switch (mode) {
+			case "static":
+				elt.staticCustomfield(cufValue.binding.customField);
+				break;
+
+			case "editable":
+				elt.editableCustomfield(cufValue.binding.customField);
+				addEditableStyle(elt[0]);
+				break;
+
+			case "jeditable":
+				elt.jeditableCustomfield(cufValue.binding.customField, cufValue.id);
+				addEditableStyle(elt[0]);
+				break;
 			}
-			
-			
-			
-		} 
-		
-		
-	};
-	
+		}
+	}
+};
+
 });
