@@ -22,33 +22,37 @@ package org.squashtest.tm.domain.search;
 
 import java.util.Iterator;
 import java.util.List;
-
+/**
+ * 
+ * Used to Export the result of an advanced Search . This model id not supposed to be importable.
+ *
+ */
 public interface SearchExportCSVModel {
 
-		char getSeparator();
-		
-		void setSeparator(char separator);
-		
-		Row getHeader();
-		
-		Iterator<Row> dataIterator();  
-		
-		
-		// ********** interfaces *************
-		
-		
-		public interface Row{
-			/**
-			 * return a separator-separated list of cell values 
-			 */
-			String toString();
-			
-			List<Cell> getCells();
-		}
-		
-		
-		
-		public interface Cell{
-			String getValue();
-		}
+	char getSeparator();
+
+	void setSeparator(char separator);
+
+	Row getHeader();
+
+	Iterator<Row> dataIterator();
+
+
+	// ********** interfaces *************
+
+
+	public interface Row{
+		/**
+		 * return a separator-separated list of cell values
+		 */
+		String toString();
+
+		List<Cell> getCells();
+	}
+
+
+
+	public interface Cell{
+		String getValue();
+	}
 }

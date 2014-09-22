@@ -21,9 +21,9 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="requirement-export" pageWidth="1900" pageHeight="595" orientation="Landscape" columnWidth="1900" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" resourceBundle="/WEB-INF/messages/tm/messages" whenResourceMissingType="Key">
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="requirement-export" pageWidth="2040" pageHeight="595" orientation="Landscape" columnWidth="2040" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" resourceBundle="/WEB-INF/messages/tm/messages" whenResourceMissingType="Key">
 	<property name="ireport.zoom" value="1.0000000000000009"/>
-	<property name="ireport.x" value="0"/>
+	<property name="ireport.x" value="109"/>
 	<property name="ireport.y" value="0"/>
 	<property name="net.sf.jasperreports.text.truncate.at.char" value="Boolean.FALSE"/>
 	<style name="table_TH" mode="Opaque" forecolor="#FFFFFF" backcolor="#7DAAD6">
@@ -73,6 +73,9 @@
 	<field name="createdBy" class="java.lang.String">
 		<fieldDescription><![CDATA[createdBy]]></fieldDescription>
 	</field>
+	<field name="requirementParentPath" class="java.lang.String">
+		<fieldDescription><![CDATA[requirementParentPath]]></fieldDescription>
+	</field>
 	<pageHeader>
 		<band height="20" splitType="Prevent">
 			<textField isBlankWhenNull="true">
@@ -80,79 +83,86 @@
 				<textElement>
 					<font isBold="true"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA["PATH"]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement style="table_TH" mode="Opaque" x="170" y="0" width="170" height="20"/>
-				<textElement>
-					<font isBold="true"/>
-				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA["ID"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["FOLDER_PATH"]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement style="table_TH" mode="Opaque" x="340" y="0" width="170" height="20"/>
 				<textElement>
 					<font isBold="true"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA["VERSION"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["ID"]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement style="table_TH" mode="Opaque" x="510" y="0" width="170" height="20"/>
 				<textElement>
 					<font isBold="true"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA["REF"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["VERSION"]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement style="table_TH" mode="Opaque" x="680" y="0" width="170" height="20"/>
 				<textElement>
 					<font isBold="true"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA["LABEL"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["REF"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="table_TH" mode="Opaque" x="850" y="0" width="170" height="20"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["LABEL"]]></textFieldExpression>
 			</textField>
 			<textField pattern="">
-				<reportElement style="table_TH" mode="Opaque" x="850" y="0" width="170" height="20">
+				<reportElement style="table_TH" mode="Opaque" x="1020" y="0" width="170" height="20">
 					<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
 				</reportElement>
 				<textElement>
 					<font isBold="true"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA["DESCRIPTION"]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement style="table_TH" mode="Opaque" x="1020" y="0" width="170" height="20"/>
-				<textElement>
-					<font isBold="true"/>
-				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA["CRITICALITY"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["DESCRIPTION"]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement style="table_TH" mode="Opaque" x="1190" y="0" width="170" height="20"/>
 				<textElement>
 					<font isBold="true"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA["CATEGORY"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["CRITICALITY"]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement style="table_TH" mode="Opaque" x="1360" y="0" width="170" height="20"/>
 				<textElement>
 					<font isBold="true"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA["STATE"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["CATEGORY"]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement style="table_TH" mode="Opaque" x="1530" y="0" width="170" height="20"/>
 				<textElement>
 					<font isBold="true"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA["CREATED_ON"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["STATE"]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement style="table_TH" mode="Opaque" x="1700" y="0" width="170" height="20"/>
 				<textElement>
 					<font isBold="true"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA["CREATED_BY"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["CREATED_ON"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="table_TH" mode="Opaque" x="1870" y="0" width="170" height="20"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["CREATED_BY"]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement style="table_TH" mode="Opaque" x="170" y="0" width="170" height="20"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["*REQUIREMENT_PATH"]]></textFieldExpression>
 			</textField>
 		</band>
 	</pageHeader>
@@ -163,80 +173,64 @@
 					<property name="net.sf.jasperreports.export.xls.ignore.cell.background" value="true"/>
 					<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
 				</reportElement>
-				<textElement/>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{folderName}]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement style="table_TD" mode="Transparent" x="170" y="0" width="170" height="20">
-					<property name="net.sf.jasperreports.export.xls.ignore.cell.background" value="true"/>
-					<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
-				</reportElement>
-				<textElement/>
-				<textFieldExpression class="java.lang.Long"><![CDATA[$F{id}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{folderName}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement style="table_TD" mode="Transparent" x="340" y="0" width="170" height="20">
 					<property name="net.sf.jasperreports.export.xls.ignore.cell.background" value="true"/>
 					<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
 				</reportElement>
-				<textElement/>
-				<textFieldExpression class="java.lang.Integer"><![CDATA[$F{currentVersion}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{id}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement style="table_TD" mode="Transparent" x="510" y="0" width="170" height="20">
 					<property name="net.sf.jasperreports.export.xls.ignore.cell.background" value="true"/>
 					<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
 				</reportElement>
-				<textElement/>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{reference}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{currentVersion}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement style="table_TD" mode="Transparent" x="680" y="0" width="170" height="20">
 					<property name="net.sf.jasperreports.export.xls.ignore.cell.background" value="true"/>
 					<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
 				</reportElement>
-				<textElement/>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{name}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{reference}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement style="table_TD" mode="Transparent" x="850" y="0" width="170" height="20">
 					<property name="net.sf.jasperreports.export.xls.ignore.cell.background" value="true"/>
 					<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
 				</reportElement>
-				<textElement markup="none"/>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{description}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{name}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement style="table_TD" mode="Transparent" x="1020" y="0" width="170" height="20">
 					<property name="net.sf.jasperreports.export.xls.ignore.cell.background" value="true"/>
 					<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
 				</reportElement>
-				<textElement/>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{criticality}.name()]]></textFieldExpression>
+				<textElement markup="none"/>
+				<textFieldExpression><![CDATA[$F{description}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement style="table_TD" mode="Transparent" x="1190" y="0" width="170" height="20">
 					<property name="net.sf.jasperreports.export.xls.ignore.cell.background" value="true"/>
 					<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
 				</reportElement>
-				<textElement/>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{category}.name()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{criticality}.name()]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement style="table_TD" mode="Transparent" x="1360" y="0" width="170" height="20">
 					<property name="net.sf.jasperreports.export.xls.ignore.cell.background" value="true"/>
 					<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
 				</reportElement>
-				<textElement/>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{status}.name()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{category}.name()]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement style="table_TD" mode="Transparent" x="1530" y="0" width="170" height="20">
 					<property name="net.sf.jasperreports.export.xls.ignore.cell.background" value="true"/>
 					<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
 				</reportElement>
-				<textElement markup="none"/>
-				<textFieldExpression class="java.util.Date"><![CDATA[$F{createdOn}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{status}.name()]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement style="table_TD" mode="Transparent" x="1700" y="0" width="170" height="20">
@@ -244,7 +238,22 @@
 					<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
 				</reportElement>
 				<textElement markup="none"/>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{createdBy}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{createdOn}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="table_TD" mode="Transparent" x="1870" y="0" width="170" height="20">
+					<property name="net.sf.jasperreports.export.xls.ignore.cell.background" value="true"/>
+					<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
+				</reportElement>
+				<textElement markup="none"/>
+				<textFieldExpression><![CDATA[$F{createdBy}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="table_TD" mode="Transparent" x="170" y="0" width="170" height="20">
+					<property name="net.sf.jasperreports.export.xls.ignore.cell.background" value="true"/>
+					<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{requirementParentPath}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>

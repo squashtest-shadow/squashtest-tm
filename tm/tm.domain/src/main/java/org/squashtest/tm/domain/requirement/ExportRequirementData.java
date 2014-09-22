@@ -34,6 +34,10 @@ public class ExportRequirementData extends ExportData {
 	private Integer currentVersion;
 	private RequirementStatus status;
 	private String reference = "";
+	private String requirementParentPath = "";
+	private Long requirementParentId;
+	public static final Long NO_REQUIREMENT_PARENT_ID = -1L;
+	public static final String NO_REQUIREMENT_PARENT_PATH = "";
 
 	public ExportRequirementData() {
 		super();
@@ -78,20 +82,41 @@ public class ExportRequirementData extends ExportData {
 	public void setReference(String reference) {
 		doSetReference(reference);
 	}
-	
-	private void doSetReference(String reference){
-		if(reference != null){
+
+	private void doSetReference(String reference) {
+		if (reference != null) {
 			this.reference = reference;
 		}
 	}
 
-	public ExportRequirementData(Requirement requirement, RequirementFolder folder) {
-		super(requirement, folder);
+	public String getRequirementParentPath() {
+		return requirementParentPath;
+	}
+
+	public void setRequirementParentId(Long requirementParentId) {
+		this.requirementParentId = requirementParentId;
+	}
+
+	public void setRequirementParentPath(String requirementParentPath) {
+		doSetRequirementParentPath(requirementParentPath);
+	}
+
+	private void doSetRequirementParentPath(String requirementParentPath) {
+		this.requirementParentPath = requirementParentPath;
+	}
+
+	public Long getRequirementParentId() {
+		return requirementParentId;
+	}
+
+	public ExportRequirementData(Requirement requirement, String requirementFolderPath, String requirementParentPath) {
+		super(requirement);
 		doSetReference(requirement.getReference());
 		this.criticality = requirement.getCriticality();
 		this.category = requirement.getCategory();
 		this.currentVersion = requirement.getCurrentVersion().getVersionNumber();
 		this.status = requirement.getStatus();
-
+		setFolderName(requirementFolderPath);
+		doSetRequirementParentPath(requirementParentPath);
 	}
 }

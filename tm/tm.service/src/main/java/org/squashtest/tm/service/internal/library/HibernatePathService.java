@@ -83,7 +83,7 @@ public class HibernatePathService implements PathService {
 			return null;
 		}
 
-		return paths.get(0).replace("/", "\\/").replace(PATH_SEPARATOR, "/");
+		return escapePath(paths.get(0));
 	}
 
 	/**
@@ -108,7 +108,7 @@ public class HibernatePathService implements PathService {
 	 * @param string
 	 * @return
 	 */
-	private String escapePath(String fetchedPath) {
+	public static String escapePath(String fetchedPath) {
 		return fetchedPath != null ? fetchedPath.replace("/", "\\/").replace(PATH_SEPARATOR, "/") : null;
 	}
 

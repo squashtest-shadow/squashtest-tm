@@ -92,6 +92,22 @@
 		@NamedQuery(name = "requirement.findAllFolderParents", query = "select par, req from RequirementFolder  par join par.content  req where req.id in (:requirementIds)"),
 		@NamedQuery(name = "requirement.findAllLibraryParents", query = "select par, req from RequirementLibrary par join par.rootContent  req where req.id in (:requirementIds)"),
 		@NamedQuery(name = "requirement.findAllAttachmentLists", query = "select v.attachmentList.id from RequirementVersion v where v.requirement.id in (:requirementIds)"),
+                @NamedQuery(name = "requirement.findRequirementParentIds", query = "select reqParent.id from Requirement reqParent , RequirementPathEdge closure  where closure.descendantId in :nodeIds and closure.ancestorId = reqParent.id and closure.depth != 0"),
+                @NamedQuery(name = "requirement.findRequirementDescendantIds", query = "select reqDescendant.id from Requirement reqDescendant, RequirementPathEdge closure where closure.ancestorId in :nodeIds and closure.descendantId = reqDescendant.id and closure.depth != 0"),
+                @NamedQuery(name = "requirement.findReqPaths", query = "select requirement1.id , "
+			+ " group_concat(requirement.resource.name, 'order by', closure.depth, 'desc', '"
+			+ HibernatePathService.PATH_SEPARATOR
+			+ "')"
+			+ " from Requirement requirement, Requirement requirement1,RequirementPathEdge closure "
+			+ " where closure.ancestorId = requirement.id  and  closure.descendantId = requirement1.id and requirement1.id in :requirementIds and closure.depth != 0 "
+			+ " group by requirement1.id"),
+		@NamedQuery(name = "requirement.findFolderPaths", query = "select requirement1.id , "
+                        + " group_concat(folder.resource.name, 'order by', closure.depth, 'desc', '"
+                        + HibernatePathService.PATH_SEPARATOR
+                        + "')"
+                        + " from Requirement requirement1, RequirementFolder folder, RequirementPathEdge closure "
+                        + " where closure.ancestorId = folder.id  and closure.descendantId = requirement1.id and requirement1.id in :requirementIds and closure.depth != 0 "
+                        + " group by requirement1.id"),
 
 		//CampaignFolder
 		@NamedQuery(name = "campaignFolder.findAllContentById", query = "select f.content from CampaignFolder f where f.id = :folderId"),

@@ -73,6 +73,7 @@
         <value>org.squashtest.tm.domain.requirement.Requirement</value>
         <value>org.squashtest.tm.domain.requirement.RequirementLibraryNode</value>
         <value>org.squashtest.tm.domain.requirement.RequirementFolder</value>
+        <value>org.squashtest.tm.domain.requirement.RequirementPathEdge</value>
 
         <value>org.squashtest.tm.domain.resource.Resource</value>
         <value>org.squashtest.tm.domain.resource.SimpleResource</value>
@@ -119,6 +120,7 @@
         <value>org.squashtest.tm.domain.event.RequirementCreation</value>
         <value>org.squashtest.tm.domain.event.RequirementPropertyChange</value>
         <value>org.squashtest.tm.domain.event.RequirementLargePropertyChange</value>
+        
 
         <!-- Test Automation -->
         <value>org.squashtest.tm.domain.testautomation.TestAutomationServer</value>

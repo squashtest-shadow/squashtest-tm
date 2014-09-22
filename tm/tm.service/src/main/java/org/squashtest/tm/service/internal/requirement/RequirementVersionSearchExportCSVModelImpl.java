@@ -35,11 +35,11 @@ import org.squashtest.tm.domain.search.SearchExportCSVModel;
 public class RequirementVersionSearchExportCSVModelImpl implements SearchExportCSVModel{
 
 	private int nbColumns;
-	
+
 	private char separator = ';';
 
 	private List<RequirementVersion> requirementVersions;
-	
+
 	public int getNbColumns() {
 		return nbColumns;
 	}
@@ -59,11 +59,11 @@ public class RequirementVersionSearchExportCSVModelImpl implements SearchExportC
 	public RequirementVersionSearchExportCSVModelImpl(){
 		super();
 	}
-	
+
 	public RequirementVersionSearchExportCSVModelImpl(List<RequirementVersion> requirementVersions){
 		this.requirementVersions = requirementVersions;
 	}
-	
+
 	@Override
 	public void setSeparator(char separator) {
 		this.separator = separator;
@@ -88,54 +88,54 @@ public class RequirementVersionSearchExportCSVModelImpl implements SearchExportC
 		headerCells.add(new CellImpl("REQUIREMENT_CATEGORY"));
 		headerCells.add(new CellImpl("REQUIREMENT_STATUS"));
 		headerCells.add(new CellImpl("#_VERSION"));
-		headerCells.add(new CellImpl("#_VERSIONS"));	
-		headerCells.add(new CellImpl("#_TESTCASES"));	
-		headerCells.add(new CellImpl("#_ATTACHMENTS"));	
-		headerCells.add(new CellImpl("CREATED_BY"));	
-		headerCells.add(new CellImpl("MODIFIED_BY"));	
-		
+		headerCells.add(new CellImpl("#_VERSIONS"));
+		headerCells.add(new CellImpl("#_TESTCASES"));
+		headerCells.add(new CellImpl("#_ATTACHMENTS"));
+		headerCells.add(new CellImpl("CREATED_BY"));
+		headerCells.add(new CellImpl("MODIFIED_BY"));
+
 		this.nbColumns = headerCells.size();
-		
-		return new RowImpl(headerCells);	
+
+		return new RowImpl(headerCells);
 	}
 
 	@Override
 	public Iterator<Row> dataIterator() {
 
 		List<Row> rows = new ArrayList<Row>();
-		
+
 		for(RequirementVersion requirementVersion : this.requirementVersions){
-			
+
 			final AuditableMixin auditable = (AuditableMixin) requirementVersion;
 
 			List<CellImpl> dataCells = new ArrayList<CellImpl>(nbColumns);
-			
+
 			dataCells.add(new CellImpl(requirementVersion.getProject().getName()));
 			dataCells.add(new CellImpl(Long.toString(requirementVersion.getId())));
 			dataCells.add(new CellImpl(requirementVersion.getReference()));
 			dataCells.add(new CellImpl(requirementVersion.getName()));
 			dataCells.add(new CellImpl(requirementVersion.getCriticality().toString()));
-			dataCells.add(new CellImpl(requirementVersion.getCategory().toString()));		
-			dataCells.add(new CellImpl(requirementVersion.getStatus().toString()));	
+			dataCells.add(new CellImpl(requirementVersion.getCategory().toString()));
+			dataCells.add(new CellImpl(requirementVersion.getStatus().toString()));
 			dataCells.add(new CellImpl(Integer.toString(requirementVersion.getVersionNumber())));
 			dataCells.add(new CellImpl(Integer.toString(requirementVersion.getRequirement().getRequirementVersions().size())));
 			dataCells.add(new CellImpl(Integer.toString(requirementVersion.getVerifyingTestCases().size())));
-			dataCells.add(new CellImpl(Integer.toString(requirementVersion.getAttachmentList().size())));		
+			dataCells.add(new CellImpl(Integer.toString(requirementVersion.getAttachmentList().size())));
 			dataCells.add(new CellImpl(formatUser(auditable.getCreatedBy())));
 			dataCells.add(new CellImpl(formatUser(auditable.getLastModifiedBy())));
-			
+
 			Row row = new RowImpl(dataCells);
 			rows.add(row);
 		}
-		
+
 		return rows.iterator();
 	}
-	
+
 	private String formatUser(String user) {
 		return (user == null) ? "" : user;
 	}
-	
-	
+
+
 	public static class CellImpl implements Cell {
 		private String value;
 

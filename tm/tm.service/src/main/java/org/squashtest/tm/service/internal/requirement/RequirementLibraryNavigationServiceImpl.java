@@ -72,8 +72,8 @@ import org.squashtest.tm.service.security.SecurityCheckableObject;
 @Service("squashtest.tm.service.RequirementLibraryNavigationService")
 @Transactional
 public class RequirementLibraryNavigationServiceImpl extends
-		AbstractLibraryNavigationService<RequirementLibrary, RequirementFolder, RequirementLibraryNode> implements
-		RequirementLibraryNavigationService, RequirementLibraryFinderService {
+AbstractLibraryNavigationService<RequirementLibrary, RequirementFolder, RequirementLibraryNode> implements
+RequirementLibraryNavigationService, RequirementLibraryFinderService {
 	private static final Logger LOGGER = LoggerFactory.getLogger(RequirementLibraryNavigationServiceImpl.class);
 
 	private static final String OR_HAS_ROLE_ADMIN = "or hasRole('ROLE_ADMIN')";
@@ -108,7 +108,7 @@ public class RequirementLibraryNavigationServiceImpl extends
 	@Inject
 	@Qualifier("squashtest.tm.service.internal.PasteToRequirementStrategy")
 	private Provider<PasteStrategy<Requirement, Requirement>> pasteToRequirementStrategyProvider;
-	
+
 
 	@Override
 	protected NodeDeletionHandler<RequirementLibraryNode, RequirementFolder> getDeletionHandler() {
@@ -145,7 +145,7 @@ public class RequirementLibraryNavigationServiceImpl extends
 	protected PasteStrategy<RequirementLibrary, RequirementLibraryNode> getPasteToLibraryStrategy() {
 		return pasteToRequirementLibraryStrategyProvider.get();
 	}
-	
+
 	protected PasteStrategy<Requirement, Requirement> getPasteToRequirementStrategy(){
 		return pasteToRequirementStrategyProvider.get();
 	}
@@ -252,32 +252,32 @@ public class RequirementLibraryNavigationServiceImpl extends
 
 		return requirement;
 	}
-	
+
 	@Override
 	@PreAuthorize("hasPermission(#requirementId, 'org.squashtest.tm.domain.requirement.Requirement' , 'CREATE') "
-			+ OR_HAS_ROLE_ADMIN)	
+			+ OR_HAS_ROLE_ADMIN)
 	public Requirement addRequirementToRequirement(long requirementId, @NotNull NewRequirementVersionDto newRequirement) {
-		
-		Requirement parent = requirementDao.findById(requirementId);		
+
+		Requirement parent = requirementDao.findById(requirementId);
 		Requirement child = createRequirement(newRequirement);
-		
-		parent.addContent(child);		
+
+		parent.addContent(child);
 		requirementDao.persist(child);
-		
+
 		createCustomFieldValues(child.getCurrentVersion());
 		initCustomFieldValues(child.getCurrentVersion(), newRequirement.getCustomFields());
 		indexationService.reindexRequirementVersion(parent.getCurrentVersion().getId());
 		indexationService.reindexRequirementVersions(child.getRequirementVersions());
-		
+
 		return child;
 	}
-	
+
 	@Override
 	@PreAuthorize("hasPermission(#folderId, 'org.squashtest.tm.domain.requirement.Requirement' , 'CREATE') "
-			+ OR_HAS_ROLE_ADMIN)	
+			+ OR_HAS_ROLE_ADMIN)
 	public Requirement addRequirementToRequirement(long requirementId,
 			@NotNull Requirement newRequirement) {
-		
+
 		Requirement parent = requirementDao.findById(requirementId);
 
 		parent.addContent(newRequirement);
@@ -288,15 +288,15 @@ public class RequirementLibraryNavigationServiceImpl extends
 		indexationService.reindexRequirementVersions(newRequirement.getRequirementVersions());
 		return newRequirement;
 	}
-	
-	
+
+
 	@Override
 	public List<Requirement> copyNodesToRequirement(long requirementId, Long[] sourceNodesIds) {
 		PasteStrategy<Requirement, Requirement> pasteStrategy = getPasteToRequirementStrategy();
 		makeCopierStrategy(pasteStrategy);
 		return pasteStrategy.pasteNodes(requirementId, Arrays.asList(sourceNodesIds));
 	}
-	
+
 	@Override
 	public void moveNodesToRequirement(long requirementId, Long[] nodeIds) {
 		if (nodeIds.length == 0) {
@@ -328,29 +328,29 @@ public class RequirementLibraryNavigationServiceImpl extends
 			throw new NameAlreadyExistsAtDestinationException(dne);
 		}
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<ExportRequirementData> findRequirementsToExportFromLibrary(List<Long> libraryIds) {
 		PermissionsUtils.checkPermission(permissionService, libraryIds, "EXPORT", RequirementLibrary.class.getName());
-		return (List<ExportRequirementData>) setFullFolderPath(requirementDao
-				.findRequirementToExportFromLibrary(libraryIds));
+		return (List<ExportRequirementData>) requirementDao
+				.findRequirementToExportFromLibrary(libraryIds);
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<ExportRequirementData> findRequirementsToExportFromNodes(List<Long> nodesIds) {
 		PermissionsUtils.checkPermission(permissionService, nodesIds, "EXPORT", RequirementLibraryNode.class.getName());
-		return (List<ExportRequirementData>) setFullFolderPath(requirementDao
-				.findRequirementToExportFromNodes(nodesIds));
+		return (List<ExportRequirementData>) requirementDao
+				.findRequirementToExportFromNodes(nodesIds);
 	}
-	
+
 	@Override
-	@PreAuthorize("hasPermission(#requirementId, 'org.squashtest.tm.domain.requirement.Requirement' , 'READ') " + OR_HAS_ROLE_ADMIN)	
+	@PreAuthorize("hasPermission(#requirementId, 'org.squashtest.tm.domain.requirement.Requirement' , 'READ') " + OR_HAS_ROLE_ADMIN)
 	public List<Requirement> findChildrenRequirements(long requirementId){
 		return requirementDao.findChildrenRequirements(requirementId);
 	}
-	
+
 
 	@Override
 	@PostFilter("hasPermission(filterObject, 'LINK') " + OR_HAS_ROLE_ADMIN)
@@ -393,12 +393,12 @@ public class RequirementLibraryNavigationServiceImpl extends
 	@Override
 	public List<String> getParentNodesAsStringList(Long nodeId) {
 		List<Long> ids = requirementLibraryNodeDao.getParentsIds(nodeId);
-		
+
 		RequirementLibraryNode node = requirementLibraryNodeDao.findById(nodeId);
 		Long librabryId = node.getLibrary().getId();
-		
+
 		List<String> parents = new ArrayList<String>();
-		
+
 		parents.add("#RequirementLibrary-"+librabryId);
 
 		if(ids.size() > 1){
@@ -408,7 +408,7 @@ public class RequirementLibraryNavigationServiceImpl extends
 				parents.add(currentNode.getClass().getSimpleName()+"-"+String.valueOf(currentId));
 			}
 		}
-		
+
 		return parents;
 	}
 

@@ -37,12 +37,12 @@ public interface RequirementDao extends EntityDao<Requirement> {
 
 	@SuppressWarnings("rawtypes")
 	List<RequirementLibraryNode> findAllBySearchCriteriaOrderByProject(RequirementSearchCriteria criteria);
-	
+
 	List<Requirement> findChildrenRequirements(long requirementId);
 
 	List<ExportRequirementData> findRequirementToExportFromNodes(List<Long> folderIds);
 
-	List<ExportRequirementData> findRequirementToExportFromLibrary(List<Long> projectIds);
+	List<ExportRequirementData> findRequirementToExportFromLibrary(List<Long> libraryId);
 
 	/**
 	 * Returns collection of distinct requirements criticalities verified by any of the given verifiers.
@@ -75,20 +75,20 @@ public interface RequirementDao extends EntityDao<Requirement> {
 	 * @return
 	 */
 	List<RequirementVersion> findVersionsForAll(List<Long> requirementIds);
-	
+
 	/**
 	 * Will find all Requirements ids contained in library (not only root ones)
 	 * @param libraryId
 	 * @return
 	 */
 	List<Long> findAllRequirementsIdsByLibrary(long libraryId);
-	
+
 	/**
 	 * returns a requirement that contains the given child requirement
 	 */
 	Requirement findByContent(Requirement childRequirement);
-	
-	
+
+
 	/**
 	 * Given a list of requirementIds, returns the corresponding list of [parent, requirement].
 	 * the 'parent' is of type NodeContainer&lt;Requirement&gt;.

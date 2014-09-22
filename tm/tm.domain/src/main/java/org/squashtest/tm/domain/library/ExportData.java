@@ -31,18 +31,18 @@ import org.squashtest.tm.domain.audit.AuditableMixin;
 public abstract class ExportData {
 
 	private Long id;
-	private String folderName;
+	private String folderName = "";//TODO Confusing ! this is not the folder name : it is the folder path !
 	private String project;
 	private String name;
 	private String description;
 	private Date createdOn;
-    private String createdBy;
-    private Long folderId;
-    public static final Long NO_FOLDER = -1l;
-	
+	private String createdBy;
+	private Long folderId;
+	public static final Long NO_FOLDER = -1l;
+
 	public ExportData() {
 	}
-	
+
 	public Long getId() {
 		return id;
 	}
@@ -70,11 +70,11 @@ public abstract class ExportData {
 	public String getDescription() {
 		return description;
 	}
-	
+
 	public void setDescription(String description) {
 		doSetDescription(description);
 	}
-	
+
 	private void doSetDescription(String description){
 		if(description != null){
 			this.description = description;
@@ -83,11 +83,17 @@ public abstract class ExportData {
 	public String getFolderName() {
 		return folderName;
 	}
-	
+
 	public void setFolderName(String folderName) {
-		this.folderName = folderName;
+		doSetFolderName(folderName);
 	}
-	
+
+	public void doSetFolderName(String folderName) {
+		if(folderName != null){
+			this.folderName = folderName;
+		}
+	}
+
 	public Date getCreatedOn() {
 		return createdOn;
 	}
@@ -103,7 +109,7 @@ public abstract class ExportData {
 	public void setCreatedBy(String createdBy) {
 		this.createdBy = createdBy;
 	}
-	
+
 
 	public Long getFolderId() {
 		return folderId;
@@ -112,23 +118,35 @@ public abstract class ExportData {
 	public void setFolderId(Long folderId) {
 		this.folderId = folderId;
 	}
-	
+
 	public ExportData(LibraryNode node, Folder folder) {
 		this.id = node.getId();
 		this.name = node.getName();
-		doSetDescription(node.getDescription()); 
+		doSetDescription(node.getDescription());
 		this.project = node.getProject().getName();
-		AuditableMixin audit = ((AuditableMixin) node);	
+		AuditableMixin audit = ((AuditableMixin) node);
 		this.createdOn = audit.getCreatedOn();
 		this.createdBy = audit.getCreatedBy();
 		//folder is null if the requirement is located directly under the project root.
 		if(folder == null) {
 			this.folderId = NO_FOLDER;
-			this.folderName = "";
 		}
 		else {
 			this.folderId = folder.getId();
-			this.folderName = folder.getName();
+			doSetFolderName(folder.getName());
 		}
-	}	
+	}
+
+	public ExportData(LibraryNode node) {
+		this.id = node.getId();
+		this.name = node.getName();
+		doSetDescription(node.getDescription());
+		this.project = node.getProject().getName();
+		AuditableMixin audit = ((AuditableMixin) node);
+		this.createdOn = audit.getCreatedOn();
+		this.createdBy = audit.getCreatedBy();
+		//folder is null if the requirement is located directly under the project root.
+		this.folderId = NO_FOLDER;
+	}
+
 }
