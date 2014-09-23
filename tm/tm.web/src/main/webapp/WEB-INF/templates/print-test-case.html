@@ -254,7 +254,8 @@
 						</tr>
 					</thead>
 					<tbody>
-						<tr th:each="paramData , iterStat : ${paramDatas}" th:object="${paramData}">
+						<tr th:each="paramData , iterStat : ${paramDatas}" th:object="${paramData}"
+                            th:class="*{['directly-associated']}? 'directVerification' : 'indirectVerification'">
 							<td th:text="${iterStat.count}">1</td>
 							<td th:text="*{[name]}">param_1</td>
 							<td sq:unsafe-html="*{[description]}">description</td>
