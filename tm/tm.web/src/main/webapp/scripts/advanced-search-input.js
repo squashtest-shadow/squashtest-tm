@@ -40,6 +40,8 @@ require([ "common" ], function(common) {
 					document.location.href = squashtm.app.contextRoot + "test-suites/"+associationId+"/test-plan-manager";
 				} else if("requirement" === searchDomain && "testcase" === associationType){
 					document.location.href = squashtm.app.contextRoot + "test-cases/"+associationId+"/verified-requirement-versions/manager";
+				} else if ("requirement" === searchDomain && "teststep" === associationType){
+					document.location.href = squashtm.app.contextRoot + "test-steps/"+associationId+"/verified-requirement-versions/manager";
 				}
 			} else {
 				if("testcase" === searchDomain){

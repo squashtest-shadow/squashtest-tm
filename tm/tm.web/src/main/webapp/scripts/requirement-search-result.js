@@ -28,6 +28,9 @@ require([ "common" ], function(common) {
 				if("testcase" === associationType){
 					document.location.href = squashtm.app.contextRoot + "test-cases/"+associationId+"/verified-requirement-versions/manager";
 				}
+				else if ("teststep" === associationType){
+					document.location.href = squashtm.app.contextRoot + "test-steps/"+associationId+"/verified-requirement-versions/manager";
+				}
 			} else {
 				document.location.href = squashtm.app.contextRoot + "requirement-workspace/";
 			}
