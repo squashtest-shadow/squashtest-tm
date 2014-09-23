@@ -117,32 +117,24 @@ public class CampaignTestCaseSuccessRateStatistics {
 	}
 	public int getNbVeryHighOther() {
 		return getValue(testsOfVeryHighImportance, ExecutionStatus.BLOCKED)+
-				getValue(testsOfVeryHighImportance, ExecutionStatus.READY)+
-				getValue(testsOfVeryHighImportance, ExecutionStatus.RUNNING)+
 				getValue(testsOfVeryHighImportance, ExecutionStatus.UNTESTABLE)+
 				getValue(testsOfVeryHighImportance, ExecutionStatus.NOT_RUN)+
 				getValue(testsOfVeryHighImportance, ExecutionStatus.NOT_FOUND);
 	}
 	public int getNbHighOther() {
 		return getValue(testsOfHighImportance, ExecutionStatus.BLOCKED)+
-				getValue(testsOfHighImportance, ExecutionStatus.READY)+
-				getValue(testsOfHighImportance, ExecutionStatus.RUNNING)+
 				getValue(testsOfHighImportance, ExecutionStatus.UNTESTABLE)+
 				getValue(testsOfHighImportance, ExecutionStatus.NOT_RUN)+
 				getValue(testsOfHighImportance, ExecutionStatus.NOT_FOUND);
 	}
 	public int getNbMediumOther() {
 		return getValue(testsOfMediumImportance, ExecutionStatus.BLOCKED)+
-				getValue(testsOfMediumImportance, ExecutionStatus.READY)+
-				getValue(testsOfMediumImportance, ExecutionStatus.RUNNING)+
 				getValue(testsOfMediumImportance, ExecutionStatus.UNTESTABLE)+
 				getValue(testsOfMediumImportance, ExecutionStatus.NOT_RUN)+
 				getValue(testsOfMediumImportance, ExecutionStatus.NOT_FOUND);
 	}
 	public int getNbLowOther() {
 		return getValue(testsOfLowImportance, ExecutionStatus.BLOCKED)+
-				getValue(testsOfLowImportance, ExecutionStatus.READY)+
-				getValue(testsOfLowImportance, ExecutionStatus.RUNNING)+
 				getValue(testsOfLowImportance, ExecutionStatus.UNTESTABLE)+
 				getValue(testsOfLowImportance, ExecutionStatus.NOT_RUN)+
 				getValue(testsOfLowImportance, ExecutionStatus.NOT_FOUND);
