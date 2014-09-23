@@ -19,10 +19,11 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 define([ "jquery", "backbone", "underscore", "app/util/StringUtil",
-        "./RequirementSearchResultTable","jquery.squash", "jqueryui",
+        "./RequirementSearchResultTable", "squash.translator", "app/ws/squashtm.notification","jquery.squash", "jqueryui",
 		"jquery.squash.togglepanel", "squashtable",
 		"jquery.squash.oneshotdialog", "jquery.squash.messagedialog",
-		"jquery.squash.confirmdialog" ], function($, Backbone, _, StringUtil, RequirementSearchResultTable) {
+		"jquery.squash.confirmdialog" ], 
+		function($, Backbone, _, StringUtil, RequirementSearchResultTable, translator, notification) {
 	
 	var RequirementSearchResultPanel = Backbone.View.extend({
 
@@ -61,8 +62,7 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil",
 			var table = $('#requirement-search-result-table').dataTable();
 			var ids = table.squashTable().getSelectedIds();
 			if(ids.length === 0){
-				var noLineSelectedDialog = $("#no-selected-lines").messageDialog();
-				noLineSelectedDialog.messageDialog('open');
+				notification.showError(translator.get('message.noLinesSelected'));
 				return;
 			}
 			var id = this.associationId;
@@ -201,95 +201,83 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil",
 			var self = this;
 			var addModifyResultDialog = $("#modify-search-result-dialog").confirmDialog();
 
-			$.ajax({
-				url : squashtm.app.contextRoot + "/requirements/criticality-combo-data",
-				dataType : 'json'
-			}).success(function(json) {
-				var importance_cell = $("#criticality-combo");
-				importance_cell.html("<select></select>");
-				 $.each(json, function(key, value){ 
-					var option = new Option(value, key);
-					$(option).html(value);
-					$("select", importance_cell).append(option);
-				 });
-			});
-
-			$.ajax({
-				url : squashtm.app.contextRoot + "/requirements/category-combo-data",
-				dataType : 'json'
-			}).success(function(json) {
-				status_cell = $("#category-combo");
-				status_cell.html("<select></select>");
-				 $.each(json, function(key, value){ 
-					var option = new Option(value, key);
-					$(option).html(value);
-					$("select", status_cell).append(option);
-				 });
-			});
-								
-			$.ajax({
-				url : squashtm.app.contextRoot + "/requirements/status-combo-data",
-				dataType : 'json'
-			}).success(function(json) {
-				nature_cell = $("#status-combo");
-				nature_cell.html("<select></select>");
-				 $.each(json, function(key, value){ 
-					var option = new Option(value, key);
-					$(option).html(value);
-					$("select", nature_cell).append(option);
-				 });
-			});
 			
-			
-			addModifyResultDialog.on("confirmdialogvalidate",
-					function() {
+			function loadCombos(comboname){
+				$.ajax({
+					url : squashtm.app.contextRoot + "/requirements/"+ comboname +"-data",
+					dataType : 'json'
+				})
+				.success(function(json) {
+					var combo = $("<select/>"),
+						comboCell = $("#"+comboname);
 						
-					});
-
-			addModifyResultDialog.on("confirmdialogconfirm",
-					function() {
-						var table = $('#requirement-search-result-table').dataTable();
-						var ids = self.getIdsOfSelectedTableRowList(table);
-						var columns = ["criticality","category","status"];
-						var index = 0;
-						
-						for(index=0; index<columns.length; index++){
-							if($("#"+columns[index]+"-checkbox").prop('checked')){
-								self.updateDisplayedValueInColumn(table, columns[index]);
-								var value = $("#"+columns[index]+"-combo").find('option:selected').val();
-								for(var i=0; i<ids.length; i++){
-									var urlPOST = squashtm.app.contextRoot + "/requirements/" + ids[i];
-									$.post(urlPOST, {
-										value : value,
-										id : "requirement-"+columns[index]	
-									});
-								}
-							}
-						}
-					});
+					 $.each(json, function(key, value){ 
+						var option = $("<option/>",{
+							value : key,
+							html : value
+						});
+						combo.append(option);
+					 });
+					 comboCell.append(combo);
+				});
+			}
 			
-			addModifyResultDialog.on('confirmdialogopen',
-					function() {
-						var table = $('#requirement-search-result-table').dataTable();
-						var ids = self.getIdsOfSelectedTableRowList(table);
-						var editableIds = self.getIdsOfEditableSelectedTableRowList(table);
-						if(ids.length === 0) {
-							var noLineSelectedDialog = $("#no-selected-lines").messageDialog();
-							noLineSelectedDialog.messageDialog('open');
-							$(this).confirmDialog('close');
-						}else if (editableIds.length === 0){
-							var noWritingRightsEditableDialog = $("#no-selected-editable-lines").messageDialog();
-							noWritingRightsEditableDialog.messageDialog('open');
-							$(this).confirmDialog('close');
-						}else if (editableIds.length < ids.length){
-							var noWritingRightsDialog = $("#warning-no-writing-rights").messageDialog();
-							noWritingRightsDialog.messageDialog('open');
+			loadCombos("criticality-combo");
+			loadCombos("category-combo");
+			loadCombos("status-combo");
+			
+			
+			addModifyResultDialog.on('change', ':checkbox', function(evt){
+				var cbx = $(evt.currentTarget),
+					state = cbx.prop('checked'),
+					select = cbx.parent().siblings().last().find('select');
+				
+				select.prop('disabled', !state);
+			});
+			
+			addModifyResultDialog.on("confirmdialogvalidate",function() {});
+
+			addModifyResultDialog.on("confirmdialogconfirm",function() {
+				var table = $('#requirement-search-result-table').dataTable();
+				var ids = self.getIdsOfSelectedTableRowList(table);
+				var columns = ["criticality","category","status"];
+				var index = 0;
+				
+				for(index=0; index<columns.length; index++){
+					if($("#"+columns[index]+"-checkbox").prop('checked')){
+						self.updateDisplayedValueInColumn(table, columns[index]);
+						var value = $("#"+columns[index]+"-combo").find('option:selected').val();
+						for(var i=0; i<ids.length; i++){
+							var urlPOST = squashtm.app.contextRoot + "/requirements/" + ids[i];
+							$.post(urlPOST, {
+								value : value,
+								id : "requirement-"+columns[index]	
+							});
 						}
-					});
+					}
+				}
+			});
+			
+			addModifyResultDialog.on('confirmdialogopen',function() {
+				addModifyResultDialog.find(':checkbox').prop('checked', false);
+				addModifyResultDialog.find('select').prop('disabled', true);
+			
+				var table = $('#requirement-search-result-table').dataTable();
+				var ids = self.getIdsOfSelectedTableRowList(table);
+				var editableIds = self.getIdsOfEditableSelectedTableRowList(table);
+				if(ids.length === 0) {							
+					notification.showError(translator.get('message.noLinesSelected'));
+					$(this).confirmDialog('close');
+				}else if (editableIds.length === 0){
+					notification.showError(translator.get('message.search.modify.noLineWithWritingRightsOrWrongStatus'));
+					$(this).confirmDialog('close');
+				}else if (editableIds.length < ids.length){							
+					notification.showError(translator.get('message.search.modify.noWritingRightsOrWrongStatus'));
+					noWritingRightsDialog.messageDialog('open');
+				}
+			});
 
-			addModifyResultDialog.activate = function(arg) {
-
-			};
+			addModifyResultDialog.activate = function(arg) {};
 
 			this.addModifyResultDialog = addModifyResultDialog;
 		}

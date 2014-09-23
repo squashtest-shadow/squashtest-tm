@@ -41,6 +41,7 @@ define([ "jquery", "app/pubsub", "squash.translator", "app/lnf/Forms", "jquery.s
 			$(".unstyled-notification-pane").addClass("notification-pane").removeClass("unstyled-notification-pane");
 			$(_spinner).addClass("not-processing").removeClass("processing");
 			$("#generic-error-dialog").messageDialog();
+			$("#generic-warning-dialog").messageDialog();
 		}
 	}
 
@@ -202,6 +203,12 @@ define([ "jquery", "app/pubsub", "squash.translator", "app/lnf/Forms", "jquery.s
 		dialog.find('.generic-error-main').html(message);
 		dialog.messageDialog('open');
 	}
+	
+	function showWarning(message){
+		var dialog = $("#generic-warning-dialog"); 
+		dialog.find('.generic-warning-main').html(message);
+		dialog.messageDialog('open');
+	}
 
 	function init() {
 		initWidgets();
@@ -226,6 +233,7 @@ define([ "jquery", "app/pubsub", "squash.translator", "app/lnf/Forms", "jquery.s
 		init : init,
 		showInfo : displayInformationNotification,
 		showError : showError,
+		showWarning : showWarning,
 		getErrorMessage : getErrorMessage,
 		handleJsonResponseError : handleJsonResponseError,
 		handleGenericResponseError : handleGenericResponseError,
