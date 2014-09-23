@@ -33,6 +33,8 @@
   <bean class="org.squashtest.it.infrastructure.StubBeanPostProcessor" lazy-init="false" />
 
 	<!--  stubs  -->
+	
+  <bean id="javax.validation.ValidatorFactory" class="org.squashtest.it.infrastructure.StubValidatorFactory" />	
   <bean id="bugTrackersService" class="org.squashtest.csp.core.bugtracker.service.StubBugTrackerService" primary="true"
     lazy-init="false" />
   <bean class="org.squashtest.tm.service.security.StubUserContextService" primary="true" lazy-init="false" />
