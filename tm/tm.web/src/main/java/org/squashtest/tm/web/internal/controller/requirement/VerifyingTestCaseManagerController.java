@@ -78,7 +78,7 @@ public class VerifyingTestCaseManagerController {
 
 	@Inject
 	private VerifyingTestCaseManagerService verifyingTestCaseManager;
-	
+
 	@Inject
 	private RequirementVersionManagerService requirementVersionFinder;
 
@@ -89,32 +89,33 @@ public class VerifyingTestCaseManagerController {
 	 * So we use a named-base with column indexes as names.
 	 */
 	private final DatatableMapper<String> verifyingTcMapper = new NameBasedMapper(6)
-			.mapAttribute("project-name", "name", Project.class)
-			.mapAttribute("tc-reference", "reference", TestCase.class)
-			.mapAttribute("tc-name", "name", TestCase.class)
-			.mapAttribute("tc-type", "executionMode", TestCase.class);
+	.mapAttribute("project-name", "name", Project.class)
+	.mapAttribute("tc-reference", "reference", TestCase.class)
+	.mapAttribute("tc-name", "name", TestCase.class)
+	.mapAttribute("tc-type", "executionMode", TestCase.class);
 
 
 	@RequestMapping(value = "/requirement-versions/{requirementVersionId}/verifying-test-cases/manager", method = RequestMethod.GET)
 	public String showManager(@PathVariable long requirementVersionId, Model model, @CookieValue(value = "jstree_open", required = false, defaultValue = "") String[] openedNodes) {
-		
+
 		RequirementVersion requirementVersion = requirementVersionFinder.findById(requirementVersionId);
 		List<TestCaseLibrary> linkableLibraries = verifyingTestCaseManager.findLinkableTestCaseLibraries();
 		List<JsTreeNode> linkableLibrariesModel = createLinkableLibrariesModel(linkableLibraries, openedNodes);
-		DataTableModel verifyingTCModel = buildVerifyingTestCaseModel(requirementVersionId, new DefaultPagingAndSorting("Project.name"), "");
+		DefaultPagingAndSorting pas = new DefaultPagingAndSorting("Project.name");
+		DataTableModel verifyingTCModel = buildVerifyingTestCaseModel(requirementVersionId, pas, "");
 
-		
+
 		model.addAttribute("requirement", requirementVersion.getRequirement()); // this is done because of RequirementViewInterceptor
 		model.addAttribute("requirementVersion", requirementVersion);
 		model.addAttribute("linkableLibrariesModel", linkableLibrariesModel);
 		model.addAttribute("verifyingTestCaseModel", verifyingTCModel);
-		
+
 		return "page/requirements/show-verifying-testcase-manager";
 	}
 
 	private List<JsTreeNode> createLinkableLibrariesModel(List<TestCaseLibrary> linkableLibraries, String[] openedNodes) {
 		MultiMap expansionCandidates = JsTreeHelper.mapIdsByType(openedNodes);
-		
+
 		DriveNodeBuilder<TestCaseLibraryNode> nodeBuilder = driveNodeBuilder.get();
 
 		return new JsTreeNodeListBuilder<TestCaseLibrary>(nodeBuilder)
@@ -128,7 +129,7 @@ public class VerifyingTestCaseManagerController {
 	@RequestMapping(value = "/requirement-versions/{requirementVersionId}/verifying-test-cases/{testCaseIds}", method = RequestMethod.POST)
 	public @ResponseBody
 	Map<String, Object> addVerifyingTestCasesToRequirement(@PathVariable("testCaseIds") List<Long> testCasesIds, @PathVariable long requirementVersionId) {
-		Map<String, Collection<?>> rejectionsAndIds =  
+		Map<String, Collection<?>> rejectionsAndIds =
 				verifyingTestCaseManager.addVerifyingTestCasesToRequirementVersion(testCasesIds, requirementVersionId);
 		Collection<VerifiedRequirementException> rejections = (Collection<VerifiedRequirementException>) rejectionsAndIds.get(VerifyingTestCaseManagerService.REJECTION_KEY);
 		Collection<Long> ids = (Collection<Long>) rejectionsAndIds.get(VerifyingTestCaseManagerService.IDS_KEY);
@@ -143,31 +144,31 @@ public class VerifyingTestCaseManagerController {
 
 	@RequestMapping(value = "/requirement-versions/{requirementVersionId}/verifying-test-cases/{testCaseIds}", method = RequestMethod.DELETE)
 	public @ResponseBody
-	void removeVerifyingTestCaseFromRequirement(@PathVariable("requirementVersionId") long requirementVersionId, 
-												@PathVariable("testCaseIds") List<Long> testCaseIds ) {
+	void removeVerifyingTestCaseFromRequirement(@PathVariable("requirementVersionId") long requirementVersionId,
+			@PathVariable("testCaseIds") List<Long> testCaseIds ) {
 		verifyingTestCaseManager.removeVerifyingTestCasesFromRequirementVersion(testCaseIds, requirementVersionId);
 	}
 
-	
+
 	@RequestMapping(value = "/requirement-versions/{requirementVersionId}/verifying-test-cases/table", params = RequestParams.S_ECHO_PARAM)
 	public @ResponseBody
 	DataTableModel getVerifiedTestCasesTableModel(@PathVariable long requirementVersionId,
 			DataTableDrawParameters params) {
-		
+
 		PagingAndSorting filter = new DataTableSorting(params, verifyingTcMapper);
 
 		return buildVerifyingTestCaseModel(requirementVersionId, filter, params.getsEcho());
 
 	}
-	
+
 	protected DataTableModel buildVerifyingTestCaseModel(long requirementVersionId, PagingAndSorting pas, String sEcho){
 		PagedCollectionHolder<List<TestCase>> holder = verifyingTestCaseManager.findAllByRequirementVersion(
 				requirementVersionId, pas);
-		
-		return new VerifyingTestCasesTableModelHelper(i18nHelper).buildDataModel(holder, sEcho);	
+
+		return new VerifyingTestCasesTableModelHelper(i18nHelper).buildDataModel(holder, sEcho);
 	}
 
-	
+
 
 
 }

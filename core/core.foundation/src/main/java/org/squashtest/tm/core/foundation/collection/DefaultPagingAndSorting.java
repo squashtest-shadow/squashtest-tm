@@ -23,7 +23,7 @@ package org.squashtest.tm.core.foundation.collection;
 public class DefaultPagingAndSorting implements PagingAndSorting {
 
 	private String sortedAttribute;
-	private Integer pageSize = 10;
+	private Integer pageSize = 50;
 	private Integer firstIndex = 0;
 	private SortOrder order = SortOrder.ASCENDING;
 	private boolean isShouldDisplayAll = false;
