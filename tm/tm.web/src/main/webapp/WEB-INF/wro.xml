@@ -42,7 +42,6 @@
     <js>/scripts/req-workspace/**.js</js>
     <js>/scripts/execution-processing/**.js</js>
     <js>/scripts/projects-manager/**.js</js>
-    <js>/scripts/req-workspace/**.js</js>
     <js>/scripts/search/**.js</js>
     <js>/scripts/squash/**.js</js>
     <js>/scripts/squashtest/**.js</js>
