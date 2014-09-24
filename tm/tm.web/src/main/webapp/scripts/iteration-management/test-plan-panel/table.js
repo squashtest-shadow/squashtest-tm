@@ -91,7 +91,7 @@ define(
 				else{
 					html = statusfactory.getHtmlFor(status);
 				}
-				
+
 
 				$statustd.html(html); // remember : this will insert a <span>
 										// in the process
@@ -109,17 +109,17 @@ define(
 				// assignee (read)
 				var $assigneetd = $row.find('.assignee-combo');
 				$assigneetd.wrapInner('<span/>');
-				
+
 				// dataset : we create the 'button' part of a menu, but not actual menu.
 				if (data['dataset'].available.length>0){
 					var $dstd = $row.find('.dataset-combo');
-					$dstd.wrapInner('<span style="text-decoration:underline;"/>');
+					$dstd.wrapInner('<span />');
 				}
 			}
 
 			function _rowCallbackWriteFeatures($row, data, _conf) {
 
-				// execution status (edit, thus selected as .status-combo). 
+				// execution status (edit, thus selected as .status-combo).
 				// Note : the children().first() thing
 				// will return the span element.
 				var statusurl = _conf.testplanUrl + data['entity-id'];
@@ -152,8 +152,8 @@ define(
 				// already ensured that a <a class="buttonmenu"> exists.
 				var $dsspan = $row.find('.dataset-combo').children().first(),
 					dsInfos = data['dataset'],
-					dsurl = _conf.testplanUrl + data['entity-id'];				
-				
+					dsurl = _conf.testplanUrl + data['entity-id'];
+
 				if (dsInfos.available.length>0){
 					jeditData = confman.toJeditableSelectFormat(dsInfos.available);
 					$dsspan.addClass('cursor-arrow');
@@ -165,7 +165,7 @@ define(
 						callback : function(value, settings){
 							$(this).html(settings.data[value]);
 						}
-					});					
+					});
 				}
 			}
 
@@ -175,8 +175,8 @@ define(
 				var isTcDel = data['is-tc-deleted'],
 					isManual = (data['exec-mode'] === "M");
 
-				var tpId = data['entity-id'], 
-					$td = $row.find('.execute-button'), 
+				var tpId = data['entity-id'],
+					$td = $row.find('.execute-button'),
 					strmenu = $("#shortcut-exec-menu-template").html()
 							.replace(/#placeholder-tpid#/g, tpId);
 
@@ -308,8 +308,8 @@ define(
 				// table.
 				var tableSettings = {
 
-					bFilter : true,	
-					
+					bFilter : true,
+
 					fnRowCallback : function(row, data, displayIndex) {
 
 						var $row = $(row);
@@ -395,13 +395,13 @@ define(
 									newautoexecBtn.click(function() {
 
 										var tpiId = $(this).data('tpi-id');
-										
+
 										var formParams = {};
 										var idPrmName = squashtm.page.identity.restype === "iterations" ? "iterationId" : "testSuiteId";
 										formParams[idPrmName] = squashtm.page.identity.resid;
 										formParams.testPlanItemsIds = [ tpiId ];
-										
-										
+
+
 										var url = squashtm.app.contextRoot + "/automated-suites/new";
 										$.ajax({
 											url : url,

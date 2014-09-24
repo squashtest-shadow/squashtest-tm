@@ -58,7 +58,7 @@ define(['jquery', '../../test-plan-panel/sortmode', 'squash.configmanager',
 			var $row = $(row);
 
 			// ********* first, treat the read-permission features *********
-			
+
 			var $exectd = $row.find('.exec-mode').text('');
 			if (data['exec-mode'] === "M") {
 				$exectd.append('<span class="exec-mode-icon exec-mode-manual"/>').attr('title', '');
@@ -73,13 +73,13 @@ define(['jquery', '../../test-plan-panel/sortmode', 'squash.configmanager',
 			// dataset : we create the 'button' part of a menu, but not actual menu.
 			if (data['dataset'].available.length>0){
 				var $dstd = $row.find('.dataset-combo');
-				$dstd.wrapInner('<span style="text-decoration:underline;"/>');
+				$dstd.wrapInner('<span />');
 			}
-			
+
 			// ****** now the write permission features *********************
-			
+
 			if (conf.features.editable){
-				
+
 				// assignable users
 				var assignableUsers = conf.data.assignableUsers;
 				var assigneeurl = conf.urls.testplanUrl + data['entity-id'];
@@ -95,13 +95,13 @@ define(['jquery', '../../test-plan-panel/sortmode', 'squash.configmanager',
 							$(this).text(assignableUsers[value]);
 						}
 				});
-				
+
 				// datasets : we build here a full menu. Note that the read features
 				// already ensured that a <a class="buttonmenu"> exists.
 				var $dsspan = $row.find('.dataset-combo').children().first(),
 					dsInfos = data['dataset'],
-					dsurl = conf.urls.testplanUrl + data['entity-id'];										
-				
+					dsurl = conf.urls.testplanUrl + data['entity-id'];
+
 				if (dsInfos.available.length>0){
 					$dsspan.addClass('cursor-arrow');
 					$dsspan.editable(dsurl, {
@@ -112,9 +112,9 @@ define(['jquery', '../../test-plan-panel/sortmode', 'squash.configmanager',
 						callback : function(value, settings){
 							$(this).html(settings.data[value]);
 						}
-					});					
+					});
 				}
-				
+
 			}
 
 

@@ -65,7 +65,7 @@
  */
 
 define([ "jquery", "squashtable/squashtable.collapser", "custom-field-values", "workspace.event-bus",
-         "./popups", 'workspace.storage', 'squash.translator', "jquery.squash.oneshotdialog", 
+         "./popups", 'workspace.storage', 'squash.translator', "jquery.squash.oneshotdialog",
          "jquery.squash.formdialog", "squashtable" ], function($, TableCollapser,
 		cufValuesManager, eventBus, popups, storage, translator, oneshot) {
 
@@ -73,7 +73,7 @@ define([ "jquery", "squashtable/squashtable.collapser", "custom-field-values", "
 	// ************************************
 
 	var COOKIE_NAME = "testcase-tab-cookie";
-	
+
 	function makeTableUrls(conf) {
 		var tcUrl = conf.basic.testCaseUrl;
 		var ctxUrl = conf.basic.rootContext;
@@ -123,39 +123,39 @@ define([ "jquery", "squashtable/squashtable.collapser", "custom-field-values", "
 		callRows.find("td.rich-edit-action").removeClass("rich-edit-action");
 		callRows.find("td.rich-edit-result").removeClass("rich-edit-result");
 		callRows.find("td.has-attachment-cell").removeClass("has-attachment-cell");
-		callRows.find("td.custom-field-value").removeClass(); 
+		callRows.find("td.custom-field-value").removeClass();
 
 		callRows.find("td.called-tc-cell").next().remove().end().attr("colspan", 2);
 	}
-	
-	
+
+
 	function setCallStepsContent(table){
 		table.find('tr.call-step-row').each(function(){
-			_callStepContent(table, this);	
+			_callStepContent(table, this);
 		});
 	}
 
-	
+
 	function _callStepContent(table, row){
 		var alllang = translator.get({
 			template : 'test-case.call-step.action.template',
 			none : 'label.callstepdataset.PickDataset',
 			delegate : 'label.callstepdataset.Delegate'
 		});
-		
+
 		var data = table.fnGetData(row);
 		var stepinfo = data['call-step-info'];
-		
+
 		var tcUrl = squashtm.app.contextRoot + '/test-cases/'+stepinfo.calledTcId+'/info',
 			dsName = (stepinfo.paramMode === 'NOTHING') ? alllang.none :
 					(stepinfo.paramMode === 'DELEGATE') ? alllang.delegate :
 					stepinfo.calledDatasetName;
-		
+
 		var	tcLink = '<a href="'+tcUrl+'">'+stepinfo.calledTcName+'</a>',
-			dsLink = '<span class="called-dataset-link cursor-pointer" style="text-decoration:underline;">'+dsName+'</span>';
-		
+			dsLink = '<a href="javascript:void(0)" class="called-dataset-link">'+dsName+'</a>';
+
 		var text = alllang.template.replace('{0}', tcLink).replace('{1}', dsLink);
-		
+
 		$(row).find('td.called-tc-cell').html(text);
 	}
 
@@ -179,7 +179,7 @@ define([ "jquery", "squashtable/squashtable.collapser", "custom-field-values", "
 		// rework the td css classes to inhibit some post processing on
 		// them when not relevant
 		specializeCellClasses(this);
-		
+
 		// handles the content of the call step rows
 		setCallStepsContent(this);
 
@@ -188,14 +188,14 @@ define([ "jquery", "squashtable/squashtable.collapser", "custom-field-values", "
 		if (collapser) {
 			collapser.refreshTable();
 		}
-		
-		// the cookie used when navigating back from the attachment manager. This solution is crap  
+
+		// the cookie used when navigating back from the attachment manager. This solution is crap
 		// and I hope we come up with something better.
 		this.on('click', 'td.has-attachment-cell > a', function(evt){
 			$.cookie(COOKIE_NAME, 1, { expires: 1, path: '/' });
 			return true;
 		});
-		
+
 	}
 
 	function stepDropHandlerFactory(dropUrl) {
@@ -210,11 +210,11 @@ define([ "jquery", "squashtable/squashtable.collapser", "custom-field-values", "
 	// *****************************
 
 	function initTable(settings) {
-		
-		
+
+
 		var cufColumnPosition = 4;
 		var language = settings.language, urls = makeTableUrls(settings), permissions = settings.permissions;
-		
+
 		var table = $("#test-steps-table-"+urls.testCaseId);
 
 		var cufTableHandler = cufValuesManager.cufTableSupport;
@@ -348,7 +348,7 @@ define([ "jquery", "squashtable/squashtable.collapser", "custom-field-values", "
 			attachments : {
 				url : "#"
 			},
-			
+
 			buttons : [ {
 				tooltip : language.edit,
 				tdSelector : "td.browse-button",
@@ -405,15 +405,15 @@ define([ "jquery", "squashtable/squashtable.collapser", "custom-field-values", "
 			};
 
 			$.extend(squashSettings, moreSettings);
-			
+
 			table.on('click', '.called-dataset-link', function(evt){
 				var sqtable = table.squashTable(),
 					popup = $("#pick-call-step-dataset-dialog");
-				
+
 				var $row = $(evt.currentTarget).closest('tr');
 				var data = sqtable.fnGetData($row.get(0));
 				popup.data('opener-id', data['step-id']);
-				
+
 				popup.formDialog('open');
 			});
 
@@ -429,7 +429,7 @@ define([ "jquery", "squashtable/squashtable.collapser", "custom-field-values", "
 
 		// Commenting out the 'refresh' just below, see https://ci.squashtest.org/mantis/view.php?id=2627#c4959
 		//$("#test-steps-table-"+urls.testCaseId).squashTable().refresh();
-		
+
 		// also listen to the parameter assignation mode of its own steps
 		eventBus.onContextual('testStepsTable.changedCallStepParamMode', function(evt, params){
 			var row = table.getRowsByIds([params.stepId]).get(0);
@@ -548,9 +548,9 @@ define([ "jquery", "squashtable/squashtable.collapser", "custom-field-values", "
 			cufValuesSupport.reset();
 		});
 	}
-	
 
-	
+
+
 
 	// ************************* other buttons code
 	// **********************************
@@ -798,7 +798,7 @@ define([ "jquery", "squashtable/squashtable.collapser", "custom-field-values", "
 		conf.testCaseId = settings.basic.testCaseId;
 		conf.stepsTablePanel = this;
 		popups.init(conf);
-		
+
 
 		// toolbar
 		if (permissions.isWritable) {

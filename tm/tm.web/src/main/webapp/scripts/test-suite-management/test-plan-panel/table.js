@@ -93,11 +93,11 @@ define(
 				// assignee (read)
 				var $assigneetd = $row.find('.assignee-combo');
 				$assigneetd.wrapInner('<span/>');
-				
+
 				// dataset : we create the 'button' part of a menu, but not actual menu.
 				if (data['dataset'].available.length>0){
 					var $dstd = $row.find('.dataset-combo');
-					$dstd.wrapInner('<span style="text-decoration:underline;"/>');
+					$dstd.wrapInner('<span />');
 				}
 			}
 
@@ -132,8 +132,8 @@ define(
 				// datasets (edit)
 				var $dsspan = $row.find('.dataset-combo').children().first(),
 					dsInfos = data['dataset'],
-					dsurl = _conf.testplanUrl + data['entity-id'];										
-				
+					dsurl = _conf.testplanUrl + data['entity-id'];
+
 				if (dsInfos.available.length>0){
 					$dsspan.addClass('cursor-arrow');
 					$dsspan.editable(dsurl, {
@@ -144,9 +144,9 @@ define(
 						callback : function(value, settings){
 							$(this).html(settings.data[value]);
 						}
-					});					
+					});
 				}
-				
+
 			}
 
 			function _rowCallbackExecFeatures($row, data, _conf) {
@@ -282,7 +282,7 @@ define(
 				// basic table configuration. Much of it is in the DOM of the
 				// table.
 				var tableSettings = {
-						
+
 					bFilter : true,
 
 					fnRowCallback : function(row, data, displayIndex) {
@@ -319,9 +319,9 @@ define(
 						var aaSorting = settings.aaSorting;
 
 						this.data('sortmode').manage(aaSorting);
-						
+
 						// hide the Dataset column if all is empty
-						
+
 					}
 				};
 
