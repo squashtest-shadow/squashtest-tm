@@ -115,7 +115,12 @@ define([ "jquery", "backbone", "jeditable.simpleJEditable", "app/util/StringUtil
 						var cellText = $value.text();
 						var textAttrs = StringUtil.parseSequence(cellText);
 						// then we fix the cell's text to show only it's value
-						var valueText = StringUtil.getParsedSequenceAttribute(textAttrs, "value");
+//						var valueText = StringUtil.getParsedSequenceAttribute(textAttrs, "value");
+//						code comented above doesn't work because of [Issue 3820]
+						var valuePrefix = "value=";
+						var indexWhereValueStarts = cellText.indexOf(valuePrefix) + valuePrefix.length;
+						
+						var valueText = cellText.slice(indexWhereValueStarts, cellText.length);
 						$value.text(valueText);
 						// and we build the url used for the SimpleJEditable
 						var cellId = StringUtil.getParsedSequenceAttribute(textAttrs, "id");
