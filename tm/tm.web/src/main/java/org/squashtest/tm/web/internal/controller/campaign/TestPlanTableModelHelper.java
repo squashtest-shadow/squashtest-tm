@@ -36,6 +36,7 @@ import org.squashtest.tm.domain.testcase.Dataset;
 import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.service.campaign.IndexedIterationTestPlanItem;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
+import org.squashtest.tm.web.internal.model.builder.JeditableComboHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelBuilder;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelConstants;
 import org.squashtest.tm.web.internal.model.json.JsonDataset;
@@ -146,11 +147,10 @@ class TestPlanTableModelHelper extends DataTableModelBuilder<IndexedIterationTes
 
 		static {
 			JsonDataset emptyDs = new JsonDataset();
-			emptyDs.setId(null);
+			emptyDs.setId(JeditableComboHelper.coerceIntoComboId(null));
 			emptyDs.setName("-");
 
-			// I would prefer Collections.emptylist but the fracking compiler would not let met cast.
-			EMPTY_INFOS = new DatasetInfos(emptyDs, new ArrayList<JsonDataset>());
+			EMPTY_INFOS = new DatasetInfos(emptyDs, Collections.<JsonDataset> emptyList());
 		}
 
 		public static final DatasetInfos EMPTY_INFOS;
@@ -199,11 +199,11 @@ class TestPlanTableModelHelper extends DataTableModelBuilder<IndexedIterationTes
 	private JsonDataset convert(Dataset ds){
 		JsonDataset jsds = new JsonDataset();
 		if (ds == null){
-			jsds.setName(messageSource.getMessage("label.noneDS", null, "label.noneDS", locale));
-			jsds.setId(null);
+			jsds.setName(messageSource.internationalize("label.noneDS", locale));
+			jsds.setId(JeditableComboHelper.coerceIntoComboId(null));
 		}else{
 			jsds.setName(ds.getName());
-			jsds.setId(ds.getId());
+			jsds.setId(JeditableComboHelper.coerceIntoComboId(ds.getId()));
 		}
 		return jsds;
 	}

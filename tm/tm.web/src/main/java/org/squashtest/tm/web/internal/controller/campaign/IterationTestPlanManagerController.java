@@ -56,6 +56,7 @@ import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.helper.JsTreeHelper;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.builder.DriveNodeBuilder;
+import org.squashtest.tm.web.internal.model.builder.JeditableComboHelper;
 import org.squashtest.tm.web.internal.model.builder.JsTreeNodeListBuilder;
 import org.squashtest.tm.web.internal.model.datatable.DataTableColumnFiltering;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
@@ -228,7 +229,6 @@ public class IterationTestPlanManagerController {
 		}
 
 		return jsonUsers;
-
 	}
 
 	@RequestMapping(value = "/iterations/{iterationId}/test-plan/{testPlanIds}", method = RequestMethod.POST, params = { "assignee" })
@@ -248,10 +248,10 @@ public class IterationTestPlanManagerController {
 
 	}
 
-	@RequestMapping(value = "/iterations/{iterationId}/test-plan/{testPlanId}", method = RequestMethod.POST, params = {"dataset"})
+	@RequestMapping(value = "/iterations/{iterationId}/test-plan/{testPlanId}", method = RequestMethod.POST, params = { "dataset" })
 	public @ResponseBody
-	Long setDataset(@PathVariable("testPlanId") long testPlanId, @RequestParam("dataset") Long datasetId){
-		iterationTestPlanManagerService.changeDataset(testPlanId, datasetId);
+	Long setDataset(@PathVariable("testPlanId") long testPlanId, @RequestParam("dataset") Long datasetId) {
+		iterationTestPlanManagerService.changeDataset(testPlanId, JeditableComboHelper.coerceIntoEntityId(datasetId));
 		return datasetId;
 	}
 
@@ -264,6 +264,5 @@ public class IterationTestPlanManagerController {
 		return new JsonIterationTestPlanItem(item.getId(), item.getExecutionStatus(), name, item.getLastExecutedOn(),
 				item.getLastExecutedBy(), item.getUser(), item.isTestCaseDeleted(), item.isAutomated());
 	}
-
 
 }

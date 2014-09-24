@@ -88,22 +88,19 @@ public class TestCaseDatasetsController {
 	@Inject
 	private MessageSource messageSource;
 
-	private DatatableMapper<String> datasetsTableMapper = new NameBasedMapper(3).mapAttribute(DataTableModelConstants.DEFAULT_ENTITY_ID_KEY, "id",
-			Dataset.class).mapAttribute(DataTableModelConstants.DEFAULT_ENTITY_NAME_KEY, "name",
-					Dataset.class);
-
-
-
+	private DatatableMapper<String> datasetsTableMapper = new NameBasedMapper(3).mapAttribute(
+			DataTableModelConstants.DEFAULT_ENTITY_ID_KEY, "id", Dataset.class).mapAttribute(
+					DataTableModelConstants.DEFAULT_ENTITY_NAME_KEY, "name", Dataset.class);
 
 	@RequestMapping(method = RequestMethod.GET)
 	@ResponseBody
-	public Collection<JsonDataset> getAvailableDatasets(@PathVariable("testCaseId") long testCaseId){
+	public Collection<JsonDataset> getAvailableDatasets(@PathVariable("testCaseId") long testCaseId) {
 
 		Collection<Dataset> datasets = datasetModificationService.findAllForTestCase(testCaseId);
 
 		Collection<JsonDataset> result = new ArrayList<JsonDataset>(datasets.size());
 
-		for (Dataset ds : datasets){
+		for (Dataset ds : datasets) {
 			JsonDataset jds = new JsonDataset();
 			jds.setId(ds.getId());
 			jds.setName(ds.getName());
@@ -162,16 +159,17 @@ public class TestCaseDatasetsController {
 	 */
 	@RequestMapping(value = "/table/param-headers", method = RequestMethod.GET)
 	@ResponseBody
-	public List<HashMap<String, String>> getDatasetsTableParametersHeaders(@PathVariable long testCaseId, final Locale locale) {
+	public List<HashMap<String, String>> getDatasetsTableParametersHeaders(@PathVariable long testCaseId,
+			final Locale locale) {
 		List<Parameter> directAndCalledParameters = getSortedDirectAndCalledParameters(testCaseId);
-		return ParametersModelHelper.findDatasetParamHeaders(testCaseId, locale, directAndCalledParameters, messageSource);
+		return ParametersModelHelper.findDatasetParamHeaders(testCaseId, locale, directAndCalledParameters,
+				messageSource);
 
 	}
 
 	private List<Parameter> getSortedDirectAndCalledParameters(long testCaseId) {
 		List<Parameter> directAndCalledParameters = parameterFinder.findAllParameters(testCaseId);
-		Collections.sort(directAndCalledParameters, new ParameterNameComparator(
-				SortOrder.ASCENDING));
+		Collections.sort(directAndCalledParameters, new ParameterNameComparator(SortOrder.ASCENDING));
 		return directAndCalledParameters;
 	}
 
