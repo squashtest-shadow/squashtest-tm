@@ -55,6 +55,14 @@
 <c:url var="customFieldsValuesURL" value="/custom-fields/values" />
 
 <%-- ----------------------------------- Authorization ----------------------------------------------%>
+  <c:set var="writable" value="${ false }" />
+  <c:set var="attachable" value="${ false }" />
+  <c:set var="deletable" value="${false }" />
+  <c:set var="creatable" value="${false }" />
+  <c:set var="linkable" value="${ false }" />
+  <c:set var="moreThanReadOnly" value="${ false }" />
+
+
 <authz:authorized hasRole="ROLE_ADMIN" hasPermission="WRITE"
 	domainObject="${ campaign }">
 	<c:set var="writable" value="${ true }" />
@@ -64,17 +72,12 @@
 	<c:set var="attachable" value="${ true }" />
 	<c:set var="moreThanReadOnly" value="${ true }" />
 </authz:authorized>
-
 <authz:authorized hasRole="ROLE_ADMIN" hasPermission="DELETE" domainObject="${ campaign }">
 	<c:set var="deletable" value="${true }" />
 	<c:set var="moreThanReadOnly" value="${ true }" />
 </authz:authorized>
 <authz:authorized hasRole="ROLE_ADMIN" hasPermission="CREATE" domainObject="${ campaign }">
 	<c:set var="creatable" value="${true }" />
-	<c:set var="moreThanReadOnly" value="${ true }" />
-</authz:authorized>
-<authz:authorized hasRole="ROLE_ADMIN" hasPermission="LINK"	domainObject="${ campaign }">
-	<c:set var="linkable" value="${ true }" />
 	<c:set var="moreThanReadOnly" value="${ true }" />
 </authz:authorized>
 <authz:authorized hasRole="ROLE_ADMIN" hasPermission="LINK"	domainObject="${ campaign }">
