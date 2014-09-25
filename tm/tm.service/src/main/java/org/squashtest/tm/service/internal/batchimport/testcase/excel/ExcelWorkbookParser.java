@@ -317,7 +317,7 @@ public class ExcelWorkbookParser {
 			Iterator<Cell> iterator = row.cellIterator();
 			while(iterator.hasNext()){
 				Cell c = iterator.next();
-				if (! StringUtils.isBlank(c.getStringCellValue())){
+				if (! StringUtils.isBlank(c.toString())){
 					isEmpty = false;
 					break;
 				}
