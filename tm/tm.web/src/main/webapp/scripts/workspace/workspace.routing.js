@@ -26,7 +26,7 @@
  * A placeholder is enclosed by curly braces '{}' and a regular expression in between that describe what an actual replacement 
  * should look to.
  * 
- * API :
+ * ==========API============ 
  * 
  * 	'url name' : returns the URL template mapped to the 'url name' (see the list right below)
  * 
@@ -41,24 +41,69 @@ define([], function(){
 
 	"use strict";
 	
-	var root = squashtm.app.contextRoot;
+	var root = squashtm.app.contextRoot.replace(/\/$/, '');
+	
+	
+	
+	// returns the template as a RegExp object.
+	// it is done by escaping the static part of the template,
+	// and inlining the regex embedded in the placeholders.
+	function templateToRegex(template){
+		
+		var exprNoCapture = /\{[^\}]+\}/g,
+			exprCapture = /\{([^\}]+)\}/g;
+		
+		
+		// let's break down the template, we separate the static parts from the placeholder parts. By construction 
+		// we'll normally have the relation placeholders.length <= staticparts.length <= placeholders.length + 1
+		var staticparts,
+			placeholders = [],
+			buf;
+		
+		staticparts = template.split(exprNoCapture);
+		
+		while ((buf = exprCapture.exec(template))!== null){
+			placeholders.push(buf[1]);
+		}
+
+		// now we can build our regexp
+		var expression = "";
+		while (staticparts.length>0){
+			var statik = staticparts.shift() || "",
+				placeholdexpr = placeholders.shift() || "";
+			
+			var escapedStatik = statik.replace(/[-[\]{}()*+?.,\\^$|#\s\/]/g, "\\$&");
+				
+			expression += escapedStatik + placeholdexpr;
+		}
+		
+		return new RegExp("^"+expression+"$"); 
+			
+	}
 	
 	return {
 		
 		// url names mapping
-		'attachments.manager':				root + '/attach-list/{d+}/attachments/manager',
+		'attachments.manager':				root + '/attach-list/{\\d+}/attachments/manager',
+		'search' : 							root + '/advanced-search',
+		'search.results' :					root + '/advanced-search/results',
 		
 		'testcases.workspace' : 			root + '/test-case-workspace/',
-		'testcases.info' : 					root + '/test-cases/{d+}/info',
-		'testcases.requirements.manager' :	root + '/test-cases/{d+}/verified-requirement-versions/manager',
+		'testcases.info' : 					root + '/test-cases/{\\d+}/info',
+		'testcases.requirements.manager' :	root + '/test-cases/{\\d+}/verified-requirement-versions/manager',
 		
-		'teststeps.info' : 					root + '/test-steps/{d+}',
-		'teststeps.requirements.manager' : 	root + '/test-steps/{d+}/verified-requirement-versions/manager',
+		'teststeps.info' : 					root + '/test-steps/{\\d+}',
+		'teststeps.requirements.manager' : 	root + '/test-steps/{\\d+}/verified-requirement-versions/manager',
 		
 		'requirements.workspace':			root + '/requirement-workspace/',
-		'requirements.info'	:				root + '/requirements/{d+}/info',
-		'requirements.versions.manager'	:	root + '/requirements/{d+}/versions/manager',
-		'requirements.testcases.manager':	root + '/requirement-versions/{d+}/verifying-test-cases/manager',
+		'requirements.info'	:				root + '/requirements/{\\d+}/info',
+		'requirements.versions.manager'	:	root + '/requirements/{\\d+}/versions/manager',
+		'requirements.testcases.manager':	root + '/requirement-versions/{\\d+}/verifying-test-cases/manager',
+		
+		'campaigns.workspace' : 			root + '/campaign-workspace/',
+		'campaigns.testplan.manager' :		root + '/campaigns/{\\d+}/test-plan//manager',
+		'iterations.testplan.manager' : 	root + '/iterations/{\\d+}/test-plan-manager',
+		'testsuites.testplan.manager' :		root + '/test-suites/{\\d+}/test-plan-manager',
 
 		
 		// helper methods
@@ -77,46 +122,11 @@ define([], function(){
 		matches : function(urlName, candidate){
 			var template = this[urlName];
 			var tplExp = templateToRegex(template);
-			return tplExp.test(candidate);
+			window.ex = tplExp;
+			return tplExp.test(candidate.replace(/\/\//,'/'));	// we remove the double '//' that may occur sometimes
 		}
 		
-	}
-	
-	
-	// returns the template as a RegExp object.
-	// it is done by escaping the static part of the template,
-	// and inlining the regex embedded in the placeholders.
-	function templateToRegex(template){
-		
-		var exprNoCapture = /\{[^\}]+\}/g,
-			exprCapture = /\{([^\}]+)\}/g;
-		
-		
-		// let's break down the template, we separate the static parts from the placeholder parts. By construction 
-		// we'll normally have the relation placeholders.length <= staticparts.length <= placeholders.length + 1
-		var staticparts,
-			placeholders,
-			buf;
-		
-		staticparts = template.split(exprNoCapture);
-		
-		while ((buf = exprCapture.exec(template))!== null){
-			placeholders.push(buf[1]);
-		}
+	};
 
-		// now we can build our regexp
-		var expression = "";
-		while (staticparts.length>0){
-			var part = staticparts.shift(),
-				placeholdexpr = placeholders.shift();
-			
-			var staticescaped = staticparts.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
-				
-			expression += escaped + placeholdexpr;
-		}
-		
-		return new RegExp("^"+expression+"$"); 
-			
-	}
 	
 });

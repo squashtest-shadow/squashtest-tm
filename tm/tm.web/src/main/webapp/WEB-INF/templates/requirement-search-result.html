@@ -107,8 +107,10 @@
 							th:value="#{label.AssociateAll}" id="associate-all-button"
 							class="button ui-button ui-widget ui-state-default ui-corner-all"
 							role="button" aria-disabled="false" />
-				  	<input th:if="!${associateResult}" id="back" type="button" class="sq-btn" th:value="#{label.Back}" value="Retour"/>	
-				  	<input th:if="${associateResult}" id="back" type="button" class="sq-btn" th:value="#{label.Cancel}" value="Retour"/>	
+				  	<input th:if="!${associateResult}" id="back" type="button" class="sq-btn" th:value="#{label.Back}" value="Retour" 
+                            onclick="document.location.href=squashtm.workspace.backurl"/>	
+				  	<input th:if="${associateResult}" id="back" type="button" class="sq-btn" th:value="#{label.Cancel}" value="Retour"
+                            onclick="document.location.href=squashtm.workspace.backurl"/>		
 				</div>
 				
 				<div class="unsnap"></div>

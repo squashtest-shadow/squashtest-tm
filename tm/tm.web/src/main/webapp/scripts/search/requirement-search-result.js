@@ -70,10 +70,10 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil",
 			var  returnUrl = "";
 			if("testcase" === this.associationType){
 				targetUrl =  squashtm.app.contextRoot + "/test-cases/" + id + "/verified-requirements";
-				returnUrl = squashtm.app.contextRoot + "/test-cases/" + id + "/verified-requirement-versions/manager";
+				//returnUrl = squashtm.app.contextRoot + "/test-cases/" + id + "/verified-requirement-versions/manager";
 			}else if ("teststep" === this.associationType){
 				targetUrl = squashtm.app.contextRoot + "/test-steps/" + id + "/verified-requirements";
-				returnUrl = squashtm.app.contextRoot + "/test-steps/" + id + "/verified-requirement-versions/manager";
+				//returnUrl = squashtm.app.contextRoot + "/test-steps/" + id + "/verified-requirement-versions/manager";
 			}
 			
 			$.ajax({
@@ -81,7 +81,8 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil",
 				url :targetUrl,
 				data : { "requirementsIds[]" : ids }
 			}).done(function() {
-				document.location.href = returnUrl;
+				//document.location.href = returnUrl;
+				$("#back").click();
 			});
 			
 		},

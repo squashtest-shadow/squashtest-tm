@@ -19,7 +19,8 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 define([ "jquery", "app/pubsub", "app/ws/squashtm.navbar", "project-filter/ProjectFilter",
-		"app/ws/squashtm.notification", "squash.session-pinger" ], function($, ps, NavBar, ProjectFilter, WTF, SSP) {
+		"app/ws/squashtm.notification", "squash.session-pinger", "workspace.breadcrumb" ], 
+		function($, ps, NavBar, ProjectFilter, WTF, SSP) {
 
 	ps.subscribe("load.navBar", NavBar.init);
 	ps.subscribe("load.projectFilter", ProjectFilter.init);

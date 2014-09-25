@@ -42,7 +42,7 @@ require([ "common" ], function(common) {
 		domReady(function() {
 			WS.init();
 			var view = new TestCaseSearchResultView();
-			$("#back").on("click", goBack);
+			//$("#back").on("click", goBack);
 		});
 
 	});
