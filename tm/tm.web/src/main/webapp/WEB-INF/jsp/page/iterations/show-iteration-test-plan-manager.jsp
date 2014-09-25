@@ -31,7 +31,6 @@
 
 <%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
 
-<c:url var="backUrl" value="/campaign-workspace/" />
 <c:url var="testPlanUrl" value="/iterations/${iteration.id}/test-plan/" />
 <c:url var="iterationUrl" value="/iterations/${iteration.id}/" />
 <c:url var="iterationTestPlanUrl" value="/iterations/${iteration.id}/info" />
@@ -54,7 +53,8 @@
     
   <jsp:attribute name="subPageButtons">
     <f:message var="backButtonLabel" key="label.Back" />
-    <input type="button" class="button" value="${backButtonLabel}" onClick="document.location.href='${backUrl}'"/>  
+    <input type="button" id="back" class="button" value="${backButtonLabel}" 
+          onClick="document.location.href=squashtm.workspace.backurl;" />	
   </jsp:attribute>    
   
   <jsp:attribute name="tree">
@@ -98,10 +98,6 @@
                      
                      $("#remove-items-button").on('click', function(){
                        $("#remove-test-plan-button").click();
-                     });
-                       
-                     $("#back").click(function(){
-                       document.location.href="${backUrl}";
                      });
                    
           			iterManager.initEvents({});

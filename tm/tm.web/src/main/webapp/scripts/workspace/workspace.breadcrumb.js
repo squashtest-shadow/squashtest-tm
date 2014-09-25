@@ -47,8 +47,8 @@
  * or 
  * 
  * 2 - The back navigation obeys to different rules : you need to 
- * 	2a : add an entry to the mapping (see below) and  
- * 	2b : add to your page a button with id="back" and onclick="document.location.href=squashtm.workspace.backurl"
+ *	2a : add an entry to the mapping (see below) and  
+ *	2b : add to your page a button with id="back" and onclick="document.location.href=squashtm.workspace.backurl"
  * 
  * 
  * ==================
@@ -60,10 +60,32 @@
  * visited first. For this reason such URLs are named here "approved referrer". 
  * 
  * For a given location, if a mapping is defined then document.referrer will be added to the breadcrumb
- * if and only if it belongs to the approved referrers for that location.
+ * if and only the referrer is approved according to the mapping.
  * 
- * The mapping uses the symbolic names of the "URL templates" defined in module "workspace.routing". 
+ * The mappings are defined in object 'module.routes' in this present file. They use the symbolic names 
+ * of the "URL templates" defined in module "workspace.routing". An entry consists of one URL template 
+ * and an array of URL templates that define what are the approved referrers. You can negate a template 
+ * by prefixing it with a bang '!'. 
  * 
+ * For a given url the approved referrer resolution is as follow : the url must either match a positive
+ * template, either match none of the negative templates.
+ * 
+ *   Examples :
+ *   
+ *  1) Back navigation from 'pub' is allowed only to 'home', 'work' or 'otherpub :
+ * 
+ *	'pub' : [ 'home', 'work', 'otherpub' ]
+ * 
+ *	2) Back navigation from 'pub.beer' is allowed to anywhere but 'pub.sober' :
+ * 
+ *  'pub.beer' : [ '!pub.sober' ]
+ *  
+ *  3) Back navigation from 'pub' to anywhere except 'work' unless you are a cop :
+ *  
+ *  'pub' : [ '!work', 'work.policestation' ]
+ * 
+ * 
+ * ----
  * Keep in mind that if a location is not mapped then no special rules will apply and document.referrer 
  * will always be considered a valid location to navigate back to. 
  * 
@@ -94,7 +116,7 @@
  * Although the main job is performed at load time a module is returned on completion. It contains the following attributes 
  * and methods :
  * 
- *  routes: if you're curious, you can look at the mapping. *  				
+ *  routes: if you're curious, you can look at the mapping. *
  *  get() : returns the current breadcrumb.
  * 
  */
@@ -103,35 +125,32 @@ define(["domReady", "workspace.routing", "workspace.storage"], function(domReady
 	"use strict";
 
 	var storekey = 'squashtm.workspace.breadcrumb';
-	squashtm = squashtm || {};
-	squashtm.workspace = squashtm.workspace || {};
+	window.squashtm = window.squashtm || {};
+	window.squashtm.workspace = window.squashtm.workspace || {};
 	
 	
 	/* ****************************************************************
-	 * 						Module definition
+	 *						Module definition
 	 **************************************************************** */
 	var module= {
 		// mapping : 'location' : [array of approved referrer]
 		routes : {			
-			//'teststeps.requirements.manager' : ['testcases.workspace', 'testcases.info', 'teststeps.info'],
+			'teststeps.requirements.manager' : ['!search', '!search.results'],
 			
-			'search.results' : ['testcases.requirements.manager', 'teststeps.requirements.manager', 
-			                    'requirements.testcases.manager',
-			                    'testcases.workspace', 'requirements.workspace',
-			                    'campaigns.testplan.manager', 'iterations.testplan.manager',
-			                    'testsuites.testplan.manager'
-			                    ]
+			'search.results' : ['!search'],
+			
+			'search' : ['!search.results']
 		},
 		
 		get : function(){
 			return storage.get(storekey) || [];
-		},
+		}
 		
 	};
 	
 	
 	/* ****************************************************************
-	 * 							Library code
+	 *							Library code
 	 **************************************************************** */
 
 	// uses a well known trick on the internet
@@ -159,6 +178,47 @@ define(["domReady", "workspace.routing", "workspace.storage"], function(domReady
 		} 
 	}
 	
+	function resolveApprobation(approvedList, referPath){
+		
+		var i, r, match, negate; 
+		var passed = false,
+			isBlacklist = false;
+		
+		for (i=0; i < approvedList.length; i++){
+			r = approvedList[i];
+			
+			negate = (r.charAt(0) === '!');
+			isBlacklist = isBlacklist || negate;
+			
+			r = (negate) ? r.substring(1) : r;
+			
+			match = routing.matches(r, referPath);
+			
+			// one positive match -> yay
+			if (match && ! negate){
+				return true;
+			}
+			
+			// one negated match -> nay
+			else if (match && negate){
+				return false;
+			}
+		}
+		
+		/*
+		 * If we ran through the whole loop,  then the result depends on 
+		 * whether the logic was 'white list' or 'black list', ie if 
+		 * we had at least one negated template.
+		 * 
+		 * Explicitly, if there was at least negated templates, if we ran through the 
+		 * whole loop then the referrer is ok because it matched none of them.
+		 * One the other hand if the whole list was made of positive templates,
+		 * if the referrer matched none of them then it is not ok.
+		 */
+		return isBlacklist;
+		
+	}
+	
 	function track(){
 		
 		var breadcrumb = storage.get(storekey);			
@@ -176,7 +236,7 @@ define(["domReady", "workspace.routing", "workspace.storage"], function(domReady
 		else if (justNavigatedBack(breadcrumb)){
 			breadcrumb.pop();
 			if (breadcrumb.length>0){
-				squashtm.workspace.backurl = breadcrumb[breadcrumb.length-1];
+				window.squashtm.workspace.backurl = breadcrumb[breadcrumb.length-1];
 			}
 		}
 		
@@ -197,17 +257,10 @@ define(["domReady", "workspace.routing", "workspace.storage"], function(domReady
 				if (routing.matches(l, locationPath)){
 					
 					locationMapped = true;
-					var approved = module.routes[l];
+					var approvedList = module.routes[l];
 					
-					for (var i=0; i < approved.length; i++){
-						var r = approved[i];
-						if (routing.matches(r, referrerPath)){
-							referrerMapped = true;
-							break;
-						}
-					}
+					referrerMapped = resolveApprobation(approvedList, referrerPath);
 					
-					break;
 				}
 			}	
 			
@@ -217,7 +270,7 @@ define(["domReady", "workspace.routing", "workspace.storage"], function(domReady
 			}
 			
 			// step 5
-			squashtm.workspace.backurl = breadcrumb[breadcrumb.length-1];
+			window.squashtm.workspace.backurl = breadcrumb[breadcrumb.length-1];
 		}
 
 		
@@ -226,12 +279,12 @@ define(["domReady", "workspace.routing", "workspace.storage"], function(domReady
 	}
 	
 	/* ****************************************************************
-	 * 		This code is executed at load time
+	 *		This code is executed at load time
 	 **************************************************************** */
 	
 	domReady(function(){
 		track();
-	})
+	});
 	
 	return module;
 

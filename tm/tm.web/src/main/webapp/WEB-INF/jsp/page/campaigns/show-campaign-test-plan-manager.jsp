@@ -31,7 +31,7 @@
 <%@ taglib prefix="authz" tagdir="/WEB-INF/tags/authz" %>
 <%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
 
-<c:url var="backUrl" value="/campaign-workspace/" />
+
 <c:url var="campaignUrl" value="/campaigns/${ campaign.id }" />
 <c:url var="testPlanUrl" value="/campaigns/${campaign.id}/test-plan"/>
 
@@ -57,7 +57,8 @@
 	
 	<jsp:attribute name="subPageButtons">
 		<f:message var="backButtonLabel" key="label.Back" />
-		<input type="button" class="button" value="${backButtonLabel}" onClick="document.location.href='${backUrl}'"/>	
+		<input type="button" id="back" class="button" value="${backButtonLabel}" 
+                onClick="document.location.href=squashtm.workspace.backurl;" /> 	
 	</jsp:attribute>	
 	
 	
@@ -89,11 +90,6 @@
               
               $(function() {
         
-                <%-- back button --%>
-                
-                $("#back").on('click', function(){
-                  history.back();
-                });
                 
                 <%-- test-case addition --%>
                 $( '#add-items-button' ).click(function() {

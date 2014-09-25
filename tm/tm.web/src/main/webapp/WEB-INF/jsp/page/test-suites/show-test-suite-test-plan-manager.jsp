@@ -30,7 +30,6 @@
 <%@ taglib prefix="it" tagdir="/WEB-INF/tags/iterations-components"%>
 
 
-<c:url var="backUrl" value="/campaign-workspace/" />
 <c:url var="testSuiteUrl" value="/test-suites/${ testSuite.id }" />
 <c:url var="testPlanUrl" value="/test-suites/${testSuite.id}/test-plan/" />
 <c:url var="testSuiteTestPlanUrl" value="/test-suites/${testSuite.id}/info" />
@@ -54,7 +53,8 @@
   
 	<jsp:attribute name="subPageButtons">
 		<f:message var="backButtonLabel" key="label.Back" />
-		<input type="button" class="button" value="${backButtonLabel}" onClick="document.location.href='${backUrl}'"/>	
+		<input type="button" id="back" class="button" value="${backButtonLabel}" 
+                onClick="document.location.href=squashtm.workspace.backurl;" /> 	
 	</jsp:attribute>		
 	
 
@@ -104,9 +104,6 @@
               $("#remove-test-plan-button").click();
             });
             
-        $("#back").click(function(){
-          document.location.href="${backUrl}";
-        });
         
         eventBus.onContextual("context.content-modified", function() {
           $("#test-suite-test-plans-table").squashTable().refresh();

@@ -69,60 +69,36 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil",
 				
 			if("requirement" === this.associationType){
 				
-				var st = "";
-				var i;
-				
-				for(i=0; i<ids.length; i++){
-					if(i+1 == ids.length){
-						st = st+ids[i];
-					} else {
-						st = st+ids[i]+",";
-					}
-				}
-				
-
+				var st = ids.join(',');
 				
 				$.ajax({
 					type: "POST",
 					url : squashtm.app.contextRoot + "/requirement-versions/" + id + "/verifying-test-cases/"+st
 				}).done(function() {
-					document.location.href = squashtm.app.contextRoot + "/requirement-versions/" + id + "/verifying-test-cases/manager";
+					$("#back").click();
 				});
 				
-			} else if ("campaign" === this.associationType){
+			} 
+			else{
+				var url;
 				
+				switch(this.associationType){
+				case "campaign" :  url = squashtm.app.contextRoot + "/campaigns/" + id + "/test-plan"; break;
+				case "iteration" : url = squashtm.app.contextRoot + "/iterations/" + id + "/test-plan"; break;
+				case "testsuite" : url = squashtm.app.contextRoot + "/test-suites/" + id + "/test-plan"; break;
+				default : throw "unknown association type " +associationType; 
+				}
 				
 				$.ajax({
 					type: "POST",
-					url : squashtm.app.contextRoot + "/campaigns/" + id + "/test-plan",
+					url : url,
 					data : { "testCasesIds[]" : ids }
 				}).done(function() {
-					document.location.href = squashtm.app.contextRoot + "/campaigns/" + id + "/test-plan/manager";				
+					$("#back").click();				
 				});
-					
-			} else if ("iteration" === this.associationType){
-
-				
-				$.ajax({
-					type: "POST",
-					url : squashtm.app.contextRoot + "/iterations/" + id + "/test-plan",
-					data : { "testCasesIds[]" : ids }
-				}).done(function() {
-					document.location.href = squashtm.app.contextRoot + "/iterations/" + id + "/test-plan-manager";				
-				});
-				
-			} else if ("testsuite" === this.associationType){
-
-				
-				$.ajax({
-					type: "POST",
-					url : squashtm.app.contextRoot + "/test-suites/" + id + "/test-plan",
-					data: { "testCasesIds[]" : ids }
-				}).done(function() {
-					document.location.href = squashtm.app.contextRoot + "/test-suites/" + id + "/test-plan-manager";					
-				});
-				
 			}
+			
+
 		},
 		
 		selectAllForAssocation : function(){

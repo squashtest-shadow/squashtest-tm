@@ -21,41 +21,10 @@
 require([ "common" ], function(common) {
 	require([ "jquery", "search/advanced-search-input", "app/ws/squashtm.workspace" ], function($,
 			AdvancedSearchView, WS) {
-		var goBack = function() {
-			
-			var searchDomain = $("#searchDomain").text();
-			if("testcaseViaRequirement" === searchDomain){
-				searchDomain = "testcase";
-			}
-			var associationType = $("#associationType").text();
-			var associationId = $("#associationId").text();
-			if(!!associationType){
-				if("testcase" === searchDomain && "requirement" === associationType){
-					document.location.href = squashtm.app.contextRoot + "requirement-versions/"+associationId+"/verifying-test-cases/manager";
-				} else if("testcase" === searchDomain && "campaign" === associationType){
-					document.location.href = squashtm.app.contextRoot + "campaigns/"+associationId+"/test-plan/manager";
-				} else if("testcase" === searchDomain && "iteration" === associationType){
-					document.location.href = squashtm.app.contextRoot + "iterations/"+associationId+"/test-plan-manager";
-				} else if("testcase" === searchDomain && "testsuite" === associationType){
-					document.location.href = squashtm.app.contextRoot + "test-suites/"+associationId+"/test-plan-manager";
-				} else if("requirement" === searchDomain && "testcase" === associationType){
-					document.location.href = squashtm.app.contextRoot + "test-cases/"+associationId+"/verified-requirement-versions/manager";
-				} else if ("requirement" === searchDomain && "teststep" === associationType){
-					document.location.href = squashtm.app.contextRoot + "test-steps/"+associationId+"/verified-requirement-versions/manager";
-				}
-			} else {
-				if("testcase" === searchDomain){
-					document.location.href = squashtm.app.contextRoot + "test-case-workspace/";
-				} else if("requirement" === searchDomain){
-					document.location.href = squashtm.app.contextRoot + "requirement-workspace/";
-				}
-			}
-		};
 
 		$(function() {
 			WS.init();
 			var view = new AdvancedSearchView();
-			//$("#back").on("click", goBack);
 		});
 
 	});

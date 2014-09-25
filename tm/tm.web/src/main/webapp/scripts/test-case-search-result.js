@@ -21,28 +21,10 @@
 require([ "common" ], function(common) {
 	require([ "jquery", "search/test-case-search-result", "app/ws/squashtm.workspace", "domReady" ], function($,
 			TestCaseSearchResultView, WS, domReady) {
-		var goBack = function() {
-			var associationType = $("#associationType").text();
-			var associationId = $("#associationId").text();
-			if(!!associationType){
-				if("requirement" === associationType){
-					document.location.href = squashtm.app.contextRoot + "requirement-versions/"+associationId+"/verifying-test-cases/manager";
-				} else if("campaign" === associationType){
-					document.location.href = squashtm.app.contextRoot + "campaigns/"+associationId+"/test-plan/manager";
-				} else if("iteration" === associationType){
-					document.location.href = squashtm.app.contextRoot + "iterations/"+associationId+"/test-plan-manager";
-				} else if("testsuite" === associationType){
-					document.location.href = squashtm.app.contextRoot + "test-suites/"+associationId+"/test-plan-manager";
-				} 
-			} else {
-				document.location.href = squashtm.app.contextRoot + "test-case-workspace/";
-			}
-		};
 
 		domReady(function() {
 			WS.init();
 			var view = new TestCaseSearchResultView();
-			//$("#back").on("click", goBack);
 		});
 
 	});

@@ -21,25 +21,10 @@
 require([ "common" ], function(common) {
 	require([ "jquery", "search/requirement-search-result", "app/ws/squashtm.workspace" ], function($,
 			TestCaseSearchResultView, WS) {
-		var goBack = function() {
-			var associationType = $("#associationType").text();
-			var associationId = $("#associationId").text();
-			if(!!associationType){
-				if("testcase" === associationType){
-					document.location.href = squashtm.app.contextRoot + "test-cases/"+associationId+"/verified-requirement-versions/manager";
-				}
-				else if ("teststep" === associationType){
-					document.location.href = squashtm.app.contextRoot + "test-steps/"+associationId+"/verified-requirement-versions/manager";
-				}
-			} else {
-				document.location.href = squashtm.app.contextRoot + "requirement-workspace/";
-			}
-		};
 
 		$(function() {
 			WS.init();
 			var view = new TestCaseSearchResultView();
-			//$("#back").on("click", goBack);
 		});
 
 	});

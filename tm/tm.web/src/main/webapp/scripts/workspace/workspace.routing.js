@@ -28,20 +28,20 @@
  * 
  * ==========API============ 
  * 
- * 	'url name' : returns the URL template mapped to the 'url name' (see the list right below)
+ *	'url name' : returns the URL template mapped to the 'url name' (see the list right below)
  * 
- * 	buildURL : function(urlName, placeholders ) : builds an URL based on a template and values for its placeholders. 
- * 				The first argument is an 'url name' and the rest are arbitrary additional arguments. 
- * 				The placeholders will be filled with the arguments in the order they are those additional arguments are supplied.
- * 				NB : the placeholders values won't be tested against the regular expression so 
+ *	buildURL : function(urlName, placeholders ) : builds an URL based on a template and values for its placeholders. 
+ *				The first argument is an 'url name' and the rest are arbitrary additional arguments. 
+ *				The placeholders will be filled with the arguments in the order they are those additional arguments are supplied.
+ *				NB : the placeholders values won't be tested against the regular expression so 
  * 
- * 	matches : function(urlName, candidate) : tests the candidate url against the template named 'urlName'
+ *	matches : function(urlName, candidate) : tests the candidate url against the template named 'urlName'
  */
 define([], function(){
 
 	"use strict";
 	
-	var root = squashtm.app.contextRoot.replace(/\/$/, '');
+	var root = window.squashtm.app.contextRoot.replace(/\/$/, '');
 	
 	
 	
@@ -72,7 +72,8 @@ define([], function(){
 			var statik = staticparts.shift() || "",
 				placeholdexpr = placeholders.shift() || "";
 			
-			var escapedStatik = statik.replace(/[-[\]{}()*+?.,\\^$|#\s\/]/g, "\\$&");
+			var escapedStatik = 
+				statik.replace(/[\-\[\\\]\{\}\(\)\*\+\?\.\,\\\^\$\|\#\s\/]/g, "\\$&");
 				
 			expression += escapedStatik + placeholdexpr;
 		}
@@ -85,24 +86,24 @@ define([], function(){
 		
 		// url names mapping
 		'attachments.manager':				root + '/attach-list/{\\d+}/attachments/manager',
-		'search' : 							root + '/advanced-search',
+		'search' :							root + '/advanced-search',
 		'search.results' :					root + '/advanced-search/results',
 		
-		'testcases.workspace' : 			root + '/test-case-workspace/',
-		'testcases.info' : 					root + '/test-cases/{\\d+}/info',
+		'testcases.workspace' :				root + '/test-case-workspace/',
+		'testcases.info' :					root + '/test-cases/{\\d+}/info',
 		'testcases.requirements.manager' :	root + '/test-cases/{\\d+}/verified-requirement-versions/manager',
 		
-		'teststeps.info' : 					root + '/test-steps/{\\d+}',
-		'teststeps.requirements.manager' : 	root + '/test-steps/{\\d+}/verified-requirement-versions/manager',
+		'teststeps.info' :					root + '/test-steps/{\\d+}',
+		'teststeps.requirements.manager' :	root + '/test-steps/{\\d+}/verified-requirement-versions/manager',
 		
 		'requirements.workspace':			root + '/requirement-workspace/',
 		'requirements.info'	:				root + '/requirements/{\\d+}/info',
 		'requirements.versions.manager'	:	root + '/requirements/{\\d+}/versions/manager',
 		'requirements.testcases.manager':	root + '/requirement-versions/{\\d+}/verifying-test-cases/manager',
 		
-		'campaigns.workspace' : 			root + '/campaign-workspace/',
+		'campaigns.workspace' :				root + '/campaign-workspace/',
 		'campaigns.testplan.manager' :		root + '/campaigns/{\\d+}/test-plan//manager',
-		'iterations.testplan.manager' : 	root + '/iterations/{\\d+}/test-plan-manager',
+		'iterations.testplan.manager' :		root + '/iterations/{\\d+}/test-plan-manager',
 		'testsuites.testplan.manager' :		root + '/test-suites/{\\d+}/test-plan-manager',
 
 		
