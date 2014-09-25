@@ -62,7 +62,7 @@
 								<textElement textAlignment="Center" verticalAlignment="Middle">
 									<font size="10" isItalic="true"/>
 								</textElement>
-								<textFieldExpression class="java.lang.String"><![CDATA[$R{report.executionprogression.main.project.label}]]></textFieldExpression>
+								<textFieldExpression><![CDATA[$R{report.executionprogression.main.project.label}]]></textFieldExpression>
 							</textField>
 						</jr:detailCell>
 					</jr:column>
@@ -73,7 +73,19 @@
 								<textElement textAlignment="Center" verticalAlignment="Middle">
 									<font size="10" isItalic="true"/>
 								</textElement>
-								<textFieldExpression class="java.lang.String"><![CDATA[$R{report.executionprogression.main.campaign.label}]]></textFieldExpression>
+								<textFieldExpression><![CDATA[$R{report.executionprogression.main.campaign.label}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="56">
+						<property name="&quot;net.sf.jasperreports.export.html.class&quot;" value="&quot;columnHeader&quot;"/>
+						<jr:detailCell height="29" rowSpan="1">
+							<textField>
+								<reportElement x="0" y="0" width="56" height="29"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font size="10" isItalic="true"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$R{report.executionprogression.main.schedstart.label}]]></textFieldExpression>
 							</textField>
 						</jr:detailCell>
 					</jr:column>
@@ -84,7 +96,7 @@
 								<textElement textAlignment="Center" verticalAlignment="Middle">
 									<font size="10" isItalic="true"/>
 								</textElement>
-								<textFieldExpression class="java.lang.String"><![CDATA[$R{report.executionprogression.main.schedstart.label}]]></textFieldExpression>
+								<textFieldExpression><![CDATA[$R{report.executionprogression.main.schedend.label}]]></textFieldExpression>
 							</textField>
 						</jr:detailCell>
 					</jr:column>
@@ -95,7 +107,7 @@
 								<textElement textAlignment="Center" verticalAlignment="Middle">
 									<font size="10" isItalic="true"/>
 								</textElement>
-								<textFieldExpression class="java.lang.String"><![CDATA[$R{report.executionprogression.main.schedend.label}]]></textFieldExpression>
+								<textFieldExpression><![CDATA[$R{report.executionprogression.main.actstart.label}]]></textFieldExpression>
 							</textField>
 						</jr:detailCell>
 					</jr:column>
@@ -106,7 +118,7 @@
 								<textElement textAlignment="Center" verticalAlignment="Middle">
 									<font size="10" isItalic="true"/>
 								</textElement>
-								<textFieldExpression class="java.lang.String"><![CDATA[$R{report.executionprogression.main.actstart.label}]]></textFieldExpression>
+								<textFieldExpression><![CDATA[$R{report.executionprogression.main.actend.label}]]></textFieldExpression>
 							</textField>
 						</jr:detailCell>
 					</jr:column>
@@ -117,7 +129,7 @@
 								<textElement textAlignment="Center" verticalAlignment="Middle">
 									<font size="10" isItalic="true"/>
 								</textElement>
-								<textFieldExpression class="java.lang.String"><![CDATA[$R{report.executionprogression.main.actend.label}]]></textFieldExpression>
+								<textFieldExpression><![CDATA[$R{report.executionprogression.main.iterationname.label}]]></textFieldExpression>
 							</textField>
 						</jr:detailCell>
 					</jr:column>
@@ -128,7 +140,7 @@
 								<textElement textAlignment="Center" verticalAlignment="Middle">
 									<font size="10" isItalic="true"/>
 								</textElement>
-								<textFieldExpression class="java.lang.String"><![CDATA[$R{report.executionprogression.main.iterationname.label}]]></textFieldExpression>
+								<textFieldExpression><![CDATA[$R{report.executionprogression.main.schedstart.label}]]></textFieldExpression>
 							</textField>
 						</jr:detailCell>
 					</jr:column>
@@ -139,7 +151,7 @@
 								<textElement textAlignment="Center" verticalAlignment="Middle">
 									<font size="10" isItalic="true"/>
 								</textElement>
-								<textFieldExpression class="java.lang.String"><![CDATA[$R{report.executionprogression.main.schedstart.label}]]></textFieldExpression>
+								<textFieldExpression><![CDATA[$R{report.executionprogression.main.schedend.label}]]></textFieldExpression>
 							</textField>
 						</jr:detailCell>
 					</jr:column>
@@ -150,7 +162,7 @@
 								<textElement textAlignment="Center" verticalAlignment="Middle">
 									<font size="10" isItalic="true"/>
 								</textElement>
-								<textFieldExpression class="java.lang.String"><![CDATA[$R{report.executionprogression.main.schedend.label}]]></textFieldExpression>
+								<textFieldExpression><![CDATA[$R{report.executionprogression.main.actstart.label}]]></textFieldExpression>
 							</textField>
 						</jr:detailCell>
 					</jr:column>
@@ -161,7 +173,7 @@
 								<textElement textAlignment="Center" verticalAlignment="Middle">
 									<font size="10" isItalic="true"/>
 								</textElement>
-								<textFieldExpression class="java.lang.String"><![CDATA[$R{report.executionprogression.main.actstart.label}]]></textFieldExpression>
+								<textFieldExpression><![CDATA[$R{report.executionprogression.main.actend.label}]]></textFieldExpression>
 							</textField>
 						</jr:detailCell>
 					</jr:column>
@@ -172,7 +184,7 @@
 								<textElement textAlignment="Center" verticalAlignment="Middle">
 									<font size="10" isItalic="true"/>
 								</textElement>
-								<textFieldExpression class="java.lang.String"><![CDATA[$R{report.executionprogression.main.actend.label}]]></textFieldExpression>
+								<textFieldExpression><![CDATA[$R{report.executionprogression.main.testcase.label}]]></textFieldExpression>
 							</textField>
 						</jr:detailCell>
 					</jr:column>
@@ -183,18 +195,7 @@
 								<textElement textAlignment="Center" verticalAlignment="Middle">
 									<font size="10" isItalic="true"/>
 								</textElement>
-								<textFieldExpression class="java.lang.String"><![CDATA[$R{report.executionprogression.main.testcase.label}]]></textFieldExpression>
-							</textField>
-						</jr:detailCell>
-					</jr:column>
-					<jr:column width="56">
-						<jr:detailCell height="29" rowSpan="1">
-							<textField>
-								<reportElement x="0" y="0" width="56" height="29"/>
-								<textElement textAlignment="Center" verticalAlignment="Middle">
-									<font size="10" isItalic="true"/>
-								</textElement>
-								<textFieldExpression class="java.lang.String"><![CDATA[$R{report.executionprogression.main.status.label}]]></textFieldExpression>
+								<textFieldExpression><![CDATA[$R{report.executionprogression.main.status.label}]]></textFieldExpression>
 							</textField>
 						</jr:detailCell>
 					</jr:column>
@@ -209,9 +210,9 @@
 				<subreportParameter name="project_name">
 					<subreportParameterExpression><![CDATA[$F{name}]]></subreportParameterExpression>
 				</subreportParameter>
-                <subreportParameter  name="REPORT_RESOURCE_BUNDLE">
-                    <subreportParameterExpression><![CDATA[$P{REPORT_RESOURCE_BUNDLE}]]></subreportParameterExpression>
-                </subreportParameter>
+				<subreportParameter name="REPORT_RESOURCE_BUNDLE">
+					<subreportParameterExpression><![CDATA[$P{REPORT_RESOURCE_BUNDLE}]]></subreportParameterExpression>
+				</subreportParameter>
 				<subreportParameter name="subReportIteration">
 					<subreportParameterExpression><![CDATA[$P{subReportIteration_0}]]></subreportParameterExpression>
 				</subreportParameter>
@@ -219,7 +220,7 @@
 					<subreportParameterExpression><![CDATA[$V{totalResult_l1}]]></subreportParameterExpression>
 				</subreportParameter>
 				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{campaigns})]]></dataSourceExpression>
-				<subreportExpression class="net.sf.jasperreports.engine.JasperReport"><![CDATA[$P{subReportCampaign}]]></subreportExpression>
+				<subreportExpression><![CDATA[$P{subReportCampaign}]]></subreportExpression>
 			</subreport>
 		</band>
 	</detail>

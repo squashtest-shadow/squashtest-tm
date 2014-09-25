@@ -225,6 +225,18 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
                     
 			          &lt;/style&gt;
 			        </value>
+					<value>
+						&lt;style&gt; table td span {
+							-moz-hyphens: auto;
+							-webkit-hyphens: auto;
+							hyphens: auto;
+							hyphenate: auto;
+					}
+						td.columnHeader p {
+						word-break:normal;
+					}
+		&lt;/style&gt;
+	</value>
 			      </entry>
 			</map>
 		</property>
