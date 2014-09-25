@@ -271,7 +271,7 @@ class HibernateRequirementDaoIT extends DbunitDaoSpecification {
 		def reqs = requirementDao.findRequirementToExportFromLibrary(libraryIds)
 
 		then :
-		reqs.size() == 4
+		reqs.size() == 5
 		def req3 = reqs[0]
 		req3.id == -40
 		req3.folderName == ""
@@ -282,11 +282,15 @@ class HibernateRequirementDaoIT extends DbunitDaoSpecification {
 		req4.requirementParentPath == "req 40"
 		def req1 = reqs[2]
 		req1.id == -10
-		req1.folderName == "folder 30"
+		req1.folderName == "folder 30/folder 40"
 		req1.requirementParentPath == ""
 		def req2 = reqs[3]
 		req2.id == -50
-		req2.folderName == "folder 30"
+		req2.folderName == "folder 30/folder 40"
 		req2.requirementParentPath == "req 10"
+		def req5 = reqs[4]
+		req5.id == -60
+		req5.folderName == "folder 30/folder 40"
+		req5.requirementParentPath == "req 10/req 50"
 	}
 }

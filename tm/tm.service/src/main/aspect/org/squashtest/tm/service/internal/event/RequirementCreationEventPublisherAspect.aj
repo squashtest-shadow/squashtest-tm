@@ -45,7 +45,7 @@ public aspect RequirementCreationEventPublisherAspect extends AbstractRequiremen
 		if (aspectIsEnabled()) {
 			RequirementCreation event = new RequirementCreation(requirement.getCurrentVersion(), currentUser());
 			publish(event);
-			LOGGER.trace("Creation event raised");
+			LOGGER.trace("Creation event raised for current version");
 		}
 	}
 	
@@ -53,7 +53,7 @@ public aspect RequirementCreationEventPublisherAspect extends AbstractRequiremen
 		if (aspectIsEnabled()) {
 			RequirementCreation event = new RequirementCreation(requirementVersion, currentUser());
 			publish(event);
-			LOGGER.trace("Creation event raised");
+			LOGGER.trace("Creation event raised for version");
 		}
 	}
 }

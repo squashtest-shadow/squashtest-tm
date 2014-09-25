@@ -37,7 +37,6 @@ import org.squashtest.tm.domain.testcase.DatasetParamValue
 import org.squashtest.tm.domain.testcase.Parameter
 import org.squashtest.tm.domain.testcase.Dataset
 import org.squashtest.tm.domain.testcase.TestCase
-import org.squashtest.tm.service.internal.repository.RequirementAuditEventDao
 
 import spock.lang.Unroll
 import spock.unitils.UnitilsSupport
