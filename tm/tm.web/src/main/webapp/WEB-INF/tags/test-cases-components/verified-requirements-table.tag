@@ -63,7 +63,7 @@
 			}
 			squashtm.app.verifiedRequirementsTableSettings = {
 				containerId : "${containerId}",
-				linkable : "${linkable}",
+				linkable : ${linkable},
 				url :"${verifiedRequirementsUrl}",
 				messages : {
 					cancel : "<f:message key='label.Cancel' />",

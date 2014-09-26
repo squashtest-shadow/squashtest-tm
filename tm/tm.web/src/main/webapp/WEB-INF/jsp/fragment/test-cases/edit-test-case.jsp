@@ -81,6 +81,7 @@ require(["common"], function() {
 	<c:set var="creatable" value="${true }" />
 	<c:set var="moreThanReadOnly" value="${ true }" />
 </authz:authorized>
+<c:set var="linkable" value="${false }"/>
 <authz:authorized hasRole="ROLE_ADMIN" hasPermission="LINK"
 	domainObject="${ testCase }">
 	<c:set var="linkable" value="${ true }" />
