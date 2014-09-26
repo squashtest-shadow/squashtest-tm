@@ -86,7 +86,7 @@
 				});
 
 				$("#remove-verified-requirements-from-step-button").click(
-						function(){squashtm.verifiedRequirementsTable.detachSelectedRequirements();});
+						function(){squashtm.verifiedRequirementsTable.removeSelectedRequirements();});
 				
 				<%-- verified requirements addition --%>
 				$( '#add-items-button' ).click(function() {
