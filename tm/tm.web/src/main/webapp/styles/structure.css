@@ -1107,22 +1107,18 @@ td.button-cell, th.button-cell, td.icon-cell, th.icon-cell {
 	width: 2em;
 }
 
-.requirement-direct-verification {
-	
-}
 
-
-.requirement-indirect-verification td>a
-	{
+.requirement-indirect-verification td, 
+.requirement-indirect-verification td>a,
+.testcases-indirect-verification td,
+.testcases-indirect-verification td>a,
+.inherited-parameter-verification td,
+.inherited-parameter-verification td>a{
 	font-style: italic;
 	color: gray;
 }
 
-.inherited-parameter-verification td>
-	{
-	font-style: italic;
-	color: gray;
-}
+
 
 div#project-description-table .projectInactive {
 	margin:0;

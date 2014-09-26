@@ -81,7 +81,7 @@
 
 <script type="text/javascript">
 	require([ "common" ], function() {
-  		require(['jquery', 'squashtable'], function($){
+  		require(['jquery', 'squashtable', 'jquery.squash.messagedialog'], function($){
 			$(function() {
     			
     			// ************************** library ***********************************

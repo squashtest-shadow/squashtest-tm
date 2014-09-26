@@ -427,7 +427,7 @@ require(["common"], function() {
 	<s:url var="createNewVersionUrl" value="/requirements/${requirement.id}/versions/new" />
 	<script type="text/javascript">
 require([ "common" ], function() {
-	require([ "jquery" ], function($) {
+	require([ "jquery", "jquery.squash.confirmdialog" ], function($) {
 		$(function() {
 			var confirmHandler = function() {
 				$.ajax({
