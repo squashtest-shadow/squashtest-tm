@@ -135,10 +135,7 @@ define(["domReady", "workspace.routing", "workspace.storage"], function(domReady
 	var module= {
 		// mapping : 'location' : [array of approved referrer]
 		routes : {			
-			'teststeps.requirements.manager' : ['!search', '!search.results'],
-			
-			'search.results' : ['!search'],
-			
+			'search.results' : ['!search'],			
 			'search' : ['!search.results']
 		},
 		
