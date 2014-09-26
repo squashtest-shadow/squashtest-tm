@@ -68,7 +68,7 @@ that page won't be editable if
 	<c:set var="creatable" value="${true }"/>
 		<c:set var="moreThanReadOnly" value="${ true }" />
 </authz:authorized>
-<authz:authorized hasRole="ROLE_ADMIN" hasPermission="LINK" domainObject="${ requirement }">
+<authz:authorized hasRole="ROLE_ADMIN" hasPermission="WRITE" domainObject="${ requirement }">
 	<c:set var="linkable" value="${ requirement.linkable }" />
 		<c:set var="moreThanReadOnly" value="${ true }" />
 </authz:authorized>
