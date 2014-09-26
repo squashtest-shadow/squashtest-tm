@@ -18,20 +18,21 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.internal.batchimport;
+package org.squashtest.tm.service.internal.batchimport
 
-import org.junit.Test;
-import org.squashtest.tm.domain.testcase.TestCase;
-import org.squashtest.tm.domain.testcase.TestCaseStatus;
-import org.squashtest.tm.domain.users.User;
-import org.squashtest.tm.service.internal.batchimport.Model.Existence;
-import org.squashtest.tm.service.internal.batchimport.Model.TargetStatus;
-import org.squashtest.tm.service.internal.repository.UserDao;
-import org.squashtest.tm.service.security.PermissionEvaluationService;
-import org.squashtest.tm.service.user.UserAccountService;
+import org.junit.Test
+import org.squashtest.tm.domain.testcase.TestCase
+import org.squashtest.tm.domain.testcase.TestCaseStatus
+import org.squashtest.tm.domain.users.User
+import org.squashtest.tm.service.internal.batchimport.Model.Existence
+import org.squashtest.tm.service.internal.batchimport.Model.ProjectTargetStatus
+import org.squashtest.tm.service.internal.batchimport.Model.TargetStatus
+import org.squashtest.tm.service.internal.repository.UserDao
+import org.squashtest.tm.service.security.PermissionEvaluationService
+import org.squashtest.tm.service.user.UserAccountService
 
-import spock.lang.Specification;
-import spock.lang.Unroll;
+import spock.lang.Specification
+import spock.lang.Unroll
 
 /**
  * @author Gregory Fouquet
@@ -55,7 +56,7 @@ class ValidationFacilityTest extends Specification {
 
 		model.getStatus(_) >> status
 		model.getTestCaseCufs(_) >> Collections.emptyList()
-		model.getProjectStatus(_) >> Mock(TargetStatus)
+		model.getProjectStatus(_) >> Mock(ProjectTargetStatus)
 
 		userAccount.findCurrentUser() >> Mock(User)
 	}
@@ -63,7 +64,7 @@ class ValidationFacilityTest extends Specification {
 	@Unroll("should validate new test case with inconsistent path #path and name #name")
 	def "should validate new test case with inconsistent path and name"() {
 		given:
-		LogTrain logTrain = new LogTrain();
+		LogTrain logTrain = new LogTrain()
 		entityValidator.createTestCaseChecks(_, _) >> logTrain
 
 		and:
@@ -91,7 +92,7 @@ class ValidationFacilityTest extends Specification {
 
 	def "should not validate old test case with inconsistent path and name"() {
 		given:
-		LogTrain logTrain = new LogTrain();
+		LogTrain logTrain = new LogTrain()
 		entityValidator.updateTestCaseChecks(_, _) >> logTrain
 
 		and:
@@ -115,7 +116,7 @@ class ValidationFacilityTest extends Specification {
 	@Unroll
 	def "should validate old test case with without name '#name'"() {
 		given:
-		LogTrain logTrain = new LogTrain();
+		LogTrain logTrain = new LogTrain()
 		entityValidator.updateTestCaseChecks(_, _) >> logTrain
 
 		and:

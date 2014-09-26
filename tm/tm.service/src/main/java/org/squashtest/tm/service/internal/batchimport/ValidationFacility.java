@@ -599,7 +599,7 @@ public class ValidationFacility implements Facility, ModelProvider {
 
 		LogEntry entry = null;
 
-		Long libid = model.getProjectStatus(target.getProject()).id;
+		Long libid = model.getProjectStatus(target.getProject()).testCaseLibraryId;
 		if ((libid != null)
 				&& (!permissionService.hasRoleOrPermissionOnObject(ROLE_ADMIN, permission, libid, LIBRARY_CLASSNAME))) {
 			entry = new LogEntry(checkedTarget, ImportStatus.FAILURE, Messages.ERROR_NO_PERMISSION, new String[] { permission,

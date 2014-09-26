@@ -31,9 +31,11 @@ import org.squashtest.tm.domain.customfield.CustomField
 import org.squashtest.tm.domain.library.structures.LibraryGraph
 import org.squashtest.tm.domain.library.structures.LibraryGraph.SimpleNode
 import org.squashtest.tm.domain.project.Project
-import org.squashtest.tm.domain.testcase.ParameterAssignationMode;
+import org.squashtest.tm.domain.testcase.ParameterAssignationMode
+import org.squashtest.tm.domain.testcase.TestCaseLibrary
 import org.squashtest.tm.service.internal.batchimport.Model.Existence
 import org.squashtest.tm.service.internal.batchimport.Model.InternalStepModel
+import org.squashtest.tm.service.internal.batchimport.Model.ProjectTargetStatus
 import org.squashtest.tm.service.internal.batchimport.Model.StepType
 import org.squashtest.tm.service.internal.batchimport.Model.TargetStatus
 import org.squashtest.tm.service.internal.repository.CustomFieldDao
@@ -45,12 +47,12 @@ import spock.lang.Specification
 
 public class ModelTest extends Specification{
 
-	SessionFactory factory;
-	CustomFieldDao cufDao;
-	TestCaseLibraryFinderService finderService;
+	SessionFactory factory
+	CustomFieldDao cufDao
+	TestCaseLibraryFinderService finderService
 	TestCaseCallTreeFinder calltreeFinder
 
-	Model model;
+	Model model
 
 	def setup(){
 
@@ -66,7 +68,7 @@ public class ModelTest extends Specification{
 		model.finderService = finderService
 		model.calltreeFinder = calltreeFinder
 		model.callGraph = new TestCaseCallGraph()
-		
+
 
 	}
 
@@ -145,8 +147,8 @@ public class ModelTest extends Specification{
 		model.testCaseStatusByTarget[targets[2]] = new TargetStatus(TO_BE_DELETED, 20l)
 		and :
 		mockSessionQuery([
-			["ACTION", null, true] as Object[], 
-			["CALL", 17l, true] as Object[], 
+			["ACTION", null, true] as Object[],
+			["CALL", 17l, true] as Object[],
 			["ACTION", null, true] as Object[]
 		])
 		finderService.getPathAsString(17l) >> "/project/bob"
@@ -157,14 +159,14 @@ public class ModelTest extends Specification{
 
 		then :
 		model.testCaseStepsByTarget[targets[0]] == []
-		
+
 		Collection<InternalStepModel> stepsTC1 = model.testCaseStepsByTarget[targets[1]]
 		stepsTC1.collect {it.type} == [StepType.ACTION, StepType.CALL, StepType.ACTION]
 		stepsTC1.collect {it.calledTC} == [null, new TestCaseTarget("/project/bob"), null]
 		stepsTC1.collect {it.delegates} == [false, true, false]
-		
+
 		model.testCaseStepsByTarget[targets[2]] == []
-		
+
 
 
 	}
@@ -177,6 +179,9 @@ public class ModelTest extends Specification{
 
 		and :
 		Project p = mockProject("project a", 10l)
+		TestCaseLibrary tcl = Mock(TestCaseLibrary)
+		tcl.getId() >> 10l
+		p.getTestCaseLibrary() >> tcl
 		mockSessionQuery([p])
 
 		and :
@@ -188,8 +193,8 @@ public class ModelTest extends Specification{
 		when :
 		model.initProjects(targets)
 
-		TargetStatus status1 = model.projectStatusByName["project a"]
-		TargetStatus status2 = model.projectStatusByName["sprololo"]
+		ProjectTargetStatus status1 = model.projectStatusByName["project a"]
+		ProjectTargetStatus status2 = model.projectStatusByName["sprololo"]
 
 		then :
 		status1.status == EXISTS
@@ -349,11 +354,11 @@ public class ModelTest extends Specification{
 		def tc = new TestCaseTarget("/project/bob")
 		def ctc = new TestCaseTarget("whatever")
 		def st  = new TestStepTarget(tc, 1)
-		
+
 		def paramInfo = new CallStepParamsInfo()
 		paramInfo.getParamMode() >> ParameterAssignationMode.DELEGATE
 
-		
+
 		model.testCaseStatusByTarget[tc] = new TargetStatus(EXISTS, 10l)
 		model.testCaseStatusByTarget[ctc] = new TargetStatus(EXISTS, 20l)
 		model.testCaseStepsByTarget[tc] =  [
@@ -383,7 +388,7 @@ public class ModelTest extends Specification{
 		def st  = new TestStepTarget(tc, null)
 		def paramInfo = new CallStepParamsInfo()
 		paramInfo.getParamMode() >> ParameterAssignationMode.DELEGATE
-		
+
 		model.testCaseStatusByTarget[tc] = new TargetStatus(EXISTS, 10l)
 		model.testCaseStatusByTarget[ctc] = new TargetStatus(EXISTS, 20l)
 		model.testCaseStepsByTarget[tc] =  [
@@ -413,7 +418,7 @@ public class ModelTest extends Specification{
 		def st  = new TestStepTarget(tc, 18)
 		def paramInfo = new CallStepParamsInfo()
 		paramInfo.getParamMode() >> ParameterAssignationMode.DELEGATE
-		
+
 		model.testCaseStatusByTarget[tc] = new TargetStatus(EXISTS, 10l)
 		model.testCaseStatusByTarget[ctc] = new TargetStatus(EXISTS, 20l)
 		model.testCaseStepsByTarget[tc] =  [
@@ -554,11 +559,11 @@ public class ModelTest extends Specification{
 		model.callGraph.addEdge(bob, robert)
 		model.callGraph.addEdge(robert, mike)
 		model.callGraph.addEdge(bob, mike)
-		
+
 		and :
 		model.testCaseStepsByTarget.put bob, [new InternalStepModel(StepType.CALL, robert, true), new InternalStepModel(StepType.CALL, mike, true)] as List
 		model.testCaseStepsByTarget.put robert, [new InternalStepModel(StepType.CALL, mike, true)] as List
-		
+
 
 		and :
 
@@ -568,7 +573,7 @@ public class ModelTest extends Specification{
 
 
 		when :
-		Collection<ParameterTarget> allparams = model.getAllParameters(bob);
+		Collection<ParameterTarget> allparams = model.getAllParameters(bob)
 
 		then :
 		allparams as Set == [p1, p2, p3, p4, p5] as Set
@@ -593,18 +598,18 @@ public class ModelTest extends Specification{
 		model.callGraph.addEdge(bob, robert)
 		model.callGraph.addEdge(robert, mike)
 		model.callGraph.addEdge(bob, mike)
-	
+
 		and:
 		model.testCaseStepsByTarget.put bob, [new InternalStepModel(StepType.CALL, robert, true), new InternalStepModel(StepType.CALL, mike, true)] as List
 		model.testCaseStepsByTarget.put robert, [new InternalStepModel(StepType.CALL, mike, true)] as List
-		
+
 		and :
 		model.parametersByTestCase.put	 bob, [ p1, p2 ] as Set
 		model.parametersByTestCase.put	 robert, [ p3 ] as Set
 		model.parametersByTestCase.put	 mike,  [p4, p5] as Set
 
 		when :
-		Collection<ParameterTarget> allparams = model.getAllParameters(robert);
+		Collection<ParameterTarget> allparams = model.getAllParameters(robert)
 
 		then :
 		allparams as Set == [p3, p4, p5] as Set
@@ -629,18 +634,18 @@ public class ModelTest extends Specification{
 		model.callGraph.addEdge(bob, robert)
 		model.callGraph.addEdge(robert, mike)
 		model.callGraph.addEdge(bob, mike)
-	
+
 		and:
 		model.testCaseStepsByTarget.put bob, [new InternalStepModel(StepType.CALL, robert, true), new InternalStepModel(StepType.CALL, mike, false)] as List
 		model.testCaseStepsByTarget.put robert, [new InternalStepModel(StepType.CALL, mike, false)] as List
-	
+
 		and :
 		model.parametersByTestCase.put	 bob, [ p1, p2 ] as Set
 		model.parametersByTestCase.put	 robert, [ p3 ] as Set
 		model.parametersByTestCase.put	 mike,  [p4, p5] as Set
 
 		when :
-		Collection<ParameterTarget> allparams = model.getAllParameters(bob);
+		Collection<ParameterTarget> allparams = model.getAllParameters(bob)
 
 		then :
 		allparams as Set == [p1, p2, p3] as Set

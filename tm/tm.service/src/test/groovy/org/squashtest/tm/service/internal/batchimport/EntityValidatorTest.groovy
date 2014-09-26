@@ -29,6 +29,7 @@ import org.squashtest.tm.domain.testcase.TestCase
 import org.squashtest.tm.domain.testcase.TestStep
 import org.squashtest.tm.service.importer.ImportMode
 import org.squashtest.tm.service.importer.ImportStatus
+import org.squashtest.tm.service.internal.batchimport.Model.ProjectTargetStatus
 import org.squashtest.tm.service.internal.batchimport.Model.TargetStatus
 
 import spock.lang.Specification
@@ -61,7 +62,7 @@ class EntityValidatorTest extends Specification {
 		TestCase testCase = new TestCase(name:"test-case")
 
 		and :
-		model.getProjectStatus("project") >> new TargetStatus(EXISTS, 10l)
+		model.getProjectStatus("project") >> new ProjectTargetStatus(EXISTS, 10l,  10l)
 
 		when :
 		LogTrain train = validator.updateTestCaseChecks(target, testCase)
@@ -81,8 +82,8 @@ class EntityValidatorTest extends Specification {
 		given :
 		model.getProjectStatus(_) >> {
 			return (it[0] == "project") ?
-			new TargetStatus(EXISTS, 10l) :
-			new TargetStatus(NOT_EXISTS, null)
+			new ProjectTargetStatus(EXISTS, 10l, 10L) :
+			new ProjectTargetStatus(NOT_EXISTS)
 		}
 
 		when :
@@ -113,8 +114,8 @@ class EntityValidatorTest extends Specification {
 		given :
 		model.getProjectStatus(_) >> {
 			return (it[0] == "project") ?
-			new TargetStatus(EXISTS, 10l) :
-			new TargetStatus(NOT_EXISTS, null)
+			new ProjectTargetStatus(EXISTS, 10l, 10L) :
+			new ProjectTargetStatus(NOT_EXISTS)
 		}
 
 		when :
@@ -144,8 +145,8 @@ class EntityValidatorTest extends Specification {
 		given :
 		model.getProjectStatus(_) >> {
 			return (it[0] == "project") ?
-			new TargetStatus(EXISTS, 10l) :
-			new TargetStatus(NOT_EXISTS, null)
+			new ProjectTargetStatus(EXISTS, 10l, 10L) :
+			new ProjectTargetStatus(NOT_EXISTS)
 		}
 
 		when :
@@ -172,7 +173,7 @@ class EntityValidatorTest extends Specification {
 		TestStep astep = new ActionTestStep(action:"ready for action", expectedResult : "expected")
 
 		and :
-		model.getProjectStatus("project") >> new TargetStatus(EXISTS, 10l)
+		model.getProjectStatus("project") >> new ProjectTargetStatus(EXISTS, 10l, 10L)
 
 		and :
 		model.getStatus(_) >> new TargetStatus(EXISTS, 10l)
@@ -193,8 +194,8 @@ class EntityValidatorTest extends Specification {
 		given :
 		model.getProjectStatus(_) >> {
 			return (it[0] == "project") ?
-			new TargetStatus(EXISTS, 10l) :
-			new TargetStatus(NOT_EXISTS, null)
+			new ProjectTargetStatus(EXISTS, 10l, 10L) :
+			new ProjectTargetStatus(NOT_EXISTS)
 		}
 
 		and :
@@ -299,7 +300,7 @@ class EntityValidatorTest extends Specification {
 
 		and :
 		model.getStatus(_) >> status(EXISTS, 10l)
-		model.getProjectStatus("project") >> status(EXISTS, 15l)
+		model.getProjectStatus("project") >> new ProjectTargetStatus(EXISTS, 15l, 15L)
 
 		when :
 		LogTrain train = validator.basicParameterChecks(target)
@@ -323,8 +324,8 @@ class EntityValidatorTest extends Specification {
 
 		model.getProjectStatus(_) >> {
 			return (it[0] == "project") ?
-			new TargetStatus(EXISTS, 10l) :
-			new TargetStatus(NOT_EXISTS, null)
+			new ProjectTargetStatus(EXISTS, 10l, 10L) :
+			new ProjectTargetStatus(NOT_EXISTS)
 		}
 
 
@@ -368,8 +369,8 @@ class EntityValidatorTest extends Specification {
 
 		model.getProjectStatus(_) >> {
 			return (it[0] == "project") ?
-			new TargetStatus(EXISTS, 10l) :
-			new TargetStatus(NOT_EXISTS, null)
+			new ProjectTargetStatus(EXISTS, 10l, 10L) :
+			new ProjectTargetStatus(NOT_EXISTS)
 		}
 
 

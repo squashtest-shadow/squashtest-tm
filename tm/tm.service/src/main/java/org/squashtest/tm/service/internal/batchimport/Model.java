@@ -120,7 +120,7 @@ public class Model {
 	/**
 	 * nothing special, plain wysiwyg
 	 */
-	private Map<String, TargetStatus> projectStatusByName = new HashMap<String, TargetStatus>();
+	private Map<String, ProjectTargetStatus> projectStatusByName = new HashMap<String, ProjectTargetStatus>();
 
 	/**
 	 * caches the custom fields defined for the test cases in a given project.
@@ -157,7 +157,7 @@ public class Model {
 	// ************************** project access
 	// *****************************************************
 
-	public TargetStatus getProjectStatus(String projectName) {
+	public ProjectTargetStatus getProjectStatus(String projectName) {
 		if (!projectStatusByName.containsKey(projectName)) {
 			initProject(projectName);
 		}
@@ -178,35 +178,30 @@ public class Model {
 	}
 
 	public void setExists(TestCaseTarget target, Long id) {
-		testCaseStatusByTarget.put(target, new TargetStatus(Existence.EXISTS,
-				id));
+		testCaseStatusByTarget.put(target, new TargetStatus(Existence.EXISTS, id));
 	}
 
 	public void setToBeCreated(TestCaseTarget target) {
-		testCaseStatusByTarget.put(target, new TargetStatus(
-				Existence.TO_BE_CREATED));
+		testCaseStatusByTarget.put(target, new TargetStatus(Existence.TO_BE_CREATED));
 		clearSteps(target);
 	}
 
 	public void setToBeDeleted(TestCaseTarget target) {
 		TargetStatus oldStatus = testCaseStatusByTarget.get(target);
-		testCaseStatusByTarget.put(target, new TargetStatus(
-				Existence.TO_BE_DELETED, oldStatus.id));
+		testCaseStatusByTarget.put(target, new TargetStatus(Existence.TO_BE_DELETED, oldStatus.id));
 		clearSteps(target);
 		callGraph.removeNode(target);
 	}
 
 	public void setDeleted(TestCaseTarget target) {
-		testCaseStatusByTarget.put(target, new TargetStatus(
-				Existence.NOT_EXISTS, null));
+		testCaseStatusByTarget.put(target, new TargetStatus(Existence.NOT_EXISTS, null));
 		clearSteps(target);
 		callGraph.removeNode(target);
 	}
 
 	/** virtually an alias of setDeleted */
 	public void setNotExists(TestCaseTarget target) {
-		testCaseStatusByTarget.put(target, new TargetStatus(
-				Existence.NOT_EXISTS, null));
+		testCaseStatusByTarget.put(target, new TargetStatus(Existence.NOT_EXISTS, null));
 		clearSteps(target);
 	}
 
@@ -229,8 +224,7 @@ public class Model {
 		if (id == null) {
 			return null;
 		} else {
-			return (TestCase) sessionFactory.getCurrentSession().load(
-					TestCase.class, id);
+			return (TestCase) sessionFactory.getCurrentSession().load(TestCase.class, id);
 		}
 	}
 
@@ -259,8 +253,7 @@ public class Model {
 		return wouldCreateCycle(called, caller);
 	}
 
-	public boolean wouldCreateCycle(TestCaseTarget srcTestCase,
-			TestCaseTarget destTestCase) {
+	public boolean wouldCreateCycle(TestCaseTarget srcTestCase, TestCaseTarget destTestCase) {
 		if (!callGraph.knowsNode(srcTestCase)) {
 			initCallGraph(srcTestCase);
 		}
@@ -272,8 +265,7 @@ public class Model {
 		return callGraph.wouldCreateCycle(srcTestCase, destTestCase);
 	}
 
-	public boolean wouldCreateCycle(TestStepTarget step,
-			TestCaseTarget destTestCase) {
+	public boolean wouldCreateCycle(TestStepTarget step, TestCaseTarget destTestCase) {
 		return wouldCreateCycle(step.getTestCase(), destTestCase);
 	}
 
@@ -290,8 +282,8 @@ public class Model {
 			return;
 		}
 
-		LibraryGraph<NamedReference, SimpleNode<NamedReference>> targetCallers = calltreeFinder
-				.getExtendedGraph(Arrays.asList(id));
+		LibraryGraph<NamedReference, SimpleNode<NamedReference>> targetCallers = calltreeFinder.getExtendedGraph(Arrays
+				.asList(id));
 
 		// some data transform now
 		Collection<SimpleNode<NamedReference>> refs = targetCallers.getNodes();
@@ -328,9 +320,8 @@ public class Model {
 		return addStep(target, StepType.ACTION, null);
 	}
 
-	public Integer addCallStep(TestStepTarget target,
-			TestCaseTarget calledTestCase, CallStepParamsInfo paramInfo) {
-		
+	public Integer addCallStep(TestStepTarget target, TestCaseTarget calledTestCase, CallStepParamsInfo paramInfo) {
+
 		Boolean delegates = (paramInfo.getParamMode().equals(ParameterAssignationMode.DELEGATE)) ? true : false;
 
 		// set the call graph
@@ -341,8 +332,7 @@ public class Model {
 
 	}
 
-	private Integer addStep(TestStepTarget target, StepType type,
-			TestCaseTarget calledTestCase, Boolean delegates) {
+	private Integer addStep(TestStepTarget target, StepType type, TestCaseTarget calledTestCase, Boolean delegates) {
 
 		List<InternalStepModel> steps = findInternalStepModels(target);
 
@@ -358,8 +348,7 @@ public class Model {
 
 	}
 
-	private Integer addStep(TestStepTarget target, StepType type,
-			TestCaseTarget calledTestCase) {
+	private Integer addStep(TestStepTarget target, StepType type, TestCaseTarget calledTestCase) {
 
 		List<InternalStepModel> steps = findInternalStepModels(target);
 
@@ -379,18 +368,15 @@ public class Model {
 	 * warning : won't check that the operation will not create a cycle. Such
 	 * check needs to be done beforehand.
 	 */
-	public void updateCallStepTarget(TestStepTarget step,
-			TestCaseTarget newTarget, CallStepParamsInfo paramInfo) {
+	public void updateCallStepTarget(TestStepTarget step, TestCaseTarget newTarget, CallStepParamsInfo paramInfo) {
 
 		if (!stepExists(step)) {
-			throw new IllegalArgumentException(
-					"cannot update non existant step '" + step + "'");
+			throw new IllegalArgumentException("cannot update non existant step '" + step + "'");
 		}
 
 		if (getType(step) != StepType.CALL) {
-			throw new IllegalArgumentException(
-					"cannot update the called test case for step '" + step
-							+ "' because that step is not a call step");
+			throw new IllegalArgumentException("cannot update the called test case for step '" + step
+					+ "' because that step is not a call step");
 		}
 
 		InternalStepModel model = findInternalStepModel(step);
@@ -411,8 +397,7 @@ public class Model {
 	public void remove(TestStepTarget target) {
 
 		if (!stepExists(target)) {
-			throw new IllegalArgumentException(
-					"cannot remove non existant step '" + target + "'");
+			throw new IllegalArgumentException("cannot remove non existant step '" + target + "'");
 		}
 
 		List<InternalStepModel> steps = findInternalStepModels(target);
@@ -481,8 +466,7 @@ public class Model {
 			return null;
 		}
 
-		Query q = sessionFactory.getCurrentSession().getNamedQuery(
-				"testStep.findIdByTestCaseAndPosition");
+		Query q = sessionFactory.getCurrentSession().getNamedQuery("testStep.findIdByTestCaseAndPosition");
 		q.setParameter(":tcId", tcId);
 		q.setParameter("position", index);
 
@@ -502,8 +486,7 @@ public class Model {
 			return null;
 		}
 
-		Query q = sessionFactory.getCurrentSession().getNamedQuery(
-				"testStep.findByTestCaseAndPosition");
+		Query q = sessionFactory.getCurrentSession().getNamedQuery("testStep.findByTestCaseAndPosition");
 		q.setParameter("tcId", tcId);
 		q.setParameter("position", index);
 
@@ -604,13 +587,10 @@ public class Model {
 			// modification patron
 			for (Node child : current.getOutbounds()) {
 
-				List<InternalStepModel> steps = testCaseStepsByTarget
-						.get(current.getKey());
+				List<InternalStepModel> steps = testCaseStepsByTarget.get(current.getKey());
 				if (steps != null) {
 					for (InternalStepModel step : steps) {
-						if (step.type == StepType.CALL
-								&& step.calledTC.equals(child.getKey())
-								&& step.getDeleguates()
+						if (step.type == StepType.CALL && step.calledTC.equals(child.getKey()) && step.getDeleguates()
 								&& !processed.contains(step.calledTC)) {
 							processing.add(child);
 						}
@@ -632,8 +612,7 @@ public class Model {
 	 *         otherwise
 	 */
 	public boolean isParamInDataset(ParameterTarget param, DatasetTarget ds) {
-		Collection<ParameterTarget> allparams = getAllParameters(ds
-				.getTestCase());
+		Collection<ParameterTarget> allparams = getAllParameters(ds.getTestCase());
 		return (allparams.contains(param));
 	}
 
@@ -694,8 +673,7 @@ public class Model {
 		}
 
 		String projectName = PathUtils.extractProjectName(target.getPath());
-		Collection<CustomField> cufs = tcCufsPerProjectname
-				.getCollection(projectName);
+		Collection<CustomField> cufs = tcCufsPerProjectname.getCollection(projectName);
 
 		if (cufs != null) {
 			return cufs;
@@ -713,8 +691,7 @@ public class Model {
 		}
 
 		String projectName = PathUtils.extractProjectName(tc.getPath());
-		Collection<CustomField> cufs = stepCufsPerProjectname
-				.getCollection(projectName);
+		Collection<CustomField> cufs = stepCufsPerProjectname.getCollection(projectName);
 		if (cufs != null) {
 			return cufs;
 		} else {
@@ -772,8 +749,7 @@ public class Model {
 			TestCaseTarget t = targets.get(i);
 			Long id = ids.get(i);
 
-			Existence existence = (id == null) ? Existence.NOT_EXISTS
-					: Existence.EXISTS;
+			Existence existence = (id == null) ? Existence.NOT_EXISTS : Existence.EXISTS;
 			TargetStatus status = new TargetStatus(existence, id);
 
 			testCaseStatusByTarget.put(t, status);
@@ -791,10 +767,8 @@ public class Model {
 			TargetStatus status = getStatus(t);
 
 			if (status.id != null && status.status != Existence.TO_BE_DELETED) {
-				Collection<Parameter> params = paramFinder
-						.findOwnParameters(status.id);
-				Collection<ParameterTarget> parameters = new HashSet<ParameterTarget>(
-						params.size());
+				Collection<Parameter> params = paramFinder.findOwnParameters(status.id);
+				Collection<ParameterTarget> parameters = new HashSet<ParameterTarget>(params.size());
 				for (Parameter p : params) {
 					parameters.add(new ParameterTarget(t, p.getName()));
 				}
@@ -816,10 +790,8 @@ public class Model {
 			TargetStatus status = getStatus(t);
 
 			if (status.id != null && status.status != Existence.TO_BE_DELETED) {
-				Collection<Dataset> datasets = dsDao
-						.findOwnDatasetsByTestCase(status.id);
-				Set<DatasetTarget> dstargets = new HashSet<DatasetTarget>(
-						datasets.size());
+				Collection<Dataset> datasets = dsDao.findOwnDatasetsByTestCase(status.id);
+				Set<DatasetTarget> dstargets = new HashSet<DatasetTarget>(datasets.size());
 				for (Dataset ds : datasets) {
 					dstargets.add(new DatasetTarget(t, ds.getName()));
 				}
@@ -886,7 +858,7 @@ public class Model {
 
 		// add the projects that were found
 		for (Project p : projects) {
-			TargetStatus status = new TargetStatus(Existence.EXISTS, p.getId());
+			ProjectTargetStatus status = new ProjectTargetStatus(Existence.EXISTS, p.getId(), p.getTestCaseLibrary().getId());
 			projectStatusByName.put(p.getName(), status);
 			initCufs(p.getName());
 		}
@@ -895,8 +867,7 @@ public class Model {
 		Set<String> knownProjects = projectStatusByName.keySet();
 		for (String name : projectNames) {
 			if (!knownProjects.contains(name)) {
-				projectStatusByName.put(name, new TargetStatus(
-						Existence.NOT_EXISTS));
+				projectStatusByName.put(name, new ProjectTargetStatus(Existence.NOT_EXISTS));
 			}
 		}
 
@@ -907,12 +878,10 @@ public class Model {
 
 		Long projectId = projectStatusByName.get(projectName).id;
 
-		List<CustomField> tccufs = cufDao.findAllBoundCustomFields(projectId,
-				BindableEntity.TEST_CASE);
+		List<CustomField> tccufs = cufDao.findAllBoundCustomFields(projectId, BindableEntity.TEST_CASE);
 		tcCufsPerProjectname.putAll(projectName, tccufs);
 
-		List<CustomField> stcufs = cufDao.findAllBoundCustomFields(projectId,
-				BindableEntity.TEST_STEP);
+		List<CustomField> stcufs = cufDao.findAllBoundCustomFields(projectId, BindableEntity.TEST_STEP);
 		stepCufsPerProjectname.putAll(projectName, stcufs);
 
 	}
@@ -932,29 +901,25 @@ public class Model {
 
 	@SuppressWarnings("unchecked")
 	private List<String> collectPaths(List<TestCaseTarget> targets) {
-		return (List<String>) CollectionUtils.collect(targets,
-				TestCasePathCollector.INSTANCE,
-				new ArrayList<String>(targets.size()));
+		return (List<String>) CollectionUtils.collect(targets, TestCasePathCollector.INSTANCE, new ArrayList<String>(
+				targets.size()));
 	}
 
 	@SuppressWarnings("unchecked")
 	private List<Project> loadProjects(List<String> names) {
-		Query q = sessionFactory.getCurrentSession().getNamedQuery(
-				"Project.findAllByName");
+		Query q = sessionFactory.getCurrentSession().getNamedQuery("Project.findAllByName");
 		q.setParameterList("names", names);
 		return q.list();
 	}
 
 	@SuppressWarnings("unchecked")
 	private List<InternalStepModel> loadStepsModel(Long tcId) {
-		Query query = sessionFactory.getCurrentSession().getNamedQuery(
-				"testStep.findBasicInfosByTcId");
+		Query query = sessionFactory.getCurrentSession().getNamedQuery("testStep.findBasicInfosByTcId");
 		query.setParameter("tcId", tcId, LongType.INSTANCE);
 
 		List<Object[]> stepdata = query.list();
 
-		List<InternalStepModel> steps = new ArrayList<InternalStepModel>(
-				stepdata.size());
+		List<InternalStepModel> steps = new ArrayList<InternalStepModel>(stepdata.size());
 		for (Object[] tuple : stepdata) {
 			StepType type = StepType.valueOf((String) tuple[0]);
 			TestCaseTarget calledTC = null;
@@ -977,18 +942,15 @@ public class Model {
 	 * saves more bloat
 	 */
 	@SuppressWarnings("unchecked")
-	private void swapNameForPath(
-			Collection<SimpleNode<NamedReference>> references) {
+	private void swapNameForPath(Collection<SimpleNode<NamedReference>> references) {
 
 		// first ensures that the references will be iterated in a constant
 		// order
-		List<SimpleNode<NamedReference>> listedRefs = new ArrayList<LibraryGraph.SimpleNode<NamedReference>>(
-				references);
+		List<SimpleNode<NamedReference>> listedRefs = new ArrayList<LibraryGraph.SimpleNode<NamedReference>>(references);
 
 		// now collect the ids. Node : the javadoc claims that the result is a
 		// new list.
-		List<Long> ids = (List<Long>) CollectionUtils.collect(listedRefs,
-				NamedReferenceIdCollector.INSTANCE);
+		List<Long> ids = (List<Long>) CollectionUtils.collect(listedRefs, NamedReferenceIdCollector.INSTANCE);
 
 		List<String> paths = finderService.getPathsAsString(ids);
 
@@ -1040,19 +1002,20 @@ public class Model {
 	 * 
 	 */
 	static class TargetStatus {// NOSONAR this class is not final so that it can
-								// be tested in ValidationFacilityTest
+		// be tested in ValidationFacilityTest
 		/**
 		 * The {@link Existence} status of the concerned entity.
 		 */
 		Existence status = null; // NOSONAR this attribute is local to the
-									// package and the implementor knows what
-									// he's
+		// package and the implementor knows what
+		// he's
 		// doing
 		/**
 		 * The id of the concerned entity.
 		 */
 		Long id = null; // NOSONAR this attribute is local to the package and
-						// the implementor knows what he's doing
+
+		// the implementor knows what he's doing
 
 		private TargetStatus(Existence status) {
 			if (status == Existence.EXISTS) {
@@ -1075,6 +1038,22 @@ public class Model {
 			return id;
 		}
 
+	}
+
+	static class ProjectTargetStatus extends TargetStatus {
+		Long testCaseLibraryId;
+
+		private ProjectTargetStatus(Existence status, Long id, Long testCaseLibraryId) {
+			super(status, id);
+			this.testCaseLibraryId = testCaseLibraryId;
+		}
+		private ProjectTargetStatus(Existence status) {
+			super(status);
+		}
+
+		public Long getTestCaseLibraryId() {
+			return testCaseLibraryId;
+		}
 	}
 
 	private static final class TestCasePathCollector implements Transformer {
@@ -1122,8 +1101,7 @@ public class Model {
 			this.calledTC = calledTC;
 		}
 
-		public InternalStepModel(StepType type, TestCaseTarget calledTC,
-				boolean delegates) {
+		public InternalStepModel(StepType type, TestCaseTarget calledTC, boolean delegates) {
 			this.type = type;
 			this.calledTC = calledTC;
 			this.delegates = delegates;

@@ -22,11 +22,10 @@ package org.squashtest.tm.service.internal.batchimport
 
 import javax.inject.Inject
 
-import org.apache.commons.io.IOUtils
 import org.junit.runner.RunWith
 import org.spockframework.runtime.Sputnik
 import org.springframework.transaction.annotation.Transactional
-import org.squashtest.tm.domain.testcase.TestCaseFolder
+import org.squashtest.tm.domain.testcase.TestCaseLibrary
 import org.squashtest.tm.domain.testcase.TestStep
 import org.squashtest.tm.service.DbunitServiceSpecification
 import org.squashtest.tm.service.importer.ImportLog
@@ -52,8 +51,22 @@ class TestCaseExcelBatchImporterIT extends DbunitServiceSpecification{
 
 		then :
 		summary != null
-		//TODO make it work
-		//		summary.testStepSuccesses == 1
-		//		!found(TestStep.class, -2L)
+		summary.recompute()
+		summary.testStepSuccesses == 1
+		!found(TestStep.class, -2L)
+	}
+
+	@DataSet("TestCaseExcelBatchImporter.should import test case in library.xml")
+	def "should import test case in library"(){
+		given :
+		URL url = TestCaseExcelBatchImporter.class.getClassLoader().getResource("import/import test case in library.xls")
+		File file = new File(url.toURI())
+
+		when :
+		ImportLog summary = importer.performImport(file)
+
+		then :
+		summary != null
+		TestCaseLibrary library = findEntity(TestCaseLibrary.class, -10L)
 	}
 }
