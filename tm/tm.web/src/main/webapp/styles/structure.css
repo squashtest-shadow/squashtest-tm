@@ -781,14 +781,6 @@ div#search-result .library {
 	display:inline;
 }
 
-#report-criteria-panel {
-	/* 
-	 * this manager-driven-css happens to mess up content's bloody styling
-	 * so dont complain about funky button size and stuff 
-	*/ 
-	font-size:10pt;
-}
-
 .report-item {
 	padding-left: 2px;
 	padding-right: 2px;
