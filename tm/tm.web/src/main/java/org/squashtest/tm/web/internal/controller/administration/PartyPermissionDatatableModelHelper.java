@@ -49,7 +49,7 @@ public class PartyPermissionDatatableModelHelper extends DataTableModelBuilder<P
 		Party party = item.getParty();
 		PermissionGroup group = item.getPermissionGroup();
 		Boolean active = activePartyDetector.isActive(party);
-		
+
 		result.put("party-id", party.getId());
 		result.put("party-active", active);
 		result.put("party-name", party.getName());
@@ -61,7 +61,7 @@ public class PartyPermissionDatatableModelHelper extends DataTableModelBuilder<P
 		return result;
 
 	}
-	
-	
+
+
 
 }

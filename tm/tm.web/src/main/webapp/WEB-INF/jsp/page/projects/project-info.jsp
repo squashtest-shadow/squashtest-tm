@@ -41,7 +41,14 @@
 <%@ page language="java" contentType="text/html; charset=utf-8"
 	pageEncoding="utf-8"%>
 <%------------------------------------- URLs et back button ----------------------------------------------%>
-<c:url var="ckeConfigUrl" value="/styles/ckeditor/ckeditor-config.js" />
+
+
+<f:message var="confirmLabel"     key="label.Confirm" />
+<f:message var="cancelLabel"      key="label.Cancel" />
+<f:message var="okLabel"          key="label.Ok" />
+<f:message var="renameLabel"      key="label.Rename" />
+
+
 <s:url var="projectUrl" value="/generic-projects/{projectId}">
 	<s:param name="projectId" value="${adminproject.project.id}" />
 </s:url>
@@ -113,24 +120,24 @@
 				</div>
 				
 				<div class="toolbar-button-panel">
-					<sec:authorize access="hasRole('ROLE_TM_PROJECT_MANAGER') or hasRole('ROLE_ADMIN')">
-          <c:if test="${ adminproject.template }">
-          <input type="button" value="<f:message key='label.coerceTemplateIntoProject' />" id="coerce" class="button" data-template-id="${ adminproject.id }" />
-          <div id="coerce-warning-dialog" title="<f:message key="title.coerceTemplateIntoProject" />" class="alert not-displayed">
-            <f:message key="message.coerceTemplateIntoProject" />
-            <input:confirm />
-            <input:cancel />
-          </div>
- 					</c:if>
+<sec:authorize access="hasRole('ROLE_TM_PROJECT_MANAGER') or hasRole('ROLE_ADMIN')">
+<c:if test="${ adminproject.template }">
+                    <input type="button" value="<f:message key='label.coerceTemplateIntoProject' />" id="coerce" class="button" data-template-id="${ adminproject.id }" />
+                    <div id="coerce-warning-dialog" title="<f:message key="title.coerceTemplateIntoProject" />" class="alert not-displayed">
+                      <f:message key="message.coerceTemplateIntoProject" />
+                      <input:confirm />
+                      <input:cancel />
+                    </div>
+</c:if>
 					<f:message var="rename" key="project.button.rename.label" />
 					<input type="button" value="${ rename }" id="rename-project-button"
 								class="button" />
-					</sec:authorize>
-					<sec:authorize access="hasRole('ROLE_ADMIN')">
-						<f:message var="delete" key='project.button.delete.label' />
-						<input type="button" value="${ delete }" id="delete-project-button"
-								class="button" />
-					</sec:authorize>						
+</sec:authorize>
+<sec:authorize access="hasRole('ROLE_ADMIN')">
+    				<f:message var="delete" key='project.button.delete.label' />
+    				<input type="button" value="${ delete }" id="delete-project-button"
+    						class="button" />
+</sec:authorize>						
 				</div>
 				<div class="unsnap"></div>
 			</div>
@@ -334,8 +341,8 @@
 		
 		<%----------------------------------- add User Popup-----------------------------------------------%>
 		
-		<f:message var="noUserSelectedError" key="error.permissions.noUserSelected" />		
-		<div id="add-permission-dialog" class="popup-dialog not-displayed">
+		<f:message var="adduserTitle" key="title.AddUser" />	
+		<div id="add-permission-dialog" class="popup-dialog not-displayed" title="${adduserTitle}">
 		
 			<input type="hidden" id="source-status"></input>
 			
@@ -367,9 +374,9 @@
 			<div data-def="state=noselect"><span><f:message key="error.permissions.noUserSelected"/></span></div>
 			
 			<div class="popup-dialog-buttonpane">
-				<input type="button" value="<f:message key='label.Confirm'/>" data-def="state=normal, mainbtn=normal, evt=confirm"/>
-				<input type="button" value="<f:message key='label.Cancel' />" data-def="state=normal loading, mainbtn=loading, evt=cancel" />
-				<input type="button" value="<f:message key='label.Ok'    />"  data-def="state=allbound noselect, mainbtn=allbound noselect, evt=cancel"/>
+				<input type="button" value="${confirmLabel}" data-def="state=normal, mainbtn=normal, evt=confirm"/>
+				<input type="button" value="${cancelLabel}" data-def="state=normal loading, mainbtn=loading, evt=cancel" />
+				<input type="button" value="${okLabel}"  data-def="state=allbound noselect, mainbtn=allbound noselect, evt=cancel"/>
 			</div>
 		
 		</div>
@@ -401,9 +408,9 @@
 			</div>
 			
 			<div class="popup-dialog-buttonpane">
-				<input type="button" value="<f:message key='label.Confirm'/>" data-def="state=normal, mainbtn=normal, evt=confirm"/>
-				<input type="button" value="<f:message key='label.Cancel' />" data-def="state=normal loading, mainbtn=loading, evt=cancel" />
-				<input type="button" value="<f:message key='label.Ok'    />"  data-def="state=allbound noselect, mainbtn=allbound noselect, evt=cancel"/>
+				<input type="button" value="${confirmLabel }" data-def="state=normal, mainbtn=normal, evt=confirm"/>
+				<input type="button" value="${cancelLabel}" data-def="state=normal loading, mainbtn=loading, evt=cancel" />
+				<input type="button" value="${okLabel}"  data-def="state=allbound noselect, mainbtn=allbound noselect, evt=cancel"/>
 			</div>
 		</div>
 
@@ -414,38 +421,29 @@
 
 <!-- --------------------------------RENAME POPUP--------------------------------------------------------- -->
 <sec:authorize access="hasRole('ROLE_TM_PROJECT_MANAGER') or hasRole('ROLE_ADMIN')">
-	<pop:popup id="rename-project-dialog"
-		titleKey="dialog.rename-project.title" isContextual="true"
-		openedBy="rename-project-button">
-		<jsp:attribute name="buttons">
-	
-		<f:message var="label" key="label.Rename" />
-		'${ label }': function() {
-			var url = "${ projectUrl }";
-			<jq:ajaxcall url="url" dataType="json" httpMethod="POST"
-				useData="true" successHandler="renameProjectSuccess">					
-				<jq:params-bindings newName="#rename-project-input" />
-			</jq:ajaxcall>					
-		},			
-		<pop:cancel-button />
-		</jsp:attribute>
-		<jsp:attribute name="body">
-		<label><f:message key="dialog.rename.label" />
-		</label>
-		<input type="text" id="rename-project-input" maxlength="255" size="50" />
-		<br />
+
+  <f:message var="renameTitle" key="dialog.rename-project.title" />
+  <div id="rename-project-dialog" class="popup-dialog not-displayed" title="${renameTitle}">
+    <div>
+        <label>
+          <f:message key="dialog.rename.label" />
+	    </label>
+	     <input type="text" id="rename-project-input" maxlength="255" size="50" />
+		  <br />
 		<comp:error-message forField="name" />
-	</jsp:attribute>
-	</pop:popup>
+    </div>
+    <div class="popup-dialog-buttonpane">
+      <input type="button" value="${renameLabel}" data-def="evt=confirm, mainbtn" />
+      <input type="button" value="${cancelLabel}" data-def="evt=cancel" />
+    </div>
+  </div>
+
 </sec:authorize>
 
 <!-- ------------------------------------END RENAME POPUP------------------------------------------------------- -->
 <script type="text/javascript">
 /* popup renaming success handler */
-function renameProjectSuccess(data) {
-	$('#project-name-header').html(data.newName);
-	$('#rename-project-dialog').dialog('close');
-}
+
 
 var squashtm = squashtm || {};
 squashtm.app = squashtm.app || {} ;	 
@@ -456,7 +454,8 @@ require(["common"], function() {
 
 	require(["jquery", "projects-manager", "jquery.squash.fragmenttabs", "squash.attributeparser", 
 	         "project/ProjectToolbar", "jquery.squash.oneshotdialog",
-	         "squashtable", "jquery.squash.formdialog", "jquery.switchButton", "app/ws/squashtm.workspace"], 
+	         "squashtable", "jquery.squash.formdialog", "jquery.switchButton", 
+	         "app/ws/squashtm.workspace", "jquery.squash.formdialog"], 
 	         function($, projectsManager, Frag, attrparser, ProjectToolbar, oneshot){
 
 
@@ -605,12 +604,31 @@ require(["common"], function() {
 		
 
 		// rename popup
-		$("#rename-project-dialog").bind("dialogopen", function(event, ui) {
-			var name = $.trim($('#project-name-header').text());
-			$("#rename-project-input").val(name);
-	
+		var renameDialog = $("#rename-project-dialog"),
+			nameHeader = $('#project-name-header');
+		renameDialog.formDialog();
+		
+		renameDialog.on('formdialogopen', function(){
+			var name = $.trim(nameHeader.text());
+			$("#rename-project-input").val(name);			
 		});
-
+		
+		renameDialog.on('formdialogconfirm', function(){
+			var name = $("#rename-project-input").val();
+            $.ajax({
+              url : "${projectUrl}",
+              type : 'POST',
+              data : {newName : name }       
+            })
+            .success(function(){
+            	nameHeader.text(name);
+            	renameDialog.formDialog('close');
+            });
+		});
+		
+		$("#rename-project-button").on('click', function(){
+			renameDialog.formDialog('open');
+		});
 
 		
 		// permissions popup
@@ -676,8 +694,8 @@ require(["common"], function() {
 				userPermissions : ${json:serialize(userPermissions)}
 			},
 			language : {
-				ok : '<f:message key="label.Confirm"/>',
-				cancel : '<f:message key="label.Cancel"/>',
+				ok : '${confirmLabel}',
+				cancel : '${cancelLabel}',
 				deleteMessage : '<f:message key="message.permissions.remove.teamOrUser"/>',
 				deleteTooltip : '<f:message key="tooltips.permissions.remove"/>'
 			}
@@ -698,7 +716,7 @@ require(["common"], function() {
 			"<div class='display-table-row'><div class='display-table-cell warning-cell'><div class='delete-node-dialog-warning'></div></div><div class='display-table-cell'><f:message key='message.project.remove.first'/><span class='red-warning-message'> <f:message key='message.project.remove.second'/> </span><f:message key='message.project.remove.third'/><span class='bold-warning-message'> <f:message key='message.project.remove.fourth'/> </span></div></div>"
 			).done(function(){
 				requestProjectDeletion().done(deleteProjectSuccess);
-				});
+			});
 			</c:if>
 			<c:if test="${!adminproject.deletable}">	
 				$.squash.openMessage("<f:message key='popup.title.info'/>","<f:message key='project.delete.cannot.exception'/>");

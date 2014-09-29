@@ -118,7 +118,7 @@ public class ProjectAdministrationController {
 				.findPartyPermissionsBeanByProject(new DefaultPagingAndSorting("login", 25),
 						DefaultFiltering.NO_FILTERING, projectId).getPagedItems();
 		Collection<Object> partyPermissions = new PartyPermissionDatatableModelHelper(locale, internationalizationHelper)
-		.buildRawModel(partyProjectPermissionsBean);
+		.buildRawModel(partyProjectPermissionsBean,1);
 
 		List<PermissionGroup> availablePermissions = projectFinder.findAllPossiblePermission();
 
