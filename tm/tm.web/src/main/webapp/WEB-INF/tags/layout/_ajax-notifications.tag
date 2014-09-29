@@ -51,7 +51,8 @@
   <input type="button" value="${okLabel}"/>  
 </div>
 
-<div id="generic-warning-dialog" class="not-displayed popup-dialog" title="${errorTitle}">
+<f:message var="warningTitle" key="label.warning" />
+<div id="generic-warning-dialog" class="not-displayed popup-dialog" title="${warningTitle}">
   <div>
      <div class="display-table-row">
         <div class="display-table-cell warning-cell">

@@ -152,11 +152,7 @@ define(["jquery", "tree","./permissions-rules", "workspace.contextual-content", 
 			$("#search-tree-button").on("click", function(){
 				document.location.href = squashtm.app.contextRoot + "/advanced-search?searchDomain=requirement";
 			});
-		
-			$("#search-tree-button-old").on("click", function(){
-				document.location.href = squashtm.app.contextRoot + "/advanced-search?searchDomain=requirement";
-			});
-			
+
 			// ***************** deletion ********************
 			
 			$("#delete-node-tree-button").on("click", function(){

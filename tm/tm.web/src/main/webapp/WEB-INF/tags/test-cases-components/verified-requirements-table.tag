@@ -110,10 +110,7 @@ data-def='datakeys-id=entity-id ,ajaxsource=${ verifiedRequirementsTableUrl }'>
 		</div>
 </div>
 
-<div id="no-selected-requirement-dialog" class="popup-dialog not-displayed"
-		title="<f:message key='popup.title.error' />">
-		<span><f:message key="message.EmptyTableSelection"/></span>
-</div>
+
 <c:if test="${includeIndirectlyVerified }">
 <div id="no-selected-direct-requirement-dialog" class="popup-dialog not-displayed"
 		title="<f:message key='popup.title.error' />">

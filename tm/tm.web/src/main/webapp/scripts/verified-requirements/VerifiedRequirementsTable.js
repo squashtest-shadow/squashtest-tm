@@ -18,9 +18,11 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ "jquery", "backbone", "underscore", "app/util/StringUtil", "jquery.squash", "jqueryui",
-		"jquery.squash.togglepanel", "squashtable", "jquery.squash.oneshotdialog",
-		"jquery.squash.messagedialog", "jquery.squash.confirmdialog", "jeditable" ], function($, Backbone, _, StringUtil) {
+define([ "jquery", "backbone", "underscore", "app/util/StringUtil", 
+         "app/ws/squashtm.notification", "squash.translator", 
+         "jquery.squash", "jqueryui",         
+		"jquery.squash.togglepanel", "squashtable", "jquery.squash.confirmdialog", "jeditable" ], 
+		function($, Backbone, _, StringUtil, notification, translator) {
 	var VRTS = squashtm.app.verifiedRequirementsTableSettings;
 	var VerifiedRequirementsTable = Backbone.View.extend({
 
@@ -46,7 +48,6 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil", "jquery.squa
 
 		configurePopups : function() {
 			this.configureRemoveRequirementDialogs.call(this);
-			this.configureNoRequirementSelectedDialog.call(this);
 		},
 		dataTableSettings : function(self) {
 			return {
@@ -126,7 +127,7 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil", "jquery.squa
 					this.confirmRemoveRequirementDialog.confirmDialog("open");
 				}
 			} else {
-				this.noRequirementSelectedDialog.messageDialog('open');
+				notification.showError(translator.get('message.EmptyTableSelection'));
 			}
 
 		},
@@ -163,10 +164,6 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil", "jquery.squa
 			this.confirmRemoveObsoleteRequirementDialog.on("close", $.proxy(function() {
 				this.toDeleteIds = [];
 			}, this));
-		},
-
-		configureNoRequirementSelectedDialog : function() {
-			this.noRequirementSelectedDialog = $("#no-selected-requirement-dialog").messageDialog();
 		},
 
 		// =====================================================

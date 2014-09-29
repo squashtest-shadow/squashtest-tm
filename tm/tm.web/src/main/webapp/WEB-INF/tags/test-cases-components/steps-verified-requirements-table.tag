@@ -119,7 +119,3 @@ data-def='datakeys-id=entity-id ,ajaxsource=${ stepVerifiedRequirementsUrl }'>
 		</div>
 </div>
 
-<div id="no-selected-requirement-dialog" class="popup-dialog not-displayed"
-		title="<f:message key='popup.title.error' />">
-		<span><f:message key="message.EmptyTableSelection"/></span>
-</div>

@@ -19,9 +19,10 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 define([ "jquery", "backbone", "underscore", "handlebars", "app/util/StringUtil", "./VerifiedRequirementsTable",
+         "app/ws/squashtm.notification", "squash.translator",
 		"jquery.squash", "jqueryui", "jquery.squash.togglepanel", "squashtable",
-		"jquery.squash.oneshotdialog", "jquery.squash.messagedialog", "jquery.squash.confirmdialog" ], function($,
-		Backbone, _, Handlebars, StringUtil, VerifiedRequirementsTable) {
+		"jquery.squash.confirmdialog" ], function($,
+		Backbone, _, Handlebars, StringUtil, VerifiedRequirementsTable, notification, translator) {
 	var VRTS = squashtm.app.verifiedRequirementsTableSettings;
 	var TestStepVerifiedRequirementsTable = VerifiedRequirementsTable.extend({
 		initialize : function(options) {
@@ -51,12 +52,9 @@ define([ "jquery", "backbone", "underscore", "handlebars", "app/util/StringUtil"
 
 		addLinkCheckboxToRow : function(row, data, displayIndex) {
 
-			var checked = (data.verifiedByStep === "true" || data.verifiedByStep === true); // that's so because
-																									// the information
-																									// could be either a
-																									// boolean or its
-																									// string
-																									// representation
+			// it is so because the information could be either a boolean or its string representation
+			var checked = (data.verifiedByStep === "true" || data.verifiedByStep === true); 
+
 			var cssClass = (checked) ? "ui-icon-link-dark-e-w" : "ui-icon-link-clear-e-w";
 
 			var elt = this.linkTemplate({
@@ -110,7 +108,7 @@ define([ "jquery", "backbone", "underscore", "handlebars", "app/util/StringUtil"
 				this.toDetachIds = rvIds;
 				this.confirmDetachRequirementDialog.confirmDialog("open");
 			} else {
-				this.noRequirementSelectedDialog.messageDialog('open');
+				notification.showError(translator.get('message.EmptyTableSelection'));
 			}
 		},
 

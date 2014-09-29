@@ -19,17 +19,16 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 define([ "jquery", "backbone", "underscore", "app/util/StringUtil", 
-         "./VerifiedRequirementsTable",
-         "jquery.squash",
-		"jqueryui", "jquery.squash.togglepanel", "squashtable", "jquery.squash.oneshotdialog",
-		"jquery.squash.messagedialog", "jquery.squash.confirmdialog" ], function($, Backbone, _, StringUtil,
-		VerifiedRequirementsTable) {
+         "./VerifiedRequirementsTable", "app/ws/squashtm.notification",
+         "squash.translator", "jquery.squash",
+		"jqueryui", "jquery.squash.togglepanel", "squashtable", 
+		"jquery.squash.confirmdialog" ], function($, Backbone, _, StringUtil,
+		VerifiedRequirementsTable, notification, translator) {
 	var VRTS = squashtm.app.verifiedRequirementsTableSettings;
 	var TestCaseVerifiedRequirementsTable = VerifiedRequirementsTable.extend({
 
 		initialize : function(options) {
 			VerifiedRequirementsTable.prototype.initialize.apply(this);
-			this.configureNoDirectRequirementSelectedDialog.call(this);
 		},
 
 		events : {},
@@ -64,7 +63,7 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil",
 					return data.directlyVerified == "false" ? false : data.directlyVerified;
 				});
 				if (indirects.length > 0) {
-					this.noDirectRequirementSelectedDialog.messageDialog("open");
+					notification.showWarning(translator.get('verified-requirements.table.indirectverifiedrequirements.removalattemptsforbidden.label'));
 				} else {
 
 					this.toDeleteIds = rvIds;
@@ -79,7 +78,7 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil",
 					}
 				}
 			} else {
-				this.noRequirementSelectedDialog.messageDialog('open');
+				notification.showError(translator.get('message.EmptyTableSelection'));
 			}
 
 		},
@@ -92,10 +91,6 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil",
 			this.discriminateDirectVerifications(row, data, displayIndex);
 			this.addLinkToTestStep(row, data, displayIndex);
 			return row;
-		},
-
-		configureNoDirectRequirementSelectedDialog : function() {
-			this.noDirectRequirementSelectedDialog = $("#no-selected-direct-requirement-dialog").messageDialog();
 		},
 
 		// =====================================================

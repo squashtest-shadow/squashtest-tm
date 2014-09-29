@@ -77,7 +77,8 @@
 				
 				var addHandler = function(data) {
 					showAddSummary(data);
-					<%-- uh, dependency on something defined in decorate-verified-requirements-table --%>
+					<%-- uh, dependency on something defined in decorate-verified-requirements-table, try 
+                        using the event bus instead --%>
 					squashtm.verifiedRequirementsTable.refresh();
 				};
 				
@@ -121,7 +122,7 @@
 	
 	<jsp:attribute name="subPageButtons">
 		<f:message var="backButtonLabel" key="label.Back" />
-		<input type="button" class="button" id="back" value="${ backButtonLabel }" onClick="document.location.href=squashtm.workspace.backurl"/>	
+		<input type="button" class="sq-btn button" id="back" value="${ backButtonLabel }" onClick="document.location.href=squashtm.workspace.backurl"/>	
 	</jsp:attribute>		
 	
 	<jsp:attribute name="tablePane">
