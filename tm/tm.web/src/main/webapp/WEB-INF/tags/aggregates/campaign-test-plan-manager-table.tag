@@ -99,7 +99,7 @@
 
   <%-- ===================== THE TABLE ===================== --%>
 
-  <div class="table-tab-wrap">
+  <div class="std-margin-top">
 
     <table id="campaign-test-plans-table" class="test-plan-table unstyled-table"
       data-def="ajaxsource=${tableModelUrl}"  data-entity-id="${campaign.id}" data-entity-type="campaign">
