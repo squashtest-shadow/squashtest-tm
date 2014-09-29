@@ -108,6 +108,7 @@ define([ "jquery", "squashtable" ], function($) {
 					"/party-permissions",
 			"aaData" : userPermissions,
 			"sDom" : 'ft<"dataTables_footer"lp>',
+			"iDisplayLength" : 25,
 			"aaSorting" : [ [ 1, 'asc' ] ],
 			"aoColumnDefs" : [ {
 				'bSortable' : false,
