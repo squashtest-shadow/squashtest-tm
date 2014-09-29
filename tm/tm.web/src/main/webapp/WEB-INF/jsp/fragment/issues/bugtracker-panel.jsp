@@ -52,6 +52,9 @@
 				* READY : nothing special, the component is fully functional.
 		- useParentContextPopup : if false, will create a popup as usual. If true, will use instead a popup accessible in the parent context 
 								(that's how the ieo-execute-execution.jsp works)
+                
+                
+    29/09/14 : that file needs refactoring too.
  --%>
  
 <%-- ------------------- variables ----------------- --%>
@@ -68,6 +71,10 @@
 </c:if>
 
 <c:if test="${empty useParentContextPopup}"><c:set var="useParentContextPopup" value="${false}" /></c:if>
+
+
+<f:message var="loginLabel" key="label.LogIn" />
+<f:message var="cancelLabel" key="label.Cancel"/>
 
 
 <%-- ------------------- /variables ----------------- --%>
@@ -149,7 +156,7 @@
 	function invokeCredentialPopup(fnSuccessHandler, fnFailureHandler) {
 		loginSuccess = fnSuccessHandler;
 		loginFail = fnFailureHandler;
-		$("#issue-dialog-credentials").dialog("open");
+		$("#issue-dialog-credentials").formDialog("open");
 	}
 
 	function refreshIssueTable() {
@@ -183,9 +190,6 @@
 		return false;
 	}
 
-	function bugTrackerLogin() {
-		invokeCredentialPopup(loginSuccessCheckIssues, loginAbort);
-	}
 </script>
 
 
@@ -351,18 +355,38 @@
 
 <%--------------------------------- login code ------------------------------------%>
 
-<%-- 
-note that the successCallback and failureCallback are in the present case two pointers to the actual callbacks, 
-check that in the next <script></script> tags 
---%>
-<is:issue-credentials-popup url="${credentialsUrl}"
-	divId="issue-dialog-credentials" successCallback="loginSuccess"
-	failureCallback="loginFail" bugTrackerId="${bugTracker.id}"/>
+<f:message var="credentialsTitle" key="dialog.issue.credentials.title" />
+<div id="issue-dialog-credentials" class="popup-dialog not-displayed" title="${credentialsTitle}" >
+
+  <div>
+    <comp:error-message forField="bugtracker" />
+    <div class="centered">
+    	<div class="display-table">
+    		<div class="display-table-row">
+    			<div class="display-table-cell"><label><f:message key="dialog.issue.credentials.labels.username"/></label></div>
+    			<div class="display-table-cell"><input type="text" id="dialog-issue-login" /></div>
+    		</div>
+    		<div class="display-table-row">
+    			<div class="display-table-cell"><label><f:message key="dialog.issue.credentials.labels.password"/></label></div>
+    			<div class="display-table-cell"><input type="password"  id="dialog-issue-password"/></div>	
+    		</div>
+    	</div>
+    </div>
+  </div>
+  
+  <div class="popup-dialog-buttonpane">
+    <input type="button" value="${loginLabel}"  data-def="evt=confirm, mainbtn"/>
+    <input type="button" value="${cancelLabel}" data-def="evt=cancel"/>
+  </div>  
+</div> 
+
+
 
 
 <script type="text/javascript">
 require([ "common" ], function() {
-	require([ "jquery", "squash.basicwidgets", "workspace.event-bus" ], function($, basicwidg, eventBus) {
+	require([ "jquery", "squash.basicwidgets", "workspace.event-bus", "jquery.squash.formdialog" ], 
+			function($, basicwidg, eventBus) {
 		$(function() {		
 			basicwidg.init();
 			<c:if test="${executable}">
@@ -372,10 +396,42 @@ require([ "common" ], function() {
 			});
 			</c:if>
 
+			
+			var credentialsDialog = $("#issue-dialog-credentials");
+			credentialsDialog.formDialog({width : 300});
+			
+			credentialsDialog.on('formdialogconfirm', function(){
+
+				var login = $("#dialog-issue-login").val();
+				var password = $("#dialog-issue-password").val();
+				$.ajax({
+					url : "${credentialsUrl}",
+					type : 'POST',
+					data : { login : login, password : password, bugTrackerId : ${bugTracker.id}},
+					dataType : 'json'
+				})
+				.success(function(){
+					credentialsDialog.formDialog('close');
+					loginSuccess();
+				});
+				
+			});
+			
+			credentialsDialog.on('formdialogcancel', function(){
+				$('#dialog-issue-login').val('');
+				$('#dialog-issue-password').val('');
+				credentialsDialog.formDialog('close');
+				loginFail();		
+			});
+			
+			
 			$("#issue-login-button").click(function() {
 				$(this).removeClass("ui-state-focus ui-state-hover");
-				bugTrackerLogin();
+				invokeCredentialPopup(loginSuccessCheckIssues, loginAbort);
 			});
+			
+			
+			
 			<c:choose>
 			<c:when test="${useParentContextPopup}">
 				parent.squashtm.eventBus.onContextual('context.bug-reported', function(evt, json){
