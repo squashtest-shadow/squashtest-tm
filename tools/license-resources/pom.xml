@@ -4,7 +4,7 @@
   <parent>
     <artifactId>squashtest-csp-tools</artifactId>
     <groupId>org.squashtest.tm</groupId>
-    <version>1.11.0.RC4-SNAPSHOT</version>
+    <version>1.11.0.RC4</version>
   </parent>
   
   <!-- No parent because it would trigger maven-remote-resources-plugin:resource -->
