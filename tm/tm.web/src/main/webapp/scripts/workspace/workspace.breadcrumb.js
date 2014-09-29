@@ -120,7 +120,8 @@
  *  get() : returns the current breadcrumb.
  * 
  */
-define(["domReady", "workspace.routing", "workspace.storage"], function(domReady, routing, storage) {
+define(["jquery", "domReady", "workspace.routing", "workspace.storage"], 
+		function($, domReady, routing, storage) {
 	
 	"use strict";
 
@@ -218,7 +219,7 @@ define(["domReady", "workspace.routing", "workspace.storage"], function(domReady
 	
 	function track(){
 		
-		var breadcrumb = storage.get(storekey);			
+		var breadcrumb = storage.get(storekey) || [];		
 		
 		
 		// step 2
