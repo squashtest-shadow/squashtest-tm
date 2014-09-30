@@ -29,13 +29,12 @@
  * 
  */
 
-define(["jquery", "squash.translator", "./jquery.squash.attachmentsDialog", 
+define(["jquery", "squash.translator", "app/ws/squashtm.notification", "./jquery.squash.attachmentsDialog", 
         "jquery.squash.confirmdialog", "squashtable"], 
-		function($,  translator){
+		function($,  translator, notification){
 	
 	function getMessages(){
 		return translator.get({
-			errorTitle : 'popup.title.error',
 			nothingSelected : 'message.EmptyTableSelection',
 			renameImpossible : 'message.CanRenameOnlyOneAttachment'
 		});
@@ -116,7 +115,7 @@ define(["jquery", "squash.translator", "./jquery.squash.attachmentsDialog",
 			}
 			else{
 				var messages = getMessages();
-				$.squash.openMessage(messages.errorTitle, messages.nothingSelected);
+				notification.showError(messages.nothingSelected);
 			}
 		});
 		
@@ -125,7 +124,7 @@ define(["jquery", "squash.translator", "./jquery.squash.attachmentsDialog",
 			var selectedIds = table.getSelectedIds();
 			if (selectedIds.length !== 1){
 				var messages = getMessages();
-				$.squash.openMessage(messages.errorTitle, messages.renameImpossible);
+				notification.showError(messages.renameImpossible);
 				return false;
 			}
 			else{
