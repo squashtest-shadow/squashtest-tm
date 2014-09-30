@@ -4,7 +4,7 @@
   <parent>
     <artifactId>squashtest-csp-tools</artifactId>
     <groupId>org.squashtest.tm</groupId>
-    <version>1.11.0.RC5</version>
+    <version>1.11.0.RC6-SNAPSHOT</version>
   </parent>
   <artifactId>tools.annotation.processor</artifactId>
   <name>${project.groupId}.${project.artifactId}</name>
