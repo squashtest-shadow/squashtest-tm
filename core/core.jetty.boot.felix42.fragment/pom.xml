@@ -3,7 +3,7 @@
   <parent>
     <groupId>org.squashtest.tm</groupId>
     <artifactId>squashtest-csp-core</artifactId>
-    <version>1.11.0.RELEASE</version>
+    <version>1.12.0.M1-SNAPSHOT</version>
   </parent>
 
   <artifactId>core.jetty.boot.felix42.fragment</artifactId>
