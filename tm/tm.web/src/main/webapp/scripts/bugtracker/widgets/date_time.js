@@ -25,7 +25,8 @@
  * 2 - java format : the prefered one. The property of the conf object is rendering.inputType.meta['format'].
  *  
  */
-define(["jquery", "../domain/FieldValue", "squash.configmanager", "squash.dateutils", "jquery.timepicker", "jqueryui"], function($, FieldValue, confman, dateutils){
+define(["jquery", "../domain/FieldValue", "squash.configmanager", "squash.dateutils", "squash.translator", "jquery.timepicker", "jqueryui"], 
+		function($, FieldValue, confman, dateutils){
 
 	function convertStrDate(fromFormat, toFormat, strFromValue){
 		var date = $.datepicker.parseDate(fromFormat, strFromValue);
@@ -119,6 +120,31 @@ define(["jquery", "../domain/FieldValue", "squash.configmanager", "squash.dateut
 			else{
 				return $.datepicker.parseDate(jsformat, strdate);
 			}
+		},
+		
+		// warning : it only checks the date, not the time.
+		validate : function(){
+			// first let's check the default behavior
+			var messages = this._super();
+			if (messages.length>0){
+				return messages;
+			}
+			
+			if ( this.element.val() !== ""){
+				var txtdate = $.trim(this.element.val().split('@')[0]);
+				/* 
+				 * warning : the format here must be the 'java' form of the dateformat returned by confman.getStdDatepicker()
+				 * (the later returning the 'datepicker' form of this dateformat). (why people don't you agree on date formats).
+				 * Here it is hardcoded to 'squashtm.dateformatShort'.
+				 */
+				var format = translator.get('squashtm.dateformatShort');	
+				
+				if (! dateutils.dateExists(txtdate, format)){
+					messages.push('error.notadate');
+				}
+			}
+			
+			return messages;
 		}
 	};
 

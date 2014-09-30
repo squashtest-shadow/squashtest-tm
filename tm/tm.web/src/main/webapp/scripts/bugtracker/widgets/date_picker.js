@@ -24,7 +24,8 @@
  * 2 - java format : the prefered one. The property of the conf object is rendering.inputType.meta['format'].
  *  
  */
-define(["jquery", "../domain/FieldValue", "squash.configmanager", "squash.dateutils", "jqueryui"], function($, FieldValue, confman, dateutils){
+define(["jquery", "../domain/FieldValue", "squash.configmanager", "squash.dateutils", "squash.translator", "jqueryui"], 
+		function($, FieldValue, confman, dateutils, translator){
 
 
 	return {
@@ -106,6 +107,31 @@ define(["jquery", "../domain/FieldValue", "squash.configmanager", "squash.dateut
 			else{
 				return $.datepicker.parseDate(jsformat, strdate);
 			}
+		},
+		
+		validate : function(){
+			// first let's check the default behavior
+			var messages = this._super();
+			if (messages.length>0){
+				return messages;
+			}
+			
+			var txtdate = this.element.val();
+			
+			if ( txtdate !== ""){
+				/* 
+				 * warning : the format here must be the 'java' form of the dateformat returned by confman.getStdDatepicker()
+				 * (the later returning the 'datepicker' form of this dateformat). (why people don't you agree on date formats).
+				 * Here it is hardcoded to 'squashtm.dateformatShort'.
+				 */
+				var format = translator.get('squashtm.dateformatShort');	
+				
+				if (! dateutils.dateExists(txtdate, format)){
+					messages.push('error.notadate');
+				}
+			}
+			
+			return messages;
 		}
 	};
 

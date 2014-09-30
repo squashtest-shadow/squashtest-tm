@@ -135,6 +135,23 @@ define(["moment"], function(moment) {
 			}
 			
 			return _date;
+		},
+		
+		/*
+		 * Checks whether this string represents a date that actually exists.
+		 * This uses the fact that javascript will round an invalid date to its 
+		 * nearest valid date.
+		 * 
+		 * thanks to http://michiel.wordpress.com/2007/07/02/how-to-validate-a-date-in-javascript/ 
+		 * for the inspiration
+		 * 
+		 * @params
+		 * value : string representation of a date
+		 * format : the format for that value, defaults to ISO_8601 if not specified
+		 */
+		dateExists : function(value, format){
+			var _fixedvalue = this.format(value, format, format);
+			return (value === _fixedvalue);
 		}
 		
 		
