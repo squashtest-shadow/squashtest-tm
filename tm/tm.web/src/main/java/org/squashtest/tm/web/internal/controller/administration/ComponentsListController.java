@@ -79,6 +79,12 @@ public class ComponentsListController {
 
 		@Override
 		public int compare(Bundle b1, Bundle b2) {
+			if (b1.getSymbolicName() == null) { // this looks weird yet it does happen
+				return -1;
+			}
+			if (b2.getSymbolicName() == null) { // this looks weird yet it does happen
+				return 1;
+			}
 			return b1.getSymbolicName().compareTo(b2.getSymbolicName());
 		}
 	};
