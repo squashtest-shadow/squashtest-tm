@@ -29,7 +29,6 @@
 
 
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<%@ taglib prefix="jq" tagdir="/WEB-INF/tags/jquery"%>
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component"%>
 <%@ taglib prefix="s" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt"%>
@@ -38,7 +37,6 @@
 <%@ taglib prefix="pop" tagdir="/WEB-INF/tags/popup"%>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 <%@ taglib prefix="authz" tagdir="/WEB-INF/tags/authz"%>
-<%@ taglib prefix="input" tagdir="/WEB-INF/tags/input"%>
 <%@ taglib prefix="at" tagdir="/WEB-INF/tags/attachments"%>
 <%@ taglib prefix="csst" uri="http://org.squashtest.tm/taglib/css-transform"%>
 
@@ -303,10 +301,14 @@
 				<f:message var="label" key="dialog.rename-requirement.title" />
 				'${ label }': function() {
 					var url = "${ pageUrl }" + $('#requirement-id').text();
-					<jq:ajaxcall url="url" dataType="json" httpMethod="POST" useData="true"
-        successHandler="squashtm.requirementVersion.renameRequirementSuccess">		
-						<jq:params-bindings newName="#rename-requirement-input" />
-					</jq:ajaxcall>					
+                    var params = { newName : $("#rename-requirement-input").val() };
+                    $.ajax({
+                      url : url, 
+                      type : 'POST',
+                      dataType : 'json',
+                      data : params,
+                      success : squashtm.requirementVersion.renameRequirementSuccess
+                    });				
 				},			
 				<pop:cancel-button />
 			</jsp:attribute>

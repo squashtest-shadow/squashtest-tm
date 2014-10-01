@@ -28,7 +28,6 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="s" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component" %>	
-<%@ taglib prefix="dt" tagdir="/WEB-INF/tags/datatables" %>
 
 <%@ attribute name="interfaceDescriptor" type="java.lang.Object" required="true" description="an object holding the labels for the interface" %>
 <%@ attribute name="dataUrl" required="true" description="where the table will fetch its data" %>

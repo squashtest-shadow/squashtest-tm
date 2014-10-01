@@ -22,7 +22,6 @@
 --%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt"%>
-<%@ taglib prefix="jq" tagdir="/WEB-INF/tags/jquery"%>
 <%@ taglib prefix="s" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component"%>
 <%@ taglib prefix="layout" tagdir="/WEB-INF/tags/layout"%>
@@ -175,10 +174,13 @@ function renameBugtrackerSuccess(data) {
 		<f:message var="label" key="rename" />
 			'${ label }': function() {
 				var url = "${ bugtrackerUrl }";
-				<jq:ajaxcall url="url" dataType="json" httpMethod="POST"
-					useData="true" successHandler="renameBugtrackerSuccess">					
-					<jq:params-bindings newName="#rename-bugtracker-input" />
-				</jq:ajaxcall>					
+                var params = { newName : $("#rename-bugtracker-input").val() };
+                $.ajax({
+                  url : url, 
+                  type : 'POST',
+                  dataType : 'json',
+                  data : params                  
+                });				
 			},			
 			<pop:cancel-button />
 		</jsp:attribute>

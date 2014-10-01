@@ -24,7 +24,6 @@
 <%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
 
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<%@ taglib prefix="jq" tagdir="/WEB-INF/tags/jquery"%>
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component"%>
 <%@ taglib prefix="s" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="aggr" tagdir="/WEB-INF/tags/aggregates"%>
@@ -281,10 +280,12 @@
 		<f:message var="label" key="label.Confirm" />
 		'${ label }': function() {
 			var url = "${executionUrl}";
-			<jq:ajaxcall url="url" httpMethod="DELETE"
-				successHandler="squashtm.execution.deleteExecutionSuccess"
-				errorHandler="squashtm.execution.deleteExecutionFailure">					
-			</jq:ajaxcall>
+            $.ajax({
+              url : url, 
+              type : 'DELETE',
+              success : squashtm.execution.deleteExecutionSuccess,
+              error : squashtm.execution.deleteExecutionFailure
+            });
 		},			
 		<pop:cancel-button />
 	</jsp:attribute>

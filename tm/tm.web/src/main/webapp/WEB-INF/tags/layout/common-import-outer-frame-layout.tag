@@ -62,7 +62,6 @@
 <%@ taglib prefix="layout" tagdir="/WEB-INF/tags/layout"  %>
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component"  %>
 <%@ taglib prefix="tree" tagdir="/WEB-INF/tags/jstree" %>
-<%@ taglib prefix="dt" tagdir="/WEB-INF/tags/datatables" %>
 <%@ tag language="java" pageEncoding="utf-8"%>
 
 <?xml version="1.0" encoding="utf-8" contentType="text/html; charset=utf-8" ?>

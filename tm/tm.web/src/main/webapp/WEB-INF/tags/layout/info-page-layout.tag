@@ -39,7 +39,6 @@ it will insert sub-page-layout.tag between the top template and this one." %>
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="sq" tagdir="/WEB-INF/tags" %>
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component"  %>
-<%@ taglib prefix="dt" tagdir="/WEB-INF/tags/datatables" %>
 <?xml version="1.0" encoding="utf-8" ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">

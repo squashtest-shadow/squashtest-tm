@@ -25,13 +25,13 @@
 	pageEncoding="utf-8"%>
 <%@ taglib prefix="s" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix="jq" tagdir="/WEB-INF/tags/jquery" %>
 <%@ taglib prefix="layout" tagdir="/WEB-INF/tags/layout"%>
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component" %>
 <%@ taglib prefix="sf" uri="http://www.springframework.org/tags/form"%>
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ taglib prefix="authz" tagdir="/WEB-INF/tags/authz"%>
 <%@ taglib prefix="at" tagdir="/WEB-INF/tags/attachments"%>
+<%@ taglib prefix="fn"uri="http://java.sun.com/jsp/jstl/functions"%>
 
 <c:url var="customFieldsValuesURL" value="/custom-fields/values" />
 <c:url var="denormalizedFieldsValuesURL" value="/denormalized-fields/values" />
@@ -383,24 +383,33 @@
 								<f:message key="execute.header.status.label" />
 							</label> 
 							<c:choose>
-							<c:when test="${editable }"><comp:execution-status-combo name="executionStatus" id="execution-status-combo" allowsUntestable="${allowsUntestable}" allowsSettled="${allowsSettled}"/>
-							<c:if test="${allowsUntestable}">
-							<button id="execute-untestable-button">
-								<f:message key="execute.header.button.untestable.title" />
-							</button>
-							</c:if>
-							<button id="execute-blocked-button">
-								<f:message key="execute.header.button.blocked.title" />
-							</button>							
-							<button id="execute-fail-button">
-								<f:message key="execute.header.button.failure.title" />
-							</button>
-							<button id="execute-success-button">
-								<f:message key="execute.header.button.passed.title" />
-							</button>
+							<c:when test="${editable }">
+                                <comp:execution-status-combo name="executionStatus" id="execution-status-combo" 
+                                  allowsUntestable="${allowsUntestable}" allowsSettled="${allowsSettled}"/>
+    							<c:if test="${allowsUntestable}">
+    							<button id="execute-untestable-button">
+    								<f:message key="execute.header.button.untestable.title" />
+    							</button>
+    							</c:if>
+    							<button id="execute-blocked-button">
+    								<f:message key="execute.header.button.blocked.title" />
+    							</button>							
+    							<button id="execute-fail-button">
+    								<f:message key="execute.header.button.failure.title" />
+    							</button>
+    							<button id="execute-success-button">
+    								<f:message key="execute.header.button.passed.title" />
+    							</button>
 							</c:when>
 							<c:otherwise>
-							<jq:execution-status status="${executionStep.executionStatus.canonicalStatus}" /> 
+                                <%-- 
+                                    I strongly doubt one can ever access this jsp if not granted the edit status
+                                    so this 'otherwise' block might never be called                                
+                                 --%>
+                                <c:set var="spanExecstatus" value="${executionStep.executionStatus.canonicalStatus}" />
+                                <span style="white-space:nowrap; display:inline-block;" class="exec-status-label exec-status-${fn:toLowerCase(spanExecstatus)}" >
+                                  <f:message key="${status.i18nKey}" />
+                                </span>
 							</c:otherwise>
 							</c:choose>
 						</td>

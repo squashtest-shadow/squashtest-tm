@@ -23,16 +23,11 @@
 <%@ tag body-content="empty" description="the calling test case table" %>
 
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component" %>
-<%@ taglib prefix="dt" tagdir="/WEB-INF/tags/datatables" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="s" uri="http://www.springframework.org/tags" %>
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
-<%@ taglib prefix="input" tagdir="/WEB-INF/tags/input" %>
-
-
 
 <%@ attribute name="testCase" required="true" type="java.lang.Object"  description="the testcase" %>
-
 
 
 <s:url var="modelUrl"	  value="/test-cases/${testCase.id}/calling-test-cases/table" />

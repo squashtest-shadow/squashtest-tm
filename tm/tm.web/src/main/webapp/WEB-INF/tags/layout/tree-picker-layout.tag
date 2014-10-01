@@ -52,7 +52,6 @@ it will insert sub-page-layout.tag between the top template and this one." %>
 <%@ taglib prefix="layout" tagdir="/WEB-INF/tags/layout"%>
 <%@ taglib prefix="tree" tagdir="/WEB-INF/tags/jstree"%>
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component"%>
-<%@ taglib prefix="dt" tagdir="/WEB-INF/tags/datatables" %>
 
 <layout:tree-page-layout 
   titleKey="squashtm" 

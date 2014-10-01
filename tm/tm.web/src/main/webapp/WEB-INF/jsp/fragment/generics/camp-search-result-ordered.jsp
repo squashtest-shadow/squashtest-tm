@@ -33,8 +33,6 @@
  --%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="f"%>
-<%@ taglib prefix="dt" tagdir="/WEB-INF/tags/datatables"%>
-<%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component"%>
 
 <?xml version="1.0" encoding="utf-8" ?>
 
@@ -42,7 +40,15 @@
 
 
 <div id="search-result">
-  <table id="search-result-datatable">
+  <table id="search-result-datatable" data-def="pre-sort=2, hover">
+  
+    <thead class="not-displayed">
+         <tr>
+            <th data-def="invisible, target=0">col1</th>
+            <th data-def="target=1">col2</th>
+            <th data-def="invisible, target=2">col3</th>
+         </tr>
+    </thead>
 
     <tbody>
       <c:forEach var="object" items="${resultList}" varStatus="index">
@@ -88,11 +94,14 @@
   </table>
 </div>
 
-<comp:decorate-ajax-search-table tableId="search-result-datatable">
-  <jsp:attribute name="initialSort">[[2,'asc']]</jsp:attribute>
-  <jsp:attribute name="columnDefs">
-		<dt:column-definition targets="0" sortable="false" visible="false" />
-		<dt:column-definition targets="1" sortable="false" />
-		<dt:column-definition targets="2" sortable="true" visible="false" lastDef="true" />
-	</jsp:attribute>
-</comp:decorate-ajax-search-table>
+<script type="text/javascript">
+  require(["common"], function() {
+    require(["jquery", "squashtable"], function($){
+  	  $("#search-result-datatable").squashTable({
+  		  'sDom' : '<r>t<<l><ip>>',
+  		  'sPaginationType' : 'full_numbers'
+  	  },{});
+  	  
+    })
+  });
+</script>

@@ -283,8 +283,8 @@
 			title="<f:message key="title.DuplicateTestSuite" />">
 			<strong><f:message key="message.DuplicateTestSuite" />
 				"${testSuite.name}" ?</strong>
-			<input:ok />
-			<input:cancel />
+			<input type="button" value="<f:message key='label.Ok' />" />
+			<input type="button" value="<f:message key='label.Cancel' />" />
 		</div>
 
 	</c:if>

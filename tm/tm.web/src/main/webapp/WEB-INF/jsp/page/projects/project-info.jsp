@@ -22,14 +22,11 @@
 --%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt"%>
-<%@ taglib prefix="jq" tagdir="/WEB-INF/tags/jquery"%>
 <%@ taglib prefix="s" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component"%>
 <%@ taglib prefix="layout" tagdir="/WEB-INF/tags/layout"%>
-<%@ taglib prefix="dt" tagdir="/WEB-INF/tags/datatables"%>
 <%@ taglib prefix="pop" tagdir="/WEB-INF/tags/popup"%>
 <%@ taglib prefix="pc" tagdir="/WEB-INF/tags/project-components"%>
-<%@ taglib prefix="input" tagdir="/WEB-INF/tags/input"%>
 <%@ taglib prefix="json" uri="http://org.squashtest.tm/taglib/json"%>
 <%@ taglib prefix="at" tagdir="/WEB-INF/tags/attachments"%>
 <%@ taglib prefix="csst" uri="http://org.squashtest.tm/taglib/css-transform" %>
@@ -125,8 +122,8 @@
                     <input type="button" value="<f:message key='label.coerceTemplateIntoProject' />" id="coerce" class="button" data-template-id="${ adminproject.id }" />
                     <div id="coerce-warning-dialog" title="<f:message key="title.coerceTemplateIntoProject" />" class="alert not-displayed">
                       <f:message key="message.coerceTemplateIntoProject" />
-                      <input:confirm />
-                      <input:cancel />
+                      <input type="button" value="<f:message key='label.Confirm' />" />
+                      <input type="button" value="<f:message key='label.Cancel' />" />
                     </div>
 </c:if>
 					<f:message var="rename" key="project.button.rename.label" />

@@ -30,7 +30,6 @@
 <%@ taglib prefix="s" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component" %>
 <%@ taglib prefix="layout" tagdir="/WEB-INF/tags/layout"%>
-<%@ taglib prefix="dt" tagdir="/WEB-INF/tags/datatables"%>
 
 
 <f:message var="userAccountPasswordLabel" key="label.password" />
@@ -143,11 +142,11 @@
 		</comp:toggle-panel>	
 		<comp:toggle-panel id="project-permission-panel" titleKey="user.project-rights.title.label" open="true">
 			<jsp:attribute name="body">
-				<table id="project-permission-table">
+				<table id="project-permission-table" data-def="hover">
 				<thead>
 					<tr>
-						<th><f:message key="label.project" /></th>
-						<th><f:message key="label.Permission" /></th>
+						<th data-def="sortable, target=0"><f:message key="label.project" /></th>
+						<th data-def="sortable, target=1"><f:message key="label.Permission" /></th>
 					</tr>
 				</thead>
 				<tbody>
@@ -203,9 +202,14 @@
 	</jsp:attribute>
 </layout:info-page-layout>
 
-<comp:decorate-ajax-search-table tableId="project-permission-table" >
-	<jsp:attribute name="columnDefs">
-			<dt:column-definition targets="0" sortable="true" visible="true" />
-			<dt:column-definition targets="1" sortable="true" visible="true" lastDef="true" />
-	</jsp:attribute>
-</comp:decorate-ajax-search-table>		
+<script type="text/javascript">
+  require(["common"], function() {
+    require(["jquery", "squashtable"], function($){
+  	  $("#project-permission-table").squashTable({
+  		  'sDom' : '<r>t<<l><ip>>',
+  		  'sPaginationType' : 'full_numbers'
+  	  },{});
+  	  
+    })
+  });
+</script>	

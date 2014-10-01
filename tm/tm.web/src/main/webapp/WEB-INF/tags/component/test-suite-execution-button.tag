@@ -30,7 +30,6 @@
 	description="The id of the test-suite"%>
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<%@ taglib prefix="input" tagdir="/WEB-INF/tags/input"%>
 
 
 <c:url var='runnerUrl' value='/test-suites/${ testSuiteId }/test-plan/execution/runner' />
@@ -83,8 +82,8 @@
 		<div id="confirm-restart-dialog" class="not-displayed popup-dialog"	title="${confirmRestartTitle}">
 			<span><f:message key="test-suite.execution.restart.warning-message" /> </span>
 			<div class="popup-dialog-buttonpane">
-				<input:ok />
-				<input:cancel />
+				<input type="button" value="<f:message key='label.Ok' />" />
+				<input type="button" value="<f:message key='label.Cancel' />" />
 			</div>
 		</div>
 	

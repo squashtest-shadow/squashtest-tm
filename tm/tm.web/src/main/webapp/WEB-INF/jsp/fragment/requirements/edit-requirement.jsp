@@ -21,7 +21,6 @@
 
 --%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix="jq" tagdir="/WEB-INF/tags/jquery" %>
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component" %>
 <%@ taglib prefix="s" uri="http://www.springframework.org/tags" %>
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
@@ -30,7 +29,6 @@
 <%@ taglib prefix="pop" tagdir="/WEB-INF/tags/popup" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="authz" tagdir="/WEB-INF/tags/authz" %>
-<%@ taglib prefix="input" tagdir="/WEB-INF/tags/input" %>
 <%@ taglib prefix="at" tagdir="/WEB-INF/tags/attachments"%>
 <%@ taglib prefix="csst" uri="http://org.squashtest.tm/taglib/css-transform" %>
 
@@ -392,23 +390,28 @@ require(["common"], function() {
 				<f:message var="label" key="dialog.rename-requirement.title" />
 				'${ label }': function() {
 					var url = "${ requirementUrl }";
-					<jq:ajaxcall  url="url" dataType="json" httpMethod="POST" useData="true" successHandler="squashtm.requirement.renameRequirementSuccess">		
-						<jq:params-bindings newName="#rename-requirement-input" />
-					</jq:ajaxcall>					
+                    var params = { newName : $("#rename-requirement-input").val() };
+                    $.ajax({
+                      url : url, 
+                      type : 'POST', 
+                      dataType : 'json',
+                      data : params,
+                      success : squashtm.requirement.renameRequirementSuccess
+                    });			
 				},			
 				<pop:cancel-button />
 			</jsp:attribute>
 			<jsp:attribute name="body">
 				<script type="text/javascript">
-		require([ "common" ], function() {
-			require([ "jquery" ], function($) {
-				$( "#rename-requirement-dialog" ).bind( "dialogopen", function(event, ui) {
-					var name = $.trim($('#requirement-raw-name').text());
-					$("#rename-requirement-input").val(name);
-					
-				});
-			});
-		});
+            		require([ "common" ], function() {
+            			require([ "jquery" ], function($) {
+            				$( "#rename-requirement-dialog" ).bind( "dialogopen", function(event, ui) {
+            					var name = $.trim($('#requirement-raw-name').text());
+            					$("#rename-requirement-input").val(name);
+            					
+            				});
+            			});
+            		});
 				</script>
 				<label><f:message key="dialog.rename.label" /></label>
 				<input type="text" id="rename-requirement-input" maxlength="255" size="50" /><br/>
@@ -421,9 +424,10 @@ require(["common"], function() {
 	<f:message var="confirmNewVersionDialogTitle" key="requirement.new-version.confirm-dialog.title" />	
 	<div id="confirm-new-version-dialog" class="not-displayed popup-dialog" title="${ confirmNewVersionDialogTitle }">
 		<strong><f:message key="requirement.new-version.confirm-dialog.label" /></strong>
-		<input:ok />
-		<input:cancel />
+		<input type="button" value="<f:message key='label.Ok' />" />
+		<input type="button" value="<f:message key='label.Cancel' />" />
 	</div>
+  
 	<s:url var="createNewVersionUrl" value="/requirements/${requirement.id}/versions/new" />
 	<script type="text/javascript">
 require([ "common" ], function() {
