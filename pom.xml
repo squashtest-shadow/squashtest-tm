@@ -358,7 +358,7 @@
   <profiles>
 		<!-- Default Squash TM dev profile -->
     <profile>
-      <id>dev-tm</id>
+      <id>dev</id>
       <activation>
         <property>
           <name>env.type</name>

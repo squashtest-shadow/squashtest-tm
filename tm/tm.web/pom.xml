@@ -32,6 +32,9 @@
     <rjs.optimizer>none</rjs.optimizer>
     <css.packageDirectory>styles</css.packageDirectory>
     <js.packageDirectory>scripts</js.packageDirectory>
+    
+    <!-- DEfault webdriver for jasmine runner. One can override it -->
+    <jasmine.webdriver.classname>org.openqa.selenium.htmlunit.HtmlUnitDriver</jasmine.webdriver.classname>
 
     <!-- Default jacoco dont record any coverage data -->
     <sonar.java.coveragePlugin>cobertura</sonar.java.coveragePlugin>
@@ -493,16 +496,37 @@
         </configuration>
       </plugin>
 
-	<!-- =========== 
-	
-		web resources optimization (spritemap, css minification etc in that order) 
-		were all moved to profile 'weboptimization'
-	============= -->
-
-	
-
-
-
+      <plugin>
+        <groupId>com.github.searls</groupId>
+        <artifactId>jasmine-maven-plugin</artifactId>
+        <version>2.0-alpha-01</version>
+        <executions>
+          <execution>
+            <id>js-tests</id>
+            <phase>test</phase>
+            <goals>
+              <goal>test</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+              <!-- <debug>true</debug> -->
+          <specRunnerTemplate>REQUIRE_JS</specRunnerTemplate>
+          <jsSrcDir>${project.basedir}/src/main/webapp/scripts</jsSrcDir>
+          <jsTestSrcDir>${project.basedir}/src/test/javascript</jsTestSrcDir>
+          <webDriverClassName>${jasmine.webdriver.classname}</webDriverClassName>
+          <preloadSources>
+            <source>scripts/require.js</source>
+            <source>scripts/sinon.js</source>
+            <source>scripts/lib/jquery/jquery-1.8.3.js</source>
+            <source>scripts/lib/underscore/underscore-1.4.4.js</source>
+            <source>scripts/lib/backbone/backbone-1.0.0.js</source>
+          </preloadSources>
+          <specIncludes>
+            <include>spec/*</include>
+          </specIncludes>
+        </configuration>
+      </plugin>
 
       <!-- ====== INTEGRATION TESTS ====== -->
       <plugin>
@@ -590,10 +614,6 @@
         </property>
       </activation>
 
-      <properties>
-        <logger.urlRewriteFilter>INFO</logger.urlRewriteFilter>
-      </properties>
-
       <build>
         <plugins>
           <plugin>
@@ -657,35 +677,8 @@
       </build>
     </profile>
 
-
     <profile>
-      <id>integration</id>
-      <activation>
-        <property>
-          <name>env.type</name>
-          <value>int</value>
-        </property>
-      </activation>
-      <properties>
-        <logger.urlRewriteFilter>INFO</logger.urlRewriteFilter>
-      </properties>
-    </profile>
-
-    <profile>
-      <id>build</id>
-      <activation>
-        <property>
-          <name>env.type</name>
-          <value>build</value>
-        </property>
-      </activation>
-      <properties>
-        <logger.urlRewriteFilter>INFO</logger.urlRewriteFilter>
-      </properties>
-    </profile>
-
-    <profile>
-      <id>development</id>
+      <id>dev</id>
       <activation>
         <property>
           <name>env.type</name>
@@ -708,12 +701,12 @@
           <exists>${basedir}\.project</exists>
         </file>
       </activation>
-      
+
       <properties>
         <is.dev.stage>true</is.dev.stage>
         <is.war.deploy>false</is.war.deploy>
       </properties>
-      
+
       <build>
         <plugins>
           <plugin>
@@ -771,7 +764,6 @@
                 </configuration>
               </execution>
 
-
               <execution>
                 <id>copy-processed-css</id>
                 <phase>process-resources</phase>
@@ -809,36 +801,6 @@
               </execution>
             </executions>
           </plugin>
-
-          <plugin>
-            <groupId>com.github.searls</groupId>
-            <artifactId>jasmine-maven-plugin</artifactId>
-            <version>2.0-alpha-01</version>
-            <executions>
-              <execution>
-                <goals>
-                  <goal>test</goal>
-                </goals>
-              </execution>
-            </executions>
-            <configuration>
-              <debug>true</debug>
-              <specRunnerTemplate>REQUIRE_JS</specRunnerTemplate>
-              <jsSrcDir>${project.basedir}/src/main/webapp/scripts</jsSrcDir>
-              <jsTestSrcDir>${project.basedir}/src/test/javascript</jsTestSrcDir>
-              <webDriverClassName>org.openqa.selenium.firefox.FirefoxDriver</webDriverClassName>
-              <preloadSources>
-                <source>scripts/require.js</source>
-                <source>scripts/sinon.js</source>
-                <source>scripts/lib/jquery/jquery-1.8.3.js</source>
-                <source>scripts/lib/underscore/underscore-1.4.4.js</source>
-                <source>scripts/lib/backbone/backbone-1.0.0.js</source>
-              </preloadSources>
-              <specIncludes>
-                <include>spec/*</include>
-              </specIncludes>
-            </configuration>
-          </plugin>
         </plugins>
       </build>
     </profile>
@@ -871,8 +833,7 @@
       <id>weboptimization</id>
       <activation>
         <property>
-          <name>webopt.skip</name>
-          <value>!true</value>
+          <name>!webopt.skip</name>
         </property>
       </activation>
 
@@ -927,7 +888,6 @@
             </executions>
           </plugin>
 
-
           <plugin>
             <groupId>ro.isdc.wro4j</groupId>
             <artifactId>wro4j-maven-plugin</artifactId>
@@ -976,6 +936,7 @@
               </targetDirectory>
             </configuration>
           </plugin>
+          
           <plugin>
         <!-- r.js optimization. can be skipped with -Drequirejs.optimize.skip=true -->
             <groupId>com.github.bringking</groupId>
