@@ -93,12 +93,6 @@ LibraryNavigationController<TestCaseLibrary, TestCaseFolder, TestCaseLibraryNode
 	}
 
 
-
-	@Override
-	protected String getShowLibraryViewName() {
-		return "page/test-case-libraries/show-test-case-library";
-	}
-
 	@Override
 	protected JsTreeNode createTreeNodeFromLibraryNode(TestCaseLibraryNode node) {
 		return testCaseLibraryTreeNodeBuilder.get().setNode(node).build();

@@ -46,7 +46,7 @@ import org.squashtest.tm.service.execution.ExecutionProcessingService;
 @RequestMapping("/executions/{executionId}/runner")
 public class TestCaseExecutionRunnerController {
 
-	private static final String OPTIMIZED_RUNNER_MAIN = "page/ieo/ieo-main-page";
+	private static final String OPTIMIZED_RUNNER_MAIN = "page/executions/oer-main-page";
 
 	@Inject
 	private ExecutionRunnerControllerHelper helper;

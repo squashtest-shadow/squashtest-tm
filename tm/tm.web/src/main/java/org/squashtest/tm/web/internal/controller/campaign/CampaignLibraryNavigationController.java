@@ -159,10 +159,6 @@ LibraryNavigationController<CampaignLibrary, CampaignFolder, CampaignLibraryNode
 		return campaignLibraryTreeNodeBuilder.get().setNode(model).build();
 	}
 
-	@Override
-	protected String getShowLibraryViewName() {
-		return "page/campaign-libraries/show-campaign-library";
-	}
 
 	@RequestMapping(value = "/campaigns/{campaignId}/content/new-iteration", method = RequestMethod.POST)
 	public @ResponseBody

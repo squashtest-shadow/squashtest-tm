@@ -42,20 +42,20 @@ public class CampaignLibraryModificationController {
 
 	@Inject
 	private ServiceAwareAttachmentTableModelHelper attachmentsHelper;
-	
+
 	@RequestMapping(method = RequestMethod.GET)
 	public final ModelAndView showCampaignLibrary(@PathVariable long libraryId) {
-		
+
 		CampaignLibrary lib = campaignLibraryNavigationService.findLibrary(libraryId);
-		
-		ModelAndView mav = new ModelAndView("fragment/library/show-libraries-details");
+
+		ModelAndView mav = new ModelAndView("fragment/libraries/library");
 		Set<Attachment> attachments = attachmentsHelper.findAttachments(lib);
-		
+
 		mav.addObject("library", lib);
-		mav.addObject("attachments", attachments);		
+		mav.addObject("attachments", attachments);
 		mav.addObject("workspaceName", "campaign");
-		
-		
+
+
 		return mav;
 	}
 }

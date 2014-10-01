@@ -81,7 +81,7 @@ public class TestSuiteExecutionRunnerController {
 		public static final String STEP = STEPS + "/{3,number,######}";
 	}
 
-	private static final String OPTIMIZED_RUNNER_MAIN = "page/ieo/ieo-main-page";
+	private static final String OPTIMIZED_RUNNER_MAIN = "page/executions/oer-main-page";
 
 	@Inject
 	private TestSuiteExecutionProcessingService testSuiteExecutionRunner;

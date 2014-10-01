@@ -30,10 +30,10 @@
 
 <s:url var="administrationUrl" value="/administration" />
 
-<c:url var="editLoginMsgUrl" value="/configuration/modify-login-message"/>
+<c:url var="editWelcomeUrl" value="/administration/modify-welcome-message"/>
 
 
-<layout:info-page-layout titleKey="label.ConsultModifyLoginMessage" highlightedWorkspace="requirement" isSubPaged="true">
+<layout:info-page-layout titleKey="label.ConsultModifyWelcomeMessage" highlightedWorkspace="requirement" isSubPaged="true">
 	<jsp:attribute  name="head">
 		<comp:sq-css name="squash.grey.css" />
 	</jsp:attribute>
@@ -43,12 +43,13 @@
 	</jsp:attribute>
 		
 	<jsp:attribute name="subPageTitle">
-		<h2><f:message key="label.ConsultModifyLoginMessage" /></h2>
+		<h2><f:message key="label.ConsultModifyWelcomeMessage" /></h2>
 	</jsp:attribute>
 	
 	<jsp:attribute name="subPageButtons">
 		<f:message var="backButtonLabel" key="label.Back" />
 		<input type="button" class="button" value="${backButtonLabel}" onClick="document.location.href= '${administrationUrl}'"/>	
+	
 	</jsp:attribute>
 	
 	<jsp:attribute name="footer">	
@@ -56,9 +57,9 @@
 	</jsp:attribute>
 	
 	<jsp:attribute name="informationContent">
-		<div id="login-page-content" class="admin-message-page-content">
-			<span id="login-message">${loginMessage}</span>
-			<comp:rich-jeditable targetUrl="${ editLoginMsgUrl }" componentId="login-message" welcome="true" />
+		<div id="welcome-page-content" class="admin-message-page-content">
+			<span id="welcome-message">${welcomeMessage}</span>
+			<comp:rich-jeditable targetUrl="${ editWelcomeUrl }" componentId="welcome-message" welcome="true" />
 		</div>
 	</jsp:attribute>
 	

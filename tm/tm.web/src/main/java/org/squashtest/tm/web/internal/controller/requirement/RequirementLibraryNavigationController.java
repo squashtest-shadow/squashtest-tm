@@ -73,12 +73,12 @@ import org.squashtest.tm.web.internal.model.jstree.JsTreeNode;
 @Controller
 @RequestMapping(value = "/requirement-browser")
 public class RequirementLibraryNavigationController extends
-		LibraryNavigationController<RequirementLibrary, RequirementFolder, RequirementLibraryNode> {
+LibraryNavigationController<RequirementLibrary, RequirementFolder, RequirementLibraryNode> {
 
 	private static final String MODEL_ATTRIBUTE_ADD_REQUIREMENT = "add-requirement";
 
 	private static final String JASPER_EXPORT_FILE = "/WEB-INF/reports/requirement-export.jasper";
-	
+
 	@Inject
 	@Named("requirement.driveNodeBuilder")
 	private Provider<DriveNodeBuilder<RequirementLibraryNode>> driveNodeBuilder;
@@ -167,7 +167,7 @@ public class RequirementLibraryNavigationController extends
 			throw new RightsUnsuficientsForOperationException(ade);
 		}
 	}
-	
+
 	@RequestMapping(value = "/requirements/{requirementId}/content", method = RequestMethod.GET)
 	public @ResponseBody
 	List<JsTreeNode> getChildrenRequirementsTreeModel(@PathVariable("requirementId") long requirementId) {
@@ -185,21 +185,17 @@ public class RequirementLibraryNavigationController extends
 		return requirementLibraryTreeNodeBuilder.get().setNode(resource).build();
 	}
 
-	@Override
-	protected String getShowLibraryViewName() {
-		return "page/requirement-libraries/show-requirement-library";
-	}
 
 	@RequestMapping(value = "/nodes/{nodeIds}/{exportformat}", method = RequestMethod.GET, params="name")
 	public @ResponseBody
 	void exportRequirements(@PathVariable("nodeIds") List<Long> ids, @RequestParam("name") String filename, @PathVariable("exportformat") String exportformat,
 			HttpServletResponse response, Locale locale) {
-		
+
 		List<ExportRequirementData> dataSource = requirementLibraryNavigationService.findRequirementsToExportFromNodes(ids);
 		printExport(dataSource, filename,JASPER_EXPORT_FILE, response, locale, exportformat);
 
 	}
-	
+
 
 
 	@RequestMapping(value = "/drives/{libIds}/{exportformat}", method = RequestMethod.GET, params="name")

@@ -41,17 +41,17 @@ import org.squashtest.tm.web.internal.model.builder.DriveNodeBuilder;
 @Controller
 @RequestMapping("/test-case-workspace")
 public class TestCaseWorkspaceController extends WorkspaceController<TestCaseLibraryNode> {
-	
+
 	@Inject
 	private TestCaseLibraryNavigationService testCaseLibraryNavigationService;
-	
+
 	@Inject
 	@Named("squashtest.tm.service.TestCasesWorkspaceService")
 	private WorkspaceService<Library<TestCaseLibraryNode>> workspaceService;
 
 	@Inject
 	@Named("testCase.driveNodeBuilder")
-	private Provider<DriveNodeBuilder<TestCaseLibraryNode>> driveNodeBuilderProvider; 
+	private Provider<DriveNodeBuilder<TestCaseLibraryNode>> driveNodeBuilderProvider;
 
 	@Override
 	protected WorkspaceService<Library<TestCaseLibraryNode>> getWorkspaceService() {
@@ -60,7 +60,7 @@ public class TestCaseWorkspaceController extends WorkspaceController<TestCaseLib
 
 	@Override
 	protected String getWorkspaceViewName() {
-		return "page/test-case-workspace";
+		return "page/test-case-workspace/test-case-workspace";
 	}
 
 	/**
@@ -69,7 +69,7 @@ public class TestCaseWorkspaceController extends WorkspaceController<TestCaseLib
 	protected WorkspaceType getWorkspaceType() {
 		return null;
 	}
-	
+
 	@Override
 	protected void populateModel(Model model, Locale locale) {
 		List<Library<TestCaseLibraryNode>> libraries = workspaceService.findAllImportableLibraries();
@@ -87,9 +87,9 @@ public class TestCaseWorkspaceController extends WorkspaceController<TestCaseLib
 	@Override
 	protected String[] getNodeParentsInWorkspace(Long elementId){
 		List<String> parents = testCaseLibraryNavigationService.getParentNodesAsStringList(elementId);
-		return parents.toArray(new String[parents.size()]); 
+		return parents.toArray(new String[parents.size()]);
 	}
-	
+
 	@Override
 	protected String getTreeElementIdInWorkspace(Long elementId){
 		return "TestCase-"+elementId;

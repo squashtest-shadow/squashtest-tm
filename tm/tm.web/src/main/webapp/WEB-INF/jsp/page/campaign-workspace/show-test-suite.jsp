@@ -44,7 +44,7 @@
 	</jsp:attribute>
 		
 	<jsp:attribute name="informationContent">	
-		<jsp:include page="/WEB-INF/jsp/fragment/test-suites/edit-test-suite.jsp">
+		<jsp:include page="/WEB-INF/jsp/fragment/test-suites/test-suite.jsp">
 			<jsp:param name="isInfoPage" value="true" />
 		</jsp:include>
 	</jsp:attribute>

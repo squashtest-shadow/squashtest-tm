@@ -21,34 +21,45 @@
 
 --%>
 <%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
-<%@ taglib tagdir="/WEB-INF/tags" prefix="sq"%>
-<%@ taglib prefix="layout" tagdir="/WEB-INF/tags/layout"%>
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt"%>
-<%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component" %>
-<layout:info-page-layout titleKey="workspace.test-case.title" highlightedWorkspace="test-case" isSubPaged="true">
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="layout" tagdir="/WEB-INF/tags/layout"%>
+<%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component"%>
+<%@ taglib prefix="pop" tagdir="/WEB-INF/tags/popup" %>
+<%@ taglib prefix="s" uri="http://www.springframework.org/tags" %>
 
-	<jsp:attribute name="head">	
-		<comp:sq-css name="squash.green.css" />
+<s:url var="administrationUrl" value="/administration" />
+
+<c:url var="editLoginMsgUrl" value="/administration/modify-login-message"/>
+
+
+<layout:info-page-layout titleKey="label.ConsultModifyLoginMessage" highlightedWorkspace="requirement" isSubPaged="true">
+	<jsp:attribute  name="head">
+		<comp:sq-css name="squash.grey.css" />
 	</jsp:attribute>
 	
 	<jsp:attribute name="titlePane">
-		<h2><f:message key="workspace.test-case.title" /></h2>	
+		<h2 class="admin"><f:message key="label.administration" /></h2>	
 	</jsp:attribute>
-	
+		
 	<jsp:attribute name="subPageTitle">
-		<h2><f:message key="subpage.test-case.info.title" /></h2>
+		<h2><f:message key="label.ConsultModifyLoginMessage" /></h2>
 	</jsp:attribute>
 	
 	<jsp:attribute name="subPageButtons">
 		<f:message var="backButtonLabel" key="label.Back" />
-		<input type="button" id="back" class="sq-btn" value="${backButtonLabel}" 
-            onClick="document.location.href=squashtm.workspace.backurl"/>	
+		<input type="button" class="button" value="${backButtonLabel}" onClick="document.location.href= '${administrationUrl}'"/>	
 	</jsp:attribute>
 	
-	<jsp:attribute name="informationContent">	
-		<jsp:include page="/WEB-INF/jsp/fragment/test-cases/edit-test-case.jsp" >
-			<jsp:param name="isInfoPage" value="true" />
-		</jsp:include>
+	<jsp:attribute name="footer">	
+		
 	</jsp:attribute>
-
+	
+	<jsp:attribute name="informationContent">
+		<div id="login-page-content" class="admin-message-page-content">
+			<span id="login-message">${loginMessage}</span>
+			<comp:rich-jeditable targetUrl="${ editLoginMsgUrl }" componentId="login-message" welcome="true" />
+		</div>
+	</jsp:attribute>
+	
 </layout:info-page-layout>

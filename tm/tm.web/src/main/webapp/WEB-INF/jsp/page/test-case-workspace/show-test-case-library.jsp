@@ -21,32 +21,33 @@
 
 --%>
 <%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
-<%@ taglib tagdir="/WEB-INF/tags" prefix="sq" %>
-<%@ taglib prefix="layout" tagdir="/WEB-INF/tags/layout"  %>
-<%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib tagdir="/WEB-INF/tags" prefix="sq"%>
+<%@ taglib prefix="layout" tagdir="/WEB-INF/tags/layout"%>
+<%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component" %>
-<layout:info-page-layout titleKey="squashtm.library.test-case.title" highlightedWorkspace="campaign" isSubPaged="true" main="iteration-page">
-	<jsp:attribute  name="head">	
-		<comp:sq-css name="squash.purple.css" />
-	</jsp:attribute>
-	<jsp:attribute name="titlePane">
-		<h2><f:message key="squashtm.library.campaign.title" /></h2>	
+<layout:info-page-layout titleKey="workspace.test-case.title" highlightedWorkspace="test-case" isSubPaged="true">
+
+	<jsp:attribute name="head">	
+		<comp:sq-css name="squash.green.css" />
 	</jsp:attribute>
 	
-		<jsp:attribute name="subPageTitle">
-		<h2><f:message key="subpage.iteration.info.title" /></h2>
+	<jsp:attribute name="titlePane">
+		<h2><f:message key="workspace.test-case.title" /></h2>	
+	</jsp:attribute>
+	
+	<jsp:attribute name="subPageTitle">
+		<h2><f:message key="subpage.test-case.info.title" /></h2>
 	</jsp:attribute>
 	
 	<jsp:attribute name="subPageButtons">
 		<f:message var="backButtonLabel" key="label.Back" />
-		<input type="button" class="button" id="back" value="${backButtonLabel}" 
-                onClick="document.location.href=squashtm.workspace.backurl;" />	
+		<input type="button" class="button" value="${backButtonLabel}" onClick="history.back();"/>	
 	</jsp:attribute>
-		
+	
 	<jsp:attribute name="informationContent">	
-		<jsp:include page="/WEB-INF/jsp/fragment/iterations/edit-iteration.jsp">
+		<jsp:include page="/WEB-INF/jsp/fragment/test-cases/test-case-library.jsp" >
 			<jsp:param name="isInfoPage" value="true" />
 		</jsp:include>
 	</jsp:attribute>
-	
+
 </layout:info-page-layout>

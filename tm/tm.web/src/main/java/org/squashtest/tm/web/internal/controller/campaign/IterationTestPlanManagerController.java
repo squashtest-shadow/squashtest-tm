@@ -115,7 +115,7 @@ public class IterationTestPlanManagerController {
 
 		List<JsTreeNode> linkableLibrariesModel = createLinkableLibrariesModel(linkableLibraries, openedNodes);
 
-		ModelAndView mav = new ModelAndView("page/iterations/show-iteration-test-plan-manager");
+		ModelAndView mav = new ModelAndView("page/campaign-workspace/show-iteration-test-plan-manager");
 		mav.addObject("iteration", iteration);
 		mav.addObject("baseURL", "/iterations/" + iterationId);
 		mav.addObject("linkableLibrariesModel", linkableLibrariesModel);

@@ -58,7 +58,7 @@
 		<h2><f:message key="squashtm.attachments.manager.title" /></h2>	
 	</jsp:attribute>
 	<jsp:attribute name="informationContent">	
-		<jsp:include page="/WEB-INF/jsp/fragment/generics/attachment-manager-fragment.jsp" />
+		<jsp:include page="/WEB-INF/jsp/fragment/attachments/attachment-manager.jsp" />
 	</jsp:attribute>
 
 </layout:info-page-layout>

@@ -139,7 +139,7 @@ public class ExecutionModificationController {
 
 		}
 
-		ModelAndView mav = new ModelAndView("page/campaign-libraries/show-execution");
+		ModelAndView mav = new ModelAndView("page/campaign-workspace/show-execution");
 		mav.addObject("execution", execution);
 		mav.addObject("executionRank", Integer.valueOf(rank + 1));
 		mav.addObject("attachmentSet", attachmentHelper.findAttachments(execution));
@@ -177,43 +177,43 @@ public class ExecutionModificationController {
 		PagedCollectionHolder<List<ExecutionStep>> holder = executionModService.findExecutionSteps(executionId,
 				filter);
 		LOGGER.trace("execsteps table : finished steps");
-		
-		
+
+
 		LOGGER.trace("execsteps table : fetching cufs / deno");
 		CustomFieldHelper<ExecutionStep> cufHelper = cufHelperService.newHelper(holder.getPagedItems())
-																	.setRenderingLocations(RenderingLocation.STEP_TABLE).
-																	restrictToCommonFields();
-		
+				.setRenderingLocations(RenderingLocation.STEP_TABLE).
+				restrictToCommonFields();
+
 		List<CustomFieldValue> cufValues = cufHelper.getCustomFieldValues();
 		int nbCufs = cufHelper.getCustomFieldConfiguration().size();
-		
+
 		DenormalizedFieldHelper<ExecutionStep> denoHelper = cufHelperService.newDenormalizedHelper(holder.getPagedItems())
-																	.setRenderingLocations(RenderingLocation.STEP_TABLE);
-		
+				.setRenderingLocations(RenderingLocation.STEP_TABLE);
+
 		List<DenormalizedFieldValue> denoValues = denoHelper.getDenormalizedFieldValues();
 		int nbDeno = denoHelper.getCustomFieldConfiguration().size();
-		
+
 		LOGGER.trace("execsteps table : finished cufs / deno");
-		
-		
+
+
 		LOGGER.trace("execsteps table : creating model");
 		ExecutionStepDataTableModelHelper tableHelper = new ExecutionStepDataTableModelHelper(locale, messageSource, exec.isAutomated());
 		tableHelper.usingCustomFields(cufValues, nbCufs);
 		tableHelper.usingDenormalizedFields(denoValues, nbDeno);
-	
+
 		DataTableModel model = tableHelper.buildDataModel(holder,  params.getsEcho());
 		LOGGER.trace("execsteps table : finished model");
-		
+
 		return model;
 
 	}
-	
+
 
 	@RequestMapping(value = "/auto-steps", method = RequestMethod.GET, params = RequestParams.S_ECHO_PARAM)
 	@ResponseBody
 	public DataTableModel getAutoStepsTableModel(@PathVariable long executionId, DataTableDrawParameters params,
 			final Locale locale) {
-		
+
 		return getStepsTableModel(executionId, params, locale);
 	}
 

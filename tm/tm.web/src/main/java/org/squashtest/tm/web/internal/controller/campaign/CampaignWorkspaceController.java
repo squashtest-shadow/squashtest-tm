@@ -42,17 +42,17 @@ import org.squashtest.tm.web.internal.model.builder.DriveNodeBuilder;
 @Controller
 @RequestMapping("/campaign-workspace")
 public class CampaignWorkspaceController extends WorkspaceController<CampaignLibraryNode> {
-	
+
 	@Inject
 	private CampaignLibraryNavigationService campaignLibraryNavigationService;
-	
+
 	@Inject
 	@Named("squashtest.tm.service.CampaignsWorkspaceService")
 	private WorkspaceService<Library<CampaignLibraryNode>> workspaceService;
-	
+
 	@Inject
 	@Named("campaign.driveNodeBuilder")
-	private Provider<DriveNodeBuilder<CampaignLibraryNode>> driveNodeBuilderProvider; 
+	private Provider<DriveNodeBuilder<CampaignLibraryNode>> driveNodeBuilderProvider;
 
 	/**
 	 * 
@@ -65,14 +65,14 @@ public class CampaignWorkspaceController extends WorkspaceController<CampaignLib
 
 	@Override
 	protected String getWorkspaceViewName() {
-		return "page/campaign-workspace";
+		return "page/campaign-workspace/campaign-workspace";
 	}
 
 	@Override
 	public WorkspaceType getWorkspaceType() {
 		return WorkspaceType.CAMPAIGN_WORKSPACE;
 	}
-	
+
 	@Override
 	protected void populateModel(Model model, Locale locale) {
 		//noop
@@ -89,7 +89,7 @@ public class CampaignWorkspaceController extends WorkspaceController<CampaignLib
 	@Override
 	protected String[] getNodeParentsInWorkspace(Long elementId) {
 		List<String> parents = campaignLibraryNavigationService.getParentNodesAsStringList(elementId);
-		return parents.toArray(new String[parents.size()]); 
+		return parents.toArray(new String[parents.size()]);
 	}
 
 	@Override

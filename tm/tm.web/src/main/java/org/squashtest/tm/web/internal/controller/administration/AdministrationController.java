@@ -32,11 +32,11 @@ import org.squashtest.tm.service.user.AdministrationService;
 public class AdministrationController {
 	@Inject
 	private AdministrationService administrationService;
-	
+
 	@RequestMapping("/administration")
 	public ModelAndView administration() {
 		AdministrationStatistics adminStat = administrationService.findAdministrationStatistics();
-		ModelAndView mav = new ModelAndView("page/administration");
+		ModelAndView mav = new ModelAndView("page/administration/administration");
 		mav.addObject("adminStats", adminStat);
 		return mav;
 	}

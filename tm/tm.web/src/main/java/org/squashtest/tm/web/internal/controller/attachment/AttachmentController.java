@@ -85,7 +85,7 @@ public class AttachmentController {
 	public ModelAndView displayAttachments(@PathVariable("attachListId") long attachListId) {
 		Set<Attachment> attachmentSet = attachmentManagerService.findAttachments(attachListId);
 
-		ModelAndView mav = new ModelAndView("fragment/generics/attachment-display");
+		ModelAndView mav = new ModelAndView("fragment/attachments/attachment-display");
 		mav.addObject("attachmentSet", attachmentSet);
 		mav.addObject("attachListId", attachListId);
 

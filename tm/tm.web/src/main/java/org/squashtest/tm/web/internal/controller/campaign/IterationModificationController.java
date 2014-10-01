@@ -127,7 +127,7 @@ public class IterationModificationController {
 	public String showIteration(Model model, @PathVariable long iterationId) {
 
 		populateIterationModel(model, iterationId);
-		return "fragment/iterations/edit-iteration";
+		return "fragment/iterations/iteration";
 	}
 
 	// will return the iteration in a full page
@@ -135,7 +135,7 @@ public class IterationModificationController {
 	public String showIterationInfo(Model model, @PathVariable long iterationId) {
 
 		populateIterationModel(model, iterationId);
-		return "page/campaign-libraries/show-iteration";
+		return "page/campaign-workspace/show-iteration";
 	}
 
 	private void populateIterationModel(Model model, long iterationId){
@@ -374,9 +374,9 @@ public class IterationModificationController {
 	public @ResponseBody
 	String addManualExecution(@PathVariable long testPlanItemId, @PathVariable long iterationId) {
 		LOGGER.trace("Add manual execution : creating execution");
-		
+
 		Execution newExecution = iterationModService.addExecution(testPlanItemId);
-		
+
 		LOGGER.trace("Add manual execution : completed in");
 
 		return newExecution.getId().toString();

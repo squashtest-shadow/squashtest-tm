@@ -20,6 +20,10 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 --%>
-<!-- The form.ajaxSubmit() fakes to ask for json while it needs text/html. Chrome and FF handle well a repsonse in json but not IE. -->
+<!-- 
+  The form.ajaxSubmit() fakes to ask for json while it needs text/html. Chrome and FF handle well a repsonse in json but not IE.
+  
+  01/10/14 : I guess that jsp landed there because it had nowhere else to go, poor things 
+-->
 <%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8" %>
 <p>${'{' } "status" : "ok" ${'}'}</p>

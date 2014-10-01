@@ -173,7 +173,7 @@ public class RequirementVersionManagerController {
 	@RequestMapping(value = "/info", method = RequestMethod.GET)
 	public String showRequirementVersionEditor(@PathVariable long requirementVersionId, Model model, Locale locale) {
 		populateRequirementEditorModel(requirementVersionId, model, locale);
-		return "page/requirements/requirement-version-editor";
+		return "page/requirement-workspace/requirement-version-editor";
 	}
 
 	private void populateRequirementEditorModel(long requirementVersionId, Model model, Locale locale) {

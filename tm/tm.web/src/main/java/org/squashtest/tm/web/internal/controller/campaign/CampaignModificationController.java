@@ -124,14 +124,14 @@ public class CampaignModificationController {
 	@RequestMapping(value = "/info", method = RequestMethod.GET)
 	public String showCampaignInfo(@PathVariable long campaignId, Model model) {
 		populateCampaignModel(campaignId, model);
-		return "page/campaign-libraries/show-campaign";
+		return "page/campaign-workspace/show-campaign";
 	}
 
 	// will return the fragment only
 	@RequestMapping(method = RequestMethod.GET)
 	public String showCampaign(@PathVariable long campaignId, Model model) {
 		populateCampaignModel(campaignId, model);
-		return "fragment/campaigns/edit-campaign";
+		return "fragment/campaigns/campaign";
 	}
 
 	private Model populateCampaignModel(long campaignId, Model model) {

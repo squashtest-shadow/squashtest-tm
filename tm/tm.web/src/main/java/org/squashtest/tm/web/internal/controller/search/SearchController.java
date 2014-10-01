@@ -42,7 +42,7 @@ public class SearchController {
 	private static final String RESULT_LIST = "resultList";
 
 	private static final String WORKSPACE = "workspace";
-	
+
 	private static final String NODE_NAME = "nodeName";
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(SearchController.class);
@@ -53,7 +53,7 @@ public class SearchController {
 
 
 
-	
+
 	@RequestMapping(value = "campaigns/breadcrumb", method = RequestMethod.POST, params = {NODE_NAME})
 	@ResponseBody
 	public List<String> findBreadCrumbCampaign(@RequestParam(NODE_NAME) String nodeName){
@@ -64,7 +64,7 @@ public class SearchController {
 		Long nodeId = Long.parseLong(splitedNodeName[1]);
 		return searchService.findBreadCrumbForCampaign(className, nodeId, NODE_NAME_REJEX);
 	}
-	
+
 
 
 	@RequestMapping(value = "/campaigns", method = RequestMethod.GET, params = { "order" })
@@ -80,9 +80,9 @@ public class SearchController {
 		ModelAndView mav;
 
 		if (isOrdered) {
-			mav = new ModelAndView("fragment/generics/camp-search-result-ordered");
+			mav = new ModelAndView("fragment/campaigns/camp-search-result-ordered");
 		} else {
-			mav = new ModelAndView("fragment/generics/camp-search-result");
+			mav = new ModelAndView("fragment/campaigns/camp-search-result");
 		}
 
 		mav.addObject(RESULT_LIST, resultList);

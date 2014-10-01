@@ -40,9 +40,9 @@ import org.squashtest.tm.web.internal.controller.generic.FolderModificationContr
 @Controller
 @RequestMapping("/test-case-folders/{folderId}")
 public class TestCaseFolderModificationController extends FolderModificationController<TestCaseFolder> {
-	
+
 	private FolderModificationService<TestCaseFolder> folderModificationService;
-	
+
 	@Inject private TestCaseLibraryFinderService libraryFinderService;
 
 	@Override
@@ -59,19 +59,19 @@ public class TestCaseFolderModificationController extends FolderModificationCont
 	protected String getWorkspaceName() {
 		return "test-case";
 	}
-	
-	
+
+
 	@Override
 	@RequestMapping(method = RequestMethod.GET)
 	public final ModelAndView showFolder(@PathVariable long folderId, HttpServletRequest request) {
-		
+
 		ModelAndView mav = super.showFolder(folderId, request);
-		
-		mav.setViewName("fragment/test-cases/edit-test-case-folder");
-		
+
+		mav.setViewName("fragment/test-cases/test-case-folder");
+
 		return mav;
 	}
-	
+
 	@RequestMapping(value="/test/{ids}", method = RequestMethod.GET)
 	@ResponseBody
 	public List<String> getPath(@PathVariable("ids") List<Long> ids){

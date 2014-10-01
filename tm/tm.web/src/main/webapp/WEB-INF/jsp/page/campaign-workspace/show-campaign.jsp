@@ -21,46 +21,36 @@
 
 --%>
 <%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
-<%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt"%>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib tagdir="/WEB-INF/tags" prefix="sq"%>
 <%@ taglib prefix="layout" tagdir="/WEB-INF/tags/layout"%>
+<%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component"%>
-<%@ taglib prefix="pop" tagdir="/WEB-INF/tags/popup" %>
-<%@ taglib prefix="s" uri="http://www.springframework.org/tags" %>
-
-<s:url var="administrationUrl" value="/administration" />
-
-<c:url var="editWelcomeUrl" value="/configuration/modify-welcome-message"/>
-
-
-<layout:info-page-layout titleKey="label.ConsultModifyWelcomeMessage" highlightedWorkspace="requirement" isSubPaged="true">
-	<jsp:attribute  name="head">
-		<comp:sq-css name="squash.grey.css" />
+<layout:info-page-layout titleKey="squashtm.library.test-case.title" highlightedWorkspace="campaign" isSubPaged="true">
+  <jsp:attribute name="head">	
+		<comp:sq-css name="squash.purple.css" />
 	</jsp:attribute>
-	
-	<jsp:attribute name="titlePane">
-		<h2 class="admin"><f:message key="label.administration" /></h2>	
+  <jsp:attribute name="titlePane">
+		<h2>
+      <f:message key="squashtm.library.campaign.title" />
+    </h2>	
 	</jsp:attribute>
-		
-	<jsp:attribute name="subPageTitle">
-		<h2><f:message key="label.ConsultModifyWelcomeMessage" /></h2>
+
+  <jsp:attribute name="subPageTitle">
+		<h2>
+      <f:message key="subpage.campaign.info.title" />
+    </h2>
 	</jsp:attribute>
-	
-	<jsp:attribute name="subPageButtons">
+
+  <jsp:attribute name="subPageButtons">
 		<f:message var="backButtonLabel" key="label.Back" />
-		<input type="button" class="button" value="${backButtonLabel}" onClick="document.location.href= '${administrationUrl}'"/>	
-	
+		<input type="button" id="back" class="button" value="${backButtonLabel}" 
+              onClick="document.location.href=squashtm.workspace.backurl;" />	
 	</jsp:attribute>
-	
-	<jsp:attribute name="footer">	
-		
+
+  <jsp:attribute name="informationContent">	
+		<jsp:include page="/WEB-INF/jsp/fragment/campaigns/campaign.jsp">
+			<jsp:param name="isInfoPage" value="true" />
+		</jsp:include>
 	</jsp:attribute>
-	
-	<jsp:attribute name="informationContent">
-		<div id="welcome-page-content" class="admin-message-page-content">
-			<span id="welcome-message">${welcomeMessage}</span>
-			<comp:rich-jeditable targetUrl="${ editWelcomeUrl }" componentId="welcome-message" welcome="true" />
-		</div>
-	</jsp:attribute>
-	
+
 </layout:info-page-layout>

@@ -197,5 +197,5 @@
 
 </div>
 
-<%-- the init code must now be in the main jsp (edit-campaign or the test plan manager jsp) --%>
+<%-- the init code must now be in the main jsp (campaign jsp or the test plan manager jsp) --%>
 

@@ -27,10 +27,10 @@ import org.springframework.web.servlet.ModelAndView;
 
 @Controller
 public class AccessDeniedController {
-	
+
 	@RequestMapping(value="/accessDenied", method=RequestMethod.GET)
 	public ModelAndView accessDenied() {
-		return new ModelAndView("authentication/accessDenied");
+		return new ModelAndView("page/authentication/accessDenied");
 	}
 
 

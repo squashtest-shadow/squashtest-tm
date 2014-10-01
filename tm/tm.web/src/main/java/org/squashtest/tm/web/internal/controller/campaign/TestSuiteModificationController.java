@@ -105,7 +105,7 @@ public class TestSuiteModificationController {
 	public String showTestSuite(Model model, @PathVariable("suiteId") long suiteId) {
 
 		populateTestSuiteModel(model, suiteId);
-		return "fragment/test-suites/edit-test-suite";
+		return "fragment/test-suites/test-suite";
 	}
 
 	// will return the iteration in a full page
@@ -113,7 +113,7 @@ public class TestSuiteModificationController {
 	public String showTestSuiteInfo(Model model, @PathVariable("suiteId") long suiteId) {
 
 		populateTestSuiteModel(model, suiteId);
-		return "page/campaign-libraries/show-test-suite";
+		return "page/campaign-workspace/show-test-suite";
 	}
 
 	private void populateTestSuiteModel(Model model, long testSuiteId) {
@@ -213,7 +213,7 @@ public class TestSuiteModificationController {
 
 		TestPlanStatistics testSuiteStats = service.findTestSuiteStatistics(suiteId);
 
-		ModelAndView mav = new ModelAndView("fragment/generics/test-suite-execution-button");
+		ModelAndView mav = new ModelAndView("fragment/test-suites/test-suite-execution-button");
 
 		mav.addObject("testSuiteId", suiteId);
 		mav.addObject("statisticsEntity", testSuiteStats);

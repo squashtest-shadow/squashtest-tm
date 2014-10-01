@@ -145,7 +145,7 @@ public class TestSuiteTestPlanManagerController {
 
 		List<JsTreeNode> linkableLibrariesModel = createLinkableLibrariesModel(linkableLibraries, openedNodes);
 
-		ModelAndView mav = new ModelAndView("page/test-suites/show-test-suite-test-plan-manager");
+		ModelAndView mav = new ModelAndView("page/campaign-workspace/show-test-suite-test-plan-manager");
 		mav.addObject("testSuite", testSuite);
 		mav.addObject("baseURL", "/test-suites/" + suiteId);
 		mav.addObject("linkableLibrariesModel", linkableLibrariesModel);

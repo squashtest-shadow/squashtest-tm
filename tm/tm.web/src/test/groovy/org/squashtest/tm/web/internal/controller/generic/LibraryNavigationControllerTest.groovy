@@ -116,22 +116,19 @@ class DummyController extends LibraryNavigationController<DummyLibrary, DummyFol
 		new JsTreeNode()
 	}
 
-	
+
 	@Override
 	protected JsTreeNode createJsTreeNode(DummyNode resource) {
 		return null ;
 	}
 
-	@Override
-	protected String getShowLibraryViewName() {
-		return "libraryPage";
-	}
-	
+
+
 	@Override
 	JsTreeNode createTreeNodeFromLibraryNode(DummyNode resource) {
 		null
 	}
-	
+
 }
 class DummyFolder  extends DummyNode  implements Folder<DummyNode>{
 	@Override
@@ -200,7 +197,7 @@ class DummyLibrary implements Library<DummyNode> {
 	public Project getProject() {
 		return null
 	}
-	@Override 
+	@Override
 	@AclConstrainedObject
 	public Library getLibrary(){
 		return this;
@@ -216,10 +213,10 @@ class DummyLibrary implements Library<DummyNode> {
 	String getClassName(){
 		return "org.squashtest.tm.web.internal.controller.generic.DummyLibrary";
 	}
-	
+
 	@Override
 	boolean hasContent(){
-		return true;	
+		return true;
 	}
 	@Override
 	public void addContent(DummyNode contentToAdd) throws DuplicateNameException, NullArgumentException {
@@ -231,31 +228,31 @@ class DummyLibrary implements Library<DummyNode> {
 	public AttachmentList getAttachmentList() {
 		return null;
 	}
-	
+
 	@Override
 	public Set<String> getEnabledPlugins() {
 		return []
 	}
-	
+
 	@Override
 	public void disablePlugin(String pluginId) {
-		
+
 	}
-	
+
 	@Override
 	public void enablePlugin(String pluginId) {
-		
+
 	}
-	
+
 	@Override
 	public boolean isPluginEnabled(String pluginId) {
 		return false;
 	}
-	
+
 	public Set<TestCaseLibraryPluginBinding> getAllPluginBindings(){
 		return [] as Set
 	}
-	
+
 	public TestCaseLibraryPluginBinding getPluginBinding(String pluginId) {
 		return null;
 	}

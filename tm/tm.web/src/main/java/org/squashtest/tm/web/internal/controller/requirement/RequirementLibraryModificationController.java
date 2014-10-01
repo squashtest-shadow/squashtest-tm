@@ -37,7 +37,7 @@ import org.squashtest.tm.web.internal.controller.generic.ServiceAwareAttachmentT
 @Controller
 @RequestMapping("/requirement-libraries/{libraryId}")
 public class RequirementLibraryModificationController {
-	
+
 	@Inject
 	private RequirementLibraryNavigationService requirementLibraryNavigationService;
 
@@ -46,16 +46,16 @@ public class RequirementLibraryModificationController {
 
 	@RequestMapping(method = RequestMethod.GET)
 	public final ModelAndView showRequirementLibrary(@PathVariable long libraryId) {
-		
+
 		RequirementLibrary lib = requirementLibraryNavigationService.findLibrary(libraryId);
-		
-		ModelAndView mav = new ModelAndView("fragment/library/show-libraries-details");
+
+		ModelAndView mav = new ModelAndView("fragment/libraries/library");
 		Set<Attachment> attachments = attachmentsHelper.findAttachments(lib);
-		
+
 		mav.addObject("library", lib);
 		mav.addObject("attachments", attachments);
 		mav.addObject("workspaceName", "requirement");
-		
+
 		return mav;
 	}
 }

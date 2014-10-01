@@ -51,13 +51,13 @@ public class RequirementWorkspaceController extends WorkspaceController<Requirem
 
 	@Inject
 	@Named("requirement.driveNodeBuilder")
-	private Provider<DriveNodeBuilder<RequirementLibraryNode<?>>> driveNodeBuilderProvider; 
+	private Provider<DriveNodeBuilder<RequirementLibraryNode<?>>> driveNodeBuilderProvider;
 
-	
+
 	@Inject
 	private RequirementLibraryNavigationService requirementLibraryNavigationService;
-	
-	
+
+
 	@Override
 	protected WorkspaceService<Library<RequirementLibraryNode<?>>> getWorkspaceService() {
 		return workspaceService;
@@ -65,19 +65,19 @@ public class RequirementWorkspaceController extends WorkspaceController<Requirem
 
 	@Override
 	protected String getWorkspaceViewName() {
-		return "page/requirement-workspace";
+		return "page/requirement-workspace/requirement-workspace";
 	}
-	
+
 	@Override
 	protected void populateModel(Model model, Locale locale) {
-		
+
 		List<Library<RequirementLibraryNode<?>>> libraries = workspaceService.findAllImportableLibraries();
 		List<RequirementCategory> categories = sortCategories();
-		
+
 		model.addAttribute("editableLibraries", libraries);
 		model.addAttribute("categories", categories);
-		
-		
+
+
 	}
 
 	/**
@@ -86,7 +86,7 @@ public class RequirementWorkspaceController extends WorkspaceController<Requirem
 	protected WorkspaceType getWorkspaceType() {
 		return WorkspaceType.REQUIREMENT_WORKSPACE;
 	}
-	
+
 	private List<RequirementCategory> sortCategories(){
 		InternationalizableComparator comparator = new InternationalizableComparator(getI18nHelper());
 		List<RequirementCategory> categories = Arrays.asList(RequirementCategory.values());
@@ -105,12 +105,12 @@ public class RequirementWorkspaceController extends WorkspaceController<Requirem
 	@Override
 	protected String[] getNodeParentsInWorkspace(Long elementId) {
 		List<String> parents = requirementLibraryNavigationService.getParentNodesAsStringList(elementId);
-		return parents.toArray(new String[parents.size()]); 
+		return parents.toArray(new String[parents.size()]);
 	}
 
 	@Override
 	protected String getTreeElementIdInWorkspace(Long elementId) {
 		return "Requirement-"+elementId;
 	}
-	
+
 }

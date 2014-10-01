@@ -195,7 +195,7 @@ public class TestCaseModificationController {
 	 */
 	@RequestMapping(method = RequestMethod.GET)
 	public final ModelAndView showTestCase(@PathVariable long testCaseId, Locale locale) {
-		ModelAndView mav = new ModelAndView("fragment/test-cases/edit-test-case");
+		ModelAndView mav = new ModelAndView("fragment/test-cases/test-case");
 
 		TestCase testCase = testCaseModificationService.findById(testCaseId);
 		populateModelWithTestCaseEditionData(mav, testCase, locale);
@@ -215,7 +215,7 @@ public class TestCaseModificationController {
 
 		LOGGER.trace("TestCaseModificationController : getting infos");
 
-		ModelAndView mav = new ModelAndView("page/test-case-libraries/show-test-case");
+		ModelAndView mav = new ModelAndView("page/test-case-workspace/show-test-case");
 
 		TestCase testCase = testCaseModificationService.findTestCaseWithSteps(testCaseId);
 		populateModelWithTestCaseEditionData(mav, testCase, locale);

@@ -20,21 +20,22 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 --%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="f"%>
-<%@ taglib prefix="s" uri="http://www.springframework.org/tags"%>
-<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
-<%@ taglib prefix="stru" uri="http://org.squashtest.tm/taglib/string-utils" %>
-<%@ taglib prefix="at" tagdir="/WEB-INF/tags/attachments"%>
-
-<?xml version="1.0" encoding="utf-8" ?>
 <%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
-<%--
-	@params 
+<%@ taglib tagdir="/WEB-INF/tags" prefix="sq" %>
+<%@ taglib prefix="layout" tagdir="/WEB-INF/tags/layout"  %>
+<%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component" %>
+<layout:info-page-layout titleKey="workspace.campaign.title" highlightedWorkspace="campaign">
+	<jsp:attribute  name="head">	
+		<comp:sq-css name="squash.purple.css" />
+	</jsp:attribute>
+	<jsp:attribute name="titlePane">
+		<h2><f:message key="workspace.campaign.title" /></h2>	
+	</jsp:attribute>
+	<jsp:attribute name="informationContent">	
+		<jsp:include page="/WEB-INF/jsp/fragment/executions/execution.jsp">
+			<jsp:param name="hasBackButton" value="true" />
+		</jsp:include>
+	</jsp:attribute>
 	
-	attachmentSet : set of attachments
-	attachListId : id of the attachment list
-
-
- --%>
-<at:attachment-display attachListId="${attachListId}" attachmentSet="${attachmentSet}" />
+</layout:info-page-layout>

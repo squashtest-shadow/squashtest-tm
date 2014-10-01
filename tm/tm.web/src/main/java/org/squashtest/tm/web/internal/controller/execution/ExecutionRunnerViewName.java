@@ -25,9 +25,9 @@ package org.squashtest.tm.web.internal.controller.execution;
  * 
  */
 final class ExecutionRunnerViewName {
-	
+
 	public static final String PROLOGUE_STEP = "execute-execution-preview.html";
-	public static final String OPTIMIZED_RUNNER_STEP = "page/ieo/ieo-execute-execution";
+	public static final String OPTIMIZED_RUNNER_STEP = "page/executions/oer-execute-execution";
 	public static final String CLASSIC_STEP = "page/executions/execute-execution";
 
 	/**

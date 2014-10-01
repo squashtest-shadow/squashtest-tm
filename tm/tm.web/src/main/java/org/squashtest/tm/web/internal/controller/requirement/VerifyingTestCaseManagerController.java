@@ -110,7 +110,7 @@ public class VerifyingTestCaseManagerController {
 		model.addAttribute("linkableLibrariesModel", linkableLibrariesModel);
 		model.addAttribute("verifyingTestCaseModel", verifyingTCModel);
 
-		return "page/requirements/show-verifying-testcase-manager";
+		return "page/requirement-workspace/show-verifying-testcase-manager";
 	}
 
 	private List<JsTreeNode> createLinkableLibrariesModel(List<TestCaseLibrary> linkableLibraries, String[] openedNodes) {

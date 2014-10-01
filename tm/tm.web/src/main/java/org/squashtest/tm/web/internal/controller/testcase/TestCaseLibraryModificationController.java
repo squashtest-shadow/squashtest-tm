@@ -49,7 +49,7 @@ public class TestCaseLibraryModificationController {
 
 		TestCaseLibrary lib = service.findLibrary(libraryId);
 
-		ModelAndView mav = new ModelAndView("fragment/test-cases/edit-test-case-library");
+		ModelAndView mav = new ModelAndView("fragment/test-cases/test-case-library");
 		Set<Attachment> attachments = attachmentsHelper.findAttachments(lib);
 
 		mav.addObject("library", lib);
@@ -62,7 +62,7 @@ public class TestCaseLibraryModificationController {
 	public final ModelAndView showTestCaseLibraryInfo(@PathVariable long libraryId){
 		TestCaseLibrary lib = service.findLibrary(libraryId);
 
-		ModelAndView mav = new ModelAndView("page/test-case-libraries/show-test-case-library");
+		ModelAndView mav = new ModelAndView("page/test-case-workspace/show-test-case-library");
 		Set<Attachment> attachments = attachmentsHelper.findAttachments(lib);
 
 		mav.addObject("library", lib);

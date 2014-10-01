@@ -128,7 +128,7 @@ public class RequirementModificationController {
 	@RequestMapping(value = "/info", method = RequestMethod.GET)
 	public String showRequirementInfo(Model model, @PathVariable("requirementId") long requirementId, Locale locale) {
 		populateRequirementModel(model, requirementId, locale);
-		return "page/requirement-libraries/show-requirement";
+		return "page/requirement-workspace/show-requirement";
 
 	}
 
@@ -136,7 +136,7 @@ public class RequirementModificationController {
 	@RequestMapping(method = RequestMethod.GET)
 	public String showRequirement(Model model, @PathVariable("requirementId") long requirementId, Locale locale) {
 		populateRequirementModel(model, requirementId, locale);
-		return "fragment/requirements/edit-requirement";
+		return "fragment/requirements/requirement";
 	}
 
 
@@ -327,7 +327,7 @@ public class RequirementModificationController {
 		boolean hasCUF = cufValueService.hasCustomFields(req.getCurrentVersion());
 
 		model.addAttribute("hasCUF", hasCUF);
-		return "page/requirements/versions-manager";
+		return "page/requirement-workspace/versions-manager";
 	}
 
 	@RequestMapping(value = "/versions/table", params = RequestParams.S_ECHO_PARAM)

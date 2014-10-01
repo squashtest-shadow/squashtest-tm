@@ -128,7 +128,7 @@ public class VerifiedRequirementsManagerController {
 		model.addAttribute("testStep", testStep);
 		model.addAttribute("linkableLibrariesModel", linkableLibrariesModel);
 
-		return "page/test-cases/show-step-verified-requirements-manager";
+		return "page/test-case-workspace/show-step-verified-requirements-manager";
 	}
 
 	@SuppressWarnings("rawtypes")

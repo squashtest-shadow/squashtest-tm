@@ -65,7 +65,7 @@ public class CallStepManagerController {
 
 		List<JsTreeNode> linkableLibrariesModel = createLinkableLibrariesModel(linkableLibraries);
 
-		ModelAndView mav = new ModelAndView("page/test-cases/show-call-step-manager");
+		ModelAndView mav = new ModelAndView("page/test-case-workspace/show-call-step-manager");
 		mav.addObject("testCase", testCase);
 		mav.addObject("rootModel", linkableLibrariesModel);
 

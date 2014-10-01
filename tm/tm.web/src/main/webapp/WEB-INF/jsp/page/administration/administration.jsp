@@ -27,14 +27,14 @@
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component"%>
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags"%>
 
-<c:url var="usersUrl" value="/administration/users/list" />
-<c:url var="projectsUrl" value="/administration/projects" />
-<c:url var="bugtrackerUrl" value="/administration/bugtrackers" />
-<c:url var="loginUrl" value="/configuration/login-message" />
-<c:url var="welcomeUrl" value="/configuration/welcome-message" />
-<c:url var="customFieldsUrl" value="administration/custom-fields" />
-<c:url var="testAutomationServerUrl" value="/administration/test-automation-servers" />
-<c:url var="indexUrl" value="/administration/indexes" />
+<c:url var="usersUrl"                 value="/administration/users/list" />
+<c:url var="projectsUrl"              value="/administration/projects" />
+<c:url var="bugtrackerUrl"            value="/administration/bugtrackers" />
+<c:url var="loginUrl"                 value="/administration/login-message" />
+<c:url var="welcomeUrl"               value="/administration/welcome-message" />
+<c:url var="customFieldsUrl"          value="/administration/custom-fields" />
+<c:url var="testAutomationServerUrl"  value="/administration/test-automation-servers" />
+<c:url var="indexUrl"                 value="/administration/indexes" />
 
 <layout:info-page-layout titleKey="label.administration">
   <jsp:attribute name="head">  

@@ -104,7 +104,7 @@ public class CampaignTestPlanManagerController {
 
 		List<JsTreeNode> linkableLibrariesModel = createLinkableLibrariesModel(linkableLibraries, openedNodes);
 
-		ModelAndView mav = new ModelAndView("page/campaigns/show-campaign-test-plan-manager");
+		ModelAndView mav = new ModelAndView("page/campaign-workspace/show-campaign-test-plan-manager");
 		mav.addObject("campaign", campaign);
 		mav.addObject("linkableLibrariesModel", linkableLibrariesModel);
 		return mav;

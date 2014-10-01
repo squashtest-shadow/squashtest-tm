@@ -18,9 +18,9 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
- package org.squashtest.tm.web.internal.controller.welcome;
- 
- import static org.squashtest.tm.web.internal.helper.JEditablePostParams.VALUE;
+package org.squashtest.tm.web.internal.controller.welcome;
+
+import static org.squashtest.tm.web.internal.helper.JEditablePostParams.VALUE;
 
 import java.util.List;
 
@@ -42,16 +42,16 @@ import org.squashtest.tm.service.user.AdministrationService;
 
 @Controller
 public class HomeController {
-	
+
 	private AdministrationService administrationService;
-	
+
 	@Inject
 	protected ProjectFinder projectFinder;
-	
+
 	@Inject
 	protected BugTrackerFinderService  bugtrackerService;
 
-	
+
 
 	@ServiceReference
 	public void setAdministrationService(AdministrationService administrationService) {
@@ -61,49 +61,49 @@ public class HomeController {
 	@RequestMapping("/home-workspace")
 	public ModelAndView home() {
 		String welcomeMessage = administrationService.findWelcomeMessage();
-		
+
 		ModelAndView mav = new ModelAndView("page/home-workspace");
 
 		mav.addObject("welcomeMessage", welcomeMessage);
-		
+
 		// put the available bugtrackers too
 		List<Project> projects = projectFinder.findAllReadable();
 		List<Long> projectsIds = IdentifiedUtil.extractIds(projects);
 		List<BugTracker> visibleBugtrackers = bugtrackerService.findDistinctBugTrackersForProjects(projectsIds);
 
 		mav.addObject("visibleBugtrackers", visibleBugtrackers);
-		
-		
+
+
 		return mav;
 	}
-	
-	@RequestMapping(value = "/configuration/modify-welcome-message", method=RequestMethod.POST)
+
+	@RequestMapping(value = "/administration/modify-welcome-message", method=RequestMethod.POST)
 	public @ResponseBody
 	String modifyWelcomeMessage(@RequestParam(VALUE) String welcomeMessage){
 		administrationService.modifyWelcomeMessage(welcomeMessage);
 		return welcomeMessage;
 	}
-	@RequestMapping(value = "/configuration/modify-login-message", method=RequestMethod.POST)
+	@RequestMapping(value = "/administration/modify-login-message", method=RequestMethod.POST)
 	public @ResponseBody
 	String modifyLoginMessage(@RequestParam(VALUE) String loginMessage){
 		administrationService.modifyLoginMessage(loginMessage);
 		return loginMessage;
 	}
-	
-	@RequestMapping("/configuration/welcome-message")
+
+	@RequestMapping("/administration/welcome-message")
 	public ModelAndView welcomeMessagePage(){
 		String welcomeMessage = administrationService.findWelcomeMessage();
-		ModelAndView mav = new ModelAndView("page/configurations/welcome-message-workspace");
+		ModelAndView mav = new ModelAndView("page/administration/welcome-message-workspace");
 		mav.addObject("welcomeMessage", welcomeMessage);
 		return mav;
 	}
-	
-	@RequestMapping("/configuration/login-message")
+
+	@RequestMapping("/administration/login-message")
 	public ModelAndView loginMessagePage(){
 		String loginMessage = administrationService.findLoginMessage();
-		ModelAndView mav = new ModelAndView("page/configurations/login-message-workspace");
+		ModelAndView mav = new ModelAndView("page/administration/login-message-workspace");
 		mav.addObject("loginMessage", loginMessage);
 		return mav;
 	}
-	
+
 }

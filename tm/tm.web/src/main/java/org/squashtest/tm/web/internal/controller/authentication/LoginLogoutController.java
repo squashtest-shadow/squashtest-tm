@@ -48,7 +48,7 @@ public class LoginLogoutController {
 	public String login(Model model) {
 		String welcomeMessage = configService.findConfiguration(LOGIN_MESSAGE);
 		model.addAttribute("welcomeMessage", welcomeMessage);
-		return "authentication/login";
+		return "page/authentication/login";
 	}
 
 	@RequestMapping("/")

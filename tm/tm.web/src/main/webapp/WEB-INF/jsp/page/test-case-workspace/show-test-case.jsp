@@ -21,21 +21,34 @@
 
 --%>
 <%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
-<%@ taglib tagdir="/WEB-INF/tags" prefix="sq" %>
-<%@ taglib prefix="layout" tagdir="/WEB-INF/tags/layout"  %>
-<%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib tagdir="/WEB-INF/tags" prefix="sq"%>
+<%@ taglib prefix="layout" tagdir="/WEB-INF/tags/layout"%>
+<%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component" %>
-<layout:info-page-layout titleKey="workspace.campaign.title" highlightedWorkspace="campaign">
-	<jsp:attribute  name="head">	
-		<comp:sq-css name="squash.purple.css" />
-	</jsp:attribute>
-	<jsp:attribute name="titlePane">
-		<h2><f:message key="workspace.campaign.title" /></h2>	
-	</jsp:attribute>
-	<jsp:attribute name="informationContent">	
-		<jsp:include page="/WEB-INF/jsp/fragment/executions/edit-execution.jsp">
-			<jsp:param name="hasBackButton" value="true" />
-		</jsp:include>
+<layout:info-page-layout titleKey="workspace.test-case.title" highlightedWorkspace="test-case" isSubPaged="true">
+
+	<jsp:attribute name="head">	
+		<comp:sq-css name="squash.green.css" />
 	</jsp:attribute>
 	
+	<jsp:attribute name="titlePane">
+		<h2><f:message key="workspace.test-case.title" /></h2>	
+	</jsp:attribute>
+	
+	<jsp:attribute name="subPageTitle">
+		<h2><f:message key="subpage.test-case.info.title" /></h2>
+	</jsp:attribute>
+	
+	<jsp:attribute name="subPageButtons">
+		<f:message var="backButtonLabel" key="label.Back" />
+		<input type="button" id="back" class="sq-btn" value="${backButtonLabel}" 
+            onClick="document.location.href=squashtm.workspace.backurl"/>	
+	</jsp:attribute>
+	
+	<jsp:attribute name="informationContent">	
+		<jsp:include page="/WEB-INF/jsp/fragment/test-cases/test-case.jsp" >
+			<jsp:param name="isInfoPage" value="true" />
+		</jsp:include>
+	</jsp:attribute>
+
 </layout:info-page-layout>

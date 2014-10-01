@@ -78,15 +78,15 @@ public abstract class LibraryNavigationController<LIBRARY extends Library<? exte
 	 * @return
 	 */
 	protected abstract LibraryNavigationService<LIBRARY, FOLDER, NODE> getLibraryNavigationService();
-	
+
 	private static final String NODE_IDS = "nodeIds[]";
-	
+
 	@Inject
 	private MessageSource messageSource;
-	
+
 	@Inject
 	private JasperReportsService jrServices;
-	
+
 	private static final int EOF = -1;
 
 	protected MessageSource getMessageSource(){
@@ -138,7 +138,7 @@ public abstract class LibraryNavigationController<LIBRARY extends Library<? exte
 
 		return createTreeNodeFromLibraryNode((NODE) newFolder);
 	}
-	
+
 
 
 	@RequestMapping(value = "/folders/{folderId}/content", method = RequestMethod.GET)
@@ -149,14 +149,6 @@ public abstract class LibraryNavigationController<LIBRARY extends Library<? exte
 
 		return model;
 	}
-
-
-	/**
-	 * Returns the logical name of the page which shows the library
-	 * 
-	 * @return
-	 */
-	protected abstract String getShowLibraryViewName();
 
 
 	@Deprecated
@@ -172,37 +164,37 @@ public abstract class LibraryNavigationController<LIBRARY extends Library<? exte
 
 
 	}
-	
+
 	@RequestMapping(value="/content/{nodeIds}/deletion-simulation", method = RequestMethod.GET)
 	public @ResponseBody Messages simulateNodeDeletion(@PathVariable("nodeIds") List<Long> nodeIds, Locale locale){
-		
+
 		List<SuppressionPreviewReport> reportList = getLibraryNavigationService().simulateDeletion(nodeIds);
-		
+
 		Messages messages = new Messages();
 		for (SuppressionPreviewReport report : reportList){
 			messages.addMessage(report.toString(messageSource, locale));
 		}
-		
+
 		return messages;
-		
+
 	}
-	
+
 
 	@RequestMapping(value="/content/{nodeIds}", method=RequestMethod.DELETE)
 	public @ResponseBody OperationReport confirmNodeDeletion(@PathVariable("nodeIds") List<Long> nodeIds){
-		
-		return getLibraryNavigationService().deleteNodes(nodeIds);	
+
+		return getLibraryNavigationService().deleteNodes(nodeIds);
 	}
 
 
 	@RequestMapping(value = "/{destinationType}/{destinationId}/content/new", method = RequestMethod.POST, params = {"nodeIds[]"})
 	public @ResponseBody
-	List<JsTreeNode> copyNodes(@RequestParam("nodeIds[]") Long[] nodeIds, 
-							  @PathVariable("destinationId") long destinationId, 
-							  @PathVariable("destinationType") String destType) {
-		
+	List<JsTreeNode> copyNodes(@RequestParam("nodeIds[]") Long[] nodeIds,
+			@PathVariable("destinationId") long destinationId,
+			@PathVariable("destinationType") String destType) {
+
 		List<NODE> nodeList;
- 		try{
+		try{
 			if (destType.equals("folders")){
 				nodeList = getLibraryNavigationService().copyNodesToFolder(destinationId, nodeIds);
 			}
@@ -212,19 +204,19 @@ public abstract class LibraryNavigationController<LIBRARY extends Library<? exte
 			else{
 				throw new IllegalArgumentException("copy nodes : specified destination type doesn't exists : "+destType);
 			}
- 		}catch(AccessDeniedException ade){
+		}catch(AccessDeniedException ade){
 			throw new RightsUnsuficientsForOperationException(ade);
 		}
-		
+
 		return createJsTreeModel(nodeList);
 	}
-	
+
 	@RequestMapping(value = "/{destinationType}/{destinationId}/content/{nodeIds}", method = RequestMethod.PUT)
 	public @ResponseBody
-	void moveNodes(@PathVariable("nodeIds") Long[] nodeIds, 
-				  @PathVariable("destinationId") long destinationId, 
-				  @PathVariable("destinationType") String destType) {
-		
+	void moveNodes(@PathVariable("nodeIds") Long[] nodeIds,
+			@PathVariable("destinationId") long destinationId,
+			@PathVariable("destinationType") String destType) {
+
 		try{
 			if (destType.equals("folders")){
 				getLibraryNavigationService().moveNodesToFolder(destinationId, nodeIds);
@@ -238,16 +230,16 @@ public abstract class LibraryNavigationController<LIBRARY extends Library<? exte
 		}catch(AccessDeniedException ade){
 			throw new RightsUnsuficientsForOperationException(ade);
 		}
-		
+
 	}
-	
+
 	@RequestMapping(value = "/{destinationType}/{destinationId}/content/{nodeIds}/{position}", method = RequestMethod.PUT)
 	public @ResponseBody
-	void moveNodes(@PathVariable("nodeIds") Long[] nodeIds, 
-				  @PathVariable("destinationId") long destinationId, 
-				  @PathVariable("destinationType") String destType,
-				  @PathVariable("position") int position) {
-		
+	void moveNodes(@PathVariable("nodeIds") Long[] nodeIds,
+			@PathVariable("destinationId") long destinationId,
+			@PathVariable("destinationType") String destType,
+			@PathVariable("position") int position) {
+
 		try{
 			if (destType.equals("folders")){
 				getLibraryNavigationService().moveNodesToFolder(destinationId, nodeIds, position);
@@ -261,10 +253,10 @@ public abstract class LibraryNavigationController<LIBRARY extends Library<? exte
 		}catch(AccessDeniedException ade){
 			throw new RightsUnsuficientsForOperationException(ade);
 		}
-		
+
 	}
-	
-	
+
+
 	protected void printExport(List<? extends ExportData> dataSource, String filename,String jasperFile, HttpServletResponse response,
 			Locale locale, String format) {
 		try {
@@ -322,28 +314,28 @@ public abstract class LibraryNavigationController<LIBRARY extends Library<? exte
 
 	}
 
-	
+
 	// ************************ other utils *************************
-	
-	
+
+
 	protected static class Messages {
-		
+
 		private Collection<String> messages = new ArrayList<String>();
-		
+
 		public Messages(){
 			super();
 		}
-		
+
 		public void addMessage(String msg){
 			this.messages.add(msg);
 		}
-		
+
 		public Collection<String> getMessages(){
 			return this.messages;
 		}
-		
+
 	}
 
-	
-	
+
+
 }
