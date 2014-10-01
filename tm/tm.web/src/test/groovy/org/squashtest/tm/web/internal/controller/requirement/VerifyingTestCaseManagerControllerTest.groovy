@@ -64,7 +64,7 @@ class VerifyingTestCaseManagerControllerTest extends Specification {
 		given:
 		Model model = new ExtendedModelMap()
 		mockVerifyingTestCaseService()
-		
+
 		and:
 		RequirementVersion requirementVersion = Mock()
 		requirementVersionManager.findById(10L) >> requirementVersion
@@ -90,7 +90,7 @@ class VerifyingTestCaseManagerControllerTest extends Specification {
 		def view = controller.showManager(10L, Mock(Model))
 
 		then:
-		view == "page/requirements/show-verifying-testcase-manager"
+		view == "page/requirement-workspace/show-verifying-testcase-manager"
 	}
 
 	def "should return rapport of test cases which could not be added"() {
@@ -110,19 +110,19 @@ class VerifyingTestCaseManagerControllerTest extends Specification {
 		then:
 		res.alreadyVerifiedRejections
 	}
-	
+
 	def mockVerifyingTestCaseService(){
-		
+
 		/*Requirement r = Mock()
-		RequirementVersion v = Mock()
-		r.getCurrentVersion() >> v
-		v.getId() >> 0*/
-		
+		 RequirementVersion v = Mock()
+		 r.getCurrentVersion() >> v
+		 v.getId() >> 0*/
+
 		PagedCollectionHolder<?> ch = Mock()
 		ch.getFirstItemIndex() >> 0
 		ch.getPagedItems() >> []
-		
+
 		verifyingTestCaseManager.findAllByRequirementVersion(_,_)>> ch
-		
+
 	}
 }

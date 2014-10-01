@@ -58,7 +58,7 @@ class RequirementModificationControllerTest extends Specification {
 	Provider criticalityBuilderProvider = criticalityBuilderProvider()
 	Provider categoryBuilderProvider = categoryBuilderProvider()
 	Provider statusBuilderProvider = statusBuilderProvider()
-	Provider levelFormatterProvider = levelFormatterProvider()	
+	Provider levelFormatterProvider = levelFormatterProvider()
 	Provider internationalFormatterProvider = internationalFormatterProvider()
 	VerifyingTestCaseManagerService verifTCService = Mock()
 	ServiceAwareAttachmentTableModelHelper attachmentsHelper = Mock()
@@ -75,10 +75,10 @@ class RequirementModificationControllerTest extends Specification {
 		controller.verifyingTestCaseManager = verifTCService
 		controller.attachmentsHelper = attachmentsHelper
 		controller.auditTrailService = auditTrailService;
-		
+
 		mockAuditTrailService()
 	}
-	
+
 	def mockAuditTrailService(){
 		PagedCollectionHolder holder = Mock()
 		holder.getFirstItemIndex() >> 0
@@ -102,7 +102,7 @@ class RequirementModificationControllerTest extends Specification {
 
 		i18nHelper.internationalize(_, _) >> "--"
 		builder.setInternationalizationHelper(i18nHelper)
-		
+
 		Provider provider = Mock()
 		provider.get() >> builder
 
@@ -112,7 +112,7 @@ class RequirementModificationControllerTest extends Specification {
 	def statusBuilderProvider() {
 		RequirementStatusComboDataBuilder builder = new RequirementStatusComboDataBuilder()
 		builder.labelFormatter = formatter
-		
+
 		Provider provider = Mock()
 		provider.get() >> builder
 
@@ -128,8 +128,8 @@ class RequirementModificationControllerTest extends Specification {
 	def internationalFormatterProvider(){
 		Provider provider = Mock()
 		provider.get() >> internationalformatter
-		
-		return provider	
+
+		return provider
 	}
 
 	def "should return requirement page fragment"() {
@@ -147,7 +147,7 @@ class RequirementModificationControllerTest extends Specification {
 		String res = controller.showRequirement(model, reqId, null)
 
 		then:
-		res == "fragment/requirements/edit-requirement"
+		res == "fragment/requirements/requirement"
 		1 * model.addAttribute('requirement', req)
 	}
 
@@ -163,19 +163,19 @@ class RequirementModificationControllerTest extends Specification {
 		given:
 		Requirement req = mockRequirementAmongOtherThings()
 		requirementModificationService.findById(0) >> req
-		
+
 		when:
 		String viewName = controller.showRequirementVersionsManager(0, Mock(Model), Locale.JAPANESE)
 
 		then:
-		viewName == "page/requirements/versions-manager"
+		viewName == "page/requirement-workspace/versions-manager"
 	}
 
 	def "should populate versions manager model"() {
 		given:
 		Requirement req = mockRequirementAmongOtherThings()
 		requirementModificationService.findById(0) >> req
-		
+
 		when:
 		Model model = new ExtendedModelMap()
 		String viewName = controller.showRequirementVersionsManager(0, model, Locale.JAPANESE)
@@ -187,21 +187,21 @@ class RequirementModificationControllerTest extends Specification {
 		model.asMap()["jsonCriticalities"] != null
 		model.asMap()["jsonCategories"] != null
 	}
-	
+
 	def mockRequirementAmongOtherThings(){
-		
+
 		Requirement r = Mock()
 		RequirementVersion v = Mock()
 		r.getCurrentVersion() >> v
 		v.getId() >> 0
 		r.getUnmodifiableVersions() >> [v]
-		
+
 		PagedCollectionHolder<?> ch = Mock()
 		ch.getFirstItemIndex() >> 0
 		ch.getPagedItems() >> []
-		
+
 		verifTCService.findAllByRequirementVersion(_,_)>> ch
-		
+
 		return r
 	}
 }

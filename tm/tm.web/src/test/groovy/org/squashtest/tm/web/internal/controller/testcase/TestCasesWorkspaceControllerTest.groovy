@@ -42,7 +42,7 @@ class TestCasesWorkspaceControllerTest extends Specification {
 	TestCaseWorkspaceController controller = new TestCaseWorkspaceController()
 	WorkspaceService service = Mock()
 	DriveNodeBuilder driveNodeBuilder = new DriveNodeBuilder(Mock(PermissionEvaluationService), Mock(Provider))
-	
+
 	Provider provider = Mock()
 
 	def setup() {
@@ -61,12 +61,12 @@ class TestCasesWorkspaceControllerTest extends Specification {
 		library.project >> project
 		service.findAllLibraries() >> [library]
 		def model = Mock(Model)
-		
+
 		when:
 		String view = controller.showWorkspace(model, Locale.getDefault(), [] as String[], "" as String)
 
 		then:
-		view == "page/test-case-workspace"
+		view == "page/test-case-workspace/test-case-workspace"
 		1 * model.addAttribute ("rootModel", _)
 	}
 }

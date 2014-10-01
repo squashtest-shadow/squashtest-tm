@@ -87,8 +87,7 @@
           require(["jquery", "tree", "workspace.event-bus"], function($, zetree, eventBus){
               
               $(function() {
-        
-                
+            	  
                 <%-- test-case addition --%>
                 $( '#add-items-button' ).click(function() {
                       var tree = zetree.get();

@@ -51,7 +51,7 @@ class VerifiedRequirementsManagerControllerTest extends Specification{
 	RequirementLibraryFinderService requirementLibraryFinder = Mock()
 	TestStepModificationService testStepService = Mock()
 	PermissionEvaluationService permissionService = Mock();
-	
+
 	def setup() {
 		controller.verifiedRequirementsManagerService = verifiedRequirementsManagerService
 		controller.driveNodeBuilder = driveNodeBuilder
@@ -82,7 +82,7 @@ class VerifiedRequirementsManagerControllerTest extends Specification{
 		def res = controller.showTestStepManager(20L, Mock(Model))
 
 		then:
-		res == "page/test-cases/show-step-verified-requirements-manager"
+		res == "page/test-case-workspace/show-step-verified-requirements-manager"
 	}
 
 	def "should populate manager page with test case and requirement libraries model"() {

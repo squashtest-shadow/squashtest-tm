@@ -170,7 +170,7 @@ class TestCaseModificationControllerTest extends Specification {
 		ModelAndView res = controller.showTestCase (tcId, null)
 
 		then:
-		res.viewName == "fragment/test-cases/edit-test-case"
+		res.viewName == "fragment/test-cases/test-case"
 		res.modelMap['testCase'] == tc
 	}
 
