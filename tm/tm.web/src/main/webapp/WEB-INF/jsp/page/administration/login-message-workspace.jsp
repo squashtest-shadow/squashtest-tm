@@ -31,7 +31,7 @@
 <s:url var="administrationUrl" value="/administration" />
 
 <c:url var="editLoginMsgUrl" value="/administration/modify-login-message"/>
-
+<c:url var="editLoginButtonsConf" value="/styles/ckeditor/welcome-message-ckeditor-config.js"/>
 
 <layout:info-page-layout titleKey="label.ConsultModifyLoginMessage" highlightedWorkspace="requirement" isSubPaged="true">
 	<jsp:attribute  name="head">
@@ -56,9 +56,10 @@
 	</jsp:attribute>
 	
 	<jsp:attribute name="informationContent">
-		<div id="login-page-content" class="admin-message-page-content">
-			<span id="login-message">${loginMessage}</span>
-			<comp:rich-jeditable targetUrl="${ editLoginMsgUrl }" componentId="login-message" welcome="true" />
+		<div id="login-page-content" class="admin-message-page-content">   
+                        
+			<span id="login-message" class="editable rich-editable" 
+            data-def="url=${editLoginMsgUrl}, rows=auto, cols=auto, ckeditor.customConfig=${editLoginButtonsConf}" >${loginMessage}</span>	
 		</div>
 	</jsp:attribute>
 	

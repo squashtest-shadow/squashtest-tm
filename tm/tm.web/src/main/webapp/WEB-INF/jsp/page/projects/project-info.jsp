@@ -151,8 +151,7 @@
 		
 			<%----------------------------------- INFORMATION PANEL -----------------------------------------------%>
 			<div id="main-informations">
-			<comp:simple-jeditable targetUrl="${ projectUrl }" componentId="project-label" maxLength="255" />
-			<comp:rich-jeditable targetUrl="${ projectUrl }" componentId="project-description" />
+			<comp:simple-jeditable targetUrl="${ projectUrl }" componentId="project-label" maxLength="255" />  
 			
 			<comp:toggle-panel id="project-info-panel"
 				titleKey="project.info.panel.title" open="true">
@@ -169,7 +168,7 @@
 							<label for="project-description" class="display-table-cell">
 							<f:message key="label.Description" />
 							</label>
-							<div class="display-table-cell" id="project-description">${ adminproject.project.description }</div>
+							<div class="display-table-cell editable rich-editable" data-def="url=${projectUrl}" id="project-description">${ adminproject.project.description }</div>
 						</div>
 						<%-- 	Waiting for implementation of deactivation	<comp:project-active adminproject="${ adminproject }"/> --%>
 					</div>

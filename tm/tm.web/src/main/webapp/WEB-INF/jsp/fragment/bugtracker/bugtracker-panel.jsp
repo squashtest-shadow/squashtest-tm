@@ -29,7 +29,6 @@
 <%@ taglib prefix="s" uri="http://www.springframework.org/tags"%>
 
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component"%>
-<%@ taglib prefix="agg" tagdir="/WEB-INF/tags/aggregates"%>
 <%@ taglib prefix="is" tagdir="/WEB-INF/tags/issues"%>
 <%@ taglib prefix="authz" tagdir="/WEB-INF/tags/authz"%>
 
@@ -288,7 +287,7 @@
 
 <%-- /init section for issue-panel-knownissues-div --%>
 
-<agg:structure-configurable-panel id="issue-panel"
+<comp:structure-configurable-panel id="issue-panel"
 	titleKey="issue.panel.title" isContextual="true" open="true"
 	style="${panelStyle}">
 
@@ -342,7 +341,7 @@
 			</c:choose>
 		</div>
 	</jsp:attribute>
-</agg:structure-configurable-panel>
+</comp:structure-configurable-panel>
 
 
 <%-------------------------------- add issue popup code -----------------------------------%>

@@ -50,14 +50,13 @@
 		<span><f:message key="folder.title" />&nbsp;:&nbsp;</span><span id="folder-name"><c:out value="${ folder.name }" escapeXml="true"/></span>
 	</h2>
 </div>
-<c:if test="${ editable }">
-<comp:rich-jeditable
-	targetUrl="${ folderUrl }" componentId="folder-description" />
+<c:if test="${ editable }">        
+  <c:set var="descrRicheditAttributes" value="class='editable rich-editable' data-def='url=${folderUrl}'"/>
 </c:if>
 <div class="fragment-body">
 	<comp:toggle-panel id="folder-description-panel" titleKey="label.Description" open="true">
 		<jsp:attribute name="body">
-			<div id="folder-description">${ folder.description }</div>
+			<div id="folder-description" ${descrRicheditAttributes}>${ folder.description }</div>
 		</jsp:attribute>
 	</comp:toggle-panel>
 	<at:attachment-bloc editable="${ editable }" workspaceName="${ workspaceName }" attachListId="${ folder.attachmentList.id }" attachmentSet="${attachments}"/>

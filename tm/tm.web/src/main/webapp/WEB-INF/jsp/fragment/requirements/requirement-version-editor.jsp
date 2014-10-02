@@ -20,6 +20,6 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 --%>
-<%@ taglib prefix="gr" tagdir="/WEB-INF/tags/aggregates" %>
-<gr:requirement-version-editor requirementVersion="${ requirementVersion }" jsonCriticalities="${ jsonCriticalities }" 
+<%@ taglib prefix="reqs" tagdir="/WEB-INF/tags/requirements-components" %>
+<reqs:requirement-version-editor requirementVersion="${ requirementVersion }" jsonCriticalities="${ jsonCriticalities }" 
 							   jsonCategories="${ jsonCategories }" verifyingTestCaseModel="${verifyingTestCasesModel}"/>

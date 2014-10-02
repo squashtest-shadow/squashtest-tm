@@ -26,7 +26,6 @@
 <%@ taglib prefix="layout" tagdir="/WEB-INF/tags/layout"%>
 <%@ taglib prefix="tree" tagdir="/WEB-INF/tags/jstree"%>
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component"%>
-<%@ taglib prefix="aggr" tagdir="/WEB-INF/tags/aggregates"%>
 <%@ taglib prefix="it" tagdir="/WEB-INF/tags/iterations-components"%>
 
 <%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
@@ -73,7 +72,7 @@
   
   <jsp:attribute name="tablePane">
     <comp:opened-object otherViewers="${ otherViewers }" objectUrl="${ iterationUrl }" />
-    <aggr:iteration-test-plan-manager-table iteration="${iteration}"/>      
+    <it:iteration-test-plan-manager-table iteration="${iteration}"/>      
     <it:test-suite-managment  iteration="${iteration}"/>  
   </jsp:attribute>
 

@@ -22,9 +22,8 @@
 --%>
 <?xml version="1.0" encoding="utf-8" ?>
 <%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
-<%@ taglib tagdir="/WEB-INF/tags" prefix="sq" %>
 <%@ taglib prefix="layout" tagdir="/WEB-INF/tags/layout"  %>
-<%@ taglib prefix="gr" tagdir="/WEB-INF/tags/aggregates"  %>
+<%@ taglib prefix="reqs" tagdir="/WEB-INF/tags/requirements-components"  %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix='fn' uri='http://java.sun.com/jsp/jstl/functions' %>
@@ -102,7 +101,7 @@
 			
 			<div id="sub-page-selection-panel" class="sub-page-selection-panel shadow ui-corner-all ui-component">
 				<div id="contextual-content">
-				<gr:requirement-version-editor requirementVersion="${ selectedVersion }" jsonCriticalities="${ jsonCriticalities }" 
+				<reqs:requirement-version-editor requirementVersion="${ selectedVersion }" jsonCriticalities="${ jsonCriticalities }" 
 											   jsonCategories="${ jsonCategories }" verifyingTestCaseModel="${verifyingTestCaseModel}"/>
 				</div>
 			</div>	

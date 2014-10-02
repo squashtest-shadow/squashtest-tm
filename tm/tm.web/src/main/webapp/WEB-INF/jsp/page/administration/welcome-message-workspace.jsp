@@ -31,6 +31,7 @@
 <s:url var="administrationUrl" value="/administration" />
 
 <c:url var="editWelcomeUrl" value="/administration/modify-welcome-message"/>
+<c:url var="editLoginButtonsConf" value="/styles/ckeditor/welcome-message-ckeditor-config.js"/>
 
 
 <layout:info-page-layout titleKey="label.ConsultModifyWelcomeMessage" highlightedWorkspace="requirement" isSubPaged="true">
@@ -57,9 +58,9 @@
 	</jsp:attribute>
 	
 	<jsp:attribute name="informationContent">
-		<div id="welcome-page-content" class="admin-message-page-content">
-			<span id="welcome-message">${welcomeMessage}</span>
-			<comp:rich-jeditable targetUrl="${ editWelcomeUrl }" componentId="welcome-message" welcome="true" />
+		<div id="welcome-page-content" class="admin-message-page-content">        
+			<span id="welcome-message" class="editable rich-editable" 
+                  data-def="url=${editWelcomeUrl}, rows=auto, cols=auto, ckeditor.customConfig=${editLoginButtonsConf}"  >${welcomeMessage}</span>
 		</div>
 	</jsp:attribute>
 	

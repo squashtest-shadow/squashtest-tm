@@ -179,15 +179,14 @@
 	<div id="tabs-1">
 
 		<c:if test="${ writable }">
-			<comp:rich-jeditable targetUrl="${ iterationUrl }"
-				componentId="iteration-description"/>
+		  <c:set var="descrRicheditAttributes" value="class='editable rich-editable' data-def='url=${iterationUrl}'"/>  
 		</c:if>
 
 		<comp:toggle-panel id="iteration-description-panel"
 			titleKey="label.Description"
 			open="true">
 			<jsp:attribute name="body">
-			<div id="iteration-description">${ iteration.description }</div>
+			<div id="iteration-description" ${descrRicheditAttributes}>${ iteration.description }</div>
 			</jsp:attribute>
 		</comp:toggle-panel>
 

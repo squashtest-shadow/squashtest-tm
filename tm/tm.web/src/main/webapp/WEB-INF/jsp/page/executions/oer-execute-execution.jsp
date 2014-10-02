@@ -219,12 +219,14 @@
 		<div id="execute-evaluation">
 		
 			<div id="execute-evaluation-leftside">
-	
-				<comp:rich-jeditable targetUrl="${executeComment}" componentId="execution-comment" />
-	
+  	
 				<comp:toggle-panel id="execution-comment-panel" titleKey="execute.panel.comment.title"  open="true">
 					<jsp:attribute name="body">
-						<div id="execution-comment"  class="load-links-right-frame">${executionStep.comment}</div>
+						<div id="execution-comment"  class="editable rich-editable load-links-right-frame"
+                        data-def="url=${executeComment}">
+                          ${executionStep.comment}
+                          
+                        </div>
 					</jsp:attribute>
 				</comp:toggle-panel>
 			</div>		

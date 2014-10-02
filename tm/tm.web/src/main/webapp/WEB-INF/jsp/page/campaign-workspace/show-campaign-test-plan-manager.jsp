@@ -25,7 +25,7 @@
 <%@ taglib prefix="layout" tagdir="/WEB-INF/tags/layout"%>
 <%@ taglib prefix="tree" tagdir="/WEB-INF/tags/jstree"%>
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component"%>
-<%@ taglib prefix="aggr" tagdir="/WEB-INF/tags/aggregates" %>
+<%@ taglib prefix="camp" tagdir="/WEB-INF/tags/campaigns-components" %>
 <%@ taglib prefix="authz" tagdir="/WEB-INF/tags/authz" %>
 <%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
 
@@ -76,7 +76,7 @@
 	<jsp:attribute name="tablePane">
 		<comp:opened-object otherViewers="${ otherViewers }" objectUrl="${ campaignUrl }" />
 		
-		<aggr:campaign-test-plan-manager-table campaign="${campaign}"/>
+		<camp:campaign-test-plan-manager-table campaign="${campaign}"/>
 		
 	</jsp:attribute>
   

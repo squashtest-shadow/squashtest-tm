@@ -166,16 +166,14 @@
 	</ul>
 	<div id="tabs-1">
 		<c:if test="${ writable }">
-			<comp:rich-jeditable targetUrl="${ campaignUrl }"
-				componentId="campaign-description" />
+              <c:set var="descrRichAttributes" value="class='editable rich-editable' data-def='url=${campaignUrl}' " />
 		</c:if>
-
-
+    
 		<comp:toggle-panel id="campaign-description-panel"
 			titleKey="label.Description"
 			open="true">
 			<jsp:attribute name="body">
-				<div id="campaign-description">${ campaign.description }</div>
+				<div id="campaign-description" ${descrRichAttributes} >${ campaign.description }</div>
 			</jsp:attribute>
 		</comp:toggle-panel>
 		

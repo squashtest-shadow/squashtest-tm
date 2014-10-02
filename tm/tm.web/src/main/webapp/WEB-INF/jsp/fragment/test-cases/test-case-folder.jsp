@@ -52,8 +52,7 @@
 
 
 <c:if test="${ editable }">
-<comp:rich-jeditable
-	targetUrl="${ folderUrl }" componentId="folder-description" />
+   <c:set var="descrRicheditAttributes" value="class='editable rich-editable' data-def='url=${folderUrl}'"/>  
 </c:if>
 
 
@@ -74,7 +73,7 @@
 	
 	<comp:toggle-panel id="folder-description-panel" titleKey="label.Description"  open="true">
 		<jsp:attribute name="body">
-			<div id="folder-description">${ folder.description }</div>
+			<div id="folder-description" ${descrRicheditAttributes}>${ folder.description }</div>
 		</jsp:attribute>
 	</comp:toggle-panel>
 	

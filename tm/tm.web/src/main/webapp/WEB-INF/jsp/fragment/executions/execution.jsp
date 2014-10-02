@@ -252,12 +252,12 @@
 	<%-------------------------------------- Comment --------------------------------------------------%>
 
 	<c:if test="${ editable }">
-		<comp:rich-jeditable targetUrl="${ executionUrl }" componentId="execution-description" />
+        <c:set var="descrRicheditAttributes" value="class='editable rich-editable' data-def='url=${executionUrl}'"/>
 	</c:if>
 	<f:message var="executionComment" key="execution.description.panel.title" />
 	<comp:toggle-panel id="execution-description-panel" title="${executionComment}"  open="false">
 		<jsp:attribute name="body">
-		<div id="execution-description">${ execution.description }</div>
+		<div id="execution-description" ${descrRicheditAttributes} >${ execution.description }</div>
 	</jsp:attribute>
 	</comp:toggle-panel>
 

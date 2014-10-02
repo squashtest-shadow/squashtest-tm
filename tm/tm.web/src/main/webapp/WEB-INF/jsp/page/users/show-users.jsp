@@ -26,7 +26,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="layout" tagdir="/WEB-INF/tags/layout"%>
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component"%>
-<%@ taglib prefix="agg" tagdir="/WEB-INF/tags/aggregates" %>
+<%@ taglib prefix="teams" tagdir="/WEB-INF/tags/teams-components" %>
 <%@ taglib prefix="s" uri="http://www.springframework.org/tags" %>
 <%@ taglib prefix="pop" tagdir="/WEB-INF/tags/popup" %>
 <%@ taglib prefix="json" uri="http://org.squashtest.tm/taglib/json" %>
@@ -102,7 +102,7 @@
 		
 			</div><%-- /div#users-table-pane --%>
 	
-			<agg:teams-table-tab />
+			<teams:teams-table-tab />
 	
 	
 	</div><%-- /div.fragment-body.fragment-tabs --%>

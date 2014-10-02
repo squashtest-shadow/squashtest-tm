@@ -193,15 +193,14 @@
 		</ul>
 		<div id="tabs-1">
 			<c:if test="${ writable }">
-				<comp:rich-jeditable targetUrl="${ testSuiteUrl }"
-					componentId="test-suite-description" />
+               <c:set var="descrRicheditAttributes" value="class='editable rich-editable' data-def='url=${testSuiteUrl}'"/>            
 			</c:if>
 
 			<comp:toggle-panel id="test-suite-description-panel"
 				titleKey="label.Description"
 				open="${ not empty testSuite.description }">
 				<jsp:attribute name="body">
-				<div id="test-suite-description">${ testSuite.description }</div>
+				<div id="test-suite-description" ${descrRicheditAttributes}>${ testSuite.description }</div>
 			</jsp:attribute>
 			</comp:toggle-panel>
 

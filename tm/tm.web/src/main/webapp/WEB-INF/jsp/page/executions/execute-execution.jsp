@@ -447,14 +447,13 @@
 
 					<div id="execute-evaluation-leftside">
 						<c:if test="${editable}">
-							<comp:rich-jeditable targetUrl="${executeComment}"
-								componentId="execution-comment"/>
+							<c:set var="descrRicheditAttributes" value="class='editable rich-editable' data-def='url=${executeComment}'"/>	
 						</c:if>
 						<comp:toggle-panel id="execution-comment-panel"
 							titleKey="execute.panel.comment.title" 
 							open="true">
 							<jsp:attribute name="body">
-								<div id="execution-comment">${executionStep.comment}</div>
+								<div id="execution-comment" ${descrRicheditAttributes}>${executionStep.comment}</div>
 							</jsp:attribute>
 						</comp:toggle-panel>
 					</div>

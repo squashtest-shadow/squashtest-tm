@@ -25,7 +25,7 @@
 <%@ taglib tagdir="/WEB-INF/tags" prefix="sq"%>
 <%@ taglib prefix="layout" tagdir="/WEB-INF/tags/layout"%>
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt"%>
-<%@ taglib prefix="gr" tagdir="/WEB-INF/tags/aggregates"%>
+<%@ taglib prefix="reqs" tagdir="/WEB-INF/tags/requirements-components"%>
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component" %>
 
 <layout:info-page-layout titleKey="squashtm.library.requirement.title" highlightedWorkspace="requirement"
@@ -52,7 +52,7 @@
 	</jsp:attribute>
 
   <jsp:attribute name="informationContent">	
-		<gr:requirement-version-editor requirementVersion="${ requirementVersion }" jsonCriticalities="${ jsonCriticalities }"
+		<reqs:requirement-version-editor requirementVersion="${ requirementVersion }" jsonCriticalities="${ jsonCriticalities }"
       jsonCategories="${ jsonCategories }" verifyingTestCaseModel="${verifyingTestCaseModel}" />
 	</jsp:attribute>
 </layout:info-page-layout>

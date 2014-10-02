@@ -18,7 +18,10 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-(function($) {
+
+define(['jquery', 'squash.configmanager', 'squash.attributeparser', "jeditable", "jeditable.ckeditor"], 
+		function($, confman, attrparser){
+	
 
 	// Adding maxlength attribute for text
 	// thanks to
@@ -53,28 +56,38 @@
 	 * content is empty - submit : text for the submit button - cancel : text
 	 * for the cancel button
 	 * 
+	 * Also accepts (simple) options passed as 'data-def' on the dom element. 
+	 * Note : options 'cols' and 'rows' can be set to 'auto', such dimensions 
+	 * will then be unbounded. 
+	 * 
 	 */
 
-	$.widget('ui.richEditable', {
+	$.widget('squash.richEditable', {
 
-		options : {
-			type : 'ckeditor',
-			rows : 10,
-			cols : 80,
-			onblur : function() {
-			},
-			// abort edit if clicked on a hyperlink (being the tag itself or its content)
-			onedit : function(settings, editable, evt){
-				var $target = $(evt.target);
-				return ! ( $target.is('a') || $target.parents('a').length > 0);  
-			}
-		},
+		options : confman.getJeditableCkeditor(),
 
 		_init : function() {
-			var self = this;
-			var element = this.element;
-			element.editable(this.options.url, this.options);
+			var defoptions = this.options;
+			
+			this.element.each(function(){
+				var $this = $(this);
+				var stropt = $this.data('def');
+				var options = (!! stropt) ? attrparser.parse(stropt) : {};
+				
+				var finaloptions = $.extend(true, {}, defoptions, options);
+				
+				if (options.cols === "auto"){
+					delete finaloptions.cols;
+				}
+				if (options.rows === "auto"){
+					delete finaloptions.rows;
+				}
+				
+				$this.editable(finaloptions.url, finaloptions);				
+			});
 		}
 
-	});
-})(jQuery);
+	});	
+	
+});
+

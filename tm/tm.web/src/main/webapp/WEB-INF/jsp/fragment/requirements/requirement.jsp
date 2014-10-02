@@ -24,8 +24,7 @@
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component" %>
 <%@ taglib prefix="s" uri="http://www.springframework.org/tags" %>
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
-<%@ taglib prefix="sf" uri="http://www.springframework.org/tags/form" %>
-<%@ taglib prefix="aggr" tagdir="/WEB-INF/tags/aggregates" %>
+<%@ taglib prefix="reqs" tagdir="/WEB-INF/tags/requirements-components" %>
 <%@ taglib prefix="pop" tagdir="/WEB-INF/tags/popup" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="authz" tagdir="/WEB-INF/tags/authz" %>
@@ -260,7 +259,8 @@ require(["common"], function() {
 	<div id="tabs-1">
 	
 	<c:if test="${writable }">
-		<comp:rich-jeditable targetUrl="${ requirementUrl }" componentId="requirement-description" />
+        <c:set var="descrRicheditAttributes" value="class='editable rich-editable' data-def='url=${requirementUrl}'"/>
+  
 		<%-- make requirement-reference editable --%>
 		<comp:simple-jeditable targetUrl="${ requirementUrl }" componentId="requirement-reference" submitCallback="squashtm.requirement.updateReferenceInTitle" maxLength="50" />
 	</c:if>
@@ -332,7 +332,7 @@ require(["common"], function() {
 	<%--------------------------- Description section------------------------------------%>
 	<comp:toggle-panel id="requirement-description-panel" titleKey="label.Description" open="true" >
 		<jsp:attribute name="body">	
-					<div id="requirement-description">${ requirement.description }</div>
+					<div id="requirement-description" ${descrRicheditAttributes}>${ requirement.description }</div>
 		</jsp:attribute>
 	</comp:toggle-panel>
 
@@ -363,13 +363,13 @@ require(["common"], function() {
 		</jsp:attribute>
 
 		<jsp:attribute name="body">
-			<aggr:decorate-verifying-test-cases-table 
+			<reqs:verifying-test-cases-table 
 			batchRemoveButtonId="remove-verifying-test-case-button" requirementVersion="${requirement.currentVersion}" 
 				editable="${ linkable }" model="${verifyingTestCasesModel}"/>
 		</jsp:attribute>
 	</comp:toggle-panel>
 	
-	<aggr:requirement-version-audit-trail requirementVersion="${ requirement.currentVersion }" tableModel="${auditTrailModel}"/>
+	<reqs:requirement-version-audit-trail requirementVersion="${ requirement.currentVersion }" tableModel="${auditTrailModel}"/>
 	
 </div>
 <%-- ----------------------------------- /INFO TAB  ----------------------------------------------%>	

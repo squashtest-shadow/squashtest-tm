@@ -32,8 +32,7 @@
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component"%>
 <%@ taglib prefix="s" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt"%>
-<%@ taglib prefix="sf" uri="http://www.springframework.org/tags/form"%>
-<%@ taglib prefix="aggr" tagdir="/WEB-INF/tags/aggregates"%>
+<%@ taglib prefix="reqs" tagdir="/WEB-INF/tags/requirements-components"%>
 <%@ taglib prefix="pop" tagdir="/WEB-INF/tags/popup"%>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 <%@ taglib prefix="authz" tagdir="/WEB-INF/tags/authz"%>
@@ -137,7 +136,8 @@
     <%-- --------------------------------------------- tab1 Information----------------------------------------------%>
     <div id="tabs-1">
       <c:if test="${ writable }">
-        <comp:rich-jeditable targetUrl="${ requirementUrl }" componentId="requirement-description" />
+        <c:set var="descrRicheditAttributes" value="class='editable rich-editable' data-def='url=${requirementUrl}'"/>
+  
         <%-- make requirement-reference editable --%>
         <%-- TODO put at end of page, maybe componentize --%>
         <comp:simple-jeditable targetUrl="${ requirementUrl }" componentId="requirement-reference"
@@ -229,7 +229,7 @@
 
       <comp:toggle-panel id="requirement-description-panel" titleKey="label.Description" open="true">
         <jsp:attribute name="body">	
-					<div id="requirement-description">${ requirementVersion.description }</div>
+					<div id="requirement-description" ${descrRicheditAttributes}>${ requirementVersion.description }</div>
 		</jsp:attribute>
       </comp:toggle-panel>
       <%--------------- verifying TestCase section ------------------------------------%>
@@ -246,13 +246,14 @@
 		</jsp:attribute>
 
         <jsp:attribute name="body">
-			<aggr:decorate-verifying-test-cases-table batchRemoveButtonId="remove-verifying-test-case-button"
+			<reqs:verifying-test-cases-table batchRemoveButtonId="remove-verifying-test-case-button"
             editable="${ linkable }" model="${verifyingTestCaseModel}" requirementVersion="${requirementVersion}" />
 		</jsp:attribute>
       </comp:toggle-panel>
 
       <%--------------- Audit Trail ------------------------------------%>
-      <aggr:requirement-version-audit-trail requirementVersion="${ requirementVersion }" tableModel="${auditTrailModel}" />
+      <reqs:requirement-version-audit-trail requirementVersion="${ requirementVersion }" tableModel="${auditTrailModel}" />
+      
     </div>
     <%-- --------------------------------------------- /tab1 Information----------------------------------------------%>
     <%-- --------------------------------------------- tab2 Attachments ----------------------------------------------%>

@@ -26,7 +26,7 @@
 <%@ taglib prefix="layout" tagdir="/WEB-INF/tags/layout"%>
 <%@ taglib prefix="tree" tagdir="/WEB-INF/tags/jstree"%>
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component"%>
-<%@ taglib prefix="aggr" tagdir="/WEB-INF/tags/aggregates"%>
+<%@ taglib prefix="tsuites" tagdir="/WEB-INF/tags/test-suites-components"%>
 <%@ taglib prefix="it" tagdir="/WEB-INF/tags/iterations-components"%>
 
 
@@ -76,7 +76,7 @@
     
     <jsp:attribute name="tablePane">
         <comp:opened-object otherViewers="${ otherViewers }" objectUrl="${ testSuiteUrl }"/>
-        <aggr:test-suite-test-plan-manager-table testSuite="${testSuite}" />  
+        <tsuites:test-suite-test-plan-manager-table testSuite="${testSuite}" />  
     </jsp:attribute>
 
   <jsp:attribute name="foot">

@@ -21,6 +21,12 @@
 
 --%>
 <%@ tag body-content="empty" %>
+
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component" %>
+
+
 <%@ attribute name="title" description="Title of the panel. Alternative : set the titleKey attribute"%>
 <%@ attribute name="titleKey" description="Key of the panel title. Alternative : set the title attribute" %>
 <%@ attribute name="open" description="true if the panel should be opened when rendered" %>
@@ -29,16 +35,28 @@
 <%@ attribute name="body" fragment="true" description="body of the panel" %>
 <%@ attribute name="id" required="true" description="the id of the panel" %>
 <%@ attribute name="classes" description="classes the panel" %>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ attribute name="style" required="false" description="for now, accepts 'toggle' or 'fragment-tab'. Default is 'toggle'" %>
 
 
-<div class="toolbar">
-<jsp:invoke fragment="panelButtons"/>
-</div>
-<div class="table-tab-wrap">
-<jsp:invoke fragment="body"/>
-</div>
-
-
-
+<c:choose>
+<c:when test="${ style == 'fragment-tab' }">
+    <div class="toolbar">
+      <jsp:invoke fragment="panelButtons"/>
+    </div>
+    <div class="table-tab-wrap">
+      <jsp:invoke fragment="body"/>
+    </div>
+</c:when>
+<c:otherwise>
+	<!-- default is toggle panel -->
+	<comp:toggle-panel id="${id}" title="${title}" 
+					   titleKey="${titleKey}" open="${open}" >
+		<jsp:attribute name="panelButtons">
+			<jsp:invoke fragment="panelButtons"/>
+		</jsp:attribute>
+		<jsp:attribute name="body">
+			<jsp:invoke fragment="body"/>
+		</jsp:attribute>		
+	</comp:toggle-panel>
+</c:otherwise>
+</c:choose>
