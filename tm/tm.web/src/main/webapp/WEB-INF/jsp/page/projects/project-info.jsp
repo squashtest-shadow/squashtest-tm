@@ -151,9 +151,8 @@
 		
 			<%----------------------------------- INFORMATION PANEL -----------------------------------------------%>
 			<div id="main-informations">
-			<comp:simple-jeditable targetUrl="${ projectUrl }" componentId="project-label" maxLength="255" />  
 			
-			<comp:toggle-panel id="project-info-panel"
+            <comp:toggle-panel id="project-info-panel"
 				titleKey="project.info.panel.title" open="true">
 	
 				<jsp:attribute name="body">
@@ -162,7 +161,7 @@
 							<label for="project-label" class="display-table-cell">
 							<f:message key="label.tag" />
 							</label>
-							<div class="display-table-cell" id="project-label">${ adminproject.project.label }</div>
+							<div class="display-table-cell editable text-editable" data-def="url=${projectUrl}, maxlength=255" id="project-label">${ adminproject.project.label }</div>
 						</div>
 						<div class="display-table-row">
 							<label for="project-description" class="display-table-cell">
@@ -226,9 +225,8 @@
 									class="display-table-cell">
 								<f:message key="project.bugtracker.project.name.label" />
 							</label>
-							<comp:simple-jeditable targetUrl="${ projectUrl }"
-									componentId="project-bugtracker-project-name" width="200"/>
-							<div class="display-table-cell"
+
+							<div class="display-table-cell editable text-editable" data-def="url=${projectUrl}, width=200" 
 									id="project-bugtracker-project-name">
 								<c:choose>
 									<c:when test="${ adminproject.project.bugtrackerConnected }">${ adminproject.project.bugtrackerBinding.projectName }</c:when>

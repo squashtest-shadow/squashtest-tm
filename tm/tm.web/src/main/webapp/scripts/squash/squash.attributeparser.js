@@ -22,18 +22,18 @@
 /*
  * Will parse a string such as 'ppt1=val1, ppt2=val2, ...' into
  * {
- * 	ppt1 : val1,
- * 	ppt2 : val2
+ *	ppt1 : val1,
+ *	ppt2 : val2
  * }
  * 
  * Note : the pptX can represent nested properties. For instance person.name.firstname = bob
  * would be parsed as 
  * {
- * 	person : {
- * 		name : {
- * 			firstname : bob
- * 		}
- * 	}
+ *	person : {
+ *		name : {
+ *			firstname : bob
+ *		}
+ *	}
  * }
  */
 define(['jquery'], function($) {
@@ -93,7 +93,7 @@ define(['jquery'], function($) {
 	
 	return {
 		parse : function(seq){
-			return _parseSequence({}, seq)
+			return _parseSequence({}, seq);
 		}
 	};
 	

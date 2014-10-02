@@ -100,9 +100,7 @@
 							<label for="bugtracker-url" class="display-table-cell">
 							<f:message key="label.Url" />
 							</label>
-							<div class="display-table-cell" id="bugtracker-url">${ bugtracker.url }</div>
-							<comp:simple-jeditable targetUrl="${ bugtrackerUrl }" componentId="bugtracker-url" submitCallback="changeBugTrackerUrlCallback"/>
-							
+							<div class="display-table-cell editable text-editable" data-def="url=${bugtrackerUrl}, callback=changeBugTrackerUrlCallback" id="bugtracker-url">${ bugtracker.url }</div>		
 						</div>
 						<div class="display-table-row">
 							<label for="bugtracker-iframeFriendly" class="display-table-cell">

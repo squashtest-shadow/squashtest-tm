@@ -137,11 +137,7 @@
     <div id="tabs-1">
       <c:if test="${ writable }">
         <c:set var="descrRicheditAttributes" value="class='editable rich-editable' data-def='url=${requirementUrl}'"/>
-  
-        <%-- make requirement-reference editable --%>
-        <%-- TODO put at end of page, maybe componentize --%>
-        <comp:simple-jeditable targetUrl="${ requirementUrl }" componentId="requirement-reference"
-          submitCallback="squashtm.requirementVersion.updateReferenceInTitle" maxLength="50" />
+        <c:set var="referenceEditableAttributes" value="class='editable text-editable' data-def='url=${requirementUrl}, maxlength=50, callback=squashtm.requirement.updateReferenceInTitle'" />  
       </c:if>
 
       <comp:toggle-panel id="requirement-information-panel" titleKey="requirement.panel.general-informations.title"
@@ -163,7 +159,7 @@
 					<label for="requirement-reference">
                 <f:message key="label.Reference" />
               </label>
-					<div id="requirement-reference">${ requirementVersion.reference }</div>
+					<div id="requirement-reference" ${referenceEditableAttributes}>${ requirementVersion.reference }</div>
 				</div>
 				<div>
 					<label for="requirement-criticality">

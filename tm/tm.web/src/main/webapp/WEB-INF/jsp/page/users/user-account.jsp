@@ -108,8 +108,6 @@
 	
 	<div class="fragment-body">
 
-		<comp:simple-jeditable  targetUrl="${userAccountUrl}" componentId="user-account-email" width="200" />
-	
 		<comp:toggle-panel id="basic-info-panel" titleKey="user.account.basicinfo.label" open="true" >
 			<jsp:attribute name="body">
 				<div class="display-table">
@@ -119,7 +117,7 @@
 					</div>
 					<div class="display-table-row">
 						<label ><f:message key="label.Email"/></label>
-						<div class="display-table-cell"><span id="user-account-email">${user.email}</span></div>
+						<div class="display-table-cell editable text-editable" data-def="url=${userAccountUrl}, width=200"><span id="user-account-email">${user.email}</span></div>
 					</div>
 					<div class="display-table-row">
 						<label ><f:message key="label.Group"/></label>

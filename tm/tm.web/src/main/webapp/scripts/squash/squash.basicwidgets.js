@@ -28,6 +28,8 @@ define(["jquery", "underscore", "jquery.squash.jeditable",
 			$(".toggle-panel-main").togglePanel();
 			
 			$('.rich-editable').richEditable();
+			
+			$(".text-editable").textEditable();
 		}
 	};
 });

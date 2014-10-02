@@ -260,9 +260,7 @@ require(["common"], function() {
 	
 	<c:if test="${writable }">
         <c:set var="descrRicheditAttributes" value="class='editable rich-editable' data-def='url=${requirementUrl}'"/>
-  
-		<%-- make requirement-reference editable --%>
-		<comp:simple-jeditable targetUrl="${ requirementUrl }" componentId="requirement-reference" submitCallback="squashtm.requirement.updateReferenceInTitle" maxLength="50" />
+        <c:set var="referenceEditableAttributes" value="class='editable text-editable' data-def='url=${requirementUrl}, maxlength=50, callback=squashtm.requirement.updateReferenceInTitle'" />
 	</c:if>
 <%--------------------------- General Informations section ------------------------------------%>
 	<comp:toggle-panel id="requirement-information-panel" titleKey="requirement.panel.general-informations.title"  open="true" >
@@ -279,7 +277,7 @@ require(["common"], function() {
 				
 				<div class="display-table-row">
 					<label class="display-table-cell"  for="requirement-reference"><f:message key="label.Reference" /></label>
-					<div class="display-table-cell"  id="requirement-reference">${ requirement.reference }</div>
+					<div id="requirement-reference" ${referenceEditableAttributes}>${ requirement.reference }</div>
 				</div>
 				<div class="display-table-row">
 					<label for="requirement-criticality" class="display-table-cell"><f:message key="requirement.criticality.combo.label" /></label>
