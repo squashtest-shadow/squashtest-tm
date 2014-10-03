@@ -32,28 +32,78 @@ if (window.console.trace === undefined){
 
 requirejs.config({
 			packages : [
-				"execution-processing",
-				"contextual-content-handlers",
-				"file-upload",
-				"squashtable",
-				"tree",
-				"search",
+				{
+					name : 'execution-processing',
+					main : 'execution-processing-main'
+				},
+				{
+					name : 'contextual-content-handlers',
+					main : 'ctxt-handlers-main'
+				},
+				{
+					name : 'file-upload',
+					main : 'file-upload-main'
+				},
+				{
+					name : 'squashtable',
+					main : 'squashtable-main'
+				},
+				{
+					name : 'tree',
+					main : 'tree-main'
+				},
 				//cufs
-				"custom-field-editor",
-				"custom-field-binding",
-				"custom-field-values",
+				{
+					name : 'custom-field-binding',
+					main : 'cuf-binding-main'
+				},
+				{
+					name : 'custom-field-values',
+					main : 'cuf-values-main'
+				},
 				//entities management
-				"projects-manager",
-				"test-case-management",
-				"test-case-folder-management",
-				"test-case-library-management",
-				"iteration-management",
-				"test-suite-management",
-				"campaign-management",
+				{
+					name : 'projects-manager',
+					main : 'projects-manager-main'
+				},
+				{
+					name : 'test-case-management',
+					main : 'tc-management-main'
+				},
+				{
+					name : 'test-case-folder-management',
+					main : 'tcf-management-main'
+				},
+				{
+					name : 'test-case-library-management',
+					main : 'tcl-management-main'
+				},
+				{
+					name : 'iteration-management',
+					main : 'iter-management-main'
+				},
+				{
+					name : 'test-suite-management',
+					main : 'ts-management-main'
+				},
+				{
+					name : 'campaign-management',
+					main : 'campaign-management-main'
+				},
+				
 				//workspaces
-				"tc-workspace",
-				"req-workspace",
-				"camp-workspace"
+				{
+					name : 'tc-workspace',
+					main : 'tc-workspace-main'
+				},
+				{
+					name : 'req-workspace',
+					main : 'req-workspace-main'
+				},
+				{
+					name : 'camp-workspace',
+					main : 'camp-workspace-main'
+				}
 			],
 			/*
 			 * rules for paths naming:

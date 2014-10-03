@@ -47,7 +47,10 @@
  */
 
 define([ 
-        "./core/main", './test-plan-panel/main', "dashboard/campaigns-dashboard/main", "./planning/main"], 
+        './core/core-main', 
+        './test-plan-panel/tp-main', 
+        'dashboard/campaigns-dashboard/campaign-dashboard-main', 
+        './planning/planning-main'], 
 		function(core, testPlanPanel, dashboard, planning) {
 	
 	return {
