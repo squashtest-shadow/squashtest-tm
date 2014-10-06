@@ -82,7 +82,7 @@ var myDatePicker;
 		};
 		<c:choose>
 		<c:when test="${ not empty jsVarName }">
-		${jsVarName} = new DatePickerAuto(controls, params);
+		window.${jsVarName} = new DatePickerAuto(controls, params);
 		</c:when>
 		<c:otherwise>
 		var myDatePicker = new DatePickerAuto(controls, params);

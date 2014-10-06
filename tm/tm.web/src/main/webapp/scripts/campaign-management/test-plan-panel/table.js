@@ -148,6 +148,7 @@ define(['jquery', '../../test-plan-panel/sortmode', 'squash.configmanager',
 				}
 			});
 			this.fnSetColumnVis(dsColIdx, dsColVis);		
+			this.data('showDatasets', dsColVis);
 		};
 
 		var tableSettings = {

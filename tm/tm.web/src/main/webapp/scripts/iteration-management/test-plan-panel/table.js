@@ -324,8 +324,9 @@ define(
 								return false;
 							}
 						});
-						this.fnSetColumnVis(dsColIdx, dsColVis);
 						
+						this.fnSetColumnVis(dsColIdx, dsColVis);
+						this.data('showDatasets', dsColVis);
 					},
 
 					
@@ -373,7 +374,9 @@ define(
 					toggleRows : {
 						'td.toggle-row' : function(table, jqold, jqnew) {
 
-							var data = table.fnGetData(jqold.get(0)), url = initconf.urls.testplanUrl + data['entity-id'] + '/executions';
+							var data = table.fnGetData(jqold.get(0)), 
+								url = initconf.urls.testplanUrl + data['entity-id'] + '/executions',
+								showDs = table.data('showDatasets') ;
 
 							jqnew.load(url, function() {
 
@@ -383,6 +386,10 @@ define(
 										.squashButton(), newautoexecBtn = jqnew
 										.find('.new-auto-exec')
 										.squashButton();
+								
+								if (! showDs){
+									jqnew.find('.tp-row-dataset').hide();
+								}
 
 								// the delete buttons
 								if (initconf.permissions.executable) {

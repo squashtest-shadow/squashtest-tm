@@ -59,7 +59,7 @@ number of columns.
       <thead>
         <tr class="executions-table-header">
           <th></th>
-          <th class="width-tenperc"></th>
+          <th class="tp-row-dataset width-tenperc"></th>
           <th class="width-tenperc"></th>
           <th class="width-tenperc"></th>
           <th class="width-tenperc"></th>
@@ -77,7 +77,7 @@ number of columns.
                         <span> ${ execution.name }</span>
 					</a>
 				</td>
-				<td>
+				<td class="tp-row-dataset">
 					<span >
                       <c:out value="${(execution.datasetLabel == null) ? labelNodata :
                                       (fn:length(execution.datasetLabel) == 0) ? labelNone : execution.datasetLabel}" />
