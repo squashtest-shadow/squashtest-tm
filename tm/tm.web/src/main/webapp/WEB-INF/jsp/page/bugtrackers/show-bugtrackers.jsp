@@ -30,7 +30,7 @@
 
 <s:url var="administrationUrl" value="/administration" />
 
-<layout:info-page-layout titleKey="squashtm.bugtrackers.title" isSubPaged="true">
+<layout:info-page-layout titleKey="squashtm.bugtrackers.title" isSubPaged="true" main="bugtracker-manager/bugtracker-manager.js">
 	<jsp:attribute  name="head">	
 		<comp:sq-css name="squash.grey.css" />
 		
@@ -59,20 +59,43 @@
 
 <div class="fragment-body">
 	<input class="snap-right" type="button" value='<f:message key="label.AddBugtracker" />' id="new-bugtracker-button"/>
+	<input class="snap-right sq-btn" type="button" value='<f:message key="label.deleteBugtracker" />' id="delete-bugtracker-button"/>
 	<div style="clear:both"></div>
 	
 	<table id="bugtrackers-table" class="unstyled-table" data-def="ajaxsource=${bugtrackersUrl}, hover, pre-sort=1-asc">
 		<thead>
 			<tr>
 				<th data-def="map=index, select">#</th>
-				<th data-def="map=name, sortable, link=${bugtrackerDetailsBaseUrl}/{id}/info"><f:message key="label.Name" /></th>
+				<th data-def="map=name, sortable, link=${bugtrackerDetailsBaseUrl}/{entity-id}/info"><f:message key="label.Name" /></th>
 				<th data-def="map=kind, sortable"><f:message key="label.Kind" /></th>
 				<th data-def="map=url, sortable, link={url}"><f:message key="label.Url" /></th>
 				<th data-def="map=iframe-friendly"><f:message key="label.lower.iframe" /></th>
+					<th data-def="map=delete, delete-button=#delete-bugtracker-popup"></th>
 			</tr>
 		</thead>
 		<tbody><%-- Will be populated through ajax --%></tbody>
 	</table>
+
+
+
+		<f:message var="deleteBugtrackerTitle" key="dialog.delete-bugtracker.title" />
+		<div id="delete-bugtracker-popup" class="popup-dialog not-displayed" title="${deleteBugtrackerTitle}">
+			
+			<div class="display-table-row">
+	            <div class="display-table-cell warning-cell">
+	                <div class="delete-node-dialog-warning"></div>
+	            </div>
+	            <div class="display-table-cell">
+				TEST
+				</div>
+			</div>
+			<div class="popup-dialog-buttonpane">
+			    <input class="confirm" type="button" value="<f:message key='label.Confirm' />" />
+			    <input class="cancel" type="button" value="<f:message key='label.Cancel' />" />				
+			</div>
+		
+		</div>	
+
 
 
 <pop:popup id="add-bugtracker-dialog" titleKey="dialog.new-bugtracker.title" openedBy="new-bugtracker-button">
@@ -131,16 +154,7 @@
 </pop:popup>
 
 		
-	<script type="text/javascript">
-require(["common"], function() {
-	require(["jquery", "squashtable"], function($){					
-		$(function() {		
-			$('#new-bugtracker-button').button();				
-			$("#bugtrackers-table").squashTable({},{});						
-		});				
-	});				
-});				
-	</script>
+
 </div>
 </jsp:attribute>
 </layout:info-page-layout>

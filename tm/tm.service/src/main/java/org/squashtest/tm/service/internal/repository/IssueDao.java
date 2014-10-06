@@ -31,7 +31,10 @@ import org.squashtest.tm.domain.testcase.TestCase;
 
 public interface IssueDao extends EntityDao<Issue> {
 
-	/**
+	
+    List<Issue> getAllIssueFromBugTrackerId(Long bugtrackerId);
+    
+    /**
 	 * Will count the total number of issues related to the given IssueList.
 	 * 
 	 * 

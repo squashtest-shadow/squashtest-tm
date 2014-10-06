@@ -20,6 +20,8 @@
  */
 package org.squashtest.tm.service.bugtracker;
 
+import java.util.Collection;
+
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.tm.exception.DuplicateNameException;
@@ -35,6 +37,10 @@ public interface BugTrackerManagerService extends BugTrackerFinderService{
 	 */
 	void addBugTracker(BugTracker bugTracker);
 
+	/**
+	 * Delete bugtracker(s), remove their binding to projects and delete all issues associated to them.
+	 * @param bugtrackerIds collection of ids of the bugtrackers to be deleted
+	 */
+	void deleteBugTrackers(Collection<Long> bugtrackerIds);
 	
-
 }

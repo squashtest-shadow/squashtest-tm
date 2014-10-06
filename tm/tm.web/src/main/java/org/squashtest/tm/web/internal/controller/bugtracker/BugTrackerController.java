@@ -73,11 +73,13 @@ import org.squashtest.tm.domain.execution.ExecutionStep;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.service.bugtracker.BugTrackerFinderService;
+import org.squashtest.tm.service.bugtracker.BugTrackerManagerService;
 import org.squashtest.tm.service.bugtracker.BugTrackersLocalService;
 import org.squashtest.tm.service.campaign.CampaignFinder;
 import org.squashtest.tm.service.campaign.IterationFinder;
 import org.squashtest.tm.service.campaign.TestSuiteFinder;
 import org.squashtest.tm.service.execution.ExecutionFinder;
+import org.squashtest.tm.service.project.CustomGenericProjectManager;
 import org.squashtest.tm.service.testcase.TestCaseFinder;
 import org.squashtest.tm.web.internal.controller.attachment.UploadedData;
 import org.squashtest.tm.web.internal.controller.attachment.UploadedDataPropertyEditorSupport;
@@ -101,6 +103,8 @@ public class BugTrackerController {
 	private ExecutionFinder executionFinder;
 	private TestCaseFinder testCaseFinder;
 	private BugTrackerFinderService bugTrackerFinderService;
+	private BugTrackerManagerService bugTrackerManagerService;
+
 
 	private static final String EXECUTION_STEP_TYPE = "execution-step";
 	private static final String EXECUTION_TYPE = "execution";
@@ -117,6 +121,14 @@ public class BugTrackerController {
 	@Inject
 	private MessageSource messageSource;
 
+	
+
+	
+	
+	@ServiceReference
+	public void setBugTrackerManagerService(BugTrackerManagerService bugTrackerManagerService){
+	    this.bugTrackerManagerService = bugTrackerManagerService;
+	}
 
 	@ServiceReference
 	public void setCampaignFinder(CampaignFinder campaignFinder) {
@@ -748,6 +760,22 @@ public class BugTrackerController {
 
 	}
 
+	   /* **************************************************************************************************************
+     * *
+     * administration section * *
+     * ***********************************************************************************************************
+     */
+	
+	   @RequestMapping(value = "/{bugtrackerIds}", method = RequestMethod.DELETE)
+	    public @ResponseBody
+	    void deleteUsers(@PathVariable("bugtrackerIds") List<Long> bugtrackerIds){
+           LOGGER.debug("ids of bugtracker to delete " + bugtrackerIds.toString());
+	       bugTrackerManagerService.deleteBugTrackers(bugtrackerIds);
+	    }
+	
+	
+	
+	
 	/* ******************************* private methods ********************************************** */
 
 	private BugTrackerStatus checkStatus(long projectId) {

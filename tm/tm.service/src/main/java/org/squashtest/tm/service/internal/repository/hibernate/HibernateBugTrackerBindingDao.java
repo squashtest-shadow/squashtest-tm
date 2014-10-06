@@ -20,11 +20,22 @@
  */
 package org.squashtest.tm.service.internal.repository.hibernate;
 
+import java.util.List;
+
+import org.hibernate.Query;
 import org.springframework.stereotype.Repository;
 import org.squashtest.tm.domain.bugtracker.BugTrackerBinding;
 import org.squashtest.tm.service.internal.repository.BugTrackerBindingDao;
 
 @Repository
 public class HibernateBugTrackerBindingDao extends HibernateEntityDao<BugTrackerBinding> implements BugTrackerBindingDao {
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<BugTrackerBinding> findByBugtrackerId(Long id) {
+        Query query = currentSession().getNamedQuery("bugTrackerBinding.findByBugtrackerId");
+        query.setParameter("bugtrackerId", id);
+        return query.list();
+    }
 
 }
