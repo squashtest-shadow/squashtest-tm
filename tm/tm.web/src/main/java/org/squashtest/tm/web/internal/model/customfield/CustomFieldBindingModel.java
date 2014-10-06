@@ -25,15 +25,15 @@ package org.squashtest.tm.web.internal.model.customfield;
 public class CustomFieldBindingModel {
 
 	private long id;
-	
+
 	private long projectId;
-	
+
 	private BindableEntityModel boundEntity;
-	
-	private CustomFieldModel customField;
-	
+
+	private CustomFieldModel<?> customField;
+
 	private RenderingLocationModel[] renderingLocations;
-	
+
 	private int position;
 
 	public long getId() {
@@ -61,11 +61,11 @@ public class CustomFieldBindingModel {
 	}
 
 
-	public CustomFieldModel getCustomField() {
+	public CustomFieldModel<?> getCustomField() {
 		return customField;
 	}
 
-	public void setCustomField(CustomFieldModel customField) {
+	public void setCustomField(CustomFieldModel<?> customField) {
 		this.customField = customField;
 	}
 

@@ -26,11 +26,12 @@
 define(function() {
 
 	return {
-		newBinding : function(projectId, fieldId, entityName) {
+		newBinding : function(projectId, fieldId, entityName, type) {
 			return {
 				projectId : projectId,
 				customField : {
-					id : fieldId
+					id : fieldId,
+					_inputType : type
 				},
 				boundEntity : {
 					enumName : entityName
