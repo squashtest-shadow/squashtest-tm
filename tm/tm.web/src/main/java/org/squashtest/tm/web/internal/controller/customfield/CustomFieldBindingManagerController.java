@@ -30,6 +30,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 import org.squashtest.tm.core.foundation.collection.DefaultPagingAndSorting;
 import org.squashtest.tm.domain.customfield.BindableEntity;
+import org.squashtest.tm.domain.customfield.CustomField;
 import org.squashtest.tm.domain.customfield.CustomFieldBinding;
 import org.squashtest.tm.service.customfield.CustomFieldBindingFinderService;
 
@@ -51,6 +52,11 @@ public class CustomFieldBindingManagerController {
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getManager(@PathVariable("projectId") Long projectId){
 		
+	    List<CustomField> customFields = service.findAvailableCustomFields();
+	    ModelAndView mav;
+	    
+	    if (customFields.size() > 0){
+	    
 		List<CustomFieldBinding> testCaseBindings = service.findCustomFieldsForProjectAndEntity
 													(projectId, BindableEntity.TEST_CASE, new DefaultPagingAndSorting(DEFAULT_PAGE_SIZE)).getPagedItems();
 		
@@ -62,7 +68,7 @@ public class CustomFieldBindingManagerController {
 		List<CustomFieldBinding> executionBindings = service.findCustomFieldsForProjectAndEntity(projectId, BindableEntity.EXECUTION);
 		List<CustomFieldBinding> executionStepBindings = service.findCustomFieldsForProjectAndEntity(projectId, BindableEntity.EXECUTION_STEP);
 		
-		ModelAndView mav = new ModelAndView("project-tabs/custom-field-binding.html");
+		mav = new ModelAndView("project-tabs/custom-field-binding.html");
 		mav.addObject("testCaseBindings", testCaseBindings);
 		mav.addObject("testStepBindings", testStepBindings);
 		mav.addObject("requirementBindings", requirementBindings);
@@ -73,6 +79,11 @@ public class CustomFieldBindingManagerController {
 		mav.addObject("executionStepBindings", executionStepBindings);
 		
 		mav.addObject("projectIdentifier", projectId);
+	    }
+	    else {
+	     mav = new ModelAndView("fragment/project/project-no-cuf-exists");  
+	     mav.addObject("msg", "message.project.cuf.noCufExists");
+	    }
 		
 		return mav;
 		
