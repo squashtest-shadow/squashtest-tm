@@ -158,7 +158,14 @@ public final class CustomFieldAdministrationController {
 
 	@RequestMapping(value = "/{customFieldId}", method = RequestMethod.DELETE)
 	@ResponseBody
+	@Deprecated
+	/**
+	 * 
+	 * @param customFieldId
+	 * @deprecated use CustomFieldController#deleteCustomField instead
+	 */
 	public void deleteCustomField(@PathVariable long customFieldId) {
+		// TODO custom-field rest api -> should be in CustomFieldController
 		customFieldManagerService.deleteCustomField(customFieldId);
 	}
 }

@@ -59,8 +59,6 @@
     <dropTable tableName="cuf_values_to_save" />
   </changeSet>
 
-  
-
   <changeSet id="tm-1.10.5-issue-3860-3" author="mpagnon">
     <comment>add missing custom field values </comment>
     <createTable tableName="steps_should_have_cuf_values">
