@@ -150,7 +150,7 @@ public class CustomFieldBindingController {
 		service.moveCustomFieldbindings(bindingIds, newIndex);
 	}
 
-	@RequestMapping(value = "/new-batch", method = RequestMethod.POST)
+	@RequestMapping(value = "/new-batch", method = RequestMethod.POST, consumes="application/json")
 	@ResponseBody
 	public void createNewBinding(@RequestBody CustomFieldBindingModel[] bindingModels) {
 		// TODO not atomic, push down a level

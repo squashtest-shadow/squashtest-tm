@@ -39,6 +39,7 @@ import org.squashtest.tm.domain.customfield.SingleSelectField;
 import org.squashtest.tm.domain.denormalizedfield.DenormalizedFieldValue;
 import org.squashtest.tm.domain.denormalizedfield.DenormalizedSingleSelectField;
 
+
 @Component
 class CustomFieldModelFactory {
 
@@ -195,6 +196,8 @@ class CustomFieldModelFactory {
 		model.setLabel(field.getLabel());
 		model.setOptional(field.isOptional());
 		model.setInputType(typeModel);
+		model.set_inputType(typeModel.getEnumName());
+		model.set_inputType(typeModel.getEnumName());
 		model.setFriendlyOptional(field.isOptional() ? getMessage("label.Yes") : getMessage("label.No"));
 		model.setCode(field.getCode());
 
@@ -260,6 +263,7 @@ class CustomFieldModelFactory {
 		customFieldModel.setCode(value.getCode());
 		customFieldModel.setId(value.getId());
 		customFieldModel.setInputType(inputTypeModel);
+		customFieldModel.set_inputType(inputTypeModel.getEnumName());
 		customFieldModel.setLabel(value.getLabel());
 		customFieldModel.setOptional(true);
 		customFieldModel.setDenormalized(true);
@@ -276,9 +280,11 @@ class CustomFieldModelFactory {
 		return messageSource.getMessage(key, null, locale);
 	}
 
+
+
 	/* ******************* various implementations ******************* */
 
-	class SingleValuedCustomFieldModel extends CustomFieldModel<String> {
+	public static class SingleValuedCustomFieldModel extends CustomFieldModel<String> {
 
 		private String defaultValue;
 
@@ -294,7 +300,7 @@ class CustomFieldModelFactory {
 
 	}
 
-	class DatePickerFieldModel extends SingleValuedCustomFieldModel {
+	public static class DatePickerFieldModel extends SingleValuedCustomFieldModel {
 
 		private String format;
 
@@ -318,7 +324,7 @@ class CustomFieldModelFactory {
 
 	}
 
-	class SingleSelectFieldModel extends SingleValuedCustomFieldModel {
+	public static class SingleSelectFieldModel extends SingleValuedCustomFieldModel {
 
 		private List<CustomFieldOptionModel> options = new LinkedList<CustomFieldOptionModel>();
 
@@ -336,7 +342,7 @@ class CustomFieldModelFactory {
 
 	}
 
-	class MultiSelectFieldModel extends CustomFieldModel<String[]> {
+	public static class MultiSelectFieldModel extends CustomFieldModel<String[]> {
 
 		private List<String> defaultValue = new LinkedList<String>();
 		private List<CustomFieldOptionModel> options = new LinkedList<CustomFieldOptionModel>();
@@ -369,7 +375,7 @@ class CustomFieldModelFactory {
 
 	}
 
-	class CustomFieldOptionModel {
+	public static class CustomFieldOptionModel {
 
 		private String label;
 

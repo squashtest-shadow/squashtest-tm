@@ -90,7 +90,8 @@ define([ "require", "./models", "app/util/ButtonUtil", "jquery.squash", "jquery.
 					newLine.addClass(rowCss);
 					var tds = newLine.find("td");
 
-					tds.eq(0).prop("id", data.id);
+					tds.eq(0).prop("id", data.id)
+							.data("type", data.inputType.enumName);
 					tds.eq(1).text(data.name);
 					tds.eq(2).text(data.inputType.friendlyName);
 					tds.eq(3).text(data.friendlyOptional);
@@ -122,17 +123,13 @@ define([ "require", "./models", "app/util/ButtonUtil", "jquery.squash", "jquery.
 		};
 
 		var makePayload = function() {
-			var selectedIds = table.find("tbody.available-fields input:checked").parent("td").map(function() {
-				return this.id;
+			return table.find("tbody.available-fields input:checked").parent("td").map(function() {
+				return Model.newBinding(
+						settings.projectId, 
+						this.id, 
+						settings.bindableEntity, 
+						$(this).data('type'));
 			}).get();
-
-			var bindings = [];
-			var i = 0;
-			for (i = 0; i < selectedIds.length; i++) {
-				bindings.push(Model.newBinding(settings.projectId, selectedIds[i], settings.bindableEntity));
-			}
-
-			return bindings;
 
 		};
 

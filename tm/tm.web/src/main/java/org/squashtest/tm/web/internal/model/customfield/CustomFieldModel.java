@@ -20,7 +20,11 @@
  */
 package org.squashtest.tm.web.internal.model.customfield;
 
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.databind.annotation.JsonTypeIdResolver;
 
+@JsonTypeInfo(include=JsonTypeInfo.As.PROPERTY, property="_inputType", use=JsonTypeInfo.Id.CUSTOM)
+@JsonTypeIdResolver(CustomFieldModelIdTypeResolver.class)
 public abstract class CustomFieldModel<VALUETYPE> {
 
 	private long id;
@@ -36,6 +40,9 @@ public abstract class CustomFieldModel<VALUETYPE> {
 	private String code;
 
 	private InputTypeModel inputType;
+
+	// this one is required by Jackson, this is how Jackson discriminates (see annotations above)
+	private String _inputType;
 
 	private boolean isDenormalized;
 
@@ -87,6 +94,13 @@ public abstract class CustomFieldModel<VALUETYPE> {
 		this.inputType = inputType;
 	}
 
+	public String get_inputType() {
+		return _inputType;
+	}
+
+	public void set_inputType(String _inputType) {
+		this._inputType = _inputType;
+	}
 
 	public String getCode() {
 		return code;
