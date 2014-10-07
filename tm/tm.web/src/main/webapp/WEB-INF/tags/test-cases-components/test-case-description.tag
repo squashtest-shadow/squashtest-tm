@@ -35,30 +35,26 @@
 
 <c:url var="testCaseUrl" 					value="/test-cases/${testCase.id}"/>
 
+<f:message var="labelDescription" key="label.Description" />
 
 
 <comp:toggle-panel id="test-case-description-panel"
-				   titleKey="label.Description" 
+				   title=  '${labelDescription} <span class="small discret">[ID = ${ testCase.id }]</span>'
 				   open="true">
 				   
 	<jsp:attribute name="body">
 	<div id="test-case-description-table"  class="display-table">
 		
 		<div class="display-table-row">
-			<label class="display-table-cell" for="test-case-id">ID</label>
-			<div class="display-table-cell" id="test-case-id">${ testCase.id }</div>
+			<label class="display-table-cell" for="test-case-reference"><f:message key="test-case.reference.label" /></label>
+			<div class="display-table-cell" id="test-case-reference">${ testCase.reference }</div>
 		</div>
 		
 		<div class="display-table-row">
 			<label for="test-case-description" class="display-table-cell"><f:message key="label.Description" /></label>
 			<div class="display-table-cell" id="test-case-description">${ testCase.description }</div>
 		</div>
-		
-		<div class="display-table-row">
-			<label class="display-table-cell" for="test-case-reference"><f:message key="test-case.reference.label" /></label>
-			<div class="display-table-cell" id="test-case-reference">${ testCase.reference }</div>
-		</div>
-		
+
 		<div class="display-table-row">
 			<label for="test-case-importance" class="display-table-cell"><f:message key="test-case.importance.combo.label" /></label>
 			<div class="display-table-cell">

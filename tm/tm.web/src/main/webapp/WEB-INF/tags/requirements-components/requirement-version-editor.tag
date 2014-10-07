@@ -70,10 +70,7 @@
 <div class="ui-widget-header ui-corner-all ui-state-default fragment-header">
   <div style="float: left; height: 100%;">
     <h2>
-      <span>
-        <f:message key="requirement-version.header.title" />
-        &nbsp;:&nbsp;
-      </span>
+
       <c:set var="completeRequirementName" value="${ requirementVersion.name }" />
       <c:if test="${ not empty requirementVersion.reference && fn:length(requirementVersion.reference) > 0 }">
         <c:set var="completeRequirementName" value='${ requirementVersion.reference } - ${ requirementVersion.name }' />
@@ -139,8 +136,10 @@
         <c:set var="descrRicheditAttributes" value="class='editable rich-editable' data-def='url=${requirementUrl}'"/>
         <c:set var="referenceEditableAttributes" value="class='editable text-editable' data-def='url=${requirementUrl}, maxlength=50, callback=squashtm.requirement.updateReferenceInTitle'" />  
       </c:if>
+<f:message var="requirementInformationPanelLabel" key="requirement.panel.general-informations.title" />
 
-      <comp:toggle-panel id="requirement-information-panel" titleKey="requirement.panel.general-informations.title"
+
+      <comp:toggle-panel id="requirement-information-panel" 	   title=  '${requirementInformationPanelLabel} <span class="small discret">[ID = ${requirementVersion.requirement.id }]</span>'
         open="true">
         <jsp:attribute name="body">
 			<div id="edit-requirement-table" class="display-table">
@@ -150,10 +149,7 @@
               </label>
 					<div id="requirement-version-number">${ requirementVersion.versionNumber }</div>
 				</div>
-				<div class="display-table-row">
-					<label for="requirement-version-id">ID</label>
-					<div id="requirement-version-id">${ requirementVersion.requirement.id }</div>
-				</div>
+	
 				
 				<div>
 					<label for="requirement-reference">

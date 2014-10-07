@@ -119,7 +119,7 @@
 	class="ui-widget-header ui-state-default ui-corner-all fragment-header ctx-title">
 	<div>
 		<h2>
-			<span><f:message key="iteration.header.title" />&nbsp;:&nbsp;</span>
+		
             <a id="iteration-name" href="${ iterationUrl }/info">
               <c:out value="${ iteration.name }" escapeXml="true" />
 			</a>

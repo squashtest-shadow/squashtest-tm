@@ -209,7 +209,7 @@ require(["common"], function() {
 <div class="ui-widget-header ui-corner-all ui-state-default fragment-header">
 	<div style="float:left;height:100%;">	
 		<h2>
-			<span><f:message key="requirement.header.title" />&nbsp;:&nbsp;</span>
+		
 			<c:set var="completeRequirementName" value="${ requirement.name }" />
 			<c:if test="${not empty requirement.reference && fn:length(requirement.reference) > 0}" >
 				<c:set var="completeRequirementName" value='${ requirement.reference } - ${ requirement.name }' />
@@ -263,17 +263,16 @@ require(["common"], function() {
         <c:set var="referenceEditableAttributes" value="class='editable text-editable' data-def='url=${requirementUrl}, maxlength=50, callback=squashtm.requirement.updateReferenceInTitle'" />
 	</c:if>
 <%--------------------------- General Informations section ------------------------------------%>
-	<comp:toggle-panel id="requirement-information-panel" titleKey="requirement.panel.general-informations.title"  open="true" >
+
+	<f:message var="labelRequirementInfoPanel" key="requirement.panel.general-informations.title"  />
+	<comp:toggle-panel id="requirement-information-panel"   title=  '${labelRequirementInfoPanel} <span class="small discret">[ID = ${ requirement.id }]</span>' open="true" >
 		<jsp:attribute name="body">
 			<div id="edit-requirement-table" class="display-table">
 				<div class="display-table-row">
 					<label for="requirement-version-number"><f:message key="requirement-version.version-number.label" /></label>
 					<div class="display-table-cell" id="requirement-version-number">${ requirement.currentVersion.versionNumber }&nbsp;&nbsp;<a href="<c:url value='/requirements/${ requirement.id }/versions/manager' />"><f:message key="requirement.button.manage-versions.label" /></a></div>
 				</div>
-				<div class="display-table-row">
-					<label for="requirement-id">ID</label>
-					<div class="display-table-cell" id="requirement-id">${ requirement.id }</div>
-				</div>
+			
 				
 				<div class="display-table-row">
 					<label class="display-table-cell"  for="requirement-reference"><f:message key="label.Reference" /></label>

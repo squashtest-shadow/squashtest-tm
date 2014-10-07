@@ -29,6 +29,8 @@ define([ "jquery", "squash.translator", "datepicker/jquery.squash.datepicker-loc
 			placeholder : "rich-edit.placeholder"
 		});
 		
+		lang.placeholder = "<span class='small discret'>" + lang.placeholder + "</span>";
+		
 		return $.extend(lang, {
 			width : '80%',
 			maxlength : 255,

@@ -94,8 +94,7 @@
 
 	<div style="float: left; height: 100%;">
 		<h2>
-			<span><f:message key="label.Campaign" />&nbsp;:&nbsp;</span><a
-				id="campaign-name" href="${ campaignUrl }/info"><c:out
+		<a id="campaign-name" href="${ campaignUrl }/info"><c:out
 					value="${ campaign.name }" escapeXml="true" />
 			</a>
 		</h2>

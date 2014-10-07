@@ -58,7 +58,7 @@
 
 <div class="ui-widget-header ui-corner-all ui-state-default fragment-header">
 	<h2>
-		<span><f:message key="folder.title" />&nbsp;:&nbsp;</span><span id="folder-name"><c:out value="${ folder.name }" escapeXml="true"/></span>
+		<span id="folder-name"><c:out value="${ folder.name }" escapeXml="true"/></span>
 	</h2>
 </div>
 

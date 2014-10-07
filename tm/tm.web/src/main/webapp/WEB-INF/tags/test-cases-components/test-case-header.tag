@@ -35,9 +35,7 @@
 
 	<div style="float: left; height: 100%;">
 		<h2>
-			<span>
-				<f:message key="test-case.header.title" />&nbsp;:&nbsp;
-			</span>
+	
 			
 			<a id="test-case-name" href="${ testCaseUrl }/info">
 				<c:out value="${testCase.fullName}" escapeXml="true" /> 

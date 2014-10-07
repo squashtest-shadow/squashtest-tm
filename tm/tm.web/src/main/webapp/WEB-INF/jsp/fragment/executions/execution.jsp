@@ -89,7 +89,6 @@
 
 	<div style="float: left; height: 100%; width: 90%;">
 		<h2>
-			<span><f:message key="execution.execute.header.title" />&nbsp;:&nbsp;</span>
 					<a id="execution-name" href="${ executionUrl }">&#35;<c:out
 						value="${executionRank} - ${ execution.name }" escapeXml="true" />
 					</a>
@@ -133,13 +132,14 @@
 		<jsp:attribute name="body">
 		<div id="execution-information-table" class="display-table">
 			<div class="display-table-row">
-				<label class="display-table-cell" for="testcase-description"><f:message key="label.Description" /></label>
-				<div id="testcase-description" class="display-table-cell">${ execution.tcdescription }</div>
-			</div>
-			<div class="display-table-row">
 				<label class="display-table-cell" for="testcase-reference"><f:message key="test-case.reference.label" /></label>
 				<div id="testcase-reference" class="display-table-cell">${ execution.reference }</div>
 			</div>
+			<div class="display-table-row">
+				<label class="display-table-cell" for="testcase-description"><f:message key="label.Description" /></label>
+				<div id="testcase-description" class="display-table-cell">${ execution.tcdescription }</div>
+			</div>
+		
 			<div class="display-table-row">
 				<label class="display-table-cell" for="testcase-importance"><f:message key="test-case.importance.label" /></label>
 				<div id="testcase-importance" class="display-table-cell"><comp:level-message level="${ execution.importance }"/></div>

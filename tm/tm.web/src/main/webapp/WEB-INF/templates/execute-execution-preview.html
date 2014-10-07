@@ -102,6 +102,15 @@ documentation :
       data-title="Informations" th:attr="data-title=#{generics.information.title}">
 
       <div class="display-table">
+      
+              <div class="display-table-row">
+
+          <label class="display-table-cell" th:text="#{test-case.reference.label}">reference</label>
+
+          <div id="testcase-reference" class="display-table-cell" th:text="${execution.reference}">REF01</div>
+        </div>
+      
+      
         <div class="display-table-row">
 
           <label class="display-table-cell" th:text="#{label.Description}">description</label>
@@ -122,12 +131,6 @@ documentation :
           </div>
         </div>
 
-        <div class="display-table-row">
-
-          <label class="display-table-cell" th:text="#{test-case.reference.label}">reference</label>
-
-          <div id="testcase-reference" class="display-table-cell" th:text="${execution.reference}">REF01</div>
-        </div>
 
         <div class="display-table-row">
           <label class="display-table-cell" th:text="#{test-case.importance.label}">importance</label>
