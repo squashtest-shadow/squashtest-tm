@@ -23,6 +23,7 @@ package org.squashtest.tm.domain.requirement;
 import java.util.Date;
 
 /**
+ * Interface to retrieve RequirementVersion attributes (such as criticality, category, description ...) from a bean.
  * @author Gregory
  * 
  */

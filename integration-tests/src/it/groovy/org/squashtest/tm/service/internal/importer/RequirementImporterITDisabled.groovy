@@ -161,8 +161,82 @@ class RequirementImporterITDisabled extends DbunitServiceSpecification {
 
 		//		//TODO improve test checks
 
+
 	}
 
+	//	@DataSet("RequirementImporterIT.setup.xml")
+	//	def "should import a hierarchy of requirement"(){
+	//
+	//		given :
+	//		Class classe = this.getClass()
+	//		ClassLoader classLoader = classe.getClassLoader()
+	//		InputStream stream = classLoader.getResourceAsStream("import/import-requirement-into-requirement.xls")
+	//
+	//		when :
+	//		def summary = importer.importExcelRequirements( stream, -2L)
+	//
+	//
+	//		then  : "all success"
+	//		summary.getTotal() == 4
+	//		summary.getSuccess()  == 4
+	//		summary.getRenamed() == 0
+	//		summary.getFailures() == 0
+	//
+	//		def rContent = service.findLibrary(-2l).content
+	//		rContent.size() == 1
+	//
+	//		and : "first requirement imported as root"
+	//		def req3 = rContent.get(0)
+	//		req3 != null
+	//		def req3Content = req3.content
+	//		req3Content.size() == 1
+	//		def req4 = req3Content.get(0)
+	//		def req4Content = req4.content
+	//		req4Content.size() == 1
+	//		def req5 = req4Content.get(0)
+	//		def req5Content = req5.content
+	//		req5Content.size() == 1
+	//		def req6 = req5Content.get(0)
+	//		req6 != null
+	//
+	//	}
+	//
 
+	@DataSet("RequirementImporterIT.setup.xml")
+	def "should import a hierarchy with new folder header"(){
+
+		given :
+		Class classe = this.getClass()
+		ClassLoader classLoader = classe.getClassLoader()
+		InputStream stream = classLoader.getResourceAsStream("import/import-requirement-with-new-folder-column.xls")
+
+		when :
+		def summary = importer.importExcelRequirements( stream, -2L)
+
+
+		then  : "all success and one renamed"
+		summary.getTotal() == 7
+		summary.getSuccess()  == 7
+		summary.getRenamed() == 1
+		summary.getFailures() == 0
+
+		def rContent = service.findLibrary(-2l).content
+		rContent.size() == 4
+
+
+		and : "folder name1 imported with it's content "
+
+		def req1 = rContent.find {it.name == "name1"}
+		req1 != null
+		RequirementFolder req1folder  = (RequirementFolder) req1
+		req1folder.content.size() == 1
+
+		RequirementFolder req2 = (RequirementFolder) req1folder.content.get(0)
+		req2.name == "name2"
+		req2.content.size() == 2
+
+		//... the rest must be ok if both req1folder and req2 are ok
+
+	}
 
 }

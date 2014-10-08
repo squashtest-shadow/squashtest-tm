@@ -50,6 +50,9 @@ class RequirementHierarchyCreator {
 
 	private RequirementParser parser;
 	private ImportSummaryImpl summary = new ImportSummaryImpl();
+	/**
+	 * Dummy RequirementFolder to hold the hierarchy of folder to import as it's content.
+	 */
 	private RequirementFolder root;
 
 	public RequirementHierarchyCreator() {
@@ -69,6 +72,17 @@ class RequirementHierarchyCreator {
 		return root;
 	}
 
+	/**
+	 * Will populate the {@linkplain #root} with the hierarchy of {@link RequirementFolder} and return the Requirement
+	 * nodes informations grouped by and mapped to their parent folder.
+	 * 
+	 * @param excelStream
+	 * @return a map holding
+	 *         <ul>
+	 *         <li>key : a {@link RequirementFolder}</li>
+	 *         <li>value : a list of all the {@link PseudoRequirement}s contained in the folder</li>
+	 *         <ul>
+	 */
 	public Map<RequirementFolder, List<PseudoRequirement>> create(InputStream excelStream) {
 		Map<RequirementFolder, List<PseudoRequirement>> organizedRequirementLibraryNodes = new HashMap<RequirementFolder, List<PseudoRequirement>>();
 		organizedRequirementLibraryNodes.put(root, new ArrayList<PseudoRequirement>());
@@ -91,7 +105,17 @@ class RequirementHierarchyCreator {
 	private void parseFile(Workbook workbook,
 			Map<RequirementFolder, List<PseudoRequirement>> organizedRequirementLibraryNodes) {
 		Sheet sheet = workbook.getSheetAt(0);
+		//map columns
 		Map<String, Integer> columnsMapping = ExcelRowReaderUtils.mapColumns(sheet);
+
+		//modify mapping to make "PATH" still work even if depreacated
+		Integer folderPathRowNb = columnsMapping.get(RequirementParser.FOLDER_PATH_TAG);
+		Integer deprecatedPathRowNb = columnsMapping.get(RequirementParser.DEPRECATED_PATH_TAG);
+		if(folderPathRowNb == null && deprecatedPathRowNb != null){
+			columnsMapping.put(RequirementParser.FOLDER_PATH_TAG, deprecatedPathRowNb);
+		}
+
+		//parse rows
 		for (int r = 1; r <= sheet.getLastRowNum(); r++) {
 			Row row = sheet.getRow(r);
 			parser.parseRow(root, row, summary, columnsMapping, organizedRequirementLibraryNodes);

@@ -26,21 +26,28 @@ import java.util.List;
 import org.squashtest.tm.domain.requirement.RequirementFolder;
 
 /**
+ * Holds :
+ * <ul>
+ * <li>
+ * it's folder owner (or null)</li>
+ * <li>the id information (used to group the requirement version together in the excel file)</li>
+ * <li>a list of it's versions as {@link PseudoRequirementVersion}</li>
+ * </ul>
  * 
  * @author mpagnon
- *
+ * 
  */
 /* package-private */class PseudoRequirement {
 	private RequirementFolder folder = null;
 	private Double id = null;
-	private List<PseudoRequirementVersion> pseudoRequirementVersions; 
+	private List<PseudoRequirementVersion> pseudoRequirementVersions;
 
 	public PseudoRequirement(String label2, int rowNumber) {
 		PseudoRequirementVersion pseudoRequirementVersion = new PseudoRequirementVersion(label2, rowNumber, this);
 		pseudoRequirementVersions = new ArrayList<PseudoRequirementVersion>();
 		pseudoRequirementVersions.add(pseudoRequirementVersion);
 	}
-	
+
 	public void addVersion(PseudoRequirement newReq) {
 		List<PseudoRequirementVersion> newReqVersions = newReq.getPseudoRequirementVersions();
 		PseudoRequirementVersion newReqVersion = newReqVersions.get(0);
@@ -53,7 +60,7 @@ import org.squashtest.tm.domain.requirement.RequirementFolder;
 	public RequirementFolder getFolder() {
 		return folder;
 	}
-	
+
 	public void setFolder(RequirementFolder folder) {
 		this.folder = folder;
 	}
@@ -73,8 +80,5 @@ import org.squashtest.tm.domain.requirement.RequirementFolder;
 	public void setPseudoRequirementVersions(List<PseudoRequirementVersion> pseudoRequirementVersions) {
 		this.pseudoRequirementVersions = pseudoRequirementVersions;
 	}
-
-	
-
 
 }

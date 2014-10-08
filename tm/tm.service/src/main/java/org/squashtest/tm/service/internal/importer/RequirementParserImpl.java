@@ -44,7 +44,7 @@ public class RequirementParserImpl implements RequirementParser {
 			Map<RequirementFolder, List<PseudoRequirement>> organizedRequirementLibraryNodes) {
 		if (validateRow(row, columnsMapping)) {
 			summary.incrTotal();
-			RequirementFolder lastFolder = createHierarchy(readTextField(row, columnsMapping, PATH_TAG), root,
+			RequirementFolder lastFolder = createHierarchy(readTextField(row, columnsMapping, FOLDER_PATH_TAG), root,
 					organizedRequirementLibraryNodes);
 			PseudoRequirement pseudoRequirement = createPseudoRequirement(row, columnsMapping, lastFolder);
 			addPseudoRequirementToFolderList(organizedRequirementLibraryNodes, lastFolder, pseudoRequirement);
@@ -154,7 +154,7 @@ public class RequirementParserImpl implements RequirementParser {
 	private boolean validateRow(Row row, Map<String, Integer> columnsMapping) {
 		boolean isValid = false;
 		if (row != null) {
-			String path = readTextField(row, columnsMapping, PATH_TAG);
+			String path = readTextField(row, columnsMapping, FOLDER_PATH_TAG);
 			String label = readTextField(row, columnsMapping, LABEL_TAG);
 			if (notEmpty(path) || notEmpty(label)) {
 				isValid = true;

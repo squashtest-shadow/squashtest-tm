@@ -30,7 +30,27 @@ import org.squashtest.tm.domain.requirement.RequirementStatus;
 import org.squashtest.tm.domain.requirement.RequirementVersionImportMemento;
 
 /**
+ * Holds:
+ * <ul>
+ * <li>usual requirement version attributes such as
+ * <ul>
+ * <li>label</li>
+ * <li>reference</li>
+ * <li>status</li>
+ * <li>...</li>
+ * </ul>
+ * </li>
+ * <li>structural informations from excel file such as
+ * <ul>
+ * <li>it's {@link PseudoRequirement} owner</li>
+ * <li>the rowNumber</li>
+ * <li>the version (nb)</li>
+ * </ul>
+ * </li>
+ * </ul>
  * 
+ * This class implements Comparable to sort PseudoRequirementVersion depending on their rowNumber.
+ *
  * @author mpagnon
  * 
  */
@@ -178,8 +198,6 @@ RequirementVersionImportMemento {
 	private boolean notEmpty(String string) {
 		return (string != null && (!string.isEmpty()));
 	}
-
-
 
 	@Override
 	public int hashCode() {

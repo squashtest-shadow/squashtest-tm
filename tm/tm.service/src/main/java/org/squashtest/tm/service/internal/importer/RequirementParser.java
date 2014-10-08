@@ -27,8 +27,10 @@ import org.apache.poi.ss.usermodel.Row;
 import org.squashtest.tm.domain.requirement.RequirementFolder;
 
 interface RequirementParser {
-	
-	String PATH_TAG = "PATH";
+
+	String DEPRECATED_PATH_TAG = "PATH";
+	String FOLDER_PATH_TAG = "FOLDER_PATH";
+	String REQ_PATH_TAG = "REQ_PATH";
 	String ID_TAG = "ID";
 	String VERSION_TAG = "VERSION";
 	String LABEL_TAG = "LABEL";
@@ -41,5 +43,5 @@ interface RequirementParser {
 	String CREATED_BY_TAG = "CREATED_BY";
 
 	void parseRow(RequirementFolder root, Row row, ImportSummaryImpl summary, Map<String, Integer> columnsMapping, Map<RequirementFolder, List<PseudoRequirement>> organizedRequirementLibraryNodes) ;
-	
+
 }

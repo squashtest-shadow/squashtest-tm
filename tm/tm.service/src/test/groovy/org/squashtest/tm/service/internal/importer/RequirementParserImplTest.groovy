@@ -34,48 +34,48 @@ import spock.lang.Specification
 
 class RequirementParserImplTest extends Specification {
 
-	RequirementParserImpl parser = new RequirementParserImpl();
-	
-/* ************************ validate **************************** */
+	RequirementParserImpl parser = new RequirementParserImpl()
+
+	/* ************************ validate **************************** */
 	def "should validate row "(){
-		given : 
-		Map<String, Integer> columnsMapping = Mock();
-		columnsMapping.get(parser.PATH_TAG)>>0
+		given :
+		Map<String, Integer> columnsMapping = Mock()
+		columnsMapping.get(parser.FOLDER_PATH_TAG)>>0
 		columnsMapping.get(parser.LABEL_TAG)>>1
 		Row row = makeStringRow("path", "label")
 		expect: parser.validateRow(row, columnsMapping) == true
-		
+
 	}
 	def "should validate row 2"(){
 		given :
-		Map<String, Integer> columnsMapping = Mock();
-		columnsMapping.get(parser.PATH_TAG)>>0
+		Map<String, Integer> columnsMapping = Mock()
+		columnsMapping.get(parser.FOLDER_PATH_TAG)>>0
 		columnsMapping.get(parser.LABEL_TAG)>>1
 		Row row = makeStringRow("path", "")
 		expect: parser.validateRow(row, columnsMapping) == true
 	}
 	def "should not validate row "(){
 		given :
-		Map<String, Integer> columnsMapping = Mock();
-		columnsMapping.get(parser.PATH_TAG)>>0
+		Map<String, Integer> columnsMapping = Mock()
+		columnsMapping.get(parser.FOLDER_PATH_TAG)>>0
 		columnsMapping.get(parser.LABEL_TAG)>>1
 		Row row = makeStringRow("", "")
 		expect: parser.validateRow(row, columnsMapping) == false
 	}
 	def "should not validate row 2"(){
 		given :
-		Map<String, Integer> columnsMapping = Mock();
-		columnsMapping.get(parser.PATH_TAG)>>0
+		Map<String, Integer> columnsMapping = Mock()
+		columnsMapping.get(parser.FOLDER_PATH_TAG)>>0
 		columnsMapping.get(parser.LABEL_TAG)>>1
 		Row row = makeStringRow("", null)
 		expect: parser.validateRow(row, columnsMapping) == false
 	}
-/* ************************ create hierarchy **************************** */
+	/* ************************ create hierarchy **************************** */
 	def "should create hierarchy"(){
 		given:
-		RequirementFolder root = new RequirementFolder();
+		RequirementFolder root = new RequirementFolder()
 		Map<RequirementFolder, List<PseudoRequirement>> organizedRequirementLibraryNodes = new HashMap<RequirementFolder, List<PseudoRequirement>>()
-		String path = "name2/name3";
+		String path = "name2/name3"
 		when:
 		RequirementFolder lastFolder = parser.createHierarchy(path, root, organizedRequirementLibraryNodes)
 		then:
@@ -88,7 +88,7 @@ class RequirementParserImplTest extends Specification {
 		organizedRequirementLibraryNodes.get(folder2) != null
 		organizedRequirementLibraryNodes.get(lastFolder) != null
 	}
-	 
+
 	def "should create hierarchy and not duplicate existing folder"(){
 		given:
 		RequirementFolder root = new RequirementFolder()
@@ -105,19 +105,19 @@ class RequirementParserImplTest extends Specification {
 		when:
 		RequirementFolder lastFolder = parser.createHierarchy(path, root, organizedRequirementLibraryNodes)
 		then:
-		def rootContent = root.getContent() 
+		def rootContent = root.getContent()
 		rootContent.size() == 1
 		rootContent.toArray()[0] == folder2
 		lastFolder == folder3
 		organizedRequirementLibraryNodes.size() == 2
 	}
 	/* ************************ CreatePseudoRequirement **************************** */
-	 
+
 	def "should parse minimum row"(){
-		given : 
+		given :
 		RequirementFolder lastFolder = new RequirementFolder()
 		Map<String, Integer> columnsMapping = Mock()
-		columnsMapping.get(parser.PATH_TAG)>>0
+		columnsMapping.get(parser.FOLDER_PATH_TAG)>>0
 		columnsMapping.get(parser.LABEL_TAG)>>1
 		Row row = makeStringRow("path", "label")
 		when:
@@ -137,7 +137,7 @@ class RequirementParserImplTest extends Specification {
 	def "should parse minimum criticality"(){
 		given :
 		RequirementFolder lastFolder = new RequirementFolder()
-		Map<String, Integer> columnsMapping = Mock()		
+		Map<String, Integer> columnsMapping = Mock()
 		columnsMapping.get(parser.LABEL_TAG)>>0
 		columnsMapping.get(parser.CRITICALITY_TAG)>>1
 		Row row = makeStringRow("path", "CRITICAL")
@@ -212,7 +212,7 @@ class RequirementParserImplTest extends Specification {
 		PseudoRequirementVersion pseudoVersion = pseudoRequirement.pseudoRequirementVersions.get(0)
 		pseudoVersion.reference ==  "12"
 	}
-	
+
 	def "should parse minimum desc"(){
 		given :
 		RequirementFolder lastFolder = new RequirementFolder()
@@ -295,18 +295,18 @@ class RequirementParserImplTest extends Specification {
 		RequirementFolder folder3 = new RequirementFolder()
 		folder3.setName("name3")
 		folder2.getContent().add (folder3)
-		
+
 		Map<RequirementFolder, List<PseudoRequirement>> organizedRequirementLibraryNodes = new HashMap<RequirementFolder, List<PseudoRequirement>>()
-		
+
 		PseudoRequirement pseudoRequirement = new PseudoRequirement ("label", 13)
 		pseudoRequirement.setId(3)
-		
+
 		organizedRequirementLibraryNodes.put(folder2, [pseudoRequirement])
 		organizedRequirementLibraryNodes.put(folder3, new ArrayList<PseudoRequirement>())
-		
+
 		PseudoRequirement newVersion = new PseudoRequirement ("label2", 12)
 		newVersion.setId(3)
-		
+
 		when:
 		parser.addPseudoRequirementToFolderList(organizedRequirementLibraryNodes, folder3, newVersion)
 		then:
@@ -317,11 +317,11 @@ class RequirementParserImplTest extends Specification {
 		pseudoReqs2.size() == 1
 		pseudoReqs2[0].pseudoRequirementVersions.size() == 1
 	}
-/* ************************ util **************************** */
+	/* ************************ util **************************** */
 	def makeStringRow = { a, b ->
 		def row = Mock(Row)
-		
-		
+
+
 		def cell1 = Mock(Cell)
 		def cell2 = Mock(Cell)
 
@@ -338,8 +338,8 @@ class RequirementParserImplTest extends Specification {
 	}
 	def makeStringAndNumberRow = { a, b ->
 		def row = Mock(Row)
-		
-		
+
+
 		def cell1 = Mock(Cell)
 		def cell2 = Mock(Cell)
 
