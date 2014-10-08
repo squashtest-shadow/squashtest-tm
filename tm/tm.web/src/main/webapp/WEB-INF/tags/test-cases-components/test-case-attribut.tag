@@ -35,44 +35,39 @@
 
 <c:url var="testCaseUrl" 					value="/test-cases/${testCase.id}"/>
 
-<f:message var="labelDescription" key="label.Description" />
 
-
-<comp:toggle-panel id="test-case-description-panel"
-				   title=  '${labelDescription} <span class="small discret">[ID = ${ testCase.id }]</span>'
+<comp:toggle-panel id="test-case-attribut-panel"
+				titleKey="label.Attributes"
 				   open="true">
 				   
 	<jsp:attribute name="body">
-	<div id="test-case-description-table"  class="display-table">
-		
-		<div class="display-table-row">
-			<label class="display-table-cell" for="test-case-reference"><f:message key="test-case.reference.label" /></label>
-			<div class="display-table-cell" id="test-case-reference">${ testCase.reference }</div>
-		</div>
-		
-		<div class="display-table-row">
-			<label for="test-case-description" class="display-table-cell"><f:message key="label.Description" /></label>
-			<div class="display-table-cell" id="test-case-description">${ testCase.description }</div>
-		</div>
-
-		
-		
-		<div class="display-table-row">
-			<label for="test-case-status" class="display-table-cell"><f:message key="test-case.status.combo.label" /></label>
+	<div id="test-case-attribut-table"  class="display-table">
+<div class="display-table-row">
+			<label for="test-case-importance" class="display-table-cell"><f:message key="test-case.importance.combo.label" /></label>
 			<div class="display-table-cell">
-			<span id="test-case-status-icon" class="test-case-status-${testCase.status}"> &nbsp &nbsp</span> <span id="test-case-status">${ testCaseStatusLabel }</span>
+			<span id="test-case-importance-icon" class="test-case-importance-${testCase.importance}">&nbsp </span>	<span id="test-case-importance">${testCaseImportanceLabel}</span>
+				<c:if test="${ writable }">
+					<comp:select-jeditable-auto associatedSelectJeditableId="test-case-importance" />
+				</c:if>
 			</div>
 		</div>
 		
+		<div class="display-table-row">
+			<label for="test-case-nature" class="display-table-cell"><f:message key="test-case.nature.combo.label" /></label>
+			<div class="display-table-cell">
+				<span id="test-case-nature">${ testCaseNatureLabel }</span>
+			</div>
+		</div>
 		
+		<div class="display-table-row">
+			<label for="test-case-type" class="display-table-cell">
+				<f:message key="test-case.type.combo.label" />
+			</label>
+			<div class="display-table-cell">
+				<span id="test-case-type">${ testCaseTypeLabel }</span>
+			</div>
+		</div>
 		
-		<%-- Test Automation structure --%>
-		<c:if test="${testCase.project.testAutomationEnabled}">
-		<tc:testcase-test-automation testCase="${testCase}"
-										  canModify="${writable}" />	
-		</c:if>			
-		<%--/Test Automation structure --%>
-		
-	</div>
+		</div>
 	</jsp:attribute>
 </comp:toggle-panel>

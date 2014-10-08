@@ -136,6 +136,8 @@ require(["common"], function() {
 									testCaseImportanceLabel="${testCaseImportanceLabel}"
 									writable="${writable}"/>
 		
+		<tc:test-case-attribut testCase="${testCase}" writable="${writable}" testCaseImportanceLabel="${testCaseImportanceLabel}" />
+	
 
 		<%----------------------------------- Prerequisites -----------------------------------------------%>
 

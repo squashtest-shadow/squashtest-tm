@@ -74,7 +74,7 @@ define([ "jquery", "backbone", "underscore",
 				$.getJSON(this.settings.urls.cufValuesUrl)
 				.success(function(jsonCufs){
 					var mode = (self.settings.writable) ? "jeditable" : "static";
-					cufvalues.infoSupport.init("#test-case-description-table", jsonCufs, mode);
+					cufvalues.infoSupport.init("#test-case-attribut-table", jsonCufs, mode);
 				});
 			}
 

@@ -28,6 +28,6 @@ by overriding this property in `settings.xml`
     
 * `requirejs.optimize.skip` : skips r.js optimization when this 
 
-* `webopt.skip` : skips r.js optimization
+* `webopt.skip` : skips wro4j css optimization
 
 [wd]: http://searls.github.io/jasmine-maven-plugin/bdd-mojo.html#webDriverClassName

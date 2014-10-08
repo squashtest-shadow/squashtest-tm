@@ -80,8 +80,9 @@ define([ "jquery", "backbone", "underscore", "workspace.event-bus", "squash.conf
 							componentId : "test-case-status",
 							jeditableSettings : {
 								data : this.settings.testCaseStatusComboJson
-							}
+							},
 						});
+						
 					
 						this.importanceEditableAuto = new SelectJEditableAuto({
 								associatedSelectJeditableId:"test-case-importance",
@@ -117,9 +118,16 @@ define([ "jquery", "backbone", "underscore", "workspace.event-bus", "squash.conf
 					.done(function(response){
 						self.updateStatusInTree(value);
 					});
-					
+
 					// in the mean time, must return immediately
 					return settings.data[value];
+				},
+				
+				_updateStatusIcon : function (value){
+
+					var status = $("#test-case-status-icon");
+					status.attr("class", "");
+					status.addClass("test-case-status-" + value);
 				},
 				
 				_postImportance : function (value, settings){
@@ -128,19 +136,27 @@ define([ "jquery", "backbone", "underscore", "workspace.event-bus", "squash.conf
 					.done(function(response){
 						self.updateImportanceInTree(value);
 					});
-					
 					// in the mean time, must return immediately
 					return settings.data[value];
 				},
 				
+				_updateImportanceIcon : function (value){
+
+					var status = $("#test-case-importance-icon");
+					status.attr("class", "");
+					status.addClass("test-case-importance-" + value);
+				},
+				
 				_updateStatusInTree : function(value){
 					var self = this;
+					self._updateStatusIcon(value);
 					eventBus.trigger('node.attribute-changed', {identity : self.identity, attribute : 'status', value : value.toLowerCase()});
 					
 				},
 				
 				_updateImportanceInTree : function(value){
 					var self = this;
+					self._updateImportanceIcon(value);
 					eventBus.trigger('node.attribute-changed', {identity : self.identity, attribute : 'importance', value : value.toLowerCase()});
 				},
 				
