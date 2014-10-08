@@ -37,9 +37,10 @@ import org.squashtest.tm.domain.requirement.RequirementFolder;
  * @author mpagnon
  * 
  */
-/* package-private */class PseudoRequirement {
+/* package-private */class PseudoRequirement implements Comparable<PseudoRequirement> {
 	private RequirementFolder folder = null;
 	private Double id = null;
+	private String reqPath = "";
 	private List<PseudoRequirementVersion> pseudoRequirementVersions;
 
 	public PseudoRequirement(String label2, int rowNumber) {
@@ -81,4 +82,34 @@ import org.squashtest.tm.domain.requirement.RequirementFolder;
 		this.pseudoRequirementVersions = pseudoRequirementVersions;
 	}
 
+	public void setReqPath(String reqPath) {
+		if (reqPath != null) {
+			this.reqPath = reqPath;
+		}
+	}
+
+	public String getReqPath() {
+		return reqPath;
+	}
+
+	public boolean hasSameIdAndReqPathThan(PseudoRequirement pseudoRequirement) {
+		return hasSameIdThan(pseudoRequirement) && hasSameReqPathThan(pseudoRequirement);
+	}
+
+	private boolean hasSameReqPathThan(PseudoRequirement pseudoRequirement) {
+		return this.reqPath.compareTo(pseudoRequirement.getReqPath()) == 0;
+	}
+
+	public boolean hasSameIdThan(PseudoRequirement pseudoRequirement) {
+		if (this.getId() == null || pseudoRequirement.getId() == null) {
+			return false;
+		} else {
+			return this.getId().compareTo(pseudoRequirement.getId()) == 0;
+		}
+	}
+
+	@Override
+	public int compareTo(PseudoRequirement o) {
+		return reqPath.compareTo(o.getReqPath());
+	}
 }

@@ -42,6 +42,7 @@ class RequirementMerger extends DestinationManager {
 	}
 
 	public void merge(List<PseudoRequirement> pseudoRequirements) {
+		Collections.sort(pseudoRequirements);
 		for (PseudoRequirement pseudoRequirement : pseudoRequirements) {
 			//order version and rename last one
 			List<PseudoRequirementVersion> pseudoRequirementVersions = pseudoRequirement.getPseudoRequirementVersions();
@@ -59,12 +60,12 @@ class RequirementMerger extends DestinationManager {
 			persistRequirement(requirement);
 		}
 	}
-	
+
 	private void addVersion(Requirement requirement, PseudoRequirementVersion pseudoVersion) {
 		requirement.increaseVersion(RequirementVersion.createFromMemento(pseudoVersion));
 	}
 
 
-	
+
 
 }

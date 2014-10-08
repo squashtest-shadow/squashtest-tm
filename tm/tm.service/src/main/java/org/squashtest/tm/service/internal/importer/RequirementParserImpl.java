@@ -72,8 +72,7 @@ public class RequirementParserImpl implements RequirementParser {
 	private void mergeVersions(PseudoRequirement pseudoRequirement, List<PseudoRequirement> lastFolderRequirements) {
 		PseudoRequirement versionedPseudoRequirement = null;
 		for (PseudoRequirement lastFolderRequirement : lastFolderRequirements) {
-			if (lastFolderRequirement.getId() != null
-					&& (lastFolderRequirement.getId().compareTo(pseudoRequirement.getId()) == 0)) {
+			if (lastFolderRequirement.hasSameIdAndReqPathThan(pseudoRequirement)) {
 				versionedPseudoRequirement = lastFolderRequirement;
 			}
 		}
@@ -93,6 +92,8 @@ public class RequirementParserImpl implements RequirementParser {
 		if (notEmpty(label)) {
 			pseudoRequirement = new PseudoRequirement(label, row.getRowNum());
 			pseudoRequirement.setFolder(lastFolder);
+			String reqPath = readTextField(row, columnsMapping, REQ_PATH_TAG);
+			pseudoRequirement.setReqPath(reqPath);
 			fillPseudoRequirement(pseudoRequirement, row, columnsMapping);
 		}
 		return pseudoRequirement;

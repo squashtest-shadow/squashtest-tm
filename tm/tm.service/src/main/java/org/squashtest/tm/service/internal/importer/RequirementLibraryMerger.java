@@ -47,7 +47,7 @@ class RequirementLibraryMerger {
 
 	public RequirementLibraryMerger(RequirementLibraryNavigationService service) {
 		this.service = service;
-		
+
 	}
 
 	public ImportSummary getSummary() {
@@ -97,7 +97,7 @@ class RequirementLibraryMerger {
 			RequirementFolder folder = (RequirementFolder) node;
 			List<RequirementLibraryNode> nodes2 = copyContent(folder);
 			folder.emptyContent();// must empty content so that subfolders don't get persisted along with their parents
-									// (need to do it one by one)
+			// (need to do it one by one)
 			folderMerger.merge(folder, persisted);
 			RequirementFolder persisted2 = folderMerger.persisted;
 			mergeContent(nodes2, persisted2, organizedPseudoReqNodes);
