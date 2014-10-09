@@ -20,12 +20,18 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 --%>
+
+<%--
+  
+  Aaaah what a js mess, my eyes are bleeding !
+
+ --%>
+
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component" %>
 <%@ taglib prefix="s" uri="http://www.springframework.org/tags" %>
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="reqs" tagdir="/WEB-INF/tags/requirements-components" %>
-<%@ taglib prefix="pop" tagdir="/WEB-INF/tags/popup" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="authz" tagdir="/WEB-INF/tags/authz" %>
 <%@ taglib prefix="at" tagdir="/WEB-INF/tags/attachments"%>
@@ -39,8 +45,8 @@
 <c:url var="workspaceUrl" value="/requirement-workspace/#" />
 
 <s:url var="getStatusComboContent" value="/requirements/${requirement.id}/next-status" />
-
 <c:url var="customFieldsValuesURL" value="/custom-fields/values" />
+<s:url var="createNewVersionUrl" value="/requirements/${requirement.id}/versions/new" />
 <%-- ----------------------------------- Authorization ----------------------------------------------%>
 <%-- 
 that page won't be editable if 
@@ -72,6 +78,9 @@ that page won't be editable if
 <c:set var="status_editable" value="${ moreThanReadOnly and requirement.status.allowsStatusUpdate }"/>
 
 
+<f:message var="confirmLabel" key="label.Confirm"/>
+<f:message var="cancelLabel" key="label.Cancel"/>
+<f:message var="okLabel" key="label.Ok"/>
 
 
 
@@ -151,6 +160,7 @@ require(["common"], function() {
 				
 				toReturn=false;
 				
+				// wtf is that test ??
 				if("disabled.APPROVED"){
 					$.squash.openMessage("<f:message key='popup.title.error' />", "${ApprovedStatusNotAllowedMessage}")
 					.done(function(){$("#requirement-status").editable().resetForm();});
@@ -185,7 +195,7 @@ require(["common"], function() {
 		function statusObsoleteSummonDialog(form, jqDialog){
 			jqDialog.data('summoned', true);
 			jqDialog.data('callMeBack', form);
-			jqDialog.dialog('open');			
+			jqDialog.formDialog('open');			
 		}
 		
 		//reset the 'summoned' flag and the widget if needed
@@ -380,105 +390,55 @@ require(["common"], function() {
 	
 <%-- -----------------------------------POPUPS ----------------------------------------------%>
 <%--------------------------- Rename popup -------------------------------------%>
+
+<div class="not-displayed">
 <c:if test="${ writable }">
-		<pop:popup id="rename-requirement-dialog" titleKey="dialog.rename-requirement.title" 
-			isContextual="true" openedBy="rename-requirement-button">
-			<jsp:attribute name="buttons">
-				<f:message var="label" key="dialog.rename-requirement.title" />
-				'${ label }': function() {
-					var url = "${ requirementUrl }";
-                    var params = { newName : $("#rename-requirement-input").val() };
-                    $.ajax({
-                      url : url, 
-                      type : 'POST', 
-                      dataType : 'json',
-                      data : params,
-                      success : squashtm.requirement.renameRequirementSuccess
-                    });			
-				},			
-				<pop:cancel-button />
-			</jsp:attribute>
-			<jsp:attribute name="body">
-				<script type="text/javascript">
-            		require([ "common" ], function() {
-            			require([ "jquery" ], function($) {
-            				$( "#rename-requirement-dialog" ).bind( "dialogopen", function(event, ui) {
-            					var name = $.trim($('#requirement-raw-name').text());
-            					$("#rename-requirement-input").val(name);
-            					
-            				});
-            			});
-            		});
-				</script>
-				<label><f:message key="dialog.rename.label" /></label>
-				<input type="text" id="rename-requirement-input" maxlength="255" size="50" /><br/>
-				<comp:error-message forField="name"/>
-			</jsp:attribute>
-		</pop:popup>
-	</c:if>
+		
+    <f:message var="renameDialogTitle" key="dialog.rename-requirement.title"/>
+    <div  id="rename-requirement-dialog" class="not-displayed popup-dialog"
+          title="${renameDialogTitle}">
+    
+        <label><f:message key="dialog.rename.label" /></label>
+        <input type="text" id="rename-requirement-input" maxlength="255" size="50" /><br/>
+        <comp:error-message forField="name"/>
+    
+    
+        <div class="popup-dialog-buttonpane">
+          <input type="button" value="${confirmLabel}" data-def="evt=confirm, mainbtn"/>
+          <input type="button" value="${cancelLabel}" data-def="evt=cancel"/>        
+        </div>
+    
+    </div>
+
+</c:if>
 <%--------------------------- New version popup -------------------------------------%>
-	<c:if test="${ creatable }">
+<c:if test="${ creatable }">
 	<f:message var="confirmNewVersionDialogTitle" key="requirement.new-version.confirm-dialog.title" />	
 	<div id="confirm-new-version-dialog" class="not-displayed popup-dialog" title="${ confirmNewVersionDialogTitle }">
 		<strong><f:message key="requirement.new-version.confirm-dialog.label" /></strong>
-		<input type="button" value="<f:message key='label.Ok' />" />
-		<input type="button" value="<f:message key='label.Cancel' />" />
+		<input type="button" value="${okLabel}" />
+		<input type="button" value="${cancelLabel}" />
 	</div>
-  
-	<s:url var="createNewVersionUrl" value="/requirements/${requirement.id}/versions/new" />
-	<script type="text/javascript">
-require([ "common" ], function() {
-	require([ "jquery", "jquery.squash.confirmdialog" ], function($) {
-		$(function() {
-			var confirmHandler = function() {
-				$.ajax({
-					type : "post",
-					url : "${ createNewVersionUrl }"
-				}).done( function() {
-					document.location.reload(true);
-				});
-			};
-			
-			var dialog = $( "#confirm-new-version-dialog" );
-			dialog.confirmDialog({confirm: confirmHandler});
-			
-			$( "#new-version-button" ).bind( "click", function() {
-				dialog.confirmDialog( "open" );
-				return false;
-			});
-		});
-	});
-});	
-	</script>		
-	</c:if>	
+  		
+</c:if>	
 
 <%------------------------------- confirm new status if set to obsolete popup---------------------%>
-	<c:if test="${status_editable}">
-	<pop:popup id="requirement-status-confirm-dialog" closeOnSuccess="false" titleKey="dialog.requirement.status.confirm.title" isContextual="true" >
-		<jsp:attribute name="buttons">
-			<f:message var="confirmLabel" key="label.Confirm" />
-			<f:message var="cancelLabel" key="label.Cancel"/>
-				'${confirmLabel}' : function(){
-					var jqDiag = $(this);
-					jqDiag.dialog( 'close' );
-					jqDiag.data("confirm", true);
-					var form = jqDiag.data('callMeBack');
-					form.submit();
-				},
-
-				'${ cancelLabel }': function() {
-					var jqDiag = $(this);
-					jqDiag.dialog( 'close' );
-					jqDiag.data("confirm", false);
-					var form = jqDiag.data('callMeBack');
-					form.submit();
-				}
-		</jsp:attribute>
-		<jsp:attribute name="body">
-			<span><f:message key="dialog.requirement.status.confirm.text"/></span>
-		</jsp:attribute>					
-	</pop:popup>
-	</c:if>
+<c:if test="${status_editable}">
+  
+      <f:message var="statusChangeDialogTitle" key="dialog.requirement.status.confirm.title"/>
+      <div id="requirement-status-confirm-dialog" class="not-displayed"
+            title="${statusChangeDialogTitle}">
+            
+            <span><f:message key="dialog.requirement.status.confirm.text"/></span>
+            
+            <div class="popup-dialog-buttonpane">
+              <input type="button" value="${confirmLabel}" data-def="mainbtn, evt=confirm"/>
+              <input type="button" value="${cancelLabel}" data-def="evt=cancel" />
+            </div>
+      </div>
+</c:if>
+  
+</div>
 <%-- -----------------------------------/POPUPS ----------------------------------------------%>
 <%-- -----------------------------------SCRIPT ----------------------------------------------%>
 
@@ -488,7 +448,8 @@ require([ "common" ], function() {
 	
 	require(["common"], function(){
 		require(["jquery", "squash.basicwidgets", "contextual-content-handlers", 
-		         "workspace.event-bus", "jquery.squash.fragmenttabs", "custom-field-values"], 
+		         "workspace.event-bus", "jquery.squash.fragmenttabs", "custom-field-values", 
+		         "jquery.squash.confirmdialog", "jquery.squash.formdialog"], 
 					function($, basicwidg,  contentHandlers, eventBus, Frag, cufvalues){
 		$(function(){
 				basicwidg.init();
@@ -500,7 +461,78 @@ require([ "common" ], function() {
 				nameHandler.nameHidden = "#requirement-raw-name";
 				nameHandler.referenceHidden = "#requirement-raw-reference";
 				
-	
+				// ******** version creation **********
+				
+				var confirmHandler = function() {
+					$.ajax({
+						type : "post",
+						url : "${ createNewVersionUrl }"
+					}).done( function() {
+						document.location.reload(true);
+					});
+				};
+				
+				var newversiondialog = $( "#confirm-new-version-dialog" );
+				newversiondialog.confirmDialog({confirm: confirmHandler});
+				
+				$( "#new-version-button" ).on( "click", function() {
+					newversiondialog.confirmDialog( "open" );
+					return false;
+				});
+				
+				// *********** status modification **********
+				
+				var statusChangeDialog = $("#requirement-status-confirm-dialog");
+				statusChangeDialog.formDialog();
+				
+				statusChangeDialog.on('formdialogconfirm', function(){
+					statusChangeDialog.formDialog('close');
+					statusChangeDialog.data('confirm', true);
+					var form = statusChangeDialog.data('callMeBack');
+					form.submit();
+				});
+				
+				statusChangeDialog.on('formdialogcancel', function(){
+					statusChangeDialog.formDialog('close');
+					statusChangeDialog.data('confirm', false);
+					var form = statusChangeDialog.data('callMeBack');
+					form.submit();				
+				});
+				
+				// ************ rename dialog ********
+				
+				var renameDialog = $("#rename-requirement-dialog");
+				renameDialog.formDialog();
+				
+				renameDialog.on('formdialogconfirm', function(){
+					var url = "${ requirementUrl }",
+						params = { newName : $("#rename-requirement-input").val() };
+					
+					$.ajax({
+						url : url,
+						type : 'POST',
+						dataType : 'json',
+						data : params
+					}).success(function(json){
+						renameDialog.formDialog('close');
+						squashtm.requirement.renameRequirementSuccess(json);
+					});
+					
+				});
+				
+				renameDialog.on('formdialogcancel', function(){
+					renameDialog.formDialog('close');
+				});
+				
+				renameDialog.on('formdialogopen', function(){
+   					var name = $.trim($('#requirement-raw-name').text());
+					$("#rename-requirement-input").val(name);
+				});
+				
+				$("#rename-requirement-button").on('click', function(){
+					renameDialog.formDialog('open');
+				});
+				
 				//****** tabs configuration *******
 	
 				Frag.init();
