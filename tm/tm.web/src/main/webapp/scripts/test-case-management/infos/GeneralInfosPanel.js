@@ -80,7 +80,7 @@ define([ "jquery", "backbone", "underscore", "workspace.event-bus", "squash.conf
 							componentId : "test-case-status",
 							jeditableSettings : {
 								data : this.settings.testCaseStatusComboJson
-							},
+							}
 						});
 						
 					

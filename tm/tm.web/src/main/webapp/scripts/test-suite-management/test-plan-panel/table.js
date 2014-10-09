@@ -289,7 +289,7 @@ define(
 						
 						// hide the Dataset column if all is empty
 						var alldata = this.fnGetData();
-						var havingDataset = $.grep(alldata, function(model){ return model.dataset.available.length !== 0 });
+						var havingDataset = $.grep(alldata, function(model){ return model.dataset.available.length !== 0; });
 						var dsColVis = (havingDataset.length !== 0);
 						
 						var dsColIdx;
