@@ -81,6 +81,8 @@ that page won't be editable if
 <f:message var="confirmLabel" key="label.Confirm"/>
 <f:message var="cancelLabel" key="label.Cancel"/>
 <f:message var="okLabel" key="label.Ok"/>
+<f:message var="DefaultStatusNotAllowedMessage" key='requirement.status.notAllowed.default' />
+<f:message var="ApprovedStatusNotAllowedMessage" key='requirement.status.notAllowed.approved' />
 
 
 
@@ -121,99 +123,8 @@ require(["common"], function() {
 
 
 <%-- ----------------------------------- Init ----------------------------------------------%>
-<%-- 
-	Code managing the status of a requirement. It is a handler for the 'onsubmit' of a jeditable (see documentation for details).
 
-	It will ask the user, if he chooses to change the requirement status to 'Obsolete', to confirm.
-	Because a jQuery dialog will not stop the execution of javascript we have to code in an unnatural way. 
-	Basically this function will be called twice : first to invoked the dialog, second to read its response.	
-	
-	Here is how it works : 
-	
-		- if any status but 'obsolete' is selected, return true.
-		- if 'obsolete' is selected and 'summoned' is false, sets 'summoned' to true, summons the dialog and return false.
-		- if 'obsolete' is selected and 'summoned' is true, sets 'summoned' to false and read 'confirm' :
-			* 'confirm' is false : reset the widget then return false.
-			* 'confirm' is true : send the information then return true
-		
-	note : Since summoning a dialog will not stop the rest of the code from executing, the second case returns false to ensure that the handler terminates quickly while the dialog
-	is still executed.
-	
-	'summoned' and 'confirm' are attributes of the dialog #. When summoned the dialog will set 'confirm' 
-	according to the user response and submit the select again. This will in turn call that hook again, which will eventually read the user response and then only decide whether 
-	the user input will be sent or not.
-	
-	See also the code in #requirement-status-confirm-dialog for details. 
---%>
-<c:if test="${status_editable}">
-<f:message var="DefaultStatusNotAllowedMessage" key='requirement.status.notAllowed.default' />
-<f:message var="ApprovedStatusNotAllowedMessage" key='requirement.status.notAllowed.approved' />
-<script type="text/javascript">
-		function statusSelect(settings, widget){
-			
-			//first check if 'obsolete' is selected
-			var selected = $(this.find('select')).val();
-			
-			var toReturn = true;
-			
-			if (isDisabled(selected)){
-				
-				toReturn=false;
-				
-				// wtf is that test ??
-				if("disabled.APPROVED"){
-					$.squash.openMessage("<f:message key='popup.title.error' />", "${ApprovedStatusNotAllowedMessage}")
-					.done(function(){$("#requirement-status").editable().resetForm();});
-				}
-				else{
-					$.squash.openMessage("<f:message key='popup.title.error' />", "${DefaultStatusNotAllowedMessage}")
-					.done(function(){$("#requirement-status").editable().resetForm();});
-				}
-			}
-			else if ("OBSOLETE" == selected) {
-				var jqDialog = $('#requirement-status-confirm-dialog');
-				var summoned = jqDialog.data('summoned');
-				
-				if (! summoned) {
-					statusObsoleteSummonDialog(this, jqDialog);
-					toReturn=false;
-				} else {	
-					jqDialog.data('summoned', false);
-					toReturn = statusObsoleteReadDialog(widget, jqDialog);			
-				}
-			} else {
-				toReturn = true;
-			}
-			
-			return toReturn;
-		}
-			
-		function isDisabled(selected){
-			return (selected.search(new RegExp("disabled.*"))!=-1);
-		}
-		
-		function statusObsoleteSummonDialog(form, jqDialog){
-			jqDialog.data('summoned', true);
-			jqDialog.data('callMeBack', form);
-			jqDialog.formDialog('open');			
-		}
-		
-		//reset the 'summoned' flag and the widget if needed
-		function statusObsoleteReadDialog(widget, jqDialog){
-			var response = jqDialog.data('confirm');
-			if (false==response) {
-				$(widget).html(widget.revert);
-				widget.editing  = false;	
-			}	
-			return response;
-		}
-		
-		
-		function statusSelectCallback(){
-			document.location.reload();
-		}
-</script>
-</c:if>
+
 <%-- ----------------------------------- CONTENT ----------------------------------------------%>
 <%-- ----------------------------------- TITLE ----------------------------------------------%>
 <div class="ui-widget-header ui-corner-all ui-state-default fragment-header">
@@ -319,17 +230,7 @@ require(["common"], function() {
 				<div class="display-table-row">
 					<label for="requirement-status" class="display-table-cell"><f:message key="requirement.status.combo.label" /></label>
 					<div class="display-table-cell">
-						<c:choose>
-						<c:when test="${status_editable}">
 						<div id="requirement-status"><comp:level-message level="${ requirement.status }"/></div>
-						<comp:select-jeditable componentId="requirement-status" jsonUrl="${getStatusComboContent}" 
-												targetUrl="${requirementUrl}"	
-												onSubmit="statusSelect" submitCallback="statusSelectCallback"/>
-						</c:when>
-						<c:otherwise>
-							<comp:level-message level="${ requirement.status }"/>
-						</c:otherwise>
-						</c:choose>
 					</div>
 
 				</div>				
@@ -449,8 +350,9 @@ require(["common"], function() {
 	require(["common"], function(){
 		require(["jquery", "squash.basicwidgets", "contextual-content-handlers", 
 		         "workspace.event-bus", "jquery.squash.fragmenttabs", "custom-field-values", 
-		         "jquery.squash.confirmdialog", "jquery.squash.formdialog"], 
-					function($, basicwidg,  contentHandlers, eventBus, Frag, cufvalues){
+		         "squash.configmanager", "app/ws/squashtm.notification",
+		         "jquery.squash.confirmdialog", "jquery.squash.formdialog"], 	
+		         function($, basicwidg,  contentHandlers, eventBus, Frag, cufvalues, confman, notification){
 		$(function(){
 				basicwidg.init();
 				
@@ -481,23 +383,84 @@ require(["common"], function() {
 				});
 				
 				// *********** status modification **********
+			
+				<c:if test="${status_editable}">
 				
 				var statusChangeDialog = $("#requirement-status-confirm-dialog");
 				statusChangeDialog.formDialog();
 				
+				var statusChangeSelect = $("#requirement-status"),
+					statusSelectConf = confman.getJeditableSelect();
+				
+				// this function uses an interplay with the 
+				// statusChangeDialog, see the "OBSOLETE" branch
+				function submitOrConfirm(settings, widget){
+					var selected = this.find('select').val(),
+						cansubmit = true;
+					
+					// if disabled, tell the user and exit
+					if (selected.search(/disabled.*/)!=-1){
+						cansubmit = false;
+						var msg = ("disabled.APPROVED" === selected ) ? 
+									"${ApprovedStatusNotAllowedMessage}" : 
+									"${DefaultStatusNotAllowedMessage}";
+									
+						notification.showError(msg);
+						widget.reset();
+					}
+					else if ("OBSOLETE" == selected){
+						
+						cansubmit = false;
+						
+						var summoned = statusChangeDialog.data('summoned'),
+							confirmed = statusChangeDialog.data('confirmed');
+						
+						if (summoned !== true){
+							statusChangeDialog.data('summoned', true);
+							statusChangeDialog.data('confirmed', false);
+							statusChangeDialog.data('form', this);
+							statusChangeDialog.formDialog('open');
+						}
+						else{
+							cansubmit = confirmed;
+							if (! confirmed){
+								widget.reset();
+							}
+							// rearm the switch;
+							statusChangeDialog.data('summoned', false);
+						}
+					}
+					
+					return cansubmit;
+				}
+				
+				var finalStatusSelectConf = $.extend(true, statusSelectConf, 
+					{
+						loadurl : "${getStatusComboContent}",
+						callback : function(){document.location.reload();},
+						onsubmit : submitOrConfirm
+					}	
+				);
+				
+				statusChangeSelect.editable('${requirementUrl}', finalStatusSelectConf)
+							.addClass('editable');
+				
+				
 				statusChangeDialog.on('formdialogconfirm', function(){
 					statusChangeDialog.formDialog('close');
-					statusChangeDialog.data('confirm', true);
-					var form = statusChangeDialog.data('callMeBack');
+					statusChangeDialog.data('confirmed', true);
+					var form = statusChangeDialog.data('form');
 					form.submit();
 				});
 				
 				statusChangeDialog.on('formdialogcancel', function(){
 					statusChangeDialog.formDialog('close');
-					statusChangeDialog.data('confirm', false);
-					var form = statusChangeDialog.data('callMeBack');
+					statusChangeDialog.data('confirmed', false);
+					var form = statusChangeDialog.data('form');
 					form.submit();				
 				});
+				
+				</c:if>
 				
 				// ************ rename dialog ********
 				

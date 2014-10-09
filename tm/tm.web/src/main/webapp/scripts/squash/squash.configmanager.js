@@ -58,13 +58,7 @@ define([ "jquery", "squash.translator", "datepicker/jquery.squash.datepicker-loc
 			width : '80%',
 			maxlength : 255,
 			indicator : '<div class="processing-indicator"/>',
-			onblur : function() {
-			},
-			// abort edit if clicked on a hyperlink (being the tag itself or its content)
-			onedit : function(settings, editable, evt){
-				var $target = $(evt.target);
-				return ! ( $target.is('a') || $target.parents('a').length > 0);  
-			},
+			onblur : function() {},
 			callback : function(value, settings){
 				$(this).text(settings.data[value]);
 			}
