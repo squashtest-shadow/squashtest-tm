@@ -45,9 +45,11 @@
 
 <c:set var="automated"	value="${ execution.executionMode == 'AUTOMATED' }" />
 <c:set var="taDisassociated" value="${ automated and execution.automatedExecutionExtender.projectDisassociated}" />
+
 <f:message var="taDisassociatedLabel" key="squashtm.itemdeleted"/>
-
-
+<f:message var="confirmLabel" key="label.Confirm"/>
+<f:message var="cancelLabel" key="label.Cancel" />
+<f:message var="deleteExecutionButton" key="execution.execute.remove.button.label" />
 
 <%-------------------------- urls ------------------------------%>
 
@@ -113,8 +115,8 @@
 		<div class="toolbar-button-panel">
 		<c:if test="${ editable }">
 				<comp:execution-execute-buttons execution="${ execution }"/>
-				<input type="button"
-					value='<f:message key="execution.execute.remove.button.label" />'
+				<input type="button" class="sq-btn"
+					value='${deleteExecutionButton}'
 					id="delete-execution-button" />
 			</c:if>
 		</div>
@@ -273,28 +275,18 @@
 
 	<%------------------------------ /bugs section -------------------------------%>
 	<%--------------------------- Deletion confirmation popup -------------------------------------%>
-	<pop:popup id="delete-execution-confirm"
-		titleKey="dialog.delete-execution.title" isContextual="true"
-		openedBy="delete-execution-button">
-		<jsp:attribute name="buttons">
-		<f:message var="label" key="label.Confirm" />
-		'${ label }': function() {
-			var url = "${executionUrl}";
-            $.ajax({
-              url : url, 
-              type : 'DELETE',
-              success : squashtm.execution.deleteExecutionSuccess,
-              error : squashtm.execution.deleteExecutionFailure
-            });
-		},			
-		<pop:cancel-button />
-	</jsp:attribute>
-		<jsp:attribute name="body">
-		<b><f:message key="dialog.delete-execution.message" />
-			</b>
-		<br />				
-	</jsp:attribute>
-	</pop:popup>
+  
+    <f:message var="deletionDialogTitle" key="dialog.delete-execution.title" />
+    <div id="delete-execution-dialog" class="popup-dialog not-displayed" title="${deletionDialogTitle}">
+    
+        <span style="font-weight:bold;"><f:message key="dialog.delete-execution.message" /></span>
+        
+        <div class="popup-dialog-buttonpane">
+          <input type="button" value="${confirmLabel}" data-def="evt=confirm, mainbtn"/>
+          <input type="button" value="${cancelLabel}" data-def="evt=cancel"/>        
+        </div>    
+    </div>
+
 
 	<%--------------------------- /Deletion confirmation popup -------------------------------------%>
 	<f:message var="statusSettled" key="execution.execution-status.SETTLED" />
@@ -309,8 +301,20 @@
 	var squashtm = squashtm || {};
 	
 	require(["common"], function() {
-		require(["jquery", "page-components/execution-information-panel", "custom-field-values", "squashtable", 
-		         "jquery.squash.jeditable"], function($, infopanel, cufValuesManager) {			
+		require(["jquery", "page-components/execution-information-panel", "custom-field-values", 
+		         "app/ws/squashtm.notification", 
+		         "squashtable", "jquery.squash.formdialog",
+		         "jquery.squash.jeditable"], function($, infopanel, cufValuesManager, notification) {	
+			
+			<%--
+			(scoped) variable that will publish useful functions to various stakeholders (use the 
+			search function if you need to see where, I'm not documenting it because 
+			that should be refactored anyway)
+            --%>
+			squashtm.execution = squashtm.execution || {}
+			
+			// --------- renaming handler ------------
+			
 			/* display the execution name. Used for extern calls (like from the page who will include this fragment)
 			*  will refresh the general informations as well*/
 			function nodeSetName(name){
@@ -320,31 +324,40 @@
 			
 			/* renaming success handler */
 			function renameExecutionSuccess(data){
-				nodeSetName(data.newName);
-								
+				nodeSetName(data.newName);								
 				$( '#rename-execution-dialog' ).dialog( 'close' );
 			}
 			
-			/* deletion success handler */
-			function deleteExecutionSuccess(){
-				$( '#delete-execution-confirm' ).dialog( 'close' );
-				history.back();
-			}
 			
-			/* deletion failure handler */
-			function deleteExecutionFailure(xhr){
-				$.squash.openMessage("<f:message key='popup.title.error' />", xhr.statusText);		
-			}
-
-			squashtm.execution = squashtm.execution || {}
-			squashtm.execution.deleteExecutionSuccess = deleteExecutionSuccess;
-			squashtm.execution.deleteExecutionFailure = deleteExecutionFailure;
-
-			$('#delete-execution-button').button();
-
-			$("#back").click(function(){
-				history.back();
+			// ============== deletion dialog ================
+			
+			var deldialog = $("#delete-execution-dialog");
+			deldialog.formDialog();
+			
+			deldialog.on('formdialogconfirm', function(){
+				$.ajax({
+	              url : "${executionUrl}", 
+	              type : 'DELETE',
+				}).success(function(){
+					deldialog.formDialog('close');
+					history.back();
+				}).error(function(xhr){
+					notification.showError(xhr.statusText);
+				});	          
 			});
+			
+			deldialog.on('formdialogcancel', function(){
+				deldialog.formDialog('close');
+			});
+
+			$('#delete-execution-button').on('click', function(){
+				deldialog.formDialog('open');
+			});
+			
+			
+			// ========= history =======
+
+			$("#back").on('click', function(){history.back();});
 
 			
 			// ==== execution table ====
@@ -445,12 +458,11 @@
 			
 		 	// ==== handle for refershing the page (called by the execution popup) ====
 		 	
-		 	squashtm.execution = squashtm.execution || {};
 		 	squashtm.execution.refresh = $.proxy(function(){
 		 		$("#execution-execution-steps-table").squashTable().refresh();
 		 		infopanel.refresh();
 		 		//see execution-execute-button.tag	
-        squashtm.execution.updateBtnlabelFromTable();
+       			 squashtm.execution.updateBtnlabelFromTable();
 		 	}, window);
 		});
 	});

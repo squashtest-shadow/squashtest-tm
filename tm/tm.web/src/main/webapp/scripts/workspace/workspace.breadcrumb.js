@@ -20,6 +20,10 @@
  */
 
 /*
+ * Note : Checks whether the History API could do just the same with less code.  
+ */
+
+/*
  * =================
  * Summary : 
  * =================
