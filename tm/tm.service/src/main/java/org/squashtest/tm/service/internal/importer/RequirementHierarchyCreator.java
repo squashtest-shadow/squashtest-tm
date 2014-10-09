@@ -105,17 +105,17 @@ class RequirementHierarchyCreator {
 	private void parseFile(Workbook workbook,
 			Map<RequirementFolder, List<PseudoRequirement>> organizedRequirementLibraryNodes) {
 		Sheet sheet = workbook.getSheetAt(0);
-		//map columns
+		// map columns
 		Map<String, Integer> columnsMapping = ExcelRowReaderUtils.mapColumns(sheet);
 
-		//modify mapping to make "PATH" still work even if depreacated
+		// modify mapping to make "PATH" still work even if depreacated
 		Integer folderPathRowNb = columnsMapping.get(RequirementParser.FOLDER_PATH_TAG);
 		Integer deprecatedPathRowNb = columnsMapping.get(RequirementParser.DEPRECATED_PATH_TAG);
-		if(folderPathRowNb == null && deprecatedPathRowNb != null){
+		if (folderPathRowNb == null && deprecatedPathRowNb != null) {
 			columnsMapping.put(RequirementParser.FOLDER_PATH_TAG, deprecatedPathRowNb);
 		}
 
-		//parse rows
+		// parse rows
 		for (int r = 1; r <= sheet.getLastRowNum(); r++) {
 			Row row = sheet.getRow(r);
 			parser.parseRow(root, row, summary, columnsMapping, organizedRequirementLibraryNodes);

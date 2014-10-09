@@ -40,7 +40,7 @@ import org.squashtest.tm.service.internal.repository.GenericDao;
  * @author Gregory Fouquet
  * 
  */
-public abstract class HibernateDao<ENTITY_TYPE> implements GenericDao<ENTITY_TYPE>{
+public abstract class HibernateDao<ENTITY_TYPE> implements GenericDao<ENTITY_TYPE> {
 	protected final Class<ENTITY_TYPE> entityType;
 
 	@SuppressWarnings("unchecked")
@@ -87,7 +87,7 @@ public abstract class HibernateDao<ENTITY_TYPE> implements GenericDao<ENTITY_TYP
 
 	@Override
 	public void clearFromCache(Collection<ENTITY_TYPE> entities) {
-		for(ENTITY_TYPE entity: entities){
+		for (ENTITY_TYPE entity : entities) {
 			clearFromCache(entity);
 		}
 	}
@@ -150,14 +150,13 @@ public abstract class HibernateDao<ENTITY_TYPE> implements GenericDao<ENTITY_TYP
 		Query q = session.getNamedQuery(queryName);
 		q.setParameter(0, queryParam);
 
-		if (! filter.shouldDisplayAll()){
+		if (!filter.shouldDisplayAll()) {
 			q.setFirstResult(filter.getFirstItemIndex());
 			q.setMaxResults(filter.getPageSize());
 		}
 
 		return q.list();
 	}
-
 
 	/**
 	 * Executes a named query with parameters. The parameters should be set by the callback object.
@@ -168,21 +167,21 @@ public abstract class HibernateDao<ENTITY_TYPE> implements GenericDao<ENTITY_TYP
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	protected final <R> List<R> executeListNamedQuery(String queryName, SetQueryParametersCallback setParams, Paging paging) {
+	protected final <R> List<R> executeListNamedQuery(String queryName, SetQueryParametersCallback setParams,
+			Paging paging) {
 
 		Session session = currentSession();
 
 		Query q = session.getNamedQuery(queryName);
 		setParams.setQueryParameters(q);
 
-		if (!paging.shouldDisplayAll()){
+		if (!paging.shouldDisplayAll()) {
 			q.setFirstResult(paging.getFirstItemIndex());
 			q.setMaxResults(paging.getPageSize());
 		}
 
 		return q.list();
 	}
-
 
 	/**
 	 * Runs a named query which returns a single entity / tuple / scalar and which accepts a unique parameter.
@@ -216,7 +215,7 @@ public abstract class HibernateDao<ENTITY_TYPE> implements GenericDao<ENTITY_TYP
 		return (R) q.uniqueResult();
 	}
 
-	protected final void executeUpdateListQuery(String queryName, SetQueryParametersCallback params){
+	protected final void executeUpdateListQuery(String queryName, SetQueryParametersCallback params) {
 		Query q = currentSession().getNamedQuery(queryName);
 		params.setQueryParameters(q);
 		q.executeUpdate();

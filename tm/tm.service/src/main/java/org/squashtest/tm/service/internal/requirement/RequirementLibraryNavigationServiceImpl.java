@@ -109,7 +109,6 @@ RequirementLibraryNavigationService, RequirementLibraryFinderService {
 	@Qualifier("squashtest.tm.service.internal.PasteToRequirementStrategy")
 	private Provider<PasteStrategy<Requirement, Requirement>> pasteToRequirementStrategyProvider;
 
-
 	@Override
 	protected NodeDeletionHandler<RequirementLibraryNode, RequirementFolder> getDeletionHandler() {
 		return deletionHandler;
@@ -146,7 +145,7 @@ RequirementLibraryNavigationService, RequirementLibraryFinderService {
 		return pasteToRequirementLibraryStrategyProvider.get();
 	}
 
-	protected PasteStrategy<Requirement, Requirement> getPasteToRequirementStrategy(){
+	protected PasteStrategy<Requirement, Requirement> getPasteToRequirementStrategy() {
 		return pasteToRequirementStrategyProvider.get();
 	}
 
@@ -275,8 +274,7 @@ RequirementLibraryNavigationService, RequirementLibraryFinderService {
 	@Override
 	@PreAuthorize("hasPermission(#folderId, 'org.squashtest.tm.domain.requirement.Requirement' , 'CREATE') "
 			+ OR_HAS_ROLE_ADMIN)
-	public Requirement addRequirementToRequirement(long requirementId,
-			@NotNull Requirement newRequirement) {
+	public Requirement addRequirementToRequirement(long requirementId, @NotNull Requirement newRequirement) {
 
 		Requirement parent = requirementDao.findById(requirementId);
 
@@ -284,11 +282,10 @@ RequirementLibraryNavigationService, RequirementLibraryFinderService {
 		requirementDao.persist(newRequirement);
 		createCustomFieldValues(newRequirement.getCurrentVersion());
 
-		indexationService.reindexRequirementVersion(requirementId);
+		indexationService.reindexRequirementVersions(parent.getRequirementVersions());
 		indexationService.reindexRequirementVersions(newRequirement.getRequirementVersions());
 		return newRequirement;
 	}
-
 
 	@Override
 	public List<Requirement> copyNodesToRequirement(long requirementId, Long[] sourceNodesIds) {
@@ -333,24 +330,22 @@ RequirementLibraryNavigationService, RequirementLibraryFinderService {
 	@Override
 	public List<ExportRequirementData> findRequirementsToExportFromLibrary(List<Long> libraryIds) {
 		PermissionsUtils.checkPermission(permissionService, libraryIds, "EXPORT", RequirementLibrary.class.getName());
-		return (List<ExportRequirementData>) requirementDao
-				.findRequirementToExportFromLibrary(libraryIds);
+		return (List<ExportRequirementData>) requirementDao.findRequirementToExportFromLibrary(libraryIds);
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<ExportRequirementData> findRequirementsToExportFromNodes(List<Long> nodesIds) {
 		PermissionsUtils.checkPermission(permissionService, nodesIds, "EXPORT", RequirementLibraryNode.class.getName());
-		return (List<ExportRequirementData>) requirementDao
-				.findRequirementToExportFromNodes(nodesIds);
+		return (List<ExportRequirementData>) requirementDao.findRequirementToExportFromNodes(nodesIds);
 	}
 
 	@Override
-	@PreAuthorize("hasPermission(#requirementId, 'org.squashtest.tm.domain.requirement.Requirement' , 'READ') " + OR_HAS_ROLE_ADMIN)
-	public List<Requirement> findChildrenRequirements(long requirementId){
+	@PreAuthorize("hasPermission(#requirementId, 'org.squashtest.tm.domain.requirement.Requirement' , 'READ') "
+			+ OR_HAS_ROLE_ADMIN)
+	public List<Requirement> findChildrenRequirements(long requirementId) {
 		return requirementDao.findChildrenRequirements(requirementId);
 	}
-
 
 	@Override
 	@PostFilter("hasPermission(filterObject, 'LINK') " + OR_HAS_ROLE_ADMIN)
@@ -399,13 +394,13 @@ RequirementLibraryNavigationService, RequirementLibraryFinderService {
 
 		List<String> parents = new ArrayList<String>();
 
-		parents.add("#RequirementLibrary-"+librabryId);
+		parents.add("#RequirementLibrary-" + librabryId);
 
-		if(ids.size() > 1){
-			for(int i=0; i<ids.size()-1; i++){
+		if (ids.size() > 1) {
+			for (int i = 0; i < ids.size() - 1; i++) {
 				long currentId = ids.get(i);
 				RequirementLibraryNode currentNode = requirementLibraryNodeDao.findById(currentId);
-				parents.add(currentNode.getClass().getSimpleName()+"-"+String.valueOf(currentId));
+				parents.add(currentNode.getClass().getSimpleName() + "-" + String.valueOf(currentId));
 			}
 		}
 

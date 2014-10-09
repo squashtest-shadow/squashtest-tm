@@ -33,11 +33,13 @@ import org.squashtest.tm.exception.DuplicateNameException;
  * 
  * @author Gregory Fouquet
  * 
- * @param <NODE> Type of contained node
+ * @param <NODE>
+ *            Type of contained node
  */
-public interface NodeContainer<NODE extends TreeNode> extends Identified{
+public interface NodeContainer<NODE extends TreeNode> extends Identified {
 	/**
-	 * Adds new content to this container. Should refuse to add null content, should refuse to add content with duplicate
+	 * Adds new content to this container. Should refuse to add null content, should refuse to add content with
+	 * duplicate
 	 * name.
 	 * 
 	 * @param node
@@ -45,35 +47,38 @@ public interface NodeContainer<NODE extends TreeNode> extends Identified{
 	void addContent(NODE node) throws DuplicateNameException, NullArgumentException;
 
 	/**
-	 * Adds new content to this container at the given position. Should refuse to add null content, should refuse to add content with duplicate
+	 * Adds new content to this container at the given position. Should refuse to add null content, should refuse to add
+	 * content with duplicate
 	 * name.
 	 * 
 	 * @param node
 	 */
 	void addContent(NODE node, int position) throws DuplicateNameException, NullArgumentException;
-	
+
 	boolean isContentNameAvailable(String name);
-	
+
 	List<NODE> getContent();
-	
+
 	/**
 	 * Will return the ordered (if order there is) content nodes.
+	 * 
 	 * @return
 	 */
 	Collection<NODE> getOrderedContent();
-	
+
 	boolean hasContent();
-	
+
 	void removeContent(NODE contentToRemove) throws NullArgumentException;
 
 	List<String> getContentNames();
-	
+
 	/**
 	 * A node container can be a library. That can be bound to a project template.
+	 * 
 	 * @return
 	 */
 	GenericProject getProject();
-	
+
 	void accept(NodeContainerVisitor visitor);
 
 }

@@ -93,7 +93,7 @@ public abstract class GenericLibrary<NODE extends LibraryNode> implements Librar
 	public void addContent(@NotNull final NODE node, int position) throws UnsupportedOperationException {
 		checkContentNameAvailable(node);
 
-		if(position >= getContent().size() || position < 0){
+		if (position >= getContent().size() || position < 0) {
 			getContent().add(node);
 		} else {
 			getContent().add(position, node);
@@ -114,7 +114,6 @@ public abstract class GenericLibrary<NODE extends LibraryNode> implements Librar
 			}
 		});
 
-
 		/*
 		 * because Hibernate and the triggers don't work along well we have to make sure that
 		 * data are inserted with their correct index (INSERT only, we don't want messy UPDATE)
@@ -122,10 +121,11 @@ public abstract class GenericLibrary<NODE extends LibraryNode> implements Librar
 		List<NODE> orig = getContent();
 		List<NODE> reindexed = new ArrayList<NODE>(orig);
 		orig.clear();
-		for (NODE n : reindexed){
+		for (NODE n : reindexed) {
 			orig.add(n);
 		}
 	}
+
 	/**
 	 * checks that content name has not been already given. Throws exception otherwise.
 	 * 

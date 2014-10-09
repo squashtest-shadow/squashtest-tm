@@ -50,7 +50,7 @@ import org.squashtest.tm.domain.requirement.RequirementVersionImportMemento;
  * </ul>
  * 
  * This class implements Comparable to sort PseudoRequirementVersion depending on their rowNumber.
- *
+ * 
  * @author mpagnon
  * 
  */
@@ -65,7 +65,7 @@ RequirementVersionImportMemento {
 	private RequirementStatus status = RequirementStatus.WORK_IN_PROGRESS;
 	private String description = "";
 	private Date createdOnDate = new Date();
-	private String createdBy = "import";
+	private String createdBy = RequirementImporter.DEFAULT_CREATED_BY;
 	private PseudoRequirement pseudoRequirement;
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(PseudoRequirementVersion.class);

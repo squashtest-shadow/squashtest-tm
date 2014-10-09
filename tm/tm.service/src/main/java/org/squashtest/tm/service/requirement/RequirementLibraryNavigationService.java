@@ -38,17 +38,20 @@ import org.squashtest.tm.service.library.LibraryNavigationService;
 
 @SuppressWarnings("rawtypes")
 public interface RequirementLibraryNavigationService extends
-LibraryNavigationService<RequirementLibrary, RequirementFolder, RequirementLibraryNode>, RequirementLibraryFinderService {
+LibraryNavigationService<RequirementLibrary, RequirementFolder, RequirementLibraryNode>,
+RequirementLibraryFinderService {
 
 	Requirement addRequirementToRequirementLibrary(long libraryId, @NotNull Requirement requirement);
+
 	Requirement addRequirementToRequirementLibrary(long libraryId, @NotNull NewRequirementVersionDto newRequirement);
 
 	Requirement addRequirementToRequirementFolder(long folderId, @NotNull Requirement requirement);
+
 	Requirement addRequirementToRequirementFolder(long folderId, @NotNull NewRequirementVersionDto newRequirement);
 
 	Requirement addRequirementToRequirement(long requirementId, @NotNull Requirement newRequirement);
-	Requirement addRequirementToRequirement(long requirementId, @NotNull NewRequirementVersionDto newRequirement);
 
+	Requirement addRequirementToRequirement(long requirementId, @NotNull NewRequirementVersionDto newRequirement);
 
 	List<Requirement> copyNodesToRequirement(long requirementId, Long[] sourceNodesIds);
 
@@ -59,15 +62,21 @@ LibraryNavigationService<RequirementLibrary, RequirementFolder, RequirementLibra
 	Requirement findRequirement(long reqId);
 
 	/**
-	 * Will find all requirements found in the given projects and return their information as a list of {@linkplain ExportRequirementData}
-	 * @param libraryIds ids of {@linkplain Project}
+	 * Will find all requirements found in the given projects and return their information as a list of
+	 * {@linkplain ExportRequirementData}
+	 * 
+	 * @param libraryIds
+	 *            ids of {@linkplain Project}
 	 * @return a list of {@linkplain ExportRequirementData}
 	 */
 	List<ExportRequirementData> findRequirementsToExportFromLibrary(@NotNull List<Long> libraryIds);
 
 	/**
-	 * Will find all requirements of the given ids and contained in folders of the given ids, and return their information as a list of {@linkplain ExportRequirementData}
-	 * @param nodesIds ids of {@linkplain RequirementLibraryNode}
+	 * Will find all requirements of the given ids and contained in folders of the given ids, and return their
+	 * information as a list of {@linkplain ExportRequirementData}
+	 * 
+	 * @param nodesIds
+	 *            ids of {@linkplain RequirementLibraryNode}
 	 * @return a list of {@linkplain ExportRequirementData}
 	 */
 	List<ExportRequirementData> findRequirementsToExportFromNodes(@NotNull List<Long> nodesIds);
@@ -79,7 +88,8 @@ LibraryNavigationService<RequirementLibrary, RequirementFolder, RequirementLibra
 	 * convert the requirements from excel to squash.
 	 * 
 	 * @param ExcelStream
-	 * @param libraryId the identifier of the library we are importing requirements into.
+	 * @param libraryId
+	 *            the identifier of the library we are importing requirements into.
 	 * @return a summary of the operations.
 	 */
 	ImportSummary importExcel(InputStream stream, long projectId);

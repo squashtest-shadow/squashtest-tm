@@ -25,7 +25,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.squashtest.tm.domain.library.NodeContainer;
 import org.squashtest.tm.domain.requirement.Requirement;
+import org.squashtest.tm.domain.requirement.RequirementExtractor;
 import org.squashtest.tm.domain.requirement.RequirementFolder;
 import org.squashtest.tm.domain.requirement.RequirementLibrary;
 import org.squashtest.tm.domain.requirement.RequirementLibraryNode;
@@ -118,6 +120,27 @@ class RequirementLibraryMerger {
 
 		protected RequirementLibrary destLibrary;
 		protected RequirementFolder destFolder;
+		protected Requirement destRequirement;
+
+		public Requirement findContentRequirementOfId(Long id) {
+			List<Requirement> content = getRequirementDestinationContent();
+			for (Requirement node : content) {
+				if (node.getId().equals(id)) {
+					return node;
+				}
+			}
+			return null;
+		}
+
+		public Requirement findContentRequirementOfName(String name) {
+			List<? extends Requirement> content = getRequirementDestinationContent();
+			for (Requirement node : content) {
+				if (node.getName().equals(name)) {
+					return node;
+				}
+			}
+			return null;
+		}
 
 		public void setMergingContext(RequirementLibraryMerger merger) {
 			this.context = merger;
@@ -126,30 +149,43 @@ class RequirementLibraryMerger {
 		public void setDestination(RequirementLibrary library) {
 			this.destLibrary = library;
 			this.destFolder = null;
+			this.destRequirement = null;
+		}
+
+		public NodeContainer<? extends RequirementLibraryNode> getDestination() {
+			if (destRequirement != null) {
+				return destRequirement;
+			} else if (destLibrary != null) {
+				return destLibrary;
+			} else {
+				return destFolder;
+			}
 		}
 
 		public void setDestination(RequirementFolder folder) {
 			this.destFolder = folder;
 			this.destLibrary = null;
+			this.destRequirement = null;
+		}
+
+		public void setRequirementDestination(Requirement requirement) {
+			this.destRequirement = requirement;
 		}
 
 		@SuppressWarnings("rawtypes")
-		protected List<RequirementLibraryNode> getDestinationContent() {
-			if (destLibrary != null) {
-				return destLibrary.getRootContent();
-			} else {
-				return destFolder.getContent();
-			}
+		protected List<? extends RequirementLibraryNode> getDestinationContent() {
+			return getDestination().getContent();
+		}
+
+		protected List<Requirement> getRequirementDestinationContent() {
+			List<? extends RequirementLibraryNode> nodes = getDestinationContent();
+			return new RequirementExtractor().extract(nodes);
 		}
 
 		@SuppressWarnings("rawtypes")
 		protected List<String> getNamesAtDestination() {
-			List<RequirementLibraryNode> nodes = null;
-			if (destLibrary != null) {
-				nodes = destLibrary.getRootContent();
-			} else {
-				nodes = destFolder.getContent();
-			}
+			NodeContainer<? extends RequirementLibraryNode> destination = getDestination();
+			List<? extends RequirementLibraryNode> nodes = destination.getContent();
 			List<String> names = new ArrayList<String>();
 			for (RequirementLibraryNode node : nodes) {
 				names.add(node.getName());
@@ -157,25 +193,27 @@ class RequirementLibraryMerger {
 			return names;
 		}
 
-		protected void renameLastVersion(List<PseudoRequirementVersion> pseudoRequirementVersions) {
-			PseudoRequirementVersion lastVersion = pseudoRequirementVersions.get(pseudoRequirementVersions.size() - 1);
-			if (destLibrary != null) {
-				if (!destLibrary.isContentNameAvailable(lastVersion.getName())) {
-					rename(lastVersion);
-				}
-			} else {
-				if (!destFolder.isContentNameAvailable(lastVersion.getName())) {
-					rename(lastVersion);
-				}
+		/**
+		 * 
+		 * @param lastVersion
+		 * @return true if has been renamed
+		 */
+		protected boolean renameLastVersion(PseudoRequirementVersion lastVersion) {
+			NodeContainer<? extends RequirementLibraryNode> container = getDestination();
+			if (!container.isContentNameAvailable(lastVersion.getName())) {
+				rename(lastVersion);
+				return true;
 			}
+			return false;
 
 		}
 
 		protected Requirement persistRequirement(Requirement requirement) {
 
 			Requirement toReturn = null;
-
-			if (destLibrary != null) {
+			if (destRequirement != null) {
+				context.service.addRequirementToRequirement(destRequirement.getId(), requirement);
+			} else if (destLibrary != null) {
 				toReturn = context.service.addRequirementToRequirementLibrary(destLibrary.getId(), requirement);
 			} else {
 				toReturn = context.service.addRequirementToRequirementFolder(destFolder.getId(), requirement);
@@ -199,7 +237,6 @@ class RequirementLibraryMerger {
 
 		protected void applyConfigurationTo(DestinationManager otherManager) {
 			otherManager.setMergingContext(context);
-
 			if (destLibrary != null) {
 				otherManager.setDestination(destLibrary);
 			} else {
@@ -279,7 +316,7 @@ class RequirementLibraryMerger {
 	}
 
 	@SuppressWarnings("rawtypes")
-	private static List<String> collectNames(List<RequirementLibraryNode> set) {
+	private static List<String> collectNames(List<? extends RequirementLibraryNode> set) {
 		List<String> res = new LinkedList<String>();
 
 		for (RequirementLibraryNode node : set) {
@@ -298,7 +335,7 @@ class RequirementLibraryMerger {
 	}
 
 	@SuppressWarnings("rawtypes")
-	private static RequirementLibraryNode getByName(List<RequirementLibraryNode> list, String needle) {
+	private static RequirementLibraryNode getByName(List<? extends RequirementLibraryNode> list, String needle) {
 		for (RequirementLibraryNode node : list) {
 			if (node.getName().equals(needle)) {
 				return node;

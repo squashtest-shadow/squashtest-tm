@@ -57,7 +57,6 @@ class RequirementImporterITDisabled extends DbunitServiceSpecification {
 
 	def setup(){
 		importer.service = service
-
 	}
 
 
@@ -164,43 +163,109 @@ class RequirementImporterITDisabled extends DbunitServiceSpecification {
 
 	}
 
-	//	@DataSet("RequirementImporterIT.setup.xml")
-	//	def "should import a hierarchy of requirement"(){
-	//
-	//		given :
-	//		Class classe = this.getClass()
-	//		ClassLoader classLoader = classe.getClassLoader()
-	//		InputStream stream = classLoader.getResourceAsStream("import/import-requirement-into-requirement.xls")
-	//
-	//		when :
-	//		def summary = importer.importExcelRequirements( stream, -2L)
-	//
-	//
-	//		then  : "all success"
-	//		summary.getTotal() == 4
-	//		summary.getSuccess()  == 4
-	//		summary.getRenamed() == 0
-	//		summary.getFailures() == 0
-	//
-	//		def rContent = service.findLibrary(-2l).content
-	//		rContent.size() == 1
-	//
-	//		and : "first requirement imported as root"
-	//		def req3 = rContent.get(0)
-	//		req3 != null
-	//		def req3Content = req3.content
-	//		req3Content.size() == 1
-	//		def req4 = req3Content.get(0)
-	//		def req4Content = req4.content
-	//		req4Content.size() == 1
-	//		def req5 = req4Content.get(0)
-	//		def req5Content = req5.content
-	//		req5Content.size() == 1
-	//		def req6 = req5Content.get(0)
-	//		req6 != null
-	//
-	//	}
-	//
+	/**
+	 * Dataset explained :
+	 * <ul>
+	 *   <li>Project & RequirementLibrary #-2
+	 *     <ol>
+	 *       <li>dossier1 #-1</li>
+	 *       <li>dossier2 #-2
+	 *         <ol>
+	 *           <li>req21 #-21
+	 *             <ol>
+	 *               <li>req211 #-211</li>
+	 *               <li>req212 #-212</li>
+	 *             </ol>
+	 *           </li>
+	 *         </ol>
+	 *       </li>
+	 *     </ol>
+	 *   </li>
+	 * </ul>
+	 */
+	@DataSet("RequirementImporterIT.import req path.xml")
+	def "should import a hierarchy of requirement"(){
+
+		given :
+		Class classe = this.getClass()
+		ClassLoader classLoader = classe.getClassLoader()
+		InputStream stream = classLoader.getResourceAsStream("import/import-requirement-into-requirement.xls")
+
+		when :
+		def summary = importer.importExcelRequirements( stream, -2L)
+
+
+		then  : "all success"
+		summary.getTotal() == 8
+		summary.getSuccess()  == 8
+		summary.getRenamed() == 2
+		summary.getFailures() == 0
+
+		def rContent = service.findLibrary(-2l).content
+		rContent.size() == 3
+
+		and : "root requirements imported"
+		def req3 = rContent.find {it.name == "name3"}
+		req3 != null
+		def req3Content = req3.content
+		req3Content.size() == 1
+		def req4 = req3Content.get(0)
+		req4.name == "name4"
+		def req4Content = req4.content
+		req4Content.size() == 1
+		def req5 = req4Content.get(0)
+		def req5Content = req5.content
+		req5Content.size() == 1
+		req5.name == "name5"
+		def req6 = req5Content.get(0)
+		req6 != null
+		req6.name == "name6"
+
+		and : "dossier1 requirements imported"
+		def dossier1 = rContent.find {it.name == "dossier1"}
+		dossier1 != null
+		def dossier1Content = dossier1.content
+		dossier1Content.size() == 1
+		def dossier11 = dossier1Content.get(0)
+		dossier11.name == "dossier11"
+		def dossier11Content = dossier11.content
+		dossier11Content.size() == 1
+		def req111 = dossier11Content.get(0)
+		req111.name == "req111"
+		def req111Content = req111.content
+		req111Content.size() == 1
+		def req1111 = req111Content.get(0)
+		req1111 != null
+		req1111.name == "req1111"
+
+		and : "dossier2 requirements imported"
+		def dossier2 = rContent.find {it.name == "dossier2"}
+		dossier2 != null
+		def dossier2Content = dossier2.content
+		dossier2Content.size() == 1
+		def req21 = dossier2Content.get(0)
+		req21.name == "req21"
+		def req21Content = req21.content
+		req21Content.size() == 4
+		def req211 = req21Content.find {it.name == "req211"}
+		req211 != null
+		req211.content.size() == 0
+		def req211imp = req21Content.find {it.name == "req211-import1"}
+		req211imp != null
+		req211imp.content.size() == 0
+		def req212 = req21Content.find {it.name == "req212"}
+		req212 != null
+		req212.content.size() == 0
+		def req212imp = req21Content.find {it.name == "req212-import1"}
+		req212imp != null
+		def req212impContent = req212imp.content
+		req212impContent.size() == 1
+		def req2121 = req212impContent.find {it.name == "req2121"}
+		req2121 != null
+
+
+	}
+
 
 	@DataSet("RequirementImporterIT.setup.xml")
 	def "should import a hierarchy with new folder header"(){

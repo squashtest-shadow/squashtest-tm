@@ -18,22 +18,41 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.domain.library;
+package org.squashtest.tm.domain.requirement;
 
-import org.squashtest.tm.domain.Identified;
-import org.squashtest.tm.domain.SelfClassAware;
-import org.squashtest.tm.domain.attachment.AttachmentHolder;
-import org.squashtest.tm.domain.project.GenericProject;
-import org.squashtest.tm.domain.project.ProjectResource;
+import java.util.ArrayList;
+import java.util.List;
 
-/**
- * Interface for project libraries;
- * 
- * @param <NODE>
- *            type of contained node.
- */
-public interface Library<NODE extends LibraryNode> extends ProjectResource<GenericProject>, SelfClassAware,
-NodeContainer<NODE>, Identified, AttachmentHolder, PluginReferencer {
-	void notifyAssociatedWithProject(GenericProject p);
+public class RequirementExtractor implements RequirementLibraryNodeVisitor {
+
+	public RequirementExtractor() {
+	}
+
+	List<Requirement> result;
+
+	/**
+	 * will go through the given nodes to return a list of the requirement ones (not folder).
+	 * 
+	 * @param nodes
+	 * @return the requirements
+	 */
+	public List<Requirement> extract(List<? extends RequirementLibraryNode> nodes) {
+		result = new ArrayList<Requirement>();
+		for (RequirementLibraryNode node : nodes) {
+			node.accept(this);
+		}
+		return result;
+	}
+
+	@Override
+	public void visit(RequirementFolder folder) {
+		// NOPE
+	}
+
+	@Override
+	public void visit(Requirement requirement) {
+		result.add(requirement);
+
+	}
 
 }

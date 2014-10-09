@@ -38,6 +38,8 @@ public class RequirementImporter {
 	@Inject
 	private RequirementLibraryNavigationService service;
 
+	public static final String DEFAULT_CREATED_BY = "import";
+
 	private RequirementParser parser = new RequirementParserImpl();
 
 	public ImportSummary importExcelRequirements(InputStream excelStream, long libraryId) {
@@ -56,7 +58,7 @@ public class RequirementImporter {
 
 		// /* phase 2 : merge with the actual database content */
 
-		RequirementLibrary library = service.findCreatableLibrary(libraryId);	
+		RequirementLibrary library = service.findCreatableLibrary(libraryId);
 		RequirementLibraryMerger merger = new RequirementLibraryMerger(service);
 		merger.mergeIntoLibrary(library, root, organizedPseudoReqNodes);
 
