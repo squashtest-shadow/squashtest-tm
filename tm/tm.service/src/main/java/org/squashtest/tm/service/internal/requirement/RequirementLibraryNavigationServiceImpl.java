@@ -272,7 +272,7 @@ RequirementLibraryNavigationService, RequirementLibraryFinderService {
 	}
 
 	@Override
-	@PreAuthorize("hasPermission(#folderId, 'org.squashtest.tm.domain.requirement.Requirement' , 'CREATE') "
+	@PreAuthorize("hasPermission(#requirementId, 'org.squashtest.tm.domain.requirement.Requirement' , 'CREATE') "
 			+ OR_HAS_ROLE_ADMIN)
 	public Requirement addRequirementToRequirement(long requirementId, @NotNull Requirement newRequirement) {
 
