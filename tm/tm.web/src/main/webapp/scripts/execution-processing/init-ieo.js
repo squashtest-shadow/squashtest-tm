@@ -19,9 +19,24 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 define([ "jquery", "module", "./ieo-manager", "squash.resizer",
-		"./jquery.ieo-control" ],
+		"./jquery.ieo-control", "jquery.squash.formdialog" ],
 		function($, module, OptimizedManager, resizer) {
 
+			function initOpenURLDialog(){
+				var openurlDialog = $("#open-address-dialog");
+				openurlDialog.formDialog();
+				
+				openurlDialog.on('formdialogconfirm', function(){
+					var url = $('#address-input').val();
+					squashtm.ieomanager.fillRightPane(url);
+					openurlDialog.formDialog('close');					
+				});
+				
+				$("#open-address-dialog-button").on('click', function(){
+					openurlDialog.formDialog('open');
+				});
+			}
+	
 			return function() {
 
 				// init the manager
@@ -42,6 +57,9 @@ define([ "jquery", "module", "./ieo-manager", "squash.resizer",
 
 				// the right panel
 				manager.setRightPane($("#ieo-right-panel"));
+				
+				// init the open url dialog
+				initOpenURLDialog();
 
 				// make the panels resizeable
 

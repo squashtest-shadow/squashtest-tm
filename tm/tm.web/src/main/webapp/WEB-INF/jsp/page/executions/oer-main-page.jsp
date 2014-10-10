@@ -26,7 +26,6 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib prefix="layout" tagdir="/WEB-INF/tags/layout"  %>
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component" %>
-<%@ taglib prefix="pop" tagdir="/WEB-INF/tags/popup" %>
 <%@ taglib prefix="sf" uri="http://www.springframework.org/tags/form"%>
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="json" uri="http://org.squashtest.tm/taglib/json" %>
@@ -100,20 +99,20 @@
 	
 	
 	<%-- Popup to enter the url we want the right panel to be filled with --%>
-	<pop:popup id="open-address-dialog" openedBy="open-address-dialog-button" titleKey="execution.IEO.address.bar.label">
-		<jsp:attribute name="buttons">
-				<f:message var="label" key="execution.IEO.address.go.to.button" />
-				'${ label }': function() {
-				var url = $('#address-input').val();
-				squashtm.ieomanager.fillRightPane(url);
-				$('#open-address-dialog').dialog('close');
-				},			
-			</jsp:attribute>
-			<jsp:attribute name="body">
-				<label><f:message key="execution.execute.IEO.address.label" /></label>
-				<input id="address-input" type="text" size="50" /><br/>
-			</jsp:attribute>
-	</pop:popup>
+    <f:message var="openurlTitle" key="execution.IEO.address.bar.label"/>
+    <f:message var="gotoLabel" key="execution.IEO.address.go.to.button" />
+    <div id="open-address-dialog" class="popup-dialog not-displayed"
+          title="${openurlTitle}" >
+        <label><f:message key="execution.execute.IEO.address.label" /></label>
+        <input id="address-input" type="text" size="50" /><br/>
+        
+        <div class="popup-dialog-buttonpane">
+          <input type="button" value="${gotoLabel}" data-def="mainbtn, evt=confirm"/>
+        </div>
+                 
+    </div>
+          
+
 	
 	<c:if test="${not empty bugTracker}">
 	<is:issue-add-popup id="issue-report-dialog" interfaceDescriptor="${interfaceDescriptor}"  bugTrackerId="${bugTracker.id}"/>		

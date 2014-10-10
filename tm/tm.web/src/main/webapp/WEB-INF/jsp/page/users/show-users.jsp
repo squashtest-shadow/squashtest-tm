@@ -43,6 +43,15 @@
 
 
 
+<f:message var="addLabel" key="label.Add" />
+<f:message var="cancelLabel" key="label.Cancel"/>
+  
+<f:message var="missingNewPassword" key="user.account.newpass.error"/>
+<f:message var="missingConfirmPassword" key="user.account.confirmpass.error"/>
+<f:message var="differentConfirmation" key="user.account.newpass.differ.error"/>
+<f:message var="okLabel" key="label.Confirm"/>
+
+
 <layout:info-page-layout titleKey="squashtm.users.title" isSubPaged="true">
 	<jsp:attribute  name="head">	
 		<comp:sq-css name="squash.grey.css" />	
@@ -110,91 +119,85 @@
 	
 	<%-- ------------------------------ Add User Dialog ------------------------------------------------ --%>
 	
-		<pop:popup id="add-user-dialog" titleKey="title.AddUser" isContextual="true"
-			openedBy="add-user-button">
-			<jsp:attribute name="buttons">
-			
-				<f:message var="label" key="label.Add" />
-				'${ label }': function() {
-					var handler = $("#add-user-dialog").data('confirm-handler');
-					handler.call(this);	
-				},			
-				<pop:cancel-button />
-			</jsp:attribute>
-			<jsp:attribute name="additionalSetup">
-				width : 600
-			</jsp:attribute>
-			<jsp:attribute name="body">
-				<table id="add-user-table">
-					<tr> 
-						<td><label  for="add-user-login"><f:message key="label.Login" /></label></td>
-						<td><input type="text" id="add-user-login" size="30"/></td>
-					</tr>
-					<tr><td> <comp:error-message forField="user-login" /> </td>
-					</tr>
-					<tr> 
-						<td><label  for="add-user-firstName"><f:message key="label.FirstName" /></label></td>
-						<td><input type="text" id="add-user-firstName" size="30"/></td> 
-					</tr>
-					<tr>
-						<td><comp:error-message forField="user-firstName" /></td>
-					</tr> 
-					<tr> 
-						<td><label  for="add-user-lastName"><f:message key="label.LastName" /></label></td>
-						<td><input type="text" id="add-user-lastName" size="30"/></td>
-					</tr>
-					<tr>
-						<td><comp:error-message forField="user-lastName" /></td>
-					</tr>
-					<tr> 
-						<td><label  for="add-user-email"><f:message key="label.Email" /></label></td>
-						<td><input type="email" id="add-user-email" size="30"/></td>
-					</tr>
-					<tr>
-						<td><comp:error-message forField="user-email" /></td>
-					</tr>
-					<tr> 
-						<td><label  for="add-user-group"><f:message key="label.Group" /></label></td>
-						<td>
-						<select id="add-user-group">
-							<c:forEach var="group" items="${ usersGroupList }">
-								<c:choose>
-									<c:when test="${ group.simpleName == 'User' }">
-										<option id="${group.qualifiedName}" value="${group.id}" selected="selected"><f:message key="user.account.group.${group.qualifiedName}.label" /></option>
-									</c:when>
-									<c:otherwise>
-										<option id="${group.qualifiedName}" value="${group.id}"><f:message key="user.account.group.${group.qualifiedName}.label" /></option>
-									</c:otherwise>
-								</c:choose>
-							</c:forEach>
-						</select>
-						</td> 
-					</tr>
+        <f:message var="adduserTitle" key="title.AddUser"/>
+        <div id="add-user-dialog" class="popup-dialog not-displayed" title="${adduserTitle}">
+        
+        <table id="add-user-table">
+          <tr> 
+            <td><label  for="add-user-login"><f:message key="label.Login" /></label></td>
+            <td><input type="text" id="add-user-login" size="30"/></td>
+          </tr>
+          <tr><td> <comp:error-message forField="user-login" /> </td>
+          </tr>
+          <tr> 
+            <td><label  for="add-user-firstName"><f:message key="label.FirstName" /></label></td>
+            <td><input type="text" id="add-user-firstName" size="30"/></td> 
+          </tr>
+          <tr>
+            <td><comp:error-message forField="user-firstName" /></td>
+          </tr> 
+          <tr> 
+            <td><label  for="add-user-lastName"><f:message key="label.LastName" /></label></td>
+            <td><input type="text" id="add-user-lastName" size="30"/></td>
+          </tr>
+          <tr>
+            <td><comp:error-message forField="user-lastName" /></td>
+          </tr>
+          <tr> 
+            <td><label  for="add-user-email"><f:message key="label.Email" /></label></td>
+            <td><input type="email" id="add-user-email" size="30"/></td>
+          </tr>
+          <tr>
+            <td><comp:error-message forField="user-email" /></td>
+          </tr>
+          <tr> 
+            <td><label  for="add-user-group"><f:message key="label.Group" /></label></td>
+            <td>
+            <select id="add-user-group">
+              <c:forEach var="group" items="${ usersGroupList }">
+                <c:choose>
+                  <c:when test="${ group.simpleName == 'User' }">
+                    <option id="${group.qualifiedName}" value="${group.id}" selected="selected"><f:message key="user.account.group.${group.qualifiedName}.label" /></option>
+                  </c:when>
+                  <c:otherwise>
+                    <option id="${group.qualifiedName}" value="${group.id}"><f:message key="user.account.group.${group.qualifiedName}.label" /></option>
+                  </c:otherwise>
+                </c:choose>
+              </c:forEach>
+            </select>
+            </td> 
+          </tr>
 <c:if test="${ not authenticationProvider.managedPassword }">
-			          <tr>
-			            <td> <label for="add-user-password"><f:message key="user.account.newpass.label" /></label> </td>
-			            <td><input type="password" id="add-user-password" size="30" /></td>
-			          </tr>
-			          <tr>
-			            <td><comp:error-message forField="password" /></td>
-			          </tr>	
-			          <tr>
-			            <td><label for="new-user-confirmpass"><f:message key="user.account.confirmpass.label"/></label></td>
-			            <td><input type="password" id="new-user-confirmpass" size="30"/> </td>
-			          </tr>
-			          <tr>
-			            <td><comp:error-message forField="confirmpass" /></td>
-			          </tr>
+                <tr>
+                  <td> <label for="add-user-password"><f:message key="user.account.newpass.label" /></label> </td>
+                  <td><input type="password" id="add-user-password" size="30" /></td>
+                </tr>
+                <tr>
+                  <td><comp:error-message forField="password" /></td>
+                </tr> 
+                <tr>
+                  <td><label for="new-user-confirmpass"><f:message key="user.account.confirmpass.label"/></label></td>
+                  <td><input type="password" id="new-user-confirmpass" size="30"/> </td>
+                </tr>
+                <tr>
+                  <td><comp:error-message forField="confirmpass" /></td>
+                </tr>
 </c:if>
  <c:if test="${ authenticationProvider.managedPassword }">
-			          <tr>
-			            <td><label><f:message key="label.password" /></label></td>
-			            <td><span><f:message key="message.managedPassword" /></span></td>
-			          </tr>
+                <tr>
+                  <td><label><f:message key="label.password" /></label></td>
+                  <td><span><f:message key="message.managedPassword" /></span></td>
+                </tr>
 </c:if>
-				</table>
-			</jsp:attribute>
-		</pop:popup>
+        </table>       
+          
+        
+          <div class="popup-dialog-buttonpane">
+            <input type="button" value="${addLabel}" data-def="mainbtn, evt=confirm"/>
+            <input type="button" value="${cancelLabel}" data-def="evt=cancel" />        
+          </div>        
+        </div>
+  
 		
 		
 		<f:message var="deleteUsersTitle" key="title.delete-users" />
@@ -218,12 +221,7 @@
 		
 		</div>	
 		
-	
-	<f:message var="missingNewPassword" key="user.account.newpass.error"/>
-	<f:message var="missingConfirmPassword" key="user.account.confirmpass.error"/>
-	<f:message var="differentConfirmation" key="user.account.newpass.differ.error"/>
-	<f:message var="ok" key="label.Confirm"/>
-	<f:message var="cancel" key="label.Cancel"/>
+
 		
 	<script type="text/javascript">
 	//<![CDATA[
@@ -250,8 +248,8 @@
     					missingNewPassword : "${missingNewPassword}",
     					missingConfirmPassword : "${missingConfirmPassword}",
     					differentConfirmation : "${differentConfirmation}",
-    					ok : "${ok}",
-    					cancel :"${cancel}"
+    					ok : "${okLabel}",
+    					cancel :"${cancelLabel}"
     				},
     				managedPassword: ${ authenticationProvider.managedPassword }
     			};

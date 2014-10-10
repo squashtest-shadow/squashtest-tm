@@ -32,17 +32,12 @@
  * for cancel } }
  */
 
-define([ "jquery", "squash.translator", "jquery.squash.fragmenttabs", "squashtable", "jquery.squash.confirmdialog" ],
+define([ "jquery", "squash.translator", 
+         "jquery.squash.fragmenttabs", "squashtable", 
+         "jquery.squash.confirmdialog", "jquery.squash.formdialog" ],
 		function($, translator, Frag) {
 
 	// ---------------- add user dialog ----------------------------
-
-	function cleanUp() {
-		$("#add-user-password").val('');
-		$("#new-user-confirmpass").val('');
-		$("#add-user-email").val('');
-		$("#add-user-group").val($("#add-user-group option:last").val());
-	}
 
 
 	// note : I don't trust hasOwnProperty due to its cross-browser issues.
@@ -121,9 +116,19 @@ define([ "jquery", "squash.translator", "jquery.squash.fragmenttabs", "squashtab
 		return form;
 	}
 
-	function buildAddUserConfirm(settings, validatePassword) {
-		return function() {
-			if (!validatePassword()){
+	// ------------- dialog init -----------------
+
+	function initDialog(settings) {
+
+		// new user popup
+
+		var passValidation = buildPasswordValidation(settings);
+		
+		var adduserDialog = $("#add-user-dialog");
+		adduserDialog.formDialog({width : 600});		
+		
+		adduserDialog.on('formdialogconfirm', function(){
+			if (!passValidation()){
 				return;
 			}
 			var url = settings.urls.baseUrl + "/new";
@@ -134,23 +139,22 @@ define([ "jquery", "squash.translator", "jquery.squash.fragmenttabs", "squashtab
 				data : readForm(settings)
 			}).success(function(){
 				$('#users-list-table').squashTable().refresh();
+				adduserDialog.formDialog('close');
 			});
-		};
-	}
-
-
-	// ------------- dialog init -----------------
-
-	function initDialog(settings) {
-
-		// new user popup
-
-		var passValidation = buildPasswordValidation(settings);
-		var addUserConfirm = buildAddUserConfirm(settings, passValidation);
-		$("#add-user-dialog").data('confirm-handler', addUserConfirm);
-		$("#add-user-dialog").bind("dialogclose", cleanUp);
-
-
+		});
+		
+		adduserDialog.on('formdialogcancel', function(){
+			adduserDialog.formDialog('close');
+		});
+		
+		adduserDialog.on('formdialogopen', function(){
+			$("#add-user-group").val($("#add-user-group option:last").val());
+		});
+		
+		$("#add-user-button").on('click', function(){
+			adduserDialog.formDialog('open');
+		});
+		
 		// confirm deletion
 		$("#delete-user-popup").confirmDialog().on('confirmdialogconfirm', function(){
 			var $this = $(this),
@@ -176,6 +180,8 @@ define([ "jquery", "squash.translator", "jquery.squash.fragmenttabs", "squashtab
 	// ---------------------- button ----------------------
 
 	function initButtons(settings) {
+		
+		$("#add-user-button").button();
 
 		function displayNothingSelected(){
 			var warn = translator.get({
@@ -185,7 +191,6 @@ define([ "jquery", "squash.translator", "jquery.squash.fragmenttabs", "squashtab
 			$.squash.openMessage(warn.errorTitle, warn.errorMessage);
 		}
 
-		$('#add-user-button').button();
 
 		$("#deactivate-user-button").button().on('click', function(){
 			var table =  $("#users-list-table").squashTable();
