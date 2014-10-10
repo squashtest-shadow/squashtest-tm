@@ -96,6 +96,7 @@ define([ "jquery", "underscore", "ckeditor",  "squash.configmanager", "./cuf-val
 				
 				var select = $("<select>");
 				var options = def.options;
+				utils.addEmptyValueToDropdownlistIfOptional(def);
 				for (var i in def.options){
 					var attrs = {
 						'text' : options[i].label,
@@ -107,6 +108,8 @@ define([ "jquery", "underscore", "ckeditor",  "squash.configmanager", "./cuf-val
 					var opt = $('<option/>',attrs);
 					select.append(opt);
 				}
+			
+				
 				elt.empty();
 				elt.append(select);
 			},

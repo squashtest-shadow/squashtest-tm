@@ -151,6 +151,10 @@ define(
 				if (elts.length === 0){
 					return;
 				}
+				
+
+		
+				utils.addEmptyValueToDropdownlistIfOptional(cufDefinitions);
 
 				var prepareSelectData = function(options, selected) {
 

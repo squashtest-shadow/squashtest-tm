@@ -26,8 +26,16 @@ define([ "jquery", "squash.configmanager", "jqueryui" ],
 		return $.datepicker.formatDate(toFormat, date);
 	}
 
+	function addEmptyValueToDropdownlistIfOptional(cufDefinitions){
+		if (cufDefinitions.optional){
+			cufDefinitions.options.push({label:""});
+		}
+	}
+	
+	
 	return {
-		convertStrDate : convertStrDate
+		convertStrDate : convertStrDate,
+		addEmptyValueToDropdownlistIfOptional : addEmptyValueToDropdownlistIfOptional
 	};
 
 });
