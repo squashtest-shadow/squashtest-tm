@@ -34,7 +34,7 @@
     <js.packageDirectory>scripts</js.packageDirectory>
     
     <!-- DEfault webdriver for jasmine runner. One can override it -->
-    <jasmine.webdriver.classname>org.openqa.selenium.htmlunit.HtmlUnitDriver</jasmine.webdriver.classname>
+    <jasmine.webdriver.classname>org.openqa.selenium.phantomjs.PhantomJSDriver</jasmine.webdriver.classname>
 
     <!-- Default jacoco dont record any coverage data -->
     <sonar.java.coveragePlugin>cobertura</sonar.java.coveragePlugin>
@@ -497,6 +497,21 @@
       </plugin>
 
       <plugin>
+        <groupId>com.github.klieber</groupId>
+        <artifactId>phantomjs-maven-plugin</artifactId>
+        <version>0.2.1</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>install</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <version>1.9.2</version>
+        </configuration>
+      </plugin>
+      <plugin>
         <groupId>com.github.searls</groupId>
         <artifactId>jasmine-maven-plugin</artifactId>
         <version>2.0-alpha-01</version>
@@ -515,6 +530,12 @@
           <jsSrcDir>${project.basedir}/src/main/webapp/scripts</jsSrcDir>
           <jsTestSrcDir>${project.basedir}/src/test/javascript</jsTestSrcDir>
           <webDriverClassName>${jasmine.webdriver.classname}</webDriverClassName>
+          <webDriverCapabilities>
+            <capability>
+              <name>phantomjs.binary.path</name>
+              <value>${phantomjs.binary}</value>
+            </capability>
+          </webDriverCapabilities>
           <preloadSources>
             <source>scripts/require.js</source>
             <source>scripts/sinon.js</source>
@@ -936,7 +957,7 @@
               </targetDirectory>
             </configuration>
           </plugin>
-          
+
           <plugin>
         <!-- r.js optimization. can be skipped with -Drequirejs.optimize.skip=true -->
             <groupId>com.github.bringking</groupId>
