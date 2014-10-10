@@ -92,6 +92,7 @@
 		         'custom-field-values',
 		         "jqueryui"], function($, basicwidg, isIE, noCloseOnEnter, cufValues){
 			$(function(){
+				"use strict"
 				basicwidg.init();
 				
 				$("#execute-next-button").button({
@@ -123,14 +124,14 @@
 				});			
 
 				
-				$("div.load-links-right-frame a").live("click", function(event){
+				$(document).on("click", "div.load-links-right-frame a", function(event){
 					event.preventDefault();
 					var url = $(this).attr('href'); 
 					parent.squashtm.ieomanager.fillRightPane(url);
 					return false;				
 				});
 				
-				$("#bugtracker-section-div a").live("click", function(){
+				$(document).on("click", "#bugtracker-section-div a", function(){
 					$(this).attr('target', "${bugLinkTarget}");
 				});			
 
