@@ -48,52 +48,43 @@
 </authz:authorized>
  
  
+ 
  <%-- ====================== POPUP STRUCTURE DEFINITION ========================= --%>
  
-<pop:popup id="manage-test-suites-popup" isContextual="true"  openedBy="manage-test-suites-button" closeOnSuccess="false" titleKey="dialog.testsuites.title">
+ <f:message var="manageTSDialog" key="dialog.testsuites.title" />
+ <f:message var="closeLabel" key="label.Close" />
+ <div id="manage-test-suites-popup" class="popup-dialog not-displayed" title="${manageTSDialog}">
+  
+  <div class="main-div-suites not-displayed">
+  <c:if test="${ creatable }">
+    <div class="create-suites-section">
+      <f:message var="defaultMessage" key="dialog.testsuites.defaultmessage" />
+      <f:message var="createLabel" key="label.Add"/>
+      <input type="text" size="30" placeholder="${defaultMessage}"/><input type="button" class="button" value="${createLabel}"/><br/>
+      <comp:error-message forField="name" />      
+    </div>  
+    </c:if>
+    <div class="display-suites-section">
+    </div>
+    
+    <div class="rename-suites-section">
+      <f:message var="renameLabel" key="dialog.testsuites.rename.label" />
+      <input type="text" size="30"/><input type="button" class="button" value="${renameLabel}" />
+    </div> 
+    <c:if test="${ deletable }">
+    <div class="remove-suites-section">
+      <f:message var="removeLabel" key="dialog.testsuites.remove.label" />
+      <input type="button" class="button" value="${removeLabel}"/>
+    </div>
+  </c:if>
+  </div>
+ 
+  <div class="popup-dialog-buttonpane">
+    <input type="button" value="${closeLabel}" data-def="evt=closemanager"/>
+  </div>
+ 
+ </div>
 
-	<jsp:attribute name="buttons">
-	<f:message var="closeLabel" key="label.Close" />
-	'${ closeLabel }': function() {
-		$( this ).dialog( 'close' );
-	}		
-	</jsp:attribute>
-	
-	<jsp:attribute name="additionalSetup">
-		width : 400,
-		open : function(){
-			squashtm.testSuiteManagement.testSuiteManager.init();
-		}
-	</jsp:attribute>
-	
-
-	<jsp:attribute name="body">
-	
-	<div class="main-div-suites not-displayed">
-	<c:if test="${ creatable }">
-		<div class="create-suites-section">
-            <f:message var="defaultMessage" key="dialog.testsuites.defaultmessage" />
-			<f:message var="createLabel" key="label.Add"/>
-			<input type="text" size="30" placeholder="${defaultMessage}"/><input type="button" class="button" value="${createLabel}"/><br/>
-			<comp:error-message forField="name" />			
-		</div>	
-		</c:if>
-		<div class="display-suites-section">
-		</div>
-		
-		<div class="rename-suites-section">
-			<f:message var="renameLabel" key="dialog.testsuites.rename.label" />
-			<input type="text" size="30"/><input type="button" class="button" value="${renameLabel}" />
-		</div> 
-		<c:if test="${ deletable }">
-		<div class="remove-suites-section">
-			<f:message var="removeLabel" key="dialog.testsuites.remove.label" />
-			<input type="button" class="button" value="${removeLabel}"/>
-		</div>
-	</c:if>
-	</div>
-	</jsp:attribute>
-</pop:popup>
 
 <div id="suite-menu-empty-selection-popup" class="not-visible"
 	title="<f:message key='title.suite.menu.emptySelection' />">
@@ -140,6 +131,7 @@ $(function(){
 			};
 		
 		var managerSettings = {
+				dialog : $("#manage-test-suites-popup"),
 				instance : $("#manage-test-suites-popup .main-div-suites"),
 				deleteConfirmMessage : "${deleteMessage}",
 				deleteConfirmTitle : "${deleteTitle}"

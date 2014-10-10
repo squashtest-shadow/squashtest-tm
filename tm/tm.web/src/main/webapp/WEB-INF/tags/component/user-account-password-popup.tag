@@ -26,83 +26,114 @@
 <%@ taglib tagdir="/WEB-INF/tags/component" prefix="comp"%>
 <%@ taglib prefix="s" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix="pop" tagdir="/WEB-INF/tags/popup" %>
 
-<%@ attribute name="url" required="true" description="the url where to post the new password" %>
-<%@ attribute name="id"  required="false" description="(optional) identifier of the said popup" %>
-<%@ attribute name="openerId" required="true" description="the name of the control that will open that popup" %>
-<%@ attribute name="successCallback" required="false" description="if defined, that function will be called after
-																	the popup is closed." %>
-<c:choose>
-	<c:when test="${not empty id}">
-		<c:set var="popupId" value="${id}" />
-	</c:when>
-	<c:otherwise>
-		<c:set var="popupId" value="password-change-popup"/>
-	</c:otherwise>
 
-</c:choose>
+<c:url var="userAccountUrl" value="/user-account/update" />
+
+<f:message var="oldPassError" key="user.account.oldpass.error" />
+<f:message var="newPassError" key="user.account.newpass.error"/>
+<f:message var="confirmPassError" key="user.account.confirmpass.error"/>
+<f:message var="samePassError" key="user.account.newpass.differ.error"/>  
+<f:message var="passSuccess" key="user.account.changepass.success" />
+<f:message var="confirmLabel" key="label.Confirm" />
+<f:message var="cancelLabel" key="label.Cancel" />
+
+<f:message var="passchangeTitle" key="user.account.password.label" />
+
+
+<div id="password-change-popup" class="popup-dialog not-displayed" title="${passchangeTitle}">
+
+    <div id="user-account-password-panel">
+      
+      <div >
+        <label><f:message key="user.account.oldpass.label"/></label>
+        <input type="password" id="oldPassword"/>
+        <comp:error-message forField="oldPassword" />
+      </div>
+    
+      <div>
+        <label ><f:message key="user.account.newpass.label"/></label>
+        <input type="password" id="newPassword"/>
+        <comp:error-message forField="newPassword" />
+      </div>
+      
+      <div>
+        <label ><f:message key="user.account.confirmpass.label"/></label>
+        <input type="password" id="user-account-confirmpass"/>
+        <comp:error-message forField="user-account-confirmpass" />
+      </div>      
+      
+    </div>
+    
+    <%-- the next comp:error is currently unused, however that might change later --%>
+    <comp:error-message forField="user-account-changepass-status"/>
+
+  <div class="popup-dialog-buttonpane">
+    <input type="button" value="${confirmLabel}" data-def="mainbtn, evt=confirm" />
+    <input type="button" value="${cancelLabel}" data-def="evt=cancel" />
+  </div>
+
+</div>
 
 <script type="text/javascript">
 require( ["common"], function(){
-	require( ["jquery"], function($){
+	require( ["jquery", "app/ws/squashtm.notification",  "jquery.squash.formdialog"], function($, notification){
 
 	$(function(){
-		$("#${popupId}").bind( "dialogclose", cleanUp);
-		$("#${popupId}").data('confirm-handler', submitPassword);
+		
+		var pwdDialog = $("#password-change-popup");
+		pwdDialog.formDialog({width : 420});
+		
+		pwdDialog.on('formdialogconfirm', function(){
+			if (! validatePassword()) return;		
+			
+			var oldPassword= $("#oldPassword").val();
+			var newPassword = $("#newPassword").val();
+			
+			$.ajax({
+				url : "${userAccountUrl}",
+				type : "POST",
+				dataType : "json",
+				data : { "oldPassword" : oldPassword, "newPassword" : newPassword }
+			})
+			.done(function(){
+				pwdDialog.formDialog('close');
+				notification.showInfo("${passSuccess}");
+			});
+		});
+		
+		pwdDialog.on('formdialogcancel', function(){
+			pwdDialog.formDialog('close');
+		});
+		
+		$("#change-password-button").on('click', function(){
+			pwdDialog.formDialog('open');
+		});
 	});
 
-
-	function submitPassword(){
-		
-		if (! validatePassword()) return;		
-			
-		var oldPassword= $("#oldPassword").val();
-		var newPassword = $("#newPassword").val();
-		
-		$.ajax({
-			url : "${url}",
-			type : "POST",
-			dataType : "json",
-			data : { "oldPassword" : oldPassword, "newPassword" : newPassword } ,
-			success : userPasswordSuccess
-		});		
-						
-		
-	}
-
-	<f:message var="oldPassError" key="user.account.oldpass.error" />
-	<f:message var="newPassError" key="user.account.newpass.error"/>
-	<f:message var="confirmPassError" key="user.account.confirmpass.error"/>
-	<f:message var="samePassError" key="user.account.newpass.differ.error"/>	
 	
 	<%-- we validate the passwords only. Note that validation also occurs server side. --%>
 	function validatePassword(){
+		
 		//first, clear error messages
 		$("#user-account-password-panel span.error-message").html('');
 		
-		//has the user attempted to change his password ?
+		var oldPassOkay=true,
+			newPassOkay=true,
+			confirmPassOkay=true,
+			samePassesOkay=true;
 		
-		var oldPassOkay=true;
-		var newPassOkay=true;
-		var confirmPassOkay=true;
-		var samePassesOkay=true;
-		
-
-		if (! isFilled("#oldPassword")){
-			$("span.error-message.oldPassword-error").html("${oldPassError}");
-			oldPassOkay=false;
+		function filledOrDie(selector, errorspan, errmsg){
+			var filled = ($(selector).val().length !== 0);
+			if (! filled){
+				$("span.error-message."+errorspan).html(errmsg);
+			}
+			return filled;
 		}
 		
-		if (! isFilled("#newPassword")){
-			$("span.error-message.newPassword-error").html("${newPassError}");
-			newPassOkay=false;
-		}
-
-		if (! isFilled("#user-account-confirmpass")){
-			$("span.error-message.user-account-confirmpass-error").html("${confirmPassError}");
-			confirmPassOkay=false;
-		}				
+		oldPassOkey = filledOrDie("#oldPassword", "oldPassword-error", "${oldPassError}");
+		newPassOkey = filledOrDie("#newPassword", "newPassword-error", "${newPassError}");;
+		newPassOkey = filledOrDie("#user-account-confirmpass", "user-account-confirmpass-error", "${confirmPassError}");
 		
 		if ((newPassOkay==true) && (confirmPassOkay==true)){
 			var pass = $("#newPassword").val();
@@ -114,98 +145,15 @@ require( ["common"], function(){
 			}
 		}
 
-		
 		return ( (oldPassOkay) && (newPassOkay) && (confirmPassOkay) &&(samePassesOkay) );
 		
 	}
-	
-	
-	<%-- returns wether the field was filled or not --%>
-	function isFilled(selector){
-		var value = $(selector).val();
-		if (value.length==0){
-			return false;
-		}else{
-			return true;
-		}
-		
-	}
-
-	
-	function hasPasswdChanged(){
-		return (
-			   (isFilled("#oldPassword"))
-			|| (isFilled("#newPassword"))
-			|| (isFilled("#user-account-confirmpass"))
-		);
-	}
-	
 
 
-	function userPasswordSuccess(){
-		$("#${popupId}").dialog('close');
-		<c:if test="${not empty successCallback}">
-			${successCallback}();
-		</c:if>
-	}
-	
-	function cleanUp(){
-		$("#oldPassword").val('');
-		$("#newPassword").val('');
-		$("#user-account-confirmpass").val('');	
-		
-	}
 	});
 });
 </script>
 
-
-
-<pop:popup  id="${popupId}" openedBy="${openerId}" closeOnSuccess="false" titleKey="user.account.password.label" isContextual="true" >
-
- 	<jsp:attribute name="buttons"> 	
-		<f:message var="label" key="label.Confirm" />
-		'${ label }': function() {
-				var handler = $($("#${popupId}")).data('confirm-handler');
-				handler.call(this);	
-		},			
-		<pop:cancel-button />
- 	</jsp:attribute> 
-
-	<jsp:attribute name="additionalSetup">
-		width: 420,
-	</jsp:attribute> 	
- 	
- 	<jsp:attribute name="body"> 
-		<div id="user-account-password-panel">
-			
-			<div >
-				<label><f:message key="user.account.oldpass.label"/></label>
-				<input type="password" id="oldPassword"/>
-				<comp:error-message forField="oldPassword" />
-			</div>
-		
-			<div>
-				<label ><f:message key="user.account.newpass.label"/></label>
-				<input type="password" id="newPassword"/>
-				<comp:error-message forField="newPassword" />
-			</div>
-			
-			<div>
-				<label ><f:message key="user.account.confirmpass.label"/></label>
-				<input type="password" id="user-account-confirmpass"/>
-				<comp:error-message forField="user-account-confirmpass" />
-			</div>			
-			
-		</div>
-		
-		<%-- the next comp:error is currently unused, however that might change later --%>
-		<comp:error-message forField="user-account-changepass-status"/>
- 		
- 	</jsp:attribute>
-
-
-</pop:popup>
 
 
 

@@ -23,7 +23,10 @@
  *
  */
 
-define([ 'jquery', 'jquery.squash.oneshotdialog', 'jqueryui', 'jquery.squash.squashbutton' ], function($, oneshot) {
+define([ 'jquery', 'jquery.squash.oneshotdialog', 
+         'jqueryui', 'jquery.squash.squashbutton',
+         'jquery.squash.formdialog'
+         ], function($, oneshot) {
 
 	function TestSuiteManagerControl(settings) {
 
@@ -257,6 +260,28 @@ define([ 'jquery', 'jquery.squash.oneshotdialog', 'jqueryui', 'jquery.squash.squ
 	function TestSuiteManager(settings) {
 
 		var self = this;
+		
+		
+		// ****** main dialog initialization ******
+		
+		var thismanager = this;
+		
+		var maindialog = settings.dialog;
+		maindialog.formDialog({width : 400});
+		
+		maindialog.on('formdialogopen', function(){
+			thismanager.resetAll();
+		});
+		
+		maindialog.on('formdialogclosemanager', function(){
+			maindialog.formDialog('close');
+		});
+		
+		$("#manage-test-suites-button").on('click', function(){
+			maindialog.formDialog('open');
+		});
+		
+		
 
 		/*
 		 * **************** public state management methods ********************
@@ -345,8 +370,9 @@ define([ 'jquery', 'jquery.squash.oneshotdialog', 'jqueryui', 'jquery.squash.squ
 
 		/* ******************** init code ****************************** */
 
+
 		// executed every time the popup opens
-		this.init = function() {
+		this.resetAll = function() {
 			this.view.deselectAllItems();
 			this.create.control.reset();
 			this.updatePopupState();

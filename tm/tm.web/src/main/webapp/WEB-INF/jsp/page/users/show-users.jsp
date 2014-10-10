@@ -28,7 +28,6 @@
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component"%>
 <%@ taglib prefix="teams" tagdir="/WEB-INF/tags/teams-components" %>
 <%@ taglib prefix="s" uri="http://www.springframework.org/tags" %>
-<%@ taglib prefix="pop" tagdir="/WEB-INF/tags/popup" %>
 <%@ taglib prefix="json" uri="http://org.squashtest.tm/taglib/json" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 

@@ -272,43 +272,7 @@ var squashtm = squashtm || {};
 		return this;
 	};
 
-	/*
-	 * Squash TM domain name : variable $.fn.squashtm
-	 * 
-	 */
-	/**
-	 * squashtm.popup(settings) : creates a popup dialog from the given settings
-	 * 
-	 * popup settings : - all normal $.ui.dialog valid options - selector : jquery selector of the dom element we are
-	 * targetting (mandatory) - openedBy : selector for a clickable element that will open the popup (optional) - title :
-	 * the title of the popup (mandatory) - isContextual : boolean telling if the said popup should be added the special
-	 * class 'is-contextual', that will mark him as a removable popup when the context changes, - closeOnSuccess :
-	 * boolean telling if the popup should be closed if an ajax request succeeds (optional) - ckeditor : { - lang : the
-	 * desired language for the ckeditor (optional) - styleUrl : the url for the ckeditor style. } - buttons : the
-	 * button definition (mandatory)
-	 * 
-	 * 
-	 */
-	squashtm.popup = {
-		// begin popup.create
-		create : function(settings) {
-			var target = $(settings.selector);
-			target.createPopup(settings);
-		}, // end popup.create
-		// begin popup.cleanup
-		cleanup : function() {
-			// clear all error-message even ones that are not in this popup
-			// because others might have been filled with error handle.
-			$('.error-message').text('');
-			// clear inputs
-			this.find('input:text').val('');
-			this.find('textarea').val('');
-		}
-	// end popup.cleanup
-	};
-
-
-
+	
 	$.extend({
 		
 		/*

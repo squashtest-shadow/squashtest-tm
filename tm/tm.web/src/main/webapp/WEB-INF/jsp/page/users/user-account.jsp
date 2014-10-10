@@ -24,7 +24,6 @@
 <%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
     
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
-<%@ taglib prefix="pop" tagdir="/WEB-INF/tags/popup" %>
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="s" uri="http://www.springframework.org/tags"%>
@@ -82,10 +81,7 @@
 					
 			});
 		});
-		function changePasswordCallback(){
-			<f:message var="passSuccess" key="user.account.changepass.success" />
-			squashtm.notification.showInfo("${passSuccess}");
-		}
+
 		
 
 		
@@ -195,7 +191,7 @@
 		</comp:toggle-panel>
 	</div>
     <c:if test="${ not authenticationProvider.managedPassword }">
-	<comp:user-account-password-popup openerId="change-password-button" url="${userAccountUrl}" successCallback="changePasswordCallback"/>
+	   <comp:user-account-password-popup/>
     </c:if>
 	</jsp:attribute>
 </layout:info-page-layout>
@@ -204,7 +200,8 @@
   require(["common"], function() {
     require(["jquery", "squashtable"], function($){
   	  $("#project-permission-table").squashTable({
-  		  'sDom' : '<r>t<<l><ip>>',
+  		  'bServerSide' : false,
+  		  'sDom' : '<r>t<i>',
   		  'sPaginationType' : 'full_numbers'
   	  },{});
   	  
