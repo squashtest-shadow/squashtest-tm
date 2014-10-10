@@ -144,7 +144,7 @@
 						});
 						
 						/* refreshes table on ajax success for any actions in the editor below */
-						table.ajaxSuccess(function(event, xrh, settings) {
+						$(document).ajaxSuccess(function(event, xrh, settings) {
 							if (settings.type == 'POST' && settings.url.match(/requirement-versions\/\d+$/g)) {
 								table.refresh();
 							}

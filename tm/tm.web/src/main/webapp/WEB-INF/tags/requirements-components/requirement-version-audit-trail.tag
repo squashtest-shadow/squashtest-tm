@@ -130,7 +130,7 @@
     	
     			$( "#audit-event-details-dialog" ).messageDialog();
     			
-    			$( "#requirement-audit-trail-table" ).ajaxSuccess(function(event, xrh, settings) {
+    			$(document).ajaxSuccess(function(event, xrh, settings) {
     				if (settings.type == 'POST' 
     						&& !(settings.data && settings.data.match(/requirement-status/g))
     						&& !settings.url.match(/versions\/new$/g)) {

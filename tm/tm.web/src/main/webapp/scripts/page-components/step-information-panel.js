@@ -25,65 +25,31 @@
  * 	format : the date format
  * 	never : the label 'never' displayed when no modification ever happend on that entity.
  * }
- * 
+ *
  */
-define(["jquery", "squash.dateutils", "squash.attributeparser", "squash.statusfactory"], 
-		function($, dateutils, attrparser, statusfactory){
-		
-	function updateDateInformations(infos, options){					
-		
+define([ "jquery", "squash.dateutils", "./general-information-panel-controller", "squash.statusfactory" ], function($,
+		dateutils, Controller, statusfactory) {
+	"use strict";
+	function updateDateInformations(options, infos) {
+		infos = infos || defaults();
+
 		// update the dates
-		var newExecutedOn = (infos.executedOn !== null && infos.executedOn.length>0) ? dateutils.format(infos.executedOn, options.format) : "";
-		var newExecutedBy = (infos.executedBy !== null && infos.executedBy.length>0) ? '('+infos.executedBy+')' : options.never;
-						
+		var newExecutedOn = (infos.executedOn !== null && infos.executedOn.length > 0) ? dateutils.format(infos.executedOn,
+				options.format) : "";
+		var newExecutedBy = (infos.executedBy !== null && infos.executedBy.length > 0) ? '(' + infos.executedBy + ')'
+				: options.never;
+
 		$("#last-executed-on  .datetime").text(newExecutedOn);
 		$("#last-executed-on  .author").text(newExecutedBy);
-	
+
 	}
-	
-	
-	return {
-		
-		refresh : function(){
-			var elt = $("#general-information-panel"),
-				stropts = elt.data('def'),
-				opts = attrparser.parse(stropts);
-			
-			if (opts.url){
-				$.ajax({
-					type : 'GET',
-					url : opts.url+'/general',
-					dataType : 'json'
-				})
-				.done(function(json){
-					updateDateInformations(json, opts);
-				});		
-			}
-		},
-		
-		init : function(){
-			
-			var elt = $("#general-information-panel"),
-				stropts = elt.data('def'),
-				opts = attrparser.parse(stropts);
-			
-			var infos = {
-				executedOn : $("#last-executed-on .datetime").text(),
-				executedBy : $("#last-executed-on .author").text()					
-			};
-			
-			var self = this;
-			
-			updateDateInformations(infos, opts);
-			
-			if (!! opts.url){
-				$("#general-information-panel").ajaxSuccess(function(event, xrh, settings) {
-					if (settings.type == 'POST') {
-						self.refresh();
-					}
-				});			
-			}
-		}
+
+	function defaults() {
+		return {
+			executedOn : $("#last-executed-on .datetime").text(),
+			executedBy : $("#last-executed-on .author").text()
+		};
 	}
-	
+
+	return new Controller(updateDateInformations);
 });
