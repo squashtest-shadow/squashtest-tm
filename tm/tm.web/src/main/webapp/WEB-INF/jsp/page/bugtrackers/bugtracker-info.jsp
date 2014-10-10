@@ -25,7 +25,6 @@
 <%@ taglib prefix="s" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component"%>
 <%@ taglib prefix="layout" tagdir="/WEB-INF/tags/layout"%>
-<%@ taglib prefix="pop" tagdir="/WEB-INF/tags/popup"%>
 
 <%@ page language="java" contentType="text/html; charset=utf-8"
 	pageEncoding="utf-8"%>
@@ -35,6 +34,12 @@
 	<s:param name="bugtrackerId" value="${bugtracker.id}" />
 </s:url>
 <s:url var="bugtrackersUrl" value="/administration/bugtrackers" />
+
+
+<f:message var="renameLabel" key="label.Rename" />
+<f:message var="cancelLabel" key="label.Cancel" />
+
+
 <layout:info-page-layout titleKey="workspace.bugtracker.info.title" isSubPaged="true">
 	<jsp:attribute name="head">	
 		<comp:sq-css name="squash.grey.css" />	
@@ -76,7 +81,7 @@
 			<div class="toolbar-button-panel">
 				<f:message var="rename" key="rename" />
 				<input type="button" value="${ rename }" id="rename-bugtracker-button"
-							class="button" />
+							class="sq-btn" />
 			</div>
 			</div>
 			<%--------End Toolbar ---------------%>
@@ -124,76 +129,98 @@
 		<%---------------------------------------------------------------END  BODY -----------------------------------------------%>
 	</jsp:attribute>
 </layout:info-page-layout>
-<script type="text/javascript">
 
-//*****************Back button
-
-$(function() {
-		require(["squash.basicwidgets"], function(basic){
-			basic.init();
-			$("#back").click(clickBugtackerBackButton);
-			$("#bugtracker-iframeFriendly-checkbx").change(clickBugTrackerIframeFriendly);
-		});
-});
-
-function clickBugtackerBackButton(){
-	document.location.href = "${bugtrackersUrl}";
-}
-
-function clickBugTrackerIframeFriendly(){
-	
-	$.ajax({
-		type : 'post',
-		data : {
-			'isIframeFriendly' : $("#bugtracker-iframeFriendly-checkbx").is(":checked")
-		},
-		dataType : "json",
-		url : "${ bugtrackerUrl }"
-	});
- }
-
-function changeBugTrackerUrlCallback(){
-	
-}
-
-/* renaming success handler */
-function renameBugtrackerSuccess(data) {
-	$('#bugtracker-name-header').html(data.newName);
-	$('#rename-bugtracker-dialog').dialog('close');
-}
-</script>
 
 <!-- --------------------------------RENAME POPUP--------------------------------------------------------- -->
+  
+    <f:message var="renameBTTitle" key="dialog.rename-bugtracker.title" />
+    <div id="rename-bugtracker-dialog" class="not-displayed popup-dialog"
+        title="${renameBTTitle}">
+  
+        <label><f:message key="dialog.rename.label" /></label>
+        <input type="text" id="rename-bugtracker-input" maxlength="255" size="50" />
+        <br />
+        <comp:error-message forField="name" />
+  
+        
+        <div class="popup-dialog-buttonpane">
+          <input type="button" value="${renameLabel}" data-def="mainbtn, evt=confirm"/>
+          <input type="button" value="${cancelLabel}" data-def="evt=cancel"/>
+        </div>        
+    </div>
 
-	<pop:popup id="rename-bugtracker-dialog"
-		titleKey="dialog.rename-bugtracker.title"
-		openedBy="rename-bugtracker-button">
-		<jsp:attribute name="buttons">
-		<f:message var="label" key="rename" />
-			'${ label }': function() {
-				var url = "${ bugtrackerUrl }";
-                var params = { newName : $("#rename-bugtracker-input").val() };
-                $.ajax({
-                  url : url, 
-                  type : 'POST',
-                  dataType : 'json',
-                  data : params                  
-                });				
-			},			
-			<pop:cancel-button />
-		</jsp:attribute>
-		<jsp:attribute name="body">
-			<script type="text/javascript">
-				$("#rename-bugtracker-dialog").bind("dialogopen", function(event, ui) {
-					var name = $.trim($('#bugtracker-name-header').text());
-					$("#rename-bugtracker-input").val($.trim(name));
-			
-				});				
-			</script>
-			<label><f:message key="dialog.rename.label" /></label>
-			<input type="text" id="rename-bugtracker-input" maxlength="255" size="50" />
-			<br />
-			<comp:error-message forField="name" />
-		</jsp:attribute>
-	</pop:popup>
+
+  
 <!-- ------------------------------------END RENAME POPUP------------------------------------------------------- -->
+
+<script type="text/javascript">
+
+  //*****************Back button  
+  
+  function clickBugtackerBackButton(){
+    document.location.href = "${bugtrackersUrl}";
+  }
+  
+  function clickBugTrackerIframeFriendly(){
+    
+    $.ajax({
+      type : 'post',
+      data : {
+        'isIframeFriendly' : $("#bugtracker-iframeFriendly-checkbx").is(":checked")
+      },
+      dataType : "json",
+      url : "${ bugtrackerUrl }"
+    });
+   }
+  
+  function changeBugTrackerUrlCallback(){
+    
+  }
+
+  
+  function initRenameDialog(){
+    var renameDialog = $("#rename-bugtracker-dialog");
+    renameDialog.formDialog();
+    
+    renameDialog.on('formdialogopen', function(){
+          var name = $.trim($('#bugtracker-name-header').text());
+          $("#rename-bugtracker-input").val($.trim(name));    
+    });
+    
+    renameDialog.on('formdialogconfirm', function(){
+      var params = { newName : $("#rename-bugtracker-input").val() };
+      $.ajax({
+        url : "${ bugtrackerUrl }",
+        type : 'POST',
+        dataType : 'json',
+        data : params
+      }).success(function(data){
+  	    $('#bugtracker-name-header').html(data.newName);
+  	    renameDialog.formDialog('close');   	  
+      });
+    });
+    
+    renameDialog.on('formdialogcancel', function(){
+    	renameDialog.formDialog('close');
+    });
+    
+    $("#rename-bugtracker-button").on('click', function(){
+    	renameDialog.formDialog('open');
+    });
+    
+  }
+  
+  
+  require(["common"], function(){
+	  require(["jquery", "squash.basicwidgets", "jquery.squash.formdialog"], function(jquery, basic){
+	    $(function(){
+	      basic.init();
+	      $("#back").click(clickBugtackerBackButton);
+	      $("#bugtracker-iframeFriendly-checkbx").change(clickBugTrackerIframeFriendly);
+	      initRenameDialog();
+	    });
+	  });	  
+  });
+
+
+</script>

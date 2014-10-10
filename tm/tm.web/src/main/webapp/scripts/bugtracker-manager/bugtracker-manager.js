@@ -19,12 +19,51 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 require(["common"], function() {
-	require(["jquery", "squash.translator", "squashtable"], function($, translator){					
+	require(["jquery", "squash.translator", "workspace.routing", "squashtable", 
+	         "app/ws/squashtm.workspace", 
+	         "jquery.squash.formdialog", "jquery.squash.confirmdialog"], 
+			function($, translator, routing){					
+		
 		$(function() {		
 			$('#new-bugtracker-button').button();				
 			$("#bugtrackers-table").squashTable({},{});						
 		});	
 		
+		
+		// *************** BT ADDITION ********************
+		
+		var addBTDialog = $("#add-bugtracker-dialog");
+		
+		addBTDialog.formDialog();
+		
+		addBTDialog.on('formdialogcancel', function(){
+			addBTDialog.formDialog('close');
+		});
+		
+		addBTDialog.on('formdialogconfirm', function(){
+			var url = routing.buildURL('administration.bugtrackers');
+			var params = {
+				name: $( '#add-bugtracker-name' ).val(),
+				url: $( '#add-bugtracker-url' ).val(),
+				kind: $( '#add-bugtracker-kind' ).val(),
+				iframeFriendly: $('#add-bugtracker-iframeFriendly').is(':checked')							
+			}
+			$.ajax({
+				url : url,
+				type : 'POST',
+				dataType : 'json',
+				data : params				
+			}).success(function(){
+				$('#bugtrackers-table').squashTable().refresh();
+				addBTDialog.formDialog('close');
+			});
+		});
+		
+		$("#new-bugtracker-button").on('click', function(){
+			addBTDialog.formDialog('open');
+		});
+		
+		// *************** BT DELETION ********************
 
 		$("#delete-bugtracker-popup").confirmDialog().on('confirmdialogconfirm', function(){
 			
@@ -44,16 +83,7 @@ require(["common"], function() {
 			
 			
 		});
-		
-		function displayNothingSelected(){
-			var warn = translator.get({
-				errorTitle : 'popup.title.Info',
-				errorMessage : 'message.EmptyTableSelection'
-			});
-			$.squash.openMessage(warn.errorTitle, warn.errorMessage);
-		}
 
-		
 		$("#delete-bugtracker-button").on('click', function(){
 			var ids = $("#bugtrackers-table").squashTable().getSelectedIds();
 
@@ -63,10 +93,17 @@ require(["common"], function() {
 				popup.confirmDialog('open');
 			}
 			else{
-
 				displayNothingSelected();
 			}
 		});
+		
+		function displayNothingSelected(){
+			var warn = translator.get({
+				errorTitle : 'popup.title.Info',
+				errorMessage : 'message.EmptyTableSelection'
+			});
+			$.squash.openMessage(warn.errorTitle, warn.errorMessage);
+		}
 	
 	});			
 });		

@@ -25,10 +25,13 @@
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component" %>
-<%@ taglib prefix="pop" tagdir="/WEB-INF/tags/popup" %>
 <%@ taglib prefix="s" uri="http://www.springframework.org/tags" %>
 
 <s:url var="administrationUrl" value="/administration" />
+
+<f:message var="addLabel"       key="label.Add"/>
+<f:message var="confirmLabel"   key="label.Confirm"/>
+<f:message var="cancelLabel"    key="label.Cancel"/>
 
 <layout:info-page-layout titleKey="squashtm.bugtrackers.title" isSubPaged="true" main="bugtracker-manager/bugtracker-manager.js">
 	<jsp:attribute  name="head">	
@@ -45,11 +48,11 @@
 	
 	<jsp:attribute name="subPageButtons">
 		<f:message var="backButtonLabel" key="label.Back" />
-		<input type="button" class="button" value="${backButtonLabel}" onClick="document.location.href= '${administrationUrl}'"/>	
+		<input type="button" class="sq-btn" value="${backButtonLabel}" onClick="document.location.href= '${administrationUrl}'"/>	
 	</jsp:attribute>
 	<jsp:attribute name="informationContent">
 		<c:url var="bugtrackersUrl" value="/administration/bugtrackers/list" />
-		<c:url var="addBugtrackerUrl" value="/administration/bugtrackers/add" />
+		<c:url var="addBugtrackerUrl" value="/administration/bugtrackers" />
 		<c:url var="bugtrackerDetailsBaseUrl" value="/bugtracker" />
 		<c:url var="dtMessagesUrl" value="/datatables/messages" />
 
@@ -58,7 +61,7 @@
 
 
 <div class="fragment-body">
-	<input class="snap-right" type="button" value='<f:message key="label.AddBugtracker" />' id="new-bugtracker-button"/>
+	<input class="snap-right sq-btn" type="button" value='<f:message key="label.AddBugtracker" />'   id="new-bugtracker-button"/>
 	<input class="snap-right sq-btn" type="button" value='<f:message key="label.deleteBugtracker" />' id="delete-bugtracker-button"/>
 	<div style="clear:both"></div>
 	
@@ -78,83 +81,68 @@
 
 
 
-		<f:message var="deleteBugtrackerTitle" key="dialog.delete-bugtracker.title" />
-		<div id="delete-bugtracker-popup" class="popup-dialog not-displayed" title="${deleteBugtrackerTitle}">
-			
-			<div class="display-table-row">
-	            <div class="display-table-cell warning-cell">
-	                <div class="delete-node-dialog-warning"></div>
-	            </div>
-	            <div class="display-table-cell">
-				TEST
-				</div>
-			</div>
-			<div class="popup-dialog-buttonpane">
-			    <input class="confirm" type="button" value="<f:message key='label.Confirm' />" />
-			    <input class="cancel" type="button" value="<f:message key='label.Cancel' />" />				
-			</div>
+	<f:message var="deleteBugtrackerTitle" key="dialog.delete-bugtracker.title" />
+	<div id="delete-bugtracker-popup" class="popup-dialog not-displayed" title="${deleteBugtrackerTitle}">
 		
-		</div>	
+		<div class="display-table-row">
+            <div class="display-table-cell warning-cell">
+                <div class="delete-node-dialog-warning"></div>
+            </div>
+            <div class="display-table-cell">
+			TEST
+			</div>
+		</div>
+		<div class="popup-dialog-buttonpane">
+		    <input class="confirm" type="button" value="${confirmLabel}" />
+		    <input class="cancel" type="button" value="${cancelLabel}" />				
+		</div>
+	
+	</div>	
 
+    <f:message var="addBugtrackerTitle" key="dialog.new-bugtracker.title"/>
+    <div id="add-bugtracker-dialog" class="not-displayed popup-dialog" 
+          title="${addBugtrackerTitle}" />
+          
+        <table>
+          <tr>
+            <td><label for="add-bugtracker-name"><f:message
+              key="label.Name" /></label></td>
+            <td><input id="add-bugtracker-name" type="text" size="50" />
+            <comp:error-message forField="name" /></td>
+          </tr>
+          <tr>
+            <td><label for="add-bugtracker-kind"><f:message
+              key="label.Kind" /></label></td>
+            <td><select id="add-bugtracker-kind" class="combobox">
+            <c:forEach items="${ bugtrackerKinds }" var="kind" > 
+            <option value = "${kind}" >${kind}</option>
+            </c:forEach>
+            </select>
+            
+            <comp:error-message forField="kind" /></td>
+          </tr>
+          <tr>
+            <td><label for="add-bugtracker-url"><f:message
+              key="dialog.new-bugtracker.url.label" /></label></td>
+            <td><input id="add-bugtracker-url" type="text" size="50"/>
+            <comp:error-message forField="url" /></td>
+          </tr>
+          <tr>
+            <td><label for="add-bugtracker-iframeFriendly"><f:message
+              key="label.DisplaysInIframe" /></label></td>
+            <td><input id="add-bugtracker-iframeFriendly" type="checkbox" />
+            <comp:error-message forField="iframeFriendly" /></td>
+          </tr>
+        </table>
 
-
-<pop:popup id="add-bugtracker-dialog" titleKey="dialog.new-bugtracker.title" openedBy="new-bugtracker-button">
-	<jsp:attribute name="buttons">
-		<f:message var="label1" key="label.Add" />
-			'${ label1 }': function() {
-					$.ajax({
-						url : "${addBugtrackerUrl}",
-						type : 'POST', 
-						dataType : 'json',
-						data : {
-							name: $( '#add-bugtracker-name' ).val(),
-							url: $( '#add-bugtracker-url' ).val(),
-							kind: $( '#add-bugtracker-kind' ).val(),
-							iframeFriendly: $('#add-bugtracker-iframeFriendly').is(':checked')							
-						}
-					}).done(function(){
-						$('#bugtrackers-table').squashTable().refresh();
-					});
-				},							
-		<pop:cancel-button />
-	</jsp:attribute>
-			<jsp:attribute name="body">
-				<table>
-					<tr>
-						<td><label for="add-bugtracker-name"><f:message
-							key="label.Name" /></label></td>
-						<td><input id="add-bugtracker-name" type="text" size="50" />
-						<comp:error-message forField="name" /></td>
-					</tr>
-					<tr>
-						<td><label for="add-bugtracker-kind"><f:message
-							key="label.Kind" /></label></td>
-						<td><select id="add-bugtracker-kind" class="combobox">
-						<c:forEach items="${ bugtrackerKinds }" var="kind" > 
-						<option value = "${kind}" >${kind}</option>
-						</c:forEach>
-						</select>
-						
-						<comp:error-message forField="kind" /></td>
-					</tr>
-					<tr>
-						<td><label for="add-bugtracker-url"><f:message
-							key="dialog.new-bugtracker.url.label" /></label></td>
-						<td><input id="add-bugtracker-url" type="text" size="50"/>
-						<comp:error-message forField="url" /></td>
-					</tr>
-					<tr>
-						<td><label for="add-bugtracker-iframeFriendly"><f:message
-							key="label.DisplaysInIframe" /></label></td>
-						<td><input id="add-bugtracker-iframeFriendly" type="checkbox" />
-						<comp:error-message forField="iframeFriendly" /></td>
-					</tr>
-				</table>
-			</jsp:attribute>
-</pop:popup>
-
-		
-
+     
+      <div class="popup-dialog-buttonpane">
+        <input type="button" value="${addLabel}" data-def="mainbtn, evt=confirm"/>
+        <input type="button" value="${cancelLabel}" data-def="evt=cancel"/>
+      </div>
+          
 </div>
+
+
 </jsp:attribute>
 </layout:info-page-layout>

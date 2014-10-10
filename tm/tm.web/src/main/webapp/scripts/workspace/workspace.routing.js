@@ -104,12 +104,14 @@ define([], function(){
 		'campaigns.testplan.manager' :		root + '/campaigns/{\\d+}/test-plan//manager',
 		'iterations.testplan.manager' :		root + '/iterations/{\\d+}/test-plan-manager',
 		'testsuites.testplan.manager' :		root + '/test-suites/{\\d+}/test-plan-manager',
+		
+		'administration.bugtrackers'	:	root + '/administration/bugtrackers',
 
 		
 		// helper methods
 		buildURL : function(){
 			var args = Array.prototype.slice.call(arguments);
-			var template = args.shift();
+			var template = this[args.shift()];
 			
 			var res = template;
 			while (args.length>0) {

@@ -60,15 +60,15 @@ public class BugTrackerAdministrationController {
 
 
 	private DatatableMapper<String> bugtrackerMapper=new NameBasedMapper()
-										.mapAttribute("id", 	"id", BugTracker.class)
-										.mapAttribute("name", 	"name", BugTracker.class)
-										.mapAttribute("kind", 	"kind", BugTracker.class)
-										.mapAttribute("url", 	"url", BugTracker.class)
-										.mapAttribute("iframe-friendly", "iframeFriendly", BugTracker.class);
+	.mapAttribute("id", 	"id", BugTracker.class)
+	.mapAttribute("name", 	"name", BugTracker.class)
+	.mapAttribute("kind", 	"kind", BugTracker.class)
+	.mapAttribute("url", 	"url", BugTracker.class)
+	.mapAttribute("iframe-friendly", "iframeFriendly", BugTracker.class);
 
 
 
-	@RequestMapping(value = "/add", method = RequestMethod.POST)
+	@RequestMapping(method = RequestMethod.POST)
 	public @ResponseBody
 	void addProject(@Valid @ModelAttribute("add-bugtracker") BugTracker bugtracker) {
 
