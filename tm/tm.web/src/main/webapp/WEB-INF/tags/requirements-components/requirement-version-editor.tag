@@ -33,7 +33,6 @@
 <%@ taglib prefix="s" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ taglib prefix="reqs" tagdir="/WEB-INF/tags/requirements-components"%>
-<%@ taglib prefix="pop" tagdir="/WEB-INF/tags/popup"%>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 <%@ taglib prefix="authz" tagdir="/WEB-INF/tags/authz"%>
 <%@ taglib prefix="at" tagdir="/WEB-INF/tags/attachments"%>
@@ -42,12 +41,15 @@
 <s:url var="requirementUrl" value="/requirement-versions/${ requirementVersion.id }" />
 <s:url var="pageUrl" value="/requirement-versions/" />
 
-
 <s:url var="verifyingTCManagerUrl" value="/requirement-versions/${ requirementVersion.id }/verifying-test-cases/manager" />
-
 <s:url var="getStatusComboContent" value="/requirement-versions/${ requirementVersion.id }/next-status" />
-
 <s:url var="customFieldsValuesURL" value="/custom-fields/values" />
+
+<f:message var="confirmLabel" key="label.Confirm"/>
+<f:message var="cancelLabel" key="label.Cancel"/>
+<f:message var="okLabel" key="label.Ok"/>
+<f:message var="DefaultStatusNotAllowedMessage" key='requirement.status.notAllowed.default' />
+<f:message var="ApprovedStatusNotAllowedMessage" key='requirement.status.notAllowed.approved' />
 
 <%-- ----------------------------------- Authorization ----------------------------------------------%>
 <%-- that page won't be editable if 
@@ -196,23 +198,11 @@
 					</div>				
 				</div>
 				<div>
-					<label for="requirement-status">
-                <f:message key="requirement.status.combo.label" />
-              </label>
-					<div>
-						<div id="requirement-status">
-						<c:choose>
-							<c:when test="${ editableStatus }">
-								<comp:level-message level="${ requirementVersion.status }" />
-								<comp:select-jeditable componentId="requirement-status" jsonUrl="${ getStatusComboContent }"
-                        targetUrl="${ requirementUrl }" onSubmit="statusSelect" submitCallback="statusSelectCallback" />
-							</c:when>
-							<c:otherwise>
-								<comp:level-message level="${ requirementVersion.status }" />
-							</c:otherwise>
-						</c:choose>
-						</div>
-					</div>		
+					<label for="requirement-status"><f:message key="requirement.status.combo.label" /></label>
+				<div>
+				<div >
+					<div id="requirement-status"><comp:level-message level="${ requirementVersion.status }"/></div>
+				</div>
 
 				</div>				
 			</div>
@@ -260,147 +250,43 @@
 <!------------------------------------------ POPUPS ------------------------------------------------------>
 <%------------------- confirm new status if set to obsolete ---------------------%>
 <c:if test="${ editableStatus }">
-  <pop:popup id="requirement-status-confirm-dialog" closeOnSuccess="false"
-    titleKey="dialog.requirement.status.confirm.title" isContextual="true">
-    <jsp:attribute name="buttons">
-			<f:message var="confirmLabel" key="label.Confirm" />
-			<f:message var="cancelLabel" key="label.Cancel" />
-				'${ confirmLabel }' : function(){
-					var jqDiag = $(this);
-					jqDiag.dialog( 'close' );
-					jqDiag.data("confirm", true);
-					var form = jqDiag.data('callMeBack');
-					form.submit();
-				},
-				
-				'${ cancelLabel }': function() {
-					var jqDiag = $(this);
-					jqDiag.dialog( 'close' );
-					jqDiag.data("confirm", false);
-					var form = jqDiag.data('callMeBack');
-					form.submit();
-				}
-		</jsp:attribute>
-    <jsp:attribute name="body">
-			<span>
-        <f:message key="dialog.requirement.status.confirm.text" />
-      </span>
-		</jsp:attribute>
-  </pop:popup>
-  <%------------------- rename ---------------------%>
-  <pop:popup id="rename-requirement-dialog" titleKey="dialog.rename-requirement.title" isContextual="true"
-    openedBy="rename-requirement-button">
-    <jsp:attribute name="buttons">
-				<f:message var="label" key="dialog.rename-requirement.title" />
-				'${ label }': function() {
-					var url = "${ pageUrl }" + $('#requirement-id').text();
-                    var params = { newName : $("#rename-requirement-input").val() };
-                    $.ajax({
-                      url : url, 
-                      type : 'POST',
-                      dataType : 'json',
-                      data : params,
-                      success : squashtm.requirementVersion.renameRequirementSuccess
-                    });				
-				},			
-				<pop:cancel-button />
-			</jsp:attribute>
-    <jsp:attribute name="body">
-				<label>
-        <f:message key="dialog.rename.label" />
-      </label>
-				<input type="text" id="rename-requirement-input" maxlength="255" />
-      <br />
-				<comp:error-message forField="name" />
-			</jsp:attribute>
-  </pop:popup>
+      <f:message var="statusChangeDialogTitle" key="dialog.requirement.status.confirm.title"/>
+      <div id="requirement-status-confirm-dialog" class="not-displayed"
+            title="${statusChangeDialogTitle}">
+            
+            <span><f:message key="dialog.requirement.status.confirm.text"/></span>
+            
+            <div class="popup-dialog-buttonpane">
+              <input type="button" value="${confirmLabel}" data-def="mainbtn, evt=confirm"/>
+              <input type="button" value="${cancelLabel}" data-def="evt=cancel" />
+            </div>
+      </div>
 </c:if>
+
+  <%------------------- rename ---------------------%>
+  <div>
+  <c:if test="${writable}">
+    <f:message var="renameDialogTitle" key="dialog.rename-requirement.title"/>
+    <div  id="rename-requirement-dialog" class="not-displayed popup-dialog"
+          title="${renameDialogTitle}">
+    
+        <label><f:message key="dialog.rename.label" /></label>
+        <input type="text" id="rename-requirement-input" maxlength="255" size="50" /><br/>
+        <comp:error-message forField="name"/>
+    
+    
+        <div class="popup-dialog-buttonpane">
+          <input type="button" value="${confirmLabel}" data-def="evt=confirm, mainbtn"/>
+          <input type="button" value="${cancelLabel}" data-def="evt=cancel"/>        
+        </div>
+    
+    </div>
+
+</c:if>
+</div>
 <!------------------------------------------/ POPUPS ------------------------------------------------------>
 <!------------------------------------------ SCRIPTS ------------------------------------------------------>
-<%-- ----------------------------------- Init ----------------------------------------------%>
-<%-- 
-	Code managing the status of a requirement. It is a handler for the 'onsubmit' of a jeditable (see documentation for details).
 
-	It will ask the user, if he chooses to change the requirement status to 'Obsolete', to confirm.
-	Because a jQuery dialog will not stop the execution of javascript we have to code in an unnatural way. 
-	Basically this function will be called twice : first to invoked the dialog, second to read its response.	
-	
-	Here is how it works : 
-	
-		- if any status but 'obsolete' is selected, return true.
-		- if 'obsolete' is selected and 'summoned' is false, sets 'summoned' to true, summons the dialog and return false.
-		- if 'obsolete' is selected and 'summoned' is true, sets 'summoned' to false and read 'confirm' :
-			* 'confirm' is false : reset the widget then return false.
-			* 'confirm' is true : send the information then return true
-		
-	note : Since summoning a dialog will not stop the rest of the code from executing, the second case returns false to ensure that the handler terminates quickly while the dialog
-	is still executed.
-	
-	'summoned' and 'confirm' are attributes of the dialog #requirement-status-confirm-dialog. When summoned the dialog will set 'confirm' 
-	according to the user response and submit the select again. This will in turn call that hook again, which will eventually read the user response and then only decide whether 
-	the user input will be sent or not.
-	
-	See also the code in #requirement-status-confirm-dialog for details. 
---%>
-
-<c:if test="${ editableStatus }">
-  <f:message var="StatusNotAllowedMessage" key='requirement.status.notAllowed' />
-  <script type="text/javascript">
-		function statusSelect(settings, widget){
-			
-			//first check if 'obsolete' is selected
-			var selected = $(this.find('select')).val();
-			
-			var toReturn = true;
-			
-			if (isDisabled(selected)){
-				toReturn=false;
-				$.squash.openMessage("<f:message key='popup.title.info' />", "${ StatusNotAllowedMessage }");
-			}
-			else if ("OBSOLETE" == selected) {
-				var jqDialog = $('#requirement-status-confirm-dialog');
-				var summoned = jqDialog.data('summoned');
-				
-				if (! summoned) {
-					statusObsoleteSummonDialog(this, jqDialog);
-					toReturn=false;
-				} else {	
-					jqDialog.data('summoned', false);
-					toReturn = statusObsoleteReadDialog(widget, jqDialog);			
-				}
-			} else {
-				toReturn = true;
-			}
-			
-			return toReturn;
-		}
-			
-		function isDisabled(selected){
-			return (selected.search(new RegExp("disabled.*"))!=-1);
-		}
-		
-		function statusObsoleteSummonDialog(form, jqDialog){
-			jqDialog.data('summoned', true);
-			jqDialog.data('callMeBack', form);
-			jqDialog.dialog('open');			
-		}
-		
-		//reset the 'summoned' flag and the widget if needed
-		function statusObsoleteReadDialog(widget, jqDialog){
-			var response = jqDialog.data('confirm');
-			if (false==response) {
-				$(widget).html(widget.revert);
-				widget.editing  = false;	
-			}	
-			return response;
-		}
-		
-		function statusSelectCallback(){
-			document.location.reload();
-		}
-</script>
-</c:if>
-<%-- ----------------------------------- Other ----------------------------------------------%>
 <script type="text/javascript">
 require( ["common"], function(){
 	require( ["jquery"], function($){
@@ -413,8 +299,9 @@ var identity = { resid : ${requirementVersion.id}, restype : "requirements"  };
 		require(["domReady", "require"], function(domReady, require){
 			domReady(function(){
 				require(["jquery", "squash.basicwidgets", "contextual-content-handlers", "workspace.event-bus", 
-				         "custom-field-values" ], 
-						function($, basic, contentHandlers, eventBus, cufvalues){
+				         "custom-field-values", "squash.configmanager", "app/ws/squashtm.notification", 
+				         "jquery.squash.formdialog" ], 
+						function($, basic, contentHandlers, eventBus, cufvalues, confman, notification){
 					
 					basic.init();
 					
@@ -433,12 +320,121 @@ var identity = { resid : ${requirementVersion.id}, restype : "requirements"  };
 					
 					$('.fragment-tabs').tabs();
 					
+					
+					// *********** status modification **********
 				
-	        		
-        		$( "#rename-requirement-dialog" ).bind( "dialogopen", function(event, ui) {
-        			var name = $('#requirement-raw-name').text();
-        			$("#rename-requirement-input").val(name);
-        		});
+					<c:if test="${editableStatus}">
+					
+					var statusChangeDialog = $("#requirement-status-confirm-dialog");
+					statusChangeDialog.formDialog();
+					
+					var statusChangeSelect = $("#requirement-status"),
+						statusSelectConf = confman.getJeditableSelect();
+					
+					// this function uses an interplay with the 
+					// statusChangeDialog, see the "OBSOLETE" branch
+					function submitOrConfirm(settings, widget){
+						var selected = this.find('select').val(),
+							cansubmit = true;
+						
+						// if disabled, tell the user and exit
+						if (selected.search(/disabled.*/)!=-1){
+							cansubmit = false;
+							var msg = ("disabled.APPROVED" === selected ) ? 
+										"${ApprovedStatusNotAllowedMessage}" : 
+										"${DefaultStatusNotAllowedMessage}";
+										
+							notification.showError(msg);
+							widget.reset();
+						}
+						else if ("OBSOLETE" == selected){
+							
+							cansubmit = false;
+							
+							var summoned = statusChangeDialog.data('summoned'),
+								confirmed = statusChangeDialog.data('confirmed');
+							
+							if (summoned !== true){
+								statusChangeDialog.data('summoned', true);
+								statusChangeDialog.data('confirmed', false);
+								statusChangeDialog.data('form', this);
+								statusChangeDialog.formDialog('open');
+							}
+							else{
+								cansubmit = confirmed;
+								if (! confirmed){
+									widget.reset();
+								}
+								// rearm the switch;
+								statusChangeDialog.data('summoned', false);
+							}
+						}
+						
+						return cansubmit;
+					}
+					
+					var finalStatusSelectConf = $.extend(true, statusSelectConf, 
+						{
+							loadurl : "${getStatusComboContent}",
+							callback : function(){document.location.reload();},
+							onsubmit : submitOrConfirm
+						}	
+					);
+					
+					statusChangeSelect.editable('${requirementUrl}', finalStatusSelectConf)
+								.addClass('editable');
+					
+					
+					statusChangeDialog.on('formdialogconfirm', function(){
+						statusChangeDialog.formDialog('close');
+						statusChangeDialog.data('confirmed', true);
+						var form = statusChangeDialog.data('form');
+						form.submit();
+					});
+					
+					statusChangeDialog.on('formdialogcancel', function(){
+						statusChangeDialog.formDialog('close');
+						statusChangeDialog.data('confirmed', false);
+						var form = statusChangeDialog.data('form');
+						form.submit();				
+					});
+					
+					</c:if>
+					
+					// ************ rename dialog****************
+				
+					
+				var renameDialog = $("#rename-requirement-dialog");
+				renameDialog.formDialog();
+				
+				renameDialog.on('formdialogconfirm', function(){
+					var url = "${ pageUrl }" + $('#requirement-id').text();
+						params = { newName : $("#rename-requirement-input").val() };
+					
+					$.ajax({
+						url : url,
+						type : 'POST',
+						dataType : 'json',
+						data : params
+					}).success(function(json){
+						renameDialog.formDialog('close');
+						squashtm.requirementVersion.renameRequirementSuccess(json);
+					});
+					
+				});
+				
+				renameDialog.on('formdialogcancel', function(){
+					renameDialog.formDialog('close');
+				});
+				
+				renameDialog.on('formdialogopen', function(){
+   					var name = $.trim($('#requirement-raw-name').text());
+					$("#rename-requirement-input").val(name);
+				});
+				
+				$("#rename-requirement-button").on('click', function(){
+					renameDialog.formDialog('open');
+				});
         		
         		$("#verifying-test-case-button").click(function(){
         			document.location.href="${ verifyingTCManagerUrl }" ;	
