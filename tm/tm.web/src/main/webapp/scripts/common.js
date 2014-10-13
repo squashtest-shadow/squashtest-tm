@@ -116,14 +116,14 @@ requirejs.config({
 				 * "jquery/my.module" will be interpolated as
 				 * "/lib/jquery/../my.module"
 				 */
-//				"datatables" : "datatables/jquery.dataTables",
-				"datatables" : "datatables/jquery.dataTables.min",
+				"datatables" : "datatables/jquery.dataTables",
+//				"datatables" : "datatables/jquery.dataTables.min",
 				//lib
 				"domReady" : "lib/require/domReady",
-//				"jquery" : "lib/jquery/jquery-2.1.1",
-				"jquery" : "lib/jquery/jquery-2.1.1.min",
-//				"jqueryui" : "lib/jquery/jquery-ui-1.9.2.custom",
-				"jqueryui" : "lib/jquery/jquery-ui-1.9.2.custom.min",
+				"jquery" : "lib/jquery/jquery-2.1.1",
+//				"jquery" : "lib/jquery/jquery-2.1.1.min",
+				"jqueryui" : "lib/jquery/jquery-ui-1.9.2.custom",
+//				"jqueryui" : "lib/jquery/jquery-ui-1.9.2.custom.min",
 				"handlebars" : "lib/handlebars/handlebars-1.0.0.rc3",
 //				"underscore" : "lib/underscore/underscore-1.4.4",
 				"underscore" : "lib/underscore/underscore-1.4.4-min",

@@ -22,53 +22,53 @@
 
 
 /*
- * Conf : see the conf of the main module + the following metadata generated in the main module : 
- * 
+ * Conf : see the conf of the main module + the following metadata generated in the main module :
+ *
  * {
  *  data:{
  *  identity : {
  *		resid : equivalent to campaignId,
  *		restype : hardcoded to "campaigns", considering that we are in the campaign core init module
  *  },
- *  dashboard : see the parameters for the dashboard. Here we define a master and a cache key 
- * 
+ *  dashboard : see the parameters for the dashboard. Here we define a master and a cache key
+ *
  * }
  * }
- * 
+ *
  */
-define(["jquery", "squash.basicwidgets", "contextual-content-handlers", "jquery.squash.fragmenttabs", 
-        "bugtracker/bugtracker-panel", "workspace.event-bus",  "squash.translator",  
-        "dashboard/campaigns-dashboard/main", "../planning/main", "../test-plan-panel/main",
+define(["jquery", "squash.basicwidgets", "contextual-content-handlers", "jquery.squash.fragmenttabs",
+        "bugtracker/bugtracker-panel", "workspace.event-bus",  "squash.translator",
+        "dashboard/campaigns-dashboard/campaigns-dashboard-main", "./planning", "./test-plan-panel",
         "custom-field-values",
-        "jqueryui", "jquery.squash.formdialog"], 
-        function($, basicwidg, contentHandlers, Frag, bugtrackerPanel, eventBus, translator, 
+        "jqueryui", "jquery.squash.formdialog"],
+        function($, basicwidg, contentHandlers, Frag, bugtrackerPanel, eventBus, translator,
         dashboard, planning, testplan, cufvalues){
-	
-	
+
+
 	function init(conf){
-		
+
 		basicwidg.init();
 
 		initTabs(conf);
-		
+
 		initCufs(conf);
-		
+
 		initRenameHandler(conf);
-		
+
 		initRenameDialog(conf);
-		
-		
+
+
 		initPlanning(conf);
-		
+
 		initDashboard(conf);
-		
+
 		initTestplan(conf);
-		
-		
+
+
 		initBugtracker(conf);
-		
+
 	}
-	
+
 	function initCufs(conf){
 		if (conf.features.hasCUF){
 			var url = conf.data.cufValuesUrl + "?boundEntityId="+conf.data.campaignId+"&boundEntityType=CAMPAIGN";
@@ -80,13 +80,13 @@ define(["jquery", "squash.basicwidgets", "contextual-content-handlers", "jquery.
 			});
 		}
 	}
-	
-	function initRenameHandler(conf){		
+
+	function initRenameHandler(conf){
 		var nameHandler = contentHandlers.getSimpleNameHandler();
 		nameHandler.identity = conf.data.identity;
-		nameHandler.nameDisplay = "#campaign-name";		
+		nameHandler.nameDisplay = "#campaign-name";
 	}
-	
+
 	function initTabs(conf){
 		var fragConf = {
 			cookie : "iteration-tab-cookie",	// FIXME : was that a copy pasta ?
@@ -96,10 +96,10 @@ define(["jquery", "squash.basicwidgets", "contextual-content-handlers", "jquery.
 				}
 			}
 		};
-		
+
 		Frag.init(fragConf);
 	}
-	
+
 	function initBugtracker(conf){
 		if (conf.features.hasBugtracker){
 			bugtrackerPanel.load({
@@ -108,35 +108,35 @@ define(["jquery", "squash.basicwidgets", "contextual-content-handlers", "jquery.
 			});
 		}
 	}
-	
+
 	function initPlanning(conf){
 		if (conf.features.writable){
 			planning.init(conf);
 		}
 	}
-	
+
 	function initDashboard(conf){
 		dashboard.init(conf.dashboard);
 	}
-	
+
 	function initTestplan(conf){
 		testplan.init(conf);
 	}
-	
+
 	function initRenameDialog(conf){
-		
+
 		var dialog = $("#rename-campaign-dialog"),
 			campaignUrl = conf.data.campaignUrl,
 			campaignId = conf.data.campaignId;
-		
+
 		dialog.formDialog();
-		
+
 		dialog.on("formdialogopen", function(){
 			var name = $('#campaign-name').text();
 			var trimmed = $.trim(name);
 			$("#rename-campaign-name").val(trimmed);
 		});
-		
+
 		dialog.on('formdialogconfirm', function(){
 			var newName = $("#rename-campaign-name").val();
 			$.ajax({
@@ -150,20 +150,20 @@ define(["jquery", "squash.basicwidgets", "contextual-content-handlers", "jquery.
 				eventBus.trigger('node.rename', { identity : conf.data.identity, newName : data.newName});
 			});
 		});
-		
+
 		dialog.on('formdialogcancel', function(){
 			dialog.formDialog('close');
 		});
-		
+
 		$("#rename-campaign-button").on('click', function(){
 			dialog.formDialog('open');
 		});
-		
+
 	}
-	
+
 	return {
 		init : init
 	};
-	
-	
+
+
 });

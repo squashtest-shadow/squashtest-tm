@@ -21,43 +21,43 @@
 
 
 /*
- * Configuration : 
- * 
+ * Configuration :
+ *
  * {
  * data : {
  *  campaignId : the campaign id,
  *  campaignUrl : the campaignUrl,
  *  bugtrackerUrl : the url to access the bugtracker for that entity,
  *  testCaseManagerUrl : the url to access the test case manager,
- *  cufValuesUrl : the url where to load the custom fields 
+ *  cufValuesUrl : the url where to load the custom fields
  *  assignableUsers : a list of (jsonified) users,
  *  weights	: a list of (jsonified) weights,
  *  modes : a list of (jsonified) modes
  * }
- * 
+ *
  * features :{
  *  writable : boolean, says if the campaign can be modified,
  *  reorderable : can the test plan be reordered by the user ?
  *	editable : is the test plan editable by the user ?
  *	linkable : can one add more test cases to the test plan ?
  *  hasBugtracker : boolean, says if the campaign can access the bugtracker,
- *  hasCUF : boolean, says if the campaign has CUFs to load 
+ *  hasCUF : boolean, says if the campaign has CUFs to load
  * }
  * }
  */
 
-define([ 
-        './core/core-main', 
-        './test-plan-panel/tp-main', 
-        'dashboard/campaigns-dashboard/campaign-dashboard-main', 
-        './planning/planning-main'], 
-		function(core, testPlanPanel, dashboard, planning) {
-	
+define([
+        './core',
+        './test-plan-panel',
+        'dashboard/campaigns-dashboard/campaigns-dashboard-main'],
+		function(core, testPlanPanel, dashboard) {
+	"use strict";
+
 	return {
-		
+
 		// this one should init all, but you still can invoke the methods below
 		init : function(conf){
-			
+
 			var reconf = $.extend(true, {}, conf, {
 				data : {
 					identity : {
@@ -70,14 +70,14 @@ define([
 					cacheKey : 'camp'+conf.data.campaignId
 				}
 			});
-			
+
 			core.init(reconf);
-		},		
-		
+		},
+
 		initTestPlanPanel : function(conf){
 			testPlanPanel.init(conf);
 		},
-		
+
 		initDashboardPanel : function(conf){
 			dashboard.init(conf);
 		}

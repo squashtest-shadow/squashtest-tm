@@ -19,7 +19,7 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 /*
- * accepts as basic configuration : 
+ * accepts as basic configuration :
  * {
  *	data : {
  *		campaignId : the id of the campaign
@@ -29,71 +29,71 @@
  *		editable : is the test plan editable by the user ?
  *		linkable : can one add more test cases to the test plan ?
  *	}
- * 
+ *
  * }
- * 
- * Note that this code is incomplete, see for instance the iteration-management for an example of what we 
- * are aiming to. 
- * 
+ *
+ * Note that this code is incomplete, see for instance the iteration-management for an example of what we
+ * are aiming to.
+ *
  */
 
-define(['squash.translator', './table', './popups', 'app/util/ButtonUtil' ], function(translator, table, popups, ButtonUtil ) {
+define(['squash.translator', './test-plan-panel/table', './test-plan-panel/popups', 'app/util/ButtonUtil' ], function(translator, table, popups, ButtonUtil ) {
 
 	var filterOn = false;
-	
+
 	function enhanceConfiguration(origconf){
 
 		var conf = $.extend(true, {}, origconf);
-		
+
 		var baseURL = squashtm.app.contextRoot;
-		
+
 		conf.messages = translator.get({
 			allLabel : "label.All",
 			automatedExecutionTooltip : "label.automatedExecution"
 		});
-		
+
 		conf.urls = {
 			testplanUrl : baseURL + '/campaigns/'+conf.data.campaignId+'/test-plan/'
 		};
-		
+
 		// because of the filtermode in the table we have to alias some properties of the conf :
 		// 'data' -> 'basic',
 		// 'features' -> 'permissions'
-		
+
 		conf.basic = conf.data;
 		conf.permissions = conf.features;
-		
+
 		return conf;
-		
+
 	}
-	
+
 	function _bindButtons(conf){
-		
-		
+
+
 		if (conf.features.editable){
 			$("#assign-users-button").on('click', function(){
 				$("#camp-test-plan-batch-assign").formDialog('open');
 			});
 		}
-		
+
 		if (conf.features.reorderable){
 			$("#reorder-test-plan-button").on('click', function(){
 				$("#camp-test-plan-reorder-dialog").confirmDialog('open');
 			});
-		}	
-		
+		}
+
 		if (conf.features.linkable){
 			$("#add-test-case-button").on('click', function(){
 				document.location.href=conf.urls.testplanUrl + "/manager";
 			});
-			
-			
+
+
 			$("#remove-test-plan-button").on('click', function(){
 				$("#delete-multiple-test-cases-dialog").formDialog('open');
 			});
 		}
-		
-		
+
+
 		$("#filter-test-plan-button").on('click', function(){
 			var domtable =  $("#campaign-test-plans-table");
 			if(filterOn){
@@ -117,9 +117,9 @@ define(['squash.translator', './table', './popups', 'app/util/ButtonUtil' ], fun
 			}
 		});
 	}
-	
-	return {	
-		init : function(origconf){			
+
+	return {
+		init : function(origconf){
 			var conf = enhanceConfiguration(origconf);
 			_bindButtons(conf);
 			table.init(conf);
@@ -127,6 +127,6 @@ define(['squash.translator', './table', './popups', 'app/util/ButtonUtil' ], fun
 			filterOn = false;
 		}
 	};
-	
-	
+
+
 });

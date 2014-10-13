@@ -18,19 +18,15 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-
-/*
- * Args :
- * - campaignId : the id of the campaign 
- * 
- */
 define(['jquery', 'squash.attributeparser',	'handlebars', 'squash.configmanager',
-        'squash.dateutils', 'jquery.squash.formdialog', 'jeditable.datepicker'], 
-        function($, attrparser, handlebars, confman, dateutils){	
+        'squash.dateutils', 'jquery.squash.formdialog', 'jeditable.datepicker'],
+		        function($, attrparser, handlebars, confman, dateutils) {
+	"use strict";
+
+  // registers an iterationplanning dialog as a jq widget
 	if ($.squash.iterplanningDialog === undefined || $.squash.iterplanningDialog === null){
-		
 		$.widget("squash.iterplanningDialog", $.squash.formDialog, {
-			
+
 			options : {
 				loaded : false,
 				template : handlebars.compile(
@@ -39,58 +35,58 @@ define(['jquery', 'squash.attributeparser',	'handlebars', 'squash.configmanager'
 								'<td>{{this.name}}</td>'+
 								'<td><span class="picker-start cursor-pointer">{{this.scheduledStartDate}}</span></td>'+
 								'<td><span class="picker-end cursor-pointer">{{this.scheduledEndDate}}</span></td>'+
-							'</tr>' + 
+							'</tr>' +
 						'{{/each}}')
 			},
-			
+
 			// *************** CREATION ************************
-			
+
 			_create : function(){
 				this._super();
 				var self=this;
-				
+
 				this._configure();
-				
+
 			},
-			
+
 			_configure : function(){
 				var strconf = this.element.data('def');
 				var conf = attrparser.parse(strconf);
 				$.extend(this.options, conf);
-				
+
 				var self = this;
-				
+
 				this.onOwnBtn('cancel', function(){
 					self.close();
-				});			
-				
+				});
+
 				this.onOwnBtn('confirm', function(){
 					self.setState('loading');
 					self.commitThenClose();
 				});
 			},
-			
-			
-			
+
+
+
 			// **************** LOAD / OPEN **********************************
 
 			open : function(){
 				this._super();
 				var self = this;
-				
+
 				if (this.options.loaded){
 					self.setState('loading');
 					self.reset();
 					self.render();
 					self.setState('edit');
 				}
-				else{					
+				else{
 					self.setState('loading');
 					this._loadThenOpen();
 				}
 			},
-			
-			
+
+
 			_loadThenOpen : function(){
 				var self =this;
 				var url = squashtm.app.contextRoot+'/campaigns/'+this.options.campaignId+'/iterations';
@@ -101,82 +97,82 @@ define(['jquery', 'squash.attributeparser',	'handlebars', 'squash.configmanager'
 					self.setState('edit');
 				});
 			},
-			
+
 			// ******************** backbone view ****************************
-			
+
 			// this is not a Backbone.View render
 			render : function(){
 				this._createDOM();
 				this._createWidgets();
 			},
-			
+
 			_createDOM : function(){
-				
+
 				var model = this.options.model;
-								
+
 				// transform the model
 				var _formated = [],
-					dateformat = this.options.dateformat;				
-				
+					dateformat = this.options.dateformat;
+
 				$.each(model, function(){
 					// convert the dates from ATOM to the datepicker format
 					var dSchedStart = (this.scheduledStartDate!==null) ? dateutils.format(this.scheduledStartDate, dateformat) : '--';
 					var dSchedEnd  = (this.scheduledEndDate!==null) ? dateutils.format(this.scheduledEndDate, dateformat) : '--';
 					_formated.push({id : this.id, name : this.name,	scheduledStartDate : dSchedStart, scheduledEndDate : dSchedEnd });
 				});
-				
-				// create the dom 
+
+				// create the dom
 				var body = this.uiDialog.find('tbody');
 				body.empty();
-				body.append(this.options.template(_formated));						
+				body.append(this.options.template(_formated));
 			},
-			
+
 			_createWidgets : function(){
-				
+
 				var dialogview = this,
 					format= this.options.dateformat,
 					body = this.uiDialog.find('tbody');
-				
+
 				var conf ={
 					type : 'datepicker',
 					placeholder : squashtm.message.placeholder,
 					datepicker  : confman.getStdDatepicker()
 				};
-				
+
 				// post to the model
 				var postFunction = function(value){
 					var $this = $(this),
 						id = $this.parents('.picker-item:first').data('iterid'),
 						date = dateutils.format(value, dateutils.ISO_8601, format),
 						attribute = ($this.hasClass('picker-start')) ? 'scheduledStartDate' : 'scheduledEndDate';
-					
+
 					var item = $.grep(dialogview.options.model, function(elt){return elt.id === id; })[0];
 					item[attribute] = date;
-					
+
 					return value;
 				};
-				
+
 
 
 				body.find('.picker-start').editable(postFunction, conf);
 				body.find('.picker-end').editable(postFunction, conf);
-				
+
 			},
-			
+
 			// ********************* model management **********************
 
-			
+
 			_createModel : function(data){
 				this.options._savemodel = data;
 				this.options.loaded = true;
 			},
-			
+
 			commitThenClose : function(){
 				var url = squashtm.app.contextRoot + '/campaigns/'+this.options.campaignId+'/iterations/planning',
 					self = this;
-					
+
 				$.ajax({
-					url : url, 
+					url : url,
 					async : false,		// we don't want the user to interact with the system while the request is being processed
 					type : "POST",
 					contentType : 'application/json',
@@ -187,13 +183,21 @@ define(['jquery', 'squash.attributeparser',	'handlebars', 'squash.configmanager'
 					self.close();
 				});
 			},
-			
+
 			reset : function(){
 				this.options.model = $.extend(true, [], this.options._savemodel);	// deep copy of the saved model
 			}
-			
-			
+
+
 		});
-	}	
-	
+	}
+
+	return {
+		init : function(conf){
+			$("#iteration-planning-popup").iterplanningDialog();
+			$("#iteration-planning-button").click(function(){
+				$("#iteration-planning-popup").iterplanningDialog('open');
+			});
+		}
+	};
 });
