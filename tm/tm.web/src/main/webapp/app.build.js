@@ -48,7 +48,7 @@
 						"jquery.timepicker", "jquery.squash", "jquery.squash.fragmenttabs",
 						"jquery.squash.togglepanel", "jquery.squash.messagedialog", "jquery.squash.confirmdialog",
 						"jquery.squash.oneshotdialog", "jquery.squash.squashbutton", "jquery.squash.jeditable",
-						"jquery.squash.projectpicker", "jquery.cookie", "jquery.tagit", "jquery.switchButton",
+						"jquery.cookie", "jquery.tagit", "jquery.switchButton",
 						"jqplot-core", "jqplot-pie", "squash.KeyEventListener",
 						// AMD
 						"domReady", "jquery", "squash.cssloader", "squash.translator", "squash.resizer",

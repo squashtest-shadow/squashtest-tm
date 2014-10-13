@@ -18,33 +18,30 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-/**
- * requires : * jquery.squash.projectpicker.js
- */
 var squashtm = squashtm || {};
 
 define([ "jquery", "./ProjectFilterPopup" ],
 		function($, ProjectFilterPopup) {
-	
+
 			var popupSelector = "#project-filter-popup";
 			var popupOpener = "#menu-project-filter-link";
 
 			function init() {
 				var projectFilterPopup = new ProjectFilterPopup({el :"#project-filter-popup"});
-				
+
 				$(popupOpener).click(function() {
 					projectFilterPopup.open();
 				});
-				
+
 				$("#menu-toggle-filter-ckbox").click(function(){
-					
+
 					function postStatus(enabled){
 						$.post(squashtm.app.contextRoot+'/global-filter/filter-status', { isEnabled : enabled })
 						.done(function(){
 							window.location.reload();
 						});
 					}
-					
+
 					if ($(this).is(':checked')){
 						postStatus(true);
 					}
@@ -53,7 +50,7 @@ define([ "jquery", "./ProjectFilterPopup" ],
 					}
 				});
 			}
-			
+
 
 			/**
 			 * public module
@@ -62,5 +59,5 @@ define([ "jquery", "./ProjectFilterPopup" ],
 				init : init
 			};
 
-			
+
 		});

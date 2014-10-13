@@ -183,7 +183,6 @@ requirejs.config({
 				"jquery.squash.add-attachment-popup" : "squashtest/add-attachment-popup",
 				"jquery.squash.datepicker" : "datepicker/jquery.squash.datepicker",
 				"jquery.squash.datepicker-auto" : "datepicker/jquery.squash.datepicker-auto",
-				"jquery.squash.projectpicker" : "squash/jquery.squash.projectpicker",
 				"jquery.squash.fragmenttabs" : "squash/squash.fragmenttabs",
 				//squash
 				"squash.cssloader" : "squash/squash.cssloader",
@@ -274,10 +273,6 @@ requirejs.config({
 				"jquery.squash.jeditable" : {
 					deps : [ "jquery", "jeditable", "jeditable.ckeditor" ],
 					exports : "jquerySquashtmJeditable"
-				},
-				"jquery.squash.projectpicker" : {
-					deps : [ "jquery", "jqueryui", "jquery.squash.confirmdialog" ],
-					exports : "jquerySquashtmProjectPicker"
 				},
 				"jquery.squash.squashbutton" : {
 					deps : [ "jquery", "jqueryui" ],
