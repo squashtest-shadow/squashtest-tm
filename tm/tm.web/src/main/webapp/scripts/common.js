@@ -90,7 +90,7 @@ requirejs.config({
 					name : 'campaign-management',
 					main : 'campaign-management-main'
 				},
-				
+
 				//workspaces
 				{
 					name : 'tc-workspace',
@@ -120,10 +120,10 @@ requirejs.config({
 				"datatables" : "datatables/jquery.dataTables.min",
 				//lib
 				"domReady" : "lib/require/domReady",
-//				"jquery" : "lib/jquery/jquery-1.8.3",
-				"jquery" : "lib/jquery/jquery-1.8.3.min",
-//				"jqueryui" : "lib/jquery/jquery-ui-1.9.0.custom",
-				"jqueryui" : "lib/jquery/jquery-ui-1.9.0.custom.min",
+//				"jquery" : "lib/jquery/jquery-2.1.1",
+				"jquery" : "lib/jquery/jquery-2.1.1.min",
+//				"jqueryui" : "lib/jquery/jquery-ui-1.9.2.custom",
+				"jqueryui" : "lib/jquery/jquery-ui-1.9.2.custom.min",
 				"handlebars" : "lib/handlebars/handlebars-1.0.0.rc3",
 //				"underscore" : "lib/underscore/underscore-1.4.4",
 				"underscore" : "lib/underscore/underscore-1.4.4-min",
