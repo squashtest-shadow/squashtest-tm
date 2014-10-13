@@ -18,7 +18,10 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define(["jquery", "./default-field-view", "./advanced-field-view", "file-upload", "workspace.event-bus", "jqueryui", "squashtest/jquery.squash.popuperror"], function($, DefaultFieldView, AdvancedFieldView, fileUploadUtils, eventBus){
+define(["jquery", "./default-field-view", "./advanced-field-view", "file-upload", 
+        "workspace.event-bus", "jqueryui", "squashtest/jquery.squash.popuperror", 
+        "jquery.squash.formdialog"], 
+        function($, DefaultFieldView, AdvancedFieldView, fileUploadUtils, eventBus){
 	
 	squashtm.eventBus = eventBus;
 	
@@ -204,6 +207,11 @@ define(["jquery", "./default-field-view", "./advanced-field-view", "file-upload"
 	$.fn.btIssueDialog = function(settings){
 
 		var self = this;
+		
+		this.formDialog({
+			height : 500,
+			width : 650
+		});
 		
 		init.call(this, settings);
 			
