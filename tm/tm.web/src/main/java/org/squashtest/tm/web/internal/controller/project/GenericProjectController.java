@@ -71,6 +71,7 @@ import org.squashtest.tm.exception.NoBugTrackerBindingException;
 import org.squashtest.tm.exception.user.LoginDoNotExistException;
 import org.squashtest.tm.service.bugtracker.BugTrackerFinderService;
 import org.squashtest.tm.service.project.GenericProjectManagerService;
+import org.squashtest.tm.service.project.ProjectManagerService;
 import org.squashtest.tm.service.testautomation.TestAutomationProjectFinderService;
 import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.controller.administration.PartyPermissionDatatableModelHelper;
@@ -128,7 +129,9 @@ public class GenericProjectController {
 	.map(DataTableModelConstants.DEFAULT_CREATED_BY_KEY, DataTableModelConstants.DEFAULT_CREATED_BY_VALUE)
 	.map("last-mod-on",DataTableModelConstants.DEFAULT_LAST_MODIFIED_ON_VALUE)
 	.map("last-mod-by", DataTableModelConstants.DEFAULT_LAST_MODIFIED_BY_VALUE);
-
+	.map("habilitation","habilitation")
+	.map("bugtracker","bugtracker")
+	.map("automation","automation");
 	private DatatableMapper<String> partyPermissionMapper = new NameBasedMapper(5).map("party-index", "index")
 			.map("party-id", "id").map("party-name", "name").map("party-type", "type")
 			.map("permission-group.qualifiedName", "qualifiedName");
@@ -143,7 +146,7 @@ public class GenericProjectController {
 
 		PagedCollectionHolder<List<GenericProject>> holder = projectManager.findSortedProjects(sorter, filter);
 
-		return new ProjectDataTableModelHelper(locale, messageSource).buildDataModel(holder, params.getsEcho());
+		return new ProjectDataTableModelHelper(locale, messageSource, projectManager).buildDataModel(holder, params.getsEcho());
 
 	}
 
@@ -447,20 +450,23 @@ public class GenericProjectController {
 	}
 
 	private static final class ProjectDataTableModelHelper extends DataTableModelBuilder<GenericProject> {
+		
+		
 		private InternationalizationHelper messageSource;
 		private Locale locale;
+		private GenericProjectManagerService projectManager;
 
-		private ProjectDataTableModelHelper(Locale locale, InternationalizationHelper messageSource) {
+		private ProjectDataTableModelHelper(Locale locale, InternationalizationHelper messageSource, GenericProjectManagerService projectManager) {
 			this.locale = locale;
 			this.messageSource = messageSource;
+			this.projectManager = projectManager;
 		}
 
 		@Override
 		public Object buildItemData(GenericProject project) {
-			Map<String, Object> data = new HashMap<String, Object>(11);
+			Map<String, Object> data = new HashMap<String, Object>(14);
 
 			final AuditableMixin auditable = (AuditableMixin) project;
-
 			data.put("project-id", project.getId());
 			data.put("index", getCurrentIndex());
 			data.put(DataTableModelConstants.DEFAULT_ENTITY_NAME_KEY, project.getName());
@@ -472,10 +478,31 @@ public class GenericProjectController {
 			data.put("last-mod-by", auditable.getLastModifiedBy());
 			data.put("raw-type", ProjectHelper.isTemplate(project) ? "template" : "project");
 			data.put("type", "&nbsp;");
-
+            data.put("habilitation", messageSource.internationalizeYesNo(hasPermissions(project),locale));
+            data.put("bugtracker", getBugtrackerKind(project));
+            data.put("automation",  messageSource.internationalizeYesNo(project.isTestAutomationEnabled(), locale));
 			return data;
 		}
+		private boolean hasPermissions(final GenericProject project){
+			boolean hasPermissions = true;
+			if (projectManager.findPartyPermissionsBeansByProject(project.getId()).size() == 0){
+				hasPermissions = false;
+			}
+			return hasPermissions;
+		}
+		private String getBugtrackerKind(final GenericProject project){
+			
+			String bugtrackerKind = null;
+			if (project.isBugtrackerConnected()){
+				bugtrackerKind = project.getBugtrackerBinding().getBugtracker().getKind();
+			} else {
+				bugtrackerKind = messageSource.noData(locale);
+			}
+			return bugtrackerKind;
+		}
 	}
+	
+
 
 	@RequestMapping(value = PROJECT_ID_URL + "/disable-execution-status/{executionStatus}", method = RequestMethod.POST)
 	@ResponseBody
