@@ -75,7 +75,10 @@
         <th data-def="map=created-on, sortable"><f:message key="label.CreatedOn" /></th>
         <th data-def="map=created-by, sortable" class="datatable-filterable"><f:message key="label.createdBy" /></th>
         <th data-def="map=last-mod-on, sortable"><f:message key="label.modifiedOn" /></th>  
-        <th data-def="map=last-mod-by, sortable" class="datatable-filterable"><f:message key="label.modifiedBy" /></th>    
+        <th data-def="map=last-mod-by, sortable" class="datatable-filterable"><f:message key="label.modifiedBy" /></th>   
+       <th data-def="map=habilitation, sortable" class="datatable-filterable"><f:message key="label.Permissions" /></th>  
+       <th data-def="map=bugtracker, sortable" class="datatable-filterable"><f:message key="label.Bugtracker" /></th>  
+      <th data-def="map=automation, sortable" class="datatable-filterable"><f:message key="label.TestAutomationServer" /></th>  
       </tr>
     </thead>
     <tbody>
