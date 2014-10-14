@@ -141,6 +141,10 @@ define([ "jquery", "app/ws/squashtm.notification", "squash.translator", "jquery.
 				testComplete();
 			}
 		};
+		
+		this.submitComment = function(){
+			$("#iframe-left").contents().find("#execution-comment-panel").find("button[type=submit]").click();
+		}
 
 		this.navigatePrevious = function() {
 			var state = this.state;
@@ -241,10 +245,12 @@ define([ "jquery", "app/ws/squashtm.notification", "squash.translator", "jquery.
 			var statusCombo = control.ieoControl("getStatusCombo");
 
 			nextButton.click(function() {
+				self.submitComment();
 				self.navigateNext();
 			});
 
 			prevButton.click(function() {
+				self.submitComment();
 				self.navigatePrevious();
 			});
 
@@ -267,6 +273,7 @@ define([ "jquery", "app/ws/squashtm.notification", "squash.translator", "jquery.
 				$.post(getStatusUrl(), {
 					executionStatus : "SUCCESS"
 				}).success(function() {
+					self.submitComment();
 					self.navigateNext();
 				});
 			});
@@ -275,6 +282,7 @@ define([ "jquery", "app/ws/squashtm.notification", "squash.translator", "jquery.
 				$.post(getStatusUrl(), {
 					executionStatus : "FAILURE"
 				}).success(function() {
+					self.submitComment();
 					self.navigateNext();
 				});
 			});
@@ -283,6 +291,7 @@ define([ "jquery", "app/ws/squashtm.notification", "squash.translator", "jquery.
 				$.post(getStatusUrl(),{
 					executionStatus : "UNTESTABLE"
 				}).success(function(){
+					self.submitComment();
 					self.navigateNext();
 				});
 			});
@@ -291,6 +300,7 @@ define([ "jquery", "app/ws/squashtm.notification", "squash.translator", "jquery.
 				$.post(getStatusUrl(),{
 					executionStatus : "BLOCKED"
 				}).success(function(){
+					self.submitComment();
 					self.navigateNext();
 				});
 			});

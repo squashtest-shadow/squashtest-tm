@@ -160,7 +160,7 @@
 				function navigatePrevious(){
 					document.location.href="${ executePrevious }";						
 				}
-				
+
 				function initNextButton(){
 					$("#execute-next-button").button({
 						'text' : false,
@@ -170,7 +170,7 @@
 						}
 					}).click( navigateNext );	
 				}
-				
+
 				function initPreviousButton(){			
 					$("#execute-previous-button").button({
 						'text' : false,
@@ -191,7 +191,7 @@
 					});
 					
 				}
-				
+
 				function initFailButton(){
 					$("#execute-fail-button").button({
 						'text': false,
@@ -280,6 +280,18 @@
 					refreshExecStepInfos();
 				}
 				
+				function submitComment(){
+				$("#execution-comment-panel").find("button[type=submit]").click();
+				}
+				
+				function addAutoSubmitComment(){
+				$("#execute-success-button").on('click', function(){submitComment()});
+				$("#execute-blocked-button").on('click', function(){submitComment()});
+				$("#execute-untestable-button").on('click', function(){submitComment()});
+				$("#execute-fail-button").on('click', function(){submitComment()});
+				$("#execute-previous-button").on('click', function(){submitComment()});
+				$("#execute-next-button").on('click', function(){submitComment()});
+				}
 
 				
 				$(function(){
@@ -294,7 +306,7 @@
 						initBlockedButton();
 						initFailButton();
 						initSuccessButton();
-		
+						addAutoSubmitComment();
 						$("#execution-status-combo").val("${executionStep.executionStatus}");
 						statusComboSetIcon();
 						
