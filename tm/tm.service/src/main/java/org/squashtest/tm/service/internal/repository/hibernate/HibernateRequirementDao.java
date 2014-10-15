@@ -221,15 +221,18 @@ public class HibernateRequirementDao extends HibernateEntityDao<Requirement> imp
 		return query.list();
 
 	}
+
 	@SuppressWarnings("unchecked")
-	private List<Long>findDescendantRequirementIds(Collection<Long> params) {
+	private List<Long> findDescendantRequirementIds(Collection<Long> params) {
 		Query query = currentSession().getNamedQuery("requirement.findRequirementDescendantIds");
 		query.setParameterList("nodeIds", params);
 		return query.list();
 
 	}
+
 	/**
 	 * Returns a list of objects that holds infos for requirements and their position in requirement hierarchy
+	 * 
 	 * @param requirements
 	 * @return list of object with, for all objects obj[0] = requirement , obj[1] folder path , obj[2] requirement path
 	 */
@@ -237,10 +240,10 @@ public class HibernateRequirementDao extends HibernateEntityDao<Requirement> imp
 		if (!requirements.isEmpty()) {
 
 			Map<Long, Object[]> exportInfosById = new HashMap<Long, Object[]>(requirements.size());
-			for(Requirement requirement : requirements){
-				Object[] exportInfo =  new Object[3];
-				exportInfo[0]  = requirement;
-				exportInfo[1] ="";
+			for (Requirement requirement : requirements) {
+				Object[] exportInfo = new Object[3];
+				exportInfo[0] = requirement;
+				exportInfo[1] = "";
 				exportInfo[2] = "";
 				exportInfosById.put(requirement.getId(), exportInfo);
 			}
@@ -249,7 +252,7 @@ public class HibernateRequirementDao extends HibernateEntityDao<Requirement> imp
 
 			Query q = session.getNamedQuery("requirement.findReqPaths");
 			newCallBack1.setQueryParameters(q);
-			List<Object[]> idAndReqPaths =  q.list();
+			List<Object[]> idAndReqPaths = q.list();
 			addPathInfosToExportInfos(exportInfosById, idAndReqPaths, 2);
 			q = session.getNamedQuery("requirement.findFolderPaths");
 			newCallBack1.setQueryParameters(q);
@@ -265,7 +268,7 @@ public class HibernateRequirementDao extends HibernateEntityDao<Requirement> imp
 
 	public void addPathInfosToExportInfos(Map<Long, Object[]> reqAndFolderPathAndReqPathById,
 			List<Object[]> idAndPaths, int pathInfoIndex) {
-		for(Object[] idAndPath : idAndPaths){
+		for (Object[] idAndPath : idAndPaths) {
 			Long reqId = (Long) idAndPath[0];
 			String reqPath = (String) idAndPath[1];
 			String escapedPath = HibernatePathService.escapePath(reqPath);
@@ -274,9 +277,8 @@ public class HibernateRequirementDao extends HibernateEntityDao<Requirement> imp
 		}
 	}
 
-
-
-	private List<ExportRequirementData> formatExportResult(Collection<Requirement> rootReq	, Collection<Object[]> nonRootReq) {
+	private List<ExportRequirementData> formatExportResult(Collection<Requirement> rootReq,
+			Collection<Object[]> nonRootReq) {
 		List<ExportRequirementData> exportList = new ArrayList<ExportRequirementData>();
 
 		for (Requirement requirement : rootReq) {
@@ -294,20 +296,22 @@ public class HibernateRequirementDao extends HibernateEntityDao<Requirement> imp
 		Collections.sort(exportList, new ExportRequirementDataComparator());
 		return exportList;
 	}
-	private class ExportRequirementDataComparator implements Comparator<ExportRequirementData>{
+
+	private static final class ExportRequirementDataComparator implements Comparator<ExportRequirementData> {
 
 		@Override
 		public int compare(ExportRequirementData o1, ExportRequirementData o2) {
 			int folderCompare = o1.getFolderName().compareTo(o2.getFolderName());
-			if(folderCompare != 0){
+			if (folderCompare != 0) {
 				return folderCompare;
-			}else{
+			} else {
 				return o1.getRequirementParentPath().compareTo(o2.getRequirementParentPath());
 			}
 
 		}
 
 	}
+
 	private List<Requirement> findRootContentRequirement(final List<Long> params) {
 		if (!params.isEmpty()) {
 			SetQueryParametersCallback newCallBack1 = new SetParamIdsParametersCallback(params);
@@ -334,7 +338,7 @@ public class HibernateRequirementDao extends HibernateEntityDao<Requirement> imp
 
 	private List<Object[]> addRootContentToExportData(List<Requirement> rootRequirement, List<Object[]> folderContent) {
 		for (Requirement requirement : rootRequirement) {
-			Object[] tab = { requirement, "", ExportRequirementData.NO_REQUIREMENT_PARENT_PATH};
+			Object[] tab = { requirement, "", ExportRequirementData.NO_REQUIREMENT_PARENT_PATH };
 			folderContent.add(tab);
 		}
 		return folderContent;
@@ -399,7 +403,6 @@ public class HibernateRequirementDao extends HibernateEntityDao<Requirement> imp
 		return query.list();
 	}
 
-
 	@Override
 	public Requirement findByContent(final Requirement child) {
 		SetQueryParametersCallback callback = new SetNodeContentParameter(child);
@@ -407,23 +410,24 @@ public class HibernateRequirementDao extends HibernateEntityDao<Requirement> imp
 		return executeEntityNamedQuery("requirement.findByContent", callback);
 	}
 
-
 	@Override
 	public List<Object[]> findAllParentsOf(List<Long> requirementIds) {
-		if (! requirementIds.isEmpty()){
+		if (!requirementIds.isEmpty()) {
 			List<Object[]> allpairs = new ArrayList<Object[]>(requirementIds.size());
 
-			List<Object[]> libraryReqs = executeListNamedQuery("requirement.findAllLibraryParents", new SetRequirementsIdsParameterCallback(requirementIds));
-			List<Object[]> folderReqs = executeListNamedQuery("requirement.findAllFolderParents", new SetRequirementsIdsParameterCallback(requirementIds));
-			List<Object[]> reqReqs = executeListNamedQuery("requirement.findAllRequirementParents", new SetRequirementsIdsParameterCallback(requirementIds));
+			List<Object[]> libraryReqs = executeListNamedQuery("requirement.findAllLibraryParents",
+					new SetRequirementsIdsParameterCallback(requirementIds));
+			List<Object[]> folderReqs = executeListNamedQuery("requirement.findAllFolderParents",
+					new SetRequirementsIdsParameterCallback(requirementIds));
+			List<Object[]> reqReqs = executeListNamedQuery("requirement.findAllRequirementParents",
+					new SetRequirementsIdsParameterCallback(requirementIds));
 
 			allpairs.addAll(libraryReqs);
 			allpairs.addAll(folderReqs);
 			allpairs.addAll(reqReqs);
 
 			return allpairs;
-		}
-		else{
+		} else {
 			return Collections.emptyList();
 		}
 	}

@@ -153,7 +153,7 @@ public class FacilityImpl implements Facility {
 			doCreateTestcase(target, testCase, cufValues);
 			validator.getModel().setExists(target, testCase.getId());
 
-			LOGGER.debug(EXCEL_ERR_PREFIX+"Created Test Case \t'" + target + "'");
+			LOGGER.debug(EXCEL_ERR_PREFIX + "Created Test Case \t'" + target + "'");
 
 		} catch (Exception ex) {
 			train.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_UNEXPECTED_ERROR,
@@ -193,13 +193,12 @@ public class FacilityImpl implements Facility {
 					helper.truncate(testCase, cufValues);
 					doUpdateTestcase(target, testCase, cufValues);
 
-
-					LOGGER.debug(EXCEL_ERR_PREFIX+"Updated Test Case \t'" + target + "'");
+					LOGGER.debug(EXCEL_ERR_PREFIX + "Updated Test Case \t'" + target + "'");
 
 				} catch (Exception ex) {
 					train.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_UNEXPECTED_ERROR,
 							new Object[] { ex.getClass().getName() }));
-					LOGGER.error(EXCEL_ERR_PREFIX+"unexpected error while updating " + target + " : ", ex);
+					LOGGER.error(EXCEL_ERR_PREFIX + "unexpected error while updating " + target + " : ", ex);
 				}
 
 			}
@@ -220,13 +219,13 @@ public class FacilityImpl implements Facility {
 				doDeleteTestCase(target);
 				validator.getModel().setDeleted(target);
 
-				LOGGER.debug(EXCEL_ERR_PREFIX+"Deleted Test Case \t'" + target + "'");
+				LOGGER.debug(EXCEL_ERR_PREFIX + "Deleted Test Case \t'" + target + "'");
 
 			} catch (Exception ex) {
 				train.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_UNEXPECTED_ERROR,
 						new Object[] { ex.getClass().getName() }));
 
-				LOGGER.error(EXCEL_ERR_PREFIX+"unexpected error while deleting " + target + " : ", ex);
+				LOGGER.error(EXCEL_ERR_PREFIX + "unexpected error while deleting " + target + " : ", ex);
 			}
 		}
 
@@ -246,13 +245,13 @@ public class FacilityImpl implements Facility {
 				doAddActionStep(target, testStep, cufValues);
 				validator.getModel().addActionStep(target);
 
-				LOGGER.debug(EXCEL_ERR_PREFIX+"Created Action Step \t'" + target + "'");
+				LOGGER.debug(EXCEL_ERR_PREFIX + "Created Action Step \t'" + target + "'");
 
 			} catch (Exception ex) {
 				train.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_UNEXPECTED_ERROR,
 						new Object[] { ex.getClass().getName() }));
 
-				LOGGER.error(EXCEL_ERR_PREFIX+"unexpected error while creating step " + target + " : ", ex);
+				LOGGER.error(EXCEL_ERR_PREFIX + "unexpected error while creating step " + target + " : ", ex);
 			}
 		}
 
@@ -278,12 +277,12 @@ public class FacilityImpl implements Facility {
 
 					validator.getModel().addCallStep(target, calledTestCase, paramInfo);
 
-					LOGGER.debug(EXCEL_ERR_PREFIX+"Created Call Step \t'" + target + "' -> '" + calledTestCase + "'");
+					LOGGER.debug(EXCEL_ERR_PREFIX + "Created Call Step \t'" + target + "' -> '" + calledTestCase + "'");
 				}
 			} catch (Exception ex) {
 				train.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_UNEXPECTED_ERROR,
 						new Object[] { ex.getClass().getName() }));
-				LOGGER.error(EXCEL_ERR_PREFIX+"unexpected error while creating step " + target + " : ", ex);
+				LOGGER.error(EXCEL_ERR_PREFIX + "unexpected error while creating step " + target + " : ", ex);
 			}
 		}
 
@@ -300,11 +299,11 @@ public class FacilityImpl implements Facility {
 				helper.truncate(testStep, cufValues);
 				doUpdateActionStep(target, testStep, cufValues);
 
-				LOGGER.debug(EXCEL_ERR_PREFIX+"Updated Action Step \t'" + target + "'");
+				LOGGER.debug(EXCEL_ERR_PREFIX + "Updated Action Step \t'" + target + "'");
 			} catch (Exception ex) {
 				train.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_UNEXPECTED_ERROR,
 						new Object[] { ex.getClass().getName() }));
-				LOGGER.error(EXCEL_ERR_PREFIX+"unexpected error while updating step " + target + " : ", ex);
+				LOGGER.error(EXCEL_ERR_PREFIX + "unexpected error while updating step " + target + " : ", ex);
 			}
 		}
 
@@ -322,11 +321,11 @@ public class FacilityImpl implements Facility {
 				doUpdateCallStep(target, calledTestCase, paramInfo);
 				validator.getModel().updateCallStepTarget(target, calledTestCase, paramInfo);
 
-				LOGGER.debug(EXCEL_ERR_PREFIX+"Created Call Step \t'" + target + "' -> '" + calledTestCase + "'");
+				LOGGER.debug(EXCEL_ERR_PREFIX + "Created Call Step \t'" + target + "' -> '" + calledTestCase + "'");
 			} catch (Exception ex) {
 				train.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_UNEXPECTED_ERROR,
 						new Object[] { ex.getClass().getName() }));
-				LOGGER.error(EXCEL_ERR_PREFIX+"unexpected error while updating step " + target + " : ", ex);
+				LOGGER.error(EXCEL_ERR_PREFIX + "unexpected error while updating step " + target + " : ", ex);
 			}
 		}
 
@@ -343,12 +342,12 @@ public class FacilityImpl implements Facility {
 				doDeleteTestStep(target);
 				validator.getModel().remove(target);
 
-				LOGGER.debug(EXCEL_ERR_PREFIX+"Deleted Step \t'" + target + "'");
+				LOGGER.debug(EXCEL_ERR_PREFIX + "Deleted Step \t'" + target + "'");
 
 			} catch (Exception ex) {
 				train.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_UNEXPECTED_ERROR,
 						new Object[] { ex.getClass().getName() }));
-				LOGGER.error(EXCEL_ERR_PREFIX+"unexpected error while deleting step " + target + " : ", ex);
+				LOGGER.error(EXCEL_ERR_PREFIX + "unexpected error while deleting step " + target + " : ", ex);
 			}
 		}
 
@@ -365,11 +364,11 @@ public class FacilityImpl implements Facility {
 				doCreateParameter(target, param);
 				validator.getModel().addParameter(target);
 
-				LOGGER.debug(EXCEL_ERR_PREFIX+"Created Parameter \t'" + target + "'");
+				LOGGER.debug(EXCEL_ERR_PREFIX + "Created Parameter \t'" + target + "'");
 			} catch (Exception ex) {
 				train.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_UNEXPECTED_ERROR,
 						new Object[] { ex.getClass().getName() }));
-				LOGGER.error(EXCEL_ERR_PREFIX+"unexpected error while adding parameter " + target + " : ", ex);
+				LOGGER.error(EXCEL_ERR_PREFIX + "unexpected error while adding parameter " + target + " : ", ex);
 			}
 		}
 
@@ -387,11 +386,11 @@ public class FacilityImpl implements Facility {
 				validator.getModel().addParameter(target); // create the parameter if didn't exist already.
 				// Double-insertion proof.
 
-				LOGGER.debug(EXCEL_ERR_PREFIX+"Updated Parameter \t'" + target + "'");
+				LOGGER.debug(EXCEL_ERR_PREFIX + "Updated Parameter \t'" + target + "'");
 			} catch (Exception ex) {
 				train.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_UNEXPECTED_ERROR,
 						new Object[] { ex.getClass().getName() }));
-				LOGGER.error(EXCEL_ERR_PREFIX+"unexpected error while updating parameter " + target + " : ", ex);
+				LOGGER.error(EXCEL_ERR_PREFIX + "unexpected error while updating parameter " + target + " : ", ex);
 			}
 		}
 
@@ -408,12 +407,12 @@ public class FacilityImpl implements Facility {
 				doDeleteParameter(target);
 				validator.getModel().removeParameter(target);
 
-				LOGGER.debug(EXCEL_ERR_PREFIX+"Deleted Parameter \t'" + target + "'");
+				LOGGER.debug(EXCEL_ERR_PREFIX + "Deleted Parameter \t'" + target + "'");
 			} catch (Exception ex) {
 				train.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_UNEXPECTED_ERROR,
 						new Object[] { ex.getClass().getName() }));
 
-				LOGGER.error(EXCEL_ERR_PREFIX+"unexpected error while deleting parameter " + target + " : ", ex);
+				LOGGER.error(EXCEL_ERR_PREFIX + "unexpected error while deleting parameter " + target + " : ", ex);
 			}
 		}
 
@@ -421,7 +420,8 @@ public class FacilityImpl implements Facility {
 	}
 
 	@Override
-	public LogTrain failsafeUpdateParameterValue(DatasetTarget dataset, ParameterTarget param, String value, boolean isUpdate) {
+	public LogTrain failsafeUpdateParameterValue(DatasetTarget dataset, ParameterTarget param, String value,
+			boolean isUpdate) {
 
 		LogTrain train = validator.failsafeUpdateParameterValue(dataset, param, value, isUpdate);
 
@@ -431,19 +431,18 @@ public class FacilityImpl implements Facility {
 
 				validator.getModel().addDataset(dataset);
 
-				LOGGER.debug(EXCEL_ERR_PREFIX+"Updated Param Value for param \t'" + param + "' in dataset '" + dataset
-						+ "'");
+				LOGGER.debug(EXCEL_ERR_PREFIX + "Updated Param Value for param \t'" + param + "' in dataset '"
+						+ dataset + "'");
 			} catch (Exception ex) {
 				train.addEntry(new LogEntry(dataset, ImportStatus.FAILURE, Messages.ERROR_UNEXPECTED_ERROR,
 						new Object[] { ex.getClass().getName() }));
-				LOGGER.error(EXCEL_ERR_PREFIX+"unexpected error while setting parameter " + param + " in dataset "
+				LOGGER.error(EXCEL_ERR_PREFIX + "unexpected error while setting parameter " + param + " in dataset "
 						+ dataset + " : ", ex);
 			}
 		}
 
 		return train;
 	}
-
 
 	@Override
 	public LogTrain createDataset(DatasetTarget dataset) {
@@ -452,22 +451,21 @@ public class FacilityImpl implements Facility {
 
 		if (!train.hasCriticalErrors()) {
 			try {
-				doCreateDataset(dataset);
+				findOrCreateDataset(dataset);
 
 				validator.getModel().addDataset(dataset);
 
-				LOGGER.debug(EXCEL_ERR_PREFIX+"Created Dataset '" + dataset + "'");
+				LOGGER.debug(EXCEL_ERR_PREFIX + "Created Dataset '" + dataset + "'");
 
 			} catch (Exception ex) {
 				train.addEntry(new LogEntry(dataset, ImportStatus.FAILURE, Messages.ERROR_UNEXPECTED_ERROR,
 						new Object[] { ex.getClass().getName() }));
-				LOGGER.error(EXCEL_ERR_PREFIX+"unexpected error while creating dataset " + dataset + " : ", ex);
+				LOGGER.error(EXCEL_ERR_PREFIX + "unexpected error while creating dataset " + dataset + " : ", ex);
 			}
 		}
 
 		return train;
 	}
-
 
 	@Override
 	public LogTrain deleteDataset(DatasetTarget dataset) {
@@ -480,12 +478,12 @@ public class FacilityImpl implements Facility {
 
 				validator.getModel().removeDataset(dataset);
 
-				LOGGER.debug(EXCEL_ERR_PREFIX+"Deleted Dataset '" + dataset + "'");
+				LOGGER.debug(EXCEL_ERR_PREFIX + "Deleted Dataset '" + dataset + "'");
 
 			} catch (Exception ex) {
 				train.addEntry(new LogEntry(dataset, ImportStatus.FAILURE, Messages.ERROR_UNEXPECTED_ERROR,
 						new Object[] { ex.getClass().getName() }));
-				LOGGER.error(EXCEL_ERR_PREFIX+"unexpected error while deleting dataset " + dataset + " : ", ex);
+				LOGGER.error(EXCEL_ERR_PREFIX + "unexpected error while deleting dataset " + dataset + " : ", ex);
 			}
 		}
 
@@ -628,7 +626,7 @@ public class FacilityImpl implements Facility {
 		// update the step
 		TestStep actualStep = validator.getModel().getStep(target);
 		TestCase newCalled = validator.getModel().get(calledTestCase);
-		callstepService.checkForCyclicStepCallBeforePaste(actualStep.getTestCase().getId(),newCalled.getId());
+		callstepService.checkForCyclicStepCallBeforePaste(actualStep.getTestCase().getId(), newCalled.getId());
 		((CallTestStep) actualStep).setCalledTestCase(newCalled);
 
 		// update the parameter assignation
@@ -683,19 +681,8 @@ public class FacilityImpl implements Facility {
 		dpv.setParamValue(trValue);
 	}
 
-
-	// here we care of double insertion of dataset
-	private void doCreateDataset(DatasetTarget dataset){
-		Dataset ds = findDataset(dataset);
-		if (ds == null){
-			TestCase tc = validator.getModel().get(dataset.getTestCase());
-			ds = new Dataset(dataset.getName(), tc);
-			datasetService.persist(ds, tc.getId());
-		}
-	}
-
 	private void doDeleteDataset(DatasetTarget dataset) {
-		Dataset ds = findDataset(dataset);
+		Dataset ds = findOrCreateDataset(dataset);
 		TestCase tc = ds.getTestCase();
 		tc.removeDataset(ds);
 		datasetService.remove(ds);
@@ -779,7 +766,12 @@ public class FacilityImpl implements Facility {
 		}
 	}
 
-	private Dataset findDataset(DatasetTarget dataset) {
+	/**
+	 * 
+	 * @param dataset
+	 * @return the found Dataset or a new one (non null value)
+	 */
+	private Dataset findOrCreateDataset(DatasetTarget dataset) {
 		Long tcid = validator.getModel().getId(dataset.getTestCase());
 
 		String truncated = helper.truncate(dataset.getName());
@@ -794,12 +786,11 @@ public class FacilityImpl implements Facility {
 			helper.truncate(newds);
 			datasetService.persist(newds, tcid);
 
-			LOGGER.debug(EXCEL_ERR_PREFIX+"Created Dataset \t'" + dataset + "'");
+			LOGGER.debug(EXCEL_ERR_PREFIX + "Created Dataset \t'" + dataset + "'");
 
 			return newds;
 		}
 	}
-
 
 	/**
 	 * 
@@ -807,11 +798,11 @@ public class FacilityImpl implements Facility {
 	 * @param tc
 	 * @param paramInfo
 	 */
-	private void changeParameterAssignation(Long stepId, TestCaseTarget tc, CallStepParamsInfo paramInfo){
+	private void changeParameterAssignation(Long stepId, TestCaseTarget tc, CallStepParamsInfo paramInfo) {
 		Long dsId = null;
-		ParameterAssignationMode mode  = paramInfo.getParamMode();
+		ParameterAssignationMode mode = paramInfo.getParamMode();
 
-		if (paramInfo.getParamMode() == ParameterAssignationMode.CALLED_DATASET){
+		if (paramInfo.getParamMode() == ParameterAssignationMode.CALLED_DATASET) {
 
 			Long tcid = validator.getModel().getId(tc);
 			String dsname = helper.truncate(paramInfo.getCalledDatasetName());
@@ -821,10 +812,9 @@ public class FacilityImpl implements Facility {
 			// otherwise we fallback to the default mode (nothing).
 			// This later case has been dutifully reported by the
 			// validator facility of course.
-			if (ds != null){
+			if (ds != null) {
 				dsId = ds.getId();
-			}
-			else{
+			} else {
 				mode = ParameterAssignationMode.NOTHING;
 			}
 
@@ -834,7 +824,7 @@ public class FacilityImpl implements Facility {
 
 	private DatasetParamValue findParamValue(DatasetTarget dataset, ParameterTarget param) {
 
-		Dataset dbDs = findDataset(dataset);
+		Dataset dbDs = findOrCreateDataset(dataset);
 		Parameter dsParam = findParameter(param);
 
 		for (DatasetParamValue dpv : dbDs.getParameterValues()) {

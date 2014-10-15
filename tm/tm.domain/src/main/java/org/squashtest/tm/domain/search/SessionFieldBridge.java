@@ -36,57 +36,58 @@ import org.springframework.beans.factory.annotation.Configurable;
 import org.squashtest.tm.domain.Identified;
 
 @Configurable
-public abstract class SessionFieldBridge implements FieldBridge{
+public abstract class SessionFieldBridge implements FieldBridge {
 	private static final Logger LOGGER = LoggerFactory.getLogger(SessionFieldBridge.class);
-	
+
 	@Inject
 	private BeanFactory beanFactory;
 
 	private SessionFactory getSessionFactory() {
-	// We cannot inject the SessionFactory because it creates a cyclic dependency injection problem :
-	// SessionFactory -> Hibernate Search -> this bridge -> SessionFactory
+		// We cannot inject the SessionFactory because it creates a cyclic dependency injection problem :
+		// SessionFactory -> Hibernate Search -> this bridge -> SessionFactory
 		return beanFactory.getBean(SessionFactory.class);
 	}
 
-	protected abstract void writeFieldToDocument(String name, Session session, Object value, Document document, LuceneOptions luceneOptions);
-	
-	
+	protected abstract void writeFieldToDocument(String name, Session session, Object value, Document document,
+			LuceneOptions luceneOptions);
+
 	@Override
 	public void set(String name, Object value, Document document, LuceneOptions luceneOptions) {
 		long start = 0;
 		if (LOGGER.isDebugEnabled()) {
 			start = System.nanoTime();
 		}
-		
+
 		Session currentSession = null;
 		Session session = null;
 		Transaction tx = null;
-		
-		try{
+
+		try {
 			currentSession = getSessionFactory().getCurrentSession();
 			session = currentSession;
-		}catch(HibernateException ex){
+		} catch (HibernateException ex) {
 			currentSession = null;
 		}
-		
-		if(currentSession == null){
+
+		if (currentSession == null) {
 			session = getSessionFactory().openSession();
 			tx = session.beginTransaction();
-			try{
+			try {
 				writeFieldToDocument(name, session, value, document, luceneOptions);
-			} catch(HibernateException ex){
-				//ugly hack in order to be able to run integration tests
+			} catch (HibernateException ex) {
+				// ugly hack in order to be able to run integration tests
 			}
 			tx.commit();
 			session.close();
 		} else {
 			writeFieldToDocument(name, session, value, document, luceneOptions);
 		}
-		
+
 		if (LOGGER.isDebugEnabled()) {
 			long end = System.nanoTime();
 			int timeInMilliSec = Math.round((end - start) / 1000000f);
-			LOGGER.trace(this.getClass().getSimpleName() + ".set(..) took {} ms for entity {}", timeInMilliSec, ((Identified)value).getId());
+			LOGGER.trace(this.getClass().getSimpleName() + ".set(..) took {} ms for entity {}", timeInMilliSec,
+					((Identified) value).getId());
 			final int threshold = 10;
 			if (timeInMilliSec > threshold) {
 				LOGGER.trace("BEWARE : " + this.getClass().getSimpleName() + ".set(..) took more than {} ms", threshold);

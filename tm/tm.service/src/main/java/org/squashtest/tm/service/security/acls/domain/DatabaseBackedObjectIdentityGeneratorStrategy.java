@@ -33,7 +33,9 @@ import org.springframework.security.acls.model.ObjectIdentityRetrievalStrategy;
 import org.springframework.stereotype.Component;
 
 /**
- * This {@link ObjectIdentityGenerator} fetches the entity using hibernate and delegates the creation of {@link ObjectIdentity} to a {@link ObjectIdentityRetrievalStrategy}. 
+ * This {@link ObjectIdentityGenerator} fetches the entity using hibernate and delegates the creation of
+ * {@link ObjectIdentity} to a {@link ObjectIdentityRetrievalStrategy}.
+ * 
  * @author bsiri
  * @reviewed-on 2011/11/23
  */
@@ -47,11 +49,10 @@ public class DatabaseBackedObjectIdentityGeneratorStrategy implements ObjectIden
 	@Named("squashtest.core.security.ObjectIdentityRetrievalStrategy")
 	private ObjectIdentityRetrievalStrategy objectRetrievalStrategy;
 
-
 	public void setSessionFactory(SessionFactory sessionFactory) {
 		this.sessionFactory = sessionFactory;
 	}
-	
+
 	/**
 	 * Creates an ObjectIdentity by :
 	 * 1. fetching the entity using the given id and type

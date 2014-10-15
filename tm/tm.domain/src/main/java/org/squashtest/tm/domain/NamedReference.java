@@ -60,8 +60,9 @@ public class NamedReference implements Serializable {
 		return result;
 	}
 
+	// GENERATED:START
 	@Override
-	public boolean equals(Object obj) { // NOSONAR : that was generated
+	public boolean equals(Object obj) {
 		if (this == obj) {
 			return true;
 		}
@@ -88,6 +89,6 @@ public class NamedReference implements Serializable {
 		}
 		return true;
 	}
-
+	// GENERATED:END
 
 }

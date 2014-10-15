@@ -37,7 +37,7 @@ import org.squashtest.tm.domain.requirement.RequirementFolder;
  * @author mpagnon
  * 
  */
-/* package-private */class PseudoRequirement implements Comparable<PseudoRequirement> {
+/* package-private */class PseudoRequirement {
 	private RequirementFolder folder = null;
 	private Double id = null;
 	private String reqPath = "";
@@ -108,8 +108,4 @@ import org.squashtest.tm.domain.requirement.RequirementFolder;
 		}
 	}
 
-	@Override
-	public int compareTo(PseudoRequirement o) {
-		return reqPath.compareTo(o.getReqPath());
-	}
 }

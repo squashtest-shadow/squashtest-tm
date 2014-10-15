@@ -33,8 +33,7 @@ public class DatasetTarget extends Target {
 		testCase = new TestCaseTarget();
 	}
 
-
-	public DatasetTarget(TestCaseTarget testCase, String name){
+	public DatasetTarget(TestCaseTarget testCase, String name) {
 		super();
 		this.testCase = testCase;
 		this.name = name;
@@ -57,18 +56,18 @@ public class DatasetTarget extends Target {
 		this.name = name;
 	}
 
+	// GENERATED:START
 	@Override
-	public int hashCode() { // GENERATED:START
+	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
-		result = prime * result
-				+ ((testCase == null) ? 0 : testCase.hashCode());
+		result = prime * result + ((testCase == null) ? 0 : testCase.hashCode());
 		return result;
-	} // GENERATED:END
+	}
 
 	@Override
-	public boolean equals(Object obj) { // GENERATED:START
+	public boolean equals(Object obj) {
 		if (this == obj) {
 			return true;
 		}
@@ -94,23 +93,26 @@ public class DatasetTarget extends Target {
 			return false;
 		}
 		return true;
-	} // GENERATED:END
+	}
+
+	// GENERATED:END
 
 	@Override
 	public boolean isWellFormed() {
-		return testCase.isWellFormed() && (! StringUtils.isBlank(name));
+		return testCase.isWellFormed() && (!StringUtils.isBlank(name));
 	}
 
 	@Override
 	public String getProject() {
 		return testCase.getProject();
 	}
+
 	/**
 	 * @return
 	 * @see org.squashtest.tm.service.internal.batchimport.TestCaseTarget#getPath()
 	 */
 	public String getPath() {
-		return testCase.getPath()+"/datasets/"+name;
+		return testCase.getPath() + "/datasets/" + name;
 	}
 
 	/**
@@ -122,7 +124,7 @@ public class DatasetTarget extends Target {
 	}
 
 	@Override
-	public String toString(){
+	public String toString() {
 		return getPath();
 	}
 

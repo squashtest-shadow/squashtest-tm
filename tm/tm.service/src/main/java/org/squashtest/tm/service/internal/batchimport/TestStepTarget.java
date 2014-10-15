@@ -76,8 +76,9 @@ public class TestStepTarget extends Target {
 		this.index = index;
 	}
 
+	// GENERATED:START
 	@Override
-	public int hashCode() { // NOSONAR generated
+	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((index == null) ? 0 : index.hashCode());
@@ -86,7 +87,7 @@ public class TestStepTarget extends Target {
 	}
 
 	@Override
-	public boolean equals(Object obj) { // NOSONAR generated
+	public boolean equals(Object obj) {
 		if (this == obj) {
 			return true;
 		}
@@ -113,6 +114,8 @@ public class TestStepTarget extends Target {
 		}
 		return true;
 	}
+
+	// GENERATED:END
 
 	@Override
 	public String toString() {

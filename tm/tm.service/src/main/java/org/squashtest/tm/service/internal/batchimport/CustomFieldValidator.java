@@ -66,7 +66,7 @@ class CustomFieldValidator {
 			CustomFieldError error = checkCustomField(value, cuf);
 
 			if (error != null) {
-				String[] errorArgs =  {code};
+				String[] errorArgs = { code };
 				String errorMessage = error.getErrorMessage();
 				String impact = error.getUpdateImpact();
 				CustomFieldError.updateValue(cufs, cuf, value, impact);
@@ -99,7 +99,7 @@ class CustomFieldValidator {
 			String value = cufs.get(code);
 			CustomFieldError error = checkCustomField(value, cuf);
 			if (error != null) {
-				String[] errorArgs =  {code};
+				String[] errorArgs = { code };
 				String errorMessage = error.getErrorMessage();
 				String impact = error.getCreateImpact();
 				CustomFieldError.updateValue(cufs, cuf, value, impact);
@@ -111,57 +111,62 @@ class CustomFieldValidator {
 		return train;
 	}
 
-	@SuppressWarnings("unchecked")
-	private CustomFieldError checkCustomField( String inputValue, CustomField cuf ) {
+	private CustomFieldError checkCustomField(String inputValue, CustomField cuf) {
 
 		CustomFieldError error = null;
 		InputType type = cuf.getInputType();
 		if (StringUtils.isNotBlank(inputValue)) {
 
-			switch (type) {
+			error = checkForType(inputValue, cuf, error, type);
 
-			case PLAIN_TEXT:
-				if (inputValue.length() > CustomFieldValue.MAX_SIZE) {
-					error = CustomFieldError.MAX_SIZE;
-				}
-				break;
-
-			case CHECKBOX:
-				if (!(TRUE.equalsIgnoreCase(inputValue) || FALSE.equalsIgnoreCase(inputValue))) {
-					error = CustomFieldError.UNPARSABLE_CHECKBOX;
-				}
-				break;
-
-			case DATE_PICKER:
-				// if the weak check is not enough, swap for the string check
-				if (!StringUtils.isBlank(inputValue) && !DateUtils.weakCheckIso8601Date(inputValue)) {
-					error = CustomFieldError.UNPARSABLE_DATE;
-
-				}
-				break;
-
-			case DROPDOWN_LIST:
-				// cache the options if needed
-				registerOptions(cuf);
-				Collection<String> options = (Collection<String>) optionsByListCode.getCollection(cuf.getCode());
-				if (!options.contains(inputValue)) {
-					error = CustomFieldError.UNPARSABLE_OPTION;
-				}
-				break;
-
-			case RICH_TEXT :
-				// TODO : some day worry about well formed html and malicious js scripts
-				break;
-
-			default:
-				error = CustomFieldError.UNKNOWN_CUF_TYPE;
-				break;
-			}
-
-		}else if (!cuf.isOptional()) {
+		} else if (!cuf.isOptional()) {
 			error = CustomFieldError.MANDATORY_CUF;
 		}
 
+		return error;
+	}
+
+	@SuppressWarnings("unchecked")
+	public CustomFieldError checkForType(String inputValue, CustomField cuf, CustomFieldError error, InputType type) {
+		switch (type) {
+
+		case PLAIN_TEXT:
+			if (inputValue.length() > CustomFieldValue.MAX_SIZE) {
+				error = CustomFieldError.MAX_SIZE;
+			}
+			break;
+
+		case CHECKBOX:
+			if (!(TRUE.equalsIgnoreCase(inputValue) || FALSE.equalsIgnoreCase(inputValue))) {
+				error = CustomFieldError.UNPARSABLE_CHECKBOX;
+			}
+			break;
+
+		case DATE_PICKER:
+			// if the weak check is not enough, swap for the string check
+			if (!StringUtils.isBlank(inputValue) && !DateUtils.weakCheckIso8601Date(inputValue)) {
+				error = CustomFieldError.UNPARSABLE_DATE;
+
+			}
+			break;
+
+		case DROPDOWN_LIST:
+			// cache the options if needed
+			registerOptions(cuf);
+			Collection<String> options = (Collection<String>) optionsByListCode.getCollection(cuf.getCode());
+			if (!options.contains(inputValue)) {
+				error = CustomFieldError.UNPARSABLE_OPTION;
+			}
+			break;
+
+		case RICH_TEXT:
+			// TODO : some day worry about well formed html and malicious js scripts
+			break;
+
+		default:
+			error = CustomFieldError.UNKNOWN_CUF_TYPE;
+			break;
+		}
 		return error;
 	}
 

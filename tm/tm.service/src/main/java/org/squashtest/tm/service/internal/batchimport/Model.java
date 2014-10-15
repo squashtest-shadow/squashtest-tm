@@ -588,14 +588,7 @@ public class Model {
 			for (Node child : current.getOutbounds()) {
 
 				List<InternalStepModel> steps = testCaseStepsByTarget.get(current.getKey());
-				if (steps != null) {
-					for (InternalStepModel step : steps) {
-						if (step.type == StepType.CALL && step.calledTC.equals(child.getKey()) && step.getDeleguates()
-								&& !processed.contains(step.calledTC)) {
-							processing.add(child);
-						}
-					}
-				}
+				extractParametersFromSteps(processing, processed, child, steps);
 				processed.add(current);
 			}
 			// existant
@@ -604,6 +597,18 @@ public class Model {
 
 		return result;
 
+	}
+
+	public void extractParametersFromSteps(LinkedList<Node> processing, Set<Node> processed, Node child,
+			List<InternalStepModel> steps) {
+		if (steps != null) {
+			for (InternalStepModel step : steps) {
+				if (step.type == StepType.CALL && step.calledTC.equals(child.getKey()) && step.getDeleguates()
+						&& !processed.contains(step.calledTC)) {
+					processing.add(child);
+				}
+			}
+		}
 	}
 
 	/**
@@ -858,7 +863,8 @@ public class Model {
 
 		// add the projects that were found
 		for (Project p : projects) {
-			ProjectTargetStatus status = new ProjectTargetStatus(Existence.EXISTS, p.getId(), p.getTestCaseLibrary().getId());
+			ProjectTargetStatus status = new ProjectTargetStatus(Existence.EXISTS, p.getId(), p.getTestCaseLibrary()
+					.getId());
 			projectStatusByName.put(p.getName(), status);
 			initCufs(p.getName());
 		}
@@ -1047,6 +1053,7 @@ public class Model {
 			super(status, id);
 			this.testCaseLibraryId = testCaseLibraryId;
 		}
+
 		private ProjectTargetStatus(Existence status) {
 			super(status);
 		}

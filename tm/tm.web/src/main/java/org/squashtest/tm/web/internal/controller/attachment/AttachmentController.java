@@ -95,9 +95,9 @@ public class AttachmentController {
 	/* *********************************** upload ************************************** */
 
 	/*
-	 *
+	 * 
 	 * Four operations are defined here :
-	 *
+	 * 
 	 * - prelude : will give a Ticket to that particular upload request that'll be used to store and retrieve
 	 * informations later. - upload : will upload the files themselves - poll : while uploading the client may asks how
 	 * far the job is done - finalize : sends a summary back to the client and relieve the resources
@@ -113,8 +113,7 @@ public class AttachmentController {
 	// uploads the file themselves and build the upload summary on the fly
 	@RequestMapping(value = UPLOAD_URL, method = RequestMethod.POST, params = "upload-ticket")
 	public ModelAndView uploadAttachment(HttpServletRequest servletRequest,
-			@RequestParam("attachment[]") List<UploadedData> attachments, @PathVariable long attachListId,
-			Locale locale)
+			@RequestParam("attachment[]") List<UploadedData> attachments, @PathVariable long attachListId, Locale locale)
 					throws IOException {
 
 		List<UploadSummary> summary = new LinkedList<UploadSummary>();
@@ -126,8 +125,8 @@ public class AttachmentController {
 			// file type checking
 			boolean shouldProceed = filterUtil.isTypeAllowed(upload);
 			if (!shouldProceed) {
-				summary.add(new UploadSummary(upload.name, getUploadSummary(STR_UPLOAD_STATUS_WRONGFILETYPE,
-						locale), UploadSummary.INT_UPLOAD_STATUS_WRONGFILETYPE));
+				summary.add(new UploadSummary(upload.name, getUploadSummary(STR_UPLOAD_STATUS_WRONGFILETYPE, locale),
+						UploadSummary.INT_UPLOAD_STATUS_WRONGFILETYPE));
 			} else {
 				attachmentManagerService.addAttachment(attachListId, upload);
 
@@ -141,7 +140,7 @@ public class AttachmentController {
 
 		// store the summary then return
 		UploadProgressListenerUtils.registerUploadSummary(servletRequest, summary);
-		return  new ModelAndView("fragment/import/attachment-success");
+		return new ModelAndView("fragment/import/attachment-success");
 	}
 
 	// by design the last file uploaded is empty and has no name. We'll strip that from the summary.
@@ -154,7 +153,7 @@ public class AttachmentController {
 	}
 
 	// answers the polls regarding upload status
-	@RequestMapping(value = UPLOAD_URL, method = RequestMethod.GET, params = "upload-ticket", produces=ContentTypes.APPLICATION_JSON)
+	@RequestMapping(value = UPLOAD_URL, method = RequestMethod.GET, params = "upload-ticket", produces = ContentTypes.APPLICATION_JSON)
 	public @ResponseBody
 	UploadProgress pollUploadStatus(HttpServletRequest request) {
 		String ticket = UploadProgressListenerUtils.getUploadTicket(request);
@@ -225,8 +224,7 @@ public class AttachmentController {
 		try {
 			Attachment attachment = attachmentManagerService.findAttachment(attachmentId);
 			response.setContentType("application/octet-stream");
-			response.setHeader("Content-Disposition",
-					"attachment; filename=" + attachment.getName().replace(" ", "_"));
+			response.setHeader("Content-Disposition", "attachment; filename=" + attachment.getName().replace(" ", "_"));
 
 			ServletOutputStream outStream = response.getOutputStream();
 
@@ -235,7 +233,6 @@ public class AttachmentController {
 			LOGGER.warn("Error happened during attachment download : " + e.getMessage(), e);
 			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 
-		} finally {
 		}
 	}
 

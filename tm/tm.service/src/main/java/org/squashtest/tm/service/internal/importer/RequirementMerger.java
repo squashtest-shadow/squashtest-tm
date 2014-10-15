@@ -21,6 +21,7 @@
 package org.squashtest.tm.service.internal.importer;
 
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -48,15 +49,23 @@ class RequirementMerger extends DestinationManager {
 		merge(pseudoRequirements);
 	}
 
+	private static final class PseudoRequirementPathComparator implements Comparator<PseudoRequirement> {
+		@Override
+		public int compare(PseudoRequirement o1, PseudoRequirement o2) {
+			return o1.getReqPath().compareTo(o2.getReqPath());
+		}
+
+	}
+
 	public void merge(List<PseudoRequirement> pseudoRequirements) {
 		// sort requirements to persist root requirements first
-		Collections.sort(pseudoRequirements);
+		Collections.sort(pseudoRequirements, new PseudoRequirementPathComparator());
 		// remember renamed requirements to import their requirement children in the renamed entity
 		Map<Identified, Map<String, Long>> renamedRequirements = new HashMap<Identified, Map<String, Long>>();
 		// process requirements one after the other
 
 		for (PseudoRequirement pseudoRequirement : pseudoRequirements) {
-			//merge requirement hierarchy
+			// merge requirement hierarchy
 			String reqPath = pseudoRequirement.getReqPath();
 			if (!reqPath.isEmpty()) {
 				mergeRequirementHierarchy(renamedRequirements, reqPath);
@@ -105,8 +114,7 @@ class RequirementMerger extends DestinationManager {
 			} else {
 				// find parent in destination matching path name
 				newReqDestination = findContentRequirementOfName(requirementParentName);
-				if (newReqDestination != null) {
-				} else {
+				if (newReqDestination == null) {
 					// create dummy requirement to recreate hierarchy
 					RequirementVersion pathFillingVersion = new RequirementVersion();
 					pathFillingVersion.setName(requirementParentName);

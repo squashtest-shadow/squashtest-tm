@@ -64,7 +64,7 @@ public abstract class GenericLibraryNode implements LibraryNode, AttachmentHolde
 	private String name;
 
 	@Lob
-	@Type(type="org.hibernate.type.StringClobType")
+	@Type(type = "org.hibernate.type.StringClobType")
 	@Field
 	private String description;
 
@@ -139,9 +139,9 @@ public abstract class GenericLibraryNode implements LibraryNode, AttachmentHolde
 		return result;
 	}
 
+	// GENERATED:START
 	@Override
-	// NOSONAR code generation, assumed to be safe
-	public boolean equals(Object obj) {// GENERATED:START
+	public boolean equals(Object obj) {
 		if (this == obj) {
 			return true;
 		}
@@ -181,6 +181,6 @@ public abstract class GenericLibraryNode implements LibraryNode, AttachmentHolde
 			return false;
 		}
 		return true;
-	} // GENERATED:END
-
+	}
+	// GENERATED:END
 }

@@ -76,8 +76,7 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 		return StringUtils.leftPad(rawValue.toString(), EXPECTED_LENGTH, '0');
 	}
 
-	private Query buildLuceneRangeQuery(QueryBuilder qb, String fieldName, Integer minValue,
-			Integer maxValue) {
+	private Query buildLuceneRangeQuery(QueryBuilder qb, String fieldName, Integer minValue, Integer maxValue) {
 
 		Query query = null;
 
@@ -111,8 +110,7 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 		return query;
 	}
 
-	private Query buildLuceneValueInListQuery(QueryBuilder qb, String fieldName,
-			List<String> values) {
+	private Query buildLuceneValueInListQuery(QueryBuilder qb, String fieldName, List<String> values) {
 
 		Query mainQuery = null;
 
@@ -137,8 +135,7 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 		return qb.bool().must(mainQuery).createQuery();
 	}
 
-	private Query buildLuceneSingleValueQuery(QueryBuilder qb, String fieldName,
-			List<String> values, Locale locale) {
+	private Query buildLuceneSingleValueQuery(QueryBuilder qb, String fieldName, List<String> values, Locale locale) {
 
 		Query mainQuery = null;
 
@@ -149,8 +146,8 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 			if (value.contains("*")) {
 				query = qb
 						.bool()
-						.must(qb.keyword().wildcard().onField(fieldName).ignoreFieldBridge()
-								.matching(value).createQuery()).createQuery();
+						.must(qb.keyword().wildcard().onField(fieldName).ignoreFieldBridge().matching(value)
+								.createQuery()).createQuery();
 			} else {
 
 				query = qb.bool()
@@ -187,8 +184,7 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 		return mainQuery;
 	}
 
-	private Query buildLuceneTimeIntervalQuery(QueryBuilder qb, String fieldName,
-			Date startdate, Date enddate) {
+	private Query buildLuceneTimeIntervalQuery(QueryBuilder qb, String fieldName, Date startdate, Date enddate) {
 
 		Query query = qb
 				.bool()
@@ -199,8 +195,7 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 		return query;
 	}
 
-	private Query buildLuceneTimeIntervalWithoutStartQuery(QueryBuilder qb, String fieldName,
-			Date enddate) {
+	private Query buildLuceneTimeIntervalWithoutStartQuery(QueryBuilder qb, String fieldName, Date enddate) {
 
 		Query query = qb
 				.bool()
@@ -210,20 +205,19 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 		return query;
 	}
 
-	private Query buildLuceneTimeIntervalWithoutEndQuery(QueryBuilder qb, String fieldName,
-			Date startdate) {
+	private Query buildLuceneTimeIntervalWithoutEndQuery(QueryBuilder qb, String fieldName, Date startdate) {
 
 		Query query = qb
 				.bool()
 				.must(qb.range().onField(fieldName).ignoreFieldBridge()
 						.above(DateTools.dateToString(startdate, DateTools.Resolution.DAY)).createQuery())
-				.createQuery();
+						.createQuery();
 
 		return query;
 	}
 
-	private Query buildQueryForSingleCriterium(String fieldKey,
-			AdvancedSearchFieldModel fieldModel, QueryBuilder qb, Locale locale) {
+	private Query buildQueryForSingleCriterium(String fieldKey, AdvancedSearchFieldModel fieldModel, QueryBuilder qb,
+			Locale locale) {
 
 		AdvancedSearchSingleFieldModel singleModel = (AdvancedSearchSingleFieldModel) fieldModel;
 		if (singleModel.getValue() != null && !"".equals(singleModel.getValue().trim())) {
@@ -235,8 +229,7 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 		return null;
 	}
 
-	private Query buildQueryForListCriterium(String fieldKey,
-			AdvancedSearchFieldModel fieldModel, QueryBuilder qb) {
+	private Query buildQueryForListCriterium(String fieldKey, AdvancedSearchFieldModel fieldModel, QueryBuilder qb) {
 
 		AdvancedSearchListFieldModel listModel = (AdvancedSearchListFieldModel) fieldModel;
 		if (listModel.getValues() != null) {
@@ -270,7 +263,7 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 		if (input[0] == '\'') {
 			start = 1;
 		}
-		
+
 		for (int i = 1; i < input.length; i++) {
 			char charAtPosition = input[i];
 			char charBeforePosition = input[i - 1];
@@ -281,12 +274,12 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 				start = i + 1;
 			}
 
-			//treat apostrophes as word separators
-			else if( isSimpleQuote(charAtPosition, charBeforePosition)){
+			// treat apostrophes as word separators
+			else if (isSimpleQuote(charAtPosition, charBeforePosition)) {
 				addToTokens(tokens, textInput.substring(start, i).trim());
 				start = i + 1;
 			}
-				
+
 			// if we encounter a double quote
 			else if (isDoubleQuote(charAtPosition, charBeforePosition)) {
 				inDoubleQuoteContext = !inDoubleQuoteContext;
@@ -306,7 +299,7 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 	private boolean isSimpleQuote(char charAtPosition, char charBeforePosition) {
 		return charAtPosition == '\'' && charBeforePosition != '\\';
 	}
-	
+
 	private boolean isDoubleQuote(char charAtPosition, char charBeforePosition) {
 		return charAtPosition == '"' && charBeforePosition != '\\';
 	}
@@ -316,8 +309,7 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 		return charAtPosition == ' ' && charBeforePosition != ' ' && !inDoubleQuoteContext;
 	}
 
-	private Query buildQueryForTextCriterium(String fieldKey,
-			AdvancedSearchFieldModel fieldModel, QueryBuilder qb) {
+	private Query buildQueryForTextCriterium(String fieldKey, AdvancedSearchFieldModel fieldModel, QueryBuilder qb) {
 		AdvancedSearchTextFieldModel textModel = (AdvancedSearchTextFieldModel) fieldModel;
 		if (textModel.getValue() != null && !"".equals(textModel.getValue().trim())) {
 			List<String> inputs = parseInput(textModel.getValue());
@@ -327,8 +319,7 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 		return null;
 	}
 
-	private Query buildQueryForRangeCriterium(String fieldKey,
-			AdvancedSearchFieldModel fieldModel, QueryBuilder qb) {
+	private Query buildQueryForRangeCriterium(String fieldKey, AdvancedSearchFieldModel fieldModel, QueryBuilder qb) {
 		AdvancedSearchRangeFieldModel rangeModel = (AdvancedSearchRangeFieldModel) fieldModel;
 		if (rangeModel.getMinValue() != null || rangeModel.getMaxValue() != null) {
 			return buildLuceneRangeQuery(qb, fieldKey, rangeModel.getMinValue(), rangeModel.getMaxValue());
@@ -337,8 +328,8 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 		return null;
 	}
 
-	private Query buildQueryForTimeIntervalCriterium(String fieldKey,
-			AdvancedSearchFieldModel fieldModel, QueryBuilder qb) {
+	private Query buildQueryForTimeIntervalCriterium(String fieldKey, AdvancedSearchFieldModel fieldModel,
+			QueryBuilder qb) {
 		AdvancedSearchTimeIntervalFieldModel intervalModel = (AdvancedSearchTimeIntervalFieldModel) fieldModel;
 		Date startDate = intervalModel.getStartDate();
 		Date endDate = intervalModel.getEndDate();
@@ -358,8 +349,7 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 		return query;
 	}
 
-	protected Query buildLuceneQuery(QueryBuilder qb, List<TestCase> testcaseList,
-			Locale locale) {
+	protected Query buildLuceneQuery(QueryBuilder qb, List<TestCase> testcaseList, Locale locale) {
 
 		Query mainQuery = null;
 		Query query = null;

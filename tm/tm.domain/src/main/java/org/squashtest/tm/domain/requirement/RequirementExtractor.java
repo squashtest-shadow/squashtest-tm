@@ -28,7 +28,7 @@ public class RequirementExtractor implements RequirementLibraryNodeVisitor {
 	public RequirementExtractor() {
 	}
 
-	List<Requirement> result;
+	private List<Requirement> result;
 
 	/**
 	 * will go through the given nodes to return a list of the requirement ones (not folder).

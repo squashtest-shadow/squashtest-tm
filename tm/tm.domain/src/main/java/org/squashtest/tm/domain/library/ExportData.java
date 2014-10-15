@@ -23,15 +23,17 @@ package org.squashtest.tm.domain.library;
 import java.util.Date;
 
 import org.squashtest.tm.domain.audit.AuditableMixin;
+
 /**
  * Common DataSource for jasper Node Export
+ * 
  * @author mpagnon
- *
+ * 
  */
 public abstract class ExportData {
 
 	private Long id;
-	private String folderName = "";//TODO Confusing ! this is not the folder name : it is the folder path !
+	private String folderName = "";// TODO Confusing ! this is not the folder name : it is the folder path !
 	private String project;
 	private String name;
 	private String description;
@@ -75,11 +77,12 @@ public abstract class ExportData {
 		doSetDescription(description);
 	}
 
-	private void doSetDescription(String description){
-		if(description != null){
+	private void doSetDescription(String description) {
+		if (description != null) {
 			this.description = description;
 		}
 	}
+
 	public String getFolderName() {
 		return folderName;
 	}
@@ -88,8 +91,8 @@ public abstract class ExportData {
 		doSetFolderName(folderName);
 	}
 
-	public void doSetFolderName(String folderName) {
-		if(folderName != null){
+	private void doSetFolderName(String folderName) {
+		if (folderName != null) {
 			this.folderName = folderName;
 		}
 	}
@@ -110,7 +113,6 @@ public abstract class ExportData {
 		this.createdBy = createdBy;
 	}
 
-
 	public Long getFolderId() {
 		return folderId;
 	}
@@ -127,11 +129,10 @@ public abstract class ExportData {
 		AuditableMixin audit = ((AuditableMixin) node);
 		this.createdOn = audit.getCreatedOn();
 		this.createdBy = audit.getCreatedBy();
-		//folder is null if the requirement is located directly under the project root.
-		if(folder == null) {
+		// folder is null if the requirement is located directly under the project root.
+		if (folder == null) {
 			this.folderId = NO_FOLDER;
-		}
-		else {
+		} else {
 			this.folderId = folder.getId();
 			doSetFolderName(folder.getName());
 		}
@@ -145,7 +146,7 @@ public abstract class ExportData {
 		AuditableMixin audit = ((AuditableMixin) node);
 		this.createdOn = audit.getCreatedOn();
 		this.createdBy = audit.getCreatedBy();
-		//folder is null if the requirement is located directly under the project root.
+		// folder is null if the requirement is located directly under the project root.
 		this.folderId = NO_FOLDER;
 	}
 
