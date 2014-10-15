@@ -18,29 +18,45 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define(['tree', './camp-treemenu', './popups/init-all', './init-actions', 'squash/squash.tree-page-resizer'], 
+define([ 'tree', './camp-treemenu', './popups/init-all', './init-actions', 'squash/squash.tree-page-resizer' ],
 		function(tree, treemenu, popups, actions, resizer) {
 
-	
-	function initResizer(){
-		var conf = {
-			leftSelector : "#tree-panel-left",
-			rightSelector : "#contextual-content"
-		};
-		resizer.init(conf);
-	}
-	
-	function init(settings){
-		initResizer();
-		tree.initWorkspaceTree(settings.tree);
-		treemenu.init();	
-		popups.init();
-		actions.init();
-	}
-	
-	
-	return {
-		init : init
-	};
-	
-});
+			function initResizer() {
+				var conf = {
+					leftSelector : "#tree-panel-left",
+					rightSelector : "#contextual-content"
+				};
+				resizer.init(conf);
+			}
+
+			function initTabbedPane() {
+				/**
+				 * Here we define which tab is currently used with selectedTab. selectedTab is used in
+				 * show-iteration-test-plan-manager, search-panel*...
+				 */
+				// The selected pane number. Always the first one (0) by default
+				selectedTab = 0;
+
+				$("#tabbed-pane").tabs();
+
+				$("#tree-panel-left").on("tabsselect", "#tabbed-pane", function(event, ui) {
+					// change the number of the selected pane
+					selectedTab = ui.index;
+				});
+			}
+
+			function init(settings) {
+				initResizer();
+				initTabbedPane();
+				tree.initWorkspaceTree(settings.tree);
+				treemenu.init(settings.treemenu);
+				popups.init();
+				actions.init();
+
+			}
+
+			return {
+				init : init
+			};
+
+		});

@@ -116,9 +116,7 @@ define(['jquery', './utils', './permissions-rules',
 	
 	// the wizard menu is a bit different from the rest, hence the init code
 	// is put appart
-	function createWizardMenu(){
-		
-		var wizards = squashtm.app.campaignWorkspace.wizards;
+	function createWizardMenu(wizards){
 		
 		if (!!wizards && wizards.length>0){
 			
@@ -157,10 +155,10 @@ define(['jquery', './utils', './permissions-rules',
 		});
 	}
 	
-	function init(){
+	function init(settings){
 		createWidgets();
 		bindTreeEvents();
-		createWizardMenu();
+		createWizardMenu(settings.wizards);
 		initExportPlugins();
 
 		$("#tree_element_menu").removeClass("unstyled-pane");

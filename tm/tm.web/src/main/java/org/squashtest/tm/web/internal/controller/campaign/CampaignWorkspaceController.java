@@ -20,7 +20,6 @@
  */
 package org.squashtest.tm.web.internal.controller.campaign;
 
-
 import java.util.List;
 import java.util.Locale;
 
@@ -65,7 +64,7 @@ public class CampaignWorkspaceController extends WorkspaceController<CampaignLib
 
 	@Override
 	protected String getWorkspaceViewName() {
-		return "page/campaign-workspace/campaign-workspace";
+		return "campaign-workspace.html";
 	}
 
 	@Override
@@ -75,7 +74,7 @@ public class CampaignWorkspaceController extends WorkspaceController<CampaignLib
 
 	@Override
 	protected void populateModel(Model model, Locale locale) {
-		//noop
+		// noop
 	}
 
 	/**
@@ -94,7 +93,7 @@ public class CampaignWorkspaceController extends WorkspaceController<CampaignLib
 
 	@Override
 	protected String getTreeElementIdInWorkspace(Long elementId) {
-		return "Campaign-"+elementId;
+		return "Campaign-" + elementId;
 	}
 
 }
