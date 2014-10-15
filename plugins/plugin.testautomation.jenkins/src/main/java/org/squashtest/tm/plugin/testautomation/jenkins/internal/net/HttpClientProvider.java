@@ -109,7 +109,7 @@ public class HttpClientProvider {
 			serverPass = server.getPassword();
 			serverKind = server.getKind();
 		}
-
+		// GENERATED:START
 		@Override
 		public int hashCode() {
 			final int prime = 31;
@@ -124,7 +124,7 @@ public class HttpClientProvider {
 		@Override
 		public boolean equals(Object obj) {
 
-			// GENERATED:START
+
 
 			if (this == obj) {
 				return true;
@@ -166,9 +166,9 @@ public class HttpClientProvider {
 			}
 			return true;
 
-			// GENERATED:END
-		}
 
+		}
+		// GENERATED:END
 	}
 
 }

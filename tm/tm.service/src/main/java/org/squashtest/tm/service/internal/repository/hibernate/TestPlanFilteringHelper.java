@@ -105,7 +105,7 @@ final class TestPlanFilteringHelper {
 			query.setParameter("userLogin", filtering.getFilter());
 		}
 
-		// IGNOREVIOLATIONS:START This is basically a huge switch
+		// NOSONAR:START This is basically a huge switch
 
 		if (columnFiltering.hasFilter(PROJECT_DATA)) {
 			query.setParameter(PROJECT_FILTER, anywhereToken(columnFiltering.getFilter(PROJECT_DATA)));
@@ -142,7 +142,7 @@ final class TestPlanFilteringHelper {
 		if (columnFiltering.hasFilter(TestPlanFilteringHelper.LASTEXEC_DATA)) {
 			setQueryStartAndEndDateParameters(columnFiltering, query);
 		}
-		// IGNOREVIOLATIONS:END
+		// NOSONAR:END
 	}
 
 	private static void setQueryStartAndEndDateParameters(ColumnFiltering columnFiltering, Query query) {

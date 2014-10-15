@@ -20,9 +20,7 @@
  */
 package org.squashtest.tm.plugin.testautomation.jenkins.beans;
 
-
 public class FileParameter {
-
 
 	protected String name;
 	protected String file;
@@ -36,21 +34,21 @@ public class FileParameter {
 	}
 
 	public String getFile() {
-		return	file;
+		return file;
 	}
+
 	public void setFile(String file) {
 		this.file = file;
 	}
 
-
-	public FileParameter(){
+	public FileParameter() {
 		super();
 	}
 
-	public FileParameter(String name, String file){
+	public FileParameter(String name, String file) {
 		super();
-		this.name=name;
-		this.file=file;
+		this.name = name;
+		this.file = file;
 	}
 
 	@Override
@@ -62,34 +60,35 @@ public class FileParameter {
 		return result;
 	}
 
+	// GENERATED:START
 	@Override
-	public boolean equals(Object obj) {// GENERATED:START
-		if (this == obj){
+	public boolean equals(Object obj) {
+		if (this == obj) {
 			return true;
 		}
-		if (obj == null){
+		if (obj == null) {
 			return false;
 		}
-		if (getClass() != obj.getClass()){
+		if (getClass() != obj.getClass()) {
 			return false;
 		}
 		FileParameter other = (FileParameter) obj;
 		if (name == null) {
-			if (other.name != null){
+			if (other.name != null) {
 				return false;
 			}
-		} else if (!name.equals(other.name)){
+		} else if (!name.equals(other.name)) {
 			return false;
 		}
 		if (file == null) {
-			if (other.file != null){
+			if (other.file != null) {
 				return false;
 			}
-		} else if (!file.equals(other.file)){
+		} else if (!file.equals(other.file)) {
 			return false;
 		}
 		return true;
-	}// GENERATED:END
-
+	}
+	// GENERATED:END
 
 }

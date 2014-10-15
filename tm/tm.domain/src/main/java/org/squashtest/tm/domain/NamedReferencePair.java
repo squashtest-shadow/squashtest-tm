@@ -25,25 +25,23 @@ package org.squashtest.tm.domain;
  * what you do with it.
  * 
  * @author bsiri
- *
+ * 
  */
-public final class NamedReferencePair{
+public final class NamedReferencePair {
 
 	private NamedReference caller;
 	private NamedReference called;
 
-	public NamedReferencePair(){
+	public NamedReferencePair() {
 
 	}
 
+	public NamedReferencePair(Long callerId, String callerName, Long calledId, String calledName) {
 
-	public NamedReferencePair(Long callerId, String callerName,
-			Long calledId, String calledName){
-
-		if (callerId != null){
+		if (callerId != null) {
 			caller = new NamedReference(callerId, callerName);
 		}
-		if (calledId != null){
+		if (calledId != null) {
 			called = new NamedReference(calledId, calledName);
 		}
 	}
@@ -60,16 +58,14 @@ public final class NamedReferencePair{
 	public int hashCode() { // NOSONAR generated
 		final int prime = 31;
 		int result = 1;
-		result = prime * result
-				+ ((called == null) ? 0 : called.hashCode());
-		result = prime * result
-				+ ((caller == null) ? 0 : caller.hashCode());
+		result = prime * result + ((called == null) ? 0 : called.hashCode());
+		result = prime * result + ((caller == null) ? 0 : caller.hashCode());
 		return result;
 	}
 
-
+	// GENERATED:START
 	@Override
-	public boolean equals(Object obj) { // NOSONAR generated
+	public boolean equals(Object obj) {
 		if (this == obj) {
 			return true;
 		}
@@ -96,6 +92,6 @@ public final class NamedReferencePair{
 		}
 		return true;
 	}
-
+	// GENERATED:END
 
 }

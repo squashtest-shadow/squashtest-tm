@@ -198,7 +198,7 @@ RequirementVersionImportMemento {
 	private boolean notEmpty(String string) {
 		return (string != null && (!string.isEmpty()));
 	}
-
+	//GENERATED:START
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -259,7 +259,7 @@ RequirementVersionImportMemento {
 		}
 		return toreturn;
 	}
-
+	//GENERATED:END
 	private int compareRowNumbers(PseudoRequirementVersion o1, PseudoRequirementVersion o2) {
 		return o1.getRowNumber().compareTo(o2.getRowNumber());
 	}
