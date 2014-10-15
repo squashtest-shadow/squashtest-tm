@@ -38,7 +38,8 @@ import org.squashtest.tm.domain.testautomation.TestAutomationServer;
 public interface GenericProjectDao extends CustomGenericProjectDao {
 	long countGenericProjects();
 
-
+	List<GenericProject> findAll();
+	
 	List<GenericProject> findAll(PagingAndSorting pagingAndSorting);
 
 	List<GenericProject> findProjectsFiltered(PagingAndSorting pagingAndSorting, @QueryParam("filter") String filter);

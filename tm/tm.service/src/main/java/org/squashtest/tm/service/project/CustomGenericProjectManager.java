@@ -29,6 +29,7 @@ import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.tm.api.workspace.WorkspaceType;
 import org.squashtest.tm.core.foundation.collection.Filtering;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
+import org.squashtest.tm.core.foundation.collection.PagingAndMultiSorting;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.domain.project.GenericProject;
@@ -224,4 +225,6 @@ public interface CustomGenericProjectManager extends CustomGenericProjectFinder 
 	boolean projectUsesExecutionStatus(long projectId,  ExecutionStatus executionStatus);
 
 	void changeName(long projectId, String newName) throws NameAlreadyInUseException;
+	
+	PagedCollectionHolder<List<GenericProject>> findCustomSortedProject(PagingAndMultiSorting sorter);
 }

@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -49,9 +50,13 @@ import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.tm.api.workspace.WorkspaceType;
 import org.squashtest.tm.core.foundation.collection.Filtering;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
+import org.squashtest.tm.core.foundation.collection.PagingAndMultiSorting;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.PagingBackedPagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.Pagings;
+import org.squashtest.tm.core.foundation.collection.SortOrder;
+import org.squashtest.tm.core.foundation.collection.Sorting;
+import org.squashtest.tm.domain.audit.AuditableMixin;
 import org.squashtest.tm.domain.bugtracker.BugTrackerBinding;
 import org.squashtest.tm.domain.campaign.CampaignLibrary;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
@@ -62,6 +67,7 @@ import org.squashtest.tm.domain.project.AdministrableProject;
 import org.squashtest.tm.domain.project.GenericProject;
 import org.squashtest.tm.domain.project.LibraryPluginBinding;
 import org.squashtest.tm.domain.project.Project;
+import org.squashtest.tm.domain.project.ProjectForCustomCompare;
 import org.squashtest.tm.domain.project.ProjectTemplate;
 import org.squashtest.tm.domain.requirement.RequirementLibrary;
 import org.squashtest.tm.domain.testautomation.TestAutomationProject;
@@ -91,6 +97,7 @@ import org.squashtest.tm.service.security.ObjectIdentityService;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.testautomation.TestAutomationProjectManagerService;
 import org.squashtest.tm.service.testautomation.TestAutomationServerManagerService;
+import org.apache.commons.lang.builder.CompareToBuilder;
 
 @Service("CustomGenericProjectManager")
 @Transactional
@@ -592,8 +599,159 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 		return executionDao.projectUsesExecutionStatus(projectId, executionStatus);
 	}
 
+	
+	// **************** Custom comparator  **************
+	
+	public PagedCollectionHolder<List<GenericProject>> findCustomSortedProject(final PagingAndMultiSorting sorter){
+		
+		List<? extends GenericProject> resultset;
+		
+		if (permissionEvaluationService.hasRole("ROLE_ADMIN")) {
+			resultset =	genericProjectDao.findAll();
+		} else {
+			resultset = projectDao.findAll();
+		}
+		List<? extends GenericProject> securedResultset = new LinkedList<GenericProject>(resultset);
+		CollectionUtils.filter(securedResultset, new IsManagerOnObject());
+		
+		List<ProjectForCustomCompare> projects = consolidateProjects(securedResultset);
+        sortProjects(projects, sorter);
+
+		// manual paging
+		int listsize = projects.size();
+		int firstIdx = Math.min(listsize, 	sorter.getFirstItemIndex());
+		int lastIdx = Math.min(listsize, firstIdx + sorter.getPageSize());
+		projects = projects.subList(firstIdx, lastIdx);
+		
+		securedResultset = extractProjectList(projects);
+		
+		return new PagingBackedPagedCollectionHolder<List<GenericProject>>(sorter, listsize,
+				(List<GenericProject>) securedResultset);
+	
+	}
+	
+	private List<GenericProject> extractProjectList(
+			List<ProjectForCustomCompare> projects) {
+		
+		List<GenericProject> liste = new LinkedList<GenericProject>();
+		
+		for (ProjectForCustomCompare project : projects){
+			liste.add(project.getGenericProject());	
+		}
+		return liste;
+	}
+
+	private List<ProjectForCustomCompare> consolidateProjects(
+			List<? extends GenericProject> securedResultset) {
+		
+		List<ProjectForCustomCompare> projects = new LinkedList<ProjectForCustomCompare>();
+		
+		for (GenericProject project : securedResultset){
+			
+		ProjectForCustomCompare customProject = new ProjectForCustomCompare();
+		customProject.setGenericProject(project);
+		customProject.setAutomated(project.isTestAutomationEnabled());
+		customProject.setBugtracker(project.isBugtrackerConnected() ? project.getBugtrackerBinding().getBugtracker().getKind(): null);
+			
+		if (permissionsManager.findPartyPermissionsBeanByProject(project.getId()).size() == 0){
+				customProject.setHabilitation(false);
+			} else {
+				customProject.setHabilitation(true);
+			}
+
+			projects.add(customProject);
+		}
+		
+				return projects;
+	}
+
+	private void sortProjects(final List<ProjectForCustomCompare> securedResultset,
+			final PagingAndMultiSorting sorter) {
+		
+		Collections.sort(securedResultset, new Comparator<ProjectForCustomCompare>() {
+			
+			@Override
+			public int compare(ProjectForCustomCompare o1, ProjectForCustomCompare o2) {
+				
+				return buildProjectComparator(sorter, o1, o2).toComparison();
+			}
+		});	
+	}
+
+	
+	
 	// **************** private stuffs **************
 
+	private CompareToBuilder buildProjectComparator(final PagingAndMultiSorting sorter, ProjectForCustomCompare o1, ProjectForCustomCompare o2) {
+		
+		CompareToBuilder comp = new CompareToBuilder();
+		GenericProject firstProject = o1.getGenericProject();
+		GenericProject secondProject = o2.getGenericProject();
+		
+		AuditableMixin firstAudit = (AuditableMixin) firstProject;
+		AuditableMixin secondAudit = (AuditableMixin) secondProject;
+		for (Sorting sorting : sorter.getSortings()){
+		
+			Object first = null;
+			Object second = null;
+
+			switch (sorting.getSortedAttribute()){
+			case "name" : first = firstProject.getName();
+			second = secondProject.getName();
+			break;
+			
+			case "label" : first = firstProject.getLabel();
+			second = secondProject.getLabel();
+			break;
+			
+			case "active" : first = firstProject.isActive();
+			second = secondProject.isActive();
+			break;
+			
+			case "audit.createdOn" : first = firstAudit.getCreatedOn();
+			second = secondAudit.getCreatedOn();
+			break;
+			
+			case "audit.createdBy" : first = firstAudit.getCreatedBy();
+			second = secondAudit.getCreatedBy();
+			break;
+			
+			case "audit.lastModifiedOn" : first = firstAudit.getLastModifiedOn();
+			second = secondAudit.getLastModifiedOn();
+			break;
+			
+			case "audit.lastModifiedBy" : first = firstAudit.getLastModifiedBy();
+			second = secondAudit.getLastModifiedBy();
+			break;
+			
+			case "habilitation" : first = o1.hasHabilitation();
+			second = o2.hasHabilitation();
+			break;
+			
+			case "bugtracker" : first = o1.getBugtracker();
+			second = o2.getBugtracker();
+			break;
+			
+			case "automation" : first = o1.isAutomated();
+			second = o2.isAutomated();
+			break;
+			}
+			
+			
+			if (sorting.getSortOrder().equals(SortOrder.DESCENDING)){
+				comp.append(first, second);
+			} else {
+				comp.append(second, first);
+			}
+		}
+		
+		return comp;
+	}
+
+	
+	
+	
+	
 	private PluginReferencer<?> findLibrary(long projectId, WorkspaceType workspace) {
 		GenericProject project = genericProjectDao.findById(projectId);
 

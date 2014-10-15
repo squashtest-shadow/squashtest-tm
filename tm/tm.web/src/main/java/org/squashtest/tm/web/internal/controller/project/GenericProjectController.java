@@ -56,8 +56,10 @@ import org.squashtest.tm.api.plugin.EntityType;
 import org.squashtest.tm.api.wizard.WorkspaceWizard;
 import org.squashtest.tm.core.foundation.collection.Filtering;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
+import org.squashtest.tm.core.foundation.collection.PagingAndMultiSorting;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.SinglePageCollectionHolder;
+import org.squashtest.tm.core.foundation.collection.Sorting;
 import org.squashtest.tm.domain.audit.AuditableMixin;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.domain.project.GenericProject;
@@ -84,6 +86,7 @@ import org.squashtest.tm.web.internal.model.datatable.DataTableFiltering;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelBuilder;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelConstants;
+import org.squashtest.tm.web.internal.model.datatable.DataTableMultiSorting;
 import org.squashtest.tm.web.internal.model.datatable.DataTableSorting;
 import org.squashtest.tm.web.internal.model.jquery.RenameModel;
 import org.squashtest.tm.web.internal.model.json.JsonGeneralInfo;
@@ -140,11 +143,12 @@ public class GenericProjectController {
 	public @ResponseBody
 	DataTableModel getProjectsTableModel(final DataTableDrawParameters params, final Locale locale) {
 
-		PagingAndSorting sorter = new DataTableSorting(params, allProjectsMapper);
+		//PagingAndSorting sorter = new DataTableSorting(params, allProjectsMapper);
 
-		Filtering filter = new DataTableFiltering(params);
-
-		PagedCollectionHolder<List<GenericProject>> holder = projectManager.findSortedProjects(sorter, filter);
+	//	Filtering filter = new DataTableFiltering(params); 
+		final PagingAndMultiSorting sorter = new DataTableMultiSorting(params, allProjectsMapper);
+		PagedCollectionHolder<List<GenericProject>> holder = projectManager.findCustomSortedProject(sorter);
+		//PagedCollectionHolder<List<GenericProject>> holder = projectManager.findSortedProjects(sorter, filter);
 
 		return new ProjectDataTableModelHelper(locale, messageSource, projectManager).buildDataModel(holder, params.getsEcho());
 
