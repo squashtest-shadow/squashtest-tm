@@ -133,9 +133,9 @@
 
 <div
 	class="ui-widget-header ui-state-default ui-corner-all fragment-header ctx-title">
-	<div>
+	<div  class="small-margin-left">
 		<h2>
-			<span><f:message key="test-suite.header.title" />&nbsp;:&nbsp;</span><a
+			<a
 				id="test-suite-name" href="${ testSuiteUrl }/info"><c:out
 					value="${ testSuite.name }" escapeXml="true" /> </a>
 		</h2>

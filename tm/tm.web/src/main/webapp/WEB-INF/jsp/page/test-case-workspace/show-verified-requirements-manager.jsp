@@ -115,7 +115,7 @@
 	</jsp:attribute>
 	
 	<jsp:attribute name="subPageTitle">
-		<h2>${testCase.name}&nbsp;:&nbsp;<f:message key="squashtm.library.verifiedrequirements.title" /></h2>
+		<h2>&nbsp;:&nbsp;${testCase.name}<f:message key="squashtm.library.verifiedrequirements.title" /></h2>
 	</jsp:attribute>
 	
 	<jsp:attribute name="subPageButtons">

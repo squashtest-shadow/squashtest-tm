@@ -92,7 +92,7 @@
 <div
 	class="ui-widget-header ui-state-default ui-corner-all fragment-header">
 
-	<div style="float: left; height: 100%;">
+	<div style="float: left; height: 100%;" class="small-margin-left">
 		<h2>
 		<a id="campaign-name" href="${ campaignUrl }/info"><c:out
 					value="${ campaign.name }" escapeXml="true" />

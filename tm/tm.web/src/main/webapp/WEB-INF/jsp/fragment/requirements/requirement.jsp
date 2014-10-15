@@ -128,7 +128,7 @@ require(["common"], function() {
 <%-- ----------------------------------- CONTENT ----------------------------------------------%>
 <%-- ----------------------------------- TITLE ----------------------------------------------%>
 <div class="ui-widget-header ui-corner-all ui-state-default fragment-header">
-	<div style="float:left;height:100%;">	
+	<div style="float:left;height:100%;" class="small-margin-left">	
 		<h2>
 		
 			<c:set var="completeRequirementName" value="${ requirement.name }" />
