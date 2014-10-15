@@ -22,7 +22,6 @@ package org.squashtest.tm.web.internal.controller.customfield;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Locale;
 
 import javax.inject.Inject;
 
@@ -33,7 +32,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.servlet.ModelAndView;
 import org.squashtest.tm.domain.customfield.BindableEntity;
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
 import org.squashtest.tm.service.customfield.CustomFieldValueManagerService;
@@ -41,7 +39,6 @@ import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.web.internal.controller.AcceptHeaders;
 import org.squashtest.tm.web.internal.helper.JEditablePostParams;
 import org.squashtest.tm.web.internal.model.customfield.CustomFieldJsonConverter;
-import org.squashtest.tm.web.internal.model.customfield.CustomFieldValueConfigurationBean;
 import org.squashtest.tm.web.internal.model.customfield.CustomFieldValueModel;
 
 @Controller

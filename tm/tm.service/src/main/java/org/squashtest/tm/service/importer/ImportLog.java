@@ -28,7 +28,6 @@ import static org.squashtest.tm.service.importer.ImportStatus.FAILURE;
 import static org.squashtest.tm.service.importer.ImportStatus.OK;
 import static org.squashtest.tm.service.importer.ImportStatus.WARNING;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;

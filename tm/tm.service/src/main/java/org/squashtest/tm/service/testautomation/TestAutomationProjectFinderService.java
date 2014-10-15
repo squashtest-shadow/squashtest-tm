@@ -22,7 +22,6 @@ package org.squashtest.tm.service.testautomation;
 
 import java.net.URL;
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 
 import org.squashtest.tm.domain.testautomation.TestAutomationProject;

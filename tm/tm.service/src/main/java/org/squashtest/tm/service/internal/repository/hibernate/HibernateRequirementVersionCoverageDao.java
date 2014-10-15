@@ -32,7 +32,6 @@ import org.hibernate.sql.JoinType;
 import org.springframework.stereotype.Repository;
 import org.squashtest.tm.core.foundation.collection.DefaultPagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
-import org.squashtest.tm.core.foundation.collection.SortOrder;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.testcase.RequirementVersionCoverage;
 import org.squashtest.tm.service.internal.foundation.collection.PagingUtils;

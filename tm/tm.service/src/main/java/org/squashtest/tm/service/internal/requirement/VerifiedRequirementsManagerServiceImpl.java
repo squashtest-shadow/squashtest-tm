@@ -42,8 +42,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.PagingBackedPagedCollectionHolder;
-import org.squashtest.tm.domain.library.WhichNodeVisitor;
-import org.squashtest.tm.domain.library.WhichNodeVisitor.NodeType;
 import org.squashtest.tm.domain.requirement.Requirement;
 import org.squashtest.tm.domain.requirement.RequirementLibraryNode;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
@@ -57,7 +55,6 @@ import org.squashtest.tm.exception.requirement.RequirementVersionNotLinkableExce
 import org.squashtest.tm.exception.requirement.VerifiedRequirementException;
 import org.squashtest.tm.service.advancedsearch.IndexationService;
 import org.squashtest.tm.service.internal.repository.LibraryNodeDao;
-import org.squashtest.tm.service.internal.repository.RequirementDeletionDao;
 import org.squashtest.tm.service.internal.repository.RequirementVersionCoverageDao;
 import org.squashtest.tm.service.internal.repository.RequirementVersionDao;
 import org.squashtest.tm.service.internal.repository.TestCaseDao;

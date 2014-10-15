@@ -26,7 +26,6 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,7 +33,6 @@ import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.PagingBackedPagedCollectionHolder;
 import org.squashtest.tm.domain.testautomation.TestAutomationServer;
-import org.squashtest.tm.exception.DomainException;
 import org.squashtest.tm.exception.NameAlreadyInUseException;
 import org.squashtest.tm.exception.testautomation.UserAndServerDefinedAlreadyException;
 import org.squashtest.tm.service.internal.repository.TestAutomationProjectDao;

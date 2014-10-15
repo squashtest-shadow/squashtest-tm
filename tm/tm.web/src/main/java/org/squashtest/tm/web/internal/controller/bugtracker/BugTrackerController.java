@@ -79,7 +79,6 @@ import org.squashtest.tm.service.campaign.CampaignFinder;
 import org.squashtest.tm.service.campaign.IterationFinder;
 import org.squashtest.tm.service.campaign.TestSuiteFinder;
 import org.squashtest.tm.service.execution.ExecutionFinder;
-import org.squashtest.tm.service.project.CustomGenericProjectManager;
 import org.squashtest.tm.service.testcase.TestCaseFinder;
 import org.squashtest.tm.web.internal.controller.attachment.UploadedData;
 import org.squashtest.tm.web.internal.controller.attachment.UploadedDataPropertyEditorSupport;

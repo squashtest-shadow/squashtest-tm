@@ -23,8 +23,6 @@ package org.squashtest.tm.domain.attachment;
 import java.util.Date;
 import java.util.Locale;
 
-import javax.persistence.Access;
-import javax.persistence.AccessType;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;

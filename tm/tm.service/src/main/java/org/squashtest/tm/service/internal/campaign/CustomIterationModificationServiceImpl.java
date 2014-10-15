@@ -21,7 +21,6 @@
 package org.squashtest.tm.service.internal.campaign;
 
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -43,7 +42,6 @@ import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.campaign.TestSuite;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.testcase.Dataset;
-import org.squashtest.tm.domain.testcase.Parameter;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.exception.execution.TestPlanItemNotExecutableException;
@@ -68,8 +66,6 @@ import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.security.PermissionsUtils;
 import org.squashtest.tm.service.security.SecurityCheckableObject;
 import org.squashtest.tm.service.statistics.iteration.IterationStatisticsBundle;
-import org.squashtest.tm.service.testcase.ParameterFinder;
-import org.squashtest.tm.service.testcase.ParameterModificationService;
 import org.squashtest.tm.service.testcase.TestCaseCyclicCallChecker;
 
 @Service("CustomIterationModificationService")

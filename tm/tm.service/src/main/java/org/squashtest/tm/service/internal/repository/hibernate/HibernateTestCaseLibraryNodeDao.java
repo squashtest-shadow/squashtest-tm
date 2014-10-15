@@ -20,15 +20,12 @@
  */
 package org.squashtest.tm.service.internal.repository.hibernate;
 
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
 import org.hibernate.Query;
-import org.hibernate.SQLQuery;
-import org.hibernate.type.LongType;
 import org.springframework.stereotype.Repository;
 import org.squashtest.tm.domain.testcase.TestCaseLibraryNode;
 import org.squashtest.tm.service.internal.repository.TestCaseLibraryNodeDao;

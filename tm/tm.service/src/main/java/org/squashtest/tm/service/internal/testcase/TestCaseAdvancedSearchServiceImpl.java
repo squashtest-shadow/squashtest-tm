@@ -58,7 +58,6 @@ import org.squashtest.tm.service.internal.repository.ProjectDao;
 import org.squashtest.tm.service.internal.repository.TestCaseDao;
 import org.squashtest.tm.service.requirement.RequirementVersionAdvancedSearchService;
 import org.squashtest.tm.service.testcase.TestCaseAdvancedSearchService;
-import org.squashtest.tm.service.testcase.TestCaseModificationService;
 import org.squashtest.tm.service.testcase.VerifyingTestCaseManagerService;
 
 @Service("squashtest.tm.service.TestCaseAdvancedSearchService")

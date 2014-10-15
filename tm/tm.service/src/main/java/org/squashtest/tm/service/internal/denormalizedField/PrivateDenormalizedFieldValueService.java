@@ -20,8 +20,6 @@
  */
 package org.squashtest.tm.service.internal.denormalizedField;
 
-import java.util.List;
-
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.customfield.BoundEntity;
 import org.squashtest.tm.domain.denormalizedfield.DenormalizedFieldHolder;

@@ -20,10 +20,8 @@
  */
 package org.squashtest.tm.web.internal.controller.campaign;
 
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;

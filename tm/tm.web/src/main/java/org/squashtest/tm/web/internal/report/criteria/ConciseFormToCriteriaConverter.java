@@ -21,6 +21,8 @@
 
 package org.squashtest.tm.web.internal.report.criteria;
 
+import static org.squashtest.tm.api.report.form.InputType.INPUTS_GROUP;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -43,8 +45,6 @@ import org.squashtest.tm.api.report.form.InputsGroup;
 import org.squashtest.tm.api.report.form.OptionInput;
 import org.squashtest.tm.api.report.form.RadioButtonsGroup;
 import org.squashtest.tm.domain.project.Project;
-
-import static org.squashtest.tm.api.report.form.InputType.*;
 
 /**
  * Converts the post data of a "concise" report form into a Map of Criteria which can be given to a Report.
