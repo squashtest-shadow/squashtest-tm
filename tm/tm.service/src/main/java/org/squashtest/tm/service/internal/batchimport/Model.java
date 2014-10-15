@@ -599,7 +599,7 @@ public class Model {
 
 	}
 
-	public void extractParametersFromSteps(LinkedList<Node> processing, Set<Node> processed, Node child,
+	private void extractParametersFromSteps(Collection<Node> processing, Set<Node> processed, Node child,
 			List<InternalStepModel> steps) {
 		if (steps != null) {
 			for (InternalStepModel step : steps) {

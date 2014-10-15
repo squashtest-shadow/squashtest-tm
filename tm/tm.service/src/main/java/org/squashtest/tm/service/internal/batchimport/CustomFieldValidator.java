@@ -117,7 +117,7 @@ class CustomFieldValidator {
 		InputType type = cuf.getInputType();
 		if (StringUtils.isNotBlank(inputValue)) {
 
-			error = checkForType(inputValue, cuf, error, type);
+			error = checkForType(inputValue, cuf, type);
 
 		} else if (!cuf.isOptional()) {
 			error = CustomFieldError.MANDATORY_CUF;
@@ -127,7 +127,8 @@ class CustomFieldValidator {
 	}
 
 	@SuppressWarnings("unchecked")
-	public CustomFieldError checkForType(String inputValue, CustomField cuf, CustomFieldError error, InputType type) {
+	public CustomFieldError checkForType(String inputValue, CustomField cuf,  InputType type) {
+		CustomFieldError error = null;
 		switch (type) {
 
 		case PLAIN_TEXT:
