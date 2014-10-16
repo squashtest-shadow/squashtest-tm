@@ -53,10 +53,6 @@ define([ "jquery", "jqueryui" ], function($) {
 		return;
 	}
 
-	function preventIfDisabled() {
-		return $(this).hasClass("ui-state-disabled");
-	}
-
 	$.widget("squash.buttonmenu", {
 		options : {
 			menu : {
