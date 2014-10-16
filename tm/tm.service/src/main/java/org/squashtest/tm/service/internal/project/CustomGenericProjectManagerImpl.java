@@ -599,159 +599,190 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 		return executionDao.projectUsesExecutionStatus(projectId, executionStatus);
 	}
 
-	
-	// **************** Custom comparator  **************
-	
-	public PagedCollectionHolder<List<GenericProject>> findCustomSortedProject(final PagingAndMultiSorting sorter){
-		
+	// **************** Custom comparator **************
+
+	public PagedCollectionHolder<List<GenericProject>> findCustomSortedProject(final PagingAndMultiSorting sorter) {
+
 		List<? extends GenericProject> resultset;
-		
+
 		if (permissionEvaluationService.hasRole("ROLE_ADMIN")) {
-			resultset =	genericProjectDao.findAll();
+			resultset = genericProjectDao.findAll();
 		} else {
 			resultset = projectDao.findAll();
 		}
+		// filter on permission
 		List<? extends GenericProject> securedResultset = new LinkedList<GenericProject>(resultset);
 		CollectionUtils.filter(securedResultset, new IsManagerOnObject());
-		
+
+		// Consolidate projects with additional information neeeded to do the sorting
 		List<ProjectForCustomCompare> projects = consolidateProjects(securedResultset);
-        sortProjects(projects, sorter);
+		sortProjects(projects, sorter);
 
 		// manual paging
 		int listsize = projects.size();
-		int firstIdx = Math.min(listsize, 	sorter.getFirstItemIndex());
+		int firstIdx = Math.min(listsize, sorter.getFirstItemIndex());
 		int lastIdx = Math.min(listsize, firstIdx + sorter.getPageSize());
 		projects = projects.subList(firstIdx, lastIdx);
-		
+
 		securedResultset = extractProjectList(projects);
-		
+
 		return new PagingBackedPagedCollectionHolder<List<GenericProject>>(sorter, listsize,
 				(List<GenericProject>) securedResultset);
-	
+
 	}
-	
-	private List<GenericProject> extractProjectList(
-			List<ProjectForCustomCompare> projects) {
-		
+
+	/**
+	 * Get back the list of project from the list of consolidated project.
+	 * 
+	 * @param projects
+	 *            The list to be converted
+	 * @return The list of generic projects
+	 */
+	private List<GenericProject> extractProjectList(final List<ProjectForCustomCompare> projects) {
+
 		List<GenericProject> liste = new LinkedList<GenericProject>();
-		
-		for (ProjectForCustomCompare project : projects){
-			liste.add(project.getGenericProject());	
+
+		for (final ProjectForCustomCompare project : projects) {
+			liste.add(project.getGenericProject());
 		}
 		return liste;
 	}
 
-	private List<ProjectForCustomCompare> consolidateProjects(
-			List<? extends GenericProject> securedResultset) {
-		
-		List<ProjectForCustomCompare> projects = new LinkedList<ProjectForCustomCompare>();
-		
-		for (GenericProject project : securedResultset){
-			
-		ProjectForCustomCompare customProject = new ProjectForCustomCompare();
-		customProject.setGenericProject(project);
-		customProject.setAutomated(project.isTestAutomationEnabled());
-		customProject.setBugtracker(project.isBugtrackerConnected() ? project.getBugtrackerBinding().getBugtracker().getKind(): null);
-			
-		if (permissionsManager.findPartyPermissionsBeanByProject(project.getId()).size() == 0){
+	/**
+	 * Create a list of ProjectForCustomCompare from a list of projects. The ProjectForCustomCompare contains the
+	 * projects and some information needed to do the sorting.
+	 * 
+	 * @param projects
+	 *            The list of project to consolidate with additional data
+	 * @return the list of consolidated data
+	 */
+	private List<ProjectForCustomCompare> consolidateProjects(final List<? extends GenericProject> projects) {
+
+		List<ProjectForCustomCompare> consolidatedProjects = new LinkedList<ProjectForCustomCompare>();
+
+		for (final GenericProject project : projects) {
+
+			ProjectForCustomCompare customProject = new ProjectForCustomCompare();
+			customProject.setGenericProject(project);
+			customProject.setAutomated(project.isTestAutomationEnabled());
+			customProject.setBugtracker(project.isBugtrackerConnected() ? project.getBugtrackerBinding()
+					.getBugtracker().getKind() : null);
+
+			if (permissionsManager.findPartyPermissionsBeanByProject(project.getId()).size() == 0) {
 				customProject.setHabilitation(false);
 			} else {
 				customProject.setHabilitation(true);
 			}
 
-			projects.add(customProject);
+			consolidatedProjects.add(customProject);
 		}
-		
-				return projects;
+
+		return consolidatedProjects;
 	}
 
-	private void sortProjects(final List<ProjectForCustomCompare> securedResultset,
-			final PagingAndMultiSorting sorter) {
-		
+
+	private void sortProjects(final List<ProjectForCustomCompare> securedResultset, final PagingAndMultiSorting sorter) {
+
 		Collections.sort(securedResultset, new Comparator<ProjectForCustomCompare>() {
-			
+
 			@Override
 			public int compare(ProjectForCustomCompare o1, ProjectForCustomCompare o2) {
-				
+
 				return buildProjectComparator(sorter, o1, o2).toComparison();
 			}
-		});	
+		});
 	}
 
-	
-	
 	// **************** private stuffs **************
 
-	private CompareToBuilder buildProjectComparator(final PagingAndMultiSorting sorter, ProjectForCustomCompare o1, ProjectForCustomCompare o2) {
-		
+	/**
+	 * Create the multiple sorter
+	 * @param sorter the rules used to sort
+	 * @param o1 the first item to compare
+	 * @param o2 the second item to compare
+	 * @return the sorter
+	 */
+	private CompareToBuilder buildProjectComparator(final PagingAndMultiSorting sorter, final ProjectForCustomCompare o1,
+			final ProjectForCustomCompare o2) {
+
 		CompareToBuilder comp = new CompareToBuilder();
 		GenericProject firstProject = o1.getGenericProject();
 		GenericProject secondProject = o2.getGenericProject();
-		
+
 		AuditableMixin firstAudit = (AuditableMixin) firstProject;
 		AuditableMixin secondAudit = (AuditableMixin) secondProject;
-		for (Sorting sorting : sorter.getSortings()){
-		
+		for (final Sorting sorting : sorter.getSortings()) {
+
 			Object first = null;
 			Object second = null;
+			String sortingAttribute = sorting.getSortedAttribute();
 
-			switch (sorting.getSortedAttribute()){
-			case "name" : first = firstProject.getName();
-			second = secondProject.getName();
-			break;
-			
-			case "label" : first = firstProject.getLabel();
-			second = secondProject.getLabel();
-			break;
-			
-			case "active" : first = firstProject.isActive();
-			second = secondProject.isActive();
-			break;
-			
-			case "audit.createdOn" : first = firstAudit.getCreatedOn();
-			second = secondAudit.getCreatedOn();
-			break;
-			
-			case "audit.createdBy" : first = firstAudit.getCreatedBy();
-			second = secondAudit.getCreatedBy();
-			break;
-			
-			case "audit.lastModifiedOn" : first = firstAudit.getLastModifiedOn();
-			second = secondAudit.getLastModifiedOn();
-			break;
-			
-			case "audit.lastModifiedBy" : first = firstAudit.getLastModifiedBy();
-			second = secondAudit.getLastModifiedBy();
-			break;
-			
-			case "habilitation" : first = o1.hasHabilitation();
-			second = o2.hasHabilitation();
-			break;
-			
-			case "bugtracker" : first = o1.getBugtracker();
-			second = o2.getBugtracker();
-			break;
-			
-			case "automation" : first = o1.isAutomated();
-			second = o2.isAutomated();
-			break;
+			switch (sortingAttribute) {
+			case "name":
+				first = firstProject.getName();
+				second = secondProject.getName();
+				break;
+
+			case "label":
+				first = firstProject.getLabel();
+				second = secondProject.getLabel();
+				break;
+
+			case "active":
+				first = firstProject.isActive();
+				second = secondProject.isActive();
+				break;
+
+			case "audit.createdOn":
+				first = firstAudit.getCreatedOn();
+				second = secondAudit.getCreatedOn();
+				break;
+
+			case "audit.createdBy":
+				first = firstAudit.getCreatedBy();
+				second = secondAudit.getCreatedBy();
+				break;
+
+			case "audit.lastModifiedOn":
+				first = firstAudit.getLastModifiedOn();
+				second = secondAudit.getLastModifiedOn();
+				break;
+
+			case "audit.lastModifiedBy":
+				first = firstAudit.getLastModifiedBy();
+				second = secondAudit.getLastModifiedBy();
+				break;
+
+			case "habilitation":
+				first = o1.hasHabilitation();
+				second = o2.hasHabilitation();
+				break;
+
+			case "bugtracker":
+				first = o1.getBugtracker();
+				second = o2.getBugtracker();
+				break;
+
+			case "automation":
+				first = o1.isAutomated();
+				second = o2.isAutomated();
+				break;
+
+			default:
+				throw new IllegalArgumentException("Sorting attribute" + sortingAttribute
+						+ " is unknown and is not covered");
 			}
-			
-			
-			if (sorting.getSortOrder().equals(SortOrder.DESCENDING)){
+
+			if (sorting.getSortOrder().equals(SortOrder.DESCENDING)) {
 				comp.append(first, second);
 			} else {
 				comp.append(second, first);
 			}
 		}
-		
+
 		return comp;
 	}
 
-	
-	
-	
-	
 	private PluginReferencer<?> findLibrary(long projectId, WorkspaceType workspace) {
 		GenericProject project = genericProjectDao.findById(projectId);
 

@@ -143,12 +143,8 @@ public class GenericProjectController {
 	public @ResponseBody
 	DataTableModel getProjectsTableModel(final DataTableDrawParameters params, final Locale locale) {
 
-		//PagingAndSorting sorter = new DataTableSorting(params, allProjectsMapper);
-
-	//	Filtering filter = new DataTableFiltering(params); 
 		final PagingAndMultiSorting sorter = new DataTableMultiSorting(params, allProjectsMapper);
 		PagedCollectionHolder<List<GenericProject>> holder = projectManager.findCustomSortedProject(sorter);
-		//PagedCollectionHolder<List<GenericProject>> holder = projectManager.findSortedProjects(sorter, filter);
 
 		return new ProjectDataTableModelHelper(locale, messageSource, projectManager).buildDataModel(holder, params.getsEcho());
 
