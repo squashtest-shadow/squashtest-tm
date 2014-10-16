@@ -125,7 +125,7 @@ define([ "jquery", "jqueryui" ], function($) {
 					blurhandler.call(this, evt);
 				} catch (wtf) {
 					if (window.console && window.console.log) {
-						console.log("buttonmenu : problem while bluring menu " + this.selector);
+						window.console.log("buttonmenu : problem while bluring menu " + this.selector);
 					}
 				}
 			}
