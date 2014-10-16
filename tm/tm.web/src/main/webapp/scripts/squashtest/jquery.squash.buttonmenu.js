@@ -21,41 +21,42 @@
 /*
  *	this combines a jquery button and a jquery menu. The DOM of the button of that of the menu must be adjacent. The button is the main
  *  object. The configuration is :
- *  
+ *
  *  conf : {
  *		menu : {  menu configuration },
  *		zindex : a user-defined z-index value, to make sure your menu will be displayed above any other elements.
  *					default is 3000,
  *		blur : "hide", "nothing" or another custom function that will receive no args. Default is "hide".
- *		anchor : one of ["left", "right"]. Default is "left" : this means that the menu is anchored to the button via its top-left corner. 
+ *		anchor : one of ["left", "right"]. Default is "left" : this means that the menu is anchored to the button via its top-left corner.
  *				When set to "right", it would be the top-right,
  *		"no-auto-hide" : default is false. If true,  the menu will not automatically hide when an element is clicked (see behaviour below)
  *	}
- * 
- * Behaviour : 
- * 
+ *
+ * Behaviour :
+ *
  * - When the button is clicked, the menu will be toggled on/off.
- * - When a <li> element of the menu is clicked, the menu will be toggled off (closed) automatically 
+ * - When a <li> element of the menu is clicked, the menu will be toggled off (closed) automatically
  * - This <li> default behaviour can be overriden in two ways :
  *		1/ the element <li> has a css class "no-auto-hide"
  *		3/ the global flag "no-auto-hide" is true.
- * 
- * 
+ *
+ *
  *	@author bsiri
- * 
+ *
  */
 
 define([ "jquery", "jqueryui" ], function($) {
+	"use strict";
 
 	// prevent double loading
-	if ($.squash && $.squash.buttonmenu){
+	if ($.squash && $.squash.buttonmenu) {
 		return;
 	}
 
-	function preventIfDisabled(){
+	function preventIfDisabled() {
 		return $(this).hasClass("ui-state-disabled");
 	}
-	
+
 	$.widget("squash.buttonmenu", {
 		options : {
 			menu : {
@@ -64,33 +65,30 @@ define([ "jquery", "jqueryui" ], function($) {
 			blur : "hide",
 			anchor : "left",
 			"no-auto-hide" : false,
-			
+
 			// private
 			_firstInvokation : true
 		},
-		
-		//will wrap both elements in an enclosing div, that will help adjust their relative positionning later.
-		_createStructure : function(){
-			
-			var btn = this.element,
-				menu = this.element.next(),
-				components = btn.add(menu);
-			
+
+		// will wrap both elements in an enclosing div, that will help adjust their relative positionning later.
+		_createStructure : function() {
+
+			var btn = this.element, menu = this.element.next(), components = btn.add(menu);
+
 			btn.addClass("buttonmenu-button");
 			menu.addClass("buttonmenu-menu");
-			
-			
-			var div = $("<div/>",{
+
+			var div = $("<div/>", {
 				style : "display:inline-block; position:relative;",
 				"class" : "buttonmenu-wrapper"
 			});
-			
+
 			components.wrapAll(div);
-			
+
 		},
 
 		_create : function() {
-			
+
 			var self = this;
 			var settings = this.options;
 
@@ -98,84 +96,77 @@ define([ "jquery", "jqueryui" ], function($) {
 			var menu = button.next();
 
 			// basics
-			this._createStructure();			
+			this._createStructure();
 			this._menuCssTweak();
 			this._bindLi();
 
-			
 			menu.menu(settings.menu);
 
 			// events
 			button.on("click", function() {
-				if (menu.hasClass("buttonmenu-open")){
+				if (menu.hasClass("expand")) {
 					self.close();
 				} else {
 					self.open();
 				}
-						
-				if (settings._firstInvokation){
+
+				if (settings._firstInvokation) {
 					self._fixRender(menu);
 				}
-				
+
 				return false;
 			});
-	
-			
+
 			return this;
 		},
-		
-		blur : function(evt){
+
+		blur : function(evt) {
 			var blurhandler = this.options.blur;
-			if (blurhandler==="hide"){				
-				this.close();				
-			}
-			else if ($.isFunction(blurhandler)){
-				try{
+			if (blurhandler === "hide") {
+				this.close();
+			} else if ($.isFunction(blurhandler)) {
+				try {
 					blurhandler.call(this, evt);
-				}
-				catch(wtf){
-					if (window.console && window.console.log){
-						console.log("buttonmenu : problem while bluring menu "+this.selector);
+				} catch (wtf) {
+					if (window.console && window.console.log) {
+						console.log("buttonmenu : problem while bluring menu " + this.selector);
 					}
 				}
 			}
 		},
 
-		enable : function(){
+		enable : function() {
 			this.element.prop("disabled", false);
 		},
-		
-		disable : function(selector){
+
+		disable : function(selector) {
 			this.close();
 			this.element.prop("disabled", true);
 		},
-				
-		open : function(){
-			this.element.next().addClass("buttonmenu-open").show();
-			$.squash.buttonmenu._opened[this.uuid] = this;
-		},
-		
-		close : function(){
-			this.element.next().removeClass("buttonmenu-open").hide();
-			delete $.squash.buttonmenu._opened[this.uuid];
-		},
-		
-		/* 
-		 * The goal here is to prevents the juggling effect when hovering the items.
-		 * 
-		 * The following cannot be invoked before the menu has appeared at least once. It is so
-		 * because we need the browser to compute its final width before we can execute some adjustments based on it
-		 * (in some cases the width might had been 0).
-		 * 
-		 */
-		_fixRender : function(menu){
-			var settings = this.options;
-			
-			var width = menu.width();
-			menu.width(width + 10);	
 
-			
-			settings._firstInvokation = false;			
+		open : function() {
+			this.element.next().addClass("expand").removeClass("collapse").show();
+		},
+
+		close : function() {
+			this.element.next().removeClass("expand").addClass("collapse").hide();
+		},
+
+		/*
+		 * The goal here is to prevents the juggling effect when hovering the items.
+		 *
+		 * The following cannot be invoked before the menu has appeared at least once. It is so because we need the browser
+		 * to compute its final width before we can execute some adjustments based on it (in some cases the width might had
+		 * been 0).
+		 *
+		 */
+		_fixRender : function(menu) {
+			var settings = this.options;
+
+			var width = menu.width();
+			menu.width(width + 10);
+
+			settings._firstInvokation = false;
 		},
 
 		_menuCssTweak : function() {
@@ -187,59 +178,58 @@ define([ "jquery", "jqueryui" ], function($) {
 			menu.css("overflow", "hidden");
 			menu.css("white-space", "nowrap");
 			menu.css("z-index", this.options.menu.zindex);
-			if (this.options.anchor === "right"){
+			if (this.options.anchor === "right") {
 				menu.css("right", 0);
 			}
 		},
 
 		_bindLi : function() {
-			var self = this,
-				settings = this.options,
-				menu = this.element.next();
-			
+			var self = this, settings = this.options, menu = this.element.next();
+
 			menu.on("click", "li", function(evt) {
-				var $li = $(this);				
-				
+				var $li = $(this);
+
 				// item disabled ? event prevented !
-				if ($li.hasClass("ui-state-disabled")){
+				if ($li.hasClass("ui-state-disabled")) {
 					evt.stopImmediatePropagation();
 					return false;
 				}
-				
-				// if no policy was set to prevent the menu from closing, let the menu close 
-				else if (! ($li.hasClass("no-auto-hide") || settings["no-auto-hide"])){
+
+				// if no policy was set to prevent the menu from closing, let the menu close
+				else if (!($li.hasClass("no-auto-hide") || settings["no-auto-hide"])) {
 					self.close();
 				}
 			});
-			
 
 		},
-		
-		_destroy : function(){
-			delete $.squash.buttonmenu._opened[this.uuid];
+
+		_destroy : function() {
 			this.element.next().menu("destroy");
 			this._super();
 		}
 
 	});
-	
-	
-	// other settings
-	$.squash.buttonmenu._opened = {};
 
-	$(document).on("click", function(evt){
-		var instances = $.squash.buttonmenu._opened;
-		
-		// find out if the event originated from within the menu
-		var possiblemenu = $(evt.target).parents("div.buttonmenu-wrapper").find(".buttonmenu-button").data("squashButtonmenu");
-		
-		for (var id in instances){
-			var inst = instances[id];
-			// blur that menu if the event is not originated from within it
-			if (inst !== possiblemenu){
-				inst.blur.call(inst, evt);
+	$(document).on("click", function(evt) {
+		var $target = $(evt.target);
+		var $menus = $(":data('squash-buttonmenu')");
+		var $blurTarget;
+
+		if ($target.is(".buttonmenu-menu.expand")) {
+			$blurTarget = $menus.not($target.prev());
+
+		} else {
+			var $parent = $target.parents(".buttonmenu-menu.expand");
+
+			if ($parent.length > 0) {
+				$blurTarget = $menus.not($parent.prev());
+
+			} else {
+				$blurTarget = $menus;
+
 			}
-		}		
-	});
+		}
 
+		$blurTarget.buttonmenu("blur");
+	});
 });

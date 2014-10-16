@@ -21,29 +21,29 @@
 define(['jquery', 'tree',
         'squash.attributeparser',
         'squash.dateutils',
-        'jquery.squash.formdialog'], 
+        'jquery.squash.formdialog'],
 		function($, zetree, attrparser, dateutils){
-	
+
 	$.widget("squash.exportDialog", $.squash.formDialog, {
-		
+
 		_create : function(){
 			this._super();
 
 			var self = this;
-			
+
 			this.onOwnBtn('cancel', function(){
 				self.close();
 			});
-			
+
 			this.onOwnBtn('confirm', function(){
 				self.confirm();
 			});
-			
-		}, 
-		
+
+		},
+
 		open : function(){
-			this._super();			
-			
+			this._super();
+
 			var selection = this.options.tree.jstree('get_selected');
 			if (selection.length>0){
 				var name = this._createName();
@@ -54,11 +54,11 @@ define(['jquery', 'tree',
 				this.setState('nonodeserror');
 			}
 		},
-		
+
 		_createName : function(){
 			return this.options.nameprefix+"_"+ dateutils.format(new Date(), this.options.dateformat);
 		},
-		
+
 		_createUrl : function(nodes, name, format){
 			var url = squashtm.app.contextRoot+'/requirement-browser/';
 			if (nodes.is(':library')){
@@ -67,10 +67,10 @@ define(['jquery', 'tree',
 			else{
 				url += "nodes/"+nodes.all('getResId').join(',')+"/"+format+"?name="+name;
 			}
-			
+
 			return url;
 		},
-		
+
 		confirm : function(){
 			var nodes = this.options.tree.jstree('get_selected');
 			if ((nodes.length>0) && (nodes.areSameLibs())){
@@ -85,17 +85,17 @@ define(['jquery', 'tree',
 			}
 		}
 	});
-	
-	
+
+
 	function init(){
-		
+
 		var dialog = $("#export-requirement-dialog").exportDialog({
 			tree : zetree.get()
 		});
 
 	}
-	
-	
+
+
 	return {
 		init : init
 	};
