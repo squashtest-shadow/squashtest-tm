@@ -765,11 +765,11 @@ div#search-result .library {
 	border: 1px solid #2E2E2E;
 }
 
-#outer-category-frame.expanded {
+.left-frame.expanded {
 	display: none;
 }
 
-#outer-category-frame>div {
+#outer-category-frame >div {
 	margin-top: 10px;
 	margin-bottom: 10px;
 	margin-left: 10px;
@@ -834,7 +834,7 @@ div#search-result .library {
 	color: #98AFC7;
 }
 
-#category-pane+#contextual-content {
+#outer-category-frame +#contextual-content {
 	bottom: 0;
 	left: 10cm;
 	position: absolute;
@@ -842,11 +842,11 @@ div#search-result .library {
 	top: 0.6cm;
 }
 
-#category-pane+#contextual-content.expanded {
-	left: 0cm;
+.left-frame+#contextual-content.expanded {
+	left: 0cm !important;
 }
 
-#category-frame-button { /*position : absolute;
+#right-frame-button { /*position : absolute;
 	top:0.6cm;*/
 	float: left;
 }

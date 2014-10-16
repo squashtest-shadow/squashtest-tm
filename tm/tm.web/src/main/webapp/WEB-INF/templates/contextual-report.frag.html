@@ -67,8 +67,8 @@
       </div>
     </div>
 
-    <div id="category-pane">
-      <div id="outer-category-frame">
+  
+      <div id="outer-category-frame" class="left-frame" >
         <div title="Cat 1" class="report-category">
           <div data-href="sample-report/0" class="report-item">
             <div class="report-item-icon report-spreadsheet-icon"></div>
@@ -83,15 +83,15 @@
           </div>
         </div>
       </div>
-    </div>
+    
 
     <!-- ==========================================REPORT FRAGMENT============================================================== -->
 
     <!-- ==================================================INPUTS====================================================== -->
     <div id="contextual-content" class="no-resizable-contextual-content" th:fragment="report">
       <div id="report-name-div" class="ui-widget-header ui-corner-all ui-state-default fragment-header cf">
-        <div id="category-frame-button" th:unless="${hasBackButton}">
-          <input type="button" class="sq-btn btn-sm" id="toggle-expand-category-frame-button" value="&lt;&lt;"
+        <div id="right-frame-button" th:unless="${hasBackButton}">
+          <input type="button" class="sq-btn btn-sm" id="toggle-expand-left-frame-button" value="&lt;&lt;"
             th:value="#{report.workspace.togglebutton.normal.label}" />
         </div>
 

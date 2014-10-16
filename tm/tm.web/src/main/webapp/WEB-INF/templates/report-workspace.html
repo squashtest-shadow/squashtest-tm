@@ -70,9 +70,9 @@
         </div>
 			</div>
 		</div>
-		<div id="category-pane">
-			<div id="outer-category-frame">
-				<div th:each="cat : ${categories}" th:id="${#ids.seq('category-panel')}" title="Cat 1" th:title="#{${cat.i18nKey}}" class="report-category">
+		
+			<div id="outer-category-frame " class="left-frame">
+				<div th:each="cat : ${categories}" th:id="${#ids.seq('left-panel')}" title="Cat 1" th:title="#{${cat.i18nKey}}" class="report-category">
 					<div th:each="rpt : ${reports.get(cat)}" th:id="${#ids.seq('report-item')}" 
 						data-href="sample-report/0" th:attr="data-href=@{'/reports/' + ${rpt.namespace} + '/' + ${rpt.index} + '/panel'}"
 						class="report-item">
@@ -88,7 +88,7 @@
 					</div>
 				</div>
 			</div> 
- 		</div>
+ 		
 		<div id="contextual-content" class="no-resizable-contextual-content" th:remove="body">
 		</div>
 	</div>
