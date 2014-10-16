@@ -95,8 +95,8 @@
   </div>
 
   <div class="popup-dialog-buttonpane">
-    <input type="button" value="${addIssueLabel}" class="post-button"/>
-    <input type="button" value="${cancelLabel}" />
+    <input type="button" value="${addIssueLabel}" class="post-button" data-def="evt=confirm"/>
+    <input type="button" value="${cancelLabel}" class="cancel-button" data-def="evt=cancel"/>
   </div> 
 
 </div>

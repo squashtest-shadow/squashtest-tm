@@ -158,6 +158,12 @@ define(["jquery", "./default-field-view", "./advanced-field-view", "file-upload"
 	 */
 	
 	function init(settings){
+		
+		// turn to dialog
+		this.formDialog({
+			height : 500,
+			width : 650
+		})
 
 		//issue model
 		this.model = new Backbone.Model();	
@@ -168,25 +174,25 @@ define(["jquery", "./default-field-view", "./advanced-field-view", "file-upload"
 		this.bugTrackerId = settings.bugTrackerId;
 		
 		//main panels of the popup
-		this.pleaseWait = $(".pleasewait", this);
-		this.content = $(".content", this);
+		this.pleaseWait = this.find(".pleasewait");
+		this.content = this.find(".content");
 
 		//the radio buttons
-		this.attachRadio = $(".attach-radio", this);
-		this.reportRadio = $(".report-radio", this);
+		this.attachRadio = this.find(".attach-radio");
+		this.reportRadio = this.find(".report-radio");
 				
 		//the issue id (if any)
-		this.idText = $(".id-text", this);
+		this.idText = this.find(".id-text");
 		
 		//the submit button
-		this.postButton = $('.post-button', this.next());
+		this.postButton = this.find('.post-button').button();
 		
 		//search issue buttons. We also turn it into a jQuery button on the fly.
-		this.searchButton = $('.attach-issue input[type="button"]', this).button();
+		this.searchButton = this.find('.attach-issue input[type="button"]').button();
 		
 		
 		//the error display
-		this.error = $(".issue-report-error", this);
+		this.error = this.find(".issue-report-error");
 		this.error.popupError();
 		
 	
@@ -447,7 +453,7 @@ define(["jquery", "./default-field-view", "./advanced-field-view", "file-upload"
 				var xhr = this.postHelper.postIssue(model, this.reportUrl);
 					
 				xhr.done(function(json){
-					self.dialog('close');
+					self.formDialog('close');
 					eventBus.trigger('context.bug-reported', json);
 				})
 				.fail(bugReportError);
@@ -462,16 +468,20 @@ define(["jquery", "./default-field-view", "./advanced-field-view", "file-upload"
 			this.reportUrl = settings.reportUrl;
 			self.postButton.focus();
 			self.reportRadio.click();
-			this.dialog("open");
+			this.formDialog("open");
 		};
 		
 		//the opening of the popup :
-		this.bind("dialogclose", function(){
+		this.bind("formdialogclose", function(){
 			self.mdlTemplate=null;
 		});
 		
-		//the action bound to click on the first button
-		this.dialog('option').buttons[0].click=this.submitIssue;
+		//the click handlers
+		this.on('formdialogconfirm', this.submitIssue);
+		this.on('formdialogcancel', function(){
+			self.formDialog('close');
+		});
+
 
 		return this;
 
