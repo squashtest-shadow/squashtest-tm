@@ -144,7 +144,7 @@ define([ "jquery", "app/ws/squashtm.notification", "squash.translator", "jquery.
 		
 		this.submitComment = function(){
 			$("#iframe-left").contents().find("#execution-comment-panel").find("button[type=submit]").click();
-		}
+		};
 
 		this.navigatePrevious = function() {
 			var state = this.state;
