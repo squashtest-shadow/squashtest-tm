@@ -548,6 +548,16 @@
 			</div>
 		</div>
 		
+		
+		<div class="std-margin-top">
+			<input type="checkbox" id="export-test-case-keepRteFormat" checked="checked"/>
+			<span><f:message key="test-case.export.dialog.keeprteformat"/></span>
+			<div class="nota-bene">
+				<f:message key="test-case.export.dialog.keeprteformat.description"/>
+			</div>
+		</div>
+		
+		
 	</div>
 	
 	<div data-def="state=nonodeserror" class="std-margin-top">

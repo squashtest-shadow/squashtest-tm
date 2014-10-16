@@ -53,6 +53,8 @@ import org.squashtest.tm.domain.library.ExportData;
 import org.squashtest.tm.domain.library.Folder;
 import org.squashtest.tm.domain.library.Library;
 import org.squashtest.tm.domain.library.LibraryNode;
+import org.squashtest.tm.domain.testcase.ExportTestCaseData;
+import org.squashtest.tm.domain.testcase.ExportTestStepData;
 import org.squashtest.tm.exception.library.RightsUnsuficientsForOperationException;
 import org.squashtest.tm.service.deletion.OperationReport;
 import org.squashtest.tm.service.deletion.SuppressionPreviewReport;
@@ -89,16 +91,14 @@ public abstract class LibraryNavigationController<LIBRARY extends Library<? exte
 
 	private static final int EOF = -1;
 
-	protected MessageSource getMessageSource(){
+	protected MessageSource getMessageSource() {
 		return messageSource;
 	}
-
 
 	protected abstract JsTreeNode createTreeNodeFromLibraryNode(NODE resource);
 
 	@RequestMapping(value = "/drives/{libraryId}/content", method = RequestMethod.GET)
-	public final @ResponseBody
-	List<JsTreeNode> getRootContentTreeModel(@PathVariable long libraryId) {
+	public final @ResponseBody List<JsTreeNode> getRootContentTreeModel(@PathVariable long libraryId) {
 		List<NODE> nodes = getLibraryNavigationService().findLibraryRootContent(libraryId);
 		List<JsTreeNode> model = createJsTreeModel(nodes);
 
@@ -115,15 +115,13 @@ public abstract class LibraryNavigationController<LIBRARY extends Library<? exte
 		return jstreeNodes;
 	}
 
-
 	@SuppressWarnings("unchecked")
 	@ResponseStatus(HttpStatus.CREATED)
 	@RequestMapping(value = "/drives/{libraryId}/content/new-folder", method = RequestMethod.POST)
-	public final @ResponseBody
-	JsTreeNode addNewFolderToLibraryRootContent(@PathVariable long libraryId, @Valid @ModelAttribute("add-folder") FOLDER newFolder) {
+	public final @ResponseBody JsTreeNode addNewFolderToLibraryRootContent(@PathVariable long libraryId,
+			@Valid @ModelAttribute("add-folder") FOLDER newFolder) {
 
 		getLibraryNavigationService().addFolderToLibrary(libraryId, newFolder);
-
 
 		return createTreeNodeFromLibraryNode((NODE) newFolder);
 	}
@@ -131,47 +129,41 @@ public abstract class LibraryNavigationController<LIBRARY extends Library<? exte
 	@SuppressWarnings("unchecked")
 	@ResponseStatus(HttpStatus.CREATED)
 	@RequestMapping(value = "/folders/{folderId}/content/new-folder", method = RequestMethod.POST)
-	public final @ResponseBody
-	JsTreeNode addNewFolderToFolderContent(@PathVariable long folderId, @Valid @ModelAttribute("add-folder") FOLDER newFolder) {
+	public final @ResponseBody JsTreeNode addNewFolderToFolderContent(@PathVariable long folderId,
+			@Valid @ModelAttribute("add-folder") FOLDER newFolder) {
 
 		getLibraryNavigationService().addFolderToFolder(folderId, newFolder);
 
 		return createTreeNodeFromLibraryNode((NODE) newFolder);
 	}
 
-
-
 	@RequestMapping(value = "/folders/{folderId}/content", method = RequestMethod.GET)
-	public final @ResponseBody
-	List<JsTreeNode> getFolderContentTreeModel(@PathVariable long folderId) {
+	public final @ResponseBody List<JsTreeNode> getFolderContentTreeModel(@PathVariable long folderId) {
 		List<NODE> nodes = getLibraryNavigationService().findFolderContent(folderId);
 		List<JsTreeNode> model = createJsTreeModel(nodes);
 
 		return model;
 	}
 
-
 	@Deprecated
 	@RequestMapping(value = "/folders/{folderId}", method = RequestMethod.POST, params = { "newName" })
-	public @ResponseBody
-	Object renameFolder(@RequestParam("newName") String newName,
-			@PathVariable Long folderId) {
-
+	public @ResponseBody Object renameFolder(@RequestParam("newName") String newName, @PathVariable Long folderId) {
 
 		final String reNewName = newName;
 		getLibraryNavigationService().renameFolder(folderId, reNewName);
-		return new Object(){ public String newName = reNewName ; }; // NOSONAR readable by json marshaller
-
+		return new Object() {
+			public String newName = reNewName;
+		}; // NOSONAR readable by json marshaller
 
 	}
 
-	@RequestMapping(value="/content/{nodeIds}/deletion-simulation", method = RequestMethod.GET)
-	public @ResponseBody Messages simulateNodeDeletion(@PathVariable("nodeIds") List<Long> nodeIds, Locale locale){
+	@RequestMapping(value = "/content/{nodeIds}/deletion-simulation", method = RequestMethod.GET)
+	public @ResponseBody Messages simulateNodeDeletion(@PathVariable("nodeIds") List<Long> nodeIds, Locale locale) {
 
 		List<SuppressionPreviewReport> reportList = getLibraryNavigationService().simulateDeletion(nodeIds);
 
 		Messages messages = new Messages();
-		for (SuppressionPreviewReport report : reportList){
+		for (SuppressionPreviewReport report : reportList) {
 			messages.addMessage(report.toString(messageSource, locale));
 		}
 
@@ -179,32 +171,27 @@ public abstract class LibraryNavigationController<LIBRARY extends Library<? exte
 
 	}
 
-
-	@RequestMapping(value="/content/{nodeIds}", method=RequestMethod.DELETE)
-	public @ResponseBody OperationReport confirmNodeDeletion(@PathVariable("nodeIds") List<Long> nodeIds){
+	@RequestMapping(value = "/content/{nodeIds}", method = RequestMethod.DELETE)
+	public @ResponseBody OperationReport confirmNodeDeletion(@PathVariable("nodeIds") List<Long> nodeIds) {
 
 		return getLibraryNavigationService().deleteNodes(nodeIds);
 	}
 
-
-	@RequestMapping(value = "/{destinationType}/{destinationId}/content/new", method = RequestMethod.POST, params = {"nodeIds[]"})
-	public @ResponseBody
-	List<JsTreeNode> copyNodes(@RequestParam("nodeIds[]") Long[] nodeIds,
-			@PathVariable("destinationId") long destinationId,
-			@PathVariable("destinationType") String destType) {
+	@RequestMapping(value = "/{destinationType}/{destinationId}/content/new", method = RequestMethod.POST, params = { "nodeIds[]" })
+	public @ResponseBody List<JsTreeNode> copyNodes(@RequestParam("nodeIds[]") Long[] nodeIds,
+			@PathVariable("destinationId") long destinationId, @PathVariable("destinationType") String destType) {
 
 		List<NODE> nodeList;
-		try{
-			if (destType.equals("folders")){
+		try {
+			if (destType.equals("folders")) {
 				nodeList = getLibraryNavigationService().copyNodesToFolder(destinationId, nodeIds);
-			}
-			else if (destType.equals("drives")){
+			} else if (destType.equals("drives")) {
 				nodeList = getLibraryNavigationService().copyNodesToLibrary(destinationId, nodeIds);
+			} else {
+				throw new IllegalArgumentException("copy nodes : specified destination type doesn't exists : "
+						+ destType);
 			}
-			else{
-				throw new IllegalArgumentException("copy nodes : specified destination type doesn't exists : "+destType);
-			}
-		}catch(AccessDeniedException ade){
+		} catch (AccessDeniedException ade) {
 			throw new RightsUnsuficientsForOperationException(ade);
 		}
 
@@ -212,60 +199,60 @@ public abstract class LibraryNavigationController<LIBRARY extends Library<? exte
 	}
 
 	@RequestMapping(value = "/{destinationType}/{destinationId}/content/{nodeIds}", method = RequestMethod.PUT)
-	public @ResponseBody
-	void moveNodes(@PathVariable("nodeIds") Long[] nodeIds,
-			@PathVariable("destinationId") long destinationId,
-			@PathVariable("destinationType") String destType) {
+	public @ResponseBody void moveNodes(@PathVariable("nodeIds") Long[] nodeIds,
+			@PathVariable("destinationId") long destinationId, @PathVariable("destinationType") String destType) {
 
-		try{
-			if (destType.equals("folders")){
+		try {
+			if (destType.equals("folders")) {
 				getLibraryNavigationService().moveNodesToFolder(destinationId, nodeIds);
-			}
-			else if (destType.equals("drives")){
+			} else if (destType.equals("drives")) {
 				getLibraryNavigationService().moveNodesToLibrary(destinationId, nodeIds);
+			} else {
+				throw new IllegalArgumentException("move nodes : specified destination type doesn't exists : "
+						+ destType);
 			}
-			else{
-				throw new IllegalArgumentException("move nodes : specified destination type doesn't exists : "+destType);
-			}
-		}catch(AccessDeniedException ade){
+		} catch (AccessDeniedException ade) {
 			throw new RightsUnsuficientsForOperationException(ade);
 		}
 
 	}
 
 	@RequestMapping(value = "/{destinationType}/{destinationId}/content/{nodeIds}/{position}", method = RequestMethod.PUT)
-	public @ResponseBody
-	void moveNodes(@PathVariable("nodeIds") Long[] nodeIds,
-			@PathVariable("destinationId") long destinationId,
-			@PathVariable("destinationType") String destType,
+	public @ResponseBody void moveNodes(@PathVariable("nodeIds") Long[] nodeIds,
+			@PathVariable("destinationId") long destinationId, @PathVariable("destinationType") String destType,
 			@PathVariable("position") int position) {
 
-		try{
-			if (destType.equals("folders")){
+		try {
+			if (destType.equals("folders")) {
 				getLibraryNavigationService().moveNodesToFolder(destinationId, nodeIds, position);
-			}
-			else if (destType.equals("drives")){
+			} else if (destType.equals("drives")) {
 				getLibraryNavigationService().moveNodesToLibrary(destinationId, nodeIds, position);
+			} else {
+				throw new IllegalArgumentException("move nodes : specified destination type doesn't exists : "
+						+ destType);
 			}
-			else{
-				throw new IllegalArgumentException("move nodes : specified destination type doesn't exists : "+destType);
-			}
-		}catch(AccessDeniedException ade){
+		} catch (AccessDeniedException ade) {
 			throw new RightsUnsuficientsForOperationException(ade);
 		}
 
 	}
 
+	private void removeRteFormat(List<? extends ExportData> dataSource) {
+		
+		for (ExportData data : dataSource) {
+			String htmlDescription = data.getDescription();
+			String description = HTMLCleanupUtils.htmlToText(htmlDescription);
+			data.setDescription(description);
+		}
+	}
+	
 
-	protected void printExport(List<? extends ExportData> dataSource, String filename,String jasperFile, HttpServletResponse response,
-			Locale locale, String format) {
+	protected void printExport(List<? extends ExportData> dataSource, String filename, String jasperFile,
+			HttpServletResponse response, Locale locale, String format, Boolean keepRteFormat) {
 		try {
-			// it seems JasperReports doesn't like '\n' and the likes so we'll HTML-encode that first.
-			// that solution is quite weak though.
-			for (ExportData data : dataSource) {
-				String htmlDescription = data.getDescription();
-				String description = HTMLCleanupUtils.htmlToText(htmlDescription);
-				data.setDescription(description);
+
+			if (!keepRteFormat) {
+				removeRteFormat(dataSource);
 			}
 
 			// report generation parameters
@@ -280,8 +267,7 @@ public abstract class LibraryNavigationController<LIBRARY extends Library<? exte
 			exportParameter.put(JRExporterParameter.CHARACTER_ENCODING, "ISO-8859-1");
 			exportParameter.put(JRXlsExporterParameter.IS_WHITE_PAGE_BACKGROUND, Boolean.FALSE);
 
-			InputStream jsStream = Thread.currentThread().getContextClassLoader()
-					.getResourceAsStream(jasperFile);
+			InputStream jsStream = Thread.currentThread().getContextClassLoader().getResourceAsStream(jasperFile);
 			InputStream reportStream = jrServices.getReportAsStream(jsStream, format, dataSource, reportParameter,
 					exportParameter);
 
@@ -289,7 +275,7 @@ public abstract class LibraryNavigationController<LIBRARY extends Library<? exte
 			ServletOutputStream servletStream = response.getOutputStream();
 
 			response.setContentType("application/octet-stream");
-			response.setHeader("Content-Disposition", "attachment; filename=" + filename + "."+format);
+			response.setHeader("Content-Disposition", "attachment; filename=" + filename + "." + format);
 
 			flushStreams(reportStream, servletStream);
 
@@ -301,6 +287,7 @@ public abstract class LibraryNavigationController<LIBRARY extends Library<? exte
 		}
 
 	}
+
 	protected void flushStreams(InputStream inStream, ServletOutputStream outStream) throws IOException {
 		int readByte;
 
@@ -314,28 +301,24 @@ public abstract class LibraryNavigationController<LIBRARY extends Library<? exte
 
 	}
 
-
 	// ************************ other utils *************************
-
 
 	protected static class Messages {
 
 		private Collection<String> messages = new ArrayList<String>();
 
-		public Messages(){
+		public Messages() {
 			super();
 		}
 
-		public void addMessage(String msg){
+		public void addMessage(String msg) {
 			this.messages.add(msg);
 		}
 
-		public Collection<String> getMessages(){
+		public Collection<String> getMessages() {
 			return this.messages;
 		}
 
 	}
-
-
 
 }

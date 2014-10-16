@@ -422,12 +422,12 @@ TestCaseLibraryNavigationService {
 
 	@Override
 	@Transactional(readOnly = true)
-	public File exportTestCaseAsExcel(List<Long> libraryIds, List<Long> nodeIds, boolean includeCalledTests) {
+	public File exportTestCaseAsExcel(List<Long> libraryIds, List<Long> nodeIds, boolean includeCalledTests, boolean keepRteFormat) {
 
 		Collection<Long> allIds = findTestCaseIdsFromSelection(libraryIds, nodeIds, includeCalledTests);
 		allIds = securityFilterIds(allIds, "org.squashtest.tm.domain.testcase.TestCase", "EXPORT");
 
-		return excelService.exportAsExcel(new ArrayList<Long>(allIds));
+		return excelService.exportAsExcel(new ArrayList<Long>(allIds), keepRteFormat);
 	}
 
 	@Override

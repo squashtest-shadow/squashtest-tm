@@ -168,7 +168,7 @@ LibraryNavigationService<TestCaseLibrary, TestCaseFolder, TestCaseLibraryNode>, 
 	 * @param includeCalledTests
 	 * @return
 	 */
-	File exportTestCaseAsExcel(List<Long> libraryIds, List<Long> nodeIds, boolean includeCalledTests);
+	File exportTestCaseAsExcel(List<Long> libraryIds, List<Long> nodeIds, boolean includeCalledTests, boolean keepRteFormat);
 
 
 	List<String> getParentNodesAsStringList(Long nodeId);

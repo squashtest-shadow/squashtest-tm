@@ -54,7 +54,7 @@ public class TestCaseExcelExporterService {
 	@Qualifier("squashtest.tm.repository.TestCaseLibraryNodeDao")
 	private TestCaseLibraryNodeDao nodeDao;
 
-	public File exportAsExcel(List<Long> testCaseIds){
+	public File exportAsExcel(List<Long> testCaseIds, boolean keepRteFormat){
 
 		// let's chunk the job by batches of 20 test cases
 		List<Long> ids;
@@ -73,7 +73,7 @@ public class TestCaseExcelExporterService {
 			addPaths(pathById, model);
 			sort(model);
 
-			exporter.appendToWorkbook(model);
+			exporter.appendToWorkbook(model, keepRteFormat);
 
 			idx = max;
 			max = Math.min(idx+20, testCaseIds.size());
