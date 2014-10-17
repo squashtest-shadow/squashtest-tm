@@ -379,6 +379,16 @@
 
     <testSourceDirectory>src/test/groovy</testSourceDirectory>
 
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>ro.isdc.wro4j</groupId>
+          <artifactId>wro4j-maven-plugin</artifactId>
+          <version>1.7.7</version>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+
     <plugins>
       <!-- ====== SPOCK TESTS ====== -->
       <plugin>
@@ -908,6 +918,8 @@
                   <cssDestinationFolder>${wro4j.css.outputDirectory}</cssDestinationFolder>
               <!-- ConfigurableWroManagerFactory is configured (d'uh) through wro.properties -->
                   <wroManagerFactory>ro.isdc.wro.maven.plugin.manager.factory.ConfigurableWroManagerFactory</wroManagerFactory>
+                  <parallelProcessing>true</parallelProcessing>
+                  <incrementalBuildEnabled>true</incrementalBuildEnabled>
                 </configuration>
               </execution>
             </executions>
