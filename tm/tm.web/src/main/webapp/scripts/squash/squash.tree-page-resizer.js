@@ -52,7 +52,8 @@ define(
 				var conf = {
 					minWidth : 270,
 					helper : "ui-resizable-helper",
-
+					handles : "e",
+					
 					start : function() {
 						confObj.helper = $(".ui-resizable-helper");
 						confObj.overlayRight = new Overlay(confObj.rightPanel);
