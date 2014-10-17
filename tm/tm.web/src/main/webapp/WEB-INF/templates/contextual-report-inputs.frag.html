@@ -98,10 +98,15 @@
   <!-- params = input , hasLabel -->
   <div th:fragment="treepicker">
     <div id="rpt-tree-crit-dialog" th:id="${input.name} + '-dialog'" title="Nodes"
-      th:title="#{report.form.tree-picker.dialog.title}"
-      class="rpt-tree-crit-dialog popup-dialog is-contextual not-displayed">
+     	  th:title="#{report.form.tree-picker.dialog.title}"
+          class="rpt-tree-crit-dialog popup-dialog is-contextual not-displayed">
       <div id="rpt-tree-crit" th:id="${input.name}" class="rpt-tree-crit tree selection-tree"
-        th:attr="data-nodetype=${input.pickedNodeType}" data-nodetype="CAMPAIGN">NODES</div>
+            th:attr="data-nodetype=${input.pickedNodeType}" data-nodetype="CAMPAIGN">NODES
+       </div>
+       <div class="popup-dialog-buttonpane">
+          <input type="button" th:value="#{label.Ok}" data-def="mainbtn, evt=confirm"/>
+          <input type="button" th:value="#{label.Cancel}" data-def="evt=cancel" />
+       </div>
     </div>
     <label th:if="${hasLabel}" for="rpt-tree-crit-open" th:for="${input.name} + '-open'" th:text="${input.label}">Nodes</label>
     <input id="rpt-tree-crit-open" th:id="${input.name} + '-open'" type="button" class="sq-btn btn-sm rpt-tree-crit-open"

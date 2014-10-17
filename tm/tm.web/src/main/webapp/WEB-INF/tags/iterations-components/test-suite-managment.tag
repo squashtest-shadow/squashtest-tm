@@ -25,7 +25,6 @@
 
 <%@ attribute name="iteration" type="java.lang.Object" required="true" description="the iteration object of which we manage the test suites" %>
 
-<%@ taglib prefix="pop" 	tagdir="/WEB-INF/tags/popup" %>
 <%@ taglib prefix="f" 		uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ taglib prefix="c" 		uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="s"		uri="http://www.springframework.org/tags"%>

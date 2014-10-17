@@ -24,7 +24,6 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="layout" tagdir="/WEB-INF/tags/layout"%>
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component"%>
-<%@ taglib prefix="pop" tagdir="/WEB-INF/tags/popup" %>
 <%@ taglib prefix="tree" tagdir="/WEB-INF/tags/jstree" %>
 <%@ taglib prefix="s" uri="http://www.springframework.org/tags"%>
 <%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>

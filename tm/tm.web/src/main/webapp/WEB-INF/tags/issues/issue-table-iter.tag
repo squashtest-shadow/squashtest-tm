@@ -23,7 +23,6 @@
 <%@ tag description="Table displaying the issues for an Iteration" body-content="empty" %>
 	
 <%@ tag language="java" pageEncoding="utf-8"%>
-<%@ taglib prefix="pop" tagdir="/WEB-INF/tags/popup" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="f"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib prefix="s" uri="http://www.springframework.org/tags"%>

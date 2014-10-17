@@ -26,7 +26,6 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="layout" tagdir="/WEB-INF/tags/layout"%>
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component"%>
-<%@ taglib prefix="pop" tagdir="/WEB-INF/tags/popup" %>
 
 <layout:info-page-layout titleKey="workspace.home.title" highlightedWorkspace="home" main="home-workspace">
 	<jsp:attribute  name="head">	

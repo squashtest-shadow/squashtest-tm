@@ -18,7 +18,9 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ "backbone", "underscore", "./ConciseFormModel", "app/util/ButtonUtil", "tree", "./ProjectsPickerPopup", "./SingleProjectPickerPopup", "jeditable.datepicker" ],
+define([ "backbone", "underscore", "./ConciseFormModel", "app/util/ButtonUtil", "tree", 
+         "./ProjectsPickerPopup", "./SingleProjectPickerPopup", "jeditable.datepicker",
+         "jquery.squash.formdialog"],
 function(Backbone, _, FormModel, ButtonUtil, treeBuilder, ProjectsPickerPopup, SingleProjectPickerPopup) {
 	"use strict";
 
@@ -207,18 +209,13 @@ function(Backbone, _, FormModel, ButtonUtil, treeBuilder, ProjectsPickerPopup, S
 
 			this.$(".rpt-tree-crit-dialog").each(function() {
 				var $dialog = $(this);
+				
+				$dialog.formDialog({height:500});
+				
+				$dialog.on('formdialogconfirm', self.onNodesPicked);
+				
+				$dialog.on('formdialogcancel', function(){$dialog.formDialog('close')});
 
-				$dialog.createPopup({
-					height : 500,
-					closeOnSuccess: false,
-					buttons : [ {
-						text : config.okLabel,
-						click : self.onNodesPicked
-					}, {
-						text : config.cancelLabel,
-						click : function() { $(this).dialog("close"); }
-					} ]
-				});
 			});
 		},
 
@@ -361,7 +358,7 @@ function(Backbone, _, FormModel, ButtonUtil, treeBuilder, ProjectsPickerPopup, S
 		openTreePicker: function(event) {
 			var target = event.currentTarget;
 			var dialogId = $(target).data("idopened");
-			$("#" + dialogId).dialog("open"); // $() instead of this.$() because dialog was removed from its location
+			$("#" + dialogId).formDialog("open"); // $() instead of this.$() because dialog was removed from its location
 		},
 
 		openProjectPicker: function(event) {
@@ -402,7 +399,7 @@ function(Backbone, _, FormModel, ButtonUtil, treeBuilder, ProjectsPickerPopup, S
 			 */
 			return function() {
 				var $picker = $(this);
-				$picker.dialog("close");
+				$picker.formDialog("close");
 				var $tree = $picker.find(".rpt-tree-crit");
 				var nodes = $tree.jstree("get_selected");
 
