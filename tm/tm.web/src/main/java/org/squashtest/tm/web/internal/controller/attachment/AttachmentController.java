@@ -118,8 +118,9 @@ public class AttachmentController {
 
 		List<UploadSummary> summary = new LinkedList<UploadSummary>();
 
+		
 		for (UploadedData upload : attachments) {
-
+			
 			LOGGER.trace("AttachmentController : adding attachment " + upload.name);
 
 			// file type checking
@@ -152,41 +153,8 @@ public class AttachmentController {
 		return summary;
 	}
 
-	// answers the polls regarding upload status
-	@RequestMapping(value = UPLOAD_URL, method = RequestMethod.GET, params = "upload-ticket", produces = ContentTypes.APPLICATION_JSON)
-	public @ResponseBody
-	UploadProgress pollUploadStatus(HttpServletRequest request) {
-		String ticket = UploadProgressListenerUtils.getUploadTicket(request);
-		UploadProgress progress;
 
-		if (ticket == null) {
-			throw new IllegalArgumentException("Requested upload status for an unspecified upload ticket");
-		}
 
-		List<UploadProgressListener> listenerList = UploadProgressListenerUtils.getRegisteredListener(
-				request.getSession(), ticket);
-
-		// todo : better handling of exceptions.
-		if (listenerList == null) {
-			progress = createProgress();
-		} else {
-			UploadProgressListener listener = listenerList.get(0);
-			if (listener == null) {
-				progress = createProgress();
-			} else {
-				progress = listener.getStatus();
-			}
-		}
-
-		return progress;
-	}
-
-	private UploadProgress createProgress() {
-		UploadProgress progress;
-		progress = new UploadProgress();
-		progress.setPercentage(NO_PROGRESS);
-		return progress;
-	}
 
 	// finalize the upload and deallocate the resources.
 	@SuppressWarnings("unchecked")

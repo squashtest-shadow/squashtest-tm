@@ -48,7 +48,6 @@ import org.springframework.util.MultiValueMap;
 
 public final class UploadProgressListenerUtils {
 
-	private static final String UPLOAD_LISTNER_MAP_KEY = "upload-listener-map";
 	private static final String UPLOAD_SUMMARY_MAP = "upload-summary-map";
 
 	private UploadProgressListenerUtils() {
@@ -90,68 +89,10 @@ public final class UploadProgressListenerUtils {
 	 * remove anything related to a ticket
 	 */
 	public static void unregisterTicket(HttpSession session, String ticket) {
-		unregisterListeners(session, ticket);
 		unregisterUploadSummary(session, ticket);
 	}
 
-	/* ****************************** upload listener section *********************************** */
 
-	/*
-	 * Registers a listener for the ticket key and into the Session session
-	 */
-	@SuppressWarnings("unchecked")
-	public static void registerListener(HttpSession session, String key, UploadProgressListener listener) {
-		MultiValueMap<String, UploadProgressListener> listenerMap = (MultiValueMap<String, UploadProgressListener>) session
-				.getAttribute(UPLOAD_LISTNER_MAP_KEY);
-
-		// create if doesn't exists already
-		if (listenerMap == null) {
-			listenerMap = new LinkedMultiValueMap<String, UploadProgressListener>();
-			session.setAttribute(UPLOAD_LISTNER_MAP_KEY, listenerMap);
-		}
-
-		listenerMap.add(key, listener);
-	}
-
-	/*
-	 * Wrapper for the above (optional)
-	 */
-	public static void registerListener(HttpServletRequest request, UploadProgressListener listener) {
-		String ticket = getUploadTicket(request);
-		HttpSession session = request.getSession();
-		registerListener(session, ticket, listener);
-	}
-
-	/*
-	 * Will clean the session from the content related to the given ticket
-	 */
-	@SuppressWarnings("unchecked")
-	public static void unregisterListeners(HttpSession session, String key) {
-		MultiValueMap<String, UploadProgressListener> listenerMap = (MultiValueMap<String, UploadProgressListener>) session
-				.getAttribute(UPLOAD_LISTNER_MAP_KEY);
-		if (listenerMap != null) {
-			listenerMap.remove(key);
-		}
-	}
-
-	/*
-	 * get the list of all registered uploadListener for a ticket in the given session
-	 * 
-	 * Note : the current implementation uses a MultiValueMap, so more than one Listener could be registered for the
-	 * same ticket. This was done in case we need some day 1 progress bar for each file being uploaded.
-	 */
-	@SuppressWarnings("unchecked")
-	public static List<UploadProgressListener> getRegisteredListener(HttpSession session, String ticket) {
-		MultiValueMap<String, UploadProgressListener> listenerMap = (MultiValueMap<String, UploadProgressListener>) session
-				.getAttribute(UPLOAD_LISTNER_MAP_KEY);
-
-		if (listenerMap == null) {
-			return null;
-		}
-
-		return listenerMap.get(ticket);
-
-	}
 
 	/* *************************************** upload summary section ************************************** */
 
