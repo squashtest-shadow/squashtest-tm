@@ -197,13 +197,11 @@
 
 	<%---------------------------- execution step summary status --------------------------------------%>
 
-
-
 	<comp:toggle-panel id="execution-steps-panel"
 		titleKey="executions.execution-steps-summary.panel.title"
 		open="true">
 		<jsp:attribute name="body">
-		<table id="execution-execution-steps-table">
+		<table id="execution-execution-steps-table" class="unstyled-table">
 			<thead>
 				<tr>
 					<th>Id(masked)</th>

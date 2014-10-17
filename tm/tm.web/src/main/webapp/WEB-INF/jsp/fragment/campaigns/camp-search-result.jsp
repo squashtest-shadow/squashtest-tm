@@ -37,7 +37,7 @@
 <%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
 
 
-<table id="search-result-datatable" data-def="pre-sort=1, hover">
+<table id="search-result-datatable" data-def="pre-sort=1, hover"  class="unstyled-table">
 
     <thead class="not-displayed">
          <tr>

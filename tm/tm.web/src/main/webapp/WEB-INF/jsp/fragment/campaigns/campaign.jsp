@@ -256,7 +256,7 @@
 		title="${iterationPlanningTitle}" data-def="dateformat=${dateformat}, campaignId=${campaign.id}">						
 		
 		<div data-def="state=edit">
-			<table class="iteration-planning-content" >
+			<table class="iteration-planning-content" class="unstyled-table">
 				<thead>
 					<tr>
 						<th><f:message key="label.Name"/></th>

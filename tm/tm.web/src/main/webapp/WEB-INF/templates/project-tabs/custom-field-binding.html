@@ -220,7 +220,7 @@
 			<div id="panel" th:id="${HTMLID}+'-binding-panel'" class="tg-body cuf-binding-panel" 
 					        th:with="availableLocations=${bindableEntity.getValidRenderingLocations()}">
 			
-				<table id="table" class="cuf-binding-table" th:id="${HTMLID}+'-binding-table'" >
+				<table id="table" class="cuf-binding-table" th:id="${HTMLID}+'-binding-table'" class="unstyled-table">
 					<thead>
 						<tr>
 							<th>id</th>
@@ -269,7 +269,7 @@
 		<div id="popup" th:id="${HTMLID}+'-binding-popup'" class="popup-dialog cuf-binding-popup">
 			
 			<div class="component left-div dataTables_wrapper">
-				<table class="dataTable">
+				<table class="dataTable" class="unstyled-table">
 					<thead>
 						<tr>
 							<th width="25px" class="th-check ui-state-default"></th>

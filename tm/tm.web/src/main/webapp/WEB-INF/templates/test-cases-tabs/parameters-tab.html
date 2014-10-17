@@ -189,7 +189,7 @@
         <br />
         <div class="help-inline">&nbsp;</div>
         </div>
-		<table id="add-dataset-dialog-table" th:attr="data-def='ajaxsource='+@{/test-cases/__${testCase.id}__/parameters}+', pre-sort=1'">
+		<table id="add-dataset-dialog-table" class="unstyled-table" th:attr="data-def='ajaxsource='+@{/test-cases/__${testCase.id}__/parameters}+', pre-sort=1'">
 			<thead>			
 				<th data-def="map=entity-index, select">#</th>
 				<th data-def="map=name" th:text="#{label.Name}">name</th>

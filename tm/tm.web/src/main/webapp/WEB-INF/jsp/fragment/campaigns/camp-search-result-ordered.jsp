@@ -40,7 +40,7 @@
 
 
 <div id="search-result">
-  <table id="search-result-datatable" data-def="pre-sort=2, hover">
+  <table id="search-result-datatable" data-def="pre-sort=2, hover" class="unstyled-table">
   
     <thead class="not-displayed">
          <tr>
