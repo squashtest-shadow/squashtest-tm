@@ -207,7 +207,7 @@ define(
 									var text;
 
 									try {
-										text = $(xhr.responseText).text()
+										text = $(xhr.responseText).text();
 									} catch (e) {
 										text = xhr.responseText;
 									}
