@@ -57,8 +57,10 @@
 				treemenu: {
   					wizards: /*[[${ wizards }]]*/ '',
 				},
-				expandSidebarLabel: /*[[ #{report.workspace.togglebutton.expand.label} ]]*/ '>>', 
-				collapseSidebarLabel: /*[[ #{report.workspace.togglebutton.normal.label} ]]*/ '<<'
+				toggleWS : {
+					expandSidebarLabel: /*[[ #{report.workspace.togglebutton.expand.label} ]]*/ '>>', 
+					collapseSidebarLabel: /*[[ #{report.workspace.togglebutton.normal.label} ]]*/ '<<'
+				}
 			},
 			
     	};
@@ -87,7 +89,7 @@
       <!-- 		above the stacking context of the contextual content. -->
       <!-- 		An interesting article on that matter : http://philipwalton.com/articles/what-no-one-told-you-about-z-index/   -->
     </div>
-    <div id="tree-panel-left" style="z-index: 1">
+    <div id="tree-panel-left" style="z-index: 1" class="left-frame">
       <div class="position-layout-fix">
         <div id="tabbed-pane">
           <ul>
