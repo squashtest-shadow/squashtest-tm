@@ -18,16 +18,14 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ "jquery", "./lib/cuf-values-utils", "./lib/jquery.staticCustomfield", "./lib/jquery.jeditableCustomfield" ], 
+define([ "jquery", "./lib/cuf-values-utils", "./lib/jquery.staticCustomfield", "./lib/jquery.jeditableCustomfield" ],
 		function($, utils) {
-	/*********************************************************************************************************************
-	 * 
+	"use strict";
+	/******************************
 	 * JS DATATABLE CONFIGURATION
-	 * 
-	 ********************************************************************************************************************/
+	 ******************************/
 
-	// ********************************** column definitions
-	// ******************************
+	// ***** column definitions
 	function createColumnDefs(cufDefinitions) {
 
 		var columns = [];
@@ -37,7 +35,7 @@ define([ "jquery", "./lib/cuf-values-utils", "./lib/jquery.staticCustomfield", "
 
 			var code = cufDefinitions[i].code;
 			var newColumn;
-			
+
 			if(cufDefinitions[i].denormalized){
 				newColumn = {
 						'bVisible' : true,
@@ -84,14 +82,11 @@ define([ "jquery", "./lib/cuf-values-utils", "./lib/jquery.staticCustomfield", "
 		var spliceArgs = [ insertionIndex, 0 ].concat(cufColumnDefs);
 		Array.prototype.splice.apply(regularColumnDefs, spliceArgs);
 
-		// return
 		return regularColumnDefs;
 
 	}
 
-	// ************************************ table draw callback
-	// *********************************
-
+	// **** table draw callback
 	function mapDefinitionsToCode(cufDefinitions) {
 
 		var resultMap = {};
@@ -106,7 +101,7 @@ define([ "jquery", "./lib/cuf-values-utils", "./lib/jquery.staticCustomfield", "
 		return resultMap;
 	}
 
-	// we have to make a post function for our jeditable custom fields. Indeed 
+	// we have to make a post function for our jeditable custom fields. Indeed
 	// we can't know at creation time what the id of the selected cuf will be (obviously).
 	// hence this function, that can fetch it at runtime.
 	function makePostFunction(cufCode, table) {
@@ -115,11 +110,11 @@ define([ "jquery", "./lib/cuf-values-utils", "./lib/jquery.staticCustomfield", "
 			var $this = $(this),
 				cell = $this.closest('td'),
 				row = $this.closest('tr').get(0);
-			
+
 			var cufId,
-				url = squashtm.app.contextRoot,
+				url = window.squashtm.app.contextRoot,
 				isDenormalized = cell.hasClass('denormalized-field-value');
-			
+
 			if (isDenormalized){
 				cufId = table.fnGetData(row).denormalizedFields[cufCode].id;
 				url += "/denormalized-fields/values/" + cufId;
@@ -138,7 +133,7 @@ define([ "jquery", "./lib/cuf-values-utils", "./lib/jquery.staticCustomfield", "
 			});
 		};
 	}
-	
+
 
 	function createCufValuesDrawCallback(cufDefinitions, editable) {
 
@@ -152,7 +147,7 @@ define([ "jquery", "./lib/cuf-values-utils", "./lib/jquery.staticCustomfield", "
 
 			// A cell holds a custom field value if it has the class
 			// .custom-field-value, and if the data model is not empty
-			// for that one. Same goes for denormalized custom field, which 
+			// for that one. Same goes for denormalized custom field, which
 			// has a class .denormalized-field-value
 			var cufCells = table.find('td.custom-field-value, td.denormalized-field-value').filter(function() {
 				return (table.fnGetData(this) !== null);
@@ -179,7 +174,7 @@ define([ "jquery", "./lib/cuf-values-utils", "./lib/jquery.staticCustomfield", "
 		};
 	}
 
-	// ******************************************** datasource model
+	// ************ datasource model
 	// configuration **************************************
 
 	function defaultFnServerDataImpl(sSource, aoData, fnCallback, oSettings) {
@@ -196,9 +191,9 @@ define([ "jquery", "./lib/cuf-values-utils", "./lib/jquery.staticCustomfield", "
 	 *
 	 */
 	function createDefaultDefinitions(cufDefinitions) {
-		var i = 0, 
+		var i = 0,
 			length = cufDefinitions.length,
-			cufCode, 
+			cufCode,
 			cufOrDeno,
 			result = {
 				customFields : {},
@@ -206,16 +201,15 @@ define([ "jquery", "./lib/cuf-values-utils", "./lib/jquery.staticCustomfield", "
 			};
 
 		for (i = 0; i < length; i++) {
-			
-			cufCode = cufDefinitions[i].code,
-			cufOrDeno = (cufDefinitions[i].denormalized) ? "denormalizedFields" : "customFields";
-			
+			cufCode = cufDefinitions[i].code;
+			cufOrDeno = (cufDefinitions[i].denormalized ? "denormalizedFields" : "customFields");
+
 			result[cufOrDeno][cufCode]= {
-				id : null, 
+				id : null,
 				value : null,
 				code : null
 			};
-			
+
 		}
 
 		return result;
@@ -230,7 +224,7 @@ define([ "jquery", "./lib/cuf-values-utils", "./lib/jquery.staticCustomfield", "
 			data = aaData[i];
 			data.customFields = $.extend({}, defaults.customFields, data.customFields);
 			data.denormalizedFields = $.extend({}, defaults.denormalizedFields, data.denormalizedFields);
-				
+
 		}
 
 		return aaData;
@@ -253,6 +247,10 @@ define([ "jquery", "./lib/cuf-values-utils", "./lib/jquery.staticCustomfield", "
 			var decoratedCallback = function(json, xhr, statusText) {
 
 				var ajaxProp = oSettings.sAjaxDataProp;
+				if (ajaxProp === "data") { // 'data' is the default starting with DT 1.10
+					ajaxProp = "aaData";
+					window.console.log("[table-handler.js] WARN: Legacy compatibility - sAjaxDataProp returned 'data', 'aaData' will be used instead");
+				}
 
 				var origData = (ajaxProp !== "") ? json[ajaxProp] : json;
 				var fixedData = fillMissingCustomFields(origData, defaultDefinitions);
@@ -272,8 +270,7 @@ define([ "jquery", "./lib/cuf-values-utils", "./lib/jquery.staticCustomfield", "
 		};
 	}
 
-	// ************************ main decorator
-	// ************************************
+	// **** main decorator
 
 	function decorateTableSettings(tableSettings, cufDefinitions, index, isEditable) {
 
@@ -309,11 +306,9 @@ define([ "jquery", "./lib/cuf-values-utils", "./lib/jquery.staticCustomfield", "
 		return tableSettings;
 	}
 
-	/*********************************************************************************************************************
-	 * 
+	/***************************
 	 * DOM TABLE CONFIGURATION
-	 * 
-	 ********************************************************************************************************************/
+	 ***************************/
 
 	function decorateDOMTable(zeTable, cufDefinitions, index) {
 		var table = (zeTable instanceof jQuery) ? zeTable : $(zeTable);
@@ -327,7 +322,7 @@ define([ "jquery", "./lib/cuf-values-utils", "./lib/jquery.staticCustomfield", "
 			var def = cufDefinitions[i];
 			var newTD;
 			if(cufDefinitions[i].denormalized){
-				newTD = $('<th class="denormalized-field-' + def.code + '">' + def.label + '</th>'); 
+				newTD = $('<th class="denormalized-field-' + def.code + '">' + def.label + '</th>');
 			} else {
 				newTD = $('<th class="custom-field-' + def.code + '">' + def.label + '</th>');
 			}
