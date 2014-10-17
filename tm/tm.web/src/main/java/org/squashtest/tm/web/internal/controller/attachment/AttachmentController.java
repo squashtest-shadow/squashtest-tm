@@ -48,17 +48,13 @@ import org.springframework.web.servlet.ModelAndView;
 import org.squashtest.tm.domain.attachment.Attachment;
 import org.squashtest.tm.service.attachment.AttachmentManagerService;
 import org.squashtest.tm.web.internal.fileupload.UploadContentFilterUtil;
-import org.squashtest.tm.web.internal.fileupload.UploadProgress;
-import org.squashtest.tm.web.internal.fileupload.UploadProgressListener;
 import org.squashtest.tm.web.internal.fileupload.UploadProgressListenerUtils;
 import org.squashtest.tm.web.internal.fileupload.UploadSummary;
-import org.squashtest.tm.web.internal.http.ContentTypes;
 
 @Controller
 @RequestMapping("/attach-list/{attachListId}/attachments")
 public class AttachmentController {
 
-	private static final int NO_PROGRESS = -1;
 	private static final String UPLOAD_URL = "/upload";
 	private static final Logger LOGGER = LoggerFactory.getLogger(AttachmentController.class);
 
