@@ -291,7 +291,8 @@
   <div id="pass-pop-pane" class="not-displayed"></div>
   <div id="auth-pop-pane" class="not-displayed"></div>
   <script id="password-reset-popup-tpl" type="text/x-handlebars-template" th:inline="text">
-  <div id="{{popupId}}" class="not-displayed popup-dialog" th:unless="${authenticationProvider.managedPassword}">
+  <div id="{{popupId}}" class="not-displayed popup-dialog" th:unless="${authenticationProvider.managedPassword}"
+th:title="#{user.account.password.reset.label}">
     <div id="user-account-password-panel">
 
       <div>
@@ -308,6 +309,10 @@
 
     </div>
     <span class="error-message user-account-changepass-status-error"></span>
+	<div class="popup-dialog-buttonpane">
+		<input type="button" th:value="#{label.Confirm}" data-def="mainbtn, evt=confirm" />
+		<input type="button" th:value="#{label.Cancel}" data-def="evt=cancel" />
+	</div>
   </div>
   </script>
 

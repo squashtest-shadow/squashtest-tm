@@ -220,7 +220,7 @@
 			<div id="panel" th:id="${HTMLID}+'-binding-panel'" class="tg-body cuf-binding-panel" 
 					        th:with="availableLocations=${bindableEntity.getValidRenderingLocations()}">
 			
-				<table id="table" class="cuf-binding-table" th:id="${HTMLID}+'-binding-table'" class="unstyled-table">
+				<table id="table" class="cuf-binding-table unstyled-table" th:id="${HTMLID}+'-binding-table'" >
 					<thead>
 						<tr>
 							<th>id</th>
@@ -266,10 +266,10 @@
 		</div>
 	
 		
-		<div id="popup" th:id="${HTMLID}+'-binding-popup'" class="popup-dialog cuf-binding-popup">
+		<div id="popup" th:id="${HTMLID}+'-binding-popup'" class="popup-dialog cuf-binding-popup" th:title="#{message.customfieldbinding.bind}">
 			
 			<div class="component left-div dataTables_wrapper">
-				<table class="dataTable" class="unstyled-table">
+				<table class="dataTable" >
 					<thead>
 						<tr>
 							<th width="25px" class="th-check ui-state-default"></th>
@@ -301,6 +301,10 @@
 			<div class="component right-div">
 			</div>
 			 -->
+            <div class="popup-dialog-buttonpane">
+              <input type="button" th:value="#{label.Confirm}" data-def="mainbtn,evt=confirm" />
+              <input type="button" th:value="#{label.Cancel}" data-def="evt=cancel"/>
+            </div>
 		</div>
 	</div>
 	

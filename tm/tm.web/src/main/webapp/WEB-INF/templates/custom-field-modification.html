@@ -135,8 +135,8 @@
           <div class="fragment-body unstyled">
             <div id="cuf-toolbar" class="toolbar-class ui-corner-all ">
               <div class="toolbar-button-panel">
-                <input type="button" th:value="#{ label.Rename }" value="Rename" id="rename-cuf-button" class="button" />
-                <input type="button" th:value="#{ label.Delete }" value="Delete" id="delete-cuf-button" class="button" />
+                <input type="button" th:value="#{ label.Rename }" value="Rename" id="rename-cuf-button" class="sq-btn button" />
+                <input type="button" th:value="#{ label.Delete }" value="Delete" id="delete-cuf-button" class="sq-btn button" />
               </div>
             </div>
             <br /> <br />
@@ -265,9 +265,13 @@
   </div>
   <!--    ====================================POPUPS======================================================  -->
   <!--    	RENAME POPUP -->
-  <div id="rename-cuf-popup" class="not-displayed popup-dialog">
+  <div id="rename-cuf-popup" class="not-displayed popup-dialog" th:title="#{title.renameCuf}">
     <label for="rename-cuf-input" th:text="#{ label.Rename }">Rename</label> <input type="text" id="rename-cuf-input"
       maxlength="255" size="50" /> <br /> <span class="error-message name-error"></span>
+      <div class="popup-dialog-buttonpane">
+        <input type="button" th:value="#{label.Rename}" data-def="mainbtn, evt=confirm"/>
+        <input type="button" th:value="#{label.Cancel}" data-def="evt=cancel" />
+      </div>
   </div>
 
   <!-- 	ADD OPTION POPUP  -->
@@ -301,7 +305,7 @@
 
   <!-- 	RENAME OPTION POPUP -->
   <div id="rename-cuf-option-popup" class="not-displayed popup-dialog"
-    th:if="${customField.inputType.name() == 'DROPDOWN_LIST'}">
+    th:if="${customField.inputType.name() == 'DROPDOWN_LIST'}" th:title="#{title.renameCufOption}">
     <span class="not-displayed" id="rename-cuf-option-previous"></span>
     <table class="form-horizontal">
       <tr class="control-group">
@@ -314,11 +318,15 @@
         </td>
       </tr>
     </table>
+    <div class="popup-dialog-buttonpane">
+        <input type="button" th:value="#{label.Rename}" data-def="mainbtn, evt=confirm"/>
+        <input type="button" th:value="#{label.Cancel}" data-def="evt=cancel" />
+    </div>
   </div>
 
   <!-- 	CHANGE OPTION CODE POPUP -->
   <div id="change-cuf-option-code-popup" class="not-displayed popup-dialog"
-    th:if="${customField.inputType.name() == 'DROPDOWN_LIST'}">
+    th:if="${customField.inputType.name() == 'DROPDOWN_LIST'}" th:title="#{title.changeCufOptionCode}">
     <span class="not-displayed" id="change-cuf-option-code-label"></span>
     <table class="form-horizontal">
       <tr class="control-group">
@@ -331,6 +339,10 @@
         </td>
       </tr>
     </table>
+      <div class="popup-dialog-buttonpane">
+        <input type="button" th:value="#{label.Confirm}" data-def="mainbtn, evt=confirm"/>
+        <input type="button" th:value="#{label.Cancel}" data-def="evt=cancel" />
+      </div>    
   </div>
 </body>
 </html>

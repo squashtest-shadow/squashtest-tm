@@ -528,12 +528,30 @@ define([ "jquery", "squashtable/squashtable.collapser", "custom-field-values", "
 			} ]
 
 		};
+		
+		var dialog = $("#add-test-step-dialog");
+		dialog.formDialog();
+		
+		dialog.on('formdialogaddandmore', function(){
+			var data = readAddStepParams();
+			postStep(data).success(addTestStepSuccessAnother);		
+		});
+		
+		dialog.on('formdialogadd', function(){
+			var data = readAddStepParams();
+			postStep(data).success(addTestStepSuccess);			
+		});
+		
+		dialog.on('formdialogcancel', function(){
+			dialog.formDialog('close');
+		});
 
-		squashtm.popup.create(params);
+		$("#add-test-step-button").on('click', function(){
+			dialog.formDialog('open');
+		});
 
 		// cuf value support
 
-		var dialog = $("#add-test-step-dialog");
 		var cufTable = $("#add-test-step-custom-fields");
 		var bindingsUrl = urls.stepcufBindingUrl;
 
@@ -544,7 +562,7 @@ define([ "jquery", "squashtable/squashtable.collapser", "custom-field-values", "
 		cufValuesSupport.reloadPanel();
 		dialog.data("cuf-values-support", cufValuesSupport);
 
-		dialog.on("dialogopen", function() {
+		dialog.on("formdialogopen", function() {
 			cufValuesSupport.reset();
 		});
 	}

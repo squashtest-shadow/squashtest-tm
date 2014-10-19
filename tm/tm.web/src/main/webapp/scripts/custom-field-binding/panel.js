@@ -18,7 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ "jquery", "jquery.squash.togglepanel" ], function($) {
+define([ "jquery", "jquery.squash.togglepanel", "jquery.squash.formdialog" ], function($) {
 
 	return function(settings) {
 
@@ -31,7 +31,7 @@ define([ "jquery", "jquery.squash.togglepanel" ], function($) {
 
 		button.setPopup = function(popup) {
 			button.click(function() {
-				popup.dialog("open");
+				popup.formDialog("open");
 			});
 		};
 

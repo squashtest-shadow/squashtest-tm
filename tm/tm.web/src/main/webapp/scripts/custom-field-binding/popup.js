@@ -33,33 +33,20 @@
  * 
  * 
  */
-define([ "require", "./models", "app/util/ButtonUtil", "jquery.squash" ], function(require, Model, ButtonUtil) {
+define([ "require", "./models", "app/util/ButtonUtil", "jquery.squash", "jquery.squash.formdialog"], function(require, Model, ButtonUtil) {
 
 	return function(settings) {
 
-		var params = {
-			selector : settings.selector,
-			title : settings.title,
-			closeOnSuccess : false,
-			buttons : [ {
-				'text' : settings.oklabel,
-				'class' : "button-ok",
-				'click' : function(event) {
-					submit(event);
-				}
-			}, {
-				'text' : settings.cancellabel,
-				'class' : "button-cancel",
-				'click' : function() {
-					popup.dialog('close');
-				}
-			} ]
-		};
-
 		// save the reference now, before the DOM is moved around
 		var popup = $(settings.selector);
-
-		squashtm.popup.create(params);
+		
+		popup.formDialog();
+		
+		popup.on('formdialogconfirm', submit);
+		
+		popup.on('formdialogcancel', function(){
+			popup.formDialog('close');
+		});
 
 		popup.postSuccessListeners = [];
 
@@ -149,11 +136,11 @@ define([ "require", "./models", "app/util/ButtonUtil", "jquery.squash" ], functi
 
 		};
 
-		var submit = function(event) {
+		function submit(event) {
 			ButtonUtil.disable($(event.target));
 			var payload = makePayload();
 			if (payload.length === 0) {
-				popup.dialog("close");
+				popup.formDialog("close");
 				return;
 			}
 			$.ajax({
@@ -162,7 +149,7 @@ define([ "require", "./models", "app/util/ButtonUtil", "jquery.squash" ], functi
 				data : JSON.stringify(payload),
 				contentType : "application/json; charset=utf-8"
 			}).done(function() {
-				popup.dialog("close");
+				popup.formDialog("close");
 				var i = 0;
 				for (i = 0; i < popup.postSuccessListeners.length; i++) {
 					popup.postSuccessListeners[i].update();
@@ -170,11 +157,11 @@ define([ "require", "./models", "app/util/ButtonUtil", "jquery.squash" ], functi
 			}).always(function(){
 				ButtonUtil.enable($(event.target));
 			});
-		};
+		}
 
 		// popup events
 
-		popup.bind("dialogopen", function() {
+		popup.bind("formdialogopen", function() {
 			reload();
 		});
 

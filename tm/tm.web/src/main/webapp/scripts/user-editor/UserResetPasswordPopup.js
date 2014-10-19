@@ -20,31 +20,32 @@
  */
 define([ "jquery", "backbone", "handlebars", "app/util/StringUtil", "jquery.squash", "jqueryui",
 		"jquery.squash.togglepanel", "squashtable", "jquery.squash.oneshotdialog",
-		"jquery.squash.messagedialog", "jquery.squash.confirmdialog" ], function($, Backbone, Handlebars, StringUtil) {
+		"jquery.squash.messagedialog", "jquery.squash.confirmdialog", "jquery.squash.formdialog" ], function($, Backbone, Handlebars, StringUtil) {
 	var UMod = squashtm.app.UMod;
 	var UserResetPasswordPopup = Backbone.View.extend({
 		initialize : function() {
 			var self = this;
 
-			var params = {
-				selector : "#" + self.options.popupId,
-				title : UMod.message.resetPasswordPopupTitle,
-				openedBy : "#" + self.options.openerId,
-				isContextual : true,
-				closeOnSuccess : false,
-				buttons : [ {
-					'text' : UMod.message.confirmLabel,
-					'click' : function() {
-						self.submitPassword.call(self);
-					}
-				} ],
-				width : 420
-			};
-
 			this.render();
-			squashtm.popup.create(params);
-			this.$dialog = $("#" + self.options.popupId); // dialog is removed from its original place afterwards
-			this.$dialog.bind("dialogclose", self.dialogCleanUp);
+			
+			var dialog = $("#"+ self.options.popupId);
+			
+			dialog.formDialog({width:420});
+			
+			dialog.on('formdialogconfirm', function(){
+				self.submitPassword.call(self);
+			});
+			dialog.on('formdialogcancel', function(){
+				dialog.formDialog('close');
+			});
+
+			dialog.on("formdialogclose", self.dialogCleanUp);
+			
+			$("#" + self.options.openerId).on('click', function(){
+				dialog.formDialog('open');
+			});
+			
+			this.$dialog = dialog;
 
 		},
 

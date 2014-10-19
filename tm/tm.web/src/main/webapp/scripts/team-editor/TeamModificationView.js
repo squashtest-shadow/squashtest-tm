@@ -20,7 +20,7 @@
  */
 define([ "jquery", "backbone", "underscore", "app/util/StringUtil", "./TeamPermissionPanel", "jquery.squash",
 		"jqueryui", "jquery.squash.togglepanel", "squashtable", "jquery.squash.oneshotdialog",
-		"jquery.squash.messagedialog", "jquery.squash.confirmdialog", "jquery.squash.jeditable" ], function($,
+		"jquery.squash.messagedialog", "jquery.squash.confirmdialog", "jquery.squash.jeditable", "jquery.squash.formdialog" ], function($,
 		Backbone, _, StringUtil, TeamPermissionPanel) {
 	var teamMod = squashtm.app.teamMod;
 	var TeamModificationView = Backbone.View.extend({
@@ -193,32 +193,27 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil", "./TeamPermi
 
 			}).done(function(data) {
 				$('#team-name-header').html(data.newName);
-				$('#rename-team-popup').dialog('close');
+				$('#rename-team-popup').formDialog('close');
 			});
 		},
 
 		configureRenamePopup : function() {
-			var params = {
-				selector : "#rename-team-popup",
-				title : teamMod.renameTeamTitle,
-				openedBy : "#rename-team-button",
-				isContextual : true,
-				usesRichEdit : false,
-				closeOnSuccess : true,
-				buttons : [ {
-					'text' : teamMod.renameLabel,
-					'click' : this.renameTeam
-				}, {
-					'text' : teamMod.cancelLabel,
-					'click' : this.closePopup
-				} ]
-			};
 
-			squashtm.popup.create(params);
-
-			$("#rename-team-popup").bind("dialogopen", function(event, ui) {
+			var dialog = $("#rename-team-popup");
+			
+			dialog.formDialog();
+			
+			dialog.on('formdialogconfirm', this.renameTeam);
+			
+			dialog.on('formdialogcancel', this.closePopup);
+			
+			dialog.bind("formdialogopen", function(event, ui) {
 				var name = $.trim($('#team-name-header').text());
 				$("#rename-team-input").val($.trim(name));
+			});
+			
+			$("#rename-team-button").on('click', function(){
+				dialog.formDialog('open');
 			});
 
 		},
@@ -296,8 +291,7 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil", "./TeamPermi
 		},
 
 		closePopup : function() {
-			$(this).data("answer", "cancel");
-			$(this).dialog('close');
+			$(this).formDialog('close');
 		}
 
 	});

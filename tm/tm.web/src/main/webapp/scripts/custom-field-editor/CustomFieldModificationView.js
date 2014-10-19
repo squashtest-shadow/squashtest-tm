@@ -22,7 +22,7 @@ define([ "jquery", "./NewCustomFieldOptionDialog", "backbone", "underscore",
 	"jeditable.simpleJEditable", "jeditable.selectJEditable", "app/util/StringUtil", "app/lnf/Forms", 
 	"jquery.squash.oneshotdialog", "squash.configmanager", "app/ws/squashtm.notification",
 	"jquery.squash", "jqueryui",
-	"jquery.squash.togglepanel", "squashtable", "jquery.squash.confirmdialog", "jeditable.datepicker" ],
+	"jquery.squash.togglepanel", "squashtable", "jquery.squash.confirmdialog", "jeditable.datepicker", "jquery.squash.formdialog" ],
 	function($, NewCustomFieldOptionDialog, Backbone, _, SimpleJEditable,SelectJEditable, StringUtil, Forms, oneshot, confman, notification) {
 		var cfMod = squashtm.app.cfMod;
 		/*
@@ -195,7 +195,7 @@ define([ "jquery", "./NewCustomFieldOptionDialog", "backbone", "underscore",
 				self.renameCufOptionPopup.find(
 						"#rename-cuf-option-label").val(
 						previousValue);
-				self.renameCufOptionPopup.dialog("open");
+				self.renameCufOptionPopup.formDialog("open");
 			},
 
 			openChangeOptionCodePopup : function(event) {
@@ -210,7 +210,7 @@ define([ "jquery", "./NewCustomFieldOptionDialog", "backbone", "underscore",
 				self.changeOptionCodePopup.find(
 						"#change-cuf-option-code").val(
 						previousValue);
-				self.changeOptionCodePopup.dialog("open");
+				self.changeOptionCodePopup.formDialog("open");
 			},
 
 			renameOption : function() {
@@ -228,6 +228,7 @@ define([ "jquery", "./NewCustomFieldOptionDialog", "backbone", "underscore",
 					url : cfMod.optionsTable.ajaxSource	+ "/" + previousValue + "/label"
 				}).done(function(data) {
 					self.optionsTable.refresh();
+					self.renameCufOptionPopup.formDialog('close');
 				});
 
 			},
@@ -247,6 +248,7 @@ define([ "jquery", "./NewCustomFieldOptionDialog", "backbone", "underscore",
 					url : cfMod.optionsTable.ajaxSource	+ "/" + label + "/code"
 				}).done(function(data) {
 					self.optionsTable.refresh();
+					self.changeOptionCodePopup.formDialog('close');
 				});
 
 			},
@@ -433,41 +435,35 @@ define([ "jquery", "./NewCustomFieldOptionDialog", "backbone", "underscore",
 
 				}).done(function(data) {
 					$('#cuf-name-header').html(data.newName);
-					$('#rename-cuf-popup').dialog('close');
+					$('#rename-cuf-popup').formDialog('close');
 				});
 			},
 
 			configureRenamePopup : function() {
-				var params = {
-					selector : "#rename-cuf-popup",
-					title : cfMod.renameCufTitle,
-					openedBy : "#rename-cuf-button",
-					isContextual : true,
-					usesRichEdit : false,
-					closeOnSuccess : true,
-					buttons : [ {
-						'text' : cfMod.renameLabel,
-						'click' : this.renameCuf
-					}, {
-						'text' : cfMod.cancelLabel,
-						'click' : this.closePopup
-					} ]
-				};
-				squashtm.popup.create(params);
-				$("#rename-cuf-popup").bind(
-						"dialogopen",
-						function(event, ui) {
-							var name = $.trim($('#cuf-name-header')
-									.text());
-							$("#rename-cuf-input")
-									.val($.trim(name));
-						});
+				
+				var dialog = $("#rename-cuf-popup");
+				
+				dialog.formDialog();
+				
+				dialog.on('formdialogconfirm', this.renameCuf);
+				
+				dialog.on('formdialogcancel', this.closePopup);
+				
+				dialog.on('formdialogopen', function(event, ui) {
+					var name = $.trim($('#cuf-name-header').text());
+					$("#rename-cuf-input").val($.trim(name));
+				});	
+		
+				$("#rename-cuf-button").on('click', function(){
+					dialog.formDialog('open');
+				});
+				
+	
 
 			},
 
 			closePopup : function() {
-				$(this).data("answer", "cancel");
-				$(this).dialog('close');
+				$(this).formDialog('close');
 			},
 
 			makeSimpleJEditable : function(inputId) {
@@ -624,26 +620,22 @@ define([ "jquery", "./NewCustomFieldOptionDialog", "backbone", "underscore",
 					return;
 				}
 				var self = this;
-				var params = {
-					selector : "#rename-cuf-option-popup",
-					title : cfMod.optionsTable.renameCufOptionTitle,
-					openedBy : "#rename-cuf-option-popup",
-					isContextual : true,
-					usesRichEdit : false,
-					closeOnSuccess : true,
-					buttons : [
-							{
-								'text' : cfMod.optionsTable.renameOptionLabel,
-								'click' : function() {
-									self.renameOption.call(self);
-								}
-							}, {
-								'text' : cfMod.cancelLabel,
-								'click' : this.closePopup
-							} ]
-				};
-				squashtm.popup.create(params);
-				this.renameCufOptionPopup = $("#rename-cuf-option-popup");
+				
+				
+				var dialog = $("#rename-cuf-option-popup");
+				this.renameCufOptionPopup = dialog;
+				
+				dialog.formDialog();
+				
+				dialog.on('formdialogconfirm', function(){
+					self.renameOption.call(self);
+				});
+				
+				dialog.on('formdialogcancel', this.closePopup);
+				
+				$("#rename-cuf-option-popup").on('click', function(){
+					dialog.formDialog('open');
+				});
 			},
 
 			configureChangeOptionCodePopup : function() {
@@ -652,27 +644,22 @@ define([ "jquery", "./NewCustomFieldOptionDialog", "backbone", "underscore",
 				}
 
 				var self = this;
-				var params = {
-					selector : "#change-cuf-option-code-popup",
-					title : cfMod.optionsTable.changeOptionCodeTitle,
-					openedBy : "#change-cuf-option-code-popup",
-					isContextual : true,
-					usesRichEdit : false,
-					closeOnSuccess : true,
-					buttons : [
-							{
-								'text' : cfMod.optionsTable.changeOptionCodeLabel,
-								'click' : function() {
-									self.changeOptionCode
-											.call(self);
-								}
-							}, {
-								'text' : cfMod.cancelLabel,
-								'click' : this.closePopup
-							} ]
-				};
-				squashtm.popup.create(params);
-				this.changeOptionCodePopup = $("#change-cuf-option-code-popup");
+				
+				
+				var dialog = $("#change-cuf-option-code-popup");
+				this.changeOptionCodePopup = dialog;
+				
+				dialog.formDialog();
+				dialog.on('formdialogconfirm', function(){
+					self.changeOptionCode.call(self);
+				});
+				
+				dialog.on('formdialogcancel', this.closePopup);
+				
+				$("#change-cuf-option-code-popup").on('click', function(){
+					dialog.formDialog('open');
+				});
+				
 			}
 
 	});

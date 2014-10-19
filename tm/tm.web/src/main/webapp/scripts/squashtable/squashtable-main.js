@@ -1372,8 +1372,6 @@ define(["jquery",
 			if (userInitCompleteCallback) {
 				userInitCompleteCallback.call(this, oSettings);
 			}
-			// sets the table visible if it was hidden
-			self.removeClass("unstyled-table");
 		};
 
 		//----------------- draw callback ------------------------
@@ -1499,6 +1497,10 @@ define(["jquery",
 		}
 
 		this.addClass("is-contextual");
+		
+
+		// sets the table visible if it was hidden
+		this.removeClass("unstyled-table");
 
 		return this;
 	};
