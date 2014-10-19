@@ -495,39 +495,6 @@ define([ "jquery", "squashtable/squashtable.collapser", "custom-field-values", "
 		}
 
 		// main popup definition
-
-		// TODO : the handlers
-		var params = {
-			selector : "#add-test-step-dialog",
-			openedBy : "#add-test-step-button",
-			title : language.addStepTitle,
-			isContextual : true,
-			usesRichEdit : true,
-			closeOnSuccess : false,
-			ckeditor : {
-				styleUrl : urls.ckeConfigUrl,
-				lang : language.ckeLang
-			},
-			buttons : [ {
-				'text' : language.addAnotherStep,
-				'click' : function() {
-					var data = readAddStepParams();
-					postStep(data).success(addTestStepSuccessAnother);
-				}
-			}, {
-				'text' : language.addStep,
-				'click' : function() {
-					var data = readAddStepParams();
-					postStep(data).success(addTestStepSuccess);
-				}
-			}, {
-				'text' : language.cancellabel,
-				'click' : function() {
-					$("#add-test-step-dialog").dialog("close");
-				}
-			} ]
-
-		};
 		
 		var dialog = $("#add-test-step-dialog");
 		dialog.formDialog();
