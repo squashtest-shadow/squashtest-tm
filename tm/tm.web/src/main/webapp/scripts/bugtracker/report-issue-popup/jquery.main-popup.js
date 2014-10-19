@@ -163,7 +163,7 @@ define(["jquery", "./default-field-view", "./advanced-field-view", "file-upload"
 		this.formDialog({
 			height : 500,
 			width : 650
-		})
+		});
 
 		//issue model
 		this.model = new Backbone.Model();	

@@ -214,7 +214,7 @@ function(Backbone, _, FormModel, ButtonUtil, treeBuilder, ProjectsPickerPopup, S
 				
 				$dialog.on('formdialogconfirm', self.onNodesPicked);
 				
-				$dialog.on('formdialogcancel', function(){$dialog.formDialog('close')});
+				$dialog.on('formdialogcancel', function(){$dialog.formDialog('close');});
 
 			});
 		},
