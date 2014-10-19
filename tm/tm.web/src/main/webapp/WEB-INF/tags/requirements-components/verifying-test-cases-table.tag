@@ -25,6 +25,9 @@
 <%@ attribute name="editable" type="java.lang.Boolean" description="Right to edit content. Default to false." %>
 <%@ attribute name="requirementVersion" type="java.lang.Object" required="true" description="The RequirementVersion instance for which we render the verifying testcases" %>
 <%@ attribute name="model" type="java.lang.Object" required="true" description="the initial rows of the table"%>
+<%@ attribute name="autoJsInit" type="java.lang.Boolean" required="false" 
+              description="TRANSITIONAL. If set to true, will insert the javascript initialization block. Defaults is true."%>
+
 
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
@@ -77,6 +80,7 @@
   </div>
 </div>
 
+<c:if test="${empty autoJsInit or autoJsInit}" >
 <script type="text/javascript">
   require([ "common" ], function() {
       require(['jquery', 'workspace.event-bus', 'squashtable', 'jquery.squash.confirmdialog'], function($, eventBus){
@@ -115,3 +119,4 @@
     });
   });
 </script>
+</c:if>

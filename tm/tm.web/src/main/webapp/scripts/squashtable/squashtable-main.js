@@ -1372,6 +1372,13 @@ define(["jquery",
 			if (userInitCompleteCallback) {
 				userInitCompleteCallback.call(this, oSettings);
 			}
+			
+			/*
+			 * bsiri, 20/10/14 : there used to be a this.removeClass('unstyled-table') instruction
+			 * here, however it stopped firing for table with delayed initialization since
+			 * we updated to version 2. So I moved the instruction intp the main process 
+			 * to make sure it is called everytime.
+			 */
 		};
 
 		//----------------- draw callback ------------------------

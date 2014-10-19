@@ -96,9 +96,18 @@ define([], function(){
 		'teststeps.requirements.manager' :	root + '/test-steps/{\\d+}/verified-requirement-versions/manager',
 		
 		'requirements.workspace':			root + '/requirement-workspace/',
+		'requirements' :					root + '/requirements/{{\\d+}}',
 		'requirements.info'	:				root + '/requirements/{\\d+}/info',
+		'requirements.versions.new' :		root + '/requirements/{\\d+}/versions/new',
+		'requirements.currentversion'	:	root + '/requirement-versions/{\\d+}"',
+		'requirements.statuses'			:	root + '/requirements/{{\\d+}}/next-status',
 		'requirements.versions.manager'	:	root + '/requirements/{\\d+}/versions/manager',
+		'requirements.testcases' :			root + '/requirement-versions/{\\d+}/verifying-test-cases',
 		'requirements.testcases.manager':	root + '/requirement-versions/{\\d+}/verifying-test-cases/manager',
+		'requirements.audittrail.change' :	root + '/audit-trail/requirement-versions/fat-prop-change-events/{\\d+}',
+		'requirements.audittrail.model' :	root + '/audit-trail/requirement-versions/{\\d+}/events-table',
+		
+		'requirementversions'	:			root + '/requirement-versions/{{\\d+}}',
 		
 		'campaigns.workspace' :				root + '/campaign-workspace/',
 		'campaigns.testplan.manager' :		root + '/campaigns/{\\d+}/test-plan//manager',
@@ -106,6 +115,8 @@ define([], function(){
 		'testsuites.testplan.manager' :		root + '/test-suites/{\\d+}/test-plan-manager',
 		
 		'administration.bugtrackers'	:	root + '/administration/bugtrackers',
+		'customfield.values' :				root + '/custom-fields/values',
+		'customfield.values.get' :			root + '/custom-fields/values?boundEntityId={\\d+}&boundEntityType={[A-Z_]+}',
 
 		
 		// helper methods

@@ -65,7 +65,8 @@ define(
 										'bSortable' : false,
 										'sClass' : 'centered ui-state-default drag-handle select-handle',
 										'aTargets' : [ 1 ],
-										'mDataProp' : 'entity-index'
+										'mDataProp' : 'entity-index',
+										'sWidth' : '2em'
 									},
 									{
 										"bSortable" : true,

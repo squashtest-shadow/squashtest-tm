@@ -26,6 +26,10 @@
 <%@ attribute name="editable" type="java.lang.Boolean" description="List of attachments is editable. Defaults to false." %>
 <%@ attribute name="tabId" description="id of the concerned tab" required="true" %>
 <%@ attribute name="tableModel" type="java.lang.Object" description="datatable model for preloaded attachments. Optional." required="false" %>
+<%@ attribute name="autoJsInit" type="java.lang.Boolean" 
+                                description="TRANSITIONAL. Whether this tag should also insert a hook for javascript init. Defaults to true." 
+                                required="false" %>
+
 
 
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
@@ -63,18 +67,20 @@
 	</div>
 </c:if>		
 
-	<script type="text/javascript">
-	require(["common"], function() {
-		require(["jquery", "file-upload"], function($, upload){
-			$(function(){
-				upload.initAttachmentsManager({
-					baseURL : "${baseURL}",
-					aaData : ${json:serialize(tableModel.aaData)}
-				});
-			});
-		});
-	});
-	</script>
+<c:if test="${empty autoJsInit or autoJsInit}">
+  <script type="text/javascript">
+  require(["common"], function() {
+  	require(["jquery", "file-upload"], function($, upload){
+  		$(function(){
+  			upload.initAttachmentsManager({
+  				baseURL : "${baseURL}",
+  				aaData : ${json:serialize(tableModel.aaData)}
+  			});
+  		});
+  	});
+  });
+  </script>
+</c:if>
 
 </div>
 
