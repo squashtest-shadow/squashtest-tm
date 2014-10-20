@@ -292,13 +292,20 @@ public class IterationStatisticsServiceImpl implements IterationStatisticsServic
 		requery.setParameterList("nonterminalStatuses", ExecutionStatus.getNonTerminatedStatusSet());
 		List<Date> executionHistory = requery.list();
 		
+		try{
 		progression.setScheduledIteration(scheduledIteration);
+		ScheduledIteration.checkIterationDatesIntegrity(scheduledIteration);
 		
 		progression.computeSchedule();
 		
 		// actual executions
 		progression.computeCumulativeTestPerDate(executionHistory);
-		
+		} catch(IllegalArgumentException ex){
+			if (LOGGER.isInfoEnabled()){
+				LOGGER.info("CampaignStatistics : could not generate iteration progression statistics for iteration "+ iterationId+" : some dates are wrong");
+			}
+			progression.addi18nErrorMessage(ex.getMessage());
+		}
 		
 		return progression;
 	}

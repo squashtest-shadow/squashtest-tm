@@ -142,6 +142,15 @@ public final class ScheduledIteration{
 
 	// ********************** static part *************************
 	
+	public static void checkIterationDatesIntegrity(ScheduledIteration iteration){
+		Date start = iteration.scheduledStart;
+		Date end = iteration.scheduledEnd;
+		
+		if (start == null || end == null){
+			throw new IllegalArgumentException(SCHED_ITER_MISSING_DATES_I18N);
+		}	
+	}
+	
 	public static void checkIterationsDatesIntegrity(Collection<ScheduledIteration> iterations){
 
 		Date prevEnd = null;
