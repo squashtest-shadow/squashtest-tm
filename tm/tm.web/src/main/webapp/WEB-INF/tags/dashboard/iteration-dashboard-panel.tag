@@ -274,46 +274,46 @@
 							<tr>
 								<th style="border:none;" colspan="1"></th>
 								<th style="border:none;"></th>
-								<th class="status-color-untestable" colspan="3"><f:message key="label.Synthesis"/></th>
+								<th class="status-color-untestable std-border light-border" colspan="3" ><f:message key="label.Synthesis"/></th>
 								<th style="border:none;"></th>
-								<th class="status-color-untestable" colspan="${allowsSettled? (allowsUntestable? 14 : 13) : (allowsUntestable? 13 : 12)}"><f:message key="label.ExecutionProgress"/> </th>
+								<th class="status-color-untestable std-border light-border" colspan="${allowsSettled? (allowsUntestable? 13 : 12) : (allowsUntestable? 12 : 11)}"><f:message key="label.ExecutionProgress"/> </th>
 								<th style="border:none;"></th>
-								<th class="status-color-untestable" colspan="4"><f:message key="label.NeverExecuted"/></th>
+								<th class="status-color-untestable std-border light-border" colspan="4"><f:message key="label.NeverExecuted"/></th>
 							</tr>
-							<tr>				
-								<th title="${TestSuiteLabel}" style="width:10%">${TestSuiteLabel}<%--<f:message key="shortLabel.TestSuite"/> --%></th>
+							<tr >				
+								<th title="${TestSuiteLabel}" style="width:10%" class="std-border light-border" >${TestSuiteLabel}<%--<f:message key="shortLabel.TestSuite"/> --%></th>
 								<th style="border:none;"></th>
-								<th title="${TotalLabel}" ><f:message key="shortLabel.Total"/></th>
-								<th title="${ToDoLabel}" ><f:message key="shortLabel.ToDo"/></th>
-							    <th title="${DoneLabel}" ><f:message key="shortLabel.Done"/></th>
+								<th title="${TotalLabel}" class="std-border light-border" ><f:message key="shortLabel.Total"/></th>
+								<th title="${ToDoLabel}" class="std-border light-border" ><f:message key="shortLabel.ToDo"/></th>
+							    <th title="${DoneLabel}" class="std-border light-border" ><f:message key="shortLabel.Done"/></th>
 								<th style="border:none;"></th>
-								<th title="${ToExecuteLabel}" class="status-color-ready"><f:message key="shortLabel.Ready"/></th>
-								<th title="${RunningLabel}" class="status-color-running"><f:message key="shortLabel.Running"/></th>															    								
-								<th title="${SuccessLabel}" class="status-color-success"><f:message key="shortLabel.Success"/></th>
+								<th title="${ToExecuteLabel}" class="status-color-ready std-border light-border"><f:message key="shortLabel.Ready"/></th>
+								<th title="${RunningLabel}" class="status-color-running std-border light-border"><f:message key="shortLabel.Running"/></th>															    								
+								<th title="${SuccessLabel}" class="status-color-success std-border light-border"><f:message key="shortLabel.Success"/></th>
 								<th class="${allowsSettled ? 'status-color-settled' : 'status-color-settled not-displayed' }" title="${SettledLabel}"><f:message key="shortLabel.Settled"/></th>
-								<th title="${FailureLabel}" class="status-color-failure"><f:message key="shortLabel.Failure"/></th>
-								<th title="${BlockedLabel}" class="status-color-blocked"><f:message key="shortLabel.Blocked"/></th>								
-								<th class="${allowsUntestable ? 'status-color-untestable' : 'status-color-untestable not-displayed' }" title="${NonExecutableLabel}"><f:message key="shortLabel.NonExecutable"/></th>
+								<th title="${FailureLabel}" class="status-color-failure std-border light-border"><f:message key="shortLabel.Failure"/></th>
+								<th title="${BlockedLabel}" class="status-color-blocked std-border light-border"><f:message key="shortLabel.Blocked"/></th>								
+								<th class="${allowsUntestable ? 'status-color-untestable std-border light-border' : 'status-color-untestable not-displayed std-border light-border' }" title="${NonExecutableLabel}"><f:message key="shortLabel.NonExecutable"/></th>
 								<th style="border:none;"></th>
-								<th title="${ProgressLabel}"><f:message key="shortLabel.ExecutionProgress"/></th>								
-								<th title="${SuccessRateLabel}"><f:message key="shortLabel.SuccessRate"/></th>
-								<th title="${FailureRateLabel}"><f:message key="shortLabel.FailureRate"/></th>
+								<th title="${ProgressLabel}" class="std-border light-border" ><f:message key="shortLabel.ExecutionProgress"/></th>								
+								<th title="${SuccessRateLabel}" class="std-border light-border" ><f:message key="shortLabel.SuccessRate"/></th>
+								<th title="${FailureRateLabel}" class="std-border light-border" ><f:message key="shortLabel.FailureRate"/></th>
 								<th style="border:none;"></th>
-								<th title="${ProgressVsPrevLabel}" style="width:8%"><f:message key="shortLabel.ExecutionProgressComparedToPrev"/></th>
-								<th title="${ToDoVsPrevLabel}" style="width:8%"><f:message key="shortLabel.ToDoComparedToPrev"/></th>
+								
+								<th title="${ToDoVsPrevLabel}" style="width:8%"  class="std-border light-border"><f:message key="shortLabel.ToDoComparedToPrev"/></th>
 								<th style="border:none;"></th>								
-								<th title="${VeryHighLabel}"><f:message key="shortLabel.VeryHigh"/></th>
-								<th title="${HighLabel}" ><f:message key="shortLabel.High"/></th>
-								<th title="${MediumLabel}" ><f:message key="shortLabel.Medium"/></th>								
-								<th title="${LowLabel}"><f:message key="shortLabel.Low"/></th>
+								<th title="${VeryHighLabel}"  class="std-border light-border"><f:message key="shortLabel.VeryHigh"/></th>
+								<th title="${HighLabel}"  class="std-border light-border"><f:message key="shortLabel.High"/></th>
+								<th title="${MediumLabel}"  class="std-border light-border"><f:message key="shortLabel.Medium"/></th>								
+								<th title="${LowLabel}"  class="std-border light-border"><f:message key="shortLabel.Low"/></th>
 							</tr>
 						</thead>
 				
 						<tbody>
-							<tr class="dashboard-table-template-emptyrow">
-								<td colspan="19" class="std-border"><f:message key="generics.datatable.zeroRecords"/></td>
+							<tr class="dashboard-table-template-emptyrow ">
+								<td colspan="19" class="std-border "><f:message key="generics.datatable.zeroRecords"/></td>
 							</tr>
-							<tr class="dashboard-table-template-datarow">
+							<tr class="dashboard-table-template-datarow status-color-untestable">
 								<!--  the following columns displays conditional style and content, for the tests belonging to no test suite -->
 								<td class="std-border light-border {{#unless this.[0]}}nota-bene{{/unless}}">{{this.[0]}}{{#unless this.[0]}}${testsWithoutSuite}{{/unless}} </td>
 								<td style="border:none;"></td>
@@ -333,13 +333,14 @@
 								<td class="std-border light-border">{{this.[12]}}%</td>
 								<td class="std-border light-border">{{this.[13]}}%</td>
 								<td class="std-border light-border"></td>
-								<td class="std-border light-border">{{this.[14]}}%</td>
+								
 								<td class="std-border light-border">{{this.[15]}}</td>
 								<td style="border:none;"></td>
 								<td class="std-border light-border">{{this.[16]}}</td>								
 								<td class="std-border light-border">{{this.[17]}}</td>
 								<td class="std-border light-border">{{this.[18]}}</td>
-								<td class="std-border light-border">{{this.[19]}}</td>
+								<td class="std-border light-border ">{{this.[19]}}</td>
+				
 							</tr>
 						</tbody>			
 					</table>	
