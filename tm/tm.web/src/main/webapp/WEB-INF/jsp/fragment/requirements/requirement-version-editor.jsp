@@ -21,5 +21,5 @@
 
 --%>
 <%@ taglib prefix="reqs" tagdir="/WEB-INF/tags/requirements-components" %>
-<reqs:requirement-version-editor requirementVersion="${ requirementVersion }" jsonCriticalities="${ jsonCriticalities }" 
-							   jsonCategories="${ jsonCategories }" verifyingTestCaseModel="${verifyingTestCasesModel}"/>
+<reqs:requirement-version-editor requirementVersion="${ requirementVersion }" jsonCriticalities="${ criticalityList }" 
+							   jsonCategories="${ categoryList }" verifyingTestCasesModel="${verifyingTestCasesModel}"/>

@@ -187,13 +187,12 @@ public class RequirementVersionManagerController {
 		DataTableModel auditTrailModel = getEventsTableModel(requirementVersion);
 
 		model.addAttribute("requirementVersion", requirementVersion);
-		model.addAttribute("jsonCriticalities", criticalities);
-		model.addAttribute("jsonCategories", categories);
+		model.addAttribute("criticalityList", criticalities);
+		model.addAttribute("categoryList", categories);
 		model.addAttribute("hasCUF", hasCUF);
-		model.addAttribute("verifyingTestCaseModel", verifyingTCModel);
+		model.addAttribute("verifyingTestCasesModel", verifyingTCModel);
 		model.addAttribute("attachmentsModel", attachmentsModel);
 		model.addAttribute("auditTrailModel", auditTrailModel);
-		model.addAttribute("hasCUF", hasCUF);
 	}
 
 	private DataTableModel getVerifyingTCModel(RequirementVersion version){

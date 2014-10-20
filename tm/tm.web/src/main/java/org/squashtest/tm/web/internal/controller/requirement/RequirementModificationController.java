@@ -320,9 +320,9 @@ public class RequirementModificationController {
 		model.addAttribute("requirement", req);
 		model.addAttribute("versions", req.getUnmodifiableVersions());
 		model.addAttribute("selectedVersion", req.getCurrentVersion());
-		model.addAttribute("jsonCriticalities", buildMarshalledCriticalities(locale));
-		model.addAttribute("jsonCategories", buildMarshalledCategories(locale));
-		model.addAttribute("verifyingTestCaseModel", getVerifyingTCModel(req.getCurrentVersion()));
+		model.addAttribute("criticalityList", buildMarshalledCriticalities(locale));
+		model.addAttribute("categoryList", buildMarshalledCategories(locale));
+		model.addAttribute("verifyingTestCasesModel", getVerifyingTCModel(req.getCurrentVersion()));
 		model.addAttribute("auditTrailModel", getEventsTableModel(req));
 		boolean hasCUF = cufValueService.hasCustomFields(req.getCurrentVersion());
 

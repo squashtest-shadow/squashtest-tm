@@ -20,11 +20,10 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 --%>
-<%@ tag body-content="empty"%>
 <%@ attribute name="requirementVersion" required="true" type="java.lang.Object" rtexprvalue="true"%>
 <%@ attribute name="jsonCriticalities" required="true" rtexprvalue="true"%>
 <%@ attribute name="jsonCategories" required="true" rtexprvalue="true"%>
-<%@ attribute name="verifyingTestCaseModel" required="true" rtexprvalue="true" type="java.lang.Object"%>
+<%@ attribute name="verifyingTestCasesModel" required="true" rtexprvalue="true" type="java.lang.Object"%>
 
 
 
@@ -37,24 +36,29 @@
 <%@ taglib prefix="authz" tagdir="/WEB-INF/tags/authz"%>
 <%@ taglib prefix="at" tagdir="/WEB-INF/tags/attachments"%>
 <%@ taglib prefix="csst" uri="http://org.squashtest.tm/taglib/css-transform"%>
+<%@ taglib prefix="json" uri="http://org.squashtest.tm/taglib/json" %>
+
 
 <s:url var="requirementUrl" value="/requirement-versions/${ requirementVersion.id }" />
-<s:url var="pageUrl" value="/requirement-versions/" />
-
-<s:url var="verifyingTCManagerUrl" value="/requirement-versions/${ requirementVersion.id }/verifying-test-cases/manager" />
-<s:url var="getStatusComboContent" value="/requirement-versions/${ requirementVersion.id }/next-status" />
-<s:url var="customFieldsValuesURL" value="/custom-fields/values" />
+<c:url var="attachmentsUrl" value="/attach-list/${requirementVersion.attachmentList.id}/attachments" />
 
 <f:message var="confirmLabel" key="label.Confirm"/>
 <f:message var="cancelLabel" key="label.Cancel"/>
 <f:message var="okLabel" key="label.Ok"/>
-<f:message var="DefaultStatusNotAllowedMessage" key='requirement.status.notAllowed.default' />
-<f:message var="ApprovedStatusNotAllowedMessage" key='requirement.status.notAllowed.approved' />
 
 <%-- ----------------------------------- Authorization ----------------------------------------------%>
 <%-- that page won't be editable if 
    * the user don't have the correct permission,
    * the requirement status doesn't allow it. --%>
+
+
+ <c:set var="attachable"        value="${false}"/> 
+ <c:set var="moreThanReadOnly"  value="${false}"/> 
+ <c:set var="writable"          value="${false}"/> 
+ <c:set var="deletable"         value="${false}"/> 
+ <c:set var="creatable"         value="${false}"/> 
+ <c:set var="linkable"          value="${false}"/> 
+ <c:set var="status_editable"   value="${false}"/>
 
 <authz:authorized hasRole="ROLE_ADMIN" hasPermission="ATTACH" domainObject="${ requirementVersion }">
   <c:set var="attachable" value="${ requirementVersion.modifiable }" />
@@ -69,6 +73,48 @@
 
 <%-- ----------------------------------- /Authorization ----------------------------------------------%>
 <%-- ----------------------------------- header ----------------------------------------------%>
+
+<script type="text/javascript">
+  requirejs.config({
+    config : {
+      'requirement-page' : {
+        basic : {
+          'edited-entity-type' : 'requirement-version',
+          identity : { resid : ${requirementVersion.id}, restype : "requirements"  },
+          requirementId : ${requirementVersion.requirement.id},
+          currentVersionId : ${requirementVersion.id},
+          criticalities : ${json:serialize(criticalityList)},
+          categories : ${json:serialize(categoryList)},
+          verifyingTestcases : ${json:serialize(verifyingTestCasesModel.aaData)},
+          attachments : ${json:serialize(attachmentsModel.aaData)},
+          audittrail : ${json:serialize(auditTrailModel.aaData)},
+          hasCufs : ${hasCUF}
+        },
+        permissions : {
+          moreThanReadOnly : ${moreThanReadOnly},
+          attachable : ${attachable},
+          writable : ${writable},
+          deletable : ${deletable},
+          creatable : ${creatable},
+          linkable : ${linkable},
+          status_editable : ${status_editable}
+        },
+        urls : {
+          baseURL : "${requirementUrl}",
+          attachmentsURL : "${attachmentsUrl}"
+        }
+      }
+    }
+  });
+  
+  require(['common'], function(){
+    require(['requirement-page'], function(){});
+  });
+
+</script>
+
+
+
 <div class="ui-widget-header ui-corner-all ui-state-default fragment-header">
   <div style="float: left; height: 100%;">
     <h2>
@@ -77,18 +123,13 @@
       <c:if test="${ not empty requirementVersion.reference && fn:length(requirementVersion.reference) > 0 }">
         <c:set var="completeRequirementName" value='${ requirementVersion.reference } - ${ requirementVersion.name }' />
       </c:if>
-      <a id="requirement-name" href="${ requirementUrl }/info">
-        <c:out value="${ completeRequirementName }" />
-      </a>
+      <a id="requirement-name" href="${ requirementUrl }/info"><c:out value="${ completeRequirementName }" /></a>
       <%-- raw reference and name because we need to get the name and only the name for modification, and then re-compose the title with the reference  --%>
       <span id="requirement-raw-reference" style="display: none">
         <c:out value="${ requirementVersion.reference }" />
       </span>
       <span id="requirement-raw-name" style="display: none">
         <c:out value="${ requirementVersion.name }" />
-      </span>
-      <span id="requirement-id" style="display: none">
-        <c:out value="${ requirementVersion.id }" />
       </span>
     </h2>
   </div>
@@ -109,10 +150,12 @@
     </c:if>
     <input type="button" value="<f:message key='label.print'/>" id="print-requirement-version-button" class="sq-btn" />
   </div>
-
-
   <div class="unsnap"></div>
 </div>
+<script type="text/javascript">
+publish('reload.requirement.toolbar');
+</script>
+
 <%-- ----------------------------------- /toolbar ----------------------------------------------%>
 <%-- -------------------------------------------------------- TABS-----------------------------------------------------------%>
 <csst:jq-tab>
@@ -136,84 +179,59 @@
     <div id="tabs-1">
       <c:if test="${ writable }">
         <c:set var="descrRicheditAttributes" value="class='editable rich-editable' data-def='url=${requirementUrl}'"/>
-        <c:set var="referenceEditableAttributes" value="class='editable text-editable' data-def='url=${requirementUrl}, maxlength=50, callback=squashtm.requirement.updateReferenceInTitle'" />  
       </c:if>
 <f:message var="requirementInformationPanelLabel" key="requirement.panel.general-informations.title" />
 
 
-      <comp:toggle-panel id="requirement-information-panel" 	   title=  '${requirementInformationPanelLabel} <span class="small discret">[ID = ${requirementVersion.requirement.id }]</span>'
+      <comp:toggle-panel id="requirement-information-panel" title='${requirementInformationPanelLabel} <span class="small discret">[ID = ${requirementVersion.requirement.id }]</span>'
         open="true">
         <jsp:attribute name="body">
 			<div id="edit-requirement-table" class="display-table">
-				<div>
-					<label for="requirement-version-number">
-                <f:message key="requirement-version.version-number.label" />
-              </label>
-					<div id="requirement-version-number">${ requirementVersion.versionNumber }</div>
+				<div class="display-table-row">
+					<label for="requirement-version-number"><f:message key="requirement-version.version-number.label" /></label>
+					<div class="display-table-cell" id="requirement-version-number">${ requirementVersion.versionNumber }&nbsp;&nbsp;</div>
 				</div>
-	
+			
 				
-				<div>
-					<label for="requirement-reference">
-                <f:message key="label.Reference" />
-              </label>
-					<div id="requirement-reference" ${referenceEditableAttributes}>${ requirementVersion.reference }</div>
+				<div class="display-table-row">
+					<label class="display-table-cell"  for="requirement-reference"><f:message key="label.Reference" /></label>
+					<div id="requirement-reference">${ requirementVersion.reference }</div>
 				</div>
-				<div>
-					<label for="requirement-criticality">
-                <f:message key="requirement.criticality.combo.label" />
-              </label>
-					<div>
-						<div id="requirement-criticality">
-							<c:choose>
-								<c:when test="${ writable }">
-									<comp:level-message level="${ requirementVersion.criticality }" />
-									<comp:select-jeditable componentId="requirement-criticality" jsonData="${ jsonCriticalities }"
-                        targetUrl="${ requirementUrl }" />
-								</c:when>
-							<c:otherwise>
-								<comp:level-message level="${ requirementVersion.criticality }" />
-							</c:otherwise>
-							</c:choose>
-						</div>
+				<div class="display-table-row">
+					<label for="requirement-criticality" class="display-table-cell"><f:message key="requirement.criticality.combo.label" /></label>
+					<div class="display-table-cell">
+						<div id="requirement-criticality"><comp:level-message level="${ requirementVersion.criticality }"/></div>
+					</div>
+				</div>
+				<div class="display-table-row">
+					<label for="requirement-category" class="display-table-cell"><f:message key="requirement.category.combo.label" /></label>
+					<div class="display-table-cell">
+						<div id="requirement-category"><s:message code="${ requirementVersion.category.i18nKey }" htmlEscape="true" /></div>
 					</div>				
 				</div>
-				<div>
-					<label for="requirement-category">
-                <f:message key="requirement.category.combo.label" />
-              </label>
-					<div>
-						<div id="requirement-category">
-							<c:choose>
-								<c:when test="${ writable }">
-									<s:message code="${ requirementVersion.category.i18nKey }" htmlEscape="true" />
-									<comp:select-jeditable componentId="requirement-category" jsonData="${ jsonCategories }"
-                        targetUrl="${ requirementUrl }" />
-								</c:when>
-							<c:otherwise>
-								<s:message code="${ requirementVersion.category.i18nKey }" htmlEscape="true" />
-							</c:otherwise>
-							</c:choose>
-						</div>
-					</div>				
-				</div>
-				<div>
-					<label for="requirement-status"><f:message key="requirement.status.combo.label" /></label>
-				<div>
-				<div >
-					<div id="requirement-status"><comp:level-message level="${ requirementVersion.status }"/></div>
-				</div>
+				<div class="display-table-row">
+					<label for="requirement-status" class="display-table-cell"><f:message key="requirement.status.combo.label" /></label>
+					<div class="display-table-cell">
+						<div id="requirement-status"><comp:level-message level="${ requirementVersion.status }"/></div>
+					</div>
 
 				</div>				
 			</div>
 		</jsp:attribute>
       </comp:toggle-panel>
+      
+  <script type="text/javascript">
+    publish('reload.requirement.generalinfo');
+  </script>
+       
 
       <comp:toggle-panel id="requirement-description-panel" titleKey="label.Description" open="true">
         <jsp:attribute name="body">	
 					<div id="requirement-description" ${descrRicheditAttributes}>${ requirementVersion.description }</div>
 		</jsp:attribute>
       </comp:toggle-panel>
+      
+      
       <%--------------- verifying TestCase section ------------------------------------%>
       <comp:toggle-panel id="verifying-test-case-panel" titleKey="requirement.verifying_test-case.panel.title"
         open="true">
@@ -229,43 +247,36 @@
 
         <jsp:attribute name="body">
 			<reqs:verifying-test-cases-table batchRemoveButtonId="remove-verifying-test-case-button"
-            editable="${ linkable }" model="${verifyingTestCaseModel}" requirementVersion="${requirementVersion}" />
+            editable="${ linkable }" model="${verifyingTestCaseModel}" requirementVersion="${requirementVersion}" autoJsInit="${false}"/>
 		</jsp:attribute>
       </comp:toggle-panel>
 
+  <script type="text/javascript">
+  publish('reload.requirement.verifyingtestcases');
+  </script>
       <%--------------- Audit Trail ------------------------------------%>
-      <reqs:requirement-version-audit-trail requirementVersion="${ requirementVersion }" tableModel="${auditTrailModel}" />
-      
+        <reqs:requirement-version-audit-trail requirementVersion="${ requirementVersion }" tableModel="${auditTrailModel}" />
+<script type="text/javascript">
+publish('reload.requirement.audittrail');
+</script>      
     </div>
     <%-- --------------------------------------------- /tab1 Information----------------------------------------------%>
     <%-- --------------------------------------------- tab2 Attachments ----------------------------------------------%>
     <at:attachment-tab tabId="tabs-2" entity="${ requirementVersion }" editable="${ attachable }"
-      tableModel="${attachmentsModel}" />
+      tableModel="${attachmentsModel}" autoJsInit="${false}"/>
     <%-- --------------------------------------------- /tab2 Attachments ----------------------------------------------%>
-
+<script type="text/javascript">
+publish('reload.requirement.attachments');
+</script>
   </div>
 </csst:jq-tab>
 <%-- --------------------------------------------------------------- /TABS ------------------------------------------------------------%>
 
 <!------------------------------------------ POPUPS ------------------------------------------------------>
 <%------------------- confirm new status if set to obsolete ---------------------%>
-<c:if test="${ editableStatus }">
-      <f:message var="statusChangeDialogTitle" key="dialog.requirement.status.confirm.title"/>
-      <div id="requirement-status-confirm-dialog" class="not-displayed"
-            title="${statusChangeDialogTitle}">
-            
-            <span><f:message key="dialog.requirement.status.confirm.text"/></span>
-            
-            <div class="popup-dialog-buttonpane">
-              <input type="button" value="${confirmLabel}" data-def="mainbtn, evt=confirm"/>
-              <input type="button" value="${cancelLabel}" data-def="evt=cancel" />
-            </div>
-      </div>
-</c:if>
-
-  <%------------------- rename ---------------------%>
-  <div>
-  <c:if test="${writable}">
+<div class="not-displayed">
+<c:if test="${ writable }">
+		
     <f:message var="renameDialogTitle" key="dialog.rename-requirement.title"/>
     <div  id="rename-requirement-dialog" class="not-displayed popup-dialog"
           title="${renameDialogTitle}">
@@ -283,206 +294,30 @@
     </div>
 
 </c:if>
+
+<%------------------------------- confirm new status if set to obsolete popup---------------------%>
+<c:if test="${status_editable}">
+  
+      <f:message var="statusChangeDialogTitle" key="dialog.requirement.status.confirm.title"/>
+      <div id="requirement-status-confirm-dialog" class="not-displayed"
+            title="${statusChangeDialogTitle}">
+            
+            <span><f:message key="dialog.requirement.status.confirm.text"/></span>
+            
+            <div class="popup-dialog-buttonpane">
+              <input type="button" value="${confirmLabel}" data-def="mainbtn, evt=confirm"/>
+              <input type="button" value="${cancelLabel}" data-def="evt=cancel" />
+            </div>
+      </div>
+</c:if>
+  
 </div>
-<!------------------------------------------/ POPUPS ------------------------------------------------------>
-<!------------------------------------------ SCRIPTS ------------------------------------------------------>
+<script type="text/javascript">
+publish('reload.requirement.popups');
+</script>
+<%-- -----------------------------------/POPUPS ----------------------------------------------%>
 
 <script type="text/javascript">
-require( ["common"], function(){
-	require( ["jquery"], function($){
-var identity = { resid : ${requirementVersion.id}, restype : "requirements"  };
-
-	$(function(){
-		
-		var identity = { obj_id : ${requirementVersion.id}, obj_restype : "requirements"  };
-
-		require(["domReady", "require"], function(domReady, require){
-			domReady(function(){
-				require(["jquery", "squash.basicwidgets", "contextual-content-handlers", "workspace.event-bus", 
-				         "custom-field-values", "squash.configmanager", "app/ws/squashtm.notification", 
-				         "jquery.squash.formdialog" ], 
-						function($, basic, contentHandlers, eventBus, cufvalues, confman, notification){
-					
-					basic.init();
-					
-					var nameHandler = contentHandlers.getNameAndReferenceHandler();
-					
-					nameHandler.identity = identity;
-					nameHandler.nameDisplay = "#requirement-name";
-					nameHandler.nameHidden = "#requirement-raw-name";
-					nameHandler.referenceHidden = "#requirement-raw-reference";
-					
-					$("#print-requirement-version-button").click(function(){
-						window.open("${requirementUrl}?format=printable", "_blank");
-					});
-					
-					//****** tabs configuration *******
-					
-					$('.fragment-tabs').tabs();
-					
-					
-					// *********** status modification **********
-				
-					<c:if test="${editableStatus}">
-					
-					var statusChangeDialog = $("#requirement-status-confirm-dialog");
-					statusChangeDialog.formDialog();
-					
-					var statusChangeSelect = $("#requirement-status"),
-						statusSelectConf = confman.getJeditableSelect();
-					
-					// this function uses an interplay with the 
-					// statusChangeDialog, see the "OBSOLETE" branch
-					function submitOrConfirm(settings, widget){
-						var selected = this.find('select').val(),
-							cansubmit = true;
-						
-						// if disabled, tell the user and exit
-						if (selected.search(/disabled.*/)!=-1){
-							cansubmit = false;
-							var msg = ("disabled.APPROVED" === selected ) ? 
-										"${ApprovedStatusNotAllowedMessage}" : 
-										"${DefaultStatusNotAllowedMessage}";
-										
-							notification.showError(msg);
-							widget.reset();
-						}
-						else if ("OBSOLETE" == selected){
-							
-							cansubmit = false;
-							
-							var summoned = statusChangeDialog.data('summoned'),
-								confirmed = statusChangeDialog.data('confirmed');
-							
-							if (summoned !== true){
-								statusChangeDialog.data('summoned', true);
-								statusChangeDialog.data('confirmed', false);
-								statusChangeDialog.data('form', this);
-								statusChangeDialog.formDialog('open');
-							}
-							else{
-								cansubmit = confirmed;
-								if (! confirmed){
-									widget.reset();
-								}
-								// rearm the switch;
-								statusChangeDialog.data('summoned', false);
-							}
-						}
-						
-						return cansubmit;
-					}
-					
-					var finalStatusSelectConf = $.extend(true, statusSelectConf, 
-						{
-							loadurl : "${getStatusComboContent}",
-							callback : function(){document.location.reload();},
-							onsubmit : submitOrConfirm
-						}	
-					);
-					
-					statusChangeSelect.editable('${requirementUrl}', finalStatusSelectConf)
-								.addClass('editable');
-					
-					
-					statusChangeDialog.on('formdialogconfirm', function(){
-						statusChangeDialog.formDialog('close');
-						statusChangeDialog.data('confirmed', true);
-						var form = statusChangeDialog.data('form');
-						form.submit();
-					});
-					
-					statusChangeDialog.on('formdialogcancel', function(){
-						statusChangeDialog.formDialog('close');
-						statusChangeDialog.data('confirmed', false);
-						var form = statusChangeDialog.data('form');
-						form.submit();				
-					});
-					
-					</c:if>
-					
-					// ************ rename dialog****************
-				
-					
-				var renameDialog = $("#rename-requirement-dialog");
-				renameDialog.formDialog();
-				
-				renameDialog.on('formdialogconfirm', function(){
-					var url = "${ pageUrl }" + $('#requirement-id').text();
-						params = { newName : $("#rename-requirement-input").val() };
-					
-					$.ajax({
-						url : url,
-						type : 'POST',
-						dataType : 'json',
-						data : params
-					}).success(function(json){
-						renameDialog.formDialog('close');
-						squashtm.requirementVersion.renameRequirementSuccess(json);
-					});
-					
-				});
-				
-				renameDialog.on('formdialogcancel', function(){
-					renameDialog.formDialog('close');
-				});
-				
-				renameDialog.on('formdialogopen', function(){
-   					var name = $.trim($('#requirement-raw-name').text());
-					$("#rename-requirement-input").val(name);
-				});
-				
-				$("#rename-requirement-button").on('click', function(){
-					renameDialog.formDialog('open');
-				});
-        		
-        		$("#verifying-test-case-button").click(function(){
-        			document.location.href="${ verifyingTCManagerUrl }" ;	
-        		});
-        		
-        		
-        		<c:if test="${hasCUF}">
-                    <c:choose>
-                    <c:when test="${writable}">
-                    <c:set var="mode" value="jeditable"/>
-                    </c:when>
-                    <c:otherwise >
-                    <c:set var="mode" value="static"/>
-                    </c:otherwise>
-                   </c:choose>
-            		<%-- loading the custom fields --%>
-            		$.getJSON("${customFieldsValuesURL}?boundEntityId=${requirementVersion.boundEntityId}&boundEntityType=${requirementVersion.boundEntityType}")
-            		.success(function(jsonCufs){	
-            			cufvalues.infoSupport.init("#edit-requirement-table", jsonCufs, "${mode}");
-            		});
-            	</c:if>
-
-				});
-			});
-		});
-
-	});
-	   squashtm = squashtm || {};
-      squashtm.requirementVersion = squashtm.requirementVersion || {} 
-
-	<c:if test="${ writable }">
-	function renameRequirementSuccess(data){
-		squashtm.workspace.eventBus.trigger('node.rename', {identity : identity, newName : data.newName});
-		
-	};	
-	 squashtm.requirementVersion.renameRequirementSuccess = renameRequirementSuccess;
-     
-	function updateReferenceInTitle(newRef){
-		squashtm.workspace.eventBus.trigger('node.update-reference', {identity : identity, newName : newRef});	
-	};
-	squashtm.requirementVersion.updateReferenceInTitle = updateReferenceInTitle;
-     
-	</c:if>
-	
-
-	});
-});
-
-	
+publish('reload.requirement.complete');
 </script>
-<!------------------------------------------ /SCRIPTS ------------------------------------------------------>
+

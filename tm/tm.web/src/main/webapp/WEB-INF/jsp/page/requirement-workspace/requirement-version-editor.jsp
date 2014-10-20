@@ -52,7 +52,7 @@
 	</jsp:attribute>
 
   <jsp:attribute name="informationContent">	
-		<reqs:requirement-version-editor requirementVersion="${ requirementVersion }" jsonCriticalities="${ jsonCriticalities }"
-      jsonCategories="${ jsonCategories }" verifyingTestCaseModel="${verifyingTestCaseModel}" />
+		<reqs:requirement-version-editor requirementVersion="${ requirementVersion }" jsonCriticalities="${ criticalityList }"
+      jsonCategories="${ categoryList }" verifyingTestCasesModel="${verifyingTestCasesModel}" />
 	</jsp:attribute>
 </layout:info-page-layout>

@@ -101,8 +101,8 @@
 			
 			<div id="sub-page-selection-panel" class="sub-page-selection-panel shadow ui-corner-all ui-component">
 				<div id="contextual-content">
-				<reqs:requirement-version-editor requirementVersion="${ selectedVersion }" jsonCriticalities="${ jsonCriticalities }" 
-											   jsonCategories="${ jsonCategories }" verifyingTestCaseModel="${verifyingTestCaseModel}"/>
+				<reqs:requirement-version-editor requirementVersion="${ selectedVersion }" jsonCriticalities="${ criticalityList }" 
+											   jsonCategories="${ categoryList }" verifyingTestCasesModel="${verifyingTestCasesModel}"/>
 				</div>
 			</div>	
 			
