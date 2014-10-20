@@ -35,7 +35,7 @@
 			description="if set to true, renders in print mode. This means among other things that the toolbar will not be rendered." %>
 
 
-<f:message var="advanceTitle" key="title.CampaignCumulativeAdvancement"/>
+<f:message var="advanceTitle" key="title.IterationCumulativeAdvancement"/>
 <f:message var="statisticsTitle" key="title.IterationStatistics"/>
 <f:message var="inventoryTitle" key="title.TestInventoryByTestSuite"/>
 <f:message var="TestSuiteLabel" key="label.testSuite"/>
@@ -85,7 +85,36 @@
 		</div>
 	
 		<div class="dashboard-figleaf-figures not-displayed">
-
+	<%-- first dashboard : cumulative progression of this iteration --%>
+					
+			<comp:toggle-panel id="" title="${advanceTitle}">
+				
+				<jsp:attribute name="panelButtons">
+					<div class="icon-helper no-print" title="${campaignProgressHelper}"> </div>	
+				</jsp:attribute>
+				
+				
+				<jsp:attribute name="body">
+								
+				<div id="dashboard-cumulative-progression" data-def="model-attribute=iterationProgressionStatistics, dateformat=${dateformatSupershort}">
+					
+					<div class="dashboard-figures  dashboard-alternative-content" style="height : 300px;">					
+						<div id="dashboard-cumulative-progression-view" class="dashboard-item-view" style="width:95%;float:none;margin:auto">
+						
+						
+						</div>				
+					</div>
+					
+					<div class="dashboard-cumulative-progression-error not-displayed  dashboard-alternative-content">
+						<span class="cumulative-progression-errormsg"></span> <a class="dashboard-cumulative-progression-details" href="#">(<f:message key="error.generic.button.details.label"/>...)</a>
+					</div>
+				
+						
+					</div>
+					
+				</div>
+				</jsp:attribute>
+			</comp:toggle-panel>
 			<%-- second dashboard : campaign statistics --%>
 			<comp:toggle-panel id="dashboard-statistics" title="${statisticsTitle}">
 				<jsp:attribute name="body">
@@ -313,10 +342,11 @@
 								<td class="std-border light-border">{{this.[19]}}</td>
 							</tr>
 						</tbody>			
-					</table>		
+					</table>	
 				</div>
 				</jsp:attribute>
 			</comp:toggle-panel>
+
 		</div>
 	</div>
 </div>

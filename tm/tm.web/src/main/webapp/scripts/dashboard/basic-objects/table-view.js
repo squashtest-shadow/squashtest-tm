@@ -81,6 +81,7 @@ define(["jquery", "backbone", "squash.attributeparser", "handlebars"],
 					var r = this.datarowTemplate(data[i]);
 					body.append(r);
 				}
+				
 			}
 		},
 		

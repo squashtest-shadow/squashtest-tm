@@ -1527,3 +1527,34 @@ div.admin-message-page-content{
 	padding-top: 0.5em;
 	padding-bottom : 0.5em;
 }
+
+/* ---------------- iteration dashbord -----------------*/
+.iteration-dashbord-test-suite-col{
+	text-align : left;
+}
+.iteration-dashbord-total-col{
+	text-align : right;
+}
+
+.iteration-dashbord-failed-col{
+
+}
+.iteration-dashbord-ready-col{
+
+}
+.iteration-dashbord-running-col{
+
+}
+.iteration-dashbord-passed-col{
+
+}
+.iteration-dashbord-blocked-col{
+
+}
+.iteration-dashbord-untestable-col{
+
+}
+.iteration-dashbord-total-ligne{
+font-weight: bold;
+background-color:#969696;
+}

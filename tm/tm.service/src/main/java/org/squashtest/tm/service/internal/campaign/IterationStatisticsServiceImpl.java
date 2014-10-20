@@ -27,7 +27,9 @@ import java.util.List;
 import javax.inject.Inject;
 
 import org.hibernate.Query;
+import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.type.LongType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -39,6 +41,8 @@ import org.squashtest.tm.service.campaign.IterationStatisticsService;
 import org.squashtest.tm.service.statistics.campaign.CampaignNonExecutedTestCaseImportanceStatistics;
 import org.squashtest.tm.service.statistics.campaign.CampaignTestCaseStatusStatistics;
 import org.squashtest.tm.service.statistics.campaign.CampaignTestCaseSuccessRateStatistics;
+import org.squashtest.tm.service.statistics.campaign.ScheduledIteration;
+import org.squashtest.tm.service.statistics.iteration.IterationProgressionStatistics;
 import org.squashtest.tm.service.statistics.iteration.IterationStatisticsBundle;
 import org.squashtest.tm.service.statistics.iteration.TestSuiteTestInventoryStatistics;
 
@@ -51,6 +55,11 @@ public class IterationStatisticsServiceImpl implements IterationStatisticsServic
 
 	@Inject
 	private SessionFactory sessionFactory;
+	
+	
+
+	
+	
 	
 	@Override
 	@PreAuthorize("hasPermission(#iterationId, 'org.squashtest.tm.domain.campaign.Iteration', 'READ') "
@@ -259,11 +268,38 @@ public class IterationStatisticsServiceImpl implements IterationStatisticsServic
 		CampaignNonExecutedTestCaseImportanceStatistics testcaseImportance = gatherIterationNonExecutedTestCaseImportanceStatistics(iterationId);
 		CampaignTestCaseSuccessRateStatistics testCaseSuccessRate = gatherIterationTestCaseSuccessRateStatistics(iterationId);
 		List<TestSuiteTestInventoryStatistics> testSuiteTestInventoryStatistics = gatherTestSuiteTestInventoryStatistics(iterationId);
+		IterationProgressionStatistics iterationProgressionStatistics = gatherIterationProgressionStatistics(iterationId);
 		bundle.setIterationTestCaseStatusStatistics(testcaseStatuses);
 		bundle.setIterationNonExecutedTestCaseImportanceStatistics(testcaseImportance);
 		bundle.setIterationTestCaseSuccessRateStatistics(testCaseSuccessRate);
 		bundle.setTestsuiteTestInventoryStatisticsList(testSuiteTestInventoryStatistics);
+		bundle.setIterationProgressionStatistics(iterationProgressionStatistics);
 		return bundle;
 		
+	}
+
+	@Override
+	public IterationProgressionStatistics gatherIterationProgressionStatistics(long iterationId) {
+		IterationProgressionStatistics progression = new IterationProgressionStatistics();
+		Session session = sessionFactory.getCurrentSession();
+		Query query = session.getNamedQuery("IterationStatistics.findScheduledIterations");
+		query.setParameter("id", iterationId, LongType.INSTANCE);
+		ScheduledIteration scheduledIteration = (ScheduledIteration) query.uniqueResult();
+		
+		//TODO : have the db do the job for me
+		Query requery = session.getNamedQuery("IterationStatistics.findExecutionsHistory");
+		requery.setParameter("id", iterationId, LongType.INSTANCE);
+		requery.setParameterList("nonterminalStatuses", ExecutionStatus.getNonTerminatedStatusSet());
+		List<Date> executionHistory = requery.list();
+		
+		progression.setScheduledIteration(scheduledIteration);
+		
+		progression.computeSchedule();
+		
+		// actual executions
+		progression.computeCumulativeTestPerDate(executionHistory);
+		
+		
+		return progression;
 	}
 }

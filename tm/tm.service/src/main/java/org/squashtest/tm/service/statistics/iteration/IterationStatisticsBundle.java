@@ -37,6 +37,16 @@ public class IterationStatisticsBundle {
 	
 	private List<TestSuiteTestInventoryStatistics> testsuiteTestInventoryStatisticsList; 
 	
+	private IterationProgressionStatistics iterationProgressionStatistics;
+	
+	public IterationProgressionStatistics getIterationProgressionStatistics() {
+		return iterationProgressionStatistics;
+	}
+
+	public void setIterationProgressionStatistics(IterationProgressionStatistics iterationProgressionStatistics) {
+		this.iterationProgressionStatistics = iterationProgressionStatistics;
+	}
+
 	public CampaignTestCaseStatusStatistics getIterationTestCaseStatusStatistics() {
 		return iterationTestCaseStatusStatistics;
 	}

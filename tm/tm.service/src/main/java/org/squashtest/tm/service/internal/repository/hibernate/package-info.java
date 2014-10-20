@@ -513,6 +513,16 @@
 	+ "and itp.lastExecutedOn is not null and itp.executionStatus not in (:nonterminalStatuses) and itp.referencedTestCase is not null order by itp.lastExecutedOn"),
 
 	//Iteration Statistics
+	
+	@NamedQuery(name = "IterationStatistics.findScheduledIterations", query = "select new org.squashtest.tm.service.statistics.campaign.ScheduledIteration(iter.id as id, iter.name as name, "
+			+ "(select count(itp1) from Iteration it1 join it1.testPlans itp1 where it1.id = iter.id and itp1.referencedTestCase is not null) as testplanCount, "
+			+ "iter.scheduledPeriod.scheduledStartDate as scheduledStart, iter.scheduledPeriod.scheduledEndDate as scheduledEnd) "
+			+ "from Iteration iter where iter.id = :id"),
+			
+	@NamedQuery(name = "IterationStatistics.findExecutionsHistory", query = "select itp.lastExecutedOn from IterationTestPlanItem itp where itp.iteration.id = :id "
+			+ "and itp.lastExecutedOn is not null and itp.executionStatus not in (:nonterminalStatuses) and itp.referencedTestCase is not null order by itp.lastExecutedOn"),
+	
+	
 
 	@NamedQuery(name = "IterationStatistics.globaltestinventory", query = "select itp.executionStatus, count(itp.executionStatus) "
 	+ "from Iteration iter join iter.testPlans itp where iter.id = :id and itp.referencedTestCase is not null group by itp.executionStatus"),
