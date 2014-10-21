@@ -38,7 +38,7 @@ class RequirementStatusTest extends Specification {
 			WORK_IN_PROGRESS  	|	[ OBSOLETE, WORK_IN_PROGRESS, UNDER_REVIEW ] as Set
 			UNDER_REVIEW		|	[ OBSOLETE, UNDER_REVIEW, APPROVED, WORK_IN_PROGRESS ] as Set
 			APPROVED			|	[ OBSOLETE, APPROVED, UNDER_REVIEW, WORK_IN_PROGRESS ] as Set
-			OBSOLETE			|	[ OBSOLETE ] as Set
+			OBSOLETE			|	[ WORK_IN_PROGRESS, UNDER_REVIEW, APPROVED,  OBSOLETE ] as Set
 			
 	}
 	@Unroll("next disabled statuses of #status should be #expectedSet")
@@ -51,7 +51,7 @@ class RequirementStatusTest extends Specification {
 			WORK_IN_PROGRESS  	|	[ APPROVED ] as Set
 			UNDER_REVIEW		|	[ ] as Set
 			APPROVED			|	[ ] as Set
-			OBSOLETE			|	[ APPROVED, UNDER_REVIEW, WORK_IN_PROGRESS ] as Set
+			OBSOLETE			|	[ ] as Set
 			
 	}
 	// FIXME l'assertion est le resultat de allowedTransitions.each { ... } soit le retour de la derni�re it�eration !
@@ -130,7 +130,7 @@ class RequirementStatusTest extends Specification {
 			WORK_IN_PROGRESS	|	true
 			UNDER_REVIEW		|	true
 			APPROVED			|	true
-			OBSOLETE			|	false
+			OBSOLETE			|	true
 	}
 	
 	@Unroll("requirement linkable state should be #linkable for status #status")

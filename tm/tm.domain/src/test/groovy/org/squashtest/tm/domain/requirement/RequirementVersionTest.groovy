@@ -149,14 +149,6 @@ class RequirementVersionTest extends Specification {
 		]
 	}
 
-	def "should not allow status change for OBSOLETE"(){
-		given :
-		def req = prepareRequirement(OBSOLETE)
-		when :
-		req.setStatus(OBSOLETE)
-		then :
-		thrown(IllegalRequirementModificationException)
-	}
 
 
 	@Unroll("the following workflow transition for #status are legal : #availableStatuses")
@@ -216,12 +208,7 @@ class RequirementVersionTest extends Specification {
 		WORK_IN_PROGRESS  	|	[APPROVED]
 		UNDER_REVIEW		|	[]
 		APPROVED			|	[]
-		OBSOLETE			|	[
-			WORK_IN_PROGRESS,
-			UNDER_REVIEW,
-			APPROVED,
-			OBSOLETE
-		]
+		OBSOLETE			|	[]
 	}
 
 	

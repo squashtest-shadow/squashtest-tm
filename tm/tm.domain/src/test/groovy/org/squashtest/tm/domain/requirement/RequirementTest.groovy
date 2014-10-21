@@ -139,17 +139,6 @@ class RequirementTest extends Specification {
 		]
 	}
 
-	def "should not allow status change for OBSOLETE"(){
-		given : "an obsolete requirement"
-		def req = prepareRequirement(OBSOLETE)
-				
-		when :
-		req.setStatus(OBSOLETE)
-		
-		
-		then :
-		thrown(IllegalRequirementModificationException)
-	}
 
 	@Unroll("the following workflow transition for #status are legal : #availableStatuses")
 	def "check workflow legal"(){
@@ -194,7 +183,7 @@ class RequirementTest extends Specification {
 		WORK_IN_PROGRESS  	|	[APPROVED]
 		UNDER_REVIEW		|	[]
 		APPROVED			|	[]
-		OBSOLETE			|	[ WORK_IN_PROGRESS, UNDER_REVIEW, APPROVED, OBSOLETE ]
+		OBSOLETE			|	[]
 	}
 
 	//that (naive) method builds requirements with initial status that could bypass the workflow.
