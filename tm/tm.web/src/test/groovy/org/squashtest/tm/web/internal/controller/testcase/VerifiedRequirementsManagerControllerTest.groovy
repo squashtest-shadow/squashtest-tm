@@ -71,7 +71,7 @@ class VerifiedRequirementsManagerControllerTest extends Specification{
 		def res = controller.showTestCaseManager(20L, Mock(Model))
 
 		then:
-		res == "page/test-cases/show-verified-requirements-manager"
+		res == "page/test-case-workspace/show-verified-requirements-manager"
 	}
 
 	def "should show test step manager page"() {

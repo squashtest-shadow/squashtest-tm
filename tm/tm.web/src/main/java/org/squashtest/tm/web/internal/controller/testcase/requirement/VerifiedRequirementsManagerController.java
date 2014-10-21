@@ -115,7 +115,7 @@ public class VerifiedRequirementsManagerController {
 		model.addAttribute("testCase", testCase);
 		model.addAttribute("linkableLibrariesModel", linkableLibrariesModel);
 
-		return "page/test-cases/show-verified-requirements-manager";
+		return "page/test-case-workspace/show-verified-requirements-manager";
 	}
 
 	@RequestMapping(value = "/test-steps/{testStepId}/verified-requirement-versions/manager", method = RequestMethod.GET)
