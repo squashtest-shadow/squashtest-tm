@@ -130,7 +130,7 @@ public enum RequirementStatus implements Level {
 
 		@Override
 		public boolean getAllowsStatusUpdate() {
-			return false;
+			return true;
 		}
 
 		@Override
