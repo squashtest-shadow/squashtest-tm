@@ -184,8 +184,8 @@ class RequirementModificationControllerTest extends Specification {
 		model.asMap()["requirement"] != null
 		model.asMap()["versions"] != null
 		model.asMap()["selectedVersion"] != null
-		model.asMap()["jsonCriticalities"] != null
-		model.asMap()["jsonCategories"] != null
+		model.asMap()["criticalityList"] != null
+		model.asMap()["categoryList"] != null
 	}
 
 	def mockRequirementAmongOtherThings(){
