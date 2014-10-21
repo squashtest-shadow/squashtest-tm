@@ -145,7 +145,7 @@
 			<div class="display-table-row">
 				<label class="display-table-cell" for="testcase-status"><f:message key="test-case.status.label" /></label>
 				<div  class="display-table-cell">
-<span id="test-case-status-icon" class="test-case-status-${ execution.status }"> &nbsp </span> <span id="test-case-status"><comp:level-message level="${ execution.status }"/></span>
+<span id="test-case-status-icon" class="test-case-status-${ execution.status }"> &nbsp &nbsp </span> <span id="test-case-status"><comp:level-message level="${ execution.status }"/></span>
 </div>
 			</div>
 <c:if test="${execution.automated}">
@@ -171,7 +171,7 @@
 <div class="display-table-row">
 			<label for="test-case-importance" class="display-table-cell"><f:message key="test-case.importance.combo.label" /></label>
 			<div class="display-table-cell">
-			<span id="test-case-importance-icon" class="test-case-importance-${ execution.importance }">&nbsp</span>	<span id="test-case-importance"><comp:level-message level="${ execution.importance }"/></span>
+			<span id="test-case-importance-icon" class="test-case-importance-${ execution.importance }">&nbsp&nbsp</span>	<span id="test-case-importance"><comp:level-message level="${ execution.importance }"/></span>
 			</div>
 		</div>
 		
