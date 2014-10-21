@@ -196,7 +196,29 @@ publish('reload.requirement.toolbar');
 					<label class="display-table-cell"  for="requirement-reference"><f:message key="label.Reference" /></label>
 					<div id="requirement-reference">${ requirement.reference }</div>
 				</div>
+				
 				<div class="display-table-row">
+					<label for="requirement-status" class="display-table-cell"><f:message key="requirement.status.combo.label" /></label>
+					<div class="display-table-cell">
+						<div id="requirement-status"><comp:level-message level="${ requirement.status }"/></div>
+					</div>
+
+				</div>				
+			</div>
+		</jsp:attribute>
+	</comp:toggle-panel>
+	
+	
+	
+	<%--------------------------- Attributs section ------------------------------------%>
+	
+	<comp:toggle-panel id="requirement"
+				titleKey="label.Attributes"
+				   open="true">
+				   
+	<jsp:attribute name="body">
+	<div id="requirement-attribut-table"  class="display-table">
+<div class="display-table-row">
 					<label for="requirement-criticality" class="display-table-cell"><f:message key="requirement.criticality.combo.label" /></label>
 					<div class="display-table-cell">
 						<div id="requirement-criticality"><comp:level-message level="${ requirement.criticality }"/></div>
@@ -205,7 +227,8 @@ publish('reload.requirement.toolbar');
 				<div class="display-table-row">
 					<label for="requirement-category" class="display-table-cell"><f:message key="requirement.category.combo.label" /></label>
 					<div class="display-table-cell">
-						<div id="requirement-category"><s:message code="${ requirement.category.i18nKey }" htmlEscape="true" /></div>
+					<span id="requirement-icon" class="requirement-icon-${requirement.category}">&nbsp &nbsp &nbsp</span>	
+						<span id="requirement-category"><s:message code="${ requirement.category.i18nKey }" htmlEscape="true" /></span>
 					</div>				
 				</div>
 				<div class="display-table-row">

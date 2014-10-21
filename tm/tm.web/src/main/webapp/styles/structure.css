@@ -1558,3 +1558,39 @@ div.admin-message-page-content{
 font-weight: bold;
 background-color:#969696;
 }
+
+
+.requirement-icon-BUSINESS { 
+	background-image: url(../images/Icon_Tree_Requirement_Business.png); /** sprite-ref: sprites-icons; */ 
+} 
+.requirement-icon-ERGONOMIC{ 
+	background-image: url(../images/Icon_Tree_Requirement_Ergonomic.png);  /** sprite-ref: sprites-icons; */ 
+} 
+.requirement-icon-FUNCTIONAL { 
+	background-image: url(../images/Icon_Tree_Requirement_Functional.png); /** sprite-ref: sprites-icons; */ 
+} 
+.requirement-icon-NON_FUNCTIONAL { 
+	background-image: url(../images/Icon_Tree_Requirement_Non-functional.png);  /** sprite-ref: sprites-icons; */ 
+} 
+.requirement-icon-PERFORMANCE{ 
+	background-image: url(../images/Icon_Tree_Requirement_Performance.png);  /** sprite-ref: sprites-icons; */ 
+} 
+.requirement-icon-SECURITY{ 
+	background-image: url(../images/Icon_Tree_Requirement_Security.png); /** sprite-ref: sprites-icons; */ 
+} 
+.requirement-icon-TECHNICAL {
+	background-image: url(../images/Icon_Tree_Requirement_Technic.png); /** sprite-ref: sprites-icons; */
+} 
+.requirement-icon-TEST_REQUIREMENT{ 
+	background-image: url(../images/Icon_Tree_Requirement_Test-requirement.png); /** sprite-ref: sprites-icons; */ 
+} 
+.requirement-icon-UNDEFINED { 
+	background-image: url(../images/Icon_Tree_Requirement_Undefined.png); /** sprite-ref: sprites-icons; */ 
+} 
+.requirement-icon-USE_CASE { 
+	background-image: url(../images/Icon_Tree_Requirement_Use-case.png); /** sprite-ref: sprites-icons; */ 
+} 
+.requirement-icon-USER_STORY{ 
+	background-image: url(../images/Icon_Tree_Requirement_User-story.png); /** sprite-ref: sprites-icons; */ 
+} 
+
