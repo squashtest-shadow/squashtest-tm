@@ -120,7 +120,11 @@ public enum RequirementStatus implements Level {
 	OBSOLETE(4) {
 		@Override
 		public Set<RequirementStatus> getAvailableNextStatus() {
-			return defaultAvailableSet();
+			Set<RequirementStatus> next = defaultAvailableSet();
+			next.add(UNDER_REVIEW);
+			next.add(WORK_IN_PROGRESS);
+			next.add(APPROVED);
+			return next;
 		}
 
 		@Override

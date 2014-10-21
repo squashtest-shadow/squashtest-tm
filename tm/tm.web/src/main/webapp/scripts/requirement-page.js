@@ -149,28 +149,6 @@ define(["module", "jquery", "app/pubsub", "squash.basicwidgets", "app/ws/squasht
  						notification.showError(msg);
  						widget.reset();
  					}
- 					else if ("OBSOLETE" == selected){
- 						
- 						cansubmit = false;
- 						
- 						var summoned = statusChangeDialog.data('summoned'),
- 							confirmed = statusChangeDialog.data('confirmed');
- 						
- 						if (summoned !== true){
- 							statusChangeDialog.data('summoned', true);
- 							statusChangeDialog.data('confirmed', false);
- 							statusChangeDialog.data('form', this);
- 							statusChangeDialog.formDialog('open');
- 						}
- 						else{
- 							cansubmit = confirmed;
- 							if (! confirmed){
- 								widget.reset();
- 							}
- 							// rearm the switch;
- 							statusChangeDialog.data('summoned', false);
- 						}
- 					}
  					
  					return cansubmit;
  				}
