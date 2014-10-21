@@ -1594,3 +1594,86 @@ background-color:#969696;
 	background-image: url(../images/Icon_Tree_Requirement_User-story.png); /** sprite-ref: sprites-icons; */ 
 } 
 
+
+/* ---------------- test case importance and status icon-----------------*/
+
+.test-case-importance-VERY_HIGH {
+background-image: url("../images/Icon_Tree_TestCase_map.png");  /** sprite-ref: sprites-icons; 
+															 sprite-margin-top: 0px; 
+															 sprite-margin-left: 240px;*/
+background-position : -240px -0px ;
+width: 24px;
+height: 16px;
+}
+.test-case-importance-HIGH {
+background-image: url("../images/Icon_Tree_TestCase_map.png");  /** sprite-ref: sprites-icons; 
+															 sprite-margin-top: 16px; 
+															 sprite-margin-left: 240px;*/
+background-position : -240px -16px ;
+width: 24px;
+height: 16px;
+}
+.test-case-importance-MEDIUM {
+background-image: url("../images/Icon_Tree_TestCase_map.png");  /** sprite-ref: sprites-icons; 
+															 sprite-margin-top: 32px; 
+															 sprite-margin-left: 240px;*/
+background-position : -240px -32px ;
+width: 24px;
+height: 16px;
+}
+.test-case-importance-LOW {
+background-image: url("../images/Icon_Tree_TestCase_map.png");  /** sprite-ref: sprites-icons; 
+															 sprite-margin-top: 48px; 
+															 sprite-margin-left: 240px;*/
+background-position : -240px -48px ;
+width: 24px;
+height: 16px;
+}
+
+
+
+
+.test-case-status-WORK_IN_PROGRESS{
+background-image: url("../images/Icon_Tree_TestCase_map.png");  /** sprite-ref: sprites-icons; 
+															 sprite-margin-top: 48px; 
+															 sprite-margin-left: 120px;*/
+background-position : -129px -48px ;
+width: 24px;
+height: 16px;
+}
+.test-case-status-UNDER_REVIEW{
+background-image: url("../images/Icon_Tree_TestCase_map.png");  /** sprite-ref: sprites-icons; 
+															 sprite-margin-top: 0px; 
+															 sprite-margin-left: 144px;*/
+background-position : -153px -0px ;
+width: 24px;
+height: 16px;
+}
+
+.test-case-status-APPROVED{
+background-image: url("../images/Icon_Tree_TestCase_map.png");  /** sprite-ref: sprites-icons; 
+															 sprite-margin-top: 0px; 
+															 sprite-margin-left: 168px;*/
+background-position : -177px -0px ;
+width: 24px;
+height: 16px;
+}
+.test-case-status-OBSOLETE{
+background-image: url("../images/Icon_Tree_TestCase_map.png");  /** sprite-ref: sprites-icons; 
+															 sprite-margin-top: 0px; 
+															 sprite-margin-left: 192px;*/
+background-position : -201px -0px ;
+width: 24px;
+height: 16px;
+}
+
+.test-case-status-TO_BE_UPDATED{
+background-image: url("../images/Icon_Tree_TestCase_map.png");  /** sprite-ref: sprites-icons; 
+															 sprite-margin-top: 0px; 
+															 sprite-margin-left: 216px;*/
+background-position : -225px -0px ;
+width: 24px;
+height: 16px;
+}
+
+

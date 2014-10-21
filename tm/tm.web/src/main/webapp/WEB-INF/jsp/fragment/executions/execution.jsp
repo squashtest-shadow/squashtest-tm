@@ -141,21 +141,12 @@
 				<div id="testcase-description" class="display-table-cell">${ execution.tcdescription }</div>
 			</div>
 		
-			<div class="display-table-row">
-				<label class="display-table-cell" for="testcase-importance"><f:message key="test-case.importance.label" /></label>
-				<div id="testcase-importance" class="display-table-cell"><comp:level-message level="${ execution.importance }"/></div>
-			</div>
-			<div class="display-table-row">
-				<label class="display-table-cell" for="testcase-nature"><f:message key="test-case.nature.label" /></label>
-				<div id="testcase-nature" class="display-table-cell"><comp:level-message level="${ execution.nature }"/></div>
-			</div>
-			<div class="display-table-row">
-				<label class="display-table-cell" for="testcase-type"><f:message key="test-case.type.label" /></label>
-				<div id="testcase-type" class="display-table-cell"><comp:level-message level="${ execution.type }"/></div>
-			</div>
+		
 			<div class="display-table-row">
 				<label class="display-table-cell" for="testcase-status"><f:message key="test-case.status.label" /></label>
-				<div id="testcase-status" class="display-table-cell"><comp:level-message level="${ execution.status }"/></div>
+				<div  class="display-table-cell">
+<span id="test-case-status-icon" class="test-case-status-${ execution.status }"> &nbsp </span> <span id="test-case-status"><comp:level-message level="${ execution.status }"/></span>
+</div>
 			</div>
 <c:if test="${execution.automated}">
 			<div class="display-table-row">
@@ -166,6 +157,36 @@
 		</div>
 	</jsp:attribute>
 	</comp:toggle-panel>
+	
+	
+		
+	<%----------------------------------- Attribute -----------------------------------------------%>
+	
+	<comp:toggle-panel id="test-case-attribut-panel"
+				titleKey="label.Attributes"
+				   open="true">
+				   
+	<jsp:attribute name="body">
+	<div id="test-case-attribut-table"  class="display-table">
+<div class="display-table-row">
+			<label for="test-case-importance" class="display-table-cell"><f:message key="test-case.importance.combo.label" /></label>
+			<div class="display-table-cell">
+			<span id="test-case-importance-icon" class="test-case-importance-${ execution.importance }">&nbsp</span>	<span id="test-case-importance"><comp:level-message level="${ execution.importance }"/></span>
+			</div>
+		</div>
+		
+		<div class="display-table-row">
+				<label class="display-table-cell" for="testcase-nature"><f:message key="test-case.nature.label" /></label>
+				<div id="testcase-nature" class="display-table-cell"><comp:level-message level="${ execution.nature }"/></div>
+			</div>
+			<div class="display-table-row">
+				<label class="display-table-cell" for="testcase-type"><f:message key="test-case.type.label" /></label>
+				<div id="testcase-type" class="display-table-cell"><comp:level-message level="${ execution.type }"/></div>
+			</div>
+		
+		</div>
+	</jsp:attribute>
+</comp:toggle-panel>
 	
 	<%----------------------------------- Prerequisites -----------------------------------------------%>
 
