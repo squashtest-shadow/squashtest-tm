@@ -74,7 +74,7 @@ define(["module", "jquery", "app/pubsub", "squash.basicwidgets", "app/ws/squasht
  				refconf.maxlength=50;
  				refconf.callback= function(reference){
  					eventBus.trigger('node.update-reference', { identity : config.basic.identity, newRef : reference});  
- 				}
+ 				};
  				
  				refinput.editable(baseURL, refconf);
  				
@@ -101,6 +101,10 @@ define(["module", "jquery", "app/pubsub", "squash.basicwidgets", "app/ws/squasht
  						});
  					});
      		      
+ 					//update icon
+ 					var requirement = $("#requirement-icon");
+ 					requirement.attr("class", "");
+ 				     requirement.addClass("requirement-icon-" + value);
  					//in the mean time, must return immediately
  					var data = JSON.parse(settings.data);
  					return data[value];
@@ -129,7 +133,7 @@ define(["module", "jquery", "app/pubsub", "squash.basicwidgets", "app/ws/squasht
  				var stsmessages = translator.get({
  					'cannot-set-status-allowed' 	: 'requirement.status.notAllowed.approved',
  					'cannot-set-status-defaultmsg'	: 'requirement.status.notAllowed.default'
- 				})
+ 				});
  				
  				function submitOrConfirm(settings, widget){
  					var selected = this.find('select').val(),
@@ -193,7 +197,7 @@ define(["module", "jquery", "app/pubsub", "squash.basicwidgets", "app/ws/squasht
  					mode = (config.permissions.writable) ? 'jeditable' : 'static';
  				$.getJSON(cufurl)
  				.success(function(jsonCufs){	
- 					cufvalues.infoSupport.init("#edit-requirement-table", jsonCufs, mode);
+ 					cufvalues.infoSupport.init("#requirement-attribut-table", jsonCufs, mode);
  				});
  			}
  			
@@ -215,7 +219,7 @@ define(["module", "jquery", "app/pubsub", "squash.basicwidgets", "app/ws/squasht
  				var removeDialog = $("#remove-verifying-test-case-dialog");
  			
  				$("#verifying-test-case-button").on('click', function(){
- 					var url = routing.buildURL('requirements.testcases.manager', config.basic.currentVersionId)
+ 					var url = routing.buildURL('requirements.testcases.manager', config.basic.currentVersionId);
  					document.location.href=url;	
  				});			
  				
@@ -279,7 +283,7 @@ define(["module", "jquery", "app/pubsub", "squash.basicwidgets", "app/ws/squasht
  			var conf = {
  				fnRowCallback : auditTrailTableRowCallback, 
  				aaData : config.basic.audittrail
- 			}
+ 			};
  			
  			var table=$( "#requirement-audit-trail-table" ).squashTable(conf, {});
  	
@@ -360,7 +364,7 @@ define(["module", "jquery", "app/pubsub", "squash.basicwidgets", "app/ws/squasht
  		            }).success(function() {
  		              table.refresh();
  		              eventBus.trigger("node.update-reqCoverage", {targetIds : ids});
- 		            })
+ 		            });
  		          });
  		          
  		          

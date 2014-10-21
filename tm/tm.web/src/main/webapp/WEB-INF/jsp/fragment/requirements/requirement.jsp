@@ -203,6 +203,13 @@ publish('reload.requirement.toolbar');
 						<div id="requirement-status"><comp:level-message level="${ requirement.status }"/></div>
 					</div>
 
+				</div>	
+				
+				<div class="display-table-row">
+					<label for="requirement-status" class="display-table-cell"><f:message key="requirement.status.combo.label" /></label>
+					<div class="display-table-cell">
+						<div id="requirement-status"><comp:level-message level="${ requirement.status }"/></div>
+					</div>
 				</div>				
 			</div>
 		</jsp:attribute>
@@ -231,13 +238,7 @@ publish('reload.requirement.toolbar');
 						<span id="requirement-category"><s:message code="${ requirement.category.i18nKey }" htmlEscape="true" /></span>
 					</div>				
 				</div>
-				<div class="display-table-row">
-					<label for="requirement-status" class="display-table-cell"><f:message key="requirement.status.combo.label" /></label>
-					<div class="display-table-cell">
-						<div id="requirement-status"><comp:level-message level="${ requirement.status }"/></div>
-					</div>
-
-				</div>				
+			
 			</div>
 		</jsp:attribute>
 	</comp:toggle-panel>
