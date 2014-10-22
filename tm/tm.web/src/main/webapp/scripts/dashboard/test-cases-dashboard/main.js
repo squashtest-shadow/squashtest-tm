@@ -67,16 +67,17 @@ define([ "require", "iesupport/am-I-ie8", "dashboard/basic-objects/model",
 			el : this.$("#dashboard-item-test-case-size"),
 			model : this.model
 		});
+		var summary = new Summary({
+			el : this.$(".dashboard-summary"),
+			model : this.model
+		});
 		
 		addClickSearchEvent($("#dashboard-item-bound-reqs"), reqPie, "requirement");
 		addClickSearchEvent($("#dashboard-item-test-case-status"), statPie, "status");
 		addClickSearchEvent($("#dashboard-item-test-case-importance"), impPie , "importance");
 		addClickSearchEvent($("#dashboard-item-test-case-size"), sizePie, "size");
-		
-		return [ new Summary({
-			el : this.$(".dashboard-summary"),
-			model : this.model
-		}), reqPie, statPie, impPie, sizePie];
+		summarySearch($(".dashboard-summary"), summary);
+		return [ summary, reqPie, statPie, impPie, sizePie];
 	}
 
 	
@@ -164,6 +165,26 @@ define([ "require", "iesupport/am-I-ie8", "dashboard/basic-objects/model",
 		        break;
 		   }		
 	}
+	
+	function summarySearch(item, summary){
+		
+		/*
+		
+		item.bind('click', function(){
+			var ids = summary.model.get('selectedIds');
+			
+			 var search = {fields:{
+				 id:{type:"LIST", values:"" }	 
+			 }};
+			 
+			 search.fields.id.values = ids.toString().split(",");
+			    
+			var queryString = "searchModel=" + encodeURIComponent(JSON.stringify(search));
+			 document.location.href = squashtm.app.contextRoot + "/advanced-search/results?testcase&" + queryString;
+			
+		});*/
+		
+	}
 	function addClickSearchEvent(item, pie, type){
 		
 		item.bind('jqplotDataHighlight', function(ev, seriesIndex, pointIndex, data){
@@ -181,8 +202,7 @@ define([ "require", "iesupport/am-I-ie8", "dashboard/basic-objects/model",
             $this.css('cursor', 'auto');
  });
 		
-		
-		
+
 		item.bind('jqplotDataClick', function(ev, seriesIndex, pointIndex, data) {
 			 var ids = pie.model.get('selectedIds');
 			

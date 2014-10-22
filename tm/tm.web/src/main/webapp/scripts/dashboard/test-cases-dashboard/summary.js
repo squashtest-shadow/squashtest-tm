@@ -18,7 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define(["jquery", "backbone"], function($, Backbone){
+define(["jquery", "backbone", "squash.translator"], function($, Backbone, translator){
 
 	return Backbone.View.extend({
 		
@@ -43,12 +43,26 @@ define(["jquery", "backbone"], function($, Backbone){
 			var stats = this.model.get('boundRequirementsStatistics');
 			var nbtc = stats.zeroRequirements + stats.oneRequirement + stats.manyRequirements;
 			
+			
+		
+				var ids = this.model.get('selectedIds');
+				
+				 var search = {fields:{
+					 id:{type:"LIST", values:"" }	 
+				 }};
+				 
+				 search.fields.id.values = ids.toString().split(",");
+				    
+				var queryString = "searchModel=" + encodeURIComponent(JSON.stringify(search));
+				var urlSearch = squashtm.app.contextRoot + "/advanced-search/results?testcase&" + queryString;
+
 			var todisplay;
 			if (nbtc===0){
 				todisplay = this.zeroItemsMsg;
 			}
 			else{
-				todisplay = this.hasItemsMsg.replace('{placeholder}', '<span style="font-weight:bold;color:black;">'+nbtc+'</span>');
+				todisplay = this.hasItemsMsg.replace('{placeholder}', '<span style="font-weight:bold;color:black;">'+nbtc+'</span>').replace('{details}', '<span><b><a href=' + urlSearch + '>'+ translator.get("dashboard.test-cases.detail")+ '</b></a></span>');
+			
 			}
 			
 			this.$el.html(todisplay);
