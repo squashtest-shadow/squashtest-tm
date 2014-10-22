@@ -18,15 +18,9 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ "require", "iesupport/am-I-ie8", "./iteration-progression-view", "./nonexecuted-testcase-importance-pie", "./testcase-status-pie",
-		"./success-rate-view", "./test-inventory-table", "dashboard/SuperMasterView" ], function(require, isIE8, ProgressionPlot,
+define([ "require", "./iteration-progression-view", "./nonexecuted-testcase-importance-pie", "./testcase-status-pie",
+		"./success-rate-view", "./test-inventory-table", "dashboard/SuperMasterView" ], function(require, ProgressionPlot,
 		ImportancePie, StatusPie, SuccessRateDonut, InventoryTable, SuperMasterView) {
-
-	var dependencies = [ "squash.attributeparser" ];
-
-	if (isIE8) {
-		dependencies.push("excanvas");
-	}
 
 	function doInit(settings) {
 
@@ -69,10 +63,7 @@ define([ "require", "iesupport/am-I-ie8", "./iteration-progression-view", "./non
 
 	return {
 		init : function(settings) {
-			require(dependencies, function(attrparser, IterDashboardView) {
-
 				doInit(settings);
-			});
 		}
 	};
 

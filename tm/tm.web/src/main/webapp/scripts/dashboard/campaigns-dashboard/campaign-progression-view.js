@@ -23,7 +23,6 @@ define([
 	'jquery',
 	'../basic-objects/jqplot-view',
 	'squash.translator',
-	'iesupport/am-I-ie8',
 	'handlebars',
 	'squash.dateutils',
 	/* -------------- implicit modules -------------------- */
@@ -33,7 +32,7 @@ define([
 	'../jqplot-ext/jqplot.squash.stylableGridRenderer',
 	'../jqplot-ext/jqplot.squash.strippedTimeDateTickRenderer'
 	],
-	function($, JqplotView, translator, isIE8, handlebars, dateutils){
+	function($, JqplotView, translator, handlebars, dateutils){
 	
 	
 	/* *********************************************************************************************
@@ -105,12 +104,10 @@ define([
 				this._swapTo('.dashboard-figures');
 				JqplotView.prototype.render.call(this);
 				
-				if (!isIE8){
 					var grid = this.$el.find('.jqplot-grid-canvas');
 					var line = this.$el.find('.jqplot-series-canvas').last();
 					grid.detach();
 					line.after(grid);
-				}
 			}
 		},
 		
@@ -165,7 +162,7 @@ define([
 			var x2ticks = this.createX2ticks(axisStart, axisEnd);
 			
 			// grid style
-			var gridcolor = (isIE8) ? "#FFFFFF" : 'transparent';
+			var gridcolor = 'transparent';
 
 			// return the conf object
 			return {

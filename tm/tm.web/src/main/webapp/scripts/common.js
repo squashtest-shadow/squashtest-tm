@@ -141,8 +141,6 @@ requirejs.config({
 				"jqplot-highlight": "lib/jqplot/plugins/jqplot.highlighter.min",
 //				"jqplot-category" : "lib/jqplot/plugins/jqplot.categoryAxisRenderer",
 				"jqplot-category" : "lib/jqplot/plugins/jqplot.categoryAxisRenderer.min",
-//				"excanvas" : "lib/excanvas",
-				"excanvas" : "lib/excanvas.min",
 				"moment" : "lib/momentjs/moment.alllang.min",
 				//cke
 				"ckeditor" : "ckeditor/ckeditor",

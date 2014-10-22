@@ -30,16 +30,11 @@
  * 
  */
 
-define([ "require", "iesupport/am-I-ie8", "dashboard/basic-objects/model", 
+define([ "require", "dashboard/basic-objects/model", 
 		"dashboard/basic-objects/timestamp-label", "dashboard/SuperMasterView", "./summary", "./bound-requirements-pie",
-		"./status-pie", "./importance-pie", "./size-pie", "squash.translator" ], function(require, isIE8, StatModel, Timestamp,
+		"./status-pie", "./importance-pie", "./size-pie", "squash.translator" ], function(require, StatModel, Timestamp,
 		SuperMasterView, Summary, BoundReqPie, StatusPie, ImportancePie, SizePie, translator) {
 
-	var dependencies = [ "squash.attributeparser" ];
-
-	if (isIE8) {
-		dependencies.push("excanvas");
-	}
 
 	function doInit(settings) {
 		new SuperMasterView({
@@ -235,10 +230,7 @@ define([ "require", "iesupport/am-I-ie8", "dashboard/basic-objects/model",
 	
 	return {
 		init : function(settings) {
-			require(dependencies, function(attrparser, IterDashboardView) {
 				doInit(settings);
-				addClickSearchEvent();
-			});
 		}
 	};
 

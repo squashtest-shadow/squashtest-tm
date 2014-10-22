@@ -18,9 +18,9 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ "require", "iesupport/am-I-ie8", "./campaign-progression-view", "./test-inventory-table",
+define([ "require", "./campaign-progression-view", "./test-inventory-table",
 		"./nonexecuted-testcase-importance-pie", "./testcase-status-pie", "./success-rate-view", "../SuperMasterView" ],
-		function(require, isIE8, ProgressionPlot, InventoryTable, ImportancePie, StatusPie, SuccessRateDonut,
+		function(require, ProgressionPlot, InventoryTable, ImportancePie, StatusPie, SuccessRateDonut,
 				SuperMasterView) {
 
 			function initCharts() {
@@ -60,13 +60,7 @@ define([ "require", "iesupport/am-I-ie8", "./campaign-progression-view", "./test
 
 			return {
 				init : function(settings) {
-					if (isIE8) {
-						require([ "excanvas" ], function() {
-							doInit(settings);
-						});
-					} else {
 						doInit(settings);
-					}
 				}
 			};
 

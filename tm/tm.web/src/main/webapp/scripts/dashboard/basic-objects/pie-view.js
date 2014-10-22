@@ -68,8 +68,7 @@
  * 
  */
 
-define(["jquery", "./jqplot-view", "iesupport/am-I-ie8", "./ie8-special-pie-renderer", 
-        "jqplot-pie"], function($, JqplotView, isIE8, specialHandler){
+define(["jquery", "./jqplot-view", "jqplot-pie"], function($, JqplotView){
 
 	
 	
@@ -105,13 +104,7 @@ define(["jquery", "./jqplot-view", "iesupport/am-I-ie8", "./ie8-special-pie-rend
 			var pieserie = this.getData();
 			var conf = this.getConf(pieserie);		
 			
-			// IE8 needs a crutch
-			if (isIE8 && (pieserie.isEmpty || pieserie.isFull)){
-				specialHandler.render(conf, this.$el.find('.dashboard-item-view'));
-			}
-			else{
 				this.draw(pieserie.plotdata, conf);
-			}
 
 		},
 		
