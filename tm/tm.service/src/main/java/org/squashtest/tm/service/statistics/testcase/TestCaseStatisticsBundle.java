@@ -20,14 +20,26 @@
  */
 package org.squashtest.tm.service.statistics.testcase;
 
+import java.util.Collection;
+import java.util.List;
+
 public class TestCaseStatisticsBundle {
 
 	private TestCaseBoundRequirementsStatistics boundRequirementsStatistics;
 	private TestCaseImportanceStatistics importanceStatistics;
 	private TestCaseStatusesStatistics statusesStatistics;
 	private TestCaseSizeStatistics sizeStatistics;
+	private Collection<Long> selectedIds;
 	
 	
+	public Collection<Long> getSelectedIds() {
+		return selectedIds;
+	}
+
+	public void setSelectedIds(Collection<Long> selectedIds) {
+		this.selectedIds = selectedIds;
+	}
+
 	public TestCaseBoundRequirementsStatistics getBoundRequirementsStatistics() {
 		return boundRequirementsStatistics;
 	}
@@ -66,12 +78,13 @@ public class TestCaseStatisticsBundle {
 			TestCaseBoundRequirementsStatistics boundRequirementsStatistics,
 			TestCaseImportanceStatistics importanceStatistics,
 			TestCaseStatusesStatistics statusesStatistics,
-			TestCaseSizeStatistics sizeStatistics) {
+			TestCaseSizeStatistics sizeStatistics, Collection<Long> selectedIds) {
 		super();
 		this.boundRequirementsStatistics = boundRequirementsStatistics;
 		this.importanceStatistics = importanceStatistics;
 		this.statusesStatistics = statusesStatistics;
 		this.sizeStatistics = sizeStatistics;
+		this.selectedIds = selectedIds;
 	}
 	
 	public TestCaseStatisticsBundle() {

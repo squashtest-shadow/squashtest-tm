@@ -257,7 +257,7 @@ public class TestCaseStatisticsServiceImpl implements TestCaseStatisticsService 
 		TestCaseStatusesStatistics status = gatherTestCaseStatusesStatistics(testCaseIds);
 		TestCaseSizeStatistics size = gatherTestCaseSizeStatistics(testCaseIds);
 
-		return new TestCaseStatisticsBundle(reqs, imp, status, size);
+		return new TestCaseStatisticsBundle(reqs, imp, status, size, testCaseIds);
 
 	}
 
