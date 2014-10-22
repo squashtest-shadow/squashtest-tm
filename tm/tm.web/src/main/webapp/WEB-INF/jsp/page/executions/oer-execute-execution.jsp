@@ -86,11 +86,8 @@
 
 	<script type="text/javascript">
 	require(["common"], function() {
-		require(["jquery", "squash.basicwidgets", 
-		         "iesupport/am-I-ie8",
-		         "execution-processing/ie8-no-close-on-enter",
-		         'custom-field-values',
-		         "jqueryui"], function($, basicwidg, isIE, noCloseOnEnter, cufValues){
+		require(["jquery", "squash.basicwidgets",'custom-field-values',
+		         "jqueryui"], function($, basicwidg, cufValues){
 			$(function(){
 				"use strict"
 				basicwidg.init();
