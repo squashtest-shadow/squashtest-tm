@@ -26,12 +26,12 @@
 	/**
 	 * MessageDialog widget. A message dialog is a preconfigured modal dialog which shows a message and only has a close
 	 * button.
-	 * 
+	 *
 	 * If the div used to generate the dialog contains an <input type="button" /> element, its value is used as the
 	 * message dialog's ok button.
-	 * 
+	 *
 	 * cf example below
-	 * 
+	 *
 	 * @author Gregory Fouquet
 	 */
 	$.widget("squash.messageDialog", $.ui.dialog, {
@@ -141,7 +141,7 @@
 	/**
 	 * Opens a messageDialog created on the fly and discards it afterwards. eg :
 	 * $('#dialogDef").openMessage().done(function () { console.log('closed') })
-	 * 
+	 *
 	 * @return a promise
 	 */
 	$.fn.openMessage = function(size) {
@@ -171,7 +171,7 @@
 		/**
 		 * Creates a modal message dialog out of the blue using the given title and message. Created DOM are discarded
 		 * when dialog is closed.
-		 * 
+		 *
 		 * @param title
 		 *            text title of message dialog
 		 * @param html
@@ -183,7 +183,7 @@
 			dialog.attr('title', title);
 
 			dialog.append('<div class="centered" style="margin-top:15px;">'+htmlMessage+'</div>');
-			$(document).append(dialog);
+			$(document.body).append(dialog);
 
 			var discardDialog = function() {
 				dialog.remove();
