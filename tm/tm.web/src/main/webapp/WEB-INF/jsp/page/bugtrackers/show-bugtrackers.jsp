@@ -82,6 +82,7 @@
 
 
 	<f:message var="deleteBugtrackerTitle" key="dialog.delete-bugtracker.title" />
+	<f:message var="warningDelete" key="dialog.deleteBugTracker.warning" />
 	<div id="delete-bugtracker-popup" class="popup-dialog not-displayed" title="${deleteBugtrackerTitle}">
 		
 		<div class="display-table-row">
@@ -89,7 +90,7 @@
                 <div class="delete-node-dialog-warning"></div>
             </div>
             <div class="display-table-cell">
-			TEST
+			${warningDelete}
 			</div>
 		</div>
 		<div class="popup-dialog-buttonpane">
