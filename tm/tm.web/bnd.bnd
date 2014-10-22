@@ -1,8 +1,7 @@
 -include: pom.xml
 Bundle-ClassPath: .,\
 	WEB-INF/classes,\
-	WEB-INF/reports,\
-	target/classes
+	WEB-INF/reports
 Include-Resource: src/main/webapp,\
 	src/main/resources
 Import-Package: javax.servlet.jsp.jstl.core;version=${jstl.version},\
