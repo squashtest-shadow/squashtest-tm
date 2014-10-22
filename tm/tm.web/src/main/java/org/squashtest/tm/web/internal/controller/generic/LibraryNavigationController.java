@@ -53,8 +53,6 @@ import org.squashtest.tm.domain.library.ExportData;
 import org.squashtest.tm.domain.library.Folder;
 import org.squashtest.tm.domain.library.Library;
 import org.squashtest.tm.domain.library.LibraryNode;
-import org.squashtest.tm.domain.testcase.ExportTestCaseData;
-import org.squashtest.tm.domain.testcase.ExportTestStepData;
 import org.squashtest.tm.exception.library.RightsUnsuficientsForOperationException;
 import org.squashtest.tm.service.deletion.OperationReport;
 import org.squashtest.tm.service.deletion.SuppressionPreviewReport;
