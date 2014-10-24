@@ -55,7 +55,7 @@
 <script>
 		var squashtm = squashtm || {};
 require(["common"], function() {
-	require(["jquery", "jqueryui", "jeditable.ckeditor"], function($) {
+	require(["jquery", "jqueryui", "jeditable.ckeditor", "jquery.squash"], function($) {
 	<%-- shitty patch for shitty practice --%>
 		squashtm.execution = squashtm.execution || {};
 	squashtm.execution.updateBtnlabelFromTable = function() {
@@ -73,7 +73,6 @@ require(["common"], function() {
 			return $.ajax({
 				url : '${ runnerUrl }',
 				method : 'get',
-				dataType : 'json',
 				data : {
 					'dry-run' : ''
 				}

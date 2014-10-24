@@ -23,7 +23,10 @@
  * next.
  */
 
-define([ "jquery", "module", "app/util/ComponentUtil", "jquery.cookie", "jqueryui" ], function($, module, ComponentUtil) {
+define([ "jquery", "module", "app/util/ComponentUtil", 
+         "app/util/ButtonUtil",
+         "jquery.cookie", "jqueryui" ], 
+		function($, module, ComponentUtil, buttonUtil) {
 
 	$.widget("squash.ieoControl", {
 
@@ -60,61 +63,6 @@ define([ "jquery", "module", "app/util/ComponentUtil", "jquery.cookie", "jqueryu
 
 			// ******** buttons init **********
 
-			this.getNextStepButton().button({
-				'text' : false,
-				icons : {
-					primary : 'ui-icon-triangle-1-e'
-				}
-			});
-
-			this.getPreviousStepButton().button({
-				'text' : false,
-				icons : {
-					primary : 'ui-icon-triangle-1-w'
-				}
-			});
-
-			this.getStopButton().button({
-				'text' : false,
-				'icons' : {
-					'primary' : 'ui-icon-power'
-				}
-			});
-
-			this.getUntestableButton().button({
-				'text' : false,
-				'icons' : {
-					'primary' : 'exec-status-untestable'
-				}
-			});
-
-			this.getBlockedButton().button({
-				'text' : false,
-				'icons' : {
-					'primary' : 'exec-status-blocked'
-				}
-			});
-
-			this.getFailedButton().button({
-				'text' : false,
-				'icons' : {
-					'primary' : 'exec-status-failure'
-				}
-			});
-
-			this.getSuccessButton().button({
-				'text' : false,
-				'icons' : {
-					'primary' : 'exec-status-success'
-				}
-			});
-
-			this.getNextTestCaseButton().button({
-				'text' : false,
-				icons : {
-					primary : 'ui-icon-seek-next'
-				}
-			});
 
 			this.getStatusCombo().change(function() {
 				self._updateComboIcon();
@@ -285,24 +233,27 @@ define([ "jquery", "module", "app/util/ComponentUtil", "jquery.cookie", "jqueryu
 
 		_updateButtons : function() {
 
-			var btnState = (this._isLastStep()) ? "disable" : "enable";
-			this.getNextStepButton().button(btnState);
-
-			btnState = (this._isPrologue()) ? "disable" : "enable";
-			this.getPreviousStepButton().button(btnState);
+			var changeState = (this._isLastStep()) ? buttonUtil["disable"] : buttonUtil["enable"];
 			
-			this.getUntestableButton().button(btnState);
-			this.getBlockedButton().button(btnState);
-			this.getSuccessButton().button(btnState);
-			this.getFailedButton().button(btnState);
+			changeState(this.getNextStepButton());
+
+			changeState = (this._isPrologue()) ? buttonUtil["disable"] : buttonUtil["enable"];
+			
+			changeState(this.getPreviousStepButton());
+			
+			changeState(this.getUntestableButton());
+			changeState(this.getBlockedButton());
+			changeState(this.getSuccessButton());
+			changeState(this.getFailedButton());
 
 			if (this._getState().testSuiteMode) {
 				this.element.find('.execute-next-test-case-panel').show();
 			} else {
 				this.element.find('.execute-next-test-case-panel').hide();
 			}
-			btnState = (this._canNavigateNextTestCase()) ? "enable" : "disable";
-			this.getNextTestCaseButton().button(btnState);
+			
+			changeState = (this._canNavigateNextTestCase()) ? buttonUtil['enable'] : buttonUtil['disable'];
+			changeState(this.getNextTestCaseButton());
 
 		},
 

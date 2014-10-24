@@ -94,7 +94,7 @@ define([ "jquery", "module", "jquery.squash.squashbutton",
 
 		// issue #2069
 		$.noBackspaceNavigation();
-		
+
 	}
 
 	return initPreview;

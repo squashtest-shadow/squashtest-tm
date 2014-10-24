@@ -331,11 +331,7 @@
 						
 						//issue #2069
 						$.noBackspaceNavigation();	
-						
-						//issue #2195
-						if (isIE){
-							noCloseOnEnter();
-						}
+	
 						
 						//issue 3083 : propagate the information to the parent context
 						eventBus.onContextual('context.bug-reported', function(event, json){

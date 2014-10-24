@@ -87,6 +87,7 @@
 	<script type="text/javascript">
 	require(["common"], function() {
 		require(["jquery", "squash.basicwidgets",'custom-field-values',
+
 		         "jqueryui"], function($, basicwidg, cufValues){
 			$(function(){
 				"use strict"
@@ -157,11 +158,7 @@
                 cufValues.infoSupport.init("#cuf-information-table", jsonCufs, 'jeditable');
               });
             </c:if>
-		
-			// 2195
-			if (isIE){
-				noCloseOnEnter();				
-			}
+
 			
 		});
 	});

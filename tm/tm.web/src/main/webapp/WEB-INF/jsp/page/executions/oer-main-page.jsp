@@ -49,6 +49,20 @@
 	<layout:_common-script-import highlightedWorkspace="" />
 </head>
 
+<script type="text/javascript">
+  
+  requirejs.config({
+      config : {
+        'oer-main-page' : ${json:serialize(config)}
+      }
+    });
+  
+  require(["common"], function(){	  
+  	require(["oer-main-page"], function(){})
+  });
+
+</script>
+
 <body id="ieo-body">
 
 	<div id="ieo-left-panel" >
@@ -62,31 +76,61 @@
 		</iframe>
 	</div>
 	
+<script type="text/javascript">
+publish("reload.oer.panelsready");  
+</script>
 	
 	<%-- structure of the toolbox --%>
+  <f:message var="stopTitle"            key="execute.header.button.stop.title" />
+  <f:message var="untestableLabel"      key="execute.header.button.untestable.title" />
+  <f:message var="blockedTitle"         key="execute.header.button.blocked.title" />
+  <f:message var="failureTitle"         key="execute.header.button.failure.title" />
+  <f:message var="passedTitle"          key="execute.header.button.passed.title" />
+  <f:message var="gotoTitle"            key="execution.IEO.address.go.to.button" />
+  <f:message var="previousTitle"        key="execute.header.button.previous.title" />
+  <f:message var="nextTitle"            key="execute.header.button.next.title" />
+  <f:message  var="nextTestCaseTitle" key="execute.header.button.next-test-case.title" />
+  
 	<div id="ieo-control" class="ui-state-active not-displayed">		
 		<table >		
 			<tr>
-				<td class="left-aligned"><button class="stop-execution"><f:message key="execute.header.button.stop.title" /></button></td>
+				<td class="left-aligned">
+                  <button class="sq-btn ui-button stop-execution" title="${stopTitle}">
+                    <span class="ui-icon ui-icon-power"></span>
+                  </button>
+                </td>
 				<td class="right-aligned">
 					<label class="evaluation-label-status"><f:message key="execute.header.status.label" /></label>
 					<comp:execution-status-combo name="executionStatus" id="step-status-combo" allowsUntestable="${config.allowsUntestable}" allowsSettled="${config.allowsSettled}"/>
 					<c:if test="${config.allowsUntestable}">
-						<button class="step-untestable"><f:message key="execute.header.button.untestable.title" /></button>
+						<button class="sq-btn ui-button step-untestable" title="${untestableLabel}">
+                          <span class="ui-icon exec-status-untestable"></span>
+                        </button>
 					</c:if>
-					<button class="step-blocked"><f:message key="execute.header.button.blocked.title" /></button>
-					<button class="step-failed"><f:message key="execute.header.button.failure.title" /></button>
-					<button class="step-succeeded"><f:message key="execute.header.button.passed.title" /></button>
+					<button class="sq-btn ui-button step-blocked" title="${blockedTitle}" >
+                      <span class="ui-icon exec-status-blocked"></span>
+                    </button>
+					<button class="sq-btn ui-button step-failed" title="${failureTitle}">
+                      <span class="ui-icon exec-status-failure"></span>
+                     </button>
+					<button class="sq-btn ui-button step-succeeded" title="${passedTitle}">
+                      <span class="ui-icon exec-status-success"></span>
+                    </button>
 				</td>
 				<td class="centered">
-					<button id="open-address-dialog-button" class="button "><f:message key="execution.IEO.address.go.to.button" /></button>
+					<input type="button" id="open-address-dialog-button" class="sq-btn" value="${gotoTitle}"/>
 					<span class="step-paging"></span>
-					<button class="button execute-previous-step"><f:message key="execute.header.button.previous.title" /></button>	
-					<button class="button execute-next-step"><f:message key="execute.header.button.next.title" /></button>
+					<button class="sq-btn ui-button execute-previous-step" title="${prevTitle}" >
+                      <span class="ui-icon ui-icon-triangle-1-w"></span>
+                    </button>	
+					<button class="sq-btn ui-button execute-next-step" title="${nextTitle}">
+                      <span class="ui-icon ui-icon-triangle-1-e"></span>
+                    </button>
 				</td>
-				<td class="centered not-displayed execute-next-test-case-panel">
-					<f:message  var="nextTestCaseTitle" key="execute.header.button.next-test-case.title" />
-					<button class="button execute-next-test-case" title="${ nextTestCaseTitle }">${ nextTestCaseTitle }</button>
+				<td class="centered not-displayed execute-next-test-case-panel">					
+					<button class="sq-btn ui-button execute-next-test-case" title="${ nextTestCaseTitle }" >
+                      <span class="ui-icon ui-icon-seek-next"></span>
+                    </button>
 				</td>
 			</tr>
 			<tr>
@@ -97,6 +141,9 @@
 		</table>
 	</div>
 	
+ <script type="text/javascript">
+ publish("reload.oer.control");
+ </script>
 	
 	<%-- Popup to enter the url we want the right panel to be filled with --%>
     <f:message var="openurlTitle" key="execution.IEO.address.bar.label"/>
@@ -111,13 +158,22 @@
         </div>
                  
     </div>
-          
+        
+<script type="text/javascript">
+publish("reload.oer.urldialog");
+</script>
 
 	
 	<c:if test="${not empty bugTracker}">
 	<is:issue-add-popup id="issue-report-dialog" interfaceDescriptor="${interfaceDescriptor}"  bugTrackerId="${bugTracker.id}"/>		
 	</c:if>
 	
+  <%-- 
+   Here we define a generic error dialog, much like in the notification system
+   used in every other pages. The thing is there is no notification section 
+   in the OER so we have to insert a copycat of that dialog here 
+   so that the js module squashtm.notification can use it seamlessly.
+   --%>
 	<f:message var="errorTitle" key="popup.title.error"/>
 	<f:message var="okLabel" key="label.Ok"/>
 	<div id="generic-error-dialog" class="not-displayed popup-dialog" title="${errorTitle}">
@@ -133,26 +189,12 @@
 	  </div>
 	  <input type="button" value="${okLabel}"/>  
 	</div>
+
+<script type="text/javascript">
+publish("reload.oer.genericerrordialog");
+publish("reload.oer.complete");
+</script>
 	
-	<script type="text/javascript">
-	require(["common"], function() {
-		require(["jquery", "domReady", "execution-processing", "jquery.squash.messagedialog"], 
-				function($, domReady, execProcessing){
-			requirejs.config({
-				config : {
-					'execution-processing/init-ieo' : ${json:serialize(config)}
-				}
-			});
-			
-			domReady(function(){
-				$("#open-address-dialog-button").button();
-				$("#generic-error-dialog").messageDialog();
-				execProcessing.initIEO();
-			});
-			
-			
-		});
-	});
-	</script>
+
 </body>
 </html>

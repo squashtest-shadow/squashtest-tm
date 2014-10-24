@@ -158,73 +158,85 @@ table.datepicker-table td.datepicker-table-col {
 }
 
 
-.ui-button .ui-icon.exec-status-untestable,
+.ui-button .ui-icon.exec-status-untestable, 
+.sq-btn .ui-icon.exec-status-untestable,
 .exec-status-untestable{
 	background-image: url("../images/Icon_White.png");  /** sprite-ref: sprites-icons; */
 	background-repeat : no-repeat;
 }
 
 .ui-button .ui-icon.exec-status-blocked,
+.sq-btn .ui-icon.exec-status-blocked,
 .exec-status-blocked{
 	background-image: url("../images/Icon_Yellow.png");  /** sprite-ref: sprites-icons; */
 	background-repeat : no-repeat;
 }
 
 .ui-button .ui-icon.exec-status-success,
+.sq-btn .ui-icon.exec-status-success,
 .exec-status-success{
 	background-image: url("../images/Icon_Green.png");  /** sprite-ref: sprites-icons; */
 	background-repeat : no-repeat;
 }
 
 .ui-button .ui-icon.exec-status-failure,
+.sq-btn .ui-icon.exec-status-failure,
 .exec-status-failure {
 	background-image: url("../images/Icon_Red.png");  /** sprite-ref: sprites-icons; */
 	background-repeat : no-repeat;
 }
 
 .ui-button .ui-icon.exec-status-running,
+.sq-btn .ui-icon.exec-status-running,
 .exec-status-running {
 	background-image: url("../images/Icon_Blue.png");  /** sprite-ref: sprites-icons; */
 	background-repeat : no-repeat;
 }
 
 .ui-button .ui-icon.exec-status-ready,
+.sq-btn .ui-icon.exec-status-ready,
 .exec-status-ready {
 	background-image: url("../images/Icon_Grey.png");  /** sprite-ref: sprites-icons; */
 	background-repeat : no-repeat;
 }
 
 .ui-button .ui-icon.exec-status-error,
+.sq-btn .ui-icon.exec-status-error,
 .exec-status-error {
 	background-image: url("../images/Icon_Yellow.png");  /** sprite-ref: sprites-icons; */
 	background-repeat : no-repeat;
 }
 
 .ui-button .ui-icon.exec-status-not_run,
+.sq-btn .ui-icon.exec-status-not_run,
 .exec-status-not_run {
 	background-image: url("../images/Icon_Yellow.png");  /** sprite-ref: sprites-icons; */
 	background-repeat : no-repeat;
 }
 
 .ui-button .ui-icon.exec-status-not_found,
+.sq-btn .ui-icon.exec-status-not_found,
 .exec-status-not_found {
 	background-image: url("../images/Icon_Yellow.png");  /** sprite-ref: sprites-icons; */
 	background-repeat : no-repeat;
 }
 
 .ui-button .ui-icon.exec-status-warning,
+.sq-btn .ui-icon.exec-status-warning,
 .exec-status-warning{
 	background-image: url("../images/Icon_Green.png");  /** sprite-ref: sprites-icons; */
 	background-repeat : no-repeat;
 }
 
 .ui-button .ui-icon.exec-status-settled,
+.sq-btn .ui-icon.exec-status-settled,
 .exec-status-settled{
 	background-image: url("../images/Icon_GreenWhite.png");  /** sprite-ref: sprites-icons; */
 	background-repeat : no-repeat;
 }
 
-.ui-button .ui-icon.execute-stop {
+.ui-button .ui-icon.execute-stop,
+.sq-btn .ui-icon.execute-stop {
 	background-image: url("../images/Button_Exec_stop.png");  /** sprite-ref: sprites-icons; */
 	background-repeat : no-repeat;
 }
