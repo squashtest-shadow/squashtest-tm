@@ -117,6 +117,7 @@ define([], function(){
 		'administration.bugtrackers'	:	root + '/administration/bugtrackers',
 		'customfield.values' :				root + '/custom-fields/values',
 		'customfield.values.get' :			root + '/custom-fields/values?boundEntityId={\\d+}&boundEntityType={[A-Z_]+}',
+		'denormalizefield.values.get' :		root + '/denormalized-fields/values?denormalizedFieldHolderId={\\d+}&denormalizedFieldHolderType={[A-Z_]+}',
 
 		
 		// helper methods

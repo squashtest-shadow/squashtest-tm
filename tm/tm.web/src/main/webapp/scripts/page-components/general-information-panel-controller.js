@@ -49,13 +49,14 @@ define([ "jquery", "squash.attributeparser" ], function($, attrparser) {
 	}
 
 	GeneralInformationPanelController.prototype.refresh = function() {
+		var self=this;
 		if (this.opts.url) {
 			$.ajax({
 				type : "GET",
 				url : this.opts.url + "/general",
 				dataType : "json"
 			}).done(function(json) {
-				this.updater.call(this, this.opts, json);
+				self.updater.call(self, self.opts, json);
 			});
 		}
 	};

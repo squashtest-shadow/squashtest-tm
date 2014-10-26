@@ -23,6 +23,7 @@
 <%@ tag body-content="empty" description="Outputs a combobox of execution statuses with no selection" %>
 <%@ attribute name="id" required="true" description="The html id of the combo" %>
 <%@ attribute name="name" required="true" description="The name attribute of the combo" %>
+<%@ attribute name="selected" required="true" description="The status currently selected" %>
 <%@ attribute name="allowsUntestable" required="true" description="Wether the status untestable is allowed" %>
 <%@ attribute name="allowsSettled" required="true" description="Wether the status settled is allowed" %>
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
@@ -30,13 +31,31 @@
 
 <select id="${ id }" name="${ name }" class="execution-status-combo-class">
 	<c:if test="${allowsUntestable}">
-		<option value="UNTESTABLE" class="exec-status-option exec-status-untestable"><f:message key="execution.execution-status.UNTESTABLE" /></option>
+		<option ${'UNTESTABLE' == selected ? 'selected="selected"' : ''}
+            value="UNTESTABLE" class="exec-status-option exec-status-untestable" >
+          <f:message key="execution.execution-status.UNTESTABLE" />
+        </option>
 	</c:if>
-	<option value="BLOCKED" class="exec-status-option exec-status-blocked"><f:message key="execution.execution-status.BLOCKED" /></option>
-	<option value="FAILURE" class="exec-status-option exec-status-failure"><f:message key="execution.execution-status.FAILURE" /></option>
-		<c:if test="${allowsSettled}">
-		<option value="SETTLED" class="exec-status-option exec-status-settled"><f:message key="execution.execution-status.SETTLED" /></option>
+	<option ${'BLOCKED' == selected ? 'selected="selected"' : ''}
+            value="BLOCKED" class="exec-status-option exec-status-blocked">
+        <f:message key="execution.execution-status.BLOCKED" />
+    </option>
+	<option ${'FAILURE' == selected ? 'selected="selected"' : ''}
+            value="FAILURE" class="exec-status-option exec-status-failure">
+      <f:message key="execution.execution-status.FAILURE" />
+     </option>
+	 <c:if test="${allowsSettled}">
+   	<option ${'SETTLED' == selected ? 'selected="selected"' : ''}
+            value="SETTLED" class="exec-status-option exec-status-settled">
+        <f:message key="execution.execution-status.SETTLED" />
+    </option>
 	</c:if>
-	<option value="SUCCESS" class="exec-status-option exec-status-success"><f:message key="execution.execution-status.SUCCESS" /></option>
-	<option value="READY" class="exec-status-option exec-status-ready"><f:message key="execution.execution-status.READY" /></option>
+	<option ${'SUCCESS' == selected ? 'selected="selected"' : ''}
+            value="SUCCESS" class="exec-status-option exec-status-success">
+        <f:message key="execution.execution-status.SUCCESS" />
+    </option>
+	<option ${'READY' == selected ? 'selected="selected"' : ''}
+            value="READY" class="exec-status-option exec-status-ready">
+      <f:message key="execution.execution-status.READY" />
+    </option>
 </select >				

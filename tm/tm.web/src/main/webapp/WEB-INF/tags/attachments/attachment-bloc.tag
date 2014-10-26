@@ -26,6 +26,9 @@
 <%@ attribute name="attachListId" type="java.lang.Object"  description="the entity to which we bind those attachments" %>
 <%@ attribute name="attachmentSet" type="java.util.Set" description="Set of attachments" %>
 <%@ attribute name="editable" type="java.lang.Boolean" description="List of attachments is editable. Defaults to false." %>
+<%@ attribute name="autoJsInit" type="java.lang.Boolean" 
+                                description="TRANSITIONAL. Whether this tag should also insert a hook for javascript init. Defaults to true." 
+                                required="false" %>
 
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component" %>
@@ -59,6 +62,8 @@
 	</div>
 </c:if>		
 
+
+<c:if test="${empty autoJsInit or autoJsInit}">
 <script type="text/javascript">
 require(["common"], function() {
 	require(["jquery", "file-upload"], function($, upload){
@@ -71,4 +76,4 @@ require(["common"], function() {
 	});
 });
 </script>
-
+</c:if>

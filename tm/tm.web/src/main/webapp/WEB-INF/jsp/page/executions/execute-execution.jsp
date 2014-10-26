@@ -33,8 +33,9 @@
 <%@ taglib prefix="at" tagdir="/WEB-INF/tags/attachments"%>
 <%@ taglib prefix="fn"uri="http://java.sun.com/jsp/jstl/functions"%>
 
-<c:url var="customFieldsValuesURL" value="/custom-fields/values" />
-<c:url var="denormalizedFieldsValuesURL" value="/denormalized-fields/values" />
+<s:url var="attachmentsURL" value="/attach-list/${executionStep.attachmentList.id}/attachments"/>
+<s:url var="btEntityUrl" value="/bugtracker/execution-step/${executionStep.id}"/>
+
 
 <%-- ----------------------------------- Authorization ----------------------------------------------%>
 
@@ -56,333 +57,120 @@
 	<c:otherwise>
 		<head>
 			<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-			<title> #${execution.executionOrder + 1 } -
-				${execution.name} (${executionStep.executionStepOrder
-				+1}/${totalSteps})</title>
+            <c:set var="stIndex" value="${executionStep.executionStepOrder}" />
+			<title> #${stIndex + 1 } - ${execution.name} (${stIndex + 1 }/${totalSteps})</title>
 			
 			<layout:common-head />
 			<layout:_common-script-import highlightedWorkspace=""/>
 			
 			<%-- cautious : below are used StepIndexes and StepIds. Dont get confused. --%>
-			<s:url var="executeNext" value="${ currentStepsUrl }/index/{stepIndex}?optimized=${param.optimized}">
-				<s:param name="stepIndex" value="${executionStep.executionStepOrder+1}" />
-			</s:url>
-			
-            <c:if test="${executionStep.first}">
+			<s:url var="executeNext" value="${ currentStepsUrl }/index/${stIndex+1}?optimized=${param.optimized}"/>		
+            <c:choose>
+            <c:when test="${executionStep.first}">
               <s:url var="executePrevious" value="${ currentStepsUrl }/prologue?optimized=${param.optimized}" />
-            </c:if>
-            <c:if test="${not executionStep.first}">
-              <s:url var="executePrevious" value="${ currentStepsUrl }/index/{stepIndex}?optimized=${param.optimized}">
-                <s:param name="stepIndex" value="${ executionStep.executionStepOrder - 1 }" />
-              </s:url>
-            </c:if>
-			
-			<s:url var="executeThis" value="${ currentStepsUrl }/index/{stepIndex}?optimized=${param.optimized}">
-				<s:param name="stepIndex" value="${executionStep.executionStepOrder}" />
-			</s:url>
-			
-			<s:url var="executeComment" value="${ currentStepsUrl }/{stepId}">
-				<s:param name="stepId" value="${executionStep.id}" />
-			</s:url>
-			
-			<s:url var="executeStatus" value="${ currentStepsUrl }/{stepId}">
-				<s:param name="stepId" value="${executionStep.id}" />
-			</s:url>
-			
-			<s:url var="executeInfos" value="${ currentStepsUrl }/index/{stepIndex}">
-				<s:param name="stepIndex" value="${executionStep.executionStepOrder}" />
-			</s:url>
+            </c:when>
+            <c:otherwise>
+              <s:url var="executePrevious" value="${ currentStepsUrl }/index/${stIndex-1}?optimized=${param.optimized}"/>
+            </c:otherwise>
+            </c:choose>
+   
+			<s:url var="executeThis" value="${ currentStepsUrl }/index/${stIndex}?optimized=${param.optimized}"/>
+			<s:url var="executeComment" value="${ currentStepsUrl }/${executionStep.id}"/>
+			<s:url var="executeStatus" value="${ currentStepsUrl }/${executionStep.id}"/>
+			<s:url var="executeInfos" value="${ currentStepsUrl }/index/${stIndex}"/>
 
 			<comp:sq-css name="squash.purple.css" />
 		</head>
 
-		<s:url var="btEntityUrl" value="/bugtracker/execution-step/{id}">
-			<s:param name="id" value="${executionStep.id}" />
-		</s:url>
+		
+    
 		<body class="execute-html-body">
-			<f:message var="completedMessage" key="execute.alert.test.complete" />
-			<f:message var="endTestSuiteMessage" key="squashtm.action.exception.testsuite.end" />
 
-			<script type="text/javascript">						
-			require(["common"], function() {
-				require(['jquery', 'squash.basicwidgets','page-components/step-information-panel', 'workspace.event-bus', 'app/util/ComponentUtil', 
-				         "jquery.squash.oneshotdialog" , 'custom-field-values', 'jquery.squash'], 
-				         function($, basicwidg, infopanel, eventBus, ComponentUtil, oneshot, cufValues ) {
-			
-				var isOer = ${ not empty hasNextTestCase };
-				var hasNextTestCase = ${ (not empty hasNextTestCase) and hasNextTestCase };
-				var hasNextStep = ${ (not empty hasNextStep) and hasNextStep };
-	
-				function refreshParent(){
-					if (!!window.opener) {
-                        if (window.opener.squashtm.execution){
-							window.opener.squashtm.execution.refresh();
-						}
-						if (window.opener.progressWindow) {
-							window.opener.progressWindow.close();
-						}
-                    }
-				}
-			
-				function refreshExecStepInfos(){
-					refreshParent();
-					infopanel.refresh();
-				}
-			
-				function testComplete() {	
+  
+            <script type="text/javascript">
+            	requirejs.config({
+            		config : {
+            			'execution-dialog-main' : {
+            				basic : {
+            					id : ${executionStep.id},
+            					index : ${stIndex},
+            					status : "${executionStep.executionStatus}",
+            					isFirst : ${executionStep.first}, 
+                				mode : ${not empty hasNextTestCase ? '"suite-mode"' : '"single-mode"' },
+                				hasNextTestCase : ${ (not empty hasNextTestCase) and hasNextTestCase },
+                				hasNextStep : ${ (not empty hasNextStep) and hasNextStep },
+                				hasCufs : ${hasCustomFields},
+                				hasDenormCufs : ${hasDenormFields}
+            				},
+            				urls : {
+            					baseURL : "${currentStepsUrl}",
+            					executeNext : "${executeNext}",
+            					executePrevious : "${executePrevious}",
+            					executeThis : "${executeThis}",
+            					executeComment : "${executeComment}",
+            					executeStatus : "${executeStatus}",
+            					executeInfos : "${executeInfos}",
+            					testPlanItemUrl : "${testPlanItemUrl}",
+            					attachments : "${attachmentsURL}",
+            					bugtracker : "${btEntityUrl}"
+            				},
+            				permissions :{
+            					editable : ${editable}
+            				}
+            			}
+            			
+            		}
+            	});
+            	
+            	require(["common"], function(){
+            		require(["execution-dialog-main"], function(){});
+            	});
+            	
+            
+            </script>
 
-					if (!isOer) {
-						oneshot.show('popup.title.info',  "${ completedMessage }").done(function() {
-							window.close();
-						});
-					} else if (hasNextTestCase) {
-						$('#execute-next-test-case').click();
-					} else { 
-						// oer without next
-						oneshot.show('popup.title.info',  "${ endTestSuiteMessage }").done(function() {
-							window.close();
-						});
-					}					
-					// parent refresh triggered through event
-				}
-				
-				function navigateNext(){
-					if (hasNextStep) {
-						document.location.href="${ executeNext }";						
-					} else {
-						testComplete();
-					}
-				}
-				
-				function navigatePrevious(){
-					document.location.href="${ executePrevious }";						
-				}
 
-				function initNextButton(){
-					$("#execute-next-button").button({
-						'text' : false,
-						'disabled': ${ not hasNextStep },
-						icons : {
-							primary : 'ui-icon-triangle-1-e'
-						}
-					}).click( navigateNext );	
-				}
-
-				function initPreviousButton(){			
-					$("#execute-previous-button").button({
-						'text' : false,
-						icons : {
-							primary : 'ui-icon-triangle-1-w'
-						}
-					}).click( navigatePrevious );	
-				}
-				
-				function initStopButton(){
-					$("#execute-stop-button").button({
-						'text': false, 
-						'icons' : {
-							'primary' : 'ui-icon-power'
-						} 
-					}).click(function(){
-						window.close();
-					});
-					
-				}
-
-				function initFailButton(){
-					$("#execute-fail-button").button({
-						'text': false,
-						'icons' :{
-							'primary' : 'exec-status-failure'
-						}
-					}).click(function(){
-						$.post('${ executeStatus }', {
-							executionStatus : "FAILURE"
-						},  setStatusFailure );
-					});		
-				}
-				
-				function initUntestableButton(){
-					$("#execute-untestable-button").button({
-						'text': false,
-						'icons' :{
-							'primary' : 'exec-status-untestable'
-						}
-					}).click(function(){
-						$.post('${ executeStatus }', {
-							executionStatus : "UNTESTABLE"
-						},  setStatusUntestable );
-					});		
-				}
-				
-				function initBlockedButton(){
-					$("#execute-blocked-button").button({
-						'text': false,
-						'icons' :{
-							'primary' : 'exec-status-blocked'
-						}
-					}).click(function(){
-						$.post('${ executeStatus }', {
-							executionStatus : "BLOCKED"
-						},  setStatusBlocked );
-					});		
-				}
-				
-				function initSuccessButton(){
-					$("#execute-success-button").button({
-						'text' : false,
-						'icons' : {
-							'primary' : 'exec-status-success'
-						}
-					}).click(function(){
-						$.post('${ executeStatus }', {
-							executionStatus : "SUCCESS"
-						},  setStatusSuccess );
-					});
-					
-				}
-				
-				
-				function setStatusSuccess(){
-					$("#execution-status-combo").val("SUCCESS");			
-					statusComboChange();
-					navigateNext();
-				}
-				
-				function setStatusFailure(){
-					$("#execution-status-combo").val("FAILURE");
-					statusComboChange();
-					navigateNext();
-				}
-				
-				function setStatusUntestable(){
-					$("#execution-status-combo").val("UNTESTABLE");			
-					statusComboChange();
-					navigateNext();
-				}
-				
-				function setStatusBlocked(){
-					$("#execution-status-combo").val("BLOCKED");
-					statusComboChange();
-					navigateNext();
-				}
-				
-				function statusComboSetIcon(){
-					var cbox = $("#execution-status-combo");
-					ComponentUtil.updateStatusCboxIcon(cbox);
-				}
-			
-				function statusComboChange(){
-					statusComboSetIcon();
-					refreshExecStepInfos();
-				}
-				
-				function submitComment(){
-				$("#execution-comment-panel").find("button[type=submit]").click();
-				}
-				
-				function addAutoSubmitComment(){
-				$("#execute-success-button").on('click', function(){submitComment()});
-				$("#execute-blocked-button").on('click', function(){submitComment()});
-				$("#execute-untestable-button").on('click', function(){submitComment()});
-				$("#execute-fail-button").on('click', function(){submitComment()});
-				$("#execute-previous-button").on('click', function(){submitComment()});
-				$("#execute-next-button").on('click', function(){submitComment()});
-				}
-
-				
-				$(function(){
-											
-						basicwidg.init();
-						
-						initNextButton();
-						initPreviousButton();
-						initStopButton();
-						<c:if test="${editable}">
-						initUntestableButton();
-						initBlockedButton();
-						initFailButton();
-						initSuccessButton();
-						addAutoSubmitComment();
-						$("#execution-status-combo").val("${executionStep.executionStatus}");
-						statusComboSetIcon();
-						
-						$('#execution-status-combo').change(function(success) {
-							$.post('${ executeStatus }', {
-								executionStatus : $(this).val()
-							},
-							statusComboChange
-							);
-						});
-						</c:if>
-						$("#execute-next-test-case").button({
-							'text': false,
-							'disabled': !hasNextTestCase,
-							icons: {
-								primary : 'ui-icon-seek-next'
-							}
-						});
-						
-						<c:if test="${ not empty testPlanItemUrl }">
-						$('#execute-next-test-case-panel').removeClass('not-displayed');		
-						</c:if>
-						
-						$(window).unload( refreshParent );
-						
-						//issue #2069
-						$.noBackspaceNavigation();	
-	
-						
-						//issue 3083 : propagate the information to the parent context
-						eventBus.onContextual('context.bug-reported', function(event, json){
-							window.opener.squashtm.workspace.eventBus.trigger(event, json )
-						});
-	                    <c:if test="${hasDenormFields}">
-	                    $.getJSON("${denormalizedFieldsValuesURL}?denormalizedFieldHolderId=${executionStep.boundEntityId}&denormalizedFieldHolderType=${executionStep.boundEntityType}")
-	                      .success(function(jsonDenorm){
-	                       	 cufValues.infoSupport.init("#dfv-information-table", jsonDenorm, "jeditable");
-	                      });
-	                    </c:if>
-	
-	                    <c:if test="${hasCustomFields}">
-	                    $.getJSON("${customFieldsValuesURL}?boundEntityId=${executionStep.boundEntityId}&boundEntityType=${executionStep.boundEntityType}")
-	                      .success(function(jsonCufs){
-	                        cufValues.infoSupport.init("#cuf-information-table", jsonCufs, 'jeditable');
-	                      });
-	                    </c:if>
-				
-					});	
-				});
-				
-			});
-			</script>
-
+  <f:message var="stopTitle"            key="execute.header.button.stop.title" />
+  <f:message var="untestableLabel"      key="execute.header.button.untestable.title" />
+  <f:message var="blockedTitle"         key="execute.header.button.blocked.title" />
+  <f:message var="failureTitle"         key="execute.header.button.failure.title" />
+  <f:message var="passedTitle"          key="execute.header.button.passed.title" />
+  <f:message var="previousTitle"        key="execute.header.button.previous.title" />
+  <f:message var="nextTitle"            key="execute.header.button.next.title" />
+  <f:message  var="nextTestCaseTitle" key="execute.header.button.next-test-case.title" />
+  
 			<div id="execute-header">
 				<table width="100%">
 					<tr>
-						<td class="centered"><button id="execute-stop-button">
-								<f:message key="execute.header.button.stop.title" />
+						<td class="centered">
+                            <button id="execute-stop-button" class="sq-btn ui-button control-button" title="${stopTitle}">
+                                <span class="ui-icon ui-icon-power"></span>
 							</button>
 						</td>
 						<td class="centered">
-							<button id="execute-previous-button">
-								<f:message key="execute.header.button.previous.title" />
+							<button id="execute-previous-button" class="sq-btn ui-button control-button" title="${previousTitle}">
+                                <span class="ui-icon ui-icon-triangle-1-w"></span>
 							</button> 
 							<span id="execute-header-numbers-label">
 								${executionStep.executionStepOrder+1} / ${totalSteps}
 							</span>
-							<button id="execute-next-button">
-								<f:message key="execute.header.button.next.title" />
+							<button id="execute-next-button" class="sq-btn ui-button control-button" 
+                                ${not hasNextStep ? 'disabled="disabled"' : ''}title="${nextTitle}">
+                                <span class="ui-icon ui-icon-triangle-1-e"></span>
 							</button>
 						</td>
-					<td class="centered not-displayed" id="execute-next-test-case-panel">
-							<form action="<c:url value='${ testPlanItemUrl }/next-execution/runner?optimized=false' />" method="post">
-								<f:message var="nextTestCaseTitle" key="execute.header.button.next-test-case.title" />
-								<button id="execute-next-test-case" name="classic"  title="${ nextTestCaseTitle }">
-									${ nextTestCaseTitle }
-								</button>
-							</form>
-						</td>
+                    <c:if test="${not empty testPlanItemUrl}">
+					<td class="centered " id="execute-next-test-case-panel">
+                          <c:url var="nextTCUrl" value='${ testPlanItemUrl }/next-execution/runner?optimized=false' />
+						<form action="${nextTCUrl}" method="post">
+							<button id="execute-next-test-case" name="classic" class="sq-btn control-button" 
+                                ${ not hasNextTestCase ? 'disabled="disabled"' : ''} 
+                                title="${ nextTestCaseTitle }">
+								${ nextTestCaseTitle }
+							</button>
+						</form>
+					</td>
+                    </c:if>
 						<td class="centered">
 							<label id="evaluation-label-status">
 								<f:message key="execute.header.status.label" />
@@ -390,20 +178,24 @@
 							<c:choose>
 							<c:when test="${editable }">
                                 <comp:execution-status-combo name="executionStatus" id="execution-status-combo" 
-                                  allowsUntestable="${allowsUntestable}" allowsSettled="${allowsSettled}"/>
+                                  allowsUntestable="${allowsUntestable}" allowsSettled="${allowsSettled}" selected="${executionStep.executionStatus}"/>
     							<c:if test="${allowsUntestable}">
-    							<button id="execute-untestable-button">
-    								<f:message key="execute.header.button.untestable.title" />
+    							<button id="execute-untestable-button" class="sq-btn ui-button control-button status-button" 
+                                    data-status="UNTESTABLE" title="${untestableTitle}">
+                                    <span class="ui-icon exec-status-untestable"></span>
     							</button>
     							</c:if>
-    							<button id="execute-blocked-button">
-    								<f:message key="execute.header.button.blocked.title" />
+    							<button id="execute-blocked-button" class="sq-btn ui-button control-button status-button" 
+                                     data-status="BLOCKED" title="${blockedTitle}">
+                                    <span class="ui-icon exec-status-blocked"></span>
     							</button>							
-    							<button id="execute-fail-button">
-    								<f:message key="execute.header.button.failure.title" />
+    							<button id="execute-fail-button" class="sq-btn ui-button control-button status-button" 
+                                    data-status="FAILURE" title="${failureTitle}">
+                                    <span class="ui-icon exec-status-failure"></span>
     							</button>
-    							<button id="execute-success-button">
-    								<f:message key="execute.header.button.passed.title" />
+    							<button id="execute-success-button" class="sq-btn ui-button control-button status-button" 
+                                    data-status="SUCCESS" title="${passedTitle}">
+                                    <span class="ui-icon exec-status-success"></span>
     							</button>
 							</c:when>
 							<c:otherwise>
@@ -422,6 +214,10 @@
 					</tr>
 				</table>
 			</div>
+      
+<script type="text/javascript">
+publish("reload.executedialog.toolbar");
+</script>
 
 			<div id="execute-body" class="execute-fragment-body">
         <c:if test="${ hasCustomFields or hasDenormFields }">
@@ -431,6 +227,10 @@
               <div id="cuf-information-table" class="display-table"></div>
             </jsp:attribute>
           </comp:toggle-panel>
+          
+<script type="text/javascript">
+publish("reload.executedialog.cufs");
+</script>
         </c:if>
 				<comp:toggle-panel id="execution-action-panel"
 					titleKey="execute.panel.action.title" 
@@ -464,28 +264,34 @@
 					</div>
 
 					<div id="execute-evaluation-rightside">
-						<comp:step-information-panel auditableEntity="${executionStep}" entityUrl="${executeInfos}/general"/>
+						<comp:step-information-panel auditableEntity="${executionStep}" entityUrl="${executeInfos}"/>
 					</div>
 					<div style="clear: both; visibility: hidden"></div>
 				</div>
 
-				<at:attachment-bloc attachListId="${executionStep.attachmentList.id}" workspaceName="campaign" editable="${ editable }" attachmentSet="${attachments}" />
-
+				<at:attachment-bloc attachListId="${executionStep.attachmentList.id}" workspaceName="campaign" editable="${ editable }" 
+                attachmentSet="${attachments}" autoJsInit="${false}"/>
+                             
+<script type="text/javascript">
+publish('reload.executedialog.attachments');
+</script>
+                
+                
 				<%------------------------------ bugs section -------------------------------%>
 				<%-- this section is loaded asynchronously. The bugtracker might be out of reach indeed. --%>
         		<div id="bugtracker-section-div">
+
         		</div>
-        		 <script type="text/javascript">
-        		 require(["common"], function() {
-        			 require(["jquery", "app/ws/squashtm.notification"], function($, wtf) {
-        		 		$("#bugtracker-section-div").load("${btEntityUrl}");
-        		 		wtf.init({});
-        			 });
-        		 });
-        		</script>
+            
+ <script type="text/javascript">
+ publish('reload.executedialog.issues'); 
+ </script>
 				<%------------------------------ /bugs section -------------------------------%>
-	
-				
+  	
+<script type="text/javascript">
+publish("reload.executedialog.complete");
+</script>
+
 			</div>
 		</body>
 	</c:otherwise>

@@ -157,7 +157,7 @@ define(["jquery", "squash.translator", "jqueryui"], function($, translator){
 			}
 
 			var oneShotPopup = $("<div/>");
-			$(document).append(oneShotPopup);
+			$("body").append(oneShotPopup);
 
 			oneShotPopup.append(content.message);
 			oneShotPopup.keypress(function() {
