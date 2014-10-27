@@ -99,7 +99,7 @@ documentation :
     </div>
 
     <div id="execute-informations-panel" class="toggle-panel-main is-contextual load-links-right-frame"
-      data-title="Informations" th:attr="data-title=#{generics.information.title}">
+     title="Informations" th:title="#{generics.information.title}">
 
       <div class="display-table">
       
@@ -169,7 +169,7 @@ documentation :
     </div>
 
 
-    <div id="execute-prerequisite-panel" class="toggle-panel-main is-contextual load-links-right-frame" data-title="Prerequisite" th:attr="data-title=#{generics.prerequisite.title}">
+    <div id="execute-prerequisite-panel" class="toggle-panel-main is-contextual load-links-right-frame" title="Prerequisite" th:title="#{generics.prerequisite.title}">
 			<div class="display-table">
 			<div class="display-table-row">			
 				<div class="display-table-cell" sq:unsafe-html="${execution.prerequisite}">					
@@ -191,16 +191,20 @@ documentation :
 	<script type="text/javascript" th:inline="javascript">
 	//<![CDATA[
 	require(["common"], function() {
-    	require(["jquery", "execution-processing", 'squash.basicwidgets', 'custom-field-values'], 
-    			function($, executionProcessing, basic, cufValues){
-  			requirejs.config({
+    	require(["jquery", 'squash.basicwidgets', 'custom-field-values'], 
+    			function($, basic, cufValues){
+  			
+    		requirejs.config({
   				config : {
-  					"execution-processing/init-preview" : /*[[${config}]]*/{}
+  					"unfinished-execution-preview-page" : /*[[${config}]]*/{}
   				}
   			});
+    		
   			
     		$(function(){
-    			executionProcessing.initPreview();
+
+        		require(["unfinished-execution-preview-page"], function(){/*noop*/});
+        		
     			basic.init();
     			
     			/* we dont append in parent because order would not be guaranteed

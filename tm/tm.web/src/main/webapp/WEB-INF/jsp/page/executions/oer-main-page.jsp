@@ -101,7 +101,8 @@ publish("reload.oer.panelsready");
                 </td>
 				<td class="right-aligned">
 					<label class="evaluation-label-status"><f:message key="execute.header.status.label" /></label>
-					<comp:execution-status-combo name="executionStatus" id="step-status-combo" allowsUntestable="${config.allowsUntestable}" allowsSettled="${config.allowsSettled}"/>
+					<comp:execution-status-combo name="executionStatus" id="step-status-combo" allowsUntestable="${config.allowsUntestable}" 
+                                                  allowsSettled="${config.allowsSettled}" selected="${config.currentStepStatus }"/>
 					<c:if test="${config.allowsUntestable}">
 						<button class="sq-btn ui-button step-untestable" title="${untestableLabel}">
                           <span class="ui-icon exec-status-untestable"></span>

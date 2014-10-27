@@ -33,10 +33,6 @@ if (window.console.trace === undefined){
 requirejs.config({
 			packages : [
 				{
-					name : 'execution-processing',
-					main : 'execution-processing-main'
-				},
-				{
 					name : 'contextual-content-handlers',
 					main : 'ctxt-handlers-main'
 				},
