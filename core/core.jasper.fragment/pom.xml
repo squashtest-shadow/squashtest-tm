@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
@@ -6,9 +7,9 @@
     <version>1.12.0.M1-SNAPSHOT</version>
   </parent>
   <artifactId>core.jasper.fragment</artifactId>
+  <packaging>bundle</packaging>
   <name>${project.groupId}.${project.artifactId}</name>
   <description>Fixes missing imports in org.apache.jasper.glassfish (see https://bugs.eclipse.org/bugs/show_bug.cgi?id=389510)</description>
-  <packaging>bundle</packaging>
 
   <dependencies>
     <dependency>
@@ -26,6 +27,9 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <generatedSourcesDirectory>${project.build.directory}/generated-resources/META-INF</generatedSourcesDirectory>
+        </configuration>
         <dependencies>
           <dependency>
             <groupId>org.squashtest.tm</groupId>
@@ -33,11 +37,7 @@
             <version>${project.version}</version>
           </dependency>
         </dependencies>
-        <configuration>
-          <generatedSourcesDirectory>${project.build.directory}/generated-resources/META-INF</generatedSourcesDirectory>
-        </configuration>
       </plugin>
-
 
       <plugin>
         <groupId>org.apache.felix</groupId>

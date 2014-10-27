@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
@@ -7,10 +8,10 @@
   </parent>
 
   <artifactId>core.jetty.boot.felix42.fragment</artifactId>
-  <name>${project.groupId}.${project.artifactId}</name>
-  <description>Fragment of jetty-osgi-boot which enables to load wars in a Felix 4.2 container. Default implementation is broken from Felix 4.0.0</description>
   <!--  Packaging is NOT bundle, look at  <plugins> for more info -->
   <packaging>jar</packaging>
+  <name>${project.groupId}.${project.artifactId}</name>
+  <description>Fragment of jetty-osgi-boot which enables to load wars in a Felix 4.2 container. Default implementation is broken from Felix 4.0.0</description>
 
   <dependencies>
     <dependency>
@@ -64,10 +65,10 @@
         <executions>
           <execution>
             <id>bundle-manifest</id>
-            <phase>process-classes</phase>
             <goals>
               <goal>manifest</goal>
             </goals>
+            <phase>process-classes</phase>
             <configuration>
               <instructions>
                 <_include>bnd.bnd</_include>

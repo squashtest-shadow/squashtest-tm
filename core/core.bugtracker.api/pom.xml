@@ -1,14 +1,14 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="ISO-8859-1"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
-    <artifactId>squashtest-csp-core</artifactId>
     <groupId>org.squashtest.tm</groupId>
+    <artifactId>squashtest-csp-core</artifactId>
     <version>1.12.0.M1-SNAPSHOT</version>
   </parent>
   <artifactId>core.bugtracker.api</artifactId>
-  <name>${project.groupId}.${project.artifactId}</name>
   <packaging>bundle</packaging>
+  <name>${project.groupId}.${project.artifactId}</name>
   <description>Squash TM API / SPI required by bugtracker connector implementations</description>
 
   <properties>
@@ -19,11 +19,53 @@
   </properties>
 
   <dependencies>
+    <dependency>
+      <groupId>org.aopalliance</groupId>
+      <artifactId>com.springsource.org.aopalliance</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.hibernate</groupId>
+      <artifactId>com.springsource.org.hibernate.validator</artifactId>
+    </dependency>
+    <!-- ====== /DEPENDENCY POMS ====== -->
+
+    <!-- ====== FOUNDATION ====== -->
+    <dependency>
+      <groupId>commons-lang</groupId>
+      <artifactId>commons-lang</artifactId>
+      <scope>compile</scope>
+    </dependency>
     <!-- ====== DEPENDENCY POMS ====== -->
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>core.foundation</artifactId>
       <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>hibernate-dependencies</artifactId>
+      <version>${project.version}</version>
+      <type>pom</type>
+    </dependency>
+    <!-- ====== /SPRING FRAMEWORK ====== -->
+
+    <!-- ====== OTHERS =================== -->
+    <dependency>
+      <groupId>org.eclipse.jetty.orbit</groupId>
+      <artifactId>javax.servlet</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>org.springframework.aop</artifactId>
+    </dependency>
+    <!-- ====== /FOUNDATION ====== -->
+
+    <!-- ====== SPRING FRAMEWORK ====== -->
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>org.springframework.transaction</artifactId>
+      <scope>compile</scope>
     </dependency>
 
     <dependency>
@@ -34,9 +76,9 @@
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>hibernate-dependencies</artifactId>
+      <artifactId>org.squashtest.csp.tools.unittest</artifactId>
       <version>${project.version}</version>
-      <type>pom</type>
+      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
@@ -45,59 +87,17 @@
       <type>pom</type>
       <scope>test</scope>
     </dependency>
-    <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>org.squashtest.csp.tools.unittest</artifactId>
-      <version>${project.version}</version>
-      <scope>test</scope>
-    </dependency>
-    <!-- ====== /DEPENDENCY POMS ====== -->
-
-    <!-- ====== FOUNDATION ====== -->
-    <dependency>
-      <groupId>commons-lang</groupId>
-      <artifactId>commons-lang</artifactId>
-      <scope>compile</scope>
-    </dependency>
-    <!-- ====== /FOUNDATION ====== -->
-
-    <!-- ====== SPRING FRAMEWORK ====== -->
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>org.springframework.transaction</artifactId>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>org.springframework.aop</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.aopalliance</groupId>
-      <artifactId>com.springsource.org.aopalliance</artifactId>
-    </dependency>
-    <!-- ====== /SPRING FRAMEWORK ====== -->
-
-    <!-- ====== OTHERS =================== -->
-    <dependency>
-      <groupId>org.eclipse.jetty.orbit</groupId>
-      <artifactId>javax.servlet</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>org.hibernate</groupId>
-      <artifactId>com.springsource.org.hibernate.validator</artifactId>
-    </dependency>
     <!-- ====== /OTHERS ================== -->
   </dependencies>
-  
+
   <build>
+    <testSourceDirectory>src/test/groovy</testSourceDirectory>
     <testResources>
       <testResource>
-        <directory>${project.basedir}/src/test/resources</directory>
         <filtering>true</filtering>
+        <directory>${project.basedir}/src/test/resources</directory>
       </testResource>
     </testResources>
-    <testSourceDirectory>src/test/groovy</testSourceDirectory>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>

@@ -1,9 +1,9 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
-    <artifactId>squash-tm</artifactId>
     <groupId>org.squashtest.tm</groupId>
+    <artifactId>squash-tm</artifactId>
     <version>1.12.0.M1-SNAPSHOT</version>
   </parent>
 
@@ -12,11 +12,17 @@
   <name>squashtest-tm-database</name>
   <description>Squash TM - Database definition</description>
 
+  <properties>
+    <incremental.updates.changelog>src/main/liquibase/global.changelog-incremental-updates.xml</incremental.updates.changelog>
+    <master.changelog>src/main/liquibase/global.changelog-master.xml</master.changelog>
+    <migration-test.changelog>src/test/liquibase/global.changelog-migration-test.xml</migration-test.changelog>
+  </properties>
+
   <dependencyManagement>
     <dependencies>
       <dependency>
-        <artifactId>provision-bom</artifactId>
         <groupId>org.squashtest.tm</groupId>
+        <artifactId>provision-bom</artifactId>
         <version>${provisionBom.version}</version>
         <type>pom</type>
         <scope>import</scope>
@@ -26,13 +32,13 @@
 
   <dependencies>
     <dependency>
-      <groupId>com.h2database</groupId>
-      <artifactId>h2</artifactId>
+      <groupId>com.mysql.jdbc</groupId>
+      <artifactId>com.springsource.com.mysql.jdbc</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>com.mysql.jdbc</groupId>
-      <artifactId>com.springsource.com.mysql.jdbc</artifactId>
+      <groupId>com.h2database</groupId>
+      <artifactId>h2</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -40,18 +46,12 @@
       <artifactId>org.postgresql</artifactId>
       <scope>test</scope>
     </dependency>
-      <!-- <dependency>
+    <!-- <dependency>
         <groupId>org.ancoron.postgresql</groupId>
         <artifactId>org.postgresql.net</artifactId>
          <scope>test</scope>
       </dependency> -->
   </dependencies>
-
-  <properties>
-    <master.changelog>src/main/liquibase/global.changelog-master.xml</master.changelog>
-    <incremental.updates.changelog>src/main/liquibase/global.changelog-incremental-updates.xml</incremental.updates.changelog>
-    <migration-test.changelog>src/test/liquibase/global.changelog-migration-test.xml</migration-test.changelog>
-  </properties>
 
   <build>
     <resources>
@@ -98,17 +98,17 @@
         <executions>
           <execution>
             <id>process-changelogs</id>
-            <phase>process-resources</phase>
             <goals>
               <goal>resources</goal>
             </goals>
+            <phase>process-resources</phase>
           </execution>
           <execution>
             <id>process-test-changelogs</id>
-            <phase>pre-integration-test</phase>
             <goals>
               <goal>testResources</goal>
             </goals>
+            <phase>pre-integration-test</phase>
           </execution>
         </executions>
       </plugin>
@@ -119,10 +119,10 @@
         <executions>
           <execution>
             <id>creates-h2-database</id>
-            <phase>prepare-package</phase>
             <goals>
               <goal>update</goal>
             </goals>
+            <phase>prepare-package</phase>
             <configuration>
               <dropFirst>true</dropFirst>
               <changeLogFile>${master.changelog}</changeLogFile>
@@ -136,10 +136,10 @@
           <!-- Performs data migration in H2 -->
           <execution>
             <id>test-h2-data-migration</id>
-            <phase>integration-test</phase>
             <goals>
               <goal>update</goal>
             </goals>
+            <phase>integration-test</phase>
             <configuration>
               <dropFirst>true</dropFirst>
               <changeLogFile>${migration-test.changelog}</changeLogFile>
@@ -153,10 +153,10 @@
           <!-- Performs incremental updates in h2 -->
           <execution>
             <id>test-h2-incremental-updates</id>
-            <phase>integration-test</phase>
             <goals>
               <goal>update</goal>
             </goals>
+            <phase>integration-test</phase>
             <configuration>
               <dropFirst>true</dropFirst>
               <changeLogFile>${incremental.updates.changelog}</changeLogFile>
@@ -169,10 +169,10 @@
 
           <execution>
             <id>generate-h2-sample-database</id>
-            <phase>prepare-package</phase>
             <goals>
               <goal>update</goal>
             </goals>
+            <phase>prepare-package</phase>
             <configuration>
               <dropFirst>true</dropFirst>
               <changeLogFile>${project.build.outputDirectory}/sample/sample-db.changelog.xml</changeLogFile>
@@ -187,7 +187,11 @@
       </plugin>
     </plugins>
   </build>
-  
+
+  <issueManagement>
+    <system>mantis</system>
+  </issueManagement>
+
   <profiles>
     <profile>
       <id>acceptance-tests</id>
@@ -229,7 +233,7 @@
                     <requireProperty>
                       <property>liquibase.postgres.password</property>
                     </requireProperty>
-                   </rules>
+                  </rules>
                 </configuration>
               </execution>
             </executions>
@@ -242,10 +246,10 @@
               <!-- Performs full import in MySQL -->
               <execution>
                 <id>create-mysql-database</id>
-                <phase>prepare-package</phase>
                 <goals>
                   <goal>update</goal>
                 </goals>
+                <phase>prepare-package</phase>
                 <configuration>
                   <dropFirst>true</dropFirst>
                   <clearCheckSums>true</clearCheckSums>
@@ -260,10 +264,10 @@
               <!-- Performs data migration in MySQL -->
               <execution>
                 <id>test-mysql-data-migration</id>
-                <phase>integration-test</phase>
                 <goals>
                   <goal>update</goal>
                 </goals>
+                <phase>integration-test</phase>
                 <configuration>
                   <dropFirst>true</dropFirst>
                   <clearCheckSums>true</clearCheckSums>
@@ -278,10 +282,10 @@
               <!-- Performs full import in PostgreSQL -->
               <execution>
                 <id>create-posgres-database</id>
-                <phase>prepare-package</phase>
                 <goals>
                   <goal>update</goal>
                 </goals>
+                <phase>prepare-package</phase>
                 <configuration>
                   <dropFirst>true</dropFirst>
                   <clearCheckSums>true</clearCheckSums>
@@ -296,10 +300,10 @@
               <!-- Performs data migration in PostgresSQL -->
               <execution>
                 <id>test-postgres-data-migration</id>
-                <phase>integration-test</phase>
                 <goals>
                   <goal>update</goal>
                 </goals>
+                <phase>integration-test</phase>
                 <configuration>
                   <dropFirst>true</dropFirst>
                   <clearCheckSums>true</clearCheckSums>
@@ -352,10 +356,10 @@
             <executions>
               <execution>
                 <id>create-mysql-database</id>
-                <phase>compile</phase>
                 <goals>
                   <goal>update</goal>
                 </goals>
+                <phase>compile</phase>
                 <configuration>
                   <dropFirst>true</dropFirst>
                   <clearCheckSums>true</clearCheckSums>
@@ -408,10 +412,10 @@
             <executions>
               <execution>
                 <id>create-postgres-database</id>
-                <phase>compile</phase>
                 <goals>
                   <goal>update</goal>
                 </goals>
+                <phase>compile</phase>
                 <configuration>
                   <dropFirst>true</dropFirst>
                   <clearCheckSums>true</clearCheckSums>
@@ -472,10 +476,10 @@
               <!-- Performs full import in PostgreSQL -->
               <execution>
                 <id>create-posgres-database</id>
-                <phase>prepare-package</phase>
                 <goals>
                   <goal>update</goal>
                 </goals>
+                <phase>prepare-package</phase>
                 <configuration>
                   <dropFirst>true</dropFirst>
                   <clearCheckSums>true</clearCheckSums>
@@ -490,10 +494,10 @@
               <!-- Performs data migration in PostgresSQL -->
               <execution>
                 <id>test-postgres-data-migration</id>
-                <phase>integration-test</phase>
                 <goals>
                   <goal>update</goal>
                 </goals>
+                <phase>integration-test</phase>
                 <configuration>
                   <dropFirst>true</dropFirst>
                   <clearCheckSums>true</clearCheckSums>
@@ -510,8 +514,4 @@
       </build>
     </profile>
   </profiles>
-  
-  <issueManagement>
-    <system>mantis</system>
-  </issueManagement>
 </project>

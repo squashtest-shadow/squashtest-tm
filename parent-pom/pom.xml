@@ -1,4 +1,4 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
@@ -13,23 +13,23 @@
   <description>This POM should be used as parent by modules which produce jars and wars</description>
 
   <dependencies>
-		<!-- ====== LOGGING ====== -->
-		<!-- Enforces logger dependencies in java projects -->
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-api</artifactId>
-    </dependency>
     <dependency>
       <groupId>log4j</groupId>
       <artifactId>log4j</artifactId>
     </dependency>
-		<!-- ====== /LOGGING ====== -->
+    <!-- ====== LOGGING ====== -->
+    <!-- Enforces logger dependencies in java projects -->
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+    </dependency>
+    <!-- ====== /LOGGING ====== -->
   </dependencies>
 
   <build>
     <plugins>
       <plugin>
-			  <!-- We add license and copyright information in jars -->
+        <!-- We add license and copyright information in jars -->
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-remote-resources-plugin</artifactId>
         <executions>
@@ -50,7 +50,7 @@
 
   <profiles>
     <profile>
-			<!-- When activated, this profile copies files required by Eclipse PDE to launch the bundles -->
+      <!-- When activated, this profile copies files required by Eclipse PDE to launch the bundles -->
       <id>eclipse</id>
       <activation>
         <file>
@@ -87,12 +87,12 @@
             <artifactId>maven-resources-plugin</artifactId>
             <executions>
               <execution>
-								<!-- MANIFEST.MF is generated at package lifecycle so we cannot copy it before -->
+                <!-- MANIFEST.MF is generated at package lifecycle so we cannot copy it before -->
                 <id>copy-manifest</id>
-                <phase>package</phase>
                 <goals>
                   <goal>copy-resources</goal>
                 </goals>
+                <phase>package</phase>
                 <configuration>
                   <outputDirectory>${basedir}/META-INF</outputDirectory>
                   <resources>
@@ -106,14 +106,13 @@
                 </configuration>
               </execution>
 
-
               <execution>
-								<!-- webapp/WEB-INF content should be copied at project root. We can do this at compile lifecycle -->
+                <!-- webapp/WEB-INF content should be copied at project root. We can do this at compile lifecycle -->
                 <id>copy-web-inf</id>
-                <phase>process-resources</phase>
                 <goals>
                   <goal>copy-resources</goal>
                 </goals>
+                <phase>process-resources</phase>
                 <configuration>
                   <outputDirectory>${basedir}/WEB-INF</outputDirectory>
                   <nonFilteredFileExtensions>
@@ -131,12 +130,12 @@
               </execution>
 
               <execution>
-								<!-- webapp/scripts content should be copied at project root. We can do this at compile lifecycle -->
+                <!-- webapp/scripts content should be copied at project root. We can do this at compile lifecycle -->
                 <id>copy-scripts</id>
-                <phase>process-resources</phase>
                 <goals>
                   <goal>copy-resources</goal>
                 </goals>
+                <phase>process-resources</phase>
                 <configuration>
                   <outputDirectory>${basedir}/scripts</outputDirectory>
                   <resources>
@@ -149,12 +148,12 @@
               </execution>
 
               <execution>
-				<!-- webapp/styles content should be copied at project root. We can do this at compile lifecycle -->
+                <!-- webapp/styles content should be copied at project root. We can do this at compile lifecycle -->
                 <id>copy-styles</id>
-                <phase>process-resources</phase>
                 <goals>
                   <goal>copy-resources</goal>
                 </goals>
+                <phase>process-resources</phase>
                 <configuration>
                   <outputDirectory>${basedir}/styles</outputDirectory>
                   <resources>
@@ -167,12 +166,12 @@
               </execution>
 
               <execution>
-								<!-- webapp/images content should be copied at project root. We can do this at compile lifecycle -->
+                <!-- webapp/images content should be copied at project root. We can do this at compile lifecycle -->
                 <id>copy-images</id>
-                <phase>process-resources</phase>
                 <goals>
                   <goal>copy-resources</goal>
                 </goals>
+                <phase>process-resources</phase>
                 <configuration>
                   <outputDirectory>${basedir}/images</outputDirectory>
                   <resources>

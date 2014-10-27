@@ -1,8 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
-    <artifactId>squashtest-csp-dependencies</artifactId>
     <groupId>org.squashtest.tm</groupId>
+    <artifactId>squashtest-csp-dependencies</artifactId>
     <version>1.12.0.M1-SNAPSHOT</version>
   </parent>
 
@@ -12,10 +13,19 @@
   <description>Defines dependencies for Spock-based tests.</description>
 
   <dependencies>
-		<!-- ====== JUNIT ====== -->
+    <!-- Required to mock classes -->
     <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
+      <groupId>net.sourceforge.cglib</groupId>
+      <artifactId>com.springsource.net.sf.cglib</artifactId>
+      <version>${cglib.version}</version>
+      <scope>compile</scope>
+    </dependency>
+    <!-- ====== /SPOCK TESTS ====== -->
+
+    <!-- ====== GROOVY ====== -->
+    <dependency>
+      <groupId>org.codehaus.groovy</groupId>
+      <artifactId>groovy-all</artifactId>
       <scope>compile</scope>
     </dependency>
     <dependency>
@@ -23,19 +33,10 @@
       <artifactId>hamcrest-all</artifactId>
       <scope>compile</scope>
     </dependency>
-		<!-- ====== /JUNIT ====== -->
-		
-		<!-- ====== SPOCK TESTS ====== -->
+    <!-- ====== JUNIT ====== -->
     <dependency>
-      <groupId>org.spockframework</groupId>
-      <artifactId>spock-core</artifactId>
-      <scope>compile</scope>
-    </dependency>
-		<!-- Required to mock classes -->
-    <dependency>
-      <groupId>net.sourceforge.cglib</groupId>
-      <artifactId>com.springsource.net.sf.cglib</artifactId>
-      <version>${cglib.version}</version>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
       <scope>compile</scope>
     </dependency>
     <dependency>
@@ -43,14 +44,14 @@
       <artifactId>objenesis</artifactId>
       <scope>compile</scope>
     </dependency>
-		<!-- ====== /SPOCK TESTS ====== -->
-		
-		<!-- ====== GROOVY ====== -->
+    <!-- ====== /JUNIT ====== -->
+
+    <!-- ====== SPOCK TESTS ====== -->
     <dependency>
-      <groupId>org.codehaus.groovy</groupId>
-      <artifactId>groovy-all</artifactId>
+      <groupId>org.spockframework</groupId>
+      <artifactId>spock-core</artifactId>
       <scope>compile</scope>
     </dependency>
-		<!-- ====== /GROOVY ====== -->
+    <!-- ====== /GROOVY ====== -->
   </dependencies>
 </project>

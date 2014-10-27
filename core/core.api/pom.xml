@@ -2,35 +2,38 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
-    <artifactId>squashtest-csp-core</artifactId>
     <groupId>org.squashtest.tm</groupId>
+    <artifactId>squashtest-csp-core</artifactId>
     <version>1.12.0.M1-SNAPSHOT</version>
   </parent>
 
   <artifactId>core.api</artifactId>
+  <packaging>bundle</packaging>
   <name>${project.groupId}.${project.artifactId}</name>
   <description>API offering entry points to Squash core webapp which can be used by plugins</description>
-  <packaging>bundle</packaging>
 
   <properties>
     <sonar.java.coveragePlugin>cobertura</sonar.java.coveragePlugin>
   </properties>
 
   <dependencies>
-		<!-- ====== SQUASHTEST ====== -->
+
+    <dependency>
+      <groupId>commons-lang</groupId>
+      <artifactId>commons-lang</artifactId>
+    </dependency>
+    <!-- ====== SQUASHTEST ====== -->
     <dependency>
       <groupId>org.squashtest.tm</groupId>
       <artifactId>core.foundation</artifactId>
       <version>${project.version}</version>
     </dependency>
+
     <dependency>
-      <groupId>org.squashtest.tm</groupId>
-      <artifactId>spock-test-dependencies</artifactId>
-      <version>${project.version}</version>
-      <type>pom</type>
-      <scope>test</scope>
+      <groupId>org.springframework</groupId>
+      <artifactId>org.springframework.context</artifactId>
     </dependency>
-		<!-- ====== /SQUASHTEST ====== -->
+    <!-- ====== /SQUASHTEST ====== -->
 
     <dependency>
       <groupId>org.squashtest.tm</groupId>
@@ -41,19 +44,16 @@
     </dependency>
 
     <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>org.springframework.context</artifactId>
-    </dependency>
-
-    <dependency>
       <groupId>javax.inject</groupId>
       <artifactId>com.springsource.javax.inject</artifactId>
       <scope>test</scope>
     </dependency>
-
     <dependency>
-      <groupId>commons-lang</groupId>
-      <artifactId>commons-lang</artifactId>
+      <groupId>org.squashtest.tm</groupId>
+      <artifactId>spock-test-dependencies</artifactId>
+      <version>${project.version}</version>
+      <type>pom</type>
+      <scope>test</scope>
     </dependency>
   </dependencies>
 

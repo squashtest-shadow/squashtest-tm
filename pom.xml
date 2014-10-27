@@ -14,60 +14,35 @@
 
   <name>squash-tm</name>
   <description>Squash Test Manager - Test repository management application</description>
-  <inceptionYear>2010</inceptionYear>
-  <organization>
-    <name>Henix, henix.fr</name>
-  </organization>
-  <licenses>
-    <license>
-      <name>GNU Lesser General Public License V3</name>
-    </license>
-  </licenses>
 
-  <scm>
-    <connection>scm:hg:${project.basedir}</connection>
-    <developerConnection>scm:hg:${project.basedir}</developerConnection>
-  </scm>
-
-  <distributionManagement>
-    <repository>
-      <id>squash-release-deploy-repo</id>
-      <name>Squash releases deployment repo</name>
-      <url>${deploy-repo.release.url}</url>
-    </repository>
-    <snapshotRepository>
-      <id>squash-snapshot-deploy-repo</id>
-      <name>Squash snapshot deployment repo</name>
-      <url>${deploy-repo.snapshot.url}</url>
-    </snapshotRepository>
-  </distributionManagement>
+  <modules>
+    <!-- tools is a parent-pom dep so it needs to built first -->
+    <module>tools</module>
+    <module>parent-pom</module>
+    <module>dependencies</module>
+    <module>database.h2.fragment</module>
+    <module>database</module>
+    <module>core</module>
+    <module>tm</module>
+    <module>plugins</module>
+  </modules>
 
   <properties>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <groovy.version>2.0.7</groovy.version>
+    <hibernate.version>4.2.2.Final</hibernate.version>
+
+    <org.osgi.framework.system.packages.extra>com.sun.org.apache.xalan.internal.res,com.sun.org.apache.xml.internal.utils,com.sun.org.apache.xpath.internal,com.sun.org.apache.xpath.internal.jaxp,com.sun.org.apache.xpath.internal.objects</org.osgi.framework.system.packages.extra>
 
     <org.osgi.service.http.port>9090</org.osgi.service.http.port>
     <org.osgi.service.http.port.secure>9443</org.osgi.service.http.port.secure>
-
-    <org.osgi.framework.system.packages.extra>
-      com.sun.org.apache.xalan.internal.res,com.sun.org.apache.xml.internal.utils,com.sun.org.apache.xpath.internal,com.sun.org.apache.xpath.internal.jaxp,com.sun.org.apache.xpath.internal.objects
-    </org.osgi.framework.system.packages.extra>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <provisionBom.version>1.4</provisionBom.version>
 
     <verbose.compiler>false</verbose.compiler>
-    <hibernate.version>4.2.2.Final</hibernate.version>
-    <groovy.version>2.0.7</groovy.version>
-    <provisionBom.version>1.4</provisionBom.version>
   </properties>
 
   <dependencyManagement>
     <dependencies>
-      <!-- ====== INFRASTRUCTURE DEFINITIONS === -->
-      <dependency>
-        <groupId>org.squashtest.tm</groupId>
-        <artifactId>provision-bom</artifactId>
-        <version>${provisionBom.version}</version>
-        <type>pom</type>
-        <scope>import</scope>
-      </dependency>
       <!-- ====== /INFRASTRUCTURE DEFINITIONS === -->
 
       <!-- if not overriden here maven don't pick up the right version -->
@@ -75,11 +50,6 @@
         <groupId>net.sourceforge.cglib</groupId>
         <artifactId>com.springsource.net.sf.cglib</artifactId>
         <version>${cglib.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.objectweb.asm</groupId>
-        <artifactId>com.springsource.org.objectweb.asm</artifactId>
-        <version>${asm.version}</version>
       </dependency>
 
       <dependency>
@@ -92,6 +62,19 @@
             <artifactId>com.springsource.org.apache.commons.logging</artifactId>
           </exclusion>
         </exclusions>
+      </dependency>
+      <dependency>
+        <groupId>org.objectweb.asm</groupId>
+        <artifactId>com.springsource.org.objectweb.asm</artifactId>
+        <version>${asm.version}</version>
+      </dependency>
+      <!-- ====== INFRASTRUCTURE DEFINITIONS === -->
+      <dependency>
+        <groupId>org.squashtest.tm</groupId>
+        <artifactId>provision-bom</artifactId>
+        <version>${provisionBom.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
       </dependency>
     </dependencies>
   </dependencyManagement>
@@ -108,13 +91,13 @@
           <dependencies>
             <dependency>
               <groupId>org.codehaus.groovy</groupId>
-              <artifactId>groovy-eclipse-compiler</artifactId>
-              <version>${groovy-eclipse-compiler.version}</version>
+              <artifactId>groovy-eclipse-batch</artifactId>
+              <version>2.0.0-01</version>
             </dependency>
             <dependency>
               <groupId>org.codehaus.groovy</groupId>
-              <artifactId>groovy-eclipse-batch</artifactId>
-              <version>2.0.0-01</version>
+              <artifactId>groovy-eclipse-compiler</artifactId>
+              <version>${groovy-eclipse-compiler.version}</version>
             </dependency>
           </dependencies>
         </plugin>
@@ -127,10 +110,10 @@
           <executions>
             <execution>
               <id>add-source</id>
-              <phase>generate-sources</phase>
               <goals>
                 <goal>add-source</goal>
               </goals>
+              <phase>generate-sources</phase>
               <configuration>
                 <sources>
                   <source>src/main/groovy</source>
@@ -139,10 +122,10 @@
             </execution>
             <execution>
               <id>add-test-source</id>
-              <phase>generate-test-sources</phase>
               <goals>
                 <goal>add-test-source</goal>
               </goals>
+              <phase>generate-test-sources</phase>
               <configuration>
                 <sources>
                   <source>src/test/groovy</source>
@@ -183,19 +166,17 @@
           </configuration>
           <dependencies>
             <dependency>
-              <groupId>org.liquibase</groupId>
-              <artifactId>liquibase-core</artifactId>
-              <version>${liquibase.version}</version>
-            </dependency>
-            <dependency>
               <groupId>org.squashtest.tm</groupId>
               <artifactId>database.h2.fragment</artifactId>
               <version>${project.version}</version>
             </dependency>
+            <dependency>
+              <groupId>org.liquibase</groupId>
+              <artifactId>liquibase-core</artifactId>
+              <version>${liquibase.version}</version>
+            </dependency>
           </dependencies>
         </plugin>
-
-
 
         <plugin>
           <groupId>org.codehaus.mojo</groupId>
@@ -215,26 +196,47 @@
 
     <plugins>
       <plugin>
+        <groupId>com.google.code.sortpom</groupId>
+        <artifactId>maven-sortpom-plugin</artifactId>
+        <version>2.2.1</version>
+        <configuration>
+          <predefinedSortOrder>custom_1</predefinedSortOrder>
+          <lineSeparator>\n</lineSeparator>
+          <encoding>${project.build.sourceEncoding}</encoding>
+          <sortProperties>true</sortProperties>
+          <keepBlankLines>true</keepBlankLines>
+          <sortDependencies>scope, artifactId</sortDependencies>
+          <nrOfIndentSpace>2</nrOfIndentSpace>
+        </configuration>
+        <executions>
+          <execution>
+            <goals>
+              <goal>sort</goal>
+            </goals>
+            <phase>verify</phase>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
         <groupId>org.ops4j</groupId>
         <artifactId>maven-pax-plugin</artifactId>
         <configuration>
           <runner>1.4.0</runner>
           <provision>
             <param>--platform=equinox</param>
-            <param>
-              --system-packages=com.sun.org.apache.xalan.internal.res,com.sun.org.apache.xml.internal.utils,com.sun.org.apache.xpath.internal,com.sun.org.apache.xpath.internal.jaxp,com.sun.org.apache.xpath.internal.objects
-            </param>
+            <param>--system-packages=com.sun.org.apache.xalan.internal.res,com.sun.org.apache.xml.internal.utils,com.sun.org.apache.xpath.internal,com.sun.org.apache.xpath.internal.jaxp,com.sun.org.apache.xpath.internal.objects</param>
             <param>--vmOptions="-Dbundles.configuration.location=${project.basedir}/provision/target/config"</param>
           </provision>
         </configuration>
         <executions>
-					<!-- | uncomment to auto-generate IDE files <execution> <id>ide-support</id> 
+          <!-- | uncomment to auto-generate IDE files <execution> <id>ide-support</id> 
 						<goals> <goal>eclipse</goal> </goals> </execution> -->
         </executions>
       </plugin>
 
       <plugin>
-		<!-- Checks license headers throughout the project -->
+        <!-- Checks license headers throughout the project -->
         <groupId>com.mycila.maven-license-plugin</groupId>
         <artifactId>maven-license-plugin</artifactId>
         <inherited>false</inherited>
@@ -248,7 +250,7 @@
             <license.copyrightOwner>${project.organization.Name}</license.copyrightOwner>
           </properties>
           <excludes>
-						<!-- license files -->
+            <!-- license files -->
             <exclude>**/COPYING.*</exclude>
             <exclude>**/LICENSE.*</exclude>
             <exclude>**/NOTICE.*</exclude>
@@ -261,17 +263,17 @@
             <exclude>**/*readme.*</exclude>
             <exclude>**/README*.*</exclude>
             <exclude>**/readme*.*</exclude>
-						<!-- manifest templates -->
+            <!-- manifest templates -->
             <exclude>**/*.mf</exclude>
             <exclude>**/bnd.bnd</exclude>
-						<!-- resource modules -->
+            <!-- resource modules -->
             <exclude>tools/license-resources/src/main/resources/**/*.*</exclude>
             <exclude>tools/tools-resources/src/main/resources/**/*.*</exclude>
-						<!-- mercurial files-->
+            <!-- mercurial files-->
             <exclude>**/*.orig</exclude>
             <exclude>**/.hgtags</exclude>
             <exclude>**/.hgignore</exclude>
-						<!-- third-party javascript libraries -->
+            <!-- third-party javascript libraries -->
             <exclude>**/js/**/*.*</exclude>
             <exclude>**/scripts/ckeditor/**/*.*</exclude>
             <exclude>**/scripts/datatables/**/*.*</exclude>
@@ -281,7 +283,7 @@
             <exclude>**/scripts/iesupport/**/*.*</exclude>
             <exclude>**/scripts/thirdparties/**/*.*</exclude>
             <exclude>**/scripts/lib/**/*.*</exclude>
-            <exclude>**/scripts/require*.js</exclude>          
+            <exclude>**/scripts/require*.js</exclude>
             <exclude>**/styles/ckeditor/**/*.*</exclude>
             <exclude>**/styles/datatables/**/*.*</exclude>
             <exclude>**/styles/jquery/**/*.*</exclude>
@@ -291,33 +293,33 @@
             <exclude>**/styles/**/thymol.js</exclude>
             <exclude>**/r.js</exclude>
             <exclude>**/scripts/sinon*.js</exclude>
-            <exclude>**/styles/**/bootstrap*.css</exclude> 
-            <exclude>**/pubsub-boot.js</exclude> 
-            
-	    <!-- generated stylesheets -->
+            <exclude>**/styles/**/bootstrap*.css</exclude>
+            <exclude>**/pubsub-boot.js</exclude>
+
+            <!-- generated stylesheets -->
             <exclude>**/styles/**/squash.*.css</exclude>
-						<!-- third-party wslds -->
+            <!-- third-party wslds -->
             <exclude>**/*.wsdl</exclude>
-						<!-- misc system / ide files -->
+            <!-- misc system / ide files -->
             <exclude>**/build.properties</exclude>
-						<!-- felix configuration files -->
+            <!-- felix configuration files -->
             <exclude>**/felix.*.properties</exclude>
-						<!-- SQL files used by liquibase, breaks on mysql import when licensed -->
+            <!-- SQL files used by liquibase, breaks on mysql import when licensed -->
             <exclude>**/src/test/liquibase/**/*.sql</exclude>
             <exclude>**/src/main/liquibase/**/*.sql</exclude>
-						<!-- IzPack files -->
+            <!-- IzPack files -->
             <exclude>**/izpack/**/*.*</exclude>
-						<!-- m2e generated files -->
+            <!-- m2e generated files -->
             <exclude>**/pom.properties</exclude>
-						<!-- webapp resources -->
+            <!-- webapp resources -->
             <exclude>**/webapp/images/*</exclude>
-						<!-- jasper files -->
+            <!-- jasper files -->
             <exclude>**/*.jasper</exclude>
-						<!-- test resources -->
+            <!-- test resources -->
             <exclude>integration-tests/src/it/resources/**</exclude>
-						<!--other -->
+            <!--other -->
             <exclude>**/new_report.rptdesign</exclude>
-						<!-- generated xml (dev) -->
+            <!-- generated xml (dev) -->
             <exclude>**/tm.service/META-INF/**</exclude>
             <exclude>**/config/META-INF/**</exclude>
             <!-- jetty config for dev -->
@@ -342,21 +344,70 @@
       </plugin>
     </plugins>
   </build>
+  <inceptionYear>2010</inceptionYear>
+  <organization>
+    <name>Henix, henix.fr</name>
+  </organization>
+  <licenses>
+    <license>
+      <name>GNU Lesser General Public License V3</name>
+    </license>
+  </licenses>
 
-  <modules>
-		<!-- tools is a parent-pom dep so it needs to built first -->
-    <module>tools</module>
-    <module>parent-pom</module>
-    <module>dependencies</module>
-    <module>database.h2.fragment</module>
-    <module>database</module>
-    <module>core</module>
-    <module>tm</module>
-    <module>plugins</module>
-  </modules>
+  <scm>
+    <connection>scm:hg:${project.basedir}</connection>
+    <developerConnection>scm:hg:${project.basedir}</developerConnection>
+  </scm>
+
+  <repositories>
+    <repository>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+      <id>squash-release-repo</id>
+      <url>http://repo.squashtest.org/maven2/releases</url>
+    </repository>
+    <repository>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+      <id>squash-snapshot-repo</id>
+      <url>http://repo.squashtest.org/maven2/snapshots</url>
+    </repository>
+  </repositories>
+
+  <pluginRepositories>
+    <pluginRepository>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+      <id>squashtest-snapshot</id>
+      <name>SquashTest snapshot repository</name>
+      <url>http://repo.squashtest.org/maven2/snapshots</url>
+    </pluginRepository>
+  </pluginRepositories>
+
+  <distributionManagement>
+    <repository>
+      <id>squash-release-deploy-repo</id>
+      <name>Squash releases deployment repo</name>
+      <url>${deploy-repo.release.url}</url>
+    </repository>
+    <snapshotRepository>
+      <id>squash-snapshot-deploy-repo</id>
+      <name>Squash snapshot deployment repo</name>
+      <url>${deploy-repo.snapshot.url}</url>
+    </snapshotRepository>
+  </distributionManagement>
 
   <profiles>
-		<!-- Default Squash TM dev profile -->
+    <!-- Default Squash TM dev profile -->
     <profile>
       <id>dev</id>
       <activation>
@@ -370,24 +421,24 @@
       </properties>
     </profile>
 
-		<!-- This profile aims to run acceptance tests without compilation and 
+    <!-- This profile aims to run acceptance tests without compilation and 
 			units tests (if possible) -->
     <profile>
       <id>acceptance-tests</id>
-
-      <properties>
-        <skipTests>true</skipTests>
-        <skipITs>false</skipITs>
-      </properties>
 
       <modules>
         <module>osgi-integration-tests</module>
         <module>integration-tests</module>
       </modules>
+
+      <properties>
+        <skipITs>false</skipITs>
+        <skipTests>true</skipTests>
+      </properties>
     </profile>
 
     <profile>
-        <!-- Without this profile, mvn versions:... fails to detect "provision" module. This profile has no other use -->
+      <!-- Without this profile, mvn versions:... fails to detect "provision" module. This profile has no other use -->
       <id>provision</id>
 
       <modules>
@@ -395,7 +446,7 @@
       </modules>
     </profile>
 
-		<!-- This profile aims to perform a build on the developper's machine before 
+    <!-- This profile aims to perform a build on the developper's machine before 
 			a push. It should not run anything against mysql -->
     <profile>
       <id>private-build</id>
@@ -416,7 +467,7 @@
       </activation>
       <build>
         <plugins>
-<!--           <plugin>
+          <!--           <plugin>
             <artifactId>maven-remote-resources-plugin</artifactId>
             <executions>
               <execution>
@@ -434,8 +485,8 @@
               </execution>
             </executions>
           </plugin>
- -->		
-<!--           <plugin>
+ -->
+          <!--           <plugin>
             <artifactId>maven-resources-plugin</artifactId>
             <executions>
               <execution>
@@ -470,7 +521,7 @@
       <build>
         <pluginManagement>
           <plugins>
-						<!--This plugin's configuration is used to store Eclipse m2e settings 
+            <!--This plugin's configuration is used to store Eclipse m2e settings 
 							only. It has no influence on the Maven build itself. -->
             <plugin>
               <groupId>org.eclipse.m2e</groupId>
@@ -490,21 +541,21 @@
                         </goals>
                       </pluginExecutionFilter>
                       <action>
-                        <execute />
+                        <execute></execute>
                       </action>
                     </pluginExecution>
 
                     <pluginExecution>
                       <pluginExecutionFilter>
-                        <groupId> com.springsource.bundlor </groupId>
-                        <artifactId> com.springsource.bundlor.maven </artifactId>
-                        <versionRange> [1.0.0.RC1,) </versionRange>
+                        <groupId>com.springsource.bundlor</groupId>
+                        <artifactId>com.springsource.bundlor.maven</artifactId>
+                        <versionRange>[1.0.0.RC1,)</versionRange>
                         <goals>
                           <goal>bundlor</goal>
                         </goals>
                       </pluginExecutionFilter>
                       <action>
-                        <execute />
+                        <execute></execute>
                       </action>
                     </pluginExecution>
 
@@ -512,7 +563,7 @@
                       <pluginExecutionFilter>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-resources-plugin</artifactId>
-                        <versionRange> [1.2.0,) </versionRange>
+                        <versionRange>[1.2.0,)</versionRange>
                         <goals>
                           <goal>process</goal>
                         </goals>
@@ -527,12 +578,8 @@
                     <pluginExecution>
                       <pluginExecutionFilter>
                         <groupId>org.codehaus.mojo</groupId>
-                        <artifactId>
-                          jasperreports-maven-plugin
-                        </artifactId>
-                        <versionRange>
-                          [1.0-beta-2,)
-                        </versionRange>
+                        <artifactId>jasperreports-maven-plugin</artifactId>
+                        <versionRange>[1.0-beta-2,)</versionRange>
                         <goals>
                           <goal>compile-reports</goal>
                         </goals>
@@ -558,9 +605,9 @@
         <os>
           <family>windows</family>
         </os>
-	<!--<file>-->
-          <!-- mvn appplies OR so criterion below is deactivated -->
-          <!-- <exists>${basedir}\.hg\.sqpreco</exists> -->
+        <!--<file>-->
+        <!-- mvn appplies OR so criterion below is deactivated -->
+        <!-- <exists>${basedir}\.hg\.sqpreco</exists> -->
         <!--</file>-->
       </activation>
       <build>
@@ -570,12 +617,12 @@
             <artifactId>gmaven-plugin</artifactId>
             <executions>
               <execution>
-                <inherited>false</inherited>
                 <id>add-windows-hg-hooks</id>
-                <phase>process-resources</phase>
                 <goals>
                   <goal>execute</goal>
                 </goals>
+                <phase>process-resources</phase>
+                <inherited>false</inherited>
                 <configuration>
                   <source>${project.basedir}/src/main/scripts/AddWindowsHgHooks.groovy</source>
                 </configuration>
@@ -586,39 +633,5 @@
       </build>
     </profile>
   </profiles>
-
-  <repositories>
-    <repository>
-      <id>squash-release-repo</id>
-      <url>http://repo.squashtest.org/maven2/releases</url>
-      <snapshots> 
-        <enabled>false</enabled>
-      </snapshots>
-    </repository>
-    <repository>
-      <id>squash-snapshot-repo</id>
-      <url>http://repo.squashtest.org/maven2/snapshots</url>
-      <snapshots>
-        <enabled>true</enabled>
-      </snapshots>
-      <releases>
-        <enabled>false</enabled>
-      </releases>
-    </repository>
-  </repositories>
-
-  <pluginRepositories>
-    <pluginRepository>
-      <id>squashtest-snapshot</id>
-      <name>SquashTest snapshot repository</name>
-      <url>http://repo.squashtest.org/maven2/snapshots</url>
-      <releases>
-        <enabled>false</enabled>
-      </releases>
-      <snapshots>
-        <enabled>true</enabled>
-      </snapshots>
-    </pluginRepository>
-  </pluginRepositories>
 
 </project>

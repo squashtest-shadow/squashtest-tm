@@ -2,41 +2,42 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
-    <artifactId>squashtest-csp-tm</artifactId>
     <groupId>org.squashtest.tm</groupId>
+    <artifactId>squashtest-csp-tm</artifactId>
     <version>1.12.0.M1-SNAPSHOT</version>
   </parent>
 
   <artifactId>tm.domain</artifactId>
+  <packaging>bundle</packaging>
   <name>${project.groupId}.${project.artifactId}</name>
   <description>Squash TM domain - the business implemented by Squash</description>
-  <packaging>bundle</packaging>
 
   <properties>
-		<!-- Default jacoco dont record any coverage data -->
+    <!-- Default jacoco dont record any coverage data -->
     <sonar.java.coveragePlugin>cobertura</sonar.java.coveragePlugin>
   </properties>
 
   <dependencies>
+
     <dependency>
-      <groupId>org.squashtest.tm</groupId>
-      <artifactId>core.foundation</artifactId>
-      <version>${project.version}</version>
+      <groupId>javax.validation</groupId>
+      <artifactId>com.springsource.javax.validation</artifactId>
     </dependency>
 
     <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>hibernate-dependencies</artifactId>
-      <version>${project.version}</version>
-      <type>pom</type>
+      <groupId>org.aspectj</groupId>
+      <artifactId>com.springsource.org.aspectj.runtime</artifactId>
     </dependency>
 
     <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>spock-test-dependencies</artifactId>
-      <version>${project.version}</version>
-      <type>pom</type>
-      <scope>test</scope>
+      <groupId>org.hibernate</groupId>
+      <artifactId>com.springsource.org.hibernate.validator</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.joda</groupId>
+      <artifactId>com.springsource.org.joda.time</artifactId>
+      <scope>compile</scope>
     </dependency>
 
     <dependency>
@@ -47,7 +48,18 @@
 
     <dependency>
       <groupId>org.squashtest.tm</groupId>
+      <artifactId>core.aspect</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.squashtest.tm</groupId>
       <artifactId>core.bugtracker.api</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.squashtest.tm</groupId>
+      <artifactId>core.foundation</artifactId>
       <version>${project.version}</version>
     </dependency>
 
@@ -58,36 +70,10 @@
     </dependency>
 
     <dependency>
-      <groupId>org.squashtest.tm</groupId>
-      <artifactId>org.squashtest.csp.tools.unittest</artifactId>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>hibernate-dependencies</artifactId>
       <version>${project.version}</version>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.squashtest.tm</groupId>
-      <artifactId>core.aspect</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-
-    <dependency>
-      <groupId>org.hibernate</groupId>
-      <artifactId>com.springsource.org.hibernate.validator</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>org.springframework.beans</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>org.springframework.test</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>org.springframework.transaction</artifactId>
+      <type>pom</type>
     </dependency>
 
     <dependency>
@@ -101,13 +87,8 @@
     </dependency>
 
     <dependency>
-      <groupId>org.hibernate</groupId>
-      <artifactId>org.squashtest.org.hibernate.search</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>javax.validation</groupId>
-      <artifactId>com.springsource.javax.validation</artifactId>
+      <groupId>org.springframework</groupId>
+      <artifactId>org.springframework.beans</artifactId>
     </dependency>
 
     <dependency>
@@ -116,15 +97,34 @@
     </dependency>
 
     <dependency>
-      <groupId>org.aspectj</groupId>
-      <artifactId>com.springsource.org.aspectj.runtime</artifactId>
+      <groupId>org.springframework</groupId>
+      <artifactId>org.springframework.test</artifactId>
     </dependency>
-    
-     <dependency>
-        <groupId>org.joda</groupId>
-        <artifactId>com.springsource.org.joda.time</artifactId>
-        <scope>compile</scope>
-      </dependency>
+
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>org.springframework.transaction</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.hibernate</groupId>
+      <artifactId>org.squashtest.org.hibernate.search</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.squashtest.tm</groupId>
+      <artifactId>org.squashtest.csp.tools.unittest</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>spock-test-dependencies</artifactId>
+      <version>${project.version}</version>
+      <type>pom</type>
+      <scope>test</scope>
+    </dependency>
 
   </dependencies>
 
@@ -132,21 +132,21 @@
 
     <sourceDirectory>src/main/java</sourceDirectory>
 
+    <testSourceDirectory>src/test/groovy</testSourceDirectory>
+
     <resources>
       <resource>
-        <directory>${project.basedir}/src/main/resources</directory>
         <filtering>true</filtering>
+        <directory>${project.basedir}/src/main/resources</directory>
       </resource>
     </resources>
 
     <testResources>
       <testResource>
-        <directory>${project.basedir}/src/test/resources</directory>
         <filtering>false</filtering>
+        <directory>${project.basedir}/src/test/resources</directory>
       </testResource>
     </testResources>
-
-    <testSourceDirectory>src/test/groovy</testSourceDirectory>
 
     <plugins>
       <plugin>
@@ -155,10 +155,10 @@
         <executions>
           <execution>
             <id>add-resource</id>
-            <phase>generate-resources</phase>
             <goals>
               <goal>add-resource</goal>
             </goals>
+            <phase>generate-resources</phase>
             <configuration>
               <resources>
                 <resource>
@@ -173,6 +173,9 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <generatedSourcesDirectory>${project.build.directory}/generated-resources/META-INF</generatedSourcesDirectory>
+        </configuration>
         <dependencies>
           <dependency>
             <groupId>org.squashtest.tm</groupId>
@@ -180,9 +183,6 @@
             <version>${project.version}</version>
           </dependency>
         </dependencies>
-        <configuration>
-          <generatedSourcesDirectory>${project.build.directory}/generated-resources/META-INF</generatedSourcesDirectory>
-        </configuration>
       </plugin>
 
       <plugin>
@@ -224,8 +224,5 @@
     </plugins>
 
   </build>
-
-
-
 
 </project>
