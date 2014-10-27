@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) 2010 - 2014 Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+  
+   <changeSet author="jsimon" id="tm-1.12.0.1">
+
+    <comment>Table representant les Jalons/Milestones</comment>
+    <createTable tableName="MILESTONE">
+
+      <column name="MILESTONE_ID" type="BIGINT" autoIncrement="true" remarks="cle primaire de la table">
+        <constraints primaryKey="true" nullable="false" />
+      </column>
+
+      <column name="LABEL" type="java.sql.Types.VARCHAR(30)" remarks="Label du jalon">
+              <constraints nullable="false" />
+      </column>
+
+	 <column name="STATUS" type="java.sql.Types.VARCHAR(30)" remarks="status du jalon">
+      </column>
+      
+        <column name="END_DATE" type="DATETIME" remarks="Date d'échéance">       
+         <constraints nullable="false" />
+    </column>
+    
+      <column name="DESCRIPTION" type="CLOB" remarks="description du jalon">
+      </column>
+      
+      <column name="RANGE" type="java.sql.Types.VARCHAR(30)" remarks="portée du jalon du jalon">
+              <constraints nullable="false" />
+      </column>
+
+      <column name="CREATED_BY" type="java.sql.Types.VARCHAR(50)" remarks="nom du createur du projet.">
+        <constraints nullable="false" />
+      </column>
+
+      <column name="CREATED_ON" type="DATETIME"
+        remarks="Date de creation de ce projet. Il s'agit de la date de creation de l'entree dans la base, non d'une date metier.">
+        <constraints nullable="false" />
+      </column>
+
+      <column name="LAST_MODIFIED_BY" type="java.sql.Types.VARCHAR(50)" defaultValue="NULL"
+        remarks="Nom du dernier utilisateur ayant mis a jour cet instance." />
+
+      <column name="LAST_MODIFIED_ON" type="DATETIME" defaultValue="NULL"
+        remarks="Date de derniere mise a jour de cette instance." />
+    </createTable>
+
+    <createIndex tableName="MILESTONE" indexName="idx_milestone">
+      <column name="MILESTONE_ID" />
+    </createIndex>
+
+
+
+  </changeSet>
+  
+</databaseChangeLog>
