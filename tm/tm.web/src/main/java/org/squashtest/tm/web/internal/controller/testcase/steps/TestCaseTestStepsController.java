@@ -47,6 +47,7 @@ import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.Paging;
 import org.squashtest.tm.domain.customfield.CustomField;
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
+import org.squashtest.tm.domain.customfield.RawValue;
 import org.squashtest.tm.domain.customfield.RenderingLocation;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.testcase.ActionTestStep;
@@ -63,6 +64,7 @@ import org.squashtest.tm.web.internal.controller.testcase.steps.ActionStepFormMo
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.customfield.CustomFieldJsonConverter;
 import org.squashtest.tm.web.internal.model.customfield.CustomFieldModel;
+import org.squashtest.tm.web.internal.model.customfield.RawValueModel;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.tm.web.internal.model.datatable.DataTablePaging;
@@ -168,7 +170,7 @@ public class TestCaseTestStepsController {
 
 		ActionTestStep step = stepModel.getActionTestStep();
 
-		Map<Long, String> customFieldValues = stepModel.getCustomFields();
+		Map<Long, RawValue> customFieldValues = stepModel.getCufs();
 
 		testCaseModificationService.addActionTestStep(testCaseId, step, customFieldValues);
 
@@ -191,6 +193,7 @@ public class TestCaseTestStepsController {
 		LOGGER.trace("test case copied some Steps");
 		return copiedCallStep;
 	}
+
 
 	@RequestMapping(value = "/paste-last-index", method = RequestMethod.POST, params = { COPIED_STEP_ID_PARAM })
 	@ResponseBody

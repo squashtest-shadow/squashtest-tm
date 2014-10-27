@@ -24,15 +24,12 @@ import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.Lob;
 
-import org.hibernate.annotations.Type;
-
 @Entity
 @DiscriminatorValue("RTF")
 public class RichTextField extends CustomField {
 
 	@Lob
-	@Type(type="org.hibernate.type.StringClobType")
-	private String largeDefaultValue;
+	private String longDefaultValue;
 
 	public RichTextField() {
 		super(InputType.RICH_TEXT);
@@ -40,13 +37,13 @@ public class RichTextField extends CustomField {
 
 	@Override
 	public void setDefaultValue(String defaultValue) {
-		largeDefaultValue = defaultValue;
+		longDefaultValue = defaultValue;
 	}
 
 	@Override
 	public String getDefaultValue() {
-		if (largeDefaultValue != null) {
-			return largeDefaultValue;
+		if (longDefaultValue != null) {
+			return longDefaultValue;
 		} else {
 			return "";
 		}

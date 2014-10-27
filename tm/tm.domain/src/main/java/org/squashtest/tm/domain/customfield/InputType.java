@@ -32,7 +32,8 @@ public enum InputType implements Internationalizable {
 	CHECKBOX,
 	DROPDOWN_LIST,
 	RICH_TEXT,
-	DATE_PICKER;
+	DATE_PICKER,
+	TAG;
 
 	/**
 	 * @see org.squashtest.tm.core.foundation.i18n.Internationalizable#getI18nKey()

@@ -31,16 +31,13 @@ import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
-import javax.persistence.SequenceGenerator;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
-import org.hibernate.annotations.DiscriminatorOptions;
 import org.hibernate.annotations.NamedQueries;
 import org.hibernate.annotations.NamedQuery;
 import org.hibernate.validator.constraints.NotBlank;
@@ -58,21 +55,20 @@ import org.squashtest.tm.validation.constraint.HasDefaultAsRequired;
 	@NamedQuery(name = "CustomField.findByCode", query = "from CustomField where code = ?1") })
 @Entity
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@DiscriminatorOptions(force=true)
 @DiscriminatorColumn(name = "FIELD_TYPE", discriminatorType = DiscriminatorType.STRING)
 @DiscriminatorValue("CF")
 @HasDefaultAsRequired
 public class CustomField {
 	private static final Logger LOGGER = LoggerFactory.getLogger(CustomField.class);
 
-	public static final String CODE_REGEXP = "^[A-Za-z0-9_]*$";
+	public static final String CODE_REGEXP = "^[A-Za-z0-9_^;]*$";
+	public static final String OPTION_REGEXP = "^[A-Za-z0-9_]*$";
 	public static final int MIN_CODE_SIZE = 1;
 	public static final int MAX_CODE_SIZE = 30;
 
 	@Id
+	@GeneratedValue
 	@Column(name = "CF_ID")
-	@GeneratedValue(strategy = GenerationType.AUTO, generator = "custom_field_cf_id_seq")
-	@SequenceGenerator(name = "custom_field_cf_id_seq", sequenceName = "custom_field_cf_id_seq")
 	protected Long id;
 
 	@NotBlank

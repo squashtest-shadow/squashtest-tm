@@ -25,7 +25,6 @@ import javax.persistence.Entity;
 import javax.persistence.Lob;
 
 import org.apache.commons.lang.StringUtils;
-import org.hibernate.annotations.Type;
 import org.squashtest.tm.exception.customfield.MandatoryCufException;
 
 @Entity
@@ -33,26 +32,25 @@ import org.squashtest.tm.exception.customfield.MandatoryCufException;
 public class RichTextValue extends CustomFieldValue {
 
 	@Lob
-	@Type(type="org.hibernate.type.StringClobType")
-	private String largeValue;
+	private String longValue;
 
 	@Override
-	public void setValue(String value) {
+	public void setValue(String value){
 		CustomField field = getCustomField();
-		if (field != null && !field.isOptional() && StringUtils.isBlank(value)) {
+		if (field != null && field.isOptional() && StringUtils.isBlank(value)){
 			throw new MandatoryCufException(this);
 		}
 
-		this.largeValue = value;
+		this.longValue = value;
 	}
 
 	@Override
-	public String getValue() {
-		return (largeValue != null) ? largeValue : "";
+	public String getValue(){
+		return (longValue != null) ? longValue : "";
 	}
 
 	@Override
-	public CustomFieldValue copy() {
+	public CustomFieldValue copy(){
 		CustomFieldValue copy = new RichTextValue();
 		copy.setBinding(getBinding());
 		copy.setValue(getValue());
