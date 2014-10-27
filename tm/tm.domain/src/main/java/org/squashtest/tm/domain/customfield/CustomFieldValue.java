@@ -31,13 +31,11 @@ import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.SequenceGenerator;
 import javax.validation.constraints.Size;
 
 import org.apache.commons.lang.StringUtils;
@@ -57,9 +55,8 @@ public class CustomFieldValue implements Identified, SingleValuedCustomFieldValu
 	private static final Logger LOGGER = LoggerFactory.getLogger(CustomFieldValue.class);
 	public static final int MAX_SIZE = 255;
 	@Id
+	@GeneratedValue
 	@Column(name = "CFV_ID")
-	@GeneratedValue(strategy = GenerationType.AUTO, generator = "custom_field_value_cfv_id_seq")
-	@SequenceGenerator(name = "custom_field_value_cfv_id_seq", sequenceName = "custom_field_value_cfv_id_seq")
 	private Long id;
 
 	protected Long boundEntityId;

@@ -33,13 +33,10 @@ import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.SequenceGenerator;
 import javax.validation.constraints.NotNull;
 
 import org.squashtest.tm.domain.project.GenericProject;
@@ -54,12 +51,11 @@ import org.squashtest.tm.domain.project.Project;
 @Entity
 public class CustomFieldBinding {
 	@Id
+	@GeneratedValue
 	@Column(name = "CFB_ID")
-	@GeneratedValue(strategy = GenerationType.AUTO, generator = "custom_field_binding_cfb_id_seq")
-	@SequenceGenerator(name = "custom_field_binding_cfb_id_seq", sequenceName = "custom_field_binding_cfb_id_seq")
 	private Long id;
 
-	@ManyToOne(fetch=FetchType.EAGER, optional=false, targetEntity=CustomField.class)
+	@ManyToOne
 	@JoinColumn(name = "CF_ID", updatable = false)
 	@NotNull
 	private CustomField customField;

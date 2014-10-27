@@ -150,7 +150,7 @@ class TestCaseLibraryNavigationControllerTest extends Specification {
 		tc.getName()>>"test case"
 		tcfm.getTestCase() >> tc
 		Map<Long, String> customFieldValues = [:]
-		tcfm.getCustomFields()>>customFieldValues
+		tcfm.getCufs()>>customFieldValues
 		when:
 		def res = controller.addNewTestCaseToLibraryRootContent(10, tcfm)
 
@@ -173,7 +173,7 @@ class TestCaseLibraryNavigationControllerTest extends Specification {
 		tc.getName()>>"test case"
 		tcfm.getTestCase() >> tc
 		Map<Long, String> customFieldValues = [:]
-		tcfm.getCustomFields()>>customFieldValues
+		tcfm.getCufs()>>customFieldValues
 		when:
 		def res = controller.addNewTestCaseToFolder(10, tcfm)
 

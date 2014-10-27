@@ -29,7 +29,10 @@ import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
+import org.squashtest.tm.domain.customfield.RawValue;
 import org.squashtest.tm.domain.testcase.ActionTestStep;
+import org.squashtest.tm.web.internal.model.customfield.RawValueModel;
+import org.squashtest.tm.web.internal.model.customfield.RawValueModel.RawValueModelMap;
 
 
 public class ActionStepFormModel {
@@ -38,17 +41,18 @@ public class ActionStepFormModel {
 	 * Note : the following validation annotations are never called, a custom validator will be invoked for this.
 	 * 
 	 */
-	
+
 	/*@NotBlank
 	 * @NotNull
 	 */
 	private String action="";
-	
+
 	private String expectedResult="";
-	
+
 	/*@NotNull
 	@NotEmpty*/
-	private Map<Long, String> customFields = new HashMap<Long, String>();
+	private RawValueModelMap customFields = new RawValueModelMap();
+
 
 	public String getAction() {
 		return action;
@@ -66,23 +70,31 @@ public class ActionStepFormModel {
 		this.expectedResult = expectedResult;
 	}
 
-	public Map<Long, String> getCustomFields() {
+	public RawValueModelMap getCustomFields() {
 		return customFields;
 	}
 
-	public void setCustomFields(Map<Long, String> customFields) {
+	public void setCustomFields(RawValueModelMap customFields) {
 		this.customFields = customFields;
 	}
-	
+
+	public Map<Long, RawValue> getCufs(){
+		Map<Long, RawValue> cufs = new HashMap<Long, RawValue>(customFields.size());
+		for (Entry<Long, RawValueModel> entry : customFields.entrySet()){
+			cufs.put(entry.getKey(), entry.getValue().toRawValue());
+		}
+		return cufs;
+	}
+
 	public ActionTestStep getActionTestStep(){
 		ActionTestStep newStep = new ActionTestStep();
 		newStep.setAction(action);
 		newStep.setExpectedResult(expectedResult);
 		return newStep;
 	}
-	
+
 	public static class ActionStepFormModelValidator implements Validator{
-		
+
 		private MessageSource messageSource;
 
 		public void setMessageSource(MessageSource messageSource) {
@@ -98,19 +110,19 @@ public class ActionStepFormModel {
 		public void validate(Object target, Errors errors) {
 			Locale locale = LocaleContextHolder.getLocale();
 			String notBlank = messageSource.getMessage("message.notBlank",null, locale);
-			
+
 			ActionStepFormModel model = (ActionStepFormModel) target;
-			
-			for (Entry<Long, String> entry : model.getCustomFields().entrySet()){
-				String value = entry.getValue();
-				if (value.trim().isEmpty()){
+
+			for (Entry<Long, RawValueModel> entry : model.getCustomFields().entrySet()){
+				RawValueModel value = entry.getValue();
+				if (value.isEmpty()){
 					errors.rejectValue("customFields["+entry.getKey()+"]", "message.notBlank", notBlank);
 				}
 			}
-			
+
 		}
-		
-		
+
+
 	}
-	
+
 }
