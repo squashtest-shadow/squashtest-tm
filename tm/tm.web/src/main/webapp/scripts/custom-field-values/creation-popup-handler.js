@@ -158,7 +158,9 @@ define(
 					var table = this.table,
 						cufDefs = this.cufDefs;
 
-					var fields = table.find(".create-node-custom-field");
+					var $this,
+						fields = table.find(".create-node-custom-field");
+					
 					if (fields.length > 0) {
 						fields.each(function(idx) {
 							$this = $(this);
