@@ -206,22 +206,23 @@ define([ "jquery", "underscore", "ckeditor",  "squash.configmanager", "./cuf-val
 						delay: 0, 
 						source : def.options
 					}
-				})
+				});
 				var ul = elt.find('>ul');
 				ul.squashTagit(conf);
 			},
 			
 			_set : function(elt, def, value){
+				var i;
 				var ul = elt.find('>ul');
 				if (ul.data('squashTagit') === undefined){
 					ul.empty();
-					for (var i=0;i<value.length;i++){
+					for (i=0;i<value.length;i++){
 						ul.append('<li>'+ value[i] +'</li>');
 					}
 				}
 				else{
 					ul.squashTagit('removeAll');
-					for (var i=0;i<value.length;i++){
+					for (i=0;i<value.length;i++){
 						ul.squashTagit('createTag', value[i]);
 					}
 				}

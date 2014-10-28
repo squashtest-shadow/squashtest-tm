@@ -32,7 +32,7 @@ import org.squashtest.tm.exception.customfield.MandatoryCufException;
 public class RichTextValue extends CustomFieldValue {
 
 	@Lob
-	private String longValue;
+	private String largeValue ;
 
 	@Override
 	public void setValue(String value){
@@ -41,12 +41,12 @@ public class RichTextValue extends CustomFieldValue {
 			throw new MandatoryCufException(this);
 		}
 
-		this.longValue = value;
+		this.largeValue  = value;
 	}
 
 	@Override
 	public String getValue(){
-		return (longValue != null) ? longValue : "";
+		return (largeValue  != null) ? largeValue  : "";
 	}
 
 	@Override

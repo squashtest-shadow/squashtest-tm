@@ -58,7 +58,7 @@ define([ "jquery", "squash.configmanager", "jqueryui" ],
 	
 	return {
 		convertStrDate : convertStrDate,
-		addEmptyValueToDropdownlistIfOptional : addEmptyValueToDropdownlistIfOptional
+		addEmptyValueToDropdownlistIfOptional : addEmptyValueToDropdownlistIfOptional,
 		registerHandlebarHelpers : registerHandlebarHelpers
 	};
 
