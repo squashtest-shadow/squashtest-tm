@@ -38,6 +38,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -69,7 +70,7 @@ import org.squashtest.tm.web.internal.util.HTMLCleanupUtils;
 @Controller
 @RequestMapping("/test-case-browser")
 public class TestCaseLibraryNavigationController extends
-		LibraryNavigationController<TestCaseLibrary, TestCaseFolder, TestCaseLibraryNode> {
+LibraryNavigationController<TestCaseLibrary, TestCaseFolder, TestCaseLibraryNode> {
 	public static final Logger LOGGER = LoggerFactory.getLogger(TestCaseLibraryNavigationController.class);
 
 	@Inject
@@ -101,16 +102,18 @@ public class TestCaseLibraryNavigationController extends
 		return testCaseLibraryTreeNodeBuilder.get().setNode(node).build();
 	}
 
+	/*
 	@InitBinder(ADD_TEST_CASE)
 	public void addTestCaseBinder(WebDataBinder binder) {
 		TestCaseFormModelValidator validator = new TestCaseFormModelValidator();
 		validator.setMessageSource(getMessageSource());
 		binder.setValidator(validator);
 	}
+	 */
 
 	@RequestMapping(value = "/drives/{libraryId}/content/new-test-case", method = RequestMethod.POST, consumes="application/json")
 	public @ResponseBody JsTreeNode addNewTestCaseToLibraryRootContent(@PathVariable long libraryId,
-			/*@Valid @ModelAttribute(ADD_TEST_CASE)*/ @RequestBody TestCaseFormModel testCaseModel){
+			@Valid /*@ModelAttribute(ADD_TEST_CASE)*/ @RequestBody TestCaseFormModel testCaseModel){
 
 		TestCase testCase = testCaseModel.getTestCase();
 
@@ -123,7 +126,7 @@ public class TestCaseLibraryNavigationController extends
 
 	@RequestMapping(value = "/folders/{folderId}/content/new-test-case", method = RequestMethod.POST, consumes="application/json")
 	public @ResponseBody JsTreeNode addNewTestCaseToFolder(@PathVariable long folderId,
-			/*@Valid @ModelAttribute(ADD_TEST_CASE)*/ @RequestBody TestCaseFormModel testCaseModel){
+			@Valid /*@ModelAttribute(ADD_TEST_CASE)*/ @RequestBody TestCaseFormModel testCaseModel){
 
 		TestCase testCase = testCaseModel.getTestCase();
 
@@ -160,7 +163,7 @@ public class TestCaseLibraryNavigationController extends
 
 		List<ExportTestCaseData> dataSource = testCaseLibraryNavigationService.findTestCasesToExport(libraryIds,
 				nodeIds, includeCalledTests);
-		
+
 		if (!keepRteFormat) {
 			escapePrerequisiteAndSteps(dataSource);
 		}

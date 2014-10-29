@@ -26,6 +26,7 @@ import java.util.HashMap;
 import org.apache.commons.lang.StringUtils;
 import org.squashtest.tm.domain.customfield.RawValue;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -43,6 +44,29 @@ public class RawValueModel {
 	@JsonProperty(required=false)
 	private String[] values;
 
+
+
+	public RawValueModel() {
+		super();
+	}
+
+
+	@JsonCreator
+	public RawValueModel(Object any){
+		if (any instanceof String){
+			this.value = (String)any;
+		}
+		else if (any instanceof Boolean){
+			this.value = ((Boolean)any).toString().toLowerCase();
+		}
+		else if (any instanceof String[]){
+			this.values = (String[]) any;
+		}
+		else{
+			throw new IllegalArgumentException("cannot make a RawValue from "+any.getClass());
+		}
+	}
+
 	public String getValue() {
 		return value;
 	}
@@ -59,6 +83,7 @@ public class RawValueModel {
 		this.values = values;
 	}
 
+	@JsonIgnore
 	public RawValue toRawValue(){
 		if (value != null){
 			return new RawValue(value);
