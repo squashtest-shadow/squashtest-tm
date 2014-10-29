@@ -71,8 +71,7 @@ public class MultiSelectField extends CustomField {
 	 * end of the list. Else will throw a NameAlreadyInUseException or CodeAlreadyExistsException.
 	 * 
 	 * @throws OptionAlreadyExistsException
-	 * @param option
-	 *            : the new option
+	 * @param option : the new option
 	 */
 	public void addOption(CustomFieldOption option) {
 		checkLabelAvailable(option.getLabel());
@@ -131,7 +130,7 @@ public class MultiSelectField extends CustomField {
 			}
 		}
 	}
-	
+
 
 	/**
 	 * Checks if the newCode is available among all options. <br>

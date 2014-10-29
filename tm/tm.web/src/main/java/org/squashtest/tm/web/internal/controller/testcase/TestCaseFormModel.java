@@ -35,6 +35,8 @@ import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.web.internal.model.customfield.RawValueModel;
 import org.squashtest.tm.web.internal.model.customfield.RawValueModel.RawValueModelMap;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 public class TestCaseFormModel {
 	/**
 	 * Note : the following validation annotations are never called, a custom validator will be invoked for this.
@@ -102,6 +104,7 @@ public class TestCaseFormModel {
 		return newTC;
 	}
 
+	@JsonIgnore
 	public Map<Long, RawValue> getCufs(){
 		Map<Long, RawValue> cufs = new HashMap<Long, RawValue>(customFields.size());
 		for (Entry<Long, RawValueModel> entry : customFields.entrySet()){
@@ -136,7 +139,7 @@ public class TestCaseFormModel {
 
 			ValidationUtils.rejectIfEmptyOrWhitespace(errors, "name", "message.notBlank", notBlank);
 
-			if (model.reference.length()>50){
+			if (model.reference != null && model.reference.length()>50){
 				errors.rejectValue("reference", "message.lengthMax", lengthMax);
 			}
 
