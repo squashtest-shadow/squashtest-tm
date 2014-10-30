@@ -284,7 +284,7 @@ define(
 				elts.on('squashtagitaftertagadded squashtagitaftertagremoved', function(evt){
 					var elt = $(evt.currentTarget);
 					var tags = elt.squashTagit('assignedTags');
-					postFunction(tags);
+					postFunction.call(elt, tags);
 				});
 							
 			}
