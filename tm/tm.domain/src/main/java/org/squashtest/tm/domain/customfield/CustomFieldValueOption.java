@@ -33,30 +33,30 @@ public class CustomFieldValueOption {
 	@NotBlank
 	@Size(min = 0, max = MAX_SIZE)
 	@Pattern(regexp = CustomField.OPTION_REGEXP)
-	private String option;
+	private String label;
 
 	public CustomFieldValueOption(){
 		super();
 	}
 
-	public CustomFieldValueOption(String option){
+	public CustomFieldValueOption(String label){
 		super();
-		this.option = option;
+		this.label = label;
 	}
 
-	public String getOption() {
-		return option;
+	public String getLabel() {
+		return label;
 	}
 
-	public void setOption(String option) {
-		this.option = option;
+	public void setLabel(String label) {
+		this.label = label;
 	}
 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((option == null) ? 0 : option.hashCode());
+		result = prime * result + ((label == null) ? 0 : label.hashCode());
 		return result;
 	}
 
@@ -72,11 +72,11 @@ public class CustomFieldValueOption {
 			return false;
 		}
 		CustomFieldValueOption other = (CustomFieldValueOption) obj;
-		if (option == null) {
-			if (other.option != null) {
+		if (label == null) {
+			if (other.label != null) {
 				return false;
 			}
-		} else if (!option.equals(other.option)) {
+		} else if (!label.equals(other.label)) {
 			return false;
 		}
 		return true;

@@ -73,11 +73,11 @@ public class RawValue {
 	}
 
 	public void setValueFor(CustomFieldValue field){
-		if (SingleValuedCustomFieldValue.class.isAssignableFrom(field.getClass())){
-			setValueFor((SingleValuedCustomFieldValue)field);
-		}
-		else if (MultiValuedCustomFieldValue.class.isAssignableFrom(field.getClass())){
+		if (MultiValuedCustomFieldValue.class.isAssignableFrom(field.getClass())){
 			setValueFor((MultiValuedCustomFieldValue) field);
+		}
+		else if (SingleValuedCustomFieldValue.class.isAssignableFrom(field.getClass())){
+			setValueFor((SingleValuedCustomFieldValue)field);
 		}
 		else {
 			logError(field);

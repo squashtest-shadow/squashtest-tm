@@ -20,8 +20,8 @@
  */
 package org.squashtest.tm.web.internal.model.customfield;
 
-import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.squashtest.tm.domain.customfield.RawValue;
@@ -42,7 +42,7 @@ public class RawValueModel {
 	private String value;
 
 	@JsonProperty(required=false)
-	private String[] values;
+	private List<String> values;
 
 
 
@@ -59,8 +59,8 @@ public class RawValueModel {
 		else if (any instanceof Boolean){
 			this.value = ((Boolean)any).toString().toLowerCase();
 		}
-		else if (any instanceof String[]){
-			this.values = (String[]) any;
+		else if (any instanceof List<?>){
+			this.values = (List<String>) any;
 		}
 		else{
 			throw new IllegalArgumentException("cannot make a RawValue from "+any.getClass());
@@ -75,11 +75,11 @@ public class RawValueModel {
 		this.value = value;
 	}
 
-	public String[] getValues() {
+	public List<String> getValues() {
 		return values;
 	}
 
-	public void setValues(String[] values) {
+	public void setValues(List<String> values) {
 		this.values = values;
 	}
 
@@ -89,19 +89,19 @@ public class RawValueModel {
 			return new RawValue(value);
 		}
 		else{
-			return new RawValue(Arrays.asList(values));
+			return new RawValue(values);
 		}
 	}
 
 	@JsonIgnore
 	public boolean isEmpty(){
-		if (value == null && (values == null || values.length==0)){
+		if (value == null && (values == null || values.isEmpty())){
 			return true;
 		}
 		if (value != null && StringUtils.isBlank(value)){
 			return true;
 		}
-		if (values != null && values.length==0){
+		if (values != null && values.isEmpty()){
 			return true;
 		}
 		return false;

@@ -21,7 +21,7 @@
 define(
 		[ "jquery", "./cuf-values-utils", "squash.configmanager", "jqueryui",
 				"jquery.squash.jeditable", "jeditable.datepicker",
-				"datepicker/jquery.squash.datepicker-locales" ],
+				"datepicker/jquery.squash.datepicker-locales", "jquery.squash.tagit" ],
 		function($, utils, confman) {
 
 			/* ***************************************************************************************************
@@ -257,7 +257,14 @@ define(
 				
 			}
 
-			
+			function initAsTag(elts, cufDefinition, idOrURLOrPostfunction){
+				
+				if (elts.length === 0){
+					return;
+				}
+				
+				
+			}
 			
 			
 			/* ***************************************************************************

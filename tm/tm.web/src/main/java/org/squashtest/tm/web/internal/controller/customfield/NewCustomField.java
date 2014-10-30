@@ -82,17 +82,7 @@ public class NewCustomField extends CustomField {
 	}
 
 	private CustomField createTag(){
-		CustomField res;
-		MultiSelectField msf = new MultiSelectField();
-
-		for(String[] option : options) {
-			String label = option[0];
-			String code = option[1];
-			msf.addOption(new CustomFieldOption(label, code) );
-		}
-		
-		res = msf;
-		return res;
+		return new MultiSelectField();
 	}
 
 	/**
