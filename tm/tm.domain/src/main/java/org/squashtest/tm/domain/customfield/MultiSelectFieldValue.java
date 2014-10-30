@@ -39,7 +39,7 @@ public class MultiSelectFieldValue extends CustomFieldValue implements MultiValu
 	@CollectionTable(name = "CUSTOM_FIELD_VALUE_OPTION", joinColumns = @JoinColumn(name = "CFV_ID"))
 	@OrderColumn(name = "POSITION")
 	@Valid
-	private List<CustomFieldValueOption> options;
+	private List<CustomFieldValueOption> options = new ArrayList<CustomFieldValueOption>();
 
 	public List<CustomFieldValueOption> getOptions() {
 		return options;
@@ -53,6 +53,7 @@ public class MultiSelectFieldValue extends CustomFieldValue implements MultiValu
 		options.remove(cufVO);
 	}
 
+
 	@Override
 	public void setValues(List<String> values) {
 		options.clear();
@@ -65,7 +66,7 @@ public class MultiSelectFieldValue extends CustomFieldValue implements MultiValu
 	public List<String> getValues() {
 		List<String> result = new ArrayList<String>(options.size());
 		for (CustomFieldValueOption option : options){
-			result.add(option.getOption());
+			result.add(option.getLabel());
 		}
 		return result;
 	}
@@ -78,7 +79,7 @@ public class MultiSelectFieldValue extends CustomFieldValue implements MultiValu
 		if (! options.isEmpty()){
 			StringBuilder builder = new StringBuilder();
 			for (CustomFieldValueOption option : options){
-				builder.append(option.getOption()+";");
+				builder.append(option.getLabel()+";");
 			}
 			int lastidx = builder.lastIndexOf(";");
 			result = builder.substring(0,lastidx);

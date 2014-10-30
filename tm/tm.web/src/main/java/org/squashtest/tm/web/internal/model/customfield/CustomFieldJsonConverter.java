@@ -120,8 +120,36 @@ public class CustomFieldJsonConverter {
 
 	}
 
+
+	// because of Java spec 15.12 and because I don't want another Visitor bullshit
+	// we're doing an ugly downcast for multi select fields when appropriate
 	public CustomFieldValueModel toJson(CustomFieldValue value) {
 
+		if (MultiSelectFieldValue.class.isAssignableFrom(value.getClass())){
+			return toJson((MultiSelectFieldValue)value);
+		}
+		else{
+			CustomFieldValueModel model = createStdCustomFieldValues(value);
+			model.setValue(value.getValue());
+
+			return model;
+		}
+	}
+
+	public CustomFieldValueModel toJson(MultiSelectFieldValue value){
+
+		CustomFieldValueModel model = createStdCustomFieldValues(value);
+
+		List<String>  options = new ArrayList<String>(value.getOptions().size());
+		for (CustomFieldValueOption option : value.getOptions()){
+			options.add(option.getLabel());
+		}
+		model.setOptionValues(options);
+		return model;
+	}
+
+
+	private <CF extends CustomFieldValue> CustomFieldValueModel createStdCustomFieldValues(CF value){
 		CustomFieldValueModel model = new CustomFieldValueModel();
 
 		BindableEntityModel entityTypeModel = toJson(value.getBoundEntityType());
@@ -131,24 +159,9 @@ public class CustomFieldJsonConverter {
 		model.setBoundEntityId(value.getBoundEntityId());
 		model.setBoundEntityType(entityTypeModel);
 		model.setBinding(bindingModel);
-		model.setValue(value.getValue());
 
 		return model;
-
 	}
-
-	public CustomFieldValueModel toJson(MultiSelectFieldValue value){
-		CustomFieldValueModel model = toJson((CustomFieldValue)value);
-		List<String>  options = new ArrayList<String>(value.getOptions().size());
-		for (CustomFieldValueOption option : value.getOptions()){
-			options.add(option.getOption());
-		}
-		model.setOptionValues(options);
-		return model;
-	}
-
-
-
 
 
 	// *********************** denormalized field values **************************
