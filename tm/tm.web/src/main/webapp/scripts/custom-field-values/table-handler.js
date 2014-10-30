@@ -55,6 +55,19 @@ define([ "jquery", "./lib/cuf-values-utils", "./lib/jquery.staticCustomfield", "
 					'aTargets' : [ 'custom-field-' + code ]
 				};
 			}
+			
+			// special delivery for tags : 
+			if (cufDefinitions[i]._inputType === "TAG"){
+				newColumn.mRender = function ( data, type, full ) {
+			        var html = "<ul>";
+			        $.each(data, function(idx, t){
+						html += "<li>"+t+"</li>";
+					});
+			        html += "</ul>";
+			        return html;
+				}
+			}
+			
 			columns.push(newColumn);
 
 		}
@@ -127,9 +140,8 @@ define([ "jquery", "./lib/cuf-values-utils", "./lib/jquery.staticCustomfield", "
 			return $.ajax({
 				url : url,
 				type : 'POST',
-				data : {
-					value : value
-				}
+				data : JSON.stringify(value),
+				contentType : 'application/json'
 			});
 		};
 	}
@@ -153,20 +165,28 @@ define([ "jquery", "./lib/cuf-values-utils", "./lib/jquery.staticCustomfield", "
 				return (table.fnGetData(this) !== null);
 			});
 
+
 			// now wrap the content with a span
 			cufCells.wrapInner('<span/>');
 
 			for ( var code in defMap) {
 
 				var def = defMap[code];
-				var spans = table.find('td.custom-field-' + code + '>span, td.denormalized-field-' + code + '>span');
-
-				if (isEditable) {
-					var postFunction = makePostFunction(code, table);
-					spans.jeditableCustomfield(def, postFunction);
+				
+				var cufselts;
+				if (def._inputType === "TAG"){
+					cufselts = table.find('td.custom-field-' + code + '>span>ul, td.denormalized-field-' + code + '>span>ul');	
 				}
 				else{
-					spans.staticCustomfield(def);
+					cufselts = table.find('td.custom-field-' + code + '>span, td.denormalized-field-' + code + '>span');	
+				}
+				
+				if (isEditable) {
+					var postFunction = makePostFunction(code, table);
+					cufselts.jeditableCustomfield(def, postFunction);
+				}
+				else{
+					cufselts.staticCustomfield(def);
 				}
 
 			}

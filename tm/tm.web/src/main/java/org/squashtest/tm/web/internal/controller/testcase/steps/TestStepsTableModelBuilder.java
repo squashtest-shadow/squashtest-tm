@@ -24,12 +24,14 @@ import java.text.ParseException;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.squashtest.tm.core.foundation.lang.DateUtils;
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
+import org.squashtest.tm.domain.customfield.MultiSelectFieldValue;
 import org.squashtest.tm.domain.testcase.ActionTestStep;
 import org.squashtest.tm.domain.testcase.CallTestStep;
 import org.squashtest.tm.domain.testcase.ParameterAssignationMode;
@@ -145,15 +147,27 @@ public class TestStepsTableModelBuilder extends DataTableModelBuilder<TestStep> 
 	protected static class CustomFieldValueTableModel {
 		private static final Logger LOGGER = LoggerFactory.getLogger(CustomFieldValueTableModel.class);
 
+
 		private String value;
+		private List<String> values;
+
 		private Long id;
 
-		public String getValue() {
-			return value;
+
+		public Object getValue() {
+			return (value != null) ? value : values;
 		}
 
-		public void setValue(String value) {
-			this.value = value;
+		public void setValue(Object value) {
+			if (List.class.isAssignableFrom(value.getClass())){
+				this.values = (List<String>) value;
+			}
+			else if (String.class.isAssignableFrom(value.getClass())){
+				this.value = (String)value;
+			}
+			else{
+				throw new IllegalArgumentException("type '"+value.getClass()+"' not supported");
+			}
 		}
 
 		public Long getId() {
@@ -170,8 +184,10 @@ public class TestStepsTableModelBuilder extends DataTableModelBuilder<TestStep> 
 
 		public Date getValueAsDate() {
 			try {
-				return DateUtils.parseIso8601Date(value);
+				return DateUtils.parseIso8601Date((String)value);
 			} catch (ParseException e) {
+				LOGGER.debug("Unable to parse date {} of custom field #{}", value, id);
+			} catch (ClassCastException e) {
 				LOGGER.debug("Unable to parse date {} of custom field #{}", value, id);
 			}
 
@@ -180,7 +196,13 @@ public class TestStepsTableModelBuilder extends DataTableModelBuilder<TestStep> 
 
 		private CustomFieldValueTableModel(CustomFieldValue value) {
 			this.id = value.getId();
-			this.value = value.getValue();
+
+			if (MultiSelectFieldValue.class.isAssignableFrom(value.getClass())) {
+				this.values = ((MultiSelectFieldValue)value).getValues();
+			}
+			else{
+				this.value = value.getValue();
+			}
 		}
 
 	}
