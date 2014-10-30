@@ -600,7 +600,8 @@ table.ta-project-bind-listdiv tr.listdiv-item.even {
 	border: 1px solid transparent;
 }
 
-.editable:HOVER {
+.editable:HOVER,
+ul.squash-tagit.editable:HOVER {
 	border: 1px solid #bbbbbb;
 }
 

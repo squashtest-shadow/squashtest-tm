@@ -146,14 +146,24 @@ define(["jquery", "./cuf-values-utils", "underscore", "squash.configmanager"], f
 			},
 			
 			_set : function(elt, def, value){
-				elt.squashTagit('removeAll');
-				$.each(value.split(';'), function(i, newtag){
-					elt.squashTagit("createTag", newtag);
-				});
+				var i;
+				var ul = elt.find('>ul');
+				if (ul.data('squashTagit') === undefined){
+					ul.empty();
+					for (i=0;i<value.length;i++){
+						ul.append('<li>'+ value[i] +'</li>');
+					}
+				}
+				else{
+					ul.squashTagit('removeAll');
+					for (i=0;i<value.length;i++){
+						ul.squashTagit('createTag', value[i]);
+					}
+				}
 			},
 			
 			_get : function(elt, def){
-				return elt.squashTagit("assignedTags").join(';');
+				return elt.find('>ul').squashTagit('assignedTags');
 			},
 			
 			_destroy : function(elt, def){

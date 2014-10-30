@@ -51,7 +51,9 @@ define(
 					
 				var ajaxconf = {
 					data : {},
-					type : 'POST'
+					type : 'POST',
+					contentType : "application/json;charset=UTF-8"
+						
 				};
 
 				var postFunction;
@@ -68,7 +70,7 @@ define(
 				case "string" :
 					postFunction = function(value) {
 						ajaxconf.url = idOrURLOrPostfunction;
-						ajaxconf.data.value = value;
+						ajaxconf.data = JSON.stringify(value);
 						return $.ajax(ajaxconf);
 					};
 					break;
@@ -79,7 +81,7 @@ define(
 					postFunction = function(value) {
 						var id = $(this).data('value-id');
 						ajaxconf.url = baseURL + id;
-						ajaxconf.data.value = value;
+						ajaxconf.data = JSON.stringify(value);
 						return $.ajax(ajaxconf);
 					};		
 					break;
@@ -89,7 +91,7 @@ define(
 				default :
 					postFunction = function(value) {
 						ajaxconf.url = baseURL + idOrURLOrPostfunction;
-						ajaxconf.data.value = value;
+						ajaxconf.data = JSON.stringify(value);
 						return $.ajax(ajaxconf);
 					};			
 					break;
@@ -257,13 +259,34 @@ define(
 				
 			}
 
+			// a jeditable Tags isn't really jeditable : it's always in an editable state.
+			// as such, to some extent it looks a lot like the initialization of 
+			// 'editableCustomfield'.
 			function initAsTag(elts, cufDefinition, idOrURLOrPostfunction){
 				
 				if (elts.length === 0){
 					return;
 				}
 				
+				var postFunction = buildPostFunction(idOrURLOrPostfunction, undefined, cufDefinition.denormalized);
 				
+				var conf = confman.getStdTagit();
+				
+				$.extend(conf, {
+					autocomplete: {
+						delay: 0, 
+						source : cufDefinition.options
+					}
+				});
+				
+				elts.squashTagit(conf);	
+				
+				elts.on('squashtagitaftertagadded squashtagitaftertagremoved', function(evt){
+					var elt = $(evt.currentTarget);
+					var tags = elt.squashTagit('assignedTags');
+					postFunction(tags);
+				});
+							
 			}
 			
 			
@@ -275,10 +298,21 @@ define(
 			
 			$.fn.jeditableCustomfield = function(cufDefinition, idOrURLOrPostfunction) {
 
-				var type = cufDefinition.inputType.enumName;
+				var type = cufDefinition._inputType;
 
+				switch(type){
+				case "DATE_PICKER" : initAsDatePicker(this, cufDefinition, idOrURLOrPostfunction); break;
+				case "DROPDOWN_LIST" : initAsList(this, cufDefinition, idOrURLOrPostfunction); break;
+				case "PLAIN_TEXT" : initAsPlainText(this, cufDefinition, idOrURLOrPostfunction); break;
+				case "CHECKBOX" : initAsCheckbox(this, cufDefinition, idOrURLOrPostfunction); break;
+				case "RICH_TEXT" : initAsRichtext(this, cufDefinition, idOrURLOrPostfunction); break;
+				case "TAG" : initAsTag(this, cufDefinition, idOrURLOrPostfunction); break;
+				default : throw "don't know cuf type "+type;
+				
+				}
+				/*
 				if (type === "DATE_PICKER") {
-					initAsDatePicker(this, cufDefinition, idOrURLOrPostfunction);
+					initAsDatePicker(this, cufDefinition, idOrURLOrPostfunction); break;
 				} else if (type === "DROPDOWN_LIST") {
 					initAsList(this, cufDefinition, idOrURLOrPostfunction);
 				} else if (type === "PLAIN_TEXT") {
@@ -288,7 +322,7 @@ define(
 				} else if (type === "RICH_TEXT"){
 					initAsRichtext(this, cufDefinition, idOrURLOrPostfunction);
 				}
-
+*/
 			};
 
 		});
