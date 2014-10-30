@@ -30,5 +30,4 @@ public final class JEditablePostParams {
 	}
 
 	public static final String VALUE = "value";
-	public static final String VALUES = "values";
 }

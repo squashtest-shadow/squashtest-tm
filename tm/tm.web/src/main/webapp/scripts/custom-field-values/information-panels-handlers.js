@@ -42,13 +42,13 @@ define(["jquery", "handlebars", "squash.translator", "./lib/cuf-values-utils","j
 			'<label class="display-table-cell">{{cuflabel this}}</label>' +
 			'<div class="display-table-cell controls">' +
 			
-			'{{#ifequals binding.customField.inputType.enumName "RICH_TEXT"}}' +
+			'{{#ifequals binding.customField._inputType "RICH_TEXT"}}' +
 			
 				'<span id="{{cufid this}}" class="{{cufclass this}}" data-value-id="{{id}}">{{{value}}}</span>' +
 			
-			'{{else}} {{#ifequals binding.customField.inputType.enumName "TAG"}}' +
+			'{{else}} {{#ifequals binding.customField._inputType "TAG"}}' +
 			
-				'<ul id="{{cufid this}}" class="{{cufclass this}}" data-value-id="{{id}}">'+
+				'<ul id="{{cufid this}}" class="{{cufclass this}}" data-value-id="{{id}}" style="line-height:1em">'+
 				'{{#each optionValues}}' +
 					'<li>{{this}}</li>' +
 				'{{/each}}' +
@@ -77,9 +77,6 @@ define(["jquery", "handlebars", "squash.translator", "./lib/cuf-values-utils","j
 
 		container.append(html);
 
-		var addEditableStyle = function(dom) {
-			$(dom).find("p:first").addClass("editable");
-		};
 
 		for ( var idx in cufValues) {
 			var cufValue = cufValues[idx], selector = (cufValue.binding.customField.denormalized) ? "#denormalized-cuf-value-" +
@@ -95,12 +92,12 @@ define(["jquery", "handlebars", "squash.translator", "./lib/cuf-values-utils","j
 
 			case "editable":
 				elt.editableCustomfield(cufValue.binding.customField);
-				addEditableStyle(elt[0]);
+				$(elt[0]).addClass('editable');
 				break;
 
 			case "jeditable":
 				elt.jeditableCustomfield(cufValue.binding.customField, cufValue.id);
-				addEditableStyle(elt[0]);
+				$(elt[0]).addClass('editable');
 				break;
 			}
 		}

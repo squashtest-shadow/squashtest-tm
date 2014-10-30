@@ -439,6 +439,12 @@ ul.squash-tagit li.invalid{
 	color : white;
 }
 
+/* when 'editable' (like in entities information panel), disables the normal 
+'tagit' border in favor of the class 'editable' border*/
+ul.squash-tagit.editable{
+	border:none;
+}
+
 
 div.ui-effects-explode{
 	z-index : 50000;
