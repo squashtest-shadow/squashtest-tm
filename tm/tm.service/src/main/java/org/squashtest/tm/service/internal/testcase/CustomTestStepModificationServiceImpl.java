@@ -34,6 +34,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.squashtest.tm.domain.customfield.CustomFieldValue;
+import org.squashtest.tm.domain.customfield.RawValue;
 import org.squashtest.tm.domain.testcase.ActionTestStep;
 import org.squashtest.tm.domain.testcase.CallTestStep;
 import org.squashtest.tm.domain.testcase.TestStep;
@@ -71,7 +73,7 @@ public class CustomTestStepModificationServiceImpl implements CustomTestStepModi
 	 * @see CustomTestStepModificationService#updateTestStep(Long, String, String, Map)
 	 */
 	@Override
-	public void updateTestStep(Long testStepId, String action, String expectedResult, Map<Long, String> cufValues) {
+	public void updateTestStep(Long testStepId, String action, String expectedResult, Map<Long, RawValue> cufValues) {
 		List<DomainException> exceptions = new ArrayList<DomainException>();
 		TestStep step = testStepDao.findById(testStepId);
 		parameterModificationService.createParamsForStep(testStepId);
@@ -104,14 +106,15 @@ public class CustomTestStepModificationServiceImpl implements CustomTestStepModi
 		}
 	}
 
-	private TestStep updateCufValues(TestStep step, Map<Long, String> cufValues, List<DomainException> exceptions) {
+	private TestStep updateCufValues(TestStep step, Map<Long, RawValue> cufValues, List<DomainException> exceptions) {
 
 		if (cufValues != null) {
 			PermissionsUtils.checkPermission(permissionEvaluationService, new SecurityCheckableObject(step, "WRITE"));
-			for (Entry<Long, String> cufValue : cufValues.entrySet()) {
+			for (Entry<Long, RawValue> cufValue : cufValues.entrySet()) {
 				try {
 					if (cufValue.getValue() != null){
-						cufValueService.changeValue(cufValue.getKey(), cufValue.getValue());
+						RawValue rValue = cufValue.getValue();
+						cufValueService.changeValue(cufValue.getKey(), rValue);
 					}
 				} catch (DomainException e) {
 					LOGGER.error(e.getMessage());

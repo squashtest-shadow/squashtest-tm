@@ -22,13 +22,15 @@ package org.squashtest.tm.service.testcase;
 
 import java.util.Map;
 
+import org.squashtest.tm.domain.customfield.RawValue;
+
 /**
  * Methods non automatically generated for TestStep Modification
  * @author mpagnon
  *
  */
 public interface CustomTestStepModificationService  extends CustomTestStepFinder{
-	
+
 	/**
 	 * Will update the TestStep of the given id with the given params.
 	 * If TestStep is a CallStep params "action" and "expectedResult" are ignored.
@@ -40,6 +42,6 @@ public interface CustomTestStepModificationService  extends CustomTestStepFinder
 	 * 
 	 */
 	void updateTestStep(Long testStepId, String action, String expectedResult,
-			Map<Long, String> cufValues);
+			Map<Long, RawValue> cufValues);
 
 }

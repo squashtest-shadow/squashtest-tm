@@ -34,6 +34,8 @@ import org.squashtest.tm.domain.testcase.ActionTestStep;
 import org.squashtest.tm.web.internal.model.customfield.RawValueModel;
 import org.squashtest.tm.web.internal.model.customfield.RawValueModel.RawValueModelMap;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 
 public class ActionStepFormModel {
 
@@ -78,6 +80,7 @@ public class ActionStepFormModel {
 		this.customFields = customFields;
 	}
 
+	@JsonIgnore
 	public Map<Long, RawValue> getCufs(){
 		Map<Long, RawValue> cufs = new HashMap<Long, RawValue>(customFields.size());
 		for (Entry<Long, RawValueModel> entry : customFields.entrySet()){
@@ -104,6 +107,12 @@ public class ActionStepFormModel {
 		@Override
 		public boolean supports(Class<?> clazz) {
 			return (clazz.equals(ActionStepFormModel.class));
+		}
+
+
+		public ActionStepFormModelValidator(MessageSource messageSource) {
+			super();
+			this.messageSource = messageSource;
 		}
 
 		@Override

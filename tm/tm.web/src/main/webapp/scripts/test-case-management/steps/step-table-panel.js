@@ -452,8 +452,8 @@ define([ "jquery", "squashtable/squashtable.collapser", "custom-field-values", "
 
 	function addTestStepSuccess() {
 		var dialog = $("#add-test-step-dialog");
-		if (dialog.dialog("isOpen")) {
-			dialog.dialog("close");
+		if (dialog.formDialog("isOpen")) {
+			dialog.formDialog("close");
 		}
 		eventBus.trigger("testStepsTable.stepAdded");
 		refresh();
@@ -489,8 +489,8 @@ define([ "jquery", "squashtable/squashtable.collapser", "custom-field-values", "
 			return $.ajax({
 				url : urls.addStep,
 				type : "POST",
-				data : data,
-				dataType : "json"
+				data : JSON.stringify(data),
+				contentType : "application/json;charset=UTF-8"
 			});
 		}
 

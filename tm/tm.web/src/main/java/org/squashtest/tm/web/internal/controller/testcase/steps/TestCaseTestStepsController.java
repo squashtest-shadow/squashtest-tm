@@ -35,10 +35,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BeanPropertyBindingResult;
+import org.springframework.validation.BindException;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -59,6 +63,7 @@ import org.squashtest.tm.service.customfield.CustomFieldHelperService;
 import org.squashtest.tm.service.testcase.CallStepManagerService;
 import org.squashtest.tm.service.testcase.TestCaseModificationService;
 import org.squashtest.tm.web.internal.controller.RequestParams;
+import org.squashtest.tm.web.internal.controller.campaign.IterationFormModel.IterationFormModelValidator;
 import org.squashtest.tm.web.internal.controller.testcase.TestCaseModificationController;
 import org.squashtest.tm.web.internal.controller.testcase.steps.ActionStepFormModel.ActionStepFormModelValidator;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
@@ -156,17 +161,19 @@ public class TestCaseTestStepsController {
 
 	}
 
-	@InitBinder("add-test-step")
-	public void addTestCaseBinder(WebDataBinder binder) {
-		ActionStepFormModelValidator validator = new ActionStepFormModelValidator();
-		validator.setMessageSource(internationalizationHelper);
-		binder.setValidator(validator);
-	}
-
-	@RequestMapping(value = "/add", method = RequestMethod.POST, params = { "action", "expectedResult" })
+	@RequestMapping(value = "/add", method = RequestMethod.POST,  consumes="application/json")
 	@ResponseBody
-	public void addActionTestStep(@Valid @ModelAttribute("add-test-step") ActionStepFormModel stepModel,
-			@PathVariable long testCaseId) {
+	public void addActionTestStep(@RequestBody ActionStepFormModel stepModel,
+			@PathVariable long testCaseId) throws BindException {
+
+		BindingResult validation = new BeanPropertyBindingResult(stepModel, "add-test-step");
+		ActionStepFormModelValidator validator = new ActionStepFormModelValidator(internationalizationHelper);
+		validator.validate(stepModel, validation);
+
+		if (validation.hasErrors()){
+			throw new BindException(validation);
+		}
+
 
 		ActionTestStep step = stepModel.getActionTestStep();
 

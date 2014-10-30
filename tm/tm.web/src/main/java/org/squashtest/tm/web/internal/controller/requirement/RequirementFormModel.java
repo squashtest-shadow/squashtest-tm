@@ -18,9 +18,10 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.web.internal.controller.campaign;
+package org.squashtest.tm.web.internal.controller.requirement;
 
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -29,30 +30,36 @@ import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
-import org.squashtest.tm.domain.campaign.Campaign;
 import org.squashtest.tm.domain.customfield.RawValue;
+import org.squashtest.tm.domain.requirement.NewRequirementVersionDto;
+import org.squashtest.tm.domain.requirement.RequirementCategory;
+import org.squashtest.tm.domain.requirement.RequirementCriticality;
 import org.squashtest.tm.web.internal.model.customfield.RawValueModel;
 import org.squashtest.tm.web.internal.model.customfield.RawValueModel.RawValueModelMap;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-public class CampaignFormModel {
-	/**
-	 * Note : the following validation annotations are never called, a custom validator will be invoked for this.
-	 * 
-	 */
+public class RequirementFormModel {
 
-	/*@NotBlank
-	@NotNull*/
+	/*
+	 * @NotBlank
+	 * @NotNull
+	 */
 	private String name;
 
 	private String description;
 
+	/*@NotNull*/
+	private RequirementCriticality criticality;
+
+	/*@NotNull*/
+	private RequirementCategory category;
+
+	private String reference;
+
+	private RawValueModelMap customFields;
 
 
-	/*@NotNull
-	@NotEmpty*/
-	private RawValueModelMap customFields = new RawValueModelMap();
 
 
 	public String getName() {
@@ -69,8 +76,39 @@ public class CampaignFormModel {
 		return description;
 	}
 
+
 	public void setDescription(String description) {
 		this.description = description;
+	}
+
+
+	public RequirementCriticality getCriticality() {
+		return criticality;
+	}
+
+
+	public void setCriticality(RequirementCriticality criticality) {
+		this.criticality = criticality;
+	}
+
+
+	public RequirementCategory getCategory() {
+		return category;
+	}
+
+
+	public void setCategory(RequirementCategory category) {
+		this.category = category;
+	}
+
+
+	public String getReference() {
+		return reference;
+	}
+
+
+	public void setReference(String reference) {
+		this.reference = reference;
 	}
 
 
@@ -84,54 +122,83 @@ public class CampaignFormModel {
 	}
 
 
-
-	public Campaign getCampaign(){
-		Campaign newCampaign = new Campaign();
-		newCampaign.setName(name);
-		newCampaign.setDescription(description);
-		return newCampaign;
-	}
-
+	/*
+	 * Check out what does NewRequirementVersionDto and laugh
+	 */
 	@JsonIgnore
-	public Map<Long, RawValue> getCufs(){
+	public NewRequirementVersionDto toDTO(){
+		NewRequirementVersionDto dto = new NewRequirementVersionDto();
+
+		dto.setName(name);
+		dto.setReference(reference);
+		dto.setCategory(category);
+		dto.setCriticality(criticality);
+
+
 		Map<Long, RawValue> cufs = new HashMap<Long, RawValue>(customFields.size());
 		for (Entry<Long, RawValueModel> entry : customFields.entrySet()){
 			cufs.put(entry.getKey(), entry.getValue().toRawValue());
 		}
-		return cufs;
+		dto.setCustomFields(cufs);
+
+		return dto;
 	}
 
 
-	public static class CampaignFormModelValidator implements Validator {
+	public static class RequirementFormModelValidator implements Validator{
+
+		/**
+		 * 
+		 */
+		private static final String MESSAGE_LENGTH_MAX = "message.lengthMax";
+		/**
+		 * 
+		 */
+		private static final String MESSAGE_NOT_BLANK = "message.notBlank";
 
 		private MessageSource messageSource;
 
-		public void setMessageSource(MessageSource messageSource){
+		public void setMessageSource(MessageSource messageSource) {
 			this.messageSource = messageSource;
 		}
 
 
 
-		public CampaignFormModelValidator(MessageSource messageSource) {
+
+		public RequirementFormModelValidator(MessageSource messageSource) {
 			super();
 			this.messageSource = messageSource;
 		}
 
 
 
+
 		@Override
 		public boolean supports(Class<?> clazz) {
-			return (clazz.equals(CampaignFormModel.class));
+			return (clazz.equals(NewRequirementVersionDto.class));
 		}
 
 		@Override
 		public void validate(Object target, Errors errors) {
+			Locale locale = LocaleContextHolder.getLocale();
+			String notBlank = messageSource.getMessage(MESSAGE_NOT_BLANK, null, locale);
+			String lengthMax = messageSource.getMessage(MESSAGE_LENGTH_MAX, new Object[]{"50"}, locale);
 
-			String notBlank = messageSource.getMessage("message.notBlank", null, LocaleContextHolder.getLocale());
+			RequirementFormModel model = (RequirementFormModel) target;
 
-			CampaignFormModel model = (CampaignFormModel) target;
+			ValidationUtils.rejectIfEmptyOrWhitespace(errors, "name", MESSAGE_NOT_BLANK, notBlank);
 
-			ValidationUtils.rejectIfEmptyOrWhitespace(errors, "name", "message.notBlank", notBlank);
+			if (model.criticality==null){
+				errors.rejectValue("criticality", MESSAGE_NOT_BLANK, notBlank);
+			}
+
+			if (model.category==null){
+				errors.rejectValue("category", MESSAGE_NOT_BLANK, notBlank);
+			}
+
+			if (model.reference != null && model.reference.length()>50){
+				errors.rejectValue("reference", MESSAGE_LENGTH_MAX, lengthMax);
+			}
 
 
 			for (Entry<Long, RawValueModel> entry : model.getCustomFields().entrySet()){
@@ -141,10 +208,10 @@ public class CampaignFormModel {
 				}
 			}
 
-
 		}
 
 	}
+
 
 
 }

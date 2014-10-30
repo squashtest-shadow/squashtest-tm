@@ -42,6 +42,7 @@ import org.squashtest.tm.domain.customfield.BoundEntity;
 import org.squashtest.tm.domain.customfield.CustomField;
 import org.squashtest.tm.domain.customfield.CustomFieldBinding;
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
+import org.squashtest.tm.domain.customfield.RawValue;
 import org.squashtest.tm.domain.customfield.RenderingLocation;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.service.advancedsearch.IndexationService;
@@ -375,7 +376,7 @@ public class PrivateCustomFieldValueServiceImpl implements PrivateCustomFieldVal
 	}
 
 	@Override
-	public void changeValue(long customFieldValueId, String newValue) {
+	public void changeValue(long customFieldValueId, RawValue newValue) {
 
 		CustomFieldValue changedValue = customFieldValueDao.findById(customFieldValueId);
 
@@ -387,7 +388,7 @@ public class PrivateCustomFieldValueServiceImpl implements PrivateCustomFieldVal
 			throw new AccessDeniedException("access is denied");
 		}
 
-		changedValue.setValue(newValue);
+		newValue.setValueFor(changedValue);
 
 		if (BindableEntity.TEST_CASE.equals(boundEntity.getBoundEntityType())) {
 			indexationService.reindexTestCase(boundEntityId);

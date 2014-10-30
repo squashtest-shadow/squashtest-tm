@@ -22,7 +22,6 @@ package org.squashtest.tm.web.internal.controller.requirement;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.rmi.activation.UnknownObjectException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -36,10 +35,12 @@ import javax.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.WebDataBinder;
-import org.springframework.web.bind.annotation.InitBinder;
+import org.springframework.validation.BeanPropertyBindingResult;
+import org.springframework.validation.BindException;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -49,7 +50,6 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 import org.squashtest.tm.domain.requirement.ExportRequirementData;
 import org.squashtest.tm.domain.requirement.NewRequirementVersionDto;
-import org.squashtest.tm.domain.requirement.NewRequirementVersionDto.NewRequirementVersionDaoValidator;
 import org.squashtest.tm.domain.requirement.Requirement;
 import org.squashtest.tm.domain.requirement.RequirementFolder;
 import org.squashtest.tm.domain.requirement.RequirementLibrary;
@@ -59,6 +59,7 @@ import org.squashtest.tm.service.importer.ImportSummary;
 import org.squashtest.tm.service.library.LibraryNavigationService;
 import org.squashtest.tm.service.requirement.RequirementLibraryNavigationService;
 import org.squashtest.tm.web.internal.controller.generic.LibraryNavigationController;
+import org.squashtest.tm.web.internal.controller.requirement.RequirementFormModel.RequirementFormModelValidator;
 import org.squashtest.tm.web.internal.model.builder.DriveNodeBuilder;
 import org.squashtest.tm.web.internal.model.builder.JsTreeNodeListBuilder;
 import org.squashtest.tm.web.internal.model.builder.RequirementLibraryTreeNodeBuilder;
@@ -90,51 +91,67 @@ LibraryNavigationController<RequirementLibrary, RequirementFolder, RequirementLi
 	private RequirementLibraryNavigationService requirementLibraryNavigationService;
 
 
-	@InitBinder(MODEL_ATTRIBUTE_ADD_REQUIREMENT)
-	public void addRequirementBinder(WebDataBinder binder) {
-		NewRequirementVersionDaoValidator validator = new NewRequirementVersionDaoValidator();
-		validator.setMessageSource(getMessageSource());
-		binder.setValidator(validator);
-	}
-
 	@RequestMapping(value = "/drives/{libraryId}/content/new-requirement", method = RequestMethod.POST)
 	@ResponseStatus(HttpStatus.CREATED)
 	public @ResponseBody
 	JsTreeNode addNewRequirementToLibraryRootContent(@PathVariable long libraryId,
-			@Valid @ModelAttribute(MODEL_ATTRIBUTE_ADD_REQUIREMENT) NewRequirementVersionDto firstVersion) {
+			@RequestBody RequirementFormModel requirementModel) throws BindException {
 
-		throw new UnsupportedOperationException("a faire : le form bean pour qu'il gère les custom fields");
+		BindingResult validation = new BeanPropertyBindingResult(requirementModel, "add-requirement");
+		RequirementFormModelValidator validator = new RequirementFormModelValidator(getMessageSource());
+		validator.validate(requirementModel, validation);
 
-		/*	Requirement req = requirementLibraryNavigationService.addRequirementToRequirementLibrary(libraryId,
-				firstVersion);
+		if (validation.hasErrors()){
+			throw new BindException(validation);
+		}
 
-		return createTreeNodeFromLibraryNode(req);*/
+
+		Requirement req = requirementLibraryNavigationService.addRequirementToRequirementLibrary(libraryId,
+				requirementModel.toDTO());
+
+		return createTreeNodeFromLibraryNode(req);
 
 	}
 
 	@RequestMapping(value = "/folders/{folderId}/content/new-requirement", method = RequestMethod.POST)
 	public @ResponseBody
 	JsTreeNode addNewRequirementToFolderContent(@PathVariable long folderId,
-			@Valid @ModelAttribute(MODEL_ATTRIBUTE_ADD_REQUIREMENT) NewRequirementVersionDto firstVersion) {
+			@RequestBody RequirementFormModel requirementModel) throws BindException{
 
-		throw new UnsupportedOperationException("a faire : le form bean pour qu'il gère les custom fields");
 
-		/*Requirement req = requirementLibraryNavigationService.addRequirementToRequirementFolder(folderId, firstVersion);
 
-		return createTreeNodeFromLibraryNode(req);*/
+		BindingResult validation = new BeanPropertyBindingResult(requirementModel, "add-requirement");
+		RequirementFormModelValidator validator = new RequirementFormModelValidator(getMessageSource());
+		validator.validate(requirementModel, validation);
+
+		if (validation.hasErrors()){
+			throw new BindException(validation);
+		}
+
+		Requirement req = requirementLibraryNavigationService.addRequirementToRequirementFolder(folderId, requirementModel.toDTO());
+
+		return createTreeNodeFromLibraryNode(req);
 
 	}
 
 	@RequestMapping(value = "/requirements/{requirementId}/content/new-requirement", method = RequestMethod.POST)
 	public @ResponseBody
 	JsTreeNode addNewRequirementToRequirementContent(@PathVariable("requirementId") long requirementId,
-			@Valid @ModelAttribute(MODEL_ATTRIBUTE_ADD_REQUIREMENT) NewRequirementVersionDto firstVersion) {
+			@RequestBody RequirementFormModel requirementModel) throws BindException{
 
-		throw new UnsupportedOperationException("a faire : le form bean pour qu'il gère les custom fields");
 
-		/*Requirement req = requirementLibraryNavigationService.addRequirementToRequirement(requirementId, firstVersion);
 
-		return createTreeNodeFromLibraryNode(req);*/
+		BindingResult validation = new BeanPropertyBindingResult(requirementModel, "add-requirement");
+		RequirementFormModelValidator validator = new RequirementFormModelValidator(getMessageSource());
+		validator.validate(requirementModel, validation);
+
+		if (validation.hasErrors()){
+			throw new BindException(validation);
+		}
+
+		Requirement req = requirementLibraryNavigationService.addRequirementToRequirement(requirementId, requirementModel.toDTO());
+
+		return createTreeNodeFromLibraryNode(req);
 
 	}
 

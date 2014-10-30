@@ -21,6 +21,7 @@
 package org.squashtest.tm.service.customfield;
 
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
+import org.squashtest.tm.domain.customfield.RawValue;
 
 public interface CustomFieldValueManagerService extends CustomFieldValueFinderService {
 
@@ -31,5 +32,5 @@ public interface CustomFieldValueManagerService extends CustomFieldValueFinderSe
 	 * @param customFieldValueId
 	 * @param newValue
 	 */
-	void changeValue(long customFieldValueId, String newValue);
+	void changeValue(long customFieldValueId, RawValue newValue);
 }

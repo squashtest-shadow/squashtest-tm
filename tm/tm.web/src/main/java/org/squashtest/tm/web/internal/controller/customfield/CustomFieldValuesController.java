@@ -34,6 +34,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.squashtest.tm.domain.customfield.BindableEntity;
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
+import org.squashtest.tm.domain.customfield.RawValue;
 import org.squashtest.tm.service.customfield.CustomFieldValueManagerService;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.web.internal.controller.AcceptHeaders;
@@ -75,8 +76,15 @@ public class CustomFieldValuesController {
 	@RequestMapping(value = "/{id}", method = RequestMethod.POST, params = JEditablePostParams.VALUE)
 	@ResponseBody
 	public void updateCustomValue(@PathVariable long id, @RequestParam(JEditablePostParams.VALUE) String value) {
-		managerService.changeValue(id, value);
+		managerService.changeValue(id, new RawValue(value));
 	}
+
+	@RequestMapping(value = "/{id}", method = RequestMethod.POST, params = JEditablePostParams.VALUES)
+	@ResponseBody
+	public void updateCustomValue(@PathVariable long id, @RequestParam(JEditablePostParams.VALUES) List<String> value) {
+		managerService.changeValue(id, new RawValue(value));
+	}
+
 
 	private List<CustomFieldValueModel> valuesToJson(List<CustomFieldValue> values) {
 		List<CustomFieldValueModel> models = new LinkedList<CustomFieldValueModel>();
