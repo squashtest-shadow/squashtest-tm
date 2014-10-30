@@ -41,10 +41,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BeanPropertyBindingResult;
+import org.springframework.validation.BindException;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -67,6 +71,7 @@ import org.squashtest.tm.service.library.LibraryNavigationService;
 import org.squashtest.tm.web.internal.controller.campaign.CampaignFormModel.CampaignFormModelValidator;
 import org.squashtest.tm.web.internal.controller.campaign.IterationFormModel.IterationFormModelValidator;
 import org.squashtest.tm.web.internal.controller.generic.LibraryNavigationController;
+import org.squashtest.tm.web.internal.controller.testcase.TestCaseFormModel.TestCaseFormModelValidator;
 import org.squashtest.tm.web.internal.model.builder.CampaignLibraryTreeNodeBuilder;
 import org.squashtest.tm.web.internal.model.builder.DriveNodeBuilder;
 import org.squashtest.tm.web.internal.model.builder.IterationNodeBuilder;
@@ -106,24 +111,21 @@ LibraryNavigationController<CampaignLibrary, CampaignFolder, CampaignLibraryNode
 	@Inject
 	private IterationModificationService iterationModificationService;
 
-	@InitBinder("add-campaign")
-	public void addCampaignBinder(WebDataBinder binder) {
-		CampaignFormModelValidator validator = new CampaignFormModelValidator();
-		validator.setMessageSource(getMessageSource());
-		binder.setValidator(validator);
-	}
 
-	@InitBinder("add-iteration")
-	public void addIterationBinder(WebDataBinder binder) {
-		IterationFormModelValidator validator = new IterationFormModelValidator();
-		validator.setMessageSource(getMessageSource());
-		binder.setValidator(validator);
-	}
 
 	@RequestMapping(value = "/drives/{libraryId}/content/new-campaign", method = RequestMethod.POST)
 	public @ResponseBody
 	JsTreeNode addNewCampaignToLibraryRootContent(@PathVariable Long libraryId,
-			@Valid @ModelAttribute("add-campaign") CampaignFormModel campaignForm) {
+			@RequestBody CampaignFormModel campaignForm) throws BindException{
+
+		BindingResult validation = new BeanPropertyBindingResult(campaignForm, "add-campaign");
+		CampaignFormModelValidator validator = new CampaignFormModelValidator(getMessageSource());
+		validator.validate(campaignForm, validation);
+
+		if (validation.hasErrors()){
+			throw new BindException(validation);
+		}
+
 
 		Campaign newCampaign = campaignForm.getCampaign();
 		Map<Long, RawValue> customFieldValues = campaignForm.getCufs();
@@ -137,7 +139,16 @@ LibraryNavigationController<CampaignLibrary, CampaignFolder, CampaignLibraryNode
 	@RequestMapping(value = "/folders/{folderId}/content/new-campaign", method = RequestMethod.POST)
 	public @ResponseBody
 	JsTreeNode addNewCampaignToFolderContent(@PathVariable long folderId,
-			@Valid @ModelAttribute("add-campaign") CampaignFormModel campaignForm) {
+			@RequestBody CampaignFormModel campaignForm)  throws BindException {
+
+		BindingResult validation = new BeanPropertyBindingResult(campaignForm, "add-campaign");
+		CampaignFormModelValidator validator = new CampaignFormModelValidator(getMessageSource());
+		validator.validate(campaignForm, validation);
+
+		if (validation.hasErrors()){
+			throw new BindException(validation);
+		}
+
 
 		Campaign newCampaign = campaignForm.getCampaign();
 		Map<Long, RawValue> customFieldValues = campaignForm.getCufs();
@@ -162,7 +173,17 @@ LibraryNavigationController<CampaignLibrary, CampaignFolder, CampaignLibraryNode
 	@RequestMapping(value = "/campaigns/{campaignId}/content/new-iteration", method = RequestMethod.POST)
 	public @ResponseBody
 	JsTreeNode addNewIterationToCampaign(@PathVariable long campaignId,
-			@Valid @ModelAttribute("add-iteration") IterationFormModel iterationForm) {
+			@RequestBody IterationFormModel iterationForm) throws BindException {
+
+		BindingResult validation = new BeanPropertyBindingResult(iterationForm, "add-iteration");
+		IterationFormModelValidator validator = new IterationFormModelValidator(getMessageSource());
+		validator.validate(iterationForm, validation);
+
+		if (validation.hasErrors()){
+			throw new BindException(validation);
+		}
+
+
 
 		Iteration newIteration = iterationForm.getIteration();
 		Map<Long, RawValue> customFieldValues = iterationForm.getCufs();

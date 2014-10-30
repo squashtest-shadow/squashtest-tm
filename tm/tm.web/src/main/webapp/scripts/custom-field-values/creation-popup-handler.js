@@ -112,7 +112,9 @@ define(
 					
 					if (fields.length > 0) {
 						fields.each(function(idx) {
-							$(this).editableCustomfield(cufDefs[idx]);
+							var $this = $(this);
+							$this.editableCustomfield(cufDefs[idx]);
+							$this.append('<span class="error-message customFields-'+cufDefs[idx].id+'-error"></span>');
 						});
 
 						this.reset(table);

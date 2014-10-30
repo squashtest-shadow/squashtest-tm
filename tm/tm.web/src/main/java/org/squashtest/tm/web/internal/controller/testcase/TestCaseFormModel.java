@@ -119,6 +119,10 @@ public class TestCaseFormModel {
 
 		private MessageSource messageSource;
 
+		public TestCaseFormModelValidator(MessageSource messageSource){
+			this.messageSource = messageSource;
+		}
+		
 		public void setMessageSource(MessageSource messageSource){
 			this.messageSource = messageSource;
 		}

@@ -143,6 +143,6 @@ public class TestStepController {
 	@ResponseBody
 	@ResponseStatus(value = HttpStatus.NO_CONTENT)
 	public void updateStep(@PathVariable Long testStepId, @RequestBody TestStepUpdateFormModel testStepModel) {
-		testStepService.updateTestStep(testStepId, testStepModel.getAction(), testStepModel.getExpectedResult(), testStepModel.getCufValues());
+		testStepService.updateTestStep(testStepId, testStepModel.getAction(), testStepModel.getExpectedResult(), testStepModel.getCufs());
 	}
 }

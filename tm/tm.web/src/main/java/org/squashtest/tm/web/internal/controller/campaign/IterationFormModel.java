@@ -34,6 +34,8 @@ import org.squashtest.tm.domain.customfield.RawValue;
 import org.squashtest.tm.web.internal.model.customfield.RawValueModel;
 import org.squashtest.tm.web.internal.model.customfield.RawValueModel.RawValueModelMap;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 public class IterationFormModel {
 	/**
 	 * Note : the following validation annotations are never called, a custom validator will be invoked for this.
@@ -103,6 +105,7 @@ public class IterationFormModel {
 		return newIteration;
 	}
 
+	@JsonIgnore
 	public Map<Long, RawValue> getCufs(){
 		Map<Long, RawValue> cufs = new HashMap<Long, RawValue>(customFields.size());
 		for (Entry<Long, RawValueModel> entry : customFields.entrySet()){
@@ -118,6 +121,13 @@ public class IterationFormModel {
 		private MessageSource messageSource;
 
 		public void setMessageSource(MessageSource messageSource){
+			this.messageSource = messageSource;
+		}
+
+
+
+		public IterationFormModelValidator(MessageSource messageSource) {
+			super();
 			this.messageSource = messageSource;
 		}
 

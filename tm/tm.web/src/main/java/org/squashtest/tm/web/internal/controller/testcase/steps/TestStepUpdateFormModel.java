@@ -20,13 +20,22 @@
  */
 package org.squashtest.tm.web.internal.controller.testcase.steps;
 
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
+
+import org.squashtest.tm.domain.customfield.RawValue;
+import org.squashtest.tm.web.internal.model.customfield.RawValueModel;
+import org.squashtest.tm.web.internal.model.customfield.RawValueModel.RawValueModelMap;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public class TestStepUpdateFormModel {
 
 	private String action;
 	private String expectedResult;
-	private Map<Long, String> cufValues;
+
+	private RawValueModelMap customFields = new RawValueModelMap();
 
 	public String getAction() {
 		return action;
@@ -44,11 +53,23 @@ public class TestStepUpdateFormModel {
 		this.expectedResult = expectedResult;
 	}
 
-	public Map<Long, String> getCufValues() {
-		return cufValues;
+	public RawValueModelMap getCustomFields() {
+		return customFields;
 	}
 
-	public void setCufValues(Map<Long, String> cufValues) {
-		this.cufValues = cufValues;
+	public void setCustomFields(RawValueModelMap customFields) {
+		this.customFields = customFields;
 	}
+
+
+	@JsonIgnore
+	public Map<Long, RawValue> getCufs(){
+		Map<Long, RawValue> cufs = new HashMap<Long, RawValue>(customFields.size());
+		for (Entry<Long, RawValueModel> entry : customFields.entrySet()){
+			cufs.put(entry.getKey(), entry.getValue().toRawValue());
+		}
+		return cufs;
+	}
+
+
 }

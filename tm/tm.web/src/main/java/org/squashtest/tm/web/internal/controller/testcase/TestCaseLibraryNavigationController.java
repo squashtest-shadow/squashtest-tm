@@ -30,16 +30,22 @@ import java.util.Map;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Provider;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.FileSystemResource;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BeanPropertyBindingResult;
+import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -48,6 +54,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.squashtest.tm.domain.customfield.RawValue;
 import org.squashtest.tm.domain.testcase.ExportTestCaseData;
 import org.squashtest.tm.domain.testcase.ExportTestStepData;
@@ -102,18 +109,24 @@ LibraryNavigationController<TestCaseLibrary, TestCaseFolder, TestCaseLibraryNode
 		return testCaseLibraryTreeNodeBuilder.get().setNode(node).build();
 	}
 
-	/*
-	@InitBinder(ADD_TEST_CASE)
-	public void addTestCaseBinder(WebDataBinder binder) {
-		TestCaseFormModelValidator validator = new TestCaseFormModelValidator();
-		validator.setMessageSource(getMessageSource());
-		binder.setValidator(validator);
-	}
-	 */
 
+
+
+	/*
+	 * The former validation system doesn't work anymore because it kicks in before our json form is filled.
+	 * So we're doing it manually now.
+	 */
 	@RequestMapping(value = "/drives/{libraryId}/content/new-test-case", method = RequestMethod.POST, consumes="application/json")
 	public @ResponseBody JsTreeNode addNewTestCaseToLibraryRootContent(@PathVariable long libraryId,
-			@Valid /*@ModelAttribute(ADD_TEST_CASE)*/ @RequestBody TestCaseFormModel testCaseModel){
+			@RequestBody TestCaseFormModel testCaseModel) throws BindException{
+
+		BindingResult validation = new BeanPropertyBindingResult(testCaseModel, ADD_TEST_CASE);
+		TestCaseFormModelValidator validator = new TestCaseFormModelValidator(getMessageSource());
+		validator.validate(testCaseModel, validation);
+
+		if (validation.hasErrors()){
+			throw new BindException(validation);
+		}
 
 		TestCase testCase = testCaseModel.getTestCase();
 
@@ -126,7 +139,15 @@ LibraryNavigationController<TestCaseLibrary, TestCaseFolder, TestCaseLibraryNode
 
 	@RequestMapping(value = "/folders/{folderId}/content/new-test-case", method = RequestMethod.POST, consumes="application/json")
 	public @ResponseBody JsTreeNode addNewTestCaseToFolder(@PathVariable long folderId,
-			@Valid /*@ModelAttribute(ADD_TEST_CASE)*/ @RequestBody TestCaseFormModel testCaseModel){
+			@RequestBody TestCaseFormModel testCaseModel) throws BindException {
+
+		BindingResult validation = new BeanPropertyBindingResult(testCaseModel, ADD_TEST_CASE);
+		TestCaseFormModelValidator validator = new TestCaseFormModelValidator(getMessageSource());
+		validator.validate(testCaseModel, validation);
+
+		if (validation.hasErrors()){
+			throw new BindException(validation);
+		}
 
 		TestCase testCase = testCaseModel.getTestCase();
 
