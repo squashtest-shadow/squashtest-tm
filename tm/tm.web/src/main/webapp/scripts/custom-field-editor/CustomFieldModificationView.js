@@ -22,7 +22,8 @@ define([ "jquery", "./NewCustomFieldOptionDialog", "backbone", "underscore",
 	"jeditable.simpleJEditable", "jeditable.selectJEditable", "app/util/StringUtil", "app/lnf/Forms", 
 	"jquery.squash.oneshotdialog", "squash.configmanager", "app/ws/squashtm.notification",
 	"jquery.squash", "jqueryui",
-	"jquery.squash.togglepanel", "squashtable", "jquery.squash.confirmdialog", "jeditable.datepicker", "jquery.squash.formdialog" ],
+	"jquery.squash.togglepanel", "squashtable", "jquery.squash.confirmdialog", "jeditable.datepicker", 
+	"jquery.squash.formdialog", "jquery.squash.tagit"  ],
 	function($, NewCustomFieldOptionDialog, Backbone, _, SimpleJEditable,SelectJEditable, StringUtil, Forms, oneshot, confman, notification) {
 		var cfMod = squashtm.app.cfMod;
 		/*
@@ -288,6 +289,9 @@ define([ "jquery", "./NewCustomFieldOptionDialog", "backbone", "underscore",
 				} else if (this.inputType === "DATE_PICKER") {
 					this.makeDefaultDatePickerEditable();
 				}
+				else if (this.inputType === "TAG"){
+					this.makeDefaultTagsEditable();
+				}
 				else if (this.inputType === "RICH_TEXT"){
 					this.makeDefaultRichTextEditable();
 				}
@@ -368,6 +372,29 @@ define([ "jquery", "./NewCustomFieldOptionDialog", "backbone", "underscore",
 					}
 				});
 
+				
+			},
+			
+			makeDefaultTagsEditable : function(){
+				var ul = this.$("#cuf-default-value"),
+					self = this;
+				
+				var conf = confman.getStdTagit();
+				ul.squashTagit(conf);
+				
+				ul.on('squashtagitaftertagadded squashtagitaftertagremoved', function(){
+					// Contrary to Custom Field Values, the default value of a Custom Field
+					// is stored as a semicolumn separated string instead of a collection of labels.
+					var values = ul.squashTagit('assignedTags').join(';');
+					$.ajax({
+						url : cfMod.customFieldUrl + '/defaultValue',
+						type : 'post',
+						data : {
+							'id' : 'cuf-default-value',
+							'value' : values 
+						}
+					});
+				});
 				
 			},
 			
