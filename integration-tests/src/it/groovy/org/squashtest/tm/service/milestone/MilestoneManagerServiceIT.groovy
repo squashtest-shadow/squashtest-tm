@@ -18,29 +18,35 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.internal.milestone
-import org.squashtest.tm.domain.milestone.Milestone
-import org.squashtest.tm.service.internal.repository.MilestoneDao
-import spock.lang.Specification
-class CustomMilestoneManagerServiceImplTest extends Specification {
+package org.squashtest.tm.service.milestone
 
-	CustomMilestoneManagerServiceImpl manager = new CustomMilestoneManagerServiceImpl()
-	MilestoneDao milestoneDao= Mock()
+import javax.inject.Inject;
+
+import org.springframework.transaction.annotation.Transactional;
+import org.squashtest.tm.domain.milestone.MilestoneStatus;
+import org.squashtest.tm.service.DbunitServiceSpecification;
+import org.unitils.dbunit.annotation.DataSet
+
+import spock.unitils.UnitilsSupport;
+
+
+@UnitilsSupport
+@Transactional
+class MilestoneManagerServiceIT extends DbunitServiceSpecification {
+
+	@Inject
+	MilestoneManagerService manager
 	
-	def setup(){
-		manager.milestoneDao = milestoneDao
-	}
-	
-	def "should delete milestones"(){
-		
+	@DataSet("/org/squashtest/tm/service/milestone/MilestoneManagerServiceIT.xml")
+	def "should find all milestones"(){
 		given :
-		def ids = [1L, 2L, 5L]
-		def milestones = ids.collect{new Milestone(id:it)}
-		milestones.each{milestoneDao.findById(it.id) >> it}
-		when :
-		manager.removeMilestones(ids)
-		then :
-		milestones.each{1 * milestoneDao.remove(it)}
 		
-	}
+		when :
+		def result = manager.findAll()
+		then :
+		result.size == 4
+		result.collect{it.id} == [1, 2, 3, 4]
+		result.collect{it.label} == ["My milestone", "My milestone 2", "My milestone 3", "My milestone 4"]
+		result.collect{it.status} == [MilestoneStatus.STATUS_1,MilestoneStatus.STATUS_1,MilestoneStatus.STATUS_2,MilestoneStatus.STATUS_3]
+		}
 }
