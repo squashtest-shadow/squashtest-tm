@@ -1317,6 +1317,17 @@ div.information-panel p {
 	background-image :url(../images/Button_Index.png); /** sprite-ref: sprites-icons; */
 }
 
+.admin-milestone-icon{
+	background-image :url(../images/Button_Milestone.png);/** sprite-ref: sprites-icons; */
+}
+
+.admin-msglogin-icon-small{
+	background-image :url(../images/Button_MsgLogin_small.png); /** sprite-ref: sprites-icons; */
+}
+
+.admin-msghome-icon-small{
+	background-image :url(../images/Button_MsgHome_small.png); /** sprite-ref: sprites-icons; */
+}
 
 #admin-link-pane  span.admin-section-label {
 	position:absolute; 
@@ -1324,6 +1335,27 @@ div.information-panel p {
 	top: 100px;
 	left:0px; 
 	right:0px
+}
+
+div#admin-small-link-pane{
+    float:left;
+	padding: 100px 20% 30px;
+	font-size: 1.2em;
+	display :table;
+}
+
+#admin-small-link-pane span.admin-section-icon {
+    height: 50px;
+    width: 50px;
+    display :table-cell;
+    margin-left	: auto;
+    margin-right : auto;
+    background-repeat : no-repeat;
+}
+
+#admin-small-link-pane  span.admin-section-label {
+	display:table-cell;
+    vertical-align:middle;
 }
 /* =================STATISTICS==================== */
 div#admin-stats {

@@ -115,8 +115,8 @@
             <td><label for="add-bugtracker-kind"><f:message
               key="label.Kind" /></label></td>
             <td><select id="add-bugtracker-kind" class="combobox">
-            <c:forEach items="${ bugtrackerKinds }" var="kind" > 
-            <option value = "${kind}" >${kind}</option>
+            <c:forEach items="${ bugtrackerKinds }" var="status" > 
+            <option value = "${status}" >${status}</option>
             </c:forEach>
             </select>
             

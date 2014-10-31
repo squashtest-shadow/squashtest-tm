@@ -23,48 +23,56 @@
 -->
 <databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+   
+    <changeSet id="tm-1.12.0" author="jsimon">
+    <comment>Update TM database version number</comment>
+    <update tableName="CORE_CONFIG">
+      <column name="VALUE" value="1.12.0" />
+      <where>STR_KEY = 'squashtest.tm.database.version'</where>
+    </update>
+  </changeSet>
   
-   <changeSet author="jsimon" id="tm-1.12.0.1">
+   <changeSet author="jsimon" id="tm-1.12.0.feature-3607-1">
 
-    <comment>Table representant les Jalons/Milestones</comment>
+    <comment>Table for Milestones</comment>
     <createTable tableName="MILESTONE">
 
-      <column name="MILESTONE_ID" type="BIGINT" autoIncrement="true" remarks="cle primaire de la table">
+      <column name="MILESTONE_ID" type="BIGINT" autoIncrement="true" remarks="Primary key">
         <constraints primaryKey="true" nullable="false" />
       </column>
 
-      <column name="LABEL" type="java.sql.Types.VARCHAR(30)" remarks="Label du jalon">
+      <column name="LABEL" type="java.sql.Types.VARCHAR(30)" remarks="Milestone label">
               <constraints nullable="false" />
       </column>
 
-	 <column name="STATUS" type="java.sql.Types.VARCHAR(30)" remarks="status du jalon">
+	 <column name="STATUS" type="java.sql.Types.VARCHAR(30)" remarks="Milestone status">
       </column>
       
-        <column name="END_DATE" type="DATETIME" remarks="Date d'échéance">       
+        <column name="END_DATE" type="DATETIME" remarks="Term date">       
          <constraints nullable="false" />
     </column>
     
-      <column name="DESCRIPTION" type="CLOB" remarks="description du jalon">
+      <column name="DESCRIPTION" type="CLOB" remarks="Milestone description">
       </column>
       
-      <column name="RANGE" type="java.sql.Types.VARCHAR(30)" remarks="portée du jalon du jalon">
+      <column name="RANGE" type="java.sql.Types.VARCHAR(30)" remarks="Milestone range">
               <constraints nullable="false" />
       </column>
 
-      <column name="CREATED_BY" type="java.sql.Types.VARCHAR(50)" remarks="nom du createur du projet.">
+      <column name="CREATED_BY" type="java.sql.Types.VARCHAR(50)" remarks="Name of the milestone creator">
         <constraints nullable="false" />
       </column>
 
       <column name="CREATED_ON" type="DATETIME"
-        remarks="Date de creation de ce projet. Il s'agit de la date de creation de l'entree dans la base, non d'une date metier.">
+        remarks="Date of creation.">
         <constraints nullable="false" />
       </column>
 
       <column name="LAST_MODIFIED_BY" type="java.sql.Types.VARCHAR(50)" defaultValue="NULL"
-        remarks="Nom du dernier utilisateur ayant mis a jour cet instance." />
+        remarks="last modified by" />
 
       <column name="LAST_MODIFIED_ON" type="DATETIME" defaultValue="NULL"
-        remarks="Date de derniere mise a jour de cette instance." />
+        remarks="Date of last update" />
     </createTable>
 
     <createIndex tableName="MILESTONE" indexName="idx_milestone">

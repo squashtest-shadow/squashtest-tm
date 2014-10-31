@@ -148,6 +148,9 @@
         <value>org.squashtest.tm.domain.campaign.CampaignLibraryPluginBinding</value>
         <value>org.squashtest.tm.domain.testcase.TestCaseLibraryPluginBinding</value>
         <value>org.squashtest.tm.domain.requirement.RequirementLibraryPluginBinding</value>
+        
+        
+        <value>org.squashtest.tm.domain.milestone.Milestone</value>
       </list>
     </property>
 

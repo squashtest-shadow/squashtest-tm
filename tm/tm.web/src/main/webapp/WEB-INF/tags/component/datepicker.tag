@@ -29,7 +29,7 @@
 <%-- Use with datepicker-manager, same tag lib --%>
 
 <%@ attribute name="datePickerId" required="true" description="this Id refers to the main div" %>
-<%@ attribute name="fmtLabel" required="true" description="message key for the label to be displayed" %>
+<%@ attribute name="fmtLabel" required="false" description="message key for the label to be displayed" %>
 <%@ attribute name="url" required="false" description="url to post to"%>
 <%@ attribute name="updateFunction" required="false" description="an user_defined javascript function that will handle
 the data. Prototype is : function my_function(strParamName, iDate)"%>
@@ -40,12 +40,16 @@ the data. Prototype is : function my_function(strParamName, iDate)"%>
 <%@ attribute name="editable" type="java.lang.Boolean" required="false" description="if specified, will tell whether the component is editable or not. Default is true." %>
 
 
+<c:if test="${ (not empty fmtLabel)}" >
 <f:message var="label" key="${fmtLabel}" />
+</c:if>
 <f:message var="dateFormat" key="squashtm.dateformatShort" />
 <f:message var="dateFormatDp" key="squashtm.dateformatShort.datepicker" />
 <div >
 	<div class="datepicker-caption">
+	<c:if test="${ (not empty label)}" >	
 		<label>${label}</label>&nbsp;
+		</c:if>
 	</div>
 	<div class="datepicker-date">
 	

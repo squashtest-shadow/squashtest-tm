@@ -79,6 +79,8 @@
     <intercept-url requires-channel="${authentication.application.securablechannels:http}" pattern="/platform/**"
       access="hasRole('ROLE_ADMIN')" />
         
+            <intercept-url requires-channel="${authentication.application.securablechannels:http}" pattern="/administration/milestones"
+      access="hasRole('ROLE_TM_PROJECT_MANAGER') or hasRole('ROLE_ADMIN')" />
 		<!-- One must log in to access the application -->
     <intercept-url pattern="/**" access="isAuthenticated()" />
 		

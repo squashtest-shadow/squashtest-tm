@@ -565,8 +565,11 @@
 				+ "join tcln.project p "
 				+ "where clos.ancestorId = tcln.id "
 				+ "group by  clos.descendantId, p.name "
-				+ "having concat('/', p.name, '/', group_concat(tcln.name, 'order by', clos.depth, 'desc', '/')) in :paths")
-
+				+ "having concat('/', p.name, '/', group_concat(tcln.name, 'order by', clos.depth, 'desc', '/')) in :paths"),
+				
+				//Milestones
+				@NamedQuery(name = "milestone.count", query = "select count(milestone) from Milestone milestone"),
+				@NamedQuery(name = "milestone.findMilestoneByLabel", query = "from Milestone where label = :label "),
 })
 package org.squashtest.tm.service.internal.repository.hibernate;
 

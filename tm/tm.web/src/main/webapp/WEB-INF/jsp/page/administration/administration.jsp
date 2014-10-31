@@ -35,6 +35,7 @@
 <c:url var="customFieldsUrl"          value="/administration/custom-fields" />
 <c:url var="testAutomationServerUrl"  value="/administration/test-automation-servers" />
 <c:url var="indexUrl"                 value="/administration/indexes" />
+<c:url var="milestoneUrl"             value="/administration/milestones" />
 
 <layout:info-page-layout titleKey="label.administration">
   <jsp:attribute name="head">  
@@ -64,21 +65,17 @@
         </a>
         
         <sec:authorize access=" hasRole('ROLE_ADMIN')">
-        <a href="${ bugtrackerUrl }" class="unstyledLink">
-          <span id="bug-tracker-admin" class="admin-section-icon admin-bugtracker-icon"></span>
-          <span class="admin-section-label"><f:message key="label.bugtrackerManagement" /></span>
+   <a href="${ milestoneUrl }" class="unstyledLink">
+          <span id="milestone-admin" class="admin-section-icon admin-milestone-icon"></span>
+          <span class="admin-section-label"><f:message key="label.milestoneManagement" /></span>
         </a>
         <a href="${ customFieldsUrl }" class="unstyledLink">
           <span id="custom-fields-admin" class="admin-section-icon admin-customfields-icon"></span>
           <span class="admin-section-label"><f:message key="label.customFieldsManagement" /></span>
         </a>
-        <a href="${ loginUrl }" class="unstyledLink ">
-          <span id="login-message-admin" class="admin-section-icon admin-msglogin-icon"></span>
-          <span class="admin-section-label"><f:message key="label.consultModifyLoginMessage" /></span>
-        </a>
-        <a href="${ welcomeUrl }" class="unstyledLink ">
-          <span id="welcome-message-admin" class="admin-section-icon admin-msghome-icon"></span>
-          <span class="admin-section-label"><f:message key="label.consultModifyWelcomeMessage" /></span>
+       <a href="${ bugtrackerUrl }" class="unstyledLink">
+          <span id="bug-tracker-admin" class="admin-section-icon admin-bugtracker-icon"></span>
+          <span class="admin-section-label"><f:message key="label.bugtrackerManagement" /></span>
         </a>
         <a href="${testAutomationServerUrl}" class="unstyledLink">
           <span id="test-automation-servers-admin" class="admin-section-icon admin-test-automation-servers-icon"></span>
@@ -88,7 +85,26 @@
           <span id="index-admin" class="admin-section-icon admin-index-icon"></span>
           <span class="admin-section-label"><f:message key="label.indexManagement" /></span>
         </a>
+            <a id="fake-link" class="unstyledLink">
+       
+        </a>
         </sec:authorize>
+      </div>
+      
+      <div id="admin-small-link-pane">  
+           <div id="admin-small-link-pane-table">  
+        <sec:authorize access=" hasRole('ROLE_ADMIN')">
+             <a href="${ loginUrl }" class="unstyledLink ">
+          <span id="login-message-admin" class="admin-section-icon admin-msglogin-icon-small"></span>
+          <span class="admin-section-label"><f:message key="label.consultModifyLoginMessage" /></span>
+        </a>
+        <a href="${ welcomeUrl }" class="unstyledLink ">
+          <span id="welcome-message-admin" class="admin-section-icon admin-msghome-icon-small"></span>
+          <span class="admin-section-label"><f:message key="label.consultModifyWelcomeMessage" /></span> 
+        </a>
+        
+         </sec:authorize>
+         </div> 
       </div>
       
       <div id="admin-stats">

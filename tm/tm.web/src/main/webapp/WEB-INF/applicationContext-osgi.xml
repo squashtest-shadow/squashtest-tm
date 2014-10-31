@@ -390,4 +390,10 @@
 
   <osgi:reference id="squashtest.core.security.PermissionEvaluator" bean-name="squashtest.core.security.PermissionEvaluator"
     interface="org.springframework.security.access.PermissionEvaluator" />
+ 
+    <osgi:reference id="squashtest.tm.service.MilestoneManagerService" bean-name="squashtest.tm.service.MilestoneManagerService" timeout="2000" >
+    <osgi:interfaces>
+      <value>org.squashtest.tm.service.milestone.MilestoneManagerService</value>
+    </osgi:interfaces>
+</osgi:reference>
 </beans>

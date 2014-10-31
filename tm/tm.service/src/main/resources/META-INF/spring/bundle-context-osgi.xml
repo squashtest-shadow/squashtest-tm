@@ -339,6 +339,15 @@
     </osgi:interfaces>
   </osgi:service>
 
+
+
+ <osgi:service ref="squashtest.tm.service.MilestoneManagerService">
+     <osgi:interfaces>
+      <value>org.squashtest.tm.service.milestone.MilestoneManagerService</value>
+    </osgi:interfaces>
+    </osgi:service>
+
+
 <!-- Bugtracker co,nnectors registry -->
   <osgi:list id="bugtracker.plugins.registry" interface="org.squashtest.csp.core.bugtracker.spi.BugTrackerConnectorProvider"
     cardinality="0..N">
