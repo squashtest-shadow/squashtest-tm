@@ -117,6 +117,7 @@ define([ "jquery", "backbone", "./TestStepInfoModel",
 					self.updateModelCufAttr({currentTarget : $(area).parent().eq(0)});
 				});
 			});
+
 		},
 
 		configureCKEs : function() {
@@ -140,7 +141,10 @@ define([ "jquery", "backbone", "./TestStepInfoModel",
 			// "change .test-step-attr" : "updateCKEModelAttr",
 			// did not work because of _CKE instances (cf method
 			// configureCKEs to see how manual binding is done.
-			"change .custom-field" : "updateModelCufAttr"
+			"change .custom-field" : "updateModelCufAttr",
+			"squashtagitaftertagadded .custom-field" : "updateModelCufAttr",
+			"squashtagitaftertagremoved .custom-field" :  "updateModelCufAttr"
+			
 
 		},
 

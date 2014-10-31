@@ -207,13 +207,13 @@ define([ "jquery", "underscore", "ckeditor",  "squash.configmanager", "./cuf-val
 						source : def.options
 					}
 				});
-				var ul = elt.find('>ul');
+				var ul = this._findUL(elt);
 				ul.squashTagit(conf);
 			},
 			
 			_set : function(elt, def, value){
 				var i;
-				var ul = elt.find('>ul');
+				var ul = this._findUL(elt);
 				if (ul.data('squashTagit') === undefined){
 					ul.empty();
 					for (i=0;i<value.length;i++){
@@ -229,11 +229,15 @@ define([ "jquery", "underscore", "ckeditor",  "squash.configmanager", "./cuf-val
 			},
 			
 			_get : function(elt, def){
-				return elt.find('>ul').squashTagit('assignedTags');
+				return this._findUL(elt).squashTagit('assignedTags');
 			},
 			
 			_destroy : function(elt, def){
-				elt.find('>ul').squashTagit('destroy');
+				this._findUL(elt).squashTagit('destroy');
+			},
+			
+			_findUL : function(elt){
+				return (elt.is('ul')) ? elt : elt.find('ul');
 			}
 		}
 	
