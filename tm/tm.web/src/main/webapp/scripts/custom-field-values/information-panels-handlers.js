@@ -48,7 +48,7 @@ define(["jquery", "handlebars", "squash.translator", "./lib/cuf-values-utils","j
 			
 			'{{else}} {{#ifequals binding.customField._inputType "TAG"}}' +
 			
-				'<ul id="{{cufid this}}" class="{{cufclass this}}" data-value-id="{{id}}" style="line-height:1em">'+
+				'<ul id="{{cufid this}}" class="{{cufclass this}}" data-value-id="{{id}}" style="margin:0;line-height:normal;">'+
 				'{{#each optionValues}}' +
 					'<li>{{this}}</li>' +
 				'{{/each}}' +
@@ -72,11 +72,13 @@ define(["jquery", "handlebars", "squash.translator", "./lib/cuf-values-utils","j
 		init : function(containerSelector, cufValues, mode) {
 
 		var html = template(cufValues);
-
+	
 		var container = $(containerSelector);
 
 		container.append(html);
-
+	
+		// quick css hack to fix the TAGs disproportionate height
+		container.find('ul.custom-field, ul.denormalized-custom-field').parent().css('line-height', '0');
 
 		for ( var idx in cufValues) {
 			var cufValue = cufValues[idx], selector = (cufValue.binding.customField.denormalized) ? "#denormalized-cuf-value-" +
@@ -92,12 +94,12 @@ define(["jquery", "handlebars", "squash.translator", "./lib/cuf-values-utils","j
 
 			case "editable":
 				elt.editableCustomfield(cufValue.binding.customField);
-				$(elt[0]).addClass('editable');
+				elt.parent().addClass('editable');
 				break;
 
 			case "jeditable":
 				elt.jeditableCustomfield(cufValue.binding.customField, cufValue.id);
-				$(elt[0]).addClass('editable');
+				elt.parent().addClass('editable');
 				break;
 			}
 		}

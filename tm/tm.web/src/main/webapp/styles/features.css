@@ -291,10 +291,11 @@ th.width-tenperc, td.width-tenperc {
 }
 
 .display-table-cell{
-	vertical-align: top;
+	vertical-align: middle;
 }
 
-.display-table-cell input[type=checkbox],.display-table>div>div input[type=checkbox] ,.display-table>div>label,.display-table>div>span,.display-table>div>select {
+.display-table-cell input[type=checkbox],.display-table>div>div input[type=checkbox] ,.display-table>div>label,.display-table>div>span,
+.display-table>div>select {
 	margin:0;
 }
 
@@ -419,36 +420,6 @@ p {
 	hyphenate: auto;
 }
 
-
-/* ---------------------------------------------------------*/
-/* ---------------->>> custom widgets <<<------------------*/
-/* ---------------------------------------------------------*/
-
-
-
-
-ul.squash-tagit li.ui-widget-content{
-	background-image: none;
-	color: #000000;
-	border-color: #707070;
-	background-color: #D8D8D8; 	
-}
-		
-ul.squash-tagit li.invalid{
-	background-color : red;
-	color : white;
-}
-
-/* when 'editable' (like in entities information panel), disables the normal 
-'tagit' border in favor of the class 'editable' border*/
-ul.squash-tagit.editable{
-	border:none;
-}
-
-
-div.ui-effects-explode{
-	z-index : 50000;
-}
 
 /* ---------------------------------------------------------*/
 /* ------------------>>> panel format <<<-------------------*/

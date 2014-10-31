@@ -35,7 +35,7 @@ public class TestStepUpdateFormModel {
 	private String action;
 	private String expectedResult;
 
-	private RawValueModelMap customFields = new RawValueModelMap();
+	private RawValueModelMap cufValues = new RawValueModelMap();
 
 	public String getAction() {
 		return action;
@@ -53,19 +53,20 @@ public class TestStepUpdateFormModel {
 		this.expectedResult = expectedResult;
 	}
 
-	public RawValueModelMap getCustomFields() {
-		return customFields;
+
+
+	public RawValueModelMap getCufValues() {
+		return cufValues;
 	}
 
-	public void setCustomFields(RawValueModelMap customFields) {
-		this.customFields = customFields;
+	public void setCufValues(RawValueModelMap cufValues) {
+		this.cufValues = cufValues;
 	}
-
 
 	@JsonIgnore
 	public Map<Long, RawValue> getCufs(){
-		Map<Long, RawValue> cufs = new HashMap<Long, RawValue>(customFields.size());
-		for (Entry<Long, RawValueModel> entry : customFields.entrySet()){
+		Map<Long, RawValue> cufs = new HashMap<Long, RawValue>(cufValues.size());
+		for (Entry<Long, RawValueModel> entry : cufValues.entrySet()){
 			cufs.put(entry.getKey(), entry.getValue().toRawValue());
 		}
 		return cufs;

@@ -330,7 +330,7 @@ define([ 'jquery', "underscore", 'squash.attributeparser', 'squash.configmanager
 			var editors = this.options._richeditors;
 			for (var i in editors) {
 				var domelt = editors[i];
-				var ckInstance = CKEDITOR.instances[domelt.id];
+				var ckInstance = CKEDITOR.instances[domelt.attr('id')];
 				if (ckInstance) {
 					ckInstance.destroy(true);
 				}

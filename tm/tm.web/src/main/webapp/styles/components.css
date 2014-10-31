@@ -401,14 +401,6 @@ span.issue-field-message-holder{
 }
 
 
-span.issue-field-control-holder ul.squash-tagit{
-	display : inline-block;
-	width : 98%;
-	border-color : lightgray;	
-}
-
-
-
 /*******************************
 	test suites management
 ********************************/
@@ -600,8 +592,7 @@ table.ta-project-bind-listdiv tr.listdiv-item.even {
 	border: 1px solid transparent;
 }
 
-.editable:HOVER,
-ul.squash-tagit.editable:HOVER {
+.editable:HOVER{
 	border: 1px solid #bbbbbb;
 }
 
