@@ -145,23 +145,23 @@
               <div id="cuf-info-panel" class="information-panel toggle-panel-main">
                 <div class="display-table" id="cuf-infos-table">
                   <div class="display-table-row controls control-group" >
-                    <label for="cuf-label" th:text="#{label.Label}">Label</label>
+                    <label for="cuf-label" th:text="#{label.Label}" class="display-table-cell" >Label</label>
                     <div id="cuf-label" class="display-table-cell" th:text="${customField.label}">Description</div>
                     <span class="help-inline">&nbsp;</span>
                   </div>
                   <div class="display-table-row controls control-group">
-                    <label for="cuf-code" class="control-label" th:text="#{label.code}">Code</label>
+                    <label for="cuf-code" class="control-label display-table-cell" th:text="#{label.code}">Code</label>
                       <div id="cuf-code" class="display-table-cell" th:text="${customField.code}">code</div>
                       <span class="help-inline">&nbsp;</span>
                   </div>
                   <div class="display-table-row">
-                    <label for="inputType" th:text="#{label.inputType}">Input Type</label>
+                    <label for="inputType" th:text="#{label.inputType}" class="display-table-cell" >Input Type</label>
                     <div id="cuf-inputType" class="display-table-cell"
                       th:attr="data-type=${customField.inputType.name()}" data-type="PLAIN_TEXT"
                       th:text="#{${customField.inputType.i18nKey}}">PLAIN_TEXT</div>
                   </div>
                   <div th:unless="${customField.inputType.name() == 'CHECKBOX'}" class="display-table-row">
-                    <label for="cf-optional" th:text="#{label.Optional}">Optional</label>
+                    <label for="cf-optional" th:text="#{label.Optional}" class="display-table-cell" >Optional</label>
                     <div class="table-cell">
                       <input id="cf-optional" name="optional" value="optional" type="checkbox"
                         th:checked="${customField.optional}" />
@@ -169,7 +169,7 @@
                     <span class="error-message  optional-error"></span>
                   </div>
                   <div th:unless="${customField.inputType.name() == 'DROPDOWN_LIST'}" class="display-table-row">
-                    <label for="cuf-default-value" th:text="#{label.defaultValue}">Default value</label>
+                    <label for="cuf-default-value" th:text="#{label.defaultValue}" class="display-table-cell" >Default value</label>
                     
                     <div th:if="${customField.inputType.name() == 'PLAIN_TEXT'}" id="cuf-default-value"
                       class="display-table-cell" th:text="${customField.defaultValue}">false</div>
@@ -182,10 +182,16 @@
                     
                      <div th:if="${customField.inputType.name() == 'DATE_PICKER'}"
                       class="display-table-cell" >
-                     <span  id="cuf-default-value" th:text="${customField.defaultValueAsDate}? ${#dates.format(customField.defaultValueAsDate,'__#{squashtm.dateformatShort}__')} : #{squashtm.nodata}" data-locale="fr" th:attr="data-locale=#{squashtm.locale}">01-02-2012</span>
-						
+                     <span  id="cuf-default-value" th:text="${customField.defaultValueAsDate}? ${#dates.format(customField.defaultValueAsDate,'__#{squashtm.dateformatShort}__')} : #{squashtm.nodata}" data-locale="fr" th:attr="data-locale=#{squashtm.locale}">01-02-2012</span>	
                       </div>
-                      
+              
+                     <div th:if="${customField.inputType.name() == 'TAG'}"
+                     class="display-table-cell" style="line-height:normal">
+                        <ul id="cuf-default-value" >
+                          <li th:text="${cfTag}" th:each="cfTag , iterStat: ${#strings.listSplit(customField.defaultValue, ';')}" ></li>
+                        </ul>
+                     </div>
+                    
                     <span class="error-message  defaultValue-error"></span>
                   </div>
                 </div>
