@@ -20,14 +20,17 @@
  */
 package org.squashtest.tm.service.milestone
 
-import javax.inject.Inject;
+import javax.inject.Inject
 
-import org.springframework.transaction.annotation.Transactional;
-import org.squashtest.tm.domain.milestone.MilestoneStatus;
-import org.squashtest.tm.service.DbunitServiceSpecification;
+import org.springframework.transaction.annotation.Transactional
+import org.squashtest.tm.domain.milestone.Milestone
+import org.squashtest.tm.domain.milestone.MilestoneStatus
+import org.squashtest.tm.exception.milestone.MilestoneLabelAlreadyExistsException
+import org.squashtest.tm.service.DbunitServiceSpecification
 import org.unitils.dbunit.annotation.DataSet
 
-import spock.unitils.UnitilsSupport;
+
+import spock.unitils.UnitilsSupport
 
 
 @UnitilsSupport
@@ -49,4 +52,45 @@ class MilestoneManagerServiceIT extends DbunitServiceSpecification {
 		result.collect{it.label} == ["My milestone", "My milestone 2", "My milestone 3", "My milestone 4"]
 		result.collect{it.status} == [MilestoneStatus.STATUS_1,MilestoneStatus.STATUS_1,MilestoneStatus.STATUS_2,MilestoneStatus.STATUS_3]
 		}
+	
+	@DataSet("/org/squashtest/tm/service/milestone/MilestoneManagerServiceIT.xml")
+	def "should change status"(){
+	
+		given : 
+		when :
+		manager.changeStatus(1L, MilestoneStatus.STATUS_2)
+		def milestone = manager.findById(1L);
+		then :
+		milestone.status == MilestoneStatus.STATUS_2
+		
+	}
+	
+	@DataSet("/org/squashtest/tm/service/milestone/MilestoneManagerServiceIT.xml")
+	def "should delete milestone"(){
+	
+		given :
+		def ids = [1L, 4L]
+		when :
+		manager.removeMilestones(ids)
+		def result = manager.findAll()
+		then :
+			result.size == 2
+		result.collect{it.id} == [2, 3]
+		result.collect{it.label} == ["My milestone 2", "My milestone 3"]
+		result.collect{it.status} == [MilestoneStatus.STATUS_1,MilestoneStatus.STATUS_2]
+		
+	}
+	
+	@DataSet("/org/squashtest/tm/service/milestone/MilestoneManagerServiceIT.xml")
+	def "label should be unique"(){
+		given :
+		def duplicateLabel = "My milestone 2"
+		Milestone milestone = new Milestone(label:duplicateLabel)
+		when :
+		manager.addMilestone(milestone)
+		then :
+	    thrown(MilestoneLabelAlreadyExistsException)
+		
+	}
+	
 }
