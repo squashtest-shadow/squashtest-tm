@@ -24,6 +24,7 @@ import java.text.ParseException;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -31,27 +32,29 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.squashtest.tm.core.foundation.lang.DateUtils;
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
+import org.squashtest.tm.domain.customfield.MultiSelectFieldValue;
 import org.squashtest.tm.domain.denormalizedfield.DenormalizedFieldValue;
+import org.squashtest.tm.domain.denormalizedfield.DenormalizedMultiSelectField;
 import org.squashtest.tm.domain.execution.ExecutionStep;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelBuilder;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelConstants;
 
 class ExecutionStepDataTableModelHelper extends DataTableModelBuilder<ExecutionStep> { // NOSONAR this cannot be made final because there are subclasses of it already
-	
+
 
 	private static final int DEFAULT_MAP_CAPACITY = 16;
-	
+
 	Locale locale;
 	InternationalizationHelper messageSource;
 	boolean isAutomated = false;
-	
+
 	private int nbCufsPerEntity;
 	private int nbDenoPerEntity;
-	
+
 	private Map<Long, Map<String, CustomFieldValueTableModel>> customFieldValuesById;
 	private Map<Long, Map<String, CustomFieldValueTableModel>> denormalizedFieldValuesById;
-	
+
 
 
 	ExecutionStepDataTableModelHelper(Locale locale, InternationalizationHelper messageSource, boolean isAutomated) {
@@ -62,9 +65,9 @@ class ExecutionStepDataTableModelHelper extends DataTableModelBuilder<ExecutionS
 
 	@Override
 	public Map<Object, Object> buildItemData(ExecutionStep item) {
-		
+
 		Map<Object, Object> res = new HashMap<Object, Object>(13 + nbCufsPerEntity + nbDenoPerEntity);
-		
+
 		res.put(DataTableModelConstants.DEFAULT_ENTITY_ID_KEY, item.getId());
 		res.put(DataTableModelConstants.DEFAULT_ENTITY_INDEX_KEY, item.getExecutionStepOrder() + 1);
 		res.put("action", item.getAction());
@@ -77,20 +80,20 @@ class ExecutionStepDataTableModelHelper extends DataTableModelBuilder<ExecutionS
 		res.put(DataTableModelConstants.DEFAULT_NB_ATTACH_KEY, item.getAttachmentList().size());
 		res.put(DataTableModelConstants.DEFAULT_ATTACH_LIST_ID_KEY, item.getAttachmentList().getId());
 		res.put("run-step-button", "");
-		
+
 		// XXX : why this ?
 		String status = (isAutomated) ? "--" : ExecutionModificationController.localizedStatus(item.getExecutionStatus(), locale, messageSource);
 		res.put("status", status);
-		
+
 		appendCustomFields(res);
 		appendDenoFields(res);
-		
+
 		return res;
 	}
 
-	
+
 	// *********************** handling of custom fields *****************************
-	
+
 	public void usingCustomFields(Collection<CustomFieldValue> cufValues) {
 		usingCustomFields(cufValues, DEFAULT_MAP_CAPACITY);
 	}
@@ -112,14 +115,14 @@ class ExecutionStepDataTableModelHelper extends DataTableModelBuilder<ExecutionS
 
 		}
 	}
-	
-	
+
+
 	private void appendCustomFields(Map<Object, Object> item) {
 		Map<String, CustomFieldValueTableModel> cufValues = getCustomFieldsFor((Long) item.get(DataTableModelConstants.DEFAULT_ENTITY_ID_KEY));
 		item.put("customFields", cufValues);
 
 	}
-	
+
 	private Map<String, CustomFieldValueTableModel> getCustomFieldsFor(Long id) {
 		if (customFieldValuesById == null) {
 			return new HashMap<String, CustomFieldValueTableModel>();
@@ -134,15 +137,15 @@ class ExecutionStepDataTableModelHelper extends DataTableModelBuilder<ExecutionS
 
 	}
 
-	
+
 	// *********************** handling of denormalized fields *****************************
-	
+
 	public void usingDenoFields(Collection<DenormalizedFieldValue> cufValues) {
 		usingDenormalizedFields(cufValues, DEFAULT_MAP_CAPACITY);
 	}
 
 	public void usingDenormalizedFields(Collection<DenormalizedFieldValue> dfvValues, int nbFieldsPerEntity) {
-		
+
 		denormalizedFieldValuesById = new HashMap<Long, Map<String, CustomFieldValueTableModel>>();
 		nbDenoPerEntity = nbFieldsPerEntity;
 
@@ -159,14 +162,14 @@ class ExecutionStepDataTableModelHelper extends DataTableModelBuilder<ExecutionS
 
 		}
 	}
-	
-	
+
+
 	private void appendDenoFields(Map<Object, Object> item) {
 		Map<String, CustomFieldValueTableModel> cufValues = getDenoFieldsFor((Long) item.get(DataTableModelConstants.DEFAULT_ENTITY_ID_KEY));
 		item.put("denormalizedFields", cufValues);
 
 	}
-	
+
 	private Map<String, CustomFieldValueTableModel> getDenoFieldsFor(Long id) {
 		if (denormalizedFieldValuesById == null) {
 			return new HashMap<String, CustomFieldValueTableModel>();
@@ -179,19 +182,20 @@ class ExecutionStepDataTableModelHelper extends DataTableModelBuilder<ExecutionS
 		}
 		return values;
 
-	}	
-	
+	}
+
 	// ************************ inner class ***********************************************************
-	
+
 	protected static class CustomFieldValueTableModel {
 		private static final Logger LOGGER = LoggerFactory.getLogger(ExecutionStepDataTableModelHelper.CustomFieldValueTableModel.class);
 
 		private String value;
+		private List<String> values;
 		private Long id;
 
 		@SuppressWarnings("unused")
-		public String getValue() {
-			return value;
+		public Object getValue() {
+			return (value != null) ? value : values;
 		}
 
 		@SuppressWarnings("unused")
@@ -217,12 +221,23 @@ class ExecutionStepDataTableModelHelper extends DataTableModelBuilder<ExecutionS
 
 		private CustomFieldValueTableModel(CustomFieldValue value) {
 			this.id = value.getId();
-			this.value = value.getValue();
+
+			if (MultiSelectFieldValue.class.isAssignableFrom(value.getClass())) {
+				this.values = ((MultiSelectFieldValue)value).getValues();
+			}
+			else{
+				this.value = value.getValue();
+			}
 		}
 
 		private CustomFieldValueTableModel(DenormalizedFieldValue value) {
 			this.id = value.getId();
-			this.value = value.getValue();
+			if (DenormalizedMultiSelectField.class.isAssignableFrom(value.getClass())) {
+				this.values = ((DenormalizedMultiSelectField)value).getValues();
+			}
+			else{
+				this.value = value.getValue();
+			}
 		}
 	}
 

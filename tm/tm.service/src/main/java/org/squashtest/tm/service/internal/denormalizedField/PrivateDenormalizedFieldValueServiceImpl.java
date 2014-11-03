@@ -34,10 +34,12 @@ import org.springframework.stereotype.Service;
 import org.squashtest.tm.domain.customfield.BindableEntity;
 import org.squashtest.tm.domain.customfield.BoundEntity;
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
+import org.squashtest.tm.domain.customfield.RawValue;
 import org.squashtest.tm.domain.customfield.RenderingLocation;
 import org.squashtest.tm.domain.denormalizedfield.DenormalizedFieldHolder;
 import org.squashtest.tm.domain.denormalizedfield.DenormalizedFieldHolderType;
 import org.squashtest.tm.domain.denormalizedfield.DenormalizedFieldValue;
+import org.squashtest.tm.domain.denormalizedfield.DenormalizedMultiSelectField;
 import org.squashtest.tm.domain.denormalizedfield.DenormalizedRichValue;
 import org.squashtest.tm.domain.denormalizedfield.DenormalizedSingleSelectField;
 import org.squashtest.tm.domain.execution.Execution;
@@ -130,6 +132,9 @@ public class PrivateDenormalizedFieldValueServiceImpl implements PrivateDenormal
 			case RICH_TEXT :
 				dfv = new DenormalizedRichValue(cfv, entity.getDenormalizedFieldHolderId(), entity.getDenormalizedFieldHolderType());
 				break;
+			case TAG :
+				dfv = new DenormalizedMultiSelectField(cfv, entity.getDenormalizedFieldHolderId(), entity.getDenormalizedFieldHolderType());
+				break;
 			default :
 				dfv = new DenormalizedFieldValue(cfv, entity.getDenormalizedFieldHolderId(), entity.getDenormalizedFieldHolderType());
 			}
@@ -193,11 +198,11 @@ public class PrivateDenormalizedFieldValueServiceImpl implements PrivateDenormal
 	}
 
 	@Override
-	public void changeValue(long denormalizedFieldValueId, String newValue) {
+	public void changeValue(long denormalizedFieldValueId, RawValue newValue) {
 
 		DenormalizedFieldValue changedValue = denormalizedFieldValueDao.findById(denormalizedFieldValueId);
+		newValue.setValueFor(changedValue);
 
-		changedValue.setValue(newValue);
 	}
 
 	/**

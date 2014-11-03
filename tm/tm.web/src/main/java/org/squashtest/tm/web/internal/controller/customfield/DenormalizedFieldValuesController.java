@@ -28,6 +28,7 @@ import javax.inject.Inject;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -40,6 +41,7 @@ import org.squashtest.tm.web.internal.controller.AcceptHeaders;
 import org.squashtest.tm.web.internal.helper.JEditablePostParams;
 import org.squashtest.tm.web.internal.model.customfield.CustomFieldJsonConverter;
 import org.squashtest.tm.web.internal.model.customfield.CustomFieldValueModel;
+import org.squashtest.tm.web.internal.model.customfield.RawValueModel;
 
 @Controller
 @RequestMapping("/denormalized-fields/values")
@@ -74,10 +76,10 @@ public class DenormalizedFieldValuesController {
 	}
 
 
-	@RequestMapping(value = "/{id}", method = RequestMethod.POST, params = JEditablePostParams.VALUE)
+	@RequestMapping(value = "/{id}", method = RequestMethod.POST, consumes="application/json")
 	@ResponseBody
-	public void updateDenormalizedValue(@PathVariable long id, @RequestParam(JEditablePostParams.VALUE) String value) {
-		denormalizedFieldValueFinder.changeValue(id, value);
+	public void updateDenormalizedValue(@PathVariable long id, @RequestBody RawValueModel value) {
+		denormalizedFieldValueFinder.changeValue(id, value.toRawValue());
 	}
 
 	private List<CustomFieldValueModel> valuesToJson(List<DenormalizedFieldValue> values) {

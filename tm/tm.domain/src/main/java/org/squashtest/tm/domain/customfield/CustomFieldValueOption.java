@@ -52,6 +52,10 @@ public class CustomFieldValueOption {
 		this.label = label;
 	}
 
+	public CustomFieldValueOption copy(){
+		return new CustomFieldValueOption(label);
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;

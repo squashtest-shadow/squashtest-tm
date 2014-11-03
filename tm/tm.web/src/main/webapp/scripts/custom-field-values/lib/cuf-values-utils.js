@@ -18,9 +18,12 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ "jquery", "squash.configmanager", "jqueryui" ], 
-		function($, confman) {
+define([ "jquery", "squash.configmanager", "squash.translator", "jqueryui" ], 
+		function($, confman, translator) {
 
+
+	var fromTestCase = " ("+translator.get("label.fromTestCase")+") ";
+	
 	function convertStrDate(fromFormat, toFormat, strFromValue) {
 		var date = $.datepicker.parseDate(fromFormat, strFromValue);
 		return $.datepicker.formatDate(toFormat, date);

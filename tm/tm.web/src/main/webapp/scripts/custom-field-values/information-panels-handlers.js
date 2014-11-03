@@ -27,11 +27,10 @@
  * can edit or not
  *
  */
-define(["jquery", "handlebars", "squash.translator", "./lib/cuf-values-utils","jqueryui", "./lib/jquery.staticCustomfield", "./lib/jquery.jeditableCustomfield"], 
-		function($, handlebars, translator, utils){
+define(["jquery", "handlebars", "./lib/cuf-values-utils","jqueryui", "./lib/jquery.staticCustomfield", "./lib/jquery.jeditableCustomfield"], 
+		function($, handlebars, utils){
 	"use strict";
 
-	var fromTestCase = " ("+translator.get("label.fromTestCase")+") ";
 
 	utils.registerHandlebarHelpers(handlebars);
 

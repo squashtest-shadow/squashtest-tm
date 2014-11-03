@@ -158,7 +158,5 @@ public class DenormalizedSingleSelectField extends DenormalizedFieldValue {
 		return Collections.unmodifiableList(options);
 	}
 
-	public void accept(DenormalizedFieldVisitor visitor) {
-		visitor.visit(this);
-	}
+
 }

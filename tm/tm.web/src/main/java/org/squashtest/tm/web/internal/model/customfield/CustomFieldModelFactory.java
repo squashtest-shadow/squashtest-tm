@@ -22,9 +22,11 @@ package org.squashtest.tm.web.internal.model.customfield;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 import javax.inject.Inject;
 
@@ -37,6 +39,7 @@ import org.squashtest.tm.domain.customfield.InputType;
 import org.squashtest.tm.domain.customfield.MultiSelectField;
 import org.squashtest.tm.domain.customfield.SingleSelectField;
 import org.squashtest.tm.domain.denormalizedfield.DenormalizedFieldValue;
+import org.squashtest.tm.domain.denormalizedfield.DenormalizedMultiSelectField;
 import org.squashtest.tm.domain.denormalizedfield.DenormalizedSingleSelectField;
 
 
@@ -101,11 +104,10 @@ class CustomFieldModelFactory {
 			break;
 
 		case TAG:
-			// TODO : implement createMultiSelectFieldModel
-			//model = createMultiSelectFieldModel((DenormalizedFieldValue) customField); // NOSONAR a CustomField which has
+
+			model = createMultiSelectFieldModel((DenormalizedMultiSelectField) customField); // NOSONAR a CustomField which has
 			// InputType == TAG is always a
 			// MultiSelectField
-			model = null;
 			break;
 
 		default:
@@ -247,11 +249,18 @@ class CustomFieldModelFactory {
 
 	}
 
-	private CustomFieldModel<?> createMultiSelectFieldModel(DenormalizedFieldValue field) {
+	private CustomFieldModel<?> createMultiSelectFieldModel(DenormalizedMultiSelectField field) {
 
-		// TODO : depends on how we implement that
-		throw new UnsupportedOperationException("Not implemented yet");
+		MultiSelectFieldModel model = new MultiSelectFieldModel();
+		populateCustomFieldModel(model, field);
 
+		for (CustomFieldOption option : field.getOptions()){
+			CustomFieldOptionModel newOption = new CustomFieldOptionModel();
+			newOption.setLabel(option.getLabel());
+			model.addOption(newOption);
+		}
+
+		return model;
 	}
 
 	private <VT> CustomFieldModel<VT> populateCustomFieldModel(CustomFieldModel<VT> customFieldModel, DenormalizedFieldValue value) {
@@ -345,7 +354,7 @@ class CustomFieldModelFactory {
 	public static class MultiSelectFieldModel extends CustomFieldModel<String[]> {
 
 		private List<String> defaultValue = new LinkedList<String>();
-		private List<CustomFieldOptionModel> options = new LinkedList<CustomFieldOptionModel>();
+		private Set<CustomFieldOptionModel> options = new HashSet<CustomFieldOptionModel>();
 
 		@Override
 		public String[] getDefaultValue() {
@@ -361,11 +370,11 @@ class CustomFieldModelFactory {
 			this.defaultValue.add(newValue);
 		}
 
-		public List<CustomFieldOptionModel> getOptions() {
+		public Set<CustomFieldOptionModel> getOptions() {
 			return options;
 		}
 
-		public void setOptions(List<CustomFieldOptionModel> options) {
+		public void setOptions(Set<CustomFieldOptionModel> options) {
 			this.options = options;
 		}
 
