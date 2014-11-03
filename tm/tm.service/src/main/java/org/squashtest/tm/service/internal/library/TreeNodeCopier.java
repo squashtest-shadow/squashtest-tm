@@ -29,6 +29,7 @@ import java.util.TreeMap;
 
 import javax.inject.Inject;
 
+import org.hibernate.SessionFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.domain.campaign.Campaign;
@@ -107,7 +108,13 @@ public class TreeNodeCopier  implements NodeVisitor, PasteOperation {
 	@Inject
 	private IndexationService indexationService;
 
+	@Inject
+	private SessionFactory sessionFactory;
+
+
 	private NodeContainer<? extends TreeNode> destination;
+
+
 	private TreeNode copy;
 	private boolean okToGoDeeper = true;
 	private boolean projectChanged = true;
@@ -121,6 +128,8 @@ public class TreeNodeCopier  implements NodeVisitor, PasteOperation {
 		copy = null;
 		source.accept(this);
 		if(projectChanged){
+			// see comment on the method flush();
+			flush();
 			copy.accept(treeNodeUpdater);
 		}
 		return copy;
@@ -137,6 +146,8 @@ public class TreeNodeCopier  implements NodeVisitor, PasteOperation {
 		copy = null;
 		source.accept(this);
 		if(projectChanged){
+			// see comment on the method flush();
+			flush();
 			copy.accept(treeNodeUpdater);
 		}
 		return copy;
@@ -375,6 +386,26 @@ public class TreeNodeCopier  implements NodeVisitor, PasteOperation {
 		List<RequirementVersionCoverage> copies = source.createRequirementVersionCoveragesForCopy(copyTestCase);
 		indexRequirementVersionCoverageCopies(copies);
 		requirementVersionCoverageDao.persist(copies);
+	}
+
+	/*
+	 * Where used, that flush matters. Had it been omitted the following scenario would occur :
+	 * 
+	 *  1/ a node is copied along with its custom field values
+	 *  2/ has it happens, the copy is created in a different project. Some additional processing is thus carried on by a TreeNodeUpdater
+	 *  3/ the custom field values are fixed during this additional step, and the former custom field values are deleted in the process.
+	 *  4/ our business code ends, thus triggering the flush of the session.
+	 *  5/ Hibernate persists the custom field values created in step 1
+	 *  6/ Hibernate deletes those same custom field values in step 3
+	 *  7/ The embedded items for custom field values created in step 1 are persisted.
+	 *  8/ Since those entities no longer exists a ConstraintViolationException is raised.
+	 * 
+	 * We can prevent this by flushing the session early. This will ensure that the embedded items are persisted and deleted
+	 * along with their owners.
+	 * 
+	 */
+	private void flush(){
+		sessionFactory.getCurrentSession().flush();
 	}
 
 }

@@ -77,6 +77,7 @@ public class RawValue implements DenormalizedFieldVisitor {
 		this.values = values;
 	}
 
+
 	public void setValueFor(CustomFieldValue field){
 		if (MultiValuedCustomFieldValue.class.isAssignableFrom(field.getClass())){
 			setValueFor((MultiValuedCustomFieldValue) field);

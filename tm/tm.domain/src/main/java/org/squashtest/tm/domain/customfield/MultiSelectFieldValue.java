@@ -111,5 +111,9 @@ public class MultiSelectFieldValue extends CustomFieldValue implements MultiValu
 		return copy;
 	}
 
+	@Override
+	public RawValue asRawValue() {
+		return new RawValue(getValues());
+	}
 
 }
