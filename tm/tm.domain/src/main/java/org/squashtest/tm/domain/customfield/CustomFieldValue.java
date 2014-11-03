@@ -183,4 +183,9 @@ public class CustomFieldValue implements Identified, SingleValuedCustomFieldValu
 		return null;
 
 	}
+
+	@Override
+	public RawValue asRawValue() {
+		return new RawValue(value);
+	}
 }

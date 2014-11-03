@@ -30,4 +30,5 @@ public interface SingleValuedCustomFieldValue {
 
 	public void setValue(String value);
 	public String getValue();
+	public RawValue asRawValue();
 }

@@ -32,5 +32,6 @@ public interface MultiValuedCustomFieldValue {
 
 	public void setValues(List<String> values);
 	public List<String> getValues();
+	public RawValue asRawValue();
 
 }

@@ -30,6 +30,7 @@ import org.squashtest.tm.domain.customfield.BoundEntity;
 import org.squashtest.tm.domain.customfield.CustomField;
 import org.squashtest.tm.domain.customfield.CustomFieldBinding;
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
+import org.squashtest.tm.domain.customfield.RawValue;
 import org.squashtest.tm.domain.customfield.RenderingLocation;
 
 @DynamicDao(entity = CustomFieldValue.class)
@@ -126,8 +127,8 @@ public interface CustomFieldValueDao extends CustomCustomFieldValueDao{
 	 * @return
 	 */
 	List<CustomFieldValue> batchedInitializedFindAllCustomValuesFor(@QueryParam("entityIds") List<Long> entityIds, @QueryParam(ENTITY_TYPE) BindableEntity entityType);
-	
-	
+
+
 	/**
 	 * Same as above, will restrict to the custom fields specified as arguments
 	 * 
@@ -223,7 +224,8 @@ public interface CustomFieldValueDao extends CustomCustomFieldValueDao{
 		 * copies the value of the original CustomFieldValue into the value of the recipient CustomFieldValue
 		 */
 		public void copyContent(){
-			recipient.setValue(original.getValue());
+			RawValue rawValue = original.asRawValue();
+			rawValue.setValueFor(recipient);
 		}
 	}
 

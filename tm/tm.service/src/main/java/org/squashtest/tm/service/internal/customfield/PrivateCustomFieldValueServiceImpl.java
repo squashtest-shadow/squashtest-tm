@@ -77,6 +77,7 @@ public class PrivateCustomFieldValueServiceImpl implements PrivateCustomFieldVal
 	@Inject
 	private IndexationService indexationService;
 
+
 	public void setPermissionService(PermissionEvaluationService permissionService) {
 		this.permissionService = permissionService;
 	}
@@ -320,12 +321,14 @@ public class PrivateCustomFieldValueServiceImpl implements PrivateCustomFieldVal
 
 		List<CustomFieldValue> sourceValues = customFieldValueDao.findAllCustomValues(source.getBoundEntityId(),
 				source.getBoundEntityType());
+
 		List<CustomFieldValue> copies = new ArrayList<CustomFieldValue>(sourceValues.size());
 		for (CustomFieldValue value : sourceValues) {
 			CustomFieldValue copy = value.copy();
 			copy.setBoundEntity(recipient);
 			copies.add(copy);
 		}
+
 		customFieldValueDao.persist(copies);
 
 	}
@@ -410,17 +413,19 @@ public class PrivateCustomFieldValueServiceImpl implements PrivateCustomFieldVal
 
 			for (CustomFieldBinding binding : projectBindings) {
 
-				CustomFieldValue updatedValue = binding.createNewValue();
+				CustomFieldValue updatedCUFValue = binding.createNewValue();
 
-				for (CustomFieldValue formerValue : valuesToUpdate) {
-					if (formerValue.representsSameCustomField(updatedValue)) {
-						updatedValue.setValue(formerValue.getValue());
+				for (CustomFieldValue formerCUFValue : valuesToUpdate) {
+					if (formerCUFValue.representsSameCustomField(updatedCUFValue)) {
+						// here we use a RawValue as a container that hides us the arity of the value (single or multi-valued)
+						RawValue rawValue = formerCUFValue.asRawValue();
+						rawValue.setValueFor(updatedCUFValue);
 						break;
 					}
 				}
 
-				updatedValue.setBoundEntity(entity);
-				customFieldValueDao.persist(updatedValue);
+				updatedCUFValue.setBoundEntity(entity);
+				customFieldValueDao.persist(updatedCUFValue);
 			}
 		}
 		deleteCustomFieldValues(valuesToUpdate);
@@ -501,6 +506,5 @@ public class PrivateCustomFieldValueServiceImpl implements PrivateCustomFieldVal
 		List<Long> valueIds = IdentifiedUtil.extractIds(values);
 		customFieldValueDao.deleteAll(valueIds);
 	}
-
 
 }
