@@ -24,6 +24,7 @@ import java.util.Collection;
 import java.util.List;
 
 import org.springframework.transaction.annotation.Transactional;
+import org.squashtest.tm.domain.customfield.RawValue;
 import org.squashtest.tm.domain.customfield.RenderingLocation;
 import org.squashtest.tm.domain.denormalizedfield.DenormalizedFieldHolder;
 import org.squashtest.tm.domain.denormalizedfield.DenormalizedFieldHolderType;
@@ -69,7 +70,7 @@ public interface DenormalizedFieldValueManager {
 
 	List<DenormalizedFieldValue> findAllForEntity(Long id, DenormalizedFieldHolderType entityType);
 
-	void changeValue(long id, String value);
+	void changeValue(long id, RawValue value);
 	/**
 	 * Tells whether the given bound entity has denormalized fields or not.
 	 * 

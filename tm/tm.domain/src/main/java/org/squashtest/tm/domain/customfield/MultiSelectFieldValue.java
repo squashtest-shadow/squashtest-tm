@@ -29,7 +29,6 @@ import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.OrderColumn;
-import javax.validation.Valid;
 
 @Entity
 @DiscriminatorValue("MFV")
@@ -38,34 +37,33 @@ public class MultiSelectFieldValue extends CustomFieldValue implements MultiValu
 	@ElementCollection
 	@CollectionTable(name = "CUSTOM_FIELD_VALUE_OPTION", joinColumns = @JoinColumn(name = "CFV_ID"))
 	@OrderColumn(name = "POSITION")
-	@Valid
-	private List<CustomFieldValueOption> options = new ArrayList<CustomFieldValueOption>();
+	private List<CustomFieldValueOption> selectedOptions = new ArrayList<CustomFieldValueOption>();
 
 	public List<CustomFieldValueOption> getOptions() {
-		return options;
+		return selectedOptions;
 	}
 
 	public void addCUFieldValueOption(CustomFieldValueOption cufVO){
-		options.add(cufVO);
+		selectedOptions.add(cufVO);
 	}
 
 	public void removeCUFValueOption(CustomFieldValueOption cufVO){
-		options.remove(cufVO);
+		selectedOptions.remove(cufVO);
 	}
 
 
 	@Override
 	public void setValues(List<String> values) {
-		options.clear();
+		selectedOptions.clear();
 		for (String option : values){
-			options.add(new CustomFieldValueOption(option));
+			selectedOptions.add(new CustomFieldValueOption(option));
 		}
 	}
 
 	@Override
 	public List<String> getValues() {
-		List<String> result = new ArrayList<String>(options.size());
-		for (CustomFieldValueOption option : options){
+		List<String> result = new ArrayList<String>(selectedOptions.size());
+		for (CustomFieldValueOption option : selectedOptions){
 			result.add(option.getLabel());
 		}
 		return result;
@@ -76,9 +74,9 @@ public class MultiSelectFieldValue extends CustomFieldValue implements MultiValu
 	@Override
 	public String getValue(){
 		String result = "";
-		if (! options.isEmpty()){
+		if (! selectedOptions.isEmpty()){
 			StringBuilder builder = new StringBuilder();
-			for (CustomFieldValueOption option : options){
+			for (CustomFieldValueOption option : selectedOptions){
 				builder.append(option.getLabel()+";");
 			}
 			int lastidx = builder.lastIndexOf(";");
@@ -93,11 +91,11 @@ public class MultiSelectFieldValue extends CustomFieldValue implements MultiValu
 	 */
 	@Deprecated
 	public void setValue(String value){
-		options.clear();
+		selectedOptions.clear();
 		String[] atoms = value.split(";");
 		int i = 0;
 		for (String atom : atoms){
-			options.add(new CustomFieldValueOption(atom));
+			selectedOptions.add(new CustomFieldValueOption(atom));
 		}
 	}
 
@@ -106,8 +104,8 @@ public class MultiSelectFieldValue extends CustomFieldValue implements MultiValu
 		MultiSelectFieldValue copy = new MultiSelectFieldValue();
 		copy.setBinding(getBinding());
 
-		for (CustomFieldValueOption option : options){
-			copy.addCUFieldValueOption(option);
+		for (CustomFieldValueOption option : selectedOptions){
+			copy.addCUFieldValueOption(option.copy());
 		}
 
 		return copy;

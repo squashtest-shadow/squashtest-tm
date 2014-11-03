@@ -25,6 +25,11 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.squashtest.tm.domain.denormalizedfield.DenormalizedFieldValue;
+import org.squashtest.tm.domain.denormalizedfield.DenormalizedFieldVisitor;
+import org.squashtest.tm.domain.denormalizedfield.DenormalizedMultiSelectField;
+import org.squashtest.tm.domain.denormalizedfield.DenormalizedRichValue;
+import org.squashtest.tm.domain.denormalizedfield.DenormalizedSingleSelectField;
 
 /**
  * That class represents a "value" that aren't attached to any specific custom field value. They can hold either a single value or a multi value,
@@ -35,7 +40,7 @@ import org.slf4j.LoggerFactory;
  * @author bsiri
  *
  */
-public class RawValue {
+public class RawValue implements DenormalizedFieldVisitor {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(RawValue.class);
 
@@ -85,6 +90,10 @@ public class RawValue {
 		}
 	}
 
+	public void setValueFor(DenormalizedFieldValue field){
+		field.accept(this);
+	}
+
 	public void setValueFor(SingleValuedCustomFieldValue field){
 		field.setValue(value);
 	}
@@ -92,6 +101,8 @@ public class RawValue {
 	public void setValueFor(MultiValuedCustomFieldValue field){
 		field.setValues(values);
 	}
+
+
 
 	public boolean isEmpty(){
 		if (value == null && (values == null || values.isEmpty())){
@@ -125,4 +136,19 @@ public class RawValue {
 		LOGGER.error("could not set custom field "+field.getCustomField().getCode()+"(type "+field.getCustomField().getInputType()+
 				") with value "+debugvalue+". Does this custom field implement either SingleValuedCustomField or MultiValuedCustomField ?");
 	}
+
+
+
+	@Override
+	public void visit(DenormalizedFieldValue standardValue) {
+		standardValue.setValue(value);
+	}
+
+
+	@Override
+	public void visit(DenormalizedMultiSelectField multiselect) {
+		multiselect.setValues(values);
+	}
+
+
 }

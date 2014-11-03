@@ -145,6 +145,7 @@
         <value>org.squashtest.tm.domain.denormalizedfield.DenormalizedFieldValue</value>
         <value>org.squashtest.tm.domain.denormalizedfield.DenormalizedSingleSelectField</value>
         <value>org.squashtest.tm.domain.denormalizedfield.DenormalizedRichValue</value>
+        <value>org.squashtest.tm.domain.denormalizedfield.DenormalizedMultiSelectField</value>
                 
         <!--  library plugins -->
         <value>org.squashtest.tm.domain.project.LibraryPluginBinding</value>

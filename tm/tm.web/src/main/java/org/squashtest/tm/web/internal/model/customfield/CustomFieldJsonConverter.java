@@ -38,6 +38,7 @@ import org.squashtest.tm.domain.customfield.CustomFieldValueOption;
 import org.squashtest.tm.domain.customfield.MultiSelectFieldValue;
 import org.squashtest.tm.domain.customfield.RenderingLocation;
 import org.squashtest.tm.domain.denormalizedfield.DenormalizedFieldValue;
+import org.squashtest.tm.domain.denormalizedfield.DenormalizedMultiSelectField;
 
 @Component
 public class CustomFieldJsonConverter {
@@ -202,7 +203,16 @@ public class CustomFieldJsonConverter {
 		model.setId(value.getId());
 		model.setBoundEntityId(value.getDenormalizedFieldHolderId());
 		model.setBinding(bindingModel);
-		model.setValue(value.getValue());
+
+		// the value depends on the actual subtype
+		if (DenormalizedMultiSelectField.class.isAssignableFrom(value.getClass())){
+			model.setOptionValues(((DenormalizedMultiSelectField)value).getValues());
+		}
+		else{
+			model.setValue(value.getValue());
+		}
+
+
 
 		bindingModel.setCustomField(customFieldModel);
 

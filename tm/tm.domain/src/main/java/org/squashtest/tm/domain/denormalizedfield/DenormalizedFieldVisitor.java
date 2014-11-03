@@ -22,11 +22,9 @@ package org.squashtest.tm.domain.denormalizedfield;
 
 public interface DenormalizedFieldVisitor {
 
-	void visit(DenormalizedSingleSelectField selectField);
-
 	void visit(DenormalizedFieldValue standardValue);
 
-	void visit(DenormalizedRichValue richValue);
+	void visit(DenormalizedMultiSelectField multiselect);
 
 }
 
