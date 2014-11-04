@@ -30,7 +30,6 @@ import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.OrderColumn;
-import javax.validation.Valid;
 
 import org.hibernate.annotations.NamedQueries;
 import org.hibernate.annotations.NamedQuery;
@@ -46,30 +45,8 @@ import org.hibernate.annotations.NamedQuery;
 @DiscriminatorValue("MSF")
 public class MultiSelectField extends CustomField {
 
-	/*
-	 * TODO : have them loaded by a query, make the following comment true.
-	 */
-
-	/*
-	 * YAGNI
-	 * 
-	 * For now the only implementation of MultiSelectField is for the
-	 * 'TAG' custom field, of which the available options are actually a view
-	 * on all the distinct values that exist throughout the application
-	 * for that custom field.
-	 * 
-	 * But conceptually we should be loading this collection from the table
-	 * CUSTOM_FIELD_OPTION.
-	 * 
-	 * If one day we have to make a real
-	 * MultiSelectField with a predefined, non-open list of options,
-	 * then we'll have to define how this collection should be loaded
-	 * depending on whether it is a TAG or not.
-	 */
 	@ElementCollection
 	@CollectionTable(name = "CUSTOM_FIELD_OPTION", joinColumns = @JoinColumn(name = "CF_ID"))
-	@OrderColumn(name = "POSITION")
-	@Valid
 	private Set<CustomFieldOption> options = new HashSet<CustomFieldOption>();
 
 	/**
@@ -87,4 +64,9 @@ public class MultiSelectField extends CustomField {
 		visitor.visit(this);
 	}
 
+
+	public void addOption(String label){
+		CustomFieldOption newOption = new CustomFieldOption(label);
+		options.add(newOption);
+	}
 }

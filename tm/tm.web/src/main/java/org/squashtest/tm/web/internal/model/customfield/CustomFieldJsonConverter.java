@@ -35,8 +35,9 @@ import org.squashtest.tm.domain.customfield.CustomField;
 import org.squashtest.tm.domain.customfield.CustomFieldBinding;
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
 import org.squashtest.tm.domain.customfield.CustomFieldValueOption;
-import org.squashtest.tm.domain.customfield.MultiSelectFieldValue;
+import org.squashtest.tm.domain.customfield.MultiValuedCustomFieldValue;
 import org.squashtest.tm.domain.customfield.RenderingLocation;
+import org.squashtest.tm.domain.customfield.TagsValue;
 import org.squashtest.tm.domain.denormalizedfield.DenormalizedFieldValue;
 import org.squashtest.tm.domain.denormalizedfield.DenormalizedMultiSelectField;
 
@@ -126,8 +127,8 @@ public class CustomFieldJsonConverter {
 	// we're doing an ugly downcast for multi select fields when appropriate
 	public CustomFieldValueModel toJson(CustomFieldValue value) {
 
-		if (MultiSelectFieldValue.class.isAssignableFrom(value.getClass())){
-			return toJson((MultiSelectFieldValue)value);
+		if (MultiValuedCustomFieldValue.class.isAssignableFrom(value.getClass())){
+			return toJson((MultiValuedCustomFieldValue)value);
 		}
 		else{
 			CustomFieldValueModel model = createStdCustomFieldValues(value);
@@ -137,7 +138,7 @@ public class CustomFieldJsonConverter {
 		}
 	}
 
-	public CustomFieldValueModel toJson(MultiSelectFieldValue value){
+	public CustomFieldValueModel toJson(MultiValuedCustomFieldValue value){
 
 		CustomFieldValueModel model = createStdCustomFieldValues(value);
 

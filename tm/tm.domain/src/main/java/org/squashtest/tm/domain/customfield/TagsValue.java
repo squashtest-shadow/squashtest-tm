@@ -31,8 +31,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OrderColumn;
 
 @Entity
-@DiscriminatorValue("MFV")
-public class MultiSelectFieldValue extends CustomFieldValue implements MultiValuedCustomFieldValue {
+@DiscriminatorValue("TAG")
+public class TagsValue extends CustomFieldValue implements MultiValuedCustomFieldValue {
 
 	@ElementCollection
 	@CollectionTable(name = "CUSTOM_FIELD_VALUE_OPTION", joinColumns = @JoinColumn(name = "CFV_ID"))
@@ -57,7 +57,10 @@ public class MultiSelectFieldValue extends CustomFieldValue implements MultiValu
 		selectedOptions.clear();
 		for (String option : values){
 			selectedOptions.add(new CustomFieldValueOption(option));
+			MultiSelectField cuf = ((MultiSelectField)getCustomField());
+			cuf.addOption(option);
 		}
+
 	}
 
 	@Override
@@ -93,7 +96,7 @@ public class MultiSelectFieldValue extends CustomFieldValue implements MultiValu
 	public void setValue(String value){
 		selectedOptions.clear();
 		String[] atoms = value.split(";");
-		int i = 0;
+
 		for (String atom : atoms){
 			selectedOptions.add(new CustomFieldValueOption(atom));
 		}
@@ -101,7 +104,7 @@ public class MultiSelectFieldValue extends CustomFieldValue implements MultiValu
 
 	@Override
 	public CustomFieldValue copy(){
-		MultiSelectFieldValue copy = new MultiSelectFieldValue();
+		TagsValue copy = new TagsValue();
 		copy.setBinding(getBinding());
 
 		for (CustomFieldValueOption option : selectedOptions){

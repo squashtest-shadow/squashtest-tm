@@ -56,6 +56,7 @@ import org.squashtest.tm.core.foundation.lang.DateUtils;
 import org.squashtest.tm.domain.customfield.CustomField;
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
 import org.squashtest.tm.domain.customfield.InputType;
+import org.squashtest.tm.domain.customfield.RawValue;
 import org.squashtest.tm.domain.customfield.RenderingLocation;
 
 @NamedQueries(value = {
@@ -137,11 +138,13 @@ public class DenormalizedFieldValue {
 		this.code = cuf.getCode();
 		this.inputType = cuf.getInputType();
 		this.label = cuf.getLabel();
-		this.value = customFieldValue.getValue();
 		this.position = customFieldValue.getBinding().getPosition();
 		this.renderingLocations = customFieldValue.getBinding().copyRenderingLocations();
 		this.denormalizedFieldHolderId = denormalizedFieldHolderId;
 		this.denormalizedFieldHolderType = denormalizedFieldHolderType;
+
+		RawValue rawValue = customFieldValue.asRawValue();
+		rawValue.setValueFor(this);
 	}
 
 
