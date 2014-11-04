@@ -27,6 +27,7 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.squashtest.tm.domain.customfield.BindableEntity;
+import org.squashtest.tm.domain.customfield.CustomFieldValueOption;
 import org.squashtest.tm.domain.customfield.InputType;
 import org.squashtest.tm.domain.testcase.TestCaseImportance;
 import org.squashtest.tm.domain.testcase.TestCaseNature;
@@ -644,14 +645,15 @@ public class ExportModel {
 		private String code;
 		private String value;
 		private InputType type;
-
-		public CustomField(Long ownerId, BindableEntity ownerType, String code, String value, String largeValue, InputType type) {
+		private String selectedOptions;
+		public CustomField(Long ownerId, BindableEntity ownerType, String code, String value, String largeValue, InputType type, String selectedOptions) {
 			super();
 			this.ownerId = ownerId;
 			this.ownerType = ownerType;
 			this.code = code;
 			this.value = (! StringUtils.isBlank(largeValue)) ? largeValue : value;
 			this.type = type;
+			this.selectedOptions = selectedOptions;
 		}
 
 		public Long getOwnerId() {
@@ -667,7 +669,7 @@ public class ExportModel {
 		}
 
 		public String getValue() {
-			return value;
+			return (! StringUtils.isBlank(selectedOptions)) ? selectedOptions : value ;
 		}
 
 		public InputType getType() {
