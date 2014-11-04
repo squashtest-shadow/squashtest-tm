@@ -31,7 +31,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.squashtest.tm.core.foundation.lang.DateUtils;
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
-import org.squashtest.tm.domain.customfield.MultiSelectFieldValue;
+import org.squashtest.tm.domain.customfield.MultiValuedCustomFieldValue;
 import org.squashtest.tm.domain.testcase.ActionTestStep;
 import org.squashtest.tm.domain.testcase.CallTestStep;
 import org.squashtest.tm.domain.testcase.ParameterAssignationMode;
@@ -197,8 +197,8 @@ public class TestStepsTableModelBuilder extends DataTableModelBuilder<TestStep> 
 		private CustomFieldValueTableModel(CustomFieldValue value) {
 			this.id = value.getId();
 
-			if (MultiSelectFieldValue.class.isAssignableFrom(value.getClass())) {
-				this.values = ((MultiSelectFieldValue)value).getValues();
+			if (MultiValuedCustomFieldValue.class.isAssignableFrom(value.getClass())) {
+				this.values = ((MultiValuedCustomFieldValue)value).getValues();
 			}
 			else{
 				this.value = value.getValue();

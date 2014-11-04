@@ -146,7 +146,7 @@ public class CustomFieldBinding {
 		CustomFieldValue value;
 		switch(customField.getInputType()){
 		case RICH_TEXT : value = new RichTextValue(); break;
-		case TAG : value =  new MultiSelectFieldValue(); break;
+		case TAG : value =  new TagsValue(); break;
 		default : value = new CustomFieldValue();
 		}
 		value.setBinding(this);

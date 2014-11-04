@@ -112,4 +112,13 @@
     </createTable>  
   </changeSet>
   
+ <changeSet id="tm-1.12.0.feature-3823-3" author="bsiri">
+    <comment>tables CUSTOM_FIELD_OPTION and DENORMALIZED_FIELD_OPTION no longer enforce the option position.</comment>
+    
+    <dropNotNullConstraint tableName="CUSTOM_FIELD_OPTION" columnDataType="INT" columnName="POSITION"/>
+    <dropNotNullConstraint tableName="DENORMALIZED_FIELD_OPTION" columnDataType="INT" columnName="POSITION"/>
+  
+  </changeSet>
+  
+  
 </databaseChangeLog>

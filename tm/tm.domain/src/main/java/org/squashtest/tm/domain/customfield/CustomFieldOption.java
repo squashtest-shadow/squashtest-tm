@@ -25,6 +25,7 @@ import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.NotBlank;
+import org.springframework.util.DigestUtils;
 
 /**
  * Defines an option which can be selected among a list and set as a custom field's value.
@@ -36,7 +37,7 @@ public class CustomFieldOption {
 	@NotBlank
 	@Size(min = 0, max = 255)
 	private String label;
-	
+
 	@NotBlank
 	@Size(min = 0, max = 30)
 	@Pattern(regexp = CustomField.CODE_REGEXP)
@@ -46,7 +47,18 @@ public class CustomFieldOption {
 		this.label = label;
 		this.code = code;
 	}
-	
+
+	public CustomFieldOption(String label){
+
+		// when no code is supplied we need to create it.
+		// To do so we md5-hash it then truncate to 30 characters because we
+		// don't care anyway.
+		String code = DigestUtils.md5DigestAsHex(label.getBytes());
+
+		this.label = label;
+		this.code = code.substring(0,30);
+	}
+
 	/**
 	 * For Hibernate.
 	 */
