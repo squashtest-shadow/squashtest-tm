@@ -93,11 +93,15 @@ define(
 								break;
 							case "TAG" :
 								this.renderOptional(true);
-								$("#defaultValue").tagit({
-									beforeTagAdded:  function(event, ui){
-										if((ui.tagLabel.indexOf("|") !== -1)){
+								var tagconf = confman.getStdTagit();
+								$.extend(true, tagconf, {
+									validate :  function(label){
+										if (label.indexOf("|") !== -1){
 											$("#defaultValue").trigger('invalidtag');
 											return false;
+										}
+										else{
+											return true;
 										}
 									},									
 									afterTagAdded:  function(event, ui){
@@ -106,8 +110,8 @@ define(
 									afterTagRemoved:  function(event, ui){
 										$("#defaultValue").trigger('change');
 									}
-								}
-								);
+								});
+								$("#defaultValue").squashTagit(tagconf);
 								break;
 							}
 							this._resize();
@@ -160,7 +164,7 @@ define(
 							this.model.set(area.attr('id'), area.val());
 						},
 						changeTagProp : function(event){
-							tags = $("#defaultValue").tagit("assignedTags").join("|");
+							tags = $("#defaultValue").squashTagit("assignedTags").join("|");
 							this.model.set("defaultValue", tags);
 						},
 						changeInputType : function(event) {

@@ -382,9 +382,14 @@ define([ "jquery", "./NewCustomFieldOptionDialog", "backbone", "underscore",
 				var conf = confman.getStdTagit();
 				ul.squashTagit(conf);
 				
-				ul.on('squashtagitaftertagadded squashtagitaftertagremoved', function(){
+				ul.on('squashtagitaftertagadded squashtagitaftertagremoved', function(event, ui){
 					// Contrary to Custom Field Values, the default value of a Custom Field
 					// is stored as a semicolumn separated string instead of a collection of labels.
+					
+					if (! ul.squashTagit("validate", event, ui)){
+						return;
+					}
+					
 					var values = ul.squashTagit('assignedTags').join('|');
 					$.ajax({
 						url : cfMod.customFieldUrl + '/defaultValue',

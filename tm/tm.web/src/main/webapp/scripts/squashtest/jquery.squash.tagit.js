@@ -33,14 +33,16 @@
  *  
  *  - constrained : boolean. If true, the user will be forced to choose a value that belongs to
  *	the availabletags (or other sources). Other inputs will be removed.
- *  - 'essspectacularrr !' : boolean. If true, a failed constrained check will be, well, spectacular.
+ *  - 'essspectacularrr !' : boolean. If true, a failed constrained check will be, well, spectacular,
+ *  - validate : function(label)=>boolean. Will stack upon the "constrained" list check.
  * 
  *  2/ methods : 
  *  
  *  - disable : Disables the widget
  *  - enable : Enables the widget
  *  - getSource: returns the tag source
- *  - belongsToAvailable(string) : tells wether the argument belongs to the source
+ *  - validate() : function(event, ui) => boolean. Returns true or false depending on a/ the constrained list check (if any) 
+ *  and b/ the custom validation function (if any).
  * 
  */
 
@@ -59,31 +61,9 @@ define(["jquery", "jqueryui", "jquery.tagit"], function($){
 			this.element.addClass('squash-tagit');
 			this.element.removeClass('ui-corner-all');
 			
-			if (this.options.constrained){
-				this._setConstrainedMode();				
-			}
+			this._setupValidationChain();
 		},
-		
-		_setConstrainedMode : function(){
-			var formerCallbacks = this.options.afterTagAdded;
-			var self = this;			
-			
-			var newCallback = function(event, ui){
-				
-				var passedCheck = true;
-				
-				if (! ui.duringInitialization){
-					passedCheck = self.checkWarnRemove(ui.tag, ui.tagLabel);
-				}
-				
-				if (passedCheck && !!formerCallbacks){
-					formerCallbacks.call(self, event, ui);
-				}
-			};		
-			
-			this.options.afterTagAdded = newCallback;
-		},
-		
+
 		
 		disable : function(){
 			
@@ -148,31 +128,78 @@ define(["jquery", "jqueryui", "jquery.tagit"], function($){
 			}
 		},
 		
-		belongsToAvailable : function(label){
-			var source = this.getSource();
-			return ($.inArray(label, source)!==-1);
+		validate : function(event, ui){
+			var self = this;
+			var passedCheck = true;
+			
+			if (! ui.duringInitialization){
+				if (self.options.constrained ){
+					passedCheck = self._checkConstrained(ui.tagLabel);
+				}
+				if (self.options.validate!== undefined){
+					passedCheck = passedCheck && self.options.validate.call(self, ui.tagLabel);
+				}			
+			}
+			
+			return passedCheck
+			
 		},
 		
-		checkWarnRemove: function(tag, label){
+		
+		// ************** internal API **********************
+		
+		
+		_setupValidationChain : function(){
+			var formerCallbacks = this.options.afterTagAdded;
+			var self = this;			
 			
-			var self = this;
-			
-			if (! this.belongsToAvailable(label)){		
-
-				tag.removeClass('ui-widget-default ui-widget-content ui-state-default');
-				tag.addClass('invalid');
+			var newCallback = function(event, ui){
 				
-				if (self.options['essspectacularrr !']){
-					self._espectacularRemove(tag);
+				var passedCheck = self.validate(event, ui);
+				
+				if (passedCheck){
+					if (!! formerCallbacks){
+						formerCallbacks.call(self, event, ui);
+					}
+					return true;
 				}
 				else{
-					self._simpleRemove(tag);
+					self._invalidate(ui.tag, ui.tagLabel);
+					event.stopImmediatePropagation();
+					return false;
 				}
-				
+			};		
+			
+			this.options.afterTagAdded = newCallback;
+		},		
+
+		
+		_checkConstrained: function(label){			
+			var source = this.getSource();
+			if (source.length===0){
 				return false;
 			}
+			
+			// normalize the values in case the source is not an array of string
+			var firstelt = source[0];
+			var allLabels = (typeof firstelt === "string") ? source : 
+							$.map(source, function(o){
+								return o.label;
+							});
+			
+			
+			return ($.inArray(label, allLabels)!==-1);
+		},
+		
+		_invalidate : function(tag, label){
+			tag.removeClass('ui-widget-default ui-widget-content ui-state-default');
+			tag.addClass('invalid');
+			
+			if (this.options['essspectacularrr !']){
+				this._espectacularRemove(tag);
+			}
 			else{
-				return true;
+				this._simpleRemove(tag);
 			}
 		},
 		
@@ -196,7 +223,6 @@ define(["jquery", "jqueryui", "jquery.tagit"], function($){
 				.effect("explode", {}, 1000);
 			
 			self.removeTag(tag.get(0));	
-
 		}
 		
 		

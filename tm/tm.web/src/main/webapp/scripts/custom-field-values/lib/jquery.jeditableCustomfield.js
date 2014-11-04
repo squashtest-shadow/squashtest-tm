@@ -272,19 +272,20 @@ define(
 				
 				var conf = confman.getStdTagit();
 				
-				$.extend(conf, {
+				$.extend(true, conf, {
 					autocomplete: {
-						delay: 0, 
 						source : cufDefinition.options
 					}
 				});
 				
 				elts.squashTagit(conf);	
 				
-				elts.on('squashtagitaftertagadded squashtagitaftertagremoved', function(evt){
+				elts.on('squashtagitaftertagadded squashtagitaftertagremoved', function(evt, ui){
 					var elt = $(evt.currentTarget);
 					var tags = elt.squashTagit('assignedTags');
-					postFunction.call(elt, tags);
+					if (elt.squashTagit("validate", evt, ui)){
+						postFunction.call(elt, tags);
+					}
 				});
 							
 			}

@@ -96,11 +96,11 @@ define([], function(){
 		'teststeps.requirements.manager' :	root + '/test-steps/{\\d+}/verified-requirement-versions/manager',
 		
 		'requirements.workspace':			root + '/requirement-workspace/',
-		'requirements' :					root + '/requirements/{{\\d+}}',
+		'requirements' :					root + '/requirements/{\\d+}',
 		'requirements.info'	:				root + '/requirements/{\\d+}/info',
 		'requirements.versions.new' :		root + '/requirements/{\\d+}/versions/new',
 		'requirements.currentversion'	:	root + '/requirement-versions/{\\d+}"',
-		'requirements.statuses'			:	root + '/requirements/{{\\d+}}/next-status',
+		'requirements.statuses'			:	root + '/requirements/{\\d+}/next-status',
 		'requirements.versions.manager'	:	root + '/requirements/{\\d+}/versions/manager',
 		'requirements.testcases' :			root + '/requirement-versions/{\\d+}/verifying-test-cases',
 		'requirements.testcases.manager':	root + '/requirement-versions/{\\d+}/verifying-test-cases/manager',

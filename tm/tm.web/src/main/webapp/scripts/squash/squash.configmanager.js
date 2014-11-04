@@ -207,7 +207,13 @@ define([ "jquery", "squash.translator", "datepicker/jquery.squash.datepicker-loc
 	
 	function stdTagit(){
 		return {
-
+			allowSpaces : true,
+			autocomplete: {
+				delay: 0
+			},
+			validate : function(label){
+				return (label.indexOf('|') === -1);
+			}
 		};
 	}
 
