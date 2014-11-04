@@ -97,7 +97,7 @@ public class TagsValue extends CustomFieldValue implements MultiValuedCustomFiel
 	 */
 	@Deprecated
 	public void setValue(String value){
-		setValues(Arrays.asList(value.split(MultiSelectField.SEPARATOR)));
+		setValues(Arrays.asList(value.split(MultiSelectField.SEPARATOR_EXPR)));
 	}
 
 	@Override

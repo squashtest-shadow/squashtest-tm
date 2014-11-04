@@ -95,7 +95,7 @@ define(
 								this.renderOptional(true);
 								$("#defaultValue").tagit({
 									beforeTagAdded:  function(event, ui){
-										if(!(ui.tagLabel.indexOf(";") == -1)){
+										if((ui.tagLabel.indexOf("|") !== -1)){
 											$("#defaultValue").trigger('invalidtag');
 											return false;
 										}
@@ -160,7 +160,7 @@ define(
 							this.model.set(area.attr('id'), area.val());
 						},
 						changeTagProp : function(event){
-							tags = $("#defaultValue").tagit("assignedTags").join(" ");
+							tags = $("#defaultValue").tagit("assignedTags").join("|");
 							this.model.set("defaultValue", tags);
 						},
 						changeInputType : function(event) {
