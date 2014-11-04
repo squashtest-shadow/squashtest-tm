@@ -44,7 +44,8 @@ import org.hibernate.annotations.NamedQuery;
 @DiscriminatorValue("MSF")
 public class MultiSelectField extends CustomField {
 
-	public static final String SEPARATOR = " ";
+	public static final String SEPARATOR = "|";
+	public static final String SEPARATOR_EXPR = "\\|";
 
 	@ElementCollection
 	@CollectionTable(name = "CUSTOM_FIELD_OPTION", joinColumns = @JoinColumn(name = "CF_ID"))
@@ -73,7 +74,7 @@ public class MultiSelectField extends CustomField {
 
 	@Override
 	public void setDefaultValue(String defaultValue){
-		String[] values = defaultValue.split(SEPARATOR);
+		String[] values = defaultValue.split(SEPARATOR_EXPR);
 		for (String v : values){
 			addOption(v);
 		}
