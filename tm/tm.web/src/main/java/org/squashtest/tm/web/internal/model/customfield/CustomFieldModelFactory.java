@@ -180,7 +180,7 @@ class CustomFieldModelFactory {
 			model.addOption(newOption);
 		}
 
-		for (String value : field.getDefaultValue().split(";")) {
+		for (String value : field.getDefaultValue().split(MultiSelectField.SEPARATOR_EXPR)) {
 			model.addDefaultValue(value);
 		}
 

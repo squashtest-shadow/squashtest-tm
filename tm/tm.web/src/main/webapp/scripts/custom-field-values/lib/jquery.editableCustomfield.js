@@ -201,9 +201,8 @@ define([ "jquery", "underscore", "ckeditor",  "squash.configmanager", "./cuf-val
 		'TAG' : {
 			_build : function(elt, def){
 				var conf = confman.getStdTagit();
-				$.extend(conf, {
+				$.extend(true, conf, {
 					autocomplete: {
-						delay: 0, 
 						source : def.options
 					}
 				});
