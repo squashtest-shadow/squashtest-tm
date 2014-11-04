@@ -228,9 +228,9 @@
 				+ "where content.id = tc.id and  tc.id in (:testCaseIds) "
 				+ "group by p.id, tc.id, index(content)+1 , content.id  "),
 
-		@NamedQuery(name = "testCase.excelExportCUF", query = "select cfv.boundEntityId, cfv.boundEntityType, cf.code, cfv.value, cfv.largeValue, cf.inputType "
-				+ "from CustomFieldValue cfv join cfv.binding binding join binding.customField cf "
-				+ "where cfv.boundEntityId in (:testCaseIds) and cfv.boundEntityType = 'TEST_CASE'"),
+		@NamedQuery(name = "testCase.excelExportCUF", query = "select cfv.boundEntityId, cfv.boundEntityType, cf.code, cfv.value, cfv.largeValue, cf.inputType, case when cfv.class = MultiSelectFieldValue then group_concat(so.label, 'order by', so.label, 'asc', '|')  else '' end "
+				+ "from CustomFieldValue cfv join cfv.binding binding join binding.customField cf left join cfv.selectedOptions so "
+				+ "where cfv.boundEntityId in (:testCaseIds) and cfv.boundEntityType = 'TEST_CASE' group by cf.code"),
 
 		//Campaign
 		@NamedQuery(name = "campaign.findNamesInCampaignStartingWith", query = "select i.name from Campaign c join c.iterations i where c.id = :containerId and i.name like :nameStart"),
@@ -267,12 +267,13 @@
 				+ "and tc.id in (:testCaseIds) "
 				+ "group by tc.id, st.id, index(st)+1 , st.calledTestCase.id , dataset.name, st.delegateParameterValues "),
 
-		@NamedQuery(name = "testStep.excelExportCUF", query = "select cfv.boundEntityId, cfv.boundEntityType, cf.code, cfv.value, cfv.largeValue, cf.inputType "
-				+ "from CustomFieldValue cfv join cfv.binding binding join binding.customField cf "
+		@NamedQuery(name = "testStep.excelExportCUF", query = "select cfv.boundEntityId, cfv.boundEntityType, cf.code, cfv.value, cfv.largeValue, cf.inputType, case when cfv.class = MultiSelectFieldValue then group_concat(so.label, 'order by', so.label, 'asc', '|')  else '' end "
+				+ "from CustomFieldValue cfv left join cfv.selectedOptions so join cfv.binding binding join binding.customField cf "
 				+ "where cfv.boundEntityId in ("
 				+ "select st.id from TestCase tc inner join tc.steps st where tc.id in (:testCaseIds)"
 				+ ") "
-				+ "and cfv.boundEntityType = 'TEST_STEP'"),
+				+ "and cfv.boundEntityType = 'TEST_STEP'"
+				+ "group by cfv.boundEntityId, cf.code"),
 
 	@NamedQuery(name = "testStep.findBasicInfosByTcId",
 	query = "select case when st.class = ActionTestStep then 'ACTION' else 'CALL' end as steptype, "
