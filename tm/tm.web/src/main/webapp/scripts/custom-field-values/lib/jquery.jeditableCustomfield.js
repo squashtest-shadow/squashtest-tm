@@ -310,19 +310,7 @@ define(
 				default : throw "don't know cuf type "+type;
 				
 				}
-				/*
-				if (type === "DATE_PICKER") {
-					initAsDatePicker(this, cufDefinition, idOrURLOrPostfunction); break;
-				} else if (type === "DROPDOWN_LIST") {
-					initAsList(this, cufDefinition, idOrURLOrPostfunction);
-				} else if (type === "PLAIN_TEXT") {
-					initAsPlainText(this, cufDefinition, idOrURLOrPostfunction);
-				} else if (type === "CHECKBOX"){
-					initAsCheckbox(this, cufDefinition, idOrURLOrPostfunction);
-				} else if (type === "RICH_TEXT"){
-					initAsRichtext(this, cufDefinition, idOrURLOrPostfunction);
-				}
-*/
+
 			};
 
 		});

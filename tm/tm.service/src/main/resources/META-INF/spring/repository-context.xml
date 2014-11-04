@@ -139,7 +139,7 @@
         <value>org.squashtest.tm.domain.customfield.RichTextValue</value>
         <value>org.squashtest.tm.domain.customfield.MultiSelectField</value>
         <value>org.squashtest.tm.domain.customfield.CustomFieldValueOption</value>
-        <value>org.squashtest.tm.domain.customfield.MultiSelectFieldValue</value>
+        <value>org.squashtest.tm.domain.customfield.TagsValue</value>
 		        
 		 <!-- Denormalized Fields -->
         <value>org.squashtest.tm.domain.denormalizedfield.DenormalizedFieldValue</value>

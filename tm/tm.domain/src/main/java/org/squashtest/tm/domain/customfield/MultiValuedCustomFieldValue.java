@@ -30,8 +30,41 @@ import java.util.List;
  */
 public interface MultiValuedCustomFieldValue {
 
+	/**
+	 * Returns the list of selected options as one concatenated string with ' ' as separator.
+	 */
+	public String getValue();
+
+	/**
+	 * Sets the value as a list of String. The CustomFieldValueOption should be
+	 * created on the fly.
+	 * @param values
+	 */
 	public void setValues(List<String> values);
+
+	/**
+	 * Sets the value as a list of CustomFieldValueOption
+	 * 
+	 * @param options
+	 */
+	public void setSelectedOptions(List<CustomFieldValueOption> options);
+
+	/**
+	 * Returns the selected options as String
+	 */
 	public List<String> getValues();
+
+	/**
+	 * Returns the selected options as a collection.
+	 * 
+	 * @return
+	 */
+	public List<CustomFieldValueOption> getSelectedOptions();
+
+	/**
+	 * Returns the value as a RawValue.
+	 * @return
+	 */
 	public RawValue asRawValue();
 
 }

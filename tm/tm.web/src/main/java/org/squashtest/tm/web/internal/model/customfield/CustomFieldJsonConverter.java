@@ -128,7 +128,7 @@ public class CustomFieldJsonConverter {
 	public CustomFieldValueModel toJson(CustomFieldValue value) {
 
 		if (MultiValuedCustomFieldValue.class.isAssignableFrom(value.getClass())){
-			return toJson((MultiValuedCustomFieldValue)value);
+			return toJson((TagsValue)value);
 		}
 		else{
 			CustomFieldValueModel model = createStdCustomFieldValues(value);
@@ -138,12 +138,12 @@ public class CustomFieldJsonConverter {
 		}
 	}
 
-	public CustomFieldValueModel toJson(MultiValuedCustomFieldValue value){
+	public CustomFieldValueModel toJson(TagsValue value){
 
 		CustomFieldValueModel model = createStdCustomFieldValues(value);
 
-		List<String>  options = new ArrayList<String>(value.getOptions().size());
-		for (CustomFieldValueOption option : value.getOptions()){
+		List<String>  options = new ArrayList<String>(value.getSelectedOptions().size());
+		for (CustomFieldValueOption option : value.getSelectedOptions()){
 			options.add(option.getLabel());
 		}
 		model.setOptionValues(options);

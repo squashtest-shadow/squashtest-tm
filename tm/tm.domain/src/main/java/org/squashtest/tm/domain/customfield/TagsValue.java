@@ -21,6 +21,7 @@
 package org.squashtest.tm.domain.customfield;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.persistence.CollectionTable;
@@ -32,14 +33,16 @@ import javax.persistence.OrderColumn;
 
 @Entity
 @DiscriminatorValue("TAG")
-public class TagsValue extends CustomFieldValue implements MultiValuedCustomFieldValue {
+public class TagsValue extends CustomFieldValue implements MultiValuedCustomFieldValue, CustomFieldVisitor {
+
+
 
 	@ElementCollection
 	@CollectionTable(name = "CUSTOM_FIELD_VALUE_OPTION", joinColumns = @JoinColumn(name = "CFV_ID"))
 	@OrderColumn(name = "POSITION")
 	private List<CustomFieldValueOption> selectedOptions = new ArrayList<CustomFieldValueOption>();
 
-	public List<CustomFieldValueOption> getOptions() {
+	public List<CustomFieldValueOption> getSelectedOptions() {
 		return selectedOptions;
 	}
 
@@ -57,10 +60,10 @@ public class TagsValue extends CustomFieldValue implements MultiValuedCustomFiel
 		selectedOptions.clear();
 		for (String option : values){
 			selectedOptions.add(new CustomFieldValueOption(option));
-			MultiSelectField cuf = ((MultiSelectField)getCustomField());
-			cuf.addOption(option);
 		}
 
+		// now update the available options at the custom field level
+		getCustomField().accept(this);
 	}
 
 	@Override
@@ -80,9 +83,9 @@ public class TagsValue extends CustomFieldValue implements MultiValuedCustomFiel
 		if (! selectedOptions.isEmpty()){
 			StringBuilder builder = new StringBuilder();
 			for (CustomFieldValueOption option : selectedOptions){
-				builder.append(option.getLabel()+";");
+				builder.append(option.getLabel()+ MultiSelectField.SEPARATOR);
 			}
-			int lastidx = builder.lastIndexOf(";");
+			int lastidx = builder.lastIndexOf(MultiSelectField.SEPARATOR);
 			result = builder.substring(0,lastidx);
 		}
 		return result;
@@ -94,12 +97,7 @@ public class TagsValue extends CustomFieldValue implements MultiValuedCustomFiel
 	 */
 	@Deprecated
 	public void setValue(String value){
-		selectedOptions.clear();
-		String[] atoms = value.split(";");
-
-		for (String atom : atoms){
-			selectedOptions.add(new CustomFieldValueOption(atom));
-		}
+		setValues(Arrays.asList(value.split(MultiSelectField.SEPARATOR)));
 	}
 
 	@Override
@@ -117,6 +115,35 @@ public class TagsValue extends CustomFieldValue implements MultiValuedCustomFiel
 	@Override
 	public RawValue asRawValue() {
 		return new RawValue(getValues());
+	}
+
+	@Override
+	public void setSelectedOptions(List<CustomFieldValueOption> options) {
+		this.selectedOptions = options;
+	}
+
+	@Override
+	public void visit(SingleSelectField selectField) {
+		throw new IllegalArgumentException("a TAG custom field value cannot represent a Single Select Field");
+	}
+
+	@Override
+	public void visit(CustomField standardValue) {
+		throw new IllegalArgumentException("a TAG custom field value cannot represent a standard custom field");
+	}
+
+	@Override
+	public void visit(RichTextField richField) {
+		throw new IllegalArgumentException("a TAG custom field value cannot represent a Rich Text field");
+	}
+
+
+	// should have been called "updateAvailableOptions"
+	@Override
+	public void visit(MultiSelectField multiselect) {
+		for (CustomFieldValueOption option : selectedOptions){
+			multiselect.addOption(option.getLabel());
+		}
 	}
 
 }
