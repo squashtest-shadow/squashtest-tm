@@ -107,7 +107,7 @@ define([], function(){
 		'requirements.audittrail.change' :	root + '/audit-trail/requirement-versions/fat-prop-change-events/{\\d+}',
 		'requirements.audittrail.model' :	root + '/audit-trail/requirement-versions/{\\d+}/events-table',
 		
-		'requirementversions'	:			root + '/requirement-versions/{{\\d+}}',
+		'requirementversions'	:			root + '/requirement-versions/{\\d+}',
 		
 		'campaigns.workspace' :				root + '/campaign-workspace/',
 		'campaigns.testplan.manager' :		root + '/campaigns/{\\d+}/test-plan//manager',

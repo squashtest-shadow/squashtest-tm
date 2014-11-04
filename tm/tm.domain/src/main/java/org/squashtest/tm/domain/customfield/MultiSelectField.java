@@ -29,7 +29,6 @@ import javax.persistence.DiscriminatorValue;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
-import javax.persistence.OrderColumn;
 
 import org.hibernate.annotations.NamedQueries;
 import org.hibernate.annotations.NamedQuery;
@@ -44,6 +43,8 @@ import org.hibernate.annotations.NamedQuery;
 @Entity
 @DiscriminatorValue("MSF")
 public class MultiSelectField extends CustomField {
+
+	public static final String SEPARATOR = " ";
 
 	@ElementCollection
 	@CollectionTable(name = "CUSTOM_FIELD_OPTION", joinColumns = @JoinColumn(name = "CF_ID"))
@@ -68,5 +69,14 @@ public class MultiSelectField extends CustomField {
 	public void addOption(String label){
 		CustomFieldOption newOption = new CustomFieldOption(label);
 		options.add(newOption);
+	}
+
+	@Override
+	public void setDefaultValue(String defaultValue){
+		String[] values = defaultValue.split(SEPARATOR);
+		for (String v : values){
+			addOption(v);
+		}
+		this.defaultValue = defaultValue;
 	}
 }

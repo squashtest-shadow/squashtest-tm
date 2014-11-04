@@ -54,7 +54,8 @@ define(["module", "jquery", "app/pubsub", "squash.basicwidgets", "app/ws/squasht
  			
  			// print button
  			$("#print-requirement-version-button").click(function(){
- 				window.open("${currentVersionUrl}?format=printable", "_blank");
+ 				var url = routing.buildURL('requirementversions', config.basic.currentVersionId);
+ 				window.open(url+"?format=printable", "_blank");
  			});
  		}
  	

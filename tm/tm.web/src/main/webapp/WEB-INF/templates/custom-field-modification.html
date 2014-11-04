@@ -188,7 +188,7 @@
                      <div th:if="${customField.inputType.name() == 'TAG'}"
                      class="display-table-cell" style="line-height:normal">
                         <ul id="cuf-default-value" >
-                          <li th:text="${cfTag}" th:each="cfTag , iterStat: ${#strings.listSplit(customField.defaultValue, ';')}" ></li>
+                          <li th:text="${cfTag}" th:each="cfTag , iterStat: ${#strings.listSplit(customField.defaultValue, ' ')}" ></li>
                         </ul>
                      </div>
                     
