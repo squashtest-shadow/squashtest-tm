@@ -18,11 +18,12 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ "jquery", "backbone", "handlebars", "squash.translator", "app/ws/squashtm.notification", "underscore", 
+define([ "jquery", "backbone", "handlebars", "squash.translator", "app/ws/squashtm.notification", "underscore", "squash.configmanager", 
 		"./SearchDateWidget", "./SearchRangeWidget", 
-		"./SearchExistsWidget","./SearchMultiAutocompleteWidget", "./SearchMultiSelectWidget", "./SearchCheckboxWidget", "./SearchComboMultiselectWidget", "./SearchRadioWidget", 
+		"./SearchExistsWidget","./SearchMultiAutocompleteWidget", "./SearchMultiSelectWidget", "./SearchCheckboxWidget", 
+		"./SearchComboMultiselectWidget", "./SearchRadioWidget", "./SearchTagsWidget",
 		"jquery.squash", "jqueryui", "jquery.squash.togglepanel", "squashtable",
-		"jquery.squash.oneshotdialog", "jquery.squash.messagedialog",
+		"jquery.squash.oneshotdialog", "jquery.squash.messagedialog", 
 		"jquery.squash.confirmdialog" ], function($, Backbone, Handlebars, translator, notification, _) {
 	
 	/**
@@ -162,6 +163,9 @@ define([ "jquery", "backbone", "handlebars", "squash.translator", "app/ws/squash
 								break;
 							case  "radiobutton":
 								self.makeRadioField(tableid, field.id, field.title, field.possibleValues, searchModel[field.id], field.ignoreBridge);
+								break;
+							case "tags":
+								self.makeTagsField(tableid, field.id, field.title, field.possibleValues, searchModel[field.id]);
 								break;
 						}
 						
@@ -305,6 +309,15 @@ define([ "jquery", "backbone", "handlebars", "squash.translator", "app/ws/squash
 			$fieldDom.searchComboMultiSelectWidget("fieldvalue", enteredValue);
 		},
 		
+		makeTagsField : function(tableId, fieldId, fieldTitle, options, enteredValue) {
+			var context = {"tags-id": fieldId, "tags-title": fieldTitle};
+			var $fieldDom = this._appendFieldDom(tableId, fieldId, this._compileTemplate("#tags-template", context));
+			$fieldDom.searchTagsWidget({
+				available : options,
+				state : enteredValue
+			});
+		},
+		
 		extractSearchModel : function(){
 			var fields = self.$("div.search-input");
 			
@@ -380,7 +393,7 @@ define([ "jquery", "backbone", "handlebars", "squash.translator", "app/ws/squash
 			};
 			$panel = this.$("#"+id);
 			$panel.togglePanel(infoSettings);
-			$("a", $panel.parent()).removeClass("tg-link").addClass(css.toString());
+			$panel.parent().find('>h3 a').removeClass("tg-link").addClass(css.toString());
 		},
 		
 		emptyCriteria : function(){

@@ -21,5 +21,5 @@
 package org.squashtest.tm.domain.search;
 
 public enum AdvancedSearchFieldModelType {
-	SINGLE, LIST, TEXT, TIME_INTERVAL, RANGE;
+	SINGLE, LIST, TEXT, TIME_INTERVAL, RANGE, TAGS;
 }
