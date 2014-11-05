@@ -39,6 +39,7 @@ import org.springframework.stereotype.Component;
 import org.squashtest.tm.domain.customfield.BoundEntity;
 import org.squashtest.tm.domain.customfield.CustomField;
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
+import org.squashtest.tm.domain.customfield.InputType;
 import org.squashtest.tm.domain.customfield.RawValue;
 import org.squashtest.tm.domain.testcase.ActionTestStep;
 import org.squashtest.tm.domain.testcase.CallTestStep;
@@ -126,7 +127,8 @@ public class FacilityImpl implements Facility {
 
 	private FacilityImplHelper helper = new FacilityImplHelper();
 
-	private Map<String, Long> cufIdByCode = new HashMap<String, Long>();
+	private Map<String, CustomFieldInfos> cufInfosCache = new HashMap<String, CustomFieldInfos>();
+
 
 	// ************************ public (and nice looking) code **************************************
 
@@ -845,7 +847,9 @@ public class FacilityImpl implements Facility {
 
 	/**
 	 * because the service identifies cufs by their id, not their code<br/>
-	 * also populates the cache (cufIdByCode)
+	 * also populates the cache (cufIdByCode), and transform the
+	 * input data in a single string or a collection of string depending
+	 * on the type of the custom field (Tags on non-tags).
 	 */
 	private Map<Long, RawValue> toAcceptableCufs(Map<String, String> origCufs) {
 
@@ -854,29 +858,58 @@ public class FacilityImpl implements Facility {
 		for (Entry<String, String> origCuf : origCufs.entrySet()) {
 			String cufCode = origCuf.getKey();
 
-			if (!cufIdByCode.containsKey(cufCode)) {
+			if (!cufInfosCache.containsKey(cufCode)) {
 
 				CustomField customField = cufDao.findByCode(cufCode);
 
 				// that bit of code checks that if the custom field doesn't exist, the hashmap entry contains
 				// a dummy value for this code.
-				Long id = null;
+				CustomFieldInfos infos = null;
 				if (customField != null) {
-					id = customField.getId();
+					Long id = customField.getId();
+					InputType type = customField.getInputType();
+					infos = new CustomFieldInfos(id, type);
 				}
 
-				cufIdByCode.put(cufCode, id);
+				cufInfosCache.put(cufCode, infos);
 			}
 
 			// now add to our map the id of the custom field, except if null : the custom field
 			// does not exist and therefore wont be included.
-			Long cufId = cufIdByCode.get(cufCode);
-			if (cufId != null) {
-				result.put(cufId, new RawValue(origCuf.getValue()));
+			CustomFieldInfos infos = cufInfosCache.get(cufCode);
+			if (infos != null) {
+				switch(infos.getType()){
+				case TAG :
+					List<String> values = Arrays.asList(origCuf.getValue().split("\\|"));
+					result.put(infos.getId(), new RawValue(values));
+					break;
+				default :
+					result.put(infos.getId(), new RawValue(origCuf.getValue()));
+					break;
+				}
 			}
 		}
 
 		return result;
+
+	}
+
+
+	private static final class CustomFieldInfos{
+		private Long id;
+		private InputType type;
+
+		public Long getId() {
+			return id;
+		}
+		public InputType getType() {
+			return type;
+		}
+		public CustomFieldInfos(Long id, InputType type) {
+			super();
+			this.id = id;
+			this.type = type;
+		}
 
 	}
 

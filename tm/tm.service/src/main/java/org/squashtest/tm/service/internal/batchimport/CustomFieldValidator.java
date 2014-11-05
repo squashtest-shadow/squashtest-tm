@@ -164,6 +164,10 @@ class CustomFieldValidator {
 			// TODO : some day worry about well formed html and malicious js scripts
 			break;
 
+		case TAG :
+			// nothing to check
+			break;
+
 		default:
 			error = CustomFieldError.UNKNOWN_CUF_TYPE;
 			break;
