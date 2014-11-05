@@ -228,7 +228,7 @@
 				+ "where content.id = tc.id and  tc.id in (:testCaseIds) "
 				+ "group by p.id, tc.id, index(content)+1 , content.id  "),
 
-		@NamedQuery(name = "testCase.excelExportCUF", query = "select cfv.boundEntityId, cfv.boundEntityType, cf.code, cfv.value, cfv.largeValue, cf.inputType, case when cfv.class = MultiSelectFieldValue then group_concat(so.label, 'order by', so.label, 'asc', '|')  else '' end "
+		@NamedQuery(name = "testCase.excelExportCUF", query = "select cfv.boundEntityId, cfv.boundEntityType, cf.code, cfv.value, cfv.largeValue, cf.inputType, case when cfv.class = TagsValue then group_concat(so.label, 'order by', so.label, 'asc', '|')  else '' end "
 				+ "from CustomFieldValue cfv join cfv.binding binding join binding.customField cf left join cfv.selectedOptions so "
 				+ "where cfv.boundEntityId in (:testCaseIds) and cfv.boundEntityType = 'TEST_CASE' group by cf.code"),
 
@@ -267,7 +267,7 @@
 				+ "and tc.id in (:testCaseIds) "
 				+ "group by tc.id, st.id, index(st)+1 , st.calledTestCase.id , dataset.name, st.delegateParameterValues "),
 
-		@NamedQuery(name = "testStep.excelExportCUF", query = "select cfv.boundEntityId, cfv.boundEntityType, cf.code, cfv.value, cfv.largeValue, cf.inputType, case when cfv.class = MultiSelectFieldValue then group_concat(so.label, 'order by', so.label, 'asc', '|')  else '' end "
+		@NamedQuery(name = "testStep.excelExportCUF", query = "select cfv.boundEntityId, cfv.boundEntityType, cf.code, cfv.value, cfv.largeValue, cf.inputType, case when cfv.class = TagsValue then group_concat(so.label, 'order by', so.label, 'asc', '|')  else '' end "
 				+ "from CustomFieldValue cfv left join cfv.selectedOptions so join cfv.binding binding join binding.customField cf "
 				+ "where cfv.boundEntityId in ("
 				+ "select st.id from TestCase tc inner join tc.steps st where tc.id in (:testCaseIds)"
