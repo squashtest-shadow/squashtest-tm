@@ -20,25 +20,47 @@
  */
 package org.squashtest.tm.domain.search;
 
-import org.codehaus.jackson.annotate.JsonSubTypes;
-import org.codehaus.jackson.annotate.JsonSubTypes.Type;
-import org.codehaus.jackson.annotate.JsonTypeInfo;
+import java.util.ArrayList;
+import java.util.List;
 
-@JsonTypeInfo(
-		use = JsonTypeInfo.Id.NAME,
-		include = JsonTypeInfo.As.PROPERTY,
-		property = "type")
-@JsonSubTypes({
-	@Type(value = AdvancedSearchListFieldModel.class, name = "LIST"),
-	@Type(value = AdvancedSearchSingleFieldModel.class, name = "SINGLE"),
-	@Type(value = AdvancedSearchTextFieldModel.class, name = "TEXT"),
-	@Type(value = AdvancedSearchRangeFieldModel.class, name = "RANGE"),
-	@Type(value = AdvancedSearchTimeIntervalFieldModel.class, name = "TIME_INTERVAL"),
-	@Type(value = AdvancedSearchTagsFieldModel.class, name = "TAGS")})
-public interface AdvancedSearchFieldModel {
+public class AdvancedSearchTagsFieldModel implements AdvancedSearchFieldModel {
 
-	AdvancedSearchFieldModelType getType();
+	public static enum Operation{
+		AND, OR;
+	}
 
-	boolean isIgnoreBridge();
+	private AdvancedSearchFieldModelType type = AdvancedSearchFieldModelType.TAGS;
+	private boolean ignoreBridge = false;
+
+	private List<String> tags = new ArrayList<String>();
+	private Operation operation;
+
+	@Override
+	public AdvancedSearchFieldModelType getType() {
+		return type;
+	}
+
+	@Override
+	public boolean isIgnoreBridge() {
+		return ignoreBridge;
+	}
+
+	public List<String> getTags() {
+		return tags;
+	}
+
+	public void setTags(List<String> tags) {
+		this.tags = tags;
+	}
+
+	public Operation getOperation() {
+		return operation;
+	}
+
+	public void setOperation(Operation operation) {
+		this.operation = operation;
+	}
+
+
 
 }

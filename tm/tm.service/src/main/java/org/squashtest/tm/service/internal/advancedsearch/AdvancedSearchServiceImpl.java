@@ -39,6 +39,8 @@ import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.search.AdvancedSearchFieldModel;
 import org.squashtest.tm.domain.search.AdvancedSearchFieldModelType;
 import org.squashtest.tm.domain.search.AdvancedSearchListFieldModel;
+import org.squashtest.tm.domain.search.AdvancedSearchTagsFieldModel;
+import org.squashtest.tm.domain.search.AdvancedSearchTagsFieldModel.Operation;
 import org.squashtest.tm.domain.search.AdvancedSearchModel;
 import org.squashtest.tm.domain.search.AdvancedSearchRangeFieldModel;
 import org.squashtest.tm.domain.search.AdvancedSearchSingleFieldModel;
@@ -349,6 +351,26 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 		return query;
 	}
 
+	private Query buildQueryForTagsCriterium(String fieldKey,  AdvancedSearchFieldModel fieldModel,
+			QueryBuilder qb) {
+
+		AdvancedSearchTagsFieldModel model = (AdvancedSearchTagsFieldModel) fieldModel;
+		Query query = null;
+
+		if (model == null){
+			return query;
+		}
+
+		List<String> tags = model.getTags();
+		Operation operation = model.getOperation();
+
+		query = buildLuceneLogicalTagsQuery(qb, fieldKey, tags, operation);
+
+		return query;
+
+	}
+
+
 	protected Query buildLuceneQuery(QueryBuilder qb, List<TestCase> testcaseList, Locale locale) {
 
 		Query mainQuery = null;
@@ -393,6 +415,41 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 		return mainQuery;
 	}
 
+	protected Query buildLuceneLogicalTagsQuery(QueryBuilder qb, String fieldKey, List<String> tags, Operation operation ){
+
+		Query main = null;
+
+		switch(operation){
+		case AND :
+			Query query = null;
+			for (String tag : tags){
+				query = qb.bool().must(qb.keyword().onField(fieldKey).ignoreFieldBridge().ignoreAnalyzer().matching(tag).createQuery()).createQuery();
+
+				if (query == null){
+					break;
+				}
+				if (main == null){
+					main = query;
+				}else {
+					main = qb.bool().must(main).must(query).createQuery();
+				}
+			}
+
+			return qb.bool().must(main).createQuery();
+
+		case OR :
+			return buildLuceneValueInListQuery(qb, fieldKey, tags);
+
+		default :
+			throw new IllegalArgumentException("search on tag '"+fieldKey+"' : operation unknown");
+
+		}
+
+
+	}
+
+
+
 	private Query buildQueryDependingOnType(QueryBuilder qb, Locale locale, String fieldKey,
 			AdvancedSearchFieldModel fieldModel, AdvancedSearchFieldModelType type) {
 		Query query = null;
@@ -411,6 +468,10 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 			break;
 		case TIME_INTERVAL:
 			query = buildQueryForTimeIntervalCriterium(fieldKey, fieldModel, qb);
+			break;
+		case TAGS :
+			query = buildQueryForTagsCriterium(fieldKey, fieldModel, qb);
+			break;
 		default:
 			break;
 		}

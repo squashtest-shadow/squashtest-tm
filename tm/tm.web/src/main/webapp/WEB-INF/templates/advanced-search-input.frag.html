@@ -239,6 +239,21 @@
 					</div>
                 </div>
 			</script>
+              <script id="tags-template" type="text/x-handlebars-template">
+				<div class="display-table-row">
+					<label for="{{tags-id}}" class="display-table-cell">{{tags-title}}</label>
+					<div id="{{tags-id}}" class="search-input" style="border:1px dotted lightgray">
+						<div class="search-line" data-widgetname="Tags" >
+							<ul style="border:1px solid black;display:inline-block">
+							</ul>
+							<select style="display:inline-block">
+								<option value="OR" th:text="#{label.or}">or</option>
+								<option value="AND" th:text="#{label.and}">and</option>
+							</select>
+						</div>
+					</div>
+				</div>
+			</script>
             </div>
 
             <div id="searchModel" class="not-displayed" th:text="${searchModel}"></div>

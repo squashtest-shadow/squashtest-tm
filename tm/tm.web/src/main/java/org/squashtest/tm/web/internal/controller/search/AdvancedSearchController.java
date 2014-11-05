@@ -50,6 +50,7 @@ import org.squashtest.tm.domain.audit.AuditableMixin;
 import org.squashtest.tm.domain.customfield.BindableEntity;
 import org.squashtest.tm.domain.customfield.CustomField;
 import org.squashtest.tm.domain.customfield.CustomFieldOption;
+import org.squashtest.tm.domain.customfield.MultiSelectField;
 import org.squashtest.tm.domain.customfield.SingleSelectField;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.requirement.Requirement;
@@ -96,6 +97,8 @@ public class AdvancedSearchController {
 	private static final String TEXTFIELD = "textfield";
 	private static final String DATE = "date";
 	private static final String COMBOMULTISELECT = "combomultiselect";
+	private static final String TAGS = "tags";
+
 	private static final String TESTCASE = "testcase";
 	private static final String REQUIREMENT = "requirement";
 	private static final String SEARCH_MODEL = "searchModel";
@@ -642,19 +645,33 @@ public class AdvancedSearchController {
 	private SearchInputPanelModel convertToSearchInputPanelModel(List<CustomField> customFields, Locale locale) {
 		SearchInputPanelModel model = new SearchInputPanelModel();
 		for (CustomField customField : customFields) {
-			if (org.squashtest.tm.domain.customfield.InputType.DROPDOWN_LIST.equals(customField.getInputType())) {
+
+			switch(customField.getInputType()){
+			case DROPDOWN_LIST :
 				SingleSelectField selectField = (SingleSelectField) customField;
 				model.getFields().add(convertToSearchInputFieldModel(selectField, locale));
+				break;
 
-			} else if (org.squashtest.tm.domain.customfield.InputType.PLAIN_TEXT.equals(customField.getInputType())) {
+			case PLAIN_TEXT :
 				model.getFields().add(convertToSearchInputFieldModel(customField));
+				break;
 
-			} else if (org.squashtest.tm.domain.customfield.InputType.CHECKBOX.equals(customField.getInputType())) {
+			case CHECKBOX :
 				model.getFields().add(createCheckBoxField(customField, locale));
+				break;
 
-			} else if (org.squashtest.tm.domain.customfield.InputType.DATE_PICKER.equals(customField.getInputType())) {
+			case DATE_PICKER :
 				model.getFields().add(createDatePickerField(customField));
+				break;
+
+			case TAG :
+				model.getFields().add(convertToSearchInputFieldModel((MultiSelectField)customField));
+				break;
+
+			case RICH_TEXT :
+				break;	// not supported for now
 			}
+
 		}
 		return model;
 	}
@@ -710,5 +727,22 @@ public class AdvancedSearchController {
 		model.setId(selectField.getCode());
 		model.setIgnoreBridge(true);
 		return model;
+	}
+
+	private SearchInputFieldModel convertToSearchInputFieldModel(MultiSelectField multifield){
+		List<SearchInputPossibleValueModel> possibleValues = new ArrayList<SearchInputPossibleValueModel>(multifield.getOptions().size());
+
+		for (CustomFieldOption option : multifield.getOptions()){
+			possibleValues.add(new SearchInputPossibleValueModel(option.getLabel(), option.getLabel()));
+		}
+
+		SearchInputFieldModel model = new SearchInputFieldModel();
+		model.setInputType(TAGS);
+		model.setTitle(multifield.getLabel());
+		model.setPossibleValues(possibleValues);
+		model.setId(multifield.getCode());
+		model.setIgnoreBridge(true);
+		return model;
+
 	}
 }
