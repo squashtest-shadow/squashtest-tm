@@ -45,6 +45,7 @@
     <wro4j.css.outputDirectory>${project.build.directory}/processed-css</wro4j.css.outputDirectory>
     <wro4j.inputDir>${smartprites-wro4j-exchangedir}</wro4j.inputDir>
     <wro4j.skip>false</wro4j.skip>
+    <fasterxml.jackson.version>2.0.5</fasterxml.jackson.version>
   </properties>
 
   <dependencies>
@@ -131,6 +132,17 @@
       <artifactId>jackson-core-asl</artifactId>
 
     </dependency>
+    <dependency>
+		  <groupId>com.fasterxml.jackson.core</groupId>
+		  <artifactId>jackson-core</artifactId>	
+		  <version>${fasterxml.jackson.version}</version>
+	</dependency>
+	<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+	 		<artifactId>jackson-databind</artifactId>
+	 		<version>${fasterxml.jackson.version}</version>
+	</dependency>
+		
     <!-- ===== / ASPECTJ ===== -->
 
     <!-- ===== JACKSON ===== -->
@@ -261,19 +273,6 @@
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
     </dependency>
-		<dependency>
-		  <groupId>com.fasterxml.jackson.core</groupId>
-		  <artifactId>jackson-core</artifactId>
-		  <version>2.0.5</version>
-		</dependency>
-		
-		<dependency>
-			<groupId>com.fasterxml.jackson.core</groupId>
-  			<artifactId>jackson-databind</artifactId>
-  			<version>2.0.5</version>
-		</dependency>
-		
-
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-log4j12</artifactId>

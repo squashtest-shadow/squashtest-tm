@@ -42,8 +42,10 @@ import net.sf.jasperreports.engine.export.JRXlsExporterParameter;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.validation.BindException;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -79,7 +81,6 @@ public abstract class LibraryNavigationController<LIBRARY extends Library<? exte
 	 */
 	protected abstract LibraryNavigationService<LIBRARY, FOLDER, NODE> getLibraryNavigationService();
 
-	private static final String NODE_IDS = "nodeIds[]";
 
 	@Inject
 	private MessageSource messageSource;
@@ -117,7 +118,10 @@ public abstract class LibraryNavigationController<LIBRARY extends Library<? exte
 	@ResponseStatus(HttpStatus.CREATED)
 	@RequestMapping(value = "/drives/{libraryId}/content/new-folder", method = RequestMethod.POST)
 	public final @ResponseBody JsTreeNode addNewFolderToLibraryRootContent(@PathVariable long libraryId,
-			@Valid @ModelAttribute("add-folder") FOLDER newFolder) {
+			@RequestBody FOLDER newFolder) {
+
+
+
 
 		getLibraryNavigationService().addFolderToLibrary(libraryId, newFolder);
 
@@ -128,7 +132,7 @@ public abstract class LibraryNavigationController<LIBRARY extends Library<? exte
 	@ResponseStatus(HttpStatus.CREATED)
 	@RequestMapping(value = "/folders/{folderId}/content/new-folder", method = RequestMethod.POST)
 	public final @ResponseBody JsTreeNode addNewFolderToFolderContent(@PathVariable long folderId,
-			@Valid @ModelAttribute("add-folder") FOLDER newFolder) {
+			@RequestBody FOLDER newFolder) {
 
 		getLibraryNavigationService().addFolderToFolder(folderId, newFolder);
 
@@ -236,14 +240,14 @@ public abstract class LibraryNavigationController<LIBRARY extends Library<? exte
 	}
 
 	private void removeRteFormat(List<? extends ExportData> dataSource) {
-		
+
 		for (ExportData data : dataSource) {
 			String htmlDescription = data.getDescription();
 			String description = HTMLCleanupUtils.htmlToText(htmlDescription);
 			data.setDescription(description);
 		}
 	}
-	
+
 
 	protected void printExport(List<? extends ExportData> dataSource, String filename, String jasperFile,
 			HttpServletResponse response, Locale locale, String format, Boolean keepRteFormat) {

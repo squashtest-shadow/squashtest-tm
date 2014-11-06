@@ -22,14 +22,18 @@ package org.squashtest.tm.web.internal.controller.requirement
 
 import javax.inject.Provider
 
+import org.springframework.context.MessageSource;
 import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory
 import org.squashtest.tm.domain.requirement.NewRequirementVersionDto
 import org.squashtest.tm.domain.requirement.Requirement
+import org.squashtest.tm.domain.requirement.RequirementCategory;
+import org.squashtest.tm.domain.requirement.RequirementCriticality;
 import org.squashtest.tm.domain.requirement.RequirementFolder
 import org.squashtest.tm.domain.requirement.RequirementLibraryNode
 import org.squashtest.tm.domain.requirement.RequirementVersion
 import org.squashtest.tm.service.requirement.RequirementLibraryNavigationService
 import org.squashtest.tm.service.security.PermissionEvaluationService;
+import org.squashtest.tm.web.internal.controller.generic.LibraryNavigationController;
 import org.squashtest.tm.web.internal.model.builder.DriveNodeBuilder
 import org.squashtest.tm.web.internal.model.builder.RequirementLibraryTreeNodeBuilder
 import org.squashtest.tm.web.internal.model.jstree.JsTreeNode
@@ -37,7 +41,9 @@ import org.squashtest.tm.web.internal.model.jstree.JsTreeNode
 import spock.lang.Specification
 
 class RequirementLibraryNavigationControllerTest  extends Specification {
+
 	RequirementLibraryNavigationController controller = new RequirementLibraryNavigationController()
+
 	RequirementLibraryNavigationService requirementLibraryNavigationService = Mock()
 	Provider driveNodeBuilder = Mock();
 	Provider requirementLibraryTreeNodeBuilder = Mock();
@@ -46,9 +52,13 @@ class RequirementLibraryNavigationControllerTest  extends Specification {
 		controller.requirementLibraryNavigationService = requirementLibraryNavigationService
 		controller.driveNodeBuilder = driveNodeBuilder
 		controller.requirementLibraryTreeNodeBuilder = requirementLibraryTreeNodeBuilder
+		use (ReflectionCategory) {
+			LibraryNavigationController.set field: "messageSource", of: controller, to: Mock(MessageSource)
+		}
 
 		driveNodeBuilder.get() >> new DriveNodeBuilder(Mock(PermissionEvaluationService), null)
 		requirementLibraryTreeNodeBuilder.get() >> new RequirementLibraryTreeNodeBuilder(Mock(PermissionEvaluationService))
+
 	}
 
 	def "should add folder to root of library and return folder node model"() {
@@ -87,7 +97,11 @@ class RequirementLibraryNavigationControllerTest  extends Specification {
 
 	def "should add requirement to root of library and return requirement node model"() {
 		given:
-		NewRequirementVersionDto firstVersion = new NewRequirementVersionDto(name: "new req")
+		RequirementFormModel firstVersion = new RequirementFormModel(
+				name: "new req",
+				criticality : RequirementCriticality.MAJOR,
+				category : RequirementCategory.PERFORMANCE,
+				customFields : [:])
 		Requirement req = new Requirement(new RequirementVersion(name: "new req"))
 		use (ReflectionCategory) {
 			RequirementLibraryNode.set field: "id", of: req, to: 100L
@@ -97,7 +111,7 @@ class RequirementLibraryNavigationControllerTest  extends Specification {
 		JsTreeNode res = controller.addNewRequirementToLibraryRootContent(100, firstVersion)
 
 		then:
-		1 * requirementLibraryNavigationService.addRequirementToRequirementLibrary(100, firstVersion) >> req
+		1 * requirementLibraryNavigationService.addRequirementToRequirementLibrary(100, _) >> req
 		res.title == "new req"
 		res.attr['resId'] == "100"
 		res.attr['rel'] == "requirement"
@@ -137,5 +151,5 @@ class RequirementLibraryNavigationControllerTest  extends Specification {
 		res.attr['rel'] == "folder"
 	}
 
-	
+
 }

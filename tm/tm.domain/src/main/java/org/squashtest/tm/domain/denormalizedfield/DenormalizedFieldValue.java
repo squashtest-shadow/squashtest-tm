@@ -143,8 +143,7 @@ public class DenormalizedFieldValue {
 		this.denormalizedFieldHolderId = denormalizedFieldHolderId;
 		this.denormalizedFieldHolderType = denormalizedFieldHolderType;
 
-		RawValue rawValue = customFieldValue.asRawValue();
-		rawValue.setValueFor(this);
+		this.value = customFieldValue.getValue();
 	}
 
 

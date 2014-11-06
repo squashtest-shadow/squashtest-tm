@@ -21,6 +21,7 @@
 package org.squashtest.tm.service.internal.advancedsearch;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -29,6 +30,8 @@ import java.util.Set;
 
 import javax.inject.Inject;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.Transformer;
 import org.apache.commons.lang.StringUtils;
 import org.apache.lucene.document.DateTools;
 import org.apache.lucene.search.Query;
@@ -364,7 +367,7 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 		List<String> tags = model.getTags();
 		Operation operation = model.getOperation();
 
-		query = buildLuceneLogicalTagsQuery(qb, fieldKey, tags, operation);
+		query = buildLuceneTagsQuery(qb, fieldKey, tags, operation);
 
 		return query;
 
@@ -415,14 +418,22 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 		return mainQuery;
 	}
 
-	protected Query buildLuceneLogicalTagsQuery(QueryBuilder qb, String fieldKey, List<String> tags, Operation operation ){
+	protected Query buildLuceneTagsQuery(QueryBuilder qb, String fieldKey, List<String> tags, Operation operation ){
 
 		Query main = null;
+
+
+		List<String> lowerTags = (List<String>)CollectionUtils.collect(tags, new Transformer() {
+			@Override
+			public Object transform(Object input) {
+				return ((String)input).toLowerCase();
+			}
+		});
 
 		switch(operation){
 		case AND :
 			Query query = null;
-			for (String tag : tags){
+			for (String tag : lowerTags){
 				query = qb.bool().must(qb.keyword().onField(fieldKey).ignoreFieldBridge().ignoreAnalyzer().matching(tag).createQuery()).createQuery();
 
 				if (query == null){
@@ -438,7 +449,7 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 			return qb.bool().must(main).createQuery();
 
 		case OR :
-			return buildLuceneValueInListQuery(qb, fieldKey, tags);
+			return buildLuceneValueInListQuery(qb, fieldKey, lowerTags);
 
 		default :
 			throw new IllegalArgumentException("search on tag '"+fieldKey+"' : operation unknown");

@@ -36,6 +36,7 @@ import javax.persistence.OrderColumn;
 import org.squashtest.tm.domain.customfield.CustomFieldOption;
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
 import org.squashtest.tm.domain.customfield.CustomFieldValueOption;
+import org.squashtest.tm.domain.customfield.RawValue;
 
 @Entity
 @DiscriminatorValue("MFV")
@@ -62,7 +63,15 @@ public class DenormalizedMultiSelectField extends DenormalizedFieldValue {
 
 	public DenormalizedMultiSelectField(CustomFieldValue customFieldValue, Long denormalizedFieldHolderId,
 			DenormalizedFieldHolderType denormalizedFieldHolderType) {
+
 		super(customFieldValue, denormalizedFieldHolderId, denormalizedFieldHolderType);
+
+		// the super constructor has set the attribute 'value', which has no meaning for this multi valued
+		// custom field.
+		this.value = null;
+
+		RawValue rawValue = customFieldValue.asRawValue();
+		rawValue.setValueFor(this);
 	}
 
 

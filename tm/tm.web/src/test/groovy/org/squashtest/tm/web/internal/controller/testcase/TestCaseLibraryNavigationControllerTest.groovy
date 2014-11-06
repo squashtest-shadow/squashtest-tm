@@ -24,6 +24,7 @@ import java.util.Map;
 
 import javax.inject.Provider
 
+import org.springframework.context.MessageSource;
 import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory
 import org.squashtest.tm.domain.testcase.TestCase
 import org.squashtest.tm.domain.testcase.TestCaseFolder
@@ -33,6 +34,7 @@ import org.squashtest.tm.domain.testcase.TestCaseStatus;
 import org.squashtest.tm.service.requirement.VerifiedRequirementsManagerService;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.testcase.TestCaseLibraryNavigationService
+import org.squashtest.tm.web.internal.controller.generic.LibraryNavigationController;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.builder.DriveNodeBuilder
 import org.squashtest.tm.web.internal.model.builder.TestCaseLibraryTreeNodeBuilder
@@ -53,6 +55,9 @@ class TestCaseLibraryNavigationControllerTest extends Specification {
 
 		controller.driveNodeBuilder = driveNodeBuilder
 		controller.testCaseLibraryTreeNodeBuilder = testCaseLibraryTreeNodeBuilder
+		use (ReflectionCategory) {
+			LibraryNavigationController.set field: "messageSource", of: controller, to: Mock(MessageSource)
+		}
 		verifiedRequirementManagerService.testCaseHasUndirectRequirementCoverage(_)>>false
 
 		driveNodeBuilder.get() >> new DriveNodeBuilder(permissionEvaluationService, null)
@@ -151,6 +156,8 @@ class TestCaseLibraryNavigationControllerTest extends Specification {
 		tcfm.getTestCase() >> tc
 		Map<Long, String> customFieldValues = [:]
 		tcfm.getCufs()>>customFieldValues
+		tcfm.getCustomFields() >> [:]
+		tcfm.getName() >> "test case"
 		when:
 		def res = controller.addNewTestCaseToLibraryRootContent(10, tcfm)
 
@@ -174,6 +181,8 @@ class TestCaseLibraryNavigationControllerTest extends Specification {
 		tcfm.getTestCase() >> tc
 		Map<Long, String> customFieldValues = [:]
 		tcfm.getCufs()>>customFieldValues
+		tcfm.getCustomFields() >> [:]
+		tcfm.getName() >> "test case"
 		when:
 		def res = controller.addNewTestCaseToFolder(10, tcfm)
 

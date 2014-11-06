@@ -65,7 +65,7 @@ define([ "jquery", "./lib/cuf-values-utils", "./lib/jquery.staticCustomfield", "
 					});
 			        html += "</ul>";
 			        return html;
-				}
+				};
 			}
 			
 			columns.push(newColumn);
