@@ -141,7 +141,7 @@ define(["jquery", "jqueryui", "jquery.tagit"], function($){
 				}			
 			}
 			
-			return passedCheck
+			return passedCheck;
 			
 		},
 		

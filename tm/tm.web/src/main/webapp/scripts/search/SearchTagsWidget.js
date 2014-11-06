@@ -68,7 +68,7 @@ define([ "jquery", "squash.configmanager", "jqueryui", "jquery.squash.tagit" ], 
 						"type" : "TAGS",
 						"tags" : tags,
 						"operation" : operation.val()
-					}
+					};
 				}else{
 					return null;
 				}
