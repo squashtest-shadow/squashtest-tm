@@ -110,8 +110,6 @@
 					</div>
 				
 						
-					</div>
-					
 				</div>
 				</jsp:attribute>
 			</comp:toggle-panel>
