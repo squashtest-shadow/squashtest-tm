@@ -299,6 +299,10 @@
       <groupId>org.spockframework</groupId>
       <artifactId>spock-unitils</artifactId>
     </dependency>
+    <dependency>
+      <groupId>org.springframework.security.oauth</groupId>
+      <artifactId>spring-security-oauth2</artifactId>
+    </dependency>
     <!-- ====== SQUASHTEST ====== -->
     <dependency>
       <groupId>${project.groupId}</groupId>

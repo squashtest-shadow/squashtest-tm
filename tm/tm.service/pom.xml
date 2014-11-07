@@ -207,6 +207,10 @@
       <groupId>org.hibernate</groupId>
       <artifactId>org.squashtest.org.hibernate.search</artifactId>
     </dependency>
+    <dependency>
+      <groupId>org.springframework.security.oauth</groupId>
+      <artifactId>spring-security-oauth2</artifactId>
+    </dependency>
     <!-- ====== DEPENDENCY POMS ====== -->
     <dependency>
       <groupId>${project.groupId}</groupId>
