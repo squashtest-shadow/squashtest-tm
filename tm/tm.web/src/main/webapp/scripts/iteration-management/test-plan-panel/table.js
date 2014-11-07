@@ -61,7 +61,7 @@ define(
 		  'test-automation/automated-suite-overview',
 			'squash.configmanager',
 		  'squashtable', 'jeditable', 'jquery.squash.buttonmenu' ],
-		function($, translator, execrunner, smode, filtermode, dateutils, statusfactory, autosuitedialog, confman) {
+		function($, translator, execrunner, smode, fmode, dateutils, statusfactory, autosuitedialog, confman) {
 
 			// ****************** TABLE CONFIGURATION **************
 
@@ -365,7 +365,7 @@ define(
 						var settings = this.fnSettings();
 						var aaSorting = settings.aaSorting;
 
-						this.data('sortmode').manage(aaSorting);
+						this.data('sortmode').update(aaSorting);
 					}
 				};
 
@@ -478,16 +478,27 @@ define(
 					var tableconf = createTableConfiguration(enhconf);
 
 					var sortmode = smode.newInst(enhconf);
+					var filtermode = fmode.newInst(enhconf);
+					
 					tableconf.tconf.aaSorting = sortmode.loadaaSorting();
 
 					var table = $("#iteration-test-plans-table").squashTable(
 							tableconf.tconf, tableconf.sconf);
+					
 					table.data('sortmode', sortmode);
-					this.lockSortMode = sortmode._lockSortMode;
-					this.unlockSortMode = sortmode._unlockSortMode;
+					table.data('filtermode', filtermode);
+					
+					
+					table.toggleFiltering = function(){
+						var isFiltering = filtermode.toggleFilter();
+						if (isFiltering){
+							sortmode.disableReorder();
+						}
+						else{
+							sortmode.enableReorder();
+						}
+					};
 
-					this.hideFilterFields = filtermode.hideFilterFields;
-					this.showFilterFields = filtermode.showFilterFields;
 					filtermode.initializeFilterFields(enhconf);
 				}
 			};

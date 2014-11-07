@@ -18,11 +18,12 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define(["jquery",  "jquery.squash.rangedatepicker", "squash.translator" ], 
-		function($, rangedatepicker, translator){
+define(["jquery",  "jquery.squash.rangedatepicker", "squash.translator", "workspace.storage" ], 
+		function($, rangedatepicker, translator, storage){
+	
 	"use strict";
 
-	var tableSelector = ".test-plan-table";
+	var tableSelector = '.test-plan-table';
 	
 	/*
 	 * Prepare some default values 
@@ -41,142 +42,179 @@ define(["jquery",  "jquery.squash.rangedatepicker", "squash.translator" ],
 	
 
 	/*
-	 * functions 
+	 * the FilterMode. No conf needed for now.
 	 * 
 	 */
 	
-	function _hideFilterFields(_bNoredraw) {
-		var table = $(tableSelector).squashTable(),
-			settings = table.fnSettings();
+	function FilterMode(){
 		
-		table.find(".th_input").hide();
-
-		for (var i=0;i<settings.aoPreSearchCols.length; i++){
-			settings.aoPreSearchCols[i].sSearch = '';
+		// ****** setup *******
+		
+		var table = $(tableSelector),
+			entityId = table.data('entity-id'),
+			entityType = table.data('entity-type');
+		
+		if (!entityId) {
+			throw "sortmode : entity id absent from table data attributes";
+		}
+		if (!entityType) {
+			throw "sortmode : entity type absent from table data attributes";
 		}
 
-		if ( _bNoredraw !== true){
-			table.refresh();
+		this.key = entityType + "-filter-" + entityId;
+		
+		this.isFiltering = false;
+		
+		
+		// ****** private methods *******
+
+		
+		function hideFilterFields(_bNoredraw) {
+			var squashtable = table.squashTable(),
+				settings = squashtable.fnSettings();
+			
+			table.find(".th_input").hide();
+	
+			for (var i=0;i<settings.aoPreSearchCols.length; i++){
+				settings.aoPreSearchCols[i].sSearch = '';
+			}
+	
+			if ( _bNoredraw !== true){
+				squashtable.refresh();
+			}
 		}
-	}
-
-	function _showFilterFields() {
-		var table = $(tableSelector).squashTable(),
-			settings = table.fnSettings();
-
-		table.find(".th_input").show();
-
-		$.each(settings.aoColumns, function(idx){
-			var column = settings.aoColumns[idx];
-			var $th = $(column.nTh);
-			if (column.bVisible && $th.is('.tp-th-filter')){
-				column.sSearch = $th.find('.filter_input').val();
-			}
-		});
-
-		table.refresh();
-	}
-
-
-
-	function _initializeFilterFields(initconf) {
-
-		function _createCombo(th, id, content){
-			if (!th || !content) {
-				return;
-			}
-			// handlebars, dammit
-			var combo = $("<select id='"+id+"' class='th_input filter_input'/>");
-
-			var nullOption = new Option("", "");
-			$(nullOption).html("");
-
-			combo.append(nullOption);
-
-			$.each(content, function(index, value) {
-				var o = new Option(value, index);
-				$(o).html(value);
-				combo.append(o);
+	
+		function showFilterFields() {
+			var squashtable = table.squashTable(),
+				settings = squashtable.fnSettings();
+	
+			table.find(".th_input").show();
+	
+			$.each(settings.aoColumns, function(idx){
+				var column = settings.aoColumns[idx];
+				var $th = $(column.nTh);
+				if (column.bVisible && $th.is('.tp-th-filter')){
+					column.sSearch = $th.find('.filter_input').val();
+					settings.aoPreSearchCols[idx].sSearch = column.sSearch;
+				}
 			});
-
-			th.append(combo);
+	
+			squashtable.refresh();
 		}
-
-
-		var table = $(tableSelector);
-		$(table.attr("id") + "_filter").hide();
-
-		/*
-		 * some of fields below can use some defaults values in case they were 
-		 * not overriden in the conf 
-		 */
-		var users = initconf.basic.assignableUsers,
-			statuses = initconf.messages.executionStatus,
-			weights = initconf.basic.weights || _weights,	
-			modes = initconf.basic.modes;
-
-
-		table.find(".tp-th-project-name,.tp-th-reference,.tp-th-name,.tp-th-dataset,.tp-th-suite")
-			 .append("<input class='th_input filter_input'/>");
-
-
-
-		var execmodeTH = table.find("th.tp-th-exec-mode"),
-			importanceTH = table.find(".tp-th-importance"),
-			statusTH = table.find(".tp-th-status"),
-			assigneeTH = table.find(".tp-th-assignee");
-
-
-		_createCombo(execmodeTH, "#filter-mode-combo", modes);
-		_createCombo(statusTH, "#filter-status-combo", statuses);
-		_createCombo(assigneeTH, "#filter-user-combo", users);
-		_createCombo(importanceTH, "#filter-weight-combo", weights);
-
-		// use handlebars, dammit !
-		table.find(".tp-th-exec-on").append("<div class='rangedatepicker th_input'>"
-								+ "<input class='rangedatepicker-input' readonly='readonly'/>"
-								+ "<div class='rangedatepicker-div' style='position:absolute;top:auto;left:auto;z-index:1;'></div>"
-								+ "<input type='hidden' class='rangedatepicker-hidden-input filter_input'/>"
-								+ "</div>");
-
-
-		$(".th_input").click(function(event) {
-			event.stopPropagation();
-		}).keypress(function(event){
-			if (event.which == 13 )
-			{
-				event.stopPropagation();
-				event.preventDefault();
-				event.target.blur();
-				event.target.focus();
+		
+		// ************** public methods *************
+		
+		this.toggleFilter = function(){
+			if (this.isFiltering){
+				this.isFiltering = false;
+				hideFilterFields(false);
 			}
-		});
-
-		table.find("th").hover(function(event) {
-			event.stopPropagation();
-		});
-
-		$(".filter_input").change(function() {
-			var sTable = table.squashTable(),
-				settings = sTable.fnSettings(),
-				api = settings.oApi,
-				headers = table.find("th");
-
-			var visiIndex =  headers.index($(this).parents("th:first")),
-				realIndex = api._fnVisibleToColumnIndex( settings, visiIndex );
-
-			sTable.fnFilter(this.value, realIndex);
-		});
-
-		rangedatepicker.init();
-
-		_hideFilterFields(true);
+			else{
+				this.isFiltering = true;
+				showFilterFields();
+			}
+			
+			return this.isFiltering;
+		}
+	
+		this.initializeFilterFields = function(initconf) {
+	
+			function _createCombo(th, id, content){
+				if (!th || !content) {
+					return;
+				}
+				// handlebars, dammit
+				var combo = $("<select id='"+id+"' class='th_input filter_input'/>");
+	
+				var nullOption = new Option("", "");
+				$(nullOption).html("");
+	
+				combo.append(nullOption);
+	
+				$.each(content, function(index, value) {
+					var o = new Option(value, index);
+					$(o).html(value);
+					combo.append(o);
+				});
+	
+				th.append(combo);
+			}
+	
+			var tableId = table.attr("id");
+			$( tableId + "_filter").hide();
+	
+			/*
+			 * some of fields below can use some defaults values in case they were 
+			 * not overriden in the conf 
+			 */
+			var users = initconf.basic.assignableUsers,
+				statuses = initconf.messages.executionStatus,
+				weights = initconf.basic.weights || _weights,	
+				modes = initconf.basic.modes;
+	
+	
+			table.find(".tp-th-project-name,.tp-th-reference,.tp-th-name,.tp-th-dataset,.tp-th-suite")
+				 .append("<input class='th_input filter_input'/>");
+	
+	
+	
+			var execmodeTH = table.find("th.tp-th-exec-mode"),
+				importanceTH = table.find(".tp-th-importance"),
+				statusTH = table.find(".tp-th-status"),
+				assigneeTH = table.find(".tp-th-assignee");
+	
+	
+			_createCombo(execmodeTH, "#filter-mode-combo", modes);
+			_createCombo(statusTH, "#filter-status-combo", statuses);
+			_createCombo(assigneeTH, "#filter-user-combo", users);
+			_createCombo(importanceTH, "#filter-weight-combo", weights);
+	
+			// use handlebars, dammit !
+			table.find(".tp-th-exec-on").append("<div class='rangedatepicker th_input'>"
+									+ "<input class='rangedatepicker-input' readonly='readonly'/>"
+									+ "<div class='rangedatepicker-div' style='position:absolute;top:auto;left:auto;z-index:1;'></div>"
+									+ "<input type='hidden' class='rangedatepicker-hidden-input filter_input'/>"
+									+ "</div>");
+	
+	
+			$(".th_input").click(function(event) {
+				event.stopPropagation();
+			}).keypress(function(event){
+				if (event.which == 13 )
+				{
+					event.stopPropagation();
+					event.preventDefault();
+					event.target.blur();
+					event.target.focus();
+				}
+			});
+	
+			table.find("th").hover(function(event) {
+				event.stopPropagation();
+			});
+	
+			$(".filter_input").change(function() {
+				var sTable = table.squashTable(),
+					settings = sTable.fnSettings(),
+					api = settings.oApi,
+					headers = table.find("th");
+	
+				var visiIndex =  headers.index($(this).parents("th:first")),
+					realIndex = api._fnVisibleToColumnIndex( settings, visiIndex );
+	
+				sTable.fnFilter(this.value, realIndex);
+			});
+	
+			rangedatepicker.init();
+	
+			hideFilterFields(true);
+		}
 	}
 
 	return {
-		initializeFilterFields : _initializeFilterFields,
-		hideFilterFields : _hideFilterFields,
-		showFilterFields : _showFilterFields
-	};
+		newInst : function(){
+			return new FilterMode();
+		}
+	}
 
 });

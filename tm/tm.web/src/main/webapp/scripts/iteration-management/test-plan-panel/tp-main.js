@@ -37,8 +37,6 @@
 
 define(['squash.translator', './table', './popups', 'app/util/ButtonUtil'], function(translator, table, popups, ButtonUtil){
 	
-	var filterOn = false;
-	
 	function enhanceConfiguration(origconf){
 		
 		var conf = $.extend({}, origconf);
@@ -99,26 +97,7 @@ define(['squash.translator', './table', './popups', 'app/util/ButtonUtil'], func
 		
 		$("#filter-test-plan-button").on('click', function(){
 			var domtable = $("#iteration-test-plans-table").squashTable();
-			if(filterOn){
-				table.hideFilterFields();
-				table.unlockSortMode();
-				filterOn=false;
-				domtable.refresh();
-				$("#test-plan-sort-mode-message").show();
-				domtable.find('.select-handle').removeClass('drag-handle');
-				if (this.reorderable){
-					ButtonUtil.enable($("#reorder-test-plan-button"));
-				}
-	
-			} else {
-				table.showFilterFields();
-				table.lockSortMode();
-				filterOn=true;
-				$("#test-plan-sort-mode-message").hide();
-				domtable.find('.select-handle').addClass('drag-handle');
-				ButtonUtil.disable($("#reorder-test-plan-button"));
-
-			}
+			domtable.toggleFiltering();	// see the initialization module table#init()
 		});
 		
 	}
@@ -134,7 +113,6 @@ define(['squash.translator', './table', './popups', 'app/util/ButtonUtil'], func
 			
 			table.init(conf);
 			popups.init(conf);
-			filterOn = false;
 			
 		}
 	};	

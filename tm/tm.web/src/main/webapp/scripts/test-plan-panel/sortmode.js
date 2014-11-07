@@ -36,12 +36,19 @@ define([ "jquery", "workspace.storage", "app/util/ButtonUtil" ],
 	var tableSelector = ".test-plan-table";
 
 	function SortMode(conf) {
-		var isLocked = false;
 
 		var $table = $(".test-plan-table");
 		var entityId = $table.data("entity-id");
 		var entityType = $table.data("entity-type");
 		this.storage = storage;
+		
+		// **************** state variables ***************
+
+		this.state = {
+			active : false,		// whether the message is displayed and DnD disabled, and conversely
+			saveable : true 	// whether saving the reordering is allowed or not. Note that it's different 
+								// from the state of the Reorder button.
+		};		
 
 		// **************** configuration ******************
 
@@ -55,55 +62,84 @@ define([ "jquery", "workspace.storage", "app/util/ButtonUtil" ],
 		}
 
 		this.key = entityType + "-sort-" + entityId;
+		
+		
 
-		// ******************* logic ***********************
+		// ******************* state logic ***********************
 
-		this.resetTableOrder = function(table) {
-			table.fnSettings().aaSorting = StaticSortMode.defaultSorting();
-			this._disableSortMode();
-		};
 
-		this.manage = function(newSorting) {
-
-			if (this._isDefaultSorting(newSorting)) {
-				this._disableSortMode();
-				this._deleteaaSorting();
-			} else {
-				if (!isLocked) {
-					this._enableSortMode();
-				}
-				this._saveaaSorting(newSorting);
-			}
-		};
-
-		this._enableSortMode = function() {
-			$("#test-plan-sort-mode-message").show();
-			$(".test-plan-table").find(".select-handle").removeClass("drag-handle");
-			if (this.reorderable) {
-				ButtonUtil.enable($("#reorder-test-plan-button"));
-			}
-		};
-
-		this._disableSortMode = function() {
-			$("#test-plan-sort-mode-message").hide();
-			$(tableSelector).find(".select-handle").addClass("drag-handle");
-
-			ButtonUtil.disable($("#reorder-test-plan-button"));
-
-		};
-
-		this._lockSortMode = function() {
-			isLocked = true;
-		};
-
-		this._unlockSortMode = function() {
-			isLocked = false;
-		};
-
-		this._isDefaultSorting = function(someSorting) {
+		function isDefaultSorting (someSorting) {
 			var defaultSorting = StaticSortMode.defaultSorting();
 			return (someSorting.length === 1 && someSorting[0][0] === defaultSorting[0][0] && someSorting[0][1] === defaultSorting[0][1]);
 		};
+		
+		
+		// ****** private state transition function ********
+		
+		this._activate = function() {
+			$("#test-plan-sort-mode-message").show();
+			$(".test-plan-table").find(".select-handle").removeClass("drag-handle");
+			this.state.active = true;
+		};
+
+		this._deactivate = function() {
+			$("#test-plan-sort-mode-message").hide();
+			$(tableSelector).find(".select-handle").addClass("drag-handle");
+			this.state.active = false;
+		};
+		
+		this._updateBtnState = function(){
+			if (this.state.active && this.state.saveable && this.reorderable){
+				ButtonUtil.enable($("#reorder-test-plan-button"));
+			}
+			else{
+				ButtonUtil.disable($("#reorder-test-plan-button"));
+			}
+		};
+
+		
+		// ***** public functions ******
+		
+		this.enableReorder = function(){
+			this.state.saveable = true;
+			this.update();
+		};
+		
+		this.disableReorder = function(){			
+			this.state.saveable = false;
+			this.update();
+		};
+
+		
+		this.resetTableOrder = function(table) {
+			var defSorting = StaticSortMode.defaultSorting();
+			table.fnSettings().aaSorting = defSorting;
+			this.update(defSorting);
+		};
+		
+
+		// accepts either no argument or 1 argument.
+		// such argument is a 'aaSorting' object from
+		// the datatable.
+		this.update = function(newSorting) {
+			
+			// if has an argument
+			if (!! newSorting){
+				if (isDefaultSorting(newSorting)){
+					this._deleteaaSorting();
+					this._deactivate();				
+				}
+				else{
+					this._saveaaSorting(newSorting);
+					this._activate();			
+				}
+			}
+			
+			// and in any case : 
+			this._updateBtnState();
+
+		};
+
 
 		// ******************** I/O ********************
 
