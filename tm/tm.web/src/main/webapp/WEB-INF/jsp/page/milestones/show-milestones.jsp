@@ -78,6 +78,7 @@
 				<th data-def="map=label, sortable, link=${milestoneDetailsBaseUrl}/{entity-id}/info"  class="datatable-filterable"><f:message key="label.Milestone" /></th>
 				<th data-def="map=status, sortable" class="datatable-filterable"><f:message key="label.Status"   /></th>
 				<th data-def="map=endDate, sortable"><f:message key="label.EndDate"/></th>
+		       	<th data-def="map=nbOfProjects, sortable"><f:message key="label.projects"/></th>
 		        <th data-def="map=range, sortable"><f:message key="label.Range" /></th>
 				<th data-def="map=description, sortable"><f:message key="label.Description" /></th>
 			    <th data-def="map=created-on, sortable"><f:message key="label.CreatedOn" /></th>

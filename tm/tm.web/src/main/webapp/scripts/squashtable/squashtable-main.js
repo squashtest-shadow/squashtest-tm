@@ -852,6 +852,10 @@ define(["jquery",
 
 	}
 
+	function _configureCheckBox(){
+		$("td.checkbox").append('<input type="checkbox" /> ')		
+	}
+	
 	function _configureDeleteButtons() {
 		var deleteConf = this.squashSettings.deleteButtons;
 		if (!deleteConf) {
@@ -868,6 +872,15 @@ define(["jquery",
 			}
 		});
 
+		var cellsUnbind = $('td.unbind-button', this);
+		cellsUnbind.html(template);
+		cellsUnbind.find('a').button({
+			text : false,
+			icons : {
+				primary : "ui-icon-minus"
+			}
+		});
+		
 	}
 
 	function _bindDeleteButtons() {
@@ -879,7 +892,7 @@ define(["jquery",
 		}
 		var self = this;
 
-		this.delegate('td.delete-button > a', 'click', function() {
+		var deleteFunction =  function() {
 			var row = this.parentNode.parentNode; // hopefully, that's the
 			// 'tr' one
 			var jqRow = $(row);
@@ -928,7 +941,10 @@ define(["jquery",
 					jqRow.removeClass('ui-state-row-selected');
 				});
 			}
-		});
+		};
+		
+		this.delegate('td.delete-button > a', 'click', deleteFunction);
+		this.delegate('td.unbind-button > a', 'click', deleteFunction);
 	}
 
 	/**
@@ -1390,6 +1406,7 @@ define(["jquery",
 		aDrawCallbacks.push(_configureExecutionStatus);
 		aDrawCallbacks.push(_configureButtons);
 		aDrawCallbacks.push(_configureDeleteButtons);
+		aDrawCallbacks.push(_configureCheckBox);
 		aDrawCallbacks.push(_configureLinks);
 		aDrawCallbacks.push(_restoreTableSelection);
 		aDrawCallbacks.push(_applyFilteredStyle);
@@ -1437,6 +1454,7 @@ define(["jquery",
 		this.configureRichEditables = _configureRichEditables;
 		this.configureExecutionStatus = _configureExecutionStatus;
 		this.configureDeleteButtons = _configureDeleteButtons;
+		this.configureCheckBox         = _configureCheckBox;
 		this.enableTableDragAndDrop = _enableTableDragAndDrop;
 		this.restoreTableSelection = _restoreTableSelection;
 		this.applyFilteredStyle = _applyFilteredStyle;
@@ -1610,6 +1628,17 @@ define(["jquery",
 						tooltip : $(selector).prev().find('span.ui-dialog-title').text()
 					};
 				},
+				'unbind-button' : function(conf, assignation) {
+					var cls = 'unbind-' + Math.random().toString().substr(2, 3);
+					conf.current.sClass += ' unbind-button centered ' + cls;
+					conf.current.sWidth = '2em';
+
+					var selector = assignation.value;
+					conf.squash.deleteButtons = {
+						delegate : selector,
+						tooltip : $(selector).prev().find('span.ui-dialog-title').text()
+					};
+				},
 				'tooltip': function(conf, assignation){
 					var cls = 'tooltip-' + Math.random().toString().substr(2, 3);
 					conf.current.sClass += ' ' + cls;
@@ -1656,7 +1685,11 @@ define(["jquery",
 					conf.current.sClass += ' ' + cls;
 					conf.squash.richEditables = conf.squash.richEditables || {};
 					conf.squash.richEditables[cls] = assignation.value;
-				}
+				},
+				'checkbox' : function(conf, assignation){
+					var cls = 'checkbox-' + Math.random().toString().substr(2, 3);
+					conf.current.sClass += 'checkbox centered ' + cls;
+				},
 			}
 		}
 	};

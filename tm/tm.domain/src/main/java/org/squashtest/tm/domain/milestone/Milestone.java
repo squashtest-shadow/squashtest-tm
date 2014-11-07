@@ -21,7 +21,10 @@
 package org.squashtest.tm.domain.milestone;
 
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -30,10 +33,9 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Lob;
+import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -81,6 +83,13 @@ public class Milestone {
     @DateTimeFormat(pattern="yy-MM-dd")
 	private Date endDate;
 
+	@OneToMany(cascade = { CascadeType.ALL }, mappedBy="milestone")
+	private Set<MilestoneBinding> milestoneBinding = new HashSet<MilestoneBinding>();
+	
+	public int getNbOfBindedProject(){
+		return milestoneBinding.size();
+	}
+	
 	public String getDescription() {
 		return description;
 	}

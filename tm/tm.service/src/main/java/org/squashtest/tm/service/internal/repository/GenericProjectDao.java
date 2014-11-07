@@ -73,4 +73,7 @@ public interface GenericProjectDao extends CustomGenericProjectDao {
 	TestAutomationServer findTestAutomationServer(@QueryParam("projectId") long projectId);
 
 
+	List<GenericProject> findAll();
+
+
 }

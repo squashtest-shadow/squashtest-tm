@@ -61,16 +61,17 @@ public class CustomFieldBindingController {
 	 */
 	private static final String PROJECT_ID = "projectId";
 
+	@Inject
 	private CustomFieldBindingModificationService service;
 
 	@Inject
 	private CustomFieldJsonConverter converter;
-
+/*
 	@ServiceReference
 	public void setCustomFieldBindingModificationService(CustomFieldBindingModificationService service) {
 		this.service = service;
 	}
-
+*/
 	@RequestMapping(method = RequestMethod.GET, params = { PROJECT_ID, "!bindableEntity" }, headers = AcceptHeaders.CONTENT_JSON)
 	@ResponseBody
 	public List<CustomFieldBindingModel> findAllCustomFieldsForProject(@RequestParam(PROJECT_ID) Long projectId) {

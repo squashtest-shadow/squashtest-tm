@@ -35,13 +35,21 @@
 </s:url>
 <s:url var="milestonesUrl" value="/administration/milestones" />
 
+<s:url var="projectsUrl" value="/milestones-binding/milestone/{milestoneId}/project">
+	<s:param name="milestoneId" value="${milestone.id}" />
+</s:url>
+
+
+<s:url var="projectDetailBaseUrl" value="/administration/projects" />
+
+<f:message var="confirmLabel" key="label.Confirm" />
 <f:message var="renameLabel" key="label.Rename" />
 <f:message var="cancelLabel" key="label.Cancel" />
 <f:message var="dateFormat" key="squashtm.dateformatShort" />
 <f:formatDate value="${ milestone.endDate }" var="formatedEndDate" pattern="${dateFormat}"/>
 
 
-<layout:info-page-layout titleKey="workspace.milestone.info.title" isSubPaged="true">
+<layout:info-page-layout titleKey="workspace.milestone.info.title" isSubPaged="true" >
 	<jsp:attribute name="head">	
 		<comp:sq-css name="squash.grey.css" />	
 	</jsp:attribute>
@@ -123,26 +131,130 @@
 			
 			
 			<%-----------------------------------END INFORMATION PANEL -----------------------------------------------%>
-			</div>
+		<comp:toggle-panel id="milestone-project-panel"
+				titleKey="label.projects" open="true">
+	
+		<jsp:attribute name="panelButtons">
+        <button id="bind-project-button" title=<f:message key="label.milestone.bindProject" /> class="sq-icon-btn btn-sm">
+          <span class="ui-icon ui-icon-plus">+</span>
+        </button>
+             <button id="unbind-project-button" title=<f:message key="label.milestone.unbindProject" /> class="sq-icon-btn btn-sm">
+          <span class="ui-icon ui-icon-minus">-</span>
+        </button>
+        
+				</jsp:attribute>	
+				<jsp:attribute name="body">
+				<table id="projects-table" class="unstyled-table" data-def="ajaxsource=${projectsUrl}?binded, hover, filter, pre-sort=1-asc">
+		<thead>
+			<tr>
+				<th data-def="map=entity-index, select">#</th>
+				<th data-def="map=name, sortable, link=${projectDetailBaseUrl}/{entity-id}/info"  class="datatable-filterable"><f:message key="label.project" /></th>
+				<th data-def="map=empty-delete-holder, unbind-button=#unbind-project-popup"></th>
+				
+
+			</tr>
+		</thead>
+		<tbody><%-- Will be populated through ajax --%></tbody>
+	</table>
+				</jsp:attribute>
+			</comp:toggle-panel>
+		
+			<%-----------------------------------START PROJECT PANEL -----------------------------------------------%>
+		
+		
+		
+		
+		<%-----------------------------------END PROJECT PANEL -----------------------------------------------%>	
+		
+			</div>	
+			
 		<%---------------------------------------------------------------END  BODY -----------------------------------------------%>
 	</jsp:attribute>
 </layout:info-page-layout>
 
 
+
+
+<!-- --------------------------------BIND PROJECT POPUP--------------------------------------------------------- -->
+
+  
+    <f:message var="bindProjectTitle" key="dialog.rename-bugtracker.title" />
+    <div id="bind-project-dialog" class="not-displayed popup-dialog"
+        title="${bindProjectTitle}">
+
+	<table id="bind-to-projects-table" class="unstyled-table" data-def="ajaxsource=${projectsUrl}?bindable, hover, filter, pre-sort=1-asc">
+		<thead>
+			<tr>
+				<th data-def="map=checkbox, checkbox"></th>
+				<th data-def="map=name, sortable, link=${projectDetailBaseUrl}/{entity-id}/info"  class="datatable-filterable"><f:message key="label.Name" /></th>
+		    	<th data-def="map=label, sortable"><f:message key="label.Label" /></th>
+		    	
+			</tr>
+		</thead>
+		<tbody><%-- Will be populated through ajax --%></tbody>
+	</table>
+
+<div>
+<ul>
+
+<li><a id="checkAll"> checkAll</a>
+<li><a id="uncheckAll">uncheckAll</a></li>
+<li><a id="invertSelect">invertSelect</a></li>
+
+</ul>
+</div>
+
+        <div class="popup-dialog-buttonpane">
+          <input type="button" value="${confirmLabel}" data-def="mainbtn, evt=confirm"/>
+          <input type="button" value="${cancelLabel}" data-def="evt=cancel"/>
+        </div>        
+    </div>
+
+
+
+<!-- ------------------------------------END BIND PROJECT POPUP------------------------------------------------------- -->
+
+
+<!-- ------------------------------------UNBIND PROJECT POPUP------------------------------------------------------- -->
+	<f:message var="unbindProject" key="dialog.milestone.unbind.project.title" />
+	<f:message var="warningUnbind" key="dialog.milestone.unbind.project.warning" />
+	<div id="unbind-project-popup" class="popup-dialog not-displayed" title="${unbindProjectTitle}">
+		
+		<div class="display-table-row">
+            <div class="display-table-cell warning-cell">
+                <div class="delete-node-dialog-warning"></div>
+            </div>
+            <div class="display-table-cell">
+			${Unbind}
+			</div>
+		</div>
+		<div class="popup-dialog-buttonpane">
+		    <input class="confirm" type="button" value="${confirmLabel}" />
+		    <input class="cancel" type="button" value="${cancelLabel}" />				
+		</div>
+	
+	</div>
+
+<!-- ------------------------------------END UNBIND PROJECT POPUP------------------------------------------------------- -->
+
+
+
 <!-- --------------------------------RENAME POPUP--------------------------------------------------------- -->
   
-    <f:message var="renameBTTitle" key="dialog.rename-bugtracker.title" />
+    <f:message var="renameMilestoneTitle" key="dialog.rename-bugtracker.title" />
     <div id="rename-milestone-dialog" class="not-displayed popup-dialog"
-        title="${renameBTTitle}">
+        title="${renameMilestoneTitle}">
   
-        <label><f:message key="dialog.rename.label" /></label>
-        <input type="text" id="rename-milestone-input" maxlength="255" size="50" />
-        <br />
-        <comp:error-message forField="name" />
-  
-        
+
+         <tr>
+            <td><label for="rename-milestone-input"><f:message
+              key="label.Label" /></label></td>
+            <td><input id="rename-milestone-input" type="text" size="30" maxlength="30"/>
+            <comp:error-message forField="label" /></td>
+          </tr>
+
         <div class="popup-dialog-buttonpane">
-          <input type="button" value="${renameLabel}" data-def="mainbtn, evt=confirm"/>
+          <input type="button" value="${confirmLabel}" data-def="mainbtn, evt=confirm"/>
           <input type="button" value="${cancelLabel}" data-def="evt=cancel"/>
         </div>        
     </div>
@@ -153,98 +265,28 @@
 
 <script type="text/javascript">
 
-  //*****************Back button  
-  
-  function clickBugtackerBackButton(){
-    document.location.href = "${milestonesUrl}";
-  }
- 
-  
-  function initRenameDialog(){
-    var renameDialog = $("#rename-milestone-dialog");
-    renameDialog.formDialog();
-    
-    renameDialog.on('formdialogopen', function(){
-          var name = $.trim($('#milestone-name-header').text());
-          $("#rename-milestone-input").val($.trim(name));    
-    });
-    
-    renameDialog.on('formdialogconfirm', function(){
-      var params = { newName : $("#rename-milestone-input").val() };
-      $.ajax({
-        url : "${ milestoneUrl }",
-        type : 'POST',
-        dataType : 'json',
-        data : params
-      }).success(function(data){
-  	    $('#milestone-name-header').html(data.newName);
-  	    renameDialog.formDialog('close');   	  
-      });
-    });
-    
-    renameDialog.on('formdialogcancel', function(){
-    	renameDialog.formDialog('close');
-    });
-    
-    $("#rename-milestone-button").on('click', function(){
-    	renameDialog.formDialog('open');
-    });
-    
-  }
-  
-  
-  require(["common"], function(){
-	  require(["jquery","squash.translator", "squash.basicwidgets","jeditable.selectJEditable", "squash.configmanager", "jquery.squash.formdialog", "jeditable.datepicker"], function(jquery, translator, basic, SelectJEditable, confman){
 
-		  $(function(){
-	    	
-			    
-		    	var settings = {
-			    	    urls : {
-			    	           milestoneUrl : "${milestoneUrl}"
-			    		    	},
-			    	     data :{
-			    	           milestoneStatus : ${milestoneStatus}
-			    			}
-			    	};
-			  
-				var postfn = function(value){
-					var localizedDate = value;
-					var postDateFormat = $.datepicker.ATOM;
-					var date = $.datepicker.parseDate(translator.get("squashtm.dateformatShort.datepicker"), localizedDate);
-					var postDate = $.datepicker.formatDate(postDateFormat, date);
+requirejs.config({
+	config : {
+		'milestone-manager/milestone-info' : {
+			urls: {
+				milestonesUrl : "${milestonesUrl}",
+				milestoneUrl :  "${milestoneUrl}",
+			      },
+			data: {
+				milestone : {
+					status : '${milestoneStatus}',
+					id: '${milestone.id}',
+				            }
 				
-					return $.ajax({
-						url : settings.urls.milestoneUrl,
-						type : 'POST',
-						data : { newEndDate : postDate }
-					})
-					.done(function(){
-						$("#milestone-end-date").text(value);
-					});
-				};
-		    	
-		    	var dateSettings = confman.getStdDatepicker(); 
-				$("#milestone-end-date").editable(postfn, {
-					type : 'datepicker',
-					datepicker : dateSettings,
-					name : "value"
-				});
-		    	
-				var statusEditable = new SelectJEditable({
-				target : settings.urls.milestoneUrl,
-                componentId : "milestone-status",
-				jeditableSettings : {
-					data : settings.data.milestoneStatus
-				},
-			});	
-	    	
-	      basic.init();
-	      $("#back").click(clickBugtackerBackButton);
-	      initRenameDialog();
-	    });
-	  });	  
-  });
+			       }
+				           }
+			}
+		});
+		
+require(["common"], function(){
+	require(["milestone-manager/milestone-info"], function(){});
+});
 
 
 </script>

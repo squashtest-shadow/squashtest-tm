@@ -62,6 +62,7 @@ public class MilestoneDataTableModelHelper  extends DataTableModelBuilder<Milest
 		row.put("entity-id", item.getId());
 		row.put("index", getCurrentIndex());
 		row.put("label", item.getLabel());
+		row.put("nbOfProjects", item.getNbOfBindedProject());
 		row.put("description", item.getDescription());
 		row.put("range",i18nRange(item.getRange()));
 		row.put("status", i18nStatus(item.getStatus()));

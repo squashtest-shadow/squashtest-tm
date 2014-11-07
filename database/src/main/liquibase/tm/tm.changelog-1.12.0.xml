@@ -79,9 +79,32 @@
       <column name="MILESTONE_ID" />
     </createIndex>
 
-
-
   </changeSet>
+  
+     <changeSet author="jsimon" id="tm-1.12.0.feature-3608-1">
+
+    <comment>Table for MilestoneBinding</comment>
+	<createTable tableName="MILESTONE_BINDING">
+			<column name="MILESTONE_BINDING_ID" type="BIGINT"
+				autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+
+			<column name="MILESTONE_ID" type="BIGINT">
+				<constraints nullable="false" foreignKeyName="FK_MILESTONE_BINDING_MILESTONE"
+					references="MILESTONE(MILESTONE_ID)" />
+			</column>
+
+				
+			<column name="PROJECT_ID" type="BIGINT">
+				<constraints nullable="false" foreignKeyName="FK_MILESTONE_BINDING_PROJECT"
+					references="PROJECT(PROJECT_ID)" />
+			</column>
+		</createTable>
+
+    </changeSet>
+  
+  
   
   
   <changeSet id="tm-1.12.0.feature-3823-1" author="bsiri">

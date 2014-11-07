@@ -155,6 +155,7 @@
         
         
         <value>org.squashtest.tm.domain.milestone.Milestone</value>
+         <value>org.squashtest.tm.domain.milestone.MilestoneBinding</value>
       </list>
     </property>
 

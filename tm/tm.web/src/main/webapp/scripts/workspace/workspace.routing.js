@@ -118,7 +118,10 @@ define([], function(){
 		'customfield.values' :				root + '/custom-fields/values',
 		'customfield.values.get' :			root + '/custom-fields/values?boundEntityId={\\d+}&boundEntityType={[A-Z_]+}',
 		'denormalizefield.values.get' :		root + '/denormalized-fields/values?denormalizedFieldHolderId={\\d+}&denormalizedFieldHolderType={[A-Z_]+}',
-
+		'milestone.bindedproject'     :     root + '/milestones-binding/milestone/{\\d+}/project?binded',
+		'milestone.bindableproject'   :     root + '/milestones-binding/milestone/{\\d+}/project?bindable',
+		'milestone.bind-projects-to-milestone':  root + '/milestones-binding/milestone/{\\d+}/project',
+		'milestone.bind-milestones-to-project':  root + '/milestones-binding/project/{\\d+}/milestone',
 		
 		// helper methods
 		buildURL : function(){

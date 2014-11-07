@@ -396,4 +396,12 @@
       <value>org.squashtest.tm.service.milestone.MilestoneManagerService</value>
     </osgi:interfaces>
 </osgi:reference>
+
+    <osgi:reference id="squashtest.tm.service.MilestoneBindingManagerService" bean-name="squashtest.tm.service.MilestoneBindingManagerService" timeout="2000" >
+    <osgi:interfaces>
+      <value>org.squashtest.tm.service.milestone.MilestoneBindingManagerService</value>
+    </osgi:interfaces>
+    
+</osgi:reference>
+
 </beans>

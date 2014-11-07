@@ -33,6 +33,8 @@ import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.PagingBackedPagedCollectionHolder;
 import org.squashtest.tm.domain.milestone.ExpandedMilestone;
 import org.squashtest.tm.domain.milestone.Milestone;
+import org.squashtest.tm.domain.milestone.MilestoneBinding;
+import org.squashtest.tm.service.internal.repository.MilestoneBindingDao;
 import org.squashtest.tm.service.internal.repository.MilestoneDao;
 import org.squashtest.tm.service.milestone.CustomMilestoneManager;
 
@@ -42,6 +44,9 @@ public class CustomMilestoneManagerServiceImpl implements CustomMilestoneManager
 	@Inject
 	private MilestoneDao milestoneDao;
 
+	@Inject 
+	private MilestoneBindingDao milestoneBindingDao;
+	
 	@Override
 	public void addMilestone(Milestone milestone) {
 		milestoneDao.checkLabelAvailability(milestone.getLabel());
@@ -62,9 +67,14 @@ public class CustomMilestoneManagerServiceImpl implements CustomMilestoneManager
 	@Override
 	public void removeMilestones(Collection<Long> ids) {
 		for (final Long id : ids) {
-			// TODO enlever les associations aux divers objects de l'application avant de retirer le jalon
+		    deleteMilestoneBinding(id);
 			deleteMilestone(id);
 		}
+	}
+
+	private void deleteMilestoneBinding(Long id) {
+	    List<MilestoneBinding> milestoneBinding = milestoneBindingDao.findAllByMilestone(id);
+		milestoneBindingDao.removeAll(milestoneBinding);
 	}
 
 	private void deleteMilestone(final Long id) {

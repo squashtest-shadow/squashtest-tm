@@ -101,7 +101,7 @@ public class MilestoneAdministrationController {
 	}
 
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView showBugtrackers(Locale locale) {
+	public ModelAndView showMilestones(Locale locale) {
 		ModelAndView mav = new ModelAndView("page/milestones/show-milestones");
 		mav.addObject("milestones", milestoneManager.findAll());
 		mav.addObject("milestoneStatus", statusComboDataBuilderProvider.get().useLocale(locale).buildMap());
@@ -109,7 +109,7 @@ public class MilestoneAdministrationController {
 	}
 
 	@RequestMapping(value = "/list", params = RequestParams.S_ECHO_PARAM)
-	public @ResponseBody DataTableModel getBugtrackerTableModel(final DataTableDrawParameters params,
+	public @ResponseBody DataTableModel getMilestonesTableModel(final DataTableDrawParameters params,
 			final Locale locale) {
 
 		PagingAndSorting sorter = createPaging(params, milestoneMapper);
