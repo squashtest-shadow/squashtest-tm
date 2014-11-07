@@ -216,7 +216,7 @@
 
 
 <!-- ------------------------------------UNBIND PROJECT POPUP------------------------------------------------------- -->
-	<f:message var="unbindProject" key="dialog.milestone.unbind.project.title" />
+	<f:message var="unbindProjectTitle" key="dialog.milestone.unbind.project.title" />
 	<f:message var="warningUnbind" key="dialog.milestone.unbind.project.warning" />
 	<div id="unbind-project-popup" class="popup-dialog not-displayed" title="${unbindProjectTitle}">
 		
@@ -225,7 +225,7 @@
                 <div class="delete-node-dialog-warning"></div>
             </div>
             <div class="display-table-cell">
-			${Unbind}
+			${warningUnbind}
 			</div>
 		</div>
 		<div class="popup-dialog-buttonpane">
