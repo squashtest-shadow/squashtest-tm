@@ -106,7 +106,16 @@ define(["jquery",  "jquery.squash.rangedatepicker", "squash.translator", "worksp
 				return;
 			}
 			else{
-				table.squashTable().fnSettings().aoPreSearchCols = filter;
+				var settings = table.squashTable().fnSettings();
+				
+				$.each(settings.aoColumns, function(idx){
+					var column = settings.aoColumns[idx];
+					var $th = $(column.nTh);
+					if (column.bVisible && $th.is('.tp-th-filter')){
+						column.sSearch = filter[idx].sSearch;
+						settings.aoPreSearchCols[idx] = filter[idx];
+					}
+				});
 			}
 			
 		}
