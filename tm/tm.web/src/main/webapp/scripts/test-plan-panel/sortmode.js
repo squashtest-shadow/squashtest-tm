@@ -41,14 +41,6 @@ define([ "jquery", "workspace.storage", "app/util/ButtonUtil" ],
 		var entityId = $table.data("entity-id");
 		var entityType = $table.data("entity-type");
 		this.storage = storage;
-		
-		// **************** state variables ***************
-
-		this.state = {
-			active : false,		// whether the message is displayed and DnD disabled, and conversely
-			saveable : true 	// whether saving the reordering is allowed or not. Note that it's different 
-								// from the state of the Reorder button.
-		};		
 
 		// **************** configuration ******************
 
@@ -63,6 +55,13 @@ define([ "jquery", "workspace.storage", "app/util/ButtonUtil" ],
 
 		this.key = entityType + "-sort-" + entityId;
 		
+
+		this.state = {
+			active : false,		// whether the message is displayed and DnD disabled, and conversely
+			saveable : true 	// whether saving the reordering is allowed or not. Note that it's different 
+								// from the state of the Reorder button.
+		};		
+
 		
 
 		// ******************* state logic ***********************
@@ -114,25 +113,22 @@ define([ "jquery", "workspace.storage", "app/util/ButtonUtil" ],
 		this.resetTableOrder = function(table) {
 			var defSorting = StaticSortMode.defaultSorting();
 			table.fnSettings().aaSorting = defSorting;
-			this.update(defSorting);
+			this.update();
 		};
 		
 
-		// accepts either no argument or 1 argument.
-		// such argument is a 'aaSorting' object from
-		// the datatable.
-		this.update = function(newSorting) {
+		this.update = function(_sort) {
+			
+			var sorting = _sort || $table.squashTable().fnSettings().aaSorting;
 			
 			// if has an argument
-			if (!! newSorting){
-				if (isDefaultSorting(newSorting)){
-					this._deleteaaSorting();
-					this._deactivate();				
-				}
-				else{
-					this._saveaaSorting(newSorting);
-					this._activate();			
-				}
+			if (isDefaultSorting(sorting)){
+				this._deleteaaSorting();
+				this._deactivate();				
+			}
+			else{
+				this._saveaaSorting(sorting);
+				this._activate();			
 			}
 			
 			// and in any case : 
@@ -166,6 +162,12 @@ define([ "jquery", "workspace.storage", "app/util/ButtonUtil" ],
 		this._deleteaaSorting = function() {
 			this.storage.remove(this.key);
 		};
+		
+		
+		// **************** init state ***************
+
+		var initialsort = this.loadaaSorting();
+		this.update(initialsort);
 
 	}
 

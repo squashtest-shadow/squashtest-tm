@@ -361,11 +361,8 @@ define(
 							$(this).submit();
 						});
 
-						// update the sort mode
-						var settings = this.fnSettings();
-						var aaSorting = settings.aaSorting;
-
-						this.data('sortmode').update(aaSorting);
+						// update the sort mode 
+						this.data('sortmode').update();
 					}
 				};
 
@@ -481,25 +478,32 @@ define(
 					var filtermode = fmode.newInst(enhconf);
 					
 					tableconf.tconf.aaSorting = sortmode.loadaaSorting();
+					tableconf.tconf.searchCols = filtermode.loadSearchCols();
 
 					var table = $("#iteration-test-plans-table").squashTable(
 							tableconf.tconf, tableconf.sconf);
 					
 					table.data('sortmode', sortmode);
-					table.data('filtermode', filtermode);
 					
+					// glue code between the filter and the sort mode
 					
-					table.toggleFiltering = function(){
-						var isFiltering = filtermode.toggleFilter();
-						if (isFiltering){
+					function toggleSortmode(locked){
+						if (locked){
 							sortmode.disableReorder();
 						}
 						else{
 							sortmode.enableReorder();
 						}
+					}
+					
+					toggleSortmode(filtermode.isFiltering());
+					
+					table.toggleFiltering = function(){
+						var isFiltering = filtermode.toggleFilter();
+						toggleSortmode(isFiltering);
 					};
-
-					filtermode.initializeFilterFields(enhconf);
+					
+					
 				}
 			};
 
