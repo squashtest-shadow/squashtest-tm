@@ -48,7 +48,7 @@
 
 define(
 		[ 'jquery', 'squash.translator', '../../test-plan-panel/exec-runner', '../../test-plan-panel/sortmode', 
-		  		'../../test-plan-panel/filtermode',
+				'../../test-plan-panel/filtermode',
 				'squash.dateutils', 'squash.statusfactory',
 				'test-automation/automated-suite-overview',
 				'squash.configmanager',
