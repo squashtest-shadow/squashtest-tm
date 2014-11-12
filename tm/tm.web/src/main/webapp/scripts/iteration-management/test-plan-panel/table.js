@@ -485,8 +485,7 @@ define(
 					
 					table.data('sortmode', sortmode);
 					
-					// glue code between the filter and the sort mode
-					
+					// glue code between the filter and the sort mode				
 					function toggleSortmode(locked){
 						if (locked){
 							sortmode.disableReorder();

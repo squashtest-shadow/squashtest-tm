@@ -49,7 +49,7 @@
 
 define(['jquery', '../../test-plan-panel/sortmode', 'squash.configmanager',
         '../../test-plan-panel/filtermode', 'squashtable', 'jeditable'],
-        function($, smode, confman, filtermode) {
+        function($, smode, confman, fmode) {
 
 	function createTableConfiguration(conf){
 
@@ -129,9 +129,7 @@ define(['jquery', '../../test-plan-panel/sortmode', 'squash.configmanager',
 			});
 
 			//sort mode
-			var settings = this.fnSettings();
-			var aaSorting = settings.aaSorting;
-			this.data('sortmode').manage(aaSorting);
+			this.data('sortmode').update();
 		};
 
 		var preDrawCallback = function(settings){
@@ -191,15 +189,32 @@ define(['jquery', '../../test-plan-panel/sortmode', 'squash.configmanager',
 			var tableconf = createTableConfiguration(enhconf);
 
 			var sortmode = smode.newInst(enhconf);
+			var filtermode = fmode.newInst(enhconf);
+			
 			tableconf.tconf.aaSorting = sortmode.loadaaSorting();
-
+			tableconf.tconf.searchCols = filtermode.loadSearchCols();
+			
+			
 			var table = $("#campaign-test-plans-table").squashTable(tableconf.tconf, tableconf.sconf);
 			table.data('sortmode', sortmode);
-			this.lockSortMode = sortmode._lockSortMode;
-			this.unlockSortMode = sortmode._unlockSortMode;
-			this.hideFilterFields = filtermode.hideFilterFields;
-			this.showFilterFields = filtermode.showFilterFields;
-			filtermode.initializeFilterFields(enhconf);
+			
+			// glue code between the filter and the sort mode				
+			function toggleSortmode(locked){
+				if (locked){
+					sortmode.disableReorder();
+				}
+				else{
+					sortmode.enableReorder();
+				}
+			}
+			
+			
+			toggleSortmode(filtermode.isFiltering());
+			
+			table.toggleFiltering = function(){
+				var isFiltering = filtermode.toggleFilter();
+				toggleSortmode(isFiltering);
+			};
 		}
 	};
 

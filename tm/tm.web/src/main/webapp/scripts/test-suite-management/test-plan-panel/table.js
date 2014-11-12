@@ -47,12 +47,13 @@
  */
 
 define(
-		[ 'jquery', 'squash.translator', '../../test-plan-panel/exec-runner', '../../test-plan-panel/sortmode', '../../test-plan-panel/filtermode',
+		[ 'jquery', 'squash.translator', '../../test-plan-panel/exec-runner', '../../test-plan-panel/sortmode', 
+		  		'../../test-plan-panel/filtermode',
 				'squash.dateutils', 'squash.statusfactory',
 				'test-automation/automated-suite-overview',
 				'squash.configmanager',
 				'jeditable.datepicker', 'squashtable', 'jeditable', 'jquery.squash.buttonmenu' ],
-		function($, translator, execrunner, smode, filtermode, dateutils, statusfactory, autosuitedialog, confman) {
+		function($, translator, execrunner, smode, fmode, dateutils, statusfactory, autosuitedialog, confman) {
 
 			// ****************** TABLE CONFIGURATION **************
 
@@ -334,13 +335,7 @@ define(
 						});
 
 						// update the sort mode
-						var settings = this.fnSettings();
-						var aaSorting = settings.aaSorting;
-
-						this.data('sortmode').manage(aaSorting);
-
-
-
+						this.data('sortmode').update();
 					}
 				};
 
@@ -442,15 +437,31 @@ define(
 					var tableconf = createTableConfiguration(enhconf);
 
 					var sortmode = smode.newInst(enhconf);
+					var filtermode = fmode.newInst(enhconf);
+					
 					tableconf.tconf.aaSorting = sortmode.loadaaSorting();
-
+					tableconf.tconf.searchCols = filtermode.loadSearchCols();
+					
 					var table = $("#test-suite-test-plans-table").squashTable(tableconf.tconf, tableconf.sconf);
 					table.data('sortmode', sortmode);
-					this.lockSortMode = sortmode._lockSortMode;
-					this.unlockSortMode = sortmode._unlockSortMode;
-					this.hideFilterFields = filtermode.hideFilterFields;
-					this.showFilterFields = filtermode.showFilterFields;
-					filtermode.initializeFilterFields(enhconf);
+					
+					// glue code between the filter and the sort mode				
+					function toggleSortmode(locked){
+						if (locked){
+							sortmode.disableReorder();
+						}
+						else{
+							sortmode.enableReorder();
+						}
+					}
+					
+					toggleSortmode(filtermode.isFiltering());
+					
+					table.toggleFiltering = function(){
+						var isFiltering = filtermode.toggleFilter();
+						toggleSortmode(isFiltering);
+					};
+					
 				}
 			};
 

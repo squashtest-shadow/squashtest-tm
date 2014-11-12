@@ -39,8 +39,6 @@
 
 define(['squash.translator', './test-plan-panel/table', './test-plan-panel/popups', 'app/util/ButtonUtil' ], function(translator, table, popups, ButtonUtil ) {
 
-	var filterOn = false;
-
 	function enhanceConfiguration(origconf){
 
 		var conf = $.extend(true, {}, origconf);
@@ -95,26 +93,8 @@ define(['squash.translator', './test-plan-panel/table', './test-plan-panel/popup
 
 
 		$("#filter-test-plan-button").on('click', function(){
-			var domtable =  $("#campaign-test-plans-table");
-			if(filterOn){
-				filterOn = false;
-				table.hideFilterFields();
-				table.unlockSortMode();
-				$("#test-plan-sort-mode-message").show();
-				domtable.find('.select-handle').removeClass('drag-handle');
-				if (this.reorderable){
-					ButtonUtil.enable($("#reorder-test-plan-button"));
-				}
-
-			} else {
-				filterOn = true;
-				table.showFilterFields();
-				table.lockSortMode();
-				$("#test-plan-sort-mode-message").hide();
-				domtable.find('.select-handle').addClass('drag-handle');
-				ButtonUtil.disable($("#reorder-test-plan-button"));
-
-			}
+			var domtable =  $("#campaign-test-plans-table").squashTable();
+			domtable.toggleFiltering();	// see the initialization module table#init()
 		});
 	}
 
