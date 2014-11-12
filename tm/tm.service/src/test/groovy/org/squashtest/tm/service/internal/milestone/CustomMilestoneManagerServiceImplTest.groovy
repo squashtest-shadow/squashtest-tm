@@ -20,19 +20,23 @@
  */
 package org.squashtest.tm.service.internal.milestone
 import org.squashtest.tm.domain.milestone.Milestone
+import org.squashtest.tm.service.internal.repository.MilestoneBindingDao
 import org.squashtest.tm.service.internal.repository.MilestoneDao
+
 import spock.lang.Specification
 class CustomMilestoneManagerServiceImplTest extends Specification {
 
 	CustomMilestoneManagerServiceImpl manager = new CustomMilestoneManagerServiceImpl()
 	MilestoneDao milestoneDao= Mock()
-	
+	MilestoneBindingDao milestoneBindingDao = Mock()
+
 	def setup(){
 		manager.milestoneDao = milestoneDao
+		manager.milestoneBindingDao = milestoneBindingDao
 	}
-	
+
 	def "should delete milestones"(){
-		
+
 		given :
 		def ids = [1L, 2L, 5L]
 		def milestones = ids.collect{new Milestone(id:it)}
@@ -41,6 +45,6 @@ class CustomMilestoneManagerServiceImplTest extends Specification {
 		manager.removeMilestones(ids)
 		then :
 		milestones.each{1 * milestoneDao.remove(it)}
-		
+
 	}
 }
