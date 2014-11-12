@@ -606,6 +606,22 @@ define(["jquery",
 		});
 	}
 	
+	
+	function _getColumnNameByIndex(idx){
+		var col = this.fnSettings().aoColumns[idx];
+		return col.mDataProp;
+	}
+	
+	function _getColumnIndexByName(name){
+		var cols = this.fnSettings().aoColumns();
+		for (var i=0;i<cols.length;i++){
+			if (cols[i].mDataProp === name){
+				return i;
+			}
+		}
+		return -1; // if not found;
+	}
+	
 	// reapped from the dataTable source : 
 	function _getAjaxParameters(){
 		var settings = this.fnSettings();
@@ -1458,6 +1474,9 @@ define(["jquery",
 		this.enableTableDragAndDrop = _enableTableDragAndDrop;
 		this.restoreTableSelection = _restoreTableSelection;
 		this.applyFilteredStyle = _applyFilteredStyle;
+		
+		this.getColumnNameByIndex = _getColumnNameByIndex;
+		this.getColumnIndexByName = _getColumnIndexByName;
 
 		if (squashSettings && squashSettings.bindDeleteButtons) {
 			this.bindDeleteButtons = squashSettings.bindDeleteButtons;
