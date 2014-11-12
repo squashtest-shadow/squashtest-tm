@@ -1,18 +1,22 @@
 /**
- * This file is part of the Squashtest platform. Copyright (C) 2010 - 2014 Henix, henix.fr
+ *     This file is part of the Squashtest platform.
+ *     Copyright (C) 2010 - 2014 Henix, henix.fr
  *
- * See the NOTICE file distributed with this work for additional information regarding copyright ownership.
+ *     See the NOTICE file distributed with this work for additional
+ *     information regarding copyright ownership.
  *
- * This is free software: you can redistribute it and/or modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later
- * version.
+ *     This is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU Lesser General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
  *
- * this software is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied
- * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
- * details.
+ *     this software is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU Lesser General Public License for more details.
  *
- * You should have received a copy of the GNU Lesser General Public License along with this software. If not, see
- * <http://www.gnu.org/licenses/>.
+ *     You should have received a copy of the GNU Lesser General Public License
+ *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.squashtest.tm.service.internal.milestone;
 
@@ -167,27 +171,29 @@ public class CustomMilestoneBindingServiceImpl implements CustomMilestoneBinding
 
 	}
 
+
 	private CompareToBuilder buildProjectComparator(final PagingAndSorting sorter, GenericProject o1,
 			GenericProject o2) {
 
 		CompareToBuilder comp = new CompareToBuilder();
 
-			Object first = null;
-			Object second = null;
+		Object first = null;
+		Object second = null;
 
-			switch (sorter.getSortedAttribute()) {
-			case "name":
-				first = o1.getName();
-				second = o2.getName();
-				break;
-			}
-				if (sorter.getSortOrder().equals(SortOrder.DESCENDING)) {
-					comp.append(first, second);
-				} else {
-					comp.append(second, first);
-				}
-			return comp;
+		if ("name".equals(sorter.getSortedAttribute())){
+			first = o1.getName();
+			second = o2.getName();
 		}
+		// FIXME don't forget an "else" branch that will initialize "first" and "second" eventually
+
+		if (sorter.getSortOrder().equals(SortOrder.DESCENDING)) {
+			comp.append(first, second);
+		} else {
+			comp.append(second, first);
+		}
+
+		return comp;
+	}
 
 	@Override
 	public PagedCollectionHolder<List<GenericProject>> getAllBindableProjectForMilestone(Long milestoneId,
@@ -210,5 +216,5 @@ public class CustomMilestoneBindingServiceImpl implements CustomMilestoneBinding
 		List<MilestoneBinding> bindings = milestoneBindingDao.findAllByMilestoneAndProjects(milestoneId, projectIds);
 		milestoneBindingDao.removeAll(bindings);
 	}
-	
+
 }
