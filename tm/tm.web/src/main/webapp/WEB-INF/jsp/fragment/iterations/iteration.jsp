@@ -116,7 +116,12 @@
 
 <div
 	class="ui-widget-header ui-state-default ui-corner-all fragment-header ctx-title">
-	<div  class="small-margin-left">
+  <div id="right-frame-button">
+    <f:message var="toggleButton" key="report.workspace.togglebutton.normal.label" />
+    <input type="button" class="sq-btn btn-sm" id="toggle-expand-left-frame-button" value="${toggleButton }" />
+  </div>
+
+  <div  class="small-margin-left">
 		<h2>
 		
             <a id="iteration-name" href="${ iterationUrl }/info">
