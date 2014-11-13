@@ -36,13 +36,13 @@ import spock.lang.Specification
  *
  */
 class StartTestExecutionTest extends Specification {
-	
+
 	BuildDef buildDef = Mock()
 	TestAutomationProject project = Mock()
 	HttpClientProvider clientProvider = Mock()
-	
+
 	StartTestExecution ste
-	
+
 
 	def setup() {
 
@@ -52,23 +52,20 @@ class StartTestExecutionTest extends Specification {
 	}
 
 	/*
-	def mockContext(httpClient) {
-		ExecuteAndWatchContext res = Mock()
-		res.getHttpClientProvider() >> mockHttpClientProvider(httpClient)
-		return res
-	}
+	 def mockContext(httpClient) {
+	 ExecuteAndWatchContext res = Mock()
+	 res.getHttpClientProvider() >> mockHttpClientProvider(httpClient)
+	 return res
+	 }
+	 def mockHttpClientProvider(httpClient) {
+	 httpClient = httpClient ?: Mock(HttpClient)
+	 HttpClientProvider res = Mock()
+	 res.getClientFor(_) >> httpClient
+	 res.getRequestFactoryFor(_) >> new CommonsClientHttpRequestFactory(httpClient);
+	 return res
+	 }
+	 */
 
-	def mockHttpClientProvider(httpClient) {
-		httpClient = httpClient ?: Mock(HttpClient)
-
-		HttpClientProvider res = Mock()
-		res.getClientFor(_) >> httpClient
-		res.getRequestFactoryFor(_) >> new CommonsClientHttpRequestFactory(httpClient);
-
-		return res
-	}
-*/
-	
 	def "should marshall model into a file"() {
 		given:
 		AutomatedExecutionExtender exec = Mock()
@@ -89,8 +86,9 @@ class StartTestExecutionTest extends Specification {
 
 		then:
 		[
-			"""{"test":[{"id":"12","script":"to/the/batcave","param":{"batman":"leatherpants"}}]}""", 
-			"""{"test":[{"param":{"batman":"leatherpants"},"script":"to/the/batcave","id":"12"}]}"""
+			"""{"test":[{"id":"12","script":"to/the/batcave","param":{"batman":"leatherpants"}}]}""",
+			"""{"test":[{"param":{"batman":"leatherpants"},"script":"to/the/batcave","id":"12"}]}""",
+			"""{"test":[{"id":"12","param":{"batman":"leatherpants"},"script":"to/the/batcave"}]}"""
 		].contains(f.text)
 	}
 }
