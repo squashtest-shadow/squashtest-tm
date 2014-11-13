@@ -613,7 +613,7 @@ define(["jquery",
 	}
 	
 	function _getColumnIndexByName(name){
-		var cols = this.fnSettings().aoColumns();
+		var cols = this.fnSettings().aoColumns;
 		for (var i=0;i<cols.length;i++){
 			if (cols[i].mDataProp === name){
 				return i;

@@ -63,7 +63,7 @@ final class TestPlanFilteringHelper {
 	public static final String REFERENCE_DATA = "reference";
 	public static final String TESTCASE_DATA = "tc-name";
 	public static final String WEIGHT_DATA = "importance";
-	public static final String DATASET_DATA = "dataset";
+	public static final String DATASET_DATA = "dataset.selected.name";
 	public static final String TESTSUITE_DATA = "suite";
 	public static final String STATUS_DATA = "status";
 	public static final String USER_DATA = "assignee-login";

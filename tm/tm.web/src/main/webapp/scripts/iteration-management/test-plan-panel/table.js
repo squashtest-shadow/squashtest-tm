@@ -312,21 +312,25 @@ define(
 
 					fnPreDrawCallback : function(settings){
 
-						// hide the Dataset column if all is empty
+						/*
+						 * The column dataset.selected.name is visible if : 
+						 * 1/ the dataset column is being filtered (we want to see the filter) or
+						 * 2/ at least one row contains a non empty dataset
+						 * 
+						 */
 						var alldata = this.fnGetData();
-						var havingDataset = $.grep(alldata, function(model){ return model.dataset.available.length !== 0 ;});
-						var dsColVis = (havingDataset.length !== 0);
+						
+						var dsFilterOn = this.data('filtermode').isFiltering('dataset.selected.name'),
+							rowsHavingDataset = $.grep(alldata, function(model){ return model.dataset.available.length !== 0 ;});
 
-						var dsColIdx;
-						$.each(settings.aoColumns, function(idx, col){
-							if (col.mDataProp.search(/dataset/) > -1) {
-								dsColIdx = idx;
-								return false;
-							}
-						});
+						
+						var dsColIdx = this.getColumnIndexByName('dataset.selected.name'),
+							dsColVis = (dsFilterOn || rowsHavingDataset.length!==0);
+						
 
 						this.fnSetColumnVis(dsColIdx, dsColVis, false);
 						this.data('showDatasets', dsColVis);
+				
 					},
 
 
@@ -480,11 +484,14 @@ define(
 					tableconf.tconf.aaSorting = sortmode.loadaaSorting();
 					tableconf.tconf.searchCols = filtermode.loadSearchCols();
 
-					var table = $("#iteration-test-plans-table").squashTable(
-							tableconf.tconf, tableconf.sconf);
+					var $table = $("#iteration-test-plans-table");
 					
-					table.data('sortmode', sortmode);
+					$table.data('sortmode', sortmode);
+					$table.data('filtermode', filtermode);
 					
+					
+					var sqtable = $table.squashTable(tableconf.tconf, tableconf.sconf);
+
 					// glue code between the filter and the sort mode				
 					function toggleSortmode(locked){
 						if (locked){
@@ -497,7 +504,7 @@ define(
 					
 					toggleSortmode(filtermode.isFiltering());
 					
-					table.toggleFiltering = function(){
+					sqtable.toggleFiltering = function(){
 						var isFiltering = filtermode.toggleFilter();
 						toggleSortmode(isFiltering);
 					};

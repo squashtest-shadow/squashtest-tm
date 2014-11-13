@@ -27,7 +27,6 @@ import java.util.Locale;
 
 import javax.inject.Inject;
 
-import org.springframework.osgi.extensions.annotation.ServiceReference;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -66,12 +65,12 @@ public class CustomFieldBindingController {
 
 	@Inject
 	private CustomFieldJsonConverter converter;
-/*
+	/*
 	@ServiceReference
 	public void setCustomFieldBindingModificationService(CustomFieldBindingModificationService service) {
 		this.service = service;
 	}
-*/
+	 */
 	@RequestMapping(method = RequestMethod.GET, params = { PROJECT_ID, "!bindableEntity" }, headers = AcceptHeaders.CONTENT_JSON)
 	@ResponseBody
 	public List<CustomFieldBindingModel> findAllCustomFieldsForProject(@RequestParam(PROJECT_ID) Long projectId) {

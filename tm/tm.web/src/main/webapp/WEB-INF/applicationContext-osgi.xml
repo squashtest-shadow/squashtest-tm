@@ -287,11 +287,14 @@
 
   <!-- CUF services -->
 
-  <osgi:reference id="squashtest.tm.service.CustomFieldBindingFinder" interface="org.squashtest.tm.service.customfield.CustomFieldBindingFinderService"
-    availability="mandatory" />
-
-  <osgi:reference id="squashtest.tm.service.CustomFieldBindingModifier" bean-name="squashtest.tm.service.CustomFieldBindingModifier"
-    interface="org.squashtest.tm.service.customfield.CustomFieldBindingModificationService" availability="mandatory" />
+  <osgi:reference id="squashtest.tm.service.CustomFieldBindingService" bean-name="squashtest.tm.service.CustomFieldBindingService"   	
+    availability="mandatory" >
+    <osgi:interfaces>
+    	<value>org.squashtest.tm.service.customfield.CustomFieldBindingFinderService</value>
+    	<value>org.squashtest.tm.service.customfield.CustomFieldBindingModificationService</value>
+    </osgi:interfaces>    
+ </osgi:reference>
+  
 
   <osgi:reference id="squashtest.tm.service.CustomFieldManagerService" bean-name="squashtest.tm.service.CustomFieldManagerService"
     availability="mandatory">

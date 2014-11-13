@@ -18,8 +18,8 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define(["jquery",  "jquery.squash.rangedatepicker", "squash.translator", "workspace.storage", "app/util/StringUtil" ], 
-		function($, rangedatepicker, translator, storage, strUtils){
+define(["jquery",  "jquery.squash.rangedatepicker", "squash.translator", "workspace.storage", "app/util/StringUtil", "underscore" ], 
+		function($, rangedatepicker, translator, storage, strUtils, _){
 	
 	"use strict";
 
@@ -52,10 +52,10 @@ define(["jquery",  "jquery.squash.rangedatepicker", "squash.translator", "worksp
 			self = this;
 		
 		if (!entityId) {
-			throw "sortmode : entity id absent from table data attributes";
+			throw "filtermode : entity id absent from table data attributes";
 		}
 		if (!entityType) {
-			throw "sortmode : entity type absent from table data attributes";
+			throw "filtermode : entity type absent from table data attributes";
 		}
 
 		this.key = entityType + "-filter-" + entityId;
@@ -68,7 +68,7 @@ define(["jquery",  "jquery.squash.rangedatepicker", "squash.translator", "worksp
 		
 		function isDefaultFiltering(currentFilter){
 			return $.grep(currentFilter, function(o){
-				return ( strUtils.isEmpty(o.sSearch) );				
+				return ( strUtils.isBlank(o.sSearch) );				
 			}).length === 0;
 		}
 
@@ -89,8 +89,6 @@ define(["jquery",  "jquery.squash.rangedatepicker", "squash.translator", "worksp
 		};
 		
 
-		
-		
 		function hideInputs() {
 			table.find(".th_input").hide();
 		}
@@ -307,9 +305,33 @@ define(["jquery",  "jquery.squash.rangedatepicker", "squash.translator", "worksp
 			}
 		};
 
-		this.isFiltering = function(){
-			return this.active;
+		
+		/*
+		 * Arguments : 
+		 * - (none) : returns whether the filter is active or not
+		 * - int : returns true if the filter is active and the given column is being actively filtered on, identified by position
+		 * - string : returns true if the filter is active and the given column is being actively filtered on, identified by name
+		 * 
+		 */
+		this.isFiltering = function(arg){
+			
+			if (arg === undefined){
+				return this.active;				
+			}
+			
+			else if (_.isNumber(arg)){
+				var filterNotDef = strUtils.isBlank(table.squashTable().fnSettings().aoPreSearchCols[arg].sSearch);
+				return this.active && (! filterNotDef);
+			}
+			
+			else {
+				var idx = table.squashTable().getColumnIndexByName(arg);
+				var filterNotDef = strUtils.isBlank(table.squashTable().fnSettings().aoPreSearchCols[idx].sSearch);
+				return this.active && (! filterNotDef);
+			}
 		};
+		
+		
 		
 		this.toggleFilter = function(){
 			
@@ -334,6 +356,7 @@ define(["jquery",  "jquery.squash.rangedatepicker", "squash.translator", "worksp
 				if (state !== undefined){
 					restoreTableFilter(state.filter);
 				}
+				
 				showInputs();
 				
 				this._save();	

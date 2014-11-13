@@ -22,6 +22,8 @@ package org.squashtest.tm.web.internal.controller.customfield;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.springframework.osgi.extensions.annotation.ServiceReference;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -39,57 +41,60 @@ import org.squashtest.tm.service.customfield.CustomFieldBindingFinderService;
 @RequestMapping("administration/projects/{projectId}/custom-fields-binding")
 public class CustomFieldBindingManagerController {
 
+	@Inject
 	private CustomFieldBindingFinderService service;
-	
+
 	//private static final Logger LOGGER = LoggerFactory.getLogger(CustomFieldBindingManagerController.class);
 	private static final int DEFAULT_PAGE_SIZE = 10;
-	
+
+	/*
 	@ServiceReference
 	public void setCustomFieldBindingFinderService(CustomFieldBindingFinderService service){
 		this.service=service;
 	}
-	
+	 */
+
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getManager(@PathVariable("projectId") Long projectId){
-		
-	    List<CustomField> customFields = service.findAvailableCustomFields();
-	    ModelAndView mav;
-	    
-	    if (customFields.size() > 0){
-	    
-		List<CustomFieldBinding> testCaseBindings = service.findCustomFieldsForProjectAndEntity
-													(projectId, BindableEntity.TEST_CASE, new DefaultPagingAndSorting(DEFAULT_PAGE_SIZE)).getPagedItems();
-		
-		List<CustomFieldBinding> testStepBindings = service.findCustomFieldsForProjectAndEntity(projectId, BindableEntity.TEST_STEP);
-		List<CustomFieldBinding> requirementBindings = service.findCustomFieldsForProjectAndEntity(projectId, BindableEntity.REQUIREMENT_VERSION);
-		List<CustomFieldBinding> campaignBindings = service.findCustomFieldsForProjectAndEntity(projectId, BindableEntity.CAMPAIGN);
-		List<CustomFieldBinding> iterationBindings = service.findCustomFieldsForProjectAndEntity(projectId, BindableEntity.ITERATION);
-		List<CustomFieldBinding> testSuiteBindings = service.findCustomFieldsForProjectAndEntity(projectId, BindableEntity.TEST_SUITE);
-		List<CustomFieldBinding> executionBindings = service.findCustomFieldsForProjectAndEntity(projectId, BindableEntity.EXECUTION);
-		List<CustomFieldBinding> executionStepBindings = service.findCustomFieldsForProjectAndEntity(projectId, BindableEntity.EXECUTION_STEP);
-		
-		mav = new ModelAndView("project-tabs/custom-field-binding.html");
-		mav.addObject("testCaseBindings", testCaseBindings);
-		mav.addObject("testStepBindings", testStepBindings);
-		mav.addObject("requirementBindings", requirementBindings);
-		mav.addObject("campaignBindings", campaignBindings);
-		mav.addObject("iterationBindings", iterationBindings);
-		mav.addObject("testSuiteBindings", testSuiteBindings);
-		mav.addObject("executionBindings", executionBindings);
-		mav.addObject("executionStepBindings", executionStepBindings);
-		
-		mav.addObject("projectIdentifier", projectId);
-	    }
-	    else {
-	     mav = new ModelAndView("fragment/project/project-no-cuf-exists");  
-	     mav.addObject("msg", "message.project.cuf.noCufExists");
-	    }
-		
+
+		List<CustomField> customFields = service.findAvailableCustomFields();
+		ModelAndView mav;
+
+		if (customFields.size() > 0){
+
+			List<CustomFieldBinding> testCaseBindings = service.findCustomFieldsForProjectAndEntity
+					(projectId, BindableEntity.TEST_CASE, new DefaultPagingAndSorting(DEFAULT_PAGE_SIZE)).getPagedItems();
+
+			List<CustomFieldBinding> testStepBindings = service.findCustomFieldsForProjectAndEntity(projectId, BindableEntity.TEST_STEP);
+			List<CustomFieldBinding> requirementBindings = service.findCustomFieldsForProjectAndEntity(projectId, BindableEntity.REQUIREMENT_VERSION);
+			List<CustomFieldBinding> campaignBindings = service.findCustomFieldsForProjectAndEntity(projectId, BindableEntity.CAMPAIGN);
+			List<CustomFieldBinding> iterationBindings = service.findCustomFieldsForProjectAndEntity(projectId, BindableEntity.ITERATION);
+			List<CustomFieldBinding> testSuiteBindings = service.findCustomFieldsForProjectAndEntity(projectId, BindableEntity.TEST_SUITE);
+			List<CustomFieldBinding> executionBindings = service.findCustomFieldsForProjectAndEntity(projectId, BindableEntity.EXECUTION);
+			List<CustomFieldBinding> executionStepBindings = service.findCustomFieldsForProjectAndEntity(projectId, BindableEntity.EXECUTION_STEP);
+
+			mav = new ModelAndView("project-tabs/custom-field-binding.html");
+			mav.addObject("testCaseBindings", testCaseBindings);
+			mav.addObject("testStepBindings", testStepBindings);
+			mav.addObject("requirementBindings", requirementBindings);
+			mav.addObject("campaignBindings", campaignBindings);
+			mav.addObject("iterationBindings", iterationBindings);
+			mav.addObject("testSuiteBindings", testSuiteBindings);
+			mav.addObject("executionBindings", executionBindings);
+			mav.addObject("executionStepBindings", executionStepBindings);
+
+			mav.addObject("projectIdentifier", projectId);
+		}
+		else {
+			mav = new ModelAndView("fragment/project/project-no-cuf-exists");
+			mav.addObject("msg", "message.project.cuf.noCufExists");
+		}
+
 		return mav;
-		
+
 	}
 
 
-	
-	
+
+
 }
