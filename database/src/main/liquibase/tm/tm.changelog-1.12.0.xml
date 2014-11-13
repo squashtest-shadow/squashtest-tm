@@ -151,5 +151,14 @@
   
   </changeSet>
   
+  <changeSet id="tm-1.12.0.issue-4017-1" author="bsiri">
+  	<comment>Some columns in REQUIREMENT_PROPERTY_CHANGE are too short compared to what 
+  	they are supposed to store. This changeset makes them bigger.</comment>
+  	
+  	<modifyDataType tableName="REQUIREMENT_PROPERTY_CHANGE" columnName="OLD_VALUE" newDataType="java.sql.Types.VARCHAR(255)"/>
+  	
+  	<modifyDataType tableName="REQUIREMENT_PROPERTY_CHANGE" columnName="NEW_VALUE" newDataType="java.sql.Types.VARCHAR(255)"/>
+  
+  </changeSet>
   
 </databaseChangeLog>

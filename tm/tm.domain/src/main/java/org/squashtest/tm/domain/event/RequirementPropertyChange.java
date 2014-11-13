@@ -37,7 +37,7 @@ import org.squashtest.tm.domain.requirement.RequirementVersion;
 @Entity
 @PrimaryKeyJoinColumn(name = "EVENT_ID")
 public class RequirementPropertyChange extends RequirementAuditEvent implements RequirementVersionModification,
-		ChangedProperty {
+ChangedProperty {
 	public static RequirementPropertyChangeEventBuilder<RequirementPropertyChange> builder() {
 		return new Builder();
 	}
@@ -59,9 +59,9 @@ public class RequirementPropertyChange extends RequirementAuditEvent implements 
 	@NotNull
 	@Size(min = 0, max = 100)
 	private String propertyName;
-	@Size(min = 0, max = 100)
+	@Size(min = 0, max = 255)
 	private String oldValue;
-	@Size(min = 0, max = 100)
+	@Size(min = 0, max = 255)
 	private String newValue;
 
 	public RequirementPropertyChange() {
