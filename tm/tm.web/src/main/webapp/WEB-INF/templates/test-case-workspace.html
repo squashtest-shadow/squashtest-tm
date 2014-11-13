@@ -1,0 +1,772 @@
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) 2010 - 2014 Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-transitional-thymeleaf-spring3-3.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+<title th:text="#{squashtm}">Squash</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<!-- common head -->
+<link rel="stylesheet" type="text/css" media="all"
+  href="../../../../../../../tm/tm.web/src/main/webapp/styles/squash.core.css" sq:css="squash.core.css" />
+<link rel="shortcut icon" type="image/x-icon" media="all"
+  href="../../../../../../../tm/tm.web/src/main/webapp/images/favicon.ico" th:href="@{/images/favicon.ico}" />
+<link rel="stylesheet" type="text/css" media="all"
+  href="../../../../../../../tm/tm.web/src/main/webapp/styles/squash.green.css" sq:css="squash.green.css" />
+<!-- rich jeditable header -->
+<script th:remove="all" type="text/javascript" src="../../scripts/lib/jquery/jquery-2.1.1.min.js"></script>
+<script th:remove="all" type="text/javascript" src="../../js/thymol.js"></script>
+<script type="text/javascript" th:inline="javascript">
+    /* <![CDATA[ */
+    	var squashtm = {};
+    	squashtm.app = {
+    		locale : /*[[#{squashtm.locale}]]*/ 'fr',
+    	  	contextRoot : /*[[ @{/} ]]*/"http://localhost:8080/squash",
+			menuBarConf: {
+	    	}, 
+	    	notificationConf: {
+    			infoTitle: /*[[ #{popup.title.info} ]]*/ 'Info', 
+    			errorTitle: /*[[ #{popup.title.error} ]]*/ 'Erreur'
+    		},
+    		testCaseWorkspaceConf : {
+				tree : {
+					model : /*[[${ rootModel }]]*/ '',
+					workspace : "test-case",
+					treeselector : "#tree",
+					selectedNode : /*[[${selectedNode}]]*/[]
+				},
+				treemenu: {
+  					wizards: /*[[${ wizards }]]*/ '',
+				},
+				toggleWS : {
+					expandSidebarLabel: /*[[ #{report.workspace.togglebutton.expand.label} ]]*/ '>>', 
+					collapseSidebarLabel: /*[[ #{report.workspace.togglebutton.normal.label} ]]*/ '<<'
+				}
+			}
+			
+    	};
+    	
+    /* ]]> */
+    </script>
+<script src="../../scripts/pubsub-boot.js" th:src="@{/scripts/pubsub-boot.js}"></script>
+
+<script data-main="../../scripts/test-case-workspace.js" th:attr="data-main=@{/scripts/test-case-workspace.js}"
+  src="../../scripts/require.js" th:src="@{/scripts/require-min.js}"></script>
+</head>
+<body>
+  <div id="navigation" th:include="navbar.frag :: navbar">NAVBAR</div>
+
+  <div id="workspace">
+    <div id="workspace-title">
+      <div class="snap-left">
+        <h2 th:text="#{workspace.test-case.title}">Espace Cas de tests</h2>
+      </div>
+      <div class="snap-right">
+        <div class="main-menubar" th:include="menubar.frag :: menubar">MENUBAR</div>
+        <div class="unstyled-notification-pane" th:include="menubar.frag :: notification">NOTIFICATION</div>
+      </div>
+    </div>
+    <div th:remove="all">
+      <!-- 		about the z-index : 1 on the tree-panel-left : this ensure that the stacking context of the tree pane will always be  -->
+      <!-- 		above the stacking context of the contextual content. -->
+      <!-- 		An interesting article on that matter : http://philipwalton.com/articles/what-no-one-told-you-about-z-index/   -->
+    </div>
+    <div id="tree-panel-left" style="z-index: 1" class="left-frame">
+      <div class="position-layout-fix">
+        <div id="tabbed-pane">
+          <ul>
+            <li class="tab">
+              <a href="#tree-pane" th:text="#{tabbed_panel.tree.pane.label}"></a>
+            </li>
+
+          </ul>
+          <div id="tree-pane">
+            <!-- ________________TREE MENU_______________ -->
+            <div id="tree_element_menu" class="tree-top-toolbar unstyled-pane">
+              <div class="button-group">
+                <a id="tree-create-button" class="buttonmenu sq-icon-btn" th:title="#{label.create} +'...'"
+                  title="create">
+                  <span class="ui-icon ui-icon-plusthick"></span>
+                </a>
+                <ul id="tree-create-menu" class="not-displayed">
+                  <li id="new-folder-tree-button" class="ui-state-disabled cursor-pointer">
+                    <a th:text="#{tree.button.new-folder.label}+'...'">New folder...</a>
+                  </li>
+                  <li id="new-test-case-tree-button" class="ui-state-disabled cursor-pointer">
+                    <a th:text="#{tree.button.new-test-case.label}+'...'">New test casen...</a>
+                  </li>
+
+                </ul>
+              </div>
+
+              <div class="button-group">
+                <a id="copy-node-tree-button" class="sq-icon-btn" th:title="#{tree.button.copy-node.label}"
+                  title="copy node">
+                  <span class="ui-icon ui-icon-copy"></span>
+                </a>
+                <a id="paste-node-tree-button" class="sq-icon-btn" th:title="#{tree.button.paste-node.label}"
+                  title="paste node">
+                  <span class="ui-icon ui-icon-clipboard"></span>
+                </a>
+              </div>
+
+              <div class="button-group">
+                <a id="rename-node-tree-button" class="sq-icon-btn" th:title="#{tree.button.rename-node.label} + '...'"
+                  title="rename node">
+                  <span class="ui-icon ui-icon-pencil"></span>
+                </a>
+
+                <a id="tree-import-button" class="buttonmenu sq-icon-btn"
+                  th:title="#{squashtm.treemenu.import.label}+'...'" title="rename node">
+                  <span class="ui-icon ui-icon-transferthick-e-w"></span>
+                </a>
+                <ul id="tree-import-menu" class="not-displayed">
+                  <li id="import-excel-tree-button" class="ui-state-disabled cursor-pointer">
+                    <a th:text="#{label.Import}+'...'">Import ...</a>
+                  </li>
+                  <li id="import-links-excel-tree-button" class="ui-state-disabled cursor-pointer">
+                    <a th:text="#{tree.button.import.links.label}+'...'">Import links ...</a>
+                  </li>
+                  <li id="export-tree-button" class="ui-state-disabled cursor-pointer">
+                    <a th:text="#{label.Export}+'...'">full ...</a>
+                  </li>
+                  <!--                   TODO -->
+                  <!--                   <c:forEach var="plugin" items="" varStatus="pluginsts"> -->
+                  <!--       <li th:each="plugin : ${wu:getExportPlugins(pageContext.servletContext, 'TEST_CASE_WORKSPACE')}" id="export-plugin-${pluginsts.index}" class="ui-state-disabled cursor-pointer export-plugin" data-module="${plugin.javascriptModuleName}"><a>${plugin.name}...</a></li> -->
+                  <!-- </c:forEach> -->
+                </ul>
+              </div>
+              <div class="button-group">
+                <a id="search-tree-button" class="sq-icon-btn" th:title="#{tree.button.search.label}" title="search">
+                  <span class="ui-icon ui-icon-search"></span>
+                </a>
+              </div>
+              <div id="wizard-tree-pane" class="button-group" th:if="${ not #lists.isEmpty(wizards)}">
+                <a id="wizard-tree-button" class="buttonmenu sq-icon-btn" th:title="#{label.wizards}+'...'"
+                  title="wizards...">
+                  <span class="ui-icon ui-icon-star"></span>
+                </a>
+                <script id="ws-wizard-tree-menu-template" type="text/x-handlebars-template">		
+								<ul id="ws-wizard-tree-menu">
+								{{#each wizards}}
+								<li id="{{this.name}}" class="ui-state-disabled cursor-pointer"><a  title="{{this.tooltip}}">{{this.label}}...</a></li>
+								{{/each}}
+								</ul>	
+   							 </script>
+                <script id="start-ws-wizard-form-template" type="text/x-handlebars-template">
+								<form id="start-ws-wizard-form" action="{{url}}" method="post"> 
+								{{#each nodes}}
+								<input type="hidden" name="{{this.type}}" value="{{this.id}}" />
+								{{/each}}
+							</form>
+    						</script>
+                <div id="start-ws-wizard-container" class="not-displayed"></div>
+              </div>
+
+              <div class="button-group snap-right">
+                <a id="delete-node-tree-button" class="sq-icon-btn" th:title="#{tree.button.delete.label}+'...'"
+                  title="delete...">
+                  <span class="ui-icon ui-icon-trash"></span>
+                </a>
+              </div>
+            </div>
+            <!-- ____________________/TREE MENU_______________________ -->
+            <!--  ____________________HTML TREE__________________________ -->
+            <!-- 	<tree:_html-tree treeId="tree" /> -->
+
+
+            <div th:remove="tag"
+              th:with="importable = ( ${sec.hasRole('ROLE_TM_PROJECT_MANAGER')} or ${sec.hasRole('ROLE_ADMIN')})">
+              <div th:remove="tag" th:with="filter = ${#workspace.projectFilter()}">
+                <div class="tree-filter-reminder-div">
+                  <span th:class="${filter.enabled} ? '' : 'not-displayed'"
+                    th:text="#{tabbed_panel.tree.pane.filter.enabled.label}">filter enabled</span>
+                </div>
+
+                <div id="tree" class="tree" th:attr="data-importable=${ importable }" data-importable="true"></div>
+              </div>
+            </div>
+            <!-- /	_________________HTML TREE___________________ -->
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="contextual-content">
+      <!--empty -->
+    </div>
+
+
+  </div>
+  <!-- _____________________TEST CASE TREE POPUPS______________________________ -->
+  <!-- 		<wkp:tc-tree-popups/> -->
+
+
+  <div id="treepopups-definition" class="not-displayed">
+
+    <div id="add-folder-dialog" class="popup-dialog not-displayed" th:title="#{dialog.new-folder.title}"
+      title="new folder">
+      <table class="add-node-attributes">
+        <tr>
+          <td>
+            <label for="add-folder-name" th:text="#{label.Name}">Name</label>
+          </td>
+          <td>
+            <input id="add-folder-name" type="text" size="50" maxlength="255" />
+            <br />
+            <span class="error-message name-error"></span>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <label for="add-foldder-description" th:text="#{label.Description}">Description</label>
+          </td>
+          <td>
+            <textarea id="add-folder-description" data-def="isrich"></textarea>
+          </td>
+        </tr>
+      </table>
+      <div class="popup-dialog-buttonpane">
+        <input type="button" th:value="#{label.addAnother}" value="add another" data-def="evt=add-another, mainbtn" />
+        <input type="button" th:value="#{label.Add}" value="add" data-def="evt=add-close" />
+        <input type="button" th:value="#{label.Cancel}" value="cancel" data-def="evt=cancel" />
+      </div>
+    </div>
+
+
+    <div id="add-test-case-dialog" class="popup-dialog not-displayed" th:title="#{dialog.new-test-case.title}"
+      title="new test case">
+      <table class="add-node-attributes">
+
+        <tr>
+          <td>
+            <label for="add-test-case-name" th:text="#{label.Name}">Name</label>
+          </td>
+
+          <td>
+            <input id="add-test-case-name" type="text" size="50" maxlength="255" />
+            <br />
+            <span class="error-message name-error"></span>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <label for="add-test-case-reference" th:text="#{label.Reference}">Reference</label>
+          </td>
+
+          <td>
+            <input id="add-test-case-reference" type="text" size="20" maxlength="50" />
+            <br />
+            <span class="error-message reference-error"></span>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <label for="add-test-case-description" th:text="#{label.Description}">Description</label>
+          </td>
+          <td>
+            <textarea id="add-test-case-description" data-def="isrich"></textarea>
+          </td>
+        </tr>
+      </table>
+      <div class="popup-dialog-buttonpane">
+        <input type="button" th:value="#{label.fem.addAnother}" value="add another" data-def="evt=add-another, mainbtn" />
+        <input type="button" th:value="#{label.Add}" value="add" data-def="evt=add-close" />
+        <input type="button" th:value="#{label.Cancel}" value="cancel" data-def="evt=cancel" />
+      </div>
+    </div>
+
+    <div id="rename-node-dialog" class="popup-dialog not-displayed" th:title="#{dialog.rename-tree-node.title}"
+      title="rename tree node">
+
+      <span data-def="state=denied" th:text="#{dialog.label.rename-node.rejected}">rename node rejected</span>
+
+      <div data-def="state=confirm">
+        <label for="rename-tree-node-text" th:text="#{dialog.rename.label}">rename</label>
+        <input id="rename-tree-node-text" type="text" size="50" />
+        <br />
+        <span class="error-message name-error"></span>
+      </div>
+
+      <div class="popup-dialog-buttonpane">
+        <input type="button" th:value="#{label.Confirm}" value="confirm"
+          data-def="evt=confirm, mainbtn=confirm, state=confirm" />
+        <input type="button" th:value="#{label.Cancel}" value="cancel" data-def="evt=cancel, mainbtn" />
+      </div>
+
+    </div>
+
+
+    <div id="delete-node-dialog" class="popup-dialog not-displayed" th:title="#{dialog.delete-tree-node.title}"
+      title="delete node">
+
+      <div data-def="state=pleasewait">
+        <div class="wait please-wait-message waiting-loading full-size-hack" th:text="#{message.PleaseWait}">zzz</div>
+      </div>
+
+      <div class="not-displayed" data-def="state=confirm">
+
+        <div class="display-table-row">
+          <div class="display-table-cell warning-cell">
+            <div class="delete-node-dialog-warning"></div>
+          </div>
+          <div class="display-table-cell">
+            <p>
+              <span th:text="#{dialog.label.delete-node.label.start}">are you sure you want to delete this </span>
+              <span class='red-warning-message' th:text="#{dialog.label.delete-nodes.test-cases.label}">
+                campaigns </span>
+              <span th:text="#{dialog.label.delete-node.label.end}">??</span>
+            </p>
+
+            <div class="not-displayed delete-node-dialog-details">
+              <p th:text="#{dialog.delete-tree-node.details}">details :</p>
+              <ul>
+              </ul>
+            </div>
+
+            <p>
+              <span th:text="#{dialog.label.delete-node.label.cantbeundone}"> can't be undone </span>
+              <span class='bold-warning-message' th:text="#{dialog.label.delete-node.label.confirm}"> do you
+                confirm ? </span>
+            </p>
+
+          </div>
+        </div>
+      </div>
+
+      <div class="not-displayed" data-def="state=rejected" th:text="#{dialog.label.delete-node.rejected}">delete
+        node rejected</div>
+
+      <div class="popup-dialog-buttonpane">
+        <input type="button" th:value="#{label.Confirm}" value="confirm"
+          data-def="evt=confirm, mainbtn=confirm, state=confirm" />
+        <input type="button" th:value="#{label.Cancel}" value="cancel" data-def="evt=cancel,  mainbtn=rejected" />
+      </div>
+    </div>
+  </div>
+
+  
+<div th:remove="tag" th:if="${sec.hasRole('ROLE_TM_PROJECT_MANAGER')} or ${sec.hasRole('ROLE_ADMIN')}">
+<!--  ================ IMPORT EXCEL POPUP =======================  -->
+
+<!-- <div id="import-excel-dialog" class="popup-dialog not-displayed" title="${importExcelTitle}"> -->
+
+<!--   <div data-def="state=parametrization" class="std-margin-top"> -->
+    
+<!--     <div> -->
+<!--       <form action="${servContext}/test-cases/importer" method="POST" enctype="multipart/form-data" class="display-table"> -->
+
+<!--         <div class="std-padding std-margin-top"> -->
+        
+<!--           <div class="grey-round-panel snap-left" style="width:43%;"> -->
+<!--             <input id="xls-import-opt" type="radio" name="import-type" value="xls" class="centered" checked="checked"/><span style="text-decoration:underline;">Excel</span> -->
+<!--             <div class="nota-bene"> -->
+<!--               <f:message key="test-case.import.dialog.excel.description"/> -->
+<!--             </div> -->
+<!--                         <f:message var="xlsFileName" key="file.testcase.import.template.xls"/> -->
+<!--             <a href="${servContext }/static/${xlsFileName}"> -->
+<!--               <f:message key="test-case.import.dialog.excel.template"/> -->
+<!--             </a>       -->
+<!--           </div> -->
+        
+<!--           <div class="grey-round-panel snap-right" style="width:43%;"> -->
+<!--             <input id="zip-import-opt" type="radio" name="import-type" value="zip" class="centered"/><span style="text-decoration:underline;">ZIP</span> -->
+<!--             <div class="nota-bene"> -->
+<!--               <f:message key="test-case.import.dialog.zip.description"/> -->
+<!--             </div>       -->
+<!--                         <f:message var="zipFileName" key="file.testcase.import.template.zip"/> -->
+<!--             <a href="${servContext }/static/${zipFileName}"> -->
+<!--               <f:message key="test-case.import.dialog.zip.template"/> -->
+<!--             </a> -->
+<!--           </div> -->
+        
+<!--           <div class="unsnap"></div> -->
+        
+<!--         </div> -->
+
+<!--         <div class="std-margin-top"> -->
+<!--         <div> -->
+<!--         <div class="display-table-row"> -->
+<!--           <div class="display-table-cell"><label><f:message key="dialog.import.project.message"/></label></div> -->
+<!--           <div class="display-table-cell"> -->
+<!--             <select id="import-project-list" name="projectId" disabled="disabled"> -->
+<!--               <c:forEach items="${importableLibraries}" var="lib" varStatus="status" > -->
+<!--               <option value="${lib.id}" <c:if test="${status.first}">selected="yes"</c:if>>${lib.project.name}</option> -->
+<!--               </c:forEach> -->
+<!--             </select> -->
+<!--             <div class="icon-helper no-print small-margin-left" title="${targetProjectHelper}"></div> -->
+<!--           </div> -->
+<!--         </div> -->
+
+<!--         <div class="display-table-row"> -->
+<!--           <div class="display-table-cell"><label><f:message key="dialog.import-excel.test-case.filetype.message"/></label></div> -->
+<!--           <div class="display-table-cell"> -->
+<!--             <input type="file" name="archive" size="20" accept="application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/zip" /> -->
+<!--           </div> -->
+<!--         </div> -->
+<!--         <div class="display-table-row"> -->
+<!--           <div class="display-table-cell"><label><f:message key="dialog.import.encoding.label"/></label></div> -->
+<!--           <div class="display-table-cell"> -->
+<!--             <select name="zipEncoding"> -->
+<!--               <option value="Cp858">Windows <f:message key="dialog.import.encoding.default"/></option> -->
+<!--               <option value="UTF8">UTF-8</option> -->
+<!--             </select> -->
+<!--           </div> -->
+<!--         </div> -->
+<!--         </div> -->
+<!--         </div> -->
+<!--       </form> -->
+    
+<!--     </div> -->
+<!--   </div> -->
+  
+<!--   <div data-def="state=confirm"> -->
+<!--     <div class="confirm-div"> -->
+<!--       <label class="confirm-label"><f:message key="dialog.import.file.confirm"/></label> -->
+<!--       <span class="confirm-span confirm-file"></span> -->
+<!--     </div> -->
+<!--     <div class="confirm-div import-project-confirm not-displayed"> -->
+<!--       <label class="confirm-label"><f:message key="dialog.import.project.confirm"/></label> -->
+<!--       <span class="confirm-span confirm-project"><c:out value="${importableLibraries[0].project.name}"/></span> -->
+<!--     </div> -->
+    
+<!--     <div><f:message key="dialog.import.confirm.message"/></div> -->
+<!--   </div> -->
+  
+<!--   <div data-def="state=progression" > -->
+<!--     <comp:waiting-pane/> -->
+<!--   </div> -->
+  
+<!--   <div class="import-summary" data-def="state=summary"> -->
+<!--   </div> -->
+  
+<!--   <script id="zip-import-recap-tpl" type="text/x-handlebars-template"> -->
+<!--   <div><span><f:message key="dialog.import-excel.test-case.total"/></span><span class="total-import span-bold">{{total}}</span></div> -->
+
+<!--   <div><span><f:message key="dialog.import-excel.test-case.success"/></span><span class="success-import span-bold span-green">{{success}}</span></div> -->
+  
+<!--   <div><span><f:message key="dialog.import-excel.test-case.rejected"/></span><span class="rejected-import span-bold span-green">{{rejected}}</span></div> -->
+  
+<!--   <div> -->
+<!--     <span><f:message key="dialog.import-excel.test-case.failed"/></span> -->
+<!--     <span class="failures-import span-bold {{failuresClass}}">{{failures}}</span> -->
+<!--   </div>       -->
+<!--   {{#unless createdOnly}} -->
+<!--   <div class="import-excel-dialog-note"> -->
+<!--     <hr/> -->
+<!--     <span><f:message key="dialog.import.summary.notes.label"/></span> -->
+<!--     <ul> -->
+<!--       {{#if hasRenamed}} -->
+<!--       <li class="import-excel-dialog-renamed"><span><f:message key="dialog.import-excel.test-case.warnings.renamed"/></span></li> -->
+<!--       {{/if}} -->
+<!--       {{#if hasModified}} -->
+<!--       <li class="import-excel-dialog-modified"><span><f:message key="dialog.import-excel.test-case.warnings.modified"/></span></li> -->
+<!--       {{/if}} -->
+<!--       {{#if hasRejects}} -->
+<!--       <li class="import-excel-dialog-extension"><span><f:message key="dialog.import-excel.test-case.warnings.extension"/></span></li> -->
+<!--       {{/if}} -->
+<!--     </ul> -->
+<!--   </div> -->
+<!--   {{/unless}} -->
+<!--   </script> -->
+  
+<!--   <div> -->
+<!--     <p class="cf"> -->
+<!--       <span class="snap-left ui-icon ui-icon-check"></span><f:message key="message.import.success" /> -->
+<!--     </p> -->
+<!--     <p> -->
+<!--     <table> -->
+<!--       <thead> -->
+<!--       <tr> -->
+<!--         <th class="not visible"></th> -->
+<!--         <th><f:message key="message.import.successRowCount" /></th> -->
+<!--         <th><f:message key="message.import.warningRowCount" /></th> -->
+<!--         <th><f:message key="message.import.failureRowCount" /></th> -->
+<!--       </tr> -->
+<!--       </thead> -->
+<!--       <tbody> -->
+<!--       <tr> -->
+<!--         <th><f:message key="label.testCases" /></th> -->
+<!--         <th class="txt-success">{{testCaseSuccesses}}</th> -->
+<!--         <th class="txt-warn">{{testCaseWarnings}}</th> -->
+<!--         <th class="txt-error">{{testCaseFailures}}</th> -->
+<!--       </tr> -->
+<!--       <tr> -->
+<!--         <th><f:message key="label.testSteps" /></th> -->
+<!--         <th class="txt-success">{{testStepSuccesses}}</th> -->
+<!--         <th class="txt-warn">{{testStepWarnings}}</th> -->
+<!--         <th class="txt-error">{{testStepFailures}}</th> -->
+<!--       </tr> -->
+<!--       <tr> -->
+<!--         <th><f:message key="label.parameters" /></th> -->
+<!--         <th class="txt-success">{{parameterSuccesses}}</th> -->
+<!--         <th class="txt-warn">{{parameterWarnings}}</th> -->
+<!--         <th class="txt-error">{{parameterFailures}}</th> -->
+<!--       </tr> -->
+<!--       <tr> -->
+<!--         <th><f:message key="label.datasets" /></th> -->
+<!--         <th class="txt-success">{{datasetSuccesses}}</th> -->
+<!--         <th class="txt-warn">{{datasetWarnings}}</th> -->
+<!--         <th class="txt-error">{{datasetFailures}}</th> -->
+<!--       </tr> -->
+<!--       </tbody> -->
+<!--     </table> -->
+<!--     </p> -->
+<!--     <p class="cf"> -->
+<!--       <span class="snap-left ui-icon ui-icon-arrowthick-1-e"></span><a href="{{reportUrl}}"><f:message key="message.import.downloadLog" /></a> -->
+<!--     </p> -->
+<!--   </div> -->
+<!--   </script> -->
+ 
+  
+<!--    <p><f:message key="message.import.error.format"/><ul> -->
+<!--      {{#if missingMandatoryColumns.length}} -->
+<!--        <li><f:message key="message.import.log.error.mandatoryColumns"/>{{missingMandatoryColumns}}.</li> -->
+<!--      {{/if}} -->
+<!--      {{#if duplicateColumns.length}} -->
+<!--        <li><f:message key="message.import.log.error.duplicateColumns"/></li> -->
+<!--      {{/if}} -->
+<!--    </ul></p> -->
+<!--    </script> -->
+
+<!--       <div data-def="state=error-size"> -->
+<!--     <span class="error-size"><f:message key="dialog.import.error.sizeexceeded"/></span> -->
+<!--   </div> -->
+  
+<!--   <div class="error-type" data-def="state=error-type">     -->
+<!--     <span class="import-err-filetype-text" id="import-err-filetype-text-xls"><f:message key="dialog.import.wrongfile"/><span id="import-err-filetype">xls, xlsx</span></span>  -->
+<!--     <span class="import-err-filetype-text" id="import-err-filetype-text-zip" style="display: none;"><f:message key="dialog.import.wrongfile"/><span id="import-err-filetype">zip</span></span>   -->
+<!--   </div> -->
+<!--   <div class="error-format" data-def="state=error-format"> -->
+<!--     </div> -->
+<!--   <div id="import-excel-dump" class="not-displayed dump"></div> -->
+
+<!--   <div class="popup-dialog-buttonpane"> -->
+<!--     <input id="simulateButton" type="button" value="${simulateLabel}"  data-def="evt=simulate, state=parametrization"/> -->
+<!--     <input type="button" value="${importLabel}"  data-def="evt=import, state=parametrization, mainbtn=parametrization"/> -->
+<!--     <input type="button" value="${confirmLabel}" data-def="evt=confirm, state=confirm, mainbtn=confirm"/> -->
+<!--     <input type="button" value="${okLabel}"    data-def="evt=ok, state=summary, mainbtn=summary"/> -->
+<!--     <input type="button" value="${okLabel}"    data-def="evt=okerrsize, state=error-size, mainbtn=error-size"/> -->
+<!--     <input type="button" value="${okLabel}"    data-def="evt=okerrformat, state=error-type error-format, mainbtn=error-type error-format"/> -->
+<!--     <input type="button" value="${cancelLabel}"  data-def="evt=cancel, state=parametrization confirm"/> -->
+<!--     <input type="button" value="${cancelLabel}"  data-def="evt=cancel-progression, state=progression"/> -->
+<!--   </div> -->
+  
+<!-- </div> -->
+
+<!--  ================ /IMPORT EXCEL POPUP ======================  -->
+</div>
+
+<!--  ================ IMPORT LINK POPUP ======================  -->
+
+<!-- <div id="import-links-excel-dialog" class="popup-dialog not-displayed" title="${importLinksTitle}"> -->
+
+<!--   <div data-def="state=parametrization"> -->
+<!--     <div style="margin-top:1em;margin-bottom:1em;"> -->
+<!--       <form action="${servContext}/requirement-version-coverage/upload" method="POST" enctype="multipart/form-data" class="display-table"> -->
+<!--         <div class="display-table-row"> -->
+<!--           <div class="display-table-cell"><label><f:message key="dialog.import-links-excel.filetype.message"/></label></div> -->
+<!--           <div class="display-table-cell"> -->
+<!--             <input type="file" name="file" size="20" accept="application/vnd.ms-excel" /> -->
+<!--           </div> -->
+<!--         </div> -->
+<!--       </form> -->
+<!--     </div> -->
+<!--   </div> -->
+  
+<!--   <div data-def="state=confirm"> -->
+<!--     <div class="confirm-div"> -->
+<!--       <label class="confirm-label"><f:message key="dialog.import.file.confirm"/></label> -->
+<!--       <span class="confirm-span confirm-file"></span> -->
+<!--     </div> -->
+<!--     <div><f:message key="dialog.import.confirm.message"/></div> -->
+<!--   </div> -->
+  
+<!--   <div data-def="state=progression"> -->
+<!--     <comp:waiting-pane/>     -->
+<!--   </div> -->
+  
+    
+<!--   <div class="import-summary" data-def="state=summary"> -->
+<!--     <br/> -->
+<!--     <div> -->
+<!--       <span class="span-bold" ><f:message key="dialog.import-links-excel.success"/></span> -->
+<!--       <span class="success-import span-bold span-green"></span> -->
+<!--     </div> -->
+<!--     <div> -->
+<!--       <span class="span-bold" ><f:message key="dialog.import-links-excel.failed"/></span> -->
+<!--       <span class="failures-import span-bold"></span> -->
+<!--     </div>       -->
+      
+      
+<!--     <div class="import-links-excel-dialog-note"> -->
+<!--       <br/> -->
+<!--       <div class="import-links-excel-dialog-normal-errors not-displayed"> -->
+<!--         <span><f:message key="dialog.import.summary.notes.label"/><br/> -->
+<!--         <f:message key="dialog.import-links.summary.notes.lines"/> -->
+<!--         </span> -->
+<!--         <ul  contenteditable="true" style="height:100px ; overflow : auto" > -->
+<!--           <li class="import-links-excel-dialog-req-not-found"> -->
+<!--             <span><f:message key="dialog.import.summary.notes.req-not-found.label"/></span> -->
+<!--             <span class="req-not-found-import"></span> -->
+<!--           </li> -->
+<!--           <li class="import-links-excel-dialog-tc-not-found"> -->
+<!--             <span><f:message key="dialog.import.summary.notes.tc-not-found.label"/></span> -->
+<!--             <span class="tc-not-found-import"></span> -->
+<!--           </li> -->
+<!--           <li class="import-links-excel-dialog-version-not-found"> -->
+<!--             <span><f:message key="dialog.import.summary.notes.version-not-found.label"/></span> -->
+<!--             <span class="version-not-found-import"></span> -->
+<!--           </li> -->
+<!--           <li class="import-links-excel-dialog-link-already-exist"> -->
+<!--             <span><f:message key="dialog.import.summary.notes.link-already-exist.label"/></span> -->
+<!--             <span class="link-already-exist-import"></span> -->
+<!--           </li> -->
+<!--           <li class="import-links-excel-dialog-obsolete"> -->
+<!--             <span><f:message key="dialog.import.summary.notes.obsolete.label"/></span> -->
+<!--             <span class="obsolete-import"></span> -->
+<!--           </li> -->
+<!--           <li class="import-links-excel-dialog-req-access-denied"> -->
+<!--             <span><f:message key="dialog.import.summary.notes.req-access-denied.label"/></span> -->
+<!--             <span class="req-access-denied-import"></span> -->
+<!--           </li> -->
+<!--           <li class="import-links-excel-dialog-tc-access-denied"> -->
+<!--             <span><f:message key="dialog.import.summary.notes.tc-access-denied.label"/></span> -->
+<!--             <span class="link-already-exist-import"></span> -->
+<!--           </li> -->
+<!--         </ul> -->
+<!--       </div> -->
+      
+<!--       <div class="import-links-excel-dialog-critical-errors not-displayed"> -->
+<!--         <span><f:message key="dialog.import.summary.errors.label"/><br/></span> -->
+<!--         <ul  contenteditable="true" style="height:100px ; overflow : auto" > -->
+<!--           <li class="import-links-excel-dialog-missing-headers"> -->
+<!--             <span><f:message key="dialog.import.summary.notes.missing-headers.label"/></span> -->
+<!--             <span class="file-missing-headers"></span> -->
+<!--           </li>          -->
+<!--         </ul> -->
+<!--       </div> -->
+          
+<!--     </div> -->
+<!--   </div>   -->
+  
+      
+<!--   <div data-def="state=error-size"> -->
+<!--     <span class="error-size"><f:message key="dialog.import.error.sizeexceeded"/></span> -->
+<!--   </div> -->
+  
+  
+<!--   <div  data-def="state=error-type"> -->
+<!--       <p><f:message key="message.import.error.format"/><ul><li><span><f:message key="dialog.import.wrongfile"/>xls, xlsx</span></li></ul></p> -->
+<!--       <p><f:message key="message.import.error.format"/><ul><li><span><f:message key="dialog.import.wrongfile"/>zip</span></li></ul></p> -->
+<!--   </div> -->
+ 
+    
+  
+  
+<!--   <div id="import-links-dump" class="not-displayed dump"></div>  -->
+
+<!--   <div class="popup-dialog-buttonpane"> -->
+<!--     <input type="button" value="${importLabel}"  data-def="evt=import, state=parametrization, mainbtn=parametrization"/> -->
+<!--     <input type="button" value="${confirmLabel}" data-def="evt=confirm, state=confirm, mainbtn=confirm"/> -->
+<!--     <input type="button" value="${okLabel}"    data-def="evt=ok, state=summary, mainbtn=summary"/> -->
+<!--     <input type="button" value="${okLabel}"    data-def="evt=okerrsize, state=error-size, mainbtn=error-size"/> -->
+<!--     <input type="button" value="${okLabel}"    data-def="evt=okerrformat, state=error-type, mainbtn=error-type"/> -->
+<!--     <input type="button" value="${cancelLabel}"  data-def="evt=cancel, state=parametrization confirm"/> -->
+<!--     <input type="button" value="${cancelLabel}"  data-def="evt=cancel-progression, state=progression"/> -->
+<!--   </div> -->
+  
+<!-- </div> -->
+
+<!--  ================ /IMPORT LINK POPUP ======================  -->
+<!-- </sec:authorize> -->
+
+
+
+<!--  ================= EXPORT TC POPUP ======================= -->
+
+<!-- <div id="export-test-case-dialog" class="popup-dialog not-displayed" title="${exportLabel}" data-def="nameprefix=${exportnamePrefix}, dateformat=${dateexportFormat}"> -->
+
+<!--   <div data-def="state=main" class="std-margin-top"> -->
+          
+<!--     <span ><f:message key="test-case.export.dialog.message"/></span> -->
+    
+<!--     <div class="std-padding std-margin-top"> -->
+    
+<!--       <div class="grey-round-panel snap-left" style="width:43%;"> -->
+<!--         <input type="radio" name="format" data-val="xls" class="centered" checked="checked"/><span style="text-decoration:underline;">Excel</span> -->
+<!--         <div class="nota-bene"> -->
+<!--           <f:message key="test-case.export.dialog.excel.description"/> -->
+<!--         </div>       -->
+<!--       </div> -->
+    
+<!--       <div class="grey-round-panel snap-right" style="width:43%;"> -->
+<!--         <input type="radio" name="format" data-val="csv" class="centered"/><span style="text-decoration:underline;">CSV</span> -->
+<!--         <div class="nota-bene"> -->
+<!--           <f:message key="test-case.export.dialog.csv.description"/> -->
+<!--         </div>       -->
+<!--       </div> -->
+    
+<!--       <div class="unsnap"></div> -->
+    
+<!--     </div> -->
+    
+<!--     <div class="std-margin-top"> -->
+<!--       <span><f:message key="test-case.export.dialog.filename"/></span> -->
+<!--       <input type="text" id="export-test-case-filename" size="255" style="width:350px"/> -->
+<!--     </div> -->
+    
+<!--     <div class="std-margin-top"> -->
+<!--       <input type="checkbox" id="export-test-case-includecalls"/> -->
+<!--       <span><f:message key="test-case.export.dialog.includecall"/></span> -->
+<!--       <div class="nota-bene"> -->
+<!--         <f:message key="test-case.export.dialog.includecall.description"/> -->
+<!--       </div> -->
+<!--     </div> -->
+    
+    
+<!--     <div class="std-margin-top"> -->
+<!--       <input type="checkbox" id="export-test-case-keepRteFormat" checked="checked"/> -->
+<!--       <span><f:message key="test-case.export.dialog.keeprteformat"/></span> -->
+<!--       <div class="nota-bene"> -->
+<!--         <f:message key="test-case.export.dialog.keeprteformat.description"/> -->
+<!--       </div> -->
+<!--     </div> -->
+    
+    
+<!--   </div> -->
+  
+<!--   <div data-def="state=nonodeserror" class="std-margin-top"> -->
+<!--     <span><f:message key="message.exportTestCaseNoNodeSelected"/></span> -->
+<!--   </div> -->
+
+<!--   <div class="popup-dialog-buttonpane"> -->
+<!--     <input type="button" value="${exportLabel}"   data-def="evt=confirm, mainbtn=main"/> -->
+<!--     <input type="button" value="${cancelLabel}"   data-def="evt=cancel, mainbtn=nonodeserror" /> -->
+<!--   </div> -->
+<!-- </div> -->
+
+
+<!--  ================= /EXPORT TC POPUP =======================  -->
+<!--  ___________________/TEST_CASE TREE POPUPS_______________________________ -->
+</body>
+</html>

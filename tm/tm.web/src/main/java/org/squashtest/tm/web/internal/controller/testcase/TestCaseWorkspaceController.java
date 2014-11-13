@@ -60,7 +60,7 @@ public class TestCaseWorkspaceController extends WorkspaceController<TestCaseLib
 
 	@Override
 	protected String getWorkspaceViewName() {
-		return "page/test-case-workspace/test-case-workspace";
+		return "test-case-workspace.html";
 	}
 
 	/**
