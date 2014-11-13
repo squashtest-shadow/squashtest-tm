@@ -88,6 +88,9 @@ class StartTestExecutionTest extends Specification {
 
 
 		then:
-		f.text == """{"test":[{"id":"12","script":"to/the/batcave","param":{"batman":"leatherpants"}}]}"""
+		[
+			"""{"test":[{"id":"12","script":"to/the/batcave","param":{"batman":"leatherpants"}}]}""", 
+			"""{"test":[{"param":{"batman":"leatherpants"},"script":"to/the/batcave","id":"12"}]}"""
+		].contains(f.text)
 	}
 }
