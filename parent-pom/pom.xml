@@ -118,6 +118,7 @@
                   <nonFilteredFileExtensions>
                     <nonFilteredFileExtension>tag</nonFilteredFileExtension>
                     <nonFilteredFileExtension>jsp</nonFilteredFileExtension>
+                    <nonFilteredFileExtension>html</nonFilteredFileExtension>
                   </nonFilteredFileExtensions>
                   <resources>
 
