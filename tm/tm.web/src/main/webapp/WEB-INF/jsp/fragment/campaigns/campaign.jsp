@@ -21,8 +21,7 @@
 
 --%>
 <?xml version="1.0" encoding="utf-8" ?>
-<%@ page language="java" contentType="text/html; charset=utf-8"
-	pageEncoding="utf-8"%>
+<%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component"%>
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt"%>
@@ -30,15 +29,15 @@
 <%@ taglib prefix="authz" tagdir="/WEB-INF/tags/authz"%>
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component"%>
 <%@ taglib prefix="at" tagdir="/WEB-INF/tags/attachments"%>
-<%@ taglib prefix="csst" uri="http://org.squashtest.tm/taglib/css-transform" %>
-<%@ taglib prefix="dashboard" tagdir="/WEB-INF/tags/dashboard" %>
+<%@ taglib prefix="csst" uri="http://org.squashtest.tm/taglib/css-transform"%>
+<%@ taglib prefix="dashboard" tagdir="/WEB-INF/tags/dashboard"%>
 <%@ taglib prefix="json" uri="http://org.squashtest.tm/taglib/json"%>
 
-<f:message var="squashlocale" key="squashtm.locale" />	
-<f:message var="iterationPlanningTitle" key="campaigns.planning.iterations.scheduled_dates"/>	
-<f:message var="iterationPlanningButton" key="campaigns.planning.iterations.button" /> 
-<f:message var="buttonOK" key="label.Ok"/>
-<f:message var="buttonCancel" key="label.Cancel"/>
+<f:message var="squashlocale" key="squashtm.locale" />
+<f:message var="iterationPlanningTitle" key="campaigns.planning.iterations.scheduled_dates" />
+<f:message var="iterationPlanningButton" key="campaigns.planning.iterations.button" />
+<f:message var="buttonOK" key="label.Ok" />
+<f:message var="buttonCancel" key="label.Cancel" />
 <f:message var="dateformat" key="squashtm.dateformatShort" />
 
 <comp:datepicker-manager locale="${squashlocale}" />
@@ -46,274 +45,269 @@
 <c:url var="ckeConfigUrl" value="/styles/ckeditor/ckeditor-config.js" />
 <c:url var="campaignUrl" value="/campaigns/${campaign.id}" />
 <c:url var="campaignInfoUrl" value="/campaigns/${campaign.id}/general" />
-<c:url var="campaignPlanningUrl" value="/campaigns/${campaign.id}/planning"/>
+<c:url var="campaignPlanningUrl" value="/campaigns/${campaign.id}/planning" />
 <c:url var="campaignStatisticsUrl" value="/campaigns/${campaign.id}/dashboard-statistics" />
-<c:url var="campaignInfoStatisticsUrl" value="/campaigns/${campaign.id}/statistics"/>
-<c:url var="campaignStatisticsPrintUrl" value="/campaigns/${campaign.id}/dashboard"/>
+<c:url var="campaignInfoStatisticsUrl" value="/campaigns/${campaign.id}/statistics" />
+<c:url var="campaignStatisticsPrintUrl" value="/campaigns/${campaign.id}/dashboard" />
 <c:url var="workspaceUrl" value="/campaign-workspace/#" />
 <c:url var="btEntityUrl" value="/bugtracker/campaign/${campaign.id}" />
 <c:url var="customFieldsValuesURL" value="/custom-fields/values" />
 
 <%-- ----------------------------------- Authorization ----------------------------------------------%>
-  <c:set var="writable" value="${ false }" />
-  <c:set var="attachable" value="${ false }" />
-  <c:set var="deletable" value="${false }" />
-  <c:set var="creatable" value="${false }" />
-  <c:set var="linkable" value="${ false }" />
-  <c:set var="moreThanReadOnly" value="${ false }" />
+<c:set var="writable" value="${ false }" />
+<c:set var="attachable" value="${ false }" />
+<c:set var="deletable" value="${false }" />
+<c:set var="creatable" value="${false }" />
+<c:set var="linkable" value="${ false }" />
+<c:set var="moreThanReadOnly" value="${ false }" />
 
 
-<authz:authorized hasRole="ROLE_ADMIN" hasPermission="WRITE"
-	domainObject="${ campaign }">
-	<c:set var="writable" value="${ true }" />
-	<c:set var="moreThanReadOnly" value="${ true }" />
+<authz:authorized hasRole="ROLE_ADMIN" hasPermission="WRITE" domainObject="${ campaign }">
+  <c:set var="writable" value="${ true }" />
+  <c:set var="moreThanReadOnly" value="${ true }" />
 </authz:authorized>
 <authz:authorized hasRole="ROLE_ADMIN" hasPermission="ATTACH" domainObject="${ campaign }">
-	<c:set var="attachable" value="${ true }" />
-	<c:set var="moreThanReadOnly" value="${ true }" />
+  <c:set var="attachable" value="${ true }" />
+  <c:set var="moreThanReadOnly" value="${ true }" />
 </authz:authorized>
 <authz:authorized hasRole="ROLE_ADMIN" hasPermission="DELETE" domainObject="${ campaign }">
-	<c:set var="deletable" value="${true }" />
-	<c:set var="moreThanReadOnly" value="${ true }" />
+  <c:set var="deletable" value="${true }" />
+  <c:set var="moreThanReadOnly" value="${ true }" />
 </authz:authorized>
 <authz:authorized hasRole="ROLE_ADMIN" hasPermission="CREATE" domainObject="${ campaign }">
-	<c:set var="creatable" value="${true }" />
-	<c:set var="moreThanReadOnly" value="${ true }" />
+  <c:set var="creatable" value="${true }" />
+  <c:set var="moreThanReadOnly" value="${ true }" />
 </authz:authorized>
-<authz:authorized hasRole="ROLE_ADMIN" hasPermission="LINK"	domainObject="${ campaign }">
-	<c:set var="linkable" value="${ true }" />
-	<c:set var="moreThanReadOnly" value="${ true }" />
+<authz:authorized hasRole="ROLE_ADMIN" hasPermission="LINK" domainObject="${ campaign }">
+  <c:set var="linkable" value="${ true }" />
+  <c:set var="moreThanReadOnly" value="${ true }" />
 </authz:authorized>
 
 
-<f:message var="okLabel"        key="label.Ok"/>
-<f:message var="cancelLabel"    key="label.Cancel"/>
+<f:message var="okLabel" key="label.Ok" />
+<f:message var="cancelLabel" key="label.Cancel" />
 
-<div
-	class="ui-widget-header ui-state-default ui-corner-all fragment-header">
- <div id="right-frame-button" >
-          <f:message var="toggleButton" key="report.workspace.togglebutton.normal.label"/>
-   <input type="button" class="sq-btn btn-sm" id="toggle-expand-left-frame-button" value="${toggleButton }"/>
-        </div>
- 
-	
+<div class="ui-widget-header ui-state-default ui-corner-all fragment-header">
+  <c:if test="${ not param.isInfoPage }">
+    <div id="right-frame-button">
+      <f:message var="toggleButton" key="report.workspace.togglebutton.normal.label" />
+      <input type="button" class="sq-btn btn-sm" id="toggle-expand-left-frame-button" value="${toggleButton }" />
+    </div>
+  </c:if>
+
   <div class="snap-left" style="height: 100%;" class="small-margin-left">
-		<h2>
-		<a id="campaign-name" href="${ campaignUrl }/info"><c:out
-					value="${ campaign.name }" escapeXml="true" />
-			</a>
-		</h2>
-	</div>
+    <h2>
+      <a id="campaign-name" href="${ campaignUrl }/info">
+        <c:out value="${ campaign.name }" escapeXml="true" />
+      </a>
+    </h2>
+  </div>
 
-	<div class="unsnap"></div>
-	<c:if test="${writable}">
-  
-      <f:message var="renameTitle" key="dialog.rename-campaign.title"/>
-      <div id="rename-campaign-dialog" class="popup-dialog not-displayed" title="${renameTitle}">
-        
-        <label><f:message key="dialog.rename.label"/></label>
-        <input type="text" id="rename-campaign-name" maxlength="255" size="50"/>
-        <br/>
-        <comp:error-message forField="name" />
-      
-        <div class="popup-dialog-buttonpane">
-          <input type="button" class="button" value="${okLabel}" data-def="evt=confirm, mainbtn"/>
-          <input type="button" class="button" value="${cancelLabel}" data-def="evt=cancel"/>        
-        </div>
-      
+  <div class="unsnap"></div>
+  <c:if test="${writable}">
+
+    <f:message var="renameTitle" key="dialog.rename-campaign.title" />
+    <div id="rename-campaign-dialog" class="popup-dialog not-displayed" title="${renameTitle}">
+
+      <label>
+        <f:message key="dialog.rename.label" />
+      </label>
+      <input type="text" id="rename-campaign-name" maxlength="255" size="50" />
+      <br />
+      <comp:error-message forField="name" />
+
+      <div class="popup-dialog-buttonpane">
+        <input type="button" class="button" value="${okLabel}" data-def="evt=confirm, mainbtn" />
+        <input type="button" class="button" value="${cancelLabel}" data-def="evt=cancel" />
       </div>
-    
-	</c:if>
+
+    </div>
+
+  </c:if>
 </div>
 
 <div id="campaign-toolbar" class="toolbar-class ui-corner-all ">
-	<div class="toolbar-information-panel">
-		<comp:general-information-panel auditableEntity="${campaign}" entityUrl="${campaignUrl}"/>
-	</div>
-	<div class="toolbar-button-panel">
-	
-		
-		<c:if test="${ writable }">
-		
-			<input type="button" class="sq-btn"
-				value='<f:message key="label.Rename" />'
-				id="rename-campaign-button" />
-		</c:if>
+  <div class="toolbar-information-panel">
+    <comp:general-information-panel auditableEntity="${campaign}" entityUrl="${campaignUrl}" />
+  </div>
+  <div class="toolbar-button-panel">
 
-	</div>
-	<div class="unsnap"></div>
-	<c:if test="${ moreThanReadOnly }">
-		<comp:opened-object otherViewers="${ otherViewers }"
-			objectUrl="${ campaignUrl }" />
-	</c:if>
+
+    <c:if test="${ writable }">
+
+      <input type="button" class="sq-btn" value='<f:message key="label.Rename" />' id="rename-campaign-button" />
+    </c:if>
+
+  </div>
+  <div class="unsnap"></div>
+  <c:if test="${ moreThanReadOnly }">
+    <comp:opened-object otherViewers="${ otherViewers }" objectUrl="${ campaignUrl }" />
+  </c:if>
 </div>
 
 
 <csst:jq-tab>
-<div class="fragment-tabs fragment-body">
-	<ul class="tab-menu">
-		<li><a href="#campaign-dashboard"><f:message key="title.Dashboard"/>
-		</a>
-		</li>
-		<li><a href="#tabs-1"><f:message key="tabs.label.information" />
-		</a>
-		</li>
-		<li><a href="#tabs-2"><f:message key="tabs.label.test-plan" />
-		</a>
-		</li>
-		<li><a href="#tabs-3"><f:message key="label.Attachments" />
-				<c:if test="${ campaign.attachmentList.notEmpty }">
-					<span class="hasAttach">!</span>
-				</c:if>
-		</a>
-		</li>
-	</ul>
-	<div id="tabs-1">
-		<c:if test="${ writable }">
-              <c:set var="descrRichAttributes" value="class='editable rich-editable' data-def='url=${campaignUrl}' " />
-		</c:if>
-    
-		<comp:toggle-panel id="campaign-description-panel"
-			titleKey="label.Description"
-			open="true">
-			<jsp:attribute name="body">
-				<div id="campaign-description" ${descrRichAttributes} >${ campaign.description }</div>
+  <div class="fragment-tabs fragment-body">
+    <ul class="tab-menu">
+      <li>
+        <a href="#campaign-dashboard">
+          <f:message key="title.Dashboard" />
+        </a>
+      </li>
+      <li>
+        <a href="#tabs-1">
+          <f:message key="tabs.label.information" />
+        </a>
+      </li>
+      <li>
+        <a href="#tabs-2">
+          <f:message key="tabs.label.test-plan" />
+        </a>
+      </li>
+      <li>
+        <a href="#tabs-3">
+          <f:message key="label.Attachments" />
+          <c:if test="${ campaign.attachmentList.notEmpty }">
+            <span class="hasAttach">!</span>
+          </c:if>
+        </a>
+      </li>
+    </ul>
+    <div id="tabs-1">
+      <c:if test="${ writable }">
+        <c:set var="descrRichAttributes" value="class='editable rich-editable' data-def='url=${campaignUrl}' " />
+      </c:if>
+
+      <comp:toggle-panel id="campaign-description-panel" titleKey="label.Description" open="true">
+        <jsp:attribute name="body">
+				<div id="campaign-description" ${descrRichAttributes}>${ campaign.description }</div>
 			</jsp:attribute>
-		</comp:toggle-panel>
-		
-		
-		<%----------------------------------- Custom Fields -----------------------------------------------%>
-		
-		<comp:toggle-panel id="campaign-custom-fields" 
-			titleKey="generics.customfieldvalues.title"	open="${hasCUF}">
-			<jsp:attribute name="body">
+      </comp:toggle-panel>
+
+
+      <%----------------------------------- Custom Fields -----------------------------------------------%>
+
+      <comp:toggle-panel id="campaign-custom-fields" titleKey="generics.customfieldvalues.title" open="${hasCUF}">
+        <jsp:attribute name="body">
 				<div id="campaign-custom-fields-content">
 <c:if test="${hasCUF}">
-				<comp:waiting-pane/>
+				<comp:waiting-pane />
 </c:if>
 				</div>
 			</jsp:attribute>
-		</comp:toggle-panel>
-		
-		
+      </comp:toggle-panel>
 
 
-		<%--------------------------- Planning section ------------------------------------%>
-		<comp:toggle-panel id="datepicker-panel" titleKey="label.Planning"	open="true">
-			<jsp:attribute name="panelButtons">
+
+
+      <%--------------------------- Planning section ------------------------------------%>
+      <comp:toggle-panel id="datepicker-panel" titleKey="label.Planning" open="true">
+        <jsp:attribute name="panelButtons">
 				<c:if test="${writable}">
-				<input id="iteration-planning-button" class="sq-btn" type="button" role="button" value="${iterationPlanningButton}"/>
+				<input id="iteration-planning-button" class="sq-btn" type="button" role="button" value="${iterationPlanningButton}" />
 				</c:if>
 			</jsp:attribute>
-			<jsp:attribute name="body">
+        <jsp:attribute name="body">
 	<div class="datepicker-panel">
 		<table class="datepicker-table">
 			<tr>
 				<td class="datepicker-table-col">
-					<comp:datepicker
-									fmtLabel="dialog.label.campaign.scheduled_start.label"
-									url="${campaignPlanningUrl}" datePickerId="scheduled-start"
-									paramName="scheduledStart" isContextual="true"
-									initialDate="${campaign.scheduledStartDate.time}"
-									editable="${ writable }">	
+					<comp:datepicker fmtLabel="dialog.label.campaign.scheduled_start.label" url="${campaignPlanningUrl}"
+                    datePickerId="scheduled-start" paramName="scheduledStart" isContextual="true"
+                    initialDate="${campaign.scheduledStartDate.time}" editable="${ writable }">	
 					</comp:datepicker>
 				</td>
 				<td class="datepicker-table-col">
-					<comp:datepicker-auto datePickerId="actual-start"
-									url="${campaignPlanningUrl}"
-									fmtLabel="dialog.label.campaign.actual_start.label"
-									paramName="actualStart" autosetParamName="setActualStartAuto"
-									isAuto="${campaign.actualStartAuto}"
-									initialDate="${campaign.actualStartDate.time}"
-									isContextual="true" editable="${ writable }">
+					<comp:datepicker-auto datePickerId="actual-start" url="${campaignPlanningUrl}"
+                    fmtLabel="dialog.label.campaign.actual_start.label" paramName="actualStart"
+                    autosetParamName="setActualStartAuto" isAuto="${campaign.actualStartAuto}"
+                    initialDate="${campaign.actualStartDate.time}" isContextual="true" editable="${ writable }">
 					</comp:datepicker-auto>
 				</td>
 			</tr>
 			<tr>
 				<td class="datepicker-table-col">
-					<comp:datepicker
-									fmtLabel="dialog.label.campaign.scheduled_end.label"
-									url="${campaignPlanningUrl}" datePickerId="scheduled-end"
-									paramName="scheduledEnd" isContextual="true"
-									initialDate="${campaign.scheduledEndDate.time}"
-									editable="${ writable }">	
+					<comp:datepicker fmtLabel="dialog.label.campaign.scheduled_end.label" url="${campaignPlanningUrl}"
+                    datePickerId="scheduled-end" paramName="scheduledEnd" isContextual="true"
+                    initialDate="${campaign.scheduledEndDate.time}" editable="${ writable }">	
 					</comp:datepicker>				
 				</td>
 				<td class="datepicker-table-col">
-					<comp:datepicker-auto datePickerId="actual-end"
-									url="${campaignPlanningUrl}"
-									fmtLabel="dialog.label.campaign.actual_end.label"
-									paramName="actualEnd" autosetParamName="setActualEndAuto"
-									isAuto="${campaign.actualEndAuto}"
-									initialDate="${campaign.actualEndDate.time}"
-									isContextual="true" editable="${ writable }">
+					<comp:datepicker-auto datePickerId="actual-end" url="${campaignPlanningUrl}"
+                    fmtLabel="dialog.label.campaign.actual_end.label" paramName="actualEnd"
+                    autosetParamName="setActualEndAuto" isAuto="${campaign.actualEndAuto}"
+                    initialDate="${campaign.actualEndDate.time}" isContextual="true" editable="${ writable }">
 					</comp:datepicker-auto>
 				</td>
 			</tr>
 		</table>
 	</div>
 	</jsp:attribute>
-	</comp:toggle-panel>
-	
-				
+      </comp:toggle-panel>
 
-	<div id="iteration-planning-popup" class="popup-dialog not-displayed" 
-		title="${iterationPlanningTitle}" data-def="dateformat=${dateformat}, campaignId=${campaign.id}">						
-		
-		<div data-def="state=edit">
-			<table class="iteration-planning-content" class="unstyled-table">
-				<thead>
-					<tr>
-						<th><f:message key="label.Name"/></th>
-						<th><f:message key="campaigns.planning.iterations.scheduledstart"/></th>
-						<th><f:message key="campaigns.planning.iterations.scheduledend"/></th>
-					</tr>
-				</thead>
-				<tbody>
-				
-				</tbody>						
-			</table>
-		</div>
-		
-		<div data-def="state=loading" >		
- 				<comp:waiting-pane />
-		</div>
-		
-		<div class="popup-dialog-buttonpane">
-			<input type="button" value="${buttonOK}" data-def="evt=confirm, mainbtn=edit"/>
-			<input type="button" value="${buttonCancel}" data-def="evt=cancel, mainbtn" />
-		</div>					
-		
-	</div>
-	
-		<%--------------------------- /Planning section ------------------------------------%>
-		<%-- ------------------ statistiques --------------------------- --%>
-		<comp:statistics-panel statisticsEntity="${ statistics }" statisticsUrl="${ campaignInfoStatisticsUrl }"/>
-		<%-- ------------------ /statistiques --------------------------- --%>
-	</div>
-	<div id="tabs-2" class="table-tab">
 
-		<%--------------------------- Test plan section ------------------------------------%>
 
-        <camp:campaign-test-plan-panel
-				editable="${ linkable }" 
-				reorderable="${linkable}" 
-                linkable="${linkable}" 
-				campaign="${campaign}"/>
-		
-	</div>
+      <div id="iteration-planning-popup" class="popup-dialog not-displayed" title="${iterationPlanningTitle}"
+        data-def="dateformat=${dateformat}, campaignId=${campaign.id}">
 
-	<%------------------------------ Attachments bloc ---------------------------------------------%>
+        <div data-def="state=edit">
+          <table class="iteration-planning-content" class="unstyled-table">
+            <thead>
+              <tr>
+                <th>
+                  <f:message key="label.Name" />
+                </th>
+                <th>
+                  <f:message key="campaigns.planning.iterations.scheduledstart" />
+                </th>
+                <th>
+                  <f:message key="campaigns.planning.iterations.scheduledend" />
+                </th>
+              </tr>
+            </thead>
+            <tbody>
 
-	<at:attachment-tab tabId="tabs-3" entity="${ campaign }" editable="${ attachable }" tableModel="${attachmentsModel}"/>
-	
-	
-	<%------------------------------- Dashboard ---------------------------------------------------%>
-	<div id="campaign-dashboard">
-		<dashboard:campaign-dashboard-panel url="${campaignStatisticsUrl}" printUrl="${campaignStatisticsPrintUrl}" allowsSettled="${allowsSettled}" allowsUntestable="${allowsUntestable}" />
-	</div>
+            </tbody>
+          </table>
+        </div>
 
-</div>
+        <div data-def="state=loading">
+          <comp:waiting-pane />
+        </div>
+
+        <div class="popup-dialog-buttonpane">
+          <input type="button" value="${buttonOK}" data-def="evt=confirm, mainbtn=edit" />
+          <input type="button" value="${buttonCancel}" data-def="evt=cancel, mainbtn" />
+        </div>
+
+      </div>
+
+      <%--------------------------- /Planning section ------------------------------------%>
+      <%-- ------------------ statistiques --------------------------- --%>
+      <comp:statistics-panel statisticsEntity="${ statistics }" statisticsUrl="${ campaignInfoStatisticsUrl }" />
+      <%-- ------------------ /statistiques --------------------------- --%>
+    </div>
+    <div id="tabs-2" class="table-tab">
+
+      <%--------------------------- Test plan section ------------------------------------%>
+
+      <camp:campaign-test-plan-panel editable="${ linkable }" reorderable="${linkable}" linkable="${linkable}"
+        campaign="${campaign}" />
+
+    </div>
+
+    <%------------------------------ Attachments bloc ---------------------------------------------%>
+
+    <at:attachment-tab tabId="tabs-3" entity="${ campaign }" editable="${ attachable }" tableModel="${attachmentsModel}" />
+
+
+    <%------------------------------- Dashboard ---------------------------------------------------%>
+    <div id="campaign-dashboard">
+      <dashboard:campaign-dashboard-panel url="${campaignStatisticsUrl}" printUrl="${campaignStatisticsPrintUrl}"
+        allowsSettled="${allowsSettled}" allowsUntestable="${allowsUntestable}" />
+    </div>
+
+  </div>
 </csst:jq-tab>
 
 
