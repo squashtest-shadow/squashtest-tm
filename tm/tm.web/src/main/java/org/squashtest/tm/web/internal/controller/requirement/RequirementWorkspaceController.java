@@ -65,7 +65,7 @@ public class RequirementWorkspaceController extends WorkspaceController<Requirem
 
 	@Override
 	protected String getWorkspaceViewName() {
-		return "page/requirement-workspace/requirement-workspace";
+		return "requirement-workspace.html";
 	}
 
 	@Override

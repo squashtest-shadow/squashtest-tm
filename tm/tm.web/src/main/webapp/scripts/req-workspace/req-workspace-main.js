@@ -18,8 +18,8 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define(['tree', './req-treemenu', './popups/init-all', './init-actions', 'squash/squash.tree-page-resizer'], 
-		function(tree, treemenu, popups, actions, resizer) {
+define(['tree', './req-treemenu', './popups/init-all', './init-actions', 'squash/squash.tree-page-resizer', 'app/ws/squashtm.toggleworkspace'], 
+		function(tree, treemenu, popups, actions, resizer, ToggleWorkspace) {
 
 	
 	function initResizer(){
@@ -30,10 +30,28 @@ define(['tree', './req-treemenu', './popups/init-all', './init-actions', 'squash
 		resizer.init(conf);
 	}
 	
+	function initTabbedPane() {
+		/**
+		 * Here we define which tab is currently used with selectedTab. selectedTab is used in
+		 * show-iteration-test-plan-manager, search-panel*...
+		 */
+		// The selected pane number. Always the first one (0) by default
+		selectedTab = 0;
+
+		$("#tabbed-pane").tabs();
+
+		$("#tree-panel-left").on("tabsselect", "#tabbed-pane", function(event, ui) {
+			// change the number of the selected pane
+			selectedTab = ui.index;
+		});
+	}
+	
 	function init(settings){
 		initResizer();
+		initTabbedPane();
+		ToggleWorkspace.init(settings.toggleWS);
 		tree.initWorkspaceTree(settings.tree);
-		treemenu.init();	
+		treemenu.init(settings.treemenu);	
 		popups.init();
 		actions.init();
 	}
