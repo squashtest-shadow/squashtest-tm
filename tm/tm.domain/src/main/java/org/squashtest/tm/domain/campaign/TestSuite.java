@@ -206,26 +206,20 @@ public class TestSuite implements Identified, Copiable, TreeNode, BoundEntity, A
 	 */
 	public void bindTestPlanItems(List<IterationTestPlanItem> items) {
 		for (IterationTestPlanItem item : items) {
-			if (!boundToThisSuite(item)) {
-				this.testPlan.add(item);
-				item.addTestSuite(this);
-			}
+			bindTestPlanItem(item);
 		}
 	}
 
 	public void bindTestPlanItem(IterationTestPlanItem item) {
 		if (!boundToThisSuite(item)) {
 			this.testPlan.add(item);
-			item.getTestSuites().add(this);
+			item.addTestSuite(this);
 		}
 	}
 
 	public void unBindTestPlan(List<IterationTestPlanItem> items) {
 		for (IterationTestPlanItem item : items) {
-			if (boundToThisSuite(item)) {
-				this.testPlan.remove(item);
-				item.getTestSuites().remove(this);
-			}
+			unBindTestPlan(item);
 		}
 	}
 
@@ -244,10 +238,8 @@ public class TestSuite implements Identified, Copiable, TreeNode, BoundEntity, A
 	public void bindTestPlanItemsById(List<Long> itemIds) {
 		for (Long itemId : itemIds) {
 			for (IterationTestPlanItem item : iteration.getTestPlans()) {
-				if (item.getId().equals(itemId) && !boundToThisSuite(item)) {
-					// item.getTestSuites().add(this);
-					this.testPlan.add(item);
-					item.addTestSuite(this);
+				if (item.getId().equals(itemId) ) {
+					bindTestPlanItem(item);
 				}
 			}
 		}
