@@ -405,7 +405,7 @@
               </div>
               <div class="display-table-cell">
                 <select name="projectId">
-                  <option th:each="lib : ${editableLibraries}" th:value="${lib.id}" value="1" th:attr="selected=${libStat.first}"
+                  <option th:each="lib : ${editableLibraries}" th:value="${lib.id}" value="1" th:selected="${libStat.first}"
                     th:text="${lib.project.name}">projet 1</option>
                 </select>
 
@@ -658,7 +658,7 @@
 
 </div>
 
-    <!--  ================= /EXPORT REQ POPUP =======================  -->
+    <!--  ================= EXPORT REQ POPUP =======================  -->
 
     <div id="export-requirement-dialog" class="popup-dialog not-displayed" title="${exportLabel}"
       th:attr="data-def='nameprefix='+#{label.lower.dash.exportRequirements}+', dateformat='+#{export.dateformat}"
