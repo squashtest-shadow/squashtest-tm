@@ -88,7 +88,9 @@ class StartTestExecutionTest extends Specification {
 		[
 			"""{"test":[{"id":"12","script":"to/the/batcave","param":{"batman":"leatherpants"}}]}""",
 			"""{"test":[{"param":{"batman":"leatherpants"},"script":"to/the/batcave","id":"12"}]}""",
-			"""{"test":[{"id":"12","param":{"batman":"leatherpants"},"script":"to/the/batcave"}]}"""
+			"""{"test":[{"id":"12","param":{"batman":"leatherpants"},"script":"to/the/batcave"}]}""",
+			"""{"test":[{"script":"to/the/batcave","param":{"batman":"leatherpants"},"id":"12"}]}"""
 		].contains(f.text)
 	}
+	
 }
