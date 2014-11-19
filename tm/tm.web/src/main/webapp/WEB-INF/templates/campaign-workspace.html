@@ -72,7 +72,7 @@
   src="../../scripts/require.js" th:src="@{/scripts/require-min.js}"></script>
 </head>
 <body>
-  <div id="navigation" th:include="navbar.frag :: navbar">NAVBAR</div>
+  <div id="navigation" th:include="navbar.frag :: navbar" th:with="highlightedWorkspace='campaign'">NAVBAR</div>
 
   <div id="workspace">
     <div id="workspace-title">
