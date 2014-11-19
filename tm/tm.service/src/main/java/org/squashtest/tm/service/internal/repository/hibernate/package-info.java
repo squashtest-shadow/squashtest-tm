@@ -230,7 +230,7 @@
 
 		@NamedQuery(name = "testCase.excelExportCUF", query = "select cfv.boundEntityId, cfv.boundEntityType, cf.code, cfv.value, cfv.largeValue, cf.inputType, case when cfv.class = TagsValue then group_concat(so.label, 'order by', so.label, 'asc', '|')  else '' end "
 				+ "from CustomFieldValue cfv join cfv.binding binding join binding.customField cf left join cfv.selectedOptions so "
-				+ "where cfv.boundEntityId in (:testCaseIds) and cfv.boundEntityType = 'TEST_CASE' group by cf.code"),
+				+ "where cfv.boundEntityId in (:testCaseIds) and cfv.boundEntityType = 'TEST_CASE' group by cfv.id"),
 
 		//Campaign
 		@NamedQuery(name = "campaign.findNamesInCampaignStartingWith", query = "select i.name from Campaign c join c.iterations i where c.id = :containerId and i.name like :nameStart"),
@@ -273,7 +273,7 @@
 				+ "select st.id from TestCase tc inner join tc.steps st where tc.id in (:testCaseIds)"
 				+ ") "
 				+ "and cfv.boundEntityType = 'TEST_STEP'"
-				+ "group by cfv.boundEntityId, cf.code"),
+				+ "group by cfv.id"),
 
 	@NamedQuery(name = "testStep.findBasicInfosByTcId",
 	query = "select case when st.class = ActionTestStep then 'ACTION' else 'CALL' end as steptype, "
