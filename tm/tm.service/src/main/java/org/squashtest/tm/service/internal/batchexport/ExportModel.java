@@ -27,7 +27,6 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.squashtest.tm.domain.customfield.BindableEntity;
-import org.squashtest.tm.domain.customfield.CustomFieldValueOption;
 import org.squashtest.tm.domain.customfield.InputType;
 import org.squashtest.tm.domain.testcase.TestCaseImportance;
 import org.squashtest.tm.domain.testcase.TestCaseNature;

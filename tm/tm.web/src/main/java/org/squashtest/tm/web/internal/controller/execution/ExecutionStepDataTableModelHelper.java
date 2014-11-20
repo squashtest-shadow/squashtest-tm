@@ -33,7 +33,6 @@ import org.slf4j.LoggerFactory;
 import org.squashtest.tm.core.foundation.lang.DateUtils;
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
 import org.squashtest.tm.domain.customfield.MultiValuedCustomFieldValue;
-import org.squashtest.tm.domain.customfield.TagsValue;
 import org.squashtest.tm.domain.denormalizedfield.DenormalizedFieldValue;
 import org.squashtest.tm.domain.denormalizedfield.DenormalizedMultiSelectField;
 import org.squashtest.tm.domain.execution.ExecutionStep;

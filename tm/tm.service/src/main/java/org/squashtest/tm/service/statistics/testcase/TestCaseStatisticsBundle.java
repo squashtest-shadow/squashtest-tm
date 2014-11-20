@@ -21,7 +21,6 @@
 package org.squashtest.tm.service.statistics.testcase;
 
 import java.util.Collection;
-import java.util.List;
 
 public class TestCaseStatisticsBundle {
 

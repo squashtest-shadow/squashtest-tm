@@ -21,15 +21,8 @@
 package org.squashtest.tm.domain.requirement;
 
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
-import java.util.Map.Entry;
 
-import org.springframework.context.MessageSource;
-import org.springframework.context.i18n.LocaleContextHolder;
-import org.springframework.validation.Errors;
-import org.springframework.validation.ValidationUtils;
-import org.springframework.validation.Validator;
 import org.squashtest.tm.domain.customfield.RawValue;
 
 /**

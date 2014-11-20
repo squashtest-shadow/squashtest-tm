@@ -28,8 +28,6 @@ import org.slf4j.LoggerFactory;
 import org.squashtest.tm.domain.denormalizedfield.DenormalizedFieldValue;
 import org.squashtest.tm.domain.denormalizedfield.DenormalizedFieldVisitor;
 import org.squashtest.tm.domain.denormalizedfield.DenormalizedMultiSelectField;
-import org.squashtest.tm.domain.denormalizedfield.DenormalizedRichValue;
-import org.squashtest.tm.domain.denormalizedfield.DenormalizedSingleSelectField;
 
 /**
  * That class represents a "value" that aren't attached to any specific custom field value. They can hold either a single value or a multi value,

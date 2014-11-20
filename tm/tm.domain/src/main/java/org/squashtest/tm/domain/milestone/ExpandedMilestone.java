@@ -20,7 +20,6 @@
  */
 package org.squashtest.tm.domain.milestone;
 
-import org.squashtest.tm.domain.milestone.Milestone;
 
 public class ExpandedMilestone {
 

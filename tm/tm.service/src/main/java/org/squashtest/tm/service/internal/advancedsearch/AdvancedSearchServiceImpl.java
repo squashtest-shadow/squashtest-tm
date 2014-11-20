@@ -21,7 +21,6 @@
 package org.squashtest.tm.service.internal.advancedsearch;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -42,11 +41,11 @@ import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.search.AdvancedSearchFieldModel;
 import org.squashtest.tm.domain.search.AdvancedSearchFieldModelType;
 import org.squashtest.tm.domain.search.AdvancedSearchListFieldModel;
-import org.squashtest.tm.domain.search.AdvancedSearchTagsFieldModel;
-import org.squashtest.tm.domain.search.AdvancedSearchTagsFieldModel.Operation;
 import org.squashtest.tm.domain.search.AdvancedSearchModel;
 import org.squashtest.tm.domain.search.AdvancedSearchRangeFieldModel;
 import org.squashtest.tm.domain.search.AdvancedSearchSingleFieldModel;
+import org.squashtest.tm.domain.search.AdvancedSearchTagsFieldModel;
+import org.squashtest.tm.domain.search.AdvancedSearchTagsFieldModel.Operation;
 import org.squashtest.tm.domain.search.AdvancedSearchTextFieldModel;
 import org.squashtest.tm.domain.search.AdvancedSearchTimeIntervalFieldModel;
 import org.squashtest.tm.domain.testcase.TestCase;
