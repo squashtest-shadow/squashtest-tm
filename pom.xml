@@ -38,7 +38,7 @@
     <org.osgi.service.http.port.secure>9443</org.osgi.service.http.port.secure>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <provisionBom.version>1.4</provisionBom.version>
-    <spring-security-oauth2.version>2.0.3.RELEASE</spring-security-oauth2.version>
+    <spring-security-oauth2.version>1.0.5.RELEASE</spring-security-oauth2.version>
 
     <thymeleaf.version>2.1.4.A-SNAPSHOT</thymeleaf.version>
 
@@ -76,7 +76,6 @@
         <groupId>org.springframework.security.oauth</groupId>
         <artifactId>spring-security-oauth2</artifactId>
         <version>${spring-security-oauth2.version}</version>
-        <scope>compile</scope>
       </dependency>
       <dependency>
         <groupId>org.thymeleaf</groupId>
