@@ -18,21 +18,21 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.web.internal.controller.testcase;
+package org.squashtest.tm.web.internal.controller.testcase
 
 import javax.inject.Provider
 
 import org.apache.poi.hssf.record.formula.functions.T
-import org.springframework.ui.Model;
+import org.springframework.ui.Model
 import org.springframework.web.servlet.ModelAndView
 import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory
 import org.squashtest.tm.domain.project.Project
 import org.squashtest.tm.domain.testcase.TestCaseLibrary
 import org.squashtest.tm.service.library.WorkspaceService
-import org.squashtest.tm.service.security.PermissionEvaluationService;
+import org.squashtest.tm.service.security.PermissionEvaluationService
 import org.squashtest.tm.web.internal.controller.generic.WorkspaceController
 import org.squashtest.tm.web.internal.model.builder.DriveNodeBuilder
-import org.squashtest.tm.web.internal.model.jstree.JsTreeNode;
+import org.squashtest.tm.web.internal.model.jstree.JsTreeNode
 
 import spock.lang.Specification
 
@@ -66,7 +66,7 @@ class TestCasesWorkspaceControllerTest extends Specification {
 		String view = controller.showWorkspace(model, Locale.getDefault(), [] as String[], "" as String)
 
 		then:
-		view == "page/test-case-workspace/test-case-workspace"
+		view == "test-case-workspace.html"
 		1 * model.addAttribute ("rootModel", _)
 	}
 }

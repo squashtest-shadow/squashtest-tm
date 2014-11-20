@@ -152,10 +152,11 @@
                   <li id="export-F-tree-button" class="ui-state-disabled cursor-pointer">
                     <a th:text="#{label.Export.Campaign.Full}+'...'">full ...</a>
                   </li>
-<!--                   TODO -->
-<!--                   <c:forEach var="plugin" items="" varStatus="pluginsts"> -->
-<!--       <li th:each="plugin : ${wu:getExportPlugins(pageContext.servletContext, 'CAMPAIGN_WORKSPACE')}" id="export-plugin-${pluginsts.index}" class="ui-state-disabled cursor-pointer export-plugin" data-module="${plugin.javascriptModuleName}"><a>${plugin.name}...</a></li> -->
-<!-- </c:forEach> -->
+                  <li th:each="plugin :  ${#workspace.exportPlugins( 'CAMPAIGN_WORKSPACE')}"
+                    th:id="'export-plugin-'+${pluginStat.index}" class="ui-state-disabled cursor-pointer export-plugin"
+                    th:attr="data-module=${plugin.javascriptModuleName}">
+                    <a th:text="${plugin.name}+'...'">plugin ...</a>
+                  </li>
                 </ul>
               </div>
 

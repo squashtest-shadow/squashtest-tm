@@ -149,10 +149,11 @@
                   <li id="export-tree-button" class="ui-state-disabled cursor-pointer">
                     <a th:text="#{label.Export}+'...'">export ...</a>
                   </li>
-                  <!--                   TODO -->
-                  <!-- <c:forEach var="plugin" items="${wu:getExportPlugins(pageContext.servletContext, 'REQUIREMENT_WORKSPACE')}" varStatus="pluginsts"> -->
-                  <!--   <li id="export-plugin-${pluginsts.index}" class="ui-state-disabled cursor-pointer export-plugin" data-module="${plugin.javascriptModuleName}"><a>${plugin.name}...</a></li> -->
-                  <!-- </c:forEach> -->
+                  <li th:each="plugin :  ${#workspace.exportPlugins( 'REQUIREMENT_WORKSPACE')}"
+                    th:id="'export-plugin-'+${pluginStat.index}" class="ui-state-disabled cursor-pointer export-plugin"
+                    th:attr="data-module=${plugin.javascriptModuleName}">
+                    <a th:text="${plugin.name}+'...'">plugin ...</a>
+                  </li>
                 </ul>
               </div>
               <div class="button-group">

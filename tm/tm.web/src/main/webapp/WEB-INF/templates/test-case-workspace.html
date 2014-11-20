@@ -149,7 +149,7 @@
                   <li id="export-tree-button" class="ui-state-disabled cursor-pointer">
                     <a th:text="#{label.Export}+'...'">full ...</a>
                   </li>
-                  <li th:each="plugin : ${wu:getExportPlugins(pageContext.servletContext, 'TEST_CASE_WORKSPACE')}"
+                  <li th:each="plugin :  ${#workspace.exportPlugins( 'TEST_CASE_WORKSPACE')}"
                     th:id="'export-plugin-'+${pluginStat.index}" class="ui-state-disabled cursor-pointer export-plugin"
                     th:attr="data-module=${plugin.javascriptModuleName}">
                     <a th:text="${plugin.name}+'...'">plugin ...</a>
@@ -449,7 +449,7 @@
           <span class="confirm-span confirm-file"></span>
         </div>
         <div class="confirm-div import-project-confirm not-displayed">
-          <label class="confirm-label" th:text="dialog.import.project.confirm">import project confirm</label>
+          <label class="confirm-label" th:text="#{dialog.import.project.confirm}">import project confirm</label>
           <span class="confirm-span confirm-project" th:text="${editableLibraries[0].project.name}"></span>
         </div>
 
@@ -492,10 +492,10 @@
         </div>
         {{/unless}}
         </script>
-<script id="xls-import-recap-tpl" type="text/x-handlebars-template">
+      <script id="xls-import-recap-tpl" type="text/x-handlebars-template">
         <div>
           <p class="cf">
-            <span class="snap-left ui-icon ui-icon-check"></span><span th:text"#{message.import.success}" th:remove="tag">import success</span>
+            <span class="snap-left ui-icon ui-icon-check"></span><span th:text="#{message.import.success}" th:remove="tag">import success</span>
           </p>
           <p>
           <table>
@@ -539,9 +539,9 @@
             <span class="snap-left ui-icon ui-icon-arrowthick-1-e"></span><a href="{{reportUrl}}" th:text="#{message.import.downloadLog}" > dowload log</a>
           </p>
         </div>
-        </script> 
+        </script>
 
-  <script id="xls-import-recap-ko" type="text/x-handlebars-template">
+      <script id="xls-import-recap-ko" type="text/x-handlebars-template">
          <p th:text="#{message.import.error.format}"><ul>
            {{#if missingMandatoryColumns.length}}
              <li><span th:remove="tag" th:text="#{message.import.log.error.mandatoryColumns}"></span>{{missingMandatoryColumns}}.</li>
@@ -550,44 +550,60 @@
              <li th:text="#{message.import.log.error.duplicateColumns}"></li>
            {{/if}}
          </ul></p>
-         </script> 
+         </script>
 
-            <div data-def="state=error-size">
-          <span class="error-size" th:text="#{dialog.import.error.sizeexceeded}">size exceeded</span>
-        </div>
-
-        <div class="error-type" data-def="state=error-type">    
-          <span class="import-err-filetype-text" id="import-err-filetype-text-xls" ><span th:text="#{dialog.import.wrongfile}" th:remove="tag">import wrong file</span><span id="import-err-filetype">xls, xlsx</span></span> 
-          <span class="import-err-filetype-text" id="import-err-filetype-text-zip" style="display: none;"><span th:text="#{dialog.import.wrongfile}" th:remove="tag">import wrong file</span><span id="import-err-filetype">zip</span></span>  
-        </div>
-        <div class="error-format" data-def="state=error-format">
-          </div>
-        <div id="import-excel-dump" class="not-displayed dump"></div>
-
-        <div class="popup-dialog-buttonpane">
-          <input id="simulateButton" type="button" value="simulateLabel" th:value="#{label.Simulate}"  data-def="evt=simulate, state=parametrization"/>
-          <input type="button" th:value="#{label.Import}" value="importLabel"  data-def="evt=import, state=parametrization, mainbtn=parametrization"/>
-          <input type="button" th:value="#{label.Confirm}" value="confirmLabel" data-def="evt=confirm, state=confirm, mainbtn=confirm"/>
-          <input type="button" th:value="#{label.Ok}" value="okLabel"    data-def="evt=ok, state=summary, mainbtn=summary"/>
-          <input type="button" th:value="#{label.Ok}" value="okLabel"    data-def="evt=okerrsize, state=error-size, mainbtn=error-size"/>
-          <input type="button" th:value="#{label.Ok}" value="okLabel"    data-def="evt=okerrformat, state=error-type error-format, mainbtn=error-type error-format"/>
-          <input type="button" th:value="#{label.Cancel}" value="cancelLabel"  data-def="evt=cancel, state=parametrization confirm"/>
-          <input type="button" th:value="#{label.Cancel}" value="cancelLabel"  data-def="evt=cancel-progression, state=progression"/>
-        </div>
-
+      <div data-def="state=error-size">
+        <span class="error-size" th:text="#{dialog.import.error.sizeexceeded}">size exceeded</span>
       </div>
 
-      <!--  ================ /IMPORT EXCEL POPUP ======================  -->
+      <div class="error-type" data-def="state=error-type">
+        <span class="import-err-filetype-text" id="import-err-filetype-text-xls">
+          <span th:text="#{dialog.import.wrongfile}" th:remove="tag">import wrong file</span>
+          <span id="import-err-filetype">xls, xlsx</span>
+        </span>
+        <span class="import-err-filetype-text" id="import-err-filetype-text-zip" style="display: none;">
+          <span th:text="#{dialog.import.wrongfile}" th:remove="tag">import wrong file</span>
+          <span id="import-err-filetype">zip</span>
+        </span>
+      </div>
+      <div class="error-format" data-def="state=error-format"></div>
+      <div id="import-excel-dump" class="not-displayed dump"></div>
+
+      <div class="popup-dialog-buttonpane">
+        <input id="simulateButton" type="button" value="simulateLabel" th:value="#{label.Simulate}"
+          data-def="evt=simulate, state=parametrization" />
+        <input type="button" th:value="#{label.Import}" value="importLabel"
+          data-def="evt=import, state=parametrization, mainbtn=parametrization" />
+        <input type="button" th:value="#{label.Confirm}" value="confirmLabel"
+          data-def="evt=confirm, state=confirm, mainbtn=confirm" />
+        <input type="button" th:value="#{label.Ok}" value="okLabel" data-def="evt=ok, state=summary, mainbtn=summary" />
+        <input type="button" th:value="#{label.Ok}" value="okLabel"
+          data-def="evt=okerrsize, state=error-size, mainbtn=error-size" />
+        <input type="button" th:value="#{label.Ok}" value="okLabel"
+          data-def="evt=okerrformat, state=error-type error-format, mainbtn=error-type error-format" />
+        <input type="button" th:value="#{label.Cancel}" value="cancelLabel"
+          data-def="evt=cancel, state=parametrization confirm" />
+        <input type="button" th:value="#{label.Cancel}" value="cancelLabel"
+          data-def="evt=cancel-progression, state=progression" />
+      </div>
+
+    </div>
+
+    <!--  ================ /IMPORT EXCEL POPUP ======================  -->
 
     <!--  ================ IMPORT LINK POPUP ======================  -->
 
-    <div id="import-links-excel-dialog" class="popup-dialog not-displayed" title="import links" th:title="#{dialog.import-links-excel.title}">
+    <div id="import-links-excel-dialog" class="popup-dialog not-displayed" title="import links"
+      th:title="#{dialog.import-links-excel.title}">
 
       <div data-def="state=parametrization">
-        <div style="margin-top:1em;margin-bottom:1em;">
-          <form action="@{/requirement-version-coverage/upload}" method="POST" enctype="multipart/form-data" class="display-table">
+        <div style="margin-top: 1em; margin-bottom: 1em;">
+          <form th:action="@{/requirement-version-coverage/upload}" action="http://localhost:8080/requirement-version-coverage/upload" method="POST" enctype="multipart/form-data"
+            class="display-table">
             <div class="display-table-row">
-              <div class="display-table-cell"><label th:text="#{dialog.import-links-excel.filetype.message}"></label></div>
+              <div class="display-table-cell">
+                <label th:text="#{dialog.import-links-excel.filetype.message}"></label>
+              </div>
               <div class="display-table-cell">
                 <input type="file" name="file" size="20" accept="application/vnd.ms-excel" />
               </div>
@@ -604,7 +620,7 @@
         <div th:text="#{dialog.import.confirm.message}"></div>
       </div>
 
-     <div data-def="state=progression">
+      <div data-def="state=progression">
         <div class="waiting-loading centered minimal-height">
           <div style="font-size: 1.5em; margin-top: 300px;" th:text="#{squashtm.processing}">processing ...</div>
         </div>
@@ -612,7 +628,7 @@
 
 
       <div class="import-summary" data-def="state=summary">
-        <br/>
+        <br />
         <div>
           <span class="span-bold" th:text="#{dialog.import-links-excel.success}"></span>
           <span class="success-import span-bold span-green"></span>
@@ -620,16 +636,19 @@
         <div>
           <span class="span-bold" th:text="#{dialog.import-links-excel.failed}"></span>
           <span class="failures-import span-bold"></span>
-        </div>      
+        </div>
 
 
         <div class="import-links-excel-dialog-note">
-          <br/>
+          <br />
           <div class="import-links-excel-dialog-normal-errors not-displayed">
-            <span><span th:remove="tag" th:text="#{dialog.import.summary.notes.label}"> import summary notes label</span><br/>
-            <span th:remove="tag" th:text="#{dialog.import-links.summary.notes.lines}">import links summary notes lines</span>
+            <span>
+              <span th:remove="tag" th:text="#{dialog.import.summary.notes.label}"> import summary notes label</span>
+              <br />
+              <span th:remove="tag" th:text="#{dialog.import-links.summary.notes.lines}">import links summary
+                notes lines</span>
             </span>
-            <ul  contenteditable="true" style="height:100px ; overflow : auto" >
+            <ul contenteditable="true" style="height: 100px; overflow: auto">
               <li class="import-links-excel-dialog-req-not-found">
                 <span th:text="#{dialog.import.summary.notes.req-not-found.label}">req not found</span>
                 <span class="req-not-found-import"></span>
@@ -662,17 +681,20 @@
           </div>
 
           <div class="import-links-excel-dialog-critical-errors not-displayed">
-            <span><span th:remove="tag" th:text="#{dialog.import.summary.errors.label"></span><br/></span>
-            <ul  contenteditable="true" style="height:100px ; overflow : auto" >
+            <span>
+              <span th:remove="tag" th:text="#{dialog.import.summary.errors.label}"></span>
+              <br />
+            </span>
+            <ul contenteditable="true" style="height: 100px; overflow: auto">
               <li class="import-links-excel-dialog-missing-headers">
                 <span th:text="#{dialog.import.summary.notes.missing-headers.label}"></span>
                 <span class="file-missing-headers"></span>
-              </li>         
+              </li>
             </ul>
           </div>
 
         </div>
-      </div>  
+      </div>
 
 
       <div data-def="state=error-size">
@@ -680,92 +702,119 @@
       </div>
 
 
-      <div  data-def="state=error-type">
-          <p><span th:remove="tag" th:text="#{message.import.error.format}"></span><ul><li><span><span th:text="#{dialog.import.wrongfile}" th:remove="tag"></span>xls, xlsx</span></li></ul></p>
-          <p><span th:remove="tag" th:text="#{message.import.error.format}"></span><ul><li><span><span th:text="#{dialog.import.wrongfile}" th:remove="tag"></span>zip</span></li></ul></p>
+      <div data-def="state=error-type">
+        <p>
+          <span th:remove="tag" th:text="#{message.import.error.format}"></span>
+        <ul>
+          <li>
+            <span>
+              <span th:text="#{dialog.import.wrongfile}" th:remove="tag"></span>
+              xls, xlsx
+            </span>
+          </li>
+        </ul>
+        </p>
+        <p>
+          <span th:remove="tag" th:text="#{message.import.error.format}"></span>
+        <ul>
+          <li>
+            <span>
+              <span th:text="#{dialog.import.wrongfile}" th:remove="tag"></span>
+              zip
+            </span>
+          </li>
+        </ul>
+        </p>
       </div>
 
 
 
 
-      <div id="import-links-dump" class="not-displayed dump"></div> 
+      <div id="import-links-dump" class="not-displayed dump"></div>
 
       <div class="popup-dialog-buttonpane">
-        <input type="button"  th:value="#{label.Import}" value="import" data-def="evt=import, state=parametrization, mainbtn=parametrization"/>
-        <input type="button" th:value="#{label.Confirm}" value="confirm" data-def="evt=confirm, state=confirm, mainbtn=confirm"/>
-        <input type="button" th:value="#{label.Ok}" value="ok" data-def="evt=ok, state=summary, mainbtn=summary"/>
-        <input type="button" th:value="#{label.Ok}" value="ok" data-def="evt=okerrsize, state=error-size, mainbtn=error-size"/>
-        <input type="button" th:value="#{label.Ok}" value="ok" data-def="evt=okerrformat, state=error-type, mainbtn=error-type"/>
-        <input type="button" th:value="#{label.Cancel}" value="cancel" data-def="evt=cancel, state=parametrization confirm"/>
-        <input type="button" th:value="#{label.Cancel}" value="cancel" data-def="evt=cancel-progression, state=progression"/>
+        <input type="button" th:value="#{label.Import}" value="import"
+          data-def="evt=import, state=parametrization, mainbtn=parametrization" />
+        <input type="button" th:value="#{label.Confirm}" value="confirm"
+          data-def="evt=confirm, state=confirm, mainbtn=confirm" />
+        <input type="button" th:value="#{label.Ok}" value="ok" data-def="evt=ok, state=summary, mainbtn=summary" />
+        <input type="button" th:value="#{label.Ok}" value="ok"
+          data-def="evt=okerrsize, state=error-size, mainbtn=error-size" />
+        <input type="button" th:value="#{label.Ok}" value="ok"
+          data-def="evt=okerrformat, state=error-type, mainbtn=error-type" />
+        <input type="button" th:value="#{label.Cancel}" value="cancel"
+          data-def="evt=cancel, state=parametrization confirm" />
+        <input type="button" th:value="#{label.Cancel}" value="cancel"
+          data-def="evt=cancel-progression, state=progression" />
       </div>
 
     </div>
 
     <!--  ================ /IMPORT LINK POPUP ======================  -->
+  </div>
+
+
+  <!--  ================= EXPORT TC POPUP ======================= -->
+
+  <div id="export-test-case-dialog" class="popup-dialog not-displayed" th:title="#{label.Export}" title="export"
+    th:attr="data-def='nameprefix='+#{label.lower.dash.exportTestCase}+', dateformat='+#{export.dateformat}">
+
+    <div data-def="state=main" class="std-margin-top">
+
+      <span th:text="#{test-case.export.dialog.message}">export message</span>
+
+      <div class="std-padding std-margin-top">
+
+        <div class="grey-round-panel snap-left" style="width: 43%;">
+          <input type="radio" name="format" data-val="xls" class="centered" checked="checked" />
+          <span style="text-decoration: underline;">Excel</span>
+          <div class="nota-bene" th:text="#{test-case.export.dialog.excel.description}">export description</div>
+        </div>
+
+        <div class="grey-round-panel snap-right" style="width: 43%;">
+          <input type="radio" name="format" data-val="csv" class="centered" />
+          <span style="text-decoration: underline;">CSV</span>
+          <div class="nota-bene" th:text="#{test-case.export.dialog.csv.description}">csv description</div>
+        </div>
+
+        <div class="unsnap"></div>
+
+      </div>
+
+      <div class="std-margin-top">
+        <span th:text="#{test-case.export.dialog.filename}"> test case export filename </span>
+        <input type="text" id="export-test-case-filename" size="255" style="width: 350px" />
+      </div>
+
+      <div class="std-margin-top">
+        <input type="checkbox" id="export-test-case-includecalls" />
+        <span th:text="#{test-case.export.dialog.includecall}"></span>
+        <div class="nota-bene" th:text="#{test-case.export.dialog.includecall.description}"></div>
+      </div>
+
+
+      <div class="std-margin-top">
+        <input type="checkbox" id="export-test-case-keepRteFormat" checked="checked" />
+        <span th:text="#{test-case.export.dialog.keeprteformat}">keep rte format</span>
+        <div class="nota-bene" th:text="#{test-case.export.dialog.keeprteformat.description}">keep rte format
+          description</div>
+      </div>
+
+
     </div>
 
-
-    <!--  ================= EXPORT TC POPUP ======================= -->
-
-    <div id="export-test-case-dialog" class="popup-dialog not-displayed" th:title="#{label.Export}" title="export" th:attr="data-def='nameprefix='+#{label.lower.dash.exportTestCase}+', dateformat='+#{export.dateformat}">
-
-      <div data-def="state=main" class="std-margin-top">
-
-        <span th:text="#{test-case.export.dialog.message}">export message</span>
-
-        <div class="std-padding std-margin-top">
-
-          <div class="grey-round-panel snap-left" style="width:43%;">
-            <input type="radio" name="format" data-val="xls" class="centered" checked="checked"/><span style="text-decoration:underline;">Excel</span>
-            <div class="nota-bene"th:text="#{test-case.export.dialog.excel.description}"> export description
-            </div>      
-          </div>
-
-          <div class="grey-round-panel snap-right" style="width:43%;">
-            <input type="radio" name="format" data-val="csv" class="centered"/><span style="text-decoration:underline;">CSV</span>
-            <div class="nota-bene" th:text="#{test-case.export.dialog.csv.description}"> csv description </div>      
-          </div>
-
-          <div class="unsnap"></div>
-
-        </div>
-
-        <div class="std-margin-top">
-          <span th:text="#{test-case.export.dialog.filename}"> test case export filename </span>
-          <input type="text" id="export-test-case-filename" size="255" style="width:350px"/>
-        </div>
-
-        <div class="std-margin-top">
-          <input type="checkbox" id="export-test-case-includecalls"/>
-          <span th:text="#{test-case.export.dialog.includecall}"></span>
-          <div class="nota-bene" th:text="#{test-case.export.dialog.includecall.description}">
-          </div>
-        </div>
-
-
-        <div class="std-margin-top">
-          <input type="checkbox" id="export-test-case-keepRteFormat" checked="checked"/>
-          <span th:text="#{test-case.export.dialog.keeprteformat}">keep rte format</span>
-          <div class="nota-bene" th:text="#{test-case.export.dialog.keeprteformat.description}"> keep rte format description
-          </div>
-        </div>
-
-
-      </div>
-
-      <div data-def="state=nonodeserror" class="std-margin-top">
-        <span th:text="#{message.exportTestCaseNoNodeSelected}">export test case no node selected</span>
-      </div>
-
-      <div class="popup-dialog-buttonpane">
-        <input type="button" th:value="#{label.Export}" value="export"   data-def="evt=confirm, mainbtn=main"/>
-        <input type="button" th:value="#{label.Cancel}" value="cancel"   data-def="evt=cancel, mainbtn=nonodeserror" />
-      </div>
+    <div data-def="state=nonodeserror" class="std-margin-top">
+      <span th:text="#{message.exportTestCaseNoNodeSelected}">export test case no node selected</span>
     </div>
 
+    <div class="popup-dialog-buttonpane">
+      <input type="button" th:value="#{label.Export}" value="export" data-def="evt=confirm, mainbtn=main" />
+      <input type="button" th:value="#{label.Cancel}" value="cancel" data-def="evt=cancel, mainbtn=nonodeserror" />
+    </div>
+  </div>
 
-    <!--  ================= /EXPORT TC POPUP =======================  -->
-    <!--  ___________________/TEST_CASE TREE POPUPS_______________________________ -->
+
+  <!--  ================= /EXPORT TC POPUP =======================  -->
+  <!--  ___________________/TEST_CASE TREE POPUPS_______________________________ -->
 </body>
 </html>

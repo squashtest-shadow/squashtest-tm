@@ -28,18 +28,21 @@ import javax.servlet.ServletContext;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
+import org.squashtest.tm.api.export.ExportPlugin;
+import org.squashtest.tm.api.workspace.WorkspaceType;
 import org.squashtest.tm.domain.IdentifiedUtil;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.projectfilter.ProjectFilter;
 import org.squashtest.tm.service.bugtracker.BugTrackerFinderService;
 import org.squashtest.tm.service.project.ProjectFilterModificationService;
 import org.squashtest.tm.service.project.ProjectFinder;
+import org.squashtest.tm.web.internal.export.ExportPluginManager;
 import org.squashtest.tm.web.internal.model.jquery.FilterModel;
 
 
 
 /**
- * Workspace helper, as an expression extension for thymeleaf 
+ * Workspace helper, as an expression extension for thymeleaf
  * 
  * @author bsiri
  *
@@ -47,36 +50,43 @@ import org.squashtest.tm.web.internal.model.jquery.FilterModel;
 public class WorkspaceHelper {
 
 	private final ServletContext servletContext;
-	
+
 	public WorkspaceHelper(final ServletContext servletContext){
 		super();
 		this.servletContext = servletContext;
 	}
-	
+
 	public Collection<BugTracker> visibleBugtrackers(){
-		
+
 		WebApplicationContext wac = WebApplicationContextUtils.getWebApplicationContext(servletContext);
-		
+
 		ProjectFinder projectFinder = wac.getBean(ProjectFinder.class);
 		BugTrackerFinderService bugtrackerService = wac.getBean(BugTrackerFinderService.class);
-		
+
 		List<Project> projects = projectFinder.findAllReadable();
 		List<Long> projectsIds = IdentifiedUtil.extractIds(projects);
-		
+
 		return bugtrackerService.findDistinctBugTrackersForProjects(projectsIds);
-		
-	}
-	
-	
-	public FilterModel projectFilter(){		
-		WebApplicationContext wac = WebApplicationContextUtils.getWebApplicationContext(servletContext);		
-		ProjectFilterModificationService service = wac.getBean(ProjectFilterModificationService.class);
-		
-		ProjectFilter filter = service.findProjectFilterByUserLogin();
-		List<Project> allProjects = service.getAllProjects();
-		
-		return new FilterModel(filter, allProjects);
-		
+
 	}
 
+
+	public FilterModel projectFilter(){
+		WebApplicationContext wac = WebApplicationContextUtils.getWebApplicationContext(servletContext);
+		ProjectFilterModificationService service = wac.getBean(ProjectFilterModificationService.class);
+
+		ProjectFilter filter = service.findProjectFilterByUserLogin();
+		List<Project> allProjects = service.getAllProjects();
+
+		return new FilterModel(filter, allProjects);
+
+	}
+	public  Collection<ExportPlugin> exportPlugins(String workspaceName) {
+
+		WebApplicationContext wac = WebApplicationContextUtils.getWebApplicationContext(servletContext);
+		WorkspaceType workspace = WorkspaceType.valueOf(workspaceName);
+
+		ExportPluginManager manager = wac.getBean(ExportPluginManager.class);
+		return manager.findAllByWorkspace(workspace);
+	}
 }
