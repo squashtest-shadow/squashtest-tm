@@ -34,6 +34,9 @@ public class ExProgressScheduledAbstractDto extends ExProgressAbstractDto{
 	protected Date actualEndDate;
 
 
+	public ExProgressScheduledAbstractDto(){
+		super();
+	}
 
 	public ExProgressScheduledAbstractDto(List<IterationTestPlanItem> testPlans) {
 		super(testPlans);
