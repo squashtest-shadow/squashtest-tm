@@ -38,14 +38,6 @@
 	position : absolute;
 }
 
-
-.shadow {
-  -moz-box-shadow: 5px 5px 5px #111111;
-  -webkit-box-shadow: 5px 5px 5px #111111;
-  box-shadow: 5px 5px 5px #111111;
-}
-
-
 .sub-page-content{
     position: absolute;
 	background-color: #EBEAE5;

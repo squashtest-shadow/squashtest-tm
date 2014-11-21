@@ -56,6 +56,14 @@ small, .small {
 	font-size: @verysmall-font;
 }
 
+.shadow {
+	@shad-offset: 5px;
+	@shad-blur: @shad-offset;
+	@shad-color: #111111;
+	
+	box-shadow: @shad-offset @shad-offset @shad-blur @shad-blur @shad-color;
+}
+
 /**
  * text variants
  */

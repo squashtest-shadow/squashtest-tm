@@ -53,7 +53,7 @@
 	
 	<jsp:attribute name="content">
 		<div id="sub-page" class="sub-page" >
-			<div id="sub-page-header" class="sub-page-header shadow ui-corner-all">
+			<div id="sub-page-header" class="sub-page-header">
 			
 				<div id="sub-page-title" class="sub-page-title">
 					<h2><f:message key="requirement-versions.manager.title" /></h2>
