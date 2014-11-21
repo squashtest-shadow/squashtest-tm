@@ -92,7 +92,7 @@
 				<div class="unsnap"></div>
 			</div>
 			
-			<div id="sub-page-content" class="sub-page-content shadow ui-corner-all">
+			<div id="sub-page-content" class="sub-page-content">
 				<jsp:invoke fragment="content" />
 			</div>	
 			
