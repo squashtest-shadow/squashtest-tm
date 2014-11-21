@@ -50,11 +50,11 @@ import org.squashtest.tm.service.campaign.IndexedCampaignTestPlanItem;
 import org.squashtest.tm.service.internal.foundation.collection.PagingUtils;
 import org.squashtest.tm.service.internal.foundation.collection.SortingUtils;
 import org.squashtest.tm.service.internal.repository.CampaignDao;
+import org.squashtest.tm.service.internal.repository.ParameterNames;
 
 @Repository
 public class HibernateCampaignDao extends HibernateEntityDao<Campaign> implements CampaignDao {
 
-	private static final String CAMPAIGN_ID_PARAM_NAME = "campaignId";
 	private static final String CONTAINER_ID = "containerId";
 	private static final String PROJECT_FILTER = "projectFilter";
 	private static final String REFERENCE_FILTER = "referenceFilter";
@@ -112,7 +112,7 @@ public class HibernateCampaignDao extends HibernateEntityDao<Campaign> implement
 
 			@Override
 			public void setQueryParameters(Query query) {
-				query.setParameter("campaignId", campaignId);
+				query.setParameter(ParameterNames.CAMPAIGN_ID, campaignId);
 			}
 
 		};
@@ -151,7 +151,7 @@ public class HibernateCampaignDao extends HibernateEntityDao<Campaign> implement
 
 		Query query = currentSession().createQuery(hqlbuilder.toString());
 
-		query.setParameter("campaignId", campaignId, LongType.INSTANCE);
+		query.setParameter(ParameterNames.CAMPAIGN_ID, campaignId, LongType.INSTANCE);
 
 		PagingUtils.addPaging(query, sorting);
 
@@ -235,7 +235,7 @@ public class HibernateCampaignDao extends HibernateEntityDao<Campaign> implement
 
 		Query query = currentSession().createQuery(queryString);
 
-		query.setParameter("campaignId", campaignId, LongType.INSTANCE);
+		query.setParameter(ParameterNames.CAMPAIGN_ID, campaignId, LongType.INSTANCE);
 
 		if (filtering.hasFilter(PROJECT_DATA)) {
 			query.setParameter(PROJECT_FILTER, "%" + filtering.getFilter(PROJECT_DATA) + "%", StringType.INSTANCE);
@@ -275,7 +275,7 @@ public class HibernateCampaignDao extends HibernateEntityDao<Campaign> implement
 	}
 
 	private SetQueryParametersCallback idParameter(long campaignId) {
-		return new SetIdParameter(CAMPAIGN_ID_PARAM_NAME, campaignId);
+		return new SetIdParameter(ParameterNames.CAMPAIGN_ID, campaignId);
 	}
 
 	@Override

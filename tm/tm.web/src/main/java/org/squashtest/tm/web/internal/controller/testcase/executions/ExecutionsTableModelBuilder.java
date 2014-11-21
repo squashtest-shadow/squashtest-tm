@@ -35,6 +35,7 @@ import org.squashtest.tm.web.internal.controller.campaign.TestSuiteHelper;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelBuilder;
+import org.squashtest.tm.web.internal.model.datatable.DataTableModelConstants;
 
 /**
  * Builder of {@link DataTableModel} for the table of a test case's executions.
@@ -68,7 +69,7 @@ DataTableModelBuilder<Execution> {
 		Map<String, Object> data = new HashMap<String, Object>(12);
 
 		data.put("exec-id", 		item.getId());
-		data.put("project-name", 	iteration.getProject().getName());
+		data.put(DataTableModelConstants.PROJECT_NAME_KEY, 	iteration.getProject().getName());
 		data.put("campaign-name", 	iteration.getCampaign().getName());
 		data.put("iteration-name", 	iteration.getName());
 		data.put("exec-name", 		item.getName());

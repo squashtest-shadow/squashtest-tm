@@ -56,6 +56,7 @@ import org.squashtest.tm.domain.testcase.TestCaseLibraryNode;
 import org.squashtest.tm.service.library.LibraryNavigationService;
 import org.squashtest.tm.service.statistics.testcase.TestCaseStatisticsBundle;
 import org.squashtest.tm.service.testcase.TestCaseLibraryNavigationService;
+import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.controller.generic.LibraryNavigationController;
 import org.squashtest.tm.web.internal.controller.testcase.TestCaseFormModel.TestCaseFormModelValidator;
 import org.squashtest.tm.web.internal.http.ContentTypes;
@@ -88,7 +89,7 @@ LibraryNavigationController<TestCaseLibrary, TestCaseFolder, TestCaseLibraryNode
 	private static final String NODES = "nodes";
 	private static final String CALLS = "calls";
 
-	private static final String RTEFORMAT = "keep-rte-format";
+
 
 	@Override
 	protected LibraryNavigationService<TestCaseLibrary, TestCaseFolder, TestCaseLibraryNode> getLibraryNavigationService() {
@@ -163,11 +164,11 @@ LibraryNavigationController<TestCaseLibrary, TestCaseFolder, TestCaseLibraryNode
 	}
 
 	@RequestMapping(value = "/content/csv", produces = "application/octet-stream", method = RequestMethod.GET, params = {
-			FILENAME, LIBRARIES, NODES, CALLS, RTEFORMAT })
+			FILENAME, LIBRARIES, NODES, CALLS, RequestParams.RTEFORMAT })
 	@ResponseBody
 	public void exportAsCsv(Locale locale, @RequestParam(FILENAME) String filename,
 			@RequestParam(LIBRARIES) List<Long> libraryIds, @RequestParam(NODES) List<Long> nodeIds,
-			@RequestParam(CALLS) Boolean includeCalledTests, @RequestParam(RTEFORMAT) Boolean keepRteFormat,
+			@RequestParam(CALLS) Boolean includeCalledTests, @RequestParam(RequestParams.RTEFORMAT) Boolean keepRteFormat,
 			HttpServletResponse response) throws FileNotFoundException {
 
 		response.setContentType("application/octet-stream");
@@ -184,11 +185,11 @@ LibraryNavigationController<TestCaseLibrary, TestCaseFolder, TestCaseLibraryNode
 	}
 
 	@RequestMapping(value = "/content/xls", produces = "application/octet-stream", method = RequestMethod.GET, params = {
-			FILENAME, LIBRARIES, NODES, CALLS, RTEFORMAT })
+			FILENAME, LIBRARIES, NODES, CALLS, RequestParams.RTEFORMAT })
 	@ResponseBody
 	public FileSystemResource exportAsExcel(@RequestParam(FILENAME) String filename,
 			@RequestParam(LIBRARIES) List<Long> libraryIds, @RequestParam(NODES) List<Long> nodeIds,
-			@RequestParam(CALLS) Boolean includeCalledTests, @RequestParam(RTEFORMAT) Boolean keepRteFormat,
+			@RequestParam(CALLS) Boolean includeCalledTests, @RequestParam(RequestParams.RTEFORMAT) Boolean keepRteFormat,
 			HttpServletResponse response) throws FileNotFoundException {
 
 		response.setContentType("application/octet-stream");

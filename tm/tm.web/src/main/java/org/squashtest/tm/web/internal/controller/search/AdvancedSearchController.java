@@ -169,7 +169,7 @@ public class AdvancedSearchController {
 	// These are used by Lucene - Thus the columns are mapped to index
 	// properties rather than class properties
 	private DatatableMapper<String> testCaseSearchResultMapper = new NameBasedMapper(11)
-	.mapAttribute("project-name", "name", Project.class).mapAttribute("test-case-id", "id", TestCase.class)
+	.mapAttribute(DataTableModelConstants.PROJECT_NAME_KEY, "name", Project.class).mapAttribute("test-case-id", "id", TestCase.class)
 	.mapAttribute("test-case-ref", "reference", TestCase.class)
 	.mapAttribute("test-case-label", "labelUpperCased", TestCase.class)
 	.mapAttribute("test-case-weight", "importance", TestCase.class)
@@ -184,7 +184,7 @@ public class AdvancedSearchController {
 	.mapAttribute("test-case-modified-by", "lastModifiedBy", TestCase.class);
 
 	private DatatableMapper<String> requirementSearchResultMapper = new NameBasedMapper(11)
-	.mapAttribute("project-name", "name", Project.class)
+	.mapAttribute(DataTableModelConstants.PROJECT_NAME_KEY, "name", Project.class)
 	.mapAttribute("requirement-id", "requirement.id", RequirementVersion.class)
 	.mapAttribute("requirement-reference", "reference", RequirementVersion.class)
 	.mapAttribute("requirement-label", "labelUpperCased", RequirementVersion.class)
@@ -283,11 +283,11 @@ public class AdvancedSearchController {
 		return isInAssociationContext;
 	}
 
-	@RequestMapping(value = "/table", method = RequestMethod.POST, params = { "model", TESTCASE_VIA_REQUIREMENT,
+	@RequestMapping(value = "/table", method = RequestMethod.POST, params = { RequestParams.MODEL, TESTCASE_VIA_REQUIREMENT,
 			RequestParams.S_ECHO_PARAM })
 	@ResponseBody
 	public DataTableModel getTestCaseThroughRequirementTableModel(final DataTableDrawParameters params,
-			final Locale locale, @RequestParam(value = "model") String model,
+			final Locale locale, @RequestParam(value = RequestParams.MODEL) String model,
 			@RequestParam(required = false) String associateResultWithType, @RequestParam(required = false) Long id)
 					throws JsonParseException, JsonMappingException, IOException {
 
@@ -310,11 +310,11 @@ public class AdvancedSearchController {
 				isInAssociationContext, ids).buildDataModel(holder, params.getsEcho());
 	}
 
-	@RequestMapping(value = "/table", method = RequestMethod.POST, params = { "model", TESTCASE,
+	@RequestMapping(value = "/table", method = RequestMethod.POST, params = { RequestParams.MODEL, TESTCASE,
 			RequestParams.S_ECHO_PARAM })
 	@ResponseBody
 	public DataTableModel getTestCaseTableModel(final DataTableDrawParameters params, final Locale locale,
-			@RequestParam(value = "model") String model,
+			@RequestParam(value = RequestParams.MODEL) String model,
 			@RequestParam(required = false) String associateResultWithType, @RequestParam(required = false) Long id)
 					throws JsonParseException, JsonMappingException, IOException {
 
@@ -337,11 +337,11 @@ public class AdvancedSearchController {
 				isInAssociationContext, ids).buildDataModel(holder, params.getsEcho());
 	}
 
-	@RequestMapping(value = "/table", method = RequestMethod.POST, params = { "model", REQUIREMENT,
+	@RequestMapping(value = "/table", method = RequestMethod.POST, params = { RequestParams.MODEL, REQUIREMENT,
 			RequestParams.S_ECHO_PARAM })
 	@ResponseBody
 	public DataTableModel getRequirementTableModel(final DataTableDrawParameters params, final Locale locale,
-			@RequestParam(value = "model") String model,
+			@RequestParam(value = RequestParams.MODEL) String model,
 			@RequestParam(required = false) String associateResultWithType, @RequestParam(required = false) Long id)
 					throws JsonParseException, JsonMappingException, IOException {
 
@@ -525,7 +525,7 @@ public class AdvancedSearchController {
 
 			final AuditableMixin auditable = (AuditableMixin) item;
 			Map<String, Object> res = new HashMap<String, Object>();
-			res.put("project-name", item.getProject().getName());
+			res.put(DataTableModelConstants.PROJECT_NAME_KEY, item.getProject().getName());
 			if (isInAssociationContext()) {
 				res.put("empty-is-associated-holder", " ");
 				res.put("is-associated", associatedRequirementIds.contains(item.getId()));
@@ -607,7 +607,7 @@ public class AdvancedSearchController {
 		public Map<String, Object> buildItemData(TestCase item) {
 			final AuditableMixin auditable = (AuditableMixin) item;
 			Map<String, Object> res = new HashMap<String, Object>();
-			res.put("project-name", item.getProject().getName());
+			res.put(DataTableModelConstants.PROJECT_NAME_KEY, item.getProject().getName());
 			if (isInAssociationContext()) {
 				res.put("empty-is-associated-holder", " ");
 				res.put("is-associated", associatedTestCaseIds.contains(item.getId()));

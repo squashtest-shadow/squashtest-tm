@@ -31,41 +31,42 @@ import org.squashtest.tm.domain.campaign.CampaignFolder;
 import org.squashtest.tm.domain.campaign.CampaignLibrary;
 import org.squashtest.tm.domain.campaign.CampaignLibraryNode;
 import org.squashtest.tm.service.internal.repository.CampaignDeletionDao;
+import org.squashtest.tm.service.internal.repository.ParameterNames;
 
 @Repository
 public class HibernateCampaignDeletionDao extends HibernateDeletionDao
-		implements CampaignDeletionDao {
+implements CampaignDeletionDao {
 
 
-	
+
 	@Override
 	public void removeEntities(List<Long> entityIds) {
 		if (!entityIds.isEmpty()) {
 
 			Query query = null;
 			for(Long entityId : entityIds){
-				
+
 				query = getSession().getNamedQuery("campaignLibraryNode.findById");
-				query.setParameter("libraryNodeId", entityId);
+				query.setParameter(ParameterNames.LIBRARY_NODE_ID, entityId);
 				CampaignLibraryNode node = (CampaignLibraryNode) query.uniqueResult();
-				
+
 				removeEntityFromParentLibraryIfExists(entityId, node);
 
 				removeEntityFromParentFolderIfExists(entityId, node);
-				
+
 				if(node != null){
 					getSession().delete(node);
 					getSession().flush();
 				}
 			}
-								
-	
+
+
 		}
 	}
-	
+
 	private void removeEntityFromParentLibraryIfExists(Long entityId, CampaignLibraryNode node){
 		Query query = getSession().getNamedQuery("campaignLibraryNode.findParentLibraryIfExists");
-		query.setParameter("libraryNodeId", entityId);
+		query.setParameter(ParameterNames.LIBRARY_NODE_ID, entityId);
 		CampaignLibrary library = (CampaignLibrary) query.uniqueResult();
 		if(library != null){
 			ListIterator<CampaignLibraryNode> iterator = library.getContent().listIterator();
@@ -78,10 +79,10 @@ public class HibernateCampaignDeletionDao extends HibernateDeletionDao
 			}
 		}
 	}
-	
+
 	private void removeEntityFromParentFolderIfExists(Long entityId, CampaignLibraryNode node){
 		Query query = getSession().getNamedQuery("campaignLibraryNode.findParentFolderIfExists");
-		query.setParameter("libraryNodeId", entityId);
+		query.setParameter(ParameterNames.LIBRARY_NODE_ID, entityId);
 		CampaignFolder folder = (CampaignFolder) query.uniqueResult();
 		if(folder != null){
 			ListIterator<CampaignLibraryNode> iterator = folder.getContent().listIterator();
@@ -94,15 +95,15 @@ public class HibernateCampaignDeletionDao extends HibernateDeletionDao
 			}
 		}
 	}
-	
+
 	@Override
 	public List<Long>[] separateFolderFromCampaignIds(List<Long> originalIds) {
 		List<Long> folderIds = new ArrayList<Long>();
 		List<Long> campaignIds = new ArrayList<Long>();
-		
+
 		List<BigInteger> filtredFolderIds = executeSelectSQLQuery(
-						NativeQueries.CAMPAIGNLIBRARYNODE_SQL_FILTERFOLDERIDS, "campaignIds", originalIds);
-		
+				NativeQueries.CAMPAIGNLIBRARYNODE_SQL_FILTERFOLDERIDS, "campaignIds", originalIds);
+
 		for (Long oId : originalIds){
 			if (filtredFolderIds.contains(BigInteger.valueOf(oId))){
 				folderIds.add(oId);
@@ -111,11 +112,11 @@ public class HibernateCampaignDeletionDao extends HibernateDeletionDao
 				campaignIds.add(oId);
 			}
 		}
-		
+
 		List<Long>[] result = new List[2];
 		result[0] = folderIds;
 		result[1] = campaignIds;
-		
+
 		return result;
 	}
 

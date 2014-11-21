@@ -46,6 +46,7 @@ import org.squashtest.tm.service.batchimport.excel.TemplateMismatchException;
 import org.squashtest.tm.service.importer.ImportLog;
 import org.squashtest.tm.service.importer.ImportSummary;
 import org.squashtest.tm.service.testcase.TestCaseLibraryNavigationService;
+import org.squashtest.tm.web.internal.controller.RequestParams;
 
 /**
  * @author Gregory Fouquet
@@ -84,7 +85,7 @@ public class TestCaseImportController {
 	 */
 	@RequestMapping(value = "/zip", method = RequestMethod.POST, produces = "text/html")
 	public ModelAndView importZippedTestCases(@RequestParam("archive") MultipartFile archive,
-			@RequestParam("projectId") long projectId, @RequestParam("zipEncoding") String zipEncoding)
+			@RequestParam(RequestParams.PROJECT_ID) long projectId, @RequestParam("zipEncoding") String zipEncoding)
 					throws IOException {
 
 		InputStream stream = archive.getInputStream();

@@ -34,6 +34,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.squashtest.tm.domain.campaign.CampaignLibraryNode;
 import org.squashtest.tm.service.library.SearchService;
+import org.squashtest.tm.web.internal.controller.RequestParams;
 
 @Controller
 @RequestMapping("/search")
@@ -68,7 +69,7 @@ public class SearchController {
 
 
 	@RequestMapping(value = "/campaigns", method = RequestMethod.GET, params = { "order" })
-	public ModelAndView searchOrderedCampaigns(@RequestParam("name") String name, @RequestParam String order) {
+	public ModelAndView searchOrderedCampaigns(@RequestParam(RequestParams.NAME) String name, @RequestParam String order) {
 		LOGGER.info("SQUASH INFO: TRY Campaign search with name : " + name);
 
 		boolean isOrdered = Boolean.parseBoolean(order);

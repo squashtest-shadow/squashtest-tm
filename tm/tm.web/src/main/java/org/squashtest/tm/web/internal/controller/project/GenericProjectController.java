@@ -117,18 +117,17 @@ public class GenericProjectController {
 	private TaskExecutor taskExecutor;
 	private static final Logger LOGGER = LoggerFactory.getLogger(GenericProjectController.class);
 
-	private static final String PROJECT_ID = "projectId";
-	private static final String PROJECT_ID_URL = "/{projectId}";
+	private static final String PROJECT_ID_URL = "/{"+RequestParams.PROJECT_ID+"}";
 	private static final String PROJECT_BUGTRACKER_NAME_UNDEFINED = "project.bugtracker.name.undefined";
 
 	private DatatableMapper<String> allProjectsMapper = new NameBasedMapper(9)
-	.map("name", "name")
+	.map(DataTableModelConstants.DEFAULT_ENTITY_NAME_KEY, "name")
 	.map("label", "label")
 	.map("active", "active")
-	.map("created-on", "audit.createdOn")
-	.map("created-by", "audit.createdBy")
-	.map("last-mod-on", "audit.lastModifiedOn")
-	.map("last-mod-by", "audit.lastModifiedBy");
+	.map(DataTableModelConstants.DEFAULT_CREATED_ON_KEY, DataTableModelConstants.DEFAULT_CREATED_ON_VALUE)
+	.map(DataTableModelConstants.DEFAULT_CREATED_BY_KEY, DataTableModelConstants.DEFAULT_CREATED_BY_VALUE)
+	.map("last-mod-on",DataTableModelConstants.DEFAULT_LAST_MODIFIED_ON_VALUE)
+	.map("last-mod-by", DataTableModelConstants.DEFAULT_LAST_MODIFIED_BY_VALUE);
 
 	private DatatableMapper<String> partyPermissionMapper = new NameBasedMapper(5).map("party-index", "index")
 			.map("party-id", "id").map("party-name", "name").map("party-type", "type")
@@ -313,7 +312,7 @@ public class GenericProjectController {
 	@RequestMapping(value = PROJECT_ID_URL + "/party-permissions", method = RequestMethod.GET)
 	@ResponseBody
 	public DataTableModel getPartyPermissionTable(DataTableDrawParameters params,
-			@PathVariable(PROJECT_ID) long projectId, final Locale locale) {
+			@PathVariable(RequestParams.PROJECT_ID) long projectId, final Locale locale) {
 
 		PagingAndSorting sorting = new DataTableSorting(params, partyPermissionMapper);
 		Filtering filtering = new DataTableFiltering(params);
@@ -341,7 +340,7 @@ public class GenericProjectController {
 
 	@RequestMapping(value = PROJECT_ID_URL + "/test-automation-server", method = RequestMethod.POST, params = "serverId")
 	@ResponseBody
-	public Long bindTestAutomationServer(@PathVariable("projectId") long projectId,
+	public Long bindTestAutomationServer(@PathVariable(RequestParams.PROJECT_ID) long projectId,
 			@RequestParam("serverId") long serverId) {
 		Long finalServerId = (serverId == 0) ? null : serverId;
 		projectManager.bindTestAutomationServer(projectId, finalServerId);
@@ -402,7 +401,7 @@ public class GenericProjectController {
 
 	@RequestMapping(value = PROJECT_ID_URL + "/wizards/{wizardId}/configuration", method = RequestMethod.GET, produces = ContentTypes.APPLICATION_JSON)
 	@ResponseBody
-	public Map<String, String> getEnabledWizardProperties(@PathVariable("projectId") long projectId,
+	public Map<String, String> getEnabledWizardProperties(@PathVariable(RequestParams.PROJECT_ID) long projectId,
 			@PathVariable("wizardId") String wizardId) {
 		WorkspaceWizard wizard = wizardManager.findById(wizardId);
 		Map<String, String> conf = wizard.getProperties();
@@ -414,7 +413,7 @@ public class GenericProjectController {
 
 	@RequestMapping(value = PROJECT_ID_URL + "/wizards/{wizardId}/configuration", method = RequestMethod.POST, consumes = ContentTypes.APPLICATION_JSON)
 	@ResponseBody
-	public void setEnabledWizardProperties(@PathVariable("projectId") long projectId,
+	public void setEnabledWizardProperties(@PathVariable(RequestParams.PROJECT_ID) long projectId,
 			@PathVariable("wizardId") String wizardId, @RequestBody Map<String, String> configuration) {
 		WorkspaceWizard wizard = wizardManager.findById(wizardId);
 		wizard.validate(new EntityReference(EntityType.PROJECT, projectId), configuration);
@@ -464,11 +463,11 @@ public class GenericProjectController {
 
 			data.put("project-id", project.getId());
 			data.put("index", getCurrentIndex());
-			data.put("name", project.getName());
+			data.put(DataTableModelConstants.DEFAULT_ENTITY_NAME_KEY, project.getName());
 			data.put("active", messageSource.internationalizeYesNo(project.isActive(), locale));
 			data.put("label", project.getLabel());
-			data.put("created-on", messageSource.localizeDate(auditable.getCreatedOn(), locale));
-			data.put("created-by", auditable.getCreatedBy());
+			data.put(DataTableModelConstants.DEFAULT_CREATED_ON_KEY, messageSource.localizeDate(auditable.getCreatedOn(), locale));
+			data.put(DataTableModelConstants.DEFAULT_CREATED_BY_KEY, auditable.getCreatedBy());
 			data.put("last-mod-on", messageSource.localizeDate(auditable.getLastModifiedOn(), locale));
 			data.put("last-mod-by", auditable.getLastModifiedBy());
 			data.put("raw-type", ProjectHelper.isTemplate(project) ? "template" : "project");

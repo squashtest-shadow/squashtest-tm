@@ -55,6 +55,7 @@ import org.squashtest.tm.exception.library.RightsUnsuficientsForOperationExcepti
 import org.squashtest.tm.service.importer.ImportSummary;
 import org.squashtest.tm.service.library.LibraryNavigationService;
 import org.squashtest.tm.service.requirement.RequirementLibraryNavigationService;
+import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.controller.generic.LibraryNavigationController;
 import org.squashtest.tm.web.internal.controller.requirement.RequirementFormModel.RequirementFormModelValidator;
 import org.squashtest.tm.web.internal.model.builder.DriveNodeBuilder;
@@ -94,7 +95,7 @@ LibraryNavigationController<RequirementLibrary, RequirementFolder, RequirementLi
 	JsTreeNode addNewRequirementToLibraryRootContent(@PathVariable long libraryId,
 			@RequestBody RequirementFormModel requirementModel) throws BindException {
 
-		BindingResult validation = new BeanPropertyBindingResult(requirementModel, "add-requirement");
+		BindingResult validation = new BeanPropertyBindingResult(requirementModel, MODEL_ATTRIBUTE_ADD_REQUIREMENT);
 		RequirementFormModelValidator validator = new RequirementFormModelValidator(getMessageSource());
 		validator.validate(requirementModel, validation);
 
@@ -117,7 +118,7 @@ LibraryNavigationController<RequirementLibrary, RequirementFolder, RequirementLi
 
 
 
-		BindingResult validation = new BeanPropertyBindingResult(requirementModel, "add-requirement");
+		BindingResult validation = new BeanPropertyBindingResult(requirementModel, MODEL_ATTRIBUTE_ADD_REQUIREMENT);
 		RequirementFormModelValidator validator = new RequirementFormModelValidator(getMessageSource());
 		validator.validate(requirementModel, validation);
 
@@ -133,12 +134,12 @@ LibraryNavigationController<RequirementLibrary, RequirementFolder, RequirementLi
 
 	@RequestMapping(value = "/requirements/{requirementId}/content/new-requirement", method = RequestMethod.POST)
 	public @ResponseBody
-	JsTreeNode addNewRequirementToRequirementContent(@PathVariable("requirementId") long requirementId,
+	JsTreeNode addNewRequirementToRequirementContent(@PathVariable(RequestParams.REQUIREMENT_ID) long requirementId,
 			@RequestBody RequirementFormModel requirementModel) throws BindException{
 
 
 
-		BindingResult validation = new BeanPropertyBindingResult(requirementModel, "add-requirement");
+		BindingResult validation = new BeanPropertyBindingResult(requirementModel, MODEL_ATTRIBUTE_ADD_REQUIREMENT);
 		RequirementFormModelValidator validator = new RequirementFormModelValidator(getMessageSource());
 		validator.validate(requirementModel, validation);
 
@@ -155,7 +156,7 @@ LibraryNavigationController<RequirementLibrary, RequirementFolder, RequirementLi
 	@RequestMapping(value = "/requirements/{requirementId}/content/new", method = RequestMethod.POST, params = { "nodeIds[]" })
 	public @ResponseBody
 	List<JsTreeNode> copyNodeIntoRequirement(@RequestParam("nodeIds[]") Long[] nodeIds,
-			@PathVariable("requirementId") long requirementId) {
+			@PathVariable(RequestParams.REQUIREMENT_ID) long requirementId) {
 
 		List<Requirement> nodeList;
 		List<RequirementLibraryNode> tojsonList;
@@ -171,7 +172,7 @@ LibraryNavigationController<RequirementLibrary, RequirementFolder, RequirementLi
 
 	@RequestMapping(value = "/requirements/{requirementId}/content/{nodeIds}", method = RequestMethod.PUT)
 	public @ResponseBody
-	void moveNode(@PathVariable("nodeIds") Long[] nodeIds, @PathVariable("requirementId") long requirementId) {
+	void moveNode(@PathVariable(RequestParams.NODE_IDS) Long[] nodeIds, @PathVariable(RequestParams.REQUIREMENT_ID) long requirementId) {
 		try {
 			requirementLibraryNavigationService.moveNodesToRequirement(requirementId, nodeIds);
 		} catch (AccessDeniedException ade) {
@@ -181,7 +182,7 @@ LibraryNavigationController<RequirementLibrary, RequirementFolder, RequirementLi
 
 	@RequestMapping(value = "/requirements/{requirementId}/content/{nodeIds}/{position}", method = RequestMethod.PUT)
 	public @ResponseBody
-	void moveNode(@PathVariable("nodeIds") Long[] nodeIds, @PathVariable("requirementId") long requirementId, @PathVariable("position") int position) {
+	void moveNode(@PathVariable(RequestParams.NODE_IDS) Long[] nodeIds, @PathVariable(RequestParams.REQUIREMENT_ID) long requirementId, @PathVariable("position") int position) {
 		try {
 			requirementLibraryNavigationService.moveNodesToRequirement(requirementId, nodeIds, position);
 		} catch (AccessDeniedException ade) {
@@ -191,7 +192,7 @@ LibraryNavigationController<RequirementLibrary, RequirementFolder, RequirementLi
 
 	@RequestMapping(value = "/requirements/{requirementId}/content", method = RequestMethod.GET)
 	public @ResponseBody
-	List<JsTreeNode> getChildrenRequirementsTreeModel(@PathVariable("requirementId") long requirementId) {
+	List<JsTreeNode> getChildrenRequirementsTreeModel(@PathVariable(RequestParams.REQUIREMENT_ID) long requirementId) {
 		List<Requirement> requirements = requirementLibraryNavigationService.findChildrenRequirements(requirementId);
 		return createChildrenRequirementsModel(requirements);
 	}
@@ -207,9 +208,9 @@ LibraryNavigationController<RequirementLibrary, RequirementFolder, RequirementLi
 	}
 
 
-	@RequestMapping(value = "/nodes/{nodeIds}/{exportformat}", method = RequestMethod.GET, params={"name", "keep-rte-format"})
+	@RequestMapping(value = "/nodes/{nodeIds}/{exportformat}", method = RequestMethod.GET, params={RequestParams.NAME, RequestParams.RTEFORMAT})
 	public @ResponseBody
-	void exportRequirements(@PathVariable("nodeIds") List<Long> ids, @RequestParam("name") String filename, @RequestParam("keep-rte-format") Boolean keepRteFormat, @PathVariable("exportformat") String exportformat,
+	void exportRequirements(@PathVariable(RequestParams.NODE_IDS) List<Long> ids, @RequestParam(RequestParams.NAME) String filename, @RequestParam(RequestParams.RTEFORMAT) Boolean keepRteFormat, @PathVariable("exportformat") String exportformat,
 			HttpServletResponse response, Locale locale) {
 
 		List<ExportRequirementData> dataSource = requirementLibraryNavigationService.findRequirementsToExportFromNodes(ids);
@@ -219,9 +220,9 @@ LibraryNavigationController<RequirementLibrary, RequirementFolder, RequirementLi
 
 
 
-	@RequestMapping(value = "/drives/{libIds}/{exportformat}", method = RequestMethod.GET, params={"name", "keep-rte-format"})
+	@RequestMapping(value = "/drives/{libIds}/{exportformat}", method = RequestMethod.GET, params={RequestParams.NAME, RequestParams.RTEFORMAT})
 	public @ResponseBody
-	void exportLibrary(@PathVariable("libIds") List<Long> libIds, @RequestParam("name") String filename, @RequestParam("keep-rte-format") Boolean keepRteFormat, @PathVariable("exportformat") String exportformat,
+	void exportLibrary(@PathVariable("libIds") List<Long> libIds, @RequestParam(RequestParams.NAME) String filename, @RequestParam(RequestParams.RTEFORMAT) Boolean keepRteFormat, @PathVariable("exportformat") String exportformat,
 			HttpServletResponse response, Locale locale) {
 
 		List<ExportRequirementData> dataSource = requirementLibraryNavigationService.findRequirementsToExportFromLibrary(libIds);
@@ -232,7 +233,7 @@ LibraryNavigationController<RequirementLibrary, RequirementFolder, RequirementLi
 
 	@RequestMapping(value = "/import/upload", method = RequestMethod.POST, params = "upload-ticket")
 	public ModelAndView importArchive(@RequestParam("archive") MultipartFile archive,
-			@RequestParam("projectId") long projectId) throws IOException {
+			@RequestParam(RequestParams.PROJECT_ID) long projectId) throws IOException {
 
 		InputStream stream = archive.getInputStream();
 		ImportSummary summary = requirementLibraryNavigationService.importExcel(stream, projectId);

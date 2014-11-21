@@ -33,6 +33,7 @@ import org.hibernate.criterion.Example;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 import org.squashtest.tm.domain.testautomation.TestAutomationProject;
+import org.squashtest.tm.service.internal.repository.ParameterNames;
 import org.squashtest.tm.service.internal.repository.TestAutomationProjectDao;
 
 @Repository
@@ -56,7 +57,7 @@ public class HibernateTestAutomationProjectDao implements TestAutomationProjectD
 	public TestAutomationProject findById(Long id) {
 		Session session = sessionFactory.getCurrentSession();
 		Query query = session.getNamedQuery("testAutomationProject.findById");
-		query.setParameter("projectId", id);
+		query.setParameter(ParameterNames.PROJECT_ID, id);
 		return (TestAutomationProject) query.uniqueResult();
 	}
 
@@ -101,7 +102,7 @@ public class HibernateTestAutomationProjectDao implements TestAutomationProjectD
 		}
 
 		Query q = sessionFactory.getCurrentSession().getNamedQuery("testAutomationProject.haveExecutedTestsByIds");
-		q.setParameterList("projectIds", projectIds);
+		q.setParameterList(ParameterNames.PROJECT_IDS, projectIds);
 		int count = ((Long) q.iterate().next()).intValue();
 		return (count > 0);
 	}
@@ -138,7 +139,7 @@ public class HibernateTestAutomationProjectDao implements TestAutomationProjectD
 	public List<TestAutomationProject> findAllHostedProjects(long serverId) {
 		Session session = sessionFactory.getCurrentSession();
 		Query query = session.getNamedQuery("testAutomationServer.findAllHostedProjects");
-		query.setParameter("serverId", serverId);
+		query.setParameter(ParameterNames.SERVER_ID, serverId);
 		return (List<TestAutomationProject>) query.list();
 	}
 
@@ -149,7 +150,7 @@ public class HibernateTestAutomationProjectDao implements TestAutomationProjectD
 	@Override
 	public List<Long> findHostedProjectIds(long serverId) {
 		Query q = sessionFactory.getCurrentSession().getNamedQuery("testAutomationProject.findHostedProjectIds");
-		q.setParameter("serverId", serverId);
+		q.setParameter(ParameterNames.SERVER_ID, serverId);
 		return q.list();
 	}
 
@@ -158,25 +159,25 @@ public class HibernateTestAutomationProjectDao implements TestAutomationProjectD
 	private void dereferenceAutomatedExecutionExtender(Collection<Long> projectIds) {
 		Query q = sessionFactory.getCurrentSession().getNamedQuery(
 				"testAutomationProject.dereferenceAutomatedExecutionExtender");
-		q.setParameterList("projectIds", projectIds);
+		q.setParameterList(ParameterNames.PROJECT_IDS, projectIds);
 		q.executeUpdate();
 	}
 
 	private void dereferenceTestCases(Collection<Long> projectIds) {
 		Query q = sessionFactory.getCurrentSession().getNamedQuery("testAutomationProject.dereferenceTestCases");
-		q.setParameterList("projectIds", projectIds);
+		q.setParameterList(ParameterNames.PROJECT_IDS, projectIds);
 		q.executeUpdate();
 	}
 
 	private void deleteAutomatedTests(Collection<Long> projectIds) {
 		Query q = sessionFactory.getCurrentSession().getNamedQuery("testAutomationProject.deleteAutomatedTests");
-		q.setParameterList("projectIds", projectIds);
+		q.setParameterList(ParameterNames.PROJECT_IDS, projectIds);
 		q.executeUpdate();
 	}
 
 	private void deleteTestAutomationProjects(Collection<Long> projectIds) {
 		Query q = sessionFactory.getCurrentSession().getNamedQuery("testAutmationProject.delete");
-		q.setParameterList("projectIds", projectIds);
+		q.setParameterList(ParameterNames.PROJECT_IDS, projectIds);
 		q.executeUpdate();
 	}
 

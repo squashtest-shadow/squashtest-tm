@@ -43,6 +43,7 @@ import org.squashtest.tm.domain.testcase.ActionTestStep;
 import org.squashtest.tm.service.internal.foundation.collection.PagingUtils;
 import org.squashtest.tm.service.internal.foundation.collection.SortingUtils;
 import org.squashtest.tm.service.internal.repository.ExecutionDao;
+import org.squashtest.tm.service.internal.repository.ParameterNames;
 
 @Repository
 public class HibernateExecutionDao extends HibernateEntityDao<Execution> implements ExecutionDao {
@@ -59,6 +60,8 @@ public class HibernateExecutionDao extends HibernateEntityDao<Execution> impleme
 	private static final String ITERATION_CAMPAIGN = "Iteration.campaign";
 	private static final String EXECUTION_STATUS = "executionStatus";
 	private static final String EXECUTION_ID = "executionId";
+	private static final String STATUS = "status";
+
 
 	/*
 	 * as long as the ordering of a collection is managed by @OrderColumn, but you can't explicitely reference the
@@ -197,8 +200,8 @@ public class HibernateExecutionDao extends HibernateEntityDao<Execution> impleme
 	public List<Long> findAllExecutionIdHavingStepWithStatus(Long projectId, ExecutionStatus source) {
 
 		Query q = currentSession().getNamedQuery("execution.findExecutionIdsHavingStepStatus");
-		q.setParameter("status", source);
-		q.setParameter("projectId", projectId);
+		q.setParameter(STATUS, source);
+		q.setParameter(ParameterNames.PROJECT_ID, projectId);
 		return q.list();
 
 	}
@@ -228,8 +231,8 @@ public class HibernateExecutionDao extends HibernateEntityDao<Execution> impleme
 	private boolean hasItemTestPlanWithStatus(long projectId, ExecutionStatus executionStatus) {
 		Session session = currentSession();
 		Query qStep = session.getNamedQuery("executionStep.countAllStatus");
-		qStep.setParameter("status", executionStatus);
-		qStep.setParameter("projectId", projectId);
+		qStep.setParameter(STATUS, executionStatus);
+		qStep.setParameter(ParameterNames.PROJECT_ID, projectId);
 		Long nStep = (Long) qStep.uniqueResult();
 		return nStep > 0;
 	}
@@ -237,8 +240,8 @@ public class HibernateExecutionDao extends HibernateEntityDao<Execution> impleme
 	private boolean hasExecWithStatus(long projectId, ExecutionStatus executionStatus) {
 		Session session = currentSession();
 		Query qExec = session.getNamedQuery("execution.countAllStatus");
-		qExec.setParameter("status", executionStatus);
-		qExec.setParameter("projectId", projectId);
+		qExec.setParameter(STATUS, executionStatus);
+		qExec.setParameter(ParameterNames.PROJECT_ID, projectId);
 		Long nExec = (Long) qExec.uniqueResult();
 		return nExec > 0;
 	}
@@ -246,8 +249,8 @@ public class HibernateExecutionDao extends HibernateEntityDao<Execution> impleme
 	private boolean hasExecStepWithStatus(long projectId, ExecutionStatus executionStatus) {
 		Session session = currentSession();
 		Query qITP = session.getNamedQuery("iterationTestPlanItem.countAllStatus");
-		qITP.setParameter("status", executionStatus);
-		qITP.setParameter("projectId", projectId);
+		qITP.setParameter(STATUS, executionStatus);
+		qITP.setParameter(ParameterNames.PROJECT_ID, projectId);
 		Long nITP = (Long) qITP.uniqueResult();
 		return nITP > 0;
 	}
@@ -259,7 +262,7 @@ public class HibernateExecutionDao extends HibernateEntityDao<Execution> impleme
 		Query qStep = session.getNamedQuery("executionStep.replaceStatus");
 		qStep.setParameter("oldStatus", oldStatus);
 		qStep.setParameter("newStatus", newStatus);
-		qStep.setParameter("projectId", projectId);
+		qStep.setParameter(ParameterNames.PROJECT_ID, projectId);
 		qStep.executeUpdate();
 
 	}
@@ -272,7 +275,7 @@ public class HibernateExecutionDao extends HibernateEntityDao<Execution> impleme
 		Query qStep = session.getNamedQuery("iterationTestPlanItem.replaceStatus");
 		qStep.setParameter("oldStatus", oldStatus);
 		qStep.setParameter("newStatus", newStatus);
-		qStep.setParameter("projectId", projectId);
+		qStep.setParameter(ParameterNames.PROJECT_ID, projectId);
 		qStep.executeUpdate();
 
 	}
@@ -357,7 +360,7 @@ public class HibernateExecutionDao extends HibernateEntityDao<Execution> impleme
 		@Override
 		public void setQueryParameters(Query query) {
 			query.setLong("execId", executionId);
-			query.setParameter("status", status);
+			query.setParameter(STATUS, status);
 		}
 	}
 

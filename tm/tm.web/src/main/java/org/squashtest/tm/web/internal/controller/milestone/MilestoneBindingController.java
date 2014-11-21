@@ -51,8 +51,8 @@ import org.squashtest.tm.web.internal.model.viewmapper.NameBasedMapper;
 @Controller
 @RequestMapping("/milestones-binding")
 public class MilestoneBindingController {
-	
-	
+
+
 	private DatatableMapper<String> allProjectsMapper = new NameBasedMapper(2)
 	.map("name", "name")
 	.map("label", "label");
@@ -61,24 +61,24 @@ public class MilestoneBindingController {
 
 	@Inject
 	private MilestoneBindingManagerService service;
-	
+
 
 	@RequestMapping(value="/project/{projectId}/milestone", method = RequestMethod.POST, params = {IDS})
 	@ResponseBody
 	public void bindMilestonesToProject(@PathVariable Long projectId, @RequestParam(IDS) List<Long> milestoneIds) {
-        service.bindMilestonesToProject(milestoneIds, projectId);
+		service.bindMilestonesToProject(milestoneIds, projectId);
 	}
-	
+
 	@RequestMapping(value="/milestone/{milestoneId}/project", method = RequestMethod.POST, params = {IDS})
 	@ResponseBody
 	public void bindProjectsToMilestone(@PathVariable Long milestoneId, @RequestParam(IDS) List<Long> projectIds) {
 		service.bindProjectsToMilestone(projectIds, milestoneId);
 	}
-	
+
 	@RequestMapping(value="/project/{projectId}/milestone/{milestoneIds}", method = RequestMethod.DELETE)
 	@ResponseBody
-	public void unbindMilestoneFromProject(@PathVariable("projectId") Long projectId, @PathVariable("milestoneIds") List<Long> milestoneIds){
-	     service.unbindMilestonesFromProject(milestoneIds, projectId);
+	public void unbindMilestoneFromProject(@PathVariable(RequestParams.PROJECT_ID) Long projectId, @PathVariable("milestoneIds") List<Long> milestoneIds){
+		service.unbindMilestonesFromProject(milestoneIds, projectId);
 	}
 	@RequestMapping(value="/milestone/{milestoneId}/project/{projectIds}", method = RequestMethod.DELETE)
 	@ResponseBody
@@ -86,35 +86,35 @@ public class MilestoneBindingController {
 		service.unbindProjectsFromMilestone(projectIds, milestoneId);
 	}
 
-	
+
 	@RequestMapping(value="/milestone/{milestoneId}/project", method = RequestMethod.GET, params = {RequestParams.S_ECHO_PARAM, "bindable"})
 	@ResponseBody
 	public DataTableModel getBindableProjectForMilestoneTableModel(@PathVariable Long milestoneId, final DataTableDrawParameters params, final Locale locale){
-		
+
 		PagingAndSorting sorter = new DataTableSorting(params, allProjectsMapper);
 
 		Filtering filter = new DataTableFiltering(params);
 
 		PagedCollectionHolder<List<GenericProject>> holder = service.getAllBindableProjectForMilestone(milestoneId, sorter, filter);
-		
-		return new ProjectDataTableModelHelper().buildDataModel(holder, params.getsEcho());			
+
+		return new ProjectDataTableModelHelper().buildDataModel(holder, params.getsEcho());
 	}
-	
-	
-	
+
+
+
 	@RequestMapping(value = "/milestone/{milestoneId}/project", method = RequestMethod.GET, params = {RequestParams.S_ECHO_PARAM, "binded" })
 	@ResponseBody
 	public 	DataTableModel getBindedProjectForMilestoneTableModel(@PathVariable Long milestoneId, final DataTableDrawParameters params, final Locale locale){
-		
+
 		PagingAndSorting sorter = new DataTableSorting(params, allProjectsMapper);
 
 		Filtering filter = new DataTableFiltering(params);
 
 		PagedCollectionHolder<List<GenericProject>> holder = service.getAllBindedProjectForMilestone(milestoneId, sorter, filter);
-				
-		return new ProjectDataTableModelHelper().buildDataModel(holder, params.getsEcho());	
+
+		return new ProjectDataTableModelHelper().buildDataModel(holder, params.getsEcho());
 	}
-	
+
 	private static final class ProjectDataTableModelHelper extends DataTableModelBuilder<GenericProject> {
 
 		private ProjectDataTableModelHelper() {
@@ -126,7 +126,7 @@ public class MilestoneBindingController {
 			data.put(DataTableModelConstants.DEFAULT_ENTITY_ID_KEY, project.getId());
 			data.put(DataTableModelConstants.DEFAULT_ENTITY_INDEX_KEY, getCurrentIndex());
 			data.put("checkbox", " ");
-			data.put("name", project.getName());
+			data.put(DataTableModelConstants.DEFAULT_ENTITY_NAME_KEY, project.getName());
 			data.put("label", project.getLabel());
 			data.put(DataTableModelConstants.DEFAULT_EMPTY_DELETE_HOLDER_KEY, " ");
 			return data;

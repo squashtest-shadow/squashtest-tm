@@ -67,6 +67,7 @@ import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelBuilder;
+import org.squashtest.tm.web.internal.model.datatable.DataTableModelConstants;
 import org.squashtest.tm.web.internal.model.datatable.DataTableSorting;
 import org.squashtest.tm.web.internal.model.jquery.RenameModel;
 import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
@@ -116,7 +117,7 @@ public class RequirementModificationController {
 	private final DatatableMapper<String> versionMapper = new NameBasedMapper()
 	.mapAttribute("version-number", "versionNumber", RequirementVersion.class)
 	.mapAttribute("reference", "reference", RequirementVersion.class)
-	.mapAttribute("name", "name", RequirementVersion.class)
+	.mapAttribute(DataTableModelConstants.DEFAULT_ENTITY_NAME_KEY, "name", RequirementVersion.class)
 	.mapAttribute("status", "status", RequirementVersion.class)
 	.mapAttribute("criticality", "criticality", RequirementVersion.class)
 	.mapAttribute("category", "category", RequirementVersion.class);
@@ -126,7 +127,7 @@ public class RequirementModificationController {
 
 	// will return the Requirement in a full page
 	@RequestMapping(value = "/info", method = RequestMethod.GET)
-	public String showRequirementInfo(Model model, @PathVariable("requirementId") long requirementId, Locale locale) {
+	public String showRequirementInfo(Model model, @PathVariable(RequestParams.REQUIREMENT_ID) long requirementId, Locale locale) {
 		populateRequirementModel(model, requirementId, locale);
 		return "page/requirement-workspace/show-requirement";
 
@@ -134,7 +135,7 @@ public class RequirementModificationController {
 
 	// will return the fragment only
 	@RequestMapping(method = RequestMethod.GET)
-	public String showRequirement(Model model, @PathVariable("requirementId") long requirementId, Locale locale) {
+	public String showRequirement(Model model, @PathVariable(RequestParams.REQUIREMENT_ID) long requirementId, Locale locale) {
 		populateRequirementModel(model, requirementId, locale);
 		return "fragment/requirements/requirement";
 	}
@@ -358,10 +359,10 @@ public class RequirementModificationController {
 
 			Map<String, Object> row = new HashMap<String, Object>(7);
 
-			row.put("entity-id", version.getId());
+			row.put(DataTableModelConstants.DEFAULT_ENTITY_ID_KEY, version.getId());
 			row.put("version-number", version.getVersionNumber());
 			row.put("reference", version.getReference());
-			row.put("name", version.getName());
+			row.put(DataTableModelConstants.DEFAULT_ENTITY_NAME_KEY, version.getName());
 			row.put("status", internationalize(version.getStatus(), locale, levelFormatterProvider));
 			row.put("criticality", internationalize(version.getCriticality(), locale, levelFormatterProvider));
 			row.put("category", formatCategory(version.getCategory(), locale, internationalizableFormatterProvider));

@@ -43,6 +43,7 @@ public final class DataTableModelConstants {
 	public static final String DEFAULT_CREATED_BY_VALUE = "audit.createdBy";
 	public static final String DEFAULT_LAST_MODIFIED_ON_VALUE = "audit.lastModifiedOn";
 	public static final String DEFAULT_LAST_MODIFIED_BY_VALUE = "audit.lastModifiedBy";
+	public static final String PROJECT_NAME_KEY = "project-name";
 
 	/**
 	 * 

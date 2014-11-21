@@ -80,6 +80,7 @@ import org.squashtest.tm.service.campaign.IterationFinder;
 import org.squashtest.tm.service.campaign.TestSuiteFinder;
 import org.squashtest.tm.service.execution.ExecutionFinder;
 import org.squashtest.tm.service.testcase.TestCaseFinder;
+import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.controller.attachment.UploadedData;
 import org.squashtest.tm.web.internal.controller.attachment.UploadedDataPropertyEditorSupport;
 import org.squashtest.tm.web.internal.controller.bugtracker.BugTrackerControllerHelper.ExecutionIssuesTableModel;
@@ -120,13 +121,13 @@ public class BugTrackerController {
 	@Inject
 	private MessageSource messageSource;
 
-	
 
-	
-	
+
+
+
 	@ServiceReference
 	public void setBugTrackerManagerService(BugTrackerManagerService bugTrackerManagerService){
-	    this.bugTrackerManagerService = bugTrackerManagerService;
+		this.bugTrackerManagerService = bugTrackerManagerService;
 	}
 
 	@ServiceReference
@@ -611,9 +612,9 @@ public class BugTrackerController {
 
 	}
 
-	@RequestMapping(value = "/status", method = RequestMethod.GET, params = { "projectId" })
+	@RequestMapping(value = "/status", method = RequestMethod.GET, params = { RequestParams.PROJECT_ID })
 	public @ResponseBody
-	Object getBugTrackerStatus(@RequestParam("projectId") Long projectId) {
+	Object getBugTrackerStatus(@RequestParam(RequestParams.PROJECT_ID) Long projectId) {
 		String strStatus = null;
 
 		BugTrackerStatus status = checkStatus(projectId);
@@ -759,22 +760,22 @@ public class BugTrackerController {
 
 	}
 
-	   /* **************************************************************************************************************
-     * *
-     * administration section * *
-     * ***********************************************************************************************************
-     */
-	
-	   @RequestMapping(value = "/{bugtrackerIds}", method = RequestMethod.DELETE)
-	    public @ResponseBody
-	    void deleteUsers(@PathVariable("bugtrackerIds") List<Long> bugtrackerIds){
-           LOGGER.debug("ids of bugtracker to delete " + bugtrackerIds.toString());
-	       bugTrackerManagerService.deleteBugTrackers(bugtrackerIds);
-	    }
-	
-	
-	
-	
+	/* **************************************************************************************************************
+	 * *
+	 * administration section * *
+	 * ***********************************************************************************************************
+	 */
+
+	@RequestMapping(value = "/{bugtrackerIds}", method = RequestMethod.DELETE)
+	public @ResponseBody
+	void deleteUsers(@PathVariable("bugtrackerIds") List<Long> bugtrackerIds){
+		LOGGER.debug("ids of bugtracker to delete " + bugtrackerIds.toString());
+		bugTrackerManagerService.deleteBugTrackers(bugtrackerIds);
+	}
+
+
+
+
 	/* ******************************* private methods ********************************************** */
 
 	private BugTrackerStatus checkStatus(long projectId) {

@@ -29,6 +29,7 @@ import org.squashtest.tm.domain.testcase.CallTestStep;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelBuilder;
+import org.squashtest.tm.web.internal.model.datatable.DataTableModelConstants;
 
 class CallingTestCasesTableModelBuilder extends DataTableModelBuilder<CallTestStep> {
 
@@ -51,7 +52,7 @@ class CallingTestCasesTableModelBuilder extends DataTableModelBuilder<CallTestSt
 
 		row.put("tc-id", Long.toString(caller.getId()));
 		row.put("tc-index", Long.toString(getCurrentIndex()));
-		row.put("project-name", caller.getProject().getName());
+		row.put(DataTableModelConstants.PROJECT_NAME_KEY, caller.getProject().getName());
 		row.put("tc-reference", caller.getReference());
 		row.put("tc-name", caller.getName());
 		row.put("tc-mode", executionMode);

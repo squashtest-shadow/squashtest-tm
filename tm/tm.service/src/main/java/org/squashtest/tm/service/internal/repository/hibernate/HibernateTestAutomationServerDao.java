@@ -37,6 +37,7 @@ import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.testautomation.TestAutomationServer;
 import org.squashtest.tm.service.internal.foundation.collection.PagingUtils;
 import org.squashtest.tm.service.internal.foundation.collection.SortingUtils;
+import org.squashtest.tm.service.internal.repository.ParameterNames;
 import org.squashtest.tm.service.internal.repository.TestAutomationServerDao;
 
 @Repository
@@ -104,7 +105,7 @@ public class HibernateTestAutomationServerDao implements TestAutomationServerDao
 	public boolean hasBoundProjects(long serverId) {
 		Session session = sessionFactory.getCurrentSession();
 		Query q = session.getNamedQuery("testAutomationServer.hasBoundProjects");
-		q.setParameter("serverId", serverId);
+		q.setParameter(ParameterNames.SERVER_ID, serverId);
 		Long count = (Long) q.uniqueResult();
 		return (count > 0);
 	}
@@ -116,7 +117,7 @@ public class HibernateTestAutomationServerDao implements TestAutomationServerDao
 	public TestAutomationServer findById(Long id) {
 		Session session = sessionFactory.getCurrentSession();
 		Query query = session.getNamedQuery("testAutomationServer.findById");
-		query.setParameter("serverId", id);
+		query.setParameter(ParameterNames.SERVER_ID, id);
 		return (TestAutomationServer) query.uniqueResult();
 	}
 
@@ -156,14 +157,14 @@ public class HibernateTestAutomationServerDao implements TestAutomationServerDao
 
 	private void dereferenceProjects(long serverId) {
 		Query q = sessionFactory.getCurrentSession().getNamedQuery("testAutomationServer.dereferenceProjects");
-		q.setParameter("serverId", serverId, LongType.INSTANCE);
+		q.setParameter(ParameterNames.SERVER_ID, serverId, LongType.INSTANCE);
 		q.executeUpdate();
 
 	}
 
 	private void deleteServerById(long serverId) {
 		Query q = sessionFactory.getCurrentSession().getNamedQuery("testAutomationServer.deleteServer");
-		q.setParameter("serverId", serverId, LongType.INSTANCE);
+		q.setParameter(ParameterNames.SERVER_ID, serverId, LongType.INSTANCE);
 		q.executeUpdate();
 	}
 

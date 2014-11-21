@@ -106,7 +106,6 @@ public class VerifiedRequirementsManagerController {
 	@Inject
 	private PermissionEvaluationService permissionService;
 
-	private static final String NAME = "name";
 	@RequestMapping(value = "/test-cases/{testCaseId}/verified-requirement-versions/manager", method = RequestMethod.GET)
 	public String showTestCaseManager(@PathVariable long testCaseId, Model model, @CookieValue(value = "jstree_open", required = false, defaultValue = "") String[] openedNodes) {
 		TestCase testCase = testCaseModificationService.findById(testCaseId);
@@ -370,8 +369,8 @@ public class VerifiedRequirementsManagerController {
 
 	private DatatableMapper<String> verifiedRequirementVersionsMapper = new NameBasedMapper(7)
 	.mapAttribute(DataTableModelConstants.DEFAULT_ENTITY_ID_KEY, "id", RequirementVersion.class)
-	.mapAttribute(DataTableModelConstants.DEFAULT_ENTITY_NAME_KEY, NAME, RequirementVersion.class)
-	.mapAttribute("project", NAME, Project.class)
+	.mapAttribute(DataTableModelConstants.DEFAULT_ENTITY_NAME_KEY,"name", RequirementVersion.class)
+	.mapAttribute("project", "name", Project.class)
 	.mapAttribute("reference", "reference", RequirementVersion.class)
 	.mapAttribute("versionNumber", "versionNumber", RequirementVersion.class)
 	.mapAttribute("criticality", "criticality", RequirementVersion.class)

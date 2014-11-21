@@ -120,7 +120,7 @@ class TestPlanTableModelHelper extends DataTableModelBuilder<IndexedIterationTes
 
 		res.put(DataTableModelConstants.DEFAULT_ENTITY_ID_KEY, item.getId());
 		res.put(DataTableModelConstants.DEFAULT_ENTITY_INDEX_KEY, index);
-		res.put("project-name", projectName);
+		res.put(DataTableModelConstants.PROJECT_NAME_KEY, projectName);
 		res.put("reference", reference);
 		res.put("tc-id", tcId);
 		res.put("tc-name", testCaseName);

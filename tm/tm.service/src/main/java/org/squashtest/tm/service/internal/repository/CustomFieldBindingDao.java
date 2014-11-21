@@ -29,22 +29,22 @@ import org.squashtest.tm.domain.customfield.BindableEntity;
 import org.squashtest.tm.domain.customfield.CustomFieldBinding;
 @DynamicDao(entity=CustomFieldBinding.class)
 public interface CustomFieldBindingDao extends CustomCustomFieldBindingDao {
-	
+
 
 	CustomFieldBinding findById(long bindingId);
-	
+
 	List<CustomFieldBinding> findAllForGenericProject(long projectId);
-	
+
 	List<CustomFieldBinding> findAllForProjectAndEntity(long projectId, BindableEntity boundEntity);
-	
+
 	List<CustomFieldBinding> findAllForProjectAndEntity(long projectId, BindableEntity boundEntity, Paging paging);
-	
+
 	List<CustomFieldBinding> findAllForCustomField(long customFieldId);
-	
+
 	void persist(CustomFieldBinding binding);
-	
+
 	Long countAllForProjectAndEntity(long projectId, BindableEntity boundEntity);
-	
+
 	/**
 	 * Given an id, returns the list of all the entities binding the same project to the same entity.
 	 * 
@@ -52,26 +52,26 @@ public interface CustomFieldBindingDao extends CustomCustomFieldBindingDao {
 	 * @return
 	 */
 	List<CustomFieldBinding> findAllAlike(long id);
-	
+
 	/**
-	 * Given a bound entity, find which custom field bindings are effectively honored. 
-	 * Indeed there is no constraints on the database that forces an entity to perfectly 
-	 * match the custom field bindings that were defined at the project level for that entity. 
+	 * Given a bound entity, find which custom field bindings are effectively honored.
+	 * Indeed there is no constraints on the database that forces an entity to perfectly
+	 * match the custom field bindings that were defined at the project level for that entity.
 	 * 
 	 * @param boundEntityId
 	 * @param boundEntityType
 	 * @return
 	 */
-	List<CustomFieldBinding> findEffectiveBindingsForEntity(@QueryParam("entityId") long entityId, 
-															@QueryParam("entityType") BindableEntity entityType);
-	
-	
+	List<CustomFieldBinding> findEffectiveBindingsForEntity(@QueryParam("entityId") long entityId,
+			@QueryParam("entityType") BindableEntity entityType);
+
+
 	/**
 	 * batched version of {@link #findEffectiveBindingsForEntity(long, BindableEntity)}.
 	 * 
-	 * The result set is a bit different as it returns a tuple-2 : [ entityId, CustomFieldBinding]. 
-	 * The first element of the array is an entityId, and the second is a CustomFieldBinding. 
-	 * If an entity (of a given id) has multiple binding actually honored, multiple tuples will be 
+	 * The result set is a bit different as it returns a tuple-2 : [ entityId, CustomFieldBinding].
+	 * The first element of the array is an entityId, and the second is a CustomFieldBinding.
+	 * If an entity (of a given id) has multiple binding actually honored, multiple tuples will be
 	 * returned for that entity.
 	 * 
 	 * 
@@ -79,9 +79,9 @@ public interface CustomFieldBindingDao extends CustomCustomFieldBindingDao {
 	 * @param entityType
 	 * @return
 	 */
-	List<Object[]> findEffectiveBindingsForEntities(@QueryParam("entityIds") List<Long> entityIds, 
-															@QueryParam("entityType") BindableEntity entityType);
-	
-	
+	List<Object[]> findEffectiveBindingsForEntities(@QueryParam(ParameterNames.ENTITY_IDS) List<Long> entityIds,
+			@QueryParam("entityType") BindableEntity entityType);
+
+
 
 }

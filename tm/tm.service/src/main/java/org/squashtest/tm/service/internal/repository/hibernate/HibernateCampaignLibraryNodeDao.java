@@ -27,6 +27,7 @@ import org.hibernate.type.LongType;
 import org.springframework.stereotype.Repository;
 import org.squashtest.tm.domain.campaign.CampaignLibraryNode;
 import org.squashtest.tm.service.internal.repository.LibraryNodeDao;
+import org.squashtest.tm.service.internal.repository.ParameterNames;
 
 @Repository("squashtest.tm.repository.CampaignLibraryNodeDao")
 public class HibernateCampaignLibraryNodeDao extends HibernateEntityDao<CampaignLibraryNode> implements LibraryNodeDao<CampaignLibraryNode>{
@@ -35,7 +36,7 @@ public class HibernateCampaignLibraryNodeDao extends HibernateEntityDao<Campaign
 	@Override
 	public List<String> getParentsName(long entityId) {
 		SQLQuery query = currentSession().createSQLQuery(NativeQueries.CLN_FIND_SORTED_PARENT_NAMES);
-		query.setParameter("nodeId", entityId, LongType.INSTANCE);
+		query.setParameter(ParameterNames.NODE_ID, entityId, LongType.INSTANCE);
 		return query.list();
 	}
 
@@ -44,7 +45,7 @@ public class HibernateCampaignLibraryNodeDao extends HibernateEntityDao<Campaign
 	public List<Long> getParentsIds(long entityId) {
 		SQLQuery query = currentSession().createSQLQuery(NativeQueries.CLN_FIND_SORTED_PARENT_IDS);
 		query.setResultTransformer(new SqLIdResultTransformer());
-		query.setParameter("nodeId", entityId, LongType.INSTANCE);
+		query.setParameter(ParameterNames.NODE_ID, entityId, LongType.INSTANCE);
 		return query.list();
 	}
 

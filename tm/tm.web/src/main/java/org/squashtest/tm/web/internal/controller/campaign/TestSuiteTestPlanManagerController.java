@@ -69,6 +69,7 @@ import org.squashtest.tm.web.internal.model.builder.JsTreeNodeListBuilder;
 import org.squashtest.tm.web.internal.model.datatable.DataTableColumnFiltering;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
+import org.squashtest.tm.web.internal.model.datatable.DataTableModelConstants;
 import org.squashtest.tm.web.internal.model.datatable.DataTableMultiSorting;
 import org.squashtest.tm.web.internal.model.jquery.TestPlanAssignableUser;
 import org.squashtest.tm.web.internal.model.json.JsonIterationTestPlanItem;
@@ -99,6 +100,8 @@ public class TestSuiteTestPlanManagerController {
 	private static final String ITEM_ID = "itemId";
 	private static final String TESTPLAN_IDS = "testPlanIds";
 
+	private static final String TEST_PLAN_IDS_URL_MAPPING = "/test-suites/{suiteId}/test-plan/{testPlanIds}";
+
 	@Inject
 	private TestSuiteModificationService service;
 
@@ -119,7 +122,7 @@ public class TestSuiteTestPlanManagerController {
 	private final DatatableMapper<String> testPlanMapper = new NameBasedMapper()
 	.map("entity-index", "index(IterationTestPlanItem)")
 	// index is a special case which means : no sorting.
-	.mapAttribute("project-name", NAME, Project.class).mapAttribute(REFERENCE, REFERENCE, TestCase.class)
+	.mapAttribute(DataTableModelConstants.PROJECT_NAME_KEY, NAME, Project.class).mapAttribute(REFERENCE, REFERENCE, TestCase.class)
 	.mapAttribute("tc-name", NAME, TestCase.class).mapAttribute(IMPORTANCE, IMPORTANCE, TestCase.class)
 	.mapAttribute("dataset.selected.name", NAME, Dataset.class)
 	.mapAttribute("status", "executionStatus", IterationTestPlanItem.class)
@@ -198,7 +201,7 @@ public class TestSuiteTestPlanManagerController {
 		return jsonUsers;
 	}
 
-	@RequestMapping(value = "/test-suites/{suiteId}/test-plan/{testPlanIds}", method = RequestMethod.POST, params = { "assignee" })
+	@RequestMapping(value = TEST_PLAN_IDS_URL_MAPPING, method = RequestMethod.POST, params = { "assignee" })
 	public @ResponseBody
 	long assignUserToCampaignTestPlanItem(@PathVariable(TESTPLAN_IDS) List<Long> testPlanIds,
 			@PathVariable(TEST_SUITE_ID) long suiteId, @RequestParam("assignee") long assignee) {
@@ -214,10 +217,10 @@ public class TestSuiteTestPlanManagerController {
 		return datasetId;
 	}
 
-	@RequestMapping(value = "/test-suites/{suiteId}/test-plan/{itemIds}/position/{newIndex}", method = RequestMethod.POST)
+	@RequestMapping(value = TEST_PLAN_IDS_URL_MAPPING+"/position/{newIndex}", method = RequestMethod.POST)
 	@ResponseBody
 	public void changeTestPlanIndex(@PathVariable(TEST_SUITE_ID) long suiteId, @PathVariable("newIndex") int newIndex,
-			@PathVariable("itemIds") List<Long> itemIds) {
+			@PathVariable(TESTPLAN_IDS) List<Long> itemIds) {
 		testSuiteTestPlanManagerService.changeTestPlanPosition(suiteId, newIndex, itemIds);
 	}
 
@@ -242,7 +245,7 @@ public class TestSuiteTestPlanManagerController {
 		testSuiteTestPlanManagerService.addTestCasesToIterationAndTestSuite(testCasesIds, suiteId);
 	}
 
-	@RequestMapping(value = "/test-suites/{suiteId}/test-plan/{testPlanIds}", method = RequestMethod.DELETE)
+	@RequestMapping(value = TEST_PLAN_IDS_URL_MAPPING, method = RequestMethod.DELETE)
 	public @ResponseBody
 	String removeTestCaseFromTestSuiteAndIteration(@PathVariable(TESTPLAN_IDS) List<Long> testPlanIds,
 			@PathVariable(TEST_SUITE_ID) long suiteId) {
@@ -252,7 +255,7 @@ public class TestSuiteTestPlanManagerController {
 		return response.toString();
 	}
 
-	@RequestMapping(value = "/test-suites/{suiteId}/test-plan/{testPlanIds}", method = RequestMethod.DELETE, params = { "detach=true" })
+	@RequestMapping(value = TEST_PLAN_IDS_URL_MAPPING, method = RequestMethod.DELETE, params = { "detach=true" })
 	public @ResponseBody
 	String detachTestCaseFromTestSuite(@PathVariable(TESTPLAN_IDS) List<Long> testPlanIds,
 			@PathVariable(TEST_SUITE_ID) long suiteId) {
@@ -299,7 +302,7 @@ public class TestSuiteTestPlanManagerController {
 		testSuiteTestPlanManagerService.bindTestPlanToMultipleSuites(boundTestSuitesIds, itpIds);
 	}
 
-	@RequestMapping(value = "/test-suites/{suiteId}/test-plan/{testPlanIds}", method = RequestMethod.POST, params = { STATUS })
+	@RequestMapping(value = TEST_PLAN_IDS_URL_MAPPING, method = RequestMethod.POST, params = { STATUS })
 	public @ResponseBody
 	JsonIterationTestPlanItem setTestPlanItemStatus(@PathVariable("testPlanIds") List<Long> testPlanIds, @RequestParam(STATUS) String status) {
 		LOGGER.debug("change status test plan items to {}", status);

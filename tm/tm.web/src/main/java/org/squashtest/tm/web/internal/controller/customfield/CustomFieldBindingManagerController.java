@@ -34,6 +34,7 @@ import org.squashtest.tm.domain.customfield.BindableEntity;
 import org.squashtest.tm.domain.customfield.CustomField;
 import org.squashtest.tm.domain.customfield.CustomFieldBinding;
 import org.squashtest.tm.service.customfield.CustomFieldBindingFinderService;
+import org.squashtest.tm.web.internal.controller.RequestParams;
 
 
 @Controller
@@ -54,7 +55,7 @@ public class CustomFieldBindingManagerController {
 	 */
 
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView getManager(@PathVariable("projectId") Long projectId){
+	public ModelAndView getManager(@PathVariable(RequestParams.PROJECT_ID) Long projectId){
 
 		List<CustomField> customFields = service.findAvailableCustomFields();
 		ModelAndView mav;

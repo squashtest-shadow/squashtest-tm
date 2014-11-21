@@ -28,6 +28,7 @@ import java.util.List;
 import org.hibernate.Query;
 import org.springframework.stereotype.Repository;
 import org.squashtest.tm.domain.testcase.TestCaseLibraryNode;
+import org.squashtest.tm.service.internal.repository.ParameterNames;
 import org.squashtest.tm.service.internal.repository.TestCaseLibraryNodeDao;
 
 @Repository("squashtest.tm.repository.TestCaseLibraryNodeDao")
@@ -38,7 +39,7 @@ TestCaseLibraryNodeDao {
 	@Override
 	public List<String> getParentsName(long entityId) {
 		Query query = currentSession().getNamedQuery("TestCasePathEdge.findSortedParentNames");
-		query.setParameter("nodeId", entityId);
+		query.setParameter(ParameterNames.NODE_ID, entityId);
 		return query.list();
 	}
 
@@ -46,7 +47,7 @@ TestCaseLibraryNodeDao {
 	@Override
 	public List<Long> getParentsIds(long entityId) {
 		Query query = currentSession().getNamedQuery("TestCasePathEdge.findSortedParentIds");
-		query.setParameter("nodeId", entityId);
+		query.setParameter(ParameterNames.NODE_ID, entityId);
 		return query.list();
 	}
 
@@ -145,12 +146,12 @@ TestCaseLibraryNodeDao {
 		Integer count;
 
 		q = currentSession().getNamedQuery("testCase.countSiblingsInFolder");
-		q.setParameter("nodeId", nodeId);
+		q.setParameter(ParameterNames.NODE_ID, nodeId);
 		count = (Integer)q.uniqueResult();
 
 		if (count == null ){
 			q = currentSession().getNamedQuery("testCase.countSiblingsInLibrary");
-			q.setParameter("nodeId", nodeId);
+			q.setParameter(ParameterNames.NODE_ID, nodeId);
 			count = (Integer)q.uniqueResult();
 		}
 

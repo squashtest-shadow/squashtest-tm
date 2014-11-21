@@ -62,6 +62,7 @@ import org.squashtest.tm.service.campaign.IterationModificationService;
 import org.squashtest.tm.service.campaign.IterationTestPlanManagerService;
 import org.squashtest.tm.service.customfield.CustomFieldValueFinderService;
 import org.squashtest.tm.service.statistics.campaign.CampaignStatisticsBundle;
+import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.controller.generic.ServiceAwareAttachmentTableModelHelper;
 import org.squashtest.tm.web.internal.controller.testcase.TestCaseImportanceJeditableComboDataBuilder;
 import org.squashtest.tm.web.internal.controller.testcase.TestCaseModeJeditableComboDataBuilder;
@@ -346,7 +347,7 @@ public class CampaignModificationController {
 
 	@RequestMapping(value = "/iterations", produces = ContentTypes.APPLICATION_JSON, method = RequestMethod.GET)
 	@ResponseBody
-	public List<JsonIteration> getIterations(@PathVariable("campaignId") long campaignId) {
+	public List<JsonIteration> getIterations(@PathVariable(RequestParams.CAMPAIGN_ID) long campaignId) {
 		List<Iteration> iterations = campaignModService.findIterationsByCampaignId(campaignId);
 		return createJsonIterations(iterations);
 	}
@@ -371,12 +372,12 @@ public class CampaignModificationController {
 	// URL should have been /statistics, but that was already used by another method in this controller
 	@RequestMapping(value = "/dashboard-statistics", method = RequestMethod.GET, produces = ContentTypes.APPLICATION_JSON)
 	public @ResponseBody
-	CampaignStatisticsBundle getStatisticsAsJson(@PathVariable("campaignId") long campaignId) {
+	CampaignStatisticsBundle getStatisticsAsJson(@PathVariable(RequestParams.CAMPAIGN_ID) long campaignId) {
 		return campaignModService.gatherCampaignStatisticsBundle(campaignId);
 	}
 
 	@RequestMapping(value = "/dashboard", method = RequestMethod.GET, produces = ContentTypes.TEXT_HTML)
-	public ModelAndView getDashboard(Model model, @PathVariable("campaignId") long campaignId) {
+	public ModelAndView getDashboard(Model model, @PathVariable(RequestParams.CAMPAIGN_ID) long campaignId) {
 
 		Campaign campaign = campaignModService.findById(campaignId);
 		CampaignStatisticsBundle bundle = campaignModService.gatherCampaignStatisticsBundle(campaignId);

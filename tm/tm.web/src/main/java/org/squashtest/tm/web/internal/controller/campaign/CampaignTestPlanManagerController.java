@@ -58,6 +58,7 @@ import org.squashtest.tm.web.internal.model.builder.JsTreeNodeListBuilder;
 import org.squashtest.tm.web.internal.model.datatable.DataTableColumnFiltering;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
+import org.squashtest.tm.web.internal.model.datatable.DataTableModelConstants;
 import org.squashtest.tm.web.internal.model.datatable.DataTableMultiSorting;
 import org.squashtest.tm.web.internal.model.jquery.TestPlanAssignableUser;
 import org.squashtest.tm.web.internal.model.jstree.JsTreeNode;
@@ -86,7 +87,7 @@ public class CampaignTestPlanManagerController {
 
 	private final DatatableMapper<String> testPlanMapper = new NameBasedMapper()
 	.map		 ("entity-index", 	"index(CampaignTestPlanItem)")
-	.mapAttribute("project-name", 	"name", 			Project.class)
+	.mapAttribute(DataTableModelConstants.PROJECT_NAME_KEY, 	"name", 			Project.class)
 	.mapAttribute("reference", 		"reference", 		TestCase.class)
 	.mapAttribute("tc-name", 		"name", 			TestCase.class)
 	.mapAttribute("dataset.selected.name", "name", 		Dataset.class)
@@ -113,7 +114,7 @@ public class CampaignTestPlanManagerController {
 
 	@RequestMapping(value = "campaigns/{campaignId}/test-plan", params = RequestParams.S_ECHO_PARAM)
 	public @ResponseBody
-	DataTableModel getTestCasesTableModel(@PathVariable("campaignId") long campaignId,
+	DataTableModel getTestCasesTableModel(@PathVariable(RequestParams.CAMPAIGN_ID) long campaignId,
 			final DataTableDrawParameters params, final Locale locale) {
 		DataTableMultiSorting sorter = new DataTableMultiSorting(params, testPlanMapper);
 
@@ -135,7 +136,7 @@ public class CampaignTestPlanManagerController {
 
 	@RequestMapping(value = "/campaigns/{campaignId}/test-plan/{testPlanIds}", method = RequestMethod.DELETE)
 	public @ResponseBody
-	void removeItemsFromTestPlan(@PathVariable("campaignId") long campaignId,
+	void removeItemsFromTestPlan(@PathVariable(RequestParams.CAMPAIGN_ID) long campaignId,
 			@PathVariable("testPlanIds") List<Long> itemsIds) {
 		testPlanManager.removeTestPlanItems(campaignId, itemsIds);
 	}
@@ -160,7 +161,7 @@ public class CampaignTestPlanManagerController {
 
 	@RequestMapping(value = "/campaigns/{campaignId}/assignable-users", method = RequestMethod.GET)
 	public @ResponseBody List<TestPlanAssignableUser> getAssignUserForCampaignTestPlanItem(
-			@PathVariable("campaignId") long campaignId, final Locale locale) {
+			@PathVariable(RequestParams.CAMPAIGN_ID) long campaignId, final Locale locale) {
 
 		List<User> usersList = testPlanManager.findAssignableUserForTestPlan(campaignId);
 
@@ -180,7 +181,7 @@ public class CampaignTestPlanManagerController {
 
 	@RequestMapping(value = "/campaigns/{campaignId}/test-plan/{testPlanIds}", method = RequestMethod.POST, params = {"assignee"})
 	public @ResponseBody
-	Long assignUserToCampaignTestPlanItem(@PathVariable("testPlanIds") List<Long> testPlanIds, @PathVariable("campaignId") long campaignId,
+	Long assignUserToCampaignTestPlanItem(@PathVariable("testPlanIds") List<Long> testPlanIds, @PathVariable(RequestParams.CAMPAIGN_ID) long campaignId,
 			@RequestParam("assignee") long assignee) {
 		testPlanManager.assignUserToTestPlanItems(testPlanIds, campaignId, assignee);
 		return assignee;
@@ -188,7 +189,7 @@ public class CampaignTestPlanManagerController {
 
 	@RequestMapping(value = "/campaigns/{campaignId}/test-plan/{itemIds}/position/{newIndex}", method = RequestMethod.POST)
 	@ResponseBody
-	public void moveTestPlanItems(@PathVariable("campaignId") long campaignId, @PathVariable("newIndex") int newIndex, @PathVariable("itemIds") List<Long> itemIds) {
+	public void moveTestPlanItems(@PathVariable(RequestParams.CAMPAIGN_ID) long campaignId, @PathVariable("newIndex") int newIndex, @PathVariable("itemIds") List<Long> itemIds) {
 		testPlanManager.moveTestPlanItems(campaignId, newIndex, itemIds);
 	}
 
@@ -209,7 +210,7 @@ public class CampaignTestPlanManagerController {
 	 */
 	@RequestMapping(value = "/campaigns/{campaignId}/test-plan/order", method = RequestMethod.POST)
 	@ResponseBody
-	public void reorderTestPlan(@PathVariable("campaignId") long campaignId, DataTableDrawParameters parameters){
+	public void reorderTestPlan(@PathVariable(RequestParams.CAMPAIGN_ID) long campaignId, DataTableDrawParameters parameters){
 
 		PagingAndMultiSorting sorting = new DataTableMultiSorting(parameters, testPlanMapper);
 		testPlanManager.reorderTestPlan(campaignId, sorting);

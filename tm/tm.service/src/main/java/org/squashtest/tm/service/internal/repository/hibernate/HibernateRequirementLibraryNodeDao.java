@@ -27,6 +27,7 @@ import org.hibernate.type.LongType;
 import org.springframework.stereotype.Repository;
 import org.squashtest.tm.domain.requirement.RequirementLibraryNode;
 import org.squashtest.tm.service.internal.repository.LibraryNodeDao;
+import org.squashtest.tm.service.internal.repository.ParameterNames;
 
 @SuppressWarnings("rawtypes")
 @Repository("squashtest.tm.repository.RequirementLibraryNodeDao")
@@ -37,7 +38,7 @@ LibraryNodeDao<RequirementLibraryNode> {
 	@Override
 	public List<String> getParentsName(long entityId) {
 		SQLQuery query = currentSession().createSQLQuery(NativeQueries.RLN_FIND_SORTED_PARENT_NAMES);
-		query.setParameter("nodeId", entityId, LongType.INSTANCE);
+		query.setParameter(ParameterNames.NODE_ID, entityId, LongType.INSTANCE);
 		return query.list();
 	}
 
@@ -46,7 +47,7 @@ LibraryNodeDao<RequirementLibraryNode> {
 	public List<Long> getParentsIds(long entityId) {
 		SQLQuery query = currentSession().createSQLQuery(NativeQueries.RLN_FIND_SORTED_PARENT_IDS);
 		query.setResultTransformer(new SqLIdResultTransformer());
-		query.setParameter("nodeId", entityId, LongType.INSTANCE);
+		query.setParameter(ParameterNames.NODE_ID, entityId, LongType.INSTANCE);
 		return query.list();
 	}
 

@@ -29,6 +29,7 @@ import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseExecutionMode;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelBuilder;
+import org.squashtest.tm.web.internal.model.datatable.DataTableModelConstants;
 
 class VerifyingTestCasesTableModelHelper extends DataTableModelBuilder<TestCase> {
 
@@ -48,7 +49,7 @@ class VerifyingTestCasesTableModelHelper extends DataTableModelBuilder<TestCase>
 
 		row.put("tc-id", tc.getId().toString());
 		row.put("tc-index", Long.toString(getCurrentIndex()));
-		row.put("project-name", tc.getProject().getName());
+		row.put(DataTableModelConstants.PROJECT_NAME_KEY, tc.getProject().getName());
 		row.put("tc-reference", tc.getReference());
 		row.put("tc-name", tc.getName());
 		row.put("tc-type", type);

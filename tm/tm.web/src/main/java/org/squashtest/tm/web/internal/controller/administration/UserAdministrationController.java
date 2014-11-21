@@ -66,6 +66,7 @@ import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.tm.web.internal.model.datatable.DataTableFiltering;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelBuilder;
+import org.squashtest.tm.web.internal.model.datatable.DataTableModelConstants;
 import org.squashtest.tm.web.internal.model.datatable.DataTableSorting;
 import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
 import org.squashtest.tm.web.internal.model.viewmapper.NameBasedMapper;
@@ -96,21 +97,21 @@ public class UserAdministrationController extends PartyControllerSupport {
 	private AuthenticationProviderContext authenticationProviderContext;
 
 	private DatatableMapper<String> userMapper = new NameBasedMapper(10)
-			.map("user-id", "id")
-			.map("user-active", "active")
-			.map("user-login", "login")
-			.map("user-group", "group")
-			.map("user-firstname", "firstName")
-			.map("user-lastname", "lastName")
-			.map("user-email", "email")
-			.map("user-created-on", "audit.createdOn")
-			.map("user-created-by", "audit.createdBy")
-			.map("user-modified-on", "audit.lastModifiedOn")
-			.map("user-modified-by", "audit.lastModifiedBy");
+	.map("user-id", "id")
+	.map("user-active", "active")
+	.map("user-login", "login")
+	.map("user-group", "group")
+	.map("user-firstname", "firstName")
+	.map("user-lastname", "lastName")
+	.map("user-email", "email")
+	.map("user-created-on", "audit.createdOn")
+	.map("user-created-by", "audit.createdBy")
+	.map("user-modified-on", "audit.lastModifiedOn")
+	.map("user-modified-by", "audit.lastModifiedBy");
 
 	private DatatableMapper<String> permissionMapper = new NameBasedMapper(2)
-			.mapAttribute("project-name","project.name", ProjectPermission.class)
-			.mapAttribute("permission-name", "permissionGroup.qualifiedName", ProjectPermission.class);
+	.mapAttribute(DataTableModelConstants.PROJECT_NAME_KEY,"project.name", ProjectPermission.class)
+	.mapAttribute("permission-name", "permissionGroup.qualifiedName", ProjectPermission.class);
 
 
 
@@ -190,19 +191,19 @@ public class UserAdministrationController extends PartyControllerSupport {
 		return new DataTableSorting(params, mapper);
 	}
 
-	
+
 	@RequestMapping(value = USER_URLS +"/deactivate", method = RequestMethod.POST)
 	public @ResponseBody
 	void deactivateUsers(@PathVariable("userIds") List<Long> userIds) {
 		adminService.deactivateUsers(userIds);
 	}
-	
+
 	@RequestMapping(value = USER_URLS + "/activate", method = RequestMethod.POST)
 	public @ResponseBody
 	void activateUsers(@PathVariable("userIds") List<Long> userIds){
 		adminService.activateUsers(userIds);
 	}
-	
+
 	@RequestMapping(value = USER_URLS, method = RequestMethod.DELETE)
 	public @ResponseBody
 	void deleteUsers(@PathVariable("userIds") List<Long> userIds){

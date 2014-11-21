@@ -47,6 +47,7 @@ import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
+import org.squashtest.tm.web.internal.model.datatable.DataTableModelConstants;
 import org.squashtest.tm.web.internal.model.datatable.DataTableSorting;
 import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
 import org.squashtest.tm.web.internal.model.viewmapper.NameBasedMapper;
@@ -59,29 +60,29 @@ public class TestCaseExecutionsController {
 	 */
 	private static final String NAME = "name";
 
-	
+
 	private final DatatableMapper<String> execsTableMapper = new NameBasedMapper()
-			.mapAttribute("project-name", NAME, Project.class)
-			.mapAttribute("campaign-name", NAME, Campaign.class)
-			.mapAttribute("iteration-name", NAME, Iteration.class)
-			.mapAttribute("exec-name", NAME, Execution.class)
-			.mapAttribute("exec-mode", "executionMode", Execution.class)
-			.mapAttribute("test-suite-name", NAME, TestSuite.class)
-			.mapAttribute("exec-status", "executionStatus", Execution.class)
-			.mapAttribute("last-exec-by", "lastExecutedBy", Execution.class)
-			.mapAttribute("last-exec-on", "lastExecutedOn", Execution.class)
-			.mapAttribute("dataset", "datasetLabel", Execution.class);
+	.mapAttribute(DataTableModelConstants.PROJECT_NAME_KEY, NAME, Project.class)
+	.mapAttribute("campaign-name", NAME, Campaign.class)
+	.mapAttribute("iteration-name", NAME, Iteration.class)
+	.mapAttribute("exec-name", NAME, Execution.class)
+	.mapAttribute("exec-mode", "executionMode", Execution.class)
+	.mapAttribute("test-suite-name", NAME, TestSuite.class)
+	.mapAttribute("exec-status", "executionStatus", Execution.class)
+	.mapAttribute("last-exec-by", "lastExecutedBy", Execution.class)
+	.mapAttribute("last-exec-on", "lastExecutedOn", Execution.class)
+	.mapAttribute("dataset", "datasetLabel", Execution.class);
 
 
 	private ExecutionFinder executionFinder;
-			
+
 	@Inject
 	private MessageSource messageSource;
-	
+
 	@Inject
 	private InternationalizationHelper internationalizationHelper;
 
-	
+
 
 	/**
 	 * Returns the

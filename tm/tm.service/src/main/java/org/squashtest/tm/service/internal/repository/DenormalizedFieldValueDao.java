@@ -80,12 +80,12 @@ public interface DenormalizedFieldValueDao {
 			@QueryParam("renderingLocation") RenderingLocation renderingLocation);
 
 
-	List<DenormalizedFieldValue> findDFVForEntities(@QueryParam("entityType") DenormalizedFieldHolderType type, @QueryParam("entityIds") Collection<Long> entities);
+	List<DenormalizedFieldValue> findDFVForEntities(@QueryParam("entityType") DenormalizedFieldHolderType type, @QueryParam(ParameterNames.ENTITY_IDS) Collection<Long> entities);
 
 
 	List<DenormalizedFieldValue> findDFVForEntitiesAndLocations(
 			@QueryParam("entityType") DenormalizedFieldHolderType denormalizedFieldHolderType,
-			@QueryParam("entityIds") Collection<Long> entities,
+			@QueryParam(ParameterNames.ENTITY_IDS) Collection<Long> entities,
 			@QueryParam("locations") Collection<RenderingLocation> locations);
 
 	public long countDenormalizedFields(@QueryParam("entityId") long entityId, @QueryParam("entityType") DenormalizedFieldHolderType entityType);

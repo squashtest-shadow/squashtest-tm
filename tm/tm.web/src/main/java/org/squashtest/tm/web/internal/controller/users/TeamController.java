@@ -97,19 +97,19 @@ public class TeamController extends PartyControllerSupport {
 	private static final String TEAM_ID_URL = "/{teamId}";
 
 	private DatatableMapper<String> teamsMapper = new NameBasedMapper(9)
-														.mapAttribute("name", "name", Team.class)
-														.mapAttribute("description", "description", Team.class)
-														.mapAttribute("nb-associated-users", "size", Team.class)
-														.mapAttribute("created-on", "audit.createdOn", Team.class)
-														.mapAttribute("created-by", "audit.createdBy", Team.class)
-														.mapAttribute("last-mod-on", "audit.lastModifiedOn", Team.class)
-														.mapAttribute("last-mod-by", "audit.lastModifiedBy", Team.class);
+	.mapAttribute(DataTableModelConstants.DEFAULT_ENTITY_NAME_KEY, "name", Team.class)
+	.mapAttribute("description", "description", Team.class)
+	.mapAttribute("nb-associated-users", "size", Team.class)
+	.mapAttribute("created-on", "audit.createdOn", Team.class)
+	.mapAttribute("created-by", "audit.createdBy", Team.class)
+	.mapAttribute("last-mod-on", "audit.lastModifiedOn", Team.class)
+	.mapAttribute("last-mod-by", "audit.lastModifiedBy", Team.class);
 
 	private DatatableMapper<String> membersMapper = new NameBasedMapper(1).map("user-name", "firstName");
 
 	private DatatableMapper<String> permissionMapper = new NameBasedMapper(2)
-														.mapAttribute("project-name", "project.name", ProjectPermission.class)
-														.mapAttribute("permission-name", "permissionGroup.qualifiedName", ProjectPermission.class);
+	.mapAttribute(DataTableModelConstants.PROJECT_NAME_KEY, "project.name", ProjectPermission.class)
+	.mapAttribute("permission-name", "permissionGroup.qualifiedName", ProjectPermission.class);
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(TeamController.class);
 
@@ -176,7 +176,7 @@ public class TeamController extends PartyControllerSupport {
 
 		List<PermissionGroupModel> pgm = getPermissionGroupModels(teamId);
 		List<ProjectModel> pm = getProjectModels(teamId);
-		
+
 
 		model.addAttribute("team", team);
 		model.addAttribute("users", userModel);
@@ -207,7 +207,7 @@ public class TeamController extends PartyControllerSupport {
 	public JsonGeneralInfo refreshGeneralInfos(@PathVariable(TEAM_ID) long teamId){
 		Team team = service.findById(teamId);
 		return new JsonGeneralInfo((AuditableMixin)team);
-		
+
 	}
 
 
@@ -302,11 +302,11 @@ public class TeamController extends PartyControllerSupport {
 			Map<String, Object> res = new HashMap<String, Object>();
 			res.put(DataTableModelConstants.DEFAULT_ENTITY_ID_KEY, item.getId());
 			res.put(DataTableModelConstants.DEFAULT_ENTITY_INDEX_KEY, getCurrentIndex());
-			res.put("name", item.getName());
+			res.put(DataTableModelConstants.DEFAULT_ENTITY_NAME_KEY, item.getName());
 			res.put("description", item.getDescription());
 			res.put("nb-associated-users", item.getMembers().size());
-			res.put("created-on", messageSource.localizeDate(auditable.getCreatedOn(), locale));
-			res.put("created-by", auditable.getCreatedBy());
+			res.put(DataTableModelConstants.DEFAULT_CREATED_ON_KEY, messageSource.localizeDate(auditable.getCreatedOn(), locale));
+			res.put(DataTableModelConstants.DEFAULT_CREATED_BY_KEY, auditable.getCreatedBy());
 			res.put("last-mod-on", messageSource.localizeDate(auditable.getLastModifiedOn(), locale));
 			res.put("last-mod-by", auditable.getLastModifiedBy());
 			res.put(DataTableModelConstants.DEFAULT_EMPTY_DELETE_HOLDER_KEY, " ");

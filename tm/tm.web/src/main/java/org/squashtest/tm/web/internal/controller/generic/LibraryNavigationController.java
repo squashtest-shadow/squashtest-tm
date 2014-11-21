@@ -56,6 +56,7 @@ import org.squashtest.tm.exception.library.RightsUnsuficientsForOperationExcepti
 import org.squashtest.tm.service.deletion.OperationReport;
 import org.squashtest.tm.service.deletion.SuppressionPreviewReport;
 import org.squashtest.tm.service.library.LibraryNavigationService;
+import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.model.jstree.JsTreeNode;
 import org.squashtest.tm.web.internal.report.service.JasperReportsService;
 import org.squashtest.tm.web.internal.util.HTMLCleanupUtils;
@@ -157,7 +158,7 @@ public abstract class LibraryNavigationController<LIBRARY extends Library<? exte
 	}
 
 	@RequestMapping(value = "/content/{nodeIds}/deletion-simulation", method = RequestMethod.GET)
-	public @ResponseBody Messages simulateNodeDeletion(@PathVariable("nodeIds") List<Long> nodeIds, Locale locale) {
+	public @ResponseBody Messages simulateNodeDeletion(@PathVariable(RequestParams.NODE_IDS) List<Long> nodeIds, Locale locale) {
 
 		List<SuppressionPreviewReport> reportList = getLibraryNavigationService().simulateDeletion(nodeIds);
 
@@ -171,7 +172,7 @@ public abstract class LibraryNavigationController<LIBRARY extends Library<? exte
 	}
 
 	@RequestMapping(value = "/content/{nodeIds}", method = RequestMethod.DELETE)
-	public @ResponseBody OperationReport confirmNodeDeletion(@PathVariable("nodeIds") List<Long> nodeIds) {
+	public @ResponseBody OperationReport confirmNodeDeletion(@PathVariable(RequestParams.NODE_IDS) List<Long> nodeIds) {
 
 		return getLibraryNavigationService().deleteNodes(nodeIds);
 	}
@@ -198,7 +199,7 @@ public abstract class LibraryNavigationController<LIBRARY extends Library<? exte
 	}
 
 	@RequestMapping(value = "/{destinationType}/{destinationId}/content/{nodeIds}", method = RequestMethod.PUT)
-	public @ResponseBody void moveNodes(@PathVariable("nodeIds") Long[] nodeIds,
+	public @ResponseBody void moveNodes(@PathVariable(RequestParams.NODE_IDS) Long[] nodeIds,
 			@PathVariable("destinationId") long destinationId, @PathVariable("destinationType") String destType) {
 
 		try {
@@ -217,7 +218,7 @@ public abstract class LibraryNavigationController<LIBRARY extends Library<? exte
 	}
 
 	@RequestMapping(value = "/{destinationType}/{destinationId}/content/{nodeIds}/{position}", method = RequestMethod.PUT)
-	public @ResponseBody void moveNodes(@PathVariable("nodeIds") Long[] nodeIds,
+	public @ResponseBody void moveNodes(@PathVariable(RequestParams.NODE_IDS) Long[] nodeIds,
 			@PathVariable("destinationId") long destinationId, @PathVariable("destinationType") String destType,
 			@PathVariable("position") int position) {
 

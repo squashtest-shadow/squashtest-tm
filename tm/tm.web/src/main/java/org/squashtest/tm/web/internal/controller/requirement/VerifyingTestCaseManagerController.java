@@ -55,6 +55,7 @@ import org.squashtest.tm.web.internal.model.builder.DriveNodeBuilder;
 import org.squashtest.tm.web.internal.model.builder.JsTreeNodeListBuilder;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
+import org.squashtest.tm.web.internal.model.datatable.DataTableModelConstants;
 import org.squashtest.tm.web.internal.model.datatable.DataTableSorting;
 import org.squashtest.tm.web.internal.model.jstree.JsTreeNode;
 import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
@@ -89,7 +90,7 @@ public class VerifyingTestCaseManagerController {
 	 * So we use a named-base with column indexes as names.
 	 */
 	private final DatatableMapper<String> verifyingTcMapper = new NameBasedMapper(6)
-	.mapAttribute("project-name", "name", Project.class)
+	.mapAttribute(DataTableModelConstants.PROJECT_NAME_KEY, "name", Project.class)
 	.mapAttribute("tc-reference", "reference", TestCase.class)
 	.mapAttribute("tc-name", "name", TestCase.class)
 	.mapAttribute("tc-type", "executionMode", TestCase.class);

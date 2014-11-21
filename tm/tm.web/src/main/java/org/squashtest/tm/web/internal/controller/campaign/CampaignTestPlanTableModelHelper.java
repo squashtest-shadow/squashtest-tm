@@ -69,7 +69,7 @@ final class CampaignTestPlanTableModelHelper extends DataTableModelBuilder<Index
 
 		result.put(DataTableModelConstants.DEFAULT_ENTITY_ID_KEY, item.getId());
 		result.put(DataTableModelConstants.DEFAULT_ENTITY_INDEX_KEY, index);
-		result.put("project-name", testCase.getProject().getName());
+		result.put(DataTableModelConstants.PROJECT_NAME_KEY, testCase.getProject().getName());
 		result.put("reference", reference);
 		result.put("tc-name", testCase.getName());
 		result.put("assigned-user", user);

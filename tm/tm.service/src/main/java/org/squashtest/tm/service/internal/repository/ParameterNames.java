@@ -18,22 +18,27 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.internal.repository.hibernate;
+package org.squashtest.tm.service.internal.repository;
 
-import java.util.List;
-
-import org.hibernate.Query;
-import org.hibernate.type.LongType;
-import org.squashtest.tm.service.internal.repository.ParameterNames;
-
-class SetProjectIdsParameterCallback implements SetQueryParametersCallback {
-	private List<Long> projectIds;
-
-	protected SetProjectIdsParameterCallback(List<Long> projectIds) {
-		this.projectIds = projectIds;
+/**
+ * Parameter mames commonly used in queries
+ * 
+ * @author mpagnon
+ */
+public final class ParameterNames {
+	public static final String PROJECT_ID = "projectId";
+	public static final String  PROJECT_IDS= "projectIds";
+	public static final String NODE_ID = "nodeId";
+	public static final String LIBRARY_NODE_ID = "libraryNodeId";
+	public static final String CAMPAIGN_ID = "campaignId";
+	public static final String ITERATION_ID = "iterationId";
+	public static final String SERVER_ID = "serverId";
+	public static final String ENTITY_IDS = "entityIds";
+	/**
+	 * 
+	 */
+	private ParameterNames() {
+		super();
 	}
-	@Override
-	public void setQueryParameters(Query query) {
-		query.setParameterList(ParameterNames.PROJECT_IDS, projectIds, new LongType());
-	}
+
 }

@@ -101,6 +101,7 @@ import org.squashtest.tm.web.internal.model.customfield.CustomFieldJsonConverter
 import org.squashtest.tm.web.internal.model.customfield.CustomFieldModel;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
+import org.squashtest.tm.web.internal.model.datatable.DataTableModelConstants;
 import org.squashtest.tm.web.internal.model.datatable.DataTableSorting;
 import org.squashtest.tm.web.internal.model.jquery.RenameModel;
 import org.squashtest.tm.web.internal.model.json.JsonEnumValue;
@@ -126,7 +127,7 @@ public class TestCaseModificationController {
 	private static final String TEST_CASE_ = "test case "; // NOSONAR generated name
 
 	private final DatatableMapper<String> referencingTestCaseMapper = new NameBasedMapper(6)
-	.mapAttribute("project-name", NAME, Project.class)
+	.mapAttribute(DataTableModelConstants.PROJECT_NAME_KEY, NAME, Project.class)
 	.mapAttribute("tc-reference", "reference", TestCase.class)
 	.mapAttribute("tc-name", NAME, TestCase.class)
 	.mapAttribute("tc-mode", "executionMode", TestCase.class);

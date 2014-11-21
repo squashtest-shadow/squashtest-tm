@@ -43,6 +43,7 @@ import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
+import org.squashtest.tm.web.internal.model.datatable.DataTableModelConstants;
 import org.squashtest.tm.web.internal.model.datatable.DataTableSorting;
 import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
 import org.squashtest.tm.web.internal.model.viewmapper.NameBasedMapper;
@@ -61,7 +62,7 @@ public class BugTrackerAdministrationController {
 
 	private DatatableMapper<String> bugtrackerMapper=new NameBasedMapper()
 	.mapAttribute("id", 	"id", BugTracker.class)
-	.mapAttribute("name", 	"name", BugTracker.class)
+	.mapAttribute(DataTableModelConstants.DEFAULT_ENTITY_NAME_KEY, 	"name", BugTracker.class)
 	.mapAttribute("kind", 	"kind", BugTracker.class)
 	.mapAttribute("url", 	"url", BugTracker.class)
 	.mapAttribute("iframe-friendly", "iframeFriendly", BugTracker.class);

@@ -55,6 +55,7 @@ import org.squashtest.tm.service.bugtracker.BugTrackerFinderService;
 import org.squashtest.tm.service.project.GenericProjectFinder;
 import org.squashtest.tm.service.testautomation.TestAutomationProjectFinderService;
 import org.squashtest.tm.service.testautomation.TestAutomationServerManagerService;
+import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.controller.generic.ServiceAwareAttachmentTableModelHelper;
 import org.squashtest.tm.web.internal.controller.project.WorkspaceWizardModel;
 import org.squashtest.tm.web.internal.helper.JsonHelper;
@@ -152,7 +153,7 @@ public class ProjectAdministrationController {
 	// ********************** Wizard administration section ************
 
 	@RequestMapping(value = "{projectId}/wizards")
-	public String getWizardsManager(@PathVariable("projectId") Long projectId, Model model) {
+	public String getWizardsManager(@PathVariable(RequestParams.PROJECT_ID) Long projectId, Model model) {
 
 		GenericProject project = projectFinder.findById(projectId);
 
@@ -165,7 +166,7 @@ public class ProjectAdministrationController {
 
 		model.addAttribute("availableWizards", availableWizards);
 		model.addAttribute("enabledWizards", enabledWizards);
-		model.addAttribute("projectId", projectId);
+		model.addAttribute(RequestParams.PROJECT_ID, projectId);
 
 		return "project-tabs/workspace-wizards-tab.html";
 

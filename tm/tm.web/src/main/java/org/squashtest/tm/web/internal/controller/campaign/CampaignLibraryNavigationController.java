@@ -64,6 +64,7 @@ import org.squashtest.tm.service.campaign.IterationModificationService;
 import org.squashtest.tm.service.deletion.OperationReport;
 import org.squashtest.tm.service.deletion.SuppressionPreviewReport;
 import org.squashtest.tm.service.library.LibraryNavigationService;
+import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.controller.campaign.CampaignFormModel.CampaignFormModelValidator;
 import org.squashtest.tm.web.internal.controller.campaign.IterationFormModel.IterationFormModelValidator;
 import org.squashtest.tm.web.internal.controller.generic.LibraryNavigationController;
@@ -320,7 +321,7 @@ LibraryNavigationController<CampaignLibrary, CampaignFolder, CampaignLibraryNode
 	@RequestMapping(value = "/campaigns/{campaignId}/iterations/new", method = RequestMethod.POST, params = { "nodeIds[]", "next-iteration-index" })
 	public @ResponseBody
 	List<JsTreeNode> copyIterations(@RequestParam("nodeIds[]") Long[] nodeIds,
-			@PathVariable("campaignId") long campaignId, @RequestParam("next-iteration-index") int nextIterationIndex) {
+			@PathVariable(RequestParams.CAMPAIGN_ID) long campaignId, @RequestParam("next-iteration-index") int nextIterationIndex) {
 
 		List<Iteration> iterationsList;
 		iterationsList = campaignLibraryNavigationService.copyIterationsToCampaign(campaignId, nodeIds);
@@ -342,7 +343,7 @@ LibraryNavigationController<CampaignLibrary, CampaignFolder, CampaignLibraryNode
 	@RequestMapping(value="/export-campaign/{campaignId}", method = RequestMethod.GET, params = "export=csv")
 
 	public @ResponseBody
-	FileSystemResource exportCampaign(@PathVariable("campaignId") long campaignId, @RequestParam(value = "exportType",defaultValue="S") String exportType, HttpServletResponse response) {
+	FileSystemResource exportCampaign(@PathVariable(RequestParams.CAMPAIGN_ID) long campaignId, @RequestParam(value = "exportType",defaultValue="S") String exportType, HttpServletResponse response) {
 
 		Campaign campaign = campaignFinder.findById(campaignId);
 		CampaignExportCSVModel model = campaignLibraryNavigationService.exportCampaignToCSV(campaignId, exportType);

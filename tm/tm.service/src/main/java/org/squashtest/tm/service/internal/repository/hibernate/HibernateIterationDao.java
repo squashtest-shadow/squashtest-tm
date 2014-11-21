@@ -56,6 +56,7 @@ import org.squashtest.tm.service.campaign.IndexedIterationTestPlanItem;
 import org.squashtest.tm.service.internal.foundation.collection.PagingUtils;
 import org.squashtest.tm.service.internal.foundation.collection.SortingUtils;
 import org.squashtest.tm.service.internal.repository.IterationDao;
+import org.squashtest.tm.service.internal.repository.ParameterNames;
 
 @Repository
 public class HibernateIterationDao extends HibernateEntityDao<Iteration> implements IterationDao {
@@ -96,7 +97,7 @@ public class HibernateIterationDao extends HibernateEntityDao<Iteration> impleme
 	@Override
 	public List<Iteration> findAllByCampaignId(long campaignId) {
 
-		return executeListNamedQuery("iterationDao.findAllByCampaignId", new SetIdParameter("campaignId", campaignId));
+		return executeListNamedQuery("iterationDao.findAllByCampaignId", new SetIdParameter(ParameterNames.CAMPAIGN_ID, campaignId));
 	}
 
 	@Override
@@ -164,7 +165,7 @@ public class HibernateIterationDao extends HibernateEntityDao<Iteration> impleme
 
 	@Override
 	public List<Execution> findOrderedExecutionsByIterationId(long iterationId) {
-		return executeListNamedQuery("iteration.findAllExecutions", new SetIdParameter("iterationId", iterationId));
+		return executeListNamedQuery("iteration.findAllExecutions", new SetIdParameter(ParameterNames.ITERATION_ID, iterationId));
 	}
 
 	@Override
@@ -173,7 +174,7 @@ public class HibernateIterationDao extends HibernateEntityDao<Iteration> impleme
 
 			@Override
 			public void setQueryParameters(Query query) {
-				query.setParameter("iterationId", iterationId);
+				query.setParameter(ParameterNames.ITERATION_ID, iterationId);
 				query.setParameter("testCaseId", testCaseId);
 
 			}
@@ -187,7 +188,7 @@ public class HibernateIterationDao extends HibernateEntityDao<Iteration> impleme
 
 			@Override
 			public void setQueryParameters(Query query) {
-				query.setParameter("iterationId", iterationId);
+				query.setParameter(ParameterNames.ITERATION_ID, iterationId);
 				query.setParameter("testPlanId", testPlanId);
 
 			}
@@ -195,7 +196,7 @@ public class HibernateIterationDao extends HibernateEntityDao<Iteration> impleme
 	}
 
 	private SetQueryParametersCallback idParameter(final long id) {
-		return new SetIdParameter("iterationId", id);
+		return new SetIdParameter(ParameterNames.ITERATION_ID, id);
 	}
 
 	private SetQueryParametersCallback idAndLoginParameter(final long id, final String login) {
@@ -203,7 +204,7 @@ public class HibernateIterationDao extends HibernateEntityDao<Iteration> impleme
 		return new SetQueryParametersCallback() {
 			@Override
 			public void setQueryParameters(Query query) {
-				query.setParameter("iterationId", id);
+				query.setParameter(ParameterNames.ITERATION_ID, id);
 				query.setParameter("userLogin", login);
 			}
 		};
@@ -404,7 +405,7 @@ public class HibernateIterationDao extends HibernateEntityDao<Iteration> impleme
 	private Query assignParameterValuesToTestPlanQuery(String queryString, Long iterationId, Filtering filtering,
 			ColumnFiltering columnFiltering) {
 		Query query = currentSession().createQuery(queryString);
-		query.setParameter("iterationId", iterationId);
+		query.setParameter(ParameterNames.ITERATION_ID, iterationId);
 		TestPlanFilteringHelper.setFilters(query, filtering, columnFiltering);
 
 		return query;

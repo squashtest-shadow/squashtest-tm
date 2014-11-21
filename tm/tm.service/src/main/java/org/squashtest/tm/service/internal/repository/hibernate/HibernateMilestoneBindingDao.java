@@ -26,12 +26,13 @@ import org.hibernate.Query;
 import org.springframework.stereotype.Repository;
 import org.squashtest.tm.domain.milestone.MilestoneBinding;
 import org.squashtest.tm.service.internal.repository.MilestoneBindingDao;
+import org.squashtest.tm.service.internal.repository.ParameterNames;
 
 @Repository
 public class HibernateMilestoneBindingDao  extends HibernateEntityDao<MilestoneBinding> implements MilestoneBindingDao{
 
-	
-	
+
+
 	@Override
 	public List<MilestoneBinding> findAllByProjectAndMilestones(Long projectId, List<Long> milestoneIds) {
 		return executeListNamedQuery("milestoneBinding.findAllByProjectIdAndMilestoneIds", new SetProjectIdMilestoneIdsParameterCallback(projectId, milestoneIds));
@@ -42,20 +43,20 @@ public class HibernateMilestoneBindingDao  extends HibernateEntityDao<MilestoneB
 	public List<MilestoneBinding> findAllByMilestoneAndProjects(Long milestoneId, List<Long> projectIds) {
 		return executeListNamedQuery("milestoneBinding.findAllByMilestoneIdAndProjectIds", new SetMilestoneIdProjectIdsParameterCallback(milestoneId, projectIds));
 	}
-	
-	
+
+
 	@Override
 	public List<MilestoneBinding> findAllByProject(Long projectId) {
 		return executeListNamedQuery("milestoneBinding.findAllByProjectId", new SetProjectIdParameterCallback(projectId));
 	}
-	
-	
+
+
 	@Override
 	public List<MilestoneBinding> findAllByMilestone(Long milestoneId) {
 		return executeListNamedQuery("milestoneBinding.findAllByMilestoneId", new SetMilestoneIdParameterCallback(milestoneId));
 	}
-	
-	
+
+
 	private static final class SetProjectIdParameterCallback implements SetQueryParametersCallback{
 		private Long id;
 		private SetProjectIdParameterCallback (Long id){
@@ -63,7 +64,7 @@ public class HibernateMilestoneBindingDao  extends HibernateEntityDao<MilestoneB
 		}
 		@Override
 		public void setQueryParameters(Query query) {
-			query.setParameter("projectId", id);
+			query.setParameter(ParameterNames.PROJECT_ID, id);
 		}
 	}
 
@@ -87,11 +88,11 @@ public class HibernateMilestoneBindingDao  extends HibernateEntityDao<MilestoneB
 		}
 		@Override
 		public void setQueryParameters(Query query) {
-			query.setParameter("projectId", id);
+			query.setParameter(ParameterNames.PROJECT_ID, id);
 			query.setParameterList("milestoneIds", ids);
 		}
 	}
-	
+
 	private static final class SetMilestoneIdProjectIdsParameterCallback implements SetQueryParametersCallback{
 		private Long id;
 		private List<Long> ids;
@@ -102,7 +103,7 @@ public class HibernateMilestoneBindingDao  extends HibernateEntityDao<MilestoneB
 		@Override
 		public void setQueryParameters(Query query) {
 			query.setParameter("milestoneId", id);
-			query.setParameterList("projectIds", ids);
+			query.setParameterList(ParameterNames.PROJECT_IDS, ids);
 		}
 	}
 

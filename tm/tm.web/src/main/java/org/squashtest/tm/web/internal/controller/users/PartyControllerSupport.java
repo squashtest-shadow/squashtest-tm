@@ -43,6 +43,7 @@ import org.squashtest.tm.web.internal.controller.project.ProjectModel;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelBuilder;
+import org.squashtest.tm.web.internal.model.datatable.DataTableModelConstants;
 
 /**
  * Superclass of team and user controllers (code factorization)
@@ -140,7 +141,7 @@ public abstract class PartyControllerSupport {
 			Map<String, Object> res = new HashMap<String, Object>();
 			res.put("project-id", item.getProject().getId());
 			res.put("project-index", getCurrentIndex());
-			res.put("project-name", item.getProject().getName());
+			res.put(DataTableModelConstants.PROJECT_NAME_KEY, item.getProject().getName());
 			res.put("permission-id", item.getPermissionGroup().getId());
 			res.put("permission-name", item.getPermissionGroup().getQualifiedName());
 			res.put("permission-simplename", item.getPermissionGroup().getSimpleName());

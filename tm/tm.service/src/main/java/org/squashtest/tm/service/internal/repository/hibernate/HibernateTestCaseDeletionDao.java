@@ -37,6 +37,7 @@ import org.springframework.stereotype.Repository;
 import org.squashtest.tm.domain.testcase.TestCaseFolder;
 import org.squashtest.tm.domain.testcase.TestCaseLibrary;
 import org.squashtest.tm.domain.testcase.TestCaseLibraryNode;
+import org.squashtest.tm.service.internal.repository.ParameterNames;
 import org.squashtest.tm.service.internal.repository.TestCaseDeletionDao;
 
 /*
@@ -76,7 +77,7 @@ public class HibernateTestCaseDeletionDao extends HibernateDeletionDao implement
 
 	private void removeEntityFromParentLibraryIfExists(Long entityId, TestCaseLibraryNode node) {
 		Query query = getSession().getNamedQuery("testCaseLibraryNode.findParentLibraryIfExists");
-		query.setParameter("libraryNodeId", entityId);
+		query.setParameter(ParameterNames.LIBRARY_NODE_ID, entityId);
 		TestCaseLibrary library = (TestCaseLibrary) query.uniqueResult();
 		if (library != null) {
 			/*
@@ -90,7 +91,7 @@ public class HibernateTestCaseDeletionDao extends HibernateDeletionDao implement
 
 	private void removeEntityFromParentFolderIfExists(Long entityId, TestCaseLibraryNode node) {
 		Query query = getSession().getNamedQuery("testCaseLibraryNode.findParentFolderIfExists");
-		query.setParameter("libraryNodeId", entityId);
+		query.setParameter(ParameterNames.LIBRARY_NODE_ID, entityId);
 		TestCaseFolder folder = (TestCaseFolder) query.uniqueResult();
 		if (folder != null) {
 			/*

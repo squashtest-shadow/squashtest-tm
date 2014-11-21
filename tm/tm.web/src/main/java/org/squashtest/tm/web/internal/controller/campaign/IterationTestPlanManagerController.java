@@ -61,6 +61,7 @@ import org.squashtest.tm.web.internal.model.builder.JsTreeNodeListBuilder;
 import org.squashtest.tm.web.internal.model.datatable.DataTableColumnFiltering;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
+import org.squashtest.tm.web.internal.model.datatable.DataTableModelConstants;
 import org.squashtest.tm.web.internal.model.datatable.DataTableMultiSorting;
 import org.squashtest.tm.web.internal.model.jquery.TestPlanAssignableUser;
 import org.squashtest.tm.web.internal.model.json.JsonIterationTestPlanItem;
@@ -98,7 +99,7 @@ public class IterationTestPlanManagerController {
 	private final DatatableMapper<String> testPlanMapper = new NameBasedMapper()
 	.map("entity-index", "index(IterationTestPlanItem)")
 	// index is a special case which means : no sorting.
-	.mapAttribute("project-name", "name", Project.class).mapAttribute("reference", "reference", TestCase.class)
+	.mapAttribute(DataTableModelConstants.PROJECT_NAME_KEY, "name", Project.class).mapAttribute("reference", "reference", TestCase.class)
 	.mapAttribute("tc-name", "name", TestCase.class).mapAttribute("importance", "importance", TestCase.class)
 	.mapAttribute("dataset.selected.name", "name", Dataset.class)
 	.mapAttribute("status", "executionStatus", IterationTestPlanItem.class)

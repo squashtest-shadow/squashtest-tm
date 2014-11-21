@@ -33,6 +33,7 @@ import org.squashtest.tm.domain.requirement.Requirement;
 import org.squashtest.tm.domain.requirement.RequirementFolder;
 import org.squashtest.tm.domain.requirement.RequirementLibrary;
 import org.squashtest.tm.domain.requirement.RequirementLibraryNode;
+import org.squashtest.tm.service.internal.repository.ParameterNames;
 import org.squashtest.tm.service.internal.repository.RequirementDeletionDao;
 
 @Repository
@@ -44,8 +45,8 @@ public class HibernateRequirementDeletionDao extends HibernateDeletionDao implem
 	// note 1 : this method will be ran twice per batch : one for folder deletion, one for requirement deletion
 	// ( is is so because two distincts calls to #deleteNodes, see RequirementDeletionHandlerImpl#deleteNodes() )
 	// It should run fine tho, at the cost of a few useless extra queries.
-	
-	// note 2 : the code below must handle the references of requirements and requirement folders to 
+
+	// note 2 : the code below must handle the references of requirements and requirement folders to
 	// their Resource and SimpleResource, making the thing a lot more funny and pleasant to maintain.
 	@Override
 	public void removeEntities(List<Long> entityIds) {
@@ -53,17 +54,17 @@ public class HibernateRequirementDeletionDao extends HibernateDeletionDao implem
 
 			Query query = null;
 			for(Long entityId : entityIds){
-				
+
 				query = getSession().getNamedQuery("requirementLibraryNode.findById");
-				query.setParameter("libraryNodeId", entityId);
+				query.setParameter(ParameterNames.LIBRARY_NODE_ID, entityId);
 				RequirementLibraryNode node = (RequirementLibraryNode) query.uniqueResult();
-				
+
 				removeEntitiesFromParentLibraryIfExists(entityId, node);
-				
+
 				removeEntitiesFromParentFolderIfExists(entityId, node);
-				
+
 				removeEntitiesFromParentRequirementIfExists(entityId, node);
-			
+
 				if(node!=null){
 					getSession().delete(node);
 					getSession().flush();
@@ -73,10 +74,10 @@ public class HibernateRequirementDeletionDao extends HibernateDeletionDao implem
 	}
 
 
-	
+
 	private void removeEntitiesFromParentLibraryIfExists(Long entityId, RequirementLibraryNode node){
 		Query query = getSession().getNamedQuery("requirementLibraryNode.findParentLibraryIfExists");
-		query.setParameter("libraryNodeId", entityId);
+		query.setParameter(ParameterNames.LIBRARY_NODE_ID, entityId);
 		RequirementLibrary library = (RequirementLibrary) query.uniqueResult();
 		if(library != null){
 			ListIterator<RequirementLibraryNode> iterator = library.getContent().listIterator();
@@ -89,10 +90,10 @@ public class HibernateRequirementDeletionDao extends HibernateDeletionDao implem
 			}
 		}
 	}
-	
+
 	private void removeEntitiesFromParentFolderIfExists(Long entityId, RequirementLibraryNode node){
 		Query query = getSession().getNamedQuery("requirementLibraryNode.findParentFolderIfExists");
-		query.setParameter("libraryNodeId", entityId);
+		query.setParameter(ParameterNames.LIBRARY_NODE_ID, entityId);
 		RequirementFolder folder = (RequirementFolder) query.uniqueResult();
 		if(folder != null){
 			ListIterator<RequirementLibraryNode> iterator = folder.getContent().listIterator();
@@ -105,10 +106,10 @@ public class HibernateRequirementDeletionDao extends HibernateDeletionDao implem
 			}
 		}
 	}
-	
+
 	private void removeEntitiesFromParentRequirementIfExists(Long entityId, RequirementLibraryNode node){
 		Query query = getSession().getNamedQuery("requirementLibraryNode.findParentRequirementIfExists");
-		query.setParameter("libraryNodeId", entityId);
+		query.setParameter(ParameterNames.LIBRARY_NODE_ID, entityId);
 		Requirement requirement = (Requirement) query.uniqueResult();
 		if(requirement  != null){
 			ListIterator<Requirement> iterator = requirement.getContent().listIterator();
@@ -121,16 +122,16 @@ public class HibernateRequirementDeletionDao extends HibernateDeletionDao implem
 			}
 		}
 	}
-	
+
 	@Override
 	public List<Long>[] separateFolderFromRequirementIds(List<Long> originalIds) {
 
 		List<Long> folderIds = new ArrayList<Long>();
 		List<Long> requirementIds = new ArrayList<Long>();
-		
+
 		List<BigInteger> filtredFolderIds = executeSelectSQLQuery(
-						NativeQueries.REQUIREMENTLIBRARYNODE_SQL_FILTERFOLDERIDS, REQUIREMENT_IDS, originalIds);
-		
+				NativeQueries.REQUIREMENTLIBRARYNODE_SQL_FILTERFOLDERIDS, REQUIREMENT_IDS, originalIds);
+
 		for (Long oId : originalIds){
 			if (filtredFolderIds.contains(BigInteger.valueOf(oId))){
 				folderIds.add(oId);
@@ -139,11 +140,11 @@ public class HibernateRequirementDeletionDao extends HibernateDeletionDao implem
 				requirementIds.add(oId);
 			}
 		}
-		
+
 		return new List[] {folderIds, requirementIds};
 	}
-	
-	
+
+
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -156,7 +157,7 @@ public class HibernateRequirementDeletionDao extends HibernateDeletionDao implem
 		return Collections.emptyList();
 	}
 
-	
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Long> findRequirementFolderAttachmentListIds(
@@ -168,8 +169,8 @@ public class HibernateRequirementDeletionDao extends HibernateDeletionDao implem
 		}
 		return Collections.emptyList();
 	}
-	
-	
+
+
 	@Override
 	public void removeFromVerifiedRequirementLists(List<Long> requirementIds) {
 		if (!requirementIds.isEmpty()) {
@@ -205,7 +206,7 @@ public class HibernateRequirementDeletionDao extends HibernateDeletionDao implem
 		}
 
 	}
-	
+
 	@Override
 	public List<Long> findVersionIds(List<Long> requirementIds) {
 		return executeSelectNamedQuery("requirementDeletionDao.findVersionIds", "reqIds", requirementIds);

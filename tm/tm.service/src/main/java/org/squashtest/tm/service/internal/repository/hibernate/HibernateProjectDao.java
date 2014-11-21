@@ -26,6 +26,7 @@ import java.util.List;
 import org.springframework.stereotype.Repository;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.service.internal.repository.CustomProjectDao;
+import org.squashtest.tm.service.internal.repository.ParameterNames;
 
 
 @Repository("CustomProjectDao")
@@ -40,7 +41,7 @@ public class HibernateProjectDao extends HibernateEntityDao<Project> implements 
 	}
 
 	private SetQueryParametersCallback idParameter(final long id) {
-		return new SetIdParameter("projectId", id);
+		return new SetIdParameter(ParameterNames.PROJECT_ID, id);
 	}
 
 	private SetQueryParametersCallback idParameters(final List<Long> ids) {

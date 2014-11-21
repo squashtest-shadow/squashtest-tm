@@ -33,6 +33,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.squashtest.tm.service.testautomation.model.TestAutomationProjectContent;
 import org.squashtest.tm.service.testcase.TestCaseModificationService;
+import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.model.testautomation.TATestNode;
 import org.squashtest.tm.web.internal.model.testautomation.TATestNodeListBuilder;
 
@@ -46,10 +47,10 @@ public class TestCaseAutomationController {
 	public void setTestCaseModificationService(TestCaseModificationService testCaseModificationService) {
 		this.testCaseModificationService = testCaseModificationService;
 	}
-	private static final String NAME_KEY = "name";
+	private static final String NAME_KEY = RequestParams.NAME;
 	private static final String PATH	=	"path";
 	private static final String TEST_CASE_ID = "testCaseId";
-	private static final String PROJECT_ID = "projectId";
+	private static final String PROJECT_ID = RequestParams.PROJECT_ID;
 
 
 	@RequestMapping(value="/tests", method = RequestMethod.GET)

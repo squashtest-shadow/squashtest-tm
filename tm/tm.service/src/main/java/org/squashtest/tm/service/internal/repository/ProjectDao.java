@@ -30,24 +30,24 @@ import org.squashtest.tm.domain.projectfilter.ProjectFilter;
 
 @DynamicDao(entity = Project.class)
 public interface ProjectDao extends CustomProjectDao {
-	
+
 	Project findByName(String projectname);
-	
+
 	Project findById(long id);
-	
+
 	void persist(Project project);
-	
+
 	List<Project> findAll();
-	
+
 	List<Project> findAllByIds(List<Long> ids);
 
 	List<Project> findAllOrderedByName();
 
 	long countProjects();
 
-	List<ProjectFilter> findProjectFiltersContainingProject(@QueryParam("projectId") long id);
-	
+	List<ProjectFilter> findProjectFiltersContainingProject(@QueryParam(ParameterNames.PROJECT_ID) long id);
+
 	List<Project> findAll(PagingAndSorting pagingAndSorting);
-	
+
 	List<Project> findProjectsFiltered(PagingAndSorting pagingAndSorting, @QueryParam("filter") String filter);
 }

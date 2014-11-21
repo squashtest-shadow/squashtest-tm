@@ -44,6 +44,7 @@ import org.squashtest.tm.domain.testautomation.AutomatedSuite;
 import org.squashtest.tm.service.testautomation.AutomatedSuiteManagerService;
 import org.squashtest.tm.service.testautomation.model.SuiteExecutionConfiguration;
 import org.squashtest.tm.service.testautomation.model.TestAutomationProjectContent;
+import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.controller.execution.AutomatedExecutionViewUtils;
 import org.squashtest.tm.web.internal.controller.execution.AutomatedExecutionViewUtils.AutomatedSuiteOverview;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
@@ -114,7 +115,7 @@ public class AutomatedSuiteManagementController {
 		Collection<SuiteExecutionConfiguration> configuration = new ArrayList<SuiteExecutionConfiguration>(
 				rawConf.size());
 		for (Map<String, ?> rawC : rawConf) {
-			long projectId = ((Integer) rawC.get("projectId")).longValue();
+			long projectId = ((Integer) rawC.get(RequestParams.PROJECT_ID)).longValue();
 			String node = (String) rawC.get("node");
 			configuration.add(new SuiteExecutionConfiguration(projectId, node));
 		}

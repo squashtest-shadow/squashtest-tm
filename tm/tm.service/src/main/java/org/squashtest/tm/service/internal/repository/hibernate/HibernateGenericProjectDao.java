@@ -31,6 +31,7 @@ import org.springframework.stereotype.Repository;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.project.ProjectTemplate;
 import org.squashtest.tm.service.internal.repository.CustomGenericProjectDao;
+import org.squashtest.tm.service.internal.repository.ParameterNames;
 
 /**
  * @author Gregory Fouquet
@@ -65,16 +66,16 @@ public class HibernateGenericProjectDao implements CustomGenericProjectDao {
 		return (Project) session.load(Project.class, templateId);
 	}
 
-	
+
 	@Override
 	public boolean isProjectTemplate(long projectId) {
 		Query query = sessionFactory.getCurrentSession().getNamedQuery("GenericProject.findProjectTypeOf");
-		query.setParameter("projectId", projectId);
-		
+		query.setParameter(ParameterNames.PROJECT_ID, projectId);
+
 		String type = (String)query.uniqueResult();
-		
+
 		return type.equals("T");
 	}
 
-	
+
 }

@@ -54,6 +54,7 @@ import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.service.campaign.IterationTestPlanFinder;
 import org.squashtest.tm.service.campaign.TestSuiteModificationService;
 import org.squashtest.tm.service.customfield.CustomFieldValueFinderService;
+import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.controller.generic.ServiceAwareAttachmentTableModelHelper;
 import org.squashtest.tm.web.internal.controller.testcase.TestCaseImportanceJeditableComboDataBuilder;
 import org.squashtest.tm.web.internal.controller.testcase.TestCaseModeJeditableComboDataBuilder;
@@ -240,9 +241,9 @@ public class TestSuiteModificationController {
 	}
 
 	// that method is redundant but don't remove it yet.
-	@RequestMapping(value = "/rename", method = RequestMethod.POST, params = NAME)
+	@RequestMapping(value = "/rename", method = RequestMethod.POST, params = RequestParams.NAME)
 	public @ResponseBody
-	Map<String, String> renameTestSuite(@PathVariable("suiteId") Long suiteId, @RequestParam(NAME) String name) {
+	Map<String, String> renameTestSuite(@PathVariable("suiteId") Long suiteId, @RequestParam(RequestParams.NAME) String name) {
 		service.rename(suiteId, name);
 		Map<String, String> result = new HashMap<String, String>();
 		result.put("id", suiteId.toString());
