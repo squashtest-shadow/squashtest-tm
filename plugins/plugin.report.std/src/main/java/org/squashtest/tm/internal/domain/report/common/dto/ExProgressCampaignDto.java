@@ -39,8 +39,8 @@ public class ExProgressCampaignDto extends ExProgressScheduledAbstractDto {
 	}
 
 	public ExProgressCampaignDto(Campaign campaign) {
-		fillBasicInfos(campaign);
-		fillIterationsInfos(campaign);
+		doFillBasicInfos(campaign);
+		doFillIterationsInfos(campaign);
 	}
 
 	public ExProgressProjectDto getProject() {
@@ -63,9 +63,12 @@ public class ExProgressCampaignDto extends ExProgressScheduledAbstractDto {
 		iterations.add(iterDto);
 	}
 
-	
+
 
 	public ExProgressCampaignDto fillBasicInfos(Campaign campaign) {
+		return doFillBasicInfos(campaign);
+	}
+	private ExProgressCampaignDto doFillBasicInfos(Campaign campaign){
 		this.name = campaign.getName();
 		this.scheduledStartDate = campaign.getScheduledStartDate();
 		this.scheduledEndDate = campaign.getScheduledEndDate();
@@ -76,6 +79,9 @@ public class ExProgressCampaignDto extends ExProgressScheduledAbstractDto {
 	}
 
 	public ExProgressCampaignDto fillIterationsInfos(Campaign campaign) {
+		return doFillIterationsInfos(campaign);
+	}
+	private ExProgressCampaignDto doFillIterationsInfos(Campaign campaign) {
 		for (Iteration iteration : campaign.getIterations()) {
 			ExProgressIterationDto iterDto = new ExProgressIterationDto(iteration);
 			iterations.add(iterDto);

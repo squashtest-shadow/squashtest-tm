@@ -105,7 +105,7 @@ public class CustomFieldValue implements Identified, SingleValuedCustomFieldValu
 	}
 
 	private void doSetValue(String value) {
-		CustomField cuf = getCustomField();
+		CustomField cuf = doGetCustomField();
 		if (cuf != null) {
 			if (!cuf.isOptional() && StringUtils.isBlank(value)) {
 				throw new MandatoryCufException(this);
@@ -126,6 +126,9 @@ public class CustomFieldValue implements Identified, SingleValuedCustomFieldValu
 	}
 
 	public CustomField getCustomField() {
+		return doGetCustomField();
+	}
+	private CustomField doGetCustomField(){
 		if (binding != null) {
 			return binding.getCustomField();
 		}
@@ -149,7 +152,7 @@ public class CustomFieldValue implements Identified, SingleValuedCustomFieldValu
 		doSetBoundEntityType(entity.getBoundEntityType());
 	}
 
-	public void doSetBoundEntityType(BindableEntity entityType) {
+	private void doSetBoundEntityType(BindableEntity entityType) {
 		if (entityType != binding.getBoundEntity()) {
 			throw new BindableEntityMismatchException("attempted to bind '" + entityType
 					+ "' while expected '" + binding.getBoundEntity() + "'");

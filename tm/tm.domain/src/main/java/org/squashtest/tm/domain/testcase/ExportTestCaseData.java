@@ -44,7 +44,7 @@ public class ExportTestCaseData extends ExportData implements TestStepVisitor{
 	private ExportTestStepData lastBuildStepData;
 	private String lastModifiedBy = "";
 	private Date lastModifiedOn ;
-	
+
 
 	public String getPrerequisite() {
 		return prerequisite;
@@ -70,15 +70,15 @@ public class ExportTestCaseData extends ExportData implements TestStepVisitor{
 	public ExportTestCaseData() {
 		super();
 	}
-	
+
 	public String getReference() {
 		return reference;
 	}
-	
+
 	public void setReference(String reference) {
 		doSetReference(reference);
 	}
-	
+
 	private void doSetReference(String reference){
 		if(reference != null){
 			this.reference = reference;
@@ -100,7 +100,7 @@ public class ExportTestCaseData extends ExportData implements TestStepVisitor{
 	public void setType(TestCaseType type) {
 		this.type = type;
 	}
-	
+
 	public TestCaseStatus getStatus() {
 		return status;
 	}
@@ -149,7 +149,7 @@ public class ExportTestCaseData extends ExportData implements TestStepVisitor{
 		this.nature = testCase.getNature();
 		this.type = testCase.getType();
 		this.status = testCase.getStatus();
-		AuditableMixin audit = ((AuditableMixin) testCase);	
+		AuditableMixin audit = ((AuditableMixin) testCase);
 		this.lastModifiedBy = audit.getLastModifiedBy();
 		this.lastModifiedOn = audit.getLastModifiedOn();
 		formatSteps(testCase);
@@ -158,7 +158,7 @@ public class ExportTestCaseData extends ExportData implements TestStepVisitor{
 	private void formatSteps(TestCase testCase) {
 		List<TestStep> testSteps = testCase.getSteps();
 		if(!testSteps.isEmpty()){
-			formatFirstStepsInfos(testSteps);			
+			formatFirstStepsInfos(testSteps);
 			formatOtherStepsInfos(testSteps);
 		}
 	}
@@ -177,18 +177,18 @@ public class ExportTestCaseData extends ExportData implements TestStepVisitor{
 		doSetFirstAction(firstStep.getAction());
 		doSetFirstExpectedResult(firstStep.getExpectedResult());
 	}
-	
-	public ExportTestStepData buildExportTestStepData(TestStep item) {
+
+	private ExportTestStepData buildExportTestStepData(TestStep item) {
 		item.accept(this);
 		return lastBuildStepData;
 	}
-	
+
 	@Override
 	public void visit(ActionTestStep visited) {
 		String action = visited.getAction();
 		String result = visited.getExpectedResult();
 		lastBuildStepData = new ExportTestStepData(action, result);
-		
+
 	}
 
 	@Override
@@ -196,7 +196,7 @@ public class ExportTestCaseData extends ExportData implements TestStepVisitor{
 		String action = "Calls : "+visited.getCalledTestCase().getName();
 		String result = "";
 		lastBuildStepData = new ExportTestStepData(action, result);
-		
+
 	}
 
 	public String getLastModifiedBy() {

@@ -69,8 +69,8 @@ public abstract class ReportCriterion {
 	 *            the path to the property of the target Hibernate entity.
 	 */
 	public ReportCriterion(String criterionName, String attributePath) {
-		setCriterionName(criterionName);
-		setAttributePath(attributePath);
+		this.criterionName = criterionName;
+		this.attributePath = attributePath;
 	}
 
 	public String getCriterionName() {

@@ -32,7 +32,7 @@ public class PermissionGroup {
 	private final String qualifiedName;
 	private transient String simpleName;
 
-	
+
 	public PermissionGroup(long id, String qualifiedName) {
 		super();
 		this.id = id;
@@ -49,12 +49,12 @@ public class PermissionGroup {
 	public long getId() {
 		return id;
 	}
-	
+
 	public String getSimpleName() {
 		return simpleName;
 	}
 
-	public void calculateSimpleName() {
+	private void calculateSimpleName() {
 		String theName = qualifiedName.substring(qualifiedName.lastIndexOf(".")+1);
 		this.simpleName = theName;
 	}

@@ -31,11 +31,14 @@ public class ParameterArray {
 	}
 
 	public void setParameter(Object[] parameter) {//NOSONAR no, this array is not stored directly
+		doSetParameter(parameter);
+	}
+	public void doSetParameter(Object[] parameter) {//NOSONAR no, this array is not stored directly
 		this.parameter = Arrays.copyOf(parameter,parameter.length);
 	}
 
 	public ParameterArray(Object[] parameter){
-		setParameter(parameter);
+		doSetParameter(parameter);
 	}
 
 }

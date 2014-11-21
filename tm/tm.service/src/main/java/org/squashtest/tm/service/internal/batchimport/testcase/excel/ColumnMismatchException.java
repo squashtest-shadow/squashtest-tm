@@ -39,7 +39,7 @@ public class ColumnMismatchException extends RuntimeException {
 	public ColumnMismatchException(ColumnMismatch type, TemplateColumn colType) {
 		this();
 		this.type = type;
-		this.setColType(colType);
+		this.colType = colType;
 	}
 
 	public ColumnMismatch getType() {

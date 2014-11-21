@@ -26,7 +26,6 @@ import org.squashtest.tm.domain.users.Team;
  * @author mpagnon
  *
  */
-// made "final" because SONAR whined about constructors, overridable methods and their intricate relationships
 public class TeamModel {
 	private Long id;
 	private String name;
@@ -54,9 +53,7 @@ public class TeamModel {
 	}
 
 	public TeamModel(Team team) {
-		super();
-		this.setId(team.getId());
-		this.setName(team.getName());
+		this(team.getId(), team.getName());
 	}
 
 }

@@ -66,7 +66,7 @@ public class Attachment {
 	}
 
 	public Attachment(String name) {
-		setName(name);
+		doSetName(name);
 	}
 
 	public Long getId() {
@@ -100,10 +100,16 @@ public class Attachment {
 	 *            name
 	 */
 	public void setName(String name) {
+		doSetName(name);
+	}
+	/**
+	 * @see #setName(String)
+	 * @param name
+	 */
+	private void doSetName(String name){
 		this.name = name;
 		setType();
 	}
-
 	/**
 	 * When dealing with name this is the one you want most of the time
 	 * 

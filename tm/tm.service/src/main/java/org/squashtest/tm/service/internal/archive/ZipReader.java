@@ -31,159 +31,157 @@ import org.squashtest.tm.exception.ZipCorruptedException;
  * TODO : make an interface for it.
  */
 public class ZipReader implements ArchiveReader {
-	
-	
+
 	private ZipArchiveInputStream zipStream;
 	private String encoding = "UTF8";
 
 	private ZipReaderEntry currentEntry;
 	private ZipReaderEntry nextEntry;
-	
-	
-	public ZipReader(InputStream stream, String encoding){
-		setEncoding(encoding);
-		setStream(stream);
-	}
-	
-	@Override
-	public void setEncoding(String encoding){
-		this.encoding=encoding;
-	}
-	
 
-	//todo : make the encoding configurable one day
+	public ZipReader(InputStream stream, String encoding) {
+		doSetEncoding(encoding);
+		doSetStream(stream);
+	}
+
 	@Override
-	public void setStream(InputStream stream){
+	public void setEncoding(String encoding) {
+		doSetEncoding(encoding);
+	}
+
+	private void doSetEncoding(String encoding) {
+		this.encoding = encoding;
+	}
+
+	// todo : make the encoding configurable one day
+	@Override
+	public void setStream(InputStream stream) {
+		doSetStream(stream);
+	}
+
+	private void doSetStream(InputStream stream) {
 		zipStream = new ZipArchiveInputStream(stream, encoding, false);
 	}
 
 	@Override
-	public void close(){
-		try{
+	public void close() {
+		try {
 			zipStream.close();
-		}catch(IOException ex){
+		} catch (IOException ex) {
 			throw new ZipCorruptedException(ex);
 		}
-		
+
 	}
 
 	/* ****************** nested entry impl****************** */
-	
-	private static final class ZipReaderEntry implements Entry{
-		
+
+	private static final class ZipReaderEntry implements Entry {
+
 		private InputStream zipStream;
 		private String name;
 		private boolean isDirectory;
-		
-		
-		private ZipReaderEntry(InputStream stream, String name, boolean isDirectory){
+
+		private ZipReaderEntry(InputStream stream, String name, boolean isDirectory) {
 			this.zipStream = stream;
 			this.name = stripSuffix(name);
-			this.isDirectory=isDirectory;
-		}
-		
-		private ZipReaderEntry(InputStream stream, ArchiveEntry entry){
-			this(stream, "/"+entry.getName(), entry.isDirectory());
+			this.isDirectory = isDirectory;
 		}
 
+		private ZipReaderEntry(InputStream stream, ArchiveEntry entry) {
+			this(stream, "/" + entry.getName(), entry.isDirectory());
+		}
 
 		@Override
-		public String getName(){
+		public String getName() {
 			return name;
 		}
-		
+
 		@Override
-		public String getShortName(){
+		public String getShortName() {
 			return getName().replaceAll(".*/", "");
 		}
-		
+
 		@Override
-		public Entry getParent(){
+		public Entry getParent() {
 			return new ZipReaderEntry(null, getParentString(), true);
 		}
-		
-		
-		//the parent of the root is itself
-		private String getParentString(){
+
+		// the parent of the root is itself
+		private String getParentString() {
 			String res = getName().replaceAll("/[^/]*$", "");
-			if (res.equals("")){
+			if (res.equals("")) {
 				res = "/";
 			}
 			return res;
 		}
 
 		@Override
-		public boolean isDirectory(){
+		public boolean isDirectory() {
 			return isDirectory;
 		}
-		
+
 		@Override
-		public boolean isFile(){
-			return (! isDirectory);
+		public boolean isFile() {
+			return (!isDirectory);
 		}
-		
 
 		@Override
 		public InputStream getStream() {
-			if (isFile()){
+			if (isFile()) {
 				return new UnclosableStream(zipStream);
-			}else{
+			} else {
 				return null;
 			}
 		}
 
-		
-		private String stripSuffix(String original){			
-			String res = (original.charAt(original.length()-1)=='/') ? 
-					original.substring(0, original.length()-1) 
+		private String stripSuffix(String original) {
+			String res = (original.charAt(original.length() - 1) == '/') ? original.substring(0, original.length() - 1)
 					: original;
-					
-			if (res.equals("")){
+
+			if (res.equals("")) {
 				res = "/";
 			}
 			return res;
 		}
-		
+
 	}
-	
-	
-	
+
 	/* ****************** extra ***************************** */
-	
-	private static class UnclosableStream extends InputStream{
+
+	private static class UnclosableStream extends InputStream {
 
 		private InputStream innerStream;
-		
-		public UnclosableStream(InputStream stream){
+
+		public UnclosableStream(InputStream stream) {
 			innerStream = stream;
 		}
-		
+
 		@Override
 		public int read() throws IOException {
 			return innerStream.read();
 		}
-		
+
 		@Override
-		public void close(){
+		public void close() {
 			// :P
 		}
-		
+
 	}
-	
-	
+
 	/* ************** iterator impl ************************ */
 
 	@Override
 	public boolean hasNext() {
 		readNext();
-		return (nextEntry!=null);
+		return (nextEntry != null);
 	}
 
 	@Override
 	public Entry next() {
-		if (nextEntry == null){ readNext();}
+		if (nextEntry == null) {
+			readNext();
+		}
 		currentEntry = nextEntry;
-		nextEntry=null;
+		nextEntry = null;
 		return currentEntry;
 	}
 
@@ -191,19 +189,18 @@ public class ZipReader implements ArchiveReader {
 	public void remove() {
 		throw new UnsupportedOperationException();
 	}
-	
-	private void readNext(){
-		try{
+
+	private void readNext() {
+		try {
 			ArchiveEntry entry = zipStream.getNextEntry();
-			if (entry!=null){
-				nextEntry= new ZipReaderEntry(zipStream, entry);
-			}else{
-				nextEntry=null;
+			if (entry != null) {
+				nextEntry = new ZipReaderEntry(zipStream, entry);
+			} else {
+				nextEntry = null;
 			}
-		}catch(IOException ex){
+		} catch (IOException ex) {
 			throw new ZipCorruptedException(ex);
 		}
 	}
 
-	
 }

@@ -28,11 +28,11 @@ import org.squashtest.tm.domain.campaign.TestSuite;
 public class ExProgressTestSuiteDto extends ExProgressAbstractDto{
 	private ExProgressIterationDto iteration;
 	private List<ExProgressTestPlanDto> testPlans = new LinkedList<ExProgressTestPlanDto>();
-	
+
 	public ExProgressTestSuiteDto(){
 		super();
 	}
-	
+
 	public ExProgressIterationDto getIteration() {
 		return iteration;
 	}
@@ -41,31 +41,28 @@ public class ExProgressTestSuiteDto extends ExProgressAbstractDto{
 	public void setIteration(ExProgressIterationDto iteration) {
 		this.iteration = iteration;
 	}
-	
+
 	public ExProgressTestSuiteDto(TestSuite testSuite){
-		fillBasicInfos(testSuite);
-		fillStatusInfos(testSuite.getTestPlan());
+		super(testSuite.getTestPlan());
+		super.name=testSuite.getName();
 	}
-	
-	
+
+
 	public List<ExProgressTestPlanDto> getTestPlans(){
 		return testPlans;
 	}
 	public void setTestPlans(List<ExProgressTestPlanDto> testPlans){
 		this.testPlans=testPlans;
 	}
-	
+
 	public void addTestPlanDto(ExProgressTestPlanDto testPlanDto){
 		testPlans.add(testPlanDto);
 	}
-	
+
 	/* ****************************** computed properties **********************************/
-	public ExProgressTestSuiteDto fillBasicInfos(TestSuite testSuite){
-		name=testSuite.getName();
-		return this;
-	}
-	
-	
+
+
+
 	public boolean isAllowsSettled() {
 		return this.getIteration().getCampaign().getProject().isAllowsSettled();
 	}
@@ -73,6 +70,6 @@ public class ExProgressTestSuiteDto extends ExProgressAbstractDto{
 	public boolean isAllowsUntestable() {
 		return this.getIteration().getCampaign().getProject().isAllowsUntestable();
 	}
-	
-	
+
+
 }

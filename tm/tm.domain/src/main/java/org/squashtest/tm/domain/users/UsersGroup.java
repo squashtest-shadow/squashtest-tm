@@ -49,7 +49,7 @@ public class UsersGroup {
 		return simpleName;
 	}
 
-	public void calculateSimpleName() {
+	private void calculateSimpleName() {
 		String theName = qualifiedName.substring(qualifiedName.lastIndexOf(".") + 1);
 		this.simpleName = theName;
 	}

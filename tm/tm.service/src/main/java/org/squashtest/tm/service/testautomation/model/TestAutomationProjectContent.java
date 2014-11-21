@@ -101,7 +101,15 @@ public class TestAutomationProjectContent {
 	 * @param test
 	 */
 	public void appendTest(AutomatedTest test) {
+		doAppendTest(test);
+	}
+	/**
+	 * @see #appendTest(AutomatedTest)
+	 * @param test
+	 */
+	private void doAppendTest(AutomatedTest test){
 		tests.add(test);
+
 	}
 
 	/**
@@ -111,7 +119,7 @@ public class TestAutomationProjectContent {
 	 */
 	public final void appendTests(Collection<AutomatedTest> tests) {
 		for (AutomatedTest test : tests) {
-			appendTest(test);
+			doAppendTest(test);
 		}
 	}
 

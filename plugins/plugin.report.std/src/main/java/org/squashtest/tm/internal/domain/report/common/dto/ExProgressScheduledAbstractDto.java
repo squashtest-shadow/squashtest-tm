@@ -21,16 +21,24 @@
 package org.squashtest.tm.internal.domain.report.common.dto;
 
 import java.util.Date;
+import java.util.List;
+
+import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 
 public class ExProgressScheduledAbstractDto extends ExProgressAbstractDto{
 
-	
+
 	protected Date scheduledStartDate;
 	protected Date scheduledEndDate;
 	protected Date actualStartDate;
 	protected Date actualEndDate;
 
-	
+
+
+	public ExProgressScheduledAbstractDto(List<IterationTestPlanItem> testPlans) {
+		super(testPlans);
+	}
+
 	public Date getScheduledStartDate() {
 		return scheduledStartDate;
 	}
@@ -63,6 +71,6 @@ public class ExProgressScheduledAbstractDto extends ExProgressAbstractDto{
 		this.actualEndDate = actualEndDate;
 	}
 
-	
-	
+
+
 }

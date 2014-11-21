@@ -90,7 +90,8 @@ class EntityValidator {
 
 		// 1 - path must be supplied and and well formed
 		if (!target.isWellFormed()) {
-			logs.addEntry(LogEntry.failure().forTarget(target).withMessage(Messages.ERROR_MALFORMED_PATH, target.getPath()).build());
+			logs.addEntry(LogEntry.failure().forTarget(target)
+					.withMessage(Messages.ERROR_MALFORMED_PATH, target.getPath()).build());
 		}
 
 		// 3 - the project actually exists
@@ -112,7 +113,8 @@ class EntityValidator {
 		String reference = testCase.getReference();
 		if (!StringUtils.isBlank(reference) && reference.length() > TestCase.MAX_REF_SIZE) {
 			logs.addEntry(LogEntry.warning().forTarget(target)
-					.withMessage(Messages.ERROR_MAX_SIZE, TC_REFERENCE.header).withImpact(Messages.IMPACT_MAX_SIZE).build());
+					.withMessage(Messages.ERROR_MAX_SIZE, TC_REFERENCE.header).withImpact(Messages.IMPACT_MAX_SIZE)
+					.build());
 		}
 
 		return logs;
@@ -138,7 +140,8 @@ class EntityValidator {
 
 		// 1 - test case owner path must be supplied and and well formed
 		if (!testCase.isWellFormed()) {
-			logs.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_MALFORMED_PATH, new String[]{testCase.getPath()}));
+			logs.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_MALFORMED_PATH,
+					new String[] { testCase.getPath() }));
 		}
 
 		// 2 - the test case must exist
@@ -166,7 +169,6 @@ class EntityValidator {
 
 	}
 
-
 	LogTrain validateCallStep(TestStepTarget target, TestStep testStep, TestCaseTarget calledTestCase,
 			CallStepParamsInfo paramInfos, ImportMode mode) {
 
@@ -189,28 +191,29 @@ class EntityValidator {
 		else {
 			// 2 - there must be no cyclic calls
 			if (getModel().wouldCreateCycle(target, calledTestCase)) {
-				logs.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_CYCLIC_STEP_CALLS, new Object[] {
-						target.getTestCase().getPath(), calledTestCase.getPath() }));
+				logs.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_CYCLIC_STEP_CALLS,
+						new Object[] { target.getTestCase().getPath(), calledTestCase.getPath() }));
 			}
 
 			// 3 - check a called dataset
-			if (paramInfos.getParamMode() == ParameterAssignationMode.CALLED_DATASET){
+			if (paramInfos.getParamMode() == ParameterAssignationMode.CALLED_DATASET) {
 				String dsname = paramInfos.getCalledDatasetName();
 
 				// 3.1 - if a dataset is specified, the name must not exceed the max limit
-				if (dsname.length() > 255){
+				if (dsname.length() > 255) {
 					logs.addEntry(new LogEntry(target, ImportStatus.WARNING, Messages.ERROR_MAX_SIZE,
-							new String[]{StepSheetColumn.TC_STEP_CALL_DATASET.name()},	Messages.IMPACT_MAX_SIZE, null));
+							new String[] { StepSheetColumn.TC_STEP_CALL_DATASET.name() }, Messages.IMPACT_MAX_SIZE,
+							null));
 				}
 
 				// 3.2 - if a dataset is specified, it must be owned by the called test case
 				DatasetTarget dsTarget = new DatasetTarget(calledTestCase, dsname);
-				if (! getModel().doesDatasetExists(dsTarget)){
-					logs.addEntry(new LogEntry(target, ImportStatus.WARNING, Messages.ERROR_DATASET_NOT_FOUND_ST, Messages.IMPACT_NO_CALL_DATASET));
+				if (!getModel().doesDatasetExists(dsTarget)) {
+					logs.addEntry(new LogEntry(target, ImportStatus.WARNING, Messages.ERROR_DATASET_NOT_FOUND_ST,
+							Messages.IMPACT_NO_CALL_DATASET));
 				}
 			}
 		}
-
 
 		return logs;
 
@@ -233,15 +236,18 @@ class EntityValidator {
 		// logging
 		return basicParameterChecks(target, fieldPathErrorArgs, Messages.ERROR_PARAMETER_OWNER_NOT_FOUND);
 	}
+
 	public LogTrain basicParameterValueChecks(ParameterTarget target) {
 
-		String[] fieldPathErrorArgs = new String[] { "TC_PARAMETER_OWNER_PATH" }; // that variable is simple convenience for
+		String[] fieldPathErrorArgs = new String[] { "TC_PARAMETER_OWNER_PATH" }; // that variable is simple convenience
+		// for
 		// logging
 		return basicParameterChecks(target, fieldPathErrorArgs, Messages.ERROR_DATASET_PARAM_OWNER_NOT_FOUND);
 
 	}
 
-	private LogTrain basicParameterChecks(ParameterTarget target, String[] fieldPathErrorArgs, String ownerNotFoundMessage) {
+	private LogTrain basicParameterChecks(ParameterTarget target, String[] fieldPathErrorArgs,
+			String ownerNotFoundMessage) {
 		LogTrain logs = new LogTrain();
 		String[] fieldNameErrorArgs = new String[] { "TC_PARAM_NAME" }; // that variable is simple convenience for
 		// logging
@@ -255,7 +261,7 @@ class EntityValidator {
 		// 2 - the test case must exist
 		TargetStatus tcStatus = getModel().getStatus(testCase);
 		if (tcStatus.status == TO_BE_DELETED || tcStatus.status == NOT_EXISTS) {
-			logs.addEntry(new LogEntry(target, ImportStatus.FAILURE,ownerNotFoundMessage ));
+			logs.addEntry(new LogEntry(target, ImportStatus.FAILURE, ownerNotFoundMessage));
 		}
 
 		// 3 - the project actually exists
@@ -266,29 +272,32 @@ class EntityValidator {
 			}
 		}
 
-		// 4 - name has length between 1 and 255
 		String name = target.getName();
-		if (name != null && name.length() > 255) {
-			logs.addEntry(new LogEntry(target, ImportStatus.WARNING, Messages.ERROR_MAX_SIZE, fieldNameErrorArgs,
-					Messages.IMPACT_MAX_SIZE, null));
-		}
-
-		// 5 - name does not contain forbidden characters
-		String regex = Parameter.NAME_REGEXP;
-		name = name.trim();
-		target.setName(name);
-		Pattern p = Pattern.compile(regex);
-		Matcher m = p.matcher(name);
-		if(!StringUtils.isBlank(name) && !m.matches() && name.length() < 256){
-			logs.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_PARAMETER_CONTAINS_FORBIDDEN_CHARACTERS, fieldNameErrorArgs));
-		}
-
 		if (StringUtils.isBlank(name)) {
 			logs.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_FIELD_MANDATORY, fieldNameErrorArgs));
+		} else {
+
+			// 4 - name has length between 1 and 255
+			if ( name.length() > 255) {
+				logs.addEntry(new LogEntry(target, ImportStatus.WARNING, Messages.ERROR_MAX_SIZE, fieldNameErrorArgs,
+						Messages.IMPACT_MAX_SIZE, null));
+			}
+
+			// 5 - name does not contain forbidden characters
+			String regex = Parameter.NAME_REGEXP;
+			name = name.trim();
+			target.setName(name);
+			Pattern p = Pattern.compile(regex);
+			Matcher m = p.matcher(name);
+			if (!StringUtils.isBlank(name) && !m.matches() && name.length() < 256) {
+				logs.addEntry(new LogEntry(target, ImportStatus.FAILURE,
+						Messages.ERROR_PARAMETER_CONTAINS_FORBIDDEN_CHARACTERS, fieldNameErrorArgs));
+			}
 		}
 
 		return logs;
 	}
+
 	LogTrain basicDatasetCheck(DatasetTarget target) {
 
 		LogTrain logs = new LogTrain();
@@ -299,7 +308,8 @@ class EntityValidator {
 
 		// 1 - the test case must be valid
 		if (!testCase.isWellFormed()) {
-			logs.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_MALFORMED_PATH, new String[]{testCase.getPath()}));
+			logs.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_MALFORMED_PATH,
+					new String[] { testCase.getPath() }));
 		}
 
 		// 2 - the test case must exist
@@ -329,7 +339,5 @@ class EntityValidator {
 		return logs;
 
 	}
-
-
 
 }

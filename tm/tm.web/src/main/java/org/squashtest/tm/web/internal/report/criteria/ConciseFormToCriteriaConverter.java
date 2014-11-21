@@ -271,7 +271,7 @@ public class ConciseFormToCriteriaConverter {
 		return new HashMap<String, Object>();
 	}
 
-	Collection<Input> flattenInputs(List<Input> inputs) {
+	private Collection<Input> flattenInputs(List<Input> inputs) {
 		Collection<Input> res = new ArrayList<Input>();
 
 		for (Input input : inputs) {

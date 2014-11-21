@@ -51,35 +51,35 @@ import org.springframework.stereotype.Service;
  */
 @Service("squashtest.tm.service.JasperReportsService")
 public class JasperReportsService {
-	
+
 	private final Map<String,Class<? extends JRExporter>> exporterMaps = new HashMap<String, Class<? extends JRExporter>>();
-	
+
 	//todo : make it Spring configurable instead.
 	public JasperReportsService(){
-			registerFormat("csv", JRCsvExporter.class);
-			registerFormat("xls", JRXlsExporter.class);
+		registerFormat("csv", JRCsvExporter.class);
+		registerFormat("xls", JRXlsExporter.class);
 	}
-	
-	
+
+
 	public Set<String> getSupportedformats(){
 		return exporterMaps.keySet();
 	}
-	
-	
+
+
 	public boolean isSupported(String format){
 		return (exporterMaps.keySet().contains(format));
 	}
-	
-	
-	public void registerFormat(String format, Class<? extends JRExporter> jrExporterClass){
+
+
+	private void registerFormat(String format, Class<? extends JRExporter> jrExporterClass){
 		if (isSupported(format)){
 			Class<?> clazz = exporterMaps.get(format);
 			throw new AlreadyMappedException("the format "+format+" is already mapped to "+clazz.getName());
 		}
 		exporterMaps.put(format, jrExporterClass);
 	}
-	
-	
+
+
 	private JRExporter getExporter(String format){
 		Class<? extends JRExporter> exporterClass = exporterMaps.get(format);
 		if (exporterClass==null) {
@@ -90,50 +90,50 @@ public class JasperReportsService {
 		}catch(Exception e){
 			throw new RuntimeException(e);
 		}
-		
+
 	}
-	
+
 	/**
 	 * 
 	 * 
 	 * @param jasperStream
 	 * @param format
 	 * @param dataSource
-	 * @param reportParameter, not null, empty maps are legals. 
+	 * @param reportParameter, not null, empty maps are legals.
 	 * @param exportParameter, not null, empty maps are legals.
 	 * @return
 	 */
 	@SuppressWarnings("rawtypes")
-	public InputStream getReportAsStream(InputStream jasperStream, String format, Collection<?> dataSource, 
-										Map reportParameter, Map<JRExporterParameter, Object> exportParameter){
+	public InputStream getReportAsStream(InputStream jasperStream, String format, Collection<?> dataSource,
+			Map reportParameter, Map<JRExporterParameter, Object> exportParameter){
 		try{
 			JRExporter exporter = getExporter(format);
-			
+
 			//create the jasper print
-			JRDataSource jasperDataSource = new JRBeanCollectionDataSource(dataSource);		
+			JRDataSource jasperDataSource = new JRBeanCollectionDataSource(dataSource);
 			JasperPrint jPrint = JasperFillManager.fillReport(jasperStream, reportParameter, jasperDataSource);
 
 			//export it
 			File reportFile = File.createTempFile("export",format);
 			reportFile.deleteOnExit();
 			FileOutputStream reportOut = new FileOutputStream(reportFile);
-			
+
 			exportParameter.put(JRExporterParameter.OUTPUT_STREAM, reportOut);
 			exportParameter.put(JRExporterParameter.JASPER_PRINT, jPrint);
 			exporter.setParameters(exportParameter);
 			exporter.exportReport();
-			
+
 			return new FileInputStream(reportFile);
-			
+
 		}catch(IOException ioe){
 			throw new RuntimeException(ioe);
 		}
 		catch(JRException jre){
 			throw new RuntimeException(jre);
 		}
-			
-			
+
+
 	}
-	
-	
+
+
 }

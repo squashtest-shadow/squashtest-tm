@@ -32,20 +32,20 @@ public class DataTableColumnFiltering implements ColumnFiltering{
 
 	private final DataTableDrawParameters params;
 	private Map<Object, Integer> dataProps = new HashMap<Object, Integer>();
-	
+
 	public DataTableColumnFiltering(DataTableDrawParameters params) {
 		super();
 		this.params = params;
 		createDataProps();
 	}
-	
-	public void createDataProps(){
+
+	private void createDataProps(){
 		Map<Integer,Object> mDataProp = params.getmDataProp();
 		for(Entry<Integer, Object>entry	: mDataProp.entrySet()){
 			dataProps.put(entry.getValue(), entry.getKey());
 		}
 	}
-	
+
 	@Override
 	public boolean isDefined() {
 		Collection<String> values = params.getsSearches().values();

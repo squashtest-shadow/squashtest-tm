@@ -31,7 +31,7 @@ import org.squashtest.tm.domain.campaign.TestSuite;
 public class ExProgressIterationDto extends ExProgressScheduledAbstractDto {
 
 	private ExProgressCampaignDto campaign;
-	
+
 	private List<ExProgressTestPlanDto> testPlans = new LinkedList<ExProgressTestPlanDto>();
 	private List<ExProgressTestSuiteDto> testSuites = new LinkedList<ExProgressTestSuiteDto>();
 
@@ -44,9 +44,19 @@ public class ExProgressIterationDto extends ExProgressScheduledAbstractDto {
 	}
 
 	public ExProgressIterationDto(Iteration iteration) {
+		super(iteration.getTestPlans());
 		fillBasicInfos(iteration);
-		fillStatusInfos(iteration.getTestPlans());
 		fillTestSuiteInfos(iteration);
+	}
+
+	private ExProgressIterationDto fillBasicInfos(Iteration iteration) {
+		super.name = iteration.getName();
+		scheduledStartDate = iteration.getScheduledStartDate();
+		scheduledEndDate = iteration.getScheduledEndDate();
+		actualStartDate = iteration.getActualStartDate();
+		actualEndDate = iteration.getActualEndDate();
+
+		return this;
 	}
 
 	private void fillTestSuiteInfos(Iteration iteration) {
@@ -58,12 +68,13 @@ public class ExProgressIterationDto extends ExProgressScheduledAbstractDto {
 		}
 	}
 
-	private static class testSuiteComparator implements Comparator<ExProgressTestSuiteDto>{
-	    @Override
+	private static class testSuiteComparator implements Comparator<ExProgressTestSuiteDto> {
+		@Override
 		public int compare(ExProgressTestSuiteDto suite1, ExProgressTestSuiteDto suite2) {
-	        return suite1.getName().compareTo(suite2.getName());
-	    }
+			return suite1.getName().compareTo(suite2.getName());
+		}
 	}
+
 	public List<ExProgressTestPlanDto> getTestPlans() {
 		return testPlans;
 	}
@@ -74,16 +85,6 @@ public class ExProgressIterationDto extends ExProgressScheduledAbstractDto {
 
 	public void addTestPlanDto(ExProgressTestPlanDto testPlanDto) {
 		testPlans.add(testPlanDto);
-	}
-
-	public ExProgressIterationDto fillBasicInfos(Iteration iteration) {
-		super.name = iteration.getName();
-		scheduledStartDate = iteration.getScheduledStartDate();
-		scheduledEndDate = iteration.getScheduledEndDate();
-		actualStartDate = iteration.getActualStartDate();
-		actualEndDate = iteration.getActualEndDate();
-
-		return this;
 	}
 
 	public List<ExProgressTestSuiteDto> getTestSuites() {

@@ -85,7 +85,7 @@ public interface CustomFieldValueDao extends CustomCustomFieldValueDao{
 	 * @param entityTpe
 	 * @param entityIds
 	 */
-	void deleteAllForEntities(@QueryParam(ENTITY_TYPE) BindableEntity entityType, @QueryParam("entityIds") List<Long> entityIds);
+	void deleteAllForEntities(@QueryParam(ENTITY_TYPE) BindableEntity entityType, @QueryParam(ParameterNames.ENTITY_IDS) List<Long> entityIds);
 
 
 
@@ -116,7 +116,7 @@ public interface CustomFieldValueDao extends CustomCustomFieldValueDao{
 	 * @param entityType
 	 * @return
 	 */
-	List<CustomFieldValue> batchedFindAllCustomValuesFor(@QueryParam("entityIds") Collection<Long> entityIds, @QueryParam(ENTITY_TYPE) BindableEntity entityType);
+	List<CustomFieldValue> batchedFindAllCustomValuesFor(@QueryParam(ParameterNames.ENTITY_IDS) Collection<Long> entityIds, @QueryParam(ENTITY_TYPE) BindableEntity entityType);
 
 
 	/**
@@ -126,7 +126,7 @@ public interface CustomFieldValueDao extends CustomCustomFieldValueDao{
 	 * @param entityType
 	 * @return
 	 */
-	List<CustomFieldValue> batchedInitializedFindAllCustomValuesFor(@QueryParam("entityIds") List<Long> entityIds, @QueryParam(ENTITY_TYPE) BindableEntity entityType);
+	List<CustomFieldValue> batchedInitializedFindAllCustomValuesFor(@QueryParam(ParameterNames.ENTITY_IDS) List<Long> entityIds, @QueryParam(ENTITY_TYPE) BindableEntity entityType);
 
 
 	/**
@@ -134,7 +134,7 @@ public interface CustomFieldValueDao extends CustomCustomFieldValueDao{
 	 * 
 	 * @return
 	 */
-	List<CustomFieldValue> batchedRestrictedFindAllCustomValuesFor(@QueryParam("entityIds") List<Long> entityIds,
+	List<CustomFieldValue> batchedRestrictedFindAllCustomValuesFor(@QueryParam(ParameterNames.ENTITY_IDS) List<Long> entityIds,
 			@QueryParam(ENTITY_TYPE) BindableEntity entityType,
 			@QueryParam("customFields") Collection<CustomField> customFields);
 
