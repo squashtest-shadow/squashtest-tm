@@ -19,7 +19,7 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.squashtest.tm.plugin.testautomation.jenkins.internal;
+package org.squashtest.tm.plugin.testautomation.jenkins.internal
 
 import org.apache.commons.httpclient.HttpClient
 import org.springframework.http.client.CommonsClientHttpRequestFactory
@@ -81,16 +81,18 @@ class StartTestExecutionTest extends Specification {
 
 
 		when:
-		File f = ste.createJsonSuite(buildDef);
+		File f = ste.createJsonSuite(buildDef)
 
 
 		then:
-		[
-			"""{"test":[{"id":"12","script":"to/the/batcave","param":{"batman":"leatherpants"}}]}""",
-			"""{"test":[{"param":{"batman":"leatherpants"},"script":"to/the/batcave","id":"12"}]}""",
-			"""{"test":[{"id":"12","param":{"batman":"leatherpants"},"script":"to/the/batcave"}]}""",
-			"""{"test":[{"script":"to/the/batcave","param":{"batman":"leatherpants"},"id":"12"}]}"""
-		].contains(f.text)
+		f.text.size() == 82
+		f.text.startsWith("""{"test":[{""")
+		f.text.endsWith("""}]}""")
+		f.text.contains('"id":"12"')
+		f.text.contains('"script":"to/the/batcave"')
+		f.text.contains('"param":{"batman":"leatherpants"}')
+		f.text.count('","') == 2
+
 	}
 	
 }
