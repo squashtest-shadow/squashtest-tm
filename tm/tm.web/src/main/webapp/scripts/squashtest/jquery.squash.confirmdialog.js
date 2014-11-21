@@ -55,8 +55,7 @@
 		return;
 	}
 
-	var closeDialogHandler = function() {
-	};
+	var closeDialogHandler = function() {};
 
 	$.widget("squash.confirmDialog", $.ui.dialog, {
 		options : {
@@ -75,6 +74,7 @@
 		},
 
 		confirm : function(event) {
+			console.log("trigger validate", event)
 			if (false === this._trigger("validate", event)) {
 				return;
 			}

@@ -18,7 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ "backbone", "underscore", "./ConciseFormModel", "app/util/ButtonUtil", "tree", 
+define([ "backbone", "underscore", "./ConciseFormModel", "app/util/ButtonUtil", "tree",
          "./ProjectsPickerPopup", "./SingleProjectPickerPopup", "jeditable.datepicker",
          "jquery.squash.formdialog"],
 function(Backbone, _, FormModel, ButtonUtil, treeBuilder, ProjectsPickerPopup, SingleProjectPickerPopup) {
@@ -209,11 +209,11 @@ function(Backbone, _, FormModel, ButtonUtil, treeBuilder, ProjectsPickerPopup, S
 
 			this.$(".rpt-tree-crit-dialog").each(function() {
 				var $dialog = $(this);
-				
+
 				$dialog.formDialog({height:500});
-				
+
 				$dialog.on('formdialogconfirm', self.onNodesPicked);
-				
+
 				$dialog.on('formdialogcancel', function(){$dialog.formDialog('close');});
 
 			});

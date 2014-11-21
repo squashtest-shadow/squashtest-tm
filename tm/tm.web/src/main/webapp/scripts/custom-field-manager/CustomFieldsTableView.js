@@ -32,7 +32,6 @@ define(
 						el : "#cf-table-pane",
 						initialize : function() {
 							var self = this;
-							$(".button").button();
 							// this.el is decorated with an ajax sourced
 							// datatable
 							var config = $.extend({
@@ -126,8 +125,6 @@ define(
 
 							this.table = this.$("table");
 							this.table.squashTable(config, squashSettings);
-
-							this.$("input:button").button();
 							
 							var deleteDialog = $("#delete-cf-popup");
 							deleteDialog.confirmDialog();

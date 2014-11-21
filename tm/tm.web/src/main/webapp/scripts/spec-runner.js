@@ -20,9 +20,12 @@
  */
 require([ "common", "require" ], function(common) {
 	var specs = [
-	'specs/PlayerSpec',
 	"specs/report/ReportCriteriaPanelSpec",
-	"specs/report/ConciseFormModelSpec"
+	"specs/report/ConciseFormModelSpec",
+	"specs/squashtable/ColDefsBuilderSpec",
+	"specs/app/BindViewSpec",
+	"specs/info-list-manager/InfoListModelSpec",
+	"specs/info-list-manager/InfoListOptionModelSpec",
 	];
 
 	// expands require config for jasmine usage
