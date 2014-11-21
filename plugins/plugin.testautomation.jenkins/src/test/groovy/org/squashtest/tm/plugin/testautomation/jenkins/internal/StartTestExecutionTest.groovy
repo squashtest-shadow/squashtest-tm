@@ -91,7 +91,7 @@ class StartTestExecutionTest extends Specification {
 		f.text.contains('"id":"12"')
 		f.text.contains('"script":"to/the/batcave"')
 		f.text.contains('"param":{"batman":"leatherpants"}')
-		f.text.count('","') == 2
+		f.text.count(',') == 2
 
 	}
 	
