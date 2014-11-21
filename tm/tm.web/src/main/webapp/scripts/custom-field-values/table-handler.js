@@ -57,7 +57,7 @@ define([ "jquery", "./lib/cuf-values-utils", "./lib/jquery.staticCustomfield", "
 			}
 			
 			// special delivery for tags : 
-			if (cufDefinitions[i]._inputType === "TAG"){
+			if (cufDefinitions[i].itype === "TAG"){
 				newColumn.mRender = function ( data, type, full ) {
 			        var html = "<ul>";
 			        $.each(data, function(idx, t){
@@ -174,7 +174,7 @@ define([ "jquery", "./lib/cuf-values-utils", "./lib/jquery.staticCustomfield", "
 				var def = defMap[code];
 				
 				var cufselts;
-				if (def._inputType === "TAG"){
+				if (def.itype === "TAG"){
 					cufselts = table.find('td.custom-field-' + code + '>span>ul, td.denormalized-field-' + code + '>span>ul');	
 				}
 				else{

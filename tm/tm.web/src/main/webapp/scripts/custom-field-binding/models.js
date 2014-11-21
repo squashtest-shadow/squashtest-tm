@@ -31,7 +31,7 @@ define(function() {
 				projectId : projectId,
 				customField : {
 					id : fieldId,
-					_inputType : type
+					itype : type
 				},
 				boundEntity : {
 					enumName : entityName

@@ -41,11 +41,11 @@ define(["jquery", "handlebars", "./lib/cuf-values-utils","jqueryui", "./lib/jque
 			'<label class="display-table-cell">{{cuflabel this}}</label>' +
 			'<div class="display-table-cell controls">' +
 			
-			'{{#ifequals binding.customField._inputType "RICH_TEXT"}}' +
+			'{{#ifequals binding.customField.itype "RICH_TEXT"}}' +
 			
 				'<span id="{{cufid this}}" class="{{cufclass this}}" data-value-id="{{id}}">{{{value}}}</span>' +
 			
-			'{{else}} {{#ifequals binding.customField._inputType "TAG"}}' +
+			'{{else}} {{#ifequals binding.customField.itype "TAG"}}' +
 			
 				'<ul id="{{cufid this}}" class="{{cufclass this}}" data-value-id="{{id}}" style="margin:0;line-height:normal;">'+
 				'{{#each optionValues}}' +

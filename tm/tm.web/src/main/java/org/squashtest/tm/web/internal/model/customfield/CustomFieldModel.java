@@ -24,7 +24,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.databind.annotation.JsonTypeIdResolver;
 
 // TODO : instead of a JsonTypeIdResolver, use something like for AdvancedSearchFieldModel
-@JsonTypeInfo(include=JsonTypeInfo.As.PROPERTY, property="_inputType", use=JsonTypeInfo.Id.CUSTOM)
+@JsonTypeInfo(include=JsonTypeInfo.As.PROPERTY, property="itype", use=JsonTypeInfo.Id.CUSTOM)
 @JsonTypeIdResolver(CustomFieldModelIdTypeResolver.class)
 public abstract class CustomFieldModel<VALUETYPE> {
 
@@ -43,7 +43,7 @@ public abstract class CustomFieldModel<VALUETYPE> {
 	private InputTypeModel inputType;
 
 	// this one is required by Jackson, this is how Jackson discriminates (see annotations above)
-	private String _inputType;
+	private String itype;
 
 	private boolean isDenormalized;
 
@@ -95,12 +95,12 @@ public abstract class CustomFieldModel<VALUETYPE> {
 		this.inputType = inputType;
 	}
 
-	public String get_inputType() {
-		return _inputType;
+	public String getShortInputType() {
+		return itype;
 	}
 
-	public void set_inputType(String _inputType) {
-		this._inputType = _inputType;
+	public void setShortInputType(String itype) {
+		this.itype = itype;
 	}
 
 	public String getCode() {

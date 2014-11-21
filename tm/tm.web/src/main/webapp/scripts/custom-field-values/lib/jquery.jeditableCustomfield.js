@@ -299,7 +299,7 @@ define(
 			
 			$.fn.jeditableCustomfield = function(cufDefinition, idOrURLOrPostfunction) {
 
-				var type = cufDefinition._inputType;
+				var type = cufDefinition.itype;
 
 				switch(type){
 				case "DATE_PICKER" : initAsDatePicker(this, cufDefinition, idOrURLOrPostfunction); break;
