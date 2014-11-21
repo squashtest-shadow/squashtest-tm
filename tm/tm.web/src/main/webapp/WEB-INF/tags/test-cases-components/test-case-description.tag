@@ -39,7 +39,7 @@
 
 
 <comp:toggle-panel id="test-case-description-panel"
-				   title=  '${labelDescription} <span class="small discret">[ID = ${ testCase.id }]</span>'
+				   title=  '${labelDescription} <span class="small txt-discreet">[ID = ${ testCase.id }]</span>'
 				   open="true">
 				   
 	<jsp:attribute name="body">

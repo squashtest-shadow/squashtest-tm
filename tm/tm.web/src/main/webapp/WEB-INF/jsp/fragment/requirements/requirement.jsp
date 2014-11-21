@@ -191,7 +191,7 @@ publish('reload.requirement.toolbar');
 <%--------------------------- General Informations section ------------------------------------%>
 
 	<f:message var="labelRequirementInfoPanel" key="requirement.panel.general-informations.title"  />
-	<comp:toggle-panel id="requirement-information-panel" title='${labelRequirementInfoPanel} <span class="small discret">[ID = ${ requirement.id }]</span>' open="true" >
+	<comp:toggle-panel id="requirement-information-panel" title='${labelRequirementInfoPanel} <span class="small txt-discreet">[ID = ${ requirement.id }]</span>' open="true" >
 		<jsp:attribute name="body">
 			<div id="edit-requirement-table" class="display-table">
 				<div class="display-table-row">
