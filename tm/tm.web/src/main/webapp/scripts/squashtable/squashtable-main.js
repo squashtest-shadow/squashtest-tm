@@ -869,7 +869,7 @@ define(["jquery",
 	}
 
 	function _configureCheckBox(){
-		$("td.checkbox").append('<input type="checkbox" /> ')		
+		$("td.checkbox", this).append('<input type="checkbox" /> ');		
 	}
 	
 	function _configureDeleteButtons() {

@@ -161,4 +161,15 @@
   
   </changeSet>
   
+  <changeSet id="tm-1.12.0.feature-3607-2" author="jsimon">
+  <addColumn tableName="MILESTONE">
+  
+			<column name="USER_ID" type="BIGINT" remarks="the user that own the milestone">
+				<constraints nullable="false" foreignKeyName="fk_milestone_owner" references="CORE_USER(PARTY_ID)"/>
+			</column>
+  </addColumn>
+  
+  </changeSet>
+  
+  
 </databaseChangeLog>

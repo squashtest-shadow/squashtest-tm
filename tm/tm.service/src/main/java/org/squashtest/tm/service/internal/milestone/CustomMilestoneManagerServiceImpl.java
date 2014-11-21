@@ -37,6 +37,7 @@ import org.squashtest.tm.domain.milestone.MilestoneBinding;
 import org.squashtest.tm.service.internal.repository.MilestoneBindingDao;
 import org.squashtest.tm.service.internal.repository.MilestoneDao;
 import org.squashtest.tm.service.milestone.CustomMilestoneManager;
+import org.squashtest.tm.service.user.UserAccountService;
 
 @Service("CustomMilestoneManager")
 public class CustomMilestoneManagerServiceImpl implements CustomMilestoneManager {
@@ -46,10 +47,14 @@ public class CustomMilestoneManagerServiceImpl implements CustomMilestoneManager
 
 	@Inject 
 	private MilestoneBindingDao milestoneBindingDao;
+	  
+    @Inject
+    private UserAccountService userService;
 	
 	@Override
 	public void addMilestone(Milestone milestone) {
 		milestoneDao.checkLabelAvailability(milestone.getLabel());
+		milestone.setOwner(userService.findCurrentUser());
 		milestoneDao.persist(milestone);
 	}
 

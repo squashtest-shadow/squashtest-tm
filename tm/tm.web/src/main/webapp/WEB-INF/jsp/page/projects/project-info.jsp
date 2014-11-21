@@ -65,6 +65,10 @@
 	<s:param name="projectId" 	    value="${adminproject.project.id}" />
 </s:url>
 
+<s:url var="milestoneManagerURL"      value="/administration/projects/{projectId}/milestone-binding">
+	<s:param name="projectId" 	    value="${adminproject.project.id}" />
+</s:url>
+
 <layout:info-page-layout titleKey="workspace.project.info.title" isSubPaged="true" main="project-page">
 	<jsp:attribute name="head">	
 		<comp:sq-css name="squash.grey.css" />	
@@ -145,7 +149,9 @@
 			<ul class="tab-menu">
 				<li><a href="#main-informations"><f:message key="tabs.label.mainpanel"/></a></li>
 				<li><a href="${customFieldManagerURL}"><f:message key="tabs.label.cufbinding"/></a></li>
+			    <li><a href="${milestoneManagerURL}"><f:message key="tabs.label.milestone"/></a></li>
 				<li><a href="${wizardsManagerURL}"><f:message key="tabs.label.wizards"/></a></li>
+			
 			</ul>
 		
 			<%----------------------------------- INFORMATION PANEL -----------------------------------------------%>

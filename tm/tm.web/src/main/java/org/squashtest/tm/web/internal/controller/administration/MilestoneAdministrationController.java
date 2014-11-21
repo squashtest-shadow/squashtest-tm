@@ -80,7 +80,7 @@ public class MilestoneAdministrationController {
 
 	@RequestMapping(method = RequestMethod.POST)
 	@ResponseStatus(HttpStatus.CREATED)
-	public @ResponseBody void addMilestone(@Valid @ModelAttribute("add-milestone") Milestone milestone) {
+	public @ResponseBody Milestone addMilestone(@Valid @ModelAttribute("add-milestone") Milestone milestone) {
 
 		if (permissionEvaluationService.hasRole("ROLE_ADMIN")) {
 			milestone.setRange(MilestoneRange.GLOBAL);
@@ -93,6 +93,8 @@ public class MilestoneAdministrationController {
 		LOGGER.info("status " + milestone.getStatus());
 		LOGGER.info("end date " + milestone.getEndDate());
 		milestoneManager.addMilestone(milestone);
+		
+		return milestone;
 	}
 
 	@RequestMapping(value = "/{milestoneIds}", method = RequestMethod.DELETE)

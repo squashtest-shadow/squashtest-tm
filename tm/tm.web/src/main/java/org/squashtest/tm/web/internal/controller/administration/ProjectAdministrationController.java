@@ -150,8 +150,12 @@ public class ProjectAdministrationController {
 		return mav;
 	}
 
+	
+
+	
 	// ********************** Wizard administration section ************
 
+	
 	@RequestMapping(value = "{projectId}/wizards")
 	public String getWizardsManager(@PathVariable(RequestParams.PROJECT_ID) Long projectId, Model model) {
 

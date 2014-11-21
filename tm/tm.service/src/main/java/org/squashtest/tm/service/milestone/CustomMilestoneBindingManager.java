@@ -55,5 +55,10 @@ public interface CustomMilestoneBindingManager {
 	void unbindProjectsFromMilestone(List<Long> projectIds, Long milestoneId);
 
 
+	PagedCollectionHolder<List<Milestone>> getAllBindedMilestoneForProject(Long projectId, PagingAndSorting sorter,
+			Filtering filter);
+
+	PagedCollectionHolder<List<Milestone>> getAllBindableMilestoneForProject(Long projectId, PagingAndSorting sorter,
+			Filtering filter, String type);
 
 }

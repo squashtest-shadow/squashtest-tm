@@ -32,7 +32,9 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
@@ -45,6 +47,7 @@ import org.hibernate.search.annotations.FieldBridge;
 import org.hibernate.validator.constraints.NotBlank;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.squashtest.tm.domain.audit.Auditable;
+import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.search.bridge.LevelEnumBridge;
 
 @Auditable
@@ -86,6 +89,19 @@ public class Milestone {
 	@OneToMany(cascade = { CascadeType.ALL }, mappedBy="milestone")
 	private Set<MilestoneBinding> milestoneBinding = new HashSet<MilestoneBinding>();
 	
+	@JoinColumn(name = "USER_ID")
+	@ManyToOne
+	private User owner;
+	
+	
+	public User getOwner() {
+		return owner;
+	}
+
+	public void setOwner(User owner) {
+		this.owner = owner;
+	}
+
 	public int getNbOfBindedProject(){
 		return milestoneBinding.size();
 	}

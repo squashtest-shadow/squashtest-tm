@@ -36,9 +36,12 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.squashtest.tm.core.foundation.collection.Filtering;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
+import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.project.GenericProject;
 import org.squashtest.tm.service.milestone.MilestoneBindingManagerService;
 import org.squashtest.tm.web.internal.controller.RequestParams;
+import org.squashtest.tm.web.internal.controller.administration.MilestoneDataTableModelHelper;
+import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.tm.web.internal.model.datatable.DataTableFiltering;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
@@ -56,9 +59,15 @@ public class MilestoneBindingController {
 	private DatatableMapper<String> allProjectsMapper = new NameBasedMapper(2)
 	.map("name", "name")
 	.map("label", "label");
+	
+	private DatatableMapper<String> milestoneMapper = new NameBasedMapper(2)
+	.map("name", "name")
+	.map("label", "label");
 
 	private static final String IDS = "Ids[]";
 
+	@Inject
+	private InternationalizationHelper messageSource;
 	@Inject
 	private MilestoneBindingManagerService service;
 
@@ -100,6 +109,35 @@ public class MilestoneBindingController {
 		return new ProjectDataTableModelHelper().buildDataModel(holder, params.getsEcho());
 	}
 
+
+	@RequestMapping(value="/project/{projectId}/milestone", method = RequestMethod.GET, params = {RequestParams.S_ECHO_PARAM, "bindable", "type"})
+	@ResponseBody
+	public DataTableModel getBindableMilestoneForProjectTableModel(@PathVariable Long projectId, final DataTableDrawParameters params, final Locale locale, @RequestParam("type") String type){
+		
+		PagingAndSorting sorter = new DataTableSorting(params, milestoneMapper);
+
+		Filtering filter = new DataTableFiltering(params);
+
+		PagedCollectionHolder<List<Milestone>> holder = service.getAllBindableMilestoneForProject(projectId, sorter, filter, type);
+		
+		return new MilestoneDataTableModelHelper(messageSource).buildDataModel(holder, params.getsEcho());			
+	}
+	
+	
+	
+	@RequestMapping(value = "/project/{projectId}/milestone", method = RequestMethod.GET, params = {RequestParams.S_ECHO_PARAM, "binded" })
+	@ResponseBody
+	public 	DataTableModel getBindedMilestoneForProjectTableModel(@PathVariable Long projectId, final DataTableDrawParameters params, final Locale locale){
+		
+		PagingAndSorting sorter = new DataTableSorting(params, milestoneMapper);
+
+		Filtering filter = new DataTableFiltering(params);
+
+		PagedCollectionHolder<List<Milestone>> holder = service.getAllBindedMilestoneForProject(projectId, sorter, filter);
+				
+		return new  MilestoneDataTableModelHelper(messageSource).buildDataModel(holder, params.getsEcho());	
+	}
+	
 
 
 	@RequestMapping(value = "/milestone/{milestoneId}/project", method = RequestMethod.GET, params = {RequestParams.S_ECHO_PARAM, "binded" })

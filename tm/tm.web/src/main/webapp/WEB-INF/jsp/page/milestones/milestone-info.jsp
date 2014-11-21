@@ -178,7 +178,7 @@
 <!-- --------------------------------BIND PROJECT POPUP--------------------------------------------------------- -->
 
   
-    <f:message var="bindProjectTitle" key="dialog.rename-bugtracker.title" />
+    <f:message var="bindProjectTitle" key="dialog.milestone.bind.project" />
     <div id="bind-project-dialog" class="not-displayed popup-dialog"
         title="${bindProjectTitle}">
 
@@ -197,7 +197,7 @@
 <div>
 <ul>
 
-<li><a id="checkAll"> checkAll</a>
+<li><a id="checkAll"> checkAll</a></li>
 <li><a id="uncheckAll">uncheckAll</a></li>
 <li><a id="invertSelect">invertSelect</a></li>
 

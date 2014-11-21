@@ -72,6 +72,7 @@ public class MilestoneDataTableModelHelper  extends DataTableModelBuilder<Milest
 		row.put("last-mod-on", messageSource.localizeDate(auditable.getLastModifiedOn(), locale));
 		row.put("last-mod-by", auditable.getLastModifiedBy());
 		row.put("delete", "");
+		row.put("checkbox", "");
 		
 		return row;
 	}
