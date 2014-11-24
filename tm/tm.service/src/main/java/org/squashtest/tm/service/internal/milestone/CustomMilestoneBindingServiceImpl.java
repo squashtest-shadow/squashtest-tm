@@ -35,17 +35,15 @@ import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.PagingBackedPagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.SortOrder;
 import org.squashtest.tm.domain.milestone.Milestone;
-import org.squashtest.tm.domain.milestone.MilestoneBinding;
 import org.squashtest.tm.domain.milestone.MilestoneRange;
 import org.squashtest.tm.domain.project.GenericProject;
 import org.squashtest.tm.service.internal.repository.GenericProjectDao;
-import org.squashtest.tm.service.internal.repository.MilestoneBindingDao;
 import org.squashtest.tm.service.internal.repository.MilestoneDao;
-import org.squashtest.tm.service.milestone.CustomMilestoneBindingManager;
+import org.squashtest.tm.service.milestone.MilestoneBindingManagerService;
 import org.squashtest.tm.service.security.UserContextService;
 
-@Service("CustomMilestoneBindingManager")
-public class CustomMilestoneBindingServiceImpl implements CustomMilestoneBindingManager {
+@Service("squashtest.tm.service.MilestoneBindingManagerService")
+public class CustomMilestoneBindingServiceImpl implements MilestoneBindingManagerService {
 
 	@Inject
 	private MilestoneDao milestoneDao;
@@ -54,11 +52,8 @@ public class CustomMilestoneBindingServiceImpl implements CustomMilestoneBinding
 	private GenericProjectDao projectDao;
 
 	@Inject
-	private MilestoneBindingDao milestoneBindingDao;
-	
-    @Inject
-    private UserContextService userContextService;
-    
+	private UserContextService userContextService;
+
 	@Override
 	public List<Milestone> getAllBindableMilestoneForProject(Long projectId) {
 
@@ -74,41 +69,20 @@ public class CustomMilestoneBindingServiceImpl implements CustomMilestoneBinding
 	public void bindMilestonesToProject(List<Long> milestoneIds, Long projectId) {
 		GenericProject project = projectDao.findById(projectId);
 		List<Milestone> milestones = milestoneDao.findAllByIds(milestoneIds);
-		List<MilestoneBinding> bindings = new ArrayList<MilestoneBinding>();
-
-		for (Milestone milestone : milestones) {
-			MilestoneBinding binding = new MilestoneBinding();
-			binding.setBoundProject(project);
-			binding.setMilestone(milestone);
-			bindings.add(binding);
-		}
-		milestoneBindingDao.persist(bindings);
-
+		project.bindMilestones(milestones);
 	}
 
 	@Override
 	public void bindProjectsToMilestone(List<Long> projectIds, Long milestoneId) {
 		List<GenericProject> projects = projectDao.findAllByIds(projectIds);
 		Milestone milestone = milestoneDao.findById(milestoneId);
-		List<MilestoneBinding> bindings = new ArrayList<MilestoneBinding>();
-		for (GenericProject project : projects) {
-			MilestoneBinding binding = new MilestoneBinding();
-			binding.setBoundProject(project);
-			binding.setMilestone(milestone);
-			bindings.add(binding);
-		}
-		milestoneBindingDao.persist(bindings);
+	milestone.bindProjects(projects);
 	}
 
 	@Override
 	public List<Milestone> getAllBindedMilestoneForProject(Long projectId) {
-
-		List<MilestoneBinding> milestoneBinding = milestoneBindingDao.findAllByProject(projectId);
-		List<Milestone> milestoneBoundToProject = new ArrayList<Milestone>();
-		for (MilestoneBinding binding : milestoneBinding) {
-			milestoneBoundToProject.add(binding.getMilestone());
-		}
-		return milestoneBoundToProject;
+		GenericProject project = projectDao.findById(projectId);	
+		return project.getMilestones();
 	}
 
 	@Override
@@ -121,12 +95,9 @@ public class CustomMilestoneBindingServiceImpl implements CustomMilestoneBinding
 
 	@Override
 	public List<GenericProject> getAllBindedProjectForMilestone(Long milestoneId) {
-		List<MilestoneBinding> milestoneBinding = milestoneBindingDao.findAllByMilestone(milestoneId);
-		List<GenericProject> projectBoundToMilestone = new ArrayList<GenericProject>();
-		for (MilestoneBinding binding : milestoneBinding) {
-			projectBoundToMilestone.add(binding.getBoundProject());
-		}
-		return projectBoundToMilestone;
+		Milestone milestone = milestoneDao.findById(milestoneId);
+
+		return milestone.getProjects();
 	}
 
 	@Override
@@ -203,14 +174,19 @@ public class CustomMilestoneBindingServiceImpl implements CustomMilestoneBinding
 
 	@Override
 	public void unbindMilestonesFromProject(List<Long> milestoneIds, Long projectId) {
-		List<MilestoneBinding> bindings = milestoneBindingDao.findAllByProjectAndMilestones(projectId, milestoneIds);
-		milestoneBindingDao.removeAll(bindings);
+
+		GenericProject project = projectDao.findById(projectId);
+		List<Milestone> milestones = milestoneDao.findAllByIds(milestoneIds);
+		project.unbindMilestones(milestones);
 	}
 
 	@Override
 	public void unbindProjectsFromMilestone(List<Long> projectIds, Long milestoneId) {
-		List<MilestoneBinding> bindings = milestoneBindingDao.findAllByMilestoneAndProjects(milestoneId, projectIds);
-		milestoneBindingDao.removeAll(bindings);
+
+		Milestone milestone = milestoneDao.findById(milestoneId);
+		List<GenericProject> projects = projectDao.findAllByIds(projectIds);
+		milestone.unbindProjects(projects);
+
 	}
 
 	@Override
@@ -222,29 +198,27 @@ public class CustomMilestoneBindingServiceImpl implements CustomMilestoneBinding
 	}
 
 	private List<Milestone> filterByType(List<Milestone> milestones, String type) {
-		
+
 		List<Milestone> filtered = null;
-		if ("global".equals(type)){
-			//global milestone
+		if ("global".equals(type)) {
+			// global milestone
 			filtered = getGlobalMilestones(milestones);
-			
+
 		} else if ("personal".equals(type)) {
-			//milestone created by the user
-			filtered = getMilestoneCreatedBySelf(milestones);	
+			// milestone created by the user
+			filtered = getMilestoneCreatedBySelf(milestones);
 		} else {
-			//other milestone
+			// other milestone
 			filtered = getOtherMilestones(milestones);
 		}
-		return  filtered;
+		return filtered;
 	}
-	
-	
 
 	private List<Milestone> getOtherMilestones(List<Milestone> milestones) {
 		List<Milestone> filtered = new ArrayList<Milestone>();
 
-		for (Milestone milestone : milestones){
-			if (isRestricted(milestone) && ! isCreatedBySelf(milestone)){
+		for (Milestone milestone : milestones) {
+			if (isRestricted(milestone) && !isCreatedBySelf(milestone)) {
 				filtered.add(milestone);
 			}
 		}
@@ -253,26 +227,26 @@ public class CustomMilestoneBindingServiceImpl implements CustomMilestoneBinding
 
 	private List<Milestone> getMilestoneCreatedBySelf(List<Milestone> milestones) {
 		List<Milestone> filtered = new ArrayList<Milestone>();
-		for (Milestone milestone : milestones){
-			if (isRestricted(milestone)&&isCreatedBySelf(milestone)){
+		for (Milestone milestone : milestones) {
+			if (isRestricted(milestone) && isCreatedBySelf(milestone)) {
 				filtered.add(milestone);
 			}
 		}
 		return filtered;
 	}
-	
-	private boolean isRestricted (Milestone milestone){
+
+	private boolean isRestricted(Milestone milestone) {
 		boolean isRestricted = false;
-		if (milestone.getRange().equals(MilestoneRange.RESTRICTED)){
+		if (milestone.getRange().equals(MilestoneRange.RESTRICTED)) {
 			isRestricted = true;
 		}
 		return isRestricted;
 	}
-	
-	private boolean isCreatedBySelf (Milestone milestone){
+
+	private boolean isCreatedBySelf(Milestone milestone) {
 		boolean isCreatedBySelf = false;
 		String myName = userContextService.getUsername();
-		if (myName.equals(milestone.getOwner().getLogin())){
+		if (myName.equals(milestone.getOwner().getLogin())) {
 			isCreatedBySelf = true;
 		}
 		return isCreatedBySelf;
@@ -280,15 +254,13 @@ public class CustomMilestoneBindingServiceImpl implements CustomMilestoneBinding
 
 	private List<Milestone> getGlobalMilestones(List<Milestone> milestones) {
 		List<Milestone> filtered = new ArrayList<Milestone>();
-		for (Milestone milestone : milestones){
-			if (milestone.getRange().equals(MilestoneRange.GLOBAL)){
+		for (Milestone milestone : milestones) {
+			if (milestone.getRange().equals(MilestoneRange.GLOBAL)) {
 				filtered.add(milestone);
 			}
 		}
 		return filtered;
 	}
-	
-	
 
 	private void sortMilestone(List<Milestone> milestones, PagingAndSorting sorter) {
 		// TODO do the sorting
@@ -314,8 +286,9 @@ public class CustomMilestoneBindingServiceImpl implements CustomMilestoneBinding
 		sortMilestone(milestones, sorter);
 		return new PagingBackedPagedCollectionHolder<List<Milestone>>(sorter, count, milestones);
 	}
-	
-	private PagingBackedPagedCollectionHolder<List<GenericProject>> getFilteredAndSortedProjects(List<GenericProject> projects,PagingAndSorting sorter, Filtering filter){
+
+	private PagingBackedPagedCollectionHolder<List<GenericProject>> getFilteredAndSortedProjects(
+			List<GenericProject> projects, PagingAndSorting sorter, Filtering filter) {
 		long count = projects.size();
 		projects = filterProject(projects, filter);
 		sortProject(projects, sorter);

@@ -20,9 +20,11 @@
  */
 package org.squashtest.tm.domain.project;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -38,6 +40,7 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
@@ -58,6 +61,7 @@ import org.squashtest.tm.domain.attachment.AttachmentList;
 import org.squashtest.tm.domain.audit.Auditable;
 import org.squashtest.tm.domain.bugtracker.BugTrackerBinding;
 import org.squashtest.tm.domain.campaign.CampaignLibrary;
+import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.requirement.RequirementLibrary;
 import org.squashtest.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.tm.domain.testautomation.TestAutomationServer;
@@ -86,7 +90,7 @@ public abstract class GenericProject implements Identified, AttachmentHolder {
 	private Long id;
 
 	@Lob
-	@Type(type="org.hibernate.type.StringClobType")
+	@Type(type = "org.hibernate.type.StringClobType")
 	private String description;
 
 	@Size(min = 0, max = 255)
@@ -94,7 +98,7 @@ public abstract class GenericProject implements Identified, AttachmentHolder {
 
 	@NotBlank
 	@Size(min = 0, max = 255)
-	@Field(analyze=Analyze.NO, store=Store.YES)
+	@Field(analyze = Analyze.NO, store = Store.YES)
 	private String name;
 
 	private boolean active = true;
@@ -113,18 +117,23 @@ public abstract class GenericProject implements Identified, AttachmentHolder {
 	@OneToOne(cascade = { CascadeType.ALL }, fetch = FetchType.LAZY, mappedBy = "project")
 	private BugTrackerBinding bugtrackerBinding;
 
-	@OneToMany(cascade = { CascadeType.ALL }, mappedBy="tmProject")
+	@OneToMany(cascade = { CascadeType.ALL }, mappedBy = "tmProject")
 	private Set<TestAutomationProject> testAutomationProjects = new HashSet<TestAutomationProject>();
-
 
 	@JoinColumn(name = "TA_SERVER_ID")
 	@ManyToOne
 	private TestAutomationServer testAutomationServer;
 
-
 	@OneToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
 	@JoinColumn(name = "ATTACHMENT_LIST_ID", updatable = false)
 	private final AttachmentList attachmentList = new AttachmentList();
+
+	@ManyToMany(mappedBy = "projects")
+	private Set<Milestone> milestones = new HashSet<Milestone>();
+
+	public List<Milestone> getMilestones() {
+		return new ArrayList<Milestone>(milestones);
+	}
 
 	public GenericProject() {
 		super();
@@ -262,19 +271,17 @@ public abstract class GenericProject implements Identified, AttachmentHolder {
 		return testAutomationServer != null;
 	}
 
-	public TestAutomationServer getTestAutomationServer(){
+	public TestAutomationServer getTestAutomationServer() {
 		return testAutomationServer;
 	}
 
-	public void setTestAutomationServer(TestAutomationServer server){
+	public void setTestAutomationServer(TestAutomationServer server) {
 		this.testAutomationServer = server;
 	}
-
 
 	public boolean hasTestAutomationProjects() {
 		return !testAutomationProjects.isEmpty();
 	}
-
 
 	public Collection<TestAutomationProject> getTestAutomationProjects() {
 		return testAutomationProjects;
@@ -286,20 +293,19 @@ public abstract class GenericProject implements Identified, AttachmentHolder {
 	 * @param p
 	 * @return
 	 */
-	public boolean isBoundToTestAutomationProject(TestAutomationProject p){
+	public boolean isBoundToTestAutomationProject(TestAutomationProject p) {
 		return testAutomationProjects.contains(p);
 	}
 
 	/**
-	 * returns a TestAutomationProject, bound to this TM project, that references the same job
-	 * than the argument.
+	 * returns a TestAutomationProject, bound to this TM project, that references the same job than the argument.
 	 * 
 	 * @param p
 	 * @return a TestAutomationProject if an equivalent was found or null if not
 	 */
-	public TestAutomationProject findTestAutomationProjectByJob(TestAutomationProject p){
-		for (TestAutomationProject mine : testAutomationProjects){
-			if (mine.referencesSameJob(p)){
+	public TestAutomationProject findTestAutomationProjectByJob(TestAutomationProject p) {
+		for (TestAutomationProject mine : testAutomationProjects) {
+			if (mine.referencesSameJob(p)) {
 				return mine;
 			}
 		}
@@ -326,5 +332,36 @@ public abstract class GenericProject implements Identified, AttachmentHolder {
 
 	public abstract void accept(ProjectVisitor visitor);
 
+	public void unbindMilestone(Milestone milestone) {
+		milestones.remove(milestone);
+		milestone.removeProject(this);
+	}
+
+	public void removeMilestone(Milestone milestone) {
+		milestones.remove(milestone);
+	}
+
+	public void unbindMilestones(List<Milestone> milestones) {
+		for (Milestone milestone : milestones) {
+			unbindMilestone(milestone);
+		}
+
+	}
+
+	public void addMilestone(Milestone milestone) {
+		milestones.add(milestone);
+	}
+
+	public void bindMilestone(Milestone milestone) {
+		milestones.add(milestone);
+		milestone.addProject(this);
+	}
+
+	public void bindMilestones(List<Milestone> milestones) {
+		for (Milestone milestone : milestones){
+			bindMilestone(milestone);
+		}
+		
+	}
 
 }

@@ -18,30 +18,38 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.internal.milestone
-import org.squashtest.tm.domain.milestone.Milestone
-import org.squashtest.tm.service.internal.repository.MilestoneDao
+package org.squashtest.tm.service.milestone;
 
-import spock.lang.Specification
-class CustomMilestoneManagerServiceImplTest extends Specification {
+import javax.inject.Inject;
 
-	CustomMilestoneManagerServiceImpl manager = new CustomMilestoneManagerServiceImpl()
-	MilestoneDao milestoneDao= Mock()
+import org.springframework.transaction.annotation.Transactional;
+import org.squashtest.tm.service.DbunitServiceSpecification;
 
-	def setup(){
-		manager.milestoneDao = milestoneDao
-	}
+import spock.unitils.UnitilsSupport;
+import org.unitils.dbunit.annotation.DataSet
 
-	def "should delete milestones"(){
+@UnitilsSupport
+@Transactional
+public class MilestoneBindingServiceIT extends DbunitServiceSpecification{
 
+	@Inject
+	MilestoneBindingManagerService manager
+	
+	@DataSet("/org/squashtest/tm/service/milestone/MilestoneBindingManagerServiceIT.xml")
+	def "one project to find them all and in darkness bind them"(){
 		given :
-		def ids = [1L, 2L, 5L]
-		def milestones = ids.collect{new Milestone(id:it)}
-		milestones.each{milestoneDao.findById(it.id) >> it}
+		def findThem = manager.getAllBindableMilestoneForProject(projectId)
+		def findedIds = findThem.collect{it.id}
 		when :
-		manager.removeMilestones(ids)
+		def bindThem = manager.bindMilestonesToProject(findedIds, projectId)
+		def findBinded = manager.getAllBindedMilestoneForProject(projectId)
 		then :
-		milestones.each{1 * milestoneDao.remove(it)}
-
+		findBinded.collect{it.id} as Set == [1, 2, 3, 4] as Set
+		where :
+		projectId | _
+		   1L     | _
+		   2L     | _
+		   3L     | _
 	}
+	
 }

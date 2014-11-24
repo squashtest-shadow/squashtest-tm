@@ -33,8 +33,7 @@ import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.PagingBackedPagedCollectionHolder;
 import org.squashtest.tm.domain.milestone.ExpandedMilestone;
 import org.squashtest.tm.domain.milestone.Milestone;
-import org.squashtest.tm.domain.milestone.MilestoneBinding;
-import org.squashtest.tm.service.internal.repository.MilestoneBindingDao;
+import org.squashtest.tm.domain.project.GenericProject;
 import org.squashtest.tm.service.internal.repository.MilestoneDao;
 import org.squashtest.tm.service.milestone.CustomMilestoneManager;
 import org.squashtest.tm.service.user.UserAccountService;
@@ -45,8 +44,6 @@ public class CustomMilestoneManagerServiceImpl implements CustomMilestoneManager
 	@Inject
 	private MilestoneDao milestoneDao;
 
-	@Inject 
-	private MilestoneBindingDao milestoneBindingDao;
 	  
     @Inject
     private UserAccountService userService;
@@ -72,18 +69,21 @@ public class CustomMilestoneManagerServiceImpl implements CustomMilestoneManager
 	@Override
 	public void removeMilestones(Collection<Long> ids) {
 		for (final Long id : ids) {
-		    deleteMilestoneBinding(id);
-			deleteMilestone(id);
+			Milestone milestone = milestoneDao.findById(id);
+		    deleteMilestoneBinding(milestone);
+			deleteMilestone(milestone);
 		}
 	}
 
-	private void deleteMilestoneBinding(Long id) {
-	    List<MilestoneBinding> milestoneBinding = milestoneBindingDao.findAllByMilestone(id);
-		milestoneBindingDao.removeAll(milestoneBinding);
+	private void deleteMilestoneBinding(final Milestone milestone) {
+		List<GenericProject> projects = milestone.getProjects();
+		for (GenericProject project : projects){
+			project.unbindMilestone(milestone);
+		}	
 	}
 
-	private void deleteMilestone(final Long id) {
-		final Milestone milestone = milestoneDao.findById(id);
+	private void deleteMilestone(final Milestone milestone) {
+		
 		milestoneDao.remove(milestone);
 	}
 

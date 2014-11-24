@@ -20,11 +20,12 @@
  */
 package org.squashtest.tm.domain.milestone;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -33,9 +34,10 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.Lob;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
@@ -47,6 +49,7 @@ import org.hibernate.search.annotations.FieldBridge;
 import org.hibernate.validator.constraints.NotBlank;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.squashtest.tm.domain.audit.Auditable;
+import org.squashtest.tm.domain.project.GenericProject;
 import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.search.bridge.LevelEnumBridge;
 
@@ -54,46 +57,44 @@ import org.squashtest.tm.search.bridge.LevelEnumBridge;
 @Entity
 @Table(name = "MILESTONE")
 public class Milestone {
-	
+
 	@Id
 	@DocumentId
 	@Column(name = "MILESTONE_ID")
 	@GeneratedValue(strategy = GenerationType.AUTO, generator = "Milestone_id_seq")
 	@SequenceGenerator(name = "Milestone_id_seq", sequenceName = "Milestone_id_seq")
 	private Long id;
-	
+
 	@Lob
-	@Type(type="org.hibernate.type.StringClobType")
+	@Type(type = "org.hibernate.type.StringClobType")
 	private String description;
 
 	@NotBlank
 	@Size(min = 0, max = 30)
 	private String label;
-	
 
 	@Enumerated(EnumType.STRING)
 	@Column(name = "STATUS")
 	@FieldBridge(impl = LevelEnumBridge.class)
 	private MilestoneStatus status;
-	
 
 	@Enumerated(EnumType.STRING)
 	@Column(name = "RANGE")
 	@FieldBridge(impl = LevelEnumBridge.class)
 	private MilestoneRange range;
-	
+
 	@NotNull
-    @DateTimeFormat(pattern="yy-MM-dd")
+	@DateTimeFormat(pattern = "yy-MM-dd")
 	private Date endDate;
 
-	@OneToMany(cascade = { CascadeType.ALL }, mappedBy="milestone")
-	private Set<MilestoneBinding> milestoneBinding = new HashSet<MilestoneBinding>();
-	
+	@ManyToMany
+	@JoinTable(name = "MILESTONE_BINDING", joinColumns = @JoinColumn(name = "MILESTONE_ID"), inverseJoinColumns = @JoinColumn(name = "PROJECT_ID"))
+	private Set<GenericProject> projects = new HashSet<GenericProject>();
+
 	@JoinColumn(name = "USER_ID")
 	@ManyToOne
 	private User owner;
-	
-	
+
 	public User getOwner() {
 		return owner;
 	}
@@ -102,10 +103,14 @@ public class Milestone {
 		this.owner = owner;
 	}
 
-	public int getNbOfBindedProject(){
-		return milestoneBinding.size();
+	public int getNbOfBindedProject() {
+		return projects.size();
 	}
-	
+
+	public List<GenericProject> getProjects() {
+		return new ArrayList<GenericProject>(projects);
+	}
+
 	public String getDescription() {
 		return description;
 	}
@@ -121,8 +126,6 @@ public class Milestone {
 	public void setLabel(String label) {
 		this.label = label;
 	}
-
-
 
 	public MilestoneStatus getStatus() {
 		return status;
@@ -151,6 +154,35 @@ public class Milestone {
 	public Long getId() {
 		return id;
 	}
+
+	public void unbindProject(GenericProject genericProject) {
+		projects.remove(genericProject);
+		genericProject.removeMilestone(this);
+	}
+
+	public void removeProject(GenericProject project) {
+		projects.remove(project);
+	}
+
+	public void unbindProjects(List<GenericProject> projects) {
+		for (GenericProject project : projects) {
+			unbindProject(project);
+		}
+	}
 	
-	
+	public void bindProject(GenericProject project){
+		projects.add(project);
+		project.addMilestone(this);
+	}
+
+	public void addProject(GenericProject genericProject) {
+		projects.add(genericProject);
+	}
+
+	public void bindProjects(List<GenericProject> projects) {
+		for(GenericProject project : projects){
+			bindProject(project);
+		}
+	}
+
 }

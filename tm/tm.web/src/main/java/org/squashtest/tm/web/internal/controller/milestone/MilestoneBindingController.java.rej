@@ -1,0 +1,39 @@
+--- MilestoneBindingController.java
++++ MilestoneBindingController.java
+@@ -115,6 +124,36 @@
+ 		return new ProjectDataTableModelHelper().buildDataModel(holder, params.getsEcho());	
+ 	}
+ 	
++
++	@RequestMapping(value="/project/{projectId}/milestone", method = RequestMethod.GET, params = {RequestParams.S_ECHO_PARAM, "bindable", "type"})
++	@ResponseBody
++	public DataTableModel getBindableMilestoneForProjectTableModel(@PathVariable Long projectId, final DataTableDrawParameters params, final Locale locale, @RequestParam("type") String type){
++		
++		PagingAndSorting sorter = new DataTableSorting(params, milestoneMapper);
++
++		Filtering filter = new DataTableFiltering(params);
++
++		PagedCollectionHolder<List<Milestone>> holder = service.getAllBindableMilestoneForProject(projectId, sorter, filter, type);
++		
++		return new MilestoneDataTableModelHelper(messageSource).buildDataModel(holder, params.getsEcho());			
++	}
++	
++	
++	
++	@RequestMapping(value = "/project/{projectId}/milestone", method = RequestMethod.GET, params = {RequestParams.S_ECHO_PARAM, "binded" })
++	@ResponseBody
++	public 	DataTableModel getBindedMilestoneForProjectTableModel(@PathVariable Long projectId, final DataTableDrawParameters params, final Locale locale){
++		
++		PagingAndSorting sorter = new DataTableSorting(params, milestoneMapper);
++
++		Filtering filter = new DataTableFiltering(params);
++
++		PagedCollectionHolder<List<Milestone>> holder = service.getAllBindedMilestoneForProject(projectId, sorter, filter);
++				
++		return new  MilestoneDataTableModelHelper(messageSource).buildDataModel(holder, params.getsEcho());	
++	}
++	
++
+ 	private static final class ProjectDataTableModelHelper extends DataTableModelBuilder<GenericProject> {
+ 
+ 		private ProjectDataTableModelHelper() {

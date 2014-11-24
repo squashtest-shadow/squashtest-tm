@@ -572,11 +572,6 @@
 				@NamedQuery(name = "milestone.count", query = "select count(milestone) from Milestone milestone"),
 				@NamedQuery(name = "milestone.findMilestoneByLabel", query = "from Milestone where label = :label "),
 
-				//MilestoneBinding
-				@NamedQuery(name="milestoneBinding.findAllByProjectId", query="from MilestoneBinding mb where mb.boundProject.id = :projectId"),
-				@NamedQuery(name="milestoneBinding.findAllByMilestoneId", query="from MilestoneBinding mb where mb.milestone.id = :milestoneId"),
-				@NamedQuery(name="milestoneBinding.findAllByMilestoneIdAndProjectIds", query="from MilestoneBinding mb where mb.milestone.id = :milestoneId and mb.boundProject.id in (:projectIds)"),
-				@NamedQuery(name="milestoneBinding.findAllByProjectIdAndMilestoneIds", query="from MilestoneBinding mb where mb.boundProject.id = :projectId and mb.milestone.id  in (:milestoneIds)"),
 })
 package org.squashtest.tm.service.internal.repository.hibernate;
 
