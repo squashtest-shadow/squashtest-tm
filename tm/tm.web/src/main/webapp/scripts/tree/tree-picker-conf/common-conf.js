@@ -27,50 +27,57 @@
  * }
  * 
  */
-define(function(){
-	
+define(function() {
+
 	var baseURL = squashtm.app.contextRoot;
-	
+
 	return {
-		generate : function(settings){
-	
+		generate : function(settings) {
+
 			return {
-				plugins : ["json_data", "sort", "themes", "types", "cookies", "ui", "squash", "treepicker"],
-				
+
+				plugins : [ "json_data", "sort", "themes", "types", "cookies", "ui", "squash", "treepicker",
+						'conditionalselect' ],
+
 				json_data : {
 					ajax : {
-						url : function(n){
+						url : function(n) {
 							var nodes = n.treeNode();
-							if (nodes.canContainNodes()){
+							if (nodes.canContainNodes()) {
 								return nodes.getContentUrl();
-							}
-							else{
+							} else {
 								return null;
 							}
 						}
 					},
 					data : settings.model
 				},
-				
+
 				core : {
 					animation : 0
 				},
-				
+
 				ui : {
 					select_multiple_modifier : "ctrl"
-				},	
-				
+				},
+
 				themes : {
 					theme : "squashtest",
 					dots : true,
 					icons : true,
-					url : squashtm.app.contextRoot +"/styles/squash.tree.css"
+					url : squashtm.app.contextRoot + "/styles/squash.tree.css"
 				},
 
 				squash : {
 					rootUrl : squashtm.app.contextRoot,
-					opened : (!!settings.selectedNode) ? [settings.selectedNode] : []
-				}
+					opened : (!!settings.selectedNode) ? [ settings.selectedNode ] : []
+				},
+				conditionalselect : function(node) {
+					if($(node).is("[rel='drive']") ){
+						return false ;
+					}
+					return true;
+				},
 			};
 		}
 	};

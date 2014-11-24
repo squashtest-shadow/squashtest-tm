@@ -18,36 +18,27 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
+define([ 'jquery', 'jstree' ], function($) {
 
-//the 'tree-node' plugin will be automatically applied when required
-define(['jquery', './jstree-dnd-override','./squash-plugin', './workspace-tree-plugin', './tree-picker-plugin' , './conditional-select-plugin', './tree-node', 'jstree'], function($, applyDndOverride, applySquashPlugin, applyWorkspacePlugin, applyTreePickerPlugin, applyConditionalSelectPlugin){
+	return function() {
 
-	return {
-		
-		configure : function(type, settings){
-			switch(type){
-			
-			case 'workspace-tree' : 
-				applyDndOverride(settings);
-				applySquashPlugin();
-				applyWorkspacePlugin();
-				break;
-				
-			case 'tree-picker' : 
-				applySquashPlugin();
-				applyTreePickerPlugin();
-				applyConditionalSelectPlugin();
-				break;
-				
-			case 'simple-tree' : 
-				applySquashPlugin();
-				break;
-				
-			default :
-				throw "'"+type+"' is not a valid tree profile";
+		/*
+		 * Thanks to https://github.com/vakata/jstree/blob/master/src/misc.js
+		 */
+		"use strict";
+		$.jstree.defaults.conditionalselect = function() {
+			return true;
+		};
+		$.jstree.plugin("conditionalselect", {
+			_fn : {
+				select_node : function(obj, supress_event, prevent_open) {
+
+					if (this.get_settings().conditionalselect.call(this, this._get_node(obj))) {
+						this.__call_old("select_node", obj, supress_event, prevent_open);
+					}
+				}
 			}
-		}
-		
+		});
 	};
-	
+
 });
