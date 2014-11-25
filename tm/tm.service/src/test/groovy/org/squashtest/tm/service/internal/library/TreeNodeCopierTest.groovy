@@ -29,20 +29,24 @@ import org.squashtest.tm.service.internal.repository.RequirementVersionCoverageD
 import org.squashtest.tm.service.internal.repository.TestCaseDao
 import org.squashtest.tm.service.internal.repository.TestCaseFolderDao
 import org.squashtest.tm.service.security.PermissionEvaluationService
+import org.squashtest.tm.service.testutils.MockFactory;
 
 import spock.lang.Specification
 
 public class TreeNodeCopierTest extends Specification{
-	
-	
+
+
 	private TreeNodeCopier copier = new TreeNodeCopier()
 	private TestCaseDao testCaseDao = Mock()
 	private TestCaseFolderDao testCaseFolderDao = Mock()
 	private PrivateCustomFieldValueService customFieldValueManagerService = Mock()
 	private PermissionEvaluationService permissionService = Mock()
 	private RequirementVersionCoverageDao requirementVersionCoverageDao = Mock()
-	
-	
+
+
+	MockFactory mockFactory = new MockFactory()
+
+
 	def setup(){
 		copier.testCaseDao = testCaseDao;
 		copier.testCaseFolderDao = testCaseFolderDao
@@ -50,109 +54,110 @@ public class TreeNodeCopierTest extends Specification{
 		permissionService.hasRoleOrPermissionOnObject(_, _, _) >> true
 		copier.permissionService = permissionService
 		copier.requirementVersionCoverageDao = requirementVersionCoverageDao
-		}
+	}
 
 	def "should copy a node without renaming it because the name was available"(){
 		given :
-			TestCase tcOrig =  new TestCase(name:"test case okay");
-			tcOrig.notifyAssociatedWithProject(new Project())
-		
-		and : "the folder"
-			TestCaseFolder folder = Mock()
-			folder.isContentNameAvailable(_) >> true
+		TestCase tcOrig =  new TestCase(name:"test case okay");
+		tcOrig.notifyAssociatedWithProject(mockFactory.mockProject())
 
-		
+		and : "the folder"
+		TestCaseFolder folder = Mock()
+		folder.isContentNameAvailable(_) >> true
+
+
 		when :
-			def result = copier.performOperation(tcOrig, folder)
-		
-		
+		def result = copier.performOperation(tcOrig, folder)
+
+
 		then :
-			result.collect{it.name}==["test case okay"];
+		result.collect{it.name}==["test case okay"];
 	}
-	
-	
-	
+
+
+
 	def "should copy a node and rename it as the 4th copy"(){
-		
+
 		given : "the test case and it's copy"
-		
-			TestCase tcOrig = new TestCase(name: "NX_OHNOZ")
-			tcOrig.notifyAssociatedWithProject(new Project())
-		and : "the folder"
-			TestCaseFolder folder = Mock()
-			
-			folder.isContentNameAvailable(_) >> false
-			
-			folder.getContentNames()>>  ["NX_OHNOZ", "NX_OHNOZ-Copie1", "NX_OHNOZ-Copie3"]
 
-					
+		TestCase tcOrig = new TestCase(name: "NX_OHNOZ")
+		tcOrig.notifyAssociatedWithProject(mockFactory.mockProject())
+		and : "the folder"
+		TestCaseFolder folder = Mock()
+
+		folder.isContentNameAvailable(_) >> false
+
+		folder.getContentNames()>>  ["NX_OHNOZ", "NX_OHNOZ-Copie1", "NX_OHNOZ-Copie3"]
+
+
 		when :
-			def result = copier.performOperation(tcOrig, folder)
-		
-		
+		def result = copier.performOperation(tcOrig, folder)
+
+
 		then :
-			result.collect{it.name}==["NX_OHNOZ-Copie4"];
-			
-		
+		result.collect{it.name}==["NX_OHNOZ-Copie4"];
+
+
 	}
-	
-	
+
+
 	def "should copy a node and rename it as the 1000th copy"(){
-		given : "the test case and it's copy"		
-			TestCase tcOrig = new TestCase(name: "NX_OHNOZ")
-			tcOrig.notifyAssociatedWithProject(new Project())
-			
-		and : "the folder"
-			TestCaseFolder folder = Mock();
-			folder.isContentNameAvailable(_) >> false;
-			folder.getContentNames() >> ["NX_OHNOZ-Copie999"]
+		given : "the test case and it's copy"
+		TestCase tcOrig = new TestCase(name: "NX_OHNOZ")
+		tcOrig.notifyAssociatedWithProject(mockFactory.mockProject())
 
-					
+		and : "the folder"
+		TestCaseFolder folder = Mock();
+		folder.isContentNameAvailable(_) >> false;
+		folder.getContentNames() >> ["NX_OHNOZ-Copie999"]
+
+
 		when :
-			def result = copier.performOperation(tcOrig, folder)
-		
-		
+		def result = copier.performOperation(tcOrig, folder)
+
+
 		then :
-			result.collect{it.name}==["NX_OHNOZ-Copie1000"]
-		
+		result.collect{it.name}==["NX_OHNOZ-Copie1000"]
+
 	}
-	
-	
+
+
 	def "should copy a node and rename it as the 2th copy"(){
 		given : "the test case and it's copy"
-			TestCase tcOrig = new TestCase(name: "NX_OHNOZ")
-			tcOrig.notifyAssociatedWithProject(new Project())
+		TestCase tcOrig = new TestCase(name: "NX_OHNOZ")
+		tcOrig.notifyAssociatedWithProject(mockFactory.mockProject())
 		and : "the folder"
-			TestCaseFolder folder = Mock()
-			folder.isContentNameAvailable(_) >> false
-			folder.getContentNames() >>  ["NX_OHNOZ", "NX_OHNOZ-Copie1", "NX_OHNOZ-Copie1-Copie7"]
-		
-		
-		when :
-			def result = copier.performOperation(tcOrig, folder)
-		
-		
-		then :
-			result.collect{it.name}==["NX_OHNOZ-Copie2"]
-		
-	}
-	
-	def "should copy a node and not rename despite copies are present since the original name is available anyway"(){
-		given : "the test case and it's copy"
-			TestCase tcOrig = new TestCase(name: "NX_OHNOZ")
-			tcOrig.notifyAssociatedWithProject(new Project())
-			
-		and : "the folder"
-			TestCaseFolder folder = new TestCaseFolder()
-			folder.addContent(new TestCase(name:"NX_OHNOZ-Copie1"))
-			folder.addContent(new TestCase(name:"NX_OHNOZ-Copie1-Copie7"))
+		TestCaseFolder folder = Mock()
+		folder.isContentNameAvailable(_) >> false
+		folder.getContentNames() >>  ["NX_OHNOZ", "NX_OHNOZ-Copie1", "NX_OHNOZ-Copie1-Copie7"]
+
 
 		when :
-			def result = copier.performOperation(tcOrig, folder)
-		
-		
+		def result = copier.performOperation(tcOrig, folder)
+
+
 		then :
-			result.collect{it.name}==["NX_OHNOZ"]
-		
+		result.collect{it.name}==["NX_OHNOZ-Copie2"]
+
+	}
+
+	def "should copy a node and not rename despite copies are present since the original name is available anyway"(){
+		given : "the test case and it's copy"
+		TestCase tcOrig = new TestCase(name: "NX_OHNOZ")
+		tcOrig.notifyAssociatedWithProject(mockFactory.mockProject())
+
+		and : "the folder"
+		TestCaseFolder folder = new TestCaseFolder()
+		folder.notifyAssociatedWithProject(mockFactory.mockProject())
+		folder.addContent(new TestCase(name:"NX_OHNOZ-Copie1"))
+		folder.addContent(new TestCase(name:"NX_OHNOZ-Copie1-Copie7"))
+
+		when :
+		def result = copier.performOperation(tcOrig, folder)
+
+
+		then :
+		result.collect{it.name}==["NX_OHNOZ"]
+
 	}
 }

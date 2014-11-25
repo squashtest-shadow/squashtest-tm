@@ -55,6 +55,7 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.Formula;
 import org.hibernate.annotations.Type;
+import org.hibernate.annotations.WhereJoinTable;
 import org.hibernate.validator.constraints.NotBlank;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.tm.domain.Identified;
@@ -72,6 +73,9 @@ import org.squashtest.tm.domain.customfield.BindableEntity;
 import org.squashtest.tm.domain.customfield.BoundEntity;
 import org.squashtest.tm.domain.denormalizedfield.DenormalizedFieldHolder;
 import org.squashtest.tm.domain.denormalizedfield.DenormalizedFieldHolderType;
+import org.squashtest.tm.domain.infolist.DenormalizedInfoList;
+import org.squashtest.tm.domain.infolist.DenormalizedInfoListItem;
+import org.squashtest.tm.domain.infolist.InfoListItem;
 import org.squashtest.tm.domain.library.HasExecutionStatus;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.testautomation.AutomatedExecutionExtender;
@@ -145,15 +149,17 @@ DenormalizedFieldHolder, BoundEntity {
 	@Basic(optional = false)
 	private TestCaseImportance importance = LOW;
 
-	@Enumerated(EnumType.STRING)
-	@Basic(optional = false)
-	@Column(name = "TC_NATURE")
-	private TestCaseNature nature = TestCaseNature.UNDEFINED;
+	@NotNull
+	@ManyToOne
+	@JoinTable(name="EXECUTION_DENORMALIZED_INFO_LIST", joinColumns = @JoinColumn(name = "EXECUTION_ID"), inverseJoinColumns=@JoinColumn(name = "DENO_LIST_ID"))
+	@WhereJoinTable(clause = "role = 'NAT'")
+	private DenormalizedInfoListItem nature;
 
-	@Enumerated(EnumType.STRING)
-	@Basic(optional = false)
-	@Column(name = "TC_TYPE")
-	private TestCaseType type = TestCaseType.UNDEFINED;
+	@NotNull
+	@ManyToOne
+	@JoinTable(name="EXECUTION_DENORMALIZED_INFO_LIST", joinColumns = @JoinColumn(name = "EXECUTION_ID"), inverseJoinColumns=@JoinColumn(name = "DENO_LIST_ID"))
+	@WhereJoinTable(clause = "role = 'TYP'")
+	private DenormalizedInfoListItem type;
 
 	@Enumerated(EnumType.STRING)
 	@Basic(optional = false)
@@ -301,6 +307,8 @@ DenormalizedFieldHolder, BoundEntity {
 	private void setReferencedTestCase(TestCase testCase) {
 		referencedTestCase = testCase;
 
+		//we cannot set the nature and type yet
+
 		if (testCase.getReference() != null && !testCase.getReference().equals("")) {
 			setName(testCase.getReference() + " - " + testCase.getName());
 		} else {
@@ -309,8 +317,7 @@ DenormalizedFieldHolder, BoundEntity {
 
 		nullSafeSetTestCaseData(testCase);
 		setImportance(testCase.getImportance());
-		setNature(testCase.getNature());
-		setType(testCase.getType());
+
 		setStatus(testCase.getStatus());
 
 	}
@@ -386,19 +393,19 @@ DenormalizedFieldHolder, BoundEntity {
 		this.importance = importance;
 	}
 
-	public TestCaseNature getNature() {
+	public DenormalizedInfoListItem getNature() {
 		return nature;
 	}
 
-	public void setNature(@NotNull TestCaseNature nature) {
+	public void setNature(@NotNull DenormalizedInfoListItem nature) {
 		this.nature = nature;
 	}
 
-	public TestCaseType getType() {
+	public DenormalizedInfoListItem getType() {
 		return type;
 	}
 
-	public void setType(@NotNull TestCaseType type) {
+	public void setType(@NotNull DenormalizedInfoListItem type) {
 		this.type = type;
 	}
 

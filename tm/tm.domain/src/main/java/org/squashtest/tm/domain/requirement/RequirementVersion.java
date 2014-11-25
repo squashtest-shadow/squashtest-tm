@@ -51,6 +51,7 @@ import org.squashtest.tm.domain.attachment.Attachment;
 import org.squashtest.tm.domain.audit.AuditableMixin;
 import org.squashtest.tm.domain.customfield.BindableEntity;
 import org.squashtest.tm.domain.customfield.BoundEntity;
+import org.squashtest.tm.domain.infolist.InfoListItem;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.resource.Resource;
 import org.squashtest.tm.domain.search.CUFBridge;
@@ -74,14 +75,14 @@ import org.squashtest.tm.security.annotation.InheritsAcls;
 @PrimaryKeyJoinColumn(name = "RES_ID")
 @InheritsAcls(constrainedClass = Requirement.class, collectionName = "versions")
 @ClassBridges({
-		@ClassBridge(name = "attachments", store = Store.YES, analyze = Analyze.NO, impl = RequirementVersionAttachmentBridge.class),
-		@ClassBridge(name = "cufs", store = Store.YES, impl = CUFBridge.class, params = {
-				@Parameter(name = "type", value = "requirement"), @Parameter(name = "inputType", value = "ALL") }),
+	@ClassBridge(name = "attachments", store = Store.YES, analyze = Analyze.NO, impl = RequirementVersionAttachmentBridge.class),
+	@ClassBridge(name = "cufs", store = Store.YES, impl = CUFBridge.class, params = {
+		@Parameter(name = "type", value = "requirement"), @Parameter(name = "inputType", value = "ALL") }),
 		@ClassBridge(name = "cufs", store = Store.YES, analyze = Analyze.NO, impl = CUFBridge.class, params = {
-				@Parameter(name = "type", value = "requirement"),
-				@Parameter(name = "inputType", value = "DROPDOWN_LIST") }),
-		@ClassBridge(name = "isCurrentVersion", store = Store.YES, analyze = Analyze.NO, impl = RequirementVersionIsCurrentBridge.class),
-		@ClassBridge(name = "parent", store = Store.YES, analyze = Analyze.NO, impl = RequirementVersionHasParentBridge.class) })
+			@Parameter(name = "type", value = "requirement"),
+			@Parameter(name = "inputType", value = "DROPDOWN_LIST") }),
+			@ClassBridge(name = "isCurrentVersion", store = Store.YES, analyze = Analyze.NO, impl = RequirementVersionIsCurrentBridge.class),
+			@ClassBridge(name = "parent", store = Store.YES, analyze = Analyze.NO, impl = RequirementVersionHasParentBridge.class) })
 public class RequirementVersion extends Resource implements BoundEntity {
 
 	@NotNull
@@ -105,9 +106,9 @@ public class RequirementVersion extends Resource implements BoundEntity {
 	private RequirementCriticality criticality = RequirementCriticality.UNDEFINED;
 
 	@NotNull
-	@Enumerated(EnumType.STRING)
-	@Field(analyze = Analyze.NO, store = Store.YES)
-	private RequirementCategory category = RequirementCategory.UNDEFINED;
+	@ManyToOne
+	@JoinColumn(name = "CATEGORY")
+	private InfoListItem category;
 
 	@NotNull
 	@Enumerated(EnumType.STRING)
@@ -198,7 +199,7 @@ public class RequirementVersion extends Resource implements BoundEntity {
 	/**
 	 * @return the requirement category
 	 */
-	public RequirementCategory getCategory() {
+	public InfoListItem getCategory() {
 		return category;
 	}
 
@@ -207,7 +208,7 @@ public class RequirementVersion extends Resource implements BoundEntity {
 	 * 
 	 * @param category
 	 */
-	public void setCategory(RequirementCategory category) {
+	public void setCategory(InfoListItem category) {
 		checkModifiable();
 		this.category = category;
 	}
@@ -346,10 +347,13 @@ public class RequirementVersion extends Resource implements BoundEntity {
 	public static RequirementVersion createFromMemento(@NotNull RequirementVersionImportMemento memento) {
 		RequirementVersion res = new RequirementVersion();
 
+		// remember that we cannot handle the category right now
+		// we can only set the rest of the attributes
+
 		res.setName(memento.getName());
 		res.setDescription(memento.getDescription());
 		res.criticality = memento.getCriticality();
-		res.category = memento.getCategory();
+
 		res.reference = memento.getReference();
 		res.status = memento.getStatus();
 
@@ -385,7 +389,7 @@ public class RequirementVersion extends Resource implements BoundEntity {
 	/**
 	 * Simply add the coverage to this.requirementVersionCoverage
 	 * 
-	 * THIS DOES NOT SET THE coverage->version SIDE OF THE ASSOCIATION ! ONE SHOULD RATHER CALL coverage.setVerifiedRequirementVersion(..)   
+	 * THIS DOES NOT SET THE coverage->version SIDE OF THE ASSOCIATION ! ONE SHOULD RATHER CALL coverage.setVerifiedRequirementVersion(..)
 	 * 
 	 * @param coverage
 	 */
@@ -435,6 +439,14 @@ public class RequirementVersion extends Resource implements BoundEntity {
 
 	public Set<RequirementVersionCoverage> getRequirementVersionCoverages() {
 		return Collections.unmodifiableSet(requirementVersionCoverages);
+	}
+
+
+	public void notifyAssociatedWithProject(Project project) {
+		// define a default category if none was set so far
+		if (category == null){
+			category = project.getRequirementCategories().getDefaultItem();
+		}
 	}
 
 }

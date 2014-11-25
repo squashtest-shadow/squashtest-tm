@@ -34,6 +34,7 @@ import org.squashtest.tm.service.internal.testautomation.UnsecuredAutomatedTestM
 import org.squashtest.tm.service.internal.testcase.CustomTestCaseModificationServiceImpl
 import org.squashtest.tm.service.internal.testcase.TestCaseNodeDeletionHandler
 import org.squashtest.tm.service.testcase.ParameterModificationService;
+import org.squashtest.tm.service.testutils.MockFactory;
 
 import spock.lang.Specification
 
@@ -47,6 +48,8 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 	PrivateCustomFieldValueService cufValuesService = Mock()
 	ParameterModificationService parameterModificationService = Mock()
 	UnsecuredAutomatedTestManagerService taService = Mock()
+
+	MockFactory mockFactory = new MockFactory()
 
 	def setup() {
 		CollectionAssertions.declareContainsExactlyIds()
@@ -124,7 +127,7 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 
 		and :
 		Project p = Mock()
-		testCase.notifyAssociatedWithProject p
+		testCase.notifyAssociatedWithProject (mockFactory.mockProject())
 
 		and:
 		testCase.addStep step1

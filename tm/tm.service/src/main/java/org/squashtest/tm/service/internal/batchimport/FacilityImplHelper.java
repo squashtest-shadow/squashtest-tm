@@ -23,6 +23,7 @@ package org.squashtest.tm.service.internal.batchimport;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.apache.commons.lang.NotImplementedException;
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
 import org.squashtest.tm.domain.testcase.ActionTestStep;
 import org.squashtest.tm.domain.testcase.Dataset;
@@ -67,11 +68,11 @@ final class FacilityImplHelper {
 		}
 
 		if (testCase.getNature() == null) {
-			testCase.setNature(TestCaseNature.UNDEFINED);
+			testCase.setNature(testCase.getProject().getTestCaseNatures().getDefaultItem());
 		}
 
 		if (testCase.getType() == null) {
-			testCase.setType(TestCaseType.UNDEFINED);
+			testCase.setType(testCase.getProject().getTestCaseTypes().getDefaultItem());
 		}
 
 		if (testCase.getStatus() == null) {

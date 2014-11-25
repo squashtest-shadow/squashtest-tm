@@ -23,8 +23,13 @@ package org.squashtest.tm.service.importer
 
 import java.util.zip.ZipInputStream
 
+import org.squashtest.tm.domain.infolist.InfoList
+import org.squashtest.tm.domain.infolist.InfoListItem;
+import org.squashtest.tm.domain.infolist.SystemListItem;
+import org.squashtest.tm.domain.project.Project
 import org.squashtest.tm.domain.testcase.TestCase
 import org.squashtest.tm.domain.testcase.TestCaseFolder
+import org.squashtest.tm.service.testutils.MockFactory;
 import org.squashtest.tm.service.internal.archive.Entry
 import org.squashtest.tm.service.internal.archive.ZipReader.ZipReaderEntry
 import org.squashtest.tm.service.internal.importer.ExcelTestCaseParser
@@ -35,93 +40,93 @@ import spock.lang.Specification
 
 class HierarchyCreatorTest extends Specification {
 
+	MockFactory mockFactory = new MockFactory()
+
 	def "should find an existing folder"(){
-		
+
 		given :
-			def importer = new HierarchyCreator();
-			
+		def importer = new HierarchyCreator();
+
 		and :
-			def folder = Mock(TestCaseFolder)
-			importer.pathMap.put("/toto/folder", folder);
-			
+		def folder = Mock(TestCaseFolder)
+		importer.pathMap.put("/toto/folder", folder);
+
 		and :
-			def entry = Mock(Entry)
-			entry.getName() >> "/toto/folder"
-					
+		def entry = Mock(Entry)
+		entry.getName() >> "/toto/folder"
+
 		when :
-			def result = importer.findOrCreateFolder(entry)
-		
-		
+		def result = importer.findOrCreateFolder(entry)
+
+
 		then :
-			result == folder
-		
+		result == folder
+
 	}
-	
+
 	def "should recursively create missing parent folders"(){
-		
+
 		given :
-			def importer = new HierarchyCreator();
-			
-			
+		def importer = new HierarchyCreator();
+
+
 		and :
-			def entry = new ZipReaderEntry(null, "/melvin/van/peebles", true);
-		
+		def entry = new ZipReaderEntry(null, "/melvin/van/peebles", true);
+
 		when :
-			importer.findOrCreateFolder(entry)
-			
+		importer.findOrCreateFolder(entry)
+
 		then :
-			def peebles = importer.pathMap.getMappedElement("/melvin/van/peebles")
-			peebles instanceof TestCaseFolder
-			peebles.getName() == "peebles"
-			
-			def van = importer.pathMap.getMappedElement("/melvin/van")
-			van instanceof TestCaseFolder
-			van.getName() == "van"
-			van.getContent() == [peebles]
-			
-			def melvin = importer.pathMap.getMappedElement("/melvin")
-			melvin instanceof TestCaseFolder
-			melvin.getName() == "melvin"
-			melvin.getContent() == [van]
-			
-			def root = importer.pathMap.getMappedElement("/")
-			root.getContent() == [melvin] 
-		
+		def peebles = importer.pathMap.getMappedElement("/melvin/van/peebles")
+		peebles instanceof TestCaseFolder
+		peebles.getName() == "peebles"
+
+		def van = importer.pathMap.getMappedElement("/melvin/van")
+		van instanceof TestCaseFolder
+		van.getName() == "van"
+		van.getContent() == [peebles]
+
+		def melvin = importer.pathMap.getMappedElement("/melvin")
+		melvin instanceof TestCaseFolder
+		melvin.getName() == "melvin"
+		melvin.getContent() == [van]
+
+		def root = importer.pathMap.getMappedElement("/")
+		root.getContent() == [melvin]
+
 	}
-	
+
 	def "should create a test case"(){
-		
-		given :		
-			def importer = new HierarchyCreator();
-			def parser = Mock(ExcelTestCaseParser)
-			parser.stripFileExtension("peebles.xlsx") >> "peebles"
-			importer.setParser(parser)
-			
+
+		given :
+		def importer = new HierarchyCreator();
+		def parser = Mock(ExcelTestCaseParser)
+		parser.stripFileExtension("peebles.xlsx") >> "peebles"
+		importer.setParser(parser)
+
 		and :
-			def mTc = new TestCase()
-			parser.parseFile(_,_) >> mTc
-		
-		
+		def mTc = new TestCase()
+		parser.parseFile(_,_) >> mTc
+
+
 		and :
-			def entry = new ZipReaderEntry(Mock(ZipInputStream), "/melvin/van/peebles.xlsx", false);
-			
-		and : 
-			def parent = new TestCaseFolder()
-			importer.pathMap.put("/melvin/van", parent)
-			
-		and : 
-			
-			
-		
+		def entry = new ZipReaderEntry(Mock(ZipInputStream), "/melvin/van/peebles.xlsx", false);
+
+		and :
+		def parent = new TestCaseFolder()
+		parent.notifyAssociatedWithProject(mockFactory.mockProject())
+		importer.pathMap.put("/melvin/van", parent)
+
 		when :
-			importer.createTestCase(entry)
-		
+		importer.createTestCase(entry)
+
 		then :
-			def tc = importer.pathMap.getMappedElement("/melvin/van/peebles.xlsx")
-			tc instanceof TestCase
-			tc.getName() == "peebles"
-			
-			parent.getContent() == [tc] 
+		def tc = importer.pathMap.getMappedElement("/melvin/van/peebles.xlsx")
+		tc instanceof TestCase
+		tc.getName() == "peebles"
+
+		parent.getContent() == [tc]
 	}
-		
+
+
 }

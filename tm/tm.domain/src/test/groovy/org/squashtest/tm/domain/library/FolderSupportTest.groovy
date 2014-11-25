@@ -20,16 +20,23 @@
  */
 package org.squashtest.tm.domain.library;
 
+import org.squashtest.tm.domain.infolist.InfoList;
+import org.squashtest.tm.domain.infolist.InfoListItem;
+import org.squashtest.tm.domain.infolist.SystemListItem;
 import org.squashtest.tm.domain.library.Folder
 import org.squashtest.tm.domain.library.FolderSupport
 import org.squashtest.tm.domain.project.Project
 import org.squashtest.tm.domain.testcase.TestCase
+import org.squashtest.tm.domain.testutils.MockFactory;
 import org.squashtest.tm.exception.DuplicateNameException;
 
 import spock.lang.Specification
 
 class FolderSupportTest extends Specification{
 	Folder folder = Mock()
+
+	MockFactory mockFactory = new MockFactory()
+
 	/**
 	 * The tested object
 	 */
@@ -49,7 +56,9 @@ class FolderSupportTest extends Specification{
 
 	def "should set this folder's project as the project of new content"() {
 		given:
-		Project project = new Project()
+		Project project = mockFactory.mockProject()
+
+
 		folder.getProject() >> project
 		folder.getContent() >> []
 
@@ -66,7 +75,7 @@ class FolderSupportTest extends Specification{
 
 	def "should set folder contents project when notified of new project"() {
 		given:
-		Project project = new Project()
+		Project project = mockFactory.mockProject()
 
 		and:
 		TestCase content = new TestCase(name: 'foo')
@@ -81,8 +90,8 @@ class FolderSupportTest extends Specification{
 
 	def "should set folder contents project when notified of project change"() {
 		given:
-		Project formerProject = new Project()
-		Project newProject = new Project()
+		Project formerProject = mockFactory.mockProject()
+		Project newProject = mockFactory.mockProject()
 
 		and:
 		TestCase content = new TestCase(name: 'foo')
@@ -109,4 +118,7 @@ class FolderSupportTest extends Specification{
 		then:
 		content.project == null
 	}
+
+
+
 }

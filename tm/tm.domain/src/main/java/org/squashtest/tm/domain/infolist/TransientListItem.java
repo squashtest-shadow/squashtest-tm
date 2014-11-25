@@ -18,29 +18,39 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.domain.requirement;
-
-import java.util.Date;
+package org.squashtest.tm.domain.infolist;
 
 /**
- * Interface to retrieve RequirementVersion attributes (such as criticality, category, description ...) from a bean.
- * @author Gregory
+ * Instances of such classes are not meant to be persisted.
+ * They merely hold a code, that should be looked up. The real instance
+ * should then be used instead of that reference
  * 
+ * @author bsiri
+ *
  */
-public interface RequirementVersionImportMemento {
-	RequirementCriticality getCriticality();
+public class TransientListItem extends InfoListItem {
 
-	String getCategory();
+	public TransientListItem(){
+		super();
+	}
 
-	String getDescription();
+	public TransientListItem(String code){
+		super();
+		setCode(code);
+	}
 
-	String getName();
+	@Override
+	public boolean equals(Object other){
+		if (other == null){
+			return false;
+		}
 
-	String getReference();
+		if (! other.getClass().isAssignableFrom(TransientListItem.class)){
+			return false;
+		}
 
-	RequirementStatus getStatus();
+		return ((TransientListItem)other).getCode().equals(getCode());
+	}
 
-	String getCreatedBy();
 
-	Date getCreatedOn();
 }

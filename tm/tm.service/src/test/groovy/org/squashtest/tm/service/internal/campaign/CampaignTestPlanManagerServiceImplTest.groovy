@@ -25,22 +25,25 @@ package org.squashtest.tm.service.internal.campaign
 import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory
 import org.squashtest.tm.domain.campaign.Campaign
 import org.squashtest.tm.domain.campaign.CampaignTestPlanItem
+import org.squashtest.tm.domain.infolist.InfoList
+import org.squashtest.tm.domain.infolist.InfoListItem
+import org.squashtest.tm.domain.infolist.TransientListItem
+import org.squashtest.tm.domain.project.Project
 import org.squashtest.tm.domain.projectfilter.ProjectFilter
+import org.squashtest.tm.domain.testcase.Dataset
 import org.squashtest.tm.domain.testcase.TestCase
 import org.squashtest.tm.domain.testcase.TestCaseFolder
 import org.squashtest.tm.domain.testcase.TestCaseLibrary
 import org.squashtest.tm.domain.testcase.TestCaseLibraryNode
+import org.squashtest.tm.service.testutils.MockFactory;
 import org.squashtest.tm.domain.users.User
-import org.squashtest.tm.service.internal.campaign.CampaignTestPlanManagerServiceImpl;
 import org.squashtest.tm.service.internal.library.LibrarySelectionStrategy
-import org.squashtest.tm.service.internal.project.ProjectFilterModificationServiceImpl;
+import org.squashtest.tm.service.internal.project.ProjectFilterModificationServiceImpl
 import org.squashtest.tm.service.internal.repository.CampaignDao
 import org.squashtest.tm.service.internal.repository.CampaignTestPlanItemDao
-import org.squashtest.tm.service.internal.repository.DatasetDao;
 import org.squashtest.tm.service.internal.repository.LibraryNodeDao
 import org.squashtest.tm.service.internal.repository.TestCaseLibraryDao
 import org.squashtest.tm.service.internal.repository.UserDao
-import org.squashtest.tm.domain.testcase.Dataset
 
 import spock.lang.Specification
 
@@ -55,6 +58,8 @@ class CampaignTestPlanManagerServiceImplTest extends Specification {
 	ProjectFilterModificationServiceImpl projectFilterModificationService = Mock()
 	LibrarySelectionStrategy<TestCaseLibrary, TestCaseLibraryNode> libraryStrategy = Mock()
 	UserDao userDao = Mock()
+
+	MockFactory mockFactory = new MockFactory()
 
 	def setup(){
 		service.testCaseLibraryDao = testCaseLibraryDao
@@ -334,9 +339,16 @@ class CampaignTestPlanManagerServiceImplTest extends Specification {
 
 	class MockTCF extends TestCaseFolder{
 		Long overId
+		Project p
+
+
 		MockTCF(Long id){
 			overId = id
 			name="don't care"
+
+			this.p = mockFactory.mockProject()
+			this.notifyAssociatedWithProject(this.p)
+
 		}
 		MockTCF(Long id, String name){
 			this(id)
@@ -345,6 +357,8 @@ class CampaignTestPlanManagerServiceImplTest extends Specification {
 		public Long getId(){return overId}
 		public void setId(Long newId){overId=newId}
 	}
+
+
 
 	def "should assign user to test plan items"() {
 		given:

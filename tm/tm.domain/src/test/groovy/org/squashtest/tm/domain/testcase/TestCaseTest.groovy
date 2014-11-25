@@ -22,30 +22,25 @@ package org.squashtest.tm.domain.testcase
 
 import static org.squashtest.tm.domain.testcase.TestCaseType.*
 
-import java.lang.reflect.Modifier;
-import java.lang.reflect.Type;
+import java.lang.reflect.Modifier
 
 import org.apache.commons.lang.NullArgumentException
-import org.springframework.util.ReflectionUtils;
 import org.squashtest.csp.tools.unittest.assertions.CollectionAssertions
 import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory
-import org.squashtest.tm.domain.audit.AuditableSupport;
+import org.squashtest.tm.domain.infolist.InfoList
+import org.squashtest.tm.domain.infolist.InfoListItem
+import org.squashtest.tm.domain.infolist.SystemListItem
 import org.squashtest.tm.domain.project.Project
 import org.squashtest.tm.domain.testautomation.AutomatedTest
-import org.squashtest.tm.domain.testcase.ActionTestStep
-import org.squashtest.tm.domain.testcase.TestCase
-import org.squashtest.tm.domain.testcase.TestCaseExecutionMode
-import org.squashtest.tm.domain.testcase.TestCaseImportance
-import org.squashtest.tm.domain.testcase.TestCaseNature
-import org.squashtest.tm.domain.testcase.TestCaseStatus
-import org.squashtest.tm.domain.testcase.TestCaseType
-import org.squashtest.tm.domain.testcase.TestStep
+import org.squashtest.tm.domain.testutils.MockFactory;
 import org.squashtest.tm.exception.UnknownEntityException
 
 import spock.lang.Specification
 import spock.lang.Unroll
 
 class TestCaseTest extends Specification {
+
+	MockFactory mockFactory = new MockFactory()
 	TestCase testCase = new TestCase()
 
 	def setup() {
@@ -223,7 +218,7 @@ class TestCaseTest extends Specification {
 		given:
 		TestCase source = new TestCase()
 		source.setName("foo");
-		source.notifyAssociatedWithProject(new Project())
+		source.notifyAssociatedWithProject(mockFactory.mockProject())
 
 		source[propName] = propValue
 
@@ -241,8 +236,6 @@ class TestCaseTest extends Specification {
 		"executionMode" | TestCaseExecutionMode.AUTOMATED
 		"importance"    | TestCaseImportance.HIGH
 		"status"		| TestCaseStatus.APPROVED
-		"nature"		| TestCaseNature.ATDD
-		"type"          | TestCaseType.END_TO_END_TESTING
 		"reference"     | "barfoo"
 	}
 
@@ -250,7 +243,7 @@ class TestCaseTest extends Specification {
 		given:
 		TestCase source = new TestCase()
 		source.setName("source");
-		source.notifyAssociatedWithProject(new Project())
+		source.notifyAssociatedWithProject(mockFactory.mockProject())
 		ActionTestStep sourceStep = new ActionTestStep(action: "fingerpoke opponent", expectedResult: "win the belt")
 		source.steps << sourceStep
 
@@ -308,5 +301,8 @@ class TestCaseTest extends Specification {
 		blankableFields.findAll({ it.get(res) != null })*.name == []
 
 	}
+
+
+
 
 }

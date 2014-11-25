@@ -21,17 +21,28 @@
 package org.squashtest.tm.domain.testcase;
 
 import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory
+import org.squashtest.tm.domain.infolist.InfoList;
+import org.squashtest.tm.domain.infolist.InfoListItem;
+import org.squashtest.tm.domain.infolist.SystemListItem;
 import org.squashtest.tm.domain.library.GenericLibraryNode
 import org.squashtest.tm.domain.project.Project
 import org.squashtest.tm.domain.testcase.TestCase
 import org.squashtest.tm.domain.testcase.TestCaseFolder
+import org.squashtest.tm.domain.testutils.MockFactory;
 import org.squashtest.tm.exception.DuplicateNameException;
 
 import spock.lang.Specification
 
 
 class TestCaseFolderTest extends Specification {
+
+	MockFactory mockFactory = new MockFactory()
+
 	TestCaseFolder folder = new TestCaseFolder()
+
+	def setup(){
+		folder.notifyAssociatedWithProject(mockFactory.mockProject())
+	}
 
 	def "should add test case to folder"() {
 		given:
@@ -88,4 +99,6 @@ class TestCaseFolderTest extends Specification {
 		then:
 		content.project == project
 	}
+
+
 }

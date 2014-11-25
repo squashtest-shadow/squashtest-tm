@@ -18,29 +18,24 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.domain.requirement;
+package org.squashtest.tm.service.internal.batchimport.excel;
 
-import java.util.Date;
+import org.apache.poi.ss.usermodel.Cell;
+import org.squashtest.tm.domain.infolist.InfoListItem;
+import org.squashtest.tm.domain.infolist.TransientListItem;
 
-/**
- * Interface to retrieve RequirementVersion attributes (such as criticality, category, description ...) from a bean.
- * @author Gregory
- * 
- */
-public interface RequirementVersionImportMemento {
-	RequirementCriticality getCriticality();
+public final class InfoListItemCoercer<T extends InfoListItem>
+extends TypeBasedCellValueCoercer<T >
+implements CellValueCoercer<T> {
 
-	String getCategory();
 
-	String getDescription();
+	@Override
+	protected T coerceStringCell(Cell cell) {
+		return (T) new TransientListItem(cell.getStringCellValue());
+	}
 
-	String getName();
-
-	String getReference();
-
-	RequirementStatus getStatus();
-
-	String getCreatedBy();
-
-	Date getCreatedOn();
+	@Override
+	protected T coerceBlankCell(Cell cell) {
+		return null;
+	}
 }

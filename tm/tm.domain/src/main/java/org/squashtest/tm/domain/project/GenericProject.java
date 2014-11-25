@@ -62,6 +62,7 @@ import org.squashtest.tm.domain.audit.Auditable;
 import org.squashtest.tm.domain.bugtracker.BugTrackerBinding;
 import org.squashtest.tm.domain.campaign.CampaignLibrary;
 import org.squashtest.tm.domain.milestone.Milestone;
+import org.squashtest.tm.domain.infolist.InfoList;
 import org.squashtest.tm.domain.requirement.RequirementLibrary;
 import org.squashtest.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.tm.domain.testautomation.TestAutomationServer;
@@ -114,6 +115,8 @@ public abstract class GenericProject implements Identified, AttachmentHolder {
 	@OneToOne(cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
 	@JoinColumn(name = "CL_ID")
 	private CampaignLibrary campaignLibrary;
+
+
 	@OneToOne(cascade = { CascadeType.ALL }, fetch = FetchType.LAZY, mappedBy = "project")
 	private BugTrackerBinding bugtrackerBinding;
 
@@ -128,13 +131,30 @@ public abstract class GenericProject implements Identified, AttachmentHolder {
 	@JoinColumn(name = "ATTACHMENT_LIST_ID", updatable = false)
 	private final AttachmentList attachmentList = new AttachmentList();
 
-	@ManyToMany(mappedBy = "projects")
+
+	// the so-called information lists
+	@ManyToOne
+	@JoinColumn(name="REQ_CATEGORIES_LIST")
+	private InfoList requirementCategories;
+
+	@ManyToOne
+	@JoinColumn(name="TC_NATURES_LIST")
+	private InfoList testCaseNatures;
+
+	@ManyToOne
+	@JoinColumn(name="TC_TYPES_LIST")
+	private InfoList testCaseTypes;
+
+
+		@ManyToMany(mappedBy = "projects")
 	private Set<Milestone> milestones = new HashSet<Milestone>();
 
 	public List<Milestone> getMilestones() {
 		return new ArrayList<Milestone>(milestones);
 	}
 
+
+	
 	public GenericProject() {
 		super();
 	}
@@ -328,6 +348,37 @@ public abstract class GenericProject implements Identified, AttachmentHolder {
 		} else {
 			throw new NoBugTrackerBindingException();
 		}
+	}
+
+
+
+	public InfoList getRequirementCategories() {
+		return requirementCategories;
+	}
+
+	public void setRequirementCategories(InfoList requirementCategories) {
+		this.requirementCategories = requirementCategories;
+	}
+
+	public InfoList getTestCaseNatures() {
+		return testCaseNatures;
+	}
+
+	public void setTestCaseNatures(InfoList testCaseNatures) {
+		this.testCaseNatures = testCaseNatures;
+	}
+
+
+	public InfoList getTestCaseTypes() {
+		return testCaseTypes;
+	}
+
+	public void setTestCaseTypes(InfoList testCaseTypes) {
+		this.testCaseTypes = testCaseTypes;
+	}
+
+	public void setTestAutomationProjects(Set<TestAutomationProject> testAutomationProjects) {
+		this.testAutomationProjects = testAutomationProjects;
 	}
 
 	public abstract void accept(ProjectVisitor visitor);

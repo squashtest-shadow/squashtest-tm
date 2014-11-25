@@ -41,6 +41,7 @@ import org.squashtest.tm.domain.attachment.AttachmentHolder;
 import org.squashtest.tm.domain.attachment.AttachmentList;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.search.UpperCasedStringBridge;
+import org.squashtest.tm.domain.testcase.TestCaseNature;
 
 /**
  * Generic superclass for library nodes.
@@ -110,7 +111,6 @@ public abstract class GenericLibraryNode implements LibraryNode, AttachmentHolde
 	@Override
 	public void notifyAssociatedWithProject(Project project) {
 		this.project = project;
-
 	}
 
 	@Override

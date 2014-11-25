@@ -153,7 +153,18 @@
         <value>org.squashtest.tm.domain.testcase.TestCaseLibraryPluginBinding</value>
         <value>org.squashtest.tm.domain.requirement.RequirementLibraryPluginBinding</value>
         
+        <!--  info lists and denormalized info lists -->
+        <value>org.squashtest.tm.domain.infolist.DenormalizedInfoList</value>
+        <value>org.squashtest.tm.domain.infolist.DenormalizedInfoListItem</value>
+        <value>org.squashtest.tm.domain.infolist.DenormalizedSystemListItem</value>
+        <value>org.squashtest.tm.domain.infolist.DenormalizedUserListItem</value>
+        <value>org.squashtest.tm.domain.infolist.InfoList</value>
+        <value>org.squashtest.tm.domain.infolist.InfoListItem</value>
+        <value>org.squashtest.tm.domain.infolist.SystemListItem</value>
+        <value>org.squashtest.tm.domain.infolist.UserListItem</value>
         
+        
+        <!--  milestones -->
         <value>org.squashtest.tm.domain.milestone.Milestone</value>
      
       </list>

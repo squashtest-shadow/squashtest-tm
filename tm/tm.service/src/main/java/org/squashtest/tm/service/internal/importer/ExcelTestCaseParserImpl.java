@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang.NotImplementedException;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -36,6 +37,7 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.squashtest.tm.domain.infolist.InfoListItem;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseImportance;
 import org.squashtest.tm.domain.testcase.TestCaseNature;
@@ -143,7 +145,7 @@ public class ExcelTestCaseParserImpl implements ExcelTestCaseParser {
 				pseudoTestCase.setImportance(value);
 			}
 		});
-		
+
 		// nature populator
 		fieldPopulators.add(new FieldPopulator(NATURE_TAG) {
 			protected void doPopulate(PseudoTestCase pseudoTestCase, Row row) {
@@ -151,7 +153,7 @@ public class ExcelTestCaseParserImpl implements ExcelTestCaseParser {
 				pseudoTestCase.setNature(value);
 			}
 		});
-		
+
 		// type populator
 		fieldPopulators.add(new FieldPopulator(TYPE_TAG) {
 			protected void doPopulate(PseudoTestCase pseudoTestCase, Row row) {
@@ -159,7 +161,7 @@ public class ExcelTestCaseParserImpl implements ExcelTestCaseParser {
 				pseudoTestCase.setType(value);
 			}
 		});
-	
+
 		// type populator
 		fieldPopulators.add(new FieldPopulator(STATUS_TAG) {
 			protected void doPopulate(PseudoTestCase pseudoTestCase, Row row) {
@@ -167,7 +169,7 @@ public class ExcelTestCaseParserImpl implements ExcelTestCaseParser {
 				pseudoTestCase.setStatus(value);
 			}
 		});
-		
+
 		// created by populator
 		fieldPopulators.add(new FieldPopulator(CREATED_BY_TAG) {
 			protected void doPopulate(PseudoTestCase pseudoTestCase, Row row) {
@@ -253,7 +255,7 @@ public class ExcelTestCaseParserImpl implements ExcelTestCaseParser {
 		return fullName.replaceAll("\\.xlsx$", "").replaceAll("\\.xls$", "");
 	}
 
-	
+
 	/* ********************************* private things **************************** */
 
 	private void parseRow(Row row, PseudoTestCase pseudoTestCase) {
@@ -295,11 +297,11 @@ public class ExcelTestCaseParserImpl implements ExcelTestCaseParser {
 		setTestCaseImportance(pseudoTestCase, summary, testCase);
 
 		setTestCaseNature(pseudoTestCase, summary, testCase);
-		
+
 		setTestCaseType(pseudoTestCase, summary, testCase);
-		
+
 		setTestCaseStatus(pseudoTestCase, summary, testCase);
-		
+
 		setTestCaseSteps(pseudoTestCase, testCase);
 
 		return testCase;
@@ -347,27 +349,26 @@ public class ExcelTestCaseParserImpl implements ExcelTestCaseParser {
 
 	private void setTestCaseType(PseudoTestCase pseudoTestCase, ImportSummaryImpl summary, TestCase testCase) {
 		try {
-			TestCaseType type = pseudoTestCase.formatType();
+			InfoListItem type = pseudoTestCase.formatType();
 			testCase.setType(type);
 
 		} catch (IllegalArgumentException ex) {
-
 			LOGGER.warn(ex.getMessage());
 			summary.incrModified();
-			testCase.setType(TestCaseType.defaultValue());
 		}
 	}
 
 	private void setTestCaseNature(PseudoTestCase pseudoTestCase, ImportSummaryImpl summary, TestCase testCase) {
 		try {
-			TestCaseNature nature = pseudoTestCase.formatNature();
+
+			InfoListItem nature = pseudoTestCase.formatNature();
 			testCase.setNature(nature);
 
 		} catch (IllegalArgumentException ex) {
 
 			LOGGER.warn(ex.getMessage());
 			summary.incrModified();
-			testCase.setNature(TestCaseNature.defaultValue());
+
 		}
 	}
 
@@ -437,7 +438,7 @@ public class ExcelTestCaseParserImpl implements ExcelTestCaseParser {
 	private boolean checkCellsContent(Row row) {
 		//first cell must be text
 		String text1 = findFirstCellValue(row);
-		
+
 		//second cell value must be text or date
 		Date date2 = null;
 		String text2 = "";
@@ -448,13 +449,13 @@ public class ExcelTestCaseParserImpl implements ExcelTestCaseParser {
 		} catch (IllegalStateException ise) {
 			date2 = row.getCell(1).getDateCellValue();
 		}
-		
+
 		//compute cell content to validate row
 		boolean keyIsPresent = !text1.isEmpty();
 		boolean keyIsCreatedOn = text1.equalsIgnoreCase(CREATED_ON_TAG);
 		boolean valueIsTextOrDateDependingOnKey = ((keyIsCreatedOn && (!text2.isEmpty() || date2 != null)) || !text2
 				.isEmpty());
-		
+
 		return keyIsPresent && valueIsTextOrDateDependingOnKey;
 	}
 

@@ -24,6 +24,7 @@ import java.util.Date;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.squashtest.tm.domain.infolist.InfoListItem;
 import org.squashtest.tm.domain.requirement.RequirementCategory;
 import org.squashtest.tm.domain.requirement.RequirementCriticality;
 import org.squashtest.tm.domain.requirement.RequirementStatus;
@@ -61,7 +62,7 @@ RequirementVersionImportMemento {
 	private String label = "untitled";
 	private String reference = "";
 	private RequirementCriticality criticality = RequirementCriticality.UNDEFINED;
-	private RequirementCategory category = RequirementCategory.UNDEFINED;
+	private String category ;
 	private RequirementStatus status = RequirementStatus.WORK_IN_PROGRESS;
 	private String description = "";
 	private Date createdOnDate = new Date();
@@ -128,18 +129,12 @@ RequirementVersionImportMemento {
 		}
 	}
 
-	public RequirementCategory getCategory() {
+	public String getCategory() {
 		return category;
 	}
 
 	public void setCategory(String category) {
-		if (category != null) {
-			try {
-				this.category = RequirementCategory.valueOf(category.toUpperCase());
-			} catch (IllegalArgumentException iae) {
-				LOGGER.warn(iae.getMessage());
-			}
-		}
+		this.category = category;
 	}
 
 	public RequirementStatus getStatus() {

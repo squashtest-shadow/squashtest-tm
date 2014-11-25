@@ -28,6 +28,7 @@ import org.squashtest.tm.domain.testcase.Dataset
 import org.squashtest.tm.domain.testcase.TestCase
 import org.squashtest.tm.domain.testcase.TestCaseFolder
 import org.squashtest.tm.domain.testcase.TestCaseLibraryNode
+import org.squashtest.tm.service.testutils.MockFactory;
 import org.squashtest.tm.domain.users.User
 import org.squashtest.tm.service.advancedsearch.IndexationService
 import org.squashtest.tm.service.internal.repository.DatasetDao
@@ -39,6 +40,9 @@ import spock.lang.Specification
 import spock.lang.Unroll
 
 public class IterationTestPlanManagerServiceImplTest extends Specification {
+
+
+	MockFactory mockFactory = new MockFactory()
 
 	IterationTestPlanManagerServiceImpl service = new IterationTestPlanManagerServiceImpl();
 
@@ -56,7 +60,7 @@ public class IterationTestPlanManagerServiceImplTest extends Specification {
 		service.datasetDao = datasetDao
 		service.indexationService = indexationService
 		service.deletionHandler = deletionHandler
-		
+
 	}
 
 	def "should reccursively add a list of test cases to an iteration" () {
@@ -93,8 +97,8 @@ public class IterationTestPlanManagerServiceImplTest extends Specification {
 		collected[ 2] == tc3
 	}
 
-	
-	
+
+
 	def "should move a test case"(){
 		given:
 		TestCase tc1 = Mock()
@@ -115,14 +119,14 @@ public class IterationTestPlanManagerServiceImplTest extends Specification {
 		iteration.addTestPlan(itp3)
 		iterDao.findById(_) >> iteration
 		itemDao.findAllByIds(_)>> [itp3]
-		
+
 		when:
 		service.changeTestPlanPosition(5, 0, [600])
 
 		then:
 		iteration.getPlannedTestCase() == [tc3, tc1, tc2]
 	}
-	
+
 	@Unroll
 	def "should create test plan fragment using datasets #datasets" () {
 		given:
@@ -153,7 +157,7 @@ public class IterationTestPlanManagerServiceImplTest extends Specification {
 				Mock(Dataset)]
 		]
 	}
-	
+
 	def MockTC(def id, def name) {
 		TestCase tc = new TestCase(name: name)
 		use (ReflectionCategory) {
@@ -166,24 +170,27 @@ public class IterationTestPlanManagerServiceImplTest extends Specification {
 		use (ReflectionCategory) {
 			TestCaseLibraryNode.set field: "id", of: f, to: id
 		}
+
+		f.notifyAssociatedWithProject(mockFactory.mockProject())
+
 		return f
 	}
-	
+
 	def "should remove test plan item from iteration by calling deletion handler"(){
 		given:
 		IterationTestPlanItem item = Mock()
 		Iteration iteration = Mock()
-		item.getIteration() >> iteration		
+		item.getIteration() >> iteration
 		item.getExecutions() >> Collections.emptyList()
 		item.getReferencedTestCase() >> null
-		
+
 		itemDao.findById(1L)>>item
 		when:
 		service.removeTestPlanFromIteration(1L)
-		
+
 		then:
-		1* deletionHandler.deleteIterationTestPlanItem(item); 
-		
+		1* deletionHandler.deleteIterationTestPlanItem(item);
+
 	}
 }
 

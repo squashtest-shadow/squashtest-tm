@@ -49,9 +49,11 @@ import org.hibernate.search.annotations.Indexed;
 import org.hibernate.search.annotations.Store;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.squashtest.tm.domain.infolist.InfoListItem;
 import org.squashtest.tm.domain.library.NodeContainer;
 import org.squashtest.tm.domain.library.NodeContainerVisitor;
 import org.squashtest.tm.domain.library.NodeVisitor;
+import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.search.CollectionSizeBridge;
 import org.squashtest.tm.exception.DuplicateNameException;
 import org.squashtest.tm.exception.NoVerifiableRequirementVersionException;
@@ -214,7 +216,7 @@ public class Requirement extends RequirementLibraryNode<RequirementVersion> impl
 	/***
 	 * @return the requirement category
 	 */
-	public RequirementCategory getCategory() {
+	public InfoListItem getCategory() {
 		return resource.getCategory();
 	}
 
@@ -223,7 +225,7 @@ public class Requirement extends RequirementLibraryNode<RequirementVersion> impl
 	 * 
 	 * @param category
 	 */
-	public void setCategory(RequirementCategory category) {
+	public void setCategory(InfoListItem category) {
 		resource.setCategory(category);
 	}
 
@@ -454,6 +456,11 @@ public class Requirement extends RequirementLibraryNode<RequirementVersion> impl
 	}
 
 
+	@Override
+	public void notifyAssociatedWithProject(Project project) {
+		super.notifyAssociatedWithProject(project);
+		resource.notifyAssociatedWithProject(project);
+	}
 
 
 }

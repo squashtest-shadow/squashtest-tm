@@ -63,7 +63,9 @@ import org.squashtest.tm.domain.attachment.AttachmentHolder;
 import org.squashtest.tm.domain.audit.AuditableMixin;
 import org.squashtest.tm.domain.customfield.BindableEntity;
 import org.squashtest.tm.domain.customfield.BoundEntity;
+import org.squashtest.tm.domain.infolist.InfoListItem;
 import org.squashtest.tm.domain.library.NodeVisitor;
+import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.requirement.Requirement;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.search.CUFBridge;
@@ -151,18 +153,14 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	private TestCaseImportance importance = LOW;
 
 	@NotNull
-	@Enumerated(EnumType.STRING)
-	@Column(name = "TC_NATURE")
-	@Field(analyze=Analyze.NO, store=Store.YES)
-	@FieldBridge(impl = LevelEnumBridge.class)
-	private TestCaseNature nature = TestCaseNature.UNDEFINED;
+	@ManyToOne
+	@JoinColumn(name = "TC_NATURE")
+	private InfoListItem nature = null;
 
 	@NotNull
-	@Enumerated(EnumType.STRING)
-	@Column(name = "TC_TYPE")
-	@Field(analyze=Analyze.NO, store=Store.YES)
-	@FieldBridge(impl = LevelEnumBridge.class)
-	private TestCaseType type = TestCaseType.UNDEFINED;
+	@ManyToOne
+	@JoinColumn(name = "TC_TYPE")
+	private InfoListItem type = null;
 
 	@NotNull
 	@Enumerated(EnumType.STRING)
@@ -435,19 +433,19 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 		this.importance = weight;
 	}
 
-	public TestCaseNature getNature() {
+	public InfoListItem getNature() {
 		return nature;
 	}
 
-	public void setNature(@NotNull TestCaseNature nature) {
+	public void setNature(@NotNull InfoListItem nature) {
 		this.nature = nature;
 	}
 
-	public TestCaseType getType() {
+	public InfoListItem getType() {
 		return type;
 	}
 
-	public void setType(@NotNull TestCaseType type) {
+	public void setType(@NotNull InfoListItem type) {
 		this.type = type;
 	}
 
@@ -777,6 +775,20 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	 */
 	public Boolean getImportanceAuto() {
 		return isImportanceAuto();
+	}
+
+	@Override
+	public void notifyAssociatedWithProject(Project project) {
+		super.notifyAssociatedWithProject(project);
+
+		// also define a default nature and type if none were set so far
+		if (nature == null){
+			nature = project.getTestCaseNatures().getDefaultItem();
+		}
+
+		if (type == null){
+			type = project.getTestCaseTypes().getDefaultItem();
+		}
 	}
 
 }

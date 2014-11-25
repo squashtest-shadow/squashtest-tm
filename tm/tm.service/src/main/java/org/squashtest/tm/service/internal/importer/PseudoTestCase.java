@@ -25,9 +25,10 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.squashtest.tm.domain.infolist.InfoListItem;
+import org.squashtest.tm.domain.infolist.TransientListItem;
 import org.squashtest.tm.domain.testcase.ActionTestStep;
 import org.squashtest.tm.domain.testcase.TestCaseImportance;
-import org.squashtest.tm.domain.testcase.TestCaseNature;
 import org.squashtest.tm.domain.testcase.TestCaseStatus;
 import org.squashtest.tm.domain.testcase.TestCaseType;
 import org.squashtest.tm.domain.testcase.TestStep;
@@ -47,7 +48,7 @@ import org.squashtest.tm.domain.testcase.TestStep;
 	private String nature = "";
 	private String type = "";
 	private String status = "";
-	
+
 	// the first element of the list is the description itself
 	// others are complementary elements
 	private final List<String[]> descriptionElements = new ArrayList<String[]>();
@@ -93,18 +94,18 @@ import org.squashtest.tm.domain.testcase.TestStep;
 		return TestCaseImportance.valueOf(importance);
 	}
 
-	public TestCaseNature formatNature() {
-		return TestCaseNature.valueOf(nature);
+	public InfoListItem formatNature() {
+		return new TransientListItem(nature);
 	}
-	
-	public TestCaseType formatType() {
-		return TestCaseType.valueOf(type);
+
+	public InfoListItem formatType() {
+		return new TransientListItem(type);
 	}
 
 	public TestCaseStatus formatStatus() {
 		return TestCaseStatus.valueOf(status);
 	}
-	
+
 	public String formatPreRequisites() {
 		StringBuilder builder = new StringBuilder();
 
@@ -137,7 +138,7 @@ import org.squashtest.tm.domain.testcase.TestStep;
 
 	}
 
-	
+
 	// ******** accessors ***********************
 
 	public Date getCreatedOnDate() {
@@ -207,7 +208,7 @@ import org.squashtest.tm.domain.testcase.TestStep;
 	public List<String[]> getStepElements() {
 		return stepElements;
 	}
-	
-	
-	
+
+
+
 }

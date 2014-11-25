@@ -24,6 +24,7 @@ package org.squashtest.tm.service.testcase;
 
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.squashtest.tm.core.dynamicmanager.factory.DynamicManagerInterfaceSpecification
+import org.squashtest.tm.domain.infolist.SystemListItem;
 import org.squashtest.tm.domain.testcase.TestCase
 import org.squashtest.tm.domain.testcase.TestCaseExecutionMode
 import org.squashtest.tm.domain.testcase.TestCaseImportance
@@ -49,9 +50,9 @@ class TestCaseModificationDynamicServiceTest extends DynamicManagerInterfaceSpec
 		}, {
 			it.changeReference(10L, "ref")
 		}, {
-			it.changeNature(10L, TestCaseNature.BUSINESS_TESTING)
+			it.changeNature(10L, new SystemListItem())
 		}, {
-			it.changeType(10L, TestCaseType.END_TO_END_TESTING)
+			it.changeType(10L, new SystemListItem())
 		}, {
 			it.changeStatus(10L, TestCaseStatus.TO_BE_UPDATED)
 		}, {

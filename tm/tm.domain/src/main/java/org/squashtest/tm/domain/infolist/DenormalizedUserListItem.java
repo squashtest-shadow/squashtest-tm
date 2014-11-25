@@ -18,29 +18,13 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.domain.requirement;
+package org.squashtest.tm.domain.infolist;
 
-import java.util.Date;
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
 
-/**
- * Interface to retrieve RequirementVersion attributes (such as criticality, category, description ...) from a bean.
- * @author Gregory
- * 
- */
-public interface RequirementVersionImportMemento {
-	RequirementCriticality getCriticality();
+@Entity
+@DiscriminatorValue("USR")
+public class DenormalizedUserListItem extends DenormalizedInfoListItem{
 
-	String getCategory();
-
-	String getDescription();
-
-	String getName();
-
-	String getReference();
-
-	RequirementStatus getStatus();
-
-	String getCreatedBy();
-
-	Date getCreatedOn();
 }

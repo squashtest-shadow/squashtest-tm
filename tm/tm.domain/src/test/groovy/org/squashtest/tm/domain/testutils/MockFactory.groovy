@@ -18,29 +18,43 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.domain.requirement;
+package org.squashtest.tm.domain.testutils
 
-import java.util.Date;
+import org.squashtest.tm.domain.infolist.InfoList
+import org.squashtest.tm.domain.infolist.InfoListItem
+import org.squashtest.tm.domain.infolist.TransientListItem
+import org.squashtest.tm.domain.project.Project
 
-/**
- * Interface to retrieve RequirementVersion attributes (such as criticality, category, description ...) from a bean.
- * @author Gregory
- * 
- */
-public interface RequirementVersionImportMemento {
-	RequirementCriticality getCriticality();
+import spock.lang.Specification;
 
-	String getCategory();
+class MockFactory extends Specification {
 
-	String getDescription();
+	def mockProject(){
 
-	String getName();
+		Project p = Mock();
 
-	String getReference();
+		InfoList natures = new InfoList()
+		InfoListItem nat = new 	TransientListItem()
+		nat.setDefault(true)
+		natures.items << nat
 
-	RequirementStatus getStatus();
+		InfoList types = new InfoList()
+		InfoListItem typ = new 	TransientListItem()
+		typ.setDefault(true)
+		types.items << typ
 
-	String getCreatedBy();
+		InfoList categories = new InfoList()
+		InfoListItem cat = new TransientListItem();
+		cat.setDefault(true)
+		categories.items << cat
 
-	Date getCreatedOn();
+		p.getTestCaseNatures() >> natures
+		p.getTestCaseTypes() >> types
+		p.getRequirementCategories() >> categories
+
+
+		p
+
+	}
+
 }

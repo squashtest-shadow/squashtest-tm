@@ -23,12 +23,16 @@ package org.squashtest.tm.domain.requirement
 import static org.squashtest.tm.domain.requirement.RequirementStatus.*
 
 import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory
+import org.squashtest.tm.domain.infolist.InfoList;
+import org.squashtest.tm.domain.infolist.InfoListItem;
+import org.squashtest.tm.domain.infolist.SystemListItem;
 import org.squashtest.tm.domain.project.Project
 import org.squashtest.tm.domain.requirement.Requirement
 import org.squashtest.tm.domain.requirement.RequirementCriticality
 import org.squashtest.tm.domain.requirement.RequirementStatus
 import org.squashtest.tm.domain.requirement.RequirementVersion
 import org.squashtest.tm.domain.testcase.TestCase
+import org.squashtest.tm.domain.testutils.MockFactory;
 import org.squashtest.tm.exception.DuplicateNameException;
 import org.squashtest.tm.exception.NoVerifiableRequirementVersionException;
 import org.squashtest.tm.exception.requirement.IllegalRequirementModificationException;
@@ -39,6 +43,8 @@ import spock.lang.Unroll
 class RequirementTest extends Specification {
 
 	Requirement requirement = new Requirement(new RequirementVersion(name: "test req", description: "this is a test req"))
+
+	MockFactory mockFactory = new MockFactory()
 
 	@Unroll("should allow modification of property '#property' for status WORK_IN_PROGRESS")
 	def "should allow modification for status WORK_IN_PROGRESS"(){
@@ -221,7 +227,7 @@ class RequirementTest extends Specification {
 		Requirement source = new Requirement(ver);
 
 		and:
-		Project project = new Project()
+		Project project = mockFactory.mockProject()
 		source.notifyAssociatedWithProject(project);
 
 		when:
@@ -243,6 +249,7 @@ class RequirementTest extends Specification {
 		given : "a requirement and it's current version"
 		RequirementVersion ver = new RequirementVersion(name: "ver")
 		Requirement source = new Requirement(ver);
+		source.notifyAssociatedWithProject(mockFactory.mockProject())
 
 		and: "an older requirement version"
 		RequirementVersion old = new RequirementVersion(name: "old")
@@ -259,32 +266,32 @@ class RequirementTest extends Specification {
 		copy.versions*.name.containsAll(["ver"])
 		copy.versions*.requirement == [copy]
 	}
-	
-		def "'pastable' copy of versions should not have obsolete versions"() {
-			given:"a requirement"
-			RequirementVersion ver = new RequirementVersion(name: "ver")
-			Requirement source = new Requirement(ver);
-			and:"with 2 versions, one being obsolete"
-			RequirementVersion obsolete = new RequirementVersion(name: "obsolete")
-			use(ReflectionCategory) {
-				RequirementVersion.set field: "status", of: obsolete, to: RequirementStatus.OBSOLETE
-			}
-			source.versions << obsolete
-			RequirementVersion old = new RequirementVersion(name: "old")
-			source.versions << old
-			and: "it's copy"
-			RequirementVersion ver2 = new RequirementVersion(name: "ver")
-			Requirement copy = new Requirement(ver2);
-			
-	
-			when:
-			def result = source.addPreviousVersionsCopiesToCopy(copy)
-	
-			then:
-			copy.versions.size() == 2
-			copy.versions*.name.containsAll(["ver", "old"])
-			copy.versions*.requirement == [copy, copy]
+
+	def "'pastable' copy of versions should not have obsolete versions"() {
+		given:"a requirement"
+		RequirementVersion ver = new RequirementVersion(name: "ver")
+		Requirement source = new Requirement(ver);
+		and:"with 2 versions, one being obsolete"
+		RequirementVersion obsolete = new RequirementVersion(name: "obsolete")
+		use(ReflectionCategory) {
+			RequirementVersion.set field: "status", of: obsolete, to: RequirementStatus.OBSOLETE
 		}
+		source.versions << obsolete
+		RequirementVersion old = new RequirementVersion(name: "old")
+		source.versions << old
+		and: "it's copy"
+		RequirementVersion ver2 = new RequirementVersion(name: "ver")
+		Requirement copy = new Requirement(ver2);
+
+
+		when:
+		def result = source.addPreviousVersionsCopiesToCopy(copy)
+
+		then:
+		copy.versions.size() == 2
+		copy.versions*.name.containsAll(["ver", "old"])
+		copy.versions*.requirement == [copy, copy]
+	}
 
 	def "should increase the current version"() {
 		given:
@@ -355,7 +362,7 @@ class RequirementTest extends Specification {
 		then:
 		res == expectedVerifiable
 	}
-	
+
 	def "should throw an exception when no version is verifiable"() {
 		given: "a req with an approved version"
 		RequirementVersion v1 = new RequirementVersion()
@@ -370,64 +377,71 @@ class RequirementTest extends Specification {
 		then:
 		thrown(NoVerifiableRequirementVersionException)
 	}
-	
+
 	def "should accept another Requirement as children"(){
 		given :
-			Requirement root = newRequirement("root")	
-			Requirement son = newRequirement("son")
-			
+		Requirement root = newRequirement("root")
+		root.notifyAssociatedWithProject(mockFactory.mockProject())
+		Requirement son = newRequirement("son")
+
 		when :
-			root.addContent son
-			
+		root.addContent son
+
 		then :
-			root.content as Set ==  [son] as Set 
+		root.content as Set ==  [son] as Set
 	}
-	
+
 	def "should say the name of requirements it contains"(){
 		given :
-			Requirement root = newRequirement("root")
-			
-		when :	
-			["bob", "mike", "robert"].each { root.addContent newRequirement(it) }
-		
+		Requirement root = newRequirement("root")
+		root.notifyAssociatedWithProject(mockFactory.mockProject())
+
+		when :
+		["bob", "mike", "robert"].each { root.addContent newRequirement(it) }
+
 		then :
-			root.contentNames as Set == ["bob", "mike", "robert"] as Set 
+		root.contentNames as Set == ["bob", "mike", "robert"] as Set
 	}
-	
+
 	def "should say that the given name is available "(){
 		when :
-			Requirement root = newRequirement("root")
-			["bob", "mike", "robert"].each { root.addContent newRequirement(it) }
-			
+		Requirement root = newRequirement("root")
+		root.notifyAssociatedWithProject(mockFactory.mockProject())
+		["bob", "mike", "robert"].each { root.addContent newRequirement(it) }
+
 		then :
-			root.isContentNameAvailable("larry")
+		root.isContentNameAvailable("larry")
 	}
-	
+
 	def "should say that the given name is not available "(){
 		when :
-			Requirement root = newRequirement("root")
-			["bob", "mike", "robert"].each { root.addContent newRequirement(it) }
-			
+		Requirement root = newRequirement("root")
+		root.notifyAssociatedWithProject(mockFactory.mockProject())
+		["bob", "mike", "robert"].each { root.addContent newRequirement(it) }
+
 		then :
-			! root.isContentNameAvailable("bob")
+		! root.isContentNameAvailable("bob")
 	}
-	
-	
-	
+
+
+
 	def "should not accept to append a requirement if another requirement having the same name is present"(){
 		given :
-			Requirement root = newRequirement("root")
-			["bob", "mike", "robert"].each { root.addContent newRequirement(it) }
-			
+		Requirement root = newRequirement("root")
+		root.notifyAssociatedWithProject(mockFactory.mockProject())
+		["bob", "mike", "robert"].each { root.addContent newRequirement(it) }
+
 		when :
-			root.addContent newRequirement("bob")
-			
+		root.addContent newRequirement("bob")
+
 		then :
-			thrown(DuplicateNameException)
+		thrown(DuplicateNameException)
 	}
-	
-	
+
+
 	def newRequirement(String name){
-		return new Requirement(new RequirementVersion(name:name))	
+		return new Requirement(new RequirementVersion(name:name))
 	}
+
+
 }

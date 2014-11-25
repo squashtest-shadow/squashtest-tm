@@ -35,8 +35,8 @@ public class ExportTestCaseData extends ExportData implements TestStepVisitor{
 	private String prerequisite = "";
 	private TestCaseImportance weight;
 	private String reference = "";
-	private TestCaseNature nature ;
-	private TestCaseType type;
+	private String nature ;
+	private String type;
 	private TestCaseStatus status;
 	private String firstAction = "";
 	private String firstExpectedResult = "";
@@ -85,19 +85,19 @@ public class ExportTestCaseData extends ExportData implements TestStepVisitor{
 		}
 	}
 
-	public TestCaseNature getNature() {
+	public String getNature() {
 		return nature;
 	}
 
-	public void setNature(TestCaseNature nature) {
+	public void setNature(String nature) {
 		this.nature = nature;
 	}
 
-	public TestCaseType getType() {
+	public String getType() {
 		return type;
 	}
 
-	public void setType(TestCaseType type) {
+	public void setType(String type) {
 		this.type = type;
 	}
 
@@ -146,8 +146,8 @@ public class ExportTestCaseData extends ExportData implements TestStepVisitor{
 		doSetReference(testCase.getReference());
 		doSetPrerequisite(testCase.getPrerequisite());
 		this.weight = testCase.getImportance() ;
-		this.nature = testCase.getNature();
-		this.type = testCase.getType();
+		this.nature = testCase.getNature().getCode();
+		this.type = testCase.getType().getCode();
 		this.status = testCase.getStatus();
 		AuditableMixin audit = ((AuditableMixin) testCase);
 		this.lastModifiedBy = audit.getLastModifiedBy();

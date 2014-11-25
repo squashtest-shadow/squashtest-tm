@@ -25,6 +25,7 @@ import java.util.Set;
 
 import javax.validation.constraints.NotNull;
 
+import org.squashtest.tm.domain.infolist.InfoListItem;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.requirement.RequirementCategory;
 import org.squashtest.tm.domain.requirement.RequirementCriticality;
@@ -48,35 +49,35 @@ public class VerifiedRequirement {
 	private final boolean directVerification;
 	private final Set<ActionTestStep> verifyingSteps = new HashSet<ActionTestStep>(0);		//to set an actual content, see #withVerifyingStepsFrom(TestCase)
 	private final RequirementVersion verifiedRequirementVersion;
-	
+
 	public VerifiedRequirement(@NotNull RequirementVersionCoverage requirementVersionCoverage, boolean directVerification) {
 		super();
 		this.verifiedRequirementVersion = requirementVersionCoverage.getVerifiedRequirementVersion();
 		this.directVerification = directVerification;
-	
+
 	}
 	public VerifiedRequirement(@NotNull RequirementVersion version, boolean directlyVerified) {
 		super();
 		this.verifiedRequirementVersion  = version;
 		this.directVerification = directlyVerified;
 	}
-	
+
 	private RequirementVersion getVerifiedRequirementVersion(){
 		return this.verifiedRequirementVersion;
 	}
-	
+
 	public Project getProject() {
 		return getVerifiedRequirementVersion().getRequirement().getProject();
 	}
-	
+
 	public RequirementStatus getStatus(){
 		return getVerifiedRequirementVersion().getStatus();
 	}
-	
+
 	public String getName() {
 		return getVerifiedRequirementVersion().getName();
 	}
-	
+
 	public int getVersionNumber(){
 		return getVerifiedRequirementVersion().getVersionNumber();
 	}
@@ -92,8 +93,8 @@ public class VerifiedRequirement {
 	public RequirementCriticality getCriticality() {
 		return getVerifiedRequirementVersion().getCriticality();
 	}
-	
-	public RequirementCategory getCategory() {
+
+	public InfoListItem getCategory() {
 		return getVerifiedRequirementVersion().getCategory();
 	}
 
@@ -115,17 +116,17 @@ public class VerifiedRequirement {
 		}
 		return false;
 	}
-	
+
 	public VerifiedRequirement withVerifyingStepsFrom(TestCase testCase){
-		
+
 		RequirementVersionCoverage coverage = this.verifiedRequirementVersion.getRequirementVersionCoverageOrNullFor(testCase);
-		
+
 		if (coverage != null){
 			this.verifyingSteps.addAll(coverage.getVerifyingSteps());
 		}
-		
+
 		return this;
 	}
-	
-	
+
+
 }

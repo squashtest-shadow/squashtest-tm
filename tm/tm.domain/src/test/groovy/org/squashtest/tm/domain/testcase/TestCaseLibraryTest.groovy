@@ -20,20 +20,23 @@
  */
 package org.squashtest.tm.domain.testcase
 
+import org.squashtest.tm.domain.infolist.InfoList
+import org.squashtest.tm.domain.infolist.InfoListItem
+import org.squashtest.tm.domain.infolist.SystemListItem
 import org.squashtest.tm.domain.project.Project
 import org.squashtest.tm.domain.project.ProjectTemplate
-import org.squashtest.tm.domain.testcase.TestCase
-import org.squashtest.tm.domain.testcase.TestCaseFolder
-import org.squashtest.tm.domain.testcase.TestCaseLibrary
-import org.squashtest.tm.exception.DuplicateNameException;
+import org.squashtest.tm.domain.testutils.MockFactory;
+import org.squashtest.tm.exception.DuplicateNameException
 
 import spock.lang.Specification
 
 class TestCaseLibraryTest   extends Specification {
+
+	MockFactory mockFactory = new MockFactory()
 	TestCaseLibrary library = new TestCaseLibrary()
 
 	def setup() {
-		library.notifyAssociatedWithProject(new Project());
+		library.notifyAssociatedWithProject(mockFactory.mockProject());
 	}
 
 	def "should add test case to library"() {
@@ -51,7 +54,7 @@ class TestCaseLibraryTest   extends Specification {
 		given:
 		TestCase testCase = new TestCase(name: "foo")
 		library.notifyAssociatedWithProject(new ProjectTemplate());
-		
+
 		when:
 		library.addContent(testCase)
 
@@ -59,7 +62,7 @@ class TestCaseLibraryTest   extends Specification {
 		thrown UnsupportedOperationException
 	}
 
-		def "should not add test with dup name"() {
+	def "should not add test with dup name"() {
 		given:
 		TestCase testCase = new TestCase(name: "foo")
 		library.addContent(testCase)
@@ -85,4 +88,6 @@ class TestCaseLibraryTest   extends Specification {
 		then:
 		folder.project == project
 	}
+
+
 }

@@ -30,7 +30,7 @@ import org.squashtest.tm.domain.library.ExportData;
 public class ExportRequirementData extends ExportData {
 
 	private RequirementCriticality criticality;
-	private RequirementCategory category;
+	private String category;
 	private Integer currentVersion;
 	private RequirementStatus status;
 	private String reference = "";
@@ -51,11 +51,11 @@ public class ExportRequirementData extends ExportData {
 		this.criticality = criticality;
 	}
 
-	public RequirementCategory getCategory() {
+	public String getCategory() {
 		return category;
 	}
 
-	public void setCategory(RequirementCategory category) {
+	public void setCategory(String category) {
 		this.category = category;
 	}
 
@@ -113,7 +113,7 @@ public class ExportRequirementData extends ExportData {
 		super(requirement);
 		doSetReference(requirement.getReference());
 		this.criticality = requirement.getCriticality();
-		this.category = requirement.getCategory();
+		this.category = requirement.getCategory().getCode();
 		this.currentVersion = requirement.getCurrentVersion().getVersionNumber();
 		this.status = requirement.getStatus();
 		setFolderName(requirementFolderPath);

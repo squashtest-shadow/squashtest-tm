@@ -57,11 +57,11 @@ public class NewRequirementVersionDto {
 		this.criticality = criticality;
 	}
 
-	public RequirementCategory getCategory() {
+	public Long getCategory() {
 		return category;
 	}
 
-	public void setCategory(RequirementCategory category) {
+	public void setCategory(Long category) {
 		this.category = category;
 	}
 
@@ -92,7 +92,7 @@ public class NewRequirementVersionDto {
 	private RequirementCriticality criticality = RequirementCriticality.UNDEFINED;
 
 	/*@NotNull*/
-	private RequirementCategory category = RequirementCategory.UNDEFINED;
+	private Long category;
 
 	/*@Length(max=50)*/
 	private String reference;
@@ -109,9 +109,7 @@ public class NewRequirementVersionDto {
 		if (criticality != null) {
 			version.setCriticality(criticality);
 		}
-		if(category != null){
-			version.setCategory(category);
-		}
+
 		version.setReference(reference);
 		version.setDescription(description);
 

@@ -41,6 +41,7 @@ import org.squashtest.tm.domain.customfield.CustomField;
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
 import org.squashtest.tm.domain.customfield.InputType;
 import org.squashtest.tm.domain.customfield.RawValue;
+import org.squashtest.tm.domain.infolist.InfoListItem;
 import org.squashtest.tm.domain.testcase.ActionTestStep;
 import org.squashtest.tm.domain.testcase.CallTestStep;
 import org.squashtest.tm.domain.testcase.Dataset;
@@ -722,12 +723,12 @@ public class FacilityImpl implements Facility {
 			testcaseModificationService.changeImportance(origId, newImp);
 		}
 
-		TestCaseNature newNat = testCase.getNature();
+		InfoListItem newNat = testCase.getNature();
 		if (newNat != null && !orig.getNature().equals(newNat)) {
 			testcaseModificationService.changeNature(origId, newNat);
 		}
 
-		TestCaseType newType = testCase.getType();
+		InfoListItem newType = testCase.getType();
 		if (newType != null && !orig.getType().equals(newType)) {
 			testcaseModificationService.changeType(origId, newType);
 		}
