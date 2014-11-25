@@ -1,5 +1,5 @@
 CKEDITOR.editorConfig = function( config ){
-	config.skin = 'squashtest,/${bundle.contextPath}/styles/ckeditor/skin/';
+	config.skin = 'moonocolor';
 	config.toolbar = 'Squash';
 	config.toolbar_Squash =  
 		[   
