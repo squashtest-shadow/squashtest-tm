@@ -487,7 +487,7 @@ define(["jquery",
 		$(row).removeClass('ui-state-highlight');
 	}
 	/**
-	 * Computes the 0-based range of row that should be selected. Note : row.rowIndex is a 1-based index.
+	 * Computes the 0-based range of row that should be selected. Note : row._DT_RowIndex is a 0-based index.
 	 * 
 	 * @param row
 	 * @param table
@@ -495,17 +495,15 @@ define(["jquery",
 	 */
 	/* private */function _computeSelectionRange(row) {
 		var baseRow = this.data("lastSelectedRow");
-		var baseIndex = baseRow ? baseRow.rowIndex : 1;
-		var currentIndex = row.rowIndex;
+		var baseIndex = baseRow ? baseRow._DT_RowIndex : 0;
+		var currentIndex = row._DT_RowIndex;
 
 		var rangeMin = Math.min(baseIndex, currentIndex);
-		rangeMin = Math.max(rangeMin, 1);
 
 		var rangeMax = Math.max(baseIndex, currentIndex);
 		var rows = this.$("tr");
-		rangeMax = Math.min(rangeMax, rows.length);
 
-		return [ rangeMin - 1, rangeMax - 1 ];
+		return [ rangeMin , rangeMax ];
 	}
 
 	/* private */function _memorizeLastSelectedRow(row) {
