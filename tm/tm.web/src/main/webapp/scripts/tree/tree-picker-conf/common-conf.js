@@ -77,7 +77,7 @@ define(function() {
 						return false ;
 					}
 					return true;
-				},
+				}
 			};
 		}
 	};
