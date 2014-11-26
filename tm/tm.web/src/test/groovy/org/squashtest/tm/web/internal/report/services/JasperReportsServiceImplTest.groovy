@@ -20,66 +20,117 @@
  */
 package org.squashtest.tm.web.internal.report.services
 
+import java.text.SimpleDateFormat;
+
 import org.apache.poi.hssf.record.formula.functions.T
+import org.squashtest.tm.domain.infolist.InfoListItem;
+import org.squashtest.tm.domain.infolist.TransientListItem;
 import org.squashtest.tm.domain.requirement.ExportRequirementData
 import org.squashtest.tm.domain.requirement.RequirementCategory
 import org.squashtest.tm.domain.requirement.RequirementCriticality
+import org.squashtest.tm.domain.requirement.RequirementStatus;
 import org.squashtest.tm.web.internal.report.service.JasperReportsService
 
 import spock.lang.Specification
 
 
 public class JasperReportsServiceImplTest extends Specification {
-	
+
 	private JasperReportsService jrService = new JasperReportsService();
-	
-	
+
+
 	def "should export some requirements"(){
-		
-		given :	
-			URL fileURL = getClass().getClassLoader().getResource("requirement-export.jasper");
-			File file = new File(fileURL.getFile());
-			InputStream reportStream = new FileInputStream(file);
-			
-			
-			def data1 = generateExportData("a", RequirementCriticality.MAJOR, RequirementCategory.BUSINESS, "a", "a", "a", "a");
-			def data2 = generateExportData("b", RequirementCriticality.MINOR, RequirementCategory.NON_FUNCTIONAL, "b", "b", "b", "b");
-			def data3 = generateExportData("c", RequirementCriticality.UNDEFINED,RequirementCategory.FUNCTIONAL, "c", "c", "c", "c");
-			
-			def dataSource = [data1, data2, data3];		
-			
+
+		given :
+
+
+		URL fileURL = getClass().getClassLoader().getResource("requirement-export.jasper");
+		File file = new File(fileURL.getFile());
+		InputStream reportStream = new FileInputStream(file);
+
+		def data1 = generateExportData("/project/folder",
+				"/project/folder/uprate",
+				1l,
+				2,
+				"REQS",
+				"uprate",
+				"<p>the rate in the up stance is 100</p>",
+				RequirementCriticality.MAJOR,
+				new TransientListItem("HITECH"),
+				RequirementStatus.APPROVED)
+
+		def data2 = generateExportData("/project/folder",
+				"/project/folder/downrate",
+				2l,
+				1,
+				"REQS",
+				"downrate",
+				"<p>the rate in the down stance is 30</p>",
+				RequirementCriticality.UNDEFINED,
+				new TransientListItem("LOTECH"),
+				RequirementStatus.UNDER_REVIEW)
+
+		def data3 = generateExportData("/project/folder",
+				"/project/folder/stdrate",
+				3l,
+				4,
+				"REQS",
+				"stdrate",
+				"<p>the rate in the normal stance is 55</p>",
+				RequirementCriticality.CRITICAL,
+				new TransientListItem("CURTECH"),
+				RequirementStatus.APPROVED)
+
+
+
+		def dataSource = [data1, data2, data3];
+
 		when :
-		
-			InputStream resStream = jrService.getReportAsStream(reportStream, "csv", dataSource, new HashMap(), new HashMap());		
-			
-			BufferedReader reader = new BufferedReader(new InputStreamReader(resStream));
-			
-			def strData1 = reader.readLine();
-			def strData2 = reader.readLine();
-			def strData3 = reader.readLine();
-			
+
+		InputStream resStream = jrService.getReportAsStream(reportStream, "csv", dataSource, new HashMap(), new HashMap());
+
+		BufferedReader reader = new BufferedReader(new InputStreamReader(resStream));
+
+		def header = reader.readLine();		// we don't care much of testing the header
+		def strData1 = reader.readLine();
+		def strData2 = reader.readLine();
+		def strData3 = reader.readLine();
+
+
 		then :
 
-			
-			strData1 == "a,a,a,MAJOR,a,a,BUSINESS"
-			strData2 == "b,b,b,MINOR,b,b,NON_FUNCTIONAL"
-			strData3 == "c,c,c,UNDEFINED,c,c,FUNCTIONAL"
-	
-		
-		
+		strData1 == "/project/folder,/project/folder/uprate,1,2,REQS,uprate,<p>the rate in the up stance is 100</p>,MAJOR,HITECH,APPROVED,null,null"
+		strData2 == "/project/folder,/project/folder/downrate,2,1,REQS,downrate,<p>the rate in the down stance is 30</p>,UNDEFINED,LOTECH,UNDER_REVIEW,null,null"
+		strData3 == "/project/folder,/project/folder/stdrate,3,4,REQS,stdrate,<p>the rate in the normal stance is 55</p>,CRITICAL,CURTECH,APPROVED,null,null"
+
 	}
-	
-	private ExportRequirementData generateExportData(String name, RequirementCriticality crit, RequirementCategory cat, String project, String foldername, String ref, String desc){
+
+	private ExportRequirementData generateExportData(
+			String folderPath,
+			String requirementParentPath,
+			Long id,
+			int version,
+			String reference,
+			String name,
+			String description,
+			RequirementCriticality crit,
+			InfoListItem cat,
+			RequirementStatus status){
+
 		ExportRequirementData data = new ExportRequirementData();
-		data.setId(1l)
-		data.setCriticality(crit)
-		data.setCategory(cat)
-		data.setDescription(desc)
-		data.setFolderName(foldername)
-		data.setName(name)
-		data.setProject(project)
-		data.setReference(ref)
-		return data;
+
+		data.setFolderName folderPath
+		data.setRequirementParentPath requirementParentPath
+		data.setId id
+		data.setCurrentVersion version
+		data.setReference reference
+		data.setName name
+		data.setDescription description
+		data.setCriticality crit
+		data.setCategory (cat.getCode())
+		data.setStatus status
+
+		data
 	}
-	
+
 }
