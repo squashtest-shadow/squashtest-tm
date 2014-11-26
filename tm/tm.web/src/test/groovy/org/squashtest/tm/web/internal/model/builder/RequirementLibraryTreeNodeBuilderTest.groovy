@@ -23,11 +23,13 @@ package org.squashtest.tm.web.internal.model.builder;
 import org.apache.commons.collections.MultiMap;
 import org.apache.commons.collections.map.MultiValueMap;
 import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory
+import org.squashtest.tm.domain.infolist.TransientListItem;
 import org.squashtest.tm.domain.requirement.Requirement
 import org.squashtest.tm.domain.requirement.RequirementFolder
 import org.squashtest.tm.domain.requirement.RequirementLibraryNode
 import org.squashtest.tm.domain.requirement.RequirementVersion
 import org.squashtest.tm.service.security.PermissionEvaluationService;
+import org.squashtest.tm.web.testutils.MockFactory;
 import org.squashtest.tm.web.internal.model.jstree.JsTreeNode.State
 
 import spock.lang.Specification
@@ -56,7 +58,7 @@ class RequirementLibraryTreeNodeBuilderTest extends Specification {
 	}
 	def "should build a Requirement node"() {
 		given:
-		RequirementVersion version = new RequirementVersion(name: "r", reference: "ref")
+		RequirementVersion version = new RequirementVersion(name: "r", reference: "ref", category : new TransientListItem("RANDOM_CATEGORY"))
 		Requirement node  = new Requirement(version)
 
 		use (ReflectionCategory) {
@@ -73,55 +75,56 @@ class RequirementLibraryTreeNodeBuilderTest extends Specification {
 		res.attr['rel'] == "requirement"
 		res.state == State.leaf.name()
 	}
-	
+
 	def "should build a folder with leaf state"(){
 		given :
-			RequirementFolder node = new RequirementFolder(name:"folder")
-			
+		RequirementFolder node = new RequirementFolder(name:"folder")
+
 		when :
-			def res = builder.setNode(node).build()
-		
+		def res = builder.setNode(node).build()
+
 		then :
-			res.state == State.leaf.name()
-		
+		res.state == State.leaf.name()
+
 	}
-	
+
 	def "should build a folder with closed state"(){
 		given :
-			RequirementFolder node = new RequirementFolder(name:"folder")
-			node.addContent(new RequirementFolder());
-		
+		RequirementFolder node = new RequirementFolder(name:"folder")
+		node.addContent(new RequirementFolder());
+
 		when :
-			def res = builder.setNode(node).build()
-		
+		def res = builder.setNode(node).build()
+
 		then :
-			res.state == State.closed.name()
-		
+		res.state == State.closed.name()
+
 	}
-	
+
 	def "should expand a requirement node"(){
 		given :
-			Requirement node = new Requirement(resource: new RequirementVersion(), name:"folder")
-			Requirement child = new Requirement(resource: new RequirementVersion(), name:"folder child")
-			node.addContent(child);
-			
-			use(ReflectionCategory) {
-				RequirementLibraryNode.set field: "id", of: node, to: 10L
-				RequirementLibraryNode.set field: "id", of: child, to: 100L
-			}
-			
+		Requirement node = new Requirement(resource: new RequirementVersion(), name:"folder")
+		node.notifyAssociatedWithProject(new MockFactory().mockProject())
+		Requirement child = new Requirement(resource: new RequirementVersion(), name:"folder child")
+		node.addContent(child);
+
+		use(ReflectionCategory) {
+			RequirementLibraryNode.set field: "id", of: node, to: 10L
+			RequirementLibraryNode.set field: "id", of: child, to: 100L
+		}
+
 		and:
 		MultiMap expanded = new MultiValueMap()
 		expanded.put("Requirement", 10L)
-		
+
 		when :
-			def res = builder.expand(expanded).setNode(node).build()
-		
+		def res = builder.expand(expanded).setNode(node).build()
+
 		then :
-			res.state == State.open.name()
-			res.children.size() == 1
-		
+		res.state == State.open.name()
+		res.children.size() == 1
+
 	}
 
-	
+
 }

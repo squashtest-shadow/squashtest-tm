@@ -23,6 +23,7 @@ package org.squashtest.tm.service.internal.requirement;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.apache.commons.lang.NotImplementedException;
 import org.hibernate.SessionFactory;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
@@ -49,10 +50,10 @@ public class CustomRequirementModificationServiceImpl implements CustomRequireme
 
 	@Inject
 	private PrivateCustomFieldValueService customFieldValueService;
-	
+
 	@Inject
 	private SessionFactory sessionFactory;
-	
+
 	@Inject
 	private IndexationService indexationService;
 
@@ -76,14 +77,14 @@ public class CustomRequirementModificationServiceImpl implements CustomRequireme
 	public void createNewVersion(long requirementId) {
 		Requirement req = requirementDao.findById(requirementId);
 		RequirementVersion previousVersion = req.getCurrentVersion();
-		
+
 		req.increaseVersion();
-		sessionFactory.getCurrentSession().persist(req.getCurrentVersion());	
+		sessionFactory.getCurrentSession().persist(req.getCurrentVersion());
 		RequirementVersion newVersion = req.getCurrentVersion();
 		indexationService.reindexRequirementVersions(req.getRequirementVersions());
 		customFieldValueService.copyCustomFieldValues(previousVersion, newVersion);
 	}
-	
+
 
 	@Override
 	@PreAuthorize("hasPermission(#requirementId, 'org.squashtest.tm.domain.requirement.Requirement', 'WRITE') or hasRole('ROLE_ADMIN')")
@@ -97,5 +98,11 @@ public class CustomRequirementModificationServiceImpl implements CustomRequireme
 
 	}
 
-	
+
+	@Override
+	@PreAuthorize("hasPermission(#requirementId, 'org.squashtest.tm.domain.requirement.Requirement', 'WRITE') or hasRole('ROLE_ADMIN')")
+	public void changeCategory(long requirementId, String categoryCode) {
+		throw new NotImplementedException();
+	}
+
 }

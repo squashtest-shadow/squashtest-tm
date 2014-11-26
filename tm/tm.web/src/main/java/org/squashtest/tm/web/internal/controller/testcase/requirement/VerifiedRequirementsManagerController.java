@@ -306,7 +306,7 @@ public class VerifiedRequirementsManagerController {
 			res.put("versionNumber", item.getVersionNumber());
 			res.put("criticality",
 					internationalizationHelper.internationalize(item.getCriticality(), locale));
-			res.put("category", internationalizationHelper.internationalize(item.getCategory(), locale));
+			res.put("category", internationalizationHelper.getMessage(item.getCategory().getLabel(), null, item.getCategory().getLabel(), locale));
 			res.put("status", item.getStatus().toString());
 			res.put(DataTableModelConstants.DEFAULT_EMPTY_DELETE_HOLDER_KEY, " ");
 			return res;

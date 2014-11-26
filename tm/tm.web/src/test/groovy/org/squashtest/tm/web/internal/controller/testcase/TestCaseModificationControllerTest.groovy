@@ -29,6 +29,7 @@ import org.springframework.web.servlet.ModelAndView
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting
 import org.squashtest.tm.domain.audit.AuditableMixin;
+import org.squashtest.tm.domain.infolist.InfoListItem;
 import org.squashtest.tm.domain.testcase.ActionTestStep
 import org.squashtest.tm.domain.testcase.TestCase
 import org.squashtest.tm.domain.testcase.TestCaseImportance
@@ -160,11 +161,15 @@ class TestCaseModificationControllerTest extends Specification {
 	def "should return test case page fragment"() {
 		given:
 		TestCase tc = Mock()
+
 		tc.getId() >> 15l
 		List<ActionTestStep> steps = new ArrayList<ActionTestStep>();
 		tc.getSteps() >> steps
 		long tcId=15
 		testCaseModificationService.findById(tcId) >> tc
+
+		and :
+		enrichTC(tc)
 
 		when:
 		ModelAndView res = controller.showTestCase (tcId, null)
@@ -231,6 +236,7 @@ class TestCaseModificationControllerTest extends Specification {
 		testCaseModificationService.findTestCaseWithSteps(10) >> testCase
 
 		and:
+		enrichTC(testCase)
 		importanceComboBuilder.buildMarshalled() >> "akemashite omedet�"
 
 		when:
@@ -250,6 +256,7 @@ class TestCaseModificationControllerTest extends Specification {
 		testCaseModificationService.findTestCaseWithSteps(10) >> testCase
 
 		and:
+		enrichTC(testCase)
 		levelLabelFormatter.formatLabel(TestCaseImportance.HIGH) >> "takai"
 
 		when:
@@ -258,6 +265,20 @@ class TestCaseModificationControllerTest extends Specification {
 		then:
 		2 * levelLabelFormatter.useLocale(Locale.JAPANESE) >> levelLabelFormatter
 		mav.modelMap['testCaseImportanceLabel'] == "takai"
+	}
+
+
+	def enrichTC(tc){
+		InfoListItem nat = Mock()
+		nat.getCode() >> "NATURE"
+		nat.getLabel() >> "some nature"
+
+		InfoListItem typ = Mock()
+		typ.getCode() >> "TYPE"
+		typ.getLabel() >> "some type"
+
+		tc.getNature() >> nat
+		tc.getType() >> typ
 	}
 
 }

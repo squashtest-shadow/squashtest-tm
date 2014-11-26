@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.web.internal.model.json;
 
+import org.squashtest.tm.domain.infolist.InfoListItem;
 import org.squashtest.tm.domain.testcase.TestCaseType;
 
 /**
@@ -31,7 +32,7 @@ public class JsonTestCase {
 	private String uri;
 	private String ref;
 	private String name;
-	private JsonInternationalizableEnum<TestCaseType> type;
+	private JsonInternationalizableItem type;
 	private JsonProject project;
 
 	/**
@@ -97,7 +98,7 @@ public class JsonTestCase {
 	/**
 	 * @return the type
 	 */
-	public JsonInternationalizableEnum<TestCaseType> getType() {
+	public JsonInternationalizableItem getType() {
 		return type;
 	}
 
@@ -105,7 +106,7 @@ public class JsonTestCase {
 	 * @param type
 	 *            the type to set
 	 */
-	public void setType(JsonInternationalizableEnum<TestCaseType> type) {
+	public void setType(JsonInternationalizableItem type) {
 		this.type = type;
 	}
 

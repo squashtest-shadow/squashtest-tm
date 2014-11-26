@@ -24,9 +24,11 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.squashtest.tm.domain.customfield.CustomField;
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
 import org.squashtest.tm.domain.customfield.RawValue;
+import org.squashtest.tm.domain.infolist.InfoListItem;
 import org.squashtest.tm.domain.testautomation.AutomatedTest;
 import org.squashtest.tm.domain.testcase.ActionTestStep;
 import org.squashtest.tm.domain.testcase.TestStep;
@@ -136,4 +138,9 @@ public interface CustomTestCaseModificationService extends CustomTestCaseFinder 
 	 * @param testCaseId
 	 */
 	void removeAutomation(long testCaseId);
+
+	void changeNature(long testCaseId, String natureCode);
+
+	void changeType(long testCaseId, String natureCode);
+
 }

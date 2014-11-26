@@ -22,6 +22,8 @@ package org.squashtest.tm.service.requirement;
 
 import javax.validation.constraints.NotNull;
 
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.squashtest.tm.domain.infolist.InfoListItem;
 import org.squashtest.tm.domain.requirement.RequirementCriticality;
 
 /**
@@ -31,7 +33,7 @@ import org.squashtest.tm.domain.requirement.RequirementCriticality;
  * 
  */
 public interface CustomRequirementModificationService {
-	
+
 	void rename(long reqId, @NotNull String newName);
 
 	/**
@@ -42,12 +44,15 @@ public interface CustomRequirementModificationService {
 	void createNewVersion(long requirementId);
 	/**
 	 * will change the requirement criticality and update the importance of any associated TestCase with importanceAuto == true.<br>
-	 * (even through call steps) 
+	 * (even through call steps)
 	 *
 	 * @param requirementId
 	 * @param criticality
 	 */
 	void changeCriticality(long requirementId, @NotNull RequirementCriticality criticality);
-	
-	
+
+
+
+	void changeCategory(long requirementId, String categoryCode);
+
 }

@@ -47,6 +47,8 @@ import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.Level;
 import org.squashtest.tm.domain.event.RequirementAuditEvent;
+import org.squashtest.tm.domain.infolist.InfoListItem;
+import org.squashtest.tm.domain.infolist.TransientListItem;
 import org.squashtest.tm.domain.requirement.Requirement;
 import org.squashtest.tm.domain.requirement.RequirementCategory;
 import org.squashtest.tm.domain.requirement.RequirementCriticality;
@@ -209,11 +211,12 @@ public class RequirementModificationController {
 
 	@RequestMapping(method = RequestMethod.POST, params = { "id=requirement-category", VALUE })
 	@ResponseBody
-	public String changeCategory(@RequestParam(VALUE) String value, @PathVariable long requirementId, Locale locale) {
-		RequirementCategory category = RequirementCategory.valueOf(value);
-		requirementModService.changeCategory(requirementId, category);
-		LOGGER.debug("Requirement {} : requirement criticality changed, new value : {}", requirementId, category.name());
-		return formatCategory(category, locale, internationalizableFormatterProvider);
+	public String changeCategory(@RequestParam(VALUE) String code, @PathVariable long requirementId, Locale locale) {
+
+		requirementModService.changeCategory(requirementId, code);
+		LOGGER.debug("Requirement {} : requirement criticality changed, new value : {}", requirementId, code);
+
+		return formatCategory(new TransientListItem(code), locale); // this won't work, remember to fix that
 	}
 
 	@RequestMapping(method = RequestMethod.POST, params = { "id=requirement-status", VALUE })
@@ -305,8 +308,8 @@ public class RequirementModificationController {
 	 *            the locale with the chosen language
 	 * @return the category in the chosen language
 	 */
-	private static String formatCategory(RequirementCategory category, Locale locale, Provider<InternationalizableLabelFormatter> internationalizableFormatterProvider) {
-		return internationalizableFormatterProvider.get().useLocale(locale).formatLabel(category);
+	private String formatCategory(InfoListItem category, Locale locale) {
+		return i18nHelper.getMessage(category.getLabel(), null, category.getLabel(), locale);
 	}
 
 	private static String internationalize(Level level, Locale locale,
@@ -339,19 +342,19 @@ public class RequirementModificationController {
 
 		PagedCollectionHolder<List<RequirementVersion>> holder = versionFinder.findAllByRequirement(requirementId, pas);
 
-		return new RequirementVersionDataTableModel(locale, levelFormatterProvider, internationalizableFormatterProvider).buildDataModel(holder,
+		return new RequirementVersionDataTableModel(locale, levelFormatterProvider, i18nHelper).buildDataModel(holder,
 				params.getsEcho());
 	}
 
 	private static final class RequirementVersionDataTableModel extends DataTableModelBuilder<RequirementVersion> {
 		private Locale locale;
 		private Provider<LevelLabelFormatter> levelFormatterProvider;
-		private Provider<InternationalizableLabelFormatter> internationalizableFormatterProvider;
+		private InternationalizationHelper i18nHelper;
 
-		private RequirementVersionDataTableModel(Locale locale, Provider<LevelLabelFormatter> levelFormatterProvider, Provider<InternationalizableLabelFormatter> internationalizableFormatterProvider) {
+		private RequirementVersionDataTableModel(Locale locale, Provider<LevelLabelFormatter> levelFormatterProvider, InternationalizationHelper helper) {
 			this.locale = locale;
 			this.levelFormatterProvider = levelFormatterProvider;
-			this.internationalizableFormatterProvider = internationalizableFormatterProvider;
+			this.i18nHelper = helper;
 		}
 
 		@Override
@@ -365,7 +368,7 @@ public class RequirementModificationController {
 			row.put(DataTableModelConstants.DEFAULT_ENTITY_NAME_KEY, version.getName());
 			row.put("status", internationalize(version.getStatus(), locale, levelFormatterProvider));
 			row.put("criticality", internationalize(version.getCriticality(), locale, levelFormatterProvider));
-			row.put("category", formatCategory(version.getCategory(), locale, internationalizableFormatterProvider));
+			row.put("category", i18nHelper.getMessage(version.getCategory().getLabel(), null, version.getCategory().getLabel(), locale)  );
 
 			return row;
 

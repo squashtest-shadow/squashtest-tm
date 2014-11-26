@@ -26,7 +26,7 @@ import java.util.Map;
 import org.squashtest.tm.domain.customfield.RawValue;
 
 /**
- * Data holder for requirement version creation. We cannot use a requirement version because of its contrained
+ * Data holder for requirement version creation. We cannot use a requirement version because of its constrained
  * relationship with a requirement.
  * 
  * @author Gregory Fouquet
@@ -57,11 +57,11 @@ public class NewRequirementVersionDto {
 		this.criticality = criticality;
 	}
 
-	public Long getCategory() {
+	public String getCategory() {
 		return category;
 	}
 
-	public void setCategory(Long category) {
+	public void setCategory(String category) {
 		this.category = category;
 	}
 
@@ -92,7 +92,7 @@ public class NewRequirementVersionDto {
 	private RequirementCriticality criticality = RequirementCriticality.UNDEFINED;
 
 	/*@NotNull*/
-	private Long category;
+	private String category;
 
 	/*@Length(max=50)*/
 	private String reference;

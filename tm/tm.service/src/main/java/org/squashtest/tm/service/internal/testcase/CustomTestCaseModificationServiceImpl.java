@@ -33,6 +33,7 @@ import javax.inject.Named;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
+import org.apache.commons.lang.NotImplementedException;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -86,6 +87,7 @@ import org.squashtest.tm.service.testcase.TestCaseImportanceManagerService;
 @Service("CustomTestCaseModificationService")
 @Transactional
 public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModificationService {
+
 	private static final Logger LOGGER = LoggerFactory.getLogger(CustomTestCaseModificationServiceImpl.class);
 	private static final String WRITE_TC_OR_ROLE_ADMIN = "hasPermission(#testCaseId, 'org.squashtest.tm.domain.testcase.TestCase' , 'WRITE') or hasRole('ROLE_ADMIN')";
 
@@ -560,6 +562,18 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 			TestAutomationProject tap = (TestAutomationProject) object;
 			return (tap.getLabel().equals(label));
 		}
+	}
+
+	@Override
+	@PreAuthorize(WRITE_TC_OR_ROLE_ADMIN)
+	public void changeNature(long testCaseId, String natureCode) {
+		throw new NotImplementedException();
+	}
+
+	@Override
+	@PreAuthorize(WRITE_TC_OR_ROLE_ADMIN)
+	public void changeType(long testCaseId, String natureCode) {
+		throw new NotImplementedException();
 	}
 
 

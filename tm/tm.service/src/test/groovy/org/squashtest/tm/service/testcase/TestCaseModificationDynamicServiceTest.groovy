@@ -50,10 +50,6 @@ class TestCaseModificationDynamicServiceTest extends DynamicManagerInterfaceSpec
 		}, {
 			it.changeReference(10L, "ref")
 		}, {
-			it.changeNature(10L, new SystemListItem())
-		}, {
-			it.changeType(10L, new SystemListItem())
-		}, {
 			it.changeStatus(10L, TestCaseStatus.TO_BE_UPDATED)
 		}, {
 			it.changePrerequisite(10L, "prq")

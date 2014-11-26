@@ -53,7 +53,7 @@ public class RequirementFormModel {
 	private RequirementCriticality criticality;
 
 	/*@NotNull*/
-	private RequirementCategory category;
+	private String category;
 
 	private String reference;
 
@@ -92,12 +92,12 @@ public class RequirementFormModel {
 	}
 
 
-	public RequirementCategory getCategory() {
+	public String getCategory() {
 		return category;
 	}
 
 
-	public void setCategory(RequirementCategory category) {
+	public void setCategory(String category) {
 		this.category = category;
 	}
 

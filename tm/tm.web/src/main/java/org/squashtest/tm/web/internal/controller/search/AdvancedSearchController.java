@@ -52,6 +52,7 @@ import org.squashtest.tm.domain.customfield.CustomField;
 import org.squashtest.tm.domain.customfield.CustomFieldOption;
 import org.squashtest.tm.domain.customfield.MultiSelectField;
 import org.squashtest.tm.domain.customfield.SingleSelectField;
+import org.squashtest.tm.domain.infolist.InfoListItem;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.requirement.Requirement;
 import org.squashtest.tm.domain.requirement.RequirementCategory;
@@ -505,8 +506,10 @@ public class AdvancedSearchController {
 			return criticality.getLevel() + "-" + messageSource.internationalize(criticality, locale);
 		}
 
-		private String formatCategory(RequirementCategory category, Locale locale) {
-			return messageSource.internationalize(category, locale);
+
+
+		private String formatInfoItem(InfoListItem item, Locale locale) {
+			return messageSource.getMessage(item.getLabel(), null, item.getLabel(), locale);
 		}
 
 		private RequirementSearchResultDataTableModelHelper(Locale locale, InternationalizationHelper messageSource,
@@ -536,7 +539,7 @@ public class AdvancedSearchController {
 			res.put("requirement-label", item.getName());
 			res.put("editable", isRequirementVersionEditable(item));
 			res.put("requirement-criticality", formatCriticality(item.getCriticality(), locale));
-			res.put("requirement-category", formatCategory(item.getCategory(), locale));
+			res.put("requirement-category", formatInfoItem(item.getCategory(), locale));
 			res.put("requirement-status", formatStatus(item.getStatus(), locale));
 			res.put("requirement-version", item.getVersionNumber());
 			res.put("requirement-version-nb", item.getRequirement().getRequirementVersions().size());
@@ -619,8 +622,8 @@ public class AdvancedSearchController {
 			res.put("editable", isTestCaseEditable(item));
 			res.put("test-case-weight", formatImportance(item.getImportance(), locale));
 			res.put("test-case-weight-auto", item.getImportanceAuto());
-			res.put("test-case-nature", formatNature(item.getNature(), locale));
-			res.put("test-case-type", formatType(item.getType(), locale));
+			res.put("test-case-nature", formatInfoItem(item.getNature(), locale));
+			res.put("test-case-type", formatInfoItem(item.getType(), locale));
 			res.put("test-case-status", formatStatus(item.getStatus(), locale));
 			res.put("test-case-requirement-nb", item.getVerifiedRequirementVersions().size());
 			res.put("test-case-teststep-nb", item.getSteps().size());
@@ -631,6 +634,11 @@ public class AdvancedSearchController {
 			res.put("empty-openinterface2-holder", " ");
 			res.put("empty-opentree-holder", " ");
 			return res;
+		}
+
+
+		private String formatInfoItem(InfoListItem item, Locale locale) {
+			return messageSource.getMessage(item.getLabel(), null, item.getLabel(), locale);
 		}
 	}
 

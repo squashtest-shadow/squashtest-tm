@@ -21,6 +21,7 @@
 package org.squashtest.tm.web.internal.model.json
 
 import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory;
+import org.squashtest.tm.domain.infolist.TransientListItem;
 import org.squashtest.tm.domain.library.GenericLibraryNode;
 import org.squashtest.tm.domain.project.GenericProject;
 import org.squashtest.tm.domain.project.Project;
@@ -38,12 +39,12 @@ import spock.lang.Specification;
 class JsonTestCaseBuilderTest extends Specification {
 	InternationalizationHelper i18nHelper = Mock()
 	JsonTestCaseBuilder builder = new JsonTestCaseBuilder();
-	
+
 	def setup() {
 		builder.internationalizationHelper = i18nHelper;
-		i18nHelper.internationalize(_, _) >> "fancy name"
+		i18nHelper.getMessage(_, _, _, _) >> "UNDEFINEDEUU"
 	}
-	
+
 	def "should build json test case"() {
 		given:
 		Project p = new Project(name: "project")
@@ -51,7 +52,7 @@ class JsonTestCaseBuilderTest extends Specification {
 			GenericProject.set field: "id", of: p, to: 1L
 		}
 
-		TestCase tc = new TestCase(name: "foo", reference: "bar", type: TestCaseType.UNDEFINED);
+		TestCase tc = new TestCase(name: "foo", reference: "bar", type: new TransientListItem("UNDEFINED"));
 		use (ReflectionCategory) {
 			TestCaseLibraryNode.set field: "id", of: tc, to: 10000L
 			GenericLibraryNode.set field: "project", of: tc, to: p
@@ -67,7 +68,7 @@ class JsonTestCaseBuilderTest extends Specification {
 		res[0].name == "foo"
 		res[0].ref == "bar"
 		res[0].project.id == 1L
-		res[0].type.id == "UNDEFINED"
-		res[0].type.label == "fancy name"
+		res[0].type.value == "UNDEFINED"
+		res[0].type.label == "UNDEFINEDEUU"
 	}
 }

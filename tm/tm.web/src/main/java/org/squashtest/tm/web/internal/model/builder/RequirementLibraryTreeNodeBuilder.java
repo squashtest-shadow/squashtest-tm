@@ -72,7 +72,7 @@ public class RequirementLibraryTreeNodeBuilder extends LibraryTreeNodeBuilder<Re
 
 			State state = (requirement.hasContent() ? State.closed : State.leaf);
 			builtNode.setState(state);
-			builtNode.addAttr("category", requirement.getCategory().toString().toLowerCase());
+			builtNode.addAttr("category", requirement.getCategory().getCode().toLowerCase());
 
 			if (requirement.getReference() != null && requirement.getReference().length() > 0) {
 				builtNode.setTitle(requirement.getReference() + " - " + requirement.getName());
@@ -106,10 +106,10 @@ public class RequirementLibraryTreeNodeBuilder extends LibraryTreeNodeBuilder<Re
 
 		if (container.hasContent()) {
 			builtNode.setState(State.open);
-			
+
 			RequirementLibraryTreeNodeBuilder childrenBuilder = new RequirementLibraryTreeNodeBuilder(permissionEvaluationService);
 			Collection<RequirementLibraryNode<?>> content = (Collection<RequirementLibraryNode<?>>) container.getOrderedContent();
-			
+
 			List<JsTreeNode> children = new JsTreeNodeListBuilder<RequirementLibraryNode<?>>(childrenBuilder)
 					.expand(getExpansionCandidates())
 					.setModel(content)

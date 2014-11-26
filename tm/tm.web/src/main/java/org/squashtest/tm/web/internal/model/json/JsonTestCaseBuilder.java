@@ -30,6 +30,7 @@ import javax.validation.constraints.NotNull;
 
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
+import org.squashtest.tm.domain.infolist.InfoListItem;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseType;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
@@ -102,10 +103,10 @@ public class JsonTestCaseBuilder {
 	 * @param type
 	 * @return
 	 */
-	private JsonInternationalizableEnum<TestCaseType> buildType(TestCaseType type) {
-		JsonInternationalizableEnum<TestCaseType> res = new JsonInternationalizableEnum<TestCaseType>();
-		res.setValue(type);
-		res.setLabel(internationalizationHelper.internationalize(type, locale));
+	private JsonInternationalizableItem buildType(InfoListItem type) {
+		JsonInternationalizableItem res = new JsonInternationalizableItem();
+		res.setValue(type.getCode());
+		res.setLabel(internationalizationHelper.getMessage(type.getLabel(),null, type.getLabel(), locale));
 		return res;
 	}
 }

@@ -23,12 +23,9 @@ package org.squashtest.tm.service.testcase;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.core.dynamicmanager.annotation.DynamicManager;
-import org.squashtest.tm.domain.infolist.InfoListItem;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseImportance;
-import org.squashtest.tm.domain.testcase.TestCaseNature;
 import org.squashtest.tm.domain.testcase.TestCaseStatus;
-import org.squashtest.tm.domain.testcase.TestCaseType;
 
 @Transactional
 @DynamicManager(name="squashtest.tm.service.TestCaseModificationService", entity = TestCase.class)
@@ -46,12 +43,6 @@ public interface TestCaseModificationService extends CustomTestCaseModificationS
 
 	@PreAuthorize(TEST_CASE_IS_WRITABLE)
 	void changeImportance(long testCaseId, TestCaseImportance importance);
-
-	@PreAuthorize(TEST_CASE_IS_WRITABLE)
-	void changeNature(long testCaseId, InfoListItem nature);
-
-	@PreAuthorize(TEST_CASE_IS_WRITABLE)
-	void changeType(long testCaseId, InfoListItem type);
 
 	@PreAuthorize(TEST_CASE_IS_WRITABLE)
 	void changeStatus(long testCaseId, TestCaseStatus status);

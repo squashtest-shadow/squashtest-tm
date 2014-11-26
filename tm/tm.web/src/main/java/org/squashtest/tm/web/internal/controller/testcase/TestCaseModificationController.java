@@ -63,6 +63,8 @@ import org.squashtest.tm.domain.customfield.CustomField;
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
 import org.squashtest.tm.domain.customfield.RenderingLocation;
 import org.squashtest.tm.domain.execution.Execution;
+import org.squashtest.tm.domain.infolist.InfoListItem;
+import org.squashtest.tm.domain.infolist.TransientListItem;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.testcase.ActionTestStep;
 import org.squashtest.tm.domain.testcase.CallTestStep;
@@ -241,9 +243,9 @@ public class TestCaseModificationController {
 		mav.addObject("testCaseImportanceComboJson", buildImportanceComboData(locale));
 		mav.addObject("testCaseImportanceLabel", formatImportance(testCase.getImportance(), locale));
 		mav.addObject("testCaseNatureComboJson", buildNatureComboData(locale));
-		mav.addObject("testCaseNatureLabel", formatNature(testCase.getNature(), locale));
+		mav.addObject("testCaseNatureLabel", formatInfoItem(testCase.getNature(), locale));
 		mav.addObject("testCaseTypeComboJson", buildTypeComboData(locale));
-		mav.addObject("testCaseTypeLabel", formatType(testCase.getType(), locale));
+		mav.addObject("testCaseTypeLabel", formatInfoItem(testCase.getType(), locale));
 		mav.addObject("testCaseStatusComboJson", buildStatusComboData(locale));
 		mav.addObject("testCaseStatusLabel", formatStatus(testCase.getStatus(), locale));
 		mav.addObject("attachmentsModel", attachmentHelper.findPagedAttachments(testCase));
@@ -314,10 +316,12 @@ public class TestCaseModificationController {
 
 	@ResponseBody
 	@RequestMapping(method = RequestMethod.POST, params = { "id=test-case-nature", VALUE })
-	public String changeNature(@PathVariable long testCaseId, @RequestParam(VALUE) TestCaseNature nature, Locale locale) {
+	public String changeNature(@PathVariable long testCaseId, @RequestParam(VALUE) String nature, Locale locale) {
+
 		testCaseModificationService.changeNature(testCaseId, nature);
 
-		return formatNature(nature, locale);
+		// the line below will break at runtime. We need to look up the item by code before we can i18n it
+		return formatInfoItem(new TransientListItem(nature), locale);
 	}
 
 	@RequestMapping(method = RequestMethod.POST, params = { "id=test-case-newname", VALUE})
@@ -333,10 +337,12 @@ public class TestCaseModificationController {
 
 	@ResponseBody
 	@RequestMapping(method = RequestMethod.POST, params = { "id=test-case-type", VALUE })
-	public String changeType(@PathVariable long testCaseId, @RequestParam(VALUE) TestCaseType type, Locale locale) {
+	public String changeType(@PathVariable long testCaseId, @RequestParam(VALUE) String type, Locale locale) {
+
 		testCaseModificationService.changeType(testCaseId, type);
 
-		return formatType(type, locale);
+		// the line below will break at runtime. We need to look up the item by code before we can i18n it
+		return formatInfoItem(new TransientListItem(type), locale);
 	}
 
 	@ResponseBody
@@ -393,16 +399,16 @@ public class TestCaseModificationController {
 	@RequestMapping(value = "/nature", method = RequestMethod.GET)
 	public String getNature(@PathVariable long testCaseId, Locale locale) {
 		TestCase testCase = testCaseModificationService.findById(testCaseId);
-		TestCaseNature nature = testCase.getNature();
-		return formatNature(nature, locale);
+		InfoListItem nature = testCase.getNature();
+		return formatInfoItem(nature, locale);
 	}
 
 	@ResponseBody
 	@RequestMapping(value = "/type", method = RequestMethod.GET)
 	public String getType(@PathVariable long testCaseId, Locale locale) {
 		TestCase testCase = testCaseModificationService.findById(testCaseId);
-		TestCaseType type = testCase.getType();
-		return formatType(type, locale);
+		InfoListItem type = testCase.getType();
+		return formatInfoItem(type, locale);
 	}
 
 	@ResponseBody
@@ -417,12 +423,8 @@ public class TestCaseModificationController {
 		return levelLabelFormatterProvider.get().useLocale(locale).formatLabel(importance);
 	}
 
-	private String formatNature(TestCaseNature nature, Locale locale) {
-		return labelFormatter.get().useLocale(locale).formatLabel(nature);
-	}
-
-	private String formatType(TestCaseType type, Locale locale) {
-		return labelFormatter.get().useLocale(locale).formatLabel(type);
+	private String formatInfoItem(InfoListItem nature, Locale locale) {
+		return  internationalizationHelper.getMessage(nature.getLabel(), null, nature.getLabel(), locale);
 	}
 
 	private String formatStatus(TestCaseStatus status, Locale locale) {
