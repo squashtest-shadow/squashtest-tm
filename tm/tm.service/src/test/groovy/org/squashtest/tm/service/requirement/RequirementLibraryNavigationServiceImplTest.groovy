@@ -27,6 +27,7 @@ import org.squashtest.tm.domain.requirement.Requirement
 import org.squashtest.tm.domain.requirement.RequirementFolder
 import org.squashtest.tm.domain.requirement.RequirementLibrary
 import org.squashtest.tm.exception.DuplicateNameException
+import org.squashtest.tm.service.infolist.InfoListItemFinderService;
 import org.squashtest.tm.service.internal.customfield.PrivateCustomFieldValueService
 import org.squashtest.tm.service.internal.library.AbstractLibraryNavigationService;
 import org.squashtest.tm.service.internal.repository.RequirementDao
@@ -35,10 +36,12 @@ import org.squashtest.tm.service.internal.repository.RequirementLibraryDao
 import org.squashtest.tm.service.internal.requirement.RequirementLibraryNavigationServiceImpl
 import org.squashtest.tm.service.project.ProjectFilterModificationService
 import org.squashtest.tm.service.security.PermissionEvaluationService
+import org.squashtest.tm.service.testutils.MockFactory;
 
 import spock.lang.Specification
 
 class RequirementLibraryNavigationServiceImplTest extends Specification {
+
 	RequirementLibraryNavigationServiceImpl service = new RequirementLibraryNavigationServiceImpl()
 	RequirementLibraryDao requirementLibraryDao = Mock()
 	RequirementFolderDao requirementFolderDao = Mock()
@@ -46,26 +49,30 @@ class RequirementLibraryNavigationServiceImplTest extends Specification {
 	PermissionEvaluationService permissionService = Mock()
 	ProjectFilterModificationService projectFilterModificationService = Mock()
 	PrivateCustomFieldValueService customFieldValueManager = Mock()
+	InfoListItemFinderService infoListItemService = Mock()
+
+	MockFactory mockFactory = new MockFactory();
 
 	def setup() {
-		NewRequirementVersionDto.metaClass.sameAs = { 
-			it.name == delegate.name && 
-			it.description == delegate.description && 
-			it.criticality &&
-			it.reference == delegate.reference
+		NewRequirementVersionDto.metaClass.sameAs = {
+			it.name == delegate.name &&
+					it.description == delegate.description &&
+					it.criticality &&
+					it.reference == delegate.reference
 		}
-		
+
 		service.requirementLibraryDao = requirementLibraryDao
 		service.requirementFolderDao = requirementFolderDao
 		service.requirementDao = requirementDao
 		service.projectFilterModificationService = projectFilterModificationService
 		permissionService.hasRoleOrPermissionOnObject(_, _, _) >> true
-		
+		service.infoListItemService = infoListItemService
+
 		use (ReflectionCategory) {
 			AbstractLibraryNavigationService.set(field: "permissionService", of: service, to: permissionService)
 			AbstractLibraryNavigationService.set(field: "customFieldValuesService", of: service, to: customFieldValueManager)
 		}
-		
+
 		customFieldValueManager.findAllCustomFieldValues(_) >> []
 		customFieldValueManager.findAllCustomFieldValues(_, _) >> []
 	}
@@ -116,17 +123,21 @@ class RequirementLibraryNavigationServiceImplTest extends Specification {
 
 		given :
 		RequirementLibrary lib = Mock(RequirementLibrary)
+		def proj =  mockFactory.mockProject()
 		requirementLibraryDao.findById(1) >> lib
-		
+
 		and:
 		def req = new NewRequirementVersionDto(name:"name", description: "desc", reference: "ref")
 		lib.isContentNameAvailable(req.name) >> true
-		
+
 		when :
 		def res = service.addRequirementToRequirementLibrary(1, req)
 
 		then :
-		1 * lib.addContent({ req.sameAs it.currentVersion })
+		1 * lib.addContent({
+			it.notifyAssociatedWithProject(proj);
+			req.sameAs it.currentVersion
+		})
 		1 * requirementDao.persist ({ req.sameAs it.currentVersion })
 		req.sameAs res
 	}
@@ -136,9 +147,10 @@ class RequirementLibraryNavigationServiceImplTest extends Specification {
 
 		given :
 		RequirementFolder folder = Mock(RequirementFolder)
+		def proj =  mockFactory.mockProject()
 		requirementFolderDao.findById(1) >> folder
-		
-		and: 
+
+		and:
 		def req = new NewRequirementVersionDto(name:"name")
 		folder.isContentNameAvailable(req.name) >> true
 
@@ -146,7 +158,10 @@ class RequirementLibraryNavigationServiceImplTest extends Specification {
 		def res = service.addRequirementToRequirementFolder(1, req)
 
 		then :
-		1 * folder.addContent({ req.sameAs it.currentVersion })
+		1 * folder.addContent({
+			it.notifyAssociatedWithProject(proj);
+			req.sameAs it.currentVersion
+		})
 		1 * requirementDao.persist ({ req.sameAs it.currentVersion })
 		req.sameAs res
 	}
@@ -156,7 +171,7 @@ class RequirementLibraryNavigationServiceImplTest extends Specification {
 		RequirementLibrary lib = Mock(RequirementLibrary)
 		requirementLibraryDao.findById(1) >> lib
 
-		and: 
+		and:
 		def req = new NewRequirementVersionDto(name:"name")
 		lib.isContentNameAvailable(req.name) >> false
 
@@ -165,7 +180,7 @@ class RequirementLibraryNavigationServiceImplTest extends Specification {
 
 		then :
 		thrown(DuplicateNameException)
-		
+
 	}
 
 	def "should find library"() {
@@ -179,7 +194,7 @@ class RequirementLibraryNavigationServiceImplTest extends Specification {
 		then:
 		found == l
 	}
-	
+
 	def "should find libraries of linkable requirements"() {
 		given:
 		RequirementLibrary lib = Mock()
@@ -190,7 +205,7 @@ class RequirementLibraryNavigationServiceImplTest extends Specification {
 
 		when:
 		def res =
-		service.findLinkableRequirementLibraries()
+				service.findLinkableRequirementLibraries()
 
 		then:
 		res == [lib]

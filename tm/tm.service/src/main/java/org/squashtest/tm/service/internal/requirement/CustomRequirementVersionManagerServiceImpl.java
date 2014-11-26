@@ -32,8 +32,12 @@ import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.PagingBackedPagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.SortOrder;
+import org.squashtest.tm.domain.infolist.InfoListItem;
+import org.squashtest.tm.domain.requirement.RequirementCategory;
 import org.squashtest.tm.domain.requirement.RequirementCriticality;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
+import org.squashtest.tm.service.infolist.InfoListItemFinderService;
+import org.squashtest.tm.service.infolist.InfoListItemManagerService;
 import org.squashtest.tm.service.internal.repository.RequirementVersionDao;
 import org.squashtest.tm.service.requirement.CustomRequirementVersionManagerService;
 import org.squashtest.tm.service.testcase.TestCaseImportanceManagerService;
@@ -48,8 +52,12 @@ public class CustomRequirementVersionManagerServiceImpl implements CustomRequire
 
 	@Inject
 	private RequirementVersionDao requirementVersionDao;
+
 	@Inject
 	private TestCaseImportanceManagerService testCaseImportanceManagerService;
+
+	@Inject
+	private InfoListItemFinderService infoListItemService;
 
 	/**
 	 * @see org.squashtest.tm.service.requirement.CustomRequirementVersionManagerService#changeCriticality(long,
@@ -86,5 +94,12 @@ public class CustomRequirementVersionManagerServiceImpl implements CustomRequire
 		return findAllByRequirement(requirementId, pas).getPagedItems();
 	}
 
+	@PreAuthorize("hasPermission(#requirementVersionId, 'org.squashtest.tm.domain.requirement.RequirementVersion', 'WRITE') or hasRole('ROLE_ADMIN')")
+	public void changeCategory(long requirementVersionId, String categoryCode){
+		RequirementVersion version = requirementVersionDao.findById(requirementVersionId);
+		InfoListItem category = infoListItemService.findByCode(categoryCode);
+
+		version.setCategory(category);
+	}
 
 }

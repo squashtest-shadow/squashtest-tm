@@ -18,24 +18,8 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.internal.batchimport.excel;
+package org.squashtest.tm.service.infolist;
 
-import org.apache.poi.ss.usermodel.Cell;
-import org.squashtest.tm.domain.infolist.InfoListItem;
-import org.squashtest.tm.domain.infolist.ListItemReference;
+public interface DenormalizedInfoListItemManagerService extends DenormalizedInfoListItemFinderService{
 
-public final class InfoListItemCoercer<T extends InfoListItem>
-extends TypeBasedCellValueCoercer<T >
-implements CellValueCoercer<T> {
-
-
-	@Override
-	protected T coerceStringCell(Cell cell) {
-		return (T) new ListItemReference(cell.getStringCellValue());
-	}
-
-	@Override
-	protected T coerceBlankCell(Cell cell) {
-		return null;
-	}
 }

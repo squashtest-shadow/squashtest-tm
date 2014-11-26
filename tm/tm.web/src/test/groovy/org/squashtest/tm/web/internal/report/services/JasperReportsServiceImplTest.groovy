@@ -24,7 +24,7 @@ import java.text.SimpleDateFormat;
 
 import org.apache.poi.hssf.record.formula.functions.T
 import org.squashtest.tm.domain.infolist.InfoListItem;
-import org.squashtest.tm.domain.infolist.TransientListItem;
+import org.squashtest.tm.domain.infolist.ListItemReference;
 import org.squashtest.tm.domain.requirement.ExportRequirementData
 import org.squashtest.tm.domain.requirement.RequirementCategory
 import org.squashtest.tm.domain.requirement.RequirementCriticality
@@ -56,7 +56,7 @@ public class JasperReportsServiceImplTest extends Specification {
 				"uprate",
 				"<p>the rate in the up stance is 100</p>",
 				RequirementCriticality.MAJOR,
-				new TransientListItem("HITECH"),
+				new ListItemReference("HITECH"),
 				RequirementStatus.APPROVED)
 
 		def data2 = generateExportData("/project/folder",
@@ -67,7 +67,7 @@ public class JasperReportsServiceImplTest extends Specification {
 				"downrate",
 				"<p>the rate in the down stance is 30</p>",
 				RequirementCriticality.UNDEFINED,
-				new TransientListItem("LOTECH"),
+				new ListItemReference("LOTECH"),
 				RequirementStatus.UNDER_REVIEW)
 
 		def data3 = generateExportData("/project/folder",
@@ -78,7 +78,7 @@ public class JasperReportsServiceImplTest extends Specification {
 				"stdrate",
 				"<p>the rate in the normal stance is 55</p>",
 				RequirementCriticality.CRITICAL,
-				new TransientListItem("CURTECH"),
+				new ListItemReference("CURTECH"),
 				RequirementStatus.APPROVED)
 
 

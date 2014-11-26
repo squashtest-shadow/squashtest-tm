@@ -18,24 +18,42 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.internal.batchimport.excel;
+package org.squashtest.tm.domain.infolist;
 
-import org.apache.poi.ss.usermodel.Cell;
-import org.squashtest.tm.domain.infolist.InfoListItem;
-import org.squashtest.tm.domain.infolist.ListItemReference;
+/**
+ * Instances of such classes are not meant to be persisted.
+ * They merely hold a code, that should be looked up. The real instance
+ * should then be used instead of that reference
+ * 
+ * @author bsiri
+ *
+ */
+public class ListItemReference extends InfoListItem {
 
-public final class InfoListItemCoercer<T extends InfoListItem>
-extends TypeBasedCellValueCoercer<T >
-implements CellValueCoercer<T> {
+	public ListItemReference(){
+		super();
+	}
 
-
-	@Override
-	protected T coerceStringCell(Cell cell) {
-		return (T) new ListItemReference(cell.getStringCellValue());
+	public ListItemReference(String code){
+		super();
+		setCode(code);
 	}
 
 	@Override
-	protected T coerceBlankCell(Cell cell) {
-		return null;
+	public boolean equals(Object other){
+		if (other == null){
+			return false;
+		}
+
+		if (InfoListItem.class.isAssignableFrom(other.getClass())){
+
+			return ((ListItemReference)other).getCode().equals(getCode());
+		}
+		else{
+			return false;
+		}
+
 	}
+
+
 }

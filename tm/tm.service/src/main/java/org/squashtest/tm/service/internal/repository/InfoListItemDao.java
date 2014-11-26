@@ -18,24 +18,15 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.internal.batchimport.excel;
+package org.squashtest.tm.service.internal.repository;
 
-import org.apache.poi.ss.usermodel.Cell;
 import org.squashtest.tm.domain.infolist.InfoListItem;
 import org.squashtest.tm.domain.infolist.ListItemReference;
 
-public final class InfoListItemCoercer<T extends InfoListItem>
-extends TypeBasedCellValueCoercer<T >
-implements CellValueCoercer<T> {
+public interface InfoListItemDao extends EntityDao<InfoListItem>{
 
+	InfoListItem findByCode(String code);
 
-	@Override
-	protected T coerceStringCell(Cell cell) {
-		return (T) new ListItemReference(cell.getStringCellValue());
-	}
+	InfoListItem findReference(ListItemReference reference);
 
-	@Override
-	protected T coerceBlankCell(Cell cell) {
-		return null;
-	}
 }

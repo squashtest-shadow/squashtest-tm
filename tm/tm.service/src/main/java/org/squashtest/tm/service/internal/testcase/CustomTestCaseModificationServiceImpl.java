@@ -52,6 +52,7 @@ import org.squashtest.tm.core.foundation.lang.PathUtils;
 import org.squashtest.tm.domain.customfield.BoundEntity;
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
 import org.squashtest.tm.domain.customfield.RawValue;
+import org.squashtest.tm.domain.infolist.InfoListItem;
 import org.squashtest.tm.domain.project.GenericProject;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.testautomation.AutomatedTest;
@@ -67,6 +68,7 @@ import org.squashtest.tm.domain.testcase.TestStepVisitor;
 import org.squashtest.tm.exception.DuplicateNameException;
 import org.squashtest.tm.exception.UnallowedTestAssociationException;
 import org.squashtest.tm.exception.testautomation.MalformedScriptPathException;
+import org.squashtest.tm.service.infolist.InfoListItemFinderService;
 import org.squashtest.tm.service.internal.customfield.PrivateCustomFieldValueService;
 import org.squashtest.tm.service.internal.library.NodeManagementService;
 import org.squashtest.tm.service.internal.repository.ActionTestStepDao;
@@ -128,6 +130,9 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 
 	@Inject
 	private ParameterModificationService parameterModificationService;
+
+	@Inject
+	private InfoListItemFinderService infoListItemService;
 
 	/* *************** TestCase section ***************************** */
 
@@ -567,13 +572,19 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	@Override
 	@PreAuthorize(WRITE_TC_OR_ROLE_ADMIN)
 	public void changeNature(long testCaseId, String natureCode) {
-		throw new NotImplementedException();
+		TestCase testCase = testCaseDao.findById(testCaseId);
+		InfoListItem nature = infoListItemService.findByCode(natureCode);
+
+		testCase.setNature(nature);
 	}
 
 	@Override
 	@PreAuthorize(WRITE_TC_OR_ROLE_ADMIN)
-	public void changeType(long testCaseId, String natureCode) {
-		throw new NotImplementedException();
+	public void changeType(long testCaseId, String typeCode) {
+		TestCase testCase = testCaseDao.findById(testCaseId);
+		InfoListItem type = infoListItemService.findByCode(typeCode);
+
+		testCase.setType(type);
 	}
 
 

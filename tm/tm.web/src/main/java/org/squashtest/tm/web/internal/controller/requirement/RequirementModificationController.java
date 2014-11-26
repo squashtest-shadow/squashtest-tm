@@ -48,7 +48,7 @@ import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.Level;
 import org.squashtest.tm.domain.event.RequirementAuditEvent;
 import org.squashtest.tm.domain.infolist.InfoListItem;
-import org.squashtest.tm.domain.infolist.TransientListItem;
+import org.squashtest.tm.domain.infolist.ListItemReference;
 import org.squashtest.tm.domain.requirement.Requirement;
 import org.squashtest.tm.domain.requirement.RequirementCategory;
 import org.squashtest.tm.domain.requirement.RequirementCriticality;
@@ -216,7 +216,7 @@ public class RequirementModificationController {
 		requirementModService.changeCategory(requirementId, code);
 		LOGGER.debug("Requirement {} : requirement criticality changed, new value : {}", requirementId, code);
 
-		return formatCategory(new TransientListItem(code), locale); // this won't work, remember to fix that
+		return formatCategory(new ListItemReference(code), locale); // this won't work, remember to fix that
 	}
 
 	@RequestMapping(method = RequestMethod.POST, params = { "id=requirement-status", VALUE })

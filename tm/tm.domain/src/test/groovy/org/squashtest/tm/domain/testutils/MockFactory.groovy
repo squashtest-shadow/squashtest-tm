@@ -22,7 +22,7 @@ package org.squashtest.tm.domain.testutils
 
 import org.squashtest.tm.domain.infolist.InfoList
 import org.squashtest.tm.domain.infolist.InfoListItem
-import org.squashtest.tm.domain.infolist.TransientListItem
+import org.squashtest.tm.domain.infolist.ListItemReference
 import org.squashtest.tm.domain.project.Project
 
 import spock.lang.Specification;
@@ -34,17 +34,17 @@ class MockFactory extends Specification {
 		Project p = Mock();
 
 		InfoList natures = new InfoList()
-		InfoListItem nat = new 	TransientListItem()
+		InfoListItem nat = new 	ListItemReference()
 		nat.setDefault(true)
 		natures.items << nat
 
 		InfoList types = new InfoList()
-		InfoListItem typ = new 	TransientListItem()
+		InfoListItem typ = new 	ListItemReference()
 		typ.setDefault(true)
 		types.items << typ
 
 		InfoList categories = new InfoList()
-		InfoListItem cat = new TransientListItem();
+		InfoListItem cat = new ListItemReference();
 		cat.setDefault(true)
 		categories.items << cat
 

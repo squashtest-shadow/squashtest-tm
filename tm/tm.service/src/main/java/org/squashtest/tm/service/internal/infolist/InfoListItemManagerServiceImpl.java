@@ -18,24 +18,39 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.internal.batchimport.excel;
+package org.squashtest.tm.service.internal.infolist;
 
-import org.apache.poi.ss.usermodel.Cell;
+import javax.inject.Inject;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.infolist.InfoListItem;
 import org.squashtest.tm.domain.infolist.ListItemReference;
+import org.squashtest.tm.service.infolist.InfoListItemManagerService;
+import org.squashtest.tm.service.internal.repository.InfoListItemDao;
 
-public final class InfoListItemCoercer<T extends InfoListItem>
-extends TypeBasedCellValueCoercer<T >
-implements CellValueCoercer<T> {
+@Transactional
+@Service("InfoListItemManagerServiceImpl")
+public class InfoListItemManagerServiceImpl implements InfoListItemManagerService {
 
+	@Inject
+	private InfoListItemDao itemDao;
+
+	// ************* "Finder" methods **************** \\
 
 	@Override
-	protected T coerceStringCell(Cell cell) {
-		return (T) new ListItemReference(cell.getStringCellValue());
+	public InfoListItem findById(Long id){
+		return itemDao.findById(id);
 	}
 
 	@Override
-	protected T coerceBlankCell(Cell cell) {
-		return null;
+	public InfoListItem findByCode(String code){
+		return itemDao.findByCode(code);
 	}
+
+	@Override
+	public InfoListItem findReference(ListItemReference reference){
+		return itemDao.findReference(reference);
+	}
+
 }

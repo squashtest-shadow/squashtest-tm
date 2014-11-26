@@ -27,6 +27,7 @@ import javax.validation.constraints.NotNull;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
+import org.squashtest.tm.domain.requirement.RequirementCategory;
 import org.squashtest.tm.domain.requirement.RequirementCriticality;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 
@@ -46,7 +47,9 @@ public interface CustomRequirementVersionManagerService {
 	 * @param criticality
 	 */
 	void changeCriticality(long requirementVersionId, @NotNull RequirementCriticality criticality);
-	
+
+	void changeCategory(long requirementVersionId, String categoryCode);
+
 	/**
 	 * Fetches the paged, sorted collection of versions for the given requirement.
 	 *
@@ -57,13 +60,13 @@ public interface CustomRequirementVersionManagerService {
 	@Transactional(readOnly = true)
 	PagedCollectionHolder<List<RequirementVersion>> findAllByRequirement(long requirementId,
 			@NotNull PagingAndSorting pas);
-	
+
 	/**
 	 * Fetches all versions for the given requirement
 	 * @param id
 	 * @return
 	 */
 	@Transactional(readOnly=true)
-	List<RequirementVersion> findAllByRequirement(long requirementId);	
+	List<RequirementVersion> findAllByRequirement(long requirementId);
 
 }

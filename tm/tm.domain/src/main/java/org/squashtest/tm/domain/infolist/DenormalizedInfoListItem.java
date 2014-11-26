@@ -105,9 +105,10 @@ public abstract class DenormalizedInfoListItem {
 		this.iconName = iconName;
 	}
 
-	public void setId(Long id) {
-		this.id = id;
+	public Long getId() {
+		return id;
 	}
+
 
 
 

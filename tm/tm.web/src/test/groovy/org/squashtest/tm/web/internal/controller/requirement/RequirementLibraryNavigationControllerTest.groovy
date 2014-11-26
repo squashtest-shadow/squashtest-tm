@@ -24,7 +24,7 @@ import javax.inject.Provider
 
 import org.springframework.context.MessageSource;
 import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory
-import org.squashtest.tm.domain.infolist.TransientListItem;
+import org.squashtest.tm.domain.infolist.ListItemReference;
 import org.squashtest.tm.domain.requirement.NewRequirementVersionDto
 import org.squashtest.tm.domain.requirement.Requirement
 import org.squashtest.tm.domain.requirement.RequirementCategory;
@@ -103,7 +103,7 @@ class RequirementLibraryNavigationControllerTest  extends Specification {
 				criticality : RequirementCriticality.MAJOR,
 				category : RequirementCategory.PERFORMANCE,
 				customFields : [:])
-		Requirement req = new Requirement(new RequirementVersion(name: "new req", category : new TransientListItem("whatever")))
+		Requirement req = new Requirement(new RequirementVersion(name: "new req", category : new ListItemReference("whatever")))
 		use (ReflectionCategory) {
 			RequirementLibraryNode.set field: "id", of: req, to: 100L
 		}

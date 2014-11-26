@@ -23,7 +23,7 @@ package org.squashtest.tm.web.internal.model.builder;
 import org.apache.commons.collections.MultiMap;
 import org.apache.commons.collections.map.MultiValueMap;
 import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory
-import org.squashtest.tm.domain.infolist.TransientListItem;
+import org.squashtest.tm.domain.infolist.ListItemReference;
 import org.squashtest.tm.domain.requirement.Requirement
 import org.squashtest.tm.domain.requirement.RequirementFolder
 import org.squashtest.tm.domain.requirement.RequirementLibraryNode
@@ -58,7 +58,7 @@ class RequirementLibraryTreeNodeBuilderTest extends Specification {
 	}
 	def "should build a Requirement node"() {
 		given:
-		RequirementVersion version = new RequirementVersion(name: "r", reference: "ref", category : new TransientListItem("RANDOM_CATEGORY"))
+		RequirementVersion version = new RequirementVersion(name: "r", reference: "ref", category : new ListItemReference("RANDOM_CATEGORY"))
 		Requirement node  = new Requirement(version)
 
 		use (ReflectionCategory) {

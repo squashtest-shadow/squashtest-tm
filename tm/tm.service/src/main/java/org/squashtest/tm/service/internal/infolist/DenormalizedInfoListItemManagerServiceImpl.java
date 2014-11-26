@@ -18,24 +18,36 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.internal.batchimport.excel;
+package org.squashtest.tm.service.internal.infolist;
 
-import org.apache.poi.ss.usermodel.Cell;
+import javax.inject.Inject;
+
+import org.squashtest.tm.domain.infolist.DenormalizedInfoListItem;
+import org.squashtest.tm.domain.infolist.DenormalizedListItemReference;
 import org.squashtest.tm.domain.infolist.InfoListItem;
-import org.squashtest.tm.domain.infolist.ListItemReference;
+import org.squashtest.tm.service.infolist.DenormalizedInfoListItemManagerService;
+import org.squashtest.tm.service.internal.repository.DenormalizedInfoListItemDao;
 
-public final class InfoListItemCoercer<T extends InfoListItem>
-extends TypeBasedCellValueCoercer<T >
-implements CellValueCoercer<T> {
+public class DenormalizedInfoListItemManagerServiceImpl implements DenormalizedInfoListItemManagerService{
 
+	@Inject
+	private DenormalizedInfoListItemDao itemDao;
 
 	@Override
-	protected T coerceStringCell(Cell cell) {
-		return (T) new ListItemReference(cell.getStringCellValue());
+	public DenormalizedInfoListItem findById(Long id) {
+		return itemDao.findById(id);
 	}
 
 	@Override
-	protected T coerceBlankCell(Cell cell) {
-		return null;
+	public DenormalizedInfoListItem findByReference(InfoListItem item) {
+		return itemDao.findByReference(item);
 	}
+
+	@Override
+	public DenormalizedInfoListItem findByReference(DenormalizedListItemReference reference) {
+		return itemDao.findByReference(reference);
+	}
+
+
+
 }

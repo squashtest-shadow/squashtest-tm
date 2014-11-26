@@ -38,6 +38,8 @@ import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.squashtest.tm.domain.infolist.InfoListItem;
+import org.squashtest.tm.domain.infolist.ListItemReference;
 import org.squashtest.tm.domain.projectfilter.ProjectFilter;
 import org.squashtest.tm.domain.requirement.ExportRequirementData;
 import org.squashtest.tm.domain.requirement.NewRequirementVersionDto;
@@ -45,6 +47,7 @@ import org.squashtest.tm.domain.requirement.Requirement;
 import org.squashtest.tm.domain.requirement.RequirementFolder;
 import org.squashtest.tm.domain.requirement.RequirementLibrary;
 import org.squashtest.tm.domain.requirement.RequirementLibraryNode;
+import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.exception.DuplicateNameException;
 import org.squashtest.tm.exception.library.NameAlreadyExistsAtDestinationException;
 import org.squashtest.tm.exception.requirement.CopyPasteObsoleteException;
@@ -52,6 +55,7 @@ import org.squashtest.tm.exception.requirement.IllegalRequirementModificationExc
 import org.squashtest.tm.service.advancedsearch.IndexationService;
 import org.squashtest.tm.service.importer.ImportRequirementTestCaseLinksSummary;
 import org.squashtest.tm.service.importer.ImportSummary;
+import org.squashtest.tm.service.infolist.InfoListItemFinderService;
 import org.squashtest.tm.service.internal.importer.RequirementImporter;
 import org.squashtest.tm.service.internal.importer.RequirementTestCaseLinksImporter;
 import org.squashtest.tm.service.internal.library.AbstractLibraryNavigationService;
@@ -108,6 +112,10 @@ RequirementLibraryNavigationService, RequirementLibraryFinderService {
 	@Inject
 	@Qualifier("squashtest.tm.service.internal.PasteToRequirementStrategy")
 	private Provider<PasteStrategy<Requirement, Requirement>> pasteToRequirementStrategyProvider;
+
+
+	@Inject
+	private InfoListItemFinderService infoListItemService;
 
 	@Override
 	protected NodeDeletionHandler<RequirementLibraryNode, RequirementFolder> getDeletionHandler() {
@@ -185,6 +193,7 @@ RequirementLibraryNavigationService, RequirementLibraryFinderService {
 		Requirement newReq = createRequirement(newVersion);
 
 		library.addContent(newReq);
+		replaceInfoListItem(newReq);
 		requirementDao.persist(newReq);
 		createCustomFieldValues(newReq.getCurrentVersion());
 
@@ -204,6 +213,7 @@ RequirementLibraryNavigationService, RequirementLibraryFinderService {
 		}
 
 		library.addContent(requirement);
+		replaceInfoListItem(requirement);
 		requirementDao.persist(requirement);
 		createCustomFieldValues(requirement.getCurrentVersion());
 
@@ -227,6 +237,7 @@ RequirementLibraryNavigationService, RequirementLibraryFinderService {
 		Requirement newReq = createRequirement(firstVersion);
 
 		folder.addContent(newReq);
+		replaceInfoListItem(newReq);
 		requirementDao.persist(newReq);
 		createCustomFieldValues(newReq.getCurrentVersion());
 
@@ -246,6 +257,7 @@ RequirementLibraryNavigationService, RequirementLibraryFinderService {
 		}
 
 		folder.addContent(requirement);
+		replaceInfoListItem(requirement);
 		requirementDao.persist(requirement);
 		createCustomFieldValues(requirement.getCurrentVersion());
 
@@ -261,6 +273,7 @@ RequirementLibraryNavigationService, RequirementLibraryFinderService {
 		Requirement child = createRequirement(newRequirement);
 
 		parent.addContent(child);
+		replaceInfoListItem(child);
 		requirementDao.persist(child);
 
 		createCustomFieldValues(child.getCurrentVersion());
@@ -279,6 +292,7 @@ RequirementLibraryNavigationService, RequirementLibraryFinderService {
 		Requirement parent = requirementDao.findById(requirementId);
 
 		parent.addContent(newRequirement);
+		replaceInfoListItem(newRequirement);
 		requirementDao.persist(newRequirement);
 		createCustomFieldValues(newRequirement.getCurrentVersion());
 
@@ -405,6 +419,16 @@ RequirementLibraryNavigationService, RequirementLibraryFinderService {
 		}
 
 		return parents;
+	}
+
+	private void replaceInfoListItem(Requirement newReq){
+		InfoListItem category = newReq.getCategory();
+		if (category == null){
+			newReq.setCategory( newReq.getProject().getRequirementCategories().getDefaultItem() );
+		}
+		else if (category instanceof ListItemReference){
+			newReq.setCategory( infoListItemService.findReference((ListItemReference)category));
+		}
 	}
 
 }

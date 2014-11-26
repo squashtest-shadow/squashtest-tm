@@ -122,14 +122,27 @@ public class InfoList {
 	}
 
 
+
 	public void removeItem(InfoListItem item){
-		this.removeItem(item.getId());
+		this.removeItem(item.getCode());
 	}
+
 
 	public void removeItem(Long itemId){
 		Iterator<InfoListItem> iter = items.iterator();
 		while (iter.hasNext()){
-			if (itemId.equals(iter.next())){
+			if (itemId.equals(iter.next().getId())){
+				iter.remove();
+				return;
+			}
+		}
+		// if not found, well, the list is already in the desired state.
+	}
+
+	public void removeItem(String code){
+		Iterator<InfoListItem> iter = items.iterator();
+		while (iter.hasNext()){
+			if (code.equals(iter.next().getCode())){
 				iter.remove();
 				return;
 			}
@@ -146,5 +159,14 @@ public class InfoList {
 		throw new NoSuchElementException("No default item was defined for this list");
 	}
 
+
+	public boolean contains(InfoListItem item){
+		for (InfoListItem it : items){
+			if (item.getCode().equals(it.getCode())){
+				return true;
+			}
+		}
+		return false;
+	}
 
 }

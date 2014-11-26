@@ -21,7 +21,7 @@
 package org.squashtest.tm.web.internal.model.json
 
 import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory;
-import org.squashtest.tm.domain.infolist.TransientListItem;
+import org.squashtest.tm.domain.infolist.ListItemReference;
 import org.squashtest.tm.domain.library.GenericLibraryNode;
 import org.squashtest.tm.domain.project.GenericProject;
 import org.squashtest.tm.domain.project.Project;
@@ -52,7 +52,7 @@ class JsonTestCaseBuilderTest extends Specification {
 			GenericProject.set field: "id", of: p, to: 1L
 		}
 
-		TestCase tc = new TestCase(name: "foo", reference: "bar", type: new TransientListItem("UNDEFINED"));
+		TestCase tc = new TestCase(name: "foo", reference: "bar", type: new ListItemReference("UNDEFINED"));
 		use (ReflectionCategory) {
 			TestCaseLibraryNode.set field: "id", of: tc, to: 10000L
 			GenericLibraryNode.set field: "project", of: tc, to: p

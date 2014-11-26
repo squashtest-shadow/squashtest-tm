@@ -20,7 +20,10 @@
  */
 package org.squashtest.tm.domain.infolist;
 
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -68,7 +71,7 @@ public class DenormalizedInfoList {
 	@OneToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
 	@OrderColumn(name = "ITEM_INDEX")
 	@JoinColumn(name = "DENO_LIST_ID")
-	private List<DenormalizedInfoListItem> items;
+	private List<DenormalizedInfoListItem> items = new ArrayList<DenormalizedInfoListItem>();
 
 
 	// to be used by Hibernate
@@ -120,5 +123,46 @@ public class DenormalizedInfoList {
 	}
 
 
+	public void addItem(DenormalizedInfoListItem item){
+		items.add(item);
+	}
+
+
+
+	public void removeItem(DenormalizedInfoListItem item){
+		this.removeItem(item.getCode());
+	}
+
+
+	public void removeItem(Long itemId){
+		Iterator<DenormalizedInfoListItem> iter = items.iterator();
+		while (iter.hasNext()){
+			if (itemId.equals(iter.next().getId())){
+				iter.remove();
+				return;
+			}
+		}
+		// if not found, well, the list is already in the desired state.
+	}
+
+	public void removeItem(String code){
+		Iterator<DenormalizedInfoListItem> iter = items.iterator();
+		while (iter.hasNext()){
+			if (code.equals(iter.next().getCode())){
+				iter.remove();
+				return;
+			}
+		}
+		// if not found, well, the list is already in the desired state.
+	}
+
+	public boolean contains(DenormalizedInfoListItem item){
+		for (DenormalizedInfoListItem it : items){
+			if (item.getCode().equals(it.getCode())){
+				return true;
+			}
+		}
+		return false;
+	}
 
 }

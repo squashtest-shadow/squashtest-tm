@@ -64,7 +64,7 @@ import org.squashtest.tm.domain.customfield.CustomFieldValue;
 import org.squashtest.tm.domain.customfield.RenderingLocation;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.infolist.InfoListItem;
-import org.squashtest.tm.domain.infolist.TransientListItem;
+import org.squashtest.tm.domain.infolist.ListItemReference;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.testcase.ActionTestStep;
 import org.squashtest.tm.domain.testcase.CallTestStep;
@@ -321,7 +321,7 @@ public class TestCaseModificationController {
 		testCaseModificationService.changeNature(testCaseId, nature);
 
 		// the line below will break at runtime. We need to look up the item by code before we can i18n it
-		return formatInfoItem(new TransientListItem(nature), locale);
+		return formatInfoItem(new ListItemReference(nature), locale);
 	}
 
 	@RequestMapping(method = RequestMethod.POST, params = { "id=test-case-newname", VALUE})
@@ -342,7 +342,7 @@ public class TestCaseModificationController {
 		testCaseModificationService.changeType(testCaseId, type);
 
 		// the line below will break at runtime. We need to look up the item by code before we can i18n it
-		return formatInfoItem(new TransientListItem(type), locale);
+		return formatInfoItem(new ListItemReference(type), locale);
 	}
 
 	@ResponseBody

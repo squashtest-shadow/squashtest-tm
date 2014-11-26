@@ -141,6 +141,6 @@ public interface CustomTestCaseModificationService extends CustomTestCaseFinder 
 
 	void changeNature(long testCaseId, String natureCode);
 
-	void changeType(long testCaseId, String natureCode);
+	void changeType(long testCaseId, String typeCode);
 
 }

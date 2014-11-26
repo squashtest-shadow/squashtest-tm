@@ -568,10 +568,18 @@
 				+ "group by  clos.descendantId, p.name "
 				+ "having concat('/', p.name, '/', group_concat(tcln.name, 'order by', clos.depth, 'desc', '/')) in :paths"),
 				
-				//Milestones
-				@NamedQuery(name = "milestone.count", query = "select count(milestone) from Milestone milestone"),
-				@NamedQuery(name = "milestone.findMilestoneByLabel", query = "from Milestone where label = :label "),
+		//Milestones
+		@NamedQuery(name = "milestone.count", query = "select count(milestone) from Milestone milestone"),
+		@NamedQuery(name = "milestone.findMilestoneByLabel", query = "from Milestone where label = :label "),
 
+		
+		//InfoListItem
+		@NamedQuery(name="infoListItem.findByCode", query="from InfoListItem where code = :code"),
+		
+		//DenormalizedInfoListItem
+		@NamedQuery(name="denormalizedInfoListItem.findByReference", 
+					query="select denoItem from DenormalizedInfoListItem denoItem join denoItem.infoList denoList where denoItem.code = :code and denoList.originalId = :listId and denoList.originalVersion = :listVersion")
+						
 })
 package org.squashtest.tm.service.internal.repository.hibernate;
 

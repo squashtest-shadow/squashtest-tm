@@ -23,17 +23,18 @@ package org.squashtest.tm.service.internal.requirement;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.apache.commons.lang.NotImplementedException;
 import org.hibernate.SessionFactory;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.squashtest.tm.domain.infolist.InfoListItem;
 import org.squashtest.tm.domain.requirement.Requirement;
 import org.squashtest.tm.domain.requirement.RequirementCriticality;
 import org.squashtest.tm.domain.requirement.RequirementFolder;
 import org.squashtest.tm.domain.requirement.RequirementLibraryNode;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.service.advancedsearch.IndexationService;
+import org.squashtest.tm.service.infolist.InfoListItemFinderService;
 import org.squashtest.tm.service.internal.customfield.PrivateCustomFieldValueService;
 import org.squashtest.tm.service.internal.library.NodeManagementService;
 import org.squashtest.tm.service.internal.repository.RequirementDao;
@@ -56,6 +57,10 @@ public class CustomRequirementModificationServiceImpl implements CustomRequireme
 
 	@Inject
 	private IndexationService indexationService;
+
+	@Inject
+	private InfoListItemFinderService infoListItemService;
+
 
 	@SuppressWarnings("rawtypes")
 	@Inject
@@ -102,7 +107,10 @@ public class CustomRequirementModificationServiceImpl implements CustomRequireme
 	@Override
 	@PreAuthorize("hasPermission(#requirementId, 'org.squashtest.tm.domain.requirement.Requirement', 'WRITE') or hasRole('ROLE_ADMIN')")
 	public void changeCategory(long requirementId, String categoryCode) {
-		throw new NotImplementedException();
+		Requirement req = requirementDao.findById(requirementId);
+		InfoListItem category = infoListItemService.findByCode(categoryCode);
+
+		req.setCategory(category);
 	}
 
 }

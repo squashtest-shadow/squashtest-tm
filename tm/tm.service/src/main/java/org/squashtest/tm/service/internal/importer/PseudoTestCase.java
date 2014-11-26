@@ -26,7 +26,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.squashtest.tm.domain.infolist.InfoListItem;
-import org.squashtest.tm.domain.infolist.TransientListItem;
+import org.squashtest.tm.domain.infolist.ListItemReference;
 import org.squashtest.tm.domain.testcase.ActionTestStep;
 import org.squashtest.tm.domain.testcase.TestCaseImportance;
 import org.squashtest.tm.domain.testcase.TestCaseStatus;
@@ -95,11 +95,11 @@ import org.squashtest.tm.domain.testcase.TestStep;
 	}
 
 	public InfoListItem formatNature() {
-		return new TransientListItem(nature);
+		return new ListItemReference(nature);
 	}
 
 	public InfoListItem formatType() {
-		return new TransientListItem(type);
+		return new ListItemReference(type);
 	}
 
 	public TestCaseStatus formatStatus() {

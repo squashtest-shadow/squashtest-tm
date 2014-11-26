@@ -18,24 +18,29 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.internal.batchimport.excel;
+package org.squashtest.tm.service.internal.repository.hibernate;
 
-import org.apache.poi.ss.usermodel.Cell;
+import org.hibernate.Query;
+import org.springframework.stereotype.Repository;
 import org.squashtest.tm.domain.infolist.InfoListItem;
 import org.squashtest.tm.domain.infolist.ListItemReference;
+import org.squashtest.tm.service.internal.repository.InfoListItemDao;
 
-public final class InfoListItemCoercer<T extends InfoListItem>
-extends TypeBasedCellValueCoercer<T >
-implements CellValueCoercer<T> {
+@Repository
+public class HibernateInfoListItemDao extends HibernateEntityDao<InfoListItem> implements InfoListItemDao{
+
+	@Override
+	public InfoListItem findByCode(String code){
+		Query q = currentSession().getNamedQuery("infoListItem.findByCode");
+		q.setParameter("code", code);
+		return (InfoListItem)q.uniqueResult();
+	}
 
 
 	@Override
-	protected T coerceStringCell(Cell cell) {
-		return (T) new ListItemReference(cell.getStringCellValue());
+	public InfoListItem findReference(ListItemReference reference){
+		return findByCode(reference.getCode());
 	}
 
-	@Override
-	protected T coerceBlankCell(Cell cell) {
-		return null;
-	}
+
 }

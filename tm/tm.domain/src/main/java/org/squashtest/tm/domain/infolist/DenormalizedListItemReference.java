@@ -28,15 +28,30 @@ package org.squashtest.tm.domain.infolist;
  * @author bsiri
  *
  */
-public class TransientListItem extends InfoListItem {
+public class DenormalizedListItemReference extends DenormalizedInfoListItem {
 
-	public TransientListItem(){
+	public Long originalListId;
+	public int originalListVersion;
+
+	public DenormalizedListItemReference(){
 		super();
 	}
 
-	public TransientListItem(String code){
+	public DenormalizedListItemReference(Long originalListId, int originalListVersion, String code){
 		super();
 		setCode(code);
+		this.originalListId = originalListId;
+		this.originalListVersion = originalListVersion;
+	}
+
+
+
+	public Long getOriginalListId() {
+		return originalListId;
+	}
+
+	public int getOriginalListVersion() {
+		return originalListVersion;
 	}
 
 	@Override
@@ -45,11 +60,24 @@ public class TransientListItem extends InfoListItem {
 			return false;
 		}
 
-		if (! other.getClass().isAssignableFrom(TransientListItem.class)){
+		if (! (DenormalizedInfoListItem.class.isAssignableFrom(other.getClass()))){
 			return false;
 		}
 
-		return ((TransientListItem)other).getCode().equals(getCode());
+		if (DenormalizedListItemReference.class.isAssignableFrom(other.getClass())){
+			DenormalizedListItemReference otherRef = (DenormalizedListItemReference)other;
+			return (otherRef.getCode().equals(getCode()) &&
+					otherRef.getOriginalListId().equals(originalListId) &&
+					otherRef.getOriginalListVersion() == originalListVersion
+					) ;
+		}
+		else{
+			DenormalizedInfoListItem otherItem = (DenormalizedInfoListItem) other;
+			return ( otherItem.getCode().equals(getCode()) &&
+					otherItem.getInfoList().getOriginalId().equals(originalListId) &&
+					otherItem.getInfoList().getOriginalVersion() == originalListVersion
+					);
+		}
 	}
 
 

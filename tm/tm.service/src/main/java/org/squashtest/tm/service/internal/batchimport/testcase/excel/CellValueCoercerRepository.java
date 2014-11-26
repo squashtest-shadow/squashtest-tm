@@ -27,7 +27,7 @@ import java.util.Map;
 import javax.validation.constraints.NotNull;
 
 import org.springframework.stereotype.Component;
-import org.squashtest.tm.domain.infolist.TransientListItem;
+import org.squashtest.tm.domain.infolist.ListItemReference;
 import org.squashtest.tm.domain.testcase.TestCaseImportance;
 import org.squashtest.tm.domain.testcase.TestCaseNature;
 import org.squashtest.tm.domain.testcase.TestCaseStatus;
@@ -130,8 +130,8 @@ final class CellValueCoercerRepository<COL extends Enum<COL> & TemplateColumn> {
 		repo.coercerByColumn.put(TestCaseSheetColumn.TC_WEIGHT_AUTO, OptionalBooleanCellCoercer.INSTANCE);
 		repo.coercerByColumn.put(TestCaseSheetColumn.TC_WEIGHT,
 				OptionalEnumCellCoercer.forEnum(TestCaseImportance.class));
-		repo.coercerByColumn.put(TestCaseSheetColumn.TC_NATURE, new InfoListItemCoercer<TransientListItem>());
-		repo.coercerByColumn.put(TestCaseSheetColumn.TC_TYPE, new InfoListItemCoercer<TransientListItem>());
+		repo.coercerByColumn.put(TestCaseSheetColumn.TC_NATURE, new InfoListItemCoercer<ListItemReference>());
+		repo.coercerByColumn.put(TestCaseSheetColumn.TC_TYPE, new InfoListItemCoercer<ListItemReference>());
 		repo.coercerByColumn.put(TestCaseSheetColumn.TC_STATUS, OptionalEnumCellCoercer.forEnum(TestCaseStatus.class));
 		repo.coercerByColumn.put(TestCaseSheetColumn.TC_CREATED_ON, OptionalDateCellCoercer.INSTANCE);
 

@@ -26,6 +26,7 @@ import org.squashtest.tm.domain.testcase.TestCase
 import org.squashtest.tm.domain.testcase.TestCaseFolder
 import org.squashtest.tm.domain.testcase.TestCaseLibrary
 import org.squashtest.tm.domain.testcase.TestCaseLibraryNode
+import org.squashtest.tm.service.infolist.InfoListItemFinderService;
 import org.squashtest.tm.service.internal.library.AbstractLibraryNavigationService;
 import org.squashtest.tm.service.internal.repository.ProjectDao;
 import org.squashtest.tm.service.internal.repository.TestCaseDao
@@ -40,13 +41,16 @@ import spock.lang.Specification
 
 
 class TestCaseLibraryNavigationServiceImplTest extends Specification {
+
 	TestCaseLibraryNavigationServiceImpl service = new TestCaseLibraryNavigationServiceImpl()
 	TestCaseLibraryDao testCaseLibraryDao = Mock()
 	TestCaseFolderDao testCaseFolderDao = Mock()
 	TestCaseDao testCaseDao = Mock()
 	ProjectDao projectDao = Mock()
 	TestCaseLibraryNodeDao nodeDao = Mock()
-	PermissionEvaluationService permissionService = Mock();
+	PermissionEvaluationService permissionService = Mock()
+	InfoListItemFinderService infoListItemService = Mock()
+
 
 	def setup() {
 		service.testCaseLibraryDao = testCaseLibraryDao
@@ -54,6 +58,8 @@ class TestCaseLibraryNavigationServiceImplTest extends Specification {
 		service.testCaseDao = testCaseDao
 		service.projectDao = projectDao
 		service.testCaseLibraryNodeDao = nodeDao
+		service.infoListItemService = infoListItemService
+
 		use (ReflectionCategory) {
 			AbstractLibraryNavigationService.set(field: "permissionService", of: service, to: permissionService)
 		}

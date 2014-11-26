@@ -27,7 +27,7 @@ import org.squashtest.tm.domain.campaign.Campaign
 import org.squashtest.tm.domain.campaign.CampaignTestPlanItem
 import org.squashtest.tm.domain.infolist.InfoList
 import org.squashtest.tm.domain.infolist.InfoListItem
-import org.squashtest.tm.domain.infolist.TransientListItem
+import org.squashtest.tm.domain.infolist.ListItemReference
 import org.squashtest.tm.domain.project.Project
 import org.squashtest.tm.domain.projectfilter.ProjectFilter
 import org.squashtest.tm.domain.testcase.Dataset

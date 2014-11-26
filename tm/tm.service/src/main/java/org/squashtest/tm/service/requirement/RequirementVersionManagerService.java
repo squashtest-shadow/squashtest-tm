@@ -26,7 +26,6 @@ import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.core.dynamicmanager.annotation.DynamicManager;
-import org.squashtest.tm.domain.requirement.RequirementCategory;
 import org.squashtest.tm.domain.requirement.RequirementStatus;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 
@@ -54,9 +53,6 @@ public interface RequirementVersionManagerService extends CustomRequirementVersi
 
 	@PreAuthorize("hasPermission(#arg0, 'org.squashtest.tm.domain.requirement.RequirementVersion', 'WRITE') or hasRole('ROLE_ADMIN')")
 	void changeName(long requirementVersionId, String newName);
-	
-	@PreAuthorize("hasPermission(#arg0, 'org.squashtest.tm.domain.requirement.RequirementVersion', 'WRITE') or hasRole('ROLE_ADMIN')")
-	void changeCategory(long requirementVersionId, RequirementCategory category);
 
 
 }

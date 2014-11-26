@@ -38,6 +38,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.customfield.RawValue;
+import org.squashtest.tm.domain.infolist.InfoListItem;
+import org.squashtest.tm.domain.infolist.ListItemReference;
 import org.squashtest.tm.domain.projectfilter.ProjectFilter;
 import org.squashtest.tm.domain.testcase.ExportTestCaseData;
 import org.squashtest.tm.domain.testcase.TestCase;
@@ -48,6 +50,7 @@ import org.squashtest.tm.exception.DuplicateNameException;
 import org.squashtest.tm.service.customfield.CustomFieldValueManagerService;
 import org.squashtest.tm.service.importer.ImportLog;
 import org.squashtest.tm.service.importer.ImportSummary;
+import org.squashtest.tm.service.infolist.InfoListItemFinderService;
 import org.squashtest.tm.service.internal.batchexport.TestCaseExcelExporterService;
 import org.squashtest.tm.service.internal.batchimport.TestCaseExcelBatchImporter;
 import org.squashtest.tm.service.internal.importer.TestCaseImporter;
@@ -117,7 +120,11 @@ TestCaseLibraryNavigationService {
 	@Inject
 	private TestCaseExcelBatchImporter batchImporter;
 
-	@Inject private PathService pathService;
+	@Inject
+	private PathService pathService;
+
+	@Inject
+	private InfoListItemFinderService infoListItemService;
 
 	@Override
 	protected NodeDeletionHandler<TestCaseLibraryNode, TestCaseFolder> getDeletionHandler() {
@@ -228,6 +235,7 @@ TestCaseLibraryNavigationService {
 			else{
 				library.addContent(testCase);
 			}
+			replaceInfoListReferences(testCase);
 			testCaseDao.safePersist(testCase);
 			createCustomFieldValuesForTestCase(testCase);
 
@@ -240,6 +248,24 @@ TestCaseLibraryNavigationService {
 		// also create the custom field values for the steps if any
 		if (!testCase.getSteps().isEmpty()) {
 			createCustomFieldValues(testCase.getActionSteps());
+		}
+	}
+
+	private void replaceInfoListReferences(TestCase testCase){
+		InfoListItem nature = testCase.getNature();
+		if (nature == null){
+			testCase.setNature( testCase.getProject().getTestCaseNatures().getDefaultItem());
+		}
+		else if (nature instanceof ListItemReference){
+			testCase.setNature(infoListItemService.findReference((ListItemReference)nature));
+		}
+
+		InfoListItem type = testCase.getType();
+		if (type == null){
+			testCase.setType( testCase.getProject().getTestCaseTypes().getDefaultItem());
+		}
+		else if (type instanceof ListItemReference){
+			testCase.setType(infoListItemService.findReference((ListItemReference)type));
 		}
 	}
 
@@ -266,6 +292,7 @@ TestCaseLibraryNavigationService {
 			else{
 				folder.addContent(testCase);
 			}
+			replaceInfoListReferences(testCase);
 			testCaseDao.safePersist(testCase);
 			createCustomFieldValuesForTestCase(testCase);
 		}

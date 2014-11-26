@@ -27,7 +27,7 @@ import static org.squashtest.tm.service.internal.batchimport.testcase.excel.Test
 import org.apache.poi.ss.usermodel.Cell
 import org.apache.poi.ss.usermodel.Row
 import org.squashtest.tm.core.foundation.lang.DateUtils
-import org.squashtest.tm.domain.infolist.TransientListItem
+import org.squashtest.tm.domain.infolist.ListItemReference
 import org.squashtest.tm.domain.testcase.TestCaseImportance
 import org.squashtest.tm.domain.testcase.TestCaseStatus
 import org.squashtest.tm.service.importer.ImportMode
@@ -167,10 +167,10 @@ class TestCaseInstructionBuilderTest extends Specification {
 		TC_WEIGHT		| Cell.CELL_TYPE_STRING		| "VERY_HIGH"		| "importance"		| TestCaseImportance.VERY_HIGH
 		TC_WEIGHT		| Cell.CELL_TYPE_BLANK		| ""				| "importance"		| null
 
-		TC_NATURE		| Cell.CELL_TYPE_STRING		| "USER_TESTING"	| "nature"			| new TransientListItem("USER_TESTING")
+		TC_NATURE		| Cell.CELL_TYPE_STRING		| "USER_TESTING"	| "nature"			| new ListItemReference("USER_TESTING")
 		TC_NATURE		| Cell.CELL_TYPE_BLANK		| ""				| "nature"			| null
 
-		TC_TYPE			| Cell.CELL_TYPE_STRING		| "PARTNER_TESTING"	| "type"			| new TransientListItem("PARTNER_TESTING")
+		TC_TYPE			| Cell.CELL_TYPE_STRING		| "PARTNER_TESTING"	| "type"			| new ListItemReference("PARTNER_TESTING")
 		TC_TYPE			| Cell.CELL_TYPE_BLANK		| ""				| "type"			| null
 
 		TC_STATUS		| Cell.CELL_TYPE_STRING		| "APPROVED"		| "status"			| TestCaseStatus.APPROVED
