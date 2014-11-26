@@ -275,7 +275,7 @@
           </td>
 
           <td>
-            <input id="add-requriement-reference" type="text" size="20" maxlength="50" />
+            <input id="add-requirement-reference" type="text" size="20" maxlength="50" />
             <br />
             <span class="error-message reference-error"></span>
           </td>
@@ -288,7 +288,7 @@
 
             <select id="add-requirement-criticality">
               <option th:each="crit : ${T(org.squashtest.tm.domain.requirement.RequirementCriticality).values()}" th:value="${crit.code}" value="val"
-                th:text="#{crit.i18nKey}">option</option>
+                th:text="#{__${crit.i18nKey}__}">option</option>
             </select>
           </td>
         </tr>
@@ -298,7 +298,7 @@
           </td>
           <td>
             <select id="add-requirement-category">
-              <option th:each="cat : ${categories}" th:value="${cat}" value="val" th:text="#{cat.i18nKey}">option</option>
+              <option th:each="cat : ${categories}" th:value="${cat}" value="val" th:text="#{__${cat.i18nKey}__}">option</option>
             </select>
           </td>
         </tr>
