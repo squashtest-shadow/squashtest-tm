@@ -55,6 +55,10 @@ Import-Package: com.fasterxml.jackson.databind,\
 	org.springframework.security.authentication.dao,\
 	org.springframework.security.authentication.encoding,\
 	org.springframework.security.core.userdetails.memory,\
+	org.springframework.security.oauth2.provider.client,\
+	org.springframework.security.oauth2.provider.endpoint,\
+	org.springframework.security.oauth2.provider.error,\
+	org.springframework.security.oauth2.provider.token,\
 	org.springframework.security.provisioning,\
 	org.springframework.security.taglibs.authz,\
 	org.springframework.security.web,\
