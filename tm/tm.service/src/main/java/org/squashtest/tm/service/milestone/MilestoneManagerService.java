@@ -25,7 +25,9 @@ import java.util.Date;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.core.dynamicmanager.annotation.DynamicManager;
 import org.squashtest.tm.domain.milestone.Milestone;
+import org.squashtest.tm.domain.milestone.MilestoneRange;
 import org.squashtest.tm.domain.milestone.MilestoneStatus;
+import org.squashtest.tm.domain.users.User;
 
 
 @Transactional
@@ -35,4 +37,6 @@ public interface MilestoneManagerService extends CustomMilestoneManager{
 	void changeLabel(long milestoneId, String newLabel);
 	void changeStatus(long milestoneId, MilestoneStatus newStatus);
 	void changeEndDate(long milestoneId, Date newEndDate);
+	void changeOwner(long milestoneId, User Owner);
+	void changeRange(long milestoneId, MilestoneRange newRange);
 }

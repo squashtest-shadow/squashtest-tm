@@ -35,9 +35,7 @@
 <f:message var="confirmLabel"   key="label.Confirm"/>
 <f:message var="cancelLabel"    key="label.Cancel"/>
 <jsp:useBean id="now" class="java.util.Date"  />   
-
-<c:set var="tableModel" 		value="${json:serialize(milestones)}"/>
-<c:set var="tableModelLength" 	value="${fn:length(tableModel)}" />
+<f:message var="dateFormat" key="squashtm.dateformatShort" />
 
 
 <layout:info-page-layout titleKey="squashtm.milestone.title" isSubPaged="true" main="milestone-manager/milestone-manager.js">
@@ -71,7 +69,8 @@
 	<input class="snap-right sq-btn" type="button" value='<f:message key="label.deleteMilestone" />' id="delete-milestone-button"/>
 	<div style="clear:both"></div>
 	
-	<table id="milestones-table" class="unstyled-table" data-def="ajaxsource=${milestonesUrl}, hover, deferLoading=${tableModelLength}, filter, pre-sort=1-asc">
+	
+	<table id="milestones-table" class="unstyled-table" data-def="ajaxsource=${milestonesUrl}, hover, filter, pre-sort=1-asc">
 		<thead>
 			<tr>
 				<th data-def="map=index, select">#</th>
@@ -80,18 +79,62 @@
 				<th data-def="map=endDate, sortable"><f:message key="label.EndDate"/></th>
 		       	<th data-def="map=nbOfProjects, sortable"><f:message key="label.projects"/></th>
 		        <th data-def="map=range, sortable"><f:message key="label.Range" /></th>
+				 <th data-def="map=owner, sortable"><f:message key="label.Owner" /></th>
 				<th data-def="map=description, sortable"><f:message key="label.Description" /></th>
 			    <th data-def="map=created-on, sortable"><f:message key="label.CreatedOn" /></th>
                 <th data-def="map=created-by, sortable" ><f:message key="label.createdBy" /></th>
                 <th data-def="map=last-mod-on, sortable"><f:message key="label.modifiedOn" /></th>  
                 <th data-def="map=last-mod-by, sortable"><f:message key="label.modifiedBy" /></th> 
-				<th data-def="map=delete, delete-button=#delete-milestone-popup"></th>
-				
-
+				<th data-def="map=delete, delete-button=#delete-milestone-popup"></th>				
 			</tr>
 		</thead>
-		<tbody><%-- Will be populated through ajax --%></tbody>
+		<tbody>	
+		</tbody>
 	</table>
+
+<!--
+<table id="milestones-table" class="unstyled-table" data-def="filter, pre-sort=1-asc">
+		<thead>
+			<tr>
+			    <th data-def="map=entity-id, invisible"> </th>
+				<th data-def="map=index, select">#</th>
+				<th data-def="map=label ,sortable"><f:message key="label.Milestone" /></th>
+				<th data-def="map=status, sortable"><f:message key="label.Status"   /></th>
+				<th data-def="map=endDate,sortable"><f:message key="label.EndDate"/></th>
+		       	<th data-def="map=nbOfBindedProject,sortable"><f:message key="label.projects"/></th>
+		        <th data-def="map=range,sortable"><f:message key="label.Range" /></th>
+				 <th data-def="map=owner,sortable"><f:message key="label.Owner" /></th>
+				<th data-def="map=description, sortable"><f:message key="label.Description" /></th>
+			    <th data-def="map=createdOn, sortable"><f:message key="label.CreatedOn" /></th>
+                <th data-def="map=createdBy, sortable"><f:message key="label.createdBy" /></th>
+                <th data-def="map=lastModifiedOn, sortable"><f:message key="label.modifiedOn" /></th>  
+                <th data-def="map=lastModifiedBy,sortable"><f:message key="label.modifiedBy" /></th> 
+				<th data-def="map=placeholder, delete-button=#delete-milestone-popup"></th>				
+			</tr>
+		</thead>
+		<tbody>	
+		 <c:forEach items="${milestones}" var="milestone" varStatus="milestoneIndex"> 
+		 <tr>
+		 <td>${ milestone.id} </td>
+		 <td>${milestoneIndex.index +1}</td>
+		 <td><a href="${milestoneDetailsBaseUrl}/${milestone.id}/info"> ${milestone.label}</a></td>
+		 <td><f:message key="${milestone.status.i18nKey}"/></td>
+		 <td><f:formatDate value="${milestone.endDate}" pattern="${dateFormat}"/></td>
+		 <td>${milestone.nbOfBindedProject}</td>
+		 <td><f:message key="${milestone.range.i18nKey}"/></td>
+		 <td>${milestone.owner.name}</td>
+		 <td>${milestone.description}</td>
+		 <td><f:formatDate value="${milestone.createdOn}" pattern="${dateFormat}"/></td>
+		 <td>${milestone.createdBy}</td>
+		 <td><f:formatDate value="${milestone.lastModifiedOn}" pattern="${dateFormat}"/></td>
+		 <td>${milestone.lastModifiedBy}</td>
+		 <td></td>
+		 </tr>
+		 </c:forEach>
+		</tbody>
+	</table>
+-->
+
 
 
 

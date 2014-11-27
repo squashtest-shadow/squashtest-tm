@@ -20,7 +20,7 @@
  */
 package org.squashtest.tm.web.internal.controller.administration;
 
-import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 
@@ -39,23 +39,14 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.ModelAndView;
-import org.squashtest.tm.core.foundation.collection.Filtering;
-import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
-import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
-import org.squashtest.tm.domain.milestone.ExpandedMilestone;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.milestone.MilestoneRange;
 import org.squashtest.tm.service.milestone.MilestoneManagerService;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
-import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.controller.milestone.MilestoneStatusComboDataBuilder;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
-import org.squashtest.tm.web.internal.model.datatable.DataTableFiltering;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
-import org.squashtest.tm.web.internal.model.datatable.DataTableSorting;
-import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
-import org.squashtest.tm.web.internal.model.viewmapper.NameBasedMapper;
 
 
 @Controller
@@ -73,10 +64,6 @@ public class MilestoneAdministrationController {
 	@Inject
 	private Provider<MilestoneStatusComboDataBuilder> statusComboDataBuilderProvider;
 
-	private DatatableMapper<String> milestoneMapper = new NameBasedMapper().map("label", "label")
-			.map("description", "description").map("range", "range").map("status", "status").map("endDate", "endDate")
-			.map("created-on", "audit.createdOn").map("created-by", "audit.createdBy")
-			.map("last-mod-on", "audit.lastModifiedOn").map("last-mod-by", "audit.lastModifiedBy");
 
 	@RequestMapping(method = RequestMethod.POST)
 	@ResponseStatus(HttpStatus.CREATED)
@@ -105,47 +92,22 @@ public class MilestoneAdministrationController {
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView showMilestones(Locale locale) {
 		ModelAndView mav = new ModelAndView("page/milestones/show-milestones");
-		mav.addObject("milestones", milestoneManager.findAll());
 		mav.addObject("milestoneStatus", statusComboDataBuilderProvider.get().useLocale(locale).buildMap());
 		return mav;
 	}
-
-	@RequestMapping(value = "/list", params = RequestParams.S_ECHO_PARAM)
-	public @ResponseBody DataTableModel getMilestonesTableModel(final DataTableDrawParameters params,
-			final Locale locale) {
-
-		PagingAndSorting sorter = createPaging(params, milestoneMapper);
-
-		List<Milestone> sortedMilestone = milestoneManager.findSortedMilestones(sorter);
-		
-		Filtering filter = new DataTableFiltering(params);
-
-		List<ExpandedMilestone> expandedMilestones = getExpandedMilestone(sortedMilestone, locale);
-
-		PagedCollectionHolder<List<Milestone>> holder = milestoneManager.filterMilestone(expandedMilestones, filter, sorter);
+	
+	
+	@RequestMapping(value = "/list")
+	public @ResponseBody DataTableModel getMilestonesTableModel(final DataTableDrawParameters params, final Locale locale) {
 
 		MilestoneDataTableModelHelper helper = new MilestoneDataTableModelHelper(messageSource);
 		helper.setLocale(locale);
-		return helper.buildDataModel(holder, params.getsEcho());
-
+		Collection<Object> aaData = helper.buildRawModel(milestoneManager.findAll());
+	    DataTableModel model = new DataTableModel("");
+	    model.setAaData((List<Object>) aaData);
+		return model;
 	}
+	
 
-	private List<ExpandedMilestone> getExpandedMilestone(List<Milestone> sortedMilestone, Locale locale) {
-		List<ExpandedMilestone> expandedMilestones = new ArrayList<ExpandedMilestone>();
-		for (Milestone milestone : sortedMilestone) {
-			ExpandedMilestone expMilestone = new ExpandedMilestone();
-			expMilestone.setMilestone(milestone);
-			expMilestone.setTranslatedStatus(messageSource.internationalize(milestone.getStatus(), locale));
-			expMilestone.setTranslatedEndDate(messageSource.localizeDate(milestone.getEndDate(), locale));
-			expandedMilestones.add(expMilestone);
-		}
-		return expandedMilestones;
-	}
-
-	/* ****************************** data formatters ********************************************** */
-
-	private PagingAndSorting createPaging(final DataTableDrawParameters params, final DatatableMapper<?> mapper) {
-		return new DataTableSorting(params, mapper);
-	}
 
 }

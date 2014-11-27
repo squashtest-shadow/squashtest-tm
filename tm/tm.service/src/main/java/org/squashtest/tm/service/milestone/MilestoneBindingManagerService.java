@@ -62,4 +62,6 @@ public interface MilestoneBindingManagerService {
 	PagedCollectionHolder<List<Milestone>> getAllBindableMilestoneForProject(Long projectId, PagingAndSorting sorter,
 			Filtering filter, String type);
 
+	List<Milestone> getAllBindableMilestoneForProject(Long projectId, String type);
+
 }

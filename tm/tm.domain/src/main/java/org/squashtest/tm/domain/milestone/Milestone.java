@@ -23,6 +23,7 @@ package org.squashtest.tm.domain.milestone;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -156,12 +157,19 @@ public class Milestone {
 	}
 
 	public void unbindProject(GenericProject genericProject) {
-		projects.remove(genericProject);
+		removeProject(genericProject);
 		genericProject.removeMilestone(this);
 	}
 
 	public void removeProject(GenericProject project) {
-		projects.remove(project);
+		Iterator<GenericProject> iter = projects.iterator();
+		while (iter.hasNext()) {
+			GenericProject proj = iter.next();
+			if (proj.getId().equals(project.getId())) {
+				iter.remove();
+				break;
+			}
+		}
 	}
 
 	public void unbindProjects(List<GenericProject> projects) {

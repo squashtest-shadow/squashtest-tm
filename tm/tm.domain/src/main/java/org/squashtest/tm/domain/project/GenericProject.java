@@ -333,12 +333,19 @@ public abstract class GenericProject implements Identified, AttachmentHolder {
 	public abstract void accept(ProjectVisitor visitor);
 
 	public void unbindMilestone(Milestone milestone) {
-		milestones.remove(milestone);
+		removeMilestone(milestone);
 		milestone.removeProject(this);
 	}
 
 	public void removeMilestone(Milestone milestone) {
-		milestones.remove(milestone);
+		Iterator<Milestone> iter = milestones.iterator();
+		while (iter.hasNext()) {
+			Milestone mil = iter.next();
+			if (mil.getId().equals(milestone.getId())) {
+				iter.remove();
+				break;
+			}
+		}
 	}
 
 	public void unbindMilestones(List<Milestone> milestones) {

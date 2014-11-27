@@ -60,11 +60,12 @@ public class MilestoneDataTableModelHelper  extends DataTableModelBuilder<Milest
 		Map<String, Object> row = new HashMap<String, Object>(12);
 		final AuditableMixin auditable = (AuditableMixin) item;
 		row.put("entity-id", item.getId());
-		row.put("index", getCurrentIndex());
+		row.put("index", getCurrentIndex() +1);
 		row.put("label", item.getLabel());
 		row.put("nbOfProjects", item.getNbOfBindedProject());
 		row.put("description", item.getDescription());
 		row.put("range",i18nRange(item.getRange()));
+		row.put("owner", item.getOwner().getName());
 		row.put("status", i18nStatus(item.getStatus()));
 		row.put("endDate",  messageSource.localizeDate(item.getEndDate(), locale));
 		row.put("created-on", messageSource.localizeDate(auditable.getCreatedOn(), locale));

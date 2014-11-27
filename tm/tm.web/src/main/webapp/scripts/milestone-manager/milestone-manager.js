@@ -19,10 +19,10 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 require(["common"], function() {
-	require(["jquery", "squash.translator", "workspace.routing","squash.configmanager","app/ws/squashtm.notification", "jeditable.datepicker",  "squashtable", 
+	require(["jquery", "squash.translator", "workspace.routing","squash.configmanager","app/ws/squashtm.notification","squash.dateutils", "jeditable.datepicker",  "squashtable", 
 	         "app/ws/squashtm.workspace", 
 	         "jquery.squash.formdialog", "jquery.squash.confirmdialog"], 
-			function($, translator, routing, confman, notification){					
+			function($, translator, routing, confman, notification, dateutils){					
 		
 
 
@@ -37,7 +37,7 @@ require(["common"], function() {
 
 		
 		$(function() {					
-			$("#milestones-table").squashTable({},{});			
+			$("#milestones-table").squashTable({"bServerSide":false},{});			
 			$('#new-milestone-button').button();		
 		});	
 		
@@ -70,13 +70,14 @@ require(["common"], function() {
 			var ids = ( !! id) ? [id] : id ;
 			var url = squashtm.app.contextRoot+'/administration/milestones/'+ ids.join(",");
 			var table = $("#milestones-table").squashTable();
+			var selectedRow = table.getRowsByIds(ids);
 			
 			$.ajax({
 				url : url,
 				type : 'delete'
 			})
 			.done(function(){
-				table.refresh();
+				table._fnAjaxUpdate();
 			});
 			
 			
@@ -111,7 +112,25 @@ require(["common"], function() {
 	addMilestoneDialog.formDialog();
 		
 	
+	function getTranslatedStatus(status){
+		var i18nstatus = translator.get({value:"milestone.status." + status});
+		return  i18nstatus.value;	
+	}
 	
+	function getTranslatedRange(range){
+		var i18nrange = translator.get({value:"milestone.range." + range});
+		return  i18nrange.value;	
+	}
+	
+	function formatDate(date){
+		var format = translator.get("squashtm.dateformatShort");
+		var formatedDate = dateutils.format(date, format);
+		return dateutils.dateExists(formatedDate, format) ? formatedDate :"";
+	}
+	function addLinkToLabel(id, label){
+		var html = '<a href="' + routing.buildURL('milestone.info', id) +'">' + label + '</a>';
+		return html;
+	}
 	
 	addMilestoneDialog.on('formdialogconfirm', function(){
 		var url = routing.buildURL('administration.milestones');
@@ -126,8 +145,8 @@ require(["common"], function() {
 			type : 'POST',
 			dataType : 'json',
 			data : params				
-		}).success(function(){
-			$('#milestones-table').squashTable().refresh();
+		}).success(function(data){
+			$('#milestones-table').squashTable()._fnAjaxUpdate();
 			addMilestoneDialog.formDialog('close');
 		});
 	

@@ -52,4 +52,83 @@ public class MilestoneBindingServiceIT extends DbunitServiceSpecification{
 		   3L     | _
 	}
 	
+	@DataSet("/org/squashtest/tm/service/milestone/MilestoneBindingManagerServiceIT.xml")
+	def "one project to find them all (bindable)"(){
+		given :
+
+		when :
+		def findThem = manager.getAllBindableMilestoneForProject(projectId)
+		then :
+		findThem.collect{it.id} as Set == ids as Set
+		where :
+		projectId || ids
+		   1L     || []
+		   2L     || [4]
+		   3L     || [1, 2, 3, 4]
+	}
+	
+	@DataSet("/org/squashtest/tm/service/milestone/MilestoneBindingManagerServiceIT.xml")
+	def "one milestone to find them all (bindable)"(){
+		given :
+
+		when :
+		def findThem = manager.getAllBindableProjectForMilestone(milestoneId)
+		then :
+		findThem.collect{it.id} as Set == ids as Set
+		where :
+		milestoneId || ids
+		   1L     || [3]
+		   2L     || [3]
+		   3L     || [3]
+		   4L     || [2, 3]
+	}
+	
+	@DataSet("/org/squashtest/tm/service/milestone/MilestoneBindingManagerServiceIT.xml")
+	def "one project to find them all (binded)"(){
+		given :
+
+		when :
+		def findThem = manager.getAllBindedMilestoneForProject(projectId)
+		then :
+		findThem.collect{it.id} as Set == ids as Set
+		where :
+		projectId || ids
+		   1L     || [1, 2, 3, 4]
+		   2L     || [1, 2, 3]
+		   3L     || []
+	}
+	
+	@DataSet("/org/squashtest/tm/service/milestone/MilestoneBindingManagerServiceIT.xml")
+	def "one milestone to find them all (binded)"(){
+		given :
+
+		when :
+		def findThem = manager.getAllBindedProjectForMilestone(milestoneId)
+		then :
+		findThem.collect{it.id} as Set == ids as Set
+		where :
+		milestoneId || ids
+		   1L     || [1, 2]
+		   2L     || [1, 2]
+		   3L     || [1, 2]
+		   4L     || [1]
+	}
+	
+	@DataSet("/org/squashtest/tm/service/milestone/MilestoneBindingManagerServiceIT.xml")
+	def "Free milestones from the evil project"(){
+	
+		given : 
+		when :
+		manager.unbindMilestonesFromProject(milestoneIds, projectId)
+		def result = manager.getAllBindedMilestoneForProject(projectId)
+		then :
+		result.collect{it.id} as Set == ids as Set 
+		
+		where : 
+		milestoneIds       | projectId    || ids
+		[1L]               |     1L       || [2, 3 , 4]
+		[1L, 2L]           |     1L       || [3, 4]
+		[1L, 3L]           |     1L       || [2, 4]
+		[1L, 2L, 3L]       |     2L       || []
+	}
 }

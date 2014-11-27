@@ -25,17 +25,17 @@ define([ 'module', "jquery", "squash.basicwidgets", "workspace.routing", "squash
 			var config = module.config();
 
 			$(function() {
-				$("#binded-milestone-table").squashTable({}, {});
-				$("#global-milestone-table").squashTable({sAjaxSource:config.urls.globalMilestones},{});
-				$("#personal-milestone-table").squashTable({sAjaxSource:config.urls.myMilestones},{});
-				$("#other-milestone-table").squashTable({sAjaxSource:config.urls.otherMilestones},{});
+				$("#binded-milestone-table").squashTable({"bServerSide":false}, {});
+				$("#global-milestone-table").squashTable({sAjaxSource:config.urls.globalMilestones, "bServerSide":false},{});
+				$("#personal-milestone-table").squashTable({sAjaxSource:config.urls.myMilestones, "bServerSide":false},{});
+				$("#other-milestone-table").squashTable({sAjaxSource:config.urls.otherMilestones, "bServerSide":false},{});
 			});
 
 			function refreshAllTables(){
-				$("#binded-milestone-table").squashTable().refresh();
-				$("#global-milestone-table").squashTable().refresh();
-				$("#personal-milestone-table").squashTable().refresh();
-				$("#other-milestone-table").squashTable().refresh();
+				$("#binded-milestone-table").squashTable()._fnAjaxUpdate();
+				$("#global-milestone-table").squashTable()._fnAjaxUpdate();
+				$("#personal-milestone-table").squashTable()._fnAjaxUpdate();
+				$("#other-milestone-table").squashTable()._fnAjaxUpdate();
 			}
 			
 			

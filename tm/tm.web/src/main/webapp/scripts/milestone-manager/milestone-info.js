@@ -94,14 +94,30 @@
 				data : config.data.milestone.status
 			},
 		});
+		
+		var rangeEditable = new SelectJEditable({
+			target : config.urls.milestoneUrl,
+			componentId : "milestone-range",
+			jeditableSettings : {
+				data : config.data.milestone.range
+			},
+		});
+		
+		var ownerEditable = new SelectJEditable({
+			target : config.urls.milestoneUrl,
+			componentId : "milestone-owner",
+			jeditableSettings : {
+				data : config.data.userList
+			},
+		});
 
 		basic.init();
 		$("#back").click(clickBugtackerBackButton);
 		initRenameDialog();
 
 		$(function() {
-			$("#projects-table").squashTable({}, {});
-			$("#bind-to-projects-table").squashTable({}, {});
+			$("#projects-table").squashTable({"bServerSide":false}, {});
+			$("#bind-to-projects-table").squashTable({"bServerSide":false}, {});
 		});
 
 		var uncheck = function() {
@@ -123,27 +139,31 @@
 		};
 
 		//Unbind project
+		
+		var bindedTable = $("#projects-table").squashTable();
+		var bindableTable = $("#bind-to-projects-table").squashTable();
+		
 $("#unbind-project-popup").confirmDialog().on('confirmdialogconfirm', function(){
 			
 			var $this = $(this);
 			var id = $this.data('entity-id');
 			var ids = ( !! id) ? [id] : id ;
 			var url = routing.buildURL('milestone.bind-projects-to-milestone', config.data.milestone.id) + "/" + ids.join(',');
-			var table = $("#projects-table").squashTable();
-			
+			var selectedRow = bindedTable.getRowsByIds(ids);
+		 
 			$.ajax({
 				url : url,
 				type : 'delete'
 			})
 			.done(function(){
-				table.refresh();
+				table._fnAjaxUpdate();
 			});
 			
 			
 		});
 
 		$("#unbind-project-button").on('click', function(){
-			var ids = $("#projects-table").squashTable().getSelectedIds();
+			var ids = bindedTable.getSelectedIds();
 
 			if (ids.length>0){
 				var popup = $("#unbind-project-popup");
@@ -180,7 +200,9 @@ $("#unbind-project-popup").confirmDialog().on('confirmdialogconfirm', function()
 		bindProjectDialog.on('formdialogcancel', function() {
 			bindProjectDialog.formDialog('close');
 		});
+		
 
+	    
 		function getCheckedId() {
 			$("#bind-to-projects-table").find(":checkbox:checked").parent("td").parent("tr").addClass(
 					'ui-state-row-selected');
@@ -189,18 +211,19 @@ $("#unbind-project-popup").confirmDialog().on('confirmdialogconfirm', function()
 			return ids;
 		}
 
+ 
 		bindProjectDialog.on('formdialogconfirm', function() {
 
 			var ids = getCheckedId();
 			var url = routing.buildURL('milestone.bind-projects-to-milestone',config.data.milestone.id); 
-	
 			$.ajax({
 				url : url,
 				type : 'POST',
 				data : {Ids : ids}
 			}).success(function() {
-				$('#projects-table').squashTable().refresh();
-				$('#bind-to-projects-table').squashTable().refresh();
+				$('#projects-table').squashTable()._fnAjaxUpdate();
+				$('#bind-to-projects-table').squashTable()._fnAjaxUpdate();
+
 				bindProjectDialog.formDialog('close');
 			});	
 		});

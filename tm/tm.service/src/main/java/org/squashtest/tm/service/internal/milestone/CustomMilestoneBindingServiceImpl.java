@@ -178,6 +178,7 @@ public class CustomMilestoneBindingServiceImpl implements MilestoneBindingManage
 		GenericProject project = projectDao.findById(projectId);
 		List<Milestone> milestones = milestoneDao.findAllByIds(milestoneIds);
 		project.unbindMilestones(milestones);
+		
 	}
 
 	@Override
@@ -197,6 +198,12 @@ public class CustomMilestoneBindingServiceImpl implements MilestoneBindingManage
 		return getFilteredAndSortedMilestones(milestones, sorter, filter);
 	}
 
+	@Override
+	public List<Milestone> getAllBindableMilestoneForProject(Long projectId, String type) {
+		List<Milestone> milestones = getAllBindableMilestoneForProject(projectId);
+		return filterByType(milestones, type);
+	}
+	
 	private List<Milestone> filterByType(List<Milestone> milestones, String type) {
 
 		List<Milestone> filtered = null;

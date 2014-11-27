@@ -23,6 +23,8 @@ package org.squashtest.tm.web.internal.controller.milestone;
 import static org.squashtest.tm.web.internal.helper.JEditablePostParams.VALUE;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 
 import javax.inject.Inject;
@@ -40,8 +42,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.squashtest.tm.domain.milestone.Milestone;
+import org.squashtest.tm.domain.milestone.MilestoneRange;
 import org.squashtest.tm.domain.milestone.MilestoneStatus;
+import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.service.milestone.MilestoneManagerService;
+import org.squashtest.tm.service.user.AdministrationService;
+import org.squashtest.tm.web.internal.helper.JsonHelper;
 import org.squashtest.tm.web.internal.helper.LevelLabelFormatter;
 import org.squashtest.tm.web.internal.model.jquery.RenameModel;
 
@@ -51,9 +57,16 @@ public class MilestoneModificationController {
 
 	@Inject
 	private MilestoneManagerService milestoneManager;
-
+	
+	@Inject
+	private  AdministrationService adminManager;
+	
+	
 	@Inject
 	private Provider<MilestoneStatusComboDataBuilder> statusComboDataBuilderProvider;
+	
+	@Inject
+	private Provider<MilestoneRangeComboDataBuilder> rangeComboDataBuilderProvider;
 	
 	@Inject
 	private Provider<LevelLabelFormatter> levelLabelFormatterProvider;
@@ -67,12 +80,23 @@ public class MilestoneModificationController {
 		mav.addObject("milestoneStatus", statusComboDataBuilderProvider.get().useLocale(locale).buildMarshalled());
 		mav.addObject("milestone", milestone);
 		mav.addObject("milestoneStatusLabel", formatStatus(locale, milestone.getStatus()));
+		mav.addObject("milestoneRangeLabel", formatRange(locale, milestone.getRange()));
+		mav.addObject("milestoneRange", rangeComboDataBuilderProvider.get().useLocale(locale).buildMarshalled());
+		//user list is all user for now, to be changed 
+		mav.addObject("userList", buildMarshalledUserMap(adminManager.findAllActiveUsersOrderedByLogin()));
 		return mav;
 	}
 	
-	private String formatStatus(Locale locale, MilestoneStatus status){
-		return levelLabelFormatterProvider.get().useLocale(locale).formatLabel(status);
+	private Object buildMarshalledUserMap(List<User> activeUsersOrderedByLogin) {
+		
+		HashMap<String, String> map = new HashMap<String, String>();
+		for (User user : activeUsersOrderedByLogin){
+			map.put(user.getLogin(), user.getName());
+		}
+	
+		return 	JsonHelper.serialize(map);
 	}
+
 	@RequestMapping(method = RequestMethod.POST, params = { "id=milestone-description", VALUE })
 	@ResponseBody
 	public String changeDescription(@PathVariable long milestoneId, @RequestParam(VALUE) String newDescription) {
@@ -89,6 +113,25 @@ public class MilestoneModificationController {
 		return  formatStatus(locale, newStatus);
 	}
 	
+	@RequestMapping(method = RequestMethod.POST, params = { "id=milestone-range", VALUE })
+	@ResponseBody
+	public String changeRange(@PathVariable long milestoneId, @RequestParam(VALUE) MilestoneRange newRange, Locale locale) {
+		milestoneManager.changeRange(milestoneId, newRange);
+		LOGGER.debug("Milestone modification : change milestone {} Range = {}", milestoneId, newRange);
+		return  formatRange(locale, newRange);
+	}
+	
+	
+	private String formatStatus(Locale locale, MilestoneStatus status){
+		return levelLabelFormatterProvider.get().useLocale(locale).formatLabel(status);
+	}
+	
+	private String formatRange(Locale locale, MilestoneRange newRange) {
+		return levelLabelFormatterProvider.get().useLocale(locale).formatLabel(newRange);
+	}
+
+	
+	
 	@RequestMapping(method = RequestMethod.POST, params = { "newEndDate" })
 	@ResponseBody
 	public Date changeEndDate(@PathVariable long milestoneId, @RequestParam @DateTimeFormat(pattern= "yy-MM-dd") Date newEndDate, Locale locale) {
@@ -97,6 +140,14 @@ public class MilestoneModificationController {
 		return  newEndDate;
 	}
 	
+	@RequestMapping(method = RequestMethod.POST, params = { "id=milestone-owner", VALUE })
+	@ResponseBody
+	public String changeOwner(@PathVariable long milestoneId, @RequestParam(VALUE) String login, Locale locale) {
+       User newOwner = adminManager.findByLogin(login);
+		milestoneManager.changeOwner(milestoneId, newOwner);
+		LOGGER.debug("Milestone modification : change milestone {} owner = {}", milestoneId, newOwner);
+		return  newOwner.getName();
+	}
 	
 	@RequestMapping(method = RequestMethod.POST, params = { "newName" })
 	@ResponseBody

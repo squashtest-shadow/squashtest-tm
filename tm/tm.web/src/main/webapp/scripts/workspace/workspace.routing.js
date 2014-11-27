@@ -123,6 +123,7 @@ define([], function(){
 		'milestone.bindableproject'   :     root + '/milestones-binding/milestone/{\\d+}/project?bindable',
 		'milestone.bind-projects-to-milestone':  root + '/milestones-binding/milestone/{\\d+}/project',
 		'milestone.bind-milestones-to-project':  root + '/milestones-binding/project/{\\d+}/milestone',
+		'milestone.info'                      : root + '/milestone/{\\d+}/info',
 		
 		// helper methods
 		buildURL : function(){

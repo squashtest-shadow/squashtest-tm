@@ -118,6 +118,21 @@
 							<div class="display-table-cell" ><span id="milestone-status" >	${ milestoneStatusLabel } </span></div>
 						</div>
 						
+								<div class="display-table-row">
+							<label for="milestone-range" class="display-table-cell">
+							<f:message key="label.Range" />
+							</label>
+							<div class="display-table-cell" ><span id="milestone-range" >	${ milestoneRangeLabel } </span></div>
+						</div>
+						
+								<div class="display-table-row">
+							<label for="milestone-owner" class="display-table-cell">
+							<f:message key="label.Owner" />
+							</label>
+							<div class="display-table-cell" ><span id="milestone-owner" >	${ milestone.owner.name } </span></div>
+						</div>
+						
+						
 						<div class="display-table-row">
 							<label for="milestone-description" class="display-table-cell">
 							<f:message key="label.Description" />
@@ -144,6 +159,7 @@
         
 				</jsp:attribute>	
 				<jsp:attribute name="body">
+				
 				<table id="projects-table" class="unstyled-table" data-def="ajaxsource=${projectsUrl}?binded, hover, filter, pre-sort=1-asc">
 		<thead>
 			<tr>
@@ -156,6 +172,35 @@
 		</thead>
 		<tbody><%-- Will be populated through ajax --%></tbody>
 	</table>
+
+	<!--
+	<table id="projects-table" class="unstyled-table" data-def="hover, filter, pre-sort=1-asc">
+		<thead>
+			<tr>
+			  <th data-def="map=entity-id, invisible"> </th>
+				<th data-def="map=entity-index, select">#</th>
+			    <th data-def="map=checkbox, invisible"></th>
+				<th data-def="map=name, sortable" ><f:message key="label.project" /></th>
+				<th data-def="map=label, invisible"></th>
+				<th data-def="map=empty-delete-holder, unbind-button=#unbind-project-popup"></th>
+			
+			</tr>
+		</thead>
+		<tbody>
+			 <c:forEach items="${bindedProjects}" var="project" varStatus="projectIndex"> 
+		 <tr>
+		 <td>${ project.id} </td>
+		 <td>${projectIndex.index +1}</td>
+		 <td></td>
+		 <td><a href="${projectDetailBaseUrl}/${project.id}/info"> ${project.name}</a></td>
+		 <td></td>
+		 <td></td>
+		 </tr>
+		
+		</c:forEach>
+		</tbody>
+	</table>
+	-->
 				</jsp:attribute>
 			</comp:toggle-panel>
 		
@@ -194,6 +239,33 @@
 		<tbody><%-- Will be populated through ajax --%></tbody>
 	</table>
 
+ 
+ <!-- 
+ <table id="bind-to-projects-table" class="unstyled-table" data-def="hover, filter, pre-sort=1-asc">
+		<thead>
+			<tr>
+				<th data-def="map=entity-id, invisible"> </th>
+			    <th data-def="map=entity-index, invisible"></th>
+				<th data-def="map=checkbox, checkbox"></th>
+				<th data-def="map=name, sortable"><f:message key="label.Name" /></th>
+		    	<th data-def="map=label, sortable"><f:message key="label.Label" /></th>
+		    	<th data-def="map=empty-delete-holder, invisible"></th>
+			</tr>
+		</thead>
+		<tbody>
+				 <c:forEach items="${bindableProjects}" var="project" varStatus="projectIndex"> 
+		 <tr>
+		 <td>${ project.id} </td>
+		 <td></td>
+		 <td></td>
+		 <td><a href="${projectDetailBaseUrl}/${project.id}/info"> ${project.name}</a></td>
+		 <td>${project.label}</td>
+		 <td></td>
+		 </tr>
+		</c:forEach>
+		</tbody>
+	</table>
+ -->
 <div>
 <ul>
 
@@ -274,9 +346,11 @@ requirejs.config({
 				milestoneUrl :  "${milestoneUrl}",
 			      },
 			data: {
+				userList : '${userList}',
 				milestone : {
 					status : '${milestoneStatus}',
 					id: '${milestone.id}',
+					range: '${milestoneRange}'
 				            }
 				
 			       }
