@@ -206,16 +206,7 @@ define(["jquery",
 			var requiredFields = $.grep(allFields, function(field){ return field.rendering.required;});
 			var optionalFields = $.grep(allFields, function(field){ return ! field.rendering.required;});
 			var fields = requiredFields.concat(optionalFields);
-			
-			fields.sort(function(fielda, fieldb){
-				
-				var requiredA = fielda.rendering.required ? 1 : 0;
-				var requiredB = fieldb.rendering.required ? 1 : 0;
-				
-				return requiredB - requiredA;
-			
-			});
-			
+
 			//generate the frame
 			var html = this.frameTpl(fields);			
 			this.$el.html(html);		
