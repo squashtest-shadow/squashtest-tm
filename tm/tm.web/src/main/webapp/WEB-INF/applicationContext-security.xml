@@ -104,59 +104,91 @@
   </http>
 
 	<!-- OAuth 2 -->
-   	<!--  ==============================  -->
-	<!--  OAUTH 2 : AUTHORIZATION SERVER  -->
-	<!--  ==============================  -->
-		<oauth:authorization-server client-details-service-ref="clientDetails" token-services-ref="tokenServices">
-			<oauth:authorization-code />
-			<oauth:implicit />
-			<oauth:refresh-token />
-			<oauth:client-credentials />
-			<oauth:password />
-		</oauth:authorization-server>	
-		
-
-	<beans:bean id="tokenStore" class="org.springframework.security.oauth2.provider.token.InMemoryTokenStore" /> 
-
-
-
-	<!-- The following 3 elements exist solely to support parameter-based client authentication, which is
-	     discouraged by the OAuth2 spec. At this time, not all OAuth2 client implementations support
-	     HTTP Basic client authentication. Therefore, these are included to allow the client to use
-	     either form of client authentication. We may consider removing these in the future, however,
-	     when HTTP Basic client authentication is fully supported across all client implementations. -->
-	<beans:bean id="clientCredentialsTokenEndpointFilter" class="org.springframework.security.oauth2.provider.client.ClientCredentialsTokenEndpointFilter">
-		<beans:property name="authenticationManager" ref="clientAuthenticationManager" />
-	</beans:bean>
-
-	<authentication-manager id="clientAuthenticationManager" xmlns="http://www.springframework.org/schema/security">
-		<authentication-provider user-service-ref="clientDetailsUserService" />
-	</authentication-manager>
-	
-	<beans:bean id="clientDetailsUserService" class="org.springframework.security.oauth2.provider.client.ClientDetailsUserDetailsService">
-		<beans:constructor-arg ref="clientDetails" />
-	</beans:bean>
-	
-	<!-- End of configuration to support parameter-based client authentication -->
-	
-	
-
-	<!--  =========================  -->
-	<!--  OAUTH 2 : RESOURCE SERVER  -->
-	<!--  =========================  -->
-	<oauth:resource-server id="resourceServerFilter" resource-id="greenhouseApi" token-services-ref="tokenServices" />
-
-
-	<!--  ======================  -->
-	<!--  OAUTH 2 : SHARED BEANS  -->
-	<!--  ======================  -->
-	<beans:bean id="tokenServices" class="org.springframework.security.oauth2.provider.token.DefaultTokenServices">
-		<beans:property name="tokenStore" ref="tokenStore" />
-		<beans:property name="supportRefreshToken" value="true" />
-		<beans:property name="clientDetailsService" ref="clientDetails"/>
-		<beans:property name="accessTokenValiditySeconds" value="604800" /> <!-- 1 week -->
-	</beans:bean>
-   
+   	
+    <http pattern="/oauth/token" create-session="stateless"
+        authentication-manager-ref="authenticationManager">
+        <intercept-url pattern="/oauth/token" access="IS_AUTHENTICATED_FULLY" />
+        <anonymous enabled="false" />
+        <http-basic entry-point-ref="clientAuthenticationEntryPoint" />
+        <custom-filter ref="clientCredentialsTokenEndpointFilter" before="BASIC_AUTH_FILTER" />
+        <access-denied-handler ref="oauthAccessDeniedHandler" />
+    </http>
+ 
+    <http pattern="/protected/**" create-session="never"
+        entry-point-ref="oauthAuthenticationEntryPoint">
+        <anonymous enabled="false" />
+        <intercept-url pattern="/protected/**" method="GET" access="IS_AUTHENTICATED_FULLY" />
+        <custom-filter ref="resourceServerFilter" before="PRE_AUTH_FILTER" />
+        <access-denied-handler ref="oauthAccessDeniedHandler" />
+    </http>
+ 
+    <beans:bean id="oauthAuthenticationEntryPoint"
+        class="org.springframework.security.oauth2.provider.error.OAuth2AuthenticationEntryPoint">
+    </beans:bean>
+ 
+    <beans:bean id="clientAuthenticationEntryPoint"
+        class="org.springframework.security.oauth2.provider.error.OAuth2AuthenticationEntryPoint">
+        <beans:property name="realmName" value="springsec/client" />
+        <beans:property name="typeName" value="Basic" />
+    </beans:bean>
+ 
+    <beans:bean id="oauthAccessDeniedHandler"
+        class="org.springframework.security.oauth2.provider.error.OAuth2AccessDeniedHandler">
+    </beans:bean>
+ 
+    <beans:bean id="clientCredentialsTokenEndpointFilter"
+        class="org.springframework.security.oauth2.provider.client.ClientCredentialsTokenEndpointFilter">
+        <beans:property name="authenticationManager" ref="authenticationManager" />
+    </beans:bean>
+ 
+    <authentication-manager alias="authenticationManager">
+        <authentication-provider user-service-ref="clientDetailsUserService" />
+    </authentication-manager>
+ 
+    <beans:bean id="clientDetailsUserService"
+        class="org.springframework.security.oauth2.provider.client.ClientDetailsUserDetailsService">
+        <beans:constructor-arg ref="clientDetails" />
+    </beans:bean>
+ 
+    <beans:bean id="clientDetails" class="org.squashtest.tm.web.internal.oauth.AAAGuestServiceImpl">
+        <beans:property name="id" value="mysupplycompany" />
+        <beans:property name="secretKey" value="mycompanykey" />
+    </beans:bean>
+ 
+    <authentication-manager id="userAuthenticationManager">
+        <authentication-provider ref="customUserAuthenticationProvider" />
+    </authentication-manager>
+ 
+    <beans:bean id="customUserAuthenticationProvider"
+        class="org.squashtest.tm.web.internal.oauth.AAAUserAuthenticationProvider">
+    </beans:bean>
+ 
+    <oauth:authorization-server
+        client-details-service-ref="clientDetails" token-services-ref="tokenServices">
+        <oauth:authorization-code />
+        <oauth:implicit/>
+        <oauth:refresh-token/>
+        <oauth:client-credentials />
+        <oauth:password authentication-manager-ref="userAuthenticationManager"/>
+    </oauth:authorization-server>
+ 
+    <oauth:resource-server id="resourceServerFilter"
+        resource-id="springsec" token-services-ref="tokenServices" />
+ 
+    <beans:bean id="tokenStore"
+        class="org.springframework.security.oauth2.provider.token.InMemoryTokenStore" />
+ 
+    <beans:bean id="tokenServices"
+        class="org.springframework.security.oauth2.provider.token.DefaultTokenServices">
+        <beans:property name="tokenStore" ref="tokenStore" />
+        <beans:property name="supportRefreshToken" value="true" />
+        <beans:property name="accessTokenValiditySeconds" value="120"/>
+        <beans:property name="clientDetailsService" ref="clientDetails" />
+    </beans:bean>
+    
+    <beans:bean id="MyResource" class="org.squashtest.tm.web.internal.oauth.UserResource"></beans:bean>
+    <beans:bean id="aaaProxy" class="org.squashtest.tm.web.internal.oauth.AAAProxy"></beans:bean>
+    
     <!-- /OAuth 2 -->
     
     
