@@ -20,9 +20,11 @@
  */
 package org.squashtest.tm.web.internal.oauth;
 
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-@RequestMapping("/userresource")
+@Controller
+@RequestMapping("/api")
 public class UserResource {
 	
 	    @RequestMapping("/userprofile")
