@@ -57,6 +57,7 @@ CustomRequirementVersionCoverageDao {
 	private Criteria createFindAllCoverageCriteria() {
 		Criteria crit = currentSession().createCriteria(RequirementVersionCoverage.class, "RequirementVersionCoverage");
 		crit.createAlias("RequirementVersionCoverage.verifiedRequirementVersion", "RequirementVersion");
+		crit.createAlias("RequirementVersion.category", "RequirementCategory");
 		crit.createAlias("RequirementVersion.requirement", "Requirement", JoinType.LEFT_OUTER_JOIN);
 		crit.createAlias("RequirementVersionCoverage.verifyingTestCase", "TestCase");
 		crit.createAlias("Requirement.project", "Project", JoinType.LEFT_OUTER_JOIN);
@@ -66,6 +67,7 @@ CustomRequirementVersionCoverageDao {
 
 	private Criteria createFindAllVerifiedCriteria(PagingAndSorting pagingAndSorting) {
 		Criteria crit = currentSession().createCriteria(RequirementVersion.class, "RequirementVersion");
+		crit.createAlias("RequirementVersion.category", "RequirementCategory");
 		crit.createAlias("requirement", "Requirement", JoinType.LEFT_OUTER_JOIN);
 		crit.createAlias("requirementVersionCoverages", "rvc");
 		crit.createAlias("rvc.verifyingTestCase", "TestCase");

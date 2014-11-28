@@ -28,6 +28,7 @@ import org.hibernate.SessionFactory
 import org.junit.runner.RunWith
 import org.spockframework.runtime.Sputnik
 import org.springframework.transaction.annotation.Transactional
+import org.squashtest.tm.domain.infolist.ListItemReference;
 import org.squashtest.tm.domain.testcase.ActionTestStep
 import org.squashtest.tm.domain.testcase.CallTestStep
 import org.squashtest.tm.domain.testcase.TestCase
@@ -145,7 +146,7 @@ public class FacilityImplIT extends DbunitServiceSpecification {
 		TestCaseTarget target = new TestCaseTarget("/Test Project-1/dossier 2/mytestcase")
 
 		TestCase tc = emptyTC()
-		stuffWith(tc, [name:"mytestcase", description :"<p>ouaaahpaaa</p>", nature: TestCaseNature.SECURITY_TESTING])
+		stuffWith(tc, [name:"mytestcase", description :"<p>ouaaahpaaa</p>", nature: new ListItemReference("NAT_SECURITY_TESTING")])
 
 		def cufs = [
 			"TXT_TC" : "shazam",
@@ -171,7 +172,7 @@ public class FacilityImplIT extends DbunitServiceSpecification {
 		t.id != null
 		t.name == "mytestcase"
 		t.description == "<p>ouaaahpaaa</p>"
-		t.nature == TestCaseNature.SECURITY_TESTING
+		new ListItemReference("NAT_SECURITY_TESTING").equals t.nature
 		t.status == TestCaseStatus.WORK_IN_PROGRESS
 		t.importanceAuto == Boolean.FALSE
 		t.importance == TestCaseImportance.LOW
@@ -243,9 +244,9 @@ public class FacilityImplIT extends DbunitServiceSpecification {
 		// the unmodified values
 		t.id == -245L
 		t.importanceAuto == false
-		t.nature == TestCaseNature.BUSINESS_TESTING
+		new ListItemReference("NAT_BUSINESS_TESTING").equals(t.nature)
 		t.status == TestCaseStatus.WORK_IN_PROGRESS
-		t.type == TestCaseType.REGRESSION_TESTING
+		new ListItemReference("TYP_REGRESSION_TESTING").equals(t.type)
 		storedcufs.hasCuf  "CK_TC" , "false"
 
 	}

@@ -724,12 +724,12 @@ public class FacilityImpl implements Facility {
 		}
 
 		InfoListItem newNat = testCase.getNature();
-		if (newNat != null && !orig.getNature().equals(newNat)) {
+		if (newNat != null && ! newNat.equals(orig.getNature())) {
 			testcaseModificationService.changeNature(origId, newNat.getCode());
 		}
 
 		InfoListItem newType = testCase.getType();
-		if (newType != null && !orig.getType().equals(newType)) {
+		if (newType != null && !newType.equals(orig.getType())) {
 			testcaseModificationService.changeType(origId, newType.getCode());
 		}
 

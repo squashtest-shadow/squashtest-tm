@@ -21,11 +21,13 @@
 package org.squashtest.tm.service.internal.repository.hibernate;
 
 import org.hibernate.Query;
+import org.springframework.stereotype.Repository;
 import org.squashtest.tm.domain.infolist.DenormalizedInfoListItem;
 import org.squashtest.tm.domain.infolist.DenormalizedListItemReference;
 import org.squashtest.tm.domain.infolist.InfoListItem;
 import org.squashtest.tm.service.internal.repository.DenormalizedInfoListItemDao;
 
+@Repository("DenormalizedInfoListItemDao")
 public class HibernateDenormalizedInfoListItemDao extends HibernateEntityDao<DenormalizedInfoListItem>
 implements DenormalizedInfoListItemDao{
 

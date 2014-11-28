@@ -25,18 +25,14 @@ import javax.inject.Inject
 import org.junit.runner.RunWith
 import org.spockframework.runtime.Sputnik
 import org.springframework.transaction.annotation.Transactional
-import org.squashtest.tm.domain.attachment.AttachmentList
 import org.squashtest.tm.domain.project.GenericProject
 import org.squashtest.tm.domain.project.Project
 import org.squashtest.tm.domain.testcase.ActionTestStep
 import org.squashtest.tm.domain.testcase.TestCase
 import org.squashtest.tm.domain.testcase.TestCaseFolder
 import org.squashtest.tm.exception.DuplicateNameException
-import org.squashtest.tm.service.DbunitServiceSpecification;
+import org.squashtest.tm.service.DbunitServiceSpecification
 import org.squashtest.tm.service.project.GenericProjectManagerService
-import org.squashtest.tm.service.testcase.TestCaseLibrariesCrudService
-import org.squashtest.tm.service.testcase.TestCaseLibraryNavigationService
-import org.squashtest.tm.service.testcase.TestCaseModificationService
 import org.unitils.dbunit.annotation.DataSet
 
 import spock.unitils.UnitilsSupport

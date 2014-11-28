@@ -119,7 +119,7 @@ class HibernateRequirementVersionCoverageDaoIT extends DbunitDaoSpecification {
 		0     | 3        | "RequirementVersion.reference"     | ASCENDING  | [-3L, -5L, -4L]
 		0     | 3        | "RequirementVersion.versionNumber" | ASCENDING  | [-2L, -1L, -3L]
 		0     | 3        | "RequirementVersion.criticality"   | ASCENDING  | [-4L, -2L, -3L]
-		0     | 3        | "RequirementVersion.category"      | ASCENDING  | [-1L, -5L, -3L]
+		0     | 3        | "RequirementCategory.code" 		  | ASCENDING  | [-1L, -5L, -3L]
 		//		0     | 3        | "ActionTestStep.id"                | DESCENDING | [-1L, -3L, -2L]
 		//		0     | 50       | "ActionTestStep.id"                | DESCENDING | [-1L, -3L, -2L, -4L, -5L]
 

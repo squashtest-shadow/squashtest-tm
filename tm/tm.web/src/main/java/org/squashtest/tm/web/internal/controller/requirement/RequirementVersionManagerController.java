@@ -133,9 +133,9 @@ public class RequirementVersionManagerController {
 	@RequestMapping(method = RequestMethod.POST, params = { "id=requirement-category", VALUE })
 	@ResponseBody
 	public String changeCategory(@PathVariable long requirementVersionId,
-			@RequestParam(VALUE) RequirementCategory category, Locale locale) {
-		requirementVersionManager.changeCategory(requirementVersionId, category);
-		return internationalizableFormatterProvider.get().useLocale(locale).formatLabel(category);
+			@RequestParam(VALUE) String categoryCode, Locale locale) {
+		requirementVersionManager.changeCategory(requirementVersionId, categoryCode);
+		return categoryCode;
 
 	}
 

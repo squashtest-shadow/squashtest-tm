@@ -18,41 +18,23 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.domain.infolist;
+package org.squashtest.tm.service.internal.repository.hibernate;
 
-/**
- * Instances of such classes are not meant to be persisted.
- * They merely hold a code, that should be looked up. The real instance
- * should then be used instead of that reference
- * 
- * @author bsiri
- *
- */
-public class ListItemReference extends InfoListItem {
+import org.hibernate.Query;
+import org.springframework.stereotype.Repository;
+import org.squashtest.tm.domain.infolist.InfoList;
+import org.squashtest.tm.service.internal.repository.InfoListDao;
 
-	public ListItemReference(){
-		super();
-	}
 
-	public ListItemReference(String code){
-		super();
-		setCode(code);
-	}
+@Repository
+public class HibernateInfoListDao extends HibernateEntityDao<InfoList> implements InfoListDao{
+
 
 	@Override
-	public boolean equals(Object other){
-		if (other == null){
-			return false;
-		}
-
-		if (InfoListItem.class.isAssignableFrom(other.getClass())){
-
-			return ((InfoListItem)other).getCode().equals(getCode());
-		}
-		else{
-			return false;
-		}
-
+	public InfoList findByCode(String code) {
+		Query query = currentSession().getNamedQuery("infoList.findByCode");
+		query.setParameter("code", code);
+		return (InfoList)query.uniqueResult();
 	}
 
 

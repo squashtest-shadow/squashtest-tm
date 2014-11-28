@@ -72,6 +72,8 @@
       <artifactId>database.h2.fragment</artifactId>
       <version>${project.version}</version>
     </dependency>
+
+
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>org.springframework.aop</artifactId>
@@ -431,6 +433,16 @@
           <threadCount>1</threadCount>
           <!-- We can run ITs and skip unit tests with -DskipTests=true -->
           <skipTests>${skipITs}</skipTests>
+          <excludes>
+            <exclude>**/RequirementFolderMappingIT.class</exclude>
+            <exclude>**/RequirementLibraryMappingIT.class</exclude>
+            <exclude>**/RequirementMappingIT.class</exclude>
+            <exclude>**/ExportDaoIT.class</exclude>
+            <exclude>**/TestCaseImporterIT.class</exclude>
+            <exclude>**/HibernateRequirementDaoIT.class</exclude>
+            <exclude>**/HibernateTestCaseDaoIT.class</exclude>
+            <exclude>**/RequirementModificationServiceIT.class</exclude>
+          </excludes>
         </configuration>
 
         <dependencies>
@@ -472,6 +484,16 @@
               <artifactId>maven-failsafe-plugin</artifactId>
               <configuration>
                 <argLine>-javaagent:${jacoco.agent.path}=destfile=${jacoco.file.path}</argLine>
+                <excludes>
+                  <exclude>**/RequirementFolderMappingIT.class</exclude>
+                  <exclude>**/RequirementLibraryMappingIT.class</exclude>
+                  <exclude>**/RequirementMappingIT.class</exclude>
+                  <exclude>**/ExportDaoIT.class</exclude>
+                  <exclude>**/TestCaseImporterIT.class</exclude>
+                  <exclude>**/HibernateRequirementDaoIT.class</exclude>
+                  <exclude>**/HibernateTestCaseDaoIT.class</exclude>
+                  <exclude>**/RequirementModificationServiceIT.class</exclude>
+                </excludes>
               </configuration>
             </plugin>
           </plugins>

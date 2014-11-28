@@ -49,6 +49,14 @@ final class FacilityImplHelper {
 	 * fix the potentially null values with default values. In some case it's completely superfluous since null values
 	 * (eg for the name) are eliminatory.
 	 */
+
+	/*
+	 * Feat 1108 :
+	 * The nullity regarding the Nature and Type will be handled by
+	 * the TestCaseLibraryNavigationService itself. No need to
+	 * worry about them here and now.
+	 * 
+	 */
 	void fillNullWithDefaults(TestCase testCase) {
 
 		if (testCase.getName() == null) {
@@ -65,14 +73,6 @@ final class FacilityImplHelper {
 
 		if (testCase.getImportance() == null) {
 			testCase.setImportance(TestCaseImportance.LOW);
-		}
-
-		if (testCase.getNature() == null) {
-			testCase.setNature(testCase.getProject().getTestCaseNatures().getDefaultItem());
-		}
-
-		if (testCase.getType() == null) {
-			testCase.setType(testCase.getProject().getTestCaseTypes().getDefaultItem());
 		}
 
 		if (testCase.getStatus() == null) {

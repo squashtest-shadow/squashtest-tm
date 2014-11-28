@@ -56,6 +56,7 @@ import org.squashtest.tm.domain.bugtracker.BugTrackerBinding;
 import org.squashtest.tm.domain.campaign.CampaignLibrary;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.domain.execution.ExecutionStatusReport;
+import org.squashtest.tm.domain.infolist.InfoList;
 import org.squashtest.tm.domain.library.PluginReferencer;
 import org.squashtest.tm.domain.project.AdministrableProject;
 import org.squashtest.tm.domain.project.GenericProject;
@@ -75,6 +76,7 @@ import org.squashtest.tm.exception.UnknownEntityException;
 import org.squashtest.tm.exception.testautomation.DuplicateTMLabelException;
 import org.squashtest.tm.security.acls.PermissionGroup;
 import org.squashtest.tm.service.execution.ExecutionProcessingService;
+import org.squashtest.tm.service.infolist.InfoListFinderService;
 import org.squashtest.tm.service.internal.repository.BugTrackerBindingDao;
 import org.squashtest.tm.service.internal.repository.BugTrackerDao;
 import org.squashtest.tm.service.internal.repository.ExecutionDao;
@@ -129,6 +131,9 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 	private TestAutomationServerManagerService taServerService;
 	@Inject
 	private TestAutomationProjectManagerService taProjectService;
+	@Inject
+	private InfoListFinderService infoListService;
+
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(CustomGenericProjectManagerImpl.class);
 
@@ -215,6 +220,18 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 		project.setTestCaseLibrary(tcl);
 		session.persist(tcl);
 
+		// hook up the default info lists
+		// TODO : extract the code lists to some meaningful place
+		InfoList defaultCategories = infoListService.findByCode("DEF_REQ_CAT");
+		project.setRequirementCategories(defaultCategories);
+
+		InfoList defaultNatures = infoListService.findByCode("DEF_TC_NAT");
+		project.setTestCaseNatures(defaultNatures);
+
+		InfoList defaultTypes = infoListService.findByCode("DEF_TC_TYP");
+		project.setTestCaseTypes(defaultTypes);
+
+		// now persist it
 		session.persist(project);
 		session.flush(); // otherwise ids not available
 

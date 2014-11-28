@@ -573,6 +573,9 @@
 		@NamedQuery(name = "milestone.findMilestoneByLabel", query = "from Milestone where label = :label "),
 
 		
+		//InfoList
+		@NamedQuery(name="infoList.findByCode", query = "from InfoList where code = :code"),
+				
 		//InfoListItem
 		@NamedQuery(name="infoListItem.findByCode", query="from InfoListItem where code = :code"),
 		

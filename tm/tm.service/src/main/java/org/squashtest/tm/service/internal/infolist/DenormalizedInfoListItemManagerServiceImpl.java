@@ -22,12 +22,16 @@ package org.squashtest.tm.service.internal.infolist;
 
 import javax.inject.Inject;
 
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.infolist.DenormalizedInfoListItem;
 import org.squashtest.tm.domain.infolist.DenormalizedListItemReference;
 import org.squashtest.tm.domain.infolist.InfoListItem;
 import org.squashtest.tm.service.infolist.DenormalizedInfoListItemManagerService;
 import org.squashtest.tm.service.internal.repository.DenormalizedInfoListItemDao;
 
+@Transactional
+@Service("DenormalizedInfoListItemManagerService")
 public class DenormalizedInfoListItemManagerServiceImpl implements DenormalizedInfoListItemManagerService{
 
 	@Inject

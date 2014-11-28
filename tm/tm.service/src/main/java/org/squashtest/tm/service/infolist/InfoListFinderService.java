@@ -18,42 +18,15 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.domain.infolist;
+package org.squashtest.tm.service.infolist;
 
-/**
- * Instances of such classes are not meant to be persisted.
- * They merely hold a code, that should be looked up. The real instance
- * should then be used instead of that reference
- * 
- * @author bsiri
- *
- */
-public class ListItemReference extends InfoListItem {
+import org.squashtest.tm.domain.infolist.InfoList;
 
-	public ListItemReference(){
-		super();
-	}
 
-	public ListItemReference(String code){
-		super();
-		setCode(code);
-	}
 
-	@Override
-	public boolean equals(Object other){
-		if (other == null){
-			return false;
-		}
+public interface InfoListFinderService {
 
-		if (InfoListItem.class.isAssignableFrom(other.getClass())){
-
-			return ((InfoListItem)other).getCode().equals(getCode());
-		}
-		else{
-			return false;
-		}
-
-	}
-
+	InfoList findById(Long id);
+	InfoList findByCode(String code);
 
 }

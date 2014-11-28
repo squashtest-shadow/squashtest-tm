@@ -30,6 +30,7 @@ import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory;
 import org.squashtest.tm.domain.project.GenericProject;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.exception.NameAlreadyInUseException;
+import org.squashtest.tm.service.infolist.InfoListFinderService;
 import org.squashtest.tm.service.internal.repository.GenericProjectDao;
 import org.squashtest.tm.service.internal.security.ObjectIdentityServiceImpl;
 import org.squashtest.tm.service.security.ObjectIdentityService;
@@ -46,12 +47,14 @@ class CustomGenericProjectManagerImplTest extends Specification {
 	Session session = Mock()
 	ObjectIdentityService objectIdentityService = Mock()
 	GenericProjectDao genericProjectDao = Mock()
+	InfoListFinderService infoListService = Mock()
 
 	def setup() {
 		manager.sessionFactory = sessionFactory
 		sessionFactory.currentSession >> session
 		manager.objectIdentityService = Mock(ObjectIdentityService)
 		manager.genericProjectDao = genericProjectDao
+		manager.infoListService = infoListService
 	}
 
 	def "should not persist project with name in use"() {
@@ -81,9 +84,9 @@ class CustomGenericProjectManagerImplTest extends Specification {
 		then:
 		1 * session.persist(candidate)
 		// missing ids of entities will throw a NPE after the persist(). we retort to this workaround which is simpler than trying to set an id on unknown objects
-		thrown NullPointerException 
+		thrown NullPointerException
 	}
-	
+
 	def "should not change project's name to name in use"() {
 		given:
 		Project project = new Project()
