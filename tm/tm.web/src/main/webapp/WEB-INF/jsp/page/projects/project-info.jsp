@@ -624,7 +624,9 @@ require(["common"], function() {
             	renameDialog.formDialog('close');
             });
 		});
-		
+		renameDialog.on('formdialogcancel', function(){
+			renameDialog.formDialog('close');
+		});
 		$("#rename-project-button").on('click', function(){
 			renameDialog.formDialog('open');
 		});
