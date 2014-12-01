@@ -47,7 +47,7 @@ import org.squashtest.tm.domain.requirement.Requirement;
 import org.squashtest.tm.domain.requirement.RequirementFolder;
 import org.squashtest.tm.domain.requirement.RequirementLibrary;
 import org.squashtest.tm.domain.requirement.RequirementLibraryNode;
-import org.squashtest.tm.domain.requirement.RequirementVersion;
+import org.squashtest.tm.domain.requirement.RequirementLibraryNodeVisitor;
 import org.squashtest.tm.exception.DuplicateNameException;
 import org.squashtest.tm.exception.library.NameAlreadyExistsAtDestinationException;
 import org.squashtest.tm.exception.requirement.CopyPasteObsoleteException;
@@ -180,6 +180,44 @@ RequirementLibraryNavigationService, RequirementLibraryFinderService {
 		return builder.toString();
 	}
 
+
+
+	@Override
+	@PreAuthorize("hasPermission(#destinationId, 'org.squashtest.tm.domain.testcase.RequirementLibrary' , 'CREATE' )"
+			+ "or hasRole('ROLE_ADMIN')")
+	public void addFolderToLibrary(long destinationId, RequirementFolder newFolder) {
+
+		RequirementLibrary container = getLibraryDao().findById(destinationId);
+		container.addContent(newFolder);
+
+		// fix the nature and type for the possible nested test cases inside that folder
+		replaceAllInfoListReferences(newFolder);
+
+		// now proceed
+		getFolderDao().persist(newFolder);
+
+		// and then create the custom field values, as a better fix for [Issue 2061]
+		createAllCustomFieldValues(newFolder);
+	}
+
+	@Override
+	@PreAuthorize("hasPermission(#destinationId, 'org.squashtest.tm.domain.testcase.RequirementFolder' , 'CREATE' )"
+			+ "or hasRole('ROLE_ADMIN')")
+	public final void addFolderToFolder(long destinationId, RequirementFolder newFolder) {
+
+		RequirementFolder container = getFolderDao().findById(destinationId);
+		container.addContent(newFolder);
+
+		// fix the nature and type for the possible nested test cases inside that folder
+		replaceAllInfoListReferences(newFolder);
+
+		// now proceed
+		getFolderDao().persist(newFolder);
+
+		// and then create the custom field values, as a better fix for [Issue 2061]
+		createAllCustomFieldValues(newFolder);
+	}
+
 	@Override
 	@PreAuthorize("hasPermission(#libraryId, 'org.squashtest.tm.domain.requirement.RequirementLibrary' , 'CREATE') "
 			+ OR_HAS_ROLE_ADMIN)
@@ -193,7 +231,9 @@ RequirementLibraryNavigationService, RequirementLibraryFinderService {
 		Requirement newReq = createRequirement(newVersion);
 
 		library.addContent(newReq);
-		replaceInfoListItem(newReq);
+
+		replaceAllInfoListReferences(newReq);
+
 		requirementDao.persist(newReq);
 		createCustomFieldValues(newReq.getCurrentVersion());
 
@@ -213,7 +253,7 @@ RequirementLibraryNavigationService, RequirementLibraryFinderService {
 		}
 
 		library.addContent(requirement);
-		replaceInfoListItem(requirement);
+		replaceAllInfoListReferences(requirement);
 		requirementDao.persist(requirement);
 		createCustomFieldValues(requirement.getCurrentVersion());
 
@@ -237,10 +277,9 @@ RequirementLibraryNavigationService, RequirementLibraryFinderService {
 		Requirement newReq = createRequirement(firstVersion);
 
 		folder.addContent(newReq);
-		replaceInfoListItem(newReq);
+		replaceAllInfoListReferences(newReq);
 		requirementDao.persist(newReq);
 		createCustomFieldValues(newReq.getCurrentVersion());
-
 		initCustomFieldValues(newReq.getCurrentVersion(), firstVersion.getCustomFields());
 
 		return newReq;
@@ -257,7 +296,7 @@ RequirementLibraryNavigationService, RequirementLibraryFinderService {
 		}
 
 		folder.addContent(requirement);
-		replaceInfoListItem(requirement);
+		replaceAllInfoListReferences(requirement);
 		requirementDao.persist(requirement);
 		createCustomFieldValues(requirement.getCurrentVersion());
 
@@ -273,7 +312,7 @@ RequirementLibraryNavigationService, RequirementLibraryFinderService {
 		Requirement child = createRequirement(newRequirement);
 
 		parent.addContent(child);
-		replaceInfoListItem(child);
+		replaceAllInfoListReferences(child);
 		requirementDao.persist(child);
 
 		createCustomFieldValues(child.getCurrentVersion());
@@ -292,7 +331,7 @@ RequirementLibraryNavigationService, RequirementLibraryFinderService {
 		Requirement parent = requirementDao.findById(requirementId);
 
 		parent.addContent(newRequirement);
-		replaceInfoListItem(newRequirement);
+		replaceAllInfoListReferences(newRequirement);
 		requirementDao.persist(newRequirement);
 		createCustomFieldValues(newRequirement.getCurrentVersion());
 
@@ -421,7 +460,26 @@ RequirementLibraryNavigationService, RequirementLibraryFinderService {
 		return parents;
 	}
 
-	private void replaceInfoListItem(Requirement newReq){
+
+	// ******************** more private code *******************
+
+	private void replaceAllInfoListReferences(RequirementFolder folder){
+		new CategoryChainFixer().fix(folder);
+	}
+
+	private void replaceAllInfoListReferences(Requirement requirement){
+		new CategoryChainFixer().fix(requirement);
+	}
+
+	private void createAllCustomFieldValues(RequirementFolder folder){
+		new CustomFieldValuesFixer().fix(folder);
+	}
+
+	private void createAllCustomFieldValues(Requirement requirement){
+		new CustomFieldValuesFixer().fix(requirement);
+	}
+
+	private void replaceInfoListReferences(Requirement newReq){
 		InfoListItem category = newReq.getCategory();
 		if (category == null){
 			newReq.setCategory( newReq.getProject().getRequirementCategories().getDefaultItem() );
@@ -429,6 +487,60 @@ RequirementLibraryNavigationService, RequirementLibraryFinderService {
 		else if (category instanceof ListItemReference){
 			newReq.setCategory( infoListItemService.findReference((ListItemReference)category));
 		}
+	}
+
+	private class CategoryChainFixer implements RequirementLibraryNodeVisitor{
+
+		private void fix(RequirementFolder folder){
+			for (RequirementLibraryNode node : folder.getContent()){
+				node.accept(this);
+			}
+		}
+
+		private void fix(Requirement req){
+			req.accept(this);
+		}
+
+		@Override
+		public void visit(Requirement visited) {
+			replaceInfoListReferences(visited);
+			for (Requirement insider : visited.getContent()){
+				fix(insider);
+			}
+		}
+
+		@Override
+		public void visit(RequirementFolder visited) {
+			fix(visited);
+		}
+
+	}
+
+	private class CustomFieldValuesFixer implements RequirementLibraryNodeVisitor{
+
+		private void fix(RequirementFolder folder){
+			for (RequirementLibraryNode node : folder.getContent()){
+				node.accept(this);
+			}
+		}
+
+		private void fix(Requirement req){
+			req.accept(this);
+		}
+
+		@Override
+		public void visit(Requirement requirement) {
+			createCustomFieldValues(requirement.getCurrentVersion());
+			for (Requirement req : requirement.getContent()){
+				fix(req);
+			}
+		}
+
+		@Override
+		public void visit(RequirementFolder folder) {
+			fix(folder);
+		}
+
 	}
 
 }

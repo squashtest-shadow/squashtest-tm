@@ -46,6 +46,7 @@ import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseFolder;
 import org.squashtest.tm.domain.testcase.TestCaseLibrary;
 import org.squashtest.tm.domain.testcase.TestCaseLibraryNode;
+import org.squashtest.tm.domain.testcase.TestCaseLibraryNodeVisitor;
 import org.squashtest.tm.exception.DuplicateNameException;
 import org.squashtest.tm.service.customfield.CustomFieldValueManagerService;
 import org.squashtest.tm.service.importer.ImportLog;
@@ -67,6 +68,7 @@ import org.squashtest.tm.service.internal.repository.TestCaseFolderDao;
 import org.squashtest.tm.service.internal.repository.TestCaseLibraryDao;
 import org.squashtest.tm.service.internal.repository.TestCaseLibraryNodeDao;
 import org.squashtest.tm.service.project.ProjectFilterModificationService;
+import org.squashtest.tm.service.security.SecurityCheckableObject;
 import org.squashtest.tm.service.statistics.testcase.TestCaseStatisticsBundle;
 import org.squashtest.tm.service.testcase.TestCaseLibraryNavigationService;
 import org.squashtest.tm.service.testcase.TestCaseStatisticsService;
@@ -218,6 +220,45 @@ TestCaseLibraryNavigationService {
 		return getLibraryNodeDao().findNodeByPath(path);
 	}
 
+
+
+	@Override
+	@PreAuthorize("hasPermission(#destinationId, 'org.squashtest.tm.domain.testcase.TestCaseLibrary' , 'CREATE' )"
+			+ "or hasRole('ROLE_ADMIN')")
+	public void addFolderToLibrary(long destinationId, TestCaseFolder newFolder) {
+
+		TestCaseLibrary container = getLibraryDao().findById(destinationId);
+		container.addContent(newFolder);
+
+		// fix the nature and type for the possible nested test cases inside that folder
+		new NatureTypeChainFixer().fix(newFolder);
+
+		// now proceed
+		getFolderDao().persist(newFolder);
+
+		// and then create the custom field values, as a better fix for [Issue 2061]
+		new CustomFieldValuesFixer().fix(newFolder);
+	}
+
+	@Override
+	@PreAuthorize("hasPermission(#destinationId, 'org.squashtest.tm.domain.testcase.TestCaseFolder' , 'CREATE' )"
+			+ "or hasRole('ROLE_ADMIN')")
+	public final void addFolderToFolder(long destinationId, TestCaseFolder newFolder) {
+
+		TestCaseFolder container = getFolderDao().findById(destinationId);
+		container.addContent(newFolder);
+
+		// fix the nature and type for the possible nested test cases inside that folder
+		new NatureTypeChainFixer().fix(newFolder);
+
+		// now proceed
+		getFolderDao().persist(newFolder);
+
+		// and then create the custom field values, as a better fix for [Issue 2061]
+		new CustomFieldValuesFixer().fix(newFolder);
+	}
+
+
 	@Override
 	@PreAuthorize("hasPermission(#libraryId, 'org.squashtest.tm.domain.testcase.TestCaseLibrary' , 'CREATE' )"
 			+ "or hasRole('ROLE_ADMIN')")
@@ -242,32 +283,7 @@ TestCaseLibraryNavigationService {
 		}
 	}
 
-	private void createCustomFieldValuesForTestCase(TestCase testCase) {
-		createCustomFieldValues(testCase);
 
-		// also create the custom field values for the steps if any
-		if (!testCase.getSteps().isEmpty()) {
-			createCustomFieldValues(testCase.getActionSteps());
-		}
-	}
-
-	private void replaceInfoListReferences(TestCase testCase){
-		InfoListItem nature = testCase.getNature();
-		if (nature == null){
-			testCase.setNature( testCase.getProject().getTestCaseNatures().getDefaultItem());
-		}
-		else if (nature instanceof ListItemReference){
-			testCase.setNature(infoListItemService.findReference((ListItemReference)nature));
-		}
-
-		InfoListItem type = testCase.getType();
-		if (type == null){
-			testCase.setType( testCase.getProject().getTestCaseTypes().getDefaultItem());
-		}
-		else if (type instanceof ListItemReference){
-			testCase.setType(infoListItemService.findReference((ListItemReference)type));
-		}
-	}
 
 	@Override
 	@PreAuthorize("hasPermission(#libraryId, 'org.squashtest.tm.domain.testcase.TestCaseLibrary' , 'CREATE' )"
@@ -392,26 +408,9 @@ TestCaseLibraryNavigationService {
 	@Override
 	@PreAuthorize("hasPermission(#libraryId, 'org.squashtest.tm.domain.testcase.TestCaseLibrary', 'IMPORT') or hasRole('ROLE_ADMIN')")
 	public ImportSummary importZipTestCase(InputStream archiveStream, long libraryId, String encoding) {
-		// **************************[Issue 2061]********************
-		// see [] save existing test cases ids
-		List<Long> alreadyExistingTestCases = testCaseDao.findAllTestCasesIdsByLibrary(libraryId);
-		// **************************end [Issue 2061]********************
+
 		ImportSummary summary = testCaseImporter.importExcelTestCases(archiveStream, libraryId, encoding);
 
-		// **************************[Issue 2061]********************
-		// flush so that sql query works
-		testCaseDao.flush();
-
-		// deduce newly imported testcases id and retrieve new test cases
-		List<Long> libraryNewTestCasesIds = testCaseDao.findAllTestCasesIdsByLibrary(libraryId);
-		libraryNewTestCasesIds.removeAll(alreadyExistingTestCases);
-		List<TestCase> importedTestCases = testCaseDao.findAllByIds(libraryNewTestCasesIds);
-
-		// create custom fields for new test cases
-		for (TestCase testCase : importedTestCases) {
-			createCustomFieldValuesForTestCase(testCase);
-		}
-		// **************************end [Issue 2061]********************
 		return summary;
 	}
 
@@ -545,6 +544,79 @@ TestCaseLibraryNavigationService {
 	@Override
 	public int countSiblingsOfNode(long nodeId) {
 		return testCaseLibraryNodeDao.countSiblingsOfNode(nodeId);
+	}
+
+	// ******************** more private code *******************
+
+
+	private void createCustomFieldValuesForTestCase(TestCase testCase) {
+		createCustomFieldValues(testCase);
+
+		// also create the custom field values for the steps if any
+		if (!testCase.getSteps().isEmpty()) {
+			createCustomFieldValues(testCase.getActionSteps());
+		}
+	}
+
+	private void replaceInfoListReferences(TestCase testCase){
+
+		InfoListItem nature = testCase.getNature();
+
+		if (nature == null){
+			testCase.setNature( testCase.getProject().getTestCaseNatures().getDefaultItem());
+		}
+		else if (nature instanceof ListItemReference){
+			testCase.setNature(infoListItemService.findReference((ListItemReference)nature));
+		}
+
+		InfoListItem type = testCase.getType();
+
+		if (type == null){
+			testCase.setType( testCase.getProject().getTestCaseTypes().getDefaultItem());
+		}
+		else if (type instanceof ListItemReference){
+			testCase.setType(infoListItemService.findReference((ListItemReference)type));
+		}
+	}
+
+
+	private class NatureTypeChainFixer implements TestCaseLibraryNodeVisitor{
+
+		private void fix(TestCaseFolder folder){
+			for (TestCaseLibraryNode node : folder.getContent()){
+				node.accept(this);
+			}
+		}
+
+		@Override
+		public void visit(TestCase visited) {
+			replaceInfoListReferences(visited);
+		}
+
+		@Override
+		public void visit(TestCaseFolder visited) {
+			fix(visited);
+		}
+	}
+
+	private class CustomFieldValuesFixer implements TestCaseLibraryNodeVisitor{
+
+		private void fix(TestCaseFolder folder){
+			for (TestCaseLibraryNode node : folder.getContent()){
+				node.accept(this);
+			}
+		}
+
+		@Override
+		public void visit(TestCase visited) {
+			createCustomFieldValuesForTestCase(visited);
+		}
+
+		@Override
+		public void visit(TestCaseFolder visited) {
+			fix(visited);
+		}
+
 	}
 
 }

@@ -126,6 +126,7 @@ class TestCaseLibraryNavigationServiceImplTest extends Specification {
 	def "should add folder to folder"() {
 		given:
 		TestCaseFolder newFolder = Mock()
+		newFolder.getContent() >> []
 		and:
 		TestCaseFolder container = Mock()
 		testCaseFolderDao.findById(10) >> container

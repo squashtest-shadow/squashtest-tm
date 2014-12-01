@@ -206,7 +206,7 @@ implements LibraryNavigationService<LIBRARY, FOLDER, NODE> {
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public final void addFolderToLibrary(long destinationId, FOLDER newFolder) {
+	public void addFolderToLibrary(long destinationId, FOLDER newFolder) {
 		// fetch
 		LIBRARY container = getLibraryDao().findById(destinationId);
 		// check
@@ -219,7 +219,7 @@ implements LibraryNavigationService<LIBRARY, FOLDER, NODE> {
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public final void addFolderToFolder(long destinationId, FOLDER newFolder) {
+	public void addFolderToFolder(long destinationId, FOLDER newFolder) {
 		// fetch
 		FOLDER container = getFolderDao().findById(destinationId);
 		// check
