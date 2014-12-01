@@ -23,6 +23,7 @@ package org.squashtest.tm.hibernate.mapping.requirement
 
 import org.hibernate.JDBCException
 import org.squashtest.tm.hibernate.mapping.HibernateMappingSpecification
+import org.squashtest.tm.domain.infolist.InfoListItem;
 import org.squashtest.tm.domain.requirement.Requirement
 import org.squashtest.tm.domain.requirement.RequirementStatus
 import org.squashtest.tm.domain.requirement.RequirementVersion
@@ -37,6 +38,8 @@ class RequirementMappingIT extends HibernateMappingSpecification {
 		given :
 		def version = new RequirementVersion(name: "req 1", description: "this is a new requirement")
 		def requirement = new Requirement(version)
+		def categ = doInTransaction({it.get(InfoListItem.class, 1l)})
+		requirement.category = categ
 
 		when :
 		persistFixture requirement
@@ -59,6 +62,8 @@ class RequirementMappingIT extends HibernateMappingSpecification {
 		given :
 		def version = new RequirementVersion(name: "req 2", description: "this is an obsolete requirement")
 		def requirement = new Requirement(version)
+		def categ = doInTransaction({it.get(InfoListItem.class, 1l)})
+		requirement.category = categ
 		requirement.setStatus(RequirementStatus.OBSOLETE)
 
 		when :

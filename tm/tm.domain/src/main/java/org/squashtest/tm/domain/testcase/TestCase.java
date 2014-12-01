@@ -777,6 +777,7 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 		return isImportanceAuto();
 	}
 
+	/*
 	@Override
 	public void notifyAssociatedWithProject(Project project) {
 		super.notifyAssociatedWithProject(project);
@@ -789,6 +790,6 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 		if (type == null){
 			type = project.getTestCaseTypes().getDefaultItem();
 		}
-	}
+	}*/
 
 }

@@ -149,7 +149,6 @@ class RequirementVersionCoverageTest extends Specification {
 		RequirementVersion source = new RequirementVersion()
 		source.setName("source");
 		source.setRequirement(requirement)
-		source.notifyAssociatedWithProject(mockFactory.mockProject())
 		and : "a test case"
 		TestCase tc = new TestCase()
 		and :"with 2 steps"

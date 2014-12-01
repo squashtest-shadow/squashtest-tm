@@ -350,7 +350,9 @@ public class ExcelTestCaseParserImpl implements ExcelTestCaseParser {
 	private void setTestCaseType(PseudoTestCase pseudoTestCase, ImportSummaryImpl summary, TestCase testCase) {
 		try {
 			InfoListItem type = pseudoTestCase.formatType();
-			testCase.setType(type);
+			if (type != null){
+				testCase.setType(type);
+			}
 
 		} catch (IllegalArgumentException ex) {
 			LOGGER.warn(ex.getMessage());
@@ -362,7 +364,9 @@ public class ExcelTestCaseParserImpl implements ExcelTestCaseParser {
 		try {
 
 			InfoListItem nature = pseudoTestCase.formatNature();
-			testCase.setNature(nature);
+			if (nature != null){
+				testCase.setNature(nature);
+			}
 
 		} catch (IllegalArgumentException ex) {
 

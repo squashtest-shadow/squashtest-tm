@@ -28,6 +28,7 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.squashtest.tm.domain.customfield.BindableEntity;
 import org.squashtest.tm.domain.customfield.InputType;
+import org.squashtest.tm.domain.infolist.InfoListItem;
 import org.squashtest.tm.domain.testcase.TestCaseImportance;
 import org.squashtest.tm.domain.testcase.TestCaseNature;
 import org.squashtest.tm.domain.testcase.TestCaseStatus;
@@ -112,8 +113,8 @@ public class ExportModel {
 		private String name;
 		private int weightAuto;
 		private TestCaseImportance weight;
-		private TestCaseNature nature;
-		private TestCaseType type;
+		private InfoListItem nature;
+		private InfoListItem type;
 		private TestCaseStatus status;
 		private String description;
 		private String prerequisite;
@@ -128,7 +129,7 @@ public class ExportModel {
 
 		// that monster constructor will be used by Hibernate in a hql query
 		public TestCaseModel(Long projectId, String projectName, Integer order, Long id, String reference, String name,
-				Boolean weightAuto, TestCaseImportance weight, TestCaseNature nature, TestCaseType type,
+				Boolean weightAuto, TestCaseImportance weight, InfoListItem nature, InfoListItem type,
 				TestCaseStatus status, String description, String prerequisite, Long nbReq, Long nbCaller,
 				Long nbAttachments, Date createdOn, String createdBy, Date lastModifiedOn, String lastModifiedBy) {
 
@@ -227,19 +228,19 @@ public class ExportModel {
 			this.weight = weight;
 		}
 
-		public TestCaseNature getNature() {
+		public InfoListItem getNature() {
 			return nature;
 		}
 
-		public void setNature(TestCaseNature nature) {
+		public void setNature(InfoListItem nature) {
 			this.nature = nature;
 		}
 
-		public TestCaseType getType() {
+		public InfoListItem getType() {
 			return type;
 		}
 
-		public void setType(TestCaseType type) {
+		public void setType(InfoListItem type) {
 			this.type = type;
 		}
 

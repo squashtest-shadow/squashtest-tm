@@ -456,11 +456,12 @@ public class Requirement extends RequirementLibraryNode<RequirementVersion> impl
 	}
 
 
+	/*
 	@Override
 	public void notifyAssociatedWithProject(Project project) {
 		super.notifyAssociatedWithProject(project);
 		resource.notifyAssociatedWithProject(project);
 	}
-
+	 */
 
 }

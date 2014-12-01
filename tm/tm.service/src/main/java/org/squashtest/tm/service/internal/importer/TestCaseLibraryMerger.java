@@ -281,7 +281,12 @@ class TestCaseLibraryMerger {
 				context.summary.incrRenamed();
 			}
 
-			persistTestCase(toMerge);
+			try{
+				persistTestCase(toMerge);
+			}
+			catch(Exception ex){	// NOSONAR this is temporary, it should change once we add proper javax validators
+				context.summary.incrFailures();
+			}
 
 		}
 

@@ -22,6 +22,7 @@ package org.squashtest.tm.domain.testcase;
 
 import org.squashtest.tm.domain.Level;
 
+@Deprecated
 public enum TestCaseNature implements Level{
 
 	UNDEFINED(1),
@@ -32,7 +33,7 @@ public enum TestCaseNature implements Level{
 	PERFORMANCE_TESTING(6),
 	SECURITY_TESTING(7),
 	ATDD(8);
-	
+
 	private static final String I18N_KEY_ROOT = "test-case.nature.";
 
 	private final int level;
@@ -40,17 +41,17 @@ public enum TestCaseNature implements Level{
 	private TestCaseNature(int value) {
 		this.level = value;
 	}
-	
+
 	@Override
 	public String getI18nKey() {
 		return I18N_KEY_ROOT + this.name();
 	}
-	
+
 	@Override
 	public int getLevel() {
 		return level;
 	}
-	
+
 	public static TestCaseNature defaultValue() {
 		return UNDEFINED;
 	}

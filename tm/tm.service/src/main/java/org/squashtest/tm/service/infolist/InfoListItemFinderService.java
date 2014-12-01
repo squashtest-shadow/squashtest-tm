@@ -30,4 +30,5 @@ public interface InfoListItemFinderService {
 	InfoListItem findByCode(String code);
 
 	InfoListItem findReference(ListItemReference reference);
+
 }

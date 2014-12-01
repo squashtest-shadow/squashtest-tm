@@ -24,6 +24,7 @@ package org.squashtest.tm.hibernate.mapping.requirement
 import org.hibernate.Session
 import org.squashtest.tm.hibernate.mapping.HibernateMappingSpecification
 import org.squashtest.tm.domain.campaign.CampaignLibrary
+import org.squashtest.tm.domain.infolist.InfoList;
 import org.squashtest.tm.domain.project.Project
 import org.squashtest.tm.domain.requirement.RequirementFolder
 import org.squashtest.tm.domain.requirement.RequirementLibrary
@@ -57,6 +58,22 @@ class RequirementLibraryMappingIT extends HibernateMappingSpecification {
 		p.requirementLibrary = library
 		p.campaignLibrary = new CampaignLibrary()
 		p.testCaseLibrary = new TestCaseLibrary()
+
+		and :
+		def categList = doInTransaction({
+			it.get(InfoList.class, 1l)
+		})
+		def naturList = doInTransaction({
+			it.get(InfoList.class, 2l)
+		})
+		def typesList = doInTransaction({
+			it.get(InfoList.class, 3l)
+		})
+
+		p.requirementCategories = categList
+		p.testCaseNatures = naturList
+		p.testCaseTypes = typesList
+
 		persistFixture p, library
 
 		and:

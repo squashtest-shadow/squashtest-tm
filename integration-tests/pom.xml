@@ -433,6 +433,7 @@
           <threadCount>1</threadCount>
           <!-- We can run ITs and skip unit tests with -DskipTests=true -->
           <skipTests>${skipITs}</skipTests>
+          <!-- 
           <excludes>
             <exclude>**/RequirementFolderMappingIT.class</exclude>
             <exclude>**/RequirementLibraryMappingIT.class</exclude>
@@ -443,6 +444,7 @@
             <exclude>**/HibernateTestCaseDaoIT.class</exclude>
             <exclude>**/RequirementModificationServiceIT.class</exclude>
           </excludes>
+           -->
         </configuration>
 
         <dependencies>
@@ -484,6 +486,7 @@
               <artifactId>maven-failsafe-plugin</artifactId>
               <configuration>
                 <argLine>-javaagent:${jacoco.agent.path}=destfile=${jacoco.file.path}</argLine>
+                <!-- 
                 <excludes>
                   <exclude>**/RequirementFolderMappingIT.class</exclude>
                   <exclude>**/RequirementLibraryMappingIT.class</exclude>
@@ -494,6 +497,7 @@
                   <exclude>**/HibernateTestCaseDaoIT.class</exclude>
                   <exclude>**/RequirementModificationServiceIT.class</exclude>
                 </excludes>
+                 -->
               </configuration>
             </plugin>
           </plugins>

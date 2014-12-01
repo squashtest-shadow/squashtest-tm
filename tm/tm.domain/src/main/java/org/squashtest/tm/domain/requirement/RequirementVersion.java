@@ -442,11 +442,12 @@ public class RequirementVersion extends Resource implements BoundEntity {
 	}
 
 
+	/*
 	public void notifyAssociatedWithProject(Project project) {
 		// define a default category if none was set so far
 		if (category == null){
 			category = project.getRequirementCategories().getDefaultItem();
 		}
-	}
+	}*/
 
 }

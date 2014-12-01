@@ -25,10 +25,12 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.squashtest.tm.domain.infolist.InfoListItem;
 import org.squashtest.tm.domain.infolist.ListItemReference;
 import org.squashtest.tm.domain.testcase.ActionTestStep;
 import org.squashtest.tm.domain.testcase.TestCaseImportance;
+import org.squashtest.tm.domain.testcase.TestCaseNature;
 import org.squashtest.tm.domain.testcase.TestCaseStatus;
 import org.squashtest.tm.domain.testcase.TestCaseType;
 import org.squashtest.tm.domain.testcase.TestStep;
@@ -94,12 +96,68 @@ import org.squashtest.tm.domain.testcase.TestStep;
 		return TestCaseImportance.valueOf(importance);
 	}
 
+
+	/*
+	 * Feat 1108 : for back compatibility purpose
+	 * we must ensure that the former natures
+	 * (the enum TestCaseNature) are still supported,
+	 * eg NON_FUNCTIONAL must be translated to NAT_NON_FUNCTIONAL.
+	 * 
+	 * Note that because of this we must treat the nominal case as an exception handling clause,
+	 * and that sucks.
+	 */
 	public InfoListItem formatNature() {
-		return new ListItemReference(nature);
+		InfoListItem res;
+
+		if (StringUtils.isBlank(nature)){
+			// better off with a null nature than a blank one
+			res = null;
+		}
+		else {
+			try{
+				// Feat 1108 : does this string reference an obsolete code for a nature ?
+				TestCaseNature obsoleteNature = TestCaseNature.valueOf(nature);
+				res = new ListItemReference("NAT_"+obsoleteNature.toString());
+			}
+			catch(IllegalArgumentException ex){
+				// else, the code is assumed to be correct
+				res = new ListItemReference(nature);
+			}
+		}
+
+		return res;
 	}
 
+
+	/*
+	 * Feat 1108 : for back compatibility purpose
+	 * we must ensure that the former types
+	 * (the enum testCaseType) are still supported,
+	 * eg UNDEFINED must be translated to TYP_UNDEFINED.
+	 * 
+	 * Note that because of this we must treat the nominal case as an exception handling clause,
+	 * and that sucks.
+	 */
 	public InfoListItem formatType() {
-		return new ListItemReference(type);
+		InfoListItem res;
+
+		if (StringUtils.isBlank(type)){
+			// better off with a null nature than a blank one
+			res = null;
+		}
+		else {
+			try{
+				// Feat 1108 : does this string reference an obsolete code for a nature ?
+				TestCaseNature obsoleteNature = TestCaseNature.valueOf(type);
+				res = new ListItemReference("TYP_"+obsoleteNature.toString());
+			}
+			catch(IllegalArgumentException ex){
+				// else, the code is assumed to be correct
+				res = new ListItemReference(type);
+			}
+		}
+
+		return res;
 	}
 
 	public TestCaseStatus formatStatus() {
@@ -176,6 +234,7 @@ import org.squashtest.tm.domain.testcase.TestStep;
 	public String getNature() {
 		return nature;
 	}
+
 
 	public void setNature(String nature) {
 		this.nature = nature;

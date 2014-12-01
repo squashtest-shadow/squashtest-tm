@@ -26,6 +26,8 @@ import org.hibernate.Session
 import org.hibernate.exception.GenericJDBCException
 import org.hibernate.exception.ConstraintViolationException
 import org.squashtest.tm.hibernate.mapping.HibernateMappingSpecification
+import org.squashtest.tm.domain.infolist.InfoListItem;
+import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.requirement.Requirement
 import org.squashtest.tm.domain.requirement.RequirementFolder
 import org.squashtest.tm.domain.requirement.RequirementVersion
@@ -94,9 +96,19 @@ class RequirementFolderMappingIT extends HibernateMappingSpecification {
 	def "should not retrieve deleted requirements"(){
 		given :
 		RequirementFolder refolder = new RequirementFolder(name: "ref")
+
+		and :
 		def req1 = new Requirement(new RequirementVersion(name: "req1"))
 		def req2 = new Requirement(new RequirementVersion(name: "req2"))
 		def req3 = new Requirement(new RequirementVersion(name: "req3"))
+
+		def defCategory = doInTransaction({
+			it.get(InfoListItem.class, 1l)
+
+		})
+
+		[req1, req2, req3].each{it.category = defCategory}
+
 
 		refolder.addContent req1
 		refolder.addContent req2
