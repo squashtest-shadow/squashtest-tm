@@ -22,7 +22,10 @@ package org.squashtest.tm.service.internal.importer;
 
 import java.util.Set;
 
+import org.squashtest.tm.domain.infolist.InfoListItem;
 import org.squashtest.tm.domain.library.structures.StringPathMap;
+import org.squashtest.tm.domain.project.GenericProject;
+import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.testcase.Parameter;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseFolder;
@@ -40,57 +43,62 @@ import org.squashtest.tm.service.internal.archive.Entry;
  *
  */
 class HierarchyCreator{
-	
+
 	private ArchiveReader reader;
 	private ExcelTestCaseParser parser;
-	
+	private GenericProject project;
+
 	private StringPathMap<TestCaseLibraryNode> pathMap = new StringPathMap<TestCaseLibraryNode>();
-	
-	
+
+
 	private ImportSummaryImpl summary = new ImportSummaryImpl();
 	private TestCaseFolder root;
-	
-	
+
+
 	public HierarchyCreator(){
 		root = new TestCaseFolder();
 		root.setName("/");
-		
+
 		pathMap.put("/", root);
 	}
 
-	
+
 	public void setArchiveReader(ArchiveReader reader){
 		this.reader = reader;
 	}
-	
+
 	public void setParser(ExcelTestCaseParser parser){
 		this.parser = parser;
 	}
-	
+
+	public void setProject(GenericProject genericProject ){
+		this.project = genericProject;
+	}
+
 	public ImportSummaryImpl getSummary(){
 		return summary;
 	}
-	
-	
+
+
 	public TestCaseFolder getNodes(){
 		return root;
 	}
-	
+
 	public void create(){
-		
+
 		while(reader.hasNext()){
-			
+
 			Entry entry = reader.next();
-			
-			if (entry.isDirectory()){					
-				findOrCreateFolder(entry);					
-			}else{					
-				createTestCase(entry);					
+
+			if (entry.isDirectory()){
+				findOrCreateFolder(entry);
+			}else{
+				createTestCase(entry);
 			}
-			
+
 		}
 	}
-	
+
 	/**
 	 * will chain-create folders if path elements do not exist. Will also store the path in a map
 	 * for faster reference later.
@@ -99,40 +107,44 @@ class HierarchyCreator{
 	 */
 	private TestCaseFolder findOrCreateFolder(Entry entry){
 		TestCaseFolder isFound = (TestCaseFolder)pathMap.getMappedElement(entry.getName());
-		
+
 		if (isFound != null){
-			
+
 			return isFound;
-			
+
 		}else{
-			TestCaseFolder parent = findOrCreateFolder(entry.getParent());			
+			TestCaseFolder parent = findOrCreateFolder(entry.getParent());
 			TestCaseFolder newFolder = new TestCaseFolder();
 			newFolder.setName(entry.getShortName());
 			parent.addContent(newFolder);
-			
+
 			pathMap.put(entry.getName(), newFolder);
-			
+
 			return newFolder;
 		}
 	}
-	
-	
+
+
 	/**
-	 * will chain-create folders if the parents does not exit, create the test case, and store the path in 
+	 * will chain-create folders if the parents does not exit, create the test case, and store the path in
 	 * a map for faster reference later.
 	 * @param entry
 	 */
 	private void createTestCase(Entry entry){
-		try{			
-			summary.incrTotal();			
+		try{
+			summary.incrTotal();
 			//create the test case
 			TestCase testCase = parser.parseFile(entry.getStream(), summary);
+
+			// fix the natures and types and report to the summary if necessary.
+			fixNatureTypes(testCase);
+
 			//add all parameters for used parameters in the step.
 			Set<String> parameterNames = testCase.findUsedParamsNamesInSteps();
 			for(String parameterName : parameterNames){
 				new Parameter(parameterName, testCase);
 			}
-			//check whether the extension is correct 
+			//check whether the extension is correct
 			if (hasValidExtension(entry)) {
 				testCase.setName(stripExtension(entry.getShortName()));
 
@@ -145,21 +157,36 @@ class HierarchyCreator{
 			} else {
 				summary.incrRejected();
 			}
-			
+
 		}catch(SheetCorruptedException ex){
 			summary.incrFailures();
 		}
-		
+
 	}
 
 
 	private boolean hasValidExtension(Entry entry) {
 		return entry.getShortName().endsWith(".xls") || entry.getShortName().endsWith(".xlsx");
 	}
-	
+
 	private String stripExtension(String withExtension){
 		return parser.stripFileExtension(withExtension);
 	}
-	
-	
+
+	private void fixNatureTypes(TestCase testCase){
+		InfoListItem importNature = testCase.getNature();
+		if (importNature == null || (! project.getTestCaseNatures().contains(importNature))){
+			InfoListItem newNature = project.getTestCaseNatures().getDefaultItem();
+			testCase.setNature(newNature);
+			summary.incrModified();
+		}
+
+		InfoListItem importType = testCase.getType();
+		if (importType == null || (! project.getTestCaseTypes().contains(importType))){
+			InfoListItem newType = project.getTestCaseTypes().getDefaultItem();
+			testCase.setType(newType);
+			summary.incrModified();
+		}
+	}
+
 }

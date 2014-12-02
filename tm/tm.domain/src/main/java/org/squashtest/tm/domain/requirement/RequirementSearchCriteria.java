@@ -63,5 +63,5 @@ public interface RequirementSearchCriteria {
 	 * 
 	 * @return List of {@link RequirementCategory}. Should never return null.
 	 */
-	Collection<RequirementCategory> getCategories();
+	Collection<String> getCategories();
 }

@@ -36,13 +36,13 @@ import org.squashtest.tm.domain.requirement.VerificationCriterion;
  * @author Gregory Fouquet
  * 
  */
+@Deprecated // make something more 1108-ish
 public class RequirementSearchCriteriaAdapter implements RequirementSearchCriteria {
 	private final RequirementSearchParams params;
 
 	private final List<RequirementCriticality> criticalities = new ArrayList<RequirementCriticality>(
 			RequirementCriticality.values().length);
-	private final List<RequirementCategory> categories = new ArrayList<RequirementCategory>(
-			RequirementCategory.values().length);
+	private final List<String> categories = new ArrayList<String>();
 
 	public RequirementSearchCriteriaAdapter(RequirementSearchParams params, boolean[] criticalitiesSelection,
 			boolean[] categoriesSelection) {
@@ -57,7 +57,7 @@ public class RequirementSearchCriteriaAdapter implements RequirementSearchCriter
 		}
 		for (int i = 0; i < categoriesSelection.length; i++) {
 			if (categoriesSelection[i]) {
-				categories.add(RequirementCategory.valueOf(i));
+				categories.add("CAT_"+RequirementCategory.valueOf(i).toString());
 			}
 		}
 	}
@@ -78,7 +78,7 @@ public class RequirementSearchCriteriaAdapter implements RequirementSearchCriter
 	}
 
 	@Override
-	public Collection<RequirementCategory> getCategories() {
+	public Collection<String> getCategories() {
 		return categories;
 	}
 

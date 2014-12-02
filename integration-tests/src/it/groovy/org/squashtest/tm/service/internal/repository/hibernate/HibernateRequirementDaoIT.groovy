@@ -105,8 +105,8 @@ class HibernateRequirementDaoIT extends DbunitDaoSpecification {
 		RequirementSearchCriteria req = Mock()
 		req.criticalities >> []
 		req.categories >> [
-			RequirementCategory.UNDEFINED,
-			RequirementCategory.FUNCTIONAL
+			"CAT_UNDEFINED",
+			"CAT_FUNCTIONAL"
 		]
 		req.verificationCriterion >> VerificationCriterion.ANY
 

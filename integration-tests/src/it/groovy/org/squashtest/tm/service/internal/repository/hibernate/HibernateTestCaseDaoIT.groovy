@@ -468,7 +468,7 @@ class HibernateTestCaseDaoIT extends DbunitDaoSpecification {
 		given:
 		RequirementSearchCriteria req = Mock()
 		req.criticalities >> []
-		req.categories >> [RequirementCategory.UNDEFINED, RequirementCategory.FUNCTIONAL]
+		req.categories >> ["CAT_UNDEFINED", "CAT_FUNCTIONAL"]
 		when:
 		def res = testCaseDao.findAllByRequirement(req, false);
 
@@ -551,8 +551,8 @@ class HibernateTestCaseDaoIT extends DbunitDaoSpecification {
 		def nameFilter = "roject"
 		def groupByProject = false
 		def importances = [TestCaseImportance.MEDIUM, TestCaseImportance.HIGH]
-		def natures = [TestCaseNature.UNDEFINED]
-		def types = [TestCaseType.UNDEFINED]
+		def natures = ["NAT_UNDEFINED"]
+		def types = ["TYP_UNDEFINED"]
 		def statuses =[TestCaseStatus.WORK_IN_PROGRESS]
 
 		when :

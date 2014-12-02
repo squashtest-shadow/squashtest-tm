@@ -22,13 +22,27 @@ package org.squashtest.tm.service.infolist;
 
 import org.squashtest.tm.domain.infolist.InfoListItem;
 import org.squashtest.tm.domain.infolist.ListItemReference;
+import org.squashtest.tm.domain.infolist.SystemListItem;
 
 public interface InfoListItemFinderService {
+
+	// ********** System (default) item methods ********
+
+	SystemListItem getSystemRequirementCategory();
+
+	SystemListItem getSystemTestCaseNature();
+
+	SystemListItem getSystemTestCaseType();
+
+
+	// ********** General methods ************
 
 	InfoListItem findById(Long id);
 
 	InfoListItem findByCode(String code);
 
 	InfoListItem findReference(ListItemReference reference);
+
+
 
 }

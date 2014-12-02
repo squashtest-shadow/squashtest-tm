@@ -26,6 +26,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.infolist.InfoListItem;
 import org.squashtest.tm.domain.infolist.ListItemReference;
+import org.squashtest.tm.domain.infolist.SystemListItem;
 import org.squashtest.tm.service.infolist.InfoListItemManagerService;
 import org.squashtest.tm.service.internal.repository.InfoListItemDao;
 
@@ -37,6 +38,21 @@ public class InfoListItemManagerServiceImpl implements InfoListItemManagerServic
 	private InfoListItemDao itemDao;
 
 	// ************* "Finder" methods **************** \\
+
+	@Override
+	public SystemListItem getSystemRequirementCategory() {
+		return itemDao.getSystemRequirementCategory();
+	}
+
+	@Override
+	public SystemListItem getSystemTestCaseNature() {
+		return itemDao.getSystemTestCaseNature();
+	}
+
+	@Override
+	public SystemListItem getSystemTestCaseType() {
+		return itemDao.getSystemTestCaseType();
+	}
 
 	@Override
 	public InfoListItem findById(Long id){

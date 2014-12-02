@@ -23,11 +23,32 @@ package org.squashtest.tm.domain.infolist;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 
+import org.squashtest.tm.domain.requirement.RequirementCategory;
+import org.squashtest.tm.domain.testcase.TestCaseNature;
+import org.squashtest.tm.domain.testcase.TestCaseType;
 
+
+/**
+ * a SystemListItem is an InfoListItem that belongs to the vanilla business originally implemented in Squash.
+ * They are the now database-backed versions of the deprecated {@link RequirementCategory}, {@link TestCaseNature}
+ * and {@link TestCaseType}.
+ * It may have in the future a different signification, compared to the {@link UserListItem} which is
+ * user-defined (as the name suggests).
+ * 
+ * 
+ * @author bsiri
+ *
+ */
 
 @Entity
 @DiscriminatorValue("SYS")
 public class SystemListItem extends InfoListItem {
+
+	public static final String SYSTEM_REQ_CATEGORY = "CAT_FUNCTIONAL";
+	public static final String SYSTEM_TC_NATURE = "NAT_UNDEFINED";
+	public static final String SYSTEM_TC_TYPE = "TYP_UNDEFINED";
+
+
 	public SystemListItem(){
 		super();
 	}

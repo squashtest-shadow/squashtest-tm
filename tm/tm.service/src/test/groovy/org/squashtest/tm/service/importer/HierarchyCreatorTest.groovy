@@ -105,6 +105,10 @@ class HierarchyCreatorTest extends Specification {
 		importer.setParser(parser)
 
 		and :
+		def project = mockFactory.mockProject()
+		importer.setProject(project)
+
+		and :
 		def mTc = new TestCase()
 		parser.parseFile(_,_) >> mTc
 
@@ -114,7 +118,7 @@ class HierarchyCreatorTest extends Specification {
 
 		and :
 		def parent = new TestCaseFolder()
-		parent.notifyAssociatedWithProject(mockFactory.mockProject())
+		parent.notifyAssociatedWithProject(project)
 		importer.pathMap.put("/melvin/van", parent)
 
 		when :

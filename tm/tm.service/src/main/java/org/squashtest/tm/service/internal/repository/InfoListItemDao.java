@@ -22,8 +22,15 @@ package org.squashtest.tm.service.internal.repository;
 
 import org.squashtest.tm.domain.infolist.InfoListItem;
 import org.squashtest.tm.domain.infolist.ListItemReference;
+import org.squashtest.tm.domain.infolist.SystemListItem;
 
 public interface InfoListItemDao extends EntityDao<InfoListItem>{
+
+	SystemListItem getSystemRequirementCategory();
+
+	SystemListItem getSystemTestCaseNature();
+
+	SystemListItem getSystemTestCaseType();
 
 	InfoListItem findByCode(String code);
 

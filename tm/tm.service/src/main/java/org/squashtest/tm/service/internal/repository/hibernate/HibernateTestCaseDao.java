@@ -401,7 +401,9 @@ public class HibernateTestCaseDao extends HibernateEntityDao<TestCase> implement
 		DetachedCriteria crit = DetachedCriteria.forClass(TestCase.class);
 		crit.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
 		crit.createAlias("requirementVersionCoverages", "rvc");
-		DetachedCriteria reqCrit = crit.createCriteria("rvc.verifiedRequirementVersion");
+
+		DetachedCriteria reqCrit = crit.createCriteria("rvc.verifiedRequirementVersion", "rversion");
+		reqCrit.createAlias("rversion.category", "categ");
 
 		if (criteria.getName() != null) {
 			reqCrit.add(Restrictions.ilike("name", criteria.getName(), MatchMode.ANYWHERE));
@@ -410,12 +412,15 @@ public class HibernateTestCaseDao extends HibernateEntityDao<TestCase> implement
 		if (criteria.getReference() != null) {
 			reqCrit.add(Restrictions.ilike("reference", criteria.getReference(), MatchMode.ANYWHERE));
 		}
+
 		if (!criteria.getCriticalities().isEmpty()) {
 			reqCrit.add(Restrictions.in("criticality", criteria.getCriticalities()));
 		}
+
 		if (!criteria.getCategories().isEmpty()) {
-			reqCrit.add(Restrictions.in("category", criteria.getCategories()));
+			reqCrit.add(Restrictions.in("categ.code", criteria.getCategories()));
 		}
+
 		return crit;
 	}
 

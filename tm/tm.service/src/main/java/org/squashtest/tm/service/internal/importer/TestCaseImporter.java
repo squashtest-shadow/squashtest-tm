@@ -36,54 +36,57 @@ import org.squashtest.tm.service.testcase.TestCaseLibraryNavigationService;
 
 @Component
 public class TestCaseImporter {
-	
+
 	private final static String DEFAULT_ENCODING= "Cp858";
 	public static final String  DEFAULT_ENCODING_KEY = "default";
 
 	@Inject
 	private TestCaseLibraryNavigationService service;
-	
+
+
+
 	private ArchiveReaderFactory factory = new ArchiveReaderFactoryImpl();
-	
+
 	private ExcelTestCaseParser parser = new ExcelTestCaseParserImpl();
-	
-	
+
+
 	public ImportSummary importExcelTestCases(InputStream archiveStream, Long libraryId, String encoding){
-		
+
 		String finalEncoding = (encoding.equals(DEFAULT_ENCODING_KEY)) ? DEFAULT_ENCODING : encoding;
-	
+
 		ArchiveReader reader = factory.createReader(archiveStream, finalEncoding);
-		
+
+
+		TestCaseLibrary library = service.findCreatableLibrary(libraryId);
+
 		ImportSummaryImpl summary = new ImportSummaryImpl();
-		
+
 		/* phase 1 : convert the content of the archive into Squash entities */
-		
+
 		HierarchyCreator creator = new HierarchyCreator();
 		creator.setArchiveReader(reader);
 		creator.setParser(parser);
-		
+		creator.setProject(library.getProject());
+
 		creator.create();
-		
+
 		TestCaseFolder root = creator.getNodes();
 		summary.add(creator.getSummary());
-		
-		
+
+
 		/* phase 2 : merge with the actual database content */
-		
-		TestCaseLibrary library = service.findCreatableLibrary(libraryId);	
-		
-		
+
 		TestCaseLibraryMerger merger = new TestCaseLibraryMerger();
 		merger.setLibraryService(service);
 		merger.mergeIntoLibrary(library, root);
-		
+
 		summary.add(merger.getSummary());
-		
-		
+
+
 		return summary;
 	}
 
 
-	
-	
+
+
 }

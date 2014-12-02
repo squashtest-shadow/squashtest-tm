@@ -24,10 +24,28 @@ import org.hibernate.Query;
 import org.springframework.stereotype.Repository;
 import org.squashtest.tm.domain.infolist.InfoListItem;
 import org.squashtest.tm.domain.infolist.ListItemReference;
+import org.squashtest.tm.domain.infolist.SystemListItem;
 import org.squashtest.tm.service.internal.repository.InfoListItemDao;
 
 @Repository
 public class HibernateInfoListItemDao extends HibernateEntityDao<InfoListItem> implements InfoListItemDao{
+
+	@Override
+	public SystemListItem getSystemRequirementCategory() {
+		return (SystemListItem) currentSession().getNamedQuery("systemListItem.getSystemRequirementCategory").uniqueResult();
+	}
+
+
+	@Override
+	public SystemListItem getSystemTestCaseNature() {
+		return (SystemListItem) currentSession().getNamedQuery("systemListItem.getSystemTestCaseNature").uniqueResult();
+	}
+
+
+	@Override
+	public SystemListItem getSystemTestCaseType() {
+		return (SystemListItem) currentSession().getNamedQuery("systemListItem.getSystemTestCaseType").uniqueResult();
+	}
 
 	@Override
 	public InfoListItem findByCode(String code){
@@ -41,6 +59,8 @@ public class HibernateInfoListItemDao extends HibernateEntityDao<InfoListItem> i
 	public InfoListItem findReference(ListItemReference reference){
 		return findByCode(reference.getCode());
 	}
+
+
 
 
 }

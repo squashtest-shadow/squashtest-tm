@@ -24,6 +24,7 @@ import org.squashtest.tm.domain.Level;
 
 
 // TODO does this need to implement LEvel ? I18nable not enough ?
+@Deprecated
 public enum RequirementCategory implements Level {
 	SECURITY(10), USER_STORY(9), TECHNICAL(8), PERFORMANCE(7), ERGONOMIC(6), UNDEFINED(5), TEST_REQUIREMENT(4), BUSINESS(3), USE_CASE(2), NON_FUNCTIONAL(1), FUNCTIONAL(0) ;
 
@@ -52,7 +53,7 @@ public enum RequirementCategory implements Level {
 	public String getI18nKey() {
 		return I18N_KEY_ROOT + name();
 	}
-	
+
 	public String getCode(){
 		return name();
 	}

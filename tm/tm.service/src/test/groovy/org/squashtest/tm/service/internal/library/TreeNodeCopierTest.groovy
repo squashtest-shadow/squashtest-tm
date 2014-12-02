@@ -142,13 +142,16 @@ public class TreeNodeCopierTest extends Specification{
 	}
 
 	def "should copy a node and not rename despite copies are present since the original name is available anyway"(){
-		given : "the test case and it's copy"
+		given : "a project"
+		def project = mockFactory.mockProject()
+
+		and : "the test case and it's copy"
 		TestCase tcOrig = new TestCase(name: "NX_OHNOZ")
-		tcOrig.notifyAssociatedWithProject(mockFactory.mockProject())
+		tcOrig.notifyAssociatedWithProject(project)
 
 		and : "the folder"
 		TestCaseFolder folder = new TestCaseFolder()
-		folder.notifyAssociatedWithProject(mockFactory.mockProject())
+		folder.notifyAssociatedWithProject(project)
 		folder.addContent(new TestCase(name:"NX_OHNOZ-Copie1"))
 		folder.addContent(new TestCase(name:"NX_OHNOZ-Copie1-Copie7"))
 

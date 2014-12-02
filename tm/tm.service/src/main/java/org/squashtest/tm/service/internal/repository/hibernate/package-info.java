@@ -579,6 +579,11 @@
 		//InfoListItem
 		@NamedQuery(name="infoListItem.findByCode", query="from InfoListItem where code = :code"),
 		
+		//SystemListItem
+		@NamedQuery(name="systemListItem.getSystemRequirementCategory", query="from SystemListItem where code = '"+ SystemListItem.SYSTEM_REQ_CATEGORY +"'"),
+		@NamedQuery(name="systemListItem.getSystemTestCaseNature", query="from SystemListItem where code = '"+ SystemListItem.SYSTEM_TC_NATURE +"'"),
+		@NamedQuery(name="systemListItem.getSystemTestCaseType", query="from SystemListItem where code = '"+ SystemListItem.SYSTEM_TC_TYPE +"'"),
+		
 		//DenormalizedInfoListItem
 		@NamedQuery(name="denormalizedInfoListItem.findByReference", 
 					query="select denoItem from DenormalizedInfoListItem denoItem join denoItem.infoList denoList where denoItem.code = :code and denoList.originalId = :listId and denoList.originalVersion = :listVersion")
@@ -589,4 +594,5 @@ package org.squashtest.tm.service.internal.repository.hibernate;
 import org.hibernate.annotations.NamedQueries;
 import org.hibernate.annotations.NamedQuery;
 import org.squashtest.tm.service.internal.library.HibernatePathService;
+import org.squashtest.tm.domain.infolist.SystemListItem;
 

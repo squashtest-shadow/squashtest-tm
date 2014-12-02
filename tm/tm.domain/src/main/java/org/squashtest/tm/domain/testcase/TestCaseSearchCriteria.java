@@ -36,61 +36,61 @@ public interface TestCaseSearchCriteria {
 	 * @return
 	 */
 	boolean includeFoldersInResult();
-	
-	
+
+
 	/**
-	 * Tells whether the result set should group the data by projects. If false, the data will 
+	 * Tells whether the result set should group the data by projects. If false, the data will
 	 * only be sorted by name.
 	 * 
 	 * @return
 	 */
 	boolean isGroupByProject();
-	
-	
+
+
 	boolean usesNameFilter();
-	
+
 	/**
 	 * Tells whether a criterion regarding importance had been set in the query or not
 	 * 
 	 * @return
 	 */
 	boolean usesImportanceFilter();
-	
+
 	/**
 	 * Tells whether a criterion regarding nature had been set in the query or not
 	 * 
 	 * @return
 	 */
 	boolean usesNatureFilter();
-	
+
 	/**
 	 * Tells whether a criterion regarding type had been set in the query or not
 	 * 
 	 * @return
 	 */
 	boolean usesTypeFilter();
-	
-	
+
+
 	/**
 	 * Tells whether a criterion regarding status had been set in the query or not
 	 * 
 	 * @return
 	 */
 	boolean usesStatusFilter();
-	
-	
+
+
 
 	/**
-	 * returns the piece of the name of the test case that are looked for. Wildcards before and 
-	 * after should not be included. 
+	 * returns the piece of the name of the test case that are looked for. Wildcards before and
+	 * after should not be included.
 	 * 
 	 * @return
 	 */
 	String getNameFilter();
-	
-	
-	
-	
+
+
+
+
 	/**
 	 * gives the importances of the test cases we want to match. A result of length 0 is likely to be interpreted like 'fetch test cases having no importance', which
 	 * in turn will likely result in a void result set since {@link TestCase}s cannot have null {@link TestCaseImportance} attribute.
@@ -99,24 +99,24 @@ public interface TestCaseSearchCriteria {
 	 */
 	List<TestCaseImportance> getImportanceFilterSet();
 
-	
+
 	/**
 	 * gives the natures of the test cases we want to match. A result of length 0 is likely to be interpreted like 'fetch test cases having no nature', which
 	 * in turn will likely result in a void result set since {@link TestCase}s cannot have null {@link TestCaseNature} attribute.
 	 * 
 	 * @return
 	 */
-	List<TestCaseNature> getNatureFilterSet();
-	
-	
+	List<String> getNatureFilterSet();
+
+
 	/**
 	 * gives the types of the test cases we want to match. A result of length 0 is likely to be interpreted like 'fetch test cases having no type', which
 	 * in turn will likely result in a void result set since {@link TestCase}s cannot have null {@link TestCaseType} attribute.
 	 * 
 	 * @return
 	 */
-	List<TestCaseType> getTypeFilterSet();
-	
+	List<String> getTypeFilterSet();
+
 	/**
 	 * gives the statuses of the test cases we want to match. A result of length 0 is likely to be interpreted like 'fetch test cases having no status', which
 	 * in turn will likely result in a void result set since {@link TestCase}s cannot have null {@link TestCaseStatus} attribute.

@@ -22,6 +22,7 @@ package org.squashtest.tm.domain.testcase;
 
 import org.squashtest.tm.domain.Level;
 
+@Deprecated
 public enum TestCaseType implements Level{
 
 	UNDEFINED(1),
@@ -31,7 +32,7 @@ public enum TestCaseType implements Level{
 	REGRESSION_TESTING(5),
 	END_TO_END_TESTING(6),
 	PARTNER_TESTING(7);
-	
+
 	private static final String I18N_KEY_ROOT = "test-case.type.";
 
 	private final int level;
@@ -49,7 +50,7 @@ public enum TestCaseType implements Level{
 	public int getLevel() {
 		return level;
 	}
-	
+
 	public static TestCaseType defaultValue() {
 		return UNDEFINED;
 	}

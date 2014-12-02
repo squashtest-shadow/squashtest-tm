@@ -27,6 +27,7 @@ import javax.inject.Inject
 import org.hibernate.SQLQuery
 import org.springframework.transaction.annotation.Transactional
 import org.squashtest.tm.service.DbunitServiceSpecification
+import org.squashtest.tm.domain.infolist.ListItemReference;
 import org.squashtest.tm.domain.testcase.TestCaseFolder
 import org.squashtest.tm.domain.testcase.TestCaseImportance
 import org.squashtest.tm.domain.testcase.TestCaseNature
@@ -199,8 +200,8 @@ class TestCaseImporterIT extends DbunitServiceSpecification {
 
 		testcase.importance == TestCaseImportance.MEDIUM
 		testcase.status == TestCaseStatus.APPROVED
-		testcase.nature == TestCaseNature.BUSINESS_TESTING
-		testcase.type == TestCaseType.UNDEFINED
+		new ListItemReference("NAT_BUSINESS_TESTING").equals(testcase.nature)
+		new ListItemReference("TYP_UNDEFINED").equals(testcase.type)
 	}
 
 	/*

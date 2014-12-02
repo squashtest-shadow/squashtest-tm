@@ -128,6 +128,7 @@ public class HibernateRequirementDao extends HibernateEntityDao<Requirement> imp
 	private DetachedCriteria createRequirementCriteria(RequirementSearchCriteria searchCriteria) {
 		DetachedCriteria versionCriteria = DetachedCriteria.forClass(Requirement.class);
 		versionCriteria.createCriteria("resource", "res");
+		versionCriteria.createCriteria("res.category", "categ");
 
 		if (StringUtils.isNotBlank(searchCriteria.getName())) {
 			versionCriteria.add(Restrictions.ilike(RES_NAME, searchCriteria.getName(), MatchMode.ANYWHERE));
@@ -139,7 +140,7 @@ public class HibernateRequirementDao extends HibernateEntityDao<Requirement> imp
 			versionCriteria.add(Restrictions.in("res.criticality", searchCriteria.getCriticalities()));
 		}
 		if (!searchCriteria.getCategories().isEmpty()) {
-			versionCriteria.add(Restrictions.in("res.category", searchCriteria.getCategories()));
+			versionCriteria.add(Restrictions.in("categ.code", searchCriteria.getCategories()));
 		}
 
 		addVerificationRestriction(searchCriteria, versionCriteria);

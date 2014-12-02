@@ -23,6 +23,7 @@ package org.squashtest.tm.service.requirement
 import javax.inject.Inject
 
 import org.springframework.transaction.annotation.Transactional
+import org.squashtest.tm.domain.infolist.ListItemReference;
 import org.squashtest.tm.domain.requirement.RequirementCategory
 import org.squashtest.tm.domain.requirement.RequirementCriticality
 import org.squashtest.tm.exception.DuplicateNameException
@@ -69,11 +70,11 @@ class RequirementModificationServiceIT extends DbunitServiceSpecification {
 	@DataSet("RequirementModificationServiceIT.should change requirement category.xml")
 	def "should change requirement category"(){
 		when:
-		modService.changeCategory(requirementId, RequirementCategory.BUSINESS)
+		modService.changeCategory(requirementId, "CAT_BUSINESS")
 		def requirement = modService.findById(requirementId)
 
 		then:
-		requirement.category == RequirementCategory.BUSINESS
+		new ListItemReference("CAT_BUSINESS").equals(requirement.category)
 	}
 
 	@DataSet("RequirementModificationServiceIT.should change requirement reference.xml")
