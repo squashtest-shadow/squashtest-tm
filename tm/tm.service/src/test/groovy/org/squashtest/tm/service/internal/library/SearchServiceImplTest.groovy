@@ -23,7 +23,6 @@ package org.squashtest.tm.service.internal.library
 import org.squashtest.tm.domain.campaign.Campaign
 import org.squashtest.tm.domain.projectfilter.ProjectFilter
 import org.squashtest.tm.domain.testcase.TestCase
-import org.squashtest.tm.domain.testcase.TestCaseSearchCriteria
 import org.squashtest.tm.service.internal.library.SearchServiceImpl;
 import org.squashtest.tm.service.internal.repository.CampaignDao
 import org.squashtest.tm.service.internal.repository.RequirementDao
@@ -38,7 +37,7 @@ class SearchServiceImplTest extends Specification {
 	SearchServiceImpl service = new SearchServiceImpl();
 
 	CampaignDao campaignDao = Mock();
-	ProjectFilterModificationService projService = Mock(); 
+	ProjectFilterModificationService projService = Mock();
 
 	def setup() {
 		service.campaignDao = campaignDao
@@ -50,19 +49,19 @@ class SearchServiceImplTest extends Specification {
 		Campaign campaign1 = Mock();
 		Campaign campaign2 = Mock();
 		campaignDao.findAllByNameContaining("campaign", false) >> [campaign1, campaign2]
-		
+
 		and :
-		
+
 		ProjectFilter filter = Mock()
 		filter.getActivated() >> false
 		projService.findProjectFilterByUserLogin() >> filter
-		
+
 		when:
 		def found = service.findCampaignByName("campaign", false)
-		
+
 		then:
 		found == [campaign1, campaign2]
 	}
-	
+
 
 }

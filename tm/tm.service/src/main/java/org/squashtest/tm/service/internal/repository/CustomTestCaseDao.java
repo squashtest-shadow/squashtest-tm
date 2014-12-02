@@ -28,13 +28,11 @@ import org.squashtest.tm.core.foundation.collection.Paging;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.NamedReferencePair;
 import org.squashtest.tm.domain.execution.Execution;
-import org.squashtest.tm.domain.requirement.RequirementSearchCriteria;
 import org.squashtest.tm.domain.testcase.CallTestStep;
 import org.squashtest.tm.domain.testcase.ExportTestCaseData;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseImportance;
 import org.squashtest.tm.domain.testcase.TestCaseLibraryNode;
-import org.squashtest.tm.domain.testcase.TestCaseSearchCriteria;
 import org.squashtest.tm.domain.testcase.TestStep;
 
 /**
@@ -175,16 +173,6 @@ public interface CustomTestCaseDao extends EntityDao<TestCase> {
 	 * @return
 	 */
 	List<CallTestStep> findAllCallingTestSteps(long testCaseId);
-	/***
-	 * Returns the test cases associated with at least a requirement that meets the criteria
-	 * 
-	 * @param criteria
-	 *            the requirement search criteria
-	 * @param isProjectOrdered
-	 *            if set to true, the list of test case is ordered by project
-	 * @return the list of test case (order by project if specified)
-	 */
-	List<TestCase> findAllByRequirement(RequirementSearchCriteria criteria, boolean isProjectOrdered);
 
 	/**
 	 * Returns the test cases ids first called by the call steps found in the list of given test steps ids. Note: only
@@ -219,7 +207,6 @@ public interface CustomTestCaseDao extends EntityDao<TestCase> {
 	 */
 	List<TestCase> findUnsortedAllByVerifiedRequirementVersion(long requirementId);
 
-	List<TestCaseLibraryNode> findBySearchCriteria(TestCaseSearchCriteria criteria);
 
 	/**
 	 * Returns all the execution associated to this test-case

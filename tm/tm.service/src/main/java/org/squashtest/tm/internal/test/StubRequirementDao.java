@@ -27,8 +27,6 @@ import java.util.Set;
 import org.squashtest.tm.domain.requirement.ExportRequirementData;
 import org.squashtest.tm.domain.requirement.Requirement;
 import org.squashtest.tm.domain.requirement.RequirementCriticality;
-import org.squashtest.tm.domain.requirement.RequirementLibraryNode;
-import org.squashtest.tm.domain.requirement.RequirementSearchCriteria;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.service.internal.repository.RequirementDao;
 
@@ -61,22 +59,6 @@ public class StubRequirementDao extends StubEntityDao<Requirement> implements Re
 	 */
 	//@Override
 	public List<String> findNamesInLibraryStartingWith(long libraryId, String nameStart) {
-		return null;
-	}
-
-	/**
-	 * @see org.squashtest.tm.service.internal.repository.RequirementDao#findAllBySearchCriteria(org.squashtest.tm.domain.requirement.RequirementSearchCriteria)
-	 */
-	//@Override
-	public List<RequirementLibraryNode> findAllBySearchCriteria(RequirementSearchCriteria criteria) {
-		return null;
-	}
-
-	/**
-	 * @see org.squashtest.tm.service.internal.repository.RequirementDao#findAllBySearchCriteriaOrderByProject(org.squashtest.tm.domain.requirement.RequirementSearchCriteria)
-	 */
-	//@Override
-	public List<RequirementLibraryNode> findAllBySearchCriteriaOrderByProject(RequirementSearchCriteria criteria) {
 		return null;
 	}
 
@@ -141,7 +123,7 @@ public class StubRequirementDao extends StubEntityDao<Requirement> implements Re
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
+
 	@Override
 	public List<Requirement> findChildrenRequirements(long requirementId) {
 		// TODO Auto-generated method stub
@@ -153,7 +135,7 @@ public class StubRequirementDao extends StubEntityDao<Requirement> implements Re
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
+
 	@Override
 	public List<Object[]> findAllParentsOf(List<Long> requirementIds) {
 		// TODO Auto-generated method stub

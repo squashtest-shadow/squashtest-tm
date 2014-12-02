@@ -103,9 +103,9 @@ class RequirementLibraryTreeNodeBuilderTest extends Specification {
 
 	def "should expand a requirement node"(){
 		given :
-		Requirement node = new Requirement(resource: new RequirementVersion(), name:"folder")
+		Requirement node = new Requirement(resource: new RequirementVersion(), name:"folder", category : new ListItemReference("CAT_UNDEFINED"))
 		node.notifyAssociatedWithProject(new MockFactory().mockProject())
-		Requirement child = new Requirement(resource: new RequirementVersion(), name:"folder child")
+		Requirement child = new Requirement(resource: new RequirementVersion(), name:"folder child", category : new ListItemReference("CAT_UNDEFINED"))
 		node.addContent(child);
 
 		use(ReflectionCategory) {

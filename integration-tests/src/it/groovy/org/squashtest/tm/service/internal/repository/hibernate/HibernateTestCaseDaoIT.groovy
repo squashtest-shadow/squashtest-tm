@@ -35,10 +35,8 @@ import org.squashtest.tm.core.foundation.collection.SortOrder
 import org.squashtest.tm.domain.NamedReference
 import org.squashtest.tm.domain.requirement.RequirementCategory
 import org.squashtest.tm.domain.requirement.RequirementCriticality
-import org.squashtest.tm.domain.requirement.RequirementSearchCriteria
 import org.squashtest.tm.domain.testcase.TestCaseImportance
 import org.squashtest.tm.domain.testcase.TestCaseNature
-import org.squashtest.tm.domain.testcase.TestCaseSearchCriteria
 import org.squashtest.tm.domain.testcase.TestCaseStatus
 import org.squashtest.tm.domain.testcase.TestCaseType
 import org.squashtest.tm.domain.NamedReferencePair;
@@ -396,186 +394,6 @@ class HibernateTestCaseDaoIT extends DbunitDaoSpecification {
 
 
 
-
-
-
-	@DataSet("HibernateTestCaseDaoIT.should find test cases by requirement name token.xml")
-	def "should find test cases by requirement name token"() {
-		given:
-		RequirementSearchCriteria req = Mock()
-		req.name >> "token"
-		req.criticalities >> []
-		req.categories >> []
-
-		when:
-		def res = testCaseDao.findAllByRequirement(req, false);
-
-		then:
-		res.containsSameIdentifiers([-202L, -102L, -103L])
-	}
-
-	@DataSet("HibernateTestCaseDaoIT.should find test cases by requirement reference token.xml")
-	def "should find test cases by requirement reference token"() {
-		given:
-		RequirementSearchCriteria req = Mock()
-		req.reference >> "token"
-		req.criticalities >> []
-		req.categories >> []
-
-		when:
-		def res = testCaseDao.findAllByRequirement(req, false);
-
-		then:
-		res.containsSameIdentifiers([-202L, -102L, -103L])
-	}
-
-	@DataSet("HibernateTestCaseDaoIT.should find test cases by requirement reference and name token.xml")
-	def "should find test cases by requirement reference and name token"() {
-		given:
-		RequirementSearchCriteria req = Mock()
-		req.reference >> "token"
-		req.name >> "foo"
-		req.criticalities >> []
-		req.categories >> []
-
-		when:
-		def res = testCaseDao.findAllByRequirement(req, false);
-
-		then:
-		res.size() == 2
-		res.containsSameIdentifiers([-103L, -102L])
-	}
-
-	@DataSet("HibernateTestCaseDaoIT.should find test cases by requirement criticalities.xml")
-	def "should find test cases by requirement criticalities"() {
-		given:
-		RequirementSearchCriteria req = Mock()
-		req.criticalities >> [
-			RequirementCriticality.MINOR,
-			RequirementCriticality.MAJOR
-		]
-		req.categories >> []
-		when:
-		def res = testCaseDao.findAllByRequirement(req, false);
-
-		then:
-		res.size() == 3
-		res.containsSameIdentifiers([-302L, -103L, -102L])
-	}
-
-	@DataSet("HibernateTestCaseDaoIT.should find test cases by requirement categories.xml")
-	def "should find test cases by requirement categories"() {
-		given:
-		RequirementSearchCriteria req = Mock()
-		req.criticalities >> []
-		req.categories >> ["CAT_UNDEFINED", "CAT_FUNCTIONAL"]
-		when:
-		def res = testCaseDao.findAllByRequirement(req, false);
-
-		then:
-		res.size() == 3
-		res.containsSameIdentifiers([-302L, -103L, -102L])
-	}
-
-	@DataSet("HibernateTestCaseDaoIT.search-by-criteria-setup.xml")
-	def "should find the test cases and folders ordered by names, not grouped by project and no importance filter"(){
-
-		given :
-
-		def nameFilter = "roject"
-		def groupByProject = false
-		def importances = []
-		def natures = []
-		def types = []
-		def statuses = []
-
-		and :
-		def criteria = mockTestCaseSearchCriteria(nameFilter, groupByProject, importances,
-				natures, types, statuses)
-
-		when :
-
-		def result = testCaseDao.findBySearchCriteria(criteria)
-
-		then :
-		result*.id.containsAll([ -211L,-121L, - 112L, -221L, -212L, -111L ])
-		result*.name.containsAll([
-			"aaa project Ed test case 1",
-			"aaa project Ion folder 1",
-			"aaa project Ion test case 2",
-			"bbb project Ed folder 1",
-			"bbb project Ed test case 2",
-			"bbb project Ion test case 1"
-		])
-		result.size() == 6
-	}
-
-
-	@DataSet("HibernateTestCaseDaoIT.search-by-criteria-setup.xml")
-	def "should find the test cases and folders ordered by names, grouped by project and no importance filter"(){
-
-
-		given :
-
-		def nameFilter = "roject"
-		def groupByProject = true
-		def importances = []
-		def natures = []
-		def types = []
-		def statuses = []
-
-		when :
-
-		def criteria = mockTestCaseSearchCriteria(nameFilter, groupByProject, importances,
-				natures, types, statuses)
-		def result = testCaseDao.findBySearchCriteria(criteria)
-
-		then :
-		result*.id.containsAll([ -121L, -112L, -111L, -211L, -221L, -212L])
-		result*.name.containsAll([
-			"aaa project Ion folder 1",
-			"aaa project Ion test case 2",
-			"bbb project Ion test case 1",
-			"aaa project Ed test case 1",
-			"bbb project Ed folder 1",
-			"bbb project Ed test case 2",
-		])
-		result.size() == 6
-	}
-
-	@DataSet("HibernateTestCaseDaoIT.search-by-criteria-setup.xml")
-	def "should find test cases ordered by names, not grouped by project and having importance MEDIUM and HIGH"(){
-
-		given :
-
-		def nameFilter = "roject"
-		def groupByProject = false
-		def importances = [TestCaseImportance.MEDIUM, TestCaseImportance.HIGH]
-		def natures = ["NAT_UNDEFINED"]
-		def types = ["TYP_UNDEFINED"]
-		def statuses =[TestCaseStatus.WORK_IN_PROGRESS]
-
-		when :
-		def criteria = mockTestCaseSearchCriteria(nameFilter, groupByProject, importances,
-				natures, types, statuses)
-
-		def result = testCaseDao.findBySearchCriteria(criteria)
-
-		then :
-
-		result.size() == 2
-		result*.id.containsAll([ -112L, -212L ])
-		result*.name.containsAll([
-			"aaa project Ion test case 2", "bbb project Ed test case 2"
-		])
-
-	}
-
-
-
-
-
-
 	@DataSet("HibernateTestCaseDaoIT.should return list of executions.xml")
 	def "should return list of executions"(){
 		when:
@@ -628,26 +446,6 @@ class HibernateTestCaseDaoIT extends DbunitDaoSpecification {
 
 	// ************* scaffolding ************
 
-	private TestCaseSearchCriteria mockTestCaseSearchCriteria(String name, boolean groupByProject,
-			List importances, List natures, List types,List statuses){
-
-		def attributes = [
-			"NameFilter" : name,
-			"groupByProject" : groupByProject,
-			"ImportanceFilter" : importances,
-			"NatureFilter" : natures,
-			"TypeFilter" : types,
-			"StatusFilter" : statuses
-		]
-
-		def handler = new SearchCriteriaHandler(attributes)
-
-		TestCaseSearchCriteria crit = Proxy.newProxyInstance(TestCaseSearchCriteria.class.getClassLoader(),
-				[TestCaseSearchCriteria.class ] as Class[],
-				handler);
-
-		return crit;
-	}
 
 
 

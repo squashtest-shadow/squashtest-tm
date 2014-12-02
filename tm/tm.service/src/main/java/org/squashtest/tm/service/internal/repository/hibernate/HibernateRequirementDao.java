@@ -30,14 +30,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.lang.StringUtils;
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.criterion.Criterion;
-import org.hibernate.criterion.DetachedCriteria;
-import org.hibernate.criterion.MatchMode;
-import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.type.LongType;
 import org.springframework.stereotype.Repository;
@@ -45,9 +41,6 @@ import org.squashtest.tm.domain.IdentifiedUtil;
 import org.squashtest.tm.domain.requirement.ExportRequirementData;
 import org.squashtest.tm.domain.requirement.Requirement;
 import org.squashtest.tm.domain.requirement.RequirementCriticality;
-import org.squashtest.tm.domain.requirement.RequirementFolder;
-import org.squashtest.tm.domain.requirement.RequirementLibraryNode;
-import org.squashtest.tm.domain.requirement.RequirementSearchCriteria;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.requirement.VerificationCriterion;
 import org.squashtest.tm.service.internal.library.HibernatePathService;
@@ -91,71 +84,7 @@ public class HibernateRequirementDao extends HibernateEntityDao<Requirement> imp
 		}
 	}
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	@Override
-	public List<RequirementLibraryNode> findAllBySearchCriteria(RequirementSearchCriteria searchCriteria) {
-		List<RequirementLibraryNode> resultList = new ArrayList<RequirementLibraryNode>();
-		// requirements
-		DetachedCriteria requirementCriteria = createRequirementCriteria(searchCriteria);
-		requirementCriteria.addOrder(Order.asc(RES_NAME));
-		List<RequirementLibraryNode> requirementList = requirementCriteria.getExecutableCriteria(currentSession())
-				.list();
-		resultList.addAll(requirementList);
-		// requirement Folders
-		if (searchCriteria.libeleIsOnlyCriteria()) {
-			DetachedCriteria requirementFolderCriteria = createRequirementFolderCriteria(searchCriteria);
-			requirementFolderCriteria.addOrder(Order.asc(RES_NAME));
-			List<RequirementLibraryNode> requirementFolderList = requirementFolderCriteria.getExecutableCriteria(
-					currentSession()).list();
-			resultList.addAll(requirementFolderList);
-		}
 
-		return resultList;
-	}
-
-	private DetachedCriteria createRequirementFolderCriteria(RequirementSearchCriteria searchCriteria) {
-		DetachedCriteria criteria = DetachedCriteria.forClass(RequirementFolder.class);
-		criteria.createCriteria("resource", "res");
-
-		if (StringUtils.isNotBlank(searchCriteria.getName())) {
-			criteria.add(Restrictions.ilike(RES_NAME, searchCriteria.getName(), MatchMode.ANYWHERE));
-		}
-
-		return criteria;
-
-	}
-
-	private DetachedCriteria createRequirementCriteria(RequirementSearchCriteria searchCriteria) {
-		DetachedCriteria versionCriteria = DetachedCriteria.forClass(Requirement.class);
-		versionCriteria.createCriteria("resource", "res");
-		versionCriteria.createCriteria("res.category", "categ");
-
-		if (StringUtils.isNotBlank(searchCriteria.getName())) {
-			versionCriteria.add(Restrictions.ilike(RES_NAME, searchCriteria.getName(), MatchMode.ANYWHERE));
-		}
-		if (StringUtils.isNotBlank(searchCriteria.getReference())) {
-			versionCriteria.add(Restrictions.ilike("res.reference", searchCriteria.getReference(), MatchMode.ANYWHERE));
-		}
-		if (!searchCriteria.getCriticalities().isEmpty()) {
-			versionCriteria.add(Restrictions.in("res.criticality", searchCriteria.getCriticalities()));
-		}
-		if (!searchCriteria.getCategories().isEmpty()) {
-			versionCriteria.add(Restrictions.in("categ.code", searchCriteria.getCategories()));
-		}
-
-		addVerificationRestriction(searchCriteria, versionCriteria);
-
-		return versionCriteria;
-	}
-
-	private void addVerificationRestriction(RequirementSearchCriteria searchCriteria, DetachedCriteria criteria) {
-		Criterion restriction = (Criterion) HIBERNATE_RESTRICTION_BY_VERIFICATION_CRITERION.get(searchCriteria
-				.getVerificationCriterion());
-
-		if (restriction != null) {
-			criteria.add(restriction);
-		}
-	}
 
 	@Override
 	public List<Requirement> findChildrenRequirements(long requirementId) {
@@ -163,19 +92,6 @@ public class HibernateRequirementDao extends HibernateEntityDao<Requirement> imp
 		return executeListNamedQuery("requirement.findChildrenRequirements", setId);
 	}
 
-	@SuppressWarnings({ "rawtypes" })
-	@Override
-	public List<RequirementLibraryNode> findAllBySearchCriteriaOrderByProject(RequirementSearchCriteria searchCriteria) {
-		List<RequirementLibraryNode> resultList = findAllBySearchCriteria(searchCriteria);
-		Collections.sort(resultList, new Comparator<RequirementLibraryNode>() {
-
-			@Override
-			public int compare(RequirementLibraryNode req1, RequirementLibraryNode req2) {
-				return req1.getProject().getName().compareTo(req2.getProject().getName());
-			}
-		});
-		return resultList;
-	}
 
 	/* ----------------------------------------------------EXPORT METHODS----------------------------------------- */
 

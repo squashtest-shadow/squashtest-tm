@@ -26,17 +26,10 @@ import java.util.Set;
 import org.squashtest.tm.domain.requirement.ExportRequirementData;
 import org.squashtest.tm.domain.requirement.Requirement;
 import org.squashtest.tm.domain.requirement.RequirementCriticality;
-import org.squashtest.tm.domain.requirement.RequirementLibraryNode;
-import org.squashtest.tm.domain.requirement.RequirementSearchCriteria;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 
 public interface RequirementDao extends EntityDao<Requirement> {
 
-	@SuppressWarnings("rawtypes")
-	List<RequirementLibraryNode> findAllBySearchCriteria(RequirementSearchCriteria criteria);
-
-	@SuppressWarnings("rawtypes")
-	List<RequirementLibraryNode> findAllBySearchCriteriaOrderByProject(RequirementSearchCriteria criteria);
 
 	List<Requirement> findChildrenRequirements(long requirementId);
 

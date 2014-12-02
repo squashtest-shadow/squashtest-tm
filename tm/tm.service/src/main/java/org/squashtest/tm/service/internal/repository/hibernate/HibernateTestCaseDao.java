@@ -36,7 +36,6 @@ import org.hibernate.Hibernate;
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
-import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
@@ -51,14 +50,12 @@ import org.squashtest.tm.domain.IdentifiedUtil;
 import org.squashtest.tm.domain.NamedReference;
 import org.squashtest.tm.domain.NamedReferencePair;
 import org.squashtest.tm.domain.execution.Execution;
-import org.squashtest.tm.domain.requirement.RequirementSearchCriteria;
 import org.squashtest.tm.domain.testcase.CallTestStep;
 import org.squashtest.tm.domain.testcase.ExportTestCaseData;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseFolder;
 import org.squashtest.tm.domain.testcase.TestCaseImportance;
 import org.squashtest.tm.domain.testcase.TestCaseLibraryNode;
-import org.squashtest.tm.domain.testcase.TestCaseSearchCriteria;
 import org.squashtest.tm.domain.testcase.TestStep;
 import org.squashtest.tm.service.internal.foundation.collection.PagingUtils;
 import org.squashtest.tm.service.internal.foundation.collection.SortingUtils;
@@ -383,46 +380,6 @@ public class HibernateTestCaseDao extends HibernateEntityDao<TestCase> implement
 	}
 
 
-	@SuppressWarnings("unchecked")
-	@Override
-	public List<TestCase> findAllByRequirement(RequirementSearchCriteria criteria, boolean isProjectOrdered) {
-
-		DetachedCriteria crit = createFindAllByRequirementCriteria(criteria);
-
-		if (isProjectOrdered) {
-			crit.addOrder(Order.asc(PROJECT));
-		}
-
-		return crit.getExecutableCriteria(currentSession()).list();
-	}
-
-
-	private DetachedCriteria createFindAllByRequirementCriteria(RequirementSearchCriteria criteria) {
-		DetachedCriteria crit = DetachedCriteria.forClass(TestCase.class);
-		crit.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
-		crit.createAlias("requirementVersionCoverages", "rvc");
-
-		DetachedCriteria reqCrit = crit.createCriteria("rvc.verifiedRequirementVersion", "rversion");
-		reqCrit.createAlias("rversion.category", "categ");
-
-		if (criteria.getName() != null) {
-			reqCrit.add(Restrictions.ilike("name", criteria.getName(), MatchMode.ANYWHERE));
-		}
-
-		if (criteria.getReference() != null) {
-			reqCrit.add(Restrictions.ilike("reference", criteria.getReference(), MatchMode.ANYWHERE));
-		}
-
-		if (!criteria.getCriticalities().isEmpty()) {
-			reqCrit.add(Restrictions.in("criticality", criteria.getCriticalities()));
-		}
-
-		if (!criteria.getCategories().isEmpty()) {
-			reqCrit.add(Restrictions.in("categ.code", criteria.getCategories()));
-		}
-
-		return crit;
-	}
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -531,47 +488,6 @@ public class HibernateTestCaseDao extends HibernateEntityDao<TestCase> implement
 		return query.list();
 	}
 
-	@SuppressWarnings("unchecked")
-	@Override
-	public List<TestCaseLibraryNode> findBySearchCriteria(TestCaseSearchCriteria criteria) {
-
-		Criteria hCriteria;
-
-		if (criteria.includeFoldersInResult()) {
-			hCriteria = currentSession().createCriteria(TestCaseLibraryNode.class);
-		} else {
-			hCriteria = currentSession().createCriteria(TestCase.class);
-		}
-
-		if (criteria.usesNameFilter()) {
-			hCriteria.add(Restrictions.ilike("name", criteria.getNameFilter(), MatchMode.ANYWHERE));
-		}
-
-		if (criteria.usesImportanceFilter()) {
-			hCriteria.add(Restrictions.in("importance", criteria.getImportanceFilterSet()));
-		}
-
-		if (criteria.usesNatureFilter()) {
-			hCriteria.add(Restrictions.in("nature", criteria.getNatureFilterSet()));
-		}
-
-		if (criteria.usesTypeFilter()) {
-			hCriteria.add(Restrictions.in("type", criteria.getTypeFilterSet()));
-		}
-
-		if (criteria.usesStatusFilter()) {
-			hCriteria.add(Restrictions.in("status", criteria.getStatusFilterSet()));
-		}
-
-		if (criteria.isGroupByProject()) {
-			hCriteria.addOrder(Order.asc(PROJECT));
-		}
-
-		hCriteria.addOrder(Order.asc("name"));
-
-		return hCriteria.list();
-
-	}
 
 	@Override
 	public List<Execution> findAllExecutionByTestCase(Long tcId) {
