@@ -81,7 +81,7 @@
   						<td th:text="*{testPlan.iteration.project.name}">Project XX</td>
   						<td th:text="*{testPlan.iteration.campaign.name}">Campaign YY</td>
   						<td th:text="*{testPlan.iteration.name}">Iteration YY</td>
-  						<td class="exec-name"><a href="/executions/1/info" th:href="@{'/executions/'} + *{id}" th:text="*{name}">Execution ZZ</a></td>
+  						<td class="exec-name"><a href="/executions/1/info" th:href="@{'/executions/'} + *{id}" th:text="*{name} + 'Exe.#'+ *{executionOrder}">Execution ZZ</a></td>
   						<td th:text="#{*{executionMode.i18nKey}}">Mode ??</td>
   						<td th:text="*{testPlan.testSuiteNames}">Test Suite AA</td>
   						<td th:text="*{executionStatus}"  class="not-displayed raw-exec-status">BLOCKED</td>

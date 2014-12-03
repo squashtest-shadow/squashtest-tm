@@ -71,7 +71,7 @@ DataTableModelBuilder<Execution> {
 		data.put("project-name", 	iteration.getProject().getName());
 		data.put("campaign-name", 	iteration.getCampaign().getName());
 		data.put("iteration-name", 	iteration.getName());
-		data.put("exec-name", 		item.getName());
+		data.put("exec-name", item.getName() + " Exe.#" + item.getExecutionOrder());
 		data.put("exec-mode", 		translate(item.getExecutionMode()));
 		data.put("test-suite-name", testSuiteNameList(testPlanItem));
 		data.put("raw-exec-status", item.getExecutionStatus().name());
