@@ -32,8 +32,8 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.domain.infolist.InfoListItem;
 import org.squashtest.tm.domain.testcase.TestCase;
-import org.squashtest.tm.domain.testcase.TestCaseType;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
+import org.squashtest.tm.web.internal.model.builder.JsonProjectBuilder;
 
 /**
  * @author Gregory Fouquet
@@ -48,6 +48,11 @@ public class JsonTestCaseBuilder {
 
 	@Inject
 	private InternationalizationHelper internationalizationHelper;
+
+	@Inject
+	private JsonProjectBuilder projectBuilder;
+
+
 	private Locale locale;
 
 	private List<TestCase> entities;
@@ -93,7 +98,7 @@ public class JsonTestCaseBuilder {
 		res.setId(tc.getId());
 		res.setName(tc.getName());
 		res.setRef(tc.getReference());
-		res.setProject(JsonProject.toJson(tc.getProject()));
+		res.setProject(projectBuilder.toSimpleJson(tc.getProject()));
 		res.setType(buildType(tc.getType()));
 
 		return res;

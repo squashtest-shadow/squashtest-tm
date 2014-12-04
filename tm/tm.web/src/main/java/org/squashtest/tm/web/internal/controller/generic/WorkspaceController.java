@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.web.internal.controller.generic;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
@@ -39,21 +40,33 @@ import org.squashtest.tm.api.wizard.WorkspaceWizard;
 import org.squashtest.tm.api.workspace.WorkspaceType;
 import org.squashtest.tm.domain.library.Library;
 import org.squashtest.tm.domain.library.LibraryNode;
+import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.service.library.WorkspaceService;
+import org.squashtest.tm.service.project.ProjectFinder;
 import org.squashtest.tm.web.internal.controller.campaign.MenuItem;
 import org.squashtest.tm.web.internal.helper.JsTreeHelper;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.builder.DriveNodeBuilder;
 import org.squashtest.tm.web.internal.model.builder.JsTreeNodeListBuilder;
+import org.squashtest.tm.web.internal.model.builder.JsonProjectBuilder;
+import org.squashtest.tm.web.internal.model.json.JsonProject;
 import org.squashtest.tm.web.internal.model.jstree.JsTreeNode;
 import org.squashtest.tm.web.internal.wizard.WorkspaceWizardManager;
 
 public abstract class WorkspaceController<LN extends LibraryNode> {
 	private static final Logger LOGGER = LoggerFactory.getLogger(WorkspaceController.class);
+
 	@Inject
 	private WorkspaceWizardManager workspaceWizardManager;
+
 	@Inject
 	protected InternationalizationHelper i18nHelper;
+
+	@Inject
+	protected ProjectFinder projectFinder;
+
+	@Inject
+	protected JsonProjectBuilder jsonProjectBuilder;
 
 	/**
 	 * Shows a workspace.
@@ -66,20 +79,21 @@ public abstract class WorkspaceController<LN extends LibraryNode> {
 	public String showWorkspace(Model model, Locale locale,
 			@CookieValue(value = "jstree_open", required = false, defaultValue = "") String[] openedNodes,
 			@CookieValue(value = "workspace-prefs", required = false, defaultValue = "") String elementId) {
+
 		List<Library<LN>> libraries = getWorkspaceService().findAllLibraries();
 		String[] nodesToOpen = null;
-		
+
 		if(elementId == null || "".equals(elementId)){
-			nodesToOpen = openedNodes;	
+			nodesToOpen = openedNodes;
 			model.addAttribute("selectedNode", "");
 		} else {
 			Long id = Long.valueOf(elementId);
 			nodesToOpen = getNodeParentsInWorkspace(id);
 			model.addAttribute("selectedNode", getTreeElementIdInWorkspace(id));
 		}
-		
+
 		MultiMap expansionCandidates = mapIdsByType(nodesToOpen);
-		
+
 		DriveNodeBuilder<LN> nodeBuilder = driveNodeBuilderProvider().get();
 		List<JsTreeNode> rootNodes = new JsTreeNodeListBuilder<Library<LN>>(nodeBuilder).expand(expansionCandidates)
 				.setModel(libraries).build();
@@ -87,6 +101,15 @@ public abstract class WorkspaceController<LN extends LibraryNode> {
 		model.addAttribute("rootModel", rootNodes);
 
 		populateModel(model, locale);
+
+		// also add meta data about projects
+		Collection<Project> projects = projectFinder.findAllReadable();
+		Collection<JsonProject> jsProjects = new ArrayList<JsonProject>(projects.size());
+		for (Project p : projects){
+			jsProjects.add(jsonProjectBuilder.toExtendedProject(p));
+		}
+
+		model.addAttribute("projects", jsProjects);
 
 		return getWorkspaceViewName();
 	}
@@ -113,21 +136,21 @@ public abstract class WorkspaceController<LN extends LibraryNode> {
 	 */
 	protected abstract String getWorkspaceViewName();
 
-	
+
 	/**
 	 * Returns the list of parents of a node given the id of an element
 	 * @param elementId
 	 * @return
 	 */
 	protected abstract String[] getNodeParentsInWorkspace(Long elementId);
-	
+
 	/**
 	 * Returns the id of a node in the tree given the id of an element
 	 * @param elementId
 	 * @return
 	 */
 	protected abstract String getTreeElementIdInWorkspace(Long elementId);
-	
+
 	/**
 	 * Called when {@link #getWorkspaceViewName()} is invoked. This allows you to add anything you need to
 	 * thisworkspace's model. No need to supply the treenodes : they will be provided.

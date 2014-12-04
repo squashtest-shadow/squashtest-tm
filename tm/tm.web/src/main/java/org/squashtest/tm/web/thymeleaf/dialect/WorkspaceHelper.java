@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.web.thymeleaf.dialect;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -37,7 +38,9 @@ import org.squashtest.tm.service.bugtracker.BugTrackerFinderService;
 import org.squashtest.tm.service.project.ProjectFilterModificationService;
 import org.squashtest.tm.service.project.ProjectFinder;
 import org.squashtest.tm.web.internal.export.ExportPluginManager;
+import org.squashtest.tm.web.internal.model.builder.JsonProjectBuilder;
 import org.squashtest.tm.web.internal.model.jquery.FilterModel;
+import org.squashtest.tm.web.internal.model.json.JsonProject;
 
 
 
@@ -81,6 +84,7 @@ public class WorkspaceHelper {
 		return new FilterModel(filter, allProjects);
 
 	}
+
 	public  Collection<ExportPlugin> exportPlugins(String workspaceName) {
 
 		WebApplicationContext wac = WebApplicationContextUtils.getWebApplicationContext(servletContext);
@@ -89,4 +93,6 @@ public class WorkspaceHelper {
 		ExportPluginManager manager = wac.getBean(ExportPluginManager.class);
 		return manager.findAllByWorkspace(workspace);
 	}
+
+
 }

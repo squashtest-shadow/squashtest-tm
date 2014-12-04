@@ -20,16 +20,33 @@
  */
 package org.squashtest.tm.web.internal.model.json;
 
+import java.util.List;
+import java.util.Map;
+
+import org.squashtest.tm.domain.customfield.BindableEntity;
+import org.squashtest.tm.domain.infolist.InfoList;
 import org.squashtest.tm.domain.project.Project;
+import org.squashtest.tm.web.internal.model.customfield.CustomFieldBindingModel;
 
 /**
  * @author Gregory Fouquet
  * 
  */
 public class JsonProject {
+
+
 	private long id;
 	private String uri;
 	private String name;
+
+	private Map<String, List<CustomFieldBindingModel>> customFieldBindings;
+
+	private JsonInfoList requirementCategories;
+
+	private JsonInfoList testCaseNatures;
+
+	private JsonInfoList testCaseTypes;
+
 
 	/**
 	 * @param project
@@ -42,6 +59,7 @@ public class JsonProject {
 		res.name = project.getName();
 		return res;
 	}
+
 
 	/**
 	 * @return the id
@@ -63,4 +81,39 @@ public class JsonProject {
 	public String getName() {
 		return name;
 	}
+
+	public Map<String, List<CustomFieldBindingModel>> getCustomFieldBindings() {
+		return customFieldBindings;
+	}
+
+	public JsonInfoList getRequirementCategories() {
+		return requirementCategories;
+	}
+
+	public JsonInfoList getTestCaseNatures() {
+		return testCaseNatures;
+	}
+
+	public JsonInfoList getTestCaseTypes() {
+		return testCaseTypes;
+	}
+
+	public void setCustomFieldBindings(Map<String, List<CustomFieldBindingModel>> customFieldBindings) {
+		this.customFieldBindings = customFieldBindings;
+	}
+
+	public void setRequirementCategories(JsonInfoList requirementCategories) {
+		this.requirementCategories = requirementCategories;
+	}
+
+	public void setTestCaseNatures(JsonInfoList testCaseNatures) {
+		this.testCaseNatures = testCaseNatures;
+	}
+
+	public void setTestCaseTypes(JsonInfoList testCaseTypes) {
+		this.testCaseTypes = testCaseTypes;
+	}
+
+
+
 }

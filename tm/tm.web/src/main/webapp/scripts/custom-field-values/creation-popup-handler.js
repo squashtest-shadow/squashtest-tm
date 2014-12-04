@@ -64,15 +64,19 @@ define(
 					throw "illegal argument : the settings must provide an attribute 'table' referencing  a jquery table";
 				}
 
-				this.url = settings.url;
+				this.source = settings.source;
 
 				/*
-				 * loads the custom field values into the table using the given
-				 * url also stores that url for future reference
+				 * loads the custom field values into the table. Parameter can be either :
+				 * - undefined : this.source will be used instead
+				 * - a String : will thus be treated as an URL where to fetch data from
+				 * - else : directly the array of beans that define the custom fields. 
+				 * 
 				 */
-				this.loadPanel = function(url) {
+				this.loadPanel = function(urlOrBeans) {
 					var pleaseWait = $('<tr class="cuf-wait" style="line-height:50px;"><td colspan="2" style="height : 50px;" class="waiting-loading"></td></tr>');
 					var table = this.table;
+					var source = urlOrBeans || this.source;
 
 					// cleanup of the previous calls (if any)
 					table.find('.create-node-custom-field-row').remove();
@@ -80,20 +84,28 @@ define(
 					table.append(pleaseWait);
 
 					var self = this;
-
-					$.getJSON(url).success(function(jsonDef) {
+					
+					function generate(jsonDef){
 						table.find(".cuf-wait").remove();
 						// only required fields are shown in creation popup
 						self.cufDefs = _.where(jsonDef, {optional: false});
 						self.init();
+					}
+					
+					if (typeof source === "string"){
+						$.getJSON(source).success(generate);
+					}
+					else{
+						generate(source);
+					}
+					// the source might have been redefined if a parameter was supplied -> redefine it
+					this.source = source; 
 
-						this.url = url;
-					});
 				};
 
-				/* reload the custom field values using the last used url */
+				/* reload the custom field values using the last source used*/
 				this.reloadPanel = function() {
-					this.loadPanel(this.url);
+					this.loadPanel();
 				};
 
 				/* init the widgets used by the custom field values */

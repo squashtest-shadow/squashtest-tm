@@ -18,7 +18,8 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define(['jquery', 'tree', 'custom-field-values', 'jquery.squash.formdialog'], function($, zetree, cufValuesManager){
+define(['jquery', 'tree', 'custom-field-values', 'workspace.projects', 'jquery.squash.formdialog'], 
+		function($, zetree, cufValuesManager, projects){
 	
 	
 
@@ -44,9 +45,10 @@ define(['jquery', 'tree', 'custom-field-values', 'jquery.squash.formdialog'], fu
 		
 		dialog.on('formdialogopen', function(){
 			var projectId = tree.jstree('get_selected').getProjectId();
-			var bindingsUrl = squashtm.app.contextRoot+"/custom-fields-binding?projectId="+projectId+"&bindableEntity=TEST_CASE&optional=false";
-					
-			cufHandler.loadPanel(bindingsUrl);		
+			var bindings = projects.findProject(projectId).customFieldBindings['TEST_CASE'];
+			var cufs = $.map(bindings, function(b){return b.customField;});
+			
+			cufHandler.loadPanel(cufs);		
 		});
 		
 		dialog.on('formdialogcleanup', function(){

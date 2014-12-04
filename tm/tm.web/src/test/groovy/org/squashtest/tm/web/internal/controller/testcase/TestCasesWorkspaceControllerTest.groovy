@@ -22,17 +22,15 @@ package org.squashtest.tm.web.internal.controller.testcase
 
 import javax.inject.Provider
 
-import org.apache.poi.hssf.record.formula.functions.T
 import org.springframework.ui.Model
-import org.springframework.web.servlet.ModelAndView
 import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory
 import org.squashtest.tm.domain.project.Project
 import org.squashtest.tm.domain.testcase.TestCaseLibrary
 import org.squashtest.tm.service.library.WorkspaceService
+import org.squashtest.tm.service.project.ProjectFinder
 import org.squashtest.tm.service.security.PermissionEvaluationService
-import org.squashtest.tm.web.internal.controller.generic.WorkspaceController
 import org.squashtest.tm.web.internal.model.builder.DriveNodeBuilder
-import org.squashtest.tm.web.internal.model.jstree.JsTreeNode
+import org.squashtest.tm.web.internal.model.builder.JsonProjectBuilder
 
 import spock.lang.Specification
 
@@ -42,11 +40,16 @@ class TestCasesWorkspaceControllerTest extends Specification {
 	TestCaseWorkspaceController controller = new TestCaseWorkspaceController()
 	WorkspaceService service = Mock()
 	DriveNodeBuilder driveNodeBuilder = new DriveNodeBuilder(Mock(PermissionEvaluationService), Mock(Provider))
+	ProjectFinder projFinder = Mock()
+	JsonProjectBuilder projBuilder = Mock()
 
 	Provider provider = Mock()
 
 	def setup() {
 		controller.workspaceService = service
+		controller.projectFinder = projFinder
+		controller.jsonProjectBuilder = projBuilder
+
 		provider.get() >> driveNodeBuilder
 		use(ReflectionCategory) {
 			TestCaseWorkspaceController.set field: 'driveNodeBuilderProvider', of: controller, to: provider
@@ -60,6 +63,7 @@ class TestCasesWorkspaceControllerTest extends Specification {
 		Project project = Mock()
 		library.project >> project
 		service.findAllLibraries() >> [library]
+		projFinder.findAllReadable() >> []
 		def model = Mock(Model)
 
 		when:
@@ -68,5 +72,6 @@ class TestCasesWorkspaceControllerTest extends Specification {
 		then:
 		view == "test-case-workspace.html"
 		1 * model.addAttribute ("rootModel", _)
+		1 * model.addAttribute("projects", [])
 	}
 }

@@ -523,7 +523,7 @@ define([ "jquery", "squashtable/squashtable.collapser", "custom-field-values", "
 		var bindingsUrl = urls.stepcufBindingUrl;
 
 		var cufValuesSupport = cufValuesManager.newCreationPopupCUFHandler({
-			url : bindingsUrl,
+			source : bindingsUrl,
 			table : cufTable
 		});
 		cufValuesSupport.reloadPanel();

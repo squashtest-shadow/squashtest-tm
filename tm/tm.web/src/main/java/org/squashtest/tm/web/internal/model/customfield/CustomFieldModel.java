@@ -95,11 +95,11 @@ public abstract class CustomFieldModel<VALUETYPE> {
 		this.inputType = inputType;
 	}
 
-	public String getShortInputType() {
+	public String getItype() {
 		return itype;
 	}
 
-	public void setShortInputType(String itype) {
+	public void setIType(String itype) {
 		this.itype = itype;
 	}
 

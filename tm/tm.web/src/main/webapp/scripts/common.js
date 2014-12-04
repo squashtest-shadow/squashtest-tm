@@ -196,6 +196,7 @@ requirejs.config({
 				"workspace.storage" : "workspace/workspace.storage",
 				"workspace.routing" : "workspace/workspace.routing",
 				"workspace.breadcrumb" : "workspace/workspace.breadcrumb",
+				"workspace.projects" : "workspace/workspace.projects",
 				//for plugin compatibility purposes
 				"jquery.squash.datatables" : "plugin-compatibility/jquery.squash.datatable",
 				// contextual content
