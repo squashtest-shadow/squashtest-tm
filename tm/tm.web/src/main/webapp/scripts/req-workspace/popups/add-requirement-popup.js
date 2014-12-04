@@ -46,8 +46,26 @@ define([ 'jquery', 'tree', 'custom-field-values', 'workspace.projects', 'jquery.
 		});
 
 		dialog.on('formdialogopen', function() {
+			
 			var projectId = tree.jstree('get_selected').getProjectId();
-			var bindings = projects.findProject(projectId).customFieldBindings['REQUIREMENT_VERSION'];
+			var project = projects.findProject(projectId);
+			
+			// the category
+			var categories = project.requirementCategories.items;
+			var catSelect = $("#add-requirement-category");
+			catSelect.empty();
+			var codeDefault;
+			for (var i=0; i < categories.length; i++){
+				var item = categories[i];
+				var strOption = (item['default']) ? '<option selected="selected" ' : '<option ';
+				strOption += 'value="'+item.code+'">'+item.friendlyLabel+'</option>'
+				
+				catSelect.append(strOption);
+			}
+			
+			
+			// the cufs
+			var bindings = project.customFieldBindings['REQUIREMENT_VERSION'];
 			var cufs = $.map(bindings, function(b){return b.customField;});
 			
 			cufHandler.loadPanel(cufs);	

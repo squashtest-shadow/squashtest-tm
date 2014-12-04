@@ -43,27 +43,6 @@ public class JsonInfoList {
 		super();
 	}
 
-	public static JsonInfoList toJson(InfoList list){
-		JsonInfoList res = new JsonInfoList();
-
-		res.id = list.getId();
-		res.code = list.getCode();
-		res.uri = "todo";
-		res.version = list.getVersion();
-		res.label = list.getLabel();
-		res.description = list.getDescription();
-
-		List<JsonInfoListItem> items = new ArrayList<JsonInfoListItem>(list.getItems().size());
-		for (InfoListItem item : list.getItems()){
-			JsonInfoListItem jsItem = JsonInfoListItem.toJson(item);
-			items.add(jsItem);
-		}
-
-		res.items = items;
-
-		return res;
-	}
-
 	public long getId() {
 		return id;
 	}

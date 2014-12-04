@@ -46,6 +46,9 @@ public class JsonProjectBuilder {
 	@Inject
 	private CustomFieldJsonConverter customFieldConverter;
 
+	@Inject
+	private JsonInfoListBuilder infoListBuilder;
+
 	public JsonProjectBuilder(){
 		super();
 	}
@@ -60,9 +63,9 @@ public class JsonProjectBuilder {
 		JsonProject res = JsonProject.toJson(p);
 
 		//  the info lists
-		JsonInfoList categories = JsonInfoList.toJson(p.getRequirementCategories());
-		JsonInfoList natures = JsonInfoList.toJson(p.getTestCaseNatures());
-		JsonInfoList types = JsonInfoList.toJson(p.getTestCaseTypes());
+		JsonInfoList categories = infoListBuilder.toJson(p.getRequirementCategories());
+		JsonInfoList natures = infoListBuilder.toJson(p.getTestCaseNatures());
+		JsonInfoList types = infoListBuilder.toJson(p.getTestCaseTypes());
 
 		res.setRequirementCategories(categories);
 		res.setTestCaseNatures(natures);

@@ -31,6 +31,7 @@ public class JsonInfoListItem {
 	private String uri;
 	private String code;
 	private String label;
+	private String friendlyLabel;
 	private boolean isDefault;
 	private boolean isSystem;
 	private String iconName;
@@ -40,18 +41,6 @@ public class JsonInfoListItem {
 		super();
 	}
 
-	public static JsonInfoListItem toJson(InfoListItem item){
-		JsonInfoListItem res = new JsonInfoListItem();
-		res.id = item.getId();
-		res.uri = "todo";
-		res.code = item.getCode();
-		res.label = item.getLabel();
-		res.isDefault = item.isDefault();
-		res.iconName = item.getIconName();
-		// TODO : something less sloppy once we have time for something better
-		res.isSystem = (SystemListItem.class.isAssignableFrom(item.getClass()));
-		return res;
-	}
 
 	public long getId() {
 		return id;
@@ -108,6 +97,15 @@ public class JsonInfoListItem {
 	public void setSystem(boolean isSystem) {
 		this.isSystem = isSystem;
 	}
+
+	public String getFriendlyLabel() {
+		return friendlyLabel;
+	}
+
+	public void setFriendlyLabel(String friendlyLabel) {
+		this.friendlyLabel = friendlyLabel;
+	}
+
 
 
 }
