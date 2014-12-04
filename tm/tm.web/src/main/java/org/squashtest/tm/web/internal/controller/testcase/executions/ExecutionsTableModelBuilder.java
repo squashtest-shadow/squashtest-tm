@@ -27,6 +27,9 @@ import java.util.Map;
 import javax.validation.constraints.NotNull;
 
 import org.apache.commons.lang.StringUtils;
+import org.jfree.util.Log;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.squashtest.tm.core.foundation.i18n.Internationalizable;
 import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
@@ -44,6 +47,8 @@ import org.squashtest.tm.web.internal.model.datatable.DataTableModelBuilder;
  */
 /* package-private */class ExecutionsTableModelBuilder extends
 DataTableModelBuilder<Execution> {
+
+	private static final Logger LOGGER = LoggerFactory.getLogger(ExecutionsTableModelBuilder.class);
 	/**
 	 * The locale to use to format the labels.
 	 */
@@ -71,7 +76,7 @@ DataTableModelBuilder<Execution> {
 		data.put("project-name", 	iteration.getProject().getName());
 		data.put("campaign-name", 	iteration.getCampaign().getName());
 		data.put("iteration-name", 	iteration.getName());
-		data.put("exec-name", item.getName() + " Exe.#" + item.getExecutionOrder());
+		data.put("exec-name", item.getName() + " (Exec.#" + (1 + item.getExecutionOrder()) + ")");
 		data.put("exec-mode", 		translate(item.getExecutionMode()));
 		data.put("test-suite-name", testSuiteNameList(testPlanItem));
 		data.put("raw-exec-status", item.getExecutionStatus().name());
