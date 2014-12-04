@@ -35,9 +35,11 @@ import org.squashtest.tm.bugtracker.definition.RemoteProject;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.bugtracker.BugTrackerStatus;
+import org.squashtest.tm.domain.bugtracker.Issue;
 import org.squashtest.tm.domain.bugtracker.IssueDetector;
 import org.squashtest.tm.domain.bugtracker.IssueOwnership;
 import org.squashtest.tm.domain.bugtracker.RemoteIssueDecorator;
+import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.testcase.TestCase;
 
@@ -332,4 +334,14 @@ public interface BugTrackersLocalService {
 	int findNumberOfIssueForExecutionStep(Long testStepId);
 
 	TestCase findTestCaseRelatedToIssue(Long issueId);
+
+	
+	Issue findIssueById(Long id);
+	
+	List<Execution> findExecutionsByRemoteIssue(String remoteid, String name);
+
+	List<Issue> getIssueList(String remoteid, String name);
+
+	Execution findExecutionByIssueId(Long id);
+	
 }

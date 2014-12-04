@@ -733,4 +733,33 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 		return issueDao.findTestCaseRelatedToIssue(issueId);
 	}
 
+	@Override
+	public Issue findIssueById(Long id) {
+		return issueDao.findById(id);
+	}
+
+	@Override
+	public List<Issue> getIssueList(String remoteid, String name) {
+		BugTracker bugtracker = bugTrackerDao.findByName(name);
+		return issueDao.findIssueListByRemoteIssue(remoteid, bugtracker);
+	}
+
+	@Override 
+	public Execution findExecutionByIssueId(Long id){
+		return issueDao.findExecutionRelatedToIssue(id);
+	}
+	
+	@Override
+	public List<Execution> findExecutionsByRemoteIssue(String remoteid, String name) {
+		List<Issue> issues = getIssueList(remoteid, name);
+		List<Execution> executions = new ArrayList<Execution>();
+		for(Issue issue : issues){
+			Execution execution = issueDao.findExecutionRelatedToIssue(issue.getId());
+			if(execution != null){
+				executions.add(execution);
+			}
+		}
+		return executions;
+	}
+
 }

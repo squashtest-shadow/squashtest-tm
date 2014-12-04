@@ -28,6 +28,7 @@ import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
+import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.bugtracker.Issue;
 import org.squashtest.tm.domain.bugtracker.IssueDetector;
@@ -131,7 +132,7 @@ public class HibernateIssueDao extends HibernateEntityDao<Issue> implements Issu
 	}
 
 	/**
-	 * @see {@linkplain IssueDao#findSortedIssuesFromIssuesLists(List, PagingAndSorting, Long)
+	 * @see {@linkplain IssueDao#findSortedIssuesFromIssuesLists(List, PagingAndSorting, Long)
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
@@ -154,7 +155,7 @@ public class HibernateIssueDao extends HibernateEntityDao<Issue> implements Issu
 	}
 
 	/**
-	 * @see {@linkplain IssueDao#findSortedIssuesFromExecutionAndExecutionSteps(List, List, PagingAndSorting)
+	 * @see {@linkplain IssueDao#findSortedIssuesFromExecutionAndExecutionSteps(List, List, PagingAndSorting)
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
@@ -251,6 +252,18 @@ public class HibernateIssueDao extends HibernateEntityDao<Issue> implements Issu
 
 		return testCase;
 	}
+    
+    @Override
+    public Execution findExecutionRelatedToIssue(long id) {
+    	 Execution exec = executeEntityNamedQuery("Issue.findExecution", new SetIdParameter("id", id));
+         if (exec == null) {
+        	 ExecutionStep step = executeEntityNamedQuery("Issue.findExecutionStep", new SetIdParameter("id", id));
+        	 if (step != null && step.getExecution() != null) {
+        		 exec = step.getExecution();
+        	 }
+         }
+         return exec;
+    }
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -258,6 +271,15 @@ public class HibernateIssueDao extends HibernateEntityDao<Issue> implements Issu
 		final Criteria crit = currentSession().createCriteria(Issue.class, "Issue")
 				.add(Restrictions.eq("Issue.bugtracker.id", bugtrackerId));
 
+		return crit.list();
+	}
+
+	@Override
+	public List<Issue> findIssueListByRemoteIssue(String remoteid, BugTracker bugtracker) {
+		final Criteria crit = currentSession().createCriteria(Issue.class, "Issue")
+				.add(Restrictions.eq("Issue.remoteIssueId", remoteid))
+				.add(Restrictions.eq("Issue.bugtracker.id", bugtracker.getId()));
+			
 		return crit.list();
 	}
 

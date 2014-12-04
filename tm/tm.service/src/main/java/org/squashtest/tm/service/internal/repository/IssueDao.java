@@ -23,10 +23,12 @@ package org.squashtest.tm.service.internal.repository;
 import java.util.Collection;
 import java.util.List;
 
+import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.bugtracker.Issue;
 import org.squashtest.tm.domain.bugtracker.IssueDetector;
 import org.squashtest.tm.domain.campaign.Iteration;
+import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.testcase.TestCase;
 
 public interface IssueDao extends EntityDao<Issue> {
@@ -126,5 +128,9 @@ public interface IssueDao extends EntityDao<Issue> {
 	IssueDetector findIssueDetectorByIssue(long id);
 
 	TestCase findTestCaseRelatedToIssue(long issueId);
+	
+	Execution findExecutionRelatedToIssue(long issueId);
+
+	List<Issue> findIssueListByRemoteIssue(String remoteid, BugTracker bugtracker);
 
 }
