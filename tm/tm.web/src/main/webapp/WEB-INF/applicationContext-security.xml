@@ -94,7 +94,7 @@
         <access-denied-handler ref="oauthAccessDeniedHandler" />
 	</http>
  
-    <http pattern="/api/**" create-session="never" entry-point-ref="oauthAuthenticationEntryPoint">
+    <http pattern="/rest/api/**" create-session="never" entry-point-ref="oauthAuthenticationEntryPoint">
         <anonymous enabled="false" />
         <intercept-url pattern="/protected/**" method="GET" access="IS_AUTHENTICATED_FULLY" />
         <custom-filter ref="resourceServerFilter" before="PRE_AUTH_FILTER" />
@@ -167,7 +167,7 @@
     <beans:bean id="oauthAuthenticationEntryPoint"
         class="org.springframework.security.oauth2.provider.error.OAuth2AuthenticationEntryPoint">
     </beans:bean>
- 
+
     <beans:bean id="clientAuthenticationEntryPoint"
         class="org.springframework.security.oauth2.provider.error.OAuth2AuthenticationEntryPoint">
         <beans:property name="realmName" value="springsec/client" />
@@ -192,11 +192,10 @@
         <beans:constructor-arg ref="clientDetails" />
     </beans:bean>
  
-    <beans:bean id="clientDetails" class="org.squashtest.tm.web.internal.oauth.AAAGuestServiceImpl">
-        <beans:property name="id" value="admin" />
-        <beans:property name="secretKey" value="admin" />
+    <beans:bean id="clientDetails" class="org.springframework.security.oauth2.provider.JdbcClientDetailsService">
+    	 <beans:constructor-arg name="dataSource" ref="squashtest.core.persistence.jdbc.DataSource"/>
     </beans:bean>
- 
+
     <authentication-manager id="userAuthenticationManager">
         <authentication-provider ref="customUserAuthenticationProvider" />
     </authentication-manager>
@@ -217,14 +216,15 @@
     <oauth:resource-server id="resourceServerFilter"
         resource-id="springsec" token-services-ref="tokenServices" />
  
-    <beans:bean id="tokenStore"
-        class="org.springframework.security.oauth2.provider.token.InMemoryTokenStore" />
+    <beans:bean id="tokenStore" class="org.springframework.security.oauth2.provider.token.JdbcTokenStore">
+    	 <beans:constructor-arg name="dataSource" ref="squashtest.core.persistence.jdbc.DataSource"/>
+    </beans:bean>
  
     <beans:bean id="tokenServices"
         class="org.springframework.security.oauth2.provider.token.DefaultTokenServices">
         <beans:property name="tokenStore" ref="tokenStore" />
         <beans:property name="supportRefreshToken" value="true" />
-        <beans:property name="accessTokenValiditySeconds" value="120"/>
+        <beans:property name="accessTokenValiditySeconds" value="900000000"/>
         <beans:property name="clientDetailsService" ref="clientDetails" />
     </beans:bean>
     
