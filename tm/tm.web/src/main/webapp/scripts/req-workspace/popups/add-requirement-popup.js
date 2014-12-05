@@ -58,7 +58,7 @@ define([ 'jquery', 'tree', 'custom-field-values', 'workspace.projects', 'jquery.
 			for (var i=0; i < categories.length; i++){
 				var item = categories[i];
 				var strOption = (item['default']) ? '<option selected="selected" ' : '<option ';
-				strOption += 'value="'+item.code+'">'+item.friendlyLabel+'</option>'
+				strOption += 'value="'+item.code+'">'+item.friendlyLabel+'</option>';
 				
 				catSelect.append(strOption);
 			}

@@ -36,4 +36,36 @@ public interface InfoListItemDao extends EntityDao<InfoListItem>{
 
 	InfoListItem findReference(ListItemReference reference);
 
+	InfoListItem findDefaultRequirementCategory(long projectId);
+
+	InfoListItem findDefaultTestCaseNature(long projectId);
+
+	InfoListItem findDefaultTestCaseType(long projectId);
+
+	/**
+	 * Tells whether the given item belongs to the categories assigned to this project
+	 * 
+	 * @param projectId
+	 * @param itemCode
+	 * @return
+	 */
+	boolean isCategoryConsistent(long projectId, String itemCode);
+
+	/**
+	 * Tells whether the given item belongs to the natures assigned to this project
+	 * 
+	 * @param projectId
+	 * @param itemCode
+	 * @return
+	 */
+	boolean isNatureConsistent(long projectId, String itemCode);
+
+	/**
+	 * Tells whether the given item belongs to the types assigned to this project
+	 * 
+	 * @param projectId
+	 * @param itemCode
+	 * @return
+	 */
+	boolean isTypeConsistent(long projectId, String itemCode);
 }

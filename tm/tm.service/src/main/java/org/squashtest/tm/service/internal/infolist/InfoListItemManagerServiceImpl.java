@@ -28,6 +28,7 @@ import org.squashtest.tm.domain.infolist.InfoListItem;
 import org.squashtest.tm.domain.infolist.ListItemReference;
 import org.squashtest.tm.domain.infolist.SystemListItem;
 import org.squashtest.tm.service.infolist.InfoListItemManagerService;
+import org.squashtest.tm.service.internal.repository.GenericProjectDao;
 import org.squashtest.tm.service.internal.repository.InfoListItemDao;
 
 @Transactional
@@ -36,6 +37,9 @@ public class InfoListItemManagerServiceImpl implements InfoListItemManagerServic
 
 	@Inject
 	private InfoListItemDao itemDao;
+
+	@Inject
+	private GenericProjectDao projectDao;
 
 	// ************* "Finder" methods **************** \\
 
@@ -68,5 +72,36 @@ public class InfoListItemManagerServiceImpl implements InfoListItemManagerServic
 	public InfoListItem findReference(ListItemReference reference){
 		return itemDao.findReference(reference);
 	}
+
+	@Override
+	public InfoListItem findDefaultRequirementCategory(long projectId) {
+		return itemDao.findDefaultRequirementCategory(projectId);
+	}
+
+	@Override
+	public InfoListItem findDefaultTestCaseNature(long projectId) {
+		return itemDao.findDefaultTestCaseNature(projectId);
+	}
+
+	@Override
+	public InfoListItem findDefaultTestCaseType(long projectId) {
+		return itemDao.findDefaultTestCaseType(projectId);
+	}
+
+	@Override
+	public boolean isCategoryConsistent(long projectId, String itemCode) {
+		return itemDao.isCategoryConsistent(projectId, itemCode);
+	}
+
+	@Override
+	public boolean isNatureConsistent(long projectId, String itemCode) {
+		return itemDao.isNatureConsistent(projectId, itemCode);
+	}
+
+	@Override
+	public boolean isTypeConsistent(long projectId, String itemCode) {
+		return itemDao.isTypeConsistent(projectId, itemCode);
+	}
+
 
 }

@@ -27,11 +27,12 @@ define(["jquery"], function($){
 			project,
 			projects = squashtm.workspace.projects;
 		
-		if (parseInt(idOrName) !== NaN){
-			matches = function(p){return p.id === parseInt(idOrName)};
+		if (! isNaN(parseInt(idOrName, 10))){
+			var id = parseInt(idOrName, 10);
+			matches = function(p){return p.id === id;};
 		}
 		else{
-			matches = function(p){return p.name === idOrName};
+			matches = function(p){return p.name === idOrName;};
 		}
 		
 		for (var i=0; i<projects.length; i++){

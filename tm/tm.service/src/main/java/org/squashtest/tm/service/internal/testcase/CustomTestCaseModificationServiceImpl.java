@@ -26,6 +26,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Set;
 
 import javax.inject.Inject;
@@ -575,7 +576,13 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 		TestCase testCase = testCaseDao.findById(testCaseId);
 		InfoListItem nature = infoListItemService.findByCode(natureCode);
 
-		testCase.setNature(nature);
+		if (infoListItemService.isNatureConsistent(testCase.getProject().getId(), natureCode)){
+			testCase.setNature(nature);
+		}
+		else{
+			throw new NoSuchElementException("Nature '"+natureCode+"' doesn't belong to the nature set defined for this project");
+		}
+
 	}
 
 	@Override
@@ -584,7 +591,12 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 		TestCase testCase = testCaseDao.findById(testCaseId);
 		InfoListItem type = infoListItemService.findByCode(typeCode);
 
-		testCase.setType(type);
+		if (infoListItemService.isTypeConsistent(testCase.getProject().getId(), typeCode)){
+			testCase.setType(type);
+		}
+		else{
+			throw new NoSuchElementException("Type '"+typeCode+"' doesn't belong to the type set defined for this project");
+		}
 	}
 
 

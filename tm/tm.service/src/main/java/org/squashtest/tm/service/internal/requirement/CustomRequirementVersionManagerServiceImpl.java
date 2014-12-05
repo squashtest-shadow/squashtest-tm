@@ -21,6 +21,7 @@
 package org.squashtest.tm.service.internal.requirement;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import javax.inject.Inject;
 
@@ -33,6 +34,7 @@ import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.PagingBackedPagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.SortOrder;
 import org.squashtest.tm.domain.infolist.InfoListItem;
+import org.squashtest.tm.domain.requirement.Requirement;
 import org.squashtest.tm.domain.requirement.RequirementCategory;
 import org.squashtest.tm.domain.requirement.RequirementCriticality;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
@@ -99,7 +101,12 @@ public class CustomRequirementVersionManagerServiceImpl implements CustomRequire
 		RequirementVersion version = requirementVersionDao.findById(requirementVersionId);
 		InfoListItem category = infoListItemService.findByCode(categoryCode);
 
-		version.setCategory(category);
+		if (infoListItemService.isCategoryConsistent(version.getProject().getId(), categoryCode)){
+			version.setCategory(category);
+		}
+		else{
+			throw new NoSuchElementException("Category '"+categoryCode+"' doesn't belong to the category set defined for this project");
+		}
 	}
 
 }

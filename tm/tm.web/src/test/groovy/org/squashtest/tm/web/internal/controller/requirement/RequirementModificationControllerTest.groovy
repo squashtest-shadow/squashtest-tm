@@ -24,27 +24,27 @@ package org.squashtest.tm.web.internal.controller.requirement
 
 import javax.inject.Provider
 
-import org.springframework.context.MessageSource
 import org.springframework.ui.ExtendedModelMap
 import org.springframework.ui.Model
-import org.springframework.web.servlet.ModelAndView
-import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
-import org.squashtest.tm.core.foundation.collection.PagingBackedPagedCollectionHolder;
+import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder
+import org.squashtest.tm.domain.infolist.ListItemReference;
 import org.squashtest.tm.domain.requirement.Requirement
 import org.squashtest.tm.domain.requirement.RequirementCategory
 import org.squashtest.tm.domain.requirement.RequirementCriticality
 import org.squashtest.tm.domain.requirement.RequirementStatus
 import org.squashtest.tm.domain.requirement.RequirementVersion
-import org.squashtest.tm.service.audit.RequirementAuditTrailService;
+import org.squashtest.tm.service.audit.RequirementAuditTrailService
 import org.squashtest.tm.service.customfield.CustomFieldValueFinderService
 import org.squashtest.tm.service.requirement.RequirementModificationService
-import org.squashtest.tm.service.testcase.VerifyingTestCaseManagerService;
-import org.squashtest.tm.web.internal.controller.generic.ServiceAwareAttachmentTableModelHelper;
+import org.squashtest.tm.service.testcase.VerifyingTestCaseManagerService
+import org.squashtest.tm.web.internal.controller.generic.ServiceAwareAttachmentTableModelHelper
 import org.squashtest.tm.web.internal.helper.InternationalizableLabelFormatter
 import org.squashtest.tm.web.internal.helper.LabelFormatter
 import org.squashtest.tm.web.internal.helper.LevelLabelFormatter
-import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
-import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
+import org.squashtest.tm.web.internal.i18n.InternationalizationHelper
+import org.squashtest.tm.web.internal.model.builder.InfoListComboDataBuilder
+import org.squashtest.tm.web.internal.model.datatable.DataTableModel
+import org.squashtest.tm.web.testutils.MockFactory;
 
 import spock.lang.Specification
 
@@ -56,7 +56,8 @@ class RequirementModificationControllerTest extends Specification {
 	LabelFormatter formatter = new LevelLabelFormatter(i18nHelper)
 	LabelFormatter internationalformatter = new InternationalizableLabelFormatter(i18nHelper)
 	Provider criticalityBuilderProvider = criticalityBuilderProvider()
-	Provider categoryBuilderProvider = categoryBuilderProvider()
+
+	InfoListComboDataBuilder infoListComboDataBuilder = mockInfoListComboDataBuilder();
 	Provider statusBuilderProvider = statusBuilderProvider()
 	Provider levelFormatterProvider = levelFormatterProvider()
 	Provider internationalFormatterProvider = internationalFormatterProvider()
@@ -64,10 +65,11 @@ class RequirementModificationControllerTest extends Specification {
 	ServiceAwareAttachmentTableModelHelper attachmentsHelper = Mock()
 	RequirementAuditTrailService auditTrailService = Mock()
 
+	MockFactory mockFactory = new MockFactory()
+
 	def setup() {
 		controller.requirementModService = requirementModificationService
 		controller.criticalityComboBuilderProvider = criticalityBuilderProvider
-		controller.categoryComboBuilderProvider = categoryBuilderProvider
 		controller.statusComboDataBuilderProvider = statusBuilderProvider
 		controller.levelFormatterProvider = levelFormatterProvider
 		controller.internationalizableFormatterProvider = internationalFormatterProvider
@@ -75,6 +77,7 @@ class RequirementModificationControllerTest extends Specification {
 		controller.verifyingTestCaseManager = verifTCService
 		controller.attachmentsHelper = attachmentsHelper
 		controller.auditTrailService = auditTrailService;
+		controller.infoListComboDataBuilder = infoListComboDataBuilder
 
 		mockAuditTrailService()
 	}
@@ -96,17 +99,11 @@ class RequirementModificationControllerTest extends Specification {
 
 		return provider
 	}
-	def categoryBuilderProvider() {
-		RequirementCategoryComboDataBuilder builder = new RequirementCategoryComboDataBuilder()
-		builder.labelFormatter = internationalformatter
 
-		i18nHelper.internationalize(_, _) >> "--"
-		builder.setInternationalizationHelper(i18nHelper)
-
-		Provider provider = Mock()
-		provider.get() >> builder
-
-		return provider
+	def mockInfoListComboDataBuilder(){
+		def builder = Mock(InfoListComboDataBuilder)
+		builder.build(_) >> [:]
+		return builder
 	}
 
 	def statusBuilderProvider() {
@@ -137,7 +134,7 @@ class RequirementModificationControllerTest extends Specification {
 		Requirement req = mockRequirementAmongOtherThings()
 		req.getCriticality() >> RequirementCriticality.UNDEFINED
 		req.getStatus() >> RequirementStatus.WORK_IN_PROGRESS
-		req.getCategory() >> RequirementCategory.UNDEFINED
+		req.getCategory() >> new ListItemReference("CAT_UNDEFINED")
 		long reqId=15
 		requirementModificationService.findById(15) >> req
 		Model model = Mock()
@@ -199,6 +196,8 @@ class RequirementModificationControllerTest extends Specification {
 		PagedCollectionHolder<?> ch = Mock()
 		ch.getFirstItemIndex() >> 0
 		ch.getPagedItems() >> []
+
+		r.getProject() >> mockFactory.mockProject()
 
 		verifTCService.findAllByRequirementVersion(_,_)>> ch
 

@@ -39,10 +39,12 @@ import org.squashtest.tm.web.internal.controller.generic.ServiceAwareAttachmentT
 import org.squashtest.tm.web.internal.helper.InternationalizableLabelFormatter;
 import org.squashtest.tm.web.internal.helper.LevelLabelFormatter
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper
+import org.squashtest.tm.web.internal.model.builder.InfoListComboDataBuilder;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel
 import org.squashtest.tm.web.internal.model.json.JsonGeneralInfo;
 import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper
+import org.squashtest.tm.web.testutils.MockFactory;
 
 import spock.lang.Specification
 
@@ -56,11 +58,8 @@ class TestCaseModificationControllerTest extends Specification {
 	TestCaseImportanceJeditableComboDataBuilder importanceComboBuilder = Mock()
 	Provider<TestCaseImportanceJeditableComboDataBuilder> importanceComboBuilderProvider = Mock()
 
-	TestCaseNatureJeditableComboDataBuilder natureComboBuilder = Mock()
-	Provider<TestCaseNatureJeditableComboDataBuilder> natureComboBuilderProvider = Mock()
 
-	TestCaseTypeJeditableComboDataBuilder typeComboBuilder = Mock()
-	Provider<TestCaseTypeJeditableComboDataBuilder> typeComboBuilderProvider = Mock()
+	InfoListComboDataBuilder infoListComboDataBuilder = mockInfoListComboDataBuilder();
 
 	TestCaseStatusJeditableComboDataBuilder statusComboBuilder = Mock()
 	Provider<TestCaseStatusJeditableComboDataBuilder> statusComboBuilderProvider = Mock()
@@ -74,6 +73,8 @@ class TestCaseModificationControllerTest extends Specification {
 
 	CustomFieldHelperService cufHelperService = Mock()
 
+	org.squashtest.tm.web.testutils.MockFactory mockFactory = new MockFactory()
+
 	def setup() {
 		controller.testCaseModificationService = testCaseModificationService
 		request.getCharacterEncoding() >> "ISO-8859-1"
@@ -81,12 +82,6 @@ class TestCaseModificationControllerTest extends Specification {
 
 		setupImportanceComboBuilder()
 		controller.importanceComboBuilderProvider = importanceComboBuilderProvider
-
-		setupNatureComboBuilder()
-		controller.natureComboBuilderProvider = natureComboBuilderProvider
-
-		setupTypeComboBuilder()
-		controller.typeComboBuilderProvider = typeComboBuilderProvider
 
 		setupStatusComboBuilder()
 		controller.statusComboBuilderProvider = statusComboBuilderProvider
@@ -103,6 +98,8 @@ class TestCaseModificationControllerTest extends Specification {
 		controller.attachmentHelper = attachmHelper;
 
 		mockCallingTestCaseService()
+
+		controller.infoListComboDataBuilder = infoListComboDataBuilder
 	}
 
 	def mockCallingTestCaseService(){
@@ -120,19 +117,6 @@ class TestCaseModificationControllerTest extends Specification {
 		importanceComboBuilderProvider.get() >> importanceComboBuilder
 	}
 
-	def setupNatureComboBuilder() {
-		natureComboBuilder.useLocale(_) >> natureComboBuilder
-		natureComboBuilder.selectItem(_) >> natureComboBuilder
-
-		natureComboBuilderProvider.get() >> natureComboBuilder
-	}
-
-	def setupTypeComboBuilder() {
-		typeComboBuilder.useLocale(_) >> typeComboBuilder
-		typeComboBuilder.selectItem(_) >> typeComboBuilder
-
-		typeComboBuilderProvider.get() >> typeComboBuilder
-	}
 
 	def setupStatusComboBuilder() {
 		statusComboBuilder.useLocale(_) >> statusComboBuilder
@@ -161,6 +145,7 @@ class TestCaseModificationControllerTest extends Specification {
 	def "should return test case page fragment"() {
 		given:
 		TestCase tc = Mock()
+
 
 		tc.getId() >> 15l
 		List<ActionTestStep> steps = new ArrayList<ActionTestStep>();
@@ -231,9 +216,11 @@ class TestCaseModificationControllerTest extends Specification {
 	def "when showing a test case, should put importance data in the model"() {
 		given:
 		TestCase testCase = Mock()
+		enrichTC(testCase)
 		testCase.getId() >> 10l
 		testCase.importance >> TestCaseImportance.HIGH
 		testCaseModificationService.findTestCaseWithSteps(10) >> testCase
+		testCaseModificationService.findById(10) >> testCase
 
 		and:
 		enrichTC(testCase)
@@ -251,9 +238,11 @@ class TestCaseModificationControllerTest extends Specification {
 	def "when showing a test case, should put test case importance label in the model"() {
 		given:
 		TestCase testCase = Mock()
+		enrichTC(testCase)
 		testCase.getId() >> 10l
 		testCase.importance >> TestCaseImportance.HIGH
 		testCaseModificationService.findTestCaseWithSteps(10) >> testCase
+		testCaseModificationService.findById(10) >> testCase
 
 		and:
 		enrichTC(testCase)
@@ -267,6 +256,11 @@ class TestCaseModificationControllerTest extends Specification {
 		mav.modelMap['testCaseImportanceLabel'] == "takai"
 	}
 
+	def mockInfoListComboDataBuilder(){
+		def builder = Mock(InfoListComboDataBuilder)
+		builder.build(_) >> [:]
+		return builder
+	}
 
 	def enrichTC(tc){
 		InfoListItem nat = Mock()
@@ -279,6 +273,8 @@ class TestCaseModificationControllerTest extends Specification {
 
 		tc.getNature() >> nat
 		tc.getType() >> typ
+
+		tc.getProject() >> mockFactory.mockProject()
 	}
 
 }

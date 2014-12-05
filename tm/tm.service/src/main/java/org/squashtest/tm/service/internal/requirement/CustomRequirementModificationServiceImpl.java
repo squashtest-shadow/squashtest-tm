@@ -20,6 +20,8 @@
  */
 package org.squashtest.tm.service.internal.requirement;
 
+import java.util.NoSuchElementException;
+
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -110,7 +112,12 @@ public class CustomRequirementModificationServiceImpl implements CustomRequireme
 		Requirement req = requirementDao.findById(requirementId);
 		InfoListItem category = infoListItemService.findByCode(categoryCode);
 
-		req.setCategory(category);
+		if (infoListItemService.isCategoryConsistent(req.getProject().getId(), categoryCode)){
+			req.setCategory(category);
+		}
+		else{
+			throw new NoSuchElementException("Category '"+categoryCode+"' doesn't belong to the category set defined for this project");
+		}
 	}
 
 }
