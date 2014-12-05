@@ -23,6 +23,7 @@ package org.squashtest.tm.service.internal.bugtracker;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -741,7 +742,11 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 	@Override
 	public List<Issue> getIssueList(String remoteid, String name) {
 		BugTracker bugtracker = bugTrackerDao.findByName(name);
-		return issueDao.findIssueListByRemoteIssue(remoteid, bugtracker);
+		if(bugtracker != null){
+			return issueDao.findIssueListByRemoteIssue(remoteid, bugtracker);
+		} else {
+			return Collections.emptyList();
+		}
 	}
 
 	@Override 

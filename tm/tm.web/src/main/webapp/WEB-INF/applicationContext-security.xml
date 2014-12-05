@@ -96,7 +96,7 @@
  
     <http pattern="/rest/api/**" create-session="never" entry-point-ref="oauthAuthenticationEntryPoint">
         <anonymous enabled="false" />
-        <intercept-url pattern="/protected/**" method="GET" access="IS_AUTHENTICATED_FULLY" />
+        <intercept-url pattern="/rest/api/**" method="GET" access="IS_AUTHENTICATED_FULLY" />
         <custom-filter ref="resourceServerFilter" before="PRE_AUTH_FILTER" />
         <access-denied-handler ref="oauthAccessDeniedHandler" />
     </http> 
@@ -170,7 +170,7 @@
 
     <beans:bean id="clientAuthenticationEntryPoint"
         class="org.springframework.security.oauth2.provider.error.OAuth2AuthenticationEntryPoint">
-        <beans:property name="realmName" value="springsec/client" />
+        <beans:property name="realmName" value="oauth" />
         <beans:property name="typeName" value="Basic" />
     </beans:bean>
  
@@ -180,18 +180,23 @@
  
     <beans:bean id="clientCredentialsTokenEndpointFilter"
         class="org.springframework.security.oauth2.provider.client.ClientCredentialsTokenEndpointFilter">
-        <beans:property name="authenticationManager" ref="authenticationManager" />
+        <beans:property name="authenticationManager" ref="clientAuthenticationManager" />
     </beans:bean>
  
     <authentication-manager alias="authenticationManager">
         <authentication-provider user-service-ref="clientDetailsUserService" />
     </authentication-manager>
  
-    <beans:bean id="clientDetailsUserService"
-        class="org.springframework.security.oauth2.provider.client.ClientDetailsUserDetailsService">
-        <beans:constructor-arg ref="clientDetails" />
-    </beans:bean>
- 
+	  <beans:bean id="clientDetailsUserService"
+	    class="org.springframework.security.oauth2.provider.client.ClientDetailsUserDetailsService">
+	    <beans:constructor-arg ref="clientDetails" />
+	</beans:bean>
+	
+ <authentication-manager id="clientAuthenticationManager"
+    xmlns="http://www.springframework.org/schema/security">
+    <authentication-provider user-service-ref="clientDetailsUserService" />
+</authentication-manager>
+
     <beans:bean id="clientDetails" class="org.springframework.security.oauth2.provider.JdbcClientDetailsService">
     	 <beans:constructor-arg name="dataSource" ref="squashtest.core.persistence.jdbc.DataSource"/>
     </beans:bean>
@@ -228,7 +233,7 @@
         <beans:property name="clientDetailsService" ref="clientDetails" />
     </beans:bean>
     
-    <beans:bean id="MyResource" class="org.squashtest.tm.web.internal.oauth.UserResource"></beans:bean>
+    <!-- <beans:bean id="MyResource" class="org.squashtest.tm.web.internal.oauth.UserResource"></beans:bean> -->
  
     
     <!-- /OAuth 2 -->

@@ -927,25 +927,28 @@
 	
  <changeSet author="flaurens" id="tm-1.12.0.feat-3764-1">
   
+    <comment>Tables for OAuth2 Support</comment>
   	<createTable tableName="OAUTH_CLIENT_DETAILS">
-  	     <column name="CLIENT_ID" type="java.sql.Types.VARCHAR(256)" remarks="cle primaire de la table">
+  	     <column name="CLIENT_ID" type="java.sql.Types.VARCHAR(256)">
         	<constraints primaryKey="true" nullable="false" />
       	</column>
-  	     <column name="RESOURCE_IDS" type="java.sql.Types.VARCHAR(256)">
+      	<column name="CLIENT_SECRET" type="java.sql.Types.VARCHAR(256)">
+      	</column>
+  	     <column name="RESOURCE_IDS" type="java.sql.Types.VARCHAR(256)" defaultValue="NULL">
       	</column>
   	     <column name="SCOPE" type="java.sql.Types.VARCHAR(256)">
       	</column>
   	     <column name="AUTHORIZED_GRANT_TYPES" type="java.sql.Types.VARCHAR(256)">
       	</column>
-  	     <column name="WEB_SERVER_REDIRECT_URI" type="java.sql.Types.VARCHAR(256)">
+  	     <column name="WEB_SERVER_REDIRECT_URI" type="java.sql.Types.VARCHAR(256)" defaultValue="NULL">
       	</column>
   	     <column name="AUTHORITIES" type="java.sql.Types.VARCHAR(256)">
       	</column>
       	<column name="ACCESS_TOKEN_VALIDITY" type="BIGINT">
       	</column>
-      	<column name="REFRESH_TOKEN_VALIDITY" type="BIGINT">
+      	<column name="REFRESH_TOKEN_VALIDITY" type="BIGINT" defaultValue="NULL">
       	</column>
-      	<column name="ADDITIONAL_INFORMATION" type="java.sql.Types.VARCHAR(4096)">
+      	<column name="ADDITIONAL_INFORMATION" type="CLOB" defaultValue="NULL">
       	</column>
       	<column name="AUTOAPPROVE" type="java.sql.Types.VARCHAR(256)">
       	</column>
@@ -1028,4 +1031,16 @@
 		</insert>
 	
     </changeSet>
+    <changeSet author="flaurens" id="tm-1.12.0.feat-3764-2">
+
+   		<comment>Default OAuth2 client for test purposes</comment>
+    	<insert tableName="OAUTH_CLIENT_DETAILS">
+      		<column name="CLIENT_ID" value="client" />
+      		<column name="CLIENT_SECRET" value="secret" />
+      		<column name="SCOPE" value="location,locationhistory" />
+      		<column name="AUTHORIZED_GRANT_TYPES" value="password,authorization_code,refresh_token,implicit" />
+      		<column name="AUTHORITIES" value="ROLE_CLIENT, ROLE_TRUSTED_CLIENT" />
+      		<column name="ACCESS_TOKEN_VALIDITY" value="60" />
+    	</insert>
+  	</changeSet>
 </databaseChangeLog>
