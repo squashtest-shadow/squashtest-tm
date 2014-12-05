@@ -361,6 +361,28 @@
   <osgi:list id="squash.tm.wizard.ExportPlugins" interface="org.squashtest.tm.api.export.ExportPlugin">
     <osgi:listener ref="squash.tm.report.ExportPluginManager" bind-method="registerPlugin" unbind-method="unregisterPlugin" />
   </osgi:list>
+  
+   
+    <osgi:reference id="squashtest.tm.service.MilestoneManagerService" bean-name="squashtest.tm.service.MilestoneManagerService" timeout="2000" >
+	    <osgi:interfaces>
+	      <value>org.squashtest.tm.service.milestone.MilestoneManagerService</value>
+	    </osgi:interfaces>
+	</osgi:reference>
+
+    <osgi:reference id="squashtest.tm.service.MilestoneBindingManagerService" bean-name="squashtest.tm.service.MilestoneBindingManagerService" timeout="2000" >
+	    <osgi:interfaces>
+	      <value>org.squashtest.tm.service.milestone.MilestoneBindingManagerService</value>
+	    </osgi:interfaces>    
+	</osgi:reference>
+	
+	<osgi:reference id="squashtest.tm.service.InfoListItemManagerService" bean-name="squashtest.tm.service.InfoListItemManagerService"
+	    availability="mandatory">
+	    <osgi:interfaces>
+		      <value>org.squashtest.tm.service.infolist.InfoListItemFinderService</value>
+		      <value>org.squashtest.tm.service.infolist.InfoListItemManagerService</value>
+	    </osgi:interfaces>
+	  </osgi:reference>
+	
 
   <osgix:cm-properties id="squash.tm.auth.config" persistent-id="org.squashtest.csp.core.auth.config" />
 
@@ -393,18 +415,6 @@
 
   <osgi:reference id="squashtest.core.security.PermissionEvaluator" bean-name="squashtest.core.security.PermissionEvaluator"
     interface="org.springframework.security.access.PermissionEvaluator" />
- 
-    <osgi:reference id="squashtest.tm.service.MilestoneManagerService" bean-name="squashtest.tm.service.MilestoneManagerService" timeout="2000" >
-    <osgi:interfaces>
-      <value>org.squashtest.tm.service.milestone.MilestoneManagerService</value>
-    </osgi:interfaces>
-</osgi:reference>
 
-    <osgi:reference id="squashtest.tm.service.MilestoneBindingManagerService" bean-name="squashtest.tm.service.MilestoneBindingManagerService" timeout="2000" >
-    <osgi:interfaces>
-      <value>org.squashtest.tm.service.milestone.MilestoneBindingManagerService</value>
-    </osgi:interfaces>
-    
-</osgi:reference>
 
 </beans>

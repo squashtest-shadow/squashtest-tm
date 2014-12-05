@@ -112,18 +112,18 @@
 						th:text="#{__${testCase.Importance.i18nKey}__}">Mineure</div>
 				</div>
 
-				<div class="display-table-row">
+				<div class="display-table-row" th:with="natLabel = ${#messages.msgOrNull('__${testCase.nature.label}__')}">
 					<label for="test-case-nature" class="display-table-cell"
 						th:text="#{ test-case.nature.combo.label }">Nature</label>
 					<div class="display-table-cell" id="test-case-nature"
-						th:text="#{__${ testCase.Nature.i18nKey }__}">Truc tic tac</div>
+						th:text="${(natLabel != null) ? natLabel : testCase.nature.label}">Truc tic tac</div>
 				</div>
 
-				<div class="display-table-row">
+				<div class="display-table-row" th:with="typLabel = ${#messages.msgOrNull('__${testCase.type.label}__')}">
 					<label for="test-case-type" class="display-table-cell"
 						th:text="#{ test-case.type.combo.label }">Type</label>
 					<div class="display-table-cell" id="test-case-type"
-						th:text="#{__${testCase.Type.i18nKey}__}">truc</div>
+						th:text="${(typLabel != null) ? typLabel : testCase.type.label}">truc</div>
 				</div>
 
 				<div class="display-table-row">
@@ -315,7 +315,8 @@
 				<tbody>
 					<tr th:each="verifReq, iterStat : ${verifiedRequirements}"
 						th:object="${verifReq}"
-						th:class="*{directVerification}? 'directVerification' : 'indirectVerification'">
+						th:class="*{directVerification}? 'directVerification' : 'indirectVerification'"
+                        th:with="catLabel = ${#messages.msgOrNull('__${verifReq.category.label}__')}">
 						<td th:text="${iterStat.count}">1</td>
 						<td th:text="*{project.name}">Project B</td>
 						<td th:text="*{id}">3</td>
@@ -323,7 +324,7 @@
 						<td th:text="*{name}">Couleurs des banières</td>
 						<td th:text="*{versionNumber}">3</td>
 						<td th:text="#{__*{criticality.i18nKey}__}">crit</td>
-						<td th:text="#{__*{category.i18nKey}__}">cat</td>
+						<td th:text="${(catLabel != null) ? catLabel : siblingVersion.category.label}">cat</td>
 						<td th:text="${ #sets.isEmpty(verifReq.verifyingSteps) ? '' :  
 										#sets.size(verifReq.verifyingSteps) > 1  ? '*' : 
 										verifReq.verifyingSteps[0].index + 1}">0</td>

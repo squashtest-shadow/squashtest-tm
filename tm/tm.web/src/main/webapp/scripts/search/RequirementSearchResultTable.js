@@ -297,7 +297,7 @@ define([ "jquery", "backbone", "squash.translator","jeditable.simpleJEditable", 
 		_addSelectEditableToCategory : function(row, data) {
 			var self = this;
 			var urlPOST = squashtm.app.contextRoot + "/requirements/" + data["requirement-id"];
-			var urlGET = squashtm.app.contextRoot + "/requirements/category-combo-data";
+			var urlGET = squashtm.app.contextRoot + "/requirements/"+ data["requirement-id"]+"/category-combo-data";
 			var ok = translator.get("rich-edit.button.ok.label");
 			var cancel = translator.get("label.Cancel");
 			var component = $('.editable_category', row);

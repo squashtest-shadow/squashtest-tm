@@ -20,8 +20,6 @@
  */
 package org.squashtest.tm.service.infolist;
 
-import org.squashtest.tm.domain.infolist.InfoListItem;
-import org.squashtest.tm.domain.infolist.ListItemReference;
 
 public interface InfoListItemManagerService extends InfoListItemFinderService{
 

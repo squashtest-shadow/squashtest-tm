@@ -47,6 +47,7 @@ import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.Level;
 import org.squashtest.tm.domain.event.RequirementAuditEvent;
+import org.squashtest.tm.domain.infolist.InfoList;
 import org.squashtest.tm.domain.infolist.InfoListItem;
 import org.squashtest.tm.domain.infolist.ListItemReference;
 import org.squashtest.tm.domain.requirement.Requirement;
@@ -57,6 +58,7 @@ import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.service.audit.RequirementAuditTrailService;
 import org.squashtest.tm.service.customfield.CustomFieldValueFinderService;
+import org.squashtest.tm.service.infolist.InfoListItemFinderService;
 import org.squashtest.tm.service.requirement.RequirementModificationService;
 import org.squashtest.tm.service.requirement.RequirementVersionManagerService;
 import org.squashtest.tm.service.testcase.VerifyingTestCaseManagerService;
@@ -64,8 +66,10 @@ import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.controller.audittrail.RequirementAuditEventTableModelBuilder;
 import org.squashtest.tm.web.internal.controller.generic.ServiceAwareAttachmentTableModelHelper;
 import org.squashtest.tm.web.internal.helper.InternationalizableLabelFormatter;
+import org.squashtest.tm.web.internal.helper.JsonHelper;
 import org.squashtest.tm.web.internal.helper.LevelLabelFormatter;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
+import org.squashtest.tm.web.internal.model.builder.InfoListComboDataBuilder;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelBuilder;
@@ -85,10 +89,10 @@ public class RequirementModificationController {
 	private Provider<RequirementCriticalityComboDataBuilder> criticalityComboBuilderProvider;
 
 	@Inject
-	private Provider<RequirementCategoryComboDataBuilder> categoryComboBuilderProvider;
+	private Provider<RequirementStatusComboDataBuilder> statusComboDataBuilderProvider;
 
 	@Inject
-	private Provider<RequirementStatusComboDataBuilder> statusComboDataBuilderProvider;
+	private InfoListComboDataBuilder infoListComboDataBuilder;
 
 	@Inject
 	private Provider<LevelLabelFormatter> levelFormatterProvider;
@@ -115,6 +119,9 @@ public class RequirementModificationController {
 
 	@Inject
 	private RequirementAuditTrailService auditTrailService;
+
+	@Inject
+	private InfoListItemFinderService infoListItemService;
 
 	private final DatatableMapper<String> versionMapper = new NameBasedMapper()
 	.mapAttribute("version-number", "versionNumber", RequirementVersion.class)
@@ -147,7 +154,7 @@ public class RequirementModificationController {
 
 		Requirement requirement = requirementModService.findById(requirementId);
 		String criticalities = buildMarshalledCriticalities(locale);
-		String categories = buildMarshalledCategories(locale);
+		String categories = buildMarshalledCategories(requirement.getProject().getRequirementCategories());
 		boolean hasCUF = cufValueService.hasCustomFields(requirement.getCurrentVersion());
 		DataTableModel verifyingTCModel = getVerifyingTCModel(requirement.getCurrentVersion());
 		DataTableModel attachmentsModel = attachmentsHelper.findPagedAttachments(requirement);
@@ -167,8 +174,9 @@ public class RequirementModificationController {
 		return criticalityComboBuilderProvider.get().useLocale(locale).buildMarshalled();
 	}
 
-	private String buildMarshalledCategories(Locale locale) {
-		return categoryComboBuilderProvider.get().useLocale(locale).buildMarshalled();
+	private String buildMarshalledCategories(InfoList list) {
+		Map<String, String> data =  infoListComboDataBuilder.build(list);
+		return JsonHelper.marshall(data);
 	}
 
 	private DataTableModel getVerifyingTCModel(RequirementVersion version){
@@ -214,9 +222,8 @@ public class RequirementModificationController {
 	public String changeCategory(@RequestParam(VALUE) String code, @PathVariable long requirementId, Locale locale) {
 
 		requirementModService.changeCategory(requirementId, code);
-		LOGGER.debug("Requirement {} : requirement criticality changed, new value : {}", requirementId, code);
-
-		return formatCategory(new ListItemReference(code), locale); // this won't work, remember to fix that
+		InfoListItem category = infoListItemService.findByCode(code);
+		return formatInfoItem(category, locale);
 	}
 
 	@RequestMapping(method = RequestMethod.POST, params = { "id=requirement-status", VALUE })
@@ -299,18 +306,6 @@ public class RequirementModificationController {
 		return internationalize(criticality, locale, levelFormatterProvider);
 	}
 
-	/***
-	 * Method which returns category in the chosen language
-	 * 
-	 * @param criticality
-	 *            the category
-	 * @param locale
-	 *            the locale with the chosen language
-	 * @return the category in the chosen language
-	 */
-	private String formatCategory(InfoListItem category, Locale locale) {
-		return i18nHelper.getMessage(category.getLabel(), null, category.getLabel(), locale);
-	}
 
 	private static String internationalize(Level level, Locale locale,
 			Provider<LevelLabelFormatter> levelFormatterProvider) {
@@ -325,7 +320,7 @@ public class RequirementModificationController {
 		model.addAttribute("versions", req.getUnmodifiableVersions());
 		model.addAttribute("selectedVersion", req.getCurrentVersion());
 		model.addAttribute("criticalityList", buildMarshalledCriticalities(locale));
-		model.addAttribute("categoryList", buildMarshalledCategories(locale));
+		model.addAttribute("categoryList", buildMarshalledCategories(req.getProject().getRequirementCategories()));
 		model.addAttribute("verifyingTestCasesModel", getVerifyingTCModel(req.getCurrentVersion()));
 		model.addAttribute("auditTrailModel", getEventsTableModel(req));
 		boolean hasCUF = cufValueService.hasCustomFields(req.getCurrentVersion());
@@ -345,6 +340,11 @@ public class RequirementModificationController {
 		return new RequirementVersionDataTableModel(locale, levelFormatterProvider, i18nHelper).buildDataModel(holder,
 				params.getsEcho());
 	}
+
+	private String formatInfoItem(InfoListItem nature, Locale locale) {
+		return  i18nHelper.getMessage(nature.getLabel(), null, nature.getLabel(), locale);
+	}
+
 
 	private static final class RequirementVersionDataTableModel extends DataTableModelBuilder<RequirementVersion> {
 		private Locale locale;

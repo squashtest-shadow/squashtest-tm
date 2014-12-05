@@ -63,6 +63,7 @@ import org.squashtest.tm.domain.customfield.CustomField;
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
 import org.squashtest.tm.domain.customfield.RenderingLocation;
 import org.squashtest.tm.domain.execution.Execution;
+import org.squashtest.tm.domain.infolist.InfoList;
 import org.squashtest.tm.domain.infolist.InfoListItem;
 import org.squashtest.tm.domain.infolist.ListItemReference;
 import org.squashtest.tm.domain.project.Project;
@@ -74,15 +75,14 @@ import org.squashtest.tm.domain.testcase.Parameter;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseExecutionMode;
 import org.squashtest.tm.domain.testcase.TestCaseImportance;
-import org.squashtest.tm.domain.testcase.TestCaseNature;
 import org.squashtest.tm.domain.testcase.TestCaseStatus;
-import org.squashtest.tm.domain.testcase.TestCaseType;
 import org.squashtest.tm.domain.testcase.TestStep;
 import org.squashtest.tm.exception.UnknownEntityException;
 import org.squashtest.tm.service.bugtracker.BugTrackersLocalService;
 import org.squashtest.tm.service.customfield.CustomFieldHelper;
 import org.squashtest.tm.service.customfield.CustomFieldHelperService;
 import org.squashtest.tm.service.execution.ExecutionFinder;
+import org.squashtest.tm.service.infolist.InfoListItemFinderService;
 import org.squashtest.tm.service.requirement.VerifiedRequirement;
 import org.squashtest.tm.service.requirement.VerifiedRequirementsManagerService;
 import org.squashtest.tm.service.testcase.ParameterFinder;
@@ -95,9 +95,11 @@ import org.squashtest.tm.web.internal.controller.testcase.parameters.ParametersM
 import org.squashtest.tm.web.internal.controller.testcase.parameters.TestCaseDatasetsController;
 import org.squashtest.tm.web.internal.controller.testcase.steps.TestStepsTableModelBuilder;
 import org.squashtest.tm.web.internal.helper.InternationalizableLabelFormatter;
+import org.squashtest.tm.web.internal.helper.JsonHelper;
 import org.squashtest.tm.web.internal.helper.LevelLabelFormatter;
 import org.squashtest.tm.web.internal.http.ContentTypes;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
+import org.squashtest.tm.web.internal.model.builder.InfoListComboDataBuilder;
 import org.squashtest.tm.web.internal.model.combo.OptionTag;
 import org.squashtest.tm.web.internal.model.customfield.CustomFieldJsonConverter;
 import org.squashtest.tm.web.internal.model.customfield.CustomFieldModel;
@@ -157,10 +159,14 @@ public class TestCaseModificationController {
 	private Provider<TestCaseImportanceJeditableComboDataBuilder> importanceComboBuilderProvider;
 
 	@Inject
-	private Provider<TestCaseNatureJeditableComboDataBuilder> natureComboBuilderProvider;
+	private BugTrackersLocalService bugTrackersLocalService;
 
 	@Inject
-	private Provider<TestCaseTypeJeditableComboDataBuilder> typeComboBuilderProvider;
+	private ServiceAwareAttachmentTableModelHelper attachmentHelper;
+
+	@Inject
+	private InfoListItemFinderService infoListItemService;
+
 
 	// ****** custom field services ******************
 
@@ -182,10 +188,7 @@ public class TestCaseModificationController {
 	private Provider<InternationalizableLabelFormatter> labelFormatter;
 
 	@Inject
-	private BugTrackersLocalService bugTrackersLocalService;
-
-	@Inject
-	private ServiceAwareAttachmentTableModelHelper attachmentHelper;
+	private InfoListComboDataBuilder infoListComboDataBuilder;
 
 
 
@@ -242,9 +245,9 @@ public class TestCaseModificationController {
 		mav.addObject("executionModes", executionModes);
 		mav.addObject("testCaseImportanceComboJson", buildImportanceComboData(locale));
 		mav.addObject("testCaseImportanceLabel", formatImportance(testCase.getImportance(), locale));
-		mav.addObject("testCaseNatureComboJson", buildNatureComboData(locale));
+		mav.addObject("testCaseNatureComboJson", buildNatureComboData(testCase.getId()));
 		mav.addObject("testCaseNatureLabel", formatInfoItem(testCase.getNature(), locale));
-		mav.addObject("testCaseTypeComboJson", buildTypeComboData(locale));
+		mav.addObject("testCaseTypeComboJson", buildTypeComboData(testCase.getId()));
 		mav.addObject("testCaseTypeLabel", formatInfoItem(testCase.getType(), locale));
 		mav.addObject("testCaseStatusComboJson", buildStatusComboData(locale));
 		mav.addObject("testCaseStatusLabel", formatStatus(testCase.getStatus(), locale));
@@ -261,14 +264,20 @@ public class TestCaseModificationController {
 
 	@RequestMapping(value = "/nature-combo-data", method = RequestMethod.GET)
 	@ResponseBody
-	public String buildNatureComboData(Locale locale) {
-		return natureComboBuilderProvider.get().useLocale(locale).buildMarshalled();
+	public String buildNatureComboData(@PathVariable("testCaseId") Long testCaseId) {
+		TestCase testCase = testCaseModificationService.findById(testCaseId);
+		InfoList natures = testCase.getProject().getTestCaseNatures();
+		Map<String, String> comboData = infoListComboDataBuilder.build(natures);
+		return JsonHelper.serialize(comboData);
 	}
 
 	@RequestMapping(value = "/type-combo-data", method = RequestMethod.GET)
 	@ResponseBody
-	public String buildTypeComboData(Locale locale) {
-		return typeComboBuilderProvider.get().useLocale(locale).buildMarshalled();
+	public String buildTypeComboData(@PathVariable("testCaseId") Long testCaseId) {
+		TestCase testCase = testCaseModificationService.findById(testCaseId);
+		InfoList types = testCase.getProject().getTestCaseTypes();
+		Map<String, String> comboData = infoListComboDataBuilder.build(types);
+		return JsonHelper.serialize(comboData);
 	}
 
 	@RequestMapping(value = "/status-combo-data", method = RequestMethod.GET)
@@ -319,9 +328,9 @@ public class TestCaseModificationController {
 	public String changeNature(@PathVariable long testCaseId, @RequestParam(VALUE) String nature, Locale locale) {
 
 		testCaseModificationService.changeNature(testCaseId, nature);
+		InfoListItem newNature = infoListItemService.findByCode(nature);
+		return formatInfoItem(newNature, locale);
 
-		// the line below will break at runtime. We need to look up the item by code before we can i18n it
-		return formatInfoItem(new ListItemReference(nature), locale);
 	}
 
 	@RequestMapping(method = RequestMethod.POST, params = { "id=test-case-newname", VALUE})
@@ -340,9 +349,8 @@ public class TestCaseModificationController {
 	public String changeType(@PathVariable long testCaseId, @RequestParam(VALUE) String type, Locale locale) {
 
 		testCaseModificationService.changeType(testCaseId, type);
-
-		// the line below will break at runtime. We need to look up the item by code before we can i18n it
-		return formatInfoItem(new ListItemReference(type), locale);
+		InfoListItem newType = infoListItemService.findByCode(type);
+		return formatInfoItem(newType, locale);
 	}
 
 	@ResponseBody

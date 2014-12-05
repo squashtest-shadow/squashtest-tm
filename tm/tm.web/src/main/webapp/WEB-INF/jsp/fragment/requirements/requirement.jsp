@@ -221,20 +221,20 @@ publish('reload.requirement.toolbar');
 	<comp:toggle-panel id="requirement"
 				titleKey="label.Attributes"
 				   open="true">
-				   
-	<jsp:attribute name="body">
-	<div id="requirement-attribut-table"  class="display-table">
-<div class="display-table-row">
-					<label for="requirement-criticality" class="display-table-cell"><f:message key="requirement.criticality.combo.label" /></label>
-					<div class="display-table-cell">
-						<div id="requirement-criticality"><comp:level-message level="${ requirement.criticality }"/></div>
-					</div>
-				</div>
+		   
+          	<jsp:attribute name="body">
+            	<div id="requirement-attribut-table"  class="display-table">
+                  <div class="display-table-row">
+			     <label for="requirement-criticality" class="display-table-cell"><f:message key="requirement.criticality.combo.label" /></label>
+			  	<div class="display-table-cell">
+				  <div id="requirement-criticality"><comp:level-message level="${ requirement.criticality }"/></div>
+			    </div>
+		      </div>
 				<div class="display-table-row">
 					<label for="requirement-category" class="display-table-cell"><f:message key="requirement.category.combo.label" /></label>
 					<div class="display-table-cell">
-					<span id="requirement-icon" class="requirement-icon-${requirement.category}">&nbsp &nbsp &nbsp</span>	
-						<span id="requirement-category"><s:message code="${ requirement.category.i18nKey }" htmlEscape="true" /></span>
+					<span id="requirement-icon" class="requirement-icon-${fn:toLowerCase(requirement.category.iconName)}">&nbsp &nbsp &nbsp</span>	
+						<span id="requirement-category"><s:message code="${ requirement.category.label }" text="${ requirement.category.label }" htmlEscape="true" /></span>
 					</div>				
 				</div>
 			

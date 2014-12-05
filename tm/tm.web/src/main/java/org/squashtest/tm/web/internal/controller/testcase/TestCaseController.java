@@ -34,17 +34,21 @@ import javax.inject.Inject;
 import javax.inject.Provider;
 
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.squashtest.tm.domain.infolist.InfoList;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseImportance;
 import org.squashtest.tm.service.requirement.VerifiedRequirementsFinderService;
 import org.squashtest.tm.service.testcase.TestCaseFinder;
 import org.squashtest.tm.web.internal.controller.AcceptHeaders;
 import org.squashtest.tm.web.internal.controller.RequestParams;
+import org.squashtest.tm.web.internal.helper.JsonHelper;
+import org.squashtest.tm.web.internal.model.builder.InfoListComboDataBuilder;
 import org.squashtest.tm.web.internal.model.json.JsonTestCase;
 import org.squashtest.tm.web.internal.model.json.JsonTestCaseBuilder;
 
@@ -75,13 +79,9 @@ public class TestCaseController {
 	private Provider<TestCaseImportanceJeditableComboDataBuilder> importanceComboBuilderProvider;
 
 	@Inject
-	private Provider<TestCaseNatureJeditableComboDataBuilder> natureComboBuilderProvider;
-
-	@Inject
 	private Provider<TestCaseStatusJeditableComboDataBuilder> statusComboBuilderProvider;
 
-	@Inject
-	private Provider<TestCaseTypeJeditableComboDataBuilder> typeComboBuilderProvider;
+
 
 	@Inject
 	private VerifiedRequirementsFinderService verifiedRequirementsFinderService;
@@ -276,17 +276,4 @@ public class TestCaseController {
 		return statusComboBuilderProvider.get().useLocale(locale).buildMarshalled();
 	}
 
-	// TODO bind to /test-case-types
-	@RequestMapping(value = "/type-combo-data", method = RequestMethod.GET)
-	@ResponseBody
-	public String buildTypeComboData(Locale locale) {
-		return typeComboBuilderProvider.get().useLocale(locale).buildMarshalled();
-	}
-
-	// TODO bind to /test-case-natures
-	@RequestMapping(value = "/nature-combo-data", method = RequestMethod.GET)
-	@ResponseBody
-	public String buildNatureComboData(Locale locale) {
-		return natureComboBuilderProvider.get().useLocale(locale).buildMarshalled();
-	}
 }

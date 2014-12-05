@@ -31,7 +31,7 @@ import org.squashtest.tm.service.infolist.InfoListItemManagerService;
 import org.squashtest.tm.service.internal.repository.InfoListItemDao;
 
 @Transactional
-@Service("InfoListItemManagerService")
+@Service("squashtest.tm.service.InfoListItemManagerService")
 public class InfoListItemManagerServiceImpl implements InfoListItemManagerService {
 
 	@Inject

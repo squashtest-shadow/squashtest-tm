@@ -50,8 +50,9 @@ import org.squashtest.tm.domain.Level;
 import org.squashtest.tm.domain.audit.AuditableMixin;
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
 import org.squashtest.tm.domain.event.RequirementAuditEvent;
+import org.squashtest.tm.domain.infolist.InfoList;
+import org.squashtest.tm.domain.infolist.InfoListItem;
 import org.squashtest.tm.domain.requirement.Requirement;
-import org.squashtest.tm.domain.requirement.RequirementCategory;
 import org.squashtest.tm.domain.requirement.RequirementCriticality;
 import org.squashtest.tm.domain.requirement.RequirementStatus;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
@@ -60,14 +61,17 @@ import org.squashtest.tm.exception.UnknownEntityException;
 import org.squashtest.tm.service.audit.RequirementAuditTrailService;
 import org.squashtest.tm.service.customfield.CustomFieldHelperService;
 import org.squashtest.tm.service.customfield.CustomFieldValueFinderService;
+import org.squashtest.tm.service.infolist.InfoListItemFinderService;
 import org.squashtest.tm.service.requirement.RequirementVersionManagerService;
 import org.squashtest.tm.service.testcase.VerifyingTestCaseManagerService;
 import org.squashtest.tm.web.internal.controller.audittrail.RequirementAuditEventTableModelBuilder;
 import org.squashtest.tm.web.internal.controller.generic.ServiceAwareAttachmentTableModelHelper;
 import org.squashtest.tm.web.internal.helper.InternationalizableLabelFormatter;
+import org.squashtest.tm.web.internal.helper.JsonHelper;
 import org.squashtest.tm.web.internal.helper.LevelLabelFormatter;
 import org.squashtest.tm.web.internal.http.ContentTypes;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
+import org.squashtest.tm.web.internal.model.builder.InfoListComboDataBuilder;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.tm.web.internal.model.jquery.RenameModel;
 import org.squashtest.tm.web.internal.model.json.JsonGeneralInfo;
@@ -84,7 +88,7 @@ public class RequirementVersionManagerController {
 	@Inject
 	private Provider<RequirementCriticalityComboDataBuilder> criticalityComboBuilderProvider;
 	@Inject
-	private Provider<RequirementCategoryComboDataBuilder> categoryComboBuilderProvider;
+	private InfoListComboDataBuilder infoListComboDataBuilder;
 	@Inject
 	private Provider<RequirementStatusComboDataBuilder> statusComboDataBuilderProvider;
 	@Inject
@@ -108,6 +112,9 @@ public class RequirementVersionManagerController {
 
 	@Inject
 	private CustomFieldValueFinderService cufValueService;
+
+	@Inject
+	private InfoListItemFinderService infoListItemService;
 
 	public RequirementVersionManagerController() {
 		super();
@@ -135,7 +142,8 @@ public class RequirementVersionManagerController {
 	public String changeCategory(@PathVariable long requirementVersionId,
 			@RequestParam(VALUE) String categoryCode, Locale locale) {
 		requirementVersionManager.changeCategory(requirementVersionId, categoryCode);
-		return categoryCode;
+		InfoListItem category = infoListItemService.findByCode(categoryCode);
+		return formatInfoItem(category, locale);
 
 	}
 
@@ -181,7 +189,7 @@ public class RequirementVersionManagerController {
 		RequirementVersion requirementVersion = requirementVersionManager.findById(requirementVersionId);
 		String criticalities = buildMarshalledCriticalities(locale);
 		boolean hasCUF = cufValueService.hasCustomFields(requirementVersion);
-		String categories = buildMarshalledCategories(locale);
+		String categories = buildMarshalledCategories(requirementVersion.getProject().getRequirementCategories());
 		DataTableModel verifyingTCModel = getVerifyingTCModel(requirementVersion);
 		DataTableModel attachmentsModel = attachmentsHelper.findPagedAttachments(requirementVersion);
 		DataTableModel auditTrailModel = getEventsTableModel(requirementVersion);
@@ -224,8 +232,9 @@ public class RequirementVersionManagerController {
 		return criticalityComboBuilderProvider.get().useLocale(locale).buildMarshalled();
 	}
 
-	private String buildMarshalledCategories(Locale locale) {
-		return categoryComboBuilderProvider.get().useLocale(locale).buildMarshalled();
+	private String buildMarshalledCategories(InfoList list) {
+		Map<String, String> data =  infoListComboDataBuilder.build(list);
+		return JsonHelper.marshall(data);
 	}
 
 	@RequestMapping(method = RequestMethod.POST, params = { "newName" })
@@ -322,6 +331,11 @@ public class RequirementVersionManagerController {
 	public void setAuditTrailService(RequirementAuditTrailService auditTrailService) {
 		this.auditTrailService = auditTrailService;
 	}
+
+	private String formatInfoItem(InfoListItem nature, Locale locale) {
+		return  i18nHelper.getMessage(nature.getLabel(), null, nature.getLabel(), locale);
+	}
+
 
 	@RequestMapping(method = RequestMethod.GET, params = "format=printable")
 	public ModelAndView printRequirementVersion(@PathVariable long requirementVersionId, Locale locale) {

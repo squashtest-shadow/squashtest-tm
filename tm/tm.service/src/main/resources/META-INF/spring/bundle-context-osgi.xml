@@ -309,9 +309,28 @@
 
   <osgi:service ref="squashtest.tm.service.CustomFieldHelperService" interface="org.squashtest.tm.service.customfield.CustomFieldHelperService" />
 
-
-
   <osgi:service ref="squashtest.tm.service.DenormalizedFieldValueManager" interface="org.squashtest.tm.service.denormalizedfield.DenormalizedFieldValueManager" />
+  
+ <osgi:service ref="squashtest.tm.service.MilestoneManagerService">
+     <osgi:interfaces>
+      <value>org.squashtest.tm.service.milestone.MilestoneManagerService</value>
+    </osgi:interfaces>
+    </osgi:service>
+
+ <osgi:service ref="squashtest.tm.service.MilestoneBindingManagerService">
+     <osgi:interfaces>
+      <value>org.squashtest.tm.service.milestone.MilestoneBindingManagerService</value>
+    </osgi:interfaces>
+ </osgi:service>
+    
+    
+  <osgi:service ref="squashtest.tm.service.InfoListItemManagerService">
+    <osgi:interfaces>
+      <value>org.squashtest.tm.service.infolist.InfoListItemFinderService</value>
+      <value>org.squashtest.tm.service.infolist.InfoListItemManagerService</value>
+    </osgi:interfaces>
+  </osgi:service>
+  
 
 
   <!-- ====== SERVICES CONSUMED BY THIS BUNDLE ====== -->
@@ -338,21 +357,6 @@
       <value>org.springframework.security.authentication.AuthenticationProvider</value>
     </osgi:interfaces>
   </osgi:service>
-
-
-
- <osgi:service ref="squashtest.tm.service.MilestoneManagerService">
-     <osgi:interfaces>
-      <value>org.squashtest.tm.service.milestone.MilestoneManagerService</value>
-    </osgi:interfaces>
-    </osgi:service>
-
- <osgi:service ref="squashtest.tm.service.MilestoneBindingManagerService">
-     <osgi:interfaces>
-      <value>org.squashtest.tm.service.milestone.MilestoneBindingManagerService</value>
-    </osgi:interfaces>
-    </osgi:service>
-
 
 
 <!-- Bugtracker co,nnectors registry -->

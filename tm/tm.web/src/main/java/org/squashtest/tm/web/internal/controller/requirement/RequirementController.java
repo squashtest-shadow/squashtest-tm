@@ -38,21 +38,12 @@ public class RequirementController {
 	private Provider<RequirementCriticalityComboDataBuilder> criticalityComboBuilderProvider;
 
 	@Inject
-	private Provider<RequirementCategoryComboDataBuilder> categoryComboBuilderProvider;
-	
-	@Inject
 	private Provider<RequirementStatusComboDataBuilder> statusComboDataBuilderProvider;
 
 	@RequestMapping(value = "/criticality-combo-data", method = RequestMethod.GET)
 	@ResponseBody
 	public String buildImportanceComboData(Locale locale) {
 		return  criticalityComboBuilderProvider.get().useLocale(locale).buildMarshalled();
-	}
-
-	@RequestMapping(value = "/category-combo-data", method = RequestMethod.GET)
-	@ResponseBody
-	public String buildNatureComboData(Locale locale) {
-		return categoryComboBuilderProvider.get().useLocale(locale).buildMarshalled();
 	}
 
 	@RequestMapping(value = "/status-combo-data", method = RequestMethod.GET)

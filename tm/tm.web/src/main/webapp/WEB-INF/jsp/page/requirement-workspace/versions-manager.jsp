@@ -92,7 +92,7 @@
 								<td>${ version.name }</td>
 								<td><comp:level-message level="${ version.status }" /></td>
 								<td><comp:level-message level="${ version.criticality }"/></td>
-								<td><s:message code="${ version.category.i18nKey }" htmlEscape="true" /></td>
+								<td><s:message code="${ version.category.label }" text="${ version.category.label }" htmlEscape="true" /></td>
 							</tr>
 						</c:forEach>
 					</tbody>

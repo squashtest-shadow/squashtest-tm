@@ -114,12 +114,13 @@
 						th:text="#{__${ requirementVersion.criticality.i18nKey }__}">1</div>
 				</div>
 
-				<div class="display-table-row">
+				<div class="display-table-row" th:with="catLabel = ${#messages.msgOrNull('__${requirementVersion.category.label}__')}">
 					<label class="display-table-cell"
 						for="requirement-version-category"
 						th:text="#{ requirement.category.combo.label }">Category</label>
-					<div class="display-table-cell" id="requirement-version-category"
-						th:text="#{__${ requirementVersion.category.i18nKey }__}">1</div>
+					
+                        <div class="display-table-cell" id="requirement-version-category"
+                        th:text="${(catLabel != null) ? catLabel : requirementVersion.category.label}">1</div>
 				</div>
 
 				<div class="display-table-row">
@@ -261,13 +262,14 @@
 				</thead>
 				<tbody>
 					<tr th:each="siblingVersion : ${siblingVersions}" th:object="${siblingVersion}"
-						th:class="${requirementVersion.id == siblingVersion.id} ? 'selected' : ''">
+						th:class="${requirementVersion.id == siblingVersion.id} ? 'selected' : ''"
+                        th:with="catLabel = ${#messages.msgOrNull('__${siblingVersion.category.label}__')}">
 						<td th:text="*{versionNumber}">1</td>
 						<td th:text="*{reference}">0002</td>
 						<td th:text="*{name}">vérification de statistiques</td>
 						<td th:text="#{__*{status.i18nKey}__}"></td>
 						<td th:text="#{__*{criticality.i18nKey}__}"></td>
-						<td th:text="#{__*{category.i18nKey}__}"></td>
+						<td th:text="${(catLabel != null) ? catLabel : siblingVersion.category.label}"></td>
 					</tr>
 				</tbody>
 			</table>
