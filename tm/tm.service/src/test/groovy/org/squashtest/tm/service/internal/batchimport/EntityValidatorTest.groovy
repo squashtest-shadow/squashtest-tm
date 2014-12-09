@@ -39,7 +39,7 @@ class EntityValidatorTest extends Specification {
 
 	EntityValidator validator
 	Model model
-	ModelProvider modelProvider = Mock()
+	ValidationFacilitySubservicesProvider modelProvider = Mock()
 
 	static def longstring =	"IMAHMODERATELYLONGSTRINGOVERFIFTYCHARACTERSSOIFAILTESTSFORTESTCASEREFERENCES"
 

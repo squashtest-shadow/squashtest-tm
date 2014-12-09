@@ -64,6 +64,8 @@ public final class Messages {
 	public static final String ERROR_CALL_NOT_READABLE = "message.import.log.error.tc.callStep.calledTcNotReadable";
 	public static final String ERROR_ACTION_STEP_HAS_DATASET = "message.import.log.error.tc.tcStep.actionStepYetHasDataset";
 	public static final String ERROR_UNKNOWN_COLUMN_HEADER = "message.import.log.error.unknowncolumnheader";
+	public static final String ERROR_INVALID_NATURE = "message.import.log.error.natureinvalid";
+	public static final String ERROR_INVALID_TYPE = "message.import.log.error.typeinvalid";
 
 	public static final String IMPACT_MAX_SIZE = "message.import.log.impact.truncatedValue";
 	public static final String IMPACT_DEFAULT_VALUE = "message.import.log.impact.useDefaultValue";

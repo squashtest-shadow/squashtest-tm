@@ -44,6 +44,7 @@ import org.squashtest.tm.service.importer.ImportMode;
 import org.squashtest.tm.service.importer.ImportStatus;
 import org.squashtest.tm.service.importer.LogEntry;
 import org.squashtest.tm.service.importer.Target;
+import org.squashtest.tm.service.infolist.InfoListItemFinderService;
 import org.squashtest.tm.service.internal.batchimport.Model.Existence;
 import org.squashtest.tm.service.internal.batchimport.Model.StepType;
 import org.squashtest.tm.service.internal.batchimport.Model.TargetStatus;
@@ -59,7 +60,7 @@ import org.squashtest.tm.service.user.UserAccountService;
  */
 @Component
 @Scope("prototype")
-public class ValidationFacility implements Facility, ModelProvider {
+public class ValidationFacility implements Facility, ValidationFacilitySubservicesProvider {
 
 	private static final String ROLE_ADMIN = "ROLE_ADMIN";
 	private static final String PERM_CREATE = "CREATE";
@@ -70,6 +71,9 @@ public class ValidationFacility implements Facility, ModelProvider {
 
 	@Inject
 	private PermissionEvaluationService permissionService;
+
+	@Inject
+	private InfoListItemFinderService infoListItemService;
 
 	@Inject
 	private Model model;
@@ -83,8 +87,14 @@ public class ValidationFacility implements Facility, ModelProvider {
 	private EntityValidator entityValidator = new EntityValidator(this);
 	private CustomFieldValidator cufValidator = new CustomFieldValidator();
 
+	@Override
 	public Model getModel() {
 		return model;
+	}
+
+	@Override
+	public InfoListItemFinderService getInfoListItemService(){
+		return infoListItemService;
 	}
 
 	@Override
@@ -100,6 +110,7 @@ public class ValidationFacility implements Facility, ModelProvider {
 
 		// 2 - custom fields (create)
 		logs.append(cufValidator.checkCreateCustomFields(target, cufValues, model.getTestCaseCufs(target)));
+
 
 		// 3 - other checks
 		// 3-1 : names clash

@@ -21,19 +21,16 @@
 
 package org.squashtest.tm.web.internal.controller.search;
 
-import org.springframework.context.MessageSource;
-import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory;
-import org.squashtest.tm.domain.requirement.RequirementCategory;
-import org.squashtest.tm.domain.requirement.RequirementCriticality;
-import org.squashtest.tm.web.internal.controller.requirement.RequirementCategoryComboDataBuilder;
-import org.squashtest.tm.web.internal.controller.search.SearchInterfaceDescription.OptionBuilder;
-import org.squashtest.tm.web.internal.helper.InternationalizableLabelFormatter;
-import org.squashtest.tm.web.internal.helper.LevelLabelFormatter;
-import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
+import javax.inject.Provider
 
-import javax.inject.Provider;
+import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory
+import org.squashtest.tm.domain.requirement.RequirementCriticality
+import org.squashtest.tm.web.internal.controller.search.SearchInterfaceDescription.OptionBuilder
+import org.squashtest.tm.web.internal.helper.InternationalizableLabelFormatter
+import org.squashtest.tm.web.internal.helper.LevelLabelFormatter
+import org.squashtest.tm.web.internal.i18n.InternationalizationHelper
 
-import spock.lang.Specification;
+import spock.lang.Specification
 
 
 /**
@@ -47,45 +44,45 @@ class SearchInterfaceDescriptionTest extends Specification {
 	InternationalizableLabelFormatter internationalizableFormatter = Mock()
 	Provider internationalizableFormatterProvider = Mock()
 	InternationalizationHelper messageSource = Mock()
-	
+
 	def "should create level combo intermediate model"() {
-		given: 
+		given:
 		def expectedKeys = RequirementCriticality.values().collect { it.level + "-" + it.name() } as Set
-		
+
 		and:
 		levelFormatter.formatLabel(_) >> "formatted label"
 		levelFormatter._ >> levelFormatter
 		levelFormatterProvider.get() >> levelFormatter
-		
+
 		use(ReflectionCategory) {
 			SearchInterfaceDescription.set field: "levelLabelFormatter", of: searchInterfaceDescription, to: levelFormatterProvider
 		}
-		
+
 		when:
 		def model = searchInterfaceDescription.delegateLevelComboBuilder(RequirementCriticality.values()).useLocale(Locale.JAPANESE).buildMap()
-		
+
 		then:
 		model.keySet() == expectedKeys
 	}
-	
+
 	def "should create level combo model"() {
 		given:
 		def sortedCrits = RequirementCriticality.values().sort({a, b -> a.level - b.level})
 		def expectedKeys = sortedCrits.collect { it.level + "-" + it.name() }
 		def expectedLabels = sortedCrits.collect { it.name() }
-		
+
 		and:
 		levelFormatter.formatLabel(_) >> { Enum it ->it.name() }
 		levelFormatter._ >> levelFormatter
 		levelFormatterProvider.get() >> levelFormatter
-		
+
 		use(ReflectionCategory) {
 			SearchInterfaceDescription.set field: "levelLabelFormatter", of: searchInterfaceDescription, to: levelFormatterProvider
 		}
-		
+
 		when:
 		def model = searchInterfaceDescription.levelComboBuilder(RequirementCriticality.values()).useLocale(Locale.JAPANESE).build()
-		
+
 		then:
 		model*.code == expectedKeys
 		model*.value == expectedLabels
@@ -94,32 +91,32 @@ class SearchInterfaceDescriptionTest extends Specification {
 	def "should create internationalizable combo model"() {
 		given:
 		def expectedKeys = RequirementCriticality.values().sort({ a, b -> a.name().compareTo(b.name()) }).collect { it.name() }
-		
+
 		and:
 		internationalizableFormatter.formatLabel(_) >> { Enum it -> it.name().toLowerCase() }
 		internationalizableFormatter._ >> internationalizableFormatter
 		internationalizableFormatterProvider.get() >> internationalizableFormatter
-				
+
 		use(ReflectionCategory) {
 			SearchInterfaceDescription.set field: "internationalizableLabelFormatter", of: searchInterfaceDescription, to: internationalizableFormatterProvider
 		}
-		
+
 		when:
 		def model = searchInterfaceDescription.internationalizableComboBuilder(RequirementCriticality.values()).useLocale(Locale.JAPANESE).build()
-		
+
 		then:
 		model*.code == expectedKeys
 		model*.value == expectedKeys.collect { it.toLowerCase() }
 	}
-	
+
 	def "should build option"() {
 		given:
 		OptionBuilder optionBuilder = searchInterfaceDescription.optionBuilder(Locale.JAPANESE);
-		
-		when: 
+
+		when:
 		def foo = optionBuilder.label("foo").optionKey("F").selected().build()
 		def bar = optionBuilder.label("bar").optionKey("B").build()
-		
+
 		then:
 		foo.value == "foo"
 		foo.code == "F"

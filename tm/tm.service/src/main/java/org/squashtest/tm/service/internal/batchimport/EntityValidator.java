@@ -29,6 +29,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
+import org.squashtest.tm.domain.infolist.InfoListItem;
 import org.squashtest.tm.domain.testcase.Parameter;
 import org.squashtest.tm.domain.testcase.ParameterAssignationMode;
 import org.squashtest.tm.domain.testcase.TestCase;
@@ -36,21 +37,26 @@ import org.squashtest.tm.domain.testcase.TestStep;
 import org.squashtest.tm.service.importer.ImportMode;
 import org.squashtest.tm.service.importer.ImportStatus;
 import org.squashtest.tm.service.importer.LogEntry;
+import org.squashtest.tm.service.infolist.InfoListItemFinderService;
 import org.squashtest.tm.service.internal.batchimport.Model.Existence;
 import org.squashtest.tm.service.internal.batchimport.Model.TargetStatus;
 import org.squashtest.tm.service.internal.batchimport.testcase.excel.StepSheetColumn;
 
 class EntityValidator {
 
-	private final ModelProvider modelProvider;
+	private final ValidationFacilitySubservicesProvider subservicesProvider;
 
 	Model getModel() {
-		return modelProvider.getModel();
+		return subservicesProvider.getModel();
 	}
 
-	public EntityValidator(ModelProvider modelProvider) {
+	InfoListItemFinderService getInfoListItemService(){
+		return subservicesProvider.getInfoListItemService();
+	}
+
+	public EntityValidator(ValidationFacilitySubservicesProvider modelProvider) {
 		super();
-		this.modelProvider = modelProvider;
+		this.subservicesProvider = modelProvider;
 	}
 
 	/**
@@ -65,14 +71,18 @@ class EntityValidator {
 	 * @return
 	 */
 	public LogTrain updateTestCaseChecks(TestCaseTarget target, TestCase testCase) {
+
 		LogTrain logs = createTestCaseChecks(target, testCase);
 
-		// 2 - name must be supplied
+		// 1 - name must be supplied
 		String name = testCase.getName();
 		if (StringUtils.isBlank(name)) {
 			logs.addEntry(LogEntry.failure().forTarget(target)
 					.withMessage(Messages.ERROR_FIELD_MANDATORY, TC_NAME.header).build());
 		}
+
+		// 2 - natures and types now
+		logs.append(checkNatureAndTypeAndFixIfNeeded(target, testCase));
 
 		return logs;
 	}
@@ -116,6 +126,9 @@ class EntityValidator {
 					.withMessage(Messages.ERROR_MAX_SIZE, TC_REFERENCE.header).withImpact(Messages.IMPACT_MAX_SIZE)
 					.build());
 		}
+
+		// 6 - natures and types now
+		logs.append(checkNatureAndTypeAndFixIfNeeded(target, testCase));
 
 		return logs;
 	}
@@ -339,5 +352,77 @@ class EntityValidator {
 		return logs;
 
 	}
+
+
+	// ************************* private stuffs ****************************************
+
+	/*
+	 * This method will check that, in case a nature and/or a type were supplied,
+	 * this element is consistent with the set of natures/types available in the
+	 * given project.
+	 * 
+	 */
+	private LogTrain checkNatureAndTypeAndFixIfNeeded(TestCaseTarget target, TestCase testCase){
+
+		LogTrain logs = new LogTrain();
+
+		if (target.isWellFormed()){
+
+			TargetStatus projectStatus = getModel().getProjectStatus(target.getProject());
+			if (projectStatus.getStatus() == Existence.EXISTS) {
+
+				// 2-1 nature, if specified, must be consistent with the natures of the target project
+				if (! natureDefinedAndConsistent(projectStatus, testCase)){
+					logs.addEntry(
+							LogEntry.warning().forTarget(target)
+							.withMessage(Messages.ERROR_INVALID_NATURE, target.getPath())
+							.withImpact(Messages.IMPACT_DEFAULT_VALUE)
+							.build()
+							);
+				}
+
+				if (! typeDefinedAndConsistent(projectStatus, testCase)){
+					logs.addEntry(
+							LogEntry.warning().forTarget(target)
+							.withMessage(Messages.ERROR_INVALID_TYPE, target.getPath())
+							.withImpact(Messages.IMPACT_DEFAULT_VALUE)
+							.build()
+							);
+				}
+			}
+		}
+
+		return logs;
+	}
+
+	private boolean natureDefinedAndConsistent(TargetStatus projectStatus, TestCase testCase){
+		boolean isConsistent = true;
+		InfoListItem nature = testCase.getNature();
+
+		if (nature == null){
+			isConsistent = true;
+		}
+		else{
+			isConsistent = getInfoListItemService().isNatureConsistent(projectStatus.getId(), nature.getCode());
+		}
+
+		return isConsistent;
+	}
+
+
+	private boolean typeDefinedAndConsistent(TargetStatus projectStatus, TestCase testCase){
+		boolean isConsistent = true;
+		InfoListItem type = testCase.getType();
+
+		if (type == null){
+			isConsistent = true;
+		}
+		else{
+			isConsistent = getInfoListItemService().isTypeConsistent(projectStatus.getId(), type.getCode());
+		}
+
+		return isConsistent;
+	}
+
 
 }

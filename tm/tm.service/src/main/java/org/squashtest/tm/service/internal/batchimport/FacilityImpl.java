@@ -50,12 +50,11 @@ import org.squashtest.tm.domain.testcase.Parameter;
 import org.squashtest.tm.domain.testcase.ParameterAssignationMode;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseImportance;
-import org.squashtest.tm.domain.testcase.TestCaseNature;
 import org.squashtest.tm.domain.testcase.TestCaseStatus;
-import org.squashtest.tm.domain.testcase.TestCaseType;
 import org.squashtest.tm.domain.testcase.TestStep;
 import org.squashtest.tm.service.importer.ImportStatus;
 import org.squashtest.tm.service.importer.LogEntry;
+import org.squashtest.tm.service.infolist.InfoListItemFinderService;
 import org.squashtest.tm.service.internal.batchimport.Model.Existence;
 import org.squashtest.tm.service.internal.batchimport.Model.TargetStatus;
 import org.squashtest.tm.service.internal.customfield.PrivateCustomFieldValueService;
@@ -124,6 +123,9 @@ public class FacilityImpl implements Facility {
 	private ParameterDao paramDao;
 
 	@Inject
+	private InfoListItemFinderService listItemFinderService;
+
+	@Inject
 	private CustomFieldDao cufDao;
 
 	private FacilityImplHelper helper = new FacilityImplHelper();
@@ -153,6 +155,7 @@ public class FacilityImpl implements Facility {
 
 			helper.fillNullWithDefaults(testCase);
 			helper.truncate(testCase, cufValues);
+			fixNatureAndType(target, testCase);
 
 			doCreateTestcase(target, testCase, cufValues);
 			validator.getModel().setExists(target, testCase.getId());
@@ -195,6 +198,8 @@ public class FacilityImpl implements Facility {
 				try {
 
 					helper.truncate(testCase, cufValues);
+					fixNatureAndType(target, testCase);
+
 					doUpdateTestcase(target, testCase, cufValues);
 
 					LOGGER.debug(EXCEL_ERR_PREFIX + "Updated Test Case \t'" + target + "'");
@@ -892,6 +897,28 @@ public class FacilityImpl implements Facility {
 		}
 
 		return result;
+
+	}
+
+	private void fixNatureAndType(TestCaseTarget target, TestCase testCase){
+
+		// at this point of the process the target is assumed to be safe for use,
+		// no need to defensively check that the project exists and such
+		TargetStatus projectStatus = validator.getModel().getProjectStatus(target.getProject());
+
+		InfoListItem nature = testCase.getNature();
+		if (nature != null){
+			if (! listItemFinderService.isNatureConsistent(projectStatus.getId(), nature.getCode())){
+				testCase.setNature( listItemFinderService.findDefaultTestCaseNature(projectStatus.getId()));
+			}
+		}
+
+		InfoListItem type = testCase.getType();
+		if (type != null){
+			if (! listItemFinderService.isTypeConsistent(projectStatus.getId(), type.getCode())){
+				testCase.setType( listItemFinderService.findDefaultTestCaseType(projectStatus.getId()));
+			}
+		}
 
 	}
 

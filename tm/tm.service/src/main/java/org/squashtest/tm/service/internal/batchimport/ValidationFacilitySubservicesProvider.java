@@ -21,10 +21,13 @@
 
 package org.squashtest.tm.service.internal.batchimport;
 
+import org.squashtest.tm.service.infolist.InfoListItemFinderService;
+
 /**
  * @author Gregory Fouquet
  *
  */
-interface ModelProvider {
+interface ValidationFacilitySubservicesProvider {
 	Model getModel();
+	InfoListItemFinderService getInfoListItemService();
 }
