@@ -76,4 +76,6 @@ public interface InfoListItemFinderService {
 	 */
 	boolean isTypeConsistent(long projectId, String itemCode);
 
+
+
 }

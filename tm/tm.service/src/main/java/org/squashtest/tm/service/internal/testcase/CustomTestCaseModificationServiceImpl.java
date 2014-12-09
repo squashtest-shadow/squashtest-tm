@@ -67,6 +67,7 @@ import org.squashtest.tm.domain.testcase.TestCaseLibraryNode;
 import org.squashtest.tm.domain.testcase.TestStep;
 import org.squashtest.tm.domain.testcase.TestStepVisitor;
 import org.squashtest.tm.exception.DuplicateNameException;
+import org.squashtest.tm.exception.InconsistentInfoListItemException;
 import org.squashtest.tm.exception.UnallowedTestAssociationException;
 import org.squashtest.tm.exception.testautomation.MalformedScriptPathException;
 import org.squashtest.tm.service.infolist.InfoListItemFinderService;
@@ -580,7 +581,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 			testCase.setNature(nature);
 		}
 		else{
-			throw new NoSuchElementException("Nature '"+natureCode+"' doesn't belong to the nature set defined for this project");
+			throw new InconsistentInfoListItemException("nature", natureCode);
 		}
 
 	}
@@ -595,7 +596,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 			testCase.setType(type);
 		}
 		else{
-			throw new NoSuchElementException("Type '"+typeCode+"' doesn't belong to the type set defined for this project");
+			throw new InconsistentInfoListItemException("type", typeCode);
 		}
 	}
 

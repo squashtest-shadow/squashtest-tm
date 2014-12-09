@@ -48,6 +48,7 @@ import org.squashtest.tm.domain.testcase.TestCaseLibrary;
 import org.squashtest.tm.domain.testcase.TestCaseLibraryNode;
 import org.squashtest.tm.domain.testcase.TestCaseLibraryNodeVisitor;
 import org.squashtest.tm.exception.DuplicateNameException;
+import org.squashtest.tm.exception.InconsistentInfoListItemException;
 import org.squashtest.tm.service.customfield.CustomFieldValueManagerService;
 import org.squashtest.tm.service.importer.ImportLog;
 import org.squashtest.tm.service.importer.ImportSummary;
@@ -562,20 +563,39 @@ TestCaseLibraryNavigationService {
 
 		InfoListItem nature = testCase.getNature();
 
+		// if no nature set -> use the default item configured for the project
 		if (nature == null){
 			testCase.setNature( testCase.getProject().getTestCaseNatures().getDefaultItem());
 		}
-		else if (nature instanceof ListItemReference){
-			testCase.setNature(infoListItemService.findReference((ListItemReference)nature));
+		else{
+			// validate the code
+			String natureCode = nature.getCode();
+			if (! infoListItemService.isNatureConsistent(testCase.getProject().getId(), natureCode)){
+				throw new InconsistentInfoListItemException("nature", natureCode);
+			}
+
+			// in case the item used here is merely a reference we need to replace it with
+			// a persistent instance
+			if (nature instanceof ListItemReference){
+				testCase.setNature(infoListItemService.findReference((ListItemReference)nature));
+			}
 		}
 
+
+		// now unroll the same procedure with the type
 		InfoListItem type = testCase.getType();
 
 		if (type == null){
 			testCase.setType( testCase.getProject().getTestCaseTypes().getDefaultItem());
 		}
-		else if (type instanceof ListItemReference){
-			testCase.setType(infoListItemService.findReference((ListItemReference)type));
+		else{
+			String typeCode = type.getCode();
+			if (! infoListItemService.isTypeConsistent(testCase.getProject().getId(), typeCode)){
+				throw new InconsistentInfoListItemException("type", typeCode);
+			}
+			if (type instanceof ListItemReference){
+				testCase.setType(infoListItemService.findReference((ListItemReference)type));
+			}
 		}
 	}
 

@@ -20,8 +20,6 @@
  */
 package org.squashtest.tm.service.internal.requirement;
 
-import java.util.NoSuchElementException;
-
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -35,6 +33,7 @@ import org.squashtest.tm.domain.requirement.RequirementCriticality;
 import org.squashtest.tm.domain.requirement.RequirementFolder;
 import org.squashtest.tm.domain.requirement.RequirementLibraryNode;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
+import org.squashtest.tm.exception.InconsistentInfoListItemException;
 import org.squashtest.tm.service.advancedsearch.IndexationService;
 import org.squashtest.tm.service.infolist.InfoListItemFinderService;
 import org.squashtest.tm.service.internal.customfield.PrivateCustomFieldValueService;
@@ -116,7 +115,7 @@ public class CustomRequirementModificationServiceImpl implements CustomRequireme
 			req.setCategory(category);
 		}
 		else{
-			throw new NoSuchElementException("Category '"+categoryCode+"' doesn't belong to the category set defined for this project");
+			throw new InconsistentInfoListItemException("requirementCategory", categoryCode);
 		}
 	}
 

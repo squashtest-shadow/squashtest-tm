@@ -49,6 +49,7 @@ import org.squashtest.tm.domain.requirement.RequirementLibrary;
 import org.squashtest.tm.domain.requirement.RequirementLibraryNode;
 import org.squashtest.tm.domain.requirement.RequirementLibraryNodeVisitor;
 import org.squashtest.tm.exception.DuplicateNameException;
+import org.squashtest.tm.exception.InconsistentInfoListItemException;
 import org.squashtest.tm.exception.library.NameAlreadyExistsAtDestinationException;
 import org.squashtest.tm.exception.requirement.CopyPasteObsoleteException;
 import org.squashtest.tm.exception.requirement.IllegalRequirementModificationException;
@@ -475,18 +476,31 @@ RequirementLibraryNavigationService, RequirementLibraryFinderService {
 		new CustomFieldValuesFixer().fix(folder);
 	}
 
-	private void createAllCustomFieldValues(Requirement requirement){
-		new CustomFieldValuesFixer().fix(requirement);
-	}
+
 
 	private void replaceInfoListReferences(Requirement newReq){
+
 		InfoListItem category = newReq.getCategory();
+
+		// if no category set -> set the default one
 		if (category == null){
 			newReq.setCategory( newReq.getProject().getRequirementCategories().getDefaultItem() );
 		}
-		else if (category instanceof ListItemReference){
-			newReq.setCategory( infoListItemService.findReference((ListItemReference)category));
+		else{
+
+			// validate the code
+			String categCode = category.getCode();
+			if (! infoListItemService.isNatureConsistent(newReq.getProject().getId(), categCode)){
+				throw new InconsistentInfoListItemException("category", categCode);
+			}
+
+			// in case the item used here is merely a reference we need to replace it with
+			// a persistent instance
+			if (category instanceof ListItemReference){
+				newReq.setCategory( infoListItemService.findReference((ListItemReference)category));
+			}
 		}
+
 	}
 
 	private class CategoryChainFixer implements RequirementLibraryNodeVisitor{

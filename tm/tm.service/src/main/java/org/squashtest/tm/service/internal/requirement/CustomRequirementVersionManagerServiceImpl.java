@@ -38,6 +38,7 @@ import org.squashtest.tm.domain.requirement.Requirement;
 import org.squashtest.tm.domain.requirement.RequirementCategory;
 import org.squashtest.tm.domain.requirement.RequirementCriticality;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
+import org.squashtest.tm.exception.InconsistentInfoListItemException;
 import org.squashtest.tm.service.infolist.InfoListItemFinderService;
 import org.squashtest.tm.service.infolist.InfoListItemManagerService;
 import org.squashtest.tm.service.internal.repository.RequirementVersionDao;
@@ -105,7 +106,7 @@ public class CustomRequirementVersionManagerServiceImpl implements CustomRequire
 			version.setCategory(category);
 		}
 		else{
-			throw new NoSuchElementException("Category '"+categoryCode+"' doesn't belong to the category set defined for this project");
+			throw new InconsistentInfoListItemException("requirementCategory", categoryCode);
 		}
 	}
 

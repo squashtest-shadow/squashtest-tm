@@ -615,7 +615,7 @@
                   <targetGroups>squash-js</targetGroups>
                   <minimize>false</minimize>
                   <options>browser,jquery,eqnull,evil,noarg,smarttabs,laxbreak,laxcomma,sub,loopfunc,curly</options>
-                  <failNever>true</failNever>
+                  <failNever>false</failNever>
                 </configuration>
               </execution>
             </executions>
