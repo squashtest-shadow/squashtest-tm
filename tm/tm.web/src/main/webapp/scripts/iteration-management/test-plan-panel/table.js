@@ -107,7 +107,12 @@ define(
 				}
 
 				// assignee (read)
+				
+
 				var $assigneetd = $row.find('.assignee-combo');
+				
+
+							
 				$assigneetd.wrapInner('<span/>');
 
 				// dataset : we create the 'button' part of a menu, but not actual menu.
@@ -138,11 +143,22 @@ define(
 				// return the span element.
 				var assigneeurl = _conf.testplanUrl + data['entity-id'];
 				var assigneeElt = $row.find('.assignee-combo').children().first();
+				
+				// Add to AssignableUsers a possible non assigned admin who did an iteration
+				var listWithUnassignedUsers = JSON.parse(_conf.jsonAssignableUsers) ;
+				var property = data['assignee-id'];
+				var dataProperty = data['assignee-login'];
+				if (listWithUnassignedUsers[property] === undefined) {
+					listWithUnassignedUsers[property] = dataProperty;
+				}
+				
+				listWithAllUsers = JSON.stringify(listWithUnassignedUsers);
+				
 				assigneeElt.addClass('cursor-arrow');
 				assigneeElt.editable(
 					assigneeurl, {
 						type : 'select',
-						data : _conf.jsonAssignableUsers,
+						data : listWithAllUsers,
 						name : 'assignee',
 						onblur : 'cancel',
 						callback : _conf.submitAssigneeClbk
@@ -244,7 +260,9 @@ define(
 									.children().first().
 									text(itp.assignee);
 					},
-
+					
+		
+					
 					jsonAssignableUsers : JSON.stringify(initconf.basic.assignableUsers),
 
 					submitAssigneeClbk : function(value, settings) {

@@ -122,9 +122,20 @@ define(
 				var assigneeElt = $row.find('.assignee-combo').children().first();
 				assigneeElt.addClass('cursor-arrow');
 				//TODO use SelectJEditable obj
+				
+				// Add to AssignableUsers a possible non assigned admin who did an iteration
+				var listWithUnassignedUsers = JSON.parse(_conf.jsonAssignableUsers) ;
+				var property = data['assignee-id'];
+				var dataProperty = data['assignee-login'];
+				if (listWithUnassignedUsers[property] === undefined) {
+					listWithUnassignedUsers[property] = dataProperty;
+				}
+				
+				listWithAllUsers = JSON.stringify(listWithUnassignedUsers);
+				
 				assigneeElt.editable(assigneeurl, {
 					type : 'select',
-					data : _conf.jsonAssignableUsers,
+					data : listWithAllUsers,
 					name : 'assignee',
 					onblur : 'cancel',
 					callback : _conf.submitAssigneeClbk
