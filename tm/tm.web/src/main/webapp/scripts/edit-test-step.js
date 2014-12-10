@@ -23,6 +23,8 @@ require([ "common" ], function(common) {
 			"app/ws/squashtm.workspace" ],
 			function(domReady, $, basic, TestStepModificationView, WS) {
 				var closeWindow = function() {
+					/* Allow the parent to be refreshed */
+					window.opener.squashtm.app.reloadSteps();
 					window.close();
 				};
 
