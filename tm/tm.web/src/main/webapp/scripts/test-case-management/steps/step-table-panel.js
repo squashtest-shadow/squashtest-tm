@@ -763,7 +763,7 @@ define([ "jquery", "squashtable/squashtable.collapser", "custom-field-values", "
 	
 	function reloading(testCase){
 		$("#test-steps-table-"+testCase).squashTable().refresh(); 
-		};
+		}
 	
 
 	// ******************************* main
