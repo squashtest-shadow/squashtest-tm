@@ -20,18 +20,67 @@
  */
 package org.squashtest.tm.service.internal.batchimport.excel;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.apache.poi.ss.usermodel.Cell;
 import org.squashtest.tm.domain.infolist.InfoListItem;
 import org.squashtest.tm.domain.infolist.ListItemReference;
+import org.squashtest.tm.domain.testcase.TestCaseNature;
+import org.squashtest.tm.domain.testcase.TestCaseType;
 
 public final class InfoListItemCoercer<T extends InfoListItem>
 extends TypeBasedCellValueCoercer<T >
 implements CellValueCoercer<T> {
 
+	public static enum ListRole { ROLE_NATURE, ROLE_TYPE };
+
+	private static final Set<String> OLD_NATURES;
+	private static final Set<String> OLD_TYPES;
+
+	static {
+		OLD_NATURES = new HashSet<String>(8);
+		for (TestCaseNature nat : TestCaseNature.values()){
+			OLD_NATURES.add(nat.toString());
+		}
+
+		OLD_TYPES = new HashSet<String>(7);
+		for (TestCaseType typ : TestCaseType.values()){
+			OLD_TYPES.add(typ.toString());
+		}
+	}
+
+	private ListRole role;
+
+	public InfoListItemCoercer(ListRole role){
+		this.role = role;
+	}
 
 	@Override
 	protected T coerceStringCell(Cell cell) {
-		return (T) new ListItemReference(cell.getStringCellValue());
+		String cellValue = cell.getStringCellValue();
+		InfoListItem coerced;
+
+		/*
+		 * Back compatibility concern : older exports still use the values from TestCaseNature and TestCaseType,
+		 * now deprecated.
+		 * 
+		 * To ensure they still can be imported we must check for those special cases, if encoutered we translate them
+		 * to the new format.
+		 * 
+		 */
+
+		if (role == ListRole.ROLE_NATURE && OLD_NATURES.contains(cellValue)){
+			coerced = new ListItemReference("NAT_"+cellValue);
+		}
+		else if (role == ListRole.ROLE_TYPE && OLD_TYPES.contains(cellValue)){
+			coerced = new ListItemReference("TYP_"+cellValue);
+		}
+		else{
+			coerced = new ListItemReference(cellValue);
+		}
+
+		return (T) coerced;
 	}
 
 	@Override

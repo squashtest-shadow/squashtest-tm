@@ -20,30 +20,27 @@
  */
 package org.squashtest.tm.service.internal.batchimport
 
+import static org.squashtest.tm.service.importer.ImportStatus.*
+import static org.squashtest.tm.service.internal.batchimport.Messages.*
+
 import javax.inject.Inject
 import javax.inject.Provider
 
-import org.hibernate.Hibernate
 import org.hibernate.SessionFactory
 import org.junit.runner.RunWith
 import org.spockframework.runtime.Sputnik
 import org.springframework.transaction.annotation.Transactional
-import org.squashtest.tm.domain.infolist.ListItemReference;
+import org.squashtest.tm.domain.infolist.ListItemReference
 import org.squashtest.tm.domain.testcase.ActionTestStep
 import org.squashtest.tm.domain.testcase.CallTestStep
 import org.squashtest.tm.domain.testcase.TestCase
 import org.squashtest.tm.domain.testcase.TestCaseImportance
-import org.squashtest.tm.domain.testcase.TestCaseLibraryNode
-import org.squashtest.tm.domain.testcase.TestCaseNature
 import org.squashtest.tm.domain.testcase.TestCaseStatus
-import org.squashtest.tm.domain.testcase.TestCaseType
 import org.squashtest.tm.service.DbunitServiceSpecification
 import org.squashtest.tm.service.customfield.CustomFieldValueFinderService
 import org.squashtest.tm.service.internal.batchimport.Model.Existence
 import org.squashtest.tm.service.testcase.TestCaseLibraryFinderService
 import org.unitils.dbunit.annotation.DataSet
-import static org.squashtest.tm.service.internal.batchimport.Messages.*
-import static org.squashtest.tm.service.importer.ImportStatus.*
 
 import spock.lang.Unroll
 import spock.unitils.UnitilsSupport
@@ -250,6 +247,46 @@ public class FacilityImplIT extends DbunitServiceSpecification {
 		storedcufs.hasCuf  "CK_TC" , "false"
 
 	}
+
+
+	/**
+	 *
+	 * See  {@link FacilityImplIT} for dataset description
+	 *
+	 */
+	@DataSet("batchimport.sandbox.xml")
+	def "should create a test case with inappropriate natures and types by using the defaults"(){
+
+		given :
+		TestCaseTarget target = new TestCaseTarget("/Test Project-1/flawednaturetype")
+
+		TestCase tc = emptyTC()
+		stuffWith(tc, [name : "flawednaturetype", nature : new ListItemReference("I_DONT_EXIST"), type : new ListItemReference("ME_NEITHER")])
+
+		when :
+		LogTrain train = impl.createTestCase(target, tc, [:])
+
+		flush()
+
+
+		then :
+
+		// check the logtrain
+		train.hasCriticalErrors() == false
+		train.entries.find { Messages.ERROR_INVALID_NATURE.equals(it.i18nError) } != null
+		train.entries.find { Messages.ERROR_INVALID_TYPE.equals(it.i18nError) } != null
+
+
+		// check the test case attributes
+		TestCase t = (TestCase) finder.findNodeByPath("/Test Project-1/flawednaturetype")
+
+		t.name == "flawednaturetype"
+		new ListItemReference("NAT_UNDEFINED").equals(t.nature)
+		new ListItemReference("TYP_UNDEFINED").equals(t.type)
+
+	}
+
+
 	/**
 	 *
 	 * See  {@link FacilityImplIT} for dataset description

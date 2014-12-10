@@ -96,7 +96,7 @@ public class HibernateInfoListItemDao extends HibernateEntityDao<InfoListItem> i
 
 	@Override
 	public boolean isNatureConsistent(long projectId, String itemCode) {
-		Query q = currentSession().getNamedQuery("infoListItem.foundCategoryInProject");
+		Query q = currentSession().getNamedQuery("infoListItem.foundNatureInProject");
 		q.setParameter("projectId", projectId);
 		q.setParameter("itemCode", itemCode);
 		return ((Long)q.uniqueResult()==1);
@@ -105,7 +105,7 @@ public class HibernateInfoListItemDao extends HibernateEntityDao<InfoListItem> i
 
 	@Override
 	public boolean isTypeConsistent(long projectId, String itemCode) {
-		Query q = currentSession().getNamedQuery("infoListItem.foundCategoryInProject");
+		Query q = currentSession().getNamedQuery("infoListItem.foundTypeInProject");
 		q.setParameter("projectId", projectId);
 		q.setParameter("itemCode", itemCode);
 		return ((Long)q.uniqueResult()==1);

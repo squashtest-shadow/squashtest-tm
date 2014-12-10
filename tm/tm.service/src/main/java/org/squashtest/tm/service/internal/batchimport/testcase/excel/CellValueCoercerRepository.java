@@ -41,6 +41,7 @@ import org.squashtest.tm.service.internal.batchimport.excel.OptionalEnumCellCoer
 import org.squashtest.tm.service.internal.batchimport.excel.OptionalOneBasedIndexCellCoercer;
 import org.squashtest.tm.service.internal.batchimport.excel.ParamAssignationModeCellCoercer;
 import org.squashtest.tm.service.internal.batchimport.excel.StringCellCoercer;
+import org.squashtest.tm.service.internal.batchimport.excel.InfoListItemCoercer.ListRole;
 
 /**
  * Repository of {@link CellValueCoercer} for a given {@link TemplateColumn}s
@@ -130,8 +131,8 @@ final class CellValueCoercerRepository<COL extends Enum<COL> & TemplateColumn> {
 		repo.coercerByColumn.put(TestCaseSheetColumn.TC_WEIGHT_AUTO, OptionalBooleanCellCoercer.INSTANCE);
 		repo.coercerByColumn.put(TestCaseSheetColumn.TC_WEIGHT,
 				OptionalEnumCellCoercer.forEnum(TestCaseImportance.class));
-		repo.coercerByColumn.put(TestCaseSheetColumn.TC_NATURE, new InfoListItemCoercer<ListItemReference>());
-		repo.coercerByColumn.put(TestCaseSheetColumn.TC_TYPE, new InfoListItemCoercer<ListItemReference>());
+		repo.coercerByColumn.put(TestCaseSheetColumn.TC_NATURE, new InfoListItemCoercer<ListItemReference>(ListRole.ROLE_NATURE));
+		repo.coercerByColumn.put(TestCaseSheetColumn.TC_TYPE, new InfoListItemCoercer<ListItemReference>(ListRole.ROLE_TYPE));
 		repo.coercerByColumn.put(TestCaseSheetColumn.TC_STATUS, OptionalEnumCellCoercer.forEnum(TestCaseStatus.class));
 		repo.coercerByColumn.put(TestCaseSheetColumn.TC_CREATED_ON, OptionalDateCellCoercer.INSTANCE);
 

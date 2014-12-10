@@ -167,10 +167,10 @@ class TestCaseInstructionBuilderTest extends Specification {
 		TC_WEIGHT		| Cell.CELL_TYPE_STRING		| "VERY_HIGH"		| "importance"		| TestCaseImportance.VERY_HIGH
 		TC_WEIGHT		| Cell.CELL_TYPE_BLANK		| ""				| "importance"		| null
 
-		TC_NATURE		| Cell.CELL_TYPE_STRING		| "USER_TESTING"	| "nature"			| new ListItemReference("USER_TESTING")
+		TC_NATURE		| Cell.CELL_TYPE_STRING		| "USER_TESTING"	| "nature"			| new ListItemReference("NAT_USER_TESTING")
 		TC_NATURE		| Cell.CELL_TYPE_BLANK		| ""				| "nature"			| null
 
-		TC_TYPE			| Cell.CELL_TYPE_STRING		| "PARTNER_TESTING"	| "type"			| new ListItemReference("PARTNER_TESTING")
+		TC_TYPE			| Cell.CELL_TYPE_STRING		| "PARTNER_TESTING"	| "type"			| new ListItemReference("TYP_PARTNER_TESTING")
 		TC_TYPE			| Cell.CELL_TYPE_BLANK		| ""				| "type"			| null
 
 		TC_STATUS		| Cell.CELL_TYPE_STRING		| "APPROVED"		| "status"			| TestCaseStatus.APPROVED

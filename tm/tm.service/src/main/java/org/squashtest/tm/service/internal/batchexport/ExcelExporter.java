@@ -143,8 +143,8 @@ class ExcelExporter {
 			r.createCell(cIdx++).setCellValue(tcm.getName());
 			r.createCell(cIdx++).setCellValue(tcm.getWeightAuto());
 			r.createCell(cIdx++).setCellValue(tcm.getWeight().toString());
-			r.createCell(cIdx++).setCellValue(tcm.getNature().toString());
-			r.createCell(cIdx++).setCellValue(tcm.getType().toString());
+			r.createCell(cIdx++).setCellValue(tcm.getNature().getCode());
+			r.createCell(cIdx++).setCellValue(tcm.getType().getCode());
 			r.createCell(cIdx++).setCellValue(tcm.getStatus().toString());
 			r.createCell(cIdx++).setCellValue(tcm.getDescription());
 			r.createCell(cIdx++).setCellValue(tcm.getPrerequisite());
