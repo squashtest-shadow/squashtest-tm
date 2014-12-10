@@ -112,6 +112,27 @@ public class HibernateInfoListItemDao extends HibernateEntityDao<InfoListItem> i
 	}
 
 
+	@Override
+	public void removeInfoListItems(long infoListId) {
+		InfoListItem defaultReqCat = findById(6);
+		execUpdateQuery(infoListId, "infoList.setReqCatToDefault", defaultReqCat);
+		InfoListItem defaultTcNat = findById(12);
+		execUpdateQuery(infoListId, "infoList.setTcNatToDefault", defaultTcNat);
+		InfoListItem defaultTcType = findById(20);
+		execUpdateQuery(infoListId, "infoList.setTcTypeToDefault", defaultTcType);
+		
+	}
+
+
+	private void execUpdateQuery(long infoListId, String queryName, InfoListItem defaultParam) {
+		Query query = currentSession().getNamedQuery(queryName);
+		query.setParameter("default", defaultParam);
+		query.setParameter("id", infoListId);
+		query.executeUpdate();
+		
+	}
+
+
 
 
 }

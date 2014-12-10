@@ -22,11 +22,14 @@ package org.squashtest.tm.service.internal.repository;
 
 import org.squashtest.tm.domain.infolist.InfoList;
 
-public interface InfoListDao {
+public interface InfoListDao  extends EntityDao<InfoList>{
 
 	InfoList findById(long id);
 	
 	InfoList findByCode(String code);
 
 	boolean isUsedByOneOrMoreProject(long infoListId);
+
+
+	void removeInfoListFromProjects(long infoListId);
 }

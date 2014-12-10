@@ -1,22 +1,18 @@
 /**
- *     This file is part of the Squashtest platform.
- *     Copyright (C) 2010 - 2014 Henix, henix.fr
+ * This file is part of the Squashtest platform. Copyright (C) 2010 - 2014 Henix, henix.fr
  *
- *     See the NOTICE file distributed with this work for additional
- *     information regarding copyright ownership.
+ * See the NOTICE file distributed with this work for additional information regarding copyright ownership.
  *
- *     This is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU Lesser General Public License as published by
- *     the Free Software Foundation, either version 3 of the License, or
- *     (at your option) any later version.
+ * This is free software: you can redistribute it and/or modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later
+ * version.
  *
- *     this software is distributed in the hope that it will be useful,
- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU Lesser General Public License for more details.
+ * this software is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied
+ * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
  *
- *     You should have received a copy of the GNU Lesser General Public License
- *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU Lesser General Public License along with this software. If not, see
+ * <http://www.gnu.org/licenses/>.
  */
 package org.squashtest.tm.web.internal.controller.infolist;
 
@@ -55,92 +51,98 @@ import org.squashtest.tm.web.internal.util.InfoListItemList;
 @Controller
 @RequestMapping("/info-lists")
 public class InfoListController {
-	
+
 	private static final Logger LOGGER = LoggerFactory.getLogger(InfoListController.class);
-	
+
 	@Inject
 	private InfoListManagerService listManager;
-	
+
 	@Inject
 	private InfoListItemManagerService listItemManager;
-	
+
 	@RequestMapping(value = "/{infoListId}", method = RequestMethod.GET)
 	public String showInfoListModificationPage(@PathVariable Long infoListId, Model model) {
 		InfoList list = listManager.findById(infoListId);
-	    model.addAttribute("infoList", list);
-	    model.addAttribute("itemListIcons", InfoListItemList.getInfoListItems());
-	    LOGGER.debug("id " + list.getId());
-	    LOGGER.debug("label " + list.getLabel());
-	    LOGGER.debug("code " + list.getCode());
-	    LOGGER.debug("description " + list.getDescription());
-	    LOGGER.debug("version " + list.getVersion());
+		model.addAttribute("infoList", list);
+		model.addAttribute("itemListIcons", InfoListItemList.getInfoListItems());
+		LOGGER.debug("id " + list.getId());
+		LOGGER.debug("label " + list.getLabel());
+		LOGGER.debug("code " + list.getCode());
+		LOGGER.debug("description " + list.getDescription());
+		LOGGER.debug("version " + list.getVersion());
 		return "info-list-modification.html";
 	}
-	
-	@RequestMapping(value = "/{infoListId}", method = RequestMethod.POST, params = { "id=info-list-label", JEditablePostParams.VALUE })
+
+	@RequestMapping(value = "/{infoListId}", method = RequestMethod.POST, params = { "id=info-list-label",
+			JEditablePostParams.VALUE })
 	@ResponseBody
-	public String changeLabel (@PathVariable Long infoListId, @RequestParam(JEditablePostParams.VALUE) String label) {
+	public String changeLabel(@PathVariable Long infoListId, @RequestParam(JEditablePostParams.VALUE) String label) {
 		listManager.changeLabel(infoListId, label);
 		return HtmlUtils.htmlEscape(label);
 	}
-	
-	@RequestMapping(value = "/{infoListId}", method = RequestMethod.POST, params = { "id=info-list-code", JEditablePostParams.VALUE })
+
+	@RequestMapping(value = "/{infoListId}", method = RequestMethod.POST, params = { "id=info-list-code",
+			JEditablePostParams.VALUE })
 	@ResponseBody
-	public String changeCode (@PathVariable Long infoListId, @RequestParam(JEditablePostParams.VALUE) String code) {
+	public String changeCode(@PathVariable Long infoListId, @RequestParam(JEditablePostParams.VALUE) String code) {
 		listManager.changeCode(infoListId, code);
 		return HtmlUtils.htmlEscape(code);
 	}
-	
-	@RequestMapping(value = "/{infoListId}", method = RequestMethod.POST, params = { "id=info-list-description", JEditablePostParams.VALUE })
+
+	@RequestMapping(value = "/{infoListId}", method = RequestMethod.POST, params = { "id=info-list-description",
+			JEditablePostParams.VALUE })
 	@ResponseBody
-	public String changeDescription (@PathVariable Long infoListId, @RequestParam(JEditablePostParams.VALUE) String description) {
+	public String changeDescription(@PathVariable Long infoListId,
+			@RequestParam(JEditablePostParams.VALUE) String description) {
 		listManager.changeDescription(infoListId, description);
 		return description;
 	}
-	
-	
+
 	@RequestMapping(value = "/{infoListId}/items", method = RequestMethod.GET)
 	@ResponseBody
 	public DataTableModel getInfoListItems(@PathVariable Long infoListId) {
 		InfoList list = listManager.findById(infoListId);
 
-	     return	buildInfoListItemTableModel(list.getItems());	
+		return buildInfoListItemTableModel(list.getItems());
 	}
-	
+
 	@RequestMapping(value = "/{infoListId}/items/positions", method = RequestMethod.POST, params = { "itemIds[]",
-	"newIndex" })
+			"newIndex" })
 	@ResponseBody
 	@ResponseStatus(value = HttpStatus.NO_CONTENT)
 	public void changeOptionsPositions(@PathVariable long infoListId, @RequestParam int newIndex,
 			@RequestParam("itemIds[]") List<Long> itemsIds) {
 		listManager.changeItemsPositions(infoListId, newIndex, itemsIds);
 	}
-	
 
 	@RequestMapping(value = "/{infoListId}/items", method = RequestMethod.POST)
 	@ResponseStatus(HttpStatus.CREATED)
-	public @ResponseBody void addInfoListItem(@PathVariable long infoListId, @Valid @ModelAttribute("item") UserListItem item) {
-	
+	public @ResponseBody void addInfoListItem(@PathVariable long infoListId,
+			@Valid @ModelAttribute("item") UserListItem item) {
+
 		listItemManager.addInfoListItem(infoListId, item);
 	}
-	
-	@RequestMapping(value="/{infoListId}/isUsed", method = RequestMethod.GET)
+
+	@RequestMapping(value = "/{infoListId}/isUsed", method = RequestMethod.GET)
 	@ResponseBody
-	public boolean isUsed(@PathVariable long infoListId){
+	public boolean isUsed(@PathVariable long infoListId) {
 		return listManager.isUsedByOneOrMoreProject(infoListId);
 	}
-	
-	
-	
-	private DataTableModel buildInfoListItemTableModel(Collection<InfoListItem> data){
+
+	@RequestMapping(value = "/{infoListId}", method = RequestMethod.DELETE)
+	@ResponseBody
+	public void delete(@PathVariable long infoListId) {
+		listManager.deleteInfoList(infoListId);
+	}
+
+	private DataTableModel buildInfoListItemTableModel(Collection<InfoListItem> data) {
 		InfoListItemDataTableModelHelper helper = new InfoListItemDataTableModelHelper();
 		Collection<Object> aaData = helper.buildRawModel(data);
-	    DataTableModel model = new DataTableModel("");
-	    model.setAaData((List<Object>) aaData);
-		return model;	
+		DataTableModel model = new DataTableModel("");
+		model.setAaData((List<Object>) aaData);
+		return model;
 	}
-	
-	
+
 	private static final class InfoListItemDataTableModelHelper extends DataTableModelBuilder<InfoListItem> {
 
 		private InfoListItemDataTableModelHelper() {
@@ -150,12 +152,12 @@ public class InfoListController {
 		public Object buildItemData(InfoListItem item) {
 			Map<String, Object> data = new HashMap<String, Object>(7);
 			data.put(DataTableModelConstants.DEFAULT_ENTITY_ID_KEY, item.getId());
-			data.put(DataTableModelConstants.DEFAULT_ENTITY_INDEX_KEY, getCurrentIndex() +1);
+			data.put(DataTableModelConstants.DEFAULT_ENTITY_INDEX_KEY, getCurrentIndex() + 1);
 			data.put("default", item.isDefault());
 			data.put("label", item.getLabel());
 			data.put("code", item.getCode());
 			data.put("iconName", item.getIconName());
-			data.put(DataTableModelConstants.DEFAULT_EMPTY_ICON_HOLDER_KEY,"");
+			data.put(DataTableModelConstants.DEFAULT_EMPTY_ICON_HOLDER_KEY, "");
 			data.put(DataTableModelConstants.DEFAULT_EMPTY_DELETE_HOLDER_KEY, " ");
 			return data;
 		}

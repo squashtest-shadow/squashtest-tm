@@ -595,8 +595,16 @@
 		
 		//DenormalizedInfoListItem
 		@NamedQuery(name="denormalizedInfoListItem.findByReference", 
-					query="select denoItem from DenormalizedInfoListItem denoItem join denoItem.infoList denoList where denoItem.code = :code and denoList.originalId = :listId and denoList.originalVersion = :listVersion")
-						
+					query="select denoItem from DenormalizedInfoListItem denoItem join denoItem.infoList denoList where denoItem.code = :code and denoList.originalId = :listId and denoList.originalVersion = :listVersion"),
+					
+		
+		//InfoList deletion
+		@NamedQuery(name="infoList.setReqCatToDefault",  query="update RequirementVersion req set req.category = :default  where req.category.id in (select infoItem.id from InfoListItem infoItem inner join infoItem.infoList infoList where infoList.id = :id)"),
+		@NamedQuery(name="infoList.setTcNatToDefault",  query="update TestCase tc set tc.nature = :default where tc.nature.id in (select infoItem.id from InfoListItem infoItem inner join infoItem.infoList infoList where infoList.id = :id)"),
+		@NamedQuery(name="infoList.setTcTypeToDefault",  query="update TestCase tc set tc.type = :default where tc.type.id in (select infoItem.id from InfoListItem infoItem inner join infoItem.infoList infoList where infoList.id = :id)"),
+		@NamedQuery(name="infoList.project.setReqCatListToDefault",  query="update Project p set p.requirementCategories = :default where p.requirementCategories.id = :id"),
+		@NamedQuery(name="infoList.project.setTcNatListToDefault",  query="update Project p set p.testCaseNatures = :default where p.testCaseNatures.id = :id"),
+		@NamedQuery(name="infoList.project.setTcTypeListToDefault",  query="update Project p set p.testCaseTypes = :default where p.testCaseTypes.id = :id"),
 })
 package org.squashtest.tm.service.internal.repository.hibernate;
 

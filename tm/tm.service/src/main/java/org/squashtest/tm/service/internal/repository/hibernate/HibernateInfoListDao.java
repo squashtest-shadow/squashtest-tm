@@ -20,7 +20,11 @@
  */
 package org.squashtest.tm.service.internal.repository.hibernate;
 
+import javax.inject.Inject;
+
 import org.hibernate.Query;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
 import org.springframework.stereotype.Repository;
 import org.squashtest.tm.domain.infolist.InfoList;
 import org.squashtest.tm.service.internal.repository.InfoListDao;
@@ -29,7 +33,13 @@ import org.squashtest.tm.service.internal.repository.InfoListDao;
 @Repository
 public class HibernateInfoListDao extends HibernateEntityDao<InfoList> implements InfoListDao{
 
+	@Inject
+	private SessionFactory sessionFactory;
 
+	protected Session getSession() {
+		return sessionFactory.getCurrentSession();
+	}
+	
 	@Override
 	public InfoList findByCode(String code) {
 		Query query = currentSession().getNamedQuery("infoList.findByCode");
@@ -47,5 +57,30 @@ public class HibernateInfoListDao extends HibernateEntityDao<InfoList> implement
 		return false;
 	}
 
+
+	@Override
+	public void removeInfoListFromProjects(long infoListId) {
+
+		
+		InfoList defaultReqCatList = findById(1);
+		execUpdateQuery(infoListId, "infoList.project.setReqCatListToDefault", defaultReqCatList);
+		InfoList defaultTcNatList = findById(2);
+		execUpdateQuery(infoListId, "infoList.project.setTcNatListToDefault", defaultTcNatList);
+		InfoList defaultTcTypeList = findById(3);
+		execUpdateQuery(infoListId, "infoList.project.setTcTypeListToDefault", defaultTcTypeList);
+
+		
+	}
+
+	
+	private void execUpdateQuery(long infoListId, String queryName, InfoList defaultParam){
+		Query query = currentSession().getNamedQuery(queryName);
+		query.setParameter("default", defaultParam);
+		query.setParameter("id", infoListId);
+		query.executeUpdate();
+	}
+	
+	
+	
 
 }

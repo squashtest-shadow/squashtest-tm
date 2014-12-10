@@ -33,4 +33,5 @@ public interface InfoListManagerService extends InfoListFinderService {
 	void upgradeVersion(InfoList infoList);
 	void changeItemsPositions(long infoListId, int newIndex, List<Long> itemsIds);
 	boolean isUsedByOneOrMoreProject(long infoListId);
+	void deleteInfoList(long infoListId);
 }

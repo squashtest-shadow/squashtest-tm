@@ -97,4 +97,20 @@ public class InfoListManagerServiceImpl implements InfoListManagerService {
 		return 	infoListDao.isUsedByOneOrMoreProject(infoListId);
 	}
 
+	@Override
+	public void deleteInfoList(long infoListId) {
+		InfoList infoList = infoListDao.findById(infoListId);
+		
+		infoListDao.removeInfoListFromProjects(infoListId);
+		infoListItemDao.removeInfoListItems(infoListId);
+		
+		for (InfoListItem item : infoList.getItems()){
+			infoListItemDao.remove(item);
+		}
+		
+		infoListDao.remove(infoList);
+		
+		
+	}
+
 }
