@@ -91,7 +91,7 @@
     <property name="basenames">
       <list>
     <!-- TODO merge core and tm files -->
-        <value>file:${bundles.configuration.location}/messages/core/messages</value>
+        <value>file:${bundles.configuration.location}/lang/core/messages</value>
         <value>/WEB-INF/messages/core/messages</value>
         <value>/WEB-INF/messages/tm/messages</value>
         <value>org/springframework/security/messages</value>
