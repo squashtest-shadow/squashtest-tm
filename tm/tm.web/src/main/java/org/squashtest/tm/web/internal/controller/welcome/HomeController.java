@@ -60,6 +60,7 @@ public class HomeController {
 
 	@RequestMapping("/home-workspace")
 	public ModelAndView home() {
+			
 		String welcomeMessage = administrationService.findWelcomeMessage();
 
 		ModelAndView mav = new ModelAndView("page/home-workspace");

@@ -34,6 +34,7 @@ public final class DataTableModelConstants {
 	public static final String DEFAULT_EMPTY_DELETE_HOLDER_KEY = "empty-delete-holder";
 	public static final String DEFAULT_EMPTY_EXECUTE_HOLDER_KEY = "empty-execute-holder";
 	public static final String DEFAULT_EMPTY_EDIT_HOLDER_KEY = "empty-edit-holder";
+	public static final String DEFAULT_EMPTY_ICON_HOLDER_KEY = "empty-icon-holder";
 	public static final String DEFAULT_ENTITY_NAME_KEY = "name";
 	public static final String DEFAULT_CREATED_BY_KEY = "created-by";
 	public static final String DEFAULT_CREATED_ON_KEY = "created-on";

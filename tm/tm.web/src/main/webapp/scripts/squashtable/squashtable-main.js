@@ -275,11 +275,12 @@ define(["jquery",
         "squash.statusfactory",  
         "squash.configmanager",
         "jquery.squash.oneshotdialog",
+        "squash.translator",
         "datatables", 
         "./squashtable.defaults", 
         "./squashtable.pagination", 
         "./squashtable.dnd"
-        ], function($, _, KeyEventListener, statusfactory, confman, oneshot){
+        ], function($, _, KeyEventListener, statusfactory, confman, oneshot, translator){
 	
 	if (!! $.fn.squashTable ){
 		return ;
@@ -528,6 +529,9 @@ define(["jquery",
 		
 	}
 
+	
+	
+	
 	/* private */function _selectRows(ids) {
 		var rows = this.fnGetNodes();
 
@@ -836,6 +840,41 @@ define(["jquery",
 
 	}
 	
+	function _configureIcons(){
+		var self = this;
+		var icons = this.squashSettings.icons;
+		if (!icons){
+			return;
+		}
+		var len = icons.length;
+		for (var i=0; i <len; i++){
+			var icon = icons[i];
+			var cells = self.find(icon.tdSelector);
+			cells.each(function(i, cell) {
+				
+				var	$cell = $(cell),
+					row = $cell.parent("tr")[0],
+					data = self.fnGetData(row);
+				
+				// find value if function
+				var value = ($.isFunction(icon.value) ) ? icon.value(row, data) : icon.value;
+				
+			
+				if (value !== ""){
+				value += " table-icon ";	
+				$cell.addClass(value);
+				} 
+				else{
+					//if there is no icon name display [None] 
+					$cell.addClass("table-icon");
+					$cell.text(translator.get("label.infoListItems.icon.none"));
+				}
+				
+			});
+		}
+		
+	}
+	
 	function _configureTooltips() {
 		var self = this;
 		//console.log("tooltip configuration for table : "+self.selector);
@@ -867,7 +906,23 @@ define(["jquery",
 	}
 
 	function _configureCheckBox(){
-		$("td.checkbox", this).append('<input type="checkbox" /> ');		
+		$("td.checkbox", this).each(function(i, item){
+			
+			var $item = $(item);
+			// If the item has a text, store the text into val, used for initilization 
+			if ($item.text() !== ""){
+				$item.val($item.text());	
+			}
+			var data = $item.val();
+			
+			var template = '<input type="checkbox"';
+			if (data === "true"){
+				template = template + 'checked="true"';
+			} 
+			template = template + '/>';
+			$item.html(template);
+		});
+
 	}
 	
 	function _configureDeleteButtons() {
@@ -1425,6 +1480,8 @@ define(["jquery",
 		aDrawCallbacks.push(_restoreTableSelection);
 		aDrawCallbacks.push(_applyFilteredStyle);
 		aDrawCallbacks.push(_configureTooltips);
+		aDrawCallbacks.push(_configureIcons);
+		
 		
 		
 		var userDrawCallback = datatableEffective.fnDrawCallback;
@@ -1706,7 +1763,17 @@ define(["jquery",
 				'checkbox' : function(conf, assignation){
 					var cls = 'checkbox-' + Math.random().toString().substr(2, 3);
 					conf.current.sClass += 'checkbox centered ' + cls;
+				
 				},
+				'icon' : function(conf, assignation){
+					var cls = 'icon-' + Math.random().toString().substr(2, 3);
+					conf.current.sClass += cls;
+					conf.squash.icons = conf.squash.icons || [];
+					conf.squash.icons.push({
+						value : function(row, data){return data[assignation.value];},
+						tdSelector : 'td.'+cls
+					});
+				}
 			}
 		}
 	};

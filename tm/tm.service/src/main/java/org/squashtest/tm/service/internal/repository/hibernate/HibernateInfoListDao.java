@@ -37,5 +37,15 @@ public class HibernateInfoListDao extends HibernateEntityDao<InfoList> implement
 		return (InfoList)query.uniqueResult();
 	}
 
+	@Override
+	public boolean isUsedByOneOrMoreProject(long infoListId) {
+		Query query = currentSession().getNamedQuery("infoList.findProjectUsingInfoList");
+		query.setParameter("id", infoListId);
+		if (query.list().size() > 0){
+			return true;
+		}
+		return false;
+	}
+
 
 }

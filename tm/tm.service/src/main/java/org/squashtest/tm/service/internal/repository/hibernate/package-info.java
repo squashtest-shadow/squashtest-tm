@@ -575,6 +575,7 @@
 		
 		//InfoList
 		@NamedQuery(name="infoList.findByCode", query = "from InfoList where code = :code"),
+		@NamedQuery(name="infoList.findProjectUsingInfoList", query ="from Project p where p.requirementCategories.id = :id or p.testCaseNatures.id = :id or p.testCaseTypes.id = :id"),
 				
 		//InfoListItem
 		@NamedQuery(name="infoListItem.findByCode", query="from InfoListItem where code = :code"),

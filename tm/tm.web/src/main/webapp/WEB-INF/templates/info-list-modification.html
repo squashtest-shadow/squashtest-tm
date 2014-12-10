@@ -1,0 +1,364 @@
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) 2010 - 2014 Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-transitional-thymeleaf-spring3-3.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
+<head>
+<title th:text="#{title.customField}">Espace detail info list</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+<style th:include="fragments-utils/various-headers :: admin-subpage-css"
+	th:remove="tag"></style>
+
+<link rel="stylesheet" type="text/css" media="all"
+	href="../../../../../../../tm/tm.web/src/main/webapp/styles/info-list-item-icon.css"
+	sq:css="info-list-item-icon.css" />
+
+
+<script type="text/javascript" th:src="@{/scripts/require-min.js}"></script>
+<script type="text/javascript" th:src="@{/scripts/common.js}"></script>
+
+<script src="../../scripts/pubsub-boot.js"
+	th:src="@{/scripts/pubsub-boot.js}"></script>
+<script th:remove="all" type="text/javascript" src="../../js/thymol.js"></script>
+
+<script th:remove="all" type="text/javascript"
+	src="../../scripts/lib/jquery/jquery-1.8.3.min.js"></script>
+<script th:remove="all" type="text/javascript"
+	src="../../scripts/require.js"></script>
+<script th:remove="all" type="text/javascript"
+	src="../../scripts/common.js"></script>
+
+</head>
+<body>
+	<div id="navigation" th:include="navbar.frag :: navbar">NAVBAR</div>
+	<div id="workspace">
+		<div id="workspace-title">
+			<div class="snap-left">
+				<h2 th:text="#{label.administration}" class="admin">Administration</h2>
+			</div>
+			<div class="snap-right">
+				<div class="main-menubar " th:include="menubar.frag :: menubar">MENUBAR</div>
+				<div class="unstyled-notification-pane"
+					th:include="menubar.frag :: notification">NOTIFICATION</div>
+			</div>
+		</div>
+		<div id="sub-page" class="sub-page">
+
+			<div id="sub-page-header"
+				class="sub-page-header shadow ui-corner-all">
+
+				<div id="sub-page-title" class="sub-page-title">
+					<h2 th:text="#{title.infoList}">Espace detail champ
+						personnalisé de test</h2>
+				</div>
+
+				<div id="sub-page-buttons" class="sub-page-buttons">
+
+					<input id="back" type="button" th:value="#{ label.Back }"
+						class="sq-btn" value="Back" />
+
+				</div>
+
+				<div class="unsnap"></div>
+			</div>
+
+			<div id="sub-page-content"
+				class="sub-page-content shadow ui-corner-all">
+
+				<div id="information-content">
+					<div id="info-list-name-div"
+						class="ui-widget-header ui-corner-all ui-state-default fragment-header">
+						<div style="float: left; height: 3em">
+							<h2>
+								<label for="info-list-name-header" th:text="#{label.infoList}">Custom
+									Field</label> <a id="info-list-name-header" href="#"
+									th:text="${infoList.label}">Test Case description</a>
+							</h2>
+						</div>
+						<div class="snap-right"></div>
+						<div class="unsnap"></div>
+					</div>
+
+					<div class="fragment-body" id="information-view">
+						<div id="info-list-toolbar" class="toolbar-class ui-corner-all ">
+							<div class="toolbar-button-panel">
+								<input type="button" th:value="#{ label.Rename }" value="Rename" id="rename-info-list-button" class="sq-btn button" />
+							    <input type="button" th:value="#{ label.Delete }" value="Delete" id="delete-info-list-button" class="sq-btn button" />
+							</div>
+						</div>
+						<br /> <br />
+						<div class="toggle-panel">
+							<span class="toogle-panel-buttons"></span>
+							<div id="info-list-info-panel"
+								class="information-panel toggle-panel-main"
+								th:title="#{label.infoList.info}">
+								<div class="display-table" id="info-list-infos-table">
+									<div class="display-table-row controls control-group">
+										<label for="info-list-description"
+											th:text="#{label.Description}" class="display-table-cell">Label</label>
+										<div id="info-list-description"
+											class="display-table-cell editable rich-editable"
+											th:utext="${infoList.description}"
+											th:attr="data-def='url='+@{/info-lists/__${infoList.id}__}+''">Description</div>
+										<span class="help-inline">&nbsp;</span>
+									</div>
+									<div class="display-table-row controls control-group">
+										<label for="info-list-code"
+											class="control-label display-table-cell"
+											th:text="#{label.code}">Code</label>
+										<div id="info-list-code" class="display-table-cell"
+											th:text="${infoList.code}">code</div>
+										<span class="help-inline">&nbsp;</span>
+									</div>
+
+
+									<span class="error-message  defaultValue-error"></span>
+								</div>
+							</div>
+						</div>
+
+						<div class="toggle-panel" id="table-view">
+							<span class="not-displayed toggle-panel-buttons">
+								<button id="add-info-list-item-button"
+									class="sq-icon-btn btn-sm">
+									<span class="ui-icon ui-icon-plus">+</span>
+								</button>
+
+							</span>
+							<div id="info-list-options-panel" class="toggle-panel-main"
+								th:title="#{label.infoList.items}">
+
+								<table id="info-list-item-table" class="unstyled-table"
+									th:attr="data-def='datakeys-id=entity-id ,ajaxsource='+@{/info-lists/__${infoList.id}__/items}+', pre-sort=0'">
+									<thead>
+										<tr>
+											<th
+												th:attr="data-def='select, map=entity-index, sClass=drag-handle'">#</th>
+											<th
+												th:attr="data-def='map=label, sortable, sClass=opt-label'"
+												th:text="#{label.Label}">Label</th>
+											<th th:attr="data-def='map=code, sortable, sClass=opt-code'"
+												th:text="#{label.code}">Code</th>
+											<th th:attr="data-def='map=empty-icon-holder,icon=iconName'"
+												th:text="#{label.icon}" />
+											<th
+												th:attr="data-def='map=default, checkbox, sClass=isDefault'"
+												th:text="#{label.default}">Default</th>
+											<th
+												th:attr="data-def='sWidth=2em, map=empty-delete-holder, delete-button=#unbind-milestone-popup'"></th>
+										</tr>
+									</thead>
+
+								</table>
+
+
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+	<!--    ====================================POPUPS======================================================  -->
+<!-- 	RENAME INFO-LIST POPUP -->
+	<div id="rename-info-list-popup"
+		class="not-displayed popup-dialog" th:title="#{title.infoList.rename}">
+		<table class="form-horizontal">
+			<tr class="control-group">
+
+				<span id="rename-popup-info-list-id" />
+				<td><label for="rename-popup-info-list-label"
+					class="control-label" th:text="#{label.Label}">Label</label></td>
+				<td class="controls"><input
+					id="rename-popup-info-list-label" name="info-list-label"
+					type="text" maxlength="255" size="50" /> <span class="help-inline">&nbsp;</span>
+				</td>
+			</tr>
+		</table>
+		<div class="popup-dialog-buttonpane">
+			<input type="button" th:value="#{label.Rename}"
+				data-def="mainbtn, evt=confirm" /> <input type="button"
+				th:value="#{label.Cancel}" data-def="evt=cancel" />
+		</div>
+	</div>
+
+<!-- 	DELETE INFO-LIST POPUP -->
+	<div id="delete-info-list-popup"
+		class="not-displayed popup-dialog" th:title="#{title.infoList.delete}">
+
+<span id="delete-info-list-warning" />
+
+		<div class="popup-dialog-buttonpane">
+			<input type="button" th:value="#{label.Delete}"
+				data-def="mainbtn, evt=confirm" /> <input type="button"
+				th:value="#{label.Cancel}" data-def="evt=cancel" />
+		</div>
+	</div>
+
+
+
+	<!-- 	RENAME ITEM POPUP -->
+	<div id="rename-info-list-item-popup"
+		class="not-displayed popup-dialog" th:title="#{title.infoList.item.rename}">
+		<table class="form-horizontal">
+			<tr class="control-group">
+
+				<span id="rename-popup-info-list-item-id" />
+				<td><label for="rename-popup-info-list-item-label"
+					class="control-label" th:text="#{label.Label}">Label</label></td>
+				<td class="controls"><input
+					id="rename-popup-info-list-item-label" name="info-list-item-label"
+					type="text" maxlength="255" size="50" /> <span class="help-inline">&nbsp;</span>
+				</td>
+			</tr>
+		</table>
+		<div class="popup-dialog-buttonpane">
+			<input type="button" th:value="#{label.Rename}"
+				data-def="mainbtn, evt=confirm" /> <input type="button"
+				th:value="#{label.Cancel}" data-def="evt=cancel" />
+		</div>
+	</div>
+
+
+	<!-- 	CHANGE ITEM CODE POPUP -->
+	<div id="change-code-info-list-item-popup"
+		class="not-displayed popup-dialog" th:title="#{title.infoList.item.code.change}">
+		<table class="form-horizontal">
+			<tr class="control-group">
+
+				<span id="change-code-popup-info-list-item-id" />
+				<td><label for="change-code-popup-info-list-item-code"
+					class="control-label" th:text="#{label.Label}">Label</label></td>
+				<td class="controls"><input
+					id="change-code-popup-info-list-item-code"
+					name="info-list-item-label" type="text" maxlength="255" size="50" />
+					<span class="help-inline">&nbsp;</span></td>
+			</tr>
+		</table>
+		<div class="popup-dialog-buttonpane">
+			<input type="button" th:value="#{label.Rename}"
+				data-def="mainbtn, evt=confirm" /> <input type="button"
+				th:value="#{label.Cancel}" data-def="evt=cancel" />
+		</div>
+	</div>
+
+
+	<!-- 	ADD ITEM POPUP  -->
+	<div id="add-info-list-item-popup" class="not-displayed popup-dialog"
+		th:title="#{title.infoList.item.add}">
+		<table class="form-horizontal">
+			<tr class="control-group">
+				<td><label class="control-label" for="new-info-list-item-label"
+					th:text="#{label.newOption}">New option</label></td>
+				<td class="controls"><input id="new-info-list-item-label"
+					name="new-info-list-item-label" type="text" value=""
+					maxlength="255" size="50" /> <span class="help-inline">&nbsp;</span>
+				</td>
+			</tr>
+			<tr class="control-group">
+				<td><label class="control-label" for="new-info-list-item-code"
+					th:text="#{label.code}">Code</label></td>
+				<td class="controls"><input id="new-info-list-item-code"
+					name="new-info-list-item-code" type="text" value="" maxlength="30"
+					size="50" /> <span class="help-inline">&nbsp;</span></td>
+			</tr>
+
+			<tr class="control-group">
+				<td><label class="control-label" for="new-info-list-item-icon"
+					th:text="#{label.icon}">icon</label></td>
+				<td class="table-icon" id="new-info-list-item-icon"
+					th:text="#{label.infoListItems.icon.none}"></td>
+			</tr>
+
+
+
+		</table>
+		<div class="popup-dialog-buttonpane">
+			<input class="confirm" type="button" th:value="#{label.Add}"
+				value="add" /> <input class="cancel" type="button"
+				th:value="#{label.Cancel}" value="cancel" />
+		</div>
+	</div>
+
+
+	<!-- 	CHOOSE ICON POPUP  -->
+
+	<div id="choose-item-icon-popup" class="not-displayed popup-dialog"
+		th:title="#{title.infoList.item.icon.choose}">
+		<table class="form-horizontal">
+			<tr>
+				<td th:each="icon :${itemListIcons}"
+					th:class="'table-icon table-icon-spaced ' + ${icon} " />
+			</tr>
+
+		</table>
+		<div class="popup-dialog-buttonpane">
+			<input class="confirm" type="button" th:value="#{label.Add}"
+				value="add" /> <input class="cancel" type="button"
+				th:value="#{label.Cancel}" value="cancel" />
+		</div>
+	</div>
+
+
+	<script type="text/javascript" th:inline="javascript">
+
+/*<![CDATA[*/
+           
+requirejs.config({
+	baseUrl: /*[[@{/scripts/}]]*/,
+	 
+	config : {
+		'info-list/info-list-modification' : {
+			urls: {
+
+			},
+			data: {
+                    infoList: {
+                    	id: /*[[${infoList.id}]]*/ 0,
+
+                             }
+				
+			       }
+				           }
+			}
+
+		});
+		
+var squashtm = squashtm || {};
+squashtm.app = squashtm.app || {};
+squashtm.app.contextRoot = /*[[@{/}]]*/ "http://localhost:8080/squash";
+squashtm.page = squashtm.page || {};
+
+require(["common"], function(){
+	require(["info-list/info-list-modification"], function(view){ new view();});
+});
+/*]]>*/
+
+</script>
+</body>
+</html>
+
+

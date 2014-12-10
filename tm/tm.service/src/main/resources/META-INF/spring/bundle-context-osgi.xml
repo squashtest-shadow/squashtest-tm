@@ -359,6 +359,21 @@
   </osgi:service>
 
 
+ <osgi:service ref="squashtest.tm.service.InfoListManagerService">
+     <osgi:interfaces>
+    <value>org.squashtest.tm.service.infolist.InfoListManagerService</value>
+        <value>org.squashtest.tm.service.infolist.InfoListFinderService</value>
+    </osgi:interfaces>
+    </osgi:service>
+
+ <osgi:service ref="squashtest.tm.service.InfoListItemManagerService">
+     <osgi:interfaces>
+    <value>org.squashtest.tm.service.infolist.InfoListItemManagerService</value>
+        <value>org.squashtest.tm.service.infolist.InfoListItemFinderService</value>
+    </osgi:interfaces>
+    </osgi:service>
+
+
 <!-- Bugtracker co,nnectors registry -->
   <osgi:list id="bugtracker.plugins.registry" interface="org.squashtest.csp.core.bugtracker.spi.BugTrackerConnectorProvider"
     cardinality="0..N">

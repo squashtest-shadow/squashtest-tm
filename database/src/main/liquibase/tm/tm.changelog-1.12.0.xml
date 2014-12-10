@@ -1314,5 +1314,13 @@
   
   </changeSet>
   
+ 
+    <changeSet id="tm-1.12.0.feat-4068-10" author="jsimon" >
+    <comment>drop not null constraint to allow easy item index reordering</comment>
+    <dropNotNullConstraint tableName="INFO_LIST_ITEM" columnName="LIST_ID" columnDataType="BIGINT"/>
+      <dropNotNullConstraint tableName="INFO_LIST_ITEM" columnName="ITEM_INDEX" columnDataType="java.sql.Types.INTEGER"/>
+    </changeSet>
+  
+  
   
 </databaseChangeLog>

@@ -25,6 +25,8 @@ import org.squashtest.tm.domain.infolist.InfoList;
 public interface InfoListDao {
 
 	InfoList findById(long id);
-
+	
 	InfoList findByCode(String code);
+
+	boolean isUsedByOneOrMoreProject(long infoListId);
 }

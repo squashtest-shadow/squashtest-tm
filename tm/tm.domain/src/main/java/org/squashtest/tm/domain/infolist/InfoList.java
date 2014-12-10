@@ -1,22 +1,18 @@
 /**
- *     This file is part of the Squashtest platform.
- *     Copyright (C) 2010 - 2014 Henix, henix.fr
+ * This file is part of the Squashtest platform. Copyright (C) 2010 - 2014 Henix, henix.fr
  *
- *     See the NOTICE file distributed with this work for additional
- *     information regarding copyright ownership.
+ * See the NOTICE file distributed with this work for additional information regarding copyright ownership.
  *
- *     This is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU Lesser General Public License as published by
- *     the Free Software Foundation, either version 3 of the License, or
- *     (at your option) any later version.
+ * This is free software: you can redistribute it and/or modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later
+ * version.
  *
- *     this software is distributed in the hope that it will be useful,
- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU Lesser General Public License for more details.
+ * this software is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied
+ * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
  *
- *     You should have received a copy of the GNU Lesser General Public License
- *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU Lesser General Public License along with this software. If not, see
+ * <http://www.gnu.org/licenses/>.
  */
 package org.squashtest.tm.domain.infolist;
 
@@ -41,7 +37,6 @@ import javax.validation.constraints.Size;
 import org.hibernate.annotations.Type;
 import org.squashtest.tm.domain.audit.Auditable;
 
-
 @Entity
 @Auditable
 public class InfoList {
@@ -56,7 +51,7 @@ public class InfoList {
 	private int version = 1;
 
 	@Column
-	@Size(max=100)
+	@Size(max = 100)
 	private String label = "";
 
 	@Lob
@@ -64,16 +59,15 @@ public class InfoList {
 	private String description;
 
 	@Column
-	@Size(max=30)
+	@Size(max = 30)
 	private String code;
-
 
 	@OneToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
 	@OrderColumn(name = "ITEM_INDEX")
 	@JoinColumn(name = "LIST_ID")
 	private List<InfoListItem> items = new ArrayList<InfoListItem>();
 
-	public InfoList(){
+	public InfoList() {
 		super();
 	}
 
@@ -117,21 +111,18 @@ public class InfoList {
 		return items;
 	}
 
-	public void addItem(InfoListItem item){
+	public void addItem(InfoListItem item) {
 		items.add(item);
 	}
 
-
-
-	public void removeItem(InfoListItem item){
+	public void removeItem(InfoListItem item) {
 		this.removeItem(item.getCode());
 	}
 
-
-	public void removeItem(Long itemId){
+	public void removeItem(Long itemId) {
 		Iterator<InfoListItem> iter = items.iterator();
-		while (iter.hasNext()){
-			if (itemId.equals(iter.next().getId())){
+		while (iter.hasNext()) {
+			if (itemId.equals(iter.next().getId())) {
 				iter.remove();
 				return;
 			}
@@ -139,10 +130,10 @@ public class InfoList {
 		// if not found, well, the list is already in the desired state.
 	}
 
-	public void removeItem(String code){
+	public void removeItem(String code) {
 		Iterator<InfoListItem> iter = items.iterator();
-		while (iter.hasNext()){
-			if (code.equals(iter.next().getCode())){
+		while (iter.hasNext()) {
+			if (code.equals(iter.next().getCode())) {
 				iter.remove();
 				return;
 			}
@@ -150,23 +141,27 @@ public class InfoList {
 		// if not found, well, the list is already in the desired state.
 	}
 
-	public InfoListItem getDefaultItem(){
-		for (InfoListItem it : items){
-			if (it.isDefault()){
+	public InfoListItem getDefaultItem() {
+		for (InfoListItem it : items) {
+			if (it.isDefault()) {
 				return it;
 			}
 		}
 		throw new NoSuchElementException("No default item was defined for this list");
 	}
 
-
-	public boolean contains(InfoListItem item){
-		for (InfoListItem it : items){
-			if (item.getCode().equals(it.getCode())){
+	public boolean contains(InfoListItem item) {
+		for (InfoListItem it : items) {
+			if (item.getCode().equals(it.getCode())) {
 				return true;
 			}
 		}
 		return false;
+	}
+
+
+	public void addItems(int newIndex, List<InfoListItem> addedItems) {
+		items.addAll(newIndex, addedItems);
 	}
 
 }

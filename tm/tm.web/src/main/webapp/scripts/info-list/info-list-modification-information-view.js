@@ -1,4 +1,4 @@
-/**
+/*
  *     This file is part of the Squashtest platform.
  *     Copyright (C) 2010 - 2014 Henix, henix.fr
  *
@@ -18,16 +18,35 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.infolist;
+define(["jquery", "backbone", "underscore", "squash.basicwidgets", "jeditable.simpleJEditable",
+		"workspace.routing", "jquery.squash.togglepanel", "squashtable" ], function($, backbone, _, basic,
+		SimpleJEditable, routing) {
 
-import org.squashtest.tm.domain.infolist.InfoListItem;
 
 
-public interface InfoListItemManagerService extends InfoListItemFinderService{
-void changeCode(long infoListItemId, String newCode);
-void changeLabel(long infoListItemId, String newLabel);
-void changeDefault(long infoListItemId);
-void changeIcon(long infoListItemId, String icon);
-void addInfoListItem(long infoListId, InfoListItem item);
+	var InformationView = Backbone.View.extend({
+		el : "#information-view",
+		initialize : function(config) {
 
-}
+			this.config = config;
+			this.editableInit();
+
+		},
+
+
+		editableInit : function() {
+			var infoListUrl = routing.buildURL("info-list.info", this.config.data.infoList.id);
+
+			var codeEditable = new SimpleJEditable({
+				target : infoListUrl,
+				componentId : "info-list-code",
+			});
+			
+
+			
+		}
+
+	});
+	return InformationView;
+
+});

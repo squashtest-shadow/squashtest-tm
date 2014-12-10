@@ -21,8 +21,10 @@
 package org.squashtest.tm.service.internal.infolist;
 
 import javax.inject.Inject;
-
+import java.util.List;
+import org.squashtest.tm.domain.infolist.InfoList;
 import org.springframework.stereotype.Service;
+import org.squashtest.tm.service.infolist.InfoListManagerService;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.infolist.InfoListItem;
 import org.squashtest.tm.domain.infolist.ListItemReference;
@@ -41,6 +43,8 @@ public class InfoListItemManagerServiceImpl implements InfoListItemManagerServic
 	@Inject
 	private GenericProjectDao projectDao;
 
+        @Inject
+	private InfoListManagerService infoListService;
 	// ************* "Finder" methods **************** \\
 
 	@Override
@@ -51,6 +55,56 @@ public class InfoListItemManagerServiceImpl implements InfoListItemManagerServic
 	@Override
 	public SystemListItem getSystemTestCaseNature() {
 		return itemDao.getSystemTestCaseNature();
+	}
+
+	@Override
+	public void changeCode(long infoListItemId, String newCode) {
+		InfoListItem item = itemDao.findById(infoListItemId);
+		item.setCode(newCode);
+		upgradeInfoListVersion(item.getInfoList());
+	}
+
+	@Override
+	public void changeLabel(long infoListItemId, String newLabel) {
+		InfoListItem item = itemDao.findById(infoListItemId);
+		item.setLabel(newLabel);
+		upgradeInfoListVersion(item.getInfoList());
+	}
+
+	@Override
+	public void changeDefault(long infoListItemId) {
+		InfoListItem changedItem = itemDao.findById(infoListItemId);
+		List<InfoListItem> items = changedItem.getInfoList().getItems();
+		for(InfoListItem item : items){
+			item.setDefault(false);
+		}
+		changedItem.setDefault(true);
+		upgradeInfoListVersion(changedItem.getInfoList());
+	}
+	
+	private void upgradeInfoListVersion(InfoList infoList){
+		infoListService.upgradeVersion(infoList);
+	}
+
+	@Override
+	public void changeIcon(long infoListItemId, String icon) {
+		InfoListItem item = itemDao.findById(infoListItemId);
+		item.setIconName(icon);
+		upgradeInfoListVersion(item.getInfoList());
+		
+	}
+
+
+	@Override
+	public void addInfoListItem(long infoListId, InfoListItem item) {
+		InfoList infoList = infoListService.findById(infoListId);
+		
+		if (infoList.getItems().size() == 0) {
+			item.setDefault(true);
+		}
+		item.setInfoList(infoList);
+		itemDao.persist(item);	
+		infoList.addItem(item);
 	}
 
 	@Override
