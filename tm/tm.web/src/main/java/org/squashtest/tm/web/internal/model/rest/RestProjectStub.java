@@ -34,24 +34,13 @@ public class RestProjectStub {
 	@XmlElement(name="name")
 	private String name;
 
+	public RestProjectStub(){
+		super();
+	}
+	
 	public RestProjectStub(Project project){
-		this.setId(project.getId());
-		this.setName(project.getName());
+		this.id = project.getId();
+		this.name =project.getName();
 	}
 	
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
-	
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
 }

@@ -34,24 +34,13 @@ public class RestTestCaseStub {
 		@XmlElement(name="name")
 		private String name;
 		
-		public RestTestCaseStub(TestCase testCase){
-			this.setId(testCase.getId());
-			this.setName(testCase.getName());
-		}
-
-		public Long getId() {
-			return id;
-		}
-
-		public void setId(Long id) {
-			this.id = id;
+		public RestTestCaseStub(){
+			super();
 		}
 		
-		public String getName() {
-			return name;
+		public RestTestCaseStub(TestCase testCase){
+			this.id = testCase.getId();
+			this.name = testCase.getName();
 		}
 
-		public void setName(String name) {
-			this.name = name;
-		}
 }

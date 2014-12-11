@@ -20,46 +20,22 @@
  */
 package org.squashtest.tm.web.internal.model.rest;
 
-import java.util.Date;
-
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.squashtest.tm.domain.execution.Execution;
+import org.squashtest.tm.domain.testcase.TestStep;
 
-@XmlRootElement(name="execution")
-public class RestExecution {
+@XmlRootElement(name="teststep")
+public class RestTestStepStub {
 
-	@XmlElement(name="id")
-	public Long id;
+	@XmlElement(name = "id")
+	private Long id;
 	
-	@XmlElement(name="campaign")
-	public RestCampaignStub restCampaignStub;
-	
-	@XmlElement(name="iteration")
-	public RestIterationStub restIterationStub;
-	
-	@XmlElement(name="testcase")
-	public RestTestCaseStub restTestCaseStub;
-	
-	@XmlElement(name="status")
-	public String status;
-	
-	@XmlElement(name="execution-date")
-	public Date executionDate; 
-	
-	public RestExecution(){
+	public RestTestStepStub() {
 		super();
 	}
 	
-	public RestExecution(Execution execution) {
-		this.id = execution.getId();
-		this.restCampaignStub = new RestCampaignStub(execution.getCampaign());
-		this.restIterationStub = new RestIterationStub(execution.getIteration());
-		this.restTestCaseStub = new RestTestCaseStub(execution.getReferencedTestCase());
-		this.status = execution.getStatus().name();
-		this.executionDate = execution.getLastExecutedOn();
+	public RestTestStepStub(TestStep testStep) {
+		this.id = testStep.getId();
 	}
-
-
 }

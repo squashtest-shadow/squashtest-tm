@@ -58,12 +58,18 @@ public class RestTestCase {
 	@XmlElement(name = "execution-mode")
 	private String executionMode;
 	
+	@XmlElement(name = "project")
+	private RestProjectStub project;
+	
+	@XmlElement(name = "path")
+	private String path;
+	
 	public RestTestCase(){
-		
+		super();
 	}
 	
 	public RestTestCase(TestCase testCase) {
-		this.setId(testCase.getId());
+		this.id = testCase.getId();
 		this.name = testCase.getName();
 		this.description = testCase.getDescription();
 		this.reference = testCase.getReference();
@@ -73,87 +79,8 @@ public class RestTestCase {
 		this.type = testCase.getType().name();
 		this.status = testCase.getStatus().name();
 		this.executionMode = testCase.getExecutionMode().name();
+		this.project = new RestProjectStub(testCase.getProject());
+		this.path = testCase.getFullName();
 	}
-
-	public String getReference() {
-		return reference;
-	}
-
-	public void setReference(String reference) {
-		this.reference = reference;
-	}
-
-	public String getPrerequisite() {
-		return prerequisite;
-	}
-
-	public void setPrerequisite(String prerequisite) {
-		this.prerequisite = prerequisite;
-	}
-
-	public String getImportance() {
-		return importance;
-	}
-
-	public void setImportance(String importance) {
-		this.importance = importance;
-	}
-
-	public String getNature() {
-		return nature;
-	}
-
-	public void setNature(String nature) {
-		this.nature = nature;
-	}
-
-	public String getType() {
-		return type;
-	}
-
-	public void setType(String type) {
-		this.type = type;
-	}
-
-	public String getStatus() {
-		return status;
-	}
-
-	public void setStatus(String status) {
-		this.status = status;
-	}
-
-	public String getExecutionMode() {
-		return executionMode;
-	}
-
-	public void setExecutionMode(String executionMode) {
-		this.executionMode = executionMode;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public String getDescription() {
-		return description;
-	}
-
-	public void setDescription(String description) {
-		this.description = description;
-	}
-
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
-
-	
 }
+	

@@ -29,6 +29,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestStep;
 import org.squashtest.tm.service.testcase.TestCaseFinder;
@@ -46,13 +47,15 @@ public class TestCaseRestController {
 	@Inject
 	TestStepFinder testStepFinder;
 	
-	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
+	@RequestMapping(value = "/{id}", method = RequestMethod.GET, produces="application/json")
+	@ResponseBody
 	public RestTestCase getTestCaseById(@PathVariable Long id) {
 		TestCase testCase = this.testCaseFinder.findById(id);
 		return new RestTestCase(testCase);
 	}
 
-	@RequestMapping(value = "/{id}/teststeps", method = RequestMethod.GET)
+	@RequestMapping(value = "/{id}/teststeps", method = RequestMethod.GET, produces="application/json")
+	@ResponseBody
 	public List<RestTestStep> getTestStepsByTestCaseId(@PathVariable Long id) {
 		List<TestStep> testSteps = this.testCaseFinder.findStepsByTestCaseId(id);
 		List<RestTestStep> restTestSteps = new ArrayList<RestTestStep>(testSteps.size());

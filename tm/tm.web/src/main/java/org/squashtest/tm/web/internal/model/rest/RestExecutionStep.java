@@ -20,46 +20,26 @@
  */
 package org.squashtest.tm.web.internal.model.rest;
 
-import java.util.Date;
-
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.squashtest.tm.domain.execution.Execution;
+import org.squashtest.tm.domain.execution.ExecutionStep;
 
-@XmlRootElement(name="execution")
-public class RestExecution {
+@XmlRootElement(name="executionstep")
+public class RestExecutionStep {
 
-	@XmlElement(name="id")
-	public Long id;
+	@XmlElement(name="action")
+	private String action;
 	
-	@XmlElement(name="campaign")
-	public RestCampaignStub restCampaignStub;
+	@XmlElement(name="expected-result")
+	private String expectedResult;
 	
-	@XmlElement(name="iteration")
-	public RestIterationStub restIterationStub;
-	
-	@XmlElement(name="testcase")
-	public RestTestCaseStub restTestCaseStub;
-	
-	@XmlElement(name="status")
-	public String status;
-	
-	@XmlElement(name="execution-date")
-	public Date executionDate; 
-	
-	public RestExecution(){
+	public RestExecutionStep(){
 		super();
 	}
 	
-	public RestExecution(Execution execution) {
-		this.id = execution.getId();
-		this.restCampaignStub = new RestCampaignStub(execution.getCampaign());
-		this.restIterationStub = new RestIterationStub(execution.getIteration());
-		this.restTestCaseStub = new RestTestCaseStub(execution.getReferencedTestCase());
-		this.status = execution.getStatus().name();
-		this.executionDate = execution.getLastExecutedOn();
+	public RestExecutionStep(ExecutionStep step){
+		action = step.getAction();
+		expectedResult = step.getExpectedResult();
 	}
-
-
 }

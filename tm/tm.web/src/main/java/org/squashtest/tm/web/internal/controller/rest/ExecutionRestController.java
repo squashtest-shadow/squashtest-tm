@@ -20,15 +20,21 @@
  */
 package org.squashtest.tm.web.internal.controller.rest;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.inject.Inject;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.squashtest.tm.domain.execution.Execution;
+import org.squashtest.tm.domain.execution.ExecutionStep;
 import org.squashtest.tm.service.execution.ExecutionFinder;
 import org.squashtest.tm.web.internal.model.rest.RestExecution;
+import org.squashtest.tm.web.internal.model.rest.RestExecutionStepStub;
 
 @Controller
 @RequestMapping("/rest/api/execution")
@@ -37,11 +43,26 @@ public class ExecutionRestController {
 	@Inject
 	ExecutionFinder executionFinder;
 	
-	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
+	@RequestMapping(value = "/{id}", method = RequestMethod.GET, produces="application/json")
+	@ResponseBody
 	public RestExecution getExecutionById(@PathVariable Long id) {
 		
 		Execution execution = executionFinder.findById(id);
 		return new RestExecution(execution);
+		
+	}
+
+	@RequestMapping(value = "/{id}/executionsteps", method = RequestMethod.GET, produces="application/json")
+	@ResponseBody
+	public List<RestExecutionStepStub> getExecutionStepsById(@PathVariable Long id) {
+		
+		Execution execution = executionFinder.findById(id);
+		List<ExecutionStep> steps = execution.getSteps();
+		List<RestExecutionStepStub> restExecutionSteps = new ArrayList<RestExecutionStepStub>(steps.size());
+		for(ExecutionStep step : steps){
+			restExecutionSteps.add(new RestExecutionStepStub(step));
+		}
+		return restExecutionSteps;
 		
 	}
 

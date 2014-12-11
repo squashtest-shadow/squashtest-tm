@@ -26,6 +26,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.squashtest.tm.domain.bugtracker.Issue;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.service.bugtracker.BugTrackersLocalService;
@@ -39,13 +40,15 @@ public class IssueRestController {
 	@Inject
 	BugTrackersLocalService bugTrackersLocalService;
 	
-	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
+	@RequestMapping(value = "/{id}", method = RequestMethod.GET, produces="application/json")
+	@ResponseBody
 	public RestIssue getIssueById(@PathVariable Long id) {
 		Issue issue = bugTrackersLocalService.findIssueById(id);
 		return new RestIssue(issue);
 	}
 
-	@RequestMapping(value = "/{id}/execution", method = RequestMethod.GET)
+	@RequestMapping(value = "/{id}/execution", method = RequestMethod.GET, produces="application/json")
+	@ResponseBody
 	public RestExecution getExecutionByIssueId(@PathVariable Long id) {
 		Execution execution = bugTrackersLocalService.findExecutionByIssueId(id);
 		RestExecution restExecution = new RestExecution(execution);

@@ -34,24 +34,13 @@ public class RestCampaignStub {
 	@XmlElement(name="name")
 	private String name;
 	
-	public RestCampaignStub(Campaign campaign){
-		this.setId(campaign.getId());
-		this.setName(campaign.getName());
-	}
-
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
+	public RestCampaignStub(){
+		super();
 	}
 	
-	public String getName() {
-		return name;
+	public RestCampaignStub(Campaign campaign){
+		this.id = campaign.getId();
+		this.name = campaign.getName();
 	}
 
-	public void setName(String name) {
-		this.name = name;
-	}
 }
