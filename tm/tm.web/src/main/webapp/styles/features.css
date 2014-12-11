@@ -435,3 +435,54 @@ p {
 }
 
 
+/* ---------------------------------------------------------*/
+/* ------------->>> default info list icons <<<-------------*/
+/* ---------------------------------------------------------*/
+.info-list-icon-def_cat_business {
+	background-image :url(../images/info-list/def_cat_business.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+.info-list-icon-def_cat_ergonomic {
+	background-image :url(../images/info-list/def_cat_ergonomic.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+.info-list-icon-def_cat_functional {
+	background-image :url(../images/info-list/def_cat_functional.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+.info-list-icon-def_cat_non-functional {
+	background-image :url(../images/info-list/def_cat_non-functional.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+.info-list-icon-def_cat_performance {
+	background-image :url(../images/info-list/def_cat_performance.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+.info-list-icon-def_cat_security {
+	background-image :url(../images/info-list/def_cat_security.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+.info-list-icon-def_cat_technic {
+	background-image :url(../images/info-list/def_cat_technic.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+.info-list-icon-def_cat_test-requirement {
+	background-image :url(../images/info-list/def_cat_test-requirement.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+.info-list-icon-def_cat_test-requirement {
+	background-image :url(../images/info-list/def_cat_undefined.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+.info-list-icon-def_cat_use-case {
+	background-image :url(../images/info-list/def_cat_use-case.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+.info-list-icon-ddef_cat_user-story {
+	background-image :url(../images/info-list/def_cat_user-story.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+.info-list-icon-info_list_noicon {
+	background-image :url(../images/info-list/info_list_noicon.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
