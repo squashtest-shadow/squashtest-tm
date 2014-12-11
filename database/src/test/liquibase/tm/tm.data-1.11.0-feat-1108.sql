@@ -179,5 +179,5 @@ values ((select max(RES_ID) from RESOURCE), (select max(RLN_ID) from REQUIREMENT
 
 update REQUIREMENT
 set CURRENT_VERSION_ID = (select max(RES_ID) from RESOURCE)
-where RLN_ID = (select max(RLN_ID) from REQUIREMENT);
+where RLN_ID = (select max(RLN_ID) from (select * from REQUIREMENT) as re);
 
