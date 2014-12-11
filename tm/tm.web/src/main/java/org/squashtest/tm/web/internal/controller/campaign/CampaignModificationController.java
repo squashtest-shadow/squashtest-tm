@@ -58,6 +58,7 @@ import org.squashtest.tm.domain.campaign.TestPlanStatistics;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.service.campaign.CampaignModificationService;
+import org.squashtest.tm.service.campaign.CampaignTestPlanManagerService;
 import org.squashtest.tm.service.campaign.IterationModificationService;
 import org.squashtest.tm.service.campaign.IterationTestPlanManagerService;
 import org.squashtest.tm.service.customfield.CustomFieldValueFinderService;
@@ -105,6 +106,9 @@ public class CampaignModificationController {
 
 	@Inject
 	private IterationTestPlanManagerService iterationTestPlanManagerService;
+
+	@Inject
+	private CampaignTestPlanManagerService testPlanManager;
 
 	@RequestMapping(value = "/statistics", method = RequestMethod.GET)
 	public ModelAndView refreshStats(@PathVariable long campaignId) {
@@ -167,9 +171,8 @@ public class CampaignModificationController {
 
 		Set<User> usersSet = new HashSet<User>();
 
-		for (Iteration iteration : campaign.getIterations()) {
-			usersSet.addAll(iterationTestPlanManagerService.findAssignableUserForTestPlan(iteration.getId()));
-		}
+		// Looking for users depending on the campaign id
+		usersSet.addAll(testPlanManager.findAssignableUserForTestPlan(campaignId));
 
 		List<User> usersList = new ArrayList<User>(usersSet.size());
 		usersList.addAll(usersSet);
