@@ -187,28 +187,24 @@
         <authentication-provider user-service-ref="clientDetailsUserService" />
     </authentication-manager>
  
-	  <beans:bean id="clientDetailsUserService"
+	<beans:bean id="clientDetailsUserService"
 	    class="org.springframework.security.oauth2.provider.client.ClientDetailsUserDetailsService">
 	    <beans:constructor-arg ref="clientDetails" />
 	</beans:bean>
 	
- <authentication-manager id="clientAuthenticationManager"
-    xmlns="http://www.springframework.org/schema/security">
-    <authentication-provider user-service-ref="clientDetailsUserService" />
-</authentication-manager>
+	 <authentication-manager id="clientAuthenticationManager"
+	    xmlns="http://www.springframework.org/schema/security">
+	    <authentication-provider user-service-ref="clientDetailsUserService" />
+	</authentication-manager>
 
     <beans:bean id="clientDetails" class="org.springframework.security.oauth2.provider.JdbcClientDetailsService">
     	 <beans:constructor-arg name="dataSource" ref="squashtest.core.persistence.jdbc.DataSource"/>
     </beans:bean>
 
     <authentication-manager id="userAuthenticationManager">
-        <authentication-provider ref="customUserAuthenticationProvider" />
+        <authentication-provider ref="authenticationProvider.${authentication.provider:internal}" />
     </authentication-manager>
- 
-    <beans:bean id="customUserAuthenticationProvider"
-        class="org.squashtest.tm.web.internal.oauth.AAAUserAuthenticationProvider">
-    </beans:bean>
- 
+
     <oauth:authorization-server
         client-details-service-ref="clientDetails" token-services-ref="tokenServices">
         <oauth:authorization-code />
@@ -232,10 +228,8 @@
         <beans:property name="accessTokenValiditySeconds" value="900000000"/>
         <beans:property name="clientDetailsService" ref="clientDetails" />
     </beans:bean>
-    
-    <!-- <beans:bean id="MyResource" class="org.squashtest.tm.web.internal.oauth.UserResource"></beans:bean> -->
- 
-    
+
+
     <!-- /OAuth 2 -->
     
   <beans:bean id="exceptionTranslationFilter" class="org.springframework.security.web.access.ExceptionTranslationFilter">
