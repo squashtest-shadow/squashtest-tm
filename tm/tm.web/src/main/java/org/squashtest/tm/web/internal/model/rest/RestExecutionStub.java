@@ -20,18 +20,13 @@
  */
 package org.squashtest.tm.web.internal.model.rest;
 
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-
 import org.squashtest.tm.domain.execution.Execution;
 
-@XmlRootElement(name="execution")
+
 public class RestExecutionStub {
 	
-	@XmlElement(name="id")
 	private Long id;
 	
-	@XmlElement(name="testcase")
 	private Long referencedTestCaseId;
 	
 	public RestExecutionStub(){
@@ -42,4 +37,22 @@ public class RestExecutionStub {
 		this.id = execution.getId();
 		this.referencedTestCaseId = execution.getReferencedTestCase().getId();
 	}
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public Long getReferencedTestCaseId() {
+		return referencedTestCaseId;
+	}
+
+	public void setReferencedTestCaseId(Long referencedTestCaseId) {
+		this.referencedTestCaseId = referencedTestCaseId;
+	}
+	
+	
 }

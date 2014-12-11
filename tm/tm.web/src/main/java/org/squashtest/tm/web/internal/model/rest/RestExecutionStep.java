@@ -20,18 +20,12 @@
  */
 package org.squashtest.tm.web.internal.model.rest;
 
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-
 import org.squashtest.tm.domain.execution.ExecutionStep;
 
-@XmlRootElement(name="executionstep")
 public class RestExecutionStep {
 
-	@XmlElement(name="action")
 	private String action;
 	
-	@XmlElement(name="expected-result")
 	private String expectedResult;
 	
 	public RestExecutionStep(){
@@ -42,4 +36,22 @@ public class RestExecutionStep {
 		action = step.getAction();
 		expectedResult = step.getExpectedResult();
 	}
+
+	public String getAction() {
+		return action;
+	}
+
+	public void setAction(String action) {
+		this.action = action;
+	}
+
+	public String getExpectedResult() {
+		return expectedResult;
+	}
+
+	public void setExpectedResult(String expectedResult) {
+		this.expectedResult = expectedResult;
+	}
+	
+	
 }

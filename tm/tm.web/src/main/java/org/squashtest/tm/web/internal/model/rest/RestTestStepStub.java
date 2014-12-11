@@ -20,15 +20,11 @@
  */
 package org.squashtest.tm.web.internal.model.rest;
 
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-
 import org.squashtest.tm.domain.testcase.TestStep;
 
-@XmlRootElement(name="teststep")
+
 public class RestTestStepStub {
 
-	@XmlElement(name = "id")
 	private Long id;
 	
 	public RestTestStepStub() {
@@ -38,4 +34,14 @@ public class RestTestStepStub {
 	public RestTestStepStub(TestStep testStep) {
 		this.id = testStep.getId();
 	}
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+	
+	
 }

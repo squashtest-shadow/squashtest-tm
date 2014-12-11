@@ -20,48 +20,44 @@
  */
 package org.squashtest.tm.web.internal.model.rest;
 
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-
 import org.squashtest.tm.domain.testcase.TestCase;
 
-@XmlRootElement(name="testcase")
 public class RestTestCase {
 
-	@XmlElement(name = "id")
+
 	private Long id;
 	
-	@XmlElement(name = "name")
+
 	private String name;
 	
-	@XmlElement(name = "description")
+
 	private String description;
 	
-	@XmlElement(name = "reference")
+
 	private String reference;
 	
-	@XmlElement(name = "prerequisite")
+
 	private String prerequisite;
 	
-	@XmlElement(name = "importance")
+
 	private String importance;
 	
-	@XmlElement(name = "nature")
+
 	private String nature;
 	
-	@XmlElement(name = "type")
+
 	private String type;
 	
-	@XmlElement(name = "status")
+
 	private String status;
 	
-	@XmlElement(name = "execution-mode")
+
 	private String executionMode;
 	
-	@XmlElement(name = "project")
+
 	private RestProjectStub project;
 	
-	@XmlElement(name = "path")
+
 	private String path;
 	
 	public RestTestCase(){
@@ -82,5 +78,103 @@ public class RestTestCase {
 		this.project = new RestProjectStub(testCase.getProject());
 		this.path = testCase.getFullName();
 	}
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public String getReference() {
+		return reference;
+	}
+
+	public void setReference(String reference) {
+		this.reference = reference;
+	}
+
+	public String getPrerequisite() {
+		return prerequisite;
+	}
+
+	public void setPrerequisite(String prerequisite) {
+		this.prerequisite = prerequisite;
+	}
+
+	public String getImportance() {
+		return importance;
+	}
+
+	public void setImportance(String importance) {
+		this.importance = importance;
+	}
+
+	public String getNature() {
+		return nature;
+	}
+
+	public void setNature(String nature) {
+		this.nature = nature;
+	}
+
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
+
+	public String getExecutionMode() {
+		return executionMode;
+	}
+
+	public void setExecutionMode(String executionMode) {
+		this.executionMode = executionMode;
+	}
+
+	public RestProjectStub getProject() {
+		return project;
+	}
+
+	public void setProject(RestProjectStub project) {
+		this.project = project;
+	}
+
+	public String getPath() {
+		return path;
+	}
+
+	public void setPath(String path) {
+		this.path = path;
+	}
+	
+	
 }
 	

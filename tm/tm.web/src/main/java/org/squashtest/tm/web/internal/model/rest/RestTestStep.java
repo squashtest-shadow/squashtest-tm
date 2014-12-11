@@ -20,11 +20,9 @@
  */
 package org.squashtest.tm.web.internal.model.rest;
 
-import javax.xml.bind.annotation.XmlRootElement;
-
 import org.squashtest.tm.domain.testcase.TestStep;
 
-@XmlRootElement(name="teststep")
+
 public class RestTestStep {
 
 	public RestTestStep() {

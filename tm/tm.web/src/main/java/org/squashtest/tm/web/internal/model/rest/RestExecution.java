@@ -22,30 +22,20 @@ package org.squashtest.tm.web.internal.model.rest;
 
 import java.util.Date;
 
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-
 import org.squashtest.tm.domain.execution.Execution;
 
-@XmlRootElement(name="execution")
 public class RestExecution {
 
-	@XmlElement(name="id")
 	public Long id;
 	
-	@XmlElement(name="campaign")
 	public RestCampaignStub restCampaignStub;
 	
-	@XmlElement(name="iteration")
 	public RestIterationStub restIterationStub;
 	
-	@XmlElement(name="testcase")
 	public RestTestCaseStub restTestCaseStub;
 	
-	@XmlElement(name="status")
 	public String status;
 	
-	@XmlElement(name="execution-date")
 	public Date executionDate; 
 	
 	public RestExecution(){
@@ -61,5 +51,52 @@ public class RestExecution {
 		this.executionDate = execution.getLastExecutedOn();
 	}
 
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public RestCampaignStub getRestCampaignStub() {
+		return restCampaignStub;
+	}
+
+	public void setRestCampaignStub(RestCampaignStub restCampaignStub) {
+		this.restCampaignStub = restCampaignStub;
+	}
+
+	public RestIterationStub getRestIterationStub() {
+		return restIterationStub;
+	}
+
+	public void setRestIterationStub(RestIterationStub restIterationStub) {
+		this.restIterationStub = restIterationStub;
+	}
+
+	public RestTestCaseStub getRestTestCaseStub() {
+		return restTestCaseStub;
+	}
+
+	public void setRestTestCaseStub(RestTestCaseStub restTestCaseStub) {
+		this.restTestCaseStub = restTestCaseStub;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
+
+	public Date getExecutionDate() {
+		return executionDate;
+	}
+
+	public void setExecutionDate(Date executionDate) {
+		this.executionDate = executionDate;
+	}
 
 }

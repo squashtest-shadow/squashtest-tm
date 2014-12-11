@@ -20,11 +20,9 @@
  */
 package org.squashtest.tm.web.internal.model.rest;
 
-import javax.xml.bind.annotation.XmlRootElement;
 
 import org.squashtest.tm.domain.bugtracker.Issue;
 
-@XmlRootElement(name="issue")
 public class RestIssue {
 
 	public RestIssue() {

@@ -20,18 +20,13 @@
  */
 package org.squashtest.tm.web.internal.model.rest;
 
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-
 import org.squashtest.tm.domain.campaign.Iteration;
 
-@XmlRootElement(name="iteration")
+
 public class RestIterationStub {
 
-	@XmlElement(name="id")
 	private Long id;
 	
-	@XmlElement(name="name")
 	private String name;
 	
 	public RestIterationStub(){
@@ -43,4 +38,21 @@ public class RestIterationStub {
 		this.name = iteration.getName();
 	}
 
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	
 }
