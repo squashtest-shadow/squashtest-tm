@@ -1592,41 +1592,6 @@ background-color:#969696;
 }
 
 
-.requirement-icon-BUSINESS, .icon-default-req-cat-business { 
-	background-image: url(../images/Icon_Tree_Requirement_Business.png); /** sprite-ref: sprites-icons; */ 
-} 
-.requirement-icon-ERGONOMIC, .icon-default-req-cat-ergonomic{ 
-	background-image: url(../images/Icon_Tree_Requirement_Ergonomic.png);  /** sprite-ref: sprites-icons; */ 
-} 
-.requirement-icon-FUNCTIONAL, .icon-default-req-cat-functional { 
-	background-image: url(../images/Icon_Tree_Requirement_Functional.png); /** sprite-ref: sprites-icons; */ 
-} 
-.requirement-icon-NON_FUNCTIONAL, .icon-default-req-cat-non-functional { 
-	background-image: url(../images/Icon_Tree_Requirement_Non-functional.png);  /** sprite-ref: sprites-icons; */ 
-} 
-.requirement-icon-PERFORMANCE, .icon-default-req-cat-performance{ 
-	background-image: url(../images/Icon_Tree_Requirement_Performance.png);  /** sprite-ref: sprites-icons; */ 
-} 
-.requirement-icon-SECURITY, .icon-default-req-cat-security{ 
-	background-image: url(../images/Icon_Tree_Requirement_Security.png); /** sprite-ref: sprites-icons; */ 
-} 
-.requirement-icon-TECHNICAL, .icon-default-req-cat-technical {
-	background-image: url(../images/Icon_Tree_Requirement_Technic.png); /** sprite-ref: sprites-icons; */
-} 
-.requirement-icon-TEST_REQUIREMENT, .icon-default-req-cat-test-requirement{ 
-	background-image: url(../images/Icon_Tree_Requirement_Test-requirement.png); /** sprite-ref: sprites-icons; */ 
-} 
-.requirement-icon-UNDEFINED, .icon-default-req-cat-undefined { 
-	background-image: url(../images/Icon_Tree_Requirement_Undefined.png); /** sprite-ref: sprites-icons; */ 
-} 
-.requirement-icon-USE_CASE, .icon-default-req-cat-use-case { 
-	background-image: url(../images/Icon_Tree_Requirement_Use-case.png); /** sprite-ref: sprites-icons; */ 
-} 
-.requirement-icon-USER_STORY, .icon-default-req-cat-user-story{ 
-	background-image: url(../images/Icon_Tree_Requirement_User-story.png); /** sprite-ref: sprites-icons; */ 
-} 
-
-
 /* ---------------- test case importance and status icon-----------------*/
 
 .test-case-importance-VERY_HIGH {
