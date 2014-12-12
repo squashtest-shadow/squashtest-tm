@@ -465,7 +465,7 @@
 			<column name="LABEL" value="requirement.category.FUNCTIONAL" />
 			<column name="CODE" value="CAT_FUNCTIONAL"/>
 			<column name="IS_DEFAULT" valueBoolean="true"/>
-			<column name="ICON_NAME" value="info-list-icon-def_cat_functional"/>		
+			<column name="ICON_NAME" value="def_cat_functional"/>		
 		</insert>
 		
 		<insert tableName="INFO_LIST_ITEM">
@@ -476,7 +476,7 @@
 			<column name="LABEL" value="requirement.category.NON_FUNCTIONAL" />
 			<column name="CODE" value="CAT_NON_FUNCTIONAL"/>
 			<column name="IS_DEFAULT" valueBoolean="false"/>
-			<column name="ICON_NAME" value="info-list-icon-def_cat_non-functional"/>		
+			<column name="ICON_NAME" value="def_cat_non-functional"/>		
 		</insert>
 		
 		<insert tableName="INFO_LIST_ITEM">
@@ -487,7 +487,7 @@
 			<column name="LABEL" value="requirement.category.USE_CASE" />
 			<column name="CODE" value="CAT_USE_CASE"/>
 			<column name="IS_DEFAULT" valueBoolean="false"/>
-			<column name="ICON_NAME" value="info-list-icon-def_cat_use-case"/>		
+			<column name="ICON_NAME" value="def_cat_use-case"/>		
 		</insert>
 		
 		<insert tableName="INFO_LIST_ITEM">
@@ -498,7 +498,7 @@
 			<column name="LABEL" value="requirement.category.BUSINESS" />
 			<column name="CODE" value="CAT_BUSINESS"/>
 			<column name="IS_DEFAULT" valueBoolean="false"/>
-			<column name="ICON_NAME" value="info-list-icon-def_cat_business"/>		
+			<column name="ICON_NAME" value="def_cat_business"/>		
 		</insert>
 		
 		<insert tableName="INFO_LIST_ITEM">
@@ -509,7 +509,7 @@
 			<column name="LABEL" value="requirement.category.TEST_REQUIREMENT" />
 			<column name="CODE" value="CAT_TEST_REQUIREMENT"/>
 			<column name="IS_DEFAULT" valueBoolean="false"/>
-			<column name="ICON_NAME" value="info-list-icon-def_cat_test-requirement"/>		
+			<column name="ICON_NAME" value="def_cat_test-requirement"/>		
 		</insert>
 		
 		<insert tableName="INFO_LIST_ITEM">
@@ -520,7 +520,7 @@
 			<column name="LABEL" value="requirement.category.UNDEFINED" />
 			<column name="CODE" value="CAT_UNDEFINED"/>
 			<column name="IS_DEFAULT" valueBoolean="false"/>
-			<column name="ICON_NAME" value="info-list-icon-def_cat_undefined"/>		
+			<column name="ICON_NAME" value="def_cat_undefined"/>		
 		</insert>
 		
 		<insert tableName="INFO_LIST_ITEM">
@@ -531,7 +531,7 @@
 			<column name="LABEL" value="requirement.category.ERGONOMIC" />
 			<column name="CODE" value="CAT_ERGONOMIC"/>
 			<column name="IS_DEFAULT" valueBoolean="false"/>
-			<column name="ICON_NAME" value="info-list-icon-def_cat_ergonomic"/>		
+			<column name="ICON_NAME" value="def_cat_ergonomic"/>		
 		</insert>
 		
 		<insert tableName="INFO_LIST_ITEM">
@@ -542,7 +542,7 @@
 			<column name="LABEL" value="requirement.category.PERFORMANCE" />
 			<column name="CODE" value="CAT_PERFORMANCE"/>
 			<column name="IS_DEFAULT" valueBoolean="false"/>
-			<column name="ICON_NAME" value="info-list-icon-def_cat_performance"/>		
+			<column name="ICON_NAME" value="def_cat_performance"/>		
 		</insert>
 		
 		<insert tableName="INFO_LIST_ITEM">
@@ -553,7 +553,7 @@
 			<column name="LABEL" value="requirement.category.TECHNICAL" />
 			<column name="CODE" value="CAT_TECHNICAL"/>
 			<column name="IS_DEFAULT" valueBoolean="false"/>
-			<column name="ICON_NAME" value="info-list-icon-def_cat_technical"/>		
+			<column name="ICON_NAME" value="def_cat_technical"/>		
 		</insert>
 		
 		<insert tableName="INFO_LIST_ITEM">
@@ -564,7 +564,7 @@
 			<column name="LABEL" value="requirement.category.USER_STORY" />
 			<column name="CODE" value="CAT_USER_STORY"/>
 			<column name="IS_DEFAULT" valueBoolean="false"/>
-			<column name="ICON_NAME" value="info-list-icon-def_cat_user-story"/>		
+			<column name="ICON_NAME" value="def_cat_user-story"/>		
 		</insert>
 		
 		<insert tableName="INFO_LIST_ITEM">
@@ -575,7 +575,7 @@
 			<column name="LABEL" value="requirement.category.SECURITY" />
 			<column name="CODE" value="CAT_SECURITY"/>
 			<column name="IS_DEFAULT" valueBoolean="false"/>
-			<column name="ICON_NAME" value="info-list-icon-def_cat_security"/>		
+			<column name="ICON_NAME" value="def_cat_security"/>		
 		</insert>
 
 		<!-- =============== the default natures list ============== -->
@@ -601,7 +601,7 @@
 			<column name="LABEL" value="test-case.nature.UNDEFINED" />
 			<column name="CODE" value="NAT_UNDEFINED"/>
 			<column name="IS_DEFAULT" valueBoolean="true"/>
-			<column name="ICON_NAME" value="info-list-icon-info_list_noicon"/>		
+			<column name="ICON_NAME" value="noicon"/>		
 		</insert>
 						
 		<insert tableName="INFO_LIST_ITEM">
@@ -612,7 +612,7 @@
 			<column name="LABEL" value="test-case.nature.FUNCTIONAL_TESTING" />
 			<column name="CODE" value="NAT_FUNCTIONAL_TESTING"/>
 			<column name="IS_DEFAULT" valueBoolean="false"/>
-			<column name="ICON_NAME" value="info-list-icon-info_list_noicon"/>		
+			<column name="ICON_NAME" value="noicon"/>		
 		</insert>
 						
 		<insert tableName="INFO_LIST_ITEM">
@@ -623,7 +623,7 @@
 			<column name="LABEL" value="test-case.nature.BUSINESS_TESTING" />
 			<column name="CODE" value="NAT_BUSINESS_TESTING"/>
 			<column name="IS_DEFAULT" valueBoolean="false"/>
-			<column name="ICON_NAME" value="info-list-icon-info_list_noicon"/>		
+			<column name="ICON_NAME" value="noicon"/>		
 		</insert>
 						
 		<insert tableName="INFO_LIST_ITEM">
@@ -634,7 +634,7 @@
 			<column name="LABEL" value="test-case.nature.USER_TESTING" />
 			<column name="CODE" value="NAT_USER_TESTING"/>
 			<column name="IS_DEFAULT" valueBoolean="false"/>
-			<column name="ICON_NAME" value="info-list-icon-info_list_noicon"/>		
+			<column name="ICON_NAME" value="noicon"/>		
 		</insert>
 						
 		<insert tableName="INFO_LIST_ITEM">
@@ -645,7 +645,7 @@
 			<column name="LABEL" value="test-case.nature.NON_FUNCTIONAL_TESTING" />
 			<column name="CODE" value="NAT_NON_FUNCTIONAL_TESTING"/>
 			<column name="IS_DEFAULT" valueBoolean="false"/>
-			<column name="ICON_NAME" value="info-list-icon-info_list_noicon"/>		
+			<column name="ICON_NAME" value="noicon"/>		
 		</insert>
 						
 		<insert tableName="INFO_LIST_ITEM">
@@ -656,7 +656,7 @@
 			<column name="LABEL" value="test-case.nature.PERFORMANCE_TESTING" />
 			<column name="CODE" value="NAT_PERFORMANCE_TESTING"/>
 			<column name="IS_DEFAULT" valueBoolean="false"/>
-			<column name="ICON_NAME" value="info-list-icon-info_list_noicon"/>		
+			<column name="ICON_NAME" value="noicon"/>		
 		</insert>
 						
 		<insert tableName="INFO_LIST_ITEM">
@@ -667,7 +667,7 @@
 			<column name="LABEL" value="test-case.nature.SECURITY_TESTING" />
 			<column name="CODE" value="NAT_SECURITY_TESTING"/>
 			<column name="IS_DEFAULT" valueBoolean="false"/>
-			<column name="ICON_NAME" value="info-list-icon-info_list_noicon"/>		
+			<column name="ICON_NAME" value="noicon"/>		
 		</insert>
 						
 		<insert tableName="INFO_LIST_ITEM">
@@ -678,7 +678,7 @@
 			<column name="LABEL" value="test-case.nature.ATDD" />
 			<column name="CODE" value="NAT_ATDD"/>
 			<column name="IS_DEFAULT" valueBoolean="false"/>
-			<column name="ICON_NAME" value="info-list-icon-info_list_noicon"/>		
+			<column name="ICON_NAME" value="noicon"/>		
 		</insert>
 
 		<!-- =============== the default types list ============== -->
@@ -703,7 +703,7 @@
 			<column name="LABEL" value="test-case.type.UNDEFINED" />
 			<column name="CODE" value="TYP_UNDEFINED"/>
 			<column name="IS_DEFAULT" valueBoolean="true"/>
-			<column name="ICON_NAME" value="info-list-icon-info_list_noicon"/>		
+			<column name="ICON_NAME" value="noicon"/>		
 		</insert>
 		
 		<insert tableName="INFO_LIST_ITEM">
@@ -714,7 +714,7 @@
 			<column name="LABEL" value="test-case.type.COMPLIANCE_TESTING" />
 			<column name="CODE" value="TYP_COMPLIANCE_TESTING"/>
 			<column name="IS_DEFAULT" valueBoolean="false"/>
-			<column name="ICON_NAME" value="info-list-icon-info_list_noicon"/>		
+			<column name="ICON_NAME" value="noicon"/>		
 		</insert>
 		
 		<insert tableName="INFO_LIST_ITEM">
@@ -725,7 +725,7 @@
 			<column name="LABEL" value="test-case.type.CORRECTION_TESTING" />
 			<column name="CODE" value="TYP_CORRECTION_TESTING"/>
 			<column name="IS_DEFAULT" valueBoolean="false"/>
-			<column name="ICON_NAME" value="info-list-icon-info_list_noicon"/>		
+			<column name="ICON_NAME" value="noicon"/>		
 		</insert>
 		
 		<insert tableName="INFO_LIST_ITEM">
@@ -736,7 +736,7 @@
 			<column name="LABEL" value="test-case.type.EVOLUTION_TESTING" />
 			<column name="CODE" value="TYP_EVOLUTION_TESTING"/>
 			<column name="IS_DEFAULT" valueBoolean="false"/>
-			<column name="ICON_NAME" value="info-list-icon-info_list_noicon"/>		
+			<column name="ICON_NAME" value="noicon"/>		
 		</insert>
 		
 		<insert tableName="INFO_LIST_ITEM">
@@ -747,7 +747,7 @@
 			<column name="LABEL" value="test-case.type.REGRESSION_TESTING" />
 			<column name="CODE" value="TYP_REGRESSION_TESTING"/>
 			<column name="IS_DEFAULT" valueBoolean="false"/>
-			<column name="ICON_NAME" value="info-list-icon-info_list_noicon"/>		
+			<column name="ICON_NAME" value="noicon"/>		
 		</insert>
 		
 		<insert tableName="INFO_LIST_ITEM">
@@ -758,7 +758,7 @@
 			<column name="LABEL" value="test-case.type.END_TO_END_TESTING" />
 			<column name="CODE" value="TYP_END_TO_END_TESTING"/>
 			<column name="IS_DEFAULT" valueBoolean="false"/>
-			<column name="ICON_NAME" value="info-list-icon-info_list_noicon"/>		
+			<column name="ICON_NAME" value="noicon"/>		
 		</insert>
 		
 		<insert tableName="INFO_LIST_ITEM">
@@ -769,7 +769,7 @@
 			<column name="LABEL" value="test-case.type.PARTNER_TESTING" />
 			<column name="CODE" value="TYP_PARTNER_TESTING"/>
 			<column name="IS_DEFAULT" valueBoolean="false"/>
-			<column name="ICON_NAME" value="info-list-icon-info_list_noicon"/>		
+			<column name="ICON_NAME" value="noicon"/>		
 		</insert>
 		
 	</changeSet>
@@ -799,7 +799,7 @@
 			<column name="LABEL" value="requirement.category.FUNCTIONAL" />
 			<column name="CODE" value="CAT_FUNCTIONAL"/>
 			<column name="IS_DEFAULT" valueBoolean="true"/>
-			<column name="ICON_NAME" value="info-list-icon-def_cat_functional"/>		
+			<column name="ICON_NAME" value="def_cat_functional"/>		
 		</insert>
 		
 		<insert tableName="DENORMALIZED_INFO_LIST_ITEM">
@@ -810,7 +810,7 @@
 			<column name="LABEL" value="requirement.category.NON_FUNCTIONAL" />
 			<column name="CODE" value="CAT_NON_FUNCTIONAL"/>
 			<column name="IS_DEFAULT" valueBoolean="false"/>
-			<column name="ICON_NAME" value="info-list-icon-def_cat_non-functional"/>		
+			<column name="ICON_NAME" value="def_cat_non-functional"/>		
 		</insert>
 		
 		<insert tableName="DENORMALIZED_INFO_LIST_ITEM">
@@ -821,7 +821,7 @@
 			<column name="LABEL" value="requirement.category.USE_CASE" />
 			<column name="CODE" value="CAT_USE_CASE"/>
 			<column name="IS_DEFAULT" valueBoolean="false"/>
-			<column name="ICON_NAME" value="info-list-icon-def_cat_use-case"/>		
+			<column name="ICON_NAME" value="def_cat_use-case"/>		
 		</insert>
 		
 		<insert tableName="DENORMALIZED_INFO_LIST_ITEM">
@@ -832,7 +832,7 @@
 			<column name="LABEL" value="requirement.category.BUSINESS" />
 			<column name="CODE" value="CAT_BUSINESS"/>
 			<column name="IS_DEFAULT" valueBoolean="false"/>
-			<column name="ICON_NAME" value="info-list-icon-def_cat_business"/>		
+			<column name="ICON_NAME" value="def_cat_business"/>		
 		</insert>
 		
 		<insert tableName="DENORMALIZED_INFO_LIST_ITEM">
@@ -843,7 +843,7 @@
 			<column name="LABEL" value="requirement.category.TEST_REQUIREMENT" />
 			<column name="CODE" value="CAT_TEST_REQUIREMENT"/>
 			<column name="IS_DEFAULT" valueBoolean="false"/>
-			<column name="ICON_NAME" value="info-list-icon-def_cat_test-requirement"/>		
+			<column name="ICON_NAME" value="def_cat_test-requirement"/>		
 		</insert>
 		
 		<insert tableName="DENORMALIZED_INFO_LIST_ITEM">
@@ -854,7 +854,7 @@
 			<column name="LABEL" value="requirement.category.UNDEFINED" />
 			<column name="CODE" value="CAT_UNDEFINED"/>
 			<column name="IS_DEFAULT" valueBoolean="false"/>
-			<column name="ICON_NAME" value="info-list-icon-def_cat_undefined"/>		
+			<column name="ICON_NAME" value="def_cat_undefined"/>		
 		</insert>
 		
 		<insert tableName="DENORMALIZED_INFO_LIST_ITEM">
@@ -865,7 +865,7 @@
 			<column name="LABEL" value="requirement.category.ERGONOMIC" />
 			<column name="CODE" value="CAT_ERGONOMIC"/>
 			<column name="IS_DEFAULT" valueBoolean="false"/>
-			<column name="ICON_NAME" value="info-list-icon-def_cat_ergonomic"/>		
+			<column name="ICON_NAME" value="def_cat_ergonomic"/>		
 		</insert>
 		
 		<insert tableName="DENORMALIZED_INFO_LIST_ITEM">
@@ -876,7 +876,7 @@
 			<column name="LABEL" value="requirement.category.PERFORMANCE" />
 			<column name="CODE" value="CAT_PERFORMANCE"/>
 			<column name="IS_DEFAULT" valueBoolean="false"/>
-			<column name="ICON_NAME" value="info-list-icon-def_cat_performance"/>		
+			<column name="ICON_NAME" value="def_cat_performance"/>		
 		</insert>
 		
 		<insert tableName="DENORMALIZED_INFO_LIST_ITEM">
@@ -887,7 +887,7 @@
 			<column name="LABEL" value="requirement.category.TECHNICAL" />
 			<column name="CODE" value="CAT_TECHNICAL"/>
 			<column name="IS_DEFAULT" valueBoolean="false"/>
-			<column name="ICON_NAME" value="info-list-icon-def_cat_technical"/>		
+			<column name="ICON_NAME" value="def_cat_technical"/>		
 		</insert>
 		
 		<insert tableName="DENORMALIZED_INFO_LIST_ITEM">
@@ -898,7 +898,7 @@
 			<column name="LABEL" value="requirement.category.USER_STORY" />
 			<column name="CODE" value="CAT_USER_STORY"/>
 			<column name="IS_DEFAULT" valueBoolean="false"/>
-			<column name="ICON_NAME" value="info-list-icon-def_cat_user-story"/>		
+			<column name="ICON_NAME" value="def_cat_user-story"/>		
 		</insert>
 		
 		<insert tableName="DENORMALIZED_INFO_LIST_ITEM">
@@ -909,7 +909,7 @@
 			<column name="LABEL" value="requirement.category.SECURITY" />
 			<column name="CODE" value="CAT_SECURITY"/>
 			<column name="IS_DEFAULT" valueBoolean="false"/>
-			<column name="ICON_NAME" value="info-list-icon-def_cat_security"/>		
+			<column name="ICON_NAME" value="def_cat_security"/>		
 		</insert>
 
 		<!-- =============== the default natures list ============== -->
@@ -932,7 +932,7 @@
 			<column name="LABEL" value="test-case.nature.UNDEFINED" />
 			<column name="CODE" value="NAT_UNDEFINED"/>
 			<column name="IS_DEFAULT" valueBoolean="true"/>
-			<column name="ICON_NAME" value="info-list-icon-info_list_noicon"/>		
+			<column name="ICON_NAME" value="noicon"/>		
 		</insert>
 						
 		<insert tableName="DENORMALIZED_INFO_LIST_ITEM">
@@ -943,7 +943,7 @@
 			<column name="LABEL" value="test-case.nature.FUNCTIONAL_TESTING" />
 			<column name="CODE" value="NAT_FUNCTIONAL_TESTING"/>
 			<column name="IS_DEFAULT" valueBoolean="false"/>
-			<column name="ICON_NAME" value="info-list-icon-info_list_noicon"/>		
+			<column name="ICON_NAME" value="noicon"/>		
 		</insert>
 						
 		<insert tableName="DENORMALIZED_INFO_LIST_ITEM">
@@ -954,7 +954,7 @@
 			<column name="LABEL" value="test-case.nature.BUSINESS_TESTING" />
 			<column name="CODE" value="NAT_BUSINESS_TESTING"/>
 			<column name="IS_DEFAULT" valueBoolean="false"/>
-			<column name="ICON_NAME" value="info-list-icon-info_list_noicon"/>		
+			<column name="ICON_NAME" value="noicon"/>		
 		</insert>
 						
 		<insert tableName="DENORMALIZED_INFO_LIST_ITEM">
@@ -965,7 +965,7 @@
 			<column name="LABEL" value="test-case.nature.USER_TESTING" />
 			<column name="CODE" value="NAT_USER_TESTING"/>
 			<column name="IS_DEFAULT" valueBoolean="false"/>
-			<column name="ICON_NAME" value="info-list-icon-info_list_noicon"/>		
+			<column name="ICON_NAME" value="noicon"/>		
 		</insert>
 						
 		<insert tableName="DENORMALIZED_INFO_LIST_ITEM">
@@ -976,7 +976,7 @@
 			<column name="LABEL" value="test-case.nature.NON_FUNCTIONAL_TESTING" />
 			<column name="CODE" value="NAT_NON_FUNCTIONAL_TESTING"/>
 			<column name="IS_DEFAULT" valueBoolean="false"/>
-			<column name="ICON_NAME" value="info-list-icon-info_list_noicon"/>		
+			<column name="ICON_NAME" value="noicon"/>		
 		</insert>
 						
 		<insert tableName="DENORMALIZED_INFO_LIST_ITEM">
@@ -987,7 +987,7 @@
 			<column name="LABEL" value="test-case.nature.PERFORMANCE_TESTING" />
 			<column name="CODE" value="NAT_PERFORMANCE_TESTING"/>
 			<column name="IS_DEFAULT" valueBoolean="false"/>
-			<column name="ICON_NAME" value="info-list-icon-info_list_noicon"/>		
+			<column name="ICON_NAME" value="noicon"/>		
 		</insert>
 						
 		<insert tableName="DENORMALIZED_INFO_LIST_ITEM">
@@ -998,7 +998,7 @@
 			<column name="LABEL" value="test-case.nature.SECURITY_TESTING" />
 			<column name="CODE" value="NAT_SECURITY_TESTING"/>
 			<column name="IS_DEFAULT" valueBoolean="false"/>
-			<column name="ICON_NAME" value="info-list-icon-info_list_noicon"/>		
+			<column name="ICON_NAME" value="noicon"/>		
 		</insert>
 						
 		<insert tableName="DENORMALIZED_INFO_LIST_ITEM">
@@ -1009,7 +1009,7 @@
 			<column name="LABEL" value="test-case.nature.ATDD" />
 			<column name="CODE" value="NAT_ATDD"/>
 			<column name="IS_DEFAULT" valueBoolean="false"/>
-			<column name="ICON_NAME" value="info-list-icon-info_list_noicon"/>		
+			<column name="ICON_NAME" value="noicon"/>		
 		</insert>
 
 		<!-- =============== the default types list ============== -->
@@ -1031,7 +1031,7 @@
 			<column name="LABEL" value="test-case.type.UNDEFINED" />
 			<column name="CODE" value="TYP_UNDEFINED"/>
 			<column name="IS_DEFAULT" valueBoolean="true"/>
-			<column name="ICON_NAME" value="info-list-icon-info_list_noicon"/>		
+			<column name="ICON_NAME" value="noicon"/>		
 		</insert>
 		
 		<insert tableName="DENORMALIZED_INFO_LIST_ITEM">
@@ -1042,7 +1042,7 @@
 			<column name="LABEL" value="test-case.type.COMPLIANCE_TESTING" />
 			<column name="CODE" value="TYP_COMPLIANCE_TESTING"/>
 			<column name="IS_DEFAULT" valueBoolean="false"/>
-			<column name="ICON_NAME" value="info-list-icon-info_list_noicon"/>		
+			<column name="ICON_NAME" value="noicon"/>		
 		</insert>
 		
 		<insert tableName="DENORMALIZED_INFO_LIST_ITEM">
@@ -1053,7 +1053,7 @@
 			<column name="LABEL" value="test-case.type.CORRECTION_TESTING" />
 			<column name="CODE" value="TYP_CORRECTION_TESTING"/>
 			<column name="IS_DEFAULT" valueBoolean="false"/>
-			<column name="ICON_NAME" value="info-list-icon-info_list_noicon"/>		
+			<column name="ICON_NAME" value="noicon"/>		
 		</insert>
 		
 		<insert tableName="DENORMALIZED_INFO_LIST_ITEM">
@@ -1064,7 +1064,7 @@
 			<column name="LABEL" value="test-case.type.EVOLUTION_TESTING" />
 			<column name="CODE" value="TYP_EVOLUTION_TESTING"/>
 			<column name="IS_DEFAULT" valueBoolean="false"/>
-			<column name="ICON_NAME" value="info-list-icon-info_list_noicon"/>		
+			<column name="ICON_NAME" value="noicon"/>		
 		</insert>
 		
 		<insert tableName="DENORMALIZED_INFO_LIST_ITEM">
@@ -1075,7 +1075,7 @@
 			<column name="LABEL" value="test-case.type.REGRESSION_TESTING" />
 			<column name="CODE" value="TYP_REGRESSION_TESTING"/>
 			<column name="IS_DEFAULT" valueBoolean="false"/>
-			<column name="ICON_NAME" value="info-list-icon-info_list_noicon"/>		
+			<column name="ICON_NAME" value="noicon"/>		
 		</insert>
 		
 		<insert tableName="DENORMALIZED_INFO_LIST_ITEM">
@@ -1086,7 +1086,7 @@
 			<column name="LABEL" value="test-case.type.END_TO_END_TESTING" />
 			<column name="CODE" value="TYP_END_TO_END_TESTING"/>
 			<column name="IS_DEFAULT" valueBoolean="false"/>
-			<column name="ICON_NAME" value="info-list-icon-info_list_noicon"/>		
+			<column name="ICON_NAME" value="noicon"/>		
 		</insert>
 		
 		<insert tableName="DENORMALIZED_INFO_LIST_ITEM">
@@ -1097,7 +1097,7 @@
 			<column name="LABEL" value="test-case.type.PARTNER_TESTING" />
 			<column name="CODE" value="TYP_PARTNER_TESTING"/>
 			<column name="IS_DEFAULT" valueBoolean="false"/>
-			<column name="ICON_NAME" value="info-list-icon-info_list_noicon"/>		
+			<column name="ICON_NAME" value="noicon"/>		
 		</insert>
 		
 	</changeSet>

@@ -21,6 +21,45 @@
 import java.util.List;
 
 import groovy.io.FileType
+import groovy.text.GStringTemplateEngine;
+
+
+
+def filetemplate = """
+/**
+* smartsprites directive :
+*/
+
+/** sprite: sprites-icons; sprite-image: url('../images/sprites-icons.png'); sprite-layout: vertical */
+
+/**
+* defining the raw classes 
+*
+*/
+
+<% filenames.each { name -> %>
+.info-list-icon-<%=name%> {
+	background-image : url(../images/info-list/<%=name%>.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+<% } %>
+
+/**
+ * defining the tree classes
+ *
+ */
+
+<% filenames.each { name -> %>
+li[rel="requirement"][category-icon="<%=name%>"] > a > .jstree-icon{
+	background-image: url(../images/info-list/<%=name%>.png); /** sprite-ref: sprites-icons; */
+}
+
+<% } %>
+ 
+"""
+
+
 // get path of the script
 def scriptPath = getClass().protectionDomain.codeSource.location.path
 // get parent path
@@ -52,23 +91,34 @@ if(!isNew){
 }
 println("create new css file : "+fileName)
 f = new File(fileName)
-f.append ("/** \n * smartsprites directive :\n */\n /** sprite: sprites-icons; sprite-image: url('../images/sprites-icons.png'); sprite-layout: vertical */\n\n")
 
 
-def printIcon(name, File f){
-	f.append('.info-list-icon-')
-	f.append(name.lastIndexOf('.').with {it != -1 ? name[0..<it] : name})
-	f.append(' {\n')
-	f.append('background-image :url(../images/info-list/')
-	f.append(name)
-	f.append('); /** sprite-ref: sprites-icons; */\n')
-	f.append('background-repeat : no-repeat;\n')
-	f.append('}\n')
-}
+/*
+ * generating the file
+ */
+def engine = new GStringTemplateEngine()
+def template = engine.createTemplate(filetemplate)
+def writer = new StringWriter()
 
-list.each {
-	printIcon(it.getName(), f)
-}
+def model = [
+	filenames : list.collect { 
+		zefile -> 
+		def name = zefile.getName()
+		name
+		.lastIndexOf('.')
+		.with {
+			it != -1 ? 
+				name[0..<it] : 
+				name
+		} 
+	}	
+]
+
+template.make(model).writeTo (writer)
+writer.flush()
+
+f.append (writer.toString())
+
 
 
 // get main dir
