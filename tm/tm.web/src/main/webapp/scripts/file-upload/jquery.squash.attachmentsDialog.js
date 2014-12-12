@@ -194,8 +194,7 @@ define(
 													self.options._xhr = xhr;
 													$(".attachment-progressbar").hide();
 													$(".attachment-progress-percentage").hide();
-
-												},
+													},
 												success : function() {
 												},
 												error : function() {
