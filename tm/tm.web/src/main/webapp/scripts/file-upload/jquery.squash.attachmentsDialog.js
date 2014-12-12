@@ -167,9 +167,23 @@ define(
 													formData.append("attachment[]", file);
 												}
 											}
-
-											xhr.send(formData);
-
+											
+											// Catch if there's a JDBC Exception
+												
+											xhr.onreadystatechange=function() {
+										    if (xhr.readyState === 4){   //if complete
+										        if(xhr.status === 200){  //check if "OK" (200)
+										            //success
+										        } else {								        
+										        	$(".attachment-progressbar").hide();
+															$(".attachment-progress-percentage").hide();
+															$(".attachment-progress-message").hide();
+																							
+										        }
+										    } 
+										}										
+												xhr.send(formData);
+										
 										} else {
 											// for browser that don't support xhr2, like IE9.
 
@@ -212,11 +226,20 @@ define(
 										text = xhr.responseText;
 									}
 
+									// if text contains html, and HTML ERROR, display an error
+									if (text.indexOf("HTTP ERROR") >= 0) {
+										this.displayErrorJDBC(text);
+									}
+									
+									
 									var json = $.parseJSON(text);
+
 									if (json.maxUploadError === undefined) {
 										this.displaySummary();
 									} else {
 										this.displayError(json.maxUploadError.maxSize);
+										
+										
 									}
 								},
 
@@ -280,6 +303,13 @@ define(
 									var s = (size / 1048576).toFixed(3);
 
 									var errMessage = this.options._sizeexceeded.replace('#size#', s);
+									this.element.find('.attachment-upload-error-message').text(errMessage);
+									this.setState('error');
+								},
+								
+								displayErrorJDBC : function(text) {
+
+									var errMessage = text;
 									this.element.find('.attachment-upload-error-message').text(errMessage);
 									this.setState('error');
 								}
