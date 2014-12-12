@@ -90,25 +90,37 @@ define(["module", "jquery", "app/pubsub", "squash.basicwidgets", "app/ws/squasht
  				// ********* CATEGORIES *****************
  				var categSelect = $("#requirement-category");
  				var catconf = confman.getJeditableSelect();
- 				catconf.data = config.basic.categories;
+ 				catconf.data = confman.toJeditableSelectFormat(config.basic.categories.items, {'code' : 'friendlyLabel'});
  				
- 				categSelect.editable(function(value, settings){
+ 				categSelect.editable(function(value, settings){ 						
+ 					var icon,
+ 						cats = config.basic.categories.items;
+ 					
+ 					// find the icon name
+					for (var i=0;i<cats.length;i++){
+						if (cats[i].code === value){
+							icon = cats[i].iconName;
+						}
+					}
+ 					
+					// trigger the event
  					$.post(baseURL, {id : 'requirement-category', value : value})
  					.done(function(response){
  						eventBus.trigger('node.attribute-changed', { 
  							identity : config.basic.identity,
- 							attribute : 'category', 
- 							value : value.toLowerCase()
+ 							attribute : 'category-icon', 
+ 							value : icon
  						});
  					});
      		      
  					//update icon
  					var requirement = $("#requirement-icon");
  					requirement.attr("class", "");
- 				     requirement.addClass("requirement-icon-" + value);
- 					//in the mean time, must return immediately
- 					var data = JSON.parse(settings.data);
- 					return data[value];
+ 				    requirement.addClass("info-list-icon-" + icon);
+ 					
+ 				    //in the mean time, must return immediately
+ 					return settings.data[value];
+ 					
  				}, catconf).addClass('editable');
  				
  				

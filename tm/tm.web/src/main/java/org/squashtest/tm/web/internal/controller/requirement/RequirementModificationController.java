@@ -47,11 +47,8 @@ import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.Level;
 import org.squashtest.tm.domain.event.RequirementAuditEvent;
-import org.squashtest.tm.domain.infolist.InfoList;
 import org.squashtest.tm.domain.infolist.InfoListItem;
-import org.squashtest.tm.domain.infolist.ListItemReference;
 import org.squashtest.tm.domain.requirement.Requirement;
-import org.squashtest.tm.domain.requirement.RequirementCategory;
 import org.squashtest.tm.domain.requirement.RequirementCriticality;
 import org.squashtest.tm.domain.requirement.RequirementStatus;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
@@ -66,16 +63,16 @@ import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.controller.audittrail.RequirementAuditEventTableModelBuilder;
 import org.squashtest.tm.web.internal.controller.generic.ServiceAwareAttachmentTableModelHelper;
 import org.squashtest.tm.web.internal.helper.InternationalizableLabelFormatter;
-import org.squashtest.tm.web.internal.helper.JsonHelper;
 import org.squashtest.tm.web.internal.helper.LevelLabelFormatter;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
-import org.squashtest.tm.web.internal.model.builder.InfoListComboDataBuilder;
+import org.squashtest.tm.web.internal.model.builder.JsonInfoListBuilder;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelBuilder;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelConstants;
 import org.squashtest.tm.web.internal.model.datatable.DataTableSorting;
 import org.squashtest.tm.web.internal.model.jquery.RenameModel;
+import org.squashtest.tm.web.internal.model.json.JsonInfoList;
 import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
 import org.squashtest.tm.web.internal.model.viewmapper.NameBasedMapper;
 
@@ -92,10 +89,8 @@ public class RequirementModificationController {
 	private Provider<RequirementStatusComboDataBuilder> statusComboDataBuilderProvider;
 
 	@Inject
-	private InfoListComboDataBuilder infoListComboDataBuilder;
-
-	@Inject
 	private Provider<LevelLabelFormatter> levelFormatterProvider;
+
 	@Inject
 	private Provider<InternationalizableLabelFormatter> internationalizableFormatterProvider;
 
@@ -122,6 +117,9 @@ public class RequirementModificationController {
 
 	@Inject
 	private InfoListItemFinderService infoListItemService;
+
+	@Inject
+	private JsonInfoListBuilder infoListBuilder;
 
 	private final DatatableMapper<String> versionMapper = new NameBasedMapper()
 	.mapAttribute("version-number", "versionNumber", RequirementVersion.class)
@@ -154,7 +152,7 @@ public class RequirementModificationController {
 
 		Requirement requirement = requirementModService.findById(requirementId);
 		String criticalities = buildMarshalledCriticalities(locale);
-		String categories = buildMarshalledCategories(requirement.getProject().getRequirementCategories());
+		JsonInfoList categories = infoListBuilder.toJson(requirement.getProject().getRequirementCategories());
 		boolean hasCUF = cufValueService.hasCustomFields(requirement.getCurrentVersion());
 		DataTableModel verifyingTCModel = getVerifyingTCModel(requirement.getCurrentVersion());
 		DataTableModel attachmentsModel = attachmentsHelper.findPagedAttachments(requirement);
@@ -174,10 +172,6 @@ public class RequirementModificationController {
 		return criticalityComboBuilderProvider.get().useLocale(locale).buildMarshalled();
 	}
 
-	private String buildMarshalledCategories(InfoList list) {
-		Map<String, String> data =  infoListComboDataBuilder.build(list);
-		return JsonHelper.marshall(data);
-	}
 
 	private DataTableModel getVerifyingTCModel(RequirementVersion version){
 		PagedCollectionHolder<List<TestCase>> holder = verifyingTestCaseManager.findAllByRequirementVersion(
@@ -320,7 +314,7 @@ public class RequirementModificationController {
 		model.addAttribute("versions", req.getUnmodifiableVersions());
 		model.addAttribute("selectedVersion", req.getCurrentVersion());
 		model.addAttribute("criticalityList", buildMarshalledCriticalities(locale));
-		model.addAttribute("categoryList", buildMarshalledCategories(req.getProject().getRequirementCategories()));
+		model.addAttribute("categoryList", infoListBuilder.toJson(req.getProject().getRequirementCategories()));
 		model.addAttribute("verifyingTestCasesModel", getVerifyingTCModel(req.getCurrentVersion()));
 		model.addAttribute("auditTrailModel", getEventsTableModel(req));
 		boolean hasCUF = cufValueService.hasCustomFields(req.getCurrentVersion());

@@ -50,7 +50,6 @@ import org.squashtest.tm.domain.Level;
 import org.squashtest.tm.domain.audit.AuditableMixin;
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
 import org.squashtest.tm.domain.event.RequirementAuditEvent;
-import org.squashtest.tm.domain.infolist.InfoList;
 import org.squashtest.tm.domain.infolist.InfoListItem;
 import org.squashtest.tm.domain.requirement.Requirement;
 import org.squashtest.tm.domain.requirement.RequirementCriticality;
@@ -67,14 +66,14 @@ import org.squashtest.tm.service.testcase.VerifyingTestCaseManagerService;
 import org.squashtest.tm.web.internal.controller.audittrail.RequirementAuditEventTableModelBuilder;
 import org.squashtest.tm.web.internal.controller.generic.ServiceAwareAttachmentTableModelHelper;
 import org.squashtest.tm.web.internal.helper.InternationalizableLabelFormatter;
-import org.squashtest.tm.web.internal.helper.JsonHelper;
 import org.squashtest.tm.web.internal.helper.LevelLabelFormatter;
 import org.squashtest.tm.web.internal.http.ContentTypes;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
-import org.squashtest.tm.web.internal.model.builder.InfoListComboDataBuilder;
+import org.squashtest.tm.web.internal.model.builder.JsonInfoListBuilder;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.tm.web.internal.model.jquery.RenameModel;
 import org.squashtest.tm.web.internal.model.json.JsonGeneralInfo;
+import org.squashtest.tm.web.internal.model.json.JsonInfoList;
 
 /**
  * Controller which receives requirement version management related requests.
@@ -87,8 +86,8 @@ import org.squashtest.tm.web.internal.model.json.JsonGeneralInfo;
 public class RequirementVersionManagerController {
 	@Inject
 	private Provider<RequirementCriticalityComboDataBuilder> criticalityComboBuilderProvider;
-	@Inject
-	private InfoListComboDataBuilder infoListComboDataBuilder;
+
+
 	@Inject
 	private Provider<RequirementStatusComboDataBuilder> statusComboDataBuilderProvider;
 	@Inject
@@ -115,6 +114,9 @@ public class RequirementVersionManagerController {
 
 	@Inject
 	private InfoListItemFinderService infoListItemService;
+
+	@Inject
+	private JsonInfoListBuilder infoListBuilder;
 
 	public RequirementVersionManagerController() {
 		super();
@@ -189,7 +191,7 @@ public class RequirementVersionManagerController {
 		RequirementVersion requirementVersion = requirementVersionManager.findById(requirementVersionId);
 		String criticalities = buildMarshalledCriticalities(locale);
 		boolean hasCUF = cufValueService.hasCustomFields(requirementVersion);
-		String categories = buildMarshalledCategories(requirementVersion.getProject().getRequirementCategories());
+		JsonInfoList categories = infoListBuilder.toJson(requirementVersion.getProject().getRequirementCategories());
 		DataTableModel verifyingTCModel = getVerifyingTCModel(requirementVersion);
 		DataTableModel attachmentsModel = attachmentsHelper.findPagedAttachments(requirementVersion);
 		DataTableModel auditTrailModel = getEventsTableModel(requirementVersion);
@@ -232,10 +234,6 @@ public class RequirementVersionManagerController {
 		return criticalityComboBuilderProvider.get().useLocale(locale).buildMarshalled();
 	}
 
-	private String buildMarshalledCategories(InfoList list) {
-		Map<String, String> data =  infoListComboDataBuilder.build(list);
-		return JsonHelper.marshall(data);
-	}
 
 	@RequestMapping(method = RequestMethod.POST, params = { "newName" })
 	public @ResponseBody

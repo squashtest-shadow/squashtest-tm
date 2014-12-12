@@ -122,44 +122,39 @@ define([ "jquery", "squash.translator", "datepicker/jquery.squash.datepicker-loc
 		return $.extend(true, {}, {dateFormat : conf.format}, language);	
 	}
 	
-	/*
-	 * EXPERIMENTAL
-	 * @params
-	 *	postfunction : function(value) => xhr : a function that just posts the data and returns the xhr object(required)
-	 *	format : a string date format that datepicker understands (optional)
-	 *	locale : a locale, used for datepicker internationalization (optional);
-	 */
-	function jeditableDatepicker(postfn, format, locale){
-		
-		var conf = stdJeditable();
-		
-		var datepickerconf = stdDatepicker(format, locale);
-		
-		conf.target = function(value){
-			var date = $("form input", this).datepicker("getDate");
-			var toAtom = dateutils.format(date);
-			
-			postfn(toAtom)
-			.done(function(){
-				return value;
-			})
-			.fail(function(){
-				return self.revert;
-			});
+	
+	function stdTagit(){
+		return {
+			allowSpaces : true,
+			autocomplete: {
+				delay: 0
+			},
+			validate : function(label){
+				return (label.indexOf('|') === -1);
+			}
 		};
-		
-		conf.type = "datepicker";
-		conf.datepicker = datepickerconf;
-		
-		return conf;
 	}
+
 	
 	/*
 	 *	Useful when creating the options for a jeditable select.  
 	 *  This function will turn an array of [{ id : <id1>, name : <name1>}, {id : <id2>, name : <name2>}] 
 	 *  into something acceptable for a jeditable select, like { <id1> : <name1>, <id2> : <name2> }.
+	 * 	 
+	 *  A/ Two arguments : an array of data and a descriptor object
+	 *  -----------------------------------------------------------
+	 *  
+	 *  The array of data is described above. The descriptor object must be of the form 
+	 *  { "valuePropertyName" : "labePropertyName" }. This tells the function that it 
+	 *  should build an option using the property "valuePropertyName" as the value 
+	 *  and proprety "labelPropertyName" as the text displayed.
 	 * 
-	 *  The objects in the input array must define 
+	 *  
+	 *  B/ One arguments only : an array of data
+	 *  -----------------------------------------
+	 *  
+	 *  In the absence of a descriptor object the value and label will be determined as follow : 
+	 *   
 	 *  - id : mandatory. Will be the 'value' of the 'option' object that'll be created from this object.
 	 *  - name : (optional) if found, will be used as a 'label' for that option.
 	 *  - value : (optional) if found, will be used as a 'label' for that option.
@@ -167,11 +162,29 @@ define([ "jquery", "squash.translator", "datepicker/jquery.squash.datepicker-loc
 	 *						Works only of the objects have 2 own properties only (one of which being 'id'),
 	 *						and must not be an object nor an array.
 	 *  
-	 *  if none of 'name', 'value' or the 'anything else' is satified the script will crash and tell you why.
+	 *  if none of 'name', 'value' or the 'anything else' is satisfied the script will crash and tell you why.
 	 *  
-	 *
 	 */
-	function _toJeditableSelectFormat(data){
+	
+	
+	function _toJeditableSelectFormat(){
+		var data;
+		
+		switch(arguments.length){
+		case 1 : data = _unaryJeditSelectFormat(arguments[0]); break;
+		default : data =  _binaryJeditSelectFormat(arguments[0], arguments[1]); break;
+		};
+		
+		// jeditable doesn't like much 'null' as a key
+		if (data[null] !== undefined){
+			data[""] = data[null];
+			delete data[null];
+		}
+		return data;
+		
+	}
+	
+	function _unaryJeditSelectFormat(data){
 		
 		if (data.length===0){
 			return {};
@@ -199,23 +212,71 @@ define([ "jquery", "squash.translator", "datepicker/jquery.squash.datepicker-loc
 			result[elt['id']] = elt[usableLabel];
 		}
 		
-		// jeditable doesn't like much 'null' as a key
-		result[""] = result[null];
-		delete result[null];
 		return result;
+
 	}
 	
-	function stdTagit(){
-		return {
-			allowSpaces : true,
-			autocomplete: {
-				delay: 0
-			},
-			validate : function(label){
-				return (label.indexOf('|') === -1);
-			}
-		};
+	function _binaryJeditSelectFormat(data, descriptor){		
+		if (data.length===0){
+			return {};
+		}
+		
+		// analyze the descriptor. The descriptor is supposed to have only one property as 
+		// describe in the main comment section
+		var valuePpt,
+			labelPpt;
+		
+		for (var ppt in descriptor){
+			valuePpt = ppt;
+			labelPpt = descriptor[ppt];
+		}
+		
+		// now build the output
+		var result = {};
+		for (var i=0; i<data.length; i++){
+			var elt = data[i];
+			result[elt[valuePpt]] = elt[labelPpt];
+		}
+
+		return result;
 	}
+
+	
+	
+	/* ***************************************************************************
+	 * EXPERIMENTAL
+	 * @params
+	 *	postfunction : function(value) => xhr : a function that just posts the data and returns the xhr object(required)
+	 *	format : a string date format that datepicker understands (optional)
+	 *	locale : a locale, used for datepicker internationalization (optional);
+	 * ***************************************************************************/
+
+	function jeditableDatepicker(postfn, format, locale){
+		
+		var conf = stdJeditable();
+		
+		var datepickerconf = stdDatepicker(format, locale);
+		
+		conf.target = function(value){
+			var date = $("form input", this).datepicker("getDate");
+			var toAtom = dateutils.format(date);
+			
+			postfn(toAtom)
+			.done(function(){
+				return value;
+			})
+			.fail(function(){
+				return self.revert;
+			});
+		};
+		
+		conf.type = "datepicker";
+		conf.datepicker = datepickerconf;
+		
+		return conf;
+	}
+
+	
 
 	return {
 		getStdCkeditor : stdCkeditor,
