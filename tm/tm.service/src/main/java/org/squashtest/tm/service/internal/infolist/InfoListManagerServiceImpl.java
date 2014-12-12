@@ -28,6 +28,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.infolist.InfoList;
 import org.squashtest.tm.domain.infolist.InfoListItem;
+import org.squashtest.tm.domain.infolist.SystemInfoListCode;
 import org.squashtest.tm.service.infolist.InfoListManagerService;
 import org.squashtest.tm.service.internal.repository.InfoListDao;
 import org.squashtest.tm.service.internal.repository.InfoListItemDao;
@@ -54,8 +55,8 @@ public class InfoListManagerServiceImpl implements InfoListManagerService {
 
 	@Override
 	public void changeDescription(long infoListId, String newDescription) {
-
 		InfoList infoList = findById(infoListId);
+		SystemInfoListCode.verifyModificationPermission(infoList);
 		infoList.setDescription(newDescription);
 
 	}
@@ -63,6 +64,7 @@ public class InfoListManagerServiceImpl implements InfoListManagerService {
 	@Override
 	public void changeLabel(long infoListId, String newLabel) {
 		InfoList infoList = findById(infoListId);
+		SystemInfoListCode.verifyModificationPermission(infoList);
 		infoList.setLabel(newLabel);
 
 	}
@@ -70,6 +72,7 @@ public class InfoListManagerServiceImpl implements InfoListManagerService {
 	@Override
 	public void changeCode(long infoListId, String newCode) {
 		InfoList infoList = findById(infoListId);
+		SystemInfoListCode.verifyModificationPermission(infoList);
 		infoList.setCode(newCode);
 
 	}
@@ -82,8 +85,10 @@ public class InfoListManagerServiceImpl implements InfoListManagerService {
 
 	@Override
 	public void changeItemsPositions(long infoListId, int newIndex, List<Long> itemsIds) {
-		InfoList infoList = findById(infoListId);
 
+		InfoList infoList = findById(infoListId);
+		SystemInfoListCode.verifyModificationPermission(infoList);
+		
 		List<InfoListItem> items = infoListItemDao.findAllByIds(itemsIds);
 		for (InfoListItem item : items) {
 			infoList.removeItem(item);
@@ -98,8 +103,10 @@ public class InfoListManagerServiceImpl implements InfoListManagerService {
 	}
 
 	@Override
-	public void deleteInfoList(long infoListId) {
+	public void deleteInfoList(long infoListId) {	
+			
 		InfoList infoList = infoListDao.findById(infoListId);
+		SystemInfoListCode.verifyModificationPermission(infoList);
 		
 		infoListDao.removeInfoListFromProjects(infoListId);
 		infoListItemDao.removeInfoListItems(infoListId);
@@ -109,8 +116,8 @@ public class InfoListManagerServiceImpl implements InfoListManagerService {
 		}
 		
 		infoListDao.remove(infoList);
-		
-		
+	
 	}
+	
 
 }

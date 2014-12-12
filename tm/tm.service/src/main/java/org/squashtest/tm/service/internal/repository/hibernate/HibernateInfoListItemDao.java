@@ -24,6 +24,7 @@ import org.hibernate.Query;
 import org.springframework.stereotype.Repository;
 import org.squashtest.tm.domain.infolist.InfoListItem;
 import org.squashtest.tm.domain.infolist.ListItemReference;
+import org.squashtest.tm.domain.infolist.SystemInfoListItemCode;
 import org.squashtest.tm.domain.infolist.SystemListItem;
 import org.squashtest.tm.service.internal.repository.InfoListItemDao;
 
@@ -114,11 +115,11 @@ public class HibernateInfoListItemDao extends HibernateEntityDao<InfoListItem> i
 
 	@Override
 	public void removeInfoListItems(long infoListId) {
-		InfoListItem defaultReqCat = findById(6);
+		InfoListItem defaultReqCat =  findByCode(SystemInfoListItemCode.CAT_UNDEFINED.getCode());
 		execUpdateQuery(infoListId, "infoList.setReqCatToDefault", defaultReqCat);
-		InfoListItem defaultTcNat = findById(12);
+		InfoListItem defaultTcNat = findByCode(SystemInfoListItemCode.NAT_UNDEFINED.getCode());
 		execUpdateQuery(infoListId, "infoList.setTcNatToDefault", defaultTcNat);
-		InfoListItem defaultTcType = findById(20);
+		InfoListItem defaultTcType = findByCode(SystemInfoListItemCode.TYP_UNDEFINED.getCode());
 		execUpdateQuery(infoListId, "infoList.setTcTypeToDefault", defaultTcType);
 		
 	}
@@ -129,6 +130,25 @@ public class HibernateInfoListItemDao extends HibernateEntityDao<InfoListItem> i
 		query.setParameter("default", defaultParam);
 		query.setParameter("id", infoListId);
 		query.executeUpdate();
+		
+	}
+
+
+	@Override
+	public boolean isUsed(long infoListItemId) {
+		Query q = currentSession().getNamedQuery("infoListItem.isUsed");
+		q.setParameter("id", infoListItemId);
+		return ((Long)q.uniqueResult()>0);
+	}
+
+
+
+	@Override
+	public void removeInfoListItem(long infoListItemId, InfoListItem defaultItem) {
+
+		execUpdateQuery(infoListItemId, "infoListItem.setReqCatToDefault", defaultItem);
+		execUpdateQuery(infoListItemId, "infoListItem.setTcNatToDefault", defaultItem);
+		execUpdateQuery(infoListItemId, "infoListItem.setTcTypeToDefault", defaultItem);
 		
 	}
 

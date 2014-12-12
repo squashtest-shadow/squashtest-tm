@@ -43,6 +43,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.util.HtmlUtils;
 import org.squashtest.tm.domain.infolist.InfoList;
 import org.squashtest.tm.domain.infolist.InfoListItem;
+import org.squashtest.tm.domain.infolist.SystemInfoListCode;
 import org.squashtest.tm.domain.infolist.UserListItem;
 import org.squashtest.tm.service.infolist.InfoListItemManagerService;
 import org.squashtest.tm.service.infolist.InfoListManagerService;
@@ -67,6 +68,7 @@ public class InfoListController {
 	@RequestMapping(value = "/{infoListId}", method = RequestMethod.GET)
 	public String showInfoListModificationPage(@PathVariable Long infoListId, Model model) {
 		InfoList list = listManager.findById(infoListId);
+		SystemInfoListCode.verifyModificationPermission(list);
 		model.addAttribute("infoList", list);
 		model.addAttribute("itemListIcons", InfoListItemList.getInfoListItems());
 		LOGGER.debug("id " + list.getId());

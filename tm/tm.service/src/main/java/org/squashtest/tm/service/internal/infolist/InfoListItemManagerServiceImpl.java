@@ -21,13 +21,17 @@
 package org.squashtest.tm.service.internal.infolist;
 
 import javax.inject.Inject;
+
 import java.util.List;
+
 import org.squashtest.tm.domain.infolist.InfoList;
 import org.springframework.stereotype.Service;
 import org.squashtest.tm.service.infolist.InfoListManagerService;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.infolist.InfoListItem;
 import org.squashtest.tm.domain.infolist.ListItemReference;
+import org.squashtest.tm.domain.infolist.SystemInfoListCode;
+import org.squashtest.tm.domain.infolist.SystemInfoListItemCode;
 import org.squashtest.tm.domain.infolist.SystemListItem;
 import org.squashtest.tm.service.infolist.InfoListItemManagerService;
 import org.squashtest.tm.service.internal.repository.GenericProjectDao;
@@ -59,7 +63,9 @@ public class InfoListItemManagerServiceImpl implements InfoListItemManagerServic
 
 	@Override
 	public void changeCode(long infoListItemId, String newCode) {
+		
 		InfoListItem item = itemDao.findById(infoListItemId);
+		SystemInfoListItemCode.verifyModificationPermission(item);
 		item.setCode(newCode);
 		upgradeInfoListVersion(item.getInfoList());
 	}
@@ -67,13 +73,16 @@ public class InfoListItemManagerServiceImpl implements InfoListItemManagerServic
 	@Override
 	public void changeLabel(long infoListItemId, String newLabel) {
 		InfoListItem item = itemDao.findById(infoListItemId);
+		SystemInfoListItemCode.verifyModificationPermission(item);
 		item.setLabel(newLabel);
 		upgradeInfoListVersion(item.getInfoList());
 	}
 
 	@Override
 	public void changeDefault(long infoListItemId) {
+
 		InfoListItem changedItem = itemDao.findById(infoListItemId);
+		SystemInfoListItemCode.verifyModificationPermission(changedItem);
 		List<InfoListItem> items = changedItem.getInfoList().getItems();
 		for(InfoListItem item : items){
 			item.setDefault(false);
@@ -89,6 +98,7 @@ public class InfoListItemManagerServiceImpl implements InfoListItemManagerServic
 	@Override
 	public void changeIcon(long infoListItemId, String icon) {
 		InfoListItem item = itemDao.findById(infoListItemId);
+		SystemInfoListItemCode.verifyModificationPermission(item);
 		item.setIconName(icon);
 		upgradeInfoListVersion(item.getInfoList());
 		
@@ -97,7 +107,9 @@ public class InfoListItemManagerServiceImpl implements InfoListItemManagerServic
 
 	@Override
 	public void addInfoListItem(long infoListId, InfoListItem item) {
+
 		InfoList infoList = infoListService.findById(infoListId);
+		SystemInfoListCode.verifyModificationPermission(infoList);
 		
 		if (infoList.getItems().size() == 0) {
 			item.setDefault(true);
@@ -157,5 +169,22 @@ public class InfoListItemManagerServiceImpl implements InfoListItemManagerServic
 		return itemDao.isTypeConsistent(projectId, itemCode);
 	}
 
+	@Override
+	public boolean isUsed(long infoListItemId) {
 
+		return itemDao.isUsed(infoListItemId);
+	}
+
+	@Override
+	public void removeInfoListItem(long infoListItemId, long infoListId) {
+		InfoList infoList = infoListService.findById(infoListId);
+		InfoListItem item = findById(infoListItemId);
+		InfoListItem defaultItem = infoList.getDefaultItem();
+		infoList.removeItem(item);
+		itemDao.removeInfoListItem(infoListItemId, defaultItem);
+		itemDao.remove(item);
+	}
+
+
+	
 }

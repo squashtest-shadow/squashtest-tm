@@ -859,20 +859,17 @@ define(["jquery",
 				// find value if function
 				var value = ($.isFunction(icon.value) ) ? icon.value(row, data) : icon.value;
 				
-			
-				if (value !== ""){
-				value += " table-icon ";	
-				$cell.addClass(value);
-				} 
-				else{
-					//if there is no icon name display [None] 
-					$cell.addClass("table-icon");
-					$cell.text(translator.get("label.infoListItems.icon.none"));
-				}
+				self.drawIcon(value, $cell);
+				
 				
 			});
 		}
 		
+	}
+	
+	function _drawIcon(value, cell){
+		value += " table-icon ";	
+		cell.addClass(value);
 	}
 	
 	function _configureTooltips() {
@@ -1529,6 +1526,7 @@ define(["jquery",
 		this.enableTableDragAndDrop = _enableTableDragAndDrop;
 		this.restoreTableSelection = _restoreTableSelection;
 		this.applyFilteredStyle = _applyFilteredStyle;
+		this.drawIcon           = _drawIcon;
 		
 		this.getColumnNameByIndex = _getColumnNameByIndex;
 		this.getColumnIndexByName = _getColumnIndexByName;

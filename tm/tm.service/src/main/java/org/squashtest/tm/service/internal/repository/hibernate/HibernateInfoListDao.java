@@ -27,6 +27,7 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.stereotype.Repository;
 import org.squashtest.tm.domain.infolist.InfoList;
+import org.squashtest.tm.domain.infolist.SystemInfoListCode;
 import org.squashtest.tm.service.internal.repository.InfoListDao;
 
 
@@ -62,11 +63,11 @@ public class HibernateInfoListDao extends HibernateEntityDao<InfoList> implement
 	public void removeInfoListFromProjects(long infoListId) {
 
 		
-		InfoList defaultReqCatList = findById(1);
+		InfoList defaultReqCatList = findByCode(SystemInfoListCode.REQUIREMENT_CATEGORY.getCode());
 		execUpdateQuery(infoListId, "infoList.project.setReqCatListToDefault", defaultReqCatList);
-		InfoList defaultTcNatList = findById(2);
+		InfoList defaultTcNatList = findByCode(SystemInfoListCode.TEST_CASE_NATURE.getCode());
 		execUpdateQuery(infoListId, "infoList.project.setTcNatListToDefault", defaultTcNatList);
-		InfoList defaultTcTypeList = findById(3);
+		InfoList defaultTcTypeList = findByCode(SystemInfoListCode.TEST_CASE_TYPE.getCode());
 		execUpdateQuery(infoListId, "infoList.project.setTcTypeListToDefault", defaultTcTypeList);
 
 		

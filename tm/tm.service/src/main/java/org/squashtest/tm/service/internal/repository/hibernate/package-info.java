@@ -585,7 +585,7 @@
 		@NamedQuery(name="infoListItem.foundCategoryInProject", query="select count(item) from GenericProject p join p.requirementCategories categories join categories.items item where item.code = :itemCode and p.id = :projectId"),
 		@NamedQuery(name="infoListItem.foundNatureInProject", query="select count(item) from GenericProject p join p.testCaseNatures natures join natures.items item where item.code = :itemCode and p.id = :projectId"),
 		@NamedQuery(name="infoListItem.foundTypeInProject", query="select count(item) from GenericProject p join p.testCaseTypes types join types.items item where item.code = :itemCode and p.id = :projectId"),
-						
+		@NamedQuery(name="infoListItem.isUsed", query="select count(*) from  RequirementVersion req, TestCase tc  where req.category.id= :id or tc.nature.id = :id or tc.type.id = :id"),				
 		
 		
 		//SystemListItem
@@ -605,6 +605,13 @@
 		@NamedQuery(name="infoList.project.setReqCatListToDefault",  query="update Project p set p.requirementCategories = :default where p.requirementCategories.id = :id"),
 		@NamedQuery(name="infoList.project.setTcNatListToDefault",  query="update Project p set p.testCaseNatures = :default where p.testCaseNatures.id = :id"),
 		@NamedQuery(name="infoList.project.setTcTypeListToDefault",  query="update Project p set p.testCaseTypes = :default where p.testCaseTypes.id = :id"),
+		
+		//InfoListItem deletion
+		@NamedQuery(name="infoListItem.setReqCatToDefault", query="update RequirementVersion req set req.category = :default  where req.category.id = :id"),
+		@NamedQuery(name="infoListItem.setTcNatToDefault", query="update TestCase tc set tc.nature = :default where tc.nature.id = :id"),
+		@NamedQuery(name="infoListItem.setTcTypeToDefault", query="update TestCase tc set tc.type = :default where tc.type.id = :id"),
+		
+		 
 })
 package org.squashtest.tm.service.internal.repository.hibernate;
 

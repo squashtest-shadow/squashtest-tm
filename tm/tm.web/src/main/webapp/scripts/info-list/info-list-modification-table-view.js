@@ -19,8 +19,8 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 define(["jquery", "backbone", "underscore", "squash.basicwidgets", "jeditable.simpleJEditable",
-		"workspace.routing", "./NewInfoListItemDialog", "./IconSelectDialog", "app/ws/squashtm.notification", "jquery.squash.togglepanel", "squashtable", "jquery.squash.formdialog","jquery.squash", "jqueryui",  "jquery.squash.confirmdialog" ], function($, backbone, _, basic,
-		SimpleJEditable, routing, NewInfoListItemDialog, IconSelectDialog, notification) {
+		"workspace.routing", "./NewInfoListItemDialog", "./IconSelectDialog", "app/ws/squashtm.notification",  "squash.translator", "jquery.squash.togglepanel", "squashtable", "jquery.squash.formdialog","jquery.squash", "jqueryui",  "jquery.squash.confirmdialog" ], function($, backbone, _, basic,
+		SimpleJEditable, routing, NewInfoListItemDialog, IconSelectDialog, notification, translator) {
 
 
 	var TableView = Backbone.View.extend({
@@ -55,6 +55,17 @@ define(["jquery", "backbone", "underscore", "squash.basicwidgets", "jeditable.si
 								self.optionsTable._fnAjaxUpdate();
 							});
 						},
+						drawIcon : function(value, cell){
+							if (value !== ""){
+								value += " table-icon ";	
+								cell.addClass(value);
+								} 
+								else{
+									//if there is no icon name display [None] 
+									cell.addClass("table-icon");
+									cell.text(translator.get("label.infoListItems.icon.none"));
+								}
+						}
 					}
 
 				};

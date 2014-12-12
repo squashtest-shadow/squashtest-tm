@@ -29,5 +29,7 @@ void changeLabel(long infoListItemId, String newLabel);
 void changeDefault(long infoListItemId);
 void changeIcon(long infoListItemId, String icon);
 void addInfoListItem(long infoListId, InfoListItem item);
+boolean isUsed(long infoListItemId);
+void removeInfoListItem(long infoListItemId, long infoListId);
 
 }
