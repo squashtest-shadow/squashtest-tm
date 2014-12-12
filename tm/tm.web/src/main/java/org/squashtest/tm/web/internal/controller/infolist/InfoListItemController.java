@@ -73,20 +73,15 @@ public class InfoListItemController {
 	@RequestMapping(value = "/{infoListItemId}/isUsed", method = RequestMethod.GET)
 	@ResponseBody
 	public boolean isUsed(@PathVariable long infoListItemId) {
+		
 		return listItemManager.isUsed(infoListItemId);
 	}
-
+	
 	
 	@RequestMapping(value = "/icons", method = RequestMethod.GET)
 	@ResponseBody
 	public List<String> getInfoListIconsList() {
 		return InfoListItemList.getInfoListItems();
-	}
-
-	@RequestMapping(value = "/{infoListItemId}", method = RequestMethod.DELETE)
-	@ResponseBody
-	public void delete(@RequestParam(JEditablePostParams.VALUE) long infoListId, @PathVariable long infoListItemId) {
-		listItemManager.removeInfoListItem(infoListItemId, infoListId);
 	}
 
 }

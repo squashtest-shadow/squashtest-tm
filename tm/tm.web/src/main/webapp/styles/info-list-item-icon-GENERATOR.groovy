@@ -138,14 +138,19 @@ javaFile = new File(javaFileName)
 javaFile.append('package org.squashtest.tm.web.internal.util;\n import java.util.Arrays;\n import java.util.List;\n\n public class InfoListItemList {\n');
 javaFile.append('private static List<String> infoListItems = Arrays.asList(');
 list.each {
+	
 	def name = it.getName()
+	def nameWithOutExt = name.lastIndexOf('.').with {it != -1 ? name[0..<it] : name}
+	if ( nameWithOutExt != "noicon"){
 	javaFile.append('"')
 	javaFile.append('info-list-icon-')
-	javaFile.append(name.lastIndexOf('.').with {it != -1 ? name[0..<it] : name})
+	javaFile.append(nameWithOutExt)
 	javaFile.append('"')
 	if(it != list.last()) {
 	javaFile.append(',')
+	
  }
+	}
 	
 }	
 javaFile.append(');\n')

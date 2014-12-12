@@ -52,8 +52,8 @@ define([ "jquery", "backbone", "handlebars", "workspace.routing", "jquery.squash
 			this.$("td").removeClass("info-list-item-icon-selected");
 			this.$("td").removeClass("low-opacity");
 			
-			//if icon is selected add correc style
-			if (this.model.icon){
+			//if icon is selected add correct style
+			if (this.model.icon && this.model.icon !== "info-list-icon-noicon"){
 			this.$("td").addClass("low-opacity");
 			var selected = this.$("." + this.model.icon);
 			selected.addClass("info-list-item-icon-selected");
@@ -90,13 +90,14 @@ define([ "jquery", "backbone", "handlebars", "workspace.routing", "jquery.squash
 			
 			var self = this;
 
-			var icon = "";
+			var icon = "noicon";
 			var selected = this.$(".info-list-item-icon-selected");
 			if (selected.length > 0){
 				var classList = selected.attr('class').split(/\s+/);
 				classList.forEach(function(item, index){
-				if (item.indexOf("info-list-icon-") > -1){
-				icon = item;
+					var indx = item.indexOf("info-list-icon-");
+				if (indx  > -1){
+				icon = item.substring(indx + "info-list-icon-".length);
 				}
 				});
 			}	

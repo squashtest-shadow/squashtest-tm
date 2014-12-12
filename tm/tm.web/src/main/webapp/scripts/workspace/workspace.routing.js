@@ -129,7 +129,9 @@ define([], function(){
 		'info-list.position'                     : root + '/info-lists/{\\d+}/items/positions',
 		'info-list.items'                      : root + '/info-lists/{\\d+}/items',
 		'info-list.isUsed'                     : root +  '/info-lists/{\\d+}/isUsed',
-	
+		'info-list.defaultItem'                : root + '/info-lists/{\\d+}/defaultItem ',
+	    'info-list-item.isUsed'                : root + '/info-list-items/{\\d+}/isUsed',
+	    'info-list-item.delete'                : root + '/info-lists/{\\d+}/{\\d+}',
 		
 		// helper methods
 		buildURL : function(){

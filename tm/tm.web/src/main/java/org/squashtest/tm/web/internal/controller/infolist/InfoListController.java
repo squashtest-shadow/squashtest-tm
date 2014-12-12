@@ -141,6 +141,20 @@ public class InfoListController {
 		listManager.deleteInfoList(infoListId);
 	}
 
+	@RequestMapping(value = "/{infoListId}/defaultItem", method = RequestMethod.GET)
+	@ResponseBody
+	public long getDefaultItemId(@PathVariable long infoListId) {
+		InfoList infoList = listManager.findById(infoListId);
+		return 	infoList.getDefaultItem().getId();
+	}
+	
+	@RequestMapping(value = "/{infoListId}/{infoListItemId}", method = RequestMethod.DELETE)
+	@ResponseBody
+	public void delete(@PathVariable("infoListId") long infoListId, @PathVariable("infoListItemId") long infoListItemId) {
+		listItemManager.removeInfoListItem(infoListItemId, infoListId);
+	}
+	
+	
 	private DataTableModel buildInfoListItemTableModel(Collection<InfoListItem> data) {
 		InfoListItemDataTableModelHelper helper = new InfoListItemDataTableModelHelper();
 		Collection<Object> aaData = helper.buildRawModel(data);

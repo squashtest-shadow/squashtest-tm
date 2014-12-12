@@ -39,6 +39,7 @@ define([ 'module', "info-list/info-list-modification-information-view", "info-li
 		},
 		basicInit : function() {
 			basic.init();
+			
 		}, 
 		
 		events : {
@@ -116,7 +117,11 @@ define([ 'module', "info-list/info-list-modification-information-view", "info-li
 			
 		}, 
 		deleteInfoList : function(){
-			
+			$.ajax({
+				type : 'DELETE',
+				url : routing.buildURL("info-list.info", self.config.data.infoList.id),
+			}).done(function(data) {
+			});
 			
 		},
 		closePopup : function() {

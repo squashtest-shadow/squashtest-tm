@@ -219,6 +219,19 @@
 	</div>
 
 
+<!-- 	DELETE INFO-LIST-ITEM POPUP -->
+	<div id="delete-info-list-item-popup"
+		class="not-displayed popup-dialog" th:title="#{title.infoListItem.delete}">
+
+<span id="delete-info-list-item-warning" />
+	<span id="delete-info-list-item-popup-info-list-item-id" />
+		<div class="popup-dialog-buttonpane">
+			<input type="button" th:value="#{label.Delete}"
+				data-def="mainbtn, evt=confirm" /> <input type="button"
+				th:value="#{label.Cancel}" data-def="evt=cancel" />
+		</div>
+	</div>
+
 
 	<!-- 	RENAME ITEM POPUP -->
 	<div id="rename-info-list-item-popup"
@@ -321,6 +334,24 @@
 				th:value="#{label.Cancel}" value="cancel" />
 		</div>
 	</div>
+
+
+	<!-- 	GENERIC ERROR POPUP  -->
+     
+        <div id="generic-error-dialog" class="not-displayed popup-dialog" th:title="#{popup.title.error}">        
+          <div>
+             <div class="display-table-row">
+                <div class="display-table-cell warning-cell">
+                  <div class="generic-error-signal"></div>
+                </div>
+                <div class="generic-error-main display-table-cell" style="padding-top:20px">
+                
+                </div>
+              </div>
+          </div>        
+          <input type="button" th:value="#{label.Ok}"/>  
+        </div>
+
 
 
 	<script type="text/javascript" th:inline="javascript">

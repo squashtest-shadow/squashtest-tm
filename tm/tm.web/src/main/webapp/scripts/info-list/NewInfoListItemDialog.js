@@ -71,16 +71,17 @@ define([ "jquery", "backbone", "handlebars", "./IconSelectDialog","squash.transl
 						 $icon.removeClass(item);
 					}
 					});
-		           
-		           if (icon !== ""){
-		           $icon.addClass(icon);
+		   
+		           if (icon !== "noicon"){
+		           $icon.addClass("info-list-icon-"+ icon);
 		           $icon.text("");
 		           } 
 		           else{
 		        	   $icon.text(translator.get("label.infoListItems.icon.none"));  
 		           }
-				}
-
+					self.populateModel();
+				}		
+				
 				self.newIconDialog = new IconSelectDialog(	{
 					model : {
 					icon: this.model.icon
