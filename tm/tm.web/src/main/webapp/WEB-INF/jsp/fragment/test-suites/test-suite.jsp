@@ -156,10 +156,11 @@
         id="duplicate-test-suite-button" class="sq-btn" />
     </c:if>
   </div>
-  <div class="unsnap"></div>
+  
   <c:if test="${ moreThanReadOnly }">
     <comp:opened-object otherViewers="${ otherViewers }" objectUrl="${ testSuiteUrl }" />
   </c:if>
+  <div class="unsnap"></div>
 </div>
 
 

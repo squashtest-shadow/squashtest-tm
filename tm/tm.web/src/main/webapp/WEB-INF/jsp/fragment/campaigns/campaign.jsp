@@ -139,10 +139,11 @@
     </c:if>
 
   </div>
-  <div class="unsnap"></div>
+
   <c:if test="${ moreThanReadOnly }">
     <comp:opened-object otherViewers="${ otherViewers }" objectUrl="${ campaignUrl }" />
   </c:if>
+  <div class="unsnap"></div>
 </div>
 
 

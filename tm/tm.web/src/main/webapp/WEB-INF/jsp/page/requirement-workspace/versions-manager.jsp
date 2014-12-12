@@ -64,10 +64,11 @@
 					<input type="button" class="sq-btn" value="${backButtonLabel}" onClick="history.back();"/>	
 				</div>
 				
-				<div class="unsnap"></div>
+				
 				<authz:authorized hasRole="ROLE_ADMIN" hasPermission="WRITE" domainObject="${ requirement }">
 					<comp:opened-object otherViewers="${ otherViewers }" objectUrl="${ requirementUrl }" />
 				</authz:authorized>
+				<div class="unsnap"></div>
 			</div>
 			
 			<div id="sub-page-list-panel" class="sub-page-list-panel shadow ui-corner-all ui-helper-reset ui-widget ui-widget-content" >

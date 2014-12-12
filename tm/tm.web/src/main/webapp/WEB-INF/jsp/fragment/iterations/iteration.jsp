@@ -147,10 +147,11 @@
     </c:if>
 
   </div>
-  <div class="unsnap"></div>
+ 
   <c:if test="${ moreThanReadOnly }">
     <comp:opened-object otherViewers="${ otherViewers }" objectUrl="${ iterationUrl }" />
   </c:if>
+   <div class="unsnap"></div>
 </div>
 
 <csst:jq-tab activeContentIndex="2">

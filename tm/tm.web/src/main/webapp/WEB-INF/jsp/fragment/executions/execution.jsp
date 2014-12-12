@@ -119,10 +119,11 @@
 					id="delete-execution-button" />
 			</c:if>
 		</div>
-		<div class="unsnap"></div>
+		
     <c:if test="${ editable }">
       <comp:opened-object otherViewers="${ otherViewers }" objectUrl="${ executionUrl }" />
     </c:if>
+    <div class="unsnap"></div>
 	</div>
 
 	<%----------------------------------- Information -----------------------------------------------%>
