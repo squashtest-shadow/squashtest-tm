@@ -20,31 +20,29 @@
  */
 package org.squashtest.tm.web.internal.controller.testcase;
 
-import java.util.TimeZone;
-
 import javax.inject.Provider
 import javax.servlet.http.HttpServletRequest
 
 import org.springframework.web.servlet.ModelAndView
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting
-import org.squashtest.tm.domain.audit.AuditableMixin;
-import org.squashtest.tm.domain.infolist.InfoListItem;
+import org.squashtest.tm.domain.audit.AuditableMixin
+import org.squashtest.tm.domain.infolist.InfoListItem
 import org.squashtest.tm.domain.testcase.ActionTestStep
 import org.squashtest.tm.domain.testcase.TestCase
 import org.squashtest.tm.domain.testcase.TestCaseImportance
 import org.squashtest.tm.service.customfield.CustomFieldHelperService
 import org.squashtest.tm.service.testcase.TestCaseModificationService
 import org.squashtest.tm.web.internal.controller.generic.ServiceAwareAttachmentTableModelHelper
-import org.squashtest.tm.web.internal.helper.InternationalizableLabelFormatter;
+import org.squashtest.tm.web.internal.helper.InternationalizableLabelFormatter
 import org.squashtest.tm.web.internal.helper.LevelLabelFormatter
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper
-import org.squashtest.tm.web.internal.model.builder.InfoListComboDataBuilder;
+import org.squashtest.tm.web.internal.model.builder.JsonInfoListBuilder;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel
-import org.squashtest.tm.web.internal.model.json.JsonGeneralInfo;
+import org.squashtest.tm.web.internal.model.json.JsonGeneralInfo
 import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper
-import org.squashtest.tm.web.testutils.MockFactory;
+import org.squashtest.tm.web.testutils.MockFactory
 
 import spock.lang.Specification
 
@@ -59,7 +57,7 @@ class TestCaseModificationControllerTest extends Specification {
 	Provider<TestCaseImportanceJeditableComboDataBuilder> importanceComboBuilderProvider = Mock()
 
 
-	InfoListComboDataBuilder infoListComboDataBuilder = mockInfoListComboDataBuilder();
+	JsonInfoListBuilder infoListBuilder = mockJsonInfoListBuilder();
 
 	TestCaseStatusJeditableComboDataBuilder statusComboBuilder = Mock()
 	Provider<TestCaseStatusJeditableComboDataBuilder> statusComboBuilderProvider = Mock()
@@ -99,7 +97,7 @@ class TestCaseModificationControllerTest extends Specification {
 
 		mockCallingTestCaseService()
 
-		controller.infoListComboDataBuilder = infoListComboDataBuilder
+		controller.infoListBuilder = infoListBuilder
 	}
 
 	def mockCallingTestCaseService(){
@@ -256,9 +254,9 @@ class TestCaseModificationControllerTest extends Specification {
 		mav.modelMap['testCaseImportanceLabel'] == "takai"
 	}
 
-	def mockInfoListComboDataBuilder(){
-		def builder = Mock(InfoListComboDataBuilder)
-		builder.build(_) >> [:]
+	def mockJsonInfoListBuilder(){
+		def builder = Mock(JsonInfoListBuilder)
+		builder.toJson(_) >> [:]
 		return builder
 	}
 

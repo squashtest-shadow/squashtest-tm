@@ -234,7 +234,7 @@ publish('reload.requirement.toolbar');
 				<div class="display-table-row">
 					<label for="requirement-category" class="display-table-cell"><f:message key="requirement.category.combo.label" /></label>
 					<div class="display-table-cell">
-					<span id="requirement-icon" class="info-list-icon-${fn:toLowerCase(requirement.category.iconName)}">&nbsp &nbsp &nbsp</span>	
+					    <span id="requirement-icon" class="small-icon info-list-icon-${requirement.category.iconName}"></span>	
 						<span id="requirement-category"><s:message code="${ requirement.category.label }" text="${ requirement.category.label }" htmlEscape="true" /></span>
 					</div>				
 				</div>

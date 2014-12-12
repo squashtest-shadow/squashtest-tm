@@ -115,8 +115,8 @@ define(["module", "jquery", "app/pubsub", "squash.basicwidgets", "app/ws/squasht
      		      
  					//update icon
  					var requirement = $("#requirement-icon");
- 					requirement.attr("class", "");
- 				    requirement.addClass("info-list-icon-" + icon);
+ 					requirement.attr("class", "");	//reset
+ 				    requirement.addClass("small-icon info-list-icon-" + icon);
  					
  				    //in the mean time, must return immediately
  					return settings.data[value];

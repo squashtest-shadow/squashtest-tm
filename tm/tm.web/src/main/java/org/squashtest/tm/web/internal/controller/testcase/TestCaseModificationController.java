@@ -65,7 +65,6 @@ import org.squashtest.tm.domain.customfield.RenderingLocation;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.infolist.InfoList;
 import org.squashtest.tm.domain.infolist.InfoListItem;
-import org.squashtest.tm.domain.infolist.ListItemReference;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.testcase.ActionTestStep;
 import org.squashtest.tm.domain.testcase.CallTestStep;
@@ -99,7 +98,7 @@ import org.squashtest.tm.web.internal.helper.JsonHelper;
 import org.squashtest.tm.web.internal.helper.LevelLabelFormatter;
 import org.squashtest.tm.web.internal.http.ContentTypes;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
-import org.squashtest.tm.web.internal.model.builder.InfoListComboDataBuilder;
+import org.squashtest.tm.web.internal.model.builder.JsonInfoListBuilder;
 import org.squashtest.tm.web.internal.model.combo.OptionTag;
 import org.squashtest.tm.web.internal.model.customfield.CustomFieldJsonConverter;
 import org.squashtest.tm.web.internal.model.customfield.CustomFieldModel;
@@ -110,6 +109,7 @@ import org.squashtest.tm.web.internal.model.datatable.DataTableSorting;
 import org.squashtest.tm.web.internal.model.jquery.RenameModel;
 import org.squashtest.tm.web.internal.model.json.JsonEnumValue;
 import org.squashtest.tm.web.internal.model.json.JsonGeneralInfo;
+import org.squashtest.tm.web.internal.model.json.JsonInfoList;
 import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
 import org.squashtest.tm.web.internal.model.viewmapper.NameBasedMapper;
 
@@ -188,8 +188,7 @@ public class TestCaseModificationController {
 	private Provider<InternationalizableLabelFormatter> labelFormatter;
 
 	@Inject
-	private InfoListComboDataBuilder infoListComboDataBuilder;
-
+	private JsonInfoListBuilder infoListBuilder;
 
 
 	/**
@@ -245,10 +244,8 @@ public class TestCaseModificationController {
 		mav.addObject("executionModes", executionModes);
 		mav.addObject("testCaseImportanceComboJson", buildImportanceComboData(locale));
 		mav.addObject("testCaseImportanceLabel", formatImportance(testCase.getImportance(), locale));
-		mav.addObject("testCaseNatureComboJson", buildNatureComboData(testCase.getId()));
-		mav.addObject("testCaseNatureLabel", formatInfoItem(testCase.getNature(), locale));
-		mav.addObject("testCaseTypeComboJson", buildTypeComboData(testCase.getId()));
-		mav.addObject("testCaseTypeLabel", formatInfoItem(testCase.getType(), locale));
+		mav.addObject("testCaseNatures", buildNatureComboData(testCase.getId()));
+		mav.addObject("testCaseTypes", buildTypeComboData(testCase.getId()));
 		mav.addObject("testCaseStatusComboJson", buildStatusComboData(locale));
 		mav.addObject("testCaseStatusLabel", formatStatus(testCase.getStatus(), locale));
 		mav.addObject("attachmentsModel", attachmentHelper.findPagedAttachments(testCase));
@@ -264,20 +261,16 @@ public class TestCaseModificationController {
 
 	@RequestMapping(value = "/nature-combo-data", method = RequestMethod.GET)
 	@ResponseBody
-	public String buildNatureComboData(@PathVariable("testCaseId") Long testCaseId) {
+	public JsonInfoList buildNatureComboData(@PathVariable("testCaseId") Long testCaseId) {
 		TestCase testCase = testCaseModificationService.findById(testCaseId);
-		InfoList natures = testCase.getProject().getTestCaseNatures();
-		Map<String, String> comboData = infoListComboDataBuilder.build(natures);
-		return JsonHelper.serialize(comboData);
+		return infoListBuilder.toJson(testCase.getProject().getTestCaseNatures());
 	}
 
 	@RequestMapping(value = "/type-combo-data", method = RequestMethod.GET)
 	@ResponseBody
-	public String buildTypeComboData(@PathVariable("testCaseId") Long testCaseId) {
+	public JsonInfoList buildTypeComboData(@PathVariable("testCaseId") Long testCaseId) {
 		TestCase testCase = testCaseModificationService.findById(testCaseId);
-		InfoList types = testCase.getProject().getTestCaseTypes();
-		Map<String, String> comboData = infoListComboDataBuilder.build(types);
-		return JsonHelper.serialize(comboData);
+		return infoListBuilder.toJson(testCase.getProject().getTestCaseTypes());
 	}
 
 	@RequestMapping(value = "/status-combo-data", method = RequestMethod.GET)

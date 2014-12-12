@@ -321,7 +321,7 @@ th.width-tenperc, td.width-tenperc {
 /*********************** various icons *****************/
 
 
-.table-icon, .icon-entity{
+.table-icon, .icon-entity, .small-icon{
 	width : 16px;
 	height : 16px;
 	background-repeat : no-repeat;

@@ -42,7 +42,7 @@ import org.squashtest.tm.web.internal.helper.InternationalizableLabelFormatter
 import org.squashtest.tm.web.internal.helper.LabelFormatter
 import org.squashtest.tm.web.internal.helper.LevelLabelFormatter
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper
-import org.squashtest.tm.web.internal.model.builder.InfoListComboDataBuilder
+import org.squashtest.tm.web.internal.model.builder.JsonInfoListBuilder;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel
 import org.squashtest.tm.web.testutils.MockFactory;
 
@@ -57,7 +57,7 @@ class RequirementModificationControllerTest extends Specification {
 	LabelFormatter internationalformatter = new InternationalizableLabelFormatter(i18nHelper)
 	Provider criticalityBuilderProvider = criticalityBuilderProvider()
 
-	InfoListComboDataBuilder infoListComboDataBuilder = mockInfoListComboDataBuilder();
+	JsonInfoListBuilder infoListBuilder = mockJsonInfoListBuilder();
 	Provider statusBuilderProvider = statusBuilderProvider()
 	Provider levelFormatterProvider = levelFormatterProvider()
 	Provider internationalFormatterProvider = internationalFormatterProvider()
@@ -77,7 +77,7 @@ class RequirementModificationControllerTest extends Specification {
 		controller.verifyingTestCaseManager = verifTCService
 		controller.attachmentsHelper = attachmentsHelper
 		controller.auditTrailService = auditTrailService;
-		controller.infoListComboDataBuilder = infoListComboDataBuilder
+		controller.infoListBuilder = infoListBuilder
 
 		mockAuditTrailService()
 	}
@@ -100,9 +100,9 @@ class RequirementModificationControllerTest extends Specification {
 		return provider
 	}
 
-	def mockInfoListComboDataBuilder(){
-		def builder = Mock(InfoListComboDataBuilder)
-		builder.build(_) >> [:]
+	def mockJsonInfoListBuilder(){
+		def builder = Mock(JsonInfoListBuilder)
+		builder.toJson(_) >> [:]
 		return builder
 	}
 

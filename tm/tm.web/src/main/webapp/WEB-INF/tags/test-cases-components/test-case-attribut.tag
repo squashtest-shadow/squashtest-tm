@@ -26,6 +26,7 @@
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component"%>
 <%@ taglib prefix="tc" tagdir="/WEB-INF/tags/test-cases-components"%>
+<%@ taglib prefix="s" uri="http://www.springframework.org/tags" %>
 
 
 <%@ attribute name="testCase" required="true" type="java.lang.Object"  description="the testcase" %>
@@ -45,7 +46,7 @@
 <div class="display-table-row">
 			<label for="test-case-importance" class="display-table-cell"><f:message key="test-case.importance.combo.label" /></label>
 			<div class="display-table-cell">
-			<span id="test-case-importance-icon" class="test-case-importance-${testCase.importance}">&nbsp </span>	<span id="test-case-importance">${testCaseImportanceLabel}</span>
+			<span id="test-case-importance-icon" class="small-icon test-case-importance-${testCase.importance}"  style="width : 8px;"></span>	<span id="test-case-importance">${testCaseImportanceLabel}</span>
 				<c:if test="${ writable }">
 					<comp:select-jeditable-auto associatedSelectJeditableId="test-case-importance" />
 				</c:if>
@@ -55,7 +56,8 @@
 		<div class="display-table-row">
 			<label for="test-case-nature" class="display-table-cell"><f:message key="test-case.nature.combo.label" /></label>
 			<div class="display-table-cell">
-				<span id="test-case-nature">${ testCaseNatureLabel }</span>
+			  <span id="test-case-nature-icon" class="small-icon info-list-icon-${testCase.nature.iconName}"></span>  
+              <span id="test-case-nature"><s:message code="${testCase.nature.label}" text="${testCase.nature.label}" htmlEscape="true"/></span>
 			</div>
 		</div>
 		
@@ -64,7 +66,8 @@
 				<f:message key="test-case.type.combo.label" />
 			</label>
 			<div class="display-table-cell">
-				<span id="test-case-type">${ testCaseTypeLabel }</span>
+			  <span id="test-case-type-icon" class="small-icon  info-list-icon-testCase.type.iconName}"></span>  
+              <span id="test-case-type"><s:message code="${testCase.type.label}" text="${testCase.type.label}" htmlEscape="true"/></span>
 			</div>
 		</div>
 		
