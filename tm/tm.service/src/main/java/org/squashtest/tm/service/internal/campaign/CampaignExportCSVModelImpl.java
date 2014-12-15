@@ -270,8 +270,8 @@ public class CampaignExportCSVModelImpl implements WritableCampaignCSVModel {
 			dataCells.add(new CellImpl(formatDate(itp.getLastExecutedOn())));
 			dataCells.add(new CellImpl(formatLongText(testCase.getDescription())));
 			dataCells.add(new CellImpl(testCase.getReference()));
-			dataCells.add(new CellImpl(testCase.getNature().toString()));
-			dataCells.add(new CellImpl(testCase.getType().toString()));
+			dataCells.add(new CellImpl(testCase.getNature().getCode()));
+			dataCells.add(new CellImpl(testCase.getType().getCode()));
 			dataCells.add(new CellImpl(testCase.getStatus().toString()));
 			dataCells.add(new CellImpl(formatLongText(testCase.getPrerequisite())));
 

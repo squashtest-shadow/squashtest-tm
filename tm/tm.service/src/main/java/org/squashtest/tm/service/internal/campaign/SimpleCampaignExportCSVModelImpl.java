@@ -193,7 +193,7 @@ public class SimpleCampaignExportCSVModelImpl implements WritableCampaignCSVMode
 		for (CustomField cufModel : iterCUFModel) {
 			headerCells.add(new CellImpl("IT_CUF_" + cufModel.getCode()));
 		}
-		
+
 		// test case custom fields
 		for (CustomField cufModel : tcCUFModel) {
 			headerCells.add(new CellImpl("TC_CUF_" + cufModel.getCode()));
@@ -250,7 +250,7 @@ public class SimpleCampaignExportCSVModelImpl implements WritableCampaignCSVMode
 
 			// custom fields
 			populateCustomFields(dataCells);
-			
+
 			// move to the next occurence
 			moveNext();
 
@@ -267,22 +267,22 @@ public class SimpleCampaignExportCSVModelImpl implements WritableCampaignCSVMode
 				String strValue = getValue(cValues, model);
 				dataCells.add(new CellImpl(strValue));
 			}
-			
+
 			Collection<CustomFieldValue> iValues = (Collection<CustomFieldValue>) iterCUFValues.get(iteration.getId());
 			for (CustomField model : iterCUFModel) {
 				String strValue = getValue(iValues, model);
 				dataCells.add(new CellImpl(strValue));
 			}
-			
+
 			TestCase testCase = itp.getReferencedTestCase();
-			
+
 			Collection<CustomFieldValue> tcValues = (Collection<CustomFieldValue>) tcCUFValues.get(testCase.getId());
 			for (CustomField model : tcCUFModel) {
 				String strValue = getValue(tcValues, model);
 				dataCells.add(new CellImpl(strValue));
 			}
 		}
-		
+
 		private void populateTestCaseRowData(List<CellImpl> dataCells) {
 
 			TestCase testCase = itp.getReferencedTestCase();
@@ -299,13 +299,13 @@ public class SimpleCampaignExportCSVModelImpl implements WritableCampaignCSVMode
 			dataCells.add(new CellImpl(formatUser(itp.getUser())));
 			dataCells.add(new CellImpl(formatDate(itp.getLastExecutedOn())));
 			dataCells.add(new CellImpl(testCase.getReference()));
-			dataCells.add(new CellImpl(testCase.getNature().toString()));
-			dataCells.add(new CellImpl(testCase.getType().toString()));
+			dataCells.add(new CellImpl(testCase.getNature().getCode()));
+			dataCells.add(new CellImpl(testCase.getType().getCode()));
 			dataCells.add(new CellImpl(testCase.getStatus().toString()));
 		}
 
 		private void populateIterationRowData(List<CellImpl> dataCells) {
-			
+
 			dataCells.add(new CellImpl(iteration.getId().toString()));
 			dataCells.add(new CellImpl(Integer.toString(iterIndex + 1)));
 			dataCells.add(new CellImpl(iteration.getName()));

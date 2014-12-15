@@ -59,9 +59,9 @@ import org.squashtest.tm.service.customfield.DenormalizedFieldHelper;
  * omg the amount of data processed here can become huge quickly and holding the whole model in memory might not be workable anymore in the future.
  * I suggest a more low level implementation using specific services, instead of being lazy like here :
  * 
- * - using hibernate cursors to maintain the size of the cache to an acceptable level, 
- * - iterate over the execution steps directly instead of the clumsy iterator mechanics, 
- * - The datacells should return data only when requested 
+ * - using hibernate cursors to maintain the size of the cache to an acceptable level,
+ * - iterate over the execution steps directly instead of the clumsy iterator mechanics,
+ * - The datacells should return data only when requested
  * - fetch the number of issues for itp and test steps more efficiently !!
  * 
  */
@@ -70,7 +70,7 @@ import org.squashtest.tm.service.customfield.DenormalizedFieldHelper;
 public class CampaignExportCSVFullModelImpl implements WritableCampaignCSVModel {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(CampaignExportCSVModel.class);
-	
+
 	@Inject
 	private CustomFieldHelperService cufHelperService;
 
@@ -89,7 +89,7 @@ public class CampaignExportCSVFullModelImpl implements WritableCampaignCSVModel 
 	private List<CustomFieldValue> campCUFValues;
 	private MultiValueMap iterCUFValues; // <Long, Collection<CustomFieldValue>>
 	private MultiValueMap tcCUFValues; // same here
-	private MultiValueMap esCUFValues; //same here 
+	private MultiValueMap esCUFValues; //same here
 
 	private int nbColumns;
 	private int nbRows;
@@ -116,7 +116,7 @@ public class CampaignExportCSVFullModelImpl implements WritableCampaignCSVModel 
 	}
 
 	private void initCustomFields() {
-		
+
 		LOGGER.info("campaign full export : processing model");
 
 		List<Iteration> iterations = campaign.getIterations();
@@ -143,12 +143,12 @@ public class CampaignExportCSVFullModelImpl implements WritableCampaignCSVModel 
 		DenormalizedFieldHelper<ExecutionStep> esHelper = cufHelperService.newDenormalizedHelper(allExecSteps);
 		esCUFModel = esHelper.getCustomFieldConfiguration();
 		List<DenormalizedFieldValue> esValues = esHelper.getDenormalizedFieldValues();
-		
+
 		nbColumns = 35 + campCUFModel.size() + iterCUFModel.size() + tcCUFModel.size() + esCUFModel.size();
 
 		// index the custom field values with a map for faster reference later
 		createCustomFieldValuesIndex(iterValues, tcValues, esValues);
-		
+
 
 		LOGGER.info("campaign full export : model processed");
 
@@ -170,8 +170,8 @@ public class CampaignExportCSVFullModelImpl implements WritableCampaignCSVModel 
 			}
 		}
 	}
-	
-	
+
+
 	private List<ExecutionStep> collectLatestExecutionStep(List<Iteration> iterations){
 		List<ExecutionStep> execSteps = new ArrayList<ExecutionStep>();
 		for (Iteration iteration : iterations){
@@ -183,7 +183,7 @@ public class CampaignExportCSVFullModelImpl implements WritableCampaignCSVModel 
 		}
 		return execSteps;
 	}
-	
+
 
 	private void createCustomFieldValuesIndex(List<CustomFieldValue> iterValues, List<CustomFieldValue> tcValues, List<DenormalizedFieldValue> esValues) {
 
@@ -198,7 +198,7 @@ public class CampaignExportCSVFullModelImpl implements WritableCampaignCSVModel 
 		for (CustomFieldValue value : tcValues) {
 			tcCUFValues.put(value.getBoundEntityId(), value);
 		}
-		
+
 		for (DenormalizedFieldValue value : esValues){
 			esCUFValues.put(value.getDenormalizedFieldHolderId(), value);
 		}
@@ -242,7 +242,7 @@ public class CampaignExportCSVFullModelImpl implements WritableCampaignCSVModel 
 		headerCells.add(new CellImpl("TC_NATURE"));
 		headerCells.add(new CellImpl("TC_TYPE"));
 		headerCells.add(new CellImpl("TC_STATUS"));
-		
+
 		//test step fixed fields (8)
 		headerCells.add(new CellImpl("STEP_ID"));
 		headerCells.add(new CellImpl("STEP_NUM"));
@@ -251,21 +251,21 @@ public class CampaignExportCSVFullModelImpl implements WritableCampaignCSVModel 
 		headerCells.add(new CellImpl("EXEC_STEP_DATE"));
 		headerCells.add(new CellImpl("EXEC_STEP_USER"));
 		headerCells.add(new CellImpl("EXEC_STEP_#_ISSUES"));
-		headerCells.add(new CellImpl("EXEC_STEP_COMMENT"));		
-		
+		headerCells.add(new CellImpl("EXEC_STEP_COMMENT"));
+
 		// campaign custom fields
 		for (CustomField cufModel : campCUFModel) {
 			headerCells.add(new CellImpl("CPG_CUF_" + cufModel.getCode()));
 		}
 
-	
-		
+
+
 		// iteration custom fields
 		for (CustomField cufModel : iterCUFModel) {
 			headerCells.add(new CellImpl("IT_CUF_" + cufModel.getCode()));
 		}
 
-		
+
 		// test case custom fields
 		for (CustomField cufModel : tcCUFModel) {
 			headerCells.add(new CellImpl("TC_CUF_" + cufModel.getCode()));
@@ -275,7 +275,7 @@ public class CampaignExportCSVFullModelImpl implements WritableCampaignCSVModel 
 		for (CustomField cufModel : esCUFModel){
 			headerCells.add(new CellImpl("STEP_CUF_" + cufModel.getCode()));
 		}
-		
+
 		return new RowImpl(headerCells);
 
 	}
@@ -287,30 +287,30 @@ public class CampaignExportCSVFullModelImpl implements WritableCampaignCSVModel 
 	// ********************************** nested classes ********************************************
 
 	private class DataIterator implements Iterator<Row> {
-		
+
 		private static final String N_A = "n/a";
 		//initial state : null is a meaningful value here.
-		private Iteration iteration = null;  
+		private Iteration iteration = null;
 		private IterationTestPlanItem itp = null;
-		private ExecutionStep execStep = null;		
+		private ExecutionStep execStep = null;
 		private ActionTestStep actionTestStep = null;
-		
+
 		private int iterIndex = -1;
 		private int itpIndex = 	-1;
 		private int stepIndex = -1;
 		private int actionTestStepIndex = -1;
-		
+
 		private boolean globalHasNext = true;
-		
+
 		private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-		
+
 		// ** caching **
 		// slight optimization, but will not make up for the need for refactoring (see comments on top)
-		
+
 		private List<CellImpl> cachedItpcellFixed = new ArrayList<CellImpl>(16);
 		private List<CellImpl> cachedItpcellCuf = new ArrayList<CellImpl>(iterCUFModel.size());
 		private boolean cachedItpcellReady = false;
-		
+
 		private int logcount=0;
 
 		public DataIterator() {
@@ -321,8 +321,8 @@ public class CampaignExportCSVFullModelImpl implements WritableCampaignCSVModel 
 		}
 
 		// ************************************** model population ******************************
-		
-		
+
+
 		// See getHeader() for reference
 		@Override
 		public Row next() {
@@ -340,22 +340,22 @@ public class CampaignExportCSVFullModelImpl implements WritableCampaignCSVModel 
 
 			//the step
 			populateTestStepFixedRowData(dataCells);
-			
+
 			//the campaign custom fields
-			populateCampaignCUFRowData(dataCells);			
-			
+			populateCampaignCUFRowData(dataCells);
+
 			//the iteration custom fields
-			populateIterationCUFRowData(dataCells);			
-			
+			populateIterationCUFRowData(dataCells);
+
 			//the test case custom fields
 			populateTestCaseCUFRowData(dataCells);
-			
+
 			//the execution steps custom fields
 			populateExecutionStepCUFRowData(dataCells);
-			
+
 			// move to the next occurence
 			moveToNextStep();
-			
+
 			// for logging purposes
 			logcount++;
 			if (logcount % 99 == 0){
@@ -365,12 +365,12 @@ public class CampaignExportCSVFullModelImpl implements WritableCampaignCSVModel 
 			return new RowImpl(dataCells);
 
 		}
-		
+
 		@SuppressWarnings("unchecked")
 		private void populateExecutionStepCUFRowData(List<CellImpl> dataCells){
 			ExecutionStep eStep = execStep;
 			if (eStep != null){
-			
+
 				Collection<DenormalizedFieldValue> esValues = (Collection<DenormalizedFieldValue>) esCUFValues.get(execStep.getId());
 				for (CustomField model : esCUFModel){
 					String strValue = getDenormalizedValue(esValues, model);
@@ -378,29 +378,29 @@ public class CampaignExportCSVFullModelImpl implements WritableCampaignCSVModel 
 				}
 			}
 		}
-		
+
 		@SuppressWarnings("unchecked")
 		private void populateTestCaseCUFRowData(List<CellImpl> dataCells){
-			
+
 			if (cachedItpcellReady){
 				dataCells.addAll(cachedItpcellCuf);
 			}
 			else{
 				TestCase testCase = itp.getReferencedTestCase();
-				
+
 				Collection<CustomFieldValue> tcValues = (Collection<CustomFieldValue>) tcCUFValues.get(testCase.getId());
-				
+
 				for (CustomField model : tcCUFModel) {
 					String strValue = getValue(tcValues, model);
 					CellImpl cell = new CellImpl(strValue);
 					dataCells.add(cell);
 					cachedItpcellCuf.add(cell);
-				}				
+				}
 				cachedItpcellReady = true;
 			}
 		}
-		
-		
+
+
 		@SuppressWarnings("unchecked")
 		private void populateIterationCUFRowData(List<CellImpl> dataCells){
 			Collection<CustomFieldValue> iValues = (Collection<CustomFieldValue>) iterCUFValues.get(iteration.getId());
@@ -409,9 +409,9 @@ public class CampaignExportCSVFullModelImpl implements WritableCampaignCSVModel 
 				dataCells.add(new CellImpl(strValue));
 			}
 		}
-		
-		
-		
+
+
+
 		private void populateCampaignCUFRowData(List<CellImpl> dataCells){
 			List<CustomFieldValue> cValues = campCUFValues;
 			// ensure that the CUF values are processed in the correct order
@@ -420,10 +420,10 @@ public class CampaignExportCSVFullModelImpl implements WritableCampaignCSVModel 
 				dataCells.add(new CellImpl(strValue));
 			}
 		}
-		
-		
+
+
 		private void populateTestStepFixedRowData(List<CellImpl> dataCells){
-			
+
 			if(execStep == null && actionTestStep != null){
 				dataCells.add(new CellImpl(N_A));
 				dataCells.add(new CellImpl(""+(actionTestStepIndex+1)));
@@ -433,8 +433,8 @@ public class CampaignExportCSVFullModelImpl implements WritableCampaignCSVModel 
 				dataCells.add(new CellImpl(N_A));
 				dataCells.add(new CellImpl(N_A));
 				dataCells.add(new CellImpl(N_A));
-			} 
-			
+			}
+
 			if(execStep != null){
 				dataCells.add(new CellImpl(Long.toString(execStep.getId())));
 				dataCells.add(new CellImpl(""+(stepIndex+1)));
@@ -446,11 +446,11 @@ public class CampaignExportCSVFullModelImpl implements WritableCampaignCSVModel 
 				dataCells.add(new CellImpl(formatLongText(execStep.getComment())));
 			}
 		}
-		
+
 		private String formatLongText(String text) {
 			return (text == null) ? "" : text.trim();
 		}
-		
+
 		private int getNbIssues(ExecutionStep execStep) {
 
 			return bugTrackerService.findNumberOfIssueForExecutionStep(execStep.getId());
@@ -462,7 +462,7 @@ public class CampaignExportCSVFullModelImpl implements WritableCampaignCSVModel 
 				dataCells.addAll(cachedItpcellFixed);
 			}
 			else{
-				
+
 				TestCase testCase = itp.getReferencedTestCase();
 
 				cachedItpcellFixed.add(new CellImpl(testCase.getId().toString()));
@@ -471,31 +471,31 @@ public class CampaignExportCSVFullModelImpl implements WritableCampaignCSVModel 
 				cachedItpcellFixed.add(new CellImpl(testCase.getProject().getName()));
 				cachedItpcellFixed.add(new CellImpl(testCase.getImportance().toString()));
 				cachedItpcellFixed.add(new CellImpl(itp.getTestSuiteNames().replace(", ",",").replace("<", "&lt;").replace(">", "&gt;")));
-				
+
 				cachedItpcellFixed.add(new CellImpl(Integer.toString(itp.getExecutions().size())));
 				cachedItpcellFixed.add(new CellImpl(Integer.toString(testCase.getRequirementVersionCoverages().size())));
-				cachedItpcellFixed.add(new CellImpl(Integer.toString(getNbIssues(itp))));		
-				
+				cachedItpcellFixed.add(new CellImpl(Integer.toString(getNbIssues(itp))));
+
 				cachedItpcellFixed.add(new CellImpl(itp.getExecutionStatus().toString()));
 				cachedItpcellFixed.add(new CellImpl(formatUser(itp.getUser())));
 				cachedItpcellFixed.add(new CellImpl(formatDate(itp.getLastExecutedOn())));
 
 				cachedItpcellFixed.add(new CellImpl(testCase.getReference()));
-				cachedItpcellFixed.add(new CellImpl(testCase.getNature().toString()));
-				cachedItpcellFixed.add(new CellImpl(testCase.getType().toString()));
+				cachedItpcellFixed.add(new CellImpl(testCase.getNature().getCode()));
+				cachedItpcellFixed.add(new CellImpl(testCase.getType().getCode()));
 				cachedItpcellFixed.add(new CellImpl(testCase.getStatus().toString()));
 
 				dataCells.addAll(cachedItpcellFixed);
-				
+
 			}
 
 
 
 		}
 
-		
+
 		private void populateIterationFixedRowData(List<CellImpl> dataCells) {
-			
+
 			dataCells.add(new CellImpl(iteration.getId().toString()));
 			dataCells.add(new CellImpl("" + (iterIndex + 1)));
 			dataCells.add(new CellImpl(iteration.getName()));
@@ -507,12 +507,12 @@ public class CampaignExportCSVFullModelImpl implements WritableCampaignCSVModel 
 		}
 
 		private void populateCampaignFixedRowData(List<CellImpl> dataCells) {
-			
+
 			dataCells.add(new CellImpl(formatDate(campaign.getScheduledStartDate())));
 			dataCells.add(new CellImpl(formatDate(campaign.getScheduledEndDate())));
 			dataCells.add(new CellImpl(formatDate(campaign.getActualStartDate())));
 			dataCells.add(new CellImpl(formatDate(campaign.getActualEndDate())));
-			
+
 		}
 
 		@Override
@@ -535,7 +535,7 @@ public class CampaignExportCSVFullModelImpl implements WritableCampaignCSVModel 
 
 			return "";
 		}
-		
+
 		private String getDenormalizedValue(Collection<DenormalizedFieldValue> values, CustomField model) {
 
 			if(values != null){
@@ -565,36 +565,36 @@ public class CampaignExportCSVFullModelImpl implements WritableCampaignCSVModel 
 			return (user == null) ? "" : user.getLogin();
 
 		}
-		
+
 		private String formatUser(String username){
 			return (username == null ) ? "" : username;
 		}
-		
+
 		private String formatStepRequirements(){
 			String res;
 			try{
 				if (execStep != null && execStep.getReferencedTestStep() != null){
-					/* should fix the mapping of execution steps -> action step : an execution 
-					 * step cannot reference a call step by design. For now we'll just downcast 
+					/* should fix the mapping of execution steps -> action step : an execution
+					 * step cannot reference a call step by design. For now we'll just downcast
 					 * the TestStep instance.
 					 */
-					ActionTestStep aStep = (ActionTestStep)execStep.getReferencedTestStep(); 
+					ActionTestStep aStep = (ActionTestStep)execStep.getReferencedTestStep();
 					res = Integer.toString(aStep.getRequirementVersionCoverages().size());
 				}
 				else if(actionTestStep != null){
-						
+
 					res = Integer.toString(actionTestStep.getRequirementVersionCoverages().size());
-						
-				} 
+
+				}
 				else {
 					res = "?";
 				}
-				
-			}			
+
+			}
 			catch(NullPointerException npe){
 				res = "?";
 			}
-			
+
 			return res;
 		}
 
@@ -604,13 +604,13 @@ public class CampaignExportCSVFullModelImpl implements WritableCampaignCSVModel 
 		public boolean hasNext() {
 			return globalHasNext;
 		}
-		
-		
+
+
 		private void moveToNextStep(){
-			
+
 			boolean foundNextStep = false;
 			boolean nextTCSucc;
-			
+
 			do{
 				// test if we must move to the next test case
 				if (execStep == null && actionTestStep == null){
@@ -618,21 +618,21 @@ public class CampaignExportCSVFullModelImpl implements WritableCampaignCSVModel 
 					if (! nextTCSucc) {
 						//that was the last test case and we cannot iterate further more : we break the loop forcibly
 						globalHasNext = false;
-						return;	
+						return;
 					}else{
 						resetCachedItpcell();
 						resetStepIndex();
 						resetActionTestStepIndex();
 					}
 				}
-				
+
 				// find a suitable execution step
 				if(itp.getLatestExecution() != null){
 					List<ExecutionStep> steps = itp.getLatestExecution().getSteps();
-					
+
 					int stepsSize = steps.size();
 					stepIndex++;
-					
+
 					if (stepIndex < stepsSize){
 						execStep = steps.get(stepIndex);
 						actionTestStep = null;
@@ -642,14 +642,14 @@ public class CampaignExportCSVFullModelImpl implements WritableCampaignCSVModel 
 						execStep = null;
 						actionTestStep = null;
 					}
-					
+
 				} else {
 					TestCase testCase = itp.getReferencedTestCase();
 					List<ActionTestStep> actiontestSteps = getActionTestStepList(testCase);
-					
+
 					int actionTestStepSize = actiontestSteps.size();
 					actionTestStepIndex++;
-		
+
 					if (actionTestStepIndex < actionTestStepSize){
 						actionTestStep = actiontestSteps.get(actionTestStepIndex);
 						execStep = null;
@@ -659,30 +659,30 @@ public class CampaignExportCSVFullModelImpl implements WritableCampaignCSVModel 
 						execStep = null;
 						actionTestStep = null;
 					}
-					
+
 					execStep = null;
 				}
-	
+
 			}while(! foundNextStep);
-			
+
 		}
 
-	
+
 		private List<ActionTestStep> getActionTestStepList(TestCase testCase){
-			
+
 			List<ActionTestStep> result = new ArrayList<ActionTestStep>();
 			List<TestStep> steps = testCase.getSteps();
-			
+
 			result.addAll(getActionTestStepListRec(steps));
-			
+
 			return result;
 		}
-		
+
 		private List<ActionTestStep> getActionTestStepListRec(List<TestStep> steps){
-			
+
 			List<ActionTestStep> result = new ArrayList<ActionTestStep>();
 			TestStepExaminer examiner = new TestStepExaminer();
-			
+
 			for(TestStep step : steps){
 				step.accept(examiner);
 				if(examiner.isActionStep()){
@@ -693,14 +693,14 @@ public class CampaignExportCSVFullModelImpl implements WritableCampaignCSVModel 
 					result.addAll(getActionTestStepList(testCase));
 				}
 			}
-			
+
 			return result;
 		}
 
 		private final class TestStepExaminer implements TestStepVisitor {
 
 			private boolean isActionStep;
-		
+
 
 			public boolean isActionStep() {
 				return isActionStep;
@@ -716,32 +716,32 @@ public class CampaignExportCSVFullModelImpl implements WritableCampaignCSVModel 
 				this.isActionStep = false;
 			}
 		}
-		
-		
+
+
 		private boolean moveToNextTestCase(){
-			
+
 			boolean foundNextTC = false;
 			boolean nextIterSucc;
-			
+
 			do{
 				// test if we must move to the next iteration
 				if (itp == null){
 					nextIterSucc = moveToNextIteration();
 					if (! nextIterSucc) {
-						return false;	
+						return false;
 					}else{
 						resetTCIndex();
 					}
 				}
-				
+
 				// find a suitable execution step
 				List<IterationTestPlanItem> items = iteration.getTestPlans();
 				int itemSize = items.size();
 				itpIndex++;
-				
+
 				//see if we reached the end of the collection
 				if (itpIndex >= itemSize){
-					itp = null;	
+					itp = null;
 					foundNextTC = false;
 				}
 				//check that the test case wasn't deleted
@@ -752,30 +752,30 @@ public class CampaignExportCSVFullModelImpl implements WritableCampaignCSVModel 
 					itp = items.get(itpIndex);
 					foundNextTC = true;
 				}
-				
+
 			}while(! foundNextTC);
-			
+
 			return foundNextTC;
 		}
-		
+
 		private boolean moveToNextIteration(){
-			
+
 			boolean foundIter=false;
 			iterIndex++;
-			
+
 			List<Iteration> iterations = campaign.getIterations();
 			int iterSize = iterations.size();
-			
+
 			if (iterIndex < iterSize){
 				iteration = iterations.get(iterIndex);
 				foundIter = true;
 			}
-			
+
 			return foundIter;
-				
+
 		}
 
-		
+
 		private void resetStepIndex(){
 			stepIndex = -1;
 		}
@@ -783,11 +783,11 @@ public class CampaignExportCSVFullModelImpl implements WritableCampaignCSVModel 
 		private void resetActionTestStepIndex(){
 			actionTestStepIndex = -1;
 		}
-		
+
 		private void resetTCIndex(){
 			itpIndex = -1;
 		}
-		
+
 		private void resetCachedItpcell(){
 			cachedItpcellFixed.clear();
 			cachedItpcellCuf.clear();
@@ -795,8 +795,8 @@ public class CampaignExportCSVFullModelImpl implements WritableCampaignCSVModel 
 		}
 
 	}
-	
-	
+
+
 	// ******************** implementation for the rows and cells **********************
 
 	public static class CellImpl implements Cell {
