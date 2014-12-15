@@ -107,7 +107,7 @@
             <!-- ________________TREE MENU_______________ -->
             <div id="tree_element_menu" class="tree-top-toolbar unstyled-pane">
               <div class="button-group">
-                <a id="tree-create-button" class="buttonmenu sq-icon-btn" th:title="#{label.create} +'...'"
+                <a id="tree-create-button" class="sq-icon-btn" th:title="#{label.create} +'...'"
                   title="create">
                   <span class="ui-icon ui-icon-plusthick"></span>
                 </a>
@@ -228,108 +228,117 @@
 
     <div id="add-folder-dialog" class="popup-dialog not-displayed" th:title="#{dialog.new-folder.title}"
       title="new folder">
-      <table class="add-node-attributes">
-        <tr>
-          <td>
-            <label for="add-folder-name" th:text="#{label.Name}">Name</label>
-          </td>
-          <td>
-            <input id="add-folder-name" type="text" size="50" maxlength="255" />
-            <br />
-            <span class="error-message name-error"></span>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            <label for="add-foldder-description" th:text="#{label.Description}">Description</label>
-          </td>
-          <td>
-            <textarea id="add-folder-description" data-def="isrich"></textarea>
-          </td>
-        </tr>
-      </table>
-      <div class="popup-dialog-buttonpane">
-        <input type="button" th:value="#{label.addAnother}" value="add another" data-def="evt=add-another, mainbtn" />
-        <input type="button" th:value="#{label.Add}" value="add" data-def="evt=add-close" />
-        <input type="button" th:value="#{label.Cancel}" value="cancel" data-def="evt=cancel" />
-      </div>
-    </div>
-
+      
+       <span data-def="state=denied" th:text="#{squashtm.action.exception.rightUnsuficients}">rename node rejected</span>
+        
+       <div data-def="state=confirm">
+	      <table class="add-node-attributes"> 
+	        <tr>
+	          <td>
+	            <label for="add-folder-name" th:text="#{label.Name}">Name</label>
+	          </td>
+	          <td>
+	            <input id="add-folder-name" type="text" size="50" maxlength="255" />
+	            <br />
+	            <span class="error-message name-error"></span>
+	          </td>
+	        </tr>
+	        <tr>
+	          <td>
+	            <label for="add-foldder-description" th:text="#{label.Description}">Description</label>
+	          </td>
+	          <td>
+	            <textarea id="add-folder-description" data-def="isrich"></textarea>
+	          </td>
+	        </tr>
+	      </table>
+	      <div class="popup-dialog-buttonpane">
+	        <input type="button" th:value="#{label.addAnother}" value="add another" data-def="evt=add-another, state=confirm" />
+	        <input type="button" th:value="#{label.Add}" value="add" data-def="evt=add-close, state=confirm" />
+	        <input type="button" th:value="#{label.Cancel}" value="cancel" data-def="evt=cancel" />
+	      </div>
+	    </div>
+	 </div>
 
     <div id="add-campaign-dialog" class="popup-dialog not-displayed" th:title="#{dialog.new-campaign.title}"
       title="new campaign">
-      <table class="add-node-attributes">
+      
+      <span data-def="state=denied" th:text="#{squashtm.action.exception.rightUnsuficients}">rename node rejected</span>
+      
+      <div data-def="state=confirm">
+	      <table class="add-node-attributes" >
+	        <tr>
+	          <td>
+	            <label for="add-campaign-name" th:text="#{label.Name}">Name</label>
+	          </td>
+	
+	          <td>
+	            <input id="add-campaign-name" type="text" size="50" maxlength="255" />
+	            <br />
+	            <span class="error-message name-error"></span>
+	          </td>
+	        </tr>
+	        <tr>
+	          <td>
+	            <label for="add-campaign-description" th:text="#{label.Description}">Description</label>
+	          </td>
+	          <td>
+	            <textarea id="add-campaign-description" data-def="isrich"></textarea>
+	          </td>
+	        </tr>
+	      </table>
+		  <div class="popup-dialog-buttonpane">
+	        <input type="button" th:value="#{label.fem.addAnother}" value="add another" data-def="evt=confirm, state=confirm" />
+	        <input type="button" th:value="#{label.Add}" value="add" data-def="evt=add-close, state=confirm" />
+	        <input type="button" th:value="#{label.Cancel}" value="cancel" data-def="evt=cancel, mainbtn" />
+	      </div>
+	 </div>
 
-        <tr>
-          <td>
-            <label for="add-campaign-name" th:text="#{label.Name}">Name</label>
-          </td>
-
-          <td>
-            <input id="add-campaign-name" type="text" size="50" maxlength="255" />
-            <br />
-            <span class="error-message name-error"></span>
-          </td>
-        </tr>
-
-        <tr>
-          <td>
-            <label for="add-campaign-description" th:text="#{label.Description}">Description</label>
-          </td>
-          <td>
-            <textarea id="add-campaign-description" data-def="isrich"></textarea>
-          </td>
-        </tr>
-      </table>
-      <div class="popup-dialog-buttonpane">
-        <input type="button" th:value="#{label.fem.addAnother}" value="add another" data-def="evt=add-another, mainbtn" />
-        <input type="button" th:value="#{label.Add}" value="add" data-def="evt=add-close" />
-        <input type="button" th:value="#{label.Cancel}" value="cancel" data-def="evt=cancel" />
-      </div>
+      
     </div>
 
     <div id="add-iteration-dialog" class="popup-dialog not-displayed" th:title="#{dialog.new-iteration.title}"
       title="new iteration">
-      <table class="add-node-attributes">
-
-        <tr>
-          <td>
-            <label for="add-iteration-name" th:text="#{Label.Name}">Name</label>
-          </td>
-
-          <td>
-            <input id="add-iteration-name" type="text" size="50" maxlength="255" />
-            <br />
-            <span class="error-message name-error"></span>
-          </td>
-        </tr>
-
-        <tr>
-          <td>
-            <label for="add-iteration-description" th:text="#{LabelDescription}">Description</label>
-          </td>
-          <td>
-            <textarea id="add-iteration-description" data-def="isrich"></textarea>
-          </td>
-        </tr>
-
-        <tr>
-          <td>
-            <!-- empty placeholder : there is no label for that checbkox-->
-          </td>
-          <td>
-            <input id="copy-test-plan-box" name="copy-test-plan-box" type="checkbox" />
-            <label class="afterDisabled" for="copy-test-plan-box" th:text="#{dialog.new-iteration.copy}">new
-              iteration copy</label>
-          </td>
-        </tr>
-
-      </table>
-      <div class="popup-dialog-buttonpane">
-        <input type="button" th:value="#{label.fem.addAnother}" value="add another" data-def="evt=add-another, mainbtn" />
-        <input type="button" th:value="#{label.Add}" value="add" data-def="evt=add-close" />
-        <input type="button" th:value="#{label.Cancel}" value="cancel" data-def="evt=cancel" />
-      </div>
+      
+      <span data-def="state=denied" th:text="#{squashtm.action.exception.rightUnsuficients}">rename node rejected</span>
+        
+      <div data-def="state=confirm">
+		 <table class="add-node-attributes">
+	        <tr>
+	          <td>
+	            <label for="add-iteration-name" th:text="#{Label.Name}">Name</label>
+	          </td>
+	          <td>
+	            <input id="add-iteration-name" type="text" size="50" maxlength="255" />
+	            <br />
+	            <span class="error-message name-error"></span>
+	          </td>
+	        </tr>
+	        <tr>
+	          <td>
+	            <label for="add-iteration-description" th:text="#{LabelDescription}">Description</label>
+	          </td>
+	          <td>
+	            <textarea id="add-iteration-description" data-def="isrich"></textarea>
+	          </td>
+	        </tr>
+	        <tr>
+	          <td>
+	            <!-- empty placeholder : there is no label for that checbkox-->
+	          </td>
+	          <td>
+	            <input id="copy-test-plan-box" name="copy-test-plan-box" type="checkbox" />
+	            <label class="afterDisabled" for="copy-test-plan-box" th:text="#{dialog.new-iteration.copy}">new
+	              iteration copy</label>
+	          </td>
+	        </tr>
+	  	  </table>
+	      <div class="popup-dialog-buttonpane">
+	        <input type="button" th:value="#{label.fem.addAnother}" value="add another" data-def="evt=add-another, state=confirm" />
+	        <input type="button" th:value="#{label.Add}" value="add" data-def="evt=add-close, state=confirm" />
+	        <input type="button" th:value="#{label.Cancel}" value="cancel" data-def="evt=cancel, mainbtn" />
+	      </div>
+   	  </div>
     </div>
 
 

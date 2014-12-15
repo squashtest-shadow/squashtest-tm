@@ -229,36 +229,46 @@
 
     <div id="add-folder-dialog" class="popup-dialog not-displayed" th:title="#{dialog.new-folder.title}"
       title="new folder">
-      <table class="add-node-attributes">
-        <tr>
-          <td>
-            <label for="add-folder-name" th:text="#{label.Name}">Name</label>
-          </td>
-          <td>
-            <input id="add-folder-name" type="text" size="50" maxlength="255" />
-            <br />
-            <span class="error-message name-error"></span>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            <label for="add-foldder-description" th:text="#{label.Description}">Description</label>
-          </td>
-          <td>
-            <textarea id="add-folder-description" data-def="isrich"></textarea>
-          </td>
-        </tr>
-      </table>
-      <div class="popup-dialog-buttonpane">
-        <input type="button" th:value="#{label.addAnother}" value="add another" data-def="evt=add-another, mainbtn" />
-        <input type="button" th:value="#{label.Add}" value="add" data-def="evt=add-close" />
-        <input type="button" th:value="#{label.Cancel}" value="cancel" data-def="evt=cancel" />
-      </div>
+      
+       <span data-def="state=denied" th:text="#{squashtm.action.exception.rightUnsuficients}">rename node rejected</span>
+        
+       <div data-def="state=confirm">
+	      <table class="add-node-attributes">
+	        <tr>
+	          <td>
+	            <label for="add-folder-name" th:text="#{label.Name}">Name</label>
+	          </td>
+	          <td>
+	            <input id="add-folder-name" type="text" size="50" maxlength="255" />
+	            <br />
+	            <span class="error-message name-error"></span>
+	          </td>
+	        </tr>
+	        <tr>
+	          <td>
+	            <label for="add-foldder-description" th:text="#{label.Description}">Description</label>
+	          </td>
+	          <td>
+	            <textarea id="add-folder-description" data-def="isrich"></textarea>
+	          </td>
+	        </tr>
+	      </table>
+	      <div class="popup-dialog-buttonpane">
+	        <input type="button" th:value="#{label.addAnother}" value="add another" data-def="evt=add-another, state=confirm" />
+	        <input type="button" th:value="#{label.Add}" value="add" data-def="evt=add-close, state=confirm" />
+	        <input type="button" th:value="#{label.Cancel}" value="cancel" data-def="evt=cancel" />
+	      </div>
+	  </div>
     </div>
 
 
     <div id="add-requirement-dialog" class="popup-dialog not-displayed" th:title="#{dialog.new-requirement.title}"
       title="new requirement">
+      
+      <span data-def="state=denied" th:text="#{squashtm.action.exception.rightUnsuficients}">rename node rejected</span>
+        
+      <div data-def="state=confirm">
+       
       <table class="add-node-attributes">
 
         <tr>
@@ -315,10 +325,11 @@
         </tr>
       </table>
       <div class="popup-dialog-buttonpane">
-        <input type="button" th:value="#{label.fem.addAnother}" value="add another" data-def="evt=add-another, mainbtn" />
-        <input type="button" th:value="#{label.Add}" value="add" data-def="evt=add-close" />
+        <input type="button" th:value="#{label.fem.addAnother}" value="add another" data-def="evt=add-another, state=confirm" />
+        <input type="button" th:value="#{label.Add}" value="add" data-def="evt=add-close, state=confirm" />
         <input type="button" th:value="#{label.Cancel}" value="cancel" data-def="evt=cancel" />
       </div>
+       </div>
     </div>
 
     <div id="rename-node-dialog" class="popup-dialog not-displayed" th:title="#{dialog.rename-tree-node.title}"

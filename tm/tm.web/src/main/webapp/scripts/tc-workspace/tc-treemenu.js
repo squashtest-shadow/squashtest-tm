@@ -64,6 +64,7 @@ define(["jquery", "./utils", "./permissions-rules", "workspace/WorkspaceWizardMe
 	function bindTreeEvents(){
 		
 		var btnselector = [
+		  "#tree-create-button",
 			"#new-folder-tree-button", 
 			"#new-test-case-tree-button", 
 			"#copy-node-tree-button", 

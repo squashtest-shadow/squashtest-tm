@@ -18,8 +18,8 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define(['jquery', 'tree', 'custom-field-values', 'workspace.projects', 'jquery.squash.formdialog'], 
-		function($, zetree, cufValuesManager, projects){
+define(['jquery', 'tree', 'custom-field-values', 'workspace.projects', '../permissions-rules', 'jquery.squash.formdialog'], 
+		function($, zetree, cufValuesManager, projects, rules){
 	
 	function postNode(dialog, tree){
 		
@@ -65,7 +65,35 @@ define(['jquery', 'tree', 'custom-field-values', 'workspace.projects', 'jquery.s
 		var dialog = $("#add-iteration-dialog").formDialog();
 		var tree = zetree.get();
 		
+		// Added to cancel the open if no rights
+		dialog.on('formdialogopen', function(){
+			var node = tree.jstree('get_selected');
+			
+			if (! rules.canCreateIteration(node)){
+				dialog.formDialog('setState','denied');
+			}
+			else{
+				dialog.formDialog('setState','confirm');
+				var name = node.getName();
+				dialog.find("#new-iteration-tree-button").val(name);				
+			}			
+		});
 		
+		dialog.on('formdialogconfirm', function(){
+			var node = tree.jstree('get_selected');
+			var url = node.getResourceUrl();
+			var name = dialog.find("#new-iteration-tree-button").val();
+			
+			$.post(url, {newName : name}, null, 'json')
+			.done(function(){
+				eventBus.trigger("node.rename", { identity : node.getIdentity(), newName : name});
+				dialog.formDialog('close');
+			});
+			
+		});
+		
+		// end
+
 		dialog.on('formdialogadd-close', function(){
 			postNode(dialog,tree).then(function(){
 				dialog.formDialog('close');

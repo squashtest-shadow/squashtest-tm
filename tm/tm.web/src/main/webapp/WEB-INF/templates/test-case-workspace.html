@@ -229,6 +229,8 @@
 
     <div id="add-folder-dialog" class="popup-dialog not-displayed" th:title="#{dialog.new-folder.title}"
       title="new folder">
+      <span data-def="state=denied" th:text="#{squashtm.action.exception.rightUnsuficients}">rename node rejected</span>
+       <div data-def="state=confirm">
       <table class="add-node-attributes">
         <tr>
           <td>
@@ -250,15 +252,18 @@
         </tr>
       </table>
       <div class="popup-dialog-buttonpane">
-        <input type="button" th:value="#{label.addAnother}" value="add another" data-def="evt=add-another, mainbtn" />
-        <input type="button" th:value="#{label.Add}" value="add" data-def="evt=add-close" />
+        <input type="button" th:value="#{label.addAnother}" value="add another" data-def="evt=add-another, state=confirm" />
+        <input type="button" th:value="#{label.Add}" value="add" data-def="evt=add-close, state=confirm" />
         <input type="button" th:value="#{label.Cancel}" value="cancel" data-def="evt=cancel" />
       </div>
+     </div>
     </div>
 
 
     <div id="add-test-case-dialog" class="popup-dialog not-displayed" th:title="#{dialog.new-test-case.title}"
       title="new test case">
+       <span data-def="state=denied" th:text="#{squashtm.action.exception.rightUnsuficients}">rename node rejected</span>
+       <div data-def="state=confirm">     
       <table class="add-node-attributes">
 
         <tr>
@@ -293,9 +298,10 @@
         </tr>
       </table>
       <div class="popup-dialog-buttonpane">
-        <input type="button" th:value="#{label.fem.addAnother}" value="add another" data-def="evt=add-another, mainbtn" />
-        <input type="button" th:value="#{label.Add}" value="add" data-def="evt=add-close" />
+        <input type="button" th:value="#{label.fem.addAnother}" value="add another" data-def="evt=add-another, state=confirm" />
+        <input type="button" th:value="#{label.Add}" value="add" data-def="evt=add-close, state=confirm" />
         <input type="button" th:value="#{label.Cancel}" value="cancel" data-def="evt=cancel" />
+      </div>
       </div>
     </div>
 

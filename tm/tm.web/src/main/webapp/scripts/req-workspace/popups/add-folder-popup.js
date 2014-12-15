@@ -18,7 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define(['jquery', 'tree', 'jquery.squash.formdialog'], function($, zetree){
+define(['jquery', 'tree', '../permissions-rules', 'jquery.squash.formdialog'], function($, zetree, rules){
 	
 	
 
@@ -38,6 +38,34 @@ define(['jquery', 'tree', 'jquery.squash.formdialog'], function($, zetree){
 		var dialog = $("#add-folder-dialog").formDialog();
 		var tree = zetree.get();
 		
+		// Added to cancel the open if no rights
+		dialog.on('formdialogopen', function(){
+			var node = tree.jstree('get_selected');
+			
+			if (! rules.canCreateFolder(node)){
+				dialog.formDialog('setState','denied');
+			}
+			else{
+				dialog.formDialog('setState','confirm');
+				var name = node.getName();
+				dialog.find("#new-folder-tree-button").val(name);				
+			}			
+		});
+		
+		dialog.on('formdialogconfirm', function(){
+			var node = tree.jstree('get_selected');
+			var url = node.getResourceUrl();
+			var name = dialog.find("#new-folder-tree-button").val();
+			
+			$.post(url, {newName : name}, null, 'json')
+			.done(function(){
+				eventBus.trigger("node.rename", { identity : node.getIdentity(), newName : name});
+				dialog.formDialog('close');
+			});
+			
+		});
+		
+		// end
 		
 		dialog.on('formdialogadd-close', function(){
 			postNode(dialog,tree).then(function(){

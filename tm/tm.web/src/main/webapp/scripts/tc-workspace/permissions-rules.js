@@ -32,6 +32,11 @@ define(['jquery', 'workspace.tree-node-copier', 'tree'], function($, copier, tre
 	
 	function TestCasePermissionsRules(){		
 		
+		// added for first button create :  
+		this.canCreateButton = function(nodes){
+			return nodes.filter(':creatable').length === 1;
+		};
+		
 		this.canCreateFolder = function(nodes){
 			return nodes.filter(':creatable').filter(':folder, :library').length === 1;
 		};
@@ -148,6 +153,7 @@ define(['jquery', 'workspace.tree-node-copier', 'tree'], function($, copier, tre
 		};
 	
 		this.buttonrules = {
+			'tree-create-button' : this.canCreateButton,
 			'new-folder-tree-button' : this.canCreateFolder,
 			'new-test-case-tree-button' : this.canCreateTestCase,
 			'copy-node-tree-button' : this.canCopy,
