@@ -130,8 +130,7 @@ define([ "jquery", "app/report/squashtm.reportworkspace", "tree", "underscore", 
 
 			// collapses the form
 			$("#report-criteria-panel.expand .tg-head").click();
-			// collapses the sidebar
-			RWS.setReportWorkspaceExpandState();
+	
 
 			var tabPanel = $("#view-tabed-panel");
 

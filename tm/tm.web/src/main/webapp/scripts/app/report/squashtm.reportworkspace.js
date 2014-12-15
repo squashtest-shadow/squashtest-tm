@@ -70,7 +70,7 @@ define([ "jquery", "app/ws/squashtm.toggleworkspace", "jquery.squash.squashbutto
 					loadContextualReport(this);
 				});
 
-				ToggleWorkspace.init(options);
+				ToggleWorkspace.init(options); 
 
 				/* decorate buttons */
 				$.squash.decorateButtons();
