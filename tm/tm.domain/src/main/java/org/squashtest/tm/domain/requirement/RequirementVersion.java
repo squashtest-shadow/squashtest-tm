@@ -347,12 +347,11 @@ public class RequirementVersion extends Resource implements BoundEntity {
 	public static RequirementVersion createFromMemento(@NotNull RequirementVersionImportMemento memento) {
 		RequirementVersion res = new RequirementVersion();
 
-		// remember that we cannot handle the category right now
-		// we can only set the rest of the attributes
 
 		res.setName(memento.getName());
 		res.setDescription(memento.getDescription());
 		res.criticality = memento.getCriticality();
+		res.category = memento.formatCategory();
 
 		res.reference = memento.getReference();
 		res.status = memento.getStatus();

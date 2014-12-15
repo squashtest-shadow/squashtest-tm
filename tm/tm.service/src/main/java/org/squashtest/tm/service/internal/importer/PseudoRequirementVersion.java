@@ -22,13 +22,16 @@ package org.squashtest.tm.service.internal.importer;
 
 import java.util.Date;
 
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.squashtest.tm.domain.infolist.InfoListItem;
+import org.squashtest.tm.domain.infolist.ListItemReference;
 import org.squashtest.tm.domain.requirement.RequirementCategory;
 import org.squashtest.tm.domain.requirement.RequirementCriticality;
 import org.squashtest.tm.domain.requirement.RequirementStatus;
 import org.squashtest.tm.domain.requirement.RequirementVersionImportMemento;
+import org.squashtest.tm.domain.testcase.TestCaseNature;
 
 /**
  * Holds:
@@ -131,6 +134,38 @@ RequirementVersionImportMemento {
 
 	public String getCategory() {
 		return category;
+	}
+
+	/*
+	 * Feat 1108 : for back compatibility purpose
+	 * we must ensure that the former categories
+	 * (the enum RequirementCategory) are still supported,
+	 * eg UNDEFINED must be translated to CAT_UNDEFINED.
+	 * 
+	 * Note that because of this we must treat the nominal case as an exception handling clause,
+	 * and that sucks.
+	 */
+	@Override
+	public ListItemReference formatCategory(){
+		ListItemReference res;
+
+		if (StringUtils.isBlank(category)){
+			// better off with a null category than a blank one
+			res = null;
+		}
+		else {
+			try{
+				// Feat 1108 : does this string reference an obsolete code for a category ?
+				RequirementCategory obsoleteCategory = RequirementCategory.valueOf(category);
+				res = new ListItemReference("CAT_"+obsoleteCategory.toString());
+			}
+			catch(IllegalArgumentException ex){
+				// else, the code is assumed to be correct
+				res = new ListItemReference(category);
+			}
+		}
+
+		return res;
 	}
 
 	public void setCategory(String category) {

@@ -25,7 +25,6 @@ import java.util.Set;
 import org.squashtest.tm.domain.infolist.InfoListItem;
 import org.squashtest.tm.domain.library.structures.StringPathMap;
 import org.squashtest.tm.domain.project.GenericProject;
-import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.testcase.Parameter;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseFolder;

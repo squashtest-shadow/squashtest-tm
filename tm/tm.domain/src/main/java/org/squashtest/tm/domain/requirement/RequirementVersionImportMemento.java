@@ -22,6 +22,8 @@ package org.squashtest.tm.domain.requirement;
 
 import java.util.Date;
 
+import org.squashtest.tm.domain.infolist.ListItemReference;
+
 /**
  * Interface to retrieve RequirementVersion attributes (such as criticality, category, description ...) from a bean.
  * @author Gregory
@@ -31,6 +33,8 @@ public interface RequirementVersionImportMemento {
 	RequirementCriticality getCriticality();
 
 	String getCategory();
+
+	ListItemReference formatCategory();
 
 	String getDescription();
 

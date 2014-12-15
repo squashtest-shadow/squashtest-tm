@@ -490,7 +490,7 @@ RequirementLibraryNavigationService, RequirementLibraryFinderService {
 
 			// validate the code
 			String categCode = category.getCode();
-			if (! infoListItemService.isNatureConsistent(newReq.getProject().getId(), categCode)){
+			if (! infoListItemService.isCategoryConsistent(newReq.getProject().getId(), categCode)){
 				throw new InconsistentInfoListItemException("category", categCode);
 			}
 

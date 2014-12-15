@@ -23,6 +23,7 @@ package org.squashtest.tm.service.internal.importer;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -34,6 +35,9 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.squashtest.tm.domain.infolist.InfoListItem;
+import org.squashtest.tm.domain.infolist.ListItemReference;
+import org.squashtest.tm.domain.project.GenericProject;
 import org.squashtest.tm.domain.requirement.RequirementFolder;
 import org.squashtest.tm.exception.SheetCorruptedException;
 
@@ -50,6 +54,7 @@ class RequirementHierarchyCreator {
 
 	private RequirementParser parser;
 	private ImportSummaryImpl summary = new ImportSummaryImpl();
+	private GenericProject project;
 	/**
 	 * Dummy RequirementFolder to hold the hierarchy of folder to import as it's content.
 	 */
@@ -70,6 +75,10 @@ class RequirementHierarchyCreator {
 
 	public RequirementFolder getNodes() {
 		return root;
+	}
+
+	public void setProject(GenericProject project){
+		this.project = project;
 	}
 
 	/**
@@ -119,6 +128,24 @@ class RequirementHierarchyCreator {
 		for (int r = 1; r <= sheet.getLastRowNum(); r++) {
 			Row row = sheet.getRow(r);
 			parser.parseRow(root, row, summary, columnsMapping, organizedRequirementLibraryNodes);
+		}
+
+		// check the categories
+		fixCategories(organizedRequirementLibraryNodes);
+	}
+
+	private void fixCategories(Map<RequirementFolder, List<PseudoRequirement>> organizedRequirementLibraryNodes){
+		for (List<PseudoRequirement> pseudoreqs : organizedRequirementLibraryNodes.values()){
+			for (PseudoRequirement preq : pseudoreqs){
+				for (PseudoRequirementVersion reqversion : preq.getPseudoRequirementVersions()){
+					ListItemReference category = reqversion.formatCategory();
+					if (category == null || (! project.getRequirementCategories().contains(category))){
+						InfoListItem newCategory = project.getRequirementCategories().getDefaultItem();
+						reqversion.setCategory(newCategory.getCode());
+						summary.incrModified();
+					}
+				}
+			}
 		}
 	}
 

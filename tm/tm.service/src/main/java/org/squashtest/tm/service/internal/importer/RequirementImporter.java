@@ -45,11 +45,13 @@ public class RequirementImporter {
 	public ImportSummary importExcelRequirements(InputStream excelStream, long libraryId) {
 
 		ImportSummaryImpl summary = new ImportSummaryImpl();
+		RequirementLibrary library = service.findCreatableLibrary(libraryId);
 
 		/* phase 1 : convert the content of the archive into Squash entities */
 
 		RequirementHierarchyCreator creator = new RequirementHierarchyCreator();
 		creator.setParser(parser);
+		creator.setProject(library.getProject());
 
 		Map<RequirementFolder, List<PseudoRequirement>> organizedPseudoReqNodes = creator.create(excelStream);
 
@@ -58,7 +60,6 @@ public class RequirementImporter {
 
 		// /* phase 2 : merge with the actual database content */
 
-		RequirementLibrary library = service.findCreatableLibrary(libraryId);
 		RequirementLibraryMerger merger = new RequirementLibraryMerger(service);
 		merger.mergeIntoLibrary(library, root, organizedPseudoReqNodes);
 
