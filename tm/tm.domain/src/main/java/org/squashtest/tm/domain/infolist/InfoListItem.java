@@ -136,11 +136,5 @@ public abstract class InfoListItem {
 
 	}
 
-	// TODO : remove this method completely once we're sure the method "references" is
-	// used where it should be and that method "equals" is used properly
-	@Override
-	public boolean equals(Object o){
-		throw new RuntimeException("TODO : use method #references instead");
-	}
 
 }
