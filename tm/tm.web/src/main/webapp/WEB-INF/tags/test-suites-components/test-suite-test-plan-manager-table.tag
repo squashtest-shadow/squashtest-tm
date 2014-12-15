@@ -201,7 +201,9 @@
               reorderable : true
             },
             basic : {
-              testsuiteId : ${testSuite.id}
+              testsuiteId : ${testSuite.id},
+             	assignableUsers : '',
+    			statuses : ''
             }
           };
           

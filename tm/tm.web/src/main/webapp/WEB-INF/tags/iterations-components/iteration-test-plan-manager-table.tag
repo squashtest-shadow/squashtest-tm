@@ -228,7 +228,9 @@
               reorderable : true
             },
             basic : {
-              iterationId : ${iteration.id}
+              iterationId : ${iteration.id},
+          	assignableUsers : '',
+			statuses : ''
             }
           };
           
