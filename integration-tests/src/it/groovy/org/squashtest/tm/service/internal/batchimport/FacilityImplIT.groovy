@@ -169,7 +169,7 @@ public class FacilityImplIT extends DbunitServiceSpecification {
 		t.id != null
 		t.name == "mytestcase"
 		t.description == "<p>ouaaahpaaa</p>"
-		new ListItemReference("NAT_SECURITY_TESTING").equals t.nature
+		new ListItemReference("NAT_SECURITY_TESTING").references t.nature
 		t.status == TestCaseStatus.WORK_IN_PROGRESS
 		t.importanceAuto == Boolean.FALSE
 		t.importance == TestCaseImportance.LOW
@@ -241,9 +241,9 @@ public class FacilityImplIT extends DbunitServiceSpecification {
 		// the unmodified values
 		t.id == -245L
 		t.importanceAuto == false
-		new ListItemReference("NAT_BUSINESS_TESTING").equals(t.nature)
+		new ListItemReference("NAT_BUSINESS_TESTING").references(t.nature)
 		t.status == TestCaseStatus.WORK_IN_PROGRESS
-		new ListItemReference("TYP_REGRESSION_TESTING").equals(t.type)
+		new ListItemReference("TYP_REGRESSION_TESTING").references(t.type)
 		storedcufs.hasCuf  "CK_TC" , "false"
 
 	}
@@ -281,8 +281,8 @@ public class FacilityImplIT extends DbunitServiceSpecification {
 		TestCase t = (TestCase) finder.findNodeByPath("/Test Project-1/flawednaturetype")
 
 		t.name == "flawednaturetype"
-		new ListItemReference("NAT_UNDEFINED").equals(t.nature)
-		new ListItemReference("TYP_UNDEFINED").equals(t.type)
+		new ListItemReference("NAT_UNDEFINED").references(t.nature)
+		new ListItemReference("TYP_UNDEFINED").references(t.type)
 
 	}
 

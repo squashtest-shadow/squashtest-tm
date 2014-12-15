@@ -115,4 +115,32 @@ public abstract class InfoListItem {
 		return id;
 	}
 
+
+	/**
+	 * tests equality-by-code
+	 * 
+	 * @param other
+	 * @return
+	 */
+	public boolean references(Object other){
+		if (other == null){
+			return false;
+		}
+
+		if (InfoListItem.class.isAssignableFrom(other.getClass())){
+			return ((InfoListItem)other).getCode().equals(getCode());
+		}
+		else{
+			return false;
+		}
+
+	}
+
+	// TODO : remove this method completely once we're sure the method "references" is
+	// used where it should be and that method "equals" is used properly
+	@Override
+	public boolean equals(Object o){
+		throw new RuntimeException("TODO : use method #references instead");
+	}
+
 }

@@ -158,7 +158,7 @@ public class DenormalizedInfoList {
 
 	public boolean contains(DenormalizedInfoListItem item){
 		for (DenormalizedInfoListItem it : items){
-			if (item.getCode().equals(it.getCode())){
+			if (it.references(item)){
 				return true;
 			}
 		}

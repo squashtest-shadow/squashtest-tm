@@ -109,7 +109,46 @@ public abstract class DenormalizedInfoListItem {
 		return id;
 	}
 
+	public Long getOriginalListId(){
+		return infoList.getOriginalId();
+	}
 
+	public int getOriginalListVersion(){
+		return infoList.getOriginalVersion();
+	}
+
+	public boolean references(Object other){
+		if (other == null){
+			return false;
+		}
+
+		if (! (DenormalizedInfoListItem.class.isAssignableFrom(other.getClass()))){
+			return false;
+		}
+
+		if (DenormalizedListItemReference.class.isAssignableFrom(other.getClass())){
+			DenormalizedListItemReference otherRef = (DenormalizedListItemReference)other;
+			return (otherRef.getCode().equals(getCode()) &&
+					otherRef.getOriginalListId().equals(getOriginalListId()) &&
+					otherRef.getOriginalListVersion() == getOriginalListVersion()
+					) ;
+		}
+		else{
+			DenormalizedInfoListItem otherItem = (DenormalizedInfoListItem) other;
+			return ( otherItem.getCode().equals(getCode()) &&
+					otherItem.getInfoList().getOriginalId().equals(getOriginalListId()) &&
+					otherItem.getInfoList().getOriginalVersion() == getOriginalListVersion()
+					);
+		}
+	}
+
+
+	// TODO : remove this method completely once we're sure the method "references" is
+	// used where it should be and that method "equals" is used properly
+	@Override
+	public boolean equals(Object o){
+		throw new RuntimeException("TODO : use method #references instead");
+	}
 
 
 }

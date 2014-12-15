@@ -156,7 +156,7 @@ public class InfoList {
 
 	public boolean contains(InfoListItem item) {
 		for (InfoListItem it : items) {
-			if (item.getCode().equals(it.getCode())) {
+			if (it.references(item)) {
 				return true;
 			}
 		}

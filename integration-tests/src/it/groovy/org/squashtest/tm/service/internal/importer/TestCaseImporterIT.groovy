@@ -200,8 +200,8 @@ class TestCaseImporterIT extends DbunitServiceSpecification {
 
 		testcase.importance == TestCaseImportance.MEDIUM
 		testcase.status == TestCaseStatus.APPROVED
-		new ListItemReference("NAT_BUSINESS_TESTING").equals(testcase.nature)
-		new ListItemReference("TYP_UNDEFINED").equals(testcase.type)
+		new ListItemReference("NAT_BUSINESS_TESTING").references(testcase.nature)
+		new ListItemReference("TYP_UNDEFINED").references(testcase.type)
 	}
 
 	/*

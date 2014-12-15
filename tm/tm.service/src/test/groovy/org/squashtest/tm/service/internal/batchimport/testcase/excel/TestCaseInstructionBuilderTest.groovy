@@ -167,12 +167,6 @@ class TestCaseInstructionBuilderTest extends Specification {
 		TC_WEIGHT		| Cell.CELL_TYPE_STRING		| "VERY_HIGH"		| "importance"		| TestCaseImportance.VERY_HIGH
 		TC_WEIGHT		| Cell.CELL_TYPE_BLANK		| ""				| "importance"		| null
 
-		TC_NATURE		| Cell.CELL_TYPE_STRING		| "USER_TESTING"	| "nature"			| new ListItemReference("NAT_USER_TESTING")
-		TC_NATURE		| Cell.CELL_TYPE_BLANK		| ""				| "nature"			| null
-
-		TC_TYPE			| Cell.CELL_TYPE_STRING		| "PARTNER_TESTING"	| "type"			| new ListItemReference("TYP_PARTNER_TESTING")
-		TC_TYPE			| Cell.CELL_TYPE_BLANK		| ""				| "type"			| null
-
 		TC_STATUS		| Cell.CELL_TYPE_STRING		| "APPROVED"		| "status"			| TestCaseStatus.APPROVED
 		TC_STATUS		| Cell.CELL_TYPE_BLANK		| ""				| "status"			| null
 
@@ -189,6 +183,35 @@ class TestCaseInstructionBuilderTest extends Specification {
 		TC_CREATED_BY	| Cell.CELL_TYPE_STRING		| "your mom"		| "createdBy"		| "your mom"
 		TC_CREATED_BY	| Cell.CELL_TYPE_BLANK		| ""				| "createdBy"		| null
 	}
+
+	@Unroll
+	def "should create test case from row with this bunch of data (info lists) : #col #cellType #cellValue #propName #propValue"() {
+		given:
+		Cell cell = mockCell(cellType, cellValue)
+		row.getCell(30, _) >> cell
+
+		and:
+		wd.getImportableColumnDefs() >> [new StdColumnDef(col, 30)]
+		wd.getCustomFieldDefs() >> []
+
+		when:
+		TestCaseInstruction instruction = builder.build(row)
+
+		then:
+		propValue == null || propValue.references(instruction.testCase[propName])
+
+		where:
+		col				| cellType					| cellValue			| propName			| propValue
+
+		TC_NATURE		| Cell.CELL_TYPE_STRING		| "USER_TESTING"	| "nature"			| new ListItemReference("NAT_USER_TESTING")
+		TC_NATURE		| Cell.CELL_TYPE_BLANK		| ""				| "nature"			| null
+
+		TC_TYPE			| Cell.CELL_TYPE_STRING		| "PARTNER_TESTING"	| "type"			| new ListItemReference("TYP_PARTNER_TESTING")
+		TC_TYPE			| Cell.CELL_TYPE_BLANK		| ""				| "type"			| null
+
+
+	}
+
 
 	private Cell mockCell(cellType, cellValue) {
 		Cell cell = Mock()

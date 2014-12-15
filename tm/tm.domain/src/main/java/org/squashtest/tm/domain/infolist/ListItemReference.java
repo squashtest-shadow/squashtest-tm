@@ -39,21 +39,6 @@ public class ListItemReference extends InfoListItem {
 		setCode(code);
 	}
 
-	@Override
-	public boolean equals(Object other){
-		if (other == null){
-			return false;
-		}
-
-		if (InfoListItem.class.isAssignableFrom(other.getClass())){
-
-			return ((InfoListItem)other).getCode().equals(getCode());
-		}
-		else{
-			return false;
-		}
-
-	}
 
 
 }

@@ -74,7 +74,7 @@ class RequirementModificationServiceIT extends DbunitServiceSpecification {
 		def requirement = modService.findById(requirementId)
 
 		then:
-		new ListItemReference("CAT_BUSINESS").equals(requirement.category)
+		new ListItemReference("CAT_BUSINESS").references(requirement.category)
 	}
 
 	@DataSet("RequirementModificationServiceIT.should change requirement reference.xml")

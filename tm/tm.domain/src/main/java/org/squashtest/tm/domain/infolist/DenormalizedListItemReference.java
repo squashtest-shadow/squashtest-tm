@@ -45,39 +45,14 @@ public class DenormalizedListItemReference extends DenormalizedInfoListItem {
 	}
 
 
-
+	@Override
 	public Long getOriginalListId() {
 		return originalListId;
 	}
 
+	@Override
 	public int getOriginalListVersion() {
 		return originalListVersion;
-	}
-
-	@Override
-	public boolean equals(Object other){
-		if (other == null){
-			return false;
-		}
-
-		if (! (DenormalizedInfoListItem.class.isAssignableFrom(other.getClass()))){
-			return false;
-		}
-
-		if (DenormalizedListItemReference.class.isAssignableFrom(other.getClass())){
-			DenormalizedListItemReference otherRef = (DenormalizedListItemReference)other;
-			return (otherRef.getCode().equals(getCode()) &&
-					otherRef.getOriginalListId().equals(originalListId) &&
-					otherRef.getOriginalListVersion() == originalListVersion
-					) ;
-		}
-		else{
-			DenormalizedInfoListItem otherItem = (DenormalizedInfoListItem) other;
-			return ( otherItem.getCode().equals(getCode()) &&
-					otherItem.getInfoList().getOriginalId().equals(originalListId) &&
-					otherItem.getInfoList().getOriginalVersion() == originalListVersion
-					);
-		}
 	}
 
 
