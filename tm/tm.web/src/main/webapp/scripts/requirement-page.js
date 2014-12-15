@@ -345,7 +345,7 @@ define(["module", "jquery", "app/pubsub", "squash.basicwidgets", "app/ws/squasht
  	        	// ****** unbind from multiple test cases ****************
  		          var removeDialog = $("#remove-verifying-test-case-dialog").confirmDialog();
  		          var verifurl = routing.buildURL('requirements.testcases', config.basic.currentVersionId) + '/';
- 		          
+ 		          var table = $("#verifying-test-cases-table").squashTable();
  		          removeDialog.on('confirmdialogconfirm', function(){
  		            var ids = $("#verifying-test-cases-table").squashTable().getSelectedIds();
  		            $.ajax({
