@@ -128,7 +128,7 @@ define([ "jquery", "backbone", "underscore", "workspace.event-bus", "squash.conf
 				
 				_updateIcon : function(form, data, receiver){
 					var value = form.find('select').val();
-					var icon = $.grep(data, function(e){return e.code === value})[0].iconName;
+					var icon = $.grep(data, function(e){return e.code === value;})[0].iconName;
 					$(receiver).attr('class', '').addClass('small-icon info-list-icon-'+icon);					
 				},
 					

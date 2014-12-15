@@ -136,44 +136,45 @@ define([ "jquery", "squash.translator", "datepicker/jquery.squash.datepicker-loc
 	}
 
 	
-	/*
-	 *	Useful when creating the options for a jeditable select.  
-	 *  This function will turn an array of [{ id : <id1>, name : <name1>}, {id : <id2>, name : <name2>}] 
-	 *  into something acceptable for a jeditable select, like { <id1> : <name1>, <id2> : <name2> }.
-	 * 	 
-	 *  A/ Two arguments : an array of data and a descriptor object
-	 *  -----------------------------------------------------------
-	 *  
-	 *  The array of data is described above. The descriptor object must be of the form 
-	 *  { "valuePropertyName" : "labePropertyName" }. This tells the function that it 
-	 *  should build an option using the property "valuePropertyName" as the value 
-	 *  and proprety "labelPropertyName" as the text displayed.
-	 * 
-	 *  
-	 *  B/ One arguments only : an array of data
-	 *  -----------------------------------------
-	 *  
-	 *  In the absence of a descriptor object the value and label will be determined as follow : 
-	 *   
-	 *  - id : mandatory. Will be the 'value' of the 'option' object that'll be created from this object.
-	 *  - name : (optional) if found, will be used as a 'label' for that option.
-	 *  - value : (optional) if found, will be used as a 'label' for that option.
-	 *  - (anything else) : if none of 'name' or 'value' are found, that third property will be used instead.
-	 *						Works only of the objects have 2 own properties only (one of which being 'id'),
-	 *						and must not be an object nor an array.
-	 *  
-	 *  if none of 'name', 'value' or the 'anything else' is satisfied the script will crash and tell you why.
-	 *  
-	 */
-	
+/*
+ *	Useful when creating the options for a jeditable select.  
+ *  This function will turn an array of [{ id : <id1>, name : <name1>}, {id : <id2>, name : <name2>}] 
+ *  into something acceptable for a jeditable select, like { <id1> : <name1>, <id2> : <name2> }.
+ *
+ *  A/ Two arguments : an array of data and a descriptor object
+ *  -----------------------------------------------------------
+ *  
+ *  The array of data is described above. The descriptor object must be of the form 
+ *  { "valuePropertyName" : "labePropertyName" }. This tells the function that it 
+ *  should build an option using the property "valuePropertyName" as the value 
+ *  and proprety "labelPropertyName" as the text displayed.
+ * 
+ *  
+ *  B/ One arguments only : an array of data
+ *  -----------------------------------------
+ *  
+ *  In the absence of a descriptor object the value and label will be determined as follow : 
+ *   
+ *  - id : mandatory. Will be the 'value' of the 'option' object that'll be created from this object.
+ *  - name : (optional) if found, will be used as a 'label' for that option.
+ *  - value : (optional) if found, will be used as a 'label' for that option.
+ *  - (anything else) : if none of 'name' or 'value' are found, that third property will be used instead.
+ *						Works only of the objects have 2 own properties only (one of which being 'id'),
+ *						and must not be an object nor an array.
+ *  
+ *  if none of 'name', 'value' or the 'anything else' is satisfied the script will crash and tell you why.
+ *  
+ */
 	
 	function _toJeditableSelectFormat(){
 		var data;
 		
-		switch(arguments.length){
-		case 1 : data = _unaryJeditSelectFormat(arguments[0]); break;
-		default : data =  _binaryJeditSelectFormat(arguments[0], arguments[1]); break;
-		};
+		if (arguments.length === 1){
+			data = _unaryJeditSelectFormat(arguments[0]); 
+		}
+		else {
+			data = _binaryJeditSelectFormat(arguments[0], arguments[1]);
+		}
 		
 		// jeditable doesn't like much 'null' as a key
 		if (data[null] !== undefined){
