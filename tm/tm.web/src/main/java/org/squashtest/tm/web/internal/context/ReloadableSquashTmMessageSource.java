@@ -23,6 +23,7 @@ package org.squashtest.tm.web.internal.context;
 import java.io.IOException;
 import java.net.URL;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import org.slf4j.Logger;
@@ -80,7 +81,7 @@ public class ReloadableSquashTmMessageSource extends ReloadableResourceBundleMes
 
 	private void registerFragmentMessageProperties() {
 		try {
-			Set<String> consolidatedBasenames = new HashSet<String>();
+			Set<String> consolidatedBasenames = new LinkedHashSet<String>();
 
 			LOGGER.debug("About to register configured basenames to build MessageSource");
 			addConfiguredBasenames(consolidatedBasenames);
