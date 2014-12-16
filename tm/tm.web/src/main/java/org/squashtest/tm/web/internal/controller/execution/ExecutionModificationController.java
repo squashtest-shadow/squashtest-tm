@@ -128,10 +128,6 @@ public class ExecutionModificationController {
 		List<CustomFieldValueModel> customValueModels = getExecutionCustomFieldValueModels(execution);
 		List<CustomFieldValueModel> denoValueModels = getExecutionDenormalizedFieldValueModels(execution);
 
-		// the lists for nature and types
-		JsonInfoList natures = denoListBuilder.toJson(execution.getNature().getInfoList());
-		JsonInfoList types = denoListBuilder.toJson(execution.getType().getInfoList());
-
 		// step properties
 		List<AoColumnDef> columnDefs;
 
@@ -155,9 +151,6 @@ public class ExecutionModificationController {
 
 		mav.addObject("stepsAoColumnDefs", JsonHelper.serialize(columnDefs));
 		mav.addObject("stepsCufDefinitions", stepCufsModels);
-
-		mav.addObject("natures", natures);
-		mav.addObject("types", types);
 
 		return mav;
 

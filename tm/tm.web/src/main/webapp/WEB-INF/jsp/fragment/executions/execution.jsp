@@ -169,7 +169,7 @@
 				   
 	<jsp:attribute name="body">
 	<div id="test-case-attribut-table"  class="display-table">
-<div class="display-table-row">
+        <div class="display-table-row">
 			<label for="test-case-importance" class="display-table-cell"><f:message key="test-case.importance.combo.label" /></label>
 			<div class="display-table-cell">
 			<span id="test-case-importance-icon" class="test-case-importance-${ execution.importance }">&nbsp&nbsp</span>	<span id="test-case-importance"><comp:level-message level="${ execution.importance }"/></span>
@@ -177,19 +177,21 @@
 		</div>
 		
 		<div class="display-table-row">
-				<label class="display-table-cell" for="testcase-nature"><f:message key="test-case.nature.label" /></label>
-				<div id="testcase-nature" class="display-table-cell">
-                    <s:message code="${execution.nature.label}" text="${execution.nature.label}" htmlEscape="true"/>
-                </div>
+			<label class="display-table-cell" for="test-case-nature"><f:message key="test-case.nature.label" /></label>
+			<div class="display-table-cell">
+              <span id="test-case-nature-icon" class="small-icon info-list-icon-${execution.nature.iconName}"></span>  
+              <span id="test-case-nature"><s:message code="${execution.nature.label}" text="${execution.nature.label}" htmlEscape="true"/></span>
 			</div>
-			<div class="display-table-row">
-				<label class="display-table-cell" for="testcase-type"><f:message key="test-case.type.label" /></label>
-				<div id="testcase-type" class="display-table-cell">
-                    <s:message code="${execution.type.label}" text="${execution.type.label}" htmlEscape="true"/>
-                </div>
-			</div>
-		
 		</div>
+		<div class="display-table-row">
+			<label class="display-table-cell" for="test-case-type"><f:message key="test-case.type.label" /></label>
+			<div class="display-table-cell">
+			  <span id="test-case-type-icon" class="small-icon  info-list-icon-testCase.type.iconName}"></span>  
+              <span id="test-case-type"><s:message code="${execution.type.label}" text="${execution.type.label}" htmlEscape="true"/></span>
+			</div>
+		</div>		
+	</div>
+    
 	</jsp:attribute>
 </comp:toggle-panel>
 	
