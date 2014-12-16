@@ -31,6 +31,7 @@ import org.squashtest.tm.domain.campaign.CampaignFolder;
 import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.campaign.TestSuite;
 import org.squashtest.tm.domain.customfield.BoundEntity;
+import org.squashtest.tm.domain.infolist.InfoListItem;
 import org.squashtest.tm.domain.library.NodeVisitor;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.requirement.Requirement;
@@ -44,6 +45,8 @@ import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseFolder;
 import org.squashtest.tm.domain.testcase.TestStep;
 import org.squashtest.tm.domain.testcase.TestStepVisitor;
+import org.squashtest.tm.service.infolist.InfoListItemManagerService;
+import org.squashtest.tm.service.infolist.InfoListManagerService;
 import org.squashtest.tm.service.internal.customfield.PrivateCustomFieldValueService;
 import org.squashtest.tm.service.internal.repository.IssueDao;
 import org.squashtest.tm.service.testcase.TestCaseModificationService;
@@ -70,6 +73,9 @@ public class TreeNodeUpdater implements NodeVisitor {
 
 	@Inject
 	private IssueDao issueDao;
+
+	@Inject
+	private InfoListItemManagerService infoListItemService;
 
 
 	@Override
@@ -119,6 +125,7 @@ public class TreeNodeUpdater implements NodeVisitor {
 		updateCustomFields(requirement.getCurrentVersion());
 		for (RequirementVersion version : requirement.getRequirementVersions()) {
 			updateCustomFields(version);
+			updateCategory(version);
 		}
 	}
 
@@ -140,6 +147,7 @@ public class TreeNodeUpdater implements NodeVisitor {
 			});
 		}
 		updateAutomationParams(testCase);
+		updateNatureAndType(testCase);
 	}
 
 	/**
@@ -198,13 +206,34 @@ public class TreeNodeUpdater implements NodeVisitor {
 
 		}
 
-
 		if (! couldConvert){
 			testCase.removeAutomatedScript();
 		}
 
 	}
 
+	private void updateNatureAndType(TestCase testCase){
+		Project project = testCase.getProject();
+		InfoListItem nature = testCase.getNature();
+		InfoListItem type = testCase.getType();
 
+		if (! infoListItemService.isNatureConsistent(project.getId(), nature.getCode())){
+			testCase.setNature(project.getTestCaseNatures().getDefaultItem());
+		}
+
+		if (! infoListItemService.isTypeConsistent(project.getId(), type.getCode())){
+			testCase.setType(project.getTestCaseTypes().getDefaultItem());
+		}
+
+	}
+
+	private void updateCategory(RequirementVersion requirement){
+		Project project = requirement.getProject();
+		InfoListItem category = requirement.getCategory();
+
+		if (! infoListItemService.isCategoryConsistent(project.getId(), category.getCode())){
+			requirement.setCategory(project.getRequirementCategories().getDefaultItem());
+		}
+	}
 
 }
