@@ -40,6 +40,9 @@ import org.squashtest.tm.domain.denormalizedfield.DenormalizedFieldValue;
 @DynamicDao(entity = DenormalizedFieldValue.class, hasCustomImplementation=false)
 public interface DenormalizedFieldValueDao {
 
+	public static final String PARAM_ENTITY_TYPE = "entityType";
+	public static final String PARAM_ENTITY_ID = "entityId";
+
 	void persist(DenormalizedFieldValue newValue);
 
 	DenormalizedFieldValue findById(long denormalizedFieldHolderId);
@@ -51,8 +54,8 @@ public interface DenormalizedFieldValueDao {
 	 * @param denormalizedFieldHolderId
 	 * @param denormalizedFieldHolderType
 	 */
-	void deleteAllForEntity(@QueryParam("entityId") long denormalizedFieldHolderId,
-			@QueryParam("entityType") DenormalizedFieldHolderType denormalizedFieldHolderType);
+	void deleteAllForEntity(@QueryParam(PARAM_ENTITY_ID) long denormalizedFieldHolderId,
+			@QueryParam(PARAM_ENTITY_TYPE) DenormalizedFieldHolderType denormalizedFieldHolderType);
 
 	/**
 	 * Return all denormalized field values related to the denormalizedFieldHolder matching params. The list is ordered
@@ -62,8 +65,8 @@ public interface DenormalizedFieldValueDao {
 	 * @param denormalizedFieldHolderType
 	 * @return the list of corresponding {@link DenormalizedFieldValue} ordered by position asc.
 	 */
-	List<DenormalizedFieldValue> findDFVForEntity(@QueryParam("entityId") long denormalizedFieldHolderId,
-			@QueryParam("entityType") DenormalizedFieldHolderType denormalizedFieldHolderType);
+	List<DenormalizedFieldValue> findDFVForEntity(@QueryParam(PARAM_ENTITY_ID) long denormalizedFieldHolderId,
+			@QueryParam(PARAM_ENTITY_TYPE) DenormalizedFieldHolderType denormalizedFieldHolderType);
 
 	/**
 	 * Return all denormalized field values related to the denormalizedFieldHolder matching params. The list is ordered
@@ -75,19 +78,19 @@ public interface DenormalizedFieldValueDao {
 	 * @return
 	 */
 	List<DenormalizedFieldValue> findDFVForEntityAndRenderingLocation(
-			@QueryParam("entityId") long denormalizedFieldHolderId,
-			@QueryParam("entityType") DenormalizedFieldHolderType denormalizedFieldHolderType,
+			@QueryParam(PARAM_ENTITY_ID) long denormalizedFieldHolderId,
+			@QueryParam(PARAM_ENTITY_TYPE) DenormalizedFieldHolderType denormalizedFieldHolderType,
 			@QueryParam("renderingLocation") RenderingLocation renderingLocation);
 
 
-	List<DenormalizedFieldValue> findDFVForEntities(@QueryParam("entityType") DenormalizedFieldHolderType type, @QueryParam(ParameterNames.ENTITY_IDS) Collection<Long> entities);
+	List<DenormalizedFieldValue> findDFVForEntities(@QueryParam(PARAM_ENTITY_TYPE) DenormalizedFieldHolderType type, @QueryParam(ParameterNames.ENTITY_IDS) Collection<Long> entities);
 
 
 	List<DenormalizedFieldValue> findDFVForEntitiesAndLocations(
-			@QueryParam("entityType") DenormalizedFieldHolderType denormalizedFieldHolderType,
+			@QueryParam(PARAM_ENTITY_TYPE) DenormalizedFieldHolderType denormalizedFieldHolderType,
 			@QueryParam(ParameterNames.ENTITY_IDS) Collection<Long> entities,
 			@QueryParam("locations") Collection<RenderingLocation> locations);
 
-	public long countDenormalizedFields(@QueryParam("entityId") long entityId, @QueryParam("entityType") DenormalizedFieldHolderType entityType);
+	public long countDenormalizedFields(@QueryParam(PARAM_ENTITY_ID) long entityId, @QueryParam(PARAM_ENTITY_TYPE) DenormalizedFieldHolderType entityType);
 
 }

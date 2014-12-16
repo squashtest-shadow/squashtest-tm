@@ -59,22 +59,29 @@ public class I18nFieldComparator extends FieldComparator<String> {
 	public int compare(int slot1, int slot2) {
 		final Short rank1 = ranks[slot1];
 		final Short rank2 = ranks[slot2];
+		int res;
 		if (rank1 == null) {
 			if (rank2 == null) {
-				return 0;
+				res = 0;
 			}
-			return -1;
-		} else if (rank2 == null) {
-			return 1;
+			else{
+				res = -1;
+			}
+		}
+		else if (rank2 == null) {
+			res = 1;
+		}
+		else {
+			res = rank1.compareTo(rank2);
 		}
 
-		return rank1.compareTo(rank2);
+		return res;
 	}
 
 	@Override
 	public int compareBottom(int doc) {
 		final String val2 = currentReaderValues[doc];
-		
+
 		if (idxBottom == null) {
 			if (val2 == null) {
 				return 0;
@@ -83,10 +90,10 @@ public class I18nFieldComparator extends FieldComparator<String> {
 		} else if (val2 == null) {
 			return 1;
 		}
-		
+
 		Short codeBottom = ranks[idxBottom];
 		Short codeDoc = mapsCodeToRank.get(val2);
-		
+
 		return codeBottom.compareTo(codeDoc);
 	}
 
