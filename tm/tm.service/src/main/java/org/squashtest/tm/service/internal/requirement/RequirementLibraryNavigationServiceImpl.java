@@ -184,7 +184,7 @@ RequirementLibraryNavigationService, RequirementLibraryFinderService {
 
 
 	@Override
-	@PreAuthorize("hasPermission(#destinationId, 'org.squashtest.tm.domain.testcase.RequirementLibrary' , 'CREATE' )"
+	@PreAuthorize("hasPermission(#destinationId, 'org.squashtest.tm.domain.requirement.RequirementLibrary' , 'CREATE' )"
 			+ "or hasRole('ROLE_ADMIN')")
 	public void addFolderToLibrary(long destinationId, RequirementFolder newFolder) {
 
@@ -202,7 +202,7 @@ RequirementLibraryNavigationService, RequirementLibraryFinderService {
 	}
 
 	@Override
-	@PreAuthorize("hasPermission(#destinationId, 'org.squashtest.tm.domain.testcase.RequirementFolder' , 'CREATE' )"
+	@PreAuthorize("hasPermission(#destinationId, 'org.squashtest.tm.domain.requirement.RequirementFolder' , 'CREATE' )"
 			+ "or hasRole('ROLE_ADMIN')")
 	public final void addFolderToFolder(long destinationId, RequirementFolder newFolder) {
 

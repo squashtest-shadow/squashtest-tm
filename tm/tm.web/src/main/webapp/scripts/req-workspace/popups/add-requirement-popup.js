@@ -18,8 +18,8 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ 'jquery', 'tree', 'custom-field-values', 'workspace.projects', '../permissions-rules', 'jquery.squash.formdialog' ], 
-		function($, zetree, cufValuesManager, projects, rules) {
+define([ 'jquery', 'tree', 'custom-field-values', 'workspace.projects', '../permissions-rules', 'workspace.event-bus', 'jquery.squash.formdialog' ], 
+		function($, zetree, cufValuesManager, projects, rules, eventBus) {
 	"use strict";
 
 	function postNode(dialog, tree) {
