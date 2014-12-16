@@ -41,6 +41,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinColumns;
 import javax.persistence.JoinTable;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
@@ -54,6 +55,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.Formula;
+import org.hibernate.annotations.JoinColumnOrFormula;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.WhereJoinTable;
 import org.hibernate.validator.constraints.NotBlank;
@@ -73,8 +75,8 @@ import org.squashtest.tm.domain.customfield.BindableEntity;
 import org.squashtest.tm.domain.customfield.BoundEntity;
 import org.squashtest.tm.domain.denormalizedfield.DenormalizedFieldHolder;
 import org.squashtest.tm.domain.denormalizedfield.DenormalizedFieldHolderType;
-import org.squashtest.tm.domain.infolist.DenormalizedInfoList;
 import org.squashtest.tm.domain.infolist.DenormalizedInfoListItem;
+import org.squashtest.tm.domain.infolist.DenormalizedListItemReference;
 import org.squashtest.tm.domain.infolist.InfoListItem;
 import org.squashtest.tm.domain.library.HasExecutionStatus;
 import org.squashtest.tm.domain.project.Project;
@@ -85,9 +87,7 @@ import org.squashtest.tm.domain.testcase.Dataset;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseExecutionMode;
 import org.squashtest.tm.domain.testcase.TestCaseImportance;
-import org.squashtest.tm.domain.testcase.TestCaseNature;
 import org.squashtest.tm.domain.testcase.TestCaseStatus;
-import org.squashtest.tm.domain.testcase.TestCaseType;
 import org.squashtest.tm.domain.testcase.TestStep;
 import org.squashtest.tm.exception.NotAutomatedException;
 import org.squashtest.tm.exception.execution.ExecutionHasNoRunnableStepException;
@@ -151,14 +151,12 @@ DenormalizedFieldHolder, BoundEntity {
 
 	@NotNull
 	@ManyToOne
-	@JoinTable(name="EXECUTION_DENORMALIZED_INFO_LIST", joinColumns = @JoinColumn(name = "EXECUTION_ID"), inverseJoinColumns=@JoinColumn(name = "DENO_LIST_ID"))
-	@WhereJoinTable(clause = "role = 'NAT'")
+	@JoinColumn(name = "TC_NATURE")
 	private DenormalizedInfoListItem nature;
 
 	@NotNull
 	@ManyToOne
-	@JoinTable(name="EXECUTION_DENORMALIZED_INFO_LIST", joinColumns = @JoinColumn(name = "EXECUTION_ID"), inverseJoinColumns=@JoinColumn(name = "DENO_LIST_ID"))
-	@WhereJoinTable(clause = "role = 'TYP'")
+	@JoinColumn(name = "TC_TYPE")
 	private DenormalizedInfoListItem type;
 
 	@Enumerated(EnumType.STRING)
@@ -305,9 +303,8 @@ DenormalizedFieldHolder, BoundEntity {
 	}
 
 	private void setReferencedTestCase(TestCase testCase) {
-		referencedTestCase = testCase;
 
-		//we cannot set the nature and type yet
+		referencedTestCase = testCase;
 
 		if (testCase.getReference() != null && !testCase.getReference().equals("")) {
 			setName(testCase.getReference() + " - " + testCase.getName());
@@ -320,9 +317,21 @@ DenormalizedFieldHolder, BoundEntity {
 
 		setStatus(testCase.getStatus());
 
+		// the nature and type now
+		// no need to say, these references should be post-processed by a service
+		// and replaced by actual instances
+		InfoListItem nature = testCase.getNature();
+		DenormalizedListItemReference denoNature = new DenormalizedListItemReference(nature.getInfoList().getId(), nature.getInfoList().getVersion(), nature.getCode());
+		this.nature = denoNature;
+
+		InfoListItem type = testCase.getType();
+		DenormalizedListItemReference denoType = new DenormalizedListItemReference(type.getInfoList().getId(), type.getInfoList().getVersion(), type.getCode());
+		this.type = denoType;
+
 	}
 
 	private void nullSafeSetTestCaseData(TestCase testCase) {
+
 		// though it's constrained by the app, database allows null test case prerequisite or reference. hence this
 		// safety belt.
 
@@ -334,6 +343,7 @@ DenormalizedFieldHolder, BoundEntity {
 
 		pr = testCase.getDescription();
 		setTcdescription(pr == null ? "" : pr);
+
 	}
 
 	public TestCaseExecutionMode getExecutionMode() {

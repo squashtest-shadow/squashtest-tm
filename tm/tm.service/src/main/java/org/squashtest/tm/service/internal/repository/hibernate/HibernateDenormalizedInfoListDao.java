@@ -22,35 +22,25 @@ package org.squashtest.tm.service.internal.repository.hibernate;
 
 import org.hibernate.Query;
 import org.springframework.stereotype.Repository;
-import org.squashtest.tm.domain.infolist.DenormalizedInfoListItem;
+import org.squashtest.tm.domain.infolist.DenormalizedInfoList;
 import org.squashtest.tm.domain.infolist.DenormalizedListItemReference;
-import org.squashtest.tm.domain.infolist.InfoListItem;
-import org.squashtest.tm.service.internal.repository.DenormalizedInfoListItemDao;
+import org.squashtest.tm.service.internal.repository.DenormalizedInfoListDao;
 
-@Repository("DenormalizedInfoListItemDao")
-public class HibernateDenormalizedInfoListItemDao extends HibernateEntityDao<DenormalizedInfoListItem>
-implements DenormalizedInfoListItemDao{
+@Repository
+public class HibernateDenormalizedInfoListDao extends HibernateEntityDao<DenormalizedInfoList>
+implements DenormalizedInfoListDao {
 
 	@Override
-	public DenormalizedInfoListItem findByReference(InfoListItem item) {
-		Query q =  currentSession().getNamedQuery("denormalizedInfoListItem.findByReference");
-		q.setParameter("code", item.getCode());
-		q.setParameter("listId", item.getInfoList().getId());
-		q.setParameter("listVersion", item.getInfoList().getVersion());
-
-		return (DenormalizedInfoListItem)q.uniqueResult();
+	public DenormalizedInfoList findByItemReference(DenormalizedListItemReference reference) {
+		return findByOriginalIdAndVersion(reference.getOriginalListId(), reference.getOriginalListVersion());
 	}
 
 	@Override
-	public DenormalizedInfoListItem findByReference(DenormalizedListItemReference item) {
-		Query q =  currentSession().getNamedQuery("denormalizedInfoListItem.findByReference");
-		q.setParameter("code", item.getCode());
-		q.setParameter("listId", item.getOriginalListId());
-		q.setParameter("listVersion", item.getOriginalListVersion());
-
-		return (DenormalizedInfoListItem)q.uniqueResult();
+	public DenormalizedInfoList findByOriginalIdAndVersion(long originalId, int originalVersion) {
+		Query q = currentSession().getNamedQuery("denormalizedInfoList.findByOriginalIdAndVersion");
+		q.setParameter("id", originalId);
+		q.setParameter("version", originalVersion);
+		return (DenormalizedInfoList)q.uniqueResult();
 	}
-
-
 
 }

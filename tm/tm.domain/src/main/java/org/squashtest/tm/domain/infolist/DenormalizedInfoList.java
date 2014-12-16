@@ -123,8 +123,25 @@ public class DenormalizedInfoList {
 	}
 
 
+
+	public List<DenormalizedInfoListItem> getItems() {
+		return items;
+	}
+
 	public void addItem(DenormalizedInfoListItem item){
 		items.add(item);
+	}
+
+
+	public DenormalizedInfoListItem find(DenormalizedListItemReference reference){
+		for (DenormalizedInfoListItem item : items){
+			if (reference.references(item)){
+				return item;
+			}
+		}
+		throw new NoSuchElementException("denormalized info list item for list(id="+reference.getOriginalListId()+
+				", version="+reference.getOriginalListVersion()+") and item code="+reference.getCode()+
+				" was not found in denormalized list of id="+id);
 	}
 
 

@@ -593,6 +593,9 @@
 		@NamedQuery(name="systemListItem.getSystemTestCaseNature", query="from SystemListItem where code = '"+ SystemListItem.SYSTEM_TC_NATURE +"'"),
 		@NamedQuery(name="systemListItem.getSystemTestCaseType", query="from SystemListItem where code = '"+ SystemListItem.SYSTEM_TC_TYPE +"'"),
 		
+		//DenormalizedInfoList
+		@NamedQuery(name="denormalizedInfoList.findByOriginalIdAndVersion", query="from DenormalizedInfoList where originalId = :id and originalVersion = :version"),
+		
 		//DenormalizedInfoListItem
 		@NamedQuery(name="denormalizedInfoListItem.findByReference", 
 					query="select denoItem from DenormalizedInfoListItem denoItem join denoItem.infoList denoList where denoItem.code = :code and denoList.originalId = :listId and denoList.originalVersion = :listVersion"),

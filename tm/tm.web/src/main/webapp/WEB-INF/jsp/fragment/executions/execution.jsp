@@ -178,11 +178,15 @@
 		
 		<div class="display-table-row">
 				<label class="display-table-cell" for="testcase-nature"><f:message key="test-case.nature.label" /></label>
-				<div id="testcase-nature" class="display-table-cell"><comp:level-message level="${ execution.nature }"/></div>
+				<div id="testcase-nature" class="display-table-cell">
+                    <s:message code="${execution.nature.label}" text="${execution.nature.label}" htmlEscape="true"/>
+                </div>
 			</div>
 			<div class="display-table-row">
 				<label class="display-table-cell" for="testcase-type"><f:message key="test-case.type.label" /></label>
-				<div id="testcase-type" class="display-table-cell"><comp:level-message level="${ execution.type }"/></div>
+				<div id="testcase-type" class="display-table-cell">
+                    <s:message code="${execution.type.label}" text="${execution.type.label}" htmlEscape="true"/>
+                </div>
 			</div>
 		
 		</div>

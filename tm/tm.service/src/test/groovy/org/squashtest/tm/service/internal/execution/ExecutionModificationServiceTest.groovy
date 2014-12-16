@@ -26,6 +26,8 @@ import org.squashtest.tm.domain.campaign.Iteration
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem
 import org.squashtest.tm.domain.execution.Execution
 import org.squashtest.tm.domain.execution.ExecutionStep
+import org.squashtest.tm.domain.infolist.InfoList;
+import org.squashtest.tm.domain.infolist.ListItemReference;
 import org.squashtest.tm.domain.project.Project
 import org.squashtest.tm.domain.testcase.ActionTestStep
 import org.squashtest.tm.domain.testcase.TestCase
@@ -60,10 +62,10 @@ public class ExecutionModificationServiceTest extends Specification {
 	CampaignDao campaignDao = Mock()
 	IterationDao iterationDao = Mock()
 	TestCaseDao testCaseDao = Mock()
-	
+
 	TestCaseCyclicCallChecker checker = Mock()
 	PrivateDenormalizedFieldValueService denormalizedFieldValueService = Mock()
-	
+
 	def setup(){
 		service.executionDao = execDao
 		service.executionStepDao = execStepDao
@@ -82,81 +84,72 @@ public class ExecutionModificationServiceTest extends Specification {
 	}
 
 	/*
-	def "should create an execution with all steps"(){
-		given :
-		ActionTestStep ts1 = new ActionTestStep(action:"action 1")
-		ActionTestStep ts2 = new ActionTestStep(action:"action 2")
-		ActionTestStep ts3 = new ActionTestStep(action:"action 3")
-		ActionTestStep ts4 = new ActionTestStep(action:"action 4")
-		ActionTestStep ts5 = new ActionTestStep(action:"action 5")
-		
-		Project project = Mock() 
-
-		TestCase testCase = Mock()
-		testCase.getSteps() >> [ts1, ts2, ts3, ts4, ts5]
-		ts1.setTestCase(testCase);
-		ts2.setTestCase(testCase);
-		ts3.setTestCase(testCase);
-		ts4.setTestCase(testCase);
-		ts5.setTestCase(testCase);
-		testCase.getId() >> 1L
-		testCase.getAllAttachments() >> new HashSet<Attachment>()
-		testCase.getPrerequisite() >> "prerequisite"
-		testCase.getImportance() >> TestCaseImportance.LOW
-		testCase.getNature() >> TestCaseNature.UNDEFINED
-		testCase.getType() >> TestCaseType.UNDEFINED
-		testCase.getStatus() >> TestCaseStatus.WORK_IN_PROGRESS
-		testCase.getDescription() >> ""
-		testCase.getReference() >> ""
-		testCase.getProject() >> project
-		project.getId() >> 1L
-		ts1.setTestCase(testCase)
-		ts2.setTestCase(testCase)
-		ts3.setTestCase(testCase)
-		ts4.setTestCase(testCase)
-		ts5.setTestCase(testCase)
-		
-		Iteration iteration = new MockIteration()
-		IterationTestPlanItem testPlanItem = new IterationTestPlanItem(id:1L, iteration : iteration)
-		testPlanItem.setReferencedTestCase testCase
-		iteration.addTestPlan(testPlanItem)
-
-		testPlanDao.findTestPlanItem(1L) >> testPlanItem
-		
-		
-		iterationDao.findOrderedExecutionsByIterationId(1) >> iteration.getExecutions()
-
-		when :
-		iterService.addExecution(1L)
-
-		List<Execution> execs = iteration.getExecutions()
-
-
-		then :
-		execs.size()==1
-		execs.get(0).getSteps().collect{it.action} == [
-			"action 1",
-			"action 2",
-			"action 3",
-			"action 4",
-			"action 5"
-		]
-		
-		6* denormalizedFieldValueService.createAllDenormalizedFieldValues(_, _)
-	}*/
+	 def "should create an execution with all steps"(){
+	 given :
+	 ActionTestStep ts1 = new ActionTestStep(action:"action 1")
+	 ActionTestStep ts2 = new ActionTestStep(action:"action 2")
+	 ActionTestStep ts3 = new ActionTestStep(action:"action 3")
+	 ActionTestStep ts4 = new ActionTestStep(action:"action 4")
+	 ActionTestStep ts5 = new ActionTestStep(action:"action 5")
+	 Project project = Mock()
+	 TestCase testCase = Mock()
+	 testCase.getSteps() >> [ts1, ts2, ts3, ts4, ts5]
+	 ts1.setTestCase(testCase);
+	 ts2.setTestCase(testCase);
+	 ts3.setTestCase(testCase);
+	 ts4.setTestCase(testCase);
+	 ts5.setTestCase(testCase);
+	 testCase.getId() >> 1L
+	 testCase.getAllAttachments() >> new HashSet<Attachment>()
+	 testCase.getPrerequisite() >> "prerequisite"
+	 testCase.getImportance() >> TestCaseImportance.LOW
+	 testCase.getNature() >> TestCaseNature.UNDEFINED
+	 testCase.getType() >> TestCaseType.UNDEFINED
+	 testCase.getStatus() >> TestCaseStatus.WORK_IN_PROGRESS
+	 testCase.getDescription() >> ""
+	 testCase.getReference() >> ""
+	 testCase.getProject() >> project
+	 project.getId() >> 1L
+	 ts1.setTestCase(testCase)
+	 ts2.setTestCase(testCase)
+	 ts3.setTestCase(testCase)
+	 ts4.setTestCase(testCase)
+	 ts5.setTestCase(testCase)
+	 Iteration iteration = new MockIteration()
+	 IterationTestPlanItem testPlanItem = new IterationTestPlanItem(id:1L, iteration : iteration)
+	 testPlanItem.setReferencedTestCase testCase
+	 iteration.addTestPlan(testPlanItem)
+	 testPlanDao.findTestPlanItem(1L) >> testPlanItem
+	 iterationDao.findOrderedExecutionsByIterationId(1) >> iteration.getExecutions()
+	 when :
+	 iterService.addExecution(1L)
+	 List<Execution> execs = iteration.getExecutions()
+	 then :
+	 execs.size()==1
+	 execs.get(0).getSteps().collect{it.action} == [
+	 "action 1",
+	 "action 2",
+	 "action 3",
+	 "action 4",
+	 "action 5"
+	 ]
+	 6* denormalizedFieldValueService.createAllDenormalizedFieldValues(_, _)
+	 }*/
 
 
 	def "should iterate over steps of a test case"(){
 
 		given :
-		TestCase testCase = new TestCase(name:"retestcase")
-		
+		TestCase testCase = new TestCase(name:"retestcase",
+		nature : new ListItemReference(code:"SOME_NATURE", infoList:Mock(InfoList)),
+		type : new ListItemReference(code:"SOME_TYPE", infoList:Mock(InfoList)))
+
 		ActionTestStep ts1 = new ActionTestStep(action:"action 1")
 		ActionTestStep ts2 = new ActionTestStep(action:"action 2")
 		ActionTestStep ts3 = new ActionTestStep(action:"action 3")
 		ActionTestStep ts4 = new ActionTestStep(action:"action 4")
 		ActionTestStep ts5 = new ActionTestStep(action:"action 5")
-		
+
 		def testSteps = [ts1, ts2, ts3, ts4, ts5]
 
 		Execution execution = new Execution()
@@ -183,7 +176,7 @@ public class ExecutionModificationServiceTest extends Specification {
 		then :
 		execution.getName()=="retestcase"
 		res.action == testSteps[index].action
-		
+
 		where:
 		index << [0, 1, 2, 3, 4]
 	}
@@ -192,7 +185,9 @@ public class ExecutionModificationServiceTest extends Specification {
 	def "should throw an out of bound exception"(){
 
 		given :
-		TestCase testCase = new TestCase(name:"test case")
+		TestCase testCase = new TestCase(name:"retestcase",
+		nature : new ListItemReference(code:"SOME_NATURE", infoList:Mock(InfoList)),
+		type : new ListItemReference(code:"SOME_TYPE", infoList:Mock(InfoList)))
 		ActionTestStep ts1 = new ActionTestStep(action:"action 1")
 		ActionTestStep ts2 = new ActionTestStep(action:"action 2")
 		ActionTestStep ts3 = new ActionTestStep(action:"action 3")
@@ -213,13 +208,13 @@ public class ExecutionModificationServiceTest extends Specification {
 		then :
 		thrown(IndexOutOfBoundsException)
 	}
-	
+
 	class MockIteration extends Iteration{
 
 		MockIteration(){
-		
+
 		}
-		
+
 		public Project getProject(){
 			Project project = new Project();
 			return project;

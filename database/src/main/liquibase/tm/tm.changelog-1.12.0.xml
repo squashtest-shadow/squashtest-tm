@@ -78,6 +78,11 @@
 
 			<column name="LAST_MODIFIED_ON" type="DATETIME" defaultValue="NULL"
 				remarks="Date of last update" />
+				
+			  
+			<column name="USER_ID" type="BIGINT" remarks="the user that own the milestone">
+				<constraints nullable="false" foreignKeyName="fk_milestone_owner" references="CORE_USER(PARTY_ID)"/>
+			</column>	
 		</createTable>
 
 		<createIndex tableName="MILESTONE" indexName="idx_milestone">
@@ -250,15 +255,15 @@
 
 
 			<column name="LIST_ID" type="BIGINT"
-				remarks="foreign key to the list this item belongs to">
-				<constraints nullable="false" foreignKeyName="fk_info_item_list"
+				remarks="foreign key to the list this item belongs to. Allows 'NULL' for Hibernate to work.">
+				<constraints nullable="true" foreignKeyName="fk_info_item_list"
 					references="INFO_LIST(INFO_LIST_ID)" />
 			</column>
 
 
 			<column name="ITEM_INDEX" type="java.sql.Types.INTEGER"
-				remarks="the position of that item in the list">
-				<constraints nullable="false" />
+				remarks="the position of that item in the list. Allows 'NULL' for Hibernate to work.">
+				<constraints nullable="true" />
 			</column>
 
 
@@ -414,27 +419,6 @@
 			</column>
 		</createIndex>
 		
-		
-		<!-- ======== association table EXECUTION - DENORMALIZED_INFO_LIST ========= -->
-
-		<createTable tableName="EXECUTION_DENORMALIZED_INFO_LIST">
-		
-			<column name="EXECUTION_ID" type="BIGINT" remarks="foreign key to the execution">
-				<constraints nullable="false" foreignKeyName="exec_denolist_exec" references="EXECUTION(EXECUTION_ID)"/>
-			</column>
-		
-		
-			<column name="DENO_LIST_ID" type="BIGINT" remarks="foreign key to the denormalized list">
-				<constraints nullable="false" foreignKeyName="exec_denolist_denolist" references="DENORMALIZED_INFO_LIST(INFO_LIST_ID)"/>			
-			</column>
-			
-			<column name="ROLE" type="CHAR(5)" remarks="the role that the list had in the test case from which the execution was created on. 
-														For now it can be NAT (nature) or TYP (types)">
-				<constraints nullable="false" />											
-			</column>
-		
-		</createTable>
-
 	</changeSet>	
 	
 	
@@ -1230,16 +1214,6 @@
 		
 		<comment>inserting the association between executions 
 		and their denormalized lists</comment>
-	
-		<sql>
-			insert into EXECUTION_DENORMALIZED_INFO_LIST (EXECUTION_ID, DENO_LIST_ID, ROLE) 
-			select ex.execution_id, 2, 'NAT' from EXECUTION ex;		
-		</sql>
-		
-		<sql>
-			insert into EXECUTION_DENORMALIZED_INFO_LIST (EXECUTION_ID, DENO_LIST_ID, ROLE) 
-			select ex.execution_id, 3, 'TYP' from EXECUTION ex;		
-		</sql>
 				
 		<!--  ========= migration of the 'nature' column ============= -->
 		
@@ -1304,23 +1278,6 @@
       </sql>
     </changeSet>	
 	
-  <changeSet id="tm-1.12.0.feature-3607-2" author="jsimon">
-  <addColumn tableName="MILESTONE">
-  
-			<column name="USER_ID" type="BIGINT" remarks="the user that own the milestone">
-				<constraints nullable="false" foreignKeyName="fk_milestone_owner" references="CORE_USER(PARTY_ID)"/>
-			</column>
-  </addColumn>
-  
-  </changeSet>
-  
- 
-    <changeSet id="tm-1.12.0.feat-4068-10" author="jsimon" >
-    <comment>drop not null constraint to allow easy item index reordering</comment>
-    <dropNotNullConstraint tableName="INFO_LIST_ITEM" columnName="LIST_ID" columnDataType="BIGINT"/>
-      <dropNotNullConstraint tableName="INFO_LIST_ITEM" columnName="ITEM_INDEX" columnDataType="java.sql.Types.INTEGER"/>
-    </changeSet>
-  
-  
+
   
 </databaseChangeLog>

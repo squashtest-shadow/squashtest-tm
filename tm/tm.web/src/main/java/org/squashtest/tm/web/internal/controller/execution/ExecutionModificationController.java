@@ -70,6 +70,7 @@ import org.squashtest.tm.web.internal.controller.widget.AoColumnDef;
 import org.squashtest.tm.web.internal.helper.JsonHelper;
 import org.squashtest.tm.web.internal.http.ContentTypes;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
+import org.squashtest.tm.web.internal.model.builder.JsonInfoListBuilder;
 import org.squashtest.tm.web.internal.model.customfield.CustomFieldJsonConverter;
 import org.squashtest.tm.web.internal.model.customfield.CustomFieldModel;
 import org.squashtest.tm.web.internal.model.customfield.CustomFieldValueModel;
@@ -77,6 +78,7 @@ import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.tm.web.internal.model.datatable.DataTablePaging;
 import org.squashtest.tm.web.internal.model.json.JsonExecutionInfo;
+import org.squashtest.tm.web.internal.model.json.JsonInfoList;
 
 @Controller
 @RequestMapping("/executions/{executionId}")
@@ -110,6 +112,9 @@ public class ExecutionModificationController {
 	@Inject
 	private CustomFieldJsonConverter converter;
 
+	@Inject
+	private JsonInfoListBuilder denoListBuilder;
+
 	// ****** /custom field services ******************
 
 	@RequestMapping(method = RequestMethod.GET)
@@ -123,6 +128,9 @@ public class ExecutionModificationController {
 		List<CustomFieldValueModel> customValueModels = getExecutionCustomFieldValueModels(execution);
 		List<CustomFieldValueModel> denoValueModels = getExecutionDenormalizedFieldValueModels(execution);
 
+		// the lists for nature and types
+		JsonInfoList natures = denoListBuilder.toJson(execution.getNature().getInfoList());
+		JsonInfoList types = denoListBuilder.toJson(execution.getType().getInfoList());
 
 		// step properties
 		List<AoColumnDef> columnDefs;
@@ -147,6 +155,9 @@ public class ExecutionModificationController {
 
 		mav.addObject("stepsAoColumnDefs", JsonHelper.serialize(columnDefs));
 		mav.addObject("stepsCufDefinitions", stepCufsModels);
+
+		mav.addObject("natures", natures);
+		mav.addObject("types", types);
 
 		return mav;
 

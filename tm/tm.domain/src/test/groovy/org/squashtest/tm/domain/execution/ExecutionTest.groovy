@@ -21,19 +21,17 @@
 package org.squashtest.tm.domain.execution;
 
 import org.apache.commons.lang.NullArgumentException
-import org.squashtest.tm.domain.execution.Execution
-import org.squashtest.tm.domain.execution.ExecutionStatus
-import org.squashtest.tm.domain.execution.ExecutionStep
+import org.squashtest.tm.domain.infolist.InfoList;
+import org.squashtest.tm.domain.infolist.ListItemReference;
+import org.squashtest.tm.domain.infolist.UserListItem;
 import org.squashtest.tm.domain.testcase.ActionTestStep
-import org.squashtest.tm.domain.testcase.CallTestStep;
-import org.squashtest.tm.domain.testcase.Dataset;
-import org.squashtest.tm.domain.testcase.DatasetParamValue;
-import org.squashtest.tm.domain.testcase.Parameter;
+import org.squashtest.tm.domain.testcase.CallTestStep
+import org.squashtest.tm.domain.testcase.Dataset
+import org.squashtest.tm.domain.testcase.DatasetParamValue
+import org.squashtest.tm.domain.testcase.Parameter
 import org.squashtest.tm.domain.testcase.TestCase
 import org.squashtest.tm.domain.testcase.TestCaseImportance
-import org.squashtest.tm.domain.testcase.TestCaseNature
 import org.squashtest.tm.domain.testcase.TestCaseStatus
-import org.squashtest.tm.domain.testcase.TestCaseType
 
 import spock.lang.Specification
 
@@ -124,8 +122,8 @@ class ExecutionTest extends Specification {
 		testCase.steps >> []
 		testCase.allAttachments >> []
 		testCase.importance >> TestCaseImportance.LOW
-		testCase.nature >> TestCaseNature.UNDEFINED
-		testCase.type >> TestCaseType.UNDEFINED
+		testCase.nature >> new UserListItem(code:"SOME_NATURE", infoList:Mock(InfoList))
+		testCase.type >> new UserListItem(code:"SOME_TYPE", infoList:Mock(InfoList))
 		testCase.status >> TestCaseStatus.WORK_IN_PROGRESS
 		testCase.getDatasets() >> []
 
@@ -155,7 +153,10 @@ class ExecutionTest extends Specification {
 
 		and : "some test case A calls it"
 
-		TestCase tcA = new TestCase(name:"a")
+		TestCase tcA = new TestCase(name:"a",
+		nature : new ListItemReference(code:"SOME_NATURE", infoList : Mock(InfoList)),
+		type : new ListItemReference(code:"SOME_TYPE", infoList : Mock(InfoList))
+		)
 
 		tcA.addStep newCallStep(tcB,ds1, false)
 		tcA.addStep newCallStep(tcB,ds2, false)

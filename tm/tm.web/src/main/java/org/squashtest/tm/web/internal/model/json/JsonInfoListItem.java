@@ -20,8 +20,6 @@
  */
 package org.squashtest.tm.web.internal.model.json;
 
-import org.squashtest.tm.domain.infolist.InfoListItem;
-import org.squashtest.tm.domain.infolist.SystemListItem;
 
 
 
@@ -34,6 +32,7 @@ public class JsonInfoListItem {
 	private String friendlyLabel;
 	private boolean isDefault;
 	private boolean isSystem;
+	private boolean isDenormalized;
 	private String iconName;
 
 
@@ -106,6 +105,12 @@ public class JsonInfoListItem {
 		this.friendlyLabel = friendlyLabel;
 	}
 
+	public boolean isDenormalized() {
+		return isDenormalized;
+	}
 
+	public void setDenormalized(boolean isDenormalized) {
+		this.isDenormalized = isDenormalized;
+	}
 
 }
