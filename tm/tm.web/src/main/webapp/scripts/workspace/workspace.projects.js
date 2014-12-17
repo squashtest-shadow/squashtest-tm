@@ -46,9 +46,38 @@ define(["jquery"], function($){
 		
 	}
 	
+	/*
+	 * Given the ID of a reference project, and the ID/array of ID of more projects,
+	 * tells whether at list one of the other projects differs from the reference project
+	 * regarding the info list configuration
+	 */
+	function haveDifferentInfolists(reference, otherProjects){
+		var areDifferent =  false;
+		var refproject = findProject(reference), 
+			cats = refproject.requirementCategories.code,
+			nats = refproject.testCaseNatures.code,
+			typs = refproject.testCaseTypes.code;
+		
+		var others = (otherProjects instanceof Array ) ? otherProjects : [ otherProjects ];
+			
+		for ( var i = 0; i < others.length; i++){
+			var oProj = findProject(others[i]);
+			if ((cats !== oProj.requirementCategories.code) ||
+				(nats !== oProj.testCaseNatures.code) ||
+				(typs !== oProj.testCaseTypes.code)
+			){
+				areDifferent = true;
+				break;
+			}
+		}
+		
+		return areDifferent;
+	}
+	
 
 	return {
-		findProject : findProject		
+		findProject : findProject,
+		haveDifferentInfolists : haveDifferentInfolists
 	};
 	
 	

@@ -24,7 +24,8 @@
  */
 
 define(['jquery', 'workspace.tree-node-copier', 'workspace.permissions-rules-broker', 'squash.translator', 
-        "jquery.squash.oneshotdialog", 'jstree'], function($, nodecopier, rulesbroker, translator, oneshot){
+        "jquery.squash.oneshotdialog", 'workspace.projects',  'jstree'], 
+        function($, nodecopier, rulesbroker, translator, oneshot, projects){
 	
 	
 	/* *******************************************************************************
@@ -194,31 +195,45 @@ define(['jquery', 'workspace.tree-node-copier', 'workspace.permissions-rules-bro
 		
 		var defer = $.Deferred();
 		
-		var targetLib = $(moveObject.np).treeNode().getLibrary().getDomId(),
+		var targetLib = $(moveObject.np).treeNode().getLibrary().getResId(),
 			srcLibs = $(moveObject.op).treeNode().getLibrary().map(function(){
-				return $(this).attr('id');
-			}),
+				return $(this).attr('resid');
+			}).get(),
 			isCrossProject = false;
 		
 
+		// check if cross project
 		for ( var i = 0; i < srcLibs.length; i++) {
 			if (targetLib != srcLibs[i]) {
 				isCrossProject = true;
 				break;
 			}
 		}
-		
+
 		if (isCrossProject) {
-			oneshot.show('Info', 'message.warnCopyToDifferentLibrary')
+			var msg = translator.get('message.warnCopyToDifferentLibrary');
+
+			// if cross-project, also check whether
+			// the nature/type/category settings are different				
+			var areInfoListsDifferent = projects.haveDifferentInfolists(targetLib, srcLibs);
+			
+			if (areInfoListsDifferent){
+				var addendum = translator.get('message.warnCopyToDifferentLibrary.infolistsDiffer');
+				// we append the addendum by manipulating the html directly
+				// it is so because first creating the js element then appending 
+				// will give poor results
+				msg = msg.replace('</ul>', addendum + '</ul>');
+			}
+			
+			oneshot.show('Info', msg)
 			.done(function() {
 				defer.resolve();
-			})
-			.fail(function() {
+			}).fail(function() {
 				defer.reject();
 			});
 		} else {
 			defer.resolve();
-		}		
+		}	
 		
 		return defer.promise();
 	};

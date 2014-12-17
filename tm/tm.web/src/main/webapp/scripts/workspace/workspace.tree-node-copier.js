@@ -25,7 +25,8 @@
  * 
  */
 
-define([ 'jquery', 'squash.translator', "jquery.squash.oneshotdialog" ], function($, translator, oneshot) {
+define([ 'jquery', 'squash.translator', "jquery.squash.oneshotdialog", "workspace.projects" ], 
+		function($, translator, oneshot, projects) {
 
 	squashtm = squashtm || {};
 	squashtm.workspace = squashtm.workspace || {};
@@ -138,17 +139,40 @@ define([ 'jquery', 'squash.translator', "jquery.squash.oneshotdialog" ], functio
 
 			var defer = $.Deferred();
 
-			var targetLib = target.getLibrary().getDomId(), destLibs = data.libraries, isCrossProject = false;
+			var targetLib = target.getLibrary().getResId(), 
+				isCrossProject = false;
+			
+			// convert the dom-id to a res-id
+			var srcLibs = $.map(data.libraries, function(domid){
+				return $("#"+domid).attr('resid');
+			});
 
-			for ( var i = 0; i < destLibs.length; i++) {
-				if (targetLib != destLibs[i]) {
+			// check if cross project
+			for ( var i = 0; i < srcLibs.length; i++) {
+				if (targetLib != srcLibs[i]) {
 					isCrossProject = true;
 					break;
 				}
 			}
-
+				
+			
 			if (isCrossProject) {
-				oneshot.show('Info', 'message.warnCopyToDifferentLibrary').done(function() {
+				var msg = translator.get('message.warnCopyToDifferentLibrary');
+
+				// if cross-project, also check whether
+				// the nature/type/category settings are different				
+				var areInfoListsDifferent = projects.haveDifferentInfolists(targetLib, srcLibs);
+				
+				if (areInfoListsDifferent){
+					var addendum = translator.get('message.warnCopyToDifferentLibrary.infolistsDiffer');
+					// we append the addendum by manipulating the html directly
+					// it is so because first creating the js element then appending 
+					// will give poor results
+					msg = msg.replace('</ul>', addendum + '</ul>');
+				}
+				
+				oneshot.show('Info', msg)
+				.done(function() {
 					defer.resolve();
 				}).fail(function() {
 					defer.reject();
