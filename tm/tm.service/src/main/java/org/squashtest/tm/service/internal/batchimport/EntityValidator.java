@@ -187,21 +187,14 @@ class EntityValidator {
 
 		LogTrain logs = new LogTrain();
 
-		TargetStatus calledStatus = getModel().getStatus(calledTestCase);
 
 		// 1 - the target must exist and be valid
-		String mustExistAndBeValidMessage = null;
-		if (calledStatus.status == NOT_EXISTS || calledStatus.status == TO_BE_DELETED) {
-			mustExistAndBeValidMessage = Messages.ERROR_CALLED_TC_NOT_FOUND;
-		} else if (!calledTestCase.isWellFormed()) {
-			mustExistAndBeValidMessage = Messages.ERROR_CALLED_STEP_WRONG_FORMAT;
-		}
+		String errorMessage = checkTestCaseExists(calledTestCase);
 
-		if (mustExistAndBeValidMessage != null) {
-			logMustExistAndBeValidCalledTest(target, mode, logs, mustExistAndBeValidMessage);
+		if (errorMessage != null){
+			logMustExistAndBeValidCalledTest(target, mode, logs, errorMessage);
 		}
-
-		else {
+		else{
 			// 2 - there must be no cyclic calls
 			if (getModel().wouldCreateCycle(target, calledTestCase)) {
 				logs.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_CYCLIC_STEP_CALLS,
@@ -213,7 +206,7 @@ class EntityValidator {
 				String dsname = paramInfos.getCalledDatasetName();
 
 				// 3.1 - if a dataset is specified, the name must not exceed the max limit
-				if (dsname.length() > 255) {
+				if (dsname.length() > FacilityImplHelper.STD_TRUNCATE_SIZE) {
 					logs.addEntry(new LogEntry(target, ImportStatus.WARNING, Messages.ERROR_MAX_SIZE,
 							new String[] { StepSheetColumn.TC_STEP_CALL_DATASET.name() }, Messages.IMPACT_MAX_SIZE,
 							null));
@@ -229,6 +222,22 @@ class EntityValidator {
 		}
 
 		return logs;
+
+	}
+
+	private String checkTestCaseExists(TestCaseTarget calledTestCase){
+
+		TargetStatus calledStatus = getModel().getStatus(calledTestCase);
+
+		String mustExistAndBeValidMessage = null;
+		if (calledStatus.status == NOT_EXISTS || calledStatus.status == TO_BE_DELETED) {
+			mustExistAndBeValidMessage = Messages.ERROR_CALLED_TC_NOT_FOUND;
+		}
+		else if (!calledTestCase.isWellFormed()) {
+			mustExistAndBeValidMessage = Messages.ERROR_CALLED_STEP_WRONG_FORMAT;
+		}
+
+		return mustExistAndBeValidMessage;
 
 	}
 

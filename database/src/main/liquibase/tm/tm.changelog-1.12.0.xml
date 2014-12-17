@@ -901,8 +901,6 @@
       <sql>
         SELECT setval('info_list_info_list_id_seq', (SELECT MAX(info_list_id) from info_list));
         SELECT setval('info_list_item_item_id_seq', (SELECT MAX(item_id) from info_list_item));
-        SELECT setval('denormalized_info_list_info_list_id_seq', (SELECT MAX(info_list_id) from denormalized_info_list));
-        SELECT setval('denormalized_info_list_item_item_id_seq', (SELECT MAX(item_id) from denormalized_info_list_item));
       </sql>
     </changeSet>	
 	
