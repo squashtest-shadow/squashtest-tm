@@ -20,126 +20,14 @@
  */
 package org.squashtest.tm.domain.infolist;
 
-import javax.persistence.Column;
-import javax.persistence.DiscriminatorColumn;
-import javax.persistence.DiscriminatorType;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.SequenceGenerator;
-import javax.validation.constraints.Size;
+public interface DenormalizedInfoListItem {
 
-@Entity
-@Inheritance(strategy=InheritanceType.SINGLE_TABLE)
-@DiscriminatorColumn(name = "ITEM_TYPE", discriminatorType = DiscriminatorType.STRING)
-public abstract class DenormalizedInfoListItem {
+	String getCode();
+	String getLabel();
+	String getIconName();
 
-	@Id
-	@Column(name = "ITEM_ID")
-	@GeneratedValue(strategy = GenerationType.AUTO, generator = "denormalized_info_list_item_item_id_seq")
-	@SequenceGenerator(name = "denormalized_info_list_item_item_id_seq", sequenceName = "denormalized_info_list_item_item_id_seq")
-	private Long id;
-
-
-	@ManyToOne
-	@JoinColumn(name="DENO_LIST_ID", insertable=false, updatable=false)
-	private DenormalizedInfoList infoList;
-
-	@Column
-	@Size(max=100)
-	private String label = "";
-
-	@Column
-	@Size(max=30)
-	private String code = "";
-
-	@Column
-	private Boolean isDefault = false;
-
-	@Column
-	@Size(max=100)
-	private String iconName = "";
-
-	public DenormalizedInfoList getInfoList() {
-		return infoList;
-	}
-
-	public void setInfoList(DenormalizedInfoList infoList) {
-		this.infoList = infoList;
-	}
-
-	public String getLabel() {
-		return label;
-	}
-
-	public void setLabel(String label) {
-		this.label = label;
-	}
-
-	public String getCode() {
-		return code;
-	}
-
-	public void setCode(String code) {
-		this.code = code;
-	}
-
-	public Boolean getIsDefault() {
-		return isDefault;
-	}
-
-	public void setIsDefault(Boolean isDefault) {
-		this.isDefault = isDefault;
-	}
-
-	public String getIconName() {
-		return iconName;
-	}
-
-	public void setIconName(String iconName) {
-		this.iconName = iconName;
-	}
-
-	public Long getId() {
-		return id;
-	}
-
-	public Long getOriginalListId(){
-		return infoList.getOriginalId();
-	}
-
-	public int getOriginalListVersion(){
-		return infoList.getOriginalVersion();
-	}
-
-	public boolean references(Object other){
-		if (other == null){
-			return false;
-		}
-
-		if (! (DenormalizedInfoListItem.class.isAssignableFrom(other.getClass()))){
-			return false;
-		}
-
-		if (DenormalizedListItemReference.class.isAssignableFrom(other.getClass())){
-			DenormalizedListItemReference otherRef = (DenormalizedListItemReference)other;
-			return (otherRef.getCode().equals(getCode()) &&
-					otherRef.getOriginalListId().equals(getOriginalListId()) &&
-					otherRef.getOriginalListVersion() == getOriginalListVersion()
-					) ;
-		}
-		else{
-			DenormalizedInfoListItem otherItem = (DenormalizedInfoListItem) other;
-			return ( otherItem.getCode().equals(getCode()) &&
-					otherItem.getInfoList().getOriginalId().equals(getOriginalListId()) &&
-					otherItem.getInfoList().getOriginalVersion() == getOriginalListVersion()
-					);
-		}
-	}
+	void setCode(String code);
+	void setLabel(String label);
+	void setIconName(String iconName);
 
 }

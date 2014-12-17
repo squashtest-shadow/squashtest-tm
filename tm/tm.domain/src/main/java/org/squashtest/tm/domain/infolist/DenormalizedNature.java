@@ -20,11 +20,61 @@
  */
 package org.squashtest.tm.domain.infolist;
 
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.Entity;
+import javax.persistence.Column;
+import javax.persistence.Embeddable;
 
-@Entity
-@DiscriminatorValue("USR")
-public class DenormalizedUserListItem extends DenormalizedInfoListItem{
+@Embeddable
+public class DenormalizedNature implements DenormalizedInfoListItem {
+
+	@Column(name="TC_NAT_LABEL")
+	private String label;
+
+	@Column(name="TC_NAT_CODE")
+	private String code;
+
+	@Column(name="TC_NAT_ICON_NAME")
+	private String iconName;
+
+
+	public DenormalizedNature(){
+		super();
+	}
+
+	public DenormalizedNature(String label, String code, String iconName) {
+		super();
+		this.label = label;
+		this.code = code;
+		this.iconName = iconName;
+	}
+
+	@Override
+	public String getLabel() {
+		return label;
+	}
+
+	@Override
+	public void setLabel(String label) {
+		this.label = label;
+	}
+
+	@Override
+	public String getCode() {
+		return code;
+	}
+
+	@Override
+	public void setCode(String code) {
+		this.code = code;
+	}
+
+	@Override
+	public String getIconName() {
+		return iconName;
+	}
+
+	@Override
+	public void setIconName(String iconName) {
+		this.iconName = iconName;
+	}
 
 }

@@ -22,15 +22,12 @@ package org.squashtest.tm.service.infolist;
 
 import java.util.List;
 
-import org.squashtest.tm.domain.infolist.InfoList;
-
 
 public interface InfoListManagerService extends InfoListFinderService {
 
 	void changeDescription(long infoListId, String newDescription);
 	void changeLabel(long infoListId, String newLabel);
 	void changeCode(long infoListId, String newCode);
-	void upgradeVersion(InfoList infoList);
 	void changeItemsPositions(long infoListId, int newIndex, List<Long> itemsIds);
 	boolean isUsedByOneOrMoreProject(long infoListId);
 	void deleteInfoList(long infoListId);

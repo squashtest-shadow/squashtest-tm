@@ -52,9 +52,6 @@ public class InfoList {
 	private Long id;
 
 	@Column
-	private int version = 1;
-
-	@Column
 	@Size(max = 100)
 	private String label = "";
 
@@ -75,13 +72,7 @@ public class InfoList {
 		super();
 	}
 
-	public int getVersion() {
-		return version;
-	}
 
-	public void setVersion(int version) {
-		this.version = version;
-	}
 
 	public String getLabel() {
 		return label;

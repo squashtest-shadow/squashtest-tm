@@ -33,10 +33,8 @@ public class JsonInfoList {
 	private long id;
 	private String uri;
 	private String code;
-	private int version;
 	private String label;
 	private String description;
-	private boolean isDenormalized;
 	private List<JsonInfoListItem> items;
 
 
@@ -60,13 +58,6 @@ public class JsonInfoList {
 		this.code = code;
 	}
 
-	public int getVersion() {
-		return version;
-	}
-
-	public void setVersion(int version) {
-		this.version = version;
-	}
 	public String getLabel() {
 		return label;
 	}
@@ -98,15 +89,5 @@ public class JsonInfoList {
 	public void setUri(String uri) {
 		this.uri = uri;
 	}
-
-	public boolean isDenormalized() {
-		return isDenormalized;
-	}
-
-	public void setDenormalized(boolean isDenormalized) {
-		this.isDenormalized = isDenormalized;
-	}
-
-
 
 }

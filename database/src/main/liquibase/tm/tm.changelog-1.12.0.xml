@@ -189,12 +189,6 @@
 				<constraints nullable="false" primaryKey="true" />
 			</column>
 
-			<column name="VERSION" type="INT"
-				remarks="for internal optimization concerns we keep track of the version of each list.
-  													See the DENORMALIZED_INFO_LIST for details.">
-				<constraints nullable="false" />
-			</column>
-
 			<column name="LABEL" type="VARCHAR(100)"
 				remarks="the label for this list. Would noly be displayed in the administration page as the name 
   														actually displayed to regular uses would depend on the role of that list on a given projet 
@@ -260,12 +254,10 @@
 					references="INFO_LIST(INFO_LIST_ID)" />
 			</column>
 
-
 			<column name="ITEM_INDEX" type="java.sql.Types.INTEGER"
 				remarks="the position of that item in the list. Allows 'NULL' for Hibernate to work.">
 				<constraints nullable="true" />
 			</column>
-
 
 			<column name="LABEL" type="VARCHAR(100)"
 				remarks="a label to be displayed. If the item is builtin 
@@ -305,119 +297,38 @@
 	
 	
 	<changeSet id="tm-1.12.0.feat-4068-2" author="bsiri">
-		<comment>Creating the denormalized version of the info_list.</comment>
+		<comment>Updating the definition of an execution</comment>
 
-		<!-- ======== the DENORMALIZED_INFO_LIST table ========= -->
-
-		<createTable tableName="DENORMALIZED_INFO_LIST">
-
-			<column name="INFO_LIST_ID" type="BIGINT" remarks="unique ID" autoIncrement="true" >
-				<constraints nullable="false" primaryKey="true" />
-			</column>
-			
-			<column name="ORIGINAL_ID" type="BIGINT" remarks="As part of an optimization we need to remember the ID of the list 
-														this one was denormalized from. Used in pair with the ORIGINAL_VERSION" />
-			
-			<column name="ORIGINAL_VERSION" type="INT" remarks="As part of an optimization we need to remember the version of the list 
-														this one was denormalized from. Used in pair with the ORIGINAL_ID" />
-			
-			
-			<column name="LABEL" type="VARCHAR(100)"
-				remarks="the label for this list. Would only be displayed in the administration page as the name 
-  														actually displayed to regular uses would depend on the role of that list on a given projet 
-  														(criticality, nature etc)">
-				<constraints unique="true" />
-			</column>
-
-			<column name="DESCRIPTION" type="TEXT" remarks="a description for that list" />
-
-			<column name="CODE" type="CHAR(30)"
-				remarks="a code that helps identifying that list. Note that the code must not be unique this time, 
-				because a same list might be denormalized multiple times.">
-				<constraints nullable="false" unique="false" />
-			</column>
-
-		</createTable>
-
-		<!--  indexing the code. Note that value may not be unique, unlike for the test -->
-		<createIndex tableName="DENORMALIZED_INFO_LIST" indexName="idx_denoinfo_list_code">
-			<column name="CODE" type="CHAR(30)">
-				<constraints nullable="false" unique="false" />
-			</column>
-		</createIndex>
+		<addColumn tableName="EXECUTION">
 		
-		<!-- 
-			also indexing the (ID, version) of the list this denormalization originates from.
-			This will help the application to decide whether a new denormalized list must 
-			be created or if an existing one can merely be reused (when multiple executions requires them).  
-		-->
-	    <createIndex tableName="DENORMALIZED_INFO_LIST" indexName="idx_denoinfo_list_origidversion">
-			<column name="ORIGINAL_ID" type="BIGINT"/>
+			<column name="TC_NAT_LABEL" type="VARCHAR(100)"
+				remarks="a label to be displayed. If the item is builtin this label will be a i18n key, else the label will 
+						be displayed verbatim">
+			</column>	
 			
-			<column name="ORIGINAL_VERSION" type="INT" />
-	    </createIndex>
-
-
-		<!-- ======== the DENORMALIZED_INFO_LIST_ITEM table ========= -->
-
-		<createTable tableName="DENORMALIZED_INFO_LIST_ITEM">
-
-			<column name="ITEM_ID" type="BIGINT" remarks="an ID, what did you expect ?" autoIncrement="true">
-				<constraints nullable="true" primaryKey="true" />
-			</column>
-
-			<column name="ITEM_TYPE" type="CHAR(3)"
-				remarks="discriminator telling whether this item is user-made or builtin in the app.
-															Pick one of 'USR' or 'SYS'">
-				<constraints nullable="false" />
-			</column>
-
-
-			<column name="DENO_LIST_ID" type="BIGINT"
-				remarks="foreign key to the list this item belongs to">
-				<constraints nullable="false" foreignKeyName="fk_denoinfo_item_list"
-					references="DENORMALIZED_INFO_LIST(INFO_LIST_ID)" />
-			</column>
-
-
-			<column name="ITEM_INDEX" type="java.sql.Types.INTEGER"
-				remarks="the position of that item in the list">
-				<constraints nullable="false" />
-			</column>
-
-
-			<column name="LABEL" type="VARCHAR(100)"
-				remarks="a label to be displayed. If the item is builtin 
-															this label will be a i18n key, else the label will 
-															be displayed verbatim">
-				<constraints nullable="false" unique="true" />
-			</column>
-
-			<column name="CODE" type="CHAR(30)"
+			<column name="TC_NAT_CODE" type="CHAR(30)"
 				remarks="a code that helps identifying that item. Note that unlike the original version the values for
-						that column will not be unique." />
-
-  
-			<column name="IS_DEFAULT" type="BOOLEAN" defaultValueBoolean="false"
-				remarks="whether this item is the default item for 
-							its list. Only one item per list should have it true">
-				<constraints nullable="false" />
-			</column>
- 
-			<column name="ICON_NAME" type="VARCHAR(100)"
+						that column will not be unique." />		
+								
+			<column name="TC_NAT_ICON_NAME" type="VARCHAR(100)"
 				remarks="the identifier of the icon to be displayed">
-				<constraints nullable="true" />
-			</column>
+			</column>	
+					
+			<column name="TC_TYP_LABEL" type="VARCHAR(100)"
+				remarks="a label to be displayed. If the item is builtin this label will be a i18n key, else the label will 
+						be displayed verbatim">
+			</column>	
+			
+			<column name="TC_TYP_CODE" type="CHAR(30)"
+				remarks="a code that helps identifying that item. Note that unlike the original version the values for
+						that column will not be unique." />		
+						
+			<column name="TC_TYP_ICON_NAME" type="VARCHAR(100)"
+				remarks="the identifier of the icon to be displayed">
+			</column>				
+		
+		</addColumn>
 
-		</createTable>
-		
-		
-		<!--  index on the code for faster lookup. Note that this index needs not 'unique' -->
-		<createIndex tableName="DENORMALIZED_INFO_LIST_ITEM" indexName="idx_denoinfo_list_item_code">
-			<column name="CODE" type="CHAR(30)">
-				<constraints nullable="false" unique="false" />
-			</column>
-		</createIndex>
 		
 	</changeSet>	
 	
@@ -431,7 +342,6 @@
 		
 		<insert tableName="INFO_LIST">
 			<column name="INFO_LIST_ID" value="1" />
-			<column name="VERSION" value="1"/>
 			<column name="LABEL" value="(def req categories)"/>
 			<column name="DESCRIPTION" value=""/>
 			<column name="CODE" value="DEF_REQ_CAT" />
@@ -566,7 +476,6 @@
 		
 		<insert tableName="INFO_LIST">
 			<column name="INFO_LIST_ID" value="2" />
-			<column name="VERSION" value="1"/>
 			<column name="LABEL" value="(def tc natures)"/>
 			<column name="DESCRIPTION" value=""/>
 			<column name="CODE" value="DEF_TC_NAT" />
@@ -669,7 +578,6 @@
 		
 		<insert tableName="INFO_LIST">
 			<column name="INFO_LIST_ID" value="3" />
-			<column name="VERSION" value="1"/>
 			<column name="LABEL" value="(def tc types)"/>
 			<column name="DESCRIPTION" value=""/>
 			<column name="CODE" value="DEF_TC_TYP" />
@@ -757,336 +665,8 @@
 		</insert>
 		
 	</changeSet>
-	
-	
+		
 	<changeSet id="tm-1.12.0.feat-4068-4" author="bsiri">
-	
-		<comment>same shit than 4068-3, for the denormalized lists</comment>
-		
-		
-		<!-- =============== the default categories list ============== -->
-		
-		<insert tableName="DENORMALIZED_INFO_LIST">
-			<column name="INFO_LIST_ID" value="1" />
-			<column name="ORIGINAL_ID" value="1" />
-			<column name="ORIGINAL_VERSION" value="1"/>
-			<column name="LABEL" value="(def req categories)"/>
-			<column name="DESCRIPTION" value=""/>
-			<column name="CODE" value="DEF_REQ_CAT" />
-		</insert>
-		
-		<insert tableName="DENORMALIZED_INFO_LIST_ITEM">
-			<column name="ITEM_ID" value="1"/>
-			<column name="ITEM_TYPE" value="SYS"/>
-			<column name="DENO_LIST_ID" value="1" />
-			<column name="ITEM_INDEX" value="0"/>
-			<column name="LABEL" value="requirement.category.FUNCTIONAL" />
-			<column name="CODE" value="CAT_FUNCTIONAL"/>
-			<column name="IS_DEFAULT" valueBoolean="true"/>
-			<column name="ICON_NAME" value="def_cat_functional"/>		
-		</insert>
-		
-		<insert tableName="DENORMALIZED_INFO_LIST_ITEM">
-			<column name="ITEM_ID" value="2"/>
-			<column name="ITEM_TYPE" value="SYS"/>
-			<column name="DENO_LIST_ID" value="1" />
-			<column name="ITEM_INDEX" value="1"/>
-			<column name="LABEL" value="requirement.category.NON_FUNCTIONAL" />
-			<column name="CODE" value="CAT_NON_FUNCTIONAL"/>
-			<column name="IS_DEFAULT" valueBoolean="false"/>
-			<column name="ICON_NAME" value="def_cat_non-functional"/>		
-		</insert>
-		
-		<insert tableName="DENORMALIZED_INFO_LIST_ITEM">
-			<column name="ITEM_ID" value="3"/>
-			<column name="ITEM_TYPE" value="SYS"/>
-			<column name="DENO_LIST_ID" value="1" />
-			<column name="ITEM_INDEX" value="2"/>
-			<column name="LABEL" value="requirement.category.USE_CASE" />
-			<column name="CODE" value="CAT_USE_CASE"/>
-			<column name="IS_DEFAULT" valueBoolean="false"/>
-			<column name="ICON_NAME" value="def_cat_use-case"/>		
-		</insert>
-		
-		<insert tableName="DENORMALIZED_INFO_LIST_ITEM">
-			<column name="ITEM_ID" value="4"/>
-			<column name="ITEM_TYPE" value="SYS"/>
-			<column name="DENO_LIST_ID" value="1" />
-			<column name="ITEM_INDEX" value="3"/>
-			<column name="LABEL" value="requirement.category.BUSINESS" />
-			<column name="CODE" value="CAT_BUSINESS"/>
-			<column name="IS_DEFAULT" valueBoolean="false"/>
-			<column name="ICON_NAME" value="def_cat_business"/>		
-		</insert>
-		
-		<insert tableName="DENORMALIZED_INFO_LIST_ITEM">
-			<column name="ITEM_ID" value="5"/>
-			<column name="ITEM_TYPE" value="SYS"/>
-			<column name="DENO_LIST_ID" value="1" />
-			<column name="ITEM_INDEX" value="4"/>
-			<column name="LABEL" value="requirement.category.TEST_REQUIREMENT" />
-			<column name="CODE" value="CAT_TEST_REQUIREMENT"/>
-			<column name="IS_DEFAULT" valueBoolean="false"/>
-			<column name="ICON_NAME" value="def_cat_test-requirement"/>		
-		</insert>
-		
-		<insert tableName="DENORMALIZED_INFO_LIST_ITEM">
-			<column name="ITEM_ID" value="6"/>
-			<column name="ITEM_TYPE" value="SYS"/>
-			<column name="DENO_LIST_ID" value="1" />
-			<column name="ITEM_INDEX" value="5"/>
-			<column name="LABEL" value="requirement.category.UNDEFINED" />
-			<column name="CODE" value="CAT_UNDEFINED"/>
-			<column name="IS_DEFAULT" valueBoolean="false"/>
-			<column name="ICON_NAME" value="def_cat_undefined"/>		
-		</insert>
-		
-		<insert tableName="DENORMALIZED_INFO_LIST_ITEM">
-			<column name="ITEM_ID" value="7"/>
-			<column name="ITEM_TYPE" value="SYS"/>
-			<column name="DENO_LIST_ID" value="1" />
-			<column name="ITEM_INDEX" value="6"/>
-			<column name="LABEL" value="requirement.category.ERGONOMIC" />
-			<column name="CODE" value="CAT_ERGONOMIC"/>
-			<column name="IS_DEFAULT" valueBoolean="false"/>
-			<column name="ICON_NAME" value="def_cat_ergonomic"/>		
-		</insert>
-		
-		<insert tableName="DENORMALIZED_INFO_LIST_ITEM">
-			<column name="ITEM_ID" value="8"/>
-			<column name="ITEM_TYPE" value="SYS"/>
-			<column name="DENO_LIST_ID" value="1" />
-			<column name="ITEM_INDEX" value="7"/>
-			<column name="LABEL" value="requirement.category.PERFORMANCE" />
-			<column name="CODE" value="CAT_PERFORMANCE"/>
-			<column name="IS_DEFAULT" valueBoolean="false"/>
-			<column name="ICON_NAME" value="def_cat_performance"/>		
-		</insert>
-		
-		<insert tableName="DENORMALIZED_INFO_LIST_ITEM">
-			<column name="ITEM_ID" value="9"/>
-			<column name="ITEM_TYPE" value="SYS"/>
-			<column name="DENO_LIST_ID" value="1" />
-			<column name="ITEM_INDEX" value="8"/>
-			<column name="LABEL" value="requirement.category.TECHNICAL" />
-			<column name="CODE" value="CAT_TECHNICAL"/>
-			<column name="IS_DEFAULT" valueBoolean="false"/>
-			<column name="ICON_NAME" value="def_cat_technical"/>		
-		</insert>
-		
-		<insert tableName="DENORMALIZED_INFO_LIST_ITEM">
-			<column name="ITEM_ID" value="10"/>
-			<column name="ITEM_TYPE" value="SYS"/>
-			<column name="DENO_LIST_ID" value="1" />
-			<column name="ITEM_INDEX" value="9"/>
-			<column name="LABEL" value="requirement.category.USER_STORY" />
-			<column name="CODE" value="CAT_USER_STORY"/>
-			<column name="IS_DEFAULT" valueBoolean="false"/>
-			<column name="ICON_NAME" value="def_cat_user-story"/>		
-		</insert>
-		
-		<insert tableName="DENORMALIZED_INFO_LIST_ITEM">
-			<column name="ITEM_ID" value="11"/>
-			<column name="ITEM_TYPE" value="SYS"/>
-			<column name="DENO_LIST_ID" value="1" />
-			<column name="ITEM_INDEX" value="10"/>
-			<column name="LABEL" value="requirement.category.SECURITY" />
-			<column name="CODE" value="CAT_SECURITY"/>
-			<column name="IS_DEFAULT" valueBoolean="false"/>
-			<column name="ICON_NAME" value="def_cat_security"/>		
-		</insert>
-
-		<!-- =============== the default natures list ============== -->
-		
-		<insert tableName="DENORMALIZED_INFO_LIST">
-			<column name="INFO_LIST_ID" value="2" />
-			<column name="ORIGINAL_ID" value="2" />
-			<column name="ORIGINAL_VERSION" value="1"/>
-			<column name="LABEL" value="(def tc natures)"/>
-			<column name="DESCRIPTION" value=""/>
-			<column name="CODE" value="DEF_TC_NAT" />
-		</insert>
-		
-		
-		<insert tableName="DENORMALIZED_INFO_LIST_ITEM">
-			<column name="ITEM_ID" value="12"/>
-			<column name="ITEM_TYPE" value="SYS"/>
-			<column name="DENO_LIST_ID" value="2" />
-			<column name="ITEM_INDEX" value="0"/>
-			<column name="LABEL" value="test-case.nature.UNDEFINED" />
-			<column name="CODE" value="NAT_UNDEFINED"/>
-			<column name="IS_DEFAULT" valueBoolean="true"/>
-			<column name="ICON_NAME" value="noicon"/>		
-		</insert>
-						
-		<insert tableName="DENORMALIZED_INFO_LIST_ITEM">
-			<column name="ITEM_ID" value="13"/>
-			<column name="ITEM_TYPE" value="SYS"/>
-			<column name="DENO_LIST_ID" value="2" />
-			<column name="ITEM_INDEX" value="1"/>
-			<column name="LABEL" value="test-case.nature.FUNCTIONAL_TESTING" />
-			<column name="CODE" value="NAT_FUNCTIONAL_TESTING"/>
-			<column name="IS_DEFAULT" valueBoolean="false"/>
-			<column name="ICON_NAME" value="noicon"/>		
-		</insert>
-						
-		<insert tableName="DENORMALIZED_INFO_LIST_ITEM">
-			<column name="ITEM_ID" value="14"/>
-			<column name="ITEM_TYPE" value="SYS"/>
-			<column name="DENO_LIST_ID" value="2" />
-			<column name="ITEM_INDEX" value="2"/>
-			<column name="LABEL" value="test-case.nature.BUSINESS_TESTING" />
-			<column name="CODE" value="NAT_BUSINESS_TESTING"/>
-			<column name="IS_DEFAULT" valueBoolean="false"/>
-			<column name="ICON_NAME" value="noicon"/>		
-		</insert>
-						
-		<insert tableName="DENORMALIZED_INFO_LIST_ITEM">
-			<column name="ITEM_ID" value="15"/>
-			<column name="ITEM_TYPE" value="SYS"/>
-			<column name="DENO_LIST_ID" value="2" />
-			<column name="ITEM_INDEX" value="3"/>
-			<column name="LABEL" value="test-case.nature.USER_TESTING" />
-			<column name="CODE" value="NAT_USER_TESTING"/>
-			<column name="IS_DEFAULT" valueBoolean="false"/>
-			<column name="ICON_NAME" value="noicon"/>		
-		</insert>
-						
-		<insert tableName="DENORMALIZED_INFO_LIST_ITEM">
-			<column name="ITEM_ID" value="16"/>
-			<column name="ITEM_TYPE" value="SYS"/>
-			<column name="DENO_LIST_ID" value="2" />
-			<column name="ITEM_INDEX" value="4"/>
-			<column name="LABEL" value="test-case.nature.NON_FUNCTIONAL_TESTING" />
-			<column name="CODE" value="NAT_NON_FUNCTIONAL_TESTING"/>
-			<column name="IS_DEFAULT" valueBoolean="false"/>
-			<column name="ICON_NAME" value="noicon"/>		
-		</insert>
-						
-		<insert tableName="DENORMALIZED_INFO_LIST_ITEM">
-			<column name="ITEM_ID" value="17"/>
-			<column name="ITEM_TYPE" value="SYS"/>
-			<column name="DENO_LIST_ID" value="2" />
-			<column name="ITEM_INDEX" value="5"/>
-			<column name="LABEL" value="test-case.nature.PERFORMANCE_TESTING" />
-			<column name="CODE" value="NAT_PERFORMANCE_TESTING"/>
-			<column name="IS_DEFAULT" valueBoolean="false"/>
-			<column name="ICON_NAME" value="noicon"/>		
-		</insert>
-						
-		<insert tableName="DENORMALIZED_INFO_LIST_ITEM">
-			<column name="ITEM_ID" value="18"/>
-			<column name="ITEM_TYPE" value="SYS"/>
-			<column name="DENO_LIST_ID" value="2" />
-			<column name="ITEM_INDEX" value="6"/>
-			<column name="LABEL" value="test-case.nature.SECURITY_TESTING" />
-			<column name="CODE" value="NAT_SECURITY_TESTING"/>
-			<column name="IS_DEFAULT" valueBoolean="false"/>
-			<column name="ICON_NAME" value="noicon"/>		
-		</insert>
-						
-		<insert tableName="DENORMALIZED_INFO_LIST_ITEM">
-			<column name="ITEM_ID" value="19"/>
-			<column name="ITEM_TYPE" value="SYS"/>
-			<column name="DENO_LIST_ID" value="2" />
-			<column name="ITEM_INDEX" value="7"/>
-			<column name="LABEL" value="test-case.nature.ATDD" />
-			<column name="CODE" value="NAT_ATDD"/>
-			<column name="IS_DEFAULT" valueBoolean="false"/>
-			<column name="ICON_NAME" value="noicon"/>		
-		</insert>
-
-		<!-- =============== the default types list ============== -->
-		
-		<insert tableName="DENORMALIZED_INFO_LIST">
-			<column name="INFO_LIST_ID" value="3" />
-			<column name="ORIGINAL_ID" value="3" />
-			<column name="ORIGINAL_VERSION" value="1"/>
-			<column name="LABEL" value="(def tc types)"/>
-			<column name="DESCRIPTION" value=""/>
-			<column name="CODE" value="DEF_TC_TYP" />
-		</insert>
-		
-		<insert tableName="DENORMALIZED_INFO_LIST_ITEM">
-			<column name="ITEM_ID" value="20"/>
-			<column name="ITEM_TYPE" value="SYS"/>
-			<column name="DENO_LIST_ID" value="3" />
-			<column name="ITEM_INDEX" value="0"/>
-			<column name="LABEL" value="test-case.type.UNDEFINED" />
-			<column name="CODE" value="TYP_UNDEFINED"/>
-			<column name="IS_DEFAULT" valueBoolean="true"/>
-			<column name="ICON_NAME" value="noicon"/>		
-		</insert>
-		
-		<insert tableName="DENORMALIZED_INFO_LIST_ITEM">
-			<column name="ITEM_ID" value="21"/>
-			<column name="ITEM_TYPE" value="SYS"/>
-			<column name="DENO_LIST_ID" value="3" />
-			<column name="ITEM_INDEX" value="1"/>
-			<column name="LABEL" value="test-case.type.COMPLIANCE_TESTING" />
-			<column name="CODE" value="TYP_COMPLIANCE_TESTING"/>
-			<column name="IS_DEFAULT" valueBoolean="false"/>
-			<column name="ICON_NAME" value="noicon"/>		
-		</insert>
-		
-		<insert tableName="DENORMALIZED_INFO_LIST_ITEM">
-			<column name="ITEM_ID" value="22"/>
-			<column name="ITEM_TYPE" value="SYS"/>
-			<column name="DENO_LIST_ID" value="3" />
-			<column name="ITEM_INDEX" value="2"/>
-			<column name="LABEL" value="test-case.type.CORRECTION_TESTING" />
-			<column name="CODE" value="TYP_CORRECTION_TESTING"/>
-			<column name="IS_DEFAULT" valueBoolean="false"/>
-			<column name="ICON_NAME" value="noicon"/>		
-		</insert>
-		
-		<insert tableName="DENORMALIZED_INFO_LIST_ITEM">
-			<column name="ITEM_ID" value="23"/>
-			<column name="ITEM_TYPE" value="SYS"/>
-			<column name="DENO_LIST_ID" value="3" />
-			<column name="ITEM_INDEX" value="3"/>
-			<column name="LABEL" value="test-case.type.EVOLUTION_TESTING" />
-			<column name="CODE" value="TYP_EVOLUTION_TESTING"/>
-			<column name="IS_DEFAULT" valueBoolean="false"/>
-			<column name="ICON_NAME" value="noicon"/>		
-		</insert>
-		
-		<insert tableName="DENORMALIZED_INFO_LIST_ITEM">
-			<column name="ITEM_ID" value="24"/>
-			<column name="ITEM_TYPE" value="SYS"/>
-			<column name="DENO_LIST_ID" value="3" />
-			<column name="ITEM_INDEX" value="4"/>
-			<column name="LABEL" value="test-case.type.REGRESSION_TESTING" />
-			<column name="CODE" value="TYP_REGRESSION_TESTING"/>
-			<column name="IS_DEFAULT" valueBoolean="false"/>
-			<column name="ICON_NAME" value="noicon"/>		
-		</insert>
-		
-		<insert tableName="DENORMALIZED_INFO_LIST_ITEM">
-			<column name="ITEM_ID" value="25"/>
-			<column name="ITEM_TYPE" value="SYS"/>
-			<column name="DENO_LIST_ID" value="3" />
-			<column name="ITEM_INDEX" value="5"/>
-			<column name="LABEL" value="test-case.type.END_TO_END_TESTING" />
-			<column name="CODE" value="TYP_END_TO_END_TESTING"/>
-			<column name="IS_DEFAULT" valueBoolean="false"/>
-			<column name="ICON_NAME" value="noicon"/>		
-		</insert>
-		
-		<insert tableName="DENORMALIZED_INFO_LIST_ITEM">
-			<column name="ITEM_ID" value="26"/>
-			<column name="ITEM_TYPE" value="SYS"/>
-			<column name="DENO_LIST_ID" value="3" />
-			<column name="ITEM_INDEX" value="6"/>
-			<column name="LABEL" value="test-case.type.PARTNER_TESTING" />
-			<column name="CODE" value="TYP_PARTNER_TESTING"/>
-			<column name="IS_DEFAULT" valueBoolean="false"/>
-			<column name="ICON_NAME" value="noicon"/>		
-		</insert>
-		
-	</changeSet>
-		
-	<changeSet id="tm-1.12.0.feat-4068-5" author="bsiri">
 		
 		<comment>other structural modifications</comment>
 		
@@ -1116,7 +696,7 @@
 	</changeSet>
 		
 		
-	<changeSet id="tm-1.12.0.feat-4068-7" author="bsiri">
+	<changeSet id="tm-1.12.0.feat-4068-6" author="bsiri">
 		
 		<comment>migrate the test cases </comment>
 		
@@ -1174,7 +754,7 @@
 	</changeSet>
 	
 	
-	<changeSet id="tm-1.12.0.feat-4068-8" author="bsiri">
+	<changeSet id="tm-1.12.0.feat-4068-7" author="bsiri">
 		
 		<comment>migrate the requirements </comment>
 		
@@ -1210,65 +790,113 @@
 	</changeSet>
 	
 			
-	<changeSet id="tm-1.12.0.feat-4068-9" author="bsiri">
+	<changeSet id="tm-1.12.0.feat-4068-8" author="bsiri">
+		<comment> migrating the columns from EXECUTION</comment>
 		
-		<comment>inserting the association between executions 
-		and their denormalized lists</comment>
-				
-		<!--  ========= migration of the 'nature' column ============= -->
-		
-		<renameColumn tableName="EXECUTION" oldColumnName="TC_NATURE" newColumnName="TC_NATURE_OLD"  columnDataType="VARCHAR(30)"/>
-		
-		<addColumn tableName="EXECUTION">		
-			<column name="TC_NATURE" type="BIGINT" remarks="foreign key to the info list item"  defaultValue="12">
-				<constraints nullable="false" foreignKeyName="fk_ex_nature" references="DENORMALIZED_INFO_LIST_ITEM(ITEM_ID)"/>
-			</column>		
-		</addColumn>
-		
-		<!--  
-		in the following sequence we issue as many 'update' statement as there are nature 
-			to migrate. Indeed not all DB support update with joins and using subqueries would be costly.  -->
 		<sql>
-			update EXECUTION set TC_NATURE = 12 where TC_NATURE_OLD = 'UNDEFINED';
-			update EXECUTION set TC_NATURE = 13 where TC_NATURE_OLD = 'FUNCTIONAL_TESTING';
-			update EXECUTION set TC_NATURE = 14 where TC_NATURE_OLD = 'BUSINESS_TESTING';
-			update EXECUTION set TC_NATURE = 15 where TC_NATURE_OLD = 'USER_TESTING';
-			update EXECUTION set TC_NATURE = 16 where TC_NATURE_OLD = 'NON_FUNCTIONAL_TESTING';
-			update EXECUTION set TC_NATURE = 17 where TC_NATURE_OLD = 'PERFORMANCE_TESTING';
-			update EXECUTION set TC_NATURE = 18 where TC_NATURE_OLD = 'SECURITY_TESTING';
-			update EXECUTION set TC_NATURE = 19 where TC_NATURE_OLD = 'ATDD';			
+			update EXECUTION
+			set TC_NAT_LABEL = 'test-case.nature.UNDEFINED',
+				TC_NAT_CODE = 'NAT_UNDEFINED',
+				TC_NAT_ICON_NAME = 'noicon'
+			where TC_NATURE='UNDEFINED';
+			
+			update EXECUTION
+			set TC_NAT_LABEL = 'test-case.nature.FUNCTIONAL_TESTING',
+				TC_NAT_CODE = 'NAT_FUNCTIONAL_TESTING',
+				TC_NAT_ICON_NAME = 'noicon'
+			where TC_NATURE='FUNCTIONAL_TESTING';		
+			
+			update EXECUTION
+			set TC_NAT_LABEL = 'test-case.nature.BUSINESS_TESTING',
+				TC_NAT_CODE = 'NAT_BUSINESS_TESTING',
+				TC_NAT_ICON_NAME = 'noicon'
+			where TC_NATURE='BUSINESS_TESTING';				
+			
+			
+			update EXECUTION
+			set TC_NAT_LABEL = 'test-case.nature.USER_TESTING',
+				TC_NAT_CODE = 'NAT_USER_TESTING',
+				TC_NAT_ICON_NAME = 'noicon'
+			where TC_NATURE='USER_TESTING';				
+			
+			update EXECUTION
+			set TC_NAT_LABEL = 'test-case.nature.NON_FUNCTIONAL_TESTING',
+				TC_NAT_CODE = 'NAT_NON_FUNCTIONAL_TESTING',
+				TC_NAT_ICON_NAME = 'noicon'
+			where TC_NATURE='NON_FUNCTIONAL_TESTING';		
+			
+			update EXECUTION
+			set TC_NAT_LABEL = 'test-case.nature.PERFORMANCE_TESTING',
+				TC_NAT_CODE = 'NAT_PERFORMANCE_TESTING',
+				TC_NAT_ICON_NAME = 'noicon'
+			where TC_NATURE='PERFORMANCE_TESTING';	
+			
+			update EXECUTION
+			set TC_NAT_LABEL = 'test-case.nature.SECURITY_TESTING',
+				TC_NAT_CODE = 'NAT_SECURITY_TESTING',
+				TC_NAT_ICON_NAME = 'noicon'
+			where TC_NATURE='SECURITY_TESTING';			
+			
+			update EXECUTION
+			set TC_NAT_LABEL = 'test-case.nature.ATDD',
+				TC_NAT_CODE = 'NAT_ATDD',
+				TC_NAT_ICON_NAME = 'noicon'
+			where TC_NATURE='ATDD';		
+			
+			
+					
+			
+			update EXECUTION
+			set TC_TYP_LABEL = 'test-case.type.UNDEFINED',
+				TC_TYP_CODE = 'TYP_UNDEFINED',
+				TC_TYP_ICON_NAME = 'noicon'
+			where TC_TYPE='UNDEFINED';			
+			
+			update EXECUTION
+			set TC_TYP_LABEL = 'test-case.type.COMPLIANCE_TESTING',
+				TC_TYP_CODE = 'TYP_COMPLIANCE_TESTING',
+				TC_TYP_ICON_NAME = 'noicon'
+			where TC_TYPE='COMPLIANCE_TESTING';	
+			
+			update EXECUTION
+			set TC_TYP_LABEL = 'test-case.type.CORRECTION_TESTING',
+				TC_TYP_CODE = 'TYP_CORRECTION_TESTING',
+				TC_TYP_ICON_NAME = 'noicon'
+			where TC_TYPE='CORRECTION_TESTING';		
+			
+			update EXECUTION
+			set TC_TYP_LABEL = 'test-case.type.EVOLUTION_TESTING',
+				TC_TYP_CODE = 'TYP_EVOLUTION_TESTING',
+				TC_TYP_ICON_NAME = 'noicon'
+			where TC_TYPE='EVOLUTION_TESTING';	
+			
+			update EXECUTION
+			set TC_TYP_LABEL = 'test-case.type.REGRESSION_TESTING',
+				TC_TYP_CODE = 'TYP_REGRESSION_TESTING',
+				TC_TYP_ICON_NAME = 'noicon'
+			where TC_TYPE='REGRESSION_TESTING';	
+			
+			update EXECUTION
+			set TC_TYP_LABEL = 'test-case.type.END_TO_END_TESTING',
+				TC_TYP_CODE = 'TYP_END_TO_END_TESTING',
+				TC_TYP_ICON_NAME = 'noicon'
+			where TC_TYPE='END_TO_END_TESTING';		
+			
+			update EXECUTION
+			set TC_TYP_LABEL = 'test-case.type.PARTNER_TESTING',
+				TC_TYP_CODE = 'TYP_PARTNER_TESTING',
+				TC_TYP_ICON_NAME = 'noicon'
+			where TC_TYPE='PARTNER_TESTING';								
+			
+			
+											
 		</sql>
 		
-		<dropColumn tableName="EXECUTION" columnName="TC_NATURE_OLD"/>
-	
-		<!--  ========= migration of the 'type' column ============= -->
-		
-		<renameColumn tableName="EXECUTION" oldColumnName="TC_TYPE" newColumnName="TC_TYPE_OLD"  columnDataType="VARCHAR(30)"/>
-		
-		<addColumn tableName="EXECUTION">		
-			<column name="TC_TYPE" type="BIGINT" remarks="foreign key to the info list item"  defaultValue="20">
-				<constraints nullable="false" foreignKeyName="fk_ex_type" references="DENORMALIZED_INFO_LIST_ITEM(ITEM_ID)"/>
-			</column>		
-		</addColumn>
-		
-		<!--  
-		in the following sequence we issue as many 'update' statement as there are types
-			to migrate. Indeed not all DB support update with joins and using subqueries would be costly.  -->
-		<sql>
-			update EXECUTION set TC_TYPE = 20 where TC_TYPE_OLD = 'UNDEFINED';
-			update EXECUTION set TC_TYPE = 21 where TC_TYPE_OLD = 'COMPLIANCE_TESTING';
-			update EXECUTION set TC_TYPE = 22 where TC_TYPE_OLD = 'CORRECTION_TESTING';
-			update EXECUTION set TC_TYPE = 23 where TC_TYPE_OLD = 'EVOLUTION_TESTING';
-			update EXECUTION set TC_TYPE = 24 where TC_TYPE_OLD = 'REGRESSION_TESTING';
-			update EXECUTION set TC_TYPE = 25 where TC_TYPE_OLD = 'END_TO_END_TESTING';
-			update EXECUTION set TC_TYPE = 26 where TC_TYPE_OLD = 'PARTNER_TESTING';			
-		</sql>
-		
-		<dropColumn tableName="EXECUTION" columnName="TC_TYPE_OLD"/>		
-	
+		<dropColumn tableName="EXECUTION" columnName="TC_NATURE" />
+		<dropColumn tableName="EXECUTION" columnName="TC_TYPE" />
 	</changeSet>
 	
-    <changeSet id="tm-1.12.0.feat-4068-10" author="bsiri" dbms="postgresql">
+    <changeSet id="tm-1.12.0.feat-4068-9" author="bsiri" dbms="postgresql">
       <comment>update the sequences afterward</comment>
       <sql>
         SELECT setval('info_list_info_list_id_seq', (SELECT MAX(info_list_id) from info_list));

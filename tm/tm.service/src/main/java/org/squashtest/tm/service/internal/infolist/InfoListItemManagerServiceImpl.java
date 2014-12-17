@@ -47,7 +47,7 @@ public class InfoListItemManagerServiceImpl implements InfoListItemManagerServic
 	@Inject
 	private GenericProjectDao projectDao;
 
-        @Inject
+	@Inject
 	private InfoListManagerService infoListService;
 	// ************* "Finder" methods **************** \\
 
@@ -63,11 +63,10 @@ public class InfoListItemManagerServiceImpl implements InfoListItemManagerServic
 
 	@Override
 	public void changeCode(long infoListItemId, String newCode) {
-		
+
 		InfoListItem item = itemDao.findById(infoListItemId);
 		SystemInfoListItemCode.verifyModificationPermission(item);
 		item.setCode(newCode);
-		upgradeInfoListVersion(item.getInfoList());
 	}
 
 	@Override
@@ -75,7 +74,6 @@ public class InfoListItemManagerServiceImpl implements InfoListItemManagerServic
 		InfoListItem item = itemDao.findById(infoListItemId);
 		SystemInfoListItemCode.verifyModificationPermission(item);
 		item.setLabel(newLabel);
-		upgradeInfoListVersion(item.getInfoList());
 	}
 
 	@Override
@@ -88,20 +86,16 @@ public class InfoListItemManagerServiceImpl implements InfoListItemManagerServic
 			item.setDefault(false);
 		}
 		changedItem.setDefault(true);
-		upgradeInfoListVersion(changedItem.getInfoList());
 	}
-	
-	private void upgradeInfoListVersion(InfoList infoList){
-		infoListService.upgradeVersion(infoList);
-	}
+
+
 
 	@Override
 	public void changeIcon(long infoListItemId, String icon) {
 		InfoListItem item = itemDao.findById(infoListItemId);
 		SystemInfoListItemCode.verifyModificationPermission(item);
 		item.setIconName(icon);
-		upgradeInfoListVersion(item.getInfoList());
-		
+
 	}
 
 
@@ -110,12 +104,12 @@ public class InfoListItemManagerServiceImpl implements InfoListItemManagerServic
 
 		InfoList infoList = infoListService.findById(infoListId);
 		SystemInfoListCode.verifyModificationPermission(infoList);
-		
+
 		if (infoList.getItems().size() == 0) {
 			item.setDefault(true);
 		}
 		item.setInfoList(infoList);
-		itemDao.persist(item);	
+		itemDao.persist(item);
 		infoList.addItem(item);
 	}
 
@@ -186,5 +180,5 @@ public class InfoListItemManagerServiceImpl implements InfoListItemManagerServic
 	}
 
 
-	
+
 }

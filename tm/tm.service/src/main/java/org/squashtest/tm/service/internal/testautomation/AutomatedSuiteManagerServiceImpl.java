@@ -54,7 +54,6 @@ import org.squashtest.tm.domain.customfield.CustomFieldValue;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.domain.infolist.DenormalizedInfoListItem;
-import org.squashtest.tm.domain.infolist.DenormalizedListItemReference;
 import org.squashtest.tm.domain.testautomation.AutomatedExecutionExtender;
 import org.squashtest.tm.domain.testautomation.AutomatedSuite;
 import org.squashtest.tm.domain.testautomation.AutomatedTest;
@@ -63,7 +62,6 @@ import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.exception.execution.TestPlanItemNotExecutableException;
 import org.squashtest.tm.service.advancedsearch.IndexationService;
 import org.squashtest.tm.service.customfield.CustomFieldValueFinderService;
-import org.squashtest.tm.service.infolist.DenormalizedInfoListManagerService;
 import org.squashtest.tm.service.internal.campaign.CampaignNodeDeletionHandler;
 import org.squashtest.tm.service.internal.customfield.PrivateCustomFieldValueService;
 import org.squashtest.tm.service.internal.denormalizedField.PrivateDenormalizedFieldValueService;
@@ -138,9 +136,6 @@ public class AutomatedSuiteManagerServiceImpl implements AutomatedSuiteManagerSe
 
 	@Inject
 	private PrivateCustomFieldValueService customFieldValuesService;
-
-	@Inject
-	private DenormalizedInfoListManagerService infoListService;
 
 	public int getTimeoutMillis() {
 		return timeoutMillis;
@@ -365,7 +360,6 @@ public class AutomatedSuiteManagerServiceImpl implements AutomatedSuiteManagerSe
 
 		Execution execution = item.createAutomatedExecution();
 
-		fixNatureAndTypes(execution);
 		executionDao.persist(execution);
 		item.addExecution(execution);
 
@@ -566,17 +560,5 @@ public class AutomatedSuiteManagerServiceImpl implements AutomatedSuiteManagerSe
 
 		return createFromItems(items);
 	}
-
-
-	private void fixNatureAndTypes(Execution exec){
-		DenormalizedInfoListItem natureReference = exec.getNature();
-		DenormalizedInfoListItem nature = infoListService.findOrDenormalize((DenormalizedListItemReference)natureReference);
-		exec.setNature(nature);
-
-		DenormalizedInfoListItem typeReference = exec.getType();
-		DenormalizedInfoListItem type = infoListService.findOrDenormalize((DenormalizedListItemReference)typeReference);
-		exec.setType(type);
-	}
-
 
 }

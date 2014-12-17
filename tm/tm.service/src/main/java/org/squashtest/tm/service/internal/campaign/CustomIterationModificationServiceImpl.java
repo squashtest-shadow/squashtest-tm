@@ -42,7 +42,6 @@ import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.campaign.TestSuite;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.infolist.DenormalizedInfoListItem;
-import org.squashtest.tm.domain.infolist.DenormalizedListItemReference;
 import org.squashtest.tm.domain.testcase.Dataset;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.users.User;
@@ -53,7 +52,6 @@ import org.squashtest.tm.service.campaign.IterationStatisticsService;
 import org.squashtest.tm.service.campaign.IterationTestPlanManagerService;
 import org.squashtest.tm.service.deletion.OperationReport;
 import org.squashtest.tm.service.deletion.SuppressionPreviewReport;
-import org.squashtest.tm.service.infolist.DenormalizedInfoListManagerService;
 import org.squashtest.tm.service.internal.customfield.PrivateCustomFieldValueService;
 import org.squashtest.tm.service.internal.denormalizedField.PrivateDenormalizedFieldValueService;
 import org.squashtest.tm.service.internal.library.PasteStrategy;
@@ -117,7 +115,6 @@ IterationTestPlanManager {
 
 	@Inject private UnsecuredAutomatedTestManagerService testAutomationService;
 
-	@Inject private DenormalizedInfoListManagerService infoListService;
 
 
 	@Override
@@ -311,8 +308,6 @@ IterationTestPlanManager {
 		// if passes, let's move to the next step
 		Execution execution = item.createExecution();
 
-		// nature and type
-		fixNatureAndTypes(execution);
 
 		// if we don't persist before we add, add will trigger an update of item.testPlan which fail because execution
 		// has no id yet. this is caused by weird mapping (https://hibernate.onjira.com/browse/HHH-5732)
@@ -340,17 +335,6 @@ IterationTestPlanManager {
 		denormalizedFieldValueService.createAllDenormalizedFieldValuesForSteps(execution);
 
 	}
-
-	private void fixNatureAndTypes(Execution exec){
-		DenormalizedInfoListItem natureReference = exec.getNature();
-		DenormalizedInfoListItem nature = infoListService.findOrDenormalize((DenormalizedListItemReference)natureReference);
-		exec.setNature(nature);
-
-		DenormalizedInfoListItem typeReference = exec.getType();
-		DenormalizedInfoListItem type = infoListService.findOrDenormalize((DenormalizedListItemReference)typeReference);
-		exec.setType(type);
-	}
-
 
 	@Override
 	public Execution addAutomatedExecution(IterationTestPlanItem item) throws TestPlanItemNotExecutableException {

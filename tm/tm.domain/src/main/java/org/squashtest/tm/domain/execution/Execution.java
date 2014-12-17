@@ -34,6 +34,7 @@ import java.util.Set;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -41,7 +42,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinColumns;
 import javax.persistence.JoinTable;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
@@ -55,9 +55,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.Formula;
-import org.hibernate.annotations.JoinColumnOrFormula;
 import org.hibernate.annotations.Type;
-import org.hibernate.annotations.WhereJoinTable;
 import org.hibernate.validator.constraints.NotBlank;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.tm.domain.Identified;
@@ -76,7 +74,8 @@ import org.squashtest.tm.domain.customfield.BoundEntity;
 import org.squashtest.tm.domain.denormalizedfield.DenormalizedFieldHolder;
 import org.squashtest.tm.domain.denormalizedfield.DenormalizedFieldHolderType;
 import org.squashtest.tm.domain.infolist.DenormalizedInfoListItem;
-import org.squashtest.tm.domain.infolist.DenormalizedListItemReference;
+import org.squashtest.tm.domain.infolist.DenormalizedNature;
+import org.squashtest.tm.domain.infolist.DenormalizedType;
 import org.squashtest.tm.domain.infolist.InfoListItem;
 import org.squashtest.tm.domain.library.HasExecutionStatus;
 import org.squashtest.tm.domain.project.Project;
@@ -149,15 +148,11 @@ DenormalizedFieldHolder, BoundEntity {
 	@Basic(optional = false)
 	private TestCaseImportance importance = LOW;
 
-	@NotNull
-	@ManyToOne
-	@JoinColumn(name = "TC_NATURE")
-	private DenormalizedInfoListItem nature;
+	@Embedded
+	private DenormalizedNature nature;
 
-	@NotNull
-	@ManyToOne
-	@JoinColumn(name = "TC_TYPE")
-	private DenormalizedInfoListItem type;
+	@Embedded
+	private DenormalizedType type;
 
 	@Enumerated(EnumType.STRING)
 	@Basic(optional = false)
@@ -318,14 +313,12 @@ DenormalizedFieldHolder, BoundEntity {
 		setStatus(testCase.getStatus());
 
 		// the nature and type now
-		// no need to say, these references should be post-processed by a service
-		// and replaced by actual instances
 		InfoListItem nature = testCase.getNature();
-		DenormalizedListItemReference denoNature = new DenormalizedListItemReference(nature.getInfoList().getId(), nature.getInfoList().getVersion(), nature.getCode());
+		DenormalizedNature denoNature = new DenormalizedNature(nature.getLabel(), nature.getCode(), nature.getIconName());
 		this.nature = denoNature;
 
 		InfoListItem type = testCase.getType();
-		DenormalizedListItemReference denoType = new DenormalizedListItemReference(type.getInfoList().getId(), type.getInfoList().getVersion(), type.getCode());
+		DenormalizedType denoType = new DenormalizedType(type.getLabel(), type.getCode(), type.getIconName());
 		this.type = denoType;
 
 	}
@@ -403,19 +396,19 @@ DenormalizedFieldHolder, BoundEntity {
 		this.importance = importance;
 	}
 
-	public DenormalizedInfoListItem getNature() {
+	public DenormalizedNature getNature() {
 		return nature;
 	}
 
-	public void setNature(@NotNull DenormalizedInfoListItem nature) {
+	public void setNature(@NotNull DenormalizedNature nature) {
 		this.nature = nature;
 	}
 
-	public DenormalizedInfoListItem getType() {
+	public DenormalizedType getType() {
 		return type;
 	}
 
-	public void setType(@NotNull DenormalizedInfoListItem type) {
+	public void setType(@NotNull DenormalizedType type) {
 		this.type = type;
 	}
 

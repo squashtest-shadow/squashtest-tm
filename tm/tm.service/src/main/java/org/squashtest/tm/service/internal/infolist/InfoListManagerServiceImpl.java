@@ -78,17 +78,11 @@ public class InfoListManagerServiceImpl implements InfoListManagerService {
 	}
 
 	@Override
-	public void upgradeVersion(InfoList infoList) {
-		int currVersion = infoList.getVersion();
-		infoList.setVersion(++currVersion);
-	}
-
-	@Override
 	public void changeItemsPositions(long infoListId, int newIndex, List<Long> itemsIds) {
 
 		InfoList infoList = findById(infoListId);
 		SystemInfoListCode.verifyModificationPermission(infoList);
-		
+
 		List<InfoListItem> items = infoListItemDao.findAllByIds(itemsIds);
 		for (InfoListItem item : items) {
 			infoList.removeItem(item);
@@ -98,26 +92,26 @@ public class InfoListManagerServiceImpl implements InfoListManagerService {
 
 	@Override
 	public boolean isUsedByOneOrMoreProject(long infoListId) {
-	
+
 		return 	infoListDao.isUsedByOneOrMoreProject(infoListId);
 	}
 
 	@Override
-	public void deleteInfoList(long infoListId) {	
-			
+	public void deleteInfoList(long infoListId) {
+
 		InfoList infoList = infoListDao.findById(infoListId);
 		SystemInfoListCode.verifyModificationPermission(infoList);
-		
+
 		infoListDao.removeInfoListFromProjects(infoListId);
 		infoListItemDao.removeInfoListItems(infoListId);
-		
+
 		for (InfoListItem item : infoList.getItems()){
 			infoListItemDao.remove(item);
 		}
-		
+
 		infoListDao.remove(infoList);
-	
+
 	}
-	
+
 
 }

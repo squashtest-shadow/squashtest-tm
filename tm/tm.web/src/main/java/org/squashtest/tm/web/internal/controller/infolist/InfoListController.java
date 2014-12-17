@@ -75,7 +75,6 @@ public class InfoListController {
 		LOGGER.debug("label " + list.getLabel());
 		LOGGER.debug("code " + list.getCode());
 		LOGGER.debug("description " + list.getDescription());
-		LOGGER.debug("version " + list.getVersion());
 		return "info-list-modification.html";
 	}
 
@@ -113,7 +112,7 @@ public class InfoListController {
 	}
 
 	@RequestMapping(value = "/{infoListId}/items/positions", method = RequestMethod.POST, params = { "itemIds[]",
-			"newIndex" })
+	"newIndex" })
 	@ResponseBody
 	@ResponseStatus(value = HttpStatus.NO_CONTENT)
 	public void changeOptionsPositions(@PathVariable long infoListId, @RequestParam int newIndex,
@@ -147,14 +146,14 @@ public class InfoListController {
 		InfoList infoList = listManager.findById(infoListId);
 		return 	infoList.getDefaultItem().getId();
 	}
-	
+
 	@RequestMapping(value = "/{infoListId}/{infoListItemId}", method = RequestMethod.DELETE)
 	@ResponseBody
 	public void delete(@PathVariable("infoListId") long infoListId, @PathVariable("infoListItemId") long infoListItemId) {
 		listItemManager.removeInfoListItem(infoListItemId, infoListId);
 	}
-	
-	
+
+
 	private DataTableModel buildInfoListItemTableModel(Collection<InfoListItem> data) {
 		InfoListItemDataTableModelHelper helper = new InfoListItemDataTableModelHelper();
 		Collection<Object> aaData = helper.buildRawModel(data);

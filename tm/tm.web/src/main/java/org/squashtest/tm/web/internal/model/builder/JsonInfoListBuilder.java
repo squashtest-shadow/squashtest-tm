@@ -28,9 +28,7 @@ import javax.inject.Inject;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Component;
-import org.squashtest.tm.domain.infolist.DenormalizedInfoList;
 import org.squashtest.tm.domain.infolist.DenormalizedInfoListItem;
-import org.squashtest.tm.domain.infolist.DenormalizedSystemListItem;
 import org.squashtest.tm.domain.infolist.InfoList;
 import org.squashtest.tm.domain.infolist.InfoListItem;
 import org.squashtest.tm.domain.infolist.SystemListItem;
@@ -51,10 +49,8 @@ public class JsonInfoListBuilder {
 		res.setId(list.getId());
 		res.setCode(list.getCode());
 		res.setUri("todo");
-		res.setVersion(list.getVersion());
 		res.setLabel(list.getLabel());
 		res.setDescription(list.getDescription());
-		res.setDenormalized(false);
 
 		List<JsonInfoListItem> items = new ArrayList<JsonInfoListItem>(list.getItems().size());
 		for (InfoListItem item : list.getItems()){
@@ -66,29 +62,6 @@ public class JsonInfoListBuilder {
 
 		return res;
 
-	}
-
-
-	public JsonInfoList toJson(DenormalizedInfoList list){
-		JsonInfoList res = new JsonInfoList();
-
-		res.setId(list.getId());
-		res.setCode(list.getCode());
-		res.setUri("todo");
-		res.setVersion(list.getOriginalVersion());	// that info is useless : denormalized lists aren't versioned
-		res.setLabel(list.getLabel());
-		res.setDescription(list.getDescription());
-		res.setDenormalized(true);
-
-		List<JsonInfoListItem> items = new ArrayList<JsonInfoListItem>(list.getItems().size());
-		for (DenormalizedInfoListItem item : list.getItems()){
-			JsonInfoListItem jsItem = toJson(item);
-			items.add(jsItem);
-		}
-
-		res.setItems(items);
-
-		return res;
 	}
 
 
@@ -110,14 +83,10 @@ public class JsonInfoListBuilder {
 
 	public JsonInfoListItem toJson(DenormalizedInfoListItem item){
 		JsonInfoListItem res = new JsonInfoListItem();
-		res.setId(item.getId());
-		res.setUri("todo");
 		res.setCode(item.getCode());
 		res.setLabel(item.getLabel());
 		res.setIconName(item.getIconName());
 		res.setDenormalized(true);
-		// TODO : something less sloppy once we have time for something better
-		res.setSystem(DenormalizedSystemListItem.class.isAssignableFrom(item.getClass()));
 		res.setFriendlyLabel(messageSource.getMessage(res.getLabel(), null, res.getLabel(), LocaleContextHolder.getLocale()));
 		return res;
 	}
