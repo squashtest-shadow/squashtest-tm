@@ -74,7 +74,7 @@ define([ 'module', "jquery", "squash.basicwidgets", "jeditable.selectJEditable",
 			data : config.data.lists.category,
 			infoListType: 'category',
 			oldValue: $("#info-list-category").text()
-		},
+		}
 	});
 	
 	var typeEditable = new SelectJEditable(
@@ -85,7 +85,7 @@ define([ 'module', "jquery", "squash.basicwidgets", "jeditable.selectJEditable",
 					data : config.data.lists.type,
 					infoListType: 'type',
 					oldValue: $("#info-list-type").text()
-				},
+				}
 			});
 	
 	
@@ -97,7 +97,7 @@ define([ 'module', "jquery", "squash.basicwidgets", "jeditable.selectJEditable",
 					data : config.data.lists.nature,
 					infoListType: 'nature',
 					oldValue: $("#info-list-nature").text()
-				},
+				}
 			});
 	
 	
