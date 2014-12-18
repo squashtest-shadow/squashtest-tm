@@ -30,11 +30,6 @@
 <style th:include="fragments-utils/various-headers :: admin-subpage-css"
 	th:remove="tag"></style>
 
-<link rel="stylesheet" type="text/css" media="all"
-	href="../../../../../../../tm/tm.web/src/main/webapp/styles/info-list-item-icon.css"
-	sq:css="info-list-item-icon.css" />
-
-
 <script type="text/javascript" th:src="@{/scripts/require-min.js}"></script>
 <script type="text/javascript" th:src="@{/scripts/common.js}"></script>
 
@@ -166,7 +161,7 @@
 												th:attr="data-def='map=default, checkbox, sClass=isDefault'"
 												th:text="#{label.default}">Default</th>
 											<th
-												th:attr="data-def='sWidth=2em, map=empty-delete-holder, delete-button=#unbind-milestone-popup'"></th>
+												th:attr="data-def='sWidth=2em, map=empty-delete-holder, delete-button'"></th>
 										</tr>
 									</thead>
 

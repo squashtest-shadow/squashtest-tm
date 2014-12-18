@@ -132,7 +132,7 @@ define([], function(){
 		'info-list.defaultItem'                : root + '/info-lists/{\\d+}/defaultItem ',
 	    'info-list-item.isUsed'                : root + '/info-list-items/{\\d+}/isUsed',
 	    'info-list-item.delete'                : root + '/info-lists/{\\d+}/{\\d+}',
-		
+	    'info-list.bind-to-project'             : root + '/info-list-binding/project/{\\d+}/{\\w+}',
 		// helper methods
 		buildURL : function(){
 			var args = Array.prototype.slice.call(arguments);

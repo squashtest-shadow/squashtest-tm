@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.service.internal.infolist;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -112,6 +113,15 @@ public class InfoListManagerServiceImpl implements InfoListManagerService {
 		infoListDao.remove(infoList);
 
 	}
-
+@Override
+	public List<InfoList> findAllUserList() {
+		List<InfoList> allList = infoListDao.findAllOrdered();
+		List<InfoList> systemList = new ArrayList<InfoList>();
+		for (SystemInfoListCode sysInfo : SystemInfoListCode.values()) {
+			systemList.add(infoListDao.findByCode(sysInfo.getCode()));
+		}
+		allList.removeAll(systemList);
+		return allList;
+	}
 
 }

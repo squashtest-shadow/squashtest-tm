@@ -20,7 +20,10 @@
  */
 package org.squashtest.tm.service.internal.repository;
 
+import java.util.List;
+
 import org.squashtest.tm.domain.infolist.InfoList;
+import org.squashtest.tm.domain.infolist.InfoListItem;
 
 public interface InfoListDao  extends EntityDao<InfoList>{
 
@@ -32,4 +35,10 @@ public interface InfoListDao  extends EntityDao<InfoList>{
 
 
 	void removeInfoListFromProjects(long infoListId);
+
+	List<InfoList> findAllOrdered();
+
+	void setDefaultCategoryForProject(long projectId, InfoListItem defaultItem);
+	void setDefaultNatureForProject(long projectId, InfoListItem defaultItem);
+	void setDefaultTypeForProject(long projectId, InfoListItem defaultItem);
 }

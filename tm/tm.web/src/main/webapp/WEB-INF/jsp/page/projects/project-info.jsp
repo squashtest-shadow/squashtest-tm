@@ -61,6 +61,10 @@
 	<s:param name="projectId" 		value="${adminproject.project.id}"/>
 </s:url>
 
+<s:url var="infoListManagerURL" 	value="/administration/projects/{projectId}/infoList-binding">
+	<s:param name="projectId" 		value="${adminproject.project.id}"/>
+</s:url>
+
 <s:url var="wizardsManagerURL"      value="/administration/projects/{projectId}/wizards">
 	<s:param name="projectId" 	    value="${adminproject.project.id}" />
 </s:url>
@@ -149,6 +153,7 @@
 			<ul class="tab-menu">
 				<li><a href="#main-informations"><f:message key="tabs.label.mainpanel"/></a></li>
 				<li><a href="${customFieldManagerURL}"><f:message key="tabs.label.cufbinding"/></a></li>
+				<li><a href="${infoListManagerURL}"><f:message key="tabs.label.infoList"/></a></li>
 			    <li><a href="${milestoneManagerURL}"><f:message key="tabs.label.milestone"/></a></li>
 				<li><a href="${wizardsManagerURL}"><f:message key="tabs.label.wizards"/></a></li>
 			

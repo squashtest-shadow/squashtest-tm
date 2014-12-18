@@ -576,7 +576,9 @@
 		//InfoList
 		@NamedQuery(name="infoList.findByCode", query = "from InfoList where code = :code"),
 		@NamedQuery(name="infoList.findProjectUsingInfoList", query ="from Project p where p.requirementCategories.id = :id or p.testCaseNatures.id = :id or p.testCaseTypes.id = :id"),
-				
+		@NamedQuery(name="infoList.findAllOrdered", query = "from InfoList order by label"),
+		
+		
 		//InfoListItem
 		@NamedQuery(name="infoListItem.findByCode", query="from InfoListItem where code = :code"),
 		@NamedQuery(name="infoListItem.findDefaultRequirementCategoryForProject", query="select item from GenericProject p join p.requirementCategories categories join categories.items item where p.id = :projectId and item.isDefault is true"),
@@ -607,7 +609,10 @@
 		@NamedQuery(name="infoListItem.setTcNatToDefault", query="update TestCase tc set tc.nature = :default where tc.nature.id = :id"),
 		@NamedQuery(name="infoListItem.setTcTypeToDefault", query="update TestCase tc set tc.type = :default where tc.type.id = :id"),
 		
-		 
+		 //set InfoListItem of a project to default value
+		@NamedQuery(name="infoList.setProjectCategoryToDefaultItem", query= "update RequirementVersion reqV set reqV.category = :default where reqV.id in  (select rln.resource.id from RequirementLibraryNode rln where rln.project.id = :id) "),
+		@NamedQuery(name="infoList.setProjectNatureToDefaultItem", query = "update TestCase tc set tc.nature = :default where tc.project.id = :id"),
+		@NamedQuery(name="infoList.setProjectTypeToDefaultItem", query = "update TestCase tc set tc.type = :default where tc.project.id = :id")
 })
 package org.squashtest.tm.service.internal.repository.hibernate;
 

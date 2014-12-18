@@ -20,6 +20,8 @@
  */
 package org.squashtest.tm.service.internal.repository.hibernate;
 
+import java.util.List;
+
 import javax.inject.Inject;
 
 import org.hibernate.Query;
@@ -27,6 +29,7 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.stereotype.Repository;
 import org.squashtest.tm.domain.infolist.InfoList;
+import org.squashtest.tm.domain.infolist.InfoListItem;
 import org.squashtest.tm.domain.infolist.SystemInfoListCode;
 import org.squashtest.tm.service.internal.repository.InfoListDao;
 
@@ -74,11 +77,34 @@ public class HibernateInfoListDao extends HibernateEntityDao<InfoList> implement
 	}
 
 	
-	private void execUpdateQuery(long infoListId, String queryName, InfoList defaultParam){
+	private void execUpdateQuery(long infoListId, String queryName, Object defaultParam){
 		Query query = currentSession().getNamedQuery(queryName);
 		query.setParameter("default", defaultParam);
 		query.setParameter("id", infoListId);
 		query.executeUpdate();
+	}
+
+	@Override
+	public List<InfoList> findAllOrdered() {
+		return executeListNamedQuery("infoList.findAllOrdered");
+		
+	}
+
+	@Override
+	public void setDefaultCategoryForProject(long projectId, InfoListItem defaultItem) {
+		execUpdateQuery(projectId,"infoList.setProjectCategoryToDefaultItem", defaultItem);
+	}
+
+	@Override
+	public void setDefaultNatureForProject(long projectId, InfoListItem defaultItem) {
+		execUpdateQuery(projectId,"infoList.setProjectNatureToDefaultItem", defaultItem);
+		
+	}
+
+	@Override
+	public void setDefaultTypeForProject(long projectId, InfoListItem defaultItem) {
+		execUpdateQuery(projectId,"infoList.setProjectTypeToDefaultItem", defaultItem);
+		
 	}
 	
 	

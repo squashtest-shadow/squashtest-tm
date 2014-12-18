@@ -74,4 +74,6 @@ public interface InfoListItemDao extends EntityDao<InfoListItem>{
 	boolean isUsed(long infoListItemId);
 	
 	void removeInfoListItem (long infoListItemId, InfoListItem defaultItem);
+	
+
 }

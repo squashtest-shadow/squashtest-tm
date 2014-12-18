@@ -20,17 +20,8 @@
  */
 package org.squashtest.tm.service.infolist;
 
-import java.util.List;
-
-import org.squashtest.tm.domain.infolist.InfoList;
-
-
-
-public interface InfoListFinderService {
-
-	InfoList findById(Long id);
-	InfoList findByCode(String code);
-	List<InfoList> findAllUserList();
-
-
+public interface InfoListBindingManagerService {
+void bindListToProjectReqCategory(long infoListId, long projectId);
+void bindListToProjectTcNature(long infoListId, long projectId);
+void bindListToProjectTcType(long infoListId, long projectId);
 }

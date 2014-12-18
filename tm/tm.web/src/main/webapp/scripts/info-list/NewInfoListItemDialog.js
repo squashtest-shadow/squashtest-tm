@@ -101,10 +101,11 @@ define([ "jquery", "backbone", "handlebars", "./IconSelectDialog","squash.transl
 			Forms.form(this.$el).clearState();
 
 			var url = routing.buildURL('info-list.items', this.model.listId);
+
 			var params = {	
 					"label" : this.model.label,
 					"code" : this.model.code,
-					"iconName" : this.model.icon,
+					"iconName" : this.model.icon || "noicon",
 			};
 			$.ajax({
 				url : url,
