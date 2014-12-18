@@ -704,7 +704,6 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 	 */
 	private CompareToBuilder buildProjectComparator(final PagingAndMultiSorting sorter, final ProjectForCustomCompare o1,
 			final ProjectForCustomCompare o2) {
-
 		CompareToBuilder comp = new CompareToBuilder();
 		GenericProject firstProject = o1.getGenericProject();
 		GenericProject secondProject = o2.getGenericProject();

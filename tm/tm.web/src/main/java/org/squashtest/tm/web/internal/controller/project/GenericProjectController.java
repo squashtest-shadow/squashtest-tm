@@ -131,7 +131,7 @@ public class GenericProjectController {
 	.map(DataTableModelConstants.DEFAULT_CREATED_ON_KEY, DataTableModelConstants.DEFAULT_CREATED_ON_VALUE)
 	.map(DataTableModelConstants.DEFAULT_CREATED_BY_KEY, DataTableModelConstants.DEFAULT_CREATED_BY_VALUE)
 	.map("last-mod-on",DataTableModelConstants.DEFAULT_LAST_MODIFIED_ON_VALUE)
-	.map("last-mod-by", DataTableModelConstants.DEFAULT_LAST_MODIFIED_BY_VALUE);
+	.map("last-mod-by", DataTableModelConstants.DEFAULT_LAST_MODIFIED_BY_VALUE)
 	.map("habilitation","habilitation")
 	.map("bugtracker","bugtracker")
 	.map("automation","automation");
