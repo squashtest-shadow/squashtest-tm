@@ -342,7 +342,7 @@
 		
 		<insert tableName="INFO_LIST">
 			<column name="INFO_LIST_ID" value="1" />
-			<column name="LABEL" value="(def req categories)"/>
+			<column name="LABEL" value="infolist.category.default"/>
 			<column name="DESCRIPTION" value=""/>
 			<column name="CODE" value="DEF_REQ_CAT" />
 			<column name="CREATED_BY" value="system" />
@@ -476,7 +476,7 @@
 		
 		<insert tableName="INFO_LIST">
 			<column name="INFO_LIST_ID" value="2" />
-			<column name="LABEL" value="(def tc natures)"/>
+			<column name="LABEL" value="infolist.nature.default"/>
 			<column name="DESCRIPTION" value=""/>
 			<column name="CODE" value="DEF_TC_NAT" />
 			<column name="CREATED_BY" value="system" />
@@ -578,7 +578,7 @@
 		
 		<insert tableName="INFO_LIST">
 			<column name="INFO_LIST_ID" value="3" />
-			<column name="LABEL" value="(def tc types)"/>
+			<column name="LABEL" value="infolist.type.default"/>
 			<column name="DESCRIPTION" value=""/>
 			<column name="CODE" value="DEF_TC_TYP" />
 			<column name="CREATED_BY" value="system" />
