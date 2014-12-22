@@ -47,10 +47,10 @@ public class TestcaseSearchInterfaceDescription extends SearchInterfaceDescripti
 		panel.addCssClass("search-icon-information");
 
 		SearchInputFieldModel idField = new SearchInputFieldModel("id", getMessageSource().internationalize("label.id",
-				locale), TEXTFIELD);
+				locale), TEXTFIELDID);
 		panel.addField(idField);
 		SearchInputFieldModel referenceField = new SearchInputFieldModel("reference", getMessageSource()
-				.internationalize("label.reference", locale), TEXTFIELD);
+				.internationalize("label.reference", locale), TEXTFIELDREFERENCE);
 		panel.addField(referenceField);
 		SearchInputFieldModel labelField = new SearchInputFieldModel("name", getMessageSource().internationalize(
 				"label.Label", locale), TEXTFIELD);
@@ -115,7 +115,7 @@ public class TestcaseSearchInterfaceDescription extends SearchInterfaceDescripti
 		panel.setTitle(getMessageSource().internationalize("search.testcase.association.panel.title", locale));
 		panel.setOpen(true);
 		panel.setId("association");
-		panel.setLocation("column2");
+		panel.setLocation("column1");
 		panel.addCssClass("search-icon-associations");
 
 		SearchInputFieldModel requirementsField = new SearchInputFieldModel("requirements", getMessageSource()
@@ -162,7 +162,7 @@ public class TestcaseSearchInterfaceDescription extends SearchInterfaceDescripti
 		panel.setTitle(getMessageSource().internationalize("search.testcase.content.panel.title", locale));
 		panel.setOpen(true);
 		panel.setId("content");
-		panel.setLocation("column2");
+		panel.setLocation("column1");
 		panel.addCssClass("search-icon-content");
 
 		SearchInputFieldModel teststepField = new SearchInputFieldModel("steps", getMessageSource().internationalize(
@@ -215,7 +215,7 @@ public class TestcaseSearchInterfaceDescription extends SearchInterfaceDescripti
 		panel.setTitle(getMessageSource().internationalize("search.testcase.history.panel.title", locale));
 		panel.setOpen(true);
 		panel.setId("history");
-		panel.setLocation("column3");
+		panel.setLocation("column1");
 		panel.addCssClass("search-icon-history");
 
 		OptionBuilder optionBuilder = optionBuilder(locale);

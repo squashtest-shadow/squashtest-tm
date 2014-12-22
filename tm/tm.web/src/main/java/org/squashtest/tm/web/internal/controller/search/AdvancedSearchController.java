@@ -410,7 +410,7 @@ public class AdvancedSearchController {
 		panel.setTitle(messageSource.internationalize("search.testcase.cuf.panel.title", locale));
 		panel.setOpen(true);
 		panel.setId("cuf");
-		panel.setLocation("column3");
+		panel.setLocation("column1");
 		panel.addCssClass("search-icon-cuf");
 		return panel;
 	}
@@ -428,6 +428,9 @@ public class AdvancedSearchController {
 		// TODO should no longer be called through HTTP, put it private
 		SearchInputInterfaceModel model = new SearchInputInterfaceModel();
 
+		// Perimeter
+		model.addPanel(requirementVersionSearchInterfaceDescription.createRequirementPerimeterPanel(locale));
+
 		// Information
 		model.addPanel(requirementVersionSearchInterfaceDescription.createRequirementInformationPanel(locale));
 
@@ -436,9 +439,6 @@ public class AdvancedSearchController {
 
 		// Version
 		model.addPanel(requirementVersionSearchInterfaceDescription.createRequirementVersionPanel(locale));
-
-		// Perimeter
-		model.addPanel(requirementVersionSearchInterfaceDescription.createRequirementPerimeterPanel(locale));
 
 		// Content
 		model.addPanel(requirementVersionSearchInterfaceDescription.createRequirementContentPanel(locale));
@@ -461,14 +461,14 @@ public class AdvancedSearchController {
 		// TODO should no longer be called through HTTP, put it private
 		SearchInputInterfaceModel model = new SearchInputInterfaceModel();
 
+		// Perimeter
+		model.addPanel(testcaseVersionSearchInterfaceDescription.createPerimeterPanel(locale));
+
 		// Information
 		model.addPanel(testcaseVersionSearchInterfaceDescription.createGeneralInfoPanel(locale));
 
 		// Attributes
 		model.addPanel(testcaseVersionSearchInterfaceDescription.createAttributePanel(locale));
-
-		// Perimeter
-		model.addPanel(testcaseVersionSearchInterfaceDescription.createPerimeterPanel(locale));
 
 		// Content
 		model.addPanel(testcaseVersionSearchInterfaceDescription.createContentPanel(locale));

@@ -44,21 +44,87 @@ div.main-menubar a {
 }
 
 #advanced-search-input-form-panel-column1.testcase div.search-toggle-panel {
-	padding-bottom : 10px;
+	padding-bottom : 1em;
+	padding-right : 2em;
+	padding-left : 2em;
+	float: left;
 }
 
 #advanced-search-input-form-panel-column1.requirement div.search-toggle-panel {
-	padding-bottom : 95px;
+    padding-bottom : 1em;
+    padding-right : 2em;
+    padding-left : 2em;   
+    float: left;
 }
 
 #advanced-search-input-form-panel-column1.testcaseViaRequirement div.search-toggle-panel {
-	padding-bottom : 95px;
+    padding-bottom : 1em;
+    padding-right : 2em;
+    padding-left : 2em;   	
+    float: left;
+
 }
 
 #advanced-search-input-form-panel-column1 div.search-toggle-panel:last-child {
 	padding-bottom : 0px;
 }
 
+#advanced-search-input-form-panel-column1.testcase div.search-perimeter-toggle-panel {
+	padding-bottom : 1em;
+	padding-right : 2em;
+	padding-left : 2em;
+	float: left;
+
+}
+
+#advanced-search-input-form-panel-column1.requirement div.search-perimeter-toggle-panel {
+    padding-bottom : 1em;
+    padding-right : 2em;
+    padding-left : 2em;   
+    float: left;  
+
+}
+
+#advanced-search-input-form-panel-column1.testcaseViaRequirement div.search-perimeter-toggle-panel {
+    padding-bottom : 1em;
+    padding-right : 2em;
+    padding-left : 2em;   	
+    float: left; 
+}
+
+#advanced-search-input-form-panel-column1 div.search-perimeter-toggle-panel:last-child {
+	padding-bottom : 0px;
+	float: left;
+}
+
+#advanced-search-input-form-panel-column1.testcase div.search-informations-toggle-panel {
+	padding-bottom : 1em;
+	padding-right : 2em;
+	padding-left : 2em;
+	float: left;
+
+}
+
+#advanced-search-input-form-panel-column1.requirement div.search-informations-toggle-panel {
+    padding-bottom : 1em;
+    padding-right : 2em;
+    padding-left : 2em;   
+    float: left;
+
+}
+
+#advanced-search-input-form-panel-column1.testcaseViaRequirement div.search-informations-toggle-panel {
+    padding-bottom : 1em;
+    padding-right : 2em;
+    padding-left : 2em;   	 
+    float: left;
+
+}
+
+#advanced-search-input-form-panel-column1 div.search-informations-toggle-panel:last-child {
+	padding-bottom : 0px;
+	float: left;
+}
 
 #advanced-search-input-form-panel-column2.requirement div.search-toggle-panel {
 	padding-bottom : 10px;
@@ -84,3 +150,4 @@ div.main-menubar a {
 #advanced-search-input-form-panel-column3 div.search-toggle-panel:last-child {
 	padding-bottom : 0px;
 }
+

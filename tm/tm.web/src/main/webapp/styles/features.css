@@ -44,7 +44,7 @@
 }
 
 select option,select {
-	max-width: 400px;
+	
 }
 
 .error-message {
@@ -274,23 +274,53 @@ th.width-tenperc, td.width-tenperc {
 	display: table;
 }
 
+.display-search-table {
+	display: flex;
+	float: left;
+	flex-wrap: wrap;
+}
+
+
 .display-table-row,.display-table>div {
-	display: table-row;
+	display: -webkit-inline-box;
 	height: auto;
 	padding-top: 5px;
 	padding-bottom: 5px;
 	text-align: left;
 	line-height: 2;
+	vertical-align: top;
 }
 
-.display-table-cell,.display-table>div>div,.display-table>div>label,.display-table>div>span,.display-table>div>select
-	{
-	display: table-cell;
+.display-search-table-row,.display-search-table>div {
+	display: -webkit-inline-box;
+	height: auto;
+	padding-top: 5px;
+	padding-bottom: 5px;
+	text-align: left;
+	line-height: 2;
+	vertical-align: top;
+}
+
+
+
+.display-table-cell,.display-table>div>div,.display-table>div>label,.display-table>div>span,.display-table>div>select {
+	display: -webkit-box;
 	padding-left: 10px;
 	padding-right: 10px;
 }
 
-.display-table-cell{
+.display-search-table-cell,.display-search-table>div>div,.display-search-table>div>label,.display-search-table>div>span,.display-search-table>div>select {
+	display: -webkit-box;
+	padding-left: 10px;
+	padding-right: 10px;
+}
+
+
+.display-table-cell {
+	vertical-align: middle;
+}
+
+.display-search-table-cell {
 	vertical-align: middle;
 }
 
@@ -299,6 +329,10 @@ th.width-tenperc, td.width-tenperc {
 	margin:0;
 }
 
+.display-search-table-cell input[type=checkbox],.display-search-table>div>div input[type=checkbox] ,.display-search-table>div>label,.display-search-table>div>span,
+.display-search-table>div>select {
+	margin:0;
+}
 
 /******************* borders ************************/
 

@@ -80,6 +80,8 @@ define([ "jquery", "backbone", "handlebars", "squash.translator", "app/ws/squash
 	});
 
 	
+	
+
 
 	var TestCaseSearchInputPanel = Backbone.View.extend({
 
@@ -93,88 +95,128 @@ define([ "jquery", "backbone", "handlebars", "squash.translator", "app/ws/squash
 			
 			// templates are no longer needed
 			this.templates = {};
+						
+			resizePerimeter = function(event) { 
+				var sizeWithPadding =  $('#perimeter-panel-id').css('width');
+				var sizeWithoutPadding = parseInt(sizeWithPadding, 10) - 20;
+				$("#perimeter-multiple-custom").css('width', sizeWithoutPadding);
+				};
+				
+			resizePerimeter();
+			$( window ).on('resize', resizePerimeter);
+			window.onresize = resizePerimeter;
+			
+			
 		},
 
 		events : {
 			"click #advanced-search-button" : "showResults"
+				
 		},
 
 		getInputInterfaceModel : function() {
 			var self = this;
-			
-			// compiles the panel template
-			var source = self.$("#toggle-panel-template").html();
-			
-			if (!source) { // could this really happen without being a bug ?
-				return;
-			}
-			
-			var template = Handlebars.compile(source);
-			
-			// parses the search model if any
-			var marshalledSearchModel = self.$("#searchModel").text();
-			var searchModel = {};
-			
-			if(marshalledSearchModel){
-				searchModel = JSON.parse(marshalledSearchModel).fields;
-			}
-			
-			var searchDomain = self.$("#searchDomain").text();
-			
+
 			var formBuilder = function(formModel) {
 				$.each(formModel.panels || {}, function(index, panel) {
 					var context = {"toggle-panel-id": panel.id+"-panel-id", "toggle-panel-table-id": panel.id+"-panel-table-id"};
 					var tableid = panel.id+"-panel-table-id";
-					var html = template(context);
-					self.$("#advanced-search-input-form-panel-"+panel.location).append(html);
-					self.$("#advanced-search-input-form-panel-"+panel.location).addClass(searchDomain);
+					var source ;
 					
-					for (var i = 0, field; i < panel.fields.length; i++){
-						field = panel.fields[i];
-						var inputType = field.inputType.toLowerCase();
-						switch(inputType)
-						{
-							case "textfield" : 
-								self.makeTextField(tableid, field.id, field.title, searchModel[field.id], field.ignoreBridge);
-								break;
-							case "textarea":
-								self.makeTextArea(tableid, field.id, field.title, searchModel[field.id]);
-								break;
-							case "multiselect" : 
-								self.makeMultiselect(tableid, field.id, field.title, field.possibleValues, searchModel[field.id]);
-								break;
-							case "multiautocomplete":
-								self.makeMultiAutocomplete(tableid, field.id, field.title, field.possibleValues, searchModel[field.id]);
-								break;
-							case "combomultiselect":
-								self.makeComboMultiselect(tableid, field.id, field.title, field.possibleValues, searchModel[field.id]);
-								break;
-							case "range" :
-								self.makeRangeField(tableid, field.id, field.title, searchModel[field.id]);
-								break;
-							case "exists" :
-								self.makeExistsField(tableid, field.id, field.title, field.possibleValues,searchModel[field.id]);
-								break;
-							case "date":
-								self.makeDateField(tableid, field.id, field.title, searchModel[field.id]);
-								break;
-							case "checkbox":
-								self.makeCheckboxField(tableid, field.id, field.title, field.possibleValues, searchModel[field.id]);
-								break;
-							case  "radiobutton":
-								self.makeRadioField(tableid, field.id, field.title, field.possibleValues, searchModel[field.id], field.ignoreBridge);
-								break;
-							case "tags":
-								self.makeTagsField(tableid, field.id, field.title, field.possibleValues, searchModel[field.id]);
-								break;
-						}
-						
-					}
+					// First A 
+					
+							var panelName = panel.id;
+							// compiles the panel template
+							if ( panelName == "perimeter" ) {
+								source = self.$("#toggle-panel-perimeter-template").html();
+							}
+							else if (panelName == "general-information") {
+								source = self.$("#toggle-panel-informations-template").html();
+							}
+							else {
+								source = self.$("#toggle-panel-template").html();
+							}
+							/* Add another source if specified */
+
+							if (!source) { // could this really happen without being a bug ?
+								return;
+							}
+							var template = Handlebars.compile(source);
+							// parses the search model if any
+							var marshalledSearchModel = self.$("#searchModel").text();
+							var searchModel = {};
+							if(marshalledSearchModel){
+								searchModel = JSON.parse(marshalledSearchModel).fields;
+							}
+							var searchDomain = self.$("#searchDomain").text();
+
+							var html = template(context);
+							self.$("#advanced-search-input-form-panel-"+panel.location).append(html);
+							self.$("#advanced-search-input-form-panel-"+panel.location).addClass(searchDomain);			
+
+				 // First C			
+							for (var i = 0, field; i < panel.fields.length; i++){
+								field = panel.fields[i];
+								var inputType = field.inputType.toLowerCase();
+								switch(inputType)
+								{
+									case "textfield" : 
+										self.makeTextField(tableid, field.id, field.title, searchModel[field.id], field.ignoreBridge);
+										break;
+									case "textfieldid" : 
+										self.makeTextFieldId(tableid, field.id, field.title, searchModel[field.id], field.ignoreBridge);
+										break;
+									case "textfieldreference" : 
+										self.makeTextFieldReference(tableid, field.id, field.title, searchModel[field.id], field.ignoreBridge);
+										break;
+									case "textarea":
+										self.makeTextArea(tableid, field.id, field.title, searchModel[field.id]);
+										break;
+									case "multiselect" : 
+										self.makeMultiselect(tableid, field.id, field.title, field.possibleValues, searchModel[field.id]);
+										break;
+									case "multiselectperimeter" : 
+										self.makeMultiselectPerimeter(tableid, field.id, field.title, field.possibleValues, searchModel[field.id]);
+										break;
+									case "multiautocomplete":
+										self.makeMultiAutocomplete(tableid, field.id, field.title, field.possibleValues, searchModel[field.id]);
+										break;
+									case "combomultiselect":
+										self.makeComboMultiselect(tableid, field.id, field.title, field.possibleValues, searchModel[field.id]);
+										break;
+									case "range" :
+										self.makeRangeField(tableid, field.id, field.title, searchModel[field.id]);
+										break;
+									case "exists" :
+										self.makeExistsField(tableid, field.id, field.title, field.possibleValues,searchModel[field.id]);
+										break;
+									case "date":
+										self.makeDateField(tableid, field.id, field.title, searchModel[field.id]);
+										break;
+									case "checkbox":
+										self.makeCheckboxField(tableid, field.id, field.title, field.possibleValues, searchModel[field.id]);
+										break;
+									case  "radiobutton":
+										self.makeRadioField(tableid, field.id, field.title, field.possibleValues, searchModel[field.id], field.ignoreBridge);
+										break;
+									case "tags":
+										self.makeTagsField(tableid, field.id, field.title, field.possibleValues, searchModel[field.id]);
+										break;
+								}			
+							}
+					// End C					
+					
+
+					
+					// End A
 					self.makeTogglePanel(panel.id+"-panel-id",panel.title,panel.open,panel.cssClasses);
 				});
+				
 			};
 			
 			this._processModel(formBuilder);
+			
+		
 			
 		},
 		
@@ -272,6 +314,26 @@ define([ "jquery", "backbone", "handlebars", "squash.translator", "app/ws/squash
 			$fieldDom.searchTextFieldWidget({"ignoreBridge" : ignoreBridge});
 		},
 		
+		makeTextFieldId : function(tableId, fieldId, fieldTitle, enteredValue, ignoreBridge) {
+			var context = {
+				"text-field-id": fieldId, 
+				"text-field-title": fieldTitle, 
+				fieldValue : !!enteredValue ? enteredValue.value : ""
+			};
+			var $fieldDom = this._appendFieldDom(tableId, fieldId, this._compileTemplate("#textfield-id-template", context));
+			$fieldDom.searchTextFieldWidget({"ignoreBridge" : ignoreBridge});
+		},
+		
+		makeTextFieldReference : function(tableId, fieldId, fieldTitle, enteredValue, ignoreBridge) {
+			var context = {
+				"text-field-id": fieldId, 
+				"text-field-title": fieldTitle, 
+				fieldValue : !!enteredValue ? enteredValue.value : ""
+			};
+			var $fieldDom = this._appendFieldDom(tableId, fieldId, this._compileTemplate("#textfield-reference-template", context));
+			$fieldDom.searchTextFieldWidget({"ignoreBridge" : ignoreBridge});
+		},
+		
 		makeTextArea : function(tableId, fieldId, fieldTitle, enteredValue) {
 			var context = {
 				"text-area-id": fieldId, 
@@ -293,6 +355,22 @@ define([ "jquery", "backbone", "handlebars", "squash.translator", "app/ws/squash
 			var $fieldDom = this._appendFieldDom(tableId, fieldId, this._compileTemplate("#multiselect-template", context));
 			$fieldDom.searchMultiSelectWidget();
 		},
+		
+		makeMultiselectPerimeter : function(tableId, fieldId, fieldTitle, options, enteredValue) {
+			// adds a "selected" property to options
+			enteredValue = enteredValue || {};
+			// no enteredValue.values means 'select everything'
+			_.each(options, function(option) {
+				option.selected = (!enteredValue.values) || _.contains(enteredValue.values, option.code);
+			});
+			var context = {"multiselect-id": fieldId, "multiselect-title": fieldTitle, options: options};
+			var $fieldDom = this._appendFieldDom(tableId, fieldId, this._compileTemplate("#multiselect-perimeter-template", context));
+			$fieldDom.searchMultiSelectWidget();
+
+
+		},
+		
+		
 		makeMultiAutocomplete : function(tableId, fieldId, fieldTitle, options, enteredValue) {
 			var context = {"multiautocomplete-id": fieldId, "multiautocomplete-title": fieldTitle};
 			var $fieldDom = this._appendFieldDom(tableId, fieldId, this._compileTemplate("#multiautocomplete-template", context));
@@ -413,6 +491,7 @@ define([ "jquery", "backbone", "handlebars", "squash.translator", "app/ws/squash
 			return !hasCriteria;
 		}
 
+		
 	});
 	return TestCaseSearchInputPanel;
 });

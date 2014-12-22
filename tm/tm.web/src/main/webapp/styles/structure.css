@@ -267,13 +267,13 @@ select.th_input {
 
 .search-input-column {
 	display:inline-block;
-	width:33%;
+	width:100%;
 	min-width: 350px;
 	vertical-align:top;
 }
 
 .search-toggle-panel {
-	width:350px;
+	 /* width:350px; */
 }
 
 .search-line {

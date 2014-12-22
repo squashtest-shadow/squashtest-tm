@@ -66,8 +66,8 @@
   sq:css="squash.subpage.override.css" />
 <script data-main="../../scripts/advanced-search-input.js" th:attr="data-main=@{/scripts/advanced-search-input.js}"
   src="../../scripts/require.js" th:src="@{/scripts/require-min.js}">
-	
-</script>
+  </script>
+
 </head>
 <body>
   <div id="navigation" th:include="navbar.frag :: navbar">NAVBAR</div>
@@ -112,32 +112,68 @@
 
               <div id="advanced-search-input-form-panel-column1" align="center" class="search-input-column"></div>
 
-              <div id="advanced-search-input-form-panel-column2" align="center" class="search-input-column"></div>
-
-              <div id="advanced-search-input-form-panel-column3" align="center" class="search-input-column"></div>
-
               <script id="toggle-panel-template" type="text/x-handlebars-template">
-				<div class="toggle-panel search-toggle-panel">
+				<div class="toggle-panel search-toggle-panel" style=" width: calc(100% - 4em);">
 					<span class="not-displayed toogle-panel-buttons"></span>
 					<div id="{{toggle-panel-id}}" class="description-panel toggle-panel-main">
-						<div class="display-table" id="{{toggle-panel-table-id}}">
+						<div class="display-search-table" id="{{toggle-panel-table-id}}" >
 						</div>
 					</div>
 				</div>
-			</script>
+			  </script>
+			  
+			  <script id="toggle-panel-perimeter-template" type="text/x-handlebars-template">
+				<div class="toggle-panel search-perimeter-toggle-panel" style=" width: calc(30% - 4em);">
+					<span class="not-displayed toogle-panel-buttons"></span>
+					<div id="{{toggle-panel-id}}" class="description-panel toggle-panel-main">
+						<div class="display-search-table" id="{{toggle-panel-table-id}}">
+						</div>
+					</div>
+				</div>
+			  </script>
+			  
+			  <script id="toggle-panel-informations-template" type="text/x-handlebars-template">
+				<div class="toggle-panel search-informations-toggle-panel" style=" width: calc(70% - 4em);">
+					<span class="not-displayed toogle-panel-buttons"></span>
+					<div id="{{toggle-panel-id}}" class="description-panel toggle-panel-main">
+						<div class="display-search-table" id="{{toggle-panel-table-id}}">
+						</div>
+					</div>
+				</div>
+			  </script>
+			  
 
               <script id="textfield-template" type="text/x-handlebars-template">
-				<div class="display-table-row">
-                  	<label for="{{text-field-id}}" class="display-table-cell">{{text-field-title}}</label>
+				<div class="display-search-table-row">
+                  	<label for="{{text-field-id}}" class="display-search-table-cell">{{text-field-title}}</label>
                     <div id="{{text-field-id}}" class="search-input">
                       <input type="text" data-widgetname="TextField" data-fieldid="F{{text-field-id}}" value="{{fieldValue}}" class="search-input" />
                     </div>
                 </div>
 				</script>
+				
+              <script id="textfield-id-template" type="text/x-handlebars-template">
+				<div class="display-search-table-row">
+                  	<label for="{{text-field-id}}" class="display-search-table-cell">{{text-field-title}}</label>
+                    <div id="{{text-field-id}}" class="search-input" style="width: 5em">
+                      <input type="text" data-widgetname="TextField" data-fieldid="F{{text-field-id}}" value="{{fieldValue}}" class="search-input" style="width: 4em" />
+                    </div>
+                </div>
+				</script>
+				
+				<script id="textfield-reference-template" type="text/x-handlebars-template">
+				<div class="display-search-table-row">
+                  	<label for="{{text-field-id}}" class="display-search-table-cell">{{text-field-title}}</label>
+                    <div id="{{text-field-id}}" class="search-input" style="width: 7em">
+                      <input type="text" data-widgetname="TextField" data-fieldid="F{{text-field-id}}" value="{{fieldValue}}" class="search-input" style="width: 6em" />
+                    </div>
+                </div>
+				</script>
+				
 
               <script id="textarea-template" type="text/x-handlebars-template">
-				<div class="display-table-row">
-                  	<label for="{{text-area-id}}" class="display-table-cell">{{text-area-title}}</label>
+				<div class="display-search-table-row">
+                  	<label for="{{text-area-id}}" class="display-search-table-cell">{{text-area-title}}</label>
                     <div id="{{text-area-id}}" class="search-input">
                       <textarea data-widgetname="TextArea" data-fieldid="F{{text-field-id}}" rows="2" class="search-input">{{fieldValue}}</textarea>
                     </div>
@@ -146,8 +182,8 @@
 
             <script id="multiselect-template" type="text/x-handlebars-template">
             {{!--<![CDATA[--}}
-            <div class="display-table-row">
-              <label for="{{multiselect-id}}" class="display-table-cell">{{multiselect-title}}</label>
+            <div class="display-search-table-row">
+              <label for="{{multiselect-id}}" class="display-search-table-cell">{{multiselect-title}}</label>
               <div id="{{multiselect-id}}" class="search-input">
                 <select data-widgetname="MultiSelect" data-fieldid="F{{multiselect-id}}" multiple="multiple" class="search-input">
                 {{#each options}}
@@ -158,10 +194,25 @@
             </div>
             {{!--]]>--}}
 			</script>
+			
+            <script id="multiselect-perimeter-template" type="text/x-handlebars-template">
+            {{!--<![CDATA[--}}
+            <div class="display-search-table-row">
+               <div id="{{multiselect-id}}" class="search-input">
+                <select id="perimeter-multiple-custom" data-widgetname="MultiSelect" data-fieldid="F{{multiselect-id}}" multiple="multiple" class="search-input">
+                {{#each options}}
+                  <option value="{{this.code}}" {{selected}}>{{this.value}}</option>
+                {{/each}}
+                </select>
+              </div>
+            </div>
+            {{!--]]>--}}
+			</script>			
+			
 			<script id="multiautocomplete-template" type="text/x-handlebars-template">
             {{!--<![CDATA[--}}
-            <div class="display-table-row">
-              <label for="{{multiautocomplete-id}}" class="display-table-cell">{{multiautocomplete-title}}</label>
+            <div class="display-search-table-row">
+              <label for="{{multiautocomplete-id}}" class="display-search-table-cell">{{multiautocomplete-title}}</label>
               <div id="{{multiautocomplete-id}}" class="search-input">
                 <input data-widgetname="MultiAutocomplete" data-fieldid="F{{multiautocomplete-id}}" class="search-input"/>
               </div>
@@ -170,30 +221,25 @@
 			</script>
 
               <script id="date-template" type="text/x-handlebars-template">
-				<div class="display-table-row">
-                  	<label for="{{text-date-id}}" class="display-table-cell">{{text-date-title}}</label>
-                    <div id="{{text-date-id}}" class="search-input" style="display:inline-block">
-						<div class="search-line" data-widgetname="Date">
-						<table>
-						<tr>
-                        	<td style="text-align:right;">
-								<input type="checkbox"></input>
-								<span th:text="#{search.testcase.betweenDate.label}"></span>
-							</td>
-							<td><input class="date-search-input" type="text"></input></td>
-						</tr>
-						<tr>
-							<td style="text-align:right;"><span th:text="#{search.testcase.andDate.label}"></span></td>
-							<td><input class="date-search-input" type="text"></input></td>
-						</tr>
-						</table>
-						</div>
+				<div class="display-search-table-row">
+					<label for="{{text-date-id}}" class="display-search-table-cell">{{text-date-title}}</label>
+					<div id="{{text-date-id}}" class="search-input" style="display:inline">
+						<input type="checkbox"></input>
+						<span th:text="#{search.testcase.betweenDate.label}"></span>
+						<input class="date-search-input" type="text"></input>
+						<span th:text="#{search.testcase.andDate.label}"></span>
+						<input class="date-search-input" type="text"></input>
 					</div>
 				</div>
+		
 				</script>
+				
+
+			
+			
 
               <script id="range-template" type="text/x-handlebars-template">
-				<div class="display-table-row">
+				<div class="display-search-table-row">
 					<div id="{{text-range-id}}" class="search-input" style="display:inline">
 						<div class="search-line" data-widgetname="Range">
 						<input type="checkbox"></input>
@@ -208,7 +254,7 @@
 				</script>
 
               <script id="exists-template" type="text/x-handlebars-template">
-				<div class="display-table-row">
+				<div class="display-search-table-row">
 					<div id="{{text-exists-id}}" class="search-input" style="display:inline">
 						<div class="search-line" data-widgetname="Exists">
 						<input type="checkbox"></input>
@@ -220,7 +266,7 @@
 				</script>
 
               <script id="radio-button-template" type="text/x-handlebars-template">
-				<div class="display-table-row">
+				<div class="display-search-table-row">
 					<div id="{{text-radio-id}}" class="search-input" style="width:inherit">
 						<div class="search-line" data-widgetname="Radio">
 						</div>
@@ -229,8 +275,8 @@
 				</script>
 
               <script id="combomultiselect-template" type="text/x-handlebars-template">
-				<div class="display-table-row">
-                  	<label for="{{combomultiselect-id}}" class="display-table-cell">{{combomultiselect-title}}</label>
+				<div class="display-search-table-row">
+                  	<label for="{{combomultiselect-id}}" class="display-search-table-cell">{{combomultiselect-title}}</label>
 					<div id="{{combomultiselect-id}}" class="search-input">
 						<div class="search-line" data-widgetname="ComboMultiSelect">
 							<input type="checkbox" style="vertical-align:top; margin-top:6px"></input>
@@ -240,8 +286,8 @@
                 </div>
 			</script>
               <script id="tags-template" type="text/x-handlebars-template">
-				<div class="display-table-row">
-					<label for="{{tags-id}}" class="display-table-cell">{{tags-title}}</label>
+				<div class="display-search-table-row">
+					<label for="{{tags-id}}" class="display-search-table-cell">{{tags-title}}</label>
 					<div id="{{tags-id}}" class="search-input" style="border:1px dotted lightgray">
 						<div class="search-line" data-widgetname="Tags" >
 							<ul style="border:1px solid black;display:inline-block">
@@ -254,6 +300,11 @@
 					</div>
 				</div>
 			</script>
+			
+			
+							
+
+			
             </div>
 
             <div id="searchModel" class="not-displayed" th:text="${searchModel}"></div>
@@ -265,7 +316,15 @@
         </div>
       </div>
     </div>
+    
+    
+    
   </div>
+  
+  
+
+
 </body>
+
 </html>
 

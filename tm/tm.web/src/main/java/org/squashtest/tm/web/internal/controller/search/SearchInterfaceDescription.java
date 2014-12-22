@@ -183,14 +183,15 @@ public abstract class SearchInterfaceDescription {
 
 		public SearchInputPanelModel build() {
 			SearchInputPanelModel panel = new SearchInputPanelModel();
-			panel.setTitle(messageSource.internationalize("search.testcase.perimeter.panel.title", locale));
+			panel.setTitle(messageSource.internationalize("search.testcase.perimeter.field.title", locale));
 			panel.setOpen(true);
 			panel.setId("perimeter");
-			panel.setLocation("column2");
+			panel.setLocation("column1");
 			panel.addCssClass(cssClass);
 
+
 			SearchInputFieldModel projectField = new SearchInputFieldModel(htmlId, messageSource.internationalize(
-					"search.testcase.perimeter.field.title", locale), MULTISELECT);
+					"search.testcase.perimeter.field.title", locale), MULTISELECTPERIMETER);
 			panel.addField(projectField);
 
 			OptionBuilder optionBuilder = optionBuilder(locale);
@@ -206,11 +207,14 @@ public abstract class SearchInterfaceDescription {
 	}
 
 	protected static final String TEXTFIELD = "textfield";
+	protected static final String TEXTFIELDID = "textfieldid";
+	protected static final String TEXTFIELDREFERENCE = "textfieldreference";
 	protected static final String TEXTAREA = "textarea";
 	protected static final String RANGE = "range";
 	protected static final String EXISTS = "exists";
 	protected static final String DATE = "date";
 	protected static final String MULTISELECT = "multiselect";
+	protected static final String MULTISELECTPERIMETER = "multiselectperimeter";
 	protected static final String MULTIAUTOCOMPLETE = "multiautocomplete";
 	protected static final String RADIOBUTTON = "radiobutton";
 	protected static final String ATLEASTONE = "1";
