@@ -103,7 +103,7 @@ public class MilestoneBindingServiceIT extends DbunitServiceSpecification{
 		given :
 
 		when :
-		def findThem = manager.getAllBindedProjectForMilestone(milestoneId)
+		def findThem = manager.getAllProjectForMilestone(milestoneId)
 		then :
 		findThem.collect{it.id} as Set == ids as Set
 		where :

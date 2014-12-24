@@ -21,10 +21,13 @@
 package org.squashtest.tm.service.internal.milestone
 
 import org.squashtest.tm.domain.milestone.Milestone
+import org.squashtest.tm.domain.milestone.MilestoneRange;
 import org.squashtest.tm.domain.project.GenericProject
 import org.squashtest.tm.domain.project.Project
 import org.squashtest.tm.service.internal.repository.GenericProjectDao;
 import org.squashtest.tm.service.internal.repository.MilestoneDao;
+import org.squashtest.tm.service.security.PermissionEvaluationService
+
 import spock.lang.Unroll
 import spock.lang.Specification;
 
@@ -32,16 +35,18 @@ class CustomMilestoneBindingServiceImplTest extends Specification{
 	CustomMilestoneBindingServiceImpl manager = new CustomMilestoneBindingServiceImpl()
 	MilestoneDao milestoneDao = Mock()
 	GenericProjectDao projectDao = Mock()
+	PermissionEvaluationService permissionEvaluationService = Mock()
 
 	def setup(){
 		manager.milestoneDao = milestoneDao
 		manager.projectDao = projectDao
+		manager.permissionEvaluationService = permissionEvaluationService
 	}
 	@Unroll("for milestones ids : #ids and binded ids : #bindedIds, returns bindable ids #bindableIds")
 	def "should get bindable milestone for project"(){
 		
 		given :
-		def allMilestones = ids.collect{new Milestone(id:it)}
+		def allMilestones = ids.collect{new Milestone(id:it, range:MilestoneRange.GLOBAL)}
 		def binded = allMilestones.findAll{bindedIds.contains(it.id)}
 		milestoneDao.findAll() >> allMilestones
 		GenericProject project = new Project()
@@ -54,11 +59,11 @@ class CustomMilestoneBindingServiceImplTest extends Specification{
 		then :
 		result.collect{it.id} == bindableIds
 		where :
-		     ids      |        bindedIds    ||     bindableIds
-		 [1L, 2L, 3L] |        [2L]         ||      [1L, 3L]
-		 [1L, 2L, 3L] |         []          ||      [1L, 2L, 3L]
-		 []           |         []          ||      []
-		 [1L, 2L, 3L] |     [1L, 2L, 3L]    ||      []
+		   ids           |        bindedIds    ||     bindableIds
+		  [1L, 2L, 3L]   |        [2L]         ||      [1L, 3L]
+		[1L, 2L, 3L]     |         []          ||      [1L, 2L, 3L]
+		 []              |         []          ||      []
+		  [1L, 2L, 3L]   |     [1L, 2L, 3L]    ||      []
 		
 	}
 	
@@ -69,7 +74,7 @@ class CustomMilestoneBindingServiceImplTest extends Specification{
 		def allProject = names.collect{new Project(name:it)}
 		def binded = allProject.findAll{bindedNames.contains(it.name)}
 		projectDao.findAll() >> allProject
-		Milestone milestone = new Milestone()
+		Milestone milestone = new Milestone(range:MilestoneRange.GLOBAL)
 		milestone.bindProjects(binded)
 		milestoneDao.findById(1L) >> milestone
 		
