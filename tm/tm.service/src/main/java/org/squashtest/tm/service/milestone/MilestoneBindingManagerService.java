@@ -23,9 +23,6 @@ package org.squashtest.tm.service.milestone;
 import java.util.List;
 
 import org.springframework.transaction.annotation.Transactional;
-import org.squashtest.tm.core.foundation.collection.Filtering;
-import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
-import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.project.GenericProject;
 
@@ -40,27 +37,13 @@ public interface MilestoneBindingManagerService {
 
 	List<Milestone> getAllBindedMilestoneForProject(Long projectId);
 
-
 	List<GenericProject> getAllBindableProjectForMilestone(Long milestoneId);
 
 	List<GenericProject> getAllProjectForMilestone(Long milestoneId);
-
-	PagedCollectionHolder<List<GenericProject>> getAllBindedProjectForMilestone(Long milestoneId,
-			PagingAndSorting sorter, Filtering filter);
-
-	PagedCollectionHolder<List<GenericProject>> getAllBindableProjectForMilestone(Long milestoneId,
-			PagingAndSorting sorter, Filtering filter);
-
+	
 	void unbindMilestonesFromProject(List<Long> milestoneIds, Long projectId);
 
 	void unbindProjectsFromMilestone(List<Long> projectIds, Long milestoneId);
-
-
-	PagedCollectionHolder<List<Milestone>> getAllBindedMilestoneForProject(Long projectId, PagingAndSorting sorter,
-			Filtering filter);
-
-	PagedCollectionHolder<List<Milestone>> getAllBindableMilestoneForProject(Long projectId, PagingAndSorting sorter,
-			Filtering filter, String type);
 
 	List<Milestone> getAllBindableMilestoneForProject(Long projectId, String type);
 

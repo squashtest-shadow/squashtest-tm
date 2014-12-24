@@ -21,19 +21,11 @@
 package org.squashtest.tm.service.internal.milestone;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import javax.inject.Inject;
 
-import org.apache.commons.lang.builder.CompareToBuilder;
 import org.springframework.stereotype.Service;
-import org.squashtest.tm.core.foundation.collection.Filtering;
-import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
-import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
-import org.squashtest.tm.core.foundation.collection.PagingBackedPagedCollectionHolder;
-import org.squashtest.tm.core.foundation.collection.SortOrder;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.milestone.MilestoneRange;
 import org.squashtest.tm.domain.project.GenericProject;
@@ -133,78 +125,6 @@ public class CustomMilestoneBindingServiceImpl implements MilestoneBindingManage
 	}
 
 	@Override
-	public PagedCollectionHolder<List<GenericProject>> getAllBindedProjectForMilestone(Long milestoneId,
-			PagingAndSorting sorter, Filtering filter) {
-
-		List<GenericProject> projects = getAllProjectForMilestone(milestoneId);
-		return getFilteredAndSortedProjects(projects, sorter, filter);
-	}
-
-	private List<GenericProject> filterProject(List<GenericProject> projects, Filtering filter) {
-
-		List<GenericProject> filtered = new ArrayList<GenericProject>();
-
-		for (GenericProject project : projects) {
-			if (isFound(project, filter)) {
-				filtered.add(project);
-			}
-		}
-		return filtered;
-	}
-
-	private boolean isFound(GenericProject project, Filtering filter) {
-		String search = filter.getFilter();
-
-		boolean nameFound = project.getName().contains(search);
-		if (nameFound) {
-			return true;
-		}
-		return false;
-	}
-
-	private void sortProject(List<GenericProject> projects, final PagingAndSorting sorter) {
-
-		Collections.sort(projects, new Comparator<GenericProject>() {
-
-			@Override
-			public int compare(GenericProject o1, GenericProject o2) {
-
-				return buildProjectComparator(sorter, o1, o2).toComparison();
-			}
-		});
-
-	}
-
-	private CompareToBuilder buildProjectComparator(final PagingAndSorting sorter, GenericProject o1, GenericProject o2) {
-
-		CompareToBuilder comp = new CompareToBuilder();
-
-		Object first = null;
-		Object second = null;
-
-		if ("name".equals(sorter.getSortedAttribute())) {
-			first = o1.getName();
-			second = o2.getName();
-		}
-		// FIXME don't forget an "else" branch that will initialize "first" and "second" eventually
-
-		if (sorter.getSortOrder().equals(SortOrder.DESCENDING)) {
-			comp.append(first, second);
-		} else {
-			comp.append(second, first);
-		}
-
-		return comp;
-	}
-
-	@Override
-	public PagedCollectionHolder<List<GenericProject>> getAllBindableProjectForMilestone(Long milestoneId,
-			PagingAndSorting sorter, Filtering filter) {
-		List<GenericProject> projects = getAllBindableProjectForMilestone(milestoneId);
-		return getFilteredAndSortedProjects(projects, sorter, filter);
-	}
-
-	@Override
 	public void unbindMilestonesFromProject(List<Long> milestoneIds, Long projectId) {
 
 		GenericProject project = projectDao.findById(projectId);
@@ -226,13 +146,7 @@ public class CustomMilestoneBindingServiceImpl implements MilestoneBindingManage
 
 	}
 
-	@Override
-	public PagedCollectionHolder<List<Milestone>> getAllBindableMilestoneForProject(Long projectId,
-			PagingAndSorting sorter, Filtering filter, String type) {
-		List<Milestone> milestones = getAllBindableMilestoneForProject(projectId);
-		milestones = filterByType(milestones, type);
-		return getFilteredAndSortedMilestones(milestones, sorter, filter);
-	}
+	
 
 	@Override
 	public List<Milestone> getAllBindableMilestoneForProject(Long projectId, String type) {
@@ -305,38 +219,7 @@ public class CustomMilestoneBindingServiceImpl implements MilestoneBindingManage
 		return filtered;
 	}
 
-	private void sortMilestone(List<Milestone> milestones, PagingAndSorting sorter) {
-		// TODO do the sorting
 
-	}
-
-	private List<Milestone> filterMilestones(List<Milestone> milestones, Filtering filter) {
-		// TODO do the filtering
-		return milestones;
-	}
-
-	@Override
-	public PagedCollectionHolder<List<Milestone>> getAllBindedMilestoneForProject(Long projectId,
-			PagingAndSorting sorter, Filtering filter) {
-		List<Milestone> milestones = getAllBindedMilestoneForProject(projectId);
-		return getFilteredAndSortedMilestones(milestones, sorter, filter);
-	}
-
-	private PagingBackedPagedCollectionHolder<List<Milestone>> getFilteredAndSortedMilestones(
-			List<Milestone> milestones, PagingAndSorting sorter, Filtering filter) {
-		long count = milestones.size();
-		milestones = filterMilestones(milestones, filter);
-		sortMilestone(milestones, sorter);
-		return new PagingBackedPagedCollectionHolder<List<Milestone>>(sorter, count, milestones);
-	}
-
-	private PagingBackedPagedCollectionHolder<List<GenericProject>> getFilteredAndSortedProjects(
-			List<GenericProject> projects, PagingAndSorting sorter, Filtering filter) {
-		long count = projects.size();
-		projects = filterProject(projects, filter);
-		sortProject(projects, sorter);
-		return new PagingBackedPagedCollectionHolder<List<GenericProject>>(sorter, count, projects);
-	}
 
 	@Override
 	public void unbindProjectsFromMilestoneKeepInPerimeter(List<Long> projectIds, Long milestoneId) {
