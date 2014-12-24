@@ -20,14 +20,8 @@
  */
 package org.squashtest.tm.service.internal.repository.hibernate;
 
-import java.util.List;
-
-import org.hibernate.Criteria;
 import org.hibernate.Query;
-import org.hibernate.criterion.Order;
 import org.springframework.stereotype.Repository;
-import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
-import org.squashtest.tm.core.foundation.collection.SortOrder;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.exception.milestone.MilestoneLabelAlreadyExistsException;
 import org.squashtest.tm.service.internal.repository.MilestoneDao;
@@ -40,36 +34,6 @@ public class HibernateMilestoneDao extends HibernateEntityDao<Milestone> impleme
 		return (Long) executeEntityNamedQuery("milestone.count");
 	}
 
-	@SuppressWarnings("unchecked")
-	@Override
-	public List<Milestone> findSortedMilestones(PagingAndSorting sorter) {
-
-
-		String sortedAttribute = sorter.getSortedAttribute();
-		SortOrder order = sorter.getSortOrder();
-
-
-		Criteria crit = currentSession().createCriteria(Milestone.class, "Milestone");
-
-		/* add ordering */
-		if (sortedAttribute != null) {
-			if (order == SortOrder.ASCENDING) {
-				crit.addOrder(Order.asc(sortedAttribute).ignoreCase());
-			} else {
-				crit.addOrder(Order.desc(sortedAttribute).ignoreCase());
-			}
-		}
-
-
-		/* result range */
-		crit.setFirstResult(sorter.getFirstItemIndex());
-		crit.setMaxResults(sorter.getPageSize());
-
-		return crit.list();
-
-	}
-
-	
 	@Override
 	public void checkLabelAvailability(String label) {
 		if(findMilestoneByLabel(label) != null){

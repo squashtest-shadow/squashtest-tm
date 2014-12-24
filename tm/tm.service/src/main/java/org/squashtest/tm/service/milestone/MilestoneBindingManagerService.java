@@ -29,24 +29,80 @@ import org.squashtest.tm.domain.project.GenericProject;
 
 @Transactional
 public interface MilestoneBindingManagerService {
-	List<Milestone> getAllBindableMilestoneForProject(Long projectId);
-	
+
+	/**
+	 * Bind multiple milestones to a project
+	 * @param milestoneIds ids of the milestone to bind
+	 * @param projectId id of the project milestone must be bound to
+	 */
 	void bindMilestonesToProject(List<Long> milestoneIds, Long projectId);
 
+	/**
+	 * Bind a milestone to multiples projects
+	 * @param projectIds ids of project the milestone must be bound to
+	 * @param milestoneId the milestone to bind
+	 */
 	void bindProjectsToMilestone(List<Long> projectIds, Long milestoneId);
 
+	/**
+	 * Get the list of all milestone bound to the project
+	 * @param projectId the id of projec
+	 * @return list of milestone bound to the project
+	 */
 	List<Milestone> getAllBindedMilestoneForProject(Long projectId);
-
+	
+	/**
+	 * The list of milestone the current user can bind to the project
+	 * @param projectId the id of project
+	 * @return list of bindable milestone for the project (depend on user rights)
+	 */
+	List<Milestone> getAllBindableMilestoneForProject(Long projectId);
+	
+	/**
+	 *  The list of milestone the current user can bind to the project
+	 * @param projectId the id of project 
+	 * @param type the filter to be applied. If set to "global", will find only global milestone. If set to
+	 *  "personal" will find non global milestone owned by current user. If any other value is supplied will 
+	 *  return all non global non owned milestone (that the user can see).
+	 * @return list of bindable milestone for the project filtered by type (depend on user rights)
+	 */
+	List<Milestone> getAllBindableMilestoneForProject(Long projectId, String type);
+	
+	/**
+	 * 
+	 * @param milestoneId the id of milestone
+	 * @return list of all bindable project for milestone
+	 */
 	List<GenericProject> getAllBindableProjectForMilestone(Long milestoneId);
 
+	/**
+	 * If the milestone range is GLOBAL, the bound project are returned. If the milestone range is RESTRICTED
+	 * then milestone projects in milestone perimeter are returned.
+	 * @param milestoneId
+	 * @return all project for the milestone
+	 */
 	List<GenericProject> getAllProjectForMilestone(Long milestoneId);
 	
+
+	/**
+	 * Unbind multiple milestone from a project. REMOVE this project from all those milestone perimeter.
+	 * @param milestoneIds ids of the milestone
+	 * @param projectId id of the project
+	 */
 	void unbindMilestonesFromProject(List<Long> milestoneIds, Long projectId);
 
+	/**
+	 * Unbind multiple projects from a milestone. Also REMOVE all those projects from the milestone perimeter.
+	 * @param projectIds ids of projects
+	 * @param milestoneId id of the milestone
+	 */
 	void unbindProjectsFromMilestone(List<Long> projectIds, Long milestoneId);
 
-	List<Milestone> getAllBindableMilestoneForProject(Long projectId, String type);
-
+	/**
+	 * Unbind multiple projects from a milestone. But KEEP all those projects in the milestone perimeter.
+	 * @param projectIds ids of projects
+	 * @param milestoneId id of the milestone
+	 */
 	void unbindProjectsFromMilestoneKeepInPerimeter(List<Long> projectIds, Long milestoneId);
 
 

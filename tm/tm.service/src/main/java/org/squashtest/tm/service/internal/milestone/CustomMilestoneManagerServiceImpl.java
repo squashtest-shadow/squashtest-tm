@@ -27,11 +27,6 @@ import java.util.List;
 import javax.inject.Inject;
 
 import org.springframework.stereotype.Service;
-import org.squashtest.tm.core.foundation.collection.Filtering;
-import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
-import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
-import org.squashtest.tm.core.foundation.collection.PagingBackedPagedCollectionHolder;
-import org.squashtest.tm.domain.milestone.ExpandedMilestone;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.milestone.MilestoneRange;
 import org.squashtest.tm.domain.project.GenericProject;
@@ -68,11 +63,6 @@ public class CustomMilestoneManagerServiceImpl implements CustomMilestoneManager
 		return milestoneDao.findAll();
 	}
 
-	@Override
-	public List<Milestone> findSortedMilestones(PagingAndSorting sorter) {
-
-		return milestoneDao.findSortedMilestones(sorter);
-	}
 
 	@Override
 	public void removeMilestones(Collection<Long> ids) {
@@ -93,42 +83,6 @@ public class CustomMilestoneManagerServiceImpl implements CustomMilestoneManager
 	private void deleteMilestone(final Milestone milestone) {
 
 		milestoneDao.remove(milestone);
-	}
-
-	@Override
-	public PagedCollectionHolder<List<Milestone>> filterMilestone(List<ExpandedMilestone> expandedMilestones,
-			Filtering filter, PagingAndSorting sorter) {
-		List<Milestone> milestones = doFilter(expandedMilestones, filter);
-		long count = milestoneDao.countMilestones();
-		return new PagingBackedPagedCollectionHolder<List<Milestone>>(sorter, count, milestones);
-	}
-
-	private List<Milestone> doFilter(List<ExpandedMilestone> expandedMilestones, Filtering filter) {
-
-		List<Milestone> filtered = new ArrayList<Milestone>();
-
-		for (ExpandedMilestone milestone : expandedMilestones) {
-			if (isFound(milestone, filter)) {
-				filtered.add(milestone.getMilestone());
-			}
-		}
-
-		return filtered;
-	}
-
-	private boolean isFound(ExpandedMilestone milestone, Filtering filter) {
-
-		String search = filter.getFilter();
-		boolean statusFound = milestone.getTranslatedStatus().contains(search);
-
-		boolean labelFound = milestone.getMilestone().getLabel().contains(search);
-
-		boolean endDateFound = milestone.getTranslatedEndDate().contains(search);
-
-		if (statusFound || labelFound || endDateFound) {
-			return true;
-		}
-		return false;
 	}
 
 	@Override

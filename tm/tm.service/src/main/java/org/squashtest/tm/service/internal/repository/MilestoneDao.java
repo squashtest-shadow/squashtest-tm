@@ -20,9 +20,6 @@
  */
 package org.squashtest.tm.service.internal.repository;
 
-import java.util.List;
-
-import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.milestone.Milestone;
 
 
@@ -32,5 +29,4 @@ public interface MilestoneDao  extends EntityDao<Milestone>{
 
 	void checkLabelAvailability(String label);
 
-	List<Milestone> findSortedMilestones(PagingAndSorting sorter);
 }

@@ -24,10 +24,6 @@ import java.util.Collection;
 import java.util.List;
 
 import org.springframework.transaction.annotation.Transactional;
-import org.squashtest.tm.core.foundation.collection.Filtering;
-import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
-import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
-import org.squashtest.tm.domain.milestone.ExpandedMilestone;
 import org.squashtest.tm.domain.milestone.Milestone;
 
 @Transactional
@@ -35,12 +31,37 @@ public interface CustomMilestoneManager {
 	void addMilestone(Milestone milestone);
 	List<Milestone>  findAll();
 	void removeMilestones(Collection<Long> ids);
-	List<Milestone> findSortedMilestones(PagingAndSorting sorter);
-	PagedCollectionHolder<List<Milestone>> filterMilestone(List<ExpandedMilestone> expandedMilestones, Filtering filter, PagingAndSorting sorter);
+
 	Milestone findById(long milestoneId);
+	
+	/**
+	 * 
+	 * @param milestoneId the id of the milestone
+	 * @return true if the user has rights to edit the milestone
+	 */
 	boolean canEditMilestone(long milestoneId);
+	
+	/**
+	 * Throw exception if the user try do edit a milestone he can't
+	 * @param milestoneId the id of the milestone
+	 */
 	void verifyCanEditMilestone(long milestoneId);
+	
+	/**
+	 * Throw exception if the user try do edit milestone range and can't
+	 * @param milestoneId the id of the milestone
+	 */
 	void verifyCanEditMilestoneRange();
+
+	/**
+	 * 
+	 * @return list of Id of editable milestone for current user
+	 */
 	List<Long> findAllIdsOfEditableMilestone();
+
+	/**
+	 * 
+	 * @return liste of all milestone the current user can see
+	 */
 	List<Milestone>  findAllICanSee();
 }
