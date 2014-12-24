@@ -282,7 +282,7 @@ th.width-tenperc, td.width-tenperc {
 
 
 .display-table-row,.display-table>div {
-	display: -webkit-inline-box;
+	display: table-row;
 	height: auto;
 	padding-top: 5px;
 	padding-bottom: 5px;
@@ -304,7 +304,6 @@ th.width-tenperc, td.width-tenperc {
 
 
 .display-table-cell,.display-table>div>div,.display-table>div>label,.display-table>div>span,.display-table>div>select {
-	display: -webkit-box;
 	padding-left: 10px;
 	padding-right: 10px;
 }
@@ -317,7 +316,10 @@ th.width-tenperc, td.width-tenperc {
 
 
 .display-table-cell {
-	vertical-align: middle;
+  display: table-cell;
+  padding-left: 10px;
+  padding-right: 10px;
+/*	vertical-align: middle;*/
 }
 
 .display-search-table-cell {
