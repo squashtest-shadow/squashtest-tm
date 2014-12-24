@@ -36,8 +36,6 @@ import org.springframework.security.acls.model.ObjectIdentity;
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.security.acls.CustomPermission;
-import org.squashtest.tm.service.internal.repository.TeamDao;
-import org.squashtest.tm.service.internal.repository.UserDao;
 import org.squashtest.tm.service.internal.repository.hibernate.SqLIdResultTransformer;
 
 @Component
@@ -105,14 +103,6 @@ class DerivedPermissionsManager {
 	
 	@Inject
 	private SessionFactory sessionFactory; 
-	
-	@Inject 
-	private TeamDao teamDao;
-	
-	@Inject 
-	private UserDao userDao;
-	
-	
 	
 	
 	void updateDerivedPermissions(ObjectIdentity identity){

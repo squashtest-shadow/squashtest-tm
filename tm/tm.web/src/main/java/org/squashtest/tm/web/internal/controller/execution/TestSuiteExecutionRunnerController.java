@@ -45,7 +45,6 @@ import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.exception.NoBugTrackerBindingException;
 import org.squashtest.tm.exception.execution.TestPlanItemNotExecutableException;
 import org.squashtest.tm.exception.execution.TestPlanTerminatedOrNoStepsException;
-import org.squashtest.tm.service.bugtracker.BugTrackerFinderService;
 import org.squashtest.tm.service.bugtracker.BugTrackersLocalService;
 import org.squashtest.tm.service.campaign.TestSuiteExecutionProcessingService;
 import org.squashtest.tm.service.campaign.TestSuiteFinder;
@@ -103,9 +102,6 @@ public class TestSuiteExecutionRunnerController {
 
 	@Inject
 	private BugTrackersLocalService bugTrackersLocalService;
-
-	@Inject
-	private BugTrackerFinderService bugTrackerFinderService;
 
 
 	public TestSuiteExecutionRunnerController() {

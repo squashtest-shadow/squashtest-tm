@@ -20,8 +20,6 @@
  */
 package org.squashtest.tm.web.internal.model.json;
 
-import org.squashtest.tm.domain.infolist.InfoListItem;
-import org.squashtest.tm.domain.testcase.TestCaseType;
 
 /**
  * @author Gregory Fouquet

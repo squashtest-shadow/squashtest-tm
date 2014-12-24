@@ -73,7 +73,6 @@ import org.squashtest.tm.domain.customfield.BindableEntity;
 import org.squashtest.tm.domain.customfield.BoundEntity;
 import org.squashtest.tm.domain.denormalizedfield.DenormalizedFieldHolder;
 import org.squashtest.tm.domain.denormalizedfield.DenormalizedFieldHolderType;
-import org.squashtest.tm.domain.infolist.DenormalizedInfoListItem;
 import org.squashtest.tm.domain.infolist.DenormalizedNature;
 import org.squashtest.tm.domain.infolist.DenormalizedType;
 import org.squashtest.tm.domain.infolist.InfoListItem;

@@ -85,8 +85,6 @@ IterationTestPlanManager {
 
 	@Inject	private IterationTestPlanDao testPlanDao;
 
-	@Inject	private AutomatedSuiteDao autoSuiteDao;
-
 	@Inject	private ExecutionDao executionDao;
 
 	@Inject	private TestCaseCyclicCallChecker testCaseCyclicCallChecker;
@@ -112,9 +110,6 @@ IterationTestPlanManager {
 	@Inject	private ObjectFactory<TreeNodeCopier> treeNodeCopierFactory;
 
 	@Inject	private IterationTestPlanManagerService iterationTestPlanManager;
-
-	@Inject private UnsecuredAutomatedTestManagerService testAutomationService;
-
 
 
 	@Override

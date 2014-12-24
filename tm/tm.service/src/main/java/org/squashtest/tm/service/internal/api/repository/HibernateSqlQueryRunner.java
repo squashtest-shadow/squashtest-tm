@@ -24,7 +24,6 @@ import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
-import javax.sql.DataSource;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
@@ -44,8 +43,7 @@ import org.squashtest.tm.api.repository.SqlQueryRunner;
  */
 @Service("squash.api.repository.SqlQueryRunner")
 public class HibernateSqlQueryRunner implements SqlQueryRunner {
-	@Inject
-	private DataSource dataSource;
+
 
 	private static final QueryExecution<Query> EXECUTE_LIST = new QueryExecution<Query>() {
 		@SuppressWarnings("unchecked")

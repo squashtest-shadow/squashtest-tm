@@ -20,21 +20,20 @@
  */
 package org.squashtest.tm.service.internal.infolist;
 
-import javax.inject.Inject;
-
 import java.util.List;
 
-import org.squashtest.tm.domain.infolist.InfoList;
+import javax.inject.Inject;
+
 import org.springframework.stereotype.Service;
-import org.squashtest.tm.service.infolist.InfoListManagerService;
 import org.springframework.transaction.annotation.Transactional;
+import org.squashtest.tm.domain.infolist.InfoList;
 import org.squashtest.tm.domain.infolist.InfoListItem;
 import org.squashtest.tm.domain.infolist.ListItemReference;
 import org.squashtest.tm.domain.infolist.SystemInfoListCode;
 import org.squashtest.tm.domain.infolist.SystemInfoListItemCode;
 import org.squashtest.tm.domain.infolist.SystemListItem;
 import org.squashtest.tm.service.infolist.InfoListItemManagerService;
-import org.squashtest.tm.service.internal.repository.GenericProjectDao;
+import org.squashtest.tm.service.infolist.InfoListManagerService;
 import org.squashtest.tm.service.internal.repository.InfoListItemDao;
 
 @Transactional
@@ -44,8 +43,6 @@ public class InfoListItemManagerServiceImpl implements InfoListItemManagerServic
 	@Inject
 	private InfoListItemDao itemDao;
 
-	@Inject
-	private GenericProjectDao projectDao;
 
 	@Inject
 	private InfoListManagerService infoListService;

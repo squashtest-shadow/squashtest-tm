@@ -41,7 +41,6 @@ import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.audit.AuditableMixin;
 import org.squashtest.tm.domain.users.Team;
 import org.squashtest.tm.domain.users.User;
-import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.user.AdministrationService;
 import org.squashtest.tm.service.user.TeamFinderService;
 import org.squashtest.tm.web.internal.controller.RequestParams;
@@ -73,8 +72,7 @@ public class UserController {
 
 	@Inject
 	private TeamFinderService teamFinder;
-	@Inject
-	private PermissionEvaluationService permissionEvaluationService;
+
 
 	private static final String USER_ID_URL = "/{userId}";
 

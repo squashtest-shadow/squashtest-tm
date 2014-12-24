@@ -23,7 +23,6 @@ package org.squashtest.tm.web.internal.controller.testautomation;
 
 import javax.inject.Inject;
 
-import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -36,9 +35,6 @@ import org.squashtest.tm.service.testautomation.TestAutomationServerManagerServi
 @Controller
 @RequestMapping("/administration/test-automation-servers/{serverId}")
 public class TestAutomationServerModificationAdminController {
-
-	@Inject
-	private MessageSource messageSource;
 
 
 	@Inject

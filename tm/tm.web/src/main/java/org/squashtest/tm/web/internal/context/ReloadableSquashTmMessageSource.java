@@ -22,7 +22,6 @@ package org.squashtest.tm.web.internal.context;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
 

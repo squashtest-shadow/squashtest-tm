@@ -25,7 +25,6 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -36,7 +35,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.squashtest.tm.domain.customfield.BindableEntity;
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
 import org.squashtest.tm.service.customfield.CustomFieldValueManagerService;
-import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.web.internal.controller.AcceptHeaders;
 import org.squashtest.tm.web.internal.model.customfield.CustomFieldJsonConverter;
 import org.squashtest.tm.web.internal.model.customfield.CustomFieldValueModel;
@@ -53,13 +51,9 @@ public class CustomFieldValuesController {
 	private CustomFieldValueManagerService managerService;
 
 	@Inject
-	private PermissionEvaluationService permissionService;
-
-	@Inject
 	private CustomFieldJsonConverter converter;
 
-	@Inject
-	private MessageSource messageSource;
+
 
 	@RequestMapping(method = RequestMethod.GET, params = { BOUND_ENTITY_ID, BOUND_ENTITY_TYPE }, headers = AcceptHeaders.CONTENT_JSON)
 	@ResponseBody

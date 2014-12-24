@@ -52,7 +52,6 @@ import org.squashtest.tm.domain.search.AdvancedSearchModel;
 import org.squashtest.tm.domain.search.SearchExportCSVModel;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.service.campaign.IterationModificationService;
-import org.squashtest.tm.service.configuration.ConfigurationService;
 import org.squashtest.tm.service.internal.advancedsearch.AdvancedSearchServiceImpl;
 import org.squashtest.tm.service.internal.repository.ProjectDao;
 import org.squashtest.tm.service.internal.repository.TestCaseDao;
@@ -66,8 +65,6 @@ TestCaseAdvancedSearchService {
 
 	@Inject
 	protected SessionFactory sessionFactory;
-	@Inject
-	private ConfigurationService configurationService;
 
 	@Inject
 	private ProjectDao projectDao;

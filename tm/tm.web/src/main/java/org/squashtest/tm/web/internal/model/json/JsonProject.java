@@ -23,8 +23,6 @@ package org.squashtest.tm.web.internal.model.json;
 import java.util.List;
 import java.util.Map;
 
-import org.squashtest.tm.domain.customfield.BindableEntity;
-import org.squashtest.tm.domain.infolist.InfoList;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.web.internal.model.customfield.CustomFieldBindingModel;
 

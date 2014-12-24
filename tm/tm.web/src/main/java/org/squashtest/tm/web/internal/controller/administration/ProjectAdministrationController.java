@@ -30,7 +30,6 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
-import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -74,8 +73,6 @@ public class ProjectAdministrationController {
 	private BugTrackerFinderService bugtrackerFinderService;
 	@Inject
 	private InternationalizationHelper internationalizationHelper;
-	@Inject
-	private MessageSource messageSource;
 
 	@Inject
 	private TestAutomationServerManagerService taServerService;

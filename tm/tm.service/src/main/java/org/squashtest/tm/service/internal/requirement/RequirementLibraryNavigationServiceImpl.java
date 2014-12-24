@@ -380,14 +380,14 @@ RequirementLibraryNavigationService, RequirementLibraryFinderService {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
+
 	@Override
 	public List<ExportRequirementData> findRequirementsToExportFromLibrary(List<Long> libraryIds) {
 		PermissionsUtils.checkPermission(permissionService, libraryIds, "EXPORT", RequirementLibrary.class.getName());
 		return (List<ExportRequirementData>) requirementDao.findRequirementToExportFromLibrary(libraryIds);
 	}
 
-	@SuppressWarnings("unchecked")
+
 	@Override
 	public List<ExportRequirementData> findRequirementsToExportFromNodes(List<Long> nodesIds) {
 		PermissionsUtils.checkPermission(permissionService, nodesIds, "EXPORT", RequirementLibraryNode.class.getName());

@@ -60,7 +60,6 @@ import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.service.campaign.CampaignModificationService;
 import org.squashtest.tm.service.campaign.CampaignTestPlanManagerService;
 import org.squashtest.tm.service.campaign.IterationModificationService;
-import org.squashtest.tm.service.campaign.IterationTestPlanManagerService;
 import org.squashtest.tm.service.customfield.CustomFieldValueFinderService;
 import org.squashtest.tm.service.statistics.campaign.CampaignStatisticsBundle;
 import org.squashtest.tm.web.internal.controller.RequestParams;
@@ -104,8 +103,6 @@ public class CampaignModificationController {
 	@Inject
 	private Provider<TestCaseModeJeditableComboDataBuilder> modeComboBuilderProvider;
 
-	@Inject
-	private IterationTestPlanManagerService iterationTestPlanManagerService;
 
 	@Inject
 	private CampaignTestPlanManagerService testPlanManager;
@@ -164,8 +161,6 @@ public class CampaignModificationController {
 	private Map<String, String> getAssignableUsers(long campaignId) {
 
 		Locale locale = LocaleContextHolder.getLocale();
-
-		Campaign campaign = campaignModService.findById(campaignId);
 
 		String unassignedLabel = messageSource.internationalize("label.Unassigned", locale);
 

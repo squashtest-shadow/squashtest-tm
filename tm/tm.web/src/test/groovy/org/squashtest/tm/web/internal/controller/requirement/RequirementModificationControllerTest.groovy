@@ -54,13 +54,12 @@ class RequirementModificationControllerTest extends Specification {
 	RequirementModificationService requirementModificationService= Mock()
 	InternationalizationHelper i18nHelper = Mock()
 	LabelFormatter formatter = new LevelLabelFormatter(i18nHelper)
-	LabelFormatter internationalformatter = new InternationalizableLabelFormatter(i18nHelper)
+
 	Provider criticalityBuilderProvider = criticalityBuilderProvider()
 
 	JsonInfoListBuilder infoListBuilder = mockJsonInfoListBuilder();
 	Provider statusBuilderProvider = statusBuilderProvider()
 	Provider levelFormatterProvider = levelFormatterProvider()
-	Provider internationalFormatterProvider = internationalFormatterProvider()
 	VerifyingTestCaseManagerService verifTCService = Mock()
 	ServiceAwareAttachmentTableModelHelper attachmentsHelper = Mock()
 	RequirementAuditTrailService auditTrailService = Mock()
@@ -72,7 +71,6 @@ class RequirementModificationControllerTest extends Specification {
 		controller.criticalityComboBuilderProvider = criticalityBuilderProvider
 		controller.statusComboDataBuilderProvider = statusBuilderProvider
 		controller.levelFormatterProvider = levelFormatterProvider
-		controller.internationalizableFormatterProvider = internationalFormatterProvider
 		controller.cufValueService = Mock(CustomFieldValueFinderService)
 		controller.verifyingTestCaseManager = verifTCService
 		controller.attachmentsHelper = attachmentsHelper
@@ -119,12 +117,6 @@ class RequirementModificationControllerTest extends Specification {
 	def levelFormatterProvider() {
 		Provider provider = Mock()
 		provider.get() >> formatter
-
-		return provider
-	}
-	def internationalFormatterProvider(){
-		Provider provider = Mock()
-		provider.get() >> internationalformatter
 
 		return provider
 	}

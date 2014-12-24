@@ -103,7 +103,7 @@ public class VerifiedRequirementsManagerServiceImpl implements VerifiedRequireme
 	@Inject
 	private PermissionEvaluationService permissionService;
 
-	@SuppressWarnings("rawtypes")
+
 	@Override
 	@PreAuthorize(LINK_TC_OR_ROLE_ADMIN)
 	public Collection<VerifiedRequirementException> addVerifiedRequirementsToTestCase(List<Long> requirementsIds,

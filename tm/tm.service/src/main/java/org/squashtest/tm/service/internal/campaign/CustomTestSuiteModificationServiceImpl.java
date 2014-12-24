@@ -33,13 +33,9 @@ import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.exception.DuplicateNameException;
 import org.squashtest.tm.service.campaign.CustomTestSuiteModificationService;
 import org.squashtest.tm.service.campaign.IterationModificationService;
-import org.squashtest.tm.service.internal.repository.AutomatedSuiteDao;
-import org.squashtest.tm.service.internal.repository.ExecutionDao;
 import org.squashtest.tm.service.internal.repository.TestSuiteDao;
-import org.squashtest.tm.service.project.ProjectsPermissionFinder;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.security.PermissionsUtils;
-import org.squashtest.tm.service.testcase.TestCaseCyclicCallChecker;
 import org.squashtest.tm.service.user.UserAccountService;
 
 @Service("CustomTestSuiteModificationService")
@@ -54,22 +50,6 @@ public class CustomTestSuiteModificationServiceImpl implements CustomTestSuiteMo
 
 	@Inject
 	private IterationModificationService iterationService;
-
-	@Inject
-	private AutomatedSuiteDao autoSuiteDao;
-
-	@Inject
-	private TestCaseCyclicCallChecker testCaseCyclicCallChecker;
-
-	@Inject
-	private ExecutionDao executionDao;
-
-	@Inject
-	private ProjectsPermissionFinder projectsPermissionFinder;
-
-
-	@Inject
-	private IterationTestPlanManager iterationTestPlanManager;
 
 	@Inject
 	private UserAccountService userService;

@@ -48,7 +48,6 @@ import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.search.AdvancedSearchModel;
 import org.squashtest.tm.domain.search.SearchExportCSVModel;
-import org.squashtest.tm.service.configuration.ConfigurationService;
 import org.squashtest.tm.service.internal.advancedsearch.AdvancedSearchServiceImpl;
 import org.squashtest.tm.service.internal.repository.ProjectDao;
 import org.squashtest.tm.service.requirement.RequirementVersionAdvancedSearchService;
@@ -66,8 +65,6 @@ public class RequirementVersionAdvancedSearchServiceImpl extends AdvancedSearchS
 	@Inject
 	private Provider<RequirementVersionSearchExportCSVModelImpl> requirementVersionSearchExportCSVModelProvider;
 
-	@Inject
-	private ConfigurationService configurationService;
 
 	private final static SortField[] DEFAULT_SORT_REQUIREMENTS = new SortField[] {
 			new SortField("requirement.project.name", SortField.STRING, false),

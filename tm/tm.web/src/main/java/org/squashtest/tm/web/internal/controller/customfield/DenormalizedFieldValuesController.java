@@ -25,7 +25,6 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -36,7 +35,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.squashtest.tm.domain.denormalizedfield.DenormalizedFieldHolderType;
 import org.squashtest.tm.domain.denormalizedfield.DenormalizedFieldValue;
 import org.squashtest.tm.service.denormalizedfield.DenormalizedFieldValueManager;
-import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.web.internal.controller.AcceptHeaders;
 import org.squashtest.tm.web.internal.model.customfield.CustomFieldJsonConverter;
 import org.squashtest.tm.web.internal.model.customfield.CustomFieldValueModel;
@@ -54,13 +52,8 @@ public class DenormalizedFieldValuesController {
 	private DenormalizedFieldValueManager denormalizedFieldValueFinder;
 
 	@Inject
-	private PermissionEvaluationService permissionService;
-
-	@Inject
 	private CustomFieldJsonConverter converter;
 
-	@Inject
-	private MessageSource messageSource;
 
 	@RequestMapping(method = RequestMethod.GET, params = { DENORMALIZED_FIELD_HOLDER_ID, DENORMALIZED_FIELD_HOLDER_TYPE }, headers = AcceptHeaders.CONTENT_JSON)
 	@ResponseBody

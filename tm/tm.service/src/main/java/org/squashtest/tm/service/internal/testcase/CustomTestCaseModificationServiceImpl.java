@@ -26,7 +26,6 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.NoSuchElementException;
 import java.util.Set;
 
 import javax.inject.Inject;
@@ -34,7 +33,6 @@ import javax.inject.Named;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
-import org.apache.commons.lang.NotImplementedException;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -75,7 +73,6 @@ import org.squashtest.tm.service.internal.customfield.PrivateCustomFieldValueSer
 import org.squashtest.tm.service.internal.library.NodeManagementService;
 import org.squashtest.tm.service.internal.repository.ActionTestStepDao;
 import org.squashtest.tm.service.internal.repository.LibraryNodeDao;
-import org.squashtest.tm.service.internal.repository.RequirementVersionDao;
 import org.squashtest.tm.service.internal.repository.TestCaseDao;
 import org.squashtest.tm.service.internal.repository.TestStepDao;
 import org.squashtest.tm.service.internal.testautomation.UnsecuredAutomatedTestManagerService;
@@ -111,8 +108,6 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	@Inject
 	private TestStepDao testStepDao;
 
-	@Inject
-	private RequirementVersionDao requirementVersionDao;
 
 	@Inject
 	@Named("squashtest.tm.service.internal.TestCaseManagementService")
@@ -127,8 +122,6 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	@Inject
 	protected PrivateCustomFieldValueService customFieldValuesService;
 
-	@Inject
-	private TestCaseCallTreeFinder callTreeFinder;
 
 	@Inject
 	private ParameterModificationService parameterModificationService;

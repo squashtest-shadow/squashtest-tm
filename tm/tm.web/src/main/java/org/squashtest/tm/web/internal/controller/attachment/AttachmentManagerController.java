@@ -28,7 +28,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -62,10 +61,6 @@ public class AttachmentManagerController {
 	private ServiceAwareAttachmentTableModelHelper attachmentModelHelper;
 
 	private static final String ATTACH_LIST_ID = "attachListId";
-
-
-	@Inject
-	private MessageSource messageSource;
 
 
 	@SuppressWarnings("rawtypes")

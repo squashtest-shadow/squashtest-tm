@@ -55,7 +55,6 @@ import org.squashtest.tm.domain.project.ProjectPermission;
 import org.squashtest.tm.domain.users.Team;
 import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
-import org.squashtest.tm.service.user.TeamFinderService;
 import org.squashtest.tm.service.user.TeamModificationService;
 import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.controller.administration.UserModel;
@@ -91,8 +90,6 @@ public class TeamController extends PartyControllerSupport {
 	@Inject
 	private PermissionEvaluationService permissionEvaluationService;
 
-	@Inject
-	private TeamFinderService teamFinderService;
 
 	private static final String TEAM_ID_URL = "/{teamId}";
 

@@ -66,10 +66,8 @@ import org.squashtest.tm.service.internal.repository.ParameterDao;
 import org.squashtest.tm.service.testcase.CallStepManagerService;
 import org.squashtest.tm.service.testcase.DatasetModificationService;
 import org.squashtest.tm.service.testcase.ParameterModificationService;
-import org.squashtest.tm.service.testcase.TestCaseLibraryFinderService;
 import org.squashtest.tm.service.testcase.TestCaseLibraryNavigationService;
 import org.squashtest.tm.service.testcase.TestCaseModificationService;
-import org.squashtest.tm.service.testcase.TestStepModificationService;
 
 /**
  * 
@@ -90,16 +88,11 @@ public class FacilityImpl implements Facility {
 	private ValidationFacility validator;
 
 	@Inject
-	private TestCaseLibraryFinderService finderService;
-
-	@Inject
 	private TestCaseLibraryNavigationService navigationService;
 
 	@Inject
 	private TestCaseModificationService testcaseModificationService;
 
-	@Inject
-	private TestStepModificationService stepModificationService;
 
 	@Inject
 	private PrivateCustomFieldValueService cufvalueService;

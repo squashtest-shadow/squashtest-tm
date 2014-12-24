@@ -58,7 +58,6 @@ import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.domain.execution.ExecutionStep;
 import org.squashtest.tm.service.customfield.CustomFieldHelper;
 import org.squashtest.tm.service.customfield.CustomFieldHelperService;
-import org.squashtest.tm.service.customfield.CustomFieldValueFinderService;
 import org.squashtest.tm.service.customfield.DenormalizedFieldHelper;
 import org.squashtest.tm.service.denormalizedfield.DenormalizedFieldValueManager;
 import org.squashtest.tm.service.execution.ExecutionModificationService;
@@ -70,7 +69,6 @@ import org.squashtest.tm.web.internal.controller.widget.AoColumnDef;
 import org.squashtest.tm.web.internal.helper.JsonHelper;
 import org.squashtest.tm.web.internal.http.ContentTypes;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
-import org.squashtest.tm.web.internal.model.builder.JsonInfoListBuilder;
 import org.squashtest.tm.web.internal.model.customfield.CustomFieldJsonConverter;
 import org.squashtest.tm.web.internal.model.customfield.CustomFieldModel;
 import org.squashtest.tm.web.internal.model.customfield.CustomFieldValueModel;
@@ -78,7 +76,6 @@ import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.tm.web.internal.model.datatable.DataTablePaging;
 import org.squashtest.tm.web.internal.model.json.JsonExecutionInfo;
-import org.squashtest.tm.web.internal.model.json.JsonInfoList;
 
 @Controller
 @RequestMapping("/executions/{executionId}")
@@ -106,14 +103,10 @@ public class ExecutionModificationController {
 	@Inject
 	private CustomFieldHelperService cufHelperService;
 
-	@Inject
-	private CustomFieldValueFinderService cufValueService;
 
 	@Inject
 	private CustomFieldJsonConverter converter;
 
-	@Inject
-	private JsonInfoListBuilder denoListBuilder;
 
 	// ****** /custom field services ******************
 

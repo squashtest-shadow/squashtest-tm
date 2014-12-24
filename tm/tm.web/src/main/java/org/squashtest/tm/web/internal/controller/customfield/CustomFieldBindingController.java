@@ -58,7 +58,7 @@ public class CustomFieldBindingController {
 	/**
 	 * 
 	 */
-	private static final String PROJECT_ID = RequestParams.PROJECT_ID;
+
 
 	@Inject
 	private CustomFieldBindingModificationService service;

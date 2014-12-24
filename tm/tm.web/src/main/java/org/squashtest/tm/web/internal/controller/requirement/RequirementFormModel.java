@@ -32,7 +32,6 @@ import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
 import org.squashtest.tm.domain.customfield.RawValue;
 import org.squashtest.tm.domain.requirement.NewRequirementVersionDto;
-import org.squashtest.tm.domain.requirement.RequirementCategory;
 import org.squashtest.tm.domain.requirement.RequirementCriticality;
 import org.squashtest.tm.web.internal.model.customfield.RawValueModel;
 import org.squashtest.tm.web.internal.model.customfield.RawValueModel.RawValueModelMap;

@@ -44,12 +44,10 @@ import org.squashtest.tm.domain.denormalizedfield.DenormalizedRichValue;
 import org.squashtest.tm.domain.denormalizedfield.DenormalizedSingleSelectField;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.execution.ExecutionStep;
-import org.squashtest.tm.service.internal.repository.CustomFieldBindingDao;
 import org.squashtest.tm.service.internal.repository.CustomFieldValueDao;
 import org.squashtest.tm.service.internal.repository.DenormalizedFieldValueDao;
 import org.squashtest.tm.service.internal.repository.DenormalizedFieldValueDeletionDao;
 import org.squashtest.tm.service.internal.repository.ExecutionDao;
-import org.squashtest.tm.service.security.PermissionEvaluationService;
 
 /**
  * 
@@ -62,24 +60,16 @@ public class PrivateDenormalizedFieldValueServiceImpl implements PrivateDenormal
 	private CustomFieldValueDao customFieldValueDao;
 
 	@Inject
-	private CustomFieldBindingDao customFieldBindingDao;
-
-	@Inject
 	private DenormalizedFieldValueDao denormalizedFieldValueDao;
 
 	@Inject
 	private DenormalizedFieldValueDeletionDao denormalizedFieldValueDeletionDao;
 
-	@Inject
-	private PermissionEvaluationService permissionService;
+
 
 	@Inject
 	private ExecutionDao execDao;
 
-
-	public void setPermissionService(PermissionEvaluationService permissionService) {
-		this.permissionService = permissionService;
-	}
 
 	@Override
 	public void createAllDenormalizedFieldValues(BoundEntity source, DenormalizedFieldHolder destination) {

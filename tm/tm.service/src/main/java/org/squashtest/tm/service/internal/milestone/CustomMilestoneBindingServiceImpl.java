@@ -120,7 +120,6 @@ public class CustomMilestoneBindingServiceImpl implements MilestoneBindingManage
 		} else {
 			bindedProject = milestone.getPerimeter();
 		}
-
 		return bindedProject;
 	}
 
@@ -133,7 +132,6 @@ public class CustomMilestoneBindingServiceImpl implements MilestoneBindingManage
 		for (Milestone milestone : milestones) {
 			milestone.removeProjectFromPerimeter(project);
 		}
-
 	}
 
 	@Override
@@ -143,7 +141,6 @@ public class CustomMilestoneBindingServiceImpl implements MilestoneBindingManage
 		List<GenericProject> projects = projectDao.findAllByIds(projectIds);
 		milestone.unbindProjects(projects);
 		milestone.removeProjectsFromPerimeter(projects);
-
 	}
 
 	

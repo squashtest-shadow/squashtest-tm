@@ -22,8 +22,6 @@ package org.squashtest.tm.service.requirement;
 
 import javax.validation.constraints.NotNull;
 
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.squashtest.tm.domain.infolist.InfoListItem;
 import org.squashtest.tm.domain.requirement.RequirementCriticality;
 
 /**

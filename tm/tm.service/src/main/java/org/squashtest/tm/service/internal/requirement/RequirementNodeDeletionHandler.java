@@ -24,6 +24,7 @@ import org.squashtest.tm.domain.requirement.RequirementFolder;
 import org.squashtest.tm.domain.requirement.RequirementLibraryNode;
 import org.squashtest.tm.service.internal.library.NodeDeletionHandler;
 
+@SuppressWarnings("rawtypes")
 public interface RequirementNodeDeletionHandler extends
 		NodeDeletionHandler<RequirementLibraryNode, RequirementFolder> {
 	

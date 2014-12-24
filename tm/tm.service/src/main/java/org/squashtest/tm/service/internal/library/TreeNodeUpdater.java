@@ -46,7 +46,6 @@ import org.squashtest.tm.domain.testcase.TestCaseFolder;
 import org.squashtest.tm.domain.testcase.TestStep;
 import org.squashtest.tm.domain.testcase.TestStepVisitor;
 import org.squashtest.tm.service.infolist.InfoListItemManagerService;
-import org.squashtest.tm.service.infolist.InfoListManagerService;
 import org.squashtest.tm.service.internal.customfield.PrivateCustomFieldValueService;
 import org.squashtest.tm.service.internal.repository.IssueDao;
 import org.squashtest.tm.service.testcase.TestCaseModificationService;

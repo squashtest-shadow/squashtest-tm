@@ -34,7 +34,6 @@ import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.csp.core.bugtracker.spi.BugTrackerInterfaceDescriptor;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.exception.NoBugTrackerBindingException;
-import org.squashtest.tm.service.bugtracker.BugTrackerFinderService;
 import org.squashtest.tm.service.bugtracker.BugTrackersLocalService;
 import org.squashtest.tm.service.execution.ExecutionProcessingService;
 
@@ -56,9 +55,6 @@ public class TestCaseExecutionRunnerController {
 
 	@Inject
 	private BugTrackersLocalService bugTrackersLocalService;
-
-	@Inject
-	private BugTrackerFinderService bugTrackerFinderService;
 
 
 	public TestCaseExecutionRunnerController() {

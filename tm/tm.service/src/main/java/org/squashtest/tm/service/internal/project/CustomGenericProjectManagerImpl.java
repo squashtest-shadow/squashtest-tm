@@ -39,6 +39,7 @@ import javax.inject.Provider;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.builder.CompareToBuilder;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.slf4j.Logger;
@@ -89,7 +90,6 @@ import org.squashtest.tm.service.internal.repository.ExecutionDao;
 import org.squashtest.tm.service.internal.repository.GenericProjectDao;
 import org.squashtest.tm.service.internal.repository.PartyDao;
 import org.squashtest.tm.service.internal.repository.ProjectDao;
-import org.squashtest.tm.service.internal.repository.UserDao;
 import org.squashtest.tm.service.project.CustomGenericProjectFinder;
 import org.squashtest.tm.service.project.CustomGenericProjectManager;
 import org.squashtest.tm.service.project.ProjectsPermissionManagementService;
@@ -97,7 +97,6 @@ import org.squashtest.tm.service.security.ObjectIdentityService;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.testautomation.TestAutomationProjectManagerService;
 import org.squashtest.tm.service.testautomation.TestAutomationServerManagerService;
-import org.apache.commons.lang.builder.CompareToBuilder;
 
 @Service("CustomGenericProjectManager")
 @Transactional
@@ -116,8 +115,7 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 	private BugTrackerDao bugTrackerDao;
 	@Inject
 	private SessionFactory sessionFactory;
-	@Inject
-	private UserDao userDao;
+
 	@Inject
 	private PartyDao partyDao;
 	@Inject
@@ -601,6 +599,7 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 
 	// **************** Custom comparator **************
 
+	@SuppressWarnings("unchecked")
 	public PagedCollectionHolder<List<GenericProject>> findCustomSortedProject(final PagingAndMultiSorting sorter) {
 
 		List<? extends GenericProject> resultset;

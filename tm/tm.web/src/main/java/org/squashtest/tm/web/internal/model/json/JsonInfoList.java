@@ -20,11 +20,7 @@
  */
 package org.squashtest.tm.web.internal.model.json;
 
-import java.util.ArrayList;
 import java.util.List;
-
-import org.squashtest.tm.domain.infolist.InfoList;
-import org.squashtest.tm.domain.infolist.InfoListItem;
 
 
 

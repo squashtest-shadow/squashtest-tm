@@ -29,8 +29,6 @@ import org.springframework.stereotype.Service;
 import org.squashtest.tm.domain.testcase.Parameter;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestStep;
-import org.squashtest.tm.service.internal.repository.DatasetDao;
-import org.squashtest.tm.service.internal.repository.DatasetParamValueDao;
 import org.squashtest.tm.service.internal.repository.ParameterDao;
 import org.squashtest.tm.service.internal.repository.TestCaseDao;
 import org.squashtest.tm.service.internal.repository.TestStepDao;
@@ -48,12 +46,6 @@ public class ParameterModificationServiceImpl implements ParameterModificationSe
 
 	@Inject
 	private TestCaseDao testCaseDao;
-
-	@Inject
-	private DatasetDao datasetDao;
-
-	@Inject
-	private DatasetParamValueDao datasetParamValueDao;
 
 	@Inject
 	private DatasetModificationService datasetModificationService;
