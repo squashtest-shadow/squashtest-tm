@@ -38,4 +38,9 @@ public interface CustomMilestoneManager {
 	List<Milestone> findSortedMilestones(PagingAndSorting sorter);
 	PagedCollectionHolder<List<Milestone>> filterMilestone(List<ExpandedMilestone> expandedMilestones, Filtering filter, PagingAndSorting sorter);
 	Milestone findById(long milestoneId);
+	boolean canEditMilestone(long milestoneId);
+	void verifyCanEditMilestone(long milestoneId);
+	void verifyCanEditMilestoneRange();
+	List<Long> findAllIdsOfEditableMilestone();
+	List<Milestone>  findAllICanSee();
 }

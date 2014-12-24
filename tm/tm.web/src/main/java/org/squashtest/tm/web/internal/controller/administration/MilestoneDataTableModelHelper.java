@@ -65,7 +65,7 @@ public class MilestoneDataTableModelHelper  extends DataTableModelBuilder<Milest
 		row.put("nbOfProjects", item.getNbOfBindedProject());
 		row.put("description", item.getDescription());
 		row.put("range",i18nRange(item.getRange()));
-		row.put("owner", item.getOwner().getName());
+		row.put("owner", ownerToPrint(item));
 		row.put("status", i18nStatus(item.getStatus()));
 		row.put("endDate",  messageSource.localizeDate(item.getEndDate(), locale));
 		row.put("created-on", messageSource.localizeDate(auditable.getCreatedOn(), locale));
@@ -78,6 +78,16 @@ public class MilestoneDataTableModelHelper  extends DataTableModelBuilder<Milest
 		return row;
 	}
 	
+	private Object ownerToPrint(Milestone item) {
+		String owner = null;
+		if (item.getRange().equals(MilestoneRange.GLOBAL)){
+			owner = messageSource.internationalize("label.milestone.global.owner", locale);
+		} else {
+			owner = item.getOwner().getName();
+		}
+		return owner;
+	}
+
 	private String i18nRange(final MilestoneRange milestoneRange){
 		final String i18nKey = milestoneRange.getI18nKey();
 		return  messageSource.internationalize(i18nKey, locale);

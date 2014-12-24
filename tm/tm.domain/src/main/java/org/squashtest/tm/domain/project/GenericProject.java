@@ -422,4 +422,8 @@ public abstract class GenericProject implements Identified, AttachmentHolder {
 		
 	}
 
+	public boolean isBoundToMilestone(Milestone milestone) {
+		return milestones.contains(milestone);
+	}
+
 }

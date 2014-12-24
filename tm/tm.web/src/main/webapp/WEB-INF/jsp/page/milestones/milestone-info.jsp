@@ -89,8 +89,10 @@
 				
 			<div class="toolbar-button-panel">
 				<f:message var="rename" key="rename" />
+			<c:if test="${canEdit }">
 				<input type="button" value="${ rename }" id="rename-milestone-button"
 							class="sq-btn" />
+							</c:if>
 			</div>
 			</div>
 			<%--------End Toolbar ---------------%>
@@ -129,15 +131,37 @@
 							<label for="milestone-owner" class="display-table-cell">
 							<f:message key="label.Owner" />
 							</label>
-							<div class="display-table-cell" ><span id="milestone-owner" >	${ milestone.owner.name } </span></div>
+							
+							<div class="display-table-cell" id="milestone-owner-cell">
+									<c:choose>
+						<c:when test="${ milestone.range == 'GLOBAL'}">  
+							  	<f:message  key="label.milestone.global.owner" /> 
+						  </c:when>
+						  	 <c:otherwise>
+						  	<span id="milestone-owner" >${ milestone.owner.name } </span>
+						        </c:otherwise>
+						</c:choose>
 						</div>
+						
+						</div>
+						
+				
+						
+						
 						
 						
 						<div class="display-table-row">
 							<label for="milestone-description" class="display-table-cell">
 							<f:message key="label.Description" />
 							</label>
+							<c:choose>
+							    <c:when test="${ canEdit }">                       
 							<div class="display-table-cell editable rich-editable" data-def="url=${milestoneUrl}" id="milestone-description">${ milestone.description }</div>
+						     </c:when>
+						 <c:otherwise>
+						<div class="display-table-cell">  ${ milestone.description } </div>
+                          </c:otherwise>
+						</c:choose>
 						</div>
 					
 					</div>
@@ -150,11 +174,13 @@
 				titleKey="label.projects" open="true">
 	
 		<jsp:attribute name="panelButtons">
+			<c:if test="${canEdit }">
         <button id="bind-project-button" title=<f:message key="label.milestone.bindProject" /> class="sq-icon-btn btn-sm">
           <span class="ui-icon ui-icon-plus">+</span>
         </button>
              <button id="unbind-project-button" title=<f:message key="label.milestone.unbindProject" /> class="sq-icon-btn btn-sm">
           <span class="ui-icon ui-icon-minus">-</span>
+          </c:if>
         </button>
         
 				</jsp:attribute>	
@@ -163,8 +189,10 @@
 				<table id="projects-table" class="unstyled-table" data-def="ajaxsource=${projectsUrl}?binded, hover, filter, pre-sort=1-asc">
 		<thead>
 			<tr>
-				<th data-def="map=entity-index, select">#</th>
+			    <th data-def="map=entity-id, invisible"> </th>
+				<th data-def="map=entity-index, select">#</th>				
 				<th data-def="map=name, sortable, link=${projectDetailBaseUrl}/{entity-id}/info"  class="datatable-filterable"><f:message key="label.project" /></th>
+				<th data-def="map=binded, sortable, sClass=binded-to-project" class="datatable-filterable"><f:message key="label.project.isBoundToMilestone" /></th>
 				<th data-def="map=empty-delete-holder, unbind-button=#unbind-project-popup"></th>
 				
 
@@ -173,34 +201,6 @@
 		<tbody><%-- Will be populated through ajax --%></tbody>
 	</table>
 
-	<!--
-	<table id="projects-table" class="unstyled-table" data-def="hover, filter, pre-sort=1-asc">
-		<thead>
-			<tr>
-			  <th data-def="map=entity-id, invisible"> </th>
-				<th data-def="map=entity-index, select">#</th>
-			    <th data-def="map=checkbox, invisible"></th>
-				<th data-def="map=name, sortable" ><f:message key="label.project" /></th>
-				<th data-def="map=label, invisible"></th>
-				<th data-def="map=empty-delete-holder, unbind-button=#unbind-project-popup"></th>
-			
-			</tr>
-		</thead>
-		<tbody>
-			 <c:forEach items="${bindedProjects}" var="project" varStatus="projectIndex"> 
-		 <tr>
-		 <td>${ project.id} </td>
-		 <td>${projectIndex.index +1}</td>
-		 <td></td>
-		 <td><a href="${projectDetailBaseUrl}/${project.id}/info"> ${project.name}</a></td>
-		 <td></td>
-		 <td></td>
-		 </tr>
-		
-		</c:forEach>
-		</tbody>
-	</table>
-	-->
 				</jsp:attribute>
 			</comp:toggle-panel>
 		
@@ -239,33 +239,6 @@
 		<tbody><%-- Will be populated through ajax --%></tbody>
 	</table>
 
- 
- <!-- 
- <table id="bind-to-projects-table" class="unstyled-table" data-def="hover, filter, pre-sort=1-asc">
-		<thead>
-			<tr>
-				<th data-def="map=entity-id, invisible"> </th>
-			    <th data-def="map=entity-index, invisible"></th>
-				<th data-def="map=checkbox, checkbox"></th>
-				<th data-def="map=name, sortable"><f:message key="label.Name" /></th>
-		    	<th data-def="map=label, sortable"><f:message key="label.Label" /></th>
-		    	<th data-def="map=empty-delete-holder, invisible"></th>
-			</tr>
-		</thead>
-		<tbody>
-				 <c:forEach items="${bindableProjects}" var="project" varStatus="projectIndex"> 
-		 <tr>
-		 <td>${ project.id} </td>
-		 <td></td>
-		 <td></td>
-		 <td><a href="${projectDetailBaseUrl}/${project.id}/info"> ${project.name}</a></td>
-		 <td>${project.label}</td>
-		 <td></td>
-		 </tr>
-		</c:forEach>
-		</tbody>
-	</table>
- -->
 <div>
 <ul>
 
@@ -310,6 +283,31 @@
 <!-- ------------------------------------END UNBIND PROJECT POPUP------------------------------------------------------- -->
 
 
+<!-- ------------------------------------UNBIND PROJECT POPUP------------------------------------------------------- -->
+	<f:message var="unbindProjectTitle" key="dialog.milestone.unbind.project.title" />
+	<f:message var="warningUnbind" key="dialog.milestone.unbind.project.warning" />
+	<div id="unbind-project-but-keep-in-perimeter-popup" class="popup-dialog not-displayed" title="${unbindProjectTitle}">
+		
+		<div class="display-table-row">
+            <div class="display-table-cell warning-cell">
+                <div class="delete-node-dialog-warning"></div>
+            </div>
+            <div class="display-table-cell">
+			${warningUnbind}
+			</div>
+		</div>
+		<div class="popup-dialog-buttonpane">
+		    <input class="confirm" type="button" value="${confirmLabel}" />
+		    <input class="cancel" type="button" value="${cancelLabel}" />				
+		</div>
+	
+	</div>
+
+<!-- ------------------------------------END UNBIND PROJECT POPUP------------------------------------------------------- -->
+
+
+
+
 
 <!-- --------------------------------RENAME POPUP--------------------------------------------------------- -->
   
@@ -346,10 +344,13 @@ requirejs.config({
 				milestoneUrl :  "${milestoneUrl}",
 			      },
 			data: {
+				canEdit : ${canEdit},
+				currentUser : '${currentUser}',
 				userList : '${userList}',
 				milestone : {
 					status : '${milestoneStatus}',
 					id: '${milestone.id}',
+					currentRange: '${ milestone.range}',
 					range: '${milestoneRange}'
 				            }
 				

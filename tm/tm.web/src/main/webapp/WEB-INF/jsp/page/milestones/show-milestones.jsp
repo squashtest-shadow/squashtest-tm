@@ -38,7 +38,7 @@
 <f:message var="dateFormat" key="squashtm.dateformatShort" />
 
 
-<layout:info-page-layout titleKey="squashtm.milestone.title" isSubPaged="true" main="milestone-manager/milestone-manager.js">
+<layout:info-page-layout titleKey="squashtm.milestone.title" isSubPaged="true">
 	<jsp:attribute  name="head">	
 		<comp:sq-css name="squash.grey.css" />
 		
@@ -203,3 +203,25 @@
 </div>
 </jsp:attribute>
 </layout:info-page-layout>
+
+
+<script type="text/javascript">
+
+
+requirejs.config({
+	config : {
+		'milestone-manager/milestone-manager' : {
+
+			data: {
+				editableMilestoneIds : ${editableMilestoneIds}
+			       }
+				           }
+			}
+		});
+		
+require(["common"], function(){
+	require(["milestone-manager/milestone-manager"], function(){});
+});
+
+
+</script>

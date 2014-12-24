@@ -930,33 +930,60 @@ define(["jquery",
 		var template = '<a >' + deleteConf.tooltip + '</a>';
 
 		var cells = $('td.delete-button', this);
+		this.drawDeleteButton(template, cells);
+	}
+	
+	function _drawDeleteButton(template, cells){
+		
 		cells.html(template);
 		cells.find('a').button({
 			text : false,
 			icons : {
 				primary : "ui-icon-trash"
 			}
-		});
-
+		});		
+	}
+	
+	function _configureUnbindButtons(){
+		var unbindConf = this.squashSettings.unbindButtons;
+		if (!unbindConf) {
+			return;
+		}
+		var template = '<a >' + unbindConf.tooltip + '</a>';
 		var cellsUnbind = $('td.unbind-button', this);
-		cellsUnbind.html(template);
-		cellsUnbind.find('a').button({
+		
+		this.drawUnbindButton(template, cellsUnbind);	
+	}
+	
+	function _drawUnbindButton(template, cell){
+		cell.html(template);
+		cell.find('a').button({
 			text : false,
 			icons : {
 				primary : "ui-icon-minus"
 			}
-		});
-		
+		});	
 	}
 
+	
+	function _bindUnbindButtons(){
+		var self = this;
+		var conf = self.squashSettings.unbindButtons;
+		_bindUnbindOrDeleteButtons(conf, self, 'td.unbind-button > a');
+	}
+	
 	function _bindDeleteButtons() {
-		var conf = this.squashSettings.deleteButtons;
-		var popconf = this.squashSettings.confirmPopup;
+		var self = this;
+		var conf = self.squashSettings.deleteButtons;
+		_bindUnbindOrDeleteButtons(conf, self, 'td.delete-button > a');
+	}
+	
+	function _bindUnbindOrDeleteButtons(conf, self, target){
+		var popconf = self.squashSettings.confirmPopup;
 
 		if (!conf) {
 			return;
 		}
-		var self = this;
 
 		var deleteFunction =  function() {
 			var row = this.parentNode.parentNode; // hopefully, that's the
@@ -1008,10 +1035,10 @@ define(["jquery",
 				});
 			}
 		};
-		
-		this.delegate('td.delete-button > a', 'click', deleteFunction);
-		this.delegate('td.unbind-button > a', 'click', deleteFunction);
+		self.delegate(target, 'click', deleteFunction);
 	}
+	
+
 
 	/**
 	 * Wrap cell text with link tags according to the given settings : squashSettings.bindLinks More info on top of the
@@ -1472,6 +1499,7 @@ define(["jquery",
 		aDrawCallbacks.push(_configureExecutionStatus);
 		aDrawCallbacks.push(_configureButtons);
 		aDrawCallbacks.push(_configureDeleteButtons);
+		aDrawCallbacks.push(_configureUnbindButtons);
 		aDrawCallbacks.push(_configureCheckBox);
 		aDrawCallbacks.push(_configureLinks);
 		aDrawCallbacks.push(_restoreTableSelection);
@@ -1522,6 +1550,8 @@ define(["jquery",
 		this.configureRichEditables = _configureRichEditables;
 		this.configureExecutionStatus = _configureExecutionStatus;
 		this.configureDeleteButtons = _configureDeleteButtons;
+		this.drawDeleteButton = _drawDeleteButton;
+		this.drawUnbindButton = _drawUnbindButton;
 		this.configureCheckBox         = _configureCheckBox;
 		this.enableTableDragAndDrop = _enableTableDragAndDrop;
 		this.restoreTableSelection = _restoreTableSelection;
@@ -1536,6 +1566,7 @@ define(["jquery",
 		} else {
 			this.bindDeleteButtons = _bindDeleteButtons;
 		}
+		
 
 		this.refresh = function() {
 			this.fnDraw(false);
@@ -1587,6 +1618,10 @@ define(["jquery",
 
 		if (squashEffective.deleteButtons) {
 			_bindDeleteButtons.call(this);
+		}
+		
+		if (squashEffective.unbindButtons) {
+			_bindUnbindButtons.call(this);
 		}
 
 		if (squashEffective.buttons) {
@@ -1706,7 +1741,7 @@ define(["jquery",
 					conf.current.sWidth = '2em';
 
 					var selector = assignation.value;
-					conf.squash.deleteButtons = {
+					conf.squash.unbindButtons = {
 						delegate : selector,
 						tooltip : $(selector).prev().find('span.ui-dialog-title').text()
 					};

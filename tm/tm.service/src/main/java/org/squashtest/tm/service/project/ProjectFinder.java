@@ -35,4 +35,5 @@ public interface ProjectFinder extends CustomProjectFinder {
 	
 	@PostFilter("hasPermission(filterObject, 'READ') or  hasRole('ROLE_ADMIN')")
 	List<Project> findAllOrderedByName();
+
 }

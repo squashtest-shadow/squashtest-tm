@@ -394,7 +394,7 @@
 	@NamedQuery(name = "user.countAllTeamMembers", query = "select members.size from Team where id = :teamId"),
 	@NamedQuery(name = "user.unassignFromAllCampaignTestPlan", query = "update CampaignTestPlanItem set user = null where user.id = :userId"),
 	@NamedQuery(name = "user.unassignFromAllIterationTestPlan", query = "update IterationTestPlanItem set user = null where user.id = :userId"),
-
+	
 	//Party
 	@NamedQuery(name = "party.findAllActive", query = "select party from Party party where party.id in (select user.id from User user where user.active = true) or party.id in (select team.id from Team team)"),
 	@NamedQuery(name = "party.findAllActiveByIds", query = "select party from Party party where party.id in (:partyIds) and (party.id in (select user.id from User user where user.active = true) or party.id in (select team.id from Team team))"),

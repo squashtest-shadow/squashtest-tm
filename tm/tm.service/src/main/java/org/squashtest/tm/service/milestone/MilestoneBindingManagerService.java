@@ -43,7 +43,7 @@ public interface MilestoneBindingManagerService {
 
 	List<GenericProject> getAllBindableProjectForMilestone(Long milestoneId);
 
-	List<GenericProject> getAllBindedProjectForMilestone(Long milestoneId);
+	List<GenericProject> getAllProjectForMilestone(Long milestoneId);
 
 	PagedCollectionHolder<List<GenericProject>> getAllBindedProjectForMilestone(Long milestoneId,
 			PagingAndSorting sorter, Filtering filter);
@@ -63,5 +63,8 @@ public interface MilestoneBindingManagerService {
 			Filtering filter, String type);
 
 	List<Milestone> getAllBindableMilestoneForProject(Long projectId, String type);
+
+	void unbindProjectsFromMilestoneKeepInPerimeter(List<Long> projectIds, Long milestoneId);
+
 
 }

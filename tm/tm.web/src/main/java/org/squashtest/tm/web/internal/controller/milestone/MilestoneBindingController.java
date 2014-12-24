@@ -37,6 +37,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.project.GenericProject;
 import org.squashtest.tm.service.milestone.MilestoneBindingManagerService;
+import org.squashtest.tm.service.milestone.MilestoneManagerService;
 import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.controller.administration.MilestoneDataTableModelHelper;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
@@ -55,7 +56,9 @@ public class MilestoneBindingController {
 	private InternationalizationHelper messageSource;
 	@Inject
 	private MilestoneBindingManagerService service;
-
+	@Inject
+	private MilestoneManagerService milestoneService;
+	
 
 	@RequestMapping(value="/project/{projectId}/milestone", method = RequestMethod.POST, params = {IDS})
 	@ResponseBody
@@ -80,17 +83,23 @@ public class MilestoneBindingController {
 		service.unbindProjectsFromMilestone(projectIds, milestoneId);
 	}
 
+	@RequestMapping(value="/milestone/{milestoneId}/project/{projectIds}/keep-in-perimeter", method = RequestMethod.DELETE)
+	@ResponseBody
+	public void unbindProjectFromMilestoneKeepInPerimeter(@PathVariable("milestoneId") Long milestoneId, @PathVariable("projectIds") List<Long> projectIds){
+		service.unbindProjectsFromMilestoneKeepInPerimeter(projectIds, milestoneId);
+	}
+	
 
 	@RequestMapping(value="/milestone/{milestoneId}/project", method = RequestMethod.GET, params = {"bindable"})
 	@ResponseBody
 	public DataTableModel getBindableProjectForMilestoneTableModel(@PathVariable Long milestoneId, final Locale locale){
-
+		Milestone milestone = milestoneService.findById(milestoneId);
 		Collection<GenericProject> data = service.getAllBindableProjectForMilestone(milestoneId);
-		return buildProjectTableModel(data);
+		return buildProjectTableModel(data, milestone, locale);
 	}
 
-	private DataTableModel buildProjectTableModel(Collection<GenericProject> data){
-		ProjectDataTableModelHelper helper = new ProjectDataTableModelHelper();
+	private DataTableModel buildProjectTableModel(Collection<GenericProject> data, Milestone milestone, Locale locale){
+		ProjectDataTableModelHelper helper = new ProjectDataTableModelHelper(milestone, messageSource, locale);
 		Collection<Object> aaData = helper.buildRawModel(data);
 	    DataTableModel model = new DataTableModel("");
 	    model.setAaData((List<Object>) aaData);
@@ -130,16 +139,25 @@ public class MilestoneBindingController {
 
 	@RequestMapping(value = "/milestone/{milestoneId}/project", method = RequestMethod.GET, params = {"binded" })
 	@ResponseBody
-	public 	DataTableModel getBindedProjectForMilestoneTableModel(@PathVariable Long milestoneId, final Locale locale){
-
-		Collection<GenericProject> data = service.getAllBindedProjectForMilestone(milestoneId);
-		return buildProjectTableModel(data);
+	public 	DataTableModel getBindedOrPerimeterProjectForMilestoneTableModel(@PathVariable Long milestoneId, final Locale locale){
+		Milestone milestone = milestoneService.findById(milestoneId);
+		Collection<GenericProject> data = service.getAllProjectForMilestone(milestoneId);
+		return buildProjectTableModel(data, milestone, locale);
 
 	}
 
 	private static final class ProjectDataTableModelHelper extends DataTableModelBuilder<GenericProject> {
 
-		private ProjectDataTableModelHelper() {
+		private Milestone milestone;
+		private InternationalizationHelper messageSource;
+		
+		private Locale locale;
+
+		
+		public ProjectDataTableModelHelper(Milestone milestone, InternationalizationHelper messageSource, Locale locale) {
+			this.milestone = milestone;
+			this.messageSource = messageSource;
+			this.locale = locale;
 		}
 
 		@Override
@@ -150,6 +168,7 @@ public class MilestoneBindingController {
 			data.put("checkbox", " ");
 			data.put(DataTableModelConstants.DEFAULT_ENTITY_NAME_KEY, project.getName());
 			data.put("label", project.getLabel());
+			data.put("binded", messageSource.internationalizeYesNo(project.isBoundToMilestone(milestone), locale) );
 			data.put(DataTableModelConstants.DEFAULT_EMPTY_DELETE_HOLDER_KEY, " ");
 			return data;
 		}

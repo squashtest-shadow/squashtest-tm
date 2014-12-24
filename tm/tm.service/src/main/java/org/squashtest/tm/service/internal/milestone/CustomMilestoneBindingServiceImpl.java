@@ -70,13 +70,17 @@ public class CustomMilestoneBindingServiceImpl implements MilestoneBindingManage
 		GenericProject project = projectDao.findById(projectId);
 		List<Milestone> milestones = milestoneDao.findAllByIds(milestoneIds);
 		project.bindMilestones(milestones);
+		for (Milestone milestone : milestones){
+			milestone.addProjectToPerimeter(project);
+		}
 	}
 
 	@Override
 	public void bindProjectsToMilestone(List<Long> projectIds, Long milestoneId) {
 		List<GenericProject> projects = projectDao.findAllByIds(projectIds);
 		Milestone milestone = milestoneDao.findById(milestoneId);
-	milestone.bindProjects(projects);
+	    milestone.bindProjects(projects);
+	    milestone.addProjectsToPerimeter(projects);
 	}
 
 	@Override
@@ -87,24 +91,33 @@ public class CustomMilestoneBindingServiceImpl implements MilestoneBindingManage
 
 	@Override
 	public List<GenericProject> getAllBindableProjectForMilestone(Long milestoneId) {
-		List<GenericProject> projectBoundToMilestone = getAllBindedProjectForMilestone(milestoneId);
+				
+		List<GenericProject> projectBoundToMilestone = getAllProjectForMilestone(milestoneId);
 		List<GenericProject> allProjects = projectDao.findAll();
 		allProjects.removeAll(projectBoundToMilestone);
 		return allProjects;
 	}
 
 	@Override
-	public List<GenericProject> getAllBindedProjectForMilestone(Long milestoneId) {
+	public List<GenericProject> getAllProjectForMilestone(Long milestoneId) {
 		Milestone milestone = milestoneDao.findById(milestoneId);
-
-		return milestone.getProjects();
+		List<GenericProject> bindedProject;
+		if (milestone.getRange().equals(MilestoneRange.GLOBAL)){
+			bindedProject = milestone.getProjects();
+		} else {
+			bindedProject = milestone.getPerimeter();
+		}
+	
+		return bindedProject;
 	}
+
+	
 
 	@Override
 	public PagedCollectionHolder<List<GenericProject>> getAllBindedProjectForMilestone(Long milestoneId,
 			PagingAndSorting sorter, Filtering filter) {
 
-		List<GenericProject> projects = getAllBindedProjectForMilestone(milestoneId);
+		List<GenericProject> projects = getAllProjectForMilestone(milestoneId);
 		return getFilteredAndSortedProjects(projects, sorter, filter);
 	}
 
@@ -178,6 +191,9 @@ public class CustomMilestoneBindingServiceImpl implements MilestoneBindingManage
 		GenericProject project = projectDao.findById(projectId);
 		List<Milestone> milestones = milestoneDao.findAllByIds(milestoneIds);
 		project.unbindMilestones(milestones);
+		for (Milestone milestone : milestones){
+			milestone.removeProjectFromPerimeter(project);
+		}
 		
 	}
 
@@ -187,6 +203,7 @@ public class CustomMilestoneBindingServiceImpl implements MilestoneBindingManage
 		Milestone milestone = milestoneDao.findById(milestoneId);
 		List<GenericProject> projects = projectDao.findAllByIds(projectIds);
 		milestone.unbindProjects(projects);
+		milestone.removeProjectsFromPerimeter(projects);
 
 	}
 
@@ -300,5 +317,12 @@ public class CustomMilestoneBindingServiceImpl implements MilestoneBindingManage
 		projects = filterProject(projects, filter);
 		sortProject(projects, sorter);
 		return new PagingBackedPagedCollectionHolder<List<GenericProject>>(sorter, count, projects);
+	}
+
+	@Override
+	public void unbindProjectsFromMilestoneKeepInPerimeter(List<Long> projectIds, Long milestoneId) {
+		Milestone milestone = milestoneDao.findById(milestoneId);
+		List<GenericProject> projects = projectDao.findAllByIds(projectIds);
+		milestone.unbindProjects(projects);
 	}
 }

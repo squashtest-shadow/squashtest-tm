@@ -1,22 +1,18 @@
 /**
- *     This file is part of the Squashtest platform.
- *     Copyright (C) 2010 - 2014 Henix, henix.fr
+ * This file is part of the Squashtest platform. Copyright (C) 2010 - 2014 Henix, henix.fr
  *
- *     See the NOTICE file distributed with this work for additional
- *     information regarding copyright ownership.
+ * See the NOTICE file distributed with this work for additional information regarding copyright ownership.
  *
- *     This is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU Lesser General Public License as published by
- *     the Free Software Foundation, either version 3 of the License, or
- *     (at your option) any later version.
+ * This is free software: you can redistribute it and/or modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later
+ * version.
  *
- *     this software is distributed in the hope that it will be useful,
- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU Lesser General Public License for more details.
+ * this software is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied
+ * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
  *
- *     You should have received a copy of the GNU Lesser General Public License
- *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU Lesser General Public License along with this software. If not, see
+ * <http://www.gnu.org/licenses/>.
  */
 package org.squashtest.tm.domain.milestone;
 
@@ -92,9 +88,17 @@ public class Milestone {
 	@JoinTable(name = "MILESTONE_BINDING", joinColumns = @JoinColumn(name = "MILESTONE_ID"), inverseJoinColumns = @JoinColumn(name = "PROJECT_ID"))
 	private Set<GenericProject> projects = new HashSet<GenericProject>();
 
+	@ManyToMany
+	@JoinTable(name = "MILESTONE_BINDING_PERIMETER", joinColumns = @JoinColumn(name = "MILESTONE_ID"), inverseJoinColumns = @JoinColumn(name = "PROJECT_ID"))
+	private Set<GenericProject> perimeter = new HashSet<GenericProject>();
+
 	@JoinColumn(name = "USER_ID")
 	@ManyToOne
 	private User owner;
+
+	public List<GenericProject> getPerimeter() {
+		return new ArrayList<GenericProject>(perimeter);
+	}
 
 	public User getOwner() {
 		return owner;
@@ -177,8 +181,8 @@ public class Milestone {
 			unbindProject(project);
 		}
 	}
-	
-	public void bindProject(GenericProject project){
+
+	public void bindProject(GenericProject project) {
 		projects.add(project);
 		project.addMilestone(this);
 	}
@@ -188,8 +192,47 @@ public class Milestone {
 	}
 
 	public void bindProjects(List<GenericProject> projects) {
-		for(GenericProject project : projects){
+		for (GenericProject project : projects) {
 			bindProject(project);
+		}
+	}
+
+	public void addProjectToPerimeter(GenericProject genericProject) {
+
+		if (!isInPerimeter(genericProject)) {
+			perimeter.add(genericProject);
+		}
+
+	}
+
+	public boolean isInPerimeter(GenericProject genericProject) {
+		for (GenericProject project : perimeter) {
+			if (project.getLabel().equals(genericProject.getLabel())) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public void addProjectsToPerimeter(List<GenericProject> projects) {
+		perimeter.addAll(projects);
+	}
+
+	public void removeProjectsFromPerimeter(List<GenericProject> projects) {
+		for (GenericProject project : projects) {
+			removeProjectFromPerimeter(project);
+		}
+
+	}
+
+	public void removeProjectFromPerimeter(GenericProject project) {
+		Iterator<GenericProject> iter = perimeter.iterator();
+		while (iter.hasNext()) {
+			GenericProject proj = iter.next();
+			if (proj.getId().equals(project.getId())) {
+				iter.remove();
+				break;
+			}
 		}
 	}
 

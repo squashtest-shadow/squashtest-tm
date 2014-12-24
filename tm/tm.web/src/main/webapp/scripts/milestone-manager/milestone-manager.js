@@ -18,13 +18,13 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-require(["common"], function() {
-	require(["jquery", "squash.translator", "workspace.routing","squash.configmanager","app/ws/squashtm.notification","squash.dateutils", "jeditable.datepicker",  "squashtable", 
+
+	define(['module', "jquery", "squash.translator", "workspace.routing","squash.configmanager","app/ws/squashtm.notification","squash.dateutils", "jeditable.datepicker",  "squashtable", 
 	         "app/ws/squashtm.workspace", 
 	         "jquery.squash.formdialog", "jquery.squash.confirmdialog"], 
-			function($, translator, routing, confman, notification, dateutils){					
+			function(module, $, translator, routing, confman, notification, dateutils){					
 		
-
+		var config = module.config();
 
 	   function getPostDate(localizedDate){
 		try{
@@ -36,8 +36,33 @@ require(["common"], function() {
 		}
 
 		
-		$(function() {					
-			$("#milestones-table").squashTable({"bServerSide":false},{});			
+		$(function() {			
+			
+			var squashSettings = {
+					functions:{					
+						drawDeleteButton: function(template, cells){
+				
+							$.each(cells, function(index, cell) {
+								var row = cell.parentNode; // should be the tr
+								var id = milestoneTable.getODataId(row);
+								var $cell = $(cell);
+								
+								if (_.contains(config.data.editableMilestoneIds, id)){
+									$cell.html(template);
+									$cell.find('a').button({
+										text : false,
+										icons : {
+											primary : "ui-icon-trash"
+										}
+									});		
+								}						
+							});
+						}	
+					}
+			};
+			
+			
+			var milestoneTable = $("#milestones-table").squashTable({"bServerSide":false},squashSettings);			
 			$('#new-milestone-button').button();		
 		});	
 		
@@ -111,26 +136,13 @@ require(["common"], function() {
 		
 	addMilestoneDialog.formDialog();
 		
-	
-	function getTranslatedStatus(status){
-		var i18nstatus = translator.get({value:"milestone.status." + status});
-		return  i18nstatus.value;	
-	}
-	
-	function getTranslatedRange(range){
-		var i18nrange = translator.get({value:"milestone.range." + range});
-		return  i18nrange.value;	
-	}
-	
+		
 	function formatDate(date){
 		var format = translator.get("squashtm.dateformatShort");
 		var formatedDate = dateutils.format(date, format);
 		return dateutils.dateExists(formatedDate, format) ? formatedDate :"";
 	}
-	function addLinkToLabel(id, label){
-		var html = '<a href="' + routing.buildURL('milestone.info', id) +'">' + label + '</a>';
-		return html;
-	}
+
 	
 	addMilestoneDialog.on('formdialogconfirm', function(){
 		var url = routing.buildURL('administration.milestones');
@@ -146,6 +158,7 @@ require(["common"], function() {
 			dataType : 'json',
 			data : params				
 		}).success(function(data){
+			config.data.editableMilestoneIds.push(data.id);
 			$('#milestones-table').squashTable()._fnAjaxUpdate();
 			addMilestoneDialog.formDialog('close');
 		});
@@ -161,4 +174,4 @@ require(["common"], function() {
 	});
 	
 	});			
-});		
+	

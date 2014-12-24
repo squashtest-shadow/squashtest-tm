@@ -41,7 +41,9 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.ModelAndView;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.milestone.MilestoneRange;
+import org.squashtest.tm.domain.project.GenericProject;
 import org.squashtest.tm.service.milestone.MilestoneManagerService;
+import org.squashtest.tm.service.project.ProjectFinder;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.web.internal.controller.milestone.MilestoneStatusComboDataBuilder;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
@@ -63,6 +65,9 @@ public class MilestoneAdministrationController {
 	private PermissionEvaluationService permissionEvaluationService;
 	@Inject
 	private Provider<MilestoneStatusComboDataBuilder> statusComboDataBuilderProvider;
+	@Inject
+	private ProjectFinder projectFinder;
+	
 
 
 	@RequestMapping(method = RequestMethod.POST)
@@ -73,6 +78,8 @@ public class MilestoneAdministrationController {
 			milestone.setRange(MilestoneRange.GLOBAL);
 		} else {
 			milestone.setRange(MilestoneRange.RESTRICTED);
+			List<GenericProject> projects = projectFinder.findAllICanManage();
+			milestone.addProjectsToPerimeter(projects);
 		}
 		LOGGER.info("description " + milestone.getDescription());
 		LOGGER.info("label " + milestone.getLabel());
@@ -93,6 +100,7 @@ public class MilestoneAdministrationController {
 	public ModelAndView showMilestones(Locale locale) {
 		ModelAndView mav = new ModelAndView("page/milestones/show-milestones");
 		mav.addObject("milestoneStatus", statusComboDataBuilderProvider.get().useLocale(locale).buildMap());
+		mav.addObject("editableMilestoneIds", milestoneManager.findAllIdsOfEditableMilestone());
 		return mav;
 	}
 	
@@ -102,7 +110,7 @@ public class MilestoneAdministrationController {
 
 		MilestoneDataTableModelHelper helper = new MilestoneDataTableModelHelper(messageSource);
 		helper.setLocale(locale);
-		Collection<Object> aaData = helper.buildRawModel(milestoneManager.findAll());
+		Collection<Object> aaData = helper.buildRawModel(milestoneManager.findAllICanSee());
 	    DataTableModel model = new DataTableModel("");
 	    model.setAaData((List<Object>) aaData);
 		return model;

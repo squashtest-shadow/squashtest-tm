@@ -47,6 +47,7 @@ import org.squashtest.tm.domain.milestone.MilestoneStatus;
 import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.service.milestone.MilestoneManagerService;
 import org.squashtest.tm.service.user.AdministrationService;
+import org.squashtest.tm.service.user.UserAccountService;
 import org.squashtest.tm.web.internal.helper.JsonHelper;
 import org.squashtest.tm.web.internal.helper.LevelLabelFormatter;
 import org.squashtest.tm.web.internal.model.jquery.RenameModel;
@@ -61,6 +62,8 @@ public class MilestoneModificationController {
 	@Inject
 	private  AdministrationService adminManager;
 	
+	@Inject
+	private UserAccountService userService;
 	
 	@Inject
 	private Provider<MilestoneStatusComboDataBuilder> statusComboDataBuilderProvider;
@@ -82,8 +85,9 @@ public class MilestoneModificationController {
 		mav.addObject("milestoneStatusLabel", formatStatus(locale, milestone.getStatus()));
 		mav.addObject("milestoneRangeLabel", formatRange(locale, milestone.getRange()));
 		mav.addObject("milestoneRange", rangeComboDataBuilderProvider.get().useLocale(locale).buildMarshalled());
-		//user list is all user for now, to be changed 
-		mav.addObject("userList", buildMarshalledUserMap(adminManager.findAllActiveUsersOrderedByLogin()));
+		mav.addObject("userList", buildMarshalledUserMap(adminManager.findAllAdminOrManager()));
+		mav.addObject("canEdit", milestoneManager.canEditMilestone(milestoneId));
+		mav.addObject("currentUser", userService.findCurrentUser().getLogin());
 		return mav;
 	}
 	
@@ -100,6 +104,7 @@ public class MilestoneModificationController {
 	@RequestMapping(method = RequestMethod.POST, params = { "id=milestone-description", VALUE })
 	@ResponseBody
 	public String changeDescription(@PathVariable long milestoneId, @RequestParam(VALUE) String newDescription) {
+		milestoneManager.verifyCanEditMilestone(milestoneId);
 		milestoneManager.changeDescription(milestoneId, newDescription);
 		LOGGER.debug("Milestone modification : change milestone {} description = {}", milestoneId, newDescription);
 		return  newDescription;
@@ -108,6 +113,7 @@ public class MilestoneModificationController {
 	@RequestMapping(method = RequestMethod.POST, params = { "id=milestone-status", VALUE })
 	@ResponseBody
 	public String changeStatus(@PathVariable long milestoneId, @RequestParam(VALUE) MilestoneStatus newStatus, Locale locale) {
+		milestoneManager.verifyCanEditMilestone(milestoneId);
 		milestoneManager.changeStatus(milestoneId, newStatus);
 		LOGGER.debug("Milestone modification : change milestone {} Status = {}", milestoneId, newStatus);
 		return  formatStatus(locale, newStatus);
@@ -116,6 +122,7 @@ public class MilestoneModificationController {
 	@RequestMapping(method = RequestMethod.POST, params = { "id=milestone-range", VALUE })
 	@ResponseBody
 	public String changeRange(@PathVariable long milestoneId, @RequestParam(VALUE) MilestoneRange newRange, Locale locale) {
+		milestoneManager.verifyCanEditMilestoneRange();
 		milestoneManager.changeRange(milestoneId, newRange);
 		LOGGER.debug("Milestone modification : change milestone {} Range = {}", milestoneId, newRange);
 		return  formatRange(locale, newRange);
@@ -135,6 +142,7 @@ public class MilestoneModificationController {
 	@RequestMapping(method = RequestMethod.POST, params = { "newEndDate" })
 	@ResponseBody
 	public Date changeEndDate(@PathVariable long milestoneId, @RequestParam @DateTimeFormat(pattern= "yy-MM-dd") Date newEndDate, Locale locale) {
+		milestoneManager.verifyCanEditMilestone(milestoneId);
 		milestoneManager.changeEndDate(milestoneId, newEndDate);
 		LOGGER.debug("Milestone modification : change milestone {} end date = {}", milestoneId, newEndDate);
 		return  newEndDate;
@@ -144,7 +152,8 @@ public class MilestoneModificationController {
 	@ResponseBody
 	public String changeOwner(@PathVariable long milestoneId, @RequestParam(VALUE) String login, Locale locale) {
        User newOwner = adminManager.findByLogin(login);
-		milestoneManager.changeOwner(milestoneId, newOwner);
+		milestoneManager.verifyCanEditMilestone(milestoneId);
+        milestoneManager.changeOwner(milestoneId, newOwner);
 		LOGGER.debug("Milestone modification : change milestone {} owner = {}", milestoneId, newOwner);
 		return  newOwner.getName();
 	}
@@ -152,6 +161,7 @@ public class MilestoneModificationController {
 	@RequestMapping(method = RequestMethod.POST, params = { "newName" })
 	@ResponseBody
 	public Object changeName(HttpServletResponse response, @PathVariable long milestoneId, @RequestParam String newName) {
+		milestoneManager.verifyCanEditMilestone(milestoneId);
 		milestoneManager.changeLabel(milestoneId, newName);
 		LOGGER.debug("Milestone modification : change milestone {} label = {}", milestoneId, newName);
 		return new RenameModel(newName);

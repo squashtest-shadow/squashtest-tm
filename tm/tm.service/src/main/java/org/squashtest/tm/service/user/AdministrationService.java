@@ -191,4 +191,6 @@ public interface AdministrationService {
 	 *             when authentication data already exixts
 	 */
 	void createAuthentication(long userId, String newPassword) throws LoginAlreadyExistsException;
+
+	List<User> findAllAdminOrManager();
 }

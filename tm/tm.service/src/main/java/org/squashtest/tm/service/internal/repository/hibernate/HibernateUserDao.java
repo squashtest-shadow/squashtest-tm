@@ -20,11 +20,15 @@
  */
 package org.squashtest.tm.service.internal.repository.hibernate;
 
+import java.math.BigInteger;
 import java.util.Collections;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.hibernate.Criteria;
 import org.hibernate.Query;
+import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
@@ -44,6 +48,12 @@ import org.squashtest.tm.service.internal.repository.UserDao;
 @Repository
 public class HibernateUserDao extends HibernateEntityDao<User> implements UserDao {
 
+	
+	static private String FIND_ALL_MANAGER_AND_ADMIN = "SELECT  member.party_id FROM  core_group_member member inner join core_group_authority cga on cga.group_id=member.group_id WHERE cga.authority = 'ROLE_ADMIN' UNION Select auth.PARTY_ID From  CORE_PARTY_AUTHORITY auth where auth.AUTHORITY = 'ROLE_TM_PROJECT_MANAGER'";
+	
+	@Inject
+	private SessionFactory sessionFactory; 
+	
 	/**
 	 * @return users with all properties fetched, ordered by login
 	 */
@@ -236,6 +246,15 @@ public class HibernateUserDao extends HibernateEntityDao<User> implements UserDa
 		public void setQueryParameters(Query query) {
 			query.setParameter("teamId", teamId, LongType.INSTANCE);
 		}
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<User> findAllAdminOrManager() {
+		Query query = sessionFactory.getCurrentSession().createSQLQuery(FIND_ALL_MANAGER_AND_ADMIN);
+		query.setResultTransformer(new SqLIdResultTransformer());
+		List<Long> ids = query.list();
+		return  findAllByIds(ids);
 	}
 
 }
