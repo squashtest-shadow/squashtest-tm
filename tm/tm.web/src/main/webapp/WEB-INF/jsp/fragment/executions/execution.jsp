@@ -33,6 +33,10 @@
 <%@ taglib prefix="json" uri="http://org.squashtest.tm/taglib/json" %>
 
 
+<c:url var="executionUrl" value="/executions/${execution.id}"/>
+<s:url var="attachmentsUrl" value="/attach-list/${execution.attachmentList.id}/attachments"/>
+
+
 <%-- ----------------------------------- Authorization ----------------------------------------------%>
 <c:set var="editable" value="${ false }" />
 <authz:authorized hasRole="ROLE_ADMIN" hasPermission="EXECUTE" domainObject="${ execution }">
@@ -50,49 +54,53 @@
 <f:message var="cancelLabel" key="label.Cancel" />
 <f:message var="deleteExecutionButton" key="execution.execute.remove.button.label" />
 
-<%-------------------------- urls ------------------------------%>
+<%-- ============ module configuration ===================== --%>
 
-<c:url var="ckeConfigUrl" value="/styles/ckeditor/ckeditor-config.js" />
+<script type="text/javascript">
+	
+	requirejs.config({
+		config : {
+			'execution-page' : {
+				basic : {
+					executionId : ${execution.id},
+					automated : ${automated},		
+    				stepstable : {
+    					colDefs : ${stepsAoColumnDefs},
+    					cufDefs : ${ json:marshall(stepsCufDefinitions) }
+    				},
+    				cufs : {
+    					normal : ${json:marshall(executionCufValues)},
+    					denoCufs : ${json:marshall(executionDenormalizedValues)}
+    				}
+				},
+				permissions : {
+					editable : ${editable}
+				},
+				urls : {
+					attachmentsURL : "${attachmentsUrl}"
+				}
+			}	
+		}
+	});
+	
+	require(["common"], function(){
+		require(['execution-page'], function(){});
+	});
+</script>
 
-<c:url var="executionUrl" value="/executions/${execution.id}" />
 
-<c:url var="baseExecuteUrl" value="/execute"/>
+<%-- ============ /module configuration ==================== --%>
 
-<s:url var="executionInfoUrl" value="/executions/{execId}/general">
-	<s:param name="execId" value="${execution.id}" />
-</s:url>
-<c:choose>
-	<c:when test="${automated}">
-		<s:url var="executionStepsUrl" value="/executions/{execId}/auto-steps">
-			<s:param name="execId" value="${execution.id}" />
-		</s:url>
-	</c:when>
-	<c:otherwise>
-		<s:url var="executionStepsUrl" value="/executions/{execId}/steps">
-			<s:param name="execId" value="${execution.id}" />
-		</s:url>
-	</c:otherwise>
-</c:choose>
-
-<s:url var="stepAttachmentManagerUrl" value="/attach-list/" />
-
-<s:url var="btEntityUrl" value="/bugtracker/execution/{id}">
-	<s:param name="id" value="${execution.id}" />
-</s:url>
-
-<c:url var="customFieldsValuesURL" value="/custom-fields/values" />
-<c:url var="denormalizedFieldsValuesURL" value="/denormalized-fields/values" />
-
-<%-------------------------- /urls ------------------------------%>
+<%-- ===================== DOM ============================= --%>
 
 <div
 	class="ui-widget-header ui-state-default ui-corner-all fragment-header">
 
 	<div style="float: left; height: 100%; width: 90%;">
 		<h2>
-					<a id="execution-name" href="${ executionUrl }">&#35;<c:out
-						value="${executionRank} - ${ execution.name }" escapeXml="true" />
-					</a>
+			<a id="execution-name" href="${ executionUrl }">&#35;<c:out
+				value="${executionRank} - ${ execution.name }" escapeXml="true" />
+			</a>
 		</h2>
 	</div>
 
@@ -120,11 +128,13 @@
 			</c:if>
 		</div>
 		
-    <c:if test="${ editable }">
-      <comp:opened-object otherViewers="${ otherViewers }" objectUrl="${ executionUrl }" />
-    </c:if>
-    <div class="unsnap"></div>
+      <c:if test="${ editable }">
+        <comp:opened-object otherViewers="${ otherViewers }" objectUrl="${ executionUrl }" />
+      </c:if>
+      <div class="unsnap"></div>
 	</div>
+ 
+
 
 	<%----------------------------------- Information -----------------------------------------------%>
 	
@@ -146,8 +156,8 @@
 			<div class="display-table-row">
 				<label class="display-table-cell" for="testcase-status"><f:message key="test-case.status.label" /></label>
 				<div  class="display-table-cell">
-<span id="test-case-status-icon" class="test-case-status-${ execution.status }"> &nbsp &nbsp </span> <span id="test-case-status"><comp:level-message level="${ execution.status }"/></span>
-</div>
+                  <span id="test-case-status-icon" class="test-case-status-${ execution.status }"> &nbsp &nbsp </span> <span id="test-case-status"><comp:level-message level="${ execution.status }"/></span>
+                </div>
 			</div>
 <c:if test="${execution.automated}">
 			<div class="display-table-row">
@@ -155,11 +165,14 @@
 				<div class="display-table-cell" id="automated-script" >${ taDisassociated ? taDisassociatedLabel : execution.automatedExecutionExtender.automatedTest.fullLabel }</div>
 			</div>
 </c:if>			
-		</div>
-	</jsp:attribute>
+		  </div>
+	     </jsp:attribute>
 	</comp:toggle-panel>
 	
-	
+  
+<script type="text/javascript">
+  publish('reload.executions.toolbar');  
+</script>	
 		
 	<%----------------------------------- Attribute -----------------------------------------------%>
 	
@@ -172,7 +185,8 @@
         <div class="display-table-row">
 			<label for="test-case-importance" class="display-table-cell"><f:message key="test-case.importance.combo.label" /></label>
 			<div class="display-table-cell">
-			<span id="test-case-importance-icon" class="test-case-importance-${ execution.importance }">&nbsp&nbsp</span>	<span id="test-case-importance"><comp:level-message level="${ execution.importance }"/></span>
+			<span id="test-case-importance-icon" class="test-case-importance-${ execution.importance }">&nbsp&nbsp</span>	
+            <span id="test-case-importance"><comp:level-message level="${ execution.importance }"/></span>
 			</div>
 		</div>
 		
@@ -276,6 +290,10 @@
 	</jsp:attribute>
 	</comp:toggle-panel>
 
+<script type="text/javascript">
+  publish('reload.executions.stepstable');  
+</script> 
+
 	<%-------------------------------------- Comment --------------------------------------------------%>
 
 	<c:if test="${ editable }">
@@ -290,13 +308,22 @@
 
 	<%------------------------------ Attachments bloc ---------------------------------------------%>
 
-	<at:attachment-bloc  workspaceName="campaign" editable="${ editable }" 
-						 attachListId="${execution.attachmentList.id}" attachmentSet="${attachmentSet}" />
+	<at:attachment-bloc  editable="${ editable }" 
+						 attachListId="${execution.attachmentList.id}" 
+                         attachmentSet="${attachmentSet}" 
+                         autoJsInit="false"/>
 
+<script type="text/javascript">
+publish('reload.executions.attachments');
+</script>
 
 	<%------------------------------ bugs section -------------------------------%>
 
 	<div id="bugtracker-section-div"></div>
+  
+<script type="text/javascript">
+publish('reload.executions.bugtracker');
+</script>  
 
 	<%------------------------------ /bugs section -------------------------------%>
 	<%--------------------------- Deletion confirmation popup -------------------------------------%>
@@ -312,186 +339,15 @@
         </div>    
     </div>
 
+<script type="text/javascript">
+publish('reload.executions.dialogs');
+</script>  
+  <%--------------------------- /Deletion confirmation popup -------------------------------------%>
 
-	<%--------------------------- /Deletion confirmation popup -------------------------------------%>
-	<f:message var="statusSettled" key="execution.execution-status.SETTLED" />
-	<f:message var="statusUntestable" key="execution.execution-status.UNTESTABLE" />
-	<f:message var="statusBlocked" key="execution.execution-status.BLOCKED" />
-	<f:message var="statusFailure" key="execution.execution-status.FAILURE" />
-	<f:message var="statusSuccess" key="execution.execution-status.SUCCESS" />
-	<f:message var="statusRunning" key="execution.execution-status.RUNNING" />
-	<f:message var="statusReady" key="execution.execution-status.READY" />
+<script type="text/javascript">
+publish('reload.executions.complete');
+</script>  
 
-	<script type="text/javascript">
-	var squashtm = squashtm || {};
-	
-	require(["common"], function() {
-		require(["jquery", "page-components/execution-information-panel", "custom-field-values", 
-		         "app/ws/squashtm.notification", 
-		         "squashtable", "jquery.squash.formdialog",
-		         "jquery.squash.jeditable"], function($, infopanel, cufValuesManager, notification) {	
-			
-			<%--
-			(scoped) variable that will publish useful functions to various stakeholders (use the 
-			search function if you need to see where, I'm not documenting it because 
-			that should be refactored anyway)
-            --%>
-			squashtm.execution = squashtm.execution || {}
-			
-			// --------- renaming handler ------------
-			
-			/* display the execution name. Used for extern calls (like from the page who will include this fragment)
-			*  will refresh the general informations as well*/
-			function nodeSetName(name){
-				var fullname = name;
-				$('#execution-name').html(fullname);		
-			}
-			
-			/* renaming success handler */
-			function renameExecutionSuccess(data){
-				nodeSetName(data.newName);								
-				$( '#rename-execution-dialog' ).dialog( 'close' );
-			}
-			
-			
-			// ============== deletion dialog ================
-			
-			var deldialog = $("#delete-execution-dialog");
-			deldialog.formDialog();
-			
-			deldialog.on('formdialogconfirm', function(){
-				$.ajax({
-	              url : "${executionUrl}", 
-	              type : 'DELETE',
-				}).success(function(){
-					deldialog.formDialog('close');
-					history.back();
-				}).error(function(xhr){
-					notification.showError(xhr.statusText);
-				});	          
-			});
-			
-			deldialog.on('formdialogcancel', function(){
-				deldialog.formDialog('close');
-			});
-
-			$('#delete-execution-button').on('click', function(){
-				deldialog.formDialog('open');
-			});
-			
-			
-			// ========= history =======
-
-			$("#back").on('click', function(){history.back();});
-
-			
-			// ==== execution table ====
-			var tableSettings = {
-				"sAjaxSource": "${executionStepsUrl}", 
-				"aoColumnDefs": ${stepsAoColumnDefs}, 
-				"cufDefinitions": ${ json:marshall(stepsCufDefinitions) }
-			};
-			
-			var squashSettings = {
-				enableHover : true
-			};			
-			
-			<c:if test="${ editable }">
-			squashSettings.richEditables = {
-				"rich-editable-comment" : "${ executionStepsUrl }/{entity-id}/comment"				
-			};
-			squashSettings.attachments = { 
-				url : "${stepAttachmentManagerUrl}/{attach-list-id}/attachments/manager?workspace=campaign"
-			}
-			
-			</c:if>
-			squashSettings.buttons = [
-					{ tooltip : "<f:message key='label.run'/>",
-						tdSelector : "td.run-step-button",
-						uiIcon : "execute-arrow",
-						onClick : function(table, cell){
-							var executionId = "${execution.id}";
-							var row = cell.parentNode.parentNode; // hopefully, that's the
-							// 'tr' one
-							var executionStepId = table.getODataId(row);
-								var url = "${baseExecuteUrl}/"+executionId+"/step/"+executionStepId;
-								var data = {
-									'optimized' : 'false',
-								};
-								var winDef = {
-									name : "classicExecutionRunner",
-									features : "height=690, width=810, resizable, scrollbars, dialog, alwaysRaised"
-								};
-								$.open(url, data, winDef);
-						}
-					},
-					{ tooltip : "<f:message key='issue.button.opendialog.label' />",
-						tdSelector : "td.bug-button",
-						uiIcon : function(row, data){
-							return (data["bug-list"].length>0)? "has-bugs" : "table-cell-add";
-						},
-						onClick : function(table, btnElt){			
-							console.log('there');
-							var row = btnElt.parentNode.parentNode; // hopefully, that's the
-							// 'tr' one
-							var executionStepId = table.getODataId(row);
-							checkAndReportIssue( {
-								reportUrl:squashtm.app.contextRoot+"/bugtracker/execution-step/"+executionStepId+"/new-issue", 
-								callback:function(json){
-									var btn = $(btnElt);
-									btn.removeClass('table-cell-add')
-											.addClass('has-bugs');
-									issueReportSuccess(json);
-								}
-							} );
-							
-						}
-					}
-				];
-			
-			
-		
-			
-			var cufColumnPosition = 2;
-			var cufTableHandler = cufValuesManager.cufTableSupport;
-			cufTableHandler.decorateDOMTable($("#execution-execution-steps-table"), tableSettings.cufDefinitions, cufColumnPosition);
-
-			datatableSettings = cufTableHandler.decorateTableSettings(tableSettings, tableSettings.cufDefinitions,
-					cufColumnPosition, true);
-			
-			$("#execution-execution-steps-table").squashTable(tableSettings, squashSettings);
-			
-			
-			//==== cuf sections (if any)====
-
-			<c:set var="cufdisplaymode" value="${editable ? 'jeditable' : 'static'}"/>
-			
-			<c:if test="${not empty executionDenormalizedValues}">
-			var denoCufs = ${json:marshall(executionDenormalizedValues)};
-			cufValuesManager.infoSupport.init("#execution-information-table", denoCufs, "${cufdisplaymode}");
-			</c:if>
-			
-			<c:if test="${not empty executionCufValues}">
-			var cufs = ${json:marshall(executionCufValues)};
-			cufValuesManager.infoSupport.init("#execution-information-table", cufs, "${cufdisplaymode}");	
-			</c:if>
-			
-			// ==== bugtracker section ====
-		 	
-		 	$("#bugtracker-section-div").load("${btEntityUrl}");
-			
-			
-		 	// ==== handle for refershing the page (called by the execution popup) ====
-		 	
-		 	squashtm.execution.refresh = $.proxy(function(){
-		 		$("#execution-execution-steps-table").squashTable().refresh();
-		 		infopanel.refresh();
-		 		//see execution-execute-button.tag	
-       			 squashtm.execution.updateBtnlabelFromTable();
-		 	}, window);
-		});
-	});
-	</script>
 
 </div>
 

@@ -88,6 +88,9 @@ define([], function(){
 		'search' :							root + '/advanced-search',
 		'search.results' :					root + '/advanced-search/results',
 		
+		'bugtracker.execution' :			root + '/bugtracker/execution/{\\d+}',
+		'bugtracker.execsteps.new' :		root + '/bugtracker/execution-step/{\\d+}/new-issue',
+		
 		'testcases.workspace' :				root + '/test-case-workspace/',
 		'testcases.info' :					root + '/test-cases/{\\d+}/info',
 		'testcases.requirements.manager' :	root + '/test-cases/{\\d+}/verified-requirement-versions/manager',
@@ -113,6 +116,15 @@ define([], function(){
 		'campaigns.testplan.manager' :		root + '/campaigns/{\\d+}/test-plan//manager',
 		'iterations.testplan.manager' :		root + '/iterations/{\\d+}/test-plan-manager',
 		'testsuites.testplan.manager' :		root + '/test-suites/{\\d+}/test-plan-manager',
+		
+		'executions' :						root + '/executions/{\\d+}',
+		'executions.generalinfos' :			root + '/executions/{\\d+}/general',
+		'executions.steps' :				root + '/executions/{\\d+}/steps',
+		'executions.autosteps' :			root + '/executions/{\\d+}/auto-steps',
+		'executions.runner' :				root + '/executions/{\\d+}/runner',
+		'execute' :							root + '/execute',
+		'execute.stepbyid' :				root + '/execute/{\\d+}/step/{\\d+}',
+		'execute.stepbyindex' :				root + '/execute/{\\d+}/step/index/{\\d+}',
 		
 		'administration.bugtrackers'	:	root + '/administration/bugtrackers',
 		'customfield.values' :				root + '/custom-fields/values',

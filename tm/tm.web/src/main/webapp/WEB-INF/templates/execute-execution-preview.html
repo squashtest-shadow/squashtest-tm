@@ -140,16 +140,16 @@ documentation :
             of all</div>
         </div>
 
-        <div class="display-table-row">
+        <div class="display-table-row" th:with="natLabel = ${#messages.msgOrNull('__${execution.nature.label}__')}">
           <label class="display-table-cell" th:text="#{test-case.nature.label}">nature</label>
           <div id="testcase-nature" class="display-table-cell"
-            th:text="${execution.nature.level}+'-'+#{${execution.nature.getI18nKey()}}">0 - supernatural</div>
+            th:text="${(natLabel != null) ? natLabel : execution.nature.label}">0 - supernatural</div>
         </div>
 
-        <div class="display-table-row">
+        <div class="display-table-row" th:with="typLabel = ${#messages.msgOrNull('__${execution.type.label}__')}">
           <label class="display-table-cell" th:text="#{test-case.type.label}">type</label>
           <div id="testcase-type" class="display-table-cell"
-            th:text="${execution.type.level}+'-'+#{${execution.type.getI18nKey()}}">0 - R</div>
+            th:text="${(typLabel != null) ? typLabel : execution.type.label}">0 - R</div>
         </div>
 
         <div class="display-table-row">

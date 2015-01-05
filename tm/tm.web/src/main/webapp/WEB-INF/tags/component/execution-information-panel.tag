@@ -126,16 +126,4 @@
   </c:if>
 
 
-  <script type="text/javascript">
-			require([ "common" ], function() {
-				require([ "jquery",
-						"page-components/execution-information-panel" ],
-						function($, panel) {
-							$(function() {
-								panel.init();
-							});
-						});
-			});
-		</script>
-
 </div>
