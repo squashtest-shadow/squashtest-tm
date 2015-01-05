@@ -47,10 +47,10 @@ import org.squashtest.tm.service.project.ProjectManagerService;
 @RequestMapping("/projects")
 public class ProjectController {
 	private static final Logger LOGGER = LoggerFactory.getLogger(ProjectController.class);
-	
+
 	@Inject
 	private ProjectManagerService projectManager;
-	
+
 	@Inject
 	private GenericProjectManagerService genericProjectManager;
 
@@ -64,7 +64,7 @@ public class ProjectController {
 					"Cannot coerce ProjectTemplate into Project : project id {0} is not the same as template id {1}",
 					projectId, payload.get("templateId")));
 		}
-		
+
 		genericProjectManager.coerceTemplateIntoProject(projectId);
 	}
 
@@ -73,10 +73,10 @@ public class ProjectController {
 	public @ResponseBody
 	void createProjectFromTemplate(@Valid @ModelAttribute("add-project-from-template") Project project,
 			@RequestParam long templateId, @RequestParam boolean copyPermissions, @RequestParam boolean copyCUF,
-			@RequestParam boolean copyBugtrackerBinding, @RequestParam boolean copyAutomatedProjects) {
+			@RequestParam boolean copyBugtrackerBinding, @RequestParam boolean copyAutomatedProjects, @RequestParam boolean copyInfolists) {
 		try {
 			projectManager.addProjectAndCopySettingsFromTemplate(project, templateId, copyPermissions, copyCUF,
-					copyBugtrackerBinding, copyAutomatedProjects);
+					copyBugtrackerBinding, copyAutomatedProjects, copyInfolists);
 		} catch (NameAlreadyInUseException ex) {
 			ex.setObjectName("add-project-from-template");
 			throw ex;

@@ -31,7 +31,7 @@ import org.squashtest.tm.exception.NameAlreadyInUseException;
  * @author mpagnon
  * 
  */
-public interface CustomProjectModificationService extends CustomProjectFinder {	
+public interface CustomProjectModificationService extends CustomProjectFinder {
 	/**
 	 * Will persist the new {@linkplain Project} and add settings copied from a given {@linkplain ProjectTemplate}.
 	 * 
@@ -41,10 +41,11 @@ public interface CustomProjectModificationService extends CustomProjectFinder {
 	 * @param copyCustomFieldsSettings : whether to copy the Template's CustomFields settings or not
 	 * @param copyBugtrackerSettings : whether to copy the Template's bug-tracker settings or not
 	 * @param copyTestAutomationSettings : whether to copy the Template's automation settings or not
+	 * @param copyInfolists : whether to use the Template's custom categories/natures/types
 	 * @return the persisted new {@link Project}
 	 */
-	Project addProjectAndCopySettingsFromTemplate(Project newProject, long templateId, boolean copyAssignedUsers, boolean copyCustomFieldsSettings, boolean copyBugtrackerSettings , boolean copyTestAutomationSettings) throws NameAlreadyInUseException;
+	Project addProjectAndCopySettingsFromTemplate(Project newProject, long templateId, boolean copyAssignedUsers, boolean copyCustomFieldsSettings, boolean copyBugtrackerSettings , boolean copyTestAutomationSettings, boolean copyInfolists) throws NameAlreadyInUseException;
 
 	void deleteProject(long projectId);
-	
+
 }

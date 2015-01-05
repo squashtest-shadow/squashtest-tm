@@ -217,10 +217,10 @@
       <tr class="control-group">
       <td>
           <label class="control-label" for="add-project-from-template-tempate"><f:message key="label.parametersFromTemplate" /></label>
-        </td>
-        <td>
+      </td>
+      <td>
       <!--        CHECKBOXES -->
-      <input id="copyPermissions" name="copyPermissions" type="checkbox" />
+          <input id="copyPermissions" name="copyPermissions" type="checkbox" />
           <label class=" afterDisabled" for="copyPermissions"><f:message key="label.copyPermissions" /></label>
          <br/>
          <input id="copyCUF"  name="copyCUF" type="checkbox" />
@@ -228,9 +228,12 @@
          <br/>
           <input id="copyBugtrackerBinding" name="copyBugtrackerBinding" type="checkbox" />
          <label class=" afterDisabled" for="copyBugtrackerBinding"><f:message key="label.copyBugtrackerBinding" /></label>
-        <br/>
+         <br/>
          <input id="copyAutomatedProjects" name="copyAutomatedProjects" type="checkbox" />
-          <label class=" afterDisabled" for="copyAutomatedProjects"><f:message key="label.copyAutomatedProjects" /></label>
+         <label class=" afterDisabled" for="copyAutomatedProjects"><f:message key="label.copyAutomatedProjects" /></label>
+         <br/>
+         <input id="copyInfolists" name="copyInfolists" type="checkbox" />
+         <label class=" afterDisabled" for="copyInfolists"><f:message key="label.copyInfolists" /></label>
         </td>
       </table>
     

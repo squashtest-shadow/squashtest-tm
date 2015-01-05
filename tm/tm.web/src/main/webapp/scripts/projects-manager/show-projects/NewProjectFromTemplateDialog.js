@@ -150,6 +150,7 @@ define([ "jquery", "backbone", "handlebars",  "app/lnf/Forms",
 			model.copyCUF = $el.find("input:checkbox[name='copyCUF']").prop("checked");
 			model.copyBugtrackerBinding = $el.find("input:checkbox[name='copyBugtrackerBinding']").prop("checked");
 			model.copyAutomatedProjects = $el.find("input:checkbox[name='copyAutomatedProjects']").prop("checked");
+			model.copyInfolists = $el.find("input:checkbox[name='copyInfolists']").prop("checked");
 		}
 
 	});

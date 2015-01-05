@@ -89,7 +89,7 @@ public class CustomProjectModificationServiceImpl implements CustomProjectModifi
 	@Override
 	public Project addProjectAndCopySettingsFromTemplate(Project newProject, long templateId,
 			boolean copyAssignedUsers, boolean copyCustomFieldsSettings, boolean copyBugtrackerSettings,
-			boolean copyTestAutomationSettings) {
+			boolean copyTestAutomationSettings, boolean copyInfolists) {
 		genericProjectManager.persist(newProject);
 
 		ProjectTemplate projectTemplate = projectTemplateDao.findById(templateId);
@@ -104,6 +104,9 @@ public class CustomProjectModificationServiceImpl implements CustomProjectModifi
 		}
 		if (copyTestAutomationSettings) {
 			copyTestAutomationSettings(newProject, projectTemplate);
+		}
+		if (copyInfolists){
+			copyInfolists(newProject, projectTemplate);
 		}
 		return newProject;
 	}
@@ -131,6 +134,12 @@ public class CustomProjectModificationServiceImpl implements CustomProjectModifi
 	private void copyAssignedUsers(Project newProject, ProjectTemplate projectTemplate) {
 		permissionService.copyAssignedUsersFromTemplate(newProject, projectTemplate);
 
+	}
+
+	private void copyInfolists(Project newProject, ProjectTemplate projectTemplate){
+		newProject.setRequirementCategories(projectTemplate.getRequirementCategories());
+		newProject.setTestCaseNatures(projectTemplate.getTestCaseNatures());
+		newProject.setTestCaseTypes(projectTemplate.getTestCaseTypes());
 	}
 
 	@Override
