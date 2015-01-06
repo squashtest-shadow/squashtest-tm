@@ -56,12 +56,13 @@ import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.resource.Resource;
 import org.squashtest.tm.domain.search.CUFBridge;
 import org.squashtest.tm.domain.search.CollectionSizeBridge;
+import org.squashtest.tm.domain.search.InfoListItemBridge;
+import org.squashtest.tm.domain.search.LevelEnumBridge;
 import org.squashtest.tm.domain.testcase.RequirementVersionCoverage;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.exception.requirement.IllegalRequirementModificationException;
 import org.squashtest.tm.exception.requirement.RequirementAlreadyVerifiedException;
 import org.squashtest.tm.exception.requirement.RequirementVersionNotLinkableException;
-import org.squashtest.tm.search.bridge.LevelEnumBridge;
 import org.squashtest.tm.security.annotation.InheritsAcls;
 
 /**
@@ -108,6 +109,8 @@ public class RequirementVersion extends Resource implements BoundEntity {
 	@NotNull
 	@ManyToOne
 	@JoinColumn(name = "CATEGORY")
+	@Field(analyze=Analyze.NO, store=Store.YES)
+	@FieldBridge(impl = InfoListItemBridge.class)
 	private InfoListItem category;
 
 	@NotNull

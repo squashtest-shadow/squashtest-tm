@@ -19,7 +19,7 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.squashtest.tm.search.bridge;
+package org.squashtest.tm.domain.search;
 
 import org.hibernate.search.bridge.StringBridge;
 import org.squashtest.tm.domain.Level;

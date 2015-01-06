@@ -18,26 +18,16 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
+package org.squashtest.tm.domain.search;
 
-package org.squashtest.tm.search.bridge;
+import org.hibernate.search.bridge.StringBridge;
+import org.squashtest.tm.domain.infolist.InfoListItem;
 
-import org.jgroups.protocols.relay.Relayer.Bridge;
-import org.squashtest.tm.domain.requirement.RequirementCriticality;
-import org.squashtest.tm.domain.search.LevelEnumBridge;
+public class InfoListItemBridge implements StringBridge {
 
-import spock.lang.Specification;
-import spock.lang.Unroll;
-
-/**
- * @author Gregory Fouquet
- *
- */
-class LevelEnumBridgeTest extends Specification {
-	LevelEnumBridge bridge = new LevelEnumBridge()
-
-	def "should coerce Level into String"() {
-		expect:
-		bridge.objectToString(RequirementCriticality.CRITICAL) == RequirementCriticality.CRITICAL.level + "-CRITICAL" 
+	@Override
+	public String objectToString(Object item) {
+		return ((InfoListItem)item).getCode();
 	}
 
 }

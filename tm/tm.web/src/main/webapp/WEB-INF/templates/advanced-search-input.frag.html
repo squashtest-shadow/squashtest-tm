@@ -219,6 +219,30 @@
             </div>
             {{!--]]>--}}
 			</script>
+      
+            <script id="multicascadeflat-template" type="text/x-handlebars-template">
+			{{!--<![CDATA[--}}
+			<div class="display-search-table-row">
+				<label for="{{multicascadeflat-id}}" class="display-search-table-cell">{{multicascadeflat-title}}</label>
+				<div id="{{multicascadeflat-id}}" class="search-input">
+					<div data-widgetname="MultiCascadeFlat" data-fieldid="F{{multicascadeflat-id}}" class="search-input">
+						<select class="multicascadeflat-primary">
+							{{#each options}}
+							<option value="{{this.code}}" {{selected}}>{{this.value}}</option>
+							{{/each}}
+						</select>
+						<select class="multicascadeflat-secondary">
+							{{#each options}}
+							{{#each this.subInput.possibleValues}}
+							<option value="{{this.code}}" {{selected}}>{{this.value}}</option>
+							{{/each}}
+							{{/each}}
+						</select>
+					</div>
+				</div>
+			</div>
+			{{!--]]>--}}
+			</script>
 
               <script id="date-template" type="text/x-handlebars-template">
 				<div class="display-search-table-row">

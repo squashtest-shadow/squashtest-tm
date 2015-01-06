@@ -27,6 +27,11 @@ public class SearchInputPossibleValueModel {
 	private String value;
 
 	/**
+	 * sometimes the value is the composite of sub inputs.
+	 */
+	private SearchInputFieldModel subInput;
+
+	/**
 	 * the thing that is posted
 	 */
 	private String code;
@@ -44,6 +49,13 @@ public class SearchInputPossibleValueModel {
 	public SearchInputPossibleValueModel(String value, String code, boolean selected) {
 		this.value = value;
 		this.code = code;
+		this.selected = selected;
+	}
+
+	public SearchInputPossibleValueModel(String value, String code, boolean selected, SearchInputFieldModel subInput){
+		this.value = value;
+		this.code = code;
+		this.subInput = subInput;
 		this.selected = selected;
 	}
 
@@ -69,6 +81,14 @@ public class SearchInputPossibleValueModel {
 
 	public void setSelected(boolean selected) {
 		this.selected = selected;
+	}
+
+	public SearchInputFieldModel getSubInput() {
+		return subInput;
+	}
+
+	public void setSubInput(SearchInputFieldModel subInput) {
+		this.subInput = subInput;
 	}
 
 }

@@ -69,12 +69,13 @@ import org.squashtest.tm.domain.requirement.Requirement;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.search.CUFBridge;
 import org.squashtest.tm.domain.search.CollectionSizeBridge;
+import org.squashtest.tm.domain.search.InfoListItemBridge;
+import org.squashtest.tm.domain.search.LevelEnumBridge;
 import org.squashtest.tm.domain.testautomation.AutomatedTest;
 import org.squashtest.tm.exception.NameAlreadyInUseException;
 import org.squashtest.tm.exception.UnallowedTestAssociationException;
 import org.squashtest.tm.exception.UnknownEntityException;
 import org.squashtest.tm.exception.requirement.RequirementAlreadyVerifiedException;
-import org.squashtest.tm.search.bridge.LevelEnumBridge;
 
 /**
  * @author Gregory Fouquet
@@ -154,11 +155,15 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	@NotNull
 	@ManyToOne
 	@JoinColumn(name = "TC_NATURE")
+	@Field(analyze=Analyze.NO, store=Store.YES)
+	@FieldBridge(impl = InfoListItemBridge.class)
 	private InfoListItem nature = null;
 
 	@NotNull
 	@ManyToOne
 	@JoinColumn(name = "TC_TYPE")
+	@Field(analyze=Analyze.NO, store=Store.YES)
+	@FieldBridge(impl = InfoListItemBridge.class)
 	private InfoListItem type = null;
 
 	@NotNull

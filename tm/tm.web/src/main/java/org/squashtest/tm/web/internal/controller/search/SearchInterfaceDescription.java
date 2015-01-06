@@ -216,6 +216,7 @@ public abstract class SearchInterfaceDescription {
 	protected static final String MULTISELECT = "multiselect";
 	protected static final String MULTISELECTPERIMETER = "multiselectperimeter";
 	protected static final String MULTIAUTOCOMPLETE = "multiautocomplete";
+	protected static final String MULTICASCADEFLAT = "multicascadeflat";
 	protected static final String RADIOBUTTON = "radiobutton";
 	protected static final String ATLEASTONE = "1";
 	protected static final String NONE = "0";

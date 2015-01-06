@@ -21,7 +21,7 @@
 define([ "jquery", "backbone", "handlebars", "squash.translator", "app/ws/squashtm.notification", "underscore", "squash.configmanager", 
 		"./SearchDateWidget", "./SearchRangeWidget", 
 		"./SearchExistsWidget","./SearchMultiAutocompleteWidget", "./SearchMultiSelectWidget", "./SearchCheckboxWidget", 
-		"./SearchComboMultiselectWidget", "./SearchRadioWidget", "./SearchTagsWidget",
+		"./SearchComboMultiselectWidget", "./SearchRadioWidget", "./SearchTagsWidget", "./SearchMultiCascadeFlatWidget",
 		"jquery.squash", "jqueryui", "jquery.squash.togglepanel", "squashtable",
 		"jquery.squash.oneshotdialog", "jquery.squash.messagedialog", 
 		"jquery.squash.confirmdialog" ], function($, Backbone, Handlebars, translator, notification, _) {
@@ -183,6 +183,9 @@ define([ "jquery", "backbone", "handlebars", "squash.translator", "app/ws/squash
 										break;
 									case "combomultiselect":
 										self.makeComboMultiselect(tableid, field.id, field.title, field.possibleValues, searchModel[field.id]);
+										break;
+									case "multicascadeflat" :
+										self.makeMultiCascadeFlat(tableid, field.id, field.title, field.possibleValues, searchModel[field.id]);
 										break;
 									case "range" :
 										self.makeRangeField(tableid, field.id, field.title, searchModel[field.id]);
@@ -370,6 +373,27 @@ define([ "jquery", "backbone", "handlebars", "squash.translator", "app/ws/squash
 
 		},
 		
+		makeMultiCascadeFlat : function(tableId, fieldId, fieldTitle, options, enteredValue){
+			enteredValue = enteredValue || {};
+			
+			/*
+			 *  Setting the initial state.
+			 *  Remember that the enteredValue contains the values of the secondary select only.
+			 *	So, setting the state of the primary select must be induced from the secondary selected values
+			 */			
+			 
+			_.each(options, function(primaryOpt){				
+				_.each(primaryOpt.subInput.possibleValues, function(secondaryOpt){
+					secondaryOpt.selected = (! enteredValue.values) || _.contains(enteredValue.values, secondaryOpt.code);					
+				});
+				
+				primaryOpt.selected = _.some(primaryOpt.subInput.possibleValues, function(sub){return (sub.selected === true)});
+			});
+			
+			var context = {"multicascadeflat-id" : fieldId, "multicascadeflat-title" : fieldTitle, options : options};
+			var $fieldDom = this._appendFieldDom(tableId, fieldId, this._compileTemplate("#multicascadeflat-template", context));
+			$fieldDom.multiCascadeFlat(options);
+		},		
 		
 		makeMultiAutocomplete : function(tableId, fieldId, fieldTitle, options, enteredValue) {
 			var context = {"multiautocomplete-id": fieldId, "multiautocomplete-title": fieldTitle};
@@ -386,7 +410,7 @@ define([ "jquery", "backbone", "handlebars", "squash.translator", "app/ws/squash
 			$fieldDom.searchComboMultiSelectWidget("createDom", "F"+fieldId, options);
 			$fieldDom.searchComboMultiSelectWidget("fieldvalue", enteredValue);
 		},
-		
+				
 		makeTagsField : function(tableId, fieldId, fieldTitle, options, enteredValue) {
 			var context = {"tags-id": fieldId, "tags-title": fieldTitle};
 			var $fieldDom = this._appendFieldDom(tableId, fieldId, this._compileTemplate("#tags-template", context));

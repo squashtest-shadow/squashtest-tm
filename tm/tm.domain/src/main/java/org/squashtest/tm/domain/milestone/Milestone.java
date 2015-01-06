@@ -51,8 +51,8 @@ import org.hibernate.validator.constraints.NotBlank;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.squashtest.tm.domain.audit.Auditable;
 import org.squashtest.tm.domain.project.GenericProject;
+import org.squashtest.tm.domain.search.LevelEnumBridge;
 import org.squashtest.tm.domain.users.User;
-import org.squashtest.tm.search.bridge.LevelEnumBridge;
 
 @Auditable
 @Entity

@@ -20,23 +20,42 @@
  */
 package org.squashtest.tm.web.internal.controller.search;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import javax.inject.Inject;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Component;
+import org.squashtest.tm.domain.infolist.InfoList;
+import org.squashtest.tm.domain.infolist.InfoListItem;
+import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.testcase.TestCaseImportance;
 import org.squashtest.tm.domain.testcase.TestCaseNature;
 import org.squashtest.tm.domain.testcase.TestCaseStatus;
 import org.squashtest.tm.domain.testcase.TestCaseType;
+import org.squashtest.tm.service.project.ProjectFinder;
 import org.squashtest.tm.service.testcase.TestCaseAdvancedSearchService;
+import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
+import org.squashtest.tm.web.internal.model.builder.JsonProjectBuilder;
 
 @Component
 public class TestcaseSearchInterfaceDescription extends SearchInterfaceDescription {
+
 	@Inject
 	private TestCaseAdvancedSearchService advancedSearchService;
+
+	@Inject
+	private ProjectFinder projectFinder;
+
+	@Inject
+	private JsonProjectBuilder jsProjectBuilder;
+
 
 	public SearchInputPanelModel createGeneralInfoPanel(Locale locale) {
 		SearchInputPanelModel panel = new SearchInputPanelModel();
@@ -81,21 +100,17 @@ public class TestcaseSearchInterfaceDescription extends SearchInterfaceDescripti
 				.useLocale(locale).build();
 		importanceField.addPossibleValues(importanceOptions);
 
-		SearchInputFieldModel natureField = new SearchInputFieldModel("nature", getMessageSource().internationalize(
-				"test-case.nature.label", locale), MULTISELECT);
+		// **************** /natures and types ************************
+
+
+		SearchInputFieldModel natureField = buildNatureFieldModel(locale);
 		panel.addField(natureField);
 
-		List<SearchInputPossibleValueModel> natureOptions = levelComboBuilder(TestCaseNature.values())
-				.useLocale(locale).build();
-		natureField.addPossibleValues(natureOptions);
-
-		SearchInputFieldModel typeField = new SearchInputFieldModel("type", getMessageSource().internationalize(
-				"test-case.type.label", locale), MULTISELECT);
+		SearchInputFieldModel typeField = buildTypeFieldModel(locale);
 		panel.addField(typeField);
 
-		List<SearchInputPossibleValueModel> typeOptions = levelComboBuilder(TestCaseType.values())
-				.useLocale(locale).build();
-		typeField.addPossibleValues(typeOptions);
+
+		// *************** /natures and types ****************************
 
 		SearchInputFieldModel statusField = new SearchInputFieldModel("status", getMessageSource().internationalize(
 				"test-case.status.label", locale), MULTISELECT);
@@ -252,5 +267,81 @@ public class TestcaseSearchInterfaceDescription extends SearchInterfaceDescripti
 		panel.addField(modifiedOnField);
 
 		return panel;
+	}
+
+
+	private SearchInputFieldModel buildNatureFieldModel(Locale locale){
+
+
+		SearchInputFieldModel natureField = new SearchInputFieldModel("nature", getMessageSource().internationalize(
+				"test-case.nature.label", locale), MULTICASCADEFLAT);
+
+
+		Collection<Project> readableProjects = projectFinder.findAllReadable();
+
+		Collection<InfoList> natures = new ArrayList<InfoList>(readableProjects.size());
+
+		for (Project p : readableProjects){
+			natures.add(p.getTestCaseNatures());
+		}
+
+		populateInfoListFieldModel(natureField, natures, locale);
+
+		return natureField;
+
+	}
+
+	private SearchInputFieldModel buildTypeFieldModel(Locale locale){
+
+
+		SearchInputFieldModel typeField = new SearchInputFieldModel("type", getMessageSource().internationalize(
+				"test-case.type.label", locale), MULTICASCADEFLAT);
+
+
+		Collection<Project> readableProjects = projectFinder.findAllReadable();
+
+		Collection<InfoList> types = new ArrayList<InfoList>(readableProjects.size());
+
+		for (Project p : readableProjects){
+			types.add(p.getTestCaseTypes());
+		}
+
+		populateInfoListFieldModel(typeField, types, locale);
+
+		return typeField;
+
+	}
+
+
+	// get ready to puke !
+	private void populateInfoListFieldModel(SearchInputFieldModel model, Collection<InfoList> infoLists, Locale locale){
+
+		InternationalizationHelper messages = getMessageSource();
+		Map<String, SearchInputPossibleValueModel> listsByListCode = new HashMap<String, SearchInputPossibleValueModel>();
+
+		for (InfoList list : infoLists){
+			if (! listsByListCode.containsKey(list.getCode())){
+
+				String listName = messages.getMessage(list.getLabel(), null, list.getLabel(), locale);
+				String listCode = list.getCode();
+				SearchInputPossibleValueModel listValues = new SearchInputPossibleValueModel(listName, listCode);
+
+				SearchInputFieldModel subInput = new SearchInputFieldModel();
+
+				for (InfoListItem item : list.getItems()){
+					String itemName = messages.getMessage(item.getLabel(), null, item.getLabel(), locale);
+					String itemCode = item.getCode();
+					subInput.addPossibleValue(new SearchInputPossibleValueModel(itemName, itemCode));
+				}
+
+				listValues.setSubInput(subInput);
+
+				listsByListCode.put(list.getCode(), listValues);
+
+			}
+		}
+
+		model.setPossibleValues(new ArrayList<SearchInputPossibleValueModel>(listsByListCode.values()));
+
 	}
 }
