@@ -103,7 +103,7 @@ public class AdvancedSearchController {
 	private static final String COMBOMULTISELECT = "combomultiselect";
 	private static final String TAGS = "tags";
 
-	private static final String TESTCASE = "testcase";
+	private static final String TESTCASE = "test-case";
 	private static final String REQUIREMENT = "requirement";
 	private static final String SEARCH_MODEL = "searchModel";
 	private static final String SEARCH_DOMAIN = "searchDomain";

@@ -180,7 +180,7 @@ define(["jquery", "tree","./permissions-rules", "workspace.contextual-content", 
 			// *****************  search  ********************
 			
 			$("#search-tree-button").on("click", function(){
-				document.location.href = squashtm.app.contextRoot + "/advanced-search?searchDomain=testcase";
+				document.location.href = squashtm.app.contextRoot + "/advanced-search?searchDomain=test-case";
 			});
 			
 			// ***************** deletion ********************

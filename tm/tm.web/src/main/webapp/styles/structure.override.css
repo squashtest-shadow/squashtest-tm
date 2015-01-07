@@ -43,7 +43,7 @@ div.main-menubar a {
 	color: lightgray;
 }
 
-#advanced-search-input-form-panel-column1.testcase div.search-toggle-panel {
+#advanced-search-input-form-panel-column1.test-case div.search-toggle-panel {
 	padding-bottom : 1em;
 	padding-right : 2em;
 	padding-left : 2em;
@@ -69,7 +69,7 @@ div.main-menubar a {
 	padding-bottom : 0px;
 }
 
-#advanced-search-input-form-panel-column1.testcase div.search-perimeter-toggle-panel {
+#advanced-search-input-form-panel-column1.test-case div.search-perimeter-toggle-panel {
 	padding-bottom : 1em;
 	padding-right : 2em;
 	padding-left : 2em;
@@ -97,7 +97,7 @@ div.main-menubar a {
 	float: left;
 }
 
-#advanced-search-input-form-panel-column1.testcase div.search-informations-toggle-panel {
+#advanced-search-input-form-panel-column1.test-case div.search-informations-toggle-panel {
 	padding-bottom : 1em;
 	padding-right : 2em;
 	padding-left : 2em;
@@ -130,7 +130,7 @@ div.main-menubar a {
 	padding-bottom : 10px;
 }
 
-#advanced-search-input-form-panel-column2.testcase div.search-toggle-panel {
+#advanced-search-input-form-panel-column2.test-case div.search-toggle-panel {
 	padding-bottom : 46px;
 }
 
