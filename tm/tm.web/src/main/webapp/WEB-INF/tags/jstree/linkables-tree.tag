@@ -89,7 +89,7 @@ require( ["common"], function(){
       			$("#search-tree-button").buttonmenu();
       			
       			$("#test-case-search-button").on('click', function(){
-      				document.location.href = squashtm.app.contextRoot + "/advanced-search?searchDomain=testcase&id=${elementId}&associateResultWithType=${elementType}";
+      				document.location.href = squashtm.app.contextRoot + "/advanced-search?searchDomain=test-case&id=${elementId}&associateResultWithType=${elementType}";
       			});
       			
       			$("#search-by-requirement-button").on('click', function(){
@@ -98,7 +98,7 @@ require( ["common"], function(){
       
       		} else {
       			$("#search-tree-button").on('click', function(){
-      				document.location.href = squashtm.app.contextRoot + "/advanced-search?searchDomain=testcase&id=${elementId}&associateResultWithType=${elementType}";
+      				document.location.href = squashtm.app.contextRoot + "/advanced-search?searchDomain=test-case&id=${elementId}&associateResultWithType=${elementType}";
       			});
       
       		}
