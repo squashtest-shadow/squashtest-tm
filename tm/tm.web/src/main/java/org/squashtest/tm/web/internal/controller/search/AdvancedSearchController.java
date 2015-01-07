@@ -264,6 +264,8 @@ public class AdvancedSearchController {
 		model.addAttribute(SEARCH_MODEL, searchModel);
 		model.addAttribute(SEARCH_DOMAIN, TESTCASE);
 
+		populateMetadata(model);
+
 		return "test-case-search-result.html";
 	}
 
@@ -275,6 +277,8 @@ public class AdvancedSearchController {
 		model.addAttribute(SEARCH_MODEL, searchModel);
 		model.addAttribute(SEARCH_DOMAIN, REQUIREMENT);
 
+		populateMetadata(model);
+
 		return "requirement-search-result.html";
 	}
 
@@ -285,6 +289,9 @@ public class AdvancedSearchController {
 		initModelForPage(model, associateResultWithType, id);
 		model.addAttribute(SEARCH_MODEL, searchModel);
 		model.addAttribute(SEARCH_DOMAIN, TESTCASE_VIA_REQUIREMENT);
+
+
+		populateMetadata(model);
 
 		return "test-case-search-result.html";
 	}
@@ -544,6 +551,7 @@ public class AdvancedSearchController {
 			final AuditableMixin auditable = (AuditableMixin) item;
 			Map<String, Object> res = new HashMap<String, Object>();
 			res.put(DataTableModelConstants.PROJECT_NAME_KEY, item.getProject().getName());
+			res.put("project-id", item.getProject().getId());
 			if (isInAssociationContext()) {
 				res.put("empty-is-associated-holder", " ");
 				res.put("is-associated", associatedRequirementIds.contains(item.getId()));
@@ -626,6 +634,7 @@ public class AdvancedSearchController {
 			final AuditableMixin auditable = (AuditableMixin) item;
 			Map<String, Object> res = new HashMap<String, Object>();
 			res.put(DataTableModelConstants.PROJECT_NAME_KEY, item.getProject().getName());
+			res.put("project-id", item.getProject().getId());
 			if (isInAssociationContext()) {
 				res.put("empty-is-associated-holder", " ");
 				res.put("is-associated", associatedTestCaseIds.contains(item.getId()));
@@ -769,9 +778,17 @@ public class AdvancedSearchController {
 
 	}
 
+	private void populateMetadata(Model model){
+		model.addAttribute("projects", readableJsonProjects());
+	}
 
 	private void populateMetadata(SearchInputInterfaceModel model){
 
+		model.addMetadata(PROJECTS_META, readableJsonProjects());
+
+	}
+
+	private List<JsonProject> readableJsonProjects(){
 		List<Project> readableProjects = projectFinder.findAllReadable();
 		List<JsonProject> jsonified = new ArrayList<JsonProject>(readableProjects.size());
 
@@ -779,7 +796,6 @@ public class AdvancedSearchController {
 			jsonified.add(jsProjectBuilder.toExtendedProject(p));
 		}
 
-		model.addMetadata(PROJECTS_META, jsonified);
-
+		return jsonified;
 	}
 }

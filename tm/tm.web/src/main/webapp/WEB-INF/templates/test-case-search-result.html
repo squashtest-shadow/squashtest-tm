@@ -51,6 +51,8 @@
 			"label.weightAuto" : /*[[#{label.weightAuto}]]*/"weight auto"
 		}
 	};
+	squashtm.workspace = squashtm.workspace || {};
+	squashtm.workspace.projects = /*[[${projects}]]*/[];
 </script>
 <script src="../../scripts/pubsub-boot.js" th:src="@{/scripts/pubsub-boot.js}"></script>
 <script data-main="../../scripts/test-case-search-result.js" th:attr="data-main=@{/scripts/test-case-search-result.js}"
@@ -178,6 +180,14 @@
 
         <div id="modify-search-result-dialog" class="not-displayed popup-dialog" th:title="#{label.Modify}">
           <div class="main">
+            
+            <div id="modify-search-result-dialog-project-conf-warning"
+                 class="not-displayed" 
+                 th:text="#{message.search.modify.differentInfolists}">
+                 
+              Warning : hey, something's wrong !
+            </div>
+          
             <table id="modify-search-result-dialog-table">
               <tr>
                 <td>
@@ -199,7 +209,8 @@
               </tr>
               <tr>
                 <td>
-                  <input id="type-checkbox" type="checkbox"></input>
+                  <span  id="type-disabled-icon" class="small-icon icon-red-cross not-displayed mass-change-forbidden" ></span>
+                  <input id="type-checkbox" type="checkbox" class="mass-change-allowed"></input>
                 </td>
                 <td>
                   <label th:text="#{test-case.type.label}"></label>
@@ -208,12 +219,13 @@
               </tr>
               <tr>
                 <td>
-                  <input id="nature-checkbox" type="checkbox"></input>
+                  <span  id="nature-disabled-icon" class="small-icon icon-red-cross not-displayed mass-change-forbidden" ></span>
+                  <input id="nature-checkbox" type="checkbox" class="mass-change-allowed"></input>
                 </td>
                 <td>
                   <label th:text="#{test-case.nature.label}"></label>
                 </td>
-                <td id="nature-combo"></td>
+                <td id="nature-combo" ></td>
               </tr>
             </table>
           </div>

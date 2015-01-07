@@ -161,7 +161,7 @@ define([ 'jquery', 'squash.translator', "jquery.squash.oneshotdialog", "workspac
 
 				// if cross-project, also check whether
 				// the nature/type/category settings are different				
-				var areInfoListsDifferent = projects.haveDifferentInfolists(targetLib, srcLibs);
+				var areInfoListsDifferent = projects.haveDifferentInfolists(srcLibs.concat(targetLib));
 				
 				if (areInfoListsDifferent){
 					var addendum = translator.get('message.warnCopyToDifferentLibrary.infolistsDiffer');

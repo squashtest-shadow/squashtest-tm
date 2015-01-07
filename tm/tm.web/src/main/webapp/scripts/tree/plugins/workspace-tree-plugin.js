@@ -215,7 +215,7 @@ define(['jquery', 'workspace.tree-node-copier', 'workspace.permissions-rules-bro
 
 			// if cross-project, also check whether
 			// the nature/type/category settings are different				
-			var areInfoListsDifferent = projects.haveDifferentInfolists(targetLib, srcLibs);
+			var areInfoListsDifferent = projects.haveDifferentInfolists(srcLibs.concat(targetLib));
 			
 			if (areInfoListsDifferent){
 				var addendum = translator.get('message.warnCopyToDifferentLibrary.infolistsDiffer');

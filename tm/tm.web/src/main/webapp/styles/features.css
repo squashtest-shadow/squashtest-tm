@@ -438,6 +438,10 @@ th.width-tenperc, td.width-tenperc {
 	background-image : url(../images/icon-user-active.png);  /** sprite-ref: sprites-icons; */
 }
 
+.icon-red-cross{
+	background-image : url(../images/red-cross-icon.png);  /** sprite-ref: sprites-icons; */
+}
+
 /* CONSIDER USING .disabled ON .sq-btn OR .sq-icon-btn */
 .disabled-transparent{
 	opacity : 0.35;

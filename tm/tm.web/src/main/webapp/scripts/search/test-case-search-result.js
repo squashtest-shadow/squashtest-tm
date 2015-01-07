@@ -19,11 +19,12 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 define([ "jquery", "backbone", "underscore", "app/util/StringUtil",
-        "./TestCaseSearchResultTable", "squash.translator", "app/ws/squashtm.notification","jquery.squash", "jqueryui",
+        "./TestCaseSearchResultTable", "squash.translator", "app/ws/squashtm.notification",
+        "squash.configmanager", "workspace.projects" , "jquery.squash", "jqueryui",
 		"jquery.squash.togglepanel", "squashtable",
 		"jquery.squash.oneshotdialog", "jquery.squash.messagedialog",
 		"jquery.squash.confirmdialog" ], 
-		function($, Backbone, _, StringUtil, TestCaseSearchResultTable, translator, notification) {
+		function($, Backbone, _, StringUtil, TestCaseSearchResultTable, translator, notification, confman, projects) {
 	
 	var TestCaseSearchInputPanel = Backbone.View.extend({
 
@@ -182,6 +183,65 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil",
 			});			
 		},
 		
+		enableTypeAndNatureModification : function(dialog, table){
+			
+			var rows = table.getSelectedRows();
+			
+			if (rows.length === 0) return;
+
+			// reset the controls
+			$("#modify-search-result-dialog-project-conf-warning").hide();
+			$(".mass-change-forbidden").hide();
+			$(".mass-change-allowed").show();
+			$(".mass-change-infolist-combo").prop('disabled', false);
+			
+			// find the selected projects unique ids
+			var selectedProjects = [];
+			rows.each(function(row){
+				selectedProjects.push(table.fnGetData(row)['project-id']);
+			});
+			selectedProjects = _.uniq(selectedProjects);
+			
+			// check for conflicts
+			var difNat = projects.haveDifferentInfolists(selectedProjects, ["nature"]);
+			var difTyp = projects.haveDifferentInfolists(selectedProjects, ["type"]);
+			
+			function populateCombo(select, infolistName){
+				var p = projects.findProject(selectedProjects[0]);
+				select.empty();
+				
+				for (var i=0;i<p[infolistName].items.length; i++){
+					var item = p[infolistName].items[i];
+					var opt = $('<option/>', {
+						value : item.code,
+						html : item.friendlyLabel
+					});
+					select.append(opt);
+				}				
+			}
+			
+			if (difNat){
+				$("#modify-search-result-dialog-project-conf-warning").show();
+				$("#nature-disabled-icon").show();
+				$("#nature-checkbox").hide();
+			}
+			else{
+				// we can move on and populate the combo
+				populateCombo($("#nature-combo select"), 'testCaseNatures');
+			}
+			
+			if (difTyp){
+				$("#modify-search-result-dialog-project-conf-warning").show();
+				$("#type-disabled-icon").show();
+				$("#type-checkbox").hide();				
+			}
+			else{
+				// we can move on and populate the combo
+				populateCombo($("#type-combo select"), 'testCaseTypes');		
+			}
+			
+		},
+		
 		_getIdsOfSelectedTableRowList : function(dataTable) {
 			var rows = dataTable.fnGetNodes();
 			var ids = [];
@@ -235,10 +295,15 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil",
 				});
 			}
 			
+
+			/*
+			 * configure the comboboxes. Note that the type and nature combos cannot 
+			 * be initialized before we know which test cases were selected.  
+			 */
+			$("#nature-combo").append('<select/>');
+			$("#type-combo").append('<select/>');
 			loadCombos("importance-combo");
 			loadCombos("status-combo");
-			loadCombos("type-combo");
-			loadCombos("nature-combo");
 			
 			addModifyResultDialog.on('change', ':checkbox', function(evt){
 				var cbx = $(evt.currentTarget),
@@ -273,15 +338,21 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil",
 			});
 			
 			addModifyResultDialog.on('confirmdialogopen', function() {
+				
 				addModifyResultDialog.find(':checkbox').prop('checked', false);
 				addModifyResultDialog.find('select').prop('disabled', true);
-				var table = $('#test-case-search-result-table').dataTable();
+				var table = $('#test-case-search-result-table').squashTable();
 				var ids = self.getIdsOfSelectedTableRowList(table);
+				
 				if(ids.length === 0) {
 					notification.showError(translator.get('message.noLinesSelected'));
 					$(this).confirmDialog('close');
 				}
+				
 				self.validateSelection(table);
+				
+				self.enableTypeAndNatureModification(addModifyResultDialog, table);
+
 			});
 
 			addModifyResultDialog.activate = function(arg) {};

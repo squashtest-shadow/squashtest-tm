@@ -18,8 +18,9 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ "jquery", "backbone", "squash.translator", "jeditable.simpleJEditable", "app/ws/squashtm.notification", "squashtable", "jqueryui", "jquery.squash.jeditable", "jquery.cookie" ], 
-		function($, Backbone, translator, SimpleJEditable, notification) {
+define([ "jquery", "backbone", "squash.translator", "jeditable.simpleJEditable", "app/ws/squashtm.notification", 
+         "workspace.projects", "squash.configmanager", "squashtable", "jqueryui", "jquery.squash.jeditable", "jquery.cookie" ], 
+		function($, Backbone, translator, SimpleJEditable, notification, projects, confman) {
 
 	var TestCaseSearchResultTable = Backbone.View.extend({
 		el : "#test-case-search-result-table",
@@ -307,9 +308,7 @@ define([ "jquery", "backbone", "squash.translator", "jeditable.simpleJEditable",
 						submit : ok,
 						cancel : cancel,
 						loadurl : urlGET,
-						"submitdata" : function(value, settings) {
-							return {"id": "test-case-importance"};
-						}
+						submitdata : function(){return {id : 'test-case-importance'};}
 					});
 		},
 		_addTooltipToImportance : function(row, data) {
@@ -320,9 +319,10 @@ define([ "jquery", "backbone", "squash.translator", "jeditable.simpleJEditable",
 		},
 		
 		_addSelectEditableToNature : function(row, data) {
-			var self = this;
 			var urlPOST = squashtm.app.contextRoot + "/test-cases/" + data["test-case-id"];
-			var urlGET = squashtm.app.contextRoot + "/test-cases/" + data["test-case-id"] + "/nature-combo-data";
+			var projectNatures = projects.findProject(data['project-id']).testCaseNatures;
+			var naturesData = confman.toJeditableSelectFormat(projectNatures.items, {'code' : 'friendlyLabel'});
+			
 			var ok = translator.get("rich-edit.button.ok.label");
 			var cancel = translator.get("label.Cancel");
 			//TODO use SelectJEditable obj
@@ -330,17 +330,16 @@ define([ "jquery", "backbone", "squash.translator", "jeditable.simpleJEditable",
 				type : 'select',
 				submit : ok,
 				cancel : cancel,
-				loadurl : urlGET,
-				"submitdata" : function(value, settings) {
-					return {"id": "test-case-nature"};
-				}
+				data : naturesData,
+				submitdata : function(){return {id : 'test-case-nature'};}
 			});
 		},
 		
 		_addSelectEditableToType : function(row, data) {
-			var self = this;
 			var urlPOST = squashtm.app.contextRoot + "/test-cases/" + data["test-case-id"];
-			var urlGET = squashtm.app.contextRoot + "/test-cases/" + data["test-case-id"] + "/type-combo-data";
+			var projectTypes = projects.findProject(data['project-id']).testCaseTypes;
+			var typesData = confman.toJeditableSelectFormat(projectTypes.items, {'code' : 'friendlyLabel'});			
+			
 			var ok = translator.get("rich-edit.button.ok.label");
 			var cancel = translator.get("label.Cancel");
 			//TODO use SelectJEditable obj
@@ -348,10 +347,8 @@ define([ "jquery", "backbone", "squash.translator", "jeditable.simpleJEditable",
 				type : 'select',
 				submit : ok,
 				cancel : cancel,
-				loadurl : urlGET,
-				"submitdata" : function(value, settings) {
-					return {"id": "test-case-type"};
-				}
+				data : typesData,
+				submitdata : function(){return {id : 'test-case-type'};}
 			});
 		},
 		
@@ -367,9 +364,7 @@ define([ "jquery", "backbone", "squash.translator", "jeditable.simpleJEditable",
 				submit : ok,
 				cancel : cancel,
 				loadurl : urlGET,
-				"submitdata" : function(value, settings) {
-					return {"id": "test-case-status"};
-				}
+				submitdata : function(){return {id : 'test-case-status'};}
 			});
 		},
 		
@@ -380,9 +375,7 @@ define([ "jquery", "backbone", "squash.translator", "jeditable.simpleJEditable",
 				targetUrl : url,
 				component : component,
 				jeditableSettings : {
-					"submitdata" : function(value, settings) {
-						return {"id": "test-case-reference"};
-					}
+					submitdata : function(){return {id : 'test-case-reference'};}
 				}
 			});
 		},
@@ -399,9 +392,7 @@ define([ "jquery", "backbone", "squash.translator", "jeditable.simpleJEditable",
 				targetUrl : url,
 				component : component,
 				jeditableSettings : {
-					"submitdata" : function(value, settings) {
-						return {"id": "test-case-newname"};
-					},
+					submitdata : function(){return {id : 'test-case-newname'};},
 					"onerror" : function(settings, self, xhr){	
 						xhr.errorIsHandled = true;
 						notification.showXhrInDialog(xhr);	

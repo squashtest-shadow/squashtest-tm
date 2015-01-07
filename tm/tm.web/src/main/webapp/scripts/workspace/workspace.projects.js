@@ -51,27 +51,52 @@ define(["jquery"], function($){
 	}
 	
 	/*
-	 * Given the ID of a reference project, and the ID/array of ID of more projects,
-	 * tells whether at list one of the other projects differs from the reference project
+	 * given their ids, tells whether at least two projects have different configurations
 	 * regarding the info list configuration
+	 * 
+	 * as an additional argument, an array of any combination of "nature"|"type"|"category".
+	 * if specified, only the given attributes will be checked.
 	 */
-	function haveDifferentInfolists(reference, otherProjects){
-		var areDifferent =  false;
-		var refproject = findProject(reference), 
-			cats = refproject.requirementCategories.code,
-			nats = refproject.testCaseNatures.code,
-			typs = refproject.testCaseTypes.code;
+	function haveDifferentInfolists(projectIds, attributes){
 		
-		var others = (otherProjects instanceof Array ) ? otherProjects : [ otherProjects ];
+		if ( projectIds.length === 0 ){
+			return false;
+		}
+		
+		var areDifferent =  false,
+			attrs = attributes || ["nature", "type", "category"];
+				
+		var firstP = findProject(projectIds[0]); 
+		var nats = firstP.testCaseNatures.code,
+			typs = firstP.testCaseTypes.code, 
+			cats = firstP.requirementCategories.code;
+		
+		var chkNat = (attrs.indexOf("nature") > -1),
+			chkTyp = (attrs.indexOf("type") > -1),
+			chkCat = (attrs.indexOf("category") > -1);
+		
+		for (var i=1; i<projectIds.length; i++){
+			var p = findProject(projectIds[i]);
 			
-		for ( var i = 0; i < others.length; i++){
-			var oProj = findProject(others[i]);
-			if ((cats !== oProj.requirementCategories.code) ||
-				(nats !== oProj.testCaseNatures.code) ||
-				(typs !== oProj.testCaseTypes.code)
-			){
-				areDifferent = true;
-				break;
+			if ( chkNat ){
+				if (nats !== p.testCaseNatures.code){
+					areDifferent = true;
+					break;
+				}
+			}
+			
+			if ( chkTyp ){
+				if (typs !== p.testCaseTypes.code){
+					areDifferent = true;
+					break;
+				}
+			}
+			
+			if ( chkCat ){
+				if (cats !== p.requirementCategories.code){
+					areDifferent = true;
+					break;
+				}
 			}
 		}
 		
