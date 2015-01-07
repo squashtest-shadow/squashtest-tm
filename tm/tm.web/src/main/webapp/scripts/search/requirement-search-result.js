@@ -19,11 +19,12 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 define([ "jquery", "backbone", "underscore", "app/util/StringUtil",
-        "./RequirementSearchResultTable", "squash.translator", "app/ws/squashtm.notification","jquery.squash", "jqueryui",
+        "./RequirementSearchResultTable", "squash.translator", "app/ws/squashtm.notification",
+        "workspace.projects", "jquery.squash", "jqueryui",
 		"jquery.squash.togglepanel", "squashtable",
 		"jquery.squash.oneshotdialog", "jquery.squash.messagedialog",
 		"jquery.squash.confirmdialog" ], 
-		function($, Backbone, _, StringUtil, RequirementSearchResultTable, translator, notification) {
+		function($, Backbone, _, StringUtil, RequirementSearchResultTable, translator, notification, projects) {
 	
 	var RequirementSearchResultPanel = Backbone.View.extend({
 
@@ -183,6 +184,55 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil",
 			return ids;
 		},
 		
+		
+		enableCategoryModification : function(dialog, table){
+			
+			var rows = table.getSelectedRows();
+			
+			if (rows.length === 0) return;
+
+			// reset the controls
+			$("#modify-search-result-dialog-project-conf-warning").hide();
+			$(".mass-change-forbidden").hide();
+			$(".mass-change-allowed").show();
+			$(".mass-change-infolist-combo").prop('disabled', false);
+			
+			// find the selected projects unique ids
+			var selectedProjects = [];
+			rows.each(function(row){
+				selectedProjects.push(table.fnGetData(row)['project-id']);
+			});
+			selectedProjects = _.uniq(selectedProjects);
+			
+			// check for conflicts
+			var difCat = projects.haveDifferentInfolists(selectedProjects, ["category"]);
+			
+			function populateCombo(select, infolistName){
+				var p = projects.findProject(selectedProjects[0]);
+				select.empty();
+				
+				for (var i=0;i<p[infolistName].items.length; i++){
+					var item = p[infolistName].items[i];
+					var opt = $('<option/>', {
+						value : item.code,
+						html : item.friendlyLabel
+					});
+					select.append(opt);
+				}				
+			}
+			
+			if (difCat){
+				$("#modify-search-result-dialog-project-conf-warning").show();
+				$("#category-disabled-icon").show();
+				$("#category-checkbox").hide();
+			}
+			else{
+				// we can move on and populate the combo
+				populateCombo($("#category-combo select"), 'requirementCategories');
+			}
+			
+		},
+		
 		_updateDisplayedValueInColumn : function(dataTable, column) {
 			var rows = dataTable.fnGetNodes();
 			
@@ -220,9 +270,14 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil",
 				});
 			}
 			
+
+			/*
+			 * configure the comboboxes. Note that the category combos cannot 
+			 * be initialized before we know which requirements were selected.  
+			 */
 			loadCombos("criticality-combo");
-			loadCombos("category-combo");
 			loadCombos("status-combo");
+			$("#category-combo").append('<select/>');
 			
 			
 			addModifyResultDialog.on('change', ':checkbox', function(evt){
@@ -260,7 +315,7 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil",
 				addModifyResultDialog.find(':checkbox').prop('checked', false);
 				addModifyResultDialog.find('select').prop('disabled', true);
 			
-				var table = $('#requirement-search-result-table').dataTable();
+				var table = $('#requirement-search-result-table').squashTable();
 				var ids = self.getIdsOfSelectedTableRowList(table);
 				var editableIds = self.getIdsOfEditableSelectedTableRowList(table);
 				if(ids.length === 0) {							
@@ -273,6 +328,9 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil",
 					notification.showError(translator.get('message.search.modify.noWritingRightsOrWrongStatus'));
 					noWritingRightsDialog.messageDialog('open');
 				}
+				
+				self.enableCategoryModification(addModifyResultDialog, table);
+
 			});
 
 			addModifyResultDialog.activate = function(arg) {};

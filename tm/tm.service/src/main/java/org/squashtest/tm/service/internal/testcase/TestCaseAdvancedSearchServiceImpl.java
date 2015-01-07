@@ -39,6 +39,8 @@ import org.hibernate.SessionFactory;
 import org.hibernate.search.FullTextSession;
 import org.hibernate.search.Search;
 import org.hibernate.search.query.dsl.QueryBuilder;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndMultiSorting;
@@ -55,6 +57,7 @@ import org.squashtest.tm.service.campaign.IterationModificationService;
 import org.squashtest.tm.service.internal.advancedsearch.AdvancedSearchServiceImpl;
 import org.squashtest.tm.service.internal.repository.ProjectDao;
 import org.squashtest.tm.service.internal.repository.TestCaseDao;
+import org.squashtest.tm.service.internal.requirement.InfoListItemComparatorSource;
 import org.squashtest.tm.service.requirement.RequirementVersionAdvancedSearchService;
 import org.squashtest.tm.service.testcase.TestCaseAdvancedSearchService;
 import org.squashtest.tm.service.testcase.VerifyingTestCaseManagerService;
@@ -86,6 +89,9 @@ TestCaseAdvancedSearchService {
 
 	@Inject
 	private Provider<TestCaseSearchExportCSVModelImpl> testCaseSearchExportCSVModelProvider;
+
+	@Inject
+	private MessageSource source;
 
 	private final static SortField[] DEFAULT_SORT_TESTCASES = new SortField[] {
 		new SortField("project.name", SortField.STRING, false),
@@ -158,6 +164,8 @@ TestCaseAdvancedSearchService {
 
 	private Sort getTestCaseSort(PagingAndMultiSorting multisorting) {
 
+		Locale locale = LocaleContextHolder.getLocale();
+
 		List<Sorting> sortings = multisorting.getSortings();
 
 		if (sortings == null || sortings.size() == 0) {
@@ -177,6 +185,10 @@ TestCaseAdvancedSearchService {
 
 			if (LONG_SORTABLE_FIELDS.contains(fieldName)) {
 				sortFieldArray[i] = new SortField(fieldName, SortField.LONG, isReverse);
+			}
+			else if ("nature".equals(fieldName) || "type".equals(fieldName)) {
+				sortFieldArray[i] = new SortField(fieldName, new InfoListItemComparatorSource(source,
+						locale), isReverse);
 			} else {
 				sortFieldArray[i] = new SortField(fieldName, SortField.STRING, isReverse);
 			}

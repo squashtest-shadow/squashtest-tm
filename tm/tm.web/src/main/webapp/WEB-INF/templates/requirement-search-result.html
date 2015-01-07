@@ -65,6 +65,8 @@
     	 }
      }
     };
+	squashtm.workspace = squashtm.workspace || {};
+	squashtm.workspace.projects = /*[[${projects}]]*/[];
   </script>
   <script src="../../scripts/pubsub-boot.js" th:src="@{/scripts/pubsub-boot.js}"></script>
   <script data-main="../../scripts/requirement-search-result.js" th:attr="data-main=@{/scripts/requirement-search-result.js}"
@@ -205,6 +207,12 @@
 			<div id="modify-search-result-dialog"
 				class="not-displayed popup-dialog" th:title="#{label.Modify}">
 				<div class="main">
+                    <div id="modify-search-result-dialog-project-conf-warning"
+                         class="not-displayed" 
+                         th:text="#{message.search.modify.differentInfolists}">
+                         
+                      Warning : hey, something's wrong !
+                    </div>
 					<table id="modify-search-result-dialog-table">
 						<tr>
 							<td><input id="criticality-checkbox" type="checkbox"></input></td>
@@ -212,7 +220,10 @@
 							<td id="criticality-combo"></td>
 						</tr>
 						<tr>
-							<td><input id="category-checkbox" type="checkbox"></input></td>
+							<td>
+                              <span  id="category-disabled-icon" class="small-icon icon-red-cross not-displayed mass-change-forbidden"></span>
+                              <input id="category-checkbox" type="checkbox" class="mass-change-allowed"></input>
+                            </td>
 							<td><label th:text="#{requirement.category.label}"></label></td>
 							<td id="category-combo"></td>
 						</tr>

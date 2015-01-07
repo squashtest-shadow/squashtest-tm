@@ -18,7 +18,10 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ "jquery", "backbone", "squash.translator","jeditable.simpleJEditable", "squashtable", "jqueryui", "jquery.squash.jeditable", "jquery.cookie" ], function($, Backbone, translator, SimpleJEditable) {
+define([ "jquery", "backbone", "squash.translator","jeditable.simpleJEditable", "workspace.projects", 
+         "squash.configmanager",  "squashtable", 
+         "jqueryui", "jquery.squash.jeditable", "jquery.cookie" ], 
+         function($, Backbone, translator, SimpleJEditable, projects, confman) {
 
 	var RequirementSearchResultTable = Backbone.View.extend({
 		el : "#requirement-search-result-table",
@@ -295,9 +298,10 @@ define([ "jquery", "backbone", "squash.translator","jeditable.simpleJEditable", 
 		},
 		
 		_addSelectEditableToCategory : function(row, data) {
-			var self = this;
 			var urlPOST = squashtm.app.contextRoot + "/requirements/" + data["requirement-id"];
-			var urlGET = squashtm.app.contextRoot + "/requirements/"+ data["requirement-id"]+"/category-combo-data";
+			var projectCategories = projects.findProject(data['project-id']).requirementCategories;
+			var catsData = confman.toJeditableSelectFormat(projectCategories.items, {'code' : 'friendlyLabel'});			
+			
 			var ok = translator.get("rich-edit.button.ok.label");
 			var cancel = translator.get("label.Cancel");
 			var component = $('.editable_category', row);
@@ -306,7 +310,7 @@ define([ "jquery", "backbone", "squash.translator","jeditable.simpleJEditable", 
 				type : 'select',
 				submit : ok,
 				cancel : cancel,
-				loadurl : urlGET,
+				data : catsData,
 				"submitdata" : function(value, settings) {
 					return {"id": "requirement-category"};
 				}

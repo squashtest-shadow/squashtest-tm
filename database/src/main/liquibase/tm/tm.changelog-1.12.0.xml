@@ -377,7 +377,7 @@
 			<column name="ITEM_TYPE" value="SYS"/>
 			<column name="LIST_ID" value="1" />
 			<column name="ITEM_INDEX" value="0"/>
-			<column name="LABEL" value="requirement.category.FUNCTIONAL" />
+			<column name="LABEL" value="requirement.category.CAT_FUNCTIONAL" />
 			<column name="CODE" value="CAT_FUNCTIONAL"/>
 			<column name="IS_DEFAULT" valueBoolean="true"/>
 			<column name="ICON_NAME" value="def_cat_functional"/>		
@@ -388,7 +388,7 @@
 			<column name="ITEM_TYPE" value="SYS"/>
 			<column name="LIST_ID" value="1" />
 			<column name="ITEM_INDEX" value="1"/>
-			<column name="LABEL" value="requirement.category.NON_FUNCTIONAL" />
+			<column name="LABEL" value="requirement.category.CAT_NON_FUNCTIONAL" />
 			<column name="CODE" value="CAT_NON_FUNCTIONAL"/>
 			<column name="IS_DEFAULT" valueBoolean="false"/>
 			<column name="ICON_NAME" value="def_cat_non-functional"/>		
@@ -399,7 +399,7 @@
 			<column name="ITEM_TYPE" value="SYS"/>
 			<column name="LIST_ID" value="1" />
 			<column name="ITEM_INDEX" value="2"/>
-			<column name="LABEL" value="requirement.category.USE_CASE" />
+			<column name="LABEL" value="requirement.category.CAT_USE_CASE" />
 			<column name="CODE" value="CAT_USE_CASE"/>
 			<column name="IS_DEFAULT" valueBoolean="false"/>
 			<column name="ICON_NAME" value="def_cat_use-case"/>		
@@ -410,7 +410,7 @@
 			<column name="ITEM_TYPE" value="SYS"/>
 			<column name="LIST_ID" value="1" />
 			<column name="ITEM_INDEX" value="3"/>
-			<column name="LABEL" value="requirement.category.BUSINESS" />
+			<column name="LABEL" value="requirement.category.CAT_BUSINESS" />
 			<column name="CODE" value="CAT_BUSINESS"/>
 			<column name="IS_DEFAULT" valueBoolean="false"/>
 			<column name="ICON_NAME" value="def_cat_business"/>		
@@ -421,7 +421,7 @@
 			<column name="ITEM_TYPE" value="SYS"/>
 			<column name="LIST_ID" value="1" />
 			<column name="ITEM_INDEX" value="4"/>
-			<column name="LABEL" value="requirement.category.TEST_REQUIREMENT" />
+			<column name="LABEL" value="requirement.category.CAT_TEST_REQUIREMENT" />
 			<column name="CODE" value="CAT_TEST_REQUIREMENT"/>
 			<column name="IS_DEFAULT" valueBoolean="false"/>
 			<column name="ICON_NAME" value="def_cat_test-requirement"/>		
@@ -432,7 +432,7 @@
 			<column name="ITEM_TYPE" value="SYS"/>
 			<column name="LIST_ID" value="1" />
 			<column name="ITEM_INDEX" value="5"/>
-			<column name="LABEL" value="requirement.category.UNDEFINED" />
+			<column name="LABEL" value="requirement.category.CAT_UNDEFINED" />
 			<column name="CODE" value="CAT_UNDEFINED"/>
 			<column name="IS_DEFAULT" valueBoolean="false"/>
 			<column name="ICON_NAME" value="def_cat_undefined"/>		
@@ -443,7 +443,7 @@
 			<column name="ITEM_TYPE" value="SYS"/>
 			<column name="LIST_ID" value="1" />
 			<column name="ITEM_INDEX" value="6"/>
-			<column name="LABEL" value="requirement.category.ERGONOMIC" />
+			<column name="LABEL" value="requirement.category.CAT_ERGONOMIC" />
 			<column name="CODE" value="CAT_ERGONOMIC"/>
 			<column name="IS_DEFAULT" valueBoolean="false"/>
 			<column name="ICON_NAME" value="def_cat_ergonomic"/>		
@@ -454,7 +454,7 @@
 			<column name="ITEM_TYPE" value="SYS"/>
 			<column name="LIST_ID" value="1" />
 			<column name="ITEM_INDEX" value="7"/>
-			<column name="LABEL" value="requirement.category.PERFORMANCE" />
+			<column name="LABEL" value="requirement.category.CAT_PERFORMANCE" />
 			<column name="CODE" value="CAT_PERFORMANCE"/>
 			<column name="IS_DEFAULT" valueBoolean="false"/>
 			<column name="ICON_NAME" value="def_cat_performance"/>		
@@ -465,7 +465,7 @@
 			<column name="ITEM_TYPE" value="SYS"/>
 			<column name="LIST_ID" value="1" />
 			<column name="ITEM_INDEX" value="8"/>
-			<column name="LABEL" value="requirement.category.TECHNICAL" />
+			<column name="LABEL" value="requirement.category.CAT_TECHNICAL" />
 			<column name="CODE" value="CAT_TECHNICAL"/>
 			<column name="IS_DEFAULT" valueBoolean="false"/>
 			<column name="ICON_NAME" value="def_cat_technical"/>		
@@ -476,7 +476,7 @@
 			<column name="ITEM_TYPE" value="SYS"/>
 			<column name="LIST_ID" value="1" />
 			<column name="ITEM_INDEX" value="9"/>
-			<column name="LABEL" value="requirement.category.USER_STORY" />
+			<column name="LABEL" value="requirement.category.CAT_USER_STORY" />
 			<column name="CODE" value="CAT_USER_STORY"/>
 			<column name="IS_DEFAULT" valueBoolean="false"/>
 			<column name="ICON_NAME" value="def_cat_user-story"/>		
@@ -487,7 +487,7 @@
 			<column name="ITEM_TYPE" value="SYS"/>
 			<column name="LIST_ID" value="1" />
 			<column name="ITEM_INDEX" value="10"/>
-			<column name="LABEL" value="requirement.category.SECURITY" />
+			<column name="LABEL" value="requirement.category.CAT_SECURITY" />
 			<column name="CODE" value="CAT_SECURITY"/>
 			<column name="IS_DEFAULT" valueBoolean="false"/>
 			<column name="ICON_NAME" value="def_cat_security"/>		
@@ -512,7 +512,7 @@
 			<column name="ITEM_TYPE" value="SYS"/>
 			<column name="LIST_ID" value="2" />
 			<column name="ITEM_INDEX" value="0"/>
-			<column name="LABEL" value="test-case.nature.UNDEFINED" />
+			<column name="LABEL" value="test-case.nature.NAT_UNDEFINED" />
 			<column name="CODE" value="NAT_UNDEFINED"/>
 			<column name="IS_DEFAULT" valueBoolean="true"/>
 			<column name="ICON_NAME" value="noicon"/>		
@@ -523,7 +523,7 @@
 			<column name="ITEM_TYPE" value="SYS"/>
 			<column name="LIST_ID" value="2" />
 			<column name="ITEM_INDEX" value="1"/>
-			<column name="LABEL" value="test-case.nature.FUNCTIONAL_TESTING" />
+			<column name="LABEL" value="test-case.nature.NAT_FUNCTIONAL_TESTING" />
 			<column name="CODE" value="NAT_FUNCTIONAL_TESTING"/>
 			<column name="IS_DEFAULT" valueBoolean="false"/>
 			<column name="ICON_NAME" value="noicon"/>		
@@ -534,7 +534,7 @@
 			<column name="ITEM_TYPE" value="SYS"/>
 			<column name="LIST_ID" value="2" />
 			<column name="ITEM_INDEX" value="2"/>
-			<column name="LABEL" value="test-case.nature.BUSINESS_TESTING" />
+			<column name="LABEL" value="test-case.nature.NAT_BUSINESS_TESTING" />
 			<column name="CODE" value="NAT_BUSINESS_TESTING"/>
 			<column name="IS_DEFAULT" valueBoolean="false"/>
 			<column name="ICON_NAME" value="noicon"/>		
@@ -545,7 +545,7 @@
 			<column name="ITEM_TYPE" value="SYS"/>
 			<column name="LIST_ID" value="2" />
 			<column name="ITEM_INDEX" value="3"/>
-			<column name="LABEL" value="test-case.nature.USER_TESTING" />
+			<column name="LABEL" value="test-case.nature.NAT_USER_TESTING" />
 			<column name="CODE" value="NAT_USER_TESTING"/>
 			<column name="IS_DEFAULT" valueBoolean="false"/>
 			<column name="ICON_NAME" value="noicon"/>		
@@ -556,7 +556,7 @@
 			<column name="ITEM_TYPE" value="SYS"/>
 			<column name="LIST_ID" value="2" />
 			<column name="ITEM_INDEX" value="4"/>
-			<column name="LABEL" value="test-case.nature.NON_FUNCTIONAL_TESTING" />
+			<column name="LABEL" value="test-case.nature.NAT_NON_FUNCTIONAL_TESTING" />
 			<column name="CODE" value="NAT_NON_FUNCTIONAL_TESTING"/>
 			<column name="IS_DEFAULT" valueBoolean="false"/>
 			<column name="ICON_NAME" value="noicon"/>		
@@ -567,7 +567,7 @@
 			<column name="ITEM_TYPE" value="SYS"/>
 			<column name="LIST_ID" value="2" />
 			<column name="ITEM_INDEX" value="5"/>
-			<column name="LABEL" value="test-case.nature.PERFORMANCE_TESTING" />
+			<column name="LABEL" value="test-case.nature.NAT_PERFORMANCE_TESTING" />
 			<column name="CODE" value="NAT_PERFORMANCE_TESTING"/>
 			<column name="IS_DEFAULT" valueBoolean="false"/>
 			<column name="ICON_NAME" value="noicon"/>		
@@ -578,7 +578,7 @@
 			<column name="ITEM_TYPE" value="SYS"/>
 			<column name="LIST_ID" value="2" />
 			<column name="ITEM_INDEX" value="6"/>
-			<column name="LABEL" value="test-case.nature.SECURITY_TESTING" />
+			<column name="LABEL" value="test-case.nature.NAT_SECURITY_TESTING" />
 			<column name="CODE" value="NAT_SECURITY_TESTING"/>
 			<column name="IS_DEFAULT" valueBoolean="false"/>
 			<column name="ICON_NAME" value="noicon"/>		
@@ -589,7 +589,7 @@
 			<column name="ITEM_TYPE" value="SYS"/>
 			<column name="LIST_ID" value="2" />
 			<column name="ITEM_INDEX" value="7"/>
-			<column name="LABEL" value="test-case.nature.ATDD" />
+			<column name="LABEL" value="test-case.nature.NAT_ATDD" />
 			<column name="CODE" value="NAT_ATDD"/>
 			<column name="IS_DEFAULT" valueBoolean="false"/>
 			<column name="ICON_NAME" value="noicon"/>		
@@ -613,7 +613,7 @@
 			<column name="ITEM_TYPE" value="SYS"/>
 			<column name="LIST_ID" value="3" />
 			<column name="ITEM_INDEX" value="0"/>
-			<column name="LABEL" value="test-case.type.UNDEFINED" />
+			<column name="LABEL" value="test-case.type.TYP_UNDEFINED" />
 			<column name="CODE" value="TYP_UNDEFINED"/>
 			<column name="IS_DEFAULT" valueBoolean="true"/>
 			<column name="ICON_NAME" value="noicon"/>		
@@ -624,7 +624,7 @@
 			<column name="ITEM_TYPE" value="SYS"/>
 			<column name="LIST_ID" value="3" />
 			<column name="ITEM_INDEX" value="1"/>
-			<column name="LABEL" value="test-case.type.COMPLIANCE_TESTING" />
+			<column name="LABEL" value="test-case.type.TYP_COMPLIANCE_TESTING" />
 			<column name="CODE" value="TYP_COMPLIANCE_TESTING"/>
 			<column name="IS_DEFAULT" valueBoolean="false"/>
 			<column name="ICON_NAME" value="noicon"/>		
@@ -635,7 +635,7 @@
 			<column name="ITEM_TYPE" value="SYS"/>
 			<column name="LIST_ID" value="3" />
 			<column name="ITEM_INDEX" value="2"/>
-			<column name="LABEL" value="test-case.type.CORRECTION_TESTING" />
+			<column name="LABEL" value="test-case.type.TYP_CORRECTION_TESTING" />
 			<column name="CODE" value="TYP_CORRECTION_TESTING"/>
 			<column name="IS_DEFAULT" valueBoolean="false"/>
 			<column name="ICON_NAME" value="noicon"/>		
@@ -646,7 +646,7 @@
 			<column name="ITEM_TYPE" value="SYS"/>
 			<column name="LIST_ID" value="3" />
 			<column name="ITEM_INDEX" value="3"/>
-			<column name="LABEL" value="test-case.type.EVOLUTION_TESTING" />
+			<column name="LABEL" value="test-case.type.TYP_EVOLUTION_TESTING" />
 			<column name="CODE" value="TYP_EVOLUTION_TESTING"/>
 			<column name="IS_DEFAULT" valueBoolean="false"/>
 			<column name="ICON_NAME" value="noicon"/>		
@@ -657,7 +657,7 @@
 			<column name="ITEM_TYPE" value="SYS"/>
 			<column name="LIST_ID" value="3" />
 			<column name="ITEM_INDEX" value="4"/>
-			<column name="LABEL" value="test-case.type.REGRESSION_TESTING" />
+			<column name="LABEL" value="test-case.type.TYP_REGRESSION_TESTING" />
 			<column name="CODE" value="TYP_REGRESSION_TESTING"/>
 			<column name="IS_DEFAULT" valueBoolean="false"/>
 			<column name="ICON_NAME" value="noicon"/>		
@@ -668,7 +668,7 @@
 			<column name="ITEM_TYPE" value="SYS"/>
 			<column name="LIST_ID" value="3" />
 			<column name="ITEM_INDEX" value="5"/>
-			<column name="LABEL" value="test-case.type.END_TO_END_TESTING" />
+			<column name="LABEL" value="test-case.type.TYP_END_TO_END_TESTING" />
 			<column name="CODE" value="TYP_END_TO_END_TESTING"/>
 			<column name="IS_DEFAULT" valueBoolean="false"/>
 			<column name="ICON_NAME" value="noicon"/>		
@@ -679,7 +679,7 @@
 			<column name="ITEM_TYPE" value="SYS"/>
 			<column name="LIST_ID" value="3" />
 			<column name="ITEM_INDEX" value="6"/>
-			<column name="LABEL" value="test-case.type.PARTNER_TESTING" />
+			<column name="LABEL" value="test-case.type.TYP_PARTNER_TESTING" />
 			<column name="CODE" value="TYP_PARTNER_TESTING"/>
 			<column name="IS_DEFAULT" valueBoolean="false"/>
 			<column name="ICON_NAME" value="noicon"/>		
@@ -816,50 +816,50 @@
 		
 		<sql>
 			update EXECUTION
-			set TC_NAT_LABEL = 'test-case.nature.UNDEFINED',
+			set TC_NAT_LABEL = 'test-case.nature.NAT_UNDEFINED',
 				TC_NAT_CODE = 'NAT_UNDEFINED',
 				TC_NAT_ICON_NAME = 'noicon'
 			where TC_NATURE='UNDEFINED';
 			
 			update EXECUTION
-			set TC_NAT_LABEL = 'test-case.nature.FUNCTIONAL_TESTING',
+			set TC_NAT_LABEL = 'test-case.nature.NAT_FUNCTIONAL_TESTING',
 				TC_NAT_CODE = 'NAT_FUNCTIONAL_TESTING',
 				TC_NAT_ICON_NAME = 'noicon'
 			where TC_NATURE='FUNCTIONAL_TESTING';		
 			
 			update EXECUTION
-			set TC_NAT_LABEL = 'test-case.nature.BUSINESS_TESTING',
+			set TC_NAT_LABEL = 'test-case.nature.NAT_BUSINESS_TESTING',
 				TC_NAT_CODE = 'NAT_BUSINESS_TESTING',
 				TC_NAT_ICON_NAME = 'noicon'
 			where TC_NATURE='BUSINESS_TESTING';				
 			
 			
 			update EXECUTION
-			set TC_NAT_LABEL = 'test-case.nature.USER_TESTING',
+			set TC_NAT_LABEL = 'test-case.nature.NAT_USER_TESTING',
 				TC_NAT_CODE = 'NAT_USER_TESTING',
 				TC_NAT_ICON_NAME = 'noicon'
 			where TC_NATURE='USER_TESTING';				
 			
 			update EXECUTION
-			set TC_NAT_LABEL = 'test-case.nature.NON_FUNCTIONAL_TESTING',
+			set TC_NAT_LABEL = 'test-case.nature.NAT_NON_FUNCTIONAL_TESTING',
 				TC_NAT_CODE = 'NAT_NON_FUNCTIONAL_TESTING',
 				TC_NAT_ICON_NAME = 'noicon'
 			where TC_NATURE='NON_FUNCTIONAL_TESTING';		
 			
 			update EXECUTION
-			set TC_NAT_LABEL = 'test-case.nature.PERFORMANCE_TESTING',
+			set TC_NAT_LABEL = 'test-case.nature.NAT_PERFORMANCE_TESTING',
 				TC_NAT_CODE = 'NAT_PERFORMANCE_TESTING',
 				TC_NAT_ICON_NAME = 'noicon'
 			where TC_NATURE='PERFORMANCE_TESTING';	
 			
 			update EXECUTION
-			set TC_NAT_LABEL = 'test-case.nature.SECURITY_TESTING',
+			set TC_NAT_LABEL = 'test-case.nature.NAT_SECURITY_TESTING',
 				TC_NAT_CODE = 'NAT_SECURITY_TESTING',
 				TC_NAT_ICON_NAME = 'noicon'
 			where TC_NATURE='SECURITY_TESTING';			
 			
 			update EXECUTION
-			set TC_NAT_LABEL = 'test-case.nature.ATDD',
+			set TC_NAT_LABEL = 'test-case.nature.NAT_ATDD',
 				TC_NAT_CODE = 'NAT_ATDD',
 				TC_NAT_ICON_NAME = 'noicon'
 			where TC_NATURE='ATDD';		
@@ -868,43 +868,43 @@
 					
 			
 			update EXECUTION
-			set TC_TYP_LABEL = 'test-case.type.UNDEFINED',
+			set TC_TYP_LABEL = 'test-case.type.TYP_UNDEFINED',
 				TC_TYP_CODE = 'TYP_UNDEFINED',
 				TC_TYP_ICON_NAME = 'noicon'
 			where TC_TYPE='UNDEFINED';			
 			
 			update EXECUTION
-			set TC_TYP_LABEL = 'test-case.type.COMPLIANCE_TESTING',
+			set TC_TYP_LABEL = 'test-case.type.TYP_COMPLIANCE_TESTING',
 				TC_TYP_CODE = 'TYP_COMPLIANCE_TESTING',
 				TC_TYP_ICON_NAME = 'noicon'
 			where TC_TYPE='COMPLIANCE_TESTING';	
 			
 			update EXECUTION
-			set TC_TYP_LABEL = 'test-case.type.CORRECTION_TESTING',
+			set TC_TYP_LABEL = 'test-case.type.TYP_CORRECTION_TESTING',
 				TC_TYP_CODE = 'TYP_CORRECTION_TESTING',
 				TC_TYP_ICON_NAME = 'noicon'
 			where TC_TYPE='CORRECTION_TESTING';		
 			
 			update EXECUTION
-			set TC_TYP_LABEL = 'test-case.type.EVOLUTION_TESTING',
+			set TC_TYP_LABEL = 'test-case.type.TYP_EVOLUTION_TESTING',
 				TC_TYP_CODE = 'TYP_EVOLUTION_TESTING',
 				TC_TYP_ICON_NAME = 'noicon'
 			where TC_TYPE='EVOLUTION_TESTING';	
 			
 			update EXECUTION
-			set TC_TYP_LABEL = 'test-case.type.REGRESSION_TESTING',
+			set TC_TYP_LABEL = 'test-case.type.TYP_REGRESSION_TESTING',
 				TC_TYP_CODE = 'TYP_REGRESSION_TESTING',
 				TC_TYP_ICON_NAME = 'noicon'
 			where TC_TYPE='REGRESSION_TESTING';	
 			
 			update EXECUTION
-			set TC_TYP_LABEL = 'test-case.type.END_TO_END_TESTING',
+			set TC_TYP_LABEL = 'test-case.type.TYP_END_TO_END_TESTING',
 				TC_TYP_CODE = 'TYP_END_TO_END_TESTING',
 				TC_TYP_ICON_NAME = 'noicon'
 			where TC_TYPE='END_TO_END_TESTING';		
 			
 			update EXECUTION
-			set TC_TYP_LABEL = 'test-case.type.PARTNER_TESTING',
+			set TC_TYP_LABEL = 'test-case.type.TYP_PARTNER_TESTING',
 				TC_TYP_CODE = 'TYP_PARTNER_TESTING',
 				TC_TYP_ICON_NAME = 'noicon'
 			where TC_TYPE='PARTNER_TESTING';								

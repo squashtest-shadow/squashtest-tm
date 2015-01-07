@@ -20,22 +20,33 @@
  */
 package org.squashtest.tm.web.internal.controller.search;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import javax.inject.Inject;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Component;
-import org.squashtest.tm.domain.requirement.RequirementCategory;
+import org.squashtest.tm.domain.infolist.InfoList;
+import org.squashtest.tm.domain.infolist.InfoListItem;
+import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.requirement.RequirementCriticality;
 import org.squashtest.tm.domain.requirement.RequirementStatus;
+import org.squashtest.tm.service.project.ProjectFinder;
 import org.squashtest.tm.service.requirement.RequirementVersionAdvancedSearchService;
+import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 
 @Component
 public class RequirementVersionSearchInterfaceDescription extends SearchInterfaceDescription {
 	@Inject
 	private RequirementVersionAdvancedSearchService advancedSearchService;
+
+	@Inject
+	private ProjectFinder projectFinder;
 
 	public SearchInputPanelModel createRequirementInformationPanel(Locale locale) {
 		SearchInputPanelModel panel = new SearchInputPanelModel();
@@ -80,13 +91,10 @@ public class RequirementVersionSearchInterfaceDescription extends SearchInterfac
 				.useLocale(locale).build();
 		criticalityField.addPossibleValues(importanceOptions);
 
-		SearchInputFieldModel categoryField = new SearchInputFieldModel("category", getMessageSource()
-				.internationalize("requirement.category.label", locale), MULTISELECT);
+
+		SearchInputFieldModel categoryField = buildCategoryFieldModel(locale);
 		panel.addField(categoryField);
 
-		List<SearchInputPossibleValueModel> natureOptions = internationalizableComboBuilder(
-				RequirementCategory.values()).useLocale(locale).build();
-		categoryField.addPossibleValues(natureOptions);
 
 		SearchInputFieldModel statusField = new SearchInputFieldModel("status", getMessageSource().internationalize(
 				"requirement.status.combo.label", locale), MULTISELECT);
@@ -241,5 +249,59 @@ public class RequirementVersionSearchInterfaceDescription extends SearchInterfac
 	public SearchInputPanelModel createRequirementPerimeterPanel(Locale locale) {
 		return perimeterPanelBuilder(locale).cssClass("search-icon-perimeter-blue").htmlId("requirement.project.id")
 				.build();
+	}
+
+	private SearchInputFieldModel buildCategoryFieldModel(Locale locale){
+
+
+		SearchInputFieldModel categoryField = new SearchInputFieldModel("category", getMessageSource().internationalize(
+				"requirement.category.label", locale), MULTICASCADEFLAT);
+
+
+		Collection<Project> readableProjects = projectFinder.findAllReadable();
+
+		Collection<InfoList> categories = new ArrayList<InfoList>(readableProjects.size());
+
+		for (Project p : readableProjects){
+			categories.add(p.getRequirementCategories());
+		}
+
+		populateInfoListFieldModel(categoryField, categories, locale);
+
+		return categoryField;
+
+	}
+
+
+	// get ready to puke !
+	private void populateInfoListFieldModel(SearchInputFieldModel model, Collection<InfoList> infoLists, Locale locale){
+
+		InternationalizationHelper messages = getMessageSource();
+		Map<String, SearchInputPossibleValueModel> listsByListCode = new HashMap<String, SearchInputPossibleValueModel>();
+
+		for (InfoList list : infoLists){
+			if (! listsByListCode.containsKey(list.getCode())){
+
+				String listName = messages.getMessage(list.getLabel(), null, list.getLabel(), locale);
+				String listCode = list.getCode();
+				SearchInputPossibleValueModel listValues = new SearchInputPossibleValueModel(listName, listCode);
+
+				SearchInputFieldModel subInput = new SearchInputFieldModel();
+
+				for (InfoListItem item : list.getItems()){
+					String itemName = messages.getMessage(item.getLabel(), null, item.getLabel(), locale);
+					String itemCode = item.getCode();
+					subInput.addPossibleValue(new SearchInputPossibleValueModel(itemName, itemCode));
+				}
+
+				listValues.setSubInput(subInput);
+
+				listsByListCode.put(list.getCode(), listValues);
+
+			}
+		}
+
+		model.setPossibleValues(new ArrayList<SearchInputPossibleValueModel>(listsByListCode.values()));
+
 	}
 }

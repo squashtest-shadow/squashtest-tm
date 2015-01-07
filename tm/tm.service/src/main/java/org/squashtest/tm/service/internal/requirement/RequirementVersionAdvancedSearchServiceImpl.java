@@ -54,7 +54,7 @@ import org.squashtest.tm.service.requirement.RequirementVersionAdvancedSearchSer
 
 @Service("squashtest.tm.service.RequirementVersionAdvancedSearchService")
 public class RequirementVersionAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl implements
-		RequirementVersionAdvancedSearchService {
+RequirementVersionAdvancedSearchService {
 
 	@Inject
 	private SessionFactory sessionFactory;
@@ -67,18 +67,18 @@ public class RequirementVersionAdvancedSearchServiceImpl extends AdvancedSearchS
 
 
 	private final static SortField[] DEFAULT_SORT_REQUIREMENTS = new SortField[] {
-			new SortField("requirement.project.name", SortField.STRING, false),
-			new SortField("reference", SortField.STRING, false), new SortField("criticality", SortField.STRING, false),
-			new SortField("category", SortField.STRING, false), new SortField("status", SortField.STRING, false),
-			new SortField("labelUpperCased", SortField.STRING, false) };
-	
+		new SortField("requirement.project.name", SortField.STRING, false),
+		new SortField("reference", SortField.STRING, false), new SortField("criticality", SortField.STRING, false),
+		new SortField("category", SortField.STRING, false), new SortField("status", SortField.STRING, false),
+		new SortField("labelUpperCased", SortField.STRING, false) };
+
 	private final static List<String> LONG_SORTABLE_FIELDS = Arrays.asList(
-			  "requirement.id", 
-			  "versionNumber", 
-			  "id", 
-			  "requirement.versions",
-			  "testcases",
-			  "attachments"
+			"requirement.id",
+			"versionNumber",
+			"id",
+			"requirement.versions",
+			"testcases",
+			"attachments"
 			);
 
 	@Override
@@ -118,8 +118,8 @@ public class RequirementVersionAdvancedSearchServiceImpl extends AdvancedSearchS
 		return hibQuery.list();
 
 	}
-	
-	
+
+
 	private Sort getRequirementVersionSort(List<Sorting> sortings, MessageSource source, Locale locale) {
 
 		if (sortings == null || sortings.size() == 0) {
@@ -141,8 +141,9 @@ public class RequirementVersionAdvancedSearchServiceImpl extends AdvancedSearchS
 
 			if (LONG_SORTABLE_FIELDS.contains(fieldName)) {
 				sortFieldArray[i] = new SortField(fieldName, SortField.LONG, isReverse);
-			} else if ("category".equals(fieldName)) {
-				sortFieldArray[i] = new SortField(fieldName, new RequirementVersionCategoryComparatorSource(source,
+			}
+			else if ("category".equals(fieldName)) {
+				sortFieldArray[i] = new SortField(fieldName, new InfoListItemComparatorSource(source,
 						locale), isReverse);
 			} else {
 				sortFieldArray[i] = new SortField(fieldName, SortField.STRING, isReverse);

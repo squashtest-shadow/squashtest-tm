@@ -70,14 +70,8 @@ public class RequirementWorkspaceController extends WorkspaceController<Requirem
 
 	@Override
 	protected void populateModel(Model model, Locale locale) {
-
 		List<Library<RequirementLibraryNode<?>>> libraries = workspaceService.findAllImportableLibraries();
-		List<RequirementCategory> categories = sortCategories();
-
 		model.addAttribute("editableLibraries", libraries);
-		model.addAttribute("categories", categories);
-
-
 	}
 
 	/**
@@ -87,12 +81,7 @@ public class RequirementWorkspaceController extends WorkspaceController<Requirem
 		return WorkspaceType.REQUIREMENT_WORKSPACE;
 	}
 
-	private List<RequirementCategory> sortCategories(){
-		InternationalizableComparator comparator = new InternationalizableComparator(getI18nHelper());
-		List<RequirementCategory> categories = Arrays.asList(RequirementCategory.values());
-		Collections.sort(categories, comparator);
-		return categories;
-	}
+
 
 	/**
 	 * @see org.squashtest.tm.web.internal.controller.generic.WorkspaceController#driveNodeBuilderProvider()

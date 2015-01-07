@@ -128,9 +128,12 @@ define(["jquery", "underscore", "jqueryui"], function($, _){
 		showPrimary : function(code){
 			var primarySelect = this._primarySelect();		
 		
-			primarySelect.find("option[value='"+code+"']").show();
+			var opt = primarySelect.find("option[value='"+code+"']");
+			opt.show();
+			if (opt.is(':selected')){
+				this.showSecondaryFrom(code);
+			}
 
-			this.showSecondaryFrom(code);
 		},
 		
 		_loopAndApplySecondaryFrom : function(primaryCode, methodname){

@@ -28,19 +28,20 @@ import org.apache.lucene.search.FieldCache;
 import org.apache.lucene.search.FieldComparator;
 import org.springframework.context.MessageSource;
 
-public class RequirementVersionCategoryComparator extends FieldComparator {
+public class InfoListItemComparator extends FieldComparator {
 
 	private String[] values;
 	private String[] currentReaderValues;
 	private final String field;
 	private String bottom;
-	private static final String I18N_KEY_ROOT = "requirement.category.";
+	private String i18nRoot;
 	private MessageSource source;
 	private Locale locale;
 
-	RequirementVersionCategoryComparator(int numHits, String field, MessageSource source, Locale locale) {
+	InfoListItemComparator(int numHits, String field, String i18nRoot, MessageSource source, Locale locale) {
 		values = new String[numHits];
 		this.field = field;
+		this.i18nRoot = i18nRoot;
 		this.source = source;
 		this.locale = locale;
 	}
@@ -58,8 +59,8 @@ public class RequirementVersionCategoryComparator extends FieldComparator {
 		} else if (val2 == null) {
 			result = 1;
 		} else {
-			String internationalizedVal1 = source.getMessage(I18N_KEY_ROOT + val1, null, locale);
-			String internationalizedVal2 = source.getMessage(I18N_KEY_ROOT + val2, null, locale);
+			String internationalizedVal1 = source.getMessage(i18nRoot + val1, null, val1, locale);
+			String internationalizedVal2 = source.getMessage(i18nRoot + val2, null, val2, locale);
 			result = internationalizedVal1.compareTo(internationalizedVal2);
 		}
 		return result;
@@ -77,7 +78,7 @@ public class RequirementVersionCategoryComparator extends FieldComparator {
 		} else if (val2 == null) {
 			result = 1;
 		} else {
-			String internationalizedVal2 = source.getMessage(I18N_KEY_ROOT + val2, null, locale);
+			String internationalizedVal2 = source.getMessage(i18nRoot + val2, null, val2, locale);
 			result = bottom.compareTo(internationalizedVal2);
 		}
 

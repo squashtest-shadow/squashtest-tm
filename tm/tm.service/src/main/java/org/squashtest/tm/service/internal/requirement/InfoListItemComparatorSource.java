@@ -27,12 +27,16 @@ import org.apache.lucene.search.FieldComparator;
 import org.apache.lucene.search.FieldComparatorSource;
 import org.springframework.context.MessageSource;
 
-public class RequirementVersionCategoryComparatorSource extends FieldComparatorSource{
+public class InfoListItemComparatorSource extends FieldComparatorSource{
 
 	private static final long serialVersionUID = 1L;
 	private MessageSource source;
 	private Locale locale;
-	
+
+	private static final String INFO_NATURE = "nature";
+	private static final String INFO_TYPE = "type";
+	private static final String INFO_CATEGORY = "category";
+
 	public MessageSource getSource() {
 		return source;
 	}
@@ -41,13 +45,22 @@ public class RequirementVersionCategoryComparatorSource extends FieldComparatorS
 		return locale;
 	}
 
-	public RequirementVersionCategoryComparatorSource(MessageSource source, Locale locale) {
+	public InfoListItemComparatorSource(MessageSource source, Locale locale) {
 		this.source = source;
 		this.locale = locale;
 	}
 
 	@Override
 	public FieldComparator<?> newComparator(String fieldname, int numHits, int sortPos, boolean reversed) throws IOException {
-		return new RequirementVersionCategoryComparator(numHits, fieldname, this.source, this.locale);
+		// quick and dirty
+		String i18nRoot = null;
+		switch(fieldname){
+		case INFO_NATURE : i18nRoot = "test-case.nature."; break;
+		case INFO_TYPE : i18nRoot = "test-case.type."; break;
+		case INFO_CATEGORY : i18nRoot = "requirement.category."; break;
+		default : throw new IllegalArgumentException("\""+fieldname+"\" references no known infolist. This is a programming bug, whip the dev responsible for that.");
+		}
+
+		return new InfoListItemComparator(numHits, fieldname, i18nRoot, this.source, this.locale);
 	}
 }

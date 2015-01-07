@@ -55,6 +55,10 @@
   		},
   		searchFormModel : /*[[ ${formModel} ]]*/ {}
   	};
+  	
+  	// copy the project metadata where our modules expect them to be
+  	squashtm.workspace = squashtm.workspace || {};
+  	squashtm.workspace.projects = squashtm.app.searchFormModel.metadata.projects;
   </script>
   <!-- common head -->
   <link rel="stylesheet" type="text/css" media="all"
