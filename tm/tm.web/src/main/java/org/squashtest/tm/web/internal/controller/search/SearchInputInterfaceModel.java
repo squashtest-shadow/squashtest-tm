@@ -21,21 +21,37 @@
 package org.squashtest.tm.web.internal.controller.search;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class SearchInputInterfaceModel {
 
 	private List<SearchInputPanelModel> panels = new ArrayList<SearchInputPanelModel>();
-	
+
+	private Map<String, Object> metadata = new HashMap<String, Object>();
+
 	SearchInputInterfaceModel(){
-		
+
 	}
-	
+
 	public void addPanel(SearchInputPanelModel panel){
 		this.panels.add(panel);
 	}
-	
+
 	public List<SearchInputPanelModel> getPanels(){
 		return this.panels;
+	}
+
+	public Map<String, Object> getMetadata() {
+		return metadata;
+	}
+
+	public void setMetadata(Map<String, Object> metadata) {
+		this.metadata = metadata;
+	}
+
+	public void addMetadata(String key, Object value){
+		this.metadata.put(key,  value);
 	}
 }

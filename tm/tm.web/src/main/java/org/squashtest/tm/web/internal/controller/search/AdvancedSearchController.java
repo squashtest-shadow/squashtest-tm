@@ -68,6 +68,7 @@ import org.squashtest.tm.service.campaign.CampaignTestPlanManagerService;
 import org.squashtest.tm.service.campaign.IterationModificationService;
 import org.squashtest.tm.service.campaign.IterationTestPlanManagerService;
 import org.squashtest.tm.service.campaign.TestSuiteTestPlanManagerService;
+import org.squashtest.tm.service.project.ProjectFinder;
 import org.squashtest.tm.service.requirement.RequirementVersionAdvancedSearchService;
 import org.squashtest.tm.service.requirement.VerifiedRequirement;
 import org.squashtest.tm.service.requirement.VerifiedRequirementsManagerService;
@@ -77,17 +78,20 @@ import org.squashtest.tm.service.testcase.VerifyingTestCaseManagerService;
 import org.squashtest.tm.web.internal.controller.AcceptHeaders;
 import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
+import org.squashtest.tm.web.internal.model.builder.JsonProjectBuilder;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelBuilder;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelConstants;
 import org.squashtest.tm.web.internal.model.datatable.DataTableMultiSorting;
+import org.squashtest.tm.web.internal.model.json.JsonProject;
 import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
 import org.squashtest.tm.web.internal.model.viewmapper.NameBasedMapper;
 
 @Controller
 @RequestMapping("/advanced-search")
 public class AdvancedSearchController {
+	private static final String PROJECTS_META = "projects";
 	private static final Logger LOGGER = LoggerFactory.getLogger(AdvancedSearchController.class);
 
 	private static interface FormModelBuilder {
@@ -105,27 +109,39 @@ public class AdvancedSearchController {
 	private static final String SEARCH_DOMAIN = "searchDomain";
 	private static final String TESTCASE_VIA_REQUIREMENT = "testcaseViaRequirement";
 
+	@Inject
+	private ProjectFinder projectFinder;
+
+	@Inject
+	private JsonProjectBuilder jsProjectBuilder;
+
 	private Map<String, FormModelBuilder> formModelBuilder = new HashMap<String, AdvancedSearchController.FormModelBuilder>();
 
 	{
 		formModelBuilder.put(TESTCASE, new FormModelBuilder() {
 			@Override
 			public SearchInputInterfaceModel build(Locale locale) {
-				return getTestCaseSearchInputInterfaceModel(locale);
+				SearchInputInterfaceModel model = getTestCaseSearchInputInterfaceModel(locale);
+				populateMetadata(model);
+				return model;
 			}
 		});
 
 		formModelBuilder.put(TESTCASE_VIA_REQUIREMENT, new FormModelBuilder() {
 			@Override
 			public SearchInputInterfaceModel build(Locale locale) {
-				return getTestCaseViaRequirementSearchInputInterfaceModel(locale);
+				SearchInputInterfaceModel model =  getTestCaseViaRequirementSearchInputInterfaceModel(locale);
+				populateMetadata(model);
+				return model;
 			}
 		});
 
 		formModelBuilder.put(REQUIREMENT, new FormModelBuilder() {
 			@Override
 			public SearchInputInterfaceModel build(Locale locale) {
-				return getRequirementSearchInputInterfaceModel(locale);
+				SearchInputInterfaceModel model =  getRequirementSearchInputInterfaceModel(locale);
+				populateMetadata(model);
+				return model;
 			}
 		});
 	}
@@ -750,6 +766,20 @@ public class AdvancedSearchController {
 		model.setId(multifield.getCode());
 		model.setIgnoreBridge(true);
 		return model;
+
+	}
+
+
+	private void populateMetadata(SearchInputInterfaceModel model){
+
+		List<Project> readableProjects = projectFinder.findAllReadable();
+		List<JsonProject> jsonified = new ArrayList<JsonProject>(readableProjects.size());
+
+		for (Project p : readableProjects){
+			jsonified.add(jsProjectBuilder.toExtendedProject(p));
+		}
+
+		model.addMetadata(PROJECTS_META, jsonified);
 
 	}
 }

@@ -23,7 +23,6 @@ package org.squashtest.tm.web.internal.controller.search;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -36,13 +35,10 @@ import org.squashtest.tm.domain.infolist.InfoList;
 import org.squashtest.tm.domain.infolist.InfoListItem;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.testcase.TestCaseImportance;
-import org.squashtest.tm.domain.testcase.TestCaseNature;
 import org.squashtest.tm.domain.testcase.TestCaseStatus;
-import org.squashtest.tm.domain.testcase.TestCaseType;
 import org.squashtest.tm.service.project.ProjectFinder;
 import org.squashtest.tm.service.testcase.TestCaseAdvancedSearchService;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
-import org.squashtest.tm.web.internal.model.builder.JsonProjectBuilder;
 
 @Component
 public class TestcaseSearchInterfaceDescription extends SearchInterfaceDescription {
@@ -53,8 +49,6 @@ public class TestcaseSearchInterfaceDescription extends SearchInterfaceDescripti
 	@Inject
 	private ProjectFinder projectFinder;
 
-	@Inject
-	private JsonProjectBuilder jsProjectBuilder;
 
 
 	public SearchInputPanelModel createGeneralInfoPanel(Locale locale) {

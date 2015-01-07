@@ -224,20 +224,31 @@
 			{{!--<![CDATA[--}}
 			<div class="display-search-table-row">
 				<label for="{{multicascadeflat-id}}" class="display-search-table-cell">{{multicascadeflat-title}}</label>
-				<div id="{{multicascadeflat-id}}" class="search-input">
-					<div data-widgetname="MultiCascadeFlat" data-fieldid="F{{multicascadeflat-id}}" class="search-input">
-						<select class="multicascadeflat-primary">
+				<div id="{{multicascadeflat-id}}" class="search-input" style="width:100%;">
+					<div data-widgetname="MultiCascadeFlat" data-fieldid="F{{multicascadeflat-id}}" >
+					<table>
+					<tr>
+					<td>
+						<select class="multicascadeflat-primary" multiple="multiple" style="display:inline-block">
 							{{#each options}}
 							<option value="{{this.code}}" {{selected}}>{{this.value}}</option>
 							{{/each}}
-						</select>
-						<select class="multicascadeflat-secondary">
+						</select>	
+					</td>
+					<td>
+						<span>&nbsp;&gt;&nbsp;</span>
+					</td>
+					<td>
+						<select class="multicascadeflat-secondary" multiple="multiple" style="display:inline-block">
 							{{#each options}}
 							{{#each this.subInput.possibleValues}}
 							<option value="{{this.code}}" {{selected}}>{{this.value}}</option>
 							{{/each}}
 							{{/each}}
 						</select>
+					</td>
+					</tr>
+					</table>
 					</div>
 				</div>
 			</div>

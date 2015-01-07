@@ -22,6 +22,10 @@
 
 define(["jquery"], function($){
 	
+	function getAll(){
+		return squashtm.workspace.projects;
+	}
+	
 	function findProject(idOrName){
 		var matches,
 			project,
@@ -76,6 +80,7 @@ define(["jquery"], function($){
 	
 
 	return {
+		getAll : getAll,
 		findProject : findProject,
 		haveDifferentInfolists : haveDifferentInfolists
 	};

@@ -18,13 +18,13 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ "jquery", "backbone", "handlebars", "squash.translator", "app/ws/squashtm.notification", "underscore", "squash.configmanager", 
-		"./SearchDateWidget", "./SearchRangeWidget", 
+define([ "jquery", "backbone", "handlebars", "squash.translator", "app/ws/squashtm.notification", "underscore", "workspace.projects", 
+         "squash.configmanager", "./SearchDateWidget", "./SearchRangeWidget", 
 		"./SearchExistsWidget","./SearchMultiAutocompleteWidget", "./SearchMultiSelectWidget", "./SearchCheckboxWidget", 
 		"./SearchComboMultiselectWidget", "./SearchRadioWidget", "./SearchTagsWidget", "./SearchMultiCascadeFlatWidget",
 		"jquery.squash", "jqueryui", "jquery.squash.togglepanel", "squashtable",
 		"jquery.squash.oneshotdialog", "jquery.squash.messagedialog", 
-		"jquery.squash.confirmdialog" ], function($, Backbone, Handlebars, translator, notification, _) {
+		"jquery.squash.confirmdialog" ], function($, Backbone, Handlebars, translator, notification, _, projects) {
 	
 	/**
 	 * handlebars helper. substitutes {{selected}} with selected="selected" when this.selected === true
@@ -218,14 +218,22 @@ define([ "jquery", "backbone", "handlebars", "squash.translator", "app/ws/squash
 			};
 			
 			this._processModel(formBuilder);
-			
-		
+
 			
 		},
 		
 		_processModel : function(formBuilder) {
 			if (!!squashtm.app.searchFormModel) {
+				
 				formBuilder(squashtm.app.searchFormModel);
+				
+				// last detail, we must also hook the project selector with the nature an type selectors
+				var self = this;
+				$("#perimeter-multiple-custom").on('change', function(){
+					self._updateAvailableInfolists();
+				});
+				// also, update immediately
+				self._updateAvailableInfolists();
 				
 			} else { // TODO legacy, remove that in Squash 1.9
 				$.ajax({
@@ -234,6 +242,14 @@ define([ "jquery", "backbone", "handlebars", "squash.translator", "app/ws/squash
 					dataType : "json"
 				}).success(function() {
 					formBuilder(squashtm.app.searchFormModel);
+					
+					// last detail, we must also hook the project selector with the nature an type selectors
+					var self = this;
+					$("#perimeter-multiple-custom").on('change', function(){
+						self._updateAvailableInfolists();
+					});
+					// also, update immediately
+					self._updateAvailableInfolists();
 				});
 			}
 		},
@@ -392,7 +408,7 @@ define([ "jquery", "backbone", "handlebars", "squash.translator", "app/ws/squash
 			
 			var context = {"multicascadeflat-id" : fieldId, "multicascadeflat-title" : fieldTitle, options : options};
 			var $fieldDom = this._appendFieldDom(tableId, fieldId, this._compileTemplate("#multicascadeflat-template", context));
-			$fieldDom.multiCascadeFlat(options);
+			$fieldDom.searchMultiCascadeFlatWidget({ lists : options });
 		},		
 		
 		makeMultiAutocomplete : function(tableId, fieldId, fieldTitle, options, enteredValue) {
@@ -513,6 +529,51 @@ define([ "jquery", "backbone", "handlebars", "squash.translator", "app/ws/squash
 				}
 			});
 			return !hasCriteria;
+		},
+		
+		// that method knows about fields 'projects', 'nature', 'type' and 'category'
+		_updateAvailableInfolists : function(){
+
+			var selectedProjectIds = $("#perimeter-multiple-custom").val(),
+				allProjects = projects.getAll(),
+				nature = $("#nature"),
+				type = $("#type"),
+				category = $("#category");
+			
+			nature.searchMultiCascadeFlatWidget("hideAll");
+			type.searchMultiCascadeFlatWidget("hideAll");
+			category.searchMultiCascadeFlatWidget("hideAll");
+			
+			var natListCodes = [], 
+				typListCodes = [],
+				catListCodes = [];
+			
+			for (var i=0; i < allProjects.length; i++){
+				var project = allProjects[i],
+					pId = project.id;
+				
+				
+				// collecting which info lists are used by the current selection
+				// use of  ""+ dirty trick to cast that int to string
+				if ( $.inArray(""+pId, selectedProjectIds) !== -1) {
+					natListCodes.push( project.testCaseNatures.code );
+					typListCodes.push( project.testCaseTypes.code );
+					catListCodes.push (project.requirementCategories.code);
+				}
+				
+			}
+			
+			// now remove the duplicates
+			natListCodes = _.uniq(natListCodes, true);
+			typListCodes = _.uniq(typListCodes, true);
+			catListCodes = _.uniq(catListCodes, true);
+
+			// finally update the info lists
+			_.each(natListCodes, function(code) {nature.searchMultiCascadeFlatWidget("showPrimary", code);});
+			_.each(typListCodes, function(code) {type.searchMultiCascadeFlatWidget("showPrimary", code);});
+			_.each(catListCodes, function(code) {category.searchMultiCascadeFlatWidget("showPrimary", code);});
+
+			
 		}
 
 		
