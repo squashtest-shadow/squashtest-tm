@@ -403,7 +403,7 @@ define([ "jquery", "backbone", "handlebars", "squash.translator", "app/ws/squash
 					secondaryOpt.selected = (! enteredValue.values) || _.contains(enteredValue.values, secondaryOpt.code);					
 				});
 				
-				primaryOpt.selected = _.some(primaryOpt.subInput.possibleValues, function(sub){return (sub.selected === true)});
+				primaryOpt.selected = _.some(primaryOpt.subInput.possibleValues, function(sub){return (sub.selected === true);});
 			});
 			
 			var context = {"multicascadeflat-id" : fieldId, "multicascadeflat-title" : fieldTitle, options : options};
