@@ -189,7 +189,7 @@ define(["jquery", "./jqplot-view", "jqplot-pie"], function($, JqplotView){
 			
 			var perc, dec;
 			for (var i=0, leni=serie.length; i<leni ;i++){
-				dec=serie[i],
+				dec=serie[i];
 				perc = (dec * coef).toFixed();
 				labels.push(perc+"% ("+dec+")");
 			}

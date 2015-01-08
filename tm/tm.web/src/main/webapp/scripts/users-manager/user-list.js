@@ -315,7 +315,7 @@ define([ "jquery", "squash.translator",
 
 		table.on('click', 'a.user-active-btn', function(evt){
 
-			var tr = this.parentNode.parentNode;
+			var tr = this.parentNode.parentNode,
 				data = table.fnGetData(tr),
 				id = data['user-id'],
 				active = data['user-active'];

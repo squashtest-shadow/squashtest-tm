@@ -54,7 +54,7 @@ define(["jquery", "../domain/FieldValue", "squash.configmanager", "squash.dateut
 			var date,strDate;
 			if (fieldvalue===null || fieldvalue === undefined){
 				
-				date = this.element.datepicker('getDate'),
+				date = this.element.datepicker('getDate');
 				strDate = "";
 				
 				if (!! date){

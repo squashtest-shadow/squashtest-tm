@@ -63,9 +63,9 @@ define(["jquery", "../domain/FieldValue", "squash.configmanager", "squash.dateut
 								
 				var toTimeFormat = this.options.rendering.inputType.meta['time-format']; 
 				
-				date = this.element.datetimepicker('getDate'),
-					strTime = "",
-					strDate = "";
+				date = this.element.datetimepicker('getDate');
+				strTime = "";
+				strDate = "";
 				
 				if(!!date){
 					strDate = this.formatDate(date);

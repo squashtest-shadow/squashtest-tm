@@ -181,7 +181,7 @@ define(["jquery", "./jqplot-view", "jqplot-donut", "jqplot-highlight"],
 				
 				var perc, dec;
 				for (var i=0, leni=series[index].length; i<leni ;i++){
-					dec=series[index][i][1],
+					dec=series[index][i][1];
 					perc = (dec * coef).toFixed();
 					series[index][i][0] = perc+"%";
 				}

@@ -152,7 +152,7 @@ define(['jquery', 'squash.translator', 'datepicker/jquery.squash.datepicker-loca
 					} else if (v.length > 0) {
 						prv = cur = $.datepicker.parseDate(message.format, v).getTime();
 					}
-				} catch (e) {
+				} catch (exception) {
 					cur = prv = -1;
 				}
 

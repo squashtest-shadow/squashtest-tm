@@ -112,7 +112,7 @@ define(['jquery', 'workspace.event-bus', 'squash.translator', 'jqueryui', 'jquer
 			
 			// init variables
 			var openerId = dialog.data('opener-id'),
-				tblrow = table.getRowsByIds([openerId]);
+				tblrow = table.getRowsByIds([openerId]),
 				rowdata = table.fnGetData(tblrow.get(0)),
 				stepInfo = rowdata['call-step-info'],
 				thisTcName = $.trim($("#test-case-name").text()); // oooh that's ugly

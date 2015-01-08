@@ -57,7 +57,9 @@ define([ "jquery", "jqplot-category" ], function($) {
 				elt = userTicks[i];
 
 				if ($.isArray(elt)) {
-					start = elt[0], end = elt[1], label = elt[2];
+					start = elt[0];
+					end = elt[1];
+					label = elt[2];
 
 					// scheduled start. This one carries the label.
 					t = new this.tickRenderer(this.tickOptions);

@@ -154,7 +154,7 @@ define([ "jquery", "app/report/squashtm.reportworkspace", "tree", "underscore", 
 	function onViewTabSelected(event, ui) {
 		/*jshint validthis: true */
 		selectedTab = ui;
-		var tabs = $(this); // jshint shit bricks here in strict mode because "this" is possibly not bound
+		var tabs = $(this); // js hint shit bricks here in strict mode because "this" is possibly not bound
 		tabs.find(".view-format-cmb").addClass("not-displayed");
 		tabs.find("#view-format-cmb-" + ui.newTab.index()).removeClass("not-displayed");
 

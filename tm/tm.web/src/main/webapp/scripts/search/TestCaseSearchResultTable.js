@@ -44,11 +44,14 @@ define([ "jquery", "backbone", "squash.translator", "jeditable.simpleJEditable",
 			this.tableRowCallback = $.proxy(this._tableRowCallback, this);
 			this.addAssociationCheckboxes  = $.proxy(this._addAssociationCheckboxes, this);
 			
-			var self;
+			var self,
+				tableConf, 
+				squashConf;
 			
 			if(isAssociation){
 				
-				self = this, tableConf = {
+				self = this;
+				tableConf = {
 						"oLanguage" : {
 							"sUrl" : squashtm.app.contextRoot + "/datatables/messages"
 						},
@@ -162,13 +165,15 @@ define([ "jquery", "backbone", "squash.translator", "jeditable.simpleJEditable",
 							"bSortable" : false
 						} ],
 						"sDom" : 'ft<"dataTables_footer"lip>'
-					}, squashConf = {
+					};
+				squashConf = {
 						enableHover : true
 					};
 				
 				this.$el.squashTable(tableConf, squashConf);
 			} else {
-				self = this, tableConf = {
+				self = this;
+				tableConf = {
 						"oLanguage" : {
 							"sUrl" : squashtm.app.contextRoot + "/datatables/messages"
 						},
@@ -282,7 +287,8 @@ define([ "jquery", "backbone", "squash.translator", "jeditable.simpleJEditable",
 							"bSortable" : false
 						}],
 						"sDom" : 'ft<"dataTables_footer"lip>'
-					}, squashConf = {
+					};
+				squashConf = {
 						enableHover : true
 					};
 				
