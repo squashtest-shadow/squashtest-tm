@@ -187,7 +187,9 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil",
 			
 			var rows = table.getSelectedRows();
 			
-			if (rows.length === 0) return;
+			if (rows.length === 0){
+				return;
+			}
 
 			// reset the controls
 			$("#modify-search-result-dialog-project-conf-warning").hide();
