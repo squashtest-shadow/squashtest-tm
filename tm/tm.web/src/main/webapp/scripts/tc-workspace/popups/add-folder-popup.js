@@ -52,19 +52,6 @@ define(['jquery', 'tree', '../permissions-rules', 'jquery.squash.formdialog'], f
 			}			
 		});
 		
-		dialog.on('formdialogconfirm', function(){
-			var node = tree.jstree('get_selected');
-			var url = node.getResourceUrl();
-			var name = dialog.find("#new-folder-tree-button").val();
-			
-			$.post(url, {newName : name}, null, 'json')
-			.done(function(){
-				eventBus.trigger("node.rename", { identity : node.getIdentity(), newName : name});
-				dialog.formDialog('close');
-			});
-			
-		});
-		
 		// end
 
 		dialog.on('formdialogadd-close', function(){

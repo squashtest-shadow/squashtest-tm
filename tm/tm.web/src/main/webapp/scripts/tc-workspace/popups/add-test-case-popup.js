@@ -81,19 +81,6 @@ define(['jquery', 'tree', 'custom-field-values', 'workspace.projects', '../permi
 			}			
 		});
 		
-		dialog.on('formdialogconfirm', function(){
-			var node = tree.jstree('get_selected');
-			var url = node.getResourceUrl();
-			var name = dialog.find("#new-test-case-tree-button").val();
-			
-			$.post(url, {newName : name}, null, 'json')
-			.done(function(){
-				eventBus.trigger("node.rename", { identity : node.getIdentity(), newName : name});
-				dialog.formDialog('close');
-			});
-			
-		});
-		
 		// end
 		
 		

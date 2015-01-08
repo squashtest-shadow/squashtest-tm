@@ -41,7 +41,7 @@ define(['jquery', 'tree', 'custom-field-values', 'workspace.projects', '../permi
 		var cufHandler = cufValuesManager.newCreationPopupCUFHandler({table : table});
 		
 		dialog.on('formdialogopen', function(){
-			var projectId = tree.jstree('get_selected').attr('project');
+			var projectId = tree.jstree('get_selected').getProjectId();
 			var bindings = projects.findProject(projectId).customFieldBindings['CAMPAIGN'];
 			var cufs = $.map(bindings, function(b){return b.customField;});
 			
@@ -78,20 +78,7 @@ define(['jquery', 'tree', 'custom-field-values', 'workspace.projects', '../permi
 				dialog.find("#new-campaign-tree-button").val(name);				
 			}			
 		});
-		
-		dialog.on('formdialogconfirm', function(){
-			var node = tree.jstree('get_selected');
-			var url = node.getResourceUrl();
-			var name = dialog.find("#new-campaign-tree-button").val();
-			
-			$.post(url, {newName : name}, null, 'json')
-			.done(function(){
-				eventBus.trigger("node.rename", { identity : node.getIdentity(), newName : name});
-				dialog.formDialog('close');
-			});
-			
-		});
-		
+
 		// end
 	
 		dialog.on('formdialogadd-close', function(){

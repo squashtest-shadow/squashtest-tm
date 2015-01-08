@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.squashtest.tm.domain.customfield.RawValue;
+import org.squashtest.tm.domain.infolist.ListItemReference;
 
 /**
  * Data holder for requirement version creation. We cannot use a requirement version because of its constrained
@@ -112,6 +113,7 @@ public class NewRequirementVersionDto {
 
 		version.setReference(reference);
 		version.setDescription(description);
+		version.setCategory(new ListItemReference(category));
 
 		return version;
 	}
