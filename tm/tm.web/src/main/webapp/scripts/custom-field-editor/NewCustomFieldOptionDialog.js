@@ -19,7 +19,7 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 define([ "jquery", "backbone", "handlebars", "app/lnf/Forms",
-		"jquery.squash.confirmdialog" ], function($, Backbone, Handlebars,
+		"jquery.squash.formdialog" ], function($, Backbone, Handlebars,
 		Forms) {
 	var View = Backbone.View.extend({
 		el : "#add-cuf-option-popup",
@@ -27,15 +27,17 @@ define([ "jquery", "backbone", "handlebars", "app/lnf/Forms",
 		initialize : function() {
 
 			this.$el.find("input:text").val("");
-			this.$el.confirmDialog({
+			this._resetForm();
+			this.$el.formDialog({
 				autoOpen : true
 			});
 		},
 
 		events : {
-			"confirmdialogcancel" : "cancel",
-			"confirmdialogvalidate" : "validate",
-			"confirmdialogconfirm" : "confirm"
+			"formdialogcancel" : "cancel",
+			"formdialogvalidate" : "validate",
+			"formdialogaddanother" : "addanother",
+			"formdialogconfirm" : "validate"
 		},
 
 		cancel : function(event) {
@@ -48,6 +50,29 @@ define([ "jquery", "backbone", "handlebars", "app/lnf/Forms",
 			this.trigger("newOption.confirm");
 		},
 
+		addanother : function(event) {
+			var res = true;
+			this.populateModel();
+			var self = this;
+			Forms.form(this.$el).clearState();
+
+			$.ajax({
+				url : squashtm.app.cfMod.optionsTable.newOptionUrl,
+				type : 'POST',
+				data : self.model,
+				// note : we cannot use promise api with async param. see
+				// http://bugs.jquery.com/ticket/11013#comment:40
+				async : false,
+				dataType : 'json'
+			}).fail(function(jqXHR, textStatus, errorThrown) {
+				res = false;
+				event.preventDefault();
+			});
+			$('#options-table').squashTable().refresh();
+			this._resetForm();
+			return res;
+		},
+		
 		validate : function(event) {
 			var res = true;
 			this.populateModel();
@@ -66,14 +91,22 @@ define([ "jquery", "backbone", "handlebars", "app/lnf/Forms",
 				res = false;
 				event.preventDefault();
 			});
-
+			$('#options-table').squashTable().refresh();
+			this.$el.formDialog("close");
 			return res;
 		},
 
+		_resetForm : function() {
+			this.$textFields = this.$el.find("input:text");
+			this.$textFields.val("");
+			this.$errorMessages.text("");
+			Forms.form(this.$el).clearState();
+		},
+		
 		cleanup : function() {
 			this.$el.addClass("not-displayed");
 			Forms.form(this.$el).clearState();
-			this.$el.confirmDialog("destroy");
+			this.$el.formDialog("destroy");
 		},
 
 		populateModel : function() {

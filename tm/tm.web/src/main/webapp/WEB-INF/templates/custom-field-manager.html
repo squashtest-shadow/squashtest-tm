@@ -197,8 +197,9 @@
         <div id="default-value-pane" class="control-group"></div>
 
         <div class="popup-dialog-buttonpane">
-          <input class="confirm" type="button" value="OK" th:value="#{label.Ok}" />
-          <input class="cancel" type="button" value="Cancel" th:value="#{label.Cancel}" />
+          <input class="confirm" type="button" value="OK" th:value="#{label.addAnother}" data-def="mainbtn, evt=addanother"/>
+          <input class="confirm" type="button" value="OK" th:value="#{label.Add}" data-def="mainbtn, evt=validate"/>
+          <input class="cancel" type="button" value="Cancel" th:value="#{label.Cancel}" data-def="mainbtn, evt=cancel"/>
         </div>
 
         <script id="PLAIN_TEXT-default-tpl" type="text/x-handlebars-template" th:inline="text">

@@ -19,7 +19,7 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 define([ "jquery", "backbone", "handlebars", "app/lnf/Forms",
-		"jquery.squash.confirmdialog" ], function($, Backbone, Handlebars,  Forms) {
+		"jquery.squash.formdialog" ], function($, Backbone, Handlebars,  Forms) {
 	var View = Backbone.View.extend({
 		el : "#add-team-dialog",
 
@@ -32,19 +32,67 @@ define([ "jquery", "backbone", "handlebars", "app/lnf/Forms",
 		},
 
 		events : {
-			"confirmdialogcancel" : "cancel",
-			"confirmdialogvalidate" : "validate",
-			"confirmdialogconfirm" : "confirm"
+			"formdialogcancel" : "cancel",
+			"formdialogvalidate" : "validate",
+			"formdialogconfirm" : "confirm",
+			"formdialogaddanother" : "addanother"
 		},
 
+		addanother : function(event) {
+		
+			this.trigger("newteam.addanother");
+			var res = true, self = this;
+			this._populateModel();
+			Forms.form(this.$el).clearState();
+
+			$.ajax({
+				type : 'post',
+				url : squashtm.app.contextRoot + "/administration/teams/new",
+				dataType : 'json',
+				// note : we cannot use promise api with async param. see
+				// http://bugs.jquery.com/ticket/11013#comment:40
+				async : false,
+				data : self.model,
+				error : function(jqXHR, textStatus, errorThrown) {
+					res = false;
+					event.preventDefault();
+				}
+			});
+			this.$el.addClass("not-displayed");
+			this._resetForm();
+			$('#teams-table').squashTable().refresh();
+			return res;
+		},
+		
 		cancel : function(event) {
 			this.cleanup();
 			this.trigger("newteam.cancel");
 		},
 
 		confirm : function(event) {
-			this.cleanup();
+			var res = true, self = this;
+			this._populateModel();
+			Forms.form(this.$el).clearState();
+
+			$.ajax({
+				type : 'post',
+				url : squashtm.app.contextRoot + "/administration/teams/new",
+				dataType : 'json',
+				// note : we cannot use promise api with async param. see
+				// http://bugs.jquery.com/ticket/11013#comment:40
+				async : false,
+				data : self.model,
+				error : function(jqXHR, textStatus, errorThrown) {
+					res = false;
+					event.preventDefault();
+				}
+			});
+			$('#teams-table').squashTable().refresh();
 			this.trigger("newteam.confirm");
+			this.$el.formDialog("close");
+			return res;
+			
+
 		},
 
 		validate : function(event) {
@@ -72,7 +120,7 @@ define([ "jquery", "backbone", "handlebars", "app/lnf/Forms",
 		cleanup : function() {
 			this.$el.addClass("not-displayed");
 			this._resetForm();
-			this.$el.confirmDialog("close");
+			this.$el.formDialog("close");
 		},
 
 		/**
@@ -90,7 +138,7 @@ define([ "jquery", "backbone", "handlebars", "app/lnf/Forms",
 				this._initializeDialog();
 			}
 
-			this.$el.confirmDialog("open");
+			this.$el.formDialog("open");
 		},
 
 		_initializeDialog : function() {
@@ -103,7 +151,7 @@ define([ "jquery", "backbone", "handlebars", "app/lnf/Forms",
 			}
 
 			this.$textAreas.each(decorateArea);
-			this.$el.confirmDialog();
+			this.$el.formDialog();
 
 			this.dialogInitialized = true;
 		},

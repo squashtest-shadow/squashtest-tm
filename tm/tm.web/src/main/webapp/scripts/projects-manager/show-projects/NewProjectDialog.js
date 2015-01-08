@@ -19,7 +19,7 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 define([ "jquery", "backbone", "handlebars", "app/lnf/Forms",
-		"jquery.squash.confirmdialog" ], function($, Backbone, Handlebars,  Forms) {
+		"jquery.squash.formdialog" ], function($, Backbone, Handlebars,  Forms) {
 	var View = Backbone.View.extend({
 		el : "#add-project-dialog",
 
@@ -28,24 +28,52 @@ define([ "jquery", "backbone", "handlebars", "app/lnf/Forms",
 			this.$textAreas = this.$el.find("textarea");
 			this.$textFields = this.$el.find("input:text");
 			this.$errorMessages = this.$el.find("span.error-message");
-
+	
 			this._resetForm();
 		},
 
 		events : {
-			"confirmdialogcancel" : "cancel",
-			"confirmdialogvalidate" : "validate",
-			"confirmdialogconfirm" : "confirm"
+			"formdialogaddanother" : "addanother",
+			"formdialogconfirm" : "confirm",
+			"formdialogcancel" : "cancel",
+			"formdialogvalidate" : "validate"
 		},
 
 		cancel : function(event) {
 			this.cleanup();
 			this.trigger("newproject.cancel");
 		},
+		
+		addanother : function(event) {
+			var res = true, self = this;
+			this._populateModel();
+			Forms.form(this.$el).clearState();
 
-		confirm : function(event) {
-			this.cleanup();
+			$.ajax({
+				type : 'post',
+				url : squashtm.app.contextRoot + "/generic-projects/new",
+				dataType : 'json',
+				// note : we cannot use promise api with async param. see
+				// http://bugs.jquery.com/ticket/11013#comment:40
+				async : false,
+				data : self.model,
+				error : function(jqXHR, textStatus, errorThrown) {
+					res = false;
+					event.preventDefault();
+				}
+			});
+			this.$el.addClass("not-displayed");
+			this._resetForm();
+			$('#projects-table').squashTable().refresh();
+			return res;
+		},
+		
+		confirm : 		function(event) {
 			this.trigger("newproject.confirm");
+			this.validate();
+			this._resetForm();
+			$('#projects-table').squashTable().refresh();
+			this.$el.formDialog("close");
 		},
 
 		validate : function(event) {
@@ -73,7 +101,7 @@ define([ "jquery", "backbone", "handlebars", "app/lnf/Forms",
 		cleanup : function() {
 			this.$el.addClass("not-displayed");
 			this._resetForm();
-			this.$el.confirmDialog("close");
+			this.$el.formDialog("close");
 		},
 
 		_resetForm : function() {
@@ -89,11 +117,11 @@ define([ "jquery", "backbone", "handlebars", "app/lnf/Forms",
 				this._initializeDialog();
 			}
 
-			this.$el.confirmDialog("open");
+			this.$el.formDialog("open");
 		},
 
 		_initializeDialog : function() {
-			this.$el.confirmDialog();
+			this.$el.formDialog();
 
 			function decorateArea() {
 				$(this).ckeditor(function() {

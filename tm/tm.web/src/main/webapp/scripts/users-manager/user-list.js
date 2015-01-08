@@ -151,6 +151,23 @@ define([ "jquery", "squash.translator",
 			$("#add-user-group").val($("#add-user-group option:last").val());
 		});
 		
+		adduserDialog.on('formdialogaddanother', function(){
+			if (!passValidation()){
+				return;
+			}
+			var url = settings.urls.baseUrl + "/new";
+			$.ajax({
+				url : url,
+				type : 'POST',
+				dataType : 'json',
+				data : readForm(settings)
+			}).success(function(){
+				$('#users-list-table').squashTable().refresh();
+				$("#add-user-dialog").formDialog('open');
+			});
+		});
+		
+		
 		$("#add-user-button").on('click', function(){
 			adduserDialog.formDialog('open');
 		});

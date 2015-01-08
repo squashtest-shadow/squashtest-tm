@@ -89,7 +89,8 @@
   </table>
   
   <div class="popup-dialog-buttonpane">
-    <input class="confirm" type="button" value="<f:message key='label.Add' />" />
-    <input class="cancel" type="button" value="<f:message key='label.Cancel' />" />
+    <input class="confirm" type="button" value="<f:message key='label.fem.addAnother' />" data-def="mainbtn, evt=addanother"/>
+    <input class="confirm" type="button" value="<f:message key='label.Add' />" data-def="mainbtn, evt=confirm"/>
+    <input class="cancel" type="button" value="<f:message key='label.Cancel' />" data-def="mainbtn, evt=cancel"/>
   </div>  
 </div>

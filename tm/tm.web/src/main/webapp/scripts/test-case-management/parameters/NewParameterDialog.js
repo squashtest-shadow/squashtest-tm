@@ -19,7 +19,7 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 define([ "jquery", "backbone", "app/lnf/Forms", 'workspace.event-bus', 
-         'squash.configmanager', "./NewParameterModel", "jquery.squash.confirmdialog" ], 
+         'squash.configmanager', "./NewParameterModel", "jquery.squash.formdialog" ], 
          function($, Backbone, Forms, eventBus, confman, NewParameterModel) {
 	
 	var NewParameterDialog = Backbone.View.extend({
@@ -37,18 +37,59 @@ define([ "jquery", "backbone", "app/lnf/Forms", 'workspace.event-bus',
 		},
 
 		events : {
-			"confirmdialogcancel" : "cancel",
-			"confirmdialogvalidate" : "validate",
-			"confirmdialogconfirm" : "confirm"
+			"formdialogcancel" : "cancel",
+			"formdialogvalidate" : "validate",
+			"formdialogconfirm" : "confirm",
+			"formdialogaddanother" : "addanother"
 		},
 
+		addanother : function(event) {
+			var res = true, self = this;
+			this._populateModel();
+			var validationErrors = this.model.validateAll();
+			
+			Forms.form(this.$el).clearState();
+
+			if (validationErrors !== null) {
+				for ( var key in validationErrors) {
+					Forms.input(this.$("input[name='add-parameter-" + key + "']")).setState("error",
+							validationErrors[key]);
+				}
+
+				return false;
+			}
+
+			$.ajax({
+				type : 'post',
+				url : self.settings.basic.testCaseUrl + "/parameters/new",
+				dataType : 'json',
+				// note : we cannot use promise api with async param. see
+				// http://bugs.jquery.com/ticket/11013#comment:40
+				async : false,
+				data : self.model.attributes,
+				error : function(jqXHR, textStatus, errorThrown) {
+					res = false;
+					event.preventDefault();
+				}
+			});
+			this.$el.addClass("not-displayed");
+			this._resetForm();
+			$('#parameters-table').squashTable().refresh();
+			
+			return res;
+			this.trigger("newparameterdialog.cancel");
+		},
+		
 		cancel : function(event) {
 			this.cleanup();
 			this.trigger("newparameterdialog.cancel");
 		},
 
 		confirm : function(event) {
-			this.cleanup();
+			this.validate();
+			this._resetForm();
+			$('#parameters-table').squashTable().refresh();
+			this.$el.formDialog("close");
 			this.trigger("newparameterdialog.confirm");
 		},
 
@@ -88,7 +129,7 @@ define([ "jquery", "backbone", "app/lnf/Forms", 'workspace.event-bus',
 		cleanup : function() {
 			this.$el.addClass("not-displayed");
 			this._resetForm();
-			this.$el.confirmDialog("close");
+			this.$el.formDialog("close");
 		},
 
 		_resetForm : function() {
@@ -103,11 +144,11 @@ define([ "jquery", "backbone", "app/lnf/Forms", 'workspace.event-bus',
 				this._initializeDialog();
 			}
 
-			this.$el.confirmDialog("open");
+			this.$el.formDialog("open");
 		},
 
 		_initializeDialog : function() {
-			this.$el.confirmDialog();
+			this.$el.formDialog();
 
 			function decorateArea() {
 				var $area = $(this);

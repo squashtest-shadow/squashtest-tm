@@ -45,11 +45,13 @@
 
 
 <div>
+  <div class="icon"><span class="ui-icon ui-icon-volume-off"></span></div>
   <input type="checkbox" id="menu-toggle-filter-ckbox" ${filterCheckedClause}></input>
   <a id="menu-project-filter-link" href="#" class="${filterLabelClass}">${filterLabelText}</a>
 </div>
 <sec:authorize access="hasRole('ROLE_TM_PROJECT_MANAGER') or hasRole('ROLE_ADMIN')">
   <div>
+    <div class="icon"><span class="ui-icon ui-icon-wrench"></span></div>
     <a id="menu-administration-link" href="${ administrationUrl }">
       <f:message key="workspace.menubar.administration.label" />
     </a>
@@ -57,6 +59,7 @@
 </sec:authorize>
 
 <div>
+  <div class="icon"><span class="ui-icon ui-icon-person"></span></div>
   <a id="menu-account-link" href="${userAccountUrl}">
     <f:message key="workspace.menubar.account.label" />
     &nbsp;(
@@ -66,9 +69,11 @@
 </div>
 
 <sec:authorize access="isAuthenticated()">
+
   <c:url var="logoutUrl" value="/logout" />
 </sec:authorize>
 <div>
+  <div class="icon"><span class="ui-icon ui-icon-power"></span></div>
   <a id="menu-logout-link" href="${ logoutUrl }">
     <f:message key="workspace.menubar.logout.label" />
   </a>

@@ -21,7 +21,7 @@
 require(["common"], function() {
 	require(["jquery", "squash.translator", "workspace.routing", "squashtable", 
 	         "app/ws/squashtm.workspace", 
-	         "jquery.squash.formdialog", "jquery.squash.confirmdialog"], 
+	         "jquery.squash.formdialog"], 
 			function($, translator, routing){					
 		
 		$(function() {		
@@ -58,6 +58,27 @@ require(["common"], function() {
 				addBTDialog.formDialog('close');
 			});
 		});
+		
+
+		addBTDialog.on('formdialogaddanother', function(){
+			var url = routing.buildURL('administration.bugtrackers');
+			var params = {
+				name: $( '#add-bugtracker-name' ).val(),
+				url: $( '#add-bugtracker-url' ).val(),
+				kind: $( '#add-bugtracker-kind' ).val(),
+				iframeFriendly: $('#add-bugtracker-iframeFriendly').is(':checked')							
+			}
+			$.ajax({
+				url : url,
+				type : 'POST',
+				dataType : 'json',
+				data : params				
+			}).success(function(){
+				$('#bugtrackers-table').squashTable().refresh();
+				addBTDialog.formDialog('open');
+			});
+		});
+		
 		
 		$("#new-bugtracker-button").on('click', function(){
 			addBTDialog.formDialog('open');

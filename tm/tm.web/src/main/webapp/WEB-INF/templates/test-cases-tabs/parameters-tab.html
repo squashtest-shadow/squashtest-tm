@@ -167,8 +167,9 @@
       </table>
 
       <div class="popup-dialog-buttonpane">
-        <input class="confirm" type="button" value="Add" th:value="#{label.Add}" />
-        <input class="cancel" type="button" value="Cancel" th:value="#{label.Cancel}" />
+     	<input class="confirm" type="button" value="Add Another" th:value="#{label.addAnother}"  data-def="mainbtn, evt=addanother"/>
+        <input class="confirm" type="button" value="Add" th:value="#{label.Add}"  data-def="mainbtn, evt=confirm"/>
+        <input class="cancel" type="button" value="Cancel" th:value="#{label.Cancel}"  data-def="mainbtn, evt=cancel"/>
       </div>
     </div>
     <!-- ==================== dataset popup ==================== -->
@@ -202,8 +203,9 @@
 		</table>
 
       <div class="popup-dialog-buttonpane">
-        <input class="confirm" type="button" value="Add" th:value="#{label.Add}" />
-        <input class="cancel" type="button" value="Cancel" th:value="#{label.Cancel}" />
+     	<input class="confirm" type="button" value="Add Another" th:value="#{label.addAnother}"  data-def="mainbtn, evt=addanother"/>
+        <input class="confirm" type="button" value="Add" th:value="#{label.Add}"  data-def="mainbtn, evt=confirm"/>
+        <input class="cancel" type="button" value="Cancel" th:value="#{label.Cancel}"  data-def="mainbtn, evt=cancel"/>
       </div>
     </div>
     
@@ -237,6 +239,7 @@
 								language : {
 									cancellabel : /*[[#{label.Cancel}]]*/"Cancel",
 									add : /*[[#{label.Add}]]*/"Add",
+									addAnother : /*[[#{label.addAnother}]]*/"Add another",
 									ckeLang : /*[[#{rich-edit.language.value}]]*/"ph",
 									placeholder : /*[[#{rich-edit.placeholder}]]*/"Click to edit...",
 									submit : /*[[#{rich-edit.button.ok.label}]]*/"submit",

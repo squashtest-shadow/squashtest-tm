@@ -47,9 +47,9 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil", "jquery.squa
 			// TODO change our way to make toggle panels buttons
 			// =============/toogle buttons===================
 
-			this.$("#remove-teams-button").on('click', $.proxy(this.confirmRemoveTeam, this));
 			this.$("#add-team-button").on('click', $.proxy(this.openAddTeam, this));
-
+			this.$("#remove-teams-button").on('click', $.proxy(this.confirmRemoveTeam, this));
+			
 		},
 
 		configureTable : function() {

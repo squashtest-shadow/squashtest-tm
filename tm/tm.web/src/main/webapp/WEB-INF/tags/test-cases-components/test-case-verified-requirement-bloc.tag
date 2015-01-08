@@ -61,10 +61,10 @@
 		<jsp:attribute name="panelButtons">
 			<c:if test="${ linkable }">					
 					<f:message var="associateLabel"	key="label.associateRequirements" />
-					<input id="add-verified-requirements-button" type="button" value="${associateLabel}" class="sq-btn" />
+					<input id="add-verified-requirements-button" type="button" value="+" class="sq-btn" />
 					
 					<f:message var="removeLabel" key="label.removeRequirementsAssociation" />
-					<input id="remove-verified-requirements-button" type="button" value="${ removeLabel }" class="sq-btn" />
+					<input id="remove-verified-requirements-button" type="button" value="-" class="sq-btn" />
 			</c:if>		
 		</jsp:attribute>
 		<jsp:attribute name="body">

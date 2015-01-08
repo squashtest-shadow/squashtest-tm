@@ -76,6 +76,7 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil", "jquery.squa
 		},
 		configureButtons : function() {
 			this.$("#add-permission-button").on('click', $.proxy(this.openAddPermission, this));
+			this.$("#remove-permission-button").on('click', $.proxy(this.confirmRemovePermission, this));
 		},
 		confirmRemovePermission : function(event) {
 			var hasPermission = ($("#permission-table").squashTable().getSelectedIds().length > 0);

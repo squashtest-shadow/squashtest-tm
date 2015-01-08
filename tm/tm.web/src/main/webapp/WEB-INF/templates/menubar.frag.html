@@ -32,6 +32,7 @@
 		<div th:remove="tag" class="this div exists for settings only, it will never be rendered" th:with="filter = ${#workspace.projectFilter()}">
 		
 		<div>
+			<div class="icon"><span class="ui-icon ui-icon-volume-off"></span></div>
 			<input type="checkbox" id="menu-toggle-filter-ckbox" th:checked="${filter.enabled}"></input>
 			<a id="menu-project-filter-link" href="javascript:void(0)" 
 			th:class="${filter.enabled} ? 'filter-enabled'"
@@ -39,6 +40,7 @@
 		</div>
 		
 		<div th:if="${sec.hasRole('ROLE_TM_PROJECT_MANAGER')} or ${sec.hasRole('ROLE_ADMIN')}">
+			<div class="icon"><span class="ui-icon ui-icon-wrench"></span></div>
 			<a id="menu-administration-link" 
 				href="administration.html" th:href="@{/administration}" 
 				th:text="#{workspace.menubar.administration.label}">
@@ -47,12 +49,14 @@
 		</div>
 		
 		<div>
+			<div class="icon"><span class="ui-icon ui-icon-person"></span></div>
 			<a id="menu-account-link" href="user-account.html" th:href="@{/user-account}">
 				<span th:text="#{workspace.menubar.account.label}">Mon compte</span>&nbsp;(<span th:text="${sec.authentication.name}">Zoltan</span>)
 			</a>
 		</div>
 		
 		<div th:if="${sec.isAuthenticated()}">
+			<div class="icon"><span class="ui-icon ui-icon-power"></span></div>
 			<a id="menu-logout-link" href="logout.html" th:href="@{/logout}" th:text="#{workspace.menubar.logout.label}">logout</a>
 		</div>
 		

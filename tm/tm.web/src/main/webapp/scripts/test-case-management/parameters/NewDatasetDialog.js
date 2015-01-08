@@ -18,7 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ "jquery", "backbone", "underscore", "app/lnf/Forms", "app/util/StringUtil", "jquery.squash.confirmdialog", "squashtable"], 
+define([ "jquery", "backbone", "underscore", "app/lnf/Forms", "app/util/StringUtil", "jquery.squash.formdialog", "squashtable"], 
 		function($,	Backbone, _, Forms, StringUtil) {
 	
 	var NewDatasetDialog = Backbone.View.extend({
@@ -36,7 +36,7 @@ define([ "jquery", "backbone", "underscore", "app/lnf/Forms", "app/util/StringUt
 		},
 		
 		_initializeDialog : function(){
-			this.$el.confirmDialog({
+			this.$el.formDialog({
 				autoOpen : true,
 				width : 1000
 			});
@@ -63,10 +63,12 @@ define([ "jquery", "backbone", "underscore", "app/lnf/Forms", "app/util/StringUt
 		},
 
 		events : {
-			"confirmdialogcancel" : "cancel",
-			"confirmdialogclose" : "close",
-			"confirmdialogvalidate" : "validate",
-			"confirmdialogconfirm" : "confirm"
+
+
+			"formdialogcancel" : "cancel",
+			"formdialogvalidate" : "validate",
+			"formdialogconfirm" : "confirm",
+			"formdialogaddanother" : "addanother"
 		},
 
 		cancel : function(event) {
@@ -75,10 +77,77 @@ define([ "jquery", "backbone", "underscore", "app/lnf/Forms", "app/util/StringUt
 		},	
 		
 		confirm : function(event) {
+			this.validate();
+			this._resetForm();
+			$('#datasets-table').squashTable().refresh();
+			this.$el.formDialog("close");
+			this.trigger("newdatasetdialog.confirm");
 		},
 		
-		close : function(){
+		addanother : function(event) {
+			var self = this;
+			var res = true, validationErrors = this.validateAll();
+			Forms.form(this.$el).clearState();
+
+			if (validationErrors !== null) {
+				for ( var key in validationErrors) {
+					Forms.input(this.$("input[name='add-dataset-" + key + "']")).setState("error", validationErrors[key]);
+				}
+				res = false;
+				return res;
+			}			
+			
+			var table = $("#add-dataset-dialog-table").squashTable();
+			
+			var parameters = [];
+		
+			table.find('tbody tr').each(function(){
+				
+				var $row = $(this);
+				var paramValue = $row.find(".add-parameter-input input").val();
+				var data = table.fnGetData(this);
+				
+				// 'null' might happen if there is no parameters in the table (but still one row saying that 
+				// the table is empty)
+				if (data !== null){
+					var paramId = data['entity-id'];					
+					var paramData = [paramId, paramValue];					
+					parameters.push(paramData);
+				}
+			});
+			
+			var params = {name:$("#add-dataset-name").val(), paramValues:parameters};
+			
+			$.ajax({
+				url : self.options.settings.basic.testCaseDatasetsUrl + '/new',
+				type : 'POST',
+				contentType : "application/json",
+				async : false,
+				data : JSON.stringify(params),
+				dataType : 'json',
+				success : function(){
+					self.cleanup();			
+					res = true;
+				},
+				error : function(jqXHR, textStatus, errorThrown){
+					event.preventDefault();
+					res = false;
+				}
+			});
+			
+			this.$el.addClass("not-displayed");
+			this._resetForm();
+			$('#datasets-table').squashTable().refresh();
+			this.$el.formDialog("open");
+			return res;
+			this.$el.formDialog("open");
+			this.trigger("newpdatasetialog.cancel");
+
 		},
+		
+
+		
+
 
 		validate : function(event) {
 			var self = this;
@@ -154,7 +223,7 @@ define([ "jquery", "backbone", "underscore", "app/lnf/Forms", "app/util/StringUt
 		},
 		
 		destroy : function(){
-			this.$el.confirmDialog('destroy');
+			this.$el.formDialog('destroy');
 		}
 
 	});

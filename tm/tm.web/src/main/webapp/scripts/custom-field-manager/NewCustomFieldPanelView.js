@@ -20,7 +20,7 @@
  */
 define(
 		[ "jquery", "backbone", "handlebars", "app/lnf/SquashDatatablesLnF", "app/lnf/Forms", "squash.configmanager",
-				"jquery.squash.confirmdialog", "datepicker/jquery.squash.datepicker-locales", "jquery.squash.tagit" ],
+				"jquery.squash.formdialog", "datepicker/jquery.squash.datepicker-locales", "jquery.squash.tagit" ],
 		function($, Backbone, Handlebars, SD, Forms, confman) {
 			/*
 			 * Defines the controller for the new custom field panel.
@@ -46,7 +46,7 @@ define(
 							this.$("input:button").button();
 
 							this.render();
-							this.$el.confirmDialog({
+							this.$el.formDialog({
 								autoOpen : true,
 								close : function() {
 									self.cancel.call(self);
@@ -119,10 +119,10 @@ define(
 						},
 						
 						_resize : function(){
-							if (this.$el.data().confirmDialog !== undefined){
+							if (this.$el.data().formDialog !== undefined){
 								var type = this.model.get("inputType");
 								var width = (type === "RICH_TEXT") ? this.richWidth : this.defaultWidth;
-								this.$el.confirmDialog("option", "width", width);
+								this.$el.formDialog("option", "width", width);
 							}
 						},
 
@@ -137,9 +137,10 @@ define(
 							"invalidtag ul.tagprop" : "invalidTag",
 							"change select[name='inputType']" : "changeInputType",
 							"click input:checkbox[name='optional']" : "changeOptional",
-							"confirmdialogcancel" : "cancel",
-							"confirmdialogvalidate" : "validate",
-							"confirmdialogconfirm" : "confirm",
+							"formdialogcancel" : "cancel",
+							"formdialogvalidate" : "validate",
+							"formdialogaddanother" : "addanother",
+							"formdialogconfirm" : "confirm",
 							"click .add-option" : "addOption",
 							"click .remove-row>a" : "removeOption",
 							"click .is-default>input:checkbox" : "changeDefaultOption"
@@ -198,6 +199,32 @@ define(
 							return false;
 						},
 						
+						addanother : function(event) {
+							var res = true, validationErrors = this.model.validateAll();
+
+							Forms.form(this.$el).clearState();
+
+							if (validationErrors !== null) {
+								for ( var key in validationErrors) {
+									Forms.input(this.$("input[name='" + key + "']")).setState("error",
+											validationErrors[key]);
+								}
+
+								return false;
+							}
+
+							this.model.save(null, {
+								async : false,
+								error : function() {
+									res = false;
+									event.preventDefault();
+								}
+							});
+							$('#cf-table').squashTable().refresh();
+							this._resetForm();
+							return res;
+						},
+						
 						validate : function(event) {
 							var res = true, validationErrors = this.model.validateAll();
 
@@ -219,14 +246,16 @@ define(
 									event.preventDefault();
 								}
 							});
-
+							this.$el.addClass("not-displayed");
+							this.$el.formDialog("close");
+							$('#cf-table').squashTable().refresh();
 							return res;
 						},
 
 						cleanup : function() {
 							this.$el.addClass("not-displayed");
 							Forms.form(this.$el).clearState();
-							this.$el.confirmDialog("destroy");
+							this.$el.formDialog("destroy");
 						},
 
 						renderOptional : function(show) {
@@ -273,6 +302,14 @@ define(
 
 						},
 
+						_resetForm : function() {
+							this.$textFields = this.$el.find("input:text");
+							this.$textFields.val("");
+							this.$textAreas.val("");
+							this.$errorMessages.text("");
+							Forms.form(this.$el).clearState();
+						},
+						
 						addOption : function() {
 							var optionLabelInput = Forms.input(this.$("input[name='new-option-label']"));
 							var optionLabel = optionLabelInput.$el.val();

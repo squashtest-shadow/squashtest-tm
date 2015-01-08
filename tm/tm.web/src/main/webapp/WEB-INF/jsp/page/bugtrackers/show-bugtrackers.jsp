@@ -29,6 +29,7 @@
 
 <s:url var="administrationUrl" value="/administration" />
 
+<f:message var="addAnotherLabel"       key="label.addAnother"/>
 <f:message var="addLabel"       key="label.Add"/>
 <f:message var="confirmLabel"   key="label.Confirm"/>
 <f:message var="cancelLabel"    key="label.Cancel"/>
@@ -138,6 +139,7 @@
 
      
       <div class="popup-dialog-buttonpane">
+     	 <input type="button" value="${addAnotherLabel}" data-def="mainbtn, evt=addanother"/>
         <input type="button" value="${addLabel}" data-def="mainbtn, evt=confirm"/>
         <input type="button" value="${cancelLabel}" data-def="evt=cancel"/>
       </div>

@@ -68,6 +68,8 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil", "jquery.squa
 		},
 		configureButtons : function() {
 			this.$("#add-permission-button").on('click', $.proxy(this.openAddPermission, this));
+			this.$("#remove-permission-button").on('click', $.proxy(this.configureRemovePermissionDialog, this));
+			
 		},
 
 		confirmRemovePermission : function(event) {
