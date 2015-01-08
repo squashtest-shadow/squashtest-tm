@@ -21,7 +21,7 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
-<!DOCTYPE dataset SYSTEM "../../../../../dtd/squash-tm.1.11.0.dtd">
+<!DOCTYPE dataset SYSTEM "../../../../../dtd/squash-tm.1.12.0.dtd">
 <dataset>
 <CORE_PARTY PARTY_ID="-10"/>
 <CORE_PARTY PARTY_ID="-12"/>
@@ -65,6 +65,7 @@
 	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="-989"/>
 	<REQUIREMENT_LIBRARY ATTACHMENT_LIST_ID="-989" RL_ID="-1"/>
 	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="-432"/>	
+	
 	
 	<TEST_AUTOMATION_SERVER SERVER_ID="-1" BASE_URL="http://www.url.com" LOGIN="a" PASSWORD="b" KIND="jenkins" CREATED_BY="admin" CREATED_ON="2015-05-16" NAME="rarze"/>
 	

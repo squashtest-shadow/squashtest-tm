@@ -37,25 +37,28 @@ class ProjectManagerServiceIT extends DbunitServiceSpecification {
 
 	@Inject
 	ProjectManagerService service
-	
+
 	@DataSet("ProjectManagerServiceIT.should copy template settings.xml")
 	def"should copy template settings"(){
 		given : "a new project to persit"
 		Project project = new Project();
 		project.setName("name");
-		 
-		when : 
-		service.addProjectAndCopySettingsFromTemplate(project, -1000L, true, true, true, true)
-		
-		then: 
+
+		when :
+		service.addProjectAndCopySettingsFromTemplate(project, -1000L, true, true, true, true, true)
+
+		then:
 		project.isTestAutomationEnabled() == true
 		project.isBugtrackerConnected() == true
 		project.getBugtrackerBinding().getId() != -11L
 		project.getBugtrackerBinding().getBugtracker().getId() == -10L
 		project.getTestAutomationProjects().size() == 1
-		
-		
+
+		project.getTestCaseNatures().getCode() == "DEF_TC_NAT"
+		project.getTestCaseTypes().getCode() == "DEF_TC_TYP"
+		project.getRequirementCategories().getCode() == "DEF_REQ_CAT"
+
 	}
-		
-		
+
+
 }

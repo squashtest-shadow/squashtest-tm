@@ -22,6 +22,7 @@ package org.squashtest.tm.service.internal.project
 
 import org.squashtest.csp.core.bugtracker.domain.BugTracker
 import org.squashtest.tm.domain.bugtracker.BugTrackerBinding
+import org.squashtest.tm.domain.infolist.InfoList;
 import org.squashtest.tm.domain.project.Project
 import org.squashtest.tm.domain.project.ProjectTemplate
 import org.squashtest.tm.domain.testautomation.TestAutomationProject
@@ -71,7 +72,7 @@ class CustomProjectModificationServiceImplTest extends Specification {
 
 
 		when:
-		service.addProjectAndCopySettingsFromTemplate(project, 1L, true, true, true, true)
+		service.addProjectAndCopySettingsFromTemplate(project, 1L, true, true, true, true, false)
 
 		then:
 		1* project.bindTestAutomationProject(automationProject)
@@ -98,7 +99,7 @@ class CustomProjectModificationServiceImplTest extends Specification {
 
 
 		when:
-		service.addProjectAndCopySettingsFromTemplate(project, 1L, true, true, false, true)
+		service.addProjectAndCopySettingsFromTemplate(project, 1L, true, true, false, true, false)
 
 		then:
 		1* project.bindTestAutomationProject(automationProject)
@@ -121,7 +122,7 @@ class CustomProjectModificationServiceImplTest extends Specification {
 		project.getClass()>> Project.class
 
 		when:
-		service.addProjectAndCopySettingsFromTemplate(project, 1L, true, true, true, true)
+		service.addProjectAndCopySettingsFromTemplate(project, 1L, true, true, true, true, false)
 
 		then:
 
@@ -151,7 +152,7 @@ class CustomProjectModificationServiceImplTest extends Specification {
 
 
 		when:
-		service.addProjectAndCopySettingsFromTemplate(project, 1L, true, true, true, false)
+		service.addProjectAndCopySettingsFromTemplate(project, 1L, true, true, true, false, false)
 
 		then:
 		0* project.setTestAutomationEnabled(_)
@@ -180,7 +181,7 @@ class CustomProjectModificationServiceImplTest extends Specification {
 
 
 		when:
-		service.addProjectAndCopySettingsFromTemplate(project, 1L, false, true, true, true)
+		service.addProjectAndCopySettingsFromTemplate(project, 1L, false, true, true, true, false)
 
 		then:
 
@@ -210,7 +211,7 @@ class CustomProjectModificationServiceImplTest extends Specification {
 
 
 		when:
-		service.addProjectAndCopySettingsFromTemplate(project, 1L, true, false, true, true)
+		service.addProjectAndCopySettingsFromTemplate(project, 1L, true, false, true, true, false)
 
 		then:
 
@@ -218,6 +219,41 @@ class CustomProjectModificationServiceImplTest extends Specification {
 		1* genericProjectManagerService.changeBugTracker(_, _)
 		0* customFieldBindingModificationService.copyCustomFieldsSettingsFromTemplate(_, _)
 		1* projectsPermissionManagementService.copyAssignedUsersFromTemplate(project, template)
+	}
+
+	def "should add projet and copy no settings but info lists from template"(){
+		given: "a template project"
+		ProjectTemplate template = Mock()
+		projectTemplateDao.findById(1L) >> template
+
+
+		and: "a project"
+		Project project = Mock()
+		project.getId()>> 2L
+		project.getClass()>> Project.class
+
+		and : "the infolists"
+
+		def naturelist = new InfoList()
+		def categorylist = new InfoList()
+		// the types are left to default
+
+		project.getTestCaseNatures() >> naturelist
+		project.getRequirementCategories() >> categorylist
+
+		when:
+		def newP = service.addProjectAndCopySettingsFromTemplate(project, 1L, false, false, false, false, true)
+
+		then:
+
+		0* project.bindTestAutomationProject(_)
+		0* genericProjectManagerService.changeBugTracker(_, _)
+		0* customFieldBindingModificationService.copyCustomFieldsSettingsFromTemplate(_, _)
+		0* projectsPermissionManagementService.copyAssignedUsersFromTemplate(project, template)
+
+		newP.getTestCaseNatures() == naturelist
+		newP.getRequirementCategories() == categorylist
+
 	}
 
 }
