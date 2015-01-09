@@ -18,24 +18,14 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ "jquery", "backbone", "handlebars", "squash.translator", "app/ws/squashtm.notification", "underscore", "workspace.projects", 
+define([ "jquery", "backbone", "app/squash.handlebars.helpers", "squash.translator", "app/ws/squashtm.notification", "underscore", "workspace.projects", 
          "squash.configmanager", "./SearchDateWidget", "./SearchRangeWidget", 
-		"./SearchExistsWidget","./SearchMultiAutocompleteWidget", "./SearchMultiSelectWidget", "./SearchCheckboxWidget", 
+		"./SearchExistsWidget","./SearchMultiAutocompleteWidget", "./SearchMultiSelectWidget", "./SearchCheckboxWidget",
 		"./SearchComboMultiselectWidget", "./SearchRadioWidget", "./SearchTagsWidget", "./SearchMultiCascadeFlatWidget",
 		"jquery.squash", "jqueryui", "jquery.squash.togglepanel", "squashtable",
-		"jquery.squash.oneshotdialog", "jquery.squash.messagedialog", 
+		"jquery.squash.oneshotdialog", "jquery.squash.messagedialog",
 		"jquery.squash.confirmdialog" ], function($, Backbone, Handlebars, translator, notification, _, projects) {
-	
-	/**
-	 * handlebars helper. substitutes {{selected}} with selected="selected" when this.selected === true
-	 */ 
-	Handlebars.registerHelper("selected", function() {
-		if (this.selected === true) {
-			return 'selected="selected"';
-		} 
-		return "";
-	});
-	
+
 	function fieldValue(fieldType, value) {
 		if (!value) {
 			var text = $(this.element.children()[0]).val();
@@ -49,7 +39,7 @@ define([ "jquery", "backbone", "handlebars", "squash.translator", "app/ws/squash
 			$(this.element.children()[0]).val(value.value);
 		}
 	}
-	
+
 	// text area widget
 	var searchTextAreaWidget = $.widget("search.searchTextAreaWidget", {
 		options : {
@@ -79,7 +69,7 @@ define([ "jquery", "backbone", "handlebars", "squash.translator", "app/ws/squash
 		}
 	});
 
-	
+
 	
 
 
@@ -92,7 +82,7 @@ define([ "jquery", "backbone", "handlebars", "squash.translator", "app/ws/squash
 			// init templates cache
 			this.templates = {};
 			this.getInputInterfaceModel();
-			
+
 			// templates are no longer needed
 			this.templates = {};
 						
@@ -141,13 +131,17 @@ define([ "jquery", "backbone", "handlebars", "squash.translator", "app/ws/squash
 							if (!source) { // could this really happen without being a bug ?
 								return;
 							}
+
 							var template = Handlebars.compile(source);
+
 							// parses the search model if any
 							var marshalledSearchModel = self.$("#searchModel").text();
 							var searchModel = {};
+
 							if(marshalledSearchModel){
 								searchModel = JSON.parse(marshalledSearchModel).fields;
 							}
+
 							var searchDomain = self.$("#searchDomain").text();
 
 							var html = template(context);
@@ -160,7 +154,7 @@ define([ "jquery", "backbone", "handlebars", "squash.translator", "app/ws/squash
 								var inputType = field.inputType.toLowerCase();
 								switch(inputType)
 								{
-									case "textfield" : 
+							case "textfield" :
 										self.makeTextField(tableid, field.id, field.title, searchModel[field.id], field.ignoreBridge);
 										break;
 									case "textfieldid" : 
@@ -172,7 +166,7 @@ define([ "jquery", "backbone", "handlebars", "squash.translator", "app/ws/squash
 									case "textarea":
 										self.makeTextArea(tableid, field.id, field.title, searchModel[field.id]);
 										break;
-									case "multiselect" : 
+							case "multiselect" :
 										self.makeMultiselect(tableid, field.id, field.title, field.possibleValues, searchModel[field.id]);
 										break;
 									case "multiselectperimeter" : 
@@ -206,6 +200,7 @@ define([ "jquery", "backbone", "handlebars", "squash.translator", "app/ws/squash
 										self.makeTagsField(tableid, field.id, field.title, field.possibleValues, searchModel[field.id]);
 										break;
 								}			
+
 							}
 					// End C					
 					
@@ -216,17 +211,17 @@ define([ "jquery", "backbone", "handlebars", "squash.translator", "app/ws/squash
 				});
 				
 			};
-			
+
 			this._processModel(formBuilder);
 
 			
 		},
-		
+
 		_processModel : function(formBuilder) {
 			if (!!squashtm.app.searchFormModel) {
 				
 				formBuilder(squashtm.app.searchFormModel);
-				
+
 				// last detail, we must also hook the project selector with the nature an type selectors
 				var self = this;
 				$("#perimeter-multiple-custom").on('change', function(){
@@ -253,22 +248,22 @@ define([ "jquery", "backbone", "handlebars", "squash.translator", "app/ws/squash
 				});
 			}
 		},
-		
+
 		/**
 		 * returns the html of a compiled template
 		 * @param selector jq selector to find the template
-		 * @param context the params given to the template 
+		 * @param context the params given to the template
 		 * @returns
 		 */
 		_compileTemplate : function(selector, context) {
 				var template = this.templates[selector];
-				
+
 				if (!template) {
 					var source = this.$(selector).html();
 					template = Handlebars.compile(source);
 					this.templates[selector] = template;
 				}
-				
+
 				return template(context);
 		},
 
@@ -276,27 +271,27 @@ define([ "jquery", "backbone", "handlebars", "squash.translator", "app/ws/squash
 			this.$("#"+tableId).append(fieldHtml);
 			var escapedId = fieldId.replace(/\./g, "\\.");
 			return this.$("#" + escapedId);
-		}, 
-		
+		},
+
 		makeRadioField : function(tableId, fieldId, fieldTitle, options, enteredValue, ignoreBridge) {
 			var context = {"text-radio-id": fieldId, "text-radio-title": fieldTitle};
 			var $fieldDom = this._appendFieldDom(tableId, fieldId, this._compileTemplate("#radio-button-template", context));
-			
+
 			$fieldDom.searchRadioWidget({"ignoreBridge" : ignoreBridge});
 			$fieldDom.searchRadioWidget("createDom", "F"+fieldId, options);
 			$fieldDom.searchRadioWidget("fieldvalue", enteredValue);
-				
+
 		},
-		
+
 		makeRangeField : function(tableId, fieldId, fieldTitle, enteredValue) {
 			var context = {"text-range-id": fieldId, "text-range-title": fieldTitle};
 			var $fieldDom = this._appendFieldDom(tableId, fieldId, this._compileTemplate("#range-template", context));
 
 			$fieldDom.searchRangeWidget();
 			$fieldDom.searchRangeWidget("fieldvalue", enteredValue);
-			
+
 		},
-		
+
 		makeExistsField : function(tableId, fieldId, fieldTitle, options, enteredValue) {
 			var context = {"text-exists-id": fieldId, "text-exists-title": fieldTitle};
 			var $fieldDom = this._appendFieldDom(tableId, fieldId, this._compileTemplate("#exists-template", context));
@@ -304,7 +299,7 @@ define([ "jquery", "backbone", "handlebars", "squash.translator", "app/ws/squash
 			$fieldDom.searchExistsWidget("createDom", "F"+fieldId, options);
 			$fieldDom.searchExistsWidget("fieldvalue", enteredValue);
 		},
-			
+
 		makeDateField : function(tableId, fieldId, fieldTitle, enteredValue) {
 			var context = {"text-date-id": fieldId, "text-date-title": fieldTitle};
 			var $fieldDom = this._appendFieldDom(tableId, fieldId, this._compileTemplate("#date-template", context));
@@ -312,7 +307,7 @@ define([ "jquery", "backbone", "handlebars", "squash.translator", "app/ws/squash
 			$fieldDom.searchDateWidget("createDom", "F"+fieldId);
 			$fieldDom.searchDateWidget("fieldvalue", enteredValue);
 		},
-			
+
 		makeCheckboxField : function(tableId, fieldId, fieldTitle, options, enteredValue) {
 			// FIXME I cannot find the matching template ?!
 			var context = {"text-checkbox-id": fieldId, "text-checkbox-title": fieldTitle};
@@ -320,19 +315,19 @@ define([ "jquery", "backbone", "handlebars", "squash.translator", "app/ws/squash
 			$fieldDom.searchCheckboxWidget();
 			$fieldDom.searchCheckboxWidget("createDom", "F"+fieldId, options);
 			$fieldDom.searchCheckboxWidget("fieldvalue", enteredValue);
-			
+
 		},
-			
+
 		makeTextField : function(tableId, fieldId, fieldTitle, enteredValue, ignoreBridge) {
 			var context = {
-				"text-field-id": fieldId, 
-				"text-field-title": fieldTitle, 
+				"text-field-id": fieldId,
+				"text-field-title": fieldTitle,
 				fieldValue : !!enteredValue ? enteredValue.value : ""
 			};
 			var $fieldDom = this._appendFieldDom(tableId, fieldId, this._compileTemplate("#textfield-template", context));
 			$fieldDom.searchTextFieldWidget({"ignoreBridge" : ignoreBridge});
 		},
-		
+
 		makeTextFieldId : function(tableId, fieldId, fieldTitle, enteredValue, ignoreBridge) {
 			var context = {
 				"text-field-id": fieldId, 
@@ -355,14 +350,14 @@ define([ "jquery", "backbone", "handlebars", "squash.translator", "app/ws/squash
 		
 		makeTextArea : function(tableId, fieldId, fieldTitle, enteredValue) {
 			var context = {
-				"text-area-id": fieldId, 
-				"text-area-title": fieldTitle, 
+				"text-area-id": fieldId,
+				"text-area-title": fieldTitle,
 				fieldValue : !!enteredValue ? enteredValue.value : ""
 			};
 			var $fieldDom = this._appendFieldDom(tableId, fieldId, this._compileTemplate("#textarea-template", context));
 			$fieldDom.searchTextAreaWidget();
 		},
-		
+
 		makeMultiselect : function(tableId, fieldId, fieldTitle, options, enteredValue) {
 			// adds a "selected" property to options
 			enteredValue = enteredValue || {};
@@ -416,9 +411,9 @@ define([ "jquery", "backbone", "handlebars", "squash.translator", "app/ws/squash
 			var $fieldDom = this._appendFieldDom(tableId, fieldId, this._compileTemplate("#multiautocomplete-template", context));
 			$fieldDom.searchMultiAutocompleteWidget({fieldId : fieldId, options : options});
 			$fieldDom.searchMultiAutocompleteWidget("fieldvalue", enteredValue);
-			
+
 		},
-			
+
 		makeComboMultiselect : function(tableId, fieldId, fieldTitle, options, enteredValue) {
 			var context = {"combomultiselect-id": fieldId, "combomultiselect-title": fieldTitle};
 			var $fieldDom = this._appendFieldDom(tableId, fieldId, this._compileTemplate("#combomultiselect-template", context));
@@ -426,7 +421,7 @@ define([ "jquery", "backbone", "handlebars", "squash.translator", "app/ws/squash
 			$fieldDom.searchComboMultiSelectWidget("createDom", "F"+fieldId, options);
 			$fieldDom.searchComboMultiSelectWidget("fieldvalue", enteredValue);
 		},
-				
+
 		makeTagsField : function(tableId, fieldId, fieldTitle, options, enteredValue) {
 			var context = {"tags-id": fieldId, "tags-title": fieldTitle};
 			var $fieldDom = this._appendFieldDom(tableId, fieldId, this._compileTemplate("#tags-template", context));
@@ -435,10 +430,10 @@ define([ "jquery", "backbone", "handlebars", "squash.translator", "app/ws/squash
 				state : enteredValue
 			});
 		},
-		
+
 		extractSearchModel : function(){
 			var fields = self.$("div.search-input");
-			
+
 			var jsonVariable = {};
 
 			for (var i = 0, $field; i < fields.length; i++) {
@@ -456,7 +451,7 @@ define([ "jquery", "backbone", "handlebars", "squash.translator", "app/ws/squash
 			}
 			this.model = {fields : jsonVariable};
 		},
-		
+
 		post : function (URL, PARAMS) {
 			var temp=document.createElement("form");
 			temp.action=URL;
@@ -475,53 +470,53 @@ define([ "jquery", "backbone", "handlebars", "squash.translator", "app/ws/squash
 			temp.submit();
 			return temp;
 		},
-		
+
 		showResults : function() {
-			
+
 			this.extractSearchModel();
-			
+
 			if (this.emptyCriteria()){
 				var message = translator.get('search.validate.empty.label');
 				notification.showInfo(message);
 				return;
 			}
-			
+
 			var searchModel = JSON.stringify(this.model);
 			var queryString = "searchModel=" + encodeURIComponent(searchModel);
 
-			if(!!$("#associationType").length){				
+			if(!!$("#associationType").length){
 				var associateResultWithType = $("#associationType").text();
 				queryString += "&associateResultWithType=" + encodeURIComponent(associateResultWithType);
 
 				var id = $("#associationId").text();
 				queryString += "&id=" + encodeURIComponent(id);
-				
+
 			}
-				
+
 			document.location.href = squashtm.app.contextRoot + "advanced-search/results?"+$("#searchDomain").text() + "&" + queryString;
 		},
 
 		makeTogglePanel : function(id, key, open, css) {
 			var title = key;
-			
+
 			var infoSettings = {
 				initiallyOpen : open,
-				title : title, 
+				title : title,
 				cssClasses : ""
 			};
 			$panel = this.$("#"+id);
 			$panel.togglePanel(infoSettings);
 			$panel.parent().find('>h3 a').removeClass("tg-link").addClass(css.toString());
 		},
-		
+
 		emptyCriteria : function(){
 			var hasCriteria = false;
-			$.each(this.model.fields, function(namename,field){ 
+			$.each(this.model.fields, function(namename,field){
 				// we must distinguish singlevalued and multivalued fields
 				// singlevalued fields define a property 'value', while multivalued fields define a property 'values'.
-				// a singlevalued field is empty if the property 'value' is empty, 
+				// a singlevalued field is empty if the property 'value' is empty,
 				// a multivalued field is empty if the property 'values' is null.
-				// 
+				//
 				if ( field.value !== undefined && field.value !== "" ){
 					hasCriteria = true;
 				} else if (field.values !== undefined && field.values !== null){

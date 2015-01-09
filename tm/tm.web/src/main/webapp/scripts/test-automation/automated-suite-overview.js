@@ -24,12 +24,11 @@
  * Module api : get() : returns the dialog widget instance.
  *
  */
-define(["jquery", "underscore", "handlebars", "../app/pubsub", "squash.statusfactory", "squash.translator",
+define(["jquery", "underscore", "app/squash.handlebars.helpers", "../app/pubsub", "squash.statusfactory", "squash.translator",
         "jqueryui", "jquery.squash.formdialog"], function($, _, Handlebars, ps, statusfactory, translator) {
 	"use strict";
 
 	Handlebars.registerHelper("ballsyStatus", $.proxy(statusfactory.getHtmlFor, statusfactory));
-	Handlebars.registerHelper("oddity", function(index) { return (index % 2 === 0) ? "even" : "odd"; });
 
 	if ($.squash.autosuiteOverview === undefined) {
 
