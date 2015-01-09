@@ -32,277 +32,280 @@
 
 /**
  * ======================Introduction===================================
- * 
- * 
+ *
+ *
  * keys used for data lookup -------------------------
- * 
+ *
  * That table uses mPropData for its columns. More explicitly, it uses json data as a map. Specifically, the defaults
  * keys used here are : - 'entity-id' : the entity id - 'entity-index' : the position of the entity when the list is
  * sorted
- * 
+ *
  * Those keys may be redefined through configuration, using a field object 'dataKeys' : { ... dataKeys : { entityId :
  * default is 'entity-id' , entityIndex : default is 'entity-index' } }
- * 
+ *
  * In some cases more keys might be required for the modules described below, refer to the documentation if need be.
- * 
- * 
+ *
+ *
  * Place-holders : --------------
- * 
+ *
  * When configuring a module sometimes you will see that a given string supports place-holders. It means that anything
  * between curly braces '{something}' are place-holders that will be replaced by the corresponding value from
  * aoData["something"]. That's where the data keys above are useful.
- * 
- * 
+ *
+ *
  * filtering : -----------------
- * 
+ *
  * activation : just give css class 'datatable-filterable' to the relevant th elements. Whenever a datatable is redrawn,
  * a hook will check if any filtering had been applied and enable/disable the class 'datatable-filtered' when
  * appropriate.
- * 
- * 
+ *
+ *
  * static functions : ----------
- * 
+ *
  * $.fn.squashTable.configuration{ fromDOM(table) : table is either a selector or a jquery object pointing to the
  * datatable. returns [ datatableSettings, squashSettings ] on the basis of what could be found on various 'data-*'
  * attributes of the nodes. Best is to read the code and see what's available in there. }
- * 
- * 
+ *
+ *
  * $.fn.squashTable.decorator{ rewriteSentData(datatableSettings) : will decorate the datatableSettigns.fnServerData
  * with a preprocessor that will turn the mDataProp_x to something that makes sense to Spring databinder - eg, will
  * write mDataProp[x] instead. If the settings specified any fnServerParams, the decorator will append its code in last
  * position (and will not overwrite it). }
- * 
+ *
  * =========== Regular Datatable settings=======================================
- * 
+ *
  * the inherited part of the datatable is configured using the first parameter : 'datatableSettings'. Any regular
  * datatable configuration is supported.
- * 
+ *
  * It uses defaults values yet the following parameters are still REQUIRED : - "oLanguage" (internationalization), -
  * "sAjaxSource" (ajax loading), - "aoColumnDefs" (the columns)
- * 
- * 
+ *
+ *
  * ============= object datasource and DOM data ================================
- * 
+ *
  * Structured object datasource is great except when you need to read those data from the DOM. Normally the initial data
  * should be provided by other means (eg ajax call or supplied to the configuration), because DOM-based simply doesn't
  * fit. For instance, if you configure your column to use "mDataProp : 'cake.cherry'", datatable.js will crash because
  * it cannot find it in the DOM (because it assumes that all you want is a scalar, not an object).
- * 
+ *
  * If you still decide to use an object datasource yet initialize it by reading the DOM, this datatable will help you to
  * work around this by creating the missing parts of the data object on the fly. Note that it still can produce buggy
  * datatables if later on the datatable uses data that couldn't be found that way.
- * 
+ *
  * To enable this feature, please add to your configuration 'fixObjectDOMInit : true'
- * 
+ *
  * ============= Squash additional settings=====================================
- * 
- * 
+ *
+ *
  * The squash specifics are configured using the second parameter : 'squashSettings', for additional configuration. The
  * next items describe the additional configuration available, that are passed as member of the 'squashSettings' object.
  * end of this file)
- * 
+ *
  * ============= Squash table functions override================================
- * 
+ *
  * Member name : 'functions' What : any function defined as public member of the table can be redefined as a member of
  * .functions (read the source to pimpoint them at the end of this file) param : an object { itemIds : array of row ids,
  * newIndex : the drop position } default : nothing
- * 
+ *
  * examples : dropHandler : what : a function that must handle the row drop. param : an object { itemIds : array of row
  * ids, newIndex : the drop position } default : nothing
- * 
+ *
  * getODataId : what : a function fetching the id from the data param : what $().dataTable().fnGetData() would normally
  * accept default : return fnGetData()["entity-id"] ============= Drag and drop :
  * =============================================
- * 
- * 
+ *
+ *
  * Member name : 'enableDnD' : true|false
- * 
- * 
+ *
+ *
  * ============== Hovering (css style) =======================================
- * 
+ *
  * Member name : 'enableHover' : true|false.
- * 
- * 
+ *
+ *
  * ============== Object data model read from the DOM =========================
- * 
+ *
  * Member name : 'fixObjectDOMInit' : true|false, refer to the documentation above ('object datasource and DOM data'),
  * default is false
- * 
- * 
+ *
+ *
  * ============== Generic multipurpose popup configuration ====================
- * 
+ *
  * Member name : 'confirmPopup'
- * 
+ *
  * If set, will configure any confirmation dialog used in that table. it's an object whose members are : oklabel : label
  * for okay buttons cancellabel : label for cancel buttons
- * 
+ *
  * ============== Attachments ==================================================
- * 
+ *
  * Member name : 'attachments'
- * 
+ *
  * If the table finds tds having a given cssClass (see cssMatcher) if will turn them into link to the attachment
  * manager. 'attachments' is an object. It must define at least url. It may also override the others of course.
- * 
+ *
  * url : url where the attachment manager is. Accepts placeholders. Note : that one accepts no defaults ! cssMatcher :
  * the css class of cells that must be treated. defaults to 'has-attachment-cells' aoDataNbAttach : the name of the
  * column in aoData where to look for how many attachment the row has. defaults to "nb-attachments" aoDataListId : the
  * name of the column in aoData where to look for the attachment list id, defaults to "attach-list-id"
- * 
+ *
  * ============== Rich editables configuration ================================= *
- * 
+ *
  * Member name : 'richEditables'
- * 
+ *
  * If set, will attempt to turn some cells to rich editables. If undefined, nothing will happen. the property
- * 'richEditables' is an compound object and must define at least 1 member for 'target'. 
- * 
+ * 'richEditables' is an compound object and must define at least 1 member for 'target'.
+ *
  * conf : a map of key-values. A key represents a css class and the value can either represents an url supporting
- * placeholders or an url and an event name to trigger when editing the cell. 
- * Any td having the given css class will be turned to a rich jeditable configured with the standard condiguration 
+ * placeholders or an url and an event name to trigger when editing the cell.
+ * Any td having the given css class will be turned to a rich jeditable configured with the standard condiguration
  * and posting to the supplied url.
- * 
+ *
  * ============== Execution status icons ======================================
- * 
- * If a td has a css class of 'has-status', the table will automatically attempt to format 
- * the content as an execution status (including style and translation). No other conf is 
+ *
+ * If a td has a css class of 'has-status', the table will automatically attempt to format
+ * the content as an execution status (including style and translation). No other conf is
  * required.
- * 
- * 
+ *
+ *
  * ============== Delete row button ========================================
  * Member name : 'deleteButtons'
- * 
+ *
  * If set then will look for cells having the css class 'delete-button'. Configuration as follow : Configuration as
  * follow : url : the url where to post the 'delete' instruction. Supports placeholders. popupmessage : the message that
  * will be displayed tooltip : the tooltip displayed by the button success : a callback on the ajax call when successful
  * fail : a callback on the ajax call when failed. dataType : the dataType parameter for the post. (default = "text")
- * 
+ *
  * NEW : delegate : jquery selector of another popup, that will be used instead of the generated one.
- * 
+ *
  * ============== Add hyperlink to a cell =====================================
- * 
+ *
  * Member name : 'bindLinks'
- * 
- * If set then will look for cells according to the parameters given and make their text a link to the wanted url. 
- * 
- *  Configuration as follow: 
- *  
- *  list :  a list of object to represent each td of a row to make as url Object params as follow : 
- *  
- *  -url : the url to wrap the  text with (place holder will be set to row object id) 
- * 
- * -target : the td rank in the row (starts with 1) 
- * 
- * -targetClass :  alternate to the above, uses css class to find its target 
- * 
+ *
+ * If set then will look for cells according to the parameters given and make their text a link to the wanted url.
+ *
+ *  Configuration as follow:
+ *
+ *  list :  a list of object to represent each td of a row to make as url Object params as follow :
+ *
+ *  -url : the url to wrap the  text with (place holder will be set to row object id)
+ *
+ * -target : the td rank in the row (starts with 1)
+ *
+ * -targetClass :  alternate to the above, uses css class to find its target
+ *
  * -isOpenInTab : boolean to set the target of the url to  "_blank" or not.
- * 
+ *
  * ============== Toggable rows ===============================================
- * 
+ *
  * Member name : 'toggleRows'
- * 
- * Coonfiguration as follow : 
- * 
+ *
+ * Coonfiguration as follow :
+ *
  * {
  *   toggleRows : {
- *       '<css-selector-1>' : url where to load the content of an expanded row when the elements selected by 'css-selector-1' 
+ *       '<css-selector-1>' : url where to load the content of an expanded row when the elements selected by 'css-selector-1'
  *                           are clicked.
- * 
+ *
  *     '<css-selector-2>' : function(table, jqExpandedRow, jqNewRow){
- *          this function will load the content of an expanded row when the elements selected 
+ *          this function will load the content of an expanded row when the elements selected
  *          by 'css-selector-2' are clicked.
  *			},
  *       ...(more of them)
  *      }
  *  }
- * 
+ *
  * }
  * ============== Add Tooltip to a cell =======================================
- * 
+ *
  * -tooltips : it the property 'tooltips' is set, then tooltips will be added to the cells matching the given td selectors
  * example :
- * 
+ *
  * tooltips = [
  * {tdSelector : "td.suites",
  *  value : "the value", function(row, data){return data["suitesTooltip"]}
  * }
  * ]
- * 
+ *
  * ============== Add Buttons to a cell =======================================
- * 
+ *
  * -buttons : if the property 'buttons' is set, then buttons will be added for each case described in the buttons table.
  * example :
- * 
+ *
  * buttons = [
  *  { tooltip : "tooltip",
- * 
+ *
  * cssclass : "classa",
- * 
+ *
  * condition : true, false, function(row, data){return data["isThat"];};
- * 
+ *
  * disabled : true or function(row, data){return data["isThat"];};
- * 
+ *
  * tdSelector : "td.run-step-button",
- * 
+ *
  * onClick : function(table, cell){doThatWithTableAndCell(table, cell);} },
  *  { tooltip : "tooltip", cssclass : "classa", tdSelector : "td.run-step-button", onClick : function(table, cell){
  * doThatWithTableAndCell(table, cell);} }];
- * 
- * 
+ *
+ *
  * the buttons items properties are :
- * 
+ *
  * .tooltip : the button's tooltip
- * 
+ *
  * .cssclass : litteral or function(row, data). Define some css class added to the input button.
- * 
- * .uiIcon : litteral or function(row, data) if the button is to be a jqueryUi icon, set this property to the wanted icon name. 
- * 
+ *
+ * .uiIcon : litteral or function(row, data) if the button is to be a jqueryUi icon, set this property to the wanted icon name.
+ *
  * .condition : boolean or function(row, data). Says if the button is added to the row. if this property is not set
  *              the button will be added everywhere
- * 
+ *
  * .disabled : a boolean or a function(row, data). Return the boolean saying if the button needs to be disabled or not.
- * 
+ *
  * .tdSelector : the css selector to use to retrieve the cells where to put the button
- * 
- * .jquery : boolean. Tells whether this button needs to turn in a jquery button or not. Default is false.  
- * 
+ *
+ * .jquery : boolean. Tells whether this button needs to turn in a jquery button or not. Default is false.
+ *
  * .onClick : a function(table, cell) that will be called with the parameters table and clicked td
- * 
- * 
+ *
+ *
  */
 
 define(["jquery",
         "underscore",
-        "squash.KeyEventListener", 
-        "squash.statusfactory",  
+        "squash.KeyEventListener",
+        "squash.statusfactory",
         "squash.configmanager",
         "jquery.squash.oneshotdialog",
         "squash.translator",
-        "datatables", 
-        "./squashtable.defaults", 
-        "./squashtable.pagination", 
+        "datatables",
+        "./squashtable.defaults",
+        "./squashtable.pagination",
         "./squashtable.dnd"
         ], function($, _, KeyEventListener, statusfactory, confman, oneshot, translator){
-	
+
 	if (!! $.fn.squashTable ){
 		return ;
 	}
-	
+
+	$(document).on("init.dt", function(event) {
+		$(event.target).removeClass("unstyled-table");
+	});
 
 	squashtm = squashtm || {};
 	squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
-	
+
 	/*******************************************************************************************************************
-	 * 
+	 *
 	 * The following functions assume that the instance of the datatable is 'this'.
-	 * 
+	 *
 	 * Note the '_' prefixing each of them.
-	 * 
+	 *
 	 * Typically when the squash datatable initialize it will also declare public methods that will access them. Those
 	 * methods then have the same name, without the '_' prefix.
-	 * 
+	 *
 	 * In some of the functions here such methods belonging to 'this' are invoked. It's not a typo : it's the expected
 	 * behaviour.
-	 * 
-	 * 
+	 *
+	 *
 	 ******************************************************************************************************************/
 
 	/*
@@ -329,13 +332,13 @@ define(["jquery",
 
 	/**
 	 * Enables DnD on the given table.
-	 * 
-	 * As of TM 1.10.0, needs to be called once, at table creation time. Not anymore at each table content refresh. 
-	 * 
+	 *
+	 * As of TM 1.10.0, needs to be called once, at table creation time. Not anymore at each table content refresh.
+	 *
 	 * Note : we calculate the 'offset' because the first displayed element is not necessarily the first item of the
 	 * table. For instance, if we are displaying page 3 and drop our rows at the top of the table view, the drop index
 	 * is not 0 but (3*pagesize);
-	 * 
+	 *
 	 * @this : the datatable instance
 	 * @param dropCallback
 	 *            function called on drop. args are row and drop position.
@@ -345,7 +348,7 @@ define(["jquery",
 		if (!this.squashSettings.enableDnD) {
 			return;
 		}
-		
+
 		function arraysEq(arr1, arr2){
 			if (arr1.length !== arr2.length){
 				return false;
@@ -357,7 +360,7 @@ define(["jquery",
 			}
 			return true;
 		}
-		
+
 		var self = this;
 		this.tableDnD({
 			dragHandle : "drag-handle",
@@ -367,8 +370,8 @@ define(["jquery",
 
 				rows.find('.drag-handle').addClass('ui-state-active');
 				var key = self.squashSettings.dataKeys.entityIndex;
-				
-				var offset = self.fnGetData(0)[key] - 1;				
+
+				var offset = self.fnGetData(0)[key] - 1;
 				self.data("offset", offset);
 
 				var indexes = rows.map(function(i,e){ return e.rowIndex - 1 });
@@ -377,15 +380,15 @@ define(["jquery",
 			},
 
 			onDrop : function(table, rows) { // again, that is now a jQuery object
-				
+
 				var oldIndexes = self.data("indexes");
 				var newIndexes = rows.map(function(i,e){ return e.rowIndex - 1 });
 
 				if (! arraysEq(oldIndexes, newIndexes)) {
-					
+
 					var newInd = rows.get(0).rowIndex - 1;
 					var offset = self.data("offset");
-				
+
 					// prepare the drop now
 					var ids = [];
 					rows.each(function(i, e) {
@@ -489,7 +492,7 @@ define(["jquery",
 	}
 	/**
 	 * Computes the 0-based range of row that should be selected. Note : row._DT_RowIndex is a 0-based index.
-	 * 
+	 *
 	 * @param row
 	 * @param table
 	 * @returns
@@ -526,7 +529,7 @@ define(["jquery",
 		if ((selectedIds instanceof Array) && (selectedIds.length > 0)) {
 			_selectRows.call(this, selectedIds);
 		}
-		
+
 	}
 
 	
@@ -571,7 +574,7 @@ define(["jquery",
 
 	/**
 	 * @returns the data model corresponding to the given id
-	 * 
+	 *
 	 */
 
 	function _getDataById(id) {
@@ -599,7 +602,7 @@ define(["jquery",
 			return found;
 		});
 	}
-	
+
 	function _getRowsByIds(ids){
 		var table = this;
 		return table.find('tbody tr').filter(function(){
@@ -607,13 +610,13 @@ define(["jquery",
 			return (!! id && $.inArray(id, ids)!== -1);
 		});
 	}
-	
-	
+
+
 	function _getColumnNameByIndex(idx){
 		var col = this.fnSettings().aoColumns[idx];
 		return col.mDataProp;
 	}
-	
+
 	function _getColumnIndexByName(name){
 		var cols = this.fnSettings().aoColumns;
 		for (var i=0;i<cols.length;i++){
@@ -623,22 +626,22 @@ define(["jquery",
 		}
 		return -1; // if not found;
 	}
-	
-	// reapped from the dataTable source : 
+
+	// reapped from the dataTable source :
 	function _getAjaxParameters(){
 		var settings = this.fnSettings();
 		//gets the 'natural' parameters
 		var parameters = $.fn.dataTableExt.oApi._fnAjaxParameters(settings);
 		//process through callbacks chain
 		$.fn.dataTableExt.oApi._fnCallbackFire(settings, 'aoServerParams', null, [ parameters ]);
-		
+
 		return parameters;
 	}
 
 	function _addHLinkToCellText(td, url, isOpenInTab) {
 		var $td = $(td),
 			link = $('<a></a>');
-		
+
 		link.attr('href', url);
 		if (isOpenInTab) {
 			link.attr('target', '_blank');
@@ -649,7 +652,7 @@ define(["jquery",
 			// instead of Node.TEXT_NODE
 			return this.nodeType == 3;
 		}).wrap(link);
-		
+
 		return $td.find('a');
 	}
 
@@ -709,7 +712,7 @@ define(["jquery",
 
 	/*
 	 * again 'this' is the table instance.
-	 * 
+	 *
 	 * TODO : user squash.configmanager next time
 	 */
 	function _configureRichEditables() {
@@ -719,7 +722,7 @@ define(["jquery",
 		if (!targets) {
 			return;
 		}
-		
+
 		var baseconf = confman.getJeditableCkeditor();
 
 		for ( var css in targets) {
@@ -734,19 +737,19 @@ define(["jquery",
 				var finalConf = $.extend(true, {
 					"url" : url
 				}, baseconf);
-				
+
 				if(!_.isString(targets[css])){
 					var evt = targets[css]['oncomplete'];
 					finalConf.ajaxoptions = {
 							complete : function(){
 								self.trigger(evt, {
-									id : self.getODataId(row), 
+									id : self.getODataId(row),
 									responseText : arguments[0].responseText
 								});
 							}
 					};
 				}
-				
+
 				$(cell).richEditable(finalConf);
 			});
 		}
@@ -757,7 +760,7 @@ define(["jquery",
 		var cells = $('td.has-status', this);
 
 		$(cells).each(function(i, cell) {
-			
+
 			var data = (cell.textContent) ? cell.textContent : cell.innerText;
 			var newhtml = statusfactory.getHtmlFor(data);
 			cell.innerHTML = newhtml;
@@ -780,47 +783,47 @@ define(["jquery",
 	function _configureButtons() {
 		var self = this;
 		var buttons = this.squashSettings.buttons;
-		
+
 		if (!buttons) {
 			return;
 		}
-		
+
 		for (var i=0, len=buttons.length; i<len; i++){
 			var button = buttons[i];
-			
+
 			var template = $("<a/>",{
 				'class' : 'table-button',
 				'title' : button.tooltip
 			});
-			
+
 			var cells = self.find(button.tdSelector);
-			
+
 			cells.each(function(i, cell) {
-				
+
 					var instance = template.clone(),
 						$cell = $(cell),
 						row = $cell.parent("tr")[0],
 						data = self.fnGetData(row);
-					
+
 					// should the button be displayed in the first place ?
 					var rendered = ($.isFunction(button.condition) ) ? button.condition(row, data) : button.condition;
 					if (rendered === false){
 						return "continue"; // returning whatever non-false means 'continue'
 					}
-					
-					// is the button disabled ? 
-					var disabled = ($.isFunction(button.disabled)) ? button.disabled(row, data) : button.disabled;  
+
+					// is the button disabled ?
+					var disabled = ($.isFunction(button.disabled)) ? button.disabled(row, data) : button.disabled;
 					if (disabled) {
 						template.prop('disabled', true);
 					}
-					
+
 					// additional classes ?
 					var classes = ($.isFunction(button.cssclass)) ? button.cssclass(row, data) : button.cssclass;
 					instance.addClass(classes);
-					
-					// an icon maybe ? 
+
+					// an icon maybe ?
 					var icon = ($.isFunction(button.uiIcon)) ? button.uiIcon(row, data) : button.uiIcon;
-					
+
 					if (button.jquery){
 						instance.squashButton({
 							text : false,
@@ -832,14 +835,14 @@ define(["jquery",
 					else{
 						instance.addClass(icon);
 					}
-					
-					//append 
+
+					//append
 					$cell.empty().append(instance);
 				});
 		};
 
 	}
-	
+
 	function _configureIcons(){
 		var self = this;
 		var icons = this.squashSettings.icons;
@@ -883,16 +886,16 @@ define(["jquery",
 		var len=tooltips.length
 		//console.log(len+" tooltips to configure");
 		for (var i=0; i<len; i++){
-			
+
 			var tooltip = tooltips[i];
 			var cells = self.find(tooltip.tdSelector);
-			
+
 			cells.each(function(i, cell) {
-				
+
 					var	$cell = $(cell),
 						row = $cell.parent("tr")[0],
 						data = self.fnGetData(row);
-					
+
 					// find value if function
 					var value = ($.isFunction(tooltip.value) ) ? tooltip.value(row, data) : tooltip.value;
 
@@ -921,7 +924,7 @@ define(["jquery",
 		});
 
 	}
-	
+
 	function _configureDeleteButtons() {
 		var deleteConf = this.squashSettings.deleteButtons;
 		if (!deleteConf) {
@@ -992,18 +995,18 @@ define(["jquery",
 			jqRow.addClass('ui-state-row-selected');
 
 			if (conf.delegate !== undefined) {
-				// the following trick will open a dialog instance regardless of the actual 
+				// the following trick will open a dialog instance regardless of the actual
 				// implementation used (the original jquery dialog or one of ours).
 				var _delegate = $(conf.delegate);
-				
+
 				var _rowid = self.getODataId(jqRow.get(0));
 				_delegate.data('entity-id', _rowid);
-				
+
 				var rowDatas = self.getDataById(_rowid)
 				for(var rowData in rowDatas){
 					_delegate.data(rowData, rowDatas[rowData]);
 				}
-					
+
 				var _data = _delegate.data();
 				for (var _ppt in _data){
 					var _widg = _data[_ppt];
@@ -1043,7 +1046,7 @@ define(["jquery",
 	/**
 	 * Wrap cell text with link tags according to the given settings : squashSettings.bindLinks More info on top of the
 	 * page on "Squash additional settings" doc.
-	 * 
+	 *
 	 */
 	function _configureLinks() {
 		var linksConf = this.squashSettings.bindLinks;
@@ -1088,9 +1091,9 @@ define(["jquery",
 	 * Unlike the above, that function will not be a member of the squash datatable. This is a factory function that
 	 * returns a method handling the corner case of initializing an object based datasource from the DOM (refer to the
 	 * documentation above).
-	 * 
+	 *
 	 * See also the function just below ( _fix_mDataProp )
-	 * 
+	 *
 	 * some bits are taken from jquery.datatable.js, sorry for the copy pasta.
 	 */
 	function _createObjectDOMInitFixer(property) {
@@ -1142,7 +1145,7 @@ define(["jquery",
 	/**
 	 * this function will process the column defs, looking for mDataProp settings using a dotted object notation, to fix
 	 * them when reading the DOM (read documentation above).
-	 * 
+	 *
 	 */
 	function _fix_mDataProp(datatableSettings) {
 
@@ -1173,21 +1176,21 @@ define(["jquery",
 			this.find('th.datatable-filterable').removeClass('datatable-filtered');
 		}
 	}
-	
-	
-	
+
+
+
 	function _configureToggableRows(){
-		
+
 		var toggleSettings = this.squashSettings.toggleRows || {};
 		var ppt;
-		var table = this;	
-		
+		var table = this;
+
 		var template = $('<div><span class="small-right-arrow"></span></div>');
-		
+
 		for (var selector in toggleSettings) {
-			
-			// adds a draw callback. It will be then executed every time the table is reloaded 
-			this.drawcallbacks.push(function(){		
+
+			// adds a draw callback. It will be then executed every time the table is reloaded
+			this.drawcallbacks.push(function(){
 				this.find(selector).each(function(idx,cell){
 					var link = table.addHLinkToCellText(cell, 'javascript:void(0)');
 					link.addClass('toggle-row-label');
@@ -1195,7 +1198,7 @@ define(["jquery",
 					template.clone().append(link).appendTo(cell);
 				});
 			});
-			
+
 			// click handler (executed one time only).
 			var loader = toggleSettings[selector];
 			this.on('click', selector+'>div> a', function(){
@@ -1203,36 +1206,36 @@ define(["jquery",
 				var jqlink = $(this),
 					icon = jqlink.prev(),
 					ltr = jqlink.parents('tr').get(0);
-				
+
 				if (! icon.hasClass('small-down-arrow')){
-					
+
 					var rowClass = ($(ltr).hasClass("odd")) ? "odd" : "even",
 						$ltr = $(ltr),
 						$newTr = $(table.fnOpen(ltr, "   ", ""));
-					
+
 					$newTr.addClass(rowClass);
-					
+
 					icon.removeClass('small-right-arrow').addClass('small-down-arrow');
-					
+
 					if (typeof loader === "string"){
 						// content loader assumed to be an url
-						$newTr.load(loader);	
+						$newTr.load(loader);
 					}
 					else{
-						// content loader assumed to be a function. The (table, table,...) arguments is not a typo. 
+						// content loader assumed to be a function. The (table, table,...) arguments is not a typo.
 						loader.call(table, table, $ltr, $newTr);
 					}
-					
+
 				}
 				else{
 					table.fnClose(ltr);
 					icon.removeClass('small-down-arrow').addClass('small-right-arrow');
 				}
-				
-				
+
+
 			});
-			
-		}		
+
+		}
 	}
 
 	// ************************ functions used by the static functions
@@ -1341,19 +1344,19 @@ define(["jquery",
 	// ******** decorator ************************
 
 	function _fnRewriteData(aoData) {
-		
-		var i = 0, 
-			length = aoData.length, 
-			match, 
+
+		var i = 0,
+			length = aoData.length,
+			match,
 			dataprop_regexp = /mDataProp_(\d+)/,
 			sortcol_regexp = /iSortCol_(\d+)/,
 			sortdir_regexp = /sSortDir_(\d+)/,
 			search_regexp = /sSearch_(\d+)/;
-		
+
 		for (i = 0; i < length; i++) {
 
 			if ((match = aoData[i].name.match(dataprop_regexp)) !== null){
-				aoData[i].name = "mDataProp[" + match[1] + "]";		
+				aoData[i].name = "mDataProp[" + match[1] + "]";
 			}
 			else if ((match = aoData[i].name.match(sortcol_regexp)) !== null){
 				aoData[i].name = "iSortCol[" + match[1] + "]";
@@ -1369,9 +1372,9 @@ define(["jquery",
 
 
 	/*******************************************************************************************************************
-	 * 
+	 *
 	 * now we can declare our plugin
-	 * 
+	 *
 	 ******************************************************************************************************************/
 
 	var datatableDefaults = $.extend(true, {}, squashtm.datatable.defaults);
@@ -1406,10 +1409,10 @@ define(["jquery",
 	$.fn.squashTable = function(datatableSettings, squashSettings) {
 
 		/* *************************************************************
-		 * 
+		 *
 		 * 0 - Getter ?
-		 * 
-		 * are we in retrieve mode or init mode ? the answer is simple : no 
+		 *
+		 * are we in retrieve mode or init mode ? the answer is simple : no
 		 * param means retrieve mode. Note that the key is the dome element.
 		 *
 		 * *********************************************************** */
@@ -1419,31 +1422,31 @@ define(["jquery",
 		}
 
 		/* *************************************************************
-		 * 
+		 *
 		 * 0 - Constructor ?
-		 * 
+		 *
 		 * If the function was not invoked as a getter for an existing
-		 * instance, then we will create a new one with the supplied 
+		 * instance, then we will create a new one with the supplied
 		 * arguments.
-		 * 
+		 *
 		 ***************************************************************/
 
 		var self = this;
 
 
-		
+
 		/* ******************************************************************
 		 * 1 - Settings augmentation
-		 * 
-		 * Here we we tune some more the datatable configuration by preconfiguring 
-		 * some callbacks. Those callbacks may also have been configured by the 
-		 * user, so we will wrap our own definition around those instead of bluntly 
-		 * overriding them.  
-		 * 
+		 *
+		 * Here we we tune some more the datatable configuration by preconfiguring
+		 * some callbacks. Those callbacks may also have been configured by the
+		 * user, so we will wrap our own definition around those instead of bluntly
+		 * overriding them.
+		 *
 		 * **************************************************************** */
-		
+
 		// ---------- merge programmatic and DOM-based configuration --------
-		
+
 		var domConf = $.fn.squashTable.configurator.fromDOM(this);
 
 		var datatableEffective = $.extend(true, {}, datatableDefaults, domConf.table, datatableSettings);
@@ -1452,16 +1455,16 @@ define(["jquery",
 
 		this.drawcallbacks = [];
 		this.rowcalbacks = [];
-		
-			
+
+
 		this.squashSettings = squashEffective;
-		
+
 		// ---------- table drag and drop, if the configuration states there is ---------
-		
+
 		_enableTableDragAndDrop.call(this);
-		
+
 		// ---------- serverparams (1) : a good time to save the table selection --------
-		
+
 		var oldFnServParam = datatableEffective.fnServerParams;
 		datatableEffective.fnServerParams = function(aoData){
 			_saveTableSelection.call(this);
@@ -1469,31 +1472,25 @@ define(["jquery",
 				oldFnServParam.call(this, aoData);
 			}
 		}
-		
+
 		// --------------- serverparams (2) : actually rewrite the data --------
-		
+
 		$.fn.squashTable.decorator.rewriteSentData(datatableEffective);
-		
-		// ---------------- init complete callback ----------------		
-		
+
+		// ---------------- init complete callback ----------------
+
 		var userInitCompleteCallback = datatableEffective.fnInitComplete;
 		datatableEffective.fnInitComplete = function(oSettings) {
 			if (userInitCompleteCallback) {
 				userInitCompleteCallback.call(this, oSettings);
 			}
-			
-			/*
-			 * bsiri, 20/10/14 : there used to be a this.removeClass('unstyled-table') instruction
-			 * here, however it stopped firing for table with delayed initialization since
-			 * we updated to version 2. So I moved the instruction intp the main process 
-			 * to make sure it is called everytime.
-			 */
+
 		};
 
 		//----------------- draw callback ------------------------
-		
+
 		var aDrawCallbacks = this.drawcallbacks;
-		
+
 		aDrawCallbacks.push(_attachButtonsCallback);
 		aDrawCallbacks.push(_configureRichEditables);
 		aDrawCallbacks.push(_configureExecutionStatus);
@@ -1507,31 +1504,31 @@ define(["jquery",
 		aDrawCallbacks.push(_configureTooltips);
 		aDrawCallbacks.push(_configureIcons);
 		
-		
-		
+
+
 		var userDrawCallback = datatableEffective.fnDrawCallback;
 
 		datatableEffective.fnDrawCallback = function(oSettings) {
-			
+
 			if (userDrawCallback) {
 				userDrawCallback.call(this, oSettings);
 			}
-			
+
 			var i=0, len = this.drawcallbacks.length;
 			for (i=0; i<len; i++){
 				this.drawcallbacks[i].call(this);
 			}
 
 		};
-		
-		
-		
+
+
+
 		/* *****************************************************
-		 * 
-		 * 2 - public methods definition		 
-		 * 
+		 *
+		 * 2 - public methods definition
+		 *
 		 ***************************************************** */
-		
+
 		this.dropHandler = _dropHandler;
 		this.getODataId = _getODataId;
 		this.saveTableSelection = _saveTableSelection;
@@ -1557,7 +1554,7 @@ define(["jquery",
 		this.restoreTableSelection = _restoreTableSelection;
 		this.applyFilteredStyle = _applyFilteredStyle;
 		this.drawIcon           = _drawIcon;
-		
+
 		this.getColumnNameByIndex = _getColumnNameByIndex;
 		this.getColumnIndexByName = _getColumnIndexByName;
 
@@ -1571,33 +1568,33 @@ define(["jquery",
 		this.refresh = function() {
 			this.fnDraw(false);
 		};
-		
+
 		this.refreshRestore = function(){
 			this.saveTableSelection();
 			this.refresh();
 			this.restoreTableSelection();
 		}
 
-		
+
 
 		if (squashEffective.functions) {
 			$.extend(this, squashEffective.functions);
 		}
-		
+
 
 		if (squashEffective.fixObjectDOMInit) {
 			_fix_mDataProp(datatableEffective);
 		}
-		
+
 		if (squashEffective.toggleRows){
 			_configureToggableRows.call(this);
 		}
 
-		
+
 		/* **********************************************************
-		 * 
+		 *
 		 * 3 - Final leg : creation and events
-		 *  
+		 *
 		 ********************************************************** */
 
 		// ---------------- store the new instance ---------------------
@@ -1607,7 +1604,7 @@ define(["jquery",
 		// ---------------- now call the base plugin -------------------
 
 		this.dataTable(datatableEffective);
-		
+
 		// ---------------- event binding ------------------------------
 
 		_bindClickHandlerToSelectHandle.call(this);
@@ -1629,10 +1626,6 @@ define(["jquery",
 		}
 
 		this.addClass("is-contextual");
-		
-
-		// sets the table visible if it was hidden
-		this.removeClass("unstyled-table");
 
 		return this;
 	};
@@ -1823,10 +1816,10 @@ define(["jquery",
 		}
 
 	};
-	
 
-	return $.fn.squashTable; 
-	
+
+	return $.fn.squashTable;
+
 });
 
 
