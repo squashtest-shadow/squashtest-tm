@@ -21,32 +21,32 @@
 /**
  * ConfirmDialog widget. A confirm dialog is a preconfigured modal dialog which
  * shows a message and has a ok and a cancel button.
- * 
+ *
  * If the div used to generate the dialog contains up to 2 <input type="button" />
  * elements, they are used as the ok and cancel buttons labels.
- * 
+ *
  * Usage example :
- * 
+ *
  * <div id="confirm-dialog" class="not-displayed popup-dialog" title="title">
  * <strong>message</strong> <input:ok /> <input:cancel /> </div>
- * 
+ *
  * <div id="confirm-dialog" class="not-displayed popup-dialog" title="title">
  * <strong>message</strong> <input type="button" value="not a confirm button" />
  * <div class="popup-dialog-buttonpane"> <input:ok /> <input:cancel /> </div>
  * </div>
- * 
+ *
  * <script> $(function(){ var confirmHandler = function() {
  * actionAfterConfirm(); };
- * 
+ *
  * var dialog = $( "#confirm-dialog" ); dialog.confirmDialog(
  * {confirm:confirmHandler} );
- * 
+ *
  * $('#button').click(function(){ dialog.confirmDialog( "open" ); return false;
  * }); }); </script>
- * 
+ *
  * The dialog triggers a confirmdialogconfirm when confirm button is clicked The
  * dialog triggers a confirmdialogcancel when cancel button is clicked
- * 
+ *
  * @author Gregory Fouquet
  */
 (function($) {
@@ -130,9 +130,9 @@
 			var self = this;
 
 			function buttonsParent() {
-				var popup = $(self.element), buttonsPane = popup
-						.find(".popup-dialog-buttonpane");
-				return buttonsPane.val() ? buttonsPane : popup;
+				var popup = $(self.element);
+				var buttonsPane = popup.find(".popup-dialog-buttonpane");
+				return buttonsPane.length > 0 ? buttonsPane : popup;
 			}
 
 			var inputButtons = buttonsParent().find("input:button");
