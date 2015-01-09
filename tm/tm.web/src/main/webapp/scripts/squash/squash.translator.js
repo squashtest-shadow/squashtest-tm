@@ -49,9 +49,9 @@
  * The method `load()` takes the same *object* arg as `get()` and performs an *asunc* request to fill the cache if needed. It does not return anything.
  */
 define(["jquery", "underscore", "workspace.storage"], function($, _, storage){
-	
+	"use strict";
 
-	var serviceURL = squashtm.app.contextRoot+"/localization/filler";
+	var serviceURL = window.squashtm.app.contextRoot+"/localization/filler";
 	var ajaxDefaults = {
 			url : serviceURL,
 			headers : {
@@ -62,24 +62,28 @@ define(["jquery", "underscore", "workspace.storage"], function($, _, storage){
 		};
 
 	//initialization
-	squashtm = squashtm || {};
-	squashtm.message = squashtm.message || {};
-	var KEY = "squashtm.message-"+squashtm.app.locale;
-	squashtm.message.cache = storage.get(KEY) || squashtm.message.cache || {};
+	window.squashtm = window.squashtm || {};
+	window.squashtm.message = window.squashtm.message || {};
+	var KEY = "squashtm.message-"+ window.squashtm.app.locale;
+	window.squashtm.message.cache = storage.get(KEY) || window.squashtm.message.cache || {};
 
 
 	// ************ ajax functions *************
 
 	function _ajax(object){
-		var result;
+		var result = "lol";
 		var params = _.defaults({
 			data : JSON.stringify(object),
-			async : false
+			async : false,
+			success: function(json) {
+				result = json;
+			},
+			error: function() {
+				console.log("Error while fetching messages", object, arguments);
+			}
 		}, ajaxDefaults);
 
-		$.ajax(params).success(function(json){
-			result = json;
-		});
+		$.ajax(params);
 
 		return result;
 	}
@@ -106,7 +110,7 @@ define(["jquery", "underscore", "workspace.storage"], function($, _, storage){
 
 			//case 1 : the property is a string, and is expected to be a _18nkey
 			if (typeof _i18nkey === "string"){
-				var _cachedValue = squashtm.message.cache[_i18nkey];
+				var _cachedValue = window.squashtm.message.cache[_i18nkey];
 				if (_cachedValue!==undefined){
 					cached[ppt] = _cachedValue;	//value is found : the translation is attached to the 'cached' object
 				}
@@ -147,7 +151,7 @@ define(["jquery", "underscore", "workspace.storage"], function($, _, storage){
 			//if the property is a string : it is a i18key. The value is stored in the 'value' argument, indexed at the same property.
 			if (typeof _i18nkey === "string"){
 				_i18nvalue = values[ppt];
-				squashtm.message.cache[_i18nkey] = _i18nvalue;
+				window.squashtm.message.cache[_i18nkey] = _i18nvalue;
 			}
 			//if it's an object, let's cache its properties
 			else{
@@ -156,7 +160,7 @@ define(["jquery", "underscore", "workspace.storage"], function($, _, storage){
 		}
 
 		if (_shouldstore !== false){
-			storage.set(KEY, squashtm.message.cache);
+			storage.set(KEY, window.squashtm.message.cache);
 		}
 	}
 
@@ -204,7 +208,7 @@ define(["jquery", "underscore", "workspace.storage"], function($, _, storage){
 
 		var params = _.defaults({
 				data : JSON.stringify(sorted.missing)
-			}, 
+			},
 			ajaxDefaults);
 
 		$.ajax(params).success(function(json){
@@ -213,13 +217,7 @@ define(["jquery", "underscore", "workspace.storage"], function($, _, storage){
 	}
 
 	function getAsString(string){
-
-		var object = {
-			query : string
-		};
-
-		var res = getAsObject(object);
-
+		var res = getAsObject({ query : string });
 		return res.query;
 	}
 
