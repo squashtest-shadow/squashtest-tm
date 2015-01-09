@@ -19,109 +19,64 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
 /**
  *
  * 1/ What is it ?
  *
- * Returns a module that generates and displays on the fly a message dialog with
- * the buttons OK and CANCEL, with the title and message of your choice.
+ * Returns a module that generates and displays on the fly a message dialog with the buttons OK and CANCEL, with the
+ * title and message of your choice.
  *
  * 2/ How does it work ?
  *
- * the method 'show' accepts 2 mandatory options and 3 optional parameters.
- * It returns a promise, that is resolved when the user clicks on the button 1
- * and is rejected when clicks the button 2. Usually the buttons 1 and 2 are
- * 'OK' and 'CANCEL' respectively.
+ * the method 'show' accepts 2 mandatory options and 3 optional parameters. It returns a promise, that is resolved when
+ * the user clicks on the button 1 and is rejected when clicks the button 2. Usually the buttons 1 and 2 are 'OK' and
+ * 'CANCEL' respectively.
  *
  * According to the various parameters description, they can be of type :
- *
- * - string : the parameter will be displayed as is. Be sensible and don't use HTML
- * where there should be.
- *
- * - i18nKey : a i18n key that will be translated before use. The parameter will
- * be recognized as a i18n key is it matches /^([\w\-_]+\.)+[\w\-_]+$/, in layman
- * terms a sequence of characters, dashes, underscore and dots (consecutive dots
- * are forbidden though).
- *
- * - HTML : a string representing HTML, that will be displayed as is. The parameter
- * will be recognised as HTML if it matches /^<([\w]+).*<\/\1>$/, in layman terms
- * anything that start with a html tag and ends with the same tag.
- *
- * - a plain javascript object.
+ *  - string : the parameter will be displayed as is. Be sensible and don't use HTML where there should be.
+ *  - i18nKey : a i18n key that will be translated before use. The parameter will be recognized as a i18n key is it
+ * matches /^([\w\-_]+\.)+[\w\-_]+$/, in layman terms a sequence of characters, dashes, underscore and dots (consecutive
+ * dots are forbidden though).
+ *  - HTML : a string representing HTML, that will be displayed as is. The parameter will be recognised as HTML if it
+ * matches /^<([\w]+).*<\/\1>$/, in layman terms anything that start with a html tag and ends with the same tag.
+ *  - a plain javascript object.
  *
  *
  * The parameters are :
  *
- * [Mandatory] title : represents the title. It may be a string or i18n key.
- * [Mandatory] message : the content of the dialog, may be string or i18n key.
- * [Optional] dialogOpts : parameters for the dialog, just like for a jQuery dialog, plain js object only.
- * [Optional] bnt1Label : if defined and non null, will replace the label 'OK'. String or i18n key.
- * [Optional] btn2Label : if defined and non null, will replace the label 'Cancel'. String or i18n key.
+ * [Mandatory] title : represents the title. It may be a string or i18n key. [Mandatory] message : the content of the
+ * dialog, may be string or i18n key. [Optional] dialogOpts : parameters for the dialog, just like for a jQuery dialog,
+ * plain js object only. [Optional] bnt1Label : if defined and non null, will replace the label 'OK'. String or i18n
+ * key. [Optional] btn2Label : if defined and non null, will replace the label 'Cancel'. String or i18n key.
  *
  *
  */
 
-define(["jquery", "squash.translator", "jqueryui"], function($, translator){
+define([ "jquery", "squash.translator", "underscore", "jqueryui" ], function($, translator, _) {
+	"use strict";
+	var _i18nReg = /^([\w\-_]+\.)+[\w\-_]+$/;
+
+	function _normalize(title, message, btn1Label, btn2Label) {
+		var args = {title: title, message: message, btn1Label: btn1Label, btn2Label: btn2Label };
+		_.defaults(args, {btn1Label: "label.Confirm", btn2Label: "label.Cancel"});
+
+		// we sort out message keys from actual messages
+		var reducer = function(memo, pair) {
+			var recipient = pair[1].match(_i18nReg) === null ? memo.definitive : memo.remotefetch;
+			recipient[pair[0]] = pair[1];
+			return memo;
+		};
+		var sorted = _.chain(args).pairs().reduce(reducer, {definitive: {}, remotefetch: {}}).value();
+
+		// now get the i18n, merge the data then return
+		var translated = translator.get(sorted.remotefetch);
+
+		return _.extend(sorted.definitive, translated);
+	}
 
 	return {
-
-		_i18nReg : /^([\w\-_]+\.)+[\w\-_]+$/,
-
-		_normalize : function(title, message, btn1Label, btn2Label){
-
-			var definitive = {},
-				remotefetch = {};
-
-			// the title
-			if (title.match(this._i18nReg) !== null){
-				remotefetch.title = title;
-			}
-			else{
-				definitive.title = title;
-			}
-
-			// the message
-			if (message.match(this._i18nReg) !== null){
-				remotefetch.message = message;
-			}
-			else{
-				definitive.message = message;
-			}
-
-			// the button 1 label
-			if (! btn1Label){
-				remotefetch.btn1 = 'label.Confirm';
-			}
-			else if (btn1Label.match(this._i18nReg)){
-				remotefetch.btn1 = btn1Label;
-			}
-			else{
-				definitive.btn1 = btn1Label;
-			}
-
-			// the button 2 label
-			if (! btn2Label){
-				remotefetch.btn2 = 'label.Cancel';
-			}
-			else if (btn2Label.match(this._i18nReg)){
-				remotefetch.btn2 = btn2Label;
-			}
-			else{
-				definitive.btn2 = btn2Label;
-			}
-
-			// now get the i18n, merge the data then return
-
-			var translated = translator.get(remotefetch);
-
-			return $.extend({}, definitive, translated);
-
-		},
-
-		show : function(title, message, dialogOpts, btn1Label, btn2Label){
-
-			var content = this._normalize(title, message, btn1Label, btn2Label);
+		show : function(title, message, dialogOpts, btn1Label, btn2Label) {
+			var content = _normalize(title, message, btn1Label, btn2Label);
 
 			var defer = $.Deferred();
 
@@ -131,7 +86,7 @@ define(["jquery", "squash.translator", "jqueryui"], function($, translator){
 				title : content.title,
 				modal : true,
 				buttons : [ {
-					'text' : content.btn1,
+					'text' : content.btn1Label,
 					'click' : function() {
 						var jqDialog = $(this);
 						jqDialog.dialog('close');
@@ -140,7 +95,7 @@ define(["jquery", "squash.translator", "jqueryui"], function($, translator){
 						defer.resolve();
 					}
 				}, {
-					'text' : content.btn2,
+					'text' : content.btn2Label,
 					'click' : function() {
 						var jqDialog = $(this);
 						jqDialog.dialog('close');
@@ -152,7 +107,7 @@ define(["jquery", "squash.translator", "jqueryui"], function($, translator){
 
 			};
 
-			if (!! dialogOpts){
+			if (!!dialogOpts) {
 				$.extend(conf, dialogOpts);
 			}
 
