@@ -84,13 +84,15 @@ Import-Package: com.fasterxml.jackson.databind,\
 	org.h2;resolution:=optional,\
 	com.mysql.jdbc;resolution:=optional,\
 	org.postgresql;resolution:=optional,\
-	org.thymeleaf.templateresolver,\
-	org.thymeleaf.spring3,\
-	org.thymeleaf.spring3.view,\
 	org.thymeleaf.dtd.standard,\
 	org.thymeleaf.dtd.thymeleaf,\
 	org.thymeleaf.dtd.thymeleaf-spring3,\
 	org.thymeleaf.extras.springsecurity3.dialect,\
+	org.thymeleaf.spring3,\
+	org.thymeleaf.spring3.expression,\
+	org.thymeleaf.spring3.requestdata,\
+	org.thymeleaf.spring3.view,\
+	org.thymeleaf.templateresolver,\
 	*
 Web-ContextPath: ${bundle.contextPath}
 # Require-TldBundle : Jetty (or RFC-66?) specific. Defines bundles containing TLDs
