@@ -28,6 +28,7 @@ import java.util.Set;
 import javax.servlet.ServletContext;
 
 import org.squashtest.tm.web.thymeleaf.processor.attr.SquashCssAttrProcessor;
+import org.squashtest.tm.web.thymeleaf.processor.attr.SquashIso8601DateAttrProcessor;
 import org.squashtest.tm.web.thymeleaf.processor.attr.SquashTogglePanelAttrProcessor;
 import org.squashtest.tm.web.thymeleaf.processor.attr.SquashUnsafeHtmlAttrProcessor;
 import org.thymeleaf.context.IContext;
@@ -70,31 +71,32 @@ public class SquashDialect extends AbstractDialect implements IExpressionEnhanci
 		processors.add(new SquashUnsafeHtmlAttrProcessor());
 		processors.add(new SquashCssAttrProcessor());
 		processors.add(new SquashTogglePanelAttrProcessor());
+		processors.add(new SquashIso8601DateAttrProcessor());
 		return processors;
 	}
 
-	
+
 	/* partly ripped from SpringSecutiryDialect*/
-	@Override	
+	@Override
 	public Map<String, Object> getAdditionalExpressionObjects(IProcessingContext processingContext) {
-        final IContext context = processingContext.getContext();
-        final IWebContext webContext =
-                (context instanceof IWebContext? (IWebContext)context : null);
-        
-        final Map<String, Object> extensions = new HashMap<String, Object>(1);
-        
-        if (webContext != null){
-        	final ServletContext servletContext = webContext.getServletContext();
-        	final WorkspaceHelper wHelper = new WorkspaceHelper(servletContext);
-        	
-        	extensions.put("workspace", wHelper);
-        	
-        }
-        
-        return extensions;
-		
+		final IContext context = processingContext.getContext();
+		final IWebContext webContext =
+				(context instanceof IWebContext? (IWebContext)context : null);
+
+		final Map<String, Object> extensions = new HashMap<String, Object>(1);
+
+		if (webContext != null){
+			final ServletContext servletContext = webContext.getServletContext();
+			final WorkspaceHelper wHelper = new WorkspaceHelper(servletContext);
+
+			extensions.put("workspace", wHelper);
+
+		}
+
+		return extensions;
+
 	}
-	
-	
+
+
 
 }
