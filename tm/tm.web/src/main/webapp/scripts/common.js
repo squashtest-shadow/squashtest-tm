@@ -123,8 +123,12 @@ requirejs.config({
 				"handlebars" : "lib/handlebars/handlebars-1.0.0.rc3",
 //				"underscore" : "lib/underscore/underscore-1.4.4",
 				"underscore" : "lib/underscore/underscore-1.4.4-min",
-//				"backbone" : "lib/backbone/backbone-1.0.0",
-				"backbone" : "lib/backbone/backbone-1.0.0-min",
+				"backbone" : "lib/backbone/backbone",
+//				"backbone" : "lib/backbone/backbone-min",
+				"backbone.validation" : "lib/backbone/backbone-validation-amd",
+//				"backbone.validation" : "lib/backbone/backbone-validation-amd-min",
+				"backbone.wreqr" : "lib/backbone/backbone.wreqr",
+//			"backbone.wreqr" : "lib/backbone/backbone.wreqr.min",
 //				"jqplot-core" : "lib/jqplot/jquery.jqplot",
 				"jqplot-core" : "lib/jqplot/jquery.jqplot.min",
 //				"jqplot-pie" : "lib/jqplot/plugins/jqplot.pieRenderer",
@@ -283,10 +287,6 @@ requirejs.config({
 				},
 				"underscore" : {
 					exports : "_"
-				},
-				"backbone" : {
-					deps : [ "underscore", "jquery" ],
-					exports : "Backbone"
 				},
 				"jquery.tagit" : {
 					deps : ["jquery", "jqueryui"],
