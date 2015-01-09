@@ -22,22 +22,46 @@
  * This module handles form messages.
  */
 define([ "jquery" ], function($) {
-	function clearState(help, controlGroup) {
+	"use strict";
+
+	function clearState($help, $controlGroup) {
 		return function() {
-			help.hide().addClass("not-displayed").html("&nbsp;");
-			controlGroup.removeClass("error").removeClass("warning");
+			$help.hide().addClass("not-displayed").html("&nbsp;");
+			$controlGroup.removeClass("error").removeClass("warning");
 
 			return this;
 		};
 	}
 
+	/** prototype for the helper object which will be returned by this module. Some functions are added later. */
+	function Forms() {}
+
 	/**
 	 * input has 2 methods : clearState setState(cssClass, messageKey)
 	 */
-	function input($dom) {
-		var $input = $dom, 
-			$controlGroup = $input.closest(".control-group"), 
-			$help = $input.closest(".controls").find(".help-inline");
+	Forms.prototype.input = function input($dom) {
+		var $input = $dom;
+		var $controlGroup = $input.closest(".control-group");
+
+		return _.extend({
+			$el : $input
+		}, control($controlGroup));
+	};
+
+	Forms.prototype.form = function form($dom) {
+		var $form = $dom;
+		var $controlGroup = $form.find(".control-group");
+		var $help = $form.find(".help-inline");
+
+		return {
+			clearState : clearState($help, $controlGroup),
+			input : Forms.prototype.input
+		};
+	};
+
+	Forms.prototype.control = function control($controlGroup) {
+		var $help = $controlGroup.find(".help-inline");
+		var clear = clearState($help, $controlGroup);
 
 		/**
 		 * Shows the message read from squashtm.app.messages using the given css class
@@ -47,10 +71,10 @@ define([ "jquery" ], function($) {
 			if (!! squashtm.app.messages) {
 				message = squashtm.app.messages[messageKey] || messageKey;
 			}
+			clear();
+			$controlGroup.addClass(state);
 
-			$controlGroup.removeClass("error").removeClass("warning").addClass(state);
-
-			$help.html(message).hide().fadeIn("slow", function() {
+			$help.html(message).fadeIn("slow", function() {
 				$(this).removeClass("not-displayed");
 			});
 
@@ -58,24 +82,11 @@ define([ "jquery" ], function($) {
 		};
 
 		return {
-			$el : $input,
-			clearState : clearState($help, $controlGroup),
+			clearState : clear,
 			setState : setState,
 			hasHelp : $help.length !== 0
 		};
-	}
-
-	function form($dom) {
-		var $form = $dom, $controlGroup = $form.find(".control-group"), $help = $form.find(".help-inline");
-
-		return {
-			clearState : clearState($help, $controlGroup),
-			input : input
-		};
-	}
-
-	return {
-		form : form,
-		input : input
 	};
+
+	return new Forms();
 });
