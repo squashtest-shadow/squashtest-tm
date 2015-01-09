@@ -4,7 +4,9 @@ Bundle-ClassPath: .,\
 	WEB-INF/reports
 Include-Resource: src/main/webapp,\
 	src/main/resources
-Import-Package: javax.servlet.jsp.jstl.core;version=${jstl.version},\
+Import-Package: com.fasterxml.jackson.databind,\
+	com.fasterxml.jackson.core,\
+	javax.servlet.jsp.jstl.core;version=${jstl.version},\
 	javax.servlet.jsp.jstl.fmt;version=${jstl.version},\
 	javax.servlet.jsp.jstl.tlv;version=${jstl.version},\
 	javax.sql,\
@@ -43,10 +45,10 @@ Import-Package: javax.servlet.jsp.jstl.core;version=${jstl.version},\
 	org.springframework.beans.factory.xml;version="${spring.version.range}",\
 	org.springframework.context.config;version="${spring.version.range}",\
 	org.springframework.context.support;version="${spring.version.range}",\
+	org.springframework.http.converter.json;version="${spring.version.range}",\
 	org.springframework.orm.hibernate4.support;version="${spring.version.range}",\
 	org.springframework.osgi.extensions.annotation;version="${springdm.version.range}",\
 	org.springframework.osgi.web.context.support;version="${springdm.version.range}",\
-	org.springframework.web.context;version="${spring.version.range}",\
 	org.springframework.security.access,\
 	org.springframework.security.acls.model,\
 	org.springframework.security.authentication.dao,\
@@ -57,10 +59,11 @@ Import-Package: javax.servlet.jsp.jstl.core;version=${jstl.version},\
 	org.springframework.security.web,\
 	org.springframework.security.web.authentication,\
 	org.springframework.security.web.access,\
+	org.springframework.security.web.savedrequest;version="${spring.version.range}",\
+	org.springframework.web.context;version="${spring.version.range}",\
 	org.springframework.web.context.request;version="${spring.version.range}",\
 	org.springframework.web.filter;version="${spring.version.range}",\
 	org.springframework.web.multipart.commons;version="${spring.version.range}",\
-	org.springframework.security.web.savedrequest;version="${spring.version.range}",\
 	org.springframework.transaction;version="${spring.version.range}",\
 	org.springframework.web.servlet;version="${spring.version.range}",\
 	org.springframework.web.servlet.view;version="${spring.version.range}",\

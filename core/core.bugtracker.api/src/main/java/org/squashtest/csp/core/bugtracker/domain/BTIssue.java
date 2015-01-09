@@ -24,6 +24,9 @@ import java.util.Date;
 
 import org.squashtest.tm.bugtracker.definition.RemoteIssue;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonFormat.Shape;
+
 /**
  * Bug-tracker-agnostic representation of an issue / ticket
  *
@@ -32,51 +35,51 @@ import org.squashtest.tm.bugtracker.definition.RemoteIssue;
  */
 
 public class BTIssue implements RemoteIssue {
-	
+
 	private String id;
-	
+
 	private String summary;
-	
+
 	private BTProject project;
-	
+
 	private Priority priority;
-	
+
 	private Version version;
-	
+
 	private User reporter;
-	
+
 	private Category category;
-	
+
 	private User assignee;
-		
+
 	private String description;
-	
+
 	private String comment;
-		
+
 	private Date createdOn;
-	
+
 	private Status status;
-	
+
 	private String bugtracker;
 
 	public BTIssue(){
-		
+		super();
 	}
 
 	public BTIssue(String id, String summary){
 		this.id=id;
 		this.summary=summary;
 	}
-	
+
 
 	public String getId(){
 		return id;
 	}
-	
+
 	public void setId(String id){
 		this.id=id;
 	}
-	
+
 
 	public Category getCategory() {
 		return category;
@@ -152,23 +155,25 @@ public class BTIssue implements RemoteIssue {
 	}
 
 
+	@JsonFormat(shape=Shape.NUMBER)
 	public Date getCreatedOn() {
 		return createdOn;
 	}
 
 
+	@JsonFormat(shape=Shape.NUMBER)
 	public void setCreatedOn(Date createdOn) {
 		this.createdOn = createdOn;
 	}
-	
+
 	public Status getStatus(){
 		return status;
 	}
-	
+
 	public void setStatus(Status status){
 		this.status=status;
 	}
-	
+
 	/**
 	 * sets the name of the instance of the bugtracker (not its kind, url or else)
 	 * 
@@ -177,24 +182,24 @@ public class BTIssue implements RemoteIssue {
 	public void setBugtracker(String btName){
 		this.bugtracker = btName;
 	}
-	
+
 	public String getBugtracker(){
 		return bugtracker;
 	}
-	
 
-	
+
+
 	/** exists for the purpose of being java-bean compliant */
 	public void setDummy(Boolean dummy){
-		
+
 	}
 
 	@Override
 	public boolean hasBlankId(){
 		return (
-			(id==null) ||
-			(id.length()==0) ||
-			(id.matches("^\\s*$"))
-		);
+				(id==null) ||
+				(id.length()==0) ||
+				(id.matches("^\\s*$"))
+				);
 	}
 }

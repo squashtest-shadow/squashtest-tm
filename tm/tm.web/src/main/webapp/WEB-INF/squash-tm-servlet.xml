@@ -41,7 +41,15 @@
   <context:property-placeholder properties-ref="squash.tm.config" />
 		
 	<!-- Configures the @Controller programming model -->
-  <mvc:annotation-driven validator="validator" />
+  <mvc:annotation-driven validator="validator">
+    <mvc:message-converters>
+      <bean class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
+        <property name="objectMapper">
+          <bean class="org.squashtest.tm.web.json.SquashObjectMapper" />
+        </property>
+      </bean>
+    </mvc:message-converters>
+  </mvc:annotation-driven>
 
   <bean id="validator" class="org.springframework.validation.beanvalidation.CustomValidatorBean">
     <property name="validatorFactory" ref="javax.validation.ValidatorFactory" />

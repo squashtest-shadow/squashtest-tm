@@ -32,7 +32,6 @@ import java.util.Locale;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletResponse;
 
-import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -47,13 +46,15 @@ import org.squashtest.tm.service.requirement.RequirementVersionAdvancedSearchSer
 import org.squashtest.tm.service.testcase.TestCaseAdvancedSearchService;
 import org.squashtest.tm.web.internal.util.HTMLCleanupUtils;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 @Controller
 @RequestMapping("/advanced-search")
 public class AdvancedSearchExportController {
 
 	@Inject
 	private TestCaseAdvancedSearchService testCaseAdvancedSearchService;
-	
+
 	@Inject
 	private RequirementVersionAdvancedSearchService requirementVersionAdvancedSearchService;
 
@@ -66,7 +67,7 @@ public class AdvancedSearchExportController {
 	void exportRequirementVersionAdvancedSearchResult(
 			HttpServletResponse response,
 			@RequestParam(value = "searchModel") String searchModel, final Locale locale)
-			throws IOException {
+					throws IOException {
 
 		AdvancedSearchModel parsedSearchModel = new ObjectMapper().readValue(
 				searchModel, AdvancedSearchModel.class);
@@ -102,13 +103,13 @@ public class AdvancedSearchExportController {
 	public @ResponseBody
 	void exportTestCaseAdvancedSearchResult(HttpServletResponse response,
 			@RequestParam(value = "searchModel") String searchModel, final Locale locale)
-			throws IOException {
+					throws IOException {
 
 		BufferedWriter writer = null;
 
 		try {
 			AdvancedSearchModel parsedSearchModel = new ObjectMapper()
-					.readValue(searchModel, AdvancedSearchModel.class);
+			.readValue(searchModel, AdvancedSearchModel.class);
 			SearchExportCSVModel model = testCaseAdvancedSearchService
 					.exportTestCaseSearchResultsToCSV(parsedSearchModel, locale);
 
