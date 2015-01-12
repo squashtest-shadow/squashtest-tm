@@ -219,7 +219,7 @@
 
 			<column name="DESCRIPTION" type="TEXT" remarks="a description for that list" />
 
-			<column name="CODE" type="CHAR(30)"
+			<column name="CODE" type="VARCHAR(30)"
 				remarks="a code that helps identifying that list">
 				<constraints nullable="false" unique="true" />
 			</column>
@@ -248,7 +248,7 @@
 
 		<!--  index on the code for faster lookup -->
 		<createIndex tableName="INFO_LIST" indexName="idx_info_list_code">
-			<column name="CODE" type="CHAR(30)">
+			<column name="CODE" type="VARCHAR(30)">
 				<constraints nullable="false" unique="true" />
 			</column>
 		</createIndex>
@@ -262,7 +262,7 @@
 				<constraints nullable="true" primaryKey="true" />
 			</column>
 
-			<column name="ITEM_TYPE" type="CHAR(3)"
+			<column name="ITEM_TYPE" type="VARCHAR(3)"
 				remarks="discriminator telling whether this item is user-made or builtin in the app.
 															Pick one of 'USR' or 'SYS'">
 				<constraints nullable="false" />
@@ -287,7 +287,7 @@
 				<constraints nullable="false" unique="true" />
 			</column>
 
-			<column name="CODE" type="CHAR(30)"
+			<column name="CODE" type="VARCHAR(30)"
 				remarks="a code that helps identifying that item">
 				<constraints nullable="false" unique="true" />
 			</column>
@@ -309,7 +309,7 @@
 
 		<!--  index on the code for faster lookup -->
 		<createIndex tableName="INFO_LIST_ITEM" indexName="idx_info_list_item_code">
-			<column name="CODE" type="CHAR(30)">
+			<column name="CODE" type="VARCHAR(30)">
 				<constraints nullable="false" unique="true" />
 			</column>
 		</createIndex>
@@ -327,7 +327,7 @@
 						be displayed verbatim">
 			</column>	
 			
-			<column name="TC_NAT_CODE" type="CHAR(30)"
+			<column name="TC_NAT_CODE" type="VARCHAR(30)"
 				remarks="a code that helps identifying that item. Note that unlike the original version the values for
 						that column will not be unique." />		
 								
@@ -340,7 +340,7 @@
 						be displayed verbatim">
 			</column>	
 			
-			<column name="TC_TYP_CODE" type="CHAR(30)"
+			<column name="TC_TYP_CODE" type="VARCHAR(30)"
 				remarks="a code that helps identifying that item. Note that unlike the original version the values for
 						that column will not be unique." />		
 						
