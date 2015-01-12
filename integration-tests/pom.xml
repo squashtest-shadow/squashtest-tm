@@ -27,6 +27,8 @@
     <hibernate.dialect>org.hibernate.dialect.H2Dialect</hibernate.dialect>
     <non-dbunit-database.url>jdbc:h2:target/database/squash-it-non-dbunit/squash-it</non-dbunit-database.url>
     <squashtest.rootDir>${project.build.directory}</squashtest.rootDir>
+    
+    <hibernate.sql.verbosity>INFO</hibernate.sql.verbosity>
   </properties>
 
   <dependencyManagement>
@@ -711,6 +713,13 @@
         </plugins>
       </build>
 
+    </profile>
+    
+    <profile>
+      <id>verbose</id>
+      <properties>
+        <hibernate.sql.verbosity>DEBUG</hibernate.sql.verbosity>
+      </properties>
     </profile>
   </profiles>
 </project>

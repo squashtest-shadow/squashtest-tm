@@ -18,6 +18,8 @@ Maven profiles
 
 * default : `h2.windows` and `h2.unix`
 
+* `verbose` : use this when you want Hibernate to vomit SQL. Most of the time it's useless and slows up the process 
+
 * `h2.windows` : performs integration tests against _h2_ database configured for a windows environment. 
 This profile is automatically activated on windows environments 
 
