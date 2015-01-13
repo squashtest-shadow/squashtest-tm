@@ -51,44 +51,49 @@ import org.squashtest.tm.service.statistics.campaign.ScheduledIteration;
 @Service("CampaignStatisticsService")
 public class CampaignStatisticsServiceImpl implements CampaignStatisticsService{
 
+	private static final String PERM_IS_ADMIN = "or hasRole('ROLE_ADMIN')";
+
+
+	private static final String PERM_CAN_READ_CAMPAIGN = "hasPermission(#campaignId, 'org.squashtest.tm.domain.campaign.Campaign', 'READ') ";
+
+
 	private static final Logger LOGGER = LoggerFactory.getLogger(CampaignStatisticsService.class);
 
-	
+
 	@Inject
 	private SessionFactory sessionFactory;
-	
-	
+
+
 	@Override
-	@PreAuthorize("hasPermission(#campaignId, 'org.squashtest.tm.domain.campaign.Campaign', 'READ') "
-			+ "or hasRole('ROLE_ADMIN')")
-	public CampaignProgressionStatistics gatherCampaignProgressionStatistics(long campaignId) {		
+	@PreAuthorize(PERM_CAN_READ_CAMPAIGN + PERM_IS_ADMIN)
+	public CampaignProgressionStatistics gatherCampaignProgressionStatistics(long campaignId) {
 
 		CampaignProgressionStatistics progression = new CampaignProgressionStatistics();
-		
+
 		Session session = sessionFactory.getCurrentSession();
-		
+
 		Query query = session.getNamedQuery("CampaignStatistics.findScheduledIterations");
 		query.setParameter("id", campaignId, LongType.INSTANCE);
 		List<ScheduledIteration> scheduledIterations = query.list();
-		
+
 		//TODO : have the db do the job for me
 		Query requery = session.getNamedQuery("CampaignStatistics.findExecutionsHistory");
 		requery.setParameter("id", campaignId, LongType.INSTANCE);
 		requery.setParameterList("nonterminalStatuses", ExecutionStatus.getNonTerminatedStatusSet());
 		List<Date> executionHistory = requery.list();
-	
+
 		try{
-			
+
 			// scheduled iterations
 			progression.setScheduledIterations(scheduledIterations);	//we want them in any case
 			ScheduledIteration.checkIterationsDatesIntegrity(scheduledIterations);
-			
+
 			progression.computeSchedule();
-			
+
 			// actual executions
 			progression.computeCumulativeTestPerDate(executionHistory);
 
-			
+
 		}catch(IllegalArgumentException ex){
 			if (LOGGER.isInfoEnabled()){
 				LOGGER.info("CampaignStatistics : could not generate campaign progression statistics for campaign "+campaignId+" : some iterations scheduled dates are wrong");
@@ -97,32 +102,31 @@ public class CampaignStatisticsServiceImpl implements CampaignStatisticsService{
 		}
 
 		return progression;
-		
+
 	}
-	
-	
+
+
 	@Override
-	@PreAuthorize("hasPermission(#campaignId, 'org.squashtest.tm.domain.campaign.Campaign', 'READ') "
-			+ "or hasRole('ROLE_ADMIN')")
+	@PreAuthorize(PERM_CAN_READ_CAMPAIGN + PERM_IS_ADMIN)
 	public List<IterationTestInventoryStatistics> gatherIterationTestInventoryStatistics(long campaignId) {
-		
+
 		List<IterationTestInventoryStatistics> result = new LinkedList<IterationTestInventoryStatistics>();
-		
+
 		//get the data
 		Query query = sessionFactory.getCurrentSession().getNamedQuery("CampaignStatistics.testinventory");
 		query.setParameter("id", campaignId);
 		List<Object[]> res = query.list();
-		
+
 		/*
-		 * Process. Beware that the logic is a bit awkward here. Indeed we first insert new 
+		 * Process. Beware that the logic is a bit awkward here. Indeed we first insert new
 		 * IterationTestInventoryStatistics in the result list, then we populate them.
 		 */
 		IterationTestInventoryStatistics newStatistics = new IterationTestInventoryStatistics();
-		Long currentId = null;		
-			
+		Long currentId = null;
+
 		for (Object[] tuple : res){
 			Long id = (Long)tuple[0];
-			
+
 			if (! id.equals(currentId)){
 				String name = (String) tuple[1];
 				newStatistics = new IterationTestInventoryStatistics();
@@ -130,122 +134,118 @@ public class CampaignStatisticsServiceImpl implements CampaignStatisticsService{
 				result.add(newStatistics);
 				currentId = id;
 			}
-			
+
 			ExecutionStatus status = (ExecutionStatus)tuple[2];
 			Long howmany = (Long)tuple[3];
-			
+
 			if (status == null){
-				continue;	// status == null iif the test plan is empty 
+				continue;	// status == null iif the test plan is empty
 			}
 			newStatistics.setNumber(howmany.intValue(), status);
-			
-			
+
+
 		}
-		
+
 		return result;
 	};
-	
+
 
 	@Override
-	@PreAuthorize("hasPermission(#campaignId, 'org.squashtest.tm.domain.campaign.Campaign', 'READ') "
-			+ "or hasRole('ROLE_ADMIN')")
+	@PreAuthorize(PERM_CAN_READ_CAMPAIGN + PERM_IS_ADMIN)
 	public CampaignTestCaseStatusStatistics gatherCampaignTestCaseStatusStatistics(long campaignId){
-		
+
 		CampaignTestCaseStatusStatistics result = new CampaignTestCaseStatusStatistics();
-		
+
 		//get the data
 		Query query = sessionFactory.getCurrentSession().getNamedQuery("CampaignStatistics.globaltestinventory");
 		query.setParameter("id", campaignId);
 		List<Object[]> res = query.list();
-		
+
 		for (Object[] tuple : res){
-			
+
 			ExecutionStatus status = (ExecutionStatus)tuple[0];
 			Long howmany = (Long)tuple[1];
 
 			result.addNumber(howmany.intValue(), status.getCanonicalStatus());
 		}
-		
+
 		return result;
 	}
-	
+
 	@Override
-	@PreAuthorize("hasPermission(#campaignId, 'org.squashtest.tm.domain.campaign.Campaign', 'READ') "
-			+ "or hasRole('ROLE_ADMIN')")
+	@PreAuthorize(PERM_CAN_READ_CAMPAIGN + PERM_IS_ADMIN)
 	public CampaignNonExecutedTestCaseImportanceStatistics gatherCampaignNonExecutedTestCaseImportanceStatistics(long campaignId){
-	
+
 		CampaignNonExecutedTestCaseImportanceStatistics result = new CampaignNonExecutedTestCaseImportanceStatistics();
-		
+
 		//get the data
 		Query query = sessionFactory.getCurrentSession().getNamedQuery("CampaignStatistics.nonexecutedTestcaseImportance");
 		query.setParameter("id", campaignId);
 		List<Object[]> res = query.list();
-		
+
 		for (Object[] tuple : res){
 
 			TestCaseImportance importance = (TestCaseImportance)tuple[0];
 			Long howmany = (Long)tuple[1];
-			
+
 			switch(importance){
-				case HIGH: result.setPercentageHigh(howmany.intValue()); break;
-				case LOW: result.setPercentageLow(howmany.intValue()); break;
-				case MEDIUM: result.setPercentageMedium(howmany.intValue()); break;
-				case VERY_HIGH: result.setPercentageVeryHigh(howmany.intValue()); break;
+			case HIGH: result.setPercentageHigh(howmany.intValue()); break;
+			case LOW: result.setPercentageLow(howmany.intValue()); break;
+			case MEDIUM: result.setPercentageMedium(howmany.intValue()); break;
+			case VERY_HIGH: result.setPercentageVeryHigh(howmany.intValue()); break;
 			}
 		}
-		
+
 		return result;
 	}
 
 	@Override
-	@PreAuthorize("hasPermission(#campaignId, 'org.squashtest.tm.domain.campaign.Campaign', 'READ') "
-			+ "or hasRole('ROLE_ADMIN')")
+	@PreAuthorize(PERM_CAN_READ_CAMPAIGN + PERM_IS_ADMIN)
 	public CampaignTestCaseSuccessRateStatistics gatherCampaignTestCaseSuccessRateStatistics(long campaignId) {
 
 		CampaignTestCaseSuccessRateStatistics result = new CampaignTestCaseSuccessRateStatistics();
-		
+
 		//get the data
 		Query query = sessionFactory.getCurrentSession().getNamedQuery("CampaignStatistics.successRate");
 		query.setParameter("id", campaignId);
 		List<Object[]> res = query.list();
-		
+
 		for (Object[] tuple : res){
 
 			TestCaseImportance importance = (TestCaseImportance)tuple[0];
 			ExecutionStatus status = (ExecutionStatus)tuple[1];
 			Long howmany = (Long)tuple[2];
-			
+
 			switch(importance){
-				case HIGH: result.addNbHigh(status, howmany.intValue()); break;
-				case LOW: result.addNbLow(status, howmany.intValue()); break;
-				case MEDIUM: result.addNbMedium(status, howmany.intValue()); break;
-				case VERY_HIGH: result.addNbVeryHigh(status, howmany.intValue()); break;
+			case HIGH: result.addNbHigh(status, howmany.intValue()); break;
+			case LOW: result.addNbLow(status, howmany.intValue()); break;
+			case MEDIUM: result.addNbMedium(status, howmany.intValue()); break;
+			case VERY_HIGH: result.addNbVeryHigh(status, howmany.intValue()); break;
 			}
 		}
-		
+
 		return result;
 	}
-	
+
 	@Override
-	@PreAuthorize("hasPermission(#campaignId, 'org.squashtest.tm.domain.campaign.Campaign', 'READ') "
-			+ "or hasRole('ROLE_ADMIN')")
+	@PreAuthorize(PERM_CAN_READ_CAMPAIGN + PERM_IS_ADMIN)
 	public CampaignStatisticsBundle gatherCampaignStatisticsBundle(long campaignId) {
 
 		CampaignStatisticsBundle bundle = new CampaignStatisticsBundle();
-		
+
 		List<IterationTestInventoryStatistics> inventory = gatherIterationTestInventoryStatistics(campaignId);
 		CampaignProgressionStatistics progression = gatherCampaignProgressionStatistics(campaignId);
 		CampaignTestCaseStatusStatistics testcaseStatuses = gatherCampaignTestCaseStatusStatistics(campaignId);
 		CampaignNonExecutedTestCaseImportanceStatistics testcaseImportance = gatherCampaignNonExecutedTestCaseImportanceStatistics(campaignId);
 		CampaignTestCaseSuccessRateStatistics testcaseSuccessRate = gatherCampaignTestCaseSuccessRateStatistics(campaignId);
-		
+
 		bundle.setIterationTestInventoryStatisticsList(inventory);
 		bundle.setCampaignProgressionStatistics(progression);
 		bundle.setCampaignTestCaseStatusStatistics(testcaseStatuses);
 		bundle.setCampaignNonExecutedTestCaseImportanceStatistics(testcaseImportance);
 		bundle.setCampaignTestCaseSuccessRateStatistics(testcaseSuccessRate);
 		return bundle;
-		
+
 	}
 
 }

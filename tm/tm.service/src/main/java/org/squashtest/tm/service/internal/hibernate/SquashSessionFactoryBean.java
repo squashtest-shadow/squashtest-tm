@@ -43,6 +43,8 @@ import org.springframework.orm.hibernate4.LocalSessionFactoryBuilder;
  * 
  */
 public class SquashSessionFactoryBean extends LocalSessionFactoryBean {
+	private static final String FN_NAME_GROUP_CONCAT = "group_concat";
+
 	private static final Logger LOGGER = LoggerFactory.getLogger(SquashSessionFactoryBean.class);
 
 	private static final String HIBERNATE_PROPERTIES_DIALECT = "hibernate.dialect";
@@ -103,9 +105,9 @@ public class SquashSessionFactoryBean extends LocalSessionFactoryBean {
 
 		if (sqlFunction != null) {
 			// add the support for group concat
-			config.addSqlFunction("group_concat", sqlFunction);
+			config.addSqlFunction(FN_NAME_GROUP_CONCAT, sqlFunction);
 		} else {
-			config.addSqlFunction("group_concat", new GroupConcatFunction("group_concat", new StringType()));
+			config.addSqlFunction(FN_NAME_GROUP_CONCAT, new GroupConcatFunction(FN_NAME_GROUP_CONCAT, new StringType()));
 		}
 	}
 
@@ -145,10 +147,10 @@ public class SquashSessionFactoryBean extends LocalSessionFactoryBean {
 		}
 
 		if (dialectsSupportingGroupConcat.contains(choosenDialect)) {
-			return new GroupConcatFunction("group_concat", new StringType());
+			return new GroupConcatFunction(FN_NAME_GROUP_CONCAT, new StringType());
 		}
 		if (dialectsSupportingStringAgg.contains(choosenDialect)) {
-			return new StringAggFunction("group_concat", new StringType());
+			return new StringAggFunction(FN_NAME_GROUP_CONCAT, new StringType());
 		}
 
 		LOGGER.error(

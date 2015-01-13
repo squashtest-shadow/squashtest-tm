@@ -48,29 +48,29 @@ public class PartyProjectPermissionsBean {
 	public void setParty(Party party) {
 		this.party = party;
 	}
-	
+
 	public boolean isTeam(){
 		return new PartyVisitor() {
-			
-			public boolean isTeam = false;
-			
+
+			private boolean isTeam = false;
+
 			@Override
 			public void visit(Team team) {
 				isTeam = true;
 			}
-			
+
 			@Override
 			public void visit(User user) {
 				isTeam = false;
 			}
-			
+
 		}.isTeam;
 	}
-	
+
 	public boolean isUser(){
 		return ! isTeam();
 	}
-	
+
 	public PermissionGroup getPermissionGroup() {
 		return permissionGroup;
 	}
@@ -78,7 +78,7 @@ public class PartyProjectPermissionsBean {
 	public void setPermissionGroup(PermissionGroup permissionGroup) {
 		this.permissionGroup = permissionGroup;
 	}
-	
-	
-	
+
+
+
 }

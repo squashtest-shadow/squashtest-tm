@@ -189,7 +189,7 @@ public abstract class ExProgressAbstractDto {
 				+ getfPercentageStatusSettled();
 	}
 
-	private void fillStatusInfos(List<IterationTestPlanItem> testPlan){
+	private void fillStatusInfos(List<IterationTestPlanItem> testPlan){ // NOSONAR the switch is perfectly readable
 		for (IterationTestPlanItem testPlanItem : testPlan){
 			switch(testPlanItem.getExecutionStatus()){
 			case READY : 	iCountStatusReady++;	break;

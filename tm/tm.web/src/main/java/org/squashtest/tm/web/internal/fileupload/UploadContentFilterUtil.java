@@ -33,7 +33,7 @@ public class UploadContentFilterUtil {
 
 	public boolean isTypeAllowed(UploadedData upload) {
 
-		String fileType = FilenameUtils.getExtension(upload.name);
+		String fileType = FilenameUtils.getExtension(upload.getName());
 
 		for (String type : allowed) {
 			if (type.trim().equalsIgnoreCase(fileType)) {

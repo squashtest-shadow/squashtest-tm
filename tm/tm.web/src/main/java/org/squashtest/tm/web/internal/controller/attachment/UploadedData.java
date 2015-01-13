@@ -29,9 +29,9 @@ import org.squashtest.tm.service.attachment.RawAttachment;
  * 
  */
 public class UploadedData implements RawAttachment {
-	public final InputStream stream;
-	public final String name;
-	public final long sizeInBytes;
+	private final InputStream stream;
+	private final String name;
+	private final long sizeInBytes;
 
 	public UploadedData(InputStream stream, String name, long sizeInBytes) {
 		super();

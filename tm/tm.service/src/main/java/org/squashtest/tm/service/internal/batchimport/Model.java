@@ -1047,7 +1047,7 @@ public class Model {
 	}
 
 	static class ProjectTargetStatus extends TargetStatus {
-		Long testCaseLibraryId;
+		private Long testCaseLibraryId;
 
 		private ProjectTargetStatus(Existence status, Long id, Long testCaseLibraryId) {
 			super(status, id);

@@ -100,12 +100,11 @@ final class TestPlanFilteringHelper {
 		return '%' + token + '%';
 	}
 
-	public static void setFilters(Query query, Filtering filtering, ColumnFiltering columnFiltering) {
+	public static void setFilters(Query query, Filtering filtering, ColumnFiltering columnFiltering) { // NOSONAR:START This is basically a huge switch
+
 		if (filtering.isDefined()) {
 			query.setParameter("userLogin", filtering.getFilter());
 		}
-
-		// NOSONAR:START This is basically a huge switch
 
 		if (columnFiltering.hasFilter(PROJECT_DATA)) {
 			query.setParameter(PROJECT_FILTER, anywhereToken(columnFiltering.getFilter(PROJECT_DATA)));
@@ -142,7 +141,7 @@ final class TestPlanFilteringHelper {
 		if (columnFiltering.hasFilter(TestPlanFilteringHelper.LASTEXEC_DATA)) {
 			setQueryStartAndEndDateParameters(columnFiltering, query);
 		}
-		// NOSONAR:END
+
 	}
 
 	private static void setQueryStartAndEndDateParameters(ColumnFiltering columnFiltering, Query query) {

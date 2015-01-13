@@ -152,8 +152,8 @@ public abstract class LibraryNavigationController<LIBRARY extends Library<? exte
 		final String reNewName = newName;
 		getLibraryNavigationService().renameFolder(folderId, reNewName);
 		return new Object() {
-			public String newName = reNewName;
-		}; // NOSONAR readable by json marshaller
+			public String newName = reNewName;  // NOSONAR readable by json marshaller
+		};
 
 	}
 

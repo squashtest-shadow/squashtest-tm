@@ -114,20 +114,20 @@ public class AttachmentController {
 
 		List<UploadSummary> summary = new LinkedList<UploadSummary>();
 
-		
+
 		for (UploadedData upload : attachments) {
-			
-			LOGGER.trace("AttachmentController : adding attachment " + upload.name);
+
+			LOGGER.trace("AttachmentController : adding attachment " + upload.getName());
 
 			// file type checking
 			boolean shouldProceed = filterUtil.isTypeAllowed(upload);
 			if (!shouldProceed) {
-				summary.add(new UploadSummary(upload.name, getUploadSummary(STR_UPLOAD_STATUS_WRONGFILETYPE, locale),
+				summary.add(new UploadSummary(upload.getName(), getUploadSummary(STR_UPLOAD_STATUS_WRONGFILETYPE, locale),
 						UploadSummary.INT_UPLOAD_STATUS_WRONGFILETYPE));
 			} else {
 				attachmentManagerService.addAttachment(attachListId, upload);
 
-				summary.add(new UploadSummary(upload.name, getUploadSummary(STR_UPLOAD_STATUS_OK, locale),
+				summary.add(new UploadSummary(upload.getName(), getUploadSummary(STR_UPLOAD_STATUS_OK, locale),
 						UploadSummary.INT_UPLOAD_STATUS_OK));
 			}
 		}

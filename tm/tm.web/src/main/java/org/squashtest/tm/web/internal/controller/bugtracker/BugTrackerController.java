@@ -670,7 +670,7 @@ public class BugTrackerController {
 
 		List<Attachment> issueAttachments = new ArrayList<Attachment>(uploads.size());
 		for (UploadedData upload : uploads) {
-			Attachment newAttachment = new Attachment(upload.name, upload.sizeInBytes, upload.stream);
+			Attachment newAttachment = new Attachment(upload.getName(), upload.getSizeInBytes(), upload.getStream());
 			issueAttachments.add(newAttachment);
 		}
 

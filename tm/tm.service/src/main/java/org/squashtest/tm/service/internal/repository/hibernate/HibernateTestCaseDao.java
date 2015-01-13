@@ -70,10 +70,15 @@ import org.squashtest.tm.service.internal.repository.CustomTestCaseDao;
 
 @Repository("CustomTestCaseDao")
 public class HibernateTestCaseDao extends HibernateEntityDao<TestCase> implements CustomTestCaseDao {
+
+
 	/**
 	 * "Standard" name for a query parameter representing a test case id.
 	 */
 	private static final String TEST_CASE_ID_PARAM_NAME = "testCaseId";
+	private static final String TEST_CASE_IDS_PARAM_NAME = "testCaseIds";
+
+
 	private static final String PROJECT = "project";
 
 	private static final String FIND_DESCENDANT_QUERY = "select DESCENDANT_ID from TCLN_RELATIONSHIP where ANCESTOR_ID in (:list)";
@@ -86,11 +91,11 @@ public class HibernateTestCaseDao extends HibernateEntityDao<TestCase> implement
 			+ " from TEST_CASE testCase " + " join TEST_CASE_LIBRARY_NODE tcln on tcln.TCLN_ID = testCase.TCLN_ID"
 			+ " join PROJECT project on project.PROJECT_ID = tcln.PROJECT_ID" + " where project.TCL_ID = :libraryId";
 	private static final String FIND_ALL_CALLING_TEST_CASE_MAIN_HQL = "select distinct TestCase from TestCase as TestCase left join TestCase.project as Project "
-			+ " join TestCase.steps as Steps where Steps.calledTestCase.id = :testCaseId ";
+			+ " join TestCase.steps as Steps where Steps.calledTestCase.id = :" + TEST_CASE_ID_PARAM_NAME;
 
 	// in that query we only want the steps, but we join also on the caller test cases and projects because we can sort on them
 	private static final String FIND_ALL_CALLING_TEST_STEPS_MAIN_HQL = "select Steps from TestCase as TestCase join TestCase.project as Project " +
-			"join TestCase.steps as Steps where Steps.calledTestCase.id = :testCaseId ";
+			"join TestCase.steps as Steps where Steps.calledTestCase.id = :" + TEST_CASE_ID_PARAM_NAME;
 
 	private static List<DefaultSorting> defaultVerifiedTcSorting;
 
@@ -177,7 +182,7 @@ public class HibernateTestCaseDao extends HibernateEntityDao<TestCase> implement
 		@Override
 		public void setQueryParameters(Query query) {
 
-			query.setParameter("testCaseId", testCaseId);
+			query.setParameter(TEST_CASE_ID_PARAM_NAME, testCaseId);
 			query.setParameter("firstIndex", firstIndex);
 			query.setParameter("lastIndex", lastIndex);
 
@@ -250,7 +255,7 @@ public class HibernateTestCaseDao extends HibernateEntityDao<TestCase> implement
 		}
 
 		Query query = currentSession().createQuery(FIND_ALL_CALLING_TEST_CASE_MAIN_HQL + orderBy);
-		query.setParameter("testCaseId", testCaseId);
+		query.setParameter(TEST_CASE_ID_PARAM_NAME, testCaseId);
 
 		if (sorting != null) {
 			query.setMaxResults(sorting.getPageSize());
@@ -264,7 +269,7 @@ public class HibernateTestCaseDao extends HibernateEntityDao<TestCase> implement
 	@Override
 	public List<TestCase> findAllCallingTestCases(long calleeId) {
 		Query query = currentSession().createQuery(FIND_ALL_CALLING_TEST_CASE_MAIN_HQL);
-		query.setParameter("testCaseId", calleeId);
+		query.setParameter(TEST_CASE_ID_PARAM_NAME, calleeId);
 		return query.list();
 	}
 
@@ -279,7 +284,7 @@ public class HibernateTestCaseDao extends HibernateEntityDao<TestCase> implement
 		}
 
 		Query query = currentSession().createQuery(FIND_ALL_CALLING_TEST_STEPS_MAIN_HQL + orderBy);
-		query.setParameter("testCaseId", testCaseId);
+		query.setParameter(TEST_CASE_ID_PARAM_NAME, testCaseId);
 
 		if (sorting != null) {
 			query.setMaxResults(sorting.getPageSize());
@@ -297,7 +302,7 @@ public class HibernateTestCaseDao extends HibernateEntityDao<TestCase> implement
 		String orderBy = " order by Project.name asc, TestCase.reference asc, TestCase.name asc, index(Steps) asc";
 
 		Query query = currentSession().createQuery(FIND_ALL_CALLING_TEST_STEPS_MAIN_HQL + orderBy);
-		query.setParameter("testCaseId", testCaseId);
+		query.setParameter(TEST_CASE_ID_PARAM_NAME, testCaseId);
 
 		return query.list();
 	}
@@ -308,7 +313,7 @@ public class HibernateTestCaseDao extends HibernateEntityDao<TestCase> implement
 			return Collections.emptyList();
 		}
 		Query q = currentSession().getNamedQuery("testCase.findTestCaseDetails");
-		q.setParameterList("testCaseIds", ids, LongType.INSTANCE);
+		q.setParameterList(TEST_CASE_IDS_PARAM_NAME, ids, LongType.INSTANCE);
 		return q.list();
 	}
 
@@ -370,7 +375,7 @@ public class HibernateTestCaseDao extends HibernateEntityDao<TestCase> implement
 		SetQueryParametersCallback queryCallback = new SetQueryParametersCallback() {
 			@Override
 			public void setQueryParameters(Query query) {
-				query.setParameterList("testCaseIds", testCaseIds, new LongType());
+				query.setParameterList(TEST_CASE_IDS_PARAM_NAME, testCaseIds, new LongType());
 				query.setReadOnly(true);
 			}
 		};

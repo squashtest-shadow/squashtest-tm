@@ -45,8 +45,8 @@ class ExecutionStepDataTableModelHelper extends DataTableModelBuilder<ExecutionS
 
 	private static final int DEFAULT_MAP_CAPACITY = 16;
 
-	Locale locale;
-	InternationalizationHelper messageSource;
+	private Locale locale;
+	private InternationalizationHelper messageSource;
 	boolean isAutomated = false;
 
 	private int nbCufsPerEntity;
