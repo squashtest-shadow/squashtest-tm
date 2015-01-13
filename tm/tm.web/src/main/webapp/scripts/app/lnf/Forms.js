@@ -21,7 +21,7 @@
 /**
  * This module handles form messages.
  */
-define([ "jquery" ], function($) {
+define([ "jquery", "underscore" ], function($, _) {
 	"use strict";
 
 	function clearState($help, $controlGroup) {
@@ -45,7 +45,7 @@ define([ "jquery" ], function($) {
 
 		return _.extend({
 			$el : $input
-		}, control($controlGroup));
+		}, this.control($controlGroup));
 	};
 
 	Forms.prototype.form = function form($dom) {
@@ -68,8 +68,8 @@ define([ "jquery" ], function($) {
 		 */
 		var setState = function(state, messageKey) {
 			var message = messageKey;
-			if (!! squashtm.app.messages) {
-				message = squashtm.app.messages[messageKey] || messageKey;
+			if (!! window.squashtm.app.messages) {
+				message = window.squashtm.app.messages[messageKey] || messageKey;
 			}
 			clear();
 			$controlGroup.addClass(state);

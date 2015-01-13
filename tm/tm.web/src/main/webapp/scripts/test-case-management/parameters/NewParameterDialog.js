@@ -18,16 +18,16 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ "jquery", "backbone", "app/lnf/Forms", 'workspace.event-bus', 
-         'squash.configmanager', "./NewParameterModel", "jquery.squash.formdialog" ], 
+define([ "jquery", "backbone", "app/lnf/Forms", 'workspace.event-bus',
+         'squash.configmanager', "./NewParameterModel", "jquery.squash.formdialog" ],
          function($, Backbone, Forms, eventBus, confman, NewParameterModel) {
-	
+
 	var NewParameterDialog = Backbone.View.extend({
 		el : "#add-parameter-dialog",
 
 		initialize : function() {
 			this.settings = this.options.settings;
-			
+
 			this.$checkboxes = this.$el.find("input:checkbox");
 			this.$textAreas = this.$el.find("textarea");
 			this.$textFields = this.$el.find("input:text");
@@ -47,7 +47,7 @@ define([ "jquery", "backbone", "app/lnf/Forms", 'workspace.event-bus',
 			var res = true, self = this;
 			this._populateModel();
 			var validationErrors = this.model.validateAll();
-			
+
 			Forms.form(this.$el).clearState();
 
 			if (validationErrors !== null) {
@@ -75,11 +75,12 @@ define([ "jquery", "backbone", "app/lnf/Forms", 'workspace.event-bus',
 			this.$el.addClass("not-displayed");
 			this._resetForm();
 			$('#parameters-table').squashTable().refresh();
-			
-			return res;
+
 			this.trigger("newparameterdialog.cancel");
+
+			return res;
 		},
-		
+
 		cancel : function(event) {
 			this.cleanup();
 			this.trigger("newparameterdialog.cancel");
@@ -97,7 +98,7 @@ define([ "jquery", "backbone", "app/lnf/Forms", 'workspace.event-bus',
 			var res = true, self = this;
 			this._populateModel();
 			var validationErrors = this.model.validateAll();
-			
+
 			Forms.form(this.$el).clearState();
 
 			if (validationErrors !== null) {
@@ -172,7 +173,7 @@ define([ "jquery", "backbone", "app/lnf/Forms", 'workspace.event-bus',
 
 		_initializeCkeditorTermination : function() {
 			var self = this;
-			
+
 			eventBus.onContextual('contextualcontent.clear', function(event) {
 				self.$textAreas.ckeditorGet().destroy();
 			});

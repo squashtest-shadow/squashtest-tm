@@ -79,7 +79,7 @@ define(["jquery", "underscore", "workspace.storage"], function($, _, storage){
 				result = json;
 			},
 			error: function() {
-				console.log("Error while fetching messages", object, arguments);
+				window.console.log("Error while fetching messages", object, arguments);
 			}
 		}, ajaxDefaults);
 

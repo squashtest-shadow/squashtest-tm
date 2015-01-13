@@ -28,7 +28,7 @@ define([ "jquery", "backbone", "handlebars", "app/lnf/Forms",
 			this.$textAreas = this.$el.find("textarea");
 			this.$textFields = this.$el.find("input:text");
 			this.$errorMessages = this.$el.find("span.error-message");
-	
+
 			this._resetForm();
 		},
 
@@ -43,7 +43,7 @@ define([ "jquery", "backbone", "handlebars", "app/lnf/Forms",
 			this.cleanup();
 			this.trigger("newproject.cancel");
 		},
-		
+
 		addanother : function(event) {
 			var res = true, self = this;
 			this._populateModel();
@@ -67,8 +67,8 @@ define([ "jquery", "backbone", "handlebars", "app/lnf/Forms",
 			$('#projects-table').squashTable().refresh();
 			return res;
 		},
-		
-		confirm : 		function(event) {
+
+		confirm: function(event) {
 			this.trigger("newproject.confirm");
 			this.validate();
 			this._resetForm();

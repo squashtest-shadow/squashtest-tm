@@ -115,7 +115,7 @@ define([ "jquery", "squash.translator", "underscore", "jqueryui" ], function($, 
 			$(document.body).append(oneShotPopup);
 
 			oneShotPopup.append(content.message);
-			oneShotPopup.keypress(function() {
+			oneShotPopup.keypress(function(evt) {
 				if (evt.which == '13') {
 					oneShotPopup.find('button:first').trigger('click');
 				}
