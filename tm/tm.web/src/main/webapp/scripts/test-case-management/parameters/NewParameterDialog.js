@@ -25,8 +25,8 @@ define([ "jquery", "backbone", "app/lnf/Forms", 'workspace.event-bus',
 	var NewParameterDialog = Backbone.View.extend({
 		el : "#add-parameter-dialog",
 
-		initialize : function() {
-			this.settings = this.options.settings;
+		initialize : function(options) {
+			this.settings = options.settings;
 
 			this.$checkboxes = this.$el.find("input:checkbox");
 			this.$textAreas = this.$el.find("textarea");

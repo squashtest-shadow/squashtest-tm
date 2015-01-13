@@ -25,8 +25,8 @@ define([ "jquery", "backbone", "underscore", "./ParametersTable", "./NewParamete
 
 		el : "#parameters-panel-container",
 
-		initialize : function() {
-			this.settings = this.options.settings;
+		initialize : function(options) {
+			this.settings = options.settings;
 			this.language = this.settings.language;
 			
 			_.bindAll(this, "showNewParameterDialog", "_onNewParameterConfirmed", 

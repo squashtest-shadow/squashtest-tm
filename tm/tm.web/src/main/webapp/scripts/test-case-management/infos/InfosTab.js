@@ -36,9 +36,9 @@ define([ "jquery", "backbone", "underscore",
 
 		el : "#tab-tc-informations",
 
-		initialize : function() {
+		initialize : function(options) {
 			var self = this;
-			this.settings = this.options.settings;
+			this.settings = options.settings;
 			this.sendUpdateReqToTree = $.proxy(this._sendUpdateReqToTree, this);
 			this.sendUpdateHasStepsToTree = $.proxy(this._sendUpdateHasStepsToTree, this);
 

@@ -24,9 +24,9 @@ define([ "jquery", "backbone", "underscore", "./ParametersPanel", "./DatasetsPan
 
 		el : "#parameters-tabs-panel",
 
-		initialize : function() {
+		initialize : function(options) {
 			var self = this;
-			this.settings = this.options.settings;
+			this.settings = options.settings;
 
 			this.parametersPanel = new ParametersPanel({
 				settings : this.settings,

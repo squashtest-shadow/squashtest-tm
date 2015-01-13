@@ -24,8 +24,8 @@ define([ "jquery", "backbone", "jeditable.simpleJEditable", "jquery.squash.confi
 
 		el : "#parameters-table",
 
-		initialize : function() {
-			this.settings = this.options.settings;
+		initialize : function(options) {
+			this.settings = options.settings;
 			this.removeRowParameter = $.proxy(this._removeRowParameter, this);
 			this.parametersTableRowCallback = $.proxy(this._parametersTableRowCallback, this);
 			this.parametersTableDrawCallback = $.proxy(this._parametersTableDrawCallback, this);

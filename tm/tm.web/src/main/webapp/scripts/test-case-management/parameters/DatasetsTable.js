@@ -25,8 +25,8 @@ define([ "jquery", "backbone", "jeditable.simpleJEditable", "app/util/StringUtil
 
 				el : "#datasets-table",
 
-				initialize : function() {
-					this.settings = this.options.settings;
+				initialize : function(options) {
+					this.settings = options.settings;
 
 					// functions called on this
 					this.removeRowDataset = $.proxy(this._removeRowDataset, this);

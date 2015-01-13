@@ -25,8 +25,8 @@ define([ "jquery", "backbone", "underscore", "squash.configmanager", "jquery.squ
 				
 				el : "#test-case-prerequisite-panel",
 				
-				initialize : function() {
-					this.settings = this.options.settings;
+				initialize : function(options) {
+					this.settings = options.settings;
 						
 					if(this.settings.writable){
 						

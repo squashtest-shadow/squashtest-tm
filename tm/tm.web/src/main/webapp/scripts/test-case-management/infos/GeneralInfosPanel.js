@@ -26,9 +26,9 @@ define([ "jquery", "backbone", "underscore", "workspace.event-bus", "squash.conf
 				
 				el : "#test-case-description-panel",
 				
-				initialize : function() {
+				initialize : function(options) {
 					var self = this;
-					this.settings = this.options.settings;
+					this.settings = options.settings;
 					this.updateReferenceInTree = $.proxy(this._updateReferenceInTree, this);
 					this.postImportance = $.proxy(this._postImportance, this);
 					this.postStatus = $.proxy(this._postStatus, this);
