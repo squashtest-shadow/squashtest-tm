@@ -38,6 +38,7 @@
 <%@ taglib prefix="s" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ taglib prefix="json" uri="http://org.squashtest.tm/taglib/json"%>
+<%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 
 <s:url var="dtMessagesUrl" value="/datatables/messages" />
@@ -104,10 +105,13 @@
             </button>
             <ul id="manage-test-suites-menu" class="not-displayed">
               <li class="suite-manager-controls suite-manager-newsection ui-menu-item">
+                <div>
                 <input type="text" id="suite-manager-menu-input" />
                 <button id="suite-manager-menu-button" class="button">
                   <f:message key="label.create" />
                 </button>
+                </div>                
+               <comp:error-message forField="name"/>
               </li>
               <li class="suite-manager-buttonpane suite-manager-newsection ui-menu-item">
                 <div class="snap-right">

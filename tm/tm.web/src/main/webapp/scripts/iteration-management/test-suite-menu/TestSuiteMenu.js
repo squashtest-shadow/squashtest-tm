@@ -198,34 +198,6 @@ define([ "jquery", "underscore", "app/ws/squashtm.notification", "squash.transla
 					.getSelectedIds();
 		}, this);
 
-		var displayAddSuiteError = $.proxy(function(xhr, text) {
-				try {
-					var errContent = jQuery.parseJSON(xhr.responseText);
-					var message = $("<div/>", {
-						'margin-top' : 'auto',
-						'margin-bottom' : 'auto'
-					});
-
-					if (errContent.fieldValidationErrors !== undefined) {
-						var errors = errContent.fieldValidationErrors;
-						for ( var i = 0; i < errors.length; i++) {
-							message.append("<div>"+ errors[0].errorMessage+ "</div>");
-						}
-					} else {
-						message.append('<div>could not add your suite : unexpected error</div>');
-					}
-
-				$.squash.openMessage('Information', message);
-
-				} catch (wtf) {
-					// non json error : it must be handled
-					// by the generic handler (see the
-					// red thing showing up in the view
-					// right now)
-					// anyway, job done here
-				}
-			}, this);
-
 		/*
 		 * **************************** public ******************************
 		 */
@@ -249,7 +221,6 @@ define([ "jquery", "underscore", "app/ws/squashtm.notification", "squash.transla
 			var name = $('#suite-manager-menu-input').val();
 			self.lastAdded = name;
 			self.model.postNew(name).fail(function(json) {
-				displayAddSuiteError(json);
 				self.lastAdded = undefined;
 			});
 		}, this);
@@ -322,6 +293,7 @@ define([ "jquery", "underscore", "app/ws/squashtm.notification", "squash.transla
 		var bindShowMenuButton = $.proxy(function() {
 				var self = this;
 				$("#manage-test-suites-buttonmenu").on('click',function(evt) {
+					$("#manage-test-suites-menu .error-message").text('');
 					self.testPlanItemIds = getDatatableSelected();
 					if (!self.testPlanItemIds.length) {
 						// no item selected: close menu and warn
