@@ -64,12 +64,12 @@ define(["jquery", "backbone", "squash.attributeparser", "workspace.event-bus", "
 		
 		
 		// ************************* core functions *********************
-		
-		options : {
-			requestRedering : true
-		},
-		
-		initialize : function(){			
+
+		initialize : function(options){
+			
+			// reassign this.options because they'll all be shared across instances
+			this.options = options;
+			
 			//configure
 			this._readDOM();
 			
@@ -78,7 +78,6 @@ define(["jquery", "backbone", "squash.attributeparser", "workspace.event-bus", "
 			
 			// events
 			this._bindEvents();
-			
 		},
 		
 		
@@ -96,7 +95,9 @@ define(["jquery", "backbone", "squash.attributeparser", "workspace.event-bus", "
 			// 1) request rendering on resize. 
 			// Note : uses a debounced and proxied version of _requestRender, 
 			// to limit the firing rate of 'resize' event.
-			this._wrappedRequestRender = _.debounce($.proxy(this._requestRender, this), 250);
+			var proxRequestRender =  $.proxy(this._requestRender, this);
+			
+			this._wrappedRequestRender = _.debounce(proxRequestRender, 250);
 			$(window).on('resize', this._wrappedRequestRender);
 			
 			// 2) request rendering on model changed. 
@@ -107,7 +108,7 @@ define(["jquery", "backbone", "squash.attributeparser", "workspace.event-bus", "
 			this.listenTo(this.model, modelchangeevt, this._requestRender);
 			
 			// 3) render when eventually possible
-			eventbus.onContextual("dashboard.appear", $.proxy(this._performRender, this));
+			eventbus.onContextual("dashboard.appear", proxRequestRender);
 			
 			
 			// 4) destroys itself properly when the content is removed

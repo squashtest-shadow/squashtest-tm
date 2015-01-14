@@ -38,7 +38,7 @@ define([ "require", "dashboard/basic-objects/model", "dashboard/basic-objects/ti
 	function doInit(settings) {
 		new SuperMasterView({
 			el : "#dashboard-master",
-			settings : settings,
+			modelSettings : settings,
 			initCharts : initCharts
 		});
 	}
@@ -224,7 +224,7 @@ define([ "require", "dashboard/basic-objects/model", "dashboard/basic-objects/ti
 			}
 
 			var queryString = "searchModel=" + encodeURIComponent(JSON.stringify(search));
-			document.location.href = squashtm.app.contextRoot + "/advanced-search/results?testcase&" + queryString;
+			document.location.href = squashtm.app.contextRoot + "/advanced-search/results?test-case&" + queryString;
 
 		});
 	}

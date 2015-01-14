@@ -53,7 +53,7 @@ define([ "require", "./campaign-progression-view", "./test-inventory-table",
 			function doInit(settings) {
 				new SuperMasterView({
 					el : "#dashboard-master",
-					settings : settings,
+					modelSettings : settings,
 					initCharts : initCharts
 				});
 			}

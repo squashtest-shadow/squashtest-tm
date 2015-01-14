@@ -58,20 +58,22 @@ define([ "jquery", "underscore", "squash.attributeparser", "./basic-objects/mode
 			initCharts: function() { return []; }
 		}, 
 
-		initialize : function() {
+		initialize : function(options) {
 			// read the conf elements from the dom
 			var domconf = attrparser.parse(this.$el.data("def"));
-			var conf = $.extend(true, {}, this.options.settings, domconf);
+			var modelconf = $.extend(true, {}, options.modelSettings, domconf);
+			
+			this.options.initCharts = options.initCharts || this.options.initCharts; 
 			
 			// coerce string|boolean to boolean
-			var isTreeListener = (conf.listenTree === "true") || (conf.listenTree === true);
+			var isTreeListener = (modelconf.listenTree === "true") || (modelconf.listenTree === true);
 			
 			// create the model
-			this.model = new StatModel(conf.model, {
-				url : conf.url,
+			this.model = new StatModel(modelconf.model, {
+				url : modelconf.url,
 				includeTreeSelection : isTreeListener,
 				syncmode : (isTreeListener) ? "tree-listener" : "passive",
-						cacheKey : conf.cacheKey
+						cacheKey : modelconf.cacheKey
 			});
 			
 			this.initFigleaves();

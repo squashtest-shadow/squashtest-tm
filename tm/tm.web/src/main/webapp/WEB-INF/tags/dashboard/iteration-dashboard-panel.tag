@@ -59,6 +59,7 @@
 <f:message var="LowLabel" key="test-case.importance.LOW"/>
 <f:message var="testsWithoutSuite" key="dashboard.iteration.tests-without-suite"/>
 <f:message var="testWeightHelper" key="dashboard.campaigns.importance.helper"/>
+<f:message var="dateformatSupershort" key="squashtm.dateformatSupershort" />  
 
 
 <f:message var="refreshLabel" key="label.Refresh" />

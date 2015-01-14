@@ -18,7 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ 'dashboard/test-cases-dashboard/main' ], function(dashboardPanel) {
+define([ 'dashboard/test-cases-dashboard/test-cases-dashboard-main' ], function(dashboardPanel) {
 
 	return {
 		

@@ -26,7 +26,7 @@ define([ "require", "./iteration-progression-view", "./nonexecuted-testcase-impo
 
 		new SuperMasterView({
 			el : "#dashboard-master",
-			settings : settings,
+			modelSettings : settings,
 			initCharts : initCharts
 		});
 	}

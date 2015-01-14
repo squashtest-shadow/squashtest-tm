@@ -21,7 +21,7 @@
 
 /*
  * this.options : {
- *	url :		the url where to fetch the data. Note that it may contain predefined query string arguments. 
+ *	urlRoot :	the url where to fetch the data. Note that it may contain predefined query string arguments. 
  *				NB : this is a native Backbone ctor parameter.
  *	model :		a javascript object being the model. If left undefined, will attempt to read from the cache (if configured to do so). 
  *				NB : this is a native Backbone ctor parameter.
@@ -50,6 +50,7 @@ define(["jquery", "backbone", "underscore", 'workspace.storage', "tree", "worksp
 				throw "dashboard : cannot initialize the model because no url was provided";
 			}
 
+			this.urlRoot = options.url;
 			this.options = options;
 			this.tree = zetree.get();
 			this.eventBus = eventBus;

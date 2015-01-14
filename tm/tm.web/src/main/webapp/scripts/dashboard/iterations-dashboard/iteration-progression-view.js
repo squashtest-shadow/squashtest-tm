@@ -61,9 +61,9 @@ define([
 	var CampaignProgressionView =  JqplotView.extend({
 		
 		
-		initialize : function(){	
-			this.configureHighlight();	
-			JqplotView.prototype.initialize.apply(this, Array.prototype.slice.call(arguments));
+		initialize : function(options){	
+			options.highlight = this.configureHighlight();	
+			JqplotView.prototype.initialize.call(this, options);
 
 		},
 
@@ -82,7 +82,7 @@ define([
 						'<p><label>{{pointLabel}}</label> {{pointValue}} ({{progression}})</p>' +
 					'</div>');
 			
-			this.options.highlight = highlight;
+			return highlight;
 		},
 		render : function(){
 			
@@ -154,9 +154,6 @@ define([
 			// and that .replace means 'replace first occurence')			
 			var xaxisFormatstring = this.options.dateformat.replace('d', '%').replace('M', '%').toLowerCase();
 			
-			// compute x2axis ticks
-			var x2ticks = this.createX2ticks(axisStart, axisEnd);
-			
 			// grid style
 			var gridcolor = 'transparent';
 
@@ -185,27 +182,6 @@ define([
 								strokeStyle : '#999999'
 							}
 						}
-					},
-					x2axis :{
-						renderer : $.jqplot.IterationAxisRenderer,
-						ticks : x2ticks,
-						tickOptions: {
-							fontSize : '12px',
-							markSize : 12,
-							// Special StylableGridRenderer
-							gridStyle : {
-								lineDash : [5],
-								strokeStyle : 'black'
-							},
-							markStyle : {
-								lineDash : [5],
-								strokeStyle : 'black'	
-							}							
-						},
-						show : true,
-						borderWidth : 0,
-						min : axisStart,
-						max : axisEnd
 					}
 				},
 				grid : {
@@ -257,33 +233,6 @@ define([
 				}
 			};
 		},
-		
-		createX2ticks : function(axisStart, axisEnd){
-			var iteration = this._getModelData().scheduledIteration;
-			
-			var labeltpl = '<div style="background-color:black; color:white; font-size:0.96em;"><span>{{this.name}}</span></div>';
-			
-			var x2ticks = [];
-			
-			x2ticks.push(axisStart);			
-			
-				var iter = iteration,
-					label = "",
-					_start = iter.scheduledStart,
-					_end = iter.scheduledEnd;
-				
-				// in case the iteration starts and ends the same day we need 
-				// to add a few hours or we'll have a 0-width label
-				if (_start === _end){
-					_end = _end + 72000000;	//aka +20 hours
-				}
-				x2ticks.push([_start, _end, label]);
-		
-			x2ticks.push(axisEnd);
-			
-			return x2ticks;
-		},
-		
 		
 		// ****************** ERROR HANDLING SECTION ******************************
 		

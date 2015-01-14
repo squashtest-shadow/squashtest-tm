@@ -64,9 +64,9 @@ define([
 			'click .dashboard-cumulative-progression-details' : "openDetails"
 		},
 		
-		initialize : function(){
-			this.configureHighlight();			
-			JqplotView.prototype.initialize.apply(this, Array.prototype.slice.call(arguments));
+		initialize : function(options){
+			options.highlight  = this.configureHighlight();	
+			JqplotView.prototype.initialize.call(this, options);
 
 		},
 		
@@ -85,7 +85,7 @@ define([
 						'<p><label>{{pointLabel}}</label> {{pointValue}} ({{progression}})</p>' +
 					'</div>');
 			
-			this.options.highlight = highlight;
+			return highlight;
 		},
 		
 		render : function(){
@@ -275,8 +275,8 @@ define([
 			for (i=0;i<len;i++){
 				var iter = iterations[i],
 					label = labeltpl.replace('{{this.name}}', (i+1)+" - "+iter.name),
-					_start = iter.scheduledStart,
-					_end = iter.scheduledEnd;
+					_start = dateutils.parse(iter.scheduledStart),
+					_end = dateutils.parse(iter.scheduledEnd);
 				
 				// in case the iteration starts and ends the same day we need 
 				// to add a few hours or we'll have a 0-width label

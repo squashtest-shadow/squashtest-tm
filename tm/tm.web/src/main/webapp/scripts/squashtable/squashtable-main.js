@@ -286,8 +286,13 @@ define(["jquery",
 		return ;
 	}
 
+	function showTable(table){
+		table.removeClass('unstyled-table');
+	}
+	
+	// for ajax-loaded tables, wait for full table init before showing it
 	$(document).on("init.dt", function(event) {
-		$(event.target).removeClass("unstyled-table");
+		showTable($(event.target));
 	});
 
 	squashtm = squashtm || {};
@@ -1626,7 +1631,10 @@ define(["jquery",
 		}
 
 		this.addClass("is-contextual");
-
+		
+		// also, if the table uses defered loading, we must render it immediately (ie remove the class unstyle-table
+		showTable(this);
+		
 		return this;
 	};
 
