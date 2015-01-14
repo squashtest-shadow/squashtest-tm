@@ -177,8 +177,10 @@ define(["jquery",
 		},
 		
 
-		initialize : function(){
+		initialize : function(options){
 
+			this.options = options;
+			
 			//first, post process the source html and split into two templates
 			this._initTemplates();
 						

@@ -25,6 +25,10 @@ define(["jquery", "backbone", "handlebars", "../domain/BTEntity", "text!./defaul
 	
 	var DefaultFieldControl = Backbone.View.extend({
 		
+		initialize : function(options){
+			this.options = options;
+		},
+		
 		updatemodel : function(){
 			var attribute = this.options.attribute;
 			var selection = this.get();
@@ -194,7 +198,9 @@ define(["jquery", "backbone", "handlebars", "../domain/BTEntity", "text!./defaul
 		// *********************** life cycle ***************
 
 		
-		initialize : function(){
+		initialize : function(options){
+			
+			this.options = options;
 			
 			var template = Handlebars.compile(source);
 			

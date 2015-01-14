@@ -23,7 +23,9 @@ define([ "jquery", "backbone", "handlebars", "app/util/StringUtil", "jquery.squa
 		"jquery.squash.messagedialog", "jquery.squash.confirmdialog", "jquery.squash.formdialog" ], function($, Backbone, Handlebars, StringUtil) {
 	var UMod = squashtm.app.UMod;
 	var UserResetPasswordPopup = Backbone.View.extend({
-		initialize : function() {
+		initialize : function(options) {
+			
+			this.options = options;
 			var self = this;
 
 			this.render();

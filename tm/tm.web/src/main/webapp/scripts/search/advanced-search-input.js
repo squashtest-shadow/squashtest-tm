@@ -77,7 +77,8 @@ define([ "jquery", "backbone", "app/squash.handlebars.helpers", "squash.translat
 
 		el : "#advanced-search-input-panel",
 
-		initialize : function() {
+		initialize : function(options) {
+			this.options = options;
 			this.model = {fields : []};
 			// init templates cache
 			this.templates = {};

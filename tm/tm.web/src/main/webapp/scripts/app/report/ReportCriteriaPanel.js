@@ -60,7 +60,7 @@ function(Backbone, _, FormModel, ButtonUtil, treeBuilder, ProjectsPickerPopup, S
 			this.projectPickers = {};
 
 			// methods fiddling
-			_.bindAll("setPickedNodes");
+			_.bindAll(this, "setPickedNodes");
 			// NOTE below : replaces handler builder by actual handler - kinda currifies onDatePicked(view, value) into onDatePicked(value)
 			this.onDatePicked = this.onDatePicked(this);
 			this.onNodesPicked = this.onNodesPicked(this);

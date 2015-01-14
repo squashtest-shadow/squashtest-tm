@@ -30,7 +30,8 @@ define(
 				emptyrowTemplate: undefined,
 				datarowTemplate: undefined,
 				
-				initialize : function() {
+				initialize : function(options) {
+					this.options = options;
 					this.$el.togglePanel();
 					this._initWizardlist();
 				},
