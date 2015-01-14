@@ -42,13 +42,13 @@ public class RequirementController {
 
 	@RequestMapping(value = "/criticality-combo-data", method = RequestMethod.GET)
 	@ResponseBody
-	public String buildImportanceComboData(Locale locale) {
-		return  criticalityComboBuilderProvider.get().useLocale(locale).buildMarshalled();
+	public Object buildImportanceComboData(Locale locale) {
+		return  criticalityComboBuilderProvider.get().useLocale(locale).buildMap();
 	}
 
 	@RequestMapping(value = "/status-combo-data", method = RequestMethod.GET)
 	@ResponseBody
-	public String buildTypeComboData(Locale locale) {
-		return statusComboDataBuilderProvider.get().useLocale(locale).buildMarshalled();
+	public Object buildTypeComboData(Locale locale) {
+		return statusComboDataBuilderProvider.get().useLocale(locale).buildMap();
 	}
 }

@@ -172,7 +172,7 @@ define([ "require", "dashboard/basic-objects/model", "dashboard/basic-objects/ti
 			 search.fields.id.values = ids.toString().split(",");
 			    
 			var queryString = "searchModel=" + encodeURIComponent(JSON.stringify(search));
-			 document.location.href = squashtm.app.contextRoot + "/advanced-search/results?testcase&" + queryString;
+			 document.location.href = squashtm.app.contextRoot + "/advanced-search/results?test-case&" + queryString;
 			
 		});*/
 

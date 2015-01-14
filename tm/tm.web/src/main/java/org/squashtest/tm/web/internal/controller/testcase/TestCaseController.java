@@ -261,15 +261,15 @@ public class TestCaseController {
 	// TODO bind to /test-case-importances
 	@RequestMapping(value = "/importance-combo-data", method = RequestMethod.GET)
 	@ResponseBody
-	public String buildImportanceComboData(Locale locale) {
-		return importanceComboBuilderProvider.get().useLocale(locale).buildMarshalled();
+	public Object buildImportanceComboData(Locale locale) {
+		return importanceComboBuilderProvider.get().useLocale(locale).buildMap();
 	}
 
 	// TODO bind to /test-case-statuses
 	@RequestMapping(value = "/status-combo-data", method = RequestMethod.GET)
 	@ResponseBody
-	public String buildStatusComboData(Locale locale) {
-		return statusComboBuilderProvider.get().useLocale(locale).buildMarshalled();
+	public Object buildStatusComboData(Locale locale) {
+		return statusComboBuilderProvider.get().useLocale(locale).buildMap();
 	}
 
 }
