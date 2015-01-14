@@ -23,15 +23,15 @@
 	$(document).on("click", ".sq-tg .tg-head", function(event) {
 		var $target = $(event.target);
 
-		if ($target.parent(".tg-toolbar").length > 0) {
+		if ($target.parents(".tg-toolbar").length > 0) {
 			// click from within the toolbar -> bail out
 			return;
 		} // else do the toggling.
 
 		event.stopImmediatePropagation();
 
-		var $panel = $target.parent(".sq-tg");
-
+		var $panel = $target.parents(".sq-tg");
+	
 		$panel.find(".tg-body").toggle("blind", 500, function() {
 			$panel.toggleClass("collapse");
 			$panel.toggleClass("expand");

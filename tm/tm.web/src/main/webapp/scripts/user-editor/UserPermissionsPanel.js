@@ -18,15 +18,18 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ "jquery", "backbone", "underscore", "app/util/StringUtil", "jquery.squash", "jqueryui",
+define([ "jquery", "backbone", "underscore", "app/util/StringUtil", "app/ws/squashtm.notification", "squash.translator", "jquery.squash", "jqueryui",
 		"jquery.squash.togglepanel", "squashtable", "jquery.squash.oneshotdialog",
-		"jquery.squash.messagedialog", "jquery.squash.confirmdialog" ], function($, Backbone, _, StringUtil) {
+		"jquery.squash.messagedialog", "jquery.squash.confirmdialog" ], function($, Backbone, _, StringUtil, notification, translator) {
 	var UMod = squashtm.app.UMod;
 	var UserPermissionsPanel = Backbone.View.extend({
 		el : "#permissions",
 		initialize : function() {
+			
 			this.configureTable();
 			this.configurePopups();
+			this.configureNoPermissionSelectedDialog();
+
 			this.configureButtons();
 		},
 		events : {
@@ -66,10 +69,10 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil", "jquery.squa
 			this.configureAddPermissionDialog();
 			this.configureRemovePermissionDialog();
 		},
+		
 		configureButtons : function() {
 			this.$("#add-permission-button").on('click', $.proxy(this.openAddPermission, this));
-			this.$("#remove-permission-button").on('click', $.proxy(this.configureRemovePermissionDialog, this));
-			
+			this.$("#remove-permission-button").on('click', $.proxy(this.confirmRemovePermission, this));
 		},
 
 		confirmRemovePermission : function(event) {
@@ -77,24 +80,48 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil", "jquery.squa
 			if (hasPermission) {
 				this.confirmRemovePermissionDialog.confirmDialog("open");
 			}
+		 else {
+				// TODO : old, suppr associated methods : 	this.noPermissionSelectedDialog.confirmDialog('open'); 
+			 notification.showError(translator.get('message.NoPermissionSelected'));
+		}
 		},
 
+		configureNoPermissionSelectedDialog : function() {
+			this.noPermissionSelectedDialog = $("#no-selected-permissions").messageDialog();
+		},
+		
 		openAddPermission : function() {
 			this.addPermissionDialog.confirmDialog('open');
 		},
 
+		openRemovePermission : function() {
+			this.removePermissionDialog.confirmDialog('open');
+		},
+		
 		removePermissions : function(event) {
 			var table = $("#permission-table").squashTable();
 			var ids = table.getSelectedIds();
+			if (ids.length === 0) {
+				return;
+			}
+			
+			// old code :
 			$.ajax({
 				url : UMod.permission.url.remove,
 				type : 'post',
 				data : {
 					project : ids[0]
 				}
-			}).done(function() {
-				$("#permission-table").squashTable().refresh();
-			});
+			}).done($.proxy(table.refresh, table));
+				
+			
+			/* New code qui ne fonctionne pas 
+			$.ajax({
+				url : UMod.user.url.simple + "teams/" + ids.join(','),
+				type : 'delete'
+			}).done($.proxy(table.refresh, table));
+			*/
+				
 
 		},
 
@@ -104,8 +131,75 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil", "jquery.squa
 		},
 
 		configureRemovePermissionDialog : function() {
+
 			this.confirmRemovePermissionDialog = $("#remove-permission-dialog").confirmDialog();
 			this.confirmRemovePermissionDialog.on("confirmdialogconfirm", $.proxy(this.removePermissions, this));
+	
+			/*
+			var removePermissionDialog = $("#remove-permission-dialog").confirmDialog();
+			var table = $("#permission-table").squashTable();
+			removePermissionDialog.on("confirmdialogvalidate", function() {
+				$.ajax({
+					type : 'POST',
+					url : UMod.permission.url.remove,
+					data : {
+						project : $("#project-input").val(),
+						permission : $("#permission-input").val()
+					},
+					dataType : "json",
+					success : function() {
+						$("#permission-table").squashTable().refresh();
+
+					}
+				});
+			});
+
+			removePermissionDialog.on("confirmdialogconfirm", $.proxy(this.removePermission, this));
+
+			removePermissionDialog.find('#remove-permission-input').autocomplete();
+
+			removePermissionDialog.on('confirmdialogopen', function() {
+				//TODO reload only when needed (after remove or remove permission)
+				var dialog = removePermissionDialog;
+				var input = dialog.find('#remove-permission-input');
+				dialog.activate('wait');
+
+				$.ajax({
+					url : UMod.permission.url.popup,
+					dataType : 'json'
+				}).success(function(json) {
+					if (json.myprojectList.length === 0) {
+						dialog.activate('no-more-projects');
+					} else {
+						$("#project-input").html("");
+						for ( var i = 0; i < json.myprojectList.length; i++) {
+							var text = json.myprojectList[i].name;
+							var value = json.myprojectList[i].id;
+							var option = new Option(text, value);
+							$(option).html(text); // for ie8
+							$("#project-input").append(option);
+						}
+						dialog.activate('main');
+					}
+
+				});
+			});
+				
+			removePermissionDialog.activate = function(arg) {
+				var cls = '.' + arg;
+				this.find('div').not('.popup-dialog-buttonpane').filter(cls).show().end().not(cls).hide();
+				if (arg !== 'main') {
+					this.next().find('button:first').hide();
+				} else {
+					this.next().find('button:first').show();
+				}
+			};
+
+			this.removePermissionDialog = removePermissionDialog;
+			
+			*/
+			
+
 		},
 
 		configureAddPermissionDialog : function() {

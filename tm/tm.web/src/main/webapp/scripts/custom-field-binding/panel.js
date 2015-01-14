@@ -18,12 +18,13 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ "jquery", "jquery.squash.togglepanel", "jquery.squash.formdialog" ], function($) {
+define([ "jquery", "app/ws/squashtm.notification", "squash.translator", "jquery.squash.togglepanel", "jquery.squash.formdialog" ], function($, notification, translator) {
 
 	return function(settings) {
 
 		var instance = $(settings.selector);
-		var button = instance.prev().find('input');
+		var button = instance.prev().find("button[value='+']");
+		var buttonDelete = instance.prev().find("button[value='-']");
 
 		//instance.togglePanel(settings);
 
@@ -31,12 +32,37 @@ define([ "jquery", "jquery.squash.togglepanel", "jquery.squash.formdialog" ], fu
 
 		button.setPopup = function(popup) {
 			button.click(function() {
-				popup.formDialog("open");
+			popup.formDialog("open");
 			});
 		};
 
 		instance.getButton = function() {
 			return button;
+		};
+		
+		instance.getButtonDelete = function() {
+			return buttonDelete;
+		};
+		
+		
+		// Add dialog here to confirm delete and forget about popup
+		// Add condition if nothing is selected
+		buttonDelete.setPopup = function(popupDelete) {
+			buttonDelete.click(function() {
+				
+				var table = instance.find('.cuf-binding-table');
+				
+				var hasPermission = (table.squashTable().getSelectedIds().length > 0);
+			if (hasPermission) {
+				panel = instance.find('.cuf-binding-table').closest('.sq-tg');
+				popupDelete.formDialog("open");
+			}
+		 else {
+				// TODO : new message : no selected element
+			 notification.showError(translator.get('message.NoPermissionSelected'));
+		 }
+			
+			});
 		};
 
 		return instance;

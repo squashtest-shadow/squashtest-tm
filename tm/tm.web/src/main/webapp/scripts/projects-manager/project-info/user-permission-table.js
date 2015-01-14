@@ -115,7 +115,7 @@ define([ "jquery", "squashtable" ], function($) {
 				'mDataProp' : 'party-index',
 				'aTargets' : [ 0 ],
 				'sWidth' : '2em',
-				'sClass' : 'centered'
+				'sClass' : 'select-handle centered'
 			}, {
 				'bSortable' : false,
 				'mDataProp' : 'party-id',
@@ -149,6 +149,7 @@ define([ "jquery", "squashtable" ], function($) {
 		// configure the delete button and the hlink to the user
 		var squashSettings = {
 			enableHover : true,
+			 dataKeys : { entityId : "party-id" },
 			confirmPopup : {
 				oklabel : language.ok,
 				cancellabel : language.cancel

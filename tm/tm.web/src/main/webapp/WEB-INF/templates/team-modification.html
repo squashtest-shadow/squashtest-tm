@@ -159,9 +159,13 @@
 				<!-- ============================================ Permissions ======================================= -->
 
 						<div id="permissions" class="toggle-panel">
-							<span class="not-displayed toggle-panel-buttons"> <input
-								id="add-permission-button" th:title="${addButtonTitle}"
-								title="add" type="button" value="+" class="button" />
+							<span class="not-displayed toggle-panel-buttons">
+							<button id="add-permission-button" class="sq-icon-btn btn-sm" type="submit">
+		                	    <span class="ui-icon ui-icon-plus squared-icons">+</span>
+		                    </button>
+		                    <button id="remove-permission-button" class="sq-icon-btn btn-sm" type="submit">
+		                  	  <span class="ui-icon ui-icon-minus squared-icons">-</span>
+		                    </button>
 							</span>
 							<div id="project-permission-panel" class="toggle-panel-main">
 								<table id="permission-table"
@@ -198,8 +202,12 @@
 				
 						<div class="toggle-panel">
 							<span class="not-displayed toggle-panel-buttons"> 
-								<input type="button" id="add-member-button" value="+" class="sq-btn"></input> 
-								<input type="button" id="remove-members-button"	value="-" class="sq-btn"></input>
+							<button id="add-member-button" class="sq-icon-btn btn-sm" type="submit">
+		                	    <span class="ui-icon ui-icon-plus squared-icons">+</span>
+		                    </button>
+		                    <button id="remove-members-button" class="sq-icon-btn btn-sm" type="submit">
+		                  	  <span class="ui-icon ui-icon-minus squared-icons">-</span>
+		                    </button>
 							</span>
 							<div id="members-panel" class="toggle-panel-main">
 
@@ -267,6 +275,11 @@
 						</div>
 
 						<div id="no-selected-users" class="popup-dialog not-displayed"
+							th:title="#{popup.title.info}" title="Info">
+							<span th:text="#{message.NoMemberSelected}"></span>
+						</div>
+						
+						<div id="no-selected-permissions" class="popup-dialog not-displayed"
 							th:title="#{popup.title.info}" title="Info">
 							<span th:text="#{message.NoMemberSelected}"></span>
 						</div>

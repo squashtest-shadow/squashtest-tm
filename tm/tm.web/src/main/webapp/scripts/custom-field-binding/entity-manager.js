@@ -18,8 +18,8 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ "require", "./panel", "./table", "./popup" ], function(require, Panel,
-		Table, Popup) {
+define([ "require", "./panel", "./table", "./popup", "./popupDelete" ], function(require, Panel,
+		Table, Popup, PopupDelete) {
 
 	function getPanelConf(settings) {
 		return {
@@ -91,6 +91,21 @@ define([ "require", "./panel", "./table", "./popup" ], function(require, Panel,
 			cancellabel : settings.cancellabel
 		};
 	}
+	
+	function getPopupDeleteConf(settings) {
+		return {
+			projectId : settings.projectId,
+			bindableEntity : settings.entityType,
+			getURL : getPopupGetURL(settings),
+			postURL : getPopupPostURL(settings),
+			selector : settings.mainSelector + " .cuf-binding-popup-delete",
+			selectorMainPage : settings.mainSelector ,
+			title : settings.popupTitle,
+			deleteUrl : getTableDeleteURL(settings),
+			oklabel : settings.oklabel,
+			cancellabel : settings.cancellabel
+		};
+	}
 
 	return function(settings) {
 		var self = this;
@@ -102,15 +117,32 @@ define([ "require", "./panel", "./table", "./popup" ], function(require, Panel,
 		this.table = new Table(tableConf);
 
 		var popupConf = getPopupConf(settings);
-		this.popup = new Popup(popupConf);
-
+		this.popup = new Popup(popupConf);	
+		
 		this.panel.getButton().setPopup(this.popup);
 		this.popup.addPostSuccessListener({
 			update : function() {
 				self.table.refresh();
 			}
 		});
-
+		
+		
+		var popupDeleteConf = getPopupDeleteConf(settings);
+		this.popupDelete = new PopupDelete(popupDeleteConf);
+	
+		this.panel.getButtonDelete().setPopup(this.popupDelete);
+	
+		/* Fonctionne :
+		 * 		var popupDeleteConf = getPopupDeleteConf(settings);
+		this.popupDelete = new PopupDelete(popupDeleteConf);
+		
+		this.panel.getButtonDelete().setPopup(this.popupDelete);
+		this.popupDelete.addPostSuccessListener({
+			update : function() {
+				self.table.refresh();
+			}
+		});*/
 	};
+		
 
 });

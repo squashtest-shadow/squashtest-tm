@@ -18,9 +18,9 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ "jquery", "backbone", "underscore", "app/util/StringUtil", "jquery.squash", "jqueryui",
-		"jquery.squash.togglepanel", "squashtable", "jquery.squash.oneshotdialog",
-		"jquery.squash.messagedialog", "jquery.squash.confirmdialog" ], function($, Backbone, _, StringUtil) {
+define([ "jquery", "backbone", "underscore", "app/util/StringUtil", "app/ws/squashtm.notification", 'squash.translator',
+         "jquery.squash", "jqueryui",	"jquery.squash.togglepanel", "squashtable", "jquery.squash.oneshotdialog",
+		"jquery.squash.messagedialog", "jquery.squash.confirmdialog" ], function($, Backbone, _, StringUtil, notification, translator) {
 	var teamMod = squashtm.app.teamMod;
 	var TeamPermissionPanel = Backbone.View.extend({
 		el : "#permissions",
@@ -28,6 +28,8 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil", "jquery.squa
 			this.makeTogglePanel();
 			this.configureTable();
 			this.configurePopups();
+			this.configureNoPermissionSelectedDialog();
+			this.configureRemovePermissionDialog();
 			this.configureButtons();
 		},
 		events : {
@@ -35,7 +37,6 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil", "jquery.squa
 		},
 
 		changePermission : function(event) {
-
 			var select = $(event.target);
 			var permission_id = select.val();
 			var project_id = select.attr('id').replace("permission-list-", "");
@@ -70,20 +71,31 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil", "jquery.squa
 				}
 			}, {});
 		},
+		
 		configurePopups : function() {
 			this.configureAddPermissionDialog();
 			this.configureRemovePermissionDialog();
 		},
+		
 		configureButtons : function() {
 			this.$("#add-permission-button").on('click', $.proxy(this.openAddPermission, this));
 			this.$("#remove-permission-button").on('click', $.proxy(this.confirmRemovePermission, this));
 		},
+		
 		confirmRemovePermission : function(event) {
 			var hasPermission = ($("#permission-table").squashTable().getSelectedIds().length > 0);
 			if (hasPermission) {
 				this.confirmRemovePermissionDialog.confirmDialog("open");
+			} else {
+				// TODO : old, suppr associated methods : this.noPermissionSelectedDialog.messageDialog('open');
+				notification.showError(translator.get('message.NoPermissionSelected'));
 			}
 		},
+		
+		configureNoPermissionSelectedDialog : function() {
+			this.noPermissionSelectedDialog = this.$("#no-selected-permissions").messageDialog();
+		},
+		
 		openAddPermission : function() {
 			this.addPermissionDialog.confirmDialog('open');
 		},

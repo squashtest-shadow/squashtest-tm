@@ -214,7 +214,12 @@
 			<div class="tg-head">
 				<h3 th:text="#{project.cufbinding.__${HTMLID}__.panel.title}"></h3>
 				<div class="tg-toolbar">
-					<input type="button" class="sq-btn" value="+"/>
+					<button class="sq-icon-btn btn-sm" type="submit" value="+">
+		                <span class="ui-icon ui-icon-plus squared-icons">+</span>
+		            </button>
+		            <button class="sq-icon-btn btn-sm" type="submit" value="-">
+		                <span class="ui-icon ui-icon-minus squared-icons">-</span>
+		            </button>				
 				</div>
 			</div>
 			<div id="panel" th:id="${HTMLID}+'-binding-panel'" class="tg-body cuf-binding-panel" 
@@ -306,6 +311,28 @@
               <input type="button" th:value="#{label.Cancel}" data-def="evt=cancel"/>
             </div>
 		</div>
+		
+			<div id="popup-delete" th:id="${HTMLID}+'-binding-popup-delete'" class="popup-dialog not-displayed cuf-binding-popup-delete" th:title="#{message.customfieldbinding.unbind.tooltip}">
+			
+			<div class='display-table-row'>
+			<div class='display-table-cell warning-cell'>
+			<div class='delete-node-dialog-warning'></div></div>
+			<div class='display-table-cell'>
+			<div th:text="#{message.customfieldbinding.unbind.message.first }"></div>
+			<span class='red-warning-message'> 
+			<div th:text="#{message.customfieldbinding.unbind.message.second2 }"></div>
+			<div th:text="#{message.customfieldbinding.unbind.message.third }"></div>
+			</span>
+			<span class='bold-warning-message'> 
+			<div th:text="#{message.customfieldbinding.unbind.message.fourth }"></div>
+			</span></div></div>
+				
+			<div class="popup-dialog-buttonpane">
+			  <input type="button" th:value="#{label.Confirm}" data-def="mainbtn,evt=confirm" />
+              <input type="button" th:value="#{label.Cancel}" data-def="evt=cancel"/>
+			</div>
+	</div>
+	
 	</div>
 	
 </div>

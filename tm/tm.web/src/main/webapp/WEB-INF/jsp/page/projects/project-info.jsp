@@ -252,12 +252,15 @@
 		<%-----------------------------------END BUGTRACKER PANEL -----------------------------------------------%>
 				<%----------------------------------- USER PANEL -----------------------------------------------%>
 			<f:message key="title.AddPermission" var="addButtonTitle" />
+			<f:message key="title.RemovePermission" var="removeButtonTitle" />
 			<comp:toggle-panel id="project-users-panel"
 				titleKey="label.Permissions" open="true">
 	
 				<jsp:attribute name="panelButtons">
         <button id="add-permission-button" title="${addButtonTitle}" class="sq-icon-btn btn-sm">
-          <span class="ui-icon ui-icon-plus">+</span>
+          <span class="ui-icon ui-icon-plus squared-icons">+</span>
+        <button id="remove-permission-button" title="${removeButtonTitle}" class="sq-icon-btn btn-sm">
+          <span class="ui-icon ui-icon-minus squared-icons">-</span>
         </button>
 				</jsp:attribute>
 				
@@ -386,7 +389,24 @@
 		</div>
 
 		<%----------------------------------- /add User Popup-----------------------------------------------%>
-	
+		
+		<%----------------------------------- remove User Popup-----------------------------------------------%>
+		
+		
+		<f:message var="removeuserTitle" key="tooltips.permissions.remove" />	
+		<div id="remove-permission-dialog" class="popup-dialog not-displayed" title="${removeuserTitle}">
+			
+		<f:message key="message.permissions.remove.teamOrUser"/>
+		
+		<div class="popup-dialog-buttonpane">
+				<input type="button" value="${confirmLabel}" data-def="state=normal, mainbtn=normal, evt=confirm"/>
+				<input type="button" value="${cancelLabel}" data-def="state=normal loading, mainbtn=loading, evt=cancel" />
+		</div>
+		
+		</div>
+		
+		<%----------------------------------- /remove User Popup-----------------------------------------------%>
+		
 		<%------------------------------------replace status popup ------------------------------------------%>
 
 		<div id="replace-status-dialog" class="popup-dialog not-displayed" title="<f:message key="label.status.options.popup.label"/>">
@@ -457,10 +477,10 @@ squashtm.app.messages["message.notBlank"] =  "<f:message key='message.notBlank' 
 require(["common"], function() {
 
 	require(["jquery", "projects-manager", "jquery.squash.fragmenttabs", "squash.attributeparser", 
-	         "project/ProjectToolbar", "jquery.squash.oneshotdialog",
+	         "project/ProjectToolbar", "jquery.squash.oneshotdialog", "app/ws/squashtm.notification", "squash.translator",
 	         "squashtable", "jquery.squash.formdialog", "jquery.switchButton", 
 	         "app/ws/squashtm.workspace", "jquery.squash.formdialog"], 
-	         function($, projectsManager, Frag, attrparser, ProjectToolbar, oneshot){
+	         function($, projectsManager, Frag, attrparser, ProjectToolbar, oneshot, notification, translator){
 
 
 	
@@ -691,7 +711,85 @@ require(["common"], function() {
 		$("#add-permission-button").on('click', function(){
 			permpopup.formDialog('open');
 		});
-	
+
+
+
+
+
+
+
+
+
+		
+
+		// TODO 
+		// permissions popup
+		var permremovepopup = $("#remove-permission-dialog"); 
+		permremovepopup.formDialog();
+		
+		permremovepopup.on('formdialogopen', function(){
+			
+			permpopup.formDialog('setState', 'loading');
+			
+			$.getJSON("${permissionPopupUrl}").done(function(json){
+				if (json.length === 0){
+					permpopup.formDialog('setState', "allbound");
+				}
+				else{
+					permpopup.data('source', json);
+					$("#party-input").autocomplete({
+						source : json
+					});
+					permpopup.formDialog('setState', "normal");
+				}
+			});
+		});
+		
+		permremovepopup.on('formdialogconfirm', function(){
+
+		//	var partyname = $("#party-input").val();
+		//	var validselection = $.grep(permremovepopup.data('source'), function(e){ return (e.label === partyname);});
+		//	var partyId = validselection[0].id;
+		
+			var table = $("#user-permissions-table");
+			var ids = table.squashTable().getSelectedIds() ; 
+			
+			
+		/*	var url = settings.deleteUrl + "/" + ids.join(',');*/
+				
+		for(key in ids) {
+			val = ids[key]; 
+			$.ajax({
+				type : 'delete',
+				dataType : "json",
+				url : squashtm.app.contextRoot + "/generic-projects/" + permSettings.basic.projectId +
+				"/parties/" + val +"/permissions"
+			}).done(function() {
+				table.squashTable().refresh();
+			});
+		}
+		
+			$(this).formDialog('close');
+			
+			// END TODO ADAPT //
+			
+		});
+		
+		permremovepopup.on('formdialogcancel', function(){
+			permremovepopup.formDialog('close');
+		});
+		// END TODO
+					
+		$("#remove-permission-button").on('click', function(){
+			var hasPermission = ($("#user-permissions-table").squashTable().getSelectedIds().length > 0);
+			if (hasPermission) {
+				permremovepopup.formDialog('open');
+				}
+			 else {
+				 notification.showError(translator.get('message.NoMemberSelected'));
+			}
+			
+		});
 
 		//user permissions table
 		var permSettings = {

@@ -448,6 +448,13 @@ th.width-tenperc, td.width-tenperc {
 	filter:alpha(opacity=35);	
 }
 
+/* To get squared icons */
+
+.squared-icons{
+  margin-right: 0.5em;
+  margin-left: 0.5em;
+}
+
 /* ---------------------------------------------------------*/
 /* ---------------->>> Hypenation <<<------------------*/
 /* ---------------------------------------------------------*/

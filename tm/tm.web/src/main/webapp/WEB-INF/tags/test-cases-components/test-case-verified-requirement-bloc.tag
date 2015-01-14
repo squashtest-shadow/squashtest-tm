@@ -60,11 +60,17 @@
 	<comp:toggle-panel id="verified-requirements-panel" title="${panelTitle}" >
 		<jsp:attribute name="panelButtons">
 			<c:if test="${ linkable }">					
-					<f:message var="associateLabel"	key="label.associateRequirements" />
-					<input id="add-verified-requirements-button" type="button" value="+" class="sq-btn" />
+			<f:message var="associateLabel"	key="label.associateRequirements" />
+				<button id="add-verified-requirements-button" class="sq-icon-btn btn-sm" type="submit">
+                	<span class="ui-icon ui-icon-plus squared-icons">+</span>
+                </button>
+			
+			<f:message var="removeLabel" key="label.removeRequirementsAssociation" />
+				<button id="remove-verified-requirements-button" class="sq-icon-btn btn-sm" type="submit">
+                	<span class="ui-icon ui-icon-minus squared-icons">-</span>
+          	  	</button>
+						
 					
-					<f:message var="removeLabel" key="label.removeRequirementsAssociation" />
-					<input id="remove-verified-requirements-button" type="button" value="-" class="sq-btn" />
 			</c:if>		
 		</jsp:attribute>
 		<jsp:attribute name="body">

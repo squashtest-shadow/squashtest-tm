@@ -81,7 +81,7 @@
         <legend>
           <f:message key="label.jobs" />
           <button id="ta-projects-bind-button" title="${addTAProjectLabel}" class="sq-icon-btn btn-sm">
-            <span class="ui-icon ui-icon-plus"></span>
+            <span class="ui-icon ui-icon-plus squared-icons"></span>
           </button>
         </legend>
         

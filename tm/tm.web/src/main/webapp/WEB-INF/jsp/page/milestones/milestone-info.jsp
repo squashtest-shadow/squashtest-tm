@@ -176,10 +176,10 @@
 		<jsp:attribute name="panelButtons">
 			<c:if test="${canEdit }">
         <button id="bind-project-button" title=<f:message key="label.milestone.bindProject" /> class="sq-icon-btn btn-sm">
-          <span class="ui-icon ui-icon-plus">+</span>
+          <span class="ui-icon ui-icon-plus squared-icons">+</span>
         </button>
              <button id="unbind-project-button" title=<f:message key="label.milestone.unbindProject" /> class="sq-icon-btn btn-sm">
-          <span class="ui-icon ui-icon-minus">-</span>
+          <span class="ui-icon ui-icon-minus squared-icons">-</span>
           </c:if>
         </button>
         
