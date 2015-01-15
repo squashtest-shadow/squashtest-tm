@@ -99,6 +99,16 @@ public class Parameter implements Identified {
 		this.testCase.addParameter(this);
 	}
 
+	/**
+	 * A detached copy means it belong to no test case yet
+	 * @return
+	 */
+	public Parameter detachedCopy(){
+		Parameter p = new Parameter(name);
+		p.setDescription(description);
+		return p;
+	}
+
 	public String getName() {
 		return name;
 	}
