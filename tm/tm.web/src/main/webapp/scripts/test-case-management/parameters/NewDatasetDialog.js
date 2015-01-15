@@ -28,11 +28,11 @@ define([ "jquery", "backbone", "underscore", "app/lnf/Forms", "app/util/StringUt
 		paramRowClass : "parameterRow",
 		inputClass : "paramValue",
 
-		initialize : function() {
+		initialize : function(options) {
+			this.options = options;
 			this.$textFields = this.$el.find("input:text");
 			this._initializeDialog();
 			this._initializeTable();
-
 		},
 
 		_initializeDialog : function(){
