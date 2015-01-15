@@ -334,7 +334,8 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 		// create copy of parameters and remember the association original/copy
 		Map<Parameter, Parameter> copyByOriginalParam = new HashMap<Parameter, Parameter>(source.getParameters().size());
 		for (Parameter parameter : source.getParameters()) {
-			Parameter paramCopy = new Parameter(parameter.getName(), this);
+			Parameter paramCopy = parameter.detachedCopy();
+			paramCopy.setTestCase(this);
 			copyByOriginalParam.put(parameter, paramCopy);
 		}
 		addCopiesOfDatasets(source, copyByOriginalParam);
