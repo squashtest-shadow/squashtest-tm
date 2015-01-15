@@ -610,7 +610,7 @@ define(["jquery",
 
 	function _getRowsByIds(ids){
 		var table = this;
-		return table.find('tbody tr').filter(function(){
+		return table.find('>tbody>tr').filter(function(){
 			var id = table.getODataId(this);
 			return (!! id && $.inArray(id, ids)!== -1);
 		});
