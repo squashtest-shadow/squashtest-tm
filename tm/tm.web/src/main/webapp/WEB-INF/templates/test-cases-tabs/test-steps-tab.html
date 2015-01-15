@@ -59,12 +59,13 @@
 				     th:text="#{test-case.step.button.remove.label}">
 					 remove selected steps
 			</button>
-			<button id="add-call-step-button" 
+			<a id="add-call-step-button" 
 					data-icon="ui-icon-arrowthickstop-1-e"
-					class="button test-step-toolbar-button"					
+					class="button test-step-toolbar-button"
+                    th:href="@{/test-cases/__${testCase.id}__/call}"					
 					th:text="#{test-case.step.button.call.label}">
 					call a test case
-			</button> 
+			</a> 
 		</span>
 		
 		<span class="group" th:if="${isWritable}">

@@ -54,16 +54,9 @@
 		<script type="text/javascript">
 		require([ "common" ], function() {
 			require([ "domReady", "jquery" ], function(domReady, $) { 
-				
-			function navigateBackFromCallStepManager(){
-				var url = $.cookie('call-step-manager-referer');
-				document.location.href=url;
-			}
-		
-		
+
 			domReady(function(){
 				$("#call-step-associate-button").click(associationAction);
-				$("#call-step-back-button").click(navigateBackFromCallStepManager);
 			});
 			
 
@@ -81,7 +74,10 @@
 					we need that post to be a json just to trigger business exception handlers server side (if an exception occurs).
 					also we'll receive the said exception as a json object, which is always cool.
 				--%>
-				$.post("${postCallStepUrl}", param, function(){},"json").success(navigateBackFromCallStepManager);
+				$.post("${postCallStepUrl}", param, function(){},"json").success(function(){
+					<%-- the variable squashtm.workspace.backurl is set by the js module workspace.breadcrumb --%>
+					document.location.href=squashtm.workspace.backurl;
+				});
 	
 				
 			}		
@@ -126,7 +122,8 @@
 		<f:message var="associateButtonLabel" key="subpage.test-case.callstep.button.call.label" />
 		<input id="call-step-associate-button" type="button" class="button" value="${associateButtonLabel}" />
 		<f:message var="backButtonLabel" key="label.Back" />
-		<input id="call-step-back-button" type="button" class="button" value="${backButtonLabel}" onclick="navigateBackFromCallStepManager();"/> 
+        <%-- this button uses back navigation thanks to the js module workspace.breadcrumb that is called implicitly --%>
+		<input id="back" type="button" class="button" value="${backButtonLabel}" onclick="document.location.href=squashtm.workspace.backurl"/> 
 	</jsp:attribute>	
 
 	<jsp:attribute name="tree">

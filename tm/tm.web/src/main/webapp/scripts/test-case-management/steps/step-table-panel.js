@@ -91,7 +91,6 @@ define([ "jquery", "squashtable/squashtable.collapser", "custom-field-values", "
 					"&bindableEntity=TEST_STEP&optional=false",
 			ckeConfigUrl : ctxUrl + "styles/ckeditor/ckeditor-config.js",
 			indicatorUrl : ctxUrl + "/scripts/jquery/indicator.gif",
-			callStepManagerUrl : tcUrl + "/call",
 			tableLanguageUrl : ctxUrl + "/datatables/messages",
 			tableAjaxUrl : tcUrl + "/steps",
 			projectId : conf.basic.projectId,
@@ -631,19 +630,6 @@ define([ "jquery", "squashtable/squashtable.collapser", "custom-field-values", "
 	}
 
 
-
-	function initCallStepButton(urls) {
-
-
-		$("#add-call-step-button").click(function() {
-			var url = document.URL;
-			$.cookie("call-step-manager-referer", url, {
-				path : "/"
-			});
-			document.location.href = urls.callStepManagerUrl;
-		});
-	}
-
 	// ******************************* toolbar initialization
 	// *********************************
 
@@ -654,9 +640,6 @@ define([ "jquery", "squashtable/squashtable.collapser", "custom-field-values", "
 
 		// delete all button
 		initDeleteAllStepsButtons(language, urls);
-
-		// call step button
-		initCallStepButton(urls);
 
 		// add test step
 		initAddTestStepDialog(language, urls);
