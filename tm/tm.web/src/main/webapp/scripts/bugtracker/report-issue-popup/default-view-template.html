@@ -25,10 +25,10 @@
 	<div class="combo-options">
 		<div class="display-table">
 			<div>
-				<div>
+				<div class="display-table-cell">
 					<label class="priority-label">{{labels.reportPriorityLabel}}</label>
 				</div>
-				<div>
+				<div class="display-table-cell">
 					<select class="priority-select" name="priorityId" style="width: 100%;" >
 						{{#each issue.project.priorities}}
 						{{#if this.dummy}}
@@ -39,10 +39,10 @@
 						{{/each}}
 					</select>
 				</div>
-				<div>
+				<div class="display-table-cell">
 					<label class="category-label">{{labels.reportCategoryLabel}}</label>
 				</div>
-				<div>
+				<div class="display-table-cell">
 					<select class="category-select" name="categoryId" style="width: 100%;">
 						{{#each issue.project.categories}}
 						{{#if this.dummy}}
@@ -56,10 +56,10 @@
 			</div>
 
 			<div>
-				<div>
+				<div class="display-table-cell">
 					<label class="version-label">{{labels.reportVersionLabel}}</label>
 				</div>
-				<div>
+				<div class="display-table-cell">
 					<select class="version-select" name="versionId" style="width: 100%;">
 						{{#each issue.project.versions}}
 						{{#if this.dummy}}
@@ -70,10 +70,10 @@
 						{{/each}}	
 					</select>
 				</div>
-				<div>
+				<div class="display-table-cell">
 					<label class="assignee-label">{{labels.reportAssigneeLabel}}</label>
 				</div>
-				<div>
+				<div class="display-table-cell">
 					<select class="assignee-select" name="assigneeId" style="width: 100%;">
 						{{#each issue.project.users}}
 						{{#if this.dummy}}

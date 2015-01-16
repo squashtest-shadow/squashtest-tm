@@ -63,7 +63,8 @@ define(["jquery", "backbone", "handlebars", "../domain/BTEntity", "text!./defaul
 	
 	var ComboBox = DefaultFieldControl.extend({
 		
-		initialize : function(){
+		initialize : function(options){
+			this.options = options;
 			this.empty = (this.$el.find('option.issue-control-empty').length!==0);
 			if (!!this.empty){
 				this.disable();
