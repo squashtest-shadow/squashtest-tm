@@ -158,12 +158,15 @@
 
 				<!-- ============================================ Permissions ======================================= -->
 
+						<f:message key="title.AddPermission" var="addPermissionField" />
+						<f:message key="title.RemovePermission" var="removPermissionField" />
+
 						<div id="permissions" class="toggle-panel">
 							<span class="not-displayed toggle-panel-buttons">
-							<button id="add-permission-button" class="sq-icon-btn btn-sm" type="submit">
+							<button id="add-permission-button" class="sq-icon-btn btn-sm" type="submit" title="${addPermissionField}">
 		                	    <span class="ui-icon ui-icon-plus squared-icons">+</span>
 		                    </button>
-		                    <button id="remove-permission-button" class="sq-icon-btn btn-sm" type="submit">
+		                    <button id="remove-permission-button" class="sq-icon-btn btn-sm" type="submit" title="${removPermissionField}">
 		                  	  <span class="ui-icon ui-icon-minus squared-icons">-</span>
 		                    </button>
 							</span>
@@ -200,12 +203,15 @@
 						
 				<!-- ========================================= Members ============================================= -->
 				
+						<f:message key="title.AddMember" var="addMemberField" />
+						<f:message key="title.RemoveMember" var="removeMemberField" />
+
 						<div class="toggle-panel">
 							<span class="not-displayed toggle-panel-buttons"> 
-							<button id="add-member-button" class="sq-icon-btn btn-sm" type="submit">
+							<button id="add-member-button" class="sq-icon-btn btn-sm" type="submit" title="${addMemberField}" >
 		                	    <span class="ui-icon ui-icon-plus squared-icons">+</span>
 		                    </button>
-		                    <button id="remove-members-button" class="sq-icon-btn btn-sm" type="submit">
+		                    <button id="remove-members-button" class="sq-icon-btn btn-sm" type="submit" title="${removeMemberField}" >
 		                  	  <span class="ui-icon ui-icon-minus squared-icons">-</span>
 		                    </button>
 							</span>

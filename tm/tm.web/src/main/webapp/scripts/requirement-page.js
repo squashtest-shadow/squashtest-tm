@@ -202,7 +202,12 @@ define(["module", "jquery", "app/pubsub", "squash.basicwidgets", "app/ws/squasht
 			
 			var table = $("#verifying-test-cases-table").squashTable({
 				aaData : config.basic.verifyingTestcases
-			}, {});
+			}, {
+				unbindButtons : {
+					delegate : "#remove-verifying-test-case-dialog",
+					tooltip : translator.get('dialog.unbind-ta-project.tooltip')
+				}
+			});
 			
  			if (config.permissions.linkable){
  
@@ -213,7 +218,7 @@ define(["module", "jquery", "app/pubsub", "squash.basicwidgets", "app/ws/squasht
  					var url = routing.buildURL('requirements.testcases.manager', config.basic.currentVersionId);
  					document.location.href=url;	
  				});			
- 				
+ 				 				
  				 $( '#remove-verifying-test-case-button' ).click(function() {
  		            var ids = table.getSelectedIds();
  		            

@@ -207,15 +207,19 @@
             </div>
             <!-- ============================================/User Infos ======================================= -->
             <!-- ============================================ Permissions ======================================= -->
+            
+			<f:message key="title.AddPermission" var="addPermissionField" />
+			<f:message key="title.RemovePermission" var="removPermissionField" />
+
             <div class="sq-tg expand" id="permissions">
               <div class="tg-head">
                 <h3><a th:text="#{user.project-rights.title.label}">Permissions</a></h3>
                 <div class="tg-toolbar">
-                  <button id="add-permission-button" th:title="${addButtonTitle}" title="add"
+                  <button id="add-permission-button" th:title="${addPermissionField}" title="add"
                     class="sq-icon-btn btn-sm">
                     <span class="ui-icon ui-icon-plus squared-icons">+</span>
                   </button>
-                  <button id="remove-permission-button" th:title="${removeButtonTitle}" title="remove"
+                  <button id="remove-permission-button" th:title="${removPermissionField}" title="remove"
                     class="sq-icon-btn btn-sm">
                     <span class="ui-icon ui-icon-minus squared-icons">-</span>
                   </button>
@@ -254,16 +258,19 @@
             <!-- ============================================/ Permissions ======================================= -->
             <!-- ============================================ Teams ======================================= -->
 
+			<f:message key="label.addTeam" var="addTeamField" />
+			<f:message key="label.removeTeam" var="removeTeamField" />
+						
             <div class="sq-tg  expand">
               <div id="teams" class="tg-head">
                 <h3><a th:text="#{label.teams}">Teams</a></h3>
 
                 <div class="tg-toolbar">
-                  <button id="add-team-button" class="sq-icon-btn btn-sm">
+                  <button id="add-team-button" class="sq-icon-btn btn-sm" title="${addTeamField}">
                     <span class="ui-icon ui-icon-plus squared-icons">+</span>
                   </button>
                   
-                   <button id="remove-teams-button" class="sq-icon-btn btn-sm">
+                   <button id="remove-teams-button" class="sq-icon-btn btn-sm" title="${removeTeamField}">
                    <span class="ui-icon ui-icon-minus squared-icons">-</span>
                   </button>
 

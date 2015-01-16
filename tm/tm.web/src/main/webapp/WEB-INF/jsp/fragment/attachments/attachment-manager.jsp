@@ -53,7 +53,7 @@
 		<div class="toolbar-information-panel"></div>
 		<div class="toolbar-button-panel">
 			<f:message var="uploadAttachment" key="label.UploadAttachment" />
-			<input id="add-attachment-button" type="button" value="${uploadAttachment}" class="sq-btn"/>
+			<input id="add-attachment-button" type="button" value="${uploadAttachment}" class="sq-btn" title="${uploadAttachment}" />
 		</div>
 		<div class="unsnap"></div>
 	</div>
@@ -64,9 +64,9 @@
 	<comp:toggle-panel id="attachment-table-panel" titleKey="label.CurrentAttachments"  open="true" >
 		<jsp:attribute name="panelButtons">	
 			<f:message var="renameAttachment" key="label.Rename" />
-			<input type="button" value="${renameAttachment}" id="rename-attachment-button" class="sq-btn" />
+			<input type="button" value="${renameAttachment}" id="rename-attachment-button" class="sq-btn"  title="${renameAttachment}" />
 			<f:message var="removeAttachment" key="label.Delete" />
-			<input type="button" value="${removeAttachment}" id="delete-attachment-button" class="sq-btn" />
+			<input type="button" value="${removeAttachment}" id="delete-attachment-button" class="sq-btn"  title="${removeAttachment}" />
 		</jsp:attribute>
 		<jsp:attribute name="body">
 			<at:attachment-table editable="${true}" baseURL="${baseURL}" />					

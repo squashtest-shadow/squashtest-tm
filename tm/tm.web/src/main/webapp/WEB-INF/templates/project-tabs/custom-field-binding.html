@@ -209,15 +209,17 @@
 				TEMPLATE FRAGMENT DEFINITION + other stuffs removed at runtime
 ============================================================================ -->
 
+	<f:message key="label.CustomField.add" var="addCustomField" />
+	<f:message key="label.CustomField.remove" var="removeCustomField" />
 	<div th:fragment="cuf-unit-binder" id="binding-manager">
 		<div class="expand sq-tg">
 			<div class="tg-head">
 				<h3 th:text="#{project.cufbinding.__${HTMLID}__.panel.title}"></h3>
 				<div class="tg-toolbar">
-					<button class="sq-icon-btn btn-sm" type="submit" value="+">
+					<button class="sq-icon-btn btn-sm" type="submit" value="+"  title="${addCustomField}" >
 		                <span class="ui-icon ui-icon-plus squared-icons">+</span>
 		            </button>
-		            <button class="sq-icon-btn btn-sm" type="submit" value="-">
+		            <button class="sq-icon-btn btn-sm" type="submit" value="-" title="${removeCustomField}" >
 		                <span class="ui-icon ui-icon-minus squared-icons">-</span>
 		            </button>				
 				</div>

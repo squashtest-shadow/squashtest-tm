@@ -132,16 +132,6 @@ define([ "require", "./panel", "./table", "./popup", "./popupDelete" ], function
 	
 		this.panel.getButtonDelete().setPopup(this.popupDelete);
 	
-		/* Fonctionne :
-		 * 		var popupDeleteConf = getPopupDeleteConf(settings);
-		this.popupDelete = new PopupDelete(popupDeleteConf);
-		
-		this.panel.getButtonDelete().setPopup(this.popupDelete);
-		this.popupDelete.addPostSuccessListener({
-			update : function() {
-				self.table.refresh();
-			}
-		});*/
 	};
 		
 

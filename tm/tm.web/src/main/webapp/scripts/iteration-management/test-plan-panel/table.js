@@ -422,6 +422,7 @@ define(
 											var dialog = $("#iter-test-plan-delete-execution-dialog");
 											dialog.data('origin',this);
 											dialog.confirmDialog('open');
+											
 										});
 
 									// the new execution buttons

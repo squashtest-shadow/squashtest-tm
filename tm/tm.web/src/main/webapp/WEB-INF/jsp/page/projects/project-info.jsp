@@ -712,18 +712,6 @@ require(["common"], function() {
 			permpopup.formDialog('open');
 		});
 
-
-
-
-
-
-
-
-
-		
-
-		// TODO 
-		// permissions popup
 		var permremovepopup = $("#remove-permission-dialog"); 
 		permremovepopup.formDialog();
 		
@@ -746,17 +734,8 @@ require(["common"], function() {
 		});
 		
 		permremovepopup.on('formdialogconfirm', function(){
-
-		//	var partyname = $("#party-input").val();
-		//	var validselection = $.grep(permremovepopup.data('source'), function(e){ return (e.label === partyname);});
-		//	var partyId = validselection[0].id;
-		
 			var table = $("#user-permissions-table");
-			var ids = table.squashTable().getSelectedIds() ; 
-			
-			
-		/*	var url = settings.deleteUrl + "/" + ids.join(',');*/
-				
+			var ids = table.squashTable().getSelectedIds() ; 		
 		for(key in ids) {
 			val = ids[key]; 
 			$.ajax({
@@ -770,16 +749,13 @@ require(["common"], function() {
 		}
 		
 			$(this).formDialog('close');
-			
-			// END TODO ADAPT //
-			
+				
 		});
 		
 		permremovepopup.on('formdialogcancel', function(){
 			permremovepopup.formDialog('close');
 		});
-		// END TODO
-					
+						
 		$("#remove-permission-button").on('click', function(){
 			var hasPermission = ($("#user-permissions-table").squashTable().getSelectedIds().length > 0);
 			if (hasPermission) {

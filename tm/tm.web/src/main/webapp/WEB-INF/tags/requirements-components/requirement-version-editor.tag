@@ -258,10 +258,10 @@ publish('reload.requirement.toolbar');
 			<c:if test="${ linkable }">
 				<f:message var="associateLabel" key="requirement.verifying_test-case.manage.button.label" />
 				<f:message var="removeLabel" key="label.removeRequirementsAssociation" />
-					<button id="verifying-test-case-button" class="sq-icon-btn btn-sm" type="submit">
+					<button id="verifying-test-case-button" class="sq-icon-btn btn-sm" type="submit" title="${associateLabel}">
                 	    <span class="ui-icon ui-icon-plus squared-icons">+</span>
                     </button>
-                    <button id="remove-verifying-test-case-button" class="sq-icon-btn btn-sm" type="submit">
+                    <button id="remove-verifying-test-case-button" class="sq-icon-btn btn-sm" type="submit" title="${removeLabel}">
                   	  <span class="ui-icon ui-icon-minus squared-icons">-</span>
                     </button>
 			</c:if>
@@ -269,7 +269,7 @@ publish('reload.requirement.toolbar');
 
         <jsp:attribute name="body">
 			<reqs:verifying-test-cases-table batchRemoveButtonId="remove-verifying-test-case-button"
-            editable="${ linkable }" model="${verifyingTestCaseModel}" requirementVersion="${requirementVersion}" autoJsInit="${false}"/>
+            editable="${ linkable }" model="${verifyingTestCaseModel}" requirementVersion="${requirementVersion}" autoJsInit="${false}" />
 		</jsp:attribute>
       </comp:toggle-panel>
 

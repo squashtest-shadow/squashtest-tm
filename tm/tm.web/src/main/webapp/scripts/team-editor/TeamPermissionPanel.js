@@ -87,7 +87,6 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil", "app/ws/squa
 			if (hasPermission) {
 				this.confirmRemovePermissionDialog.confirmDialog("open");
 			} else {
-				// TODO : old, suppr associated methods : this.noPermissionSelectedDialog.messageDialog('open');
 				notification.showError(translator.get('message.NoPermissionSelected'));
 			}
 		},

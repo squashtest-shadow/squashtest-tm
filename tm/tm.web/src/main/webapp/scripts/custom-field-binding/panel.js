@@ -26,8 +26,6 @@ define([ "jquery", "app/ws/squashtm.notification", "squash.translator", "jquery.
 		var button = instance.prev().find("button[value='+']");
 		var buttonDelete = instance.prev().find("button[value='-']");
 
-		//instance.togglePanel(settings);
-
 		// *********** decorate the attributes ******
 
 		button.setPopup = function(popup) {
@@ -44,10 +42,7 @@ define([ "jquery", "app/ws/squashtm.notification", "squash.translator", "jquery.
 			return buttonDelete;
 		};
 		
-		
-		// Add dialog here to confirm delete and forget about popup
-		// Add condition if nothing is selected
-		buttonDelete.setPopup = function(popupDelete) {
+			buttonDelete.setPopup = function(popupDelete) {
 			buttonDelete.click(function() {
 				
 				var table = instance.find('.cuf-binding-table');
@@ -58,8 +53,7 @@ define([ "jquery", "app/ws/squashtm.notification", "squash.translator", "jquery.
 				popupDelete.formDialog("open");
 			}
 		 else {
-				// TODO : new message : no selected element
-			 notification.showError(translator.get('message.NoPermissionSelected'));
+			 notification.showError(translator.get('message.NoCUFSelected'));
 		 }
 			
 			});
