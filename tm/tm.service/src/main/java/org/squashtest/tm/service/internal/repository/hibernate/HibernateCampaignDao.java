@@ -61,6 +61,7 @@ public class HibernateCampaignDao extends HibernateEntityDao<Campaign> implement
 	private static final String TESTCASE_FILTER = "testcaseFilter";
 	private static final String USER_FILTER = "userFilter";
 	private static final String WEIGHT_FILTER = "weightFilter";
+	private static final String DATASET_FILTER = "datasetFilter";
 
 	private static final String PROJECT_DATA = "project-name";
 	private static final String REFERENCE_DATA = "reference";
@@ -68,6 +69,7 @@ public class HibernateCampaignDao extends HibernateEntityDao<Campaign> implement
 	private static final String USER_DATA = "assigned-user";
 	private static final String WEIGHT_DATA = "importance";
 	private static final String MODE_DATA = "exec-mode";
+	private static final String DATASET_DATA = "dataset.selected.name";
 
 	/*
 	 * Because it is impossible to sort over the indices of ordered collection in a criteria query
@@ -97,6 +99,8 @@ public class HibernateCampaignDao extends HibernateEntityDao<Campaign> implement
 	private static final String HQL_INDEXED_TEST_PLAN_MODEAUTO_FILTER = "and TestCase.automatedTest is not null ";
 
 	private static final String HQL_INDEXED_TEST_PLAN_MODEMANUAL_FILTER = "and TestCase.automatedTest is null ";
+
+	private static final String HQL_INDEXED_TEST_PLAN_DATASET_FILTER = "and Dataset.name like :datasetFilter ";
 
 	@Override
 	public Campaign findByIdWithInitializedIterations(long campaignId) {
@@ -195,6 +199,8 @@ public class HibernateCampaignDao extends HibernateEntityDao<Campaign> implement
 
 		applySimpleFilter(hqlbuilder, filtering, TESTCASE_DATA, HQL_INDEXED_TEST_PLAN_TESTCASE_FILTER);
 
+		applySimpleFilter(hqlbuilder, filtering, DATASET_DATA, HQL_INDEXED_TEST_PLAN_DATASET_FILTER);
+
 		if (filtering.hasFilter(USER_DATA)) {
 			if ("0".equals(filtering.getFilter(USER_DATA))) {
 				hqlbuilder.append(HQL_INDEXED_TEST_PLAN_NULL_USER_FILTER);
@@ -245,6 +251,9 @@ public class HibernateCampaignDao extends HibernateEntityDao<Campaign> implement
 		}
 		if (filtering.hasFilter(TESTCASE_DATA)) {
 			query.setParameter(TESTCASE_FILTER, "%" + filtering.getFilter(TESTCASE_DATA) + "%", StringType.INSTANCE);
+		}
+		if (filtering.hasFilter(DATASET_DATA)) {
+			query.setParameter(DATASET_FILTER, "%" + filtering.getFilter(DATASET_DATA) + "%", StringType.INSTANCE);
 		}
 		if (filtering.hasFilter(USER_DATA) && !"0".equals(filtering.getFilter(USER_DATA))) {
 			query.setParameter(USER_FILTER, Long.parseLong(filtering.getFilter(USER_DATA)), LongType.INSTANCE);

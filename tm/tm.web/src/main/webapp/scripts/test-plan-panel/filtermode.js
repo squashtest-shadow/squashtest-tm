@@ -61,6 +61,7 @@ define(["jquery",  "jquery.squash.rangedatepicker", "squash.translator", "worksp
 		this.key = entityType + "-filter-" + entityId;
 		
 		this.active = false;
+		table.find('>thead>tr').addClass('tp-filtermode-disabled');
 		
 
 		
@@ -90,17 +91,17 @@ define(["jquery",  "jquery.squash.rangedatepicker", "squash.translator", "worksp
 		
 
 		function hideInputs() {
-			table.find(".th_input").hide();
+			table.find('>thead>tr').addClass('tp-filtermode-disabled');
 		}
 	
 		function showInputs() {
-			table.find(".th_input").show();
+			table.find('>thead>tr').removeClass('tp-filtermode-disabled');
 		};
 		
 			
 		function restoreTableFilter(filter){
 			
-			if (state === undefined){
+			if (filter === undefined){
 				return;
 			}
 			else{
@@ -154,7 +155,7 @@ define(["jquery",  "jquery.squash.rangedatepicker", "squash.translator", "worksp
 				return;
 			}
 			// handlebars, dammit
-			var combo = $("<select id='"+id+"' class='th_input filter_input not-displayed' />");
+			var combo = $("<select id='"+id+"' class='th_input filter_input' />");
 
 			var nullOption = new Option("", "");
 			$(nullOption).html("");
@@ -185,7 +186,7 @@ define(["jquery",  "jquery.squash.rangedatepicker", "squash.translator", "worksp
 
 
 		table.find(".tp-th-project-name,.tp-th-reference,.tp-th-name,.tp-th-dataset,.tp-th-suite")
-			 .append("<input class='th_input filter_input not-displayed'/>");
+			 .append("<input class='th_input filter_input'/>");
 
 
 
@@ -201,7 +202,7 @@ define(["jquery",  "jquery.squash.rangedatepicker", "squash.translator", "worksp
 		_createCombo(importanceTH, "#filter-weight-combo", weights);
 
 		// use handlebars, dammit !
-		table.find(".tp-th-exec-on").append("<div class='rangedatepicker th_input not-displayed'>"
+		table.find(".tp-th-exec-on").append("<div class='rangedatepicker th_input '>"
 								+ "<input class='rangedatepicker-input' readonly='readonly'/>"
 								+ "<div class='rangedatepicker-div' style='position:absolute;top:auto;left:auto;z-index:1;'></div>"
 								+ "<input type='hidden' class='rangedatepicker-hidden-input filter_input'/>"
