@@ -28,7 +28,6 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
-import org.springframework.security.access.PermissionEvaluator;
 import org.springframework.security.acls.domain.BasePermission;
 import org.springframework.security.acls.domain.PermissionFactory;
 import org.springframework.security.acls.model.Permission;
@@ -46,7 +45,7 @@ public class AclPermissionEvaluationService implements PermissionEvaluationServi
 	private UserContextService userContextService;
 
 	@Inject
-	private PermissionEvaluator permissionEvaluator;
+	private AffirmativeBasedCompositePermissionEvaluator permissionEvaluator;
 
 	@Inject
 	private PermissionFactory permissionFactory;
@@ -67,15 +66,15 @@ public class AclPermissionEvaluationService implements PermissionEvaluationServi
 	public boolean hasRoleOrPermissionOnObject(String role, String permissionName, Object object) {
 		return hasRoleOrPermissionOnObject(role, permissionFactory.buildFromName(permissionName), object);
 	}
-	
+
 	@Override
 	public boolean hasRoleOrPermissionOnObject(String role, String permissionName,
 			Long entityId, String entityClassName) {
-		
+
 		if (userContextService.hasRole(role)) {
 			return true;
 		}
-		
+
 		return hasPermissionOnObject(permissionName, entityId, entityClassName);
 	}
 
@@ -85,7 +84,7 @@ public class AclPermissionEvaluationService implements PermissionEvaluationServi
 	public boolean canRead(Object object) {
 		return hasRoleOrPermissionOnObject("ROLE_ADMIN", "READ", object);
 	}
-	
+
 	@Override
 	public boolean hasRole(String role) {
 		return userContextService.hasRole(role);
@@ -118,7 +117,7 @@ public class AclPermissionEvaluationService implements PermissionEvaluationServi
 		return hasMore;
 	}
 
-	
+
 	@Override
 	public boolean hasPermissionOnObject(String permissionName, Long entityId, String entityClassName) {
 		Authentication authentication = userContextService.getPrincipal();
@@ -127,13 +126,13 @@ public class AclPermissionEvaluationService implements PermissionEvaluationServi
 		return permissionEvaluator.hasPermission(authentication,entityId, entityClassName, permission);
 	}
 
-	
+
 	@Override
 	public Map<Permission, Boolean> listPermissionsOnObject(Object object) {
 		String admin = "ROLE_ADMIN";
-		
+
 		Map<Permission, Boolean> permissionMap = new HashMap<Permission, Boolean>(13);
-		
+
 		permissionMap.put(BasePermission.READ, hasRoleOrPermissionOnObject(admin, BasePermission.READ.toString(), object));
 		permissionMap.put(BasePermission.WRITE, hasRoleOrPermissionOnObject(admin, BasePermission.WRITE.toString(), object));
 		permissionMap.put(BasePermission.CREATE, hasRoleOrPermissionOnObject(admin, BasePermission.CREATE.toString(), object));
@@ -147,8 +146,8 @@ public class AclPermissionEvaluationService implements PermissionEvaluationServi
 		permissionMap.put(CustomPermission.ATTACH, hasRoleOrPermissionOnObject(admin, CustomPermission.ATTACH.toString(), object));
 		permissionMap.put(CustomPermission.EXTENDED_DELETE, hasRoleOrPermissionOnObject(admin, CustomPermission.EXTENDED_DELETE.toString(), object));
 		permissionMap.put(CustomPermission.READ_UNASSIGNED, hasRoleOrPermissionOnObject(admin, CustomPermission.READ_UNASSIGNED.toString(), object));
-		
+
 		return permissionMap;
 	}
-	
+
 }

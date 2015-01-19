@@ -65,7 +65,7 @@
 
   <bean id="expressionHandler"
     class="org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler">
-    <property name="permissionEvaluator" ref="squashtest.core.security.PermissionEvaluator" />
+    <property name="permissionEvaluator" ref="squashtest.core.security.internal.PermissionEvaluator" />
     <property name="parameterNameDiscoverer">
       <!-- We use 2 param name discovery strategies : the standard one and a "arg0, arg1" fallback -->
       <bean
@@ -215,7 +215,7 @@
   </bean>
   
     <!-- ====== SECURITY PLUMBING ====== -->
-  <bean class="org.springframework.security.acls.AclPermissionEvaluator" id="squashtest.core.security.PermissionEvaluator">
+  <bean class="org.squashtest.tm.service.internal.security.AffirmativeBasedCompositePermissionEvaluator" id="squashtest.core.security.internal.PermissionEvaluator">
     <constructor-arg ref="squashtest.core.security.AclService" />
     <property name="objectIdentityRetrievalStrategy" ref="squashtest.core.security.ObjectIdentityRetrievalStrategy" />
     <property name="objectIdentityGenerator" ref="squashtest.core.security.ObjectIdentityGeneratorStrategy" />

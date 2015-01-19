@@ -62,7 +62,11 @@
 
   <osgi:service ref="squashtest.core.user.UserContextService" interface="org.squashtest.tm.service.security.UserContextService" />
 
-  <osgi:service ref="squashtest.core.security.PermissionEvaluator" interface="org.springframework.security.access.PermissionEvaluator" />
+  <!-- 
+  	Feat 4174 : since multiple impls of PermissionEvaluator might be available in the context we must ensure that  
+  	tm.web will consume the one we want. We add then an ID to help with that.
+  -->
+  <osgi:service id="squashtest.core.security.PermissionEvaluator" ref="squashtest.core.security.internal.PermissionEvaluator" interface="org.springframework.security.access.PermissionEvaluator" />
 
   <osgi:service ref="squashtest.core.security.AclService">
     <osgi:interfaces>
@@ -381,7 +385,7 @@
 
 
 
-<!-- Bugtracker co,nnectors registry -->
+<!-- Bugtracker connectors registry -->
   <osgi:list id="bugtracker.plugins.registry" interface="org.squashtest.csp.core.bugtracker.spi.BugTrackerConnectorProvider"
     cardinality="0..N">
     <osgi:listener ref="squashtest.core.bugtracker.BugTrackerConnectorFactory" bind-method="registerProvider"
@@ -392,5 +396,20 @@
     <osgi:listener ref="squashtest.core.bugtracker.BugTrackerConnectorFactory" bind-method="registerAdvancedProvider"
       unbind-method="unregisterAdvancedProvider" />
   </osgi:list>
+  
+  
+  	<!-- 
+  		Additional Permission Evaluators registry 
+  		We also must take care that the composite evaluator must not register against itself or death by 
+  		stackoverflow would entail.	
+  	-->
+	<osgi:list id="security.plugin.permission-evaluators" interface="org.springframework.security.access.PermissionEvaluator" 
+	cardinality="0..N" filter="(!(org.springframework.osgi.bean.name=squashtest.core.security.internal.PermissionEvaluator))">
+		<osgi:listener 
+			ref="squashtest.core.security.internal.PermissionEvaluator" 			
+			bind-method="registerPermissionEvaluator"
+			unbind-method="unregisterPermissionEvaluator" />
+	</osgi:list>
+
 
 </beans>
