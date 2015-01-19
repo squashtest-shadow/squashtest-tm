@@ -981,13 +981,14 @@ div#contextual-content>div:first-child h2,.fragment-header h2 {
 /* -------->>> Execution windows <<<--------- */
 /* ------------------------------------------ */
 body.execute-html-body { /*width:100%;*/
-	/*min-width: 500px;*/
+
 }
 
 div#execute-header {
 	position: absolute;
-	width:inherit;
-	
+	white-space : nowrap;
+	overflow : hidden;	
+	width : 100%;	
 }
 
 
@@ -1023,6 +1024,7 @@ div#execute-body {
 	position: absolute;
 	bottom: 0;
 	top: 0.9cm;
+	position:absolute;
 }
 
 .ui-resizable-helper {
