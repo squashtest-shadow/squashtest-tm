@@ -33,7 +33,7 @@ class AclPermissionEvaluationServiceTest extends Specification {
 
 	UserContextService userContextService = Mock()
 
-	PermissionEvaluator permissionEvaluator = Mock()
+	AffirmativeBasedCompositePermissionEvaluator permissionEvaluator = Mock()
 
 	def setup() {
 		service.userContextService = userContextService
