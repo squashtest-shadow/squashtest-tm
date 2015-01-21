@@ -40,11 +40,7 @@
 <div id="generic-error-dialog" class="not-displayed popup-dialog" title="${errorTitle}">
   <div>
      <div class="display-table-row">
-        <div class="display-table-cell warning-cell">
-          <div class="generic-error-signal"></div>
-        </div>
         <div class="generic-error-main display-table-cell" style="padding-top:20px">
-        
         </div>
       </div>
   </div>

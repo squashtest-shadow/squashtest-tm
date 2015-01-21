@@ -115,7 +115,7 @@
                 th:text="#{requirement-version.version-number.label}">Version#</th>
               <th th:attr="data-def='sortable, map=criticality'" th:text="#{requirement.criticality.label}">Critical</th>
               <th th:attr="data-def='sortable, map=category'" th:text="#{requirement.category.label}">Functional</th>
-              <th th:attr="data-def='sClass=delete-button, map=empty-delete-holder, center, narrow'">&nbsp;</th>
+              <th th:attr="data-def='unbind-button, map=empty-delete-holder, center, narrow'">&nbsp;</th>
               <th th:attr="data-def='invisible, map=status'">status(masked)</th>
               <th th:attr="data-def='invisible, map=verifiedByStep'">verifiedByStep(masked)</th>
             </tr>
@@ -132,7 +132,7 @@
               <td th:text="${coverage.version.versionNumber}">3</td>
               <td th:text="#{__${coverage.version.criticality.i18nKey}__}">Criticality</td>
               <td th:text="${(catLabel != null) ? catLabel : coverage.version.category.label}">Category</td>
-              <td class="delete-button"></td>
+              <td class="unbind-button"></td>
               <td th:text="${coverage.version.status}">OBSOLETE</td>
               <td th:text="${coverage.verifiedByStep}">true</td>
             </tr>

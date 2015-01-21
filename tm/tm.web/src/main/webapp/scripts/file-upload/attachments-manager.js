@@ -154,7 +154,13 @@ define(["jquery", "squash.translator", "app/ws/squashtm.notification", "./jquery
 			dtSettings.aaData = settings.aaData;
 		}
 		
-		$("#attachment-detail-table").squashTable(dtSettings, {});
+		// Added parameters there to allow tooltips on buttons
+		$("#attachment-detail-table").squashTable(dtSettings, {
+			deleteButtons : {
+				delegate : "#delete-attachment-dialog",
+				tooltip : translator.get('title.RemoveAttachment')
+			}
+		});
 
 		initDialogs(settings);
 		initButtons();

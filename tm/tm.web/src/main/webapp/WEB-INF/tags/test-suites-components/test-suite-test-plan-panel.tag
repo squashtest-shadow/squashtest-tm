@@ -128,7 +128,7 @@
   <%-- ===================== THE TABLE ===================== --%>
   <div class="table-tab-wrap">
     <c:if test="${editable}">
-      <c:set var="deleteBtnClause" value=", delete-button=#ts-test-plan-delete-dialog" />
+      <c:set var="deleteBtnClause" value=", unbind-button=#ts-test-plan-delete-dialog" />
     </c:if>
     <table id="test-suite-test-plans-table" class="test-plan-table unstyled-table" data-def="ajaxsource=${tableModelUrl}"  data-entity-id="${testSuite.id}" data-entity-type="testSuite">
       <thead>
@@ -193,13 +193,9 @@
 
     <div id="ts-test-plan-delete-dialog" class="not-displayed popup-dialog"
       title="<f:message key="dialog.remove-testcase-testsuite-associations.title" />">
-      <span data-def="state=single-tp" style="font-weight: bold;">
-        <f:message key="dialog.remove-testcase-testsuite-association.message" />
-      </span>
-      <span data-def="state=multiple-tp" style="font-weight: bold;">
-        <f:message key="dialog.remove-testcase-testsuite-associations.message" />
-      </span>
-
+      <span data-def="state=single-tp" ><f:message key="dialog.remove-testcase-testsuite-association.message" />   </span>
+      <span data-def="state=multiple-tp"><f:message key="dialog.remove-testcase-testsuite-associations.message" /> </span>
+      <span><f:message key="message.permissions.confirm"/></span>
       <div class="popup-dialog-buttonpane">
         <input type="button" value="${removeLabel}"
           data-def="state=single-tp multiple-tp, mainbtn=single-tp multiple-tp, evt=confirm" />

@@ -107,7 +107,7 @@
 
 <div class="table-tab-wrap">
   <c:if test="${editable}">
-    <c:set var="deleteBtnClause" value=", delete-button=#delete-multiple-test-cases-dialog" />
+    <c:set var="deleteBtnClause" value=", unbind-button=#delete-multiple-test-cases-dialog" />
   </c:if>
   <table id="campaign-test-plans-table" data-def="ajaxsource=${tablemodel}" class="unstyled-table test-plan-table"
     data-entity-id="${campaign.id}" data-entity-type="campaign">
@@ -184,12 +184,16 @@
   <div id="delete-multiple-test-cases-dialog" class="not-displayed popup-dialog" title="<f:message key='dialog.remove-testcase-associations.title'/>">
   
     <div data-def="state=confirm-deletion">
-      <span><f:message key="dialog.remove-testcase-associations.message"/></span>
+      <span><f:message key="dialog.remove-testcase-associations.message.first"/></span>
+      <span><f:message key="message.permissions.confirm"/></span>
     </div>
-
+    <div data-def="state=multiple-tp">
+      <span><f:message key="dialog.remove-testcase-associations.message.multiple"/></span>
+      <span><f:message key="message.permissions.confirm"/></span>
+    </div>
     
     <div class="popup-dialog-buttonpane">
-      <input type="button" class="button" value="${okLabel}" data-def="state=confirm-deletion, evt=confirm, mainbtn=confirm-deletion"/>
+      <input type="button" class="button" value="${okLabel}" data-def="state=confirm-deletion multiple-tp, evt=confirm, mainbtn=confirm-deletion multiple-tp"/>
       <input type="button" class="button" value="${cancelLabel}" data-def="evt=cancel"/>
     </div>
   

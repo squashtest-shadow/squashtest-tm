@@ -776,7 +776,7 @@ require(["common"], function() {
 			language : {
 				ok : '${confirmLabel}',
 				cancel : '${cancelLabel}',
-				deleteMessage : '<f:message key="message.permissions.remove.teamOrUser"/>',
+				deleteMessage : "<f:message key='message.permissions.remove.teamOrUser.first'/> <f:message key='message.permissions.confirm'/>",
 				deleteTooltip : '<f:message key="tooltips.permissions.remove"/>'
 			}
 		};
@@ -793,7 +793,7 @@ require(["common"], function() {
 		function deleteProject(){
 		<c:if test="${adminproject.deletable}">	
 			oneshot.show('dialog.delete-project.title',
-			"<div class='display-table-row'><div class='display-table-cell warning-cell'><div class='delete-node-dialog-warning'></div></div><div class='display-table-cell'><f:message key='message.project.remove.first'/><span class='red-warning-message'> <f:message key='message.project.remove.second'/> </span><f:message key='message.project.remove.third'/><span class='bold-warning-message'> <f:message key='message.project.remove.fourth'/> </span></div></div>"
+			"<div class='display-table-row'><div class='display-table-cell warning-cell'><div class='generic-error-signal'></div></div><div class='display-table-cell'><f:message key='message.project.remove.first'/><span class='red-warning-message'> <f:message key='message.project.remove.second'/> </span><f:message key='message.project.remove.third'/><span class='bold-warning-message'> <f:message key='message.project.remove.fourth'/> </span></div></div>"
 			).done(function(){
 				requestProjectDeletion().done(deleteProjectSuccess);
 			});

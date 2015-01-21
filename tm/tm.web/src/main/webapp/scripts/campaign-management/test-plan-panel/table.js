@@ -48,8 +48,8 @@
  */
 
 define(['jquery', '../../test-plan-panel/sortmode', 'squash.configmanager',
-        '../../test-plan-panel/filtermode', 'squashtable', 'jeditable'],
-        function($, smode, confman, fmode) {
+        '../../test-plan-panel/filtermode', "squash.translator", 'squashtable', 'jeditable'],
+        function($, smode, confman, fmode, translator) {
 
 	function createTableConfiguration(conf){
 
@@ -158,7 +158,18 @@ define(['jquery', '../../test-plan-panel/sortmode', 'squash.configmanager',
 			"aaSorting" : [ [ 2, "asc" ] ]
 		};
 
-		var squashSettings = {};
+		var squashSettings = {
+				deleteButtons : {
+					delegate : "#delete-multiple-test-cases-dialog",
+					tooltip : translator.get('dialog.testsuites.remove.label')
+				},
+			/* UnbindButtons now to dessasociate and not delete */
+				unbindButtons : {
+					delegate : "#delete-multiple-test-cases-dialog",
+					tooltip : translator.get('dialog.testsuites.remove.label')
+		}
+				
+		};
 
 		if (conf.features.reorderable){
 			squashSettings.enableDnD = true;

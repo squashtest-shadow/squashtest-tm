@@ -18,9 +18,9 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ "jquery", "backbone", "underscore", "app/util/StringUtil", "jquery.squash", "jqueryui",
+define([ "jquery", "backbone", "underscore", "app/util/StringUtil", "squash.translator", "jquery.squash", "jqueryui",
 		"jquery.squash.togglepanel", "squashtable", "jquery.squash.oneshotdialog",
-		"jquery.squash.messagedialog", "jquery.squash.confirmdialog" ], function($, Backbone, _, StringUtil) {
+		"jquery.squash.messagedialog", "jquery.squash.confirmdialog" ], function($, Backbone, _, StringUtil, translator) {
 	var UMod = squashtm.app.UMod;
 	var UserTeamsPanel = Backbone.View.extend({
 		el : "#teams",
@@ -53,7 +53,12 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil", "jquery.squa
 		},
 
 		configureTable : function() {
-			$("#teams-table").squashTable({}, {}); // pure DOM conf
+			$("#teams-table").squashTable({}, {
+				unbindButtons : {
+					delegate : "#remove-teams-dialog",
+					tooltip : translator.get('dialog.unbind-ta-project.tooltip')
+				}
+			}); // pure DOM conf
 		},
 		confirmRemoveTeam : function(event) {
 			var hasTeam = ($("#teams-table").squashTable().getSelectedIds().length > 0);

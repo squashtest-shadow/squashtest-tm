@@ -72,9 +72,9 @@
 				<th data-def="map=index, select">#</th>
 				<th data-def="map=name, sortable, link=${bugtrackerDetailsBaseUrl}/{entity-id}/info"><f:message key="label.Name" /></th>
 				<th data-def="map=kind, sortable"><f:message key="label.Kind" /></th>
-				<th data-def="map=url, sortable, link={url}"><f:message key="label.Url" /></th>
+				<th data-def="map=url, sortable, link-new-tab={url}"><f:message key="label.Url" /></th>
 				<th data-def="map=iframe-friendly"><f:message key="label.lower.iframe" /></th>
-					<th data-def="map=delete, delete-button=#delete-bugtracker-popup"></th>
+				<th data-def="map=delete, delete-button=#delete-bugtracker-popup"></th>
 			</tr>
 		</thead>
 		<tbody><%-- Will be populated through ajax --%></tbody>
@@ -88,7 +88,7 @@
 		
 		<div class="display-table-row">
             <div class="display-table-cell warning-cell">
-                <div class="delete-node-dialog-warning"></div>
+                <div class="generic-error-signal"></div>
             </div>
             <div class="display-table-cell">
 			${warningDelete}

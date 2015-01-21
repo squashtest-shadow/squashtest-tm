@@ -86,7 +86,7 @@ data-def='datakeys-id=entity-id ,ajaxsource=${ stepVerifiedRequirementsUrl }'>
 			<th data-def="sClass=versionNumber, sortable, map=versionNumber"><f:message key="requirement-version.version-number.label" /></th>
 			<th data-def="sortable, map=criticality"><f:message key="requirement.criticality.label"/></th>
 			<th data-def="sortable, map=category"><f:message key="requirement.category.label"/></th>
-			<th data-def='sClass=delete-button, map=empty-delete-holder, narrow'>&nbsp;</th>
+			<th data-def='unbind-button, map=empty-delete-holder, narrow'>&nbsp;</th>
 			<th data-def="invisible, map=status">status(masked)</th>
 			<th data-def='invisible, map=verifiedByStep'>verifiedByStep(masked)</th>
 		</tr>

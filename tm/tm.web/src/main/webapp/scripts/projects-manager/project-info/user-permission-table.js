@@ -142,7 +142,7 @@ define([ "jquery", "squashtable" ], function($) {
 				'mDataProp' : 'empty-delete-holder',
 				'aTargets' : [ 5 ],
 				'sWidth' : '2em',
-				'sClass' : "delete-button centered"
+				'sClass' : "unbind-button centered"
 			} ]
 		};
 
@@ -154,7 +154,7 @@ define([ "jquery", "squashtable" ], function($) {
 				oklabel : language.ok,
 				cancellabel : language.cancel
 			},
-			deleteButtons : {
+			unbindButtons : {
 				popupmessage : language.deleteMessage,
 				url : squashtm.app.contextRoot + "/generic-projects/" + settings.basic.projectId +
 						"/parties/{party-id}/permissions",

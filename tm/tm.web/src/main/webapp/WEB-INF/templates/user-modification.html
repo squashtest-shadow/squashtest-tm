@@ -64,7 +64,11 @@
         confirmPassError : /*[[ #{user.account.confirmpass.error} ]]*/"confirm pass error",
         samePassError : /*[[ #{user.account.newpass.differ.error} ]]*/"same pass error",
         activate : /*[[ #{label.Activate} ]]*/ "activate",
-        deactivate : /*[[ #{label.Deactivate} ]]*/ "deactivate"
+        deactivate : /*[[ #{label.Deactivate} ]]*/ "deactivate",
+        addPermissionField : /*[[ #{title.AddPermission} ]]*/ "add permission",
+        removePermissionField : /*[[ #{title.RemovePermission} ]]*/ "remove permission",
+        addTeamField : /*[[ #{label.addTeam} ]]*/ "add team",
+        removeTeamField : /*[[ #{label.removeTeam} ]]*/ "remove team"
       },
       permission : {
         url : {
@@ -208,18 +212,15 @@
             <!-- ============================================/User Infos ======================================= -->
             <!-- ============================================ Permissions ======================================= -->
             
-			<f:message key="title.AddPermission" var="addPermissionField" />
-			<f:message key="title.RemovePermission" var="removPermissionField" />
-
-            <div class="sq-tg expand" id="permissions">
+		     <div class="sq-tg expand" id="permissions">
               <div class="tg-head">
                 <h3><a th:text="#{user.project-rights.title.label}">Permissions</a></h3>
                 <div class="tg-toolbar">
-                  <button id="add-permission-button" th:title="${addPermissionField}" title="add"
+                  <button id="add-permission-button" th:title=" #{title.AddPermission}" title="add"
                     class="sq-icon-btn btn-sm">
                     <span class="ui-icon ui-icon-plus squared-icons">+</span>
                   </button>
-                  <button id="remove-permission-button" th:title="${removPermissionField}" title="remove"
+                  <button id="remove-permission-button" th:title="#{title.RemovePermission}" title="remove"
                     class="sq-icon-btn btn-sm">
                     <span class="ui-icon ui-icon-minus squared-icons">-</span>
                   </button>
@@ -239,7 +240,7 @@
                           th:text="#{projects.label}">project</th>
                         <th th:attr="data-def='sortable, map=empty-permission-list-holder, sClass=permission-select'"
                           th:text="#{project.permission.table.profile.label}">permission</th>
-                        <th th:attr="data-def='delete-button=#remove-permission-dialog, map=empty-delete-holder'">
+                        <th th:attr="data-def='unbind-button=#remove-permission-dialog, map=empty-delete-holder'">
                         </th>
                       </tr>
                     </thead>
@@ -258,19 +259,14 @@
             <!-- ============================================/ Permissions ======================================= -->
             <!-- ============================================ Teams ======================================= -->
 
-			<f:message key="label.addTeam" var="addTeamField" />
-			<f:message key="label.removeTeam" var="removeTeamField" />
-						
-            <div class="sq-tg  expand">
+		      <div class="sq-tg  expand">
               <div id="teams" class="tg-head">
                 <h3><a th:text="#{label.teams}">Teams</a></h3>
-
                 <div class="tg-toolbar">
-                  <button id="add-team-button" class="sq-icon-btn btn-sm" title="${addTeamField}">
+                  <button id="add-team-button" class="sq-icon-btn btn-sm" th:title="#{label.addTeam}">
                     <span class="ui-icon ui-icon-plus squared-icons">+</span>
                   </button>
-                  
-                   <button id="remove-teams-button" class="sq-icon-btn btn-sm" title="${removeTeamField}">
+                  <button id="remove-teams-button" class="sq-icon-btn btn-sm" th:title="#{label.removeTeam}">
                    <span class="ui-icon ui-icon-minus squared-icons">-</span>
                   </button>
 
@@ -286,7 +282,7 @@
                         <th
                           th:attr="data-def='sortable, map=team-name, filter, link=' + @{/administration/teams/{team-id}}"
                           th:text="#{label.team}">team</th>
-                        <th th:attr="data-def='delete-button=#remove-teams-dialog, map=empty-delete-holder'"></th>
+                        <th th:attr="data-def='unbind-button=#remove-teams-dialog, map=empty-delete-holder'"></th>
                       </tr>
                     </thead>
                     <tbody>
@@ -332,7 +328,8 @@ th:title="#{user.account.password.reset.label}">
   </script>
 
   <div id="remove-teams-dialog" class="popup-dialog not-displayed" th:title="#{title.unsubscribeToTeams}">
-    <div th:text="#{message.unsubscribeToTeams}">?</div>
+    <div th:text="#{message.permissions.remove.team.first}"></div>
+    <div th:text="#{message.permissions.confirm}"></div>
     <div class="popup-dialog-buttonpane">
       <input class="confirm" type="button" value="confirm" th:value="#{label.Confirm}" />
       <input class="cancel" type="button" value="cancel" th:value="#{label.Cancel}" />
@@ -361,7 +358,8 @@ th:title="#{user.account.password.reset.label}">
   </div>
 
   <div id="remove-permission-dialog" class="popup-dialog not-displayed" th:title="#{title.RemovePermission}">
-    <div th:text="#{message.permissions.remove}"></div>
+    <div th:text="#{message.permissions.remove.permission}"></div>
+    <div th:text="#{message.permissions.confirm}"></div>
     <div class="popup-dialog-buttonpane">
       <input class="confirm" type="button" value="confirm" th:value="#{label.Confirm}" />
       <input class="cancel" type="button" value="cancel" th:value="#{label.Cancel}" />
@@ -372,7 +370,7 @@ th:title="#{user.account.password.reset.label}">
   <div id="delete-warning-pane" class="not-displayed popup-dialog" title="Delete" th:title="#{title.delete-users}">
     <div class="display-table-row">
       <div class="display-table-cell warning-cell">
-        <div class="delete-node-dialog-warning"></div>
+        <div class="generic-error-signal"></div>
       </div>
       <div class="display-table-cell">
         <span th:text="#{message.user.remove.first}" ></span>

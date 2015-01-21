@@ -51,7 +51,7 @@
 	<div class="right btn-toolbar">
 		<span class="dashboard-timestamp not-displayed"><f:message key="dashboard.meta.timestamp.label"/></span> 		
 <c:if test="${empty printmode or (not printmode) }">
-		<input type="button" class="dashboard-refresh-button sq-btn btn-sm" value="${refreshLabel}"/>	
+		<input type="button" class="dashboard-refresh-button sq-btn btn-sm" value="${refreshLabel}" title="${refreshLabel}"/>	
     <a id="campaign-dashboard-print" href="${printUrl}" target="_blank" class="sq-icon-btn btn-sm"  role="button" title="<f:message key='label.print' />">
       <span class="ui-icon ui-icon-print"></span>
     </a>

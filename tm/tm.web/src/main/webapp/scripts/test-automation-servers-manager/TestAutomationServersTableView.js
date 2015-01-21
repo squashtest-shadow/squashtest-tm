@@ -18,8 +18,8 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ 'jquery', 'backbone', "underscore", './NewTestAutomationServerDialogView', './NewTestAutomationServerModel', 'app/util/ButtonUtil', 'squashtable',
-		'jqueryui', 'jquery.squash.formdialog' ], function($, Backbone, _, NewTestAutomationServerDialogView, NewTestAutomationServerModel, ButtonUtil) {
+define([ 'jquery', 'backbone', "underscore", './NewTestAutomationServerDialogView', './NewTestAutomationServerModel', 'app/util/ButtonUtil',  'squash.translator', 'squashtable',
+		'jqueryui', 'jquery.squash.formdialog' ], function($, Backbone, _, NewTestAutomationServerDialogView, NewTestAutomationServerModel, ButtonUtil, translator) {
 	"use strict";
 
 	var tasTable = squashtm.app.tasTable;
@@ -35,7 +35,12 @@ define([ 'jquery', 'backbone', "underscore", './NewTestAutomationServerDialogVie
 
 			// DOM initialized table
 			this.table = this.$("table");
-			this.table.squashTable(squashtm.datatable.defaults, {});
+			this.table.squashTable(squashtm.datatable.defaults, {
+				deleteButtons : {
+					delegate : "#remove-test-automation-server-confirm-dialog",
+					tooltip : translator.get('label.Remove')
+				}
+			});
 			this.configureRemoveTASDialog();
 
 		},

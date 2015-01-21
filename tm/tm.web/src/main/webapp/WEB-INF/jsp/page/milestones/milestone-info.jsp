@@ -267,7 +267,7 @@
 		
 		<div class="display-table-row">
             <div class="display-table-cell warning-cell">
-                <div class="delete-node-dialog-warning"></div>
+                <div class="generic-error-signal"></div>
             </div>
             <div class="display-table-cell">
 			${warningUnbind}
@@ -290,7 +290,7 @@
 		
 		<div class="display-table-row">
             <div class="display-table-cell warning-cell">
-                <div class="delete-node-dialog-warning"></div>
+                <div class="generic-error-signal"></div>
             </div>
             <div class="display-table-cell">
 			${warningUnbind}

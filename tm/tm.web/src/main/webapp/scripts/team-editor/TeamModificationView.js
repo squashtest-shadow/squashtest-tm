@@ -18,10 +18,10 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ "jquery", "backbone", "underscore", "app/util/StringUtil", "./TeamPermissionPanel", "jquery.squash",
+define([ "jquery", "backbone", "underscore", "app/util/StringUtil", "./TeamPermissionPanel", 'squash.translator', "jquery.squash",
 		"jqueryui", "jquery.squash.togglepanel", "squashtable", "jquery.squash.oneshotdialog",
 		"jquery.squash.messagedialog", "jquery.squash.confirmdialog", "jquery.squash.jeditable", "jquery.squash.formdialog" ], function($,
-		Backbone, _, StringUtil, TeamPermissionPanel) {
+		Backbone, _, StringUtil, TeamPermissionPanel, translator) {
 	var teamMod = squashtm.app.teamMod;
 	var TeamModificationView = Backbone.View.extend({
 		el : "#information-content",
@@ -178,7 +178,14 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil", "./TeamPermi
 				}
 			};
 			
-			$("#members-table").squashTable(datatableSettings, {}); 
+			$("#members-table").squashTable(datatableSettings, {
+				
+				unbindButtons : {
+					delegate : "#remove-members-dialog",
+					tooltip : translator.get('dialog.unbind-ta-project.tooltip')
+					
+				}
+			}); 
 		},
 
 		renameTeam : function() {

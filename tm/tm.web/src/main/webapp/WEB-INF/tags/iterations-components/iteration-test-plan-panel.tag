@@ -156,7 +156,7 @@
 
   <div class="table-tab-wrap">
     <c:if test="${editable}">
-      <c:set var="deleteBtnClause" value=", delete-button=#iter-test-plan-delete-dialog" />
+      <c:set var="deleteBtnClause" value=", unbind-button=#iter-test-plan-delete-dialog" />
     </c:if>
     <table id="iteration-test-plans-table" class="test-plan-table unstyled-table"
       data-def="ajaxsource=${tableModelUrl}"  data-entity-id="${iteration.id}" data-entity-type="iteration">
@@ -225,12 +225,14 @@
 
 
     <div id="iter-test-plan-delete-dialog" class="not-displayed popup-dialog"
-      title="<f:message key="test-case.verified_requirement_item.remove.button.label" />">
-      <span data-def="state=single-tp" style="font-weight: bold;">
-        <f:message key="dialog.remove-testcase-association.message" />
+      title="<f:message key="dialog.unbind-ta-project.tooltip" />">
+      <span data-def="state=single-tp" >
+         <span><f:message key="dialog.remove-testcase-association.message.solo" /></span>
+         <span><f:message key="message.permissions.confirm"/></span>
       </span>
-      <span data-def="state=multiple-tp" style="font-weight: bold;">
-        <f:message key="dialog.remove-testcase-associations.message" />
+      <span data-def="state=multiple-tp" >
+        <span><f:message key="dialog.remove-testcase-associations.message.multiple" /></span>
+        <span><f:message key="message.permissions.confirm"/></span>
       </span>
 
       <div class="popup-dialog-buttonpane">

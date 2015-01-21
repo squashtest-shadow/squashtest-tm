@@ -112,10 +112,15 @@ define(['jquery', 'squash.translator', 'app/ws/squashtm.notification', 'jquery.s
 				$(this).formDialog('close');
 				notification.showError(translator.get('iteration.test-plan.action.empty-selection.message'));
 			}
-			else{
+			else if(ids.length === 1){
 				this.selIds = ids;
 				dialog.formDialog("setState", "confirm-deletion");
 			}
+			else {
+				this.selIds = ids;
+				dialog.formDialog("setState", "multiple-tp");
+			}
+				
 			
 		});
 		

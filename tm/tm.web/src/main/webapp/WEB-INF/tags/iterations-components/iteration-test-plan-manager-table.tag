@@ -172,11 +172,13 @@
 
     <div id="iter-test-plan-delete-dialog" class="not-displayed popup-dialog"
       title="<f:message key="test-case.verified_requirement_item.remove.button.label" />">
-      <span data-def="state=single-tp" style="font-weight: bold;">
-        <f:message key="dialog.remove-testcase-association.message" />
+      <span data-def="state=single-tp" >
+        <span><f:message key="dialog.remove-testcase-association.message.solo" /></span>
+        <span><f:message key="message.permissions.confirm"/></span>
       </span>
-      <span data-def="state=multiple-tp" style="font-weight: bold;">
-        <f:message key="dialog.remove-testcase-associations.message" />
+      <span data-def="state=multiple-tp" >
+        <span><f:message key="dialog.remove-testcase-associations.message.multiple" /></span>
+        <span><f:message key="message.permissions.confirm"/></span>
       </span>
 
       <div class="popup-dialog-buttonpane">

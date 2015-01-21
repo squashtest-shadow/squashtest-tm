@@ -278,6 +278,12 @@ define([ "jquery", "squash.translator",
 		};
 
 		var squashSettings = {
+
+				deleteButtons : {
+					delegate : "#delete-user-popup",
+					tooltip : translator.get('label.Remove')
+				},
+		
 			functions : {
 
 

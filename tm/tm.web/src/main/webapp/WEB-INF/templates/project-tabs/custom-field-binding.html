@@ -109,6 +109,8 @@
 	       			tableDeleteMessageThird : /*[[#{message.customfieldbinding.unbind.message.third}]]*/ "Retirer les champs personalis�s s�lectionn�es de ce projet ?",
 	       			tableDeleteMessageFourth : /*[[#{message.customfieldbinding.unbind.message.fourth}]]*/ "Retirer les champs personalis�s s�lectionn�es de ce projet ?",
 	       			tableDeleteTooltip : /*[[#{message.customfieldbinding.unbind.tooltip}]]*/ 'retirer',
+	       			addCustomField : /*[[#{label.CustomField.add}]]*/ 'ajouter',
+	       			removeCustomField : /*[[#{label.CustomField.remove}]]*/ 'retirer',
 		        },
 	    		
 	    		tcSettings : {
@@ -209,17 +211,15 @@
 				TEMPLATE FRAGMENT DEFINITION + other stuffs removed at runtime
 ============================================================================ -->
 
-	<f:message key="label.CustomField.add" var="addCustomField" />
-	<f:message key="label.CustomField.remove" var="removeCustomField" />
 	<div th:fragment="cuf-unit-binder" id="binding-manager">
 		<div class="expand sq-tg">
 			<div class="tg-head">
 				<h3 th:text="#{project.cufbinding.__${HTMLID}__.panel.title}"></h3>
 				<div class="tg-toolbar">
-					<button class="sq-icon-btn btn-sm" type="submit" value="+"  title="${addCustomField}" >
+					<button class="sq-icon-btn btn-sm" type="submit" value="+"  th:title="#{label.CustomField.add}" >
 		                <span class="ui-icon ui-icon-plus squared-icons">+</span>
 		            </button>
-		            <button class="sq-icon-btn btn-sm" type="submit" value="-" title="${removeCustomField}" >
+		            <button class="sq-icon-btn btn-sm" type="submit" value="-" th:title="#{label.CustomField.remove}" >
 		                <span class="ui-icon ui-icon-minus squared-icons">-</span>
 		            </button>				
 				</div>
@@ -318,7 +318,7 @@
 			
 			<div class='display-table-row'>
 			<div class='display-table-cell warning-cell'>
-			<div class='delete-node-dialog-warning'></div></div>
+			<div class='generic-error-signal'></div></div>
 			<div class='display-table-cell'>
 			<div th:text="#{message.customfieldbinding.unbind.message.first }"></div>
 			<span class='red-warning-message'> 
@@ -364,6 +364,10 @@
    			
    			tableDeleteMessage : "Retirer les champs personalis�s s�lectionn�es de ce projet ?",
    			tableDeleteTooltip : 'retirer',
+   			tableRenderingLocations : ['bob'],
+   			
+   			tableUnbindMessage : "Retirer les champs personalis�s s�lectionn�es de ce projet ?",
+   			tableUnbindTooltip : 'retirer',
    			tableRenderingLocations : ['bob']
 		};
 				   

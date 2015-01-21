@@ -50,7 +50,7 @@
 
 <c:set var="tblRemoveBtnClause" value=""/>
 <c:if test="${editable}" >
-<c:set var="tblRemoveBtnClause" value=", delete-button=#remove-verifying-test-case-dialog" />
+<c:set var="tblRemoveBtnClause" value=", unbind-button" />
 </c:if>
 
 <%-- ======================== /VARIABLES & URLS ============================ --%>
@@ -83,12 +83,16 @@
 <c:if test="${empty autoJsInit or autoJsInit}" >
 <script type="text/javascript">
   require([ "common" ], function() {
-      require(['jquery', 'workspace.event-bus', 'squashtable', 'jquery.squash.confirmdialog'], function($, eventBus){
+      require(['jquery', 'workspace.event-bus', "squash.translator", 'squashtable', 'jquery.squash.confirmdialog'], function($, eventBus, translator){
       $(function() {
           var table = $("#verifying-test-cases-table").squashTable({
             'aaData' : ${json:serialize(model.aaData)}
-          }, {});
-          
+          }, {
+          	unbindButtons : {
+      				delegate : "#remove-verified-requirement-version-dialog",
+      				tooltip : translator.get('dialog.unbind-ta-project.tooltip')	
+      			}
+	        });
           <c:if test="${editable}">
           var removeDialog = $("#remove-verifying-test-case-dialog").confirmDialog();
           

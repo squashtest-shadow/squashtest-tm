@@ -169,7 +169,7 @@ define(
 					'aTargets' : [ 3 + arrayLength ],
 					'mDataProp' : null,
 					'sWidth' : '2em',
-					'sClass' : 'delete-button centered'
+					'sClass' : 'unbind-button centered'
 				});
 
 				// **************************** rest of the table initialization
@@ -197,9 +197,9 @@ define(
 						cancellabel : settings.cancellabel
 					},
 
-					deleteButtons : {
+					unbindButtons : {
 						url : settings.deleteUrl + "/{id}",
-						popupmessage : "<div class='display-table-row'><div class='display-table-cell warning-cell'><div class='delete-node-dialog-warning'></div></div><div class='display-table-cell'>"+settings.deleteMessageFirst+"<span class='red-warning-message'> "+settings.deleteMessageSecond+"</span>"+settings.deleteMessageThird+"<span class='bold-warning-message'> "+settings.deleteMessageFourth+"</span></div></div>",
+						popupmessage : "<div class='display-table-row'><div class='display-table-cell warning-cell'><div class='generic-error-signal'></div></div><div class='display-table-cell'>"+settings.deleteMessageFirst+"<span class='red-warning-message'> "+settings.deleteMessageSecond+"</span>"+settings.deleteMessageThird+"<span class='bold-warning-message'> "+settings.deleteMessageFourth+"</span></div></div>",
 						tooltip : settings.deleteTooltip,
 						success : function() {
 							$(settings.selector).squashTable().refresh();

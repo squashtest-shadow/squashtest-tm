@@ -59,18 +59,25 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil",
 		},
 
 		squashSettings : function(self) {
-
+			
 			var settings = {};
-
+			
+			settings.unbindButtons = {
+				delegate : "#remove-verifying-test-case-dialog",
+				tooltip : translator.get('dialog.unbind-ta-project.tooltip')
+			  };
+	
 			if (VRTS.linkable) {
 				settings.buttons = [ {
 					tooltip : VRTS.messages.remove,
-					tdSelector : "td.delete-button",
-					uiIcon : "ui-icon-trash",
+					tdSelector : "td.unbind-button",
+					uiIcon : "ui-icon-minus",
 					jquery : true,
+					delegate : "#remove-verifying-test-case-dialog",
+					tooltip : translator.get('dialog.unbind-ta-project.tooltip'),
 					onClick : this.removeRowRequirementVersion
 				} ];
-			}
+			};
 
 			return settings;
 

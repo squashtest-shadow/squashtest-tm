@@ -126,7 +126,7 @@
           <th class="no-user-select tp-th-filter tp-th-status" data-def="map=status, sortable, sWidth=10%, sClass=status-display">
             <f:message key="iteration.executions.table.column-header.status.label" />
           </th>
-          <th class="no-user-select" data-def="map=empty-delete-holder, delete-button=#ts-test-plan-delete-dialog">&nbsp;</th>
+          <th class="no-user-select" data-def="map=empty-delete-holder, unbind-button=#ts-test-plan-delete-dialog">&nbsp;</th>
         </tr>
       </thead>
       <tbody>
@@ -140,13 +140,11 @@
 
     <div id="ts-test-plan-delete-dialog" class="not-displayed popup-dialog"
       title="<f:message key="dialog.remove-testcase-testsuite-associations.title" />">
-      <span data-def="state=single-tp" style="font-weight: bold;">
-        <f:message key="dialog.remove-testcase-testsuite-association.message" />
-      </span>
-      <span data-def="state=multiple-tp" style="font-weight: bold;">
-        <f:message key="dialog.remove-testcase-testsuite-associations.message" />
-      </span>
-
+      
+      <span data-def="state=single-tp" ><f:message key="dialog.remove-testcase-testsuite-association.message.solo" />   </span>
+      <span data-def="state=multiple-tp"><f:message key="dialog.remove-testcase-testsuite-association.message.multiple" /> </span>
+      <span><f:message key="message.permissions.confirm"/></span>
+      
       <div class="popup-dialog-buttonpane">
         <input type="button" value="${removeLabel}"
           data-def="state=single-tp multiple-tp, mainbtn=single-tp multiple-tp, evt=confirm" />

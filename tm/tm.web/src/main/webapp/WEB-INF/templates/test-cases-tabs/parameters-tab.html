@@ -59,8 +59,10 @@
     <!-- ==================== parameters table panel =================== -->
     <div id="parameters-panel-container" class="toggle-panel ">
       <span class="not-displayed toggle-panel-buttons">
-        <input id="add-parameter-button" th:if="${isWritable}" th:title="${addButtonTitle}" title="add" type="button"
-          value="+" class="button" />
+       <button id="add-parameter-button" th:if="${isWritable}" class="sq-icon-btn btn-sm" title="add" th:title="${addButtonTitle}" 
+       value="+"  type="submit" >
+         <span class="ui-icon ui-icon-plus squared-icons">+</span>
+      </button>
       </span>
       <div id="parameters-panel" class="toggle-panel-main">
         <table id="parameters-table" class="unstyled-table"
@@ -105,8 +107,10 @@
     <!-- ==================== datasets table panel =================== -->
     <div id="datasets-panel-container" class="toggle-panel ">
       <span class="not-displayed toggle-panel-buttons">
-        <input id="add-dataset-button" th:if="${isWritable}" th:title="${addButtonTitle}" title="add" type="button"
-          value="+" class="button" />
+      <button id="add-dataset-button" th:if="${isWritable}" class="sq-icon-btn btn-sm" title="add" th:title="${addButtonTitle}" 
+       value="+"  type="submit" >
+         <span class="ui-icon ui-icon-plus squared-icons">+</span>
+      </button>
       </span>
       <div id="datasets-panel" class="toggle-panel-main">
         <table id="datasets-table" class="unstyled-table">
@@ -130,7 +134,14 @@
     <!-- ====================parameter popup ==================== -->
     <div id="remove-parameter-confirm-dialog" class="popup-dialog not-displayed" th:title="#{title.removeParameter}"
       title="info">
-      <div th:text="#{message.parameter.remove.confirm}">Confirmez vous la suppression du paramètre ?</div>
+      	<div class="display-table-row">
+	        <div class="display-table-cell warning-cell">
+	           <div class="generic-error-signal"></div>
+	       </div>
+	        <div class="display-table-cell">
+				 <div th:text="#{message.parameter.remove.confirm}" class="bold-warning-message">Confirmez vous la suppression du paramètre ?</div>		
+			</div>
+		</div>
       <div class="popup-dialog-buttonpane">
         <input class="confirm" type="button" value="confirm" th:value="#{label.Confirm}" />
         <input class="cancel" type="button" value="cancel" th:value="#{label.Cancel}" />
@@ -175,8 +186,15 @@
     <!-- ==================== dataset popup ==================== -->
     <div id="remove-dataset-confirm-dialog" class="popup-dialog not-displayed" th:title="#{title.removeDataset}"
       title="info">
-      <div th:text="#{message.dataset.remove.confirm}">Confirmez vous la suppression du dataset?</div>
-      <div class="popup-dialog-buttonpane">
+      	<div class="display-table-row">
+	        <div class="display-table-cell warning-cell">
+	           <div class="generic-error-signal"></div>
+	       </div>
+	        <div class="display-table-cell">
+				 <div th:text="#{message.dataset.remove.confirm}" class="bold-warning-message">Confirmez vous la suppression du dataset?</div>	
+			</div>
+		</div>      
+    <div class="popup-dialog-buttonpane">
         <input class="confirm" type="button" value="confirm" th:value="#{label.Confirm}" />
         <input class="cancel" type="button" value="cancel" th:value="#{label.Cancel}" />
       </div>

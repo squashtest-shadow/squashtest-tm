@@ -144,10 +144,16 @@
 	<!-- ==================== /Add Test Step Dialog ==================== -->
 	<!-- ==================== Remove Test Step Row Dialog ==================== -->
 	<div id="delete-test-step-dialog" class="not-displayed popup-dialog" th:title="#{dialog.delete-step.title}">
-		<span data-def="state=single-tp" 	style="font-weight:bold;" th:text="#{dialog.delete-step.message}">remove row ?</span>
-		<span data-def="state=multiple-tp" 	style="font-weight:bold;" th:text="#{dialog.delete-selected-steps.message}">remove all selected ?</span>
-		<span data-def="state=empty-selec" th:text="#{message.EmptyTableSelection}">no selection</span>
-		
+		<div class="display-table-row">
+	           <div class="display-table-cell warning-cell">
+	               <div class="generic-error-signal"></div>
+	           </div>
+	           <div class="display-table-cell">
+				<span data-def="state=single-tp" 	style="font-weight:bold;" th:text="#{dialog.delete-step.message}">remove row ?</span>
+				<span data-def="state=multiple-tp" 	style="font-weight:bold;" th:text="#{dialog.delete-selected-steps.message}">remove all selected ?</span>
+				<span data-def="state=empty-selec" th:text="#{message.EmptyTableSelection}">no selection</span>
+			</div>
+		</div>
 		<div class="popup-dialog-buttonpane"> 
 			<input type="button" th:value="#{label.Confirm}" data-def="state=single-tp multiple-tp, mainbtn=single-tp multiple-tp, evt=confirm"/> 
 			<input type="button" th:value="#{label.Cancel}" data-def="mainbtn=empty-selec, evt=cancel"/> 

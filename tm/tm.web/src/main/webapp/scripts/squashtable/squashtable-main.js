@@ -947,7 +947,7 @@ define(["jquery",
 		cells.find('a').button({
 			text : false,
 			icons : {
-				primary : "ui-icon-trash"
+				primary : "ui-icon-trash",
 			}
 		});		
 	}
@@ -1726,26 +1726,33 @@ define(["jquery",
 					conf.current.aTargets = [ assignation.value ];
 				},
 				'delete-button' : function(conf, assignation) {
+					// the following attributes must always be defined
 					var cls = 'delete-' + Math.random().toString().substr(2, 3);
 					conf.current.sClass += ' delete-button centered ' + cls;
 					conf.current.sWidth = '2em';
 
-					var selector = assignation.value;
-					conf.squash.deleteButtons = {
-						delegate : selector,
-						tooltip : $(selector).prev().find('span.ui-dialog-title').text()
-					};
+					// additionally, if this flag got a value (ie 'delete-button=#some-delegate-selector') we must specify it as the 
+					// delegate
+					// cautious : the following expression must read it as "was a delegate defined ?"
+					if (assignation.value !== "true"){
+						conf.squash.deleteButtons = {
+								delegate : assignation.value,
+								tooltip : $(assignation.value).prev().find('span.ui-dialog-title').text()
+							};					
+					}
 				},
 				'unbind-button' : function(conf, assignation) {
 					var cls = 'unbind-' + Math.random().toString().substr(2, 3);
 					conf.current.sClass += ' unbind-button centered ' + cls;
 					conf.current.sWidth = '2em';
 
-					var selector = assignation.value;
-					conf.squash.unbindButtons = {
-						delegate : selector,
-						tooltip : $(selector).prev().find('span.ui-dialog-title').text()
-					};
+					// see comment for delete-button
+					if (assignation.value !== "true"){
+						conf.squash.unbindButtons = {
+								delegate : assignation.value,
+								tooltip : $(assignation.value).prev().find('span.ui-dialog-title').text()
+							};					
+					}
 				},
 				'tooltip': function(conf, assignation){
 					var cls = 'tooltip-' + Math.random().toString().substr(2, 3);

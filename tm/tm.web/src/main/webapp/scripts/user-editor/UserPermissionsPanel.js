@@ -63,7 +63,12 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil", "app/ws/squa
 					select.val(data['permission-name']);
 					$('.permission-select', nRow).empty().append(select);
 				}
-			}, {}); // pure DOM conf
+			}, {
+				unbindButtons : {
+					delegate : "#remove-permission-dialog",
+					tooltip : translator.get('dialog.unbind-ta-project.tooltip')
+				}
+			}); // pure DOM conf
 		},
 		configurePopups : function() {
 			this.configureAddPermissionDialog();

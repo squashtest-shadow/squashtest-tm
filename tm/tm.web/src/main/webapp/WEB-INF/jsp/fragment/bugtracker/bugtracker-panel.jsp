@@ -262,7 +262,7 @@
 	class="not-displayed ui-corner-all ">
 	<span class="ui-icon ui-icon-info icon"></span><span
 		id="issue-add-success-message"><f:message
-			key="issue.add.success" />&nbsp;(<a href="" id="issue-url"></a>)</span>
+			key="issue.add.success" />&nbsp;(<a href="" target="_blank" id="issue-url"></a>)</span>
 </div>
 
 

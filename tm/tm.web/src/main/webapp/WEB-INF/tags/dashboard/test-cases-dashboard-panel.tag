@@ -36,7 +36,7 @@
       </h3>
       <div class="tg-toolbar">
         <span class="dashboard-timestamp not-displayed"><f:message key="dashboard.meta.timestamp.label"/></span> 
-        <input type="button" class="dashboard-refresh-button sq-btn" role="button" value="<f:message key='label.Refresh' />"/>
+        <input type="button" class="dashboard-refresh-button sq-btn" role="button" value="<f:message key='label.Refresh' />" title="<f:message key='label.Refresh' />"/>
       </div>
     </div>
     <div class="tg-body">

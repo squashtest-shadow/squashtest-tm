@@ -53,6 +53,10 @@
 			membersPanelLabel : /*[[#{label.Members}]]*/'Teammates',
 			permissionPanelLabel : /*[[ #{user.project-rights.title.label} ]]*/ "Permissions",
 			permissionsPanelTitle : /*[[ #{user.project-rights.title.label} ]]*/ "Permissions",
+			addPermissionField : /*[[ #{title.AddPermission} ]]*/ "Add a permission",
+			removePermissionField : /*[[ #{title.RemovePermission} ]]*/ "Remove a permission",
+			addMemberField : /*[[ #{title.AddMember} ]]*/ "Add a member",
+			removeMemberField : /*[[ #{title.RemoveMember} ]]*/ "Remove a member",
 			message :{
 				addPermissionPopupTitle : /*[[#{title.AddPermission}]]*/ 'add permission',
 				error : /*[[ #{popup.title.error} ]]*/ "Error",
@@ -158,15 +162,12 @@
 
 				<!-- ============================================ Permissions ======================================= -->
 
-						<f:message key="title.AddPermission" var="addPermissionField" />
-						<f:message key="title.RemovePermission" var="removPermissionField" />
-
 						<div id="permissions" class="toggle-panel">
 							<span class="not-displayed toggle-panel-buttons">
-							<button id="add-permission-button" class="sq-icon-btn btn-sm" type="submit" title="${addPermissionField}">
+							<button id="add-permission-button" class="sq-icon-btn btn-sm" type="submit" th:title="#{title.AddPermission}">
 		                	    <span class="ui-icon ui-icon-plus squared-icons">+</span>
 		                    </button>
-		                    <button id="remove-permission-button" class="sq-icon-btn btn-sm" type="submit" title="${removPermissionField}">
+		                    <button id="remove-permission-button" class="sq-icon-btn btn-sm" type="submit" th:title="#{title.RemovePermission}">
 		                  	  <span class="ui-icon ui-icon-minus squared-icons">-</span>
 		                    </button>
 							</span>
@@ -183,7 +184,7 @@
 											<th	th:attr="data-def='sortable, map=empty-permission-list-holder, sClass=permission-select'"
 												th:text="#{project.permission.table.profile.label}">user</th>
 												
-											<th	th:attr="data-def='delete-button=#remove-permission-dialog, map=empty-delete-holder'"></th>
+											<th	th:attr="data-def='unbind-button, map=empty-delete-holder'"></th>
 										</tr>
 									</thead>
 									<tbody>
@@ -203,15 +204,12 @@
 						
 				<!-- ========================================= Members ============================================= -->
 				
-						<f:message key="title.AddMember" var="addMemberField" />
-						<f:message key="title.RemoveMember" var="removeMemberField" />
-
 						<div class="toggle-panel">
 							<span class="not-displayed toggle-panel-buttons"> 
-							<button id="add-member-button" class="sq-icon-btn btn-sm" type="submit" title="${addMemberField}" >
+							<button id="add-member-button" class="sq-icon-btn btn-sm" type="submit" th:title="#{title.AddMember}" >
 		                	    <span class="ui-icon ui-icon-plus squared-icons">+</span>
 		                    </button>
-		                    <button id="remove-members-button" class="sq-icon-btn btn-sm" type="submit" title="${removeMemberField}" >
+		                    <button id="remove-members-button" class="sq-icon-btn btn-sm" type="submit" th:title="#{title.RemoveMember}" >
 		                  	  <span class="ui-icon ui-icon-minus squared-icons">-</span>
 		                    </button>
 							</span>
@@ -225,7 +223,7 @@
 											<th	th:attr="data-def='sortable, map=user-name, filter, link='+@{/administration/users/{user-id}/info}"
 												th:text="#{label.User}">user</th>
 
-											<th	th:attr="data-def='delete-button=#remove-members-dialog, map=empty-delete-holder'"></th>
+											<th	th:attr="data-def='unbind-button=#remove-members-dialog, map=empty-delete-holder'"></th>
 										</tr>
 									</thead>
 									<tbody>	
@@ -252,7 +250,7 @@
 							title="Delete" th:title="#{label.Delete}">
 							<div class="display-table-row">
             					<div class="display-table-cell warning-cell">
-                					<div class="delete-node-dialog-warning"></div>
+                					<div class="generic-error-signal"></div>
             					</div>
             					<div class="display-table-cell">
 									<span th:text="#{message.team.remove.first}"/>
@@ -269,10 +267,11 @@
 						</div>
 
 
-						<div id="remove-members-dialog" class="popup-dialog not-displayed"
-							th:title="#{title.RemoveMember}">
-							<div th:text="#{message.RemoveMember}">roundhouse-kick
+						<div id="remove-members-dialog" class="popup-dialog not-displayed"	th:title="#{title.RemoveMember}">
+													
+							<div th:text="#{message.team.remove.user}">roundhouse-kick
 								selected users to oblivion ?</div>
+							<div th:text="#{message.permissions.confirm}"></div>
 							<div class="popup-dialog-buttonpane">
 								<input class="confirm" type="button" value="confirm"
 									th:value="#{label.Confirm}" /> <input class="cancel"
@@ -326,13 +325,12 @@
 	</div>
 	<!--    ====================================POPUPS======================================================  -->
 
-	<div id="remove-permission-dialog" class="popup-dialog not-displayed"
-		th:title="#{title.RemovePermissions}">
-		<div th:text="#{message.permissions.remove.team}"></div>
+	<div id="remove-permission-dialog" class="popup-dialog not-displayed" th:title="#{title.RemovePermissions}">
+		<div th:text="#{message.permissions.remove.permission}"></div>
+		<div th:text="#{message.permissions.confirm}"></div>
 		<div class="popup-dialog-buttonpane">
-			<input class="confirm" type="button" value="confirm"
-				th:value="#{label.Confirm}" /> <input class="cancel" type="button"
-				value="cancel" th:value="#{label.Cancel}" />
+			<input class="confirm" type="button" value="confirm" th:value="#{label.Confirm}" /> 
+			<input class="cancel" type="button"	value="cancel" th:value="#{label.Cancel}" />
 		</div>
 	</div>
 

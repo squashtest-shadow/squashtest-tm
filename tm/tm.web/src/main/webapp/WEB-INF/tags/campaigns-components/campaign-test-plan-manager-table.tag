@@ -122,7 +122,7 @@
           <th class="no-user-select tp-th-filter tp-th-dataset" data-def="map=dataset.selected.name, sortable, sWidth=10%, sClass=dataset-combo">
             <f:message key="label.Dataset" />
           </th>       
-          <th class="no-user-select" data-def="map=empty-delete-holder, delete-button=#delete-multiple-test-cases-dialog">&nbsp;</th>
+          <th class="no-user-select" data-def="map=empty-delete-holder, unbind-button=#delete-multiple-test-cases-dialog">&nbsp;</th>
         </tr>
       </thead>
       <tbody>

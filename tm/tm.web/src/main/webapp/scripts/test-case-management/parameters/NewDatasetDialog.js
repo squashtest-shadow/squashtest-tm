@@ -184,7 +184,7 @@ define([ "jquery", "backbone", "underscore", "app/lnf/Forms", "app/util/StringUt
 			var params = {name:$("#add-dataset-name").val(), paramValues:parameters};
 
 			$.ajax({
-				url : self.options.settings.basic.testCaseDatasetsUrl + '/new',
+				url : this.settings.basic.testCaseDatasetsUrl + '/new',
 				type : 'POST',
 				contentType : "application/json",
 				async : false,
