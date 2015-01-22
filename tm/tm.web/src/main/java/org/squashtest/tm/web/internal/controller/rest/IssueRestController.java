@@ -30,6 +30,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.squashtest.tm.domain.bugtracker.Issue;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.service.bugtracker.BugTrackersLocalService;
+import org.squashtest.tm.service.testcase.TestCaseLibraryFinderService;
 import org.squashtest.tm.web.internal.model.rest.RestExecution;
 import org.squashtest.tm.web.internal.model.rest.RestIssue;
 
@@ -39,6 +40,10 @@ public class IssueRestController {
 
 	@Inject
 	BugTrackersLocalService bugTrackersLocalService;
+
+	@Inject
+	TestCaseLibraryFinderService testCaseLibraryFinder;
+	
 	
 	@RequestMapping(value = "/{id}", method = RequestMethod.GET, produces="application/json")
 	@ResponseBody
@@ -51,7 +56,11 @@ public class IssueRestController {
 	@ResponseBody
 	public RestExecution getExecutionByIssueId(@PathVariable Long id) {
 		Execution execution = bugTrackersLocalService.findExecutionByIssueId(id);
-		RestExecution restExecution = new RestExecution(execution);
+		String path = "";
+		if(execution.getReferencedTestCase() != null){
+			path = testCaseLibraryFinder.getPathAsString(execution.getReferencedTestCase().getId());
+		}
+		RestExecution restExecution = new RestExecution(execution, path);
 		return restExecution;
 	}
 	

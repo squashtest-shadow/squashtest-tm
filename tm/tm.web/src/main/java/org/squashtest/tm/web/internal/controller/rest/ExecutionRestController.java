@@ -33,6 +33,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.execution.ExecutionStep;
 import org.squashtest.tm.service.execution.ExecutionFinder;
+import org.squashtest.tm.service.testcase.TestCaseFinder;
+import org.squashtest.tm.service.testcase.TestCaseLibraryFinderService;
 import org.squashtest.tm.web.internal.model.rest.RestExecution;
 import org.squashtest.tm.web.internal.model.rest.RestExecutionStepStub;
 
@@ -43,12 +45,20 @@ public class ExecutionRestController {
 	@Inject
 	ExecutionFinder executionFinder;
 	
+	@Inject
+	TestCaseLibraryFinderService testCaseLibraryFinder;
+	
 	@RequestMapping(value = "/{id}", method = RequestMethod.GET, produces="application/json")
 	@ResponseBody
 	public RestExecution getExecutionById(@PathVariable Long id) {
 		
 		Execution execution = executionFinder.findById(id);
-		return new RestExecution(execution);
+		String path = "";
+		if(execution.getReferencedTestCase() != null){
+			path = testCaseLibraryFinder.getPathAsString(execution.getReferencedTestCase().getId());
+		}
+		
+		return new RestExecution(execution, path);
 		
 	}
 

@@ -27,6 +27,16 @@ import org.squashtest.tm.domain.execution.Execution;
 public class RestExecution {
 
 	public Long id;
+
+	private String reference;
+	
+	private String name;
+	
+	private RestProject project;
+	
+	private String testcasePath;
+
+	private String description;
 	
 	public RestCampaignStub restCampaignStub;
 	
@@ -36,19 +46,27 @@ public class RestExecution {
 	
 	public String status;
 	
-	public Date executionDate; 
+	public Date lastExecutedOn; 
+	
+	public String lastExecutedBy;
 	
 	public RestExecution(){
 		super();
 	}
 	
-	public RestExecution(Execution execution) {
+	public RestExecution(Execution execution, String testcasePath) {
 		this.id = execution.getId();
+		this.reference = execution.getReference();
+		this.name = execution.getName();
+		this.project = new RestProject(execution.getProject());
+		this.testcasePath = testcasePath;
+		this.description = execution.getDescription();
 		this.restCampaignStub = new RestCampaignStub(execution.getCampaign());
 		this.restIterationStub = new RestIterationStub(execution.getIteration());
 		this.restTestCaseStub = new RestTestCaseStub(execution.getReferencedTestCase());
 		this.status = execution.getStatus().name();
-		this.executionDate = execution.getLastExecutedOn();
+		this.lastExecutedOn = execution.getLastExecutedOn();
+		this.lastExecutedBy = execution.getLastExecutedBy();
 	}
 
 	public Long getId() {
@@ -91,12 +109,61 @@ public class RestExecution {
 		this.status = status;
 	}
 
-	public Date getExecutionDate() {
-		return executionDate;
+	public String getReference() {
+		return reference;
 	}
 
-	public void setExecutionDate(Date executionDate) {
-		this.executionDate = executionDate;
+	public void setReference(String reference) {
+		this.reference = reference;
 	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public RestProject getProject() {
+		return project;
+	}
+
+	public void setProject(RestProject project) {
+		this.project = project;
+	}
+
+	public String getTestcasePath() {
+		return testcasePath;
+	}
+
+	public void setTestcasePath(String testcasePath) {
+		this.testcasePath = testcasePath;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public Date getLastExecutedOn() {
+		return lastExecutedOn;
+	}
+
+	public void setLastExecutedOn(Date lastExecutedOn) {
+		this.lastExecutedOn = lastExecutedOn;
+	}
+
+	public String getLastExecutedBy() {
+		return lastExecutedBy;
+	}
+
+	public void setLastExecutedBy(String lastExecutedBy) {
+		this.lastExecutedBy = lastExecutedBy;
+	}
+
 
 }
