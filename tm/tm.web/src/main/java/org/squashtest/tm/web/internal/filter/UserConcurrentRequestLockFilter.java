@@ -52,11 +52,11 @@ public class UserConcurrentRequestLockFilter implements Filter {
 	 * Key used do store lock in http session.
 	 */
 	public static final String READ_WRITE_LOCK_SESSION_KEY = "squashtest.core.ReadWriteLock";
-    private String excludePatterns;
+	private String excludePatterns;
 
 	@Override
 	public void init(FilterConfig filterConfig) throws ServletException {
-	    this.excludePatterns = filterConfig.getInitParameter("excludePatterns");
+		this.excludePatterns = filterConfig.getInitParameter("excludePatterns");
 	}
 
 	/**
@@ -65,33 +65,33 @@ public class UserConcurrentRequestLockFilter implements Filter {
 	 */
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException,
-			ServletException {
+	ServletException {
 
-	    String url = ((HttpServletRequest) request).getPathInfo();
-	    if (!matchExcludePatterns(url)) {
-		ReadWriteLock lock = loadLock(request);
+		String url = ((HttpServletRequest) request).getPathInfo();
+		if (!matchExcludePatterns(url)) {
+			ReadWriteLock lock = loadLock(request);
 
-		try {
-			handleRequest(request, response, chain, lock);
-		} finally {
-			storeLockInExistingSession(request, lock);
+			try {
+				handleRequest(request, response, chain, lock);
+			} finally {
+				storeLockInExistingSession(request, lock);
+			}
+		} else {
+			chain.doFilter(request, response);
 		}
-	    } else {
-	        chain.doFilter(request, response);
-	    }
 	}
-	
+
 	private boolean matchExcludePatterns(String url) {
-	   
-	    boolean result= false;
-	    if (excludePatterns != null){
-	        Pattern p = Pattern.compile(excludePatterns);
-	        Matcher m = p.matcher(url);
-	        result = m.matches();
-	    }
-   
-        return result;
-}
+
+		boolean result= false;
+		if (excludePatterns != null){
+			Pattern p = Pattern.compile(excludePatterns);
+			Matcher m = p.matcher(url);
+			result = m.find();
+		}
+
+		return result;
+	}
 
 	private void handleRequest(ServletRequest request, ServletResponse response, FilterChain chain, ReadWriteLock lock)
 			throws IOException, ServletException {
@@ -104,11 +104,17 @@ public class UserConcurrentRequestLockFilter implements Filter {
 
 	private void handleReadRequest(ServletRequest request, ServletResponse response, FilterChain chain,
 			ReadWriteLock lock) throws IOException, ServletException {
+
+		if (LOGGER.isDebugEnabled()){
+			HttpServletRequest hrequest = (HttpServletRequest)request;
+			LOGGER.debug("READ request : "+hrequest.getMethod()+" "+hrequest.getRequestURI()+" : attempting to acquire lock");
+		}
 		lock.readLock().lock();
 
 		try {
 			if (LOGGER.isDebugEnabled()) {
-				LOGGER.trace("Read lock acquired by request '{}'", request);
+				HttpServletRequest hrequest = (HttpServletRequest)request;
+				LOGGER.debug("READ request : "+hrequest.getMethod()+" "+hrequest.getRequestURI()+" : lock acquired");
 			}
 
 			chain.doFilter(request, response);
@@ -116,7 +122,8 @@ public class UserConcurrentRequestLockFilter implements Filter {
 			lock.readLock().unlock();
 
 			if (LOGGER.isDebugEnabled()) {
-				LOGGER.trace("Read lock released by request '{}'", request);
+				HttpServletRequest hrequest = (HttpServletRequest)request;
+				LOGGER.debug("READ request : "+hrequest.getMethod()+" "+hrequest.getRequestURI()+" : lock released");
 			}
 		}
 
@@ -124,11 +131,17 @@ public class UserConcurrentRequestLockFilter implements Filter {
 
 	private void handleWriteRequest(ServletRequest request, ServletResponse response, FilterChain chain,
 			ReadWriteLock lock) throws IOException, ServletException {
+
+		if (LOGGER.isDebugEnabled()){
+			HttpServletRequest hrequest = (HttpServletRequest)request;
+			LOGGER.debug("WRITE request : "+hrequest.getMethod()+" "+hrequest.getRequestURI()+" : attempting to acquire lock");
+		}
 		lock.writeLock().lock();
 
 		try {
 			if (LOGGER.isDebugEnabled()) {
-				LOGGER.trace("Write lock acquired by request '{}'", request);
+				HttpServletRequest hrequest = (HttpServletRequest)request;
+				LOGGER.debug("WRITE request : "+hrequest.getMethod()+" "+hrequest.getRequestURI()+" : lock acquired");
 			}
 
 			chain.doFilter(request, response);
@@ -136,7 +149,8 @@ public class UserConcurrentRequestLockFilter implements Filter {
 			lock.writeLock().unlock();
 
 			if (LOGGER.isDebugEnabled()) {
-				LOGGER.trace("Write lock released by request '{}'", request);
+				HttpServletRequest hrequest = (HttpServletRequest)request;
+				LOGGER.debug("WRITE request : "+hrequest.getMethod()+" "+hrequest.getRequestURI()+" : lock released");
 			}
 		}
 

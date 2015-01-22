@@ -126,7 +126,7 @@
 		<filter-class>org.squashtest.tm.web.internal.filter.UserConcurrentRequestLockFilter</filter-class>
 		<init-param>
 			<param-name>excludePatterns</param-name>
-			<param-value>/isSquashAlive</param-value>
+			<param-value>(/isSquashAlive|/opened-entity)</param-value>
 		</init-param>
 	</filter>
 
