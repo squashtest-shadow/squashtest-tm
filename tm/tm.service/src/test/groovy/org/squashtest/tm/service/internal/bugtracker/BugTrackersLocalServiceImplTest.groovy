@@ -20,10 +20,14 @@
  */
 package org.squashtest.tm.service.internal.bugtracker
 
+import java.util.concurrent.Future;
+
 import org.apache.commons.collections.MultiMap
+import org.springframework.scheduling.annotation.AsyncResult;
 import org.squashtest.csp.core.bugtracker.domain.BTIssue;
 import org.squashtest.csp.core.bugtracker.domain.BTProject;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker
+import org.squashtest.csp.core.bugtracker.service.BugTrackerContextHolder;
 import org.squashtest.csp.core.bugtracker.service.BugTrackersService
 import org.squashtest.tm.bugtracker.definition.RemoteIssue
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder
@@ -47,11 +51,11 @@ import spock.lang.Specification
  */
 class BugTrackersLocalServiceImplTest extends Specification {
 	BugTrackersLocalServiceImpl service = new BugTrackersLocalServiceImpl()
-	
+
 	IssueDao issueDao = Mock()
 	BugTrackersService bugTrackersService = Mock()
 	IndexationService indexationService = Mock();
-	
+
 	// alias
 	BugTrackersService remoteService = bugTrackersService;
 
@@ -59,6 +63,7 @@ class BugTrackersLocalServiceImplTest extends Specification {
 		service.issueDao = issueDao
 		service.remoteBugTrackersService = bugTrackersService
 		service.indexationService = indexationService;
+		service.contextHolder = Mock(BugTrackerContextHolder)
 	}
 
 
@@ -86,8 +91,11 @@ class BugTrackersLocalServiceImplTest extends Specification {
 		and:
 		RemoteIssue ri = Mock()
 		ri.id >> "10"
+
+		Future future = Mock()
+		future.get(_, _) >> [ri]
 		// 1st arg is a set, hence the closure condition
-		bugTrackersService.getIssues({ it.containsAll(["10"]) }, bugtracker) >> [ri]
+		bugTrackersService.getIssues({ it.containsAll(["10"]) }, _, _) >> future
 
 		and:
 		issueDao.countIssuesfromIssueList(_,_) >> 10
@@ -130,8 +138,10 @@ class BugTrackersLocalServiceImplTest extends Specification {
 		RemoteIssue ri2 = Mock()
 		ri2.id >> "20"
 
+		Future future = Mock()
+		future.get(_, _) >> [ri1, ri2]
 		// 1st arg is a set, hence the closure condition
-		bugTrackersService.getIssues({ it.containsAll(["10", "20"]) }, bugtracker) >> [ri1, ri2]
+		bugTrackersService.getIssues({ it.containsAll(["10", "20"]) }, _,_) >> future
 
 		and:
 		issueDao.countIssuesfromIssueList(_,_) >> 10
@@ -238,9 +248,9 @@ class BugTrackersLocalServiceImplTest extends Specification {
 		res.find({ it.issue == r20200 && it.owner == ex2 })
 		res.find({ it.issue == r30100 && it.owner == ex3 })
 	}
-	
-	
-	
+
+
+
 	def "should say bugtracker needs credentials"(){
 
 		given :
@@ -296,7 +306,7 @@ class BugTrackersLocalServiceImplTest extends Specification {
 		BTIssue issue = new BTIssue()
 
 		when :
-	
+
 		BTIssue reissue = service.createRemoteIssue(execution, issue)
 
 		then :
@@ -371,19 +381,19 @@ class BugTrackersLocalServiceImplTest extends Specification {
 
 		return ownership
 	}
-	
-	
+
+
 	def issue(listId, remoteId, localId){
 		IssueList mIL = Mock(IssueList)
 		Issue mi = Mock(Issue)
-		
+
 		mIL.getId() >> listId
 		mi.getIssueList() >> mIL
-		
+
 		mi.getRemoteIssueId() >> remoteId
 		mi.getId() >> localId
-		
+
 		return mi
-		
+
 	}
 }
