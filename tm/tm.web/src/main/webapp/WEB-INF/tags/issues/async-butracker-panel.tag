@@ -33,8 +33,16 @@
   <div id="bugtracker-section-pleasewait">
     <comp:waiting-pane/>
   </div>
+  
   <div id="bugtracker-section-div" class="table-tab not-displayed">
   
+  </div>
+  
+  <div id="bugtracker-section-error" class="not-displayed">
+    <div class="centered minimal-height" style="margin-top:100px; font-size : 1.5em;">
+      <f:message key="message.bugtracker.unavailable"/>
+    </div>
+    
   </div>
   
 </div>

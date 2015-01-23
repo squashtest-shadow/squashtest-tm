@@ -62,15 +62,27 @@ define([ "jquery", "jqueryui", "./report-issue-popup/jquery.main-popup" ], funct
 			var btDiv = $("#bugtracker-section-main-div"),
 				btContentDiv = $("#bugtracker-section-div"),
 				waitDiv = $("#bugtracker-section-pleasewait"),
+				errorDiv = $("#bugtracker-section-error"),
 				tab =  $("div.fragment-tabs");
 
 			// note that we bind with 'one' , not 'on'. This matters.
 			tab.one('tabsactivate', function(evt, ui){
-				if (ui.newPanel.is(btDiv)){					
+				if (ui.newPanel.is(btDiv)){	
+					
+					$.ajax(conf.url + "?style=fragment-tab")
+					.success(function(htmlpanel) {
+						btContentDiv.html(htmlpanel);
+						waitDiv.hide();
+						btContentDiv.show();
+					})
+					.error(function(){
+						waitDiv.hide();
+						errorDiv.show();
+					});
+					
 					btContentDiv.load(conf.url + "?style=fragment-tab", function() {
 						waitDiv.hide();
 						btContentDiv.show();
-						tab.off('')
 					});
 				}
 			});

@@ -20,23 +20,21 @@
  */
 package org.squashtest.tm.web.internal.controller.bugtracker;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.collections.MapUtils;
 import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.stereotype.Component;
 import org.squashtest.tm.bugtracker.definition.RemoteIssue;
 import org.squashtest.tm.bugtracker.definition.RemotePriority;
 import org.squashtest.tm.bugtracker.definition.RemoteStatus;
 import org.squashtest.tm.bugtracker.definition.RemoteUser;
-import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
-import org.squashtest.tm.core.foundation.collection.SinglePageCollectionHolder;
 import org.squashtest.tm.domain.bugtracker.IssueDetector;
 import org.squashtest.tm.domain.bugtracker.IssueOwnership;
 import org.squashtest.tm.domain.bugtracker.RemoteIssueDecorator;
@@ -47,12 +45,18 @@ import org.squashtest.tm.domain.execution.ExecutionStep;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.service.bugtracker.BugTrackersLocalService;
 import org.squashtest.tm.web.internal.controller.campaign.TestSuiteHelper;
-import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
+import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelBuilder;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelConstants;
 import org.squashtest.tm.web.internal.util.HTMLCleanupUtils;
 
-public final class BugTrackerControllerHelper {
+
+@Component
+final class BugTrackerControllerHelper {
+
+	@Inject private BugTrackersLocalService service;
+	@Inject private InternationalizationHelper source;
+
 	private BugTrackerControllerHelper() {
 
 	}
@@ -224,20 +228,52 @@ public final class BugTrackerControllerHelper {
 	}
 
 
-	static final class EmptyIssuesTableModel extends DataTableModelBuilder<IssueOwnership<RemoteIssueDecorator>>{
 
-		// would never be called anyway : there are no row to display
-		@Override
-		protected Object buildItemData(IssueOwnership<RemoteIssueDecorator> item) {
-			return MapUtils.EMPTY_MAP;
+	/* *****************************************************************
+	 * 
+	 * 						Table builders
+	 * 
+	 ***************************************************************** */
+
+
+
+	/**
+	 * Factory method. Supports : all public string constant with suffix '_TYPE' declared in {@link BugTrackerController}
+	 * @param entityType
+	 * @return
+	 */
+	DataTableModelBuilder<IssueOwnership<RemoteIssueDecorator>> createModelBuilderFor(String entityType){
+
+		DataTableModelBuilder<IssueOwnership<RemoteIssueDecorator>> builder;
+
+		switch(entityType){
+		case BugTrackerController.TEST_CASE_TYPE :
+			builder = new TestCaseIssuesTableModel();
+			break;
+
+		case BugTrackerController.CAMPAIGN_TYPE :
+		case BugTrackerController.ITERATION_TYPE :
+		case BugTrackerController.TEST_SUITE_TYPE :
+			builder = new IterationIssuesTableModel();
+			break;
+
+		case BugTrackerController.EXECUTION_TYPE :
+			builder = new ExecutionIssuesTableModel();
+			break;
+
+		case BugTrackerController.EXECUTION_STEP_TYPE :
+			builder = new StepIssuesTableModel();
+			break;
+
+		default :
+			throw new IllegalArgumentException("BugTrackerController : cannot fetch issues for unknown entity type '"+entityType+"'");
+
 		}
 
-		protected DataTableModel buildNothing(){
-			return buildDataModel(new SinglePageCollectionHolder<List<IssueOwnership<RemoteIssueDecorator>>>
-			(new ArrayList()), "0");
-		}
-
+		return builder;
 	}
+
+
 
 	/**
 	 * <p>
@@ -253,16 +289,13 @@ public final class BugTrackerControllerHelper {
 	 * </ul>
 	 * </p>
 	 */
-	static final class IterationIssuesTableModel extends DataTableModelBuilder<IssueOwnership<RemoteIssueDecorator>> {
+	final class IterationIssuesTableModel extends DataTableModelBuilder<IssueOwnership<RemoteIssueDecorator>> {
 
 		private IssueOwnershipNameBuilder nameBuilder = new IterationModelOwnershipNamebuilder();
-		private BugTrackersLocalService bugTrackersLocalService;
 
-		public IterationIssuesTableModel(BugTrackersLocalService bugTrackersLocalService, MessageSource source,
-				Locale locale) {
+		public IterationIssuesTableModel() {
 			nameBuilder.setMessageSource(source);
-			nameBuilder.setLocale(locale);
-			this.bugTrackersLocalService = bugTrackersLocalService;
+			nameBuilder.setLocale(LocaleContextHolder.getLocale());
 		}
 
 		@Override
@@ -271,7 +304,7 @@ public final class BugTrackerControllerHelper {
 			Map<String, String> result = new HashMap<String, String>(7);
 
 			RemoteIssue issue = ownership.getIssue();
-			String strUrl = bugTrackersLocalService.getIssueUrl(ownership.getIssue().getId(),
+			String strUrl = service.getIssueUrl(ownership.getIssue().getId(),
 					ownership.getOwner().getBugTracker()).toExternalForm();
 			String ownerName = nameBuilder.buildName(ownership.getOwner());
 			String ownerPath = nameBuilder.buildURLPath(ownership.getOwner());
@@ -291,32 +324,6 @@ public final class BugTrackerControllerHelper {
 
 	}
 
-	private static String findAssignee(RemoteIssue issue) {
-		String assignee = "";
-		RemoteUser remoteUser = issue.getAssignee();
-		if (remoteUser != null) {
-			assignee = remoteUser.getName();
-		}
-		return assignee;
-	}
-
-	private static String findStatus(RemoteIssue issue) {
-		String status = "";
-		RemoteStatus remoteStatus = issue.getStatus();
-		if (remoteStatus != null) {
-			status = remoteStatus.getName();
-		}
-		return status;
-	}
-
-	private static String findPriority(RemoteIssue issue) {
-		String priority = "";
-		RemotePriority remotePriority = issue.getPriority();
-		if (remotePriority != null) {
-			priority = remotePriority.getName();
-		}
-		return priority;
-	}
 
 	/**
 	 * <p>
@@ -332,16 +339,13 @@ public final class BugTrackerControllerHelper {
 	 * </ul>
 	 * </p>
 	 */
-	static final class TestCaseIssuesTableModel extends DataTableModelBuilder<IssueOwnership<RemoteIssueDecorator>> {
+	final class TestCaseIssuesTableModel extends DataTableModelBuilder<IssueOwnership<RemoteIssueDecorator>> {
 
 		private IssueOwnershipNameBuilder nameBuilder = new TestCaseModelOwnershipNamebuilder();
-		private BugTrackersLocalService bugTrackersLocalService;
 
-		public TestCaseIssuesTableModel(BugTrackersLocalService bugTrackersLocalService, MessageSource source,
-				Locale locale) {
+		public TestCaseIssuesTableModel() {
 			nameBuilder.setMessageSource(source);
-			nameBuilder.setLocale(locale);
-			this.bugTrackersLocalService = bugTrackersLocalService;
+			nameBuilder.setLocale(LocaleContextHolder.getLocale());
 		}
 
 		@Override
@@ -349,7 +353,7 @@ public final class BugTrackerControllerHelper {
 			RemoteIssue issue = ownership.getIssue();
 			Map<String, Object> row = new HashMap<String, Object>(8);
 
-			String url = bugTrackersLocalService.getIssueUrl(issue.getId(), ownership.getOwner().getBugTracker())
+			String url = service.getIssueUrl(issue.getId(), ownership.getOwner().getBugTracker())
 					.toExternalForm();
 			String issueOwner = nameBuilder.buildName(ownership.getOwner());
 
@@ -380,16 +384,13 @@ public final class BugTrackerControllerHelper {
 	 * </ul>
 	 * </p>
 	 */
-	static final class ExecutionIssuesTableModel extends DataTableModelBuilder<IssueOwnership<RemoteIssueDecorator>> {
+	final class ExecutionIssuesTableModel extends DataTableModelBuilder<IssueOwnership<RemoteIssueDecorator>> {
 
 		private IssueOwnershipNameBuilder nameBuilder = new ExecutionModelOwnershipNamebuilder();
-		private BugTrackersLocalService bugTrackersLocalService;
 
-		public ExecutionIssuesTableModel(BugTrackersLocalService bugTrackersLocalService, MessageSource source,
-				Locale locale) {
+		public ExecutionIssuesTableModel() {
 			nameBuilder.setMessageSource(source);
-			nameBuilder.setLocale(locale);
-			this.bugTrackersLocalService = bugTrackersLocalService;
+			nameBuilder.setLocale(LocaleContextHolder.getLocale());
 		}
 
 		@Override
@@ -400,7 +401,7 @@ public final class BugTrackerControllerHelper {
 			Map<String, Object> result = new HashMap<String, Object>(9);
 
 			result.put("issue-url",
-					bugTrackersLocalService.getIssueUrl(issue.getId(), ownership.getOwner().getBugTracker())
+					service.getIssueUrl(issue.getId(), ownership.getOwner().getBugTracker())
 					.toExternalForm());
 
 			result.put("remote-id", issue.getId());
@@ -427,11 +428,9 @@ public final class BugTrackerControllerHelper {
 	 * </ul>
 	 * </p>
 	 */
-	static final class StepIssuesTableModel extends DataTableModelBuilder<IssueOwnership<RemoteIssueDecorator>> {
-		private BugTrackersLocalService bugTrackersLocalService;
+	final class StepIssuesTableModel extends DataTableModelBuilder<IssueOwnership<RemoteIssueDecorator>> {
 
-		StepIssuesTableModel(BugTrackersLocalService bugTrackerLocalService) {
-			this.bugTrackersLocalService = bugTrackerLocalService;
+		StepIssuesTableModel() {
 		}
 
 		@Override
@@ -441,7 +440,7 @@ public final class BugTrackerControllerHelper {
 			Map<String, Object> result = new HashMap<String, Object>();
 
 			result.put("issue-url",
-					bugTrackersLocalService.getIssueUrl(issue.getId(), ownership.getOwner().getBugTracker())
+					service.getIssueUrl(issue.getId(), ownership.getOwner().getBugTracker())
 					.toExternalForm());
 
 			result.put("remote-id", issue.getId());
@@ -453,6 +452,38 @@ public final class BugTrackerControllerHelper {
 			return result;
 		}
 	}
+
+
+	// ****** utility methods *******************
+
+	private static String findAssignee(RemoteIssue issue) {
+		String assignee = "";
+		RemoteUser remoteUser = issue.getAssignee();
+		if (remoteUser != null) {
+			assignee = remoteUser.getName();
+		}
+		return assignee;
+	}
+
+	private static String findStatus(RemoteIssue issue) {
+		String status = "";
+		RemoteStatus remoteStatus = issue.getStatus();
+		if (remoteStatus != null) {
+			status = remoteStatus.getName();
+		}
+		return status;
+	}
+
+	private static String findPriority(RemoteIssue issue) {
+		String priority = "";
+		RemotePriority remotePriority = issue.getPriority();
+		if (remotePriority != null) {
+			priority = remotePriority.getName();
+		}
+		return priority;
+	}
+
+	/* ********** name builders *****************
 
 	/**
 	 * 

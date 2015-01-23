@@ -23,15 +23,18 @@
 <%@ tag description="Table displaying the issues for an Iteration" body-content="empty" %>
 	
 <%@ tag language="java" pageEncoding="utf-8"%>
-<%@ taglib prefix="pop" tagdir="/WEB-INF/tags/popup" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="f"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="s" uri="http://www.springframework.org/tags"%>
-<%@ taglib tagdir="/WEB-INF/tags/component" prefix="comp"%>	
-<%@ taglib prefix="dt" tagdir="/WEB-INF/tags/datatables" %>
+<%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component"%>	
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%@ taglib prefix="json" uri="http://org.squashtest.tm/taglib/json" %>
 
 <%@ attribute name="interfaceDescriptor" type="java.lang.Object" required="true" description="an object holding the labels for the interface"%>
 <%@ attribute name="dataUrl" required="true" description="where the table will fetch its data" %>
+<%@ attribute name="tableEntries" required="false" type="java.util.List" description="if set, must be valid aaData for datatables. Will then defer the ajax loading of the table." %>
+
+
 <c:url var="tableLanguageUrl" value="/datatables/messages" />
 
 <%-- 
@@ -62,6 +65,8 @@
 	<tbody><%-- Will be populated through ajax --%></tbody>
 </table>
 
+<c:set var="deferLoading" value="${not empty tableEntries ? fn:length(tableEntries) : 0 }" />
+
 <script type="text/javascript">
 require( ["common"], function(){
 	require( ["jquery","squashtable"], function($, datatable){
@@ -86,14 +91,16 @@ require( ["common"], function(){
 				return row;
 			};
 			
-			
-				$("#issue-table").squashTable(
-					{
-						'fnRowCallback' : issueTableRowCallback
-					},
-					{}
-				);
-			
+		
+			$("#issue-table").squashTable({
+					'fnRowCallback' : issueTableRowCallback,
+					'iDeferLoading' : ${deferLoading}
+        			<c:if test="${not empty tableEntries}">
+        			,
+        			'aaData' : ${json:serialize(tableEntries)}
+        			</c:if>
+				},
+				{});			
 		});
 	});
 });
