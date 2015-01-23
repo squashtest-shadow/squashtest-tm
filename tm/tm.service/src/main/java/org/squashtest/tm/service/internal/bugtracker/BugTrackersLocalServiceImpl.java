@@ -39,6 +39,7 @@ import org.apache.commons.collections.MultiMap;
 import org.apache.commons.collections.map.MultiValueMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.squashtest.csp.core.bugtracker.core.BugTrackerNotFoundException;
@@ -92,7 +93,8 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(BugTrackersLocalServiceImpl.class);
 
-	private static final long TIMEOUT_SEC = 15l;
+	@Value("${squashtm.bugtracker.timeout:15l}")
+	private long timeout;
 
 	@Inject
 	private IssueDao issueDao;
@@ -208,7 +210,7 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 
 		try {
 			Future<List<RemoteIssue>> futureIssues = remoteBugTrackersService.getIssues(issueKeyList, bugTracker, contextHolder.getContext());
-			return futureIssues.get(TIMEOUT_SEC, TimeUnit.SECONDS);
+			return futureIssues.get(timeout, TimeUnit.SECONDS);
 		}catch(TimeoutException timex){
 			throw new BugTrackerRemoteException(timex);
 		} catch (InterruptedException | ExecutionException e) {
@@ -472,7 +474,7 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 		// Find the BT issues out of the remote ids
 		try{
 			Future<List<RemoteIssue>> futureIssues = remoteBugTrackersService.getIssues(issuesRemoteIds, bugTracker, contextHolder.getContext());
-			List<RemoteIssue> btIssues = futureIssues.get(TIMEOUT_SEC, TimeUnit.SECONDS);
+			List<RemoteIssue> btIssues = futureIssues.get(timeout, TimeUnit.SECONDS);
 
 			List<RemoteIssueDecorator> btIssueDecorators = decorateRemoteIssues(btIssues, localIdsByRemoteId);
 
@@ -576,7 +578,7 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 				Future<List<RemoteIssue>> futureIssues = remoteBugTrackersService.getIssues(
 						remoteIdsByBugTracker.getValue(), remoteIdsByBugTracker.getKey(), contextHolder.getContext());
 
-				List<RemoteIssue> btIssuesOfBugTracker = futureIssues.get(TIMEOUT_SEC, TimeUnit.SECONDS);
+				List<RemoteIssue> btIssuesOfBugTracker = futureIssues.get(timeout, TimeUnit.SECONDS);
 
 				btIssues.addAll(btIssuesOfBugTracker);
 			}

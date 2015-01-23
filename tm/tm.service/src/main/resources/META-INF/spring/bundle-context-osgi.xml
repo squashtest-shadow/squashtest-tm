@@ -30,6 +30,14 @@
     definitions in a separate file if you do not want to. The rationale for keeping these definitions separate is to facilitate 
     integration testing of the bundle outside of an OSGi container -->
 
+  <!-- Looks up properties set from OSGi Config Admin Compendium -->
+  <osgix:cm-properties id="squashtest.core.datasource.jdbc.config" persistent-id="org.squashtest.csp.core.datasource.jdbc.config" />
+  <osgix:cm-properties id="squashtest.tm.hibernate.config" persistent-id="org.squashtest.csp.tm.hibernate.config" />
+  <osgix:cm-properties id="squashtest.tm.cfg" persistent-id="squash.tm.cfg" />
+  
+
+
+
   <!-- ====== SERVICES EXPOSED BY THIS BUNDLE ====== -->
 
   <!-- =================== free access scheduled thread pool ======================= -->
@@ -338,16 +346,6 @@
 
 
   <!-- ====== SERVICES CONSUMED BY THIS BUNDLE ====== -->
-  <!-- Looks up properties set from OSGi Config Admin Compendium -->
-  <osgix:cm-properties id="squashtest.core.datasource.jdbc.config" persistent-id="org.squashtest.csp.core.datasource.jdbc.config" />
-
-
-
-  <!-- Looks up properties set from OSGi Config Admin Compendium -->
-  <osgix:cm-properties id="squashtest.tm.hibernate.config" persistent-id="org.squashtest.csp.tm.hibernate.config" />
-
-  <!-- Bugtracker config -->
-  <osgix:cm-properties id="squashtest.tm.bugtracker.config" persistent-id="org.squashtest.csp.tm.bugtracker.config" />
 
   <osgi:service ref="squashtest.core.security.JdbcUserDetailsManager">
     <osgi:interfaces>

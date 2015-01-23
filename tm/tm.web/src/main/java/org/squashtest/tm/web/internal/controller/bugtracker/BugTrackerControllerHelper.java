@@ -52,7 +52,7 @@ import org.squashtest.tm.web.internal.util.HTMLCleanupUtils;
 
 
 @Component
-final class BugTrackerControllerHelper {
+public final class BugTrackerControllerHelper {
 
 	@Inject private BugTrackersLocalService service;
 	@Inject private InternationalizationHelper source;
