@@ -20,6 +20,8 @@
  */
 package org.squashtest.tm.web.internal.controller.bugtracker;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -27,11 +29,14 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.collections.MapUtils;
 import org.springframework.context.MessageSource;
 import org.squashtest.tm.bugtracker.definition.RemoteIssue;
 import org.squashtest.tm.bugtracker.definition.RemotePriority;
 import org.squashtest.tm.bugtracker.definition.RemoteStatus;
 import org.squashtest.tm.bugtracker.definition.RemoteUser;
+import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
+import org.squashtest.tm.core.foundation.collection.SinglePageCollectionHolder;
 import org.squashtest.tm.domain.bugtracker.IssueDetector;
 import org.squashtest.tm.domain.bugtracker.IssueOwnership;
 import org.squashtest.tm.domain.bugtracker.RemoteIssueDecorator;
@@ -42,6 +47,7 @@ import org.squashtest.tm.domain.execution.ExecutionStep;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.service.bugtracker.BugTrackersLocalService;
 import org.squashtest.tm.web.internal.controller.campaign.TestSuiteHelper;
+import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelBuilder;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelConstants;
 import org.squashtest.tm.web.internal.util.HTMLCleanupUtils;
@@ -217,6 +223,22 @@ public final class BugTrackerControllerHelper {
 		}
 	}
 
+
+	static final class EmptyIssuesTableModel extends DataTableModelBuilder<IssueOwnership<RemoteIssueDecorator>>{
+
+		// would never be called anyway : there are no row to display
+		@Override
+		protected Object buildItemData(IssueOwnership<RemoteIssueDecorator> item) {
+			return MapUtils.EMPTY_MAP;
+		}
+
+		protected DataTableModel buildNothing(){
+			return buildDataModel(new SinglePageCollectionHolder<List<IssueOwnership<RemoteIssueDecorator>>>
+			(new ArrayList()), "0");
+		}
+
+	}
+
 	/**
 	 * <p>
 	 * the DataTableModel for an execution will hold the same informations than IterationIssuesTableModel (for now) :
@@ -379,7 +401,7 @@ public final class BugTrackerControllerHelper {
 
 			result.put("issue-url",
 					bugTrackersLocalService.getIssueUrl(issue.getId(), ownership.getOwner().getBugTracker())
-							.toExternalForm());
+					.toExternalForm());
 
 			result.put("remote-id", issue.getId());
 			result.put("summary", issue.getSummary());
@@ -420,7 +442,7 @@ public final class BugTrackerControllerHelper {
 
 			result.put("issue-url",
 					bugTrackersLocalService.getIssueUrl(issue.getId(), ownership.getOwner().getBugTracker())
-							.toExternalForm());
+					.toExternalForm());
 
 			result.put("remote-id", issue.getId());
 			result.put("summary", issue.getSummary());

@@ -25,6 +25,7 @@
 <%@ taglib prefix="authz" tagdir="/WEB-INF/tags/authz"%>
 <%@ taglib prefix="at" tagdir="/WEB-INF/tags/attachments"%>
 <%@ taglib prefix="tc" tagdir="/WEB-INF/tags/test-cases-components"%>
+<%@ taglib prefix="issues" tagdir="/WEB-INF/tags/issues"%>
 <%@ taglib prefix="csst" uri="http://org.squashtest.tm/taglib/css-transform" %>
 <%@ taglib prefix="json" uri="http://org.squashtest.tm/taglib/json" %>
 
@@ -124,6 +125,12 @@ require(["common"], function() {
 		<li>
 			<a href="${executionsTabUrl}"><f:message key="label.executions" /> </a>
 		</li>
+<c:if test="${testCase.project.bugtrackerConnected}">
+        <li>
+          <%-- div#bugtracker-section-main-div is declared in tagfile issues:async-bugtracker-panel.tag --%>
+          <a href="#bugtracker-section-main-div"><f:message key="tabs.label.issues"/></a>
+        </li>
+</c:if>
 	</ul>
 	
 		
@@ -163,6 +170,12 @@ require(["common"], function() {
 	
 	<%------------------------------ /Attachments  ---------------------------------------------%>
 
+    <%-- ----------------------- bugtracker (if present)----------------------------------------%> 
+<c:if test="${testCase.project.bugtrackerConnected}">
+        <issues:async-butracker-panel />
+</c:if>
+
+    <%-- ----------------------- /bugtracker (if present)----------------------------------------%> 
 
 </div>
 </csst:jq-tab>

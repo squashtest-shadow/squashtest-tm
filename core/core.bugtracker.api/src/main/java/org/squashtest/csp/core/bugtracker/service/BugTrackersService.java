@@ -24,7 +24,9 @@ import java.net.URL;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.Future;
 
+import org.springframework.scheduling.annotation.Async;
 import org.squashtest.csp.core.bugtracker.core.BugTrackerNotFoundException;
 import org.squashtest.csp.core.bugtracker.core.BugTrackerRemoteException;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
@@ -72,7 +74,7 @@ public interface BugTrackersService {
 	 * @return just what I said
 	 */
 	BugTrackerInterfaceDescriptor getInterfaceDescriptor(BugTracker bugtracker);
-	
+
 
 	/**
 	 * returns an url like for getBugTrackerUrl. That method will build an url pointing to the issue
@@ -88,7 +90,7 @@ public interface BugTrackersService {
 
 	/**
 	 * will return a project, matching by its name
-	 *	 * 
+	 *	 *
 	 * @param name of the project
 	 * @param bugTracker the concerned BugTracker
 	 * @return the project if found, shipped with all known versions, categories and users.
@@ -117,8 +119,8 @@ public interface BugTrackersService {
 	 */
 	RemoteIssue createIssue(RemoteIssue issue, BugTracker bugTracker);
 
-	
-	
+
+
 	/**
 	 * given a key, returns an issue
 	 * 
@@ -128,19 +130,28 @@ public interface BugTrackersService {
 	 * @throws BugTrackerNotFoundException
 	 */
 	RemoteIssue getIssue(String key, BugTracker bugTracker);
-	
+
 
 	/***
-	 * This method returns a list of issues corresponding to the given Squash Issue List
+	 * <p>This method returns a list of issues corresponding to the given Squash Issue List. This method
+	 * returns a future so that the caller can abort if this takes too long. Technically it is done by having the
+	 * current thread enqueue a new task in the TaskExecutor, the caller can then set a time limit.</p>
+	 * 
+	 * <p>Because the credentials are usually passed using a {@link ThreadLocalBugTrackerContextHolder}, and that the task
+	 * is performed in another thread, the code being executed will not find the credentials. That's why you have to
+	 * provide them explicitly here.</p>
 	 *
 	 * @param issueKeyList
 	 *            the Squash issue key List (List<String>)
 	 * @param bugTracker the concerned BugTracker
-	 * @return the corresponding BTIssue List
+	 * @param
+	 * @return A future on the corresponding BTIssue List
 	 */
-	List<RemoteIssue> getIssues(Collection<String> issueKeyList, BugTracker bugTracker);
-	
-	
+
+	@Async
+	Future<List<RemoteIssue>> getIssues(Collection<String> issueKeyList, BugTracker bugTracker, BugTrackerContext context);
+
+
 	/**
 	 * Must return ready-to-fill issue, ie with empty fields and its project configured with as many metadata as possible related to issue creation.
 	 * 
@@ -149,18 +160,18 @@ public interface BugTrackersService {
 	 * @return
 	 */
 	RemoteIssue createReportIssueTemplate(String projectName, BugTracker bugTracker);
-	
-	
+
+
 	/**
 	 * Given a remote issue key, will ask the bugtracker to attach the attachments to that issue.
-	 * Note that the specified bugtracker will be used for that purpose. 
+	 * Note that the specified bugtracker will be used for that purpose.
 	 * 
 	 * @param remoteIssueKey
 	 * @param bugtracker
 	 * @param attachments
 	 */
 	void forwardAttachments(String remoteIssueKey, BugTracker bugtracker, List<Attachment> attachments);
-	
+
 	/**
 	 * forwards a {@link DelegateCommand} to a connector
 	 * 
@@ -168,7 +179,7 @@ public interface BugTrackersService {
 	 * @return
 	 */
 	Object forwardDelegateCommand(DelegateCommand command, BugTracker bugtracker);
-	
+
 
 	Set<String> getProviderKinds();
 

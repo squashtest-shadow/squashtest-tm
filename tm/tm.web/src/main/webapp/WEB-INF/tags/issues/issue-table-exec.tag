@@ -32,7 +32,6 @@
 <%@ attribute name="dataUrl" required="true" description="where the table will fetch its data" %>
 <%@ attribute name="bugTrackerUrl" required="true" description="where the delete buttons send the delete instruction" %>
 <%@ attribute name="entityId" required="true" description="id of the current execution" %>
-<%@ attribute name="freeSettings" required="true" description="added settings to issue table" %>
 <%@ attribute name="executable" required="true" description="if the user has EXECUTE rights on the execution" %>
 <%-- 
 	columns are :

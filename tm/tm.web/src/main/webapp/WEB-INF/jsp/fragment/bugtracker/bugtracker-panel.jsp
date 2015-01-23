@@ -50,6 +50,7 @@
 				* READY : nothing special, the component is fully functional.
 		- useParentContextPopup : if false, will create a popup as usual. If true, will use instead a popup accessible in the parent context 
 								(that's how the ieo-execute-execution.jsp works)
+        - tableEntries : if not null, will be used as data for table init instead of ajax call. The data must be valid datatable aaData 
                 
                 
     29/09/14 : that file needs refactoring too.
@@ -311,31 +312,24 @@
 			<input type="button" class="sq-btn" id="issue-login-button"
 				value="${loginButtonLabel}" />
 		</div>
-	<c:choose>
-		<c:when test="${ bugTrackerStatus == 'BUGTRACKER_READY' }">
-			<c:set var="freeSettings" value="iDeferLoading : null "/>
-		</c:when>
-		<c:otherwise>
-			<c:set var="freeSettings" value="iDeferLoading : 0 "/>
-		</c:otherwise>
-	</c:choose>
+
 		<div id="issue-panel-known-issue-table-div"${knownIssuesTableInitCss}>
 			<c:choose>
 				<c:when test="${entityType == 'execution-step'}">
 					<is:issue-table-execstep dataUrl="${tableUrl}" bugTrackerUrl="${bugTrackerServiceUrl}" entityId="${entity.id}"
-						interfaceDescriptor="${interfaceDescriptor}" freeSettings="${ freeSettings }" executable="${executable}"/>
+						interfaceDescriptor="${interfaceDescriptor}" executable="${executable}"/>
 				</c:when>
 				<c:when test="${entityType == 'execution'}">
 					<is:issue-table-exec dataUrl="${tableUrl}" bugTrackerUrl="${bugTrackerServiceUrl}" entityId="${entity.id}"
-						interfaceDescriptor="${interfaceDescriptor}"  freeSettings="${ freeSettings }" executable="${ executable }"/>			
+						interfaceDescriptor="${interfaceDescriptor}" executable="${ executable }"/>			
 				</c:when>
 				
 				<c:when
 					test="${entityType == 'iteration'||entityType == 'test-suite'||entityType == 'campaign'}">
-					<is:issue-table-iter dataUrl="${tableUrl}" interfaceDescriptor="${interfaceDescriptor}"  freeSettings="${ freeSettings }" />
+					<is:issue-table-iter dataUrl="${tableUrl}" interfaceDescriptor="${interfaceDescriptor}" />
 				</c:when>
 				<c:when test="${entityType == 'test-case' }">
-					<is:issue-table-tc dataUrl="${tableUrl}" interfaceDescriptor="${interfaceDescriptor}"  freeSettings="${ freeSettings }" />
+					<is:issue-table-tc dataUrl="${tableUrl}" interfaceDescriptor="${interfaceDescriptor}"  tableEntries="${tableEntries}"/>
 				</c:when>
 			</c:choose>
 		</div>
