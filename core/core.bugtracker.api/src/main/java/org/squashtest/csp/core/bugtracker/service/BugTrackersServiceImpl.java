@@ -24,7 +24,9 @@ import java.net.URL;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.Future;
 
+import org.springframework.scheduling.annotation.AsyncResult;
 import org.squashtest.csp.core.bugtracker.core.BugTrackerConnectorFactory;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.csp.core.bugtracker.net.AuthenticationCredentials;
@@ -53,10 +55,10 @@ public class BugTrackersServiceImpl implements BugTrackersService {
 
 	@Override
 	public BugTrackerInterfaceDescriptor getInterfaceDescriptor(BugTracker bugTracker) {
-			InternalBugtrackerConnector connector = bugTrackerConnectorFactory.createConnector(bugTracker);
-			return connector.getInterfaceDescriptor();
+		InternalBugtrackerConnector connector = bugTrackerConnectorFactory.createConnector(bugTracker);
+		return connector.getInterfaceDescriptor();
 	}
-	
+
 	@Override
 	public URL getViewIssueUrl(String issueId, BugTracker bugTracker) {
 		InternalBugtrackerConnector connector = bugTrackerConnectorFactory.createConnector(bugTracker);
@@ -82,7 +84,7 @@ public class BugTrackersServiceImpl implements BugTrackersService {
 
 	}
 
-	
+
 	@Override
 	public RemoteProject findProject(String name, BugTracker bugTracker) {
 		return connect(bugTracker).findProject(name);
@@ -105,14 +107,14 @@ public class BugTrackersServiceImpl implements BugTrackersService {
 		newissue.setBugtracker(bugTracker.getName());
 		return newissue;
 	}
-	
+
 	@Override
 	public RemoteIssue createReportIssueTemplate(String projectName, BugTracker bugTracker) {
 		RemoteIssue issue = connect(bugTracker).createReportIssueTemplate(projectName);
 		issue.setBugtracker(bugTracker.getName());
 		return issue;
 	}
-	
+
 
 	@Override
 	public RemoteIssue getIssue(String key, BugTracker bugTracker) {
@@ -122,7 +124,10 @@ public class BugTrackersServiceImpl implements BugTrackersService {
 	}
 
 	@Override
-	public List<RemoteIssue> getIssues(Collection<String> issueKeyList, BugTracker bugTracker) {
+	public Future<List<RemoteIssue>> getIssues(Collection<String> issueKeyList, BugTracker bugTracker, BugTrackerContext context) {
+
+		// reinstate the bugtrackercontext (since this method will execute in a different thread, see comments in the interface
+		contextHolder.setContext(context);
 
 		List<RemoteIssue> issues = connect(bugTracker).findIssues(issueKeyList);
 
@@ -132,27 +137,27 @@ public class BugTrackersServiceImpl implements BugTrackersService {
 			issue.setBugtracker(bugtrackerName);
 		}
 
-		return issues;
+		return new AsyncResult<List<RemoteIssue>>(issues);
 	}
-	
+
 	@Override
 	public void forwardAttachments(String remoteIssueKey, BugTracker bugtracker, List<Attachment> attachments) {
 		connect(bugtracker).forwardAttachments(remoteIssueKey, attachments);
 	}
-	
+
 
 	@Override
 	public Set<String> getProviderKinds() {
 		return bugTrackerConnectorFactory.getProviderKinds();
 	}
-	
-	
+
+
 	@Override
 	public Object forwardDelegateCommand(DelegateCommand command,
 			BugTracker bugtracker) {
 		return connect(bugtracker).executeDelegateCommand(command);
 	}
-	
+
 
 	/**
 	 * @param contextHolder the contextHolder to set

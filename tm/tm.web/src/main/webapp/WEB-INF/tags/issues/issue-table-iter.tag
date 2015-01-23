@@ -32,8 +32,6 @@
 
 <%@ attribute name="interfaceDescriptor" type="java.lang.Object" required="true" description="an object holding the labels for the interface"%>
 <%@ attribute name="dataUrl" required="true" description="where the table will fetch its data" %>
-<%@ attribute name="freeSettings" required="true" description="added settings to issue table" %>
-
 <c:url var="tableLanguageUrl" value="/datatables/messages" />
 
 <%-- 
@@ -91,8 +89,7 @@ require( ["common"], function(){
 			
 				$("#issue-table").squashTable(
 					{
-						'fnRowCallback' : issueTableRowCallback,
-						${freeSettings}
+						'fnRowCallback' : issueTableRowCallback
 					},
 					{}
 				);

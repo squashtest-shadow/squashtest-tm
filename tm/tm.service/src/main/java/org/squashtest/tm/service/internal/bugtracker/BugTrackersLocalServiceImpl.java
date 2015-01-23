@@ -28,15 +28,23 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import javax.inject.Inject;
 
 import org.apache.commons.collections.MultiMap;
 import org.apache.commons.collections.map.MultiValueMap;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.squashtest.csp.core.bugtracker.core.BugTrackerNotFoundException;
+import org.squashtest.csp.core.bugtracker.core.BugTrackerRemoteException;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
+import org.squashtest.csp.core.bugtracker.service.BugTrackerContextHolder;
 import org.squashtest.csp.core.bugtracker.service.BugTrackersService;
 import org.squashtest.csp.core.bugtracker.spi.BugTrackerInterfaceDescriptor;
 import org.squashtest.tm.bugtracker.advanceddomain.DelegateCommand;
@@ -82,6 +90,10 @@ import org.squashtest.tm.service.security.SecurityCheckableObject;
 @Service("squashtest.tm.service.BugTrackersLocalService")
 public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 
+	private static final Logger LOGGER = LoggerFactory.getLogger(BugTrackersLocalServiceImpl.class);
+
+	private static final long TIMEOUT_SEC = 15l;
+
 	@Inject
 	private IssueDao issueDao;
 
@@ -120,6 +132,9 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 
 	@Inject
 	private PermissionEvaluationService permissionEvaluationService;
+
+	@Inject
+	private BugTrackerContextHolder contextHolder;
 
 	@Override
 	public BugTrackerInterfaceDescriptor getInterfaceDescriptor(BugTracker bugTracker) {
@@ -190,7 +205,16 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 
 	@Override
 	public List<RemoteIssue> getIssues(List<String> issueKeyList, BugTracker bugTracker) {
-		return remoteBugTrackersService.getIssues(issueKeyList, bugTracker);
+
+		try {
+			Future<List<RemoteIssue>> futureIssues = remoteBugTrackersService.getIssues(issueKeyList, bugTracker, contextHolder.getContext());
+			return futureIssues.get(TIMEOUT_SEC, TimeUnit.SECONDS);
+		}catch(TimeoutException timex){
+			throw new BugTrackerRemoteException(timex);
+		} catch (InterruptedException | ExecutionException e) {
+			throw new BugTrackerRemoteException(e.getCause());
+		}
+
 	}
 
 	/* ************** delegate methods ************* */
@@ -446,17 +470,25 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 		Collection<String> issuesRemoteIds = (Collection<String>)localIdsByRemoteId.keySet();
 
 		// Find the BT issues out of the remote ids
-		List<RemoteIssue> btIssues = remoteBugTrackersService.getIssues(issuesRemoteIds, bugTracker);
+		try{
+			Future<List<RemoteIssue>> futureIssues = remoteBugTrackersService.getIssues(issuesRemoteIds, bugTracker, contextHolder.getContext());
+			List<RemoteIssue> btIssues = futureIssues.get(TIMEOUT_SEC, TimeUnit.SECONDS);
 
-		List<RemoteIssueDecorator> btIssueDecorators = decorateRemoteIssues(btIssues, localIdsByRemoteId);
+			List<RemoteIssueDecorator> btIssueDecorators = decorateRemoteIssues(btIssues, localIdsByRemoteId);
 
-		// Bind the BT issues to their owner with the kept informations
-		List<IssueOwnership<RemoteIssueDecorator>> ownerships = bindBTIssuesToOwner(btIssueDecorators,
-				localIssues, issueDetectorByListId);
+			// Bind the BT issues to their owner with the kept informations
+			List<IssueOwnership<RemoteIssueDecorator>> ownerships = bindBTIssuesToOwner(btIssueDecorators,
+					localIssues, issueDetectorByListId);
 
-		Integer totalIssues = issueDao.countIssuesfromIssueList(issueListIds, bugTracker.getId());
-		return new PagingBackedPagedCollectionHolder<List<IssueOwnership<RemoteIssueDecorator>>>(sorter, totalIssues,
-				ownerships);
+			Integer totalIssues = issueDao.countIssuesfromIssueList(issueListIds, bugTracker.getId());
+			return new PagingBackedPagedCollectionHolder<List<IssueOwnership<RemoteIssueDecorator>>>(sorter, totalIssues,
+					ownerships);
+
+		}catch(TimeoutException ex){
+			throw new BugTrackerRemoteException(ex.getCause());
+		}catch(ExecutionException | InterruptedException ex){
+			throw new BugTrackerRemoteException(ex.getCause());
+		}
 	}
 
 	/**
@@ -538,12 +570,22 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 	private List<RemoteIssue> findBTIssuesOutOfRemoteIdsAndBTIds(List<Issue> sortedIssueListIdsAndIssueRemoteIds) {
 		Map<BugTracker, List<String>> issueRemoteIdsByBugTrackers = organizeIssueRemoteIdsByBugTrackers(sortedIssueListIdsAndIssueRemoteIds);
 		List<RemoteIssue> btIssues = new ArrayList<RemoteIssue>();
-		for (Entry<BugTracker, List<String>> remoteIdsByBugTracker : issueRemoteIdsByBugTrackers.entrySet()) {
-			List<RemoteIssue> btIssuesOfBugTracker = remoteBugTrackersService.getIssues(
-					remoteIdsByBugTracker.getValue(), remoteIdsByBugTracker.getKey());
-			btIssues.addAll(btIssuesOfBugTracker);
+
+		try{
+			for (Entry<BugTracker, List<String>> remoteIdsByBugTracker : issueRemoteIdsByBugTrackers.entrySet()) {
+				Future<List<RemoteIssue>> futureIssues = remoteBugTrackersService.getIssues(
+						remoteIdsByBugTracker.getValue(), remoteIdsByBugTracker.getKey(), contextHolder.getContext());
+
+				List<RemoteIssue> btIssuesOfBugTracker = futureIssues.get(TIMEOUT_SEC, TimeUnit.SECONDS);
+
+				btIssues.addAll(btIssuesOfBugTracker);
+			}
+			return btIssues;
+		}catch(TimeoutException timex){
+			throw new BugTrackerRemoteException(timex);
+		}catch(ExecutionException | InterruptedException ex){
+			throw new BugTrackerRemoteException(ex.getCause());
 		}
-		return btIssues;
 	}
 
 	private Map<BugTracker, List<String>> organizeIssueRemoteIdsByBugTrackers(

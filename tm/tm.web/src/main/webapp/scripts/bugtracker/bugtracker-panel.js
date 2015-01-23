@@ -20,6 +20,12 @@
  */
 define([ "jquery", "jqueryui", "./report-issue-popup/jquery.main-popup" ], function($) {
 	return {
+		
+		/*
+		 *  Inserts the panel head and loads the content eagerly.
+		 *  This is legacy code, use the loadAsync instead. 
+		 *  
+		 */
 		load : function(conf) {
 
 			// first : add the tab entry
@@ -44,8 +50,39 @@ define([ "jquery", "jqueryui", "./report-issue-popup/jquery.main-popup" ], funct
 				tab.tabs({active : parseInt(cookie,10)});
 				$.cookie(cookieName, null, { path: '/' });
 			}
+		},
+		
+		/*
+		 * This method assumes the existence of a certain structure (if you're a dev and 
+		 * interested with this, check async-bugtracker-panel.tag), especially the 
+		 * tab and the recipient of the ajax call must exist.
+		 */
+		loadAsync : function(conf) {
+
+			var btDiv = $("#bugtracker-section-main-div"),
+				btContentDiv = $("#bugtracker-section-div"),
+				waitDiv = $("#bugtracker-section-pleasewait"),
+				tab =  $("div.fragment-tabs");
+
+			// note that we bind with 'one' , not 'on'. This matters.
+			tab.one('tabsactivate', function(evt, ui){
+				if (ui.newPanel.is(btDiv)){					
+					btContentDiv.load(conf.url + "?style=fragment-tab", function() {
+						waitDiv.hide();
+						btContentDiv.show();
+						tab.off('')
+					});
+				}
+			});
+
+			var cookieName = "iteration-tab-cookie";
+			var cookie = $.cookie(cookieName);
+			if (cookie){
+				tab.tabs({active : parseInt(cookie,10)});
+				$.cookie(cookieName, null, { path: '/' });
+			}
 		}
 
-	};
+	}
 
 });
