@@ -83,11 +83,6 @@ import org.squashtest.tm.service.testcase.TestCaseFinder;
 import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.controller.attachment.UploadedData;
 import org.squashtest.tm.web.internal.controller.attachment.UploadedDataPropertyEditorSupport;
-import org.squashtest.tm.web.internal.controller.bugtracker.BugTrackerControllerHelper.EmptyIssuesTableModel;
-import org.squashtest.tm.web.internal.controller.bugtracker.BugTrackerControllerHelper.ExecutionIssuesTableModel;
-import org.squashtest.tm.web.internal.controller.bugtracker.BugTrackerControllerHelper.IterationIssuesTableModel;
-import org.squashtest.tm.web.internal.controller.bugtracker.BugTrackerControllerHelper.StepIssuesTableModel;
-import org.squashtest.tm.web.internal.controller.bugtracker.BugTrackerControllerHelper.TestCaseIssuesTableModel;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 
@@ -110,14 +105,15 @@ public class BugTrackerController {
 	@Inject private BugTrackerManagerService bugTrackerManagerService;
 
 	@Inject private MessageSource messageSource;
+	@Inject private BugTrackerControllerHelper helper;
 
 
-	private static final String EXECUTION_STEP_TYPE = "execution-step";
-	private static final String EXECUTION_TYPE = "execution";
-	private static final String ITERATION_TYPE = "iteration";
-	private static final String CAMPAIGN_TYPE = "campaign";
-	private static final String TEST_SUITE_TYPE = "test-suite";
-	private static final String TEST_CASE_TYPE = "test-case";
+	static final String EXECUTION_STEP_TYPE = "execution-step";
+	static final String EXECUTION_TYPE = "execution";
+	static final String ITERATION_TYPE = "iteration";
+	static final String CAMPAIGN_TYPE = "campaign";
+	static final String TEST_SUITE_TYPE = "test-suite";
+	static final String TEST_CASE_TYPE = "test-case";
 
 
 	private static final String BUGTRACKER_ID = "bugTrackerId";
@@ -189,23 +185,9 @@ public class BugTrackerController {
 	DataTableModel getExecStepKnownIssuesData(@PathVariable("stepId") Long stepId,
 			final DataTableDrawParameters params, final Locale locale) {
 
-		PagedCollectionHolder<List<IssueOwnership<RemoteIssueDecorator>>> filteredCollection;
 		PagingAndSorting sorter = new IssueCollectionSorting(params);
-		try {
 
-			filteredCollection = bugTrackersLocalService.findSortedIssueOwnerShipsForExecutionStep(stepId, sorter);
-		}
-
-		// no credentials exception are okay, the rest is to be treated as usual
-		catch (BugTrackerNoCredentialsException noCrdsException) {
-			filteredCollection = makeEmptyIssueDecoratorCollectionHolder(EXECUTION_STEP_TYPE, stepId, noCrdsException,
-					sorter);
-		} catch (NullArgumentException npException) {
-			filteredCollection = makeEmptyIssueDecoratorCollectionHolder(EXECUTION_STEP_TYPE, stepId, npException,
-					sorter);
-		}
-
-		return new StepIssuesTableModel(bugTrackersLocalService).buildDataModel(filteredCollection, params.getsEcho());
+		return getKnownIssuesData(EXECUTION_STEP_TYPE, stepId, sorter, params.getsEcho());
 
 	}
 
@@ -417,7 +399,20 @@ public class BugTrackerController {
 			@RequestParam(value = STYLE_ARG, required = false, defaultValue = STYLE_TOGGLE) String panelStyle) {
 
 		Iteration iteration = iterationFinder.findById(iterId);
-		return makeIssuePanel(iteration, ITERATION_TYPE, locale, panelStyle, iteration.getProject());
+		ModelAndView mav = makeIssuePanel(iteration, ITERATION_TYPE, locale, panelStyle, iteration.getProject());
+
+		/*
+		 * issue 4178
+		 * eagerly fetch the row entries if panelStyle is 'fragment-tab'
+		 * and if the user is authenticated
+		 * (we need the table to be shipped along with the panel in one call)
+		 */
+		if (shouldGetTableData(mav, panelStyle)){
+			DataTableModel issues = getKnownIssuesData(ITERATION_TYPE, iterId, new DefaultPagingAndSorting(SORTING_DEFAULT_ATTRIBUTE), "0");
+			mav.addObject(MODEL_TABLE_ENTRIES, issues.getAaData());
+		}
+
+		return mav;
 
 	}
 
@@ -453,8 +448,20 @@ public class BugTrackerController {
 			@RequestParam(value = STYLE_ARG, required = false, defaultValue = STYLE_TOGGLE) String panelStyle) {
 
 		Campaign campaign = campaignFinder.findById(campId);
-		return makeIssuePanel(campaign, CAMPAIGN_TYPE, locale, panelStyle, campaign.getProject());
+		ModelAndView mav = makeIssuePanel(campaign, CAMPAIGN_TYPE, locale, panelStyle, campaign.getProject());
 
+		/*
+		 * issue 4178
+		 * eagerly fetch the row entries if panelStyle is 'fragment-tab'
+		 * and if the user is authenticated
+		 * (we need the table to be shipped along with the panel in one call)
+		 */
+		if (shouldGetTableData(mav, panelStyle)){
+			DataTableModel issues = getKnownIssuesData(CAMPAIGN_TYPE, campId, new DefaultPagingAndSorting(SORTING_DEFAULT_ATTRIBUTE), "0");
+			mav.addObject(MODEL_TABLE_ENTRIES, issues.getAaData());
+		}
+
+		return mav;
 	}
 
 	/**
@@ -488,8 +495,21 @@ public class BugTrackerController {
 			@RequestParam(value = STYLE_ARG, required = false, defaultValue = STYLE_TOGGLE) String panelStyle) {
 
 		TestSuite testSuite = testSuiteFinder.findById(testSuiteId);
-		return makeIssuePanel(testSuite, TEST_SUITE_TYPE, locale, panelStyle, testSuite.getIteration().getProject());
+		ModelAndView mav = makeIssuePanel(testSuite, TEST_SUITE_TYPE, locale, panelStyle, testSuite.getIteration().getProject());
 
+
+		/*
+		 * issue 4178
+		 * eagerly fetch the row entries if panelStyle is 'fragment-tab'
+		 * and if the user is authenticated
+		 * (we need the table to be shipped along with the panel in one call)
+		 */
+		if (shouldGetTableData(mav, panelStyle)){
+			DataTableModel issues = getKnownIssuesData(TEST_SUITE_TYPE, testSuiteId, new DefaultPagingAndSorting(SORTING_DEFAULT_ATTRIBUTE), "0");
+			mav.addObject(MODEL_TABLE_ENTRIES, issues.getAaData());
+		}
+
+		return mav;
 	}
 
 	/**
@@ -707,35 +727,23 @@ public class BugTrackerController {
 			switch(entityType){
 			case TEST_CASE_TYPE :
 				filteredCollection = bugTrackersLocalService.findSortedIssueOwnershipForTestCase(id, paging);
-				model = new TestCaseIssuesTableModel(bugTrackersLocalService, messageSource, locale).buildDataModel(
-						filteredCollection, sEcho);
 				break;
 			case CAMPAIGN_TYPE :
 				filteredCollection = bugTrackersLocalService.findSortedIssueOwnershipsForCampaigns(id, paging);
-				model = new IterationIssuesTableModel(bugTrackersLocalService, messageSource, locale).buildDataModel(
-						filteredCollection,sEcho);
 				break;
 			case ITERATION_TYPE :
 				filteredCollection = bugTrackersLocalService.findSortedIssueOwnershipForIteration(id, paging);
-				model = new IterationIssuesTableModel(bugTrackersLocalService, messageSource, locale).buildDataModel(
-						filteredCollection,sEcho);
 				break;
 			case TEST_SUITE_TYPE :
 				filteredCollection = bugTrackersLocalService.findSortedIssueOwnershipsForTestSuite(id, paging);
-				model = new IterationIssuesTableModel(bugTrackersLocalService, messageSource, locale).buildDataModel(
-						filteredCollection,sEcho);
 				break;
 			case EXECUTION_TYPE :
 				filteredCollection = bugTrackersLocalService.findSortedIssueOwnershipsforExecution(id, paging);
-				model = new ExecutionIssuesTableModel(bugTrackersLocalService, messageSource, locale).buildDataModel(
-						filteredCollection, sEcho);
 				break;
 			case EXECUTION_STEP_TYPE :
 				filteredCollection = bugTrackersLocalService.findSortedIssueOwnerShipsForExecutionStep(id, paging);
-				model = new StepIssuesTableModel(bugTrackersLocalService).buildDataModel(filteredCollection, sEcho);
 				break;
 			default :
-				model = new EmptyIssuesTableModel().buildNothing();
 				String error = "BugTrackerController : cannot fetch issues for unknown entity type '"+entityType+"'";
 				if (LOGGER.isErrorEnabled()){
 					LOGGER.error(error);
@@ -746,10 +754,9 @@ public class BugTrackerController {
 		// no credentials exception are okay, the rest is to be treated as usual
 		catch (BugTrackerNoCredentialsException | NullArgumentException exception) {
 			filteredCollection = makeEmptyIssueDecoratorCollectionHolder(entityType, id, exception, paging);
-			model = new EmptyIssuesTableModel().buildNothing();
 		}
 
-		return model;
+		return model = helper.createModelBuilderFor(entityType).buildDataModel(filteredCollection, sEcho);
 
 	}
 

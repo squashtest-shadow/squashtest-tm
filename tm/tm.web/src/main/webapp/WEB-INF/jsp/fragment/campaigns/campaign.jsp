@@ -27,11 +27,11 @@
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ taglib prefix="camp" tagdir="/WEB-INF/tags/campaigns-components"%>
 <%@ taglib prefix="authz" tagdir="/WEB-INF/tags/authz"%>
-<%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component"%>
 <%@ taglib prefix="at" tagdir="/WEB-INF/tags/attachments"%>
 <%@ taglib prefix="csst" uri="http://org.squashtest.tm/taglib/css-transform"%>
 <%@ taglib prefix="dashboard" tagdir="/WEB-INF/tags/dashboard"%>
 <%@ taglib prefix="json" uri="http://org.squashtest.tm/taglib/json"%>
+<%@ taglib prefix="issues" tagdir="/WEB-INF/tags/issues"%>
 
 <f:message var="squashlocale" key="squashtm.locale" />
 <f:message var="iterationPlanningTitle" key="campaigns.planning.iterations.scheduled_dates" />
@@ -173,7 +173,17 @@
           </c:if>
         </a>
       </li>
+
+<c:if test="${campaign.project.bugtrackerConnected}">
+        <li>
+          <%-- div#bugtracker-section-main-div is declared in tagfile issues:async-bugtracker-panel.tag  --%>
+          <a href="#bugtracker-section-main-div"><f:message key="tabs.label.issues"/></a>
+        </li>
+</c:if>      
+      
     </ul>
+
+
     <div id="tabs-1">
       <c:if test="${ writable }">
         <c:set var="descrRichAttributes" value="class='editable rich-editable' data-def='url=${campaignUrl}' " />
@@ -307,7 +317,16 @@
       <dashboard:campaign-dashboard-panel url="${campaignStatisticsUrl}" printUrl="${campaignStatisticsPrintUrl}"
         allowsSettled="${allowsSettled}" allowsUntestable="${allowsUntestable}" />
     </div>
+    
+        <%-- ----------------------- bugtracker (if present)----------------------------------------%> 
+  
+<c:if test="${campaign.project.bugtrackerConnected}">
+        <issues:async-butracker-panel />
+</c:if>
 
+    <%-- ----------------------- /bugtracker (if present)----------------------------------------%> 
+ 
+    
   </div>
 </csst:jq-tab>
 

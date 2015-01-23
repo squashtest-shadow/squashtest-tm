@@ -31,6 +31,7 @@
 <%@ taglib prefix="at" tagdir="/WEB-INF/tags/attachments"%>
 <%@ taglib prefix="ts" tagdir="/WEB-INF/tags/test-suites-components"%>
 <%@ taglib prefix="csst" uri="http://org.squashtest.tm/taglib/css-transform"%>
+<%@ taglib prefix="issues" tagdir="/WEB-INF/tags/issues"%>
 
 
 <f:message var="squashlocale" key="squashtm.locale" />
@@ -185,6 +186,12 @@
           </c:if>
         </a>
       </li>
+<c:if test="${testSuite.project.bugtrackerConnected}">
+        <li>
+          <%-- div#bugtracker-section-main-div is declared in tagfile issues:async-bugtracker-panel.tag --%>
+          <a href="#bugtracker-section-main-div"><f:message key="tabs.label.issues"/></a>
+        </li>
+</c:if>      
     </ul>
     <div id="tabs-1">
       <c:if test="${ writable }">
@@ -231,6 +238,12 @@
     <at:attachment-tab tabId="tabs-3" entity="${ testSuite }" editable="${ executable }"
       tableModel="${attachmentsModel}" />
 
+    <%-- ----------------------- bugtracker (if present)----------------------------------------%> 
+<c:if test="${testSuite.project.bugtrackerConnected}">
+        <issues:async-butracker-panel />
+</c:if>
+
+    <%-- ----------------------- /bugtracker (if present)----------------------------------------%> 
 
   </div>
 </csst:jq-tab>

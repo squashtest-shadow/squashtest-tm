@@ -151,7 +151,7 @@ require([ "common" ], function() {
 			Frag.init(fragConf);
 
 			if (config.hasBugtracker) {
-				bugtracker.load(config.bugtracker);
+				bugtracker.loadAsync(config.bugtracker);
 			}
 
 			if (config.hasFields) {

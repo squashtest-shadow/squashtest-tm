@@ -62,6 +62,8 @@
 	<tbody><%-- Will be populated through ajax --%></tbody>
 </table>
 
+<c:set var="deferLoading" value="${not empty tableEntries ? fn:length(tableEntries) : 0 }" />
+
 <script type="text/javascript">
 require( ["common"], function(){
 		require(["jquery","squashtable"], function($){
@@ -73,9 +75,10 @@ require( ["common"], function(){
 					$(td).html(correctAssignee);
 					return row;				
 				},
+				'iDeferLoading' : ${deferLoading}
 				<c:if test="${not empty tableEntries}">
-				'aaData' : ${json:serialize(tableEntries)},
-				'iDeferLoading' : ${fn:length(tableEntries)}
+				,
+				'aaData' : ${json:serialize(tableEntries)}
 				</c:if>
 			},
 			{});
