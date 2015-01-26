@@ -259,8 +259,21 @@ public class BugTrackerController {
 	@RequestMapping(value = EXECUTION_TYPE + "/{execId}", method = RequestMethod.GET)
 	public ModelAndView getExecIssuePanel(@PathVariable Long execId, Locale locale,
 			@RequestParam(value = STYLE_ARG, required = false, defaultValue = STYLE_TOGGLE) String panelStyle) {
+
 		Execution bugged = executionFinder.findById(execId);
-		return makeIssuePanel(bugged, EXECUTION_TYPE, locale, panelStyle, bugged.getProject());
+		ModelAndView mav =  makeIssuePanel(bugged, EXECUTION_TYPE, locale, panelStyle, bugged.getProject());
+
+		/*
+		 * issue 4178
+		 * eagerly fetch the row entries if the user is authenticated
+		 * (we need the table to be shipped along with the panel in one call)
+		 */
+		if (shouldGetTableData(mav)){
+			DataTableModel issues = getKnownIssuesData(EXECUTION_TYPE, execId, new DefaultPagingAndSorting(SORTING_DEFAULT_ATTRIBUTE), "0");
+			mav.addObject(MODEL_TABLE_ENTRIES, issues.getAaData());
+		}
+
+		return mav;
 
 	}
 
@@ -350,11 +363,10 @@ public class BugTrackerController {
 
 		/*
 		 * issue 4178
-		 * eagerly fetch the row entries if panelStyle is 'fragment-tab'
-		 * and if the user is authenticated
+		 * eagerly fetch the row entries if the user is authenticated
 		 * (we need the table to be shipped along with the panel in one call)
 		 */
-		if (shouldGetTableData(mav, panelStyle)){
+		if (shouldGetTableData(mav)){
 			DataTableModel issues = getKnownIssuesData(TEST_CASE_TYPE, tcId, new DefaultPagingAndSorting(SORTING_DEFAULT_ATTRIBUTE), "0");
 			mav.addObject(MODEL_TABLE_ENTRIES, issues.getAaData());
 		}
@@ -398,11 +410,10 @@ public class BugTrackerController {
 
 		/*
 		 * issue 4178
-		 * eagerly fetch the row entries if panelStyle is 'fragment-tab'
-		 * and if the user is authenticated
+		 * eagerly fetch the row entries if the user is authenticated
 		 * (we need the table to be shipped along with the panel in one call)
 		 */
-		if (shouldGetTableData(mav, panelStyle)){
+		if (shouldGetTableData(mav)){
 			DataTableModel issues = getKnownIssuesData(ITERATION_TYPE, iterId, new DefaultPagingAndSorting(SORTING_DEFAULT_ATTRIBUTE), "0");
 			mav.addObject(MODEL_TABLE_ENTRIES, issues.getAaData());
 		}
@@ -447,11 +458,10 @@ public class BugTrackerController {
 
 		/*
 		 * issue 4178
-		 * eagerly fetch the row entries if panelStyle is 'fragment-tab'
-		 * and if the user is authenticated
+		 * eagerly fetch the row entries if the user is authenticated
 		 * (we need the table to be shipped along with the panel in one call)
 		 */
-		if (shouldGetTableData(mav, panelStyle)){
+		if (shouldGetTableData(mav)){
 			DataTableModel issues = getKnownIssuesData(CAMPAIGN_TYPE, campId, new DefaultPagingAndSorting(SORTING_DEFAULT_ATTRIBUTE), "0");
 			mav.addObject(MODEL_TABLE_ENTRIES, issues.getAaData());
 		}
@@ -495,11 +505,10 @@ public class BugTrackerController {
 
 		/*
 		 * issue 4178
-		 * eagerly fetch the row entries if panelStyle is 'fragment-tab'
-		 * and if the user is authenticated
+		 * eagerly fetch the row entries if the user is authenticated
 		 * (we need the table to be shipped along with the panel in one call)
 		 */
-		if (shouldGetTableData(mav, panelStyle)){
+		if (shouldGetTableData(mav)){
 			DataTableModel issues = getKnownIssuesData(TEST_SUITE_TYPE, testSuiteId, new DefaultPagingAndSorting(SORTING_DEFAULT_ATTRIBUTE), "0");
 			mav.addObject(MODEL_TABLE_ENTRIES, issues.getAaData());
 		}
@@ -697,10 +706,7 @@ public class BugTrackerController {
 
 	private DataTableModel getKnownIssuesData(String entityType, Long id, PagingAndSorting paging, String sEcho) {
 
-		Locale locale = LocaleContextHolder.getLocale();
-
 		PagedCollectionHolder<List<IssueOwnership<RemoteIssueDecorator>>> filteredCollection;
-		DataTableModel model ;
 
 		try {
 			if (entityType.equals(TEST_CASE_TYPE)){
@@ -737,7 +743,7 @@ public class BugTrackerController {
 			filteredCollection = makeEmptyIssueDecoratorCollectionHolder(entityType, id, exception, paging);
 		}
 
-		return model = helper.createModelBuilderFor(entityType).buildDataModel(filteredCollection, sEcho);
+		return helper.createModelBuilderFor(entityType).buildDataModel(filteredCollection, sEcho);
 
 	}
 
@@ -793,8 +799,8 @@ public class BugTrackerController {
 		return new PagingBackedPagedCollectionHolder<List<IssueOwnership<RemoteIssueDecorator>>>(paging, 0, emptyList);
 	}
 
-	private boolean shouldGetTableData(ModelAndView mav, String panelStyle){
-		return mav.getModel().get(MODEL_BUG_TRACKER_STATUS) == BugTrackerStatus.BUGTRACKER_READY && STYLE_TAB.equals(panelStyle);
+	private boolean shouldGetTableData(ModelAndView mav){
+		return mav.getModel().get(MODEL_BUG_TRACKER_STATUS) == BugTrackerStatus.BUGTRACKER_READY;
 	}
 
 }
