@@ -48,7 +48,7 @@ define(["jquery", "squashtable"], function($){
 			}
 		};
 
-		return $(tblSelector).squashTable({}, squashSettings);
+		return $(tblSelector).squashTable(settings.tblSettings, squashSettings);
 	};
 
 	return{

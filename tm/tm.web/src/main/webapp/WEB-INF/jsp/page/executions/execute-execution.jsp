@@ -32,6 +32,7 @@
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ taglib prefix="authz" tagdir="/WEB-INF/tags/authz"%>
 <%@ taglib prefix="at" tagdir="/WEB-INF/tags/attachments"%>
+<%@ taglib prefix="issues" tagdir="/WEB-INF/tags/issues"%>
 
 <c:url var="customFieldsValuesURL" value="/custom-fields/values" />
 <c:url var="denormalizedFieldsValuesURL" value="/denormalized-fields/values" />
@@ -457,12 +458,12 @@
 				</div>
 
 				<at:attachment-bloc attachListId="${executionStep.attachmentList.id}" workspaceName="campaign" editable="${ editable }" attachmentSet="${attachments}" />
-
-				<%------------------------------ bugs section -------------------------------%>
-				<%-- this section is loaded asynchronously. The bugtracker might be out of reach indeed. --%>
-        		<div id="bugtracker-section-div">
-        		</div>
-        		 <script type="text/javascript">
+    <%-- ----------------------- bugtracker (if present)----------------------------------------%> 
+<c:if test="${executionStep.project.bugtrackerConnected}">
+        <issues:butracker-panel entity="${executionStep}" issueDetector="true"/>
+</c:if>
+        
+        <script type="text/javascript">
         		 require(["common"], function() {
         			 require(["jquery", "app/ws/squashtm.notification"], function($, wtf) {
         		 		$("#bugtracker-section-div").load("${btEntityUrl}");
@@ -470,7 +471,10 @@
         			 });
         		 });
         		</script>
-				<%------------------------------ /bugs section -------------------------------%>
+</c:if>
+
+    <%-- ----------------------- /bugtracker (if present)----------------------------------------%> 
+
 	
 				
 			</div>
