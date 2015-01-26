@@ -107,7 +107,7 @@
   config.hasBugtracker = ${ testSuite.iteration.project.bugtrackerConnected };
   config.identity = { resid : ${testSuite.id}, restype : "test-suites"  };
   config.parentIdentity = { resid : ${testSuite.iteration.id}, restype : "iteration" };
-  config.bugtracker = { url: "${btEntityUrl}", label: "${tabIssueLabel}" };
+  config.bugtracker = { url: "${btEntityUrl}", style : "fragment-tab" };
   config.customFields = { url: "${customFieldsValuesURL}" };
   config.testSuiteURL = "${testSuiteUrl}";
   config.api = {
@@ -188,7 +188,7 @@
       </li>
 <c:if test="${testSuite.project.bugtrackerConnected}">
         <li>
-          <%-- div#bugtracker-section-main-div is declared in tagfile issues:async-bugtracker-panel.tag --%>
+          <%-- div#bugtracker-section-main-div is declared in tagfile issues:bugtracker-panel.tag --%>
           <a href="#bugtracker-section-main-div"><f:message key="tabs.label.issues"/></a>
         </li>
 </c:if>      
@@ -240,7 +240,7 @@
 
     <%-- ----------------------- bugtracker (if present)----------------------------------------%> 
 <c:if test="${testSuite.project.bugtrackerConnected}">
-        <issues:async-butracker-panel />
+        <issues:butracker-panel entity="${testSuite}"/>
 </c:if>
 
     <%-- ----------------------- /bugtracker (if present)----------------------------------------%> 

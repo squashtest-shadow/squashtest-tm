@@ -18,46 +18,26 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ "jquery", "jqueryui", "./report-issue-popup/jquery.main-popup" ], function($) {
+define([ "jquery", "app/util/ButtonUtil", 
+         "jqueryui", "./report-issue-popup/jquery.main-popup" ], function($, btn) {
 	return {
 		
 		/*
-		 *  Inserts the panel head and loads the content eagerly.
-		 *  This is legacy code, use the loadAsync instead. 
+		 * Loads a bugtracker panel with (a more) graceful error handling
+		 * if the bugtracker is sluggish
+		 * 
+		 * the conf object must be : 
+		 * {
+		 * 	url  : the url where to fetch the panel,
+		 * 	style : "toggle" || "fragment-tab", defaults to "toggle" if undefined
+		 * }
 		 *  
-		 */
-		load : function(conf) {
-
-			// first : add the tab entry
-			var tab = $("div.fragment-tabs");
-
-			var btDiv = $("#bugtracker-section-div");
-			if (!btDiv.length) {
-				btDiv = $('<div id="bugtracker-section-div"/>');
-				btDiv.appendTo(tab);
-			}
-
-			tab.tabs("add", "#bugtracker-section-div", conf.label);
-
-			// second : load the bugtracker section
-			btDiv.load(conf.url + "?style=fragment-tab", function() {
-				btDiv.addClass("table-tab");
-			});
-
-			var cookieName = "iteration-tab-cookie";
-			var cookie = $.cookie(cookieName);
-			if (cookie){
-				tab.tabs({active : parseInt(cookie,10)});
-				$.cookie(cookieName, null, { path: '/' });
-			}
-		},
-		
-		/*
-		 * This method assumes the existence of a certain structure (if you're a dev and 
+		 * Also, This method assumes the existence of a certain structure (if you're a dev and 
 		 * interested with this, check async-bugtracker-panel.tag), especially the 
 		 * tab and the recipient of the ajax call must exist.
 		 */
-		loadAsync : function(conf) {
+		load : function(conf) {
+			
 
 			var btDiv = $("#bugtracker-section-main-div"),
 				btContentDiv = $("#bugtracker-section-div"),
@@ -65,36 +45,50 @@ define([ "jquery", "jqueryui", "./report-issue-popup/jquery.main-popup" ], funct
 				errorDiv = $("#bugtracker-section-error"),
 				tab =  $("div.fragment-tabs");
 
-			// note that we bind with 'one' , not 'on'. This matters.
-			tab.one('tabsactivate', function(evt, ui){
-				if (ui.newPanel.is(btDiv)){	
-					
-					$.ajax(conf.url + "?style=fragment-tab")
-					.success(function(htmlpanel) {
-						btContentDiv.html(htmlpanel);
-						waitDiv.hide();
-						btContentDiv.show();
-					})
-					.error(function(){
-						waitDiv.hide();
-						errorDiv.show();
-					});
-					
-					btContentDiv.load(conf.url + "?style=fragment-tab", function() {
-						waitDiv.hide();
-						btContentDiv.show();
-					});
-				}
-			});
-
-			var cookieName = "iteration-tab-cookie";
-			var cookie = $.cookie(cookieName);
-			if (cookie){
-				tab.tabs({active : parseInt(cookie,10)});
-				$.cookie(cookieName, null, { path: '/' });
+			var sstyle = conf.style || "toggle";
+			
+			// the main loading function
+			var loadFn = function(){
+				$.ajax(conf.url + "?style="+sstyle)
+				.success(function(htmlpanel) {
+					btContentDiv.html(htmlpanel);
+					waitDiv.hide();
+					btContentDiv.show();
+				})
+				.error(function(){
+					waitDiv.hide();
+					errorDiv.show();
+					btn.disable($("#issue-report-dialog-openbutton"));
+				});			
+			};
+			
+			// now let's see how we use it
+			if (sstyle === "toggle"){
+				// execute immediately
+				loadFn();
 			}
-		}
+			else if (sstyle === "fragment-tab"){
+				// deferred execution to when the 
+				// note that we bind with 'one' , not 'on'. This matters.
+				tab.one('tabsactivate', function(evt, ui){
+					if (ui.newPanel.is(btDiv)){	
+						loadFn();
+					}
+				});
 
+				// plus some shits I don't remember what it is
+				var cookieName = "iteration-tab-cookie";
+				var cookie = $.cookie(cookieName);
+				if (cookie){
+					tab.tabs({active : parseInt(cookie,10)});
+					$.cookie(cookieName, null, { path: '/' });
+				}				
+			}
+			else{
+				throw "bugtracker : unknown or undefined panel style '"+sstyle+"'";
+			}
+
+		}
 	}
 
 });

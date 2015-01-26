@@ -102,8 +102,9 @@ define(["jquery", "squash.basicwidgets", "contextual-content-handlers", "jquery.
 
 	function initBugtracker(conf){
 		if (conf.features.hasBugtracker){
-			bugtrackerPanel.loadAsync({
-				url : conf.data.bugtrackerUrl
+			bugtrackerPanel.load({
+				url : conf.data.bugtrackerUrl,
+				style : "fragment-tab"
 			});
 		}
 	}

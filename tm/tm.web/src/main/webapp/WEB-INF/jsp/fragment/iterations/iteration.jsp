@@ -103,7 +103,7 @@
 	config.hasFields = ${ hasCUF };
 	config.hasBugtracker = ${ iteration.project.bugtrackerConnected };
 	config.identity = { resid: ${iteration.id}, restype : "iterations" };
-	config.bugtracker = {url: "${btEntityUrl}", label: "${tabIssueLabel}" };
+	config.bugtracker = {url: "${btEntityUrl}", style: "fragment-tab" };
 	config.customFields = { url: "${customFieldsValuesURL}" };
 	config.iterationURL = "${iterationUrl}";
 </script>
@@ -184,7 +184,7 @@
       
 <c:if test="${iteration.project.bugtrackerConnected}">
         <li>
-          <%-- div#bugtracker-section-main-div is declared in tagfile issues:async-bugtracker-panel.tag --%>
+          <%-- div#bugtracker-section-main-div is declared in tagfile issues:bugtracker-panel.tag --%>
           <a href="#bugtracker-section-main-div"><f:message key="tabs.label.issues"/></a>
         </li>
 </c:if>      
@@ -317,7 +317,7 @@
 
     <%-- ----------------------- bugtracker (if present)----------------------------------------%> 
 <c:if test="${iteration.project.bugtrackerConnected}">
-        <issues:async-butracker-panel />
+        <issues:butracker-panel entity="${iteration}"/>
 </c:if>
 
     <%-- ----------------------- /bugtracker (if present)----------------------------------------%> 

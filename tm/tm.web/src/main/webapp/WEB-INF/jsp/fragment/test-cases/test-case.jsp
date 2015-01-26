@@ -127,7 +127,7 @@ require(["common"], function() {
 		</li>
 <c:if test="${testCase.project.bugtrackerConnected}">
         <li>
-          <%-- div#bugtracker-section-main-div is declared in tagfile issues:async-bugtracker-panel.tag --%>
+          <%-- div#bugtracker-section-main-div is declared in tagfile issues:bugtracker-panel.tag --%>
           <a href="#bugtracker-section-main-div"><f:message key="tabs.label.issues"/></a>
         </li>
 </c:if>
@@ -172,7 +172,7 @@ require(["common"], function() {
 
     <%-- ----------------------- bugtracker (if present)----------------------------------------%> 
 <c:if test="${testCase.project.bugtrackerConnected}">
-        <issues:async-butracker-panel />
+        <issues:butracker-panel entity="${testCase}"/>
 </c:if>
 
     <%-- ----------------------- /bugtracker (if present)----------------------------------------%> 

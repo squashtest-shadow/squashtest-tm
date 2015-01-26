@@ -30,6 +30,7 @@
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ taglib prefix="authz" tagdir="/WEB-INF/tags/authz"%>
 <%@ taglib prefix="at" tagdir="/WEB-INF/tags/attachments"%>
+<%@ taglib prefix="issues" tagdir="/WEB-INF/tags/issues"%>
 <%@ taglib prefix="json" uri="http://org.squashtest.tm/taglib/json" %>
 
 
@@ -63,7 +64,8 @@
 			'execution-page' : {
 				basic : {
 					executionId : ${execution.id},
-					automated : ${automated},		
+					automated : ${automated},	
+					hasBugtracker : ${execution.project.bugtrackerConnected},
     				stepstable : {
     					colDefs : ${stepsAoColumnDefs},
     					cufDefs : ${ json:marshall(stepsCufDefinitions) }
@@ -317,13 +319,18 @@
 publish('reload.executions.attachments');
 </script>
 
-	<%------------------------------ bugs section -------------------------------%>
+    <%-- ----------------------- bugtracker (if present)----------------------------------------%> 
+<c:if test="${execution.project.bugtrackerConnected}">
+        <issues:butracker-panel entity="${execution}" issueDetector="true"/>
+        
+        <script type="text/javascript">
+        publish('reload.executions.bugtracker');
+        </script>          
+</c:if>
 
-	<div id="bugtracker-section-div"></div>
-  
-<script type="text/javascript">
-publish('reload.executions.bugtracker');
-</script>  
+    <%-- ----------------------- /bugtracker (if present)----------------------------------------%> 
+
+
 
 	<%------------------------------ /bugs section -------------------------------%>
 	<%--------------------------- Deletion confirmation popup -------------------------------------%>

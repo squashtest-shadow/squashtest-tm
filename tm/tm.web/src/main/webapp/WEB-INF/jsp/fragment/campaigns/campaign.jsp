@@ -176,7 +176,7 @@
 
 <c:if test="${campaign.project.bugtrackerConnected}">
         <li>
-          <%-- div#bugtracker-section-main-div is declared in tagfile issues:async-bugtracker-panel.tag  --%>
+          <%-- div#bugtracker-section-main-div is declared in tagfile issues:bugtracker-panel.tag  --%>
           <a href="#bugtracker-section-main-div"><f:message key="tabs.label.issues"/></a>
         </li>
 </c:if>      
@@ -321,7 +321,7 @@
         <%-- ----------------------- bugtracker (if present)----------------------------------------%> 
   
 <c:if test="${campaign.project.bugtrackerConnected}">
-        <issues:async-butracker-panel />
+        <issues:butracker-panel entity="${campaign}" />
 </c:if>
 
     <%-- ----------------------- /bugtracker (if present)----------------------------------------%> 

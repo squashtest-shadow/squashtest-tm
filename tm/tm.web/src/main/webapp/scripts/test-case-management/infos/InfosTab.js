@@ -80,8 +80,9 @@ define([ "jquery", "backbone", "underscore",
 
 			// bugtracker
 			if (this.settings.hasBugtracker){
-				bugtrackerPanel.loadAsync({
-					url : this.settings.urls.bugtrackerUrl
+				bugtrackerPanel.load({
+					url : this.settings.urls.bugtrackerUrl,
+					style : "fragment-tab"
 				});
 			}
 

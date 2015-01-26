@@ -19,9 +19,9 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 define(['module', 'jquery', 'app/pubsub', 'squash.basicwidgets', 'app/ws/squashtm.workspace', 'squash.translator', 'app/ws/squashtm.notification', 'workspace.routing', 
-        'page-components/execution-information-panel', 'file-upload', 'custom-field-values',
+        'page-components/execution-information-panel', 'file-upload', 'custom-field-values', 'bugtracker/bugtracker-panel',
         'jqueryui', 'jeditable.ckeditor', 'jquery.squash', 'jquery.squash.formdialog', 'jquery.squash.togglepanel'], 
-		function(module, $, pubsub, basicwidg, WS, translator, notification, routing, infopanel, upload, cufValuesManager){
+		function(module, $, pubsub, basicwidg, WS, translator, notification, routing, infopanel, upload, cufValuesManager, bugtracker){
 
 	squashtm.execution = squashtm.execution || {};
 	
@@ -241,9 +241,14 @@ define(['module', 'jquery', 'app/pubsub', 'squash.basicwidgets', 'app/ws/squasht
 	
 	function initBugtracker(){
 		var config = module.config();
-		var url = routing.buildURL('bugtracker.execution', config.basic.executionId);
 		
-		$("#bugtracker-section-div").load(url);
+		if (config.basic.hasBugtracker){
+			var conf = {
+				url : routing.buildURL('bugtracker.execution', config.basic.executionId)
+			}
+			
+			bugtracker.load(conf);
+		}
 	}
 	
 	
