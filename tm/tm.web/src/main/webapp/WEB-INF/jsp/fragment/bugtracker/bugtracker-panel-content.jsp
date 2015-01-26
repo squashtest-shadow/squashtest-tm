@@ -382,7 +382,7 @@ require([ "common" ], function() {
 	<c:choose>
 		<c:when test="${entityType == 'execution-step'}">
 			<is:issue-table-execstep dataUrl="${tableUrl}" bugTrackerUrl="${bugTrackerServiceUrl}" entityId="${entity.id}"
-				interfaceDescriptor="${interfaceDescriptor}" executable="${executable}"/>
+				interfaceDescriptor="${interfaceDescriptor}" executable="${executable}" tableEntries="${tableEntries}"/>
 		</c:when>
 		<c:when test="${entityType == 'execution'}">
 			<is:issue-table-exec dataUrl="${tableUrl}" bugTrackerUrl="${bugTrackerServiceUrl}" entityId="${entity.id}"

@@ -31,6 +31,7 @@
 <%@ taglib prefix="authz" tagdir="/WEB-INF/tags/authz" %>
 <%@ taglib prefix="at" tagdir="/WEB-INF/tags/attachments"%>
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component" %>
+<%@ taglib prefix="issues" tagdir="/WEB-INF/tags/issues"%>
 <%-- ----------------------------------- Authorization ----------------------------------------------%>
 <c:set var="editable" value="${ false }" /> 
 <authz:authorized hasRole="ROLE_ADMIN" hasPermission="EXECUTE" domainObject="${ execution }">
@@ -239,18 +240,25 @@
 		<%--
 			this section is loaded asynchronously. The bugtracker might be out of reach indeed.
 		 --%>	
-		<div id="bugtracker-section-div">
-		</div>
+    <%-- ----------------------- bugtracker (if present)----------------------------------------%> 
+<c:if test="${executionStep.project.bugtrackerConnected}">
+        <issues:butracker-panel entity="${executionStep}" issueDetector="true"/>
+        
 		 <script type="text/javascript">
 		 require(["common"], function() {
-			 require(["jquery", "app/ws/squashtm.notification"], function($, wtf) {
-		 		$("#bugtracker-section-div").load("${btEntityUrl}");
+			 require(["jquery", "app/ws/squashtm.notification", "bugtracker/bugtracker-panel"], function($, wtf, bugtracker) {
+				 bugtracker.load({
+					 url : "${btEntityUrl}"
+				 });
 		 		wtf.init({});
 			 });
 		 });
-		</script>
+		</script>         
+</c:if>
+
+    <%-- ----------------------- /bugtracker (if present)----------------------------------------%> 
+
 		
-		<%------------------------------ /bugs section -------------------------------%>
 	</div>
 </body>
 </c:otherwise>

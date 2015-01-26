@@ -174,6 +174,19 @@ public class BugTrackerController {
 		ExecutionStep step = executionFinder.findExecutionStepById(stepId);
 		ModelAndView mav = makeIssuePanel(step, EXECUTION_STEP_TYPE, locale, panelStyle, step.getProject());
 		mav.addObject("useParentContextPopup", useParentPopup);
+
+
+		/*
+		 * issue 4178
+		 * eagerly fetch the row entries if the user is authenticated
+		 * (we need the table to be shipped along with the panel in one call)
+		 */
+		if (shouldGetTableData(mav)){
+			DataTableModel issues = getKnownIssuesData(EXECUTION_STEP_TYPE, stepId, new DefaultPagingAndSorting(SORTING_DEFAULT_ATTRIBUTE), "0");
+			mav.addObject(MODEL_TABLE_ENTRIES, issues.getAaData());
+		}
+
+
 		return mav;
 	}
 

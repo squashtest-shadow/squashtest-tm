@@ -27,12 +27,16 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="s" uri="http://www.springframework.org/tags" %>
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component" %>	
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%@ taglib prefix="json" uri="http://org.squashtest.tm/taglib/json" %>
 
 <%@ attribute name="interfaceDescriptor" type="java.lang.Object" required="true" description="an object holding the labels for the interface"%>
 <%@ attribute name="dataUrl" required="true" description="where the table will fetch its data" %>
 <%@ attribute name="bugTrackerUrl" required="true" description="where the delete buttons send the delete instruction" %>
 <%@ attribute name="entityId" required="true" description="id of the current execution step" %>
 <%@ attribute name="executable" required="true" description="if the user has EXECUTE rights on the execution" %>
+<%@ attribute name="tableEntries" required="false" type="java.util.List" description="if set, must be valid aaData for datatables. Will then defer the ajax loading of the table." %>
+
 <%--
 
 	columns are :
@@ -62,6 +66,8 @@
 </table>
 
 
+<c:set var="deferLoading" value="${not empty tableEntries ? fn:length(tableEntries) : 0 }" />
+
 <script type="text/javascript">
 require( ["common"], function(){
 		require(["jquery","issues/issues-table"], function($,it){
@@ -74,6 +80,13 @@ require( ["common"], function(){
 				language : {
 					removeMessage : '<f:message key="dialog.remove-testcase-association.message" />',
 					removeTooltip : '<f:message key="test-case.verified_requirement_item.remove.button.label" />'
+				},
+				tblSettings : {
+					iDeferLoading : ${deferLoading}
+	        		<c:if test="${not empty tableEntries}">
+	        		,
+	        		'aaData' : ${json:serialize(tableEntries)}
+	        		</c:if>					
 				}
 			});
 		});

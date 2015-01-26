@@ -32,11 +32,12 @@ define(['module',
         'custom-field-values', 
         'app/ws/squashtm.notification',
         "file-upload",
+        'bugtracker/bugtracker-panel',
         'jquery.squash'], 
          function(module, pubsub, routing, $, basicwidg, infopanel, eventBus, 
         		 translator,
         		 ComponentUtil, buttonUtil, oneshot, cufValues, notification,
-        		 upload) {
+        		 upload, bugtracker) {
 
 	// ************* event subscription ****************
 	
@@ -198,12 +199,21 @@ define(['module',
 	function initBugtracker(){
 		var config = module.config();
 		
-		$("#bugtracker-section-div").load(config.urls.bugtracker);
+		if (config.basic.hasBugtracker){
+
+			var conf = {
+				url : config.urls.bugtracker
+			}
+			
+			bugtracker.load(conf);
+			
+			//issue 3083 : propagate the information to the parent context
+			eventBus.onContextual('context.bug-reported', function(event, json){
+				window.opener.squashtm.workspace.eventBus.trigger(event, json )
+			});
+			
+		}
 		
-		//issue 3083 : propagate the information to the parent context
-		eventBus.onContextual('context.bug-reported', function(event, json){
-			window.opener.squashtm.workspace.eventBus.trigger(event, json )
-		});
 	}
 	
 	function initComplete(){

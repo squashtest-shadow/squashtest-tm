@@ -32,6 +32,7 @@
 <%@ taglib prefix="authz" tagdir="/WEB-INF/tags/authz"%>
 <%@ taglib prefix="at" tagdir="/WEB-INF/tags/attachments"%>
 <%@ taglib prefix="fn"uri="http://java.sun.com/jsp/jstl/functions"%>
+<%@ taglib prefix="issues" tagdir="/WEB-INF/tags/issues"%>
 
 <s:url var="attachmentsURL" value="/attach-list/${executionStep.attachmentList.id}/attachments"/>
 <s:url var="btEntityUrl" value="/bugtracker/execution-step/${executionStep.id}"/>
@@ -100,7 +101,8 @@
                 				hasNextTestCase : ${ (not empty hasNextTestCase) and hasNextTestCase },
                 				hasNextStep : ${ (not empty hasNextStep) and hasNextStep },
                 				hasCufs : ${hasCustomFields},
-                				hasDenormCufs : ${hasDenormFields}
+                				hasDenormCufs : ${hasDenormFields},
+                				hasBugtracker : ${executionStep.project.bugtrackerConnected}
             				},
             				urls : {
             					baseURL : "${currentStepsUrl}",
@@ -276,18 +278,18 @@ publish("reload.executedialog.cufs");
 publish('reload.executedialog.attachments');
 </script>
                 
-                
-				<%------------------------------ bugs section -------------------------------%>
-				<%-- this section is loaded asynchronously. The bugtracker might be out of reach indeed. --%>
-        		<div id="bugtracker-section-div">
+    <%-- ----------------------- bugtracker (if present)----------------------------------------%> 
+<c:if test="${executionStep.project.bugtrackerConnected}">
+        <issues:butracker-panel entity="${executionStep}" issueDetector="true"/>
+        
+        <script type="text/javascript">
+        publish('reload.executedialog.issues'); 
+        </script>          
+</c:if>
 
-        		</div>
-            
- <script type="text/javascript">
- publish('reload.executedialog.issues'); 
- </script>
-				<%------------------------------ /bugs section -------------------------------%>
-  	
+    <%-- ----------------------- /bugtracker (if present)----------------------------------------%> 
+
+
 <script type="text/javascript">
 publish("reload.executedialog.complete");
 </script>

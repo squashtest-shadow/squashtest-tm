@@ -49,7 +49,10 @@ define([ "jquery", "app/util/ButtonUtil",
 			
 			// the main loading function
 			var loadFn = function(){
-				$.ajax(conf.url + "?style="+sstyle)
+				var params = {
+					data : { 'style' : sstyle}	
+				};
+				$.ajax(conf.url, params)
 				.success(function(htmlpanel) {
 					btContentDiv.html(htmlpanel);
 					waitDiv.hide();
