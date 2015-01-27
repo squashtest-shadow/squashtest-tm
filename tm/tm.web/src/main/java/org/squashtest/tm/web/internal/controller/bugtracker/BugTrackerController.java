@@ -73,6 +73,7 @@ import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.execution.ExecutionStep;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.testcase.TestCase;
+import org.squashtest.tm.service.bugtracker.BugTrackerManagerService;
 import org.squashtest.tm.service.bugtracker.BugTrackersLocalService;
 import org.squashtest.tm.service.campaign.CampaignFinder;
 import org.squashtest.tm.service.campaign.IterationFinder;
@@ -114,7 +115,6 @@ public class BugTrackerController {
 	private static final String EMPTY_BUGTRACKER_MAV = "fragment/issues/bugtracker-panel-empty";
 
 	private static final String BUGTRACKER_ID = "bugTrackerId";
-	private static final String EMPTY_BUGTRACKER_MAV = "fragment/bugtracker/bugtracker-panel-empty";
 	private static final String STYLE_ARG = "style";
 	private static final String STYLE_TOGGLE = "toggle";
 	private static final String STYLE_TAB = "fragment-tab";
@@ -703,26 +703,25 @@ public class BugTrackerController {
 		DataTableModel model ;
 
 		try {
-			switch(entityType){
-			case TEST_CASE_TYPE :
+			if (entityType.equals(TEST_CASE_TYPE)){
 				filteredCollection = bugTrackersLocalService.findSortedIssueOwnershipForTestCase(id, paging);
-				break;
-			case CAMPAIGN_TYPE :
+			}
+			else if (entityType.equals(CAMPAIGN_TYPE)){			
 				filteredCollection = bugTrackersLocalService.findSortedIssueOwnershipsForCampaigns(id, paging);
-				break;
-			case ITERATION_TYPE :
+			}
+			else if (entityType.equals(ITERATION_TYPE)){			
 				filteredCollection = bugTrackersLocalService.findSortedIssueOwnershipForIteration(id, paging);
-				break;
-			case TEST_SUITE_TYPE :
+			}
+			else if (entityType.equals(TEST_SUITE_TYPE)){
 				filteredCollection = bugTrackersLocalService.findSortedIssueOwnershipsForTestSuite(id, paging);
-				break;
-			case EXECUTION_TYPE :
+			}
+			else if (entityType.equals(EXECUTION_TYPE)){
 				filteredCollection = bugTrackersLocalService.findSortedIssueOwnershipsforExecution(id, paging);
-				break;
-			case EXECUTION_STEP_TYPE :
+			}
+			else if (entityType.equals(EXECUTION_STEP_TYPE)){
 				filteredCollection = bugTrackersLocalService.findSortedIssueOwnerShipsForExecutionStep(id, paging);
-				break;
-			default :
+			}
+			else{
 				String error = "BugTrackerController : cannot fetch issues for unknown entity type '"+entityType+"'";
 				if (LOGGER.isErrorEnabled()){
 					LOGGER.error(error);
@@ -731,7 +730,10 @@ public class BugTrackerController {
 			}
 		}
 		// no credentials exception are okay, the rest is to be treated as usual
-		catch (BugTrackerNoCredentialsException | NullArgumentException exception) {
+		catch (BugTrackerNoCredentialsException ex){
+			filteredCollection = makeEmptyIssueDecoratorCollectionHolder(entityType, id, ex, paging);
+		}
+		catch( NullArgumentException exception) {
 			filteredCollection = makeEmptyIssueDecoratorCollectionHolder(entityType, id, exception, paging);
 		}
 

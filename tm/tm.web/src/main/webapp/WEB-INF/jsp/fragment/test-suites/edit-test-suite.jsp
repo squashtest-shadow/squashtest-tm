@@ -34,6 +34,7 @@
 <%@ taglib prefix="ts" tagdir="/WEB-INF/tags/test-suites-components"%>
 <%@ taglib prefix="csst"
 	uri="http://org.squashtest.tm/taglib/css-transform"%>
+<%@ taglib prefix="issues" tagdir="/WEB-INF/tags/issues"%>
 
 
 <f:message var="squashlocale" key="squashtm.locale" />
@@ -122,7 +123,7 @@
   config.hasBugtracker = ${ testSuite.iteration.project.bugtrackerConnected };
   config.identity = { resid : ${testSuite.id}, restype : "test-suites"  };
   config.parentIdentity = { resid : ${testSuite.iteration.id}, restype : "iteration" };
-  config.bugtracker = { url: "${btEntityUrl}", label: "${tabIssueLabel}" };
+  config.bugtracker = { url: "${btEntityUrl}", style : "fragment-tab"  };
   config.customFields = { url: "${customFieldsValuesURL}" };
   config.testSuiteURL = "${testSuiteUrl}";
   config.api = {
@@ -190,6 +191,12 @@
 					<c:if test="${ testSuite.attachmentList.notEmpty }">
 						<span class="hasAttach">!</span>
 					</c:if> </a></li>
+<c:if test="${testSuite.project.bugtrackerConnected}">
+        <li>
+          <%-- div#bugtracker-section-main-div is declared in tagfile issues:bugtracker-panel.tag --%>
+          <a href="#bugtracker-section-main-div"><f:message key="tabs.label.issues"/></a>
+        </li>
+</c:if>   					
 		</ul>
 		<div id="tabs-1">
 			<c:if test="${ writable }">
@@ -241,6 +248,13 @@
 
 		<at:attachment-tab tabId="tabs-3" entity="${ testSuite }"
 			editable="${ executable }" tableModel="${attachmentsModel}" />
+
+    <%-- ----------------------- bugtracker (if present)----------------------------------------%> 
+<c:if test="${testSuite.project.bugtrackerConnected}">
+        <issues:butracker-panel entity="${testSuite}"/>
+</c:if>
+
+    <%-- ----------------------- /bugtracker (if present)----------------------------------------%> 
 
 
 	</div>

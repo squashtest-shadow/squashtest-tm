@@ -211,8 +211,10 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 			return futureIssues.get(TIMEOUT_SEC, TimeUnit.SECONDS);
 		}catch(TimeoutException timex){
 			throw new BugTrackerRemoteException(timex);
-		} catch (InterruptedException | ExecutionException e) {
+		} catch (InterruptedException e){
 			throw new BugTrackerRemoteException(e.getCause());
+		} catch  (ExecutionException e) {
+			throw new BugTrackerRemoteException(e);
 		}
 
 	}
@@ -484,10 +486,12 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 			return new PagingBackedPagedCollectionHolder<List<IssueOwnership<RemoteIssueDecorator>>>(sorter, totalIssues,
 					ownerships);
 
-		}catch(TimeoutException ex){
-			throw new BugTrackerRemoteException(ex.getCause());
-		}catch(ExecutionException | InterruptedException ex){
-			throw new BugTrackerRemoteException(ex.getCause());
+		}catch(TimeoutException timex){
+			throw new BugTrackerRemoteException(timex);
+		} catch (InterruptedException e){
+			throw new BugTrackerRemoteException(e.getCause());
+		} catch  (ExecutionException e) {
+			throw new BugTrackerRemoteException(e);
 		}
 	}
 
@@ -583,8 +587,10 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 			return btIssues;
 		}catch(TimeoutException timex){
 			throw new BugTrackerRemoteException(timex);
-		}catch(ExecutionException | InterruptedException ex){
-			throw new BugTrackerRemoteException(ex.getCause());
+		} catch (InterruptedException e){
+			throw new BugTrackerRemoteException(e.getCause());
+		} catch  (ExecutionException e) {
+			throw new BugTrackerRemoteException(e);
 		}
 	}
 

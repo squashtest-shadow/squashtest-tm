@@ -52,7 +52,7 @@ import org.squashtest.tm.web.internal.util.HTMLCleanupUtils;
 
 
 @Component
-final class BugTrackerControllerHelper {
+public final class BugTrackerControllerHelper {
 
 	@Inject private BugTrackersLocalService service;
 	@Inject private InternationalizationHelper source;
@@ -246,29 +246,20 @@ final class BugTrackerControllerHelper {
 
 		DataTableModelBuilder<IssueOwnership<RemoteIssueDecorator>> builder;
 
-		switch(entityType){
-		case BugTrackerController.TEST_CASE_TYPE :
+		if (entityType.equals(BugTrackerController.TEST_CASE_TYPE)){
 			builder = new TestCaseIssuesTableModel();
-			break;
-
-		case BugTrackerController.CAMPAIGN_TYPE :
-		case BugTrackerController.ITERATION_TYPE :
-		case BugTrackerController.TEST_SUITE_TYPE :
-			builder = new IterationIssuesTableModel();
-			break;
-
-		case BugTrackerController.EXECUTION_TYPE :
-			builder = new ExecutionIssuesTableModel();
-			break;
-
-		case BugTrackerController.EXECUTION_STEP_TYPE :
-			builder = new StepIssuesTableModel();
-			break;
-
-		default :
-			throw new IllegalArgumentException("BugTrackerController : cannot fetch issues for unknown entity type '"+entityType+"'");
-
 		}
+		else if (entityType.equals(BugTrackerController.EXECUTION_TYPE)){
+			builder = new ExecutionIssuesTableModel();
+		}
+		else if (entityType.equals(BugTrackerController.EXECUTION_STEP_TYPE)){
+			builder = new StepIssuesTableModel();
+		}
+		else {
+			// the rest is for campaign/iteration/testsuite
+			builder = new IterationIssuesTableModel();
+		}
+		
 
 		return builder;
 	}

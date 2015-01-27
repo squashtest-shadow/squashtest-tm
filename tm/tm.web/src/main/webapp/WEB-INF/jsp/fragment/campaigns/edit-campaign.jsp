@@ -33,6 +33,7 @@
 <%@ taglib prefix="csst" uri="http://org.squashtest.tm/taglib/css-transform" %>
 <%@ taglib prefix="dashboard" tagdir="/WEB-INF/tags/dashboard" %>
 <%@ taglib prefix="json" uri="http://org.squashtest.tm/taglib/json"%>
+<%@ taglib prefix="issues" tagdir="/WEB-INF/tags/issues"%>
 
 <f:message var="squashlocale" key="squashtm.locale" />	
 <f:message var="iterationPlanningTitle" key="campaigns.planning.iterations.scheduled_dates"/>	
@@ -163,6 +164,14 @@
 				</c:if>
 		</a>
 		</li>
+
+<c:if test="${campaign.project.bugtrackerConnected}">
+        <li>
+          <%-- div#bugtracker-section-main-div is declared in tagfile issues:bugtracker-panel.tag  --%>
+          <a href="#bugtracker-section-main-div"><f:message key="tabs.label.issues"/></a>
+        </li>
+</c:if>      
+      		
 	</ul>
 	<div id="tabs-1">
 		<c:if test="${ writable }">
@@ -310,7 +319,14 @@
 	<div id="campaign-dashboard">
 		<dashboard:campaign-dashboard-panel url="${campaignStatisticsUrl}" printUrl="${campaignStatisticsPrintUrl}" allowsSettled="${allowsSettled}" allowsUntestable="${allowsUntestable}" />
 	</div>
+        <%-- ----------------------- bugtracker (if present)----------------------------------------%> 
+  
+<c:if test="${campaign.project.bugtrackerConnected}">
+        <issues:butracker-panel entity="${campaign}" />
+</c:if>
 
+    <%-- ----------------------- /bugtracker (if present)----------------------------------------%> 
+ 
 </div>
 </csst:jq-tab>
 

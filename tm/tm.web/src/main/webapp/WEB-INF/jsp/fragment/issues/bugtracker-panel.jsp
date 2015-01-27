@@ -23,13 +23,11 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <%@ page language="java" contentType="text/html; charset=utf-8"
 	pageEncoding="utf-8"%>
-<%@ taglib prefix="pop" tagdir="/WEB-INF/tags/popup"%>
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="s" uri="http://www.springframework.org/tags"%>
 
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component"%>
-<%@ taglib prefix="agg" tagdir="/WEB-INF/tags/aggregates"%>
 <%@ taglib prefix="is" tagdir="/WEB-INF/tags/issues"%>
 <%@ taglib prefix="authz" tagdir="/WEB-INF/tags/authz"%>
 
@@ -52,6 +50,7 @@
 				* READY : nothing special, the component is fully functional.
 		- useParentContextPopup : if false, will create a popup as usual. If true, will use instead a popup accessible in the parent context 
 								(that's how the ieo-execute-execution.jsp works)
+        - tableEntries : if not null, will be used as data for table init instead of ajax call. The data must be valid datatable aaData 
                 
                 
     29/09/14 : that file needs refactoring too.
@@ -259,12 +258,94 @@
 
 
 
+<%-- ==================================================
+
+  MAIN JS
+================================================== --%>
+
+<script type="text/javascript">
+require([ "common" ], function() {
+  require([ "jquery", "squash.basicwidgets", "workspace.event-bus", "jquery.squash.formdialog" ], 
+      function($, basicwidg, eventBus) {
+    $(function() {    
+      basicwidg.init();
+      <c:if test="${executable}">
+      $("#issue-report-dialog-openbutton").click(function() {
+        $(this).removeClass("ui-state-focus ui-state-hover");
+        checkAndReportIssue( {reportUrl:"${entityUrl}/new-issue" } );
+      });
+      </c:if>
+
+      
+      var credentialsDialog = $("#issue-dialog-credentials");
+      credentialsDialog.formDialog({width : 300});
+      
+      credentialsDialog.on('formdialogconfirm', function(){
+
+        var login = $("#dialog-issue-login").val();
+        var password = $("#dialog-issue-password").val();
+        $.ajax({
+          url : "${credentialsUrl}",
+          type : 'POST',
+          data : { login : login, password : password, bugTrackerId : ${bugTracker.id}},
+          dataType : 'json'
+        })
+        .success(function(){
+          credentialsDialog.formDialog('close');
+          loginSuccess();
+        });
+        
+      });
+      
+      credentialsDialog.on('formdialogcancel', function(){
+        $('#dialog-issue-login').val('');
+        $('#dialog-issue-password').val('');
+        credentialsDialog.formDialog('close');
+        loginFail();    
+      });
+      
+      
+      $("#issue-login-button").click(function() {
+        $(this).removeClass("ui-state-focus ui-state-hover");
+        invokeCredentialPopup(loginSuccessCheckIssues, loginAbort);
+      });
+      
+      
+      
+      <c:choose>
+      <c:when test="${useParentContextPopup}">
+        parent.squashtm.eventBus.onContextual('context.bug-reported', function(evt, json){
+          displayNewIssue(json);
+          refreshIssueTable();
+        });
+      </c:when>
+      <c:otherwise>
+           eventBus.onContextual('context.bug-reported', function(evt, json){
+        displayNewIssue(json);
+        refreshIssueTable();
+         });
+      </c:otherwise>
+      </c:choose>     
+      
+    });
+  });
+});
+</script>
+
+
+
+
+
+<%-- ==================================================
+  DOCUMENT
+================================================== --%>
+
 
 <div id="issue-panel-bugcreated-area"
 	class="not-displayed ui-corner-all ">
 	<span class="ui-icon ui-icon-info icon"></span><span
 		id="issue-add-success-message"><f:message
-			key="issue.add.success" />&nbsp;(<a href="" id="issue-url"></a>)</span>
+			key="issue.add.success" />&nbsp;(<a href="" target="_blank" id="issue-url"></a>)</span>
 </div>
 
 
@@ -288,61 +369,35 @@
 
 <%-- /init section for issue-panel-knownissues-div --%>
 
-<agg:structure-configurable-panel id="issue-panel"
-	titleKey="issue.panel.title" isContextual="true" open="true"
-	style="${panelStyle}">
+<div id="issue-panel-knownissues-div"
+	class="${knownIssuesLabelInitCss}">
+	<span><f:message key="issue.panel.needscredentials.label" />
+	</span>			
+	<f:message var="loginButtonLabel" key="label.LogIn" />
+	<input type="button" class="sq-btn" id="issue-login-button"
+		value="${loginButtonLabel}" />
+</div>
 
-	<jsp:attribute name="panelButtons">
-		<c:if test="${ executable }">
-				<f:message var="issueReportOpenButtonLabel"
-				key="issue.button.opendialog.label" />
-				<input type="button" class="sq-btn"
-				id="issue-report-dialog-openbutton"
-				value="${issueReportOpenButtonLabel}" />
-		</c:if>
-	</jsp:attribute>
-
-
-	<jsp:attribute name="body">
-	
-		<div id="issue-panel-knownissues-div"
-			class="${knownIssuesLabelInitCss}">
-			<span><f:message key="issue.panel.needscredentials.label" />
-			</span>			
-			<f:message var="loginButtonLabel" key="label.LogIn" />
-			<input type="button" class="sq-btn" id="issue-login-button"
-				value="${loginButtonLabel}" />
-		</div>
+<div id="issue-panel-known-issue-table-div"${knownIssuesTableInitCss}>
 	<c:choose>
-		<c:when test="${ bugTrackerStatus == 'BUGTRACKER_READY' }">
-			<c:set var="freeSettings" value="iDeferLoading : null "/>
+		<c:when test="${entityType == 'execution-step'}">
+			<is:issue-table-execstep dataUrl="${tableUrl}" bugTrackerUrl="${bugTrackerServiceUrl}" entityId="${entity.id}"
+				interfaceDescriptor="${interfaceDescriptor}" executable="${executable}" tableEntries="${tableEntries}"/>
 		</c:when>
-		<c:otherwise>
-			<c:set var="freeSettings" value="iDeferLoading : 0 "/>
-		</c:otherwise>
+		<c:when test="${entityType == 'execution'}">
+			<is:issue-table-exec dataUrl="${tableUrl}" bugTrackerUrl="${bugTrackerServiceUrl}" entityId="${entity.id}"
+				interfaceDescriptor="${interfaceDescriptor}" executable="${ executable }" tableEntries="${tableEntries}"/>			
+		</c:when>
+		
+		<c:when
+			test="${entityType == 'iteration'||entityType == 'test-suite'||entityType == 'campaign'}">
+			<is:issue-table-iter dataUrl="${tableUrl}" interfaceDescriptor="${interfaceDescriptor}" tableEntries="${tableEntries}"/>
+		</c:when>
+		<c:when test="${entityType == 'test-case' }">
+			<is:issue-table-tc dataUrl="${tableUrl}" interfaceDescriptor="${interfaceDescriptor}"  tableEntries="${tableEntries}"/>
+		</c:when>
 	</c:choose>
-		<div id="issue-panel-known-issue-table-div"${knownIssuesTableInitCss}>
-			<c:choose>
-				<c:when test="${entityType == 'execution-step'}">
-					<is:issue-table-execstep dataUrl="${tableUrl}" bugTrackerUrl="${bugTrackerServiceUrl}" entityId="${entity.id}"
-						interfaceDescriptor="${interfaceDescriptor}" freeSettings="${ freeSettings }" executable="${executable}"/>
-				</c:when>
-				<c:when test="${entityType == 'execution'}">
-					<is:issue-table-exec dataUrl="${tableUrl}" bugTrackerUrl="${bugTrackerServiceUrl}" entityId="${entity.id}"
-						interfaceDescriptor="${interfaceDescriptor}"  freeSettings="${ freeSettings }" executable="${ executable }"/>			
-				</c:when>
-				
-				<c:when
-					test="${entityType == 'iteration'||entityType == 'test-suite'||entityType == 'campaign'}">
-					<is:issue-table-iter dataUrl="${tableUrl}" interfaceDescriptor="${interfaceDescriptor}"  freeSettings="${ freeSettings }" />
-				</c:when>
-				<c:when test="${entityType == 'test-case' }">
-					<is:issue-table-tc dataUrl="${tableUrl}" interfaceDescriptor="${interfaceDescriptor}"  freeSettings="${ freeSettings }" />
-				</c:when>
-			</c:choose>
-		</div>
-	</jsp:attribute>
-</agg:structure-configurable-panel>
+</div>
 
 
 <%-------------------------------- add issue popup code -----------------------------------%>
@@ -381,73 +436,3 @@
 </div> 
 
 
-
-
-<script type="text/javascript">
-require([ "common" ], function() {
-	require([ "jquery", "squash.basicwidgets", "workspace.event-bus", "jquery.squash.formdialog" ], 
-			function($, basicwidg, eventBus) {
-		$(function() {		
-			basicwidg.init();
-			<c:if test="${executable}">
-			$("#issue-report-dialog-openbutton").click(function() {
-				$(this).removeClass("ui-state-focus ui-state-hover");
-				checkAndReportIssue( {reportUrl:"${entityUrl}/new-issue" } );
-			});
-			</c:if>
-
-			
-			var credentialsDialog = $("#issue-dialog-credentials");
-			credentialsDialog.formDialog({width : 300});
-			
-			credentialsDialog.on('formdialogconfirm', function(){
-
-				var login = $("#dialog-issue-login").val();
-				var password = $("#dialog-issue-password").val();
-				$.ajax({
-					url : "${credentialsUrl}",
-					type : 'POST',
-					data : { login : login, password : password, bugTrackerId : ${bugTracker.id}},
-					dataType : 'json'
-				})
-				.success(function(){
-					credentialsDialog.formDialog('close');
-					loginSuccess();
-				});
-				
-			});
-			
-			credentialsDialog.on('formdialogcancel', function(){
-				$('#dialog-issue-login').val('');
-				$('#dialog-issue-password').val('');
-				credentialsDialog.formDialog('close');
-				loginFail();		
-			});
-			
-			
-			$("#issue-login-button").click(function() {
-				$(this).removeClass("ui-state-focus ui-state-hover");
-				invokeCredentialPopup(loginSuccessCheckIssues, loginAbort);
-			});
-			
-			
-			
-			<c:choose>
-			<c:when test="${useParentContextPopup}">
-				parent.squashtm.eventBus.onContextual('context.bug-reported', function(evt, json){
-					displayNewIssue(json);
-					refreshIssueTable();
-				});
-			</c:when>
-			<c:otherwise>
-			     eventBus.onContextual('context.bug-reported', function(evt, json){
-				displayNewIssue(json);
-				refreshIssueTable();
-			   });
-			</c:otherwise>
-			</c:choose>			
-			
-		});
-	});
-});
-</script>

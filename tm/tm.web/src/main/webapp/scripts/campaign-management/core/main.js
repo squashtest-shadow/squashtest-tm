@@ -104,7 +104,7 @@ define(["jquery", "squash.basicwidgets", "contextual-content-handlers", "jquery.
 		if (conf.features.hasBugtracker){
 			bugtrackerPanel.load({
 				url : conf.data.bugtrackerUrl,
-				label : translator.get('tabs.label.issues')
+				style : "fragment-tab"
 			});
 		}
 	}

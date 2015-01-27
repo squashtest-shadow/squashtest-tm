@@ -34,6 +34,7 @@
 <%@ taglib prefix="it" tagdir="/WEB-INF/tags/iterations-components"%>
 <%@ taglib prefix="csst" uri="http://org.squashtest.tm/taglib/css-transform" %>
 <%@ taglib prefix="dashboard" tagdir="/WEB-INF/tags/dashboard" %>
+<%@ taglib prefix="issues" tagdir="/WEB-INF/tags/issues"%>
 
 <f:message var="squashlocale" key="squashtm.locale" />
 
@@ -110,7 +111,7 @@
 	config.hasFields = ${ hasCUF };
 	config.hasBugtracker = ${ iteration.project.bugtrackerConnected };
 	config.identity = { resid: ${iteration.id}, restype : "iterations" };
-	config.bugtracker = {url: "${btEntityUrl}", label: "${tabIssueLabel}" };
+	config.bugtracker = {url: "${btEntityUrl}", style : "fragment-tab" };
 	config.customFields = { url: "${customFieldsValuesURL}" };
 	config.iterationURL = "${iterationUrl}";
 </script>
@@ -175,6 +176,12 @@
 				</c:if>
 		</a>
 		</li>
+<c:if test="${iteration.project.bugtrackerConnected}">
+        <li>
+          <%-- div#bugtracker-section-main-div is declared in tagfile issues:bugtracker-panel.tag --%>
+          <a href="#bugtracker-section-main-div"><f:message key="tabs.label.issues"/></a>
+        </li>
+</c:if> 		
 	</ul>
 	<div id="tabs-1">
 
@@ -312,6 +319,12 @@
 	</c:if>
 	<%-- ----------------------------------- /Test Suite Management -------------------------------------------------- --%>
 
+    <%-- ----------------------- bugtracker (if present)----------------------------------------%> 
+<c:if test="${iteration.project.bugtrackerConnected}">
+        <issues:butracker-panel entity="${iteration}"/>
+</c:if>
+
+    <%-- ----------------------- /bugtracker (if present)----------------------------------------%> 
 
 
 </div>
