@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.TimeoutException;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
@@ -48,6 +49,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.util.HtmlUtils;
 import org.squashtest.csp.core.bugtracker.core.BugTrackerNoCredentialsException;
+import org.squashtest.csp.core.bugtracker.core.BugTrackerRemoteException;
 import org.squashtest.csp.core.bugtracker.spi.BugTrackerInterfaceDescriptor;
 import org.squashtest.tm.core.foundation.collection.DefaultPagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
@@ -506,9 +508,8 @@ public class TestCaseModificationController {
 					}
 
 				}
-				// no credentials exception are okay, the rest is to be treated as usual
-				catch (BugTrackerNoCredentialsException noCrdsException) {
-				} catch (NullArgumentException npException) {
+				// it's okay if the bugtracker fails, it should not forbid the rest to work
+				catch (BugTrackerRemoteException  | NullArgumentException  whatever) {
 				}
 			}
 			mav.addObject("issuesOwnerShipList", decoratedIssues);
