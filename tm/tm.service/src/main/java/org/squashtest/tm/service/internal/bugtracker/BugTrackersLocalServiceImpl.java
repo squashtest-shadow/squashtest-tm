@@ -527,17 +527,6 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 	 * @param issueDetectors
 	 * @return
 	 */
-	/*
-	 * XXX with plugin jira.rest this method takes about 15 seconds to complete on my machine, of which only 2 seconds are
-	 * spent on the remote call. Specifically the methods
-	 *	
-	 *	- issueDao.findSortedIssuesFromExecutionAndExecutionSteps(executionIds, executionStepsIds, sorter),
-	 *	- issueDao.countIssuesfromExecutionAndExecutionSteps(executionIds, executionStepsIds);
-	 * 
-	 * are outstandingly slow.
-	 * 
-	 *  Note : this sluggishness occurs when multiple projects are bound to a bugtracker. It runs quite fine when there is only one project with a bugtracker.
-	 */
 	private PagedCollectionHolder<List<IssueOwnership<RemoteIssueDecorator>>> createOwnershipsCollection(
 			PagingAndSorting sorter, List<Execution> executions, List<ExecutionStep> executionSteps) {
 
@@ -567,7 +556,7 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 		List<IssueOwnership<RemoteIssueDecorator>> ownerships = bindBTIssuesToOwner(btIssueDecorators,
 				sortedIssueListIdsAndIssueRemoteIds, issueDetectorByListId);
 
-		Integer totalIssues = issueDao.countIssuesfromExecutionAndExecutionSteps(executionIds, executionStepsIds);
+		Integer totalIssues = sortedIssueListIdsAndIssueRemoteIds.size();
 		return new PagingBackedPagedCollectionHolder<List<IssueOwnership<RemoteIssueDecorator>>>(sorter, totalIssues,
 				ownerships);
 

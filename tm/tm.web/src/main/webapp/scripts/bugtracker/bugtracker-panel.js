@@ -71,11 +71,10 @@ define([ "jquery", "app/util/ButtonUtil",
 				loadFn();
 			}
 			else if (sstyle === "fragment-tab"){
-				// deferred execution to when the 
-				// note that we bind with 'one' , not 'on'. This matters.
-				tab.one('tabsactivate', function(evt, ui){
+				tab.on('tabsactivate', function(evt, ui){
 					if (ui.newPanel.is(btDiv)){	
 						loadFn();
+						tab.off('tabsactivate', loadFn);
 					}
 				});
 
