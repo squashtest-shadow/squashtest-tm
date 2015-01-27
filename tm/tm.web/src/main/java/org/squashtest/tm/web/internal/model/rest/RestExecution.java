@@ -22,6 +22,7 @@ package org.squashtest.tm.web.internal.model.rest;
 
 import java.util.Date;
 
+import org.squashtest.tm.core.foundation.lang.DateUtils;
 import org.squashtest.tm.domain.execution.Execution;
 
 public class RestExecution {
@@ -29,31 +30,31 @@ public class RestExecution {
 	public Long id;
 
 	private String reference;
-	
+
 	private String name;
-	
+
 	private RestProject project;
-	
+
 	private String testcasePath;
 
 	private String description;
-	
+
 	public RestCampaignStub restCampaignStub;
-	
+
 	public RestIterationStub restIterationStub;
-	
+
 	public RestTestCaseStub restTestCaseStub;
-	
+
 	public String status;
-	
-	public Date lastExecutedOn; 
-	
+
+	public String lastExecutedOn;
+
 	public String lastExecutedBy;
-	
+
 	public RestExecution(){
 		super();
 	}
-	
+
 	public RestExecution(Execution execution, String testcasePath) {
 		this.id = execution.getId();
 		this.reference = execution.getReference();
@@ -65,7 +66,7 @@ public class RestExecution {
 		this.restIterationStub = new RestIterationStub(execution.getIteration());
 		this.restTestCaseStub = new RestTestCaseStub(execution.getReferencedTestCase());
 		this.status = execution.getStatus().name();
-		this.lastExecutedOn = execution.getLastExecutedOn();
+		this.lastExecutedOn = DateUtils.formatIso8601DateTime(execution.getLastExecutedOn());
 		this.lastExecutedBy = execution.getLastExecutedBy();
 	}
 
@@ -149,12 +150,12 @@ public class RestExecution {
 		this.description = description;
 	}
 
-	public Date getLastExecutedOn() {
+	public String getLastExecutedOn() {
 		return lastExecutedOn;
 	}
 
 	public void setLastExecutedOn(Date lastExecutedOn) {
-		this.lastExecutedOn = lastExecutedOn;
+		this.lastExecutedOn = DateUtils.formatIso8601DateTime(lastExecutedOn);
 	}
 
 	public String getLastExecutedBy() {

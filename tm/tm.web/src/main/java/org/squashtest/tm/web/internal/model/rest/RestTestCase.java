@@ -71,8 +71,8 @@ public class RestTestCase {
 		this.reference = testCase.getReference();
 		this.prerequisite = testCase.getPrerequisite();
 		this.importance = testCase.getImportance().name();
-		this.nature = testCase.getNature().name();
-		this.type = testCase.getType().name();
+		this.nature = testCase.getNature().getCode();
+		this.type = testCase.getType().getCode();
 		this.status = testCase.getStatus().name();
 		this.executionMode = testCase.getExecutionMode().name();
 		this.project = new RestProjectStub(testCase.getProject());

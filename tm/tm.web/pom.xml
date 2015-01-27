@@ -129,6 +129,11 @@
     </dependency>
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-annotations</artifactId>
+      <version>${fasterxml.jackson.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-core</artifactId>
       <version>${fasterxml.jackson.version}</version>
     </dependency>
@@ -316,12 +321,7 @@
       <artifactId>tm.service</artifactId>
       <version>${project.version}</version>
     </dependency>
-    <dependency>
-      <groupId>com.fasterxml.jackson.core</groupId>
-      <artifactId>jackson-annotations</artifactId>
-      <version>2.1.1</version>
-      <scope>provided</scope>
-    </dependency>
+
     <!-- ====== /THYMELEAF ====== -->
 
     <!-- ====== JASPER REPORTS ====== -->

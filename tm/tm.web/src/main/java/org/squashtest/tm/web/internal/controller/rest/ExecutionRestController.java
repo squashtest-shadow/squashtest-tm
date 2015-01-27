@@ -33,10 +33,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.execution.ExecutionStep;
 import org.squashtest.tm.service.execution.ExecutionFinder;
-import org.squashtest.tm.service.testcase.TestCaseFinder;
 import org.squashtest.tm.service.testcase.TestCaseLibraryFinderService;
 import org.squashtest.tm.web.internal.model.rest.RestExecution;
-import org.squashtest.tm.web.internal.model.rest.RestExecutionStepStub;
+import org.squashtest.tm.web.internal.model.rest.RestExecutionStep;
 
 @Controller
 @RequestMapping("/rest/api/execution")
@@ -44,36 +43,36 @@ public class ExecutionRestController {
 
 	@Inject
 	ExecutionFinder executionFinder;
-	
+
 	@Inject
 	TestCaseLibraryFinderService testCaseLibraryFinder;
-	
+
 	@RequestMapping(value = "/{id}", method = RequestMethod.GET, produces="application/json")
 	@ResponseBody
 	public RestExecution getExecutionById(@PathVariable Long id) {
-		
+
 		Execution execution = executionFinder.findById(id);
 		String path = "";
 		if(execution.getReferencedTestCase() != null){
 			path = testCaseLibraryFinder.getPathAsString(execution.getReferencedTestCase().getId());
 		}
-		
+
 		return new RestExecution(execution, path);
-		
+
 	}
 
 	@RequestMapping(value = "/{id}/executionsteps", method = RequestMethod.GET, produces="application/json")
 	@ResponseBody
-	public List<RestExecutionStepStub> getExecutionStepsById(@PathVariable Long id) {
-		
+	public List<RestExecutionStep> getExecutionStepsById(@PathVariable Long id) {
+
 		Execution execution = executionFinder.findById(id);
 		List<ExecutionStep> steps = execution.getSteps();
-		List<RestExecutionStepStub> restExecutionSteps = new ArrayList<RestExecutionStepStub>(steps.size());
+		List<RestExecutionStep> restExecutionSteps = new ArrayList<RestExecutionStep>(steps.size());
 		for(ExecutionStep step : steps){
-			restExecutionSteps.add(new RestExecutionStepStub(step));
+			restExecutionSteps.add(new RestExecutionStep(step));
 		}
 		return restExecutionSteps;
-		
+
 	}
 
 }
