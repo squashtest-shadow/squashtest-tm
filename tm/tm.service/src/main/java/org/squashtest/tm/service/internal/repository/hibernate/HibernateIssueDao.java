@@ -147,8 +147,6 @@ public class HibernateIssueDao extends HibernateEntityDao<Issue> implements Issu
 		}
 	
         Criteria crit = currentSession().createCriteria(Issue.class, "Issue")
-		Criteria crit = currentSession()
-						.createCriteria(Issue.class, "Issue")
 				.add(Restrictions.in("Issue.issueList.id", issueListIds))
 				.add(Restrictions.eq("Issue.bugtracker.id", bugtrackerId));
 		
@@ -211,7 +209,6 @@ public class HibernateIssueDao extends HibernateEntityDao<Issue> implements Issu
 	public Integer countIssuesfromExecutionSteps(List<Long> executionStepsIds) {
 		if (!executionStepsIds.isEmpty()) {
 			String queryString = COUNT_ISSUES_INTRO + WHERE_CLAUSE_FOR_ISSUES_FROM_EXEC_STEP + SELECT_ISSUES_OUTRO;
-					+ WHERE_CLAUSE_FOR_ISSUES_FROM_EXEC_STEP;
 			Query query = currentSession().createQuery(queryString);
 			query.setParameterList("executionStepsIds", executionStepsIds);
 			Long result = (Long) query.uniqueResult();
@@ -261,13 +258,5 @@ public class HibernateIssueDao extends HibernateEntityDao<Issue> implements Issu
 		return testCase;
 	}
 	
-	@SuppressWarnings("unchecked")
-	@Override
-	public List<Issue> getAllIssueFromBugTrackerId(Long bugtrackerId) {
-		final Criteria crit = currentSession().createCriteria(Issue.class, "Issue")
-				.add(Restrictions.eq("Issue.bugtracker.id", bugtrackerId));
-
-		return crit.list();
-	}
 
 }
