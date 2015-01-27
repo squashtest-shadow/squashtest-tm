@@ -110,8 +110,10 @@
 				         'iesupport/am-I-ie8',
 				         'execution-processing/ie8-no-close-on-enter',
 				         'page-components/step-information-panel', 'workspace.event-bus', 'app/util/ComponentUtil', 
-				         "jquery.squash.oneshotdialog" , 'custom-field-values', 'jquery.squash'], 
-				         function($, basicwidg, isIE, noCloseOnEnter, infopanel, eventBus, ComponentUtil, oneshot, cufValues ) {
+				         "jquery.squash.oneshotdialog" , 'custom-field-values', "app/ws/squashtm.notification" ,
+				         'jquery.squash'], 
+				         function($, basicwidg, isIE, noCloseOnEnter, infopanel, eventBus, ComponentUtil, oneshot, cufValues,
+				        		 notification) {
 			
 				var isOer = ${ not empty hasNextTestCase };
 				var hasNextTestCase = ${ (not empty hasNextTestCase) and hasNextTestCase };
@@ -346,7 +348,8 @@
 	                        cufValues.infoSupport.init("#cuf-information-table", jsonCufs, 'jeditable');
 	                      });
 	                    </c:if>
-				
+
+        		 		notification.init({});
 					});	
 				});
 				
@@ -461,13 +464,15 @@
     <%-- ----------------------- bugtracker (if present)----------------------------------------%> 
 <c:if test="${executionStep.project.bugtrackerConnected}">
         <issues:butracker-panel entity="${executionStep}" issueDetector="true"/>
-</c:if>
+
         
         <script type="text/javascript">
         		 require(["common"], function() {
-        			 require(["jquery", "app/ws/squashtm.notification"], function($, wtf) {
-        		 		$("#bugtracker-section-div").load("${btEntityUrl}");
-        		 		wtf.init({});
+        			 require(["jquery", "bugtracker/bugtracker-panel"], 
+        					 function($, bugtracker) {
+        				 bugtracker.load({
+        					url : "${btEntityUrl}" 
+        				 });
         			 });
         		 });
         		</script>

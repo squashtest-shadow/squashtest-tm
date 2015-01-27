@@ -32,6 +32,7 @@
 <%@ taglib prefix="authz" tagdir="/WEB-INF/tags/authz" %>
 <%@ taglib prefix="at" tagdir="/WEB-INF/tags/attachments"%>
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component" %>
+<%@ taglib prefix="issues" tagdir="/WEB-INF/tags/issues"%>
 <%-- ----------------------------------- Authorization ----------------------------------------------%>
 <c:set var="editable" value="${ false }" /> 
 <authz:authorized hasRole="ROLE_ADMIN" hasPermission="EXECUTE" domainObject="${ execution }">
@@ -91,7 +92,8 @@
 		         "iesupport/am-I-ie8",
 		         "execution-processing/ie8-no-close-on-enter",
 		         'custom-field-values',
-		         "jqueryui"], function($, basicwidg, isIE, noCloseOnEnter, cufValues){
+		         "app/ws/squashtm.notification" ,
+		         "jqueryui"], function($, basicwidg, isIE, noCloseOnEnter, cufValues, notification){
 			$(function(){
 				basicwidg.init();
 				
@@ -166,6 +168,7 @@
 				noCloseOnEnter();				
 			}
 			
+			notification.init({});
 		});
 	});
 	</script> 
@@ -243,17 +246,20 @@
 		<%--
 			this section is loaded asynchronously. The bugtracker might be out of reach indeed.
 		 --%>	
-		<div id="bugtracker-section-div">
-		</div>
+<c:if test="${executionStep.project.bugtrackerConnected}">
+        <issues:butracker-panel entity="${executionStep}" issueDetector="true"/>
+
 		 <script type="text/javascript">
 		 require(["common"], function() {
-			 require(["jquery", "app/ws/squashtm.notification"], function($, wtf) {
-		 		$("#bugtracker-section-div").load("${btEntityUrl}");
-		 		wtf.init({});
+   			 require(["jquery", "bugtracker/bugtracker-panel"], 
+					 function($, bugtracker) {
+				 bugtracker.load({
+					url : "${btEntityUrl}" 
+				 });
 			 });
 		 });
 		</script>
-		
+</c:if>		
 		<%------------------------------ /bugs section -------------------------------%>
 	</div>
 </body>

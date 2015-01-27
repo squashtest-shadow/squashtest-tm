@@ -33,6 +33,7 @@
 <%@ taglib prefix="authz" tagdir="/WEB-INF/tags/authz"%>
 <%@ taglib prefix="at" tagdir="/WEB-INF/tags/attachments"%>
 <%@ taglib prefix="json" uri="http://org.squashtest.tm/taglib/json" %>
+<%@ taglib prefix="issues" tagdir="/WEB-INF/tags/issues"%>
 
 
 <%-- ----------------------------------- Authorization ----------------------------------------------%>
@@ -267,10 +268,14 @@
 	<at:attachment-bloc  workspaceName="campaign" editable="${ editable }" 
 						 attachListId="${execution.attachmentList.id}" attachmentSet="${attachmentSet}" />
 
+    <%-- ----------------------- bugtracker (if present)----------------------------------------%> 
+<c:if test="${execution.project.bugtrackerConnected}">
+        <issues:butracker-panel entity="${execution}" issueDetector="true"/>        
+</c:if>
 
-	<%------------------------------ bugs section -------------------------------%>
+    <%-- ----------------------- /bugtracker (if present)----------------------------------------%> 
 
-	<div id="bugtracker-section-div"></div>
+
 
 	<%------------------------------ /bugs section -------------------------------%>
 	<%--------------------------- Deletion confirmation popup -------------------------------------%>
@@ -308,8 +313,10 @@
 	var squashtm = squashtm || {};
 	
 	require(["common"], function() {
-		require(["jquery", "page-components/execution-information-panel", "custom-field-values", "squashtable", 
-		         "jquery.squash.jeditable"], function($, infopanel, cufValuesManager) {			
+		require(["jquery", "page-components/execution-information-panel", "custom-field-values", 
+		         "bugtracker/bugtracker-panel",
+		         "squashtable", 
+		         "jquery.squash.jeditable"], function($, infopanel, cufValuesManager, bugtracker) {			
 			/* display the execution name. Used for extern calls (like from the page who will include this fragment)
 			*  will refresh the general informations as well*/
 			function nodeSetName(name){
@@ -438,9 +445,11 @@
 			</c:if>
 			
 			// ==== bugtracker section ====
-		 	
-		 	$("#bugtracker-section-div").load("${btEntityUrl}");
-			
+		 	<c:if test="${execution.project.bugtrackerConnected}">
+		 	bugtracker.load({
+		 		url : "${btEntityUrl}"
+		 	});
+			</c:if>
 			
 		 	// ==== handle for refershing the page (called by the execution popup) ====
 		 	

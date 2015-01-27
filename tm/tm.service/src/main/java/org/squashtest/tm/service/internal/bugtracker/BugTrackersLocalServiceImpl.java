@@ -93,7 +93,7 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(BugTrackersLocalServiceImpl.class);
 
-	@Value("${squashtm.bugtracker.timeout:15l}")
+	@Value("${squashtm.bugtracker.timeout:15}")
 	private long timeout;
 
 	@Inject

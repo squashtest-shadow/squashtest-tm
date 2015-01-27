@@ -112,7 +112,7 @@ public class BugTrackerController {
 	static final String CAMPAIGN_TYPE = "campaign";
 	static final String TEST_SUITE_TYPE = "test-suite";
 	static final String TEST_CASE_TYPE = "test-case";
-	private static final String EMPTY_BUGTRACKER_MAV = "fragment/issues/bugtracker-panel-empty";
+	private static final String EMPTY_BUGTRACKER_MAV = "fragment/bugtracker/bugtracker-panel-empty";
 
 	private static final String BUGTRACKER_ID = "bugTrackerId";
 	private static final String STYLE_ARG = "style";
@@ -698,7 +698,7 @@ public class BugTrackerController {
 					.findBugTracker());
 			descriptor.setLocale(locale);
 
-			ModelAndView mav = new ModelAndView("fragment/issues/bugtracker-panel");
+			ModelAndView mav = new ModelAndView("fragment/bugtracker/bugtracker-panel-content");
 			mav.addObject("entity", entity);
 			mav.addObject("entityType", type);
 			mav.addObject("interfaceDescriptor", descriptor);

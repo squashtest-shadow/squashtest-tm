@@ -20,15 +20,7 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 --%>
-<%@ tag description="Table displaying the issues for an ExecutionStep" body-content="empty" %>
-
-<%@ tag language="java" pageEncoding="utf-8"%>
-
-
-<%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component" %>  
-<%@ tag description="Table displaying the issues for an ExecutionStep" body-content="empty" %>
+<%@ tag description="Structure of the bugtracker section" body-content="empty" %>
 
 <%@ tag language="java" pageEncoding="utf-8"%>
 
