@@ -51,7 +51,31 @@
       </New>
     </Arg>
   </Call>
-
+  
+  <!-- Template for https connector with mutual SSL auth, used by management api -->
+  <!-- 
+  <Call name="addConnector">
+    <Arg>
+      <New class="org.eclipse.jetty.server.ssl.SslSelectChannelConnector">
+        <Arg>
+          <New class="org.eclipse.jetty.http.ssl.SslContextFactory">
+            <Set name="keyStore"><Property name="jetty.keystore" default="./keystore/server.jks" /></Set>
+            <Set name="keyStorePassword">OBF:1v2j1uum1xtv1zej1zer1xtn1uvk1v1v</Set>
+            <Set name="keyManagerPassword">OBF:1v2j1uum1xtv1zej1zer1xtn1uvk1v1v</Set>
+            <Set name="trustStore"><Property name="jetty.keystore" default="./keystore/server.jks" /></Set>
+            <Set name="trustStorePassword">OBF:1v2j1uum1xtv1zej1zer1xtn1uvk1v1v</Set>
+            <Set name="needClientAuth">true</Set>
+          </New>
+        </Arg>
+        <Set name="port">
+          <Property name="management.port" default="9443" />
+        </Set>
+        <Set name="maxIdleTime">300000</Set>
+      </New>
+    </Arg>
+  </Call>
+   -->
+   
     <!-- =========================================================== -->
     <!-- Set handler Collection Structure                            --> 
     <!-- =========================================================== -->
