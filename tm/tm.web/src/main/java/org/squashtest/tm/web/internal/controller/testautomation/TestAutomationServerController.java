@@ -21,6 +21,8 @@
 package org.squashtest.tm.web.internal.controller.testautomation;
 
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 import javax.inject.Inject;
@@ -107,7 +109,7 @@ public class TestAutomationServerController {
 
 	@RequestMapping(value = "/{serverId}", method = RequestMethod.DELETE)
 	@ResponseBody
-	public void deleteTestAutomationServer(@PathVariable long serverId) {
+	public void deleteTestAutomationServer(@PathVariable List<Long> serverId) {
 		LOGGER.info("Delete test automation server of id #{}", serverId);
 		service.deleteServer(serverId);
 	}
@@ -125,11 +127,24 @@ public class TestAutomationServerController {
 
 	@RequestMapping(value = "/{serverId}/usage-status", method = RequestMethod.GET)
 	@ResponseBody
-	public TAUsageStatus getTestAutomationUsageStatus(@PathVariable long serverId) {
+	public TAUsageStatus getTestAutomationUsageStatus(@PathVariable List<Long> serverId) {
 		LOGGER.info("Delete test automation server of id #{}", serverId);
-		boolean hasBoundProject = service.hasBoundProjects(serverId);
-		boolean hasExecutedTests = service.hasExecutedTests(serverId);
-		return new TAUsageStatus(hasBoundProject, hasExecutedTests);
+		List<TAUsageStatus> liste = new ArrayList<TAUsageStatus>();
+		for (Long id : serverId) {
+			boolean hasBoundProject = service.hasBoundProjects(id);
+			boolean hasExecutedTests = service.hasExecutedTests(id);
+			TAUsageStatus taUsage = new TAUsageStatus(hasBoundProject, hasExecutedTests);
+			liste.add(taUsage);
+		}
+
+		TAUsageStatus tABoolean = new TAUsageStatus(true);
+		for (TAUsageStatus taUsageStatus : liste) {
+			if (!taUsageStatus.isHasBoundProject() && !taUsageStatus.isHasExecutedTests()) {
+				tABoolean = new TAUsageStatus(false);
+			}
+		}
+		
+		return tABoolean;
 	}
 
 

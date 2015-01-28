@@ -81,6 +81,16 @@ public class CustomTeamModificationServiceImpl implements CustomTeamModification
 
 	}
 
+	/**
+	 * @see CustomTeamModificationService#deleteTeam(long)
+	 */
+	@Override
+	public void deleteTeam(List<Long> teamId) {
+		for (Long id : teamId) {
+			deleteTeam(id);
+		}
+	}
+
 	@Override
 	public PagedCollectionHolder<List<Team>> findAllFiltered(PagingAndSorting paging, Filtering filtering) {
 		List<Team> teams = teamDao.findSortedTeams(paging, filtering);

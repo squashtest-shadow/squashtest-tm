@@ -76,10 +76,15 @@
 			<div id="users-table-pane" class="table-tab">
 				<!-- z-index fix needed for button pane because it would be partially shadowed by the table filter input otherwise -->
 				<div class="toolbar" style="z-index:1;">
-					<a id="add-user-button" href="#" class="add-user-button"><f:message key="user.add.label" /></a>
+					<a id="add-user-button" class="test-step-toolbar-button ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-primary .squash-button-initialized"
+					 title="<f:message key="user.add.label" />" >
+					 <span class="ui-icon ui-icon-plusthick" style="padding: 0;">+</span> <span class="ui-button-text"><f:message key="label.Add" /></span></a>
 					<a id="activate-user-button" href="#" ><f:message key="label.activate-users"/></a>
 					<a id="deactivate-user-button" href="#" ><f:message key="label.deactivate-users"/></a>
-					<a id="delete-user-button" href="#"><f:message key="label.delete-users"/></a>
+					<button id="delete-user-button" href="#" class="test-step-toolbar-button ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-primary .squash-button-initialized"
+					 title="<f:message key="label.delete-users" />" >
+					<span class="ui-icon ui-icon-trash"></span>
+					<span class="ui-button-text"><f:message key="label.Delete" /></span></button>
 				</div>
 				<div class="table-tab-wrap">
 					<table id="users-list-table"  class="unstyled-table" 
@@ -98,7 +103,7 @@
 								<th class="user-created-by datatable-filterable"data-def="map=user-created-by, sortable"><f:message key="label.createdBy" /></th>
 								<th class="user-modified-on"					data-def="map=user-modified-on, sortable"><f:message key="label.modifiedOn" /></th>	
 								<th class="user-modified-by datatable-filterable"data-def="map=user-modified-by, sortable"><f:message key="label.modifiedBy" /></th>
-								<th class="empty-delete-holder" 				data-def="map=empty-delete-holder, delete-button=#delete-user-popup"></th>
+								<th class="empty-delete-holder" 				data-def="map=empty-delete-holder, delete-button=#delete-user-dialog"></th>
 							</tr>
 						</thead>
 						<tbody>
@@ -201,7 +206,7 @@
 		
 		
 		<f:message var="deleteUsersTitle" key="title.delete-users" />
-		<div id="delete-user-popup" class="popup-dialog not-displayed" title="${deleteUsersTitle}">
+		<div id="delete-user-dialog" class="popup-dialog not-displayed" title="${deleteUsersTitle}">
 			
 			<div class="display-table-row">
 	            <div class="display-table-cell warning-cell">

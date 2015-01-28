@@ -108,7 +108,7 @@
 <table id="issue-table" data-def="ajaxsource=${dataUrl}">
 	<thead >
 		<tr>
-			<th data-def="map=remote-id, link={issue-url}, center, select, double-narrow">${interfaceDescriptor.tableIssueIDHeader}</th>
+			<th data-def="map=remote-id, link-new-tab={issue-url}, center, select, double-narrow">${interfaceDescriptor.tableIssueIDHeader}</th>
 			<th data-def="map=summary">${interfaceDescriptor.tableSummaryHeader}</th>
 			<th data-def="map=priority">${interfaceDescriptor.tablePriorityHeader}</th>
 			<th data-def="map=status">${interfaceDescriptor.tableStatusHeader}</th>

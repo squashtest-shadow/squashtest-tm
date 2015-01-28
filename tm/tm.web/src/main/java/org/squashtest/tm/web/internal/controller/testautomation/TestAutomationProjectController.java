@@ -20,6 +20,9 @@
  */
 package org.squashtest.tm.web.internal.controller.testautomation;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.inject.Inject;
 
 import org.slf4j.Logger;
@@ -67,11 +70,25 @@ public class TestAutomationProjectController {
 
 	@RequestMapping(value = PROJECT_ID+"/usage-status", method = RequestMethod.GET)
 	@ResponseBody
-	public TAUsageStatus getTestAutomationUsageStatus(@PathVariable long projectId) {
+	public TAUsageStatus getTestAutomationUsageStatus(@PathVariable List<Long> projectId) {
 		LOGGER.info("Delete test automation server of id #{}", projectId);
-		boolean hasExecutedTests = service.hasExecutedTests(projectId);
-		return new TAUsageStatus( hasExecutedTests);
+		List<TAUsageStatus> liste = new ArrayList<TAUsageStatus>();
+		for (Long id : projectId) {
+			boolean hasExecutedTests = service.hasExecutedTests(id);
+			TAUsageStatus taUsage = new TAUsageStatus(hasExecutedTests);
+			liste.add(taUsage);
+		}
+
+		TAUsageStatus tABoolean = new TAUsageStatus(true);
+		for (TAUsageStatus taUsageStatus : liste) {
+			if (!taUsageStatus.isHasExecutedTests()) {
+				tABoolean = new TAUsageStatus(false);
+			}
+		}
+
+		return tABoolean;
 	}
+
 
 
 }

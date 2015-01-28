@@ -43,7 +43,7 @@
 	<div class="toolbar">
 
 		<span class="group"><button id="collapse-steps-button"
-				class="button test-step-toolbar-button" data-icon="ui-icon-zoomout"  th:text="#{test-case.step.button.collapse.label}">collapse</button>
+				class="button test-step-toolbar-button" style="float: left" data-icon="ui-icon-zoomout"  th:text="#{test-case.step.button.collapse.label}">collapse</button>
 		</span>
 		
 		<span class="group" th:if="${isWritable}">
@@ -52,12 +52,6 @@
 				    class="button test-step-toolbar-button" 				    
 				    th:text="#{test-case.step.button.add.label}">
 				    add a step
-			</button>
-			<button id="delete-all-steps-button"
-					data-icon="ui-icon-trash"
-				     class="button test-step-toolbar-button" 				     
-				     th:text="#{test-case.step.button.remove.label}">
-					 remove selected steps
 			</button>
 			<a id="add-call-step-button" 
 					data-icon="ui-icon-arrowthickstop-1-e"
@@ -82,6 +76,15 @@
 					paste step(s)
 			</button> 
 		</span>
+		
+		<span class="group" th:if="${isWritable}">
+			<button id="delete-all-steps-button"
+					data-icon="ui-icon-trash"
+				     class="button test-step-toolbar-button" 				     
+				     th:text="#{test-case.step.delete.button}">
+					 remove selected steps
+			</button>
+		</span>	
 	</div>
 
 	<!-- ==================== /toolbar definition =================== -->
@@ -94,8 +97,8 @@
 				<tr>
 					<th class="not-displayed">id (masked)</th>
 					<th>#</th>
+					<th> </th> <!-- requirements -->
 					<th th:text="#{table.column-header.has-attachment.label}">0</th>				
-					<th th:text="#{label.requirement.short}"> </th> <!-- requirements -->
 					<th th:text="#{label.Actions}">Actions</th>
 					<th th:text="#{label.ExpectedResults}">Expected results</th>
 					<th> </th> <!-- browse -->

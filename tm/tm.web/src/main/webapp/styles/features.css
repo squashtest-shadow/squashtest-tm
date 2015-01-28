@@ -455,6 +455,14 @@ th.width-tenperc, td.width-tenperc {
   margin-left: 0.5em;
 }
 
+  /* To get icons with a correct size close to text buttons */
+  
+.decent-icons{
+  vertical-align: sub; 
+  margin: 0.5em 0.3em;
+}
+
+
 /* ---------------------------------------------------------*/
 /* ---------------->>> Hypenation <<<------------------*/
 /* ---------------------------------------------------------*/

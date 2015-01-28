@@ -44,7 +44,25 @@ define(
 							this.$("select[name='inputType']").val(model.get("inputType"));
 
 							this.$("input:button").button();
-
+							
+							this.$("#add-cf").button();
+							
+							// Icons don't work with an <input ... /> , but work with a <button />
+							
+				/*			$("input:button").button({
+		            icons: {
+		                primary: 'ui-icon-trash'
+		            },
+		            text: "toto"
+		        });*/
+						/*
+							$("#add-cf").button({
+									icons: {
+										primary: 'ui-icon ui-icon-arrowthick-1-n'
+									},
+									label: "Ajouter "}) ;*/
+							
+							
 							this.render();
 							this.$el.formDialog({
 								autoOpen : true,
@@ -299,6 +317,8 @@ define(
 							});
 
 							this.$("input:button").button();
+							
+							this.$("#add-cf").button();
 
 						},
 

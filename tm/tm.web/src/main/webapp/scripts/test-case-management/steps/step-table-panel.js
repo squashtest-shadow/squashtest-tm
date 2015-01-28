@@ -270,15 +270,15 @@ define([ "jquery", "squashtable/squashtable.collapser", "custom-field-values", "
 				'bVisible' : true,
 				'bSortable' : false,
 				'aTargets' : [ 2 ],
-				'mDataProp' : "attach-list-id",
-				'sClass' : "centered has-attachment-cell "+ attachButtonClass,
+				'mDataProp' : "empty-requirements-holder",
+				'sClass' : "centered requirements-button "+ linkButtonClass,
 				'sWidth' : "2em"
 			}, {
 				'bVisible' : true,
 				'bSortable' : false,
 				'aTargets' : [ 3 ],
-				'mDataProp' : "empty-requirements-holder",
-				'sClass' : "centered requirements-button "+ linkButtonClass,
+				'mDataProp' : "attach-list-id",
+				'sClass' : "centered has-attachment-cell "+ attachButtonClass,
 				'sWidth' : "2em"
 			}, {
 				'bVisible' : true,

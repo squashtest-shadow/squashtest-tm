@@ -50,11 +50,18 @@ public interface CustomTeamModificationService extends CustomTeamFinderService{
 	void deleteTeam(long teamId);
 	
 	/**
+	 * Delete the team along with all it's acls. Do not delete it's associated users.
+	 * 
+	 */
+	void deleteTeam(List<Long> teamId);
+
+	/**
 	 * Changes the name the team of the given id.
-	 *  
+	 * 
 	 * @param teamId
 	 * @param name
-	 * @throws NameAlreadyInUseException if a team of the same name already exists in database
+	 * @throws NameAlreadyInUseException
+	 *             if a team of the same name already exists in database
 	 */
 	void changeName(long teamId, String name);
 

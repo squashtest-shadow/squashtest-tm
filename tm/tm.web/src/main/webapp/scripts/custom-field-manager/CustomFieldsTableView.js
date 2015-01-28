@@ -20,9 +20,9 @@
  */
 define(
 		[ "jquery", "backbone", "./NewCustomFieldPanelView",
-				"./NewCustomFieldModel", "squashtable",
-				"jqueryui" ],
-		function($, Backbone, NewCustomFieldPanelView, NewCustomFieldModel) {
+				"./NewCustomFieldModel", "app/ws/squashtm.notification", "squash.translator", "squashtable",
+				"jqueryui", "jquery.squash.confirmdialog" ],
+		function($, Backbone, NewCustomFieldPanelView, NewCustomFieldModel, notification, translator) {
 			var cfTable = squashtm.app.cfTable;
 			/*
 			 * Defines the controller for the custom fields table.
@@ -128,12 +128,55 @@ define(
 							this.table.squashTable(config, squashSettings);
 
 							this.$("input:button").button();
+							
+							var deleteDialog = $("#delete-cf-popup");
+							deleteDialog.confirmDialog();
+							
+							this.configureDeleteCfPanel();
+							
 						},
 
 						events : {
-							"click #add-cf" : "showNewCfPanel"
+							"click #add-cf" : "showNewCfPanel",
+							"click #delete-cf" : "showDeleteCfPanel"
 						},
+						
 
+						// ******** delete dialog init ***********
+						
+						configureDeleteCfPanel :  function(event) {
+							var tableCf = $("#cf-table").squashTable();
+							var self = this;
+							var deleteDialog = $("#delete-cf-popup");
+							deleteDialog.confirmDialog();
+							
+							deleteDialog.on('confirmdialogconfirm', function(){
+								var removedIds = tableCf.getSelectedIds().join(',');
+								var urlDelete = cfTable.ajaxSource + "/" + removedIds;
+									$.ajax({
+										type : 'DELETE',
+										url : urlDelete ,
+									}).done(function(){
+										deleteDialog.confirmDialog('close');
+										tableCf.refresh();	
+										}); 
+							});
+						},
+						
+						showDeleteCfPanel :  function(event) {
+							var table = $("#cf-table").squashTable();
+								if (table.getSelectedRows().size()>0){
+									$("#delete-cf-popup").confirmDialog();
+									$("#delete-cf-popup").confirmDialog('open');
+			
+								}
+								else{
+										notification.showError(translator.get('message.NoCUFSelected'));
+								}
+							},
+
+						// ******** add dialog init ***********
+						
 						showNewCfPanel : function(event) {
 							var self = this, showButton = event.target;
 
@@ -142,7 +185,7 @@ define(
 										.off("newcustomfield.cancel newcustomfield.confirm");
 								self.newCfPanel.undelegateEvents();
 								self.newCfPanel = null;
-								$(showButton).button("enable");
+								$(showButton).prop("disabled", true);
 								self.table.squashTable().fnDraw();
 							}
 
@@ -151,7 +194,7 @@ define(
 								self.table.squashTable().fnDraw();
 							}
 
-							$(event.target).button("disable");
+							$(event.target).prop("disabled", false);
 							self.newCfPanel = new NewCustomFieldPanelView({
 								model : new NewCustomFieldModel()
 							});

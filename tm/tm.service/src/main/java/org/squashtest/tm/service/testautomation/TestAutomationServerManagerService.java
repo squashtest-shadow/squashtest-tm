@@ -60,6 +60,16 @@ public interface TestAutomationServerManagerService {
 	 */
 	void deleteServer(long serverId);
 
+	/**
+	 * <p>
+	 * <b style="color:red">Warning :</b> When using this method there is a risk that your Hibernate beans are not up to
+	 * date. Use {@link Session#clear()} and {@link Session#refresh(Object)} to make sure your they are.
+	 * </p>
+	 * 
+	 * @param serverId
+	 */
+	void deleteServer(List<Long> serverId);
+
 	List<TestAutomationServer> findAllOrderedByName();
 
 	PagedCollectionHolder<List<TestAutomationServer>> findSortedTestAutomationServers(PagingAndSorting pagingNsorting);

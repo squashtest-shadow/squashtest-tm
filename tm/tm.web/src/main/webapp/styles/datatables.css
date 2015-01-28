@@ -135,13 +135,23 @@ a.table-button{
 }
 
 a.manage-attachments{
-	background-image: url("../images/attachment.png");	/** sprite-ref: sprites-icons; */
+/*	background-image: url("../images/attachment.png");	 sprite-ref: sprites-icons; */
+    background: #6eac2c url(../styles/jquery/ui/images/ui-bg_glass_45_6eac2c_1x400.png) 50% 50% repeat-x; 
+    font-weight: normal;
+    color: #fff;
+    background-image: url("../styles/jquery/ui/images/ui-icons_ffffff_256x240.png");
+    background-position: -240px -112px;
+    border: 1px solid #acdd4a;
+    font-weight: normal;
+    color: #fff;
 	width : 16px;
-	height : 16px;
+	height : 16px;    
 }
 
 a.edit-pencil{
-	background-image: url("../images/pencil.png");	/** sprite-ref: sprites-icons; */
+/*	background-image: url("../images/pencil.png");	sprite-ref: sprites-icons; */
+    background-image: url("../styles/jquery/ui/images/ui-icons_a8a8a8_256x240.png");
+    background-position: -64px -112px;
 	width : 16px;
 	height : 16px;	
 }
@@ -150,7 +160,9 @@ a.edit-pencil{
 .ui-button .ui-icon.table-cell-add,
 a.table-cell-add, 
 a.add-attachments{
-	background-image: url("../images/add.png");	/** sprite-ref: sprites-icons; */
+/*	background-image: url("../images/add.png");	 sprite-ref: sprites-icons; */
+	background-image: url("../styles/jquery/ui/images/ui-icons_a8a8a8_256x240.png");
+    background-position: -240px -112px;
 	width : 16px;
 	height : 16px;				
 }

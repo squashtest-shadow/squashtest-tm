@@ -62,8 +62,14 @@
 
 
 <div class="fragment-body">
-	<input class="snap-right sq-btn" type="button" value='<f:message key="label.AddBugtracker" />'   id="new-bugtracker-button"/>
-	<input class="snap-right sq-btn" type="button" value='<f:message key="label.deleteBugtracker" />' id="delete-bugtracker-button"/>
+	<button class="snap-right sq-btn" type="button" title="<f:message key='label.AddBugtracker' />"  id="new-bugtracker-button"/>
+	<span class="ui-icon ui-icon-plusthick">+</span><f:message key='label.Add' />
+	</button>
+	
+	<button class="snap-right sq-btn" type="button" title="<f:message key="label.deleteBugtracker" />"  id="delete-bugtracker-button"/>
+	<span class="ui-icon ui-icon-trash">-</span><f:message key='label.Delete' />
+	</button>
+		
 	<div style="clear:both"></div>
 	
 	<table id="bugtrackers-table" class="unstyled-table" data-def="ajaxsource=${bugtrackersUrl}, hover, pre-sort=1-asc">

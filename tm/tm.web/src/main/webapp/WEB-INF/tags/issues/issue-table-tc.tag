@@ -51,7 +51,7 @@
 <table id="issue-table" data-def="ajaxsource=${dataUrl}, datakeys-id=id, pre-sort=1-desc">
 	<thead>
 		<tr>
-			<th data-def="select, map=remote-id, link={url}, sWidth=2.5em, sortable">${interfaceDescriptor.tableIssueIDHeader}</th>
+			<th data-def="select, map=remote-id, link-new-tab={url}, sWidth=2.5em, sortable">${interfaceDescriptor.tableIssueIDHeader}</th>
 			<th data-def="map=summary">${interfaceDescriptor.tableSummaryHeader}</th>
 			<th data-def="map=priority">${interfaceDescriptor.tablePriorityHeader}</th>
 			<th data-def="map=status">${interfaceDescriptor.tableStatusHeader}</th>

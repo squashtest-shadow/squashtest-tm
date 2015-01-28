@@ -150,7 +150,7 @@ public class TeamController extends PartyControllerSupport {
 	 */
 	@RequestMapping(value = TEAM_ID_URL, method = RequestMethod.DELETE)
 	@ResponseBody
-	public void deleteTeam(@PathVariable long teamId) {
+	public void deleteTeam(@PathVariable List<Long> teamId) {
 		service.deleteTeam(teamId);
 	}
 

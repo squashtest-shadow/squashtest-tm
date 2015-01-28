@@ -52,6 +52,8 @@ public interface CustomCustomFieldManagerService {
 	 */
 	void deleteCustomField(long customFieldId);
 
+	void deleteCustomField(List<Long> customFieldIds);
+
 	/**
 	 * Will persist the given custom field.
 	 * 

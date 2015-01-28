@@ -173,7 +173,7 @@ define([ "jquery", "squash.translator",
 		});
 		
 		// confirm deletion
-		$("#delete-user-popup").confirmDialog().on('confirmdialogconfirm', function(){
+		$("#delete-user-dialog").confirmDialog().on('confirmdialogconfirm', function(){
 			var $this = $(this),
 			table = $("#users-list-table").squashTable();
 
@@ -198,7 +198,14 @@ define([ "jquery", "squash.translator",
 
 	function initButtons(settings) {
 		
+		
+		/* There's something that remove and replace an element of the css and destroy the apparence of the buttons */
 		$("#add-user-button").button();
+		$("#add-user-button").removeClass("ui-button-text-only").addClass("ui-button-text-icon-primary");
+		$("#add-user-button > span").removeClass("ui-button-text")
+		$("#delete-user-button").button();
+		$("#delete-user-button").removeClass("ui-button-text-only").addClass("ui-button-text-icon-primary");
+		$("#delete-user-button > span").removeClass("ui-button-text");
 
 		function displayNothingSelected(){
 			var warn = translator.get({
@@ -234,7 +241,7 @@ define([ "jquery", "squash.translator",
 		$("#delete-user-button").button().on('click', function(){
 			var ids = $("#users-list-table").squashTable().getSelectedIds();
 			if (ids.length>0){
-				var popup = $("#delete-user-popup");
+				var popup = $("#delete-user-dialog");
 				popup.data('entity-id',null);
 				popup.confirmDialog('open');
 			}
@@ -280,7 +287,7 @@ define([ "jquery", "squash.translator",
 		var squashSettings = {
 
 				deleteButtons : {
-					delegate : "#delete-user-popup",
+					delegate : "#delete-user-dialog",
 					tooltip : translator.get('label.Remove')
 				},
 		

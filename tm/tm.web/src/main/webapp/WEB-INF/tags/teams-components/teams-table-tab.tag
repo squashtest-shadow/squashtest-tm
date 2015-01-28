@@ -27,7 +27,10 @@
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component"%>
 <div id="team-table-pane" class="table-tab" >
   <div class="toolbar">
-    <button id="new-team-button" class="sq-btn"><f:message key="label.addTeam"/></button>
+    <button id="new-team-button" class="test-step-toolbar-button ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-primary .squash-button-initialized" title="f:message key="label.addTeam">    
+     <span class="ui-icon ui-icon-plusthick">+</span> <span class="ui-button-text"><f:message key="label.Add" /> </span> </button>
+     <button id="delete-team-button" class="test-step-toolbar-button ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-primary .squash-button-initialized" title="f:message key="label.deleteTeam">    
+     <span class="ui-icon ui-icon-trash">-</span> <span class="ui-button-text"><f:message key="label.Delete" /> </span> </button>
   </div>
   <div class="table-tab-wrap">
     <table id="teams-table" data-def="deferloading=${ pagedTeams.totalNumberOfItems }, pagesize=${ teamsPageSize }"  class="unstyled-table">
@@ -94,3 +97,23 @@
     <input class="cancel" type="button" value="<f:message key='label.Cancel' />" data-def="mainbtn, evt=cancel"/>
   </div>  
 </div>
+
+
+          <div id="remove-team-dialog" class="popup-dialog not-displayed"
+            th:title="#{title.removeTestAutomationServer}" title="<f:message key='label.Delete' />">
+            <!-- _____________CASE 1_______________ -->
+            <div class="display-table-row">
+            	<div class="display-table-cell warning-cell">
+              	  <div class="generic-error-signal"></div>
+           		</div>
+	            <div class="display-table-cell">
+				  <p th:text="#{dialog.remove-team	}">Confirmez vous la suppression de ces équipes ?</p>
+	              <p th:text="#{dialog.label.delete-node.label.cantbeundone}">Cette action ne peut-être annulée.</p>
+	              <p th:text="#{dialog.label.delete-node.label.confirm }">Confirmez-vous la suppression ?</p>
+				</div>
+			</div>
+            <div class="popup-dialog-buttonpane">
+              <input class="confirm" type="button" value="<f:message key='label.Confirm' />" th:value="#{label.Confirm}" data-def="evt=confirm, mainbtn" />
+              <input class="cancel" type="button" value="<f:message key='label.Cancel' />" th:value="#{label.Cancel}" data-def="evt=cancel" />
+            </div>
+          </div>

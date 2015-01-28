@@ -164,7 +164,7 @@ public final class CustomFieldAdministrationController {
 	 * @param customFieldId
 	 * @deprecated use CustomFieldController#deleteCustomField instead
 	 */
-	public void deleteCustomField(@PathVariable long customFieldId) {
+	public void deleteCustomField(@PathVariable List<Long> customFieldId) {
 		// TODO custom-field rest api -> should be in CustomFieldController
 		customFieldManagerService.deleteCustomField(customFieldId);
 	}

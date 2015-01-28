@@ -25,7 +25,7 @@ require(["common"], function() {
 			function($, translator, routing){					
 		
 		$(function() {		
-			$('#new-bugtracker-button').button();				
+		
 			$("#bugtrackers-table").squashTable({},{});						
 		});	
 		

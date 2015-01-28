@@ -22,6 +22,7 @@ package org.squashtest.tm.service.internal.testautomation;
 
 import java.net.URL;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -91,16 +92,24 @@ public class TestAutomationServerManagerServiceImpl implements TestAutomationSer
 		return projectDao.haveExecutedTestsByIds(projectIds);
 	}
 
+
 	/**
 	 * @see TestAutomationServerManagerService#deleteServer(long)
 	 */
 	@Override
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public void deleteServer(long serverId) {
-
 		projectDao.deleteAllHostedProjects(serverId);
 		serverDao.deleteServer(serverId);
+	}
 
+	@Override
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	public void deleteServer(List<Long> serverIds) {
+		for (Long id : serverIds) {
+			projectDao.deleteAllHostedProjects(id);
+			serverDao.deleteServer(id);
+		}
 	}
 
 	@Override

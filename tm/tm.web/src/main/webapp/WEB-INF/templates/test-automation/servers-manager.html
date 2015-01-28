@@ -92,9 +92,17 @@
       <div id="sub-page-content" class="sub-page-content">
         <div class="fragment-body unstyled">
           <div id="test-automation-server-table-pane">
-            <input id="add-test-automation-server" type="button" class="sq-btn snap-right"
-              value="Add a test automation server" th:value="#{label.testAutomationServer.add}" />
-            <div class="unsnap"></div>
+            <button class="snap-right sq-btn" type="button" value="Add a test automation server" th:value="#{label.testAutomationServer.add}" 
+           	th:title="#{label.testAutomationServer.add}"   id="add-test-automation-server">
+			<span class="ui-icon ui-icon-plus">+</span><span th:text="#{label.Add}"/>
+			</button>
+			
+			<button class="snap-right sq-btn" type="button" value="Delete a test automation server" th:value="#{label.testAutomationServer.delete}" 
+           	th:title="#{label.testAutomationServer.delete}"   id="delete-test-automation-server">
+			<span class="ui-icon ui-icon-trash">-</span><span th:text="#{label.Delete}"/>
+			</button>
+	
+	        <div class="unsnap"></div>
             <div>
               <table id="test-automation-server-table"
                 th:attr="data-def='pre-sort=2-asc, pre-filled,  pagesize=50, datakeys-id=entity-id ,ajaxsource='+@{/administration/test-automation-servers}">
@@ -210,48 +218,56 @@
           <!-- ==================== remove popup ==================== -->
           <div id="remove-test-automation-server-confirm-dialog" class="popup-dialog not-displayed"
             th:title="#{title.removeTestAutomationServer}" title="info">
-            <!-- _____________CASE 1_______________ -->
-            <div data-def="state=case1">
-              <p th:text="#{message.testAutomationServer.remove.confirm}">Confirmez vous la suppression de ce
-                serveur d'exécution ?</p>
-            </div>
-            <!-- _____________CASE 2_______________ -->
-            <div data-def="state=case2">
-              <p>
-                <span th:text="#{message.testAutomationServer.boundToTMProject}">Ce serveur d’exécution est
-                  associé a au moins un projet TM. </span>
-                <span th:text="#{message.testAutomationServer.noExecution}">Aucune exécution n’a encore été
-                  lancée sur ce serveur.</span>
-              </p>
-              <p>
-                <label th:text="#{label.warning}">Attention</label>
-                <span th:text="#{message.testAutomationServer.noExecution.warning}">les associations des scripts
-                  TA aux cas de tests des projets TM seront supprimées.</span>
-              </p>
-              <p th:text="#{message.testAutomationServer.remove.confirm}">Confirmez vous la suppression de ce
-                serveur d'exécution ?</p>
-            </div>
-            <!-- _____________CASE 3_______________ -->
-            <div data-def="state=case3">
-              <p>
-                <span th:text="#{message.testAutomationServer.boundToTMProject}">Ce serveur d’exécution est
-                  associé a au moins un projet TM. </span>
-                <span th:text=" #{message.testAutomationServer.withExecution}">Au moins une exécution a déjà été
-                  lancée sur ce serveur.</span>
-              </p>
-              <p>
-                <label th:text="#{label.warning}">Attention</label>
-                <span th:text="#{message.testAutomationServer.withExecution.warning}">les exécutions des cas de
-                  test automatisés resteront accessibles mais les liens vers les rapports de résultat et d’exécution
-                  seront supprimés ainsi que l’association des scripts TA aux cas de tests des projets TM.</span>
-              </p>
-              <p th:text="#{message.testAutomationServer.remove.confirm}">Confirmez vous la suppression de ce
-                serveur d'exécution ?</p>
-            </div>
-            <!-- _____________Progression_______________ -->
-            <div data-def="state=progression" th:include="fragments-utils/static-panels :: small-please-wait" >
-              zzz
-            </div>
+            
+            <div class="display-table-row">
+	            <div class="display-table-cell warning-cell">
+	                <div class="generic-error-signal"></div>
+	            </div>
+	            <div class="display-table-cell">
+				            <!-- _____________CASE 1_______________ -->
+			            <div data-def="state=case1">
+			              <p th:text="#{message.testAutomationServer.remove.confirm}">Confirmez vous la suppression de ce
+			                serveur d'exécution ?</p>
+			            </div>
+			            <!-- _____________CASE 2_______________ -->
+			            <div data-def="state=case2">
+			              <p>
+			                <span th:text="#{message.testAutomationServer.boundToTMProject}">Ce serveur d’exécution est
+			                  associé a au moins un projet TM. </span>
+			                <span th:text="#{message.testAutomationServer.noExecution}">Aucune exécution n’a encore été
+			                  lancée sur ce serveur.</span>
+			              </p>
+			              <p>
+			                <label th:text="#{label.warning}">Attention</label>
+			                <span th:text="#{message.testAutomationServer.noExecution.warning}">les associations des scripts
+			                  TA aux cas de tests des projets TM seront supprimées.</span>
+			              </p>
+			              <p th:text="#{message.testAutomationServer.remove.confirm}">Confirmez vous la suppression de ce
+			                serveur d'exécution ?</p>
+			            </div>
+			            <!-- _____________CASE 3_______________ -->
+			            <div data-def="state=case3">
+			              <p>
+			                <span th:text="#{message.testAutomationServer.boundToTMProject}">Ce serveur d’exécution est
+			                  associé a au moins un projet TM. </span>
+			                <span th:text=" #{message.testAutomationServer.withExecution}">Au moins une exécution a déjà été
+			                  lancée sur ce serveur.</span>
+			              </p>
+			              <p>
+			                <label th:text="#{label.warning}">Attention</label>
+			                <span th:text="#{message.testAutomationServer.withExecution.warning}">les exécutions des cas de
+			                  test automatisés resteront accessibles mais les liens vers les rapports de résultat et d’exécution
+			                  seront supprimés ainsi que l’association des scripts TA aux cas de tests des projets TM.</span>
+			              </p>
+			              <p th:text="#{message.testAutomationServer.remove.confirm}">Confirmez vous la suppression de ce
+			                serveur d'exécution ?</p>
+			            </div>
+			            <!-- _____________Progression_______________ -->
+			            <div data-def="state=progression" th:include="fragments-utils/static-panels :: small-please-wait" >
+			              zzz
+			            </div>
+            	</div>
+			</div>
             <div class="popup-dialog-buttonpane">
               <input class="confirm" type="button" value="confirm" th:value="#{label.Confirm}"
                 data-def="evt=confirm,  state=case1, mainbtn" />

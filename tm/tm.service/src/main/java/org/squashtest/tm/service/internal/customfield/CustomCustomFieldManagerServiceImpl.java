@@ -95,6 +95,15 @@ public class CustomCustomFieldManagerServiceImpl implements CustomCustomFieldMan
 	}
 
 	/**
+	 * @see org.squashtest.tm.service.customfield.CustomCustomFieldManagerService#deleteCustomField(long)
+	 */
+	@Override
+	public void deleteCustomField(List<Long> customFieldIds) {
+		for (Long id : customFieldIds) {
+			deleteCustomField(id);
+		}
+	}
+	/**
 	 * @see org.squashtest.tm.service.customfield.CustomCustomFieldManagerService#persist(org.squashtest.tm.domain.customfield.CustomField)
 	 */
 	@Override
