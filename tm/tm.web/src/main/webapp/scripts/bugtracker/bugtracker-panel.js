@@ -28,8 +28,8 @@ define([ "jquery", "app/util/ButtonUtil",
 		 * 
 		 * the conf object must be : 
 		 * {
-		 * 	url  : the url where to fetch the panel,
-		 * 	style : "toggle" || "fragment-tab", defaults to "toggle" if undefined
+		 *	url  : the url where to fetch the panel,
+		 *	style : "toggle" || "fragment-tab", defaults to "toggle" if undefined
 		 * }
 		 *  
 		 * Also, This method assumes the existence of a certain structure (if you're a dev and 
@@ -91,6 +91,6 @@ define([ "jquery", "app/util/ButtonUtil",
 			}
 
 		}
-	}
+	};
 
 });
