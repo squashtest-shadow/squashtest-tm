@@ -141,19 +141,23 @@
     <beans:property name="loginFormUrl" value="/login" />
     <beans:property name="forceHttps" value="#{'${application.channel:any}'.equalsIgnoreCase('https')}" />
   </beans:bean>
+  
 
   <beans:bean id="htmlSanitizationFilter" class="org.squashtest.tm.web.internal.filter.HtmlSanitizationFilter" />
 
-  <authentication-manager alias="squashtest.core.security.AuthenticationManager">
-    <authentication-provider ref="authenticationProvider.${authentication.provider:internal}" />
-  </authentication-manager>
-
+  <beans:bean id="authenticationProvider.auxiliary.noop" class="org.squashtest.tm.web.security.authentication.NoOpAuthenticationProvider" />
+  
+  
   <!-- 
 		the following bean provide a link to the credentials, both reading and editing. 
 		todo : create a bean configurable via a .properties file, in case we need to switch 
 		to an LDAP provider. 
 	  -->
 
+  <authentication-manager alias="squashtest.core.security.AuthenticationManager">
+  	<authentication-provider ref="authenticationProvider.auxiliary.${authentication.provider.auxiliary:noop}" />
+    <authentication-provider ref="authenticationProvider.${authentication.provider:internal}" />
+  </authentication-manager>
 
   <beans:bean id="permissionFactory" class="org.squashtest.tm.security.acls.CustomPermissionFactory" />
 
