@@ -32,6 +32,7 @@ import org.springframework.security.access.PermissionEvaluator;
 import org.springframework.security.acls.AclPermissionEvaluator;
 import org.springframework.security.acls.model.AclService;
 import org.springframework.security.core.Authentication;
+import org.squashtest.tm.service.security.acls.ExtraPermissionEvaluator;
 
 
 /**
@@ -49,7 +50,7 @@ public class AffirmativeBasedCompositePermissionEvaluator extends AclPermissionE
 
 	// Note : I choose not to synchronize this collection because chances of things going haywire
 	// are very slim, and could happen only at boot time.
-	private Collection<PermissionEvaluator> evaluators = new ArrayList<>();
+	private Collection<ExtraPermissionEvaluator> evaluators = new ArrayList<>();
 
 
 	public AffirmativeBasedCompositePermissionEvaluator(AclService aclService) {
@@ -62,10 +63,10 @@ public class AffirmativeBasedCompositePermissionEvaluator extends AclPermissionE
 		boolean granted = false;
 
 		if (! evaluators.isEmpty()){
-			Iterator<PermissionEvaluator> evalIter = evaluators.iterator();
+			Iterator<ExtraPermissionEvaluator> evalIter = evaluators.iterator();
 
 			while(evalIter.hasNext() && (! granted)){
-				PermissionEvaluator evaluator = evalIter.next();
+				ExtraPermissionEvaluator evaluator = evalIter.next();
 				granted = evaluator.hasPermission(authentication, targetDomainObject, permission);
 			}
 		}
@@ -82,10 +83,10 @@ public class AffirmativeBasedCompositePermissionEvaluator extends AclPermissionE
 		boolean granted = false;
 
 		if (! evaluators.isEmpty()){
-			Iterator<PermissionEvaluator> evalIter = evaluators.iterator();
+			Iterator<ExtraPermissionEvaluator> evalIter = evaluators.iterator();
 
 			while(evalIter.hasNext() && (! granted)){
-				PermissionEvaluator evaluator = evalIter.next();
+				ExtraPermissionEvaluator evaluator = evalIter.next();
 				granted = evaluator.hasPermission(authentication, targetId, targetType, permission);
 			}
 		}
@@ -100,7 +101,7 @@ public class AffirmativeBasedCompositePermissionEvaluator extends AclPermissionE
 	 * @param evaluator
 	 * @param properties
 	 */
-	public void registerPermissionEvaluator(PermissionEvaluator evaluator, Map properties ){
+	public void registerPermissionEvaluator(ExtraPermissionEvaluator evaluator, Map properties ){
 
 		if (evaluator == null){
 			return;
@@ -114,7 +115,7 @@ public class AffirmativeBasedCompositePermissionEvaluator extends AclPermissionE
 	}
 
 
-	public void unregisterPermissionEvaluator(PermissionEvaluator evaluator, Map properties){
+	public void unregisterPermissionEvaluator(ExtraPermissionEvaluator evaluator, Map properties){
 		if (evaluator == null){
 			return;
 		}

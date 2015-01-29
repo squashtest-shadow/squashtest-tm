@@ -401,8 +401,8 @@
   		We also must take care that the composite evaluator must not register against itself or death by 
   		stackoverflow would entail.	
   	-->
-	<osgi:list id="security.plugin.permission-evaluators" interface="org.springframework.security.access.PermissionEvaluator" 
-	cardinality="0..N" filter="(!(org.springframework.osgi.bean.name=squashtest.core.security.PermissionEvaluator))">
+	<osgi:list id="security.plugin.permission-evaluators" interface="org.squashtest.tm.service.security.acls.ExtraPermissionEvaluator" 
+	cardinality="0..N" >
 		<osgi:listener 
 			ref="squashtest.core.security.PermissionEvaluator" 			
 			bind-method="registerPermissionEvaluator"
