@@ -30,31 +30,18 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.squashtest.tm.domain.bugtracker.Issue;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.service.bugtracker.BugTrackersLocalService;
-import org.squashtest.tm.web.internal.model.rest.RestExecution;
 import org.squashtest.tm.web.internal.model.rest.RestExecutionStub;
-import org.squashtest.tm.web.internal.model.rest.RestIssue;
+
 
 @Controller
-@RequestMapping("/rest/api/bugtracker")
+@RequestMapping("/api/bugtracker")
 public class BugtrackerRestController {
-	
+
 	@Inject
 	BugTrackersLocalService bugTrackersLocalService;
-	
-	@RequestMapping(value = "/{name}/issue/{remoteid}", method = RequestMethod.GET, produces="application/json")
-	@ResponseBody
-	public List<RestIssue> getIssueById(@PathVariable String name, @PathVariable String remoteid ) {
-		List<Issue> issues = bugTrackersLocalService.getIssueList(remoteid, name);
-		List<RestIssue> restIssues = new ArrayList<RestIssue>(issues.size());
-		for(Issue issue : issues){
-			restIssues.add(new RestIssue(issue));
-		}
-		return restIssues;
-	}
-	
+
 	@RequestMapping(value = "/{name}/issue/{remoteid}/executions", method = RequestMethod.GET, produces="application/json")
 	@ResponseBody
 	public List<RestExecutionStub> getExecutionsByRemotedId(@PathVariable String name, @PathVariable String remoteid) {

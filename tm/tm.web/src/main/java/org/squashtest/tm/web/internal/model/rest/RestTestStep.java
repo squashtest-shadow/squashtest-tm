@@ -20,17 +20,65 @@
  */
 package org.squashtest.tm.web.internal.model.rest;
 
+import org.squashtest.tm.domain.testcase.ActionTestStep;
+import org.squashtest.tm.domain.testcase.CallTestStep;
 import org.squashtest.tm.domain.testcase.TestStep;
+import org.squashtest.tm.domain.testcase.TestStepVisitor;
 
 
 public class RestTestStep {
 
+	private String action;
+
+	private String expectedResult;
+
+	private RestTestCaseStub calledTestCase;
+
 	public RestTestStep() {
 		super();
 	}
-	
+
 	public RestTestStep(TestStep testStep) {
-		// TODO Auto-generated constructor stub
+		Visitor visitor = new Visitor();
+		testStep.accept(visitor);
 	}
 
+	private class Visitor implements TestStepVisitor{
+
+		@Override
+		public void visit(ActionTestStep visited) {
+			setAction(visited.getAction());
+			setExpectedResult(visited.getExpectedResult());
+		}
+
+		@Override
+		public void visit(CallTestStep visited) {
+			setCalledTestCase(new RestTestCaseStub(visited.getCalledTestCase()));
+		}
+
+	}
+
+	public String getAction() {
+		return action;
+	}
+
+	public void setAction(String action) {
+		this.action = action;
+	}
+
+	public String getExpectedResult() {
+		return expectedResult;
+	}
+
+	public void setExpectedResult(String expectedResult) {
+		this.expectedResult = expectedResult;
+	}
+
+	public RestTestCaseStub getCalledTestCase() {
+		return calledTestCase;
+	}
+
+	public void setCalledTestCase(RestTestCaseStub calledTestCase) {
+		this.calledTestCase = calledTestCase;
+	}
 }

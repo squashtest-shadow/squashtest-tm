@@ -25,11 +25,13 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestStep;
 import org.squashtest.tm.service.testcase.TestCaseFinder;
@@ -38,31 +40,77 @@ import org.squashtest.tm.web.internal.model.rest.RestTestCase;
 import org.squashtest.tm.web.internal.model.rest.RestTestStep;
 
 @Controller
-@RequestMapping("/rest/api/testcase")
+@RequestMapping("/api/testcase")
 public class TestCaseRestController {
-	
+
 	@Inject
 	TestCaseFinder testCaseFinder;
 
 	@Inject
 	TestStepFinder testStepFinder;
-	
-	@RequestMapping(value = "/{id}", method = RequestMethod.GET, produces="application/json")
-	@ResponseBody
-	public RestTestCase getTestCaseById(@PathVariable Long id) {
-		TestCase testCase = this.testCaseFinder.findById(id);
-		return new RestTestCase(testCase);
+
+	@ResponseStatus(value = HttpStatus.NOT_FOUND)
+	public class ResourceNotFoundException extends RuntimeException {
+
+		private static final long serialVersionUID = -649887942614579558L;
+
 	}
 
-	@RequestMapping(value = "/{id}/teststeps", method = RequestMethod.GET, produces="application/json")
+	private TestCase findTestCase(Long id){
+
+		TestCase testCase = null;
+
+		try {
+			testCase = this.testCaseFinder.findById(id);
+		} catch (RuntimeException e) {
+
+			if(e.getCause().getClass().equals(java.lang.reflect.InvocationTargetException.class)) {
+				throw new ResourceNotFoundException();
+			}
+		}
+
+
+		if(testCase == null){
+			throw new ResourceNotFoundException();
+		}
+
+		return testCase;
+	}
+
+	private List<TestStep> findTestSteps(Long id){
+
+		List<TestStep> testSteps = new ArrayList<TestStep>();
+
+		try {
+			testSteps = this.testCaseFinder.findStepsByTestCaseId(id);
+		} catch (java.lang.RuntimeException e) {
+			if (e.getCause().getClass().equals(java.lang.reflect.InvocationTargetException.class)) {
+				throw new ResourceNotFoundException();
+			}
+		}
+
+		return testSteps;
+	}
+
+	@RequestMapping(value = "/{id}", method = RequestMethod.GET, produces = "application/json")
+	@ResponseBody
+	public RestTestCase getTestCaseById(@PathVariable Long id) {
+		TestCase testCase = findTestCase(id);
+		return new RestTestCase(testCase);
+
+	}
+
+	@RequestMapping(value = "/{id}/teststeps", method = RequestMethod.GET, produces = "application/json")
 	@ResponseBody
 	public List<RestTestStep> getTestStepsByTestCaseId(@PathVariable Long id) {
-		List<TestStep> testSteps = this.testCaseFinder.findStepsByTestCaseId(id);
+
+		List<TestStep> testSteps = findTestSteps(id);
 		List<RestTestStep> restTestSteps = new ArrayList<RestTestStep>(testSteps.size());
-		for(TestStep testStep : testSteps){
+		for (TestStep testStep : testSteps) {
 			restTestSteps.add(new RestTestStep(testStep));
 		}
+
 		return restTestSteps;
 	}
-	
+
 }

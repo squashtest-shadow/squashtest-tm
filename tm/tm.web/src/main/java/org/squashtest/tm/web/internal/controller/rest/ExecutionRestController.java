@@ -25,11 +25,13 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.execution.ExecutionStep;
 import org.squashtest.tm.service.execution.ExecutionFinder;
@@ -38,7 +40,7 @@ import org.squashtest.tm.web.internal.model.rest.RestExecution;
 import org.squashtest.tm.web.internal.model.rest.RestExecutionStep;
 
 @Controller
-@RequestMapping("/rest/api/execution")
+@RequestMapping("/api/execution")
 public class ExecutionRestController {
 
 	@Inject
@@ -47,32 +49,55 @@ public class ExecutionRestController {
 	@Inject
 	TestCaseLibraryFinderService testCaseLibraryFinder;
 
+	@ResponseStatus(value = HttpStatus.NOT_FOUND)
+	public class ResourceNotFoundException extends RuntimeException {
+
+		private static final long serialVersionUID = 6673064417292687334L;
+	}
+
+	private Execution findExecution(Long id){
+
+		Execution execution = null;
+
+		try {
+			execution = executionFinder.findById(id);
+		} catch(NullPointerException e) {
+			throw new ResourceNotFoundException();
+		}
+
+		if(execution == null){
+			throw new ResourceNotFoundException();
+		}
+
+		return execution;
+	}
+
 	@RequestMapping(value = "/{id}", method = RequestMethod.GET, produces="application/json")
 	@ResponseBody
 	public RestExecution getExecutionById(@PathVariable Long id) {
 
-		Execution execution = executionFinder.findById(id);
+		Execution execution = null;
 		String path = "";
+		execution = findExecution(id);
 		if(execution.getReferencedTestCase() != null){
 			path = testCaseLibraryFinder.getPathAsString(execution.getReferencedTestCase().getId());
 		}
 
 		return new RestExecution(execution, path);
-
 	}
 
 	@RequestMapping(value = "/{id}/executionsteps", method = RequestMethod.GET, produces="application/json")
 	@ResponseBody
 	public List<RestExecutionStep> getExecutionStepsById(@PathVariable Long id) {
 
-		Execution execution = executionFinder.findById(id);
+		Execution execution = findExecution(id);
 		List<ExecutionStep> steps = execution.getSteps();
 		List<RestExecutionStep> restExecutionSteps = new ArrayList<RestExecutionStep>(steps.size());
 		for(ExecutionStep step : steps){
 			restExecutionSteps.add(new RestExecutionStep(step));
 		}
-		return restExecutionSteps;
 
+		return restExecutionSteps;
 	}
 
 }
