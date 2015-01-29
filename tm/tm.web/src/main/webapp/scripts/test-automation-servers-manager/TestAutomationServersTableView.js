@@ -66,8 +66,6 @@ define([ 'jquery', 'backbone', "underscore", './NewTestAutomationServerDialogVie
 			var self = this;
 			var deleteDialog = $("#remove-test-automation-server-confirm-dialog").formDialog();
 			deleteDialog.formDialog('setState','processing');
-		/*	deleteDialog.on("formdialogopen", this.setConfirmRemoveDialogState);*/
-			
 			deleteDialog.on('formdialogconfirm', function(){
 				var removedIds = tableCf.getSelectedIds().join(',');
 				var urlDelete = squashtm.app.contextRoot + "test-automation-servers/" + removedIds;
@@ -103,9 +101,6 @@ define([ 'jquery', 'backbone', "underscore", './NewTestAutomationServerDialogVie
 				discard();
 				self.table.squashTable().fnDraw();
 			}
-
-			
-			
 				if (table.getSelectedRows().size()>0){
 					$("#remove-test-automation-server-confirm-dialog").formDialog('open');
 				}
@@ -113,17 +108,6 @@ define([ 'jquery', 'backbone', "underscore", './NewTestAutomationServerDialogVie
 						notification.showError(translator.get('testautomation.exceptions.no-selection'));
 				}
 			},
-			
-			
-
-			
-			
-			
-			
-			
-			
-			
-			
 			
 		showNewTestAutomationServerDialog : function(event) {
 			var self = this, showButton = event.target;
@@ -161,10 +145,6 @@ define([ 'jquery', 'backbone', "underscore", './NewTestAutomationServerDialogVie
 			var dialog = $("#remove-test-automation-server-confirm-dialog").formDialog();
 			dialog.formDialog('setState','processing');
 			dialog.on("formdialogopen", this.setConfirmRemoveDialogState);
-		/*	dialog.on("formdialogconfirm", function(evt){
-				self.removeTestAutomationServer(evt);
-				dialog.formDialog('close');
-			});*/
 			dialog.on("formdialogcancel", function() {
 				dialog.formDialog('close');
 			});
@@ -195,54 +175,6 @@ define([ 'jquery', 'backbone', "underscore", './NewTestAutomationServerDialogVie
 				});
 			
 		},
-		
-			
-		/*			
-	setConfirmRemoveDialogState : function(event){
-			var self = this;
-			var table = self.table;
-			var ids = table.getSelectedIds();
-			if (ids.length !=1 ) {
-				return ;
-			}else {
-				$.ajax({
-					url : squashtm.app.contextRoot +"test-automation-servers/"+ids[0]+"/usage-status",
-					type: "GET"
-				}).then(function(status){
-					if(!status.hasBoundProject && !status.hasExecutedTests){
-						self.confirmRemoveTASDialog.formDialog('setState','case1');
-					}else if (!status.hasExecutedTests){
-						self.confirmRemoveTASDialog.formDialog('setState','case2');
-					}else{
-						self.confirmRemoveTASDialog.formDialog('setState','case3');
-					}
-				});
-			}
-
-		},
-		
-		setConfirmRemoveDialogStateMultiple : function(event){
-			var self = this;
-			var table = $("#test-automation-server-table").squashTable();
-			var ids = table.getSelectedIds().join(',');
-				$.ajax({
-					url : squashtm.app.contextRoot +"test-automation-servers/"+ids+"/usage-status",
-					type: "GET"
-				}).then(function(status){
-					if(!status.hasBoundProject && !status.hasExecutedTests){
-						self.configureRemoveTASPanel.formDialog('setState','case1');
-					}else if (!status.hasExecutedTests){
-						self.configureRemoveTASPanel.formDialog('setState','case2');
-					}else{
-						self.configureRemoveTASPanel.formDialog('setState','case3');
-					}
-				});
-			
-		},
-		
-		*/
-		
-		
 		
 		removeTestAutomationServer : function(event) {
 			var self = this,

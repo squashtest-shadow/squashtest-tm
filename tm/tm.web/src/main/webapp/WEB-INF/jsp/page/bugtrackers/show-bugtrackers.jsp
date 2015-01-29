@@ -62,13 +62,18 @@
 
 
 <div class="fragment-body">
+
+   <div class="toolbar">
+   	
+	<button class="snap-right sq-btn" type="button" title="<f:message key="label.deleteBugtracker" />"  id="delete-bugtracker-button"/>
+	<span class="ui-icon ui-icon-trash">-</span><f:message key='label.Delete' />
 	<button class="snap-right sq-btn" type="button" title="<f:message key='label.AddBugtracker' />"  id="new-bugtracker-button"/>
 	<span class="ui-icon ui-icon-plusthick">+</span><f:message key='label.Add' />
 	</button>
-	
-	<button class="snap-right sq-btn" type="button" title="<f:message key="label.deleteBugtracker" />"  id="delete-bugtracker-button"/>
-	<span class="ui-icon ui-icon-trash">-</span><f:message key='label.Delete' />
+
 	</button>
+  </div>
+
 		
 	<div style="clear:both"></div>
 	

@@ -62,14 +62,17 @@
 		<c:url var="dtMessagesUrl" value="/datatables/messages" />
 
 		
-		<%----------------------------------- Milestp,e Table -----------------------------------------------%>
+		<%----------------------------------- Milestone Table -----------------------------------------------%>
 
 <div class="fragment-body">
-	<input class="snap-right sq-btn" type="button" value='<f:message key="label.AddMilestone" />'   id="new-milestone-button"/>
-	<input class="snap-right sq-btn" type="button" value='<f:message key="label.deleteMilestone" />' id="delete-milestone-button"/>
-	<div style="clear:both"></div>
-	
-	
+
+ <div class="toolbar">
+     <button id="new-milestone-button" class="test-step-toolbar-button ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-primary .squash-button-initialized" title="f:message key="label.addTeam">    
+     <span class="ui-icon ui-icon-plusthick">+</span> <span class="ui-button-text"><f:message key="label.AddMilestone" /> </span> </button>
+     <button id="delete-milestone-button" class="test-step-toolbar-button ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-primary .squash-button-initialized" title="f:message key="label.addTeam">    
+     <span class="ui-icon ui-icon-trash">-</span> <span class="ui-button-text"><f:message key="label.deleteMilestone" /> </span> </button>
+ </div>
+  <div style="clear:both"></div>
 	<table id="milestones-table" class="unstyled-table" data-def="ajaxsource=${milestonesUrl}, hover, filter, pre-sort=1-asc">
 		<thead>
 			<tr>

@@ -91,17 +91,17 @@
 
       <div id="sub-page-content" class="sub-page-content">
         <div class="fragment-body unstyled">
-          <div id="test-automation-server-table-pane">
-            <button class="snap-right sq-btn" type="button" value="Add a test automation server" th:value="#{label.testAutomationServer.add}" 
-           	th:title="#{label.testAutomationServer.add}"   id="add-test-automation-server">
-			<span class="ui-icon ui-icon-plus">+</span><span th:text="#{label.Add}"/>
-			</button>
-			
-			<button class="snap-right sq-btn" type="button" value="Delete a test automation server" th:value="#{label.testAutomationServer.delete}" 
-           	th:title="#{label.testAutomationServer.delete}"   id="delete-test-automation-server">
-			<span class="ui-icon ui-icon-trash">-</span><span th:text="#{label.Delete}"/>
-			</button>
-	
+          <div id="test-automation-server-table-pane">       
+            <div class="toolbar">  			
+				<button class="snap-right sq-btn" type="button" value="Delete a test automation server" th:value="#{label.testAutomationServer.delete}" 
+	           	th:title="#{label.testAutomationServer.delete}"   id="delete-test-automation-server">
+				<span class="ui-icon ui-icon-trash">-</span><span th:text="#{label.Delete}"/>
+				</button>
+	            <button class="snap-right sq-btn" type="button" value="Add a test automation server" th:value="#{label.testAutomationServer.add}" 
+	           	th:title="#{label.testAutomationServer.add}"   id="add-test-automation-server">
+				<span class="ui-icon ui-icon-plus">+</span><span th:text="#{label.Add}"/>
+				</button>
+ 			</div>
 	        <div class="unsnap"></div>
             <div>
               <table id="test-automation-server-table"

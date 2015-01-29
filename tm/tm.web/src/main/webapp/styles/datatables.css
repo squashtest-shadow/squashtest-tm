@@ -183,6 +183,7 @@ table.center {
 }
 
 div.dataTables_wrapper th.datatable-filterable.datatable-filtered{
+    margin-bottom: 1em;
 	font-weight:bold;	
 }
 

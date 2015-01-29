@@ -61,9 +61,12 @@
 					}
 			};
 			
-			
 			var milestoneTable = $("#milestones-table").squashTable({"bServerSide":false},squashSettings);			
-			$('#new-milestone-button').button();		
+			$('#new-milestone-button').button();	
+
+			/* The button gets CSS we don't want to keep a clean CSS and also put a span with text only after*/
+			$("#new-milestone-button").removeClass("ui-button-text-only").addClass("ui-button-text-icon-primary");
+			$("#new-milestone-button > span").removeClass("ui-button-text");
 		});	
 		
 	

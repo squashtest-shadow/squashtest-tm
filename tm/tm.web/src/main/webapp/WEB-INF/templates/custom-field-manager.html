@@ -104,15 +104,15 @@
       <div id="sub-page-content" class="sub-page-content">
     <div class="fragment-body unstyled">
     <div id="cf-table-pane">
-   
-      <a id="add-cf" class="sq-btn snap-right" th:title="#{label.CustomField.add}" >
-      <span class="ui-icon ui-icon-plusthick">+</span> <span><th th:text="#{label.Add}">Add a custom field</th></span>
-      </a>
-      <a id="delete-cf" class="sq-btn snap-right" th:title="#{label.CustomField.delete}" >
-      <span class="ui-icon ui-icon-trash">-</span> <span><th th:text="#{label.Delete}">Delete a custom field</th></span>
-      </a>
-      
-      <div class="unsnap"></div>
+  	  <div class="toolbar">
+		      <a id="delete-cf" class="sq-btn snap-right" th:title="#{label.CustomField.delete}" >
+		      <span class="ui-icon ui-icon-trash">-</span> <span><th th:text="#{label.Delete}">Delete a custom field</th></span>
+		      </a>
+		      <a id="add-cf" class="sq-btn snap-right" th:title="#{label.CustomField.add}" >
+		      <span class="ui-icon ui-icon-plusthick">+</span> <span><th th:text="#{label.Add}">Add a custom field</th></span>
+		      </a>
+	  </div>
+    <div class="unsnap"></div>
       <div>
         <table id="cf-table" class="unstyled-table">
           <thead>

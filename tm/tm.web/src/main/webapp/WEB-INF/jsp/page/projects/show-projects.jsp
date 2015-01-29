@@ -56,12 +56,11 @@
     <%----------------------------------- Projects Table -----------------------------------------------%>
 <div class="fragment-body">
   <sec:authorize access=" hasRole('ROLE_ADMIN')">
-  <div class="btn-toolbar right">
-    <button id="new-project-button" type="button" class="test-step-toolbar-button ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-primary .squash-button-initialized"
+   <div class="toolbar">
+   <button id="new-project-button" type="button" class="test-step-toolbar-button ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-primary .squash-button-initialized"
      title="<f:message key='project.button.add.label' />" >
     <span class="ui-icon ui-icon-plusthick" >+</span><span class="ui-button-text"><f:message key='label.Add' /></span>
     </button>
-    
     <input id="new-project-from-template-button" type="button" class="sq-btn" value="<f:message key='label.createFromATemplate'/>"/>
   </div>
   </sec:authorize>
