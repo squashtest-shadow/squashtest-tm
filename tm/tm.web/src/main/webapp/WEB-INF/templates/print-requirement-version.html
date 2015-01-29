@@ -188,12 +188,13 @@
 				</thead>
 				<tbody>
 					<tr th:each="verifTC, iterStat : ${verifyingTestCases}"
-						th:object="${verifTC}">
+						th:object="${verifTC}"
+                        th:with="typLabel = ${#messages.msgOrNull('__${verifTC.type.label}__')}">
 						<td th:text="${iterStat.count}">1</td>
 						<td th:text="*{project.name}">Project B</td>
 						<td th:text="*{reference}">RG-002-03</td>
 						<td th:text="*{name}">Couleurs des banières</td>
-						<td th:text="#{__*{type.i18nKey}__}">crit</td>
+						<td th:text="${(typLabel != null) ? typLabel : verifTC.type.label}">crit</td>
 					</tr>
 				</tbody>
 			</table>
