@@ -99,7 +99,7 @@ documentation :
     </div>
 
     <div id="execute-informations-panel" class="toggle-panel-main is-contextual load-links-right-frame"
-     title="Informations" th:title="#{generics.information.title}">
+     title="Informations" th:title="#{label.Description}">
 
       <div class="display-table">
       
@@ -131,13 +131,38 @@ documentation :
           </div>
         </div>
 
-
         <div class="display-table-row">
+          <label class="display-table-cell" th:text="#{test-case.status.label}">status</label>
+     	  <div  class="display-table-cell">
+            <span id="test-case-status-icon" th:class="'test-case-status-'+${execution.status}">  &nbsp; &nbsp; </span>
+            <span id="testcase-status" th:text="${execution.status.level}+'-'+#{${execution.status.getI18nKey()}}">0 - a specifier</span>
+          </div>
+        </div>
+         <div class="display-table-row">
+          <label class="display-table-cell" th:text="#{label.Dataset}">status</label>
+          <div id="execute-dataset" class="display-table-cell"
+            th:text="${execution.datasetLabel}">dataset name</div>
+        </div>
+        
+        <div class="display-table-row">
+        	<input type="hidden" id="TC_SOURCE_ID" th:value="${execution.referencedTestCase.id}" />
+         	<input type="hidden" id="TC_SOURCE_NAME" th:value="${execution.referencedTestCase.name}" />
+            <input type="hidden" id="EXEC_ID" th:value="${execution.id}" />
+        </div>     
+        
+      </div>
+    </div>
+    
+    <div id="test-case-attribute-panel" class="toggle-panel-main is-contextual load-links-right-frame" title="Attribute" th:title="#{label.Attributes}">
+			<div class="display-table">
+			
+		<div class="display-table-row">
           <label class="display-table-cell" th:text="#{test-case.importance.label}">importance</label>
-
-          <div id="testcase-importance" class="display-table-cell"
-            th:text="${execution.importance.level}+'-'+#{${execution.importance.getI18nKey()}}">0 - most important
-            of all</div>
+			<div class="display-table-cell">
+				<span id="test-case-importance-icon" th:class="'test-case-importance-'+${execution.importance}">&nbsp;&nbsp;</span>
+	          <span id="testcase-importance" 
+	            th:text="${execution.importance.level}+'-'+#{${execution.importance.getI18nKey()}}">0 - most important of all</span>
+	        </div>
         </div>
 
         <div class="display-table-row" th:with="natLabel = ${#messages.msgOrNull('__${execution.nature.label}__')}">
@@ -151,23 +176,29 @@ documentation :
           <div id="testcase-type" class="display-table-cell"
             th:text="${(typLabel != null) ? typLabel : execution.type.label}">0 - R</div>
         </div>
-
-        <div class="display-table-row">
-          <label class="display-table-cell" th:text="#{test-case.status.label}">status</label>
-          <div id="testcase-status" class="display-table-cell"
-            th:text="${execution.status.level}+'-'+#{${execution.status.getI18nKey()}}">0 - a specifier</div>
-        </div>
- 
-         <div class="display-table-row">
-          <label class="display-table-cell" th:text="#{label.Dataset}">status</label>
-          <div id="execute-dataset" class="display-table-cell"
-            th:text="${execution.datasetLabel}">dataset name</div>
-        </div>
         
-      </div>
-      
-    </div>
-
+			<div class="display-table-row">			
+				<div class="display-table-cell" sq:unsafe-html="${execution.prerequisite}">					
+					<p th:remove="all"> 
+						consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam 
+						quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, 
+						nisi ut aliquid ex ea commodi consequatur? Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse 
+						quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur?	
+					</p>	
+				</div>				
+			</div>
+			</div>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 
     <div id="execute-prerequisite-panel" class="toggle-panel-main is-contextual load-links-right-frame" title="Prerequisite" th:title="#{generics.prerequisite.title}">
 			<div class="display-table">
@@ -182,9 +213,9 @@ documentation :
 				</div>				
 			</div>
 			</div>
-		</div>
+	</div>
 		
-		<div th:with="attachable = ${false}, attachableEntity=${execution}, attachmentSet = ${attachments}" id="attachment-bloc-frag" th:include="attachment-bloc.frag :: attachment-bloc">ATTACHMENT-BLOC</div>
+	<div th:with="attachable = ${false}, attachableEntity=${execution}, attachmentSet = ${attachments}" id="attachment-bloc-frag" th:include="attachment-bloc.frag :: attachment-bloc">ATTACHMENT-BLOC</div>
 		
 	</div>
 	
@@ -207,6 +238,31 @@ documentation :
         		
     			basic.init();
     			
+    			/* Allow the status icon to exist : InTree may be useless */
+    			
+    			_updateStatusIcon = function (value){
+  					var statusIcon = $("#test-case-status-icon");
+  					statusIcon.attr("class", ""); //reset
+  					statusIcon.addClass("small-icon test-case-status-" + value);
+  				};
+    			_updateStatusInTree = function(value){
+  					var self = this;
+  					self._updateStatusIcon(value);
+  					eventBus.trigger('node.attribute-changed', {identity : self.identity, attribute : 'status', value : value.toLowerCase()});
+  				};
+  			 	this.updateStatusInTree = $.proxy(this._updateStatusInTree, this);
+  				
+    			/* Allow the importance icon to exist */
+    			
+  				_updateImportanceIcon = function (value){
+  					var status = $("#test-case-importance-icon");
+  					status.attr("class", ""); // reset
+  					status.addClass("small-icon test-case-importance-" + value);
+  				};
+  				
+  				
+
+					
     			/* we dont append in parent because order would not be guaranteed
     			 * we dont append in placeholder because it breaks layout aux petits oignons
     			 * hence the replaceWith
