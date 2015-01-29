@@ -35,7 +35,7 @@
 	// you should explicitly exclude the "common" module
 	// you should explicitly include nested require directives (cf. the "login-page" example)
 	modules : [
-		/*	{
+			{
 				name : "common",
 				// List common dependencies here. Only need to list
 				// top level dependencies, "include" will find
@@ -145,6 +145,6 @@
 				            "contextual-content-handlers", "jquery.squash.fragmenttabs", "bugtracker/bugtracker-panel", "test-suite-management",
 				            "jquery.cookie", "test-suite/execution-buttons-panel", "test-automation/auto-execution-buttons-panel" ],
 				exclude : [ "common" ]
-			}*/
+			}
 			]
 }) // DONT ADD NO SEMICOLON!
