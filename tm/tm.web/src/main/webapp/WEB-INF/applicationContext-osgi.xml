@@ -362,6 +362,7 @@
     <osgi:listener ref="squash.tm.report.ExportPluginManager" bind-method="registerPlugin" unbind-method="unregisterPlugin" />
   </osgi:list>
   
+
    
     <osgi:reference id="squashtest.tm.service.MilestoneManagerService" bean-name="squashtest.tm.service.MilestoneManagerService" timeout="2000" >
 	    <osgi:interfaces>

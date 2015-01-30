@@ -45,6 +45,7 @@ Import-Package: com.fasterxml.jackson.databind,\
 	org.springframework.beans.factory.xml;version="${spring.version.range}",\
 	org.springframework.context.config;version="${spring.version.range}",\
 	org.springframework.context.support;version="${spring.version.range}",\
+        org.springframework.context.event;version="${spring.version.range}",\
 	org.springframework.http.converter.json;version="${spring.version.range}",\
 	org.springframework.orm.hibernate4.support;version="${spring.version.range}",\
 	org.springframework.osgi.extensions.annotation;version="${springdm.version.range}",\

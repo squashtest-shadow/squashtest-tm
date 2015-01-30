@@ -2,7 +2,12 @@ package org.squashtest.tm.web.internal.controller.administration;
 
 import javax.inject.Inject;
 
-import org.springframework.context.ApplicationEventPublisher;
+import org.osgi.framework.BundleContext;
+import org.springframework.beans.BeansException;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
+import org.springframework.osgi.context.BundleContextAware;
+import org.springframework.osgi.context.event.OsgiBundleApplicationContextEventMulticaster;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -13,7 +18,7 @@ import org.squashtest.tm.service.configuration.ConfigurationService;
 
 @Controller
 @RequestMapping("administration/config")
-public class ConfigAdministrationController {
+public class ConfigAdministrationController implements ApplicationContextAware, BundleContextAware {
 
 	private static final String WHITE_LIST = "uploadfilter.fileExtensions.whitelist";
 	private static final String UPLOAD_SIZE_LIMIT = "uploadfilter.upload.sizeLimitInBytes";
@@ -21,8 +26,20 @@ public class ConfigAdministrationController {
 	@Inject
 	private ConfigurationService configService;
 	
+	/**
+	 * bundle context needed to create osgi event
+	 */
+	private BundleContext bundleCtx;
+	/**
+	 * application context needed to create osgi event
+	 */
+	private ApplicationContext applicationCtx;
+	
+	/**
+	 * publisher of the osgi event.
+	 */
 	@Inject
-    private ApplicationEventPublisher publisher;
+	private OsgiBundleApplicationContextEventMulticaster publisher;
 	
 	@RequestMapping(method = RequestMethod.POST)
 	@ResponseBody
@@ -33,8 +50,20 @@ public class ConfigAdministrationController {
 		configService.updateConfiguration(WHITE_LIST, whiteList);
 		configService.updateConfiguration(UPLOAD_SIZE_LIMIT, uploadSizeLimit);
 		configService.updateConfiguration(IMPORT_SIZE_LIMIT, importSizeLimit);
-		ConfigUpdateEvent event = new ConfigUpdateEvent(this);
-		publisher.publishEvent(event);
+		ConfigUpdateEvent event = new ConfigUpdateEvent(applicationCtx, bundleCtx.getBundle());
+		publisher.multicastEvent(event);
+	}
+
+	@Override
+	public void setBundleContext(BundleContext bundleContext) {
+		bundleCtx = bundleContext;
+		
+	}
+
+	@Override
+	public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+		applicationCtx = applicationContext;
+		
 	}
 
 	

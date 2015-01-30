@@ -21,18 +21,24 @@
 package org.squashtest.tm.web.internal.fileupload;
 
 import org.apache.commons.io.FilenameUtils;
-import org.springframework.context.ApplicationListener;
+import org.springframework.osgi.context.event.OsgiBundleApplicationContextEventMulticaster;
+import org.springframework.osgi.context.event.OsgiBundleApplicationContextListener;
 import org.squashtest.tm.event.ConfigUpdateEvent;
 import org.squashtest.tm.service.configuration.ConfigurationService;
 import org.squashtest.tm.web.internal.controller.attachment.UploadedData;
 
-public class UploadContentFilterUtil implements ApplicationListener<ConfigUpdateEvent> {
+public class UploadContentFilterUtil implements OsgiBundleApplicationContextListener<ConfigUpdateEvent> {
 
+
+	private OsgiBundleApplicationContextEventMulticaster publisher;
 	
 	private ConfigurationService config; 
 	
 	public void setConfig(ConfigurationService config) {
 		this.config = config;
+	}
+	public void setPublisher(OsgiBundleApplicationContextEventMulticaster publisher) {
+		this.publisher = publisher;
 	}
 
 	private String[] allowed;
@@ -63,11 +69,13 @@ public class UploadContentFilterUtil implements ApplicationListener<ConfigUpdate
 	}
 
 	public void init(){
+		publisher.addApplicationListener(this);
 		updateConfig();
 	}
 
+
 	@Override
-	public void onApplicationEvent(ConfigUpdateEvent event) {
-		updateConfig();		
+	public void onOsgiApplicationEvent(ConfigUpdateEvent event) {
+		updateConfig();	
 	}
 }
