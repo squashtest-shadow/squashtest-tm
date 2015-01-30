@@ -21,13 +21,31 @@
 package org.squashtest.tm.web.internal.fileupload;
 
 import org.apache.commons.io.FilenameUtils;
+import org.springframework.context.ApplicationListener;
+import org.squashtest.tm.event.ConfigUpdateEvent;
+import org.squashtest.tm.service.configuration.ConfigurationService;
 import org.squashtest.tm.web.internal.controller.attachment.UploadedData;
 
-public class UploadContentFilterUtil {
+public class UploadContentFilterUtil implements ApplicationListener<ConfigUpdateEvent> {
+
+	
+	private ConfigurationService config; 
+	
+	public void setConfig(ConfigurationService config) {
+		this.config = config;
+	}
 
 	private String[] allowed;
 
-	public void setWhiteList(String whiteList) {
+	private String whiteListKey;
+	
+	public void setWhiteListKey(String whiteListKey) {
+		this.whiteListKey = whiteListKey;	
+	}
+	
+
+	private void updateConfig(){
+		String whiteList = config.findConfiguration(whiteListKey);
 		allowed = whiteList.split(",");
 	}
 
@@ -42,5 +60,14 @@ public class UploadContentFilterUtil {
 		}
 
 		return false;
+	}
+
+	public void init(){
+		updateConfig();
+	}
+
+	@Override
+	public void onApplicationEvent(ConfigUpdateEvent event) {
+		updateConfig();		
 	}
 }

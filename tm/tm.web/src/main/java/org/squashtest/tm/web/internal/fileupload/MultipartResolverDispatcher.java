@@ -38,15 +38,15 @@ import org.springframework.web.multipart.commons.CommonsMultipartResolver;
  */
 public class MultipartResolverDispatcher extends CommonsMultipartResolver {
 	
-	private CommonsMultipartResolver defaultResolver;
+	private SquashMultipartResolver defaultResolver;
 	
-	private Map<String, CommonsMultipartResolver> resolverMap;
+	private Map<String, SquashMultipartResolver> resolverMap;
 	
-	public void setResolverMap(Map<String, CommonsMultipartResolver> chain){
+	public void setResolverMap(Map<String, SquashMultipartResolver> chain){
 		this.resolverMap = chain;
 	}
 	
-	public void setDefaultResolver(CommonsMultipartResolver defaultResolver){
+	public void setDefaultResolver(SquashMultipartResolver defaultResolver){
 		this.defaultResolver = defaultResolver;
 	}
 	
