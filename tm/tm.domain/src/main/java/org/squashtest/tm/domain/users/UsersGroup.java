@@ -30,6 +30,15 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "CORE_GROUP")
 public class UsersGroup {
+	/**
+	 * Qualified name of User group
+	 */
+	public static final String USER = "squashtest.authz.group.tm.Admin";
+	/**
+	 * Qualified name of Admin group
+	 */
+	public static final String ADMIN = "squashtest.authz.group.core.Admin";
+
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO, generator = "core_group_id_seq")

@@ -100,7 +100,7 @@ public class AdministrationServiceImpl implements AdministrationService {
 	private final static String TESTCASE_INDEXING_DATE_KEY = "lastindexing.testcase.date";
 	private final static String CAMPAIGN_INDEXING_DATE_KEY = "lastindexing.campaign.date";
 	private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd hh:mm");
-	
+
 	public void setAdministratorAuthenticationService(AdministratorAuthenticationService adminService) {
 		this.adminAuthentService = adminService;
 	}
@@ -134,6 +134,7 @@ public class AdministrationServiceImpl implements AdministrationService {
 	/* ********************** proper admin section ******************* */
 	private static final String HAS_ROLE_ADMIN = "hasRole('ROLE_ADMIN')";
 	private static final String IS_ADMIN_OR_MANAGER = "hasRole('ROLE_TM_PROJECT_MANAGER') or hasRole('ROLE_ADMIN')";
+
 	@Override
 	@PreAuthorize(HAS_ROLE_ADMIN)
 	public AuthenticatedUser findUserById(long userId) {
@@ -197,32 +198,32 @@ public class AdministrationServiceImpl implements AdministrationService {
 	@Override
 	@PreAuthorize(HAS_ROLE_ADMIN)
 	public void activateUser(long userId) {
-		userAccountService.activateUser(userId);		
+		userAccountService.activateUser(userId);
 		User user = userDao.findById(userId);
 		adminAuthentService.activateAccount(user.getLogin());
 		aclService.refreshAcls();
 	}
-	
+
 	@Override
 	@PreAuthorize(HAS_ROLE_ADMIN)
 	public void deactivateUsers(Collection<Long> userIds) {
-		for (Long id : userIds){
+		for (Long id : userIds) {
 			deactivateUser(id);
 		}
 	}
-	
+
 	@Override
 	@PreAuthorize(HAS_ROLE_ADMIN)
 	public void activateUsers(Collection<Long> userIds) {
-		for (Long id : userIds){
+		for (Long id : userIds) {
 			activateUser(id);
 		}
 	}
-	
+
 	@Override
 	@PreAuthorize(HAS_ROLE_ADMIN)
 	public void deleteUsers(Collection<Long> userIds) {
-		for (Long id : userIds){
+		for (Long id : userIds) {
 			userAccountService.deleteUser(id);
 			User user = userDao.findById(id);
 			adminAuthentService.deleteAccount(user.getLogin());
@@ -230,7 +231,7 @@ public class AdministrationServiceImpl implements AdministrationService {
 		}
 		aclService.refreshAcls();
 	}
-	
+
 	@Override
 	public List<Project> findAllProjects() {
 		return projectDao.findAll();
@@ -264,45 +265,45 @@ public class AdministrationServiceImpl implements AdministrationService {
 		return configurationService.findConfiguration(LOGIN_MESSAGE_KEY);
 	}
 
-	private Date findRequirementIndexingDate(){
+	private Date findRequirementIndexingDate() {
 		String date = configurationService.findConfiguration(REQUIREMENT_INDEXING_DATE_KEY);
 		Date result = null;
-		if(date != null){
-			try{
+		if (date != null) {
+			try {
 				result = dateFormat.parse(date);
-			} catch(ParseException e){
-				
-			}
-		}
-		return result;
-	}
-	
-	private Date findTestCaseIndexingDate() {
-		String date = configurationService.findConfiguration(TESTCASE_INDEXING_DATE_KEY);
-		Date result = null;
-		if(date != null){
-			try{
-				result = dateFormat.parse(date);
-			} catch(ParseException e){
-				
+			} catch (ParseException e) {
+
 			}
 		}
 		return result;
 	}
 
-	private Date findCampaignIndexingDate(){
-		String date = configurationService.findConfiguration(CAMPAIGN_INDEXING_DATE_KEY);
+	private Date findTestCaseIndexingDate() {
+		String date = configurationService.findConfiguration(TESTCASE_INDEXING_DATE_KEY);
 		Date result = null;
-		if(date != null){
-			try{
+		if (date != null) {
+			try {
 				result = dateFormat.parse(date);
-			} catch(ParseException e){
-				
+			} catch (ParseException e) {
+
 			}
 		}
 		return result;
 	}
-	
+
+	private Date findCampaignIndexingDate() {
+		String date = configurationService.findConfiguration(CAMPAIGN_INDEXING_DATE_KEY);
+		Date result = null;
+		if (date != null) {
+			try {
+				result = dateFormat.parse(date);
+			} catch (ParseException e) {
+
+			}
+		}
+		return result;
+	}
+
 	@Override
 	@PreAuthorize(HAS_ROLE_ADMIN)
 	public void resetUserPassword(long userId, String newPassword) {
@@ -390,7 +391,7 @@ public class AdministrationServiceImpl implements AdministrationService {
 		}
 
 		User user = User.createFromLogin(loginTrim);
-		UsersGroup defaultGroup = groupDao.findByQualifiedName("squashtest.authz.group.tm.User");
+		UsersGroup defaultGroup = groupDao.findByQualifiedName(UsersGroup.USER);
 		user.setGroup(defaultGroup);
 
 		userDao.persist(user);
@@ -406,8 +407,8 @@ public class AdministrationServiceImpl implements AdministrationService {
 		userDao.checkLoginAvailability(user.getLogin());
 
 		UsersGroup group = groupDao.findById(groupId);
-
 		user.setGroup(group);
+
 		userDao.persist(user);
 	}
 
@@ -432,6 +433,19 @@ public class AdministrationServiceImpl implements AdministrationService {
 	@Override
 	@PreAuthorize(IS_ADMIN_OR_MANAGER)
 	public List<User> findAllAdminOrManager() {
-		return 	userDao.findAllAdminOrManager();
+		return userDao.findAllAdminOrManager();
+	}
+
+	/**
+	 * @see org.squashtest.tm.service.user.UserManagerService#createAdministrator(org.squashtest.tm.domain.users.User,
+	 *      java.lang.String)
+	 */
+	@Override
+	public User createAdministrator(User user, String password) throws LoginAlreadyExistsException {
+		UsersGroup admin = groupDao.findByQualifiedName(UsersGroup.ADMIN);
+		user.normalize();
+		addUser(user, admin.getId(), password);
+
+		return user;
 	}
 }

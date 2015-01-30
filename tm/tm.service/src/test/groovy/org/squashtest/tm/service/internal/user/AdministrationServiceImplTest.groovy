@@ -49,6 +49,7 @@ class AdministrationServiceImplTest extends Specification {
 		given:
 		User user = new User()
 		userDao.findById(10) >> user
+
 		and:
 		UsersGroup group = new UsersGroup()
 		groupDao.findById(1) >> group
@@ -66,11 +67,27 @@ class AdministrationServiceImplTest extends Specification {
 		User user = new User()
 		user.setLogin("login")
 		String login = "login"
-		
+
 		when:
 		service.addUser(user, 2L, "password")
 
 		then:
 		userDao.checkLoginAvailability("login")
+	}
+
+	def "should put new user in admin group"() {
+		given:
+		User u = new User(login:"batman")
+
+		UsersGroup admin = new UsersGroup(id: 10L)
+
+		when:
+		User res = service.createAdministrator(u, "leatherpants")
+
+		then:
+		1 * groupDao.findByQualifiedName("squashtest.authz.group.core.Admin") >> admin
+		1 * groupDao.findById(_) >> admin
+		res.group == admin
+
 	}
 }

@@ -64,6 +64,7 @@ public class User extends Party {
 	@Size(min = 0, max = 50)
 	private String email = "";
 
+	// TODO is it nullable ? Aint "boolean" ok ?
 	private Boolean active = true;
 
 	@NotNull
@@ -173,8 +174,8 @@ public class User extends Party {
 	 */
 	public static User createFromLogin(@NotNull String login) {
 		User user = new User();
-		user.lastName = login;
 		user.login = login;
+		user.normalize();
 
 		return user;
 	}
@@ -187,5 +188,16 @@ public class User extends Party {
 	 */
 	public boolean loginIs(String candidate) {
 		return StringUtils.equals(login, candidate);
+	}
+
+	/**
+	 * Modifies this user with sensible defaults so that it is valid, provided it has a login.
+	 */
+	public void normalize() {
+		lastName = login;
+		firstName = firstName != null ? firstName : "";
+		email = email != null ? email : "";
+		active = active != null ? active : true;
+
 	}
 }
