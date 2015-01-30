@@ -20,6 +20,8 @@
  */
 package org.squashtest.tm.web.internal.controller.administration;
 
+import static org.squashtest.tm.web.internal.helper.JEditablePostParams.VALUE;
+
 import javax.inject.Inject;
 
 import org.osgi.framework.BundleContext;
@@ -29,10 +31,13 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.osgi.context.BundleContextAware;
 import org.springframework.osgi.context.event.OsgiBundleApplicationContextEventMulticaster;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
+import org.squashtest.tm.domain.AdministrationStatistics;
 import org.squashtest.tm.event.ConfigUpdateEvent;
 import org.squashtest.tm.service.configuration.ConfigurationService;
 
@@ -70,8 +75,7 @@ public class ConfigAdministrationController implements ApplicationContextAware, 
 		configService.updateConfiguration(WHITE_LIST, whiteList);
 		configService.updateConfiguration(UPLOAD_SIZE_LIMIT, uploadSizeLimit);
 		configService.updateConfiguration(IMPORT_SIZE_LIMIT, importSizeLimit);
-		ConfigUpdateEvent event = new ConfigUpdateEvent(applicationCtx, bundleCtx.getBundle());
-		publisher.multicastEvent(event);
+		sendUpdateEvent();
 	}
 
 	@Override
@@ -86,6 +90,44 @@ public class ConfigAdministrationController implements ApplicationContextAware, 
 		
 	}
 
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView administration() {
+
+		ModelAndView mav = new ModelAndView("page/administration/config");
+		mav.addObject("whiteList", configService.findConfiguration(WHITE_LIST));
+		mav.addObject("uploadSizeLimit", configService.findConfiguration(UPLOAD_SIZE_LIMIT));
+		mav.addObject("uploadImportSizeLimit", configService.findConfiguration(IMPORT_SIZE_LIMIT));
+		return mav;
+	}
 	
+	@RequestMapping(method = RequestMethod.POST, params = { "id=whiteList", VALUE })
+	@ResponseBody
+	public String changeWhiteList(@RequestParam(VALUE) String newWhiteList) {
+		configService.updateConfiguration(WHITE_LIST, newWhiteList);
+		sendUpdateEvent();
+		return  newWhiteList;
+	}
+	
+	@RequestMapping(method = RequestMethod.POST, params = { "id=uploadSizeLimit", VALUE })
+	@ResponseBody
+	public String changeUploadSizeLimit(@RequestParam(VALUE) String newUploadSizeLimit) {
+		configService.updateConfiguration(UPLOAD_SIZE_LIMIT, newUploadSizeLimit);
+		sendUpdateEvent();
+		return  newUploadSizeLimit;
+	}
+	
+	@RequestMapping(method = RequestMethod.POST, params = { "id=uploadImportSizeLimit", VALUE })
+	@ResponseBody
+	public String changeUploadImportSizeLimit(@RequestParam(VALUE) String newUploadImportSizeLimit) {
+		configService.updateConfiguration(IMPORT_SIZE_LIMIT, newUploadImportSizeLimit);
+		sendUpdateEvent();
+		return  newUploadImportSizeLimit;
+	}
+	
+
+	private void sendUpdateEvent(){
+		ConfigUpdateEvent event = new ConfigUpdateEvent(applicationCtx, bundleCtx.getBundle());
+		publisher.multicastEvent(event);
+	}
 	
 }

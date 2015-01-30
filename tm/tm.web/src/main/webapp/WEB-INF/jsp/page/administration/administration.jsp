@@ -36,6 +36,8 @@
 <c:url var="testAutomationServerUrl"  value="/administration/test-automation-servers" />
 <c:url var="indexUrl"                 value="/administration/indexes" />
 <c:url var="milestoneUrl"             value="/administration/milestones" />
+<c:url var="configUrl"               value="/administration/config" />
+
 
 <layout:info-page-layout titleKey="label.administration">
   <jsp:attribute name="head">  
@@ -104,6 +106,10 @@
           <span class="admin-section-label"><f:message key="label.consultModifyWelcomeMessage" /></span> 
         </a>
         
+           <a href="${ configUrl }" class="unstyledLink ">
+          <span id="config-admin" class="admin-section-icon admin-config-icon-small"></span>
+          <span class="admin-section-label"><f:message key="label.ModifyConfig" /></span> 
+        </a>
          </sec:authorize>
          </div> 
       </div>

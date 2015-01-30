@@ -1331,6 +1331,10 @@ div.information-panel p {
 	background-image :url(../images/Button_MsgHome_small.png); /** sprite-ref: sprites-icons; */
 }
 
+.admin-config-icon-small{
+	background-image :url(../images/Button_Config_small.png); /** sprite-ref: sprites-icons; */
+}
+
 #admin-link-pane  span.admin-section-label {
 	position:absolute; 
 	z-index:5; 
