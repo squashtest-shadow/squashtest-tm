@@ -63,7 +63,7 @@ public class ReportsRegistry {
 
 
 	@Inject
-	private InternationalizationHelper i18nHelper;
+	private MessageSource i18nHelper;
 
 	/**
 	 * OSGi context should be configured to call this method when a {@link ReportPlugin} service is started.
