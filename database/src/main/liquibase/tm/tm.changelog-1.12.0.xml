@@ -931,7 +931,7 @@
 			<column name="VALUE" value="txt, doc, xls, ppt, docx, xlsx, pptx, odt, ods, odp, pdf"/>
 		</insert>
 			<insert tableName="CORE_CONFIG">
-			<column name="STR_KEY" value="uploadfilter.upload.sizeLimitInBytes />
+			<column name="STR_KEY" value="uploadfilter.upload.sizeLimitInBytes" />
 			<column name="VALUE" value="4000000"/>
 		</insert>
 			<insert tableName="CORE_CONFIG">
