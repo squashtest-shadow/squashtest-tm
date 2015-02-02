@@ -57,7 +57,6 @@
     
 <f:message var="issueReportOpenButtonLabel" key="issue.button.opendialog.label" />
 
-
 <div id="bugtracker-section-main-div">
 
   <agg:structure-configurable-panel id="issue-panel"
@@ -82,10 +81,14 @@
       </div>
       
       <div id="bugtracker-section-error" class="not-displayed">
-        <div class="centered minimal-height" style="margin-top:100px; font-size : 1.5em;">
-          <f:message key="message.bugtracker.unavailable"/>
+        <div class="centered minimal-height" style="margin-top:100px;">
+          <span style="font-size : 1.5em;">
+            <f:message key="message.bugtracker.unavailable"/>
+          </span>
+          <span id="bugtracker-section-error-details" class="cursor-pointer" style="text-decoration:underline">
+            (<f:message key="label.Details"/>)
+          </span>
         </div>
-        
       </div>
     
     </jsp:attribute>
