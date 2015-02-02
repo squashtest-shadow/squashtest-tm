@@ -19,7 +19,40 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 define([ "jquery", "app/util/ButtonUtil", 
-         "jqueryui", "./report-issue-popup/jquery.main-popup" ], function($, btn) {
+         "squash.translator",
+         "app/ws/squashtm.notification",
+         "jqueryui", "./report-issue-popup/jquery.main-popup" ], function($, btn, translator, notification) {
+	
+	
+	function makeAndShowError(xhr){
+		
+		var errorDiv = $("#bugtracker-section-error"),
+			errorDetails = $("#bugtracker-section-error-details");
+		
+		xhr.errorIsHandled = true;
+		
+		errorDetails.on('click', function(){
+			
+			var errmsg = notification.getErrorMessage(xhr);
+			var isTimeout = (errmsg.match(/TimeoutException/) !== null);
+			var msg = "";
+			
+			if (isTimeout){
+				msg = 	"<span class='std-margin'>" +
+						translator.get('message.bugtracker.unavailable.timeout') +
+						"</span><br><hr>"
+			}
+			
+			msg +=  errmsg;
+			
+			notification.showError(msg);
+			
+		});
+		
+		errorDiv.show();
+		
+	}
+	
 	return {
 		
 		/*
@@ -42,7 +75,6 @@ define([ "jquery", "app/util/ButtonUtil",
 			var btDiv = $("#bugtracker-section-main-div"),
 				btContentDiv = $("#bugtracker-section-div"),
 				waitDiv = $("#bugtracker-section-pleasewait"),
-				errorDiv = $("#bugtracker-section-error"),
 				tab =  $("div.fragment-tabs");
 
 			var sstyle = conf.style || "toggle";
@@ -58,9 +90,9 @@ define([ "jquery", "app/util/ButtonUtil",
 					waitDiv.hide();
 					btContentDiv.show();
 				})
-				.error(function(){
+				.error(function(xhr){
 					waitDiv.hide();
-					errorDiv.show();
+					makeAndShowError(xhr);
 					btn.disable($("#issue-report-dialog-openbutton"));
 				});			
 			};
