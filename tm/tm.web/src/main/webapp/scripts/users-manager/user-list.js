@@ -317,7 +317,7 @@ define([ "jquery", "squash.translator",
 						var data = _table.fnGetData(this);
 						data['user-active'] = value;
 					});
-					rows.find('a.user-active-btn').removeClass().addClass(cssclass);
+					rows.find('a.user-active-btn').attr('class', '').addClass(cssclass);
 				}
 			}
 		};
