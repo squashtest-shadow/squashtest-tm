@@ -695,7 +695,7 @@ define(["jquery",
 		var attachConf = this.squashSettings.attachments;
 
 		var self = this;
-		var cells = $('td.' + attachConf.cssMatcher, this);
+		var cells = this.find('>tbody>tr>td.' + attachConf.cssMatcher);
 
 		$(cells).each(function(i, cell) {
 
