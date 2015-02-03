@@ -22,6 +22,7 @@ package org.squashtest.tm.web.internal.interceptor;
 
 import java.io.IOException;
 
+import javax.inject.Inject;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
@@ -30,12 +31,15 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
+import org.springframework.security.access.PermissionEvaluator;
 import org.springframework.security.authentication.AuthenticationTrustResolver;
 import org.springframework.security.authentication.AuthenticationTrustResolverImpl;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.FilterInvocation;
 import org.springframework.security.web.access.expression.WebSecurityExpressionRoot;
+import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.context.support.WebApplicationContextUtils;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
@@ -48,6 +52,10 @@ import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
  * 
  */
 public class SecurityExpressionResolverExposerInterceptor extends HandlerInterceptorAdapter {
+
+	@Inject
+	private PermissionEvaluator permissionEvaluator;
+
 	private static final FilterChain DUMMY_CHAIN = new FilterChain() {
 		@Override
 		public void doFilter(ServletRequest request, ServletResponse response) throws IOException, ServletException {
@@ -70,7 +78,9 @@ public class SecurityExpressionResolverExposerInterceptor extends HandlerInterce
 
 			Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 			WebSecurityExpressionRoot expressionRoot = new WebSecurityExpressionRoot(authentication, filterInvocation);
+
 			expressionRoot.setTrustResolver(trustResolver);
+			expressionRoot.setPermissionEvaluator(permissionEvaluator);
 			modelAndView.addObject("sec", expressionRoot);
 		}
 	}

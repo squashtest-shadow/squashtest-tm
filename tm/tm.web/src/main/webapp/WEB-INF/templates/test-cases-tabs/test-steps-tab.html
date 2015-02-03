@@ -32,12 +32,11 @@
 </div>
 
 
-
 <div id="test-steps-tabs-panel" 
 	 class="table-tab" 
-	 th:with="isWritable = ${#authorization.expression('hasRole(''ROLE_ADMIN'')') or #authorization.acl(testCase , 'WRITE')} , 
-	 		  isLinkable = ${#authorization.expression('hasRole(''ROLE_ADMIN'')') or #authorization.acl(testCase , 'LINK')} , 
-			  isAttachable = ${#authorization.expression('hasRole(''ROLE_ADMIN'')') or #authorization.acl(testCase , 'ATTACH')}">
+   th:with="isWritable = ${#authorization.expression('hasRole(''ROLE_ADMIN'')') or sec.hasPermission(testCase , 'WRITE')} , 
+            isLinkable = ${#authorization.expression('hasRole(''ROLE_ADMIN'')') or sec.hasPermission(testCase , 'LINK')} , 
+            isAttachable = ${#authorization.expression('hasRole(''ROLE_ADMIN'')') or sec.hasPermission(testCase , 'ATTACH')}">
 	
 	<!-- ==================== toolbar definition =================== -->
 	<div class="toolbar">
