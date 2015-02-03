@@ -285,14 +285,26 @@ define(["module", "jquery", "app/pubsub", "squash.basicwidgets", "app/ws/squasht
  	
  			$( "#audit-event-details-dialog" ).messageDialog();
  			
- 			$(document).ajaxSuccess(function(event, xrh, settings) {
+ 			function updateOnSuccess(event, xhr, settings){
  				if (settings.type == 'POST' 
- 						&& !(settings.data && settings.data.match(/requirement-status/g))
- 						&& !settings.url.match(/versions\/new$/g)) {
- 					//We refresh tble on POSTs which do not uptate requirement status or create a new version (these ones already refresh the whole page)
- 					table.refresh();
- 				}
- 			});			
+						&& !(settings.data && settings.data.match(/requirement-status/g))
+						&& !settings.url.match(/versions\/new$/g)) {
+					//We refresh tble on POSTs which do not uptate requirement status or create a new version (these ones already refresh the whole page)
+					table.refresh();
+				}			
+ 			}
+ 			
+ 			/*
+ 			 * we need to make sure this handler on document is removed when the requirement 
+ 			 * is unloaded, hence the listener on the contextualcontent.clear the function 
+ 			 * responsible to unload it must also be unloaded in turn, hence it registers 
+ 			 * against eventBus.onContextual (which does just that).
+ 			 */
+ 			$(document).on('ajaxSuccess', updateOnSuccess);
+ 			eventBus.onContextual('contextualcontent.clear', function(){
+ 				$(document).off('ajaxSuccess', updateOnSuccess);
+ 			});
+ 			
  		}
  	
  		function initAttachments(){
