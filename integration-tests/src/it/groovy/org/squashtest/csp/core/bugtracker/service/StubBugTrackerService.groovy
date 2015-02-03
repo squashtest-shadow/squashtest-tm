@@ -22,6 +22,7 @@ package org.squashtest.csp.core.bugtracker.service
 
 
 import java.util.List;
+import java.util.concurrent.Future;
 
 import org.squashtest.csp.core.bugtracker.domain.BTIssue
 import org.squashtest.csp.core.bugtracker.domain.BTProject
@@ -52,7 +53,7 @@ class StubBugTrackerService implements BugTrackersService {
 
 	@Override
 	public void setCredentials(String username, String password, BugTracker bugTracker) {
-		
+
 	}
 
 	@Override
@@ -91,7 +92,7 @@ class StubBugTrackerService implements BugTrackersService {
 	}
 
 	@Override
-	public List<BTIssue> getIssues(Collection<String> issueKeyList, BugTracker bugTracker) {
+	public Future<List<RemoteIssue>> getIssues(Collection<String> issueKeyList, BugTracker bugTracker, BugTrackerContext context) {
 		return null;
 	}
 
@@ -117,7 +118,7 @@ class StubBugTrackerService implements BugTrackersService {
 	public void forwardAttachments(String remoteIssueKey,
 			BugTracker bugtracker, List<Attachment> attachments) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -126,5 +127,5 @@ class StubBugTrackerService implements BugTrackersService {
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
+
 }
