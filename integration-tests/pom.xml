@@ -25,10 +25,10 @@
     <dbunit-database.url>jdbc:h2:target/database/squash-it-dbunit/squash-it</dbunit-database.url>
 
     <hibernate.dialect>org.hibernate.dialect.H2Dialect</hibernate.dialect>
+
+    <hibernate.sql.verbosity>INFO</hibernate.sql.verbosity>
     <non-dbunit-database.url>jdbc:h2:target/database/squash-it-non-dbunit/squash-it</non-dbunit-database.url>
     <squashtest.rootDir>${project.build.directory}</squashtest.rootDir>
-    
-    <hibernate.sql.verbosity>INFO</hibernate.sql.verbosity>
   </properties>
 
   <dependencyManagement>
@@ -74,7 +74,6 @@
       <artifactId>database.h2.fragment</artifactId>
       <version>${project.version}</version>
     </dependency>
-
 
     <dependency>
       <groupId>org.springframework</groupId>
@@ -714,7 +713,7 @@
       </build>
 
     </profile>
-    
+
     <profile>
       <id>verbose</id>
       <properties>

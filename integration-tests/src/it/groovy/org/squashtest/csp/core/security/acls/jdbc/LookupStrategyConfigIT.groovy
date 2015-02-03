@@ -37,7 +37,11 @@ import org.unitils.dbunit.datasetloadstrategy.impl.InsertLoadStrategy;
 import spock.lang.Specification;
 import spock.unitils.UnitilsSupport;
 
-@ContextConfiguration(["classpath:service/dependencies-scan-context.xml", "classpath:unitils-datasource-context.xml", "classpath*:META-INF/**/bundle-context.xml", "classpath*:META-INF/**/repository-context.xml", "classpath*:META-INF/**/dynamicdao-context.xml", "classpath*:META-INF/**/dynamicmanager-context.xml"])
+@ContextConfiguration(["classpath:service/dependencies-scan-context.xml",
+	"classpath:unitils-datasource-context.xml", "classpath*:META-INF/**/bundle-context.xml",
+	"classpath*:META-INF/**/repository-context.xml", "classpath*:META-INF/**/dynamicdao-context.xml",
+	"classpath*:META-INF/**/dynamicmanager-context.xml",
+	"classpath:it-config-context.xml"])
 @TransactionConfiguration(transactionManager = "squashtest.tm.hibernate.TransactionManager")
 @UnitilsSupport
 class LookupStrategyConfigIT extends Specification {

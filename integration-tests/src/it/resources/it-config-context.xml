@@ -33,8 +33,10 @@
 		tests 
 	-->
 
+<!--  
 	<context:property-placeholder location="classpath:datasource.properties" />
 	<util:properties location="classpath:hibernate.properties" id="squashtest.tm.hibernate.config" />
-	
-	
+	 -->
+	 	<context:property-placeholder location="classpath:squash.tm.cfg.properties" />
+	 
 </beans>
