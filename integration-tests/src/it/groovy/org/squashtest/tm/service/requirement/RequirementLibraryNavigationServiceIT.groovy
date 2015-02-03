@@ -69,7 +69,6 @@ class RequirementLibraryNavigationServiceIT extends DbunitServiceSpecification {
 
 		given:
 		List<Long> listReq = [-3L, -250L]
-
 		when :
 		def reqs = navService.findRequirementsToExportFromNodes(listReq)
 

@@ -25,11 +25,12 @@ import java.io.Serializable
 import org.springframework.security.access.PermissionEvaluator;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
+import org.squashtest.tm.service.internal.security.AffirmativeBasedCompositePermissionEvaluator;
 
-class StubPermissionEvaluator implements PermissionEvaluator {
+class StubPermissionEvaluator extends AffirmativeBasedCompositePermissionEvaluator {
 
 	public StubPermissionEvaluator() {
-		super();
+		super(null);
 	}
 
 	@Override
