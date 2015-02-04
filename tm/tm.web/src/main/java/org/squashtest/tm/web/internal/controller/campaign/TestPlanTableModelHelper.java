@@ -199,7 +199,7 @@ class TestPlanTableModelHelper extends DataTableModelBuilder<IndexedIterationTes
 	private JsonDataset convert(Dataset ds){
 		JsonDataset jsds = new JsonDataset();
 		if (ds == null){
-			jsds.setName(messageSource.internationalize("label.noneDS", locale));
+			jsds.setName(messageSource.internationalize("label.noneDSEscaped", locale));
 			jsds.setId(JeditableComboHelper.coerceIntoComboId(null));
 		}else{
 			jsds.setName(ds.getName());
