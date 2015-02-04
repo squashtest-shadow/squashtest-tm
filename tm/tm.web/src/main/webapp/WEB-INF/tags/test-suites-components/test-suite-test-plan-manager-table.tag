@@ -1,7 +1,7 @@
 <%--
 
         This file is part of the Squashtest platform.
-        Copyright (C) 2010 - 2014 Henix, henix.fr
+        Copyright (C) 2010 - 2015 Henix, henix.fr
 
         See the NOTICE file distributed with this work for additional
         information regarding copyright ownership.
@@ -20,7 +20,6 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 --%>
-
 <%-- 
   As of Squash TM 1.11 the content of this file has been wiped and replaced by tags/test-suites-components/test-suite-test-plan-panel.tag
   (Just like for iteration but with less features).

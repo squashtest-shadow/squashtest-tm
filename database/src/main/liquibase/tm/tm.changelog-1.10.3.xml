@@ -2,7 +2,7 @@
 <!--
 
         This file is part of the Squashtest platform.
-        Copyright (C) 2010 - 2014 Henix, henix.fr
+        Copyright (C) 2010 - 2015 Henix, henix.fr
 
         See the NOTICE file distributed with this work for additional
         information regarding copyright ownership.
@@ -21,7 +21,6 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
-
 <databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
 
