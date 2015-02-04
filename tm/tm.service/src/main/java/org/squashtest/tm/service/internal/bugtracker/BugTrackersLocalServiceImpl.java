@@ -491,7 +491,7 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 		}catch(TimeoutException timex){
 			throw new BugTrackerRemoteException(timex);
 		} catch (InterruptedException e){
-			throw new BugTrackerRemoteException(e.getCause());
+			throw new BugTrackerRemoteException(e);
 		} catch  (ExecutionException e) {
 			throw new BugTrackerRemoteException(e);
 		}
@@ -579,7 +579,7 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 		}catch(TimeoutException timex){
 			throw new BugTrackerRemoteException(timex);
 		} catch (InterruptedException e){
-			throw new BugTrackerRemoteException(e.getCause());
+			throw new BugTrackerRemoteException(e);
 		} catch  (ExecutionException e) {
 			throw new BugTrackerRemoteException(e);
 		}
