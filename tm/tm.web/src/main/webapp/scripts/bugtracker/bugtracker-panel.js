@@ -27,7 +27,12 @@ define([ "jquery", "app/util/ButtonUtil",
 	function makeAndShowError(xhr){
 		
 		var errorDiv = $("#bugtracker-section-error"),
+			waitDiv = $("#bugtracker-section-pleasewait"),
+			btContentDiv = $("#bugtracker-section-div"),
 			errorDetails = $("#bugtracker-section-error-details");
+
+		waitDiv.hide();
+		btContentDiv.hide();
 		
 		xhr.errorIsHandled = true;
 		
@@ -50,6 +55,8 @@ define([ "jquery", "app/util/ButtonUtil",
 		});
 		
 		errorDiv.show();
+		
+		btn.disable($("#issue-report-dialog-openbutton"));
 		
 	}
 	
@@ -89,14 +96,25 @@ define([ "jquery", "app/util/ButtonUtil",
 					btContentDiv.html(htmlpanel);
 					waitDiv.hide();
 					btContentDiv.show();
+					
+					/*
+					 * We also need to handle ajax errors that still can
+					 * happen later on when the table loads data 
+					 * (when changing the paging for example).
+					 * 
+					 * I wish I could register that handler elsewhere
+					 * as a live event but unfortunately it didn't work,
+					 * so I bind it to the table itself once it's loaded.
+					 */ 
+					$("#issue-table").on('ajaxError', function(evt, xhr){
+						makeAndShowError(xhr);
+					});
 				})
 				.error(function(xhr){
-					waitDiv.hide();
 					makeAndShowError(xhr);
-					btn.disable($("#issue-report-dialog-openbutton"));
 				});			
 			};
-			
+	
 			// now let's see how we use it
 			if (sstyle === "toggle"){
 				// execute immediately
