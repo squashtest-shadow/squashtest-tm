@@ -33,6 +33,9 @@
 /**
  * ======================Introduction===================================
  *
+ * Legacy Ajax ----------------------------------------------
+ * 
+ * Support for datatables v 1.10 is not ready yet. We force DataTable.ext.legacy.ajax=true.
  *
  * keys used for data lookup -------------------------
  *
@@ -285,6 +288,8 @@ define(["jquery",
 	if (!! $.fn.squashTable ){
 		return ;
 	}
+	
+	$.fn.DataTable.ext.legacy.ajax=true;
 
 	function showTable(table){
 		table.removeClass('unstyled-table');

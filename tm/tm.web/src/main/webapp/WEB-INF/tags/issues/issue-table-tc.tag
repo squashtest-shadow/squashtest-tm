@@ -48,7 +48,7 @@
 
  --%>
 
-<table id="issue-table" data-def="ajaxsource=${dataUrl}, datakeys-id=id, pre-sort=1-desc">
+<table id="issue-table" data-def="datakeys-id=id, pre-sort=1-desc">
 	<thead>
 		<tr>
 			<th data-def="select, map=remote-id, link-new-tab={url}, sWidth=2.5em, sortable">${interfaceDescriptor.tableIssueIDHeader}</th>
@@ -66,8 +66,9 @@
 
 <script type="text/javascript">
 require( ["common"], function(){
-		require(["jquery","squashtable"], function($){
+		require(["jquery", "workspace.event-bus", "squashtable"], function($, eventBus){
 	$(function(){
+			
 			$("#issue-table").squashTable({
 				fnRowCallback : function(row, data){
 					var correctAssignee = (data["assignee"]!=="") ? data["assignee"] : "${interfaceDescriptor.tableNoAssigneeLabel}";
@@ -75,11 +76,17 @@ require( ["common"], function(){
 					$(td).html(correctAssignee);
 					return row;				
 				},
-				'iDeferLoading' : ${deferLoading}
 				<c:if test="${not empty tableEntries}">
-				,
-				'aaData' : ${json:serialize(tableEntries)}
+				'aaData' : ${json:serialize(tableEntries)},
 				</c:if>
+				'iDeferLoading' : ${deferLoading},
+				'ajax' : {
+					url : "${dataUrl}",
+					error : function(xhr){
+						eventBus.trigger('issuetable.ajaxerror', xhr);
+						return false;
+					}
+				}
 			},
 			{});
 		});

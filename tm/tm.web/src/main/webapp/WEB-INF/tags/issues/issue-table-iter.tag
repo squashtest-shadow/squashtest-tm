@@ -51,7 +51,7 @@
  --%>
 
 	
-<table id="issue-table" data-def="datakeys-id=issue-id, ajaxsource=${dataUrl}, pre-sort=1-desc">
+<table id="issue-table" data-def="datakeys-id=issue-id, pre-sort=1-desc">
 	<thead>
 		<tr>
 			<th data-def="select, map=issue-id, link-new-tab={issue-url}, sWidth=2.5em, sortable,">${interfaceDescriptor.tableIssueIDHeader}</th>
@@ -69,7 +69,7 @@
 
 <script type="text/javascript">
 require( ["common"], function(){
-	require( ["jquery","squashtable"], function($, datatable){
+	require( ["jquery","workspace.event-bus", "squashtable"], function($, eventBus, datatable){
 		$(function(){
 	
 			var issueTableRowCallback = function(row, data, displayIndex) {
@@ -94,11 +94,17 @@ require( ["common"], function(){
 		
 			$("#issue-table").squashTable({
 					'fnRowCallback' : issueTableRowCallback,
-					'iDeferLoading' : ${deferLoading}
         			<c:if test="${not empty tableEntries}">
-        			,
-        			'aaData' : ${json:serialize(tableEntries)}
+        			'aaData' : ${json:serialize(tableEntries)},
         			</c:if>
+					'iDeferLoading' : ${deferLoading},
+					'ajax' : {
+						url : "${dataUrl}",
+						error : function(xhr){
+							eventBus.trigger('issuetable.ajaxerror', xhr);
+							return false;
+						}
+					}	
 				},
 				{});			
 		});

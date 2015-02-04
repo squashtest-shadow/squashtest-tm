@@ -77,11 +77,17 @@
 		var tableSettings = { 
 				"aaSorting" : [[0,'desc']],
 				"fnRowCallback" : issueTableRowCallback,
-				'iDeferLoading' : ${deferLoading}
+				'iDeferLoading' : ${deferLoading},
         		<c:if test="${not empty tableEntries}">
-        		,
-        		'aaData' : ${json:serialize(tableEntries)}
+        		'aaData' : ${json:serialize(tableEntries)},
         		</c:if>
+				'ajax' : {
+					url : "${dataUrl}",
+					error : function(xhr){
+						squashtm.workspace.eventBus.trigger('issuetable.ajaxerror', xhr);
+						return false;
+					}
+				}     		
 			};		
 		
 			var squashSettings = {
@@ -105,7 +111,7 @@
 <c:if test="${executable}">
 	<c:set var="deleteBtnClause" value=", sClass=delete-button"/>
 </c:if>
-<table id="issue-table" data-def="ajaxsource=${dataUrl}">
+<table id="issue-table" >
 	<thead >
 		<tr>
 			<th data-def="map=remote-id, link-new-tab={issue-url}, center, select, double-narrow">${interfaceDescriptor.tableIssueIDHeader}</th>

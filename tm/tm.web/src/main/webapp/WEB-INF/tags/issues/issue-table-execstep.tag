@@ -53,7 +53,7 @@
 <c:if test="${executable}">
 	<c:set var="deleteBtnClause" value=", sClass=centered delete-button"/>
 </c:if>
-<table id="issue-table" data-def="ajaxsource=${dataUrl}, pre-sort=0-asc">
+<table id="issue-table" data-def="pre-sort=0-asc">
 	<thead>
 		<tr>
 			<th style="cursor:pointer" data-def="link-new-tab={issue-url}, select, map=remote-id, sortable, narrow, sClass=id-header">${interfaceDescriptor.tableIssueIDHeader}</th>
@@ -70,7 +70,7 @@
 
 <script type="text/javascript">
 require( ["common"], function(){
-		require(["jquery","issues/issues-table"], function($,it){
+		require(["jquery","workspace.event-bus", "issues/issues-table"], function($,eventBus, it){
 	$(function(){
 			it.initTestStepIssueTable({
 				target : '#issue-table',
@@ -82,11 +82,17 @@ require( ["common"], function(){
 					removeTooltip : '<f:message key="test-case.verified_requirement_item.remove.button.label" />'
 				},
 				tblSettings : {
-					iDeferLoading : ${deferLoading}
+					iDeferLoading : ${deferLoading},
 	        		<c:if test="${not empty tableEntries}">
-	        		,
-	        		'aaData' : ${json:serialize(tableEntries)}
-	        		</c:if>					
+	        		'aaData' : ${json:serialize(tableEntries)},
+	        		</c:if>		
+					'ajax' : {
+						url : "${dataUrl}",
+						error : function(xhr){
+							eventBus.trigger('issuetable.ajaxerror', xhr);
+							return false;
+						}
+					}	        		
 				}
 			});
 		});

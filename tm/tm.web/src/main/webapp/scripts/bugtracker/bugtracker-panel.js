@@ -21,7 +21,9 @@
 define([ "jquery", "app/util/ButtonUtil", 
          "squash.translator",
          "app/ws/squashtm.notification",
-         "jqueryui", "./report-issue-popup/jquery.main-popup" ], function($, btn, translator, notification) {
+         "workspace.event-bus",
+         "jqueryui",
+         "./report-issue-popup/jquery.main-popup" ], function($, btn, translator, notification, eventBus) {
 	
 	
 	function makeAndShowError(xhr){
@@ -96,24 +98,19 @@ define([ "jquery", "app/util/ButtonUtil",
 					btContentDiv.html(htmlpanel);
 					waitDiv.hide();
 					btContentDiv.show();
-					
-					/*
-					 * We also need to handle ajax errors that still can
-					 * happen later on when the table loads data 
-					 * (when changing the paging for example).
-					 * 
-					 * I wish I could register that handler elsewhere
-					 * as a live event but unfortunately it didn't work,
-					 * so I bind it to the table itself once it's loaded.
-					 */ 
-					$("#issue-table").on('ajaxError', function(evt, xhr){
-						makeAndShowError(xhr);
-					});
 				})
 				.error(function(xhr){
 					makeAndShowError(xhr);
 				});			
 			};
+			
+			/*
+			 * also handle errors when the table encounter them
+			 * although the panel itself did load successfully 
+			 */ 
+			eventBus.on('issuetable.ajaxerror', function(evt, xhr){
+				makeAndShowError(xhr);
+			});
 	
 			// now let's see how we use it
 			if (sstyle === "toggle"){
