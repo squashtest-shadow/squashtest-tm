@@ -487,9 +487,9 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 					ownerships);
 
 		}catch(TimeoutException ex){
-			throw new BugTrackerRemoteException(ex.getCause());
+			throw new BugTrackerRemoteException(ex);
 		}catch(ExecutionException | InterruptedException ex){
-			throw new BugTrackerRemoteException(ex.getCause());
+			throw new BugTrackerRemoteException(ex);
 		}
 	}
 
@@ -575,7 +575,7 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 		}catch(TimeoutException timex){
 			throw new BugTrackerRemoteException(timex);
 		}catch(ExecutionException | InterruptedException ex){
-			throw new BugTrackerRemoteException(ex.getCause());
+			throw new BugTrackerRemoteException(ex);
 		}
 	}
 
