@@ -27,7 +27,7 @@ import org.squashtest.tm.domain.execution.Execution;
 
 public class RestExecution {
 
-	public Long id;
+	private Long id;
 
 	private String reference;
 
@@ -39,17 +39,17 @@ public class RestExecution {
 
 	private String description;
 
-	public RestCampaignStub restCampaignStub;
+	private RestCampaignStub restCampaignStub;
 
-	public RestIterationStub restIterationStub;
+	private RestIterationStub restIterationStub;
 
-	public RestTestCaseStub restTestCaseStub;
+	private RestTestCaseStub restTestCaseStub;
 
-	public String status;
+	private String status;
 
-	public String lastExecutedOn;
+	private String lastExecutedOn;
 
-	public String lastExecutedBy;
+	private String lastExecutedBy;
 
 	public RestExecution(){
 		super();

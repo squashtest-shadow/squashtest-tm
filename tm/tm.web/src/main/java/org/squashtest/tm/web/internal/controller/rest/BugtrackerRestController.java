@@ -40,7 +40,7 @@ import org.squashtest.tm.web.internal.model.rest.RestExecutionStub;
 public class BugtrackerRestController {
 
 	@Inject
-	BugTrackersLocalService bugTrackersLocalService;
+	private BugTrackersLocalService bugTrackersLocalService;
 
 	@RequestMapping(value = "/{name}/issue/{remoteid}/executions", method = RequestMethod.GET, produces="application/json")
 	@ResponseBody

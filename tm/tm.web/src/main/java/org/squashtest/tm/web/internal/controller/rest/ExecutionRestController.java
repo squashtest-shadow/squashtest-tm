@@ -44,56 +44,64 @@ import org.squashtest.tm.web.internal.model.rest.RestExecutionStep;
 public class ExecutionRestController {
 
 	@Inject
-	ExecutionFinder executionFinder;
+	private ExecutionFinder executionFinder;
 
 	@Inject
-	TestCaseLibraryFinderService testCaseLibraryFinder;
+	private TestCaseLibraryFinderService testCaseLibraryFinder;
 
 	@ResponseStatus(value = HttpStatus.NOT_FOUND)
-	public class ResourceNotFoundException extends RuntimeException {
+	private final class ResourceNotFoundException extends RuntimeException {
 
 		private static final long serialVersionUID = 6673064417292687334L;
+
+		public ResourceNotFoundException() {
+			super();
+		}
+
+		public ResourceNotFoundException(Throwable cause) {
+			super(cause);
+		}
 	}
 
-	private Execution findExecution(Long id){
+	private Execution findExecution(Long id) {
 
 		Execution execution = null;
 
 		try {
 			execution = executionFinder.findById(id);
-		} catch(NullPointerException e) {
-			throw new ResourceNotFoundException();
+		} catch (NullPointerException e) {
+			throw new ResourceNotFoundException(e);
 		}
 
-		if(execution == null){
+		if (execution == null) {
 			throw new ResourceNotFoundException();
 		}
 
 		return execution;
 	}
 
-	@RequestMapping(value = "/{id}", method = RequestMethod.GET, produces="application/json")
+	@RequestMapping(value = "/{id}", method = RequestMethod.GET, produces = "application/json")
 	@ResponseBody
 	public RestExecution getExecutionById(@PathVariable Long id) {
 
 		Execution execution = null;
 		String path = "";
 		execution = findExecution(id);
-		if(execution.getReferencedTestCase() != null){
+		if (execution.getReferencedTestCase() != null) {
 			path = testCaseLibraryFinder.getPathAsString(execution.getReferencedTestCase().getId());
 		}
 
 		return new RestExecution(execution, path);
 	}
 
-	@RequestMapping(value = "/{id}/executionsteps", method = RequestMethod.GET, produces="application/json")
+	@RequestMapping(value = "/{id}/executionsteps", method = RequestMethod.GET, produces = "application/json")
 	@ResponseBody
 	public List<RestExecutionStep> getExecutionStepsById(@PathVariable Long id) {
 
 		Execution execution = findExecution(id);
 		List<ExecutionStep> steps = execution.getSteps();
 		List<RestExecutionStep> restExecutionSteps = new ArrayList<RestExecutionStep>(steps.size());
-		for(ExecutionStep step : steps){
+		for (ExecutionStep step : steps) {
 			restExecutionSteps.add(new RestExecutionStep(step));
 		}
 
@@ -101,4 +109,3 @@ public class ExecutionRestController {
 	}
 
 }
-

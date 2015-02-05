@@ -44,16 +44,23 @@ import org.squashtest.tm.web.internal.model.rest.RestTestStep;
 public class TestCaseRestController {
 
 	@Inject
-	TestCaseFinder testCaseFinder;
+	private TestCaseFinder testCaseFinder;
 
 	@Inject
-	TestStepFinder testStepFinder;
+	private TestStepFinder testStepFinder;
 
 	@ResponseStatus(value = HttpStatus.NOT_FOUND)
-	public class ResourceNotFoundException extends RuntimeException {
+	private final class ResourceNotFoundException extends RuntimeException {
 
 		private static final long serialVersionUID = -649887942614579558L;
 
+		public ResourceNotFoundException() {
+			super();
+		}
+
+		public ResourceNotFoundException(Throwable cause) {
+			super(cause);
+		}
 	}
 
 	private TestCase findTestCase(Long id){
@@ -65,7 +72,7 @@ public class TestCaseRestController {
 		} catch (RuntimeException e) {
 
 			if(e.getCause().getClass().equals(java.lang.reflect.InvocationTargetException.class)) {
-				throw new ResourceNotFoundException();
+				throw new ResourceNotFoundException(e);
 			}
 		}
 
