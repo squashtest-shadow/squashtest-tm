@@ -108,7 +108,7 @@ define([ "jquery", "app/util/ButtonUtil",
 			 * also handle errors when the table encounter them
 			 * although the panel itself did load successfully 
 			 */ 
-			eventBus.on('issuetable.ajaxerror', function(evt, xhr){
+			eventBus.onContextual('issuetable.ajaxerror', function(evt, xhr){
 				makeAndShowError(xhr);
 			});
 	
