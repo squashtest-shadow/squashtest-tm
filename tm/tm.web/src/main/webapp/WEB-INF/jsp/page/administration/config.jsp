@@ -20,44 +20,61 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 --%>
-<%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
+<%@ page language="java" contentType="text/html; charset=utf-8"
+	pageEncoding="utf-8"%>
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="layout" tagdir="/WEB-INF/tags/layout"%>
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component"%>
-<%@ taglib prefix="s" uri="http://www.springframework.org/tags" %>
+<%@ taglib prefix="s" uri="http://www.springframework.org/tags"%>
 
 <s:url var="administrationUrl" value="/administration" />
 
+<f:message var="confirmLabel" key="label.Confirm" />
+<f:message var="addLabel" key="label.Add" />
+<f:message var="cancelLabel" key="label.Cancel" />
+<f:message var="addClientTitle" key="label.Cancel" />
+<f:message var="deleteClientTitle" key="label.Cancel" />
 
-<layout:info-page-layout titleKey="label.ModifyConfig"  isSubPaged="true">
-	<jsp:attribute  name="head">
+<layout:info-page-layout titleKey="label.ModifyConfig" isSubPaged="true">
+	<jsp:attribute name="head">
 		<comp:sq-css name="squash.grey.css" />
 	</jsp:attribute>
-	
+
 	<jsp:attribute name="titlePane">
-		<h2 class="admin"><f:message key="label.administration" /></h2>	
+		<h2 class="admin">
+			<f:message key="label.administration" />
+		</h2>	
 	</jsp:attribute>
-		
+
 	<jsp:attribute name="subPageTitle">
-		<h2><f:message key="label.ModifyConfig" /></h2>
+		<h2>
+			<f:message key="label.ModifyConfig" />
+		</h2>
 	</jsp:attribute>
-	
+
 	<jsp:attribute name="subPageButtons">
 		<f:message var="backButtonLabel" key="label.Back" />
-		<input type="button" class="button" value="${backButtonLabel}" onClick="document.location.href= '${administrationUrl}'"/>	
+		<input type="button" class="button" value="${backButtonLabel}"
+			onClick="document.location.href= '${administrationUrl}'" />	
 	</jsp:attribute>
-	
+
 	<jsp:attribute name="footer">	
 		
 	</jsp:attribute>
-	
 
-             
 	<jsp:attribute name="informationContent">
+		
+		
+		<c:url var="clientsUrl" value="/administration/config/clients/list" />
+		<c:url var="addMilestoneUrl" value="/administration/config/clients" />
+
+		
+		
 		<div id="config-page-content" class="admin-message-page-content">   
              
-             		<comp:toggle-panel id="config-info-panel"titleKey="label.ModifyConfig" open="true">
+             		<comp:toggle-panel id="config-info-panel"
+				titleKey="label.ModifyConfig" open="true">
              <jsp:attribute name="body">
                	<div id="config-table" class="display-table">
 					
@@ -65,7 +82,8 @@
 							<label for="whiteList" class="display-table-cell">
 							<f:message key="label.whiteList" />
 							</label>				
-							<div class="display-table-cell editable text-editable" id="whiteList" >${whiteList}</div>	
+							<div class="display-table-cell editable text-editable"
+								id="whiteList">${whiteList}</div>	
 						</div>
 				</div>
                 
@@ -75,7 +93,8 @@
 							<label for="uploadSizeLimit" class="display-table-cell">
 							<f:message key="label.uploadSizeLimit" />
 							</label>
-								<div class="display-table-cell editable text-editable" id="uploadSizeLimit" >  ${uploadSizeLimit} </div>
+								<div class="display-table-cell editable text-editable"
+								id="uploadSizeLimit">  ${uploadSizeLimit} </div>
 						</div>
 				</div>
                 
@@ -85,14 +104,90 @@
 							<label for="uploadImportSizeLimit" class="display-table-cell">
 							<f:message key="label.uploadImportSizeLimit" />
 							</label>
-								<div class="display-table-cell editable text-editable" id="uploadImportSizeLimit" > ${uploadImportSizeLimit} </div>
+								<div class="display-table-cell editable text-editable"
+								id="uploadImportSizeLimit"> ${uploadImportSizeLimit} </div>
 						</div>
 				</div>
 
               </jsp:attribute>
 				     </comp:toggle-panel>
+				     
+			<comp:toggle-panel id="client-config-panel" titleKey="label.ModifyClientConfig" open="true">
+				  <jsp:attribute name="body">
+				 <div class="toolbar">
+     <button id="new-client-button" class="test-step-toolbar-button ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-primary .squash-button-initialized" title="f:message key="label.addTeam">    
+     <span class="ui-icon ui-icon-plusthick">+</span> <span class="ui-button-text"><f:message key="label.AddClient" /> </span> </button>
+     <button id="delete-client-button" class="test-step-toolbar-button ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-primary .squash-button-initialized" title="f:message key="label.addTeam">    
+     <span class="ui-icon ui-icon-trash">-</span> <span class="ui-button-text"><f:message key="label.deleteClient" /> </span> </button>
+ </div>
+  <div style="clear:both"></div>
+	<table id="client-table" class="unstyled-table" data-def="ajaxsource=${clientsUrl}, hover, filter, pre-sort=1-asc">
+		<thead>
+			<tr>
+				<th data-def="map=index, select">#</th>
+				<th data-def="map=entity-id, sortable" class="datatable-filterable"><f:message key="label.Name"/></th>
+				<th data-def="map=secret, sortable"><f:message key="label.secret"/></th> 
+				<th data-def="map=delete, delete-button=#delete-client-popup"></th>				
+			</tr>
+		</thead>
+		<tbody>	
+		</tbody>
+	</table>
+
+	<f:message var="deleteMilestoneTitle" key="dialog.delete-client.title" />
+	<div id="delete-client-popup" class="popup-dialog not-displayed" title="${deleteClientTitle}">
+		
+		<div class="display-table-row">
+            <div class="display-table-cell warning-cell">
+                <div class="generic-error-signal"></div>
+            </div>
+            <div id="warning-delete" class="display-table-cell">
+			</div>
+		</div>
+		<div class="popup-dialog-buttonpane">
+		    <input class="confirm" type="button" value="${confirmLabel}" />
+		    <input class="cancel" type="button" value="${cancelLabel}" />				
+		</div>
+	
+	</div>	
+
+    <f:message var="addMilestoneTitle" key="dialog.new-client.title"/>
+    <div id="add-client-dialog" class="not-displayed popup-dialog" 
+          title="${addClientTitle}" />
+          
+        <table>
+          <tr>
+            <td><label for="add-client-name"><f:message
+              key="label.Name" /></label></td>
+            <td><input id="add-client-name" type="text" size="30" maxlength="30"/>
+            <comp:error-message forField="label" /></td>
+          </tr>
+          <tr>
+            <td><label for="add-client-secret"><f:message
+              key="label.secret" /></label></td>
+            <td><input id="add-client-secret" type="password" size="30" maxlength="30"/>
+            <comp:error-message forField="label" /></td>
+          </tr>        
+        </table>
+      <div class="popup-dialog-buttonpane">
+        <input type="button" value="${addLabel}" data-def="mainbtn, evt=confirm"/>
+        <input type="button" value="${cancelLabel}" data-def="evt=cancel"/>
+      </div>     
+</div>
+</jsp:attribute>
+			</comp:toggle-panel>
 		</div>
 	</jsp:attribute>
-	     
 </layout:info-page-layout>
+
+<script type="text/javascript">
+
+require(["common"], function(){
+	require(["client-manager/client-manager"], function(){});
+});
+
+
+</script>
+
+
 

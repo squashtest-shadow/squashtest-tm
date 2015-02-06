@@ -137,4 +137,9 @@ public class ExecutionModificationServiceImpl implements ExecutionModificationSe
 		return new PagingBackedPagedCollectionHolder<List<Execution>>(pas, count, executions);
 	}
 
+	@Override
+	public boolean exists(long id) {
+		return executionDao.exists(id);
+	}
+
 }

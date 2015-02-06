@@ -364,4 +364,11 @@ public class HibernateExecutionDao extends HibernateEntityDao<Execution> impleme
 		}
 	}
 
+	@Override
+	public boolean exists(long executionId) {
+		Query q = currentSession().getNamedQuery("execution.count");
+		q.setParameter(EXECUTION_ID, executionId);
+		return (Long) q.uniqueResult() > 0;
+	}
+
 }

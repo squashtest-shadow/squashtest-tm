@@ -929,22 +929,25 @@
   
     <comment>Tables for OAuth2 Support</comment>
   	<createTable tableName="OAUTH_CLIENT_DETAILS">
+  		<column name="ID" autoIncrement="true" type="BIGINT">
+			<constraints primaryKey="true" nullable="false"/>
+		</column>
   	     <column name="CLIENT_ID" type="java.sql.Types.VARCHAR(256)">
-        	<constraints primaryKey="true" nullable="false" />
+        	<constraints nullable="false" />
       	</column>
       	<column name="CLIENT_SECRET" type="java.sql.Types.VARCHAR(256)">
       	</column>
   	     <column name="RESOURCE_IDS" type="java.sql.Types.VARCHAR(256)" defaultValue="NULL">
       	</column>
-  	     <column name="SCOPE" type="java.sql.Types.VARCHAR(256)">
+  	     <column name="SCOPE" type="java.sql.Types.VARCHAR(256)" defaultValue="location,locationhistory">
       	</column>
-  	     <column name="AUTHORIZED_GRANT_TYPES" type="java.sql.Types.VARCHAR(256)">
+  	     <column name="AUTHORIZED_GRANT_TYPES" type="java.sql.Types.VARCHAR(256)" defaultValue="password,authorization_code,refresh_token,implicit">
       	</column>
   	     <column name="WEB_SERVER_REDIRECT_URI" type="java.sql.Types.VARCHAR(256)" defaultValue="NULL">
       	</column>
-  	     <column name="AUTHORITIES" type="java.sql.Types.VARCHAR(256)">
+  	     <column name="AUTHORITIES" type="java.sql.Types.VARCHAR(256)" defaultValue="ROLE_CLIENT, ROLE_TRUSTED_CLIENT">
       	</column>
-      	<column name="ACCESS_TOKEN_VALIDITY" type="BIGINT">
+      	<column name="ACCESS_TOKEN_VALIDITY" type="BIGINT" defaultValue="60">
       	</column>
       	<column name="REFRESH_TOKEN_VALIDITY" type="BIGINT" defaultValue="NULL">
       	</column>
@@ -953,7 +956,7 @@
       	<column name="AUTOAPPROVE" type="java.sql.Types.VARCHAR(256)">
       	</column>
   	</createTable>
-  	
+
   	<createTable tableName="OAUTH_CLIENT_TOKEN">
   		<column name="TOKEN_ID" type="java.sql.Types.VARCHAR(256)">
       	</column>
@@ -1037,6 +1040,7 @@
 
    		<comment>Default OAuth2 client for test purposes</comment>
     	<insert tableName="OAUTH_CLIENT_DETAILS">
+      		<column name="ID" value="1" />
       		<column name="CLIENT_ID" value="client" />
       		<column name="CLIENT_SECRET" value="secret" />
       		<column name="SCOPE" value="location,locationhistory" />
@@ -1046,3 +1050,4 @@
     	</insert>
   	</changeSet>
 </databaseChangeLog>
+

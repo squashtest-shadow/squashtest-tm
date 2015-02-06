@@ -33,6 +33,8 @@ import org.squashtest.tm.domain.execution.ExecutionStep;
 public interface ExecutionFinder {
 	Execution findById(long id);
 
+	boolean exists(long id);
+
 	List<ExecutionStep> findExecutionSteps(long executionId);
 
 	ExecutionStep findExecutionStepById(long id);

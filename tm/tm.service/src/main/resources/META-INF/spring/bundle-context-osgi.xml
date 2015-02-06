@@ -253,6 +253,8 @@
 
   <osgi:service ref="squashtest.tm.service.AdministrationService" interface="org.squashtest.tm.service.user.AdministrationService" />
 
+  <osgi:service ref="squashtest.tm.service.OAuth2ClientService" interface="org.squashtest.tm.service.security.OAuth2ClientService" />
+
   <osgi:service ref="squashtest.tm.service.ProjectsPermissionManagementService">
     <osgi:interfaces>
       <value>org.squashtest.tm.service.project.ProjectsPermissionManagementService</value>

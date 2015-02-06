@@ -163,6 +163,9 @@
         <!--  milestones -->
         <value>org.squashtest.tm.domain.milestone.Milestone</value>
      
+       	<!--  oauth2 -->
+        <value>org.squashtest.tm.domain.oauth2.Client</value>
+        
       </list>
     </property>
 

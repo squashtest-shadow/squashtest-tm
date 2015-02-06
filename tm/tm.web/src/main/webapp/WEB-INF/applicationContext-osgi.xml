@@ -195,6 +195,8 @@
   <osgi:reference id="squashtest.tm.service.SearchService" bean-name="squashtest.tm.service.SearchService"
     interface="org.squashtest.tm.service.library.SearchService" availability="mandatory" />
 
+  <osgi:reference id="squashtest.tm.service.OAuth2ClientService" bean-name="squashtest.tm.service.OAuth2ClientService" 
+  interface="org.squashtest.tm.service.security.OAuth2ClientService" availability="mandatory"/>
 
 
   <osgi:reference id="squashtest.core.security.PermissionEvaluationService" bean-name="squashtest.core.security.PermissionEvaluationService"

@@ -67,10 +67,8 @@ public class ExecutionRestController {
 
 		Execution execution = null;
 
-		try {
+		if(executionFinder.equals(id)){
 			execution = executionFinder.findById(id);
-		} catch (NullPointerException e) {
-			throw new ResourceNotFoundException(e);
 		}
 
 		if (execution == null) {

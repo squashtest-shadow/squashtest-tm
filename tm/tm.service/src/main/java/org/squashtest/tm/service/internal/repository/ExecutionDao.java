@@ -35,11 +35,11 @@ import org.squashtest.tm.domain.testcase.ActionTestStep;
 public interface ExecutionDao extends EntityDao<Execution> {
 
 	List<ExecutionStep> findExecutionSteps(long executionId);
-	
-	List<ActionTestStep> findOriginalSteps(long executionId);	
-	
+
+	List<ActionTestStep> findOriginalSteps(long executionId);
+
 	List<Long> findOriginalStepIds(long executionId);
-	
+
 	Execution findAndInit(long executionId);
 
 	int findExecutionRank(long executionId);
@@ -50,26 +50,28 @@ public interface ExecutionDao extends EntityDao<Execution> {
 
 	long countReady(long executionId);
 
+	boolean exists(long executionId);
+
 	// ************** special execution status deactivation section ***************
-	
+
 	List<ExecutionStep> findStepsFiltered(Long executionId, Paging filter);
 
 	List<ExecutionStep> findAllExecutionStepsWithStatus(Long projectId, ExecutionStatus source);
-	
+
 	List<Long> findAllExecutionIdHavingStepWithStatus(Long projectId, ExecutionStatus source);
-	
+
 	List<IterationTestPlanItem> findAllIterationTestPlanItemsWithStatus(Long projectId, ExecutionStatus source);
-	
+
 	boolean projectUsesExecutionStatus(long projectId, ExecutionStatus executionStatus);
-	
+
 	void replaceExecutionStepStatus(long projectId, ExecutionStatus oldStatus, ExecutionStatus newStatus);
-	
+
 	void replaceTestPlanStatus(long projectId, ExecutionStatus oldStatus, ExecutionStatus newStatus);
-	
-	
+
+
 	// ************* /special execution status deactivation section ***************
-	
-	
+
+
 	List<IssueDetector> findAllIssueDetectorsForExecution(Long execId);
 
 	long countExecutionSteps(long executionId);
@@ -98,11 +100,11 @@ public interface ExecutionDao extends EntityDao<Execution> {
 	 * @return
 	 */
 	long countByTestCaseId(long testCaseId);
-	
+
 
 	/**
-	 * Tells whether the execution is fresh new or not. Namely, that all its steps have a status 
-	 * READY. 
+	 * Tells whether the execution is fresh new or not. Namely, that all its steps have a status
+	 * READY.
 	 * 
 	 * @param executionId
 	 * @return
