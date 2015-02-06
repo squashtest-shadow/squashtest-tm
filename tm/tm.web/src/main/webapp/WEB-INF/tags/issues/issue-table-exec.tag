@@ -84,7 +84,7 @@
 				'ajax' : {
 					url : "${dataUrl}",
 					error : function(xhr){
-						squashtm.workspace.eventBus.trigger('issuetable.ajaxerror', xhr);
+						squashtm.workspace.eventBus.trigger('bugtracker.ajaxerror', xhr);
 						return false;
 					}
 				}     		

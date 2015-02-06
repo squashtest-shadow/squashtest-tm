@@ -101,7 +101,7 @@ require( ["common"], function(){
 					'ajax' : {
 						url : "${dataUrl}",
 						error : function(xhr){
-							eventBus.trigger('issuetable.ajaxerror', xhr);
+							eventBus.trigger('bugtracker.ajaxerror', xhr);
 							return false;
 						}
 					}	

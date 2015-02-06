@@ -88,27 +88,35 @@ define([ "jquery", "app/util/ButtonUtil",
 
 			var sstyle = conf.style || "toggle";
 			
+			// keep a reference on that request
+			// in case we need to abort it
+			var currentXhr = null;
+			
 			// the main loading function
 			var loadFn = function(){
 				var params = {
 					data : { 'style' : sstyle}	
 				};
-				$.ajax(conf.url, params)
+				
+				currentXhr = $.ajax(conf.url, params)
 				.success(function(htmlpanel) {
 					btContentDiv.html(htmlpanel);
 					waitDiv.hide();
 					btContentDiv.show();
 				})
 				.error(function(xhr){
-					makeAndShowError(xhr);
-				});			
+					eventBus.trigger('bugtracker.ajaxerror', xhr);
+				})
+				.complete(function(){
+					currentXhr = null;
+				});
 			};
 			
 			/*
 			 * also handle errors when the table encounter them
 			 * although the panel itself did load successfully 
 			 */ 
-			eventBus.onContextual('issuetable.ajaxerror', function(evt, xhr){
+			eventBus.onContextual('bugtracker.ajaxerror', function(evt, xhr){
 				makeAndShowError(xhr);
 			});
 	
@@ -137,6 +145,28 @@ define([ "jquery", "app/util/ButtonUtil",
 				throw "bugtracker : unknown or undefined panel style '"+sstyle+"'";
 			}
 
+			/*
+			 * Lastly, when the user navigates away, we must make sure that
+			 * ongoing ajax requests are canceled.
+			 * 
+			 */
+			
+			eventBus.onContextual('contextualcontent.clear', function(){
+				if (currentXhr !== null){
+					currentXhr.abort();
+				} 
+				else {
+					 var table = $("#issue-table");
+					 if (!! table.length > 0){
+						 var tableXhr = table.squashTable().fnSettings().jqXHR;
+						 if (!! tableXhr){
+							 tableXhr.abort();
+						 }
+					 }
+				}
+				
+			});
+			
 		}
 	}
 
