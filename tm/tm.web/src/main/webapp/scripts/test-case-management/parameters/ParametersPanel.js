@@ -33,7 +33,6 @@ define([ "jquery", "backbone", "underscore", "./ParametersTable", "./NewParamete
 					"_onParameterRemoved", "refresh", "refreshDataSetParameterName", 
 					"refreshDataSetParameterDescription");
 
-			this.makeTogglePanel();
 			this.table = new ParametersTable({
 				settings : this.settings
 			});
@@ -56,15 +55,6 @@ define([ "jquery", "backbone", "underscore", "./ParametersTable", "./NewParamete
 
 		events : {
 
-		},
-
-		makeTogglePanel : function() {
-			var self = this;
-			var panelSettings = {
-				initiallyOpen : true,
-				title : self.language.parametersPanelTitle
-			};
-			this.$("#parameters-panel").togglePanel(panelSettings);
 		},
 
 		configureButtons : function() {

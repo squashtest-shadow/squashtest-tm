@@ -72,20 +72,25 @@
 		</div>
 		
 			<div id="outer-category-frame " class="left-frame">
-				<div th:each="cat : ${categories}" th:id="${#ids.seq('left-panel')}" title="Cat 1" th:title="#{${cat.i18nKey}}" class="report-category">
-					<div th:each="rpt : ${reports.get(cat)}" th:id="${#ids.seq('report-item')}" 
-						data-href="sample-report/0" th:attr="data-href=@{'/reports/' + ${rpt.namespace} + '/' + ${rpt.index} + '/panel'}"
-						class="report-item">
-						<div class="report-item-icon" th:classappend="${rpt.type.iconClass}"></div> 
-						<div class="report-item-text">
-								<strong class="report-item-name">
-									<span th:text="${rpt.label}">Sample report</span>
-								</strong>
-							<br/>
-							<span class="report-item-description" th:text="${rpt.description}">Report description</span>
-						</div>
-						<div class="unsnap"></div>
-					</div>
+				<div th:each="cat : ${categories}" th:id="${#ids.seq('left-panel')}" class="report-category sq-tg expand">
+                  <div class="tg-head">
+                    <h3 th:text="#{${cat.i18nKey}}"></h3>
+                    <div class="tg-tollbar"></div>
+                  </div>
+                  
+    				<div th:each="rpt : ${reports.get(cat)}" th:id="${#ids.seq('report-item')}" 
+    					data-href="sample-report/0" th:attr="data-href=@{'/reports/' + ${rpt.namespace} + '/' + ${rpt.index} + '/panel'}"
+    					class="report-item tg-body">
+    					<div class="report-item-icon" th:classappend="${rpt.type.iconClass}"></div> 
+    					<div class="report-item-text">
+    							<strong class="report-item-name">
+    								<span th:text="${rpt.label}">Sample report</span>
+    							</strong>
+    						<br/>
+    						<span class="report-item-description" th:text="${rpt.description}">Report description</span>
+    					</div>
+    					<div class="unsnap"></div>
+    				</div>
 				</div>
 			</div> 
  		

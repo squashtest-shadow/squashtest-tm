@@ -57,14 +57,18 @@
 
 
     <!-- ==================== parameters table panel =================== -->
-    <div id="parameters-panel-container" class="toggle-panel ">
-      <span class="not-displayed toggle-panel-buttons">
-       <button id="add-parameter-button" th:if="${isWritable}" class="sq-icon-btn btn-sm" title="add" th:title="${addButtonTitle}" 
-       value="+"  type="submit" >
-         <span class="ui-icon ui-icon-plus squared-icons">+</span>
-      </button>
-      </span>
-      <div id="parameters-panel" class="toggle-panel-main">
+    
+    <div id="parameters-panel-container" class="sq-tg expand">
+      <div class="tg-head">
+        <h3 th:text="#{label.parameters}">params</h3>
+        <div class="tg-toolbar">
+           <button id="add-parameter-button" th:if="${isWritable}" class="sq-icon-btn sq-btn btn-sm" title="add" th:title="${addButtonTitle}" 
+           value="+"  type="submit" >
+             <span class="ui-icon ui-icon-plus squared-icons">+</span>
+          </button>
+        </div>
+      </div>
+      <div id="parameters-panel" class="tg-body">
         <table id="parameters-table" class="unstyled-table"
           th:attr="data-def='datakeys-id=entity-id ,ajaxsource='+@{/test-cases/__${testCase.id}__/parameters}+', pre-sort=1'">
           <thead>
@@ -103,16 +107,21 @@
         </table>
       </div>
     </div>
+    
     <!-- ==================== /parameters table panel =================== -->
     <!-- ==================== datasets table panel =================== -->
-    <div id="datasets-panel-container" class="toggle-panel ">
-      <span class="not-displayed toggle-panel-buttons">
-      <button id="add-dataset-button" th:if="${isWritable}" class="sq-icon-btn btn-sm" title="add" th:title="${addButtonTitle}" 
-       value="+"  type="submit" >
-         <span class="ui-icon ui-icon-plus squared-icons">+</span>
-      </button>
-      </span>
-      <div id="datasets-panel" class="toggle-panel-main">
+    
+    <div id="datasets-panel-container" class="sq-tg expand">
+      <div class="tg-head">
+        <h3 th:text="#{label.datasets}"></h3>
+        <div class="tg-toolbar">
+           <button id="add-dataset-button" th:if="${isWritable}" class="sq-icon-btn sq-btn btn-sm" title="add" th:title="${addButtonTitle}" 
+           value="+"  type="submit" >
+             <span class="ui-icon ui-icon-plus squared-icons">+</span>
+          </button>       
+        </div>
+      </div>
+      <div id="datasets-panel" class="tg-body">
         <table id="datasets-table" class="unstyled-table">
           <thead>
             <tr>
@@ -128,6 +137,7 @@
         </table>
       </div>
     </div>
+
     <!-- ==================== /datasets table panel =================== -->
 
     <!-- ==================== POPUPS ==================== -->

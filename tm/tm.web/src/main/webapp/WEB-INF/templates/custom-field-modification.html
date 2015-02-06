@@ -140,9 +140,12 @@
               </div>
             </div>
             <br /> <br />
-            <div class="toggle-panel ">
-              <span class="not-displayed toogle-panel-buttons"></span>
-              <div id="cuf-info-panel" class="information-panel toggle-panel-main">
+            
+            <div id="cuf-info-panel" class="information-panel sq-tg expand">
+              <div class="tg-head">
+                <h3 th:text="#{label.CUFInformation}"></h3>
+              </div>
+              <div class="tg-body">
                 <div class="display-table" id="cuf-infos-table">
                   <div class="display-table-row controls control-group" >
                     <label for="cuf-label" th:text="#{label.Label}" class="display-table-cell" >Label</label>
@@ -196,13 +199,17 @@
                     <span class="error-message  defaultValue-error"></span>
                   </div>
                 </div>
+                </div>
               </div>
-            </div>
-            <div class="toggle-panel" th:if="${customField.inputType.name() == 'DROPDOWN_LIST'}">
-              <span class="not-displayed toggle-panel-buttons"> <input id="add-cuf-option-button"
-                class="add-option button" type="button" th:value="#{label.addOption}" value="Add an option" />
-              </span>
-              <div id="cuf-options-panel" class="toggle-panel-main">
+              <div id="cuf-options-panel" class="sq-tg expand" th:if="${customField.inputType.name() == 'DROPDOWN_LIST'}">
+               <div class="tg-head">
+                <h3 th:text="#{title.optionsDefinition}"></h3>
+                <div class="tg-toolbar">
+                  <input id="add-cuf-option-button"
+               	  class="add-option button" type="button" th:value="#{label.addOption}" value="Add an option" />
+                </div>
+               </div>
+               <div class="tg-body">
                 <table id="options-table" class="unstyled-table">
                   <thead>
                     <tr>
@@ -244,8 +251,8 @@
                     </tr>
                   </tbody>
                 </table>
+                </div>
               </div>
-            </div>
           </div>
 
           <div id="delete-warning-pane" class="not-displayed popup-dialog" title="Delete"

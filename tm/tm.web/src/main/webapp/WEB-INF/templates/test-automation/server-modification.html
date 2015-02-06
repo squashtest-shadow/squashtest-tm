@@ -110,10 +110,13 @@
 
             <br />
             <br />
-            <div class="toggle-panel ">
-
-              <div id="ta-server-info-panel" class="information-panel toggle-panel-main"
-                th:title="#{title.InfoOnServer}">
+            <div class="sq-tg expand">
+            
+              <div class="tg-head">
+                <h3 th:text="#{title.InfoOnServer}"></h3>
+              </div>
+              
+              <div id="ta-server-info-panel" class="information-panel tg-body">
                 <div class="display-table" id="ta-server-infos-table">
 
                   <div class="display-table-row">
@@ -157,8 +160,8 @@
           </div>
 
           <script type="text/javascript">
-											publish('load.main-panel');
-										</script>
+          publish('load.main-panel');
+          </script>
 
         </div>
       </div>

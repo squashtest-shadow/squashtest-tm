@@ -64,8 +64,6 @@ define([ "jquery", "app/ws/squashtm.toggleworkspace", "jquery.squash.squashbutto
 			 */
 			function init(options) {
 				
-				$(".report-category").togglePanel({});
-
 				$("#outer-category-frame  .report-item").click(function() {
 					loadContextualReport(this);
 				});

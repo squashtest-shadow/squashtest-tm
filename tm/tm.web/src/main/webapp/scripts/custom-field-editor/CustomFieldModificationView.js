@@ -36,7 +36,6 @@ define([ "jquery", "./NewCustomFieldOptionDialog", "backbone", "underscore",
 
 				this.optionalCheckbox = this.$("#cf-optional").get(0);
 
-				this.configureTogglePanels();
 				this.configureEditables();
 				this.configureRenamePopup();
 				this.configureRenameOptionPopup();
@@ -258,20 +257,7 @@ define([ "jquery", "./NewCustomFieldOptionDialog", "backbone", "underscore",
 				$.squash.decorateButtons();
 			},
 
-			configureTogglePanels : function() {
-				var informationSettings = {
-					initiallyOpen : true,
-					title : cfMod.informationPanelLabel
-				};
-				this.$("#cuf-info-panel").togglePanel(
-						informationSettings);
-				var optionSettings = {
-					initiallyOpen : true,
-					title : cfMod.optionsPanelLabel
-				};
-				this.$("#cuf-options-panel").togglePanel(
-						optionSettings);
-			},
+
 
 			configureEditables : function() {
 				var self = this;

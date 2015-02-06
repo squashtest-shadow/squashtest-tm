@@ -33,22 +33,12 @@ define([ "jquery", "backbone", "underscore", "./DatasetsTable", "./NewDatasetDia
 							"refreshDataSetParameterName", 
 							"refreshDataSetParameterDescription");
 					
-					this.makeTogglePanel();
 					this.table = new DatasetsTable({settings : options.settings, parentTab : options.parentTab});
 					this.configureButtons();
 				},
 				
 				events : {
 					
-				},
-				
-				makeTogglePanel : function(){
-					var self = this;
-					var panelSettings = {
-							initiallyOpen : true,
-							title : self.language.datasetsPanelTitle
-						};
-					this.$("#datasets-panel").togglePanel(panelSettings);
 				},
 				
 				configureButtons : function() {

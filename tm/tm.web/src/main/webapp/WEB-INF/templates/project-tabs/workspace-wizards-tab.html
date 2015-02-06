@@ -39,9 +39,12 @@
 <div id="workspace-wizards-tab">
 
 	
-	<div class="toggle-panel" th:with="baseID = 'workspace-wizards'">
+	<div class="sq-tg expand" th:with="baseID = 'workspace-wizards'">
+      <div class="tg-head">
+        <h3 th:text="#{title.workspace-wizards.administration}"></h3>
+      </div>
 		
-		<div th:id="${baseID}+'-panel'" class="toggle-panel-main"  th:title="#{title.workspace-wizards.administration}">
+		<div th:id="${baseID}+'-panel'" class="tg-body"  >
 
 			<div th:id="${baseID}+'-list'" class="wizard-list">
 

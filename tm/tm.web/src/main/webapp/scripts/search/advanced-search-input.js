@@ -110,105 +110,108 @@ define([ "jquery", "backbone", "app/squash.handlebars.helpers", "squash.translat
 
 			var formBuilder = function(formModel) {
 				$.each(formModel.panels || {}, function(index, panel) {
-					var context = {"toggle-panel-id": panel.id+"-panel-id", "toggle-panel-table-id": panel.id+"-panel-table-id"};
+					var context = {
+						"toggle-panel-id": panel.id+"-panel-id", 
+						"toggle-panel-table-id": panel.id+"-panel-table-id",
+						"toggle-panel-icon" : panel.cssClasses,
+						"toggle-panel-title" : panel.title,
+						"toggle-panel-state" : (panel.open) ? "expand" : "collapse"
+					};
 					var tableid = panel.id+"-panel-table-id";
 					var source ;
 					
 					// First A 
 					
-							var panelName = panel.id;
-							// compiles the panel template
-							if ( panelName == "perimeter" ) {
-								source = self.$("#toggle-panel-perimeter-template").html();
-							}
-							else if (panelName == "general-information") {
-								source = self.$("#toggle-panel-informations-template").html();
-							}
-							else {
-								source = self.$("#toggle-panel-template").html();
-							}
-							/* Add another source if specified */
+					var panelName = panel.id;
+					// compiles the panel template
+					if ( panelName == "perimeter" ) {
+						source = self.$("#toggle-panel-perimeter-template").html();
+					}
+					else if (panelName == "general-information") {
+						source = self.$("#toggle-panel-informations-template").html();
+					}
+					else {
+						source = self.$("#toggle-panel-template").html();
+					}
+					/* Add another source if specified */
 
-							if (!source) { // could this really happen without being a bug ?
-								return;
-							}
+					if (!source) { // could this really happen without being a bug ?
+						return;
+					}
 
-							var template = Handlebars.compile(source);
+					var template = Handlebars.compile(source);
 
-							// parses the search model if any
-							var marshalledSearchModel = self.$("#searchModel").text();
-							var searchModel = {};
+					// parses the search model if any
+					var marshalledSearchModel = self.$("#searchModel").text();
+					var searchModel = {};
 
-							if(marshalledSearchModel){
-								searchModel = JSON.parse(marshalledSearchModel).fields;
-							}
+					if(marshalledSearchModel){
+						searchModel = JSON.parse(marshalledSearchModel).fields;
+					}
 
-							var searchDomain = self.$("#searchDomain").text();
+					var searchDomain = self.$("#searchDomain").text();
 
-							var html = template(context);
-							self.$("#advanced-search-input-form-panel-"+panel.location).append(html);
-							self.$("#advanced-search-input-form-panel-"+panel.location).addClass(searchDomain);			
+					var html = template(context);
+					self.$("#advanced-search-input-form-panel-"+panel.location).append(html);
+					self.$("#advanced-search-input-form-panel-"+panel.location).addClass(searchDomain);			
 
-				 // First C			
-							for (var i = 0, field; i < panel.fields.length; i++){
-								field = panel.fields[i];
-								var inputType = field.inputType.toLowerCase();
-								switch(inputType)
-								{
+		 // First C			
+					for (var i = 0, field; i < panel.fields.length; i++){
+						field = panel.fields[i];
+						var inputType = field.inputType.toLowerCase();
+						switch(inputType)
+						{
 							case "textfield" :
-										self.makeTextField(tableid, field.id, field.title, searchModel[field.id], field.ignoreBridge);
-										break;
-									case "textfieldid" : 
-										self.makeTextFieldId(tableid, field.id, field.title, searchModel[field.id], field.ignoreBridge);
-										break;
-									case "textfieldreference" : 
-										self.makeTextFieldReference(tableid, field.id, field.title, searchModel[field.id], field.ignoreBridge);
-										break;
-									case "textarea":
-										self.makeTextArea(tableid, field.id, field.title, searchModel[field.id]);
-										break;
+								self.makeTextField(tableid, field.id, field.title, searchModel[field.id], field.ignoreBridge);
+								break;
+							case "textfieldid" : 
+								self.makeTextFieldId(tableid, field.id, field.title, searchModel[field.id], field.ignoreBridge);
+								break;
+							case "textfieldreference" : 
+								self.makeTextFieldReference(tableid, field.id, field.title, searchModel[field.id], field.ignoreBridge);
+								break;
+							case "textarea":
+								self.makeTextArea(tableid, field.id, field.title, searchModel[field.id]);
+								break;
 							case "multiselect" :
-										self.makeMultiselect(tableid, field.id, field.title, field.possibleValues, searchModel[field.id]);
-										break;
-									case "multiselectperimeter" : 
-										self.makeMultiselectPerimeter(tableid, field.id, field.title, field.possibleValues, searchModel[field.id]);
-										break;
-									case "multiautocomplete":
-										self.makeMultiAutocomplete(tableid, field.id, field.title, field.possibleValues, searchModel[field.id]);
-										break;
-									case "combomultiselect":
-										self.makeComboMultiselect(tableid, field.id, field.title, field.possibleValues, searchModel[field.id]);
-										break;
-									case "multicascadeflat" :
-										self.makeMultiCascadeFlat(tableid, field.id, field.title, field.possibleValues, searchModel[field.id]);
-										break;
-									case "range" :
-										self.makeRangeField(tableid, field.id, field.title, searchModel[field.id]);
-										break;
-									case "exists" :
-										self.makeExistsField(tableid, field.id, field.title, field.possibleValues,searchModel[field.id]);
-										break;
-									case "date":
-										self.makeDateField(tableid, field.id, field.title, searchModel[field.id]);
-										break;
-									case "checkbox":
-										self.makeCheckboxField(tableid, field.id, field.title, field.possibleValues, searchModel[field.id]);
-										break;
-									case  "radiobutton":
-										self.makeRadioField(tableid, field.id, field.title, field.possibleValues, searchModel[field.id], field.ignoreBridge);
-										break;
-									case "tags":
-										self.makeTagsField(tableid, field.id, field.title, field.possibleValues, searchModel[field.id]);
-										break;
-								}			
+								self.makeMultiselect(tableid, field.id, field.title, field.possibleValues, searchModel[field.id]);
+								break;
+							case "multiselectperimeter" : 
+								self.makeMultiselectPerimeter(tableid, field.id, field.title, field.possibleValues, searchModel[field.id]);
+								break;
+							case "multiautocomplete":
+								self.makeMultiAutocomplete(tableid, field.id, field.title, field.possibleValues, searchModel[field.id]);
+								break;
+							case "combomultiselect":
+								self.makeComboMultiselect(tableid, field.id, field.title, field.possibleValues, searchModel[field.id]);
+								break;
+							case "multicascadeflat" :
+								self.makeMultiCascadeFlat(tableid, field.id, field.title, field.possibleValues, searchModel[field.id]);
+								break;
+							case "range" :
+								self.makeRangeField(tableid, field.id, field.title, searchModel[field.id]);
+								break;
+							case "exists" :
+								self.makeExistsField(tableid, field.id, field.title, field.possibleValues,searchModel[field.id]);
+								break;
+							case "date":
+								self.makeDateField(tableid, field.id, field.title, searchModel[field.id]);
+								break;
+							case "checkbox":
+								self.makeCheckboxField(tableid, field.id, field.title, field.possibleValues, searchModel[field.id]);
+								break;
+							case  "radiobutton":
+								self.makeRadioField(tableid, field.id, field.title, field.possibleValues, searchModel[field.id], field.ignoreBridge);
+								break;
+							case "tags":
+								self.makeTagsField(tableid, field.id, field.title, field.possibleValues, searchModel[field.id]);
+								break;
+						}			
 
-							}
+					}
 					// End C					
 					
-
-					
 					// End A
-					self.makeTogglePanel(panel.id+"-panel-id",panel.title,panel.open,panel.cssClasses);
 				});
 				
 			};
@@ -495,19 +498,6 @@ define([ "jquery", "backbone", "app/squash.handlebars.helpers", "squash.translat
 			}
 
 			document.location.href = squashtm.app.contextRoot + "advanced-search/results?"+$("#searchDomain").text() + "&" + queryString;
-		},
-
-		makeTogglePanel : function(id, key, open, css) {
-			var title = key;
-
-			var infoSettings = {
-				initiallyOpen : open,
-				title : title,
-				cssClasses : ""
-			};
-			$panel = this.$("#"+id);
-			$panel.togglePanel(infoSettings);
-			$panel.parent().find('>h3 a').removeClass("tg-link").addClass(css.toString());
 		},
 
 		emptyCriteria : function(){

@@ -68,9 +68,7 @@
 			<f:message var="removeLabel" key="label.removeRequirementsAssociation" />
 				<button id="remove-verified-requirements-button" class="sq-icon-btn btn-sm" type="submit" title="${removeLabel}" >
                 	<span class="ui-icon ui-icon-minus squared-icons">-</span>
-          	  	</button>
-						
-					
+          	  	</button>					
 			</c:if>		
 		</jsp:attribute>
 		<jsp:attribute name="body">

@@ -27,7 +27,6 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil", "./TeamPermi
 		el : "#information-content",
 		initialize : function() {
 
-			this.configureTogglePanels();
 			this.configureEditables();
 
 			this.configureRenamePopup();
@@ -126,25 +125,6 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil", "./TeamPermi
 
 		},
 
-		configureTogglePanels : function() {
-			var descSettings = {
-				initiallyOpen : true,
-				title : teamMod.descriptionPanelLabel
-			};
-			this.$("#team-description-panel").togglePanel(descSettings);
-
-			/*
-			 * var permissionSettings = { initiallyOpen : true, title : teamMod.permissionPanelLabel };
-			 * this.$("#project-permission-panel").togglePanel(permissionSettings);
-			 */
-
-			var usersSettings = {
-				initiallyOpen : true,
-				title : teamMod.membersPanelLabel
-			};
-			this.$("#members-panel").togglePanel(usersSettings);
-
-		},
 
 		configureEditables : function() {
 			var settings = {

@@ -113,9 +113,11 @@
               <div id="advanced-search-input-form-panel-column1" align="center" class="search-input-column"></div>
 
               <script id="toggle-panel-template" type="text/x-handlebars-template">
-				<div class="toggle-panel search-toggle-panel" style=" width: calc(100% - 4em);">
-					<span class="not-displayed toogle-panel-buttons"></span>
-					<div id="{{toggle-panel-id}}" class="description-panel toggle-panel-main">
+				<div class="sq-tg {{toggle-panel-state}} search-toggle-panel" style=" width: calc(100% - 4em);">
+					<div class="tg-head">
+						<h3 ><a class="{{toggle-panel-icon}}">{{toggle-panel-title}}</a></h3>
+					</div>
+					<div id="{{toggle-panel-id}}" class="description-panel tg-body">
 						<div class="display-search-table" id="{{toggle-panel-table-id}}" >
 						</div>
 					</div>
@@ -123,9 +125,11 @@
 			  </script>
 			  
 			  <script id="toggle-panel-perimeter-template" type="text/x-handlebars-template">
-				<div class="toggle-panel search-perimeter-toggle-panel" style=" width: calc(30% - 4em);">
-					<span class="not-displayed toogle-panel-buttons"></span>
-					<div id="{{toggle-panel-id}}" class="description-panel toggle-panel-main">
+				<div class="sq-tg {{toggle-panel-state}} search-perimeter-toggle-panel" style=" width: calc(30% - 4em);">
+					<div class="tg-head">
+						<h3 ><a class="{{toggle-panel-icon}}">{{toggle-panel-title}}</a></h3>
+					</div>
+					<div id="{{toggle-panel-id}}" class="description-panel tg-body">
 						<div class="display-search-table" id="{{toggle-panel-table-id}}">
 						</div>
 					</div>
@@ -133,9 +137,11 @@
 			  </script>
 			  
 			  <script id="toggle-panel-informations-template" type="text/x-handlebars-template">
-				<div class="toggle-panel search-informations-toggle-panel" style=" width: calc(70% - 4em);">
-					<span class="not-displayed toogle-panel-buttons"></span>
-					<div id="{{toggle-panel-id}}" class="description-panel toggle-panel-main">
+				<div class="sq-tg {{toggle-panel-state}} search-informations-toggle-panel" style=" width: calc(70% - 4em);">
+					<div class="tg-head">
+						<h3 ><a class="{{toggle-panel-icon}}">{{toggle-panel-title}}</a></h3>
+					</div>
+					<div id="{{toggle-panel-id}}" class="description-panel tg-body">
 						<div class="display-search-table" id="{{toggle-panel-table-id}}">
 						</div>
 					</div>

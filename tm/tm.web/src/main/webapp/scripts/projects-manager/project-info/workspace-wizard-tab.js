@@ -32,7 +32,7 @@ define(
 				
 				initialize : function(options) {
 					this.options = options;
-					this.$el.togglePanel();
+					//this.$el.togglePanel();
 					this._initWizardlist();
 				},
 				

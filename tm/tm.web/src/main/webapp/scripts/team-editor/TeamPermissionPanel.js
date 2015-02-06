@@ -25,7 +25,7 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil", "app/ws/squa
 	var TeamPermissionPanel = Backbone.View.extend({
 		el : "#permissions",
 		initialize : function() {
-			this.makeTogglePanel();
+
 			this.configureTable();
 			this.configurePopups();
 			this.configureNoPermissionSelectedDialog();
@@ -54,13 +54,7 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil", "app/ws/squa
 				}
 			});
 		},
-		makeTogglePanel : function() {
-			var infoSettings = {
-				initiallyOpen : true,
-				title : teamMod.message.permissionsPanelTitle
-			};
-			this.$("#project-permission-panel").togglePanel(infoSettings);
-		},
+
 		configureTable : function() {
 			$("#permission-table").squashTable({
 				"fnRowCallback" : function(nRow, data){

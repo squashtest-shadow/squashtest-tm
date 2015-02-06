@@ -152,26 +152,30 @@
 						</div>
 						<br /> <br />
 
-						<div class="toggle-panel ">
-							<span class="not-displayed toogle-panel-buttons"></span>
-							<div id="team-description-panel"
-								class="description-panel toggle-panel-main">
+						<div class="sq-tg expand">
+                            <div class="tg-head">
+                              <h3 th:text="#{label.Description}"></h3>
+                            </div>
+							<div id="team-description-panel" class="description-panel tg-body">
 								<div id="team-description" sq:unsafe-html="${team.description}">Description</div>
 							</div>
 						</div>
 
 				<!-- ============================================ Permissions ======================================= -->
 
-						<div id="permissions" class="toggle-panel">
-							<span class="not-displayed toggle-panel-buttons">
-							<button id="add-permission-button" class="sq-icon-btn btn-sm" type="submit" th:title="#{title.AddPermission}">
-		                	    <span class="ui-icon ui-icon-plus squared-icons">+</span>
-		                    </button>
-		                    <button id="remove-permission-button" class="sq-icon-btn btn-sm" type="submit" th:title="#{title.RemovePermission}">
-		                  	  <span class="ui-icon ui-icon-minus squared-icons">-</span>
-		                    </button>
-							</span>
-							<div id="project-permission-panel" class="toggle-panel-main">
+						<div id="permissions" class="sq-tg expand">
+                          <div class="tg-head">
+                            <h3 th:text="#{user.project-rights.title.label}"></h3>
+                            <div class="tg-toolbar">
+                              <button id="add-permission-button" class="sq-icon-btn btn-sm" type="submit" th:title="#{title.AddPermission}">
+                                <span class="ui-icon ui-icon-plus squared-icons">+</span>
+                              </button>
+                              <button id="remove-permission-button" class="sq-icon-btn btn-sm" type="submit" th:title="#{title.RemovePermission}">
+                                <span class="ui-icon ui-icon-minus squared-icons">-</span>
+                              </button>                       
+                            </div>
+                          </div>
+							<div id="project-permission-panel" class="tg-body">
 								<table id="permission-table"
 									th:attr="data-def='filter, pre-sort=1-asc, datakeys-id=project-id ,ajaxsource='+@{/administration/teams/__${team.id}__/permissions}">
 									<thead>
@@ -204,16 +208,20 @@
 						
 				<!-- ========================================= Members ============================================= -->
 				
-						<div class="toggle-panel">
-							<span class="not-displayed toggle-panel-buttons"> 
-							<button id="add-member-button" class="sq-icon-btn btn-sm" type="submit" th:title="#{title.AddMember}" >
-		                	    <span class="ui-icon ui-icon-plus squared-icons">+</span>
-		                    </button>
-		                    <button id="remove-members-button" class="sq-icon-btn btn-sm" type="submit" th:title="#{title.RemoveMember}" >
-		                  	  <span class="ui-icon ui-icon-minus squared-icons">-</span>
-		                    </button>
-							</span>
-							<div id="members-panel" class="toggle-panel-main">
+						<div class="sq-tg expand">
+                            <div class="tg-head">
+                              <h3 th:text="#{label.Members}"></h3>
+                              <div class="tg-toolbar">
+                                <button id="add-member-button" class="sq-icon-btn btn-sm" type="submit" th:title="#{title.AddMember}" >
+                                  <span class="ui-icon ui-icon-plus squared-icons">+</span>
+                                </button>
+                                <button id="remove-members-button" class="sq-icon-btn btn-sm" type="submit" th:title="#{title.RemoveMember}" >
+                                  <span class="ui-icon ui-icon-minus squared-icons">-</span>
+                                </button>                              
+                              </div>
+                            </div>
+
+							<div id="members-panel" class="tg-body">
 
 								<table id="members-table"
 									th:attr="data-def='filter, pre-sort=1-asc, datakeys-id=user-id , pagesize=50, ajaxsource='+@{/administration/teams/__${team.id}__/members}">

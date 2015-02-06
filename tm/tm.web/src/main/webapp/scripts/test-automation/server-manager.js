@@ -36,8 +36,6 @@ require([ "common", ], function() {
 			
 			var url = squashtm.pageConfiguration.url;
 
-			$("#ta-server-info-panel").togglePanel();
-
 			new SimpleJEditable({
 				targetUrl : url + '/baseURL',
 				componentId : "ta-server-url",

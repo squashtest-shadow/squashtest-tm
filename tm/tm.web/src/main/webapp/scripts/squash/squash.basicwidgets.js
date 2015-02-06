@@ -25,8 +25,6 @@ define(["jquery", "underscore", "jquery.squash.jeditable",
 		init : function(){
 			$.squash.decorateButtons();
 			
-			$(".toggle-panel-main").togglePanel();
-			
 			$('.rich-editable').richEditable();
 			
 			$(".text-editable").textEditable();
