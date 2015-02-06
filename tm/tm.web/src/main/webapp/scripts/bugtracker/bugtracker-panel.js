@@ -21,7 +21,8 @@
 define([ "jquery", "app/util/ButtonUtil", 
          "squash.translator",
          "app/ws/squashtm.notification",
-         "jqueryui", "./report-issue-popup/jquery.main-popup" ], function($, btn, translator, notification) {
+         "workspace.event-bus",
+         "jqueryui", "./report-issue-popup/jquery.main-popup" ], function($, btn, translator, notification, eventBus) {
 	
 	
 	function makeAndShowError(xhr){
@@ -86,12 +87,18 @@ define([ "jquery", "app/util/ButtonUtil",
 
 			var sstyle = conf.style || "toggle";
 			
+			// keep a reference on that request
+			// in case we need to abort it
+			var currentXhr = null;
+			
 			// the main loading function
 			var loadFn = function(){
 				var params = {
 					data : { 'style' : sstyle}	
 				};
-				$.ajax(conf.url, params)
+				
+				
+				currentXhr = $.ajax(conf.url, params)
 				.success(function(htmlpanel) {
 					btContentDiv.html(htmlpanel);
 					waitDiv.hide();
@@ -112,7 +119,10 @@ define([ "jquery", "app/util/ButtonUtil",
 				})
 				.error(function(xhr){
 					makeAndShowError(xhr);
-				});			
+				})
+				.complete(function(){
+					currentXhr = null;
+				});
 			};
 	
 			// now let's see how we use it
@@ -140,6 +150,26 @@ define([ "jquery", "app/util/ButtonUtil",
 				throw "bugtracker : unknown or undefined panel style '"+sstyle+"'";
 			}
 
+			/*
+			 * Lastly, when the user navigates away, we must make sure that
+			 * ongoing ajax requests are canceled.
+			 * 
+			 */			
+			eventBus.onContextual('contextualcontent.clear', function(){
+				if (currentXhr !== null){
+					currentXhr.abort();
+				} 
+				else {
+					 var table = $("#issue-table");
+					 if (!! table.length > 0){
+						 var tableXhr = table.squashTable().fnSettings().jqXHR;
+						 if (!! tableXhr){
+							 tableXhr.abort();
+						 }
+					 }
+				}
+				
+			});
 		}
 	};
 
