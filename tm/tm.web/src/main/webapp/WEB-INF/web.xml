@@ -149,21 +149,6 @@
 		<dispatcher>FORWARD</dispatcher>
 	</filter-mapping>
 
-
-
-	<!-- ====== FIXES IE8 ACCEPT HEADER ====== -->
-	<filter>
-		<filter-name>IE8AcceptHeaderFixerFilter</filter-name>
-		<filter-class>org.squashtest.tm.web.internal.filter.IE8AcceptHeaderFixerFilter</filter-class>
-	</filter>
-
-	<filter-mapping>
-		<filter-name>IE8AcceptHeaderFixerFilter</filter-name>
-		<servlet-name>squash-tm</servlet-name>
-		<dispatcher>FORWARD</dispatcher>
-	</filter-mapping>
-	<!-- ====== /FIXES IE8 ACCEPT HEADER ====== -->
-
 	<filter>
 		<filter-name>httpPutFormContentFilter</filter-name>
 		<filter-class>org.springframework.web.filter.HttpPutFormContentFilter</filter-class>
