@@ -208,7 +208,7 @@
 				+ "), "
 				+ "content.audit.createdOn, content.audit.createdBy, content.audit.lastModifiedOn, content.audit.lastModifiedBy "
 				+ "from TestCaseFolder f join f.content content, TestCase tc join tc.project p "
-				+ " where content.id = tc.id and tc.id in (:testCaseIds) group by p.id, tc.id, index(content)+1 , content.id  "
+				+ " where content.id = tc.id and tc.id in (:testCaseIds) group by p.id, tc.id, index(content)+1 , content.id, tc.type, tc.nature  "
 
 		),
 
@@ -226,7 +226,7 @@
 				+ "content.audit.createdOn, content.audit.createdBy, content.audit.lastModifiedOn, content.audit.lastModifiedBy "
 				+ "from TestCaseLibrary tcl join tcl.rootContent content, TestCase tc join tc.project p  "
 				+ "where content.id = tc.id and  tc.id in (:testCaseIds) "
-				+ "group by p.id, tc.id, index(content)+1 , content.id  "),
+				+ "group by p.id, tc.id, index(content)+1 , content.id, tc.type, tc.nature  "),
 
 		@NamedQuery(name = "testCase.excelExportCUF", query = "select cfv.boundEntityId, cfv.boundEntityType, cf.code, cfv.value, cfv.largeValue, cf.inputType, case when cfv.class = TagsValue then group_concat(so.label, 'order by', so.label, 'asc', '|')  else '' end "
 				+ "from CustomFieldValue cfv join cfv.binding binding join binding.customField cf left join cfv.selectedOptions so "

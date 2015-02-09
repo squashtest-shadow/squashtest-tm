@@ -39,48 +39,48 @@ class MilestoneManagerServiceIT extends DbunitServiceSpecification {
 
 	@Inject
 	MilestoneManagerService manager
-	
+
 	@DataSet("/org/squashtest/tm/service/milestone/MilestoneManagerServiceIT.xml")
 	def "should find all milestones"(){
 		given :
-		
+
 		when :
 		def result = manager.findAll()
 		then :
 		result.size == 4
-		result.collect{it.id} == [1, 2, 3, 4]
-		result.collect{it.label} == ["My milestone", "My milestone 2", "My milestone 3", "My milestone 4"]
-		result.collect{it.status} == [MilestoneStatus.STATUS_1,MilestoneStatus.STATUS_1,MilestoneStatus.STATUS_2,MilestoneStatus.STATUS_3]
-		}
-	
+		result.collect{it.id} as Set == [1, 2, 3, 4] as Set
+		result.collect{it.label} as Set == ["My milestone", "My milestone 2", "My milestone 3", "My milestone 4"] as Set
+		result.collect{it.status} as Set == [MilestoneStatus.STATUS_1,MilestoneStatus.STATUS_1,MilestoneStatus.STATUS_2,MilestoneStatus.STATUS_3] as Set
+	}
+
 	@DataSet("/org/squashtest/tm/service/milestone/MilestoneManagerServiceIT.xml")
 	def "should change status"(){
-	
-		given : 
+
+		given :
 		when :
 		manager.changeStatus(1L, MilestoneStatus.STATUS_2)
 		def milestone = manager.findById(1L);
 		then :
 		milestone.status == MilestoneStatus.STATUS_2
-		
+
 	}
-	
+
 	@DataSet("/org/squashtest/tm/service/milestone/MilestoneManagerServiceIT.xml")
 	def "should delete milestone"(){
-	
+
 		given :
 		def ids = [1L, 4L]
 		when :
 		manager.removeMilestones(ids)
 		def result = manager.findAll()
 		then :
-			result.size == 2
-		result.collect{it.id} == [2, 3]
+		result.size == 2
+		result.collect{it.id} as Set == [2, 3] as Set
 		result.collect{it.label} == ["My milestone 2", "My milestone 3"]
 		result.collect{it.status} == [MilestoneStatus.STATUS_1,MilestoneStatus.STATUS_2]
-		
+
 	}
-	
+
 	@DataSet("/org/squashtest/tm/service/milestone/MilestoneManagerServiceIT.xml")
 	def "label should be unique"(){
 		given :
@@ -89,8 +89,8 @@ class MilestoneManagerServiceIT extends DbunitServiceSpecification {
 		when :
 		manager.addMilestone(milestone)
 		then :
-	    thrown(MilestoneLabelAlreadyExistsException)
-		
+		thrown(MilestoneLabelAlreadyExistsException)
+
 	}
-	
+
 }
