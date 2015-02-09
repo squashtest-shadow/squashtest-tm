@@ -81,12 +81,12 @@ public class AdministratorAuthenticationServiceImpl implements AdministratorAuth
 
 	@Override
 	public void resetUserPassword(String login, String plainTextPassword) {
-		UserDetails user2 = userManager.loadUserByUsername(login);
+		UserDetails user = userManager.loadUserByUsername(login);
 		String encodedPassword = encode(plainTextPassword);
-		UserDetails user = new User(login, encodedPassword, user2.isEnabled(), true, true, true,
-				user2.getAuthorities());
+		UserDetails updateCommand = new User(login, encodedPassword, user.isEnabled(), true, true, true,
+				user.getAuthorities());
 		LOGGER.debug("reset password for user {}", login);
-		userManager.updateUser(user);
+		userManager.updateUser(updateCommand);
 
 	}
 

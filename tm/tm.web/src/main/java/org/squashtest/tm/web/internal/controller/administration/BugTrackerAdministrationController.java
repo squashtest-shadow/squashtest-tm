@@ -71,7 +71,7 @@ public class BugTrackerAdministrationController {
 
 	@RequestMapping(method = RequestMethod.POST)
 	public @ResponseBody
-	void addProject(@Valid @ModelAttribute("add-bugtracker") BugTracker bugtracker) {
+	void createBugTracker(@Valid @ModelAttribute("add-bugtracker") BugTracker bugtracker) {
 
 		LOGGER.info("name " + bugtracker.getName());
 		LOGGER.info("kind " + bugtracker.getKind());

@@ -178,5 +178,4 @@ public class IdentifiedReportDecorator implements Report {
 		return report.buildModelAndView(viewIndex, format, criteria);
 		
 	}
-
 }

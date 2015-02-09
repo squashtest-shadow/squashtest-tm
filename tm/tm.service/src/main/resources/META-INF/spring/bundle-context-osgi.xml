@@ -99,7 +99,12 @@
 
   <osgi:service ref="squashtest.tm.persistence.hibernate.SessionFactory" interface="org.hibernate.SessionFactory" />
 
-  <osgi:service ref="squashtest.core.security.AdministratorAuthenticationService" interface="org.squashtest.tm.service.security.UserAuthenticationService" />
+  <osgi:service ref="squashtest.core.security.AdministratorAuthenticationService">
+    <osgi:interfaces>
+      <value>org.squashtest.tm.service.security.UserAuthenticationService</value>
+      <value>org.squashtest.tm.service.security.AdministratorAuthenticationService</value>
+    </osgi:interfaces>
+  </osgi:service>
 
   <!-- ====== API SERVICES ====== -->
   <osgi:service ref="squash.api.repository.SqlQueryRunner" interface="org.squashtest.tm.api.repository.SqlQueryRunner" />
