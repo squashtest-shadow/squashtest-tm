@@ -103,11 +103,12 @@
 							</div>
 						</div>
 						<br /> <br />
-						<div class="toggle-panel">
-							<span class="toogle-panel-buttons"></span>
+						<div class="sq-tg expand">
+                            <div class="tg-head">
+                              <h3 th:text="#{label.infoList.info}"></h3>
+                            </div>
 							<div id="info-list-info-panel"
-								class="information-panel toggle-panel-main"
-								th:title="#{label.infoList.info}">
+								class="information-panel tg-body">
 								<div class="display-table" id="info-list-infos-table">
 									<div class="display-table-row controls control-group">
 										<label for="info-list-description"
@@ -133,15 +134,17 @@
 							</div>
 						</div>
 
-						<div class="toggle-panel" id="table-view">
-							<span class="not-displayed toggle-panel-buttons">
-								<button id="add-info-list-item-button"
-									class="sq-icon-btn btn-sm">
-									<span class="ui-icon ui-icon-plus squared-icons">+</span>
-								</button>
+						<div class="sq-tg expand" id="table-view">
+                            <div class="tg-head">                            
+                              <div class="tg-toolbar">
+                                <button id="add-info-list-item-button"
+                                  class="sq-icon-btn btn-sm">
+                                  <span class="ui-icon ui-icon-plus squared-icons">+</span>
+                                </button>                          
+                              </div>
+                            </div>
 
-							</span>
-							<div id="info-list-options-panel" class="toggle-panel-main"
+							<div id="info-list-options-panel" class="tg-body"
 								th:title="#{label.infoList.items}">
 
 								<table id="info-list-item-table" class="unstyled-table"

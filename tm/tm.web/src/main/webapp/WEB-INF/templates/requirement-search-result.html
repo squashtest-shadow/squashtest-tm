@@ -158,8 +158,8 @@
 				<div th:if="${associateResult}" id="associationType" class="not-displayed" th:text="${associateResultWithType}"></div>
 				<div th:if="${associateResult}" id="associationId" class="not-displayed" th:text="${associateId}"></div>
 				
-				<div id="search-results" class="toggle-panel">
-					<div id="search-results-panel" class="toggle-panel-main table-tab-wrap">
+				<div id="search-results">
+					<div id="search-results-panel" class="table-tab-wrap">
 						<table id="requirement-search-result-table"
 							th:attr="data-def='filter, hover, datakeys-id=requirement-id'" class="unstyled-table">
 							<thead>

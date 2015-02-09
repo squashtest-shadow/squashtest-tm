@@ -47,15 +47,20 @@
 	<div th:fragment="attachment-bloc">
 
 
-		<div class="toggle-panel">
-			<span class="not-displayed toggle-panel-buttons"> <input
-				th:if="${attachable}" id="upload-attachment-button" type="button"
-				th:value="#{label.UploadAttachment}" value="Upload" class="button" />
-				<input th:if="${attachable}" id="manage-attachment-bloc-button"
-				type="button" th:value="#{label.Organize}" value="Organize"
-				class="button" />
-			</span>
-			<div class="toggle-panel-main" id="attachment-panel" th:title="#{label.Attachments}">
+		<div class="sq-tg expand">
+           <div class="tg-head">
+              <h3 th:text="#{label.Attachments}"></h3>
+              <div class="tg-toolbar">
+                <input th:if="${attachable}" id="upload-attachment-button" type="button"
+                      th:value="#{label.UploadAttachment}" value="Upload" class="button" />
+                <input th:if="${attachable}" id="manage-attachment-bloc-button"
+                      type="button" th:value="#{label.Organize}" value="Organize"
+                      class="button" />               
+              </div>
+           </div>
+    
+
+			<div class="tg-body" id="attachment-panel" >
 				<div id="attachment-container" class="div-attachments" th:with="listId = ${attachableEntity.attachmentList.id}">
 					<div class="div-attachments-item" style="text-align:center;" th:each="attachment : ${attachmentSet}">
 						<div th:class="'attachment-file file-'+${#strings.toLowerCase(attachment.type)}"></div>

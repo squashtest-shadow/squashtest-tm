@@ -98,96 +98,107 @@ documentation :
       <h2 th:text="${title}">Exec #3 : test interface</h2>
     </div>
 
-    <div id="execute-informations-panel" class="toggle-panel-main is-contextual load-links-right-frame"
-     title="Informations" th:title="#{label.Description}">
-
-      <div class="display-table">
-      
-              <div class="display-table-row">
-
-          <label class="display-table-cell" th:text="#{test-case.reference.label}">reference</label>
-
-          <div id="testcase-reference" class="display-table-cell" th:text="${execution.reference}">REF01</div>
+    <div class="sq-tg expand">
+        <div class="tg-head">
+          <h3 th:text="#{label.Description}"></h3>
         </div>
-      
-      
-        <div class="display-table-row">
-
-          <label class="display-table-cell" th:text="#{label.Description}">description</label>
-
-          <div id="testcase-description" class="display-table-cell" sq:unsafe-html="${execution.tcdescription}">
-
-            <p th:remove="all">Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque
-              laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae
-              vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit,
-              sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est,
-              qui dolorem ipsum quia dolor sit amet,</p>
-
-            <p th:remove="all">consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut
-              labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem
-              ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur? Quis autem vel eum iure
-              reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum
-              fugiat quo voluptas nulla pariatur?</p>
+        <div id="execute-informations-panel" class="tg-body is-contextual load-links-right-frame"
+         title="Informations" >
+    
+          <div class="display-table">
+          
+                  <div class="display-table-row">
+    
+              <label class="display-table-cell" th:text="#{test-case.reference.label}">reference</label>
+    
+              <div id="testcase-reference" class="display-table-cell" th:text="${execution.reference}">REF01</div>
+            </div>
+          
+          
+            <div class="display-table-row">
+    
+              <label class="display-table-cell" th:text="#{label.Description}">description</label>
+    
+              <div id="testcase-description" class="display-table-cell" sq:unsafe-html="${execution.tcdescription}">
+    
+                <p th:remove="all">Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque
+                  laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae
+                  vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit,
+                  sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est,
+                  qui dolorem ipsum quia dolor sit amet,</p>
+    
+                <p th:remove="all">consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut
+                  labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem
+                  ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur? Quis autem vel eum iure
+                  reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum
+                  fugiat quo voluptas nulla pariatur?</p>
+              </div>
+            </div>
+    
+            <div class="display-table-row">
+              <label class="display-table-cell" th:text="#{test-case.status.label}">status</label>
+         	  <div  class="display-table-cell">
+                <span id="test-case-status-icon" th:class="'test-case-status-'+${execution.status}">  &nbsp; &nbsp; </span>
+                <span id="testcase-status" th:text="${execution.status.level}+'-'+#{${execution.status.getI18nKey()}}">0 - a specifier</span>
+              </div>
+            </div>
+             <div class="display-table-row">
+              <label class="display-table-cell" th:text="#{label.Dataset}">status</label>
+              <div id="execute-dataset" class="display-table-cell"
+                th:text="${execution.datasetLabel}">dataset name</div>
+            </div>
+            
+            <div class="display-table-row">
+            	<input type="hidden" id="TC_SOURCE_ID" th:value="${execution.referencedTestCase.id}" />
+             	<input type="hidden" id="TC_SOURCE_NAME" th:value="${execution.referencedTestCase.name}" />
+                <input type="hidden" id="EXEC_ID" th:value="${execution.id}" />
+            </div>     
+            
           </div>
         </div>
-
-        <div class="display-table-row">
-          <label class="display-table-cell" th:text="#{test-case.status.label}">status</label>
-     	  <div  class="display-table-cell">
-            <span id="test-case-status-icon" th:class="'test-case-status-'+${execution.status}">  &nbsp; &nbsp; </span>
-            <span id="testcase-status" th:text="${execution.status.level}+'-'+#{${execution.status.getI18nKey()}}">0 - a specifier</span>
-          </div>
-        </div>
-         <div class="display-table-row">
-          <label class="display-table-cell" th:text="#{label.Dataset}">status</label>
-          <div id="execute-dataset" class="display-table-cell"
-            th:text="${execution.datasetLabel}">dataset name</div>
-        </div>
-        
-        <div class="display-table-row">
-        	<input type="hidden" id="TC_SOURCE_ID" th:value="${execution.referencedTestCase.id}" />
-         	<input type="hidden" id="TC_SOURCE_NAME" th:value="${execution.referencedTestCase.name}" />
-            <input type="hidden" id="EXEC_ID" th:value="${execution.id}" />
-        </div>     
-        
-      </div>
     </div>
     
-    <div id="test-case-attribute-panel" class="toggle-panel-main is-contextual load-links-right-frame" title="Attribute" th:title="#{label.Attributes}">
-			<div class="display-table">
-			
-		<div class="display-table-row">
-          <label class="display-table-cell" th:text="#{test-case.importance.label}">importance</label>
-			<div class="display-table-cell">
-				<span id="test-case-importance-icon" th:class="'test-case-importance-'+${execution.importance}">&nbsp;&nbsp;</span>
-	          <span id="testcase-importance" 
-	            th:text="${execution.importance.level}+'-'+#{${execution.importance.getI18nKey()}}">0 - most important of all</span>
-	        </div>
-        </div>
-
-        <div class="display-table-row" th:with="natLabel = ${#messages.msgOrNull('__${execution.nature.label}__')}">
-          <label class="display-table-cell" th:text="#{test-case.nature.label}">nature</label>
-          <div id="testcase-nature" class="display-table-cell"
-            th:text="${(natLabel != null) ? natLabel : execution.nature.label}">0 - supernatural</div>
-        </div>
-
-        <div class="display-table-row" th:with="typLabel = ${#messages.msgOrNull('__${execution.type.label}__')}">
-          <label class="display-table-cell" th:text="#{test-case.type.label}">type</label>
-          <div id="testcase-type" class="display-table-cell"
-            th:text="${(typLabel != null) ? typLabel : execution.type.label}">0 - R</div>
-        </div>
-        
-			<div class="display-table-row">			
-				<div class="display-table-cell" sq:unsafe-html="${execution.prerequisite}">					
-					<p th:remove="all"> 
-						consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam 
-						quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, 
-						nisi ut aliquid ex ea commodi consequatur? Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse 
-						quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur?	
-					</p>	
-				</div>				
-			</div>
-			</div>
+    
+    <div class="sq-tg expand">
+      <div class="tg-head">
+        <h3 th:text="#{label.Attributes}"></h3>
+      </div>
+      <div id="test-case-attribute-panel" class="tg-body is-contextual load-links-right-frame" title="Attribute">
+  			<div class="display-table">
+  			
+  		<div class="display-table-row">
+            <label class="display-table-cell" th:text="#{test-case.importance.label}">importance</label>
+  			<div class="display-table-cell">
+  				<span id="test-case-importance-icon" th:class="'test-case-importance-'+${execution.importance}">&nbsp;&nbsp;</span>
+  	          <span id="testcase-importance" 
+  	            th:text="${execution.importance.level}+'-'+#{${execution.importance.getI18nKey()}}">0 - most important of all</span>
+  	        </div>
+          </div>
+  
+          <div class="display-table-row" th:with="natLabel = ${#messages.msgOrNull('__${execution.nature.label}__')}">
+            <label class="display-table-cell" th:text="#{test-case.nature.label}">nature</label>
+            <div id="testcase-nature" class="display-table-cell"
+              th:text="${(natLabel != null) ? natLabel : execution.nature.label}">0 - supernatural</div>
+          </div>
+  
+          <div class="display-table-row" th:with="typLabel = ${#messages.msgOrNull('__${execution.type.label}__')}">
+            <label class="display-table-cell" th:text="#{test-case.type.label}">type</label>
+            <div id="testcase-type" class="display-table-cell"
+              th:text="${(typLabel != null) ? typLabel : execution.type.label}">0 - R</div>
+          </div>
+          
+  			<div class="display-table-row">			
+  				<div class="display-table-cell" sq:unsafe-html="${execution.prerequisite}">					
+  					<p th:remove="all"> 
+  						consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam 
+  						quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, 
+  						nisi ut aliquid ex ea commodi consequatur? Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse 
+  						quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur?	
+  					</p>	
+  				</div>				
+  			</div>
+  			</div>
+  	</div>
 	</div>
 	
 	
@@ -198,23 +209,25 @@ documentation :
 	
 	
 	
-	
-
-    <div id="execute-prerequisite-panel" class="toggle-panel-main is-contextual load-links-right-frame" title="Prerequisite" th:title="#{generics.prerequisite.title}">
-			<div class="display-table">
-			<div class="display-table-row">			
-				<div class="display-table-cell" sq:unsafe-html="${execution.prerequisite}">					
-					<p th:remove="all"> 
-						consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam 
-						quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, 
-						nisi ut aliquid ex ea commodi consequatur? Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse 
-						quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur?	
-					</p>	
-				</div>				
-			</div>
-			</div>
-	</div>
-		
+    <div class="sq-tg expand">
+        <div class="tg-head">
+          <h3 th:text="#{generics.prerequisite.title}"></h3>
+        </div>
+        <div id="execute-prerequisite-panel" class="tg-body is-contextual load-links-right-frame" >
+    			<div class="display-table">
+    			<div class="display-table-row">			
+    				<div class="display-table-cell" sq:unsafe-html="${execution.prerequisite}">					
+    					<p th:remove="all"> 
+    						consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam 
+    						quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, 
+    						nisi ut aliquid ex ea commodi consequatur? Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse 
+    						quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur?	
+    					</p>	
+    				</div>				
+    			</div>
+    			</div>
+    	</div>
+	</div>	
 	<div th:with="attachable = ${false}, attachableEntity=${execution}, attachmentSet = ${attachments}" id="attachment-bloc-frag" th:include="attachment-bloc.frag :: attachment-bloc">ATTACHMENT-BLOC</div>
 		
 	</div>

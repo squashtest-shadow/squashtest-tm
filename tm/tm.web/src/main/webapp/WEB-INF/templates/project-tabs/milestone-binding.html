@@ -21,27 +21,29 @@
 
 -->
 <div>
- <div id="parameters-panel-container" class="toggle-panel ">
 
-      <div id="parameters-panel" class="toggle-panel-main" th:title="#{tabs.label.milestone}">
-      
-      <f:message key="dialog.new-milestone.title" var="addMilestoneField" />
-      <f:message key="label.deleteMilestone" var="deleteMilestoneField" />
-      
-<div class="toggle-panel-buttons">
-      <button id="bind-milestone-button" class="sq-icon-btn btn-sm" title="${addMilestoneField}">
-                    <span class="ui-icon ui-icon-plus squared-icons">+</span>
-       </button>
+
+ <div id="parameters-panel-container" class="sq-tg expand ">
+
+    <div class="tg-head">
+      <h3 th:text="#{tabs.label.milestone}"></h3>
+      <div class="tg-toolbar">
+        <button id="bind-milestone-button" class="sq-icon-btn btn-sm" title="${addMilestoneField}">
+            <span class="ui-icon ui-icon-plus squared-icons">+</span>
+        </button>
                   
-       <button id="unbind-milestone-button" class="sq-icon-btn btn-sm" title="${deleteMilestoneField}">
-                    <span class="ui-icon ui-icon-minus squared-icons">-</span>
+        <button id="unbind-milestone-button" class="sq-icon-btn btn-sm" title="${deleteMilestoneField}">
+            <span class="ui-icon ui-icon-minus squared-icons">-</span>        
         </button>      
-                  
-<input type="button" id="create-and-bind-milestone-button" th:value="#{label.create}" class="sq-btn btn-sm" />                   
-<input type="button" id="duplicate-milestone-button" th:value="#{label.milestone.duplicate}" class="sq-btn btn-sm" />
-                    
+                          
+        <input type="button" id="create-and-bind-milestone-button" th:value="#{label.create}" class="sq-btn btn-sm" />      
+            
+        <input type="button" id="duplicate-milestone-button" th:value="#{label.milestone.duplicate}" class="sq-btn btn-sm" />       
       </div>
-      
+    </div>
+
+      <div id="parameters-panel" class="tg-body" >
+
         <table id="binded-milestone-table" class="unstyled-table"
           th:attr="data-def='datakeys-id=entity-id ,ajaxsource='+@{/milestones-binding/project/__${proj.id}__/milestone(binded)}+', pre-sort=1'">
           <thead>
