@@ -30,7 +30,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.TimeoutException;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
@@ -48,7 +47,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.util.HtmlUtils;
-import org.squashtest.csp.core.bugtracker.core.BugTrackerNoCredentialsException;
 import org.squashtest.csp.core.bugtracker.core.BugTrackerRemoteException;
 import org.squashtest.csp.core.bugtracker.spi.BugTrackerInterfaceDescriptor;
 import org.squashtest.tm.core.foundation.collection.DefaultPagingAndSorting;
@@ -316,8 +314,8 @@ public class TestCaseModificationController {
 		return formatImportance(importance, locale);
 	}
 
-	@ResponseBody
 	@RequestMapping(method = RequestMethod.POST, params = { "id=test-case-nature", VALUE })
+	@ResponseBody
 	public String changeNature(@PathVariable long testCaseId, @RequestParam(VALUE) String nature, Locale locale) {
 
 		testCaseModificationService.changeNature(testCaseId, nature);
@@ -337,8 +335,8 @@ public class TestCaseModificationController {
 
 	}
 
-	@ResponseBody
 	@RequestMapping(method = RequestMethod.POST, params = { "id=test-case-type", VALUE })
+	@ResponseBody
 	public String changeType(@PathVariable long testCaseId, @RequestParam(VALUE) String type, Locale locale) {
 
 		testCaseModificationService.changeType(testCaseId, type);
@@ -425,7 +423,8 @@ public class TestCaseModificationController {
 	}
 
 	private String formatInfoItem(InfoListItem nature, Locale locale) {
-		return  internationalizationHelper.getMessage(nature.getLabel(), null, nature.getLabel(), locale);
+		String item=  internationalizationHelper.getMessage(nature.getLabel(), null, nature.getLabel(), locale);
+		return HtmlUtils.htmlEscape(item);
 	}
 
 	private String formatStatus(TestCaseStatus status, Locale locale) {
