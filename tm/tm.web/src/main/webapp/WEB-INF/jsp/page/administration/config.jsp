@@ -33,8 +33,8 @@
 <f:message var="confirmLabel" key="label.Confirm" />
 <f:message var="addLabel" key="label.Add" />
 <f:message var="cancelLabel" key="label.Cancel" />
-<f:message var="addClientTitle" key="label.Cancel" />
-<f:message var="deleteClientTitle" key="label.Cancel" />
+<f:message var="addClientTitle" key="label.addClientTitle" />
+<f:message var="deleteClientTitle" key="label.deleteClientTitle" />
 
 <layout:info-page-layout titleKey="label.ModifyConfig" isSubPaged="true">
 	<jsp:attribute name="head">
@@ -124,8 +124,9 @@
 	<table id="client-table" class="unstyled-table" data-def="ajaxsource=${clientsUrl}, hover, filter, pre-sort=1-asc">
 		<thead>
 			<tr>
+				<th data-def="map=entity-id, invisible"> </th>
 				<th data-def="map=index, select">#</th>
-				<th data-def="map=entity-id, sortable" class="datatable-filterable"><f:message key="label.Name"/></th>
+				<th data-def="map=name, sortable" class="datatable-filterable"><f:message key="label.Name"/></th>
 				<th data-def="map=secret, sortable"><f:message key="label.secret"/></th> 
 				<th data-def="map=delete, delete-button=#delete-client-popup"></th>				
 			</tr>

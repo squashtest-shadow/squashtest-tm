@@ -151,9 +151,9 @@ public class ConfigAdministrationController implements ApplicationContextAware, 
 		publisher.multicastEvent(event);
 	}
 
-	@RequestMapping(value = "clients/{nameList}", method = RequestMethod.DELETE)
-	public @ResponseBody void removeMilestones(@PathVariable("nameList") List<String> nameList) {
-		clientService.removeClients(nameList);
+	@RequestMapping(value = "clients/{idList}", method = RequestMethod.DELETE)
+	public @ResponseBody void removeMilestones(@PathVariable("idList") List<Long> idList) {
+		clientService.removeClients(idList);
 	}
 
 	@RequestMapping(value = "clients", method = RequestMethod.POST)

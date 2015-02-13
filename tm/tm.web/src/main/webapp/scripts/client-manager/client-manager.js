@@ -33,7 +33,7 @@
 				
 							$.each(cells, function(index, cell) {
 								var row = cell.parentNode; // should be the tr
-								var id = $(row.cells[1]).text();
+								var id = clientTable.getODataId(row);
 								var $cell = $(cell);
 								
 									$cell.html(template);
@@ -79,10 +79,8 @@
 
 		$("#delete-client-button").on('click', function(){
 
-			var ids = $("#client-table").squashTable().getSelectedRows().map(function() {
-				return $(this.cells[1]).text();
-			}).get();
-			
+			var ids = $("#client-table").squashTable().getSelectedIds();
+	
 			if (ids.length>0){
 				var popup = $("#delete-client-popup");
 				popup.data('entity-id', ids);

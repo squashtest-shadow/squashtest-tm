@@ -30,11 +30,11 @@ public interface OAuth2ClientService {
 
 	void addClient(String name, String secret);
 
-	void removeClient(String name);
-
 	void changeClientSecret(String name, String newSecret);
 
-	void removeClients(List<String> nameList);
+	void removeClients(List<Long> idList);
 
 	void addClient(Client client);
+
+	void removeClient(Long id);
 }

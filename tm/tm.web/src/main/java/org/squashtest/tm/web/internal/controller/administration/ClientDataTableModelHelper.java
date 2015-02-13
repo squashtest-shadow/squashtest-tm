@@ -55,8 +55,9 @@ public class ClientDataTableModelHelper  extends DataTableModelBuilder<Client> {
 	@Override
 	protected Object buildItemData(Client item) {
 		Map<String, Object> row = new HashMap<String, Object>(3);
-		row.put("entity-id", item.getClientId());
+		row.put("entity-id", item.getId());
 		row.put("index", getCurrentIndex() +1);
+		row.put("name", item.getClientId());
 		row.put("secret", item.getClientSecret());
 		row.put("delete", "");
 

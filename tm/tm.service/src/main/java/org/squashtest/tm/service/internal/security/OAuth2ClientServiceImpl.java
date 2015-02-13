@@ -49,8 +49,8 @@ public class OAuth2ClientServiceImpl implements OAuth2ClientService{
 	}
 
 	@Override
-	public void removeClient(String name) {
-		Client client = clientDao.findClientByName(name);
+	public void removeClient(Long id) {
+		Client client = clientDao.findById(id);
 		clientDao.remove(client);
 	}
 
@@ -61,9 +61,9 @@ public class OAuth2ClientServiceImpl implements OAuth2ClientService{
 	}
 
 	@Override
-	public void removeClients(List<String> nameList) {
-		for(String name : nameList){
-			removeClient(name);
+	public void removeClients(List<Long> idList) {
+		for(Long id : idList){
+			removeClient(id);
 		}
 	}
 
