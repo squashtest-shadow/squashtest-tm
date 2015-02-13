@@ -76,8 +76,8 @@ class MilestoneManagerServiceIT extends DbunitServiceSpecification {
 		then :
 		result.size == 2
 		result.collect{it.id} as Set == [2, 3] as Set
-		result.collect{it.label} == ["My milestone 2", "My milestone 3"]
-		result.collect{it.status} == [MilestoneStatus.STATUS_1,MilestoneStatus.STATUS_2]
+		result.collect{it.label} as Set == ["My milestone 2", "My milestone 3"]  as Set
+		result.collect{it.status}  as Set == [MilestoneStatus.STATUS_1,MilestoneStatus.STATUS_2]  as Set
 
 	}
 
