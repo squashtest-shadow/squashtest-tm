@@ -1036,18 +1036,6 @@
 		</insert>
 	
     </changeSet>
-    <changeSet author="flaurens" id="tm-1.12.0.feat-3764-2">
 
-   		<comment>Default OAuth2 client for test purposes</comment>
-    	<insert tableName="OAUTH_CLIENT_DETAILS">
-      		<column name="ID" value="1" />
-      		<column name="CLIENT_ID" value="client" />
-      		<column name="CLIENT_SECRET" value="secret" />
-      		<column name="SCOPE" value="location,locationhistory" />
-      		<column name="AUTHORIZED_GRANT_TYPES" value="password,authorization_code,refresh_token,implicit" />
-      		<column name="AUTHORITIES" value="ROLE_CLIENT, ROLE_TRUSTED_CLIENT" />
-      		<column name="ACCESS_TOKEN_VALIDITY" value="60" />
-    	</insert>
-  	</changeSet>
 </databaseChangeLog>
 

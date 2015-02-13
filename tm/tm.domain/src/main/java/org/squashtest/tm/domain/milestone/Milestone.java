@@ -62,8 +62,8 @@ public class Milestone {
 	@Id
 	@DocumentId
 	@Column(name = "MILESTONE_ID")
-	@GeneratedValue(strategy = GenerationType.AUTO, generator = "Milestone_id_seq")
-	@SequenceGenerator(name = "Milestone_id_seq", sequenceName = "Milestone_id_seq")
+	@GeneratedValue(strategy = GenerationType.AUTO, generator = "milestone_id_seq")
+	@SequenceGenerator(name = "milestone_id_seq", sequenceName = "milestone_id_seq")
 	private Long id;
 
 	@Lob

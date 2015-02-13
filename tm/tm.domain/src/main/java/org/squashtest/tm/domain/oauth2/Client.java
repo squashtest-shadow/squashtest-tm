@@ -36,8 +36,8 @@ public class Client {
 
 	@Id
 	@Column(name = "ID")
-	@GeneratedValue(strategy = GenerationType.AUTO, generator = "Client_id_seq")
-	@SequenceGenerator(name = "Client_id_seq", sequenceName = "Client_id_seq")
+	@GeneratedValue(strategy = GenerationType.AUTO, generator = "client_id_seq")
+	@SequenceGenerator(name = "client_id_seq", sequenceName = "client_id_seq")
 	private Long id;
 
 	@NotBlank
