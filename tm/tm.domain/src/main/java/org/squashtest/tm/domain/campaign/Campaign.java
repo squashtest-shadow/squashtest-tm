@@ -23,14 +23,17 @@ package org.squashtest.tm.domain.campaign;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderColumn;
 import javax.persistence.PrimaryKeyJoinColumn;
@@ -43,12 +46,14 @@ import org.squashtest.tm.domain.customfield.BoundEntity;
 import org.squashtest.tm.domain.library.NodeContainer;
 import org.squashtest.tm.domain.library.NodeContainerVisitor;
 import org.squashtest.tm.domain.library.NodeVisitor;
+import org.squashtest.tm.domain.milestone.Milestone;
+import org.squashtest.tm.domain.milestone.MilestoneHolder;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.exception.DuplicateNameException;
 
 @Entity
 @PrimaryKeyJoinColumn(name = "CLN_ID")
-public class Campaign extends CampaignLibraryNode implements NodeContainer<Iteration>, BoundEntity {
+public class Campaign extends CampaignLibraryNode implements NodeContainer<Iteration>, BoundEntity, MilestoneHolder {
 	@Embedded
 	private ScheduledTimePeriod scheduledPeriod = new ScheduledTimePeriod();
 	@Embedded
@@ -64,6 +69,11 @@ public class Campaign extends CampaignLibraryNode implements NodeContainer<Itera
 	@JoinColumn(name = "CAMPAIGN_ID")
 	private final List<CampaignTestPlanItem> testPlan = new ArrayList<CampaignTestPlanItem>();
 
+	@ManyToMany
+	@JoinTable(name = "MILESTONE_CAMPAIGN", joinColumns = @JoinColumn(name = "CAMPAIGN_ID"), inverseJoinColumns = @JoinColumn(name = "MILESTONE_ID"))
+	private Set<Milestone> milestones = new HashSet<Milestone>();
+
+
 	public Campaign() {
 		super();
 	}
@@ -73,13 +83,13 @@ public class Campaign extends CampaignLibraryNode implements NodeContainer<Itera
 		visitor.visit(this);
 
 	}
-	
+
 	@Override
 	public void accept(NodeContainerVisitor visitor) {
 		visitor.visit(this);
-		
+
 	}
-	
+
 	public void setScheduledStartDate(Date startDate) {
 		getScheduledPeriod().setScheduledStartDate(startDate);
 	}
@@ -225,7 +235,7 @@ public class Campaign extends CampaignLibraryNode implements NodeContainer<Itera
 		getIterations().add(position, iteration);
 		iteration.setCampaign(this);
 	}
-	
+
 	private ScheduledTimePeriod getScheduledPeriod() {
 		// Hibernate workaround : when STP fields are null, component is set to null
 		if (scheduledPeriod == null) {
@@ -263,7 +273,7 @@ public class Campaign extends CampaignLibraryNode implements NodeContainer<Itera
 		copy.notifyAssociatedWithProject(this.getProject());
 		return copy;
 	}
-	
+
 	@Override
 	public boolean isContentNameAvailable(String name) {
 		for (Iteration content : getIterations()) {
@@ -389,15 +399,15 @@ public class Campaign extends CampaignLibraryNode implements NodeContainer<Itera
 		testPlan.removeAll(moved);
 		testPlan.addAll(targetIndex, moved);
 	}
-		
+
 
 	// ***************** (detached) custom field section *************
-	
+
 	@Override
 	public Long getBoundEntityId() {
 		return getId();
 	}
-	
+
 	@Override
 	public BindableEntity getBoundEntityType() {
 		return BindableEntity.CAMPAIGN;
@@ -405,7 +415,7 @@ public class Campaign extends CampaignLibraryNode implements NodeContainer<Itera
 
 	@Override
 	public void accept(NodeVisitor visitor) {
-		visitor.visit(this);		
+		visitor.visit(this);
 	}
 
 	@Override
@@ -414,12 +424,12 @@ public class Campaign extends CampaignLibraryNode implements NodeContainer<Itera
 		iterationList.addAll(getIterations());
 		return iterationList;
 	}
-	
+
 	@Override
 	public List<Iteration> getOrderedContent(){
 		return getIterations();
 	}
-	
+
 	@Override
 	public boolean hasContent(){
 		return !getContent().isEmpty();
@@ -428,19 +438,19 @@ public class Campaign extends CampaignLibraryNode implements NodeContainer<Itera
 	@Override
 	public void addContent(Iteration iteration) throws DuplicateNameException, NullArgumentException {
 		addIteration(iteration);
-		
+
 	}
 
 	@Override
 	public void addContent(Iteration iteration, int position) throws DuplicateNameException, NullArgumentException {
 		addIteration(iteration, position);
-		
+
 	}
-	
+
 	@Override
 	public void removeContent(Iteration contentToRemove) throws NullArgumentException {
 		removeIteration(contentToRemove);
-		
+
 	}
 
 	@Override
@@ -452,8 +462,29 @@ public class Campaign extends CampaignLibraryNode implements NodeContainer<Itera
 		return iterationNames;
 	}
 
-	
-	
+	public Set<Milestone> getMilestones(){
+		return milestones;
+	}
 
-	
+	public void bindMilestone(Milestone milestone){
+		milestones.add(milestone);
+	}
+
+	public void unbindMilestone(Milestone milestone){
+		unbindMilestone(milestone.getId());
+	}
+
+	public void unbindMilestone(Long milestoneId){
+		Iterator<Milestone> iter = milestones.iterator();
+
+		while(iter.hasNext()){
+			Milestone m = iter.next();
+			if (m.getId().equals(milestoneId)){
+				iter.remove();
+				break;
+			}
+		}
+	}
+
+
 }

@@ -27,6 +27,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -39,6 +40,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.Lob;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
@@ -65,6 +67,8 @@ import org.squashtest.tm.domain.customfield.BindableEntity;
 import org.squashtest.tm.domain.customfield.BoundEntity;
 import org.squashtest.tm.domain.infolist.InfoListItem;
 import org.squashtest.tm.domain.library.NodeVisitor;
+import org.squashtest.tm.domain.milestone.Milestone;
+import org.squashtest.tm.domain.milestone.MilestoneHolder;
 import org.squashtest.tm.domain.requirement.Requirement;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.search.CUFBridge;
@@ -99,7 +103,7 @@ import org.squashtest.tm.exception.requirement.RequirementAlreadyVerifiedExcepti
 	})
 })
 @PrimaryKeyJoinColumn(name = "TCLN_ID")
-public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, BoundEntity {
+public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, BoundEntity, MilestoneHolder {
 	private static final Logger LOGGER = LoggerFactory.getLogger(TestCaseLibraryNode.class);
 	private static final String CLASS_NAME = "org.squashtest.tm.domain.testcase.TestCase";
 	private static final String SIMPLE_CLASS_NAME = "TestCase";
@@ -186,6 +190,10 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	@ManyToOne
 	@JoinColumn(name = "TA_TEST")
 	private AutomatedTest automatedTest;
+
+	@ManyToMany
+	@JoinTable(name = "MILESTONE_TEST_CASE", joinColumns = @JoinColumn(name = "TEST_CASE_ID"), inverseJoinColumns = @JoinColumn(name = "MILESTONE_ID"))
+	private Set<Milestone> milestones = new HashSet<Milestone>();
 
 	// *************************** CODE *************************************
 
@@ -725,6 +733,30 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 		this.datasets.remove(dataset);
 	}
 
+	public Set<Milestone> getMilestones(){
+		return milestones;
+	}
+
+	public void bindMilestone(Milestone milestone){
+		milestones.add(milestone);
+	}
+
+	public void unbindMilestone(Milestone milestone){
+		unbindMilestone(milestone.getId());
+	}
+
+	public void unbindMilestone(Long milestoneId){
+		Iterator<Milestone> iter = milestones.iterator();
+
+		while(iter.hasNext()){
+			Milestone m = iter.next();
+			if (m.getId().equals(milestoneId)){
+				iter.remove();
+				break;
+			}
+		}
+	}
+
 	/**
 	 * Will go through this.parameters and return the Parameter matching the given name
 	 * 
@@ -782,19 +814,6 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 		return isImportanceAuto();
 	}
 
-	/*
-	@Override
-	public void notifyAssociatedWithProject(Project project) {
-		super.notifyAssociatedWithProject(project);
 
-		// also define a default nature and type if none were set so far
-		if (nature == null){
-			nature = project.getTestCaseNatures().getDefaultItem();
-		}
-
-		if (type == null){
-			type = project.getTestCaseTypes().getDefaultItem();
-		}
-	}*/
 
 }

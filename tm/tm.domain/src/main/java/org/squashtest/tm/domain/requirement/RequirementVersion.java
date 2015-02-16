@@ -23,6 +23,7 @@ package org.squashtest.tm.domain.requirement;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -32,6 +33,8 @@ import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.PrimaryKeyJoinColumn;
@@ -52,6 +55,8 @@ import org.squashtest.tm.domain.audit.AuditableMixin;
 import org.squashtest.tm.domain.customfield.BindableEntity;
 import org.squashtest.tm.domain.customfield.BoundEntity;
 import org.squashtest.tm.domain.infolist.InfoListItem;
+import org.squashtest.tm.domain.milestone.Milestone;
+import org.squashtest.tm.domain.milestone.MilestoneHolder;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.resource.Resource;
 import org.squashtest.tm.domain.search.CUFBridge;
@@ -84,7 +89,7 @@ import org.squashtest.tm.security.annotation.InheritsAcls;
 			@Parameter(name = "inputType", value = "DROPDOWN_LIST") }),
 			@ClassBridge(name = "isCurrentVersion", store = Store.YES, analyze = Analyze.NO, impl = RequirementVersionIsCurrentBridge.class),
 			@ClassBridge(name = "parent", store = Store.YES, analyze = Analyze.NO, impl = RequirementVersionHasParentBridge.class) })
-public class RequirementVersion extends Resource implements BoundEntity {
+public class RequirementVersion extends Resource implements BoundEntity, MilestoneHolder {
 
 	@NotNull
 	@OneToMany(cascade = { CascadeType.REMOVE, CascadeType.REFRESH, CascadeType.MERGE }, mappedBy = "verifiedRequirementVersion")
@@ -128,6 +133,11 @@ public class RequirementVersion extends Resource implements BoundEntity {
 
 	@Field(analyze = Analyze.NO, store = Store.YES)
 	private int versionNumber = 1;
+
+	@ManyToMany
+	@JoinTable(name = "MILESTONE_REQ_VERSION", joinColumns = @JoinColumn(name = "REQ_VERSION_ID"), inverseJoinColumns = @JoinColumn(name = "MILESTONE_ID"))
+	private Set<Milestone> milestones = new HashSet<Milestone>();
+
 
 	public RequirementVersion() {
 		super();
@@ -444,12 +454,28 @@ public class RequirementVersion extends Resource implements BoundEntity {
 	}
 
 
-	/*
-	public void notifyAssociatedWithProject(Project project) {
-		// define a default category if none was set so far
-		if (category == null){
-			category = project.getRequirementCategories().getDefaultItem();
+	public Set<Milestone> getMilestones(){
+		return milestones;
+	}
+
+	public void bindMilestone(Milestone milestone){
+		milestones.add(milestone);
+	}
+
+	public void unbindMilestone(Milestone milestone){
+		unbindMilestone(milestone.getId());
+	}
+
+	public void unbindMilestone(Long milestoneId){
+		Iterator<Milestone> iter = milestones.iterator();
+
+		while(iter.hasNext()){
+			Milestone m = iter.next();
+			if (m.getId().equals(milestoneId)){
+				iter.remove();
+				break;
+			}
 		}
-	}*/
+	}
 
 }

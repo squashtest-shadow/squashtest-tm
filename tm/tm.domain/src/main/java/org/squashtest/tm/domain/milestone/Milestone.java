@@ -21,6 +21,7 @@
 package org.squashtest.tm.domain.milestone;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -31,6 +32,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -44,14 +46,18 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.hibernate.annotations.Type;
 import org.hibernate.search.annotations.DocumentId;
 import org.hibernate.search.annotations.FieldBridge;
 import org.hibernate.validator.constraints.NotBlank;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.squashtest.tm.domain.audit.Auditable;
+import org.squashtest.tm.domain.campaign.Campaign;
 import org.squashtest.tm.domain.project.GenericProject;
+import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.search.LevelEnumBridge;
+import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.users.User;
 
 @Auditable
@@ -99,6 +105,23 @@ public class Milestone {
 	@JoinColumn(name = "USER_ID")
 	@ManyToOne
 	private User owner;
+
+
+	@ManyToMany(fetch=FetchType.LAZY)
+	@JoinTable(name = "MILESTONE_TEST_CASE", joinColumns = @JoinColumn(name = "MILESTONE_ID"), inverseJoinColumns = @JoinColumn(name = "TEST_CASE_ID"))
+	private Set<TestCase> testCases = new HashSet<>();
+
+
+	@ManyToMany(fetch=FetchType.LAZY)
+	@JoinTable(name = "MILESTONE_REQ_VERSION", joinColumns = @JoinColumn(name = "MILESTONE_ID"), inverseJoinColumns = @JoinColumn(name = "REQ_VERSION_ID"))
+	private Set<RequirementVersion> requirementVersions = new HashSet<>();
+
+
+	@ManyToMany(fetch=FetchType.LAZY)
+	@JoinTable(name = "MILESTONE_CAMPAIGN", joinColumns = @JoinColumn(name = "MILESTONE_ID"), inverseJoinColumns = @JoinColumn(name = "CAMPAIGN_ID"))
+	private Set<Campaign> campaigns = new HashSet<>();
+
+
 
 	public List<GenericProject> getPerimeter() {
 		return new ArrayList<GenericProject>(perimeter);
@@ -240,4 +263,88 @@ public class Milestone {
 		}
 	}
 
+	public Set<TestCase> getTestCases() {
+		return testCases;
+	}
+
+	public Set<RequirementVersion> getRequirementVersions() {
+		return requirementVersions;
+	}
+
+	public Set<Campaign> getCampaigns() {
+		return campaigns;
+	}
+
+	public void bindTestCase(TestCase testCase){
+		testCases.add(testCase);
+	}
+
+	public void bindRequirementVersion(RequirementVersion version){
+
+		// we need to exit early because this case is legit
+		// but would fail the test below
+		if (requirementVersions.contains(version)){
+			return;
+		}
+
+		// check that no other version of this requirement is bound already
+		Collection<RequirementVersion> allVersions = version.getRequirement().getRequirementVersions();
+
+		if (CollectionUtils.containsAny(requirementVersions, allVersions)){
+			throw new IllegalArgumentException("Another version of this requirement is already bound to this milestone");
+		}
+
+		requirementVersions.add(version);
+
+	}
+
+	public void bindCampaign(Campaign campaign){
+		campaigns.add(campaign);
+	}
+
+	public void unbindTestCase(TestCase testCase){
+		unbindTestCase(testCase.getId());
+	}
+
+	public void unbindTestCase(Long testCaseId){
+		Iterator<TestCase> iter = testCases.iterator();
+		while (iter.hasNext()){
+			TestCase tc = iter.next();
+			if (tc.getId().equals(testCaseId)){
+				iter.remove();
+				break;
+			}
+		}
+	}
+
+	public void unbindRequirementVersion(RequirementVersion reqVersion){
+		unbindRequirementVersion(reqVersion.getId());
+	}
+
+	public void unbindRequirementVersion(Long reqVersionId){
+		Iterator<RequirementVersion> iter = requirementVersions.iterator();
+		while (iter.hasNext()){
+			RequirementVersion rv = iter.next();
+			if (rv.getId().equals(reqVersionId)){
+				iter.remove();
+				break;
+			}
+		}
+	}
+
+
+	public void unbindCampaign(Campaign campaign){
+		unbindCampaign(campaign.getId());
+	}
+
+	public void unbindCampaign(Long campaignId){
+		Iterator<Campaign> iter = campaigns.iterator();
+		while (iter.hasNext()){
+			Campaign camp = iter.next();
+			if (camp.getId().equals(campaignId)){
+				iter.remove();
+				break;
+			}
+		}
+	}
 }

@@ -1036,6 +1036,50 @@
 		</insert>
 	
     </changeSet>
+    
+    <changeSet id="tm-1.12.0.feat-3611-1" author="bsiri">
+    	<comment>
+    		Creating the tables modeling the relationships between milestones and test cases, requirement versions 
+    		and campaigns
+    	</comment>
+    
+    	<createTable tableName="MILESTONE_TEST_CASE">
+    		<column name="MILESTONE_ID" type="BIGINT" remarks="foreign key to table MILESTONE">
+    			<constraints nullable="false" foreignKeyName="milestone_tc_milestone" 
+    			references="MILESTONE(MILESTONE_ID)" />    		
+    		</column>
+    		
+    		<column name="TEST_CASE_ID" type="BIGINT" remarks="foreign key to table TEST_CASE">
+    			<constraints nullable="false" foreignKeyName="milestone_tc_tc" references="TEST_CASE(TCLN_ID)"/>    		
+    		</column>
+    	
+    	</createTable>
+    
+      	<createTable tableName="MILESTONE_REQ_VERSION">
+    		<column name="MILESTONE_ID" type="BIGINT" remarks="foreign key to table MILESTONE">
+    			<constraints nullable="false" foreignKeyName="milestone_rqv_milestone" 
+    			references="MILESTONE(MILESTONE_ID)" />    		
+    		</column>
+    		
+    		<column name="REQ_VERSION_ID" type="BIGINT" remarks="foreign key to table REQUIREMENT_VERSION">
+    			<constraints nullable="false" foreignKeyName="milestone_rqv_rqv" 
+    			references="REQUIREMENT_VERSION(RES_ID)"/>    		
+    		</column>    	
+    	</createTable>  
+    
+      	<createTable tableName="MILESTONE_CAMPAIGN">
+    		<column name="MILESTONE_ID" type="BIGINT" remarks="foreign key to table MILESTONE">
+    			<constraints nullable="false" foreignKeyName="milestone_camp_milestone" 
+    			references="MILESTONE(MILESTONE_ID)" />    		
+    		</column>
+    		
+    		<column name="CAMPAIGN_ID" type="BIGINT" remarks="foreign key to table CAMPAIGN">
+    			<constraints nullable="false" foreignKeyName="milestone_camp_camp" 
+    			references="CAMPAIGN(CLN_ID)"/>    		
+    		</column>    	
+    	</createTable>          
+    
+    </changeSet>
 
 </databaseChangeLog>
 

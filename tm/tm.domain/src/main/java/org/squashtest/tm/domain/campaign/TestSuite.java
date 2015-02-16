@@ -22,6 +22,7 @@ package org.squashtest.tm.domain.campaign;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -52,6 +53,8 @@ import org.squashtest.tm.domain.customfield.BoundEntity;
 import org.squashtest.tm.domain.library.Copiable;
 import org.squashtest.tm.domain.library.NodeVisitor;
 import org.squashtest.tm.domain.library.TreeNode;
+import org.squashtest.tm.domain.milestone.Milestone;
+import org.squashtest.tm.domain.milestone.MilestoneMember;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.exception.DuplicateNameException;
@@ -62,7 +65,7 @@ import org.squashtest.tm.security.annotation.InheritsAcls;
 @Auditable
 @Entity
 @InheritsAcls(constrainedClass = Iteration.class, collectionName = "testSuites")
-public class TestSuite implements Identified, Copiable, TreeNode, BoundEntity, AttachmentHolder {
+public class TestSuite implements Identified, Copiable, TreeNode, BoundEntity, AttachmentHolder, MilestoneMember {
 	public static final int MAX_NAME_SIZE = 100;
 	public TestSuite() {
 		super();
@@ -477,6 +480,11 @@ public class TestSuite implements Identified, Copiable, TreeNode, BoundEntity, A
 
 	public void setTestPlan(List<IterationTestPlanItem> testPlan) {
 		this.testPlan = testPlan;
+	}
+
+	@Override
+	public Set<Milestone> getMilestones() {
+		return getIteration().getMilestones();
 	}
 
 
