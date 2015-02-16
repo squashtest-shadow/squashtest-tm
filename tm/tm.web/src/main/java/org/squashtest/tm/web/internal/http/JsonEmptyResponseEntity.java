@@ -19,51 +19,30 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.squashtest.tm.domain.user;
+package org.squashtest.tm.web.internal.http;
 
-import static org.junit.Assert.*;
-
-import org.apache.commons.lang.StringUtils;
-import org.junit.Test;
-import org.squashtest.tm.domain.users.User;
-
-import spock.lang.Specification;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.util.MultiValueMap;
 
 /**
+ * Should be used to return an empty JSON response.
+ * As per XHR spec, an empty JSON response body should be "null", yet Spring produces an empty body.
+ * 
  * @author Gregory Fouquet
- *
+ * 
  */
-class UserTest extends Specification {
+public class JsonEmptyResponseEntity extends ResponseEntity<String> {
 
-	@Test
-	public void "normalized user should be valid"() {
-		given:
-		User u = new User(login: "batman", email: null, firstName: null, lastName: null, active: null)
-
-		when:
-		u.normalize()
-
-		then:
-		u.firstName != null
-		StringUtils.isNotBlank(u.lastName)
-		u.email != null
-		u.active != null
-
+	public JsonEmptyResponseEntity(MultiValueMap<String, String> headers, HttpStatus statusCode) {
+		super("null", headers, statusCode);
 	}
 
-	@Test
-	public void "valid user should not be normalized"() {
-		given:
-		User u = new User(login: "batman", email: "batman@batcave.com", firstName: "bruce", lastName: "wayne", active: null)
-
-		when:
-		u.normalize()
-
-		then:
-		u.firstName == "bruce"
-		u.lastName == "wayne"
-		u.email == "batman@batcave.com"
-		u.active != null
-
+	/**
+	 * @param statusCode
+	 */
+	public JsonEmptyResponseEntity(HttpStatus statusCode) {
+		super("null", statusCode);
 	}
+
 }

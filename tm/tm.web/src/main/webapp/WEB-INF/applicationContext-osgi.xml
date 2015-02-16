@@ -220,6 +220,7 @@
     <osgi:interfaces>
       <value>org.squashtest.tm.service.bugtracker.BugTrackerManagerService</value>
       <value>org.squashtest.tm.service.bugtracker.BugTrackerFinderService</value>
+      <value>org.squashtest.tm.service.bugtracker.BugTrackerSystemManager</value>
     </osgi:interfaces>
   </osgi:reference>
 

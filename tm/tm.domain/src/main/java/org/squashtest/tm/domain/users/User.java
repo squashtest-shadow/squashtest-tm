@@ -194,7 +194,9 @@ public class User extends Party {
 	 * Modifies this user with sensible defaults so that it is valid, provided it has a login.
 	 */
 	public void normalize() {
-		lastName = login;
+		if (StringUtils.isBlank(lastName)) {
+			lastName = login;
+		}
 		firstName = firstName != null ? firstName : "";
 		email = email != null ? email : "";
 		active = active != null ? active : true;

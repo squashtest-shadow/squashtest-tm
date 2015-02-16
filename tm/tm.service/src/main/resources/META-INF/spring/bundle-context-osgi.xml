@@ -60,6 +60,7 @@
     <osgi:interfaces>
       <value>org.squashtest.tm.service.bugtracker.BugTrackerManagerService</value>
       <value>org.squashtest.tm.service.bugtracker.BugTrackerFinderService</value>
+      <value>org.squashtest.tm.service.bugtracker.BugTrackerSystemManager</value>
     </osgi:interfaces>
   </osgi:service>
   <osgi:service ref="squashtest.tm.service.BugTrackerModificationService" interface="org.squashtest.tm.service.bugtracker.BugTrackerModificationService" />

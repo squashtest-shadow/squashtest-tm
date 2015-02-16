@@ -27,10 +27,11 @@ import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.tm.exception.DuplicateNameException;
 
 @Transactional
-public interface BugTrackerManagerService extends BugTrackerFinderService{
-	
+public interface BugTrackerManagerService extends BugTrackerFinderService {
+
 	/**
-	 * add a new bugtracker in the database 
+	 * add a new bugtracker in the database
+	 * 
 	 * @throws DuplicateNameException
 	 * 
 	 * @param bugTracker
@@ -39,8 +40,10 @@ public interface BugTrackerManagerService extends BugTrackerFinderService{
 
 	/**
 	 * Delete bugtracker(s), remove their binding to projects and delete all issues associated to them.
-	 * @param bugtrackerIds collection of ids of the bugtrackers to be deleted
+	 * 
+	 * @param bugtrackerIds
+	 *            collection of ids of the bugtrackers to be deleted
 	 */
 	void deleteBugTrackers(Collection<Long> bugtrackerIds);
-	
+
 }

@@ -28,17 +28,36 @@ package org.squashtest.tm.exception;
  * 
  */
 public class NameAlreadyInUseException extends DomainException {
-	/**
-	 *TODO make serial version , my eclipse can't.
-	 */
-	private static final long serialVersionUID = 1L;
+	public enum EntityType {
+		GENERIC("message.exception.nameAlreadyInUse", "unknown"),
+		BUG_TRACKER("squashtm.action.exception.bugtracker.name.exists.label", "BugTracker");
+		public final String i18nKey;
+		public final String entityName;
+
+		private EntityType(String i18nKey, String entityName) {
+			this.i18nKey = i18nKey;
+			this.entityName = entityName;
+		}
+
+	}
+
+	private static final long serialVersionUID = 1395737862096099500L;
 	private final String entityName;
 	private final String name;
+	private final EntityType entityType;
 
 	public NameAlreadyInUseException(String entityName, String name) {
 		super("The name '" + name + "' is already used by another " + entityName + " entity", "name");
 		this.entityName = entityName;
 		this.name = name;
+		this.entityType = EntityType.GENERIC;
+	}
+
+	public NameAlreadyInUseException(EntityType type, String name) {
+		super("The name '" + name + "' is already used by another " + type.entityName + " entity", "name");
+		this.entityName = type.entityName;
+		this.name = name;
+		this.entityType = type;
 	}
 
 	/**
@@ -48,7 +67,7 @@ public class NameAlreadyInUseException extends DomainException {
 	 */
 	@Override
 	public String getI18nKey() {
-		return "message.exception.nameAlreadyInUse";
+		return entityType.i18nKey;
 	}
 
 	/**

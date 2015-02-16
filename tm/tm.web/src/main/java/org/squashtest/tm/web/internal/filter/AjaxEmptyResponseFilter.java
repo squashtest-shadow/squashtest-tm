@@ -30,30 +30,42 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 
+/**
+ * This patches empty responses by setting them an "app/json" type + "null" content, otherwise js clients interpreting
+ * the response as JSON won't be able to parse it (null is valid JSON while nothing is not).
+ * 
+ * Yet there are bugs because this filter accesses the response's Writer. If response.getOutpouStream() alreadyt has
+ * been called somewhere in the responce processing stack, this will throw exception.
+ * 
+ * To work around this, one can set a "notJson" request attribute which will override the filter's behaviour.
+ * 
+ */
 public class AjaxEmptyResponseFilter implements Filter {
 
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-        chain.doFilter(request, response);
-        if (response.getContentType() == null) {
-            response.setCharacterEncoding("UTF-8");
-            response.setContentType("application/json");
-            Writer writer = response.getWriter();
-            writer.write("null");
-            writer.close();
-            response.flushBuffer();
-        }
-    }
+	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException,
+	ServletException {
+		chain.doFilter(request, response);
+
+		if (response.getContentType() == null) {
+			response.setCharacterEncoding("UTF-8");
+			response.setContentType("application/json");
+			Writer writer = response.getWriter();
+			writer.write("null");
+			writer.close();
+			response.flushBuffer();
+		}
+	}
 
 	@Override
 	public void init(FilterConfig filterConfig) throws ServletException {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void destroy() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 }

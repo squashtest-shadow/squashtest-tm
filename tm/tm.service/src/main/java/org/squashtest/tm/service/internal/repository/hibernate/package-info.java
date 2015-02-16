@@ -375,9 +375,8 @@
 
 																																	//BugTrackersEntities
 																																	@NamedQuery(name = "bugtracker.count", query = "select count(bte) from BugTracker bte"),
-																																	@NamedQuery(name = "bugtracker.findBugTrackerByName", query = "from BugTracker where name = :name "),
 																																	@NamedQuery(name = "bugtracker.findDistinctBugTrackersForProjects", query = "select distinct bt from Project p join p.bugtrackerBinding btB join btB.bugtracker bt where p.id in (:projects)"),
-																																	@NamedQuery(name = "bugtracker.findByName", query = "from BugTracker where name = :btName"),
+	@NamedQuery(name = "bugtracker.findByName", query = "from BugTracker where name = :name"),
 
 																																	//BugTrackerBinding
 																																	@NamedQuery(name = "bugTrackerBinding.findByBugtrackerId", query = "from BugTrackerBinding where bugtracker_id= :bugtrackerId"),

@@ -31,6 +31,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.Size;
 
+import org.apache.commons.lang.StringUtils;
 import org.hibernate.validator.constraints.NotBlank;
 
 @Entity
@@ -55,8 +56,8 @@ public class BugTracker {
 	}
 
 	@Id
-	@GeneratedValue(generator="bugtracker_bugtracker_id_seq")
-	@SequenceGenerator(name="bugtracker_bugtracker_id_seq", sequenceName="bugtracker_bugtracker_id_seq")
+	@GeneratedValue(generator = "bugtracker_bugtracker_id_seq")
+	@SequenceGenerator(name = "bugtracker_bugtracker_id_seq", sequenceName = "bugtracker_bugtracker_id_seq")
 	@Column(name = "BUGTRACKER_ID")
 	private Long id;
 
@@ -141,4 +142,12 @@ public class BugTracker {
 		return detached;
 	}
 
+	/**
+	 * Modifies this BT with sensible defaults so that it is valid, provided it has a url and a kind.
+	 */
+	public void normalize() {
+		if (StringUtils.isBlank(name)) {
+			name = url;
+		}
+	}
 }

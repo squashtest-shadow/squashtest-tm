@@ -19,51 +19,25 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.squashtest.tm.domain.user;
+package org.squashtest.tm.service.bugtracker;
 
-import static org.junit.Assert.*;
+import javax.validation.constraints.NotNull;
 
-import org.apache.commons.lang.StringUtils;
-import org.junit.Test;
-import org.squashtest.tm.domain.users.User;
-
-import spock.lang.Specification;
+import org.squashtest.csp.core.bugtracker.domain.BugTracker;
+import org.squashtest.tm.exception.NameAlreadyInUseException;
 
 /**
+ * BT management services available for System operations.
+ * 
  * @author Gregory Fouquet
- *
+ * 
  */
-class UserTest extends Specification {
-
-	@Test
-	public void "normalized user should be valid"() {
-		given:
-		User u = new User(login: "batman", email: null, firstName: null, lastName: null, active: null)
-
-		when:
-		u.normalize()
-
-		then:
-		u.firstName != null
-		StringUtils.isNotBlank(u.lastName)
-		u.email != null
-		u.active != null
-
-	}
-
-	@Test
-	public void "valid user should not be normalized"() {
-		given:
-		User u = new User(login: "batman", email: "batman@batcave.com", firstName: "bruce", lastName: "wayne", active: null)
-
-		when:
-		u.normalize()
-
-		then:
-		u.firstName == "bruce"
-		u.lastName == "wayne"
-		u.email == "batman@batcave.com"
-		u.active != null
-
-	}
+public interface BugTrackerSystemManager {
+	/**
+	 * Creates a BT using the requested data.
+	 * 
+	 * @param request
+	 * @return The created, persistent BT
+	 */
+	BugTracker createBugTracker(@NotNull BugTracker request) throws NameAlreadyInUseException;
 }

@@ -70,27 +70,25 @@ public class HibernateBugTrackerDao extends HibernateEntityDao<BugTracker> imple
 	public long countBugTrackers() {
 		return (Long) executeEntityNamedQuery("bugtracker.count");
 	}
-	
+
 	/**
 	 * @see BugTrackerDao#checkNameAvailability(String)
 	 */
 	@Override
 	public void checkNameAvailability(String name) {
-		if(findBugTrackerByName(name) != null){
+		if (findByName(name) != null) {
 			throw new BugTrackerNameAlreadyExistsException();
 		}
-		
+
 	}
 
-	private BugTracker findBugTrackerByName(final String name) {
-			return executeEntityNamedQuery("bugtracker.findBugTrackerByName", new SetNameParameterCallback(name));
-	}
-	
-	private static final class SetNameParameterCallback implements SetQueryParametersCallback{
+	private static final class SetNameParameterCallback implements SetQueryParametersCallback {
 		private String name;
-		private SetNameParameterCallback (String name){
+
+		private SetNameParameterCallback(String name) {
 			this.name = name;
 		}
+
 		@Override
 		public void setQueryParameters(Query query) {
 			query.setParameter("name", name);
@@ -99,27 +97,29 @@ public class HibernateBugTrackerDao extends HibernateEntityDao<BugTracker> imple
 
 	@Override
 	public List<BugTracker> findDistinctBugTrackersForProjects(final List<Long> projectIds) {
-		if(!projectIds.isEmpty()){
-		return executeListNamedQuery("bugtracker.findDistinctBugTrackersForProjects", new SetProjectsParametersCallback(projectIds));
-		}else{
+		if (!projectIds.isEmpty()) {
+			return executeListNamedQuery("bugtracker.findDistinctBugTrackersForProjects",
+					new SetProjectsParametersCallback(projectIds));
+		} else {
 			return Collections.emptyList();
 		}
 	}
-	
-	
+
 	@Override
 	public BugTracker findByName(String bugtrackerName) {
 		Query query = currentSession().getNamedQuery("bugtracker.findByName");
-		query.setParameter("btName",  bugtrackerName, StringType.INSTANCE);
-		return (BugTracker)query.uniqueResult();
-		
+		query.setParameter("name", bugtrackerName, StringType.INSTANCE);
+		return (BugTracker) query.uniqueResult();
+
 	}
-	
+
 	private static final class SetProjectsParametersCallback implements SetQueryParametersCallback {
 		private List<Long> projectIds;
-		private SetProjectsParametersCallback(List<Long> projectIds){
+
+		private SetProjectsParametersCallback(List<Long> projectIds) {
 			this.projectIds = projectIds;
 		}
+
 		@Override
 		public void setQueryParameters(Query query) {
 			query.setParameterList("projects", projectIds, LongType.INSTANCE);

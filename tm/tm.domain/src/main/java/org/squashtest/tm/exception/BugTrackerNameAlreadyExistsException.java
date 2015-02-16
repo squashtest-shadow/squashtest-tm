@@ -21,7 +21,11 @@
 package org.squashtest.tm.exception;
 
 import org.squashtest.tm.core.foundation.exception.ActionException;
-
+/**
+ * 
+ * @deprecated there is already {@link NameAlreadyInUseException}
+ */
+@Deprecated
 public class BugTrackerNameAlreadyExistsException extends ActionException {
 
 	/**
@@ -29,8 +33,8 @@ public class BugTrackerNameAlreadyExistsException extends ActionException {
 	 */
 	//FIXME add generated serial version UID , my eclipse couldn't do it (mpagnon)
 	private static final long serialVersionUID = 1L;
-	
-	
+
+
 	private static final String BUGTRAKER_NAME_ALREADY_EXIST_MESSAGE_KEY = "squashtm.action.exception.bugtracker.name.exists.label";
 
 	public BugTrackerNameAlreadyExistsException(Exception ex) {
@@ -42,7 +46,7 @@ public class BugTrackerNameAlreadyExistsException extends ActionException {
 	}
 
 	public BugTrackerNameAlreadyExistsException() {
-
+		super();
 	}
 
 	@Override
