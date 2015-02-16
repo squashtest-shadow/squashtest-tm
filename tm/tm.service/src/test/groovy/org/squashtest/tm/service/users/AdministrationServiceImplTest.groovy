@@ -94,7 +94,7 @@ class AdministrationServiceImplTest extends Specification {
 
 		and:
 		UsersGroup defaultGroup = Mock()
-		groupDao.findByQualifiedName("squashtest.authz.group.tm.User") >> defaultGroup
+		groupDao.findByQualifiedName(UsersGroup.USER) >> defaultGroup
 
 		when:
 		User res = service.createUserFromLogin("chris.jericho")
@@ -139,7 +139,7 @@ class AdministrationServiceImplTest extends Specification {
 		1 * newUser.setGroup(defaultGroup)
 		1 * adminAuthentService.createNewUserPassword("chris.jericho", "y2j", true, true, true, true, _)
 	}
-	
+
 	def "should create user without credentials"() {
 		given:
 		User newUser = Mock()
@@ -157,7 +157,7 @@ class AdministrationServiceImplTest extends Specification {
 		1 * newUser.setGroup(defaultGroup)
 		0 * adminAuthentService.createNewUserPassword(_, _, _, _, _, _, _)
 	}
-	
+
 	def "should create authentication data"() {
 		given:
 		User user = Mock()
@@ -166,7 +166,7 @@ class AdministrationServiceImplTest extends Specification {
 
 		and:
 		userDao.findById(10L) >> user
-		
+
 		and:
 		adminAuthentService.userExists("chris.jericho") >> false
 
@@ -188,7 +188,7 @@ class AdministrationServiceImplTest extends Specification {
 
 		and:
 		userDao.findById(10L) >> user
-		
+
 		and:
 		adminAuthentService.userExists("chris.jericho") >> true
 
