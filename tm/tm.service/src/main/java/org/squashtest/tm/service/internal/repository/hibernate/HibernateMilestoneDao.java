@@ -20,6 +20,11 @@
  */
 package org.squashtest.tm.service.internal.repository.hibernate;
 
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import org.hibernate.Query;
 import org.springframework.stereotype.Repository;
 import org.squashtest.tm.domain.milestone.Milestone;
@@ -39,7 +44,37 @@ public class HibernateMilestoneDao extends HibernateEntityDao<Milestone> impleme
 		if(findMilestoneByLabel(label) != null){
 			throw new MilestoneLabelAlreadyExistsException();
 		}
-		
+
+	}
+
+
+	@Override
+	public Collection<Milestone> findAssociableMilestonesForTestCase(long testCaseId){
+		Query query = currentSession().getNamedQuery("milestone.findAssociableMilestonesForTestCase");
+		query.setParameter("testCaseId", testCaseId);
+		return query.list();
+	}
+
+	@Override
+	public Collection<Milestone> findAllMilestonesForTestCase(long testCaseId) {
+
+		Set<Milestone> allMilestones = new HashSet<>();
+
+
+		Query query1 = currentSession().getNamedQuery("milestone.findTestCaseMilestones");
+		query1.setParameter("testCaseId", testCaseId);
+		List<Milestone> ownMilestones = query1.list();
+
+
+		Query query2 = currentSession().getNamedQuery("milestone.findIndirectTestCaseMilestones");
+		query2.setParameter("testCaseId", testCaseId);
+		List<Milestone> indirectMilestones = query2.list();
+
+		allMilestones.addAll(ownMilestones);
+		allMilestones.addAll(indirectMilestones);
+
+		return allMilestones;
+
 	}
 
 	private Milestone findMilestoneByLabel(String label) {

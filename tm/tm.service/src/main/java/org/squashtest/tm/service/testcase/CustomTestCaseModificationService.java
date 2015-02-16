@@ -23,10 +23,12 @@ package org.squashtest.tm.service.testcase;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.squashtest.tm.domain.customfield.CustomField;
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
 import org.squashtest.tm.domain.customfield.RawValue;
+import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.testautomation.AutomatedTest;
 import org.squashtest.tm.domain.testcase.ActionTestStep;
 import org.squashtest.tm.domain.testcase.TestStep;
@@ -140,5 +142,22 @@ public interface CustomTestCaseModificationService extends CustomTestCaseFinder 
 	void changeNature(long testCaseId, String natureCode);
 
 	void changeType(long testCaseId, String typeCode);
+
+
+	/* ********************** milestones section ******************* */
+
+	void bindMilestones(long testCaseId, Collection<Long> milestoneIds);
+
+	void unbindMilestones(long testCaseId, Collection<Long> milestoneIds);
+
+	Collection<Milestone> findAssociableMilestones(long testCaseId);
+
+	/**
+	 * returns direct milestone membership, plus indirect milestones due to verified requirements
+	 * 
+	 * @param testCaseId
+	 * @return
+	 */
+	Collection<Milestone> findAllMilestones(long testCaseId);
 
 }

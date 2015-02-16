@@ -18,21 +18,25 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.internal.repository;
+package org.squashtest.tm.service.milestone;
 
 import java.util.Collection;
 
 import org.squashtest.tm.domain.milestone.Milestone;
 
 
-public interface MilestoneDao  extends EntityDao<Milestone>{
+public interface MilestoneMembershipFinder {
 
-	long countMilestones();
 
-	void checkLabelAvailability(String label);
+	Collection<Milestone> findAssociableMilestonesToTestCase(long testCaseId);
 
-	Collection<Milestone> findAssociableMilestonesForTestCase(long testCaseId);
 
+	/**
+	 * Returns the milestones of which the test case is directly a member,
+	 * plus all the milestones of which its verified requirement are members.
+	 * 
+	 * @param testCase
+	 * @return
+	 */
 	Collection<Milestone> findAllMilestonesForTestCase(long testCaseId);
-
 }

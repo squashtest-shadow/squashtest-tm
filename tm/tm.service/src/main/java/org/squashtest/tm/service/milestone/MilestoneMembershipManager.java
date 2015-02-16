@@ -18,21 +18,18 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.internal.repository;
+package org.squashtest.tm.service.milestone;
 
 import java.util.Collection;
 
-import org.squashtest.tm.domain.milestone.Milestone;
+public interface MilestoneMembershipManager extends MilestoneMembershipFinder {
 
+	void bindTestCaseToMilestones(long testCaseId, Collection<Long> milestoneIds);
 
-public interface MilestoneDao  extends EntityDao<Milestone>{
+	void unbindTestCaseFromMilestones(long testCaseId, Collection<Long> milestoneIds);
 
-	long countMilestones();
+	void bindRequirementVersionToMilestones(long requirementVersionId, Collection<Long> milestoneIds);
 
-	void checkLabelAvailability(String label);
-
-	Collection<Milestone> findAssociableMilestonesForTestCase(long testCaseId);
-
-	Collection<Milestone> findAllMilestonesForTestCase(long testCaseId);
+	void bindCampaignToMilestones(long campaignId, Collection<Long> milestoneIds);
 
 }

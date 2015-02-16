@@ -146,7 +146,7 @@ public abstract class GenericProject implements Identified, AttachmentHolder {
 	private InfoList testCaseTypes;
 
 
-		@ManyToMany(mappedBy = "projects")
+	@ManyToMany(mappedBy = "projects")
 	private Set<Milestone> milestones = new HashSet<Milestone>();
 
 	public List<Milestone> getMilestones() {
@@ -154,7 +154,7 @@ public abstract class GenericProject implements Identified, AttachmentHolder {
 	}
 
 
-	
+
 	public GenericProject() {
 		super();
 	}
@@ -419,7 +419,7 @@ public abstract class GenericProject implements Identified, AttachmentHolder {
 		for (Milestone milestone : milestones){
 			bindMilestone(milestone);
 		}
-		
+
 	}
 
 	public boolean isBoundToMilestone(Milestone milestone) {

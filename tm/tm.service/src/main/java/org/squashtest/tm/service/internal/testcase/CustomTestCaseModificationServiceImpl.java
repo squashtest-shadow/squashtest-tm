@@ -52,6 +52,7 @@ import org.squashtest.tm.domain.customfield.BoundEntity;
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
 import org.squashtest.tm.domain.customfield.RawValue;
 import org.squashtest.tm.domain.infolist.InfoListItem;
+import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.project.GenericProject;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.testautomation.AutomatedTest;
@@ -76,6 +77,7 @@ import org.squashtest.tm.service.internal.repository.LibraryNodeDao;
 import org.squashtest.tm.service.internal.repository.TestCaseDao;
 import org.squashtest.tm.service.internal.repository.TestStepDao;
 import org.squashtest.tm.service.internal.testautomation.UnsecuredAutomatedTestManagerService;
+import org.squashtest.tm.service.milestone.MilestoneMembershipManager;
 import org.squashtest.tm.service.testautomation.model.TestAutomationProjectContent;
 import org.squashtest.tm.service.testcase.CustomTestCaseModificationService;
 import org.squashtest.tm.service.testcase.ParameterModificationService;
@@ -108,7 +110,6 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	@Inject
 	private TestStepDao testStepDao;
 
-
 	@Inject
 	@Named("squashtest.tm.service.internal.TestCaseManagementService")
 	private NodeManagementService<TestCase, TestCaseLibraryNode, TestCaseFolder> testCaseManagementService;
@@ -122,12 +123,14 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	@Inject
 	protected PrivateCustomFieldValueService customFieldValuesService;
 
-
 	@Inject
 	private ParameterModificationService parameterModificationService;
 
 	@Inject
 	private InfoListItemFinderService infoListItemService;
+
+	@Inject
+	private MilestoneMembershipManager milestoneService;
 
 	/* *************** TestCase section ***************************** */
 
@@ -393,7 +396,6 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	@PreAuthorize(WRITE_TC_OR_ROLE_ADMIN)
 	public AutomatedTest bindAutomatedTest(Long testCaseId, Long taProjectId, String testName) {
 
-
 		TestAutomationProject project = taService.findProjectById(taProjectId);
 
 		AutomatedTest newTest = new AutomatedTest(testName, project);
@@ -415,11 +417,10 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	@PreAuthorize(WRITE_TC_OR_ROLE_ADMIN)
 	public AutomatedTest bindAutomatedTest(Long testCaseId, String testPath) {
 
-		if (StringUtils.isBlank(testPath)){
+		if (StringUtils.isBlank(testPath)) {
 			removeAutomation(testCaseId);
 			return null;
-		}
-		else{
+		} else {
 
 			Couple<Long, String> projectAndTestname = extractAutomatedProjectAndTestName(testCaseId, testPath);
 
@@ -428,7 +429,6 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 		}
 
 	}
-
 
 	@Override
 	public void removeAutomation(long testCaseId) {
@@ -485,7 +485,6 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 		return testCaseDao.findTestCaseByTestStepId(testStepId);
 	}
 
-
 	/**
 	 * @see org.squashtest.tm.service.testcase.CustomTestCaseFinder#findImpTCWithImpAuto(Collection)
 	 */
@@ -500,8 +499,8 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	@Override
 	public Set<Long> findCallingTCids(long updatedId, Collection<Long> callingCandidates) {
 		List<Long> callingCandidatesClone = new ArrayList<Long>(callingCandidates);
-		List<Long> callingLayer = testCaseDao.findAllTestCasesIdsCallingTestCases(Arrays.asList(Long
-				.valueOf(updatedId)));
+		List<Long> callingLayer = testCaseDao
+				.findAllTestCasesIdsCallingTestCases(Arrays.asList(Long.valueOf(updatedId)));
 		Set<Long> callingTCToUpdate = new HashSet<Long>();
 		while (!callingLayer.isEmpty() && !callingCandidatesClone.isEmpty()) {
 			// filter found calling test cases
@@ -510,47 +509,45 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 			callingTCToUpdate.addAll(callingLayer);
 			// reduce test case of interest
 			callingCandidatesClone.removeAll(callingLayer);
-			//go next layer
+			// go next layer
 			callingLayer = testCaseDao.findAllTestCasesIdsCallingTestCases(callingLayer);
 		}
 		return callingTCToUpdate;
 	}
 
-
-
 	// ******************** private stuffs *********************
 
-
-
 	// returns a tuple-2 with first element : project ID, second element : test name
-	private Couple<Long, String> extractAutomatedProjectAndTestName(Long testCaseId, String testPath){
+	private Couple<Long, String> extractAutomatedProjectAndTestName(Long testCaseId, String testPath) {
 
 		// first we reject the operation if the script name is malformed
-		if (! PathUtils.isPathWellFormed(testPath)){
+		if (!PathUtils.isPathWellFormed(testPath)) {
 			throw new MalformedScriptPathException();
 		}
 
-		// now it's clear to go, let's find which TA project it is. The first slash must be removed because it doesn't count.
+		// now it's clear to go, let's find which TA project it is. The first slash must be removed because it doesn't
+		// count.
 		String path = testPath.replaceFirst("^/", "");
 		int idxSlash = path.indexOf('/');
 
-		String projectLabel = path.substring(0,idxSlash);
-		String testName = path.substring(idxSlash+1);
+		String projectLabel = path.substring(0, idxSlash);
+		String testName = path.substring(idxSlash + 1);
 
 		TestCase tc = testCaseDao.findById(testCaseId);
 		GenericProject tmproject = tc.getProject();
 
-		TestAutomationProject tap = (TestAutomationProject) CollectionUtils.find(tmproject.getTestAutomationProjects(), new HasSuchLabel(projectLabel));
+		TestAutomationProject tap = (TestAutomationProject) CollectionUtils.find(tmproject.getTestAutomationProjects(),
+				new HasSuchLabel(projectLabel));
 
 		// if the project couldn't be found we must also reject the operation
-		if (tap == null){
+		if (tap == null) {
 			throw new UnallowedTestAssociationException();
 		}
 
 		return new Couple<Long, String>(tap.getId(), testName);
 	}
 
-	private static final class HasSuchLabel implements Predicate{
+	private static final class HasSuchLabel implements Predicate {
 		private String label;
 
 		HasSuchLabel(String label) {
@@ -570,10 +567,9 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 		TestCase testCase = testCaseDao.findById(testCaseId);
 		InfoListItem nature = infoListItemService.findByCode(natureCode);
 
-		if (infoListItemService.isNatureConsistent(testCase.getProject().getId(), natureCode)){
+		if (infoListItemService.isNatureConsistent(testCase.getProject().getId(), natureCode)) {
 			testCase.setNature(nature);
-		}
-		else{
+		} else {
 			throw new InconsistentInfoListItemException("nature", natureCode);
 		}
 
@@ -585,12 +581,42 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 		TestCase testCase = testCaseDao.findById(testCaseId);
 		InfoListItem type = infoListItemService.findByCode(typeCode);
 
-		if (infoListItemService.isTypeConsistent(testCase.getProject().getId(), typeCode)){
+		if (infoListItemService.isTypeConsistent(testCase.getProject().getId(), typeCode)) {
 			testCase.setType(type);
-		}
-		else{
+		} else {
 			throw new InconsistentInfoListItemException("type", typeCode);
 		}
+	}
+
+	/* ********************************************************************************
+	 * 
+	 * Milestones section
+	 * 
+	 * *******************************************************************************
+	 */
+
+	@Override
+	@PreAuthorize(WRITE_TC_OR_ROLE_ADMIN)
+	public void bindMilestones(long testCaseId, Collection<Long> milestoneIds) {
+		milestoneService.bindTestCaseToMilestones(testCaseId, milestoneIds);
+	}
+
+	@Override
+	@PreAuthorize(WRITE_TC_OR_ROLE_ADMIN)
+	public void unbindMilestones(long testCaseId, Collection<Long> milestoneIds) {
+		milestoneService.unbindTestCaseFromMilestones(testCaseId, milestoneIds);
+	}
+
+	@Override
+	@PreAuthorize(WRITE_TC_OR_ROLE_ADMIN)
+	public Collection<Milestone> findAllMilestones(long testCaseId) {
+		return milestoneService.findAllMilestonesForTestCase(testCaseId);
+	}
+
+	@Override
+	@PreAuthorize(WRITE_TC_OR_ROLE_ADMIN)
+	public Collection<Milestone> findAssociableMilestones(long testCaseId) {
+		return milestoneService.findAssociableMilestonesToTestCase(testCaseId);
 	}
 
 
