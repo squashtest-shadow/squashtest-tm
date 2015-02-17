@@ -21,28 +21,51 @@
 package org.squashtest.tm.web.internal.controller.milestone;
 
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
+import org.squashtest.tm.domain.milestone.MilestoneStatus;
+import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelBuilder;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelConstants;
 
 public class TestCaseBoundMilestoneTableModelHelper extends DataTableModelBuilder<MetaMilestone> {
+
+	private InternationalizationHelper i18nHelper;
+	private Locale locale;
+
+
+
+	public TestCaseBoundMilestoneTableModelHelper(InternationalizationHelper i18nHelper, Locale locale) {
+		super();
+		this.i18nHelper = i18nHelper;
+		this.locale = locale;
+	}
+
+
 
 	@Override
 	protected Map<String, Object> buildItemData(MetaMilestone item) {
 
 		Map<String, Object> row = new HashMap<>();
 
+		String date = i18nHelper.localizeDate(item.getEndDate(), locale);
+		String status = formatStatus(item.getStatus());
+
 		row.put(DataTableModelConstants.DEFAULT_ENTITY_INDEX_KEY, getCurrentIndex());
 		row.put(DataTableModelConstants.DEFAULT_ENTITY_ID_KEY, item.getId());
 		row.put("directMember", item.isDirectMembership());
-		row.put("status", item.getStatus());
+		row.put("status", status);
 		row.put("label", item.getLabel());
-		row.put("date", item.getEndDate());
+		row.put("date", date);
 		row.put("description", item.getDescription());
 		row.put(DataTableModelConstants.DEFAULT_EMPTY_DELETE_HOLDER_KEY, null);
 
 		return row;
+	}
+
+	private String formatStatus(MilestoneStatus status){
+		return status.toString();
 	}
 
 

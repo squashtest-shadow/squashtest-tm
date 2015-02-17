@@ -42,7 +42,11 @@
  * 			add popup definition goes here, see file jquery.squash.milestoneDialog.js
  * 		</div>
  * 
- * 		<script>
+ * 		<div class="unbind-milestone-dialog popup-dialog not-displayed">
+ * 			add popup definition goes here, see file jquery.squash.milestoneDialog.js
+ * 		</div>
+ * 
+ *		<script>
  * 
  * 			var conf = {
  * 				see documentation below
@@ -94,7 +98,8 @@
  * 		
  * 
  */
-define(["jquery", "workspace.event-bus", "app/ws/squashtm.notification", "squashtable", "./jquery.squash.milestoneDialog"], 
+define(["jquery", "workspace.event-bus", "app/ws/squashtm.notification", "squashtable", 
+        "./jquery.squash.milestoneDialog", "jquery.squash.formdialog"], 
 		function($, eventBus, notification){
 	
 	
@@ -106,6 +111,8 @@ define(["jquery", "workspace.event-bus", "app/ws/squashtm.notification", "squash
 		var tblCnf = {
 			bServerSide : false,
 			iDeferLoading : conf.basic.currentModel.length,
+			bDeferLoading : true,
+			sAjaxSource : conf.urls.currentTableSource,
 			aaData : conf.basic.currentModel
 		},
 		squashCnf = {
@@ -124,40 +131,62 @@ define(["jquery", "workspace.event-bus", "app/ws/squashtm.notification", "squash
 				milestonesURL : conf.urls.milestonesURL
 			};
 			
-			var bindDialog = element.find('bind-milestone-dialog');
+			var bindDialog = element.find('.bind-milestone-dialog');
 			bindDialog.milestoneDialog(dialogOptions);
 			
 			$(".milestone-panel-bind-button").on('click', function(){
 				bindDialog.milestoneDialog('open');
 			});
 			
-			eventBus.onContextual('node.bindmilestones', function(){
-				currentTable.refresh();
+			eventBus.onContextual('node.bindmilestones node.unbindmilestones', function(){
+				currentTable._fnAjaxUpdate();
 			});
 			
-			// remove milestones 
+			// remove milestones 			
+			var unbindDialog = $(".unbind-milestone-dialog");
 			
-			$(".milestone-panel-unbind-button").on('click', function(){
+			unbindDialog.formDialog();
+			
+			unbindDialog.on('formdialogopen', function(){
+				
+				var ids = currentTable.getSelectedIds(),
+					state;
+				
+				switch(ids.length){
+				case 0 : state="none-selected"; break;
+				case 1 : state="one-selected";break;
+				default : state="more-selected"
+				};
+				
+				unbindDialog.formDialog('setState', state);
+			});
+			
+			unbindDialog.on('formdialogconfirm', function(){			
+				
 				var ids = currentTable.getSelectedIds();
 				
-				if (ids.length === 0){
-					notification.showError('select some milestones ya troll');
-				}
-				else{
+				var url = conf.urls.milestonesURL + '/' + ids.join(',');
 					
-					var url = conf.urls.milestonesURL + '/' + ids.join(',');
-					
-					$.ajax({
-						url : url,
-						type : 'DELETE'
-					})
-					.success(function(){
-						eventBus.trigger('node.unbindmilestones', {
-							identity : conf.basic.identity,
-							milestones : [ids]
-						});
+				$.ajax({
+					url : url,
+					type : 'DELETE'
+				})
+				.success(function(){
+					eventBus.trigger('node.unbindmilestones', {
+						identity : conf.basic.identity,
+						milestones : [ids]
 					});
-				}
+					unbindDialog.formDialog('close');
+				});
+
+			});
+			
+			unbindDialog.on('formdialogcancel', function(){
+				unbindDialog.formDialog('close');
+			});
+			
+			$(".milestone-panel-unbind-button").on('click', function(){
+				unbindDialog.formDialog('open');
 			});
 			
 		}		

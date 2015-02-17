@@ -40,6 +40,7 @@ import org.apache.commons.lang.NullArgumentException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -463,11 +464,47 @@ public class TestCaseModificationController {
 	}
 
 
+	private DataTableModel getCallingTestCaseTableModel(long testCaseId, PagingAndSorting paging, String sEcho){
+
+		PagedCollectionHolder<List<CallTestStep>> holder = testCaseModificationService.findCallingTestSteps(testCaseId,
+				paging);
+
+		return new CallingTestCasesTableModelBuilder(internationalizationHelper).buildDataModel(holder, sEcho);
+	}
+	/* **********************************************************************
+	 * 
+	 * Milestones section
+	 * 
+	 ********************************************************************** */
+
 	@RequestMapping(value = "/milestones", method=RequestMethod.GET)
 	@ResponseBody
 	public DataTableModel getBoundMilestones(@PathVariable long testCaseId, DataTableDrawParameters params){
 
-		return buildMilestoneModel(testCaseId, params.getsEcho());
+		Collection<Milestone> allMilestones = testCaseModificationService.findAllMilestones(testCaseId);
+
+		return buildMilestoneModel(testCaseId, allMilestones, params.getsEcho());
+	}
+
+	@RequestMapping(value = "/milestones/{milestoneIds}", method=RequestMethod.POST)
+	@ResponseBody
+	public void bindMilestones(@PathVariable long testCaseId, @PathVariable("milestoneIds") List<Long> milestoneIds){
+
+		testCaseModificationService.bindMilestones(testCaseId, milestoneIds);
+	}
+
+	@RequestMapping(value = "/milestones/{milestoneIds}", method=RequestMethod.DELETE)
+	@ResponseBody
+	public void unbindMilestones(@PathVariable long testCaseId, @PathVariable("milestoneIds") List<Long> milestoneIds){
+
+		testCaseModificationService.unbindMilestones(testCaseId, milestoneIds);
+	}
+
+	@RequestMapping(value = "/milestones/associables", method=RequestMethod.GET)
+	@ResponseBody
+	public DataTableModel getNotYetBoundMilestones(@PathVariable long testCaseId, DataTableDrawParameters params){
+		Collection<Milestone> notBoundMilestones = testCaseModificationService.findAssociableMilestones(testCaseId);
+		return buildMilestoneModel(testCaseId, notBoundMilestones, params.getsEcho());
 	}
 
 
@@ -477,7 +514,8 @@ public class TestCaseModificationController {
 		MilestonePanelConfiguration conf = new MilestonePanelConfiguration();
 
 		// build the needed data
-		List<?> datamodel = buildMilestoneModel(testCaseId, "0").getAaData();
+		Collection<Milestone> allMilestones = testCaseModificationService.findAllMilestones(testCaseId);
+		List<?> datamodel = buildMilestoneModel(testCaseId,allMilestones,  "0").getAaData();
 
 		Map<String, String> identity = new HashMap<>();
 		identity.put("restype", "test-cases");
@@ -488,7 +526,7 @@ public class TestCaseModificationController {
 
 		String currentTableSource = milestonePath;
 		String bindTableSource = milestonePath + "/associables";
-		String milestoneUrl = milestonePath;
+		String milestonesUrl = milestonePath;
 
 		Boolean editable = Boolean.TRUE;	// fix that later
 
@@ -498,7 +536,7 @@ public class TestCaseModificationController {
 
 		conf.addUrls("currentTableSource", currentTableSource);
 		conf.addUrls("bindTableSource" ,bindTableSource);
-		conf.addUrls("milestoneURL", milestoneUrl);
+		conf.addUrls("milestonesURL", milestonesUrl);
 
 		conf.addPermissions("editable", editable);
 
@@ -509,36 +547,28 @@ public class TestCaseModificationController {
 	}
 
 
-	private DataTableModel getCallingTestCaseTableModel(long testCaseId, PagingAndSorting paging, String sEcho){
-
-		PagedCollectionHolder<List<CallTestStep>> holder = testCaseModificationService.findCallingTestSteps(testCaseId,
-				paging);
-
-		return new CallingTestCasesTableModelBuilder(internationalizationHelper).buildDataModel(holder, sEcho);
-	}
-
 	private PagingAndSorting createPaging(final DataTableDrawParameters params, final DatatableMapper<?> dtMapper) {
 		return new DataTableSorting(params, dtMapper);
 	}
 
 
-	private DataTableModel buildMilestoneModel(long testCaseId, String sEcho){
+	private DataTableModel buildMilestoneModel(long testCaseId, Collection<Milestone> milestones, String sEcho){
 
 		TestCase tc = testCaseModificationService.findById(testCaseId);
 
-		Collection<Milestone> allMilestones = testCaseModificationService.findAllMilestones(testCaseId);
 
 
-		List<MetaMilestone> metaMilestones = new ArrayList<>(allMilestones.size());
+		List<MetaMilestone> metaMilestones = new ArrayList<>(milestones.size());
 
-		for (Milestone m : allMilestones){
+		for (Milestone m : milestones){
 			metaMilestones.add(new MetaMilestone(m, tc.isMemberOf(m)));
 		}
 
 		PagedCollectionHolder<List<MetaMilestone>> collectionHolder =
 				new SinglePageCollectionHolder<List<MetaMilestone>>(metaMilestones);
 
-		return new TestCaseBoundMilestoneTableModelHelper().buildDataModel(collectionHolder, sEcho);
+		Locale locale = LocaleContextHolder.getLocale();
+		return new TestCaseBoundMilestoneTableModelHelper(internationalizationHelper, locale).buildDataModel(collectionHolder, sEcho);
 
 	}
 

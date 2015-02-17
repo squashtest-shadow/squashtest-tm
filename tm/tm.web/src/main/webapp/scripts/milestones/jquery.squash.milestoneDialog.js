@@ -88,9 +88,8 @@ define(["jquery", "workspace.event-bus", "jqueryui", "jquery.squash.formdialog",
 			this._super();
 			
 			var self = this,
-				element = this.elements[0];
+				element = $(this.element[0]);
 			
-			this._configureTable();
 			
 			this.onOwnBtn('confirm', $.proxy(self.confirm, self));
 			this.onOwnBtn('cancel', $.proxy(self.cancel, self));
@@ -98,11 +97,11 @@ define(["jquery", "workspace.event-bus", "jqueryui", "jquery.squash.formdialog",
 			var table = element.find('.bind-milestone-dialog-table');
 			
 			element.on('click', '.bind-milestone-dialog-selectall', function(){
-				table.find('>tbody>tr>td..bind-milestone-dialog-check input').prop('checked', true);
+				table.find('>tbody>tr>td.bind-milestone-dialog-check input').prop('checked', true);
 			});			
 			
 			element.on('click', '.bind-milestone-dialog-selectnone', function(){
-				table.find('>tbody>tr>td..bind-milestone-dialog-check input').prop('checked', false);				
+				table.find('>tbody>tr>td.bind-milestone-dialog-check input').prop('checked', false);				
 			});			
 			
 			element.on('click', '.bind-milestone-dialog-invertselect', function(){
@@ -110,6 +109,8 @@ define(["jquery", "workspace.event-bus", "jqueryui", "jquery.squash.formdialog",
 					this.checked = ! this.checked;					
 				});				
 			});
+			
+			
 			
 		},
 		
@@ -120,11 +121,11 @@ define(["jquery", "workspace.event-bus", "jqueryui", "jquery.squash.formdialog",
 			this._super();
 			
 			var url = this.options.tableSource;
-			var table = this.elements[0].find('.bind-milestone-dialog-table');
+			var table = $(this.element[0]).find('.bind-milestone-dialog-table');
 			
 			// if initialized -> refresh
 			if (!! table.data('squashtableInstance')){
-				table.squashTable().refresh();
+				table.squashTable()._fnAjaxUpdate();
 			}
 			// else -> init
 			else{
@@ -140,47 +141,50 @@ define(["jquery", "workspace.event-bus", "jqueryui", "jquery.squash.formdialog",
 		 */
 		_configureTable : function(){
 			
-			var table = this.elements[0].find('.bind-milestone-dialog-table');	
+			var table = $(this.element[0]).find('.bind-milestone-dialog-table');	
 			
 			table.on('click', '>tbody>tr', function(evt){
 				
 				// don't trigger if the clicked element is 
 				// the checkbox itself 
-				if (! evt.target.is('input')){
-					var chk = evt.currentTarget.find('.bind-milestone-dialog-check input');								
-					var newtate = ! chk.is('checked');
+				if (! $(evt.target).is('input')){
+					var chk = $(evt.currentTarget).find('.bind-milestone-dialog-check input');								
+					var newstate = ! chk.is(':checked');
 					chk.prop('checked', newstate);
 				}
 			});
 			
 			
 			var tblCnf = {
-					
+					sAjaxSource : this.options.tableSource, 
+					bServerSide : false,
+					fnDrawCallback : function(){
+						table.find('>tbody>tr>td.bind-milestone-dialog-check').each(function(){
+							$(this).html('<input type="checkbox"/>');
+						});
+						table.find('>tbody>tr').addClass('cursor-pointer');
+					}
 				},
 
 				squashCnf = {
-					sAjaxSource : this.options.tableSource, 
-					fnDrawCallback : function(){
-						table.find('>tbody>tr>td.bind-milestone-dialog-check').each(function(){
-							this.append('<input type="checkbox"/>');
-						});
-					}
 					
 				};
 			
 			table.squashTable(tblCnf, squashCnf);
+			
+			table.squashTable().refresh();
 		},
 				
 		confirm : function(){
 			var self = this;
-			var table = this.elements[0].find('.bind-milestone-dialog-table').squashTable();
+			var table = $(this.element[0]).find('.bind-milestone-dialog-table').squashTable();
 			var checks = table.find('>tbody>tr>td.bind-milestone-dialog-check input:checked');
 			var ids = [];
 			
 			checks.each(function(){
 				var r = this.parentNode.parentNode;
-				var id = table.fnGetData(r, 'entity-id');
-				ids.push[id];
+				var id = table.fnGetData(r)['entity-id'];
+				ids.push(id);
 			});
 			
 			var url = this.options.milestonesURL + '/'+ ids.join(',');

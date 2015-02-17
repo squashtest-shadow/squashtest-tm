@@ -595,7 +595,7 @@
 	@NamedQuery(name = "milestone.findAssociableMilestonesForTestCase", 
 			query = "select milestone from TestCase tc join tc.project p join p.milestones milestone "
 					+ "where tc.id = :testCaseId and milestone not in ( " 
-					+ "select mstone from TestCase tcase join tcase.milestones mstone where tcase.id = :testcaseId " 
+					+ "select mstone from TestCase tcase join tcase.milestones mstone where tcase.id = :testCaseId " 
 					+ ")"),
 			
 	@NamedQuery(name = "milestone.findTestCaseMilestones", query="select milestones from TestCase tc join tc.milestones milestones where tc.id = :testCaseId" ),
