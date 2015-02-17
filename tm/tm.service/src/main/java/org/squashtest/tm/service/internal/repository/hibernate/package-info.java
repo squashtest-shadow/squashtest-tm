@@ -598,8 +598,13 @@
 					+ "select mstone from TestCase tcase join tcase.milestones mstone where tcase.id = :testcaseId " 
 					+ ")"),
 			
-	@NamedQuery(name = "milestone.findTestCaseMilestones", query="select milestones from TestCase tc join tc.milestones milestones" ),
-	@NamedQuery(name = "milestone.findIndirectTestCaseMilestones", query="select milestones from TestCase tc join requirementVersionCoverages cov join cov.verifiedRequirementVersion version join version.milestones milestones"),
+	@NamedQuery(name = "milestone.findTestCaseMilestones", query="select milestones from TestCase tc join tc.milestones milestones where tc.id = :testCaseId" ),
+	@NamedQuery(name = "milestone.findIndirectTestCaseMilestones", 
+					query="select milestones from TestCase tc join tc.requirementVersionCoverages cov " +
+							"join cov.verifiedRequirementVersion version " +
+							"join version.milestones milestones " +
+							"where tc.id = :testCaseId"),
+						
 
 	
 	//InfoList

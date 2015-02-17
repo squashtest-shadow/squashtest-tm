@@ -158,8 +158,7 @@
         <value>org.squashtest.tm.domain.infolist.InfoListItem</value>
         <value>org.squashtest.tm.domain.infolist.SystemListItem</value>
         <value>org.squashtest.tm.domain.infolist.UserListItem</value>
-        
-        
+                
         <!--  milestones -->
         <value>org.squashtest.tm.domain.milestone.Milestone</value>
      

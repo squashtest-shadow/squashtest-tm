@@ -24,16 +24,13 @@
  * Here is a good template your could use for your own milestone panels.
  * Please pay attention to the classes milestone-panel-X.
  * 
- * 	<div class="sq-tg expand milestone-panel-master">
- * 		<div class="tg-head">
- * 			<h3>milestones</h3>
- * 			<div class="tg-toolbar">
- * 				<input type="button" class="sq-btn milestone-panel-bind-button" value="+"/>
- * 				<input type="button" class="sq-btn milestone-panel-unbind-button" value="-"/>
- * 			</div>
+ * 	<div class="milestone-panel-master">
+ * 		<div class="toolbar">
+ * 			<input type="button" class="sq-btn milestone-panel-bind-button" value="+"/>
+ * 			<input type="button" class="sq-btn milestone-panel-unbind-button" value="-"/>
  * 		</div>
  * 
- * 		<div class="tg-body">
+ * 		<div class="table-tab-wrap">
  * 			
  * 			<table class="milestone-panel-table" data-def="...">
  * 				table definition goes here 
@@ -45,6 +42,18 @@
  * 			add popup definition goes here, see file jquery.squash.milestoneDialog.js
  * 		</div>
  * 
+ * 		<script>
+ * 
+ * 			var conf = {
+ * 				see documentation below
+ * 			}
+ * 
+ * 			require(["milestones/milestone-panel"], function(panel){
+ * 				panel.init(conf);
+ * 			});
+ * 
+ * 		</script>
+ *
  * 	</div>
  * 
  * 
@@ -54,11 +63,12 @@
  * {
  * 
  * 	basic : {
- * 		element : the jquery selector for the panel,
+ * 		element : the jquery selector for the panel (optional),
  * 		identity : {
  * 			resid : the id of the test-case/whatever this panel sits in
  * 			restype : the type of entity : 'testcases etc'
- * 		}
+ * 		}, 
+ * 		currentModel : if provided, the table will be initialized with it
  * 	},
  * 
  * 	urls : {
@@ -71,7 +81,7 @@
  * 	},
  * 
  * 	permissions : {
- * 		editable : boolean, whether you can edit the content
+ * 		editable : boolean, whether the user can or not edit the table content
  * 	}
  * 
  * }
@@ -84,17 +94,26 @@
  * 		
  * 
  */
-define(["jquery", "workspace.event-bus", "app/ws/squash.notification", "squashtable", "./jquery.squash.milestoneDialog"], 
+define(["jquery", "workspace.event-bus", "app/ws/squashtm.notification", "squashtable", "./jquery.squash.milestoneDialog"], 
 		function($, eventBus, notification){
 	
 	
 	function init(conf){
+
+		// now we begin		
+		var element = $(conf.element || ".milestone-panel-master");
 		
-		var element = $(conf.element);
+		var tblCnf = {
+			bServerSide : false,
+			iDeferLoading : conf.basic.currentModel.length,
+			aaData : conf.basic.currentModel
+		},
+		squashCnf = {
+				
+		};
 		
 		
-		
-		var currentTable = element.find('milestone-panel-table').squashTable({},{});
+		var currentTable = element.find('.milestone-panel-table').squashTable(tblCnf, squashCnf);
 		
 		
 		if (conf.permissions.editable){

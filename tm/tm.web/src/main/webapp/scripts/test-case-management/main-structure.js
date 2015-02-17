@@ -20,15 +20,20 @@
  */
 
 define(["jquery",
+        "app/pubsub",
 		"squash.basicwidgets",
 		"contextual-content-handlers",
 		"jquery.squash.fragmenttabs",
 		"workspace.event-bus",
+		"milestones/milestone-panel",
 		"jqueryui",
 		"jquery.squash.formdialog"],
-		function($, basic, contentHandlers, Frag, eventBus){
+		function($, pubsub, basic, contentHandlers, Frag, eventBus, milestonePanel){
+	
 	"use strict";
 
+
+	
 	function initRenameDialog(settings){
 
 		var identity = { resid : settings.testCaseId, restype : "test-cases"  },
@@ -38,15 +43,18 @@ define(["jquery",
 
 		dialog.formDialog();
 
+		
 		$("#rename-test-case-button").on('click', function(){
 			dialog.formDialog('open');
 		});
 
+		
 		dialog.on( "formdialogopen", function(event, ui) {
 			var hiddenRawName = $('#test-case-raw-name');
 			var name = $.trim(hiddenRawName.text());
 			$("#rename-test-case-input").val(name);
 		});
+		
 
 		dialog.on('formdialogconfirm', function(){
 
@@ -73,7 +81,7 @@ define(["jquery",
 	function initRenameListener(settings){
 
 		var nameHandler = contentHandlers.getNameAndReferenceHandler();
-		nameHandler.identity = { resid : settings.testCaseId, restype : "test-cases"  };
+		nameHandler.identity = { resid : settings.testCaseId, restype : "test-cases" };
 		nameHandler.nameDisplay = "#test-case-name";
 		nameHandler.nameHidden = "#test-case-raw-name";
 		nameHandler.referenceHidden = "#test-case-raw-reference";
@@ -96,6 +104,7 @@ define(["jquery",
 
 
 	function init(settings){
+
 		basic.init();
 		initButtons(settings);
 		initRenameDialog(settings);

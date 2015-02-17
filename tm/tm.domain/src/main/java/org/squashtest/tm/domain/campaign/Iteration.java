@@ -88,7 +88,7 @@ BoundEntity, MilestoneMember {
 	private Long id;
 
 	@Lob
-	@Type(type="org.hibernate.type.StringClobType")
+	@Type(type = "org.hibernate.type.StringClobType")
 	private String description;
 
 	@NotBlank
@@ -442,14 +442,14 @@ BoundEntity, MilestoneMember {
 		return testSuites;
 	}
 
-	public TestSuite getTestSuiteByName(String tsName){
-		for (TestSuite ts : testSuites){
-			if (ts.getName().equals(tsName)){
+	public TestSuite getTestSuiteByName(String tsName) {
+		for (TestSuite ts : testSuites) {
+			if (ts.getName().equals(tsName)) {
 				return ts;
 			}
 		}
 
-		throw new RuntimeException("Iteration "+id+" : cannot find test suite named '"+tsName+"'");
+		throw new RuntimeException("Iteration " + id + " : cannot find test suite named '" + tsName + "'");
 	}
 
 	public void addTestSuite(TestSuite suite) {
@@ -469,7 +469,6 @@ BoundEntity, MilestoneMember {
 		testSuites.add(position, suite);
 		suite.setIteration(this);
 	}
-
 
 	public boolean checkSuiteNameAvailable(String name) {
 		for (TestSuite suite : testSuites) {
@@ -728,7 +727,8 @@ BoundEntity, MilestoneMember {
 	}
 
 	@Override
-	public void addContent(@NotNull TestSuite testSuite, int position) throws DuplicateNameException, NullArgumentException {
+	public void addContent(@NotNull TestSuite testSuite, int position) throws DuplicateNameException,
+	NullArgumentException {
 		this.addTestSuite((TestSuite) testSuite, position);
 
 	}
@@ -752,8 +752,6 @@ BoundEntity, MilestoneMember {
 	public Collection<TestSuite> getOrderedContent() {
 		return getTestSuites();
 	}
-
-
 
 	/**
 	 * @return true if there are test suites
@@ -779,10 +777,14 @@ BoundEntity, MilestoneMember {
 		return testSuitesNames;
 	}
 
-
 	@Override
 	public Set<Milestone> getMilestones() {
 		return getCampaign().getMilestones();
+	}
+
+	@Override
+	public boolean isMemberOf(Milestone milestone) {
+		return getCampaign().isMemberOf(milestone);
 	}
 
 }

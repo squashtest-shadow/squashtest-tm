@@ -18,21 +18,51 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.domain.milestone;
+package org.squashtest.tm.web.internal.controller.milestone;
 
-import java.util.Set;
+import java.util.Date;
+
+import org.squashtest.tm.domain.milestone.Milestone;
+import org.squashtest.tm.domain.milestone.MilestoneStatus;
+
+public class MetaMilestone{
+
+	private Milestone milestone;
+
+	private boolean directMembership = false;
 
 
-/**
- * That interface represents domain objects that belong to one or several milestones.
- * 
- * 
- * @author bsiri
- *
- */
-public interface MilestoneMember {
 
-	Set<Milestone> getMilestones();
+	public MetaMilestone(Milestone milestone, boolean directMembership) {
+		super();
+		this.milestone = milestone;
+		this.directMembership = directMembership;
+	}
 
-	boolean isMemberOf(Milestone milestone);
+	public String getDescription() {
+		return milestone.getDescription();
+	}
+
+	public String getLabel() {
+		return milestone.getLabel();
+	}
+
+	public MilestoneStatus getStatus() {
+		return milestone.getStatus();
+	}
+
+	public Date getEndDate() {
+		return milestone.getEndDate();
+	}
+
+	public Long getId() {
+		return milestone.getId();
+	}
+
+	public boolean isDirectMembership() {
+		return directMembership;
+	}
+
+
+
 }

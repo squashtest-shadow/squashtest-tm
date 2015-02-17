@@ -454,18 +454,27 @@ public class RequirementVersion extends Resource implements BoundEntity, Milesto
 	}
 
 
+	@Override
 	public Set<Milestone> getMilestones(){
 		return milestones;
 	}
 
+	@Override
+	public boolean isMemberOf(Milestone milestone) {
+		return milestones.contains(milestone);
+	}
+
+	@Override
 	public void bindMilestone(Milestone milestone){
 		milestones.add(milestone);
 	}
 
+	@Override
 	public void unbindMilestone(Milestone milestone){
 		unbindMilestone(milestone.getId());
 	}
 
+	@Override
 	public void unbindMilestone(Long milestoneId){
 		Iterator<Milestone> iter = milestones.iterator();
 

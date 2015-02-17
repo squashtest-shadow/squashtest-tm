@@ -33,6 +33,7 @@ import java.util.Set;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.NullArgumentException;
@@ -40,6 +41,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -53,6 +55,7 @@ import org.squashtest.tm.core.foundation.collection.DefaultPagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.Paging;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
+import org.squashtest.tm.core.foundation.collection.SinglePageCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.SortOrder;
 import org.squashtest.tm.domain.IdentifiedUtil;
 import org.squashtest.tm.domain.audit.AuditableMixin;
@@ -64,6 +67,7 @@ import org.squashtest.tm.domain.customfield.CustomFieldValue;
 import org.squashtest.tm.domain.customfield.RenderingLocation;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.infolist.InfoListItem;
+import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.testcase.ActionTestStep;
 import org.squashtest.tm.domain.testcase.CallTestStep;
@@ -88,6 +92,9 @@ import org.squashtest.tm.service.testcase.TestCaseModificationService;
 import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.controller.bugtracker.BugTrackerControllerHelper;
 import org.squashtest.tm.web.internal.controller.generic.ServiceAwareAttachmentTableModelHelper;
+import org.squashtest.tm.web.internal.controller.milestone.MetaMilestone;
+import org.squashtest.tm.web.internal.controller.milestone.MilestonePanelConfiguration;
+import org.squashtest.tm.web.internal.controller.milestone.TestCaseBoundMilestoneTableModelHelper;
 import org.squashtest.tm.web.internal.controller.testcase.parameters.ParameterNameComparator;
 import org.squashtest.tm.web.internal.controller.testcase.parameters.ParametersModelHelper;
 import org.squashtest.tm.web.internal.controller.testcase.parameters.TestCaseDatasetsController;
@@ -455,6 +462,53 @@ public class TestCaseModificationController {
 
 	}
 
+
+	@RequestMapping(value = "/milestones", method=RequestMethod.GET)
+	@ResponseBody
+	public DataTableModel getBoundMilestones(@PathVariable long testCaseId, DataTableDrawParameters params){
+
+		return buildMilestoneModel(testCaseId, params.getsEcho());
+	}
+
+
+	@RequestMapping(value = "/milestones/panel", method=RequestMethod.GET)
+	public String getMilestonesPanel(@PathVariable Long testCaseId, Model model, HttpServletRequest context){
+
+		MilestonePanelConfiguration conf = new MilestonePanelConfiguration();
+
+		// build the needed data
+		List<?> datamodel = buildMilestoneModel(testCaseId, "0").getAaData();
+
+		Map<String, String> identity = new HashMap<>();
+		identity.put("restype", "test-cases");
+		identity.put("resid", testCaseId.toString());
+
+		String contextPath = context.getContextPath();
+		String milestonePath = contextPath + "/test-cases/"+testCaseId+"/milestones";
+
+		String currentTableSource = milestonePath;
+		String bindTableSource = milestonePath + "/associables";
+		String milestoneUrl = milestonePath;
+
+		Boolean editable = Boolean.TRUE;	// fix that later
+
+		// add them to the model
+		conf.addBasic("currentModel", datamodel);
+		conf.addBasic("identity", identity);
+
+		conf.addUrls("currentTableSource", currentTableSource);
+		conf.addUrls("bindTableSource" ,bindTableSource);
+		conf.addUrls("milestoneURL", milestoneUrl);
+
+		conf.addPermissions("editable", editable);
+
+		model.addAttribute("conf", conf);
+
+		return "test-cases-tabs/milestones-tab.html";
+
+	}
+
+
 	private DataTableModel getCallingTestCaseTableModel(long testCaseId, PagingAndSorting paging, String sEcho){
 
 		PagedCollectionHolder<List<CallTestStep>> holder = testCaseModificationService.findCallingTestSteps(testCaseId,
@@ -465,6 +519,27 @@ public class TestCaseModificationController {
 
 	private PagingAndSorting createPaging(final DataTableDrawParameters params, final DatatableMapper<?> dtMapper) {
 		return new DataTableSorting(params, dtMapper);
+	}
+
+
+	private DataTableModel buildMilestoneModel(long testCaseId, String sEcho){
+
+		TestCase tc = testCaseModificationService.findById(testCaseId);
+
+		Collection<Milestone> allMilestones = testCaseModificationService.findAllMilestones(testCaseId);
+
+
+		List<MetaMilestone> metaMilestones = new ArrayList<>(allMilestones.size());
+
+		for (Milestone m : allMilestones){
+			metaMilestones.add(new MetaMilestone(m, tc.isMemberOf(m)));
+		}
+
+		PagedCollectionHolder<List<MetaMilestone>> collectionHolder =
+				new SinglePageCollectionHolder<List<MetaMilestone>>(metaMilestones);
+
+		return new TestCaseBoundMilestoneTableModelHelper().buildDataModel(collectionHolder, sEcho);
+
 	}
 
 	/* ********************************** localization stuffs ****************************** */

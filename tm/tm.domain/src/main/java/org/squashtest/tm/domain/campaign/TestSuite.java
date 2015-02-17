@@ -488,4 +488,8 @@ public class TestSuite implements Identified, Copiable, TreeNode, BoundEntity, A
 	}
 
 
+	@Override
+	public boolean isMemberOf(Milestone milestone) {
+		return getIteration().isMemberOf(milestone);
+	}
 }

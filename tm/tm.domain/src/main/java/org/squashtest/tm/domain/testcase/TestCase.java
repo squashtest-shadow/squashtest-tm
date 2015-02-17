@@ -757,6 +757,11 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 		}
 	}
 
+	@Override
+	public boolean isMemberOf(Milestone milestone) {
+		return milestones.contains(milestone);
+	}
+
 	/**
 	 * Will go through this.parameters and return the Parameter matching the given name
 	 * 

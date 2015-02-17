@@ -77,7 +77,7 @@
 define(["jquery", "workspace.event-bus", "jqueryui", "jquery.squash.formdialog", "squashtable"], 
 		function($, eventBus){
 	
-	$.widget("squash.milestoneDialog", $.ui.formDialog, {
+	$.widget("squash.milestoneDialog", $.squash.formDialog, {
 	
 		options : {
 			multilines : true
@@ -131,7 +131,7 @@ define(["jquery", "workspace.event-bus", "jqueryui", "jquery.squash.formdialog",
 				this._configureTable();
 			}
 				
-		}
+		},
 		
 		/*
 		 * One major aspect of this table is that, if no initialData is provided,
@@ -159,7 +159,7 @@ define(["jquery", "workspace.event-bus", "jqueryui", "jquery.squash.formdialog",
 				},
 
 				squashCnf = {
-					sAjaxSource = this.options.tableSource, 
+					sAjaxSource : this.options.tableSource, 
 					fnDrawCallback : function(){
 						table.find('>tbody>tr>td.bind-milestone-dialog-check').each(function(){
 							this.append('<input type="checkbox"/>');

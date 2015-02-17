@@ -21,17 +21,18 @@
 package org.squashtest.tm.service.internal.milestone;
 
 import java.util.Collection;
-import java.util.Set;
 
 import javax.inject.Inject;
 
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.stereotype.Service;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.service.internal.repository.MilestoneDao;
 import org.squashtest.tm.service.internal.repository.TestCaseDao;
 import org.squashtest.tm.service.milestone.MilestoneMembershipManager;
 
+@Service
 public class MilestoneMembershipManagerImpl implements MilestoneMembershipManager {
 
 	private static final String WRITE_TC_OR_ROLE_ADMIN = "hasPermission(#testCaseId, 'org.squashtest.tm.domain.testcase.TestCase' , 'WRITE') or hasRole('ROLE_ADMIN')";

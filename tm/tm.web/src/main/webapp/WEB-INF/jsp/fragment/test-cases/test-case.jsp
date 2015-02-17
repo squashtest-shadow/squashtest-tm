@@ -115,6 +115,9 @@ require(["common"], function() {
 		<li>
 			<a href="${testCaseUrl}/parameters/panel"><f:message key="label.parameters" /></a>
 		</li>
+        <li>
+            <a href="${testCaseUrl}/milestones/panel">MILESTONES</a>
+        </li>
 		<li>
 			<a href="#tabs-tc-attachments"><f:message key="label.Attachments" />
 			<c:if test="${ testCase.attachmentList.notEmpty }">
