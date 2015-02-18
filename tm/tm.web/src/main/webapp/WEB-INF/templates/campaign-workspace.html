@@ -99,9 +99,6 @@
             <li class="tab">
               <a href="#tree-pane" th:text="#{tabbed_panel.tree.pane.label}"></a>
             </li>
-            <li class="tab">
-              <a href="#search-pane" th:text="#{tabbed_panel.search.pane.label}"></a>
-            </li>
           </ul>
           <div id="tree-pane">
             <!-- ________________TREE MENU_______________ -->
@@ -162,7 +159,11 @@
                   </li>
                 </ul>
               </div>
-
+              <div class="button-group">
+                <a id="search-tree-button" class="sq-icon-btn" th:title="#{tree.button.search.label}" title="search">
+                  <span class="ui-icon ui-icon-search"></span>
+                </a>
+              </div>
               <div id="wizard-tree-pane" class="button-group" th:if="${ not #lists.isEmpty(wizards)}">
                 <a id="wizard-tree-button" class="buttonmenu sq-icon-btn" th:title="#{label.wizards}+'...'"
                   title="wizards...">
@@ -306,7 +307,7 @@
 		 <table class="add-node-attributes">
 	        <tr>
 	          <td>
-	            <label for="add-iteration-name" th:text="#{Label.Name}">Name</label>
+	            <label for="add-iteration-name" th:text="#{label.Name}">Name</label>
 	          </td>
 	          <td>
 	            <input id="add-iteration-name" type="text" size="50" maxlength="255" />
@@ -316,7 +317,7 @@
 	        </tr>
 	        <tr>
 	          <td>
-	            <label for="add-iteration-description" th:text="#{LabelDescription}">Description</label>
+	            <label for="add-iteration-description" th:text="#{label.Description}">Description</label>
 	          </td>
 	          <td>
 	            <textarea id="add-iteration-description" data-def="isrich"></textarea>
