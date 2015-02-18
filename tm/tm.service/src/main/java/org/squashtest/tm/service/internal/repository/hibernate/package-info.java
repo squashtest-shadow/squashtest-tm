@@ -667,6 +667,9 @@
 																																																																															@NamedQuery(name="infoList.setProjectNatureToDefaultItem", query = "update TestCase tc set tc.nature = :default where tc.project.id = :id"),
 																																																																															@NamedQuery(name="infoList.setProjectTypeToDefaultItem", query = "update TestCase tc set tc.type = :default where tc.project.id = :id"),
 
+	//Clients
+	@NamedQuery(name="client.findAllOrderedByName", query = "from Client order by clientId"),
+	@NamedQuery(name="client.findClientByName", query = "from Client cl where cl.clientId = :name")
 })
 package org.squashtest.tm.service.internal.repository.hibernate;
 
