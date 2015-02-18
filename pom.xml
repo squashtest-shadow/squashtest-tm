@@ -38,7 +38,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <provisionBom.version>1.4</provisionBom.version>
 
-    <thymeleaf.version>2.1.4.A-SNAPSHOT</thymeleaf.version>
+    <thymeleaf.version>2.1.4.A</thymeleaf.version>
 
     <verbose.compiler>false</verbose.compiler>
   </properties>
@@ -84,12 +84,12 @@
       <dependency>
         <groupId>org.thymeleaf.extras</groupId>
         <artifactId>org.squashtest.org.thymeleaf.extras.springsecurity3</artifactId>
-        <version>2.1.0.A-SNAPSHOT</version>
+        <version>2.1.0.A</version>
       </dependency>
       <dependency>
         <groupId>org.thymeleaf.extras</groupId>
         <artifactId>org.squashtest.org.thymeleaf.extras.springsecurity3</artifactId>
-        <version>2.1.0.A-SNAPSHOT</version>
+        <version>2.1.0.A</version>
       </dependency>
       <dependency>
         <groupId>org.thymeleaf</groupId>

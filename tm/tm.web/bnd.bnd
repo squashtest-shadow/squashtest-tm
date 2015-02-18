@@ -12,7 +12,6 @@ Import-Package: com.fasterxml.jackson.databind,\
 	javax.sql,\
 	javax.validation,\
 	javax.validation.constraints,\
-	org.springframework.transaction.annotation,\
 	net.sf.cglib.core,\
 	net.sf.cglib.reflect,\
 	org.aopalliance.aop;version=${aopalliance.version},\
@@ -45,7 +44,7 @@ Import-Package: com.fasterxml.jackson.databind,\
 	org.springframework.beans.factory.xml;version="${spring.version.range}",\
 	org.springframework.context.config;version="${spring.version.range}",\
 	org.springframework.context.support;version="${spring.version.range}",\
-        org.springframework.context.event;version="${spring.version.range}",\
+	org.springframework.context.event;version="${spring.version.range}",\
 	org.springframework.http.converter.json;version="${spring.version.range}",\
 	org.springframework.orm.hibernate4.support;version="${spring.version.range}",\
 	org.springframework.osgi.extensions.annotation;version="${springdm.version.range}",\
@@ -55,17 +54,19 @@ Import-Package: com.fasterxml.jackson.databind,\
 	org.springframework.security.authentication.dao,\
 	org.springframework.security.authentication.encoding,\
 	org.springframework.security.core.userdetails.memory,\
+	org.springframework.security.oauth2,\
+	org.springframework.security.oauth2.provider,\
 	org.springframework.security.oauth2.provider.client,\
 	org.springframework.security.oauth2.provider.endpoint,\
 	org.springframework.security.oauth2.provider.error,\
 	org.springframework.security.oauth2.provider.token,\
-	org.springframework.security.oauth2.provider,\
 	org.springframework.security.provisioning,\
 	org.springframework.security.taglibs.authz,\
 	org.springframework.security.web,\
 	org.springframework.security.web.authentication,\
 	org.springframework.security.web.access,\
 	org.springframework.security.web.savedrequest;version="${spring.version.range}",\
+	org.springframework.transaction.annotation,\
 	org.springframework.web.context;version="${spring.version.range}",\
 	org.springframework.web.context.request;version="${spring.version.range}",\
 	org.springframework.web.filter;version="${spring.version.range}",\
