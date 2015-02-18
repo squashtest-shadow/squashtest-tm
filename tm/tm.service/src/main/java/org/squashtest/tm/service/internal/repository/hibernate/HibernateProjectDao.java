@@ -79,4 +79,12 @@ public class HibernateProjectDao extends HibernateEntityDao<Project> implements 
 		}
 		return executeListNamedQuery("Project.findAllUsersWhoModifiedRequirementVersions", idParameters(projectIds));
 	}
+
+	@Override
+	public List<String> findUsersWhoCanAccessProject(List<Long> projectIds) {
+		if (projectIds.isEmpty()) {
+			return Collections.emptyList();
+		}
+		return executeListNamedQuery("Project.findAllAuthorizedUsersForProject", idParameters(projectIds));
+	}
 }

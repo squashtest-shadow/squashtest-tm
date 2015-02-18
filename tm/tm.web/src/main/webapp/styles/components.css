@@ -710,6 +710,15 @@ span.span-green {
 	height:16px;
 	display: block;
 }
+.search-icon-execution {
+	background-position : center left;
+	background-image: url("../images/cog.png");  /** sprite-ref: sprites-icons; sprite-alignment: left; */
+	background-color : transparent;
+	background-repeat : no-repeat;
+	padding-left: 20px;
+	height:16px;
+	display: block;
+}
 .search-icon-history  {
 	background-position : center left;
 	background-image: url("../images/Search_History.png");  /** sprite-ref: sprites-icons; sprite-alignment: left; */

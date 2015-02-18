@@ -142,6 +142,25 @@ public abstract class WorkspaceController<LN extends LibraryNode> {
 		return getWorkspaceViewName();
 	}
 
+	public List<JsTreeNode> getRootModel(String[] openedNodes, String elementId) {
+		List<Library<LN>> libraries = getWorkspaceService().findAllLibraries();
+		String[] nodesToOpen = null;
+
+		if (elementId == null || "".equals(elementId)) {
+			nodesToOpen = openedNodes;
+		} else {
+			Long id = Long.valueOf(elementId);
+			nodesToOpen = getNodeParentsInWorkspace(id);
+		}
+
+		MultiMap expansionCandidates = mapIdsByType(nodesToOpen);
+
+		DriveNodeBuilder<LN> nodeBuilder = driveNodeBuilderProvider().get();
+		List<JsTreeNode> rootNodes = new JsTreeNodeListBuilder<Library<LN>>(nodeBuilder).expand(expansionCandidates)
+				.setModel(libraries).build();
+		return rootNodes;
+	}
+
 	/**
 	 * @param openedNodes
 	 * @return

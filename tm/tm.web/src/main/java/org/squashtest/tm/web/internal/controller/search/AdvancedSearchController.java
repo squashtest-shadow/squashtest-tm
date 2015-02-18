@@ -118,6 +118,7 @@ public class AdvancedSearchController {
 	private static final String COMBOMULTISELECT = "combomultiselect";
 	private static final String TAGS = "tags";
 
+	private static final String CAMPAIGN = "campaign";
 	private static final String TESTCASE = "test-case";
 	private static final String REQUIREMENT = "requirement";
 	private static final String SEARCH_MODEL = "searchModel";
@@ -167,6 +168,15 @@ public class AdvancedSearchController {
 			}
 		});
 
+		formModelBuilder.put(CAMPAIGN, new FormModelBuilder() {
+			@Override
+			public SearchInputInterfaceModel build(Locale locale) {
+				SearchInputInterfaceModel model = getCampaignSearchInputInterfaceModel(locale);
+				populateMetadata(model);
+				return model;
+			}
+		});
+
 		formModelBuilder.put(REQUIREMENT, new FormModelBuilder() {
 			@Override
 			public SearchInputInterfaceModel build(Locale locale, boolean isMilestoneMode) {
@@ -203,6 +213,9 @@ public class AdvancedSearchController {
 
 	@Inject
 	private TestcaseSearchInterfaceDescription testcaseVersionSearchInterfaceDescription;
+
+	@Inject
+	private CampaignSearchInterfaceDescription campaignSearchInterfaceDescription;
 
 	@Inject
 	private CampaignTestPlanManagerService campaignTestPlanManagerService;
@@ -248,6 +261,8 @@ public class AdvancedSearchController {
 	.mapAttribute("requirement-created-by", "createdBy", RequirementVersion.class)
 	.mapAttribute("requirement-modified-by", "lastModifiedBy", RequirementVersion.class);
 
+	// TODO TO CAMPAIGN
+	
 	@RequestMapping(method = RequestMethod.GET)
 	public String showSearchPage(Model model, @RequestParam String searchDomain,
 			@RequestParam(required = false) String associateResultWithType, @RequestParam(required = false) Long id,
@@ -258,6 +273,13 @@ public class AdvancedSearchController {
 		model.addAttribute(SEARCH_DOMAIN, searchDomain);
 		if (TESTCASE_VIA_REQUIREMENT.equals(searchDomain)) {
 			searchDomain = REQUIREMENT;
+		}
+ else if (CAMPAIGN.equals(searchDomain)) {
+			searchDomain = CAMPAIGN;
+			List<JsTreeNode> rootModel = createCampaignTreeRootModel();
+			model.addAttribute("rootModel", rootModel);
+			LOGGER.warn("COUCOU GET");
+
 		}
 
 		FormModelBuilder builder = formModelBuilder.get(searchDomain);
@@ -319,6 +341,20 @@ public class AdvancedSearchController {
 		populateMetadata(model);
 
 		return "requirement-search-result.html";
+	}
+
+	@RequestMapping(value = "/results", params = CAMPAIGN)
+	public String getCampaignSearchResultPage(Model model, @RequestParam String searchModel,
+			@RequestParam(required = false) String associateResultWithType, @RequestParam(required = false) Long id) {
+
+		initModelForPage(model, associateResultWithType, id);
+		model.addAttribute(SEARCH_MODEL, searchModel);
+		model.addAttribute(SEARCH_DOMAIN, CAMPAIGN);
+
+		populateMetadata(model);
+
+		return "campaign-search-result.html";
+
 	}
 
 	@RequestMapping(value = "/results", params = TESTCASE_VIA_REQUIREMENT)
@@ -522,6 +558,9 @@ public class AdvancedSearchController {
 		// History
 		model.addPanel(requirementVersionSearchInterfaceDescription.createRequirementHistoryPanel(locale));
 
+		// History
+		model.addPanel(requirementVersionSearchInterfaceDescription.createRequirementHistoryPanel(locale));
+
 		// Attributes
 		model.addPanel(requirementVersionSearchInterfaceDescription.createRequirementAttributePanel(locale));
 
@@ -556,6 +595,9 @@ public class AdvancedSearchController {
 
 		// Information
 		model.addPanel(testcaseVersionSearchInterfaceDescription.createGeneralInfoPanel(locale));
+
+		// History
+		model.addPanel(testcaseVersionSearchInterfaceDescription.createTestCaseHistoryPanel(locale));
 
 		// History
 		model.addPanel(testcaseVersionSearchInterfaceDescription.createTestCaseHistoryPanel(locale));
@@ -962,5 +1004,18 @@ public class AdvancedSearchController {
 		}
 
 		return jsonified;
+	}
+
+	private List<JsTreeNode> createCampaignTreeRootModel() {
+		List<CampaignLibrary> libraries = campaignLibraryFinder.findLinkableCampaignLibraries();
+
+		DriveNodeBuilder<CampaignLibraryNode> builder = cammpaignDriveNodeBuilder.get();
+		List<JsTreeNode> linkableLibrariesModel = new ArrayList<JsTreeNode>();
+
+		for (CampaignLibrary library : libraries) {
+			JsTreeNode libraryNode = builder.setModel(library).build();
+			linkableLibrariesModel.add(libraryNode);
+		}
+		return linkableLibrariesModel;
 	}
 }

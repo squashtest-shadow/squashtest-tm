@@ -21,24 +21,15 @@
 package org.squashtest.tm.service.campaign;
 
 import java.util.List;
+import java.util.Locale;
 
-import org.squashtest.tm.domain.campaign.CampaignLibrary;
+import org.squashtest.tm.domain.project.Project;
+import org.squashtest.tm.domain.search.AdvancedSearchModel;
+import org.squashtest.tm.domain.search.SearchExportCSVModel;
 
-public interface CampaignLibraryFinderService {
+public interface CampaignAdvancedSearchService {
 
-	/**
-	 * Returns the path of a CampaignLibraryNode given its id. The format is standard, beginning with /&lt;project-name&gt;
-	 * 
-	 * @param entityId the id of the node.
-	 * @return the path of that node.
-	 */
-	String getPathAsString(long entityId);
+	List<String> findAllAuthorizedUsersForACampaign();
 
-	/**
-	 * Returns the collection of {@link CampaignLibrary}s which Campaigns can be linked by a {@link Campaign} via a
-	 * CallTestStep
-	 * 
-	 * @return
-	 */
-	List<CampaignLibrary> findLinkableCampaignLibraries();
+
 }

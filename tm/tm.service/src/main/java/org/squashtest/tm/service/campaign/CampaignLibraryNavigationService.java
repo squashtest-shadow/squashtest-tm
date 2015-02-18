@@ -127,6 +127,10 @@ LibraryNavigationService<CampaignLibrary, CampaignFolder, CampaignLibraryNode>, 
 	//FIXME move to TestSuiteFinder
 	List<TestSuite> findIterationContent(long iterationId);
 
+	/**
+	 * @param
+	 * @return
+	 */
 	List<CampaignLibrary> findLinkableCampaignLibraries();
 
 	/**

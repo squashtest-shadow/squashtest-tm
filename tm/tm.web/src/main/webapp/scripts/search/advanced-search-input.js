@@ -130,6 +130,9 @@ define([ "jquery", "backbone", "app/squash.handlebars.helpers", "squash.translat
 					else if (panelName == "general-information") {
 						source = self.$("#toggle-panel-informations-template").html();
 					}
+					else if (panelName == "general-information-fullsize") {
+						source = self.$("#toggle-panel-informationsfull-template").html();
+					}
 					else {
 						source = self.$("#toggle-panel-template").html();
 					}
@@ -193,6 +196,9 @@ define([ "jquery", "backbone", "app/squash.handlebars.helpers", "squash.translat
 								break;
 							case "exists" :
 								self.makeExistsField(tableid, field.id, field.title, field.possibleValues,searchModel[field.id]);
+								break;
+							case "existsbefore" :
+								self.makeExistsBeforeField(tableid, field.id, field.title, field.possibleValues,searchModel[field.id]);
 								break;
 							case "date":
 								self.makeDateField(tableid, field.id, field.title, searchModel[field.id]);
@@ -299,6 +305,14 @@ define([ "jquery", "backbone", "app/squash.handlebars.helpers", "squash.translat
 		makeExistsField : function(tableId, fieldId, fieldTitle, options, enteredValue) {
 			var context = {"text-exists-id": fieldId, "text-exists-title": fieldTitle};
 			var $fieldDom = this._appendFieldDom(tableId, fieldId, this._compileTemplate("#exists-template", context));
+			$fieldDom.searchExistsWidget();
+			$fieldDom.searchExistsWidget("createDom", "F"+fieldId, options);
+			$fieldDom.searchExistsWidget("fieldvalue", enteredValue);
+		},
+		
+		makeExistsBeforeField : function(tableId, fieldId, fieldTitle, options, enteredValue) {
+			var context = {"text-exists-id": fieldId, "text-exists-title": fieldTitle};
+			var $fieldDom = this._appendFieldDom(tableId, fieldId, this._compileTemplate("#existsbefore-template", context));
 			$fieldDom.searchExistsWidget();
 			$fieldDom.searchExistsWidget("createDom", "F"+fieldId, options);
 			$fieldDom.searchExistsWidget("fieldvalue", enteredValue);

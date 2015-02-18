@@ -1,4 +1,4 @@
-/**
+/*
  *     This file is part of the Squashtest platform.
  *     Copyright (C) 2010 - 2015 Henix, henix.fr
  *
@@ -18,27 +18,27 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.campaign;
+require([ "common" ], function() {
+	require([ "jquery", 'camp-workspace/camp-workspace-search' ,"app/ws/squashtm.workspace", "domReady" , "search/advanced-search-input", "app/ws/squashtm.workspace", 'jquery.cookie' ],
+			function($, CampWorkspaceSearch,  WS, domReady, AdvancedSearchView, WS) {
 
-import java.util.List;
+		domReady(function() {
+			WS.init();
+			
+			$.cookie("workspace-prefs", null, {
+				path : '/'
+			});
+			CampWorkspaceSearch.init(squashtm.app.campaignWorkspaceConf);
+		});
+		
+		$(function() {
+			WS.init();
+			var view = new AdvancedSearchView();
+			
+		});
+		
+		
+	});
+});
 
-import org.squashtest.tm.domain.campaign.CampaignLibrary;
 
-public interface CampaignLibraryFinderService {
-
-	/**
-	 * Returns the path of a CampaignLibraryNode given its id. The format is standard, beginning with /&lt;project-name&gt;
-	 * 
-	 * @param entityId the id of the node.
-	 * @return the path of that node.
-	 */
-	String getPathAsString(long entityId);
-
-	/**
-	 * Returns the collection of {@link CampaignLibrary}s which Campaigns can be linked by a {@link Campaign} via a
-	 * CallTestStep
-	 * 
-	 * @return
-	 */
-	List<CampaignLibrary> findLinkableCampaignLibraries();
-}

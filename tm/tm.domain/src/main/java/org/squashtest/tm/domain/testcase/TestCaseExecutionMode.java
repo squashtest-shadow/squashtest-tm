@@ -21,13 +21,18 @@
 package org.squashtest.tm.domain.testcase;
 
 import org.squashtest.tm.core.foundation.i18n.Internationalizable;
+import org.squashtest.tm.domain.Level;
 
-public enum TestCaseExecutionMode implements Internationalizable {
-	AUTOMATED,
-	MANUAL,
-	UNDEFINED;
+public enum TestCaseExecutionMode implements Internationalizable, Level {
+	AUTOMATED(1), MANUAL(2), UNDEFINED(3);
 
 	private static final String I18N_KEY_ROOT = "test-case.execution-mode.";
+
+	private final int level;
+
+	private TestCaseExecutionMode(int value) {
+		this.level = value;
+	}
 
 	@Override
 	public String getI18nKey() {
@@ -36,5 +41,10 @@ public enum TestCaseExecutionMode implements Internationalizable {
 	
 	public static TestCaseExecutionMode defaultValue() {
 		return MANUAL;
+	}
+
+	@Override
+	public int getLevel() {
+		return level;
 	}
 }
