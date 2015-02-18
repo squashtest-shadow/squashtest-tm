@@ -509,40 +509,32 @@ public class TestCaseModificationController {
 
 
 	@RequestMapping(value = "/milestones/panel", method=RequestMethod.GET)
-	public String getMilestonesPanel(@PathVariable Long testCaseId, Model model, HttpServletRequest context){
+	public String getMilestonesPanel(@PathVariable Long testCaseId, Model model){
 
 		MilestonePanelConfiguration conf = new MilestonePanelConfiguration();
 
 		// build the needed data
 		Collection<Milestone> allMilestones = testCaseModificationService.findAllMilestones(testCaseId);
-		List<?> datamodel = buildMilestoneModel(testCaseId,allMilestones,  "0").getAaData();
+		List<?> currentModel = buildMilestoneModel(testCaseId,allMilestones,  "0").getAaData();
 
 		Map<String, String> identity = new HashMap<>();
 		identity.put("restype", "test-cases");
 		identity.put("resid", testCaseId.toString());
 
-		String contextPath = context.getContextPath();
-		String milestonePath = contextPath + "/test-cases/"+testCaseId+"/milestones";
-
-		String currentTableSource = milestonePath;
-		String bindTableSource = milestonePath + "/associables";
-		String milestonesUrl = milestonePath;
+		String rootPath = "/test-cases/"+testCaseId.toString();
 
 		Boolean editable = Boolean.TRUE;	// fix that later
 
 		// add them to the model
-		conf.addBasic("currentModel", datamodel);
-		conf.addBasic("identity", identity);
 
-		conf.addUrls("currentTableSource", currentTableSource);
-		conf.addUrls("bindTableSource" ,bindTableSource);
-		conf.addUrls("milestonesURL", milestonesUrl);
-
-		conf.addPermissions("editable", editable);
+		conf.setRootPath(rootPath);
+		conf.setIdentity(identity);
+		conf.setCurrentModel(currentModel);
+		conf.setEditable(editable);
 
 		model.addAttribute("conf", conf);
 
-		return "test-cases-tabs/milestones-tab.html";
+		return "milestones/milestones-tab.html";
 
 	}
 

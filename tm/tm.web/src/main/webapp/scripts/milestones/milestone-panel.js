@@ -66,28 +66,14 @@
  * 
  * {
  * 
- * 	basic : {
  * 		element : the jquery selector for the panel (optional),
+ * 		rootPath : the root path for the entity of which we 're managing the milestones. Note that we don't want the root context (eg not '/squash')
  * 		identity : {
  * 			resid : the id of the test-case/whatever this panel sits in
  * 			restype : the type of entity : 'testcases etc'
  * 		}, 
- * 		currentModel : if provided, the table will be initialized with it
- * 	},
- * 
- * 	urls : {
- * 
- * 		currentTableSource : the url where to fetch the content for the table of currently bound milestones
- * 
- * 		bindTableSource : the url where to fetch the content for the table of not-yet bound milestones
- * 		
- * 		milestonesURL : the URL where to post or delete milestones binding 
- * 	},
- * 
- * 	permissions : {
+ * 		currentModel : if provided, the table will be initialized with it,
  * 		editable : boolean, whether the user can or not edit the table content
- * 	}
- * 
  * }
  * 
  * 
@@ -104,31 +90,49 @@ define(["jquery", "workspace.event-bus", "app/ws/squashtm.notification", "squash
 	
 	
 	function init(conf){
+		
+		// stuff the configuration with the last bits
+		var rootContext = squashtm.app.contextRoot + conf.rootPath;
+		conf.currentTableSource = rootContext + "/milestones";
+		conf.bindTableSource = rootContext + "/milestones/associables";
+		conf.milestonesURL = rootContext + "/milestones";
 
 		// now we begin		
 		var element = $(conf.element || ".milestone-panel-master");
 		
-		var tblCnf = {
+		/* 
+		 * Here we want our table to use a local model for initialization, perform sort and filter operations locally,
+		 * yet be able to reload by ajax.
+		 * 
+		 * Configuring all of this at once doesn't work because the table initialize the content once with the model
+		 * and a second time with the ajax source.
+		 * 
+		 * So we need to trick it by initializing it with no ajax source specified, then we supply it when it's complete.  
+		 * 
+		 */
+		var tblCnf = {		
+			aaData : conf.currentModel,
+			iDeferLoading : conf.currentModel.length,
 			bServerSide : false,
-			iDeferLoading : conf.basic.currentModel.length,
-			bDeferLoading : true,
-			sAjaxSource : conf.urls.currentTableSource,
-			aaData : conf.basic.currentModel
+			bDeferLoading : true
 		},
 		squashCnf = {
 				
 		};
 		
-		
 		var currentTable = element.find('.milestone-panel-table').squashTable(tblCnf, squashCnf);
 		
+		// now we can set the ajax source
+		currentTable.fnSettings().sAjaxSource=conf.currentTableSource;
 		
-		if (conf.permissions.editable){
+		
+		// write features
+		if (conf.editable){
 			
 			// add milestones dialog
 			var dialogOptions = {
-				tableSource : conf.urls.bindTableSource,
-				milestonesURL : conf.urls.milestonesURL
+				tableSource : conf.bindTableSource,
+				milestonesURL : conf.milestonesURL
 			};
 			
 			var bindDialog = element.find('.bind-milestone-dialog');
@@ -137,11 +141,7 @@ define(["jquery", "workspace.event-bus", "app/ws/squashtm.notification", "squash
 			$(".milestone-panel-bind-button").on('click', function(){
 				bindDialog.milestoneDialog('open');
 			});
-			
-			eventBus.onContextual('node.bindmilestones node.unbindmilestones', function(){
-				currentTable._fnAjaxUpdate();
-			});
-			
+
 			// remove milestones 			
 			var unbindDialog = $(".unbind-milestone-dialog");
 			
@@ -165,7 +165,7 @@ define(["jquery", "workspace.event-bus", "app/ws/squashtm.notification", "squash
 				
 				var ids = currentTable.getSelectedIds();
 				
-				var url = conf.urls.milestonesURL + '/' + ids.join(',');
+				var url = conf.milestonesURL + '/' + ids.join(',');
 					
 				$.ajax({
 					url : url,
@@ -173,7 +173,7 @@ define(["jquery", "workspace.event-bus", "app/ws/squashtm.notification", "squash
 				})
 				.success(function(){
 					eventBus.trigger('node.unbindmilestones', {
-						identity : conf.basic.identity,
+						identity : conf.identity,
 						milestones : [ids]
 					});
 					unbindDialog.formDialog('close');
@@ -188,6 +188,13 @@ define(["jquery", "workspace.event-bus", "app/ws/squashtm.notification", "squash
 			$(".milestone-panel-unbind-button").on('click', function(){
 				unbindDialog.formDialog('open');
 			});
+			
+			// event subscription
+			
+			eventBus.onContextual('node.bindmilestones node.unbindmilestones', function(){
+				currentTable._fnAjaxUpdate();
+			});
+			
 			
 		}		
 		

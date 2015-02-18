@@ -219,6 +219,11 @@ tr.nodrop td.drag-handle {
 	cursor : pointer;
 }
 
+.clickable-item{
+	text-decoration : underline;
+	cursor : pointer;
+}
+
 .icon-helper{
 	cursor : help;
 	background-image: url("../images/icon-help.png"); /** sprite-ref: sprites-icons; */	
@@ -257,6 +262,10 @@ th.width-tenperc, td.width-tenperc {
 
 .std-margin-top {
 	margin-top : 1em;	
+}
+
+.extra-small-margin-top {
+	margin-tim : 0.2em;
 }
 
 .std-margin-bottom {

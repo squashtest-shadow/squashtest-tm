@@ -20,53 +20,59 @@
  */
 package org.squashtest.tm.web.internal.controller.milestone;
 
-import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+
+/**
+ * see documentation of this in scripts/milestones/milestone-panel.js
+ * 
+ * @author bsiri
+ *
+ */
 public class MilestonePanelConfiguration {
 
-	private Map<String, Object> basic = new HashMap<>();
+	private String rootPath;
 
-	private Map<String, Object> urls = new HashMap<>();
+	private Map<String, String> identity;
 
-	private Map<String, Object> permissions = new HashMap<>();
+	private List<?> currentModel;
 
+	private boolean editable;
 
-	public Map<String, Object> getBasic() {
-		return basic;
+	public String getRootPath() {
+		return rootPath;
 	}
 
-	public void setBasic(Map<String, Object> basic) {
-		this.basic = basic;
+	public void setRootPath(String rootPath) {
+		this.rootPath = rootPath;
 	}
 
-	public Map<String, Object> getUrls() {
-		return urls;
+	public Map<String, String> getIdentity() {
+		return identity;
 	}
 
-	public void setUrls(Map<String, Object> urls) {
-		this.urls = urls;
+	public void setIdentity(Map<String, String> identity) {
+		this.identity = identity;
 	}
 
-	public Map<String, Object> getPermissions() {
-		return permissions;
+	public List<?> getCurrentModel() {
+		return currentModel;
 	}
 
-	public void setPermissions(Map<String, Object> permissions) {
-		this.permissions = permissions;
+	public void setCurrentModel(List<?> currentModel) {
+		this.currentModel = currentModel;
 	}
 
-	public void addBasic(String attribute, Object value){
-		this.basic.put(attribute, value);
+	public boolean isEditable() {
+		return editable;
 	}
 
-	public void addUrls(String attribute, Object value){
-		this.urls.put(attribute, value);
+	public void setEditable(boolean editable) {
+		this.editable = editable;
 	}
 
-	public void addPermissions(String attribute, Object value){
-		this.permissions.put(attribute, value);
-	}
+
 
 
 }
