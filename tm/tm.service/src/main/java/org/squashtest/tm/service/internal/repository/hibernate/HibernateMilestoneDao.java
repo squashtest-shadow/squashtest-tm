@@ -77,6 +77,20 @@ public class HibernateMilestoneDao extends HibernateEntityDao<Milestone> impleme
 
 	}
 
+	@Override
+	public Collection<Milestone> findAssociableMilestonesForRequirementVersion(long versionId) {
+		Query q = currentSession().getNamedQuery("milestone.findAssociableMilestonesForRequirementVersion");
+		q.setParameter("versionId", versionId);
+		return q.list();
+	}
+
+	@Override
+	public Collection<Milestone> findMilestonesForRequirementVersion(long versionId) {
+		Query q = currentSession().getNamedQuery("milestone.findRequirementVersionMilestones");
+		q.setParameter("versionId", versionId);
+		return q.list();
+	}
+
 	private Milestone findMilestoneByLabel(String label) {
 		return executeEntityNamedQuery("milestone.findMilestoneByLabel", new SetLabelParameterCallback(label));
 	}

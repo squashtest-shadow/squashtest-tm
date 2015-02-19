@@ -39,4 +39,9 @@ public interface MilestoneMembershipFinder {
 	 * @return
 	 */
 	Collection<Milestone> findAllMilestonesForTestCase(long testCaseId);
+
+
+	Collection<Milestone> findAssociableMilestonesToRequirementVersion(long versionId);
+
+	Collection<Milestone> findMilestonesForRequirementVersion(long versionId);
 }

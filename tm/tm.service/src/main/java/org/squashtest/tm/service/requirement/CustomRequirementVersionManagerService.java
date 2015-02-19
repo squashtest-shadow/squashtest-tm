@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.service.requirement;
 
+import java.util.Collection;
 import java.util.List;
 
 import javax.validation.constraints.NotNull;
@@ -27,6 +28,7 @@ import javax.validation.constraints.NotNull;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
+import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.requirement.RequirementCriticality;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 
@@ -67,5 +69,22 @@ public interface CustomRequirementVersionManagerService {
 	 */
 	@Transactional(readOnly=true)
 	List<RequirementVersion> findAllByRequirement(long requirementId);
+
+	/*
+	 * 
+	 * 
+	 * Milestones
+	 * 
+	 */
+	void bindMilestones(long versionId, Collection<Long> milestoneIds);
+
+	void unbindMilestones(long versionId, Collection<Long> milestoneIds);
+
+	@Transactional(readOnly=true)
+	Collection<Milestone> findAssociableMilestones(long versionId);
+
+	@Transactional(readOnly=true)
+	Collection<Milestone> findAllMilestones(long versionId);
+
 
 }

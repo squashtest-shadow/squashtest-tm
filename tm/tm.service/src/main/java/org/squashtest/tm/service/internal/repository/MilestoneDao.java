@@ -35,4 +35,8 @@ public interface MilestoneDao  extends EntityDao<Milestone>{
 
 	Collection<Milestone> findAllMilestonesForTestCase(long testCaseId);
 
+	Collection<Milestone> findAssociableMilestonesForRequirementVersion(long versionId);
+
+	Collection<Milestone> findMilestonesForRequirementVersion(long versionId);
+
 }

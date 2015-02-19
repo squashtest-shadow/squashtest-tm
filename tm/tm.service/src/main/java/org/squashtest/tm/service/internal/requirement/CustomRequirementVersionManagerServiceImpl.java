@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.service.internal.requirement;
 
+import java.util.Collection;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -33,11 +34,13 @@ import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.PagingBackedPagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.SortOrder;
 import org.squashtest.tm.domain.infolist.InfoListItem;
+import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.requirement.RequirementCriticality;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.exception.InconsistentInfoListItemException;
 import org.squashtest.tm.service.infolist.InfoListItemFinderService;
 import org.squashtest.tm.service.internal.repository.RequirementVersionDao;
+import org.squashtest.tm.service.milestone.MilestoneMembershipManager;
 import org.squashtest.tm.service.requirement.CustomRequirementVersionManagerService;
 import org.squashtest.tm.service.testcase.TestCaseImportanceManagerService;
 
@@ -57,6 +60,9 @@ public class CustomRequirementVersionManagerServiceImpl implements CustomRequire
 
 	@Inject
 	private InfoListItemFinderService infoListItemService;
+
+	@Inject
+	private MilestoneMembershipManager milestoneManager;
 
 	/**
 	 * @see org.squashtest.tm.service.requirement.CustomRequirementVersionManagerService#changeCriticality(long,
@@ -104,6 +110,32 @@ public class CustomRequirementVersionManagerServiceImpl implements CustomRequire
 		else{
 			throw new InconsistentInfoListItemException("requirementCategory", categoryCode);
 		}
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	@PreAuthorize("hasPermission(#versionId, 'org.squashtest.tm.domain.requirement.RequirementVersion', 'READ') or hasRole('ROLE_ADMIN')")
+	public Collection<Milestone> findAllMilestones(long versionId) {
+		return milestoneManager.findMilestonesForRequirementVersion(versionId);
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	@PreAuthorize("hasPermission(#versionId, 'org.squashtest.tm.domain.requirement.RequirementVersion', 'READ') or hasRole('ROLE_ADMIN')")
+	public Collection<Milestone> findAssociableMilestones(long versionId) {
+		return milestoneManager.findAssociableMilestonesToRequirementVersion(versionId);
+	}
+
+	@Override
+	@PreAuthorize("hasPermission(#versionId, 'org.squashtest.tm.domain.requirement.RequirementVersion', 'WRITE') or hasRole('ROLE_ADMIN')")
+	public void bindMilestones(long versionId, Collection<Long> milestoneIds) {
+		milestoneManager.bindRequirementVersionToMilestones(versionId, milestoneIds);
+	}
+
+	@Override
+	@PreAuthorize("hasPermission(#versionId, 'org.squashtest.tm.domain.requirement.RequirementVersion', 'WRITE') or hasRole('ROLE_ADMIN')")
+	public void unbindMilestones(long versionId, Collection<Long> milestoneIds) {
+		milestoneManager.unbindRequirementVersionToMilestones(versionId, milestoneIds);
 	}
 
 }

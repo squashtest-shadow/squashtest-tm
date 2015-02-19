@@ -28,7 +28,9 @@ public interface MilestoneMembershipManager extends MilestoneMembershipFinder {
 
 	void unbindTestCaseFromMilestones(long testCaseId, Collection<Long> milestoneIds);
 
-	void bindRequirementVersionToMilestones(long requirementVersionId, Collection<Long> milestoneIds);
+	void bindRequirementVersionToMilestones(long versionId, Collection<Long> milestoneIds);
+
+	void unbindRequirementVersionToMilestones(long versionId, Collection<Long> milestoneIds);
 
 	void bindCampaignToMilestones(long campaignId, Collection<Long> milestoneIds);
 

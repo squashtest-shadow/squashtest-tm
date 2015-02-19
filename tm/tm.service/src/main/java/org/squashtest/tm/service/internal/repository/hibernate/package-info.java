@@ -597,15 +597,19 @@
 					+ "where tc.id = :testCaseId and milestone not in ( " 
 					+ "select mstone from TestCase tcase join tcase.milestones mstone where tcase.id = :testCaseId " 
 					+ ")"),
+	@NamedQuery(name = "milestone.findAssociableMilestonesForRequirementVersion", 
+			query="select milestone from RequirementVersion version join version.requirement req join req.project p join p.milestones milestone " +
+					"where version.id = :versionId and milestone not in (" +
+					"select mstone from RequirementVersion v join v.requirement req join req.versions vs join vs.milestones mstone where v.id = :versionId" +
+					")"),
 			
 	@NamedQuery(name = "milestone.findTestCaseMilestones", query="select milestones from TestCase tc join tc.milestones milestones where tc.id = :testCaseId" ),
 	@NamedQuery(name = "milestone.findIndirectTestCaseMilestones", 
-					query="select milestones from TestCase tc join tc.requirementVersionCoverages cov " +
-							"join cov.verifiedRequirementVersion version " +
-							"join version.milestones milestones " +
-							"where tc.id = :testCaseId"),
-						
-
+			query="select milestones from TestCase tc join tc.requirementVersionCoverages cov " +
+					"join cov.verifiedRequirementVersion version " +
+					"join version.milestones milestones " +
+					"where tc.id = :testCaseId"),
+	@NamedQuery(name = "milestone.findRequirementVersionMilestones", query="select milestones from RequirementVersion version join version.milestones milestones where version.id = :versionId"),
 	
 	//InfoList
 	@NamedQuery(name = "infoList.findByCode", query = "from InfoList where code = :code"),

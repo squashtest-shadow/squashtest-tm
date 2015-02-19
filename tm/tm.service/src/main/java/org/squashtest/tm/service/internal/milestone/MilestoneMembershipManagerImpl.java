@@ -27,24 +27,36 @@ import javax.inject.Inject;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.squashtest.tm.domain.milestone.Milestone;
+import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.service.internal.repository.MilestoneDao;
+import org.squashtest.tm.service.internal.repository.RequirementDao;
+import org.squashtest.tm.service.internal.repository.RequirementVersionDao;
 import org.squashtest.tm.service.internal.repository.TestCaseDao;
 import org.squashtest.tm.service.milestone.MilestoneMembershipManager;
 
 @Service
 public class MilestoneMembershipManagerImpl implements MilestoneMembershipManager {
 
-	private static final String WRITE_TC_OR_ROLE_ADMIN = "hasPermission(#testCaseId, 'org.squashtest.tm.domain.testcase.TestCase' , 'WRITE') or hasRole('ROLE_ADMIN')";
+	private static final String READ_TC = "hasPermission(#testCaseId, 'org.squashtest.tm.domain.testcase.TestCase' , 'READ')";
+	private static final String WRITE_TC = "hasPermission(#testCaseId, 'org.squashtest.tm.domain.testcase.TestCase' , 'WRITE')";
+
+	private static final String READ_REQVERSION = "hasPermission(#versionId, 'org.squashtest.tm.domain.requirement.RequirementVersion' , 'READ')";
+	private static final String WRITE_REQVERSION = "hasPermission(#versionId, 'org.squashtest.tm.domain.requirement.RequirementVersion' , 'WRITE')";
+
+	private static final String ROLE_ADMIN = " or hasRole('ROLE_ADMIN')";
 
 	@Inject
 	private TestCaseDao testCaseDao;
 
 	@Inject
+	private RequirementVersionDao requirementVersionDao;
+
+	@Inject
 	private MilestoneDao milestoneDao;
 
 	@Override
-	@PreAuthorize(WRITE_TC_OR_ROLE_ADMIN)
+	@PreAuthorize(WRITE_TC + ROLE_ADMIN)
 	public void bindTestCaseToMilestones(long testCaseId, Collection<Long> milestoneIds) {
 		TestCase tc = testCaseDao.findById(testCaseId);
 		Collection<Milestone> milestones = milestoneDao.findAllByIds(milestoneIds);
@@ -55,7 +67,7 @@ public class MilestoneMembershipManagerImpl implements MilestoneMembershipManage
 	}
 
 	@Override
-	@PreAuthorize(WRITE_TC_OR_ROLE_ADMIN)
+	@PreAuthorize(WRITE_TC + ROLE_ADMIN)
 	public void unbindTestCaseFromMilestones(long testCaseId, Collection<Long> milestoneIds) {
 		TestCase tc = testCaseDao.findById(testCaseId);
 		for (Long milestoneId : milestoneIds){
@@ -64,9 +76,24 @@ public class MilestoneMembershipManagerImpl implements MilestoneMembershipManage
 	}
 
 	@Override
-	public void bindRequirementVersionToMilestones(long requirementVersionId, Collection<Long> milestoneIds) {
-		// TODO Auto-generated method stub
+	@PreAuthorize(WRITE_REQVERSION + ROLE_ADMIN)
+	public void bindRequirementVersionToMilestones(long versionId, Collection<Long> milestoneIds) {
+		RequirementVersion version = requirementVersionDao.findById(versionId);
+		Collection<Milestone> milestones = milestoneDao.findAllByIds(milestoneIds);
 
+		for (Milestone m : milestones) {
+			version.bindMilestone(m);
+		}
+
+	}
+
+	@Override
+	@PreAuthorize(WRITE_REQVERSION + ROLE_ADMIN)
+	public void unbindRequirementVersionToMilestones(long versionId, Collection<Long> milestoneIds) {
+		RequirementVersion version = requirementVersionDao.findById(versionId);
+		for (Long milestoneId : milestoneIds){
+			version.unbindMilestone(milestoneId);
+		}
 	}
 
 	@Override
@@ -76,14 +103,26 @@ public class MilestoneMembershipManagerImpl implements MilestoneMembershipManage
 	}
 
 	@Override
-	@PreAuthorize(WRITE_TC_OR_ROLE_ADMIN)
+	@PreAuthorize(READ_TC + ROLE_ADMIN)
 	public Collection<Milestone> findAllMilestonesForTestCase(long testCaseId) {
 		return milestoneDao.findAllMilestonesForTestCase(testCaseId);
 	}
 
 	@Override
-	@PreAuthorize(WRITE_TC_OR_ROLE_ADMIN)
+	@PreAuthorize(READ_TC + ROLE_ADMIN)
 	public Collection<Milestone> findAssociableMilestonesToTestCase(long testCaseId) {
 		return milestoneDao.findAssociableMilestonesForTestCase(testCaseId);
+	}
+
+	@Override
+	@PreAuthorize(READ_REQVERSION + ROLE_ADMIN)
+	public Collection<Milestone> findAssociableMilestonesToRequirementVersion(long versionId) {
+		return milestoneDao.findAssociableMilestonesForRequirementVersion(versionId);
+	}
+
+	@Override
+	@PreAuthorize(READ_REQVERSION + ROLE_ADMIN)
+	public Collection<Milestone> findMilestonesForRequirementVersion(long versionId) {
+		return milestoneDao.findMilestonesForRequirementVersion(versionId);
 	}
 }
