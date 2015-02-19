@@ -47,7 +47,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.ModelAndView;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.milestone.MilestoneRange;
-import org.squashtest.tm.domain.oauth2.Client;
 import org.squashtest.tm.domain.project.GenericProject;
 import org.squashtest.tm.event.ConfigUpdateEvent;
 import org.squashtest.tm.service.configuration.ConfigurationService;
@@ -55,6 +54,8 @@ import org.squashtest.tm.service.security.OAuth2ClientService;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
+import org.springframework.security.oauth2.provider.ClientDetails;
+import org.springframework.security.oauth2.provider.BaseClientDetails;
 
 @Controller
 @RequestMapping("administration/config")
@@ -152,17 +153,17 @@ public class ConfigAdministrationController implements ApplicationContextAware, 
 	}
 
 	@RequestMapping(value = "clients/{idList}", method = RequestMethod.DELETE)
-	public @ResponseBody void removeMilestones(@PathVariable("idList") List<Long> idList) {
-		clientService.removeClients(idList);
+	public @ResponseBody void removeMilestones(@PathVariable("idList") List<String> idList) {
+		clientService.removeClientDetails(idList);
 	}
 
 	@RequestMapping(value = "clients", method = RequestMethod.POST)
 	@ResponseStatus(HttpStatus.CREATED)
-	public @ResponseBody Client addClient(@Valid @ModelAttribute("add-client") Client client) {
+	public @ResponseBody ClientDetails addClient(@Valid @ModelAttribute("add-client") BaseClientDetails clientDetails) {
 
-		clientService.addClient(client);
+		clientService.addClientDetails(clientDetails);
 
-		return client;
+		return clientDetails;
 	}
 
 	@RequestMapping(value = "clients/list")
@@ -170,7 +171,7 @@ public class ConfigAdministrationController implements ApplicationContextAware, 
 
 		ClientDataTableModelHelper helper = new ClientDataTableModelHelper(messageSource);
 		helper.setLocale(locale);
-		Collection<Object> aaData = helper.buildRawModel(clientService.findClientList());
+		Collection<Object> aaData = helper.buildRawModel(clientService.findClientDetailsList());
 		DataTableModel model = new DataTableModel("");
 		model.setAaData((List<Object>) aaData);
 		return model;

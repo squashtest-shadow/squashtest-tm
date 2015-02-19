@@ -45,14 +45,26 @@
 									});		
 													
 							});
-						}	
+						},
+						getODataId : function(arg) {
+							var key = clientTable.squashSettings.dataKeys.entityId;
+							var id = clientTable.fnGetData(arg)[key];
+							if (!!id) {
+								return id;
+							} else {
+								return null;
+							}
+						}
 					}
 			};
 			
 			var clientTable = $("#client-table").squashTable({"bServerSide":false},squashSettings);			
 			$('#new-client-button').button();	
 
-			/* The button gets CSS we don't want to keep a clean CSS and also put a span with text only after*/
+			/*
+			 * The button gets CSS we don't want to keep a clean CSS and also
+			 * put a span with text only after
+			 */
 			$("#new-client-button").removeClass("ui-button-text-only").addClass("ui-button-text-icon-primary");
 			$("#new-client-button > span").removeClass("ui-button-text");
 		});	

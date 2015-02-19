@@ -25,51 +25,52 @@ import java.util.List;
 import javax.inject.Inject;
 
 import org.springframework.stereotype.Service;
-import org.squashtest.tm.domain.oauth2.Client;
-import org.squashtest.tm.service.internal.repository.ClientDao;
 import org.squashtest.tm.service.security.OAuth2ClientService;
+import org.springframework.security.oauth2.provider.BaseClientDetails;
+import org.springframework.security.oauth2.provider.ClientDetails;
+import org.springframework.security.oauth2.provider.JdbcClientDetailsService;
 
 @Service("squashtest.tm.service.OAuth2ClientService")
 public class OAuth2ClientServiceImpl implements OAuth2ClientService{
 
 	@Inject
-	ClientDao clientDao;
+	JdbcClientDetailsService jdbcClientDetailsService;
 
 	@Override
-	public List<Client> findClientList() {
-
-		return clientDao.findClientsOrderedByName();
+	public List<ClientDetails> findClientDetailsList() {
+		return jdbcClientDetailsService.listClientDetails();
 	}
 
 	@Override
-	public void addClient(String name, String secret) {
-		Client client = new Client(name, secret);
-		clientDao.persist(client);
-
+	public void addClientDetails(String name, String secret) {
+		BaseClientDetails clientDetails = new BaseClientDetails();
+		clientDetails.setClientId(name);
+		clientDetails.setClientSecret(secret);
+		jdbcClientDetailsService.addClientDetails(clientDetails);
 	}
 
 	@Override
-	public void removeClient(Long id) {
-		Client client = clientDao.findById(id);
-		clientDao.remove(client);
+	public void removeClientDetails(String clientId) {
+		jdbcClientDetailsService.removeClientDetails(clientId);
 	}
 
 	@Override
 	public void changeClientSecret(String name, String newSecret) {
-		Client client = clientDao.findClientByName(name);
-		client.setClientSecret(newSecret);
+		BaseClientDetails clientDetails = new BaseClientDetails();
+		clientDetails.setClientId(name);
+		clientDetails.setClientSecret(newSecret);
+		jdbcClientDetailsService.updateClientDetails(clientDetails);
 	}
 
 	@Override
-	public void removeClients(List<Long> idList) {
-		for(Long id : idList){
-			removeClient(id);
+	public void removeClientDetails(List<String> idList) {
+		for(String clientId : idList){
+			jdbcClientDetailsService.removeClientDetails(clientId);
 		}
 	}
 
 	@Override
-	public void addClient(Client client) {
-		clientDao.persist(client);
+	public void addClientDetails(ClientDetails clientDetails) {
+		jdbcClientDetailsService.addClientDetails(clientDetails);
 	}
-
 }

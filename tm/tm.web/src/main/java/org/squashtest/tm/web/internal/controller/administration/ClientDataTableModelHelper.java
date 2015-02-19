@@ -24,11 +24,11 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
-import org.squashtest.tm.domain.oauth2.Client;
+import org.springframework.security.oauth2.provider.ClientDetails;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelBuilder;
 
-public class ClientDataTableModelHelper  extends DataTableModelBuilder<Client> {
+public class ClientDataTableModelHelper  extends DataTableModelBuilder<ClientDetails> {
 
 	private InternationalizationHelper messageSource;
 	private Locale locale;
@@ -53,9 +53,9 @@ public class ClientDataTableModelHelper  extends DataTableModelBuilder<Client> {
 	}
 
 	@Override
-	protected Object buildItemData(Client item) {
+	protected Object buildItemData(ClientDetails item) {
 		Map<String, Object> row = new HashMap<String, Object>(3);
-		row.put("entity-id", item.getId());
+		row.put("entity-id", item.getClientId());
 		row.put("index", getCurrentIndex() +1);
 		row.put("name", item.getClientId());
 		row.put("secret", item.getClientSecret());

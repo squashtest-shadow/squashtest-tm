@@ -82,6 +82,10 @@
     </property>
   </bean>
 
+   <bean id="clientDetails" class="org.springframework.security.oauth2.provider.JdbcClientDetailsService">
+    	 <constructor-arg name="dataSource" ref="squashtest.core.persistence.jdbc.DataSource"/>
+    </bean>
+    
   <bean id="squash.security.authenticationProvider.internal" class="org.springframework.security.authentication.dao.DaoAuthenticationProvider">
     <property name="userDetailsService" ref="squashtest.core.security.JdbcUserDetailsManager" />
 

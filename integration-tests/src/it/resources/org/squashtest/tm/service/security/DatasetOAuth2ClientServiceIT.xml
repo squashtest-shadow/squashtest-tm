@@ -24,11 +24,9 @@
 <!DOCTYPE dataset SYSTEM "../../../../../../../dtd/squash-tm.1.12.0.dtd">
 <dataset>
 
-<OAUTH_CLIENT_DETAILS ID="10" CLIENT_ID="client1" CLIENT_SECRET="secret"/>
-<OAUTH_CLIENT_DETAILS ID="20" CLIENT_ID="client2" CLIENT_SECRET="secret"/>
-<OAUTH_CLIENT_DETAILS ID="30" CLIENT_ID="client3" CLIENT_SECRET="secret"/>
-
-
+<OAUTH_CLIENT_DETAILS CLIENT_ID="client1" CLIENT_SECRET="secret"/>
+<OAUTH_CLIENT_DETAILS CLIENT_ID="client2" CLIENT_SECRET="secret"/>
+<OAUTH_CLIENT_DETAILS CLIENT_ID="client3" CLIENT_SECRET="secret"/>
 
 </dataset>
 	

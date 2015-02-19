@@ -22,19 +22,19 @@ package org.squashtest.tm.service.security;
 
 import java.util.List;
 
-import org.squashtest.tm.domain.oauth2.Client;
+import org.springframework.security.oauth2.provider.ClientDetails;
 
 public interface OAuth2ClientService {
 
-	List<Client> findClientList();
+	List<ClientDetails> findClientDetailsList();
 
-	void addClient(String name, String secret);
+	void addClientDetails(String name, String secret);
 
 	void changeClientSecret(String name, String newSecret);
 
-	void removeClients(List<Long> idList);
+	void removeClientDetails(List<String> idList);
 
-	void addClient(Client client);
+	void addClientDetails(ClientDetails client);
 
-	void removeClient(Long id);
+	void removeClientDetails(String id);
 }

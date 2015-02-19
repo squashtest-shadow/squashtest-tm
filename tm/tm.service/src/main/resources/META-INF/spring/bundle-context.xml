@@ -216,6 +216,7 @@
   </bean>
 
 <!-- Security related service, declared here so that we can test it -->
+
   <bean id="permissionFactory" class="org.squashtest.tm.security.acls.CustomPermissionFactory" />
 
   <bean id="aclAdminAuthority" class="org.springframework.security.core.authority.GrantedAuthorityImpl">

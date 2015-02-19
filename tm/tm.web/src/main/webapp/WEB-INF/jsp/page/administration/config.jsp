@@ -166,7 +166,7 @@
           <tr>
             <td><label for="add-client-secret"><f:message
               key="label.secret" /></label></td>
-            <td><input id="add-client-secret" type="password" size="30" maxlength="30"/>
+            <td><input id="add-client-secret" type="text" size="30" maxlength="30"/>
             <comp:error-message forField="label" /></td>
           </tr>        
         </table>

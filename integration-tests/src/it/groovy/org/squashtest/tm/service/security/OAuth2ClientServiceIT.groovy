@@ -18,58 +18,49 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.internal.repository.hibernate;
+package org.squashtest.tm.service.security;
 
 import static org.junit.Assert.*;
-
-import java.util.List;
 
 import javax.inject.Inject;
 
 import org.springframework.transaction.annotation.Transactional;
-import org.squashtest.tm.domain.oauth2.Client;
-import org.squashtest.tm.service.internal.repository.ClientDao;
+import org.squashtest.tm.service.DbunitServiceSpecification;
 import org.unitils.dbunit.annotation.DataSet;
 import spock.unitils.UnitilsSupport;
 
-
 @UnitilsSupport
-class HibernateClientDaoIT extends DbunitDaoSpecification {
+@Transactional
+class OAuth2ClientServiceIT extends DbunitServiceSpecification {
 
 	@Inject
-	ClientDao clientDao;
+	OAuth2ClientService oAuth2ClientService;
 
 	def "should create a client"(){
-		given:
-		Client client = new Client("client1", "secret");
-
 		when:
-		clientDao.persist(client);
-
+		oAuth2ClientService.addClientDetails("client1", "secret");
 
 		then:
-		def result = clientDao.findClientByName("client1");
-		result.clientId == "client1";
-		result.clientSecret == "secret";
+		def clientList = oAuth2ClientService.findClientDetailsList();
+		clientList.size() == 1
 	}
 
-	@DataSet("HibernateClientDaoIT.should return list of clients.xml")
-	def "should return list of clients"(){
+	@DataSet("DatasetOAuth2ClientServiceIT.xml")
+	def "should find the list of all clients"(){
 		when:
-		def result =  clientDao.findClientsOrderedByName()
+		def clientList = oAuth2ClientService.findClientDetailsList();
 
 		then:
-		result.size() == 3
+		clientList.size() == 3
 	}
 
-	@DataSet("HibernateClientDaoIT.should remove clients.xml")
+	@DataSet("DatasetOAuth2ClientServiceIT.xml")
 	def "should remove a client"(){
 		when:
-		def client = clientDao.findClientByName("client1");
-		clientDao.remove(client);
+		oAuth2ClientService.removeClientDetails("client1");
+		def clientList = oAuth2ClientService.findClientDetailsList();
 
 		then:
-		def result = clientDao.findClientsOrderedByName()
-		result.size() == 2
+		clientList.size() == 2
 	}
 }
