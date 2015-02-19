@@ -165,6 +165,9 @@ publish('reload.requirement.toolbar');
           <f:message key="tabs.label.information" />
         </a>
       </li>
+        <li>
+            <a href="${requirementUrl}/milestones/panel"><f:message key="tabs.label.milestone"/></a>
+        </li>        
       <li>
         <a href="#tabs-2">
           <f:message key="label.Attachments" />

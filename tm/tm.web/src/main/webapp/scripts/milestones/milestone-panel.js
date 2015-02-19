@@ -114,10 +114,20 @@ define(["jquery", "workspace.event-bus", "app/ws/squashtm.notification", "squash
 			aaData : conf.currentModel,
 			iDeferLoading : conf.currentModel.length,
 			bServerSide : false,
-			bDeferLoading : true
+			bDeferLoading : true,
+			fnRowCallback : function(nRow, aData){
+				// this callback is necessary only for test case milestones
+				var tcDirectMember = aData['directMember'];
+				if (tcDirectMember===false){
+					var row = $(nRow);
+					row.addClass('milestone-indirect-membership');
+					row.find('.unbind-button').removeClass('unbind-button');
+					
+				}
+			}
 		},
 		squashCnf = {
-				
+			
 		};
 		
 		var currentTable = element.find('.milestone-panel-table').squashTable(tblCnf, squashCnf);

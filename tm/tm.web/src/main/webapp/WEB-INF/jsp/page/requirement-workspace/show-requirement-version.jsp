@@ -46,7 +46,7 @@
 	</jsp:attribute>
 	
 	<jsp:attribute name="informationContent">	
-		<jsp:include page="/WEB-INF/jsp/fragment/requirements/requirement.jsp">
+		<jsp:include page="/WEB-INF/jsp/fragment/requirements/requirement-version.jsp">
 			<jsp:param name="isInfoPage" value="true" />
 		</jsp:include>
 	</jsp:attribute>

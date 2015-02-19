@@ -23,8 +23,10 @@ package org.squashtest.tm.web.internal.controller.requirement;
 import static org.squashtest.tm.web.internal.helper.JEditablePostParams.VALUE;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
@@ -46,11 +48,13 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.util.HtmlUtils;
 import org.squashtest.tm.core.foundation.collection.DefaultPagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
+import org.squashtest.tm.core.foundation.collection.SinglePageCollectionHolder;
 import org.squashtest.tm.domain.Level;
 import org.squashtest.tm.domain.audit.AuditableMixin;
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
 import org.squashtest.tm.domain.event.RequirementAuditEvent;
 import org.squashtest.tm.domain.infolist.InfoListItem;
+import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.requirement.Requirement;
 import org.squashtest.tm.domain.requirement.RequirementCriticality;
 import org.squashtest.tm.domain.requirement.RequirementStatus;
@@ -65,10 +69,15 @@ import org.squashtest.tm.service.requirement.RequirementVersionManagerService;
 import org.squashtest.tm.service.testcase.VerifyingTestCaseManagerService;
 import org.squashtest.tm.web.internal.controller.audittrail.RequirementAuditEventTableModelBuilder;
 import org.squashtest.tm.web.internal.controller.generic.ServiceAwareAttachmentTableModelHelper;
+import org.squashtest.tm.web.internal.controller.milestone.MetaMilestone;
+import org.squashtest.tm.web.internal.controller.milestone.MilestonePanelConfiguration;
+import org.squashtest.tm.web.internal.controller.milestone.MilestoneTableModelHelper;
+import org.squashtest.tm.web.internal.controller.milestone.TestCaseBoundMilestoneTableModelHelper;
 import org.squashtest.tm.web.internal.helper.LevelLabelFormatter;
 import org.squashtest.tm.web.internal.http.ContentTypes;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.builder.JsonInfoListBuilder;
+import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.tm.web.internal.model.jquery.RenameModel;
 import org.squashtest.tm.web.internal.model.json.JsonGeneralInfo;
@@ -366,5 +375,84 @@ public class RequirementVersionModificationController {
 		DataTableModel auditTrailModel = builder.buildDataModel(auditTrail, "1");
 		mav.addObject("auditTrailDatas", auditTrailModel.getAaData());
 		return mav;
+	}
+
+	/* **********************************************************************
+	 * 
+	 * Milestones section
+	 * 
+	 ********************************************************************** */
+
+	@RequestMapping(value = "/milestones", method=RequestMethod.GET)
+	@ResponseBody
+	public DataTableModel getBoundMilestones(@PathVariable("requirementVersionId") long requirementVersionId, DataTableDrawParameters params){
+
+		Collection<Milestone> allMilestones = requirementVersionManager.findAllMilestones(requirementVersionId);
+
+		return buildMilestoneModel(requirementVersionId, new ArrayList<>(allMilestones), params.getsEcho());
+	}
+
+	@RequestMapping(value = "/milestones/{milestoneIds}", method=RequestMethod.POST)
+	@ResponseBody
+	public void bindMilestones(@PathVariable("requirementVersionId") long requirementVersionId, @PathVariable("milestoneIds") List<Long> milestoneIds){
+
+		requirementVersionManager.bindMilestones(requirementVersionId, milestoneIds);
+	}
+
+	@RequestMapping(value = "/milestones/{milestoneIds}", method=RequestMethod.DELETE)
+	@ResponseBody
+	public void unbindMilestones(@PathVariable("requirementVersionId") long requirementVersionId, @PathVariable("milestoneIds") List<Long> milestoneIds){
+
+		requirementVersionManager.unbindMilestones(requirementVersionId, milestoneIds);
+	}
+
+	@RequestMapping(value = "/milestones/associables", method=RequestMethod.GET)
+	@ResponseBody
+	public DataTableModel getNotYetBoundMilestones(@PathVariable("requirementVersionId") long requirementVersionId, DataTableDrawParameters params){
+		Collection<Milestone> notBoundMilestones = requirementVersionManager.findAssociableMilestones(requirementVersionId);
+		return buildMilestoneModel(requirementVersionId,new ArrayList<>(notBoundMilestones),params.getsEcho());
+	}
+
+
+	@RequestMapping(value = "/milestones/panel", method=RequestMethod.GET)
+	public String getMilestonesPanel(@PathVariable("requirementVersionId") Long requirementVersionId, Model model){
+
+		MilestonePanelConfiguration conf = new MilestonePanelConfiguration();
+		RequirementVersion version = requirementVersionManager.findById(requirementVersionId);
+
+		// build the needed data
+		Collection<Milestone> allMilestones = requirementVersionManager.findAllMilestones(requirementVersionId);
+		List<?> currentModel = buildMilestoneModel(requirementVersionId, new ArrayList<>(allMilestones),  "0").getAaData();
+
+		Map<String, String> identity = new HashMap<>();
+		identity.put("restype", "requirements");
+		identity.put("resid", version.getRequirement().getId().toString());
+
+		String rootPath = "/requirement-versions/"+requirementVersionId.toString();
+
+		Boolean editable = Boolean.TRUE;	// fix that later
+
+		// add them to the model
+		conf.setNodeType("requirement-version");
+		conf.setRootPath(rootPath);
+		conf.setIdentity(identity);
+		conf.setCurrentModel(currentModel);
+		conf.setEditable(editable);
+
+		model.addAttribute("conf", conf);
+
+		return "milestones/milestones-tab.html";
+
+	}
+
+	private DataTableModel buildMilestoneModel(long versionId, List<Milestone> milestones, String sEcho){
+
+
+		PagedCollectionHolder<List<Milestone>> collectionHolder =
+				new SinglePageCollectionHolder<List<Milestone>>(milestones);
+
+		Locale locale = LocaleContextHolder.getLocale();
+		return new MilestoneTableModelHelper(i18nHelper, locale).buildDataModel(collectionHolder, sEcho);
+
 	}
 }

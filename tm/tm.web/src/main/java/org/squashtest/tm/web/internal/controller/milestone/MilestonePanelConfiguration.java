@@ -36,6 +36,8 @@ public class MilestonePanelConfiguration {
 
 	private Map<String, String> identity;
 
+	private String nodeType;
+
 	private List<?> currentModel;
 
 	private boolean editable;
@@ -70,6 +72,14 @@ public class MilestonePanelConfiguration {
 
 	public void setEditable(boolean editable) {
 		this.editable = editable;
+	}
+
+	public String getNodeType() {
+		return nodeType;
+	}
+
+	public void setNodeType(String nodeType) {
+		this.nodeType = nodeType;
 	}
 
 

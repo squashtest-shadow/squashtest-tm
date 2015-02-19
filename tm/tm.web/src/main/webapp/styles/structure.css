@@ -1107,7 +1107,9 @@ td.button-cell, th.button-cell, td.icon-cell, th.icon-cell {
 .testcases-indirect-verification td,
 .testcases-indirect-verification td>a,
 .inherited-parameter-verification td,
-.inherited-parameter-verification td>a{
+.inherited-parameter-verification td>a,
+.milestone-indirect-membership td,
+.milestone-indirect-membership td>a{
 	font-style: italic;
 	color: gray;
 }
