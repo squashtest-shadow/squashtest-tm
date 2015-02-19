@@ -136,8 +136,8 @@
   <osgi:reference id="squashtest.tm.service.DatasetModificationService" bean-name="squashtest.tm.service.DatasetModificationService"
     availability="mandatory" interface="org.squashtest.tm.service.testcase.DatasetModificationService" />
 
-  <osgi:reference id="squashtest.tm.service.RequirementModificationService" bean-name="squashtest.tm.service.RequirementModificationService"
-    interface="org.squashtest.tm.service.requirement.RequirementModificationService" availability="mandatory" />
+  <osgi:reference id="squashtest.tm.service.RequirementVersionResolverService" bean-name="squashtest.tm.service.RequirementVersionResolverService"
+    interface="org.squashtest.tm.service.requirement.RequirementVersionResolverService" availability="mandatory" />
 
   <osgi:reference id="squashtest.tm.service.RequirementVersionManagerService" bean-name="squashtest.tm.service.RequirementVersionManagerService"
     interface="org.squashtest.tm.service.requirement.RequirementVersionManagerService" availability="mandatory" />

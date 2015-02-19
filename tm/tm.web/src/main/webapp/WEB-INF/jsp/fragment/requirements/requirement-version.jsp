@@ -31,14 +31,14 @@
 <%@ taglib prefix="csst" uri="http://org.squashtest.tm/taglib/css-transform" %>
 <%@ taglib prefix="json" uri="http://org.squashtest.tm/taglib/json" %>
 
-<s:url var="requirementUrl" value="/requirements/${requirement.id}"/>
-<c:url var="attachmentsUrl" value="/attach-list/${requirement.currentVersion.attachmentList.id}/attachments" />
-
+<s:url var="requirementVersionUrl" value="/requirement-versions/${requirementVersion.id}"/>
+<s:url var="requirementUrl" value="/requirements/${requirementVersion.requirement.id}"/>
+<c:url var="attachmentsUrl" value="/attach-list/${requirementVersion.attachmentList.id}/attachments" />
 <%-- ----------------------------------- Authorization ----------------------------------------------%>
 <%-- 
 that page won't be editable if 
    * the user don't have the correct permission,
-   * the requirement status doesn't allow it.
+   * the requirement version status doesn't allow it.
 
  --%>
  
@@ -49,27 +49,29 @@ that page won't be editable if
  <c:set var="creatable"         value="${false}"/> 
  <c:set var="linkable"          value="${false}"/> 
  <c:set var="status_editable"   value="${false}"/>
-<authz:authorized hasRole="ROLE_ADMIN" hasPermission="ATTACH" domainObject="${ requirement }">
-	<c:set var="attachable" value="${ requirement.modifiable }" />
+ 
+ 
+<authz:authorized hasRole="ROLE_ADMIN" hasPermission="ATTACH" domainObject="${ requirementVersion }">
+	<c:set var="attachable" value="${ requirementVersion.modifiable }" />
 	<c:set var="moreThanReadOnly" value="${ true }" />
 </authz:authorized>
-<authz:authorized hasRole="ROLE_ADMIN" hasPermission="WRITE" domainObject="${ requirement }">
-	<c:set var="writable" value="${ requirement.modifiable }"/>
+<authz:authorized hasRole="ROLE_ADMIN" hasPermission="WRITE" domainObject="${ requirementVersion }">
+	<c:set var="writable" value="${ requirementVersion.modifiable }"/>
 		<c:set var="moreThanReadOnly" value="${ true }" />
 </authz:authorized>
-<authz:authorized hasRole="ROLE_ADMIN" hasPermission="DELETE" domainObject="${ requirement }">
+<authz:authorized hasRole="ROLE_ADMIN" hasPermission="DELETE" domainObject="${ requirementVersion }">
 	<c:set var="deletable" value="${true}"/>
 		<c:set var="moreThanReadOnly" value="${ true }" />
 </authz:authorized>
-<authz:authorized hasRole="ROLE_ADMIN" hasPermission="CREATE" domainObject="${ requirement }">
+<authz:authorized hasRole="ROLE_ADMIN" hasPermission="CREATE" domainObject="${ requirementVersion }">
 	<c:set var="creatable" value="${true }"/>
 		<c:set var="moreThanReadOnly" value="${ true }" />
 </authz:authorized>
-<authz:authorized hasRole="ROLE_ADMIN" hasPermission="WRITE" domainObject="${ requirement }">
-	<c:set var="linkable" value="${ requirement.linkable }" />
+<authz:authorized hasRole="ROLE_ADMIN" hasPermission="WRITE" domainObject="${ requirementVersion }">
+	<c:set var="linkable" value="${ requirementVersion.linkable }" />
 		<c:set var="moreThanReadOnly" value="${ true }" />
 </authz:authorized>
-<c:set var="status_editable" value="${ moreThanReadOnly and requirement.status.allowsStatusUpdate }"/>
+<c:set var="status_editable" value="${ moreThanReadOnly and requirementVersion.status.allowsStatusUpdate }"/>
 
 
 <f:message var="confirmLabel" key="label.Confirm"/>
@@ -80,39 +82,38 @@ that page won't be editable if
 
 <script type="text/javascript">
 	requirejs.config({
-		config : {
-			'requirement-page' : {
-				basic : {
-					'edited-entity-type' : 'requirement',
-					identity : { resid : ${requirement.id}, restype : "requirements"  },
-					requirementId : ${requirement.id},
-					currentVersionId : ${requirement.currentVersion.id},
-					criticalities : ${json:serialize(criticalityList)},
-					categories : ${json:serialize(categoryList)},
-					verifyingTestcases : ${json:serialize(verifyingTestCasesModel.aaData)},
-					attachments : ${json:serialize(attachmentsModel.aaData)},
-					audittrail : ${json:serialize(auditTrailModel.aaData)},
-					hasCufs : ${hasCUF}
-				},
-				permissions : {
-					moreThanReadOnly : ${moreThanReadOnly},
-					attachable : ${attachable},
-					writable : ${writable},
-					deletable : ${deletable},
-					creatable : ${creatable},
-					linkable : ${linkable},
-					status_editable : ${status_editable}
-				},
-				urls : {
-					baseURL : "${requirementUrl}",
-					attachmentsURL : "${attachmentsUrl}"
-				}
-			}
-		}
+	    config : {
+	        'requirement-version-page' : {
+	          basic : {	            
+	            identity : { resid : ${requirementVersion.requirement.id}, restype : "requirements"  },
+	            requirementId : ${requirementVersion.requirement.id},
+	            currentVersionId : ${requirementVersion.id},
+	            criticalities : ${json:serialize(criticalityList)},
+	            categories : ${json:serialize(categoryList)},
+	            verifyingTestcases : ${json:serialize(verifyingTestCasesModel.aaData)},
+	            attachments : ${json:serialize(attachmentsModel.aaData)},
+	            audittrail : ${json:serialize(auditTrailModel.aaData)},
+	            hasCufs : ${hasCUF}
+	          },
+	          permissions : {
+	            moreThanReadOnly : ${moreThanReadOnly},
+	            attachable : ${attachable},
+	            writable : ${writable},
+	            deletable : ${deletable},
+	            creatable : ${creatable},
+	            linkable : ${linkable},
+	            status_editable : ${status_editable}
+	          },
+	          urls : {
+	            baseURL : "${requirementVersionUrl}",
+	            attachmentsURL : "${attachmentsUrl}"
+	          }
+	        }
+	      }
 	});
 	
 	require(['common'], function(){
-		require(['requirement-page'], function(){});
+		require(['requirement-version-page'], function(){});
 	});
 
 </script>
@@ -129,14 +130,14 @@ that page won't be editable if
   
 		<h2>
 		
-			<c:set var="completeRequirementName" value="${ requirement.name }" />
-			<c:if test="${not empty requirement.reference && fn:length(requirement.reference) > 0}" >
-				<c:set var="completeRequirementName" value='${ requirement.reference } - ${ requirement.name }' />
+			<c:set var="completeRequirementName" value="${ requirementVersion.name }" />
+			<c:if test="${not empty requirementVersion.reference && fn:length(requirementVersion.reference) > 0}" >
+				<c:set var="completeRequirementName" value='${ requirementVersion.reference } - ${ requirementVersion.name }' />
 			</c:if>
-			<a id="requirement-name" href="${ requirementUrl }/info"><c:out value="${ completeRequirementName }" escapeXml="true"/></a>
+			<a id="requirement-name" href="${ requirementVersionUrl }/info"><c:out value="${ completeRequirementName }" escapeXml="true"/></a>
 			<%-- raw reference and name because we need to get the name and only the name for modification, and then re-compose the title with the reference  --%>
-			<span id="requirement-raw-reference" style="display:none"><c:out value="${ requirement.reference }" escapeXml="true"/></span>
-			<span id="requirement-raw-name" style="display:none"><c:out value="${ requirement.name }" escapeXml="true"/></span>
+			<span id="requirement-raw-reference" style="display:none"><c:out value="${ requirementVersion.reference }" escapeXml="true"/></span>
+			<span id="requirement-raw-name" style="display:none"><c:out value="${ requirementVersion.name }" escapeXml="true"/></span>
 		</h2>
 	</div>
 	<div class="unsnap"></div>		
@@ -145,8 +146,7 @@ that page won't be editable if
 <%-- ----------------------------------- AUDIT & TOOLBAR  ----------------------------------------------%>	
 <div id="requirement-toolbar" class="toolbar-class ui-corner-all" >
 	<div  class="toolbar-information-panel">
-	<c:url var="currentVersionUrl" value="/requirement-versions/${requirement.currentVersion.id}" />
-		<comp:general-information-panel auditableEntity="${ requirement.currentVersion }" entityUrl="${ currentVersionUrl }" />
+		<comp:general-information-panel auditableEntity="${ requirementVersion }" entityUrl="${ currentVersionUrl }" />
 	</div>
 
 	<div class="toolbar-button-panel">
@@ -177,36 +177,36 @@ publish('reload.requirement.toolbar');
 	<ul class="tab-menu">
 		<li><a href="#tabs-1"><f:message key="tabs.label.information" /></a></li>
 		<li><a href="#tabs-2"><f:message key="label.Attachments" />
-		<c:if test="${ requirement.attachmentList.notEmpty }"><span class="hasAttach">!</span></c:if>
+		<c:if test="${ requirementVersion.attachmentList.notEmpty }"><span class="hasAttach">!</span></c:if>
 		</a></li>
 	</ul>
 	<%-- ----------------------------------- INFO TAB  ----------------------------------------------%>	
 	<div id="tabs-1">
 	
 	<c:if test="${writable }">
-        <c:set var="descrRicheditAttributes" value="class='editable rich-editable' data-def='url=${requirementUrl}'"/>
+        <c:set var="descrRicheditAttributes" value="class='editable rich-editable' data-def='url=${requirementVersionUrl}'"/>
 	</c:if>
 <%--------------------------- General Informations section ------------------------------------%>
 
 	<f:message var="labelRequirementInfoPanel" key="requirement.panel.general-informations.title"  />
-	<comp:toggle-panel id="requirement-information-panel" title='${labelRequirementInfoPanel} <span class="small txt-discreet">[ID = ${ requirement.id }]</span>' open="true" >
+	<comp:toggle-panel id="requirement-information-panel" title='${labelRequirementInfoPanel} <span class="small txt-discreet">[ID = ${ requirementVersion.requirement.id }]</span>' open="true" >
 		<jsp:attribute name="body">
 			<div id="edit-requirement-table" class="display-table">
 				<div class="display-table-row">
 					<label for="requirement-version-number"><f:message key="requirement-version.version-number.label" /></label>
-					<div class="display-table-cell" id="requirement-version-number">${ requirement.currentVersion.versionNumber }&nbsp;&nbsp;<a href="<c:url value='/requirements/${ requirement.id }/versions/manager' />"><f:message key="requirement.button.manage-versions.label" /></a></div>
+					<div class="display-table-cell" id="requirement-version-number">${ requirementVersion.versionNumber }&nbsp;&nbsp;<a href="<c:url value='/requirements/${ requirementVersion.requirement.id }/versions/manager' />"><f:message key="requirement.button.manage-versions.label" /></a></div>
 				</div>
 			
 				
 				<div class="display-table-row">
 					<label class="display-table-cell"  for="requirement-reference"><f:message key="label.Reference" /></label>
-					<div id="requirement-reference">${ requirement.reference }</div>
+					<div id="requirement-reference">${ requirementVersion.reference }</div>
 				</div>
 				
 				<div class="display-table-row">
 					<label for="requirement-status" class="display-table-cell"><f:message key="requirement.status.combo.label" /></label>
 					<div class="display-table-cell">
-						<div id="requirement-status"><comp:level-message level="${ requirement.status }"/></div>
+						<div id="requirement-status"><comp:level-message level="${ requirementVersion.status }"/></div>
 					</div>
 				</div>				
 			</div>
@@ -226,14 +226,14 @@ publish('reload.requirement.toolbar');
                   <div class="display-table-row">
 			     <label for="requirement-criticality" class="display-table-cell"><f:message key="requirement.criticality.combo.label" /></label>
 			  	<div class="display-table-cell">
-				  <div id="requirement-criticality"><comp:level-message level="${ requirement.criticality }"/></div>
+				  <div id="requirement-criticality"><comp:level-message level="${ requirementVersion.criticality }"/></div>
 			    </div>
 		      </div>
 				<div class="display-table-row">
 					<label for="requirement-category" class="display-table-cell"><f:message key="requirement.category.combo.label" /></label>
 					<div class="display-table-cell">
-					    <span id="requirement-icon" class="small-icon info-list-icon-${requirement.category.iconName}"></span>	
-						<span id="requirement-category"><s:message code="${ requirement.category.label }" text="${ requirement.category.label }" htmlEscape="true" /></span>
+					    <span id="requirement-icon" class="small-icon info-list-icon-${requirementVersion.category.iconName}"></span>	
+						<span id="requirement-category"><s:message code="${ requirementVersion.category.label }" text="${ requirementVersion.category.label }" htmlEscape="true" /></span>
 					</div>				
 				</div>
 			
@@ -248,7 +248,7 @@ publish('reload.requirement.toolbar');
 	<%--------------------------- Description section------------------------------------%>
 	<comp:toggle-panel id="requirement-description-panel" titleKey="label.Description" open="true" >
 		<jsp:attribute name="body">	
-					<div id="requirement-description" ${descrRicheditAttributes}>${ requirement.description }</div>
+					<div id="requirement-description" ${descrRicheditAttributes}>${ requirementVersion.description }</div>
 		</jsp:attribute>
 	</comp:toggle-panel>
 
@@ -271,7 +271,7 @@ publish('reload.requirement.toolbar');
 
 		<jsp:attribute name="body">
 			<reqs:verifying-test-cases-table 
-			batchRemoveButtonId="remove-verifying-test-case-button" requirementVersion="${requirement.currentVersion}" 
+			batchRemoveButtonId="remove-verifying-test-case-button" requirementVersion="${requirementVersion}" 
 				editable="${ linkable }" model="${verifyingTestCasesModel}" autoJsInit="${false}"/>
 		</jsp:attribute>
 	</comp:toggle-panel>
@@ -280,14 +280,14 @@ publish('reload.requirement.toolbar');
   publish('reload.requirement.verifyingtestcases');
   </script>
 	
-	<reqs:requirement-version-audit-trail requirementVersion="${ requirement.currentVersion }" tableModel="${auditTrailModel}"/>
+	<reqs:requirement-version-audit-trail requirementVersion="${ requirementVersion }" tableModel="${auditTrailModel}"/>
 <script type="text/javascript">
 publish('reload.requirement.audittrail');
 </script>
 </div>
 <%-- ----------------------------------- /INFO TAB  ----------------------------------------------%>	
 <%-- ----------------------------------- ATTACHMENT TAB  ----------------------------------------------%>
-<at:attachment-tab tabId="tabs-2" entity="${ requirement }" editable="${ attachable }" tableModel="${attachmentsModel}" autoJsInit="${false}"/>
+<at:attachment-tab tabId="tabs-2" entity="${ requirementVersion }" editable="${ attachable }" tableModel="${attachmentsModel}" autoJsInit="${false}"/>
 <script type="text/javascript">
 publish('reload.requirement.attachments');
 </script>

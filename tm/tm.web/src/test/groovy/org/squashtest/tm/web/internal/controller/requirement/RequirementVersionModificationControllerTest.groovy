@@ -28,6 +28,7 @@ import org.springframework.ui.ExtendedModelMap
 import org.springframework.ui.Model
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder
 import org.squashtest.tm.domain.infolist.ListItemReference;
+import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.requirement.Requirement
 import org.squashtest.tm.domain.requirement.RequirementCategory
 import org.squashtest.tm.domain.requirement.RequirementCriticality
@@ -35,7 +36,8 @@ import org.squashtest.tm.domain.requirement.RequirementStatus
 import org.squashtest.tm.domain.requirement.RequirementVersion
 import org.squashtest.tm.service.audit.RequirementAuditTrailService
 import org.squashtest.tm.service.customfield.CustomFieldValueFinderService
-import org.squashtest.tm.service.requirement.RequirementModificationService
+import org.squashtest.tm.service.requirement.RequirementVersionManagerService;
+import org.squashtest.tm.service.requirement.RequirementVersionResolverService
 import org.squashtest.tm.service.testcase.VerifyingTestCaseManagerService
 import org.squashtest.tm.web.internal.controller.generic.ServiceAwareAttachmentTableModelHelper
 import org.squashtest.tm.web.internal.helper.InternationalizableLabelFormatter
@@ -49,9 +51,9 @@ import org.squashtest.tm.web.testutils.MockFactory;
 import spock.lang.Specification
 
 
-class RequirementModificationControllerTest extends Specification {
-	RequirementModificationController controller = new RequirementModificationController()
-	RequirementModificationService requirementModificationService= Mock()
+class RequirementVersionModificationControllerTest extends Specification {
+	RequirementVersionModificationController controller = new RequirementVersionModificationController()
+	RequirementVersionManagerService requirementVersionModificationService= Mock()
 	InternationalizationHelper i18nHelper = Mock()
 	LabelFormatter formatter = new LevelLabelFormatter(i18nHelper)
 
@@ -67,7 +69,7 @@ class RequirementModificationControllerTest extends Specification {
 	MockFactory mockFactory = new MockFactory()
 
 	def setup() {
-		controller.requirementModService = requirementModificationService
+		controller.requirementVersionManager = requirementVersionModificationService
 		controller.criticalityComboBuilderProvider = criticalityBuilderProvider
 		controller.statusComboDataBuilderProvider = statusBuilderProvider
 		controller.levelFormatterProvider = levelFormatterProvider
@@ -123,59 +125,24 @@ class RequirementModificationControllerTest extends Specification {
 
 	def "should return requirement page fragment"() {
 		given:
-		Requirement req = mockRequirementAmongOtherThings()
+		RequirementVersion req = mockRequirementAmongOtherThings()
 		req.getCriticality() >> RequirementCriticality.UNDEFINED
 		req.getStatus() >> RequirementStatus.WORK_IN_PROGRESS
 		req.getCategory() >> new ListItemReference("CAT_UNDEFINED")
 		long reqId=15
-		requirementModificationService.findById(15) >> req
+		requirementVersionModificationService.findById(15) >> req
 		Model model = Mock()
 		attachmentsHelper.findPagedAttachments(_) >> Mock(DataTableModel)
 
 		when:
-		String res = controller.showRequirement(model, reqId, null)
+		String res = controller.showRequirementVersion(reqId, model, null)
 
 		then:
-		res == "fragment/requirements/requirement"
-		1 * model.addAttribute('requirement', req)
+		res == "fragment/requirements/requirement-version"
+		1 * model.addAttribute('requirementVersion', req)
 	}
 
-	def "should ask to create new version"() {
-		when:
-		controller.createNewVersion(10L)
 
-		then:
-		requirementModificationService.createNewVersion(10L)
-	}
-
-	def "should return versions manager view"() {
-		given:
-		Requirement req = mockRequirementAmongOtherThings()
-		requirementModificationService.findById(0) >> req
-
-		when:
-		String viewName = controller.showRequirementVersionsManager(0, Mock(Model), Locale.JAPANESE)
-
-		then:
-		viewName == "page/requirement-workspace/versions-manager"
-	}
-
-	def "should populate versions manager model"() {
-		given:
-		Requirement req = mockRequirementAmongOtherThings()
-		requirementModificationService.findById(0) >> req
-
-		when:
-		Model model = new ExtendedModelMap()
-		String viewName = controller.showRequirementVersionsManager(0, model, Locale.JAPANESE)
-
-		then:
-		model.asMap()["requirement"] != null
-		model.asMap()["versions"] != null
-		model.asMap()["selectedVersion"] != null
-		model.asMap()["criticalityList"] != null
-		model.asMap()["categoryList"] != null
-	}
 
 	def mockRequirementAmongOtherThings(){
 
@@ -184,15 +151,18 @@ class RequirementModificationControllerTest extends Specification {
 		r.getCurrentVersion() >> v
 		v.getId() >> 0
 		r.getUnmodifiableVersions() >> [v]
+		v.getRequirement() >> r
 
 		PagedCollectionHolder<?> ch = Mock()
 		ch.getFirstItemIndex() >> 0
 		ch.getPagedItems() >> []
 
-		r.getProject() >> mockFactory.mockProject()
+		Project p = mockFactory.mockProject()
+		r.getProject() >> p
+		v.getProject() >> p
 
 		verifTCService.findAllByRequirementVersion(_,_)>> ch
 
-		return r
+		return v
 	}
 }

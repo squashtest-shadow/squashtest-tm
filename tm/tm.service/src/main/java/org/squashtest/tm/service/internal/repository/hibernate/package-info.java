@@ -434,6 +434,9 @@
 	@NamedQuery(name = "RequirementVersion.countVerifiedByTestCase", query = "select count(r) from TestCase tc join tc.requirementVersionCoverages rvc join rvc.verifiedRequirementVersion r where tc.id = ?1"),
 	@NamedQuery(name = "requirementVersion.findDistinctRequirementsCriticalitiesVerifiedByTestCases", query = "select distinct r.criticality from TestCase tc join tc.requirementVersionCoverages rvc join rvc.verifiedRequirementVersion r where tc.id in (:testCasesIds) "),
 	@NamedQuery(name = "requirementVersion.findDistinctRequirementsCriticalities", query = "select distinct r.criticality from RequirementVersion as r  where r.id in (:requirementsIds) "),
+	@NamedQuery(name = "requirementVersion.findLatestRequirementVersion", query = "select version from Requirement req join req.resource version where req.id = :requirementId"),
+	@NamedQuery(name = "requirementVersion.findVersionByRequirementAndMilestone", query = "select version from Requirement req join req.versions version join version.milestones milestone where req.id = :requirementId and milestone.id = :milestoneId"),
+	
 	@NamedQuery(name = "RequirementVersion.countByRequirement", query = "select count(rv) from RequirementVersion rv join rv.requirement r where r.id = ?1"),
 	@NamedQuery(name = "requirementDeletionDao.findVersionIds", query = "select rv.id from RequirementVersion rv join rv.requirement r where r.id in (:reqIds)"),
 	

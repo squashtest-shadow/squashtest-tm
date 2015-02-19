@@ -28,43 +28,43 @@ import org.squashtest.tm.domain.requirement.Requirement
 import org.squashtest.tm.domain.requirement.RequirementVersion
 import org.squashtest.tm.service.advancedsearch.IndexationService
 import org.squashtest.tm.service.internal.customfield.PrivateCustomFieldValueService
-import org.squashtest.tm.service.internal.repository.RequirementDao
-import org.squashtest.tm.service.internal.requirement.CustomRequirementModificationServiceImpl
+import org.squashtest.tm.service.internal.repository.RequirementVersionDao
+import org.squashtest.tm.service.internal.requirement.CustomRequirementVersionManagerServiceImpl
 
 import spock.lang.Specification
 
-class CustomRequirementModificationServiceImplTest extends Specification {
-	CustomRequirementModificationServiceImpl service = new CustomRequirementModificationServiceImpl()
-	RequirementDao requirementDao = Mock()
+class CustomRequirementVersionManagerServiceImplTest extends Specification {
+	CustomRequirementVersionManagerServiceImpl service = new CustomRequirementVersionManagerServiceImpl()
+	RequirementVersionDao requirementVersionDao = Mock()
 	SessionFactory sessionFactory = Mock()
 	Session currentSession = Mock()
 	PrivateCustomFieldValueService customFieldService = Mock()
 	IndexationService indexationService = Mock()
-		
+
 	def setup() {
-		service.requirementDao = requirementDao
+		service.requirementVersionDao = requirementVersionDao
 		service.sessionFactory = sessionFactory
 		service.indexationService = indexationService;
-		
+
 		sessionFactory.currentSession >> currentSession
 		service.customFieldValueService = customFieldService
 	}
-	
+
 	def "should increase the version of the requirement and persist it"() {
 		given:
 		Requirement req = Mock()
-		requirementDao.findById(10L) >> req
-		
+		requirementVersionDao.findRequirementById(10L) >> req
+
 		and:
 		RequirementVersion newVersion = Mock()
 		req.currentVersion >> newVersion
-		
+
 		when:
 		service.createNewVersion(10L)
-		
+
 		then:
 		1 * currentSession.persist(newVersion)
-		
+
 	}
-	
+
 }

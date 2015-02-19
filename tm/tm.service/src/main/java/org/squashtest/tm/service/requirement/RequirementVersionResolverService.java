@@ -20,37 +20,21 @@
  */
 package org.squashtest.tm.service.requirement;
 
-import javax.validation.constraints.NotNull;
+import org.springframework.transaction.annotation.Transactional;
+import org.squashtest.tm.domain.requirement.RequirementVersion;
 
-import org.squashtest.tm.domain.requirement.RequirementCriticality;
-
-/**
- * Requirement modification services which cannot be dynamically generated.
- *
- * @author Gregory Fouquet
- * 
- */
-public interface CustomRequirementModificationService {
-
-	void rename(long reqId, @NotNull String newName);
+@Transactional
+public interface RequirementVersionResolverService {
 
 	/**
-	 * Increase the current version of the given requirement.
+	 * Returns the version of a requirement which is bound to a given milestone.
+	 * If milestoneId is null, the latest version will be returned
 	 * 
-	 * @param requirementId
+	 * @param reqId
+	 * @param milestoneId
+	 * @return
 	 */
-	void createNewVersion(long requirementId);
-	/**
-	 * will change the requirement criticality and update the importance of any associated TestCase with importanceAuto == true.<br>
-	 * (even through call steps)
-	 *
-	 * @param requirementId
-	 * @param criticality
-	 */
-	void changeCriticality(long requirementId, @NotNull RequirementCriticality criticality);
+	RequirementVersion resolveByRequirementId(long requirementId, Long milestoneId);
 
-
-
-	void changeCategory(long requirementId, String categoryCode);
 
 }

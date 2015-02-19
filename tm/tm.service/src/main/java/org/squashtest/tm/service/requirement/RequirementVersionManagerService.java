@@ -38,6 +38,7 @@ import org.squashtest.tm.domain.requirement.RequirementVersion;
 @Transactional
 @DynamicManager(name = "squashtest.tm.service.RequirementVersionManagerService", entity = RequirementVersion.class)
 public interface RequirementVersionManagerService extends CustomRequirementVersionManagerService {
+
 	@Transactional(readOnly = true)
 	@PostAuthorize("hasPermission(returnObject,'READ') or hasRole('ROLE_ADMIN')")
 	RequirementVersion findById(long requirementVersionId);
@@ -50,9 +51,6 @@ public interface RequirementVersionManagerService extends CustomRequirementVersi
 
 	@PreAuthorize("hasPermission(#arg0, 'org.squashtest.tm.domain.requirement.RequirementVersion', 'WRITE') or hasRole('ROLE_ADMIN')")
 	void changeStatus(long requirementVersionId, @NotNull RequirementStatus status);
-
-	@PreAuthorize("hasPermission(#arg0, 'org.squashtest.tm.domain.requirement.RequirementVersion', 'WRITE') or hasRole('ROLE_ADMIN')")
-	void changeName(long requirementVersionId, String newName);
 
 
 }

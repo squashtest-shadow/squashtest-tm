@@ -137,7 +137,7 @@ class RequirementFolderMappingIT extends HibernateMappingSpecification {
 
 		//refetch the collection
 		def contentNames = doInTransaction {
-			it.enableFilter("filter.entity.deleted")
+
 			obj = it.get(RequirementFolder, refolder.id)
 			obj.content.collect { it.name }
 		}

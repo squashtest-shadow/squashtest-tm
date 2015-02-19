@@ -18,36 +18,29 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.internal.repository;
+package org.squashtest.tm.service.internal.requirement;
 
-import java.util.Collection;
-import java.util.List;
+import javax.inject.Inject;
 
-import org.squashtest.tm.core.dynamicmanager.annotation.DynamicDao;
-import org.squashtest.tm.domain.requirement.Requirement;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
-
-/**
- *
- * @author Gregory Fouquet
- *
- */
-@DynamicDao(entity=RequirementVersion.class)
-public interface RequirementVersionDao extends CustomRequirementVersionDao {
-
-	List<RequirementVersion> findAllByIds(Collection<Long> ids);
-
-	RequirementVersion findById(long requirementId);
-
-	long countVerifiedByTestCase(long testCaseId);
-
-	List<RequirementVersion> findAllByRequirement(Requirement node);
+import org.squashtest.tm.service.internal.repository.RequirementVersionDao;
+import org.squashtest.tm.service.requirement.RequirementVersionResolverService;
 
 
-	/**
-	 * @param requirementId
-	 * @return the versions count for the given requirement.
-	 */
-	long countByRequirement(long requirementId);
+@Service("squashtest.tm.service.RequirementVersionResolverService")
+public class RequirementVersionResolverServiceImpl implements RequirementVersionResolverService{
+
+	@Inject
+	private RequirementVersionDao versionDao;
+
+	@Override
+	@Transactional(readOnly = true)
+	@PreAuthorize("hasPermission(#requirementId, 'org.squashtest.tm.domain.requirement.Requirement', 'READ') or hasRole('ROLE_ADMIN')")
+	public RequirementVersion resolveByRequirementId(long requirementId, Long milestoneId) {
+		return versionDao.findByRequirementIdAndMilestone(requirementId, milestoneId);
+	}
 
 }

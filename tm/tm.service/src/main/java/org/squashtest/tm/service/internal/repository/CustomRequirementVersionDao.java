@@ -23,11 +23,28 @@ package org.squashtest.tm.service.internal.repository;
 import java.util.List;
 
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
+import org.squashtest.tm.domain.requirement.Requirement;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 
 public interface CustomRequirementVersionDao {
-	
 
+	/**
+	 * Returns a requirement by its ID. Note that we mean Requirement, and not RequirementVersion
+	 * 
+	 * @param requirementId
+	 * @return
+	 */
+	Requirement findRequirementById(long requirementId);
+
+	/**
+	 * Find which version of a requirement that is bound to a given milestone. if MilestoneId is null
+	 * the latest version will be returned
+	 * 
+	 * @param requirementId
+	 * @param milestoneId
+	 * @return
+	 */
+	RequirementVersion findByRequirementIdAndMilestone(long requirementId, Long milestoneId);
 
 	/**
 	 * @param requirementId

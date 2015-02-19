@@ -29,6 +29,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.milestone.Milestone;
+import org.squashtest.tm.domain.requirement.Requirement;
 import org.squashtest.tm.domain.requirement.RequirementCriticality;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 
@@ -39,6 +40,20 @@ import org.squashtest.tm.domain.requirement.RequirementVersion;
  *
  */
 public interface CustomRequirementVersionManagerService {
+
+
+	Requirement findRequirementById(long requirementId);
+
+	/**
+	 * Increase the current version of the given requirement. Note that the argument is a requirement Id, not the id of a given version
+	 * 
+	 * @param requirementId
+	 */
+	void createNewVersion(long requirementId);
+
+
+	void rename(long requirementVersionId, String newName);
+
 	/**
 	 * will change the requirement criticality and update the importance of any associated TestCase with importanceAuto
 	 * == true.<br>

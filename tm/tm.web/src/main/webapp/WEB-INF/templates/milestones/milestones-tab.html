@@ -44,13 +44,13 @@
   <div class="table-tab-wrap">
 
     <table class="milestone-panel-table">
-      <thead>
+      <thead th:with="unbindClause=${(conf.editable) ? ', unbind-button=.unbind-milestone-dialog' : ''}">
         <th data-def="select, sWidth=2.5em, map=entity-index">#</th>
         <th data-def="map=label, sortable" th:text="#{label.Label}">label</th>
         <th data-def="map=status, sortable" th:text="#{label.Status}">status</th>
         <th data-def="map=date, sortable" th:text="#{label.EndDate}">end date</th>
         <th data-def="map=description, sortable" th:text="#{label.Description}">description</th>
-        <th data-def="map=empty-delete-holder, unbind-button=.unbind-milestone-dialog"></th>
+        <th th:attr="data-def='map=empty-delete-holder'+${unbindClause}" ></th>
       </thead>
       <tbody>
           <!-- initialized via javascript -->
@@ -61,7 +61,6 @@
   </div>
 
   <div class="bind-milestone-dialog popup-dialog not-displayed" th:title="#{title.bindMilestones}">
-
     <div>
       <table class="bind-milestone-dialog-table" data-def="filter">
         <thead>

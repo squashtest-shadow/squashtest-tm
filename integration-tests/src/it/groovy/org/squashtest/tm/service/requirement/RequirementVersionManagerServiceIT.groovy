@@ -23,41 +23,38 @@ package org.squashtest.tm.service.requirement
 import javax.inject.Inject
 
 import org.springframework.transaction.annotation.Transactional
-import org.squashtest.tm.domain.infolist.ListItemReference;
-import org.squashtest.tm.domain.requirement.RequirementCategory
+import org.squashtest.tm.domain.infolist.ListItemReference
 import org.squashtest.tm.domain.requirement.RequirementCriticality
 import org.squashtest.tm.exception.DuplicateNameException
-import org.squashtest.tm.service.DbunitServiceSpecification;
-import org.squashtest.tm.service.requirement.RequirementModificationService
+import org.squashtest.tm.service.DbunitServiceSpecification
 import org.unitils.dbunit.annotation.DataSet
 
 import spock.unitils.UnitilsSupport
 
 @UnitilsSupport
 @Transactional
-class RequirementModificationServiceIT extends DbunitServiceSpecification {
+class RequirementVersionManagerServiceIT extends DbunitServiceSpecification {
 
 	@Inject
-	RequirementModificationService modService;
+	RequirementVersionManagerService modService;
 
 	long requirementId = -10
 
-	@DataSet("RequirementModificationServiceIT.should successfully rename a requirement.xml")
+	@DataSet("RequirementVersionManagerServiceIT.should successfully rename a requirement.xml")
 	def "should successfully rename a requirement"(){
+
 		when :
 		modService.rename(requirementId, "new req");
 		def rereq = modService.findById(requirementId);
-
 
 		then :
 		rereq != null
 		rereq.id != null
 		rereq.name == "new req"
 
-
 	}
 
-	@DataSet("RequirementModificationServiceIT.should change requirement criticality.xml")
+	@DataSet("RequirementVersionManagerServiceIT.should change requirement criticality.xml")
 	def "should change requirement criticality"(){
 		when:
 		modService.changeCriticality (requirementId, RequirementCriticality.CRITICAL)
@@ -67,7 +64,7 @@ class RequirementModificationServiceIT extends DbunitServiceSpecification {
 		requirement.criticality == RequirementCriticality.CRITICAL
 	}
 
-	@DataSet("RequirementModificationServiceIT.should change requirement category.xml")
+	@DataSet("RequirementVersionManagerServiceIT.should change requirement category.xml")
 	def "should change requirement category"(){
 		when:
 		modService.changeCategory(requirementId, "CAT_BUSINESS")
@@ -77,7 +74,7 @@ class RequirementModificationServiceIT extends DbunitServiceSpecification {
 		new ListItemReference("CAT_BUSINESS").references(requirement.category)
 	}
 
-	@DataSet("RequirementModificationServiceIT.should change requirement reference.xml")
+	@DataSet("RequirementVersionManagerServiceIT.should change requirement reference.xml")
 	def "should change requirement reference"(){
 		given:
 		def reference = "something"
@@ -90,8 +87,12 @@ class RequirementModificationServiceIT extends DbunitServiceSpecification {
 		requirement.reference == reference
 	}
 
-	// Execute this one last
-	@DataSet("RequirementModificationServiceIT.should fail to rename a requirement because duplicated name.xml")
+
+	/*
+	 * [Feat 3611] The test is broken for now because the business rule must be redesigned and reimplemented,
+	 * see comment in CustomRequirementVersionManagerService#rename(long, String)
+	 */
+	@DataSet("RequirementVersionManagerServiceIT.should fail to rename a requirement because duplicated name.xml")
 	def "should fail to rename a requirement because duplicated name"(){
 		when :
 		modService.rename(requirementId, "req 2")

@@ -65,7 +65,7 @@
 </authz:authorized>
 <authz:authorized hasRole="ROLE_ADMIN" hasPermission="WRITE" domainObject="${ requirementVersion }">
   <c:set var="writable" value="${ requirementVersion.modifiable }" />
-  <c:set var="editableStatus" value="${ requirementVersion.status.allowsStatusUpdate }" />
+  <c:set var="status_editable" value="${ requirementVersion.status.allowsStatusUpdate }" />
 </authz:authorized>
 <authz:authorized hasRole="ROLE_ADMIN" hasPermission="LINK" domainObject="${ requirementVersion }">
   <c:set var="linkable" value="${ requirementVersion.linkable }" />
@@ -77,10 +77,9 @@
 <script type="text/javascript">
   requirejs.config({
     config : {
-      'requirement-page' : {
+      'requirement-version-page' : {
         basic : {
-          'edited-entity-type' : 'requirement-version',
-          identity : { resid : ${requirementVersion.id}, restype : "requirements"  },
+          identity : { resid : ${requirementVersion.requirement.id}, restype : "requirements"  },
           requirementId : ${requirementVersion.requirement.id},
           currentVersionId : ${requirementVersion.id},
           criticalities : ${json:serialize(criticalityList)},
@@ -108,7 +107,7 @@
   });
   
   require(['common'], function(){
-    require(['requirement-page'], function(){});
+    require(['requirement-version-page'], function(){});
   });
 
 </script>
@@ -180,7 +179,7 @@ publish('reload.requirement.toolbar');
       <c:if test="${ writable }">
         <c:set var="descrRicheditAttributes" value="class='editable rich-editable' data-def='url=${requirementUrl}'"/>
       </c:if>
-<f:message var="requirementInformationPanelLabel" key="requirement.panel.general-informations.title" />
+      <f:message var="requirementInformationPanelLabel" key="requirement.panel.general-informations.title" />
 
 
       <comp:toggle-panel id="requirement-information-panel" title='${requirementInformationPanelLabel} <span class="small txt-discreet">[ID = ${requirementVersion.requirement.id }]</span>'
@@ -211,32 +210,31 @@ publish('reload.requirement.toolbar');
       
       	<%--------------------------- Attributs section ------------------------------------%>
 	
-	<comp:toggle-panel id="requirement"
-				titleKey="label.Attributes"
-				   open="true">
+    	<comp:toggle-panel id="requirement"
+    				titleKey="label.Attributes"
+    				   open="true">
 				   
-	<jsp:attribute name="body">
-	<div id="requirement-attribut-table"  class="display-table">
-				<div class="display-table-row">
-					<label for="requirement-criticality" class="display-table-cell"><f:message key="requirement.criticality.combo.label" /></label>
-					<div class="display-table-cell">
-						<div id="requirement-criticality"><comp:level-message level="${ requirementVersion.criticality }"/></div>
-					</div>
-				</div>
-				<div class="display-table-row">
-					<label for="requirement-category" class="display-table-cell"><f:message key="requirement.category.combo.label" /></label>
-					<div class="display-table-cell">
-						<span id="requirement-icon" class="small-icon info-list-icon-${requirementVersion.category.iconName}"></span>	
-						<span id="requirement-category">
-                            <s:message code="${requirementVersion.category.label}" text="${requirementVersion.category.label}" htmlEscape="true" />
-                        </span>
-					</div>				
-				</div>
-
-				</div>				
-			</div>
-		</jsp:attribute>
-	</comp:toggle-panel>
+        	<jsp:attribute name="body">
+        	       <div id="requirement-attribut-table"  class="display-table">
+        				<div class="display-table-row">
+        					<label for="requirement-criticality" class="display-table-cell"><f:message key="requirement.criticality.combo.label" /></label>
+        					<div class="display-table-cell">
+        						<div id="requirement-criticality"><comp:level-message level="${ requirementVersion.criticality }"/></div>
+        					</div>
+        				</div>
+        				<div class="display-table-row">
+        					<label for="requirement-category" class="display-table-cell"><f:message key="requirement.category.combo.label" /></label>
+        					<div class="display-table-cell">
+        						<span id="requirement-icon" class="small-icon info-list-icon-${requirementVersion.category.iconName}"></span>	
+        						<span id="requirement-category">
+                                    <s:message code="${requirementVersion.category.label}" text="${requirementVersion.category.label}" htmlEscape="true" />
+                                </span>
+        					</div>				
+        				</div>
+        
+        			</div>	
+        		</jsp:attribute>
+	     </comp:toggle-panel>
       
       
   <script type="text/javascript">

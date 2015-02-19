@@ -162,7 +162,7 @@
     </osgi:interfaces>
   </osgi:service>
 
-  <osgi:service ref="squashtest.tm.service.RequirementModificationService" interface="org.squashtest.tm.service.requirement.RequirementModificationService" />
+  <osgi:service ref="squashtest.tm.service.RequirementVersionResolverService" interface="org.squashtest.tm.service.requirement.RequirementVersionResolverService" />
 
   <osgi:service ref="squashtest.tm.service.RequirementLibraryNavigationService">
     <osgi:interfaces>

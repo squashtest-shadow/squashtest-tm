@@ -25,7 +25,6 @@ import org.squashtest.tm.domain.requirement.Requirement
 import org.squashtest.tm.domain.requirement.RequirementCriticality
 import org.squashtest.tm.domain.requirement.RequirementStatus
 import org.squashtest.tm.domain.requirement.RequirementVersion
-import org.squashtest.tm.service.requirement.RequirementModificationService;
 
 import spock.lang.Shared
 
@@ -35,7 +34,7 @@ import spock.lang.Shared
  */
 class RequirementModificationDynamicServiceTest extends DynamicManagerInterfaceSpecification {
 	@Shared Class entityType = Requirement
-	@Shared Class managerType = RequirementModificationService
+	@Shared Class managerType = RequirementVersionManagerService
 
 	@Shared List changeServiceCalls = [{
 			it.changeDescription(10L, "foo")

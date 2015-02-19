@@ -26,12 +26,8 @@ import org.spockframework.util.NotThreadSafe
 import org.squashtest.tm.domain.project.Project
 import org.squashtest.tm.domain.requirement.RequirementFolder
 import org.squashtest.tm.domain.testcase.TestCaseFolder
-import org.squashtest.tm.service.HibernateServiceSpecification;
+import org.squashtest.tm.service.HibernateServiceSpecification
 import org.squashtest.tm.service.project.ProjectManagerService
-import org.squashtest.tm.service.requirement.CustomRequirementModificationService
-import org.squashtest.tm.service.requirement.RequirementLibrariesCrudService
-import org.squashtest.tm.service.requirement.RequirementLibraryNavigationService
-import org.squashtest.tm.service.requirement.VerifiedRequirementsManagerService
 import org.squashtest.tm.service.testcase.TestCaseLibrariesCrudService
 import org.squashtest.tm.service.testcase.TestCaseLibraryNavigationService
 import org.squashtest.tm.service.testcase.TestCaseModificationService
@@ -49,8 +45,6 @@ class VerifiedRequirementModificationServiceIT extends HibernateServiceSpecifica
 	@Inject
 	private TestCaseLibrariesCrudService tcCrudService
 
-	@Inject
-	CustomRequirementModificationService reqModService;
 
 	@Inject
 	RequirementLibraryNavigationService reqNavService;
@@ -94,6 +88,6 @@ class VerifiedRequirementModificationServiceIT extends HibernateServiceSpecifica
 
 		reqFolderId = folder.id;
 	}
-	
+
 
 }

@@ -24,7 +24,9 @@ import java.util.Collection;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 
+import org.hibernate.SessionFactory;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,10 +37,16 @@ import org.squashtest.tm.core.foundation.collection.PagingBackedPagedCollectionH
 import org.squashtest.tm.core.foundation.collection.SortOrder;
 import org.squashtest.tm.domain.infolist.InfoListItem;
 import org.squashtest.tm.domain.milestone.Milestone;
+import org.squashtest.tm.domain.requirement.Requirement;
 import org.squashtest.tm.domain.requirement.RequirementCriticality;
+import org.squashtest.tm.domain.requirement.RequirementFolder;
+import org.squashtest.tm.domain.requirement.RequirementLibraryNode;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.exception.InconsistentInfoListItemException;
+import org.squashtest.tm.service.advancedsearch.IndexationService;
 import org.squashtest.tm.service.infolist.InfoListItemFinderService;
+import org.squashtest.tm.service.internal.customfield.PrivateCustomFieldValueService;
+import org.squashtest.tm.service.internal.library.NodeManagementService;
 import org.squashtest.tm.service.internal.repository.RequirementVersionDao;
 import org.squashtest.tm.service.milestone.MilestoneMembershipManager;
 import org.squashtest.tm.service.requirement.CustomRequirementVersionManagerService;
@@ -64,6 +72,35 @@ public class CustomRequirementVersionManagerServiceImpl implements CustomRequire
 	@Inject
 	private MilestoneMembershipManager milestoneManager;
 
+	@Inject
+	private IndexationService indexationService;
+
+	@Inject
+	private PrivateCustomFieldValueService customFieldValueService;
+
+
+	@Inject
+	private SessionFactory sessionFactory;
+
+	@Override
+	@PreAuthorize("hasPermission(#requirementId, 'org.squashtest.tm.domain.requirement.Requirement', 'READ') or hasRole('ROLE_ADMIN')")
+	public Requirement findRequirementById(long requirementId){
+		return requirementVersionDao.findRequirementById(requirementId);
+	}
+
+	@Override
+	@PreAuthorize("hasPermission(#requirementId, 'org.squashtest.tm.domain.requirement.Requirement', 'CREATE') or hasRole('ROLE_ADMIN')")
+	public void createNewVersion(long requirementId) {
+		Requirement req = requirementVersionDao.findRequirementById(requirementId);
+		RequirementVersion previousVersion = req.getCurrentVersion();
+
+		req.increaseVersion();
+		sessionFactory.getCurrentSession().persist(req.getCurrentVersion());
+		RequirementVersion newVersion = req.getCurrentVersion();
+		indexationService.reindexRequirementVersions(req.getRequirementVersions());
+		customFieldValueService.copyCustomFieldValues(previousVersion, newVersion);
+	}
+
 	/**
 	 * @see org.squashtest.tm.service.requirement.CustomRequirementVersionManagerService#changeCriticality(long,
 	 *      org.squashtest.tm.domain.requirement.RequirementCriticality)
@@ -75,6 +112,22 @@ public class CustomRequirementVersionManagerServiceImpl implements CustomRequire
 		RequirementCriticality oldCriticality = requirementVersion.getCriticality();
 		requirementVersion.setCriticality(criticality);
 		testCaseImportanceManagerService.changeImportanceIfRequirementCriticalityChanged(requirementVersionId, oldCriticality);
+	}
+
+	@Override
+	@PreAuthorize("hasPermission(#requirementVersionId, 'org.squashtest.tm.domain.requirement.RequirementVersion', 'WRITE') or hasRole('ROLE_ADMIN')")
+	public void rename(long requirementVersionId, String newName) {
+		RequirementVersion v = requirementVersionDao.findById(requirementVersionId);
+
+		/*
+		 *  FIXME : there is a loophole here. What exactly means DuplicateNameException for requirements, that can have multiple names (one for each
+		 *  version) ? What happens when the library is displayed in milestone mode and that two versions of different requirements happens to have the
+		 *  same name and same milestone (hint : they would be displayed both anyway).
+		 * 
+		 *    Because of this we are waiting for better specs on that matter, and the implementation here remains trivial in the mean time.
+		 */
+
+		v.setName(newName.trim());
 	}
 
 	/**

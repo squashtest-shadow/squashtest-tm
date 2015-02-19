@@ -25,11 +25,13 @@ import java.util.List;
 import javax.inject.Inject;
 
 import org.hibernate.Criteria;
+import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
+import org.squashtest.tm.domain.requirement.Requirement;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.service.internal.foundation.collection.PagingUtils;
 import org.squashtest.tm.service.internal.foundation.collection.SortingUtils;
@@ -65,6 +67,25 @@ public class HibernateRequirementVersionDao implements CustomRequirementVersionD
 		SortingUtils.addOrder(crit, pas);
 
 		return crit.list();
+	}
+
+	@Override
+	public Requirement findRequirementById(long requirementId) {
+		return (Requirement)currentSession().load(Requirement.class, requirementId);
+	}
+
+	@Override
+	public RequirementVersion findByRequirementIdAndMilestone(long requirementId, Long milestoneId) {
+		if (milestoneId== null){
+			Query q = currentSession().getNamedQuery("requirementVersion.findLatestRequirementVersion");
+			q.setParameter("requirementId", requirementId);
+			return (RequirementVersion)q.uniqueResult();
+		}
+		else{
+			Query q = currentSession().getNamedQuery("requirementVersion.findVersionByRequirementAndMilestone");
+			q.setParameter("requirementId", requirementId);
+			return (RequirementVersion)q.uniqueResult();
+		}
 	}
 
 }
