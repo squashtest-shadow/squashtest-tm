@@ -26,13 +26,16 @@ import javax.inject.Inject;
 
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
+import org.squashtest.tm.domain.campaign.Campaign;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.testcase.TestCase;
+import org.squashtest.tm.service.internal.repository.CampaignDao;
+import org.squashtest.tm.service.internal.repository.IterationDao;
 import org.squashtest.tm.service.internal.repository.MilestoneDao;
-import org.squashtest.tm.service.internal.repository.RequirementDao;
 import org.squashtest.tm.service.internal.repository.RequirementVersionDao;
 import org.squashtest.tm.service.internal.repository.TestCaseDao;
+import org.squashtest.tm.service.internal.repository.TestSuiteDao;
 import org.squashtest.tm.service.milestone.MilestoneMembershipManager;
 
 @Service
@@ -44,6 +47,15 @@ public class MilestoneMembershipManagerImpl implements MilestoneMembershipManage
 	private static final String READ_REQVERSION = "hasPermission(#versionId, 'org.squashtest.tm.domain.requirement.RequirementVersion' , 'READ')";
 	private static final String WRITE_REQVERSION = "hasPermission(#versionId, 'org.squashtest.tm.domain.requirement.RequirementVersion' , 'WRITE')";
 
+	private static final String READ_CAMPAIGN = "hasPermission(#campaignId, 'org.squashtest.tm.domain.campaign.Campaign' , 'READ')";
+	private static final String WRITE_CAMPAIGN = "hasPermission(#campaignId, 'org.squashtest.tm.domain.campaign.Campaign' , 'WRITE')";
+
+	private static final String READ_ITERATION = "hasPermission(#iterationId, 'org.squashtest.tm.domain.campaign.Iteration' , 'READ')";
+
+	private static final String READ_TESTSUITE = "hasPermission(#testSuiteId, 'org.squashtest.tm.domain.campaign.TestSuite' , 'READ')";
+
+
+
 	private static final String ROLE_ADMIN = " or hasRole('ROLE_ADMIN')";
 
 	@Inject
@@ -51,6 +63,15 @@ public class MilestoneMembershipManagerImpl implements MilestoneMembershipManage
 
 	@Inject
 	private RequirementVersionDao requirementVersionDao;
+
+	@Inject
+	private CampaignDao campaignDao;
+
+	@Inject
+	private IterationDao iterDao;
+
+	@Inject
+	private TestSuiteDao tsDao;
 
 	@Inject
 	private MilestoneDao milestoneDao;
@@ -89,17 +110,32 @@ public class MilestoneMembershipManagerImpl implements MilestoneMembershipManage
 
 	@Override
 	@PreAuthorize(WRITE_REQVERSION + ROLE_ADMIN)
-	public void unbindRequirementVersionToMilestones(long versionId, Collection<Long> milestoneIds) {
+	public void unbindRequirementVersionFromMilestones(long versionId, Collection<Long> milestoneIds) {
 		RequirementVersion version = requirementVersionDao.findById(versionId);
 		for (Long milestoneId : milestoneIds){
 			version.unbindMilestone(milestoneId);
 		}
 	}
 
-	@Override
-	public void bindCampaignToMilestones(long campaignId, Collection<Long> milestoneIds) {
-		// TODO Auto-generated method stub
 
+	@Override
+	@PreAuthorize(WRITE_CAMPAIGN + ROLE_ADMIN)
+	public void bindCampaignToMilestones(long campaignId, Collection<Long> milestoneIds) {
+		Campaign campaign = campaignDao.findById(campaignId);
+		Collection<Milestone> milestones = milestoneDao.findAllByIds(milestoneIds);
+
+		for (Milestone m : milestones) {
+			campaign.bindMilestone(m);
+		}
+	}
+
+	@Override
+	@PreAuthorize(WRITE_CAMPAIGN + ROLE_ADMIN)
+	public void unbindCampaignFromMilestones(long campaignId, Collection<Long> milestoneIds) {
+		Campaign campaign = campaignDao.findById(campaignId);
+		for (Long milestoneId : milestoneIds){
+			campaign.unbindMilestone(milestoneId);
+		}
 	}
 
 	@Override
@@ -125,4 +161,29 @@ public class MilestoneMembershipManagerImpl implements MilestoneMembershipManage
 	public Collection<Milestone> findMilestonesForRequirementVersion(long versionId) {
 		return milestoneDao.findMilestonesForRequirementVersion(versionId);
 	}
+
+	@Override
+	@PreAuthorize(READ_CAMPAIGN + ROLE_ADMIN)
+	public Collection<Milestone> findAssociableMilestonesToCampaign(long campaignId) {
+		return milestoneDao.findAssociableMilestonesForCampaign(campaignId);
+	}
+
+	@Override
+	@PreAuthorize(READ_CAMPAIGN + ROLE_ADMIN)
+	public Collection<Milestone> findMilestonesForCampaign(long campaignId) {
+		return milestoneDao.findMilestonesForCampaign(campaignId);
+	}
+
+	@Override
+	@PreAuthorize(READ_ITERATION + ROLE_ADMIN)
+	public Collection<Milestone> findMilestonesForIteration(long iterationId) {
+		return milestoneDao.findMilestonesForIteration(iterationId);
+	}
+
+	@Override
+	@PreAuthorize(READ_TESTSUITE + ROLE_ADMIN)
+	public Collection<Milestone> findMilestonesForTestSuite(long testSuiteId) {
+		return milestoneDao.findMilestonesForTestSuite(testSuiteId);
+	}
+
 }

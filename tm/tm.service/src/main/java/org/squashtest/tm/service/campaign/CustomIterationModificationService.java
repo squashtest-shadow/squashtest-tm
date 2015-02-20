@@ -114,6 +114,7 @@ public interface CustomIterationModificationService extends IterationFinder {
 	List<TestSuite> copyPasteTestSuitesToIteration(Long[] testSuiteIds, long iterationId);
 
 
-
 	IterationStatisticsBundle gatherIterationStatisticsBundle(long iterationId);
+
+
 }

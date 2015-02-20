@@ -27,10 +27,6 @@ import org.squashtest.tm.domain.milestone.Milestone;
 
 public interface MilestoneMembershipFinder {
 
-
-	Collection<Milestone> findAssociableMilestonesToTestCase(long testCaseId);
-
-
 	/**
 	 * Returns the milestones of which the test case is directly a member,
 	 * plus all the milestones of which its verified requirement are members.
@@ -40,8 +36,12 @@ public interface MilestoneMembershipFinder {
 	 */
 	Collection<Milestone> findAllMilestonesForTestCase(long testCaseId);
 
-
-	Collection<Milestone> findAssociableMilestonesToRequirementVersion(long versionId);
-
 	Collection<Milestone> findMilestonesForRequirementVersion(long versionId);
+
+	Collection<Milestone> findMilestonesForCampaign(long campaignId);
+
+	Collection<Milestone> findMilestonesForIteration(long iterationId);
+
+	Collection<Milestone> findMilestonesForTestSuite(long testSuiteId);
+
 }

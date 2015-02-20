@@ -22,6 +22,8 @@ package org.squashtest.tm.web.internal.controller.campaign;
 
 import static org.squashtest.tm.web.internal.helper.JEditablePostParams.VALUE;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -45,10 +47,13 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
+import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
+import org.squashtest.tm.core.foundation.collection.SinglePageCollectionHolder;
 import org.squashtest.tm.domain.audit.AuditableMixin;
 import org.squashtest.tm.domain.campaign.TestPlanStatistics;
 import org.squashtest.tm.domain.campaign.TestSuite;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
+import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.service.campaign.IterationTestPlanFinder;
@@ -56,6 +61,8 @@ import org.squashtest.tm.service.campaign.TestSuiteModificationService;
 import org.squashtest.tm.service.customfield.CustomFieldValueFinderService;
 import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.controller.generic.ServiceAwareAttachmentTableModelHelper;
+import org.squashtest.tm.web.internal.controller.milestone.MilestonePanelConfiguration;
+import org.squashtest.tm.web.internal.controller.milestone.MilestoneTableModelHelper;
 import org.squashtest.tm.web.internal.controller.testcase.TestCaseImportanceJeditableComboDataBuilder;
 import org.squashtest.tm.web.internal.controller.testcase.TestCaseModeJeditableComboDataBuilder;
 import org.squashtest.tm.web.internal.controller.testcase.executions.ExecutionStatusJeditableComboDataBuilder;
@@ -251,7 +258,53 @@ public class TestSuiteModificationController {
 		return result;
 	}
 
+	/* **************************************************************************************************
+	 * 
+	 * 	Milestones
+	 * 
+	 ************************************************************************************************* */
 
+	@RequestMapping(value = "/milestones/panel", method=RequestMethod.GET)
+	public String getMilestonesPanel(@PathVariable("suiteId") Long suiteId, Model model){
+
+		MilestonePanelConfiguration conf = new MilestonePanelConfiguration();
+
+		// build the needed data
+		Collection<Milestone> allMilestones = service.findAllMilestones(suiteId);
+		List<?> currentModel = buildMilestoneModel(suiteId, new ArrayList<>(allMilestones),  "0").getAaData();
+
+		Map<String, String> identity = new HashMap<>();
+		identity.put("restype", "test-suites");
+		identity.put("resid", suiteId.toString());
+
+		String rootPath = "/iterations/"+suiteId.toString();
+
+		Boolean editable = Boolean.FALSE;	// fix that later
+
+		// add them to the model
+		conf.setNodeType("test-suite");
+		conf.setRootPath(rootPath);
+		conf.setIdentity(identity);
+		conf.setCurrentModel(currentModel);
+		conf.setEditable(editable);
+
+		model.addAttribute("conf", conf);
+
+		return "milestones/milestones-tab.html";
+
+	}
+
+
+	private DataTableModel buildMilestoneModel(long campaignId, List<Milestone> milestones, String sEcho){
+
+
+		PagedCollectionHolder<List<Milestone>> collectionHolder =
+				new SinglePageCollectionHolder<List<Milestone>>(milestones);
+
+		Locale locale = LocaleContextHolder.getLocale();
+		return new MilestoneTableModelHelper(messageSource, locale).buildDataModel(collectionHolder, sEcho);
+
+	}
 
 	// ******************** other stuffs ********************
 

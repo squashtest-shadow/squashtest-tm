@@ -24,9 +24,11 @@ import static org.squashtest.tm.web.internal.helper.JEditablePostParams.VALUE;
 
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -50,12 +52,18 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
+import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
+import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
+import org.squashtest.tm.core.foundation.collection.SinglePageCollectionHolder;
 import org.squashtest.tm.core.foundation.lang.DateUtils;
 import org.squashtest.tm.domain.audit.AuditableMixin;
 import org.squashtest.tm.domain.campaign.Campaign;
 import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.campaign.TestPlanStatistics;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
+import org.squashtest.tm.domain.milestone.Milestone;
+import org.squashtest.tm.domain.requirement.RequirementVersion;
+import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.service.campaign.CampaignModificationService;
 import org.squashtest.tm.service.campaign.CampaignTestPlanManagerService;
@@ -64,14 +72,21 @@ import org.squashtest.tm.service.customfield.CustomFieldValueFinderService;
 import org.squashtest.tm.service.statistics.campaign.CampaignStatisticsBundle;
 import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.controller.generic.ServiceAwareAttachmentTableModelHelper;
+import org.squashtest.tm.web.internal.controller.milestone.MetaMilestone;
+import org.squashtest.tm.web.internal.controller.milestone.MilestonePanelConfiguration;
+import org.squashtest.tm.web.internal.controller.milestone.MilestoneTableModelHelper;
+import org.squashtest.tm.web.internal.controller.milestone.TestCaseBoundMilestoneTableModelHelper;
 import org.squashtest.tm.web.internal.controller.testcase.TestCaseImportanceJeditableComboDataBuilder;
 import org.squashtest.tm.web.internal.controller.testcase.TestCaseModeJeditableComboDataBuilder;
 import org.squashtest.tm.web.internal.http.ContentTypes;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
+import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
+import org.squashtest.tm.web.internal.model.datatable.DataTableSorting;
 import org.squashtest.tm.web.internal.model.jquery.RenameModel;
 import org.squashtest.tm.web.internal.model.json.JsonGeneralInfo;
 import org.squashtest.tm.web.internal.model.json.JsonIteration;
+import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
 
 @Controller
 @RequestMapping("/campaigns/{campaignId}")
@@ -365,6 +380,8 @@ public class CampaignModificationController {
 		}
 	}
 
+
+
 	// *************************** statistics ********************************
 
 	// URL should have been /statistics, but that was already used by another method in this controller
@@ -388,6 +405,83 @@ public class CampaignModificationController {
 
 	}
 
+	/* **********************************************************************
+	 * 
+	 * Milestones section
+	 * 
+	 ********************************************************************** */
+
+	@RequestMapping(value = "/milestones", method=RequestMethod.GET)
+	@ResponseBody
+	public DataTableModel getBoundMilestones(@PathVariable("campaignId") long campaignId, DataTableDrawParameters params){
+
+		Collection<Milestone> allMilestones = campaignModService.findAllMilestones(campaignId);
+
+		return buildMilestoneModel(campaignId, new ArrayList<>(allMilestones), params.getsEcho());
+	}
+
+	@RequestMapping(value = "/milestones/{milestoneIds}", method=RequestMethod.POST)
+	@ResponseBody
+	public void bindMilestones(@PathVariable("campaignId") long campaignId, @PathVariable("milestoneIds") List<Long> milestoneIds){
+
+		campaignModService.bindMilestones(campaignId, milestoneIds);
+	}
+
+	@RequestMapping(value = "/milestones/{milestoneIds}", method=RequestMethod.DELETE)
+	@ResponseBody
+	public void unbindMilestones(@PathVariable("campaignId") long campaignId, @PathVariable("milestoneIds") List<Long> milestoneIds){
+
+		campaignModService.unbindMilestones(campaignId, milestoneIds);
+	}
+
+	@RequestMapping(value = "/milestones/associables", method=RequestMethod.GET)
+	@ResponseBody
+	public DataTableModel getNotYetBoundMilestones(@PathVariable("campaignId") Long campaignId, DataTableDrawParameters params){
+		Collection<Milestone> notBoundMilestones = campaignModService.findAssociableMilestones(campaignId);
+		return buildMilestoneModel(campaignId, new ArrayList<>(notBoundMilestones),params.getsEcho());
+	}
+
+
+	@RequestMapping(value = "/milestones/panel", method=RequestMethod.GET)
+	public String getMilestonesPanel(@PathVariable("campaignId") Long campaignId, Model model){
+
+		MilestonePanelConfiguration conf = new MilestonePanelConfiguration();
+
+		// build the needed data
+		Collection<Milestone> allMilestones = campaignModService.findAllMilestones(campaignId);
+		List<?> currentModel = buildMilestoneModel(campaignId, new ArrayList<>(allMilestones),  "0").getAaData();
+
+		Map<String, String> identity = new HashMap<>();
+		identity.put("restype", "campaigns");
+		identity.put("resid", campaignId.toString());
+
+		String rootPath = "/campaigns/"+campaignId.toString();
+
+		Boolean editable = Boolean.TRUE;	// fix that later
+
+		// add them to the model
+		conf.setNodeType("campaign");
+		conf.setRootPath(rootPath);
+		conf.setIdentity(identity);
+		conf.setCurrentModel(currentModel);
+		conf.setEditable(editable);
+
+		model.addAttribute("conf", conf);
+
+		return "milestones/milestones-tab.html";
+
+	}
+
+	private DataTableModel buildMilestoneModel(long campaignId, List<Milestone> milestones, String sEcho){
+
+
+		PagedCollectionHolder<List<Milestone>> collectionHolder =
+				new SinglePageCollectionHolder<List<Milestone>>(milestones);
+
+		Locale locale = LocaleContextHolder.getLocale();
+		return new MilestoneTableModelHelper(messageSource, locale).buildDataModel(collectionHolder, sEcho);
+
+	}
 	// **************************** private stuffs ***************************
 
 	private List<JsonIteration> createJsonIterations(List<Iteration> iterations) {

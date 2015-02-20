@@ -39,4 +39,11 @@ public interface MilestoneDao  extends EntityDao<Milestone>{
 
 	Collection<Milestone> findMilestonesForRequirementVersion(long versionId);
 
+	Collection<Milestone> findAssociableMilestonesForCampaign(long campaignId);
+
+	Collection<Milestone> findMilestonesForCampaign(long campaignId);
+
+	Collection<Milestone> findMilestonesForIteration(long iterationId);
+
+	Collection<Milestone> findMilestonesForTestSuite(long suiteId);
 }

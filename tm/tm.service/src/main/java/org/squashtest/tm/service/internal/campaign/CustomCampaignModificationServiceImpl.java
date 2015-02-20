@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.service.internal.campaign;
 
+import java.util.Collection;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -33,25 +34,38 @@ import org.squashtest.tm.domain.campaign.CampaignFolder;
 import org.squashtest.tm.domain.campaign.CampaignLibraryNode;
 import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.campaign.TestPlanStatistics;
+import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.service.campaign.CampaignStatisticsService;
 import org.squashtest.tm.service.campaign.CustomCampaignModificationService;
 import org.squashtest.tm.service.internal.library.NodeManagementService;
 import org.squashtest.tm.service.internal.repository.CampaignDao;
 import org.squashtest.tm.service.internal.repository.IterationDao;
+import org.squashtest.tm.service.milestone.MilestoneMembershipManager;
 import org.squashtest.tm.service.statistics.campaign.CampaignStatisticsBundle;
 
 @Service("CustomCampaignModificationService")
 @Transactional
 public class CustomCampaignModificationServiceImpl implements CustomCampaignModificationService {
 
+
+
+
+	private static final String READ_CAMPAIGN_OR_ADMIN = "hasPermission(#campaignId, 'org.squashtest.tm.domain.campaign.Campaign', 'READ') or hasRole('ROLE_ADMIN')";
+
+	private static final String WRITE_CAMPAIGN_OR_ADMIN = "hasPermission(#campaignId, 'org.squashtest.tm.domain.campaign.Campaign' ,'WRITE') or hasRole('ROLE_ADMIN')";
+
 	@Inject
 	private CampaignDao campaignDao;
-	
+
 	@Inject
 	private IterationDao iterationDao;
-	
+
 	@Inject
 	private CampaignStatisticsService statisticsService;
+
+	@Inject
+	private MilestoneMembershipManager milestoneService;
+
 
 	@Inject
 	@Named("squashtest.tm.service.internal.CampaignManagementService")
@@ -62,31 +76,63 @@ public class CustomCampaignModificationServiceImpl implements CustomCampaignModi
 	}
 
 	@Override
-	@PreAuthorize("hasPermission(#campaignId, 'org.squashtest.tm.domain.campaign.Campaign' ,'WRITE') "
-			+ "or hasRole('ROLE_ADMIN')")
+	@PreAuthorize(WRITE_CAMPAIGN_OR_ADMIN)
 	public void rename(long campaignId, String newName) {
 		campaignManagementService.renameNode(campaignId, newName);
 	}
 
 	@Override
+	@PreAuthorize(READ_CAMPAIGN_OR_ADMIN)
 	public TestPlanStatistics findCampaignStatistics(long campaignId) {
 		return campaignDao.findCampaignStatistics(campaignId);
 	}
-	
+
 	@Override
-	@PreAuthorize("hasPermission(#campaignId, 'org.squashtest.tm.domain.campaign.Campaign', 'READ') or hasRole('ROLE_ADMIN')")
+	@PreAuthorize(READ_CAMPAIGN_OR_ADMIN)
 	public List<Iteration> findIterationsByCampaignId(long campaignId) {
 		return iterationDao.findAllByCampaignId(campaignId);
 	}
-	
-	
+
+
 	@Override
-	@PreAuthorize("hasPermission(#campaignId, 'org.squashtest.tm.domain.campaign.Campaign', 'READ') "
-			+ "or hasRole('ROLE_ADMIN')")
+	@PreAuthorize(READ_CAMPAIGN_OR_ADMIN)
 	public CampaignStatisticsBundle gatherCampaignStatisticsBundle(
 			long campaignId) {
 		return statisticsService.gatherCampaignStatisticsBundle(campaignId);
 	}
-	
-	
+
+
+	/*
+	 * 
+	 * Milestones sections
+	 * 
+	 */
+
+	@Override
+	@PreAuthorize(WRITE_CAMPAIGN_OR_ADMIN)
+	public void bindMilestones(long campaignId, Collection<Long> milestoneIds) {
+		milestoneService.bindCampaignToMilestones(campaignId, milestoneIds);
+	}
+
+
+	@Override
+	@PreAuthorize(WRITE_CAMPAIGN_OR_ADMIN)
+	public void unbindMilestones(long campaignId, Collection<Long> milestoneIds) {
+		milestoneService.unbindCampaignFromMilestones(campaignId, milestoneIds);
+	}
+
+	@Override
+	@PreAuthorize(READ_CAMPAIGN_OR_ADMIN)
+	public Collection<Milestone> findAllMilestones(long campaignId) {
+		return milestoneService.findMilestonesForCampaign(campaignId);
+	}
+
+	@Override
+	@PreAuthorize(READ_CAMPAIGN_OR_ADMIN)
+	public Collection<Milestone> findAssociableMilestones(long campaignId) {
+		return milestoneService.findAssociableMilestonesToCampaign(campaignId);
+	}
+
+
+
 }

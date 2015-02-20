@@ -21,19 +21,23 @@
 package org.squashtest.tm.service.internal.campaign;
 
 import java.util.Arrays;
+import java.util.Collection;
 
 import javax.inject.Inject;
 
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.campaign.TestPlanStatistics;
 import org.squashtest.tm.domain.campaign.TestSuite;
 import org.squashtest.tm.domain.execution.Execution;
+import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.exception.DuplicateNameException;
 import org.squashtest.tm.service.campaign.CustomTestSuiteModificationService;
 import org.squashtest.tm.service.campaign.IterationModificationService;
 import org.squashtest.tm.service.internal.repository.TestSuiteDao;
+import org.squashtest.tm.service.milestone.MilestoneMembershipFinder;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.security.PermissionsUtils;
 import org.squashtest.tm.service.user.UserAccountService;
@@ -56,6 +60,9 @@ public class CustomTestSuiteModificationServiceImpl implements CustomTestSuiteMo
 
 	@Inject
 	private PermissionEvaluationService permissionEvaluationService;
+
+	@Inject
+	private MilestoneMembershipFinder milestoneService;
 
 	@Override
 	@PreAuthorize(HAS_WRITE_PERMISSION_ID + OR_HAS_ROLE_ADMIN)
@@ -93,6 +100,11 @@ public class CustomTestSuiteModificationServiceImpl implements CustomTestSuiteMo
 		return iterationService.addExecution(testPlanItemId);
 	}
 
-
+	@Override
+	@Transactional(readOnly = true)
+	@PreAuthorize(HAS_READ_PERMISSION_ID + OR_HAS_ROLE_ADMIN)
+	public Collection<Milestone> findAllMilestones(long suiteId) {
+		return milestoneService.findMilestonesForTestSuite(suiteId);
+	}
 
 }

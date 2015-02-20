@@ -188,7 +188,7 @@ public class CustomRequirementVersionManagerServiceImpl implements CustomRequire
 	@Override
 	@PreAuthorize("hasPermission(#versionId, 'org.squashtest.tm.domain.requirement.RequirementVersion', 'WRITE') or hasRole('ROLE_ADMIN')")
 	public void unbindMilestones(long versionId, Collection<Long> milestoneIds) {
-		milestoneManager.unbindRequirementVersionToMilestones(versionId, milestoneIds);
+		milestoneManager.unbindRequirementVersionFromMilestones(versionId, milestoneIds);
 	}
 
 }

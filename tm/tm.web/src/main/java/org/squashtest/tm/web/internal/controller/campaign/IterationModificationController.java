@@ -50,6 +50,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
+import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
+import org.squashtest.tm.core.foundation.collection.SinglePageCollectionHolder;
 import org.squashtest.tm.core.foundation.lang.DateUtils;
 import org.squashtest.tm.domain.audit.AuditableMixin;
 import org.squashtest.tm.domain.campaign.Iteration;
@@ -57,6 +59,7 @@ import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.campaign.TestSuite;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
+import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.service.campaign.IterationModificationService;
@@ -68,6 +71,8 @@ import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.statistics.iteration.IterationStatisticsBundle;
 import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.controller.generic.ServiceAwareAttachmentTableModelHelper;
+import org.squashtest.tm.web.internal.controller.milestone.MilestonePanelConfiguration;
+import org.squashtest.tm.web.internal.controller.milestone.MilestoneTableModelHelper;
 import org.squashtest.tm.web.internal.controller.testcase.TestCaseImportanceJeditableComboDataBuilder;
 import org.squashtest.tm.web.internal.controller.testcase.TestCaseModeJeditableComboDataBuilder;
 import org.squashtest.tm.web.internal.controller.testcase.executions.ExecutionStatusJeditableComboDataBuilder;
@@ -119,6 +124,9 @@ public class IterationModificationController {
 
 	@Inject
 	private Provider<ExecutionStatusJeditableComboDataBuilder> executionStatusComboBuilderProvider;
+
+
+
 
 	@RequestMapping(method = RequestMethod.GET)
 	public String showIteration(Model model, @PathVariable long iterationId) {
@@ -439,6 +447,53 @@ public class IterationModificationController {
 	}
 
 
+	/* **************************************************************************************************
+	 * 
+	 * 	Milestones
+	 * 
+	 ************************************************************************************************* */
+
+	@RequestMapping(value = "/milestones/panel", method=RequestMethod.GET)
+	public String getMilestonesPanel(@PathVariable("iterationId") Long iterationId, Model model){
+
+		MilestonePanelConfiguration conf = new MilestonePanelConfiguration();
+
+		// build the needed data
+		Collection<Milestone> allMilestones = iterationModService.findAllMilestones(iterationId);
+		List<?> currentModel = buildMilestoneModel(iterationId, new ArrayList<>(allMilestones),  "0").getAaData();
+
+		Map<String, String> identity = new HashMap<>();
+		identity.put("restype", "iterations");
+		identity.put("resid", iterationId.toString());
+
+		String rootPath = "/iterations/"+iterationId.toString();
+
+		Boolean editable = Boolean.FALSE;
+
+		// add them to the model
+		conf.setNodeType("iteration");
+		conf.setRootPath(rootPath);
+		conf.setIdentity(identity);
+		conf.setCurrentModel(currentModel);
+		conf.setEditable(editable);
+
+		model.addAttribute("conf", conf);
+
+		return "milestones/milestones-tab.html";
+
+	}
+
+
+	private DataTableModel buildMilestoneModel(long campaignId, List<Milestone> milestones, String sEcho){
+
+
+		PagedCollectionHolder<List<Milestone>> collectionHolder =
+				new SinglePageCollectionHolder<List<Milestone>>(milestones);
+
+		Locale locale = LocaleContextHolder.getLocale();
+		return new MilestoneTableModelHelper(messageSource, locale).buildDataModel(collectionHolder, sEcho);
+
+	}
 
 	// ******************** other stuffs ***********************
 

@@ -605,7 +605,11 @@
 					"where version.id = :versionId and milestone not in (" +
 					"select mstone from RequirementVersion v join v.requirement req join req.versions vs join vs.milestones mstone where v.id = :versionId" +
 					")"),
-			
+	@NamedQuery(name = "milestone.findAssociableMilestonesForCampaign", 
+			query = "select milestone from Campaign c join c.project p join p.milestones milestone "
+					+ "where c.id = :campaignId and milestone not in ( " 
+					+ "select mstone from Campaign camp join camp.milestones mstone where camp.id = :campaignId " 
+					+ ")"),			
 	@NamedQuery(name = "milestone.findTestCaseMilestones", query="select milestones from TestCase tc join tc.milestones milestones where tc.id = :testCaseId" ),
 	@NamedQuery(name = "milestone.findIndirectTestCaseMilestones", 
 			query="select milestones from TestCase tc join tc.requirementVersionCoverages cov " +
@@ -613,6 +617,9 @@
 					"join version.milestones milestones " +
 					"where tc.id = :testCaseId"),
 	@NamedQuery(name = "milestone.findRequirementVersionMilestones", query="select milestones from RequirementVersion version join version.milestones milestones where version.id = :versionId"),
+	@NamedQuery(name = "milestone.findCampaignMilestones", query="select milestones from Campaign camp join camp.milestones milestones where camp.id = :campaignId"),
+	@NamedQuery(name = "milestone.findIterationMilestones", query="select milestones from Iteration iter join iter.campaign camp join camp.milestones milestones where iter.id = :iterId"),
+	@NamedQuery(name = "milestone.findTestSuiteMilestones", query="select milestones from TestSuite ts join ts.iteration iter join iter.campaign camp join camp.milestones milestones where ts.id = :tsId"),
 	
 	//InfoList
 	@NamedQuery(name = "infoList.findByCode", query = "from InfoList where code = :code"),

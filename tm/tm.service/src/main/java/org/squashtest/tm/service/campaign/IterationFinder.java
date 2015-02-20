@@ -20,10 +20,13 @@
  */
 package org.squashtest.tm.service.campaign;
 
+import java.util.Collection;
 import java.util.List;
 
+import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.execution.Execution;
+import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.testcase.TestCase;
 
 public interface IterationFinder {
@@ -44,4 +47,9 @@ public interface IterationFinder {
 
 	List<Iteration> findIterationContainingTestCase(long testCaseId);
 
+
+	/* ********************** milestones section ******************* */
+
+	@Transactional(readOnly=true)
+	Collection<Milestone> findAllMilestones(long iterationId);
 }

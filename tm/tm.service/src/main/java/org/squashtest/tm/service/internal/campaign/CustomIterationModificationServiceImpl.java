@@ -21,6 +21,7 @@
 package org.squashtest.tm.service.internal.campaign;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -41,7 +42,7 @@ import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.campaign.TestSuite;
 import org.squashtest.tm.domain.execution.Execution;
-import org.squashtest.tm.domain.infolist.DenormalizedInfoListItem;
+import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.testcase.Dataset;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.users.User;
@@ -56,13 +57,12 @@ import org.squashtest.tm.service.internal.customfield.PrivateCustomFieldValueSer
 import org.squashtest.tm.service.internal.denormalizedField.PrivateDenormalizedFieldValueService;
 import org.squashtest.tm.service.internal.library.PasteStrategy;
 import org.squashtest.tm.service.internal.library.TreeNodeCopier;
-import org.squashtest.tm.service.internal.repository.AutomatedSuiteDao;
 import org.squashtest.tm.service.internal.repository.CampaignDao;
 import org.squashtest.tm.service.internal.repository.ExecutionDao;
 import org.squashtest.tm.service.internal.repository.IterationDao;
 import org.squashtest.tm.service.internal.repository.IterationTestPlanDao;
 import org.squashtest.tm.service.internal.repository.TestSuiteDao;
-import org.squashtest.tm.service.internal.testautomation.UnsecuredAutomatedTestManagerService;
+import org.squashtest.tm.service.milestone.MilestoneMembershipFinder;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.security.PermissionsUtils;
 import org.squashtest.tm.service.security.SecurityCheckableObject;
@@ -102,6 +102,8 @@ IterationTestPlanManager {
 	@Inject private IterationStatisticsService statisticsService;
 
 	@Inject private PrivateCustomFieldValueService customFieldValuesService;
+
+	@Inject private MilestoneMembershipFinder milestoneService;
 
 	@Inject
 	@Qualifier("squashtest.tm.service.internal.PasteToIterationStrategy")
@@ -362,13 +364,24 @@ IterationTestPlanManager {
 
 
 	@Override
+	@PreAuthorize("hasPermission(#iterationId, 'org.squashtest.tm.domain.campaign.Iteration', 'READ') "
+			+ OR_HAS_ROLE_ADMIN)
 	public List<Iteration> findIterationContainingTestCase(long testCaseId) {
 		return iterationDao.findAllIterationContainingTestCase(testCaseId);
 	}
 
 	@Override
+	@PreAuthorize("hasPermission(#iterationId, 'org.squashtest.tm.domain.campaign.Iteration', 'READ') "
+			+ OR_HAS_ROLE_ADMIN)
 	public IterationStatisticsBundle gatherIterationStatisticsBundle(long iterationId) {
 		return statisticsService.gatherIterationStatisticsBundle(iterationId);
+	}
+
+	@Override
+	@PreAuthorize("hasPermission(#iterationId, 'org.squashtest.tm.domain.campaign.Iteration', 'READ') "
+			+ OR_HAS_ROLE_ADMIN)
+	public Collection<Milestone> findAllMilestones(long iterationId) {
+		return milestoneService.findMilestonesForIteration(iterationId);
 	}
 
 }

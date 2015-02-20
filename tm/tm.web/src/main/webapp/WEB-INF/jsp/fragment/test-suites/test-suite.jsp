@@ -178,6 +178,9 @@
           <f:message key="tabs.label.test-plan" />
         </a>
       </li>
+        <li>
+            <a href="${testSuiteUrl}/milestones/panel"><f:message key="tabs.label.milestone"/></a>
+        </li>         
       <li>
         <a href="#tabs-3">
           <f:message key="label.Attachments" />

@@ -152,12 +152,4 @@ public interface CustomTestCaseModificationService extends CustomTestCaseFinder 
 
 	Collection<Milestone> findAssociableMilestones(long testCaseId);
 
-	/**
-	 * returns direct milestone membership, plus indirect milestones due to verified requirements
-	 * 
-	 * @param testCaseId
-	 * @return
-	 */
-	Collection<Milestone> findAllMilestones(long testCaseId);
-
 }

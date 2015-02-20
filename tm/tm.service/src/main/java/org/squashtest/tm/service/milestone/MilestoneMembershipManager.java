@@ -22,16 +22,26 @@ package org.squashtest.tm.service.milestone;
 
 import java.util.Collection;
 
+import org.squashtest.tm.domain.milestone.Milestone;
+
 public interface MilestoneMembershipManager extends MilestoneMembershipFinder {
+
+	Collection<Milestone> findAssociableMilestonesToTestCase(long testCaseId);
 
 	void bindTestCaseToMilestones(long testCaseId, Collection<Long> milestoneIds);
 
 	void unbindTestCaseFromMilestones(long testCaseId, Collection<Long> milestoneIds);
 
+	Collection<Milestone> findAssociableMilestonesToRequirementVersion(long versionId);
+
 	void bindRequirementVersionToMilestones(long versionId, Collection<Long> milestoneIds);
 
-	void unbindRequirementVersionToMilestones(long versionId, Collection<Long> milestoneIds);
+	void unbindRequirementVersionFromMilestones(long versionId, Collection<Long> milestoneIds);
+
+	Collection<Milestone> findAssociableMilestonesToCampaign(long campaignId);
 
 	void bindCampaignToMilestones(long campaignId, Collection<Long> milestoneIds);
+
+	void unbindCampaignFromMilestones(long campaignId, Collection<Long> milestoneIds);
 
 }

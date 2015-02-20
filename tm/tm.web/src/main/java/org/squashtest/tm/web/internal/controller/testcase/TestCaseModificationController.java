@@ -471,6 +471,7 @@ public class TestCaseModificationController {
 
 		return new CallingTestCasesTableModelBuilder(internationalizationHelper).buildDataModel(holder, sEcho);
 	}
+
 	/* **********************************************************************
 	 * 
 	 * Milestones section

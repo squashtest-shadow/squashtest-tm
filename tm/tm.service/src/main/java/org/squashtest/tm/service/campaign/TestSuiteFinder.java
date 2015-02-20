@@ -20,8 +20,11 @@
  */
 package org.squashtest.tm.service.campaign;
 
+import java.util.Collection;
+
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.campaign.TestSuite;
+import org.squashtest.tm.domain.milestone.Milestone;
 
 public interface TestSuiteFinder {
 	/**
@@ -31,4 +34,11 @@ public interface TestSuiteFinder {
 	 */
 	@Transactional(readOnly = true)
 	TestSuite findById(long suiteId);
+
+
+
+	/* ********************** milestones section ******************* */
+
+	@Transactional(readOnly = true)
+	Collection<Milestone> findAllMilestones(long suiteId);
 }

@@ -20,11 +20,13 @@
  */
 package org.squashtest.tm.service.campaign;
 
+import java.util.Collection;
 import java.util.List;
 
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.campaign.TestPlanStatistics;
+import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.service.statistics.campaign.CampaignStatisticsBundle;
 
 @Transactional
@@ -33,14 +35,25 @@ public interface CustomCampaignModificationService {
 	void rename(long campaignId, String newName);
 
 	List<Iteration> findIterationsByCampaignId(long campaignId);
-	
+
 	/**
 	 * 
 	 * @param campaignId the id of the concerned campaign
 	 * @return the computed {@link TestPlanStatistics} out of each test-plan-item of each campaign's iteration
 	 */
 	TestPlanStatistics findCampaignStatistics(long campaignId);
-		
+
 	CampaignStatisticsBundle gatherCampaignStatisticsBundle(long campaignId);
 
+
+
+	/* ********************** milestones section ******************* */
+
+	void bindMilestones(long campaignId, Collection<Long> milestoneIds);
+
+	void unbindMilestones(long campaignId, Collection<Long> milestoneIds);
+
+	Collection<Milestone> findAssociableMilestones(long campaignId);
+
+	Collection<Milestone> findAllMilestones(long campaignId);
 }

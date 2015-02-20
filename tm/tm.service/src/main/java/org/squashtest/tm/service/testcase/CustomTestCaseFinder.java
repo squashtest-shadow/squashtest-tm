@@ -30,6 +30,7 @@ import javax.validation.constraints.NotNull;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.Paging;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
+import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.testcase.CallTestStep;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseImportance;
@@ -113,4 +114,17 @@ public interface CustomTestCaseFinder {
 	 *         the callingCadidates list.
 	 */
 	Set<Long> findCallingTCids(long updatedId, Collection<Long> callingCandidates);
+
+
+	/**
+	 * returns direct milestone membership, plus indirect milestones due to verified requirements
+	 * 
+	 * @param testCaseId
+	 * @return
+	 */
+	Collection<Milestone> findAllMilestones(long testCaseId);
+
+
+
+
 }
