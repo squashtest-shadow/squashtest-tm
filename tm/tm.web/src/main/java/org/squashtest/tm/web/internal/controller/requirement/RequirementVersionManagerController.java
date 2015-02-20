@@ -20,7 +20,10 @@
  */
 package org.squashtest.tm.web.internal.controller.requirement;
 
+import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -38,8 +41,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.squashtest.tm.core.foundation.collection.DefaultPagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
+import org.squashtest.tm.core.foundation.collection.SinglePageCollectionHolder;
 import org.squashtest.tm.domain.Level;
 import org.squashtest.tm.domain.event.RequirementAuditEvent;
+import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.requirement.Requirement;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.testcase.TestCase;
@@ -115,10 +120,17 @@ public class RequirementVersionManagerController {
 
 	@RequestMapping(value = "/manager")
 	public String showRequirementVersionsManager(@PathVariable long requirementId, Model model, Locale locale) {
+
 		Requirement req = versionService.findRequirementById(requirementId);
+
+		PagedCollectionHolder<List<RequirementVersion>> holder = new SinglePageCollectionHolder<List<RequirementVersion>>(req.getUnmodifiableVersions());
+
+		DataTableModel tableModel = new RequirementVersionDataTableModel(locale, levelFormatterProvider, i18nHelper).buildDataModel(holder,
+				"0");
 
 		model.addAttribute("requirement", req);
 		model.addAttribute("versions", req.getUnmodifiableVersions());
+		model.addAttribute("versionsTableModel", tableModel);
 		model.addAttribute("selectedVersion", req.getCurrentVersion());
 		model.addAttribute("criticalityList", buildMarshalledCriticalities(locale));
 		model.addAttribute("categoryList", infoListBuilder.toJson(req.getProject().getRequirementCategories()));
@@ -198,8 +210,38 @@ public class RequirementVersionManagerController {
 			row.put("status", internationalize(version.getStatus(), locale, levelFormatterProvider));
 			row.put("criticality", internationalize(version.getCriticality(), locale, levelFormatterProvider));
 			row.put("category", i18nHelper.getMessage(version.getCategory().getLabel(), null, version.getCategory().getLabel(), locale)  );
+			row.put("milestone-dates", computeTimeInterval(version, locale));
 
 			return row;
+
+		}
+
+		String computeTimeInterval(RequirementVersion v, Locale locale){
+			Collection<Milestone> milestones = v.getMilestones();
+
+			if (milestones.isEmpty()){
+				return "--";
+			}
+
+			Date minDate = null;
+			Date maxDate = null;
+
+			Iterator<Milestone> iter = milestones.iterator();
+			while(iter.hasNext()){
+				Milestone m  = iter.next();
+				Date date = m.getEndDate();
+				if (minDate == null || date.before(minDate)){
+					minDate = date;
+				}
+				if (maxDate == null || date.after(maxDate)){
+					maxDate = date;
+				}
+			}
+
+			String strMindate = i18nHelper.localizeDate(minDate, locale);
+			String strMaxdate = i18nHelper.localizeDate(maxDate, locale);
+
+			return strMindate + " - " + strMaxdate;
 
 		}
 

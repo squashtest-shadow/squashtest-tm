@@ -30,6 +30,7 @@
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component" %>
 <%@ taglib prefix="s" uri="http://www.springframework.org/tags" %>
 <%@ taglib prefix="authz" tagdir="/WEB-INF/tags/authz" %>
+<%@ taglib prefix="json" uri="http://org.squashtest.tm/taglib/json" %>
 
 <s:url var="requirementUrl" value="/requirements/{reqId}">
 	<s:param name="reqId" value="${requirement.id}" />
@@ -82,9 +83,11 @@
 							<th data-def="map=status"><f:message key="requirement.versions.table.col-header.status" /></th>
 							<th data-def="map=criticality"><f:message key="requirement.versions.table.col-header.criticality" /></th>
 							<th data-def="map=category"><f:message key="requirement.versions.table.col-header.category" /></th>
+                            <th data-def="map=milestone-dates"><f:message key="label.Milestones"/></th>
 						</tr>
 					</thead>
 					<tbody >
+          <%--
 						<c:forEach var="version" items="${ versions }" end="${ displayedVersions - 1 }">
 							<tr style="mouse:pointer">
 								<td>${ version.id }</td>
@@ -96,6 +99,7 @@
 								<td><s:message code="${ version.category.label }" text="${ version.category.label }" htmlEscape="true" /></td>
 							</tr>
 						</c:forEach>
+             --%>
 					</tbody>
 				</table>
 			</div>	
@@ -115,6 +119,7 @@
 					require(['jquery', 'workspace.contextual-content', 'squashtable'], function($, ctxcontent){
 				$(function(){
 						var table = $("#versions-table").squashTable({
+							aaData : ${json:serialize(versionsTableModel.aaData)},
 							// select the initially selected version 
 							fnInitComplete : function(){
 								table.find('tbody tr').filter(function(){ 
