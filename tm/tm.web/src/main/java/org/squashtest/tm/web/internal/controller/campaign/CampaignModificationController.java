@@ -417,7 +417,7 @@ public class CampaignModificationController {
 
 		Collection<Milestone> allMilestones = campaignModService.findAllMilestones(campaignId);
 
-		return buildMilestoneModel(campaignId, new ArrayList<>(allMilestones), params.getsEcho());
+		return buildMilestoneModel(new ArrayList<>(allMilestones), params.getsEcho());
 	}
 
 	@RequestMapping(value = "/milestones/{milestoneIds}", method=RequestMethod.POST)
@@ -438,7 +438,7 @@ public class CampaignModificationController {
 	@ResponseBody
 	public DataTableModel getNotYetBoundMilestones(@PathVariable("campaignId") Long campaignId, DataTableDrawParameters params){
 		Collection<Milestone> notBoundMilestones = campaignModService.findAssociableMilestones(campaignId);
-		return buildMilestoneModel(campaignId, new ArrayList<>(notBoundMilestones),params.getsEcho());
+		return buildMilestoneModel(new ArrayList<>(notBoundMilestones),params.getsEcho());
 	}
 
 
@@ -449,7 +449,7 @@ public class CampaignModificationController {
 
 		// build the needed data
 		Collection<Milestone> allMilestones = campaignModService.findAllMilestones(campaignId);
-		List<?> currentModel = buildMilestoneModel(campaignId, new ArrayList<>(allMilestones),  "0").getAaData();
+		List<?> currentModel = buildMilestoneModel(new ArrayList<>(allMilestones),  "0").getAaData();
 
 		Map<String, String> identity = new HashMap<>();
 		identity.put("restype", "campaigns");
@@ -472,7 +472,7 @@ public class CampaignModificationController {
 
 	}
 
-	private DataTableModel buildMilestoneModel(long campaignId, List<Milestone> milestones, String sEcho){
+	private DataTableModel buildMilestoneModel(List<Milestone> milestones, String sEcho){
 
 
 		PagedCollectionHolder<List<Milestone>> collectionHolder =

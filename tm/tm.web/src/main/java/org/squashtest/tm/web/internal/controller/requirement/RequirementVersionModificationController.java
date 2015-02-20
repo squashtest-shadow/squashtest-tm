@@ -389,7 +389,7 @@ public class RequirementVersionModificationController {
 
 		Collection<Milestone> allMilestones = requirementVersionManager.findAllMilestones(requirementVersionId);
 
-		return buildMilestoneModel(requirementVersionId, new ArrayList<>(allMilestones), params.getsEcho());
+		return buildMilestoneModel(new ArrayList<>(allMilestones), params.getsEcho());
 	}
 
 	@RequestMapping(value = "/milestones/{milestoneIds}", method=RequestMethod.POST)
@@ -410,7 +410,7 @@ public class RequirementVersionModificationController {
 	@ResponseBody
 	public DataTableModel getNotYetBoundMilestones(@PathVariable("requirementVersionId") long requirementVersionId, DataTableDrawParameters params){
 		Collection<Milestone> notBoundMilestones = requirementVersionManager.findAssociableMilestones(requirementVersionId);
-		return buildMilestoneModel(requirementVersionId,new ArrayList<>(notBoundMilestones),params.getsEcho());
+		return buildMilestoneModel(new ArrayList<>(notBoundMilestones),params.getsEcho());
 	}
 
 
@@ -422,7 +422,7 @@ public class RequirementVersionModificationController {
 
 		// build the needed data
 		Collection<Milestone> allMilestones = requirementVersionManager.findAllMilestones(requirementVersionId);
-		List<?> currentModel = buildMilestoneModel(requirementVersionId, new ArrayList<>(allMilestones),  "0").getAaData();
+		List<?> currentModel = buildMilestoneModel(new ArrayList<>(allMilestones),  "0").getAaData();
 
 		Map<String, String> identity = new HashMap<>();
 		identity.put("restype", "requirements");
@@ -445,7 +445,7 @@ public class RequirementVersionModificationController {
 
 	}
 
-	private DataTableModel buildMilestoneModel(long versionId, List<Milestone> milestones, String sEcho){
+	private DataTableModel buildMilestoneModel(List<Milestone> milestones, String sEcho){
 
 
 		PagedCollectionHolder<List<Milestone>> collectionHolder =

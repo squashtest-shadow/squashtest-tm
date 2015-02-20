@@ -271,7 +271,7 @@ public class TestSuiteModificationController {
 
 		// build the needed data
 		Collection<Milestone> allMilestones = service.findAllMilestones(suiteId);
-		List<?> currentModel = buildMilestoneModel(suiteId, new ArrayList<>(allMilestones),  "0").getAaData();
+		List<?> currentModel = buildMilestoneModel(new ArrayList<>(allMilestones),  "0").getAaData();
 
 		Map<String, String> identity = new HashMap<>();
 		identity.put("restype", "test-suites");
@@ -295,7 +295,7 @@ public class TestSuiteModificationController {
 	}
 
 
-	private DataTableModel buildMilestoneModel(long campaignId, List<Milestone> milestones, String sEcho){
+	private DataTableModel buildMilestoneModel(List<Milestone> milestones, String sEcho){
 
 
 		PagedCollectionHolder<List<Milestone>> collectionHolder =

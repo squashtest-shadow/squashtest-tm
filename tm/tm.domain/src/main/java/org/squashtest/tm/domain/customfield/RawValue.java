@@ -104,16 +104,18 @@ public class RawValue implements DenormalizedFieldVisitor {
 
 
 	public boolean isEmpty(){
+		boolean isEmpty = false;
 		if (value == null && (values == null || values.isEmpty())){
-			return true;
+			isEmpty= true;
 		}
-		if (value != null && StringUtils.isBlank(value)){
-			return true;
+		else if (value != null && StringUtils.isBlank(value)){
+			isEmpty = true;
 		}
-		if (values != null && values.isEmpty()){
-			return true;
+		else if (values != null && values.isEmpty()){
+			isEmpty =  true;
 		}
-		return false;
+
+		return isEmpty;
 	}
 
 

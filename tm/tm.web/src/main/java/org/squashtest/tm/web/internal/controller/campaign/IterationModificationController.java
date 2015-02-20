@@ -460,7 +460,7 @@ public class IterationModificationController {
 
 		// build the needed data
 		Collection<Milestone> allMilestones = iterationModService.findAllMilestones(iterationId);
-		List<?> currentModel = buildMilestoneModel(iterationId, new ArrayList<>(allMilestones),  "0").getAaData();
+		List<?> currentModel = buildMilestoneModel(new ArrayList<>(allMilestones),  "0").getAaData();
 
 		Map<String, String> identity = new HashMap<>();
 		identity.put("restype", "iterations");
@@ -484,7 +484,7 @@ public class IterationModificationController {
 	}
 
 
-	private DataTableModel buildMilestoneModel(long campaignId, List<Milestone> milestones, String sEcho){
+	private DataTableModel buildMilestoneModel(List<Milestone> milestones, String sEcho){
 
 
 		PagedCollectionHolder<List<Milestone>> collectionHolder =
