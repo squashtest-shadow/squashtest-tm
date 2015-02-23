@@ -33,8 +33,8 @@ import org.squashtest.tm.web.internal.model.jstree.JsTreeNode.State;
  * 
  */
 public abstract class LibraryTreeNodeBuilder<LN extends LibraryNode> extends GenericJsTreeNodeBuilder<LN, LibraryTreeNodeBuilder<LN>> {
-	private LN node;
-	private JsTreeNode builtNode;
+	protected LN node;
+	protected JsTreeNode builtNode;
 
 	public LibraryTreeNodeBuilder(PermissionEvaluationService permissionEvaluationService) {
 		super(permissionEvaluationService);
@@ -75,19 +75,27 @@ public abstract class LibraryTreeNodeBuilder<LN extends LibraryNode> extends Gen
 
 	/**
 	 * Builds a {@link JsTreeNode} from the {@link LibraryNode} previously set with {@link #setNode(LibraryNode)}
+	 * Might return null if no jstree node can be built because of some constraints (milestones notably)
 	 * 
 	 * @return
 	 */
-	public final void doBuild(JsTreeNode builtNode, LN model) {
+	public final JsTreeNode doBuild(JsTreeNode builtNode, LN model) {
 		this.builtNode = builtNode;
 		this.node = model;
 
-		addCommonAttributes();
-		addCustomAttributes(node, builtNode);
-		
+		if (passesMilestoneFilter()){
+			addCommonAttributes();
+			addCustomAttributes(node, builtNode);
+		}
+		else{
+			this.builtNode = null;
+		}
+
+		return this.builtNode;
+
 	}
 
-	private void addCommonAttributes() {
+	protected void addCommonAttributes() {
 		String name = node.getName();
 		builtNode.setTitle(name);
 		builtNode.addAttr("name", name);
@@ -95,6 +103,12 @@ public abstract class LibraryTreeNodeBuilder<LN extends LibraryNode> extends Gen
 		// FIXME may break when node is a proxy
 		builtNode.addAttr("id", node.getClass().getSimpleName() + '-' + node.getId());
 	}
+
+	/**
+	 * if the milestone filter is set,
+	 * should say if the current node should be built.
+	 */
+	protected abstract boolean passesMilestoneFilter();
 
 	/**
 	 * s sets the {@link LibraryNode} which will be used to build a {@link JsTreeNode}

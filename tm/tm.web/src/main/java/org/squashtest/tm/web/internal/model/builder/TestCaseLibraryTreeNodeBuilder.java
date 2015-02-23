@@ -25,9 +25,11 @@ import java.util.Locale;
 
 import javax.inject.Inject;
 
+import org.apache.commons.collections.Predicate;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Component;
+import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseFolder;
 import org.squashtest.tm.domain.testcase.TestCaseImportance;
@@ -49,11 +51,11 @@ import org.squashtest.tm.web.internal.model.jstree.JsTreeNode.State;
 @Component
 @Scope("prototype")
 public class TestCaseLibraryTreeNodeBuilder extends LibraryTreeNodeBuilder<TestCaseLibraryNode> {
-	
-	
+
+
 	protected VerifiedRequirementsManagerService verifiedRequirementsManagerService;
 	protected InternationalizationHelper internationalizationHelper;
-	
+
 	/**
 	 * This visitor is used to populate custom attributes of the {@link JsTreeNode} currently built
 	 * 
@@ -74,9 +76,9 @@ public class TestCaseLibraryTreeNodeBuilder extends LibraryTreeNodeBuilder<TestC
 			//gather test cases infos
 			TestCaseStatus status = visited.getStatus();
 			TestCaseImportance importance = visited.getImportance();
-			Boolean isreqcovered = (!visited.getRequirementVersionCoverages().isEmpty() || 
+			Boolean isreqcovered = (!visited.getRequirementVersionCoverages().isEmpty() ||
 					verifiedRequirementsManagerService.testCaseHasUndirectRequirementCoverage(visited.getId())) ;
-			
+
 			Boolean hasSteps = !visited.getSteps().isEmpty();
 			//build tooltip
 			Locale locale = LocaleContextHolder.getLocale();
@@ -86,7 +88,7 @@ public class TestCaseLibraryTreeNodeBuilder extends LibraryTreeNodeBuilder<TestC
 			String localizedHasSteps = internationalizationHelper.internationalize("tootltip.tree.testCase.hasSteps."+hasSteps,locale);
 			String[] args = {localizedStatus, localizedImportance, localizedIsReqCovered, localizedHasSteps};
 			String tooltip = internationalizationHelper.getMessage("label.tree.testCase.tooltip",args,visited.getId().toString(), locale);
-			
+
 			//set test case attributes
 			addLeafAttributes("test-case", "test-cases");
 			builtNode.addAttr("status", status.toString().toLowerCase());
@@ -94,7 +96,8 @@ public class TestCaseLibraryTreeNodeBuilder extends LibraryTreeNodeBuilder<TestC
 			builtNode.addAttr("isreqcovered", isreqcovered.toString());
 			builtNode.addAttr("title", tooltip);
 			builtNode.addAttr("hassteps", hasSteps.toString());
-			
+			builtNode.addAttr("milestones", visited.getMilestones().size());
+
 			if (visited.getReference() != null && visited.getReference().length() > 0) {
 				builtNode.setTitle(visited.getReference() + " - " + visited.getName());
 				builtNode.addAttr("reference", visited.getReference());
@@ -148,6 +151,8 @@ public class TestCaseLibraryTreeNodeBuilder extends LibraryTreeNodeBuilder<TestC
 
 				TestCaseLibraryTreeNodeBuilder childrenBuilder = new TestCaseLibraryTreeNodeBuilder(
 						permissionEvaluationService, verifiedRequirementsManagerService, internationalizationHelper);
+				childrenBuilder.filterByMilestone(milestoneFilter);
+
 				List<JsTreeNode> children = new JsTreeNodeListBuilder<TestCaseLibraryNode>(childrenBuilder)
 						.expand(getExpansionCandidates()).setModel(visited.getOrderedContent()).build();
 
@@ -162,7 +167,7 @@ public class TestCaseLibraryTreeNodeBuilder extends LibraryTreeNodeBuilder<TestC
 		super(permissionEvaluationService);
 		this.verifiedRequirementsManagerService = verifiedRequirementsManagerService;
 		this.internationalizationHelper = internationalizationHelper;
-		
+
 	}
 
 	/**
@@ -183,8 +188,44 @@ public class TestCaseLibraryTreeNodeBuilder extends LibraryTreeNodeBuilder<TestC
 	protected void doAddChildren(JsTreeNode node, TestCaseLibraryNode model) {
 		model.accept(new ChildrenPopulator(node));
 	}
-	
-	
 
-	
+
+	@Override
+	protected boolean passesMilestoneFilter() {
+		if (milestoneFilter != null){
+			return new MilestoneFilter(milestoneFilter).isValid(node);
+		}
+		else{
+			return true;
+		}
+	}
+
+	private static final class MilestoneFilter implements TestCaseLibraryNodeVisitor{
+
+		private Milestone milestone;
+		private boolean isValid;
+
+		private MilestoneFilter(Milestone milestone){
+			this.milestone = milestone;
+		}
+
+		@Override
+		public void visit(TestCase visited) {
+			isValid =  visited.isMemberOf(milestone);
+		}
+
+		@Override
+		public void visit(TestCaseFolder visited) {
+			isValid = true;
+		}
+
+		public boolean isValid(TestCaseLibraryNode node){
+			isValid = false;
+			node.accept(this);
+			return isValid;
+		}
+
+	}
+
+
 }

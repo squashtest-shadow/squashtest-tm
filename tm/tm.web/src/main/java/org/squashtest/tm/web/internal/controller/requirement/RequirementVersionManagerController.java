@@ -109,7 +109,7 @@ public class RequirementVersionManagerController {
 
 
 
-	@RequestMapping(value = "/versions/new", method = RequestMethod.POST)
+	@RequestMapping(value = "/new", method = RequestMethod.POST)
 	@ResponseBody
 	public void createNewVersion(@PathVariable long requirementId) {
 		versionService.createNewVersion(requirementId);

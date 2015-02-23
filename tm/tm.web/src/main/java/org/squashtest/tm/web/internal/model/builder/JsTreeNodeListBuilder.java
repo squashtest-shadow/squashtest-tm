@@ -53,15 +53,18 @@ public class JsTreeNodeListBuilder<ITEM> {
 
 	public final List<JsTreeNode> build() {
 		List<JsTreeNode> nodes = new ArrayList<JsTreeNode>(model.size());
-		
+
 		if (expansionCandidates == null) {
 			expansionCandidates = new MultiValueMap();
 		}
-		
+
 		int index = 0;
 		for (ITEM item : model) {
-			nodes.add(nodeBuilder.setIndex(index).expand(expansionCandidates).setModel(item).build());
-			index ++;
+			JsTreeNode builtNode = nodeBuilder.setIndex(index).expand(expansionCandidates).setModel(item).build();
+			if (builtNode != null){
+				nodes.add(builtNode);
+				index ++;
+			}
 		}
 
 		return nodes;

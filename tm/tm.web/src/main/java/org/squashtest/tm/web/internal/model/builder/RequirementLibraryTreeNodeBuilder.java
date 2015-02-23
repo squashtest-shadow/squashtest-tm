@@ -28,10 +28,12 @@ import javax.inject.Inject;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.domain.library.NodeContainer;
+import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.requirement.Requirement;
 import org.squashtest.tm.domain.requirement.RequirementFolder;
 import org.squashtest.tm.domain.requirement.RequirementLibraryNode;
 import org.squashtest.tm.domain.requirement.RequirementLibraryNodeVisitor;
+import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.web.internal.model.jstree.JsTreeNode;
 import org.squashtest.tm.web.internal.model.jstree.JsTreeNode.State;
@@ -63,22 +65,32 @@ public class RequirementLibraryTreeNodeBuilder extends LibraryTreeNodeBuilder<Re
 
 		}
 
+
 		/**
 		 * 
 		 * @see org.squashtest.tm.domain.requirement.RequirementLibraryNodeVisitor#visit(org.squashtest.tm.domain.requirement.Requirement)
 		 */
 		public void visit(Requirement requirement) {
+
+			// supposed not to be null;
+			RequirementVersion version = (milestoneFilter == null) ? requirement.getCurrentVersion() : requirement.findByMilestone(milestoneFilter);
+
+			// the name, usually treated as a common attributes, must be overriden in this case
+			String name = version.getName();
+			builtNode.addAttr("name", name);
+
 			addLeafAttributes("requirement", "requirements");
 
 			State state = (requirement.hasContent() ? State.closed : State.leaf);
 			builtNode.setState(state);
-			builtNode.addAttr("category-icon", requirement.getCategory().getIconName());
+			builtNode.addAttr("category-icon", version.getCategory().getIconName());
+			builtNode.addAttr("milestones", version.getMilestones().size());
 
-			if (requirement.getReference() != null && requirement.getReference().length() > 0) {
-				builtNode.setTitle(requirement.getReference() + " - " + requirement.getName());
-				builtNode.addAttr("reference", requirement.getReference());
+			if (version.getReference() != null && version.getReference().length() > 0) {
+				builtNode.setTitle(version.getReference() + " - " + version.getName());
+				builtNode.addAttr("reference", version.getReference());
 			} else {
-				builtNode.setTitle(requirement.getName());
+				builtNode.setTitle(version.getName());
 			}
 		}
 
@@ -95,6 +107,7 @@ public class RequirementLibraryTreeNodeBuilder extends LibraryTreeNodeBuilder<Re
 
 	}
 
+
 	/**
 	 * @see org.squashtest.tm.web.internal.model.builder.GenericJsTreeNodeBuilder#doAddChildren(org.squashtest.tm.web.internal.model.jstree.JsTreeNode,
 	 *      org.squashtest.tm.domain.Identified)
@@ -108,6 +121,8 @@ public class RequirementLibraryTreeNodeBuilder extends LibraryTreeNodeBuilder<Re
 			builtNode.setState(State.open);
 
 			RequirementLibraryTreeNodeBuilder childrenBuilder = new RequirementLibraryTreeNodeBuilder(permissionEvaluationService);
+			childrenBuilder.filterByMilestone(milestoneFilter);
+
 			Collection<RequirementLibraryNode<?>> content = (Collection<RequirementLibraryNode<?>>) container.getOrderedContent();
 
 			List<JsTreeNode> children = new JsTreeNodeListBuilder<RequirementLibraryNode<?>>(childrenBuilder)
@@ -117,6 +132,48 @@ public class RequirementLibraryTreeNodeBuilder extends LibraryTreeNodeBuilder<Re
 
 			builtNode.setChildren(children);
 		}
+	}
+
+
+
+	@Override
+	protected boolean passesMilestoneFilter() {
+		if (milestoneFilter != null){
+			return new MilestoneFilter(milestoneFilter).isValid(node);
+		}
+		else{
+			return true;
+		}
+	}
+
+
+
+	private static final class MilestoneFilter implements RequirementLibraryNodeVisitor{
+
+		private Milestone milestone;
+		private boolean isValid;
+
+
+		private MilestoneFilter(Milestone milestone){
+			this.milestone = milestone;
+		}
+
+		public boolean isValid(RequirementLibraryNode node){
+			isValid = false;
+			node.accept(this);
+			return isValid;
+		}
+
+		@Override
+		public void visit(RequirementFolder folder) {
+			isValid = true;
+		}
+
+		@Override
+		public void visit(Requirement requirement) {
+			isValid = requirement.findByMilestone(milestone) != null;
+		}
+
 	}
 
 

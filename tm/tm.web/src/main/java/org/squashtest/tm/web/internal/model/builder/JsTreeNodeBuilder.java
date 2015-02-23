@@ -22,6 +22,7 @@ package org.squashtest.tm.web.internal.model.builder;
 
 import org.apache.commons.collections.MultiMap;
 import org.squashtest.tm.domain.Identified;
+import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.web.internal.model.jstree.JsTreeNode;
 
 /**
@@ -47,6 +48,8 @@ public interface JsTreeNodeBuilder<MODEL extends Identified, BUILDER extends JsT
 
 	/**
 	 * Creates a {@link JsTreeNode} using the current builder configuration.
+	 * May return null if no nodes can be built for the given model, most notably
+	 * when the milestone filter is set and that the model doesn't match it.
 	 * 
 	 * @return
 	 */
@@ -60,12 +63,23 @@ public interface JsTreeNodeBuilder<MODEL extends Identified, BUILDER extends JsT
 	 * @return
 	 */
 	BUILDER expand(MultiMap expansionCandidates);
-	
+
 	/**
 	 * Will set the 'index' property of the builder.
 	 * @param index
 	 * @return this JsTreeNodeBuilder
 	 */
 	BUILDER setIndex(int index);
+
+
+	/**
+	 * 
+	 * If desired one can filter out some content that doesn't belong to
+	 * the given milestone.
+	 * 
+	 * @param milestone
+	 * @return
+	 */
+	BUILDER filterByMilestone(Milestone milestone);
 
 }

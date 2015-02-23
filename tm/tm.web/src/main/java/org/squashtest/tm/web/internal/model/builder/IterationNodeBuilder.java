@@ -35,7 +35,7 @@ import org.squashtest.tm.web.internal.model.jstree.JsTreeNode.State;
 @Component
 @Scope("prototype")
 public class IterationNodeBuilder extends GenericJsTreeNodeBuilder<Iteration, IterationNodeBuilder> {
-	
+
 
 	@Inject
 	public IterationNodeBuilder(PermissionEvaluationService permissionEvaluationService) {
@@ -48,7 +48,7 @@ public class IterationNodeBuilder extends GenericJsTreeNodeBuilder<Iteration, It
 	 *      org.squashtest.tm.domain.Identified)
 	 */
 	@Override
-	protected void doBuild(JsTreeNode node, Iteration model) {
+	protected JsTreeNode doBuild(JsTreeNode node, Iteration model) {
 		node.addAttr("rel", "iteration");
 		node.addAttr("resId", String.valueOf(model.getId()));
 		node.addAttr("resType", "iterations");
@@ -57,6 +57,7 @@ public class IterationNodeBuilder extends GenericJsTreeNodeBuilder<Iteration, It
 		node.addAttr("iterationIndex", Integer.toString(index + 1));
 		node.addAttr("name", model.getName());
 		node.addAttr("id", model.getClass().getSimpleName() + '-' + model.getId());
+		return node;
 	}
 
 	private String createTitle(Iteration model) {
@@ -71,12 +72,12 @@ public class IterationNodeBuilder extends GenericJsTreeNodeBuilder<Iteration, It
 		if (model.hasContent()) {
 			node.setState(State.open);
 
-			TestSuiteNodeBuilder childrenBuilder = new TestSuiteNodeBuilder(permissionEvaluationService); 
-			
+			TestSuiteNodeBuilder childrenBuilder = new TestSuiteNodeBuilder(permissionEvaluationService);
+
 			List<JsTreeNode> children = new JsTreeNodeListBuilder<TestSuite>(childrenBuilder)
-				.expand(getExpansionCandidates())
-				.setModel(model.getOrderedContent())
-				.build();
+					.expand(getExpansionCandidates())
+					.setModel(model.getOrderedContent())
+					.build();
 
 			node.setChildren(children);
 		}

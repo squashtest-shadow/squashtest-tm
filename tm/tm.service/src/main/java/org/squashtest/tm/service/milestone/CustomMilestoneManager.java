@@ -27,26 +27,24 @@ import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.milestone.Milestone;
 
 @Transactional
-public interface CustomMilestoneManager {
+public interface CustomMilestoneManager extends MilestoneFinderService {
 	void addMilestone(Milestone milestone);
 	List<Milestone>  findAll();
 	void removeMilestones(Collection<Long> ids);
 
-	Milestone findById(long milestoneId);
-	
 	/**
 	 * 
 	 * @param milestoneId the id of the milestone
 	 * @return true if the user has rights to edit the milestone
 	 */
 	boolean canEditMilestone(long milestoneId);
-	
+
 	/**
 	 * Throw exception if the user try do edit a milestone he can't
 	 * @param milestoneId the id of the milestone
 	 */
 	void verifyCanEditMilestone(long milestoneId);
-	
+
 	/**
 	 * Throw exception if the user try do edit milestone range and can't
 	 * @param milestoneId the id of the milestone

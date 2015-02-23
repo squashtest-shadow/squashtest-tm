@@ -33,6 +33,7 @@ import org.squashtest.tm.api.security.acls.Permission;
 import org.squashtest.tm.domain.Identified;
 import org.squashtest.tm.domain.library.NodeContainer;
 import org.squashtest.tm.domain.library.TreeNode;
+import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.web.internal.model.jstree.JsTreeNode;
 
@@ -43,11 +44,13 @@ import org.squashtest.tm.web.internal.model.jstree.JsTreeNode;
  * 
  */
 public abstract class GenericJsTreeNodeBuilder<MODEL extends Identified, BUILDER extends JsTreeNodeBuilder<MODEL, BUILDER>>
-		implements JsTreeNodeBuilder<MODEL, BUILDER> {
+implements JsTreeNodeBuilder<MODEL, BUILDER> {
 	private static final String ROLE_ADMIN = "ROLE_ADMIN";
 	private static final Permission[] NODE_PERMISSIONS = { WRITE, CREATE, DELETE, EXECUTE, EXPORT };
 
 	protected final PermissionEvaluationService permissionEvaluationService;
+
+	protected Milestone milestoneFilter;
 
 	protected int index;
 	/**
@@ -85,9 +88,9 @@ public abstract class GenericJsTreeNodeBuilder<MODEL extends Identified, BUILDER
 			node.addAttr(permission.getQuality(), String.valueOf(hasPermission));
 		}
 
-		doBuild(node, model);
+		node = doBuild(node, model);
 
-		if (shouldExpandModel()) {
+		if (node != null && shouldExpandModel()) {
 			doAddChildren(node, model);
 		}
 
@@ -137,8 +140,9 @@ public abstract class GenericJsTreeNodeBuilder<MODEL extends Identified, BUILDER
 	 *            the node to populate
 	 * @param model
 	 *            the model used to build the node
+	 * @return TODO
 	 */
-	protected abstract void doBuild(JsTreeNode node, MODEL model);
+	protected abstract JsTreeNode doBuild(JsTreeNode node, MODEL model);
 
 	/**
 	 * Implementors should add to the given {@link JsTreeNode} the models children if any. It should also set the node's
@@ -180,6 +184,13 @@ public abstract class GenericJsTreeNodeBuilder<MODEL extends Identified, BUILDER
 	@Override
 	public BUILDER setIndex(int index) {
 		this.index = index;
+		return (BUILDER) this;
+	}
+
+	@Override
+	@SuppressWarnings("unchecked")
+	public BUILDER filterByMilestone(Milestone milestone) {
+		this.milestoneFilter = milestone;
 		return (BUILDER) this;
 	}
 }

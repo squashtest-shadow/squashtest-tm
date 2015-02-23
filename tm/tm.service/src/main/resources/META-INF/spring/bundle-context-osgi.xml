@@ -333,6 +333,7 @@
   
  <osgi:service ref="squashtest.tm.service.MilestoneManagerService">
      <osgi:interfaces>
+      <value>org.squashtest.tm.service.milestone.MilestoneFinderService</value>
       <value>org.squashtest.tm.service.milestone.MilestoneManagerService</value>
     </osgi:interfaces>
     </osgi:service>

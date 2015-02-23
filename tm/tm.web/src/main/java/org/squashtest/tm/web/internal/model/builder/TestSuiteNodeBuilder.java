@@ -53,14 +53,14 @@ import org.squashtest.tm.web.internal.model.jstree.JsTreeNode.State;
 @Scope("prototype")
 public class TestSuiteNodeBuilder extends GenericJsTreeNodeBuilder<TestSuite, TestSuiteNodeBuilder> {
 
-	
+
 	@Inject
 	protected TestSuiteNodeBuilder(PermissionEvaluationService permissionEvaluationService) {
 		super(permissionEvaluationService);
 	}
 
 	@Override
-	protected void doBuild(JsTreeNode node, TestSuite model) {
+	protected JsTreeNode doBuild(JsTreeNode node, TestSuite model) {
 		node.addAttr("rel", "test-suite");
 		node.addAttr("resId", String.valueOf(model.getId()));
 		node.addAttr("resType", "test-suites");
@@ -68,6 +68,7 @@ public class TestSuiteNodeBuilder extends GenericJsTreeNodeBuilder<TestSuite, Te
 		node.setTitle(model.getName());
 		node.addAttr("name", model.getName());
 		node.addAttr("id", model.getClass().getSimpleName() + '-' + model.getId());
+		return node;
 	}
 
 	/**
@@ -79,6 +80,6 @@ public class TestSuiteNodeBuilder extends GenericJsTreeNodeBuilder<TestSuite, Te
 		// Test suite ain't got no children
 	}
 
-	
+
 
 }

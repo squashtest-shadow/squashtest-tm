@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.TreeMap;
 
 import javax.persistence.CascadeType;
@@ -53,6 +54,7 @@ import org.squashtest.tm.domain.infolist.InfoListItem;
 import org.squashtest.tm.domain.library.NodeContainer;
 import org.squashtest.tm.domain.library.NodeContainerVisitor;
 import org.squashtest.tm.domain.library.NodeVisitor;
+import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.search.CollectionSizeBridge;
 import org.squashtest.tm.exception.DuplicateNameException;
@@ -455,13 +457,17 @@ public class Requirement extends RequirementLibraryNode<RequirementVersion> impl
 		visitor.visit(this);
 	}
 
-
-	/*
-	@Override
-	public void notifyAssociatedWithProject(Project project) {
-		super.notifyAssociatedWithProject(project);
-		resource.notifyAssociatedWithProject(project);
-	}
+	/**
+	 * finds which version of this requirement is bound to the given milestone, or null
+	 * if there is none
 	 */
+	public RequirementVersion findByMilestone(Milestone milestone){
+		for (RequirementVersion version : versions){
+			if (version.isMemberOf(milestone)){
+				return version;
+			}
+		}
+		return null;
+	}
 
 }

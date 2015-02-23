@@ -151,6 +151,7 @@ class TestCaseLibraryNavigationControllerTest extends Specification {
 		tc.getImportance() >> TestCaseImportance.LOW
 		tc.getSteps()>> []
 		tc.getRequirementVersionCoverages() >> []
+		tc.getMilestones() >> []
 		tc.getId()>>23L
 		tc.getName()>>"test case"
 		tcfm.getTestCase() >> tc
@@ -175,6 +176,7 @@ class TestCaseLibraryNavigationControllerTest extends Specification {
 		tc.getStatus() >> TestCaseStatus.WORK_IN_PROGRESS
 		tc.getImportance() >> TestCaseImportance.LOW
 		tc.getSteps()>>[]
+		tc.getMilestones() >> []
 		tc.getRequirementVersionCoverages() >> []
 		tc.getId()>>23L
 		tc.getName()>>"test case"

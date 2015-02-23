@@ -72,7 +72,7 @@ class LibraryTreeNodeBuilderTest extends Specification{
 		then:
 		res.attr["editable"] == "false"
 	}
-	
+
 	def "node should not be editable"() {
 		given:
 		DummyNode node = new DummyNode(name: "tc", id: 10)
@@ -92,11 +92,11 @@ class LibraryTreeNodeBuilderTest extends Specification{
 		DummyNode node = new DummyNode(name: "tc", id: 10)
 		node.children << new DummyNode(name: "c1", id: 100)
 		node.children << new DummyNode(name: "c2", id: 200)
-		
+
 		and:
 		MultiMap expand = new MultiValueMap()
 		expand.put("TestCase", 10L)
-		
+
 		when:
 		def res = builder.expand(expand).setNode(node).build()
 
@@ -122,13 +122,17 @@ class DummyLibraryTreeNodeBuilder extends LibraryTreeNodeBuilder<DummyNode> {
 	 */
 	@Override
 	protected void doAddChildren(JsTreeNode node, DummyNode model) {
-		
+
 		model.children.each {
-			node.children << it.id 
+			node.children << it.id
 		}
-		
+
 	}
 
+	@Override
+	protected boolean passesMilestoneFilter() {
+		return true;
+	}
 
 }
 
@@ -140,7 +144,7 @@ class DummyNode implements  LibraryNode {
 	void deleteMe(){}
 	Project getProject() {}
 	Library<LibraryNode> getLibrary() {}
-	void notifyAssociatedWithProject(Project project){}	
+	void notifyAssociatedWithProject(Project project){}
 	Copiable createCopy() {return null}
 	void accept(NodeVisitor visitor) {
 		visitor.visit(new TestCase())

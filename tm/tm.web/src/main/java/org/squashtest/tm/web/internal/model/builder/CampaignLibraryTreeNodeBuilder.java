@@ -31,6 +31,7 @@ import org.squashtest.tm.domain.campaign.CampaignFolder;
 import org.squashtest.tm.domain.campaign.CampaignLibraryNode;
 import org.squashtest.tm.domain.campaign.CampaignLibraryNodeVisitor;
 import org.squashtest.tm.domain.campaign.Iteration;
+import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.web.internal.model.jstree.JsTreeNode;
 import org.squashtest.tm.web.internal.model.jstree.JsTreeNode.State;
@@ -71,6 +72,7 @@ public class CampaignLibraryTreeNodeBuilder extends LibraryTreeNodeBuilder<Campa
 			builtNode.addAttr("resType", "campaigns");
 			State state = (campaign.hasIterations() ? State.closed : State.leaf);
 			builtNode.setState(state);
+			builtNode.addAttr("milestones", campaign.getMilestones().size());
 		}
 	}
 
@@ -113,10 +115,13 @@ public class CampaignLibraryTreeNodeBuilder extends LibraryTreeNodeBuilder<Campa
 		@Override
 		public void visit(CampaignFolder visited) {
 			if (visited.hasContent()) {
+
 				builtNode.setState(State.open);
 
-				CampaignLibraryTreeNodeBuilder childrenBuilder = new CampaignLibraryTreeNodeBuilder(
-						permissionEvaluationService);
+				CampaignLibraryTreeNodeBuilder childrenBuilder = new CampaignLibraryTreeNodeBuilder(permissionEvaluationService);
+				childrenBuilder.filterByMilestone(milestoneFilter);
+
+
 
 				List<JsTreeNode> children = new JsTreeNodeListBuilder<CampaignLibraryNode>(childrenBuilder)
 						.expand(getExpansionCandidates())
@@ -149,5 +154,50 @@ public class CampaignLibraryTreeNodeBuilder extends LibraryTreeNodeBuilder<Campa
 		model.accept(new ChildrenPopulator(node));
 
 	}
+
+
+
+
+	@Override
+	protected boolean passesMilestoneFilter() {
+		if (milestoneFilter != null){
+			return new MilestoneFilter(milestoneFilter).isValid(node);
+		}
+		else{
+			return true;
+		}
+	}
+
+
+
+	private static final class MilestoneFilter implements CampaignLibraryNodeVisitor{
+
+		private Milestone milestone;
+		private boolean isValid;
+
+
+		private MilestoneFilter(Milestone milestone){
+			this.milestone = milestone;
+		}
+
+		public boolean isValid(CampaignLibraryNode node){
+			isValid = false;
+			node.accept(this);
+			return isValid;
+		}
+
+		@Override
+		public void visit(CampaignFolder folder) {
+			isValid = true;
+		}
+
+		@Override
+		public void visit(Campaign campaign) {
+			isValid = campaign.isMemberOf(milestone);
+		}
+
+	}
+
+
 
 }

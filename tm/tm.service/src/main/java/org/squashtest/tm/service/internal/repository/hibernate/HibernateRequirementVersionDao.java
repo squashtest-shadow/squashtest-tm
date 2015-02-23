@@ -84,6 +84,7 @@ public class HibernateRequirementVersionDao implements CustomRequirementVersionD
 		else{
 			Query q = currentSession().getNamedQuery("requirementVersion.findVersionByRequirementAndMilestone");
 			q.setParameter("requirementId", requirementId);
+			q.setParameter("milestoneId", milestoneId);
 			return (RequirementVersion)q.uniqueResult();
 		}
 	}

@@ -38,8 +38,10 @@ import org.squashtest.tm.web.internal.model.jstree.JsTreeNode.State;
  * 
  */
 public class DriveNodeBuilder<LN extends LibraryNode> extends
-		GenericJsTreeNodeBuilder<Library<LN>, DriveNodeBuilder<LN>> {
+GenericJsTreeNodeBuilder<Library<LN>, DriveNodeBuilder<LN>> {
+
 	private final Provider<LibraryTreeNodeBuilder<LN>> childrenBuilderProvider;
+
 
 	public DriveNodeBuilder(PermissionEvaluationService permissionEvaluationService,
 			Provider<LibraryTreeNodeBuilder<LN>> childrenBuilderProvider) {
@@ -53,7 +55,7 @@ public class DriveNodeBuilder<LN extends LibraryNode> extends
 	 *      org.squashtest.tm.domain.Identified)
 	 */
 	@Override
-	protected void doBuild(JsTreeNode node, Library<LN> model) {
+	protected JsTreeNode doBuild(JsTreeNode node, Library<LN> model) {
 		node.addAttr("rel", "drive");
 		node.addAttr("resId", String.valueOf(model.getId()));
 		node.addAttr("resType", buildResourceType(model.getClassSimpleName()));
@@ -64,6 +66,7 @@ public class DriveNodeBuilder<LN extends LibraryNode> extends
 		node.addAttr("title", model.getProject().getLabel());
 		node.addAttr("project", model.getProject().getId());
 		node.addAttr("wizards", model.getEnabledPlugins());
+		return node;
 	}
 
 	private String buildResourceType(String classSimpleName) {
@@ -80,10 +83,15 @@ public class DriveNodeBuilder<LN extends LibraryNode> extends
 		if (model.hasContent()) {
 			node.setState(State.open);
 
-			List<JsTreeNode> children = new JsTreeNodeListBuilder<LN>(childrenBuilderProvider.get())
-				.expand(getExpansionCandidates())
-				.setModel(model.getOrderedContent())
-				.build();
+			LibraryTreeNodeBuilder<LN> builder = childrenBuilderProvider.get();
+			if (milestoneFilter != null){
+				builder.filterByMilestone(milestoneFilter);
+			}
+
+			List<JsTreeNode> children = new JsTreeNodeListBuilder<LN>(builder)
+					.expand(getExpansionCandidates())
+					.setModel(model.getOrderedContent())
+					.build();
 
 			node.setChildren(children);
 		}

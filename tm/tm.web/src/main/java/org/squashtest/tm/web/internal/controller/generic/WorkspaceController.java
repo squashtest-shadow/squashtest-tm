@@ -42,6 +42,7 @@ import org.squashtest.tm.domain.library.Library;
 import org.squashtest.tm.domain.library.LibraryNode;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.service.library.WorkspaceService;
+import org.squashtest.tm.service.milestone.MilestoneFinderService;
 import org.squashtest.tm.service.project.ProjectFinder;
 import org.squashtest.tm.web.internal.controller.campaign.MenuItem;
 import org.squashtest.tm.web.internal.helper.JsTreeHelper;
@@ -68,6 +69,10 @@ public abstract class WorkspaceController<LN extends LibraryNode> {
 	@Inject
 	protected JsonProjectBuilder jsonProjectBuilder;
 
+	@Inject
+	protected MilestoneFinderService milestoneFinder;
+
+
 	/**
 	 * Shows a workspace.
 	 * 
@@ -77,6 +82,7 @@ public abstract class WorkspaceController<LN extends LibraryNode> {
 	 */
 	@RequestMapping(method = RequestMethod.GET)
 	public String showWorkspace(Model model, Locale locale,
+			@CookieValue(value = "milestones", required = false, defaultValue = "") List<Long> milestoneIds,
 			@CookieValue(value = "jstree_open", required = false, defaultValue = "") String[] openedNodes,
 			@CookieValue(value = "workspace-prefs", required = false, defaultValue = "") String elementId) {
 
@@ -95,6 +101,10 @@ public abstract class WorkspaceController<LN extends LibraryNode> {
 		MultiMap expansionCandidates = mapIdsByType(nodesToOpen);
 
 		DriveNodeBuilder<LN> nodeBuilder = driveNodeBuilderProvider().get();
+		if (milestoneIds != null && (!milestoneIds.isEmpty())){
+			nodeBuilder.filterByMilestone(milestoneFinder.findById(milestoneIds.get(0)));
+		}
+
 		List<JsTreeNode> rootNodes = new JsTreeNodeListBuilder<Library<LN>>(nodeBuilder).expand(expansionCandidates)
 				.setModel(libraries).build();
 
@@ -212,4 +222,5 @@ public abstract class WorkspaceController<LN extends LibraryNode> {
 	 * @return
 	 */
 	protected abstract Provider<DriveNodeBuilder<LN>> driveNodeBuilderProvider();
+
 }

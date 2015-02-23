@@ -47,8 +47,9 @@ class DummyBuilder extends GenericJsTreeNodeBuilder<String, DummyBuilder> {
 	}
 
 	@Override
-	protected void doBuild(JsTreeNode node, String model) {
+	protected JsTreeNode doBuild(JsTreeNode node, String model) {
 		node.title = model
+		return node;
 	}
 
 	/**
@@ -57,7 +58,7 @@ class DummyBuilder extends GenericJsTreeNodeBuilder<String, DummyBuilder> {
 	@Override
 	protected void doAddChildren(JsTreeNode node, String model) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 }
