@@ -67,6 +67,7 @@ import org.squashtest.tm.service.internal.repository.LibraryNodeDao;
 import org.squashtest.tm.service.internal.repository.RequirementDao;
 import org.squashtest.tm.service.internal.repository.RequirementFolderDao;
 import org.squashtest.tm.service.internal.repository.RequirementLibraryDao;
+import org.squashtest.tm.service.milestone.MilestoneMembershipManager;
 import org.squashtest.tm.service.project.ProjectFilterModificationService;
 import org.squashtest.tm.service.requirement.RequirementLibraryFinderService;
 import org.squashtest.tm.service.requirement.RequirementLibraryNavigationService;
@@ -114,6 +115,8 @@ RequirementLibraryNavigationService, RequirementLibraryFinderService {
 	@Qualifier("squashtest.tm.service.internal.PasteToRequirementStrategy")
 	private Provider<PasteStrategy<Requirement, Requirement>> pasteToRequirementStrategyProvider;
 
+	@Inject
+	private MilestoneMembershipManager milestoneService;
 
 	@Inject
 	private InfoListItemFinderService infoListItemService;
@@ -222,7 +225,7 @@ RequirementLibraryNavigationService, RequirementLibraryFinderService {
 	@Override
 	@PreAuthorize("hasPermission(#libraryId, 'org.squashtest.tm.domain.requirement.RequirementLibrary' , 'CREATE') "
 			+ OR_HAS_ROLE_ADMIN)
-	public Requirement addRequirementToRequirementLibrary(long libraryId, @NotNull NewRequirementVersionDto newVersion) {
+	public Requirement addRequirementToRequirementLibrary(long libraryId, @NotNull NewRequirementVersionDto newVersion, List<Long> milestoneIds) {
 		RequirementLibrary library = requirementLibraryDao.findById(libraryId);
 
 		if (!library.isContentNameAvailable(newVersion.getName())) {
@@ -240,13 +243,15 @@ RequirementLibraryNavigationService, RequirementLibraryFinderService {
 
 		initCustomFieldValues(newReq.getCurrentVersion(), newVersion.getCustomFields());
 
+		milestoneService.bindRequirementVersionToMilestones(newReq.getCurrentVersion().getId(), milestoneIds);
+
 		return newReq;
 	}
 
 	@Override
 	@PreAuthorize("hasPermission(#libraryId, 'org.squashtest.tm.domain.requirement.RequirementLibrary' , 'CREATE') "
 			+ OR_HAS_ROLE_ADMIN)
-	public Requirement addRequirementToRequirementLibrary(long libraryId, @NotNull Requirement requirement) {
+	public Requirement addRequirementToRequirementLibrary(long libraryId, @NotNull Requirement requirement, List<Long> milestoneIds) {
 		RequirementLibrary library = requirementLibraryDao.findById(libraryId);
 
 		if (!library.isContentNameAvailable(requirement.getName())) {
@@ -257,6 +262,7 @@ RequirementLibraryNavigationService, RequirementLibraryFinderService {
 		replaceAllInfoListReferences(requirement);
 		requirementDao.persist(requirement);
 		createCustomFieldValues(requirement.getCurrentVersion());
+		milestoneService.bindRequirementVersionToMilestones(requirement.getCurrentVersion().getId(), milestoneIds);
 
 		return requirement;
 	}
@@ -268,7 +274,7 @@ RequirementLibraryNavigationService, RequirementLibraryFinderService {
 	@Override
 	@PreAuthorize("hasPermission(#folderId, 'org.squashtest.tm.domain.requirement.RequirementFolder' , 'CREATE') "
 			+ OR_HAS_ROLE_ADMIN)
-	public Requirement addRequirementToRequirementFolder(long folderId, @NotNull NewRequirementVersionDto firstVersion) {
+	public Requirement addRequirementToRequirementFolder(long folderId, @NotNull NewRequirementVersionDto firstVersion, List<Long> milestoneIds) {
 		RequirementFolder folder = requirementFolderDao.findById(folderId);
 
 		if (!folder.isContentNameAvailable(firstVersion.getName())) {
@@ -282,6 +288,7 @@ RequirementLibraryNavigationService, RequirementLibraryFinderService {
 		requirementDao.persist(newReq);
 		createCustomFieldValues(newReq.getCurrentVersion());
 		initCustomFieldValues(newReq.getCurrentVersion(), firstVersion.getCustomFields());
+		milestoneService.bindRequirementVersionToMilestones(newReq.getCurrentVersion().getId(), milestoneIds);
 
 		return newReq;
 	}
@@ -289,7 +296,7 @@ RequirementLibraryNavigationService, RequirementLibraryFinderService {
 	@Override
 	@PreAuthorize("hasPermission(#folderId, 'org.squashtest.tm.domain.requirement.RequirementFolder' , 'CREATE') "
 			+ OR_HAS_ROLE_ADMIN)
-	public Requirement addRequirementToRequirementFolder(long folderId, @NotNull Requirement requirement) {
+	public Requirement addRequirementToRequirementFolder(long folderId, @NotNull Requirement requirement, List<Long> milestoneIds) {
 		RequirementFolder folder = requirementFolderDao.findById(folderId);
 
 		if (!folder.isContentNameAvailable(requirement.getName())) {
@@ -300,6 +307,7 @@ RequirementLibraryNavigationService, RequirementLibraryFinderService {
 		replaceAllInfoListReferences(requirement);
 		requirementDao.persist(requirement);
 		createCustomFieldValues(requirement.getCurrentVersion());
+		milestoneService.bindRequirementVersionToMilestones(requirement.getCurrentVersion().getId(), milestoneIds);
 
 		return requirement;
 	}
@@ -307,7 +315,7 @@ RequirementLibraryNavigationService, RequirementLibraryFinderService {
 	@Override
 	@PreAuthorize("hasPermission(#requirementId, 'org.squashtest.tm.domain.requirement.Requirement' , 'CREATE') "
 			+ OR_HAS_ROLE_ADMIN)
-	public Requirement addRequirementToRequirement(long requirementId, @NotNull NewRequirementVersionDto newRequirement) {
+	public Requirement addRequirementToRequirement(long requirementId, @NotNull NewRequirementVersionDto newRequirement, List<Long> milestoneIds) {
 
 		Requirement parent = requirementDao.findById(requirementId);
 		Requirement child = createRequirement(newRequirement);
@@ -320,6 +328,7 @@ RequirementLibraryNavigationService, RequirementLibraryFinderService {
 		initCustomFieldValues(child.getCurrentVersion(), newRequirement.getCustomFields());
 		indexationService.reindexRequirementVersion(parent.getCurrentVersion().getId());
 		indexationService.reindexRequirementVersions(child.getRequirementVersions());
+		milestoneService.bindRequirementVersionToMilestones(child.getCurrentVersion().getId(), milestoneIds);
 
 		return child;
 	}
@@ -327,7 +336,7 @@ RequirementLibraryNavigationService, RequirementLibraryFinderService {
 	@Override
 	@PreAuthorize("hasPermission(#requirementId, 'org.squashtest.tm.domain.requirement.Requirement' , 'CREATE') "
 			+ OR_HAS_ROLE_ADMIN)
-	public Requirement addRequirementToRequirement(long requirementId, @NotNull Requirement newRequirement) {
+	public Requirement addRequirementToRequirement(long requirementId, @NotNull Requirement newRequirement, List<Long> milestoneIds) {
 
 		Requirement parent = requirementDao.findById(requirementId);
 
@@ -338,6 +347,8 @@ RequirementLibraryNavigationService, RequirementLibraryFinderService {
 
 		indexationService.reindexRequirementVersions(parent.getRequirementVersions());
 		indexationService.reindexRequirementVersions(newRequirement.getRequirementVersions());
+		milestoneService.bindRequirementVersionToMilestones(newRequirement.getCurrentVersion().getId(), milestoneIds);
+
 		return newRequirement;
 	}
 

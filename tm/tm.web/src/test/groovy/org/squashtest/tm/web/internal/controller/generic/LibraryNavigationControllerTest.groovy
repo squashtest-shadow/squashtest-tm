@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.web.internal.controller.generic;
 
+import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.lang.NullArgumentException
@@ -54,7 +55,7 @@ class LibraryNavigationControllerTest extends Specification {
 		DummyFolder folder = new DummyFolder()
 
 		when:
-		def res = controller.addNewFolderToLibraryRootContent(10, folder)
+		def res = controller.addNewFolderToLibraryRootContent(10, folder, [])
 
 		then:
 		1 * service.addFolderToLibrary(10, folder)
@@ -69,7 +70,7 @@ class LibraryNavigationControllerTest extends Specification {
 		service.findLibraryRootContent(10) >> [rootFolder]
 
 		when:
-		def res = controller.getRootContentTreeModel(10)
+		def res = controller.getRootContentTreeModel(10, [])
 
 		then:
 		res.size() == 1
@@ -83,7 +84,7 @@ class LibraryNavigationControllerTest extends Specification {
 		service.findFolderContent(10) >> [content]
 
 		when:
-		def res = controller.getFolderContentTreeModel(10)
+		def res = controller.getFolderContentTreeModel(10, [])
 
 		then:
 		res.size() == 1
@@ -95,7 +96,7 @@ class LibraryNavigationControllerTest extends Specification {
 		DummyFolder folder = new DummyFolder();
 
 		when:
-		JsTreeNode res = controller.addNewFolderToFolderContent(100, folder)
+		JsTreeNode res = controller.addNewFolderToFolderContent(100, folder, [])
 
 		then:
 		1 * service.addFolderToFolder(100, folder)
@@ -112,7 +113,7 @@ class DummyController extends LibraryNavigationController<DummyLibrary, DummyFol
 		service
 	}
 
-	JsTreeNode createTreeNodeFromLibraryNode(LibraryNode node) {
+	JsTreeNode createTreeNodeFromLibraryNode(LibraryNode node, List<Long> milestoneIds) {
 		new JsTreeNode()
 	}
 

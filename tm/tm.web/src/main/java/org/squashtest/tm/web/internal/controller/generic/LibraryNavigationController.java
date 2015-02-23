@@ -41,6 +41,7 @@ import net.sf.jasperreports.engine.export.JRXlsExporterParameter;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -92,21 +93,25 @@ public abstract class LibraryNavigationController<LIBRARY extends Library<? exte
 		return messageSource;
 	}
 
-	protected abstract JsTreeNode createTreeNodeFromLibraryNode(NODE resource);
+	protected abstract JsTreeNode createTreeNodeFromLibraryNode(NODE resource, List<Long> milestoneIds);
 
 	@RequestMapping(value = "/drives/{libraryId}/content", method = RequestMethod.GET)
-	public final @ResponseBody List<JsTreeNode> getRootContentTreeModel(@PathVariable long libraryId) {
+	public final @ResponseBody List<JsTreeNode> getRootContentTreeModel(@PathVariable long libraryId,
+			@CookieValue(value="milestones", required=false, defaultValue="") List<Long> milestoneIds) {
 		List<NODE> nodes = getLibraryNavigationService().findLibraryRootContent(libraryId);
-		List<JsTreeNode> model = createJsTreeModel(nodes);
+		List<JsTreeNode> model = createJsTreeModel(nodes, milestoneIds);
 
 		return model;
 	}
 
-	protected List<JsTreeNode> createJsTreeModel(Collection<NODE> nodes) {
+	protected List<JsTreeNode> createJsTreeModel(Collection<NODE> nodes, List<Long> milestoneIds) {
 		List<JsTreeNode> jstreeNodes = new ArrayList<JsTreeNode>();
 
 		for (NODE node : nodes) {
-			jstreeNodes.add(createTreeNodeFromLibraryNode(node));
+			JsTreeNode jsnode = createTreeNodeFromLibraryNode(node, milestoneIds);
+			if (jsnode != null){
+				jstreeNodes.add(jsnode);
+			}
 		}
 
 		return jstreeNodes;
@@ -116,31 +121,31 @@ public abstract class LibraryNavigationController<LIBRARY extends Library<? exte
 	@ResponseStatus(HttpStatus.CREATED)
 	@RequestMapping(value = "/drives/{libraryId}/content/new-folder", method = RequestMethod.POST)
 	public final @ResponseBody JsTreeNode addNewFolderToLibraryRootContent(@PathVariable long libraryId,
-			@RequestBody FOLDER newFolder) {
-
-
-
+			@RequestBody FOLDER newFolder, @CookieValue(value="milestones", required=false, defaultValue="") List<Long> milestoneIds) {
 
 		getLibraryNavigationService().addFolderToLibrary(libraryId, newFolder);
 
-		return createTreeNodeFromLibraryNode((NODE) newFolder);
+		return createTreeNodeFromLibraryNode((NODE) newFolder, milestoneIds);
 	}
 
 	@SuppressWarnings("unchecked")
 	@ResponseStatus(HttpStatus.CREATED)
 	@RequestMapping(value = "/folders/{folderId}/content/new-folder", method = RequestMethod.POST)
 	public final @ResponseBody JsTreeNode addNewFolderToFolderContent(@PathVariable long folderId,
-			@RequestBody FOLDER newFolder) {
+			@RequestBody FOLDER newFolder, @CookieValue(value="milestones", required=false, defaultValue="") List<Long> milestoneIds) {
 
 		getLibraryNavigationService().addFolderToFolder(folderId, newFolder);
 
-		return createTreeNodeFromLibraryNode((NODE) newFolder);
+		return createTreeNodeFromLibraryNode((NODE) newFolder, milestoneIds);
 	}
 
 	@RequestMapping(value = "/folders/{folderId}/content", method = RequestMethod.GET)
-	public final @ResponseBody List<JsTreeNode> getFolderContentTreeModel(@PathVariable long folderId) {
+	public final @ResponseBody
+	List<JsTreeNode> getFolderContentTreeModel(@PathVariable long folderId,
+			@CookieValue(value="milestones", required=false, defaultValue="") List<Long> milestoneIds) {
+
 		List<NODE> nodes = getLibraryNavigationService().findFolderContent(folderId);
-		List<JsTreeNode> model = createJsTreeModel(nodes);
+		List<JsTreeNode> model = createJsTreeModel(nodes, milestoneIds);
 
 		return model;
 	}
@@ -179,7 +184,8 @@ public abstract class LibraryNavigationController<LIBRARY extends Library<? exte
 
 	@RequestMapping(value = "/{destinationType}/{destinationId}/content/new", method = RequestMethod.POST, params = { "nodeIds[]" })
 	public @ResponseBody List<JsTreeNode> copyNodes(@RequestParam("nodeIds[]") Long[] nodeIds,
-			@PathVariable("destinationId") long destinationId, @PathVariable("destinationType") String destType) {
+			@PathVariable("destinationId") long destinationId, @PathVariable("destinationType") String destType, @CookieValue(value="milestones",
+			required=false, defaultValue="") List<Long> milestoneIds) {
 
 		List<NODE> nodeList;
 		try {
@@ -195,7 +201,7 @@ public abstract class LibraryNavigationController<LIBRARY extends Library<? exte
 			throw new RightsUnsuficientsForOperationException(ade);
 		}
 
-		return createJsTreeModel(nodeList);
+		return createJsTreeModel(nodeList, milestoneIds);
 	}
 
 	@RequestMapping(value = "/{destinationType}/{destinationId}/content/{nodeIds}", method = RequestMethod.PUT)

@@ -101,7 +101,7 @@ public abstract class WorkspaceController<LN extends LibraryNode> {
 		MultiMap expansionCandidates = mapIdsByType(nodesToOpen);
 
 		DriveNodeBuilder<LN> nodeBuilder = driveNodeBuilderProvider().get();
-		if (milestoneIds != null && (!milestoneIds.isEmpty())){
+		if (!milestoneIds.isEmpty()){
 			nodeBuilder.filterByMilestone(milestoneFinder.findById(milestoneIds.get(0)));
 		}
 

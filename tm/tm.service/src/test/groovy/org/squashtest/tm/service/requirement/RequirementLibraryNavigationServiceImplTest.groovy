@@ -26,6 +26,8 @@ import org.squashtest.tm.domain.requirement.NewRequirementVersionDto
 import org.squashtest.tm.domain.requirement.Requirement
 import org.squashtest.tm.domain.requirement.RequirementFolder
 import org.squashtest.tm.domain.requirement.RequirementLibrary
+import org.squashtest.tm.domain.requirement.RequirementVersion;
+import org.squashtest.tm.domain.resource.Resource;
 import org.squashtest.tm.exception.DuplicateNameException
 import org.squashtest.tm.service.infolist.InfoListItemFinderService;
 import org.squashtest.tm.service.internal.customfield.PrivateCustomFieldValueService
@@ -34,6 +36,7 @@ import org.squashtest.tm.service.internal.repository.RequirementDao
 import org.squashtest.tm.service.internal.repository.RequirementFolderDao
 import org.squashtest.tm.service.internal.repository.RequirementLibraryDao
 import org.squashtest.tm.service.internal.requirement.RequirementLibraryNavigationServiceImpl
+import org.squashtest.tm.service.milestone.MilestoneMembershipManager;
 import org.squashtest.tm.service.project.ProjectFilterModificationService
 import org.squashtest.tm.service.security.PermissionEvaluationService
 import org.squashtest.tm.service.testutils.MockFactory;
@@ -50,8 +53,11 @@ class RequirementLibraryNavigationServiceImplTest extends Specification {
 	ProjectFilterModificationService projectFilterModificationService = Mock()
 	PrivateCustomFieldValueService customFieldValueManager = Mock()
 	InfoListItemFinderService infoListItemService = Mock()
+	MilestoneMembershipManager milestoneService = Mock()
 
 	MockFactory mockFactory = new MockFactory();
+
+	RequirementVersion version;	// used in some hacks
 
 	def setup() {
 		NewRequirementVersionDto.metaClass.sameAs = {
@@ -67,6 +73,7 @@ class RequirementLibraryNavigationServiceImplTest extends Specification {
 		service.projectFilterModificationService = projectFilterModificationService
 		permissionService.hasRoleOrPermissionOnObject(_, _, _) >> true
 		service.infoListItemService = infoListItemService
+		service.milestoneService = milestoneService
 
 		use (ReflectionCategory) {
 			AbstractLibraryNavigationService.set(field: "permissionService", of: service, to: permissionService)
@@ -129,13 +136,18 @@ class RequirementLibraryNavigationServiceImplTest extends Specification {
 
 		and:
 		def req = new NewRequirementVersionDto(name:"name", description: "desc", reference: "ref", category : "CAT_BUSINESS")
+
 		lib.isContentNameAvailable(req.name) >> true
 
 		when :
-		def res = service.addRequirementToRequirementLibrary(1, req)
+		def res = service.addRequirementToRequirementLibrary(1, req, [])
 
 		then :
 		1 * lib.addContent({
+			this.version = it.currentVersion
+			use (ReflectionCategory) {
+				Resource.set(field : 'id', of : version, to : 1l)
+			}
 			it.notifyAssociatedWithProject(proj);
 			req.sameAs it.currentVersion
 		})
@@ -157,10 +169,14 @@ class RequirementLibraryNavigationServiceImplTest extends Specification {
 		folder.isContentNameAvailable(req.name) >> true
 
 		when :
-		def res = service.addRequirementToRequirementFolder(1, req)
+		def res = service.addRequirementToRequirementFolder(1, req, [])
 
 		then :
 		1 * folder.addContent({
+			this.version = it.currentVersion
+			use (ReflectionCategory) {
+				Resource.set(field : 'id', of : version, to : 1l)
+			}
 			it.notifyAssociatedWithProject(proj);
 			req.sameAs it.currentVersion
 		})
@@ -178,7 +194,7 @@ class RequirementLibraryNavigationServiceImplTest extends Specification {
 		lib.isContentNameAvailable(req.name) >> false
 
 		when :
-		service.addRequirementToRequirementLibrary(1, req)
+		service.addRequirementToRequirementLibrary(1, req, [])
 
 		then :
 		thrown(DuplicateNameException)

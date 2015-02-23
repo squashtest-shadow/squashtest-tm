@@ -65,8 +65,9 @@ LibraryNavigationService<TestCaseLibrary, TestCaseFolder, TestCaseLibraryNode>, 
 	 * @param testCase
 	 * @param customFieldValues
 	 * @param position if non-null and non-negative, the test case will be inserted at that index.
+	 * @param milestoneIds the list of the ids of the milestones the test case must be bound to
 	 */
-	void addTestCaseToLibrary(long libraryId, TestCase testCase, Map<Long, RawValue> customFieldValues, Integer position);
+	void addTestCaseToLibrary(long libraryId, TestCase testCase, Map<Long, RawValue> customFieldValues, Integer position, List<Long> milestoneIds);
 
 
 
@@ -89,8 +90,9 @@ LibraryNavigationService<TestCaseLibrary, TestCaseFolder, TestCaseLibraryNode>, 
 	 * @param testCase
 	 * @param customFieldValues Map&lt;String, String||String[]&gt;
 	 * @param position if non-null and non-negative, the test case will be inserted at that index.
+	 * @param milestoneIds the ids of the milestones the test case will be bound to
 	 */
-	void addTestCaseToFolder(long folderId, TestCase testCase, Map<Long, RawValue> customFieldValues, Integer position);
+	void addTestCaseToFolder(long folderId, TestCase testCase, Map<Long, RawValue> customFieldValues, Integer position, List<Long> milestoneIds);
 
 
 	/**

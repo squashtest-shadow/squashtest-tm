@@ -40,6 +40,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -54,8 +55,10 @@ import org.squashtest.tm.domain.testcase.TestCaseFolder;
 import org.squashtest.tm.domain.testcase.TestCaseLibrary;
 import org.squashtest.tm.domain.testcase.TestCaseLibraryNode;
 import org.squashtest.tm.service.library.LibraryNavigationService;
+import org.squashtest.tm.service.milestone.MilestoneFinderService;
 import org.squashtest.tm.service.statistics.testcase.TestCaseStatisticsBundle;
 import org.squashtest.tm.service.testcase.TestCaseLibraryNavigationService;
+import org.squashtest.tm.service.testcase.TestCaseModificationService;
 import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.controller.generic.LibraryNavigationController;
 import org.squashtest.tm.web.internal.controller.testcase.TestCaseFormModel.TestCaseFormModelValidator;
@@ -82,6 +85,9 @@ LibraryNavigationController<TestCaseLibrary, TestCaseFolder, TestCaseLibraryNode
 	@Inject
 	private TestCaseLibraryNavigationService testCaseLibraryNavigationService;
 
+	@Inject
+	private MilestoneFinderService milestoneFinder;
+
 	private static final String JASPER_EXPORT_FILE = "/WEB-INF/reports/test-case-export.jasper";
 	private static final String ADD_TEST_CASE = "add-test-case";
 	private static final String FILENAME = "filename";
@@ -97,11 +103,16 @@ LibraryNavigationController<TestCaseLibrary, TestCaseFolder, TestCaseLibraryNode
 	}
 
 	@Override
-	protected JsTreeNode createTreeNodeFromLibraryNode(TestCaseLibraryNode node) {
-		return testCaseLibraryTreeNodeBuilder.get().setNode(node).build();
+	protected JsTreeNode createTreeNodeFromLibraryNode(TestCaseLibraryNode node, List<Long> milestoneIds) {
+
+		TestCaseLibraryTreeNodeBuilder builder = testCaseLibraryTreeNodeBuilder.get();
+
+		if (!milestoneIds.isEmpty()){
+			builder.filterByMilestone(milestoneFinder.findById(milestoneIds.get(0)));
+		}
+
+		return builder.setNode(node).build();
 	}
-
-
 
 
 	/*
@@ -109,8 +120,10 @@ LibraryNavigationController<TestCaseLibrary, TestCaseFolder, TestCaseLibraryNode
 	 * So we're doing it manually now.
 	 */
 	@RequestMapping(value = "/drives/{libraryId}/content/new-test-case", method = RequestMethod.POST, consumes="application/json")
-	public @ResponseBody JsTreeNode addNewTestCaseToLibraryRootContent(@PathVariable long libraryId,
-			@RequestBody TestCaseFormModel testCaseModel) throws BindException{
+	public @ResponseBody JsTreeNode addNewTestCaseToLibraryRootContent(
+			@PathVariable long libraryId,
+			@RequestBody TestCaseFormModel testCaseModel,
+			@CookieValue(value="milestones", required=false, defaultValue="") List<Long> milestoneIds) throws BindException{
 
 		BindingResult validation = new BeanPropertyBindingResult(testCaseModel, ADD_TEST_CASE);
 		TestCaseFormModelValidator validator = new TestCaseFormModelValidator(getMessageSource());
@@ -124,14 +137,16 @@ LibraryNavigationController<TestCaseLibrary, TestCaseFolder, TestCaseLibraryNode
 
 		Map<Long, RawValue> customFieldValues = testCaseModel.getCufs();
 
-		testCaseLibraryNavigationService.addTestCaseToLibrary(libraryId, testCase, customFieldValues, null);
+		testCaseLibraryNavigationService.addTestCaseToLibrary(libraryId, testCase, customFieldValues, null, milestoneIds);
 
-		return createTreeNodeFromLibraryNode(testCase);
+		return createTreeNodeFromLibraryNode(testCase, milestoneIds);
 	}
 
 	@RequestMapping(value = "/folders/{folderId}/content/new-test-case", method = RequestMethod.POST, consumes="application/json")
-	public @ResponseBody JsTreeNode addNewTestCaseToFolder(@PathVariable long folderId,
-			@RequestBody TestCaseFormModel testCaseModel) throws BindException {
+	public @ResponseBody JsTreeNode addNewTestCaseToFolder(
+			@PathVariable long folderId,
+			@RequestBody TestCaseFormModel testCaseModel,
+			@CookieValue(value="milestones", required=false, defaultValue="") List<Long> milestoneIds) throws BindException {
 
 		BindingResult validation = new BeanPropertyBindingResult(testCaseModel, ADD_TEST_CASE);
 		TestCaseFormModelValidator validator = new TestCaseFormModelValidator(getMessageSource());
@@ -145,9 +160,9 @@ LibraryNavigationController<TestCaseLibrary, TestCaseFolder, TestCaseLibraryNode
 
 		Map<Long, RawValue> customFieldValues = testCaseModel.getCufs();
 
-		testCaseLibraryNavigationService.addTestCaseToFolder(folderId, testCase, customFieldValues, null);
+		testCaseLibraryNavigationService.addTestCaseToFolder(folderId, testCase, customFieldValues, null, milestoneIds);
 
-		return createTreeNodeFromLibraryNode(testCase);
+		return createTreeNodeFromLibraryNode(testCase, milestoneIds);
 	}
 
 	@RequestMapping(value = "/drives", method = RequestMethod.GET, params = { "linkables" })

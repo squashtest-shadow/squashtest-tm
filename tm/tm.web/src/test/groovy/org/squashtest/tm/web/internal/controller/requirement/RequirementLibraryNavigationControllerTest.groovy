@@ -70,7 +70,7 @@ class RequirementLibraryNavigationControllerTest  extends Specification {
 		}
 
 		when:
-		JsTreeNode res = controller.addNewFolderToLibraryRootContent(10, folder)
+		JsTreeNode res = controller.addNewFolderToLibraryRootContent(10, folder, [])
 
 		then:
 		1 * requirementLibraryNavigationService.addFolderToLibrary(10, folder)
@@ -88,7 +88,7 @@ class RequirementLibraryNavigationControllerTest  extends Specification {
 		requirementLibraryNavigationService.findLibraryRootContent(10) >> [rootFolder]
 
 		when:
-		def res = controller.getRootContentTreeModel(10)
+		def res = controller.getRootContentTreeModel(10, [])
 
 		then:
 		res.size() == 1
@@ -109,7 +109,7 @@ class RequirementLibraryNavigationControllerTest  extends Specification {
 		}
 
 		when:
-		JsTreeNode res = controller.addNewRequirementToLibraryRootContent(100, firstVersion)
+		JsTreeNode res = controller.addNewRequirementToLibraryRootContent(100, firstVersion, [])
 
 		then:
 		1 * requirementLibraryNavigationService.addRequirementToRequirementLibrary(100, _) >> req
@@ -127,7 +127,7 @@ class RequirementLibraryNavigationControllerTest  extends Specification {
 		requirementLibraryNavigationService.findFolderContent(10) >> [content]
 
 		when:
-		def res = controller.getFolderContentTreeModel(10)
+		def res = controller.getFolderContentTreeModel(10, [])
 
 		then:
 		res.size() == 1
@@ -143,7 +143,7 @@ class RequirementLibraryNavigationControllerTest  extends Specification {
 		}
 
 		when:
-		JsTreeNode res = controller.addNewFolderToFolderContent(100, folder)
+		JsTreeNode res = controller.addNewFolderToFolderContent(100, folder, [])
 
 		then:
 		1 * requirementLibraryNavigationService.addFolderToFolder(100, folder)

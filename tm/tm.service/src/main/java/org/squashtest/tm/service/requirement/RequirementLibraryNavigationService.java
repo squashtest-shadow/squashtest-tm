@@ -41,17 +41,17 @@ public interface RequirementLibraryNavigationService extends
 LibraryNavigationService<RequirementLibrary, RequirementFolder, RequirementLibraryNode>,
 RequirementLibraryFinderService {
 
-	Requirement addRequirementToRequirementLibrary(long libraryId, @NotNull Requirement requirement);
+	Requirement addRequirementToRequirementLibrary(long libraryId, @NotNull Requirement requirement, List<Long> milestoneIds);
 
-	Requirement addRequirementToRequirementLibrary(long libraryId, @NotNull NewRequirementVersionDto newRequirement);
+	Requirement addRequirementToRequirementLibrary(long libraryId, @NotNull NewRequirementVersionDto newRequirement, List<Long> milestoneIds);
 
-	Requirement addRequirementToRequirementFolder(long folderId, @NotNull Requirement requirement);
+	Requirement addRequirementToRequirementFolder(long folderId, @NotNull Requirement requirement, List<Long> milestoneIds);
 
-	Requirement addRequirementToRequirementFolder(long folderId, @NotNull NewRequirementVersionDto newRequirement);
+	Requirement addRequirementToRequirementFolder(long folderId, @NotNull NewRequirementVersionDto newRequirement, List<Long> milestoneIds);
 
-	Requirement addRequirementToRequirement(long requirementId, @NotNull Requirement newRequirement);
+	Requirement addRequirementToRequirement(long requirementId, @NotNull Requirement newRequirement, List<Long> milestoneIds);
 
-	Requirement addRequirementToRequirement(long requirementId, @NotNull NewRequirementVersionDto newRequirement);
+	Requirement addRequirementToRequirement(long requirementId, @NotNull NewRequirementVersionDto newRequirement, List<Long> milestoneIds);
 
 	List<Requirement> copyNodesToRequirement(long requirementId, Long[] sourceNodesIds);
 

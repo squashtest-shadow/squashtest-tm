@@ -34,6 +34,7 @@ import javax.inject.Provider;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -111,8 +112,12 @@ public class RequirementVersionManagerController {
 
 	@RequestMapping(value = "/new", method = RequestMethod.POST)
 	@ResponseBody
-	public void createNewVersion(@PathVariable long requirementId) {
-		versionService.createNewVersion(requirementId);
+	public void createNewVersion(@PathVariable long requirementId, @CookieValue(value="milestones", required=false, defaultValue="") List<Long> milestoneIds) {
+		if (milestoneIds.isEmpty()){
+			versionService.createNewVersion(requirementId);
+		}else{
+			versionService.createNewVersion(requirementId, milestoneIds);
+		}
 	}
 
 

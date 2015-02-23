@@ -67,6 +67,7 @@ import org.squashtest.tm.service.internal.repository.TestCaseDao;
 import org.squashtest.tm.service.internal.repository.TestCaseFolderDao;
 import org.squashtest.tm.service.internal.repository.TestCaseLibraryDao;
 import org.squashtest.tm.service.internal.repository.TestCaseLibraryNodeDao;
+import org.squashtest.tm.service.milestone.MilestoneMembershipManager;
 import org.squashtest.tm.service.project.ProjectFilterModificationService;
 import org.squashtest.tm.service.statistics.testcase.TestCaseStatisticsBundle;
 import org.squashtest.tm.service.testcase.TestCaseLibraryNavigationService;
@@ -125,6 +126,9 @@ TestCaseLibraryNavigationService {
 
 	@Inject
 	private InfoListItemFinderService infoListItemService;
+
+	@Inject
+	private MilestoneMembershipManager milestoneService;
 
 	@Override
 	protected NodeDeletionHandler<TestCaseLibraryNode, TestCaseFolder> getDeletionHandler() {
@@ -286,9 +290,10 @@ TestCaseLibraryNavigationService {
 	@Override
 	@PreAuthorize("hasPermission(#libraryId, 'org.squashtest.tm.domain.testcase.TestCaseLibrary' , 'CREATE' )"
 			+ "or hasRole('ROLE_ADMIN')")
-	public void addTestCaseToLibrary(long libraryId, TestCase testCase, Map<Long, RawValue> customFieldValues, Integer position) {
+	public void addTestCaseToLibrary(long libraryId, TestCase testCase, Map<Long, RawValue> customFieldValues, Integer position, List<Long> milestoneIds) {
 		addTestCaseToLibrary(libraryId, testCase, position);
 		initCustomFieldValues(testCase, customFieldValues);
+		milestoneService.bindTestCaseToMilestones(testCase.getId(), milestoneIds);
 	}
 
 	@Override
@@ -315,9 +320,10 @@ TestCaseLibraryNavigationService {
 	@Override
 	@PreAuthorize("hasPermission(#folderId, 'org.squashtest.tm.domain.testcase.TestCaseFolder' , 'CREATE') "
 			+ "or hasRole('ROLE_ADMIN')")
-	public void addTestCaseToFolder(long folderId, TestCase testCase, Map<Long, RawValue> customFieldValues, Integer position) {
+	public void addTestCaseToFolder(long folderId, TestCase testCase, Map<Long, RawValue> customFieldValues, Integer position, List<Long> milestoneIds) {
 		addTestCaseToFolder(folderId, testCase, position);
 		initCustomFieldValues(testCase, customFieldValues);
+		milestoneService.bindTestCaseToMilestones(testCase.getId(), milestoneIds);
 	}
 
 	@Override

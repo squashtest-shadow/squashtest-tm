@@ -51,6 +51,16 @@ public interface CustomRequirementVersionManagerService {
 	 */
 	void createNewVersion(long requirementId);
 
+	/**
+	 * Increase the current version of the given requirement and associates the requirement to the given milestones. If other versions of the same requirements
+	 * were bound to those milestones, they won't be anymore.
+	 * 
+	 * Note that the argument is a requirement Id, not the id of a given version
+	 * 
+	 * @param requirementId
+	 */
+	void createNewVersion(long requirementId, Collection<Long> milestoneIds);
+
 
 	void rename(long requirementVersionId, String newName);
 

@@ -43,6 +43,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -64,6 +65,7 @@ import org.squashtest.tm.service.campaign.IterationModificationService;
 import org.squashtest.tm.service.deletion.OperationReport;
 import org.squashtest.tm.service.deletion.SuppressionPreviewReport;
 import org.squashtest.tm.service.library.LibraryNavigationService;
+import org.squashtest.tm.service.milestone.MilestoneFinderService;
 import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.controller.campaign.CampaignFormModel.CampaignFormModelValidator;
 import org.squashtest.tm.web.internal.controller.campaign.IterationFormModel.IterationFormModelValidator;
@@ -106,13 +108,15 @@ LibraryNavigationController<CampaignLibrary, CampaignFolder, CampaignLibraryNode
 	private CampaignFinder campaignFinder;
 	@Inject
 	private IterationModificationService iterationModificationService;
-
+	@Inject
+	private MilestoneFinderService milestoneFinder;
 
 
 	@RequestMapping(value = "/drives/{libraryId}/content/new-campaign", method = RequestMethod.POST)
 	public @ResponseBody
 	JsTreeNode addNewCampaignToLibraryRootContent(@PathVariable Long libraryId,
-			@RequestBody CampaignFormModel campaignForm) throws BindException{
+			@RequestBody CampaignFormModel campaignForm,
+			@CookieValue(value="milestones", required=false, defaultValue="") List<Long> milestoneIds) throws BindException{
 
 		BindingResult validation = new BeanPropertyBindingResult(campaignForm, "add-campaign");
 		CampaignFormModelValidator validator = new CampaignFormModelValidator(getMessageSource());
@@ -128,14 +132,15 @@ LibraryNavigationController<CampaignLibrary, CampaignFolder, CampaignLibraryNode
 
 		campaignLibraryNavigationService.addCampaignToCampaignLibrary(libraryId, newCampaign, customFieldValues);
 
-		return createTreeNodeFromLibraryNode(newCampaign);
+		return createTreeNodeFromLibraryNode(newCampaign, milestoneIds);
 
 	}
 
 	@RequestMapping(value = "/folders/{folderId}/content/new-campaign", method = RequestMethod.POST)
 	public @ResponseBody
 	JsTreeNode addNewCampaignToFolderContent(@PathVariable long folderId,
-			@RequestBody CampaignFormModel campaignForm)  throws BindException {
+			@RequestBody CampaignFormModel campaignForm,
+			@CookieValue(value="milestones", required=false, defaultValue="") List<Long> milestoneIds)  throws BindException {
 
 		BindingResult validation = new BeanPropertyBindingResult(campaignForm, "add-campaign");
 		CampaignFormModelValidator validator = new CampaignFormModelValidator(getMessageSource());
@@ -151,7 +156,7 @@ LibraryNavigationController<CampaignLibrary, CampaignFolder, CampaignLibraryNode
 
 		campaignLibraryNavigationService.addCampaignToCampaignFolder(folderId, newCampaign, customFieldValues);
 
-		return createTreeNodeFromLibraryNode(newCampaign);
+		return createTreeNodeFromLibraryNode(newCampaign, milestoneIds);
 
 	}
 
@@ -161,8 +166,14 @@ LibraryNavigationController<CampaignLibrary, CampaignFolder, CampaignLibraryNode
 	}
 
 	@Override
-	protected JsTreeNode createTreeNodeFromLibraryNode(CampaignLibraryNode model) {
-		return campaignLibraryTreeNodeBuilder.get().setNode(model).build();
+	protected JsTreeNode createTreeNodeFromLibraryNode(CampaignLibraryNode model, List<Long> milestoneIds) {
+		CampaignLibraryTreeNodeBuilder builder = campaignLibraryTreeNodeBuilder.get();
+
+		if (! milestoneIds.isEmpty()){
+			builder.filterByMilestone(milestoneFinder.findById(milestoneIds.get(0)));
+		}
+
+		return builder.setNode(model).build();
 	}
 
 

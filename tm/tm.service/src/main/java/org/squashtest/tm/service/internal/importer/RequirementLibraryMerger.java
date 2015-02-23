@@ -212,11 +212,11 @@ class RequirementLibraryMerger {
 
 			Requirement toReturn = null;
 			if (destRequirement != null) {
-				context.service.addRequirementToRequirement(destRequirement.getId(), requirement);
+				context.service.addRequirementToRequirement(destRequirement.getId(), requirement, new ArrayList<Long>());
 			} else if (destLibrary != null) {
-				toReturn = context.service.addRequirementToRequirementLibrary(destLibrary.getId(), requirement);
+				toReturn = context.service.addRequirementToRequirementLibrary(destLibrary.getId(), requirement, new ArrayList<Long>());
 			} else {
-				toReturn = context.service.addRequirementToRequirementFolder(destFolder.getId(), requirement);
+				toReturn = context.service.addRequirementToRequirementFolder(destFolder.getId(), requirement, new ArrayList<Long>());
 			}
 			return toReturn;
 		}

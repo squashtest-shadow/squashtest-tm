@@ -37,6 +37,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -54,6 +55,7 @@ import org.squashtest.tm.domain.requirement.RequirementLibraryNode;
 import org.squashtest.tm.exception.library.RightsUnsuficientsForOperationException;
 import org.squashtest.tm.service.importer.ImportSummary;
 import org.squashtest.tm.service.library.LibraryNavigationService;
+import org.squashtest.tm.service.milestone.MilestoneFinderService;
 import org.squashtest.tm.service.requirement.RequirementLibraryNavigationService;
 import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.controller.generic.LibraryNavigationController;
@@ -88,12 +90,15 @@ LibraryNavigationController<RequirementLibrary, RequirementFolder, RequirementLi
 	@Inject
 	private RequirementLibraryNavigationService requirementLibraryNavigationService;
 
+	@Inject
+	private MilestoneFinderService milestoneFinder;
+
 
 	@RequestMapping(value = "/drives/{libraryId}/content/new-requirement", method = RequestMethod.POST)
 	@ResponseStatus(HttpStatus.CREATED)
 	public @ResponseBody
 	JsTreeNode addNewRequirementToLibraryRootContent(@PathVariable long libraryId,
-			@RequestBody RequirementFormModel requirementModel) throws BindException {
+			@RequestBody RequirementFormModel requirementModel, @CookieValue(value="milestones", required=false, defaultValue="") List<Long> milestoneIds) throws BindException {
 
 		BindingResult validation = new BeanPropertyBindingResult(requirementModel, MODEL_ATTRIBUTE_ADD_REQUIREMENT);
 		RequirementFormModelValidator validator = new RequirementFormModelValidator(getMessageSource());
@@ -107,14 +112,15 @@ LibraryNavigationController<RequirementLibrary, RequirementFolder, RequirementLi
 		Requirement req = requirementLibraryNavigationService.addRequirementToRequirementLibrary(libraryId,
 				requirementModel.toDTO());
 
-		return createTreeNodeFromLibraryNode(req);
+		return createTreeNodeFromLibraryNode(req, milestoneIds);
 
 	}
 
 	@RequestMapping(value = "/folders/{folderId}/content/new-requirement", method = RequestMethod.POST)
 	public @ResponseBody
 	JsTreeNode addNewRequirementToFolderContent(@PathVariable long folderId,
-			@RequestBody RequirementFormModel requirementModel) throws BindException{
+			@RequestBody RequirementFormModel requirementModel,
+			@CookieValue(value="milestones", required=false, defaultValue="") List<Long> milestoneIds) throws BindException{
 
 
 
@@ -128,14 +134,15 @@ LibraryNavigationController<RequirementLibrary, RequirementFolder, RequirementLi
 
 		Requirement req = requirementLibraryNavigationService.addRequirementToRequirementFolder(folderId, requirementModel.toDTO());
 
-		return createTreeNodeFromLibraryNode(req);
+		return createTreeNodeFromLibraryNode(req, milestoneIds);
 
 	}
 
 	@RequestMapping(value = "/requirements/{requirementId}/content/new-requirement", method = RequestMethod.POST)
 	public @ResponseBody
 	JsTreeNode addNewRequirementToRequirementContent(@PathVariable(RequestParams.REQUIREMENT_ID) long requirementId,
-			@RequestBody RequirementFormModel requirementModel) throws BindException{
+			@RequestBody RequirementFormModel requirementModel,
+			@CookieValue(value="milestones", required=false, defaultValue="") List<Long> milestoneIds) throws BindException{
 
 
 
@@ -149,14 +156,14 @@ LibraryNavigationController<RequirementLibrary, RequirementFolder, RequirementLi
 
 		Requirement req = requirementLibraryNavigationService.addRequirementToRequirement(requirementId, requirementModel.toDTO());
 
-		return createTreeNodeFromLibraryNode(req);
+		return createTreeNodeFromLibraryNode(req, milestoneIds);
 
 	}
 
 	@RequestMapping(value = "/requirements/{requirementId}/content/new", method = RequestMethod.POST, params = { "nodeIds[]" })
 	public @ResponseBody
 	List<JsTreeNode> copyNodeIntoRequirement(@RequestParam("nodeIds[]") Long[] nodeIds,
-			@PathVariable(RequestParams.REQUIREMENT_ID) long requirementId) {
+			@PathVariable(RequestParams.REQUIREMENT_ID) long requirementId, @CookieValue(value="milestones", required=false, defaultValue="") List<Long> milestoneIds) {
 
 		List<Requirement> nodeList;
 		List<RequirementLibraryNode> tojsonList;
@@ -167,7 +174,7 @@ LibraryNavigationController<RequirementLibrary, RequirementFolder, RequirementLi
 			throw new RightsUnsuficientsForOperationException(ade);
 		}
 
-		return createJsTreeModel(tojsonList);
+		return createJsTreeModel(tojsonList, milestoneIds);
 	}
 
 	@RequestMapping(value = "/requirements/{requirementId}/content/{nodeIds}", method = RequestMethod.PUT)
@@ -203,8 +210,14 @@ LibraryNavigationController<RequirementLibrary, RequirementFolder, RequirementLi
 	}
 
 	@Override
-	protected JsTreeNode createTreeNodeFromLibraryNode(RequirementLibraryNode resource) {
-		return requirementLibraryTreeNodeBuilder.get().setNode(resource).build();
+	protected JsTreeNode createTreeNodeFromLibraryNode(RequirementLibraryNode resource, List<Long> milestoneIds) {
+		RequirementLibraryTreeNodeBuilder builder = requirementLibraryTreeNodeBuilder.get();
+
+		if (! milestoneIds.isEmpty()){
+			builder.filterByMilestone(milestoneFinder.findById(milestoneIds.get(0)));
+		}
+
+		return builder.setNode(resource).build();
 	}
 
 

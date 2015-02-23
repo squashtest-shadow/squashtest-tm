@@ -57,7 +57,7 @@ LibraryNavigationService<CampaignLibrary, CampaignFolder, CampaignLibraryNode>, 
 	 * @param campaign
 	 * @param customFieldValues
 	 */
-	void addCampaignToCampaignLibrary(long libraryId, Campaign campaign, Map<Long, RawValue> customFieldValues);
+	void addCampaignToCampaignLibrary(long libraryId, Campaign campaign, Map<Long, RawValue> customFieldValues, List<Long> milestoneIds);
 
 
 
@@ -78,7 +78,7 @@ LibraryNavigationService<CampaignLibrary, CampaignFolder, CampaignLibraryNode>, 
 	 * @param campaign
 	 * @param customFieldValues
 	 */
-	void addCampaignToCampaignFolder(long folderId, Campaign campaign, Map<Long, RawValue> customFieldValues);
+	void addCampaignToCampaignFolder(long folderId, Campaign campaign, Map<Long, RawValue> customFieldValues, List<Long> milestoneIds);
 
 
 	/**

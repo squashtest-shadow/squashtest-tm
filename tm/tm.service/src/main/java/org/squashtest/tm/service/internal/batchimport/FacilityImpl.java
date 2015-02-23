@@ -20,8 +20,10 @@
  */
 package org.squashtest.tm.service.internal.batchimport;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -515,7 +517,7 @@ public class FacilityImpl implements Facility {
 			Collection<String> siblingNames = navigationService.findNamesInLibraryStartingWith(libraryId,
 					testCase.getName());
 			renameIfNeeded(testCase, siblingNames);
-			navigationService.addTestCaseToLibrary(libraryId, testCase, acceptableCufs, target.getOrder());
+			navigationService.addTestCaseToLibrary(libraryId, testCase, acceptableCufs, target.getOrder(), new ArrayList<Long>());
 		}
 		// case 2 : this test case exists within a folder
 		else {
@@ -523,7 +525,7 @@ public class FacilityImpl implements Facility {
 			Collection<String> siblingNames = navigationService.findNamesInFolderStartingWith(folderId,
 					testCase.getName());
 			renameIfNeeded(testCase, siblingNames);
-			navigationService.addTestCaseToFolder(folderId, testCase, acceptableCufs, target.getOrder());
+			navigationService.addTestCaseToFolder(folderId, testCase, acceptableCufs, target.getOrder(), new ArrayList<Long>());
 		}
 
 	}

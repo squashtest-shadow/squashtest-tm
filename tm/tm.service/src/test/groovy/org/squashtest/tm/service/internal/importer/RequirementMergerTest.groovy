@@ -39,7 +39,7 @@ class RequirementMergerTest extends Specification {
 	RequirementMerger merger = new RequirementMerger()
 	RequirementLibraryNavigationService service = Mock()
 	RequirementLibraryMerger context = new RequirementLibraryMerger(service)
-		
+
 	def setup() {
 		merger.context = context
 		merger.destFolder = Mock(RequirementFolder)
@@ -47,7 +47,7 @@ class RequirementMergerTest extends Specification {
 		merger.destFolder.id >> 0
 		merger.destFolder.isContentNameAvailable(_) >> true
 	}
-	
+
 	def "should merge status of requirement"() {
 		given:
 		PseudoRequirement pseudo = new PseudoRequirement("foo", 10)
@@ -60,8 +60,8 @@ class RequirementMergerTest extends Specification {
 
 		when:
 		merger.merge([pseudo])
-		
+
 		then:
-		1 * context.service.addRequirementToRequirementFolder(0, { it.status == RequirementStatus.APPROVED })
+		1 * context.service.addRequirementToRequirementFolder(0, { it.status == RequirementStatus.APPROVED }, [])
 	}
 }

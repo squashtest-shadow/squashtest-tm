@@ -101,6 +101,24 @@ public class CustomRequirementVersionManagerServiceImpl implements CustomRequire
 		customFieldValueService.copyCustomFieldValues(previousVersion, newVersion);
 	}
 
+	@Override
+	@PreAuthorize("hasPermission(#requirementId, 'org.squashtest.tm.domain.requirement.Requirement', 'CREATE') or hasRole('ROLE_ADMIN')")
+	public void createNewVersion(long requirementId, Collection<Long> milestoneIds) {
+
+		createNewVersion(requirementId);
+		Requirement req = requirementVersionDao.findRequirementById(requirementId);
+
+		for (RequirementVersion version : req.getRequirementVersions()){
+			for (Long mid : milestoneIds){
+				version.unbindMilestone(mid);
+			}
+		}
+
+		milestoneManager.bindRequirementVersionToMilestones(req.getCurrentVersion().getId(), milestoneIds);
+
+	}
+
+
 	/**
 	 * @see org.squashtest.tm.service.requirement.CustomRequirementVersionManagerService#changeCriticality(long,
 	 *      org.squashtest.tm.domain.requirement.RequirementCriticality)

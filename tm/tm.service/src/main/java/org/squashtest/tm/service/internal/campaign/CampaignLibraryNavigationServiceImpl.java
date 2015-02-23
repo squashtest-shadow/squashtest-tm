@@ -58,6 +58,7 @@ import org.squashtest.tm.service.internal.repository.CampaignLibraryDao;
 import org.squashtest.tm.service.internal.repository.IterationDao;
 import org.squashtest.tm.service.internal.repository.LibraryNodeDao;
 import org.squashtest.tm.service.internal.repository.TestSuiteDao;
+import org.squashtest.tm.service.milestone.MilestoneMembershipManager;
 import org.squashtest.tm.service.project.ProjectFilterModificationService;
 import org.squashtest.tm.service.security.SecurityCheckableObject;
 
@@ -122,6 +123,8 @@ CampaignLibraryNavigationService {
 	@Qualifier("squashtest.tm.service.internal.PasteToCampaignStrategy")
 	private Provider<PasteStrategy<Campaign, Iteration>> pasteToCampaignStrategyProvider;
 
+	@Inject
+	private MilestoneMembershipManager milestoneManager;
 
 	@Override
 	protected NodeDeletionHandler<CampaignLibraryNode, CampaignFolder> getDeletionHandler() {
@@ -224,10 +227,10 @@ CampaignLibraryNavigationService {
 	@Override
 	@PreAuthorize("hasPermission(#libraryId, 'org.squashtest.tm.domain.campaign.CampaignLibrary', 'CREATE')"
 			+ OR_HAS_ROLE_ADMIN)
-	public void addCampaignToCampaignLibrary(long libraryId, Campaign campaign, Map<Long, RawValue> customFieldValues) {
+	public void addCampaignToCampaignLibrary(long libraryId, Campaign campaign, Map<Long, RawValue> customFieldValues, List<Long> milestoneIds) {
 		addCampaignToCampaignLibrary(libraryId, campaign);
 		initCustomFieldValues(campaign, customFieldValues);
-
+		milestoneManager.bindCampaignToMilestones(campaign.getId(), milestoneIds);
 	}
 
 	@Override
@@ -248,10 +251,11 @@ CampaignLibraryNavigationService {
 	@Override
 	@PreAuthorize("hasPermission(#folderId, 'org.squashtest.tm.domain.campaign.CampaignFolder', 'CREATE')"
 			+ OR_HAS_ROLE_ADMIN)
-	public void addCampaignToCampaignFolder(long folderId, Campaign campaign, Map<Long, RawValue> customFieldValues) {
+	public void addCampaignToCampaignFolder(long folderId, Campaign campaign, Map<Long, RawValue> customFieldValues, List<Long> milestoneIds) {
 
 		addCampaignToCampaignFolder(folderId, campaign);
 		initCustomFieldValues(campaign, customFieldValues);
+		milestoneManager.bindCampaignToMilestones(campaign.getId(), milestoneIds);
 
 	}
 
