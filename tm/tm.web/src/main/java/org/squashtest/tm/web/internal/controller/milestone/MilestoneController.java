@@ -37,6 +37,8 @@ public class MilestoneController {
 	@Inject
 	private Provider<MilestoneStatusComboDataBuilder> statusComboDataBuilderProvider;
 	
+
+	
 	@RequestMapping(value = "/status-combo-data", method = RequestMethod.GET)
 	@ResponseBody
 	public String buildStatusComboData(Locale locale) {

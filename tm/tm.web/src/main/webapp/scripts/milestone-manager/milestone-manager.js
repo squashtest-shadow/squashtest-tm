@@ -159,8 +159,8 @@
 			type : 'POST',
 			dataType : 'json',
 			data : params				
-		}).success(function(data){
-			config.data.editableMilestoneIds.push(data.id);
+		}).success(function(id){
+			config.data.editableMilestoneIds.push(id);
 			$('#milestones-table').squashTable()._fnAjaxUpdate();
 			addMilestoneDialog.formDialog('close');
 		});

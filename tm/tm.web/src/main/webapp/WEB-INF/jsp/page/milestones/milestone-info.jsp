@@ -231,6 +231,8 @@
 		<thead>
 			<tr>
 				<th data-def="map=checkbox, checkbox"></th>
+		  <th data-def="map=raw-type, invisible">raw type (not shown)</th> 
+          <th data-def="map=type, sClass=icon-cell type" >&nbsp;</th> 
 				<th data-def="map=name, sortable, link=${projectDetailBaseUrl}/{entity-id}/info"  class="datatable-filterable"><f:message key="label.Name" /></th>
 		    	<th data-def="map=label, sortable"><f:message key="label.Label" /></th>
 		    	
@@ -283,7 +285,7 @@
 <!-- ------------------------------------END UNBIND PROJECT POPUP------------------------------------------------------- -->
 
 
-<!-- ------------------------------------UNBIND PROJECT POPUP------------------------------------------------------- -->
+<!-- ------------------------------------UNBIND PROJECT BUT KEEP IN PERIMETER POPUP------------------------------------------------------- -->
 	<f:message var="unbindProjectTitle" key="dialog.milestone.unbind.project.title" />
 	<f:message var="warningUnbind" key="dialog.milestone.unbind.project.warning" />
 	<div id="unbind-project-but-keep-in-perimeter-popup" class="popup-dialog not-displayed" title="${unbindProjectTitle}">
@@ -303,8 +305,30 @@
 	
 	</div>
 
-<!-- ------------------------------------END UNBIND PROJECT POPUP------------------------------------------------------- -->
+<!-- ------------------------------------END UNBIND PROJECT BUT KEEP IN PERIMETER  POPUP------------------------------------------------------- -->
 
+
+<!-- ------------------------------------CHANGE RANGE WITH TEMPLATE POPUP------------------------------------------------------- -->
+	<f:message var="changeRangeTitle" key="dialog.milestone.changerange.title" />
+	<f:message var="warningChangeRange" key="dialog.milestone.changerange.warning" />
+	<div id="changeRange-popup" class="popup-dialog not-displayed" title="${changeRangeTitle}">
+		
+		<div class="display-table-row">
+            <div class="display-table-cell warning-cell">
+                <div class="generic-error-signal"></div>
+            </div>
+            <div class="display-table-cell">
+			${warningChangeRange}
+			</div>
+		</div>
+		<div class="popup-dialog-buttonpane">
+		    <input class="confirm" type="button" value="${confirmLabel}" />
+		    <input class="cancel" type="button" value="${cancelLabel}" />				
+		</div>
+	
+	</div>
+
+<!-- ------------------------------------CHANGE RANGE WITH TEMPLATE POPUP------------------------------------------------------- -->
 
 
 

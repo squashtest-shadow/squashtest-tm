@@ -73,10 +73,10 @@ public class ProjectController {
 	public @ResponseBody
 	void createProjectFromTemplate(@Valid @ModelAttribute("add-project-from-template") Project project,
 			@RequestParam long templateId, @RequestParam boolean copyPermissions, @RequestParam boolean copyCUF,
-			@RequestParam boolean copyBugtrackerBinding, @RequestParam boolean copyAutomatedProjects, @RequestParam boolean copyInfolists) {
+			@RequestParam boolean copyBugtrackerBinding, @RequestParam boolean copyAutomatedProjects, @RequestParam boolean copyInfolists, @RequestParam boolean copyMilestone) {
 		try {
 			projectManager.addProjectAndCopySettingsFromTemplate(project, templateId, copyPermissions, copyCUF,
-					copyBugtrackerBinding, copyAutomatedProjects, copyInfolists);
+					copyBugtrackerBinding, copyAutomatedProjects, copyInfolists, copyMilestone);
 		} catch (NameAlreadyInUseException ex) {
 			ex.setObjectName("add-project-from-template");
 			throw ex;

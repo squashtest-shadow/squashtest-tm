@@ -40,6 +40,7 @@ import org.squashtest.tm.service.milestone.MilestoneBindingManagerService;
 import org.squashtest.tm.service.milestone.MilestoneManagerService;
 import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.controller.administration.MilestoneDataTableModelHelper;
+import org.squashtest.tm.web.internal.helper.ProjectHelper;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelBuilder;
@@ -77,6 +78,16 @@ public class MilestoneBindingController {
 	public void unbindMilestoneFromProject(@PathVariable(RequestParams.PROJECT_ID) Long projectId, @PathVariable("milestoneIds") List<Long> milestoneIds){
 		service.unbindMilestonesFromProject(milestoneIds, projectId);
 	}
+	
+	
+	@RequestMapping(value="/milestone/{milestoneId}/template", method = RequestMethod.DELETE)
+	@ResponseBody
+	public void unbindTemplateFroMilestone( @PathVariable("milestoneId") Long milestoneId){
+		service.unbindTemplateFrom(milestoneId);
+	}
+	
+	
+	
 	@RequestMapping(value="/milestone/{milestoneId}/project/{projectIds}", method = RequestMethod.DELETE)
 	@ResponseBody
 	public void unbindProjectFromMilestone(@PathVariable("milestoneId") Long milestoneId, @PathVariable("projectIds") List<Long> projectIds){
@@ -165,6 +176,8 @@ public class MilestoneBindingController {
 			Map<String, Object> data = new HashMap<String, Object>(4);
 			data.put(DataTableModelConstants.DEFAULT_ENTITY_ID_KEY, project.getId());
 			data.put(DataTableModelConstants.DEFAULT_ENTITY_INDEX_KEY, getCurrentIndex() +1);
+			data.put("type", "&nbsp;");
+			data.put("raw-type", ProjectHelper.isTemplate(project) ? "template" : "project");
 			data.put("checkbox", " ");
 			data.put(DataTableModelConstants.DEFAULT_ENTITY_NAME_KEY, project.getName());
 			data.put("label", project.getLabel());

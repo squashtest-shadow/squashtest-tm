@@ -117,42 +117,100 @@
 		}
 
 			
-		var changeRange = function changeRange(value, self){
 		
-			$.ajax({
-				type : "POST",
-				url : config.urls.milestoneUrl,
-				data: {
-					id: self.settings.componentId,
-					value: value
-				}
-			}).then(function(value) {
-				self.component.html(value);
-				var data = JSON.parse(self.settings.jeditableSettings.data);
-				var newRange;		
-				for(var prop in data) {
-                     if(data.hasOwnProperty(prop)){
-                    	 if (data[prop] === value){
-                    		 newRange = prop;
-                    	 }
-                     }
-                       } 
-				updateAfterRangeChange(newRange);
-			});
+		var changeRange = function changeRange(value, rangeEditable){
+		
+			//If the range is global we need to check if the project is bound to a template
+			if (config.data.milestone.currentRange == "GLOBAL"){
+				$.ajax({
+					type : "GET",
+					url : config.urls.milestoneUrl,
+					data: {
+						id: rangeEditable.settings.componentId,
+						isBoundToTemplate: ""
+						}
+					}).done(function(isBoundToATemplate){
+				 
+						//if bound to template show a popup (noooooo....) to know if the user really want to change range
+						if (isBoundToATemplate){
+							
+							var popup = $("#changeRange-popup");
+							popup.data('value', value);
+							popup.data('rangeEditable', rangeEditable);
+							popup.confirmDialog('open');
+						} else {
+							//if not bound to template do the "classical" change range
+							changeRangeRequest(value, rangeEditable);
+						}	
+					});	
+
+			} else {
+				changeRangeRequest(value, rangeEditable);
+			}
+
 		};
+		
+		
+		
+		$("#changeRange-popup").confirmDialog().on('confirmdialogconfirm', function(){	
+			
+			var $this = $(this);
+			var value = $this.data('value');
+			var rangeEditable = $this.data('rangeEditable');
+			//remove all template from the milestone
+			var url = routing.buildURL('milestone.unbind-templates', config.data.milestone.id);	
+			$.ajax({
+				url : url,
+				type : 'delete'
+			})
+			//now we can change the range
+			changeRangeRequest(value, rangeEditable);
+			
+		});
+		
+		
+		
+		
+		
+		var changeRangeRequest = function changeRange(value, rangeEditable){ 
+			$.ajax({
+			type : "POST",
+			url : config.urls.milestoneUrl,
+			data: {
+				id: rangeEditable.settings.componentId,
+				value: value
+			}
+		}).then(function(value) {
+			rangeEditable.component.html(value);
+			var data = JSON.parse(rangeEditable.settings.jeditableSettings.data);
+			var newRange;		
+			for(var prop in data) {
+                 if(data.hasOwnProperty(prop)){
+                	 if (data[prop] === value){
+                		 newRange = prop;
+                	 }
+                 }
+                   } 
+			updateAfterRangeChange(newRange);
+		});
+	}
+		
+		
+		
+		
 	
 		function updateAfterRangeChange(newRange) {
 
 			var ownerEditable = $("#milestone-owner-cell");
-			//update the currentRange with the new value
+			// update the currentRange with the new value
 			config.data.milestone.currentRange = newRange;
-			//redraw the table so the project binding is editable or not depending on range
+			// redraw the table so the project binding is editable or not depending on range
 			$('#projects-table').squashTable().fnDraw();
 			if (newRange === "GLOBAL"){
-				//If new range is global, the owner is not editable and equal to <Admin>
+				// If new range is global, the owner is not editable and equal to <Admin>
 				ownerEditable.html(translator.get("label.milestone.global.owner"));
 			} else {
-				//If new range is restricted, we must update the owner to the current user
+				// If new range is restricted, we must update the owner to the current user
 				$.ajax({
 					type : "POST",
 					url : config.urls.milestoneUrl,
@@ -161,17 +219,20 @@
 						value: config.data.currentUser
 					}
 				}).then(function(value) {
-					//recreate the editable
+					// recreate the editable
 					ownerEditable.html('<span id="milestone-owner" >' + value + '</span>');
 			        createOwnerEditable();
 				});
 			}
+			
+			$('#projects-table').squashTable()._fnAjaxUpdate();
+			$('#bind-to-projects-table').squashTable()._fnAjaxUpdate();
 		}
 
 		
 
 		var drawCallBack = function editableBinding() {
-//the bind to project is editable only if range is restricted
+// the bind to project is editable only if range is restricted
 			if (config.data.milestone.currentRange === "RESTRICTED"){
 			$("td.binded-to-project").editable('enable');
 		} else {
@@ -230,20 +291,32 @@
 				squashSettings = {
 						functions:{					
 							drawUnbindButton: function(template, cell){
-								//do nothing so the unbind button are not displayed
+								// do nothing so the unbind button are not displayed
 							}	
 						}
 				};
 				
 			}
 			$("#projects-table").squashTable({"bServerSide":false, fnDrawCallback : drawCallBack}, squashSettings);
-			$("#bind-to-projects-table").squashTable({"bServerSide":false}, {});
+			$("#bind-to-projects-table").squashTable({"bServerSide":false, "fnRowCallback" : projectTableRowCallback}, {});
+		
 			basic.init();
 			$("#back").click(clickBugtackerBackButton);
 			initRenameDialog();
 	
 		});
 
+		
+		var projectTableRowCallback = function(row, data, displayIndex) {
+			// add template icon
+			var type = data["raw-type"];
+			$(row).find(".type").addClass("type-" + type);
+			
+			return row;
+		};
+		
+		
+		
 		var uncheck = function() {
 			$("#bind-to-projects-table").find(":checkbox").prop('checked', false);
 		};
@@ -262,7 +335,7 @@
 			});
 		};
 
-		//unbind project but keep in perimeter 
+		// unbind project but keep in perimeter
 		
 		$("#unbind-project-but-keep-in-perimeter-popup").confirmDialog().on('confirmdialogconfirm', function(){	
 			
@@ -280,7 +353,7 @@
 			});
 		});
 		
-		//Unbind project
+		// Unbind project
 		
 		var bindedTable = $("#projects-table").squashTable();
 		var bindableTable = $("#bind-to-projects-table").squashTable();
@@ -291,7 +364,8 @@ $("#unbind-project-popup").confirmDialog().on('confirmdialogconfirm', function()
 			var id = $this.data('entity-id');
 			var ids = ( !! id) ? [id] : id ;
 			var url = routing.buildURL('milestone.bind-projects-to-milestone', config.data.milestone.id) + "/" + ids.join(',');
-			var selectedRow = bindedTable.getRowsByIds(ids);
+
+			var selectedRow = $("#projects-table").squashTable().getRowsByIds(ids);
 		 
 			$.ajax({
 				url : url,

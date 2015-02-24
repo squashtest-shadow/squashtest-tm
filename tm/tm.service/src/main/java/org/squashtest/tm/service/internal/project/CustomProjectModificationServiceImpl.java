@@ -29,6 +29,7 @@ import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.project.GenericProject;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.project.ProjectTemplate;
@@ -89,7 +90,7 @@ public class CustomProjectModificationServiceImpl implements CustomProjectModifi
 	@Override
 	public Project addProjectAndCopySettingsFromTemplate(Project newProject, long templateId,
 			boolean copyAssignedUsers, boolean copyCustomFieldsSettings, boolean copyBugtrackerSettings,
-			boolean copyTestAutomationSettings, boolean copyInfolists) {
+			boolean copyTestAutomationSettings, boolean copyInfolists, boolean copyMilestone) {
 		genericProjectManager.persist(newProject);
 
 		ProjectTemplate projectTemplate = projectTemplateDao.findById(templateId);
@@ -108,7 +109,20 @@ public class CustomProjectModificationServiceImpl implements CustomProjectModifi
 		if (copyInfolists){
 			copyInfolists(newProject, projectTemplate);
 		}
+		
+		if (copyMilestone){
+			copyMilestone(newProject, projectTemplate);
+		}
+		
 		return newProject;
+	}
+
+	private void copyMilestone(Project newProject, ProjectTemplate projectTemplate) {
+		newProject.bindMilestones(projectTemplate.getMilestones());	
+		
+		for (Milestone milestone: projectTemplate.getMilestones()){
+			milestone.addProjectToPerimeter(newProject);
+		}
 	}
 
 	private void copyTestAutomationSettings(Project newProject, ProjectTemplate projectTemplate) {

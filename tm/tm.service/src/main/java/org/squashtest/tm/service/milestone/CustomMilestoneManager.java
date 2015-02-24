@@ -64,4 +64,6 @@ public interface CustomMilestoneManager {
 	 * @return liste of all milestone the current user can see
 	 */
 	List<Milestone>  findAllICanSee();
+	
+	boolean isBoundToATemplate(Long milestoneId);
 }

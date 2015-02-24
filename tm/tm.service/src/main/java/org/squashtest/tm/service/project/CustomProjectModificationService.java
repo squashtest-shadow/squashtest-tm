@@ -42,9 +42,10 @@ public interface CustomProjectModificationService extends CustomProjectFinder {
 	 * @param copyBugtrackerSettings : whether to copy the Template's bug-tracker settings or not
 	 * @param copyTestAutomationSettings : whether to copy the Template's automation settings or not
 	 * @param copyInfolists : whether to use the Template's custom categories/natures/types
+	 * @param copyMilestone 
 	 * @return the persisted new {@link Project}
 	 */
-	Project addProjectAndCopySettingsFromTemplate(Project newProject, long templateId, boolean copyAssignedUsers, boolean copyCustomFieldsSettings, boolean copyBugtrackerSettings , boolean copyTestAutomationSettings, boolean copyInfolists) throws NameAlreadyInUseException;
+	Project addProjectAndCopySettingsFromTemplate(Project newProject, long templateId, boolean copyAssignedUsers, boolean copyCustomFieldsSettings, boolean copyBugtrackerSettings , boolean copyTestAutomationSettings, boolean copyInfolists, boolean copyMilestone) throws NameAlreadyInUseException;
 
 	void deleteProject(long projectId);
 

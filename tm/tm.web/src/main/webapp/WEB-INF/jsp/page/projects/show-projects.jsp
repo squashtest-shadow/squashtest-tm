@@ -239,6 +239,9 @@
          <br/>
          <input id="copyInfolists" name="copyInfolists" type="checkbox" />
          <label class=" afterDisabled" for="copyInfolists"><f:message key="label.copyInfolists" /></label>
+                <br/>
+         <input id="copyMilestone" name="copyMilestone" type="checkbox" />
+         <label class=" afterDisabled" for="copyMilestone"><f:message key="label.copyMilestone" /></label>
         </td>
       </table>
     

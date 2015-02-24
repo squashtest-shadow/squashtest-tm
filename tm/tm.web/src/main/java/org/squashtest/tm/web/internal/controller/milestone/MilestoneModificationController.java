@@ -167,4 +167,12 @@ public class MilestoneModificationController {
 		return new RenameModel(newName);
 	}
 	
+	
+	@RequestMapping(method = RequestMethod.GET,  params = { "isBoundToTemplate" })
+	@ResponseBody
+	public boolean isBoundToATemplate(@PathVariable long milestoneId) {
+	
+		return milestoneManager.isBoundToATemplate(milestoneId);
+	}
+	
 }

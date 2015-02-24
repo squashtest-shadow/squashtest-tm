@@ -179,7 +179,17 @@ define([ 'module', "jquery", "squash.basicwidgets", "workspace.routing", "squash
 			});
 			
 			
+			$("#unbind-milestone-popup").confirmDialog().on("confirmdialogopen", function(){
 			
+				if (config.data.project.isTemplate){
+					var $this = $(this);
+					var id = $this.data('entity-id');
+					var ids = ( !! id) ? [id] : id ;
+					unbindMilestone(ids);
+					$("#unbind-milestone-popup").confirmDialog("close");
+				}
+			
+			});
 			
 			//Unbind milestone
 			$("#unbind-milestone-popup").confirmDialog().on('confirmdialogconfirm', function(){
@@ -188,20 +198,22 @@ define([ 'module', "jquery", "squash.basicwidgets", "workspace.routing", "squash
 						var id = $this.data('entity-id');
 						var ids = ( !! id) ? [id] : id ;
 						setDefaultWarnMessage();
-			
-						var url = routing.buildURL('milestone.bind-milestones-to-project', config.data.project.id) + "/" + ids.join(',');
-						var table = $("#binded-milestone-table").squashTable();
-						
-						$.ajax({
-							url : url,
-							type : 'delete'
-						})
-						.done(function(){
-							refreshAllTables();
-						});
-						
+						unbindMilestone(ids);
 						
 					});
+			
+			var unbindMilestone = function unbindMilestone(ids) {
+				var url = routing.buildURL('milestone.bind-milestones-to-project', config.data.project.id) + "/" + ids.join(',');
+
+				$.ajax({
+					url : url,
+					type : 'delete'
+				})
+				.done(function(){
+					refreshAllTables();
+				});	
+			};
+			
 
 			$("#unbind-milestone-popup").confirmDialog().on('confirmdialogcancel', function(){
 			setDefaultWarnMessage();
@@ -226,6 +238,7 @@ define([ 'module', "jquery", "squash.basicwidgets", "workspace.routing", "squash
 							var popup = $("#unbind-milestone-popup");
 							popup.data('entity-id', ids);
 							popup.confirmDialog('open');
+				
 						}
 						else{
 							displayNothingSelected();
@@ -277,8 +290,8 @@ define([ 'module', "jquery", "squash.basicwidgets", "workspace.routing", "squash
 					type : 'POST',
 					dataType : 'json',
 					data : params				
-				}).success(function(data){
-					var id = [data.id];		
+				}).success(function(milestoneId){
+					var id = [milestoneId];		
 					var urlBind = routing.buildURL('milestone.bind-milestones-to-project', config.data.project.id); 
 					$.ajax({
 						url : urlBind,

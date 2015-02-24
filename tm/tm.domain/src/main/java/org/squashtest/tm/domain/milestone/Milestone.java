@@ -1,22 +1,18 @@
 /**
- *     This file is part of the Squashtest platform.
- *     Copyright (C) 2010 - 2015 Henix, henix.fr
+ * This file is part of the Squashtest platform. Copyright (C) 2010 - 2015 Henix, henix.fr
  *
- *     See the NOTICE file distributed with this work for additional
- *     information regarding copyright ownership.
+ * See the NOTICE file distributed with this work for additional information regarding copyright ownership.
  *
- *     This is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU Lesser General Public License as published by
- *     the Free Software Foundation, either version 3 of the License, or
- *     (at your option) any later version.
+ * This is free software: you can redistribute it and/or modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later
+ * version.
  *
- *     this software is distributed in the hope that it will be useful,
- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU Lesser General Public License for more details.
+ * this software is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied
+ * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
  *
- *     You should have received a copy of the GNU Lesser General Public License
- *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU Lesser General Public License along with this software. If not, see
+ * <http://www.gnu.org/licenses/>.
  */
 package org.squashtest.tm.domain.milestone;
 
@@ -55,6 +51,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.squashtest.tm.domain.audit.Auditable;
 import org.squashtest.tm.domain.campaign.Campaign;
 import org.squashtest.tm.domain.project.GenericProject;
+import org.squashtest.tm.domain.project.ProjectTemplate;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.search.LevelEnumBridge;
 import org.squashtest.tm.domain.testcase.TestCase;
@@ -106,22 +103,17 @@ public class Milestone {
 	@ManyToOne
 	private User owner;
 
-
-	@ManyToMany(fetch=FetchType.LAZY)
+	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(name = "MILESTONE_TEST_CASE", joinColumns = @JoinColumn(name = "MILESTONE_ID"), inverseJoinColumns = @JoinColumn(name = "TEST_CASE_ID"))
 	private Set<TestCase> testCases = new HashSet<>();
 
-
-	@ManyToMany(fetch=FetchType.LAZY)
+	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(name = "MILESTONE_REQ_VERSION", joinColumns = @JoinColumn(name = "MILESTONE_ID"), inverseJoinColumns = @JoinColumn(name = "REQ_VERSION_ID"))
 	private Set<RequirementVersion> requirementVersions = new HashSet<>();
 
-
-	@ManyToMany(fetch=FetchType.LAZY)
+	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(name = "MILESTONE_CAMPAIGN", joinColumns = @JoinColumn(name = "MILESTONE_ID"), inverseJoinColumns = @JoinColumn(name = "CAMPAIGN_ID"))
 	private Set<Campaign> campaigns = new HashSet<>();
-
-
 
 	public List<GenericProject> getPerimeter() {
 		return new ArrayList<GenericProject>(perimeter);
@@ -275,22 +267,22 @@ public class Milestone {
 		return campaigns;
 	}
 
-	public void bindTestCase(TestCase testCase){
+	public void bindTestCase(TestCase testCase) {
 		testCases.add(testCase);
 	}
 
-	public void bindRequirementVersion(RequirementVersion version){
+	public void bindRequirementVersion(RequirementVersion version) {
 
 		// we need to exit early because this case is legit
 		// but would fail the test below
-		if (requirementVersions.contains(version)){
+		if (requirementVersions.contains(version)) {
 			return;
 		}
 
 		// check that no other version of this requirement is bound already
 		Collection<RequirementVersion> allVersions = version.getRequirement().getRequirementVersions();
 
-		if (CollectionUtils.containsAny(requirementVersions, allVersions)){
+		if (CollectionUtils.containsAny(requirementVersions, allVersions)) {
 			throw new IllegalArgumentException("Another version of this requirement is already bound to this milestone");
 		}
 
@@ -298,53 +290,83 @@ public class Milestone {
 
 	}
 
-	public void bindCampaign(Campaign campaign){
+	public void bindCampaign(Campaign campaign) {
 		campaigns.add(campaign);
 	}
 
-	public void unbindTestCase(TestCase testCase){
+	public void unbindTestCase(TestCase testCase) {
 		unbindTestCase(testCase.getId());
 	}
 
-	public void unbindTestCase(Long testCaseId){
+	public void unbindTestCase(Long testCaseId) {
 		Iterator<TestCase> iter = testCases.iterator();
-		while (iter.hasNext()){
+		while (iter.hasNext()) {
 			TestCase tc = iter.next();
-			if (tc.getId().equals(testCaseId)){
+			if (tc.getId().equals(testCaseId)) {
 				iter.remove();
 				break;
 			}
 		}
 	}
 
-	public void unbindRequirementVersion(RequirementVersion reqVersion){
+	public void unbindRequirementVersion(RequirementVersion reqVersion) {
 		unbindRequirementVersion(reqVersion.getId());
 	}
 
-	public void unbindRequirementVersion(Long reqVersionId){
+	public void unbindRequirementVersion(Long reqVersionId) {
 		Iterator<RequirementVersion> iter = requirementVersions.iterator();
-		while (iter.hasNext()){
+		while (iter.hasNext()) {
 			RequirementVersion rv = iter.next();
-			if (rv.getId().equals(reqVersionId)){
+			if (rv.getId().equals(reqVersionId)) {
 				iter.remove();
 				break;
 			}
 		}
 	}
 
-
-	public void unbindCampaign(Campaign campaign){
+	public void unbindCampaign(Campaign campaign) {
 		unbindCampaign(campaign.getId());
 	}
 
-	public void unbindCampaign(Long campaignId){
+	public void unbindCampaign(Long campaignId) {
 		Iterator<Campaign> iter = campaigns.iterator();
-		while (iter.hasNext()){
+		while (iter.hasNext()) {
 			Campaign camp = iter.next();
-			if (camp.getId().equals(campaignId)){
+			if (camp.getId().equals(campaignId)) {
 				iter.remove();
 				break;
 			}
 		}
+	}
+
+	public boolean isBoundToATemplate() {
+
+		for (GenericProject project : projects) {
+			if (project instanceof ProjectTemplate) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public void removeTemplates() {
+
+		
+		Iterator<GenericProject> iterPerim = perimeter.iterator();
+		while (iterPerim.hasNext()) {
+			GenericProject proj = iterPerim.next();
+			if (proj instanceof ProjectTemplate) {
+				iterPerim.remove();
+			}
+		}
+		
+		Iterator<GenericProject> iterProject = projects.iterator();
+		while (iterProject.hasNext()) {
+			GenericProject proj = iterProject.next();
+			if (proj instanceof ProjectTemplate) {
+				iterProject.remove();
+			}
+		}
+
 	}
 }

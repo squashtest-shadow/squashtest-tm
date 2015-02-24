@@ -1,22 +1,18 @@
 /**
- *     This file is part of the Squashtest platform.
- *     Copyright (C) 2010 - 2015 Henix, henix.fr
+ * This file is part of the Squashtest platform. Copyright (C) 2010 - 2015 Henix, henix.fr
  *
- *     See the NOTICE file distributed with this work for additional
- *     information regarding copyright ownership.
+ * See the NOTICE file distributed with this work for additional information regarding copyright ownership.
  *
- *     This is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU Lesser General Public License as published by
- *     the Free Software Foundation, either version 3 of the License, or
- *     (at your option) any later version.
+ * This is free software: you can redistribute it and/or modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later
+ * version.
  *
- *     this software is distributed in the hope that it will be useful,
- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU Lesser General Public License for more details.
+ * this software is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied
+ * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
  *
- *     You should have received a copy of the GNU Lesser General Public License
- *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU Lesser General Public License along with this software. If not, see
+ * <http://www.gnu.org/licenses/>.
  */
 package org.squashtest.tm.service.internal.milestone;
 
@@ -31,6 +27,7 @@ import org.squashtest.tm.domain.milestone.MilestoneRange;
 import org.squashtest.tm.domain.project.GenericProject;
 import org.squashtest.tm.service.internal.repository.GenericProjectDao;
 import org.squashtest.tm.service.internal.repository.MilestoneDao;
+import org.squashtest.tm.service.internal.repository.ProjectTemplateDao;
 import org.squashtest.tm.service.milestone.MilestoneBindingManagerService;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.security.UserContextService;
@@ -43,6 +40,9 @@ public class CustomMilestoneBindingServiceImpl implements MilestoneBindingManage
 
 	@Inject
 	private GenericProjectDao projectDao;
+
+	@Inject
+	private ProjectTemplateDao projectTemplateDao;
 
 	@Inject
 	private UserContextService userContextService;
@@ -107,7 +107,12 @@ public class CustomMilestoneBindingServiceImpl implements MilestoneBindingManage
 
 		List<GenericProject> projectBoundToMilestone = getAllProjectForMilestone(milestoneId);
 		List<GenericProject> allProjects = projectDao.findAll();
+		Milestone milestone = milestoneDao.findById(milestoneId);
+		if (milestone.getRange().equals(MilestoneRange.RESTRICTED)) {
+			allProjects.removeAll(projectTemplateDao.findAll());
+		} 
 		allProjects.removeAll(projectBoundToMilestone);
+
 		return allProjects;
 	}
 
@@ -142,8 +147,6 @@ public class CustomMilestoneBindingServiceImpl implements MilestoneBindingManage
 		milestone.unbindProjects(projects);
 		milestone.removeProjectsFromPerimeter(projects);
 	}
-
-	
 
 	@Override
 	public List<Milestone> getAllBindableMilestoneForProject(Long projectId, String type) {
@@ -216,12 +219,16 @@ public class CustomMilestoneBindingServiceImpl implements MilestoneBindingManage
 		return filtered;
 	}
 
-
-
 	@Override
 	public void unbindProjectsFromMilestoneKeepInPerimeter(List<Long> projectIds, Long milestoneId) {
 		Milestone milestone = milestoneDao.findById(milestoneId);
 		List<GenericProject> projects = projectDao.findAllByIds(projectIds);
 		milestone.unbindProjects(projects);
+	}
+
+	@Override
+	public void unbindTemplateFrom(Long milestoneId) {
+		Milestone milestone = milestoneDao.findById(milestoneId);
+		milestone.removeTemplates();
 	}
 }

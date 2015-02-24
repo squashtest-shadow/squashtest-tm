@@ -105,5 +105,7 @@ public interface MilestoneBindingManagerService {
 	 */
 	void unbindProjectsFromMilestoneKeepInPerimeter(List<Long> projectIds, Long milestoneId);
 
+	void unbindTemplateFrom(Long milestoneId);
+
 
 }

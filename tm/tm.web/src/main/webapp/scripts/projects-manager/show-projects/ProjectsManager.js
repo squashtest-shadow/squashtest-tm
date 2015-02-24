@@ -26,11 +26,11 @@ define([ "jquery", "backbone", "./ProjectsTable", "./NewProjectDialog", "./NewPr
 				initialize : function() {
 					this.projectsTable = new ProjectsTable();
 					this.templates = new Backbone.Collection([], {
-						url : squashtm.app.contextRoot + "/project-templates?dropdownList",
 						comparator : function(template) {
 							return template.get("name");
 						}
 					});
+					this.templates.url = squashtm.app.contextRoot + "/project-templates?dropdownList"; 
 
 					this.newProjectDialog = new NewProjectDialog({
 						model : {
@@ -49,7 +49,8 @@ define([ "jquery", "backbone", "./ProjectsTable", "./NewProjectDialog", "./NewPr
 							copyPermissions : true,
 							copyCUF : true,
 							copyBugtrackerBinding : true,
-							copyAutomatedProjects : true
+							copyAutomatedProjects : true,
+							copyMilestone : true
 						},
 						collection : this.templates
 					});

@@ -177,4 +177,10 @@ public class CustomMilestoneManagerServiceImpl implements CustomMilestoneManager
 		}	
 		return isInAProjetICanManage;
 	}
+
+	@Override
+	public boolean isBoundToATemplate(Long milestoneId) {
+		Milestone milestone = findById(milestoneId);	
+		return milestone.isBoundToATemplate();
+	}
 }

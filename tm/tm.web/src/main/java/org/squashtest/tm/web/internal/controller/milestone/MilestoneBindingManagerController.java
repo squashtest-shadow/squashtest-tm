@@ -32,6 +32,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 import org.squashtest.tm.domain.project.GenericProject;
 import org.squashtest.tm.service.project.GenericProjectFinder;
+import org.squashtest.tm.web.internal.helper.ProjectHelper;
 
 @Controller
 @RequestMapping("administration/projects/{projectId}/milestone-binding")
@@ -49,6 +50,7 @@ public class MilestoneBindingManagerController {
 		ModelAndView mav = new ModelAndView("project-tabs/milestone-binding.html");
         GenericProject project = service.findById(projectId);
 		mav.addObject("proj", project);
+		mav.addObject("isTemplate", ProjectHelper.isTemplate(project));
 		mav.addObject("milestoneStatus", statusComboDataBuilderProvider.get().useLocale(locale).buildMap());
 		return mav;
 	}
