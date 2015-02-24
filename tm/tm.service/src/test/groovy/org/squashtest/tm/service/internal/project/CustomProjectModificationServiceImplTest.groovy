@@ -72,7 +72,7 @@ class CustomProjectModificationServiceImplTest extends Specification {
 
 
 		when:
-		service.addProjectAndCopySettingsFromTemplate(project, 1L, true, true, true, true, false)
+		service.addProjectAndCopySettingsFromTemplate(project, 1L, true, true, true, true, false, false)
 
 		then:
 		1* project.bindTestAutomationProject(automationProject)
@@ -99,7 +99,7 @@ class CustomProjectModificationServiceImplTest extends Specification {
 
 
 		when:
-		service.addProjectAndCopySettingsFromTemplate(project, 1L, true, true, false, true, false)
+		service.addProjectAndCopySettingsFromTemplate(project, 1L, true, true, false, true, false, false)
 
 		then:
 		1* project.bindTestAutomationProject(automationProject)
@@ -122,7 +122,7 @@ class CustomProjectModificationServiceImplTest extends Specification {
 		project.getClass()>> Project.class
 
 		when:
-		service.addProjectAndCopySettingsFromTemplate(project, 1L, true, true, true, true, false)
+		service.addProjectAndCopySettingsFromTemplate(project, 1L, true, true, true, true, false, false)
 
 		then:
 
@@ -152,7 +152,7 @@ class CustomProjectModificationServiceImplTest extends Specification {
 
 
 		when:
-		service.addProjectAndCopySettingsFromTemplate(project, 1L, true, true, true, false, false)
+		service.addProjectAndCopySettingsFromTemplate(project, 1L, true, true, true, false, false, false)
 
 		then:
 		0* project.setTestAutomationEnabled(_)
@@ -181,7 +181,7 @@ class CustomProjectModificationServiceImplTest extends Specification {
 
 
 		when:
-		service.addProjectAndCopySettingsFromTemplate(project, 1L, false, true, true, true, false)
+		service.addProjectAndCopySettingsFromTemplate(project, 1L, false, true, true, true, false, false)
 
 		then:
 
@@ -211,7 +211,7 @@ class CustomProjectModificationServiceImplTest extends Specification {
 
 
 		when:
-		service.addProjectAndCopySettingsFromTemplate(project, 1L, true, false, true, true, false)
+		service.addProjectAndCopySettingsFromTemplate(project, 1L, true, false, true, true, false, false)
 
 		then:
 
@@ -242,7 +242,7 @@ class CustomProjectModificationServiceImplTest extends Specification {
 		project.getRequirementCategories() >> categorylist
 
 		when:
-		def newP = service.addProjectAndCopySettingsFromTemplate(project, 1L, false, false, false, false, true)
+		def newP = service.addProjectAndCopySettingsFromTemplate(project, 1L, false, false, false, false, true, false)
 
 		then:
 
