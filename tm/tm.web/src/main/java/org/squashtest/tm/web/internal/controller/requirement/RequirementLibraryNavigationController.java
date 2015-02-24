@@ -110,7 +110,7 @@ LibraryNavigationController<RequirementLibrary, RequirementFolder, RequirementLi
 
 
 		Requirement req = requirementLibraryNavigationService.addRequirementToRequirementLibrary(libraryId,
-				requirementModel.toDTO());
+				requirementModel.toDTO(), milestoneIds);
 
 		return createTreeNodeFromLibraryNode(req, milestoneIds);
 
@@ -132,7 +132,7 @@ LibraryNavigationController<RequirementLibrary, RequirementFolder, RequirementLi
 			throw new BindException(validation);
 		}
 
-		Requirement req = requirementLibraryNavigationService.addRequirementToRequirementFolder(folderId, requirementModel.toDTO());
+		Requirement req = requirementLibraryNavigationService.addRequirementToRequirementFolder(folderId, requirementModel.toDTO(), milestoneIds);
 
 		return createTreeNodeFromLibraryNode(req, milestoneIds);
 
@@ -154,7 +154,7 @@ LibraryNavigationController<RequirementLibrary, RequirementFolder, RequirementLi
 			throw new BindException(validation);
 		}
 
-		Requirement req = requirementLibraryNavigationService.addRequirementToRequirement(requirementId, requirementModel.toDTO());
+		Requirement req = requirementLibraryNavigationService.addRequirementToRequirement(requirementId, requirementModel.toDTO(), milestoneIds);
 
 		return createTreeNodeFromLibraryNode(req, milestoneIds);
 

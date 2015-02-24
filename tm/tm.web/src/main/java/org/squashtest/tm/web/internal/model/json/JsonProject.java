@@ -22,6 +22,7 @@ package org.squashtest.tm.web.internal.model.json;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.web.internal.model.customfield.CustomFieldBindingModel;
@@ -38,6 +39,8 @@ public class JsonProject {
 	private String name;
 
 	private Map<String, List<CustomFieldBindingModel>> customFieldBindings;
+
+	private Set<JsonMilestone> milestones;
 
 	private JsonInfoList requirementCategories;
 
@@ -112,6 +115,12 @@ public class JsonProject {
 		this.testCaseTypes = testCaseTypes;
 	}
 
+	public Set<JsonMilestone> getMilestones() {
+		return milestones;
+	}
 
+	public void setMilestones(Set<JsonMilestone> milestones) {
+		this.milestones = milestones;
+	}
 
 }

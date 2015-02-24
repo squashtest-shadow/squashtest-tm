@@ -21,20 +21,25 @@
 package org.squashtest.tm.web.internal.model.builder;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.inject.Inject;
 
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.domain.customfield.BindableEntity;
 import org.squashtest.tm.domain.customfield.CustomFieldBinding;
+import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.service.customfield.CustomFieldBindingFinderService;
 import org.squashtest.tm.web.internal.model.customfield.CustomFieldBindingModel;
 import org.squashtest.tm.web.internal.model.customfield.CustomFieldJsonConverter;
 import org.squashtest.tm.web.internal.model.json.JsonInfoList;
+import org.squashtest.tm.web.internal.model.json.JsonMilestone;
 import org.squashtest.tm.web.internal.model.json.JsonProject;
 
 @Component
@@ -84,6 +89,16 @@ public class JsonProjectBuilder {
 		}
 
 		res.setCustomFieldBindings(cufBindings);
+
+		// the milestones
+		Collection<Milestone> milestones = p.getMilestones();
+		Set<JsonMilestone> jsmilestones = new HashSet<>(milestones.size());
+		for (Milestone m : milestones){
+			JsonMilestone jsm = new JsonMilestone(m.getId(), m.getLabel(), m.getStatus(), m.getRange(), m.getEndDate(), m.getOwner().getLogin());
+			jsmilestones.add(jsm);
+		}
+
+		res.setMilestones(jsmilestones);
 
 		return res;
 	}

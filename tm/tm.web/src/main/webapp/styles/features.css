@@ -421,6 +421,14 @@ th.width-tenperc, td.width-tenperc {
 	display : inline-block;
 }
 
+.small-down-white-arrow{
+	background-image:url(../images/white-arrow-down.png);	/** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;	
+	width: 15px;
+	height : 15px;
+	display : inline-block;
+	vertical-align : middle;
+}
 
 .small-right-arrow{
 	background-image :url(../images/arrow_right.png);	/** sprite-ref: sprites-icons; */

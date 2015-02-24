@@ -40,6 +40,7 @@ import org.squashtest.tm.api.wizard.WorkspaceWizard;
 import org.squashtest.tm.api.workspace.WorkspaceType;
 import org.squashtest.tm.domain.library.Library;
 import org.squashtest.tm.domain.library.LibraryNode;
+import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.service.library.WorkspaceService;
 import org.squashtest.tm.service.milestone.MilestoneFinderService;
@@ -50,6 +51,7 @@ import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.builder.DriveNodeBuilder;
 import org.squashtest.tm.web.internal.model.builder.JsTreeNodeListBuilder;
 import org.squashtest.tm.web.internal.model.builder.JsonProjectBuilder;
+import org.squashtest.tm.web.internal.model.json.JsonMilestone;
 import org.squashtest.tm.web.internal.model.json.JsonProject;
 import org.squashtest.tm.web.internal.model.jstree.JsTreeNode;
 import org.squashtest.tm.web.internal.wizard.WorkspaceWizardManager;
@@ -88,6 +90,7 @@ public abstract class WorkspaceController<LN extends LibraryNode> {
 
 		List<Library<LN>> libraries = getWorkspaceService().findAllLibraries();
 		String[] nodesToOpen = null;
+		Milestone activeMilestone = null;
 
 		if(elementId == null || "".equals(elementId)){
 			nodesToOpen = openedNodes;
@@ -102,7 +105,8 @@ public abstract class WorkspaceController<LN extends LibraryNode> {
 
 		DriveNodeBuilder<LN> nodeBuilder = driveNodeBuilderProvider().get();
 		if (!milestoneIds.isEmpty()){
-			nodeBuilder.filterByMilestone(milestoneFinder.findById(milestoneIds.get(0)));
+			activeMilestone = milestoneFinder.findById(milestoneIds.get(0));
+			nodeBuilder.filterByMilestone(activeMilestone);
 		}
 
 		List<JsTreeNode> rootNodes = new JsTreeNodeListBuilder<Library<LN>>(nodeBuilder).expand(expansionCandidates)
@@ -120,6 +124,20 @@ public abstract class WorkspaceController<LN extends LibraryNode> {
 		}
 
 		model.addAttribute("projects", jsProjects);
+
+		// also, milestones
+		if (activeMilestone != null){
+			JsonMilestone jsMilestone =
+					new JsonMilestone(
+							activeMilestone.getId(),
+							activeMilestone.getLabel(),
+							activeMilestone.getStatus(),
+							activeMilestone.getRange(),
+							activeMilestone.getEndDate(),
+							activeMilestone.getOwner().getLogin()
+							);
+			model.addAttribute("activeMilestone", jsMilestone);
+		}
 
 		return getWorkspaceViewName();
 	}

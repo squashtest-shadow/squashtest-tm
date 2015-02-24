@@ -102,11 +102,34 @@ define(["jquery"], function($){
 		return areDifferent;
 	}
 	
+	
+	function getAllMilestones(){
+		
+		var projects = squashtm.workspace.projects,
+			allmilestones = [],
+			idsCache = {};
+		
+		for (var i=0; i<projects.length; i++){
+			var mstones = projects[i].milestones;
+			for (var m=0; m < mstones.length; m++){
+				var mstone = mstones[i];
+				if (idsCache[mstone.id] === undefined){
+					idsCache[mstone.id] = 'found';
+					allmilestones.push(mstone);
+				}
+			}
+		}
+		
+		return allmilestones;
+		
+	}
+	
 
 	return {
 		getAll : getAll,
 		findProject : findProject,
-		haveDifferentInfolists : haveDifferentInfolists
+		haveDifferentInfolists : haveDifferentInfolists,
+		getAllMilestones : getAllMilestones
 	};
 	
 	

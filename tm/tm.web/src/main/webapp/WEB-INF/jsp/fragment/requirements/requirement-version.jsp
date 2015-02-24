@@ -49,6 +49,7 @@ that page won't be editable if
  <c:set var="creatable"         value="${false}"/> 
  <c:set var="linkable"          value="${false}"/> 
  <c:set var="status_editable"   value="${false}"/>
+ <c:set var="milestone_mode"    value="${not empty cookie['milestones'] }"/>
  
  
 <authz:authorized hasRole="ROLE_ADMIN" hasPermission="ATTACH" domainObject="${ requirementVersion }">
@@ -328,6 +329,11 @@ publish('reload.requirement.attachments');
 	<f:message var="confirmNewVersionDialogTitle" key="requirement.new-version.confirm-dialog.title" />	
 	<div id="confirm-new-version-dialog" class="not-displayed popup-dialog" title="${ confirmNewVersionDialogTitle }">
 		<strong><f:message key="requirement.new-version.confirm-dialog.label" /></strong>
+    
+      <c:if test="${milestone_mode}">
+        HEY MAN, THIS IS MILESTONE MODE
+      </c:if>
+    
 		<input type="button" value="${okLabel}" />
 		<input type="button" value="${cancelLabel}" />
 	</div>

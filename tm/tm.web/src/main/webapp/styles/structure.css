@@ -220,9 +220,15 @@ div.sub-page div.table-tab-wrap .dataTables_footer{
 }
 
 #tabbed-pane>ul {
+	visibility : hidden;
+}
+
+#tabbed-pane>ul.milestones-mode {
 	position: relative;
 	top: -0.75cm;
 	padding: 0;
+	float : right;
+	visibility : visible;
 }
 
 

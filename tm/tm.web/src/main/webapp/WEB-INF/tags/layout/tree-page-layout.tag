@@ -53,7 +53,7 @@
 <%@ attribute name="tree" fragment="true" required="true" description="Tree definition" %>
 <%@ attribute name="contextualContent" fragment="true" description="Optional contextual content" %>
 <%@ attribute name="i18nLibraryTabTitle" required="false" description="a i18n key that should be displayed on the first tab above the tree.
-                                                                     If not specified, will use 'tabbed_panel.tree.pane.label' as default" %>
+                                                                     If not specified, will use 'label.Milestone' as default" %>
 
 
 <%-- from sub-page-layout --%>
@@ -78,7 +78,7 @@
 <c:url var="path" value="${ pageContext.servletContext.contextPath }"/>
 
 <c:set var="usesObsoleteSearch" value="${(highlightedWorkspace == 'campaign') and (empty linkable)}" />
-<f:message var="libraryTabTitle" key="${not empty i18nLibraryTabTitle ? i18nLibraryTabTitle : 'tabbed_panel.tree.pane.label'}"/>
+<f:message var="libraryTabTitle" key="${not empty i18nLibraryTabTitle ? i18nLibraryTabTitle : 'label.Milestone'}"/>
 
 <c:set var="tabbedPaneScript" >
 	<script type="text/javascript">
