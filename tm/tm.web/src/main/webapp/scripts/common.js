@@ -112,9 +112,25 @@ requirejs.config({
 				 * "jquery/my.module" will be interpolated as
 				 * "/lib/jquery/../my.module"
 				 */
+
+				"worker" : "lib/requirejsWorker/worker",
+				"workerWithoutFake" : "lib/requirejsWorker/workerWithoutFake",
+				"worker-fake" : "lib/requirejsWorker/fake-worker",
 				"datatables" : "datatables/jquery.dataTables",
 //				"datatables" : "datatables/jquery.dataTables.min",
 				//lib
+				"linq"         : "lib/openXML/linq",
+				"ltxml"         : "lib/openXML/ltxml",
+				"ltxml-extensions"         : "lib/openXML/ltxml-extensions",
+				"jszip"   : "lib/openXML/jszip",
+				"jszip-utils-ie" : "lib/openXML/jszip-utils-ie",
+				"jszip-utils" : "lib/openXML/jszip-utils",
+				"jszip-deflate"   : "lib/openXML/jszip-deflate",
+				"jszip-inflate"   : "lib/openXML/jszip-inflate",
+				"jszip-load"   : "lib/openXML/jszip-load",
+				"openxml" : "lib/openXML/openxml",
+				"docxgen" : "lib/docxgen/docxgen.min",
+				"FileSaver": "lib/docxgen/FileSaver.min",
 				"domReady" : "lib/require/domReady",
 				"jquery" : "lib/jquery/jquery-2.1.1",
 //				"jquery" : "lib/jquery/jquery-2.1.1.min",
@@ -208,6 +224,20 @@ requirejs.config({
 				"squash.KeyEventListener" : "squashtest/classes/KeyEventListener"
 			},
 			shim : {
+
+				"openxml" : {
+					deps:["jszip-load", "jszip-inflate", "jszip-deflate"]
+				},
+	
+				"jszip-load":{
+					deps:["jszip"]
+				},
+				"jszip-inflate":{
+					deps:["jszip"]
+				},
+				"jszip-deflate":{
+					deps:["jszip"]
+				},
 				"ckeditor" : {
 					exports : "CKEDITOR"
 				},

@@ -23,6 +23,7 @@ package org.squashtest.tm.web.internal.report;
 import java.util.Map;
 
 import org.springframework.web.servlet.ModelAndView;
+import org.squashtest.tm.api.report.DocxTemplaterReport;
 import org.squashtest.tm.api.report.Report;
 import org.squashtest.tm.api.report.ReportView;
 import org.squashtest.tm.api.report.StandardReportCategory;
@@ -37,6 +38,7 @@ import org.squashtest.tm.api.report.form.Input;
 public class IdentifiedReportDecorator implements Report {
 	private final Report report;
 	private final ReportIdentifier identifier;
+
 
 	/**
 	 * @param report
@@ -167,6 +169,10 @@ public class IdentifiedReportDecorator implements Report {
 	public String toString() {
 		return "IdentifiedReportDecorator [labelKey=" + getLabelKey() + ", namespace=" + getNamespace()
 				+ ", index=" + getIndex() + "]";
+	}
+
+	public boolean isDocxTemplate(){
+		 return report instanceof DocxTemplaterReport;
 	}
 
 	/**

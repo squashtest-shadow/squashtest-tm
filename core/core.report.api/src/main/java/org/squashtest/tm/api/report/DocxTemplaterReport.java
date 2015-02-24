@@ -1,6 +1,6 @@
 /**
  *     This file is part of the Squashtest platform.
- *     Copyright (C) 2010 - 2015 Henix, henix.fr
+ *     Copyright (C) 2010 - 2014 Henix, henix.fr
  *
  *     See the NOTICE file distributed with this work for additional
  *     information regarding copyright ownership.
@@ -30,13 +30,13 @@ import org.squashtest.tm.api.report.form.Input;
 import org.squashtest.tm.core.foundation.i18n.Labelled;
 
 /**
- * Basic implementation od a {@link Report}. This class should be used in report plugins to describe reports.
+ * DocxTemplater report
  * 
  * @author bsiri
  * @author Gregory Fouquet
  * 
  */
-public class BasicReport extends Labelled implements Report, InitializingBean {
+public class DocxTemplaterReport extends Labelled implements Report, InitializingBean {
 	private StandardReportCategory category = StandardReportCategory.VARIOUS;
 	private StandardReportType type = StandardReportType.GENERIC;
 
@@ -180,3 +180,4 @@ public class BasicReport extends Labelled implements Report, InitializingBean {
 	}
 
 }
+

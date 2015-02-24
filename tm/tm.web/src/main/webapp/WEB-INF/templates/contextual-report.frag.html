@@ -230,8 +230,8 @@
 
         <!-- ===============================================/FORM====================================================== -->
         <!-- ===============================================RESULT====================================================== -->
-        <div id="view-tabed-panel" class="not-displayed">
-          <ul>
+        <div id="view-tabed-panel" class="not-displayed" >
+          <ul >
             <li th:each="view, it : ${report.views}">
               <a href="#view-content-panel-sample-0" th:href="'#view-content-panel-' + ${it.index}"
                 th:text="${view.label}">Sample view</a>
@@ -240,7 +240,7 @@
               <a href="#view-content-panel-sample-1">Sample view 2</a>
             </li>
 
-            <div id="view-formats-panel" class="snap-right">
+            <div id="view-formats-panel" class="snap-right" th:unless="${report.DocxTemplate}">
               <span th:text="#{report.view.panel.label.export.label}">Export</span>
               <select id="view-format-cmb-0" th:id="'view-format-cmb-' + ${it.index}"
                 th:each="view, it : ${report.views}" class="not-displayed view-format-cmb">
@@ -252,7 +252,7 @@
               <input type="button" class="sq-btn btn-sm" id="export" value="Go!" th:value="#{label.Export}" />
             </div>
           </ul>
-          <div th:each="view, it : ${report.views}" class="view-content-panel" th:remove="body"
+          <div  th:each="view, it : ${report.views}" class="view-content-panel" th:remove="body"
             id="view-content-panel-sample-0" th:id="'view-content-panel-' + ${it.index}" style="overflow: scroll;">VIEW
             HERE</div>
           <div th:remove="all" id="view-content-panel-sample-1" style="overflow: scroll;">ANOTHER VIEW HERE</div>
@@ -275,6 +275,7 @@
             noDateLabel: /*[[ #{squashtm.nodata} ]]*/ "-", 
             okLabel: /*[[ #{label.Confirm} ]]*/ "OK",
             cancelLabel: /*[[ #{label.Cancel} ]]*/ "Cancel", 
+            isDocx: /*[[${report.DocxTemplate}]]*/
         }; 
         require([ "common" ], function() {
             require([ "jquery", "app/report/squashtm.report" ], function($, Report) {

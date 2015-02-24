@@ -71,7 +71,7 @@ define([ "jquery", "app/report/squashtm.reportworkspace", "tree", "underscore", 
 	}
 
 	function loadTab(tab) {
-		var url = buildViewUrl(tab.newTab.index(), "html");
+		var url = config.isDocx ? buildViewUrl(0, "docx") : buildViewUrl(tab.newTab.index(), "html");
 
 		$.ajax({
 			type : "get",
@@ -125,6 +125,7 @@ define([ "jquery", "app/report/squashtm.reportworkspace", "tree", "underscore", 
 
 	function generateView() {
 
+		
 		if (formModel.hasBoundary()) {
 			formState.save();
 
@@ -134,6 +135,8 @@ define([ "jquery", "app/report/squashtm.reportworkspace", "tree", "underscore", 
 
 			var tabPanel = $("#view-tabed-panel");
 
+
+			
 			if (!selectedTab) {
 				tabPanel.tabs("option", "active", 0);
 				// tab is inited, we dont need collapsible anymore,
@@ -142,12 +145,14 @@ define([ "jquery", "app/report/squashtm.reportworkspace", "tree", "underscore", 
 			} else {
 				loadTab(selectedTab);
 			}
-
+					
 			$("#view-tabed-panel:hidden").show("blind", {}, 500);
+			
 		} else {
 			var invalidPerimeterDialog = $("#invalid-perimeter").messageDialog();
 			invalidPerimeterDialog.messageDialog("open");
 		}
+		
 	}
 
 	/*jshint validthis: true */

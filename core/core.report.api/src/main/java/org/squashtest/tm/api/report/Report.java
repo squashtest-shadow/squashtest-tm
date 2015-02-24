@@ -105,5 +105,5 @@ public interface Report {
 	 * @return a non nul, initialized ModelAndView object.
 	 */
 	ModelAndView buildModelAndView(int viewIndex, String format, Map<String, Criteria> criteria);
-
+	
 }
