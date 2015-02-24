@@ -277,7 +277,45 @@ define([ 'module', "jquery", "squash.basicwidgets", "workspace.routing", "squash
 					} catch(err){ return null;}
 					}
 			   
-			createAndBindMilestoneDialog.on('formdialogconfirm', function() {
+			   //created, bind to project and bind to all object in that project
+			   createAndBindMilestoneDialog.on('formdialogbind', function(){
+				createMilestone(bindMilestoneToProjectAndAllObject)
+  
+			   });
+			
+			   //create and bind to project
+			createAndBindMilestoneDialog.on('formdialogconfirm', function() {	
+				createMilestone(bindMilestoneToProject);
+			});
+			
+			var bindMilestoneToProject = function bindMilestoneToProject(milestoneId){
+				var id = [milestoneId];		
+				var urlBind = routing.buildURL('milestone.bind-milestones-to-project', config.data.project.id); 
+				$.ajax({
+					url : urlBind,
+					type : 'POST',
+					data : {Ids : id}
+				}).success(function() {
+					refreshAllTables();
+					createAndBindMilestoneDialog.formDialog('close');
+				});	
+			};
+			
+			var bindMilestoneToProjectAndAllObject = function bindMilestoneToProjectAndAllObject(milestoneId){
+				var id = [milestoneId];		
+				var urlBind = routing.buildURL('milestone.bind-milestones-to-project', config.data.project.id); 
+				$.ajax({
+					url : urlBind,
+					type : 'POST',
+					data : {Ids : id,
+						bindObjects: ""}
+				}).success(function() {
+					refreshAllTables();
+					createAndBindMilestoneDialog.formDialog('close');
+				});	
+			};
+			
+			function createMilestone(callback){
 				var urlCreate = routing.buildURL('administration.milestones');
 				var params = {
 					label: $( '#add-milestone-label' ).val(),
@@ -291,19 +329,9 @@ define([ 'module', "jquery", "squash.basicwidgets", "workspace.routing", "squash
 					dataType : 'json',
 					data : params				
 				}).success(function(milestoneId){
-					var id = [milestoneId];		
-					var urlBind = routing.buildURL('milestone.bind-milestones-to-project', config.data.project.id); 
-					$.ajax({
-						url : urlBind,
-						type : 'POST',
-						data : {Ids : id}
-					}).success(function() {
-						refreshAllTables();
-						createAndBindMilestoneDialog.formDialog('close');
-					});	
-				});
-
-			});
+					callback(milestoneId);});
+			}	
+			
 			
 			
 		});

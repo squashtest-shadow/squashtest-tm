@@ -67,9 +67,11 @@
 <div class="fragment-body">
 
  <div class="toolbar">
-     <button id="new-milestone-button" class="test-step-toolbar-button ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-primary .squash-button-initialized" title="f:message key="label.addTeam">    
+     <button id="new-milestone-button" class="test-step-toolbar-button ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-primary .squash-button-initialized" title=<f:message key="label.AddMilestone" />>    
      <span class="ui-icon ui-icon-plusthick">+</span> <span class="ui-button-text"><f:message key="label.AddMilestone" /> </span> </button>
-     <button id="delete-milestone-button" class="test-step-toolbar-button ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-primary .squash-button-initialized" title="f:message key="label.addTeam">    
+     <button id="clone-milestone-button" class="test-step-toolbar-button ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-primary .squash-button-initialized" title=<f:message key="label.milestone.duplicate" />>    
+     <span class="ui-button-text"><f:message key="label.milestone.duplicate" /> </span> </button>
+     <button id="delete-milestone-button" class="test-step-toolbar-button ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-primary .squash-button-initialized" title=<f:message key="label.deleteMilestone" />>    
      <span class="ui-icon ui-icon-trash">-</span> <span class="ui-button-text"><f:message key="label.deleteMilestone" /> </span> </button>
  </div>
   <div style="clear:both"></div>
@@ -204,6 +206,77 @@
         <input type="button" value="${cancelLabel}" data-def="evt=cancel"/>
       </div>     
 </div>
+
+
+<!--  clone popup -->
+ <f:message var="cloneMilestoneTitle" key="dialog.clone-milestone.title"/>
+    <div id="clone-milestone-dialog" class="not-displayed popup-dialog" 
+          title="${cloneMilestoneTitle}" />
+          
+        <table>
+          <tr>
+            <td><label for="clone-milestone-label"><f:message
+              key="label.Label" /></label></td>
+            <td><input id="clone-milestone-label" type="text" size="30" maxlength="30"/>
+            <comp:error-message forField="label" /></td>
+          </tr>
+        
+     
+         <tr>
+       
+            <td><label><f:message key="label.EndDate" /></td>    
+            <td><span id="clone-milestone-end-date"></span>
+        <comp:error-message forField="endDate" /></td>
+         </tr>  
+
+          <tr>
+            <td>
+               <label for="clone-milestone-description">
+                   <f:message key="label.Description" />
+                </label>
+            </td>
+            <td>
+                <textarea id="clone-milestone-description" name="add-milestone-description"></textarea>
+            <comp:error-message forField="description" /></td>
+          </tr>   
+          
+          
+          <tr>
+          <td> <f:message key="label.milestone.cloneoptions" /> </td>
+          
+          <td>
+           <input id="bindToRequirements"  name="bindToRequirements" type="checkbox" />
+          <label class=" afterDisabled" for="bindToRequirements"><f:message key="label.milestone.bindToRequirements" /></label>
+   </br>
+          <input id="bindToTestCases" name="bindToTestCases" type="checkbox" />
+         <label class=" afterDisabled" for="bindToTestCases"><f:message key="label.milestone.bindToTestCases" /></label>
+   </br>  
+         <input id="bindToCampaigns" name="bindToCampaigns" type="checkbox" />
+         <label class=" afterDisabled" for="bindToCampaigns"><f:message key="label.milestone.bindToCampaigns" /></label>
+       </td>
+   </tr>
+       
+        </table>
+        
+        <ul>
+
+<li><a id="checkAll"> checkAll</a></li>
+<li><a id="uncheckAll">uncheckAll</a></li>
+
+</ul>
+
+      <div class="popup-dialog-buttonpane">
+        <input type="button" value="${addLabel}" data-def="mainbtn, evt=confirm"/>
+        <input type="button" value="${cancelLabel}" data-def="evt=cancel"/>
+      </div>     
+</div>
+
+
+
+
+
+
+
 </jsp:attribute>
 </layout:info-page-layout>
 

@@ -46,6 +46,7 @@ import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelBuilder;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelConstants;
 
+
 @Controller
 @RequestMapping("/milestones-binding")
 public class MilestoneBindingController {
@@ -72,7 +73,15 @@ public class MilestoneBindingController {
 	public void bindProjectsToMilestone(@PathVariable Long milestoneId, @RequestParam(IDS) List<Long> projectIds) {
 		service.bindProjectsToMilestone(projectIds, milestoneId);
 	}
+	@RequestMapping(value="/project/{projectId}/milestone", method = RequestMethod.POST, params = {IDS, "bindObjects"})
+	@ResponseBody
+	public void bindMilestonesToProjectAndBindObject(@PathVariable Long projectId, @RequestParam(IDS) List<Long> milestoneIds) {
+		service.bindMilestonesToProjectAndBindObject(projectId, milestoneIds);
+	}
 
+	
+	
+	
 	@RequestMapping(value="/project/{projectId}/milestone/{milestoneIds}", method = RequestMethod.DELETE)
 	@ResponseBody
 	public void unbindMilestoneFromProject(@PathVariable(RequestParams.PROJECT_ID) Long projectId, @PathVariable("milestoneIds") List<Long> milestoneIds){

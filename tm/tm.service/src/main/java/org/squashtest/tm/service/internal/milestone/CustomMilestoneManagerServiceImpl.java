@@ -27,9 +27,12 @@ import java.util.List;
 import javax.inject.Inject;
 
 import org.springframework.stereotype.Service;
+import org.squashtest.tm.domain.campaign.Campaign;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.milestone.MilestoneRange;
 import org.squashtest.tm.domain.project.GenericProject;
+import org.squashtest.tm.domain.requirement.RequirementVersion;
+import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.service.internal.repository.MilestoneDao;
 import org.squashtest.tm.service.milestone.CustomMilestoneManager;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
@@ -182,5 +185,47 @@ public class CustomMilestoneManagerServiceImpl implements CustomMilestoneManager
 	public boolean isBoundToATemplate(Long milestoneId) {
 		Milestone milestone = findById(milestoneId);	
 		return milestone.isBoundToATemplate();
+	}
+
+	@Override
+	public void cloneMilestone(long motherId, Milestone milestone, boolean bindToRequirements, boolean bindToTestCases,
+			boolean bindToCampaigns) {
+		Milestone mother = findById(motherId);
+		bindProjectsAndPerimeter(mother, milestone);
+		bindRequirements(mother, milestone, bindToRequirements);
+		bindTestCases(mother, milestone, bindToTestCases);
+		bindCampaigns(mother, milestone, bindToCampaigns);
+		addMilestone(milestone);		
+	}
+
+	private void bindProjectsAndPerimeter(Milestone mother, Milestone milestone) {
+	milestone.bindProjects(mother.getProjects());
+	milestone.addProjectsToPerimeter(mother.getPerimeter());	
+	}
+
+	
+	
+	private void bindCampaigns(Milestone mother, Milestone milestone, boolean bindToCampaigns) {
+		if(bindToCampaigns){
+			for (Campaign camp : mother.getCampaigns()){
+				milestone.bindCampaign(camp);
+			}
+		}		
+	}
+
+	private void bindTestCases(Milestone mother, Milestone milestone, boolean bindToTestCases) {
+		if(bindToTestCases){
+			for (TestCase tc : mother.getTestCases()){
+				milestone.bindTestCase(tc);
+			}
+		}
+	}
+
+	private void bindRequirements(Milestone mother, Milestone milestone, boolean bindToRequirements) {
+		if(bindToRequirements){
+			for (RequirementVersion req : mother.getRequirementVersions()){
+				milestone.bindRequirementVersion(req);
+			}
+		}
 	}
 }

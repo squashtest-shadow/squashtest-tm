@@ -67,6 +67,7 @@ public class MilestoneDataTableModelHelper  extends DataTableModelBuilder<Milest
 		row.put("range",i18nRange(item.getRange()));
 		row.put("owner", ownerToPrint(item));
 		row.put("status", i18nStatus(item.getStatus()));
+		row.put("binded-to-objects",messageSource.internationalizeYesNo(item.isBoundToObjects() ,locale));
 		row.put("endDate",  messageSource.localizeDate(item.getEndDate(), locale));
 		row.put("created-on", messageSource.localizeDate(auditable.getCreatedOn(), locale));
 		row.put("created-by", auditable.getCreatedBy());

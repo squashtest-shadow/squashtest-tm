@@ -24,7 +24,7 @@ import org.squashtest.tm.domain.Level;
 
 public enum MilestoneStatus implements Level {
 	
-	STATUS_1(1), STATUS_2(2), STATUS_3(3);
+	PLANNED(1), IN_PROGRESS(2), FINISHED(3), LOCKED(4);
 	
 	
 	private static final String I18N_KEY_ROOT = "milestone.status.";

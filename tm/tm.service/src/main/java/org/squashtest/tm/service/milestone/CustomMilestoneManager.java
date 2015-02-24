@@ -66,4 +66,8 @@ public interface CustomMilestoneManager {
 	List<Milestone>  findAllICanSee();
 	
 	boolean isBoundToATemplate(Long milestoneId);
+	
+	
+	void cloneMilestone(long motherId, Milestone milestone, boolean bindToRequirements, boolean bindToTestCases,
+			boolean bindToCampaigns);
 }

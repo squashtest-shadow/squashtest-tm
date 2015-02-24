@@ -39,4 +39,5 @@ public interface MilestoneManagerService extends CustomMilestoneManager{
 	void changeEndDate(long milestoneId, Date newEndDate);
 	void changeOwner(long milestoneId, User Owner);
 	void changeRange(long milestoneId, MilestoneRange newRange);
+
 }

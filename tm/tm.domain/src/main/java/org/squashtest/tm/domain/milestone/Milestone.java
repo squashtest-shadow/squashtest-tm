@@ -351,7 +351,6 @@ public class Milestone {
 
 	public void removeTemplates() {
 
-		
 		Iterator<GenericProject> iterPerim = perimeter.iterator();
 		while (iterPerim.hasNext()) {
 			GenericProject proj = iterPerim.next();
@@ -359,7 +358,7 @@ public class Milestone {
 				iterPerim.remove();
 			}
 		}
-		
+
 		Iterator<GenericProject> iterProject = projects.iterator();
 		while (iterProject.hasNext()) {
 			GenericProject proj = iterProject.next();
@@ -368,5 +367,13 @@ public class Milestone {
 			}
 		}
 
+	}
+
+	public boolean isBoundToObjects() {
+
+		if (testCases.isEmpty() && requirementVersions.isEmpty() && campaigns.isEmpty()) {
+			return false;
+		}
+		return true;
 	}
 }

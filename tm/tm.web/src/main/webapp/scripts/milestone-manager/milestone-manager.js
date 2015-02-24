@@ -78,6 +78,14 @@
 			name : "value"
 		});
 		
+		$("#clone-milestone-end-date").editable(function(value){
+			$("#clone-milestone-end-date").text(value);
+	    }, {
+			type : 'datepicker',
+			datepicker : dateSettings,
+			name : "value"
+		});
+		
 		this.$textAreas = $("textarea");
 		function decorateArea() {
 			$(this).ckeditor(function() {
@@ -174,6 +182,83 @@
 	$('#new-milestone-button').on('click', function(){
 		addMilestoneDialog.formDialog('open');
 	});
+	
+	//Clone milestone
+	var cloneMilestoneDialog = $("#clone-milestone-dialog");
+	
+	cloneMilestoneDialog.formDialog();
+	
+		
+	$('#clone-milestone-button').on('click', function(){
+		
+		var ids = $("#milestones-table").squashTable().getSelectedIds();
+		if (ids.length>1){
+			warningCantCloneMoreThanOne();
+		} else if (ids.length == 1) {
+			cloneMilestoneDialog.data('entity-id', ids);
+			cloneMilestoneDialog.formDialog('open');
+		} else {
+			warningCantCloneNothing();
+		}
+	});
+	
+	function warningCantCloneMoreThanOne()  {
+		var warn = translator.get({
+			errorTitle : 'popup.title.Info',
+			errorMessage : 'message.milestone.cantclonemultiple'
+		});
+		$.squash.openMessage(warn.errorTitle, warn.errorMessage);	
+	}
+	
+	function warningCantCloneNothing()  {
+		var warn = translator.get({
+			errorTitle : 'popup.title.Info',
+			errorMessage : 'message.milestone.cantclonenothing'
+		});
+		$.squash.openMessage(warn.errorTitle, warn.errorMessage);	
+	}
+	
+	
+	
+	cloneMilestoneDialog.on('formdialogcancel', function(){
+		cloneMilestoneDialog.formDialog('close');
+		});
+	
+	cloneMilestoneDialog.on('formdialogconfirm', function(){
+		var $this = $(this);
+		var motherId  = $this.data('entity-id');
+		var url = routing.buildURL('administration.milestones.clone', motherId);
+		var params = {
+				label: $( '#clone-milestone-label' ).val(),
+				endDate: getPostDate($( '#clone-milestone-end-date' ).text()),
+				description: $( '#clone-milestone-description' ).val(),
+				bindToRequirements : cloneMilestoneDialog.find("input:checkbox[name='bindToRequirements']").prop("checked"),
+				bindToTestCases : cloneMilestoneDialog.find("input:checkbox[name='bindToTestCases']").prop("checked"),
+				bindToCampaigns : cloneMilestoneDialog.find("input:checkbox[name='bindToCampaigns']").prop("checked"),
+			};
+		$.ajax({
+			url : url,
+			type : 'POST',
+			data : params				
+		}).success(function(id){
+			config.data.editableMilestoneIds.push(id);
+			$('#milestones-table').squashTable()._fnAjaxUpdate();
+			cloneMilestoneDialog.formDialog('close');
+		});
+		});
+	
+	
+	var uncheckCloneParam = function() {
+		cloneMilestoneDialog.find(":checkbox").prop('checked', false);
+	};
+	var checkAllCloneParam = function() {
+		cloneMilestoneDialog.find(":checkbox").prop('checked', true);
+	};
+	
+	$("#checkAll").on('click', checkAllCloneParam);
+	$("#uncheckAll").on('click', uncheckCloneParam);
+	
+	
 	
 	});			
 	

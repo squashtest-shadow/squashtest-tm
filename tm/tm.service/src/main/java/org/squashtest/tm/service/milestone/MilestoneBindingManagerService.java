@@ -107,5 +107,7 @@ public interface MilestoneBindingManagerService {
 
 	void unbindTemplateFrom(Long milestoneId);
 
+	void bindMilestonesToProjectAndBindObject(Long projectId, List<Long> milestoneIds);
+
 
 }

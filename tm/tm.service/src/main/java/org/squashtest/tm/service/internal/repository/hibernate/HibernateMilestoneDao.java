@@ -25,9 +25,16 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.hibernate.CacheMode;
 import org.hibernate.Query;
+import org.hibernate.ScrollMode;
+import org.hibernate.ScrollableResults;
+import org.hibernate.Transaction;
 import org.springframework.stereotype.Repository;
+import org.squashtest.tm.domain.campaign.Campaign;
 import org.squashtest.tm.domain.milestone.Milestone;
+import org.squashtest.tm.domain.requirement.RequirementVersion;
+import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.exception.milestone.MilestoneLabelAlreadyExistsException;
 import org.squashtest.tm.service.internal.repository.MilestoneDao;
 
@@ -133,5 +140,68 @@ public class HibernateMilestoneDao extends HibernateEntityDao<Milestone> impleme
 			query.setParameter("label", label);
 		}
 	}
+	@Override
+	public void bindMilestoneToProjectTestCases(long projectId, long milestoneId) {
 
+		Query query =  currentSession().getNamedQuery("BoundEntityDao.findAllTestCasesForProject");
+		query.setParameter("projectId", projectId);
+		ScrollableResults tcs = query.setCacheMode(CacheMode.IGNORE)
+			    .scroll(ScrollMode.FORWARD_ONLY);
+		
+		Milestone milestone = findById(milestoneId);
+		int count=0;
+		while ( tcs.next() ) {
+		    TestCase tc = (TestCase) tcs.get(0);
+		    milestone.bindTestCase(tc);
+		    if ( ++count % 20 == 0 ) {
+		        //flush a batch of updates and release memory:
+		    	currentSession().flush();
+		    	currentSession().clear();
+		    	milestone = findById(milestoneId);
+		    }
+		}	
+	}
+
+	@Override
+	public void bindMilestoneToProjectRequirementVersions(long projectId, long milestoneId) {
+		Query query =  currentSession().getNamedQuery("BoundEntityDao.findAllReqVersionsForProject");
+		query.setParameter("projectId", projectId);
+		ScrollableResults reqVersions = query.setCacheMode(CacheMode.IGNORE)
+			    .scroll(ScrollMode.FORWARD_ONLY);
+		
+		Milestone milestone = findById(milestoneId);
+		int count=0;
+		while ( reqVersions.next() ) {
+		    RequirementVersion reqV = (RequirementVersion) reqVersions.get(0);
+		    milestone.bindRequirementVersion(reqV);
+		    if ( ++count % 20 == 0 ) {
+		        //flush a batch of updates and release memory:
+		    	currentSession().flush();
+		    	currentSession().clear();
+		    	milestone = findById(milestoneId);
+		    }
+		}
+		
+	}
+
+	@Override
+	public void bindMilestoneToProjectCampaigns(long projectId, long milestoneId) {
+		Query query =  currentSession().getNamedQuery("BoundEntityDao.findAllCampaignsForProject");
+		query.setParameter("projectId", projectId);
+		ScrollableResults campaigns = query.setCacheMode(CacheMode.IGNORE)
+			    .scroll(ScrollMode.FORWARD_ONLY);
+		
+		Milestone milestone = findById(milestoneId);
+		int count=0;
+		while ( campaigns.next() ) {
+			Campaign camp = (Campaign) campaigns.get(0);
+		    milestone.bindCampaign(camp);
+		    if ( ++count % 20 == 0 ) {
+		        //flush a batch of updates and release memory:
+		    	currentSession().flush();
+		    	currentSession().clear();
+		    	milestone = findById(milestoneId);
+		    }
+		}
+	}
 }
