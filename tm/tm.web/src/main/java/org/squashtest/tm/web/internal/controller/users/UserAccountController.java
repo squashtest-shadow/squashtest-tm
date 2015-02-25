@@ -22,6 +22,10 @@ package org.squashtest.tm.web.internal.controller.users;
 
 import static org.squashtest.tm.web.internal.helper.JEditablePostParams.VALUE;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -37,8 +41,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.util.HtmlUtils;
 import org.squashtest.tm.api.security.authentication.AuthenticationProviderFeatures;
+import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.project.ProjectPermission;
 import org.squashtest.tm.domain.users.User;
+import org.squashtest.tm.service.milestone.MilestoneManagerService;
 import org.squashtest.tm.service.project.ProjectsPermissionFinder;
 import org.squashtest.tm.service.user.UserAccountService;
 import org.squashtest.tm.web.internal.security.authentication.AuthenticationProviderContext;
@@ -50,6 +56,9 @@ public class UserAccountController {
 
 	private UserAccountService userService;
 	
+	@Inject
+	private MilestoneManagerService milestoneManager;
+
 	private ProjectsPermissionFinder permissionFinder;
 	
 	@Inject
@@ -67,10 +76,27 @@ public class UserAccountController {
 	@RequestMapping(method=RequestMethod.GET)
 	public ModelAndView getUserAccountDetails(){
 		User user = userService.findCurrentUser();
+		List<Milestone> milestoneList = new ArrayList<>();
+		try {
+			milestoneList = milestoneManager.findAllICanSee();
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+		;
 		List<ProjectPermission> projectPermissions = permissionFinder.findProjectPermissionByUserLogin(user.getLogin());
+
+		// Sort List
+		/*
+		 * Collections.sort(milestoneList, new Comparator<Milestone>() {
+		 * 
+		 * @Override public int compare(Milestone m1, Milestone m2) { return m1.getLabel().compareTo(m2.getLabel()); }
+		 * });
+		 */
+		Collections.sort(milestoneList, new SortMilestoneList());
 
 		ModelAndView mav = new ModelAndView("page/users/user-account");
 		mav.addObject("user", user);
+		mav.addObject("milestoneList", milestoneList);
 		mav.addObject("projectPermissions", projectPermissions);
 		return mav;
 
@@ -93,5 +119,12 @@ public class UserAccountController {
 	@ModelAttribute("authenticationProvider")
 	AuthenticationProviderFeatures getAuthenticationProviderModelAttribute() {
 		return authenticationProviderContext.getCurrentProviderFeatures();
+	}
+
+	public class SortMilestoneList implements Comparator<Milestone> {
+		@Override
+		public int compare(Milestone m1, Milestone m2) {
+			return m1.getLabel().compareTo(m2.getLabel());
+		}
 	}
 }

@@ -64,7 +64,7 @@ import org.squashtest.tm.domain.users.User;
 @Auditable
 @Entity
 @Table(name = "MILESTONE")
-public class Milestone {
+public class Milestone implements Comparable {
 
 	@Id
 	@DocumentId
@@ -343,6 +343,10 @@ public class Milestone {
 		}
 	}
 
+	@Override
+	public int compareTo(Object o) {
+		// TODO Auto-generated method stub
+		return 0;
 	public boolean isBoundToATemplate() {
 
 		for (GenericProject project : projects) {

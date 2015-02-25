@@ -40,7 +40,7 @@ import org.squashtest.tm.service.internal.repository.MilestoneDao;
 
 @Repository
 public class HibernateMilestoneDao extends HibernateEntityDao<Milestone> implements MilestoneDao{
-
+	
 	@Override
 	public long countMilestones() {
 		return (Long) executeEntityNamedQuery("milestone.count");
@@ -139,6 +139,12 @@ public class HibernateMilestoneDao extends HibernateEntityDao<Milestone> impleme
 		public void setQueryParameters(Query query) {
 			query.setParameter("label", label);
 		}
+	}
+
+	@Override
+	public Collection<Milestone> findAssociableMilestonesForUser(long userId) {
+		Query query = currentSession().getNamedQuery("milestone.findAssociableMilestonesForUser");
+		return query.list();
 	}
 	@Override
 	public void bindMilestoneToProjectTestCases(long projectId, long milestoneId) {

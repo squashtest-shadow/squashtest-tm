@@ -27,6 +27,7 @@
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="s" uri="http://www.springframework.org/tags"%>
+<%@ taglib prefix="json" uri="http://org.squashtest.tm/taglib/json"%>
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component" %>
 <%@ taglib prefix="layout" tagdir="/WEB-INF/tags/layout"%>
 
@@ -189,6 +190,39 @@
 				</div>
 			</jsp:attribute>
 		</comp:toggle-panel>
+		
+		<comp:toggle-panel id="library-display-mode-panel" titleKey="user-preferences.tree-order.mode.title" open="true" >
+			<jsp:attribute name="body">
+				<div class="display-table">			
+				<div class="display-table-row">
+					<div class="display-table-cell">  
+					<label for="toggle-activation-checkbox" ><f:message key="user-preferences.tree-order.mode.label"/></label>
+					</div>
+					<div class="customHeigth">
+					<div class="display-table-cell">                  		
+                 			<input id="toggle-MODE-checkbox" type="checkbox" 
+                 	data-def="width=35, on_label='<f:message key="user-preferences.milestone"/>', off_label='<f:message key="user-preferences.tree-order.referentiel.label"/>',
+                 	 checked=${allowedStatuses['MODE']}" style="display: none;"/>
+                 		</div>
+                 	</div>
+				</div>
+				
+				
+				
+				<div class="display-table-row">
+					<div class="display-table-cell">  
+					<label for="choose-your-mode" ><f:message key="user-preferences.milestone"/></label>
+					</div>
+					<div id="labelchoose" class="customHeigth">
+					 <select id="milestone-group" class="combobox" >
+				        <c:forEach items="${ milestoneList }" var="milestone"> 
+				           <option value = "${milestone.id}" >${milestone.label}</option>
+			            </c:forEach>                    
+					</select>
+				</div>
+			</jsp:attribute>
+		</comp:toggle-panel>
+		
 	</div>
     <c:if test="${ not authenticationProvider.managedPassword }">
 	   <comp:user-account-password-popup/>
@@ -198,13 +232,104 @@
 
 <script type="text/javascript">
   require(["common"], function() {
-    require(["jquery", "squashtable"], function($){
+    require(["jquery", "projects-manager", "jquery.squash.fragmenttabs", "squash.attributeparser", 
+  	         "project/ProjectToolbar", "app/ws/squashtm.notification", "squash.translator",  "squashtable", "jquery.switchButton", "jquery.cookie"], 
+        function($, projectsManager, Frag, attrparser, ProjectToolbar, notification, translator){
   	  $("#project-permission-table").squashTable({
   		  'bServerSide' : false,
   		  'sDom' : '<r>t<i>',
   		  'sPaginationType' : 'full_numbers'
   	  },{});
+
+  	  var COOKIE_NAME = "milestones";
+  	  var oPath = {
+					path : "/"
+				};	  
   	  
+  	  $(function() {
+		 		init(projectsManager, Frag);	
+		 		configureActivation("MODE");
+		 		if (typeof $.cookie(COOKIE_NAME) === 'undefined'){
+		 		 //no cookie
+		 			$.cookie(COOKIE_NAME, "choose");
+		 		} else {
+		 		 //have cookie
+		 		}
+		 		$("#milestone-group").val($.cookie(COOKIE_NAME));
+		 		var cookieValue = $.cookie(COOKIE_NAME);
+		 		if (localStorage.getItem("milestones") == 0 ) {
+					 	if ($.cookie(COOKIE_NAME) == null || $.cookie(COOKIE_NAME) == "choose" ) {
+					 	 	$("#milestone-group").append(new Option(translator.get('user-preferences.choosemilestone.label'), 'choose', true, true));
+						 	$('.milestone-group option[value="choose"]');
+					 	}
+					 	else {
+						
+					 	}
+					 	
+		 		document.getElementById("milestone-group").disabled = true; 
+		  		}
+		 		else {
+		 		document.getElementById("milestone-group").disabled = false; 
+		 		if ($("#toggle-MODE-checkbox").prop('checked') == false) {
+		 			$('#toggle-MODE-checkbox').switchButton({
+		 			  checked: true
+		 			});
+		 			}	
+		 		}
+		 		$("#toggle-MODE-checkbox").change(function(){
+		 			toggleStatusActivation("MODE");
+		 		}); 		 		
+		 		new ProjectToolbar(); 		
+
+			  	$("#milestone-group").change(function(){
+			  	  	$.cookie(COOKIE_NAME, encodeURIComponent($("#milestone-group").val()), oPath);
+			  	  });
+		
+			  	$("#toggle-MODE-checkbox").change(function(){
+			  	 		if ($("#toggle-MODE-checkbox").prop('checked')) {
+					 		 document.getElementById("milestone-group").disabled = false; 		
+						 		}
+			  	 		else 	{
+					 		 document.getElementById("milestone-group").disabled = true;		
+					 		}
+			  	  });
+	  	});
+
+  		function init(projectsManager, Frag){
+   			Frag.init();
+
+  		};
+  		function configureActivation(status){
+
+  			var activCbx = $("#toggle-"+status+"-checkbox"),
+  				activConf = attrparser.parse(activCbx.data('def'));
+  			activConf.checked = activConf.checked == 'true';
+  			activCbx.switchButton(activConf);
+  			
+  			//a bit of css tweak now
+  			activCbx.siblings('.switch-button-background').css({position : 'relative', top : '6px'});
+  		};
+  		
+  		function toggleStatusActivation(status){
+  			var shouldActivate = $("#toggle-"+status+"-checkbox").prop('checked');
+  			if (shouldActivate){
+  				$("#milestone-group option[value='choose']").remove();
+  				activateStatus(status);
+  			}
+  			else{
+  				deactivateStatus(status);
+  			}
+  		};	
+
+  		function activateStatus(status){
+  			$.cookie(COOKIE_NAME, encodeURIComponent($("#milestone-group").val()), oPath);
+  			localStorage.setItem("milestones", 1);
+  		};
+  		
+  		function deactivateStatus(status){
+  			// $.cookie(COOKIE_NAME, "null", oPath);
+  			localStorage.setItem("milestones", 0);
+  		};
     })
   });
 </script>	

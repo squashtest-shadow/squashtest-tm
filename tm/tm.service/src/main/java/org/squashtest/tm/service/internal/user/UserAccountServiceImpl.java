@@ -20,6 +20,10 @@
  */
 package org.squashtest.tm.service.internal.user;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
 import javax.inject.Inject;
 
 import org.slf4j.Logger;
@@ -30,6 +34,7 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.UnauthorizedPasswordChange;
+import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.exception.WrongPasswordException;
 import org.squashtest.tm.service.internal.repository.UserDao;
@@ -170,6 +175,10 @@ public class UserAccountServiceImpl implements UserAccountService {
         
 	}
 
+	@Override
+	public Collection<Milestone> findAllMilestonesForUser(long userId) {
+		return null;
+	}
 	
 
 	/* ************ private stuffs ****************** */
@@ -181,5 +190,7 @@ public class UserAccountServiceImpl implements UserAccountService {
 			throw new AccessDeniedException("Access is denied");
 		}
 	}
+
+
 
 }

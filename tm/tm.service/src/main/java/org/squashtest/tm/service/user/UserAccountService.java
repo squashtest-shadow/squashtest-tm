@@ -21,6 +21,10 @@
 package org.squashtest.tm.service.user;
 
 import org.squashtest.tm.domain.users.User;
+import java.util.Collection;
+import java.util.List;
+
+import org.squashtest.tm.domain.milestone.Milestone;
 
 //TODO : same methods but with no parameters (UserContextService will give us the user)
 public interface UserAccountService {
@@ -55,4 +59,7 @@ public interface UserAccountService {
 	void setCurrentUserEmail(String newEmail);
 
 	void setCurrentUserPassword(String oldPasswd, String newPasswd);
+
+	Collection<Milestone> findAllMilestonesForUser(long userId);
+
 }
