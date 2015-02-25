@@ -163,7 +163,7 @@ class TestCaseLibraryNavigationControllerTest extends Specification {
 		def res = controller.addNewTestCaseToLibraryRootContent(10, tcfm, [])
 
 		then:
-		1 * testCaseLibraryNavigationService.addTestCaseToLibrary(10, {it.getName() == "test case"}, [:], null)
+		1 * testCaseLibraryNavigationService.addTestCaseToLibrary(10, {it.getName() == "test case"}, [:], null, [])
 		res.attr['name'] == "test case"
 	}
 
@@ -189,7 +189,7 @@ class TestCaseLibraryNavigationControllerTest extends Specification {
 		def res = controller.addNewTestCaseToFolder(10, tcfm, [])
 
 		then:
-		1 * testCaseLibraryNavigationService.addTestCaseToFolder(10, {it.getName() == "test case"}, [:], null)
+		1 * testCaseLibraryNavigationService.addTestCaseToFolder(10, {it.getName() == "test case"}, [:], null, [])
 		res.attr['name'] == "test case"
 	}
 }

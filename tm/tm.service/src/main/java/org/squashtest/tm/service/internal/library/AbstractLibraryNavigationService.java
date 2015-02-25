@@ -365,12 +365,12 @@ implements LibraryNavigationService<LIBRARY, FOLDER, NODE> {
 	/* ***************************** deletion operations *************************** */
 
 	@Override
-	public List<SuppressionPreviewReport> simulateDeletion(List<Long> targetIds) {
-		return getDeletionHandler().simulateDeletion(targetIds);
+	public List<SuppressionPreviewReport> simulateDeletion(List<Long> targetIds, Long milestoneId) {
+		return getDeletionHandler().simulateDeletion(targetIds, milestoneId);
 	}
 
 	@Override
-	public OperationReport deleteNodes(List<Long> targetIds) {
+	public OperationReport deleteNodes(List<Long> targetIds, Long milestoneId) {
 
 		// check. Note : we wont recursively check for the whole hierarchy as it's supposed to have the same
 		// identity holder
@@ -379,7 +379,7 @@ implements LibraryNavigationService<LIBRARY, FOLDER, NODE> {
 			checkPermission(new SecurityCheckableObject(node, "DELETE"));
 		}
 
-		return getDeletionHandler().deleteNodes(targetIds);
+		return getDeletionHandler().deleteNodes(targetIds, milestoneId);
 	}
 
 	/* ************************* private stuffs ************************* */

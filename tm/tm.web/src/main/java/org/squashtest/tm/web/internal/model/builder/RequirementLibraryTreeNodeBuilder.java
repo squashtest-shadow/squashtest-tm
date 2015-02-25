@@ -84,7 +84,7 @@ public class RequirementLibraryTreeNodeBuilder extends LibraryTreeNodeBuilder<Re
 			State state = (requirement.hasContent() ? State.closed : State.leaf);
 			builtNode.setState(state);
 			builtNode.addAttr("category-icon", version.getCategory().getIconName());
-			builtNode.addAttr("milestones", version.getMilestones().size());
+			builtNode.addAttr("milestones", totalMilestones(requirement));
 
 			if (version.getReference() != null && version.getReference().length() > 0) {
 				builtNode.setTitle(version.getReference() + " - " + version.getName());
@@ -94,6 +94,14 @@ public class RequirementLibraryTreeNodeBuilder extends LibraryTreeNodeBuilder<Re
 			}
 		}
 
+	}
+
+	private int totalMilestones(Requirement requirement){
+		int count=0;
+		for (RequirementVersion v : requirement.getRequirementVersions()){
+			count += v.getMilestones().size();
+		}
+		return count;
 	}
 
 	@Inject

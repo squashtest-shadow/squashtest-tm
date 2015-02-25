@@ -55,8 +55,8 @@ import org.squashtest.tm.service.requirement.VerifiedRequirementsManagerService;
 
 @Component("squashtest.tm.service.deletion.RequirementNodeDeletionHandler")
 public class RequirementDeletionHandlerImpl extends
-		AbstractNodeDeletionHandler<RequirementLibraryNode, RequirementFolder> implements
-		RequirementNodeDeletionHandler {
+AbstractNodeDeletionHandler<RequirementLibraryNode, RequirementFolder> implements
+RequirementNodeDeletionHandler {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(RequirementDeletionHandlerImpl.class);
 
@@ -77,14 +77,14 @@ public class RequirementDeletionHandlerImpl extends
 
 	@Inject
 	private VerifiedRequirementsManagerService verifiedRequirementsManagerService;
-	
+
 	@Override
 	protected FolderDao<RequirementFolder, RequirementLibraryNode> getFolderDao() {
 		return folderDao;
 	}
 
 	@Override
-	protected List<SuppressionPreviewReport> diagnoseSuppression(List<Long> nodeIds) {
+	protected List<SuppressionPreviewReport> diagnoseSuppression(List<Long> nodeIds, Long milestoneId) {
 		List<SuppressionPreviewReport> preview = new LinkedList<SuppressionPreviewReport>();
 
 		// TODO : perform an actual verification
@@ -112,7 +112,7 @@ public class RequirementDeletionHandlerImpl extends
 	 * @see org.squashtest.tm.service.internal.deletion.AbstractNodeDeletionHandler#deleteNodes(java.util.List)
 	 */
 	@Override
-	public OperationReport deleteNodes(List<Long> targetIds) {
+	public OperationReport deleteNodes(List<Long> targetIds, Long milestoneId) {
 
 		OperationReport globalReport = new OperationReport();
 
@@ -120,18 +120,18 @@ public class RequirementDeletionHandlerImpl extends
 		List<Long>[] separatedIds = deletionDao.separateFolderFromRequirementIds(targetIds);
 
 		// the folderIds are treated as usual.
-		OperationReport deletedFolders = super.deleteNodes(separatedIds[0]);
+		OperationReport deletedFolders = super.deleteNodes(separatedIds[0], milestoneId);
 		deletionDao.flush();
 		globalReport.mergeWith(deletedFolders);
 
-		// the requirements get a special treatment : first we rewire the children requirements 
+		// the requirements get a special treatment : first we rewire the children requirements
 		// when a parent requirement is removed, second we bypass super#deleteNodes
 		// because we don't need to re-compute which folders should be deleted by transitivity.
 		OperationReport rewiredRequirements = rewireChildrenRequirements(separatedIds[1]);
 		globalReport.mergeWith(rewiredRequirements);
 		deletionDao.flush();
-		
-		OperationReport deletedRequirements = batchDeleteNodes(separatedIds[1]);
+
+		OperationReport deletedRequirements = batchDeleteNodes(separatedIds[1], milestoneId);
 		deletionDao.flush();
 		globalReport.mergeWith(deletedRequirements);
 
@@ -147,18 +147,18 @@ public class RequirementDeletionHandlerImpl extends
 		try{
 			if (!requirements.isEmpty()) {
 				OperationReport rewireReport = new OperationReport();
-	
+
 				List<Object[]> pairedParentChildren = requirementDao.findAllParentsOf(requirements);
-	
+
 				for (Object[] pair : pairedParentChildren) {
-	
+
 					NodeContainer<Requirement> parent = (NodeContainer<Requirement>) pair[0];
 					Requirement requirement = (Requirement) pair[1];
-	
+
 					renameContentIfNeededThenAttach(parent, requirement, rewireReport);
-	
+
 				}
-	
+
 				return rewireReport;
 			} else {
 				return new OperationReport();
@@ -175,7 +175,7 @@ public class RequirementDeletionHandlerImpl extends
 	 * nodes themselves
 	 */
 	@Override
-	protected OperationReport batchDeleteNodes(List<Long> ids) {
+	protected OperationReport batchDeleteNodes(List<Long> ids, Long milestoneId) {
 
 		OperationReport report = new OperationReport();
 
@@ -200,12 +200,12 @@ public class RequirementDeletionHandlerImpl extends
 			// remove binds to other entities
 			deletionDao.removeTestStepsCoverageByRequirementVersionIds(allVersionIds);
 			//deletionDao.removeFromVerifiedRequirementLists(ids);
-			
+
 
 			// remove the elements now
 			deletionDao.removeEntities(ids);
 
-			
+
 			// finally delete the attachment lists
 			requirementAttachmentIds.addAll(requirementFolderAttachmentIds);
 			deletionDao.removeAttachmentsLists(requirementAttachmentIds);
@@ -219,6 +219,14 @@ public class RequirementDeletionHandlerImpl extends
 
 		return report;
 	}
+
+
+	@Override
+	protected OperationReport batchUnbindFromMilestone(List<Long> ids, Long milestoneId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 
 	private void renameContentIfNeededThenAttach(NodeContainer<Requirement> parent, Requirement toBeDeleted,
 			OperationReport report) {
@@ -290,8 +298,8 @@ public class RequirementDeletionHandlerImpl extends
 		report.addMoved(nodeMovement);
 
 	}
-	
-	
+
+
 	private static final class ImpossibleSuppression extends ActionException{
 
 		/**
@@ -299,25 +307,19 @@ public class RequirementDeletionHandlerImpl extends
 		 */
 		private static final long serialVersionUID = 4901610054565947807L;
 		private static final String impossibleSuppressionException = "squashtm.action.exception.impossiblerequirementsuppression.label";
-		
-		
+
+
 		public ImpossibleSuppression(Exception ex){
 			super(ex);
 		}
-		
-		public ImpossibleSuppression(String message){
-			super(message);
-		}
-		
-		public ImpossibleSuppression(){
-			
-		}
-		
+
+
 		@Override
 		public String getI18nKey() {
 			return impossibleSuppressionException;
 		}
-		
+
 	}
+
 
 }

@@ -338,4 +338,28 @@ public class HibernateTestCaseDeletionDao extends HibernateDeletionDao implement
 
 		return result;
 	}
+
+	@Override
+	public List<Long> findRemainingTestCaseIds(List<Long> originalIds) {
+		List<BigInteger> rawids = executeSelectSQLQuery(NativeQueries.TESTCASE_SQL_FINDNOTDELETED, "allTestCaseIds", originalIds);
+		List<Long> tcIds = new ArrayList<>(rawids.size());
+		for (BigInteger rid : rawids){
+			tcIds.add(rid.longValue());
+		}
+		return tcIds;
+	}
+
+	@Override
+	public void unbindFromMilestone(List<Long> testCaseIds, Long milestoneId){
+
+		if (! testCaseIds.isEmpty()){
+			Query query = getSession().createSQLQuery(NativeQueries.TESTCASE_SQL_UNBIND_MILESTONE);
+			query.setParameterList("testCaseIds", testCaseIds, LongType.INSTANCE);
+			query.setParameter("milestoneId", milestoneId);
+			query.executeUpdate();
+		}
+
+	}
+
+
 }

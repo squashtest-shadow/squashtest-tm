@@ -21,6 +21,7 @@
 package org.squashtest.tm.service.internal.deletion;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -38,7 +39,9 @@ import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseFolder;
 import org.squashtest.tm.domain.testcase.TestCaseLibraryNode;
 import org.squashtest.tm.domain.testcase.TestStep;
+import org.squashtest.tm.service.deletion.BoundToMultipleMilestonesReport;
 import org.squashtest.tm.service.deletion.LinkedToIterationPreviewReport;
+import org.squashtest.tm.service.deletion.MilestoneModeNoFolderDeletion;
 import org.squashtest.tm.service.deletion.NotDeletablePreviewReport;
 import org.squashtest.tm.service.deletion.OperationReport;
 import org.squashtest.tm.service.deletion.SuppressionPreviewReport;
@@ -91,25 +94,69 @@ AbstractNodeDeletionHandler<TestCaseLibraryNode, TestCaseFolder> implements Test
 		return folderDao;
 	}
 
-	/*
-	 * ************************************ AbstractNodeDeletionHandlerImpl impl
-	 * *****************************************
-	 */
+	/* *******************************************************************************
+	 * 
+	 * DELETION SIMULATION
+	 * 
+	 * ******************************************************************************/
 
 	@Override
-	protected List<SuppressionPreviewReport> diagnoseSuppression(List<Long> nodeIds) {
+	protected List<SuppressionPreviewReport> diagnoseSuppression(List<Long> nodeIds, Long milestoneId) {
+
+		if (milestoneId == null){
+			return diagnoseSuppressionNormalMode(nodeIds);
+		}
+		else{
+			return diagnoseSuppressionMilestoneMode(nodeIds, milestoneId);
+		}
+
+	}
+
+	private List<SuppressionPreviewReport> diagnoseSuppressionNormalMode(List<Long> nodeIds){
 		List<SuppressionPreviewReport> preview = new LinkedList<SuppressionPreviewReport>();
 
+		// check test cases that are called by other test cases
 		NotDeletablePreviewReport report = previewLockedNodes(nodeIds);
-		if(report != null){
+		if (report != null){
 			preview.add(report);
 		}
+
+		// check test cases that have been planned or executed
 		LinkedToIterationPreviewReport previewAffectedNodes = previewAffectedNodes(nodeIds);
-		if(previewAffectedNodes != null){
+		if (previewAffectedNodes != null){
 			preview.add(previewAffectedNodes);
 		}
+
 		return preview;
 	}
+
+	private List<SuppressionPreviewReport> diagnoseSuppressionMilestoneMode(List<Long> nodeIds, Long milestoneId){
+
+		// first get the preview for the normal mode
+		List<SuppressionPreviewReport> previews = diagnoseSuppressionNormalMode(nodeIds);
+
+		// check if there are some folders in the selection
+		List<Long>[] separatedIds = deletionDao.separateFolderFromTestCaseIds(nodeIds);
+		if (! separatedIds[0].isEmpty()){
+			previews.add(new MilestoneModeNoFolderDeletion());
+		}
+
+		// check if some elements are bound to multiple milestones
+		if (someNodesHaveMultipleMilestones(nodeIds)){
+			previews.add(new BoundToMultipleMilestonesReport());
+		}
+
+		return previews;
+
+	}
+
+	/* *******************************************************************************
+	 * 
+	 * ACTUAL DELETION
+	 * 
+	 * ******************************************************************************/
+
+
 	@Override
 	protected List<Long> detectLockedNodes(final List<Long> nodeIds) {
 
@@ -136,38 +183,46 @@ AbstractNodeDeletionHandler<TestCaseLibraryNode, TestCaseFolder> implements Test
 	 * Note : We only need to take care of the attachments and steps, the rest will cascade thanks to the ON CASCADE
 	 * clauses in the other tables.
 	 */
-	protected OperationReport batchDeleteNodes(List<Long> ids) {
+	protected OperationReport batchDeleteNodes(List<Long> ids, Long milestoneId) {
 
 		OperationReport report = new OperationReport();
 
 		if (!ids.isEmpty()) {
 
-			List<Long>[] separatedIds = deletionDao.separateFolderFromTestCaseIds(ids);
+			DeletableIds deletableIds = findSeparateIds(ids);
 
-			List<Long> stepIds = deletionDao.findTestSteps(ids);
+			if (milestoneId != null){
+				deletableIds = applyMilestoneMode(deletableIds, milestoneId);
+			}
 
-			List<Long> testCaseAttachmentIds = deletionDao.findTestCaseAttachmentListIds(ids);
-			List<Long> testStepAttachmentIds = deletionDao.findTestStepAttachmentListIds(stepIds);
-			List<Long> testCaseFolderAttachmentIds = deletionDao.findTestCaseFolderAttachmentListIds(ids);
+			List<Long> folderIds = deletableIds.getFolderIds();
+			List<Long> tcIds = deletableIds.getTestCaseIds();
+			List<Long> allIds = deletableIds.getAllIds();
 
-			deletionDao.removeCampaignTestPlanInboundReferences(ids);
-			deletionDao.removeOrSetIterationTestPlanInboundReferencesToNull(ids);
+			List<Long> stepIds = deletionDao.findTestSteps(tcIds);
 
-			deletionDao.setExecutionInboundReferencesToNull(ids);
+			List<Long> testCaseAttachmentIds = 	deletionDao.findTestCaseAttachmentListIds(tcIds);
+			List<Long> testStepAttachmentIds = 	deletionDao.findTestStepAttachmentListIds(stepIds);
+			List<Long> testCaseFolderAttachmentIds = deletionDao.findTestCaseFolderAttachmentListIds(folderIds);
+
+			deletionDao.removeCampaignTestPlanInboundReferences(tcIds);
+			deletionDao.removeOrSetIterationTestPlanInboundReferencesToNull(tcIds);
+
+			deletionDao.setExecutionInboundReferencesToNull(tcIds);
 			deletionDao.setExecStepInboundReferencesToNull(stepIds);
 
 			deletionDao.removeFromVerifyingTestStepsList(stepIds);
-			deletionDao.removeFromVerifyingTestCaseLists(ids);
+			deletionDao.removeFromVerifyingTestCaseLists(tcIds);
 
 			customValueService.deleteAllCustomFieldValues(BindableEntity.TEST_STEP, stepIds);
 			deletionDao.removeAllSteps(stepIds);
 
-			customValueService.deleteAllCustomFieldValues(BindableEntity.TEST_CASE, ids);
+			customValueService.deleteAllCustomFieldValues(BindableEntity.TEST_CASE, tcIds);
 
-			datasetService.removeAllByTestCaseIds(ids);
-			parameterService.removeAllByTestCaseIds(ids);
+			datasetService.removeAllByTestCaseIds(tcIds);
+			parameterService.removeAllByTestCaseIds(tcIds);
 
-			deletionDao.removeEntities(ids);
+			deletionDao.removeEntities(allIds);
 
 			// We merge the attachment list ids for
 			// test cases, test step and folder first so that
@@ -176,8 +231,8 @@ AbstractNodeDeletionHandler<TestCaseLibraryNode, TestCaseFolder> implements Test
 			testCaseAttachmentIds.addAll(testCaseFolderAttachmentIds);
 			deletionDao.removeAttachmentsLists(testCaseAttachmentIds);
 
-			report.addRemoved(separatedIds[0], "folder");
-			report.addRemoved(separatedIds[1], "test-case");
+			report.addRemoved(folderIds, "folder");
+			report.addRemoved(tcIds, "test-case");
 
 			// Last, take care of the automated tests that could end up as "orphans" after the mass deletion
 			autoTestDao.pruneOrphans();
@@ -186,6 +241,22 @@ AbstractNodeDeletionHandler<TestCaseLibraryNode, TestCaseFolder> implements Test
 
 		return report;
 	}
+
+
+	protected OperationReport batchUnbindFromMilestone(List<Long> ids, Long milestoneId){
+
+		List<Long> remainingIds = deletionDao.findRemainingTestCaseIds(ids);
+
+		OperationReport report = new OperationReport();
+
+		deletionDao.unbindFromMilestone(remainingIds, milestoneId);
+
+		report.addRemoved(remainingIds, "test-case");
+
+		return report;
+
+	}
+
 
 	/* ************************ TestCaseNodeDeletionHandler impl ***************************** */
 
@@ -206,6 +277,7 @@ AbstractNodeDeletionHandler<TestCaseLibraryNode, TestCaseFolder> implements Test
 		List<Long> stepId = new LinkedList<Long>();
 		stepId.add(step.getId());
 		deletionDao.setExecStepInboundReferencesToNull(stepId);
+
 		if (step instanceof ActionTestStep) {
 			customValueService.deleteAllCustomFieldValues((ActionTestStep) step);
 			deleteActionStep((ActionTestStep) step);
@@ -217,14 +289,6 @@ AbstractNodeDeletionHandler<TestCaseLibraryNode, TestCaseFolder> implements Test
 		}
 	}
 
-	private void deleteActionStep(ActionTestStep step) {
-		deletionDao.removeAttachmentList(step.getAttachmentList());
-		deletionDao.removeEntity(step);
-	}
-
-	private void deleteCallStep(CallTestStep step) {
-		deletionDao.removeEntity(step);
-	}
 
 	/* ************************ privates stuffs ************************ */
 
@@ -297,5 +361,79 @@ AbstractNodeDeletionHandler<TestCaseLibraryNode, TestCaseFolder> implements Test
 		return report;
 	}
 
+	private void deleteActionStep(ActionTestStep step) {
+		deletionDao.removeAttachmentList(step.getAttachmentList());
+		deletionDao.removeEntity(step);
+	}
+
+	private void deleteCallStep(CallTestStep step) {
+		deletionDao.removeEntity(step);
+	}
+
+	private boolean someNodesHaveMultipleMilestones(List<Long> nodeIds){
+		List<Long> boundNodes = leafDao.findNodeIdsHavingMultipleMilestones(nodeIds);
+		return ! (boundNodes.isEmpty());
+	}
+
+
+	private DeletableIds findSeparateIds(List<Long> ids){
+		List<Long>[] separatedIds = deletionDao.separateFolderFromTestCaseIds(ids);
+		return new DeletableIds(separatedIds[0], separatedIds[1]);
+	}
+
+	/*
+	 * Rules of milestone mode :
+	 * - 1) no folder shall be deleted,
+	 * - 2) no test case that doesn't belong to the milestone shall be deleted,
+	 * - 3) no test case bound to more than one milestone shall be deleted (it will be unbound though, but later).
+	 */
+	private DeletableIds applyMilestoneMode(DeletableIds deletableIds, Long milestoneId){
+		List<Long> folderIds;
+		List<Long> testCaseIds;
+
+		// rule 1
+		folderIds = Collections.emptyList();
+
+		// rule 2
+		testCaseIds = deletableIds.getTestCaseIds();
+		List<Long> outOfScopeIds = leafDao.findNonBoundTestCases(testCaseIds, milestoneId);
+
+		testCaseIds.removeAll(outOfScopeIds);
+
+		// rule 3
+		List<Long> belongsToMoreMilestones = leafDao.findNodeIdsHavingMultipleMilestones(testCaseIds);
+		testCaseIds.removeAll(belongsToMoreMilestones);
+
+		return new DeletableIds(folderIds, testCaseIds);
+
+	}
+
+	private static final class DeletableIds {
+		private final List<Long> folderIds;
+		private final List<Long> testCaseIds;
+
+		public DeletableIds(List<Long> folderIds, List<Long> testCaseIds) {
+			super();
+			this.folderIds = folderIds;
+			this.testCaseIds = testCaseIds;
+		}
+
+		public List<Long> getFolderIds() {
+			return folderIds;
+		}
+
+		public List<Long> getTestCaseIds() {
+			return testCaseIds;
+		}
+
+		public List<Long> getAllIds(){
+			ArrayList<Long> all = new ArrayList<>(folderIds.size() + testCaseIds.size());
+			all.addAll(folderIds);
+			all.addAll(testCaseIds);
+			return all;
+		}
+
+
+	}
 
 }

@@ -53,6 +53,8 @@ public final class NativeQueries {
 
 	public static final String TESTCASE_SQL_REMOVEFROMFOLDER = "delete from TCLN_RELATIONSHIP where ancestor_id in (:ancIds) or descendant_id in (:descIds)";
 	public static final String TESTCASE_SQL_REMOVEFROMLIBRARY = "delete from TEST_CASE_LIBRARY_CONTENT where content_id in (:testCaseIds)";
+	public static final String TESTCASE_SQL_UNBIND_MILESTONE = "delete from MILESTONE_TEST_CASE where MILESTONE_ID = :milestoneId and TEST_CASE_ID in (:testCaseIds)";
+	public static final String TESTCASE_SQL_FINDNOTDELETED = "select TCLN_ID from TEST_CASE where TCLN_ID in (:allTestCaseIds)";
 
 	public static final String TESTSTEP_SQL_REMOVEACTIONSTEPS = "delete from ACTION_TEST_STEP where test_step_id in (:testStepIds)";
 	public static final String TESTSTEP_SQL_REMOVECALLSTEPS = "delete from CALL_TEST_STEP where test_step_id in (:testStepIds)";
@@ -206,8 +208,8 @@ public final class NativeQueries {
 			"on clos.ancestor_id = rln.rln_id "+
 			"where clos.descendant_id = :nodeId "+
 			"order by clos.depth desc";
-	
-	
 
-			
+
+
+
 }

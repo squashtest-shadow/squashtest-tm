@@ -21,6 +21,8 @@
 package org.squashtest.tm.service.deletion
 
 
+import java.util.List;
+
 import org.apache.poi.hssf.record.formula.functions.T
 import org.springframework.context.MessageSource
 import org.squashtest.tm.domain.testcase.TestCase
@@ -40,59 +42,64 @@ class AbstractNodeDeletionHandlerImplTest extends Specification {
 
 	final TestCaseDao nodeDao = Mock();
 	final TestCaseFolderDao folderDao = Mock();
-	
+
 	class TestNodeDeletionHandler extends AbstractNodeDeletionHandler<TestCaseLibraryNode,  TestCaseFolder>{
-		
+
 		TestCaseDao tcDao;
 		TestCaseFolderDao tcFolderDao;
-		
-		
+
+
 		protected EntityDao<TestCase> getEntityDao(){
 			return tcDao;
 		}
 		protected FolderDao<TestCaseFolder, TestCaseLibraryNode> getFolderDao(){
 			return tcFolderDao;
 		}
-		
-		protected  List<SuppressionPreviewReport> diagnoseSuppression(List<Long> nodeIds){
+
+		protected  List<SuppressionPreviewReport> diagnoseSuppression(List<Long> nodeIds, Long milestoneId){
 			List<SuppressionPreviewReport> preview = new LinkedList<SuppressionPreviewReport>();
-			
-			
+
+
 			NotDeletablePreviewReport notDeletableReport = new NotDeletablePreviewReport();
 			List<Long> calleds = tcDao.findTestCasesHavingCaller (nodeIds);
-			
+
 			for (Long called : calleds ){
 				notDeletableReport.addName(called.toString());
 			}
 			notDeletableReport.addWhy("because it's a test");
-			
+
 			preview.add(notDeletableReport);
-			
+
 			return preview;
 		}
-		
+
 		protected  List<Long> detectLockedNodes(List<Long> nodeIds){
 			return tcDao.findAllTestCasesIdsCalledByTestCases (nodeIds);
 		}
-		
-		protected  OperationReport batchDeleteNodes(List<Long> ids){
+
+		protected  OperationReport batchDeleteNodes(List<Long> ids, Long milestoneId){
 			OperationReport report = new  OperationReport()
 			report.addRemoved(ids, "who-cares");
 			return report
 		}
-		
-		
-		
+
+		@Override
+		protected OperationReport batchUnbindFromMilestone(List<Long> ids, Long milestoneId) {
+			return new OperationReport();
+		}
+
+
+
 	}
-	
+
 	TestNodeDeletionHandler handler = new TestNodeDeletionHandler();
 
 	def setup(){
 		handler.tcDao=nodeDao;
 		handler.tcFolderDao=folderDao;
 	}
-	
-	//default groovy collections for the [] notation is an implementation of List. But I have specific needs for Long[], hence the 
+
+	//default groovy collections for the [] notation is an implementation of List. But I have specific needs for Long[], hence the
 	//scaffolding code here
 	private List<Long[]> toListOfArrays(List<List<Long>> l){
 		List<Long[]> res = new LinkedList<Long[]>();
@@ -104,156 +111,156 @@ class AbstractNodeDeletionHandlerImplTest extends Specification {
 		}
 		return res;
 	}
-	
-	
+
+
 	private List<Long[]> defaultTreeHierarchy(){
 		return  toListOfArrays([ [null, 1], [null, 2],
-											[1, 11], [1, 12],[1, 13],[2, 14] ,
-											[11, 21], [11, 22], [12, 23], [12, 24],
-											[24, 31], [24, 32]
-											])
+			[1, 11], [1, 12],[1, 13],[2, 14] ,
+			[11, 21], [11, 22], [12, 23], [12, 24],
+			[24, 31], [24, 32]
+		])
 	}
-	
-	
+
+
 	def "should fetch the node hierarchy"(){
-		
+
 		given :
-			def layer0 = [11, 12, 13, 14]
-			def layer1 = [21, 22, 23, 24] 
-			def layer2 = [31, 32]
-			def layer3 = []
-		
-		and : 
-		
-			folderDao.findContentForList([1, 2]) >> layer0
-			folderDao.findContentForList([11, 12, 13, 14]) >> layer1 
-			folderDao.findContentForList([21, 22, 23, 24]) >>  layer2
-			folderDao.findContentForList([31, 32]) >> layer3
-			
+		def layer0 = [11, 12, 13, 14]
+		def layer1 = [21, 22, 23, 24]
+		def layer2 = [31, 32]
+		def layer3 = []
+
 		and :
-			def expectedList = [1, 2, 11, 12, 13, 14, 21, 22, 23, 24, 31, 32]
-	
-			
+
+		folderDao.findContentForList([1, 2]) >> layer0
+		folderDao.findContentForList([11, 12, 13, 14]) >> layer1
+		folderDao.findContentForList([21, 22, 23, 24]) >>  layer2
+		folderDao.findContentForList([31, 32]) >> layer3
+
+		and :
+		def expectedList = [1, 2, 11, 12, 13, 14, 21, 22, 23, 24, 31, 32]
+
+
 		when :
-			def result = handler.findNodeHierarchy([1l, 2l])
-		
+		def result = handler.findNodeHierarchy([1l, 2l])
+
 		then :
-			result == expectedList
-		
-		
-		
+		result == expectedList
+
+
+
 	}
-	
-	
-	
+
+
+
 	def "should fetch the paired node hierarchy"(){
-		
+
 		given :
-			def layer0 = toListOfArrays ([ [1, 11], [1, 12],[1, 13],[2, 14]]);
-			def layer1 = toListOfArrays ([ [11, 21], [11, 22], [12, 23], [12, 24]] )
-			def layer2 = toListOfArrays ([ [24, 31], [24, 32]])
-			def layer3 = toListOfArrays ([])
-		
-		and : 
-		
-			folderDao.findPairedContentForList([1, 2]) >> layer0
-			folderDao.findPairedContentForList([11, 12, 13, 14]) >> layer1 
-			folderDao.findPairedContentForList([21, 22, 23, 24]) >>  layer2
-			folderDao.findPairedContentForList([31, 32]) >> layer3
-		
-		and : 
-			def expectedList = [ [null, 1], [null, 2], layer0, layer1 , layer2 , layer3].flatten()
-		
+		def layer0 = toListOfArrays ([ [1, 11], [1, 12],[1, 13],[2, 14]]);
+		def layer1 = toListOfArrays ([ [11, 21], [11, 22], [12, 23], [12, 24]] )
+		def layer2 = toListOfArrays ([ [24, 31], [24, 32]])
+		def layer3 = toListOfArrays ([])
+
+		and :
+
+		folderDao.findPairedContentForList([1, 2]) >> layer0
+		folderDao.findPairedContentForList([11, 12, 13, 14]) >> layer1
+		folderDao.findPairedContentForList([21, 22, 23, 24]) >>  layer2
+		folderDao.findPairedContentForList([31, 32]) >> layer3
+
+		and :
+		def expectedList = [ [null, 1], [null, 2], layer0, layer1 , layer2 , layer3].flatten()
+
 		when :
-			def hierarchy = handler.findPairedNodeHierarchy([1l, 2l])
-		
+		def hierarchy = handler.findPairedNodeHierarchy([1l, 2l])
+
 		then :
-			hierarchy.flatten() == expectedList
-		
-		
+		hierarchy.flatten() == expectedList
+
+
 	}
 
 
-	
+
 	//not much to test here since we'll mostly test the test class defined above
 	def "should return a preview of : affected : all nodes, not deletable : several"(){
-		
-		given :
-			def layer0 = [11,12,13,14]
-			def layer1 = [21, 22, 23, 24] 
-			def layer2 = [ 31 , 32]
-			def layer3 = []
-		
-		and : 
-		
-			folderDao.findContentForList([1, 2]) >> layer0
-			folderDao.findContentForList([11, 12, 13, 14]) >> layer1 
-			folderDao.findContentForList([21, 22, 23, 24]) >>  layer2
-			folderDao.findContentForList([31, 32]) >> layer3
-			
-		and :
-		
-			def callers = [31, 32]
-			nodeDao.findTestCasesHavingCaller(_) >> callers
-			
-		and :
-			MessageSource source = Mock()
-			source.getMessage("squashtm.deletion.preview.notdeletable.whichnodes",_,_) >> "cannot be deleted"
-			source.getMessage("squashtm.deletion.preview.notdeletable.why",_,_) >> "reason"
-		
-		when :
-		
-			def preview = handler.simulateDeletion([1l, 2l])
-		
-		then :
-		
-			preview.size == 1
-			String nondeletablemessage = preview[0].toString(source, null) 
-			
-			nondeletablemessage.contains("31");
-			nondeletablemessage.contains("32");
-			nondeletablemessage.contains("<br/>reason : because it's a test<br/>");
-	}
-	
 
-	
-	
-	
+		given :
+		def layer0 = [11,12,13,14]
+		def layer1 = [21, 22, 23, 24]
+		def layer2 = [ 31 , 32]
+		def layer3 = []
+
+		and :
+
+		folderDao.findContentForList([1, 2]) >> layer0
+		folderDao.findContentForList([11, 12, 13, 14]) >> layer1
+		folderDao.findContentForList([21, 22, 23, 24]) >>  layer2
+		folderDao.findContentForList([31, 32]) >> layer3
+
+		and :
+
+		def callers = [31, 32]
+		nodeDao.findTestCasesHavingCaller(_) >> callers
+
+		and :
+		MessageSource source = Mock()
+		source.getMessage("squashtm.deletion.preview.notdeletable.whichnodes",_,_) >> "cannot be deleted"
+		source.getMessage("squashtm.deletion.preview.notdeletable.why",_,_) >> "reason"
+
+		when :
+
+		def preview = handler.simulateDeletion([1l, 2l], null)
+
+		then :
+
+		preview.size == 1
+		String nondeletablemessage = preview[0].toString(source, null)
+
+		nondeletablemessage.contains("31");
+		nondeletablemessage.contains("32");
+		nondeletablemessage.contains("<br/>reason : because it's a test<br/>");
+	}
+
+
+
+
+
 	def "should delete nodes"(){
-		
-		given :
-			def layer0 = toListOfArrays ([ [1, 11], [1, 12],[1, 13],[2, 14]]);
-			def layer1 = toListOfArrays ([ [11, 21], [11, 22], [12, 23], [12, 24]] )
-			def layer2 = toListOfArrays ([ [24, 31], [24, 32]])
-			def layer3 = toListOfArrays ([])
-		
-		and : 
-		
-			folderDao.findPairedContentForList([1, 2]) >> layer0
-			folderDao.findPairedContentForList([11, 12, 13, 14]) >> layer1 
-			folderDao.findPairedContentForList([21, 22, 23, 24]) >>  layer2
-			folderDao.findPairedContentForList([31, 32]) >> layer3
-			
-		and :
-			nodeDao.findAllTestCasesIdsCalledByTestCases([2, 1, 14, 13, 12, 11, 24, 23, 22, 21, 32, 31]) >> [32l, 22l]
-		
-		and :
-			def expected = [2, 14, 13, 23, 21, 31]
-		
-			
-		when :
-			def deleted = handler.deleteNodes([1l, 2l])
-		
-		then :
-			deleted.removed.collect{it.resid} == expected
-			
-		
-		
-	}
-	
 
-	
-	
+		given :
+		def layer0 = toListOfArrays ([ [1, 11], [1, 12],[1, 13],[2, 14]]);
+		def layer1 = toListOfArrays ([ [11, 21], [11, 22], [12, 23], [12, 24]] )
+		def layer2 = toListOfArrays ([ [24, 31], [24, 32]])
+		def layer3 = toListOfArrays ([])
+
+		and :
+
+		folderDao.findPairedContentForList([1, 2]) >> layer0
+		folderDao.findPairedContentForList([11, 12, 13, 14]) >> layer1
+		folderDao.findPairedContentForList([21, 22, 23, 24]) >>  layer2
+		folderDao.findPairedContentForList([31, 32]) >> layer3
+
+		and :
+		nodeDao.findAllTestCasesIdsCalledByTestCases([2, 1, 14, 13, 12, 11, 24, 23, 22, 21, 32, 31]) >> [32l, 22l]
+
+		and :
+		def expected = [2, 14, 13, 23, 21, 31]
+
+
+		when :
+		def deleted = handler.deleteNodes([1l, 2l], null)
+
+		then :
+		deleted.removed.collect{it.resid} == expected
+
+
+
+	}
+
+
+
+
 
 
 }

@@ -97,7 +97,7 @@ implements CampaignNodeDeletionHandler {
 	/* ************************** diagnostic section ******************************* */
 
 	@Override
-	protected List<SuppressionPreviewReport> diagnoseSuppression(List<Long> nodeIds) {
+	protected List<SuppressionPreviewReport> diagnoseSuppression(List<Long> nodeIds, Long MilestoneId) {
 
 		List<SuppressionPreviewReport> reportList = new ArrayList<SuppressionPreviewReport>();
 		NotDeletableCampaignsPreviewReport report;
@@ -223,7 +223,7 @@ implements CampaignNodeDeletionHandler {
 	/*
 	 * by Nodes we mean the CampaignLibraryNodes.
 	 */
-	protected OperationReport batchDeleteNodes(List<Long> ids) {
+	protected OperationReport batchDeleteNodes(List<Long> ids, Long milestoneId) {
 
 		//prepare the operation report:
 		List<Long>[] separatedIds = deletionDao.separateFolderFromCampaignIds(ids);
@@ -266,6 +266,14 @@ implements CampaignNodeDeletionHandler {
 
 		return report;
 	}
+
+
+	@Override
+	protected OperationReport batchUnbindFromMilestone(List<Long> ids, Long milestoneId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 
 	@Override
 	public OperationReport deleteIterations(List<Long> targetIds) {

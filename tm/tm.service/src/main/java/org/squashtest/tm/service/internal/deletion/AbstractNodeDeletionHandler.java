@@ -36,17 +36,17 @@ import org.squashtest.tm.service.internal.repository.FolderDao;
 
 /**
  * 
- * <p> This class is a abstract and generic implementation of NodeDeletionHandler that implements a few basic rules. Regardless of the end domain object (TestCase, Campaign etc) the common 
+ * <p> This class is a abstract and generic implementation of NodeDeletionHandler that implements a few basic rules. Regardless of the end domain object (TestCase, Campaign etc) the common
  * rules are :
  * <ul>
  * 	<li>both methods must cover the children of the selected nodes,</li>
  * 	<li>a folder is not removable if at least itself or one of its children is not removable (now the details of what is a non removable children is still to be implemented by subclasses).</li>
  * </ul>
  * 
- * 	Basically this class covers the tasks related to the directory structure (subtree coverage and detection of locked folders) by implementing those two features. On the other hand subclasses 
- * must determine, by implementing {@link #diagnoseSuppression(List)} and {@link #detectLockedNodes(List)}, which nodes are locked for other reasons. See the documentations of the subclasses 
+ * 	Basically this class covers the tasks related to the directory structure (subtree coverage and detection of locked folders) by implementing those two features. On the other hand subclasses
+ * must determine, by implementing {@link #diagnoseSuppression(List)} and {@link #detectLockedNodes(List)}, which nodes are locked for other reasons. See the documentations of the subclasses
  * for more informations.
- * </p> 
+ * </p>
  * 
  * @author bsiri
  *
@@ -55,7 +55,7 @@ import org.squashtest.tm.service.internal.repository.FolderDao;
  */
 
 public abstract class AbstractNodeDeletionHandler<NODE extends LibraryNode, FOLDER extends Folder<NODE>>
-		implements NodeDeletionHandler<NODE, FOLDER>{
+implements NodeDeletionHandler<NODE, FOLDER>{
 
 	/**
 	 * The implemention should return which FolderDao to use depending on the end domain object.
@@ -69,39 +69,47 @@ public abstract class AbstractNodeDeletionHandler<NODE extends LibraryNode, FOLD
 	 * {@link NodeDeletionHandler#simulateDeletion(List)}
 	 */
 	@Override
-	public List<SuppressionPreviewReport> simulateDeletion(List<Long> targetIds){
+	public List<SuppressionPreviewReport> simulateDeletion(List<Long> targetIds, Long milestoneId){
 		List<Long> nodeIds = findNodeHierarchy(targetIds);
-		return  diagnoseSuppression(nodeIds);
+		return  diagnoseSuppression(nodeIds, milestoneId);
 	}
 
 	/**
 	 * {@link NodeDeletionHandler#deleteNodes(List)}
 	 */
 	@Override
-	public OperationReport deleteNodes(List<Long> targetIds){
-		
+	public OperationReport deleteNodes(List<Long> targetIds, Long milestoneId){
+
 		if (! targetIds.isEmpty()){
 
 			//phase 1 : find all the nodes and build the tree
 			List<Long[]> hierarchy = findPairedNodeHierarchy(targetIds);
-	
+
 			LockedFolderInferenceTree tree = new LockedFolderInferenceTree();
 			tree.build(hierarchy);
-	
+
 			//phase 2 : find the nodes that aren't deletable and mark them as such in the tree
 			List<Long> candidateNodeIds = tree.collectKeys();
 			List<Long> lockedNodeIds = detectLockedNodes(candidateNodeIds);
-	
+
 			//phase 3 : resolve which folders are locked with respect to the locked content.
 			tree.markLockedNodes(lockedNodeIds);
 			tree.resolveLockedFolders();
-	
-	
+
+
 			//phase 4 : now the dependencies between the nodes are resolved we may collect the ids of deletable nodes
 			//and batch - delete them
 			List<Long> deletableNodeIds =  tree.collectDeletableIds();
-			
-			return batchDeleteNodes(deletableNodeIds);
+
+			OperationReport deleteReport =  batchDeleteNodes(deletableNodeIds, milestoneId);
+
+			// phase 5 : if milestone mode, also unbind non deleted test cases
+			if (milestoneId != null){
+				OperationReport unbindReport = batchUnbindFromMilestone(deletableNodeIds, milestoneId);
+				deleteReport.mergeWith(unbindReport);
+			}
+
+			return deleteReport;
 		}
 		else{
 			return new OperationReport();	//empty operations
@@ -112,14 +120,14 @@ public abstract class AbstractNodeDeletionHandler<NODE extends LibraryNode, FOLD
 
 	/**
 	 * <p>Accepts a list of ids and returns themselves and their children as a list of pairs, each pair being an array of long (node ids) such as [ parent.id, child.id ].
-	 * see {@link FolderDao#findPairedContentForList(List)} for details. The nodes input nodes will be paired with null (no parents), and the leaves will be be paired with null (for children). 
-	 *  </p> 
+	 * see {@link FolderDao#findPairedContentForList(List)} for details. The nodes input nodes will be paired with null (no parents), and the leaves will be be paired with null (for children).
+	 *  </p>
 	 *
 	 * @param rootNodesIds the ids defining the upper level of the hierarchy.
 	 * @return the rootNodeIds and the ids of their children, paired together as described above.
 	 */
 	/*
-	 * TODO : refactor and make profit of the tables [TC,R,C]LN_RELATIONSHIP_CLOSURE] 
+	 * TODO : refactor and make profit of the tables [TC,R,C]LN_RELATIONSHIP_CLOSURE]
 	 */
 	@SuppressWarnings("unchecked")
 	protected List<Long[]> findPairedNodeHierarchy(List<Long> rootNodeIds){
@@ -162,7 +170,7 @@ public abstract class AbstractNodeDeletionHandler<NODE extends LibraryNode, FOLD
 	 * @return the rootNodeIds and the ids of their children.
 	 */
 	/*
-	 * TODO : refactor and make profit of the tables [TC,R,C]LN_RELATIONSHIP_CLOSURE] 
+	 * TODO : refactor and make profit of the tables [TC,R,C]LN_RELATIONSHIP_CLOSURE]
 	 */
 	protected List<Long> findNodeHierarchy(List<Long> rootNodeIds){
 		if (rootNodeIds.isEmpty()) {
@@ -189,9 +197,9 @@ public abstract class AbstractNodeDeletionHandler<NODE extends LibraryNode, FOLD
 	}
 
 
-	
+
 	/**
-	 * <p> Given a list of node ids, returns a sublist corresponding to the ids of the nodes which cannot be deleted according to the specs. The input list includes all the nodes 
+	 * <p> Given a list of node ids, returns a sublist corresponding to the ids of the nodes which cannot be deleted according to the specs. The input list includes all the nodes
 	 * and their children in the directory structure. The implementation is responsible to fetch any other dependencies needed for the completion of its task. The implementation is not required
 	 * to resolve which folders are locked : this abstract class will handle that on the basis of the returned value. </p>
 	 *
@@ -199,26 +207,39 @@ public abstract class AbstractNodeDeletionHandler<NODE extends LibraryNode, FOLD
 	 * @return the sublist of node ids that should NOT be deleted.
 	 */
 	protected abstract List<Long> detectLockedNodes(List<Long> nodeIds);
-	
+
 
 	/**
-	 * <p>Given their ids, that method should check the nodes and actually report the informations as specified in {@link NodeDeletionHandler#simulateDeletion(List)}. 
+	 * <p>Given their ids, that method should check the nodes and actually report the informations as specified in {@link NodeDeletionHandler#simulateDeletion(List)}.
 	 * See {@link #detectLockedNodes(List)} for details regarding the input list.</p>
 	 *
 	 * @param nodeIds the complete list of the nodes involved in that report.
+	 * @Param milestoneId if a milestone id is supplied, the diagnostic will use the milestone mode. If left null, the normal mode applies.
 	 * @return a list of reports summarizing in human readable format what will happen.
 	 */
-	protected abstract List<SuppressionPreviewReport> diagnoseSuppression(List<Long> nodeIds);
+	protected abstract List<SuppressionPreviewReport> diagnoseSuppression(List<Long> nodeIds, Long milestoneId);
 
 
 	/**
-	 * Will delete the nodes identified by the ids parameter. Those nodes have been identified as legal for deletion and the implementation should only care of deleting them and 
+	 * Will delete the nodes identified by the ids parameter. Those nodes have been identified as legal for deletion and the implementation should only care of deleting them and
 	 * unbinding them from the rest of the domain.
+	 * If performed in milestone mode, the implementor must spare the elements that should not be removed according to those rules.
 	 *
 	 * @param ids the doomed node ids.
-	 * @return 
+	 * @param milestoneId if non null, the deletion will be peformed in milestone mode.
+	 * @return
 	 */
-	protected abstract OperationReport batchDeleteNodes(List<Long> ids);
+	protected abstract OperationReport batchDeleteNodes(List<Long> ids, Long milestoneId);
+
+	/**
+	 * Will unbind the given nodes from the given milestone. The operation report must report such nodes as 'deleted', in order
+	 * to notify the tree not to display them anymore.
+	 * 
+	 * @param ids
+	 * @param milestoneId
+	 * @return
+	 */
+	protected abstract OperationReport batchUnbindFromMilestone(List<Long> ids, Long milestoneId);
 
 
 }

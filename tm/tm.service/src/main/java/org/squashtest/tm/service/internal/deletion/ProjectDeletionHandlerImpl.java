@@ -71,7 +71,7 @@ public class ProjectDeletionHandlerImpl implements ProjectDeletionHandler {
 	private ProjectsPermissionManagementService projectPermissionManagementService;
 	@Inject
 	private SessionFactory sessionFactory;
-	
+
 
 	@Inject
 	private CustomFieldBindingModificationService bindingService;
@@ -79,13 +79,13 @@ public class ProjectDeletionHandlerImpl implements ProjectDeletionHandler {
 	@Override
 	public void deleteProject(long projectId) {
 		GenericProject project = genericProjectDao.findById(projectId);
-		
-		project.accept(new ProjectVisitor() {			
+
+		project.accept(new ProjectVisitor() {
 			@Override
 			public void visit(ProjectTemplate projectTemplate) {
 				// NOOP
 			}
-			
+
 			@Override
 			public void visit(Project project) {
 				checkProjectContainsOnlyFolders(project);
@@ -122,12 +122,12 @@ public class ProjectDeletionHandlerImpl implements ProjectDeletionHandler {
 		deleteLibraryContent(requirementLibrary, requirementDeletionHandler);
 		sessionFactory.getCurrentSession().evict(project);
 		project = genericProjectDao.findById(projectId);
-		project.accept(new ProjectVisitor() {			
+		project.accept(new ProjectVisitor() {
 			@Override
 			public void visit(ProjectTemplate projectTemplate) {
 				// NOOP
 			}
-			
+
 			@Override
 			public void visit(Project project) {
 				removeProjectFromFilters(project);
@@ -152,13 +152,13 @@ public class ProjectDeletionHandlerImpl implements ProjectDeletionHandler {
 		objectIdentityService.removeObjectIdentity(clId, CampaignLibrary.class);
 		//remove arse for project
 		//and remove aoi for project
-		project.accept(new ProjectVisitor() {			
+		project.accept(new ProjectVisitor() {
 			@Override
 			public void visit(ProjectTemplate projectTemplate) {
 				projectPermissionManagementService.removeAllPermissionsFromObject(ProjectTemplate.class, projectTemplate.getId());
 				objectIdentityService.removeObjectIdentity(projectTemplate.getId(), ProjectTemplate.class);
 			}
-			
+
 			@Override
 			public void visit(Project project) {
 				projectPermissionManagementService.removeAllPermissionsFromObject(Project.class, project.getId());
@@ -178,7 +178,7 @@ public class ProjectDeletionHandlerImpl implements ProjectDeletionHandler {
 		List<? extends LibraryNode> folders = library.getContent();
 		if (!folders.isEmpty()) {
 			List<Long> nodesIds = retrieveNodesids(folders);
-			deletionHandler.deleteNodes(nodesIds);
+			deletionHandler.deleteNodes(nodesIds, null);
 		}
 
 	}

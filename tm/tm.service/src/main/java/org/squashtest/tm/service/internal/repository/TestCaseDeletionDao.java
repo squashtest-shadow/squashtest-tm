@@ -23,13 +23,13 @@ package org.squashtest.tm.service.internal.repository;
 import java.util.List;
 
 public interface TestCaseDeletionDao extends DeletionDao {
-		
+
 	//data getters
 	List<Long> findTestSteps(List<Long> testCaseIds);
 	List<Long> findTestCaseAttachmentListIds(List<Long> testCaseIds);
 	List<Long> findTestStepAttachmentListIds(List<Long> testStepIds);
 	List<Long> findTestCaseFolderAttachmentListIds(List<Long> folderIds);
-	
+
 	//data removers
 	void removeAllSteps(List<Long> testStepIds);
 	void removeCampaignTestPlanInboundReferences(List<Long> testCaseIds);
@@ -37,12 +37,14 @@ public interface TestCaseDeletionDao extends DeletionDao {
 	void setExecStepInboundReferencesToNull(List<Long> testStepIds);
 	void setExecutionInboundReferencesToNull(List<Long> testCaseIds);
 	void removeFromVerifyingTestCaseLists(List<Long> testCaseIds);
+	void unbindFromMilestone(List<Long> testCaseIds, Long milestoneId);
+
 	/**
 	 * @param testStepIds
 	 */
 	void removeFromVerifyingTestStepsList(List<Long> testStepIds);
-	
-	
+
+
 	/**
 	 * Given a list of TestCaseLibraryNode ids, will tell which ones are folder ids and which ones are campaigns.
 	 * 
@@ -50,4 +52,12 @@ public interface TestCaseDeletionDao extends DeletionDao {
 	 * @return an array of list of ids : result[0] are the folder ids and result[1] are the test case ids.
 	 */
 	List<Long>[] separateFolderFromTestCaseIds(List<Long> originalIds);
+
+	/**
+	 * Given a list of ids, retain only the ids of test cases that were not deleted
+	 * 
+	 * @param originalIds
+	 * @return
+	 */
+	List<Long> findRemainingTestCaseIds(List<Long> originalIds);
 }

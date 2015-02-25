@@ -194,6 +194,8 @@
 	@NamedQuery(name = "testCase.countSiblingsInFolder", query = "select maxindex(node) from TestCaseFolder f join f.content node where :nodeId in (select n.id from TestCaseFolder f2 join f2.content n where f2=f)"),
 	@NamedQuery(name = "testCase.countSiblingsInLibrary", query = "select maxindex(node) from TestCaseLibrary tcl join tcl.rootContent node where :nodeId in (select n.id from TestCaseLibrary tcl2 join tcl2.rootContent n where tcl2=tcl)"),
 	@NamedQuery(name = "testCase.remove", query = "delete TestCase tc where tc.id in (:nodeIds)"),
+	@NamedQuery(name = "TestCase.findNodeIdsHavingMultipleMilestones", query = "select tc.id from TestCase tc join tc.milestones stones where tc.id in (:nodeIds) group by tc.id having count(stones) > 1 "),
+	@NamedQuery(name = "TestCase.findNonBoundTestCases", query = "select tc.id from TestCase tc where tc.id in (:nodeIds) and tc.id not in (select tcs.id from Milestone m join m.testCases tcs where m.id = :milestoneId)"),
 	
 	@NamedQuery(name = "testCase.findTestCaseDetails", query = "select new org.squashtest.tm.domain.NamedReference(tc.id, tc.name) from TestCase tc where tc.id in (:testCaseIds)"),
 	

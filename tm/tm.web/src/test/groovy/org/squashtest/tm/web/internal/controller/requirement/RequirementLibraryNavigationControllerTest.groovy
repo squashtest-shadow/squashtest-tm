@@ -112,7 +112,7 @@ class RequirementLibraryNavigationControllerTest  extends Specification {
 		JsTreeNode res = controller.addNewRequirementToLibraryRootContent(100, firstVersion, [])
 
 		then:
-		1 * requirementLibraryNavigationService.addRequirementToRequirementLibrary(100, _) >> req
+		1 * requirementLibraryNavigationService.addRequirementToRequirementLibrary(100, _, []) >> req
 		res.title == "new req"
 		res.attr['resId'] == "100"
 		res.attr['rel'] == "requirement"

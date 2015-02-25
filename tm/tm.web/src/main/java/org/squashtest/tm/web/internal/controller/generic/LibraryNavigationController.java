@@ -163,9 +163,16 @@ public abstract class LibraryNavigationController<LIBRARY extends Library<? exte
 	}
 
 	@RequestMapping(value = "/content/{nodeIds}/deletion-simulation", method = RequestMethod.GET)
-	public @ResponseBody Messages simulateNodeDeletion(@PathVariable(RequestParams.NODE_IDS) List<Long> nodeIds, Locale locale) {
+	public @ResponseBody Messages simulateNodeDeletion(@PathVariable(RequestParams.NODE_IDS) List<Long> nodeIds,
+			@CookieValue(value="milestones", required=false, defaultValue="") List<Long> milestoneIds,
+			Locale locale) {
 
-		List<SuppressionPreviewReport> reportList = getLibraryNavigationService().simulateDeletion(nodeIds);
+		Long milestoneId = null;
+		if ( ! milestoneIds.isEmpty()){
+			milestoneId = milestoneIds.get(0);
+		}
+
+		List<SuppressionPreviewReport> reportList = getLibraryNavigationService().simulateDeletion(nodeIds, milestoneId);
 
 		Messages messages = new Messages();
 		for (SuppressionPreviewReport report : reportList) {
@@ -177,10 +184,19 @@ public abstract class LibraryNavigationController<LIBRARY extends Library<? exte
 	}
 
 	@RequestMapping(value = "/content/{nodeIds}", method = RequestMethod.DELETE)
-	public @ResponseBody OperationReport confirmNodeDeletion(@PathVariable(RequestParams.NODE_IDS) List<Long> nodeIds) {
+	public @ResponseBody OperationReport confirmNodeDeletion(
+			@PathVariable(RequestParams.NODE_IDS) List<Long> nodeIds,
+			@CookieValue(value="milestones", required=false, defaultValue="") List<Long> milestoneIds) {
 
-		return getLibraryNavigationService().deleteNodes(nodeIds);
+		Long milestoneId = null;
+		if ( ! milestoneIds.isEmpty()){
+			milestoneId = milestoneIds.get(0);
+		}
+
+
+		return getLibraryNavigationService().deleteNodes(nodeIds, milestoneId);
 	}
+
 
 	@RequestMapping(value = "/{destinationType}/{destinationId}/content/new", method = RequestMethod.POST, params = { "nodeIds[]" })
 	public @ResponseBody List<JsTreeNode> copyNodes(@RequestParam("nodeIds[]") Long[] nodeIds,
@@ -203,6 +219,7 @@ public abstract class LibraryNavigationController<LIBRARY extends Library<? exte
 
 		return createJsTreeModel(nodeList, milestoneIds);
 	}
+
 
 	@RequestMapping(value = "/{destinationType}/{destinationId}/content/{nodeIds}", method = RequestMethod.PUT)
 	public @ResponseBody void moveNodes(@PathVariable(RequestParams.NODE_IDS) Long[] nodeIds,
