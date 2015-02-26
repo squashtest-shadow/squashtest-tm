@@ -1,22 +1,18 @@
 /**
- *     This file is part of the Squashtest platform.
- *     Copyright (C) 2010 - 2015 Henix, henix.fr
+ * This file is part of the Squashtest platform. Copyright (C) 2010 - 2015 Henix, henix.fr
  *
- *     See the NOTICE file distributed with this work for additional
- *     information regarding copyright ownership.
+ * See the NOTICE file distributed with this work for additional information regarding copyright ownership.
  *
- *     This is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU Lesser General Public License as published by
- *     the Free Software Foundation, either version 3 of the License, or
- *     (at your option) any later version.
+ * This is free software: you can redistribute it and/or modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later
+ * version.
  *
- *     this software is distributed in the hope that it will be useful,
- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU Lesser General Public License for more details.
+ * this software is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied
+ * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
  *
- *     You should have received a copy of the GNU Lesser General Public License
- *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU Lesser General Public License along with this software. If not, see
+ * <http://www.gnu.org/licenses/>.
  */
 package org.squashtest.tm.service.internal.milestone;
 
@@ -50,7 +46,7 @@ public class CustomMilestoneManagerServiceImpl implements CustomMilestoneManager
 
 	@Inject
 	private UserAccountService userService;
-	
+
 	@Inject
 	private PermissionEvaluationService permissionEvaluationService;
 
@@ -65,7 +61,6 @@ public class CustomMilestoneManagerServiceImpl implements CustomMilestoneManager
 	public List<Milestone> findAll() {
 		return milestoneDao.findAll();
 	}
-
 
 	@Override
 	public void removeMilestones(Collection<Long> ids) {
@@ -161,7 +156,7 @@ public class CustomMilestoneManagerServiceImpl implements CustomMilestoneManager
 			milestones.addAll(allMilestones);
 		} else {
 			for (Milestone milestone : allMilestones) {
-				if (isGlobal(milestone) || isCreatedBySelf(milestone)|| isInAProjetICanManage(milestone)){
+				if (isGlobal(milestone) || isCreatedBySelf(milestone) || isInAProjetICanManage(milestone)) {
 					milestones.add(milestone);
 				}
 			}
@@ -172,18 +167,38 @@ public class CustomMilestoneManagerServiceImpl implements CustomMilestoneManager
 	private boolean isInAProjetICanManage(Milestone milestone) {
 		boolean isInAProjetICanManage = false;
 		List<GenericProject> perimeter = milestone.getPerimeter();
-		
-		for (GenericProject project : perimeter){
-			if (permissionEvaluationService.hasRoleOrPermissionOnObject("ADMIN", "MANAGEMENT", project)){
+
+		for (GenericProject project : perimeter) {
+			if (canIManageThisProject(project)) {
 				isInAProjetICanManage = true;
+				break;
 			}
-		}	
+		}
 		return isInAProjetICanManage;
+	}
+
+	private boolean canIManageThisProject(GenericProject project) {
+		if (permissionEvaluationService.hasRoleOrPermissionOnObject("ADMIN", "MANAGEMENT", project)) {
+			return true;
+		}
+		return false;
+	}
+
+	private List<GenericProject> getProjectICanManage(List<GenericProject> projects) {
+
+		List<GenericProject> manageableProjects = new ArrayList<GenericProject>();
+
+		for (GenericProject project : projects) {
+			if (canIManageThisProject(project)) {
+				manageableProjects.add(project);
+			}
+		}
+		return manageableProjects;
 	}
 
 	@Override
 	public boolean isBoundToATemplate(Long milestoneId) {
-		Milestone milestone = findById(milestoneId);	
+		Milestone milestone = findById(milestoneId);
 		return milestone.isBoundToATemplate();
 	}
 
@@ -191,40 +206,55 @@ public class CustomMilestoneManagerServiceImpl implements CustomMilestoneManager
 	public void cloneMilestone(long motherId, Milestone milestone, boolean bindToRequirements, boolean bindToTestCases,
 			boolean bindToCampaigns) {
 		Milestone mother = findById(motherId);
-		bindProjectsAndPerimeter(mother, milestone);
-		bindRequirements(mother, milestone, bindToRequirements);
-		bindTestCases(mother, milestone, bindToTestCases);
-		bindCampaigns(mother, milestone, bindToCampaigns);
-		addMilestone(milestone);		
+		boolean copyAllPerimeter = permissionEvaluationService.hasRole("ROLE_ADMIN") || !isGlobal(milestone)
+				&& isCreatedBySelf(milestone);
+
+		bindProjectsAndPerimeter(mother, milestone, copyAllPerimeter);
+		bindRequirements(mother, milestone, bindToRequirements, copyAllPerimeter);
+		bindTestCases(mother, milestone, bindToTestCases, copyAllPerimeter);
+		bindCampaigns(mother, milestone, bindToCampaigns, copyAllPerimeter);
+		addMilestone(milestone);
 	}
 
-	private void bindProjectsAndPerimeter(Milestone mother, Milestone milestone) {
-	milestone.bindProjects(mother.getProjects());
-	milestone.addProjectsToPerimeter(mother.getPerimeter());	
+	private void bindProjectsAndPerimeter(Milestone mother, Milestone milestone, boolean copyAllPerimeter) {
+
+		if (copyAllPerimeter) {
+			milestone.bindProjects(mother.getProjects());
+			milestone.addProjectsToPerimeter(mother.getPerimeter());
+		} else {
+			milestone.bindProjects(getProjectICanManage(mother.getProjects()));
+			milestone.addProjectsToPerimeter(getProjectICanManage(mother.getPerimeter()));
+		}
+
 	}
 
-	
-	
-	private void bindCampaigns(Milestone mother, Milestone milestone, boolean bindToCampaigns) {
-		if(bindToCampaigns){
-			for (Campaign camp : mother.getCampaigns()){
+	private void bindCampaigns(Milestone mother, Milestone milestone, boolean bindToCampaigns, boolean copyAllPerimeter) {
+		if (bindToCampaigns) {
+			for (Campaign camp : mother.getCampaigns()) {
+				if (copyAllPerimeter || canIManageThisProject(camp.getProject())){
 				milestone.bindCampaign(camp);
-			}
-		}		
-	}
-
-	private void bindTestCases(Milestone mother, Milestone milestone, boolean bindToTestCases) {
-		if(bindToTestCases){
-			for (TestCase tc : mother.getTestCases()){
-				milestone.bindTestCase(tc);
+				}
 			}
 		}
 	}
 
-	private void bindRequirements(Milestone mother, Milestone milestone, boolean bindToRequirements) {
-		if(bindToRequirements){
-			for (RequirementVersion req : mother.getRequirementVersions()){
+	private void bindTestCases(Milestone mother, Milestone milestone, boolean bindToTestCases, boolean copyAllPerimeter) {
+		if (bindToTestCases) {
+			for (TestCase tc : mother.getTestCases()) {
+				if (copyAllPerimeter || canIManageThisProject(tc.getProject())){
+				milestone.bindTestCase(tc);
+				}
+			}
+		}
+	}
+
+	private void bindRequirements(Milestone mother, Milestone milestone, boolean bindToRequirements,
+			boolean copyAllPerimeter) {
+		if (bindToRequirements) {
+			for (RequirementVersion req : mother.getRequirementVersions()) {
+				if (copyAllPerimeter || canIManageThisProject(req.getProject())){
 				milestone.bindRequirementVersion(req);
+				}
 			}
 		}
 	}

@@ -53,6 +53,8 @@ public class MilestoneBindingController {
 
 
 	private static final String IDS = "Ids[]";
+	private static final String BINDED = "binded";
+	private static final String BINDABLE = "bindable";
 
 	@Inject
 	private InternationalizationHelper messageSource;
@@ -110,7 +112,7 @@ public class MilestoneBindingController {
 	}
 	
 
-	@RequestMapping(value="/milestone/{milestoneId}/project", method = RequestMethod.GET, params = {"bindable"})
+	@RequestMapping(value="/milestone/{milestoneId}/project", method = RequestMethod.GET, params = {BINDABLE})
 	@ResponseBody
 	public DataTableModel getBindableProjectForMilestoneTableModel(@PathVariable Long milestoneId, final Locale locale){
 		Milestone milestone = milestoneService.findById(milestoneId);
@@ -135,7 +137,7 @@ public class MilestoneBindingController {
 	}
 	
 
-	@RequestMapping(value="/project/{projectId}/milestone", method = RequestMethod.GET, params = { "bindable", "type"})
+	@RequestMapping(value="/project/{projectId}/milestone", method = RequestMethod.GET, params = { BINDABLE, "type"})
 	@ResponseBody
 	public DataTableModel getBindableMilestoneForProjectTableModel(@PathVariable Long projectId, final Locale locale, @RequestParam("type") String type){
 
@@ -146,7 +148,7 @@ public class MilestoneBindingController {
 	
 	
 	
-	@RequestMapping(value = "/project/{projectId}/milestone", method = RequestMethod.GET, params = {"binded" })
+	@RequestMapping(value = "/project/{projectId}/milestone", method = RequestMethod.GET, params = {BINDED })
 	@ResponseBody
 	public 	DataTableModel getBindedMilestoneForProjectTableModel(@PathVariable Long projectId, final Locale locale){
 		
@@ -157,7 +159,7 @@ public class MilestoneBindingController {
 	
 
 
-	@RequestMapping(value = "/milestone/{milestoneId}/project", method = RequestMethod.GET, params = {"binded" })
+	@RequestMapping(value = "/milestone/{milestoneId}/project", method = RequestMethod.GET, params = {BINDED })
 	@ResponseBody
 	public 	DataTableModel getBindedOrPerimeterProjectForMilestoneTableModel(@PathVariable Long milestoneId, final Locale locale){
 		Milestone milestone = milestoneService.findById(milestoneId);

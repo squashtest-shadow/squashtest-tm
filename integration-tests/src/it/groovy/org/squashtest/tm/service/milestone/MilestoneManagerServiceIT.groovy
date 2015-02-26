@@ -50,7 +50,7 @@ class MilestoneManagerServiceIT extends DbunitServiceSpecification {
 		result.size == 4
 		result.collect{it.id} as Set == [1, 2, 3, 4] as Set
 		result.collect{it.label} as Set == ["My milestone", "My milestone 2", "My milestone 3", "My milestone 4"] as Set
-		result.collect{it.status} as Set == [MilestoneStatus.STATUS_1,MilestoneStatus.STATUS_1,MilestoneStatus.STATUS_2,MilestoneStatus.STATUS_3] as Set
+		result.collect{it.status} as Set == [MilestoneStatus.PLANNED,MilestoneStatus.PLANNED,MilestoneStatus.IN_PROGRESS,MilestoneStatus.LOCKED] as Set
 	}
 
 	@DataSet("/org/squashtest/tm/service/milestone/MilestoneManagerServiceIT.xml")
@@ -58,10 +58,10 @@ class MilestoneManagerServiceIT extends DbunitServiceSpecification {
 
 		given :
 		when :
-		manager.changeStatus(1L, MilestoneStatus.STATUS_2)
+		manager.changeStatus(1L, MilestoneStatus.IN_PROGRESS)
 		def milestone = manager.findById(1L);
 		then :
-		milestone.status == MilestoneStatus.STATUS_2
+		milestone.status == MilestoneStatus.IN_PROGRESS
 
 	}
 
@@ -77,7 +77,7 @@ class MilestoneManagerServiceIT extends DbunitServiceSpecification {
 		result.size == 2
 		result.collect{it.id} as Set == [2, 3] as Set
 		result.collect{it.label} as Set == ["My milestone 2", "My milestone 3"]  as Set
-		result.collect{it.status}  as Set == [MilestoneStatus.STATUS_1,MilestoneStatus.STATUS_2]  as Set
+		result.collect{it.status}  as Set == [MilestoneStatus.PLANNED,MilestoneStatus.IN_PROGRESS]  as Set
 
 	}
 

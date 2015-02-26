@@ -45,7 +45,7 @@ class ProjectManagerServiceIT extends DbunitServiceSpecification {
 		project.setName("name");
 
 		when :
-		service.addProjectAndCopySettingsFromTemplate(project, -1000L, true, true, true, true, true)
+		service.addProjectAndCopySettingsFromTemplate(project, -1000L, true, true, true, true, true, false)
 
 		then:
 		project.isTestAutomationEnabled() == true

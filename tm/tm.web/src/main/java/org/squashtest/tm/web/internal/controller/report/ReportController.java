@@ -25,7 +25,6 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -34,7 +33,6 @@ import java.util.Map;
 import java.util.zip.GZIPInputStream;
 
 import javax.inject.Inject;
-import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -203,7 +201,6 @@ public class ReportController {
 
 
 	    public static byte[] decompress(byte[] str) throws IOException {
-	        System.out.println("Input String length : " + str.length);
 	        byte[] buf = new byte[str.length*10];
 	        GZIPInputStream gis = new GZIPInputStream(new ByteArrayInputStream(str));
 	        int len;
@@ -215,8 +212,7 @@ public class ReportController {
 	     }
 	    
 	    public static byte[] base64Decoding(String str) {
-	        byte[] decoded = Base64.decode(str);
-	        return decoded;
+	        return Base64.decode(str);
 	    }
 	    
 	
@@ -226,10 +222,8 @@ public class ReportController {
 		
 		 final File tempFile = File.createTempFile(fileName, ".tmp");
 		    tempFile.deleteOnExit();
-		    LOGGER.debug(b64);
 		    byte decoded[] = base64Decoding(b64);
 
-	        LOGGER.debug("After Base 64 Decoded  String : " + decoded);
 	      FileOutputStream fos = new FileOutputStream(tempFile);
 	      fos.write(decoded);
 	      fos.close();
