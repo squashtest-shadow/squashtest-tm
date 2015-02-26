@@ -73,7 +73,7 @@ class TestCaseNodeDeletionHandlerTest extends Specification {
 			calltreeFinder.getCallerGraph(_) >> testGraph1()
 		
 		when :
-			def report = handler.previewLockedNodes([21l, 22l, 23l, 24l, 25l]);
+			def report = handler.previewLockedNodes([21l, 22l, 23l, 24l, 25l], null);
 		
 		then :
 			report.nodeNames == ["21", "22", "23", "24"] as Set
@@ -88,7 +88,7 @@ class TestCaseNodeDeletionHandlerTest extends Specification {
 			calltreeFinder.getCallerGraph(_) >> testGraph2()
 		
 		when :
-			def report = handler.previewLockedNodes([11l, 12l]);
+			def report = handler.previewLockedNodes([11l, 12l], null);
 		
 		then :
 			report.nodeNames == ["11", "12"] as Set
@@ -103,7 +103,7 @@ class TestCaseNodeDeletionHandlerTest extends Specification {
 			calltreeFinder.getCallerGraph(_) >> testGraph2()
 		
 		when :
-			def report = handler.previewLockedNodes([11l, 12l, 1l]);
+			def report = handler.previewLockedNodes([11l, 12l, 1l], null);
 		
 		then :
 			report == null
@@ -116,7 +116,7 @@ class TestCaseNodeDeletionHandlerTest extends Specification {
 			
 			
 		when :
-			def reallyNonDeletables = handler.detectLockedNodes([21l, 22l, 23l, 24l, 25l])
+			def reallyNonDeletables = handler.detectLockedNodes([21l, 22l, 23l, 24l, 25l], null)
 			
 		then :
 			reallyNonDeletables as Set == [21l, 22l, 23l, 24l] as Set
@@ -130,7 +130,7 @@ class TestCaseNodeDeletionHandlerTest extends Specification {
 			calltreeFinder.getCallerGraph(_) >> testGraph2()
 		
 		when :
-			def reallyNonDeletables = handler.detectLockedNodes([11l, 12l])
+			def reallyNonDeletables = handler.detectLockedNodes([11l, 12l], null)
 			
 		then :
 			reallyNonDeletables as Set == [11l, 12l] as Set
@@ -143,7 +143,7 @@ class TestCaseNodeDeletionHandlerTest extends Specification {
 			calltreeFinder.getCallerGraph(_) >> testGraph2()
 		
 		when :
-			def reallyNonDeletables = handler.detectLockedNodes([11l, 12l, 1l])
+			def reallyNonDeletables = handler.detectLockedNodes([11l, 12l, 1l], null)
 			
 		then :
 			reallyNonDeletables == []

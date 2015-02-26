@@ -73,7 +73,7 @@ class AbstractNodeDeletionHandlerImplTest extends Specification {
 			return preview;
 		}
 
-		protected  List<Long> detectLockedNodes(List<Long> nodeIds){
+		protected  List<Long> detectLockedNodes(List<Long> nodeIds,  Long milestoneId){
 			return tcDao.findAllTestCasesIdsCalledByTestCases (nodeIds);
 		}
 
@@ -87,13 +87,6 @@ class AbstractNodeDeletionHandlerImplTest extends Specification {
 		protected OperationReport batchUnbindFromMilestone(List<Long> ids, Long milestoneId) {
 			return new OperationReport();
 		}
-		@Override
-		protected List<Long> detectLockedNodes(List<Long> nodeIds, Long milestoneId) {
-			// TODO Auto-generated method stub
-			return null;
-		}
-
-
 
 	}
 
