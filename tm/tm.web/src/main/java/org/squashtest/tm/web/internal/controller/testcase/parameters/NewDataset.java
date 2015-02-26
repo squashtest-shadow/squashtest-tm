@@ -41,7 +41,8 @@ public class NewDataset extends Dataset {
 		Dataset dataset =  new Dataset();
 		dataset.setName(getName());
 		for(Object[] paramValue : paramValues) {
-			Parameter parameter = parameterFinder.findById((Integer) paramValue[0]);
+			Number intParam = (Number) paramValue[0];
+			Parameter parameter = parameterFinder.findById(intParam.longValue());
 			new DatasetParamValue(parameter, dataset, (String) paramValue[1]);
 		}
 		return dataset;
