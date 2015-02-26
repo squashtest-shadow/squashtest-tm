@@ -87,6 +87,11 @@ class AbstractNodeDeletionHandlerImplTest extends Specification {
 		protected OperationReport batchUnbindFromMilestone(List<Long> ids, Long milestoneId) {
 			return new OperationReport();
 		}
+		@Override
+		protected List<Long> detectLockedNodes(List<Long> nodeIds, Long milestoneId) {
+			// TODO Auto-generated method stub
+			return null;
+		}
 
 
 
