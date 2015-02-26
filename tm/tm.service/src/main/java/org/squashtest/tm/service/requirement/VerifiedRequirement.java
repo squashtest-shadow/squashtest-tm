@@ -26,6 +26,7 @@ import java.util.Set;
 import javax.validation.constraints.NotNull;
 
 import org.squashtest.tm.domain.infolist.InfoListItem;
+import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.requirement.RequirementCriticality;
 import org.squashtest.tm.domain.requirement.RequirementStatus;
@@ -99,6 +100,10 @@ public class VerifiedRequirement {
 
 	public boolean isDirectVerification() {
 		return directVerification;
+	}
+
+	public Set<Milestone> getMilestones(){
+		return getVerifiedRequirementVersion().getMilestones();
 	}
 
 	public Long getId() {

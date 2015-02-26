@@ -236,7 +236,7 @@ public class CustomMilestoneManagerServiceImpl implements CustomMilestoneManager
 		if (bindToCampaigns) {
 			for (Campaign camp : mother.getCampaigns()) {
 				if (copyAllPerimeter || canIManageThisProject(camp.getProject())){
-				milestone.bindCampaign(camp);
+					milestone.bindCampaign(camp);
 				}
 			}
 		}
@@ -246,7 +246,7 @@ public class CustomMilestoneManagerServiceImpl implements CustomMilestoneManager
 		if (bindToTestCases) {
 			for (TestCase tc : mother.getTestCases()) {
 				if (copyAllPerimeter || canIManageThisProject(tc.getProject())){
-				milestone.bindTestCase(tc);
+					milestone.bindTestCase(tc);
 				}
 			}
 		}
@@ -257,7 +257,7 @@ public class CustomMilestoneManagerServiceImpl implements CustomMilestoneManager
 		if (bindToRequirements) {
 			for (RequirementVersion req : mother.getRequirementVersions()) {
 				if (copyAllPerimeter || canIManageThisProject(req.getProject())){
-				milestone.bindRequirementVersion(req);
+					milestone.bindRequirementVersion(req);
 				}
 			}
 		}

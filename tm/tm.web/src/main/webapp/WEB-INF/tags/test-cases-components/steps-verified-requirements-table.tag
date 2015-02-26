@@ -28,6 +28,7 @@
 <%@ attribute name="testStep" required="true"  type="java.lang.Object" description="the concerned test step" %>
 <%@ attribute name="containerId" required="true" description="if of dom container that will hold the table events" %>
 
+
 <c:url var="tableLanguageUrl" value="/datatables/messages" />
 <c:url var="requirementVersionsUrl" value="/requirement-versions" />
 <c:url var="verifiedRequirementsUrl" value="/test-cases/${ testStep.testCase.id }/verified-requirement-versions" />
@@ -80,6 +81,9 @@ data-def='datakeys-id=entity-id ,ajaxsource=${ stepVerifiedRequirementsUrl }'>
 			<th data-def="select, map=entity-index">#</th>
 			<th data-def="sClass=link-checkbox, map=empty-link-checkbox, narrow" style="width:32px;">&nbsp;</th>
 			<th data-def="sortable, map=project"><f:message key="label.project" /></th>
+            <c:if test="${not empty cookie['milestones']}">
+            <th data-def="map=milestone-dates"><f:message key="label.Milestone"/></th>
+            </c:if>
 			<th data-def="sortable, map=entity-id"><f:message key="label.versionId"/></th>
 			<th data-def="sortable, map=reference"><f:message key="label.Reference"/></th>
 			<th data-def="sortable, map=name, link=${requirementVersionsUrl}/{entity-id}/info"><f:message key="requirement.name.label" /></th>
@@ -97,11 +101,12 @@ data-def='datakeys-id=entity-id ,ajaxsource=${ stepVerifiedRequirementsUrl }'>
 </table>
 
 <div id="remove-verified-requirement-version-dialog" class="popup-dialog not-displayed" title="<f:message key='label.Confirm'/>">
-<div><f:message key='dialog.remove-requirement-version-association.message' /></div>
-<div class="popup-dialog-buttonpane">
+<div>
+    <f:message key='dialog.remove-requirement-version-association.message' /></div>
+    <div class="popup-dialog-buttonpane">
 			<input class="confirm" type="button" value="<f:message key='label.Confirm'/>" />
 			 <input class="cancel" type="button" value="<f:message key='label.Cancel'/>" />
-		</div>
+	</div>
 </div>
 
 <div id="remove-obsolete-verified-requirement-version-dialog" class="popup-dialog not-displayed" title="<f:message key='dialog.obsolete.requirement.version.removal.confirm.title'/>">

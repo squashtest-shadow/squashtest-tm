@@ -80,11 +80,6 @@ public class HibernateTestCaseDeletionDao extends HibernateDeletionDao implement
 		query.setParameter(ParameterNames.LIBRARY_NODE_ID, entityId);
 		TestCaseLibrary library = (TestCaseLibrary) query.uniqueResult();
 		if (library != null) {
-			/*
-			 * ListIterator<TestCaseLibraryNode> iterator = library.getContent().listIterator(); while
-			 * (iterator.hasNext()) { TestCaseLibraryNode tcln = iterator.next(); if (tcln.getId().equals(node.getId()))
-			 * { library.removeContent(tcln); break; } }
-			 */
 			library.removeContent(node);
 		}
 	}
@@ -94,11 +89,6 @@ public class HibernateTestCaseDeletionDao extends HibernateDeletionDao implement
 		query.setParameter(ParameterNames.LIBRARY_NODE_ID, entityId);
 		TestCaseFolder folder = (TestCaseFolder) query.uniqueResult();
 		if (folder != null) {
-			/*
-			 * ListIterator<TestCaseLibraryNode> iterator = folder.getContent().listIterator(); while
-			 * (iterator.hasNext()) { TestCaseLibraryNode tcln = iterator.next(); if (tcln.getId().equals(node.getId()))
-			 * { folder.removeContent(tcln); break; } }
-			 */
 			folder.removeContent(node);
 		}
 	}
@@ -119,7 +109,7 @@ public class HibernateTestCaseDeletionDao extends HibernateDeletionDao implement
 		if (!testCaseIds.isEmpty()) {
 			return executeSelectNamedQuery("testCase.findAllSteps", TEST_CASES_IDS, testCaseIds);
 		}
-		return Collections.emptyList();
+		return new ArrayList<Long>();
 	}
 
 	@Override
@@ -127,7 +117,7 @@ public class HibernateTestCaseDeletionDao extends HibernateDeletionDao implement
 		if (!testCaseIds.isEmpty()) {
 			return executeSelectNamedQuery("testCase.findAllAttachmentLists", TEST_CASES_IDS, testCaseIds);
 		}
-		return Collections.emptyList();
+		return new ArrayList<Long>();
 	}
 
 	@Override
@@ -135,7 +125,7 @@ public class HibernateTestCaseDeletionDao extends HibernateDeletionDao implement
 		if (!folderIds.isEmpty()) {
 			return executeSelectNamedQuery("testCaseFolder.findAllAttachmentLists", FOLDER_IDS, folderIds);
 		}
-		return Collections.emptyList();
+		return new ArrayList<Long>();
 	}
 
 	@Override
@@ -143,7 +133,7 @@ public class HibernateTestCaseDeletionDao extends HibernateDeletionDao implement
 		if (!testStepIds.isEmpty()) {
 			return executeSelectNamedQuery("testStep.findAllAttachmentLists", TEST_STEP_IDS, testStepIds);
 		}
-		return Collections.emptyList();
+		return new ArrayList<Long>();
 	}
 
 	@Override

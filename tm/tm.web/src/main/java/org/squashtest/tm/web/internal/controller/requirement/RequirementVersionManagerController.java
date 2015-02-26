@@ -56,6 +56,7 @@ import org.squashtest.tm.service.requirement.RequirementVersionManagerService;
 import org.squashtest.tm.service.testcase.VerifyingTestCaseManagerService;
 import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.controller.audittrail.RequirementAuditEventTableModelBuilder;
+import org.squashtest.tm.web.internal.controller.milestone.MilestoneModelUtils;
 import org.squashtest.tm.web.internal.helper.LevelLabelFormatter;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.builder.JsonInfoListBuilder;
@@ -215,40 +216,12 @@ public class RequirementVersionManagerController {
 			row.put("status", internationalize(version.getStatus(), locale, levelFormatterProvider));
 			row.put("criticality", internationalize(version.getCriticality(), locale, levelFormatterProvider));
 			row.put("category", i18nHelper.getMessage(version.getCategory().getLabel(), null, version.getCategory().getLabel(), locale)  );
-			row.put("milestone-dates", computeTimeInterval(version, locale));
+			row.put("milestone-dates", MilestoneModelUtils.timeIntervalToString(version.getMilestones(),i18nHelper, locale));
 
 			return row;
 
 		}
 
-		String computeTimeInterval(RequirementVersion v, Locale locale){
-			Collection<Milestone> milestones = v.getMilestones();
-
-			if (milestones.isEmpty()){
-				return "--";
-			}
-
-			Date minDate = null;
-			Date maxDate = null;
-
-			Iterator<Milestone> iter = milestones.iterator();
-			while(iter.hasNext()){
-				Milestone m  = iter.next();
-				Date date = m.getEndDate();
-				if (minDate == null || date.before(minDate)){
-					minDate = date;
-				}
-				if (maxDate == null || date.after(maxDate)){
-					maxDate = date;
-				}
-			}
-
-			String strMindate = i18nHelper.localizeDate(minDate, locale);
-			String strMaxdate = i18nHelper.localizeDate(maxDate, locale);
-
-			return strMindate + " - " + strMaxdate;
-
-		}
-
 	}
+
 }

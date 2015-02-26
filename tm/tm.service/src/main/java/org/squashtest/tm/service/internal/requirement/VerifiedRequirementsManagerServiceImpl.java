@@ -42,6 +42,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.PagingBackedPagedCollectionHolder;
+import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.requirement.Requirement;
 import org.squashtest.tm.domain.requirement.RequirementLibraryNode;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
@@ -60,6 +61,8 @@ import org.squashtest.tm.service.internal.repository.RequirementVersionDao;
 import org.squashtest.tm.service.internal.repository.TestCaseDao;
 import org.squashtest.tm.service.internal.repository.TestStepDao;
 import org.squashtest.tm.service.internal.testcase.TestCaseCallTreeFinder;
+import org.squashtest.tm.service.milestone.MilestoneFinderService;
+import org.squashtest.tm.service.milestone.MilestoneManagerService;
 import org.squashtest.tm.service.requirement.VerifiedRequirement;
 import org.squashtest.tm.service.requirement.VerifiedRequirementsManagerService;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
@@ -95,6 +98,9 @@ public class VerifiedRequirementsManagerServiceImpl implements VerifiedRequireme
 	@Inject
 	private IndexationService indexationService;
 
+	@Inject
+	private MilestoneManagerService milestoneManager;
+
 
 	@SuppressWarnings("rawtypes")
 	@Inject
@@ -107,8 +113,10 @@ public class VerifiedRequirementsManagerServiceImpl implements VerifiedRequireme
 	@Override
 	@PreAuthorize(LINK_TC_OR_ROLE_ADMIN)
 	public Collection<VerifiedRequirementException> addVerifiedRequirementsToTestCase(List<Long> requirementsIds,
-			long testCaseId) {
-		List<RequirementVersion> requirementVersions = findRequirementVersions(requirementsIds);
+			long testCaseId, Long milestoneId) {
+
+		List<RequirementVersion> requirementVersions = findRequirementVersions(requirementsIds, milestoneId);
+
 		TestCase testCase = testCaseDao.findById(testCaseId);
 		if (!requirementVersions.isEmpty()) {
 			return doAddVerifyingRequirementVersionsToTestCase(requirementVersions, testCase);
@@ -116,10 +124,25 @@ public class VerifiedRequirementsManagerServiceImpl implements VerifiedRequireme
 		return Collections.emptyList();
 	}
 
-	private List<RequirementVersion> extractVersions(List<Requirement> requirements) {
+	private List<RequirementVersion> extractVersions(List<Requirement> requirements, Long milestoneId) {
+
+		Milestone m = null;
+		if (milestoneId != null){
+			m = milestoneManager.findById(milestoneId);
+		}
+
 		List<RequirementVersion> rvs = new ArrayList<RequirementVersion>(requirements.size());
 		for (Requirement requirement : requirements) {
-			rvs.add(requirement.getResource());
+
+			// normal mode
+			if (m == null){
+				rvs.add(requirement.getResource());
+			}
+			// milestone mode
+			else{
+				rvs.add(requirement.findByMilestone(m));
+			}
+
 		}
 		return rvs;
 	}
@@ -258,8 +281,8 @@ public class VerifiedRequirementsManagerServiceImpl implements VerifiedRequireme
 	@Override
 	@PreAuthorize("hasPermission(#testStepId, 'org.squashtest.tm.domain.testcase.TestStep' , 'LINK') or hasRole('ROLE_ADMIN')")
 	public Collection<VerifiedRequirementException> addVerifiedRequirementsToTestStep(List<Long> requirementsIds,
-			long testStepId) {
-		List<RequirementVersion> requirementVersions = findRequirementVersions(requirementsIds);
+			long testStepId, Long milestoneId) {
+		List<RequirementVersion> requirementVersions = findRequirementVersions(requirementsIds, milestoneId);
 		// init rejections
 		Collection<VerifiedRequirementException> rejections = new ArrayList<VerifiedRequirementException>();
 		// check if list not empty
@@ -350,12 +373,14 @@ public class VerifiedRequirementsManagerServiceImpl implements VerifiedRequireme
 		return rejections;
 	}
 
-	private List<RequirementVersion> findRequirementVersions(List<Long> requirementsIds) {
+	private List<RequirementVersion> findRequirementVersions(List<Long> requirementsIds, Long milestoneId) {
+
 		List<RequirementLibraryNode> nodes = requirementLibraryNodeDao.findAllByIds(requirementsIds);
+
 		if (!nodes.isEmpty()) {
 			List<Requirement> requirements = new RequirementNodeWalker().walk(nodes);
 			if (!requirements.isEmpty()) {
-				return extractVersions(requirements);
+				return extractVersions(requirements, milestoneId);
 			}
 		}
 		return Collections.emptyList();
