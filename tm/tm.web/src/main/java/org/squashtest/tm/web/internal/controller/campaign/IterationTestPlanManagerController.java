@@ -51,6 +51,7 @@ import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.service.campaign.IndexedIterationTestPlanItem;
 import org.squashtest.tm.service.campaign.IterationFinder;
 import org.squashtest.tm.service.campaign.IterationTestPlanManagerService;
+import org.squashtest.tm.service.milestone.MilestoneFinderService;
 import org.squashtest.tm.web.internal.controller.AcceptHeaders;
 import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.helper.JsTreeHelper;
@@ -96,6 +97,9 @@ public class IterationTestPlanManagerController {
 	@Inject
 	private Provider<JsonTestCaseBuilder> jsonTestCaseBuilder;
 
+	@Inject
+	private MilestoneFinderService milestoneFinder;
+
 	private final DatatableMapper<String> testPlanMapper = new NameBasedMapper()
 	.map("entity-index", "index(IterationTestPlanItem)")
 	// index is a special case which means : no sorting.
@@ -109,12 +113,17 @@ public class IterationTestPlanManagerController {
 
 	@RequestMapping(value = "/iterations/{iterationId}/test-plan-manager", method = RequestMethod.GET)
 	public ModelAndView showManager(@PathVariable long iterationId,
-			@CookieValue(value = "jstree_open", required = false, defaultValue = "") String[] openedNodes) {
+			@CookieValue(value = "jstree_open", required = false, defaultValue = "") String[] openedNodes,
+			@CookieValue(value = "milestones", required = false, defaultValue = "") List<Long> milestoneIds) {
 
 		Iteration iteration = iterationFinder.findById(iterationId);
 		List<TestCaseLibrary> linkableLibraries = iterationTestPlanManagerService.findLinkableTestCaseLibraries();
 
-		List<JsTreeNode> linkableLibrariesModel = createLinkableLibrariesModel(linkableLibraries, openedNodes);
+		Long milestoneId = null;
+		if (! milestoneIds.isEmpty()){
+			milestoneId = milestoneIds.get(0);
+		}
+		List<JsTreeNode> linkableLibrariesModel = createLinkableLibrariesModel(linkableLibraries, openedNodes, milestoneId);
 
 		ModelAndView mav = new ModelAndView("page/campaign-workspace/show-iteration-test-plan-manager");
 		mav.addObject("iteration", iteration);
@@ -132,8 +141,8 @@ public class IterationTestPlanManagerController {
 
 		ColumnFiltering filter = new DataTableColumnFiltering(params);
 
-		PagedCollectionHolder<List<IndexedIterationTestPlanItem>> holder = iterationTestPlanManagerService
-				.findAssignedTestPlan(iterationId, paging, filter);
+		PagedCollectionHolder<List<IndexedIterationTestPlanItem>> holder =
+				iterationTestPlanManagerService.findAssignedTestPlan(iterationId, paging, filter);
 
 		return new TestPlanTableModelHelper(messageSource, locale).buildDataModel(holder, params.getsEcho());
 
@@ -204,8 +213,15 @@ public class IterationTestPlanManagerController {
 		return response.toString();
 	}
 
-	private List<JsTreeNode> createLinkableLibrariesModel(List<TestCaseLibrary> linkableLibraries, String[] openedNodes) {
+	private List<JsTreeNode> createLinkableLibrariesModel(List<TestCaseLibrary> linkableLibraries, String[] openedNodes, Long milestoneId) {
+
+
 		MultiMap expansionCandidates = JsTreeHelper.mapIdsByType(openedNodes);
+
+		DriveNodeBuilder<TestCaseLibraryNode> dNodeBuilder = driveNodeBuilder.get();
+		if (milestoneId != null){
+			dNodeBuilder.filterByMilestone(milestoneFinder.findById(milestoneId));
+		}
 
 		JsTreeNodeListBuilder<TestCaseLibrary> listBuilder = new JsTreeNodeListBuilder<TestCaseLibrary>(
 				driveNodeBuilder.get());

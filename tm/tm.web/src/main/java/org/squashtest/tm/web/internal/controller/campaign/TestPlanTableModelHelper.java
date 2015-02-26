@@ -35,6 +35,7 @@ import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.testcase.Dataset;
 import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.service.campaign.IndexedIterationTestPlanItem;
+import org.squashtest.tm.web.internal.controller.milestone.MilestoneModelUtils;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.builder.JeditableComboHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelBuilder;
@@ -78,6 +79,7 @@ class TestPlanTableModelHelper extends DataTableModelBuilder<IndexedIterationTes
 		Long tcId;
 		String importance;
 		String reference;
+		String milestoneDates = "--";
 		if (item.isTestCaseDeleted()) {
 			projectName = formatNoData(locale);
 			testCaseName = formatDeleted(locale);
@@ -93,7 +95,8 @@ class TestPlanTableModelHelper extends DataTableModelBuilder<IndexedIterationTes
 			}else{
 				reference = item.getReferencedTestCase().getReference();
 			}
-			importance = messageSource.internationalize(item.getReferencedTestCase().getImportance(), locale);
+			importance 		= messageSource.internationalize(item.getReferencedTestCase().getImportance(), locale);
+			milestoneDates 	= MilestoneModelUtils.timeIntervalToString(item.getReferencedTestCase().getMilestones(), messageSource, locale);
 		}
 
 
@@ -118,6 +121,7 @@ class TestPlanTableModelHelper extends DataTableModelBuilder<IndexedIterationTes
 
 
 
+
 		res.put(DataTableModelConstants.DEFAULT_ENTITY_ID_KEY, item.getId());
 		res.put(DataTableModelConstants.DEFAULT_ENTITY_INDEX_KEY, index);
 		res.put(DataTableModelConstants.PROJECT_NAME_KEY, projectName);
@@ -136,6 +140,7 @@ class TestPlanTableModelHelper extends DataTableModelBuilder<IndexedIterationTes
 		res.put(DataTableModelConstants.DEFAULT_EMPTY_EXECUTE_HOLDER_KEY, " ");
 		res.put(DataTableModelConstants.DEFAULT_EMPTY_DELETE_HOLDER_KEY, " ");
 		res.put("exec-mode", automationMode);
+		res.put("milestone-dates", milestoneDates);
 		res.put("dataset", dsIndos);
 
 		return res;

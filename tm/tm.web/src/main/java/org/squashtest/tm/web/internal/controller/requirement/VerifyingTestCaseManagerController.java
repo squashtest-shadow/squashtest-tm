@@ -39,12 +39,14 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.squashtest.tm.core.foundation.collection.DefaultPagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
+import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseLibrary;
 import org.squashtest.tm.domain.testcase.TestCaseLibraryNode;
 import org.squashtest.tm.exception.requirement.VerifiedRequirementException;
+import org.squashtest.tm.service.milestone.MilestoneFinderService;
 import org.squashtest.tm.service.requirement.RequirementVersionManagerService;
 import org.squashtest.tm.service.testcase.VerifyingTestCaseManagerService;
 import org.squashtest.tm.web.internal.controller.RequestParams;
@@ -83,6 +85,9 @@ public class VerifyingTestCaseManagerController {
 	@Inject
 	private RequirementVersionManagerService requirementVersionFinder;
 
+	@Inject
+	private MilestoneFinderService milestoneFinder;
+
 	/*
 	 * Kind of a hack : we rely on mDataProp sent by squash table. IndexBasedMapper looks up into mataProps unmarchalled
 	 * as a Map<String, String>. The found value is used as a key in a Map<Long, Object>, so it breaks.
@@ -97,11 +102,19 @@ public class VerifyingTestCaseManagerController {
 
 
 	@RequestMapping(value = "/requirement-versions/{requirementVersionId}/verifying-test-cases/manager", method = RequestMethod.GET)
-	public String showManager(@PathVariable long requirementVersionId, Model model, @CookieValue(value = "jstree_open", required = false, defaultValue = "") String[] openedNodes) {
+	public String showManager(@PathVariable long requirementVersionId, Model model,
+			@CookieValue(value = "jstree_open", required = false, defaultValue = "") String[] openedNodes,
+			@CookieValue(value = "milestones", required = false, defaultValue = "") List<Long> milestoneIds) {
 
 		RequirementVersion requirementVersion = requirementVersionFinder.findById(requirementVersionId);
 		List<TestCaseLibrary> linkableLibraries = verifyingTestCaseManager.findLinkableTestCaseLibraries();
-		List<JsTreeNode> linkableLibrariesModel = createLinkableLibrariesModel(linkableLibraries, openedNodes);
+
+		Long milestoneId = null;
+		if (! milestoneIds.isEmpty()){
+			milestoneId = milestoneIds.get(0);
+		}
+
+		List<JsTreeNode> linkableLibrariesModel = createLinkableLibrariesModel(linkableLibraries, openedNodes, milestoneId);
 		DefaultPagingAndSorting pas = new DefaultPagingAndSorting("Project.name");
 		DataTableModel verifyingTCModel = buildVerifyingTestCaseModel(requirementVersionId, pas, "");
 
@@ -114,10 +127,14 @@ public class VerifyingTestCaseManagerController {
 		return "page/requirement-workspace/show-verifying-testcase-manager";
 	}
 
-	private List<JsTreeNode> createLinkableLibrariesModel(List<TestCaseLibrary> linkableLibraries, String[] openedNodes) {
+	private List<JsTreeNode> createLinkableLibrariesModel(List<TestCaseLibrary> linkableLibraries, String[] openedNodes, Long milestoneId) {
 		MultiMap expansionCandidates = JsTreeHelper.mapIdsByType(openedNodes);
 
 		DriveNodeBuilder<TestCaseLibraryNode> nodeBuilder = driveNodeBuilder.get();
+
+		if (milestoneId != null){
+			nodeBuilder.filterByMilestone(milestoneFinder.findById(milestoneId));
+		}
 
 		return new JsTreeNodeListBuilder<TestCaseLibrary>(nodeBuilder)
 				.expand(expansionCandidates)

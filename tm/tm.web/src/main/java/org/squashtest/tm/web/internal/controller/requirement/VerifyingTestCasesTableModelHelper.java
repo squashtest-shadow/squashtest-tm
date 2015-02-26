@@ -27,6 +27,7 @@ import java.util.Map;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseExecutionMode;
+import org.squashtest.tm.web.internal.controller.milestone.MilestoneModelUtils;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelBuilder;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelConstants;
@@ -53,6 +54,7 @@ class VerifyingTestCasesTableModelHelper extends DataTableModelBuilder<TestCase>
 		row.put("tc-reference", tc.getReference());
 		row.put("tc-name", tc.getName());
 		row.put("tc-type", type);
+		row.put("milestone-dates", MilestoneModelUtils.timeIntervalToString(tc.getMilestones(), helper, locale));
 		row.put("empty-delete-holder", null);
 
 		return row;

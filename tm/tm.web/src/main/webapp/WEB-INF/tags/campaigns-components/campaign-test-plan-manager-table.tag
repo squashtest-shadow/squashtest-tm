@@ -30,6 +30,9 @@
 <%@ tag body-content="empty" description="the test plan panel of a campaign when displayed in the test plan manager" %>
 
 <%@ attribute name="campaign" type="java.lang.Object" description="the instance of campaign"%>
+<%@ attribute name="managerMode" type="java.lang.Boolean" required="false" 
+description="if displayed in the test plan manager page and milestone mode is on, an additional column may appear"  %>
+
 
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="s" uri="http://www.springframework.org/tags"%>
@@ -43,8 +46,6 @@
   <s:param name="campId" value="${campaign.id}" />
 </s:url>
 <s:url var="testcaseUrl"  value="/test-cases/{tc-id}/info" />
-
-
 
 
 
@@ -99,6 +100,9 @@
 
   <%-- ===================== THE TABLE ===================== --%>
 
+
+  <c:set var="milestoneVisibility" value="${((not empty managerMode and managerMode) and (not empty cookie['milestones']) ) ? '' : ', invisible'}"/>
+
   <div class="std-margin-top">
 
     <table id="campaign-test-plans-table" class="test-plan-table unstyled-table"
@@ -109,6 +113,9 @@
             data-def="map=entity-index, select, sortable, center, sClass=drag-handle, sWidth=2.5em">#</th>
           <th class="no-user-select tp-th-filter tp-th-project-name" data-def="map=project-name, sortable">
             <f:message key="label.project" />
+          </th>
+          <th class="no-user-select" data-def="map=milestone-dates ${milestoneVisibility}">
+            <f:message key="label.Milestone"/>
           </th>
           <th class="no-user-select tp-th-filter tp-th-reference" data-def="map=reference, sortable">
             <f:message key="label.Reference" />

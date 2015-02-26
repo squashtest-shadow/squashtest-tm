@@ -33,6 +33,7 @@ import org.squashtest.tm.domain.testcase.TestCaseImportance;
 import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.service.campaign.IndexedCampaignTestPlanItem;
 import org.squashtest.tm.web.internal.controller.campaign.TestPlanTableModelHelper.DatasetInfos;
+import org.squashtest.tm.web.internal.controller.milestone.MilestoneModelUtils;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.builder.JeditableComboHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelBuilder;
@@ -78,6 +79,7 @@ final class CampaignTestPlanTableModelHelper extends DataTableModelBuilder<Index
 		result.put("exec-mode", testCase.isAutomated() ? "A" : "M");
 		result.put("dataset", dsInfos);
 		result.put(DataTableModelConstants.DEFAULT_EMPTY_DELETE_HOLDER_KEY, " ");
+		result.put("milestone-dates", MilestoneModelUtils.timeIntervalToString(testCase.getMilestones(), messageSource, locale));
 		result.put("tc-id", testCase.getId());
 
 		return result;

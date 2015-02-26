@@ -59,6 +59,7 @@ import org.squashtest.tm.service.campaign.IterationFinder;
 import org.squashtest.tm.service.campaign.IterationTestPlanManagerService;
 import org.squashtest.tm.service.campaign.TestSuiteModificationService;
 import org.squashtest.tm.service.campaign.TestSuiteTestPlanManagerService;
+import org.squashtest.tm.service.milestone.MilestoneFinderService;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.helper.JsTreeHelper;
@@ -117,6 +118,9 @@ public class TestSuiteTestPlanManagerController {
 	@Inject
 	private PermissionEvaluationService permissionService;
 
+	@Inject
+	private MilestoneFinderService milestoneFinder;
+
 	private static final Logger LOGGER = LoggerFactory.getLogger(TestSuiteModificationController.class);
 
 	private final DatatableMapper<String> testPlanMapper = new NameBasedMapper()
@@ -139,14 +143,19 @@ public class TestSuiteTestPlanManagerController {
 
 	@RequestMapping(value = "/test-suites/{suiteId}/test-plan-manager", method = RequestMethod.GET)
 	public ModelAndView showManager(@PathVariable(TEST_SUITE_ID) long suiteId,
-			@CookieValue(value = "jstree_open", required = false, defaultValue = "") String[] openedNodes) {
+			@CookieValue(value = "jstree_open", required = false, defaultValue = "") String[] openedNodes,
+			@CookieValue(value = "milestones", required = false, defaultValue = "") List<Long> milestoneIds) {
 
 		LOGGER.debug("show test suite test plan manager for test suite #{}", suiteId);
 		TestSuite testSuite = testSuiteTestPlanManagerService.findTestSuite(suiteId);
 
 		List<TestCaseLibrary> linkableLibraries = iterationTestPlanManagerService.findLinkableTestCaseLibraries();
 
-		List<JsTreeNode> linkableLibrariesModel = createLinkableLibrariesModel(linkableLibraries, openedNodes);
+		Long milestoneId = null;
+		if (! milestoneIds.isEmpty()){
+			milestoneId=milestoneIds.get(0);
+		}
+		List<JsTreeNode> linkableLibrariesModel = createLinkableLibrariesModel(linkableLibraries, openedNodes, milestoneId);
 
 		ModelAndView mav = new ModelAndView("page/campaign-workspace/show-test-suite-test-plan-manager");
 		mav.addObject("testSuite", testSuite);
@@ -155,8 +164,14 @@ public class TestSuiteTestPlanManagerController {
 		return mav;
 	}
 
-	private List<JsTreeNode> createLinkableLibrariesModel(List<TestCaseLibrary> linkableLibraries, String[] openedNodes) {
+	private List<JsTreeNode> createLinkableLibrariesModel(List<TestCaseLibrary> linkableLibraries, String[] openedNodes, Long milestoneId) {
+
 		MultiMap expansionCandidates = JsTreeHelper.mapIdsByType(openedNodes);
+
+		DriveNodeBuilder<TestCaseLibraryNode> dNodeBuilder = driveNodeBuilder.get();
+		if (milestoneId != null){
+			dNodeBuilder.filterByMilestone(milestoneFinder.findById(milestoneId));
+		}
 
 		JsTreeNodeListBuilder<TestCaseLibrary> listBuilder = new JsTreeNodeListBuilder<TestCaseLibrary>(
 				driveNodeBuilder.get());
