@@ -20,8 +20,10 @@
  */
 package org.squashtest.tm.service.internal.repository;
 
+import java.util.Collection;
 import java.util.List;
 
+import org.squashtest.tm.core.dynamicmanager.annotation.QueryParam;
 import org.squashtest.tm.core.foundation.collection.ColumnFiltering;
 import org.squashtest.tm.core.foundation.collection.PagingAndMultiSorting;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
@@ -38,11 +40,11 @@ public interface CampaignDao extends EntityDao<Campaign> {
 	Campaign findByIdWithInitializedIterations(long campaignId);
 
 	List<CampaignTestPlanItem> findAllTestPlanByIdFiltered(long campaignId, PagingAndSorting filter);
-	
-	
+
+
 	List<CampaignTestPlanItem> findTestPlan(long campaignId, PagingAndMultiSorting sorting);
-	
-	
+
+
 	/**
 	 * Returns the paged list of [index, CampaignTestPlanItem] wrapped in an {@link IndexedIterationTestPlanItem}
 	 * 
@@ -51,7 +53,7 @@ public interface CampaignDao extends EntityDao<Campaign> {
 	 * @return
 	 */
 	List<IndexedCampaignTestPlanItem> findIndexedTestPlan(long campaignId, PagingAndMultiSorting sorting);
-	
+
 	/**
 	 * Returns the paged list of [index, CampaignTestPlanItem] wrapped in an {@link IndexedIterationTestPlanItem}
 	 * 
@@ -60,8 +62,8 @@ public interface CampaignDao extends EntityDao<Campaign> {
 	 * @return
 	 */
 	List<IndexedCampaignTestPlanItem> findIndexedTestPlan(long campaignId, PagingAndSorting sorting);
-	
-	
+
+
 	long countTestPlanById(long campaignId);
 
 	List<String> findNamesInFolderStartingWith(long folderId, String nameStart);
@@ -69,10 +71,10 @@ public interface CampaignDao extends EntityDao<Campaign> {
 	List<String> findNamesInLibraryStartingWith(long libraryId, String nameStart);
 
 	List<String> findNamesInCampaignStartingWith(long campaignId, String nameStart);
-	
+
 	List<String> findAllNamesInCampaign(long campaignId);
-	
-	
+
+
 	/**
 	 * Finds all {@link CampaignLibraryNode} which name contains the given token.
 	 * 
@@ -81,7 +83,7 @@ public interface CampaignDao extends EntityDao<Campaign> {
 	 * @return
 	 */
 	List<CampaignLibraryNode> findAllByNameContaining(String tokenInName, boolean groupByProject);
-	
+
 	/**
 	 * find all the campaign's iterations, and return all iteration's executions regardless of the campaign test-plan
 	 * 
@@ -96,10 +98,14 @@ public interface CampaignDao extends EntityDao<Campaign> {
 	 */
 	TestPlanStatistics findCampaignStatistics(long campaignId);
 
-	
+
 	long countRunningOrDoneExecutions(long campaignId);
 
 	List<IndexedCampaignTestPlanItem> findFilteredIndexedTestPlan(long campaignId, PagingAndMultiSorting sorting, ColumnFiltering filtering);
 
 	long countFilteredTestPlanById(long campaignId, ColumnFiltering filtering);
+
+	List<Long> findCampaignIdsHavingMultipleMilestones(List<Long> nodeIds);
+
+	List<Long> findNonBoundCampaign(Collection<Long> nodeIds, Long milestoneId);
 }

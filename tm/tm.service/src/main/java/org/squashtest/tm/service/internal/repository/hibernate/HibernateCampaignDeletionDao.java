@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.ListIterator;
 
 import org.hibernate.Query;
+import org.hibernate.type.LongType;
 import org.springframework.stereotype.Repository;
 import org.squashtest.tm.domain.campaign.CampaignFolder;
 import org.squashtest.tm.domain.campaign.CampaignLibrary;
@@ -118,6 +119,28 @@ implements CampaignDeletionDao {
 		result[1] = campaignIds;
 
 		return result;
+	}
+
+	@Override
+	public void unbindFromMilestone(List<Long> campaignIds, Long milestoneId){
+
+		if (! campaignIds.isEmpty()){
+			Query query = getSession().createSQLQuery(NativeQueries.CAMPAIGN_SQL_UNBIND_MILESTONE);
+			query.setParameterList("campaignIds", campaignIds, LongType.INSTANCE);
+			query.setParameter("milestoneId", milestoneId);
+			query.executeUpdate();
+		}
+
+	}
+
+	@Override
+	public List<Long> findRemainingCampaignIds(List<Long> originalIds) {
+		List<BigInteger> rawids = executeSelectSQLQuery(NativeQueries.CAMPAIGN_SQL_FINDNOTDELETED, "allCampaignIds", originalIds);
+		List<Long> tcIds = new ArrayList<>(rawids.size());
+		for (BigInteger rid : rawids){
+			tcIds.add(rid.longValue());
+		}
+		return tcIds;
 	}
 
 }

@@ -24,7 +24,7 @@ import java.util.List;
 
 
 public interface CampaignDeletionDao extends DeletionDao {
-	
+
 	/**
 	 * Given a list of CampaignLibraryNode ids, will tell which ones are folder ids and which ones are campaigns.
 	 * 
@@ -32,4 +32,14 @@ public interface CampaignDeletionDao extends DeletionDao {
 	 * @return an array of list of ids : result[0] are the folder ids and result[1] are the campaign ids.
 	 */
 	List<Long>[] separateFolderFromCampaignIds(List<Long> originalIds);
+
+	/**
+	 * Returns the subset of originalIds that represents the campaigns that were not deleted
+	 * 
+	 * @param originalIds
+	 * @return
+	 */
+	public List<Long> findRemainingCampaignIds(List<Long> originalIds);
+
+	public void unbindFromMilestone(List<Long> campaignIds, Long milestoneId);
 }

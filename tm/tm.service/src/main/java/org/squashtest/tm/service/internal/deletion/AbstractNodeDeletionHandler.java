@@ -105,7 +105,7 @@ implements NodeDeletionHandler<NODE, FOLDER>{
 
 			// phase 5 : if milestone mode, also unbind non deleted test cases
 			if (milestoneId != null){
-				OperationReport unbindReport = batchUnbindFromMilestone(deletableNodeIds, milestoneId);
+				OperationReport unbindReport = batchUnbindFromMilestone(candidateNodeIds, milestoneId);
 				deleteReport.mergeWith(unbindReport);
 			}
 

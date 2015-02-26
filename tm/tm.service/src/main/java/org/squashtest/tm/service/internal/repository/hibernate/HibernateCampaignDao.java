@@ -21,6 +21,7 @@
 package org.squashtest.tm.service.internal.repository.hibernate;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -370,6 +371,22 @@ public class HibernateCampaignDao extends HibernateEntityDao<Campaign> implement
 	@Override
 	public long countRunningOrDoneExecutions(long campaignId) {
 		return (Long) executeEntityNamedQuery("campaign.countRunningOrDoneExecutions", idParameter(campaignId));
+	}
+
+
+	@Override
+	public List<Long> findNonBoundCampaign(Collection<Long> nodeIds, Long milestoneId) {
+		Query q = currentSession().getNamedQuery("campaign.findNonBoundCampaign");
+		q.setParameterList("nodeIds", nodeIds, LongType.INSTANCE);
+		q.setParameter("milestoneId", milestoneId);
+		return q.list();
+	}
+
+	@Override
+	public List<Long> findCampaignIdsHavingMultipleMilestones(List<Long> nodeIds) {
+		Query q = currentSession().getNamedQuery("campaign.findCampaignIdsHavingMultipleMilestones");
+		q.setParameterList("nodeIds", nodeIds, LongType.INSTANCE);
+		return q.list();
 	}
 
 	// ******************** utils ***************************

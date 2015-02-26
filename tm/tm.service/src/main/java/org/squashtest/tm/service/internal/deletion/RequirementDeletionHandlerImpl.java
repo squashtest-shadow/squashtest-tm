@@ -40,6 +40,8 @@ import org.squashtest.tm.domain.requirement.Requirement;
 import org.squashtest.tm.domain.requirement.RequirementFolder;
 import org.squashtest.tm.domain.requirement.RequirementLibraryNode;
 import org.squashtest.tm.exception.requirement.IllegalRequirementModificationException;
+import org.squashtest.tm.service.deletion.BoundToMultipleMilestonesReport;
+import org.squashtest.tm.service.deletion.MilestoneModeNoFolderDeletion;
 import org.squashtest.tm.service.deletion.Node;
 import org.squashtest.tm.service.deletion.NodeMovement;
 import org.squashtest.tm.service.deletion.OperationReport;
@@ -85,15 +87,29 @@ RequirementNodeDeletionHandler {
 
 	@Override
 	protected List<SuppressionPreviewReport> diagnoseSuppression(List<Long> nodeIds, Long milestoneId) {
+
 		List<SuppressionPreviewReport> preview = new LinkedList<SuppressionPreviewReport>();
 
-		// TODO : perform an actual verification
+		// milestone mode verification
+		/*	if (milestoneId != null){
+			// check if there are some folders in the selection
+			List<Long>[] separatedIds = deletionDao.separateFolderFromRequirementIds(nodeIds);
+			if (! separatedIds[0].isEmpty()){
+				preview.add(new MilestoneModeNoFolderDeletion());
+			}
+
+			// check if some elements are bound to multiple milestones
+			if (someNodesHaveMultipleMilestones(nodeIds)){
+				preview.add(new BoundToMultipleMilestonesReport());
+			}
+		}*/
 
 		return preview;
 	}
 
 	@Override
 	protected List<Long> detectLockedNodes(List<Long> nodeIds, Long milestoneId) {
+
 		List<Long> lockedIds = new LinkedList<Long>();
 
 		// TODO : up to now a requirement is never locked for deletion (safe for security check)
@@ -298,7 +314,6 @@ RequirementNodeDeletionHandler {
 		report.addMoved(nodeMovement);
 
 	}
-
 
 	private static final class ImpossibleSuppression extends ActionException{
 

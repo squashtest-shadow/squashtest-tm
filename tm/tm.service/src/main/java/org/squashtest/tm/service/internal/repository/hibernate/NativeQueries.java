@@ -86,7 +86,8 @@ public final class NativeQueries {
 
 	public static final String CAMPAIGN_SQL_REMOVEFROMFOLDER = "delete from CLN_RELATIONSHIP where ancestor_id in (:ancIds) or descendant_id in (:descIds)";
 	public static final String CAMPAIGN_SQL_REMOVEFROMLIBRARY = "delete from CAMPAIGN_LIBRARY_CONTENT where content_id in (:campaignIds)";
-
+	public static final String CAMPAIGN_SQL_UNBIND_MILESTONE = "delete from MILESTONE_CAMPAIGN where MILESTONE_ID = :milestoneId and CAMPAIGN_ID in (:campaignIds)";
+	public static final String CAMPAIGN_SQL_FINDNOTDELETED = "select CLN_ID from CAMPAIGN where CLN_ID in (:allCampaignIds)";
 
 	/*
 	 * ********************************************** consequences of test case deletion on campaign item test plans
