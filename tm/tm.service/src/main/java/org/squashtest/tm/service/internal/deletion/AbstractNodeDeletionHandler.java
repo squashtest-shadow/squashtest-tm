@@ -90,7 +90,7 @@ implements NodeDeletionHandler<NODE, FOLDER>{
 
 			//phase 2 : find the nodes that aren't deletable and mark them as such in the tree
 			List<Long> candidateNodeIds = tree.collectKeys();
-			List<Long> lockedNodeIds = detectLockedNodes(candidateNodeIds);
+			List<Long> lockedNodeIds = detectLockedNodes(candidateNodeIds, milestoneId);
 
 			//phase 3 : resolve which folders are locked with respect to the locked content.
 			tree.markLockedNodes(lockedNodeIds);
@@ -204,9 +204,10 @@ implements NodeDeletionHandler<NODE, FOLDER>{
 	 * to resolve which folders are locked : this abstract class will handle that on the basis of the returned value. </p>
 	 *
 	 * @param nodeIds all the node ids.
+	 * @param milestoneId if not null, the milestone mode will apply to the locked node detection.
 	 * @return the sublist of node ids that should NOT be deleted.
 	 */
-	protected abstract List<Long> detectLockedNodes(List<Long> nodeIds);
+	protected abstract List<Long> detectLockedNodes(List<Long> nodeIds, Long milestoneId);
 
 
 	/**

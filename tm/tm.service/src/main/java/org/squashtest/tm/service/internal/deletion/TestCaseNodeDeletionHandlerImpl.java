@@ -21,6 +21,7 @@
 package org.squashtest.tm.service.internal.deletion;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -103,20 +104,10 @@ AbstractNodeDeletionHandler<TestCaseLibraryNode, TestCaseFolder> implements Test
 	@Override
 	protected List<SuppressionPreviewReport> diagnoseSuppression(List<Long> nodeIds, Long milestoneId) {
 
-		if (milestoneId == null){
-			return diagnoseSuppressionNormalMode(nodeIds);
-		}
-		else{
-			return diagnoseSuppressionMilestoneMode(nodeIds, milestoneId);
-		}
-
-	}
-
-	private List<SuppressionPreviewReport> diagnoseSuppressionNormalMode(List<Long> nodeIds){
 		List<SuppressionPreviewReport> preview = new LinkedList<SuppressionPreviewReport>();
 
 		// check test cases that are called by other test cases
-		NotDeletablePreviewReport report = previewLockedNodes(nodeIds);
+		NotDeletablePreviewReport report = previewLockedNodes(nodeIds, milestoneId);
 		if (report != null){
 			preview.add(report);
 		}
@@ -127,28 +118,25 @@ AbstractNodeDeletionHandler<TestCaseLibraryNode, TestCaseFolder> implements Test
 			preview.add(previewAffectedNodes);
 		}
 
+		// milestone mode only :
+		if (milestoneId != null){
+			// check if there are some folders in the selection
+			List<Long>[] separatedIds = deletionDao.separateFolderFromTestCaseIds(nodeIds);
+			if (! separatedIds[0].isEmpty()){
+				preview.add(new MilestoneModeNoFolderDeletion());
+			}
+
+			// check if some elements are bound to multiple milestones
+			if (someNodesHaveMultipleMilestones(nodeIds)){
+				preview.add(new BoundToMultipleMilestonesReport());
+			}
+		}
+
 		return preview;
-	}
-
-	private List<SuppressionPreviewReport> diagnoseSuppressionMilestoneMode(List<Long> nodeIds, Long milestoneId){
-
-		// first get the preview for the normal mode
-		List<SuppressionPreviewReport> previews = diagnoseSuppressionNormalMode(nodeIds);
-
-		// check if there are some folders in the selection
-		List<Long>[] separatedIds = deletionDao.separateFolderFromTestCaseIds(nodeIds);
-		if (! separatedIds[0].isEmpty()){
-			previews.add(new MilestoneModeNoFolderDeletion());
-		}
-
-		// check if some elements are bound to multiple milestones
-		if (someNodesHaveMultipleMilestones(nodeIds)){
-			previews.add(new BoundToMultipleMilestonesReport());
-		}
-
-		return previews;
 
 	}
+
+
 
 	/* *******************************************************************************
 	 * 
@@ -158,17 +146,42 @@ AbstractNodeDeletionHandler<TestCaseLibraryNode, TestCaseFolder> implements Test
 
 
 	@Override
-	protected List<Long> detectLockedNodes(final List<Long> nodeIds) {
+	protected List<Long> detectLockedNodes(final List<Long> nodeIds, Long milestoneId) {
 
-		LockedFileInferenceGraph graph = initLockGraph(nodeIds);
+		List<Long> lockedCandidateIds = new ArrayList<Long>();
+
+		List<Long> lockedByMilestoneRule = new ArrayList<>();
+
+		// Init the graph with test case calls
+		LockedFileInferenceGraph graph = createCallTestCaseGraph(nodeIds);
+
+		List<Long> candidateIds = new ArrayList<>(nodeIds);
+
+		/*
+		 * If needed, apply the milestone mode. We need add to the locked candidates
+		 * all nodes falling under it. Also, we need them for the graph resolution.
+		 */
+		if (milestoneId != null){
+			// we must apply the rule on all nodes in the graph
+			List<Long> graphNodeIds = collectAllNodeIds(graph);
+
+			lockedByMilestoneRule = lockedByMilestoneMode(graphNodeIds, milestoneId);
+
+			candidateIds.removeAll(lockedByMilestoneRule);
+
+		}
+
+		graph.setCandidatesToDeletion(candidateIds);
+		graph.resolveLockedFiles();
 
 		List<Node> lockedCandidates = graph.collectLockedCandidates();
 
-		List<Long> lockedCandidateIds = new ArrayList<Long>();
 
 		for (Node node : lockedCandidates) {
 			lockedCandidateIds.add(node.getKey().getId());
 		}
+
+		lockedCandidateIds.addAll(lockedByMilestoneRule);
 
 		return lockedCandidateIds;
 
@@ -191,9 +204,9 @@ AbstractNodeDeletionHandler<TestCaseLibraryNode, TestCaseFolder> implements Test
 
 			DeletableIds deletableIds = findSeparateIds(ids);
 
-			if (milestoneId != null){
+			/*if (milestoneId != null){
 				deletableIds = applyMilestoneMode(deletableIds, milestoneId);
-			}
+			}*/
 
 			List<Long> folderIds = deletableIds.getFolderIds();
 			List<Long> tcIds = deletableIds.getTestCaseIds();
@@ -301,11 +314,30 @@ AbstractNodeDeletionHandler<TestCaseLibraryNode, TestCaseFolder> implements Test
 	 * a node will be deletable if : - it has no deletion-related constraints, - the node has constraints but they are
 	 * being deleted too.
 	 */
-	protected NotDeletablePreviewReport previewLockedNodes(List<Long> nodeIds) {
+	protected NotDeletablePreviewReport previewLockedNodes(List<Long> nodeIds, Long milestoneId) {
 
 		NotDeletablePreviewReport report = null;
 
-		LockedFileInferenceGraph graph = initLockGraph(nodeIds);
+		LockedFileInferenceGraph graph = createCallTestCaseGraph(nodeIds);
+
+		List<Long> candidateIds = new ArrayList<>(nodeIds);
+
+		/*
+		 * If needed, apply the milestone mode. We need add to the locked candidates
+		 * all nodes falling under it. Also, we need them for the graph resolution.
+		 */
+		if (milestoneId != null){
+			// we must apply the rule on all nodes in the graph
+			List<Long> graphNodeIds = collectAllNodeIds(graph);
+
+			List<Long> lockedByMilestoneRule = lockedByMilestoneMode(graphNodeIds, milestoneId);
+
+			candidateIds.removeAll(lockedByMilestoneRule);
+
+		}
+
+		graph.setCandidatesToDeletion(candidateIds);
+		graph.resolveLockedFiles();
 
 		// when nonDeletableData is not empty, some of those nodes belongs to
 		// the deletion request itself
@@ -329,15 +361,12 @@ AbstractNodeDeletionHandler<TestCaseLibraryNode, TestCaseFolder> implements Test
 	}
 
 
-	protected LockedFileInferenceGraph initLockGraph(List<Long> candidatesId) {
+	protected LockedFileInferenceGraph createCallTestCaseGraph(List<Long> candidatesId) {
 
 		LibraryGraph<NamedReference, SimpleNode<NamedReference>> calltree = calltreeFinder.getCallerGraph(candidatesId);
 
 		LockedFileInferenceGraph graph = new LockedFileInferenceGraph();
 		graph.init(calltree);
-
-		graph.setCandidatesToDeletion(candidatesId);
-		graph.resolveLockedFiles();
 
 		return graph;
 	}
@@ -381,32 +410,40 @@ AbstractNodeDeletionHandler<TestCaseLibraryNode, TestCaseFolder> implements Test
 		return new DeletableIds(separatedIds[0], separatedIds[1]);
 	}
 
-	/*
-	 * Rules of milestone mode :
-	 * - 1) no folder shall be deleted,
-	 * - 2) no test case that doesn't belong to the milestone shall be deleted,
-	 * - 3) no test case bound to more than one milestone shall be deleted (it will be unbound though, but later).
-	 */
-	private DeletableIds applyMilestoneMode(DeletableIds deletableIds, Long milestoneId){
-		List<Long> folderIds;
-		List<Long> testCaseIds;
 
-		// rule 1
-		folderIds = Collections.emptyList();
+	private List<Long> collectAllNodeIds(LockedFileInferenceGraph graph){
+		Collection<Node> graphNodes = graph.getNodes();
+		List<Long> graphNodeIds = new ArrayList<>(graphNodes.size());
 
-		// rule 2
-		testCaseIds = deletableIds.getTestCaseIds();
-		List<Long> outOfScopeIds = leafDao.findNonBoundTestCases(testCaseIds, milestoneId);
+		for (Node n : graphNodes){
+			graphNodeIds.add(n.getKey().getId());
+		}
 
-		testCaseIds.removeAll(outOfScopeIds);
-
-		// rule 3
-		List<Long> belongsToMoreMilestones = leafDao.findNodeIdsHavingMultipleMilestones(testCaseIds);
-		testCaseIds.removeAll(belongsToMoreMilestones);
-
-		return new DeletableIds(folderIds, testCaseIds);
-
+		return graphNodeIds;
 	}
+
+
+	/*
+	 * milestone mode :
+	 * - 1) no folder shall be deleted (enqueued outright)
+	 * - 2) no test case that doesn't belong to the milestone shall be deleted (needed for graph resolution)
+	 * - 3) no test case bound to more than one milestone shall be deleted (need for graph resolution) (they will be unbound though, but later).
+	 */
+	private List<Long> lockedByMilestoneMode(List<Long> nodeIds, Long milestoneId){
+
+		List<Long> folderIds = deletionDao.separateFolderFromTestCaseIds(nodeIds)[0];
+		List<Long> outOfMilestone = leafDao.findNonBoundTestCases(nodeIds, milestoneId);
+		List<Long> belongsToMoreMilestones = leafDao.findNodeIdsHavingMultipleMilestones(nodeIds);
+
+		List<Long> milestoneLocked = new ArrayList<>(folderIds.size()+outOfMilestone.size()+belongsToMoreMilestones.size());
+
+		milestoneLocked.addAll(folderIds);
+		milestoneLocked.addAll(outOfMilestone);
+		milestoneLocked.addAll(belongsToMoreMilestones);
+
+		return milestoneLocked;
+	}
+
 
 	private static final class DeletableIds {
 		private final List<Long> folderIds;

@@ -186,7 +186,7 @@ implements CampaignNodeDeletionHandler {
 	/* *************************locked entities detection section ******************* */
 
 	@Override
-	protected List<Long> detectLockedNodes(List<Long> nodeIds) {
+	protected List<Long> detectLockedNodes(List<Long> nodeIds, Long milestoneId) {
 
 		List<Campaign> campaigns = campaignDao.findAllByIds(nodeIds);
 		List<Long> lockedNodes = new ArrayList<Long>(nodeIds.size());

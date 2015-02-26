@@ -79,7 +79,7 @@ public class RequirementNodeDeletionHandlerIT extends DbunitServiceSpecification
 		setCurrentVersions()
 
 		when :
-		def result = deletionHandler.deleteNodes([-11L])
+		def result = deletionHandler.deleteNodes([-11L], null)
 
 		then :
 		result.removed*.resid.containsAll([-11L])
@@ -99,7 +99,7 @@ public class RequirementNodeDeletionHandlerIT extends DbunitServiceSpecification
 		setCurrentVersions()
 
 		when :
-		def result = deletionHandler.deleteNodes([-1L])
+		def result = deletionHandler.deleteNodes([-1L], null)
 
 		then :
 		result.removed.collect{it.resid}.containsAll([-1L])
@@ -119,7 +119,7 @@ public class RequirementNodeDeletionHandlerIT extends DbunitServiceSpecification
 		setCurrentVersions()
 
 		when :
-		def result = deletionHandler.deleteNodes([-1L])
+		def result = deletionHandler.deleteNodes([-1L], null)
 
 		then :
 		result.removed.collect{it.resid}.containsAll([-1L])
@@ -136,7 +136,7 @@ public class RequirementNodeDeletionHandlerIT extends DbunitServiceSpecification
 		setCurrentVersions()
 
 		when :
-		def result = deletionHandler.deleteNodes([-1L])
+		def result = deletionHandler.deleteNodes([-1L], null)
 
 		then :
 		result.removed.collect{it.resid}.containsAll([-1L])
@@ -152,7 +152,7 @@ public class RequirementNodeDeletionHandlerIT extends DbunitServiceSpecification
 	def "should update test case importance when requirement is deleted"(){
 
 		when :
-		def result = deletionHandler.deleteNodes([-11L])
+		def result = deletionHandler.deleteNodes([-11L], null)
 
 		then :
 		result.removed*.resid.containsAll([-11L])
@@ -173,7 +173,7 @@ public class RequirementNodeDeletionHandlerIT extends DbunitServiceSpecification
 
 		when :
 		def lib = findEntity(RequirementLibrary.class, -1L)
-		def result = deletionHandler.deleteNodes([-3L])
+		def result = deletionHandler.deleteNodes([-3L], null)
 
 		then :
 		result.removed.collect{it.resid}.containsAll([-3L])
@@ -199,7 +199,7 @@ public class RequirementNodeDeletionHandlerIT extends DbunitServiceSpecification
 		setCurrentVersions()
 
 		when :
-		deletionHandler.deleteNodes([-1L])
+		deletionHandler.deleteNodes([-1L], null)
 
 		then :
 		! found(RequirementFolder.class, -1L)
@@ -238,7 +238,7 @@ public class RequirementNodeDeletionHandlerIT extends DbunitServiceSpecification
 	@DataSet("RequirementNodeDeletionHandlerIT.should cascade delete.xml")
 	def "should delete a requirement in a hierarchy"(){
 		when :
-		deletionHandler.deleteNodes([-15L])
+		deletionHandler.deleteNodes([-15L], null)
 		then :
 		! found(Requirement.class, -15L)
 	}

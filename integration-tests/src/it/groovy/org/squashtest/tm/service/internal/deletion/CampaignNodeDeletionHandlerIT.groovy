@@ -41,12 +41,12 @@ import spock.unitils.UnitilsSupport
 
 
 /*
- * 
- * Note : that class wont test yet whether an entity is actually removable or not, since the implementation of the 
+ *
+ * Note : that class wont test yet whether an entity is actually removable or not, since the implementation of the
  * class doesn't care of it yet.
- * 
- * 2012-11-09 Note : the comment above still holds true today. 
- * 
+ *
+ * 2012-11-09 Note : the comment above still holds true today.
+ *
  */
 
 @NotThreadSafe
@@ -121,7 +121,7 @@ class CampaignNodeDeletionHandlerIT  extends DbunitServiceSpecification{
 		then :
 		allDeleted("DenormalizedFieldValue", [-1L,-2L,-3L,-4L]);
 	}
-	
+
 	@DataSet("NodeDeletionHandlerTest.executionPlusCustomFields.xml")
 	def "should delete an execution with all custom field values"(){
 		given :
@@ -133,8 +133,8 @@ class CampaignNodeDeletionHandlerIT  extends DbunitServiceSpecification{
 		then :
 		allDeleted("CustomFieldValue", [-1L,-3L,-4L]);
 	}
-	
-	
+
+
 
 	@DataSet("NodeDeletionHandlerTest.iterationPlusExecutions.xml")
 	def "should delete an execution but not the other"(){
@@ -166,7 +166,7 @@ class CampaignNodeDeletionHandlerIT  extends DbunitServiceSpecification{
 		deletionHandler.deleteExecution(exec)
 
 		then :
-		
+
 		IterationTestPlanItem tp = findEntity(IterationTestPlanItem.class, -111L )
 		tp.executionStatus == ExecutionStatus.READY
 		tp.lastExecutedBy == null
@@ -178,7 +178,7 @@ class CampaignNodeDeletionHandlerIT  extends DbunitServiceSpecification{
 		campaign.actualEndDate.month +1  == 8
 		campaign.actualEndDate.year +1900  == 2011
 	}
-	
+
 	@DataSet("NodeDeletionHandlerTest.iterationPlusExecutionsStatus2.xml")
 	def "should delete an execution and update status and auto dates 2"(){
 		given :
@@ -188,7 +188,7 @@ class CampaignNodeDeletionHandlerIT  extends DbunitServiceSpecification{
 		deletionHandler.deleteExecution(exec)
 
 		then :
-		
+
 		IterationTestPlanItem tp = findEntity(IterationTestPlanItem.class, -111L )
 		tp.executionStatus == ExecutionStatus.FAILURE
 		tp.lastExecutedBy == "machin"
@@ -215,7 +215,7 @@ class CampaignNodeDeletionHandlerIT  extends DbunitServiceSpecification{
 		campaign.actualStartDate.month +1  == 8
 		campaign.actualStartDate.year +1900  == 2011
 	}
-	
+
 	@DataSet("NodeDeletionHandlerTest.iterationPlusExecutions.xml")
 	def "should remove a pair of iterations and the executions"(){
 
@@ -307,7 +307,7 @@ class CampaignNodeDeletionHandlerIT  extends DbunitServiceSpecification{
 		cpg.iterations.size()==1
 		cpg.iterations[0].id==-12L
 	}
-	
+
 	@DataSet("NodeDeletionHandlerTest.iterationPlusExecutions.xml")
 	def "should remove iteration test plan item and its executions"(){
 		given :
@@ -339,7 +339,7 @@ class CampaignNodeDeletionHandlerIT  extends DbunitServiceSpecification{
 		!allDeleted("IterationTestPlanItem", [-121L, -122L, -112L])
 		!allDeleted("Iteration", [-12L, -11L])
 
-		
+
 	}
 
 
@@ -350,7 +350,7 @@ class CampaignNodeDeletionHandlerIT  extends DbunitServiceSpecification{
 		def cpg = findEntity(Campaign.class, 1);
 
 		when:
-		deletionHandler.deleteNodes([-1L])
+		deletionHandler.deleteNodes([-1L], null)
 
 		then :
 
@@ -358,7 +358,7 @@ class CampaignNodeDeletionHandlerIT  extends DbunitServiceSpecification{
 		allDeleted("AttachmentList", [-1L, -11L, -12L])
 		allDeleted("CampaignTestPlanItem", [-50L, -51L])
 		allDeleted("Iteration", [-11L, -12L])
-		
+
 		allDeleted("CustomFieldValue", [-101L, -102L, -113L, -123L])
 	}
 
@@ -367,7 +367,7 @@ class CampaignNodeDeletionHandlerIT  extends DbunitServiceSpecification{
 	@DataSet("NodeDeletionHandlerTest.cpgFolderHierarchy.xml")
 	def "should remove a hierarchy of campaign folders and campaigns (1)"(){
 		when :
-		deletionHandler.deleteNodes([-11L])
+		deletionHandler.deleteNodes([-11L], null)
 		then :
 		allDeleted("CampaignFolder", [-11L, -21L])
 		allDeleted("Campaign", [-22L, -31L, -32L])
@@ -375,7 +375,7 @@ class CampaignNodeDeletionHandlerIT  extends DbunitServiceSpecification{
 
 		allNotDeleted("Campaign", [-12L])
 		allNotDeleted("AttachmentList", [-12L])
-		
+
 		allDeleted("CustomFieldValue", [-221L, -222L, -311L, -312L, -321L, -322L])
 		allNotDeleted("CustomFieldValue", [-121L, -122L])
 
@@ -390,7 +390,7 @@ class CampaignNodeDeletionHandlerIT  extends DbunitServiceSpecification{
 	@DataSet("NodeDeletionHandlerTest.cpgFolderHierarchy.xml")
 	def "should remove a hierarchy of campaign folders and campaigns (2)"(){
 		when :
-		deletionHandler.deleteNodes([-21L])
+		deletionHandler.deleteNodes([-21L], null)
 		then :
 		allDeleted("CampaignFolder", 	[-21L])
 		allDeleted("Campaign", 			[-31L, -32L])
@@ -402,7 +402,7 @@ class CampaignNodeDeletionHandlerIT  extends DbunitServiceSpecification{
 
 		allDeleted("CustomFieldValue", 	[-3131L, -312L, -321L, -322L])
 		allNotDeleted("CustomFieldValue",[-121L, -122L, -221L, -222L])
-		
+
 		def lib = findEntity(CampaignLibrary.class, -1L)
 		def cpg1 = findEntity(Campaign.class, -12L)
 		def fold1 = findEntity(CampaignFolder.class, -11L)
@@ -415,7 +415,7 @@ class CampaignNodeDeletionHandlerIT  extends DbunitServiceSpecification{
 	@DataSet("NodeDeletionHandlerTest.cpgFolderHierarchy.xml")
 	def "should remove a hierarchy of campaign folders and campaigns (3)"(){
 		when :
-		deletionHandler.deleteNodes([-11L, -12L])
+		deletionHandler.deleteNodes([-11L, -12L], null)
 		then :
 		allDeleted("CampaignFolder", [-11L, -21L])
 		allDeleted("Campaign", [-12L, -22L, -31L, -32L])
@@ -423,11 +423,11 @@ class CampaignNodeDeletionHandlerIT  extends DbunitServiceSpecification{
 
 		def lib=findEntity(CampaignLibrary.class, -1L)
 		lib.rootContent.size()==0
-		
+
 		allDeleted("CustomFieldValue", [-121L, -122L, -221L, -222L, -3131L, -312L, -321L, -322L])
-		
+
 	}
-	
+
 
 	@DataSet("NodeDeletionHandlerTest.should delete testSuites.xml")
 	def"should remove test suites"(){
@@ -436,18 +436,18 @@ class CampaignNodeDeletionHandlerIT  extends DbunitServiceSpecification{
 		then :
 		allDeleted("TestSuite", [-1L, -2L])
 		allDeleted("AttachmentList", [-12L, -13L])
-		
+
 		IterationTestPlanItem iterationTestPlanItem=findEntity(IterationTestPlanItem.class, -121L)
 		iterationTestPlanItem.getTestSuites().size() == 0
 		IterationTestPlanItem iterationTestPlanItem2=findEntity(IterationTestPlanItem.class, -122L)
 		iterationTestPlanItem2.getTestSuites().size() == 0
-		
+
 		Iteration iteration = findEntity(Iteration.class, -11L)
 		iteration.getTestSuites().size() == 0
 		Iteration iteration2 = findEntity(Iteration.class, -12L)
 		iteration2.getTestSuites().size() == 0
-		
+
 
 	}
-	
+
 }

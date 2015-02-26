@@ -93,7 +93,7 @@ RequirementNodeDeletionHandler {
 	}
 
 	@Override
-	protected List<Long> detectLockedNodes(List<Long> nodeIds) {
+	protected List<Long> detectLockedNodes(List<Long> nodeIds, Long milestoneId) {
 		List<Long> lockedIds = new LinkedList<Long>();
 
 		// TODO : up to now a requirement is never locked for deletion (safe for security check)
