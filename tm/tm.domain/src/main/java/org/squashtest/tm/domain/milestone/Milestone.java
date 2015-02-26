@@ -346,7 +346,7 @@ public class Milestone implements Comparable {
 	@Override
 	public int compareTo(Object o) {
 		// TODO Auto-generated method stub
-		return 0;
+		return 0;}
 	public boolean isBoundToATemplate() {
 
 		for (GenericProject project : projects) {
