@@ -65,7 +65,7 @@ public class RestExecution {
 		this.restCampaignStub = new RestCampaignStub(execution.getCampaign());
 		this.restIterationStub = new RestIterationStub(execution.getIteration());
 		this.restTestCaseStub = new RestTestCaseStub(execution.getReferencedTestCase());
-		this.status = execution.getStatus().name();
+		this.status = execution.getExecutionStatus().name();
 		this.lastExecutedOn = DateUtils.formatIso8601DateTime(execution.getLastExecutedOn());
 		this.lastExecutedBy = execution.getLastExecutedBy();
 	}

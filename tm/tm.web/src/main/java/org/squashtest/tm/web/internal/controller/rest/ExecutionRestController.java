@@ -67,7 +67,7 @@ public class ExecutionRestController {
 
 		Execution execution = null;
 
-		if(executionFinder.equals(id)){
+		if(executionFinder.exists(id)){
 			execution = executionFinder.findById(id);
 		}
 

@@ -20,18 +20,28 @@
  */
 package org.squashtest.tm.service.internal.security;
 
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 import javax.inject.Inject;
 
 import org.springframework.stereotype.Service;
 import org.squashtest.tm.service.security.OAuth2ClientService;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.provider.BaseClientDetails;
 import org.springframework.security.oauth2.provider.ClientDetails;
 import org.springframework.security.oauth2.provider.JdbcClientDetailsService;
 
 @Service("squashtest.tm.service.OAuth2ClientService")
 public class OAuth2ClientServiceImpl implements OAuth2ClientService{
+
+	private static Collection<String> DEFAULT_GRANT_TYPES = Arrays.asList("password","authorization_code","refresh_token","implicit");
+	private static Collection<SimpleGrantedAuthority> DEFAULT_AUTHORITIES = Arrays.asList(new SimpleGrantedAuthority("ROLE_CLIENT"), new SimpleGrantedAuthority("ROLE_TRUSTED_CLIENT"));
+	private static Collection<String> DEFAULT_SCOPE = Arrays.asList("location", "locationhistory");
+
+
+
 
 	@Inject
 	JdbcClientDetailsService jdbcClientDetailsService;
@@ -46,6 +56,9 @@ public class OAuth2ClientServiceImpl implements OAuth2ClientService{
 		BaseClientDetails clientDetails = new BaseClientDetails();
 		clientDetails.setClientId(name);
 		clientDetails.setClientSecret(secret);
+		clientDetails.setAuthorizedGrantTypes(DEFAULT_GRANT_TYPES);
+		clientDetails.setAuthorities(DEFAULT_AUTHORITIES);
+		clientDetails.setScope(DEFAULT_SCOPE);
 		jdbcClientDetailsService.addClientDetails(clientDetails);
 	}
 
@@ -71,6 +84,12 @@ public class OAuth2ClientServiceImpl implements OAuth2ClientService{
 
 	@Override
 	public void addClientDetails(ClientDetails clientDetails) {
-		jdbcClientDetailsService.addClientDetails(clientDetails);
+		BaseClientDetails baseClientDetails = new BaseClientDetails();
+		baseClientDetails.setClientId(clientDetails.getClientId());
+		baseClientDetails.setClientSecret(clientDetails.getClientSecret());
+		baseClientDetails.setAuthorizedGrantTypes(DEFAULT_GRANT_TYPES);
+		baseClientDetails.setAuthorities(DEFAULT_AUTHORITIES);
+		baseClientDetails.setScope(DEFAULT_SCOPE);
+		jdbcClientDetailsService.addClientDetails(baseClientDetails);
 	}
 }
