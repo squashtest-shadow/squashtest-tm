@@ -25,7 +25,7 @@ import org.hibernate.SessionFactory;
 import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory;
 import org.squashtest.tm.domain.customfield.BindableEntity;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
-import org.squashtest.tm.service.internal.requirement.InfoListItemComparator;
+import org.squashtest.tm.service.internal.infolist.InfoListItemComparator;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 
 import spock.lang.Specification

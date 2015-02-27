@@ -18,7 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.internal.requirement;
+package org.squashtest.tm.service.internal.infolist;
 
 import java.io.IOException;
 import java.util.Locale;
@@ -27,7 +27,7 @@ import org.apache.lucene.search.FieldComparator;
 import org.apache.lucene.search.FieldComparatorSource;
 import org.springframework.context.MessageSource;
 
-public class InfoListItemComparatorSource extends FieldComparatorSource{
+public class InfoListItemComparatorSource extends FieldComparatorSource {
 
 	private static final long serialVersionUID = 1L;
 	private MessageSource source;
@@ -51,16 +51,25 @@ public class InfoListItemComparatorSource extends FieldComparatorSource{
 	}
 
 	@Override
-	public FieldComparator<?> newComparator(String fieldname, int numHits, int sortPos, boolean reversed) throws IOException {
+	public FieldComparator<?> newComparator(String fieldName, int numHits, int sortPos, boolean reversed)
+			throws IOException {
 		// quick and dirty
 		String i18nRoot = null;
-		switch(fieldname){
-		case INFO_NATURE : i18nRoot = "test-case.nature."; break;
-		case INFO_TYPE : i18nRoot = "test-case.type."; break;
-		case INFO_CATEGORY : i18nRoot = "requirement.category."; break;
-		default : throw new IllegalArgumentException("\""+fieldname+"\" references no known infolist. This is a programming bug, whip the dev responsible for that.");
+		switch (fieldName) {
+		case INFO_NATURE:
+			i18nRoot = "test-case.nature.";
+			break;
+		case INFO_TYPE:
+			i18nRoot = "test-case.type.";
+			break;
+		case INFO_CATEGORY:
+			i18nRoot = "requirement.category.";
+			break;
+		default:
+			throw new IllegalArgumentException("\"" + fieldName
+					+ "\" references no known infolist. This is a programming bug, whip bsiri.");
 		}
 
-		return new InfoListItemComparator(numHits, fieldname, i18nRoot, this.source, this.locale);
+		return new InfoListItemComparator(numHits, fieldName, i18nRoot, this.source, this.locale);
 	}
 }

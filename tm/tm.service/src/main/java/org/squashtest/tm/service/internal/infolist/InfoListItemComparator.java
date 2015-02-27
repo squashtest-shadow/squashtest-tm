@@ -18,7 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.internal.requirement;
+package org.squashtest.tm.service.internal.infolist;
 
 import java.io.IOException;
 import java.util.Locale;
@@ -28,7 +28,7 @@ import org.apache.lucene.search.FieldCache;
 import org.apache.lucene.search.FieldComparator;
 import org.springframework.context.MessageSource;
 
-public class InfoListItemComparator extends FieldComparator {
+public class InfoListItemComparator extends FieldComparator<Object> {
 
 	private String[] values;
 	private String[] currentReaderValues;

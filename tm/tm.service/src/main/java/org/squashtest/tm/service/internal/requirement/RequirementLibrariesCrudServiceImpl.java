@@ -32,22 +32,21 @@ import org.squashtest.tm.service.requirement.RequirementLibrariesCrudService;
 
 @Service("squashtest.tm.service.RequirementLibrariesCrudService")
 @Transactional
-public class RequirementLibrariesCrudServiceImpl implements
-		RequirementLibrariesCrudService {
-	
+public class RequirementLibrariesCrudServiceImpl implements RequirementLibrariesCrudService {
+
 	@Inject
 	private RequirementLibraryDao requirementLibraryDao;
 
 	@Override
 	public List<RequirementLibrary> findAllLibraries() {
-		
+
 		return requirementLibraryDao.findAll();
 	}
 
 	@Override
 	public void addLibrary() {
 		requirementLibraryDao.persist(new RequirementLibrary());
-		
+
 	}
 
 }
