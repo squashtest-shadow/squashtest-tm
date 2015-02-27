@@ -31,6 +31,7 @@ import org.squashtest.tm.domain.customfield.RawValue;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.testautomation.AutomatedTest;
 import org.squashtest.tm.domain.testcase.ActionTestStep;
+import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestStep;
 import org.squashtest.tm.service.testautomation.model.TestAutomationProjectContent;
 
@@ -114,6 +115,20 @@ public interface CustomTestCaseModificationService extends CustomTestCaseFinder 
 	 * @param auto
 	 */
 	void changeImportanceAuto(long testCaseId, boolean auto);
+
+
+
+	/**
+	 * Will create a new version of a test case and insert it next to it.
+	 * It's basically a cheap copy where the test steps, attachments, parameters and custom fields are the only elements
+	 * duplicated, and some other properties are overriden by the content of newTestCase. The verified requirements are left out.
+	 * 
+	 * @param originalTcId
+	 * @param newVersionData
+	 * @param milestoneIds
+	 */
+	public void addNewTestCaseVersion(long originalTcId, TestCase newVersionData, List<Long> milestoneIds);
+
 
 
 	// *************** test automation section ******************

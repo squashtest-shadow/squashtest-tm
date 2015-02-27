@@ -142,6 +142,7 @@ LibraryNavigationController<TestCaseLibrary, TestCaseFolder, TestCaseLibraryNode
 		return createTreeNodeFromLibraryNode(testCase, milestoneIds);
 	}
 
+
 	@RequestMapping(value = "/folders/{folderId}/content/new-test-case", method = RequestMethod.POST, consumes="application/json")
 	public @ResponseBody JsTreeNode addNewTestCaseToFolder(
 			@PathVariable long folderId,

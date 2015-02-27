@@ -62,6 +62,7 @@ import org.squashtest.tm.domain.testcase.CallTestStep;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseFolder;
 import org.squashtest.tm.domain.testcase.TestCaseImportance;
+import org.squashtest.tm.domain.testcase.TestCaseLibrary;
 import org.squashtest.tm.domain.testcase.TestCaseLibraryNode;
 import org.squashtest.tm.domain.testcase.TestStep;
 import org.squashtest.tm.domain.testcase.TestStepVisitor;
@@ -82,6 +83,7 @@ import org.squashtest.tm.service.testautomation.model.TestAutomationProjectConte
 import org.squashtest.tm.service.testcase.CustomTestCaseModificationService;
 import org.squashtest.tm.service.testcase.ParameterModificationService;
 import org.squashtest.tm.service.testcase.TestCaseImportanceManagerService;
+import org.squashtest.tm.service.testcase.TestCaseLibraryNavigationService;
 
 /**
  * @author Gregory Fouquet
@@ -131,6 +133,10 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 
 	@Inject
 	private MilestoneMembershipManager milestoneService;
+
+	@Inject
+	private TestCaseLibraryNavigationService libraryService;
+
 
 	/* *************** TestCase section ***************************** */
 
@@ -514,6 +520,41 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 		}
 		return callingTCToUpdate;
 	}
+
+
+
+
+	@Override
+	// TODO : secure this
+	public void addNewTestCaseVersion(long originalTcId, TestCase newVersionData, List<Long> milestoneIds){
+
+		TestCase orig = testCaseDao.findById(originalTcId);
+		TestCase newTC = orig.createCopy();
+
+		newTC.setName(newVersionData.getName());
+		newTC.setReference(newVersionData.getReference());
+		newTC.setDescription(newVersionData.getDescription());
+
+		// now we must inster that at the correct location
+		TestCaseLibrary library = libraryService.findLibraryOfRootNodeIfExist(orig);
+		if (library != null){
+			libraryService.addTestCaseToLibrary(library.getId(), newTC, null);
+		}
+		else{
+			TestCaseFolder folder = libraryService.findParentIfExists(orig);
+			libraryService.addTestCaseToFolder(folder.getId(), newTC, null);
+		}
+
+		customFieldValuesService.copyCustomFieldValues(orig, newTC);
+		milestoneService.bindTestCaseToMilestones(newTC.getId(), milestoneIds);
+		milestoneService.unbindTestCaseFromMilestones(originalTcId, milestoneIds);
+
+	}
+
+
+
+
+
 
 	// ******************** private stuffs *********************
 
