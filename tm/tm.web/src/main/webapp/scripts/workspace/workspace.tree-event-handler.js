@@ -107,7 +107,51 @@ define([ 'jquery', 'tree', 'workspace.event-bus' ], function($, tree, eventBus) 
 			updateCallingTestCasesNodes( tree, mapIdOldReq);
 		});
 		
-
+		/* on this one we will cheat, by assuming that the currently 
+		 * selected test case if the one we want
+		 * 
+		 * We also need to refresh the parent's content because 
+		 * it's the only way to have a proper jstree node for 
+		 * this new test case.
+		 * 
+		 * The problem is, reloading is asynchronous yet doesn't 
+		 * always provide deferred action support. So we cannot 
+		 * select the new node on completion. Thus we rely on the 
+		 * following trick :
+		 * 
+		 * We create a proto-node for the new test case, 
+		 * insert it in the tree, then refresh the parent. By the magic
+		 * of the tree cookie plugin, the real jstree node will then 
+		 * be selected.
+		 */
+		eventBus.on('test-case.new-version', function(event, jsonTestCase){
+			
+			var tree = self.getTree();
+			
+			var selected = tree.get_selected().treeNode();
+			var parent = selected.getParent();
+			
+			var nodeid = '#TestCase-'+jsonTestCase.id;
+			var data = {
+				attr : {
+					id : nodeid, 
+					resid : jsonTestCase.id,
+					restype : 'test-cases',
+					rel : 'test-case'
+				},
+				data : jsonTestCase.name
+			};
+			
+			tree.create_node(selected, 'after', data, function(){
+				var treenode = tree.findNodes({ id : nodeid}).get(0);
+				selected.deselect();
+				tree.select_node(treenode);
+							
+				parent.refresh();
+								
+			});
+		});
+		
 	}
 
 	/* *************************** update Events ********************* */

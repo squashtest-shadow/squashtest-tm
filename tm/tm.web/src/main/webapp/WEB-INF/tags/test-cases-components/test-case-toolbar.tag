@@ -37,6 +37,10 @@
 
 <c:url var="testCaseUrl" value="/test-cases/${testCase.id}"/>
 
+<f:message var="createNewVersionLabel" key="label.createNewVersion"/>
+<f:message var="renameLabel" key="test-case.button.rename.label"/>
+<f:message var="printLabel" key="label.print"/>
+
 <%---------------------------- Test Case Informations ------------------------------%>
 
 <div id="test-case-toolbar" class="toolbar-class ui-corner-all">
@@ -47,10 +51,11 @@
 
 	<div class="toolbar-button-panel">
 	<c:if test="${ writable }">
-		<input type="button" value="<f:message key='test-case.button.rename.label' />"
+		<input type="button" value="${renameLabel}"
 				id="rename-test-case-button" class="sq-btn" />
 	</c:if>
-		<input type="button" value="<f:message key='label.print'/>" id="print-test-case-button" class="sq-btn"/>
+        <input type="button" value="${createNewVersionLabel}" id="create-test-case-version-button" class="sq-btn"/>
+		<input type="button" value="${printLabel}" id="print-test-case-button" class="sq-btn"/>
 	</div>
 	
 	<c:if test="${ moreThanReadOnly }">
@@ -58,6 +63,7 @@
 							objectUrl="${ testCaseUrl }" />
 	</c:if>
 	<div class="unsnap"></div>
+ 
 </div>
 
 

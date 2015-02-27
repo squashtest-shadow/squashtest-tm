@@ -123,11 +123,12 @@ public interface CustomTestCaseModificationService extends CustomTestCaseFinder 
 	 * It's basically a cheap copy where the test steps, attachments, parameters and custom fields are the only elements
 	 * duplicated, and some other properties are overriden by the content of newTestCase. The verified requirements are left out.
 	 * 
+	 * @return the newly created test case version
 	 * @param originalTcId
 	 * @param newVersionData
 	 * @param milestoneIds
 	 */
-	public void addNewTestCaseVersion(long originalTcId, TestCase newVersionData, List<Long> milestoneIds);
+	public TestCase addNewTestCaseVersion(long originalTcId, TestCase newVersionData, List<Long> milestoneIds);
 
 
 

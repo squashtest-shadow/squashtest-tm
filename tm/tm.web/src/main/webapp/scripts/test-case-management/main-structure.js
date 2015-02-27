@@ -66,8 +66,8 @@ define(["jquery",
 				dataType : "json",
 				data : { 'newName' : newName}
 			}).success(function(){
-				eventBus.trigger('node.rename', { identity : identity, newName : newName});
 				dialog.formDialog('close');
+				eventBus.trigger('node.rename', { identity : identity, newName : newName});
 			});
 
 		});
@@ -76,6 +76,52 @@ define(["jquery",
 			dialog.formDialog('close');
 		});
 
+	}
+	
+	function initNewVersionDialog(settings){
+		
+		var url = settings.urls.testCaseUrl+'/new-version';
+		
+		var dialog = $("#create-test-case-version-dialog").formDialog();
+		
+		dialog.on('formdialogopen', function(){
+			var hiddenRawName = $('#test-case-raw-name');
+			var name = $.trim(hiddenRawName.text());
+			
+			var fullname = name;
+			if (!! settings.milestone){
+				fullname+='-'+settings.milestone.label;
+			}
+			
+			$("#new-version-test-case-name").val(fullname);		
+		});
+		
+		dialog.on('formdialogconfirm', function(){
+			
+			var params = {
+				name : dialog.find('#new-version-test-case-name').val(),
+				reference : dialog.find('#new-version-test-case-reference').val(),
+				description : dialog.find('#new-version-test-case-description').val()
+			};
+			
+			$.ajax({
+				url : url,
+				type : 'post',
+				data : JSON.stringify(params),
+				contentType : 'application/json',
+				dataType : 'json'
+			})
+			.success(function(jsonTestCase){
+				dialog.formDialog('close');
+				eventBus.trigger('test-case.new-version', jsonTestCase);
+			})
+			
+		});
+		
+		dialog.on('formdialogcancel', function(){
+			dialog.formDialog('close');
+		});
+		
 	}
 
 	function initRenameListener(settings){
@@ -97,8 +143,13 @@ define(["jquery",
 	}
 
 	function initButtons(settings){
+		
 		$("#print-test-case-button").on('click', function(){
 			window.open(settings.urls.testCaseUrl+"?format=printable", "_blank");
+		});
+		
+		$("#create-test-case-version-button").on('click', function(){
+			$("#create-test-case-version-dialog").formDialog('open');
 		});
 	}
 
@@ -109,6 +160,7 @@ define(["jquery",
 		initButtons(settings);
 		initRenameDialog(settings);
 		initRenameListener(settings);
+		initNewVersionDialog(settings);
 		initFragmentTab();
 	}
 

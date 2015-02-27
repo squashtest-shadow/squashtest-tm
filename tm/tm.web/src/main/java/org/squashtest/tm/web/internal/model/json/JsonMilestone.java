@@ -39,6 +39,9 @@ public class JsonMilestone {
 
 	private String ownerLogin;
 
+	public JsonMilestone(){
+		super();
+	}
 
 	public JsonMilestone(
 			long id,

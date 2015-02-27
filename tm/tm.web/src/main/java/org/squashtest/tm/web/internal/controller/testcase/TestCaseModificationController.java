@@ -87,6 +87,7 @@ import org.squashtest.tm.service.customfield.CustomFieldHelper;
 import org.squashtest.tm.service.customfield.CustomFieldHelperService;
 import org.squashtest.tm.service.execution.ExecutionFinder;
 import org.squashtest.tm.service.infolist.InfoListItemFinderService;
+import org.squashtest.tm.service.milestone.MilestoneFinderService;
 import org.squashtest.tm.service.requirement.VerifiedRequirement;
 import org.squashtest.tm.service.requirement.VerifiedRequirementsManagerService;
 import org.squashtest.tm.service.testcase.ParameterFinder;
@@ -117,6 +118,8 @@ import org.squashtest.tm.web.internal.model.jquery.RenameModel;
 import org.squashtest.tm.web.internal.model.json.JsonEnumValue;
 import org.squashtest.tm.web.internal.model.json.JsonGeneralInfo;
 import org.squashtest.tm.web.internal.model.json.JsonInfoList;
+import org.squashtest.tm.web.internal.model.json.JsonMilestone;
+import org.squashtest.tm.web.internal.model.json.JsonTestCase;
 import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
 import org.squashtest.tm.web.internal.model.viewmapper.NameBasedMapper;
 
@@ -197,6 +200,9 @@ public class TestCaseModificationController {
 	@Inject
 	private JsonInfoListBuilder infoListBuilder;
 
+	@Inject
+	private MilestoneFinderService milestoneFinder;
+
 
 	/**
 	 * Returns the fragment html view of test case
@@ -206,11 +212,17 @@ public class TestCaseModificationController {
 	 * @return
 	 */
 	@RequestMapping(method = RequestMethod.GET)
-	public final ModelAndView showTestCase(@PathVariable long testCaseId, Locale locale) {
+	public final ModelAndView showTestCase(@PathVariable long testCaseId, Locale locale,
+			@CookieValue(value="milestones", required=false, defaultValue="") List<Long> milestoneIds) {
 		ModelAndView mav = new ModelAndView("fragment/test-cases/test-case");
 
 		TestCase testCase = testCaseModificationService.findById(testCaseId);
-		populateModelWithTestCaseEditionData(mav, testCase, locale);
+
+		Milestone m = null;
+		if (! milestoneIds.isEmpty()){
+			m = milestoneFinder.findById(milestoneIds.get(0));
+		}
+		populateModelWithTestCaseEditionData(mav, testCase, locale, m);
 
 		return mav;
 	}
@@ -223,19 +235,26 @@ public class TestCaseModificationController {
 	 * @return
 	 */
 	@RequestMapping(value = "/info", method = RequestMethod.GET)
-	public ModelAndView showTestCaseInfo(@PathVariable long testCaseId, Locale locale) {
+	public ModelAndView showTestCaseInfo(@PathVariable long testCaseId, Locale locale,
+			@CookieValue(value="milestones", required=false, defaultValue="") List<Long> milestoneIds) {
 
 		LOGGER.trace("TestCaseModificationController : getting infos");
 
 		ModelAndView mav = new ModelAndView("page/test-case-workspace/show-test-case");
 
 		TestCase testCase = testCaseModificationService.findTestCaseWithSteps(testCaseId);
-		populateModelWithTestCaseEditionData(mav, testCase, locale);
+
+		Milestone m = null;
+		if (! milestoneIds.isEmpty()){
+			m = milestoneFinder.findById(milestoneIds.get(0));
+		}
+
+		populateModelWithTestCaseEditionData(mav, testCase, locale, m);
 
 		return mav;
 	}
 
-	private void populateModelWithTestCaseEditionData(ModelAndView mav, TestCase testCase, Locale locale) {
+	private void populateModelWithTestCaseEditionData(ModelAndView mav, TestCase testCase, Locale locale, Milestone activeMilestone) {
 
 		boolean hasCUF = cufHelperService.hasCustomFields(testCase);
 
@@ -247,6 +266,8 @@ public class TestCaseModificationController {
 			ot.setValue(executionMode.toString());
 			executionModes.add(ot);
 		}
+
+
 		mav.addObject(TEST_CASE, testCase);
 		mav.addObject("executionModes", executionModes);
 		mav.addObject("testCaseImportanceComboJson", buildImportanceComboData(locale));
@@ -258,6 +279,13 @@ public class TestCaseModificationController {
 		mav.addObject("attachmentsModel", attachmentHelper.findPagedAttachments(testCase));
 		mav.addObject("callingTestCasesModel", getCallingTestCaseTableModel(testCase.getId(), new DefaultPagingAndSorting("TestCase.name"), ""));
 		mav.addObject("hasCUF", hasCUF);
+
+		if (activeMilestone != null){
+			JsonMilestone jsMilestone = new JsonMilestone();
+			jsMilestone.setId(activeMilestone.getId());
+			jsMilestone.setLabel(activeMilestone.getLabel());
+			mav.addObject("activeMilestone", jsMilestone);
+		}
 	}
 
 	@RequestMapping(value = "/importance-combo-data", method = RequestMethod.GET)
@@ -303,10 +331,18 @@ public class TestCaseModificationController {
 	}
 
 
-	@RequestMapping(value = "/new-version", method = RequestMethod.POST)
-	public @ResponseBody void createNewVersion(@PathVariable("testCaseId") Long originalId, @RequestBody TestCase newVersionData,
+	@RequestMapping(value = "/new-version", method = RequestMethod.POST, consumes="application/json", produces="application/json")
+	public @ResponseBody JsonTestCase createNewVersion(@PathVariable("testCaseId") Long originalId, @RequestBody TestCase newVersionData,
 			@CookieValue(value="milestones", required=false, defaultValue="") List<Long> milestoneIds){
-		testCaseModificationService.addNewTestCaseVersion(originalId, newVersionData, milestoneIds);
+
+		TestCase newTestCase = testCaseModificationService.addNewTestCaseVersion(originalId, newVersionData, milestoneIds);
+
+		JsonTestCase jsTestCase = new JsonTestCase();
+		jsTestCase.setId(newTestCase.getId());
+		jsTestCase.setName(newTestCase.getName());
+
+		return jsTestCase;
+
 	}
 
 

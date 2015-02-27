@@ -185,7 +185,7 @@ require(["common"], function() {
 
 <%-- ===================================== popups =============================== --%>
 
-<tc:test-case-popups writable="${writable}" />
+<tc:test-case-popups writable="${writable}"/>
 
 <%-- ===================================== /popups =============================== --%>
 		
@@ -197,8 +197,8 @@ require(["common"], function() {
 	var squashtm = squashtm || {};
   	squashtm.app = squashtm.app || {} ;	 
     require([ "common" ], function() {
-        require([ "jquery", "test-case-management" ],
-			function($, testCaseManagement) {
+        require([ "jquery", "test-case-management", "workspace.event-bus" ],
+			function($, testCaseManagement, eventBus) {
 					var settings = {
 						urls : {
 							testCaseUrl : "${testCaseUrl}",
@@ -218,12 +218,23 @@ require(["common"], function() {
 						hasCufs : ${hasCUF},
 						hasBugtracker : ${testCase.project.bugtrackerConnected},
 						isAutomated : ${testCase.project.testAutomationEnabled}
+						<c:if test="${not empty activeMilestone}">
+						,milestone : ${json:serialize(activeMilestone)}
+						</c:if>
 					};
 					
 				$(function() {
 					testCaseManagement.initStructure(settings);
 					testCaseManagement.initInfosTab(settings);
 				});
+				
+				<c:if test="${param.isInfoPage}">
+				<c:url var="newversionUrl" value="/test-cases/{id}/info"/>				
+    			eventBus.on('test-case.new-version', function(evt, version){
+    				var url =  "${newversionUrl}".replace('{id}', version.id);
+    				document.location.href = url;
+    			});				
+				</c:if>
 			});
     });
 	/*]]>*/

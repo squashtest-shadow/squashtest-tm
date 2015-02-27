@@ -341,7 +341,7 @@ define(['jquery'], function($){
 					this.tree.refresh(this);
 				}
 				else{
-					this.load();
+					return this.load();
 				}
 			}
 		};

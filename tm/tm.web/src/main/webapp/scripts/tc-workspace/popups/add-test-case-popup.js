@@ -93,7 +93,7 @@ define(['jquery', 'tree', 'custom-field-values', 'workspace.projects', '../permi
 		dialog.on('formdialogadd-another', function(){
 			postNode(dialog, tree).then(function(){
 				dialog.formDialog('cleanup');
-			}) ;		
+			});		
 		});
 		
 		dialog.on('formdialogcancel', function(){

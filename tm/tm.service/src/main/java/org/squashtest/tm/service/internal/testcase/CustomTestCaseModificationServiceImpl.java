@@ -526,7 +526,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 
 	@Override
 	// TODO : secure this
-	public void addNewTestCaseVersion(long originalTcId, TestCase newVersionData, List<Long> milestoneIds){
+	public TestCase addNewTestCaseVersion(long originalTcId, TestCase newVersionData, List<Long> milestoneIds){
 
 		TestCase orig = testCaseDao.findById(originalTcId);
 		TestCase newTC = orig.createCopy();
@@ -549,6 +549,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 		milestoneService.bindTestCaseToMilestones(newTC.getId(), milestoneIds);
 		milestoneService.unbindTestCaseFromMilestones(originalTcId, milestoneIds);
 
+		return newTC;
 	}
 
 
