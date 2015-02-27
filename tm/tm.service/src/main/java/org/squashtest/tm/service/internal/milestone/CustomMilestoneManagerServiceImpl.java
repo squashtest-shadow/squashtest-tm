@@ -22,6 +22,7 @@ package org.squashtest.tm.service.internal.milestone;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -29,8 +30,10 @@ import javax.inject.Inject;
 import org.springframework.stereotype.Service;
 import org.squashtest.tm.domain.campaign.Campaign;
 import org.squashtest.tm.domain.milestone.Milestone;
+import org.squashtest.tm.domain.milestone.MilestoneHolder;
 import org.squashtest.tm.domain.milestone.MilestoneRange;
 import org.squashtest.tm.domain.project.GenericProject;
+import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.service.internal.repository.MilestoneDao;
@@ -218,6 +221,21 @@ public class CustomMilestoneManagerServiceImpl implements CustomMilestoneManager
 		bindTestCases(mother, milestone, bindToTestCases, copyAllPerimeter);
 		bindCampaigns(mother, milestone, bindToCampaigns, copyAllPerimeter);
 		addMilestone(milestone);
+	}
+
+	@Override
+	public void migrateMilestones(MilestoneHolder member){
+
+		Collection<Milestone> projectMilestones = member.getProject().getMilestones();
+		Collection<Milestone> memberMilestones = member.getMilestones();
+
+		Iterator<Milestone> memberIterator = memberMilestones.iterator();
+		while(memberIterator.hasNext()){
+			Milestone m = memberIterator.next();
+			if (! projectMilestones.contains(m)){
+				memberIterator.remove();
+			}
+		}
 	}
 
 	private void bindProjectsAndPerimeter(Milestone mother, Milestone milestone, boolean copyAllPerimeter) {

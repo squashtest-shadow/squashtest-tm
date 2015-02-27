@@ -271,6 +271,9 @@ public class Campaign extends CampaignLibraryNode implements NodeContainer<Itera
 		}
 
 		copy.notifyAssociatedWithProject(this.getProject());
+
+		copy.bindSameMilestones(this);
+
 		return copy;
 	}
 
@@ -398,6 +401,13 @@ public class Campaign extends CampaignLibraryNode implements NodeContainer<Itera
 
 		testPlan.removeAll(moved);
 		testPlan.addAll(targetIndex, moved);
+	}
+
+
+	private void bindSameMilestones(Campaign src){
+		for (Milestone m : src.getMilestones()){
+			bindMilestone(m);
+		}
 	}
 
 

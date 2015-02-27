@@ -33,6 +33,8 @@ import org.squashtest.tm.domain.campaign.TestSuite;
 import org.squashtest.tm.domain.customfield.BoundEntity;
 import org.squashtest.tm.domain.infolist.InfoListItem;
 import org.squashtest.tm.domain.library.NodeVisitor;
+import org.squashtest.tm.domain.milestone.MilestoneHolder;
+import org.squashtest.tm.domain.milestone.MilestoneMember;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.requirement.Requirement;
 import org.squashtest.tm.domain.requirement.RequirementFolder;
@@ -48,6 +50,7 @@ import org.squashtest.tm.domain.testcase.TestStepVisitor;
 import org.squashtest.tm.service.infolist.InfoListItemManagerService;
 import org.squashtest.tm.service.internal.customfield.PrivateCustomFieldValueService;
 import org.squashtest.tm.service.internal.repository.IssueDao;
+import org.squashtest.tm.service.milestone.MilestoneManagerService;
 import org.squashtest.tm.service.testcase.TestCaseModificationService;
 
 /**
@@ -77,6 +80,10 @@ public class TreeNodeUpdater implements NodeVisitor {
 	private InfoListItemManagerService infoListItemService;
 
 
+	@Inject
+	private MilestoneManagerService milestoneService;
+
+
 	@Override
 	public void visit(CampaignFolder campaignFolder) {
 		// nothing to update
@@ -95,6 +102,7 @@ public class TreeNodeUpdater implements NodeVisitor {
 	@Override
 	public void visit(Campaign campaign) {
 		updateCustomFields(campaign);
+		updateMilestones(campaign);
 	}
 
 	@Override
@@ -125,12 +133,14 @@ public class TreeNodeUpdater implements NodeVisitor {
 		for (RequirementVersion version : requirement.getRequirementVersions()) {
 			updateCustomFields(version);
 			updateCategory(version);
+			updateMilestones(version);
 		}
 	}
 
 	@Override
 	public void visit(TestCase testCase) {
 		updateCustomFields(testCase);
+		updateMilestones(testCase);
 		for (TestStep step : testCase.getSteps()) {
 			step.accept(new TestStepVisitor() {
 
@@ -233,6 +243,11 @@ public class TreeNodeUpdater implements NodeVisitor {
 		if (! infoListItemService.isCategoryConsistent(project.getId(), category.getCode())){
 			requirement.setCategory(project.getRequirementCategories().getDefaultItem());
 		}
+	}
+
+
+	private void updateMilestones(MilestoneHolder element){
+		milestoneService.migrateMilestones(element);
 	}
 
 }

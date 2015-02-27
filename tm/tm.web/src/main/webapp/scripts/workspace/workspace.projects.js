@@ -19,7 +19,7 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-define(["jquery"], function($){
+define(["jquery", "underscore"], function($, _){
 	
 	function getAll(){
 		return squashtm.workspace.projects;
@@ -102,6 +102,70 @@ define(["jquery"], function($){
 		return areDifferent;
 	}
 	
+	// Can be useful in some situations, but for now 
+	// the function willMilestonesBeLost(destLibId, [srcLitIds]) 
+	// better suit the needs of the application
+	function haveDifferentMilestones(projectIds){
+		
+		if ( projectIds.length === 0){
+			return false;
+		}
+		
+		var firstP = findProject(projectIds[0]);
+		var milestoneIds = firstP.milestones.map(function(m){
+			return m.id;
+		});
+		
+		for (var i=1; i<projectIds.length; i++){
+			var p = findProject(projectIds[i]);
+			var pMilestoneIds = p.milestones.map(function(m){
+				return m.id;
+			});
+			
+			if (milestoneIds.length !== pMilestoneIds.length){
+				return true;
+			}
+			
+			var commonelts = _.intersection(milestoneIds, pMilestoneIds);
+			if (commonelts.length !== milestoneIds.length){
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	
+	
+	function willMilestonesBeLost(destLibId, srcLibIds){
+		
+		if (srcLibIds.length === 0){
+			return false;
+		}
+		
+		var destP = findProject(destLibId);
+		
+		var destMilestoneIds = destP.milestones.map(function(m){
+			return m.id;
+		});
+		
+		for (var i=0;i<srcLibIds.length; i++){
+			var srcP = findProject(srcLibIds[i]);
+			
+			var srcMilestoneIds = srcP.milestones.map(function(m){
+				return m.id;
+			});
+			
+			// test if destMilestoneIds contains all of srcMilestoneIds
+			var commonelts = _.intersection(destMilestoneIds, srcMilestoneIds);
+			
+			if (commonelts.length !== destMilestoneIds.length){
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	
 	
 	function getAllMilestones(){
 		
@@ -129,7 +193,9 @@ define(["jquery"], function($){
 		getAll : getAll,
 		findProject : findProject,
 		haveDifferentInfolists : haveDifferentInfolists,
-		getAllMilestones : getAllMilestones
+		getAllMilestones : getAllMilestones,
+		haveDifferentMilestones : haveDifferentMilestones,
+		willMilestonesBeLost : willMilestonesBeLost
 	};
 	
 	

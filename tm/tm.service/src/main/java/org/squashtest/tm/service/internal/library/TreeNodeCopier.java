@@ -70,6 +70,7 @@ import org.squashtest.tm.service.internal.repository.RequirementVersionCoverageD
 import org.squashtest.tm.service.internal.repository.TestCaseDao;
 import org.squashtest.tm.service.internal.repository.TestCaseFolderDao;
 import org.squashtest.tm.service.internal.repository.TestSuiteDao;
+import org.squashtest.tm.service.milestone.MilestoneManagerService;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.security.PermissionsUtils;
 import org.squashtest.tm.service.security.SecurityCheckableObject;
@@ -110,7 +111,6 @@ public class TreeNodeCopier  implements NodeVisitor, PasteOperation {
 
 	@Inject
 	private SessionFactory sessionFactory;
-
 
 	private NodeContainer<? extends TreeNode> destination;
 

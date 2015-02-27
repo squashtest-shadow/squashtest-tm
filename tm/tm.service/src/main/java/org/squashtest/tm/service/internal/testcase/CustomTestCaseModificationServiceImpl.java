@@ -534,6 +534,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 		newTC.setName(newVersionData.getName());
 		newTC.setReference(newVersionData.getReference());
 		newTC.setDescription(newVersionData.getDescription());
+		newTC.clearMilestones();
 
 		// now we must inster that at the correct location
 		TestCaseLibrary library = libraryService.findLibraryOfRootNodeIfExist(orig);

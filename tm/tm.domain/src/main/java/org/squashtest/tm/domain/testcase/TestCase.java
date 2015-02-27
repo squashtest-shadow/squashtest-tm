@@ -320,6 +320,7 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 		copy.addCopiesOfAttachments(this);
 		copy.addCopiesOfParametersAndDatasets(this);
 		copy.notifyAssociatedWithProject(this.getProject());
+		copy.bindSameMilestones(this);
 		if (this.automatedTest != null) {
 			try {
 				copy.setAutomatedTest(this.automatedTest);
@@ -387,6 +388,12 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	private void addCopiesOfSteps(TestCase source) {
 		for (TestStep testStep : source.getSteps()) {
 			this.addStep(testStep.createCopy());
+		}
+	}
+
+	private void bindSameMilestones(TestCase src){
+		for (Milestone m : src.getMilestones()){
+			this.bindMilestone(m);
 		}
 	}
 
@@ -755,6 +762,10 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 				break;
 			}
 		}
+	}
+
+	public void clearMilestones(){
+		milestones.clear();
 	}
 
 	@Override

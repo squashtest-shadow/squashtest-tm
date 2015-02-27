@@ -171,12 +171,19 @@ define([ 'jquery', 'squash.translator', "jquery.squash.oneshotdialog", "workspac
 					msg = msg.replace('</ul>', addendum + '</ul>');
 				}
 				
+				var lostMilestones = projects.willMilestonesBeLost(targetLib, srcLibs);
+				if (lostMilestones){
+					var addendum = translator.get('message.warnCopyToDifferentLibrary.milestonesDiffer');
+					msg = msg.replace('</ul>', addendum + '</ul>');
+				}
+				
 				oneshot.show('Info', msg)
 				.done(function() {
 					defer.resolve();
 				}).fail(function() {
 					defer.reject();
 				});
+				
 			} else {
 				defer.resolve();
 			}

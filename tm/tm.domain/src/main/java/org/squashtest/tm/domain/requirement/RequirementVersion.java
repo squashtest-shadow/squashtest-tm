@@ -310,6 +310,7 @@ public class RequirementVersion extends Resource implements BoundEntity, Milesto
 		copy.versionNumber = this.versionNumber;
 		copy.requirement = null;
 		attachCopiesOfAttachmentsTo(copy);
+		copy.bindSameMilestones(this);
 
 		return copy;
 	}
@@ -328,6 +329,12 @@ public class RequirementVersion extends Resource implements BoundEntity, Milesto
 		copy.category = this.category;
 		copy.reference = this.reference;
 		return copy;
+	}
+
+	private void bindSameMilestones(RequirementVersion src){
+		for (Milestone m : src.getMilestones()){
+			bindMilestone(m);
+		}
 	}
 
 	public boolean isNotObsolete() {

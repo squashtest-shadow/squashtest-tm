@@ -20,6 +20,8 @@
  */
 package org.squashtest.tm.domain.milestone;
 
+import org.squashtest.tm.domain.project.Project;
+
 /**
  * 
  * Those objects can bind or unbind with milestones. They are the physical support of such binding,
@@ -36,4 +38,5 @@ public interface MilestoneHolder extends MilestoneMember{
 
 	void unbindMilestone(Long milestoneId);
 
+	Project getProject();
 }

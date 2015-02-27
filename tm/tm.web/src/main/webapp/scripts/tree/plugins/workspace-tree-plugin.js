@@ -225,6 +225,12 @@ define(['jquery', 'workspace.tree-node-copier', 'workspace.permissions-rules-bro
 				msg = msg.replace('</ul>', addendum + '</ul>');
 			}
 			
+			var lostMilestones = projects.willMilestonesBeLost(targetLib, srcLibs);
+			if (lostMilestones){
+				var addendum = translator.get('message.warnCopyToDifferentLibrary.milestonesDiffer');
+				msg = msg.replace('</ul>', addendum + '</ul>');
+			}
+			
 			oneshot.show('Info', msg)
 			.done(function() {
 				defer.resolve();

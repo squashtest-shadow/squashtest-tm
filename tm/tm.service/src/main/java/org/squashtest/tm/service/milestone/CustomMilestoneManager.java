@@ -25,6 +25,7 @@ import java.util.List;
 
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.milestone.Milestone;
+import org.squashtest.tm.domain.milestone.MilestoneHolder;
 
 @Transactional
 public interface CustomMilestoneManager extends MilestoneFinderService {
@@ -62,10 +63,18 @@ public interface CustomMilestoneManager extends MilestoneFinderService {
 	 * @return liste of all milestone the current user can see
 	 */
 	List<Milestone>  findAllICanSee();
-	
+
 	boolean isBoundToATemplate(Long milestoneId);
-	
-	
+
+
 	void cloneMilestone(long motherId, Milestone milestone, boolean bindToRequirements, boolean bindToTestCases,
 			boolean bindToCampaigns);
+
+	/**
+	 * When a node has been copied to another project some milestones might no longer be available.
+	 * This method will trim unbind the member from them.
+	 * 
+	 * @param member
+	 */
+	void migrateMilestones(MilestoneHolder member);
 }
