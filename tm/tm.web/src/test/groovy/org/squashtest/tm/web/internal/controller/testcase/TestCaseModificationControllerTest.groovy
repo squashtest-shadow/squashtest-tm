@@ -155,7 +155,7 @@ class TestCaseModificationControllerTest extends Specification {
 		enrichTC(tc)
 
 		when:
-		ModelAndView res = controller.showTestCase (tcId, null)
+		ModelAndView res = controller.showTestCase (tcId, null, [])
 
 		then:
 		res.viewName == "fragment/test-cases/test-case"
@@ -225,7 +225,7 @@ class TestCaseModificationControllerTest extends Specification {
 		importanceComboBuilder.buildMarshalled() >> "akemashite omedet�"
 
 		when:
-		ModelAndView mav = controller.showTestCaseInfo(10, Locale.JAPANESE)
+		ModelAndView mav = controller.showTestCaseInfo(10, Locale.JAPANESE, [])
 
 		then:
 		1 * importanceComboBuilder.useLocale(Locale.JAPANESE) >> importanceComboBuilder
@@ -247,7 +247,7 @@ class TestCaseModificationControllerTest extends Specification {
 		levelLabelFormatter.formatLabel(TestCaseImportance.HIGH) >> "takai"
 
 		when:
-		ModelAndView mav = controller.showTestCaseInfo(10, Locale.JAPANESE)
+		ModelAndView mav = controller.showTestCaseInfo(10, Locale.JAPANESE, [])
 
 		then:
 		2 * levelLabelFormatter.useLocale(Locale.JAPANESE) >> levelLabelFormatter
