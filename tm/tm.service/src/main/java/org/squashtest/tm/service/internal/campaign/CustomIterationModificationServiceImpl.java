@@ -63,6 +63,7 @@ import org.squashtest.tm.service.internal.repository.IterationDao;
 import org.squashtest.tm.service.internal.repository.IterationTestPlanDao;
 import org.squashtest.tm.service.internal.repository.TestSuiteDao;
 import org.squashtest.tm.service.milestone.MilestoneMembershipFinder;
+import org.squashtest.tm.service.security.Authorizations;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.security.PermissionsUtils;
 import org.squashtest.tm.service.security.SecurityCheckableObject;
@@ -77,42 +78,57 @@ IterationTestPlanManager {
 	private static final String OR_HAS_ROLE_ADMIN = "or hasRole('ROLE_ADMIN')";
 	private static final String PERMISSION_EXECUTE_ITEM = "hasPermission(#testPlanItemId, 'org.squashtest.tm.domain.campaign.IterationTestPlanItem', 'EXECUTE') ";
 
-	@Inject	private CampaignDao campaignDao;
+	@Inject
+	private CampaignDao campaignDao;
 
-	@Inject	private IterationDao iterationDao;
+	@Inject
+	private IterationDao iterationDao;
 
-	@Inject	private TestSuiteDao suiteDao;
+	@Inject
+	private TestSuiteDao suiteDao;
 
-	@Inject	private IterationTestPlanDao testPlanDao;
+	@Inject
+	private IterationTestPlanDao testPlanDao;
 
-	@Inject	private ExecutionDao executionDao;
+	@Inject
+	private ExecutionDao executionDao;
 
-	@Inject	private TestCaseCyclicCallChecker testCaseCyclicCallChecker;
+	@Inject
+	private TestCaseCyclicCallChecker testCaseCyclicCallChecker;
 
-	@Inject	private CampaignNodeDeletionHandler deletionHandler;
+	@Inject
+	private CampaignNodeDeletionHandler deletionHandler;
 
-	@Inject	private PermissionEvaluationService permissionService;
+	@Inject
+	private PermissionEvaluationService permissionService;
 
-	@Inject	private PrivateCustomFieldValueService customFieldValueService;
+	@Inject
+	private PrivateCustomFieldValueService customFieldValueService;
 
-	@Inject	private PrivateDenormalizedFieldValueService denormalizedFieldValueService;
+	@Inject
+	private PrivateDenormalizedFieldValueService denormalizedFieldValueService;
 
-	@Inject private IndexationService indexationService;
+	@Inject
+	private IndexationService indexationService;
 
-	@Inject private IterationStatisticsService statisticsService;
+	@Inject
+	private IterationStatisticsService statisticsService;
 
-	@Inject private PrivateCustomFieldValueService customFieldValuesService;
+	@Inject
+	private PrivateCustomFieldValueService customFieldValuesService;
 
-	@Inject private MilestoneMembershipFinder milestoneService;
+	@Inject
+	private MilestoneMembershipFinder milestoneService;
 
 	@Inject
 	@Qualifier("squashtest.tm.service.internal.PasteToIterationStrategy")
 	private Provider<PasteStrategy<Iteration, TestSuite>> pasteToIterationStrategyProvider;
 
-	@Inject	private ObjectFactory<TreeNodeCopier> treeNodeCopierFactory;
+	@Inject
+	private ObjectFactory<TreeNodeCopier> treeNodeCopierFactory;
 
-	@Inject	private IterationTestPlanManagerService iterationTestPlanManager;
-
+	@Inject
+	private IterationTestPlanManagerService iterationTestPlanManager;
 
 	@Override
 	@PreAuthorize("hasPermission(#campaignId, 'org.squashtest.tm.domain.campaign.Campaign', 'CREATE') "
@@ -151,8 +167,6 @@ IterationTestPlanManager {
 			iteration.addTestPlan(item);
 		}
 	}
-
-
 
 	@Override
 	@PreAuthorize("hasPermission(#campaignId, 'org.squashtest.tm.domain.campaign.Campaign', 'READ') "
@@ -204,7 +218,6 @@ IterationTestPlanManager {
 		IterationTestPlanItem item = testPlanDao.findById(testPlanItemId);
 		return addExecution(item);
 	}
-
 
 	@Override
 	@PreAuthorize("hasPermission(#iterationId, 'org.squashtest.tm.domain.campaign.Iteration', 'READ') "
@@ -305,7 +318,6 @@ IterationTestPlanManager {
 		// if passes, let's move to the next step
 		Execution execution = item.createExecution();
 
-
 		// if we don't persist before we add, add will trigger an update of item.testPlan which fail because execution
 		// has no id yet. this is caused by weird mapping (https://hibernate.onjira.com/browse/HHH-5732)
 		executionDao.persist(execution);
@@ -361,8 +373,6 @@ IterationTestPlanManager {
 
 	}
 
-
-
 	@Override
 	@PreAuthorize("hasPermission(#iterationId, 'org.squashtest.tm.domain.campaign.Iteration', 'READ') "
 			+ OR_HAS_ROLE_ADMIN)
@@ -383,5 +393,4 @@ IterationTestPlanManager {
 	public Collection<Milestone> findAllMilestones(long iterationId) {
 		return milestoneService.findMilestonesForIteration(iterationId);
 	}
-
 }

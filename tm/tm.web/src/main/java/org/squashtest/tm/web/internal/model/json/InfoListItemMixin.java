@@ -18,25 +18,20 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.infolist;
+package org.squashtest.tm.web.internal.model.json;
 
-import java.util.List;
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
-import org.squashtest.tm.domain.infolist.InfoList;
+/**
+ * @author Gregory Fouquet
+ * 
+ */
+@JsonAutoDetect
+public abstract class InfoListItemMixin {
+	@JsonProperty("isDefault")
+	public abstract void setDefault(boolean isDefault);
 
-public interface InfoListFinderService {
-
-	InfoList findById(Long id);
-
-	InfoList findByCode(String code);
-
-	List<InfoList> findAllUserLists();
-
-	/**
-	 * Fetches all infolists and tryurns them in an adapter also containing the bound project count.
-	 * 
-	 * @return
-	 */
-	List<IsBoundInfoListAdapter> findAllWithBoundInfo();
-
+	@JsonProperty("isDefault")
+	public abstract boolean isDefault();
 }

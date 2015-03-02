@@ -87,7 +87,6 @@ define(
 					this.selectedIds = [];
 
 					this.listenTo(squashtm.vent, "newinfolist:confirmed", function(event) {
-						console.log("ILT event", event)
 						self.$el.DataTable().ajax.reload();
 						self.refresh();
 					});
@@ -105,15 +104,16 @@ define(
 					var colDefs = SquashTable.colDefs()
 						.hidden(0, "id")
 						.index(1)
-						.std({ targets: 2, data: "name", render: editLink })
+						.std({ targets: 2, data: "label", render: editLink })
 						.std(3, "description")
-						.std(4, "defaultValue")
-						.calendar(5, "createdOn")
-						.std(6, "createdBy")
-						.datetime(7, "lastModifiedOn")
-						.std(8, "lastModifiedBy")
-						.button({ targets: 9, render: remove })
-						.hidden(10, "boundProjectsCount")
+						.std(4, "defaultLabel")
+						.std(5, "code")
+						.calendar(6, "createdOn")
+						.std(7, "createdBy")
+						.datetime(8, "lastModifiedOn")
+						.std(9, "lastModifiedBy")
+						.button({ targets: 10, render: remove })
+						.hidden(11, "bound")
 						.build();
 
 					var tableConfig = {
@@ -147,7 +147,6 @@ define(
 					var self = this;
 
 					var selector = function(idx, data, node) {
-						console.log("selector", data.id, self.selectedIds.indexOf(data.id))
 						return self.selectedIds.indexOf(data.id) > -1;
 					};
 
@@ -220,7 +219,7 @@ define(
 					var self = this;
 					var tgt =  event.currentTarget;
 					var $tr = $(tgt).closest("tr");
-					var isBound = this.$el.DataTable().row($tr).data().boundProjectsCount > 0;
+					var isBound = this.$el.DataTable().row($tr).data().isBound;
 					var props = removeProps(false /* not batch */);
 					var tpl = removeTemplate()(props(isBound));
 
@@ -236,11 +235,11 @@ define(
 					var rows = this.$el.DataTable().rows($sel);
 
 					if (rows.data().length === 0) {
-						notif.showWarning(messages.get("message.noLinesSelected"))
+						notif.showWarning(messages.get("message.noLinesSelected"));
 						return;
 					}
 
-					var hasBound = _.some(rows.data(), function(data) { return data.boundProjectsCount > 0; });
+					var hasBound = _.some(rows.data(), function(data) { return data.bound === true; });
 					var props = removeProps(true /* batch */);
 					var tpl = removeTemplate()(props(hasBound));
 

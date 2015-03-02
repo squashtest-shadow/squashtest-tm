@@ -269,7 +269,7 @@ define([ "jquery", "squash.translator",
 			var value = table.fnGetData(this),
 				$cell = $(this);
 
-			var btnclass = (value) ? 'table-icon user-active-btn icon-user-activated' : 'table-icon user-active-btn icon-user-deactivated';
+			var btnclass = (value) ? 'sq-icon user-active-btn icon-user-activated' : 'sq-icon user-active-btn icon-user-deactivated';
 
 			$cell.empty().append('<a href="#" class="'+btnclass+'"/>');
 
@@ -298,7 +298,7 @@ define([ "jquery", "squash.translator",
 					var table = this;
 					var url = squashtm.app.contextRoot+"/administration/users/"+ids.join(',')+'/activate';
 					$.post(url).done(function(){
-						table._changeActivation(ids, true, "table-icon user-active-btn icon-user-activated");
+						table._changeActivation(ids, true, "sq-icon user-active-btn icon-user-activated");
 					});
 				},
 
@@ -306,7 +306,7 @@ define([ "jquery", "squash.translator",
 					var table = this;
 					var url = squashtm.app.contextRoot+"/administration/users/"+ids.join(',')+'/deactivate';
 					$.post(url).done(function(){
-						table._changeActivation(ids, false, "table-icon user-active-btn icon-user-deactivated");
+						table._changeActivation(ids, false, "sq-icon user-active-btn icon-user-deactivated");
 					});
 				},
 

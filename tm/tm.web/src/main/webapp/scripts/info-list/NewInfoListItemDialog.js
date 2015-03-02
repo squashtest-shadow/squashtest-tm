@@ -36,7 +36,7 @@ define([ "jquery", "backbone", "handlebars", "./IconSelectDialog","squash.transl
 			"confirmdialogcancel" : "cancel",
 			"confirmdialogvalidate" : "validate",
 			"confirmdialogconfirm" : "confirm",
-			"click td.table-icon" : "openChangeIconPopup"
+			"click td.sq-icon" : "openChangeIconPopup"
 		},
 
 		cancel : function(event) {

@@ -20,10 +20,10 @@
  */
 package org.squashtest.tm.web.internal.controller.administration;
 
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+
+import javax.inject.Inject;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -33,12 +33,14 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.squashtest.tm.core.foundation.collection.Pagings;
+import org.squashtest.tm.service.infolist.InfoListFinderService;
+import org.squashtest.tm.service.infolist.IsBoundInfoListAdapter;
 import org.squashtest.tm.web.internal.controller.AcceptHeaders;
-import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.model.datatable.DataTable10Model;
 import org.squashtest.tm.web.internal.model.datatable.DataTable10ModelAdaptor;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
+import org.squashtest.tm.web.internal.util.IconLibrary;
 
 /**
  * Controller for rendering info list management pages
@@ -49,25 +51,9 @@ import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 @Controller
 @RequestMapping("/administration/info-lists")
 public class InfoListAdministrationController {
-	public interface InfoList {
-		Long getId();
 
-		String getName();
-
-		String getDescription();
-
-		String getDefaultValue();
-
-		Date getCreatedOn();
-
-		String getCreatedBy();
-
-		Date getLastModifiedOn();
-
-		String getLastModifiedBy();
-
-		int getBoundProjectsCount();
-	}
+	@Inject
+	private InfoListFinderService infoListFinder;
 
 	@ModelAttribute("tablePageSize")
 	public long populateTablePageSize() {
@@ -82,75 +68,20 @@ public class InfoListAdministrationController {
 	 */
 	@RequestMapping(method = RequestMethod.GET)
 	public String showManager(Model model) {
-		List<Object> lists = makeList();
+		List<IsBoundInfoListAdapter> lists = infoListFinder.findAllWithBoundInfo();
 
 		model.addAttribute("infoLists", lists);
+		model.addAttribute("icons", IconLibrary.getIconNames());
 		return "info-list-manager.html";
 	}
 
-	private List<Object> makeList() {
-		List<Object> lists = new ArrayList<Object>();
-
-		for (int i = 10; i < 20; i++) {
-			final long id = i;
-			lists.add(new InfoList() {
-
-				@Override
-				public Long getId() {
-					return (long) id;
-				}
-
-				@Override
-				public String getName() {
-					return "item" + 1;
-				}
-
-				@Override
-				public String getDescription() {
-					return "my fancy " + id;
-				}
-
-				@Override
-				public String getDefaultValue() {
-					return "def" + id;
-				}
-
-				@Override
-				public Date getCreatedOn() {
-					return new Date();
-				}
-
-				@Override
-				public String getCreatedBy() {
-					return "YOUR MOM";
-				}
-
-				@Override
-				public Date getLastModifiedOn() {
-					return new Date();
-				}
-
-				@Override
-				public String getLastModifiedBy() {
-					return "YOUR MOM";
-				}
-
-				@Override
-				public int getBoundProjectsCount() {
-					return (int) (id % 2);
-				}
-
-			});
-		}
-		return lists;
-	}
 
 	@RequestMapping(method = RequestMethod.GET, params = "_", headers = AcceptHeaders.CONTENT_JSON)
 	@ResponseBody
-	public DataTable10Model getCustomFieldsTableModel(@RequestParam("_") String echo,
+	public DataTable10Model<IsBoundInfoListAdapter> getTableModel(@RequestParam("_") String echo,
 			final DataTableDrawParameters params, final Locale locale) {
-		DataTableModel model = new DataTableModel(echo);
-		model.setAaData(makeList());
+		DataTableModel<IsBoundInfoListAdapter> model = new DataTableModel<>(echo);
+		model.setAaData(infoListFinder.findAllWithBoundInfo());
 		return DataTable10ModelAdaptor.adapt(model);
 	}
 }

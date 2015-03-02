@@ -27,7 +27,7 @@ define([ "jquery", "underscore" ], function($, _) {
 	function clearState($help, $controlGroup) {
 		return function() {
 			$help.hide().addClass("not-displayed").html("&nbsp;");
-			$controlGroup.removeClass("error").removeClass("warning").removeClass("success");
+			$controlGroup.removeClass("error").removeClass("warning").removeClass("success").removeClass("xsuccess");
 
 			return this;
 		};

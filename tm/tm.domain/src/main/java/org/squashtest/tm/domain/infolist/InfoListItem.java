@@ -34,11 +34,12 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.validation.constraints.Size;
 
+import org.hibernate.validator.constraints.NotBlank;
+
 @Entity
-@Inheritance(strategy=InheritanceType.SINGLE_TABLE)
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "ITEM_TYPE", discriminatorType = DiscriminatorType.STRING)
 public abstract class InfoListItem {
-
 
 	@Id
 	@Column(name = "ITEM_ID")
@@ -47,28 +48,25 @@ public abstract class InfoListItem {
 	private Long id;
 
 	@ManyToOne
-	@JoinColumn(name="LIST_ID", insertable=false, updatable=false)
+	@JoinColumn(name = "LIST_ID", insertable = false, updatable = false)
 	private InfoList infoList;
 
-	@Column
-	@Size(max=100)
+	@Size(max = 100)
+	@NotBlank
 	private String label = "";
 
-	@Column
-	@Size(max=30)
+	@Size(max = 30)
+	@NotBlank
 	private String code = "";
 
-	@Column
 	private boolean isDefault = false;
 
-	@Column
-	@Size(max=100)
-	private String iconName ="";
+	@Size(max = 100)
+	private String iconName = "";
 
-	public InfoListItem(){
+	public InfoListItem() {
 		super();
 	}
-
 
 	public InfoList getInfoList() {
 		return infoList;
@@ -94,7 +92,6 @@ public abstract class InfoListItem {
 		this.code = code;
 	}
 
-
 	public boolean isDefault() {
 		return isDefault;
 	}
@@ -115,26 +112,23 @@ public abstract class InfoListItem {
 		return id;
 	}
 
-
 	/**
 	 * tests equality-by-code
 	 * 
 	 * @param other
 	 * @return
 	 */
-	public boolean references(Object other){
-		if (other == null){
+	public boolean references(Object other) {
+		if (other == null) {
 			return false;
 		}
 
-		if (InfoListItem.class.isAssignableFrom(other.getClass())){
-			return ((InfoListItem)other).getCode().equals(getCode());
-		}
-		else{
+		if (InfoListItem.class.isAssignableFrom(other.getClass())) {
+			return ((InfoListItem) other).getCode().equals(getCode());
+		} else {
 			return false;
 		}
 
 	}
-
 
 }

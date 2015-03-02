@@ -38,23 +38,11 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 
 public class ActionStepFormModel {
-
-	/**
-	 * Note : the following validation annotations are never called, a custom validator will be invoked for this.
-	 * 
-	 */
-
-	/*@NotBlank
-	 * @NotNull
-	 */
 	private String action="";
 
 	private String expectedResult="";
 
-	/*@NotNull
-	@NotEmpty*/
 	private RawValueModelMap customFields = new RawValueModelMap();
-
 
 	public String getAction() {
 		return action;

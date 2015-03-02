@@ -94,7 +94,7 @@ define([ "underscore", "app/squash.handlebars.helpers", "moment" ], function(_, 
 	ColDefsBuilder.prototype.button = makeColDef({
 			sortable : false,
 			width : "2em"
-		});
+	});
 
 	ColDefsBuilder.prototype.index = makeColDef({
 			sortable : false,
@@ -114,6 +114,11 @@ define([ "underscore", "app/squash.handlebars.helpers", "moment" ], function(_, 
 			width : "2em",
 			render : defaultRenderer.radio
 		});
+
+	ColDefsBuilder.prototype.icon = makeColDef({
+		sortable : false,
+		width : "2em",
+	});
 
 	/**
 	 * Creates a "calendar formatted" cell. Data should be an ISO 8601 timestamp

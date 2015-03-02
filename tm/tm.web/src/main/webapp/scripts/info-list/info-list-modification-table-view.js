@@ -38,7 +38,7 @@ define(["jquery", "backbone", "underscore", "squash.basicwidgets", "jeditable.si
 		"click .isDefault>input:checkbox" : "changeDefaultOption",
 		"click td.opt-label" : "openChangeLabelPopup",
 		"click td.opt-code" : "openChangeCodePopup",
-		"click td.table-icon" : "openChangeIconPopup",
+		"click td.sq-icon" : "openChangeIconPopup",
 		"click td.delete-button" : "openDeleteOptionPopup"
 		},
 		initErrorPopup : function(){
@@ -63,12 +63,12 @@ define(["jquery", "backbone", "underscore", "squash.basicwidgets", "jeditable.si
 						drawIcon : function(value, cell){
 							if (value !== "noicon"){
 								value = "sq-icon-" + value;
-								value += " table-icon ";	
+								value += " sq-icon ";	
 								cell.addClass(value);
 								} 
 								else{
 									//if there is no icon name display [None] 
-									cell.addClass("table-icon");
+									cell.addClass("sq-icon");
 									cell.text(translator.get("label.infoListItems.icon.none"));
 								}
 						}

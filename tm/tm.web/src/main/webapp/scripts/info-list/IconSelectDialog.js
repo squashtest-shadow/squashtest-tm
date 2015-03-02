@@ -19,8 +19,16 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 define([ "jquery", "backbone", "handlebars", "workspace.routing", "jquery.squash.confirmdialog" ], function($, Backbone, Handlebars, routing) {
+	var ICON_PREFIX = "sq-icon-";
+
 	var View = Backbone.View.extend({
 		initialize : function() {
+
+			if (!!this.model.icon && this.model.icon.indexOf(ICON_PREFIX) !== 0) {
+				// i wanna be consistent with output model which is icon name, not icon class
+				// yet i dont change existing code coz "no refactoring BS"
+				this.model.icon = ICON_PREFIX + this.model.icon;
+			}
 
 			this.initIcon();
 			this.$el.confirmDialog({
@@ -83,32 +91,36 @@ define([ "jquery", "backbone", "handlebars", "workspace.routing", "jquery.squash
 			this.cleanup();
 			this.trigger("selectIcon.cancel");
 			if (!!window.squashtm.vent) {
-				window.squashtm.vent.trigger("iconselectdialog::cancelled", { model: this.model, view: this, source: event });
+				window.squashtm.vent.trigger("iconselectdialog:cancelled", { model: this.model, view: this, source: event });
 			}
 		},
 
+/**
+ * Upon confirmation, will trigger a "iconselectdialog:confirmed" event using squashtm.vent if it exists.
+ * event is { model: { icon: <icon name> }, view: this, source: domEvent }
+ * @param event
+ */
 		confirm : function(event) {
 			this.cleanup();
 
-			var self = this;
+			var icon;
+			var classes = this.$(".info-list-item-icon-selected").attr("class");
 
-			var icon = "noicon";
-			var selected = this.$(".info-list-item-icon-selected");
-
-			if (selected.length > 0){
-				var classList = selected.attr('class').split(/\s+/);
-				classList.forEach(function(item, index) {
-					var indx = item.indexOf("sq-icon-");
-				if (indx  > -1){
-						icon = item.substring(indx + "sq-icon-".length);
-				}
+			if (classes !== undefined) {
+				var iconClass = _.find(classes.split(" "), function(it) {
+					return it.indexOf(ICON_PREFIX) === 0;
 				});
+
+				if (iconClass !== undefined) {
+					icon = iconClass.substring(ICON_PREFIX.length);
+				}
 			}
 
-			this.trigger("selectIcon.confirm", icon);
+			this.model.icon = icon;
+			this.trigger("selectIcon.confirm", icon === undefined ? "none" : icon);
 
 			if (!!window.squashtm.vent) {
-				window.squashtm.vent.trigger("iconselectdialog::confirmed", {
+				window.squashtm.vent.trigger("iconselectdialog:confirmed", {
 					model : this.model,
 					view : this,
 					source : event
@@ -118,7 +130,8 @@ define([ "jquery", "backbone", "handlebars", "workspace.routing", "jquery.squash
 
 		cleanup : function() {
 			this.$el.addClass("not-displayed");
-			this.$el.confirmDialog("destroy");
+			// if we destroy twice, jqui blows up
+			this.$el.hasClass("ui-dialog-content") && this.$el.confirmDialog("destroy");
 		},
 
 		remove : function() {
@@ -126,8 +139,6 @@ define([ "jquery", "backbone", "handlebars", "workspace.routing", "jquery.squash
 			this.undelegateEvents();
 			Backbone.View.prototype.remove.apply(this, arguments);
 		},
-
-
 	});
 
 	return View;

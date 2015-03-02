@@ -881,7 +881,7 @@ define(["jquery",
 	}
 	
 	function _drawIcon(value, cell){
-		value += " table-icon ";	
+		value += " sq-icon ";	
 		cell.addClass(value);
 	}
 	

@@ -30,7 +30,7 @@ import java.util.List;
  * @author Gregory Fouquet
  * 
  */
-public class DataTableModel {
+public class DataTableModel<T> {
 	// total nr of records before filtering.
 	private long iTotalRecords;
 
@@ -44,7 +44,7 @@ public class DataTableModel {
 	private String sColumns;
 
 	// list of data rows as arrays of objects.
-	private List<Object> aaData = new ArrayList<Object>();
+	private List<T> aaData = new ArrayList<>();
 
 
 
@@ -53,11 +53,11 @@ public class DataTableModel {
 		this.sEcho = sEcho;
 	}
 
-	public void setAaData(List<Object> aaData) {
+	public void setAaData(List<T> aaData) {
 		this.aaData = aaData;
 	}
 
-	public List<Object> getAaData() {
+	public List<T> getAaData() {
 		return aaData;
 	}
 
@@ -94,7 +94,7 @@ public class DataTableModel {
 		return sColumns;
 	}
 
-	public void addRow(Object row) {
+	public void addRow(T row) {
 		aaData.add(row);
 	}
 

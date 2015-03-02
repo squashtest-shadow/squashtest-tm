@@ -25,17 +25,16 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.execution.ExecutionStep;
 import org.squashtest.tm.service.execution.ExecutionFinder;
 import org.squashtest.tm.service.testcase.TestCaseLibraryFinderService;
+import org.squashtest.tm.web.exception.ResourceNotFoundException;
 import org.squashtest.tm.web.internal.model.rest.RestExecution;
 import org.squashtest.tm.web.internal.model.rest.RestExecutionStep;
 
@@ -48,20 +47,6 @@ public class ExecutionRestController {
 
 	@Inject
 	private TestCaseLibraryFinderService testCaseLibraryFinder;
-
-	@ResponseStatus(value = HttpStatus.NOT_FOUND)
-	private final class ResourceNotFoundException extends RuntimeException {
-
-		private static final long serialVersionUID = 6673064417292687334L;
-
-		public ResourceNotFoundException() {
-			super();
-		}
-
-		public ResourceNotFoundException(Throwable cause) {
-			super(cause);
-		}
-	}
 
 	private Execution findExecution(Long id) {
 

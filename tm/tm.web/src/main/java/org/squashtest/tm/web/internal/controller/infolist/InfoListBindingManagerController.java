@@ -58,7 +58,7 @@ public class InfoListBindingManagerController {
 
 		ModelAndView mav = new ModelAndView("project-tabs/info-list-binding.html");
 		GenericProject project = projectService.findById(projectId);
-		List<InfoList> infoLists = infoListService.findAllUserList();
+		List<InfoList> infoLists = infoListService.findAllUserLists();
 		mav.addObject("proj", project);
 		mav.addObject("category", buildCategoryData(infoLists, locale));
 		mav.addObject("nature",buildNatureData(infoLists, locale));

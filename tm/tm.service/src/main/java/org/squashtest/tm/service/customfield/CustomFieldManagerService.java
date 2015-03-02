@@ -24,6 +24,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.core.dynamicmanager.annotation.DynamicManager;
 import org.squashtest.tm.domain.customfield.CustomField;
+import org.squashtest.tm.service.security.Authorizations;
 
 /**
  * Facade service for custom fields management.
@@ -34,7 +35,7 @@ import org.squashtest.tm.domain.customfield.CustomField;
 @Transactional
 @DynamicManager(name = "squashtest.tm.service.CustomFieldManagerService", entity = CustomField.class)
 public interface CustomFieldManagerService extends CustomCustomFieldManagerService, CustomFieldFinderService {
-	String HAS_ROLE_ADMIN = "hasRole('ROLE_ADMIN')";
+	String HAS_ROLE_ADMIN = Authorizations.HAS_ROLE_ADMIN;
 
 	@PreAuthorize(HAS_ROLE_ADMIN)
 	void changeLabel(long customFieldId, String label);

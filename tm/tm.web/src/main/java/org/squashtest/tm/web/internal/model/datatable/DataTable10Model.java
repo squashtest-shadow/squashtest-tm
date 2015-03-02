@@ -30,7 +30,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * @author Gregory Fouquet
  * 
  */
-public interface DataTable10Model {
+public interface DataTable10Model<T> {
 	@JsonProperty
 	long getDraw();
 
@@ -41,5 +41,5 @@ public interface DataTable10Model {
 	long getRecordsFiltered();
 
 	@JsonProperty
-	List<Object> getData();
+	List<T> getData();
 }

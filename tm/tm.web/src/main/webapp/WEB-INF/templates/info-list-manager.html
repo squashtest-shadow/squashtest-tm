@@ -145,6 +145,7 @@
                     <th th:text="#{label.Name}">Name</th>
                     <th th:text="#{label.Description}">Description</th>
                     <th th:text="#{label.defaultValue}">Default value</th>
+                    <th th:text="#{label.code}">Code</th>
                     <th th:text="#{label.createdOn}">Created on</th>
                     <th th:text="#{label.createdBy}">Created by</th>
                     <th th:text="#{label.lastModifiedOn}">Modified on</th>
@@ -157,9 +158,10 @@
                   <tr th:each="item, iterStat : ${infoLists}" th:object="${item}">
                     <td th:text="*{id}" class="not-displayed item-id">1</td>
                     <td th:text="${iterStat.count}">1</td>
-                    <td th:text="*{name}">My Fancy List</td>
+                    <td th:text="*{label}">My Fancy List</td>
                     <td th:text="*{description}">Shucky Ducky Quack Quack</td>
-                    <td th:text="*{defaultValue}">Default value</td>
+                    <td th:text="*{defaultLabel}">Default value</td>
+                    <td th:text="*{code}">code</td>
                     <td sq:iso-date="*{createdOn}">2014-01-02</td>
                     <td th:text="*{createdBy}">batman</td>
                     <td sq:iso-date="*{lastModifiedOn}">2014-01-02</td>
@@ -169,7 +171,7 @@
                         <span class="ui-icon ui-icon-trash"></span>
                       </button>
                     </td>
-                    <td th:text="*{boundProjectsCount}" class="not-displayed">0</td>
+                    <td th:text="*{bound}" class="not-displayed">0</td>
                   </tr>
                 </tbody>
               </table>
@@ -220,6 +222,7 @@
                     <tr>
                       <th th:text="#{label.option}">Option</th>
                       <th th:text="#{label.code}">Code</th>
+                      <th th:text="#{label.icon}">Icon</th>
                       <th style="width: 2em;" th:text="#{label.default}">Default</th>
                       <th style="width: 1.5em;">&nbsp;</th>
                     </tr>
@@ -256,9 +259,11 @@
             </div>
 
             <div class="control-group">
-              <label for="option-icon" class="control-label" th:text="#{label.icon}">Icon</label>
+              <label for="sel-opt-icon" class="control-label" th:text="#{label.icon}">Icon</label>
               <div class="controls">
-                <input id="choose-option-icon" class="sq-btn" type="button" value="choose icon" />
+                <a id="choose-sel-opt-icon" href="javascript:void(0)" value="choose icon" th:value="#{label.chooseIcon}">
+                  <span id="sel-opt-icon" class="sq-icon" data-none="#{label.infoListItems.icon.none}" th:text="#{label.infoListItems.icon.none}">none</span>
+                </a>
               </div>
             </div>
 
@@ -272,7 +277,21 @@
           <input type="radio" name="option-default" value="{{option}}" {{checked}} />
           {{!--]]>--}}
           </script>
+
+          <script id="icon-cell-tpl" type="text/x-handlebars-template" th:inline="text">
+          <a data-code="{{code}}" href="javascript:void(0)" class="option-icon">
+            <span class="sq-icon sq-icon-{{icon}}" title="{{icon}}"></span>
+          </a>
+          </script>
+          
+          <script id="noicon-cell-tpl" type="text/x-handlebars-template" th:inline="text">
+          <a data-code="{{code}}" href="javascript:void(0)" class="option-icon" th:text="#{label.infoListItems.icon.none}">None</a>
+          </script>
+          
           <script id="icon-picker-dialog-tpl" type="text/x-handlebars-template" th:inline="text" th:include="icon-library.frag :: icon-picker-dialog(id='icon-picker-dialog', icons=${icons})">
+          </script>
+          
+          <script id="icon-picker-dialog-tpl" type="text/x-handlebars-template" th:inline="text" th:include="icons-library.frag :: icon-picker-dialog(id='icon-picker-dialog', icons=${icons})">
           </script>
         <script type="text/javascript">
         publish("loaded.newItemDialog");

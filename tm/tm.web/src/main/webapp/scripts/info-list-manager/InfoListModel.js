@@ -28,14 +28,14 @@ define([ "backbone", "underscore", "squash.translator", , "../app/squash.backbon
 			label : "",
 			description : "",
 			code : "",
-			options : []
+			items : []
 		},
 		validation : {
-			label : { notBlank : true, maxLength : 50 },
-			code : { notBlank : true, maxLength : 20 },
-			options : {
+			label : { notBlank : true, maxLength : 100 },
+			code : { notBlank : true, maxLength : 30 },
+			items : {
 				fn : function(val, attr, computed) {
-					if ((val || []).length != 0 && _.where(val, { isDefault : true }).length != 1) {
+					if ((val || []).length === 0 || _.where(val, { isDefault : true }).length !== 1) {
 						return messages.get("message.noDefaultOption");
 					}
 				}

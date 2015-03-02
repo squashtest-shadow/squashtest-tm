@@ -18,13 +18,27 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ "underscore", "app/BindView", "handlebars", "backbone.validation", "squash.translator" ],
-	function(_, BindView, Handlebars, Validation, messages) {
+define([ "underscore", "app/BindView", "handlebars", "backbone.validation", "squash.translator", "info-list/IconSelectDialog" ],
+	function(_, BindView, Handlebars, Validation, messages, IconPicker) {
 	"use strict";
+
+	/**
+	 * Renders the icon picker if necessary
+	 */
+	function renderIconPicker() {
+		if (IconPicker.template === undefined) {
+			var src = $("#icon-picker-dialog-tpl").html();
+			IconPicker.template = Handlebars.compile(src);
+		}
+		if ($("#icon-picker-dialog").length === 0) {
+			$("body").append($(IconPicker.template({})));
+		}
+	}
 
 	var validationOptions = {
 		valid : function(view, prop) {
-			view.boundControl(prop).setState("success");
+		// not "success" state because we do not want green fields. yet.
+			view.boundControl(prop).setState("xsuccess");
 		},
 		invalid : function(view, prop, err) {
 			console.log(view);
@@ -37,12 +51,16 @@ define([ "underscore", "app/BindView", "handlebars", "backbone.validation", "squ
 		wrapper: "#new-option-pane",
 
 		events : {
-			"click #add-option" : "onClickAdd"
+			"click #add-option" : "onClickAdd",
+			"click #choose-sel-opt-icon": "onClickChooseIcon",
 		},
 
 		initialize : function() {
 			Backbone.Validation.bind(this, validationOptions);
 			$(this.wrapper).html(this.render().$el);
+
+			this.listenTo(squashtm.vent, "iconselectdialog:cancelled", this.onIconPickingCancelled);
+			this.listenTo(squashtm.vent, "iconselectdialog:confirmed", this.onIconPicked);
 		},
 
 		render : function() {
@@ -69,6 +87,39 @@ define([ "underscore", "app/BindView", "handlebars", "backbone.validation", "squ
 				});
 			}
 		},
+		/**
+		 * handler of the "choose icon" button (in the "selected" icon panel)
+		 * @param event
+		 */
+		onClickChooseIcon: function(event) {
+			renderIconPicker();
+			this.iconPicker = this.iconPicker || new IconPicker({ el: "#icon-picker-dialog", model: { icon: this.model.get("iconName") } });
+		},
+
+		onIconPicked: function(event) {
+			if (event.view !== this.iconPicker) {
+				return; // bail out
+			}
+			var icon = event.model.icon;
+			this.model.set("iconName", icon);
+
+			var $optIcon = this.$("#sel-opt-icon");
+
+			if (_.isEmpty(icon)) {
+				$optIcon.removeClass().text($optIcon.data("none"));
+			} else {
+				$optIcon.addClass("sq-icon sq-icon-" + icon).text("");
+			}
+			this.onIconPickingCancelled(event);
+		},
+
+		onIconPickingCancelled: function(event) {
+			if (event.view !== this.iconPicker) {
+				return; // bail out
+			}
+			event.view.remove();
+			this.iconPicker = undefined;
+		}
 	});
 
 	return InfoListOptionPanel;

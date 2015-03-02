@@ -69,7 +69,7 @@ public interface InfoListItemDao extends EntityDao<InfoListItem>{
 	 */
 	boolean isTypeConsistent(long projectId, String itemCode);
 
-	void removeInfoListItems(long infoListId);
+	void unbindFromLibraryObjects(long infoListId);
 
 	boolean isUsed(long infoListItemId);
 	

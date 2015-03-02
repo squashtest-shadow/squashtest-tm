@@ -31,8 +31,13 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.util.HtmlUtils;
+import org.squashtest.tm.domain.infolist.InfoListItem;
 import org.squashtest.tm.service.infolist.InfoListItemManagerService;
+import org.squashtest.tm.web.exception.ResourceNotFoundException;
 import org.squashtest.tm.web.internal.helper.JEditablePostParams;
+import org.squashtest.tm.web.internal.http.ContentTypes;
+import org.squashtest.tm.web.internal.model.builder.JsonInfoListBuilder;
+import org.squashtest.tm.web.internal.model.json.JsonInfoListItem;
 import org.squashtest.tm.web.internal.util.IconLibrary;
 
 @Controller
@@ -41,6 +46,8 @@ public class InfoListItemController {
 
 	@Inject
 	private InfoListItemManagerService listItemManager;
+	@Inject
+	private JsonInfoListBuilder jsonBuilder;
 
 	@RequestMapping(value = "/{infoListItemId}", method = RequestMethod.POST, params = { "id=info-list-item-label",
 			JEditablePostParams.VALUE })
@@ -73,11 +80,21 @@ public class InfoListItemController {
 	@RequestMapping(value = "/{infoListItemId}/isUsed", method = RequestMethod.GET)
 	@ResponseBody
 	public boolean isUsed(@PathVariable long infoListItemId) {
-		
+
 		return listItemManager.isUsed(infoListItemId);
 	}
-	
-	
+
+	@RequestMapping(value="/code/{code}", method = RequestMethod.GET, produces = ContentTypes.APPLICATION_JSON)
+	@ResponseBody
+	public JsonInfoListItem getItemByCode(@PathVariable String code) {
+		InfoListItem item = listItemManager.findByCode(code);
+		if (item == null) {
+			throw new ResourceNotFoundException();
+		}
+		return jsonBuilder.toJson(item);
+	}
+
+
 	@RequestMapping(value = "/icons", method = RequestMethod.GET)
 	@ResponseBody
 	public List<String> getInfoListIconsList() {

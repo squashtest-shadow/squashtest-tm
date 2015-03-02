@@ -21,7 +21,9 @@
 package org.squashtest.tm.domain.infolist;
 
 public enum SystemInfoListCode {
-	TEST_CASE_NATURE("DEF_TC_NAT"), TEST_CASE_TYPE("DEF_TC_TYP"), REQUIREMENT_CATEGORY("DEF_REQ_CAT");
+	TEST_CASE_NATURE("DEF_TC_NAT"),
+	TEST_CASE_TYPE("DEF_TC_TYP"),
+	REQUIREMENT_CATEGORY("DEF_REQ_CAT");
 
 	private final String code;
 
@@ -29,7 +31,7 @@ public enum SystemInfoListCode {
 		this.code = code;
 	}
 
-	
+
 	public static void verifyModificationPermission(InfoList infoList) {
 
 		for (SystemInfoListCode id : SystemInfoListCode.values()) {
@@ -39,10 +41,30 @@ public enum SystemInfoListCode {
 		}
 	}
 
+	public static boolean isSystem(String code) {
+		for (SystemInfoListCode sys : SystemInfoListCode.values()) {
+			if (sys.getCode().equals(code)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public static boolean isSystem(InfoList list) {
+		return isSystem(list.getCode());
+	}
+
+	public static boolean isNotSystem(String code) {
+		return !isSystem(code);
+	}
+
+	public static boolean isNotSystem(InfoList list) {
+		return !isSystem(list);
+	}
 
 	public String getCode() {
 		return code;
 	}
-	
-	
+
+
 }

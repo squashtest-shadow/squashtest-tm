@@ -77,7 +77,7 @@ public class SquashIso8601DateAttrProcessor extends AbstractTextChildModifierAtt
 
 		final Object result = expression.execute(configuration, arguments);
 
-		return DateUtils.formatISO(result);
+		return result == null ? "" : DateUtils.formatISO(result);
 
 	}
 

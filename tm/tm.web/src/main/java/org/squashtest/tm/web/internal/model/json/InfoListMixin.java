@@ -18,25 +18,29 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.infolist;
+package org.squashtest.tm.web.internal.model.json;
 
 import java.util.List;
 
-import org.squashtest.tm.domain.infolist.InfoList;
+import org.squashtest.tm.domain.infolist.InfoListItem;
+import org.squashtest.tm.domain.infolist.UserListItem;
 
-public interface InfoListFinderService {
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
-	InfoList findById(Long id);
-
-	InfoList findByCode(String code);
-
-	List<InfoList> findAllUserLists();
-
-	/**
-	 * Fetches all infolists and tryurns them in an adapter also containing the bound project count.
-	 * 
-	 * @return
-	 */
-	List<IsBoundInfoListAdapter> findAllWithBoundInfo();
+/**
+ * Jackson mixin to deserialize InfoList. It deserializes InfoListItems into UserListItems.
+ * 
+ * TODO maybe there should be a discriminator in the item's json, then we would default to USerListItem when
+ * discriminator is absent.
+ * 
+ * 
+ * @author Gregory Fouquet
+ * 
+ */
+@JsonAutoDetect
+public abstract class InfoListMixin {
+	@JsonDeserialize(contentAs = UserListItem.class)
+	private List<InfoListItem> items;
 
 }

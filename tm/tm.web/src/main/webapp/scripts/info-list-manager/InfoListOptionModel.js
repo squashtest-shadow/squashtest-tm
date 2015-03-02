@@ -38,14 +38,21 @@ define([ "backbone", "squash.translator", "../app/squash.backbone.validation" ],
 	}
 
 	return Backbone.Model.extend({
+		defaults : {
+			label : "",
+			code : "",
+			isDefault : false,
+			iconName : ""
+		},
+
 		validation : {
 			label : {
 				notBlank : true,
-				maxLength : 50
+				maxLength : 100
 			},
 			code : {
 				notBlank : true,
-				maxLength : 20,
+				maxLength : 30,
 				fn : isCodeUnique
 			},
 		}

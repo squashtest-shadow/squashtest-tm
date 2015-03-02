@@ -21,15 +21,21 @@
 package org.squashtest.tm.service.internal.infolist;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import javax.inject.Inject;
 
+import org.hibernate.SessionFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.infolist.InfoList;
 import org.squashtest.tm.domain.infolist.InfoListItem;
 import org.squashtest.tm.domain.infolist.SystemInfoListCode;
+import org.squashtest.tm.service.infolist.IsBoundInfoListAdapter;
 import org.squashtest.tm.service.infolist.InfoListManagerService;
 import org.squashtest.tm.service.internal.repository.InfoListDao;
 import org.squashtest.tm.service.internal.repository.InfoListItemDao;
@@ -37,6 +43,8 @@ import org.squashtest.tm.service.internal.repository.InfoListItemDao;
 @Transactional
 @Service("squashtest.tm.service.InfoListManagerService")
 public class InfoListManagerServiceImpl implements InfoListManagerService {
+	@Inject
+	private SessionFactory sessionFactory;
 
 	@Inject
 	private InfoListDao infoListDao;
@@ -94,34 +102,107 @@ public class InfoListManagerServiceImpl implements InfoListManagerService {
 	@Override
 	public boolean isUsedByOneOrMoreProject(long infoListId) {
 
-		return 	infoListDao.isUsedByOneOrMoreProject(infoListId);
+		return infoListDao.isUsedByOneOrMoreProject(infoListId);
 	}
 
 	@Override
-	public void deleteInfoList(long infoListId) {
+	public void remove(long infoListId) {
 
 		InfoList infoList = infoListDao.findById(infoListId);
 		SystemInfoListCode.verifyModificationPermission(infoList);
 
-		infoListDao.removeInfoListFromProjects(infoListId);
-		infoListItemDao.removeInfoListItems(infoListId);
+		infoListDao.unbindFromProject(infoListId);
+		infoListItemDao.unbindFromLibraryObjects(infoListId);
 
-		for (InfoListItem item : infoList.getItems()){
+		for (InfoListItem item : infoList.getItems()) {
 			infoListItemDao.remove(item);
 		}
 
 		infoListDao.remove(infoList);
-
 	}
-@Override
-	public List<InfoList> findAllUserList() {
+
+	@Override
+	public List<InfoList> findAllUserLists() {
 		List<InfoList> allList = infoListDao.findAllOrdered();
-		List<InfoList> systemList = new ArrayList<InfoList>();
+		List<InfoList> systemList = new ArrayList<>();
 		for (SystemInfoListCode sysInfo : SystemInfoListCode.values()) {
 			systemList.add(infoListDao.findByCode(sysInfo.getCode()));
 		}
 		allList.removeAll(systemList);
 		return allList;
+	}
+
+	/**
+	 * @see org.squashtest.tm.service.infolist.InfoListManagerService#remove(java.util.List)
+	 */
+	@Override
+	public void remove(List<Long> ids) {
+		for (long id : ids) {
+			remove(id);
+		}
+	}
+
+	/**
+	 * @see org.squashtest.tm.service.infolist.InfoListManagerService#findAllWithBoundInfo()
+	 */
+	@Override
+	@Transactional(readOnly = true)
+	public List<IsBoundInfoListAdapter> findAllWithBoundInfo() {
+		List<IsBoundInfoListAdapter> unbound = createBoundAdapters(infoListDao.findAllUnbound(), false);
+		List<IsBoundInfoListAdapter> bound = createBoundAdapters(infoListDao.findAllBound(), true);
+
+		SortedSet<IsBoundInfoListAdapter> res = new TreeSet<>(new Comparator<IsBoundInfoListAdapter>() {
+			@Override
+			public int compare(IsBoundInfoListAdapter kore, IsBoundInfoListAdapter sore) {
+				return kore.getLabel().compareTo(sore.getLabel());
+			}
+		});
+
+		res.addAll(bound);
+		res.addAll(unbound);
+
+		return filterSystemLists(res);
+	}
+
+	/**
+	 * Returns a collection in the same (iterator) order as the given collection where systems lists have been filtered out.
+	 * 
+	 * @param lists
+	 * @return
+	 */
+	private List<IsBoundInfoListAdapter> filterSystemLists(Collection<IsBoundInfoListAdapter> lists) {
+		List<IsBoundInfoListAdapter> res = new ArrayList<>(lists.size());
+
+		for (IsBoundInfoListAdapter list : lists) {
+			if (SystemInfoListCode.isNotSystem(list.getCode())) {
+				res.add(list);
+			}
+		}
+
+		return res;
+	}
+
+	private List<IsBoundInfoListAdapter> createBoundAdapters(List<InfoList> lists, boolean isBound) {
+		List<IsBoundInfoListAdapter> adapted = new ArrayList<>(lists.size());
+		for (InfoList list : lists) {
+			adapted.add(new IsBoundInfoListAdapter(list, isBound));
+		}
+
+		return adapted;
+	}
+
+	/**
+	 * @see org.squashtest.tm.service.infolist.InfoListManagerService#persist(org.squashtest.tm.domain.infolist.InfoList)
+	 */
+	@Override
+	public InfoList persist(InfoList infoList) {
+		infoListDao.persist(infoList);
+
+		for (InfoListItem item : infoList.getItems()) {
+			infoListItemDao.persist(item);
+		}
+
+		return infoList;
 	}
 
 }

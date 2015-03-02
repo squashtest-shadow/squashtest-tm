@@ -20,23 +20,34 @@
  */
 package org.squashtest.tm.service.infolist;
 
-import java.util.List;
+import javax.validation.constraints.NotNull;
 
 import org.squashtest.tm.domain.infolist.InfoList;
 
-public interface InfoListFinderService {
+/**
+ * Adapts an InfoList into a consolidated view of list + does it have any bound projects.
+ * 
+ * Strictly not a Decorator because it does not 100% match the {@link InfoList} api.
+ * 
+ * @author Gregory Fouquet
+ * 
+ */
+public class IsBoundInfoListAdapter extends InfoListAdapter {
+	private final boolean bound;
 
-	InfoList findById(Long id);
-
-	InfoList findByCode(String code);
-
-	List<InfoList> findAllUserLists();
+	public IsBoundInfoListAdapter(@NotNull InfoList delegate, boolean isBound) {
+		super(delegate);
+		this.bound = isBound;
+	}
 
 	/**
-	 * Fetches all infolists and tryurns them in an adapter also containing the bound project count.
-	 * 
-	 * @return
+	 * @return the isBound
 	 */
-	List<IsBoundInfoListAdapter> findAllWithBoundInfo();
+	public boolean isBound() {
+		return bound;
+	}
 
+	public String getDefaultLabel() {
+		return delegate.getDefaultItem().getLabel();
+	}
 }

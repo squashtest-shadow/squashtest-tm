@@ -29,19 +29,18 @@ import org.squashtest.tm.domain.infolist.SystemListItem;
 import org.squashtest.tm.service.internal.repository.InfoListItemDao;
 
 @Repository
-public class HibernateInfoListItemDao extends HibernateEntityDao<InfoListItem> implements InfoListItemDao{
+public class HibernateInfoListItemDao extends HibernateEntityDao<InfoListItem> implements InfoListItemDao {
 
 	@Override
 	public SystemListItem getSystemRequirementCategory() {
-		return (SystemListItem) currentSession().getNamedQuery("systemListItem.getSystemRequirementCategory").uniqueResult();
+		return (SystemListItem) currentSession().getNamedQuery("systemListItem.getSystemRequirementCategory")
+				.uniqueResult();
 	}
-
 
 	@Override
 	public SystemListItem getSystemTestCaseNature() {
 		return (SystemListItem) currentSession().getNamedQuery("systemListItem.getSystemTestCaseNature").uniqueResult();
 	}
-
 
 	@Override
 	public SystemListItem getSystemTestCaseType() {
@@ -49,99 +48,87 @@ public class HibernateInfoListItemDao extends HibernateEntityDao<InfoListItem> i
 	}
 
 	@Override
-	public InfoListItem findByCode(String code){
+	public InfoListItem findByCode(String code) {
 		Query q = currentSession().getNamedQuery("infoListItem.findByCode");
 		q.setParameter("code", code);
-		return (InfoListItem)q.uniqueResult();
+		return (InfoListItem) q.uniqueResult();
 	}
-
 
 	@Override
-	public InfoListItem findReference(ListItemReference reference){
+	public InfoListItem findReference(ListItemReference reference) {
 		return findByCode(reference.getCode());
 	}
-
 
 	@Override
 	public InfoListItem findDefaultRequirementCategory(long projectId) {
 		Query q = currentSession().getNamedQuery("infoListItem.findDefaultRequirementCategoryForProject");
 		q.setParameter("projectId", projectId);
-		return (InfoListItem)q.uniqueResult();
+		return (InfoListItem) q.uniqueResult();
 	}
-
 
 	@Override
 	public InfoListItem findDefaultTestCaseNature(long projectId) {
 		Query q = currentSession().getNamedQuery("infoListItem.findDefaultTestCaseNatureForProject");
 		q.setParameter("projectId", projectId);
-		return (InfoListItem)q.uniqueResult();
+		return (InfoListItem) q.uniqueResult();
 	}
-
 
 	@Override
 	public InfoListItem findDefaultTestCaseType(long projectId) {
 		Query q = currentSession().getNamedQuery("infoListItem.findDefaultTestCaseTypeForProject");
 		q.setParameter("projectId", projectId);
-		return (InfoListItem)q.uniqueResult();
+		return (InfoListItem) q.uniqueResult();
 	}
-
 
 	@Override
 	public boolean isCategoryConsistent(long projectId, String itemCode) {
 		Query q = currentSession().getNamedQuery("infoListItem.foundCategoryInProject");
 		q.setParameter("projectId", projectId);
 		q.setParameter("itemCode", itemCode);
-		return ((Long)q.uniqueResult()==1);
+		return ((Long) q.uniqueResult() == 1);
 	}
-
 
 	@Override
 	public boolean isNatureConsistent(long projectId, String itemCode) {
 		Query q = currentSession().getNamedQuery("infoListItem.foundNatureInProject");
 		q.setParameter("projectId", projectId);
 		q.setParameter("itemCode", itemCode);
-		return ((Long)q.uniqueResult()==1);
+		return ((Long) q.uniqueResult() == 1);
 	}
-
 
 	@Override
 	public boolean isTypeConsistent(long projectId, String itemCode) {
 		Query q = currentSession().getNamedQuery("infoListItem.foundTypeInProject");
 		q.setParameter("projectId", projectId);
 		q.setParameter("itemCode", itemCode);
-		return ((Long)q.uniqueResult()==1);
+		return ((Long) q.uniqueResult() == 1);
 	}
 
-
 	@Override
-	public void removeInfoListItems(long infoListId) {
-		InfoListItem defaultReqCat =  findByCode(SystemInfoListItemCode.CAT_UNDEFINED.getCode());
+	public void unbindFromLibraryObjects(long infoListId) {
+		InfoListItem defaultReqCat = findByCode(SystemInfoListItemCode.CAT_UNDEFINED.getCode());
 		execUpdateQuery(infoListId, "infoList.setReqCatToDefault", defaultReqCat);
 		InfoListItem defaultTcNat = findByCode(SystemInfoListItemCode.NAT_UNDEFINED.getCode());
 		execUpdateQuery(infoListId, "infoList.setTcNatToDefault", defaultTcNat);
 		InfoListItem defaultTcType = findByCode(SystemInfoListItemCode.TYP_UNDEFINED.getCode());
 		execUpdateQuery(infoListId, "infoList.setTcTypeToDefault", defaultTcType);
-		
-	}
 
+	}
 
 	private void execUpdateQuery(long infoListId, String queryName, InfoListItem defaultParam) {
 		Query query = currentSession().getNamedQuery(queryName);
 		query.setParameter("default", defaultParam);
 		query.setParameter("id", infoListId);
 		query.executeUpdate();
-		
-	}
 
+	}
 
 	@Override
 	public boolean isUsed(long infoListItemId) {
 		Query q = currentSession().getNamedQuery("infoListItem.isUsed");
 		q.setParameter("id", infoListItemId);
-		return ((Long)q.uniqueResult()>0);
+		return ((Long) q.uniqueResult() > 0);
 	}
-
-
 
 	@Override
 	public void removeInfoListItem(long infoListItemId, InfoListItem defaultItem) {
@@ -149,10 +136,7 @@ public class HibernateInfoListItemDao extends HibernateEntityDao<InfoListItem> i
 		execUpdateQuery(infoListItemId, "infoListItem.setReqCatToDefault", defaultItem);
 		execUpdateQuery(infoListItemId, "infoListItem.setTcNatToDefault", defaultItem);
 		execUpdateQuery(infoListItemId, "infoListItem.setTcTypeToDefault", defaultItem);
-		
+
 	}
-
-
-
 
 }

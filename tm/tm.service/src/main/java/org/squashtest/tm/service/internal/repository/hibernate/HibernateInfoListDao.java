@@ -33,9 +33,8 @@ import org.squashtest.tm.domain.infolist.InfoListItem;
 import org.squashtest.tm.domain.infolist.SystemInfoListCode;
 import org.squashtest.tm.service.internal.repository.InfoListDao;
 
-
 @Repository
-public class HibernateInfoListDao extends HibernateEntityDao<InfoList> implements InfoListDao{
+public class HibernateInfoListDao extends HibernateEntityDao<InfoList> implements InfoListDao {
 
 	@Inject
 	private SessionFactory sessionFactory;
@@ -43,41 +42,35 @@ public class HibernateInfoListDao extends HibernateEntityDao<InfoList> implement
 	protected Session getSession() {
 		return sessionFactory.getCurrentSession();
 	}
-	
+
 	@Override
 	public InfoList findByCode(String code) {
 		Query query = currentSession().getNamedQuery("infoList.findByCode");
 		query.setParameter("code", code);
-		return (InfoList)query.uniqueResult();
+		return (InfoList) query.uniqueResult();
 	}
 
 	@Override
 	public boolean isUsedByOneOrMoreProject(long infoListId) {
 		Query query = currentSession().getNamedQuery("infoList.findProjectUsingInfoList");
 		query.setParameter("id", infoListId);
-		if (query.list().size() > 0){
+		if (query.list().size() > 0) {
 			return true;
 		}
 		return false;
 	}
 
-
 	@Override
-	public void removeInfoListFromProjects(long infoListId) {
-
-		
+	public void unbindFromProject(long infoListId) {
 		InfoList defaultReqCatList = findByCode(SystemInfoListCode.REQUIREMENT_CATEGORY.getCode());
 		execUpdateQuery(infoListId, "infoList.project.setReqCatListToDefault", defaultReqCatList);
 		InfoList defaultTcNatList = findByCode(SystemInfoListCode.TEST_CASE_NATURE.getCode());
 		execUpdateQuery(infoListId, "infoList.project.setTcNatListToDefault", defaultTcNatList);
 		InfoList defaultTcTypeList = findByCode(SystemInfoListCode.TEST_CASE_TYPE.getCode());
 		execUpdateQuery(infoListId, "infoList.project.setTcTypeListToDefault", defaultTcTypeList);
-
-		
 	}
 
-	
-	private void execUpdateQuery(long infoListId, String queryName, Object defaultParam){
+	private void execUpdateQuery(long infoListId, String queryName, Object defaultParam) {
 		Query query = currentSession().getNamedQuery(queryName);
 		query.setParameter("default", defaultParam);
 		query.setParameter("id", infoListId);
@@ -87,27 +80,40 @@ public class HibernateInfoListDao extends HibernateEntityDao<InfoList> implement
 	@Override
 	public List<InfoList> findAllOrdered() {
 		return executeListNamedQuery("infoList.findAllOrdered");
-		
+
 	}
 
 	@Override
 	public void setDefaultCategoryForProject(long projectId, InfoListItem defaultItem) {
-		execUpdateQuery(projectId,"infoList.setProjectCategoryToDefaultItem", defaultItem);
+		execUpdateQuery(projectId, "infoList.setProjectCategoryToDefaultItem", defaultItem);
 	}
 
 	@Override
 	public void setDefaultNatureForProject(long projectId, InfoListItem defaultItem) {
-		execUpdateQuery(projectId,"infoList.setProjectNatureToDefaultItem", defaultItem);
-		
+		execUpdateQuery(projectId, "infoList.setProjectNatureToDefaultItem", defaultItem);
+
 	}
 
 	@Override
 	public void setDefaultTypeForProject(long projectId, InfoListItem defaultItem) {
-		execUpdateQuery(projectId,"infoList.setProjectTypeToDefaultItem", defaultItem);
-		
+		execUpdateQuery(projectId, "infoList.setProjectTypeToDefaultItem", defaultItem);
+
 	}
-	
-	
-	
+
+	/**
+	 * @see org.squashtest.tm.service.internal.repository.InfoListDao#findAllBound()
+	 */
+	@Override
+	public List<InfoList> findAllBound() {
+		return executeListNamedQuery("infoList.findAllBound");
+	}
+
+	/**
+	 * @see org.squashtest.tm.service.internal.repository.InfoListDao#findAllUnbound()
+	 */
+	@Override
+	public List<InfoList> findAllUnbound() {
+		return executeListNamedQuery("infoList.findAllUnbound");
+	}
 
 }

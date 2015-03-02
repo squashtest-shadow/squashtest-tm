@@ -35,11 +35,11 @@ import org.springframework.util.DigestUtils;
 @Embeddable
 public class CustomFieldOption {
 	@NotBlank
-	@Size(min = 0, max = 255)
+	@Size(max = 255)
 	private String label;
 
 	@NotBlank
-	@Size(min = 0, max = 30)
+	@Size(max = 30)
 	@Pattern(regexp = CustomField.CODE_REGEXP)
 	private String code = "";
 

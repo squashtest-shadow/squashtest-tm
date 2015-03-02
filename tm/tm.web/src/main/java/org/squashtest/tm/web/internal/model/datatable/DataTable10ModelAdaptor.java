@@ -30,8 +30,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * @author Gregory Fouquet
  * 
  */
-public class DataTable10ModelAdaptor implements DataTable10Model {
-	private final DataTableModel adapted;
+public class DataTable10ModelAdaptor<T> implements DataTable10Model<T> {
+	private final DataTableModel<T> adapted;
 
 	/**
 	 * Adapts a {@link DataTableModel} into a {@link DataTable10Model}
@@ -39,11 +39,11 @@ public class DataTable10ModelAdaptor implements DataTable10Model {
 	 * @param model
 	 * @return
 	 */
-	public static final DataTable10Model adapt(@NotNull DataTableModel model) {
-		return new DataTable10ModelAdaptor(model);
+	public static final <U> DataTable10Model<U> adapt(@NotNull DataTableModel<U> model) {
+		return new DataTable10ModelAdaptor<U>(model);
 	}
 
-	private DataTable10ModelAdaptor(DataTableModel adapted) {
+	private DataTable10ModelAdaptor(DataTableModel<T> adapted) {
 		super();
 		this.adapted = adapted;
 	}
@@ -80,7 +80,7 @@ public class DataTable10ModelAdaptor implements DataTable10Model {
 	 */
 	@Override
 	@JsonProperty
-	public List<Object> getData() {
+	public List<T> getData() {
 		return adapted.getAaData();
 	}
 }

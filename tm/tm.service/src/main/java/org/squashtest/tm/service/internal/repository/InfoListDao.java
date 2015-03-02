@@ -28,17 +28,28 @@ import org.squashtest.tm.domain.infolist.InfoListItem;
 public interface InfoListDao  extends EntityDao<InfoList>{
 
 	InfoList findById(long id);
-	
+
 	InfoList findByCode(String code);
 
 	boolean isUsedByOneOrMoreProject(long infoListId);
 
 
-	void removeInfoListFromProjects(long infoListId);
+	void unbindFromProject(long infoListId);
 
 	List<InfoList> findAllOrdered();
 
 	void setDefaultCategoryForProject(long projectId, InfoListItem defaultItem);
 	void setDefaultNatureForProject(long projectId, InfoListItem defaultItem);
 	void setDefaultTypeForProject(long projectId, InfoListItem defaultItem);
+
+	/**
+	 * Fetches all InfoLists bound to at least 1 Project in their natural order
+	 * @return
+	 */
+	List<InfoList> findAllBound();
+	/**
+	 * Fetches all InfoLists which are not bound to any Project in their natural order
+	 * @return
+	 */
+	List<InfoList> findAllUnbound();
 }

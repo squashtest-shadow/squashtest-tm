@@ -82,6 +82,12 @@
           </span>
           <span class="admin-section-label"><f:message key="label.infoListManagement" /></span>
         </a>
+        <a href="<c:url value='/administration/info-lists' />" class="unstyledLink">
+          <span id="admin-info-list" class="admin-section-icon admin-info-list-icon">
+            <img src="<c:url value='/images/Button_InfoList.jpg' />" title="Il n'y a personne pour me renseigner :-(" width="64px" height="64px" /> 
+          </span>
+          <span class="admin-section-label"><f:message key="label.infoListManagement" /></span>
+        </a>
        <a href="${ bugtrackerUrl }" class="unstyledLink">
           <span id="bug-tracker-admin" class="admin-section-icon admin-bugtracker-icon"></span>
           <span class="admin-section-label"><f:message key="label.bugtrackerManagement" /></span>

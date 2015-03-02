@@ -129,7 +129,7 @@ define([ "jquery", "backbone", "underscore", "workspace.event-bus", "squash.conf
 				_updateIcon : function(form, data, receiver){
 					var value = form.find('select').val();
 					var icon = $.grep(data, function(e){return e.code === value;})[0].iconName;
-					$(receiver).attr('class', '').addClass('small-icon sq-icon-'+icon);					
+					$(receiver).attr('class', '').addClass('sq-icon sq-icon-'+icon);					
 				},
 					
 				_postStatus : function (value, settings){
@@ -147,7 +147,7 @@ define([ "jquery", "backbone", "underscore", "workspace.event-bus", "squash.conf
 
 					var status = $("#test-case-status-icon");
 					status.attr("class", ""); //reset
-					status.addClass("small-icon test-case-status-" + value);
+					status.addClass("sq-icon test-case-status-" + value);
 				},
 				
 				_postImportance : function (value, settings){
@@ -164,7 +164,7 @@ define([ "jquery", "backbone", "underscore", "workspace.event-bus", "squash.conf
 
 					var status = $("#test-case-importance-icon");
 					status.attr("class", ""); // reset
-					status.addClass("small-icon test-case-importance-" + value);
+					status.addClass("sq-icon test-case-importance-" + value);
 				},
 				
 				_updateStatusInTree : function(value){

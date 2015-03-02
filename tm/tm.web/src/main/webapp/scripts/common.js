@@ -18,7 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-var CKEDITOR_BASEPATH = "/${bundle.contextPath}/scripts/ckeditor/";
+var CKEDITOR_BASEPATH = "/squash/scripts/ckeditor/";
 
 if (window.console === undefined) {
 	window.console = {};
@@ -294,7 +294,7 @@ requirejs.config({
 				},
 				"jquery.squash.messagedialog" : {
 					deps : [ "jquery", "jqueryui" ],
-					exports : "jquerySquashMessageDialog"
+					exports : "$.squash"
 				},
 				"jquery.squash.confirmdialog" : {
 					deps : [ "jquery", "jqueryui" ],

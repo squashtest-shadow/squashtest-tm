@@ -74,7 +74,6 @@
 		},
 
 		confirm : function(event) {
-			console.log("trigger validate", event)
 			if (false === this._trigger("validate", event)) {
 				return;
 			}

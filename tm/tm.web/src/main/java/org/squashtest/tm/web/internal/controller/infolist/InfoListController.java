@@ -28,6 +28,7 @@ import java.util.Map;
 import javax.inject.Inject;
 import javax.validation.Valid;
 
+import org.apache.commons.lang.builder.ToStringBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -35,6 +36,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -48,9 +50,12 @@ import org.squashtest.tm.domain.infolist.UserListItem;
 import org.squashtest.tm.service.infolist.InfoListItemManagerService;
 import org.squashtest.tm.service.infolist.InfoListManagerService;
 import org.squashtest.tm.web.internal.helper.JEditablePostParams;
+import org.squashtest.tm.web.internal.http.ContentTypes;
+import org.squashtest.tm.web.internal.http.JsonEmptyResponseEntity;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelBuilder;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelConstants;
+import org.squashtest.tm.web.internal.model.json.JsonInfoListItem;
 import org.squashtest.tm.web.internal.util.IconLibrary;
 
 @Controller
@@ -60,17 +65,20 @@ public class InfoListController {
 	private static final Logger LOGGER = LoggerFactory.getLogger(InfoListController.class);
 
 	@Inject
-	private InfoListManagerService listManager;
+	private InfoListManagerService infoListManager;
 
 	@Inject
-	private InfoListItemManagerService listItemManager;
+	private InfoListItemManagerService infoListItemManager;
+
+	@Inject
+	private InfoListItemController itemsController;
 
 	@RequestMapping(value = "/{infoListId}", method = RequestMethod.GET)
 	public String showInfoListModificationPage(@PathVariable Long infoListId, Model model) {
-		InfoList list = listManager.findById(infoListId);
+		InfoList list = infoListManager.findById(infoListId);
 		SystemInfoListCode.verifyModificationPermission(list);
 		model.addAttribute("infoList", list);
-		model.addAttribute("itemListIcons", InfoListItemList.getInfoListItems());
+		model.addAttribute("itemListIcons", IconLibrary.getIconNames());
 		LOGGER.debug("id " + list.getId());
 		LOGGER.debug("label " + list.getLabel());
 		LOGGER.debug("code " + list.getCode());
@@ -82,7 +90,7 @@ public class InfoListController {
 			JEditablePostParams.VALUE })
 	@ResponseBody
 	public String changeLabel(@PathVariable Long infoListId, @RequestParam(JEditablePostParams.VALUE) String label) {
-		listManager.changeLabel(infoListId, label);
+		infoListManager.changeLabel(infoListId, label);
 		return HtmlUtils.htmlEscape(label);
 	}
 
@@ -90,7 +98,7 @@ public class InfoListController {
 			JEditablePostParams.VALUE })
 	@ResponseBody
 	public String changeCode(@PathVariable Long infoListId, @RequestParam(JEditablePostParams.VALUE) String code) {
-		listManager.changeCode(infoListId, code);
+		infoListManager.changeCode(infoListId, code);
 		return HtmlUtils.htmlEscape(code);
 	}
 
@@ -99,16 +107,45 @@ public class InfoListController {
 	@ResponseBody
 	public String changeDescription(@PathVariable Long infoListId,
 			@RequestParam(JEditablePostParams.VALUE) String description) {
-		listManager.changeDescription(infoListId, description);
+		infoListManager.changeDescription(infoListId, description);
 		return description;
 	}
 
 	@RequestMapping(value = "/{infoListId}/items", method = RequestMethod.GET)
 	@ResponseBody
-	public DataTableModel getInfoListItems(@PathVariable Long infoListId) {
-		InfoList list = listManager.findById(infoListId);
+	public DataTableModel<?> getInfoListItems(@PathVariable Long infoListId) {
+		InfoList list = infoListManager.findById(infoListId);
 
 		return buildInfoListItemTableModel(list.getItems());
+	}
+
+	/**
+	 * Tells if an item identified by its code exists or not.
+	 * 
+	 * @param code
+	 * @return JSON <code>{ exists: <true|false> }</code>
+	 */
+	@RequestMapping(value = "/items/code/{code}", method = RequestMethod.GET, produces = ContentTypes.APPLICATION_JSON, params = "format=exists")
+	@ResponseBody
+	public Map<String, Object> doesItemExist(@PathVariable String code) {
+		InfoListItem item = infoListItemManager.findByCode(code);
+
+		Map<String, Object> res = new HashMap<>(1);
+		res.put("exists", item != null);
+
+		return res;
+	}
+
+	/**
+	 * Alias of {@link InfoListItemController#getItemByCode(String)}
+	 * 
+	 * @param code
+	 * @return
+	 */
+	@RequestMapping(value = "/items/code/{code}", method = RequestMethod.GET, produces = ContentTypes.APPLICATION_JSON)
+	@ResponseBody
+	public JsonInfoListItem getItemByCode(@PathVariable String code) {
+		return itemsController.getItemByCode(code);
 	}
 
 	@RequestMapping(value = "/{infoListId}/items/positions", method = RequestMethod.POST, params = { "itemIds[]",
@@ -117,7 +154,7 @@ public class InfoListController {
 	@ResponseStatus(value = HttpStatus.NO_CONTENT)
 	public void changeOptionsPositions(@PathVariable long infoListId, @RequestParam int newIndex,
 			@RequestParam("itemIds[]") List<Long> itemsIds) {
-		listManager.changeItemsPositions(infoListId, newIndex, itemsIds);
+		infoListManager.changeItemsPositions(infoListId, newIndex, itemsIds);
 	}
 
 	@RequestMapping(value = "/{infoListId}/items", method = RequestMethod.POST)
@@ -125,40 +162,41 @@ public class InfoListController {
 	public @ResponseBody void addInfoListItem(@PathVariable long infoListId,
 			@Valid @ModelAttribute("item") UserListItem item) {
 
-		listItemManager.addInfoListItem(infoListId, item);
+		infoListItemManager.addInfoListItem(infoListId, item);
 	}
 
 	@RequestMapping(value = "/{infoListId}/isUsed", method = RequestMethod.GET)
 	@ResponseBody
 	public boolean isUsed(@PathVariable long infoListId) {
-		return listManager.isUsedByOneOrMoreProject(infoListId);
+		return infoListManager.isUsedByOneOrMoreProject(infoListId);
 	}
 
-	@RequestMapping(value = "/{infoListId}", method = RequestMethod.DELETE)
+	@RequestMapping(value = "/{infoListIds}", method = RequestMethod.DELETE)
+	@ResponseStatus(HttpStatus.NO_CONTENT)
 	@ResponseBody
-	public void delete(@PathVariable long infoListId) {
-		listManager.deleteInfoList(infoListId);
+	public void delete(@PathVariable List<Long> infoListIds) {
+		infoListManager.remove(infoListIds);
 	}
 
 	@RequestMapping(value = "/{infoListId}/defaultItem", method = RequestMethod.GET)
 	@ResponseBody
 	public long getDefaultItemId(@PathVariable long infoListId) {
-		InfoList infoList = listManager.findById(infoListId);
+		InfoList infoList = infoListManager.findById(infoListId);
 		return 	infoList.getDefaultItem().getId();
 	}
 
-	@RequestMapping(value = "/{infoListId}/{infoListItemId}", method = RequestMethod.DELETE)
+	@RequestMapping(value = "/{infoListId}/items/{infoListItemId}", method = RequestMethod.DELETE)
+	@ResponseStatus(HttpStatus.NO_CONTENT)
 	@ResponseBody
-	public void delete(@PathVariable("infoListId") long infoListId, @PathVariable("infoListItemId") long infoListItemId) {
-		listItemManager.removeInfoListItem(infoListItemId, infoListId);
+	public void delete(@PathVariable long infoListId, @PathVariable long infoListItemId) {
+		infoListItemManager.removeInfoListItem(infoListItemId, infoListId);
 	}
 
-
-	private DataTableModel buildInfoListItemTableModel(Collection<InfoListItem> data) {
+	private DataTableModel<Object> buildInfoListItemTableModel(Collection<InfoListItem> data) {
 		InfoListItemDataTableModelHelper helper = new InfoListItemDataTableModelHelper();
-		Collection<Object> aaData = helper.buildRawModel(data);
-		DataTableModel model = new DataTableModel("");
-		model.setAaData((List<Object>) aaData);
+		List<Object> aaData = helper.buildRawModel(data);
+		DataTableModel<Object> model = new DataTableModel<>("");
+		model.setAaData(aaData);
 		return model;
 	}
 
@@ -182,4 +220,45 @@ public class InfoListController {
 		}
 	}
 
+	// @InitBinder
+	// public void initBinder(WebDataBinder binder) {
+	// binder.registerCustomEditor(InfoList.class, new PropertyEditorSupport() {
+	//
+	// /**
+	// * @see java.beans.PropertyEditorSupport#setSource(java.lang.Object)
+	// */
+	// @Override
+	// public void setSource(Object source) {
+	// LOGGER.warn(ToStringBuilder.reflectionToString(source));
+	// super.setSource(source);
+	// }
+	//
+	// /**
+	// * @see java.beans.PropertyEditorSupport#setValue(java.lang.Object)
+	// */
+	// @Override
+	// public void setValue(Object value) {
+	// LOGGER.warn(ToStringBuilder.reflectionToString(value));
+	// super.setValue(value);
+	// }
+	//
+	// /**
+	// * @see java.beans.PropertyEditorSupport#setAsText(java.lang.String)
+	// */
+	// @Override
+	// public void setAsText(String text) throws IllegalArgumentException {
+	// LOGGER.warn(ToStringBuilder.reflectionToString(text));
+	// super.setAsText(text);
+	// }
+	// });
+	// }
+
+	@RequestMapping(value = "/new", method = RequestMethod.POST, produces = ContentTypes.APPLICATION_JSON)
+	public JsonEmptyResponseEntity createNew(@RequestBody @Valid InfoList infoList) {
+		if (LOGGER.isDebugEnabled()) {
+			LOGGER.debug("Will create Info list {}", ToStringBuilder.reflectionToString(infoList));
+		}
+		infoListManager.persist(infoList);
+		return new JsonEmptyResponseEntity(HttpStatus.CREATED);
+	}
 }

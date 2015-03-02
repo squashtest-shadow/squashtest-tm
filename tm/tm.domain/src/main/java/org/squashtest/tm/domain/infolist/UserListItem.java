@@ -25,8 +25,8 @@ import javax.persistence.Entity;
 
 @Entity
 @DiscriminatorValue("USR")
-public class UserListItem extends InfoListItem{
-	public UserListItem(){
+public class UserListItem extends InfoListItem {
+	public UserListItem() {
 		super();
 	}
 }

@@ -22,13 +22,41 @@ package org.squashtest.tm.service.infolist;
 
 import java.util.List;
 
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.squashtest.tm.domain.infolist.InfoList;
+
+import static org.squashtest.tm.service.security.Authorizations.*;
 
 public interface InfoListManagerService extends InfoListFinderService {
 
+	@PreAuthorize(HAS_ROLE_ADMIN)
 	void changeDescription(long infoListId, String newDescription);
+
+	@PreAuthorize(HAS_ROLE_ADMIN)
 	void changeLabel(long infoListId, String newLabel);
+
+	@PreAuthorize(HAS_ROLE_ADMIN)
 	void changeCode(long infoListId, String newCode);
+
+	@PreAuthorize(HAS_ROLE_ADMIN)
 	void changeItemsPositions(long infoListId, int newIndex, List<Long> itemsIds);
+
 	boolean isUsedByOneOrMoreProject(long infoListId);
-	void deleteInfoList(long infoListId);
+
+	@PreAuthorize(HAS_ROLE_ADMIN)
+	void remove(long infoListId);
+
+	/**
+	 * Removes all the info lists matching the given ids.
+	 * 
+	 * @param ids
+	 */
+	@PreAuthorize(HAS_ROLE_ADMIN)
+	void remove(List<Long> ids);
+
+	/**
+	 * @param infoList
+	 */
+	@PreAuthorize(HAS_ROLE_ADMIN)
+	InfoList persist(InfoList infoList);
 }

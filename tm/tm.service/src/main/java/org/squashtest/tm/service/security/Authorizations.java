@@ -18,25 +18,20 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.infolist;
+package org.squashtest.tm.service.security;
 
-import java.util.List;
+/**
+ * Defines constants for authorization rules.
+ * 
+ * @author Gregory Fouquet
+ * 
+ */
+public final class Authorizations {
+	private Authorizations() {
+		super();
+	}
 
-import org.squashtest.tm.domain.infolist.InfoList;
+	public static final String HAS_ROLE_ADMIN = "hasRole('ROLE_ADMIN')";
 
-public interface InfoListFinderService {
-
-	InfoList findById(Long id);
-
-	InfoList findByCode(String code);
-
-	List<InfoList> findAllUserLists();
-
-	/**
-	 * Fetches all infolists and tryurns them in an adapter also containing the bound project count.
-	 * 
-	 * @return
-	 */
-	List<IsBoundInfoListAdapter> findAllWithBoundInfo();
-
+	public static final String OR_HAS_ROLE_ADMIN = " or hasRole('ROLE_ADMIN')";
 }

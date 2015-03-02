@@ -71,7 +71,6 @@ public abstract class TestCaseLibraryNode extends GenericLibraryNode implements 
 
 	public abstract void accept(TestCaseLibraryNodeVisitor visitor);
 
-
 	@Override
 	public int hashCode() {
 		final int prime = 31;

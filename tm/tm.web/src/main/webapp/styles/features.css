@@ -366,7 +366,7 @@ th.width-tenperc, td.width-tenperc {
 /*********************** various icons *****************/
 
 
-.table-icon, .icon-entity, .small-icon{
+.icon-entity, .sq-icon {
 	width : 16px;
 	height : 16px;
 	background-repeat : no-repeat;
@@ -447,11 +447,11 @@ th.width-tenperc, td.width-tenperc {
 	height : 20px;
 }
 
-.icon-user-deactivated, .table-icon.icon-user-deactivated{
+.icon-user-deactivated, .sq-icon.icon-user-deactivated{
 	background-image : url(../images/icon-user-deactivated.png); /** sprite-ref: sprites-icons; */
 }
 
-.icon-user-activated, .table-icon.icon-user-activated{
+.icon-user-activated, .sq-icon.icon-user-activated{
 	background-image : url(../images/icon-user-active.png);  /** sprite-ref: sprites-icons; */
 }
 

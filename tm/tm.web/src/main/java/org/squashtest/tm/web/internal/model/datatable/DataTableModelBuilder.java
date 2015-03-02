@@ -57,8 +57,8 @@ public abstract class DataTableModelBuilder<X> {
 
 	}
 
-	public Collection<Object> buildRawModel(Collection<X> pagedItems) {
-		Collection<Object> model = new ArrayList<Object>(pagedItems.size());
+	public List<Object> buildRawModel(Collection<X> pagedItems) {
+		List<Object> model = new ArrayList<Object>(pagedItems.size());
 
 		for (X item : pagedItems) {
 			Object itemData = buildItemData(item);
@@ -69,7 +69,7 @@ public abstract class DataTableModelBuilder<X> {
 		return model;
 	}
 
-	public Collection<Object> buildRawModel(Collection<X> pagedItems, int startIndex) {
+	public List<Object> buildRawModel(Collection<X> pagedItems, int startIndex) {
 		currentIndex = startIndex;
 		return buildRawModel(pagedItems);
 	}
@@ -97,7 +97,8 @@ public abstract class DataTableModelBuilder<X> {
 	// it is here on purpose
 	@SuppressWarnings("unused")
 	private void setCurrentIndex(int i) {
-		// NOOP - No fiddling with the current index ! Use #getCurrentIndex() in #buildItemData(X item) implementations instead.
+		// NOOP - No fiddling with the current index ! Use #getCurrentIndex() in #buildItemData(X item) implementations
+		// instead.
 	}
 	// NOSONAR:END
 

@@ -630,6 +630,9 @@
 																																																																															@NamedQuery(name = "infoList.findByCode", query = "from InfoList where code = :code"),
 																																																																															@NamedQuery(name = "infoList.findProjectUsingInfoList", query ="from Project p where p.requirementCategories.id = :id or p.testCaseNatures.id = :id or p.testCaseTypes.id = :id"),
 																																																																															@NamedQuery(name = "infoList.findAllOrdered", query = "from InfoList order by label"),
+	@NamedQuery(name = "infoList.findAllBound", query = "from InfoList il where  exists (from Project p where p.requirementCategories = il or p.testCaseNatures = il or p.testCaseTypes = il)"),
+	@NamedQuery(name = "infoList.findAllUnbound", query = "from InfoList il where not exists (from Project p  where p.requirementCategories = il or p.testCaseNatures = il or p.testCaseTypes = il)"),
+	@NamedQuery(name = "infoList.findAllWithBoundProjectsCount", query = "from InfoList, Project rc, Project tcn, Project  "),
 
 
 																																																																															//InfoListItem

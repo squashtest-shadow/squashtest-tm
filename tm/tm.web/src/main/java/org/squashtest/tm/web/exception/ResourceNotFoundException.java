@@ -18,25 +18,21 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.infolist;
+package org.squashtest.tm.web.exception;
 
-import java.util.List;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
-import org.squashtest.tm.domain.infolist.InfoList;
+@ResponseStatus(value = HttpStatus.NOT_FOUND)
+public class ResourceNotFoundException extends RuntimeException {
 
-public interface InfoListFinderService {
+	private static final long serialVersionUID = 6673064417292687334L;
 
-	InfoList findById(Long id);
+	public ResourceNotFoundException() {
+		super();
+	}
 
-	InfoList findByCode(String code);
-
-	List<InfoList> findAllUserLists();
-
-	/**
-	 * Fetches all infolists and tryurns them in an adapter also containing the bound project count.
-	 * 
-	 * @return
-	 */
-	List<IsBoundInfoListAdapter> findAllWithBoundInfo();
-
+	public ResourceNotFoundException(Throwable cause) {
+		super(cause);
+	}
 }

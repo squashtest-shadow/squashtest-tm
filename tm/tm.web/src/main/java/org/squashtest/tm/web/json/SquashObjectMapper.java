@@ -20,11 +20,18 @@
  */
 package org.squashtest.tm.web.json;
 
+import org.squashtest.tm.domain.infolist.InfoList;
+import org.squashtest.tm.domain.infolist.InfoListItem;
+import org.squashtest.tm.web.internal.model.json.InfoListItemMixin;
+import org.squashtest.tm.web.internal.model.json.InfoListMixin;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
 /**
- * @author Gregory
+ * Custom implementation of Json deserializer to suit our needs.
+ * 
+ * @author Gregory Fouquet
  * 
  */
 public class SquashObjectMapper extends ObjectMapper {
@@ -34,6 +41,10 @@ public class SquashObjectMapper extends ObjectMapper {
 		// serializes dates as ISO timestamps in GMT timezone
 		configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
 		configure(SerializationFeature.WRITE_DATE_KEYS_AS_TIMESTAMPS, false);
+
+		// configures various domain objects (un)marshalling w/O the use of DTOs or jackson annotations
+		addMixInAnnotations(InfoList.class, InfoListMixin.class);
+		addMixInAnnotations(InfoListItem.class, InfoListItemMixin.class);
 	}
 
 }
