@@ -87,7 +87,7 @@ public class HibernateIssueDao extends HibernateEntityDao<Issue> implements Issu
 	private static final String WHERE_CLAUSE_FOR_ISSUES_FROM_EXEC_STEP =
 			"where Issue.id in (" +
 					"select isStep.id " +
-					"from ExecutionStep estep +" +
+					"from ExecutionStep estep " +
 					"inner join estep.issueList ils " +
 					"inner join ils.issues isStep " +
 					"where estep.id in (:executionStepsIds) " +
