@@ -27,7 +27,7 @@ define([ "jquery", "backbone", "handlebars", "app/lnf/Forms",
 			this.$textAreas = this.$el.find("textarea");
 			this.$textFields = this.$el.find("input:text");
 			this.$errorMessages = this.$el.find("span.error-message");
-			
+
 			this._resetForm();
 		},
 
@@ -44,13 +44,13 @@ define([ "jquery", "backbone", "handlebars", "app/lnf/Forms",
 
 		confirm : function(event) {
 			var res = true, self = this;
-			
+
 			this._populateModel();
 			Forms.form(this.$el).clearState();
 			var table = $("#teams-table").squashTable();
 			var ids = table.getSelectedIds().join(',');
 			var urlDelete = squashtm.app.contextRoot + "/administration/teams/" + ids ;
-			
+
 			$.ajax({
 				type : 'delete',
 				url : urlDelete,
@@ -68,7 +68,7 @@ define([ "jquery", "backbone", "handlebars", "app/lnf/Forms",
 			this.trigger("deleteteam.confirm");
 			this.$el.formDialog("close");
 			return res;
-			
+
 
 		},
 

@@ -56,8 +56,6 @@ define([ "require", "./models", "app/util/ButtonUtil", "jquery.squash", "jquery.
 	
 		function submit(event) {
 			
-			
-
 				var instance = $(settings.selectorMainPage);
 				var table = instance.find('.cuf-binding-table');
 				var ids = table.squashTable().getSelectedIds() ; 

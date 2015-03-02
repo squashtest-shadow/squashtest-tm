@@ -45,8 +45,7 @@ define([ "jquery", "app/util/ButtonUtil",
 			var msg = "";
 			
 			if (isTimeout){
-				msg =	"<span class='std-margin'>" +
-						translator.get('message.bugtracker.unavailable.timeout') +
+				msg = "<span class='std-margin'>" + translator.get('message.bugtracker.unavailable.timeout') +
 						"</span><br><hr>";
 			}
 			
@@ -154,20 +153,16 @@ define([ "jquery", "app/util/ButtonUtil",
 			eventBus.onContextual('contextualcontent.clear', function(){
 				if (currentXhr !== null){
 					currentXhr.abort();
-				} 
-				else {
+				} else {
 					var table = $("#issue-table");
-					if (table.length > 0){
+					if (table.length > 0) {
 						 var tableXhr = table.squashTable().fnSettings().jqXHR;
 						 if (!! tableXhr){
 							 tableXhr.abort();
 						 }
 					 }
 				}
-				
 			});
-			
 		}
 	};
-
 });

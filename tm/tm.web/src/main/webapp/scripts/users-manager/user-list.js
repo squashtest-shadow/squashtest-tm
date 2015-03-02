@@ -32,8 +32,8 @@
  * for cancel } }
  */
 
-define([ "jquery", "squash.translator", 
-         "jquery.squash.fragmenttabs", "squashtable", 
+define([ "jquery", "squash.translator",
+         "jquery.squash.fragmenttabs", "squashtable",
          "jquery.squash.confirmdialog", "jquery.squash.formdialog" ],
 		function($, translator, Frag) {
 
@@ -123,10 +123,10 @@ define([ "jquery", "squash.translator",
 		// new user popup
 
 		var passValidation = buildPasswordValidation(settings);
-		
+
 		var adduserDialog = $("#add-user-dialog");
-		adduserDialog.formDialog({width : 600});		
-		
+		adduserDialog.formDialog({width : 600});
+
 		adduserDialog.on('formdialogconfirm', function(){
 			if (!passValidation()){
 				return;
@@ -142,15 +142,15 @@ define([ "jquery", "squash.translator",
 				adduserDialog.formDialog('close');
 			});
 		});
-		
+
 		adduserDialog.on('formdialogcancel', function(){
 			adduserDialog.formDialog('close');
 		});
-		
+
 		adduserDialog.on('formdialogopen', function(){
 			$("#add-user-group").val($("#add-user-group option:last").val());
 		});
-		
+
 		adduserDialog.on('formdialogaddanother', function(){
 			if (!passValidation()){
 				return;
@@ -166,12 +166,12 @@ define([ "jquery", "squash.translator",
 				$("#add-user-dialog").formDialog('open');
 			});
 		});
-		
-		
+
+
 		$("#add-user-button").on('click', function(){
 			adduserDialog.formDialog('open');
 		});
-		
+
 		// confirm deletion
 		$("#delete-user-dialog").confirmDialog().on('confirmdialogconfirm', function(){
 			var $this = $(this),
@@ -197,8 +197,8 @@ define([ "jquery", "squash.translator",
 	// ---------------------- button ----------------------
 
 	function initButtons(settings) {
-		
-		
+
+
 		/* There's something that remove and replace an element of the css and destroy the apparence of the buttons */
 		$("#add-user-button").button();
 		$("#add-user-button").removeClass("ui-button-text-only").addClass("ui-button-text-icon-primary");
@@ -290,7 +290,7 @@ define([ "jquery", "squash.translator",
 					delegate : "#delete-user-dialog",
 					tooltip : translator.get('label.Remove')
 				},
-		
+
 			functions : {
 
 
