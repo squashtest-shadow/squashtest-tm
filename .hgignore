@@ -145,6 +145,7 @@ core/core.service/META-INF$
 ^plugins/plugin\.testautomation\.jenkins/META-INF$
 tm/tm.web/images/*
 ^.*\\\.settings$
+tm/tm.web/node_modules
 syntax: regexp
 ^plugins/plugin\.testautomation\.jenkins/META-INF$
 syntax: regexp

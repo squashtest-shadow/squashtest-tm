@@ -38,8 +38,8 @@ def filetemplate = """
 */
 
 <% filenames.each { name -> %>
-.info-list-icon-<%=name%> {
-	background-image : url(../images/info-list/<%=name%>.png); /** sprite-ref: sprites-icons; */
+.sq-icon-<%=name%> {
+	background-image : url(../images/icon-lib/<%=name%>.png); /** sprite-ref: sprites-icons; */
 	background-repeat : no-repeat;
 }
 
@@ -52,7 +52,7 @@ def filetemplate = """
 
 <% filenames.each { name -> %>
 li[rel="requirement"][category-icon="<%=name%>"] > a > .jstree-icon{
-	background-image: url(../images/info-list/<%=name%>.png); /** sprite-ref: sprites-icons; */
+	background-image: url(../images/icon-lib/<%=name%>.png); /** sprite-ref: sprites-icons; */
 }
 
 <% } %>
@@ -66,8 +66,8 @@ def scriptPath = getClass().protectionDomain.codeSource.location.path
 def scriptDir = scriptPath.substring(0, scriptPath.lastIndexOf("/"))
 // get parent path again
 def webappDir = scriptDir.substring(0, scriptDir.lastIndexOf("/"))
-// add to the path the icon path of info-list
-def iconDir= webappDir + "/images/info-list"
+// add to the path the icon path of icon-lib
+def iconDir= webappDir + "/images/icon-lib"
 
 
 def list = []
@@ -80,7 +80,7 @@ dir.eachFileRecurse (FileType.FILES) { file ->
 }
 
 //name of the generated css
-def fileName = scriptDir + '/info-list-item-icon.css'
+def fileName = scriptDir + '/icon-lib-item-icon.css'
 
 //CSS file
 File f = new File(fileName)
@@ -143,7 +143,7 @@ list.each {
 	def nameWithOutExt = name.lastIndexOf('.').with {it != -1 ? name[0..<it] : name}
 	if ( nameWithOutExt != "noicon"){
 	javaFile.append('"')
-	javaFile.append('info-list-icon-')
+	javaFile.append('sq-icon-')
 	javaFile.append(nameWithOutExt)
 	javaFile.append('"')
 	if(it != list.last()) {

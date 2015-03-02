@@ -33,7 +33,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.util.HtmlUtils;
 import org.squashtest.tm.service.infolist.InfoListItemManagerService;
 import org.squashtest.tm.web.internal.helper.JEditablePostParams;
-import org.squashtest.tm.web.internal.util.InfoListItemList;
+import org.squashtest.tm.web.internal.util.IconLibrary;
 
 @Controller
 @RequestMapping("/info-list-items")
@@ -81,7 +81,7 @@ public class InfoListItemController {
 	@RequestMapping(value = "/icons", method = RequestMethod.GET)
 	@ResponseBody
 	public List<String> getInfoListIconsList() {
-		return InfoListItemList.getInfoListItems();
+		return IconLibrary.getIconNames();
 	}
 
 }

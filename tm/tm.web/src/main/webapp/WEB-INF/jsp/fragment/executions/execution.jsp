@@ -195,14 +195,14 @@
 		<div class="display-table-row">
 			<label class="display-table-cell" for="test-case-nature"><f:message key="test-case.nature.label" /></label>
 			<div class="display-table-cell">
-              <span id="test-case-nature-icon" class="small-icon info-list-icon-${execution.nature.iconName}"></span>  
+              <span id="test-case-nature-icon" class="small-icon sq-icon-${execution.nature.iconName}"></span>  
               <span id="test-case-nature"><s:message code="${execution.nature.label}" text="${execution.nature.label}" htmlEscape="true"/></span>
 			</div>
 		</div>
 		<div class="display-table-row">
 			<label class="display-table-cell" for="test-case-type"><f:message key="test-case.type.label" /></label>
 			<div class="display-table-cell">
-			  <span id="test-case-type-icon" class="small-icon  info-list-icon-testCase.type.iconName}"></span>  
+			  <span id="test-case-type-icon" class="small-icon  sq-icon-testCase.type.iconName}"></span>  
               <span id="test-case-type"><s:message code="${execution.type.label}" text="${execution.type.label}" htmlEscape="true"/></span>
 			</div>
 		</div>		

@@ -50,7 +50,7 @@ define([ "jquery", "backbone", "handlebars", "./IconSelectDialog","squash.transl
 		},
 
 		openChangeIconPopup : function(){
-			
+
 	        var self = this;
 
 
@@ -61,28 +61,28 @@ define([ "jquery", "backbone", "handlebars", "./IconSelectDialog","squash.transl
 					self.newIconDialog = null;
 				}
 
-				function discardAndRefresh(icon) {
-				   discard();	      
-		           $icon =  $("#new-info-list-item-icon");
-		           
-		           var classList = $icon.attr('class').split(/\s+/);
-					classList.forEach(function(item, index){
-					if (item.indexOf("info-list-icon-") > -1){
+			function discardAndRefresh(icon) {
+				discard();
+				$icon = $("#new-info-list-item-icon");
+
+				var classList = $icon.attr('class').split(/\s+/);
+				classList.forEach(function(item, index) {
+					if (item.indexOf("sq-icon-") > -1) {
 						 $icon.removeClass(item);
 					}
-					});
-		   
-		           if (icon !== "noicon"){
-		           $icon.addClass("info-list-icon-"+ icon);
-		           $icon.text("");
-		           } 
-		           else{
-		        	   $icon.text(translator.get("label.infoListItems.icon.none"));  
-		           }
-					self.populateModel();
-				}		
-				
+				});
+
+				if (icon !== "noicon") {
+					$icon.addClass("sq-icon-" + icon);
+					$icon.text("");
+				} else {
+					$icon.text(translator.get("label.infoListItems.icon.none"));
+				}
+				self.populateModel();
+			}
+
 				self.newIconDialog = new IconSelectDialog(	{
+					el: "#choose-item-icon-popup",
 					model : {
 					icon: this.model.icon
 					}
@@ -90,10 +90,10 @@ define([ "jquery", "backbone", "handlebars", "./IconSelectDialog","squash.transl
 
 				self.newIconDialog.on("selectIcon.cancel", discard);
 				self.newIconDialog.on("selectIcon.confirm", discardAndRefresh);
-				
-			
+
+
 			},
-		
+
 		validate : function(event) {
 			var res = true;
 			this.populateModel();
@@ -102,7 +102,7 @@ define([ "jquery", "backbone", "handlebars", "./IconSelectDialog","squash.transl
 
 			var url = routing.buildURL('info-list.items', this.model.listId);
 
-			var params = {	
+			var params = {
 					"label" : this.model.label,
 					"code" : this.model.code,
 					"iconName" : this.model.icon || "noicon",
@@ -111,11 +111,11 @@ define([ "jquery", "backbone", "handlebars", "./IconSelectDialog","squash.transl
 				url : url,
 				type : 'POST',
 				dataType : 'json',
-				data : params				
+				data : params
 			}).success(function(data){
-	
+
 			});
-		
+
 			return res;
 		},
 
@@ -133,12 +133,12 @@ define([ "jquery", "backbone", "handlebars", "./IconSelectDialog","squash.transl
 			var selected = $el.find("#new-info-list-item-icon");
 			var classList = selected.attr('class').split(/\s+/);
 			classList.forEach(function(item, index){
-			if (item.indexOf("info-list-icon-") > -1){
+			if (item.indexOf("sq-icon-") > -1){
 				self.model.icon = item;
 			}
 			});
-			
-			
+
+
 		}
 
 	});

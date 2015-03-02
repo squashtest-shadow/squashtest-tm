@@ -62,7 +62,7 @@ define(["jquery", "backbone", "underscore", "squash.basicwidgets", "jeditable.si
 						},
 						drawIcon : function(value, cell){
 							if (value !== "noicon"){
-								value = "info-list-icon-" + value;
+								value = "sq-icon-" + value;
 								value += " table-icon ";	
 								cell.addClass(value);
 								} 
@@ -162,7 +162,7 @@ define(["jquery", "backbone", "underscore", "squash.basicwidgets", "jeditable.si
 			self.newIconDialog = new IconSelectDialog(
 					{
 						model : {
-							icon:"info-list-icon-"+iconName
+							icon:"sq-icon-"+iconName
 						}
 					});
 

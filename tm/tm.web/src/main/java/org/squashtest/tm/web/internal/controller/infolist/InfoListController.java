@@ -51,7 +51,7 @@ import org.squashtest.tm.web.internal.helper.JEditablePostParams;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelBuilder;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelConstants;
-import org.squashtest.tm.web.internal.util.InfoListItemList;
+import org.squashtest.tm.web.internal.util.IconLibrary;
 
 @Controller
 @RequestMapping("/info-lists")

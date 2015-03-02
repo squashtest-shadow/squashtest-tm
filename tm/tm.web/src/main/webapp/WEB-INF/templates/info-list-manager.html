@@ -272,6 +272,8 @@
           <input type="radio" name="option-default" value="{{option}}" {{checked}} />
           {{!--]]>--}}
           </script>
+          <script id="icon-picker-dialog-tpl" type="text/x-handlebars-template" th:inline="text" th:include="icon-library.frag :: icon-picker-dialog(id='icon-picker-dialog', icons=${icons})">
+          </script>
         <script type="text/javascript">
         publish("loaded.newItemDialog");
         </script>

@@ -20,13 +20,12 @@
  */
 define([ "jquery", "backbone", "handlebars", "workspace.routing", "jquery.squash.confirmdialog" ], function($, Backbone, Handlebars, routing) {
 	var View = Backbone.View.extend({
-		el : "#choose-item-icon-popup",
-
 		initialize : function() {
 
-		this.initIcon();
+			this.initIcon();
 			this.$el.confirmDialog({
-				autoOpen : true,  width : 800,
+				autoOpen : true,
+				width : 800,
 			});
 		},
 
@@ -36,13 +35,13 @@ define([ "jquery", "backbone", "handlebars", "workspace.routing", "jquery.squash
 			"confirmdialogconfirm" : "confirm",
 
 		},
-		
+
 		changeIconOpacity: function (event){
-			var icon = event.currentTarget;	
+			var icon = event.currentTarget;
 			var $icon = this.$(icon);
 			this.$("td").addClass("low-opacity");
 			$icon.removeClass("low-opacity");
-			
+
 		},
 		restoreIconOpacity : function (event){
 			this.$("td").removeClass("low-opacity");
@@ -51,23 +50,23 @@ define([ "jquery", "backbone", "handlebars", "workspace.routing", "jquery.squash
 	        //clean the style
 			this.$("td").removeClass("info-list-item-icon-selected");
 			this.$("td").removeClass("low-opacity");
-			
+
 			//if icon is selected add correct style
-			if (this.model.icon && this.model.icon !== "info-list-icon-noicon"){
+			if (this.model.icon && this.model.icon !== "sq-icon-noicon"){
 			this.$("td").addClass("low-opacity");
 			var selected = this.$("." + this.model.icon);
 			selected.addClass("info-list-item-icon-selected");
 			selected.removeClass("low-opacity");
 			}
-			
+
 		},
 		selectIcon : function(event){
-			var icon = event.currentTarget;	
+			var icon = event.currentTarget;
 			var selected = this.$(".info-list-item-icon-selected");
 			selected.removeClass("info-list-item-icon-selected");
 			var $icon = this.$(icon);
-		
-			
+
+
 			if (!selected[0] || selected[0].cellIndex !== $icon[0].cellIndex){
 			$icon.addClass("info-list-item-icon-selected");
 			this.$("td").addClass("low-opacity");
@@ -76,32 +75,45 @@ define([ "jquery", "backbone", "handlebars", "workspace.routing", "jquery.squash
 				this.$("td").removeClass("low-opacity");
 
 			}
-	
+
 		},
-		
-		
+
+
 		cancel : function(event) {
 			this.cleanup();
 			this.trigger("selectIcon.cancel");
+			if (!!window.squashtm.vent) {
+				window.squashtm.vent.trigger("iconselectdialog::cancelled", { model: this.model, view: this, source: event });
+			}
 		},
 
 		confirm : function(event) {
 			this.cleanup();
-			
+
 			var self = this;
 
 			var icon = "noicon";
 			var selected = this.$(".info-list-item-icon-selected");
+
 			if (selected.length > 0){
 				var classList = selected.attr('class').split(/\s+/);
-				classList.forEach(function(item, index){
-					var indx = item.indexOf("info-list-icon-");
+				classList.forEach(function(item, index) {
+					var indx = item.indexOf("sq-icon-");
 				if (indx  > -1){
-				icon = item.substring(indx + "info-list-icon-".length);
+						icon = item.substring(indx + "sq-icon-".length);
 				}
 				});
-			}	
+			}
+
 			this.trigger("selectIcon.confirm", icon);
+
+			if (!!window.squashtm.vent) {
+				window.squashtm.vent.trigger("iconselectdialog::confirmed", {
+					model : this.model,
+					view : this,
+					source : event
+				});
+			}
 		},
 
 		cleanup : function() {
@@ -109,6 +121,11 @@ define([ "jquery", "backbone", "handlebars", "workspace.routing", "jquery.squash
 			this.$el.confirmDialog("destroy");
 		},
 
+		remove : function() {
+			this.cleanup();
+			this.undelegateEvents();
+			Backbone.View.prototype.remove.apply(this, arguments);
+		},
 
 
 	});
