@@ -62,6 +62,13 @@
 		<comp:opened-object otherViewers="${ otherViewers }"
 							objectUrl="${ testCaseUrl }" />
 	</c:if>
+  
+    <c:if test="${not empty activeMilestone}">
+        <div data-milestones="${totalMilestones}" class="milestone-count-notifier entity-edit-general-warning ${(totalMilestones < 2) ? 'not-displayed' : ''}">
+          <p><f:message key="messages.boundToMultipleMilestones"/></p>
+        </div>
+    </c:if>
+  
 	<div class="unsnap"></div>
  
 </div>

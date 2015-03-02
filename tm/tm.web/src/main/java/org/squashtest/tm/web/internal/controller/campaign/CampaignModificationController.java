@@ -45,6 +45,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -69,6 +70,7 @@ import org.squashtest.tm.service.campaign.CampaignModificationService;
 import org.squashtest.tm.service.campaign.CampaignTestPlanManagerService;
 import org.squashtest.tm.service.campaign.IterationModificationService;
 import org.squashtest.tm.service.customfield.CustomFieldValueFinderService;
+import org.squashtest.tm.service.milestone.MilestoneFinderService;
 import org.squashtest.tm.service.statistics.campaign.CampaignStatisticsBundle;
 import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.controller.generic.ServiceAwareAttachmentTableModelHelper;
@@ -86,6 +88,7 @@ import org.squashtest.tm.web.internal.model.datatable.DataTableSorting;
 import org.squashtest.tm.web.internal.model.jquery.RenameModel;
 import org.squashtest.tm.web.internal.model.json.JsonGeneralInfo;
 import org.squashtest.tm.web.internal.model.json.JsonIteration;
+import org.squashtest.tm.web.internal.model.json.JsonMilestone;
 import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
 
 @Controller
@@ -126,6 +129,10 @@ public class CampaignModificationController {
 	@Inject
 	private CampaignTestPlanManagerService testPlanManager;
 
+	@Inject
+	private MilestoneFinderService milestoneFinder;
+
+
 	@RequestMapping(value = "/statistics", method = RequestMethod.GET)
 	public ModelAndView refreshStats(@PathVariable long campaignId) {
 
@@ -143,19 +150,21 @@ public class CampaignModificationController {
 
 	// will return the Campaign in a full page
 	@RequestMapping(value = "/info", method = RequestMethod.GET)
-	public String showCampaignInfo(@PathVariable long campaignId, Model model) {
-		populateCampaignModel(campaignId, model);
+	public String showCampaignInfo(@PathVariable long campaignId,
+			@CookieValue(value="milestones", required=false, defaultValue="") List<Long> milestoneIds, Model model) {
+		populateCampaignModel(campaignId, milestoneIds, model);
 		return "page/campaign-workspace/show-campaign";
 	}
 
 	// will return the fragment only
 	@RequestMapping(method = RequestMethod.GET)
-	public String showCampaign(@PathVariable long campaignId, Model model) {
-		populateCampaignModel(campaignId, model);
+	public String showCampaign(@PathVariable long campaignId,
+			@CookieValue(value="milestones", required=false, defaultValue="") List<Long> milestoneIds, Model model) {
+		populateCampaignModel(campaignId,milestoneIds, model);
 		return "fragment/campaigns/campaign";
 	}
 
-	private Model populateCampaignModel(long campaignId, Model model) {
+	private Model populateCampaignModel(long campaignId, List<Long> milestoneIds, Model model) {
 
 		Campaign campaign = campaignModService.findById(campaignId);
 		TestPlanStatistics statistics = campaignModService.findCampaignStatistics(campaignId);
@@ -173,6 +182,16 @@ public class CampaignModificationController {
 				campaign.getProject().getCampaignLibrary().allowsStatus(ExecutionStatus.SETTLED));
 		model.addAttribute("allowsUntestable",
 				campaign.getProject().getCampaignLibrary().allowsStatus(ExecutionStatus.UNTESTABLE));
+
+		if (! milestoneIds.isEmpty()){
+			Milestone activeMilestone = milestoneFinder.findById(milestoneIds.get(0));
+
+			JsonMilestone jsMilestone = new JsonMilestone();
+			jsMilestone.setId(activeMilestone.getId());
+			jsMilestone.setLabel(activeMilestone.getLabel());
+			model.addAttribute("activeMilestone", jsMilestone);
+			model.addAttribute("totalMilestones", campaign.getMilestones().size());
+		}
 
 		return model;
 	}

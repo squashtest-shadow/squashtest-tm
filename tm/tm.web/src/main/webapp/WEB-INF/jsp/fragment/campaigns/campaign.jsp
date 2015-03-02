@@ -109,6 +109,13 @@
     <f:message var="renameTitle" key="dialog.rename-campaign.title" />
     <div id="rename-campaign-dialog" class="popup-dialog not-displayed" title="${renameTitle}">
 
+        <c:if test="${not empty activeMilestone}">
+        <div data-milestones="${totalMilestones}" 
+          class="milestone-count-notifier centered std-margin-top std-margin-bottom ${(totalMilestones lt 2) ? 'not-displayed' : ''}">
+        <f:message key="message.RenameCampaignBoundToMultipleMilestones"/>
+      </div>
+      </c:if> 
+
       <label>
         <f:message key="dialog.rename.label" />
       </label>
@@ -142,6 +149,13 @@
 
   <c:if test="${ moreThanReadOnly }">
     <comp:opened-object otherViewers="${ otherViewers }" objectUrl="${ campaignUrl }" />
+    
+    <c:if test="${not empty activeMilestone}">
+        <div data-milestones="${totalMilestones}" class="milestone-count-notifier entity-edit-general-warning ${(totalMilestones < 2) ? 'not-displayed' : ''}">
+          <p><f:message key="messages.boundToMultipleMilestones"/></p>
+        </div>
+    </c:if>
+    
   </c:if>
   <div class="unsnap"></div>
 </div>

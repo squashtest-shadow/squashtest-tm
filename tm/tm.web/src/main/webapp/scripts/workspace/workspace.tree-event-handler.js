@@ -152,6 +152,29 @@ define([ 'jquery', 'tree', 'workspace.event-bus' ], function($, tree, eventBus) 
 			});
 		});
 		
+
+		
+		eventBus.on('node.unbindmilestones node.bindmilestones', function(evt, data){
+			var tree = self.getTree(),
+				id = data.identity,
+				delta = data.milestones.length,
+				evtname = evt.type+'.'+evt.namespace;
+			
+			var node = tree.findNodes(id);
+						
+			if (!! node){
+				var nbmilestones = parseInt(node.attr('milestones'), 10);
+				if (nbmilestones !== undefined) {
+					
+					delta = (evtname === 'node.bindmilestones') ? delta : -delta;
+					nbmilestones += delta;
+					
+					node.attr('milestones', nbmilestones );
+				}
+			}	
+		});
+
+		
 	}
 
 	/* *************************** update Events ********************* */
@@ -255,4 +278,6 @@ define([ 'jquery', 'tree', 'workspace.event-bus' ], function($, tree, eventBus) 
 			});
 		});
 	}
+	
+
 });

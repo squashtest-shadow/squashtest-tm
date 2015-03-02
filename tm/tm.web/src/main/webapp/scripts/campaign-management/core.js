@@ -38,10 +38,10 @@
 define(["jquery", "squash.basicwidgets", "contextual-content-handlers", "jquery.squash.fragmenttabs",
         "bugtracker/bugtracker-panel", "workspace.event-bus",  "squash.translator",
         "dashboard/campaigns-dashboard/campaigns-dashboard-main", "./planning", "./test-plan-panel",
-        "custom-field-values",
+        "custom-field-values", "milestones/entity-milestone-count-notifier",
         "jqueryui", "jquery.squash.formdialog"],
         function($, basicwidg, contentHandlers, Frag, bugtrackerPanel, eventBus, translator,
-        dashboard, planning, testplan, cufvalues){
+        dashboard, planning, testplan, cufvalues, milestoneNotifier){
 
 
 	function init(conf){
@@ -56,13 +56,13 @@ define(["jquery", "squash.basicwidgets", "contextual-content-handlers", "jquery.
 
 		initRenameDialog(conf);
 
-
 		initPlanning(conf);
 
 		initDashboard(conf);
 
 		initTestplan(conf);
 
+		initMilestoneNotification(conf);
 
 		initBugtracker(conf);
 
@@ -158,6 +158,10 @@ define(["jquery", "squash.basicwidgets", "contextual-content-handlers", "jquery.
 			dialog.formDialog('open');
 		});
 
+	}
+	
+	function initMilestoneNotification(conf){
+		milestoneNotifier.newHandler(conf.data.identity);
 	}
 
 	return {

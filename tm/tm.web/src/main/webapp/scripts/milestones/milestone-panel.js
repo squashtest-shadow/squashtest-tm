@@ -142,7 +142,8 @@ define(["jquery", "workspace.event-bus", "app/ws/squashtm.notification", "squash
 			// add milestones dialog
 			var dialogOptions = {
 				tableSource : conf.bindTableSource,
-				milestonesURL : conf.milestonesURL
+				milestonesURL : conf.milestonesURL,
+				identity : conf.identity
 			};
 			
 			var bindDialog = element.find('.bind-milestone-dialog');
@@ -184,7 +185,7 @@ define(["jquery", "workspace.event-bus", "app/ws/squashtm.notification", "squash
 				.success(function(){
 					eventBus.trigger('node.unbindmilestones', {
 						identity : conf.identity,
-						milestones : [ids]
+						milestones : ids
 					});
 					unbindDialog.formDialog('close');
 				});

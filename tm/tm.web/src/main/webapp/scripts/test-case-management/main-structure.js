@@ -26,9 +26,10 @@ define(["jquery",
 		"jquery.squash.fragmenttabs",
 		"workspace.event-bus",
 		"milestones/milestone-panel",
+		"milestones/entity-milestone-count-notifier",
 		"jqueryui",
 		"jquery.squash.formdialog"],
-		function($, pubsub, basic, contentHandlers, Frag, eventBus, milestonePanel){
+		function($, pubsub, basic, contentHandlers, Frag, eventBus, milestonePanel, milestoneNotifier){
 	
 	"use strict";
 
@@ -153,11 +154,18 @@ define(["jquery",
 		});
 	}
 
+	
+	function initMilestonesCountNotifier(settings){
+		milestoneNotifier.newHandler({
+			restype : 'test-cases',
+			resid : settings.testCaseId
+		});
+	}
 
 	function init(settings){
-
 		basic.init();
 		initButtons(settings);
+		initMilestonesCountNotifier(settings);
 		initRenameDialog(settings);
 		initRenameListener(settings);
 		initNewVersionDialog(settings);

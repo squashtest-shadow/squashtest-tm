@@ -164,7 +164,15 @@ that page won't be editable if
 	<c:if test="${ moreThanReadOnly	 }">
 	<comp:opened-object otherViewers="${ otherViewers }" objectUrl="${ requirementUrl }" />
 	</c:if>
-		<div class="unsnap"></div>	
+  
+    <c:if test="${not empty activeMilestone}">
+        <div data-milestones="${totalMilestones}" 
+        class="milestone-count-notifier entity-edit-general-warning ${(totalMilestones < 2) ? 'not-displayed' : ''}">
+          <p><f:message key="messages.boundToMultipleMilestones"/></p>
+        </div>
+    </c:if>
+  
+	<div class="unsnap"></div>	
 </div>
 
 <script type="text/javascript">
@@ -310,6 +318,13 @@ publish('reload.requirement.attachments');
     <f:message var="renameDialogTitle" key="dialog.rename-requirement.title"/>
     <div  id="rename-requirement-dialog" class="not-displayed popup-dialog"
           title="${renameDialogTitle}">
+    
+        <c:if test="${not empty activeMilestone}">
+          <div data-milestones="${totalMilestones}" 
+          class="milestone-count-notifier centered std-margin-top std-margin-bottom ${(totalMilestones lt 2) ? 'not-displayed' : ''}">
+          <f:message key="message.RenameRequirementBoundToMultipleMilestones"/>
+        </div>
+        </c:if> 
     
         <label><f:message key="dialog.rename.label" /></label>
         <input type="text" id="rename-requirement-input" maxlength="255" size="50" /><br/>

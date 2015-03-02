@@ -39,6 +39,7 @@ import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.osgi.extensions.annotation.ServiceReference;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -65,6 +66,7 @@ import org.squashtest.tm.service.audit.RequirementAuditTrailService;
 import org.squashtest.tm.service.customfield.CustomFieldHelperService;
 import org.squashtest.tm.service.customfield.CustomFieldValueFinderService;
 import org.squashtest.tm.service.infolist.InfoListItemFinderService;
+import org.squashtest.tm.service.milestone.MilestoneFinderService;
 import org.squashtest.tm.service.requirement.RequirementVersionManagerService;
 import org.squashtest.tm.service.testcase.VerifyingTestCaseManagerService;
 import org.squashtest.tm.web.internal.controller.audittrail.RequirementAuditEventTableModelBuilder;
@@ -82,6 +84,7 @@ import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.tm.web.internal.model.jquery.RenameModel;
 import org.squashtest.tm.web.internal.model.json.JsonGeneralInfo;
 import org.squashtest.tm.web.internal.model.json.JsonInfoList;
+import org.squashtest.tm.web.internal.model.json.JsonMilestone;
 
 /**
  * Controller which receives requirement version management related requests.
@@ -125,26 +128,29 @@ public class RequirementVersionModificationController {
 	@Inject
 	private JsonInfoListBuilder infoListBuilder;
 
+	@Inject
+	private MilestoneFinderService milestoneFinder;
+
 	public RequirementVersionModificationController() {
 		super();
 	}
 
 
 	@RequestMapping(value = "/editor-fragment", method = RequestMethod.GET)
-	public String getRequirementEditor(@PathVariable long requirementVersionId, Model model, Locale locale) {
-		populateRequirementEditorModel(requirementVersionId, model, locale);
+	public String getRequirementEditor(@PathVariable long requirementVersionId, Model model, @CookieValue(value="milestones", required=false, defaultValue="") List<Long> milestoneIds, Locale locale) {
+		populateRequirementEditorModel(requirementVersionId, model, milestoneIds, locale);
 		return "fragment/requirements/requirement-version-editor";
 	}
 
 	@RequestMapping(method = RequestMethod.GET)
-	public String showRequirementVersion(@PathVariable long requirementVersionId, Model model, Locale locale) {
-		populateRequirementEditorModel(requirementVersionId, model, locale);
+	public String showRequirementVersion(@PathVariable long requirementVersionId, Model model, @CookieValue(value="milestones", required=false, defaultValue="") List<Long> milestoneIds, Locale locale) {
+		populateRequirementEditorModel(requirementVersionId, model,  milestoneIds, locale);
 		return "fragment/requirements/requirement-version";
 	}
 
 	@RequestMapping(value = "/info", method = RequestMethod.GET)
-	public String showRequirementVersionInfos(@PathVariable long requirementVersionId, Model model, Locale locale) {
-		populateRequirementEditorModel(requirementVersionId, model, locale);
+	public String showRequirementVersionInfos(@PathVariable long requirementVersionId, Model model,@CookieValue(value="milestones", required=false, defaultValue="") List<Long> milestoneIds,  Locale locale) {
+		populateRequirementEditorModel(requirementVersionId, model,  milestoneIds, locale);
 		return "page/requirement-workspace/show-requirement-version";
 	}
 
@@ -199,7 +205,7 @@ public class RequirementVersionModificationController {
 	}
 
 
-	private void populateRequirementEditorModel(long requirementVersionId, Model model, Locale locale) {
+	private void populateRequirementEditorModel(long requirementVersionId, Model model, List<Long> milestoneIds, Locale locale) {
 
 		RequirementVersion requirementVersion = requirementVersionManager.findById(requirementVersionId);
 		String criticalities = buildMarshalledCriticalities(locale);
@@ -216,6 +222,17 @@ public class RequirementVersionModificationController {
 		model.addAttribute("verifyingTestCasesModel", verifyingTCModel);
 		model.addAttribute("attachmentsModel", attachmentsModel);
 		model.addAttribute("auditTrailModel", auditTrailModel);
+
+		if (! milestoneIds.isEmpty()){
+			Milestone activeMilestone = milestoneFinder.findById(milestoneIds.get(0));
+
+			JsonMilestone jsMilestone = new JsonMilestone();
+			jsMilestone.setId(activeMilestone.getId());
+			jsMilestone.setLabel(activeMilestone.getLabel());
+			model.addAttribute("activeMilestone", jsMilestone);
+			model.addAttribute("totalMilestones", requirementVersion.getMilestones().size());
+		}
+
 	}
 
 	private DataTableModel getVerifyingTCModel(RequirementVersion version){

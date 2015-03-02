@@ -26,9 +26,11 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="f"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 
-<c:if test="${ otherViewers }">
-<div style="color: #7E0426; display: block; text-align: center;"><p><f:message key="squashtm.generic.opened-object.quit.message"/></p></div>
+
+<c:if test="${ otherViewers }"> 
+<div class="entity-edit-general-warning"><p><f:message key="squashtm.generic.opened-object.quit.message"/></p></div>
 </c:if>
+
 <script>
 require(["common"], function() {
 	require(["jquery","workspace.event-bus"], function($, eventBus){

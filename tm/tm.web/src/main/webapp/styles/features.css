@@ -479,6 +479,11 @@ th.width-tenperc, td.width-tenperc {
   margin: 0.5em 0.3em;
 }
 
+.entity-edit-general-warning{
+	color: #7E0426; 
+	display: block; 
+	text-align: center;
+}
 
 /* ---------------------------------------------------------*/
 /* ---------------->>> Hypenation <<<------------------*/

@@ -355,6 +355,11 @@
       <span data-def="state=denied" th:text="#{dialog.label.rename-node.rejected}">rename node rejected</span>
 
       <div data-def="state=confirm">
+            
+        <div id="rename-node-dialog-warningmilestones" class="centered std-margin-top std-margin-bottom not-displayed">
+          <span th:text="#{message.RenameCampaignBoundToMultipleMilestones}">warning : attempting to rename something bound to multiple milestones</span>        
+        </div>
+      
         <label for="rename-tree-node-text" th:text="#{dialog.rename.label}">rename</label>
         <input id="rename-tree-node-text" type="text" size="50" />
         <br />

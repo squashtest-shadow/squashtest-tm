@@ -21,6 +21,15 @@
 define(['jquery', 'tree', 'workspace.event-bus', '../permissions-rules', 'jquery.squash.formdialog'], 
 		function($, zetree, eventBus, rules){
 	
+	function warnMilestones(node){		
+		var nbmilestones = parseInt(node.attr('milestones'), 10);
+		if (nbmilestones > 1){
+			$("#rename-node-dialog-warningmilestones").show();
+		}
+		else{
+			$("#rename-node-dialog-warningmilestones").hide();
+		}		
+	}
 	
 	function init(){
 		
@@ -35,6 +44,7 @@ define(['jquery', 'tree', 'workspace.event-bus', '../permissions-rules', 'jquery
 				dialog.formDialog('setState','denied');
 			}
 			else{
+				warnMilestones(node);				
 				dialog.formDialog('setState','confirm');
 				var name = node.getName();
 				dialog.find("#rename-tree-node-text").val(name);				

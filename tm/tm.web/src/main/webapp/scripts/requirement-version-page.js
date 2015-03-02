@@ -2,10 +2,10 @@
 define(["module", "jquery", "app/pubsub", "squash.basicwidgets", "app/ws/squashtm.workspace", 
          "contextual-content-handlers", "workspace.event-bus", "jquery.squash.fragmenttabs", 
          "custom-field-values", "squash.configmanager", "app/ws/squashtm.notification", 
-         "workspace.routing",  "squash.translator", "file-upload",
+         "workspace.routing",  "squash.translator", "file-upload", "milestones/entity-milestone-count-notifier",
           "jquery.squash.confirmdialog", "jquery.squash.formdialog"], 	
  		function(module, $, pubsub, basicwidg, WS, contentHandlers, eventBus, Frag, 
- 				cufvalues, confman, notification, routing, translator, upload){
+ 				cufvalues, confman, notification, routing, translator, upload, milestoneNotifier){
 
 		// event subscription
  		pubsub.subscribe('reload.requirement.toolbar', initToolbar);
@@ -57,6 +57,9 @@ define(["module", "jquery", "app/pubsub", "squash.basicwidgets", "app/ws/squasht
  				var url = routing.buildURL('requirementversions', config.basic.currentVersionId);
  				window.open(url+"?format=printable", "_blank");
  			});
+ 			
+ 			// milestone count notifier
+ 			milestoneNotifier.newHandler(config.basic.identity);
  		}
  	
  		

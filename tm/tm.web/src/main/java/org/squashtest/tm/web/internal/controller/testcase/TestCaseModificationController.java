@@ -285,6 +285,7 @@ public class TestCaseModificationController {
 			jsMilestone.setId(activeMilestone.getId());
 			jsMilestone.setLabel(activeMilestone.getLabel());
 			mav.addObject("activeMilestone", jsMilestone);
+			mav.addObject("totalMilestones", testCase.getMilestones().size());
 		}
 	}
 

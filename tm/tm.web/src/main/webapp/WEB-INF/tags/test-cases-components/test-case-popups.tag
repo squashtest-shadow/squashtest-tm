@@ -77,8 +77,14 @@
 <div id="rename-test-case-dialog" title="${renameDialogTitle}" class="popup-dialog not-displayed">
 	
 	<div>
+        <c:if test="${not empty activeMilestone}">
+          <div data-milestones="${totalMilestones}" 
+          class="milestone-count-notifier centered std-margin-top std-margin-bottom ${(totalMilestones lt 2) ? 'not-displayed' : ''}">
+            <f:message key="message.RenameTestCaseBoundToMultipleMilestones"/>
+          </div>
+        </c:if>  
 		<label><f:message key="dialog.rename.label" /></label>
-		<input type="text" id="rename-test-case-input"  maxlength="255"	size="50" />
+		<input type="text" id="rename-test-case-input" maxlength="255"	size="50" />
 		<br />
 		<comp:error-message forField="name" />
 	</div>
