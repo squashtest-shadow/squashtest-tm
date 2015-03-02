@@ -202,7 +202,7 @@ define([ "jquery", "squash.translator",
 		/* There's something that remove and replace an element of the css and destroy the apparence of the buttons */
 		$("#add-user-button").button();
 		$("#add-user-button").removeClass("ui-button-text-only").addClass("ui-button-text-icon-primary");
-		$("#add-user-button > span").removeClass("ui-button-text")
+		$("#add-user-button > span").removeClass("ui-button-text");
 		$("#delete-user-button").button();
 		$("#delete-user-button").removeClass("ui-button-text-only").addClass("ui-button-text-icon-primary");
 		$("#delete-user-button > span").removeClass("ui-button-text");

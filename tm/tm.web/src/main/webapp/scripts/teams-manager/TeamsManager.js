@@ -58,7 +58,7 @@ define([ "jquery", "backbone", "./TeamsTable", "./NewTeamDialog", "./DeleteTeamD
 			var table = $("#teams-table").squashTable();
 			var ids = table.getSelectedIds();
 			
-			if (ids.length == 0) {
+			if (ids.length === 0) {
 				notification.showError(translator.get('message.noTeamSelected'));
 			}
 		 else {

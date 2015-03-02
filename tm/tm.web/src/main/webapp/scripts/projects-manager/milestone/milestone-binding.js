@@ -21,7 +21,7 @@
 define([ 'module', "jquery", "squash.basicwidgets", "workspace.routing", "squash.translator", "squash.configmanager", "squashtable", "jquery.squash.formdialog", "jeditable.datepicker" ], function(module, $, basic, routing, translator, confman) {
 
 	
-	        basic.init();
+			basic.init();
 			var config = module.config();
 
 			$(function() {
@@ -276,10 +276,10 @@ define([ 'module', "jquery", "squash.basicwidgets", "workspace.routing", "squash
 					return postDate;
 					} catch(err){ return null;}
 					}
-			   
-			   //created, bind to project and bind to all object in that project
-			   createAndBindMilestoneDialog.on('formdialogbind', function(){
-				createMilestone(bindMilestoneToProjectAndAllObject)
+
+				//created, bind to project and bind to all object in that project
+				createAndBindMilestoneDialog.on('formdialogbind', function(){
+				createMilestone(bindMilestoneToProjectAndAllObject);
   
 			   });
 			

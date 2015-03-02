@@ -317,9 +317,7 @@ public enum ExecutionStatus implements Internationalizable, Level {
 		@Override
 		protected ExecutionStatus resolveStatus(ExecutionStatus formerExecutionStatus, ExecutionStatus formerStepStatus) {
 			throw new UnsupportedOperationException(
-					"ExecutionStatus.TA_ERROR#resolveStatus(...) should never have been invoked. That exception cleary results from faulty logic. If you read this message please "
-							+ "report the issue at https://ci.squashtest.org/mantis/ Please put [ExecutionStatus - unsupported operation] as title for your report and explain what you did. Also please check that it hadn't been reported "
-							+ "already. Thanks for your help and happy Squash !");
+					"ExecutionStatus.TA_ERROR#resolveStatus(...) " + LOG_MSG_RESOLVESTATUS_ERROR);
 		}
 
 		@Override
@@ -342,9 +340,7 @@ public enum ExecutionStatus implements Internationalizable, Level {
 		@Override
 		protected ExecutionStatus resolveStatus(ExecutionStatus formerExecutionStatus, ExecutionStatus formerStepStatus) {
 			throw new UnsupportedOperationException(
-					"ExecutionStatus.TA_NOT_RUN#resolveStatus(...) should never have been invoked. That exception cleary results from faulty logic. If you read this message please "
-							+ "report the issue at https://ci.squashtest.org/mantis/ Please put [ExecutionStatus - unsupported operation] as title for your report and explain what you did. Also please check that it hadn't been reported "
-							+ "already. Thanks for your help and happy Squash !");
+					"ExecutionStatus.TA_NOT_RUN#resolveStatus(...) " + LOG_MSG_RESOLVESTATUS_ERROR);
 		}
 
 		@Override
@@ -366,9 +362,7 @@ public enum ExecutionStatus implements Internationalizable, Level {
 		@Override
 		protected ExecutionStatus resolveStatus(ExecutionStatus formerExecutionStatus, ExecutionStatus formerStepStatus) {
 			throw new UnsupportedOperationException(
-					"ExecutionStatus.TA_NOT_FOUND#resolveStatus(...) should never have been invoked. That exception cleary results from faulty logic. If you read this message please "
-							+ "report the issue at https://ci.squashtest.org/mantis/ Please put [ExecutionStatus - unsupported operation] as title for your report and explain what you did. Also please check that it hadn't been reported "
-							+ "already. Thanks for your help and happy Squash !");
+					"ExecutionStatus.TA_NOT_FOUND#resolveStatus(...) " + LOG_MSG_RESOLVESTATUS_ERROR);
 		}
 
 		@Override
@@ -388,6 +382,10 @@ public enum ExecutionStatus implements Internationalizable, Level {
 	};
 
 	/* ************************* attributes ********************************** */
+
+	private static final String LOG_MSG_RESOLVESTATUS_ERROR = "should never have been invoked. That exception cleary results from faulty logic. If you read this message please "
+								+ "report the issue at https://ci.squashtest.org/mantis/ Please put [ExecutionStatus - unsupported operation] as title for your report and explain what you did. Also please check that it hadn't been reported "
+								+ "already. Thanks for your help and happy Squash !";
 
 	private static final String I18N_KEY_ROOT = "execution.execution-status.";
 

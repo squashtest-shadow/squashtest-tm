@@ -72,7 +72,7 @@ define([ "require", "./models", "app/util/ButtonUtil", "jquery.squash", "jquery.
 				});
 
 				$(this).formDialog('close');
-		};
+		}
 			
 
 			popup.addPostSuccessListener = function(listener) {

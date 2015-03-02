@@ -34,7 +34,7 @@ define([ "jquery", "backbone", "handlebars", "app/lnf/Forms",
 		events : {
 			"formdialogcancel" : "cancel",
 			"formdialogvalidate" : "validate",
-			"formdialogconfirm" : "confirm",
+			"formdialogconfirm" : "confirm"
 		},
 
 		cancel : function(event) {

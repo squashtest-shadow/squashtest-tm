@@ -92,6 +92,10 @@ import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
 @RequestMapping("/campaigns/{campaignId}")
 public class CampaignModificationController {
 
+	private static final String CAMPAIGN_ID = "campaignId";
+
+	private static final String LOG_MSG_SET_CPG_SART_DATE = "Setting scheduled start date for campaign ";
+
 	private static final Logger LOGGER = LoggerFactory.getLogger(CampaignModificationController.class);
 
 	private static final String PLANNING_URL = "/planning";
@@ -269,7 +273,7 @@ public class CampaignModificationController {
 		Date newScheduledStart = strToDate(strDate);
 		String toReturn = dateToStr(newScheduledStart);
 
-		LOGGER.info("Setting scheduled start date for campaign " + campaignId + NEW_DATE_ + newScheduledStart);
+		LOGGER.info(LOG_MSG_SET_CPG_SART_DATE + campaignId + NEW_DATE_ + newScheduledStart);
 
 		campaignModService.changeScheduledStartDate(campaignId, newScheduledStart);
 
@@ -285,7 +289,7 @@ public class CampaignModificationController {
 		Date newScheduledEnd = strToDate(strDate);
 		String toReturn = dateToStr(newScheduledEnd);
 
-		LOGGER.info("Setting scheduled start date for campaign " + campaignId + NEW_DATE_ + newScheduledEnd);
+		LOGGER.info(LOG_MSG_SET_CPG_SART_DATE + campaignId + NEW_DATE_ + newScheduledEnd);
 
 		campaignModService.changeScheduledEndDate(campaignId, newScheduledEnd);
 
@@ -303,7 +307,7 @@ public class CampaignModificationController {
 		Date newActualStart = strToDate(strDate);
 		String toReturn = dateToStr(newActualStart);
 
-		LOGGER.info("Setting scheduled start date for campaign " + campaignId + NEW_DATE_ + newActualStart);
+		LOGGER.info(LOG_MSG_SET_CPG_SART_DATE + campaignId + NEW_DATE_ + newActualStart);
 
 		campaignModService.changeActualStartDate(campaignId, newActualStart);
 
@@ -319,7 +323,7 @@ public class CampaignModificationController {
 		Date newActualEnd = strToDate(strDate);
 		String toReturn = dateToStr(newActualEnd);
 
-		LOGGER.info("Setting scheduled start date for campaign " + campaignId + NEW_DATE_ + newActualEnd);
+		LOGGER.info(LOG_MSG_SET_CPG_SART_DATE + campaignId + NEW_DATE_ + newActualEnd);
 
 		campaignModService.changeActualEndDate(campaignId, newActualEnd);
 
@@ -413,7 +417,7 @@ public class CampaignModificationController {
 
 	@RequestMapping(value = "/milestones", method=RequestMethod.GET)
 	@ResponseBody
-	public DataTableModel getBoundMilestones(@PathVariable("campaignId") long campaignId, DataTableDrawParameters params){
+	public DataTableModel getBoundMilestones(@PathVariable(CAMPAIGN_ID) long campaignId, DataTableDrawParameters params){
 
 		Collection<Milestone> allMilestones = campaignModService.findAllMilestones(campaignId);
 
@@ -422,28 +426,28 @@ public class CampaignModificationController {
 
 	@RequestMapping(value = "/milestones/{milestoneIds}", method=RequestMethod.POST)
 	@ResponseBody
-	public void bindMilestones(@PathVariable("campaignId") long campaignId, @PathVariable("milestoneIds") List<Long> milestoneIds){
+	public void bindMilestones(@PathVariable(CAMPAIGN_ID) long campaignId, @PathVariable("milestoneIds") List<Long> milestoneIds){
 
 		campaignModService.bindMilestones(campaignId, milestoneIds);
 	}
 
 	@RequestMapping(value = "/milestones/{milestoneIds}", method=RequestMethod.DELETE)
 	@ResponseBody
-	public void unbindMilestones(@PathVariable("campaignId") long campaignId, @PathVariable("milestoneIds") List<Long> milestoneIds){
+	public void unbindMilestones(@PathVariable(CAMPAIGN_ID) long campaignId, @PathVariable("milestoneIds") List<Long> milestoneIds){
 
 		campaignModService.unbindMilestones(campaignId, milestoneIds);
 	}
 
 	@RequestMapping(value = "/milestones/associables", method=RequestMethod.GET)
 	@ResponseBody
-	public DataTableModel getNotYetBoundMilestones(@PathVariable("campaignId") Long campaignId, DataTableDrawParameters params){
+	public DataTableModel getNotYetBoundMilestones(@PathVariable(CAMPAIGN_ID) Long campaignId, DataTableDrawParameters params){
 		Collection<Milestone> notBoundMilestones = campaignModService.findAssociableMilestones(campaignId);
 		return buildMilestoneModel(new ArrayList<>(notBoundMilestones),params.getsEcho());
 	}
 
 
 	@RequestMapping(value = "/milestones/panel", method=RequestMethod.GET)
-	public String getMilestonesPanel(@PathVariable("campaignId") Long campaignId, Model model){
+	public String getMilestonesPanel(@PathVariable(CAMPAIGN_ID) Long campaignId, Model model){
 
 		MilestonePanelConfiguration conf = new MilestonePanelConfiguration();
 

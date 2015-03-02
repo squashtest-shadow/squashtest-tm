@@ -114,7 +114,7 @@ define(["jquery",
 			.success(function(jsonTestCase){
 				dialog.formDialog('close');
 				eventBus.trigger('test-case.new-version', jsonTestCase);
-			})
+			});
 			
 		});
 		

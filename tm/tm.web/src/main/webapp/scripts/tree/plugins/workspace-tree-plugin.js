@@ -216,9 +216,10 @@ define(['jquery', 'workspace.tree-node-copier', 'workspace.permissions-rules-bro
 			// if cross-project, also check whether
 			// the nature/type/category settings are different				
 			var areInfoListsDifferent = projects.haveDifferentInfolists(srcLibs.concat(targetLib));
+			var addendum;
 			
 			if (areInfoListsDifferent){
-				var addendum = translator.get('message.warnCopyToDifferentLibrary.infolistsDiffer');
+				addendum = translator.get('message.warnCopyToDifferentLibrary.infolistsDiffer');
 				// we append the addendum by manipulating the html directly
 				// it is so because first creating the js element then appending 
 				// will give poor results
@@ -227,7 +228,7 @@ define(['jquery', 'workspace.tree-node-copier', 'workspace.permissions-rules-bro
 			
 			var lostMilestones = projects.willMilestonesBeLost(targetLib, srcLibs);
 			if (lostMilestones){
-				var addendum = translator.get('message.warnCopyToDifferentLibrary.milestonesDiffer');
+				addendum = translator.get('message.warnCopyToDifferentLibrary.milestonesDiffer');
 				msg = msg.replace('</ul>', addendum + '</ul>');
 			}
 			

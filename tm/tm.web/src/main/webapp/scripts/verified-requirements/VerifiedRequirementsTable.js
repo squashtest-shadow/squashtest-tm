@@ -74,10 +74,9 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil",
 					uiIcon : "ui-icon-minus",
 					jquery : true,
 					delegate : "#remove-verifying-test-case-dialog",
-					tooltip : translator.get('dialog.unbind-ta-project.tooltip'),
 					onClick : this.removeRowRequirementVersion
 				} ];
-			};
+			}
 
 			return settings;
 
