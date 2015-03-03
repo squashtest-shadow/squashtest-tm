@@ -308,7 +308,7 @@ class RequirementLibraryNavigationServiceIT extends DbunitServiceSpecification {
 	def "should remove requirement without move 1"(){
 
 		when:
-		deletionHandler.deleteNodes([-10L])
+		deletionHandler.deleteNodes([-10L], null)
 
 		then:
 		! found("REQUIREMENT", "rln_id", -10L)
@@ -318,7 +318,7 @@ class RequirementLibraryNavigationServiceIT extends DbunitServiceSpecification {
 	def "should remove requirement without move 2"(){
 
 		when:
-		deletionHandler.deleteNodes([-20L])
+		deletionHandler.deleteNodes([-20L], null)
 
 		then:
 		! found("REQUIREMENT", "rln_id", -20L)
@@ -334,7 +334,7 @@ class RequirementLibraryNavigationServiceIT extends DbunitServiceSpecification {
 		navService.moveNodesToRequirement(-20L, reqIds)
 
 		when:
-		deletionHandler.deleteNodes([-20L])
+		deletionHandler.deleteNodes([-20L], null)
 
 		then:
 		! found("REQUIREMENT", "rln_id", -20L)
@@ -349,7 +349,7 @@ class RequirementLibraryNavigationServiceIT extends DbunitServiceSpecification {
 		navService.moveNodesToRequirement(-10L, reqIds)
 
 		when:
-		deletionHandler.deleteNodes([-10L])
+		deletionHandler.deleteNodes([-10L], null)
 
 		then:
 		! found("REQUIREMENT", "rln_id", -10L)
