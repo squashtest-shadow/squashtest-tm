@@ -233,59 +233,27 @@
 <script type="text/javascript">
   require(["common"], function() {
     require(["jquery", "projects-manager", "jquery.squash.fragmenttabs", "squash.attributeparser", 
-  	         "project/ProjectToolbar", "app/ws/squashtm.notification", "squash.translator",  "squashtable", "jquery.switchButton", "jquery.cookie"], 
-        function($, projectsManager, Frag, attrparser, ProjectToolbar, notification, translator){
+  	         "project/ProjectToolbar", "app/ws/squashtm.notification", "squash.translator", "milestone-manager/milestone-activation", "squashtable", "jquery.switchButton", "jquery.cookie"], 
+        function($, projectsManager, Frag, attrparser, ProjectToolbar, notification, translator, milestoneActivation){    	
+      
   	  $("#project-permission-table").squashTable({
   		  'bServerSide' : false,
   		  'sDom' : '<r>t<i>',
   		  'sPaginationType' : 'full_numbers'
   	  },{});
 
-  	  var COOKIE_NAME = "milestones";
-  	  var oPath = {
-					path : "/"
-				};	  
+  	  var milestoneGroup = $("#milestone-group") ;
   	  
   	  $(function() {
+  	  			milestoneActivation.init(milestoneGroup);
 		 		init(projectsManager, Frag);	
+  			 	// Text below is used for the select, could be replaced directly without parameters	
 		 		configureActivation("MODE");
-		 		if (typeof $.cookie(COOKIE_NAME) === 'undefined'){
-		 		 //no cookie
-		 			$.cookie(COOKIE_NAME, "choose");
-		 		} else {
-		 		 //have cookie
-		 		}
-		 		$("#milestone-group").val($.cookie(COOKIE_NAME));
-		 		var cookieValue = $.cookie(COOKIE_NAME);
-		 		if (localStorage.getItem("milestones") == 0 ) {
-					 	if ($.cookie(COOKIE_NAME) == null || $.cookie(COOKIE_NAME) == "choose" ) {
-					 	 	$("#milestone-group").append(new Option(translator.get('user-preferences.choosemilestone.label'), 'choose', true, true));
-						 	$('.milestone-group option[value="choose"]');
-					 	}
-					 	else {
-						
-					 	}
-					 	
-		 		document.getElementById("milestone-group").disabled = true; 
-		  		}
-		 		else {
-		 		document.getElementById("milestone-group").disabled = false; 
-		 		if ($("#toggle-MODE-checkbox").prop('checked') == false) {
-		 			$('#toggle-MODE-checkbox').switchButton({
-		 			  checked: true
-		 			});
-		 			}	
-		 		}
-		 		$("#toggle-MODE-checkbox").change(function(){
-		 			toggleStatusActivation("MODE");
-		 		}); 		 		
+	 		
 		 		new ProjectToolbar(); 		
 
-			  	$("#milestone-group").change(function(){
-			  	  	$.cookie(COOKIE_NAME, encodeURIComponent($("#milestone-group").val()), oPath);
-			  	  });
-		
 			  	$("#toggle-MODE-checkbox").change(function(){
+			  		toggleStatusActivation("MODE");
 			  	 		if ($("#toggle-MODE-checkbox").prop('checked')) {
 					 		 document.getElementById("milestone-group").disabled = false; 		
 						 		}
@@ -300,12 +268,10 @@
 
   		};
   		function configureActivation(status){
-
   			var activCbx = $("#toggle-"+status+"-checkbox"),
   				activConf = attrparser.parse(activCbx.data('def'));
   			activConf.checked = activConf.checked == 'true';
-  			activCbx.switchButton(activConf);
-  			
+  			activCbx.switchButton(activConf);		
   			//a bit of css tweak now
   			activCbx.siblings('.switch-button-background').css({position : 'relative', top : '6px'});
   		};
@@ -314,21 +280,19 @@
   			var shouldActivate = $("#toggle-"+status+"-checkbox").prop('checked');
   			if (shouldActivate){
   				$("#milestone-group option[value='choose']").remove();
-  				activateStatus(status);
+  				activateStatus();
   			}
   			else{
-  				deactivateStatus(status);
+  				deactivateStatus();
   			}
   		};	
 
-  		function activateStatus(status){
-  			$.cookie(COOKIE_NAME, encodeURIComponent($("#milestone-group").val()), oPath);
-  			localStorage.setItem("milestones", 1);
+  		function activateStatus(){
+  			milestoneActivation.activateStatus(milestoneGroup);
   		};
   		
-  		function deactivateStatus(status){
-  			// $.cookie(COOKIE_NAME, "null", oPath);
-  			localStorage.setItem("milestones", 0);
+  		function deactivateStatus(){
+  			milestoneActivation.deactivateStatus(milestoneGroup);
   		};
     })
   });
