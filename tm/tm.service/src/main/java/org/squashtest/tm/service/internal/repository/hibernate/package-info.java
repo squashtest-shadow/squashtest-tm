@@ -42,13 +42,14 @@
  * This file contains Hibernate named queries used by DAOs.
  * @author Gregory Fouquet
  */
-
+// @formatter:off
 @NamedQueries({
 	//TestCaseLibrary
 	@NamedQuery(name = "testCaseLibrary.findAllRootContentById", query = "select l.rootContent from TestCaseLibrary l where l.id = :libraryId"),
 	@NamedQuery(name = "testCaseLibrary.findAll", query = "select tcl from Project p join p.testCaseLibrary tcl fetch all properties"),
 	@NamedQuery(name = "testCaseLibrary.findByRootContent", query = "from TestCaseLibrary where :content in elements(rootContent)"),
 
+	
 	//RequirementLibrary
 	@NamedQuery(name = "requirementLibrary.findAll", query = "select rl from Project p join p.requirementLibrary rl fetch all properties"),
 	@NamedQuery(name = "requirementLibrary.findAllRootContentById", query = "select l.rootContent from RequirementLibrary l where l.id = :libraryId"),
@@ -669,11 +670,8 @@
 	@NamedQuery(name="infoList.setProjectCategoryToDefaultItem", query= "update RequirementVersion reqV set reqV.category = :default where reqV.id in  (select rln.resource.id from RequirementLibraryNode rln where rln.project.id = :id) "),
 	@NamedQuery(name="infoList.setProjectNatureToDefaultItem", query = "update TestCase tc set tc.nature = :default where tc.project.id = :id"),
 	@NamedQuery(name="infoList.setProjectTypeToDefaultItem", query = "update TestCase tc set tc.type = :default where tc.project.id = :id"),
-
-	//Clients
-	@NamedQuery(name="client.findAllOrderedByName", query = "from Client order by clientId"),
-	@NamedQuery(name="client.findClientByName", query = "from Client cl where cl.clientId = :name")
 })
+//@formatter:on
 package org.squashtest.tm.service.internal.repository.hibernate;
 
 import org.hibernate.annotations.NamedQueries;
