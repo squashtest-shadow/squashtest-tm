@@ -40,11 +40,9 @@ public class OAuth2ClientServiceImpl implements OAuth2ClientService{
 	private static Collection<SimpleGrantedAuthority> DEFAULT_AUTHORITIES = Arrays.asList(new SimpleGrantedAuthority("ROLE_CLIENT"), new SimpleGrantedAuthority("ROLE_TRUSTED_CLIENT"));
 	private static Collection<String> DEFAULT_SCOPE = Arrays.asList("location", "locationhistory");
 
-
-
-
 	@Inject
 	JdbcClientDetailsService jdbcClientDetailsService;
+
 
 	@Override
 	public List<ClientDetails> findClientDetailsList() {
@@ -91,5 +89,10 @@ public class OAuth2ClientServiceImpl implements OAuth2ClientService{
 		baseClientDetails.setAuthorities(DEFAULT_AUTHORITIES);
 		baseClientDetails.setScope(DEFAULT_SCOPE);
 		jdbcClientDetailsService.addClientDetails(baseClientDetails);
+	}
+
+	@Override
+	public ClientDetails findClientDetailsById(String clientId) {
+		return jdbcClientDetailsService.loadClientByClientId(clientId);
 	}
 }

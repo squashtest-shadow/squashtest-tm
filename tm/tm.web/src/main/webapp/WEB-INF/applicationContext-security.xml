@@ -206,13 +206,22 @@
     	 <beans:constructor-arg name="dataSource" ref="squashtest.core.persistence.jdbc.DataSource"/>
     </beans:bean>
 
+	<beans:bean id="oauthCodeDetails" class="org.springframework.security.oauth2.provider.code.JdbcAuthorizationCodeServices">
+		 <beans:constructor-arg name="dataSource" ref="squashtest.core.persistence.jdbc.DataSource"/>
+	</beans:bean>
+	
     <authentication-manager id="userAuthenticationManager">
         <authentication-provider ref="authenticationProvider.${authentication.provider:internal}" />
     </authentication-manager>
 
-    <oauth:authorization-server
+	<beans:bean id="userApprovalHandler" class="org.springframework.security.oauth2.provider.approval.TokenServicesUserApprovalHandler">
+		<beans:property name="tokenServices" ref="tokenServices"></beans:property>
+	</beans:bean>
+    
+    <!-- user-approval-page="page/oauth/confirm_access" -->
+    <oauth:authorization-server user-approval-handler-ref="userApprovalHandler" user-approval-page="redirect:/oauth/confirm_access"
         client-details-service-ref="clientDetails" token-services-ref="tokenServices">
-        <oauth:authorization-code />
+        <oauth:authorization-code authorization-code-services-ref="oauthCodeDetails"/>
         <oauth:implicit/>
         <oauth:refresh-token/>
         <oauth:client-credentials />

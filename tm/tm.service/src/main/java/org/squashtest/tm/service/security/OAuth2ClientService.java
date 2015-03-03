@@ -28,6 +28,8 @@ public interface OAuth2ClientService {
 
 	List<ClientDetails> findClientDetailsList();
 
+	ClientDetails findClientDetailsById(String clientId);
+
 	void addClientDetails(String name, String secret);
 
 	void changeClientSecret(String name, String newSecret);
