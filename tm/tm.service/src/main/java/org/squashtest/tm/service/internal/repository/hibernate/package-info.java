@@ -1,45 +1,38 @@
 /**
- *     This file is part of the Squashtest platform.
- *     Copyright (C) 2010 - 2015 Henix, henix.fr
+ * This file is part of the Squashtest platform. Copyright (C) 2010 - 2015 Henix, henix.fr
  *
- *     See the NOTICE file distributed with this work for additional
- *     information regarding copyright ownership.
+ * See the NOTICE file distributed with this work for additional information regarding copyright ownership.
  *
- *     This is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU Lesser General Public License as published by
- *     the Free Software Foundation, either version 3 of the License, or
- *     (at your option) any later version.
+ * This is free software: you can redistribute it and/or modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later
+ * version.
  *
- *     this software is distributed in the hope that it will be useful,
- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU Lesser General Public License for more details.
+ * this software is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied
+ * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
  *
- *     You should have received a copy of the GNU Lesser General Public License
- *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU Lesser General Public License along with this software. If not, see
+ * <http://www.gnu.org/licenses/>.
  */
 /**
- *     This file is part of the Squashtest platform.
- *     Copyright (C) 2010 - 2015 Henix, henix.fr
+ * This file is part of the Squashtest platform. Copyright (C) 2010 - 2015 Henix, henix.fr
  *
- *     See the NOTICE file distributed with this work for additional
- *     information regarding copyright ownership.
+ * See the NOTICE file distributed with this work for additional information regarding copyright ownership.
  *
- *     This is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU Lesser General Public License as published by
- *     the Free Software Foundation, either version 3 of the License, or
- *     (at your option) any later version.
+ * This is free software: you can redistribute it and/or modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later
+ * version.
  *
- *     this software is distributed in the hope that it will be useful,
- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU Lesser General Public License for more details.
+ * this software is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied
+ * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
  *
- *     You should have received a copy of the GNU Lesser General Public License
- *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU Lesser General Public License along with this software. If not, see
+ * <http://www.gnu.org/licenses/>.
  */
 /**
  * This file contains Hibernate named queries used by DAOs.
+ *
  * @author Gregory Fouquet
  */
 // @formatter:off
@@ -49,7 +42,7 @@
 	@NamedQuery(name = "testCaseLibrary.findAll", query = "select tcl from Project p join p.testCaseLibrary tcl fetch all properties"),
 	@NamedQuery(name = "testCaseLibrary.findByRootContent", query = "from TestCaseLibrary where :content in elements(rootContent)"),
 
-	
+
 	//RequirementLibrary
 	@NamedQuery(name = "requirementLibrary.findAll", query = "select rl from Project p join p.requirementLibrary rl fetch all properties"),
 	@NamedQuery(name = "requirementLibrary.findAllRootContentById", query = "select l.rootContent from RequirementLibrary l where l.id = :libraryId"),
@@ -218,8 +211,12 @@
 	@NamedQuery(name = "testCase.removeAllCallSteps", query = "delete CallTestStep cts where  cts.id in (:stepIds)"),
 	@NamedQuery(name = "testCase.removeAllActionSteps", query = "delete ActionTestStep ats where ats.id in (:stepIds)"),
 
-	@NamedQuery(name = "testCase.excelExportDataFromFolder", query = "select p.id, p.name, index(content)+1, tc.id, tc.reference, content.name, tc.importanceAuto, tc.importance, tc.nature, "
-	+ "tc.type, tc.status, content.description, tc.prerequisite, "
+	// NOTE : Hibernate ignores any grouped entity when it is not projected
+	// NOTE : Hibernate ignores group by tc.nature.id unless we alias tc.nature (AND PROJECT THE ALIAS !)
+	// NOTE : "from f join f.content c where c.class = TestCase group by c.id" generates SQL w/o grouped TCLN.TCLN_ID, only TC.TCLN_ID, which breaks under postgresql
+	@NamedQuery(name = "testCase.excelExportDataFromFolder", query =
+	"select p.id, p.name, index(content)+1, tc.id, tc.reference, content.name, tc.importanceAuto, tc.importance, nat, "
+	+ "type, tc.status, content.description, tc.prerequisite, "
 	+ "("
 	+ "select count (distinct req) from TestCase tc1 left join tc1.requirementVersionCoverages req where tc.id = tc1.id"
 	+ "), "
@@ -231,12 +228,12 @@
 	+ "), "
 	+ "content.audit.createdOn, content.audit.createdBy, content.audit.lastModifiedOn, content.audit.lastModifiedBy "
 	+ "from TestCaseFolder f join f.content content, TestCase tc join tc.project p "
-	+ " where content.id = tc.id and tc.id in (:testCaseIds) group by p.id, tc.id, index(content)+1 , content.id, tc.type, tc.nature  "
-
+	+ " join tc.nature nat join tc.type type"
+	+ " where content.id = tc.id and tc.id in (:testCaseIds) group by p.id, tc.id, index(content)+1 , content.id, type.id, nat.id  "
 	),
 
-	@NamedQuery(name = "testCase.excelExportDataFromLibrary", query = "select p.id, p.name, index(content)+1, tc.id, tc.reference, content.name, tc.importanceAuto, tc.importance, tc.nature, "
-	+ "tc.type, tc.status, content.description, tc.prerequisite, "
+	@NamedQuery(name = "testCase.excelExportDataFromLibrary", query = "select p.id, p.name, index(content)+1, tc.id, tc.reference, content.name, tc.importanceAuto, tc.importance, nat, "
+	+ "type, tc.status, content.description, tc.prerequisite, "
 	+ "("
 	+ "select count (distinct req) from TestCase tc1 left join tc1.requirementVersionCoverages req where tc.id = tc1.id"
 	+ "), "
@@ -248,8 +245,9 @@
 	+ "), "
 	+ "content.audit.createdOn, content.audit.createdBy, content.audit.lastModifiedOn, content.audit.lastModifiedBy "
 	+ "from TestCaseLibrary tcl join tcl.rootContent content, TestCase tc join tc.project p  "
+	+ " join tc.nature nat join tc.type type "
 	+ "where content.id = tc.id and  tc.id in (:testCaseIds) "
-	+ "group by p.id, tc.id, index(content)+1 , content.id, tc.type, tc.nature  "),
+	+ "group by p.id, tc.id, index(content)+1 , content.id, nat.id, type.id "),
 
 	@NamedQuery(name = "testCase.excelExportCUF", query = "select cfv.boundEntityId, cfv.boundEntityType, cf.code, cfv.value, cfv.largeValue, cf.inputType, case when cfv.class = TagsValue then group_concat(so.label, 'order by', so.label, 'asc', '|')  else '' end "
 	+ "from CustomFieldValue cfv join cfv.binding binding join binding.customField cf left join cfv.selectedOptions so "
@@ -272,7 +270,7 @@
 	@NamedQuery(name = "campaign.remove", query = "delete Campaign c where c.id in (:nodeIds)"),
 	@NamedQuery(name = "campaign.findCampaignIdsHavingMultipleMilestones", query = "select c.id from Campaign c join c.milestones stones where c.id in (:nodeIds) group by c.id having count(stones) > 1 "),
 	@NamedQuery(name = "campaign.findNonBoundCampaign", query = "select c.id from Campaign c where c.id in (:nodeIds) and c.id not in (select cs.id from Milestone m join m.campaigns cs where m.id = :milestoneId)"),
-	
+
 	//TestStep
 	@NamedQuery(name = "testStep.findParentNode", query = "select testcase from TestCase as testcase join testcase.steps tcSteps where tcSteps.id= :childId "),
 	@NamedQuery(name = "testStep.findAllByParentId", query = "select step.id from TestCase testCase join testCase.steps step where testCase.id in (:testCaseIds)"),
@@ -442,7 +440,7 @@
 	@NamedQuery(name = "requirementVersion.findDistinctRequirementsCriticalities", query = "select distinct r.criticality from RequirementVersion as r  where r.id in (:requirementsIds) "),
 	@NamedQuery(name = "requirementVersion.findLatestRequirementVersion", query = "select version from Requirement req join req.resource version where req.id = :requirementId"),
 	@NamedQuery(name = "requirementVersion.findVersionByRequirementAndMilestone", query = "select version from Requirement req join req.versions version join version.milestones milestone where req.id = :requirementId and milestone.id = :milestoneId"),
-	
+
 	@NamedQuery(name = "RequirementVersion.countByRequirement", query = "select count(rv) from RequirementVersion rv join rv.requirement r where r.id = ?1"),
 	@NamedQuery(name = "requirementDeletionDao.findVersionIds", query = "select rv.id from RequirementVersion rv join rv.requirement r where r.id in (:reqIds)"),
 
@@ -611,11 +609,11 @@
 	"where version.id = :versionId and milestone not in (" +
 	"select mstone from RequirementVersion v join v.requirement req join req.versions vs join vs.milestones mstone where v.id = :versionId" +
 	")"),
-	@NamedQuery(name = "milestone.findAssociableMilestonesForCampaign", 
+	@NamedQuery(name = "milestone.findAssociableMilestonesForCampaign",
 	query = "select milestone from Campaign c join c.project p join p.milestones milestone "
-	+ "where c.id = :campaignId and milestone not in ( " 
-	+ "select mstone from Campaign camp join camp.milestones mstone where camp.id = :campaignId " 
-	+ ")"),			
+	+ "where c.id = :campaignId and milestone not in ( "
+	+ "select mstone from Campaign camp join camp.milestones mstone where camp.id = :campaignId "
+	+ ")"),
 	@NamedQuery(name = "milestone.findTestCaseMilestones", query="select milestones from TestCase tc join tc.milestones milestones where tc.id = :testCaseId" ),
 	@NamedQuery(name = "milestone.findIndirectTestCaseMilestones",
 	query="select milestones from TestCase tc join tc.requirementVersionCoverages cov " +
