@@ -731,10 +731,17 @@
         <input type="button" th:value="#{label.Cancel}" value="cancel"
           data-def="evt=cancel, mainbtn=crossproerror, mainbtn=nonodeserror" />
       </div>
+      
     </div>
 
 
     <!--  ================= /EXPORT REQ POPUP ======================= -->
+
+    <!--  ================= MILESTONE POPUP =======================  -->
+  
+  <div th:include="milestones/workspace-tree-milestone-popup :: tree-milestone-dialog-fragment" />
+  
+  <!--  ================= /MILESTONE POPUP =======================  -->
 
     <!-- 	___________________/REQUIREMENT TREE POPUPS_______________________________ -->
 

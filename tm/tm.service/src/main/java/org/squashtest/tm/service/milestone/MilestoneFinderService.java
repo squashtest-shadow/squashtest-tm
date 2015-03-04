@@ -20,10 +20,18 @@
  */
 package org.squashtest.tm.service.milestone;
 
+import java.util.List;
+
 import org.squashtest.tm.domain.milestone.Milestone;
 
 public interface MilestoneFinderService {
 
 	Milestone findById(long milestoneId);
+
+
+	/**
+	 * @return returns the list of all milestone a regular user can see
+	 */
+	List<Milestone> findAllVisibleToCurrentUser();
 
 }

@@ -191,6 +191,9 @@
 			</jsp:attribute>
 		</comp:toggle-panel>
 		
+    
+        <f:message var="milestoneReferentialMode" key="user-preferences.tree-order.referentiel.label" />
+        <f:message var="milestoneMilestoneMode" key="user-preferences.milestone" />
 		<comp:toggle-panel id="library-display-mode-panel" titleKey="user-preferences.tree-order.mode.title" open="true" >
 			<jsp:attribute name="body">
 				<div class="display-table">			
@@ -201,8 +204,7 @@
 					<div class="customHeigth">
 					<div class="display-table-cell">                  		
                  			<input id="toggle-MODE-checkbox" type="checkbox" 
-                 	data-def="width=35, on_label='<f:message key="user-preferences.milestone"/>', off_label='<f:message key="user-preferences.tree-order.referentiel.label"/>',
-                 	 checked=${allowedStatuses['MODE']}" style="display: none;"/>
+                 	          data-def="width=35, on_label='${milestoneMilestoneMode}', off_label='${milestoneReferentialMode}'" style="display: none;"/>
                  		</div>
                  	</div>
 				</div>
@@ -247,8 +249,6 @@
   	  $(function() {
   	  			milestoneActivation.init(milestoneGroup);
 		 		init(projectsManager, Frag);	
-  			 	// Text below is used for the select, could be replaced directly without parameters	
-		 		configureActivation("MODE");
 	 		
 		 		new ProjectToolbar(); 		
 
@@ -267,19 +267,11 @@
    			Frag.init();
 
   		};
-  		function configureActivation(status){
-  			var activCbx = $("#toggle-"+status+"-checkbox"),
-  				activConf = attrparser.parse(activCbx.data('def'));
-  			activConf.checked = activConf.checked == 'true';
-  			activCbx.switchButton(activConf);		
-  			//a bit of css tweak now
-  			activCbx.siblings('.switch-button-background').css({position : 'relative', top : '6px'});
-  		};
-  		
+
   		function toggleStatusActivation(status){
   			var shouldActivate = $("#toggle-"+status+"-checkbox").prop('checked');
   			if (shouldActivate){
-  				$("#milestone-group option[value='choose']").remove();
+  				$("#milestone-group option[value='']").remove();
   				activateStatus();
   			}
   			else{

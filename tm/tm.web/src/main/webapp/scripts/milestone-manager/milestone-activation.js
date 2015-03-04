@@ -18,60 +18,119 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-	 define([ "jquery", "jquery.cookie" ], function($) {
+define([ "jquery", "workspace.storage", "squash.translator", "squash.attributeparser", "jquery.cookie" ], 
+		function($, storage, translator, attrparser) {
 
-	  var COOKIE_NAME = "milestones";
-	  var LOCAL_STORAGE = "milestones";
-	  var oPath = {
-				path : "/"
-			};	  
-	  
-	  return {
-	  	/* milestones-group is the component argument here but some stuff can't be directly argumented*/
-	  	/* init the milestones select and create the cookie if needed*/
-	  	init : function(component) {	
-	  	if (typeof $.cookie(COOKIE_NAME) === 'undefined'){
-		 		 //no cookie > take a cookie, it's dangerous to go alone
-		 			$.cookie(COOKIE_NAME, "choose");
-		 		} else {
-		 		 //have a cookie
-		 		}
-	  		component.val($.cookie(COOKIE_NAME));
-	  		
-		 		if (localStorage.getItem(LOCAL_STORAGE) == 0 ) {
-				 	if ($.cookie(COOKIE_NAME) == null || $.cookie(COOKIE_NAME) == "choose" ) {
-				 	 	$("#milestone-group").append(new Option(translator.get('user-preferences.choosemilestone.label'), 'choose', true, true));
-					 	$('.milestone-group option[value="choose"]');
-				 	}
-				 	else {
-				 	}
-				 	document.getElementById("milestone-group").disabled = true; 
-	  		}
-		 		else {
-			 		document.getElementById("milestone-group").disabled = false; 
-			 		if ($("#toggle-MODE-checkbox").prop('checked') == false) {
-			 			$('#toggle-MODE-checkbox').switchButton({
-			 			  checked: true
-			 			});
-			 			}	
-			 		}
-		 		
-		  	$("#milestone-group").change(function(){
-	  	  	$.cookie(COOKIE_NAME, encodeURIComponent($("#milestone-group").val()), oPath);
-	  	  });
-		 		
-	  },
+	// local storage data 
+	var LOCAL_STORAGE = "milestones";
+
+	var milestoneFeatureStatus = {
+		enabled : false,
+		milestoneId : ''
+	};
+
+	// cookie data
+	var COOKIE_NAME = "milestones";
+
+	var oPath = {
+		path : "/"
+	};
+	
+	function initCookieIfNeeded(){
+		var mId = $.cookie(COOKIE_NAME);
+		if (mId === undefined){
+			$.cookie(COOKIE_NAME, '', oPath);
+		}
+	}
+	
+	function initFeatureIfNeeded(){
+		var feature = storage.get(LOCAL_STORAGE);
+		if (feature === undefined){
+			storage.set(LOCAL_STORAGE, milestoneFeatureStatus);
+		}
+	}
+
+	return {
+		/*
+		 * milestones-group is the component argument here but some
+		 * stuff can't be directly argumented
+		 */
+		/* init the milestones select and create the cookie if needed */
+		init : function(component) {					
+
+			// those functions will ensure that sensible defaults are set.
+			initCookieIfNeeded();
+			initFeatureIfNeeded();
+			
+			// get our feature variables
+			var mId = $.cookie(COOKIE_NAME);
+			var feature = storage.get(LOCAL_STORAGE);
+			
+			
+			// ****** init the switch button ******		
+			
+			var modeCbx = $("#toggle-MODE-checkbox"); 
+			var modeConf = attrparser.parse(modeCbx.data('def'));
+			modeConf.checked = feature.enabled;
+			modeCbx.switchButton(modeConf);
 		
-	  activateStatus : function(component){
-			$.cookie(COOKIE_NAME, encodeURIComponent(component.val()), oPath);
-			localStorage.setItem(LOCAL_STORAGE, 1);
+			modeCbx.siblings('.switch-button-background').css({position : 'relative', top : '6px'});
+			
+			// ********* combobox init *****
+
+			component.prop('disabled', (! feature.enabled));
+			
+			if (mId === '') {					
+				component.prepend(new Option(translator.get('user-preferences.choosemilestone.label'),
+										'', true, true));
+			} 
+			
+			component.val(mId);			
+
+			
+			// event handling
+			component.change(function() {
+				var activeId = encodeURIComponent($("#milestone-group").val());
+				$.cookie(COOKIE_NAME, activeId, oPath);
+			});
+			
+
+
+		},
+
+		activateStatus : function(component) {
+			var feature = storage.get(LOCAL_STORAGE);	
+			
+			feature.enabled = true;
+			$.cookie(COOKIE_NAME, feature.milestoneId, oPath);
+			component.val(feature.milestoneId);
+			
+			storage.set(LOCAL_STORAGE, feature);
+		},
+
+		deactivateStatus : function(component) {
+
+			var mId = $.cookie(COOKIE_NAME);
+			
+			var feature = storage.get(LOCAL_STORAGE);
+			
+			feature.enabled = false;
+			feature.milestoneId = mId;
+			$.cookie(COOKIE_NAME, '', oPath);
+			
+			storage.set(LOCAL_STORAGE, feature);
 		},
 		
-		deactivateStatus : function(component){
-			// We need to keep the cookie value so keep it by doing nothing !
-			localStorage.setItem(LOCAL_STORAGE, 0);
+		setActiveMilestone : function(milestoneId){
+			$.cookie(COOKIE_NAME, milestoneId, oPath);
+		},
+		
+		isEnabled : function(){
+			initFeatureIfNeeded();
+			var feature = storage.get(LOCAL_STORAGE); 
+			return feature.enabled;
 		}
 
-    }
+	}
 
-	});
+});

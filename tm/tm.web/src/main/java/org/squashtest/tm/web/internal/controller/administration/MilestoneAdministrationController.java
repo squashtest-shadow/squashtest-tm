@@ -123,7 +123,7 @@ public class MilestoneAdministrationController {
 
 		MilestoneDataTableModelHelper helper = new MilestoneDataTableModelHelper(messageSource);
 		helper.setLocale(locale);
-		Collection<Object> aaData = helper.buildRawModel(milestoneManager.findAllICanSee());
+		Collection<Object> aaData = helper.buildRawModel(milestoneManager.findAllVisibleToCurrentManager());
 		DataTableModel model = new DataTableModel("");
 		model.setAaData((List<Object>) aaData);
 		return model;

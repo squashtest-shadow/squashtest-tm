@@ -422,9 +422,17 @@
         <input type="button" th:value="#{label.Cancel}" value="cancel" data-def="evt=cancel,  mainbtn=rejected" />
       </div>
     </div>
+    
+        <!--  ================= MILESTONE POPUP =======================  -->
+  
+  <div th:include="milestones/workspace-tree-milestone-popup :: tree-milestone-dialog-fragment" />
+  
+  <!--  ================= /MILESTONE POPUP =======================  -->
   </div>
 
   <!-- 	___________________/CAMPAIGN TREE POPUPS_______________________________ -->
+  
+
 
 </body>
 </html>

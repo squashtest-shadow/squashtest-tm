@@ -20,29 +20,55 @@
  */
 package org.squashtest.tm.web.internal.controller.milestone;
 
+import java.util.List;
 import java.util.Locale;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
 
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
+import org.squashtest.tm.core.foundation.collection.SinglePageCollectionHolder;
+import org.squashtest.tm.domain.milestone.Milestone;
+import org.squashtest.tm.service.milestone.MilestoneFinderService;
+import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
+import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 
 @Controller
 @RequestMapping("/milestones")
 public class MilestoneController {
-	
+
 	@Inject
 	private Provider<MilestoneStatusComboDataBuilder> statusComboDataBuilderProvider;
-	
 
-	
+	@Inject
+	private MilestoneFinderService milestoneFinder;
+
+	@Inject
+	private InternationalizationHelper i18nHelper;
+
 	@RequestMapping(value = "/status-combo-data", method = RequestMethod.GET)
 	@ResponseBody
 	public String buildStatusComboData(Locale locale) {
 		return statusComboDataBuilderProvider.get().useLocale(locale).buildMarshalled();
 	}
+
+	@RequestMapping(params="selectable", method = RequestMethod.GET)
+	@ResponseBody
+	public DataTableModel<Milestone> findUserSelectableMilestones(){
+
+		List<Milestone> milestones = milestoneFinder.findAllVisibleToCurrentUser();
+		PagedCollectionHolder<List<Milestone>> holderCollection =
+				new SinglePageCollectionHolder<List<Milestone>>(milestones);
+
+		Locale locale = LocaleContextHolder.getLocale();
+		return new MilestoneTableModelHelper(i18nHelper, locale).buildDataModel(holderCollection, "0");
+
+	}
+
 
 }

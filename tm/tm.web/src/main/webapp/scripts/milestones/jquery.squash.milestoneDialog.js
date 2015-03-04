@@ -165,7 +165,7 @@ define(["jquery", "workspace.event-bus", "jqueryui", "jquery.squash.formdialog",
 						table.find('>tbody>tr').addClass('cursor-pointer');
 					}
 				},
-
+	
 				squashCnf = {
 					
 				};

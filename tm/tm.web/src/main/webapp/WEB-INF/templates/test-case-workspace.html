@@ -332,8 +332,7 @@
       </div>
 
     </div>
-
-
+    
     <div id="delete-node-dialog" class="popup-dialog not-displayed" th:title="#{dialog.delete-tree-node.title}"
       title="delete node">
 
@@ -832,6 +831,13 @@
 
 
   <!--  ================= /EXPORT TC POPUP =======================  -->
+  
+  <!--  ================= MILESTONE POPUP =======================  -->
+  
+  <div th:include="milestones/workspace-tree-milestone-popup :: tree-milestone-dialog-fragment" />
+  
+  <!--  ================= /MILESTONE POPUP =======================  -->
+  
   <!--  ___________________/TEST_CASE TREE POPUPS_______________________________ -->
 </body>
 </html>

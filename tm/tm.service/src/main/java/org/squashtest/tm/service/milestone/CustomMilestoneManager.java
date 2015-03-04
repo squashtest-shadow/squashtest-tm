@@ -60,9 +60,9 @@ public interface CustomMilestoneManager extends MilestoneFinderService {
 
 	/**
 	 * 
-	 * @return liste of all milestone the current user can see
+	 * @return returns the list of all milestone a user can see as a project manager
 	 */
-	List<Milestone>  findAllICanSee();
+	List<Milestone>  findAllVisibleToCurrentManager();
 
 	boolean isBoundToATemplate(Long milestoneId);
 

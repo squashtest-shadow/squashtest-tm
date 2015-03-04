@@ -40,6 +40,7 @@ import org.squashtest.tm.service.requirement.RequirementVersionManagerService;
 import org.squashtest.tm.service.requirement.RequirementVersionResolverService
 import org.squashtest.tm.service.testcase.VerifyingTestCaseManagerService
 import org.squashtest.tm.web.internal.controller.generic.ServiceAwareAttachmentTableModelHelper
+import org.squashtest.tm.web.internal.controller.milestone.MilestoneUIConfigurationService;
 import org.squashtest.tm.web.internal.helper.InternationalizableLabelFormatter
 import org.squashtest.tm.web.internal.helper.LabelFormatter
 import org.squashtest.tm.web.internal.helper.LevelLabelFormatter
@@ -65,6 +66,7 @@ class RequirementVersionModificationControllerTest extends Specification {
 	VerifyingTestCaseManagerService verifTCService = Mock()
 	ServiceAwareAttachmentTableModelHelper attachmentsHelper = Mock()
 	RequirementAuditTrailService auditTrailService = Mock()
+	MilestoneUIConfigurationService milestoneConfigurer = Mock()
 
 	MockFactory mockFactory = new MockFactory()
 
@@ -78,6 +80,7 @@ class RequirementVersionModificationControllerTest extends Specification {
 		controller.attachmentsHelper = attachmentsHelper
 		controller.auditTrailService = auditTrailService;
 		controller.infoListBuilder = infoListBuilder
+		controller.milestoneConfService = milestoneConfigurer
 
 		mockAuditTrailService()
 	}

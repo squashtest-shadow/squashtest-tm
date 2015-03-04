@@ -64,6 +64,9 @@ public class CustomMilestoneManagerServiceImpl implements CustomMilestoneManager
 	@Inject
 	private PermissionEvaluationService permissionEvaluationService;
 
+	@Inject
+	private ProjectFinder projectFinder;
+
 	@Override
 	public void addMilestone(Milestone milestone) {
 		milestoneDao.checkLabelAvailability(milestone.getLabel());
@@ -161,7 +164,7 @@ public class CustomMilestoneManagerServiceImpl implements CustomMilestoneManager
 	}
 
 	@Override
-	public List<Milestone> findAllICanSee() {
+	public List<Milestone> findAllVisibleToCurrentManager() {
 
 		List<Milestone> allMilestones = findAll();
 		List<Milestone> milestones = new ArrayList<Milestone>();
@@ -176,6 +179,21 @@ public class CustomMilestoneManagerServiceImpl implements CustomMilestoneManager
 			}
 		}
 		return milestones;
+	}
+
+	// security provided by projectFinder.findAllReadable(); is enough here
+	@Override
+	public List<Milestone> findAllVisibleToCurrentUser() {
+
+		Set<Milestone> allMilestones = new HashSet<>();
+
+		Collection<Project> projects = projectFinder.findAllReadable();
+
+		for (Project p : projects){
+			allMilestones.addAll(p.getMilestones());
+		}
+
+		return new ArrayList<>(allMilestones);
 	}
 
 	private boolean isInAProjetICanManage(Milestone milestone) {

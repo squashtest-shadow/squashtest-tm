@@ -23,7 +23,6 @@ package org.squashtest.tm.web.internal.controller.users;
 import static org.squashtest.tm.web.internal.helper.JEditablePostParams.VALUE;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -55,12 +54,12 @@ import org.squashtest.tm.web.internal.security.authentication.AuthenticationProv
 public class UserAccountController {
 
 	private UserAccountService userService;
-	
+
 	@Inject
 	private MilestoneManagerService milestoneManager;
 
 	private ProjectsPermissionFinder permissionFinder;
-	
+
 	@Inject
 	private AuthenticationProviderContext authenticationProviderContext;
 
@@ -72,13 +71,13 @@ public class UserAccountController {
 	public void setUserAccountService(UserAccountService service){
 		this.userService=service;
 	}
-	
+
 	@RequestMapping(method=RequestMethod.GET)
 	public ModelAndView getUserAccountDetails(){
 		User user = userService.findCurrentUser();
 		List<Milestone> milestoneList = new ArrayList<>();
 		try {
-			milestoneList = milestoneManager.findAllICanSee();
+			milestoneList = milestoneManager.findAllVisibleToCurrentUser();
 		} catch (Exception e) {
 			// TODO: handle exception
 		}
@@ -105,17 +104,17 @@ public class UserAccountController {
 	@RequestMapping(value="/update", method=RequestMethod.POST, params={"oldPassword", "newPassword"})
 	@ResponseBody
 	public void changePassword(@ModelAttribute @Valid PasswordChangeForm form){
-			userService.setCurrentUserPassword(form.getOldPassword(), form.getNewPassword());
+		userService.setCurrentUserPassword(form.getOldPassword(), form.getNewPassword());
 	}
-	
+
 	@RequestMapping(value="/update", method=RequestMethod.POST, params={"id=user-account-email", VALUE}, produces = "text/plain;charset=UTF-8")
 	@ResponseBody
 	public String updateUserEmail(@RequestParam(VALUE) String email){
 		userService.setCurrentUserEmail(email);
 		return HtmlUtils.htmlEscape(email);
 	}
-	
-	
+
+
 	@ModelAttribute("authenticationProvider")
 	AuthenticationProviderFeatures getAuthenticationProviderModelAttribute() {
 		return authenticationProviderContext.getCurrentProviderFeatures();

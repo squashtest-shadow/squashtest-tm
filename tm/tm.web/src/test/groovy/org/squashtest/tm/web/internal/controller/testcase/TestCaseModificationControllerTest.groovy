@@ -34,6 +34,7 @@ import org.squashtest.tm.domain.testcase.TestCaseImportance
 import org.squashtest.tm.service.customfield.CustomFieldHelperService
 import org.squashtest.tm.service.testcase.TestCaseModificationService
 import org.squashtest.tm.web.internal.controller.generic.ServiceAwareAttachmentTableModelHelper
+import org.squashtest.tm.web.internal.controller.milestone.MilestoneUIConfigurationService;
 import org.squashtest.tm.web.internal.helper.InternationalizableLabelFormatter
 import org.squashtest.tm.web.internal.helper.LevelLabelFormatter
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper
@@ -72,6 +73,7 @@ class TestCaseModificationControllerTest extends Specification {
 	CustomFieldHelperService cufHelperService = Mock()
 
 	org.squashtest.tm.web.testutils.MockFactory mockFactory = new MockFactory()
+	MilestoneUIConfigurationService milestoneConfigurer = Mock()
 
 	def setup() {
 		controller.testCaseModificationService = testCaseModificationService
@@ -98,6 +100,7 @@ class TestCaseModificationControllerTest extends Specification {
 		mockCallingTestCaseService()
 
 		controller.infoListBuilder = infoListBuilder
+		controller.milestoneConfService = milestoneConfigurer
 	}
 
 	def mockCallingTestCaseService(){
