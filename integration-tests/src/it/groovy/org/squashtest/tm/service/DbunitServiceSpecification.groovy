@@ -31,6 +31,7 @@ import org.hibernate.type.LongType
 import org.hibernate.ObjectNotFoundException
 import org.hibernate.Session
 import org.hibernate.SessionFactory
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.transaction.TransactionConfiguration
 

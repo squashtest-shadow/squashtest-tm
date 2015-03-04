@@ -1,24 +1,34 @@
+/**
+ *     This file is part of the Squashtest platform.
+ *     Copyright (C) 2010 - 2015 Henix, henix.fr
+ *
+ *     See the NOTICE file distributed with this work for additional
+ *     information regarding copyright ownership.
+ *
+ *     This is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU Lesser General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     this software is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU Lesser General Public License for more details.
+ *
+ *     You should have received a copy of the GNU Lesser General Public License
+ *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package org.squashtest.tm.service.milestone
 
-import javax.inject.Inject;
+import javax.inject.Inject
 
-import org.springframework.transaction.annotation.Transactional;
-import org.squashtest.tm.domain.milestone.Milestone;
-import org.squashtest.tm.domain.milestone.MilestoneRange;
-import org.squashtest.tm.domain.milestone.MilestoneStatus;
-import org.squashtest.tm.domain.users.User
+import org.springframework.transaction.annotation.Transactional
+import org.squashtest.tm.domain.milestone.Milestone
 import org.squashtest.tm.service.CustomDbunitServiceSpecification
-
-
-
-import org.squashtest.tm.service.internal.repository.MilestoneDao;
-import org.squashtest.tm.service.project.ProjectFinder;
-import org.squashtest.tm.service.user.UserAccountService;
-
-import spock.lang.Unroll;
-import spock.unitils.UnitilsSupport;
-
 import org.unitils.dbunit.annotation.DataSet
+
+import spock.lang.Unroll
+import spock.unitils.UnitilsSupport
 
 @UnitilsSupport
 @Transactional
@@ -72,7 +82,7 @@ class MilestoneManagerAsProjectLeaderServiceIT extends CustomDbunitServiceSpecif
 		when :
 		def allICanSee = manager.findAllICanSee();
 		then :
-		allICanSee.collect{it.id} as Set == [1, 2, 3, 4, 5, 6, 7, 8 , 9, 13] as Set
+		allICanSee*.id as Set == [1, 2, 3, 4, 5, 6, 7, 8 , 9, 13] as Set
 	}
 	
 	@DataSet("/org/squashtest/tm/service/milestone/MilestoneManagerService2IT.xml")
@@ -93,17 +103,17 @@ class MilestoneManagerAsProjectLeaderServiceIT extends CustomDbunitServiceSpecif
 		def target = manager.findById(targetId)
 		def source = manager.findById(sourceId)
 		then :
-		target.perimeter.collect{it.id} as Set == targetProjectIds as Set
-		target.projects.collect{it.id} as Set == targetProjectIds as Set
-		target.testCases.collect{it.id} as Set == targetObjIds as Set
-		target.campaigns.collect{it.id} as Set == targetObjIds as Set
-		target.requirementVersions.collect{it.id} as Set == targetObjIds as Set
+		target.perimeter*.id as Set == targetProjectIds as Set
+		target.projects*.id as Set == targetProjectIds as Set
+		target.testCases*.id as Set == targetObjIds as Set
+		target.campaigns*.id as Set == targetObjIds as Set
+		target.requirementVersions*.id as Set == targetObjIds as Set
 		
-		source.perimeter.collect{it.id} as Set == sourceProjectIds as Set
-		source.projects.collect{it.id} as Set == sourceProjectIds as Set
-		source.testCases.collect{it.id} as Set == sourceObjIds as Set
-		source.campaigns.collect{it.id} as Set == sourceObjIds as Set
-		source.requirementVersions.collect{it.id} as Set == sourceObjIds as Set
+		source.perimeter*.id as Set == sourceProjectIds as Set
+		source.projects*.id as Set == sourceProjectIds as Set
+		source.testCases*.id as Set == sourceObjIds as Set
+		source.campaigns*.id as Set == sourceObjIds as Set
+		source.requirementVersions*.id as Set == sourceObjIds as Set
 		where :
 		sourceId | targetId | extendPerimeter | isUnion ||  sourceProjectIds       |  targetProjectIds       |    sourceObjIds                |    targetObjIds
 			1    |     7    |       false     |   false ||      [1, 2, 3, 4]       |  [3, 4, 5, 6]           |	  [1, 3, 5, 7]               |     [5, 6, 7, 8, 9, 11]
@@ -180,11 +190,11 @@ class MilestoneManagerAsProjectLeaderServiceIT extends CustomDbunitServiceSpecif
 		manager.cloneMilestone(motherId, milestone, bindToRequirements, bindToTestCases, bindToCampaigns)
 
 		then :
-		milestone.perimeter.collect{it.id} as Set == targetProjectIds as Set
-		milestone.projects.collect{it.id} as Set == targetProjectIds as Set
-		milestone.testCases.collect{it.id} as Set == targetTcIds as Set
-		milestone.campaigns.collect{it.id} as Set == targetCampIds as Set
-		milestone.requirementVersions.collect{it.id} as Set == targetReqVIds as Set
+		milestone.perimeter*.id as Set == targetProjectIds as Set
+		milestone.projects*.id as Set == targetProjectIds as Set
+		milestone.testCases*.id as Set == targetTcIds as Set
+		milestone.campaigns*.id as Set == targetCampIds as Set
+		milestone.requirementVersions*.id as Set == targetReqVIds as Set
 	
 		
 		where :
@@ -210,7 +220,5 @@ class MilestoneManagerAsProjectLeaderServiceIT extends CustomDbunitServiceSpecif
 			1L   |       false          |      true        |      false       ||   [1, 3, 5, 7]   |  []            |     [1, 5]    |     []
 			1L   |       true           |      false       |      false       ||   [1, 3, 5, 7]   |  [1, 5]        |     []        |     []
 	}
-	
-	
 	
 }

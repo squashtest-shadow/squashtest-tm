@@ -185,8 +185,20 @@
 		if (ids.length>1){
 			warningWithTranslation ('message.milestone.cantclonemultiple');
 		} else if (ids.length == 1) {
+			
+			var mil = $("#milestones-table").squashTable().getDataById(ids[0]);
+			var trans = translator.get({
+				statusFinished : "milestone.status.FINISHED",
+				statusInProgress :"milestone.status.IN_PROGRESS"
+				});
+			if (mil.status == trans.statusFinished || mil.status == trans.statusInProgress){
 			cloneMilestoneDialog.data('entity-id', ids);
 			cloneMilestoneDialog.formDialog('open');
+			} else {
+				warningWithTranslation('message.milestone.invalidclonestatus');
+			}
+			
+			
 		} else {
 			warningWithTranslation ('message.milestone.cantclonenothing');	
 		}
@@ -257,9 +269,9 @@
 			synchronizeMilestoneDialog.data('mil1', mil1);
 			synchronizeMilestoneDialog.data('mil2', mil2);
 			var trans = translator.get({
-			rangeGlobal : "milestone.range.GLOBAL",
-			statusInProgress :"milestone.status.IN_PROGRESS"
-			});
+				rangeGlobal : "milestone.range.GLOBAL",
+				statusInProgress :"milestone.status.IN_PROGRESS"
+				});
 			
 			if (mil1.status == trans.statusInProgress || mil2.status == trans.statusInProgress){
 				// you need at least one milestone in progress to synchronize
