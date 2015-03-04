@@ -132,19 +132,19 @@ requirejs.config({
 				"docxgen" : "lib/docxgen/docxgen.min",
 				"FileSaver": "lib/docxgen/FileSaver.min",
 				"domReady" : "lib/require/domReady",
-				"jquery" : "lib/jquery/jquery-2.1.1",
-//				"jquery" : "lib/jquery/jquery-2.1.1.min",
-				"jqueryui" : "lib/jquery/jquery-ui-1.9.2.custom",
-//				"jqueryui" : "lib/jquery/jquery-ui-1.9.2.custom.min",
+//				"jquery" : "lib/jquery/jquery-2.1.1",
+				"jquery" : "lib/jquery/jquery-2.1.1.min",
+//				"jqueryui" : "lib/jquery/jquery-ui-1.9.2.custom",
+				"jqueryui" : "lib/jquery/jquery-ui-1.9.2.custom.min",
 				"handlebars" : "lib/handlebars/handlebars-1.0.0.rc3",
 //				"underscore" : "lib/underscore/underscore-1.7.0",
 				"underscore" : "lib/underscore/underscore-1.7.0-min",
-				"backbone" : "lib/backbone/backbone",
-//				"backbone" : "lib/backbone/backbone-min",
-				"backbone.validation" : "lib/backbone/backbone-validation-amd",
-//				"backbone.validation" : "lib/backbone/backbone-validation-amd-min",
-				"backbone.wreqr" : "lib/backbone/backbone.wreqr",
-//			"backbone.wreqr" : "lib/backbone/backbone.wreqr.min",
+//				"backbone" : "lib/backbone/backbone",
+				"backbone" : "lib/backbone/backbone-min",
+//				"backbone.validation" : "lib/backbone/backbone-validation-amd",
+				"backbone.validation" : "lib/backbone/backbone-validation-amd-min",
+//				"backbone.wreqr" : "lib/backbone/backbone.wreqr",
+			"backbone.wreqr" : "lib/backbone/backbone.wreqr.min",
 //				"jqplot-core" : "lib/jqplot/jquery.jqplot",
 				"jqplot-core" : "lib/jqplot/jquery.jqplot.min",
 //				"jqplot-pie" : "lib/jqplot/plugins/jqplot.pieRenderer",
@@ -229,7 +229,7 @@ requirejs.config({
 				"openxml" : {
 					deps:["jszip-load", "jszip-inflate", "jszip-deflate"]
 				},
-	
+
 				"jszip-load":{
 					deps:["jszip"]
 				},

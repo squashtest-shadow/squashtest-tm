@@ -103,6 +103,18 @@
 				exclude : [ "common" ]
 			},
 			{
+				name : "info-list-manager",
+				include : [ "app/pubsub", "backbone.wreqr", "moment", "./info-list-manager/InfoListsTable", "./info-list-manager/NewInfoListPanel", "./info-list-manager/InfoListModel", "app/ws/squashtm.workspace" ],
+				exclude : [ "common" ]
+			},
+			{
+				name : "iteration-page",
+				include : [ "app/pubsub", "squash.basicwidgets", "contextual-content-handlers", "jquery.squash.fragmenttabs",
+				            "bugtracker/bugtracker-panel", "workspace.event-bus", "iteration-management", "app/ws/squashtm.workspace",
+				            "test-automation/auto-execution-buttons-panel" ],
+				exclude : [ "common" ]
+			},
+			{
 				name : "legacy-ws-page",
 				include : [ "jquery", "app/ws/squashtm.workspace" ],
 				exclude : [ "common" ]
@@ -128,22 +140,15 @@
 				exclude : [ "common" ]
 			},
 			{
-				name : "user-page",
-				include : [ "jquery", "user-editor/UserModificationView", "app/ws/squashtm.workspace", "app/pubsub" ],
-				exclude : [ "common" ]
-			},
-			{
-				name : "iteration-page",
-				include : [ "app/pubsub", "squash.basicwidgets", "contextual-content-handlers", "jquery.squash.fragmenttabs",
-				            "bugtracker/bugtracker-panel", "workspace.event-bus", "iteration-management", "app/ws/squashtm.workspace",
-				            "test-automation/auto-execution-buttons-panel" ],
-				exclude : [ "common" ]
-			},
-			{
 				name : "test-suite-page",
 				include : [ "app/pubsub", "squash.translator", "squash.basicwidgets", "workspace.event-bus", "app/ws/squashtm.workspace",
 				            "contextual-content-handlers", "jquery.squash.fragmenttabs", "bugtracker/bugtracker-panel", "test-suite-management",
 				            "jquery.cookie", "test-suite/execution-buttons-panel", "test-automation/auto-execution-buttons-panel" ],
+				exclude : [ "common" ]
+			},
+			{
+				name : "user-page",
+				include : [ "jquery", "user-editor/UserModificationView", "app/ws/squashtm.workspace", "app/pubsub" ],
 				exclude : [ "common" ]
 			}
 			]
