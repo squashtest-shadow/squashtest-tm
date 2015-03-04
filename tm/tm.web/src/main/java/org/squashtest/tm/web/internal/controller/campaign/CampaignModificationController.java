@@ -75,8 +75,10 @@ import org.squashtest.tm.service.statistics.campaign.CampaignStatisticsBundle;
 import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.controller.generic.ServiceAwareAttachmentTableModelHelper;
 import org.squashtest.tm.web.internal.controller.milestone.MetaMilestone;
+import org.squashtest.tm.web.internal.controller.milestone.MilestoneFeatureConfiguration;
 import org.squashtest.tm.web.internal.controller.milestone.MilestonePanelConfiguration;
 import org.squashtest.tm.web.internal.controller.milestone.MilestoneTableModelHelper;
+import org.squashtest.tm.web.internal.controller.milestone.MilestoneUIConfigurationService;
 import org.squashtest.tm.web.internal.controller.milestone.TestCaseBoundMilestoneTableModelHelper;
 import org.squashtest.tm.web.internal.controller.testcase.TestCaseImportanceJeditableComboDataBuilder;
 import org.squashtest.tm.web.internal.controller.testcase.TestCaseModeJeditableComboDataBuilder;
@@ -130,7 +132,7 @@ public class CampaignModificationController {
 	private CampaignTestPlanManagerService testPlanManager;
 
 	@Inject
-	private MilestoneFinderService milestoneFinder;
+	private MilestoneUIConfigurationService milestoneConfService;
 
 
 	@RequestMapping(value = "/statistics", method = RequestMethod.GET)
@@ -183,15 +185,8 @@ public class CampaignModificationController {
 		model.addAttribute("allowsUntestable",
 				campaign.getProject().getCampaignLibrary().allowsStatus(ExecutionStatus.UNTESTABLE));
 
-		if (! milestoneIds.isEmpty()){
-			Milestone activeMilestone = milestoneFinder.findById(milestoneIds.get(0));
-
-			JsonMilestone jsMilestone = new JsonMilestone();
-			jsMilestone.setId(activeMilestone.getId());
-			jsMilestone.setLabel(activeMilestone.getLabel());
-			model.addAttribute("activeMilestone", jsMilestone);
-			model.addAttribute("totalMilestones", campaign.getMilestones().size());
-		}
+		MilestoneFeatureConfiguration milestoneConf = milestoneConfService.configure(milestoneIds, campaign);
+		model.addAttribute("milestoneConf", milestoneConf);
 
 		return model;
 	}

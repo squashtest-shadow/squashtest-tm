@@ -384,4 +384,8 @@ public class Milestone implements Comparable {
 		}
 		return true;
 	}
+
+	public boolean isLocked(){
+		return MilestoneStatus.LOCKED == status;
+	}
 }

@@ -33,6 +33,7 @@
 <%@ attribute name="moreThanReadOnly"  required="true" type="java.lang.Boolean"  description="if the user has more than read only permission on this test case" %>
 <%@ attribute name="isInfoPage"  required="true" type="java.lang.Boolean"  description="a parameter set in the context when this template is to be displayed in an info page." %>
 <%@ attribute name="otherViewers"  required="true" type="java.lang.Object"  description="an object saying if that test case is being browsed by someone else right now" %>
+<%@ attribute name="milestoneConf" required="true" type="java.lang.Object" description="an instance of MilestoneFeatureConfiguration"%>
 
 
 <c:url var="testCaseUrl" value="/test-cases/${testCase.id}"/>
@@ -63,10 +64,16 @@
 							objectUrl="${ testCaseUrl }" />
 	</c:if>
   
-    <c:if test="${not empty activeMilestone}">
-        <div data-milestones="${totalMilestones}" class="milestone-count-notifier entity-edit-general-warning ${(totalMilestones < 2) ? 'not-displayed' : ''}">
+    <c:if test="${milestoneConf.messagesEnabled}">
+        <div data-milestones="${milestoneConf.totalMilestones}" class="milestone-count-notifier entity-edit-general-warning 
+              ${(milestoneConf.multipleBindings) ? '' : 'not-displayed'}">
           <p><f:message key="messages.boundToMultipleMilestones"/></p>
         </div>
+        <c:if test="${milestoneConf.locked}">
+        <div class="entity-edit-general-warning">
+          <p><f:message key="message.CannotModifyBecauseMilestoneLocking"/></p>
+        </div>        
+        </c:if>
     </c:if>
   
 	<div class="unsnap"></div>

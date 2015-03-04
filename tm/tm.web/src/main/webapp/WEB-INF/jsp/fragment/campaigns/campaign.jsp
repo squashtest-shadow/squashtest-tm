@@ -109,9 +109,9 @@
     <f:message var="renameTitle" key="dialog.rename-campaign.title" />
     <div id="rename-campaign-dialog" class="popup-dialog not-displayed" title="${renameTitle}">
 
-        <c:if test="${not empty activeMilestone}">
-        <div data-milestones="${totalMilestones}" 
-          class="milestone-count-notifier centered std-margin-top std-margin-bottom ${(totalMilestones lt 2) ? 'not-displayed' : ''}">
+        <c:if test="${milestoneConf.messagesEnabled}">
+        <div data-milestones="${milestoneConf.totalMilestones}" 
+          class="milestone-count-notifier centered std-margin-top std-margin-bottom ${(milestoneConf.multipleBindings) ? '' : 'not-displayed'}">
         <f:message key="message.RenameCampaignBoundToMultipleMilestones"/>
       </div>
       </c:if> 
@@ -150,10 +150,16 @@
   <c:if test="${ moreThanReadOnly }">
     <comp:opened-object otherViewers="${ otherViewers }" objectUrl="${ campaignUrl }" />
     
-    <c:if test="${not empty activeMilestone}">
-        <div data-milestones="${totalMilestones}" class="milestone-count-notifier entity-edit-general-warning ${(totalMilestones < 2) ? 'not-displayed' : ''}">
+    <c:if test="${milestoneConf.messagesEnabled}">
+        <div data-milestones="${milestoneConf.totalMilestones}" class="milestone-count-notifier entity-edit-general-warning 
+              ${(milestoneConf.multipleBindings) ? '' : 'not-displayed'}">
           <p><f:message key="messages.boundToMultipleMilestones"/></p>
         </div>
+        <c:if test="${milestoneConf.locked}">
+        <div class="entity-edit-general-warning">
+          <p><f:message key="message.CannotModifyBecauseMilestoneLocking"/></p>
+        </div>        
+        </c:if>
     </c:if>
     
   </c:if>
@@ -179,9 +185,11 @@
           <f:message key="tabs.label.test-plan" />
         </a>
       </li>
+      <c:if test="${milestoneConf.displayTab}">
         <li>
             <a href="${campaignUrl}/milestones/panel"><f:message key="tabs.label.milestone"/></a>
-        </li>      
+        </li>  
+      </c:if>    
       <li>
         <a href="#tabs-3">
           <f:message key="label.Attachments" />

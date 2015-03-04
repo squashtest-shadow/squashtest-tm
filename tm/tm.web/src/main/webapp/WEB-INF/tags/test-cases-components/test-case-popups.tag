@@ -27,6 +27,7 @@
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component"%>
 
 <%@ attribute name="writable"  required="true" type="java.lang.Boolean"  description="if the user has write permission on this test case" %>
+<%@ attribute name="milestoneConf" required="true" type="java.lang.Object" description="an instance of MilestoneFeatureConfiguration" %>
 
 <f:message var="renameDialogTitle" key="dialog.rename-test-case.title"/>
 <f:message var="renameButtonLabel" key="dialog.rename-test-case.title"/>
@@ -77,9 +78,9 @@
 <div id="rename-test-case-dialog" title="${renameDialogTitle}" class="popup-dialog not-displayed">
 	
 	<div>
-        <c:if test="${not empty activeMilestone}">
-          <div data-milestones="${totalMilestones}" 
-          class="milestone-count-notifier centered std-margin-top std-margin-bottom ${(totalMilestones lt 2) ? 'not-displayed' : ''}">
+        <c:if test="${milestoneConf.messagesEnabled}">
+          <div data-milestones="${milestoneConf.totalMilestones}" 
+          class="milestone-count-notifier centered std-margin-top std-margin-bottom ${(milestoneConf.multipleBindings) ? '' : 'not-displayed'}">
             <f:message key="message.RenameTestCaseBoundToMultipleMilestones"/>
           </div>
         </c:if>  

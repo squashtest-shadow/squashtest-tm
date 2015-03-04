@@ -98,7 +98,8 @@ require(["common"], function() {
 <%---------------------------- Test Case Informations ------------------------------%>
 
 <tc:test-case-toolbar testCase="${testCase}" isInfoPage="${param.isInfoPage}" otherViewers="${otherViewers}"   
-					  moreThanReadOnly="${moreThanReadOnly}"  writable="${writable}" deletable="${deletable}" />
+					  moreThanReadOnly="${moreThanReadOnly}"  writable="${writable}" deletable="${deletable}" 
+                      milestoneConf="${milestoneConf}"/>
 
 <%-- --------------------------------------- Test Case body --------------------------------------- --%>
 <csst:jq-tab>
@@ -115,9 +116,11 @@ require(["common"], function() {
 		<li>
 			<a href="${testCaseUrl}/parameters/panel"><f:message key="label.parameters" /></a>
 		</li>
+        <c:if test="${milestoneConf.displayTab}">
         <li>
             <a href="${testCaseUrl}/milestones/panel"><f:message key="tabs.label.milestone"/></a>
         </li>
+        </c:if>
 		<li>
 			<a href="#tabs-tc-attachments"><f:message key="label.Attachments" />
 			<c:if test="${testCase.attachmentList.notEmpty}">
@@ -185,7 +188,7 @@ require(["common"], function() {
 
 <%-- ===================================== popups =============================== --%>
 
-<tc:test-case-popups writable="${writable}"/>
+<tc:test-case-popups writable="${writable}" milestoneConf="${milestoneConf}"/>
 
 <%-- ===================================== /popups =============================== --%>
 		
@@ -219,7 +222,7 @@ require(["common"], function() {
 						hasBugtracker : ${testCase.project.bugtrackerConnected},
 						isAutomated : ${testCase.project.testAutomationEnabled}
 						<c:if test="${not empty activeMilestone}">
-						,milestone : ${json:serialize(activeMilestone)}
+						,milestone : ${json:serialize(milestoneConf.activeMilestone)}
 						</c:if>
 					};
 					

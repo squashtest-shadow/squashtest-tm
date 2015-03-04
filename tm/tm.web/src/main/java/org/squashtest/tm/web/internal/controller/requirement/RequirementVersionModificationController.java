@@ -72,8 +72,10 @@ import org.squashtest.tm.service.testcase.VerifyingTestCaseManagerService;
 import org.squashtest.tm.web.internal.controller.audittrail.RequirementAuditEventTableModelBuilder;
 import org.squashtest.tm.web.internal.controller.generic.ServiceAwareAttachmentTableModelHelper;
 import org.squashtest.tm.web.internal.controller.milestone.MetaMilestone;
+import org.squashtest.tm.web.internal.controller.milestone.MilestoneFeatureConfiguration;
 import org.squashtest.tm.web.internal.controller.milestone.MilestonePanelConfiguration;
 import org.squashtest.tm.web.internal.controller.milestone.MilestoneTableModelHelper;
+import org.squashtest.tm.web.internal.controller.milestone.MilestoneUIConfigurationService;
 import org.squashtest.tm.web.internal.controller.milestone.TestCaseBoundMilestoneTableModelHelper;
 import org.squashtest.tm.web.internal.helper.LevelLabelFormatter;
 import org.squashtest.tm.web.internal.http.ContentTypes;
@@ -129,7 +131,8 @@ public class RequirementVersionModificationController {
 	private JsonInfoListBuilder infoListBuilder;
 
 	@Inject
-	private MilestoneFinderService milestoneFinder;
+	private MilestoneUIConfigurationService milestoneConfService;
+
 
 	public RequirementVersionModificationController() {
 		super();
@@ -223,15 +226,9 @@ public class RequirementVersionModificationController {
 		model.addAttribute("attachmentsModel", attachmentsModel);
 		model.addAttribute("auditTrailModel", auditTrailModel);
 
-		if (! milestoneIds.isEmpty()){
-			Milestone activeMilestone = milestoneFinder.findById(milestoneIds.get(0));
+		MilestoneFeatureConfiguration milestoneConf = milestoneConfService.configure(milestoneIds, requirementVersion);
 
-			JsonMilestone jsMilestone = new JsonMilestone();
-			jsMilestone.setId(activeMilestone.getId());
-			jsMilestone.setLabel(activeMilestone.getLabel());
-			model.addAttribute("activeMilestone", jsMilestone);
-			model.addAttribute("totalMilestones", requirementVersion.getMilestones().size());
-		}
+		model.addAttribute("milestoneConf", milestoneConf);
 
 	}
 

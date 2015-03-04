@@ -96,7 +96,9 @@ import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.controller.bugtracker.BugTrackerControllerHelper;
 import org.squashtest.tm.web.internal.controller.generic.ServiceAwareAttachmentTableModelHelper;
 import org.squashtest.tm.web.internal.controller.milestone.MetaMilestone;
+import org.squashtest.tm.web.internal.controller.milestone.MilestoneFeatureConfiguration;
 import org.squashtest.tm.web.internal.controller.milestone.MilestonePanelConfiguration;
+import org.squashtest.tm.web.internal.controller.milestone.MilestoneUIConfigurationService;
 import org.squashtest.tm.web.internal.controller.milestone.TestCaseBoundMilestoneTableModelHelper;
 import org.squashtest.tm.web.internal.controller.testcase.parameters.ParameterNameComparator;
 import org.squashtest.tm.web.internal.controller.testcase.parameters.ParametersModelHelper;
@@ -201,7 +203,7 @@ public class TestCaseModificationController {
 	private JsonInfoListBuilder infoListBuilder;
 
 	@Inject
-	private MilestoneFinderService milestoneFinder;
+	private MilestoneUIConfigurationService milestoneConfService;
 
 
 	/**
@@ -218,11 +220,7 @@ public class TestCaseModificationController {
 
 		TestCase testCase = testCaseModificationService.findById(testCaseId);
 
-		Milestone m = null;
-		if (! milestoneIds.isEmpty()){
-			m = milestoneFinder.findById(milestoneIds.get(0));
-		}
-		populateModelWithTestCaseEditionData(mav, testCase, locale, m);
+		populateModelWithTestCaseEditionData(mav, testCase, locale, milestoneIds);
 
 		return mav;
 	}
@@ -244,17 +242,12 @@ public class TestCaseModificationController {
 
 		TestCase testCase = testCaseModificationService.findTestCaseWithSteps(testCaseId);
 
-		Milestone m = null;
-		if (! milestoneIds.isEmpty()){
-			m = milestoneFinder.findById(milestoneIds.get(0));
-		}
-
-		populateModelWithTestCaseEditionData(mav, testCase, locale, m);
+		populateModelWithTestCaseEditionData(mav, testCase, locale, milestoneIds);
 
 		return mav;
 	}
 
-	private void populateModelWithTestCaseEditionData(ModelAndView mav, TestCase testCase, Locale locale, Milestone activeMilestone) {
+	private void populateModelWithTestCaseEditionData(ModelAndView mav, TestCase testCase, Locale locale, List<Long> activeMilestones) {
 
 		boolean hasCUF = cufHelperService.hasCustomFields(testCase);
 
@@ -280,13 +273,8 @@ public class TestCaseModificationController {
 		mav.addObject("callingTestCasesModel", getCallingTestCaseTableModel(testCase.getId(), new DefaultPagingAndSorting("TestCase.name"), ""));
 		mav.addObject("hasCUF", hasCUF);
 
-		if (activeMilestone != null){
-			JsonMilestone jsMilestone = new JsonMilestone();
-			jsMilestone.setId(activeMilestone.getId());
-			jsMilestone.setLabel(activeMilestone.getLabel());
-			mav.addObject("activeMilestone", jsMilestone);
-			mav.addObject("totalMilestones", testCase.getMilestones().size());
-		}
+		MilestoneFeatureConfiguration milestoneConf = milestoneConfService.configure(activeMilestones, testCase);
+		mav.addObject("milestoneConf", milestoneConf);
 	}
 
 	@RequestMapping(value = "/importance-combo-data", method = RequestMethod.GET)

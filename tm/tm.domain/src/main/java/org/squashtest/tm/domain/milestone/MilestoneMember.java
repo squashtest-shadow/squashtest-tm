@@ -30,7 +30,7 @@ import java.util.Set;
  * @author bsiri
  *
  */
-public interface MilestoneMember {
+public interface MilestoneMember{
 
 	Set<Milestone> getMilestones();
 

@@ -165,11 +165,16 @@ that page won't be editable if
 	<comp:opened-object otherViewers="${ otherViewers }" objectUrl="${ requirementUrl }" />
 	</c:if>
   
-    <c:if test="${not empty activeMilestone}">
-        <div data-milestones="${totalMilestones}" 
-        class="milestone-count-notifier entity-edit-general-warning ${(totalMilestones < 2) ? 'not-displayed' : ''}">
+    <c:if test="${milestoneConf.messagesEnabled}">
+        <div data-milestones="${milestoneConf.totalMilestones}" class="milestone-count-notifier entity-edit-general-warning 
+              ${(milestoneConf.multipleBindings) ? '' : 'not-displayed'}">
           <p><f:message key="messages.boundToMultipleMilestones"/></p>
         </div>
+        <c:if test="${milestoneConf.locked}">
+        <div class="entity-edit-general-warning">
+          <p><f:message key="message.CannotModifyBecauseMilestoneLocking"/></p>
+        </div>        
+        </c:if>
     </c:if>
   
 	<div class="unsnap"></div>	
@@ -319,11 +324,11 @@ publish('reload.requirement.attachments');
     <div  id="rename-requirement-dialog" class="not-displayed popup-dialog"
           title="${renameDialogTitle}">
     
-        <c:if test="${not empty activeMilestone}">
-          <div data-milestones="${totalMilestones}" 
-          class="milestone-count-notifier centered std-margin-top std-margin-bottom ${(totalMilestones lt 2) ? 'not-displayed' : ''}">
-          <f:message key="message.RenameRequirementBoundToMultipleMilestones"/>
-        </div>
+        <c:if test="${milestoneConf.messagesEnabled}">
+            <div data-milestones="${milestoneConf.totalMilestones}" 
+                class="milestone-count-notifier centered std-margin-top std-margin-bottom ${(milestoneConf.multipleBindings) ? '' : 'not-displayed'}">
+                <f:message key="message.RenameRequirementBoundToMultipleMilestones"/>
+            </div>
         </c:if> 
     
         <label><f:message key="dialog.rename.label" /></label>
