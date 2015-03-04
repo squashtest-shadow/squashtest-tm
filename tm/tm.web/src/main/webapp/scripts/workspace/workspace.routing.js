@@ -148,6 +148,7 @@ define([], function(){
 	    'info-list.bind-to-project'             : root + '/info-list-binding/project/{\\d+}/{\\w+}',
 	    'docxtemplate'                          : root + '/reports/{\\w+}/{\\d+}/views/{\\d+}/docxtemplate',
 	    'ie9sucks'                          : root + '/reports/0/0/ie9',
+	     'milestone.synchronize'            : root + '/administration/milestones/{\\d+}/synchronize/{\\d+}',
 		// helper methods
 		buildURL : function(){
 			var args = Array.prototype.slice.call(arguments);

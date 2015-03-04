@@ -47,6 +47,7 @@ import org.squashtest.tm.domain.project.GenericProject;
 import org.squashtest.tm.service.milestone.MilestoneManagerService;
 import org.squashtest.tm.service.project.ProjectFinder;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
+import org.squashtest.tm.service.user.UserAccountService;
 import org.squashtest.tm.web.internal.controller.milestone.MilestoneStatusComboDataBuilder;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
@@ -68,7 +69,9 @@ public class MilestoneAdministrationController {
 	private Provider<MilestoneStatusComboDataBuilder> statusComboDataBuilderProvider;
 	@Inject
 	private ProjectFinder projectFinder;
-
+	@Inject
+	private UserAccountService userService;
+	
 	@RequestMapping(method = RequestMethod.POST)
 	@ResponseStatus(HttpStatus.CREATED)
 	public @ResponseBody long addMilestone(@Valid @ModelAttribute("add-milestone") Milestone milestone) {
@@ -109,6 +112,8 @@ public class MilestoneAdministrationController {
 		ModelAndView mav = new ModelAndView("page/milestones/show-milestones");
 		mav.addObject("milestoneStatus", statusComboDataBuilderProvider.get().useLocale(locale).buildMap());
 		mav.addObject("editableMilestoneIds", milestoneManager.findAllIdsOfEditableMilestone());
+		mav.addObject("currentUser", userService.findCurrentUser().getName());
+		mav.addObject("isAdmin", permissionEvaluationService.hasRole("ROLE_ADMIN"));
 		return mav;
 	}
 
@@ -138,5 +143,14 @@ public class MilestoneAdministrationController {
 		milestoneManager.cloneMilestone(motherId, milestone, bindToRequirements, bindToTestCases, bindToCampaigns);
 		return milestone.getId();
 	}
+	
+	
+	@RequestMapping(value = "/{sourceId}/synchronize/{targetId}", method = RequestMethod.POST)
+	public @ResponseBody void synchronizeMilestone(@PathVariable("sourceId") long sourceId,  @PathVariable("targetId") long targetId, @RequestParam boolean extendPerimeter, @RequestParam boolean isUnion){
+		
+		milestoneManager.synchronize(sourceId, targetId, extendPerimeter, isUnion);
+		
+	}
+	
 
 }

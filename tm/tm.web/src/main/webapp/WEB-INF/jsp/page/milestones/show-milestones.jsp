@@ -71,6 +71,10 @@
      <span class="ui-icon ui-icon-plusthick">+</span> <span class="ui-button-text"><f:message key="label.AddMilestone" /> </span> </button>
      <button id="clone-milestone-button" class="test-step-toolbar-button ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-primary .squash-button-initialized" title=<f:message key="label.milestone.duplicate" />>    
      <span class="ui-button-text"><f:message key="label.milestone.duplicate" /> </span> </button>
+     
+      <button id="synchronize-milestone-button" class="test-step-toolbar-button ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-primary .squash-button-initialized" title=<f:message key="label.milestone.synchronize" />>    
+     <span class="ui-button-text"><f:message key="label.milestone.synchronize" /> </span> </button>
+     
      <button id="delete-milestone-button" class="test-step-toolbar-button ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-primary .squash-button-initialized" title=<f:message key="label.deleteMilestone" />>    
      <span class="ui-icon ui-icon-trash">-</span> <span class="ui-button-text"><f:message key="label.deleteMilestone" /> </span> </button>
  </div>
@@ -270,11 +274,48 @@
         <input type="button" value="${cancelLabel}" data-def="evt=cancel"/>
       </div>     
 </div>
+<!--  clone popup end-->
 
 
+<!--  synchronize popup -->
 
+<f:message var="synchronizeMilestoneTitle" key="dialog.synchronize-milestone.title"/>
+    <div id="synchronize-milestone-dialog" class="not-displayed popup-dialog" 
+          title="${synchronizeMilestoneTitle}" />
+    
+    
+     <table>
+          <tr>
+<td><input id="mil1" type="radio" name="synchro"></td>
+<td><span id="mil1Label"/></td>
+          </tr>
+        
+     
+         <tr>
+<td><input id="mil2" type="radio" name="synchro"></td>
+<td><span id="mil2Label"/></td>
+         </tr>  
 
-
+          <tr>
+<td><input id="union" type="radio" name="synchro" ></td>
+<td><span id="unionLabel"/></td>
+          </tr>   
+          
+          
+          <tr>
+        <td><input id="perim" type="checkbox" ></td>
+<td></td>
+   </tr>
+       
+        </table>
+    
+    
+      <div class="popup-dialog-buttonpane">
+        <input type="button" value="${addLabel}" data-def="mainbtn, evt=confirm"/>
+        <input type="button" value="${cancelLabel}" data-def="evt=cancel"/>
+      </div>     
+</div>
+<!--  synchronize popup end-->
 
 
 </jsp:attribute>
@@ -289,6 +330,8 @@ requirejs.config({
 		'milestone-manager/milestone-manager' : {
 
 			data: {
+				currentUser : '${currentUser}',
+				isAdmin : ${isAdmin},
 				editableMilestoneIds : ${editableMilestoneIds}
 			       }
 				           }

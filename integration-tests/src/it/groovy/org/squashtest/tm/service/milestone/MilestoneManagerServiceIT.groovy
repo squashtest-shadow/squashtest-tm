@@ -21,13 +21,17 @@
 package org.squashtest.tm.service.milestone
 
 import javax.inject.Inject
+import javax.naming.ldap.ManageReferralControl;
 
 import org.springframework.transaction.annotation.Transactional
 import org.squashtest.tm.domain.milestone.Milestone
 import org.squashtest.tm.domain.milestone.MilestoneStatus
 import org.squashtest.tm.exception.milestone.MilestoneLabelAlreadyExistsException
+import org.squashtest.tm.service.CustomDbunitServiceSpecification
 import org.squashtest.tm.service.DbunitServiceSpecification
+import org.squashtest.tm.service.security.PermissionEvaluationService
 import org.unitils.dbunit.annotation.DataSet
+
 
 
 import spock.unitils.UnitilsSupport
@@ -93,4 +97,5 @@ class MilestoneManagerServiceIT extends DbunitServiceSpecification {
 
 	}
 
+	
 }

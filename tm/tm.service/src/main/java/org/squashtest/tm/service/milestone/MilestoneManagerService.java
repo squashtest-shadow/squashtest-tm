@@ -40,4 +40,5 @@ public interface MilestoneManagerService extends CustomMilestoneManager{
 	void changeOwner(long milestoneId, User Owner);
 	void changeRange(long milestoneId, MilestoneRange newRange);
 
+
 }

@@ -127,20 +127,10 @@
 				popup.confirmDialog('open');
 			}
 			else{
-				displayNothingSelected();
+				warningWithTranslation ('message.EmptyTableSelection');
 			}
 		});
-		
-		function displayNothingSelected(){
-			var warn = translator.get({
-				errorTitle : 'popup.title.Info',
-				errorMessage : 'message.EmptyTableSelection'
-			});
-			$.squash.openMessage(warn.errorTitle, warn.errorMessage);
-		}
-		
-		
-		
+			
 		
 	var addMilestoneDialog = $("#add-milestone-dialog");
 		
@@ -193,32 +183,23 @@
 		
 		var ids = $("#milestones-table").squashTable().getSelectedIds();
 		if (ids.length>1){
-			warningCantCloneMoreThanOne();
+			warningWithTranslation ('message.milestone.cantclonemultiple');
 		} else if (ids.length == 1) {
 			cloneMilestoneDialog.data('entity-id', ids);
 			cloneMilestoneDialog.formDialog('open');
 		} else {
-			warningCantCloneNothing();
+			warningWithTranslation ('message.milestone.cantclonenothing');	
 		}
 	});
 	
-	function warningCantCloneMoreThanOne()  {
+	
+	function warningWithTranslation(errorKey){
 		var warn = translator.get({
 			errorTitle : 'popup.title.Info',
-			errorMessage : 'message.milestone.cantclonemultiple'
+			errorMessage : errorKey
 		});
-		$.squash.openMessage(warn.errorTitle, warn.errorMessage);	
+		$.squash.openMessage(warn.errorTitle, warn.errorMessage);		
 	}
-	
-	function warningCantCloneNothing()  {
-		var warn = translator.get({
-			errorTitle : 'popup.title.Info',
-			errorMessage : 'message.milestone.cantclonenothing'
-		});
-		$.squash.openMessage(warn.errorTitle, warn.errorMessage);	
-	}
-	
-	
 	
 	cloneMilestoneDialog.on('formdialogcancel', function(){
 		cloneMilestoneDialog.formDialog('close');
@@ -258,7 +239,169 @@
 	$("#checkAll").on('click', checkAllCloneParam);
 	$("#uncheckAll").on('click', uncheckCloneParam);
 	
+	//Synchronize
+	$("#synchronize-milestone-button").on('click', function(){
+		var table = $("#milestones-table").squashTable();
+		var ids = table.getSelectedIds();
+		//BEWARE lot's of check incoming
+		if (ids.length < 2) {
+			//error can't select less than 2
+			warningWithTranslation('message.milestone.synchronize.notenought');
+		} else if (ids.length > 2){
+			//error can't select more than 2
+			warningWithTranslation('message.milestone.synchronize.toomuch');
+		} else {
+			//maybe it's ok... let's see 
+			var mil1 = table.getDataById(ids[0]);
+			var mil2 = table.getDataById(ids[1]);
+			synchronizeMilestoneDialog.data('mil1', mil1);
+			synchronizeMilestoneDialog.data('mil2', mil2);
+			var trans = translator.get({
+			rangeGlobal : "milestone.range.GLOBAL",
+			statusInProgress :"milestone.status.IN_PROGRESS"
+			});
+			
+			if (mil1.status == trans.statusInProgress || mil2.status == trans.statusInProgress){
+				// you need at least one milestone in progress to synchronize
+			
+				if (config.data.isAdmin){
+					//ok you're admin you can skip some additional check
+					configAdminSynchroPopup();
+					checkFirstRadio();
+					synchronizeMilestoneDialog.formDialog('open');
+				
+				} else {
+					//too bad you're not admin, you have to pass some more check...
+					if (mil1.range == trans.rangeGlobal && mil2.range == trans.rangeGlobal){
+						//you loose you're not admin and want to synchronize 2 global milestone
+						warningWithTranslation('message.milestone.synchronize.wrongrange');
+					} else if (mil1.range == trans.rangeGlobal && mil2.status != trans.statusInProgress || mil2.range == trans.rangeGlobal && mil1.status != trans.statusInProgress ) {
+						//you have selected one global and a restricted non in progress milestone...too bad you loose again !
+						
+					} else {
+						//You're still here ?? ok you can now have your pop up !
+						configNonAdminSynchroPopup();
+						checkFirstRadio();
+						allowPerimeterOrNot();
+						synchronizeMilestoneDialog.formDialog('open');
+					
+					}		
+				}
+				
+			} else {
+				// 2 milestone not in progress, you loose again
+				warningWithTranslation('message.milestone.synchronize.wrongstatus');
+			}	
+		}
+
+		function configAdminSynchroPopup(){
+			var mil1 = synchronizeMilestoneDialog.data('mil1');
+			var mil2 = synchronizeMilestoneDialog.data('mil2');
+			$("#mil1").attr("disabled", mil1.status != trans.statusInProgress); 
+			$("#mil2").attr("disabled", mil2.status != trans.statusInProgress); 
+			$("#union").attr("disabled", mil1.status != trans.statusInProgress || mil2.status != trans.statusInProgress); 
+			$("#perim").attr("disabled", true);
+			writeMilestonesLabel();
+		
+		}
+		
+		function configNonAdminSynchroPopup(){
+			var mil1 = synchronizeMilestoneDialog.data('mil1');
+			var mil2 = synchronizeMilestoneDialog.data('mil2');
+			var mil1CantBeTarget = mil1.status != trans.statusInProgress ||  mil1.range == trans.rangeGlobal;
+			var mil2CantBeTarget = mil2.status != trans.statusInProgress ||  mil2.range == trans.rangeGlobal;
+			$("#mil1").attr("disabled", mil1CantBeTarget); 
+			$("#mil2").attr("disabled", mil2CantBeTarget); 
+			$("#union").attr("disabled", mil1CantBeTarget || mil2CantBeTarget); 
+			writeMilestonesLabel();
+		}
+		
+		function writeMilestonesLabel(){
+			var msg = translator.get({
+				mil:"label.milestone.synchronize.target",
+				union:"label.milestone.synchronize.union"	
+			});
+			
+			  
+			$("#mil1Label").text(msg.mil.split('"{0}"').join(mil1.label).split('"{1}"').join(mil2.label));
+			$("#mil2Label").text(msg.mil.split('"{0}"').join(mil2.label).split('"{1}"').join(mil1.label));
+			$("#unionLabel").text(msg.union.split('"{0}"').join(mil1.label).split('"{1}"').join(mil2.label));
+			greyTextForDisabledLabel($("#mil1"), $("#mil1Label"));
+			greyTextForDisabledLabel($("#mil2"), $("#mil2Label"));
+			greyTextForDisabledLabel($("#union"),$("#unionLabel"));
+			
+		}
+		
+		function greyTextForDisabledLabel( radioButtonSelector,labelSelector){
+			$radioButtonSelector = $(radioButtonSelector);
+			$labelSelector = $(labelSelector);
+			if ($radioButtonSelector.attr("disabled")){
+				$labelSelector.addClass("nota-bene");
+			} else {
+				$labelSelector.removeClass("nota-bene");
+			}
+			
+		}
+		
+		$("#mil1").on('change', allowPerimeterOrNot);
+		$("#mil2").on('change', allowPerimeterOrNot);
+		$("#union").on('change', allowPerimeterOrNot);
+		
+		function allowPerimeterOrNot(){
+			var mil1 = synchronizeMilestoneDialog.data('mil1');
+			var mil2 = synchronizeMilestoneDialog.data('mil2');
+			
+			if (!config.data.isAdmin){
+				//admin don't have the perimeter checkbox
+			$("#perim").attr("disabled", false);
+			
+			if ($("#union").prop('checked')){
+				$("#perim").attr("disabled", true);
+			}
+			
+			if ($("#mil1").prop('checked') && config.data.currentUser != mil1.owner){
+				$("#perim").attr("disabled", true);
+			}
+			
+			if ($("#mil2").prop('checked') && config.data.currentUser != mil2.owner){
+				$("#perim").attr("disabled", true);
+			}
+			
+			}
+		}
+		
+		function checkFirstRadio(){
+			
+			if ($("#mil1").attr("disabled")){
+				$("#mil2").prop('checked', true);
+			} else {
+				$("#mil1").prop('checked', true);
+			}
+		}
+		
+		
+	});
 	
+	var synchronizeMilestoneDialog = $("#synchronize-milestone-dialog");
+	synchronizeMilestoneDialog.formDialog();
 	
+	synchronizeMilestoneDialog.on('formdialogcancel', function(){
+		synchronizeMilestoneDialog.formDialog('close');
+		});
+	
+	synchronizeMilestoneDialog.on('formdialogconfirm', function(){
+		var mil1 = synchronizeMilestoneDialog.data('mil1');
+		var mil2 = synchronizeMilestoneDialog.data('mil2');
+		$.ajax({
+			url : routing.buildURL("milestone.synchronize" , mil1["entity-id"], mil2["entity-id"]),
+			type : 'POST',
+			data : {extendPerimeter: $("#perim").prop("checked"),
+				isUnion:$("#union").prop("checked")}					
+		});
+		
+		
+		
+		synchronizeMilestoneDialog.formDialog('close');
+		});
 	});			
 	

@@ -45,6 +45,10 @@ import org.squashtest.tm.service.user.UserAccountService;
 @Service("CustomMilestoneManager")
 public class CustomMilestoneManagerServiceImpl implements CustomMilestoneManager {
 
+	
+	@Inject
+	private ProjectFinder projectFinder;
+	
 	@Inject
 	private MilestoneDao milestoneDao;
 
@@ -191,7 +195,7 @@ public class CustomMilestoneManagerServiceImpl implements CustomMilestoneManager
 		return false;
 	}
 
-	private List<GenericProject> getProjectICanManage(List<GenericProject> projects) {
+	private List<GenericProject> getProjectICanManage(Collection<GenericProject> projects) {
 
 		List<GenericProject> manageableProjects = new ArrayList<GenericProject>();
 
@@ -213,8 +217,8 @@ public class CustomMilestoneManagerServiceImpl implements CustomMilestoneManager
 	public void cloneMilestone(long motherId, Milestone milestone, boolean bindToRequirements, boolean bindToTestCases,
 			boolean bindToCampaigns) {
 		Milestone mother = findById(motherId);
-		boolean copyAllPerimeter = permissionEvaluationService.hasRole("ROLE_ADMIN") || !isGlobal(milestone)
-				&& isCreatedBySelf(milestone);
+		boolean copyAllPerimeter = permissionEvaluationService.hasRole("ROLE_ADMIN") || !isGlobal(mother)
+				&& isCreatedBySelf(mother);
 
 		bindProjectsAndPerimeter(mother, milestone, copyAllPerimeter);
 		bindRequirements(mother, milestone, bindToRequirements, copyAllPerimeter);
@@ -244,8 +248,9 @@ public class CustomMilestoneManagerServiceImpl implements CustomMilestoneManager
 			milestone.bindProjects(mother.getProjects());
 			milestone.addProjectsToPerimeter(mother.getPerimeter());
 		} else {
-			milestone.bindProjects(getProjectICanManage(mother.getProjects()));
-			milestone.addProjectsToPerimeter(getProjectICanManage(mother.getPerimeter()));
+			milestone.bindProjects(projectFinder.findAllICanManage());
+			milestone.addProjectsToPerimeter(projectFinder.findAllICanManage());
+			
 		}
 
 	}
@@ -278,6 +283,124 @@ public class CustomMilestoneManagerServiceImpl implements CustomMilestoneManager
 					milestone.bindRequirementVersion(req);
 				}
 			}
+		}
+	}
+
+
+	@Override
+	public void synchronize(long sourceId, long targetId, boolean extendPerimeter, boolean isUnion) {
+		
+	
+		Milestone source = findById(sourceId);
+		Milestone target = findById(targetId);
+		verifyCanSynchronize(source,target, isUnion);
+		synchronizePerimeterAndProjects(source, target, extendPerimeter, isUnion);
+		synchronizeTestCases(source, target, isUnion, extendPerimeter);
+		synchronizeRequirementVersions(source, target, isUnion, extendPerimeter);
+		synchronizeCampaigns(source, target, isUnion, extendPerimeter);
+	}
+
+
+
+	private void verifyCanSynchronize(Milestone source, Milestone target, boolean isUnion) {
+		
+		if (isUnion && (source.getStatus() != MilestoneStatus.IN_PROGRESS || !permissionEvaluationService.hasRole("ROLE_ADMIN") && isGlobal(source))){
+			throw new IllegalArgumentException("milestone can't be synchronized because it's status or range don't allow it");
+		}
+		
+		if (target.getStatus() != MilestoneStatus.IN_PROGRESS || !permissionEvaluationService.hasRole("ROLE_ADMIN") && isGlobal(target)){
+			throw new IllegalArgumentException("milestone can't be synchronized because it's status or range don't allow it");
+		}
+		
+	}
+
+	private void synchronizeCampaigns(Milestone source, Milestone target, boolean isUnion, boolean extendPerimeter) {
+
+		milestoneDao.synchronizeCampaigns(source.getId(), target.getId(),
+				getProjectsToSynchronize(source, target, extendPerimeter, isUnion));
+		if (isUnion) {
+			milestoneDao.synchronizeCampaigns(target.getId(), source.getId(),
+					getProjectsToSynchronize(target, source, extendPerimeter, isUnion));
+		}
+	}
+
+	private void synchronizeRequirementVersions(Milestone source, Milestone target, boolean isUnion,
+			boolean extendPerimeter) {
+		milestoneDao.synchronizeRequirementVersions(source.getId(), target.getId(),
+				getProjectsToSynchronize(source, target, extendPerimeter, isUnion));
+		if (isUnion) {
+			milestoneDao.synchronizeRequirementVersions(target.getId(), source.getId(),
+					getProjectsToSynchronize(target, source, extendPerimeter, isUnion));
+		}
+	}
+
+	private void synchronizeTestCases(Milestone source, Milestone target, boolean isUnion, boolean extendPerimeter) {
+		milestoneDao.synchronizeTestCases(source.getId(), target.getId(),
+				getProjectsToSynchronize(source, target, extendPerimeter, isUnion));
+		if (isUnion) {
+			milestoneDao.synchronizeTestCases(target.getId(), source.getId(),
+					getProjectsToSynchronize(target, source, extendPerimeter, isUnion));
+		}
+	}
+
+	private List<Long> getProjectsToSynchronize(Milestone source, Milestone target, boolean extendPerimeter,
+			boolean isUnion) {
+
+		Set<GenericProject> result = new HashSet<GenericProject>(source.getPerimeter());
+		if (permissionEvaluationService.hasRole("ROLE_ADMIN") || extendPerimeter && isCreatedBySelf(target)) {
+			result.addAll(target.getPerimeter());
+		} else {
+			result.retainAll(target.getPerimeter());
+			if (!isCreatedBySelf(target)) {
+				result.retainAll(getProjectICanManage(result));
+			}
+		}
+		List<Long> ids = new ArrayList<Long>();
+		for (GenericProject p : result){
+			ids.add(p.getId());
+		}
+		return ids;
+	}
+
+	private void adminSynchronize(Milestone source, Milestone target, boolean isUnion) {
+		if (isUnion) {
+			source.bindProjects(target.getProjects());
+			source.addProjectsToPerimeter(target.getPerimeter());
+			target.bindProjects(source.getProjects());
+			target.addProjectsToPerimeter(source.getPerimeter());
+		} else {
+			target.bindProjects(source.getProjects());
+			target.addProjectsToPerimeter(source.getPerimeter());
+		}
+	}
+
+	private void projectManagerSynchronize(Milestone source, Milestone target, boolean isUnion, boolean extendPerimeter) {
+		if (isUnion) {
+			if (isCreatedBySelf(target)) {
+				target.bindProjects(source.getProjects());
+				target.addProjectsToPerimeter(source.getPerimeter());
+			}
+			if (isCreatedBySelf(source)) {
+				source.bindProjects(target.getProjects());
+				source.addProjectsToPerimeter(target.getPerimeter());
+			}
+
+		} else {
+			if (isCreatedBySelf(target) && extendPerimeter) {
+				// can extend perimeter only if own milestone
+				target.bindProjects(source.getProjects());
+				target.addProjectsToPerimeter(source.getPerimeter());
+			}
+		}
+	}
+
+	private void synchronizePerimeterAndProjects(Milestone source, Milestone target, boolean extendPerimeter,
+			boolean isUnion) {
+
+		if (permissionEvaluationService.hasRole("ROLE_ADMIN")) {
+			adminSynchronize(source, target, isUnion);
+		} else {
+			projectManagerSynchronize(source, target, isUnion, extendPerimeter);
 		}
 	}
 }

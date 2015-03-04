@@ -434,6 +434,12 @@
           <threadCount>1</threadCount>
           <!-- We can run ITs and skip unit tests with -DskipTests=true -->
           <skipTests>${skipITs}</skipTests>
+        
+        
+     <includes>
+     <include>**/*Milestone*.class</include>
+     </includes>
+        
           <!-- 
           <excludes>
             <exclude>**/RequirementFolderMappingIT.class</exclude>

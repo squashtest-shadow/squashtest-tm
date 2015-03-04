@@ -69,6 +69,8 @@ public interface CustomMilestoneManager extends MilestoneFinderService {
 
 	void cloneMilestone(long motherId, Milestone milestone, boolean bindToRequirements, boolean bindToTestCases,
 			boolean bindToCampaigns);
+	
+	void synchronize(long sourceId, long targetId, boolean extendPerimeter, boolean isUnion);
 
 	/**
 	 * When a node has been copied to another project some milestones might no longer be available.

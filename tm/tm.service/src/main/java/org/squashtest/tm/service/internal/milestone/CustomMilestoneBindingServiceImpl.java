@@ -29,14 +29,12 @@ import org.springframework.stereotype.Service;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.milestone.MilestoneRange;
 import org.squashtest.tm.domain.project.GenericProject;
-import org.squashtest.tm.service.internal.repository.BoundEntityDao;
 import org.squashtest.tm.service.internal.repository.GenericProjectDao;
 import org.squashtest.tm.service.internal.repository.MilestoneDao;
 import org.squashtest.tm.service.internal.repository.ProjectTemplateDao;
 import org.squashtest.tm.service.milestone.MilestoneBindingManagerService;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.security.UserContextService;
-import org.squashtest.tm.service.testcase.TestCaseFinder;
 
 @Service("squashtest.tm.service.MilestoneBindingManagerService")
 public class CustomMilestoneBindingServiceImpl implements MilestoneBindingManagerService {
