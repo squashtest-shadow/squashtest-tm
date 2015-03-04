@@ -170,7 +170,7 @@ public class HibernateMilestoneDao extends HibernateEntityDao<Milestone> impleme
 
 	@Override
 	public void bindMilestoneToProjectRequirementVersions(long projectId, long milestoneId) {
-		Query query =  currentSession().getNamedQuery("BoundEntityDao.findAllReqVersionsForProject");
+		Query query =  currentSession().getNamedQuery("milestone.findLastNonObsoleteReqVersionsForProject");
 		query.setParameter("projectId", projectId);
 		ScrollableResults reqVersions = query.setCacheMode(CacheMode.IGNORE)
 			    .scroll(ScrollMode.FORWARD_ONLY);
@@ -189,6 +189,7 @@ public class HibernateMilestoneDao extends HibernateEntityDao<Milestone> impleme
 		}
 		
 	}
+	
 
 	@Override
 	public void bindMilestoneToProjectCampaigns(long projectId, long milestoneId) {

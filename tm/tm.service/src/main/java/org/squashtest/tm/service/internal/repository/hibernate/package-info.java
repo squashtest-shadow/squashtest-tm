@@ -626,8 +626,9 @@
 	@NamedQuery(name = "milestone.findCampaignMilestones", query="select milestones from Campaign camp join camp.milestones milestones where camp.id = :campaignId"),
 	@NamedQuery(name = "milestone.findIterationMilestones", query="select milestones from Iteration iter join iter.campaign camp join camp.milestones milestones where iter.id = :iterId"),
 	@NamedQuery(name = "milestone.findTestSuiteMilestones", query="select milestones from TestSuite ts join ts.iteration iter join iter.campaign camp join camp.milestones milestones where ts.id = :tsId"),
-
-	//InfoList
+        @NamedQuery(name = "milestone.findLastNonObsoleteReqVersionsForProject", query = "select rv from RequirementVersion rv join rv.requirement r where r.project.id = :projectId and rv.status != 'OBSOLETE'  "),
+	
+        //InfoList
 	@NamedQuery(name = "infoList.findByCode", query = "from InfoList where code = :code"),
 	@NamedQuery(name = "infoList.findProjectUsingInfoList", query ="from Project p where p.requirementCategories.id = :id or p.testCaseNatures.id = :id or p.testCaseTypes.id = :id"),
 	@NamedQuery(name = "infoList.findAllOrdered", query = "from InfoList order by label"),
