@@ -4,7 +4,7 @@
   <parent>
     <artifactId>squashtest-csp-tm</artifactId>
     <groupId>org.squashtest.tm</groupId>
-    <version>1.11.4.RC3-SNAPSHOT</version>
+    <version>1.11.4.RELEASE</version>
   </parent>
 
   <artifactId>tm.web</artifactId>
