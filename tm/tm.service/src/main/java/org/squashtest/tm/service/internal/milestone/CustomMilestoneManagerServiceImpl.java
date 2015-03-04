@@ -36,6 +36,7 @@ import org.squashtest.tm.domain.milestone.MilestoneHolder;
 import org.squashtest.tm.domain.milestone.MilestoneRange;
 import org.squashtest.tm.domain.milestone.MilestoneStatus;
 import org.squashtest.tm.domain.project.GenericProject;
+import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.service.internal.repository.MilestoneDao;
@@ -48,10 +49,10 @@ import org.squashtest.tm.service.user.UserAccountService;
 @Service("CustomMilestoneManager")
 public class CustomMilestoneManagerServiceImpl implements CustomMilestoneManager {
 
-	
+
 	@Inject
 	private ProjectFinder projectFinder;
-	
+
 	@Inject
 	private MilestoneDao milestoneDao;
 
@@ -64,8 +65,6 @@ public class CustomMilestoneManagerServiceImpl implements CustomMilestoneManager
 	@Inject
 	private PermissionEvaluationService permissionEvaluationService;
 
-	@Inject
-	private ProjectFinder projectFinder;
 
 	@Override
 	public void addMilestone(Milestone milestone) {
@@ -271,7 +270,7 @@ public class CustomMilestoneManagerServiceImpl implements CustomMilestoneManager
 		} else {
 			milestone.bindProjects(projectFinder.findAllICanManage());
 			milestone.addProjectsToPerimeter(projectFinder.findAllICanManage());
-			
+
 		}
 
 	}
@@ -310,8 +309,8 @@ public class CustomMilestoneManagerServiceImpl implements CustomMilestoneManager
 
 	@Override
 	public void synchronize(long sourceId, long targetId, boolean extendPerimeter, boolean isUnion) {
-		
-	
+
+
 		Milestone source = findById(sourceId);
 		Milestone target = findById(targetId);
 		verifyCanSynchronize(source,target, isUnion);
@@ -324,15 +323,15 @@ public class CustomMilestoneManagerServiceImpl implements CustomMilestoneManager
 
 
 	private void verifyCanSynchronize(Milestone source, Milestone target, boolean isUnion) {
-		
+
 		if (isUnion && (source.getStatus() != MilestoneStatus.IN_PROGRESS || !permissionEvaluationService.hasRole("ROLE_ADMIN") && isGlobal(source))){
 			throw new IllegalArgumentException("milestone can't be synchronized because it's status or range don't allow it");
 		}
-		
+
 		if (target.getStatus() != MilestoneStatus.IN_PROGRESS || !permissionEvaluationService.hasRole("ROLE_ADMIN") && isGlobal(target)){
 			throw new IllegalArgumentException("milestone can't be synchronized because it's status or range don't allow it");
 		}
-		
+
 	}
 
 	private void synchronizeCampaigns(Milestone source, Milestone target, boolean isUnion, boolean extendPerimeter) {
