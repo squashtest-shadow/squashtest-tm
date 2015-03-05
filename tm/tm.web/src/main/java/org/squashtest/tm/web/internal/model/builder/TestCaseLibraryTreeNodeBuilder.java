@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.web.internal.model.builder;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 
@@ -36,6 +37,7 @@ import org.squashtest.tm.domain.testcase.TestCaseImportance;
 import org.squashtest.tm.domain.testcase.TestCaseLibraryNode;
 import org.squashtest.tm.domain.testcase.TestCaseLibraryNodeVisitor;
 import org.squashtest.tm.domain.testcase.TestCaseStatus;
+import org.squashtest.tm.service.milestone.MilestoneMembershipFinder;
 import org.squashtest.tm.service.requirement.VerifiedRequirementsManagerService;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
@@ -55,6 +57,9 @@ public class TestCaseLibraryTreeNodeBuilder extends LibraryTreeNodeBuilder<TestC
 
 	protected VerifiedRequirementsManagerService verifiedRequirementsManagerService;
 	protected InternationalizationHelper internationalizationHelper;
+
+	@Inject
+	private MilestoneMembershipFinder milestoneMembershipFinder;
 
 	/**
 	 * This visitor is used to populate custom attributes of the {@link JsTreeNode} currently built
@@ -193,7 +198,7 @@ public class TestCaseLibraryTreeNodeBuilder extends LibraryTreeNodeBuilder<TestC
 	@Override
 	protected boolean passesMilestoneFilter() {
 		if (milestoneFilter != null){
-			return new MilestoneFilter(milestoneFilter).isValid(node);
+			return new MilestoneFilter(milestoneMembershipFinder, milestoneFilter).isValid(node);
 		}
 		else{
 			return true;
@@ -202,16 +207,19 @@ public class TestCaseLibraryTreeNodeBuilder extends LibraryTreeNodeBuilder<TestC
 
 	private static final class MilestoneFilter implements TestCaseLibraryNodeVisitor{
 
+		private MilestoneMembershipFinder memberFinder;
 		private Milestone milestone;
 		private boolean isValid;
 
-		private MilestoneFilter(Milestone milestone){
+		private MilestoneFilter(MilestoneMembershipFinder memberFinder, Milestone milestone){
+			this.memberFinder = memberFinder;
 			this.milestone = milestone;
 		}
 
 		@Override
 		public void visit(TestCase visited) {
-			isValid =  visited.isMemberOf(milestone);
+			Collection<Milestone> allMilestones = memberFinder.findAllMilestonesForTestCase(visited.getId());
+			isValid =  allMilestones.contains(milestone);
 		}
 
 		@Override

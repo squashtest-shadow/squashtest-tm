@@ -38,7 +38,7 @@ import org.squashtest.tm.service.internal.repository.TestCaseDao;
 import org.squashtest.tm.service.internal.repository.TestSuiteDao;
 import org.squashtest.tm.service.milestone.MilestoneMembershipManager;
 
-@Service
+@Service("squashtest.tm.service.MilestoneMembershipManager")
 public class MilestoneMembershipManagerImpl implements MilestoneMembershipManager {
 
 	private static final String READ_TC = "hasPermission(#testCaseId, 'org.squashtest.tm.domain.testcase.TestCase' , 'READ')";

@@ -166,29 +166,52 @@ define(["jquery", "workspace.event-bus", "app/ws/squashtm.notification", "squash
 				switch(ids.length){
 				case 0 : state="none-selected"; break;
 				case 1 : state="one-selected";break;
-				default : state="more-selected"
+				default : state="more-selected";
 				};
 				
 				unbindDialog.formDialog('setState', state);
 			});
 			
+			
+			/*
+			 * Here we filter out the milestones that weren't direct milestones 
+			 */
 			unbindDialog.on('formdialogconfirm', function(){			
 				
-				var ids = currentTable.getSelectedIds();
-				
-				var url = conf.milestonesURL + '/' + ids.join(',');
+				var ids = [];
+
+				var rows = currentTable.getSelectedRows();
+				rows.each(function(){
 					
-				$.ajax({
-					url : url,
-					type : 'DELETE'
-				})
-				.success(function(){
-					eventBus.trigger('node.unbindmilestones', {
-						identity : conf.identity,
-						milestones : ids
-					});
-					unbindDialog.formDialog('close');
+					var data = currentTable.fnGetData(this);
+
+					// the test is a success if 'directMember' 
+					// is true or undefined (that is intended).
+					if (data['directMember'] !== false){
+						ids.push(data['entity-id']);
+					}					
 				});
+				
+				// abort if empty
+				if (ids.length===0){
+					unbindDialog.formDialog('close');
+				}
+				// else post
+				else{				
+					var url = conf.milestonesURL + '/' + ids.join(',');
+						
+					$.ajax({
+						url : url,
+						type : 'DELETE'
+					})
+					.success(function(){
+						eventBus.trigger('node.unbindmilestones', {
+							identity : conf.identity,
+							milestones : ids
+						});
+						unbindDialog.formDialog('close');
+					});
+				}
 
 			});
 			
