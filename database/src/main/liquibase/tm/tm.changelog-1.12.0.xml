@@ -55,7 +55,7 @@
       <column name="DESCRIPTION" type="CLOB" remarks="Milestone description">
       </column>
 
-      <column name="RANGE" type="java.sql.Types.VARCHAR(30)" remarks="Milestone range">
+      <column name="M_RANGE" type="java.sql.Types.VARCHAR(30)" remarks="Milestone range">
         <constraints nullable="false" />
       </column>
 

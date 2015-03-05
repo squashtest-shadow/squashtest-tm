@@ -87,7 +87,7 @@ public class Milestone implements Comparable {
 	private MilestoneStatus status;
 
 	@Enumerated(EnumType.STRING)
-	@Column(name = "RANGE")
+	@Column(name = "M_RANGE")
 	@FieldBridge(impl = LevelEnumBridge.class)
 	private MilestoneRange range;
 
