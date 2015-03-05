@@ -20,15 +20,16 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
-  <div th:fragment="icon-picker-dialog(id, icons)" id="icon-picker-dialog" class="not-displayed popup-dialog" 
-    th:id="${id}" th:title="#{title.infoList.item.icon.choose}">
-    <table class="form-horizontal">
-      <tr>
-        <td th:each="icon :${icons}" th:class="'sq-icon sq-spaced-icon ' + ${icon} " />
-      </tr>
-    </table>
-    <div class="popup-dialog-buttonpane">
-      <input class="confirm" type="button" th:value="#{label.Add}" value="add" /> <input class="cancel" type="button"
-        th:value="#{label.Cancel}" value="cancel" />
+  <div th:fragment="icon-picker-dialog(id, icons)">
+    <div id="icon-picker-dialog" class="not-displayed popup-dialog" th:id="${id}" th:title="#{title.infoList.item.icon.choose}">
+      <table class="form-horizontal">
+        <tr>
+          <td th:each="icon :${icons}" th:class="'sq-icon sq-spaced-icon ' + ${icon} " />
+        </tr>
+      </table>
+      <div class="popup-dialog-buttonpane">
+        <input class="confirm" type="button" th:value="#{label.Add}" value="add" /> <input class="cancel" type="button"
+          th:value="#{label.Cancel}" value="cancel" />
+      </div>
     </div>
   </div>
