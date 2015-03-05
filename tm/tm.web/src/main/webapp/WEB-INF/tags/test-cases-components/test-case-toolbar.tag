@@ -55,7 +55,9 @@
 		<input type="button" value="${renameLabel}"
 				id="rename-test-case-button" class="sq-btn" />
 	</c:if>
+    <c:if test="${milestoneConf.messagesEnabled}">
         <input type="button" value="${createNewVersionLabel}" id="create-test-case-version-button" class="sq-btn"/>
+    </c:if>
 		<input type="button" value="${printLabel}" id="print-test-case-button" class="sq-btn"/>
 	</div>
 	

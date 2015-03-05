@@ -26,7 +26,6 @@ import java.util.Locale;
 
 import javax.inject.Inject;
 
-import org.apache.commons.collections.Predicate;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Component;
@@ -60,6 +59,10 @@ public class TestCaseLibraryTreeNodeBuilder extends LibraryTreeNodeBuilder<TestC
 
 	@Inject
 	private MilestoneMembershipFinder milestoneMembershipFinder;
+
+	public void setMilestoneMembershipFinder(MilestoneMembershipFinder finder){
+		this.milestoneMembershipFinder = finder;
+	}
 
 	/**
 	 * This visitor is used to populate custom attributes of the {@link JsTreeNode} currently built
@@ -155,6 +158,7 @@ public class TestCaseLibraryTreeNodeBuilder extends LibraryTreeNodeBuilder<TestC
 
 				TestCaseLibraryTreeNodeBuilder childrenBuilder = new TestCaseLibraryTreeNodeBuilder(
 						permissionEvaluationService, verifiedRequirementsManagerService, internationalizationHelper);
+				childrenBuilder.setMilestoneMembershipFinder(milestoneMembershipFinder);
 				childrenBuilder.filterByMilestone(milestoneFilter);
 
 				List<JsTreeNode> children = new JsTreeNodeListBuilder<TestCaseLibraryNode>(childrenBuilder)

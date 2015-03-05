@@ -66,7 +66,7 @@ public class MilestoneTableModelHelper extends DataTableModelBuilder<Milestone> 
 	}
 
 	private String formatStatus(MilestoneStatus status){
-		return status.toString();
+		return i18nHelper.internationalize(status, locale);
 	}
 
 }

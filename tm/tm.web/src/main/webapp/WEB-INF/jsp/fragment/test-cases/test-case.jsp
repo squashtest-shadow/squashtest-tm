@@ -221,7 +221,7 @@ require(["common"], function() {
 						hasCufs : ${hasCUF},
 						hasBugtracker : ${testCase.project.bugtrackerConnected},
 						isAutomated : ${testCase.project.testAutomationEnabled}
-						<c:if test="${not empty activeMilestone}">
+						<c:if test="${not empty milestoneConf.activeMilestone}">
 						,milestone : ${json:serialize(milestoneConf.activeMilestone)}
 						</c:if>
 					};

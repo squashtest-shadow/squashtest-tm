@@ -152,24 +152,25 @@ AbstractNodeDeletionHandler<TestCaseLibraryNode, TestCaseFolder> implements Test
 
 		List<Long> lockedByMilestoneRule = new ArrayList<>();
 
-		// Init the graph with test case calls
-		LockedFileInferenceGraph graph = createCallTestCaseGraph(nodeIds);
-
 		List<Long> candidateIds = new ArrayList<>(nodeIds);
 
 		/*
-		 * If needed, apply the milestone mode. We need add to the locked candidates
-		 * all nodes falling under it. Also, we need them for the graph resolution.
+		 * If needed, apply the milestone mode. Those not removable according to
+		 * the milestone rule must be added to the list, also they are de facto
+		 * removed from the test case call graph before computation.
 		 */
 		if (milestoneId != null){
-			// we must apply the rule on all nodes in the graph
-			List<Long> graphNodeIds = collectAllNodeIds(graph);
 
-			lockedByMilestoneRule = lockedByMilestoneMode(graphNodeIds, milestoneId);
+			lockedByMilestoneRule = lockedByMilestoneMode(nodeIds, milestoneId);
+
+			lockedCandidateIds.addAll(lockedByMilestoneRule);
 
 			candidateIds.removeAll(lockedByMilestoneRule);
 
 		}
+
+		// now init the graph with test case calls
+		LockedFileInferenceGraph graph = createCallTestCaseGraph(candidateIds);
 
 		graph.setCandidatesToDeletion(candidateIds);
 		graph.resolveLockedFiles();
@@ -181,7 +182,6 @@ AbstractNodeDeletionHandler<TestCaseLibraryNode, TestCaseFolder> implements Test
 			lockedCandidateIds.add(node.getKey().getId());
 		}
 
-		lockedCandidateIds.addAll(lockedByMilestoneRule);
 
 		return lockedCandidateIds;
 
@@ -204,9 +204,6 @@ AbstractNodeDeletionHandler<TestCaseLibraryNode, TestCaseFolder> implements Test
 
 			DeletableIds deletableIds = findSeparateIds(ids);
 
-			/*if (milestoneId != null){
-				deletableIds = applyMilestoneMode(deletableIds, milestoneId);
-			}*/
 
 			List<Long> folderIds = deletableIds.getFolderIds();
 			List<Long> tcIds = deletableIds.getTestCaseIds();
@@ -318,8 +315,6 @@ AbstractNodeDeletionHandler<TestCaseLibraryNode, TestCaseFolder> implements Test
 
 		NotDeletablePreviewReport report = null;
 
-		LockedFileInferenceGraph graph = createCallTestCaseGraph(nodeIds);
-
 		List<Long> candidateIds = new ArrayList<>(nodeIds);
 
 		/*
@@ -327,14 +322,14 @@ AbstractNodeDeletionHandler<TestCaseLibraryNode, TestCaseFolder> implements Test
 		 * all nodes falling under it. Also, we need them for the graph resolution.
 		 */
 		if (milestoneId != null){
-			// we must apply the rule on all nodes in the graph
-			List<Long> graphNodeIds = collectAllNodeIds(graph);
 
-			List<Long> lockedByMilestoneRule = lockedByMilestoneMode(graphNodeIds, milestoneId);
+			List<Long> lockedByMilestoneRule = lockedByMilestoneMode(nodeIds, milestoneId);
 
 			candidateIds.removeAll(lockedByMilestoneRule);
 
 		}
+
+		LockedFileInferenceGraph graph = createCallTestCaseGraph(candidateIds);
 
 		graph.setCandidatesToDeletion(candidateIds);
 		graph.resolveLockedFiles();
