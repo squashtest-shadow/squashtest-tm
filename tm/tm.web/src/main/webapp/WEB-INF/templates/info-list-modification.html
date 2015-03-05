@@ -27,22 +27,17 @@
 <title th:text="#{title.customField}">Espace detail info list</title>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 
-<style th:include="fragments-utils/various-headers :: admin-subpage-css"
-	th:remove="tag"></style>
+<style th:include="admin/admin-subpage.frag :: subpage-css"></style>
 
 <script type="text/javascript" th:src="@{/scripts/require-min.js}"></script>
 <script type="text/javascript" th:src="@{/scripts/common.js}"></script>
 
-<script src="../../scripts/pubsub-boot.js"
-	th:src="@{/scripts/pubsub-boot.js}"></script>
+<script src="../../scripts/pubsub-boot.js" th:src="@{/scripts/pubsub-boot.js}"></script>
 <script th:remove="all" type="text/javascript" src="../../js/thymol.js"></script>
 
-<script th:remove="all" type="text/javascript"
-	src="../../scripts/lib/jquery/jquery-1.8.3.min.js"></script>
-<script th:remove="all" type="text/javascript"
-	src="../../scripts/require.js"></script>
-<script th:remove="all" type="text/javascript"
-	src="../../scripts/common.js"></script>
+<script th:remove="all" type="text/javascript" src="../../scripts/lib/jquery/jquery-1.8.3.min.js"></script>
+<script th:remove="all" type="text/javascript" src="../../scripts/require.js"></script>
+<script th:remove="all" type="text/javascript" src="../../scripts/common.js"></script>
 
 </head>
 <body>
