@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.service.internal.repository;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -90,4 +91,8 @@ public interface RequirementDao extends EntityDao<Requirement> {
 	 * 
 	 */
 	List<Object[]> findAllParentsOf(List<Long> requirementIds);
+
+	List<Long> findRequirementIdsHavingMultipleMilestones(List<Long> nodeIds);
+
+	List<Long> findNonBoundRequirement(Collection<Long> nodeIds, Long milestoneId);
 }

@@ -425,7 +425,7 @@ th.width-tenperc, td.width-tenperc {
 	background-image:url(../images/white-arrow-down.png);	/** sprite-ref: sprites-icons; */
 	background-repeat : no-repeat;	
 	width: 15px;
-	height : 15px;
+	height : 9px;
 	display : inline-block;
 	vertical-align : middle;
 }

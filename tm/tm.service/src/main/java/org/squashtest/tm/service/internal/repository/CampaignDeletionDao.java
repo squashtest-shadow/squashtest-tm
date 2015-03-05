@@ -39,7 +39,7 @@ public interface CampaignDeletionDao extends DeletionDao {
 	 * @param originalIds
 	 * @return
 	 */
-	public List<Long> findRemainingCampaignIds(List<Long> originalIds);
+	List<Long> findRemainingCampaignIds(List<Long> originalIds);
 
-	public void unbindFromMilestone(List<Long> campaignIds, Long milestoneId);
+	void unbindFromMilestone(List<Long> campaignIds, Long milestoneId);
 }

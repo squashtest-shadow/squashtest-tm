@@ -126,7 +126,11 @@
 	+ " from Requirement requirement1, RequirementFolder folder, RequirementPathEdge closure "
 	+ " where closure.ancestorId = folder.id  and closure.descendantId = requirement1.id and requirement1.id in :requirementIds and closure.depth != 0 "
 	+ " group by requirement1.id"),
+	@NamedQuery(name = "requirement.findRequirementIdsHavingMultipleMilestones", 
+	query = "select r.id from Requirement r join r.versions v join v.milestones stones where r.id in (:nodeIds) group by r.id having count(stones) > 1 "),
+	@NamedQuery(name = "requirement.findNonBoundRequirement", query = "select r.id from Requirement r join r.versions v where r.id in (:nodeIds) and v.id not in (select rvs.id from Milestone m join m.requirementVersions rvs where m.id = :milestoneId)"),
 
+	
 	//CampaignFolder
 	@NamedQuery(name = "campaignFolder.findAllContentById", query = "select f.content from CampaignFolder f where f.id = :folderId"),
 	@NamedQuery(name = "campaignFolder.findByContent", query = "from CampaignFolder where :content in elements(content)"),

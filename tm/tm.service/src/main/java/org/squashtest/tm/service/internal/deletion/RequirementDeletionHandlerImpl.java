@@ -91,7 +91,7 @@ RequirementNodeDeletionHandler {
 		List<SuppressionPreviewReport> preview = new LinkedList<SuppressionPreviewReport>();
 
 		// milestone mode verification
-		/*	if (milestoneId != null){
+		if (milestoneId != null){
 			// check if there are some folders in the selection
 			List<Long>[] separatedIds = deletionDao.separateFolderFromRequirementIds(nodeIds);
 			if (! separatedIds[0].isEmpty()){
@@ -102,7 +102,7 @@ RequirementNodeDeletionHandler {
 			if (someNodesHaveMultipleMilestones(nodeIds)){
 				preview.add(new BoundToMultipleMilestonesReport());
 			}
-		}*/
+		}
 
 		return preview;
 	}
@@ -112,8 +112,22 @@ RequirementNodeDeletionHandler {
 
 		List<Long> lockedIds = new LinkedList<Long>();
 
-		// TODO : up to now a requirement is never locked for deletion (safe for security check)
-		// however if it may change later put something here.
+		// milestone mode
+		if (milestoneId != null){
+
+			// no folder shall be deleted
+			List<Long>[] separateIds = deletionDao.separateFolderFromRequirementIds(nodeIds);
+
+			//no campaign bound to more than one milestone shall be deleted
+			List<Long> boundToMoreMilestones = requirementDao.findRequirementIdsHavingMultipleMilestones(nodeIds);
+
+			// no campaign that aren't bound to the current milestone shall be deleted
+			List<Long> notBoundToMilestone = requirementDao.findNonBoundRequirement(nodeIds, milestoneId);
+
+			lockedIds.addAll(separateIds[0]);
+			lockedIds.addAll(boundToMoreMilestones);
+			lockedIds.addAll(notBoundToMilestone);
+		}
 
 		return lockedIds;
 	}
@@ -239,8 +253,20 @@ RequirementNodeDeletionHandler {
 
 	@Override
 	protected OperationReport batchUnbindFromMilestone(List<Long> ids, Long milestoneId) {
-		// TODO Auto-generated method stub
-		return null;
+		List<Long> remainingIds = deletionDao.findRemainingRequirementIds(ids);
+
+		OperationReport report = new OperationReport();
+
+		deletionDao.unbindFromMilestone(remainingIds, milestoneId);
+
+		report.addRemoved(remainingIds, "requirement");
+
+		return report;
+	}
+
+	private boolean someNodesHaveMultipleMilestones(List<Long> nodeIds){
+		List<Long> boundNodes = requirementDao.findRequirementIdsHavingMultipleMilestones(nodeIds);
+		return ! (boundNodes.isEmpty());
 	}
 
 

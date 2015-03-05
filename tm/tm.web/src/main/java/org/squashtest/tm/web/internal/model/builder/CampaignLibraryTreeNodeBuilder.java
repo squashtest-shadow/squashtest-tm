@@ -116,8 +116,6 @@ public class CampaignLibraryTreeNodeBuilder extends LibraryTreeNodeBuilder<Campa
 		public void visit(CampaignFolder visited) {
 			if (visited.hasContent()) {
 
-				builtNode.setState(State.open);
-
 				CampaignLibraryTreeNodeBuilder childrenBuilder = new CampaignLibraryTreeNodeBuilder(permissionEvaluationService);
 				childrenBuilder.filterByMilestone(milestoneFilter);
 
@@ -129,6 +127,12 @@ public class CampaignLibraryTreeNodeBuilder extends LibraryTreeNodeBuilder<Campa
 						.build();
 
 				builtNode.setChildren(children);
+
+
+				// because of the milestoneFilter it may happen that the children collection ends up empty.
+				// in that case we must set the state of the node accordingly
+				State state =  (children.isEmpty()) ? State.leaf : State.open;
+				builtNode.setState(state);
 			}
 		}
 

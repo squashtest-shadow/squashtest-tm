@@ -70,7 +70,6 @@ public class IterationNodeBuilder extends GenericJsTreeNodeBuilder<Iteration, It
 	@Override
 	protected void doAddChildren(JsTreeNode node, Iteration model) {
 		if (model.hasContent()) {
-			node.setState(State.open);
 
 			TestSuiteNodeBuilder childrenBuilder = new TestSuiteNodeBuilder(permissionEvaluationService);
 
@@ -80,6 +79,11 @@ public class IterationNodeBuilder extends GenericJsTreeNodeBuilder<Iteration, It
 					.build();
 
 			node.setChildren(children);
+
+			// because of the milestoneFilter it may happen that the children collection ends up empty.
+			// in that case we must set the state of the node accordingly
+			State state =  (children.isEmpty()) ? State.leaf : State.open;
+			node.setState(state);
 		}
 
 	}

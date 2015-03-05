@@ -23,7 +23,7 @@ package org.squashtest.tm.service.internal.repository;
 import java.util.List;
 
 public interface RequirementDeletionDao extends DeletionDao {
-	
+
 	/**
 	 * Given a list of RequirementLibraryNode ids, will tell which ones are folder ids and which ones are requirements.
 	 * 
@@ -31,19 +31,23 @@ public interface RequirementDeletionDao extends DeletionDao {
 	 * @return an array of list of ids : result[0] are the folder ids and result[1] are the requirement ids.
 	 */
 	List<Long>[] separateFolderFromRequirementIds(List<Long> originalIds);
-	
+
 	List<Long> findRequirementAttachmentListIds(List<Long> requirementIds);
 	List<Long> findRequirementFolderAttachmentListIds(List<Long> folderIds);
-	
+
 	void removeFromVerifiedRequirementLists(List<Long> requirementIds);
-	
+
 	void deleteRequirementAuditEvents(List<Long> requirementIds);
-	
+
 	List<Long> findVersionIds(List<Long> requirementIds);
-	
+
 	/**
 	 * @param versionsIds
 	 */
 	void removeTestStepsCoverageByRequirementVersionIds(List<Long> versionsIds);
+
+	List<Long> findRemainingRequirementIds(List<Long> originalIds);
+
+	void unbindFromMilestone(List<Long> requirementIds, Long milestoneId);
 
 }

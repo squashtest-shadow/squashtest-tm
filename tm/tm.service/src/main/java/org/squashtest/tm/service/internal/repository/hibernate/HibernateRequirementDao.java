@@ -349,4 +349,19 @@ public class HibernateRequirementDao extends HibernateEntityDao<Requirement> imp
 		}
 	}
 
+	@Override
+	public List<Long> findRequirementIdsHavingMultipleMilestones(List<Long> nodeIds) {
+		Query q = currentSession().getNamedQuery("requirement.findRequirementIdsHavingMultipleMilestones");
+		q.setParameterList("nodeIds", nodeIds, LongType.INSTANCE);
+		return q.list();
+	}
+
+	@Override
+	public List<Long> findNonBoundRequirement(Collection<Long> nodeIds, Long milestoneId) {
+		Query q = currentSession().getNamedQuery("requirement.findNonBoundRequirement");
+		q.setParameterList("nodeIds", nodeIds, LongType.INSTANCE);
+		q.setParameter("milestoneId", milestoneId);
+		return q.list();
+	}
+
 }

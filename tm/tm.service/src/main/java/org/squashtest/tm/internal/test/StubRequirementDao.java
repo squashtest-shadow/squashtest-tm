@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.internal.test;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
@@ -39,7 +40,7 @@ public class StubRequirementDao extends StubEntityDao<Requirement> implements Re
 	/**
 	 * @see org.squashtest.tm.service.internal.repository.RequirementDao#findAllByIds(java.util.Collection)
 	 */
-	//@Override
+	// @Override
 	public List<Requirement> findAllByIds(Collection<Long> requirementsIds) {
 		return null;
 	}
@@ -48,7 +49,7 @@ public class StubRequirementDao extends StubEntityDao<Requirement> implements Re
 	 * @see org.squashtest.tm.service.internal.repository.RequirementDao#findNamesInFolderStartingWith(long,
 	 *      java.lang.String)
 	 */
-	//@Override
+	// @Override
 	public List<String> findNamesInFolderStartingWith(long folderId, String nameStart) {
 		return null;
 	}
@@ -57,7 +58,7 @@ public class StubRequirementDao extends StubEntityDao<Requirement> implements Re
 	 * @see org.squashtest.tm.service.internal.repository.RequirementDao#findNamesInLibraryStartingWith(long,
 	 *      java.lang.String)
 	 */
-	//@Override
+	// @Override
 	public List<String> findNamesInLibraryStartingWith(long libraryId, String nameStart) {
 		return null;
 	}
@@ -65,7 +66,7 @@ public class StubRequirementDao extends StubEntityDao<Requirement> implements Re
 	/**
 	 * @see org.squashtest.tm.service.internal.repository.RequirementDao#findRequirementToExportFromFolder(java.util.List)
 	 */
-	//@Override
+	// @Override
 	public List<ExportRequirementData> findRequirementToExportFromNodes(List<Long> folderIds) {
 		return null;
 	}
@@ -73,7 +74,7 @@ public class StubRequirementDao extends StubEntityDao<Requirement> implements Re
 	/**
 	 * @see org.squashtest.tm.service.internal.repository.RequirementDao#findRequirementToExportFromLibrary(java.util.List)
 	 */
-	//@Override
+	// @Override
 	public List<ExportRequirementData> findRequirementToExportFromLibrary(List<Long> folderIds) {
 		return null;
 	}
@@ -81,7 +82,7 @@ public class StubRequirementDao extends StubEntityDao<Requirement> implements Re
 	/**
 	 * @see org.squashtest.tm.service.internal.repository.RequirementDao#findDistinctRequirementsCriticalitiesVerifiedByTestCases(java.util.List)
 	 */
-	//@Override
+	// @Override
 	public List<RequirementCriticality> findDistinctRequirementsCriticalitiesVerifiedByTestCases(Set<Long> testCasesIds) {
 		return null;
 	}
@@ -89,7 +90,7 @@ public class StubRequirementDao extends StubEntityDao<Requirement> implements Re
 	/**
 	 * @see org.squashtest.tm.service.internal.repository.RequirementDao#findDistinctRequirementsCriticalities(java.util.List)
 	 */
-	//@Override
+	// @Override
 	public List<RequirementCriticality> findDistinctRequirementsCriticalities(List<Long> requirementsIds) {
 
 		return null;
@@ -98,22 +99,22 @@ public class StubRequirementDao extends StubEntityDao<Requirement> implements Re
 	/**
 	 * @see org.squashtest.tm.service.internal.repository.RequirementDao#findVersions(Long)
 	 */
-	//@Override
+	// @Override
 	public List<RequirementVersion> findVersions(Long requirementId) {
 		return null;
 	}
 
-	//@Override
+	// @Override
 	public List<RequirementVersion> findVersionsForAll(List<Long> requirementIds) {
 		return null;
 	}
 
-	//@Override
+	// @Override
 	public List<Requirement> findAll() {
 		return null;
 	}
 
-	//@Override
+	// @Override
 	public List<Requirement> findAllByIdListOrderedByName(List<Long> requirementsIds) {
 		return null;
 	}
@@ -141,4 +142,15 @@ public class StubRequirementDao extends StubEntityDao<Requirement> implements Re
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+	@Override
+	public List<Long> findRequirementIdsHavingMultipleMilestones(List<Long> nodeIds) {
+		return new ArrayList<>();
+	}
+
+	@Override
+	public List<Long> findNonBoundRequirement(Collection<Long> nodeIds, Long milestoneId) {
+		return new ArrayList<>();
+	}
+
 }

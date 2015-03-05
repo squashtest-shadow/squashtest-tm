@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.ListIterator;
 
 import org.hibernate.Query;
+import org.hibernate.type.LongType;
 import org.springframework.stereotype.Repository;
 import org.squashtest.tm.domain.event.RequirementAuditEvent;
 import org.squashtest.tm.domain.requirement.Requirement;
@@ -210,6 +211,27 @@ public class HibernateRequirementDeletionDao extends HibernateDeletionDao implem
 	@Override
 	public List<Long> findVersionIds(List<Long> requirementIds) {
 		return executeSelectNamedQuery("requirementDeletionDao.findVersionIds", "reqIds", requirementIds);
+	}
+
+	@Override
+	public void unbindFromMilestone(List<Long> requirementIds, Long milestoneId) {
+		if (! requirementIds.isEmpty()){
+			Query query = getSession().createSQLQuery(NativeQueries.REQUIREMENT_SQL_UNBIND_MILESTONE);
+			query.setParameterList("requirementIds", requirementIds, LongType.INSTANCE);
+			query.setParameter("milestoneId", milestoneId);
+			query.executeUpdate();
+		}
+
+	}
+
+	@Override
+	public List<Long> findRemainingRequirementIds(List<Long> originalIds) {
+		List<BigInteger> rawids = executeSelectSQLQuery(NativeQueries.REQUIREMENT_SQL_FINDNOTDELETED, "allRequirementIds", originalIds);
+		List<Long> cIds = new ArrayList<>(rawids.size());
+		for (BigInteger rid : rawids){
+			cIds.add(rid.longValue());
+		}
+		return cIds;
 	}
 
 }

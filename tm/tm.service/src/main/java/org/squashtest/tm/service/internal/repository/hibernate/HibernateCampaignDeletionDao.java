@@ -136,11 +136,11 @@ implements CampaignDeletionDao {
 	@Override
 	public List<Long> findRemainingCampaignIds(List<Long> originalIds) {
 		List<BigInteger> rawids = executeSelectSQLQuery(NativeQueries.CAMPAIGN_SQL_FINDNOTDELETED, "allCampaignIds", originalIds);
-		List<Long> tcIds = new ArrayList<>(rawids.size());
+		List<Long> cIds = new ArrayList<>(rawids.size());
 		for (BigInteger rid : rawids){
-			tcIds.add(rid.longValue());
+			cIds.add(rid.longValue());
 		}
-		return tcIds;
+		return cIds;
 	}
 
 }

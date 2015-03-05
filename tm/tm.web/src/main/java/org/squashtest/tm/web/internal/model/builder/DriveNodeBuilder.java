@@ -81,7 +81,6 @@ GenericJsTreeNodeBuilder<Library<LN>, DriveNodeBuilder<LN>> {
 	@Override
 	protected void doAddChildren(JsTreeNode node, Library<LN> model) {
 		if (model.hasContent()) {
-			node.setState(State.open);
 
 			LibraryTreeNodeBuilder<LN> builder = childrenBuilderProvider.get();
 			if (milestoneFilter != null){
@@ -94,6 +93,11 @@ GenericJsTreeNodeBuilder<Library<LN>, DriveNodeBuilder<LN>> {
 					.build();
 
 			node.setChildren(children);
+
+			// because of the milestoneFilter it may happen that the children collection ends up empty.
+			// in that case we must set the state of the node accordingly
+			State state =  (children.isEmpty()) ? State.leaf : State.open;
+			node.setState(state);
 		}
 
 	}

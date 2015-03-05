@@ -126,7 +126,6 @@ public class RequirementLibraryTreeNodeBuilder extends LibraryTreeNodeBuilder<Re
 		NodeContainer<RequirementLibraryNode<?>> container = (NodeContainer<RequirementLibraryNode<?>>) model;
 
 		if (container.hasContent()) {
-			builtNode.setState(State.open);
 
 			RequirementLibraryTreeNodeBuilder childrenBuilder = new RequirementLibraryTreeNodeBuilder(permissionEvaluationService);
 			childrenBuilder.filterByMilestone(milestoneFilter);
@@ -139,6 +138,11 @@ public class RequirementLibraryTreeNodeBuilder extends LibraryTreeNodeBuilder<Re
 					.build();
 
 			builtNode.setChildren(children);
+
+			// because of the milestoneFilter it may happen that the children collection ends up empty.
+			// in that case we must set the state of the node accordingly
+			State state =  (children.isEmpty()) ? State.leaf : State.open;
+			builtNode.setState(state);
 		}
 	}
 

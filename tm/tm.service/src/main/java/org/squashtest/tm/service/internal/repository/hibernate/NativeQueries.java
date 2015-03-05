@@ -78,6 +78,11 @@ public final class NativeQueries {
 
 	public static final String REQUIREMENT_SQL_REMOVE_FROM_FOLDER = "delete from RLN_RELATIONSHIP where ancestor_id in (:ancIds) or descendant_id in (:descIds)";
 	public static final String REQUIREMENT_SQL_REMOVE_FROM_LIBRARY = "delete from REQUIREMENT_LIBRARY_CONTENT where content_id in (:requirementIds)";
+	public static final String REQUIREMENT_SQL_UNBIND_MILESTONE = "delete from MILESTONE_REQ_VERSION where MILESTONE_ID = :milestoneId and REQ_VERSION_ID in " +
+			"(select v.RES_ID from REQUIREMENT_VERSION v where v.REQUIREMENT_ID in (:requirementIds) )";
+	public static final String REQUIREMENT_SQL_FINDNOTDELETED = "select RLN_ID from REQUIREMENT where RLN_ID in (:allRequirementIds)";
+
+
 
 	public static final String CAMPAIGN_SQL_REMOVE = "delete from CAMPAIGN where cln_id in (:nodeIds)";
 	public static final String CAMPAIGNLIBRARYNODE_SQL_REMOVE = "delete from CAMPAIGN_LIBRARY_NODE where cln_id in (:nodeIds)";

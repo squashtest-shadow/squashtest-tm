@@ -152,7 +152,6 @@ public class TestCaseLibraryTreeNodeBuilder extends LibraryTreeNodeBuilder<TestC
 		@Override
 		public void visit(TestCaseFolder visited) {
 			if (visited.hasContent()) {
-				builtNode.setState(State.open);
 
 				TestCaseLibraryTreeNodeBuilder childrenBuilder = new TestCaseLibraryTreeNodeBuilder(
 						permissionEvaluationService, verifiedRequirementsManagerService, internationalizationHelper);
@@ -162,6 +161,12 @@ public class TestCaseLibraryTreeNodeBuilder extends LibraryTreeNodeBuilder<TestC
 						.expand(getExpansionCandidates()).setModel(visited.getOrderedContent()).build();
 
 				builtNode.setChildren(children);
+
+
+				// because of the milestoneFilter it may happen that the children collection ends up empty.
+				// in that case we must set the state of the node accordingly
+				State state =  (children.isEmpty()) ? State.leaf : State.open;
+				builtNode.setState(state);
 			}
 		}
 
