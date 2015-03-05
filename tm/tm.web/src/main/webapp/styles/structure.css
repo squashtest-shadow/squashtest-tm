@@ -1752,10 +1752,10 @@ border-style: solid;
 }
 
 .sq-spaced-icon{
-margin-left: 4px;
-margin-bottom: 4px;
-padding : 3px;
-border: white solid 2px;
+	margin-left: 4px;
+	margin-bottom: 4px;
+	padding : 0;
+	border: white solid 2px;
 }
 
 .low-opacity {
