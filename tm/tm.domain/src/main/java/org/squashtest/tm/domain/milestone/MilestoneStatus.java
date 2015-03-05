@@ -23,10 +23,14 @@ package org.squashtest.tm.domain.milestone;
 import org.squashtest.tm.domain.Level;
 
 public enum MilestoneStatus implements Level {
-	
-	PLANNED(1), IN_PROGRESS(2), FINISHED(3), LOCKED(4);
-	
-	
+	// @formatter::off
+	PLANNED(1),
+	IN_PROGRESS(2),
+	FINISHED(3),
+	LOCKED(4);
+	// @formatter::on
+
+
 	private static final String I18N_KEY_ROOT = "milestone.status.";
 
 	private final int level;

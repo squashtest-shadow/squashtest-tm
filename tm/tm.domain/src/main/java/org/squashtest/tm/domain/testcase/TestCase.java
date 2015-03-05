@@ -811,7 +811,6 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 		TestCase res = new TestCase();
 
 		res.importanceAuto = null;
-		//res.executionMode = null;
 		res.prerequisite = null;
 		res.reference = null;
 		res.nature = null;

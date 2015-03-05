@@ -23,10 +23,12 @@ package org.squashtest.tm.domain.milestone;
 import org.squashtest.tm.domain.Level;
 
 public enum MilestoneRange implements Level{
+	// @formatter::off
+	GLOBAL(1),
+	RESTRICTED(2);
+	// @formatter::off
 
-GLOBAL(1), RESTRICTED(2);
-	
-	
+
 	private static final String I18N_KEY_ROOT = "milestone.range.";
 
 	private final int level;
