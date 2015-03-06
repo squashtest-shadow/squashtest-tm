@@ -107,6 +107,8 @@ public class RequirementParserImpl implements RequirementParser {
 		pseudoRequirementVersion.setVersion(version);
 		String ref = readTextField(row, columnsMapping, REF_TAG);
 		pseudoRequirementVersion.setReference(ref);
+		String milestone = readTextField(row, columnsMapping, MILESTONE_TAG);
+		pseudoRequirementVersion.setReference(milestone);
 		String description = readTextField(row, columnsMapping, DESCRIPTION_TAG);
 		pseudoRequirementVersion.setDescription(description);
 		String createdBy = readTextField(row, columnsMapping, CREATED_BY_TAG);
@@ -119,7 +121,6 @@ public class RequirementParserImpl implements RequirementParser {
 		pseudoRequirementVersion.setStatus(state);
 		Date createdOn = readDateField(row, columnsMapping, CREATED_ON_TAG);
 		pseudoRequirementVersion.setCreatedOnDate(createdOn);
-
 	}
 
 	private RequirementFolder createHierarchy(String path, RequirementFolder root,

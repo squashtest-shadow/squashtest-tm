@@ -35,21 +35,17 @@ import static org.squashtest.tm.service.internal.batchimport.testcase.excel.Temp
  *
  */
 class ExcelWorkbookParserBuilderTest extends Specification {
-
 	def "should create metadata"() {
 		given:
 		def builder = new ExcelWorkbookParserBuilder()
-
 		and:
 		Resource xls = new ClassPathResource("batchimport/testcase/import-2269.xlsx")
 		println xls.file.absolutePath
 		InputStream is = new BufferedInputStream(new FileInputStream(xls.file))
 		println is
-
 		when:
 		def wb = builder.openWorkbook(is);
 		WorkbookMetaData wmd = builder.buildMetaData(wb)
-
 		then:
 		wmd.worksheetDefByType[TEST_CASES_SHEET]
 		wmd.worksheetDefByType[TEST_CASES_SHEET].stdColumnDefs.values()*.type as Set == TestCaseSheetColumn.values() as Set
@@ -64,7 +60,6 @@ class ExcelWorkbookParserBuilderTest extends Specification {
 		wmd.worksheetDefByType[DATASET_PARAM_VALUES_SHEET]
 		wmd.worksheetDefByType[DATASET_PARAM_VALUES_SHEET].stdColumnDefs.values()*.type as Set == DatasetParamValuesSheetColumn.values() as Set
 		(wmd.worksheetDefByType[TEST_CASES_SHEET].stdColumnDefs.values().collect{ it.type.name()}).contains("ACTION")
-
 		cleanup:
 		IOUtils.closeQuietly(is);
 	}

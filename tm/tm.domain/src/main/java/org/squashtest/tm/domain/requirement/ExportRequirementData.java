@@ -20,7 +20,10 @@
  */
 package org.squashtest.tm.domain.requirement;
 
+import java.util.List;
+
 import org.squashtest.tm.domain.library.ExportData;
+import org.squashtest.tm.domain.milestone.Milestone;
 
 /**
  * 
@@ -34,6 +37,7 @@ public class ExportRequirementData extends ExportData {
 	private Integer currentVersion;
 	private RequirementStatus status;
 	private String reference = "";
+	private String milestone = "";
 	private String requirementParentPath = "";
 	private Long requirementParentId;
 	public static final Long NO_REQUIREMENT_PARENT_ID = -1L;
@@ -41,6 +45,14 @@ public class ExportRequirementData extends ExportData {
 
 	public ExportRequirementData() {
 		super();
+	}
+
+	public String getMilestone() {
+		return milestone;
+	}
+
+	public void setMilestone(String milestone) {
+		this.milestone = milestone;
 	}
 
 	public RequirementCriticality getCriticality() {
@@ -113,6 +125,14 @@ public class ExportRequirementData extends ExportData {
 		super(requirement);
 		doSetReference(requirement.getReference());
 		this.criticality = requirement.getCriticality();
+		int index = 0;
+		for (Milestone m : requirement.getCurrentVersion().getMilestones()) {
+			if (index > 0) {
+				this.milestone += " | ";
+			}
+			this.milestone += m.getId();
+			index++;
+		}
 		this.category = requirement.getCategory().getCode();
 		this.currentVersion = requirement.getCurrentVersion().getVersionNumber();
 		this.status = requirement.getStatus();

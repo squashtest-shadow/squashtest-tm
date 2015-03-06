@@ -233,7 +233,6 @@ public class HibernateRequirementDao extends HibernateEntityDao<Requirement> imp
 		if (!params.isEmpty()) {
 			SetQueryParametersCallback newCallBack1 = new SetParamIdsParametersCallback(params);
 			return executeListNamedQuery("requirement.findRootContentRequirement", newCallBack1);
-
 		} else {
 			return Collections.emptyList();
 

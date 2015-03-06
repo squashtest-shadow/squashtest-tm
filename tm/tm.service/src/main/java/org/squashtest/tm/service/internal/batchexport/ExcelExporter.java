@@ -141,6 +141,7 @@ class ExcelExporter {
 			r.createCell(cIdx++).setCellValue(tcm.getId());
 			r.createCell(cIdx++).setCellValue(tcm.getReference());
 			r.createCell(cIdx++).setCellValue(tcm.getName());
+			r.createCell(cIdx++).setCellValue(tcm.getMilestone());
 			r.createCell(cIdx++).setCellValue(tcm.getWeightAuto());
 			r.createCell(cIdx++).setCellValue(tcm.getWeight().toString());
 			r.createCell(cIdx++).setCellValue(tcm.getNature().getCode());
@@ -362,6 +363,7 @@ class ExcelExporter {
 		h.createCell(cIdx++).setCellValue(TestCaseSheetColumn.TC_ID.header);
 		h.createCell(cIdx++).setCellValue(TestCaseSheetColumn.TC_REFERENCE.header);
 		h.createCell(cIdx++).setCellValue(TestCaseSheetColumn.TC_NAME.header);
+		h.createCell(cIdx++).setCellValue(TestCaseSheetColumn.TC_MILESTONE.header);
 		h.createCell(cIdx++).setCellValue(TestCaseSheetColumn.TC_WEIGHT_AUTO.header);
 		h.createCell(cIdx++).setCellValue(TestCaseSheetColumn.TC_WEIGHT.header);
 		h.createCell(cIdx++).setCellValue(TestCaseSheetColumn.TC_NATURE.header);

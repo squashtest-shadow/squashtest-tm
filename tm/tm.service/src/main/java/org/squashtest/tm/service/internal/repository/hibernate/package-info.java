@@ -19,22 +19,6 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 /**
- * This file is part of the Squashtest platform. Copyright (C) 2010 - 2015 Henix, henix.fr
- *
- * See the NOTICE file distributed with this work for additional information regarding copyright ownership.
- *
- * This is free software: you can redistribute it and/or modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later
- * version.
- *
- * this software is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied
- * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
- * details.
- *
- * You should have received a copy of the GNU Lesser General Public License along with this software. If not, see
- * <http://www.gnu.org/licenses/>.
- */
-/**
  * This file contains Hibernate named queries used by DAOs.
  *
  * @author Gregory Fouquet
@@ -100,10 +84,10 @@
 	//a Requirement
 	@NamedQuery(name = "requirement.findRequirementByName", query = "from RequirementLibraryNode r where r.resource.name like :requirementName order by r.resource.name asc"),
 	@NamedQuery(name = "requirement.findRequirementWithParentFolder", query = "select r, rf from RequirementFolder rf join rf.content r where r.id in (:requirementIds)"),
-	@NamedQuery(name = "requirement.findRootContentRequirement", query = "select r from RequirementLibrary rl join rl.rootContent r where r.id in (:paramIds) and r in (from Requirement)"),
+	@NamedQuery(name = "requirement.findRootContentRequirement", query = "select r from RequirementLibrary rl, RequirementVersion rv left join rv.milestones milestones join rl.rootContent r where r.id in (:paramIds) and r in (from Requirement)"),
 	@NamedQuery(name = "requirement.findAllRootContent", query = "select r.id from RequirementLibraryNode r where r.project.requirementLibrary.id in (:libraryIds)"),
-	@NamedQuery(name = "requirement.findVersions", query = "select rv from RequirementVersion rv where rv.requirement.id = :requirementId"),
-	@NamedQuery(name = "requirement.findVersionsForAll", query = "select rv from RequirementVersion rv join rv.requirement r where r.id in (:requirementIds)"),
+	@NamedQuery(name = "requirement.findVersions", query = "select rv from RequirementVersion rv left join rv.milestones milestones where rv.requirement.id = :requirementId"),
+	@NamedQuery(name = "requirement.findVersionsForAll", query = "select rv from RequirementVersion rv left join rv.milestones milestones join rv.requirement r where r.id in (:requirementIds)"),
 	@NamedQuery(name = "requirement.findChildrenRequirements", query = "select childreqs from Requirement r join r.children childreqs where r.id = :requirementId"),
 	@NamedQuery(name = "requirement.findByContent", query = "from Requirement where :content in elements(children)"),
 	@NamedQuery(name = "requirement.findAllRequirementParents", query = "select par, req from Requirement 		 par join par.children req where req.id in (:requirementIds)"),
@@ -223,7 +207,8 @@
 	// NOTE : Hibernate ignores group by tc.nature.id unless we alias tc.nature (AND PROJECT THE ALIAS !)
 	// NOTE : "from f join f.content c where c.class = TestCase group by c.id" generates SQL w/o grouped TCLN.TCLN_ID, only TC.TCLN_ID, which breaks under postgresql
 	@NamedQuery(name = "testCase.excelExportDataFromFolder", query =
-	"select p.id, p.name, index(content)+1, tc.id, tc.reference, content.name, tc.importanceAuto, tc.importance, nat, "
+	"select p.id, p.name, index(content)+1, tc.id, tc.reference, content.name, "
+	+ "group_concat(milestones, 'order by', milestones, 'asc', '|'), tc.importanceAuto, tc.importance, nat, "
 	+ "type, tc.status, content.description, tc.prerequisite, "
 	+ "("
 	+ "select count (distinct req) from TestCase tc1 left join tc1.requirementVersionCoverages req where tc.id = tc1.id"
@@ -235,13 +220,14 @@
 	+ "select count(distinct attach) from TestCase tc2 join tc2.attachmentList atlist left join atlist.attachments attach where tc.id = tc2.id"
 	+ "), "
 	+ "content.audit.createdOn, content.audit.createdBy, content.audit.lastModifiedOn, content.audit.lastModifiedBy "
-	+ "from TestCaseFolder f join f.content content, TestCase tc join tc.project p "
+	+ "from TestCaseFolder f join f.content content, TestCase tc join tc.project p left join tc.milestones milestones "
 	+ " join tc.nature nat join tc.type type"
 	+ " where content.id = tc.id and tc.id in (:testCaseIds) group by p.id, tc.id, index(content)+1 , content.id, type.id, nat.id  "
 	),
 
-	@NamedQuery(name = "testCase.excelExportDataFromLibrary", query = "select p.id, p.name, index(content)+1, tc.id, tc.reference, content.name, tc.importanceAuto, tc.importance, nat, "
-	+ "type, tc.status, content.description, tc.prerequisite, "
+	@NamedQuery(name = "testCase.excelExportDataFromLibrary", query = "select p.id, p.name, index(content)+1, tc.id, tc.reference, content.name, " 
+	+ "group_concat(milestones, 'order by', milestones, 'asc', '|'), tc.importanceAuto, tc.importance, tc.nature, "
+	+ "tc.type, tc.status, content.description, tc.prerequisite, "
 	+ "("
 	+ "select count (distinct req) from TestCase tc1 left join tc1.requirementVersionCoverages req where tc.id = tc1.id"
 	+ "), "
@@ -252,7 +238,7 @@
 	+ "select count(distinct attach) from TestCase tc2 join tc2.attachmentList atlist left join atlist.attachments attach where tc.id = tc2.id"
 	+ "), "
 	+ "content.audit.createdOn, content.audit.createdBy, content.audit.lastModifiedOn, content.audit.lastModifiedBy "
-	+ "from TestCaseLibrary tcl join tcl.rootContent content, TestCase tc join tc.project p  "
+	+ "from TestCaseLibrary tcl join tcl.rootContent content, TestCase tc join tc.project p left join tc.milestones milestones "
 	+ " join tc.nature nat join tc.type type "
 	+ "where content.id = tc.id and  tc.id in (:testCaseIds) "
 	+ "group by p.id, tc.id, index(content)+1 , content.id, nat.id, type.id "),

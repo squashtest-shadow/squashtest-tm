@@ -109,6 +109,7 @@ public class ExportModel {
 		private Long id;
 		private String reference;
 		private String name;
+		private String milestone;
 		private int weightAuto;
 		private TestCaseImportance weight;
 		private InfoListItem nature;
@@ -127,6 +128,7 @@ public class ExportModel {
 
 		// that monster constructor will be used by Hibernate in a hql query
 		public TestCaseModel(Long projectId, String projectName, Integer order, Long id, String reference, String name,
+				String milestone,
 				Boolean weightAuto, TestCaseImportance weight, InfoListItem nature, InfoListItem type,
 				TestCaseStatus status, String description, String prerequisite, Long nbReq, Long nbCaller,
 				Long nbAttachments, Date createdOn, String createdBy, Date lastModifiedOn, String lastModifiedBy) {
@@ -138,6 +140,7 @@ public class ExportModel {
 			this.id = id;
 			this.reference = reference;
 			this.name = name;
+			this.milestone = milestone;
 			this.weightAuto = weightAuto ? 1 : 0;
 			this.weight = weight;
 			this.nature = nature;
@@ -152,6 +155,14 @@ public class ExportModel {
 			this.createdBy = createdBy;
 			this.lastModifiedOn = lastModifiedOn;
 			this.lastModifiedBy = lastModifiedBy;
+		}
+
+		public String getMilestone() {
+			return milestone;
+		}
+
+		public void setMilestone(String milestone) {
+			this.milestone = milestone;
 		}
 
 		public Long getProjectId() {

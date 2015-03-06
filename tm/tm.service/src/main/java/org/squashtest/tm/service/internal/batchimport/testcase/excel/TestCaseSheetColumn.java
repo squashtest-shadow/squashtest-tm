@@ -39,6 +39,7 @@ public enum TestCaseSheetColumn implements TemplateColumn {
 	TC_ID(IGNORED),
 	TC_REFERENCE,
 	TC_NAME,
+ TC_MILESTONE,
 	TC_WEIGHT_AUTO,
 	TC_WEIGHT,
 	TC_NATURE,

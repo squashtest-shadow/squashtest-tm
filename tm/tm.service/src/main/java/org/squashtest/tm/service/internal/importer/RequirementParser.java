@@ -34,6 +34,7 @@ interface RequirementParser {
 	String ID_TAG = "ID";
 	String VERSION_TAG = "VERSION";
 	String LABEL_TAG = "LABEL";
+	String MILESTONE_TAG = "MILESTONE";
 	String REF_TAG = "REF";
 	String CRITICALITY_TAG = "CRITICALITY";
 	String CATEGORY_TAG = "CATEGORY";
