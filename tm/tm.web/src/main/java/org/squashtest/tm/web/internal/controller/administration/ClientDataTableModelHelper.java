@@ -23,6 +23,7 @@ package org.squashtest.tm.web.internal.controller.administration;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 import org.springframework.security.oauth2.provider.ClientDetails;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
@@ -52,6 +53,14 @@ public class ClientDataTableModelHelper  extends DataTableModelBuilder<ClientDet
 		this.messageSource = messageSource;
 	}
 
+	public String formatRegisteredRedirectUri(Set<String> registeredRedirectUri){
+		StringBuilder builder = new StringBuilder();
+		for(String uri : registeredRedirectUri){
+			builder.append(uri+" ");
+		}
+		return builder.toString();
+	}
+
 	@Override
 	protected Object buildItemData(ClientDetails item) {
 		Map<String, Object> row = new HashMap<String, Object>(3);
@@ -59,6 +68,7 @@ public class ClientDataTableModelHelper  extends DataTableModelBuilder<ClientDet
 		row.put("index", getCurrentIndex() +1);
 		row.put("name", item.getClientId());
 		row.put("secret", item.getClientSecret());
+		row.put("redirect_uri", formatRegisteredRedirectUri(item.getRegisteredRedirectUri()));
 		row.put("delete", "");
 
 		return row;

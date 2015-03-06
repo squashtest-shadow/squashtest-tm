@@ -122,6 +122,7 @@
 		var params = {
 			clientId: $( '#add-client-name' ).val(),
 			clientSecret: $( '#add-client-secret' ).val(),
+			registeredRedirectUri : [$( '#add-client-uri' ).val()]
 		};
 		$.ajax({
 			url : url,

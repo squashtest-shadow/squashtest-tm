@@ -128,6 +128,7 @@
 				<th data-def="map=index, select">#</th>
 				<th data-def="map=name, sortable" class="datatable-filterable"><f:message key="label.Name"/></th>
 				<th data-def="map=secret, sortable"><f:message key="label.secret"/></th> 
+				<th data-def="map=redirect_uri, sortable"><f:message key="label.redirect_uri"/></th> 
 				<th data-def="map=delete, delete-button=#delete-client-popup"></th>				
 			</tr>
 		</thead>
@@ -169,6 +170,12 @@
             <td><input id="add-client-secret" type="text" size="30" maxlength="30"/>
             <comp:error-message forField="label" /></td>
           </tr>        
+          <tr>
+            <td><label for="add-redirect_uri"><f:message
+              key="label.redirect_uri" /></label></td>
+            <td><input id="add-client-uri" type="text" size="30"/>
+            <comp:error-message forField="label" /></td>
+          </tr>  
         </table>
       <div class="popup-dialog-buttonpane">
         <input type="button" value="${addLabel}" data-def="mainbtn, evt=confirm"/>

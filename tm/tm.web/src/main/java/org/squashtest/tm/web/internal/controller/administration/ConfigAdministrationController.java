@@ -39,15 +39,13 @@ import org.springframework.osgi.context.event.OsgiBundleApplicationContextEventM
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.ModelAndView;
-import org.squashtest.tm.domain.milestone.Milestone;
-import org.squashtest.tm.domain.milestone.MilestoneRange;
-import org.squashtest.tm.domain.project.GenericProject;
 import org.squashtest.tm.event.ConfigUpdateEvent;
 import org.squashtest.tm.service.configuration.ConfigurationService;
 import org.squashtest.tm.service.security.OAuth2ClientService;
@@ -56,7 +54,6 @@ import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 import org.springframework.security.oauth2.provider.ClientDetails;
 import org.springframework.security.oauth2.provider.BaseClientDetails;
-import org.springframework.security.oauth2.provider.code.JdbcAuthorizationCodeServices;
 
 @Controller
 @RequestMapping("administration/config")
@@ -160,7 +157,7 @@ public class ConfigAdministrationController implements ApplicationContextAware, 
 
 	@RequestMapping(value = "clients", method = RequestMethod.POST)
 	@ResponseStatus(HttpStatus.CREATED)
-	public @ResponseBody ClientDetails addClient(@Valid @ModelAttribute("add-client") BaseClientDetails clientDetails) {
+	public @ResponseBody ClientDetails addClient(@Valid @ModelAttribute("addClient") BaseClientDetails clientDetails) {
 
 		clientService.addClientDetails(clientDetails);
 
@@ -168,7 +165,7 @@ public class ConfigAdministrationController implements ApplicationContextAware, 
 	}
 
 	@RequestMapping(value = "clients/list")
-	public @ResponseBody DataTableModel getMilestonesTableModel(final DataTableDrawParameters params, final Locale locale) {
+	public @ResponseBody DataTableModel getClientsTableModel(final DataTableDrawParameters params, final Locale locale) {
 
 		ClientDataTableModelHelper helper = new ClientDataTableModelHelper(messageSource);
 		helper.setLocale(locale);

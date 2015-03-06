@@ -25,9 +25,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
-
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.provider.AuthorizationRequest;
 import org.springframework.security.oauth2.provider.ClientDetails;
 import org.springframework.stereotype.Controller;
@@ -62,6 +60,6 @@ public class OauthController {
 		// We can add more stuff to the model here for JSP rendering. If the client was a machine then
 		// the JSON will already have been rendered.
 		model.put("message", "There was a problem with the OAuth2 protocol");
-		return "oauth_error";
+		return "page/oauth/oauth_error";
 	}
 }

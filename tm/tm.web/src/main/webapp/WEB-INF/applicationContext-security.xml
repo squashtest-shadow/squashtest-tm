@@ -219,7 +219,9 @@
 	</beans:bean>
     
     <!-- user-approval-page="page/oauth/confirm_access" -->
-    <oauth:authorization-server user-approval-handler-ref="userApprovalHandler" user-approval-page="redirect:/oauth/confirm_access"
+    <oauth:authorization-server user-approval-handler-ref="userApprovalHandler" 
+    	user-approval-page="redirect:/oauth/confirm_access"
+    	error-page="redirect:/oauth/error"
         client-details-service-ref="clientDetails" token-services-ref="tokenServices">
         <oauth:authorization-code authorization-code-services-ref="oauthCodeDetails"/>
         <oauth:implicit/>

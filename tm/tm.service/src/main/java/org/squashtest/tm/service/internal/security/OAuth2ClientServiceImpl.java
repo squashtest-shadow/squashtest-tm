@@ -85,6 +85,7 @@ public class OAuth2ClientServiceImpl implements OAuth2ClientService{
 		BaseClientDetails baseClientDetails = new BaseClientDetails();
 		baseClientDetails.setClientId(clientDetails.getClientId());
 		baseClientDetails.setClientSecret(clientDetails.getClientSecret());
+		baseClientDetails.setRegisteredRedirectUri(clientDetails.getRegisteredRedirectUri());
 		baseClientDetails.setAuthorizedGrantTypes(DEFAULT_GRANT_TYPES);
 		baseClientDetails.setAuthorities(DEFAULT_AUTHORITIES);
 		baseClientDetails.setScope(DEFAULT_SCOPE);
