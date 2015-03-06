@@ -48,8 +48,12 @@ import javax.validation.constraints.Size;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.hibernate.annotations.Type;
+import org.hibernate.search.annotations.Analyze;
 import org.hibernate.search.annotations.DocumentId;
+import org.hibernate.search.annotations.Field;
 import org.hibernate.search.annotations.FieldBridge;
+import org.hibernate.search.annotations.Indexed;
+import org.hibernate.search.annotations.Store;
 import org.hibernate.validator.constraints.NotBlank;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.squashtest.tm.domain.audit.Auditable;
@@ -64,13 +68,15 @@ import org.squashtest.tm.domain.users.User;
 @Auditable
 @Entity
 @Table(name = "MILESTONE")
-public class Milestone implements Comparable {
+@Indexed
+public class Milestone  {
 
+	@Field(analyze = Analyze.NO, store = Store.YES)
 	@Id
 	@DocumentId
 	@Column(name = "MILESTONE_ID")
-	@GeneratedValue(strategy = GenerationType.AUTO, generator = "milestone_id_seq")
-	@SequenceGenerator(name = "milestone_id_seq", sequenceName = "milestone_id_seq")
+	@GeneratedValue(strategy = GenerationType.AUTO, generator = "milestone_milestone_id_seq")
+	@SequenceGenerator(name = "milestone_milestone_id_seq", sequenceName = "milestone_milestone_id_seq")
 	private Long id;
 
 	@Lob
@@ -343,10 +349,7 @@ public class Milestone implements Comparable {
 		}
 	}
 
-	@Override
-	public int compareTo(Object o) {
-		// TODO Auto-generated method stub
-		return 0;}
+
 	public boolean isBoundToATemplate() {
 
 		for (GenericProject project : projects) {

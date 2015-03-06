@@ -435,6 +435,7 @@
           <threadCount>1</threadCount>
           <!-- We can run ITs and skip unit tests with -DskipTests=true -->
           <skipTests>${skipITs}</skipTests>
+  
        <!-- 
           <excludes>
             <exclude>**/RequirementFolderMappingIT.class</exclude>
