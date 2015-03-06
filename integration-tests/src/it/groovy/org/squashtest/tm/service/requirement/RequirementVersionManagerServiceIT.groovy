@@ -46,7 +46,7 @@ class RequirementVersionManagerServiceIT extends DbunitServiceSpecification {
 	def "useless test to clean context "(){
 		expect : true
 	}
-	
+
 	@DirtiesContext
 	@DataSet("RequirementVersionManagerServiceIT.should successfully rename a requirement.xml")
 	def "should successfully rename a requirement"(){
@@ -99,13 +99,14 @@ class RequirementVersionManagerServiceIT extends DbunitServiceSpecification {
 	/*
 	 * [Feat 3611] The test is broken for now because the business rule must be redesigned and reimplemented,
 	 * see comment in CustomRequirementVersionManagerService#rename(long, String)
+	 * [Feat 3611] (gfouquet 15-03-06) Apparently, from now on, we should allow duplicate names so I negated the test.
 	 */
 	@DirtiesContext
 	@DataSet("RequirementVersionManagerServiceIT.should fail to rename a requirement because duplicated name.xml")
-	def "should fail to rename a requirement because duplicated name"(){
+	def "should NOT fail to rename a requirement because duplicated name"(){
 		when :
 		modService.rename(requirementId, "req 2")
 		then :
-		thrown(DuplicateNameException)
+		notThrown(DuplicateNameException)
 	}
 }
