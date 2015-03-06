@@ -25,6 +25,7 @@ define([ "backbone", "underscore", "jquery", "jeditable.datepicker" ], function(
 	var TREE_PICKER = "TREE_PICKER";
 	var RADIO_BUTTONS_GROUP = "RADIO_BUTTONS_GROUP";
 	var EVERYTHING = "EVERYTHING";
+	var MILESTONE_PICKER = "MILESTONE_PICKER";
 
 	var dateChecker = function(val) {
 		if (val === "--") {
@@ -48,7 +49,8 @@ define([ "backbone", "underscore", "jquery", "jeditable.datepicker" ], function(
 		"CHECKBOX": _.isBoolean,
 		"CHECKBOXES_GROUP": _.isArray,
 		"TREE_PICKER": _.isArray,
-		"PROJECT_PICKER": _.isArray
+		"PROJECT_PICKER": _.isArray,
+		"MILESTONE_PICKER" : _.isNumber
 	};
 
 	/**
@@ -102,7 +104,7 @@ define([ "backbone", "underscore", "jquery", "jeditable.datepicker" ], function(
 			var boundary = false;
 
 			var boundarySelector =  _.find(this.values(), function(attr) {
-				return attr.type === RADIO_BUTTONS_GROUP && (attr.val === PROJECT_PICKER || attr.val === TREE_PICKER);
+				return attr.type === RADIO_BUTTONS_GROUP && (attr.val === PROJECT_PICKER || attr.val === TREE_PICKER || attr.val === MILESTONE_PICKER);
 			});
 
 			var pickedBoundary = function(pickerType) {
@@ -116,6 +118,7 @@ define([ "backbone", "underscore", "jquery", "jeditable.datepicker" ], function(
 			} else {
 				boundary = _.some(this.values(), pickedBoundary(PROJECT_PICKER)) ||
 				_.some(this.values(), pickedBoundary(TREE_PICKER)) ||
+				_.some(this.values(), pickedBoundary(MILESTONE_PICKER)) ||
 				_.some(this.values(), function(attr) { return attr.type === RADIO_BUTTONS_GROUP && attr.val === EVERYTHING; });
 			}
 

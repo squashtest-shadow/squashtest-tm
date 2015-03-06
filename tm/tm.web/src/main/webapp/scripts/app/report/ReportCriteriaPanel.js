@@ -19,9 +19,9 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 define([ "backbone", "underscore", "./ConciseFormModel", "app/util/ButtonUtil", "tree",
-         "./ProjectsPickerPopup", "./SingleProjectPickerPopup", "jeditable.datepicker",
+         "./ProjectsPickerPopup", "./SingleProjectPickerPopup", "./MilestonePickerPopup", "jeditable.datepicker",
          "jquery.squash.formdialog"],
-function(Backbone, _, FormModel, ButtonUtil, treeBuilder, ProjectsPickerPopup, SingleProjectPickerPopup) {
+function(Backbone, _, FormModel, ButtonUtil, treeBuilder, ProjectsPickerPopup, SingleProjectPickerPopup, MilestonePickerPopup) {
 	"use strict";
 
 	var postDateFormat = $.datepicker.ATOM;
@@ -83,7 +83,8 @@ function(Backbone, _, FormModel, ButtonUtil, treeBuilder, ProjectsPickerPopup, S
 			this._renderDatePickers();
 			this._renderTreePickers();
 			this._renderProjectPickers();
-
+			this._renderMilestonePickers();
+			
 			return this;
 		},
 
@@ -94,7 +95,8 @@ function(Backbone, _, FormModel, ButtonUtil, treeBuilder, ProjectsPickerPopup, S
 			"change .rpt-drop select": "changeValuedInput",
 			"change input:radio": "changeRadioButtonGroup",
 			"click .rpt-tree-crit-open": "openTreePicker",
-			"click .rpt-projects-crit-open": "openProjectPicker"
+			"click .rpt-projects-crit-open": "openProjectPicker",
+			"click .rpt-milestone-crit-open" : "openMilestonePicker"
 		},
 
 		_renderTexts: function() {
@@ -231,6 +233,16 @@ function(Backbone, _, FormModel, ButtonUtil, treeBuilder, ProjectsPickerPopup, S
 				self.projectPickers[dom.id] = pickerView;
 			});
 		},
+		
+		_renderMilestonePickers : function(){
+			var self = this;
+			this.$(".milestone-picker").each(function(i, dom){
+				MilestonePickerPopup.init({
+					selector : "#"+dom.id,
+					model : self.model
+				});				
+			});
+		},
 
 		_initModel: function() {
 			this._initTexts();
@@ -241,6 +253,7 @@ function(Backbone, _, FormModel, ButtonUtil, treeBuilder, ProjectsPickerPopup, S
 			this._initDatePickers();
 			this._initPickers(".rpt-tree-crit", "TREE_PICKER");
 			this._initPickers(".project-picker", "PROJECT_PICKER");
+			this._initPickers(".milestone-picker", "MILESTONE_PICKER");
 		},
 
 		_initTexts: function() {
@@ -365,6 +378,12 @@ function(Backbone, _, FormModel, ButtonUtil, treeBuilder, ProjectsPickerPopup, S
 			var target = event.currentTarget;
 			var dialogId = $(target).data("idopened");
 			this.projectPickers[dialogId].open();
+		},
+		
+		openMilestonePicker : function(event){
+			var target = event.currentTarget;
+			var dialogId = $(target).data("idopened");
+			$("#"+dialogId).formDialog("open");
 		},
 
 		/**

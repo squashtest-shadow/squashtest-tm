@@ -153,6 +153,12 @@
                         class="report-selector rpt-projects-crit-container rpt-projects"
                         th:include="contextual-report-inputs.frag :: projectpicker " th:with="input = ${opt.content}, hasLabel = ${false} ">PROJECT_PICKER
                         WITHOUT LABEL</div>
+                        
+                      <div th:case="'MILESTONE_PICKER'" class="report-selector" 
+                      th:include="contextual-report-inputs.frag :: milestonepicker"
+                      th:with="input = ${opt.content}">
+                      
+                      </div>
   
                       <div th:case="*">Unsupported type : ${opt.content.type.name()}</div>
                     </span>

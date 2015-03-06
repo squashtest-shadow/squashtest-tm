@@ -97,6 +97,11 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
 								<property name="pickerName" value="campaignIds" />
 								<property name="pickedNodeType" value="CAMPAIGN" />
 							</bean>
+							
+							<bean class="org.squashtest.tm.api.report.form.composite.MilestonePickerOption">
+								<property name="pickerLabelKey" value="report.criteria.panel.milestone.label"/>
+								<property name="pickerName" value="milestone"/>							
+							</bean>
 						</list>
 					</property>
 				</bean>
