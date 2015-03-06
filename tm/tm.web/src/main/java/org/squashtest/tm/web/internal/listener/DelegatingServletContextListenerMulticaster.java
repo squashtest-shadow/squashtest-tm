@@ -34,13 +34,13 @@ import org.springframework.beans.factory.ListableBeanFactory;
 import org.springframework.web.context.WebApplicationContext;
 
 /**
- * This {@link ServletContextListener} delegates events to any bean declares in Spring app context which implements
+ * This {@link ServletContextListener} delegates events to any bean declared in Spring app context which implements
  * {@link ServletContextListener}.
- *
+ * 
  * This listener should be declared AFTER the Spring bootstrapper (ContextLoaderListener).
- *
+ * 
  * @author Gregory Fouquet
- *
+ * 
  */
 public class DelegatingServletContextListenerMulticaster implements ServletContextListener {
 

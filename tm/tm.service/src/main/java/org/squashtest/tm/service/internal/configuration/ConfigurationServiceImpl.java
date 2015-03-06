@@ -32,21 +32,18 @@ import org.squashtest.tm.service.configuration.ConfigurationService;
 @Service("squashtest.core.configuration.ConfigurationService")
 @Transactional
 public class ConfigurationServiceImpl implements ConfigurationService {
-	
+
 	private static final String INSERT_KEY_SQL = "insert into CORE_CONFIG (STR_KEY, VALUE) values (?, ?)";
 	private static final String FIND_VALUE_BY_KEY_SQL = "select VALUE from CORE_CONFIG where STR_KEY = ?";
 	private static final String UPDATE_KEY_SQL = "update CORE_CONFIG set VALUE = ? where STR_KEY = ?";
-	
-	
+
 	@Inject
 	private SessionFactory sessionFactory;
-	
-	
-	
+
 	public void setSessionFactory(SessionFactory sessionFactory) {
 		this.sessionFactory = sessionFactory;
 	}
-	
+
 	@Override
 	public void createNewConfiguration(String key, String value) {
 		Session session = sessionFactory.getCurrentSession();
@@ -57,18 +54,13 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 	}
 
 	@Override
-	public void deleteConfiguration(String key, String value) {
-		//TODO
-	}
-
-	@Override
 	public void updateConfiguration(String key, String value) {
 		Session session = sessionFactory.getCurrentSession();
 		Query sqlQuery = session.createSQLQuery(UPDATE_KEY_SQL);
 		sqlQuery.setString(0, value);
 		sqlQuery.setString(1, key);
 		sqlQuery.executeUpdate();
-		
+
 	}
 
 	@Override
@@ -77,10 +69,18 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 		Query sqlQuery = session.createSQLQuery(FIND_VALUE_BY_KEY_SQL);
 		sqlQuery.setParameter(0, key);
 		Object value = sqlQuery.uniqueResult();
-		if (value == null){
-			return null;
-		}
-		return value.toString();
+		return value == null ? null : value.toString();
 	}
-	
+
+	/**
+	 * As per interface spec, when stored value is "true" (ignoring case), this returns <code>true</code>, otherwise it
+	 * returns <code>false</code>
+	 *
+	 * @see org.squashtest.tm.service.configuration.ConfigurationService#findBooleanConfiguration(java.lang.String)
+	 */
+	@Override
+	public boolean findBooleanConfiguration(String key) {
+		return Boolean.parseBoolean(findConfiguration(key));
+	}
+
 }

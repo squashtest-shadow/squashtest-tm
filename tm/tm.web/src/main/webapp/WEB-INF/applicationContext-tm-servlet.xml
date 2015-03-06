@@ -97,8 +97,6 @@
  
 	<!-- ============================== /multipart files handling =============================================== -->
 
-  <bean id="tmEnumServletContextExposer" class="org.squashtest.tm.web.internal.filter.EnumServletContextExposer" />
-	
   <!-- 
     Message source for this context, loaded from localized "messages_xx" files.
     It has to be declared in app context, not in spring-mvc context, this way, it is both inherited by spring-mvc context and available outside of it (e.g. in fragments)
