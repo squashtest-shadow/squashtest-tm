@@ -181,6 +181,22 @@ public class ConciseFormToCriteriaConverter {
 			expanded = exp;
 			break;
 		}
+
+		case MILESTONE_PICKER : {
+
+			Collection milestoneIds = (Collection) concise.get(CON_VAL);
+
+			List<Object> milestones = new ArrayList<>(milestoneIds.size());
+
+			Map<String, Object> mMap = new HashMap<>();
+			mMap.put(EXP_TYPE, concise.get(CON_TYPE));
+			mMap.put(EXP_VALUE, milestoneIds);
+
+			milestones.add(mMap);
+
+			expanded = milestones;
+			break;
+		}
 		}
 
 		expandedForm.put(inputName, expanded);

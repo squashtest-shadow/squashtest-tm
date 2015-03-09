@@ -29,7 +29,7 @@ import org.squashtest.tm.internal.domain.report.query.QueryOperator;
 import org.squashtest.tm.internal.domain.report.query.hibernate.ReportCriterion;
 
 /*
- * This ReportCriterion will check if the value at the given propertyPath is an element of the list of parameters. 
+ * This ReportCriterion will check if the value at the given propertyPath is an element of the list of parameters.
  * This ReportCriterion is special because we need to define a callback for it, see fromValueToTypedValue(). This callback
  * exists to define how to cast each elements of the parameter list to the right type.
  * 
@@ -65,7 +65,7 @@ public abstract class IsInSet<T extends Number> extends ReportCriterion {
 	/*
 	 * this method casts to the correct type the raw Object parameters using the closure implemented below.
 	 */
-	private List<?> getTypedParameters() {
+	protected List<?> getTypedParameters() {
 
 		Object[] rawParameters = getParameters();
 

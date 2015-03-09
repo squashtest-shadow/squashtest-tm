@@ -52,12 +52,20 @@ public class ExecutionProgressQueryAdapter extends LegacyQueryAdapter<HibernateE
 	 */
 	static final String CAMPAIGN_SELECTION_MODE = "campaignSelectionMode";
 
+	static final String MILESTONE_IDS = "milestones";
+
 	@SuppressWarnings({ "rawtypes" })
 	protected void processNonStandardCriteria(Map<String, Criteria> criteria, HibernateReportQuery legacyQuery) {
 		Criteria selMode = criteria.get(CAMPAIGN_SELECTION_MODE);
 		if ("EVERYTHING".equals(selMode.getValue())) {
 			setNoCampaignIds(legacyQuery);
-		} else {
+		}
+		else if ("MILESTONE_PICKER".equals(selMode.getValue())){
+			Criteria mIdsCrit = criteria.get("milestones");
+			Collection values = (Collection) mIdsCrit.getValue();
+			legacyQuery.setCriterion("milestones", values.toArray());
+		}
+		else {
 			Criteria idsCrit = criteria.get(CAMPAIGN_IDS);
 			Collection nodesIds = new HashSet<Object>();
 			addCampaignIds(idsCrit, nodesIds, "campaigns");
@@ -84,7 +92,17 @@ public class ExecutionProgressQueryAdapter extends LegacyQueryAdapter<HibernateE
 	 */
 	@Override
 	protected boolean isStandardCriteria(String criterionName) {
-		return !(CAMPAIGN_IDS.equals(criterionName) || CAMPAIGN_SELECTION_MODE.equals(criterionName));
+		boolean isStd = true;
+		switch(criterionName){
+		case CAMPAIGN_IDS:
+		case CAMPAIGN_SELECTION_MODE:
+		case MILESTONE_IDS :
+			isStd = false;
+			break;
+		default :
+			isStd = true;
+		}
+		return isStd;
 	}
 
 	/**

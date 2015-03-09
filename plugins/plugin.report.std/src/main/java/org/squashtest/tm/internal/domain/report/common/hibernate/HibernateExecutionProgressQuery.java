@@ -34,6 +34,7 @@ import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.domain.campaign.Campaign;
 import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
+import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.internal.domain.report.common.dto.ExProgressCampaignDto;
 import org.squashtest.tm.internal.domain.report.common.dto.ExProgressIterationDto;
@@ -75,26 +76,30 @@ public class HibernateExecutionProgressQuery extends HibernateReportQuery {
 
 		ReportCriterion campaignIds = new CampaignIdIsInIds("campaignIds[]","id", Campaign.class, "campaigns") {
 
-			
+
 		};
 
 		//note : the name here follows the naming convention of http requests for array parameters. It allows the
 		// controller to directly map the http query string to that criterion.
 		criterions.put("campaignIds[]", campaignIds);
+
+		ReportCriterion milestones = new CampaignBelongToMilestone();
+
+		criterions.put("milestones", milestones);
 	}
 
 	private static class CampaignIdIsInIds extends IsInSet<Long> {
-		
+
 		public CampaignIdIsInIds(String criterionName, String attributePath, Class<?> entityClass, String entityAlias) {
 			super(criterionName, attributePath, entityClass, entityAlias);
-			
+
 		}
 
 		@Override
 		public Long fromValueToTypedValue(Object o) {
 			return Long.parseLong(o.toString());
 		}
-		
+
 	}
 	/*
 	 * Here is a typical implementation of createHibernateQuery :
@@ -143,7 +148,7 @@ public class HibernateExecutionProgressQuery extends HibernateReportQuery {
 	@SuppressWarnings("unchecked")
 	public List<?> convertToDto(List<?> rawData) {
 		List<Campaign> unfilteredList= (List<Campaign>) rawData;
-		
+
 		//phase 0 : let's filter the unwanted data out.
 		List<Campaign> campaignList = filterUnwantedDataOut(unfilteredList);
 
@@ -154,9 +159,9 @@ public class HibernateExecutionProgressQuery extends HibernateReportQuery {
 		Map<Long,ExProgressProjectDto> projectMap = new HashMap<Long, ExProgressProjectDto>();
 
 		for (Campaign campaign : campaignList){
-			
+
 			Project project = campaign.getProject();
-				
+
 			if (! projectMap.keySet().contains(project.getId())){
 				ExProgressProjectDto projectDto = new ExProgressProjectDto();
 				projectDto.setName(project.getName());
@@ -165,7 +170,7 @@ public class HibernateExecutionProgressQuery extends HibernateReportQuery {
 				projectDto.setAllowsUntestable(project.getCampaignLibrary().allowsStatus(ExecutionStatus.UNTESTABLE));
 				projectMap.put(project.getId(), projectDto);
 			}
-			
+
 		}
 
 		//phase 2 : we generate the other dtos (campaigns and so on) and add them to the right instances of
@@ -181,23 +186,23 @@ public class HibernateExecutionProgressQuery extends HibernateReportQuery {
 			campDto.setProject(projectDto);
 			projectDto.addCampaignDto(campDto);
 		}
-		
+
 		//phase 3 : return the list and we're done !
 
-		List<ExProgressProjectDto> projectList = new LinkedList<ExProgressProjectDto>();		
+		List<ExProgressProjectDto> projectList = new LinkedList<ExProgressProjectDto>();
 		fillProjectStatusInfos(projectMap);
 		projectList.addAll(projectMap.values());
 		return projectList;
 
 
 	}
-	
+
 	private void fillProjectStatusInfos(Map<Long, ExProgressProjectDto> projectMap) {
 		for(Entry<Long, ExProgressProjectDto> entry : projectMap.entrySet()){
 			ExProgressProjectDto projectDto = entry.getValue();
 			projectDto.fillStatusInfosWithChildren(projectDto.getCampaigns());
 		}
-		
+
 	}
 
 	protected List<Campaign> filterUnwantedDataOut(List<Campaign> list){
@@ -239,7 +244,7 @@ public class HibernateExecutionProgressQuery extends HibernateReportQuery {
 
 	private ExProgressTestPlanDto makeTestPlanDto(IterationTestPlanItem testPlan){
 		ExProgressTestPlanDto testPlanDto = new ExProgressTestPlanDto()
-											.fillBasicInfo(testPlan);
+		.fillBasicInfo(testPlan);
 		return testPlanDto;
 	}
 

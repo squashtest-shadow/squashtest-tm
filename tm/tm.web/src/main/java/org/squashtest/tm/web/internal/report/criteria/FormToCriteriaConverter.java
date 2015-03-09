@@ -24,6 +24,7 @@ import static org.squashtest.tm.api.report.form.InputType.CHECKBOX;
 import static org.squashtest.tm.api.report.form.InputType.DATE;
 import static org.squashtest.tm.api.report.form.InputType.TEXT;
 import static org.squashtest.tm.api.report.form.InputType.TREE_PICKER;
+import static org.squashtest.tm.api.report.form.InputType.MILESTONE_PICKER;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -61,6 +62,7 @@ public class FormToCriteriaConverter {
 		simpleEntryConverterByType.put(CHECKBOX, new CheckboxEntryConverter());
 		simpleEntryConverterByType.put(TEXT, simpleEntryDefaultConverter);
 		simpleEntryConverterByType.put(TREE_PICKER, simpleEntryDefaultConverter);
+		simpleEntryConverterByType.put(MILESTONE_PICKER, simpleEntryDefaultConverter);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -120,6 +122,9 @@ public class FormToCriteriaConverter {
 		case DROPDOWN_LIST:
 			res = createSingleOptionCriteria(name, multiValued, inputType);
 			break;
+		case MILESTONE_PICKER :
+			res = createMilestoneMultiCriteria(name, multiValued, inputType);
+			break;
 		default:
 			res = EmptyCriteria.createEmptyCriteria(name, inputType);
 		}
@@ -157,6 +162,7 @@ public class FormToCriteriaConverter {
 
 	private Criteria createMultiOptionsCriteria(String name, Collection<Map<String, Object>> multiValued,
 			InputType inputType) {
+
 		MultiOptionsCriteria crit = new MultiOptionsCriteria(name, inputType);
 
 		for (Map<String, Object> valueItem : multiValued) {
@@ -164,6 +170,20 @@ public class FormToCriteriaConverter {
 			Object value =  valueItem.get(INPUT_VALUE);
 			crit.addOption(value, selected);
 		}
+		return crit;
+	}
+
+	private Criteria createMilestoneMultiCriteria(String name, Collection<Map<String, Object>> multiValued, InputType inputType){
+
+		MultiOptionsCriteria crit = new MultiOptionsCriteria(name, inputType);
+
+		for (Map<String, Object> valueItem : multiValued){
+			Collection<Integer> selectedIds = (Collection) valueItem.get(INPUT_VALUE);
+			for (Integer id : selectedIds){
+				crit.addOption(id, Boolean.TRUE);
+			}
+		}
+
 		return crit;
 	}
 
