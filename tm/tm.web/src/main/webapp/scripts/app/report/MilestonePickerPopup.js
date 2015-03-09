@@ -19,8 +19,7 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
-define(['jquery', 'jquery.squash.formdialog', 'squashtable'], function($){
+define(['jquery', 'milestone-manager/milestone-activation', 'jquery.squash.formdialog', 'squashtable'], function($, milestone){
 	
 	function init(settings){
 		
@@ -29,6 +28,10 @@ define(['jquery', 'jquery.squash.formdialog', 'squashtable'], function($){
 		var dialog = $(settings.selector).formDialog();
 		var table = dialog.find('table');
 		
+		dialog.data('model' , settings.model);
+		
+		
+		// conf
 		var tableconf = {
 			bServerSide : false,
 			fnDrawCallback : function(){
@@ -41,6 +44,18 @@ define(['jquery', 'jquery.squash.formdialog', 'squashtable'], function($){
 		};
 		
 		table.squashTable(tableconf, {});
+		
+		// on completion we need to restore the selection
+		// this depends on the activation of the milestone/referential mode
+		var critName = dialog.attr('id');
+		
+		var selectedId = (milestone.isEnabled()) ? 
+				parseInt(milestone.getActiveMilestone(), 10) : 
+				settings.model.get(critName).val[0];
+				
+		table.on('init.dt', function(){
+			setValue(selectedId);
+		});
 		
 		// we want to deselect all lines except the one currently selected
 		table.on('click', '>tbody>tr', function(evt){
@@ -57,7 +72,6 @@ define(['jquery', 'jquery.squash.formdialog', 'squashtable'], function($){
 				table.find('.milestone-radio input').not(evt.target).prop('checked', false);		
 			}
 		});
-		
 		
 		// events		
 		dialog.on('formdialogconfirm', function(){
@@ -85,10 +99,35 @@ define(['jquery', 'jquery.squash.formdialog', 'squashtable'], function($){
 		dialog.on('formdialogcancel', function(){
 			dialog.formDialog('close');
 		});
+		
+	}
+	
+	function setValue(selectedId){
+		var dialog = $(".milestone-picker"); 
+		var table =  dialog.find("table").squashTable();
+		
+		table.find('>tbody>tr').each(function(){
+			var data = table.fnGetData(this);
+			var isMe = (data['entity-id'] === selectedId);
+			if (isMe){
+				// select the row
+				$(this).find('input').prop('checked', true);
+				
+				// update the result span
+				var resultspan  = $("#"+dialog.data('idresult'));
+				resultspan.text(data['label']);		
+				
+				//update the model
+				var id = dialog.attr('id');
+				dialog.data('model').setVal(id, [selectedId]);
+				
+			}
+		});		
 	}
 	
 	return {
-		init : init
+		init : init,
+		setValue : setValue
 	};
 	
 });

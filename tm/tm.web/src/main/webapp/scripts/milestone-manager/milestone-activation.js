@@ -125,6 +125,10 @@ define([ "jquery", "workspace.storage", "squash.translator", "squash.attributepa
 			$.cookie(COOKIE_NAME, milestoneId, oPath);
 		},
 		
+		getActiveMilestone : function(){
+			return $.cookie(COOKIE_NAME);
+		},
+		
 		isEnabled : function(){
 			initFeatureIfNeeded();
 			var feature = storage.get(LOCAL_STORAGE); 

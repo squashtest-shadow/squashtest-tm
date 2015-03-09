@@ -101,17 +101,12 @@ define([ "jquery", "app/report/squashtm.reportworkspace", "tree", "underscore", 
 				return !!element.value;
 			});
 		}
-		
-		function hasMilestonePicker(mp){
-			console.log(mp);
-			return false;
-		}
+
 
 		var checkerByControl = {
 				"PROJECT_PICKER" : hasProjectPicked,
 				"RADIO_BUTTONS_GROUP" : hasEverythingSelected,
-				"TREE_PICKER" : hasNodePicked,
-				"MILESTONE_PICKER" : hasMilestonePicked
+				"TREE_PICKER" : hasNodePicked
 		};
 
 		var res = checkerByControl;

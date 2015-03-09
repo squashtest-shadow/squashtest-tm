@@ -50,7 +50,7 @@ define([ "backbone", "underscore", "jquery", "jeditable.datepicker" ], function(
 		"CHECKBOXES_GROUP": _.isArray,
 		"TREE_PICKER": _.isArray,
 		"PROJECT_PICKER": _.isArray,
-		"MILESTONE_PICKER" : _.isNumber
+		"MILESTONE_PICKER" : _.isArray
 	};
 
 	/**

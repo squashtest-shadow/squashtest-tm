@@ -19,9 +19,10 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 define([ "backbone", "underscore", "./ConciseFormModel", "app/util/ButtonUtil", "tree",
-         "./ProjectsPickerPopup", "./SingleProjectPickerPopup", "./MilestonePickerPopup", "jeditable.datepicker",
+         "./ProjectsPickerPopup", "./SingleProjectPickerPopup", "./MilestonePickerPopup", 
+         "milestone-manager/milestone-activation", "jeditable.datepicker",
          "jquery.squash.formdialog"],
-function(Backbone, _, FormModel, ButtonUtil, treeBuilder, ProjectsPickerPopup, SingleProjectPickerPopup, MilestonePickerPopup) {
+function(Backbone, _, FormModel, ButtonUtil, treeBuilder, ProjectsPickerPopup, SingleProjectPickerPopup, MilestonePickerPopup, milestone) {
 	"use strict";
 
 	var postDateFormat = $.datepicker.ATOM;
@@ -84,6 +85,16 @@ function(Backbone, _, FormModel, ButtonUtil, treeBuilder, ProjectsPickerPopup, S
 			this._renderTreePickers();
 			this._renderProjectPickers();
 			this._renderMilestonePickers();
+			
+			// we must also handle the milestone mode
+			if (milestone.isEnabled()){
+				var chk = $("#milestones-binder"); 
+				chk.prop('checked', true);
+				
+				// deactivate the other options
+				var parentLi = chk.parent('li'); 
+				parentLi.siblings().add(parentLi).find('input').prop('disabled', true);
+			}
 			
 			return this;
 		},
