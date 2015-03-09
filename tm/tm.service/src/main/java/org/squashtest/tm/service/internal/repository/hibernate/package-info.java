@@ -84,7 +84,7 @@
 	//a Requirement
 	@NamedQuery(name = "requirement.findRequirementByName", query = "from RequirementLibraryNode r where r.resource.name like :requirementName order by r.resource.name asc"),
 	@NamedQuery(name = "requirement.findRequirementWithParentFolder", query = "select r, rf from RequirementFolder rf join rf.content r where r.id in (:requirementIds)"),
-	@NamedQuery(name = "requirement.findRootContentRequirement", query = "select r from RequirementLibrary rl, RequirementVersion rv left join rv.milestones milestones join rl.rootContent r where r.id in (:paramIds) and r in (from Requirement)"),
+	@NamedQuery(name = "requirement.findRootContentRequirement", query = "select r from RequirementLibrary rl join rl.rootContent r where r.id in (:paramIds) and r in (from Requirement)"),
 	@NamedQuery(name = "requirement.findAllRootContent", query = "select r.id from RequirementLibraryNode r where r.project.requirementLibrary.id in (:libraryIds)"),
 	@NamedQuery(name = "requirement.findVersions", query = "select rv from RequirementVersion rv left join rv.milestones milestones where rv.requirement.id = :requirementId"),
 	@NamedQuery(name = "requirement.findVersionsForAll", query = "select rv from RequirementVersion rv left join rv.milestones milestones join rv.requirement r where r.id in (:requirementIds)"),

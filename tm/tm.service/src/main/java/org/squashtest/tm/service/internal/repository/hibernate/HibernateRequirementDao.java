@@ -99,10 +99,8 @@ public class HibernateRequirementDao extends HibernateEntityDao<Requirement> imp
 	public List<ExportRequirementData> findRequirementToExportFromNodes(List<Long> params) {
 		if (!params.isEmpty()) {
 			return doFindRequirementToExportFromNodes(params);
-
 		} else {
 			return Collections.emptyList();
-
 		}
 	}
 
@@ -235,7 +233,6 @@ public class HibernateRequirementDao extends HibernateEntityDao<Requirement> imp
 			return executeListNamedQuery("requirement.findRootContentRequirement", newCallBack1);
 		} else {
 			return Collections.emptyList();
-
 		}
 	}
 
