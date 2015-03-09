@@ -23,13 +23,21 @@ package org.squashtest.tm.internal.domain.report.common.dto;
 import java.util.LinkedList;
 import java.util.List;
 
-public class ExProgressProjectDto extends ExProgressAbstractDto {
+public class ExProgressProjectDto extends ExProgressAbstractDto implements HasMilestoneLabel {
+
+	/*
+	 * The milestone label is essentially a Report level parameter, not an attribute of the project. But still we have to store that
+	 * information somewhere, and by default this DTO is the best place so far.
+	 * 
+	 */
+	private String milestone;
+
 	private Long id;
 
 	private boolean allowsUntestable;
-	
+
 	private boolean allowsSettled;
-	
+
 	private List<ExProgressCampaignDto> campaigns = new LinkedList<ExProgressCampaignDto>();
 
 	public Long getId() {
@@ -68,4 +76,13 @@ public class ExProgressProjectDto extends ExProgressAbstractDto {
 	public void setAllowsUntestable(boolean allowsUntestable) {
 		this.allowsUntestable = allowsUntestable;
 	}
+
+	public String getMilestone() {
+		return milestone;
+	}
+
+	public void setMilestone(String milestone) {
+		this.milestone = milestone;
+	}
+
 }

@@ -28,7 +28,9 @@ import java.util.Map.Entry;
 
 import org.squashtest.tm.domain.requirement.RequirementStatus;
 
-public class ReqCoverageByTestProjectDto {
+public class ReqCoverageByTestProjectDto implements HasMilestoneLabel{
+
+	private String milestone;
 
 	/***
 	 * Name of the project
@@ -51,7 +53,7 @@ public class ReqCoverageByTestProjectDto {
 		for (ReqCoverageByTestStatType reqStatType : ReqCoverageByTestStatType.values()) {
 			requirementNumbers.put(reqStatType, 0L);
 		}
-		
+
 		for (RequirementStatus status : RequirementStatus.values()) {
 			for (ReqCoverageByTestStatType reqStatType : ReqCoverageByTestStatType.values()) {
 				String key = status.toString() + reqStatType.toString();
@@ -637,5 +639,15 @@ public class ReqCoverageByTestProjectDto {
 	public Map<String, Long> getRequirementStatusNumbers() {
 		return requirementStatusNumbers;
 	}
+
+	public String getMilestone() {
+		return milestone;
+	}
+
+	public void setMilestone(String milestone) {
+		this.milestone = milestone;
+	}
+
+
 
 }

@@ -96,5 +96,7 @@ public class ExProgressCampaignDto extends ExProgressScheduledAbstractDto {
 	public boolean isAllowsUntestable() {
 		return this.getProject().isAllowsUntestable();
 	}
-
+	public String getMilestone(){
+		return project.getMilestone();
+	}
 }

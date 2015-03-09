@@ -28,6 +28,7 @@ import javax.inject.Provider;
 
 import org.squashtest.tm.api.report.criteria.Criteria;
 import org.squashtest.tm.api.report.query.ReportQuery;
+import org.squashtest.tm.internal.domain.report.common.dto.HasMilestoneLabel;
 import org.squashtest.tm.internal.domain.report.query.hibernate.HibernateReportQuery;
 import org.squashtest.tm.plugin.report.std.service.ReportService;
 
@@ -62,6 +63,17 @@ public abstract class LegacyQueryAdapter<QUERY extends HibernateReportQuery> imp
 
 		Collection<?> data = reportService.executeQuery(legacyQuery);
 		model.put("data", data);
+
+		/*
+		 * Feat 3629 : we need to put the milestone label as a parameter of the reports.
+		 * We can fetch it from the first DTO of the list. Screw it if this is a hack
+		 * because the whole thing is a hack anyway.
+		 */
+
+		if (! data.isEmpty()){
+			HasMilestoneLabel dto  = (HasMilestoneLabel) data.iterator().next();
+			model.put("milestoneLabel", dto.getMilestone());
+		}
 
 	}
 
