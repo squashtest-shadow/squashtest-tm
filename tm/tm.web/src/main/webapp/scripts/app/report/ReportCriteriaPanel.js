@@ -91,6 +91,9 @@ function(Backbone, _, FormModel, ButtonUtil, treeBuilder, ProjectsPickerPopup, S
 				var chk = $("#milestones-binder"); 
 				chk.prop('checked', true);
 				
+				var radiogroupName = chk.attr('name');
+				this.model.setVal(radiogroupName, chk.val());
+				
 				// deactivate the other options
 				var parentLi = chk.parent('li'); 
 				parentLi.siblings().add(parentLi).find('input').prop('disabled', true);
