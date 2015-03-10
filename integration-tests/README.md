@@ -7,8 +7,8 @@ The command `mvn clean integration-tests` provisions a test database and runs th
 One can skip db provisioning using the `mvn integration-tests -Ddatabase.nocreate` CLI.
 By default, the tests run against a _h2_ db. To run against a _mysql_ or _postgresql_ db, use the CLI : 
 
-    mvn clean integration-tests -Pmysql,!h2.windows,!h2.unix
-    mvn clean integration-tests -Ppostgresql,!h2.windows,!h2.unix
+    mvn clean integration-test -Pmysql,!h2.windows,!h2.unix
+    mvn clean integration-test -Ppostgresql,!h2.windows,!h2.unix
 
 **Note** : one requires **two** databases to run integration tests. both DB should be accessible through the same user with _DDL and DML grants_
 
@@ -23,7 +23,7 @@ Maven profiles
 * `h2.windows` : performs integration tests against _h2_ database configured for a windows environment. 
 This profile is automatically activated on windows environments 
 
-* `h2.unix` : performs integration tests against _h2_ database configured for a unix (lunux + macos environment. 
+* `h2.unix` : performs integration tests against _h2_ database configured for a unix (linux + macos environment. 
 This profile is automatically activated on windows environments 
 	
 * `mysql` : performs integration tests against _mysql_ It requires these properties : 
