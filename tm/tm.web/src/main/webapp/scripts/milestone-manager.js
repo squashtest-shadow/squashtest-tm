@@ -19,9 +19,9 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 require(["common"], function(){
-	require(["app/pubsub", "backbone.wreqr", 'module', "jquery", "squash.translator", "workspace.routing","squash.configmanager","app/ws/squashtm.notification","squash.dateutils", "milestone-manager/MilestoneFeatureSwitch",
+	require(["app/pubsub", "backbone.wreqr", 'module', "jquery", "squash.translator", "workspace.routing","squash.configmanager","squash.dateutils", "milestone-manager/MilestoneFeatureSwitch",
 	         "jeditable.datepicker",  "squashtable", "app/ws/squashtm.workspace", "jquery.squash.formdialog", "jquery.squash.confirmdialog"],
-			function(ps, Wreqr, module, $, translator, routing, confman, notification, dateutils, MilestoneFeatureSwitch){
+			function(ps, Wreqr, module, $, translator, routing, confman, dateutils, MilestoneFeatureSwitch){
 		"use strict";
 
 		squashtm = squashtm || {};
@@ -41,20 +41,25 @@ require(["common"], function(){
 			}
 		}
 
+		function setActionsEnabled(enabled) {
+			$(".milestone-dep").prop("disabled", !enabled);
+		}
+
 	ps.subscribe("loaded.milestoneFeatureSwitch", function() {
 		console.log("loaded.milestoneFeatureSwitch");
-		var milestoneNuke = new MilestoneFeatureSwitch();
+		new MilestoneFeatureSwitch();
 	});
 
 	squashtm.vent.on("milestonefeatureswitch:activating milestonefeatureswitch:deactivating", function(event) {
-		$(".milestone-dep").prop("disabled", true);
+		// prevents performing ops on milestones while the feature state is being changed
+		setActionsEnabled(false);
 	});
 
 	squashtm.vent.on("milestonefeatureswitch:activated", function(event) {
-		$(".milestone-dep").prop("disabled", false);
+		setActionsEnabled(true);
 	});
 	squashtm.vent.on("milestonefeatureswitch:deactivated", function(event) {
-		$(".milestone-dep").prop("disabled", true);
+		setActionsEnabled(false);
 		$table()._fnAjaxUpdate();
 	});
 

@@ -116,8 +116,8 @@ requirejs.config({
 				"worker" : "lib/requirejsWorker/worker",
 				"workerWithoutFake" : "lib/requirejsWorker/workerWithoutFake",
 				"worker-fake" : "lib/requirejsWorker/fake-worker",
-				"datatables" : "datatables/jquery.dataTables",
-//				"datatables" : "datatables/jquery.dataTables.min",
+//				"datatables" : "datatables/jquery.dataTables",
+				"datatables" : "datatables/jquery.dataTables.min",
 				//lib
 				"linq"         : "lib/openXML/linq",
 				"ltxml"         : "lib/openXML/ltxml",

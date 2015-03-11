@@ -104,7 +104,9 @@
 			},
 			{
 				name : "info-list-manager",
-				include : [ "app/pubsub", "backbone.wreqr", "moment", "./info-list-manager/InfoListsTable", "./info-list-manager/NewInfoListPanel", "./info-list-manager/InfoListModel", "app/ws/squashtm.workspace" ],
+				include : [ "app/pubsub", "backbone.wreqr", "moment", "./info-list-manager/InfoListsTable", "./info-list-manager/NewInfoListPanel",
+				            "./info-list-manager/InfoListModel", "app/ws/squashtm.workspace"
+				            ],
 				exclude : [ "common" ]
 			},
 			{
@@ -112,6 +114,14 @@
 				include : [ "app/pubsub", "squash.basicwidgets", "contextual-content-handlers", "jquery.squash.fragmenttabs",
 				            "bugtracker/bugtracker-panel", "workspace.event-bus", "iteration-management", "app/ws/squashtm.workspace",
 				            "test-automation/auto-execution-buttons-panel" ],
+				exclude : [ "common" ]
+			},
+			{
+				name : "milestone-manager",
+				include : [ "app/pubsub", "backbone.wreqr", "jquery", "squash.translator", "workspace.routing", "squash.configmanager",
+				            "squash.dateutils", "milestone-manager/MilestoneFeatureSwitch",
+				            "jeditable.datepicker",  "squashtable", "app/ws/squashtm.workspace", "jquery.squash.formdialog", "jquery.squash.confirmdialog"
+				            ],
 				exclude : [ "common" ]
 			},
 			{
