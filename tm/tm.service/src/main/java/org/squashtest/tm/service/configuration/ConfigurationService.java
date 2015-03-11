@@ -21,7 +21,7 @@
 package org.squashtest.tm.service.configuration;
 
 public interface ConfigurationService {
-	String MILESTONES_FEATURE_ENABLED = "feature.milestones.enabled";
+	String MILESTONE_FEATURE_ENABLED = "feature.milestone.enabled";
 
 	void createNewConfiguration(String key, String value);
 
@@ -36,5 +36,21 @@ public interface ConfigurationService {
 	 * @param key
 	 * @return
 	 */
-	boolean findBooleanConfiguration(String key);
+	boolean getBoolean(String key);
+
+	/**
+	 * Sets the given boolean config property. Creates it when required.
+	 *
+	 * @param key
+	 * @param value
+	 */
+	void set(String key, boolean value);
+
+	/**
+	 * Sets the given string config property. Creates it when required.
+	 *
+	 * @param key
+	 * @param value
+	 */
+	void set(String key, String value);
 }

@@ -22,6 +22,7 @@ package org.squashtest.tm.service.internal.configuration;
 
 import javax.inject.Inject;
 
+import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -46,7 +47,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 
 	@Override
 	public void createNewConfiguration(String key, String value) {
-		Session session = sessionFactory.getCurrentSession();
+		Session session = currentSession();
 		Query sqlQuery = session.createSQLQuery(INSERT_KEY_SQL);
 		sqlQuery.setString(0, key);
 		sqlQuery.setString(1, value);
@@ -55,7 +56,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 
 	@Override
 	public void updateConfiguration(String key, String value) {
-		Session session = sessionFactory.getCurrentSession();
+		Session session = currentSession();
 		Query sqlQuery = session.createSQLQuery(UPDATE_KEY_SQL);
 		sqlQuery.setString(0, value);
 		sqlQuery.setString(1, key);
@@ -63,24 +64,55 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 
 	}
 
+	private Session currentSession() throws HibernateException {
+		Session session = sessionFactory.getCurrentSession();
+		return session;
+	}
+
 	@Override
 	public String findConfiguration(String key) {
-		Session session = sessionFactory.getCurrentSession();
+		Object value = findValue(key);
+		return value == null ? null : value.toString();
+	}
+
+	private Object findValue(String key) throws HibernateException {
+		Session session = currentSession();
 		Query sqlQuery = session.createSQLQuery(FIND_VALUE_BY_KEY_SQL);
 		sqlQuery.setParameter(0, key);
 		Object value = sqlQuery.uniqueResult();
-		return value == null ? null : value.toString();
+		return value;
 	}
 
 	/**
 	 * As per interface spec, when stored value is "true" (ignoring case), this returns <code>true</code>, otherwise it
 	 * returns <code>false</code>
 	 *
-	 * @see org.squashtest.tm.service.configuration.ConfigurationService#findBooleanConfiguration(java.lang.String)
+	 * @see org.squashtest.tm.service.configuration.ConfigurationService#getBoolean(java.lang.String)
 	 */
 	@Override
-	public boolean findBooleanConfiguration(String key) {
+	public boolean getBoolean(String key) {
 		return Boolean.parseBoolean(findConfiguration(key));
+	}
+
+	/**
+	 * @see org.squashtest.tm.service.configuration.ConfigurationService#set(java.lang.String, boolean)
+	 */
+	@Override
+	public void set(String key, boolean value) {
+		String strVal = Boolean.toString(value);
+		set(key, strVal);
+	}
+
+	/**
+	 *
+	 * @see org.squashtest.tm.service.configuration.ConfigurationService#set(java.lang.String, java.lang.String)
+	 */
+	public void set(String key, String value) {
+		if (findValue(key) == null) {
+			createNewConfiguration(key, value);
+		} else {
+			updateConfiguration(key, value);
+		}
 	}
 
 }
