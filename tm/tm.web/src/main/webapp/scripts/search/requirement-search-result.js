@@ -96,7 +96,7 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil","workspace.ro
 			var dialogOptions = {
 					tableSource : routing.buildURL('search-reqV.mass-change.associable-milestone', ids),
 					milestonesURL : routing.buildURL('search-reqV.mass-change.bindmilestones', ids), 
-					identity : "",
+					identity : ""
 				};
 		
 			var addModifyMilestoneDialog = $('.bind-milestone-dialog');
