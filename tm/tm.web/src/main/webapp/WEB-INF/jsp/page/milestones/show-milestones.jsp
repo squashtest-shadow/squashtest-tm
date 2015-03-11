@@ -37,13 +37,24 @@
 <jsp:useBean id="now" class="java.util.Date"  />   
 <f:message var="dateFormat" key="squashtm.dateformatShort" />
 
+<layout:info-page-layout titleKey="squashtm.milestone.title" isSubPaged="true" main="milestone-manager">
+  <jsp:attribute  name="head">	
+    <comp:sq-css name="squash.grey.css" />
+      <script type="text/javascript">
+      requirejs.config({
+        config : {
+          'milestone-manager' : {
+            data: {
+              currentUser : '${currentUser}',
+              isAdmin : ${isAdmin},
+              editableMilestoneIds : ${editableMilestoneIds}
+            }
+          }
+        }
+      });
+      </script>
+  </jsp:attribute>
 
-<layout:info-page-layout titleKey="squashtm.milestone.title" isSubPaged="true">
-	<jsp:attribute  name="head">	
-		<comp:sq-css name="squash.grey.css" />
-		
-	</jsp:attribute>
-	
 	<jsp:attribute name="titlePane">
 		<h2 class="admin"><f:message key="label.administration" /></h2>
 	</jsp:attribute>
@@ -66,86 +77,47 @@
 
 <div class="fragment-body">
 
- <div class="toolbar">
-     <button id="new-milestone-button" class="test-step-toolbar-button ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-primary .squash-button-initialized" title=<f:message key="label.AddMilestone" />>    
-     <span class="ui-icon ui-icon-plusthick">+</span> <span class="ui-button-text"><f:message key="label.AddMilestone" /> </span> </button>
-     <button id="clone-milestone-button" class="test-step-toolbar-button ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-primary .squash-button-initialized" title=<f:message key="label.milestone.duplicate" />>    
-     <span class="ui-button-text"><f:message key="label.milestone.duplicate" /> </span> </button>
-     
-      <button id="synchronize-milestone-button" class="test-step-toolbar-button ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-primary .squash-button-initialized" title=<f:message key="label.milestone.synchronize" />>    
-     <span class="ui-button-text"><f:message key="label.milestone.synchronize" /> </span> </button>
-     
-     <button id="delete-milestone-button" class="test-step-toolbar-button ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-primary .squash-button-initialized" title=<f:message key="label.deleteMilestone" />>    
-     <span class="ui-icon ui-icon-trash">-</span> <span class="ui-button-text"><f:message key="label.deleteMilestone" /> </span> </button>
- </div>
-  <div style="clear:both"></div>
-	<table id="milestones-table" class="unstyled-table" data-def="ajaxsource=${milestonesUrl}, hover, filter, pre-sort=1-asc">
-		<thead>
-			<tr>
-				<th data-def="map=index, select">#</th>
-				<th data-def="map=label, sortable, link=${milestoneDetailsBaseUrl}/{entity-id}/info"  class="datatable-filterable"><f:message key="label.Milestone" /></th>
-				<th data-def="map=status, sortable" class="datatable-filterable"><f:message key="label.Status"   /></th>
-				<th data-def="map=endDate, sortable"><f:message key="label.EndDate"/></th>
-		       	<th data-def="map=nbOfProjects, sortable"><f:message key="label.projects"/></th>
-		        <th data-def="map=range, sortable"><f:message key="label.Range" /></th>
-				 <th data-def="map=owner, sortable"><f:message key="label.Owner" /></th>
-				<th data-def="map=description, sortable"><f:message key="label.Description" /></th>
-			    <th data-def="map=created-on, sortable"><f:message key="label.CreatedOn" /></th>
-                <th data-def="map=created-by, sortable" ><f:message key="label.createdBy" /></th>
-                <th data-def="map=last-mod-on, sortable"><f:message key="label.modifiedOn" /></th>  
-                <th data-def="map=last-mod-by, sortable"><f:message key="label.modifiedBy" /></th> 
-				<th data-def="map=delete, delete-button=#delete-milestone-popup"></th>				
-			</tr>
-		</thead>
-		<tbody>	
-		</tbody>
-	</table>
-
-<!--
-<table id="milestones-table" class="unstyled-table" data-def="filter, pre-sort=1-asc">
-		<thead>
-			<tr>
-			    <th data-def="map=entity-id, invisible"> </th>
-				<th data-def="map=index, select">#</th>
-				<th data-def="map=label ,sortable"><f:message key="label.Milestone" /></th>
-				<th data-def="map=status, sortable"><f:message key="label.Status"   /></th>
-				<th data-def="map=endDate,sortable"><f:message key="label.EndDate"/></th>
-		       	<th data-def="map=nbOfBindedProject,sortable"><f:message key="label.projects"/></th>
-		        <th data-def="map=range,sortable"><f:message key="label.Range" /></th>
-				 <th data-def="map=owner,sortable"><f:message key="label.Owner" /></th>
-				<th data-def="map=description, sortable"><f:message key="label.Description" /></th>
-			    <th data-def="map=createdOn, sortable"><f:message key="label.CreatedOn" /></th>
-                <th data-def="map=createdBy, sortable"><f:message key="label.createdBy" /></th>
-                <th data-def="map=lastModifiedOn, sortable"><f:message key="label.modifiedOn" /></th>  
-                <th data-def="map=lastModifiedBy,sortable"><f:message key="label.modifiedBy" /></th> 
-				<th data-def="map=placeholder, delete-button=#delete-milestone-popup"></th>				
-			</tr>
-		</thead>
-		<tbody>	
-		 <c:forEach items="${milestones}" var="milestone" varStatus="milestoneIndex"> 
-		 <tr>
-		 <td>${ milestone.id} </td>
-		 <td>${milestoneIndex.index +1}</td>
-		 <td><a href="${milestoneDetailsBaseUrl}/${milestone.id}/info"> ${milestone.label}</a></td>
-		 <td><f:message key="${milestone.status.i18nKey}"/></td>
-		 <td><f:formatDate value="${milestone.endDate}" pattern="${dateFormat}"/></td>
-		 <td>${milestone.nbOfBindedProject}</td>
-		 <td><f:message key="${milestone.range.i18nKey}"/></td>
-		 <td>${milestone.owner.name}</td>
-		 <td>${milestone.description}</td>
-		 <td><f:formatDate value="${milestone.createdOn}" pattern="${dateFormat}"/></td>
-		 <td>${milestone.createdBy}</td>
-		 <td><f:formatDate value="${milestone.lastModifiedOn}" pattern="${dateFormat}"/></td>
-		 <td>${milestone.lastModifiedBy}</td>
-		 <td></td>
-		 </tr>
-		 </c:forEach>
-		</tbody>
-	</table>
--->
-
-
-
+  <div class="cf">
+    <div class="btn-toolbar left">
+    </div>
+    <div class="btn-toolbar right">
+      <button id="new-milestone-button" class="sq-btn" title="<f:message key='label.AddMilestone' />">
+        <span class="ui-icon ui-icon-plusthick">+</span> <f:message key="label.AddMilestone" />
+      </button>
+      <button id="clone-milestone-button" class="sq-btn" title="<f:message key='label.milestone.duplicate' />">
+        <f:message key="label.milestone.duplicate" />>
+      </button>
+       
+      <button id="synchronize-milestone-button" class="sq-btn" title="<f:message key='label.milestone.synchronize' />">
+        <f:message key="label.milestone.synchronize" />
+      </button>
+      
+      <button id="delete-milestone-button" class="sq-btn" title=<f:message key="label.deleteMilestone" />>    
+        <span class="ui-icon ui-icon-trash">-</span> <f:message key="label.deleteMilestone" />
+      </button>
+    </div>
+  </div>
+  <table id="milestones-table" class="unstyled-table" data-def="ajaxsource=${milestonesUrl}, hover, filter, pre-sort=1-asc">
+    <thead>
+      <tr>
+        <th data-def="map=index, select">#</th>
+        <th data-def="map=label, sortable, link=${milestoneDetailsBaseUrl}/{entity-id}/info"  class="datatable-filterable"><f:message key="label.Milestone" /></th>
+        <th data-def="map=status, sortable" class="datatable-filterable"><f:message key="label.Status"   /></th>
+        <th data-def="map=endDate, sortable"><f:message key="label.EndDate"/></th>
+        <th data-def="map=nbOfProjects, sortable"><f:message key="label.projects"/></th>
+        <th data-def="map=range, sortable"><f:message key="label.Range" /></th>
+        <th data-def="map=owner, sortable"><f:message key="label.Owner" /></th>
+        <th data-def="map=description, sortable"><f:message key="label.Description" /></th>
+        <th data-def="map=created-on, sortable"><f:message key="label.CreatedOn" /></th>
+        <th data-def="map=created-by, sortable" ><f:message key="label.createdBy" /></th>
+        <th data-def="map=last-mod-on, sortable"><f:message key="label.modifiedOn" /></th>
+        <th data-def="map=last-mod-by, sortable"><f:message key="label.modifiedBy" /></th> 
+        <th data-def="map=delete, delete-button=#delete-milestone-popup"></th>
+      </tr>
+    </thead>
+    <tbody>
+    </tbody>
+  </table>
 
 	<f:message var="deleteMilestoneTitle" key="dialog.delete-milestone.title" />
 	<div id="delete-milestone-popup" class="popup-dialog not-displayed" title="${deleteMilestoneTitle}">
@@ -159,7 +131,7 @@
 		</div>
 		<div class="popup-dialog-buttonpane">
 		    <input class="confirm" type="button" value="${confirmLabel}" />
-		    <input class="cancel" type="button" value="${cancelLabel}" />				
+		    <input class="cancel" type="button" value="${cancelLabel}" />
 		</div>
 	
 	</div>	
@@ -179,7 +151,7 @@
             <td><label for="add-milestone-status"><f:message
               key="label.Status" /></label></td>
             <td>
-		<select id="add-milestone-status" class="combobox">           
+		<select id="add-milestone-status" class="combobox">
             <c:forEach items="${milestoneStatus}" var="status" > 
             <option value = "${status.key}" >${status.value} </option>
             </c:forEach>
@@ -189,7 +161,7 @@
         
          <tr>
        
-            <td><label><f:message key="label.EndDate" /></td>    
+            <td><label><f:message key="label.EndDate" /></td>
             <td><span id="add-milestone-end-date"></span>
         <comp:error-message forField="endDate" /></td>
          </tr>  
@@ -320,27 +292,3 @@
 
 </jsp:attribute>
 </layout:info-page-layout>
-
-
-<script type="text/javascript">
-
-
-requirejs.config({
-	config : {
-		'milestone-manager/milestone-manager' : {
-
-			data: {
-				currentUser : '${currentUser}',
-				isAdmin : ${isAdmin},
-				editableMilestoneIds : ${editableMilestoneIds}
-			       }
-				           }
-			}
-		});
-		
-require(["common"], function(){
-	require(["milestone-manager/milestone-manager"], function(){});
-});
-
-
-</script>

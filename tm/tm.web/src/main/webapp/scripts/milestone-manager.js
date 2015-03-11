@@ -18,34 +18,35 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-	define(['module', "jquery", "squash.translator", "workspace.routing","squash.configmanager","app/ws/squashtm.notification","squash.dateutils", "jeditable.datepicker",  "squashtable", 
-	         "app/ws/squashtm.workspace", 
-	         "jquery.squash.formdialog", "jquery.squash.confirmdialog"], 
-			function(module, $, translator, routing, confman, notification, dateutils){					
-		
+require(["common"], function(){
+	require(['module', "jquery", "squash.translator", "workspace.routing","squash.configmanager","app/ws/squashtm.notification","squash.dateutils", "jeditable.datepicker",  "squashtable",
+	         "app/ws/squashtm.workspace", "jquery.squash.formdialog", "jquery.squash.confirmdialog"],
+			function(module, $, translator, routing, confman, notification, dateutils){
+		"use strict";
+
 		var config = module.config();
 
 	   function getPostDate(localizedDate){
 		try{
-		var postDateFormat = $.datepicker.ATOM;   
+		var postDateFormat = $.datepicker.ATOM;
 		var date = $.datepicker.parseDate(translator.get("squashtm.dateformatShort.datepicker"), localizedDate);
 		var postDate = $.datepicker.formatDate(postDateFormat, date);
 		return postDate;
 		} catch(err){ return null;}
 		}
 
-		
-		$(function() {			
-			
+
+		$(function() {
+
 			var squashSettings = {
-					functions:{					
+					functions:{
 						drawDeleteButton: function(template, cells){
-				
+
 							$.each(cells, function(index, cell) {
 								var row = cell.parentNode; // should be the tr
 								var id = milestoneTable.getODataId(row);
 								var $cell = $(cell);
-								
+
 								if (_.contains(config.data.editableMilestoneIds, id)){
 									$cell.html(template);
 									$cell.find('a').button({
@@ -53,23 +54,22 @@
 										icons : {
 											primary : "ui-icon-trash"
 										}
-									});		
-								}						
+									});
+								}
 							});
-						}	
+						}
 					}
 			};
-			
-			var milestoneTable = $("#milestones-table").squashTable({"bServerSide":false},squashSettings);			
-			$('#new-milestone-button').button();	
+
+			var milestoneTable = $("#milestones-table").squashTable({"bServerSide":false},squashSettings);
 
 			/* The button gets CSS we don't want to keep a clean CSS and also put a span with text only after*/
 			$("#new-milestone-button").removeClass("ui-button-text-only").addClass("ui-button-text-icon-primary");
 			$("#new-milestone-button > span").removeClass("ui-button-text");
-		});	
-		
-	
-		var dateSettings = confman.getStdDatepicker(); 
+		});
+
+
+		var dateSettings = confman.getStdDatepicker();
 		$("#add-milestone-end-date").editable(function(value){
 			$("#add-milestone-end-date").text(value);
 	    }, {
@@ -77,7 +77,7 @@
 			datepicker : dateSettings,
 			name : "value"
 		});
-		
+
 		$("#clone-milestone-end-date").editable(function(value){
 			$("#clone-milestone-end-date").text(value);
 	    }, {
@@ -85,7 +85,7 @@
 			datepicker : dateSettings,
 			name : "value"
 		});
-		
+
 		this.$textAreas = $("textarea");
 		function decorateArea() {
 			$(this).ckeditor(function() {
@@ -96,17 +96,17 @@
 		}
 
 		this.$textAreas.each(decorateArea);
-		
+
 
 		$("#delete-milestone-popup").confirmDialog().on('confirmdialogconfirm', function(){
-			
+
 			var $this = $(this);
 			var id = $this.data('entity-id');
 			var ids = ( !! id) ? [id] : id ;
 			var url = squashtm.app.contextRoot+'/administration/milestones/'+ ids.join(",");
 			var table = $("#milestones-table").squashTable();
 			var selectedRow = table.getRowsByIds(ids);
-			
+
 			$.ajax({
 				url : url,
 				type : 'delete'
@@ -114,8 +114,8 @@
 			.done(function(){
 				table._fnAjaxUpdate();
 			});
-			
-			
+
+
 		});
 
 		$("#delete-milestone-button").on('click', function(){
@@ -130,20 +130,20 @@
 				warningWithTranslation ('message.EmptyTableSelection');
 			}
 		});
-			
-		
+
+
 	var addMilestoneDialog = $("#add-milestone-dialog");
-		
+
 	addMilestoneDialog.formDialog();
-		
-		
+
+
 	function formatDate(date){
 		var format = translator.get("squashtm.dateformatShort");
 		var formatedDate = dateutils.format(date, format);
 		return dateutils.dateExists(formatedDate, format) ? formatedDate :"";
 	}
 
-	
+
 	addMilestoneDialog.on('formdialogconfirm', function(){
 		var url = routing.buildURL('administration.milestones');
 		var params = {
@@ -156,36 +156,36 @@
 			url : url,
 			type : 'POST',
 			dataType : 'json',
-			data : params				
+			data : params
 		}).success(function(id){
 			config.data.editableMilestoneIds.push(id);
 			$('#milestones-table').squashTable()._fnAjaxUpdate();
 			addMilestoneDialog.formDialog('close');
 		});
-	
+
 	});
-	
+
 	addMilestoneDialog.on('formdialogcancel', function(){
 		addMilestoneDialog.formDialog('close');
 		});
-		
+
 	$('#new-milestone-button').on('click', function(){
 		addMilestoneDialog.formDialog('open');
 	});
-	
+
 	//Clone milestone
 	var cloneMilestoneDialog = $("#clone-milestone-dialog");
-	
+
 	cloneMilestoneDialog.formDialog();
-	
-		
+
+
 	$('#clone-milestone-button').on('click', function(){
-		
+
 		var ids = $("#milestones-table").squashTable().getSelectedIds();
 		if (ids.length>1){
 			warningWithTranslation ('message.milestone.cantclonemultiple');
 		} else if (ids.length == 1) {
-			
+
 			var mil = $("#milestones-table").squashTable().getDataById(ids[0]);
 			var trans = translator.get({
 				statusFinished : "milestone.status.FINISHED",
@@ -197,26 +197,26 @@
 			} else {
 				warningWithTranslation('message.milestone.invalidclonestatus');
 			}
-			
-			
+
+
 		} else {
-			warningWithTranslation ('message.milestone.cantclonenothing');	
+			warningWithTranslation ('message.milestone.cantclonenothing');
 		}
 	});
-	
-	
+
+
 	function warningWithTranslation(errorKey){
 		var warn = translator.get({
 			errorTitle : 'popup.title.Info',
 			errorMessage : errorKey
 		});
-		$.squash.openMessage(warn.errorTitle, warn.errorMessage);		
+		$.squash.openMessage(warn.errorTitle, warn.errorMessage);
 	}
-	
+
 	cloneMilestoneDialog.on('formdialogcancel', function(){
 		cloneMilestoneDialog.formDialog('close');
 		});
-	
+
 	cloneMilestoneDialog.on('formdialogconfirm', function(){
 		var $this = $(this);
 		var motherId  = $this.data('entity-id');
@@ -232,25 +232,25 @@
 		$.ajax({
 			url : url,
 			type : 'POST',
-			data : params				
+			data : params
 		}).success(function(id){
 			config.data.editableMilestoneIds.push(id);
 			$('#milestones-table').squashTable()._fnAjaxUpdate();
 			cloneMilestoneDialog.formDialog('close');
 		});
 		});
-	
-	
+
+
 	var uncheckCloneParam = function() {
 		cloneMilestoneDialog.find(":checkbox").prop('checked', false);
 	};
 	var checkAllCloneParam = function() {
 		cloneMilestoneDialog.find(":checkbox").prop('checked', true);
 	};
-	
+
 	$("#checkAll").on('click', checkAllCloneParam);
 	$("#uncheckAll").on('click', uncheckCloneParam);
-	
+
 	//Synchronize
 	$("#synchronize-milestone-button").on('click', function(){
 		var table = $("#milestones-table").squashTable();
@@ -263,7 +263,7 @@
 			//error can't select more than 2
 			warningWithTranslation('message.milestone.synchronize.toomuch');
 		} else {
-			//maybe it's ok... let's see 
+			//maybe it's ok... let's see
 			var mil1 = table.getDataById(ids[0]);
 			var mil2 = table.getDataById(ids[1]);
 			synchronizeMilestoneDialog.data('mil1', mil1);
@@ -272,16 +272,16 @@
 				rangeGlobal : "milestone.range.GLOBAL",
 				statusInProgress :"milestone.status.IN_PROGRESS"
 				});
-			
+
 			if (mil1.status == trans.statusInProgress || mil2.status == trans.statusInProgress){
 				// you need at least one milestone in progress to synchronize
-			
+
 				if (config.data.isAdmin){
 					//ok you're admin you can skip some additional check
 					configAdminSynchroPopup();
 					checkFirstRadio();
 					synchronizeMilestoneDialog.formDialog('open');
-				
+
 				} else {
 					//too bad you're not admin, you have to pass some more check...
 					if (mil1.range == trans.rangeGlobal && mil2.range == trans.rangeGlobal){
@@ -289,61 +289,61 @@
 						warningWithTranslation('message.milestone.synchronize.wrongrange');
 					} else if (mil1.range == trans.rangeGlobal && mil2.status != trans.statusInProgress || mil2.range == trans.rangeGlobal && mil1.status != trans.statusInProgress ) {
 						//you have selected one global and a restricted non in progress milestone...too bad you loose again !
-						
+
 					} else {
 						//You're still here ?? ok you can now have your pop up !
 						configNonAdminSynchroPopup();
 						checkFirstRadio();
 						allowPerimeterOrNot();
 						synchronizeMilestoneDialog.formDialog('open');
-					
-					}		
+
+					}
 				}
-				
+
 			} else {
 				// 2 milestone not in progress, you loose again
 				warningWithTranslation('message.milestone.synchronize.wrongstatus');
-			}	
+			}
 		}
 
 		function configAdminSynchroPopup(){
 			var mil1 = synchronizeMilestoneDialog.data('mil1');
 			var mil2 = synchronizeMilestoneDialog.data('mil2');
-			$("#mil1").attr("disabled", mil1.status != trans.statusInProgress); 
-			$("#mil2").attr("disabled", mil2.status != trans.statusInProgress); 
-			$("#union").attr("disabled", mil1.status != trans.statusInProgress || mil2.status != trans.statusInProgress); 
+			$("#mil1").attr("disabled", mil1.status != trans.statusInProgress);
+			$("#mil2").attr("disabled", mil2.status != trans.statusInProgress);
+			$("#union").attr("disabled", mil1.status != trans.statusInProgress || mil2.status != trans.statusInProgress);
 			$("#perim").attr("disabled", true);
 			writeMilestonesLabel();
-		
+
 		}
-		
+
 		function configNonAdminSynchroPopup(){
 			var mil1 = synchronizeMilestoneDialog.data('mil1');
 			var mil2 = synchronizeMilestoneDialog.data('mil2');
 			var mil1CantBeTarget = mil1.status != trans.statusInProgress ||  mil1.range == trans.rangeGlobal;
 			var mil2CantBeTarget = mil2.status != trans.statusInProgress ||  mil2.range == trans.rangeGlobal;
-			$("#mil1").attr("disabled", mil1CantBeTarget); 
-			$("#mil2").attr("disabled", mil2CantBeTarget); 
-			$("#union").attr("disabled", mil1CantBeTarget || mil2CantBeTarget); 
+			$("#mil1").attr("disabled", mil1CantBeTarget);
+			$("#mil2").attr("disabled", mil2CantBeTarget);
+			$("#union").attr("disabled", mil1CantBeTarget || mil2CantBeTarget);
 			writeMilestonesLabel();
 		}
-		
+
 		function writeMilestonesLabel(){
 			var msg = translator.get({
 				mil:"label.milestone.synchronize.target",
-				union:"label.milestone.synchronize.union"	
+				union:"label.milestone.synchronize.union"
 			});
-			
-			  
+
+
 			$("#mil1Label").text(msg.mil.split('"{0}"').join(mil1.label).split('"{1}"').join(mil2.label));
 			$("#mil2Label").text(msg.mil.split('"{0}"').join(mil2.label).split('"{1}"').join(mil1.label));
 			$("#unionLabel").text(msg.union.split('"{0}"').join(mil1.label).split('"{1}"').join(mil2.label));
 			greyTextForDisabledLabel($("#mil1"), $("#mil1Label"));
 			greyTextForDisabledLabel($("#mil2"), $("#mil2Label"));
 			greyTextForDisabledLabel($("#union"),$("#unionLabel"));
-			
+
 		}
-		
+
 		function greyTextForDisabledLabel( radioButtonSelector,labelSelector){
 			$radioButtonSelector = $(radioButtonSelector);
 			$labelSelector = $(labelSelector);
@@ -352,55 +352,55 @@
 			} else {
 				$labelSelector.removeClass("nota-bene");
 			}
-			
+
 		}
-		
+
 		$("#mil1").on('change', allowPerimeterOrNot);
 		$("#mil2").on('change', allowPerimeterOrNot);
 		$("#union").on('change', allowPerimeterOrNot);
-		
+
 		function allowPerimeterOrNot(){
 			var mil1 = synchronizeMilestoneDialog.data('mil1');
 			var mil2 = synchronizeMilestoneDialog.data('mil2');
-			
+
 			if (!config.data.isAdmin){
 				//admin don't have the perimeter checkbox
 			$("#perim").attr("disabled", false);
-			
+
 			if ($("#union").prop('checked')){
 				$("#perim").attr("disabled", true);
 			}
-			
+
 			if ($("#mil1").prop('checked') && config.data.currentUser != mil1.owner){
 				$("#perim").attr("disabled", true);
 			}
-			
+
 			if ($("#mil2").prop('checked') && config.data.currentUser != mil2.owner){
 				$("#perim").attr("disabled", true);
 			}
-			
+
 			}
 		}
-		
+
 		function checkFirstRadio(){
-			
+
 			if ($("#mil1").attr("disabled")){
 				$("#mil2").prop('checked', true);
 			} else {
 				$("#mil1").prop('checked', true);
 			}
 		}
-		
-		
+
+
 	});
-	
+
 	var synchronizeMilestoneDialog = $("#synchronize-milestone-dialog");
 	synchronizeMilestoneDialog.formDialog();
-	
+
 	synchronizeMilestoneDialog.on('formdialogcancel', function(){
 		synchronizeMilestoneDialog.formDialog('close');
 		});
-	
+
 	synchronizeMilestoneDialog.on('formdialogconfirm', function(){
 		var mil1 = synchronizeMilestoneDialog.data('mil1');
 		var mil2 = synchronizeMilestoneDialog.data('mil2');
@@ -408,12 +408,12 @@
 			url : routing.buildURL("milestone.synchronize" , mil1["entity-id"], mil2["entity-id"]),
 			type : 'POST',
 			data : {extendPerimeter: $("#perim").prop("checked"),
-				isUnion:$("#union").prop("checked")}					
+				isUnion:$("#union").prop("checked")}
 		});
-		
-		
-		
+
+
+
 		synchronizeMilestoneDialog.formDialog('close');
 		});
-	});			
-	
+	});
+});
