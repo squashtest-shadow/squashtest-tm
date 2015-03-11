@@ -87,12 +87,12 @@ import org.squashtest.tm.service.customfield.CustomFieldHelper;
 import org.squashtest.tm.service.customfield.CustomFieldHelperService;
 import org.squashtest.tm.service.execution.ExecutionFinder;
 import org.squashtest.tm.service.infolist.InfoListItemFinderService;
-import org.squashtest.tm.service.milestone.MilestoneFinderService;
 import org.squashtest.tm.service.requirement.VerifiedRequirement;
 import org.squashtest.tm.service.requirement.VerifiedRequirementsManagerService;
 import org.squashtest.tm.service.testcase.ParameterFinder;
 import org.squashtest.tm.service.testcase.TestCaseModificationService;
 import org.squashtest.tm.web.internal.controller.RequestParams;
+import org.squashtest.tm.web.internal.controller.administration.MilestoneDataTableModelHelper;
 import org.squashtest.tm.web.internal.controller.bugtracker.BugTrackerControllerHelper;
 import org.squashtest.tm.web.internal.controller.generic.ServiceAwareAttachmentTableModelHelper;
 import org.squashtest.tm.web.internal.controller.milestone.MetaMilestone;
@@ -120,7 +120,6 @@ import org.squashtest.tm.web.internal.model.jquery.RenameModel;
 import org.squashtest.tm.web.internal.model.json.JsonEnumValue;
 import org.squashtest.tm.web.internal.model.json.JsonGeneralInfo;
 import org.squashtest.tm.web.internal.model.json.JsonInfoList;
-import org.squashtest.tm.web.internal.model.json.JsonMilestone;
 import org.squashtest.tm.web.internal.model.json.JsonTestCase;
 import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
 import org.squashtest.tm.web.internal.model.viewmapper.NameBasedMapper;
@@ -543,6 +542,7 @@ public class TestCaseModificationController {
 		return buildMilestoneModel(testCaseId, notBoundMilestones, params.getsEcho());
 	}
 
+	
 
 	@RequestMapping(value = "/milestones/panel", method=RequestMethod.GET)
 	public String getMilestonesPanel(@PathVariable Long testCaseId, Model model){

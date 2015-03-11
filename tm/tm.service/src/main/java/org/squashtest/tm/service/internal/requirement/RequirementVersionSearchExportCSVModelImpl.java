@@ -87,6 +87,7 @@ public class RequirementVersionSearchExportCSVModelImpl implements SearchExportC
 		headerCells.add(new CellImpl("REQUIREMENT_CRITICALITY"));
 		headerCells.add(new CellImpl("REQUIREMENT_CATEGORY"));
 		headerCells.add(new CellImpl("REQUIREMENT_STATUS"));
+		headerCells.add(new CellImpl("#_MIL"));
 		headerCells.add(new CellImpl("#_VERSION"));
 		headerCells.add(new CellImpl("#_VERSIONS"));
 		headerCells.add(new CellImpl("#_TESTCASES"));
@@ -115,8 +116,9 @@ public class RequirementVersionSearchExportCSVModelImpl implements SearchExportC
 			dataCells.add(new CellImpl(requirementVersion.getReference()));
 			dataCells.add(new CellImpl(requirementVersion.getName()));
 			dataCells.add(new CellImpl(requirementVersion.getCriticality().toString()));
-			dataCells.add(new CellImpl(requirementVersion.getCategory().toString()));
+			dataCells.add(new CellImpl(requirementVersion.getCategory().getCode()));
 			dataCells.add(new CellImpl(requirementVersion.getStatus().toString()));
+			dataCells.add(new CellImpl(Integer.toString(requirementVersion.getMilestones().size())));
 			dataCells.add(new CellImpl(Integer.toString(requirementVersion.getVersionNumber())));
 			dataCells.add(new CellImpl(Integer.toString(requirementVersion.getRequirement().getRequirementVersions().size())));
 			dataCells.add(new CellImpl(Integer.toString(requirementVersion.getVerifyingTestCases().size())));

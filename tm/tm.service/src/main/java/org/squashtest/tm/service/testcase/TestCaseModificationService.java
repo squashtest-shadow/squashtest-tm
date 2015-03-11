@@ -20,9 +20,13 @@
  */
 package org.squashtest.tm.service.testcase;
 
+import java.util.Collection;
+import java.util.List;
+
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.core.dynamicmanager.annotation.DynamicManager;
+import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseImportance;
 import org.squashtest.tm.domain.testcase.TestCaseStatus;
@@ -49,6 +53,8 @@ public interface TestCaseModificationService extends CustomTestCaseModificationS
 
 	@PreAuthorize("hasPermission(#arg0, 'org.squashtest.tm.domain.testcase.TestCase' , 'WRITE') or hasRole('ROLE_ADMIN')")
 	void changePrerequisite(long testCaseId, String newPrerequisite);
+
+
 
 
 }

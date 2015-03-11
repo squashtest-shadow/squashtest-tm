@@ -94,32 +94,32 @@ define([ "jquery", "backbone", "squash.translator", "jeditable.simpleJEditable",
 							"aTargets" : [ 4 ],
 							"mDataProp" : "test-case-ref",
 							"bSortable" : true,
-							"sClass" : "editable_ref"
+							"sClass" : "editable editable_ref"
 						}, {
 							"aTargets" : [ 5 ],
 							"mDataProp" : "test-case-label",
 							"bSortable" : true,
-							"sClass" : "editable_label"
+							"sClass" : "editable editable_label"
 						}, {
 							"aTargets" : [ 6 ],
 							"mDataProp" : "test-case-weight",
 							"bSortable" : true,
-							"sClass" : "editable_importance"
+							"sClass" : "editable editable_importance"
 						}, {
 							"aTargets" : [ 7 ],
 							"mDataProp" : "test-case-nature",
 							"bSortable" : true,
-							"sClass" : "editable_nature"
+							"sClass" : "editable editable_nature"
 						}, {
 							"aTargets" : [ 8 ],
 							"mDataProp" : "test-case-type",
 							"bSortable" : true,
-							"sClass" : "editable_type"
+							"sClass" : "editable editable_type"
 						}, {
 							"aTargets" : [ 9 ],
 							"mDataProp" : "test-case-status",
 							"bSortable" : true,
-							"sClass" : "editable_status"
+							"sClass" : "editable editable_status"
 						}, 
 						{
 							"aTargets" : [ 10 ],
@@ -215,32 +215,32 @@ define([ "jquery", "backbone", "squash.translator", "jeditable.simpleJEditable",
 							"aTargets" : [ 3 ],
 							"mDataProp" : "test-case-ref",
 							"bSortable" : true,
-							"sClass" : "editable_ref"
+							"sClass" : "editable editable_ref"
 						}, {
 							"aTargets" : [ 4 ],
 							"mDataProp" : "test-case-label",
 							"bSortable" : true,
-							"sClass" : "editable_label"
+							"sClass" : "editable editable_label"
 						}, {
 							"aTargets" : [ 5 ],
 							"mDataProp" : "test-case-weight",
 							"bSortable" : true,
-							"sClass" : "editable_importance"
+							"sClass" : "editable editable_importance"
 						}, {
 							"aTargets" : [ 6 ],
 							"mDataProp" : "test-case-nature",
 							"bSortable" : true,
-							"sClass" : "editable_nature"
+							"sClass" : "editable editable_nature"
 						}, {
 							"aTargets" : [ 7 ],
 							"mDataProp" : "test-case-type",
 							"bSortable" : true,
-							"sClass" : "editable_type"
+							"sClass" : "editable editable_type"
 						}, {
 							"aTargets" : [ 8 ],
 							"mDataProp" : "test-case-status",
 							"bSortable" : true,
-							"sClass" : "editable_status"
+							"sClass" : "editable editable_status"
 						}, {
 							"aTargets" : [ 9 ],
 							"mDataProp" : "test-case-milestone-nb",
@@ -433,8 +433,10 @@ define([ "jquery", "backbone", "squash.translator", "jeditable.simpleJEditable",
 				this.addSelectEditableToNature(row,data);
 				this.addSelectEditableToStatus(row,data);
 				this.addSelectEditableToType(row,data);
-			}
-
+			} else{
+			$(row).addClass("nonEditable");
+			$(row).attr('title', squashtm.app.testcaseSearchResultConf.messages.nonEditableTooltip);
+		         }
 			this.addInterfaceLevel2Link(row,data);
 			this.addTreeLink(row,data);
 	

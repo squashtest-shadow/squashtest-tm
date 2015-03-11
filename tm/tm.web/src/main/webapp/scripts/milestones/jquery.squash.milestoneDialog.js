@@ -166,9 +166,7 @@ define(["jquery", "workspace.event-bus", "jqueryui", "jquery.squash.formdialog",
 					}
 				},
 	
-				squashCnf = {
-					
-				};
+				squashCnf = {};
 			
 			table.squashTable(tblCnf, squashCnf);
 			

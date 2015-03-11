@@ -100,6 +100,7 @@ public class TestCaseSearchExportCSVModelImpl implements SearchExportCSVModel{
 		headerCells.add(new CellImpl("NATURE"));
 		headerCells.add(new CellImpl("TYPE"));
 		headerCells.add(new CellImpl("STATUS"));
+		headerCells.add(new CellImpl("#_MIL"));
 		headerCells.add(new CellImpl("#_REQUIREMENTS"));
 		headerCells.add(new CellImpl("#_TEST_STEPS"));	
 		headerCells.add(new CellImpl("#_ITERATIONS"));	
@@ -128,9 +129,10 @@ public class TestCaseSearchExportCSVModelImpl implements SearchExportCSVModel{
 			dataCells.add(new CellImpl(testCase.getReference()));
 			dataCells.add(new CellImpl(testCase.getName()));
 			dataCells.add(new CellImpl(testCase.getImportance().toString()));
-			dataCells.add(new CellImpl(testCase.getNature().toString()));
-			dataCells.add(new CellImpl(testCase.getType().toString()));
+			dataCells.add(new CellImpl(testCase.getNature().getCode()));
+			dataCells.add(new CellImpl(testCase.getType().getCode()));
 			dataCells.add(new CellImpl(testCase.getStatus().toString()));
+			dataCells.add(new CellImpl(Integer.toString(testCase.getMilestones().size())));
 			dataCells.add(new CellImpl(Integer.toString(testCase.getVerifiedRequirementVersions().size())));
 			dataCells.add(new CellImpl(Integer.toString(testCase.getSteps().size())));
 			dataCells.add(new CellImpl(Integer.toString(iterationService.findIterationContainingTestCase(testCase.getId()).size())));

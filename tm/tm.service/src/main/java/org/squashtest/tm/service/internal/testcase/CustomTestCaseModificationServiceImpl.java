@@ -662,5 +662,24 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 		return milestoneService.findAssociableMilestonesToTestCase(testCaseId);
 	}
 
+	@Override
+	public Collection<Milestone> findAssociableMilestonesForMassModif(List<Long> testCaseIds) {
+		
+		Collection<Milestone> milestones = null;
+		
+		for (Long testCaseId : testCaseIds){
+			List<Milestone> mil = testCaseDao.findById(testCaseId).getProject().getMilestones();
+			if (milestones != null){
+				//keep only milestone that in ALL selected tc
+				milestones.retainAll(mil);
+			} else {
+				//populate the collection for the first time
+				milestones = new ArrayList<Milestone>(mil);
+			}
+		}
+	
+		return milestones;
+	}
+
 
 }

@@ -18,13 +18,13 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ "jquery", "backbone", "underscore", "app/util/StringUtil",
+define([ "jquery", "backbone", "underscore", "app/util/StringUtil", "workspace.routing","workspace.event-bus",
         "./TestCaseSearchResultTable", "squash.translator", "app/ws/squashtm.notification",
         "squash.configmanager", "workspace.projects" , "jquery.squash", "jqueryui",
 		"jquery.squash.togglepanel", "squashtable",
 		"jquery.squash.oneshotdialog", "jquery.squash.messagedialog",
-		"jquery.squash.confirmdialog" ], 
-		function($, Backbone, _, StringUtil, TestCaseSearchResultTable, translator, notification, confman, projects) {
+		"jquery.squash.confirmdialog", "jquery.squash.milestoneDialog" ], 
+		function($, Backbone, _, StringUtil, routing, eventBus, TestCaseSearchResultTable, translator, notification, confman, projects) {
 	
 	var TestCaseSearchInputPanel = Backbone.View.extend({
 
@@ -42,7 +42,7 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil",
 				this.associationType = $("#associationType").text();
 				this.associationId = $("#associationId").text();
 			}
-			this.model = model;
+			this.model = model;		
 			new TestCaseSearchResultTable(model, this.domain, this.isAssociation, this.associationType, this.associationId);
 		},
 
@@ -54,7 +54,8 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil",
 			"click #associate-selection-button" : "associateSelection",
 			"click #select-all-button" : "selectAllForAssocation",
 			"click #associate-all-button" : "associateAll",
-			"click #deselect-all-button" : "deselectAll"
+			"click #deselect-all-button" : "deselectAll",
+			"click #modify-search-result-milestone-button" : "editMilestone"
 		},
 
 		
@@ -170,6 +171,15 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil",
 			this.addModifyResultDialog.confirmDialog("open");
 		},
 		
+		editMilestone : function(){
+			if (! this.addModifyMilestoneDialog){
+				this.initModifyMilestoneDialog();
+			} else {
+				this.updateMilestoneDialog();
+			}
+	
+			this.addModifyMilestoneDialog.milestoneDialog('open');
+		},
 		
 		validateSelection : function(dataTable) {
 			var rows = dataTable.fnGetNodes();
@@ -271,7 +281,41 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil",
 			});
 
 		},
-				
+		initModifyMilestoneDialog : function() {
+
+			var self = this;
+			var table = $('#test-case-search-result-table').squashTable();
+			var ids = table.getSelectedIds();
+			
+			var dialogOptions = {
+					tableSource : routing.buildURL('search-tc.mass-change.associable-milestone', ids),
+					milestonesURL : routing.buildURL('search-tc.mass-change.bindmilestones', ids), 
+					identity : ""
+				};
+		
+			var addModifyMilestoneDialog = $('.bind-milestone-dialog');
+            addModifyMilestoneDialog.milestoneDialog(dialogOptions);
+			this.addModifyMilestoneDialog = addModifyMilestoneDialog;
+			
+			eventBus.on("node.bindmilestones", function(){
+				var table = $('#test-case-search-result-table').squashTable();
+				table._fnAjaxUpdate();		
+			});
+			
+		},
+		
+		updateMilestoneDialog : function(){
+			var self = this;
+			var table = $('#test-case-search-result-table').squashTable();
+			var ids = table.getSelectedIds();
+			
+			var tab = $('.bind-milestone-dialog-table').squashTable();
+			tab.fnSettings().sAjaxSource = routing.buildURL('search-tc.mass-change.associable-milestone', ids);
+			var addModifyMilestoneDialog = $('.bind-milestone-dialog').milestoneDialog();
+			addModifyMilestoneDialog.data().milestoneDialog.options.milestonesURL = routing.buildURL('search-tc.mass-change.bindmilestones', ids);
+	
+		},
+		
 		configureModifyResultsDialog : function() {
 			
 			var self = this;

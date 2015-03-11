@@ -18,13 +18,13 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ "jquery", "backbone", "underscore", "app/util/StringUtil",
+define([ "jquery", "backbone", "underscore", "app/util/StringUtil","workspace.routing","workspace.event-bus",
         "./RequirementSearchResultTable", "squash.translator", "app/ws/squashtm.notification",
         "workspace.projects", "jquery.squash", "jqueryui",
 		"jquery.squash.togglepanel", "squashtable",
 		"jquery.squash.oneshotdialog", "jquery.squash.messagedialog",
-		"jquery.squash.confirmdialog" ], 
-		function($, Backbone, _, StringUtil, RequirementSearchResultTable, translator, notification, projects) {
+		"jquery.squash.confirmdialog", "jquery.squash.milestoneDialog" ], 
+		function($, Backbone, _, StringUtil, routing, eventBus, RequirementSearchResultTable, translator, notification, projects) {
 	
 	var RequirementSearchResultPanel = Backbone.View.extend({
 
@@ -54,10 +54,79 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil",
 			"click #associate-selection-button" : "associateSelection",
 			"click #select-all-button" : "selectAllForAssocation",
 			"click #associate-all-button" : "associateAll",
-			"click #deselect-all-button" : "deselectAll"
+			"click #deselect-all-button" : "deselectAll",
+			"click #modify-search-result-milestone-button" : "editMilestone"
 		},
 
+	
 		
+		editMilestone : function(){
+			
+			var table = $('#requirement-search-result-table').squashTable();
+			var ids = table.getSelectedIds(); //ids of requirement
+			if (this._containsDuplicate(ids)){
+
+				var warn = translator.get({
+					errorTitle : 'popup.title.Info',
+					errorMessage : 'message.search.mass-modif.milestone.multiple-req-version'
+				});
+				$.squash.openMessage(warn.errorTitle, warn.errorMessage);	
+			} else {
+				
+				if (! this.addModifyMilestoneDialog){
+					this.initModifyMilestoneDialog();
+				} else {
+					this.updateMilestoneDialog();
+				}
+				
+				this.addModifyMilestoneDialog.milestoneDialog('open');
+			}
+			
+			
+		},
+
+	
+		initModifyMilestoneDialog : function() {
+
+			var self = this;
+			
+			var table = $('#requirement-search-result-table').squashTable();
+			var ids = this._getRequirementVersionIdSelectedTableRowList(table);
+		
+			var dialogOptions = {
+					tableSource : routing.buildURL('search-reqV.mass-change.associable-milestone', ids),
+					milestonesURL : routing.buildURL('search-reqV.mass-change.bindmilestones', ids), 
+					identity : "",
+				};
+		
+			var addModifyMilestoneDialog = $('.bind-milestone-dialog');
+            addModifyMilestoneDialog.milestoneDialog(dialogOptions);
+			this.addModifyMilestoneDialog = addModifyMilestoneDialog;
+			
+			
+			eventBus.on("node.bindmilestones", function(){
+				var table = $('#requirement-search-result-table').squashTable();
+				
+				table.drawcallbacks.push(function() {   table.deselectRows();
+				self._restoreSelect();});
+				self._saveSelect();
+                table._fnAjaxUpdate();
+
+			});
+			
+		},
+		
+		updateMilestoneDialog : function(){
+			var self = this;	
+			var table = $('#requirement-search-result-table').squashTable();
+			var ids = this._getRequirementVersionIdSelectedTableRowList(table);
+			
+			var tab = $('.bind-milestone-dialog-table').squashTable();
+			tab.fnSettings().sAjaxSource = routing.buildURL('search-reqV.mass-change.associable-milestone', ids);
+			var addModifyMilestoneDialog = $('.bind-milestone-dialog').milestoneDialog();
+			addModifyMilestoneDialog.data().milestoneDialog.options.milestonesURL = routing.buildURL('search-reqV.mass-change.bindmilestones', ids);
+	
+		},
 		
 		associateSelection : function(){
 			var table = $('#requirement-search-result-table').dataTable();
@@ -153,6 +222,34 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil",
 		},
 		
 		
+		_saveSelect : function saveSelect(){
+		var table = $('#requirement-search-result-table').squashTable();
+		this.selectedIds = this._getRequirementVersionIdSelectedTableRowList(table);
+		},
+		
+		_restoreSelect : function restoreSelect(){
+			
+			var selectedIds = this.selectedIds;
+			var table = $('#requirement-search-result-table').squashTable();
+			
+			if ((selectedIds instanceof Array) && (selectedIds.length > 0)) {
+				var rows = table.fnGetNodes();
+				$(rows).filter(function() {		
+					var rId = table.fnGetData(this)["requirement-version-id"];
+					return $.inArray(rId, selectedIds) != -1;
+				}).addClass('ui-state-row-selected');
+			}
+			
+		},
+		
+		_containsDuplicate : function containsDuplicate(arr) {arr.sort();
+		var last = arr[0];
+		for (var i=1; i<arr.length; i++) {
+		   if (arr[i] == last) {return true;}
+		   last = arr[i];
+		}
+		return false;
+		},
 		
 		_getIdsOfSelectedTableRowList : function(dataTable) {
 			var rows = dataTable.fnGetNodes();
@@ -167,7 +264,19 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil",
 			
 			return ids;
 		},
-		
+		_getRequirementVersionIdSelectedTableRowList : function(dataTable) {
+			var rows = dataTable.fnGetNodes();
+			var ids = [];
+			
+			$( rows ).each(function(index, row) {
+				if ($( row ).attr('class').search('selected') != -1) {
+					var data = dataTable.fnGetData(row);
+						ids.push(data["requirement-version-id"]);		
+				}
+			});
+			
+			return ids;
+		},
 		_getIdsOfEditableSelectedTableRowList : function(dataTable) {
 			var rows = dataTable.fnGetNodes();
 			var ids = [];

@@ -149,7 +149,12 @@ define([], function(){
 	    'docxtemplate'                          : root + '/reports/{\\w+}/{\\d+}/views/{\\d+}/docxtemplate',
 	    'ie9sucks'                          : root + '/reports/0/0/ie9',
 	     'milestone.synchronize'            : root + '/administration/milestones/{\\d+}/synchronize/{\\d+}',
-		// helper methods
+		'search-tc.mass-change.associable-milestone'  : root + '/advanced-search/milestones/tc-mass-modif-associables/{\\d+}',
+	    'search-tc.mass-change.bindmilestones' : root + '/advanced-search/tcs/{\\d+}/milestones',
+	    'search-reqV.mass-change.associable-milestone'  : root + '/advanced-search/milestones/reqV-mass-modif-associables/{\\d+}',
+	    'search-reqV.mass-change.bindmilestones' : root + '/advanced-search/reqVersions/{\\d+}/milestones',
+	     
+	     // helper methods
 		buildURL : function(){
 			var args = Array.prototype.slice.call(arguments);
 			var template = this[args.shift()];

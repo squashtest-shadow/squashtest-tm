@@ -289,10 +289,7 @@ public class Milestone  {
 			return;
 		}
 
-		// check that no other version of this requirement is bound already
-		Collection<RequirementVersion> allVersions = version.getRequirement().getRequirementVersions();
-
-		if (CollectionUtils.containsAny(requirementVersions, allVersions)) {
+		if (isOneVersionAlreadyBound(version)) {
 			throw new IllegalArgumentException("Another version of this requirement is already bound to this milestone");
 		}
 
@@ -300,6 +297,20 @@ public class Milestone  {
 
 	}
 
+	public boolean isOneVersionAlreadyBound(RequirementVersion version) {
+
+
+		// check that no other version of this requirement is bound already
+		Collection<RequirementVersion> allVersions = version.getRequirement().getRequirementVersions();
+
+		if (CollectionUtils.containsAny(requirementVersions, allVersions)) {
+			return true;
+		}
+		return false;
+
+	}
+	
+	
 	public void bindCampaign(Campaign campaign) {
 		campaigns.add(campaign);
 	}

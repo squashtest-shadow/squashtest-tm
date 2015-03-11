@@ -54,8 +54,6 @@ public class MilestoneMembershipManagerImpl implements MilestoneMembershipManage
 
 	private static final String READ_TESTSUITE = "hasPermission(#testSuiteId, 'org.squashtest.tm.domain.campaign.TestSuite' , 'READ')";
 
-
-
 	private static final String ROLE_ADMIN = " or hasRole('ROLE_ADMIN')";
 
 	@Inject
@@ -91,7 +89,7 @@ public class MilestoneMembershipManagerImpl implements MilestoneMembershipManage
 	@PreAuthorize(WRITE_TC + ROLE_ADMIN)
 	public void unbindTestCaseFromMilestones(long testCaseId, Collection<Long> milestoneIds) {
 		TestCase tc = testCaseDao.findById(testCaseId);
-		for (Long milestoneId : milestoneIds){
+		for (Long milestoneId : milestoneIds) {
 			tc.unbindMilestone(milestoneId);
 		}
 	}
@@ -103,7 +101,9 @@ public class MilestoneMembershipManagerImpl implements MilestoneMembershipManage
 		Collection<Milestone> milestones = milestoneDao.findAllByIds(milestoneIds);
 
 		for (Milestone m : milestones) {
-			version.bindMilestone(m);
+			if (!m.isOneVersionAlreadyBound(version)) {
+				version.bindMilestone(m);
+			}
 		}
 
 	}
@@ -112,11 +112,10 @@ public class MilestoneMembershipManagerImpl implements MilestoneMembershipManage
 	@PreAuthorize(WRITE_REQVERSION + ROLE_ADMIN)
 	public void unbindRequirementVersionFromMilestones(long versionId, Collection<Long> milestoneIds) {
 		RequirementVersion version = requirementVersionDao.findById(versionId);
-		for (Long milestoneId : milestoneIds){
+		for (Long milestoneId : milestoneIds) {
 			version.unbindMilestone(milestoneId);
 		}
 	}
-
 
 	@Override
 	@PreAuthorize(WRITE_CAMPAIGN + ROLE_ADMIN)
@@ -133,7 +132,7 @@ public class MilestoneMembershipManagerImpl implements MilestoneMembershipManage
 	@PreAuthorize(WRITE_CAMPAIGN + ROLE_ADMIN)
 	public void unbindCampaignFromMilestones(long campaignId, Collection<Long> milestoneIds) {
 		Campaign campaign = campaignDao.findById(campaignId);
-		for (Long milestoneId : milestoneIds){
+		for (Long milestoneId : milestoneIds) {
 			campaign.unbindMilestone(milestoneId);
 		}
 	}
@@ -154,6 +153,7 @@ public class MilestoneMembershipManagerImpl implements MilestoneMembershipManage
 	public Collection<Milestone> findAllMilestonesForUser(long userId) {
 		return milestoneDao.findAssociableMilestonesForUser(userId);
 	}
+
 	@PreAuthorize(READ_REQVERSION + ROLE_ADMIN)
 	public Collection<Milestone> findAssociableMilestonesToRequirementVersion(long versionId) {
 		return milestoneDao.findAssociableMilestonesForRequirementVersion(versionId);

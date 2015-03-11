@@ -1,23 +1,28 @@
 /**
- * This file is part of the Squashtest platform. Copyright (C) 2010 - 2015 Henix, henix.fr
+ *     This file is part of the Squashtest platform.
+ *     Copyright (C) 2010 - 2015 Henix, henix.fr
  *
- * See the NOTICE file distributed with this work for additional information regarding copyright ownership.
+ *     See the NOTICE file distributed with this work for additional
+ *     information regarding copyright ownership.
  *
- * This is free software: you can redistribute it and/or modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later
- * version.
+ *     This is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU Lesser General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
  *
- * this software is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied
- * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
- * details.
+ *     this software is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU Lesser General Public License for more details.
  *
- * You should have received a copy of the GNU Lesser General Public License along with this software. If not, see
- * <http://www.gnu.org/licenses/>.
+ *     You should have received a copy of the GNU Lesser General Public License
+ *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.squashtest.tm.web.internal.controller.search;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -33,6 +38,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.CookieValue;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -47,6 +53,7 @@ import org.squashtest.tm.domain.customfield.CustomFieldOption;
 import org.squashtest.tm.domain.customfield.MultiSelectField;
 import org.squashtest.tm.domain.customfield.SingleSelectField;
 import org.squashtest.tm.domain.infolist.InfoListItem;
+import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.requirement.Requirement;
 import org.squashtest.tm.domain.requirement.RequirementCriticality;
@@ -66,13 +73,16 @@ import org.squashtest.tm.service.campaign.TestSuiteTestPlanManagerService;
 import org.squashtest.tm.service.milestone.MilestoneFinderService;
 import org.squashtest.tm.service.project.ProjectFinder;
 import org.squashtest.tm.service.requirement.RequirementVersionAdvancedSearchService;
+import org.squashtest.tm.service.requirement.RequirementVersionManagerService;
 import org.squashtest.tm.service.requirement.VerifiedRequirement;
 import org.squashtest.tm.service.requirement.VerifiedRequirementsManagerService;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.testcase.TestCaseAdvancedSearchService;
+import org.squashtest.tm.service.testcase.TestCaseModificationService;
 import org.squashtest.tm.service.testcase.VerifyingTestCaseManagerService;
 import org.squashtest.tm.web.internal.controller.AcceptHeaders;
 import org.squashtest.tm.web.internal.controller.RequestParams;
+import org.squashtest.tm.web.internal.controller.administration.MilestoneDataTableModelHelper;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.builder.JsonProjectBuilder;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
@@ -108,12 +118,21 @@ public class AdvancedSearchController {
 	private static final String SEARCH_MODEL = "searchModel";
 	private static final String SEARCH_DOMAIN = "searchDomain";
 	private static final String TESTCASE_VIA_REQUIREMENT = "testcaseViaRequirement";
-
+	
+	@Inject
+	private RequirementVersionManagerService versionService;
+	
 	@Inject
 	private ProjectFinder projectFinder;
 
 	@Inject
 	private JsonProjectBuilder jsProjectBuilder;
+
+	@Inject
+	private TestCaseModificationService testCaseModificationService;
+
+	@Inject
+	private InternationalizationHelper internationalizationHelper;
 
 	@Inject
 	private MilestoneFinderService milestoneFinder;
@@ -197,7 +216,7 @@ public class AdvancedSearchController {
 			.mapAttribute("test-case-nature", "nature", TestCase.class)
 			.mapAttribute("test-case-type", "type", TestCase.class)
 			.mapAttribute("test-case-status", "status", TestCase.class)
-		    .mapAttribute("test-case-milestone-nb", "milestones", TestCase.class)
+			.mapAttribute("test-case-milestone-nb", "milestones", TestCase.class)
 			.mapAttribute("test-case-requirement-nb", "requirements", TestCase.class)
 			.mapAttribute("test-case-teststep-nb", "steps", TestCase.class)
 			.mapAttribute("test-case-iteration-nb", "iterations", TestCase.class)
@@ -548,6 +567,54 @@ public class AdvancedSearchController {
 		return model;
 	}
 
+	@RequestMapping(value = "/milestones/tc-mass-modif-associables/{testCaseIds}", method = RequestMethod.GET)
+	@ResponseBody
+	public DataTableModel getMilestonesForMassTcModif(@PathVariable List<Long> testCaseIds,
+			DataTableDrawParameters params) {
+		Collection<Milestone> milestones = testCaseModificationService
+				.findAssociableMilestonesForMassModif(testCaseIds);
+		return buildMilestoneTableModelForMassModif(milestones);
+	}
+
+	@RequestMapping(value = "/milestones/reqV-mass-modif-associables/{reqVersionIds}", method = RequestMethod.GET)
+	@ResponseBody
+	public DataTableModel getMilestonesForMassReqVersionModif(@PathVariable List<Long> reqVersionIds,
+			DataTableDrawParameters params) {
+		Collection<Milestone> milestones = versionService.findAssociableMilestonesForMassModif(reqVersionIds);
+		return buildMilestoneTableModelForMassModif(milestones);
+	}
+
+	
+	
+	@RequestMapping(value = "/tcs/{testCaseIds}/milestones/{milestoneIds}", method = RequestMethod.POST)
+	@ResponseBody
+	public void bindMilestonesToTcs(@PathVariable List<Long> testCaseIds, @PathVariable List<Long> milestoneIds) {
+
+		for (Long testCaseId : testCaseIds) {
+			testCaseModificationService.bindMilestones(testCaseId, milestoneIds);
+		}
+	}
+	
+
+	@RequestMapping(value = "/reqVersions/{reqVIds}/milestones/{milestoneIds}", method = RequestMethod.POST)
+	@ResponseBody
+	public void bindMilestonesToReqV(@PathVariable List<Long> reqVIds, @PathVariable List<Long> milestoneIds) {
+
+		for (Long reqVId : reqVIds) {
+			versionService.bindMilestones(reqVId, milestoneIds);
+		}
+	}
+	
+	
+
+	private DataTableModel buildMilestoneTableModelForMassModif(Collection<Milestone> data) {
+		MilestoneDataTableModelHelper helper = new MilestoneDataTableModelHelper(internationalizationHelper);
+		Collection<Object> aaData = helper.buildRawModel(data);
+		DataTableModel model = new DataTableModel("");
+		model.setAaData((List<Object>) aaData);
+		return model;
+	}
+
 	private static final class RequirementSearchResultDataTableModelHelper extends
 			DataTableModelBuilder<RequirementVersion> {
 
@@ -597,6 +664,7 @@ public class AdvancedSearchController {
 			}
 			res.put(DataTableModelConstants.DEFAULT_ENTITY_INDEX_KEY, getCurrentIndex());
 			res.put("requirement-id", item.getRequirement().getId());
+			res.put("requirement-version-id", item.getId());
 			res.put("requirement-reference", item.getReference());
 			res.put("requirement-label", item.getName());
 			res.put("editable", isRequirementVersionEditable(item));
@@ -662,7 +730,11 @@ public class AdvancedSearchController {
 		}
 
 		private boolean isTestCaseEditable(TestCase item) {
-			return permissionService.hasRoleOrPermissionOnObject("ROLE_ADMIN", "WRITE", item);
+			if (item.isModifiable()) {
+				return permissionService.hasRoleOrPermissionOnObject("ROLE_ADMIN", "WRITE", item);
+			} else {
+				return false;
+			}
 		}
 
 		private boolean isInAssociationContext() {

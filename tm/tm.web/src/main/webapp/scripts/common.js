@@ -173,6 +173,7 @@ requirejs.config({
 				//jquery
 				"jstree" : "jquery/jquery.jstree",
 				"jform" : "jquery/jquery.form",
+				"jquery.squash.milestoneDialog" : "milestones/jquery.squash.milestoneDialog",
 				"jquery.dialog-patch" : "jquery/jquery.dialog-patch",
 				"jquery.generateId" : "jquery/jquery.generateId",
 				"jquery.hotkeys" : "jquery/jquery.hotkeys-0.8",

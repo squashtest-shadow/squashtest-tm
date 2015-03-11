@@ -198,6 +198,11 @@ thead tr.tp-filtermode-disabled .th_input{
 table#requirement-search-result-table tr.nonEditable td.editable{
     cursor: not-allowed;
 }
+
+table#test-case-search-result-table tr.nonEditable td.editable{
+    cursor: not-allowed;
+}
+
 table tr td.nonEditable{
 	cursor : not-allowed;
 }

@@ -111,5 +111,8 @@ public interface CustomRequirementVersionManagerService {
 	@Transactional(readOnly=true)
 	Collection<Milestone> findAllMilestones(long versionId);
 
+	Collection<Milestone> findAssociableMilestonesForMassModif(List<Long> reqVersionIds);
+
+
 
 }

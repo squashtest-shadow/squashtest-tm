@@ -20,11 +20,11 @@
  */
 package org.squashtest.tm.service.internal.requirement;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 
 import org.hibernate.SessionFactory;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -39,14 +39,11 @@ import org.squashtest.tm.domain.infolist.InfoListItem;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.requirement.Requirement;
 import org.squashtest.tm.domain.requirement.RequirementCriticality;
-import org.squashtest.tm.domain.requirement.RequirementFolder;
-import org.squashtest.tm.domain.requirement.RequirementLibraryNode;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.exception.InconsistentInfoListItemException;
 import org.squashtest.tm.service.advancedsearch.IndexationService;
 import org.squashtest.tm.service.infolist.InfoListItemFinderService;
 import org.squashtest.tm.service.internal.customfield.PrivateCustomFieldValueService;
-import org.squashtest.tm.service.internal.library.NodeManagementService;
 import org.squashtest.tm.service.internal.repository.RequirementVersionDao;
 import org.squashtest.tm.service.milestone.MilestoneMembershipManager;
 import org.squashtest.tm.service.requirement.CustomRequirementVersionManagerService;
@@ -207,6 +204,24 @@ public class CustomRequirementVersionManagerServiceImpl implements CustomRequire
 	@PreAuthorize("hasPermission(#versionId, 'org.squashtest.tm.domain.requirement.RequirementVersion', 'WRITE') or hasRole('ROLE_ADMIN')")
 	public void unbindMilestones(long versionId, Collection<Long> milestoneIds) {
 		milestoneManager.unbindRequirementVersionFromMilestones(versionId, milestoneIds);
+	}
+
+	@Override
+	public Collection<Milestone> findAssociableMilestonesForMassModif(List<Long> reqVersionIds) {
+	Collection<Milestone> milestones = null;
+		
+		for (Long reqVersionId : reqVersionIds){
+			List<Milestone> mil = requirementVersionDao.findById(reqVersionId).getProject().getMilestones();
+			if (milestones != null){
+				//keep only milestone that in ALL selected requirementVersion
+				milestones.retainAll(mil);
+			} else {
+				//populate the collection for the first time
+				milestones = new ArrayList<Milestone>(mil);
+			}
+		}
+	
+		return milestones;
 	}
 
 }

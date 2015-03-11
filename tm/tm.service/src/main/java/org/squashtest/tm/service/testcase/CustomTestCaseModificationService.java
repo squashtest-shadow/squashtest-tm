@@ -167,5 +167,7 @@ public interface CustomTestCaseModificationService extends CustomTestCaseFinder 
 	void unbindMilestones(long testCaseId, Collection<Long> milestoneIds);
 
 	Collection<Milestone> findAssociableMilestones(long testCaseId);
+	
+	Collection<Milestone> findAssociableMilestonesForMassModif(List<Long> testCaseIds);
 
 }
