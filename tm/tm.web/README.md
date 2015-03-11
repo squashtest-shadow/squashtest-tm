@@ -12,6 +12,7 @@ It also runs both java unit tests and js unit tests.
 * `eclipse` : automatically activated when folder is an eclipse project. Copies files so that the project correctly runs under eclipse 
 and configures the webapp so that it does not cache web resources / templates 
 
+* `reports` : runs jshint
 
 
 Maven properties
