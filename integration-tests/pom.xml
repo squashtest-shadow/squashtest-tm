@@ -25,9 +25,9 @@
     <dbunit-database.url>jdbc:h2:target/database/squash-it-dbunit/squash-it</dbunit-database.url>
 
     <hibernate.dialect>org.hibernate.dialect.H2Dialect</hibernate.dialect>
+    <hibernate.sql.formatted>false</hibernate.sql.formatted>
 
     <hibernate.sql.verbosity>INFO</hibernate.sql.verbosity>
-    <hibernate.sql.formatted>false</hibernate.sql.formatted>
     <non-dbunit-database.url>jdbc:h2:target/database/squash-it-non-dbunit/squash-it</non-dbunit-database.url>
     <squashtest.rootDir>${project.build.directory}</squashtest.rootDir>
   </properties>
@@ -719,8 +719,8 @@
     <profile>
       <id>verbose</id>
       <properties>
-        <hibernate.sql.verbosity>DEBUG</hibernate.sql.verbosity>
         <hibernate.sql.formatted>true</hibernate.sql.formatted>
+        <hibernate.sql.verbosity>DEBUG</hibernate.sql.verbosity>
       </properties>
     </profile>
   </profiles>
