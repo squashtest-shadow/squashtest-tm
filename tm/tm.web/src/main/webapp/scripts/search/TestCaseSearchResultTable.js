@@ -120,46 +120,53 @@ define([ "jquery", "backbone", "squash.translator", "jeditable.simpleJEditable",
 							"mDataProp" : "test-case-status",
 							"bSortable" : true,
 							"sClass" : "editable_status"
-						}, {
+						}, 
+						{
 							"aTargets" : [ 10 ],
+							"mDataProp" : "test-case-milestone-nb",
+							"bSortable" : true,
+							"sClass" : "centered"
+						},
+						{
+							"aTargets" : [ 11 ],
 							"mDataProp" : "test-case-requirement-nb",
 							"bSortable" : true,
 							"sClass" : "centered"
 						}, {
-							"aTargets" : [ 11 ],
+							"aTargets" : [ 12 ],
 							"mDataProp" : "test-case-teststep-nb",
 							"bSortable" : true,
 							"sClass" : "centered"
 						}, {
-							"aTargets" : [ 12 ],
+							"aTargets" : [ 13 ],
 							"mDataProp" : "test-case-iteration-nb",
 							"bSortable" : true,
 							"sClass" : "centered"
 						}, {
-							"aTargets" : [ 13 ],
+							"aTargets" : [ 14 ],
 							"mDataProp" : "test-case-attachment-nb",
 							"bSortable" : true
 						}, {
-							"aTargets" : [ 14 ],
+							"aTargets" : [ 15 ],
 							"mDataProp" : "test-case-created-by",
 							"bSortable" : true
 						}, {
-							"aTargets" : [ 15 ],
+							"aTargets" : [ 16 ],
 							"mDataProp" : "test-case-modified-by",
 							"bSortable" : true
 						}, {
-							"aTargets" : [ 16 ],
+							"aTargets" : [ 17 ],
 							"mDataProp" : "empty-openinterface2-holder",
 							"sClass" : "centered search-open-interface2-holder",
 							"sWidth" : "2em",
 							"bSortable" : false
 						}, {
-							"aTargets" : [ 17 ],
+							"aTargets" : [ 18 ],
 							"mDataProp" : "editable",
 							"bVisible" : false,
 							"bSortable" : false
 						},{
-							"aTargets" : [ 18 ],
+							"aTargets" : [ 19 ],
 							"mDataProp" : "test-case-weight-auto",
 							"bVisible" : false,
 							"bSortable" : false
@@ -236,52 +243,57 @@ define([ "jquery", "backbone", "squash.translator", "jeditable.simpleJEditable",
 							"sClass" : "editable_status"
 						}, {
 							"aTargets" : [ 9 ],
+							"mDataProp" : "test-case-milestone-nb",
+							"bSortable" : true,
+							"sClass" : "centered"
+						},{
+							"aTargets" : [ 10 ],
 							"mDataProp" : "test-case-requirement-nb",
 							"bSortable" : true,
 							"sClass" : "centered"
 						}, {
-							"aTargets" : [ 10 ],
+							"aTargets" : [ 11 ],
 							"mDataProp" : "test-case-teststep-nb",
 							"bSortable" : true,
 							"sClass" : "centered"
 						}, {
-							"aTargets" : [ 11 ],
+							"aTargets" : [ 12 ],
 							"mDataProp" : "test-case-iteration-nb",
 							"bSortable" : true,
 							"sClass" : "centered"
 						}, {
-							"aTargets" : [ 12 ],
+							"aTargets" : [ 13 ],
 							"mDataProp" : "test-case-attachment-nb",
 							"bSortable" : true,
 							"sClass" : "centered"
 						}, {
-							"aTargets" : [ 13 ],
+							"aTargets" : [ 14 ],
 							"mDataProp" : "test-case-created-by",
 							"bSortable" : true
 						}, {
-							"aTargets" : [ 14 ],
+							"aTargets" : [ 15 ],
 							"mDataProp" : "test-case-modified-by",
 							"bSortable" : true
 						}, {
-							"aTargets" : [ 15 ],
+							"aTargets" : [ 16 ],
 							"mDataProp" : "empty-openinterface2-holder",
 							"sClass" : "centered search-open-interface2-holder",
 							"sWidth" : "2em",
 							"bSortable" : false
 						}, {
-							"aTargets" : [ 16 ],
+							"aTargets" : [ 17 ],
 							"mDataProp" : "empty-opentree-holder",
 							"sClass" : "centered search-open-tree-holder",
 							"sWidth" : "2em",
 							"bSortable" : false
 						}, {
-							"aTargets" : [ 17 ],
+							"aTargets" : [ 18 ],
 							"mDataProp" : "editable",
 							"bVisible" : false,
 							"bSortable" : false
 						},
 						{
-							"aTargets" : [ 18 ],
+							"aTargets" : [ 19 ],
 							"mDataProp" : "test-case-weight-auto",
 							"bVisible" : false,
 							"bSortable" : false

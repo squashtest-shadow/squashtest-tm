@@ -1,22 +1,18 @@
 /**
- *     This file is part of the Squashtest platform.
- *     Copyright (C) 2010 - 2015 Henix, henix.fr
+ * This file is part of the Squashtest platform. Copyright (C) 2010 - 2015 Henix, henix.fr
  *
- *     See the NOTICE file distributed with this work for additional
- *     information regarding copyright ownership.
+ * See the NOTICE file distributed with this work for additional information regarding copyright ownership.
  *
- *     This is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU Lesser General Public License as published by
- *     the Free Software Foundation, either version 3 of the License, or
- *     (at your option) any later version.
+ * This is free software: you can redistribute it and/or modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later
+ * version.
  *
- *     this software is distributed in the hope that it will be useful,
- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU Lesser General Public License for more details.
+ * this software is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied
+ * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
  *
- *     You should have received a copy of the GNU Lesser General Public License
- *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU Lesser General Public License along with this software. If not, see
+ * <http://www.gnu.org/licenses/>.
  */
 package org.squashtest.tm.web.internal.controller.search;
 
@@ -36,6 +32,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -55,6 +52,7 @@ import org.squashtest.tm.domain.requirement.Requirement;
 import org.squashtest.tm.domain.requirement.RequirementCriticality;
 import org.squashtest.tm.domain.requirement.RequirementStatus;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
+import org.squashtest.tm.domain.search.AdvancedSearchListFieldModel;
 import org.squashtest.tm.domain.search.AdvancedSearchModel;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseImportance;
@@ -65,6 +63,7 @@ import org.squashtest.tm.service.campaign.CampaignTestPlanManagerService;
 import org.squashtest.tm.service.campaign.IterationModificationService;
 import org.squashtest.tm.service.campaign.IterationTestPlanManagerService;
 import org.squashtest.tm.service.campaign.TestSuiteTestPlanManagerService;
+import org.squashtest.tm.service.milestone.MilestoneFinderService;
 import org.squashtest.tm.service.project.ProjectFinder;
 import org.squashtest.tm.service.requirement.RequirementVersionAdvancedSearchService;
 import org.squashtest.tm.service.requirement.VerifiedRequirement;
@@ -96,7 +95,7 @@ public class AdvancedSearchController {
 	private static final Logger LOGGER = LoggerFactory.getLogger(AdvancedSearchController.class);
 
 	private static interface FormModelBuilder {
-		SearchInputInterfaceModel build(Locale locale);
+		SearchInputInterfaceModel build(Locale locale, List<Long> milestoneIds);
 	}
 
 	private static final String TEXTFIELD = "textfield";
@@ -116,13 +115,16 @@ public class AdvancedSearchController {
 	@Inject
 	private JsonProjectBuilder jsProjectBuilder;
 
+	@Inject
+	private MilestoneFinderService milestoneFinder;
+
 	private Map<String, FormModelBuilder> formModelBuilder = new HashMap<String, AdvancedSearchController.FormModelBuilder>();
 
 	{
 		formModelBuilder.put(TESTCASE, new FormModelBuilder() {
 			@Override
-			public SearchInputInterfaceModel build(Locale locale) {
-				SearchInputInterfaceModel model = getTestCaseSearchInputInterfaceModel(locale);
+			public SearchInputInterfaceModel build(Locale locale, List<Long> milestoneIds) {
+				SearchInputInterfaceModel model = getTestCaseSearchInputInterfaceModel(locale, milestoneIds);
 				populateMetadata(model);
 				return model;
 			}
@@ -130,8 +132,9 @@ public class AdvancedSearchController {
 
 		formModelBuilder.put(TESTCASE_VIA_REQUIREMENT, new FormModelBuilder() {
 			@Override
-			public SearchInputInterfaceModel build(Locale locale) {
-				SearchInputInterfaceModel model =  getTestCaseViaRequirementSearchInputInterfaceModel(locale);
+			public SearchInputInterfaceModel build(Locale locale, List<Long> milestoneIds) {
+				SearchInputInterfaceModel model = getTestCaseViaRequirementSearchInputInterfaceModel(locale,
+						milestoneIds);
 				populateMetadata(model);
 				return model;
 			}
@@ -139,8 +142,8 @@ public class AdvancedSearchController {
 
 		formModelBuilder.put(REQUIREMENT, new FormModelBuilder() {
 			@Override
-			public SearchInputInterfaceModel build(Locale locale) {
-				SearchInputInterfaceModel model =  getRequirementSearchInputInterfaceModel(locale);
+			public SearchInputInterfaceModel build(Locale locale, List<Long> milestoneIds) {
+				SearchInputInterfaceModel model = getRequirementSearchInputInterfaceModel(locale, milestoneIds);
 				populateMetadata(model);
 				return model;
 			}
@@ -185,40 +188,44 @@ public class AdvancedSearchController {
 
 	// These are used by Lucene - Thus the columns are mapped to index
 	// properties rather than class properties
-	private DatatableMapper<String> testCaseSearchResultMapper = new NameBasedMapper(11)
-	.mapAttribute(DataTableModelConstants.PROJECT_NAME_KEY, "name", Project.class).mapAttribute("test-case-id", "id", TestCase.class)
-	.mapAttribute("test-case-ref", "reference", TestCase.class)
-	.mapAttribute("test-case-label", "labelUpperCased", TestCase.class)
-	.mapAttribute("test-case-weight", "importance", TestCase.class)
-	.mapAttribute("test-case-nature", "nature", TestCase.class)
-	.mapAttribute("test-case-type", "type", TestCase.class)
-	.mapAttribute("test-case-status", "status", TestCase.class)
-	.mapAttribute("test-case-requirement-nb", "requirements", TestCase.class)
-	.mapAttribute("test-case-teststep-nb", "steps", TestCase.class)
-	.mapAttribute("test-case-iteration-nb", "iterations", TestCase.class)
-	.mapAttribute("test-case-attachment-nb", "attachments", TestCase.class)
-	.mapAttribute("test-case-created-by", "createdBy", TestCase.class)
-	.mapAttribute("test-case-modified-by", "lastModifiedBy", TestCase.class);
+	private DatatableMapper<String> testCaseSearchResultMapper = new NameBasedMapper(15)
+			.mapAttribute(DataTableModelConstants.PROJECT_NAME_KEY, "name", Project.class)
+			.mapAttribute("test-case-id", "id", TestCase.class)
+			.mapAttribute("test-case-ref", "reference", TestCase.class)
+			.mapAttribute("test-case-label", "labelUpperCased", TestCase.class)
+			.mapAttribute("test-case-weight", "importance", TestCase.class)
+			.mapAttribute("test-case-nature", "nature", TestCase.class)
+			.mapAttribute("test-case-type", "type", TestCase.class)
+			.mapAttribute("test-case-status", "status", TestCase.class)
+		    .mapAttribute("test-case-milestone-nb", "milestones", TestCase.class)
+			.mapAttribute("test-case-requirement-nb", "requirements", TestCase.class)
+			.mapAttribute("test-case-teststep-nb", "steps", TestCase.class)
+			.mapAttribute("test-case-iteration-nb", "iterations", TestCase.class)
+			.mapAttribute("test-case-attachment-nb", "attachments", TestCase.class)
+			.mapAttribute("test-case-created-by", "createdBy", TestCase.class)
+			.mapAttribute("test-case-modified-by", "lastModifiedBy", TestCase.class);
 
-	private DatatableMapper<String> requirementSearchResultMapper = new NameBasedMapper(11)
-	.mapAttribute(DataTableModelConstants.PROJECT_NAME_KEY, "name", Project.class)
-	.mapAttribute("requirement-id", "requirement.id", RequirementVersion.class)
-	.mapAttribute("requirement-reference", "reference", RequirementVersion.class)
-	.mapAttribute("requirement-label", "labelUpperCased", RequirementVersion.class)
-	.mapAttribute("requirement-criticality", "criticality", RequirementVersion.class)
-	.mapAttribute("requirement-category", "category", RequirementVersion.class)
-	.mapAttribute("requirement-status", "status", RequirementVersion.class)
-	.mapAttribute("requirement-version", "versionNumber", RequirementVersion.class)
-	.mapAttribute("requirement-version-nb", "versions", Requirement.class)
-	.mapAttribute("requirement-testcase-nb", "testcases", RequirementVersion.class)
-	.mapAttribute("requirement-attachment-nb", "attachments", RequirementVersion.class)
-	.mapAttribute("requirement-created-by", "createdBy", RequirementVersion.class)
-	.mapAttribute("requirement-modified-by", "lastModifiedBy", RequirementVersion.class);
+	private DatatableMapper<String> requirementSearchResultMapper = new NameBasedMapper(14)
+			.mapAttribute(DataTableModelConstants.PROJECT_NAME_KEY, "name", Project.class)
+			.mapAttribute("requirement-id", "requirement.id", RequirementVersion.class)
+			.mapAttribute("requirement-reference", "reference", RequirementVersion.class)
+			.mapAttribute("requirement-label", "labelUpperCased", RequirementVersion.class)
+			.mapAttribute("requirement-criticality", "criticality", RequirementVersion.class)
+			.mapAttribute("requirement-category", "category", RequirementVersion.class)
+			.mapAttribute("requirement-status", "status", RequirementVersion.class)
+			.mapAttribute("requirement-milestone-nb", "milestones", RequirementVersion.class)
+			.mapAttribute("requirement-version", "versionNumber", RequirementVersion.class)
+			.mapAttribute("requirement-version-nb", "versions", Requirement.class)
+			.mapAttribute("requirement-testcase-nb", "testcases", RequirementVersion.class)
+			.mapAttribute("requirement-attachment-nb", "attachments", RequirementVersion.class)
+			.mapAttribute("requirement-created-by", "createdBy", RequirementVersion.class)
+			.mapAttribute("requirement-modified-by", "lastModifiedBy", RequirementVersion.class);
 
 	@RequestMapping(method = RequestMethod.GET)
 	public String showSearchPage(Model model, @RequestParam String searchDomain,
 			@RequestParam(required = false) String associateResultWithType, @RequestParam(required = false) Long id,
-			Locale locale) {
+			Locale locale,
+			@CookieValue(value = "milestones", required = false, defaultValue = "") List<Long> milestoneIds) {
 
 		initModelForPage(model, associateResultWithType, id);
 		model.addAttribute(SEARCH_DOMAIN, searchDomain);
@@ -229,7 +236,7 @@ public class AdvancedSearchController {
 		FormModelBuilder builder = formModelBuilder.get(searchDomain);
 
 		if (builder != null) {
-			model.addAttribute("formModel", builder.build(locale));
+			model.addAttribute("formModel", builder.build(locale, milestoneIds));
 		} else {
 			LOGGER.error(
 					"Could not find a FormModelBuilder for search domain : {}. This is either caused by a bug or a hand-written request",
@@ -252,9 +259,10 @@ public class AdvancedSearchController {
 	@RequestMapping(method = RequestMethod.POST)
 	public String showSearchPageFilledWithParams(Model model, @RequestParam String searchDomain,
 			@RequestParam String searchModel, @RequestParam(required = false) String associateResultWithType,
-			@RequestParam(required = false) Long id, Locale locale) {
+			@RequestParam(required = false) Long id, Locale locale,
+			@CookieValue(value = "milestones", required = false, defaultValue = "") List<Long> milestoneIds) {
 		model.addAttribute(SEARCH_MODEL, searchModel);
-		return showSearchPage(model, searchDomain, associateResultWithType, id, locale);
+		return showSearchPage(model, searchDomain, associateResultWithType, id, locale, milestoneIds);
 	}
 
 	@RequestMapping(value = "/results", params = TESTCASE)
@@ -291,7 +299,6 @@ public class AdvancedSearchController {
 		model.addAttribute(SEARCH_MODEL, searchModel);
 		model.addAttribute(SEARCH_DOMAIN, TESTCASE_VIA_REQUIREMENT);
 
-
 		populateMetadata(model);
 
 		return "test-case-search-result.html";
@@ -307,20 +314,25 @@ public class AdvancedSearchController {
 		return isInAssociationContext;
 	}
 
-	@RequestMapping(value = "/table", method = RequestMethod.POST, params = { RequestParams.MODEL, TESTCASE_VIA_REQUIREMENT,
-			RequestParams.S_ECHO_PARAM })
+	@RequestMapping(value = "/table", method = RequestMethod.POST, params = { RequestParams.MODEL,
+			TESTCASE_VIA_REQUIREMENT, RequestParams.S_ECHO_PARAM })
 	@ResponseBody
 	public DataTableModel getTestCaseThroughRequirementTableModel(final DataTableDrawParameters params,
 			final Locale locale, @RequestParam(value = RequestParams.MODEL) String model,
-			@RequestParam(required = false) String associateResultWithType, @RequestParam(required = false) Long id)
-					throws JsonParseException, JsonMappingException, IOException {
+			@RequestParam(required = false) String associateResultWithType, @RequestParam(required = false) Long id,
+			@CookieValue(value = "milestones", required = false, defaultValue = "") List<Long> milestoneIds)
+			throws JsonParseException, JsonMappingException, IOException {
 
 		AdvancedSearchModel searchModel = new ObjectMapper().readValue(model, AdvancedSearchModel.class);
 
+		if (milestoneIds.size() == 1) {
+			addMilestoneToSearchModel(searchModel, milestoneIds.get(0));
+		}
+
 		PagingAndMultiSorting paging = new DataTableMultiSorting(params, testCaseSearchResultMapper);
 
-		PagedCollectionHolder<List<TestCase>> holder = testCaseAdvancedSearchService.searchForTestCasesThroughRequirementModel(
-				searchModel, paging, locale);
+		PagedCollectionHolder<List<TestCase>> holder = testCaseAdvancedSearchService
+				.searchForTestCasesThroughRequirementModel(searchModel, paging, locale);
 
 		boolean isInAssociationContext = isInAssociationContext(associateResultWithType);
 
@@ -339,15 +351,18 @@ public class AdvancedSearchController {
 	@ResponseBody
 	public DataTableModel getTestCaseTableModel(final DataTableDrawParameters params, final Locale locale,
 			@RequestParam(value = RequestParams.MODEL) String model,
-			@RequestParam(required = false) String associateResultWithType, @RequestParam(required = false) Long id)
-					throws JsonParseException, JsonMappingException, IOException {
+			@RequestParam(required = false) String associateResultWithType, @RequestParam(required = false) Long id,
+			@CookieValue(value = "milestones", required = false, defaultValue = "") List<Long> milestoneIds)
+			throws JsonParseException, JsonMappingException, IOException {
 
 		AdvancedSearchModel searchModel = new ObjectMapper().readValue(model, AdvancedSearchModel.class);
-
+		if (milestoneIds.size() == 1) {
+			addMilestoneToSearchModel(searchModel, milestoneIds.get(0));
+		}
 		PagingAndMultiSorting paging = new DataTableMultiSorting(params, testCaseSearchResultMapper);
 
-		PagedCollectionHolder<List<TestCase>> holder = testCaseAdvancedSearchService.searchForTestCases(searchModel, paging,
-				locale);
+		PagedCollectionHolder<List<TestCase>> holder = testCaseAdvancedSearchService.searchForTestCases(searchModel,
+				paging, locale);
 
 		boolean isInAssociationContext = isInAssociationContext(associateResultWithType);
 
@@ -366,15 +381,20 @@ public class AdvancedSearchController {
 	@ResponseBody
 	public DataTableModel getRequirementTableModel(final DataTableDrawParameters params, final Locale locale,
 			@RequestParam(value = RequestParams.MODEL) String model,
-			@RequestParam(required = false) String associateResultWithType, @RequestParam(required = false) Long id)
-					throws JsonParseException, JsonMappingException, IOException {
+			@RequestParam(required = false) String associateResultWithType, @RequestParam(required = false) Long id,
+			@CookieValue(value = "milestones", required = false, defaultValue = "") List<Long> milestoneIds)
+			throws JsonParseException, JsonMappingException, IOException {
 
 		AdvancedSearchModel searchModel = new ObjectMapper().readValue(model, AdvancedSearchModel.class);
 
+		if (milestoneIds.size() == 1) {
+			addMilestoneToSearchModel(searchModel, milestoneIds.get(0));
+		}
+
 		PagingAndMultiSorting paging = new DataTableMultiSorting(params, requirementSearchResultMapper);
 
-		PagedCollectionHolder<List<RequirementVersion>> holder = requirementVersionAdvancedSearchService.searchForRequirementVersions(
-				searchModel, paging, messageSource, locale);
+		PagedCollectionHolder<List<RequirementVersion>> holder = requirementVersionAdvancedSearchService
+				.searchForRequirementVersions(searchModel, paging, messageSource, locale);
 
 		boolean isInAssociationContext = isInAssociationContext(associateResultWithType);
 
@@ -386,6 +406,16 @@ public class AdvancedSearchController {
 
 		return new RequirementSearchResultDataTableModelHelper(locale, messageSource, permissionService,
 				isInAssociationContext, ids).buildDataModel(holder, params.getsEcho());
+	}
+
+	private void addMilestoneToSearchModel(AdvancedSearchModel searchModel, Long milestoneId) {
+		// yes this is a list field for only one value ! But this allow us to handle milestone mode same as reference
+		// mode
+		AdvancedSearchListFieldModel model = new AdvancedSearchListFieldModel();
+		List<String> milestones = new ArrayList<String>();
+		milestones.add(milestoneFinder.findById(milestoneId).getLabel());
+		model.setValues(milestones);
+		searchModel.addField("milestone.label", model);
 	}
 
 	private Set<Long> getIdsOfRequirementsAssociatedWithObjects(String associateResultWithType, Long id) {
@@ -440,14 +470,15 @@ public class AdvancedSearchController {
 
 	@RequestMapping(value = "/input", method = RequestMethod.GET, headers = AcceptHeaders.CONTENT_JSON, params = TESTCASE_VIA_REQUIREMENT)
 	@ResponseBody
-	public SearchInputInterfaceModel getTestCaseViaRequirementSearchInputInterfaceModel(Locale locale) {
+	public SearchInputInterfaceModel getTestCaseViaRequirementSearchInputInterfaceModel(Locale locale,
+			List<Long> milestoneIds) {
 		// TODO should no longer be called through HTTP, put it private
-		return getRequirementSearchInputInterfaceModel(locale);
+		return getRequirementSearchInputInterfaceModel(locale, milestoneIds);
 	}
 
 	@RequestMapping(value = "/input", method = RequestMethod.GET, headers = AcceptHeaders.CONTENT_JSON, params = REQUIREMENT)
 	@ResponseBody
-	public SearchInputInterfaceModel getRequirementSearchInputInterfaceModel(Locale locale) {
+	public SearchInputInterfaceModel getRequirementSearchInputInterfaceModel(Locale locale, List<Long> milestoneIds) {
 		// TODO should no longer be called through HTTP, put it private
 		SearchInputInterfaceModel model = new SearchInputInterfaceModel();
 
@@ -460,6 +491,10 @@ public class AdvancedSearchController {
 		// Attributes
 		model.addPanel(requirementVersionSearchInterfaceDescription.createRequirementAttributePanel(locale));
 
+		// Milestones
+		if (milestoneIds.size() != 1) {
+			model.addPanel(requirementVersionSearchInterfaceDescription.createMilestonePanel(locale));
+		}
 		// Version
 		model.addPanel(requirementVersionSearchInterfaceDescription.createRequirementVersionPanel(locale));
 
@@ -480,7 +515,7 @@ public class AdvancedSearchController {
 
 	@RequestMapping(value = "/input", method = RequestMethod.GET, headers = AcceptHeaders.CONTENT_JSON, params = TESTCASE)
 	@ResponseBody
-	public SearchInputInterfaceModel getTestCaseSearchInputInterfaceModel(Locale locale) {
+	public SearchInputInterfaceModel getTestCaseSearchInputInterfaceModel(Locale locale, List<Long> milestoneIds) {
 		// TODO should no longer be called through HTTP, put it private
 		SearchInputInterfaceModel model = new SearchInputInterfaceModel();
 
@@ -492,6 +527,11 @@ public class AdvancedSearchController {
 
 		// Attributes
 		model.addPanel(testcaseVersionSearchInterfaceDescription.createAttributePanel(locale));
+
+		// Milestones
+		if (milestoneIds.size() != 1) {
+			model.addPanel(testcaseVersionSearchInterfaceDescription.createMilestonePanel(locale));
+		}
 
 		// Content
 		model.addPanel(testcaseVersionSearchInterfaceDescription.createContentPanel(locale));
@@ -509,7 +549,7 @@ public class AdvancedSearchController {
 	}
 
 	private static final class RequirementSearchResultDataTableModelHelper extends
-	DataTableModelBuilder<RequirementVersion> {
+			DataTableModelBuilder<RequirementVersion> {
 
 		private boolean isInAssociationContext;
 		private Set<Long> associatedRequirementIds;
@@ -528,8 +568,6 @@ public class AdvancedSearchController {
 		private String formatCriticality(RequirementCriticality criticality, Locale locale) {
 			return criticality.getLevel() + "-" + messageSource.internationalize(criticality, locale);
 		}
-
-
 
 		private String formatInfoItem(InfoListItem item, Locale locale) {
 			return messageSource.getMessage(item.getLabel(), null, item.getLabel(), locale);
@@ -565,6 +603,7 @@ public class AdvancedSearchController {
 			res.put("requirement-criticality", formatCriticality(item.getCriticality(), locale));
 			res.put("requirement-category", formatInfoItem(item.getCategory(), locale));
 			res.put("requirement-status", formatStatus(item.getStatus(), locale));
+			res.put("requirement-milestone-nb", item.getMilestones().size());
 			res.put("requirement-version", item.getVersionNumber());
 			res.put("requirement-version-nb", item.getRequirement().getRequirementVersions().size());
 			res.put("requirement-testcase-nb", item.getVerifyingTestCases().size());
@@ -650,6 +689,7 @@ public class AdvancedSearchController {
 			res.put("test-case-nature", formatInfoItem(item.getNature(), locale));
 			res.put("test-case-type", formatInfoItem(item.getType(), locale));
 			res.put("test-case-status", formatStatus(item.getStatus(), locale));
+			res.put("test-case-milestone-nb", item.getMilestones().size());
 			res.put("test-case-requirement-nb", item.getVerifiedRequirementVersions().size());
 			res.put("test-case-teststep-nb", item.getSteps().size());
 			res.put("test-case-iteration-nb", iterationService.findIterationContainingTestCase(item.getId()).size());
@@ -661,13 +701,10 @@ public class AdvancedSearchController {
 			return res;
 		}
 
-
 		private String formatInfoItem(InfoListItem item, Locale locale) {
 			return messageSource.getMessage(item.getLabel(), null, item.getLabel(), locale);
 		}
 	}
-
-
 
 	public SearchInputPanelModel getCustomFielModel(Locale locale, BindableEntity bindableEntity) {
 		List<CustomField> customFields = testCaseAdvancedSearchService
@@ -679,30 +716,30 @@ public class AdvancedSearchController {
 		SearchInputPanelModel model = new SearchInputPanelModel();
 		for (CustomField customField : customFields) {
 
-			switch(customField.getInputType()){
-			case DROPDOWN_LIST :
+			switch (customField.getInputType()) {
+			case DROPDOWN_LIST:
 				SingleSelectField selectField = (SingleSelectField) customField;
 				model.getFields().add(convertToSearchInputFieldModel(selectField, locale));
 				break;
 
-			case PLAIN_TEXT :
+			case PLAIN_TEXT:
 				model.getFields().add(convertToSearchInputFieldModel(customField));
 				break;
 
-			case CHECKBOX :
+			case CHECKBOX:
 				model.getFields().add(createCheckBoxField(customField, locale));
 				break;
 
-			case DATE_PICKER :
+			case DATE_PICKER:
 				model.getFields().add(createDatePickerField(customField));
 				break;
 
-			case TAG :
-				model.getFields().add(convertToSearchInputFieldModel((MultiSelectField)customField));
+			case TAG:
+				model.getFields().add(convertToSearchInputFieldModel((MultiSelectField) customField));
 				break;
 
-			case RICH_TEXT :
-				break;	// not supported for now
+			case RICH_TEXT:
+				break; // not supported for now
 			}
 
 		}
@@ -749,7 +786,7 @@ public class AdvancedSearchController {
 	private SearchInputFieldModel convertToSearchInputFieldModel(SingleSelectField selectField, Locale locale) {
 		List<SearchInputPossibleValueModel> possibleValues = new ArrayList<SearchInputPossibleValueModel>();
 		possibleValues
-		.add(new SearchInputPossibleValueModel(messageSource.internationalize("label.Empty", locale), ""));
+				.add(new SearchInputPossibleValueModel(messageSource.internationalize("label.Empty", locale), ""));
 		for (CustomFieldOption option : selectField.getOptions()) {
 			possibleValues.add(new SearchInputPossibleValueModel(option.getLabel(), option.getLabel()));
 		}
@@ -762,10 +799,11 @@ public class AdvancedSearchController {
 		return model;
 	}
 
-	private SearchInputFieldModel convertToSearchInputFieldModel(MultiSelectField multifield){
-		List<SearchInputPossibleValueModel> possibleValues = new ArrayList<SearchInputPossibleValueModel>(multifield.getOptions().size());
+	private SearchInputFieldModel convertToSearchInputFieldModel(MultiSelectField multifield) {
+		List<SearchInputPossibleValueModel> possibleValues = new ArrayList<SearchInputPossibleValueModel>(multifield
+				.getOptions().size());
 
-		for (CustomFieldOption option : multifield.getOptions()){
+		for (CustomFieldOption option : multifield.getOptions()) {
 			possibleValues.add(new SearchInputPossibleValueModel(option.getLabel(), option.getLabel()));
 		}
 
@@ -779,21 +817,21 @@ public class AdvancedSearchController {
 
 	}
 
-	private void populateMetadata(Model model){
+	private void populateMetadata(Model model) {
 		model.addAttribute("projects", readableJsonProjects());
 	}
 
-	private void populateMetadata(SearchInputInterfaceModel model){
+	private void populateMetadata(SearchInputInterfaceModel model) {
 
 		model.addMetadata(PROJECTS_META, readableJsonProjects());
 
 	}
 
-	private List<JsonProject> readableJsonProjects(){
+	private List<JsonProject> readableJsonProjects() {
 		List<Project> readableProjects = projectFinder.findAllReadable();
 		List<JsonProject> jsonified = new ArrayList<JsonProject>(readableProjects.size());
 
-		for (Project p : readableProjects){
+		for (Project p : readableProjects) {
 			jsonified.add(jsProjectBuilder.toExtendedProject(p));
 		}
 

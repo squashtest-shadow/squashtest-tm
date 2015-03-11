@@ -57,6 +57,7 @@ import org.hibernate.search.annotations.ClassBridges;
 import org.hibernate.search.annotations.Field;
 import org.hibernate.search.annotations.FieldBridge;
 import org.hibernate.search.annotations.Indexed;
+import org.hibernate.search.annotations.IndexedEmbedded;
 import org.hibernate.search.annotations.Store;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -191,6 +192,10 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	@JoinColumn(name = "TA_TEST")
 	private AutomatedTest automatedTest;
 
+	
+	@FieldBridge(impl = CollectionSizeBridge.class)
+	@Field(analyze=Analyze.NO, store=Store.YES)
+	@IndexedEmbedded
 	@ManyToMany
 	@JoinTable(name = "MILESTONE_TEST_CASE", joinColumns = @JoinColumn(name = "TEST_CASE_ID"), inverseJoinColumns = @JoinColumn(name = "MILESTONE_ID"))
 	private Set<Milestone> milestones = new HashSet<Milestone>();

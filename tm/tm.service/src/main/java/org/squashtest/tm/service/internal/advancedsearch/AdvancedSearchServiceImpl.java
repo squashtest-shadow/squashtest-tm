@@ -21,10 +21,13 @@
 package org.squashtest.tm.service.internal.advancedsearch;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import javax.inject.Inject;
@@ -34,9 +37,15 @@ import org.apache.commons.collections.Transformer;
 import org.apache.commons.lang.StringUtils;
 import org.apache.lucene.document.DateTools;
 import org.apache.lucene.search.Query;
+import org.hibernate.Criteria;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Restrictions;
 import org.hibernate.search.query.dsl.QueryBuilder;
 import org.squashtest.tm.domain.customfield.BindableEntity;
 import org.squashtest.tm.domain.customfield.CustomField;
+import org.squashtest.tm.domain.milestone.Milestone;
+import org.squashtest.tm.domain.milestone.MilestoneStatus;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.search.AdvancedSearchFieldModel;
 import org.squashtest.tm.domain.search.AdvancedSearchFieldModelType;
@@ -54,7 +63,14 @@ import org.squashtest.tm.service.customfield.CustomFieldBindingFinderService;
 import org.squashtest.tm.service.project.ProjectManagerService;
 
 public class AdvancedSearchServiceImpl implements AdvancedSearchService {
+	
+	private final static List<String> MILESTONE_SEARCH_FIELD = Arrays.asList("milestone.label", "milestone.status",
+			"milestone.endDate", "searchByMilestone");
+	
 
+	@Inject
+	private SessionFactory sessionFactory;
+	
 	@Inject
 	private CustomFieldBindingFinderService customFieldBindingFinderService;
 
@@ -393,13 +409,14 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 	}
 
 	protected Query buildLuceneQuery(QueryBuilder qb, AdvancedSearchModel model, Locale locale) {
-
+		addMilestoneFilter(model);
 		Query mainQuery = null;
 
 		Set<String> fieldKeys = model.getFields().keySet();
 
 		for (String fieldKey : fieldKeys) {
 
+		
 			AdvancedSearchFieldModel fieldModel = model.getFields().get(fieldKey);
 			AdvancedSearchFieldModelType type = fieldModel.getType();
 
@@ -412,11 +429,93 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 					mainQuery = qb.bool().must(mainQuery).must(query).createQuery();
 				}
 			}
+			
 		}
 
 		return mainQuery;
 	}
 
+	@SuppressWarnings("unchecked")
+	private void  addMilestoneFilter (AdvancedSearchModel searchModel){
+		Session session = sessionFactory.getCurrentSession();
+		Criteria crit = session.createCriteria(Milestone.class);
+
+		Map<String, AdvancedSearchFieldModel> fields = searchModel.getFields();
+		
+		
+		AdvancedSearchSingleFieldModel searchByMilestone = (AdvancedSearchSingleFieldModel) fields.get("searchByMilestone");
+		
+		if ("true".equals(searchByMilestone.getValue())) {
+		
+		for (Entry<String, AdvancedSearchFieldModel> entry : fields.entrySet()) {
+
+			AdvancedSearchFieldModel model = entry.getValue();
+			if (model != null) {
+
+				switch (entry.getKey()) {
+
+				case "milestone.label":
+					
+					List<String> labelValues = ((AdvancedSearchListFieldModel) model).getValues();
+					if (labelValues != null){
+					crit.add(Restrictions.in("label", labelValues));
+					}
+					break;
+				case "milestone.status":
+					List<String> statusValues = ((AdvancedSearchListFieldModel) model).getValues();
+					if (statusValues != null){
+					crit.add(Restrictions.in("status", convertStatus(statusValues)));
+					}
+					break;
+				case "milestone.endDate":
+					Date startDate = ((AdvancedSearchTimeIntervalFieldModel) model).getStartDate();
+					Date endDate = ((AdvancedSearchTimeIntervalFieldModel) model).getEndDate();
+					
+					if (startDate != null && endDate != null){
+						crit.add(Restrictions.between("endDate", startDate, endDate));
+					} else if (startDate != null){
+						crit.add(Restrictions.gt("endDate", startDate));
+					} else if (endDate != null){
+						crit.add(Restrictions.le("endDate", endDate));
+						
+					}
+
+					break;
+				default:
+					// do nothing
+				}
+			}
+		}
+
+	
+	
+		List<String> milestoneIds = new ArrayList<String>();
+		for (Milestone milestone : (List<Milestone>) crit.list()){
+			milestoneIds.add(String.valueOf(milestone.getId()));		
+		}
+		
+		AdvancedSearchListFieldModel milestonesModel = new AdvancedSearchListFieldModel();
+		milestonesModel.setValues(milestoneIds);
+
+		fields.put("milestones.id", milestonesModel);
+		}
+		
+		
+		for (String s : MILESTONE_SEARCH_FIELD){
+			fields.remove(s);
+		}
+		
+	}
+	private List<MilestoneStatus> convertStatus(List<String> values) {
+		List<MilestoneStatus> status = new ArrayList<MilestoneStatus>();
+		for (String value : values) {
+			int level = Integer.valueOf(value.substring(0, 1));
+			status.add(MilestoneStatus.getByLevel(level));
+		}
+		return status;
+	}
+	
+	
 	protected Query buildLuceneTagsQuery(QueryBuilder qb, String fieldKey, List<String> tags, Operation operation ){
 
 		Query main = null;

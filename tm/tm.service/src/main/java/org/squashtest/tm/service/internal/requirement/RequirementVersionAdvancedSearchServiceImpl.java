@@ -1,22 +1,18 @@
 /**
- *     This file is part of the Squashtest platform.
- *     Copyright (C) 2010 - 2015 Henix, henix.fr
+ * This file is part of the Squashtest platform. Copyright (C) 2010 - 2015 Henix, henix.fr
  *
- *     See the NOTICE file distributed with this work for additional
- *     information regarding copyright ownership.
+ * See the NOTICE file distributed with this work for additional information regarding copyright ownership.
  *
- *     This is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU Lesser General Public License as published by
- *     the Free Software Foundation, either version 3 of the License, or
- *     (at your option) any later version.
+ * This is free software: you can redistribute it and/or modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later
+ * version.
  *
- *     this software is distributed in the hope that it will be useful,
- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU Lesser General Public License for more details.
+ * this software is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied
+ * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
  *
- *     You should have received a copy of the GNU Lesser General Public License
- *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU Lesser General Public License along with this software. If not, see
+ * <http://www.gnu.org/licenses/>.
  */
 package org.squashtest.tm.service.internal.requirement;
 
@@ -55,7 +51,7 @@ import org.squashtest.tm.service.requirement.RequirementVersionAdvancedSearchSer
 
 @Service("squashtest.tm.service.RequirementVersionAdvancedSearchService")
 public class RequirementVersionAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl implements
-RequirementVersionAdvancedSearchService {
+		RequirementVersionAdvancedSearchService {
 
 	@Inject
 	private SessionFactory sessionFactory;
@@ -66,21 +62,14 @@ RequirementVersionAdvancedSearchService {
 	@Inject
 	private Provider<RequirementVersionSearchExportCSVModelImpl> requirementVersionSearchExportCSVModelProvider;
 
-
 	private final static SortField[] DEFAULT_SORT_REQUIREMENTS = new SortField[] {
-		new SortField("requirement.project.name", SortField.STRING, false),
-		new SortField("reference", SortField.STRING, false), new SortField("criticality", SortField.STRING, false),
-		new SortField("category", SortField.STRING, false), new SortField("status", SortField.STRING, false),
-		new SortField("labelUpperCased", SortField.STRING, false) };
+			new SortField("requirement.project.name", SortField.STRING, false),
+			new SortField("reference", SortField.STRING, false), new SortField("criticality", SortField.STRING, false),
+			new SortField("category", SortField.STRING, false), new SortField("status", SortField.STRING, false),
+			new SortField("labelUpperCased", SortField.STRING, false) };
 
-	private final static List<String> LONG_SORTABLE_FIELDS = Arrays.asList(
-			"requirement.id",
-			"versionNumber",
-			"id",
-			"requirement.versions",
-			"testcases",
-			"attachments"
-			);
+	private final static List<String> LONG_SORTABLE_FIELDS = Arrays.asList("requirement.id", "versionNumber", "id",
+			"requirement.versions", "testcases", "attachments");
 
 	@Override
 	public List<String> findAllUsersWhoCreatedRequirementVersions() {
@@ -111,15 +100,13 @@ RequirementVersionAdvancedSearchService {
 		FullTextSession ftSession = Search.getFullTextSession(session);
 
 		QueryBuilder qb = ftSession.getSearchFactory().buildQueryBuilder().forEntity(RequirementVersion.class).get();
-
+	
 		Query luceneQuery = buildLuceneQuery(qb, model, locale);
 
 		org.hibernate.Query hibQuery = ftSession.createFullTextQuery(luceneQuery, RequirementVersion.class);
 
-		return hibQuery.list();
-
+		return  hibQuery.list();
 	}
-
 
 	private Sort getRequirementVersionSort(List<Sorting> sortings, MessageSource source, Locale locale) {
 
@@ -142,10 +129,9 @@ RequirementVersionAdvancedSearchService {
 
 			if (LONG_SORTABLE_FIELDS.contains(fieldName)) {
 				sortFieldArray[i] = new SortField(fieldName, SortField.LONG, isReverse);
-			}
-			else if ("category".equals(fieldName)) {
-				sortFieldArray[i] = new SortField(fieldName, new InfoListItemComparatorSource(source,
-						locale), isReverse);
+			} else if ("category".equals(fieldName)) {
+				sortFieldArray[i] = new SortField(fieldName, new InfoListItemComparatorSource(source, locale),
+						isReverse);
 			} else {
 				sortFieldArray[i] = new SortField(fieldName, SortField.STRING, isReverse);
 			}
@@ -177,7 +163,7 @@ RequirementVersionAdvancedSearchService {
 		FullTextSession ftSession = Search.getFullTextSession(session);
 
 		QueryBuilder qb = ftSession.getSearchFactory().buildQueryBuilder().forEntity(RequirementVersion.class).get();
-
+	
 		Query luceneQuery = buildLuceneQuery(qb, model, locale);
 
 		List<RequirementVersion> result = Collections.emptyList();
@@ -190,9 +176,76 @@ RequirementVersionAdvancedSearchService {
 			countAll = hibQuery.list().size();
 
 			result = hibQuery.setFirstResult(sorting.getFirstItemIndex()).setMaxResults(sorting.getPageSize()).list();
+			
+
 		}
 		return new PagingBackedPagedCollectionHolder<List<RequirementVersion>>(sorting, countAll, result);
 	}
+	
+	
+
+	
+	/*
+	private List<RequirementVersion> applyMilestoneFilter(AdvancedSearchModel model2, List<RequirementVersion> result) {
+
+		Session session = sessionFactory.getCurrentSession();
+		Criteria crit = session.createCriteria(Milestone.class);
+
+		for (Entry<String, AdvancedSearchFieldModel> entry : model2.getFields().entrySet()) {
+
+			AdvancedSearchFieldModel model = entry.getValue();
+			if (model != null) {
+
+				switch (entry.getKey()) {
+
+				case "milestone.label":
+					crit.add(Restrictions.in("label", ((AdvancedSearchListFieldModel) model).getValues()));
+					break;
+				case "milestone.status":
+					crit.add(Restrictions.in("status",
+							convertStatus(((AdvancedSearchListFieldModel) model).getValues())));
+					break;
+				case "milestone.endDate":
+					crit.add(Restrictions.between("endDate",
+							((AdvancedSearchTimeIntervalFieldModel) model).getStartDate(),
+							((AdvancedSearchTimeIntervalFieldModel) model).getEndDate()));
+					break;
+				default:
+					// do nothing
+				}
+			}
+		}
+
+		List<Milestone> milestones = crit.list();
+
+		Map<Long, List<RequirementVersion>> map = new HashMap<Long, List<RequirementVersion>>();
+		for (RequirementVersion reqV : result) {
+			for (Milestone milestone : reqV.getMilestones()) {
+
+				List<RequirementVersion> liste = map.get(milestone.getId());
+				if (liste == null) {
+					liste = new ArrayList<RequirementVersion>();
+					map.put(milestone.getId(), liste);
+				}
+				liste.add(reqV);
+			}
+		}
+
+		Set<RequirementVersion> reqVs = new HashSet<RequirementVersion>();
+		for (Milestone milestone : milestones) {
+			List<RequirementVersion> versions;
+			if (map.get(milestone.getId()) != null) {
+				versions = map.get(milestone.getId());
+			} else {
+				versions = Collections.emptyList();
+			}
+
+			reqVs.addAll(versions);
+		}
+		return new ArrayList<RequirementVersion>(reqVs);
+	}
+*/
+
 
 	@Override
 	public SearchExportCSVModel exportRequirementVersionSearchResultsToCSV(AdvancedSearchModel searchModel,

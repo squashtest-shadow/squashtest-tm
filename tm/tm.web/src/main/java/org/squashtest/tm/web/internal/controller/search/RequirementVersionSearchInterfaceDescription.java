@@ -33,9 +33,12 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.domain.infolist.InfoList;
 import org.squashtest.tm.domain.infolist.InfoListItem;
+import org.squashtest.tm.domain.milestone.Milestone;
+import org.squashtest.tm.domain.milestone.MilestoneStatus;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.requirement.RequirementCriticality;
 import org.squashtest.tm.domain.requirement.RequirementStatus;
+import org.squashtest.tm.service.milestone.MilestoneFinderService;
 import org.squashtest.tm.service.project.ProjectFinder;
 import org.squashtest.tm.service.requirement.RequirementVersionAdvancedSearchService;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
@@ -47,6 +50,9 @@ public class RequirementVersionSearchInterfaceDescription extends SearchInterfac
 
 	@Inject
 	private ProjectFinder projectFinder;
+	
+	@Inject
+	private MilestoneFinderService milestoneFinder;
 
 	public SearchInputPanelModel createRequirementInformationPanel(Locale locale) {
 		SearchInputPanelModel panel = new SearchInputPanelModel();
@@ -73,6 +79,53 @@ public class RequirementVersionSearchInterfaceDescription extends SearchInterfac
 		panel.addField(descriptionField);
 
 		return panel;
+	}
+	
+	
+	public SearchInputPanelModel createMilestonePanel(Locale locale){
+		SearchInputPanelModel panel = new SearchInputPanelModel();
+		panel.setTitle(getMessageSource().internationalize("label.Milestone", locale));
+		panel.setOpen(true);
+		panel.setId("milestone");
+		panel.setLocation("column1");
+		panel.addCssClass("search-icon-attributes");
+			
+		SearchInputFieldModel searchByMilestone = new SearchInputFieldModel("searchByMilestone", getMessageSource()
+				.internationalize("search.requirement.content.version.label", locale), RADIOBUTTON);
+		panel.addField(searchByMilestone);
+
+		OptionBuilder optionBuilder = optionBuilder(locale);
+		searchByMilestone.addPossibleValue(optionBuilder.labelI18nKey("search.milestone.search-by-milestone.no").optionKey(FALSE)
+				.selected().build());
+		searchByMilestone.addPossibleValue(optionBuilder.labelI18nKey("search.milestone.search-by-milestone.yes")
+				.optionKey(TRUE).build());	
+
+		SearchInputFieldModel labelField = new SearchInputFieldModel("milestone.label", getMessageSource()
+				.internationalize("label.Label", locale), MULTISELECT);
+		panel.addField(labelField);
+		
+		
+		for (Milestone milestone : milestoneFinder.findAllVisibleToCurrentUser()){
+			labelField.addPossibleValue(optionBuilder.label(milestone.getLabel()).optionKey(milestone.getLabel()).build());
+		}	 
+		
+		SearchInputFieldModel statusField = new SearchInputFieldModel("milestone.status", getMessageSource()
+				.internationalize("label.Status", locale), MULTISELECT);
+		panel.addField(statusField);
+
+		List<SearchInputPossibleValueModel>  statusOptions = levelComboBuilder(MilestoneStatus.values())
+				.useLocale(locale).build();
+		 statusField.addPossibleValues( statusOptions);
+		 
+		 
+		 SearchInputFieldModel endDateField = new SearchInputFieldModel("milestone.endDate", getMessageSource()
+					.internationalize("label.EndDate", locale), DATE);
+			panel.addField(endDateField);
+		 
+		
+		 
+		return panel;
+		
 	}
 
 	public SearchInputPanelModel createRequirementAttributePanel(Locale locale) {

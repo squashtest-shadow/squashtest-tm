@@ -221,6 +221,8 @@ public abstract class SearchInterfaceDescription {
 	protected static final String ATLEASTONE = "1";
 	protected static final String NONE = "0";
 	protected static final String EMPTY = "";
+	protected static final String TRUE = "true";
+	protected static final String FALSE = "false";
 
 	@Inject
 	private InternationalizationHelper messageSource;

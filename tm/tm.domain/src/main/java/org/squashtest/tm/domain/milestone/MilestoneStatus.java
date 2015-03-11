@@ -38,6 +38,17 @@ public enum MilestoneStatus implements Level {
 	private MilestoneStatus(int level) {
 		this.level = level;
 	}
+	
+	public static MilestoneStatus getByLevel(int level){
+		
+		for (MilestoneStatus status : MilestoneStatus.values()){
+			if (status.getLevel() == level){
+				return status;
+			}
+		}
+		
+		throw new IllegalArgumentException("Does not match any level : " + level);
+	}
 
 	@Override
 	public String getI18nKey() {

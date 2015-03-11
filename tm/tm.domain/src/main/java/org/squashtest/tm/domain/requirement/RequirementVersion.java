@@ -134,6 +134,8 @@ public class RequirementVersion extends Resource implements BoundEntity, Milesto
 	@Field(analyze = Analyze.NO, store = Store.YES)
 	private int versionNumber = 1;
 
+	@FieldBridge(impl = CollectionSizeBridge.class)
+	@Field(analyze=Analyze.NO, store=Store.YES)
 	@IndexedEmbedded
 	@ManyToMany
 	@JoinTable(name = "MILESTONE_REQ_VERSION", joinColumns = @JoinColumn(name = "REQ_VERSION_ID"), inverseJoinColumns = @JoinColumn(name = "MILESTONE_ID"))

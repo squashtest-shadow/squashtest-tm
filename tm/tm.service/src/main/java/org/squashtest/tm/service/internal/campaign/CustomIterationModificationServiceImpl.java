@@ -374,7 +374,7 @@ IterationTestPlanManager {
 	}
 
 	@Override
-	@PreAuthorize("hasPermission(#iterationId, 'org.squashtest.tm.domain.campaign.Iteration', 'READ') "
+	@PreAuthorize("hasPermission(#testCaseId, 'org.squashtest.tm.domain.testcase.TestCase', 'READ') "
 			+ OR_HAS_ROLE_ADMIN)
 	public List<Iteration> findIterationContainingTestCase(long testCaseId) {
 		return iterationDao.findAllIterationContainingTestCase(testCaseId);

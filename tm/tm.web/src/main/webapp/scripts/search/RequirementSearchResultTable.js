@@ -112,39 +112,44 @@ define([ "jquery", "backbone", "squash.translator","jeditable.simpleJEditable", 
 							"sClass" : "editable editable_status"
 						}, {
 							"aTargets" : [ 9 ],
+							"mDataProp" : "requirement-milestone-nb",
+							"bSortable" : true,
+							"sClass" : "centered"
+						},{
+							"aTargets" : [ 10 ],
 							"mDataProp" : "requirement-version",
 							"bSortable" : true,
 							"sClass" : "centered"
 						}, {
-							"aTargets" : [ 10 ],
+							"aTargets" : [ 11 ],
 							"mDataProp" : "requirement-version-nb",
 							"bSortable" : true,
 							"sClass" : "centered"
 						}, {
-							"aTargets" : [ 11 ],
+							"aTargets" : [ 12 ],
 							"mDataProp" : "requirement-testcase-nb",
 							"bSortable" : true,
 							"sClass" : "centered"
 						}, {
-							"aTargets" : [ 12 ],
+							"aTargets" : [ 13 ],
 							"mDataProp" : "requirement-attachment-nb",
 							"bSortable" : true
 						}, {
-							"aTargets" : [ 13 ],
+							"aTargets" : [ 14 ],
 							"mDataProp" : "requirement-created-by",
 							"bSortable" : true
 						}, {
-							"aTargets" : [ 14 ],
+							"aTargets" : [ 15 ],
 							"mDataProp" : "requirement-modified-by",
 							"bSortable" : true
 						}, {
-							"aTargets" : [ 15 ],
+							"aTargets" : [ 16 ],
 							"mDataProp" : "empty-openinterface2-holder",
 							"sClass" : "centered search-open-interface2-holder",
 							"sWidth" : "2em",
 							"bSortable" : false
 						}, {
-							"aTargets" : [ 16 ],
+							"aTargets" : [ 17 ],
 							"mDataProp" : "editable",
 							"bVisible" : false,
 							"bSortable" : false
@@ -216,46 +221,52 @@ define([ "jquery", "backbone", "squash.translator","jeditable.simpleJEditable", 
 							"sClass" : "editable editable_status"
 						}, {
 							"aTargets" : [ 8 ],
+							"mDataProp" : "requirement-milestone-nb",
+							"bSortable" : true,
+							"sClass" : "centered"
+						},
+						{
+							"aTargets" : [ 9 ],
 							"mDataProp" : "requirement-version",
 							"bSortable" : true,
 							"sClass" : "centered"
 						}, {
-							"aTargets" : [ 9 ],
+							"aTargets" : [ 10 ],
 							"mDataProp" : "requirement-version-nb",
 							"bSortable" : true,
 							"sClass" : "centered"
 						}, {
-							"aTargets" : [ 10 ],
+							"aTargets" : [ 11 ],
 							"mDataProp" : "requirement-testcase-nb",
 							"bSortable" : true,
 							"sClass" : "centered"
 						}, {
-							"aTargets" : [ 11 ],
+							"aTargets" : [ 12 ],
 							"mDataProp" : "requirement-attachment-nb",
 							"bSortable" : true,
 							"sClass" : "centered"
 						}, {
-							"aTargets" : [ 12 ],
+							"aTargets" : [ 13 ],
 							"mDataProp" : "requirement-created-by",
 							"bSortable" : true
 						}, {
-							"aTargets" : [ 13 ],
+							"aTargets" : [ 14 ],
 							"mDataProp" : "requirement-modified-by",
 							"bSortable" : true
 						}, {
-							"aTargets" : [ 14 ],
+							"aTargets" : [ 15 ],
 							"mDataProp" : "empty-openinterface2-holder",
 							"sClass" : "centered search-open-interface2-holder",
 							"sWidth" : "2em",
 							"bSortable" : false
 						}, {
-							"aTargets" : [ 15 ],
+							"aTargets" : [ 16 ],
 							"mDataProp" : "empty-opentree-holder",
 							"sClass" : "centered search-open-tree-holder",
 							"sWidth" : "2em",
 							"bSortable" : false
 						}, {
-							"aTargets" : [ 16 ],
+							"aTargets" : [ 17 ],
 							"mDataProp" : "editable",
 							"bVisible" : false,
 							"bSortable" : false
