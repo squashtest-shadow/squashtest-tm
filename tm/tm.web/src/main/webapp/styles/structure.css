@@ -1222,21 +1222,21 @@ div.information-panel p {
 	vertical-align: middle;
 }
 
-.generic-error-signal{
+.generic-error-signal {
 	background-image : url('../images/messagebox_error.png');  /** sprite-ref: sprites-icons; */
 	background-repeat : no-repeat;
 	width : 72px;
 	height : 64px;
 }
 
-.generic-warning-signal{
+.generic-warning-signal {
 	background-image : url('../images/messagebox_warning.png');  /** sprite-ref: sprites-icons; */
 	background-repeat : no-repeat;
 	width : 72px;
 	height : 64px;
 }
 
-.delete-node-dialog-warning{
+.generic-question-signal, .delete-node-dialog-warning {
 	background-image : url('../images/messagebox_confirm.png');  /** sprite-ref: sprites-icons; */
 	background-repeat : no-repeat;
 	width : 72px;

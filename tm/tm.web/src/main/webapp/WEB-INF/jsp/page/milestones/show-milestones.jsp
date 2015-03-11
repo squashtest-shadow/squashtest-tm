@@ -53,6 +53,19 @@
         }
       });
       </script>
+<script id="confirm-milestone-switch-tpl" type="text/x-handlebars-template">
+<div class='display-table-row'>
+  <div class='display-table-cell warning-cell'>
+    <div class='generic-question-signal'></div>
+  </div>
+  <div class='display-table-cell'>
+    <span>{{first}}</span>
+    <span class='red-warning-message'>{{second}}</span>
+    <span>{{third}}</span>
+    <span class='bold-warning-message'>{{fourth}}</span>
+  </div>
+</div>
+</script>
   </jsp:attribute>
 
 	<jsp:attribute name="titlePane">
@@ -79,21 +92,29 @@
 
   <div class="cf">
     <div class="btn-toolbar left">
+      <div id="milestone-feat-switch" class="btn-group" data-api="<c:url value='/features/milestones' />">
+        <label for="milestone-feat-switch"><f:message key='message.UseMilestoneFeature' /></label>
+        <button id="milestone-feat-on" class="sq-btn  btn-sm ${ milestoneFeatureEnabled ? 'active' : ''}" type="button"><f:message key='label.active' /></button>
+        <button id="milestone-feat-off" class="sq-btn  btn-sm ${ not milestoneFeatureEnabled ? 'active' : ''}" type="button"><f:message key='label.inactive' /></button>
+      </div>
+      <script type="text/javascript">publish("loaded.milestoneFeatureSwitch");</script>
     </div>
+    <c:set var="actionState" value="${ milestoneFeatureEnabled ? '' : 'disabled=\"disabled\"' }" />
     <div class="btn-toolbar right">
-      <button id="new-milestone-button" class="sq-btn" title="<f:message key='label.AddMilestone' />">
-        <span class="ui-icon ui-icon-plusthick">+</span> <f:message key="label.AddMilestone" />
+      <button id="new-milestone-button" ${ actionState } class="sq-btn milestone-dep" title="<f:message key='label.AddMilestone' />">
+        <span class="ui-icon ui-icon-plusthick">+</span>&nbsp;<f:message key="label.AddMilestone" />
       </button>
-      <button id="clone-milestone-button" class="sq-btn" title="<f:message key='label.milestone.duplicate' />">
-        <f:message key="label.milestone.duplicate" />>
+      
+      <button id="clone-milestone-button" ${ actionState } class="sq-btn milestone-dep" title="<f:message key='label.milestone.duplicate' />">
+        <f:message key="label.milestone.duplicate" />
       </button>
        
-      <button id="synchronize-milestone-button" class="sq-btn" title="<f:message key='label.milestone.synchronize' />">
+      <button id="synchronize-milestone-button" ${ actionState } class="sq-btn milestone-dep" title="<f:message key='label.milestone.synchronize' />">
         <f:message key="label.milestone.synchronize" />
       </button>
       
-      <button id="delete-milestone-button" class="sq-btn" title=<f:message key="label.deleteMilestone" />>    
-        <span class="ui-icon ui-icon-trash">-</span> <f:message key="label.deleteMilestone" />
+      <button id="delete-milestone-button" ${ actionState } class="sq-btn milestone-dep" title="<f:message key='label.deleteMilestone' />">
+        <span class="ui-icon ui-icon-trash">-</span>&nbsp;<f:message key="label.deleteMilestone" />
       </button>
     </div>
   </div>
@@ -288,7 +309,6 @@
       </div>     
 </div>
 <!--  synchronize popup end-->
-
 
 </jsp:attribute>
 </layout:info-page-layout>

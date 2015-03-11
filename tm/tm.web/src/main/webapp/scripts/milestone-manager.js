@@ -19,26 +19,52 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 require(["common"], function(){
-	require(['module', "jquery", "squash.translator", "workspace.routing","squash.configmanager","app/ws/squashtm.notification","squash.dateutils", "jeditable.datepicker",  "squashtable",
-	         "app/ws/squashtm.workspace", "jquery.squash.formdialog", "jquery.squash.confirmdialog"],
-			function(module, $, translator, routing, confman, notification, dateutils){
+	require(["app/pubsub", "backbone.wreqr", 'module', "jquery", "squash.translator", "workspace.routing","squash.configmanager","app/ws/squashtm.notification","squash.dateutils", "milestone-manager/MilestoneFeatureSwitch",
+	         "jeditable.datepicker",  "squashtable", "app/ws/squashtm.workspace", "jquery.squash.formdialog", "jquery.squash.confirmdialog"],
+			function(ps, Wreqr, module, $, translator, routing, confman, notification, dateutils, MilestoneFeatureSwitch){
 		"use strict";
+
+		squashtm = squashtm || {};
+		squashtm.vent = squashtm.vent || new Wreqr.EventAggregator();
 
 		var config = module.config();
 
-	   function getPostDate(localizedDate){
-		try{
-		var postDateFormat = $.datepicker.ATOM;
-		var date = $.datepicker.parseDate(translator.get("squashtm.dateformatShort.datepicker"), localizedDate);
-		var postDate = $.datepicker.formatDate(postDateFormat, date);
-		return postDate;
-		} catch(err){ return null;}
+		function getPostDate(localizedDate) {
+			try {
+				var postDateFormat = $.datepicker.ATOM;
+				var date = $.datepicker.parseDate(translator.get("squashtm.dateformatShort.datepicker"), localizedDate);
+				var postDate = $.datepicker.formatDate(postDateFormat, date);
+				return postDate;
+
+			} catch (err) {
+				return null;
+			}
 		}
 
+	ps.subscribe("loaded.milestoneFeatureSwitch", function() {
+		console.log("loaded.milestoneFeatureSwitch");
+		var milestoneNuke = new MilestoneFeatureSwitch();
+	});
 
-		$(function() {
+	squashtm.vent.on("milestonefeatureswitch:activating milestonefeatureswitch:deactivating", function(event) {
+		$(".milestone-dep").prop("disabled", true);
+	});
 
-			var squashSettings = {
+	squashtm.vent.on("milestonefeatureswitch:activated", function(event) {
+		$(".milestone-dep").prop("disabled", false);
+	});
+	squashtm.vent.on("milestonefeatureswitch:deactivated", function(event) {
+		$(".milestone-dep").prop("disabled", true);
+		$table()._fnAjaxUpdate();
+	});
+
+	function $table() {
+		return $("#milestones-table").squashTable();
+	}
+
+	$(function() {
+
+		var squashSettings = {
 					functions:{
 						drawDeleteButton: function(template, cells){
 
@@ -62,10 +88,6 @@ require(["common"], function(){
 			};
 
 			var milestoneTable = $("#milestones-table").squashTable({"bServerSide":false},squashSettings);
-
-			/* The button gets CSS we don't want to keep a clean CSS and also put a span with text only after*/
-			$("#new-milestone-button").removeClass("ui-button-text-only").addClass("ui-button-text-icon-primary");
-			$("#new-milestone-button > span").removeClass("ui-button-text");
 		});
 
 
@@ -87,9 +109,9 @@ require(["common"], function(){
 		});
 
 		this.$textAreas = $("textarea");
+
 		function decorateArea() {
-			$(this).ckeditor(function() {
-			}, {
+			$(this).ckeditor(function() {}, {
 				customConfig : squashtm.app.contextRoot + "/styles/ckeditor/ckeditor-config.js",
 				language : squashtm.app.ckeditorLanguage
 			});
@@ -104,14 +126,13 @@ require(["common"], function(){
 			var id = $this.data('entity-id');
 			var ids = ( !! id) ? [id] : id ;
 			var url = squashtm.app.contextRoot+'/administration/milestones/'+ ids.join(",");
-			var table = $("#milestones-table").squashTable();
-			var selectedRow = table.getRowsByIds(ids);
+			var table = $table();
+			//var selectedRow = table.getRowsByIds(ids);
 
 			$.ajax({
 				url : url,
 				type : 'delete'
-			})
-			.done(function(){
+			}).done(function(){
 				table._fnAjaxUpdate();
 			});
 
@@ -119,7 +140,7 @@ require(["common"], function(){
 		});
 
 		$("#delete-milestone-button").on('click', function(){
-			var ids = $("#milestones-table").squashTable().getSelectedIds();
+			var ids = $table().getSelectedIds();
 
 			if (ids.length>0){
 				var popup = $("#delete-milestone-popup");
@@ -181,12 +202,12 @@ require(["common"], function(){
 
 	$('#clone-milestone-button').on('click', function(){
 
-		var ids = $("#milestones-table").squashTable().getSelectedIds();
+		var ids = $table().getSelectedIds();
 		if (ids.length>1){
 			warningWithTranslation ('message.milestone.cantclonemultiple');
 		} else if (ids.length == 1) {
 
-			var mil = $("#milestones-table").squashTable().getDataById(ids[0]);
+			var mil = $table().getDataById(ids[0]);
 			var trans = translator.get({
 				statusFinished : "milestone.status.FINISHED",
 				statusInProgress :"milestone.status.IN_PROGRESS"
@@ -253,7 +274,7 @@ require(["common"], function(){
 
 	//Synchronize
 	$("#synchronize-milestone-button").on('click', function(){
-		var table = $("#milestones-table").squashTable();
+		var table = $table();
 		var ids = table.getSelectedIds();
 		//BEWARE lot's of check incoming
 		if (ids.length < 2) {
