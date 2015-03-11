@@ -24,19 +24,29 @@ import org.squashtest.tm.domain.Level;
 
 public enum MilestoneStatus implements Level {
 	// @formatter::off
-	PLANNED(1),
-	IN_PROGRESS(2),
-	FINISHED(3),
-	LOCKED(4);
+	PLANNED(1, true, false, false, false),
+	IN_PROGRESS(2, true, true, true, true),
+	FINISHED(3, false, false, false, true),
+	LOCKED(4, false, false, false, false); 
 	// @formatter::on
 
 
+
+	
 	private static final String I18N_KEY_ROOT = "milestone.status.";
 
 	private final int level;
-
-	private MilestoneStatus(int level) {
+	private final boolean isBindableToProject;
+	private final boolean isBindableToObject;
+	private final boolean allowObjectCreateAndDelete;
+	private final boolean allowObjectModification;
+	
+	private MilestoneStatus(int level, boolean isBindableToProject, boolean isBindableToObject, boolean allowObjectCreateAndDelete, boolean allowObjectModification) {
 		this.level = level;
+		this.isBindableToProject = isBindableToProject;
+		this.isBindableToObject = isBindableToObject;
+		this.allowObjectCreateAndDelete = allowObjectCreateAndDelete;
+		this.allowObjectModification = allowObjectModification;
 	}
 	
 	public static MilestoneStatus getByLevel(int level){
@@ -58,6 +68,22 @@ public enum MilestoneStatus implements Level {
 	@Override
 	public int getLevel() {
 		return level;
+	}
+
+	public boolean isBindableToProject() {
+		return isBindableToProject;
+	}
+
+	public boolean isBindableToObject() {
+		return isBindableToObject;
+	}
+
+	public boolean isAllowObjectCreateAndDelete() {
+		return allowObjectCreateAndDelete;
+	}
+
+	public boolean isAllowObjectModification() {
+		return allowObjectModification;
 	}
 
 }

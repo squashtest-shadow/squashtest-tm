@@ -1,22 +1,18 @@
 /**
- *     This file is part of the Squashtest platform.
- *     Copyright (C) 2010 - 2015 Henix, henix.fr
+ * This file is part of the Squashtest platform. Copyright (C) 2010 - 2015 Henix, henix.fr
  *
- *     See the NOTICE file distributed with this work for additional
- *     information regarding copyright ownership.
+ * See the NOTICE file distributed with this work for additional information regarding copyright ownership.
  *
- *     This is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU Lesser General Public License as published by
- *     the Free Software Foundation, either version 3 of the License, or
- *     (at your option) any later version.
+ * This is free software: you can redistribute it and/or modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later
+ * version.
  *
- *     this software is distributed in the hope that it will be useful,
- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU Lesser General Public License for more details.
+ * this software is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied
+ * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
  *
- *     You should have received a copy of the GNU Lesser General Public License
- *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU Lesser General Public License along with this software. If not, see
+ * <http://www.gnu.org/licenses/>.
  */
 package org.squashtest.tm.domain.requirement;
 
@@ -81,20 +77,20 @@ import org.squashtest.tm.security.annotation.InheritsAcls;
 @PrimaryKeyJoinColumn(name = "RES_ID")
 @InheritsAcls(constrainedClass = Requirement.class, collectionName = "versions")
 @ClassBridges({
-	@ClassBridge(name = "attachments", store = Store.YES, analyze = Analyze.NO, impl = RequirementVersionAttachmentBridge.class),
-	@ClassBridge(name = "cufs", store = Store.YES, impl = CUFBridge.class, params = {
-		@Parameter(name = "type", value = "requirement"), @Parameter(name = "inputType", value = "ALL") }),
+		@ClassBridge(name = "attachments", store = Store.YES, analyze = Analyze.NO, impl = RequirementVersionAttachmentBridge.class),
+		@ClassBridge(name = "cufs", store = Store.YES, impl = CUFBridge.class, params = {
+				@Parameter(name = "type", value = "requirement"), @Parameter(name = "inputType", value = "ALL") }),
 		@ClassBridge(name = "cufs", store = Store.YES, analyze = Analyze.NO, impl = CUFBridge.class, params = {
-			@Parameter(name = "type", value = "requirement"),
-			@Parameter(name = "inputType", value = "DROPDOWN_LIST") }),
-			@ClassBridge(name = "isCurrentVersion", store = Store.YES, analyze = Analyze.NO, impl = RequirementVersionIsCurrentBridge.class),
-			@ClassBridge(name = "parent", store = Store.YES, analyze = Analyze.NO, impl = RequirementVersionHasParentBridge.class) })
+				@Parameter(name = "type", value = "requirement"),
+				@Parameter(name = "inputType", value = "DROPDOWN_LIST") }),
+		@ClassBridge(name = "isCurrentVersion", store = Store.YES, analyze = Analyze.NO, impl = RequirementVersionIsCurrentBridge.class),
+		@ClassBridge(name = "parent", store = Store.YES, analyze = Analyze.NO, impl = RequirementVersionHasParentBridge.class) })
 public class RequirementVersion extends Resource implements BoundEntity, MilestoneHolder {
 
 	@NotNull
 	@OneToMany(cascade = { CascadeType.REMOVE, CascadeType.REFRESH, CascadeType.MERGE }, mappedBy = "verifiedRequirementVersion")
-	@Field(name="testcases",  analyze = Analyze.NO, store = Store.YES)
-	@FieldBridge(impl=CollectionSizeBridge.class)
+	@Field(name = "testcases", analyze = Analyze.NO, store = Store.YES)
+	@FieldBridge(impl = CollectionSizeBridge.class)
 	private Set<RequirementVersionCoverage> requirementVersionCoverages = new HashSet<RequirementVersionCoverage>();
 
 	/***
@@ -114,7 +110,7 @@ public class RequirementVersion extends Resource implements BoundEntity, Milesto
 	@NotNull
 	@ManyToOne
 	@JoinColumn(name = "CATEGORY")
-	@Field(analyze=Analyze.NO, store=Store.YES)
+	@Field(analyze = Analyze.NO, store = Store.YES)
 	@FieldBridge(impl = InfoListItemBridge.class)
 	private InfoListItem category;
 
@@ -135,12 +131,11 @@ public class RequirementVersion extends Resource implements BoundEntity, Milesto
 	private int versionNumber = 1;
 
 	@FieldBridge(impl = CollectionSizeBridge.class)
-	@Field(analyze=Analyze.NO, store=Store.YES)
+	@Field(analyze = Analyze.NO, store = Store.YES)
 	@IndexedEmbedded
 	@ManyToMany
 	@JoinTable(name = "MILESTONE_REQ_VERSION", joinColumns = @JoinColumn(name = "REQ_VERSION_ID"), inverseJoinColumns = @JoinColumn(name = "MILESTONE_ID"))
 	private Set<Milestone> milestones = new HashSet<Milestone>();
-
 
 	public RequirementVersion() {
 		super();
@@ -244,7 +239,7 @@ public class RequirementVersion extends Resource implements BoundEntity, Milesto
 	}
 
 	private void checkModifiable() {
-		if (!status.isRequirementModifiable()) {
+		if (!isModifiable()) {
 			throw new IllegalRequirementModificationException();
 		}
 	}
@@ -271,7 +266,7 @@ public class RequirementVersion extends Resource implements BoundEntity, Milesto
 	 * @return <code>true</code> if this requirement's properties can be modified.
 	 */
 	public boolean isModifiable() {
-		return getStatus().isRequirementModifiable();
+		return getStatus().isRequirementModifiable() && milestonesAllowEdit();
 	}
 
 	/**
@@ -334,8 +329,8 @@ public class RequirementVersion extends Resource implements BoundEntity, Milesto
 		return copy;
 	}
 
-	private void bindSameMilestones(RequirementVersion src){
-		for (Milestone m : src.getMilestones()){
+	private void bindSameMilestones(RequirementVersion src) {
+		for (Milestone m : src.getMilestones()) {
 			bindMilestone(m);
 		}
 	}
@@ -369,7 +364,6 @@ public class RequirementVersion extends Resource implements BoundEntity, Milesto
 	 */
 	public static RequirementVersion createFromMemento(@NotNull RequirementVersionImportMemento memento) {
 		RequirementVersion res = new RequirementVersion();
-
 
 		res.setName(memento.getName());
 		res.setDescription(memento.getDescription());
@@ -411,7 +405,8 @@ public class RequirementVersion extends Resource implements BoundEntity, Milesto
 	/**
 	 * Simply add the coverage to this.requirementVersionCoverage
 	 * 
-	 * THIS DOES NOT SET THE coverage->version SIDE OF THE ASSOCIATION ! ONE SHOULD RATHER CALL coverage.setVerifiedRequirementVersion(..)
+	 * THIS DOES NOT SET THE coverage->version SIDE OF THE ASSOCIATION ! ONE SHOULD RATHER CALL
+	 * coverage.setVerifiedRequirementVersion(..)
 	 * 
 	 * @param coverage
 	 */
@@ -463,9 +458,8 @@ public class RequirementVersion extends Resource implements BoundEntity, Milesto
 		return Collections.unmodifiableSet(requirementVersionCoverages);
 	}
 
-
 	@Override
-	public Set<Milestone> getMilestones(){
+	public Set<Milestone> getMilestones() {
 		return milestones;
 	}
 
@@ -475,26 +469,34 @@ public class RequirementVersion extends Resource implements BoundEntity, Milesto
 	}
 
 	@Override
-	public void bindMilestone(Milestone milestone){
+	public void bindMilestone(Milestone milestone) {
 		milestones.add(milestone);
 	}
 
 	@Override
-	public void unbindMilestone(Milestone milestone){
+	public void unbindMilestone(Milestone milestone) {
 		unbindMilestone(milestone.getId());
 	}
 
 	@Override
-	public void unbindMilestone(Long milestoneId){
+	public void unbindMilestone(Long milestoneId) {
 		Iterator<Milestone> iter = milestones.iterator();
 
-		while(iter.hasNext()){
+		while (iter.hasNext()) {
 			Milestone m = iter.next();
-			if (m.getId().equals(milestoneId)){
+			if (m.getId().equals(milestoneId)) {
 				iter.remove();
 				break;
 			}
 		}
 	}
 
+	private boolean milestonesAllowEdit() {
+		for (Milestone m : milestones) {
+			if (!m.getStatus().isAllowObjectModification()) {
+				return false;
+			}
+		}
+		return true;
+	}
 }

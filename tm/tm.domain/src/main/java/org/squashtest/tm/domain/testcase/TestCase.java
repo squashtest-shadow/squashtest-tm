@@ -834,6 +834,17 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 		return isImportanceAuto();
 	}
 
-
+	public boolean isModifiable() {
+		return milestonesAllowEdit();
+	}
+	
+	private boolean milestonesAllowEdit() {
+		for (Milestone m : milestones) {
+			if (!m.getStatus().isAllowObjectModification()) {
+				return false;
+			}
+		}
+		return true;
+	}
 
 }
