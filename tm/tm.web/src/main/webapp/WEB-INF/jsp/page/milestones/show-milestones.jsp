@@ -41,17 +41,14 @@
   <jsp:attribute  name="head">	
     <comp:sq-css name="squash.grey.css" />
       <script type="text/javascript">
-      requirejs.config({
-        config : {
-          'milestone-manager' : {
-            data: {
-              currentUser : '${currentUser}',
-              isAdmin : ${isAdmin},
-              editableMilestoneIds : ${editableMilestoneIds}
-            }
-          }
+      squashtm = squashtm || {}
+      squashtm.milestoneManager = {
+        data: {
+          currentUser : '${currentUser}',
+          isAdmin : ${isAdmin},
+          editableMilestoneIds : ${editableMilestoneIds}
         }
-      });
+      }
       </script>
 <script id="confirm-milestone-switch-tpl" type="text/x-handlebars-template">
 <div class='display-table-row'>

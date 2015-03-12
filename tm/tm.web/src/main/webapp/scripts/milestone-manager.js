@@ -19,15 +19,13 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 require(["common"], function(){
-	require(["app/pubsub", "backbone.wreqr", 'module', "jquery", "squash.translator", "workspace.routing","squash.configmanager","squash.dateutils", "milestone-manager/MilestoneFeatureSwitch",
+	require(["app/pubsub", "backbone.wreqr", "jquery", "squash.translator", "workspace.routing","squash.configmanager","squash.dateutils", "milestone-manager/MilestoneFeatureSwitch",
 	         "jeditable.datepicker",  "squashtable", "app/ws/squashtm.workspace", "jquery.squash.formdialog", "jquery.squash.confirmdialog"],
-			function(ps, Wreqr, module, $, translator, routing, confman, dateutils, MilestoneFeatureSwitch){
+			function(ps, Wreqr, $, translator, routing, confman, dateutils, MilestoneFeatureSwitch){
 		"use strict";
 
 		squashtm = squashtm || {};
 		squashtm.vent = squashtm.vent || new Wreqr.EventAggregator();
-
-		var config = module.config();
 
 		function getPostDate(localizedDate) {
 			try {
@@ -67,7 +65,22 @@ require(["common"], function(){
 		return $("#milestones-table").squashTable();
 	}
 
+	$(document).on("click", "#delete-milestone-button", function() {
+		var ids = $table().getSelectedIds();
+
+		if (ids.length>0){
+			var popup = $("#delete-milestone-popup");
+			popup.data('entity-id', ids);
+			popup.confirmDialog('open');
+		} else {
+			warningWithTranslation ('message.EmptyTableSelection');
+		}
+	});
+
 	$(function() {
+		console.log("domready");
+		// squashtm cannot be read before because it might be inited after this module is loaded
+		var config = squashtm.milestoneManager;
 
 		var squashSettings = {
 					functions:{
@@ -93,10 +106,9 @@ require(["common"], function(){
 			};
 
 			var milestoneTable = $("#milestones-table").squashTable({"bServerSide":false},squashSettings);
-		});
-
 
 		var dateSettings = confman.getStdDatepicker();
+
 		$("#add-milestone-end-date").editable(function(value){
 			$("#add-milestone-end-date").text(value);
 	    }, {
@@ -113,7 +125,7 @@ require(["common"], function(){
 			name : "value"
 		});
 
-		this.$textAreas = $("textarea");
+		var $textAreas = $("textarea");
 
 		function decorateArea() {
 			$(this).ckeditor(function() {}, {
@@ -122,7 +134,7 @@ require(["common"], function(){
 			});
 		}
 
-		this.$textAreas.each(decorateArea);
+		$textAreas.each(decorateArea);
 
 
 		$("#delete-milestone-popup").confirmDialog().on('confirmdialogconfirm', function(){
@@ -141,29 +153,12 @@ require(["common"], function(){
 				table._fnAjaxUpdate();
 			});
 
-
 		});
-
-		$("#delete-milestone-button").on('click', function(){
-			var ids = $table().getSelectedIds();
-
-			if (ids.length>0){
-				var popup = $("#delete-milestone-popup");
-				popup.data('entity-id', ids);
-				popup.confirmDialog('open');
-			}
-			else{
-				warningWithTranslation ('message.EmptyTableSelection');
-			}
-		});
-
 
 	var addMilestoneDialog = $("#add-milestone-dialog");
-
 	addMilestoneDialog.formDialog();
 
-
-	function formatDate(date){
+	function formatDate(date) {
 		var format = translator.get("squashtm.dateformatShort");
 		var formatedDate = dateutils.format(date, format);
 		return dateutils.dateExists(formatedDate, format) ? formatedDate :"";
@@ -441,5 +436,6 @@ require(["common"], function(){
 
 		synchronizeMilestoneDialog.formDialog('close');
 		});
+	});
 	});
 });
