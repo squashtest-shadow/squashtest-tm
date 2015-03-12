@@ -30,7 +30,6 @@
 	@NamedQuery(name = "testCaseLibrary.findAll", query = "select tcl from Project p join p.testCaseLibrary tcl fetch all properties"),
 	@NamedQuery(name = "testCaseLibrary.findByRootContent", query = "from TestCaseLibrary where :content in elements(rootContent)"),
 
-
 	//RequirementLibrary
 	@NamedQuery(name = "requirementLibrary.findAll", query = "select rl from Project p join p.requirementLibrary rl fetch all properties"),
 	@NamedQuery(name = "requirementLibrary.findAllRootContentById", query = "select l.rootContent from RequirementLibrary l where l.id = :libraryId"),
@@ -182,7 +181,9 @@
 	@NamedQuery(name = "testCase.remove", query = "delete TestCase tc where tc.id in (:nodeIds)"),
 	@NamedQuery(name = "TestCase.findNodeIdsHavingMultipleMilestones", query = "select tc.id from TestCase tc join tc.milestones stones where tc.id in (:nodeIds) group by tc.id having count(stones) > 1 "),
 	@NamedQuery(name = "TestCase.findNonBoundTestCases", query = "select tc.id from TestCase tc where tc.id in (:nodeIds) and tc.id not in (select tcs.id from Milestone m join m.testCases tcs where m.id = :milestoneId)"),
-
+	@NamedQuery(name = "TestCase.findAllTestCasesLibraryForMilestone", query = "select tcl.id from TestCase tc join tc.project p join p.testCaseLibrary tcl join tc.milestones milestones where milestones.id = :milestoneId"),
+	@NamedQuery(name = "TestCase.findAllTestCasesLibraryNodeForMilestone", query = "select tcln.id from TestCase tc, TestCaseLibraryNode tcln join tc.milestones milestones where milestones.id = :milestoneId"),
+	
 	@NamedQuery(name = "testCase.findTestCaseDetails", query = "select new org.squashtest.tm.domain.NamedReference(tc.id, tc.name) from TestCase tc where tc.id in (:testCaseIds)"),
 
 	@NamedQuery(name = "testCase.findTestCasesHavingCallerDetails", query = "select new org.squashtest.tm.domain.NamedReferencePair(caller.id, caller.name, called.id, called.name) "

@@ -180,4 +180,9 @@ LibraryNavigationService<TestCaseLibrary, TestCaseFolder, TestCaseLibraryNode>, 
 	public List<String> findNamesInFolderStartingWith(final long folderId, final String nameStart);
 
 	public List<String> findNamesInLibraryStartingWith(final long libraryId, final String nameStart);
+
+	public List<Long> findAllTestCasesLibraryForMilestone(List<Long> milestoneIds);
+
+	public List<Long> findAllTestCasesLibraryNodeForMilestone(List<Long> milestoneIds);
+
 }

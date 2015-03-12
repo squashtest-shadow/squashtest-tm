@@ -100,8 +100,8 @@
           <ul th:class="${(usesMilestone) ? 'milestones-mode' : ''}">
             <li class="tab">
               <a href="#tree-pane" >
-                <span th:text="#{label.Milestone} + ' : ' + ${milestoneLabel}"></span>
-                <span id="tree-milestone-selector" class="clickable-item small-down-white-arrow"></span>
+              <span  id="dashboardMilestone"  th:text="#{label.Milestone} + ' : ' + ${milestoneLabel}"  class="clickable-item" style="text-decoration:none"></span> 
+              <span id="tree-milestone-selector" class="clickable-item small-down-white-arrow"></span>
               </a>
             </li>
           </ul>
@@ -118,7 +118,7 @@
                     <a th:text="#{tree.button.new-folder.label}+'...'">New folder...</a>
                   </li>
                   <li id="new-test-case-tree-button" class="ui-state-disabled cursor-pointer">
-                    <a th:text="#{tree.button.new-test-case.label}+'...'">New test casen...</a>
+                    <a th:text="#{tree.button.new-test-case.label}+'...'">New test case...</a>
                   </li>
 
                 </ul>

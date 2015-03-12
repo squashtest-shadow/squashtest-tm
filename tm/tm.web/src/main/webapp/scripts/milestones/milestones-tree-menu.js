@@ -20,7 +20,7 @@
  */
 
 
-define(['jquery', 'milestone-manager/milestone-activation', 'jquery.squash.formdialog' ], function($, milestones){
+define(['jquery', 'milestone-manager/milestone-activation', 'workspace.contextual-content', 'jquery.squash.formdialog' ], function($, milestones, ctxContent){
 	
 	
 	function configureTable(){
@@ -67,6 +67,7 @@ define(['jquery', 'milestone-manager/milestone-activation', 'jquery.squash.formd
 	
 	function init(){
 		
+		// the white down arrow menu
 		var dialog = $("#tree-milestone-dialog").formDialog(),
 			table = $("#tree-milestone-dialog-table");
 		
@@ -97,6 +98,11 @@ define(['jquery', 'milestone-manager/milestone-activation', 'jquery.squash.formd
 		
 		$("#tree-milestone-selector").on('click', function(){
 			dialog.formDialog('open');
+		});
+		
+		// the dashboard button
+		$("#dashboardMilestone").on('click', function(){
+	  ctxContent.loadWith(squashtm.app.contextRoot+"/test-case-browser/dashboard");
 		});
 	}
 	

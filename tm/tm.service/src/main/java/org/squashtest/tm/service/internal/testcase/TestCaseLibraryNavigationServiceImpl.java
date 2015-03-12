@@ -642,4 +642,14 @@ TestCaseLibraryNavigationService {
 
 	}
 
+	@Override
+	public List<Long> findAllTestCasesLibraryForMilestone(List<Long> milestoneIds) {
+		return testCaseDao.findAllTestCasesLibraryForMilestone(milestoneIds);
+	}
+
+	@Override
+	public List<Long> findAllTestCasesLibraryNodeForMilestone(List<Long> milestoneIds) {
+		return testCaseDao.findAllTestCasesLibraryNodeForMilestone(milestoneIds);
+	}
+
 }

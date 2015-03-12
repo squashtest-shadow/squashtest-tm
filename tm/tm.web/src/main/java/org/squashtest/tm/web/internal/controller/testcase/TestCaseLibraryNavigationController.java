@@ -271,4 +271,33 @@ LibraryNavigationController<TestCaseLibrary, TestCaseFolder, TestCaseLibraryNode
 		return "fragment/test-cases/test-cases-dashboard";
 	}
 
+	@RequestMapping(value = "/statistics", method = RequestMethod.GET, produces = ContentTypes.APPLICATION_JSON)
+	public @ResponseBody
+	TestCaseStatisticsBundle getStatisticsAsJson(
+			@CookieValue(value = "milestones", required = false, defaultValue = "") List<Long> milestoneIds) {
+		// Find library and node ids for specific milestone
+		List<Long> libraryIds = (List<Long>) testCaseLibraryNavigationService
+				.findAllTestCasesLibraryForMilestone(milestoneIds);
+		List<Long> nodeIds = (List<Long>) testCaseLibraryNavigationService
+				.findAllTestCasesLibraryNodeForMilestone(milestoneIds);
+
+		return testCaseLibraryNavigationService.getStatisticsForSelection(libraryIds, nodeIds);
+	}
+	
+	@RequestMapping(value = "/dashboard", method = RequestMethod.GET, produces = ContentTypes.TEXT_HTML)
+	public String getDashboardByMilestone(Model model,
+			@CookieValue(value = "milestones", required = false, defaultValue = "") List<Long> milestoneIds) {
+
+		// Find library and node ids for specific milestone
+		List<Long> libraryIds = (List<Long>) testCaseLibraryNavigationService.findAllTestCasesLibraryForMilestone(milestoneIds);
+		List<Long> nodeIds = (List<Long>) testCaseLibraryNavigationService.findAllTestCasesLibraryNodeForMilestone(milestoneIds);
+
+		TestCaseStatisticsBundle stats = testCaseLibraryNavigationService
+				.getStatisticsForSelection(libraryIds, nodeIds);
+		model.addAttribute("statistics", stats);
+		model.addAttribute("milestone", milestoneFinder.findById(milestoneIds.get(0)));
+
+		return "fragment/test-cases/test-cases-milestone-dashboard";
+	}
+
 }

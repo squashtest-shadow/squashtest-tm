@@ -48,4 +48,8 @@ public interface TestCaseDao extends CustomTestCaseDao {
 	List<Long> findNodeIdsHavingMultipleMilestones(@QueryParam("nodeIds") Collection<Long> nodeIds);
 
 	List<Long> findNonBoundTestCases(@QueryParam("nodeIds") Collection<Long> nodeIds, @QueryParam("milestoneId") Long milestoneId);
+	
+	List<Long> findAllTestCasesLibraryForMilestone(@QueryParam("milestoneId") Collection<Long> milestoneIds);
+
+	List<Long> findAllTestCasesLibraryNodeForMilestone(@QueryParam("milestoneId") Collection<Long> milestoneIds);
 }
