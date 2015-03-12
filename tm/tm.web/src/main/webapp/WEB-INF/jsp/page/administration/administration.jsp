@@ -67,11 +67,14 @@
         </a>
         
   
-   <a href="${ milestoneUrl }" class="unstyledLink">
+        <sec:authorize var="isAdmin" access="hasRole('ROLE_ADMIN')" />
+        <c:if test="${ isAdmin or milestoneFeatureEnabled }">
+        <a href="${ milestoneUrl }" class="unstyledLink">
           <span id="milestone-admin" class="admin-section-icon admin-milestone-icon"></span>
           <span class="admin-section-label"><f:message key="label.milestoneManagement" /></span>
         </a>
-              <sec:authorize access=" hasRole('ROLE_ADMIN')">
+        </c:if>
+        <sec:authorize access=" hasRole('ROLE_ADMIN')">
         <a href="${ customFieldsUrl }" class="unstyledLink">
           <span id="custom-fields-admin" class="admin-section-icon admin-customfields-icon"></span>
           <span class="admin-section-label"><f:message key="label.customFieldsManagement" /></span>

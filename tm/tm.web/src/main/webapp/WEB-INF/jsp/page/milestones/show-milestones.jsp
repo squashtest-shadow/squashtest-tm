@@ -28,6 +28,7 @@
 <%@ taglib prefix="s" uri="http://www.springframework.org/tags" %>
 <%@ taglib prefix="json" uri="http://org.squashtest.tm/taglib/json" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags"%>
 
 <s:url var="administrationUrl" value="/administration" />
 
@@ -54,6 +55,9 @@
 <div class='display-table-row'>
   <div class='display-table-cell warning-cell'>
     <div class='generic-question-signal'></div>
+    <c:if test="${milestoneFeatureEnabled}">
+    <div><img src="<c:url value='/images/Button_InfoList.jpg' />" width="64px" height="64px" /></div>
+    </c:if>
   </div>
   <div class='display-table-cell'>
     <span>{{first}}</span>
@@ -88,6 +92,7 @@
 <div class="fragment-body">
 
   <div class="cf">
+    <sec:authorize access=" hasRole('ROLE_ADMIN')">
     <div class="btn-toolbar left">
       <div id="milestone-feat-switch" class="btn-group" data-api="<c:url value='/features/milestones' />">
         <label for="milestone-feat-switch"><f:message key='message.UseMilestoneFeature' /></label>
@@ -96,6 +101,7 @@
       </div>
       <script type="text/javascript">publish("loaded.milestoneFeatureSwitch");</script>
     </div>
+    </sec:authorize>
     <c:set var="actionState" value="${ milestoneFeatureEnabled ? '' : 'disabled=\"disabled\"' }" />
     <div class="btn-toolbar right">
       <button id="new-milestone-button" ${ actionState } class="sq-btn milestone-dep" title="<f:message key='label.AddMilestone' />">
