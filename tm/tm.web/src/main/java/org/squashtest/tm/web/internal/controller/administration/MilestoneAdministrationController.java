@@ -71,7 +71,7 @@ public class MilestoneAdministrationController {
 	private ProjectFinder projectFinder;
 	@Inject
 	private UserAccountService userService;
-	
+
 	@RequestMapping(method = RequestMethod.POST)
 	@ResponseStatus(HttpStatus.CREATED)
 	public @ResponseBody long addMilestone(@Valid @ModelAttribute("add-milestone") Milestone milestone) {
@@ -94,14 +94,14 @@ public class MilestoneAdministrationController {
 			milestone.setRange(MilestoneRange.RESTRICTED);
 		}
 	}
-	
+
 	private void setPerimeter(Milestone milestone){
 		if (!permissionEvaluationService.hasRole("ROLE_ADMIN")) {
 			List<GenericProject> projects = projectFinder.findAllICanManage();
 			milestone.addProjectsToPerimeter(projects);
 		}
 	}
-	
+
 	@RequestMapping(value = "/{milestoneIds}", method = RequestMethod.DELETE)
 	public @ResponseBody void removeMilestones(@PathVariable("milestoneIds") List<Long> milestoneIds) {
 		milestoneManager.removeMilestones(milestoneIds);
@@ -131,7 +131,7 @@ public class MilestoneAdministrationController {
 
 	@RequestMapping(value = "/{motherId}/clone", method = RequestMethod.POST)
 	public @ResponseBody long cloneMilestone(@Valid @ModelAttribute("new-milestone") Milestone milestone, @RequestParam boolean bindToRequirements, @RequestParam boolean bindToTestCases, @RequestParam boolean bindToCampaigns, @PathVariable("motherId") long motherId) {
-		
+
 		if (permissionEvaluationService.hasRole("ROLE_ADMIN")) {
 			//keep range for admin user
 			milestone.setRange(milestoneManager.findById(motherId).getRange());
@@ -143,14 +143,14 @@ public class MilestoneAdministrationController {
 		milestoneManager.cloneMilestone(motherId, milestone, bindToRequirements, bindToTestCases, bindToCampaigns);
 		return milestone.getId();
 	}
-	
-	
+
+
 	@RequestMapping(value = "/{sourceId}/synchronize/{targetId}", method = RequestMethod.POST)
 	public @ResponseBody void synchronizeMilestone(@PathVariable("sourceId") long sourceId,  @PathVariable("targetId") long targetId, @RequestParam boolean extendPerimeter, @RequestParam boolean isUnion){
-		
+
 		milestoneManager.synchronize(sourceId, targetId, extendPerimeter, isUnion);
-		
+
 	}
-	
+
 
 }

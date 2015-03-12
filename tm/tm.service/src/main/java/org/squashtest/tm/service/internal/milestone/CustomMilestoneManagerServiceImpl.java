@@ -1,22 +1,18 @@
 /**
- *     This file is part of the Squashtest platform.
- *     Copyright (C) 2010 - 2015 Henix, henix.fr
+ * This file is part of the Squashtest platform. Copyright (C) 2010 - 2015 Henix, henix.fr
  *
- *     See the NOTICE file distributed with this work for additional
- *     information regarding copyright ownership.
+ * See the NOTICE file distributed with this work for additional information regarding copyright ownership.
  *
- *     This is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU Lesser General Public License as published by
- *     the Free Software Foundation, either version 3 of the License, or
- *     (at your option) any later version.
+ * This is free software: you can redistribute it and/or modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later
+ * version.
  *
- *     this software is distributed in the hope that it will be useful,
- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU Lesser General Public License for more details.
+ * this software is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied
+ * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
  *
- *     You should have received a copy of the GNU Lesser General Public License
- *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU Lesser General Public License along with this software. If not, see
+ * <http://www.gnu.org/licenses/>.
  */
 package org.squashtest.tm.service.internal.milestone;
 
@@ -29,6 +25,10 @@ import java.util.Set;
 
 import javax.inject.Inject;
 
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.squashtest.tm.domain.campaign.Campaign;
 import org.squashtest.tm.domain.milestone.Milestone;
@@ -40,6 +40,7 @@ import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.service.internal.repository.MilestoneDao;
+import org.squashtest.tm.service.internal.repository.MilestoneDao.HolderConsumer;
 import org.squashtest.tm.service.milestone.CustomMilestoneManager;
 import org.squashtest.tm.service.project.ProjectFinder;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
@@ -48,7 +49,7 @@ import org.squashtest.tm.service.user.UserAccountService;
 
 @Service("CustomMilestoneManager")
 public class CustomMilestoneManagerServiceImpl implements CustomMilestoneManager {
-
+	private static final Logger LOGGER = LoggerFactory.getLogger(CustomMilestoneManagerServiceImpl.class);
 
 	@Inject
 	private ProjectFinder projectFinder;
@@ -65,6 +66,8 @@ public class CustomMilestoneManagerServiceImpl implements CustomMilestoneManager
 	@Inject
 	private PermissionEvaluationService permissionEvaluationService;
 
+	@Inject
+	private SessionFactory sessionFactory;
 
 	@Override
 	public void addMilestone(Milestone milestone) {
@@ -188,7 +191,7 @@ public class CustomMilestoneManagerServiceImpl implements CustomMilestoneManager
 
 		Collection<Project> projects = projectFinder.findAllReadable();
 
-		for (Project p : projects){
+		for (Project p : projects) {
 			allMilestones.addAll(p.getMilestones());
 		}
 
@@ -248,15 +251,15 @@ public class CustomMilestoneManagerServiceImpl implements CustomMilestoneManager
 	}
 
 	@Override
-	public void migrateMilestones(MilestoneHolder member){
+	public void migrateMilestones(MilestoneHolder member) {
 
 		Collection<Milestone> projectMilestones = member.getProject().getMilestones();
 		Collection<Milestone> memberMilestones = member.getMilestones();
 
 		Iterator<Milestone> memberIterator = memberMilestones.iterator();
-		while(memberIterator.hasNext()){
+		while (memberIterator.hasNext()) {
 			Milestone m = memberIterator.next();
-			if (! projectMilestones.contains(m)){
+			if (!projectMilestones.contains(m)) {
 				memberIterator.remove();
 			}
 		}
@@ -278,7 +281,7 @@ public class CustomMilestoneManagerServiceImpl implements CustomMilestoneManager
 	private void bindCampaigns(Milestone mother, Milestone milestone, boolean bindToCampaigns, boolean copyAllPerimeter) {
 		if (bindToCampaigns) {
 			for (Campaign camp : mother.getCampaigns()) {
-				if (copyAllPerimeter || canIManageThisProject(camp.getProject())){
+				if (copyAllPerimeter || canIManageThisProject(camp.getProject())) {
 					milestone.bindCampaign(camp);
 				}
 			}
@@ -288,7 +291,7 @@ public class CustomMilestoneManagerServiceImpl implements CustomMilestoneManager
 	private void bindTestCases(Milestone mother, Milestone milestone, boolean bindToTestCases, boolean copyAllPerimeter) {
 		if (bindToTestCases) {
 			for (TestCase tc : mother.getTestCases()) {
-				if (copyAllPerimeter || canIManageThisProject(tc.getProject())){
+				if (copyAllPerimeter || canIManageThisProject(tc.getProject())) {
 					milestone.bindTestCase(tc);
 				}
 			}
@@ -299,37 +302,38 @@ public class CustomMilestoneManagerServiceImpl implements CustomMilestoneManager
 			boolean copyAllPerimeter) {
 		if (bindToRequirements) {
 			for (RequirementVersion req : mother.getRequirementVersions()) {
-				if (copyAllPerimeter || canIManageThisProject(req.getProject())){
+				if (copyAllPerimeter || canIManageThisProject(req.getProject())) {
 					milestone.bindRequirementVersion(req);
 				}
 			}
 		}
 	}
 
-
 	@Override
 	public void synchronize(long sourceId, long targetId, boolean extendPerimeter, boolean isUnion) {
 
-
 		Milestone source = findById(sourceId);
 		Milestone target = findById(targetId);
-		verifyCanSynchronize(source,target, isUnion);
+		verifyCanSynchronize(source, target, isUnion);
 		synchronizePerimeterAndProjects(source, target, extendPerimeter, isUnion);
 		synchronizeTestCases(source, target, isUnion, extendPerimeter);
 		synchronizeRequirementVersions(source, target, isUnion, extendPerimeter);
 		synchronizeCampaigns(source, target, isUnion, extendPerimeter);
 	}
 
-
-
 	private void verifyCanSynchronize(Milestone source, Milestone target, boolean isUnion) {
 
-		if (isUnion && (source.getStatus() != MilestoneStatus.IN_PROGRESS || !permissionEvaluationService.hasRole("ROLE_ADMIN") && isGlobal(source))){
-			throw new IllegalArgumentException("milestone can't be synchronized because it's status or range don't allow it");
+		if (isUnion
+				&& (source.getStatus() != MilestoneStatus.IN_PROGRESS || !permissionEvaluationService
+						.hasRole("ROLE_ADMIN") && isGlobal(source))) {
+			throw new IllegalArgumentException(
+					"milestone can't be synchronized because it's status or range don't allow it");
 		}
 
-		if (target.getStatus() != MilestoneStatus.IN_PROGRESS || !permissionEvaluationService.hasRole("ROLE_ADMIN") && isGlobal(target)){
-			throw new IllegalArgumentException("milestone can't be synchronized because it's status or range don't allow it");
+		if (target.getStatus() != MilestoneStatus.IN_PROGRESS || !permissionEvaluationService.hasRole("ROLE_ADMIN")
+				&& isGlobal(target)) {
+			throw new IllegalArgumentException(
+					"milestone can't be synchronized because it's status or range don't allow it");
 		}
 
 	}
@@ -376,7 +380,7 @@ public class CustomMilestoneManagerServiceImpl implements CustomMilestoneManager
 			}
 		}
 		List<Long> ids = new ArrayList<Long>();
-		for (GenericProject p : result){
+		for (GenericProject p : result) {
 			ids.add(p.getId());
 		}
 		return ids;
@@ -421,6 +425,40 @@ public class CustomMilestoneManagerServiceImpl implements CustomMilestoneManager
 			adminSynchronize(source, target, isUnion);
 		} else {
 			projectManagerSynchronize(source, target, isUnion, extendPerimeter);
+		}
+	}
+
+	/**
+	 * @see org.squashtest.tm.service.milestone.CustomMilestoneManager#enableFeature()
+	 */
+	@Override
+	public void enableFeature() {
+		// NOOP (AFAIK)
+
+	}
+
+	/**
+	 * @see org.squashtest.tm.service.milestone.CustomMilestoneManager#disableFeature()
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public void disableFeature() {
+		LOGGER.info("Disabling the Milestones feature : I am about to nuke all milestones from database");
+
+		milestoneDao.performBatchUpdate(new HolderConsumer() {
+			@Override
+			public void consume(MilestoneHolder holder) {
+				holder.unbindAllMilestones();
+			}
+		});
+
+		Session session = sessionFactory.getCurrentSession();
+		List<Milestone> milestones = session.createQuery("from Milestone").list();
+
+		for (Milestone milestone : milestones) {
+			milestone.unbindAllProjects();
+			milestone.clearPerimeter();
+			session.delete(milestone);
 		}
 	}
 }

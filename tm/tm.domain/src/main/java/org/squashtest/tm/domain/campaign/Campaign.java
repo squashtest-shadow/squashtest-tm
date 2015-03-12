@@ -506,5 +506,14 @@ public class Campaign extends CampaignLibraryNode implements NodeContainer<Itera
 		}
 	}
 
+	/**
+	 * @see org.squashtest.tm.domain.milestone.MilestoneHolder#unbindAllMilestones()
+	 */
+	@Override
+	public void unbindAllMilestones() {
+		milestones.clear();
+
+	}
+
 
 }

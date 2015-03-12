@@ -18,23 +18,23 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.security;
+
+package org.squashtest.tm.service.feature;
 
 /**
- * Defines constants for authorization rules.
+ *
+ * Facade for Squash TM feature management
  *
  * @author Gregory Fouquet
  *
  */
-public final class Authorizations {
-	private Authorizations() {
-		super();
+public interface FeatureManager {
+	// @formatter:off
+	public enum Feature {
+		MILESTONE
 	}
+	// @formatter:on
+	boolean isEnabled(Feature feature);
 
-	public static final String HAS_ROLE_ADMIN = "hasRole('ROLE_ADMIN')";
-
-	public static final String OR_HAS_ROLE_ADMIN = " or hasRole('ROLE_ADMIN')";
-
-	public static final String MILESTONE_FEAT_ENABLED = "@featureManager.isEnabled('MILESTONE')";
-
+	void setEnabled(Feature feature, boolean enabled);
 }

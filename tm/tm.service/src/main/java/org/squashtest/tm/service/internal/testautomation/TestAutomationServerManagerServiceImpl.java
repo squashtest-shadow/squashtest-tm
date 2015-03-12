@@ -38,6 +38,7 @@ import org.squashtest.tm.exception.NameAlreadyInUseException;
 import org.squashtest.tm.exception.testautomation.UserAndServerDefinedAlreadyException;
 import org.squashtest.tm.service.internal.repository.TestAutomationProjectDao;
 import org.squashtest.tm.service.internal.repository.TestAutomationServerDao;
+import org.squashtest.tm.service.security.Authorizations;
 import org.squashtest.tm.service.testautomation.TestAutomationServerManagerService;
 
 @Transactional
@@ -57,7 +58,7 @@ public class TestAutomationServerManagerServiceImpl implements TestAutomationSer
 	}
 
 	@Override
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize(Authorizations.HAS_ROLE_ADMIN)
 	/**
 	 * @see TestAutomationServerManagerService#persist(TestAutomationServer)
 	 */
@@ -80,13 +81,13 @@ public class TestAutomationServerManagerServiceImpl implements TestAutomationSer
 	}
 
 	@Override
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize(Authorizations.HAS_ROLE_ADMIN)
 	public boolean hasBoundProjects(long serverId) {
 		return serverDao.hasBoundProjects(serverId);
 	}
 
 	@Override
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize(Authorizations.HAS_ROLE_ADMIN)
 	public boolean hasExecutedTests(long serverId) {
 		Collection<Long> projectIds = projectDao.findHostedProjectIds(serverId);
 		return projectDao.haveExecutedTestsByIds(projectIds);
@@ -97,14 +98,14 @@ public class TestAutomationServerManagerServiceImpl implements TestAutomationSer
 	 * @see TestAutomationServerManagerService#deleteServer(long)
 	 */
 	@Override
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize(Authorizations.HAS_ROLE_ADMIN)
 	public void deleteServer(long serverId) {
 		projectDao.deleteAllHostedProjects(serverId);
 		serverDao.deleteServer(serverId);
 	}
 
 	@Override
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize(Authorizations.HAS_ROLE_ADMIN)
 	public void deleteServer(List<Long> serverIds) {
 		for (Long id : serverIds) {
 			projectDao.deleteAllHostedProjects(id);
@@ -130,7 +131,7 @@ public class TestAutomationServerManagerServiceImpl implements TestAutomationSer
 	}
 
 	@Override
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize(Authorizations.HAS_ROLE_ADMIN)
 	public void changeURL(long serverId, URL url) {
 
 		TestAutomationServer server = serverDao.findById(serverId);
@@ -140,7 +141,7 @@ public class TestAutomationServerManagerServiceImpl implements TestAutomationSer
 	}
 
 	@Override
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize(Authorizations.HAS_ROLE_ADMIN)
 	public void changeName(long serverId, String newName) {
 		TestAutomationServer server = serverDao.findById(serverId);
 		if (newName.equals(server.getName())) {
@@ -155,7 +156,7 @@ public class TestAutomationServerManagerServiceImpl implements TestAutomationSer
 	}
 
 	@Override
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize(Authorizations.HAS_ROLE_ADMIN)
 	public void changeLogin(long serverId, String login) {
 		TestAutomationServer server = serverDao.findById(serverId);
 		checkNoConflicts(server, login);
@@ -163,21 +164,21 @@ public class TestAutomationServerManagerServiceImpl implements TestAutomationSer
 	}
 
 	@Override
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize(Authorizations.HAS_ROLE_ADMIN)
 	public void changePassword(long serverId, String password) {
 		TestAutomationServer server = serverDao.findById(serverId);
 		server.setPassword(password);
 	}
 
 	@Override
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize(Authorizations.HAS_ROLE_ADMIN)
 	public void changeDescription(long serverId, String description) {
 		TestAutomationServer server = serverDao.findById(serverId);
 		server.setDescription(description);
 	}
 
 	@Override
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize(Authorizations.HAS_ROLE_ADMIN)
 	public void changeManualSlaveSelection(long serverId, boolean manualSlaveSelection) {
 		TestAutomationServer server = serverDao.findById(serverId);
 		server.setManualSlaveSelection(manualSlaveSelection);

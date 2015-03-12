@@ -1,22 +1,18 @@
 /**
- *     This file is part of the Squashtest platform.
- *     Copyright (C) 2010 - 2015 Henix, henix.fr
- *
- *     See the NOTICE file distributed with this work for additional
- *     information regarding copyright ownership.
- *
- *     This is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU Lesser General Public License as published by
- *     the Free Software Foundation, either version 3 of the License, or
- *     (at your option) any later version.
- *
- *     this software is distributed in the hope that it will be useful,
- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU Lesser General Public License for more details.
- *
- *     You should have received a copy of the GNU Lesser General Public License
- *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
+ * This file is part of the Squashtest platform. Copyright (C) 2010 - 2015 Henix, henix.fr
+ * 
+ * See the NOTICE file distributed with this work for additional information regarding copyright ownership.
+ * 
+ * This is free software: you can redistribute it and/or modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later
+ * version.
+ * 
+ * this software is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied
+ * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
+ * 
+ * You should have received a copy of the GNU Lesser General Public License along with this software. If not, see
+ * <http://www.gnu.org/licenses/>.
  */
 package org.squashtest.tm.domain.testcase;
 
@@ -96,19 +92,16 @@ import org.squashtest.tm.exception.requirement.RequirementAlreadyVerifiedExcepti
 	@ClassBridge(name = "issues", store = Store.YES, impl = TestCaseIssueBridge.class),
 	@ClassBridge(name = "cufs", store = Store.YES, impl = CUFBridge.class, params = {
 		@org.hibernate.search.annotations.Parameter(name = "type", value = "testcase"),
-		@org.hibernate.search.annotations.Parameter(name = "inputType", value = "ALL")
-	}),
-	@ClassBridge(name = "cufs", store = Store.YES, analyze = Analyze.NO, impl = CUFBridge.class, params = {
-		@org.hibernate.search.annotations.Parameter(name = "type", value = "testcase"),
-		@org.hibernate.search.annotations.Parameter(name = "inputType", value = "DROPDOWN_LIST")
-	})
-})
+		@org.hibernate.search.annotations.Parameter(name = "inputType", value = "ALL") }),
+		@ClassBridge(name = "cufs", store = Store.YES, analyze = Analyze.NO, impl = CUFBridge.class, params = {
+			@org.hibernate.search.annotations.Parameter(name = "type", value = "testcase"),
+			@org.hibernate.search.annotations.Parameter(name = "inputType", value = "DROPDOWN_LIST") }) })
 @PrimaryKeyJoinColumn(name = "TCLN_ID")
 public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, BoundEntity, MilestoneHolder {
 	private static final Logger LOGGER = LoggerFactory.getLogger(TestCaseLibraryNode.class);
 	private static final String CLASS_NAME = "org.squashtest.tm.domain.testcase.TestCase";
 	private static final String SIMPLE_CLASS_NAME = "TestCase";
-	public static final int MAX_REF_SIZE=50;
+	public static final int MAX_REF_SIZE = 50;
 	@Column(updatable = false)
 	private final int version = 1;
 
@@ -118,7 +111,7 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	private String reference = "";
 
 	@Lob
-	@Type(type="org.hibernate.type.StringClobType")
+	@Type(type = "org.hibernate.type.StringClobType")
 	@Field
 	private String prerequisite = "";
 
@@ -127,54 +120,54 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	@OrderColumn(name = "STEP_ORDER")
 	@JoinTable(name = "TEST_CASE_STEPS", joinColumns = @JoinColumn(name = "TEST_CASE_ID"), inverseJoinColumns = @JoinColumn(name = "STEP_ID"))
 	@FieldBridge(impl = CollectionSizeBridge.class)
-	@Field(analyze=Analyze.NO, store=Store.YES)
+	@Field(analyze = Analyze.NO, store = Store.YES)
 	private final List<TestStep> steps = new ArrayList<TestStep>();
 
 	@NotNull
 	@OneToMany(cascade = { CascadeType.REMOVE, CascadeType.REFRESH, CascadeType.MERGE })
 	@JoinColumn(name = "VERIFYING_TEST_CASE_ID")
 	@FieldBridge(impl = CollectionSizeBridge.class)
-	@Field(name="requirements",analyze=Analyze.NO, store=Store.YES)
+	@Field(name = "requirements", analyze = Analyze.NO, store = Store.YES)
 	private Set<RequirementVersionCoverage> requirementVersionCoverages = new HashSet<RequirementVersionCoverage>(0);
 
 	@NotNull
 	@OneToMany(cascade = { CascadeType.ALL }, mappedBy = "testCase")
 	@OrderBy("name")
-	@Field(analyze=Analyze.NO, store=Store.YES)
+	@Field(analyze = Analyze.NO, store = Store.YES)
 	@FieldBridge(impl = CollectionSizeBridge.class)
 	private Set<Parameter> parameters = new HashSet<Parameter>(0);
 
 	@NotNull
 	@OneToMany(cascade = { CascadeType.ALL }, mappedBy = "testCase")
 	@OrderBy("name")
-	@Field(analyze=Analyze.NO, store=Store.YES)
+	@Field(analyze = Analyze.NO, store = Store.YES)
 	@FieldBridge(impl = CollectionSizeBridge.class)
 	private Set<Dataset> datasets = new HashSet<Dataset>(0);
 
 	@NotNull
 	@Enumerated(EnumType.STRING)
-	@Field(analyze=Analyze.NO, store=Store.YES)
+	@Field(analyze = Analyze.NO, store = Store.YES)
 	@FieldBridge(impl = LevelEnumBridge.class)
 	private TestCaseImportance importance = LOW;
 
 	@NotNull
 	@ManyToOne
 	@JoinColumn(name = "TC_NATURE")
-	@Field(analyze=Analyze.NO, store=Store.YES)
+	@Field(analyze = Analyze.NO, store = Store.YES)
 	@FieldBridge(impl = InfoListItemBridge.class)
 	private InfoListItem nature = null;
 
 	@NotNull
 	@ManyToOne
 	@JoinColumn(name = "TC_TYPE")
-	@Field(analyze=Analyze.NO, store=Store.YES)
+	@Field(analyze = Analyze.NO, store = Store.YES)
 	@FieldBridge(impl = InfoListItemBridge.class)
 	private InfoListItem type = null;
 
 	@NotNull
 	@Enumerated(EnumType.STRING)
 	@Column(name = "TC_STATUS")
-	@Field(analyze=Analyze.NO, store=Store.YES)
+	@Field(analyze = Analyze.NO, store = Store.YES)
 	@FieldBridge(impl = LevelEnumBridge.class)
 	private TestCaseStatus status = TestCaseStatus.WORK_IN_PROGRESS;
 
@@ -396,8 +389,8 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 		}
 	}
 
-	private void bindSameMilestones(TestCase src){
-		for (Milestone m : src.getMilestones()){
+	private void bindSameMilestones(TestCase src) {
+		for (Milestone m : src.getMilestones()) {
 			this.bindMilestone(m);
 		}
 	}
@@ -640,7 +633,7 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 		List<RequirementVersionCoverage> createdCoverages = new ArrayList<RequirementVersionCoverage>();
 		for (RequirementVersionCoverage coverage : this.requirementVersionCoverages) {
 			RequirementVersionCoverage covCopy = coverage.copyForTestCase(copy);
-			if (covCopy != null){
+			if (covCopy != null) {
 				createdCoverages.add(covCopy);
 			}
 
@@ -741,35 +734,35 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 		this.datasets.add(dataset);
 	}
 
-	public void removeDataset(@NotNull Dataset dataset){
+	public void removeDataset(@NotNull Dataset dataset) {
 		this.datasets.remove(dataset);
 	}
 
-	public Set<Milestone> getMilestones(){
+	public Set<Milestone> getMilestones() {
 		return milestones;
 	}
 
-	public void bindMilestone(Milestone milestone){
+	public void bindMilestone(Milestone milestone) {
 		milestones.add(milestone);
 	}
 
-	public void unbindMilestone(Milestone milestone){
+	public void unbindMilestone(Milestone milestone) {
 		unbindMilestone(milestone.getId());
 	}
 
-	public void unbindMilestone(Long milestoneId){
+	public void unbindMilestone(Long milestoneId) {
 		Iterator<Milestone> iter = milestones.iterator();
 
-		while(iter.hasNext()){
+		while (iter.hasNext()) {
 			Milestone m = iter.next();
-			if (m.getId().equals(milestoneId)){
+			if (m.getId().equals(milestoneId)) {
 				iter.remove();
 				break;
 			}
 		}
 	}
 
-	public void clearMilestones(){
+	public void clearMilestones() {
 		milestones.clear();
 	}
 
@@ -827,11 +820,20 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	}
 
 	/**
-	 * Same as {@link #isImportanceAuto()}, required as per javabean spec since it returns a Boolean instead of a boolean.
-	 * @return the importanceAuto
+	 * Same as {@link #isImportanceAuto()}, required as per javabean spec since it returns a Boolean instead of a
+	 * boolean.
+	 * 
 	 */
 	public Boolean getImportanceAuto() {
 		return isImportanceAuto();
+	}
+
+	/**
+	 * @see org.squashtest.tm.domain.milestone.MilestoneHolder#unbindAllMilestones()
+	 */
+	@Override
+	public void unbindAllMilestones() {
+		milestones.clear();
 	}
 
 	public boolean isModifiable() {

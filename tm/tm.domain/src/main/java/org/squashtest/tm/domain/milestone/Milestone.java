@@ -88,7 +88,6 @@ public class Milestone  {
 	private String label;
 
 	@Enumerated(EnumType.STRING)
-	@Column(name = "STATUS")
 	@FieldBridge(impl = LevelEnumBridge.class)
 	private MilestoneStatus status;
 
@@ -113,14 +112,17 @@ public class Milestone  {
 	@ManyToOne
 	private User owner;
 
+	@Deprecated
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(name = "MILESTONE_TEST_CASE", joinColumns = @JoinColumn(name = "MILESTONE_ID"), inverseJoinColumns = @JoinColumn(name = "TEST_CASE_ID"))
 	private Set<TestCase> testCases = new HashSet<>();
 
+	@Deprecated
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(name = "MILESTONE_REQ_VERSION", joinColumns = @JoinColumn(name = "MILESTONE_ID"), inverseJoinColumns = @JoinColumn(name = "REQ_VERSION_ID"))
 	private Set<RequirementVersion> requirementVersions = new HashSet<>();
 
+	@Deprecated
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(name = "MILESTONE_CAMPAIGN", joinColumns = @JoinColumn(name = "MILESTONE_ID"), inverseJoinColumns = @JoinColumn(name = "CAMPAIGN_ID"))
 	private Set<Campaign> campaigns = new HashSet<>();
@@ -265,22 +267,27 @@ public class Milestone  {
 		}
 	}
 
+	@Deprecated
 	public Set<TestCase> getTestCases() {
 		return testCases;
 	}
 
+	@Deprecated
 	public Set<RequirementVersion> getRequirementVersions() {
 		return requirementVersions;
 	}
 
+	@Deprecated
 	public Set<Campaign> getCampaigns() {
 		return campaigns;
 	}
 
+	@Deprecated
 	public void bindTestCase(TestCase testCase) {
 		testCases.add(testCase);
 	}
 
+	@Deprecated
 	public void bindRequirementVersion(RequirementVersion version) {
 
 		// we need to exit early because this case is legit
@@ -315,54 +322,10 @@ public class Milestone  {
 		campaigns.add(campaign);
 	}
 
-	public void unbindTestCase(TestCase testCase) {
-		unbindTestCase(testCase.getId());
-	}
-
-	public void unbindTestCase(Long testCaseId) {
-		Iterator<TestCase> iter = testCases.iterator();
-		while (iter.hasNext()) {
-			TestCase tc = iter.next();
-			if (tc.getId().equals(testCaseId)) {
-				iter.remove();
-				break;
-			}
-		}
-	}
-
-	public void unbindRequirementVersion(RequirementVersion reqVersion) {
-		unbindRequirementVersion(reqVersion.getId());
-	}
-
-	public void unbindRequirementVersion(Long reqVersionId) {
-		Iterator<RequirementVersion> iter = requirementVersions.iterator();
-		while (iter.hasNext()) {
-			RequirementVersion rv = iter.next();
-			if (rv.getId().equals(reqVersionId)) {
-				iter.remove();
-				break;
-			}
-		}
-	}
-
-	public void unbindCampaign(Campaign campaign) {
-		unbindCampaign(campaign.getId());
-	}
-
-	public void unbindCampaign(Long campaignId) {
-		Iterator<Campaign> iter = campaigns.iterator();
-		while (iter.hasNext()) {
-			Campaign camp = iter.next();
-			if (camp.getId().equals(campaignId)) {
-				iter.remove();
-				break;
-			}
-		}
-	}
-
 
 	public boolean isBoundToATemplate() {
 
+		// XXX IMHO this may not work because of hibernate proxies
 		for (GenericProject project : projects) {
 			if (project instanceof ProjectTemplate) {
 				return true;
@@ -372,25 +335,26 @@ public class Milestone  {
 	}
 
 	public void removeTemplates() {
-
-		Iterator<GenericProject> iterPerim = perimeter.iterator();
-		while (iterPerim.hasNext()) {
-			GenericProject proj = iterPerim.next();
-			if (proj instanceof ProjectTemplate) {
-				iterPerim.remove();
-			}
-		}
-
-		Iterator<GenericProject> iterProject = projects.iterator();
-		while (iterProject.hasNext()) {
-			GenericProject proj = iterProject.next();
-			if (proj instanceof ProjectTemplate) {
-				iterProject.remove();
-			}
-		}
-
+		removeTemplates(perimeter);
+		removeTemplates(projects);
 	}
 
+	private void removeTemplates(Collection<GenericProject> col) {
+		// XXX IMHO this may not work because of hibernate proxies
+		Iterator<GenericProject> iter = col.iterator();
+		while (iter.hasNext()) {
+			GenericProject proj = iter.next();
+			if (proj instanceof ProjectTemplate) {
+				iter.remove();
+			}
+		}
+	}
+
+	/**
+	 * @deprecated all hell shall break loose when this method is called
+	 * @return
+	 */
+	@Deprecated
 	public boolean isBoundToObjects() {
 
 		if (testCases.isEmpty() && requirementVersions.isEmpty() && campaigns.isEmpty()) {
@@ -401,5 +365,13 @@ public class Milestone  {
 
 	public boolean isLocked(){
 		return MilestoneStatus.LOCKED == status;
+	}
+
+	public void unbindAllProjects() {
+		projects.clear();
+	}
+
+	public void clearPerimeter() {
+		perimeter.clear();
 	}
 }

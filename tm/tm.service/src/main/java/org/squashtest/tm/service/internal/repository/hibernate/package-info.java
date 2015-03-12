@@ -30,6 +30,7 @@
 	@NamedQuery(name = "testCaseLibrary.findAll", query = "select tcl from Project p join p.testCaseLibrary tcl fetch all properties"),
 	@NamedQuery(name = "testCaseLibrary.findByRootContent", query = "from TestCaseLibrary where :content in elements(rootContent)"),
 
+
 	//RequirementLibrary
 	@NamedQuery(name = "requirementLibrary.findAll", query = "select rl from Project p join p.requirementLibrary rl fetch all properties"),
 	@NamedQuery(name = "requirementLibrary.findAllRootContentById", query = "select l.rootContent from RequirementLibrary l where l.id = :libraryId"),
@@ -181,6 +182,7 @@
 	@NamedQuery(name = "testCase.remove", query = "delete TestCase tc where tc.id in (:nodeIds)"),
 	@NamedQuery(name = "TestCase.findNodeIdsHavingMultipleMilestones", query = "select tc.id from TestCase tc join tc.milestones stones where tc.id in (:nodeIds) group by tc.id having count(stones) > 1 "),
 	@NamedQuery(name = "TestCase.findNonBoundTestCases", query = "select tc.id from TestCase tc where tc.id in (:nodeIds) and tc.id not in (select tcs.id from Milestone m join m.testCases tcs where m.id = :milestoneId)"),
+	@NamedQuery(name = "TestCase.findAllWithMilestones", query = "from TestCase tc where tc.milestones is empty"),
 	@NamedQuery(name = "TestCase.findAllTestCasesLibraryForMilestone", query = "select tcl.id from TestCase tc join tc.project p join p.testCaseLibrary tcl join tc.milestones milestones where milestones.id = :milestoneId"),
 	@NamedQuery(name = "TestCase.findAllTestCasesLibraryNodeForMilestone", query = "select tcln.id from TestCase tc, TestCaseLibraryNode tcln join tc.milestones milestones where milestones.id = :milestoneId"),
 	
@@ -265,6 +267,7 @@
 	@NamedQuery(name = "campaign.remove", query = "delete Campaign c where c.id in (:nodeIds)"),
 	@NamedQuery(name = "campaign.findCampaignIdsHavingMultipleMilestones", query = "select c.id from Campaign c join c.milestones stones where c.id in (:nodeIds) group by c.id having count(stones) > 1 "),
 	@NamedQuery(name = "campaign.findNonBoundCampaign", query = "select c.id from Campaign c where c.id in (:nodeIds) and c.id not in (select cs.id from Milestone m join m.campaigns cs where m.id = :milestoneId)"),
+	@NamedQuery(name = "Campaign.findAllWithMilestones", query = "from Campaign c where c.milestones is empty"),
 
 	//TestStep
 	@NamedQuery(name = "testStep.findParentNode", query = "select testcase from TestCase as testcase join testcase.steps tcSteps where tcSteps.id= :childId "),
@@ -435,6 +438,7 @@
 	@NamedQuery(name = "requirementVersion.findDistinctRequirementsCriticalities", query = "select distinct r.criticality from RequirementVersion as r  where r.id in (:requirementsIds) "),
 	@NamedQuery(name = "requirementVersion.findLatestRequirementVersion", query = "select version from Requirement req join req.resource version where req.id = :requirementId"),
 	@NamedQuery(name = "requirementVersion.findVersionByRequirementAndMilestone", query = "select version from Requirement req join req.versions version join version.milestones milestone where req.id = :requirementId and milestone.id = :milestoneId"),
+	@NamedQuery(name = "RequirementVersion.findAllWithMilestones", query = "from RequirementVersion rv where rv.milestones is empty"),
 
 	@NamedQuery(name = "RequirementVersion.countByRequirement", query = "select count(rv) from RequirementVersion rv join rv.requirement r where r.id = ?1"),
 	@NamedQuery(name = "requirementDeletionDao.findVersionIds", query = "select rv.id from RequirementVersion rv join rv.requirement r where r.id in (:reqIds)"),

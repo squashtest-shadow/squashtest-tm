@@ -452,7 +452,7 @@
 		</osgi:interfaces>
 	</osgi:service>
 
-
+  <osgi:service ref="featureManager" interface="org.squashtest.tm.service.feature.FeatureManager" />
 
 	<!-- Bugtracker connectors registry -->
 	<osgi:list id="bugtracker.plugins.registry"
