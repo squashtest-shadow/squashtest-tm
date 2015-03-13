@@ -35,9 +35,6 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<layout:info-page-layout titleKey="squashtm.milestone.title" isSubPaged="true">
-	<div class="container">
-
 		<%
 			if (session.getAttribute(AbstractAuthenticationProcessingFilter.SPRING_SECURITY_LAST_EXCEPTION_KEY) != null
 					&& !(session
@@ -90,8 +87,6 @@
 			</form>
 
 		</authz:authorize>
-
-	</div>
-</layout:info-page-layout>
+</html>
 
 
