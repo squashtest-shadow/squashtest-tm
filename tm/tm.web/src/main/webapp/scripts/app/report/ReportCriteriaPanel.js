@@ -505,8 +505,6 @@ function(Backbone, _, FormModel, ButtonUtil, treeBuilder, ProjectsPickerPopup, S
 					
 			});
 			
-			
-			console.log(evt);
 		}
 
 	});
