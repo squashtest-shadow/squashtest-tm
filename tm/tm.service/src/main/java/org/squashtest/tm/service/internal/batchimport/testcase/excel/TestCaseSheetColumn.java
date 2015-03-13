@@ -26,9 +26,9 @@ import static org.squashtest.tm.service.internal.batchimport.testcase.excel.Colu
 
 /**
  * Enumerates columns in the test case worksheet
- * 
+ *
  * @author Gregory Fouquet
- * 
+ *
  */
 public enum TestCaseSheetColumn implements TemplateColumn {
 	ACTION,
@@ -39,7 +39,7 @@ public enum TestCaseSheetColumn implements TemplateColumn {
 	TC_ID(IGNORED),
 	TC_REFERENCE,
 	TC_NAME,
- TC_MILESTONE,
+	TC_MILESTONE,
 	TC_WEIGHT_AUTO,
 	TC_WEIGHT,
 	TC_NATURE,

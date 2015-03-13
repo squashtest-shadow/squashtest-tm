@@ -53,6 +53,7 @@ import org.squashtest.tm.domain.library.ExportData;
 import org.squashtest.tm.domain.library.Folder;
 import org.squashtest.tm.domain.library.Library;
 import org.squashtest.tm.domain.library.LibraryNode;
+import org.squashtest.tm.domain.testcase.ExportTestCaseData;
 import org.squashtest.tm.exception.library.RightsUnsuficientsForOperationException;
 import org.squashtest.tm.service.deletion.OperationReport;
 import org.squashtest.tm.service.deletion.SuppressionPreviewReport;
@@ -269,9 +270,26 @@ public abstract class LibraryNavigationController<LIBRARY extends Library<? exte
 		}
 	}
 
+	/**
+	 * @param dataSource
+	 * @param filename2
+	 * @param jasperExportFile
+	 * @param response
+	 * @param locale
+	 * @param string
+	 * @param keepRteFormat
+	 */
+	protected void printExport(List<ExportTestCaseData> dataSource, String filename2, String jasperExportFile,
+			HttpServletResponse response, Locale locale, String string, Boolean keepRteFormat) {
+		printExport(dataSource, filename2, jasperExportFile, response, locale, string, keepRteFormat,
+				new HashMap<String, Object>());
+
+	}
+
 
 	protected void printExport(List<? extends ExportData> dataSource, String filename, String jasperFile,
-			HttpServletResponse response, Locale locale, String format, Boolean keepRteFormat) {
+			HttpServletResponse response, Locale locale, String format, boolean keepRteFormat,
+			Map<String, Object> reportParameters) {
 		try {
 
 			if (!keepRteFormat) {
@@ -279,8 +297,7 @@ public abstract class LibraryNavigationController<LIBRARY extends Library<? exte
 			}
 
 			// report generation parameters
-			Map<String, Object> reportParameter = new HashMap<String, Object>();
-			reportParameter.put(JRParameter.REPORT_LOCALE, locale);
+			reportParameters.put(JRParameter.REPORT_LOCALE, locale);
 
 			// exporter parameters
 			// TODO : defining an export parameter specific to csv while in the future we could export to other formats
@@ -291,7 +308,7 @@ public abstract class LibraryNavigationController<LIBRARY extends Library<? exte
 			exportParameter.put(JRXlsExporterParameter.IS_WHITE_PAGE_BACKGROUND, Boolean.FALSE);
 
 			InputStream jsStream = Thread.currentThread().getContextClassLoader().getResourceAsStream(jasperFile);
-			InputStream reportStream = jrServices.getReportAsStream(jsStream, format, dataSource, reportParameter,
+			InputStream reportStream = jrServices.getReportAsStream(jsStream, format, dataSource, reportParameters,
 					exportParameter);
 
 			// print it.

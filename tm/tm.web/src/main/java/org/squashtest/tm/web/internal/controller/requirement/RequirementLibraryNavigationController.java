@@ -23,8 +23,10 @@ package org.squashtest.tm.web.internal.controller.requirement;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -53,6 +55,8 @@ import org.squashtest.tm.domain.requirement.RequirementFolder;
 import org.squashtest.tm.domain.requirement.RequirementLibrary;
 import org.squashtest.tm.domain.requirement.RequirementLibraryNode;
 import org.squashtest.tm.exception.library.RightsUnsuficientsForOperationException;
+import org.squashtest.tm.service.feature.FeatureManager;
+import org.squashtest.tm.service.feature.FeatureManager.Feature;
 import org.squashtest.tm.service.importer.ImportSummary;
 import org.squashtest.tm.service.library.LibraryNavigationService;
 import org.squashtest.tm.service.milestone.MilestoneFinderService;
@@ -60,13 +64,15 @@ import org.squashtest.tm.service.requirement.RequirementLibraryNavigationService
 import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.controller.generic.LibraryNavigationController;
 import org.squashtest.tm.web.internal.controller.requirement.RequirementFormModel.RequirementFormModelValidator;
+import org.squashtest.tm.web.internal.listener.SquashConfigContextExposer;
 import org.squashtest.tm.web.internal.model.builder.DriveNodeBuilder;
 import org.squashtest.tm.web.internal.model.builder.JsTreeNodeListBuilder;
 import org.squashtest.tm.web.internal.model.builder.RequirementLibraryTreeNodeBuilder;
 import org.squashtest.tm.web.internal.model.jstree.JsTreeNode;
 
 /**
- * Controller which processes requests related to navigation in a {@link RequirementLibrary}.
+ * Controller which processes requests related to navigation in a
+ * {@link RequirementLibrary}.
  * 
  * @author Gregory Fouquet
  * 
@@ -93,21 +99,24 @@ LibraryNavigationController<RequirementLibrary, RequirementFolder, RequirementLi
 	@Inject
 	private MilestoneFinderService milestoneFinder;
 
+	@Inject
+	private FeatureManager featureManager;
 
 	@RequestMapping(value = "/drives/{libraryId}/content/new-requirement", method = RequestMethod.POST)
 	@ResponseStatus(HttpStatus.CREATED)
 	public @ResponseBody
 	JsTreeNode addNewRequirementToLibraryRootContent(@PathVariable long libraryId,
-			@RequestBody RequirementFormModel requirementModel, @CookieValue(value="milestones", required=false, defaultValue="") List<Long> milestoneIds) throws BindException {
+			@RequestBody RequirementFormModel requirementModel,
+			@CookieValue(value = "milestones", required = false, defaultValue = "") List<Long> milestoneIds)
+					throws BindException {
 
 		BindingResult validation = new BeanPropertyBindingResult(requirementModel, MODEL_ATTRIBUTE_ADD_REQUIREMENT);
 		RequirementFormModelValidator validator = new RequirementFormModelValidator(getMessageSource());
 		validator.validate(requirementModel, validation);
 
-		if (validation.hasErrors()){
+		if (validation.hasErrors()) {
 			throw new BindException(validation);
 		}
-
 
 		Requirement req = requirementLibraryNavigationService.addRequirementToRequirementLibrary(libraryId,
 				requirementModel.toDTO(), milestoneIds);
@@ -120,19 +129,19 @@ LibraryNavigationController<RequirementLibrary, RequirementFolder, RequirementLi
 	public @ResponseBody
 	JsTreeNode addNewRequirementToFolderContent(@PathVariable long folderId,
 			@RequestBody RequirementFormModel requirementModel,
-			@CookieValue(value="milestones", required=false, defaultValue="") List<Long> milestoneIds) throws BindException{
-
-
+			@CookieValue(value = "milestones", required = false, defaultValue = "") List<Long> milestoneIds)
+					throws BindException {
 
 		BindingResult validation = new BeanPropertyBindingResult(requirementModel, MODEL_ATTRIBUTE_ADD_REQUIREMENT);
 		RequirementFormModelValidator validator = new RequirementFormModelValidator(getMessageSource());
 		validator.validate(requirementModel, validation);
 
-		if (validation.hasErrors()){
+		if (validation.hasErrors()) {
 			throw new BindException(validation);
 		}
 
-		Requirement req = requirementLibraryNavigationService.addRequirementToRequirementFolder(folderId, requirementModel.toDTO(), milestoneIds);
+		Requirement req = requirementLibraryNavigationService.addRequirementToRequirementFolder(folderId,
+				requirementModel.toDTO(), milestoneIds);
 
 		return createTreeNodeFromLibraryNode(req, milestoneIds);
 
@@ -142,19 +151,19 @@ LibraryNavigationController<RequirementLibrary, RequirementFolder, RequirementLi
 	public @ResponseBody
 	JsTreeNode addNewRequirementToRequirementContent(@PathVariable(RequestParams.REQUIREMENT_ID) long requirementId,
 			@RequestBody RequirementFormModel requirementModel,
-			@CookieValue(value="milestones", required=false, defaultValue="") List<Long> milestoneIds) throws BindException{
-
-
+			@CookieValue(value = "milestones", required = false, defaultValue = "") List<Long> milestoneIds)
+					throws BindException {
 
 		BindingResult validation = new BeanPropertyBindingResult(requirementModel, MODEL_ATTRIBUTE_ADD_REQUIREMENT);
 		RequirementFormModelValidator validator = new RequirementFormModelValidator(getMessageSource());
 		validator.validate(requirementModel, validation);
 
-		if (validation.hasErrors()){
+		if (validation.hasErrors()) {
 			throw new BindException(validation);
 		}
 
-		Requirement req = requirementLibraryNavigationService.addRequirementToRequirement(requirementId, requirementModel.toDTO(), milestoneIds);
+		Requirement req = requirementLibraryNavigationService.addRequirementToRequirement(requirementId,
+				requirementModel.toDTO(), milestoneIds);
 
 		return createTreeNodeFromLibraryNode(req, milestoneIds);
 
@@ -163,7 +172,8 @@ LibraryNavigationController<RequirementLibrary, RequirementFolder, RequirementLi
 	@RequestMapping(value = "/requirements/{requirementId}/content/new", method = RequestMethod.POST, params = { "nodeIds[]" })
 	public @ResponseBody
 	List<JsTreeNode> copyNodeIntoRequirement(@RequestParam("nodeIds[]") Long[] nodeIds,
-			@PathVariable(RequestParams.REQUIREMENT_ID) long requirementId, @CookieValue(value="milestones", required=false, defaultValue="") List<Long> milestoneIds) {
+			@PathVariable(RequestParams.REQUIREMENT_ID) long requirementId,
+			@CookieValue(value = "milestones", required = false, defaultValue = "") List<Long> milestoneIds) {
 
 		List<Requirement> nodeList;
 		List<RequirementLibraryNode> tojsonList;
@@ -179,7 +189,8 @@ LibraryNavigationController<RequirementLibrary, RequirementFolder, RequirementLi
 
 	@RequestMapping(value = "/requirements/{requirementId}/content/{nodeIds}", method = RequestMethod.PUT)
 	public @ResponseBody
-	void moveNode(@PathVariable(RequestParams.NODE_IDS) Long[] nodeIds, @PathVariable(RequestParams.REQUIREMENT_ID) long requirementId) {
+	void moveNode(@PathVariable(RequestParams.NODE_IDS) Long[] nodeIds,
+			@PathVariable(RequestParams.REQUIREMENT_ID) long requirementId) {
 		try {
 			requirementLibraryNavigationService.moveNodesToRequirement(requirementId, nodeIds);
 		} catch (AccessDeniedException ade) {
@@ -189,7 +200,8 @@ LibraryNavigationController<RequirementLibrary, RequirementFolder, RequirementLi
 
 	@RequestMapping(value = "/requirements/{requirementId}/content/{nodeIds}/{position}", method = RequestMethod.PUT)
 	public @ResponseBody
-	void moveNode(@PathVariable(RequestParams.NODE_IDS) Long[] nodeIds, @PathVariable(RequestParams.REQUIREMENT_ID) long requirementId, @PathVariable("position") int position) {
+	void moveNode(@PathVariable(RequestParams.NODE_IDS) Long[] nodeIds,
+			@PathVariable(RequestParams.REQUIREMENT_ID) long requirementId, @PathVariable("position") int position) {
 		try {
 			requirementLibraryNavigationService.moveNodesToRequirement(requirementId, nodeIds, position);
 		} catch (AccessDeniedException ade) {
@@ -213,35 +225,48 @@ LibraryNavigationController<RequirementLibrary, RequirementFolder, RequirementLi
 	protected JsTreeNode createTreeNodeFromLibraryNode(RequirementLibraryNode resource, List<Long> milestoneIds) {
 		RequirementLibraryTreeNodeBuilder builder = requirementLibraryTreeNodeBuilder.get();
 
-		if (! milestoneIds.isEmpty()){
+		if (!milestoneIds.isEmpty()) {
 			builder.filterByMilestone(milestoneFinder.findById(milestoneIds.get(0)));
 		}
 
 		return builder.setNode(resource).build();
 	}
 
-
-	@RequestMapping(value = "/nodes/{nodeIds}/{exportformat}", method = RequestMethod.GET, params={RequestParams.NAME, RequestParams.RTEFORMAT})
+	@RequestMapping(value = "/nodes/{nodeIds}/{exportformat}", method = RequestMethod.GET, params = {
+			RequestParams.NAME, RequestParams.RTEFORMAT })
 	public @ResponseBody
-	void exportRequirements(@PathVariable(RequestParams.NODE_IDS) List<Long> ids, @RequestParam(RequestParams.NAME) String filename, @RequestParam(RequestParams.RTEFORMAT) Boolean keepRteFormat, @PathVariable("exportformat") String exportformat,
+	void exportRequirements(@PathVariable(RequestParams.NODE_IDS) List<Long> ids,
+			@RequestParam(RequestParams.NAME) String filename,
+			@RequestParam(RequestParams.RTEFORMAT) boolean keepRteFormat, @PathVariable String exportformat,
 			HttpServletResponse response, Locale locale) {
 
-		List<ExportRequirementData> dataSource = requirementLibraryNavigationService.findRequirementsToExportFromNodes(ids);
-		printExport(dataSource, filename,JASPER_EXPORT_FILE, response, locale, exportformat, keepRteFormat);
+		List<ExportRequirementData> dataSource = requirementLibraryNavigationService
+				.findRequirementsToExportFromNodes(ids);
+		printExport(dataSource, filename, JASPER_EXPORT_FILE, response, locale, exportformat, keepRteFormat,
+				exportReportParams());
 
 	}
 
-
-
-	@RequestMapping(value = "/drives/{libIds}/{exportformat}", method = RequestMethod.GET, params={RequestParams.NAME, RequestParams.RTEFORMAT})
+	@RequestMapping(value = "/drives/{libIds}/{exportformat}", method = RequestMethod.GET, params = {
+			RequestParams.NAME, RequestParams.RTEFORMAT })
 	public @ResponseBody
-	void exportLibrary(@PathVariable("libIds") List<Long> libIds, @RequestParam(RequestParams.NAME) String filename, @RequestParam(RequestParams.RTEFORMAT) Boolean keepRteFormat, @PathVariable("exportformat") String exportformat,
+	void exportLibrary(@PathVariable List<Long> libIds, @RequestParam(RequestParams.NAME) String filename,
+			@RequestParam(RequestParams.RTEFORMAT) boolean keepRteFormat, @PathVariable String exportformat,
 			HttpServletResponse response, Locale locale) {
 
-		List<ExportRequirementData> dataSource = requirementLibraryNavigationService.findRequirementsToExportFromLibrary(libIds);
+		List<ExportRequirementData> dataSource = requirementLibraryNavigationService
+				.findRequirementsToExportFromLibrary(libIds);
 
-		printExport(dataSource, filename,JASPER_EXPORT_FILE, response, locale, exportformat, keepRteFormat);
+		printExport(dataSource, filename, JASPER_EXPORT_FILE, response, locale, exportformat, keepRteFormat,
+				exportReportParams());
 
+	}
+
+	private Map<String, Object> exportReportParams() {
+		Map<String, Object> reportParams = new HashMap<>();
+		reportParams.put(SquashConfigContextExposer.MILESTONE_FEATURE_ENABLED,
+				featureManager.isEnabled(Feature.MILESTONE));
+		return reportParams;
 	}
 
 	@RequestMapping(value = "/import/upload", method = RequestMethod.POST, params = "upload-ticket")
@@ -257,7 +282,10 @@ LibraryNavigationController<RequirementLibrary, RequirementFolder, RequirementLi
 
 	}
 
-	/* ********************************** private stuffs ******************************* */
+	/*
+	 * ********************************** private stuffs
+	 * *******************************
+	 */
 
 	@SuppressWarnings("unchecked")
 	private List<JsTreeNode> createChildrenRequirementsModel(List<? extends RequirementLibraryNode> requirements) {

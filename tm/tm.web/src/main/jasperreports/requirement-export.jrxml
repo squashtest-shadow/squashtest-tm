@@ -22,8 +22,8 @@
 
 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="requirement-export" pageWidth="2210" pageHeight="595" orientation="Landscape" columnWidth="2210" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" resourceBundle="WEB-INF/messages/tm/messages" whenResourceMissingType="Key" uuid="6d4c9bc5-00fd-4450-b9ad-57347d3c1d78">
-	<property name="ireport.zoom" value="1.0000000000000009"/>
-	<property name="ireport.x" value="772"/>
+	<property name="ireport.zoom" value="0.8264462809917362"/>
+	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
 	<property name="net.sf.jasperreports.text.truncate.at.char" value="Boolean.FALSE"/>
 	<style name="table_TH" mode="Opaque" forecolor="#FFFFFF" backcolor="#7DAAD6">
@@ -37,6 +37,9 @@
 		</box>
 	</style>
 	<subDataset name="Table Dataset 1" uuid="50bb2ce2-2303-43c2-b8f1-fd59ea667e73"/>
+	<parameter name="milestoneFeatureEnabled" class="java.lang.Boolean">
+		<defaultValueExpression><![CDATA[java.lang.Boolean.FALSE]]></defaultValueExpression>
+	</parameter>
 	<queryString>
 		<![CDATA[]]>
 	</queryString>
@@ -82,42 +85,42 @@
 	<pageHeader>
 		<band height="20" splitType="Prevent">
 			<textField isBlankWhenNull="true">
-				<reportElement uuid="d3eea101-3c36-4c41-b284-42fd2c243665" style="table_TH" mode="Opaque" x="0" y="0" width="170" height="20"/>
+				<reportElement style="table_TH" mode="Opaque" x="0" y="0" width="170" height="20" uuid="d3eea101-3c36-4c41-b284-42fd2c243665"/>
 				<textElement>
 					<font isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA["FOLDER_PATH"]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement uuid="7c628e5f-d98f-4d01-b7bc-020d2a60bc36" style="table_TH" mode="Opaque" x="340" y="0" width="170" height="20"/>
+				<reportElement style="table_TH" mode="Opaque" x="340" y="0" width="170" height="20" uuid="7c628e5f-d98f-4d01-b7bc-020d2a60bc36"/>
 				<textElement>
 					<font isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA["ID"]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement uuid="338d15d0-1058-4408-bd77-984184da44a0" style="table_TH" mode="Opaque" x="510" y="0" width="170" height="20"/>
+				<reportElement style="table_TH" mode="Opaque" x="510" y="0" width="170" height="20" uuid="338d15d0-1058-4408-bd77-984184da44a0"/>
 				<textElement>
 					<font isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA["VERSION"]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement uuid="2c8576c1-ef02-4f6a-abb3-7a98e156b893" style="table_TH" mode="Opaque" x="680" y="0" width="170" height="20"/>
+				<reportElement style="table_TH" mode="Opaque" x="680" y="0" width="170" height="20" uuid="2c8576c1-ef02-4f6a-abb3-7a98e156b893"/>
 				<textElement>
 					<font isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA["REF"]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement uuid="453eb1ae-4874-4e8d-acc2-b7f256e7f211" style="table_TH" mode="Opaque" x="1020" y="0" width="170" height="20"/>
+				<reportElement style="table_TH" mode="Opaque" x="850" y="0" width="170" height="20" uuid="453eb1ae-4874-4e8d-acc2-b7f256e7f211"/>
 				<textElement>
 					<font isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA["LABEL"]]></textFieldExpression>
 			</textField>
 			<textField pattern="">
-				<reportElement uuid="d940d116-3fe1-4778-8c13-87a3642282c9" style="table_TH" mode="Opaque" x="1190" y="0" width="170" height="20">
+				<reportElement style="table_TH" mode="Opaque" x="1020" y="0" width="170" height="20" uuid="d940d116-3fe1-4778-8c13-87a3642282c9">
 					<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
 				</reportElement>
 				<textElement>
@@ -126,49 +129,51 @@
 				<textFieldExpression><![CDATA["DESCRIPTION"]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement uuid="640a803c-13f6-458d-a844-5efb4da42b6f" style="table_TH" mode="Opaque" x="1360" y="0" width="170" height="20"/>
+				<reportElement style="table_TH" mode="Opaque" x="1190" y="0" width="170" height="20" uuid="640a803c-13f6-458d-a844-5efb4da42b6f"/>
 				<textElement>
 					<font isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA["CRITICALITY"]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement uuid="9149fb2b-7a96-49e9-a3ff-675b083ee833" style="table_TH" mode="Opaque" x="1530" y="0" width="170" height="20"/>
+				<reportElement style="table_TH" mode="Opaque" x="1360" y="0" width="170" height="20" uuid="9149fb2b-7a96-49e9-a3ff-675b083ee833"/>
 				<textElement>
 					<font isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA["CATEGORY"]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement uuid="57b626c7-ced1-4f5a-bc2d-47933067817b" style="table_TH" mode="Opaque" x="1700" y="0" width="170" height="20"/>
+				<reportElement style="table_TH" mode="Opaque" x="1530" y="0" width="170" height="20" uuid="57b626c7-ced1-4f5a-bc2d-47933067817b"/>
 				<textElement>
 					<font isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA["STATE"]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement uuid="89c97637-dec3-48f9-8b16-a8b5fd8c2c94" style="table_TH" mode="Opaque" x="1870" y="0" width="170" height="20"/>
+				<reportElement style="table_TH" mode="Opaque" x="1700" y="0" width="170" height="20" uuid="89c97637-dec3-48f9-8b16-a8b5fd8c2c94"/>
 				<textElement>
 					<font isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA["CREATED_ON"]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement uuid="4ecfeef6-453e-45c7-b619-847bfdafe8e9" style="table_TH" mode="Opaque" x="170" y="0" width="170" height="20"/>
+				<reportElement style="table_TH" mode="Opaque" x="170" y="0" width="170" height="20" uuid="4ecfeef6-453e-45c7-b619-847bfdafe8e9"/>
 				<textElement>
 					<font isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA["*REQUIREMENT_PATH"]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement uuid="a6af67c6-5574-404f-8127-81b403bdc573" style="table_TH" mode="Opaque" x="2040" y="0" width="170" height="20"/>
+				<reportElement style="table_TH" mode="Opaque" x="1870" y="0" width="170" height="20" uuid="a6af67c6-5574-404f-8127-81b403bdc573"/>
 				<textElement>
 					<font isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA["CREATED_BY"]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement uuid="2c8576c1-ef02-4f6a-abb3-7a98e156b893" style="table_TH" mode="Opaque" x="850" y="0" width="170" height="20"/>
+				<reportElement style="table_TH" mode="Opaque" x="2040" y="0" width="170" height="20" uuid="2c8576c1-ef02-4f6a-abb3-7a98e156b893">
+					<printWhenExpression><![CDATA[$P{milestoneFeatureEnabled}]]></printWhenExpression>
+				</reportElement>
 				<textElement>
 					<font isBold="true"/>
 				</textElement>
@@ -179,47 +184,42 @@
 	<detail>
 		<band height="20" splitType="Prevent">
 			<textField>
-				<reportElement uuid="05125303-2c7e-468b-85a4-0d4b6d321da2" style="table_TD" mode="Transparent" x="0" y="0" width="170" height="20">
+				<reportElement style="table_TD" mode="Transparent" x="0" y="0" width="170" height="20" uuid="05125303-2c7e-468b-85a4-0d4b6d321da2">
 					<property name="net.sf.jasperreports.export.xls.ignore.cell.background" value="true"/>
 					<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
 				</reportElement>
-				<textElement/>
 				<textFieldExpression><![CDATA[$F{folderName}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement uuid="5d599ef9-3afd-478d-a105-d3f219663bbd" style="table_TD" mode="Transparent" x="340" y="0" width="170" height="20">
+				<reportElement style="table_TD" mode="Transparent" x="340" y="0" width="170" height="20" uuid="5d599ef9-3afd-478d-a105-d3f219663bbd">
 					<property name="net.sf.jasperreports.export.xls.ignore.cell.background" value="true"/>
 					<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
 				</reportElement>
-				<textElement/>
 				<textFieldExpression><![CDATA[$F{id}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement uuid="1d1547ea-c380-4e0d-abbc-c9ff32eea364" style="table_TD" mode="Transparent" x="510" y="0" width="170" height="20">
+				<reportElement style="table_TD" mode="Transparent" x="510" y="0" width="170" height="20" uuid="1d1547ea-c380-4e0d-abbc-c9ff32eea364">
 					<property name="net.sf.jasperreports.export.xls.ignore.cell.background" value="true"/>
 					<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
 				</reportElement>
-				<textElement/>
 				<textFieldExpression><![CDATA[$F{currentVersion}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement uuid="888aab59-ddd7-4f5c-b7a6-6626111a800c" style="table_TD" mode="Transparent" x="680" y="0" width="170" height="20">
+				<reportElement style="table_TD" mode="Transparent" x="680" y="0" width="170" height="20" uuid="888aab59-ddd7-4f5c-b7a6-6626111a800c">
 					<property name="net.sf.jasperreports.export.xls.ignore.cell.background" value="true"/>
 					<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
 				</reportElement>
-				<textElement/>
 				<textFieldExpression><![CDATA[$F{reference}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement uuid="3f48862c-cac1-4d73-b9e3-a39afa215f58" style="table_TD" mode="Transparent" x="1020" y="0" width="170" height="20">
+				<reportElement style="table_TD" mode="Transparent" x="850" y="0" width="170" height="20" uuid="3f48862c-cac1-4d73-b9e3-a39afa215f58">
 					<property name="net.sf.jasperreports.export.xls.ignore.cell.background" value="true"/>
 					<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
 				</reportElement>
-				<textElement/>
 				<textFieldExpression><![CDATA[$F{name}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement uuid="4ce99bf2-e440-4a9a-85df-22e1f8f072cf" style="table_TD" mode="Transparent" x="1190" y="0" width="170" height="20">
+				<reportElement style="table_TD" mode="Transparent" x="1020" y="0" width="170" height="20" uuid="4ce99bf2-e440-4a9a-85df-22e1f8f072cf">
 					<property name="net.sf.jasperreports.export.xls.ignore.cell.background" value="true"/>
 					<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
 				</reportElement>
@@ -227,31 +227,28 @@
 				<textFieldExpression><![CDATA[$F{description}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement uuid="b3220e7d-72eb-4b18-9fc9-3a671876762a" style="table_TD" mode="Transparent" x="1360" y="0" width="170" height="20">
+				<reportElement style="table_TD" mode="Transparent" x="1190" y="0" width="170" height="20" uuid="b3220e7d-72eb-4b18-9fc9-3a671876762a">
 					<property name="net.sf.jasperreports.export.xls.ignore.cell.background" value="true"/>
 					<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
 				</reportElement>
-				<textElement/>
 				<textFieldExpression><![CDATA[$F{criticality}.name()]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement uuid="3305b6e3-cc4f-4603-b648-81d6694e9489" style="table_TD" mode="Transparent" x="1530" y="0" width="170" height="20">
+				<reportElement style="table_TD" mode="Transparent" x="1360" y="0" width="170" height="20" uuid="3305b6e3-cc4f-4603-b648-81d6694e9489">
 					<property name="net.sf.jasperreports.export.xls.ignore.cell.background" value="true"/>
 					<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
 				</reportElement>
-				<textElement/>
 				<textFieldExpression><![CDATA[$F{category}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement uuid="8f2d9712-552f-4a0d-84a5-74cc6b4ff931" style="table_TD" mode="Transparent" x="1700" y="0" width="170" height="20">
+				<reportElement style="table_TD" mode="Transparent" x="1530" y="0" width="170" height="20" uuid="8f2d9712-552f-4a0d-84a5-74cc6b4ff931">
 					<property name="net.sf.jasperreports.export.xls.ignore.cell.background" value="true"/>
 					<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
 				</reportElement>
-				<textElement/>
 				<textFieldExpression><![CDATA[$F{status}.name()]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement uuid="7f707521-6942-40cd-b839-9d7e3253f48c" style="table_TD" mode="Transparent" x="1870" y="0" width="170" height="20">
+				<reportElement style="table_TD" mode="Transparent" x="1700" y="0" width="170" height="20" uuid="7f707521-6942-40cd-b839-9d7e3253f48c">
 					<property name="net.sf.jasperreports.export.xls.ignore.cell.background" value="true"/>
 					<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
 				</reportElement>
@@ -259,15 +256,14 @@
 				<textFieldExpression><![CDATA[$F{createdOn}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement uuid="bc0335f3-04dd-42a7-8e50-96fb14331f76" style="table_TD" mode="Transparent" x="170" y="0" width="170" height="20">
+				<reportElement style="table_TD" mode="Transparent" x="170" y="0" width="170" height="20" uuid="bc0335f3-04dd-42a7-8e50-96fb14331f76">
 					<property name="net.sf.jasperreports.export.xls.ignore.cell.background" value="true"/>
 					<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
 				</reportElement>
-				<textElement/>
 				<textFieldExpression><![CDATA[$F{requirementParentPath}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement uuid="ebb54e26-dcf9-4285-9dc0-dde5e139f1f9" style="table_TD" mode="Transparent" x="2040" y="0" width="170" height="20">
+				<reportElement style="table_TD" mode="Transparent" x="1870" y="0" width="170" height="20" uuid="ebb54e26-dcf9-4285-9dc0-dde5e139f1f9">
 					<property name="net.sf.jasperreports.export.xls.ignore.cell.background" value="true"/>
 					<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
 				</reportElement>
@@ -275,11 +271,11 @@
 				<textFieldExpression><![CDATA[$F{createdBy}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement uuid="3f48862c-cac1-4d73-b9e3-a39afa215f58" style="table_TD" mode="Transparent" x="850" y="0" width="170" height="20">
+				<reportElement style="table_TD" mode="Transparent" x="2040" y="0" width="170" height="20" uuid="3f48862c-cac1-4d73-b9e3-a39afa215f58">
 					<property name="net.sf.jasperreports.export.xls.ignore.cell.background" value="true"/>
 					<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
+					<printWhenExpression><![CDATA[$P{milestoneFeatureEnabled}]]></printWhenExpression>
 				</reportElement>
-				<textElement/>
 				<textFieldExpression><![CDATA[$F{milestone}]]></textFieldExpression>
 			</textField>
 		</band>

@@ -31,6 +31,7 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.inject.Inject;
+import javax.inject.Provider;
 
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -43,7 +44,6 @@ import org.squashtest.tm.service.internal.repository.TestCaseLibraryNodeDao;
 
 @Service
 public class TestCaseExcelExporterService {
-
 	@Inject
 	private ExportDao exportDao;
 
@@ -54,13 +54,15 @@ public class TestCaseExcelExporterService {
 	@Qualifier("squashtest.tm.repository.TestCaseLibraryNodeDao")
 	private TestCaseLibraryNodeDao nodeDao;
 
+	@Inject private Provider<ExcelExporter> exporterProvider;
+
 	public File exportAsExcel(List<Long> testCaseIds, boolean keepRteFormat){
 
 		// let's chunk the job by batches of 20 test cases
 		List<Long> ids;
 		int idx=0;
 		int max = Math.min(idx+20, testCaseIds.size());
-		ExcelExporter exporter = new ExcelExporter();
+		ExcelExporter exporter = exporterProvider.get();
 
 		Map<Long, String> pathById = new HashMap<Long, String>(testCaseIds.size());
 		populatePathsCache(pathById, testCaseIds);

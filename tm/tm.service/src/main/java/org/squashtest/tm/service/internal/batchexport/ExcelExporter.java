@@ -28,12 +28,18 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 import org.squashtest.tm.core.foundation.lang.DateUtils;
+import org.squashtest.tm.service.feature.FeatureManager;
+import org.squashtest.tm.service.feature.FeatureManager.Feature;
 import org.squashtest.tm.service.internal.batchexport.ExportModel.CustomField;
 import org.squashtest.tm.service.internal.batchexport.ExportModel.DatasetModel;
 import org.squashtest.tm.service.internal.batchexport.ExportModel.ParameterModel;
@@ -45,13 +51,13 @@ import org.squashtest.tm.service.internal.batchimport.testcase.excel.StepSheetCo
 import org.squashtest.tm.service.internal.batchimport.testcase.excel.TemplateWorksheet;
 import org.squashtest.tm.service.internal.batchimport.testcase.excel.TestCaseSheetColumn;
 
-
 /**
  * @author bsiri
- * 
+ *
  */
+@Component
+@Scope("prototype")
 class ExcelExporter {
-
 	private static final String DS_SHEET = TemplateWorksheet.DATASETS_SHEET.sheetName;
 	private static final String PRM_SHEET = TemplateWorksheet.PARAMETERS_SHEET.sheetName;
 	private static final String ST_SHEET = TemplateWorksheet.STEPS_SHEET.sheetName;
@@ -61,8 +67,12 @@ class ExcelExporter {
 
 	private Workbook workbook;
 
-	public ExcelExporter() {
+	private boolean milestonesEnabled;
+
+	@Inject
+	public ExcelExporter(FeatureManager featureManager) {
 		super();
+		milestonesEnabled = featureManager.isEnabled(Feature.MILESTONE);
 		createWorkbook();
 		createHeaders();
 	}
@@ -123,7 +133,6 @@ class ExcelExporter {
 	}
 
 	private void appendTestCases(ExportModel model) {
-
 		List<TestCaseModel> models = model.getTestCases();
 		Sheet tcSheet = workbook.getSheet(TC_SHEET);
 		Row r;
@@ -141,7 +150,9 @@ class ExcelExporter {
 			r.createCell(cIdx++).setCellValue(tcm.getId());
 			r.createCell(cIdx++).setCellValue(tcm.getReference());
 			r.createCell(cIdx++).setCellValue(tcm.getName());
-			r.createCell(cIdx++).setCellValue(tcm.getMilestone());
+			if (milestonesEnabled) {
+				r.createCell(cIdx++).setCellValue(tcm.getMilestone());
+			}
 			r.createCell(cIdx++).setCellValue(tcm.getWeightAuto());
 			r.createCell(cIdx++).setCellValue(tcm.getWeight().toString());
 			r.createCell(cIdx++).setCellValue(tcm.getNature().getCode());
@@ -363,7 +374,9 @@ class ExcelExporter {
 		h.createCell(cIdx++).setCellValue(TestCaseSheetColumn.TC_ID.header);
 		h.createCell(cIdx++).setCellValue(TestCaseSheetColumn.TC_REFERENCE.header);
 		h.createCell(cIdx++).setCellValue(TestCaseSheetColumn.TC_NAME.header);
-		h.createCell(cIdx++).setCellValue(TestCaseSheetColumn.TC_MILESTONE.header);
+		if (milestonesEnabled) {
+			h.createCell(cIdx++).setCellValue(TestCaseSheetColumn.TC_MILESTONE.header);
+		}
 		h.createCell(cIdx++).setCellValue(TestCaseSheetColumn.TC_WEIGHT_AUTO.header);
 		h.createCell(cIdx++).setCellValue(TestCaseSheetColumn.TC_WEIGHT.header);
 		h.createCell(cIdx++).setCellValue(TestCaseSheetColumn.TC_NATURE.header);
