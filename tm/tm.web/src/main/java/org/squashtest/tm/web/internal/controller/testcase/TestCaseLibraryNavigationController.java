@@ -58,7 +58,6 @@ import org.squashtest.tm.service.library.LibraryNavigationService;
 import org.squashtest.tm.service.milestone.MilestoneFinderService;
 import org.squashtest.tm.service.statistics.testcase.TestCaseStatisticsBundle;
 import org.squashtest.tm.service.testcase.TestCaseLibraryNavigationService;
-import org.squashtest.tm.service.testcase.TestCaseModificationService;
 import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.controller.generic.LibraryNavigationController;
 import org.squashtest.tm.web.internal.controller.testcase.TestCaseFormModel.TestCaseFormModelValidator;
@@ -283,7 +282,7 @@ LibraryNavigationController<TestCaseLibrary, TestCaseFolder, TestCaseLibraryNode
 
 		return testCaseLibraryNavigationService.getStatisticsForSelection(libraryIds, nodeIds);
 	}
-	
+
 	@RequestMapping(value = "/dashboard", method = RequestMethod.GET, produces = ContentTypes.TEXT_HTML)
 	public String getDashboardByMilestone(Model model,
 			@CookieValue(value = "milestones", required = false, defaultValue = "") List<Long> milestoneIds) {

@@ -30,6 +30,15 @@ define(['jquery', 'workspace.tree-node-copier', 'tree'], function($, copier, tre
 	return squashtm.workspace.permissions_rules;
 	
 	
+	function milestoneAllowsThis(){
+		if (squashtm.app.campaignWorkspaceConf.activeMilestone){
+			return squashtm.app.campaignWorkspaceConf.activeMilestone.status['$name'] === 'IN_PROGRESS';
+		}
+		else{
+			return true;
+		}
+	}
+	
 	function CampaignPermissionsRules(){		
 	
 		function allOrNone(nodes, type){
@@ -39,19 +48,19 @@ define(['jquery', 'workspace.tree-node-copier', 'tree'], function($, copier, tre
 		
 		// added for first button create :  
 		this.canCreateButton = function(nodes){
-			return nodes.filter(':creatable').length === 1;
+			return milestoneAllowsThis() && nodes.filter(':creatable').length === 1;
 		};
 		
 		this.canCreateFolder = function(nodes){
-			return nodes.filter(':creatable').filter(':folder, :library').length === 1;
+			return milestoneAllowsThis() && nodes.filter(':creatable').filter(':folder, :library').length === 1;
 		};
 		
 		this.canCreateCampaign = function(nodes){
-			return nodes.filter(':creatable').filter(':folder, :library, :campaign').length === 1;
+			return milestoneAllowsThis() && nodes.filter(':creatable').filter(':folder, :library, :campaign').length === 1;
 		};
 		
 		this.canCreateIteration = function(nodes){
-			return nodes.filter(':creatable').filter(':campaign').length === 1;
+			return milestoneAllowsThis() && nodes.filter(':creatable').filter(':campaign').length === 1;
 		};
 		
 		this.canExport = function(nodes){

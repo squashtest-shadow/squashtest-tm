@@ -29,19 +29,29 @@ define(['jquery', 'workspace.tree-node-copier', 'tree'], function($, copier, tre
 	
 	return squashtm.workspace.permissions_rules;
 	
+	function milestoneAllowsThis(){
+		if (squashtm.app.requirementWorkspaceConf.activeMilestone){
+			return squashtm.app.requirementWorkspaceConf.activeMilestone.status['$name'] === 'IN_PROGRESS';
+		}
+		else{
+			return true;
+		}
+	}
+	
+	
 	function RequirementPermissionsRules(){		
 		
 		// added for first button create :  
 		this.canCreateButton = function(nodes){
-			return nodes.filter(':creatable').length === 1;
+			return milestoneAllowsThis() && nodes.filter(':creatable').length === 1;
 		};
 		
 		this.canCreateFolder = function(nodes){
-			return nodes.filter(':creatable').filter(':folder, :library').length === 1;
+			return milestoneAllowsThis() && nodes.filter(':creatable').filter(':folder, :library').length === 1;
 		};
 		
 		this.canCreateRequirement = function(nodes){
-			return nodes.filter(':creatable').length === 1;
+			return milestoneAllowsThis() && nodes.filter(':creatable').length === 1;
 		};
 		
 		//must be not empty, and not contain libraries.
