@@ -30,6 +30,13 @@ abstract class BasicInput extends Labelled implements Input {
 	private String name;
 
 	/**
+	 * if non null, refers to another input of the same form. The current input will be
+	 * automatically disabled if the referenced input is selected.
+	 * 
+	 */
+	private String disabledBy;
+
+	/**
 	 * @return the name
 	 */
 	public String getName() {
@@ -42,4 +49,14 @@ abstract class BasicInput extends Labelled implements Input {
 	public void setName(String name) {
 		this.name = name;
 	}
+
+	public String getDisabledBy() {
+		return disabledBy;
+	}
+
+	public void setDisabledBy(String disabledBy) {
+		this.disabledBy = disabledBy;
+	}
+
+
 }

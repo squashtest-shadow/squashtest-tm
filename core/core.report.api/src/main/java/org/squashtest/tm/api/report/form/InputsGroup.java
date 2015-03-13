@@ -35,6 +35,11 @@ public class InputsGroup extends Labelled implements Input {
 	private List<Input> inputs = Collections.emptyList();
 
 	/**
+	 * Please refer to {@link BasicInput#disabledBy}
+	 */
+	private String disabledBy;
+
+	/**
 	 * 
 	 */
 	public InputsGroup() {
@@ -73,5 +78,15 @@ public class InputsGroup extends Labelled implements Input {
 	public List<Input> getInputs() {
 		return inputs;
 	}
+
+	public String getDisabledBy() {
+		return disabledBy;
+	}
+
+	public void setDisabledBy(String disabledBy) {
+		this.disabledBy = disabledBy;
+	}
+
+
 
 }

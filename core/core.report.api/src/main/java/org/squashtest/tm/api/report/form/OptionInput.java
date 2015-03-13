@@ -31,9 +31,13 @@ public class OptionInput extends Labelled {
 	private String value = "";
 	private boolean defaultSelected = false;
 	private String givesAccessTo = "none";
+	/**
+	 * please read {@link BasicInput#disabledBy}
+	 */
+	private String disabledBy;
 
 	/**
-	 *  
+	 * 
 	 * @param value
 	 *            the value to set
 	 */
@@ -91,5 +95,15 @@ public class OptionInput extends Labelled {
 	public boolean isDefaultSelected() {
 		return defaultSelected;
 	}
+
+	public String getDisabledBy() {
+		return disabledBy;
+	}
+
+	public void setDisabledBy(String disabledBy) {
+		this.disabledBy = disabledBy;
+	}
+
+
 
 }

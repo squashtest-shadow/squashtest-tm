@@ -72,6 +72,11 @@ function(Backbone, _, FormModel, ButtonUtil, treeBuilder, ProjectsPickerPopup, S
 				this.model.applyFormerState(options.formerState);
 			}
 
+
+			// add the hooks for deactivable inputs
+			this.registerDeactivableInputs();
+			
+			
 			this.render();
 		},
 
@@ -85,6 +90,7 @@ function(Backbone, _, FormModel, ButtonUtil, treeBuilder, ProjectsPickerPopup, S
 			this._renderTreePickers();
 			this._renderProjectPickers();
 			this._renderMilestonePickers();
+			
 			
 			// we must also handle the milestone mode
 			if (milestone.isEnabled()){
@@ -110,7 +116,8 @@ function(Backbone, _, FormModel, ButtonUtil, treeBuilder, ProjectsPickerPopup, S
 			"change input:radio": "changeRadioButtonGroup",
 			"click .rpt-tree-crit-open": "openTreePicker",
 			"click .rpt-projects-crit-open": "openProjectPicker",
-			"click .rpt-milestone-crit-open" : "openMilestonePicker"
+			"click .rpt-milestone-crit-open" : "openMilestonePicker",
+			"change input" : "updateDeactivableInputs"
 		},
 
 		_renderTexts: function() {
@@ -452,6 +459,54 @@ function(Backbone, _, FormModel, ButtonUtil, treeBuilder, ProjectsPickerPopup, S
 			});
 
 			this.model.setVal(propName, val);
+		},
+		
+		/**
+		 * Some inputs may be deactivated when others are selected. This is what the clause data-deactivatedby is for, which
+		 * appears on the tag of such inputs.
+		 * 
+		 * This method will bind events : when the target input is selected the receiving inputs will be deactivated, and 
+		 * conversely when the target input isn't selected anymore the input will be enabled again.
+		 */
+		registerDeactivableInputs : function(){
+			var self = this;
+			
+			var deactivableInputs = this.$el.find('[data-disabledby]');
+			
+			var deactivationMap = {};
+			
+			deactivableInputs.each(function(){
+				var $input = $(this);
+				var targetid = $input.data('disabledby');
+				
+				deactivationMap[targetid] = deactivationMap[targetid] || [];
+				deactivationMap[targetid].push($input);
+				
+			});
+			
+			self.config.deactivationMap = deactivationMap;
+			
+		},
+		
+		updateDeactivableInputs : function(evt){
+			var deactivationMap = this.config.deactivationMap;
+			
+			_.each(deactivationMap, function(deactivable, deactivatorid){
+				var $deactivator = $("#"+deactivatorid);
+				var newstate = ($deactivator.is(evt.currentTarget)) ?
+						// case "is the target" : its state is about to change
+						(! $deactivator.is(':selected')) :
+						//case "is not the target" : the state won't change
+						$deactivator.is(':selected');	
+				deactivable.forEach(function(elt){
+					elt.prop('disabled', newstate);
+					elt.find('input').prop('disabled', newstate);
+				});
+					
+			});
+			
+			
+			console.log(evt);
 		}
 
 	});

@@ -61,7 +61,7 @@
   <!--  params = input -->
   <div th:fragment="text">
     <label for="rpt-text-crit" th:for="${input.name}" th:text="${input.label}" class="rpt-text-crit">Text criteria</label>
-    <input name="rpt-text-crit" th:id="${input.name}" th:name="${input.name}" type="text" value="" />
+    <input name="rpt-text-crit" th:id="${input.name}" th:name="${input.name}" type="text" value="" th:attr="data-disabledby=${input.disabledBy}"/>
   </div>
 
 
@@ -69,7 +69,7 @@
   <!--  params = input -->
   <div th:fragment="checkbox">
     <input name="rpt-chk-crit" th:id="${input.name}" th:name="${input.name}" type="checkbox" th:value="${input.value}"
-      th:checked="${input.defaultSelected}" th:attr="data-grouped=${grouped ne null and grouped}"/>
+      th:checked="${input.defaultSelected}" th:attr="data-grouped=${grouped ne null and grouped}, data-disabledby=${input.disabledBy}"/>
     <label for="rpt-chk-crit" th:for="${input.name}" th:text="${input.label}">Checkbox criteria</label>
   </div>
 
@@ -79,7 +79,7 @@
   <div th:fragment="datepicker">
     <label th:for="${input.name}" th:text="${input.label}">Date criteria</label>
     <span class="rpt-date-crit small" th:id="${input.name}" th:name="${input.name}" th:text="#{squashtm.nodata}"
-      data-locale="fr" data-nodate="no date" th:attr="data-locale=#{squashtm.locale}, data-nodate=#{squashtm.nodata}">01-02-2012</span>
+      data-locale="fr" data-nodate="no date" th:attr="data-locale=#{squashtm.locale}, data-nodate=#{squashtm.nodata}, data-disabledby=${input.disabledBy}">01-02-2012</span>
   </div>
 
 
@@ -87,7 +87,7 @@
   <!--  params = input -->
   <div th:fragment="dropdownlist">
     <label for="rpt-drop-crit" th:for="${input.name}" th:text="${input.label}">Dropdown criteria</label>
-    <select name="rpt-drop-crit" th:name="${input.name}" size="1">
+    <select name="rpt-drop-crit" th:name="${input.name}" size="1" th:attr="data-disabledby=${input.disabledBy}">
       <option th:each="opt : ${input.options}" th:name="${opt.name}" th:value="${opt.value}"
         th:selected="${opt.defaultSelected}" th:text="${opt.label}">Option</option>
     </select>
@@ -111,7 +111,7 @@
     <label th:if="${hasLabel}" for="rpt-tree-crit-open" th:for="${input.name} + '-open'" th:text="${input.label}">Nodes</label>
     <input id="rpt-tree-crit-open" th:id="${input.name} + '-open'" type="button" class="sq-btn btn-sm rpt-tree-crit-open"
       th:value="#{report.form.tree-picker.button.label}" value="Pick nodes" data-idopened="rpt-tree-crit-dialog"
-      th:attr="data-idopened=${input.name} + '-dialog'" />
+      th:attr="data-idopened=${input.name} + '-dialog', data-disabledby=${input.disabledBy}" />
   </div>
 
 
@@ -169,7 +169,7 @@
       th:attr="data-multiplevaluetext=#{label.multipleProjects}" data-multiplevaluetext="Multiple projects"></span>
     <input id="rpt-project-crit-open" th:id="${input.name} + '-open'" type="button" class="sq-btn btn-sm rpt-projects-crit-open" 
       th:value="#{report.form.project-picker.button.label}" value="Pick projects"
-      th:attr="data-idopened=${input.name}" data-idopened="rpt-project-crit" />
+      th:attr="data-idopened=${input.name}, data-disabledby=${input.disabledBy}" data-idopened="rpt-project-crit" />
   </div>
 
   <div th:fragment="milestonepicker">
@@ -177,7 +177,7 @@
     <label th:text="#{__${input.labelKey}__}" th:for="${input.name}+'-open'">Milestone</label>
     <span th:id="'rpt-milestone-crit-result-'+${input.name}" class="rpt-milestone-crit-result small"></span>
     <input th:id="${input.name} + '-open'" type="button" class="sq-btn btn-sm rpt-milestone-crit-open" th:value="#{label.Choose}"
-          th:attr="data-idopened=${input.name}" />
+          th:attr="data-idopened=${input.name}, data-disabledby=${input.disabledBy}" />
   
     <div class="milestone-picker popup-dialog not-displayed" th:id="${input.name}"
       th:title="#{message.PickAMilestone}" 

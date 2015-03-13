@@ -260,15 +260,20 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
 		</property>
 		<property name="form">
 			<list>
-				<bean class="org.squashtest.tm.api.report.form.InputsGroup">
-<!-- 					<property name="name" value="perimeter" />
- -->					<property name="labelKey" value="report.coverage.criteria.selectionMode.label" />
-					<property name="inputs">
+				<bean class="org.squashtest.tm.api.report.form.RadioButtonsGroup">
+					<property name="name" value="selectionMode" />
+					<property name="labelKey" value="report.coverage.criteria.selectionMode.label" />
+					<property name="options">
 						<list>
-							<bean class="org.squashtest.tm.api.report.form.ProjectPicker">
-								<property name="name" value="projectIds" />
-								<property name="labelKey" value="report.criteria.panel.projectlist.label" />
+							<bean class="org.squashtest.tm.api.report.form.composite.ProjectPickerOption">
+								<property name="pickerName" value="projectIds" />
+								<property name="pickerLabelKey" value="report.criteria.panel.projectlist.label" />
+								<property name="defaultSelected" value="true" />
 							</bean>
+							<bean class="org.squashtest.tm.api.report.form.composite.MilestonePickerOption">
+								<property name="pickerLabelKey" value="report.criteria.panel.milestone.label"/>
+								<property name="pickerName" value="milestones"/>							
+							</bean>							
 						</list>
 					</property>
 				</bean>
@@ -276,6 +281,7 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
 				<bean class="org.squashtest.tm.api.report.form.RadioButtonsGroup">
 					<property name="name" value="mode" />
 					<property name="labelKey" value="report.criteria.panel.requirement.version.label" />
+					<property name="disabledBy" value="milestones-binder"/>
 					<property name="options">
 						<list>
 							<bean class="org.squashtest.tm.api.report.form.OptionInput">

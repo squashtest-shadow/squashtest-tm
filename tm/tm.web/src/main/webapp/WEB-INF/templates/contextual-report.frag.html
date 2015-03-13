@@ -134,10 +134,10 @@
   
               <div th:case="'RADIO_BUTTONS_GROUP'">
                 <label th:text="*{label}">Radio buttons group</label>
-                <ul>
+                <ul th:attr="data-disabledby=${input.disabledBy}">
                   <li th:each="opt : *{options}" th:with="radioId = ${opt.givesAccessTo} + '-binder'">
                     <input id="radioId" name="rpt-radio-crit" type="radio" th:value="${opt.value}" data-grouped="true"
-                      th:id="${radioId}" th:name="${opt.name}" th:checked="${opt.defaultSelected}" />
+                      th:id="${radioId}" th:name="${opt.name}" th:checked="${opt.defaultSelected}" th:attr="data-disabledby=${opt.disabledBy}"/>
                     <label for="radioId" th:for="${radioId}" th:text="${opt.label}">Option</label>
   
                     <span th:remove="all">TODO would be better to have a helper which checks the presence of
@@ -181,7 +181,7 @@
   
               <div th:case="'CHECKBOXES_GROUP'">
                 <label th:text="*{label}">Checkboxes group</label>
-                <ul>
+                <ul th:attr="data-disabledby=${input.disabledBy}">
                   <li th:each="opt : *{options}" th:with="checkboxId = ${opt.givesAccessTo} + '-binder', input = ${opt}, grouped=${true}"
                     th:include="contextual-report-inputs.frag :: checkbox " >CHECKBOX</li>
                 </ul>
@@ -208,7 +208,7 @@
   
               <div th:case="'INPUTS_GROUP'">
                 <label th:text="*{label}">Group of inputs</label>
-                <ul>
+                <ul th:attr="data-disabledby=${input.disabledBy}">
                   <li th:each="input : *{inputs}" th:switch="${input.type.name()}" th:object="${input}">
                     <span th:case="'DATE'" th:include="contextual-report-inputs.frag :: datepicker ">
                       DATE </span>
