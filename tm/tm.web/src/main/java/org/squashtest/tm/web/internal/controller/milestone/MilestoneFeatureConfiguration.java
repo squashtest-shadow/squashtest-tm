@@ -174,7 +174,7 @@ public class MilestoneFeatureConfiguration {
 	}
 
 	public boolean isLocked(){
-		return milestoneLocked;
+		return globallyEnabled && userEnabled && milestoneLocked;
 	}
 
 	public boolean isMultipleBindings(){
@@ -182,7 +182,7 @@ public class MilestoneFeatureConfiguration {
 	}
 
 	public boolean isEditable(){
-		return ! milestoneLocked;
+		return ! isLocked();
 	}
 
 }

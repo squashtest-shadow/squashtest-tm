@@ -49,7 +49,10 @@
 <%-- ----------------------------------- Authorization ----------------------------------------------%>
 <%-- that page won't be editable if 
    * the user don't have the correct permission,
-   * the requirement status doesn't allow it. --%>
+   * the requirement status doesn't allow it. 
+   * one of the milestones this version belongs to doesn't allow modification
+   
+--%>
 
 
  <c:set var="attachable"        value="${false}"/> 
@@ -59,6 +62,8 @@
  <c:set var="creatable"         value="${false}"/> 
  <c:set var="linkable"          value="${false}"/> 
  <c:set var="status_editable"   value="${false}"/>
+ 
+ <c:if test="${not milestoneConf.locked}">
 
 <authz:authorized hasRole="ROLE_ADMIN" hasPermission="ATTACH" domainObject="${ requirementVersion }">
   <c:set var="attachable" value="${ requirementVersion.modifiable }" />
@@ -70,6 +75,8 @@
 <authz:authorized hasRole="ROLE_ADMIN" hasPermission="LINK" domainObject="${ requirementVersion }">
   <c:set var="linkable" value="${ requirementVersion.linkable }" />
 </authz:authorized>
+
+</c:if>
 
 <%-- ----------------------------------- /Authorization ----------------------------------------------%>
 <%-- ----------------------------------- header ----------------------------------------------%>

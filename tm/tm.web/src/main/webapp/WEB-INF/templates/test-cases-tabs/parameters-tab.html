@@ -45,7 +45,7 @@
 </script>
 </head>
 <body th:remove="tag"
-  th:with="isWritable = ${#authorization.expression('hasRole(''ROLE_ADMIN'')') or sec.hasPermission(testCase , 'WRITE')}">
+  th:with="isWritable = ${(#authorization.expression('hasRole(''ROLE_ADMIN'')') or sec.hasPermission(testCase , 'WRITE')) and milestoneConf.editable}">
   <div th:remove="all">
     <!--  
 		This snippet of html describes the template for the test step panel of the tab panel of a test case.

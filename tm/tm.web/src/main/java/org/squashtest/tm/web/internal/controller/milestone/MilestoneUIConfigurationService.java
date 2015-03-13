@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.web.internal.controller.milestone;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -31,11 +32,9 @@ import org.springframework.stereotype.Component;
 import org.squashtest.tm.domain.campaign.Campaign;
 import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.campaign.TestSuite;
-import org.squashtest.tm.domain.library.WhichNodeVisitor;
-import org.squashtest.tm.domain.library.WhichNodeVisitor.NodeType;
 import org.squashtest.tm.domain.milestone.Milestone;
-import org.squashtest.tm.domain.milestone.MilestoneHolder;
 import org.squashtest.tm.domain.milestone.MilestoneMember;
+import org.squashtest.tm.domain.milestone.MilestoneStatus;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.service.milestone.MilestoneFinderService;
@@ -99,7 +98,7 @@ public class MilestoneUIConfigurationService {
 	// ************************** private stuffs *******************************************
 
 
-	private MilestoneFeatureConfiguration createCommonConf(List<Long> activeMilestones, MilestoneMember member){
+	private MilestoneFeatureConfiguration createCommonConf(List<Long> milestones, MilestoneMember member){
 
 		MilestoneFeatureConfiguration conf = new MilestoneFeatureConfiguration();
 
@@ -108,6 +107,14 @@ public class MilestoneUIConfigurationService {
 		boolean userEnabled = true;
 		boolean locked = false;
 		int totalMilestones = 0;
+
+		List<Long> activeMilestones;
+		if (milestones != null){
+			activeMilestones = milestones;
+		}
+		else{
+			activeMilestones = new ArrayList<>();
+		}
 
 
 		// TODO : test whether the functionality is globally enabled
@@ -128,7 +135,7 @@ public class MilestoneUIConfigurationService {
 		}
 
 		// if both globally and user enabled, fetch the active milestones etc
-		if (globallyEnabled && userEnabled){
+		if (globallyEnabled && userEnabled && ! activeMilestones.isEmpty()){
 			Milestone milestone = milestoneFinder.findById(activeMilestones.get(0));
 			activeMilestone.setId(milestone.getId());
 			activeMilestone.setLabel(milestone.getLabel());
@@ -147,7 +154,8 @@ public class MilestoneUIConfigurationService {
 		Collection<Milestone> milestones = member.getMilestones();
 
 		for (Milestone m : milestones){
-			if (m.isLocked()){
+			MilestoneStatus status = m.getStatus();
+			if (! status.isAllowObjectModification()){
 				locked = true;
 				break;
 			}

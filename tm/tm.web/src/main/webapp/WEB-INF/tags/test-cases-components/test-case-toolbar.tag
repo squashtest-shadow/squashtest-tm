@@ -29,7 +29,6 @@
 
 <%@ attribute name="testCase" required="true" type="java.lang.Object"  description="the testcase" %>
 <%@ attribute name="writable"  required="true" type="java.lang.Boolean"  description="if the user has write permission on this test case" %>
-<%@ attribute name="deletable"  required="true" type="java.lang.Boolean"  description="if the user has deletion permission on this test case" %>
 <%@ attribute name="moreThanReadOnly"  required="true" type="java.lang.Boolean"  description="if the user has more than read only permission on this test case" %>
 <%@ attribute name="isInfoPage"  required="true" type="java.lang.Boolean"  description="a parameter set in the context when this template is to be displayed in an info page." %>
 <%@ attribute name="otherViewers"  required="true" type="java.lang.Object"  description="an object saying if that test case is being browsed by someone else right now" %>

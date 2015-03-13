@@ -43,6 +43,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -71,8 +72,10 @@ import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.statistics.iteration.IterationStatisticsBundle;
 import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.controller.generic.ServiceAwareAttachmentTableModelHelper;
+import org.squashtest.tm.web.internal.controller.milestone.MilestoneFeatureConfiguration;
 import org.squashtest.tm.web.internal.controller.milestone.MilestonePanelConfiguration;
 import org.squashtest.tm.web.internal.controller.milestone.MilestoneTableModelHelper;
+import org.squashtest.tm.web.internal.controller.milestone.MilestoneUIConfigurationService;
 import org.squashtest.tm.web.internal.controller.testcase.TestCaseImportanceJeditableComboDataBuilder;
 import org.squashtest.tm.web.internal.controller.testcase.TestCaseModeJeditableComboDataBuilder;
 import org.squashtest.tm.web.internal.controller.testcase.executions.ExecutionStatusJeditableComboDataBuilder;
@@ -125,31 +128,38 @@ public class IterationModificationController {
 	@Inject
 	private Provider<ExecutionStatusJeditableComboDataBuilder> executionStatusComboBuilderProvider;
 
+	@Inject
+	private MilestoneUIConfigurationService milestoneConfService;
+
 
 
 
 	@RequestMapping(method = RequestMethod.GET)
-	public String showIteration(Model model, @PathVariable long iterationId) {
+	public String showIteration(Model model, @PathVariable long iterationId,
+			@CookieValue(value="milestones", required=false, defaultValue="") List<Long> milestoneIds) {
 
-		populateIterationModel(model, iterationId);
+		populateIterationModel(model, iterationId, milestoneIds);
 		return "fragment/iterations/iteration";
 	}
 
 	// will return the iteration in a full page
 	@RequestMapping(value = "/info", method = RequestMethod.GET)
-	public String showIterationInfo(Model model, @PathVariable long iterationId) {
+	public String showIterationInfo(Model model, @PathVariable long iterationId,
+			@CookieValue(value="milestones", required=false, defaultValue="") List<Long> milestoneIds) {
 
-		populateIterationModel(model, iterationId);
+		populateIterationModel(model, iterationId, milestoneIds);
 		return "page/campaign-workspace/show-iteration";
 	}
 
-	private void populateIterationModel(Model model, long iterationId){
+	private void populateIterationModel(Model model, long iterationId, List<Long> milestoneIds){
 
 		Iteration iteration = iterationModService.findById(iterationId);
 		boolean hasCUF = cufValueService.hasCustomFields(iteration);
 		DataTableModel attachmentsModel = attachmentHelper.findPagedAttachments(iteration);
 		Map<String, String> assignableUsers = getAssignableUsers(iterationId);
 		Map<String, String> weights = getWeights();
+
+		MilestoneFeatureConfiguration milestoneConf = milestoneConfService.configure(milestoneIds, iteration);
 
 		model.addAttribute(ITERATION_KEY, iteration);
 		model.addAttribute("hasCUF", hasCUF);
@@ -160,6 +170,7 @@ public class IterationModificationController {
 		model.addAttribute("statuses", getStatuses(iteration.getProject().getId()));
 		model.addAttribute("allowsSettled", iteration.getProject().getCampaignLibrary().allowsStatus(ExecutionStatus.SETTLED));
 		model.addAttribute("allowsUntestable", iteration.getProject().getCampaignLibrary().allowsStatus(ExecutionStatus.UNTESTABLE));
+		model.addAttribute("milestoneConf", milestoneConf);
 
 	}
 

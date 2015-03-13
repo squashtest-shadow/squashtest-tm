@@ -92,7 +92,6 @@ import org.squashtest.tm.service.requirement.VerifiedRequirementsManagerService;
 import org.squashtest.tm.service.testcase.ParameterFinder;
 import org.squashtest.tm.service.testcase.TestCaseModificationService;
 import org.squashtest.tm.web.internal.controller.RequestParams;
-import org.squashtest.tm.web.internal.controller.administration.MilestoneDataTableModelHelper;
 import org.squashtest.tm.web.internal.controller.bugtracker.BugTrackerControllerHelper;
 import org.squashtest.tm.web.internal.controller.generic.ServiceAwareAttachmentTableModelHelper;
 import org.squashtest.tm.web.internal.controller.milestone.MetaMilestone;
@@ -542,7 +541,7 @@ public class TestCaseModificationController {
 		return buildMilestoneModel(testCaseId, notBoundMilestones, params.getsEcho());
 	}
 
-	
+
 
 	@RequestMapping(value = "/milestones/panel", method=RequestMethod.GET)
 	public String getMilestonesPanel(@PathVariable Long testCaseId, Model model){

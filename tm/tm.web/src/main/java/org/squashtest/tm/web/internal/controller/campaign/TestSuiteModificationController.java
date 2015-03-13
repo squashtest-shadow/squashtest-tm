@@ -41,6 +41,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -61,8 +62,10 @@ import org.squashtest.tm.service.campaign.TestSuiteModificationService;
 import org.squashtest.tm.service.customfield.CustomFieldValueFinderService;
 import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.controller.generic.ServiceAwareAttachmentTableModelHelper;
+import org.squashtest.tm.web.internal.controller.milestone.MilestoneFeatureConfiguration;
 import org.squashtest.tm.web.internal.controller.milestone.MilestonePanelConfiguration;
 import org.squashtest.tm.web.internal.controller.milestone.MilestoneTableModelHelper;
+import org.squashtest.tm.web.internal.controller.milestone.MilestoneUIConfigurationService;
 import org.squashtest.tm.web.internal.controller.testcase.TestCaseImportanceJeditableComboDataBuilder;
 import org.squashtest.tm.web.internal.controller.testcase.TestCaseModeJeditableComboDataBuilder;
 import org.squashtest.tm.web.internal.controller.testcase.executions.ExecutionStatusJeditableComboDataBuilder;
@@ -105,23 +108,30 @@ public class TestSuiteModificationController {
 	@Inject
 	private Provider<ExecutionStatusJeditableComboDataBuilder> executionStatusComboBuilderProvider;
 
+	@Inject
+	private MilestoneUIConfigurationService milestoneConfService;
+
+
+
 	// will return the fragment only
 	@RequestMapping(method = RequestMethod.GET)
-	public String showTestSuite(Model model, @PathVariable("suiteId") long suiteId) {
+	public String showTestSuite(Model model, @PathVariable("suiteId") long suiteId,
+			@CookieValue(value="milestones", required=false, defaultValue="") List<Long> milestoneIds) {
 
-		populateTestSuiteModel(model, suiteId);
+		populateTestSuiteModel(model, suiteId, milestoneIds);
 		return "fragment/test-suites/test-suite";
 	}
 
 	// will return the iteration in a full page
 	@RequestMapping(value = "/info", method = RequestMethod.GET)
-	public String showTestSuiteInfo(Model model, @PathVariable("suiteId") long suiteId) {
+	public String showTestSuiteInfo(Model model, @PathVariable("suiteId") long suiteId,
+			@CookieValue(value="milestones", required=false, defaultValue="") List<Long> milestoneIds) {
 
-		populateTestSuiteModel(model, suiteId);
+		populateTestSuiteModel(model, suiteId, milestoneIds);
 		return "page/campaign-workspace/show-test-suite";
 	}
 
-	private void populateTestSuiteModel(Model model, long testSuiteId) {
+	private void populateTestSuiteModel(Model model, long testSuiteId, List<Long> milestoneIds) {
 
 		TestSuite testSuite = service.findById(testSuiteId);
 		TestPlanStatistics testSuiteStats = service.findTestSuiteStatistics(testSuiteId);
@@ -129,6 +139,9 @@ public class TestSuiteModificationController {
 		DataTableModel attachmentsModel = attachmentsHelper.findPagedAttachments(testSuite);
 		Map<String, String> assignableUsers = getAssignableUsers(testSuiteId);
 		Map<String, String> weights = getWeights();
+
+		MilestoneFeatureConfiguration milestoneConf = milestoneConfService.configure(milestoneIds, testSuite);
+
 
 		model.addAttribute(TEST_SUITE, testSuite);
 		model.addAttribute("statistics", testSuiteStats);
@@ -142,6 +155,7 @@ public class TestSuiteModificationController {
 		model.addAttribute("weights", weights);
 		model.addAttribute("modes", getModes());
 		model.addAttribute("statuses", getStatuses(testSuite.getProject().getId()));
+		model.addAttribute("milestoneConf", milestoneConf);
 	}
 
 	/**

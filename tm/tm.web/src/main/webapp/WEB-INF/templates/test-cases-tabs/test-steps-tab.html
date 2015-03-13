@@ -27,6 +27,7 @@
 			- testCase : the test case bean
 			- stepsData : a list of maps such as build by a TestStepsTableModelBuilder.
 			- cufDefinitions : an array of CustomFieldModel
+            - milestoneConf : an instance of MilestoneFeatureConfiguration
 	 -->
 
 </div>
@@ -34,9 +35,9 @@
 
 <div id="test-steps-tabs-panel" 
 	 class="table-tab" 
-   th:with="isWritable = ${#authorization.expression('hasRole(''ROLE_ADMIN'')') or sec.hasPermission(testCase , 'WRITE')} , 
-            isLinkable = ${#authorization.expression('hasRole(''ROLE_ADMIN'')') or sec.hasPermission(testCase , 'LINK')} , 
-            isAttachable = ${#authorization.expression('hasRole(''ROLE_ADMIN'')') or sec.hasPermission(testCase , 'ATTACH')}">
+   th:with="isWritable = ${(#authorization.expression('hasRole(''ROLE_ADMIN'')') or sec.hasPermission(testCase , 'WRITE')) and milestoneConf.editable} , 
+            isLinkable = ${(#authorization.expression('hasRole(''ROLE_ADMIN'')') or sec.hasPermission(testCase , 'LINK')) and milestoneConf.editable} , 
+            isAttachable = ${(#authorization.expression('hasRole(''ROLE_ADMIN'')') or sec.hasPermission(testCase , 'ATTACH')) and milestoneConf.editable}">
 	
 	<!-- ==================== toolbar definition =================== -->
 	<div class="toolbar">

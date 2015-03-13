@@ -75,15 +75,25 @@
 <c:set var="servContext" value="${ pageContext.servletContext.contextPath }" />
 
 <%-- ----------------------------------- Authorization ----------------------------------------------%>
+
+
+<c:set var="writable"       value="${false}" />
+<c:set var="creatable"      value="${false}" />
+<c:set var="linkable"       value="${false}" />
+<c:set var="executable"     value="${false}" /> 
+ 
+ 
+<c:if test="${not milestoneConf.locked}"> 
+  
 <authz:authorized hasRole="ROLE_ADMIN" hasPermission="WRITE" domainObject="${ testSuite }">
   <c:set var="writable" value="${ true }" />
   <c:set var="moreThanReadOnly" value="${ true }" />
 </authz:authorized>
 
 <authz:authorized hasRole="ROLE_ADMIN" hasPermission="DELETE" domainObject="${ testSuite }">
-  <c:set var="deletable" value="${true }" />
   <c:set var="moreThanReadOnly" value="${ true }" />
 </authz:authorized>
+
 <authz:authorized hasRole="ROLE_ADMIN" hasPermission="CREATE" domainObject="${ testSuite }">
   <c:set var="creatable" value="${true }" />
   <c:set var="moreThanReadOnly" value="${ true }" />
@@ -96,6 +106,9 @@
   <c:set var="executable" value="${ true }" />
   <c:set var="moreThanReadOnly" value="${ true }" />
 </authz:authorized>
+
+
+</c:if>
 
 <f:message key="tabs.label.issues" var="tabIssueLabel" />
 <script type="text/javascript">
@@ -161,6 +174,19 @@
   <c:if test="${ moreThanReadOnly }">
     <comp:opened-object otherViewers="${ otherViewers }" objectUrl="${ testSuiteUrl }" />
   </c:if>
+  
+  <c:if test="${milestoneConf.messagesEnabled}">
+      <div data-milestones="${milestoneConf.totalMilestones}" class="milestone-count-notifier entity-edit-general-warning 
+            ${(milestoneConf.multipleBindings) ? '' : 'not-displayed'}">
+        <p><f:message key="messages.boundToMultipleMilestones"/></p>
+      </div>
+      <c:if test="${milestoneConf.locked}">
+      <div class="entity-edit-general-warning">
+        <p><f:message key="message.CannotModifyBecauseMilestoneLocking"/></p>
+      </div>        
+      </c:if>
+  </c:if>    
+  
   <div class="unsnap"></div>
 </div>
 
@@ -178,9 +204,11 @@
           <f:message key="tabs.label.test-plan" />
         </a>
       </li>
+      <c:if test="${milestoneConf.displayTab}">
         <li>
             <a href="${testSuiteUrl}/milestones/panel"><f:message key="tabs.label.milestone"/></a>
         </li>         
+        </c:if>
       <li>
         <a href="#tabs-3">
           <f:message key="label.Attachments" />

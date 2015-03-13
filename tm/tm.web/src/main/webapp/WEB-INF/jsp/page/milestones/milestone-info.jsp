@@ -30,7 +30,7 @@
 	pageEncoding="utf-8"%>
 <%------------------------------------- URLs et back button ----------------------------------------------%>
 <c:url var="ckeConfigUrl" value="/styles/ckeditor/ckeditor-config.js" />
-<s:url var="milestoneUrl" value="/milestone/{milestoneId}">
+<s:url var="milestoneUrl" value="/milestones/{milestoneId}">
 	<s:param name="milestoneId" value="${milestone.id}" />
 </s:url>
 <s:url var="milestonesUrl" value="/administration/milestones" />

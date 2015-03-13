@@ -58,9 +58,20 @@ require(["common"], function() {
 <%-- 
 	if no variable 'editable' was provided in the context, we'll set one according to the authorization the user
 	was granted for that object. 
+  
+    Also if there is an active milestone that prevent modification, 
+    all permissions shall remain to false.
 --%>
 
-<c:set var="writable" value="${false }"/>
+
+<c:set var="writable"           value="${false}"/>
+<c:set var="moreThanReadOnly"   value="${false}" />
+<c:set var="attachable"         value="${false}" />
+<c:set var="deletable"          value="${false}" />
+<c:set var="linkable"           value="${false}" />
+
+<c:if test="${not milestoneConf.locked}">
+
 <authz:authorized hasRole="ROLE_ADMIN" hasPermission="WRITE"
 	domainObject="${ testCase }">
 	<c:set var="writable" value="${ true }" />
@@ -74,7 +85,6 @@ require(["common"], function() {
 
 <authz:authorized hasRole="ROLE_ADMIN" hasPermission="DELETE"
 	domainObject="${ testCase }">
-	<c:set var="deletable" value="${true }" />
 	<c:set var="moreThanReadOnly" value="${ true }" />
 </authz:authorized>
 <authz:authorized hasRole="ROLE_ADMIN" hasPermission="CREATE"
@@ -89,6 +99,7 @@ require(["common"], function() {
 	<c:set var="moreThanReadOnly" value="${ true }" />
 </authz:authorized>
 
+</c:if>
 
 <%---------------------------- Test Case Header ------------------------------%>
 
@@ -98,7 +109,7 @@ require(["common"], function() {
 <%---------------------------- Test Case Informations ------------------------------%>
 
 <tc:test-case-toolbar testCase="${testCase}" isInfoPage="${param.isInfoPage}" otherViewers="${otherViewers}"   
-					  moreThanReadOnly="${moreThanReadOnly}"  writable="${writable}" deletable="${deletable}" 
+					  moreThanReadOnly="${moreThanReadOnly}"  writable="${writable}" 
                       milestoneConf="${milestoneConf}"/>
 
 <%-- --------------------------------------- Test Case body --------------------------------------- --%>

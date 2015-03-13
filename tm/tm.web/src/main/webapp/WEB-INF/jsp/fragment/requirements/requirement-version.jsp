@@ -39,6 +39,7 @@
 that page won't be editable if 
    * the user don't have the correct permission,
    * the requirement version status doesn't allow it.
+   * one of the milestones this version belongs to doesn't allow modification
 
  --%>
  
@@ -52,6 +53,8 @@ that page won't be editable if
  <c:set var="milestone_mode"    value="${not empty cookie['milestones'] }"/>
  
  
+<c:if test="${not milestoneConf.locked}">
+
 <authz:authorized hasRole="ROLE_ADMIN" hasPermission="ATTACH" domainObject="${ requirementVersion }">
 	<c:set var="attachable" value="${ requirementVersion.modifiable }" />
 	<c:set var="moreThanReadOnly" value="${ true }" />
@@ -74,7 +77,7 @@ that page won't be editable if
 </authz:authorized>
 <c:set var="status_editable" value="${ moreThanReadOnly and requirementVersion.status.allowsStatusUpdate }"/>
 
-
+</c:if>
 <f:message var="confirmLabel" key="label.Confirm"/>
 <f:message var="cancelLabel" key="label.Cancel"/>
 <f:message var="okLabel" key="label.Ok"/>

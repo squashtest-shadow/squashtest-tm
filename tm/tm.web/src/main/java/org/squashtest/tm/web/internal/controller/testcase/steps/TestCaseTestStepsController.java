@@ -37,6 +37,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -59,6 +60,8 @@ import org.squashtest.tm.service.customfield.CustomFieldHelperService;
 import org.squashtest.tm.service.testcase.CallStepManagerService;
 import org.squashtest.tm.service.testcase.TestCaseModificationService;
 import org.squashtest.tm.web.internal.controller.RequestParams;
+import org.squashtest.tm.web.internal.controller.milestone.MilestoneFeatureConfiguration;
+import org.squashtest.tm.web.internal.controller.milestone.MilestoneUIConfigurationService;
 import org.squashtest.tm.web.internal.controller.testcase.TestCaseModificationController;
 import org.squashtest.tm.web.internal.controller.testcase.steps.ActionStepFormModel.ActionStepFormModelValidator;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
@@ -94,12 +97,16 @@ public class TestCaseTestStepsController {
 	@Inject
 	private TestCaseModificationService testCaseModificationService;
 
+	@Inject
+	private MilestoneUIConfigurationService milestoneConfService;
 
 	private static final String COPIED_STEP_ID_PARAM = "copiedStepId[]";
 	private static final Logger LOGGER = LoggerFactory.getLogger(TestCaseModificationController.class);
 
 	@RequestMapping(value = "/panel")
-	public String getTestStepsPanel(@PathVariable("testCaseId") long testCaseId, Model model, Locale locale) {
+	public String getTestStepsPanel(@PathVariable("testCaseId") long testCaseId, Model model, Locale locale,
+			@CookieValue(value="milestones", required=false, defaultValue="") List<Long> milestoneIds
+			) {
 
 		// the main entities
 		TestCase testCase = testCaseModificationService.findById(testCaseId);
@@ -118,10 +125,16 @@ public class TestCaseTestStepsController {
 		builder.usingCustomFields(cufValues, cufDefinitions.size());
 		Collection<Object> stepsData = builder.buildRawModel(steps, 1);
 
+
+		// the milestone feature
+		MilestoneFeatureConfiguration milestoneConf = milestoneConfService.configure(milestoneIds, testCase);
+
 		// populate the model
 		model.addAttribute(TEST_CASE, testCase);
 		model.addAttribute("stepsData", stepsData);
 		model.addAttribute("cufDefinitions", cufDefinitions);
+		model.addAttribute("milestoneConf", milestoneConf);
+
 
 		// return
 		return "test-cases-tabs/test-steps-tab.html";

@@ -34,6 +34,7 @@ import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -52,6 +53,8 @@ import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.testcase.ParameterModificationService;
 import org.squashtest.tm.service.testcase.TestCaseFinder;
 import org.squashtest.tm.web.internal.controller.RequestParams;
+import org.squashtest.tm.web.internal.controller.milestone.MilestoneFeatureConfiguration;
+import org.squashtest.tm.web.internal.controller.milestone.MilestoneUIConfigurationService;
 import org.squashtest.tm.web.internal.controller.widget.AoColumnDef;
 import org.squashtest.tm.web.internal.helper.JsonHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
@@ -77,9 +80,12 @@ public class TestCaseParametersController {
 
 	@Inject
 	private PermissionEvaluationService permissionEvaluationService;
+
 	@Inject
 	private MessageSource messageSource;
 
+	@Inject
+	private MilestoneUIConfigurationService milestoneConfService;
 
 
 	private DatatableMapper<String> parametersTableMapper =
@@ -116,7 +122,8 @@ public class TestCaseParametersController {
 	 * @return
 	 */
 	@RequestMapping(value = "/panel", method = RequestMethod.GET)
-	public String getParametersPanel(@PathVariable("testCaseId") long testCaseId, Model model, Locale locale) {
+	public String getParametersPanel(@PathVariable("testCaseId") long testCaseId, Model model, Locale locale,
+			@CookieValue(value="milestones", required=false, defaultValue="") List<Long> milestoneIds) {
 
 		// the main entities
 		TestCase testCase = testCaseFinder.findById(testCaseId);
@@ -143,10 +150,15 @@ public class TestCaseParametersController {
 		boolean editable = permissionEvaluationService.hasRoleOrPermissionOnObject("ROLE_ADMIN", "WRITE", testCase);
 		List<AoColumnDef> columnDefs = new DatasetsTableColumnDefHelper().getAoColumnDefs(paramIds, editable);
 		List<HashMap<String, String>> paramHeaders = ParametersModelHelper.findDatasetParamHeaders(testCaseId, locale, directAndCalledParameters, messageSource);
+
+		MilestoneFeatureConfiguration milestoneConf = milestoneConfService.configure(milestoneIds, testCase);
+
 		// populate the model
 		model.addAttribute(TEST_CASE, testCase);
 		model.addAttribute("datasetsAoColumnDefs", JsonHelper.serialize(columnDefs));
 		model.addAttribute("paramHeaders", paramHeaders);
+		model.addAttribute("milestoneConf", milestoneConf);
+
 		// return
 		return "test-cases-tabs/parameters-tab.html";
 

@@ -83,7 +83,7 @@
 	<jsp:attribute name="informationContent">
 		<c:url var="milestonesUrl" value="/administration/milestones/list" />
 		<c:url var="addMilestoneUrl" value="/administration/milestones" />
-		<c:url var="milestoneDetailsBaseUrl" value="/milestone" />
+		<c:url var="milestoneDetailsBaseUrl" value="/milestones" />
 		<c:url var="dtMessagesUrl" value="/datatables/messages" />
 
 		
