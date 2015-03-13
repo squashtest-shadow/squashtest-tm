@@ -67,10 +67,9 @@
 		
 		
 		<c:url var="clientsUrl" value="/administration/config/clients/list" />
-		<c:url var="addMilestoneUrl" value="/administration/config/clients" />
+		<c:url var="addClientUrl" value="/administration/config/clients" />
 
-		
-		
+			
 		<div id="config-page-content" class="admin-message-page-content">   
              
              		<comp:toggle-panel id="config-info-panel"
@@ -111,38 +110,56 @@
 
               </jsp:attribute>
 				     </comp:toggle-panel>
-				     
-			<comp:toggle-panel id="client-config-panel" titleKey="label.ModifyClientConfig" open="true">
-				  <jsp:attribute name="body">
-				 <div class="toolbar">
-     <button id="new-client-button" class="test-step-toolbar-button ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-primary .squash-button-initialized" title="f:message key="label.addTeam">    
-     <span class="ui-icon ui-icon-plusthick">+</span> <span class="ui-button-text"><f:message key="label.AddClient" /> </span> </button>
-     <button id="delete-client-button" class="test-step-toolbar-button ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-primary .squash-button-initialized" title="f:message key="label.addTeam">    
-     <span class="ui-icon ui-icon-trash">-</span> <span class="ui-button-text"><f:message key="label.deleteClient" /> </span> </button>
- </div>
-  <div style="clear:both"></div>
-	<table id="client-table" class="unstyled-table" data-def="ajaxsource=${clientsUrl}, hover, filter, pre-sort=1-asc">
+	
+						<div id="client-config-panel" 
+				class="sq-tg expand">
+                          <div class="tg-head">
+                            <h3><f:message key="label.ModifyClientConfig" /></h3>
+                            <div class="tg-toolbar">
+                              <button id="new-client-button" title="${addClientTitle}"
+							class="sq-icon-btn btn-sm" type="submit">
+                                <span class="ui-icon ui-icon-plus squared-icons">+</span>
+                              </button>
+                              <button id="delete-client-button" title="${deleteClientTitle}"
+							class="sq-icon-btn btn-sm" type="submit">
+                                <span class="ui-icon ui-icon-minus squared-icons">-</span>
+                              </button>                       
+                            </div>
+                          </div>
+                          <div class="tg-body">
+                          	<table id="client-table"
+						class="unstyled-table"
+						data-def="ajaxsource=${clientsUrl}, hover, filter, pre-sort=1-asc">
 		<thead>
 			<tr>
 				<th data-def="map=entity-id, invisible"> </th>
 				<th data-def="map=index, select">#</th>
-				<th data-def="map=name, sortable" class="datatable-filterable"><f:message key="label.Name"/></th>
-				<th data-def="map=secret, sortable"><f:message key="label.secret"/></th> 
-				<th data-def="map=redirect_uri, sortable"><f:message key="label.redirect_uri"/></th> 
+				<th data-def="map=name, sortable" class="datatable-filterable"><f:message
+										key="label.Name" /></th>
+				<th data-def="map=secret, sortable"><f:message
+										key="label.secret" /></th> 
+				<th data-def="map=redirect_uri, sortable"><f:message
+										key="label.redirect_uri" /></th> 
 				<th data-def="map=delete, delete-button=#delete-client-popup"></th>				
 			</tr>
 		</thead>
 		<tbody>	
 		</tbody>
 	</table>
+	
 
-	<f:message var="deleteMilestoneTitle" key="dialog.delete-client.title" />
 	<div id="delete-client-popup" class="popup-dialog not-displayed" title="${deleteClientTitle}">
 		
 		<div class="display-table-row">
             <div class="display-table-cell warning-cell">
                 <div class="generic-error-signal"></div>
             </div>
+		 	<div class="display-table-cell">
+		        <span><f:message key="message.client.remove.first"/></span>
+		        <span class="red-warning-message"><f:message key="message.client.remove.second"/></span>
+		        <span><f:message key="message.client.remove.third"/></span>
+		        <span class="bold-warning-message"><f:message key="message.client.remove.fourth"/></span>
+		      </div>
             <div id="warning-delete" class="display-table-cell">
 			</div>
 		</div>
@@ -152,8 +169,7 @@
 		</div>
 	
 	</div>	
-
-    <f:message var="addMilestoneTitle" key="dialog.new-client.title"/>
+	
     <div id="add-client-dialog" class="not-displayed popup-dialog" 
           title="${addClientTitle}" />
           
@@ -178,23 +194,21 @@
           </tr>  
         </table>
       <div class="popup-dialog-buttonpane">
-        <input type="button" value="${addLabel}" data-def="mainbtn, evt=confirm"/>
+        <input type="button" value="${confirmLabel}" data-def="mainbtn, evt=confirm"/>
         <input type="button" value="${cancelLabel}" data-def="evt=cancel"/>
       </div>     
 </div>
-</jsp:attribute>
-			</comp:toggle-panel>
+                         </div>			     
+			</div>
 		</div>
 	</jsp:attribute>
 </layout:info-page-layout>
 
 <script type="text/javascript">
-
-require(["common"], function(){
-	require(["client-manager/client-manager"], function(){});
-});
-
-
+	require([ "common" ], function() {
+		require([ "client-manager/client-manager" ], function() {
+		});
+	});
 </script>
 
 

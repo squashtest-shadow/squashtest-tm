@@ -23,8 +23,10 @@ package org.squashtest.tm.web.internal.controller.administration;
 import static org.squashtest.tm.web.internal.helper.JEditablePostParams.VALUE;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 import javax.inject.Inject;
 import javax.validation.Valid;
@@ -39,7 +41,6 @@ import org.springframework.osgi.context.event.OsgiBundleApplicationContextEventM
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -157,8 +158,14 @@ public class ConfigAdministrationController implements ApplicationContextAware, 
 
 	@RequestMapping(value = "clients", method = RequestMethod.POST)
 	@ResponseStatus(HttpStatus.CREATED)
-	public @ResponseBody ClientDetails addClient(@Valid @ModelAttribute("addClient") BaseClientDetails clientDetails) {
+	public @ResponseBody ClientDetails addClient(@Valid @ModelAttribute("addClient") ClientModel model) {
 
+		BaseClientDetails clientDetails = new BaseClientDetails();
+		clientDetails.setClientId(model.getClientId());
+		clientDetails.setClientSecret(model.getClientSecret());
+		Set<String> uris = new HashSet<String>();
+		uris.add(model.getRegisteredRedirectUri());
+		clientDetails.setRegisteredRedirectUri(uris);
 		clientService.addClientDetails(clientDetails);
 
 		return clientDetails;
@@ -174,5 +181,4 @@ public class ConfigAdministrationController implements ApplicationContextAware, 
 		model.setAaData((List<Object>) aaData);
 		return model;
 	}
-
 }
