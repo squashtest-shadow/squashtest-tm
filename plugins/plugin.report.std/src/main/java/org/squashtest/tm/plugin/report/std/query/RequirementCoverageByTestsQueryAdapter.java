@@ -44,15 +44,33 @@ public class RequirementCoverageByTestsQueryAdapter extends LegacyQueryAdapter<H
 	 */
 	private static final String LEGACY_PROJECT_IDS = "projectIds[]";
 
+	private static final String MILESTONE_IDS = "milestones";
+
 	/**
 	 * @see org.squashtest.tm.plugin.report.std.query.LegacyQueryAdapter#processNonStandardCriteria(java.util.Map,
 	 *      org.squashtest.tm.internal.domain.report.query.hibernate.HibernateReportQuery)
 	 */
 	@Override
 	protected void processNonStandardCriteria(Map<String, Criteria> criteria, HibernateReportQuery legacyQuery) {
-		
+
+		String mode = (String)criteria.get("selectionMode").getValue();
+
+		if (mode.equals("PROJECT_PICKER")){
 			Criteria idsCrit = criteria.get("projectIds");
 			legacyQuery.setCriterion(LEGACY_PROJECT_IDS, ((Collection<?>) idsCrit.getValue()).toArray());
+
+			Criteria modeCrit = criteria.get("mode");
+			legacyQuery.setCriterion("mode" , modeCrit.getValue());
+
+		}
+		else{
+			Criteria mIds = criteria.get(MILESTONE_IDS);
+			legacyQuery.setCriterion(MILESTONE_IDS, ((Collection<?>) mIds.getValue()).toArray());
+
+			// when using the milestone picker, the "mode" is set to ad-hoc value "0"
+			legacyQuery.setCriterion("mode" , "0");
+		}
+
 	}
 
 	/**
@@ -60,7 +78,7 @@ public class RequirementCoverageByTestsQueryAdapter extends LegacyQueryAdapter<H
 	 */
 	@Override
 	protected boolean isStandardCriteria(String criterionName) {
-		return "mode".equals(criterionName);
+		return false;
 	}
 
 	/**

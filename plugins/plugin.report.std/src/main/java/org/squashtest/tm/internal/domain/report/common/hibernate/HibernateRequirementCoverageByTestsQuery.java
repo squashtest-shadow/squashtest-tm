@@ -22,6 +22,8 @@ package org.squashtest.tm.internal.domain.report.common.hibernate;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -35,6 +37,7 @@ import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.type.LongType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.requirement.Requirement;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
@@ -62,6 +65,14 @@ public class HibernateRequirementCoverageByTestsQuery extends HibernateReportQue
 	 * Name of the project created only to display totals in the report
 	 */
 	private static final String TOTAL_PROJECT_NAME = "TOTAL";
+
+	/**
+	 * when picking by milestone, will only treat versions bound to
+	 * the given milestone.
+	 * 
+	 */
+	private static final int REPORT_VERSION_BOUND_TO_MILESTONE =  0;
+
 	/**
 	 * will treat each version of requirement as a separate requirement
 	 */
@@ -72,14 +83,16 @@ public class HibernateRequirementCoverageByTestsQuery extends HibernateReportQue
 	private static final int REPORT_LAST_VERSION = 2;
 
 	private static final String PROJECT_IDS = "projectIds[]";
-	
-	
-	private static final String FIND_REQUIREMENT_PARENT_NAMES = 
+
+	private static final String MILESTONE_IDS = "milestones";
+
+
+	private static final String FIND_REQUIREMENT_PARENT_NAMES =
 			"select rlnc.descendant_id, res.name "+
-			"from RLN_RELATIONSHIP rlnc  "+
-			"inner join REQUIREMENT_FOLDER rf on rlnc.ancestor_id = rf.rln_id  "+
-			"inner join RESOURCE res on rf.res_id = res.res_id "+
-			"where rlnc.descendant_id in (:reqIds) "+
+					"from RLN_RELATIONSHIP rlnc  "+
+					"inner join REQUIREMENT_FOLDER rf on rlnc.ancestor_id = rf.rln_id  "+
+					"inner join RESOURCE res on rf.res_id = res.res_id "+
+					"where rlnc.descendant_id in (:reqIds) "+
 
 			"UNION "+
 
@@ -96,17 +109,32 @@ public class HibernateRequirementCoverageByTestsQuery extends HibernateReportQue
 			"left join RLN_RELATIONSHIP rlnc on req.rln_id = rlnc.descendant_id "+
 			"where rlnc.descendant_id is null "+
 			"and req.rln_id in (:reqIds) ";
-	
+
 
 	public HibernateRequirementCoverageByTestsQuery() {
 		Map<String, ReportCriterion> criterions = getCriterions();
+
 		ReportCriterion projectIds = new ProjectIdsIsInIds(PROJECT_IDS, "id", Project.class, "projects");
 		// note : the name here follows the naming convention of http requests for array parameters. It allows the
 		// controller to directly map the http query string to that criterion.
 		criterions.put(PROJECT_IDS, projectIds);
 
+		ReportCriterion milestoneIds = new MilestoneIdsIsInIds(MILESTONE_IDS, "id", Milestone.class, "milestones");
+		criterions.put(MILESTONE_IDS, milestoneIds);
+
 		ReportCriterion reportMode = new RequirementReportTypeCriterion("mode", "on s'en fout");
 		criterions.put("mode", reportMode);
+	}
+
+	private static class MilestoneIdsIsInIds extends IsInSet<Long>{
+		public MilestoneIdsIsInIds(String criterionName, String attributePath, Class<?> entityClass, String entityAlias) {
+			super(criterionName, attributePath, entityClass, entityAlias);
+		}
+
+		@Override
+		public Long fromValueToTypedValue(Object o) {
+			return Long.parseLong(o.toString());
+		}
 	}
 
 	private static class ProjectIdsIsInIds extends IsInSet<Long> {
@@ -129,27 +157,60 @@ public class HibernateRequirementCoverageByTestsQuery extends HibernateReportQue
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<?> doInSession(Session session) {
-		
+
 		// find the ids of all the requirements encompassed in the scope of this report instance.
 		List<Long> ids = findRequirementIds(session);
 
 		// find the corresponding requirements
 		List<Requirement> requirements = findRequirements(session, ids);
-		
+
 		// find the name of their parents. The result is a pair of (requirementid, parentname)
 		List<Object[]> parentsNameOfRequirements = findParentsNames(session, ids);
 
 		// pair the requirements with their parent's name
 		List<Object[]> requirementsAndParents = pairRequirementAndParents(requirements, parentsNameOfRequirements);
-		
+
 		// return
 		return requirementsAndParents;
 	}
 
-	
+
 	private List<Long> findRequirementIds(Session session){
+
+		// select by milestone
+		if (this.getCriterions().get(MILESTONE_IDS).getParameters() != null){
+			return idsByMilestones(session);
+		}
+		else{
+			return idsByProject(session);
+		}
+
+
+	}
+
+	private List<Long> idsByMilestones(Session session){
+		Object[] milestoneIds = this.getCriterions().get(MILESTONE_IDS).getParameters();
+
+		Collection<Long> mIds = new ArrayList<>(milestoneIds.length);
+		for (Object o : milestoneIds){
+			mIds.add(Long.valueOf(o.toString()));
+		}
+
+		String hql = "select req.id from Requirement req join req.versions version join version.milestones mstones "+
+				"where mstones.id in (:milestones)";
+
+		Query q = session.createQuery(hql);
+		q.setParameterList("milestones", mIds, LongType.INSTANCE);
+
+		return q.list();
+
+	}
+
+	private List<Long> idsByProject(Session session){
+
 		List<Long> projectIds = new ArrayList<Long>();
 		boolean runOnAllProjects = true;
+
 		if (this.getCriterions().get(PROJECT_IDS).getParameters() != null) {
 			runOnAllProjects = false;
 			// Put ids in a list
@@ -157,50 +218,51 @@ public class HibernateRequirementCoverageByTestsQuery extends HibernateReportQue
 				projectIds.add(Long.parseLong((String) id));
 			}
 		}
-		
+
 		String hql = "select req.id from Requirement req";
 		if (! runOnAllProjects){
 			hql +=" where req.project.id in (:projectIds)";
 		}
-		
+
 		Query query = session.createQuery(hql);
-		
+
 		if (! runOnAllProjects){
 			query.setParameterList("projectIds", projectIds, LongType.INSTANCE);
 		}
-		
+
 		return query.list();
 	}
-	
+
+
 	private List<Requirement> findRequirements(Session session, List<Long> ids) {
 		if(ids.isEmpty()){
 			return Collections.emptyList();
 		}
 		return session.createQuery("from Requirement where id in (:ids)")
-					  .setParameterList("ids", ids, LongType.INSTANCE)
-					  .list();
-		
+				.setParameterList("ids", ids, LongType.INSTANCE)
+				.list();
+
 	}
 
-	
+
 	private List<Object[]> findParentsNames(Session session, List<Long> ids){
 		if(ids.isEmpty()){
 			return Collections.emptyList();
 		}
 		return session.createSQLQuery(FIND_REQUIREMENT_PARENT_NAMES)
-					  .setParameterList("reqIds", ids, LongType.INSTANCE)
-					  .list();
+				.setParameterList("reqIds", ids, LongType.INSTANCE)
+				.list();
 	}
 
-	
+
 	private List<Object[]> pairRequirementAndParents(List<Requirement> requirements, List<Object[]>parentsNameOfRequirements){
-		
+
 		List<Object[]> requirementsAndParents = new LinkedList<Object[]>();
-		
+
 		for (Requirement req : requirements){
-			
+
 			ListIterator<Object[]> iterNames = parentsNameOfRequirements.listIterator();
-			
+
 			while (iterNames.hasNext()){
 				Object[] tuple = iterNames.next();
 				Long id = ((BigInteger)tuple[0]).longValue();
@@ -210,14 +272,14 @@ public class HibernateRequirementCoverageByTestsQuery extends HibernateReportQue
 					break;
 				}
 			}
-			
+
 		}
-		
+
 		return requirementsAndParents;
-		
+
 	}
 
-	
+
 	// ************************ post processing part **********************************
 
 	@SuppressWarnings("unchecked")
@@ -345,6 +407,10 @@ public class HibernateRequirementCoverageByTestsQuery extends HibernateReportQue
 		int reqMode = Integer.parseInt((String) mode);
 		List<ReqCoverageByTestRequirementSingleDto> reqCovByTestReqSingleDtos = new ArrayList<ReqCoverageByTestRequirementSingleDto>();
 		switch (reqMode) {
+		case REPORT_VERSION_BOUND_TO_MILESTONE :
+			LOGGER.debug("creation of reqCovByTestReqSingleDtos for Report mode 0 : only versions bound to the specified milestones are taken into account");
+			createSingleDtoReportMilestoneVersion(requirement, parentName, reqCovByTestReqSingleDtos);
+			break;
 		case REPORT_EACH_VERSION:
 			LOGGER.debug("creation of reqCovByTestReqSingleDtos for Report mode 1 : all versions of requirement taken into account");
 			createSingleDtoReportEachVersion(requirement, parentName, reqCovByTestReqSingleDtos);
@@ -361,6 +427,30 @@ public class HibernateRequirementCoverageByTestsQuery extends HibernateReportQue
 		}
 
 		return reqCovByTestReqSingleDtos;
+	}
+
+	private void createSingleDtoReportMilestoneVersion(Requirement requirement, String parentName,
+			List<ReqCoverageByTestRequirementSingleDto> reqCovByTestReqSingleDtos) {
+
+		// TODO : ce sont des entiers
+		Object[] oIds =  getCriterions().get(MILESTONE_IDS).getParameters();
+		Collection<Long> milestoneIds = new ArrayList<>(oIds.length);
+		for (Object o : oIds){
+			milestoneIds.add(Long.valueOf(o.toString()));
+
+		}
+
+		List<RequirementVersion> requirementVersions = requirement.getRequirementVersions();
+		for (RequirementVersion version : requirementVersions){
+			for(Milestone m : version.getMilestones()){
+				if (milestoneIds.contains(m.getId())){
+					ReqCoverageByTestRequirementSingleDto requirementSingleDto = createRequirementSingleDto(version, parentName,
+							requirement);
+					reqCovByTestReqSingleDtos.add(requirementSingleDto);
+				}
+			}
+		}
+
 	}
 
 	private void createSingleDtoReportEachVersion(Requirement requirement, String parentName,
@@ -464,7 +554,7 @@ public class HibernateRequirementCoverageByTestsQuery extends HibernateReportQue
 		givenProject.setObsoleteUndefinedRequirementCoverage(calculateAndRoundRate(
 				givenProject.getObsoleteUndefinedVerifiedRequirementNumber(),
 				givenProject.getObsoleteUndefinedRequirementNumber()));
-		
+
 	}
 
 	private void calculateProjectCoverageRateApproved(ReqCoverageByTestProjectDto givenProject) {
@@ -488,7 +578,7 @@ public class HibernateRequirementCoverageByTestsQuery extends HibernateReportQue
 		givenProject.setApprovedUndefinedRequirementCoverage(calculateAndRoundRate(
 				givenProject.getApprovedUndefinedVerifiedRequirementNumber(),
 				givenProject.getApprovedUndefinedRequirementNumber()));
-		
+
 	}
 
 	private void calculateProjectCoverageRateUnderReview(ReqCoverageByTestProjectDto givenProject) {
@@ -513,7 +603,7 @@ public class HibernateRequirementCoverageByTestsQuery extends HibernateReportQue
 				givenProject.getUnderReviewUndefinedVerifiedRequirementNumber(),
 				givenProject.getUnderReviewUndefinedRequirementNumber()));
 
-		
+
 	}
 
 	private void calculateProjectCoverageRatesWorkInProgress(ReqCoverageByTestProjectDto givenProject) {
@@ -537,7 +627,7 @@ public class HibernateRequirementCoverageByTestsQuery extends HibernateReportQue
 		givenProject.setWorkInProgressUndefinedRequirementCoverage(calculateAndRoundRate(
 				givenProject.getWorkInProgressUndefinedVerifiedRequirementNumber(),
 				givenProject.getWorkInProgressUndefinedRequirementNumber()));
-		
+
 	}
 
 	private void calculateProjectCoverageRatesAllStatus(ReqCoverageByTestProjectDto givenProject) {
