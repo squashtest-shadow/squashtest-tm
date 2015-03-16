@@ -37,7 +37,7 @@ define(['jquery', 'workspace.tree-node-copier', 'tree', 'milestone-manager/miles
 	 * 1 - if the milestone mode is disabled, the test passes automatically
 	 * 2 - else, test if the active milestone allows the operation
 	 * 3 - also, if a 'nodes' argument is supplied, test if the other milestones 
-	 * 		to which those nodes are bound too also allow the operation
+	 *		to which those nodes are bound too also allow the operation
 	 * 
 	 * *****************************************************************/
 	
@@ -64,7 +64,7 @@ define(['jquery', 'workspace.tree-node-copier', 'tree', 'milestone-manager/miles
 				nodesAllowed = (nodes.filter(':'+metaattr).length === nodes.length);
 			}
 			
-			allowed = activeAllowed && nodesAllowed
+			allowed = activeAllowed && nodesAllowed;
 		}
 		
 		return allowed;
@@ -109,7 +109,9 @@ define(['jquery', 'workspace.tree-node-copier', 'tree', 'milestone-manager/miles
 			else if (! canCreateButton(nodes)){
 				return "permission-denied";
 			}
-			else return "yes-you-can";
+			else {
+				return "yes-you-can";
+			}
 		};
 
 		// must be not empty, and not contain libraries.
@@ -179,8 +181,9 @@ define(['jquery', 'workspace.tree-node-copier', 'tree', 'milestone-manager/miles
 			else if (nodes.filter(':editable').not(':library').length !== 1){
 				return "permission-denied";
 			}
-			else 
+			else {
 				return "yes-you-can";
+			}
 		};
 
 		this.canRename = $.proxy(function(nodes){
@@ -199,7 +202,7 @@ define(['jquery', 'workspace.tree-node-copier', 'tree', 'milestone-manager/miles
 			return true;
 		};
 		
-		this.canDelete = (function(nodes){
+		this.canDelete = function(nodes){
 			return milestonesAllowCreation(nodes) && (nodes.filter(':deletable').not(':library').length == nodes.length) && (nodes.length>0);
 		};
 		

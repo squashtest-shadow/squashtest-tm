@@ -70,7 +70,13 @@ define(['jquery', 'tree', 'custom-field-values', 'workspace.projects', '../permi
 			var node = tree.jstree('get_selected');
 			
 			if (! rules.canCreateIteration(node)){
-				dialog.formDialog('setState','denied');
+				var errorState;
+				switch (rules.whyCantCreate(node)){
+				case 'milestone-denied' : errorState = 'milestone-denied'; break;
+				case 'permission-denied': errorState = 'permission-denied';break;
+				default : throw "there is a bug : permission-rules said you can't create a node but you actually can";
+				}
+				dialog.formDialog('setState', errorState);
 			}
 			else{
 				dialog.formDialog('setState','confirm');
