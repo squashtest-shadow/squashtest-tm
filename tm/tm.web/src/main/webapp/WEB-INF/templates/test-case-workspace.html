@@ -233,8 +233,13 @@
 
     <div id="add-folder-dialog" class="popup-dialog not-displayed" th:title="#{dialog.new-folder.title}"
       title="new folder">
-      <span data-def="state=denied" th:text="#{squashtm.action.exception.rightUnsuficients}">rename node rejected</span>
-       <div data-def="state=confirm">
+      
+      <span data-def="state=permission-denied" th:text="#{squashtm.action.exception.rightUnsuficients}">rename node rejected</span>
+      
+      <span data-def="state=milestone-denied" th:text="#{squashtm.action.exception.milestonelocked}">milestone said no</span>
+            
+      
+      <div data-def="state=confirm">
       <table class="add-node-attributes">
         <tr>
           <td>
@@ -266,8 +271,13 @@
 
     <div id="add-test-case-dialog" class="popup-dialog not-displayed" th:title="#{dialog.new-test-case.title}"
       title="new test case">
-       <span data-def="state=denied" th:text="#{squashtm.action.exception.rightUnsuficients}">rename node rejected</span>
-       <div data-def="state=confirm">     
+      
+      
+      <span data-def="state=permission-denied" th:text="#{squashtm.action.exception.rightUnsuficients}">rename node rejected</span>
+      
+      <span data-def="state=milestone-denied" th:text="#{squashtm.action.exception.milestonelocked}">milestone said no</span>
+       
+      <div data-def="state=confirm">     
       <table class="add-node-attributes">
 
         <tr>
@@ -312,8 +322,12 @@
     <div id="rename-node-dialog" class="popup-dialog not-displayed" th:title="#{dialog.rename-tree-node.title}"
       title="rename tree node">
 
-      <span data-def="state=denied" th:text="#{dialog.label.rename-node.rejected}">rename node rejected</span>
-
+      <span data-def="state=permission-denied" th:text="#{dialog.label.rename-node.rejected}">rename node rejected</span>
+      
+      <span data-def="state=milestone-denied" th:text="#{squashtm.action.exception.milestonelocked}">milestone said no</span>
+      
+      <span data-def="state=notunique-denied" th:text="#{squashtm.action.exception.notunique}">not unique</span>
+      
       <div data-def="state=confirm">
       
         <div id="rename-node-dialog-warningmilestones" class="centered std-margin-top std-margin-bottom not-displayed">

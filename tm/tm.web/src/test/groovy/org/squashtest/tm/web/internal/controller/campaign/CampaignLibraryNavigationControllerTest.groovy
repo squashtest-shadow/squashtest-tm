@@ -52,6 +52,9 @@ class CampaignLibraryNavigationControllerTest extends spock.lang.Specification {
 	def "should return iteration nodes of campaign"() {
 		given:
 		Iteration iter = Mock()
+		iter.getMilestones() >> []
+		iter.doMilestonesAllowCreation() >> Boolean.TRUE
+		iter.doMilestonesAllowEdition() >> Boolean.TRUE
 		service.findIterationsByCampaignId(10) >> [iter]
 
 		when:

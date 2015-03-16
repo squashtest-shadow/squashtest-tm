@@ -102,38 +102,6 @@ define(["jquery", "underscore"], function($, _){
 		return areDifferent;
 	}
 	
-	// Can be useful in some situations, but for now 
-	// the function willMilestonesBeLost(destLibId, [srcLitIds]) 
-	// better suit the needs of the application
-	function haveDifferentMilestones(projectIds){
-		
-		if ( projectIds.length === 0){
-			return false;
-		}
-		
-		var firstP = findProject(projectIds[0]);
-		var milestoneIds = firstP.milestones.map(function(m){
-			return m.id;
-		});
-		
-		for (var i=1; i<projectIds.length; i++){
-			var p = findProject(projectIds[i]);
-			var pMilestoneIds = p.milestones.map(function(m){
-				return m.id;
-			});
-			
-			if (milestoneIds.length !== pMilestoneIds.length){
-				return true;
-			}
-			
-			var commonelts = _.intersection(milestoneIds, pMilestoneIds);
-			if (commonelts.length !== milestoneIds.length){
-				return true;
-			}
-		}
-		
-		return false;
-	}
 	
 	
 	function willMilestonesBeLost(destLibId, srcLibIds){
@@ -156,9 +124,11 @@ define(["jquery", "underscore"], function($, _){
 			});
 			
 			// test if destMilestoneIds contains all of srcMilestoneIds
-			var commonelts = _.intersection(destMilestoneIds, srcMilestoneIds);
+			var allpresent = srcMilestoneIds.every(function(id){
+				return _.contains(destMilestoneIds, id);
+			});
 			
-			if (commonelts.length !== destMilestoneIds.length){
+			if (! allpresent){
 				return true;
 			}
 		}
@@ -194,7 +164,6 @@ define(["jquery", "underscore"], function($, _){
 		findProject : findProject,
 		haveDifferentInfolists : haveDifferentInfolists,
 		getAllMilestones : getAllMilestones,
-		haveDifferentMilestones : haveDifferentMilestones,
 		willMilestonesBeLost : willMilestonesBeLost
 	};
 	

@@ -23,6 +23,7 @@ package org.squashtest.tm.web.internal.model.builder
 import org.apache.commons.collections.MultiMap;
 import org.apache.commons.collections.map.MultiValueMap;
 import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory
+import org.squashtest.tm.domain.campaign.Campaign;
 import org.squashtest.tm.domain.campaign.Iteration
 import org.squashtest.tm.domain.campaign.TestSuite;
 import org.squashtest.tm.service.security.PermissionEvaluationService
@@ -36,7 +37,11 @@ class IterationNodeBuilderTest extends Specification {
 
 	def "should build root node of test case library"() {
 		given:
-		Iteration iter = new Iteration(name: "it")
+		Campaign c = Mock()
+		c.getMilestones() >> []
+		c.doMilestonesAllowCreation() >> Boolean.TRUE
+		c.doMilestonesAllowEdition() >> Boolean.TRUE
+		Iteration iter = new Iteration(name: "it", campaign : c)
 		def id = 10L
 		use(ReflectionCategory) {
 			Iteration.set(field: "id", of:iter, to: id)
@@ -53,17 +58,21 @@ class IterationNodeBuilderTest extends Specification {
 		res.attr['resType'] == "iterations"
 		res.title == "5 - it"
 	}
-	
+
 	def "should expand itreration"() {
 		given:
-		Iteration iter = new Iteration(name: "it")
+		Campaign c = Mock()
+		c.getMilestones() >> []
+		c.doMilestonesAllowCreation() >> Boolean.TRUE
+		c.doMilestonesAllowEdition() >> Boolean.TRUE
+		Iteration iter = new Iteration(name: "it", campaign : c)
 		def id = 10L
 		use(ReflectionCategory) {
 			Iteration.set(field: "id", of:iter, to: id)
 		}
-		
+
 		and:
-		TestSuite ts = new TestSuite()
+		TestSuite ts = new TestSuite(iteration:iter)
 		iter.testSuites << ts
 
 		and:

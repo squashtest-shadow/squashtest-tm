@@ -530,4 +530,28 @@ public class Campaign extends CampaignLibraryNode implements NodeContainer<Itera
 
 	}
 
+	@Override
+	public Boolean doMilestonesAllowCreation() {
+		Boolean allowed=Boolean.TRUE;
+		for (Milestone m : getMilestones()){
+			if (! m.getStatus().isAllowObjectCreateAndDelete()){
+				allowed = Boolean.FALSE;
+				break;
+			}
+		}
+		return allowed;
+	}
+
+	@Override
+	public Boolean doMilestonesAllowEdition() {
+		Boolean allowed=Boolean.TRUE;
+		for (Milestone m : getMilestones()){
+			if (! m.getStatus().isAllowObjectModification()){
+				allowed = Boolean.FALSE;
+				break;
+			}
+		}
+		return allowed;
+	};
+
 }

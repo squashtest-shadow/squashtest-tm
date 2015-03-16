@@ -73,6 +73,12 @@ var squashtm = squashtm || {};
 		},
 		exportable : function(a){
 			return $(a).attr('exportable') === 'true';
+		},
+		'milestone-creatable' : function(a){
+			return $(a).attr('milestone-creatable-deletable') === 'true';
+		},
+		'milestone-editable' : function(a){
+			return $(a).attr('milestone-editable') === 'true';
 		}
 	});
 

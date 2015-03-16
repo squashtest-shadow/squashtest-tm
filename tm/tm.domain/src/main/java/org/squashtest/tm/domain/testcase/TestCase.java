@@ -189,7 +189,7 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	@JoinColumn(name = "TA_TEST")
 	private AutomatedTest automatedTest;
 
-	
+
 	@FieldBridge(impl = CollectionSizeBridge.class)
 	@Field(analyze=Analyze.NO, store=Store.YES)
 	@IndexedEmbedded
@@ -844,7 +844,7 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	public boolean isModifiable() {
 		return milestonesAllowEdit();
 	}
-	
+
 	private boolean milestonesAllowEdit() {
 		for (Milestone m : milestones) {
 			if (!m.getStatus().isAllowObjectModification()) {
@@ -854,4 +854,27 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 		return true;
 	}
 
+	@Override
+	public Boolean doMilestonesAllowCreation() {
+		Boolean allowed=Boolean.TRUE;
+		for (Milestone m : getMilestones()){
+			if (! m.getStatus().isAllowObjectCreateAndDelete()){
+				allowed = Boolean.FALSE;
+				break;
+			}
+		}
+		return allowed;
+	}
+
+	@Override
+	public Boolean doMilestonesAllowEdition() {
+		Boolean allowed=Boolean.TRUE;
+		for (Milestone m : getMilestones()){
+			if (! m.getStatus().isAllowObjectModification()){
+				allowed = Boolean.FALSE;
+				break;
+			}
+		}
+		return allowed;
+	};
 }

@@ -68,6 +68,12 @@ public class TestSuiteNodeBuilder extends GenericJsTreeNodeBuilder<TestSuite, Te
 		node.setTitle(model.getName());
 		node.addAttr("name", model.getName());
 		node.addAttr("id", model.getClass().getSimpleName() + '-' + model.getId());
+
+		//milestone attributes
+		node.addAttr("milestones", model.getMilestones().size());
+		node.addAttr("milestone-creatable-deletable", model.doMilestonesAllowCreation().toString());
+		node.addAttr("milestone-editable", model.doMilestonesAllowEdition().toString());
+
 		return node;
 	}
 

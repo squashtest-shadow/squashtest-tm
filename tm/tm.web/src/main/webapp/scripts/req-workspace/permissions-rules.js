@@ -18,7 +18,8 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define(['jquery', 'workspace.tree-node-copier', 'tree'], function($, copier, tree){
+define(['jquery', 'workspace.tree-node-copier', 'tree', 'milestone-manager/milestone-activation'], 
+		function($, copier, tree, milestones){
 
 	squashtm = squashtm || {};
 	squashtm.workspace = squashtm.workspace || {};
@@ -29,29 +30,89 @@ define(['jquery', 'workspace.tree-node-copier', 'tree'], function($, copier, tre
 	
 	return squashtm.workspace.permissions_rules;
 	
-	function milestoneAllowsThis(){
-		if (squashtm.app.requirementWorkspaceConf.activeMilestone){
-			return squashtm.app.requirementWorkspaceConf.activeMilestone.status['$name'] === 'IN_PROGRESS';
-		}
+	
+	/* ******************************************************************
+	 * Predicates on the milestones 
+	 * 
+	 * Test test does the following : 
+	 * 1 - if the milestone mode is disabled, the test passes automatically
+	 * 2 - else, test if the active milestone allows the operation
+	 * 3 - also, if a 'nodes' argument is supplied, test if the other milestones 
+	 * 		to which those nodes are bound too also allow the operation
+	 * 
+	 * *****************************************************************/
+	
+	// operation : 'canCreateDelete' || 'canEdit'
+	// metaattr : 'milestone-creatable' || 'milestone-editable'
+	function milestonesAllowOperation(nodes, operation, metaattr){
+		
+		var allowed = true;
+		// no milestone mode -> true
+		if (! milestones.isEnabled()){
+			allowed = true;
+		}		
 		else{
-			return true;
+			var activeMilestone = squashtm.app.requirementWorkspaceConf.activeMilestone; 
+			
+			var activeAllowed = true,
+				nodesAllowed = true;
+			// no nodes -> check the active milestone
+			// no active milestone -> true
+			activeAllowed = (activeMilestone !== undefined) ? activeMilestone[operation] : true;
+			
+			if (nodes !== undefined){
+				// nodes : they must all allow the operation
+				nodesAllowed = (nodes.filter(':'+metaattr).length === nodes.length);
+			}
+			
+			allowed = activeAllowed && nodesAllowed
 		}
+		
+		return allowed;
+	}
+	
+	function milestonesAllowCreation(nodes){
+		return milestonesAllowOperation(nodes, 'canCreateDelete', 'milestone-creatable');
+	}
+	
+	function milestonesAllowEdition(nodes){
+		return milestonesAllowOperation(nodes, 'canEdit', 'milestone-editable');
 	}
 	
 	
+	/* *******************************************************
+	 * Main Object 
+	 *********************************************************/
+	
 	function RequirementPermissionsRules(){		
+		
+		
+		this.milestonesAllowCreation = milestonesAllowCreation;
+		
+		this.milestonesAllowEdition = milestonesAllowEdition;
+		
 		
 		// added for first button create :  
 		this.canCreateButton = function(nodes){
-			return milestoneAllowsThis() && nodes.filter(':creatable').length === 1;
+			return milestonesAllowCreation(nodes) && nodes.filter(':creatable').length === 1;
 		};
 		
 		this.canCreateFolder = function(nodes){
-			return milestoneAllowsThis() && nodes.filter(':creatable').filter(':folder, :library').length === 1;
+			return milestonesAllowCreation(nodes) && nodes.filter(':creatable').filter(':folder, :library').length === 1;
 		};
 		
 		this.canCreateRequirement = function(nodes){
-			return milestoneAllowsThis() && nodes.filter(':creatable').length === 1;
+			return milestonesAllowCreation(nodes) && nodes.filter(':creatable').length === 1;
+		};
+		
+		this.whyCantCreate = function(nodes){
+			if (! milestonesAllowCreation(nodes)){
+				return "milestone-denied";
+			}
+			else if (nodes.filter(':creatable').length !== 1){
+				return "permission-denied";
+			}
+			else return "yes-you-can";
 		};
 		
 		//must be not empty, and not contain libraries.
@@ -71,6 +132,12 @@ define(['jquery', 'workspace.tree-node-copier', 'tree'], function($, copier, tre
 			return "yes-you-can";
 		};
 		
+		
+		/*
+		 * Milestone mode : the recipient must allow creation.
+		 * 
+		 * Rest of the rules is standard stuff.
+		 */
 		this.whyCantPaste = function(){
 			
 			var nodes = copier.bufferedNodes(); 
@@ -94,6 +161,10 @@ define(['jquery', 'workspace.tree-node-copier', 'tree'], function($, copier, tre
 				return 'invalid-content';
 			}
 			
+			if (! milestonesAllowCreation(target)){
+				return "milestone-denied";
+			}
+			
 			return "yes-you-can";
 		};
 			
@@ -101,9 +172,24 @@ define(['jquery', 'workspace.tree-node-copier', 'tree'], function($, copier, tre
 			return (this.whyCantPaste(nodes) === "yes-you-can");			
 		}, this);
 
-		this.canRename = function(nodes){
-			return nodes.filter(':editable').not(':library').length === 1;
+		this.whyCantRename = function(nodes){
+			
+			if (! milestonesAllowEdition(nodes)){
+				return "milestone-denied";
+			}
+			else if (nodes.length !== 1){
+				return "not-unique";
+			}
+			else if (nodes.filter(':editable').not(':library').length !== 1){
+				return "permission-denied";
+			}
+			else 
+				return "yes-you-can";
 		};
+
+		this.canRename = $.proxy(function(nodes){
+			return (this.whyCantRename(nodes) === "yes-you-can");
+		}, this);
 		
 		this.canImport = function(nodes){
 			return tree.get().data('importable');	//tree.data would lead to a different object.
@@ -114,7 +200,7 @@ define(['jquery', 'workspace.tree-node-copier', 'tree'], function($, copier, tre
 		};
 		
 		this.canDelete = function(nodes){
-			return (nodes.filter(':deletable').not(':library').length == nodes.length) && (nodes.length>0);
+			return milestonesAllowCreation(nodes) && (nodes.filter(':deletable').not(':library').length == nodes.length) && (nodes.length>0);
 		};
 		
 		this.whyCantDelete = function(nodes){
@@ -128,6 +214,10 @@ define(['jquery', 'workspace.tree-node-copier', 'tree'], function($, copier, tre
 			
 			if (nodes.is(':library')){
 				return "no-libraries-allowed";
+			}
+			
+			if (! milestonesAllowCreation(nodes)){
+				return "milestone-denied";
 			}
 			
 			return "yes-you-can";
@@ -150,6 +240,11 @@ define(['jquery', 'workspace.tree-node-copier', 'tree'], function($, copier, tre
 			
 			// check that the destination type is legal
 			if (! newparent.isCreatable() || ! newparent.acceptsAsContent(movednodes)) {
+				return false;
+			}
+			
+			// check that destination isn't locked by milestones
+			if (! milestonesAllowCreation(newparent)){
 				return false;
 			}
 			

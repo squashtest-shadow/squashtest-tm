@@ -211,6 +211,14 @@ define(['jquery'], function($){
 		this.isCreatable = function() {
 			return this.reference.attr('creatable') === "true";
 		};
+		
+		this.isMilestoneCreatable = function(){
+			return this.reference.attr('milestone-creatable-deletable') === "true";
+		};
+		
+		this.isMilestoneEditable = function(){
+			return this.reference.attr('milestone-editable') === "true";
+		};
 
 		this.isDeletable = function() {
 			return this.reference.attr('deletable') === "true";

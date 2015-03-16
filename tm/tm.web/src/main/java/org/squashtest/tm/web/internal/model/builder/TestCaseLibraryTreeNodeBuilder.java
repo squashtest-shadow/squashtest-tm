@@ -104,7 +104,11 @@ public class TestCaseLibraryTreeNodeBuilder extends LibraryTreeNodeBuilder<TestC
 			builtNode.addAttr("isreqcovered", isreqcovered.toString());
 			builtNode.addAttr("title", tooltip);
 			builtNode.addAttr("hassteps", hasSteps.toString());
+
+			//milestone attributes
 			builtNode.addAttr("milestones", visited.getMilestones().size());
+			builtNode.addAttr("milestone-creatable-deletable", visited.doMilestonesAllowCreation().toString());
+			builtNode.addAttr("milestone-editable", visited.doMilestonesAllowEdition().toString());
 
 			if (visited.getReference() != null && visited.getReference().length() > 0) {
 				builtNode.setTitle(visited.getReference() + " - " + visited.getName());

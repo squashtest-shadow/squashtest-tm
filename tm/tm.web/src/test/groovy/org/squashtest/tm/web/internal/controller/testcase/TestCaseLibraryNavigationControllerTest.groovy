@@ -145,6 +145,10 @@ class TestCaseLibraryNavigationControllerTest extends Specification {
 		given:
 		TestCaseFormModel tcfm = Mock()
 		TestCase tc = Mock()
+
+		tc.getMilestones() >> []
+		tc.doMilestonesAllowCreation() >> Boolean.TRUE
+		tc.doMilestonesAllowEdition() >> Boolean.TRUE
 		def visitor
 		tc.accept({ visitor = it }) >> { visitor.visit(tc) }
 		tc.getStatus() >> TestCaseStatus.WORK_IN_PROGRESS
@@ -171,6 +175,9 @@ class TestCaseLibraryNavigationControllerTest extends Specification {
 		given:
 		TestCaseFormModel tcfm = Mock()
 		TestCase tc = Mock()
+		tc.getMilestones() >> []
+		tc.doMilestonesAllowCreation() >> Boolean.TRUE
+		tc.doMilestonesAllowEdition() >> Boolean.TRUE
 		def visitor
 		tc.accept({ visitor = it }) >> { visitor.visit(tc) }
 		tc.getStatus() >> TestCaseStatus.WORK_IN_PROGRESS

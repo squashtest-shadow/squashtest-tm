@@ -39,6 +39,10 @@ public class JsonMilestone {
 
 	private String ownerLogin;
 
+	private boolean canCreateDelete;
+
+	private boolean canEdit;
+
 	public JsonMilestone(){
 		super();
 	}
@@ -54,7 +58,7 @@ public class JsonMilestone {
 		super();
 		this.id = id;
 		this.label = label;
-		this.status = status;
+		this.setStatus(status);
 		this.range = range;
 		this.endDate = endDate;
 		this.ownerLogin = ownerLogin;
@@ -82,6 +86,8 @@ public class JsonMilestone {
 
 	public void setStatus(MilestoneStatus status) {
 		this.status = status;
+		this.canCreateDelete = status.isAllowObjectCreateAndDelete();
+		this.canEdit = status.isAllowObjectModification();
 	}
 
 	public MilestoneRange getRange() {
@@ -108,7 +114,21 @@ public class JsonMilestone {
 		this.ownerLogin = ownerLogin;
 	}
 
+	public boolean isCanCreateDelete() {
+		return canCreateDelete;
+	}
 
+	public void setCanCreateDelete(boolean canCreateDelete) {
+		this.canCreateDelete = canCreateDelete;
+	}
+
+	public boolean isCanEdit() {
+		return canEdit;
+	}
+
+	public void setCanEdit(boolean canEdit) {
+		this.canEdit = canEdit;
+	}
 
 
 }

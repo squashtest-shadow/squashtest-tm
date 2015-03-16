@@ -130,6 +130,8 @@ class DriveNodeBuilderTest extends Specification {
 		tc.getRequirementVersionCoverages() >> []
 		tc.getId()>>23L
 		tc.getMilestones() >> [Mock(Milestone)]
+		tc.doMilestonesAllowCreation() >> Boolean.TRUE
+		tc.doMilestonesAllowEdition() >> Boolean.TRUE
 		library.addContent tc
 
 		and:

@@ -66,6 +66,11 @@ GenericJsTreeNodeBuilder<Library<LN>, DriveNodeBuilder<LN>> {
 		node.addAttr("title", model.getProject().getLabel());
 		node.addAttr("project", model.getProject().getId());
 		node.addAttr("wizards", model.getEnabledPlugins());
+
+		// milestone attributes : libraries are yes-men
+		node.addAttr("milestone-creatable-deletable", "true");
+		node.addAttr("milestone-editable", "true");
+
 		return node;
 	}
 

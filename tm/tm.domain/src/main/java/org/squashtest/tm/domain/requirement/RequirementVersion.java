@@ -81,14 +81,14 @@ import org.squashtest.tm.security.annotation.InheritsAcls;
 @PrimaryKeyJoinColumn(name = "RES_ID")
 @InheritsAcls(constrainedClass = Requirement.class, collectionName = "versions")
 @ClassBridges({
-		@ClassBridge(name = "attachments", store = Store.YES, analyze = Analyze.NO, impl = RequirementVersionAttachmentBridge.class),
-		@ClassBridge(name = "cufs", store = Store.YES, impl = CUFBridge.class, params = {
-				@Parameter(name = "type", value = "requirement"), @Parameter(name = "inputType", value = "ALL") }),
+	@ClassBridge(name = "attachments", store = Store.YES, analyze = Analyze.NO, impl = RequirementVersionAttachmentBridge.class),
+	@ClassBridge(name = "cufs", store = Store.YES, impl = CUFBridge.class, params = {
+		@Parameter(name = "type", value = "requirement"), @Parameter(name = "inputType", value = "ALL") }),
 		@ClassBridge(name = "cufs", store = Store.YES, analyze = Analyze.NO, impl = CUFBridge.class, params = {
-				@Parameter(name = "type", value = "requirement"),
-				@Parameter(name = "inputType", value = "DROPDOWN_LIST") }),
-		@ClassBridge(name = "isCurrentVersion", store = Store.YES, analyze = Analyze.NO, impl = RequirementVersionIsCurrentBridge.class),
-		@ClassBridge(name = "parent", store = Store.YES, analyze = Analyze.NO, impl = RequirementVersionHasParentBridge.class) })
+			@Parameter(name = "type", value = "requirement"),
+			@Parameter(name = "inputType", value = "DROPDOWN_LIST") }),
+			@ClassBridge(name = "isCurrentVersion", store = Store.YES, analyze = Analyze.NO, impl = RequirementVersionIsCurrentBridge.class),
+			@ClassBridge(name = "parent", store = Store.YES, analyze = Analyze.NO, impl = RequirementVersionHasParentBridge.class) })
 public class RequirementVersion extends Resource implements BoundEntity, MilestoneHolder {
 
 	@NotNull
@@ -514,4 +514,27 @@ public class RequirementVersion extends Resource implements BoundEntity, Milesto
 
 	}
 
+	@Override
+	public Boolean doMilestonesAllowCreation() {
+		Boolean allowed=Boolean.TRUE;
+		for (Milestone m : getMilestones()){
+			if (! m.getStatus().isAllowObjectCreateAndDelete()){
+				allowed = Boolean.FALSE;
+				break;
+			}
+		}
+		return allowed;
+	}
+
+	@Override
+	public Boolean doMilestonesAllowEdition() {
+		Boolean allowed=Boolean.TRUE;
+		for (Milestone m : getMilestones()){
+			if (! m.getStatus().isAllowObjectModification()){
+				allowed = Boolean.FALSE;
+				break;
+			}
+		}
+		return allowed;
+	};
 }

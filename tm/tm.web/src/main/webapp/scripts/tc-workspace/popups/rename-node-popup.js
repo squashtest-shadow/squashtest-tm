@@ -41,7 +41,14 @@ define(['jquery', 'tree', 'workspace.event-bus', '../permissions-rules', 'jquery
 			var node = tree.jstree('get_selected');
 			
 			if (! rules.canRename(node)){
-				dialog.formDialog('setState','denied');
+				var errorState;
+				switch (rules.whyCantRename(node)){
+				case 'milestone-denied' : errorState = 'milestone-denied'; break;
+				case 'permission-denied': errorState = 'permission-denied';break;
+				case 'not-unique' : errorState = 'notunique-denied'; break;
+				default : throw "there is a bug : permission-rules said you can't rename but you actually can";
+				}
+				dialog.formDialog('setState', errorState);
 			}
 			else{
 				warnMilestones(node);				

@@ -72,7 +72,11 @@ public class CampaignLibraryTreeNodeBuilder extends LibraryTreeNodeBuilder<Campa
 			builtNode.addAttr("resType", "campaigns");
 			State state = (campaign.hasIterations() ? State.closed : State.leaf);
 			builtNode.setState(state);
+
+			// milestones
 			builtNode.addAttr("milestones", campaign.getMilestones().size());
+			builtNode.addAttr("milestone-creatable-deletable", campaign.doMilestonesAllowCreation().toString());
+			builtNode.addAttr("milestone-editable", campaign.doMilestonesAllowEdition().toString());
 		}
 	}
 

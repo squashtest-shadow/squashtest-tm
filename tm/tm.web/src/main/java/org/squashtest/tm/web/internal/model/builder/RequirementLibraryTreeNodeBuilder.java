@@ -84,7 +84,11 @@ public class RequirementLibraryTreeNodeBuilder extends LibraryTreeNodeBuilder<Re
 			State state = (requirement.hasContent() ? State.closed : State.leaf);
 			builtNode.setState(state);
 			builtNode.addAttr("category-icon", version.getCategory().getIconName());
+
+			//miletsones
 			builtNode.addAttr("milestones", totalMilestones(requirement));
+			builtNode.addAttr("milestone-creatable-deletable", version.doMilestonesAllowCreation().toString());
+			builtNode.addAttr("milestone-editable", version.doMilestonesAllowEdition().toString());
 
 			if (version.getReference() != null && version.getReference().length() > 0) {
 				builtNode.setTitle(version.getReference() + " - " + version.getName());

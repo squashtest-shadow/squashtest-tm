@@ -34,4 +34,8 @@ public interface MilestoneMember {
 	Set<Milestone> getMilestones();
 
 	boolean isMemberOf(Milestone milestone);
+
+	Boolean doMilestonesAllowCreation();
+
+	Boolean doMilestonesAllowEdition();
 }

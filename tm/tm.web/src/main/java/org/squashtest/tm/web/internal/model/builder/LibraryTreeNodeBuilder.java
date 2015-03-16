@@ -71,6 +71,10 @@ public abstract class LibraryTreeNodeBuilder<LN extends LibraryNode> extends Gen
 		builtNode.addAttr("rel", "folder");
 		builtNode.addAttr("resType", resType);
 		builtNode.setState(State.closed);
+
+		// milestone attributes : folders are yes-men
+		builtNode.addAttr("milestone-creatable-deletable", "true");
+		builtNode.addAttr("milestone-editable", "true");
 	}
 
 	/**
