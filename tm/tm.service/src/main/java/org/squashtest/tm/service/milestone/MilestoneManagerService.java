@@ -52,4 +52,6 @@ public interface MilestoneManagerService extends CustomMilestoneManager {
 	@PreAuthorize(MILESTONE_FEAT_ENABLED)
 	void changeRange(long milestoneId, MilestoneRange newRange);
 
+
+
 }

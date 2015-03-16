@@ -440,7 +440,7 @@ public class RequirementVersionModificationController {
 
 		String rootPath = "/requirement-versions/"+requirementVersionId.toString();
 
-		Boolean editable = version.isMilestoneBindable();	// fix that later
+		Boolean editable = version.isModifiable();
 
 		// add them to the model
 		conf.setNodeType("requirement-version");

@@ -840,6 +840,7 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 		milestones.clear();
 	}
 
+
 	public boolean isModifiable() {
 		return milestonesAllowEdit();
 	}

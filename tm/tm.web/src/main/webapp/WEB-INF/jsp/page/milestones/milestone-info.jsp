@@ -331,6 +331,25 @@
 <!-- ------------------------------------CHANGE RANGE WITH TEMPLATE POPUP------------------------------------------------------- -->
 
 
+	<f:message var="changeStatusTitle" key="dialog.milestone.changestatus.title" />
+	<f:message var="warningChangeStatus" key="dialog.milestone.changestatus.warning" />
+	<div id="changeStatus-popup" class="popup-dialog not-displayed" title="${changeRangeTitle}">
+		
+		<div class="display-table-row">
+            <div class="display-table-cell warning-cell">
+                <div class="generic-error-signal"></div>
+            </div>
+            <div class="display-table-cell">
+			${warningChangeStatus}
+			</div>
+		</div>
+		<div class="popup-dialog-buttonpane">
+		    <input class="confirm" type="button" value="${confirmLabel}" />
+		    <input class="cancel" type="button" value="${cancelLabel}" />				
+		</div>
+	
+	</div>
+
 
 
 <!-- --------------------------------RENAME POPUP--------------------------------------------------------- -->
@@ -372,6 +391,7 @@ requirejs.config({
 				currentUser : '${currentUser}',
 				userList : '${userList}',
 				milestone : {
+					currentStatus : '${milestone.status}',
 					status : '${milestoneStatus}',
 					id: '${milestone.id}',
 					currentRange: '${ milestone.range}',

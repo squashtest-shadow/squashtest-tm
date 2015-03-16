@@ -465,6 +465,7 @@ public class CampaignModificationController {
 
 		MilestonePanelConfiguration conf = new MilestonePanelConfiguration();
 
+		Campaign camp = campaignModService.findById(campaignId);
 		// build the needed data
 		Collection<Milestone> allMilestones = campaignModService.findAllMilestones(campaignId);
 		List<?> currentModel = buildMilestoneModel(new ArrayList<>(allMilestones),  "0").getAaData();
@@ -475,7 +476,7 @@ public class CampaignModificationController {
 
 		String rootPath = "/campaigns/"+campaignId.toString();
 
-		Boolean editable = Boolean.TRUE;	// fix that later
+		Boolean editable = camp.isBindableToMilestone();	
 
 		// add them to the model
 		conf.setNodeType("campaign");

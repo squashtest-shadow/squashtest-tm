@@ -174,5 +174,20 @@ public class MilestoneModificationController {
 
 		return milestoneManager.isBoundToATemplate(milestoneId);
 	}
+	
+	@RequestMapping(method = RequestMethod.GET,  params = { "isBoundToAtleastOneObject" })
+	@ResponseBody
+	public boolean isBoundToAtleastOneObject(@PathVariable long milestoneId) {
+
+		return milestoneManager.isBoundToAtleastOneObject(milestoneId);
+	}
+	
+	@RequestMapping(value = "/unbindallobjects", method = RequestMethod.DELETE)
+	@ResponseBody
+	public void unbindAllObjects(@PathVariable long milestoneId) {
+
+		 milestoneManager.unbindAllObjects(milestoneId);
+	}	
+	
 
 }

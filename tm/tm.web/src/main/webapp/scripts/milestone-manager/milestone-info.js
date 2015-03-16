@@ -88,10 +88,11 @@
 		});
 
 		var statusEditable = new SelectJEditable({
-			target : config.urls.milestoneUrl,
+			target : function(value) {changeStatus(value, statusEditable);},
 			componentId : "milestone-status",
 			jeditableSettings : {
 				data : config.data.milestone.status
+				
 			},
 		});
 		
@@ -116,7 +117,64 @@
 			}});
 		}
 
+		
+		var changeStatus = function changeStatus(value, statusEditable){
+
+			if (value == "PLANNED") {
+				$.ajax({
+					type : "GET",
+					url : config.urls.milestoneUrl,
+					data: {
+						isBoundToAtleastOneObject: ""
+						}
+					}).done(function(isBoundToAtleastOneObject){
+						
+						//popup hit you (again) for 9999 dmg. You die.
+						if (isBoundToAtleastOneObject){
+							var popup = $("#changeStatus-popup");
+							popup.data('value', value);
+							popup.data('statusEditable', statusEditable);
+							popup.confirmDialog('open');
+							
+							
+						} else {
+							//you are lucky no objects are bound to this object so you evaded the popup !
+							changeStatusRequest(value, statusEditable);
+						}
+						
+					});
+			} else {
+				//cool, other status allow you to change it without popup !
+				changeStatusRequest(value, statusEditable);
+			}
 			
+		};
+		
+		
+		var changeStatusRequest = function changeStatus(value, statusEditable){ 
+			$.ajax({
+			type : "POST",
+			url : config.urls.milestoneUrl,
+			data: {
+				id: statusEditable.settings.componentId,
+				value: value
+			}
+		}).then(function(value) {
+			var data = JSON.parse(statusEditable.settings.jeditableSettings.data);
+			var newStatus;		
+			for(var prop in data) {
+                 if(data.hasOwnProperty(prop)){
+                	 if (data[prop] === value){
+                		 newStatus = prop;
+                	 }
+                 }
+                   } 
+			
+			config.data.milestone.currentStatus = newStatus;
+			statusEditable.component.html(value);	
+		});
+		};
+		
 		
 		var changeRange = function changeRange(value, rangeEditable){
 		
@@ -126,7 +184,6 @@
 					type : "GET",
 					url : config.urls.milestoneUrl,
 					data: {
-						id: rangeEditable.settings.componentId,
 						isBoundToTemplate: ""
 						}
 					}).done(function(isBoundToATemplate){
@@ -150,7 +207,12 @@
 
 		};
 		
-		
+		$("#changeRange-popup").confirmDialog().on('confirmdialogcancel', function(){	
+			var $this = $(this);
+			var rangeEditable = $this.data('rangeEditable');
+			var data = JSON.parse(rangeEditable.settings.jeditableSettings.data);			
+			rangeEditable.component.html(data[config.data.milestone.currentRange]);
+		});
 		
 		$("#changeRange-popup").confirmDialog().on('confirmdialogconfirm', function(){	
 			
@@ -162,16 +224,39 @@
 			$.ajax({
 				url : url,
 				type : 'delete'
-			})
+			});
 			//now we can change the range
 			changeRangeRequest(value, rangeEditable);
 			
 		});
 		
 		
+$("#changeStatus-popup").confirmDialog().on('confirmdialogconfirm', function(){	
+			
+			var $this = $(this);
+			var value = $this.data('value');
+			var statusEditable = $this.data('statusEditable');		
+
+			var url = routing.buildURL('milestone.unbind-object', config.data.milestone.id);	
+			$.ajax({
+				url : url,
+				type : 'delete'
+			});
+			
+			changeStatusRequest(value, statusEditable);		
+		});
 		
-		
-		
+$("#changeStatus-popup").confirmDialog().on('confirmdialogcancel', function(){	
+	
+	var $this = $(this);
+	var value = $this.data('value');
+	var statusEditable = $this.data('statusEditable');	
+	var data = JSON.parse(statusEditable.settings.jeditableSettings.data);			
+	statusEditable.component.html(data[config.data.milestone.currentStatus]);
+});
+
+
+
 		var changeRangeRequest = function changeRange(value, rangeEditable){ 
 			$.ajax({
 			type : "POST",
@@ -193,7 +278,7 @@
                    } 
 			updateAfterRangeChange(newRange);
 		});
-	}
+	};
 		
 		
 		

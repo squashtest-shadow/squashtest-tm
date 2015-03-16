@@ -374,4 +374,11 @@ public class Milestone  {
 	public void clearPerimeter() {
 		perimeter.clear();
 	}
+
+	public void clearObjects() {
+		campaigns.clear();
+		testCases.clear();
+		requirementVersions.clear();
+	}
+	
 }

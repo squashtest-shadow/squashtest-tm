@@ -548,6 +548,7 @@ public class TestCaseModificationController {
 
 		MilestonePanelConfiguration conf = new MilestonePanelConfiguration();
 
+		TestCase tc = testCaseModificationService.findById(testCaseId);
 		// build the needed data
 		Collection<Milestone> allMilestones = testCaseModificationService.findAllMilestones(testCaseId);
 		List<?> currentModel = buildMilestoneModel(testCaseId,allMilestones,  "0").getAaData();
@@ -558,7 +559,7 @@ public class TestCaseModificationController {
 
 		String rootPath = "/test-cases/"+testCaseId.toString();
 
-		Boolean editable = Boolean.TRUE;	// fix that later
+		Boolean editable = tc.isModifiable();
 
 		// add them to the model
 

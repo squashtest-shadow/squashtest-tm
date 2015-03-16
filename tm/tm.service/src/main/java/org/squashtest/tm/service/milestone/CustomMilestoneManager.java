@@ -107,4 +107,9 @@ public interface CustomMilestoneManager extends MilestoneFinderService {
 	@PreAuthorize(HAS_ROLE_ADMIN)
 	void disableFeature();
 
+	boolean isBoundToAtleastOneObject(long milestoneId);
+	
+	void unbindAllObjects(long milestoneId);
+
+
 }

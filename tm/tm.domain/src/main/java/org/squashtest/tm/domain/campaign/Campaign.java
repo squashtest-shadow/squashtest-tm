@@ -515,5 +515,19 @@ public class Campaign extends CampaignLibraryNode implements NodeContainer<Itera
 
 	}
 
+	public boolean isBindableToMilestone() {
+		return milestonesAllowBind();
+	}
+	
+	private boolean milestonesAllowBind() {
+	
+			for (Milestone m : milestones) {
+				if (!m.getStatus().isAllowObjectModification()) {
+					return false;
+				}
+			}
+			return true;
+
+	}
 
 }

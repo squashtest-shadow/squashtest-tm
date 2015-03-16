@@ -66,4 +66,8 @@ public interface MilestoneDao extends EntityDao<Milestone> {
 	void synchronizeTestCases(long source, long target, List<Long> projectIds);
 
 	void  performBatchUpdate(HolderConsumer consumer);
+
+	boolean isBoundToAtleastOneObject(long milestoneId);
+
+	void unbindAllObjects(long milestoneId);
 }

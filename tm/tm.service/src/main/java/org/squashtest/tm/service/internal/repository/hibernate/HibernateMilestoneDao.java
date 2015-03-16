@@ -329,4 +329,49 @@ public class HibernateMilestoneDao extends HibernateEntityDao<Milestone> impleme
 
 		LOGGER.info("Done with Milestone Holder batch update");
 	}
+
+	@Override
+	public boolean isBoundToAtleastOneObject(long milestoneId) {
+		Query query = currentSession().getNamedQuery("milestone.countBoundObject");
+		query.setParameter("milestoneId", milestoneId);
+		int count =  (int) query.uniqueResult();
+		return count != 0 ? true : false;
+	}
+
+	@Override
+	public void unbindAllObjects(long milestoneId) {
+
+		final String[] entities = { "TestCase", "RequirementVersion", "Campaign" };
+
+		Session session = currentSession();
+
+		for (String entity : entities) {
+			LOGGER.info("About to fetch entities {}", entity);
+
+			String namedQuery = entity + ".findAllBoundToMilestone";
+			LOGGER.debug("Fetching bound entities with query named {}", namedQuery);
+            Query query = session.getNamedQuery(namedQuery);
+    		query.setParameter("milestoneId", milestoneId);
+			ScrollableResults holders = scrollableResults(query);
+
+			int count = 0;
+
+			while (holders.next()) {
+				MilestoneHolder holder = (MilestoneHolder) holders.get(0);
+				holder.unbindMilestone(milestoneId);
+				if (++count % BATCH_UPDATE_SIZE == 0) {
+					// flush a batch of updates and release memory:
+					session.flush();
+					session.clear();
+				}
+			}
+		}
+
+		
+		
+		
+		
+		
+		
+	}
 }

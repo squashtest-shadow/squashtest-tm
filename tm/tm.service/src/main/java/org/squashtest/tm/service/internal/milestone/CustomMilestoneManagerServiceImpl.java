@@ -465,4 +465,19 @@ public class CustomMilestoneManagerServiceImpl implements CustomMilestoneManager
 			session.delete(milestone);
 		}
 	}
+
+	@Override
+	public boolean isBoundToAtleastOneObject(long milestoneId) {
+		return 	milestoneDao.isBoundToAtleastOneObject(milestoneId);
+	}
+
+	@Override
+	public void unbindAllObjects(long milestoneId) {
+		
+		milestoneDao.unbindAllObjects(milestoneId);
+		Milestone milestone = findById(milestoneId);
+		milestone.clearObjects();
+		}
+	
+	
 }

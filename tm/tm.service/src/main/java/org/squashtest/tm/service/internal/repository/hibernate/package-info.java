@@ -597,6 +597,7 @@
 
 	//Milestones
 	@NamedQuery(name = "milestone.count", query = "select count(milestone) from Milestone milestone"),
+	@NamedQuery(name = "milestone.countBoundObject", query = "select mil.testCases.size + mil.requirementVersions.size + mil.campaigns.size from Milestone mil where mil.id = :milestoneId"),
 	@NamedQuery(name = "milestone.findMilestoneByLabel", query = "from Milestone where label = :label "),
 	@NamedQuery(name = "milestone.findAssociableMilestonesForUser", query = "select milestone from Milestone milestone"),
 	@NamedQuery(name = "milestone.findAssociableMilestonesForTestCase",
@@ -627,7 +628,12 @@
 	@NamedQuery(name = "milestone.findAllTestCasesForProjectAndMilestone", query = "select tc from TestCase tc join tc.milestones m where tc.project.id in (:projectIds) and m.id = :milestoneId"),
 	@NamedQuery(name = "milestone.findAllRequirementVersionsForProjectAndMilestone", query = "select rv from RequirementVersion rv join rv.requirement r join rv.milestones m where r.project.id in (:projectIds) and m.id = :milestoneId"),
 	@NamedQuery(name = "milestone.findAllCampaignsForProjectAndMilestone", query = "select c from Campaign c join c.milestones m  where c.project.id in (:projectIds) and m.id = :milestoneId"),
+	@NamedQuery(name = "TestCase.findAllBoundToMilestone", query = "select tc from TestCase tc join tc.milestones m where m.id = :milestoneId"),
+	@NamedQuery(name = "RequirementVersion.findAllBoundToMilestone", query = "select rv from RequirementVersion rv join rv.requirement r join rv.milestones m where m.id = :milestoneId"),
+	@NamedQuery(name = "Campaign.findAllBoundToMilestone", query = "select c from Campaign c join c.milestones m  where m.id = :milestoneId"),
+	
 
+	
         //InfoList
 	@NamedQuery(name = "infoList.findByCode", query = "from InfoList where code = :code"),
 	@NamedQuery(name = "infoList.findProjectUsingInfoList", query ="from Project p where p.requirementCategories.id = :id or p.testCaseNatures.id = :id or p.testCaseTypes.id = :id"),
