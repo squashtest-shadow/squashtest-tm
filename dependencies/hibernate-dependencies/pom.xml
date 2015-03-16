@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.squashtest.tm</groupId>
     <artifactId>squashtest-csp-dependencies</artifactId>
-    <version>1.12.0.M2</version>
+    <version>1.12.0.M3-SNAPSHOT</version>
   </parent>
   <artifactId>hibernate-dependencies</artifactId>
   <packaging>pom</packaging>
