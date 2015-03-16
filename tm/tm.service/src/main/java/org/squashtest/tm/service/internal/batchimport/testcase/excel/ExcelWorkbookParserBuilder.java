@@ -50,10 +50,11 @@ import org.squashtest.tm.service.batchimport.excel.WorksheetFormatStatus;
 import org.squashtest.tm.service.batchimport.excel.WorksheetMismatch;
 
 /**
- * Builds an excel parser. It checks the structure of the excel file and configures the parser accordingly.
- * 
+ * Builds an excel parser. It checks the structure of the excel file and
+ * configures the parser accordingly.
+ *
  * @author Gregory Fouquet
- * 
+ *
  */
 class ExcelWorkbookParserBuilder {
 	private static final Logger LOGGER = LoggerFactory.getLogger(ExcelWorkbookParserBuilder.class);
@@ -69,22 +70,18 @@ class ExcelWorkbookParserBuilder {
 	}
 
 	/**
-	 * Builds a parser. May throw exceptions when the workbook contains unrecoverable errors.
-	 * 
+	 * Builds a parser. May throw exceptions when the workbook contains
+	 * unrecoverable errors.
+	 *
 	 * @return
 	 * @throws SheetCorruptedException
 	 *             when the excel file cannot be read
 	 * @throws TemplateMismatchException
-	 *             when the workbook does not match the expected template in an unrecoverable way.
+	 *             when the workbook does not match the expected template in an
+	 *             unrecoverable way.
 	 */
 	public ExcelWorkbookParser build() throws MaxFileSizeExceededException, SheetCorruptedException,
-	TemplateMismatchException {
-
-		/*
-		 * if(xls.length() > maxSize){
-		 * throw new MaxFileSizeExceededException(xls.getName());
-		 * }
-		 */
+			TemplateMismatchException {
 
 		InputStream is = null;
 		try {
@@ -94,7 +91,7 @@ class ExcelWorkbookParserBuilder {
 			throw new SheetCorruptedException(e);
 		}
 		Workbook wb = openWorkbook(is);
-		List<TemplateMismatchException> mismatches = new ArrayList<TemplateMismatchException>();
+		List<TemplateMismatchException> mismatches = new ArrayList<>();
 		WorkbookMetaData wmd = null;
 		try {
 			wmd = buildMetaData(wb);
@@ -129,14 +126,14 @@ class ExcelWorkbookParserBuilder {
 	}
 
 	/**
-	 * Reads the workbook's sheets and append {@link WorksheetDef}s to the {@link WorkbookMetaData} accordingly.
-	 * 
+	 * Reads the workbook's sheets and append {@link WorksheetDef}s to the
+	 * {@link WorkbookMetaData} accordingly.
+	 *
 	 * @param wb
 	 * @param wmd
 	 */
-	@SuppressWarnings({ "rawtypes" })
 	private void processSheets(Workbook wb, WorkbookMetaData wmd) {
-		List<WorksheetFormatStatus> worksheetKOStatuses = new ArrayList<WorksheetFormatStatus>();
+		List<WorksheetFormatStatus> worksheetKOStatuses = new ArrayList<>();
 
 		for (int iSheet = 0; iSheet < wb.getNumberOfSheets(); iSheet++) {
 			processSheet(wb, wmd, worksheetKOStatuses, iSheet);
@@ -146,6 +143,7 @@ class ExcelWorkbookParserBuilder {
 		}
 	}
 
+	@SuppressWarnings("rawtypes")
 	private void processSheet(Workbook wb, WorkbookMetaData wmd, List<WorksheetFormatStatus> worksheetKOStatuses,
 			int iSheet) {
 		Sheet ws = wb.getSheetAt(iSheet);
@@ -153,7 +151,7 @@ class ExcelWorkbookParserBuilder {
 
 		Collection<TemplateWorksheet> sheetTypes = TemplateWorksheet.coerceFromSheetName(sheetName);
 
-		for (TemplateWorksheet sheetType : sheetTypes){
+		for (TemplateWorksheet sheetType : sheetTypes) {
 			if (sheetType != null) {
 				LOGGER.trace("Worksheet named '{}' will be added to metamodel as standard worksheet {}", sheetName,
 						sheetType);
@@ -172,8 +170,9 @@ class ExcelWorkbookParserBuilder {
 	}
 
 	/**
-	 * Reads the given sheet and appends {@link ColumnDef} to the {@link WorksheetDef} accordingly.
-	 * 
+	 * Reads the given sheet and appends {@link ColumnDef} to the
+	 * {@link WorksheetDef} accordingly.
+	 *
 	 * @param wd
 	 * @param ws
 	 * @return {@link WorksheetFormatStatus}
@@ -186,8 +185,10 @@ class ExcelWorkbookParserBuilder {
 			worksheetFormatStatus.addWorksheetMismatch(WorksheetMismatch.MISSING_HEADER);
 			return worksheetFormatStatus;
 		}
+
 		for (int iCell = 0; iCell < headerRow.getLastCellNum(); iCell++) {
 			Cell cell = headerRow.getCell(iCell);
+
 			if (cell != null) {
 				try {
 					String header = cell.getStringCellValue();
@@ -202,11 +203,12 @@ class ExcelWorkbookParserBuilder {
 				}
 			}
 		}
+
 		return worksheetFormatStatus;
 	}
 
 	/**
-	 * 
+	 *
 	 * @param ws
 	 * @return header row or <code>null</code>
 	 */
@@ -215,8 +217,9 @@ class ExcelWorkbookParserBuilder {
 	}
 
 	/**
-	 * Opens a workbook from a stream. Potential IO errors are converted / softened into {@link SheetCorruptedException}
-	 * 
+	 * Opens a workbook from a stream. Potential IO errors are converted /
+	 * softened into {@link SheetCorruptedException}
+	 *
 	 * @param is
 	 * @return
 	 * @throws SheetCorruptedException
@@ -225,17 +228,7 @@ class ExcelWorkbookParserBuilder {
 		try {
 			return WorkbookFactory.create(is);
 
-		} catch (InvalidFormatException e) {
-			LOGGER.info(e.getMessage());
-			IOUtils.closeQuietly(is);
-			throw new SheetCorruptedException(e);
-
-		} catch (IOException e) {
-			LOGGER.info(e.getMessage());
-			IOUtils.closeQuietly(is);
-			throw new SheetCorruptedException(e);
-
-		} catch (IllegalArgumentException e) {
+		} catch (InvalidFormatException | IOException | IllegalArgumentException e ) {
 			LOGGER.info(e.getMessage());
 			IOUtils.closeQuietly(is);
 			throw new SheetCorruptedException(e);

@@ -66,10 +66,10 @@ import org.squashtest.tm.service.internal.batchimport.TestStepTarget;
  * <p>
  * Parses an excel import workbook and creates instructions.
  * </p>
- * 
+ *
  * <p>
  * Usage :
- * 
+ *
  * <pre>
  * {
  * 	&#064;code
@@ -78,11 +78,11 @@ import org.squashtest.tm.service.internal.batchimport.TestStepTarget;
  * 	List&lt;Instructions&gt; instructions = parser.getInstructions();
  * }
  * </pre>
- * 
+ *
  * </p>
- * 
+ *
  * @author Gregory Fouquet
- * 
+ *
  */
 public class ExcelWorkbookParser {
 	private static final Logger LOGGER = LoggerFactory.getLogger(ExcelWorkbookParser.class);
@@ -103,7 +103,7 @@ public class ExcelWorkbookParser {
 
 	/**
 	 * Factory method which should be used to create a parser.
-	 * 
+	 *
 	 * @param xls
 	 * @return
 	 * @throws SheetCorruptedException
@@ -126,7 +126,7 @@ public class ExcelWorkbookParser {
 
 	/**
 	 * Should be used by ExcelWorkbookParserBuilder only.
-	 * 
+	 *
 	 * @param workbook
 	 * @param wmd
 	 */
@@ -199,22 +199,26 @@ public class ExcelWorkbookParser {
 
 	// quick and dirty. LogEntries need a target because ImportLog sorts the entries by the EntityType
 	// of the target of the log entry.
-	private Target createDummyTarget(WorksheetDef def){
+	private Target createDummyTarget(WorksheetDef<?> def){
 		Target target = null;
 		switch (def.getWorksheetType()){
 		case TEST_CASES_SHEET :
 			target = new TestCaseTarget();
 			break;
+
 		case STEPS_SHEET :
 			target = new TestStepTarget();
 			break;
+
 		case DATASET_PARAM_VALUES_SHEET :
 		case DATASETS_SHEET:
 			target = new DatasetTarget();
 			break;
+
 		case PARAMETERS_SHEET :
 			target = new ParameterTarget();
 			break;
+
 		default : throw new IllegalArgumentException("sheet '"+def.getSheetName()+"' is unknown and contains errors in its column headers");
 		}
 		return target;
@@ -222,7 +226,7 @@ public class ExcelWorkbookParser {
 
 	/**
 	 * Parses the file and creates instructions accordingly.
-	 * 
+	 *
 	 * @return this
 	 */
 	public ExcelWorkbookParser parse() {
@@ -248,10 +252,6 @@ public class ExcelWorkbookParser {
 
 		Sheet sheet = workbook.getSheet(worksheetDef.getSheetName());
 
-		/*if(sheet.getLastRowNum() > maxLines){
-			throw new MaxNumberOfLinesExceededException(worksheetDef.getSheetName());
-		}*/
-
 		InstructionBuilder<?, ?> instructionBuilder = instructionBuilderFactoryByWorksheet.get(
 				worksheetDef.getWorksheetType()).create((WorksheetDef) worksheetDef); // useless (WorksheetDef) cast
 		// required for compiler not to whine
@@ -270,7 +270,7 @@ public class ExcelWorkbookParser {
 	/**
 	 * Releases resources held by this parser. The result of parsing is still available but the {@link #parse()} method
 	 * should no longer be called.
-	 * 
+	 *
 	 * @return this
 	 */
 	public ExcelWorkbookParser releaseResources() {
@@ -309,14 +309,15 @@ public class ExcelWorkbookParser {
 		// whine
 	}
 
-	public boolean isEmpty(Row row){
+	public boolean isEmpty(Row row) {
 		boolean isEmpty = true;
 
-		if (row != null){
+		if (row != null) {
 			Iterator<Cell> iterator = row.cellIterator();
-			while(iterator.hasNext()){
+
+			while (iterator.hasNext()) {
 				Cell c = iterator.next();
-				if (! StringUtils.isBlank(c.toString())){
+				if (!StringUtils.isBlank(c.toString())) {
 					isEmpty = false;
 					break;
 				}
@@ -324,7 +325,6 @@ public class ExcelWorkbookParser {
 		}
 
 		return isEmpty;
-
 	}
 
 }

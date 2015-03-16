@@ -24,14 +24,15 @@ import javax.validation.constraints.NotNull;
 
 import org.apache.poi.ss.usermodel.Row;
 import org.squashtest.tm.domain.testcase.TestCase;
+import org.squashtest.tm.domain.testcase.TestCaseImportance;
 import org.squashtest.tm.service.internal.batchimport.TestCaseInstruction;
 import org.squashtest.tm.service.internal.batchimport.TestCaseTarget;
 
 /**
  * This builder creates {@link TestCaseTarget}s by reading workbook rows according to its {@link WorkbookMetaData}
- * 
+ *
  * @author Gregory Fouquet
- * 
+ *
  */
 class TestCaseInstructionBuilder extends InstructionBuilder<TestCaseSheetColumn, TestCaseInstruction> {
 	public TestCaseInstructionBuilder(@NotNull WorksheetDef<TestCaseSheetColumn> worksheetDef) {
@@ -44,5 +45,20 @@ class TestCaseInstructionBuilder extends InstructionBuilder<TestCaseSheetColumn,
 	@Override
 	protected TestCaseInstruction createInstruction(Row row) {
 		return new TestCaseInstruction(new TestCaseTarget(), TestCase.createBlankTestCase());
+	}
+
+	/**
+	 * @see org.squashtest.tm.service.internal.batchimport.testcase.excel.InstructionBuilder#postProcessInstruction(org.apache.poi.ss.usermodel.Row, org.squashtest.tm.service.internal.batchimport.Instruction)
+	 */
+	@Override
+	protected void postProcessInstruction(Row row, TestCaseInstruction instruction) {
+		ignoreImportanceIfAuto((TestCaseInstruction) instruction);
+	}
+
+	private void ignoreImportanceIfAuto(TestCaseInstruction instruction) {
+		TestCase testCase = instruction.getTestCase();
+		if (testCase != null && testCase.isImportanceAuto() != null && testCase.isImportanceAuto()) {
+			testCase.setImportance(TestCaseImportance.defaultValue());
+		}
 	}
 }

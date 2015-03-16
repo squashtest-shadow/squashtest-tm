@@ -24,13 +24,10 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.squashtest.tm.domain.testcase.TestCase;
-import org.squashtest.tm.domain.testcase.TestCaseImportance;
 import org.squashtest.tm.service.importer.ImportStatus;
 import org.squashtest.tm.service.internal.batchimport.CustomFieldHolder;
 import org.squashtest.tm.service.internal.batchimport.Instruction;
 import org.squashtest.tm.service.internal.batchimport.Messages;
-import org.squashtest.tm.service.internal.batchimport.TestCaseInstruction;
 import org.squashtest.tm.service.internal.batchimport.excel.CannotCoerceException;
 import org.squashtest.tm.service.internal.batchimport.excel.InvalidTargetException;
 import org.squashtest.tm.service.internal.batchimport.excel.NullMandatoryValueException;
@@ -38,9 +35,9 @@ import org.squashtest.tm.service.internal.batchimport.excel.PropertySetter;
 
 /**
  * Generic superclass for instruction builders.
- * 
+ *
  * @author Gregory Fouquet
- * 
+ *
  */
 public abstract class InstructionBuilder<COL extends Enum<COL> & TemplateColumn, INST extends Instruction<?>> {
 	private final Logger logger = LoggerFactory.getLogger(getClass());
@@ -51,7 +48,7 @@ public abstract class InstructionBuilder<COL extends Enum<COL> & TemplateColumn,
 	protected final WorksheetDef<COL> worksheetDef;
 
 	/**
-	 * 
+	 *
 	 */
 	public InstructionBuilder(WorksheetDef<COL> worksheetDef) {
 		super();
@@ -66,6 +63,9 @@ public abstract class InstructionBuilder<COL extends Enum<COL> & TemplateColumn,
 	protected abstract INST createInstruction(Row row);
 
 	/**
+	 * Template method : instruction building can be customized in subclasses by
+	 * overriding {@link #postProcessInstruction(Row, Instruction)}
+	 *
 	 * @param row
 	 * @return
 	 */
@@ -78,18 +78,21 @@ public abstract class InstructionBuilder<COL extends Enum<COL> & TemplateColumn,
 		if (instruction instanceof CustomFieldHolder) {
 			processCustomFieldColumns(row, instruction);
 		}
-		if (instruction instanceof TestCaseInstruction) {
-			ignoreImportancetIfAuto((TestCaseInstruction) instruction);
-		}
+
+		postProcessInstruction(row, instruction);
 
 		return instruction;
 	}
 
-	private void ignoreImportancetIfAuto(TestCaseInstruction instruction) {
-		TestCase testCase = instruction.getTestCase();
-		if (testCase != null && testCase.isImportanceAuto() != null && testCase.isImportanceAuto()) {
-			testCase.setImportance(TestCaseImportance.defaultValue());
-		}
+	/**
+	 * Override this method in subclass to postprocess an instruction. Default
+	 * implementation does nothing.
+	 *
+	 * @param row
+	 * @param instruction
+	 */
+	protected void postProcessInstruction(Row row, INST instruction) {
+		// NOOP;
 	}
 
 	private void processCustomFieldColumns(Row row, INST instruction) {
@@ -135,12 +138,10 @@ public abstract class InstructionBuilder<COL extends Enum<COL> & TemplateColumn,
 
 		} catch (NullMandatoryValueException e) {
 			log(colDef, instruction);
-		} catch (InvalidTargetException e){
+		} catch (InvalidTargetException e) {
 			instruction.addLogEntry(e.getStatus(), e.getErrori18nMessage(), e.getImpacti18nMessage());
 		}
 	}
-
-
 
 	/**
 	 * @param colDef
@@ -159,18 +160,19 @@ public abstract class InstructionBuilder<COL extends Enum<COL> & TemplateColumn,
 	private void log(ColumnDef colDef, CannotCoerceException e, INST instruction) {
 		String impactKey = null;
 		ImportStatus status = ImportStatus.FAILURE;
+
 		if (!colDef.is(ColumnProcessingMode.MANDATORY)) {
 			status = ImportStatus.WARNING;
 			impactKey = e.getImpactI18nKey(instruction.getMode());
 		}
+
 		instruction.addLogEntry(status, e.errorI18nKey, impactKey, colDef.getHeader());
 
 	}
 
-
 	/**
 	 * Returns the asked cell
-	 * 
+	 *
 	 * @param row
 	 * @param col
 	 * @return the cell or null when the cell does not exist

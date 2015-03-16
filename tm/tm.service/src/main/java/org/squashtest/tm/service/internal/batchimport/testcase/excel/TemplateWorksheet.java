@@ -30,9 +30,9 @@ import org.apache.commons.collections.map.MultiValueMap;
 
 /**
  * Enum of worksheet which are expected in the import file.
- * 
+ *
  * @author Gregory Fouquet
- * 
+ *
  */
 public enum TemplateWorksheet {
 	TEST_CASES_SHEET("TEST_CASES", TestCaseSheetColumn.class, TEST_CASE_CUSTOM_FIELD),
@@ -63,18 +63,19 @@ public enum TemplateWorksheet {
 
 	/**
 	 * Returns the enum value matching the given sheet name.
-	 * 
+	 *
 	 * @param name
 	 * @return the matching enum, <code>null</code> when no match.
 	 */
 	/*
 	 * Feat 3695
-	 * 
+	 *
 	 * For a same sheet in the workbook one can now define it by multiple templates
 	 * Hint : as for now only the sheet DATASETS can be defined by : DATASET_SHEET
 	 * and DATASET_PARAM_VALUES_SHEET
-	 * 
+	 *
 	 */
+	@SuppressWarnings("unchecked")
 	public static Collection<TemplateWorksheet> coerceFromSheetName(String name) {
 		if (ENUM_BY_SHEET_NAME.size() == 0) {
 			synchronized (ENUM_BY_SHEET_NAME) {

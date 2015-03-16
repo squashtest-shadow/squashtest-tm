@@ -92,7 +92,7 @@ public class TestCaseExcelBatchImporter {
 
 	private List<Instruction<?>> findInstructionsByEntity(ExcelWorkbookParser parser, EntityType entityType) {
 		List<Instruction<?>> instructions = new ArrayList<Instruction<?>>();
-		;
+
 		switch (entityType) {
 		case TEST_CASE:
 			instructions.addAll(parser.getTestCaseInstructions());
@@ -119,12 +119,12 @@ public class TestCaseExcelBatchImporter {
 
 
 	/*
-	 * 
+	 *
 	 *  Feat 3695 :
-	 * 
+	 *
 	 *  an additional step is required now that DATASET and PArameter values are
 	 *  processed separately : we still need to merge their logs.
-	 * 
+	 *
 	 */
 	private ImportLog run(List<Instruction<?>> instructions, Facility facility) {
 
