@@ -29,6 +29,7 @@ import org.hibernate.CacheMode;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.ScrollMode;
+import org.squashtest.tm.domain.milestone.MilestoneStatus;
 import org.hibernate.ScrollableResults;
 import org.hibernate.Session;
 import org.slf4j.Logger;
@@ -65,6 +66,7 @@ public class HibernateMilestoneDao extends HibernateEntityDao<Milestone> impleme
 	public Collection<Milestone> findAssociableMilestonesForTestCase(long testCaseId) {
 		Query query = currentSession().getNamedQuery("milestone.findAssociableMilestonesForTestCase");
 		query.setParameter("testCaseId", testCaseId);
+		query.setParameterList("validStatus", MilestoneStatus.getAllStatusAllowingObjectBind());
 		return query.list();
 	}
 
@@ -94,6 +96,7 @@ public class HibernateMilestoneDao extends HibernateEntityDao<Milestone> impleme
 	public Collection<Milestone> findAssociableMilestonesForRequirementVersion(long versionId) {
 		Query q = currentSession().getNamedQuery("milestone.findAssociableMilestonesForRequirementVersion");
 		q.setParameter("versionId", versionId);
+		q.setParameterList("validStatus", MilestoneStatus.getAllStatusAllowingObjectBind());
 		return q.list();
 	}
 
@@ -109,7 +112,8 @@ public class HibernateMilestoneDao extends HibernateEntityDao<Milestone> impleme
 	@Override
 	public Collection<Milestone> findAssociableMilestonesForCampaign(long campaignId) {
 		Query q = currentSession().getNamedQuery("milestone.findAssociableMilestonesForCampaign");
-		q.setParameter("campaignId", campaignId);
+		q.setParameterList("validStatus", MilestoneStatus.getAllStatusAllowingObjectBind());
+                q.setParameter("campaignId", campaignId);
 		return q.list();
 	}
 

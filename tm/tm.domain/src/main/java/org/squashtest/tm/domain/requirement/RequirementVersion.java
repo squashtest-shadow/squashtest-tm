@@ -504,6 +504,15 @@ public class RequirementVersion extends Resource implements BoundEntity, Milesto
 		return true;
 	}
 
+	public Boolean isMilestoneBindable() {
+		for (Milestone m : milestones) {
+			if (!m.getStatus().isBindableToObject()) {
+				return false;
+			}
+		}
+		return true;
+	}
+
 	/**
 	 * @see org.squashtest.tm.domain.milestone.MilestoneHolder#unbindAllMilestones()
 	 */

@@ -601,16 +601,16 @@
 	@NamedQuery(name = "milestone.findAssociableMilestonesForUser", query = "select milestone from Milestone milestone"),
 	@NamedQuery(name = "milestone.findAssociableMilestonesForTestCase",
 	query = "select milestone from TestCase tc join tc.project p join p.milestones milestone "
-	+ "where tc.id = :testCaseId and milestone not in ( "
+	+ "where tc.id = :testCaseId and milestone.status in (:validStatus) and milestone not in ( "
 	+ "select mstone from TestCase tcase join tcase.milestones mstone where tcase.id = :testCaseId "
 	+ ")"),
 	@NamedQuery(name = "milestone.findAssociableMilestonesForRequirementVersion", query="select milestone from RequirementVersion version join version.requirement req join req.project p join p.milestones milestone " +
-	"where version.id = :versionId and milestone not in (" +
+	"where version.id = :versionId and  milestone.status in (:validStatus) and milestone not in (" +
 	"select mstone from RequirementVersion v join v.requirement req join req.versions vs join vs.milestones mstone where v.id = :versionId" +
 	")"),
 	@NamedQuery(name = "milestone.findAssociableMilestonesForCampaign",
 	query = "select milestone from Campaign c join c.project p join p.milestones milestone "
-	+ "where c.id = :campaignId and milestone not in ( "
+	+ "where c.id = :campaignId and milestone.status in (:validStatus) and  milestone not in ( "
 	+ "select mstone from Campaign camp join camp.milestones mstone where camp.id = :campaignId "
 	+ ")"),
 	@NamedQuery(name = "milestone.findTestCaseMilestones", query="select milestones from TestCase tc join tc.milestones milestones where tc.id = :testCaseId" ),

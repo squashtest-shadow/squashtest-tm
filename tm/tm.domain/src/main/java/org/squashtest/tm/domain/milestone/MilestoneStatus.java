@@ -20,6 +20,10 @@
  */
 package org.squashtest.tm.domain.milestone;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.commons.collections.iterators.AbstractListIteratorDecorator;
 import org.squashtest.tm.domain.Level;
 
 public enum MilestoneStatus implements Level {
@@ -58,6 +62,17 @@ public enum MilestoneStatus implements Level {
 		}
 		
 		throw new IllegalArgumentException("Does not match any level : " + level);
+	}
+	
+	public static List<MilestoneStatus> getAllStatusAllowingObjectBind(){
+		
+		List<MilestoneStatus> result = new ArrayList<MilestoneStatus>();
+		for (MilestoneStatus status : MilestoneStatus.values()){
+			if (status.isBindableToObject){
+				result.add(status);
+			}
+		}
+		return result;
 	}
 
 	@Override
