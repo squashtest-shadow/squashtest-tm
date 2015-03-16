@@ -129,6 +129,10 @@ define([ "jquery", "workspace.storage", "squash.translator", "squash.attributepa
 			return $.cookie(COOKIE_NAME);
 		},
 		
+		deleteCookie : function(){
+			document.cookie = COOKIE_NAME +'=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;'; 
+		},
+		
 		isEnabled : function(){
 			initFeatureIfNeeded();
 			var feature = storage.get(LOCAL_STORAGE); 

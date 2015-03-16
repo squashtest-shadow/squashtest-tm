@@ -98,10 +98,10 @@
       <div class="position-layout-fix">
         <div id="tabbed-pane"
             th:with="usesMilestone = ${(activeMilestone!=null)}, milestoneLabel = ${(activeMilestone!=null) ? activeMilestone.label : ''}">
-          <ul th:class="${(usesMilestone) ? 'milestones-mode' : ''}">
+           <ul th:if="${application.milestoneFeatureEnabled == true}" th:class="${(usesMilestone) ? 'milestones-mode' : ''}">
             <li class="tab">
               <a href="#tree-pane" >
-              <span  id="dashboardMilestone"  th:text="#{label.Milestone} + ' : ' + ${milestoneLabel}"  class="clickable-item" style="text-decoration:none"></span> 
+              <span  id="testCaseDashboardMilestone"  th:text="#{label.Milestone} + ' : ' + ${milestoneLabel}"  class="clickable-item" style="text-decoration:none"></span> 
               <span id="tree-milestone-selector" class="clickable-item small-down-white-arrow"></span>
               </a>
             </li>

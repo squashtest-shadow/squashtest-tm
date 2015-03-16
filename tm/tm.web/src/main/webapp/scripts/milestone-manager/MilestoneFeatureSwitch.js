@@ -81,7 +81,7 @@ define([ "backbone", "jquery", "handlebars", "underscore", "jquery.squash.onesho
 				second : "message.milestone.feature.disable.second",
 				third : "message.milestone.feature.disable.third",
 				fourth : "message.milestone.feature.disable.fourth",
-				title : "title.ActivateMilestoneFeature"
+				title : "title.DeactivateMilestoneFeature"
 			});
 
 			return confirm.show(text.title, disableTpl()(text));

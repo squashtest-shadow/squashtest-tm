@@ -190,11 +190,12 @@
 				</div>
 			</jsp:attribute>
 		</comp:toggle-panel>
-		
     
         <f:message var="milestoneReferentialMode" key="user-preferences.tree-order.referentiel.label" />
         <f:message var="milestoneMilestoneMode" key="user-preferences.milestone" />
-		<comp:toggle-panel id="library-display-mode-panel" titleKey="user-preferences.tree-order.mode.title" open="true" >
+       
+          <c:if test="${ milestoneFeatureEnabled }">
+        	<comp:toggle-panel id="library-display-mode-panel" titleKey="user-preferences.tree-order.mode.title" open="true" >
 			<jsp:attribute name="body">
 				<div class="display-table">			
 				<div class="display-table-row">
@@ -207,23 +208,22 @@
                  	          data-def="width=35, on_label='${milestoneMilestoneMode}', off_label='${milestoneReferentialMode}'" style="display: none;"/>
                  		</div>
                  	</div>
+			</div>
+							
+			<div class="display-table-row">
+				<div class="display-table-cell">  
+				<label for="choose-your-mode" ><f:message key="user-preferences.milestone"/></label>
 				</div>
-				
-				
-				
-				<div class="display-table-row">
-					<div class="display-table-cell">  
-					<label for="choose-your-mode" ><f:message key="user-preferences.milestone"/></label>
-					</div>
-					<div id="labelchoose" class="customHeigth">
-					 <select id="milestone-group" class="combobox" >
-				        <c:forEach items="${ milestoneList }" var="milestone"> 
-				           <option value = "${milestone.id}" >${milestone.label}</option>
-			            </c:forEach>                    
-					</select>
-				</div>
+				<div id="labelchoose" class="customHeigth">
+				 <select id="milestone-group" class="combobox" >
+			        <c:forEach items="${ milestoneList }" var="milestone"> 
+			           <option value = "${milestone.id}" >${milestone.label}</option>
+		            </c:forEach>                    
+				</select>
+			</div>
 			</jsp:attribute>
-		</comp:toggle-panel>
+			</comp:toggle-panel>
+		 </c:if>
 		
 	</div>
     <c:if test="${ not authenticationProvider.managedPassword }">

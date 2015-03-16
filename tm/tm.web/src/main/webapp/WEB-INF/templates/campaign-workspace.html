@@ -96,14 +96,14 @@
     <div id="tree-panel-left" style="z-index: 1" class="left-frame">
       <div class="position-layout-fix">
         <div id="tabbed-pane"     
-              th:with="usesMilestone = ${(activeMilestone!=null)}, milestoneLabel = ${(activeMilestone!=null) ? activeMilestone.label : ''}">
-          <ul th:class="${(usesMilestone) ? 'milestones-mode' : ''}">
+              th:with="usesMilestone = ${(activeMilestone!=null)}, milestoneLabel = ${(activeMilestone!=null) ? activeMilestone.label : ''}">    
+          <ul th:if="${application.milestoneFeatureEnabled == true}" th:class="${(usesMilestone) ? 'milestones-mode' : ''}" >
             <li class="tab" >
-              <a href="#tree-pane">             
-                <span th:text="#{label.Milestone} + ' : ' + ${milestoneLabel}"></span> 
-                <span id="tree-milestone-selector" class="clickable-item small-down-white-arrow"></span>
+              <a href="#tree-pane">
+               <span  id="campaignDashboardMilestone"  th:text="#{label.Milestone} + ' : ' + ${milestoneLabel}"  class="clickable-item" style="text-decoration:none"></span> 
+               <span id="tree-milestone-selector" class="clickable-item small-down-white-arrow"></span>
               </a>
-            </li>
+            </li>  
           </ul>
           <div id="tree-pane">
             <!-- ________________TREE MENU_______________ -->

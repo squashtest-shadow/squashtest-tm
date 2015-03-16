@@ -19,9 +19,9 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 require(["common"], function(){
-	require(["app/pubsub", "backbone.wreqr", "jquery", "squash.translator", "workspace.routing","squash.configmanager","squash.dateutils", "milestone-manager/MilestoneFeatureSwitch",
-	         "jeditable.datepicker",  "squashtable", "app/ws/squashtm.workspace", "jquery.squash.formdialog", "jquery.squash.confirmdialog"],
-			function(ps, Wreqr, $, translator, routing, confman, dateutils, MilestoneFeatureSwitch){
+	require(["app/pubsub", "backbone.wreqr", "jquery", "squash.translator", "workspace.routing","squash.configmanager","squash.dateutils", "milestone-manager/MilestoneFeatureSwitch", 
+	         "milestone-manager/milestone-activation", "jeditable.datepicker",  "squashtable", "app/ws/squashtm.workspace", "jquery.squash.formdialog", "jquery.squash.confirmdialog"],
+			function(ps, Wreqr, $, translator, routing, confman, dateutils, MilestoneFeatureSwitch, MilestoneActivation){
 		"use strict";
 
 		squashtm = squashtm || {};
@@ -58,6 +58,7 @@ require(["common"], function(){
 	});
 	squashtm.vent.on("milestonefeatureswitch:deactivated", function(event) {
 		setActionsEnabled(false);
+		MilestoneActivation.deleteCookie();
 		$table()._fnAjaxUpdate();
 	});
 
@@ -138,7 +139,6 @@ require(["common"], function(){
 
 
 		$("#delete-milestone-popup").confirmDialog().on('confirmdialogconfirm', function(){
-
 			var $this = $(this);
 			var id = $this.data('entity-id');
 			var ids = ( !! id) ? [id] : id ;
