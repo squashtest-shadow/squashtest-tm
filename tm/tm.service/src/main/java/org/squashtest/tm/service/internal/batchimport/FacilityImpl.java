@@ -23,7 +23,6 @@ package org.squashtest.tm.service.internal.batchimport;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -72,9 +71,9 @@ import org.squashtest.tm.service.testcase.TestCaseLibraryNavigationService;
 import org.squashtest.tm.service.testcase.TestCaseModificationService;
 
 /**
- * 
+ *
  * Implementation of batch import methods that will actually update the database.
- * 
+ *
  */
 @Component
 @Scope("prototype")
@@ -131,16 +130,9 @@ public class FacilityImpl implements Facility {
 	// ************************ public (and nice looking) code **************************************
 
 	@Override
+	@Deprecated
 	public LogTrain createTestCase(TestCaseTarget target, TestCase testCase, Map<String, String> cufValues) {
-
-		LogTrain train = validator.createTestCase(target, testCase, cufValues);
-
-		if (!train.hasCriticalErrors()) {
-			train = createTCRoutine(train, target, testCase, cufValues);
-		}
-
-		return train;
-
+		throw new RuntimeException(new NoSuchMethodError("This method is in the process of being removed"));
 	}
 
 	private LogTrain updateTCRoutine(LogTrain train, TestCaseTarget target, TestCase testCase,
@@ -177,39 +169,9 @@ public class FacilityImpl implements Facility {
 	}
 
 	@Override
+	@Deprecated
 	public LogTrain updateTestCase(TestCaseTarget target, TestCase testCase, Map<String, String> cufValues) {
-
-		TargetStatus status = validator.getModel().getStatus(target);
-
-		LogTrain train = validator.updateTestCase(target, testCase, cufValues);
-
-		if (!train.hasCriticalErrors()) {
-
-			if (status.status == Existence.NOT_EXISTS) {
-
-				train = updateTCRoutine(train, target, testCase, cufValues);
-
-			} else {
-				try {
-
-					helper.truncate(testCase, cufValues);
-					fixNatureAndType(target, testCase);
-
-					doUpdateTestcase(target, testCase, cufValues);
-
-					LOGGER.debug(EXCEL_ERR_PREFIX + "Updated Test Case \t'" + target + "'");
-
-				} catch (Exception ex) {
-					train.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_UNEXPECTED_ERROR,
-							new Object[] { ex.getClass().getName() }));
-					LOGGER.error(EXCEL_ERR_PREFIX + "unexpected error while updating " + target + " : ", ex);
-				}
-
-			}
-
-		}
-
-		return train;
+		throw new RuntimeException(new NoSuchMethodError("This method is in the process of being removed"));
 	}
 
 	@Override
@@ -496,7 +458,7 @@ public class FacilityImpl implements Facility {
 
 	/**
 	 * for all other stuffs that need to be done afterward
-	 * 
+	 *
 	 */
 	public void postprocess() {
 		// NOOP yet
@@ -771,7 +733,7 @@ public class FacilityImpl implements Facility {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param dataset
 	 * @return the found Dataset or a new one (non null value)
 	 */
@@ -797,7 +759,7 @@ public class FacilityImpl implements Facility {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param testStep
 	 * @param tc
 	 * @param paramInfo
@@ -934,6 +896,63 @@ public class FacilityImpl implements Facility {
 			this.type = type;
 		}
 
+	}
+
+
+	/**
+	 * @see org.squashtest.tm.service.internal.batchimport.Facility#createTestCase(org.squashtest.tm.service.internal.batchimport.TestCaseInstruction)
+	 */
+	@Override
+	public LogTrain createTestCase(TestCaseInstruction instr) {
+		LogTrain train = validator.createTestCase(instr);
+
+		if (!train.hasCriticalErrors()) {
+			train = createTCRoutine(train, instr.getTarget(), instr.getTestCase(), instr.getCustomFields());
+		}
+
+		return train;
+	}
+
+	/**
+	 * @see org.squashtest.tm.service.internal.batchimport.Facility#updateTestCase(org.squashtest.tm.service.internal.batchimport.TestCaseInstruction)
+	 */
+	@Override
+	public LogTrain updateTestCase(TestCaseInstruction instr) {
+		TestCaseTarget target = instr.getTarget();
+		TestCase testCase = instr.getTestCase();
+		Map<String, String> cufValues = instr.getCustomFields();
+
+		TargetStatus status = validator.getModel().getStatus(target);
+
+		LogTrain train = validator.updateTestCase(target, testCase, cufValues);
+
+		if (!train.hasCriticalErrors()) {
+
+			if (status.status == Existence.NOT_EXISTS) {
+
+				train = updateTCRoutine(train, target, testCase, (Map<String, String>) cufValues);
+
+			} else {
+				try {
+
+					helper.truncate(testCase, (Map<String, String>) cufValues);
+					fixNatureAndType(target, testCase);
+
+					doUpdateTestcase(target, testCase, (Map<String, String>) cufValues);
+
+					LOGGER.debug(EXCEL_ERR_PREFIX + "Updated Test Case \t'" + target + "'");
+
+				} catch (Exception ex) {
+					train.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_UNEXPECTED_ERROR,
+							new Object[] { ex.getClass().getName() }));
+					LOGGER.error(EXCEL_ERR_PREFIX + "unexpected error while updating " + target + " : ", ex);
+				}
+
+			}
+
+		}
+
+		return train;
 	}
 
 }

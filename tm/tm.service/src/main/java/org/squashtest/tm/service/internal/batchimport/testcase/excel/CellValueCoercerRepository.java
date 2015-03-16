@@ -28,25 +28,23 @@ import javax.validation.constraints.NotNull;
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.domain.infolist.ListItemReference;
 import org.squashtest.tm.domain.testcase.TestCaseImportance;
-import org.squashtest.tm.domain.testcase.TestCaseNature;
 import org.squashtest.tm.domain.testcase.TestCaseStatus;
-import org.squashtest.tm.domain.testcase.TestCaseType;
 import org.squashtest.tm.service.internal.batchimport.excel.CellValueCoercer;
 import org.squashtest.tm.service.internal.batchimport.excel.ImportModeCellCoercer;
 import org.squashtest.tm.service.internal.batchimport.excel.InfoListItemCoercer;
+import org.squashtest.tm.service.internal.batchimport.excel.InfoListItemCoercer.ListRole;
 import org.squashtest.tm.service.internal.batchimport.excel.OptionalBooleanCellCoercer;
 import org.squashtest.tm.service.internal.batchimport.excel.OptionalDateCellCoercer;
 import org.squashtest.tm.service.internal.batchimport.excel.OptionalEnumCellCoercer;
 import org.squashtest.tm.service.internal.batchimport.excel.OptionalOneBasedIndexCellCoercer;
 import org.squashtest.tm.service.internal.batchimport.excel.ParamAssignationModeCellCoercer;
 import org.squashtest.tm.service.internal.batchimport.excel.StringCellCoercer;
-import org.squashtest.tm.service.internal.batchimport.excel.InfoListItemCoercer.ListRole;
 
 /**
  * Repository of {@link CellValueCoercer} for a given {@link TemplateColumn}s
- * 
+ *
  * @author Gregory Fouquet
- * 
+ *
  */
 @Component
 final class CellValueCoercerRepository<COL extends Enum<COL> & TemplateColumn> {
@@ -63,7 +61,7 @@ final class CellValueCoercerRepository<COL extends Enum<COL> & TemplateColumn> {
 
 	/**
 	 * Returns the repository suitable for the given worksheet.
-	 * 
+	 *
 	 * @param worksheet
 	 * @return
 	 */
@@ -153,7 +151,7 @@ final class CellValueCoercerRepository<COL extends Enum<COL> & TemplateColumn> {
 
 	/**
 	 * Finds a coercer for the given column. When no coercer is available, returns the default coercer
-	 * 
+	 *
 	 * @param col
 	 * @return
 	 */

@@ -66,6 +66,7 @@ public final class Messages {
 	public static final String ERROR_UNKNOWN_COLUMN_HEADER = "message.import.log.error.unknowncolumnheader";
 	public static final String ERROR_INVALID_NATURE = "message.import.log.error.natureinvalid";
 	public static final String ERROR_INVALID_TYPE = "message.import.log.error.typeinvalid";
+	public static final String ERROR_MILESTONE_FEATURE_DEACTIVATED = "message.import.log.error.milestoneFeatureDeactivated";
 
 	public static final String IMPACT_MAX_SIZE = "message.import.log.impact.truncatedValue";
 	public static final String IMPACT_DEFAULT_VALUE = "message.import.log.impact.useDefaultValue";
@@ -84,6 +85,7 @@ public final class Messages {
 	public static final String IMPACT_NO_CALL_DATASET = "message.import.log.impact.callStepCallsNoDataset";
 	public static final String IMPACT_COLUMN_IGNORED = "message.import.log.impact.columnIgnored";
 
+	public static final String WARN_MILESTONE_FEATURE_DEACTIVATED = "message.import.log.warn.milestoneFeatureDeactivated";
 
 	private Messages(){
 		super();

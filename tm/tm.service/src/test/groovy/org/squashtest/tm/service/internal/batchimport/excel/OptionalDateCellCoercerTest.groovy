@@ -51,6 +51,6 @@ class OptionalDateCellCoercerTest extends Specification {
 		cellType 				| cellValue										| date
 		Cell.CELL_TYPE_BLANK	| ""											| null
 		Cell.CELL_TYPE_STRING	| "2012-05-08"									| DateUtils.parseIso8601Date("2012-05-08");
-		Cell.CELL_TYPE_NUMERIC	| DateUtils.parseIso8601Date("2017-05-18")	| DateUtils.parseIso8601Date("2017-05-18")
+		Cell.CELL_TYPE_NUMERIC	| DateUtils.parseIso8601Date("2017-05-18")	 	| DateUtils.parseIso8601Date("2017-05-18")
 	}
 }

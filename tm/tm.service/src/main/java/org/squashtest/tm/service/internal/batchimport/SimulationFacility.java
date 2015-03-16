@@ -32,11 +32,11 @@ import org.squashtest.tm.domain.testcase.Parameter;
 import org.squashtest.tm.domain.testcase.TestCase;
 
 /**
- * 
+ *
  * @Implementation of batch import method that won't update the database. It justs updates an internal model
  * (held by a ValidationFacility) when it sees fit, depending on the sanity of the data and the operation being
  * simulated.
- * 
+ *
  */
 @Component
 @Scope("prototype")
@@ -48,42 +48,12 @@ public class SimulationFacility implements Facility {
 
 	@Override
 	public LogTrain createTestCase(TestCaseTarget target, TestCase testCase, Map<String, String> cufValues) {
-
-		LogTrain logs = validator.createTestCase(target, testCase, cufValues);
-
-		/*
-		 * Create TestCase : how to update the model.
-		 * 
-		 * If there were no errors, the target is set to be created. If there is at least one failure the target wont be
-		 * created and is considered as non existent, and further operations referring to that test case will
-		 * consequently fail (import on steps etc).
-		 * 
-		 * Note that in case of path clash, we consider that the imported test case (target) shadows the one that
-		 * already exists in the DB. We update the model according to the success or failure of the create operation
-		 * only and the status of an already existent test case is irrelevant.
-		 */
-		if (!logs.hasCriticalErrors()) {
-			validator.getModel().setToBeCreated(target);
-		} else {
-			validator.getModel().setNotExists(target);
-		}
-
-		return logs;
-
+		throw new RuntimeException(new NoSuchMethodError("This method is in the process of being removed"));
 	}
 
 	@Override
 	public LogTrain updateTestCase(TestCaseTarget target, TestCase testCase, Map<String, String> cufValues) {
-
-		LogTrain logs = validator.updateTestCase(target, testCase, cufValues);
-
-		/*
-		 * In case of an update, we don't need to change the model regardless of the success or failure of the
-		 * operation.
-		 */
-
-		return logs;
-
+		throw new RuntimeException(new NoSuchMethodError("This method is in the process of being removed"));
 	}
 
 	@Override
@@ -247,6 +217,58 @@ public class SimulationFacility implements Facility {
 		if (!logs.hasCriticalErrors()) {
 			validator.getModel().removeDataset(dataset);
 		}
+
+		return logs;
+
+	}
+
+	/**
+	 * @see org.squashtest.tm.service.internal.batchimport.Facility#createTestCase(org.squashtest.tm.service.internal.batchimport.TestCaseInstruction)
+	 */
+	@Override
+	public LogTrain createTestCase(TestCaseInstruction instr) {
+		TestCaseTarget target = instr.getTarget();
+		TestCase testCase = instr.getTestCase();
+		Map<String, String> cufValues = instr.getCustomFields();
+
+		LogTrain logs = validator.createTestCase(target, testCase, cufValues);
+
+		/*
+		 * Create TestCase : how to update the model.
+		 *
+		 * If there were no errors, the target is set to be created. If there is at least one failure the target wont be
+		 * created and is considered as non existent, and further operations referring to that test case will
+		 * consequently fail (import on steps etc).
+		 *
+		 * Note that in case of path clash, we consider that the imported test case (target) shadows the one that
+		 * already exists in the DB. We update the model according to the success or failure of the create operation
+		 * only and the status of an already existent test case is irrelevant.
+		 */
+		if (!logs.hasCriticalErrors()) {
+			validator.getModel().setToBeCreated(target);
+		} else {
+			validator.getModel().setNotExists(target);
+		}
+
+		return logs;
+
+	}
+
+	/**
+	 * @see org.squashtest.tm.service.internal.batchimport.Facility#updateTestCase(org.squashtest.tm.service.internal.batchimport.TestCaseInstruction)
+	 */
+	@Override
+	public LogTrain updateTestCase(TestCaseInstruction instr) {
+		TestCaseTarget target = instr.getTarget();
+		TestCase testCase = instr.getTestCase();
+		Map<String, String> cufValues = instr.getCustomFields();
+
+		LogTrain logs = validator.updateTestCase(target, testCase, cufValues);
+
+		/*
+		 * In case of an update, we don't need to change the model regardless of the success or failure of the
+		 * operation.
+		 */
 
 		return logs;
 

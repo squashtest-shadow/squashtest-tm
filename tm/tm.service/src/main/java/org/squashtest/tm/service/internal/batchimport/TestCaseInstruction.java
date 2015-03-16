@@ -20,14 +20,18 @@
  */
 package org.squashtest.tm.service.internal.batchimport;
 
+import java.util.ArrayDeque;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Queue;
 
 import org.squashtest.tm.domain.testcase.TestCase;
 
 public class TestCaseInstruction extends Instruction<TestCaseTarget> implements CustomFieldHolder {
 	private final TestCase testCase;
-	private final Map<String, String> customFields = new HashMap<String, String>();
+	private final Map<String, String> customFields = new HashMap<>();
+	private final Queue<String> milestones = new ArrayDeque<>();
 
 	public TestCaseInstruction(TestCaseTarget target, TestCase testCase) {
 		super(target);
@@ -36,7 +40,7 @@ public class TestCaseInstruction extends Instruction<TestCaseTarget> implements 
 
 	protected LogTrain executeUpdate(Facility facility) {
 		LogTrain execLogTrain;
-		execLogTrain = facility.updateTestCase(getTarget(), testCase, customFields);
+		execLogTrain = facility.updateTestCase(this);
 		return execLogTrain;
 	}
 
@@ -48,7 +52,7 @@ public class TestCaseInstruction extends Instruction<TestCaseTarget> implements 
 
 	protected LogTrain executeCreate(Facility facility) {
 		LogTrain execLogTrain;
-		execLogTrain = facility.createTestCase(getTarget(), testCase, customFields);
+		execLogTrain = facility.createTestCase(this);
 		return execLogTrain;
 	}
 
@@ -62,5 +66,13 @@ public class TestCaseInstruction extends Instruction<TestCaseTarget> implements 
 
 	public void addCustomField(String code, String value) {
 		customFields.put(code, value);
+	}
+
+	public Collection<String> getMilestones() {
+		return milestones;
+	}
+
+	public void addMilestoneName(String name) {
+		milestones.add(name);
 	}
 }

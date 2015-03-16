@@ -43,7 +43,9 @@ public interface Facility {
 					EntityType.TEST_STEP,
 					EntityType.DATASET_PARAM_VALUES);
 
+	@Deprecated
 	LogTrain createTestCase(TestCaseTarget target, TestCase testCase, Map<String, String> cufValues);
+	@Deprecated
 	LogTrain updateTestCase(TestCaseTarget target, TestCase testCaseData, Map<String, String> cufValues);
 	LogTrain deleteTestCase(TestCaseTarget target);
 
@@ -70,7 +72,7 @@ public interface Facility {
 	/**
 	 * Will update the value for the given parameter in the given dataset. If the dataset doesn't exist for this dataset, it will be created.
 	 * If the parameter doesn't exist or is not available to this dataset the method fails. In all cases the methods returns a log.
-	 * 
+	 *
 	 * @param dataset
 	 * @param param
 	 * @param value
@@ -78,6 +80,19 @@ public interface Facility {
 	 */
 	LogTrain failsafeUpdateParameterValue (DatasetTarget dataset, ParameterTarget param, String value, boolean isUpdate);
 
+	/**
+	 * Does exactly the same as the method above but with other arguments.
+	 * @param instr
+	 * @return
+	 */
+	LogTrain createTestCase(TestCaseInstruction instr);
+
+	/**
+	 * Does exactly the same as the method above but with other arguments.
+	 * @param instr
+	 * @return
+	 */
+	LogTrain updateTestCase(TestCaseInstruction instr);
 
 
 }

@@ -61,8 +61,8 @@ class ValidationFacilityTest extends Specification {
 		userAccount.findCurrentUser() >> Mock(User)
 	}
 
-	@Unroll("should validate new test case with inconsistent path #path and name #name")
-	def "should validate new test case with inconsistent path and name"() {
+	@Unroll
+	def "should validate new test case with inconsistent path #path and name #name"() {
 		given:
 		LogTrain logTrain = new LogTrain()
 		entityValidator.createTestCaseChecks(_, _) >> logTrain
@@ -76,10 +76,13 @@ class ValidationFacilityTest extends Specification {
 		testCase.name >> name
 
 		and:
+		TestCaseInstruction instr = new TestCaseInstruction(target, testCase);
+
+		and:
 		status.status >> Existence.NOT_EXISTS
 
 		when:
-		LogTrain createLog = facility.createTestCase(target, testCase, Collections.emptyMap())
+		LogTrain createLog = facility.createTestCase(instr)
 
 		then:
 		!createLog.criticalErrors
@@ -104,10 +107,13 @@ class ValidationFacilityTest extends Specification {
 		testCase.name >> "deviant"
 
 		and:
+		TestCaseInstruction instr = new TestCaseInstruction(target, testCase);
+
+		and:
 		status.status >> Existence.EXISTS
 
 		when:
-		LogTrain createLog = facility.updateTestCase(target, testCase, Collections.emptyMap())
+		LogTrain createLog = facility.updateTestCase(instr)
 
 		then:
 		createLog.criticalErrors
@@ -128,10 +134,13 @@ class ValidationFacilityTest extends Specification {
 		testCase.name >> name
 
 		and:
+		TestCaseInstruction instr = new TestCaseInstruction(target, testCase);
+
+		and:
 		status.status >> Existence.EXISTS
 
 		when:
-		LogTrain createLog = facility.updateTestCase(target, testCase, Collections.emptyMap())
+		LogTrain createLog = facility.updateTestCase(instr)
 
 		then:
 		createLog.criticalErrors == fails

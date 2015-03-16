@@ -51,7 +51,7 @@ class TestCaseInstructionTest extends Specification {
 		def lt = instruction.execute(f)
 
 		then:
-		1 * f.createTestCase(target, testCase, _) >> new LogTrain()
+		1 * f.createTestCase(instruction) >> new LogTrain()
 	}
 
 	@Unroll
@@ -63,7 +63,7 @@ class TestCaseInstructionTest extends Specification {
 		def lt = instruction.execute(f)
 
 		then:
-		1 * f.updateTestCase(target, testCase, _) >> new LogTrain()
+		1 * f.updateTestCase(instruction) >> new LogTrain()
 
 		where:
 		mode << [ImportMode.UPDATE, null]
