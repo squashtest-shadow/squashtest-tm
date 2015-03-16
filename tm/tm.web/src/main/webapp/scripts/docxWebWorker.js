@@ -19,8 +19,9 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 importScripts('require.js');
-
 var window = self; //common.js need window 
+importScripts('common.js');
+
 
 var eventRecived;
 self.onmessage = function(e) {
