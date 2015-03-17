@@ -33,10 +33,16 @@
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component" %>
 <%@ taglib prefix="issues" tagdir="/WEB-INF/tags/issues"%>
 <%-- ----------------------------------- Authorization ----------------------------------------------%>
-<c:set var="editable" value="${ false }" /> 
+
+
+
+<c:set var="editable" value="${false}" />
+
+<c:if test="${not milestoneConf.locked}"> 
 <authz:authorized hasRole="ROLE_ADMIN" hasPermission="EXECUTE" domainObject="${ execution }">
 	<c:set var="editable" value="${ true }" /> 
 </authz:authorized>
+</c:if>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" class="execute-html">

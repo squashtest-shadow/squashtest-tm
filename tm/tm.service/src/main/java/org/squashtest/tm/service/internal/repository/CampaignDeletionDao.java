@@ -42,4 +42,13 @@ public interface CampaignDeletionDao extends DeletionDao {
 	List<Long> findRemainingCampaignIds(List<Long> originalIds);
 
 	void unbindFromMilestone(List<Long> campaignIds, Long milestoneId);
+
+	/**
+	 * Given their ids, return the ids of campaigns one cannot remove
+	 * due to restrictions on the status of their milestones
+	 * 
+	 * @param originalId
+	 * @return
+	 */
+	List<Long> findCampaignsWhichMilestonesForbidsDeletion(List<Long> originalId);
 }

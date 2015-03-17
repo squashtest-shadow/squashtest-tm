@@ -39,10 +39,13 @@
 
 
 <%-- ----------------------------------- Authorization ----------------------------------------------%>
-<c:set var="editable" value="${ false }" />
+<c:set var="editable" value="${false}" />
+
+<c:if test="${not milestoneConf.locked}">
 <authz:authorized hasRole="ROLE_ADMIN" hasPermission="EXECUTE" domainObject="${ execution }">
 	<c:set var="editable" value="${ true }" />
 </authz:authorized>
+</c:if>
 
 
 <%-- -----------------------------test automation ------------------------------ --%>
@@ -133,6 +136,19 @@
       <c:if test="${ editable }">
         <comp:opened-object otherViewers="${ otherViewers }" objectUrl="${ executionUrl }" />
       </c:if>
+      
+  <c:if test="${milestoneConf.messagesEnabled}">
+      <div data-milestones="${milestoneConf.totalMilestones}" class="milestone-count-notifier entity-edit-general-warning 
+            ${(milestoneConf.multipleBindings) ? '' : 'not-displayed'}">
+        <p><f:message key="messages.boundToMultipleMilestones"/></p>
+      </div>
+      <c:if test="${milestoneConf.locked}">
+      <div class="entity-edit-general-warning">
+        <p><f:message key="message.CannotModifyBecauseMilestoneLocking"/></p>
+      </div>        
+      </c:if>
+  </c:if>      
+      
       <div class="unsnap"></div>
 	</div>
  

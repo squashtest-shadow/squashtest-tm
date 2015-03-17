@@ -34,10 +34,15 @@
 
 <s:url var="showExecutionUrl" value="/executions" />
 
+
+<c:set var="executable" value="${false}" />
+
+
+<c:if test="${not milestoneConf.locked }">
 <authz:authorized hasRole="ROLE_ADMIN" hasPermission="EXECUTE" domainObject="${ testSuite }">
 	<c:set var="executable" value="${ true }" />
 </authz:authorized>
-
+</c:if>
 
 <f:message var="labelNodata" key="squashtm.nodata" />
 <f:message var="labelNone" key="label.None" />

@@ -156,6 +156,19 @@
     </c:if>
     <input type="button" value="<f:message key='label.print'/>" id="print-requirement-version-button" class="sq-btn" />
   </div>
+  
+   <c:if test="${milestoneConf.messagesEnabled}">
+        <div data-milestones="${milestoneConf.totalMilestones}" class="milestone-count-notifier entity-edit-general-warning 
+              ${(milestoneConf.multipleBindings) ? '' : 'not-displayed'}">
+          <p><f:message key="messages.boundToMultipleMilestones"/></p>
+        </div>
+        <c:if test="${milestoneConf.locked}">
+        <div class="entity-edit-general-warning">
+          <p><f:message key="message.CannotModifyBecauseMilestoneLocking"/></p>
+        </div>        
+        </c:if>
+    </c:if>
+  
   <div class="unsnap"></div>
 </div>
 <script type="text/javascript">
@@ -172,9 +185,11 @@ publish('reload.requirement.toolbar');
           <f:message key="tabs.label.information" />
         </a>
       </li>
+        <c:if test="${milestoneConf.displayTab}">
         <li>
             <a href="${requirementUrl}/milestones/panel"><f:message key="tabs.label.milestone"/></a>
         </li>        
+        </c:if>
       <li>
         <a href="#tabs-2">
           <f:message key="label.Attachments" />

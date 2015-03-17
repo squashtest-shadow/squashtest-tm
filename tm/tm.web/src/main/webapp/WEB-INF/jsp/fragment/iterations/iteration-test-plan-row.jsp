@@ -26,9 +26,15 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 <%@ taglib prefix="authz" tagdir="/WEB-INF/tags/authz" %>
 
+
+<c:set var="executable" value="${false}"/>
+
+<c:if test="${not milestoneConf.locked}">
 <authz:authorized hasRole="ROLE_ADMIN" hasPermission="EXECUTE" domainObject="${ iteration }">
 	<c:set var="executable" value="${ true }" />
 </authz:authorized>
+</c:if>
+
 <s:url var="newExecutionUrl"
 	value="/iterations/{iterId}/test-plan/{tpId}/executions/new">
 	<s:param name="iterId" value="${iterationId}" />

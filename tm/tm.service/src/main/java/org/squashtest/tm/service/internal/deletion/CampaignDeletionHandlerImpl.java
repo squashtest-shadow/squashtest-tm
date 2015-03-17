@@ -41,6 +41,7 @@ import org.squashtest.tm.domain.campaign.TestSuite;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.execution.ExecutionStep;
 import org.squashtest.tm.domain.testautomation.AutomatedExecutionExtender;
+import org.squashtest.tm.service.deletion.BoundToLockedMilestonesReport;
 import org.squashtest.tm.service.deletion.BoundToMultipleMilestonesReport;
 import org.squashtest.tm.service.deletion.MilestoneModeNoFolderDeletion;
 import org.squashtest.tm.service.deletion.NotDeletableCampaignsPreviewReport;
@@ -134,6 +135,11 @@ implements CampaignNodeDeletionHandler {
 		// milestone mode
 		if (milestoneId != null){
 
+			// check if some elements belong to milestones which status forbids that
+			if (someNodesAreLockedByMilestones(nodeIds)){
+				reportList.add(new BoundToLockedMilestonesReport());
+			}
+
 			// no folder shall be deleted
 			List<Long>[] separateIds = deletionDao.separateFolderFromCampaignIds(nodeIds);
 			if (! separateIds[0].isEmpty()){
@@ -219,21 +225,34 @@ implements CampaignNodeDeletionHandler {
 			}
 		}
 
-		// milestone mode
+
+		/*
+		 * milestone mode :
+		 * - 1) no folder shall be deleted (enqueued outright)
+		 * - 2) no campaign that doesn't belong to the milestone shall be deleted
+		 * - 3) no campaign bound to more than one milestone shall be deleted (they will be unbound though, but later).
+		 * - 4) no campaign bound to a milestone which status forbids deletion shall be deleted.
+		 */
 		if (milestoneId != null){
 
-			// no folder shall be deleted
-			List<Long>[] separateIds = deletionDao.separateFolderFromCampaignIds(nodeIds);
+			// 1 - no folder shall be deleted
+			List<Long> folderIds = deletionDao.separateFolderFromCampaignIds(nodeIds)[0];
 
-			//no campaign bound to more than one milestone shall be deleted
-			List<Long> boundToMoreMilestones = campaignDao.findCampaignIdsHavingMultipleMilestones(nodeIds);
-
-			// no campaign that aren't bound to the current milestone shall be deleted
+			// 2 - no campaign that aren't bound to the current milestone shall be deleted
 			List<Long> notBoundToMilestone = campaignDao.findNonBoundCampaign(nodeIds, milestoneId);
 
-			lockedNodes.addAll(separateIds[0]);
+			// 3 - no campaign bound to more than one milestone shall be deleted
+			List<Long> boundToMoreMilestones = campaignDao.findCampaignIdsHavingMultipleMilestones(nodeIds);
+
+			// 4 - no campaign bound to locked milestones shall be deleted
+			List<Long> lockedByMilestones = deletionDao.findCampaignsWhichMilestonesForbidsDeletion(nodeIds);
+
+
+			lockedNodes.addAll(lockedByMilestones);
+			lockedNodes.addAll(folderIds);
 			lockedNodes.addAll(boundToMoreMilestones);
 			lockedNodes.addAll(notBoundToMilestone);
+
 		}
 
 		return lockedNodes;
@@ -302,7 +321,12 @@ implements CampaignNodeDeletionHandler {
 
 	@Override
 	protected OperationReport batchUnbindFromMilestone(List<Long> ids, Long milestoneId) {
+
 		List<Long> remainingIds = deletionDao.findRemainingCampaignIds(ids);
+
+		// some node should not be unbound.
+		List<Long> lockedIds = deletionDao.findCampaignsWhichMilestonesForbidsDeletion(remainingIds);
+		remainingIds.removeAll(lockedIds);
 
 		OperationReport report = new OperationReport();
 
@@ -311,6 +335,11 @@ implements CampaignNodeDeletionHandler {
 		report.addRemoved(remainingIds, "campaign");
 
 		return report;
+	}
+
+	private boolean someNodesAreLockedByMilestones(List<Long> nodeIds){
+		List<Long> lockedNodes = deletionDao.findCampaignsWhichMilestonesForbidsDeletion(nodeIds);
+		return ! (lockedNodes.isEmpty());
 	}
 
 

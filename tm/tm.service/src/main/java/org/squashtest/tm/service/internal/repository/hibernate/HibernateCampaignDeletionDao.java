@@ -31,6 +31,7 @@ import org.springframework.stereotype.Repository;
 import org.squashtest.tm.domain.campaign.CampaignFolder;
 import org.squashtest.tm.domain.campaign.CampaignLibrary;
 import org.squashtest.tm.domain.campaign.CampaignLibraryNode;
+import org.squashtest.tm.domain.milestone.MilestoneStatus;
 import org.squashtest.tm.service.internal.repository.CampaignDeletionDao;
 import org.squashtest.tm.service.internal.repository.ParameterNames;
 
@@ -131,6 +132,19 @@ implements CampaignDeletionDao {
 			query.executeUpdate();
 		}
 
+	}
+
+	@Override
+	public List<Long> findCampaignsWhichMilestonesForbidsDeletion(List<Long> originalId) {
+		if (! originalId.isEmpty()){
+			MilestoneStatus[] lockedStatuses = new MilestoneStatus[]{ MilestoneStatus.PLANNED, MilestoneStatus.FINISHED, MilestoneStatus.LOCKED};
+			Query query = getSession().getNamedQuery("campaign.findCampaignsWhichMilestonesForbidsDeletion");
+			query.setParameterList("campaignIds", originalId, LongType.INSTANCE);
+			query.setParameterList("lockedStatuses", lockedStatuses);
+			return query.list();
+		}else{
+			return new ArrayList<>();
+		}
 	}
 
 	@Override

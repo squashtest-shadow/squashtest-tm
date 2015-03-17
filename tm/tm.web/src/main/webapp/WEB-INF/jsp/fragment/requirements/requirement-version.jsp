@@ -55,6 +55,8 @@ that page won't be editable if
  
 <c:if test="${not milestoneConf.locked}">
 
+<h1>not locked</h1>
+
 <authz:authorized hasRole="ROLE_ADMIN" hasPermission="ATTACH" domainObject="${ requirementVersion }">
 	<c:set var="attachable" value="${ requirementVersion.modifiable }" />
 	<c:set var="moreThanReadOnly" value="${ true }" />
@@ -75,14 +77,15 @@ that page won't be editable if
 	<c:set var="linkable" value="${ requirementVersion.linkable }" />
 		<c:set var="moreThanReadOnly" value="${ true }" />
 </authz:authorized>
+
 <c:set var="status_editable" value="${ moreThanReadOnly and requirementVersion.status.allowsStatusUpdate }"/>
 
 </c:if>
+
+
 <f:message var="confirmLabel" key="label.Confirm"/>
 <f:message var="cancelLabel" key="label.Cancel"/>
 <f:message var="okLabel" key="label.Ok"/>
-
-
 
 <script type="text/javascript">
 	requirejs.config({
@@ -193,9 +196,11 @@ publish('reload.requirement.toolbar');
 <div class="fragment-tabs fragment-body">
 	<ul class="tab-menu">
 		<li><a href="#tabs-1"><f:message key="tabs.label.information" /></a></li>
+        <c:if test="${milestoneConf.displayTab}">
         <li>
             <a href="${requirementVersionUrl}/milestones/panel"><f:message key="tabs.label.milestone"/></a>
-        </li>    
+        </li>
+        </c:if>    
 		<li><a href="#tabs-2"><f:message key="label.Attachments" />
 		<c:if test="${ requirementVersion.attachmentList.notEmpty }"><span class="hasAttach">!</span></c:if>
 		</a></li>

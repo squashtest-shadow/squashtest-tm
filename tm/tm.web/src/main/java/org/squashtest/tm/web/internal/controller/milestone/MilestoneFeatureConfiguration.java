@@ -170,11 +170,11 @@ public class MilestoneFeatureConfiguration {
 	}
 
 	public boolean isMessagesEnabled(){
-		return globallyEnabled && userEnabled;
+		return globallyEnabled;
 	}
 
 	public boolean isLocked(){
-		return globallyEnabled && userEnabled && milestoneLocked;
+		return globallyEnabled && milestoneLocked;
 	}
 
 	public boolean isMultipleBindings(){

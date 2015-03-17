@@ -40,12 +40,14 @@
 
 <%-- ----------------------------------- Authorization ----------------------------------------------%>
 
-<c:set var="editable" value="${ false }" />
+<c:set var="editable" value="${false}" />
+
+<c:if test="${not milestoneConf.locked}"> 
 <authz:authorized hasRole="ROLE_ADMIN" hasPermission="EXECUTE"
 	domainObject="${ execution }">
 	<c:set var="editable" value="${ true }" />
 </authz:authorized>
-
+</c:if>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" class="execute-html">
@@ -207,7 +209,7 @@
                                  --%>
                                 <c:set var="spanExecstatus" value="${executionStep.executionStatus.canonicalStatus}" />
                                 <span style="white-space:nowrap; display:inline-block;" class="exec-status-label exec-status-${fn:toLowerCase(spanExecstatus)}" >
-                                  <f:message key="${status.i18nKey}" />
+                                  <f:message key="${spanExecstatus.i18nKey}" />
                                 </span>
 							</c:otherwise>
 							</c:choose>

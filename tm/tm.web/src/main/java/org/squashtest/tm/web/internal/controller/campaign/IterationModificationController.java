@@ -400,24 +400,28 @@ public class IterationModificationController {
 	}
 
 
+	/*
+	 * TODO : should that method be in IterationTestPlanManagerController ?
+	 */
 	@RequestMapping(value = "/test-plan/{itemId}/executions", method = RequestMethod.GET)
 	public ModelAndView getExecutionsForTestPlan(@PathVariable("iterationId") long iterationId,
-			@PathVariable("itemId") long itemId) {
+			@PathVariable("itemId") long itemId,
+			@CookieValue(value="milestones", required=false, defaultValue="") List<Long> milestoneIds) {
 
-		// TODO
 		List<Execution> executionList = iterationModService.findExecutionsByTestPlan(iterationId,
 				itemId);
 		// get the iteraction to check access rights
 		Iteration iter = iterationModService.findById(iterationId);
-		boolean editable = permissionService.hasRoleOrPermissionOnObject("ROLE_ADMIN", "WRITE", iter);
 		IterationTestPlanItem testPlanItem = testPlanFinder.findTestPlanItem(itemId);
 		ModelAndView mav = new ModelAndView("fragment/iterations/iteration-test-plan-row");
 
-		mav.addObject("editableIteration", editable);
+		MilestoneFeatureConfiguration milestoneConf = milestoneConfService.configure(milestoneIds, iter);
+
 		mav.addObject("testPlanItem", testPlanItem);
 		mav.addObject(ITERATION_ID_KEY, iterationId);
 		mav.addObject(ITERATION_KEY, iter);
 		mav.addObject("executions", executionList);
+		mav.addObject("milestoneConf", milestoneConf);
 
 		return mav;
 

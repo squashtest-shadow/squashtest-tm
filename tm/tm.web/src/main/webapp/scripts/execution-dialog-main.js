@@ -59,7 +59,9 @@ define(['module',
 		var config = module.config();
 
 		var cbox = $("#execution-status-combo");
-		ComponentUtil.updateStatusCboxIcon(cbox);
+		if (cbox.length>0){
+			ComponentUtil.updateStatusCboxIcon(cbox);
+		}
 		
 		
 		var lang = translator.get({

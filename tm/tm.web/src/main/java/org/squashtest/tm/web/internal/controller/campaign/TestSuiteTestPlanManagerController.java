@@ -62,6 +62,8 @@ import org.squashtest.tm.service.campaign.TestSuiteTestPlanManagerService;
 import org.squashtest.tm.service.milestone.MilestoneFinderService;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.web.internal.controller.RequestParams;
+import org.squashtest.tm.web.internal.controller.milestone.MilestoneFeatureConfiguration;
+import org.squashtest.tm.web.internal.controller.milestone.MilestoneUIConfigurationService;
 import org.squashtest.tm.web.internal.helper.JsTreeHelper;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.builder.DriveNodeBuilder;
@@ -120,6 +122,12 @@ public class TestSuiteTestPlanManagerController {
 
 	@Inject
 	private MilestoneFinderService milestoneFinder;
+
+
+	@Inject
+	private MilestoneUIConfigurationService milestoneConfService;
+
+
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(TestSuiteModificationController.class);
 
@@ -327,8 +335,10 @@ public class TestSuiteTestPlanManagerController {
 
 	@RequestMapping(value = "/test-suites/{suiteId}/test-plan/{itemId}/executions", method = RequestMethod.GET)
 	public ModelAndView getExecutionsForTestPlan(@PathVariable(TEST_SUITE_ID) long suiteId,
-			@PathVariable(ITEM_ID) long itemId) {
+			@PathVariable(ITEM_ID) long itemId,
+			@CookieValue(value="milestones", required=false, defaultValue="") List<Long> milestoneIds) {
 		LOGGER.debug("find model and view for executions of test plan item  #{}", itemId);
+
 		TestSuite testSuite = service.findById(suiteId);
 		Long iterationId = testSuite.getIteration().getId();
 		List<Execution> executionList = iterationFinder.findExecutionsByTestPlan(iterationId, itemId);
@@ -336,15 +346,16 @@ public class TestSuiteTestPlanManagerController {
 		// get the iteraction to check access rights
 		Iteration iter = iterationFinder.findById(iterationId);
 		IterationTestPlanItem iterationTestPlanItem = iterationTestPlanManagerService.findTestPlanItem(itemId);
-		boolean editable = permissionService.hasRoleOrPermissionOnObject("ROLE_ADMIN", "WRITE", iter);
 
 		ModelAndView mav = new ModelAndView("fragment/test-suites/test-suite-test-plan-row");
 
-		mav.addObject("editableIteration", editable);
+		MilestoneFeatureConfiguration milestoneConf = milestoneConfService.configure(milestoneIds, testSuite);
+
 		mav.addObject("testPlanItem", iterationTestPlanItem);
 		mav.addObject("iterationId", iterationId);
 		mav.addObject("executions", executionList);
 		mav.addObject(TEST_SUITE, testSuite);
+		mav.addObject("milestoneConf", milestoneConf);
 
 		return mav;
 

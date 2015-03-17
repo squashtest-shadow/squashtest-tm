@@ -38,6 +38,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -65,6 +66,8 @@ import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.controller.generic.DataTableColumnDefHelper;
 import org.squashtest.tm.web.internal.controller.generic.ServiceAwareAttachmentTableModelHelper;
+import org.squashtest.tm.web.internal.controller.milestone.MilestoneFeatureConfiguration;
+import org.squashtest.tm.web.internal.controller.milestone.MilestoneUIConfigurationService;
 import org.squashtest.tm.web.internal.controller.widget.AoColumnDef;
 import org.squashtest.tm.web.internal.helper.JsonHelper;
 import org.squashtest.tm.web.internal.http.ContentTypes;
@@ -107,11 +110,16 @@ public class ExecutionModificationController {
 	@Inject
 	private CustomFieldJsonConverter converter;
 
+	@Inject
+	private MilestoneUIConfigurationService milestoneConfService;
+
 
 	// ****** /custom field services ******************
 
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView getExecution(@PathVariable long executionId) {
+	public ModelAndView getExecution(@PathVariable long executionId,
+			@CookieValue(value="milestones", required=false, defaultValue="") List<Long> milestoneIds) {
+
 		// execution properties
 		Execution execution = executionModService.findAndInitExecution(executionId);
 		int rank = executionModService.findExecutionRank(executionId);
@@ -134,6 +142,8 @@ public class ExecutionModificationController {
 
 		}
 
+		MilestoneFeatureConfiguration milestoneConf = milestoneConfService.configure(milestoneIds, execution.getIteration());
+
 		ModelAndView mav = new ModelAndView("page/campaign-workspace/show-execution");
 		mav.addObject("execution", execution);
 		mav.addObject("executionRank", Integer.valueOf(rank + 1));
@@ -144,6 +154,8 @@ public class ExecutionModificationController {
 
 		mav.addObject("stepsAoColumnDefs", JsonHelper.serialize(columnDefs));
 		mav.addObject("stepsCufDefinitions", stepCufsModels);
+
+		mav.addObject("milestoneConf", milestoneConf);
 
 		return mav;
 

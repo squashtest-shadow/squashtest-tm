@@ -27,6 +27,7 @@ import java.util.Set;
 
 import javax.inject.Inject;
 
+import org.jgroups.protocols.MFC;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Component;
 import org.springframework.ui.Model;
@@ -41,6 +42,8 @@ import org.squashtest.tm.service.customfield.CustomFieldValueFinderService;
 import org.squashtest.tm.service.denormalizedfield.DenormalizedFieldValueManager;
 import org.squashtest.tm.service.execution.ExecutionProcessingService;
 import org.squashtest.tm.web.internal.controller.generic.ServiceAwareAttachmentTableModelHelper;
+import org.squashtest.tm.web.internal.controller.milestone.MilestoneFeatureConfiguration;
+import org.squashtest.tm.web.internal.controller.milestone.MilestoneUIConfigurationService;
 
 /**
  * Helper class for Controllers which need to show classic and optimized execution runners.
@@ -79,6 +82,9 @@ public class ExecutionRunnerControllerHelper {
 
 	@Inject
 	private CustomFieldValueFinderService customFieldValueFinderService;
+
+	@Inject
+	private MilestoneUIConfigurationService milestoneConfService;
 
 	private ExecutionStep findStepAtIndex(long executionId, int stepIndex) {
 
@@ -123,6 +129,8 @@ public class ExecutionRunnerControllerHelper {
 			attachments = attachmentHelper.findAttachments(executionStep);
 		}
 
+		MilestoneFeatureConfiguration milestoneConf = milestoneConfService.configure(null, executionStep.getExecution().getIteration());
+
 		model.addAttribute("execution", execution);
 		model.addAttribute("executionStep", executionStep);
 		model.addAttribute("hasDenormFields", hasDenormFields);
@@ -132,6 +140,7 @@ public class ExecutionRunnerControllerHelper {
 		model.addAttribute("attachments", attachments);
 		model.addAttribute("allowsUntestable", execution.getProject().getCampaignLibrary().allowsStatus(ExecutionStatus.UNTESTABLE));
 		model.addAttribute("allowsSettled", execution.getProject().getCampaignLibrary().allowsStatus(ExecutionStatus.SETTLED));
+		model.addAttribute("milestoneConf", milestoneConf);
 
 
 		addCurrentStepUrl(execution.getId(), model);

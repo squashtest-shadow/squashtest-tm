@@ -272,7 +272,10 @@
 	@NamedQuery(name = "campaign.findCampaignIdsHavingMultipleMilestones", query = "select c.id from Campaign c join c.milestones stones where c.id in (:nodeIds) group by c.id having count(stones) > 1 "),
 	@NamedQuery(name = "campaign.findNonBoundCampaign", query = "select c.id from Campaign c where c.id in (:nodeIds) and c.id not in (select cs.id from Milestone m join m.campaigns cs where m.id = :milestoneId)"),
 	@NamedQuery(name = "Campaign.findAllWithMilestones", query = "from Campaign c where c.milestones is empty"),
-
+	@NamedQuery(name = "campaign.findCampaignsWhichMilestonesForbidsDeletion", 
+	query="select distinct c.id from Campaign c inner join c.milestones milestones where c.id in (:campaignIds) and milestones.status in (:lockedStatuses)"),
+	
+	
 	//TestStep
 	@NamedQuery(name = "testStep.findParentNode", query = "select testcase from TestCase as testcase join testcase.steps tcSteps where tcSteps.id= :childId "),
 	@NamedQuery(name = "testStep.findAllByParentId", query = "select step.id from TestCase testCase join testCase.steps step where testCase.id in (:testCaseIds)"),
