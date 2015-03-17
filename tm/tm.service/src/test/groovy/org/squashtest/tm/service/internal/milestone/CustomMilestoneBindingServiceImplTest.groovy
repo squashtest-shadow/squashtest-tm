@@ -24,6 +24,7 @@ import org.squashtest.tm.domain.milestone.Milestone
 import org.squashtest.tm.domain.milestone.MilestoneRange;
 import org.squashtest.tm.domain.project.GenericProject
 import org.squashtest.tm.domain.project.Project
+import org.squashtest.tm.domain.project.ProjectTemplate
 import org.squashtest.tm.service.internal.repository.GenericProjectDao;
 import org.squashtest.tm.service.internal.repository.MilestoneDao;
 import org.squashtest.tm.service.security.PermissionEvaluationService
@@ -91,7 +92,31 @@ class CustomMilestoneBindingServiceImplTest extends Specification{
 		 ['proj 1', 'proj 2', 'proj 3']   |   ['proj 1', 'proj 2', 'proj 3']  ||      []
 		
 	}
-	
-	
+	@Unroll("for project name : #projectsNames and template name : #templatesNames, should remove template ")
+	def "should remove project template from milestone"(){
+		
+		given :
+		def projects = projectsNames.collect{new Project(name:it)};
+		def templates = templatesNames.collect{new ProjectTemplate(name:it)};
+		Milestone milestone = new Milestone(range:MilestoneRange.GLOBAL)
+		milestone.bindProjects(projects);
+		milestone.bindProjects(templates);
+		milestoneDao.findById(1L) >> milestone
+		
+		when : 
+		 manager.unbindTemplateFrom(1L);
+		then :
+		milestone.projects*.name as Set == projectsNames  as Set 
+		
+		where :
+		projectsNames                   |        templatesNames                 ||     _
+		['proj 1', 'proj 2', 'proj 3']   |   ['template 1', 'template 2']    ||     _
+		['proj 1', 'proj 2', 'proj 3']   |   []                              ||    _
+		[]                               |   []                              ||    _
+		[]                               |   ['template 1', 'template 2']    ||     _
+		
+		 
+		
+	}
 	
 }

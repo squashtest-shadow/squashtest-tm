@@ -180,16 +180,56 @@ define([ 'module', "jquery", "squash.basicwidgets", "workspace.routing", "squash
 			
 			
 			$("#unbind-milestone-popup").confirmDialog().on("confirmdialogopen", function(){
+				var $this = $(this);
+				var id = $this.data('entity-id');
+				var ids = ! $.isArray(id) ? [id] : id ;
+				var table =  $("#binded-milestone-table").squashTable();
+				
 			
+			
+				// if the status don't allow unbind kill the popup and show another popup
+				if (oneStatusIsNotEditable(table, ids)){	
+					$("#unbind-milestone-popup").confirmDialog("close");
+					displayStatusForbidUnbind();
+				}	
+
 				if (config.data.project.isTemplate){
-					var $this = $(this);
-					var id = $this.data('entity-id');
-					var ids = ( !! id) ? [id] : id ;
+				
 					unbindMilestone(ids);
 					$("#unbind-milestone-popup").confirmDialog("close");
 				}
 			
 			});
+			
+			var translatedStatus = translator.get({
+				finished :"milestone.status.FINISHED",
+				locked :"milestone.status.LOCKED"		
+			});
+			
+			function oneStatusIsNotEditable(table, ids){
+				
+				for(var i= 0; i < ids.length; i++)
+				{
+				var curStat = table.getDataById(ids[i])["status"]; 
+				if (curStat == translatedStatus.finished || curStat == translatedStatus.locked){
+					return true;
+				}	
+				}
+				return false;
+
+			}
+			
+			function displayStatusForbidUnbind(){
+				var warn = translator.get({
+					errorTitle : 'popup.title.Info',
+					errorMessage : 'dialog.milestone.unbind.statusforbid'
+				});
+				$.squash.openMessage(warn.errorTitle, warn.errorMessage);
+			}
+			
+			
+			
+			
 			
 			//Unbind milestone
 			$("#unbind-milestone-popup").confirmDialog().on('confirmdialogconfirm', function(){

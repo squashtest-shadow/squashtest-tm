@@ -237,7 +237,7 @@ $("#changeStatus-popup").confirmDialog().on('confirmdialogconfirm', function(){
 			var value = $this.data('value');
 			var statusEditable = $this.data('statusEditable');		
 
-			var url = routing.buildURL('milestone.unbind-object', config.data.milestone.id);	
+			var url = routing.buildURL('milestone.unbind-objects', config.data.milestone.id);	
 			$.ajax({
 				url : url,
 				type : 'delete'
@@ -328,16 +328,20 @@ $("#changeStatus-popup").confirmDialog().on('confirmdialogcancel', function(){
 			
 		$("td.binded-to-project").editable(function(value, settings) {
 			    var returned;
-			    
 			    var cell = this.parentElement;
 			    var id = $("#projects-table").squashTable().getODataId(cell);
-			    
+			    var origvalue = this.revert;
+				if (!currentStatusIsEditable()){	
+					displayStatusForbidUnbind();
+					returned = origvalue;
+				} 
+				else {
 				if (value === "yes"){
 					bindProjectInPerimeter(id);
-					returned = translator.get("squashtm.yesno.true");
 				} else {
 					unbindProjectInPerimeter (id);
-					returned = translator.get("squashtm.yesno.false");
+					returned = 	origvalue;
+				}
 				}
 			     return(returned);
 			  }, {
@@ -426,7 +430,7 @@ $("#changeStatus-popup").confirmDialog().on('confirmdialogcancel', function(){
 			
 			var $this = $(this);
 			var id = $this.data('entity-id');
-			var ids = ( !! id) ? [id] : id ;
+			var ids = ! $.isArray(id) ? [id] : id ;
 			var url = routing.buildURL('milestone.bind-projects-to-milestone', config.data.milestone.id) + "/" + ids.join(',') + "/keep-in-perimeter";	
 			$.ajax({
 				url : url,
@@ -442,6 +446,24 @@ $("#changeStatus-popup").confirmDialog().on('confirmdialogcancel', function(){
 		
 		var bindedTable = $("#projects-table").squashTable();
 		var bindableTable = $("#bind-to-projects-table").squashTable();
+	
+		
+		$("#unbind-project-popup").confirmDialog().on("confirmdialogopen", function(){
+			// if the status don't allow unbind kill the popup and show another popup
+			if (!currentStatusIsEditable()){	
+				$("#unbind-project-popup").confirmDialog("close");
+				displayStatusForbidUnbind();
+			}	
+		});
+
+	
+		function displayStatusForbidUnbind(){
+			var warn = translator.get({
+				errorTitle : 'popup.title.Info',
+				errorMessage : 'dialog.milestone.unbind.statusforbid'
+			});
+			$.squash.openMessage(warn.errorTitle, warn.errorMessage);
+		}
 		
 $("#unbind-project-popup").confirmDialog().on('confirmdialogconfirm', function(){
 			
@@ -492,9 +514,27 @@ $("#unbind-project-popup").confirmDialog().on('confirmdialogconfirm', function()
 		$("#invertSelect").on('click', invertCheck);
 
 		$("#bind-project-button").on('click', function() {
-			bindProjectDialog.formDialog('open');
+			
+			if (currentStatusIsEditable()){
+				bindProjectDialog.formDialog('open');
+			} else {	
+				var warn = translator.get({
+					errorTitle : 'popup.title.Info',
+					errorMessage : 'dialog.milestone.bind.statusforbid'
+				});
+				$.squash.openMessage(warn.errorTitle, warn.errorMessage);
+			}
 		});
 
+		
+		function currentStatusIsEditable(){
+			var curStat = config.data.milestone.currentStatus;
+			if (curStat == "FINISHED" || curStat == "LOCKED"){
+				return false;
+			}
+			return true;
+		}
+		
 		var bindProjectDialog = $("#bind-project-dialog");
 
 		bindProjectDialog.formDialog();

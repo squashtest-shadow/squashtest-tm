@@ -128,8 +128,9 @@ public class MilestoneBindingController {
 		return model;	
 	}
 	
-	private DataTableModel buildMilestoneTableModel(Collection<Milestone> data){
+	private DataTableModel buildMilestoneTableModel(Collection<Milestone> data, Locale locale){
 		MilestoneDataTableModelHelper helper = new MilestoneDataTableModelHelper(messageSource);
+		helper.setLocale(locale);
 		Collection<Object> aaData = helper.buildRawModel(data);
 	    DataTableModel model = new DataTableModel("");
 	    model.setAaData((List<Object>) aaData);
@@ -143,7 +144,7 @@ public class MilestoneBindingController {
 
 		Collection<Milestone> data = service.getAllBindableMilestoneForProject(projectId, type);
 	
-		return buildMilestoneTableModel(data);			
+		return buildMilestoneTableModel(data, locale);			
 	}
 	
 	
@@ -154,7 +155,7 @@ public class MilestoneBindingController {
 		
 		Collection<Milestone> data = service.getAllBindedMilestoneForProject(projectId);
 		
-		return buildMilestoneTableModel(data);			
+		return buildMilestoneTableModel(data, locale);			
 	}
 	
 

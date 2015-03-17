@@ -59,7 +59,9 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.squashtest.tm.domain.audit.Auditable;
 import org.squashtest.tm.domain.campaign.Campaign;
 import org.squashtest.tm.domain.project.GenericProject;
+import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.project.ProjectTemplate;
+import org.squashtest.tm.domain.project.ProjectVisitor;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.search.LevelEnumBridge;
 import org.squashtest.tm.domain.testcase.TestCase;
@@ -340,15 +342,26 @@ public class Milestone  {
 	}
 
 	private void removeTemplates(Collection<GenericProject> col) {
-		// XXX IMHO this may not work because of hibernate proxies
-		Iterator<GenericProject> iter = col.iterator();
+		final Iterator<GenericProject> iter = col.iterator();
 		while (iter.hasNext()) {
 			GenericProject proj = iter.next();
-			if (proj instanceof ProjectTemplate) {
+			
+			proj.accept(new ProjectVisitor() {
+
+			@Override
+			public void visit(ProjectTemplate projectTemplate) {
 				iter.remove();
 			}
+
+			@Override
+			public void visit(Project project) {
+				//do nothing, keep the projects !
+			}
+			});
 		}
 	}
+	
+
 
 	/**
 	 * @deprecated all hell shall break loose when this method is called
