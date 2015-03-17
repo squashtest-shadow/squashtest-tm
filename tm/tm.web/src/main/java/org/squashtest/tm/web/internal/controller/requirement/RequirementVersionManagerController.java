@@ -51,7 +51,9 @@ import org.squashtest.tm.service.requirement.RequirementVersionManagerService;
 import org.squashtest.tm.service.testcase.VerifyingTestCaseManagerService;
 import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.controller.audittrail.RequirementAuditEventTableModelBuilder;
+import org.squashtest.tm.web.internal.controller.milestone.MilestoneFeatureConfiguration;
 import org.squashtest.tm.web.internal.controller.milestone.MilestoneModelUtils;
+import org.squashtest.tm.web.internal.controller.milestone.MilestoneUIConfigurationService;
 import org.squashtest.tm.web.internal.helper.LevelLabelFormatter;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.builder.JsonInfoListBuilder;
@@ -94,6 +96,9 @@ public class RequirementVersionManagerController {
 	@Inject
 	private RequirementAuditTrailService auditTrailService;
 
+	@Inject
+	private MilestoneUIConfigurationService milestoneConfService;
+
 
 	private final DatatableMapper<String> versionMapper = new NameBasedMapper()
 	.mapAttribute("version-number", "versionNumber", RequirementVersion.class)
@@ -120,7 +125,8 @@ public class RequirementVersionManagerController {
 
 
 	@RequestMapping(value = "/manager")
-	public String showRequirementVersionsManager(@PathVariable long requirementId, Model model, Locale locale) {
+	public String showRequirementVersionsManager(@PathVariable long requirementId, Model model, Locale locale,
+			@CookieValue(value="milestones", defaultValue="", required=false) List<Long> milestoneIds) {
 
 		Requirement req = versionService.findRequirementById(requirementId);
 
@@ -128,6 +134,8 @@ public class RequirementVersionManagerController {
 
 		DataTableModel tableModel = new RequirementVersionDataTableModel(locale, levelFormatterProvider, i18nHelper).buildDataModel(holder,
 				"0");
+
+		MilestoneFeatureConfiguration milestoneConf = milestoneConfService.configure(milestoneIds, req.getCurrentVersion());
 
 		model.addAttribute("requirement", req);
 		model.addAttribute("versions", req.getUnmodifiableVersions());
@@ -137,6 +145,7 @@ public class RequirementVersionManagerController {
 		model.addAttribute("categoryList", infoListBuilder.toJson(req.getProject().getRequirementCategories()));
 		model.addAttribute("verifyingTestCasesModel", getVerifyingTCModel(req.getCurrentVersion()));
 		model.addAttribute("auditTrailModel", getEventsTableModel(req));
+		model.addAttribute("milestoneConf", milestoneConf);
 		boolean hasCUF = cufValueService.hasCustomFields(req.getCurrentVersion());
 
 		model.addAttribute("hasCUF", hasCUF);

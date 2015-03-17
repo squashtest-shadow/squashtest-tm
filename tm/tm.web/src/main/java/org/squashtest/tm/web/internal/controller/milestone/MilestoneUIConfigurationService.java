@@ -140,16 +140,17 @@ public class MilestoneUIConfigurationService {
 			conf.setUserEnabled(false);
 		}
 
+		// total count of milestones
+		totalMilestones = member.getMilestones().size();
+		conf.setTotalMilestones(totalMilestones);
+
 		// if both globally and user enabled, fetch the active milestones etc
 		if (globallyEnabled && userEnabled && ! activeMilestones.isEmpty()){
 			Milestone milestone = milestoneFinder.findById(activeMilestones.get(0));
 			activeMilestone.setId(milestone.getId());
 			activeMilestone.setLabel(milestone.getLabel());
-
-			totalMilestones = member.getMilestones().size();
-
 			conf.setActiveMilestone(activeMilestone);
-			conf.setTotalMilestones(totalMilestones);
+
 		}
 
 		return conf;

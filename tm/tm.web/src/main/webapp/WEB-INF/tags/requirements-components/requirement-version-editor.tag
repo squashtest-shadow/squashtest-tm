@@ -63,6 +63,15 @@
  <c:set var="linkable"          value="${false}"/> 
  <c:set var="status_editable"   value="${false}"/>
  
+ 
+ 
+ <%-- permission 'linkable' is not subject to the milestone statuses, ACL only --%>
+ 
+ <authz:authorized hasRole="ROLE_ADMIN" hasPermission="LINK" domainObject="${ requirementVersion }">
+  <c:set var="linkable" value="${ requirementVersion.linkable }" />
+</authz:authorized>
+ 
+ <%-- other permissions. ACL should be evaluated only if the milestone statuses allows it.  --%>
  <c:if test="${not milestoneConf.locked}">
 
 <authz:authorized hasRole="ROLE_ADMIN" hasPermission="ATTACH" domainObject="${ requirementVersion }">
@@ -71,9 +80,6 @@
 <authz:authorized hasRole="ROLE_ADMIN" hasPermission="WRITE" domainObject="${ requirementVersion }">
   <c:set var="writable" value="${ requirementVersion.modifiable }" />
   <c:set var="status_editable" value="${ requirementVersion.status.allowsStatusUpdate }" />
-</authz:authorized>
-<authz:authorized hasRole="ROLE_ADMIN" hasPermission="LINK" domainObject="${ requirementVersion }">
-  <c:set var="linkable" value="${ requirementVersion.linkable }" />
 </authz:authorized>
 
 </c:if>

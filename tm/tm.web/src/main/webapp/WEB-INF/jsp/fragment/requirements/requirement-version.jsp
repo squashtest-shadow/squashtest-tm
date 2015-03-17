@@ -53,9 +53,14 @@ that page won't be editable if
  <c:set var="milestone_mode"    value="${not empty cookie['milestones'] }"/>
  
  
+ <%-- permission 'linkable' is not subject to the milestone statuses, ACL only --%> 
+<authz:authorized hasRole="ROLE_ADMIN" hasPermission="WRITE" domainObject="${ requirementVersion }">
+  <c:set var="linkable" value="${ requirementVersion.linkable }" />
+</authz:authorized> 
+ 
+ 
+<%-- other permissions. ACL should be evaluated only if the milestone statuses allows it.  --%>
 <c:if test="${not milestoneConf.locked}">
-
-<h1>not locked</h1>
 
 <authz:authorized hasRole="ROLE_ADMIN" hasPermission="ATTACH" domainObject="${ requirementVersion }">
 	<c:set var="attachable" value="${ requirementVersion.modifiable }" />

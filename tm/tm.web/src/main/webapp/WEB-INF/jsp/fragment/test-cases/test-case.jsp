@@ -70,6 +70,15 @@ require(["common"], function() {
 <c:set var="deletable"          value="${false}" />
 <c:set var="linkable"           value="${false}" />
 
+
+
+<%-- permission 'linkable' is not subject to the milestone statuses, ACL only --%>
+<authz:authorized hasRole="ROLE_ADMIN" hasPermission="LINK"
+  domainObject="${ testCase }">
+  <c:set var="linkable" value="${ true }" />
+</authz:authorized>
+
+<%-- other permissions. ACL should be evaluated only if the milestone statuses allows it.  --%>
 <c:if test="${not milestoneConf.locked}">
 
 <authz:authorized hasRole="ROLE_ADMIN" hasPermission="WRITE"

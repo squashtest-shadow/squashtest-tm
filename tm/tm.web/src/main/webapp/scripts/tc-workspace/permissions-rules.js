@@ -34,9 +34,8 @@ define(['jquery', 'workspace.tree-node-copier', 'tree', 'milestone-manager/miles
 	 * Predicates on the milestones 
 	 * 
 	 * Test test does the following : 
-	 * 1 - if the milestone mode is disabled, the test passes automatically
-	 * 2 - else, test if the active milestone allows the operation
-	 * 3 - also, if a 'nodes' argument is supplied, test if the other milestones 
+	 * 1 - test if the active milestone allows the operation
+	 * 2 - also, if a 'nodes' argument is supplied, test if the other milestones 
 	 *		to which those nodes are bound too also allow the operation
 	 * 
 	 * *****************************************************************/
@@ -46,27 +45,23 @@ define(['jquery', 'workspace.tree-node-copier', 'tree', 'milestone-manager/miles
 	function milestonesAllowOperation(nodes, operation, metaattr){
 		
 		var allowed = true;
-		// no milestone mode -> true
-		if (! milestones.isEnabled()){
-			allowed = true;
-		}		
-		else{
-			var activeMilestone = squashtm.app.testCaseWorkspaceConf.activeMilestone; 
-			
-			var activeAllowed = true,
-				nodesAllowed = true;
-			// no nodes -> check the active milestone
-			// no active milestone -> true
-			activeAllowed = (!! activeMilestone) ? activeMilestone[operation] : true;
-			
-			if (nodes !== undefined){
-				// nodes : they must all allow the operation
-				nodesAllowed = (nodes.filter(':'+metaattr).length === nodes.length);
-			}
-			
-			allowed = activeAllowed && nodesAllowed;
+
+		var activeMilestone = squashtm.app.testCaseWorkspaceConf.activeMilestone; 
+		
+		var activeAllowed = true,
+			nodesAllowed = true;
+		// no nodes -> check the active milestone
+		// no active milestone -> true
+		activeAllowed = (!! activeMilestone) ? activeMilestone[operation] : true;
+		
+		if (nodes !== undefined){
+			// nodes : they must all allow the operation
+			nodesAllowed = (nodes.filter(':'+metaattr).length === nodes.length);
 		}
 		
+		allowed = activeAllowed && nodesAllowed;
+	
+	
 		return allowed;
 	}
 	
