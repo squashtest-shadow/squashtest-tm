@@ -29,7 +29,9 @@ import javax.inject.Inject;
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.domain.requirement.RequirementFolder;
 import org.squashtest.tm.domain.requirement.RequirementLibrary;
+import org.squashtest.tm.service.feature.FeatureManager;
 import org.squashtest.tm.service.importer.ImportSummary;
+import org.squashtest.tm.service.milestone.MilestoneManagerService;
 import org.squashtest.tm.service.requirement.RequirementLibraryNavigationService;
 
 @Component
@@ -37,6 +39,12 @@ public class RequirementImporter {
 
 	@Inject
 	private RequirementLibraryNavigationService service;
+	
+	@Inject
+	private MilestoneManagerService milestoneService;
+	
+	@Inject
+	private FeatureManager featureManager;
 
 	public static final String DEFAULT_CREATED_BY = "import";
 
@@ -60,7 +68,7 @@ public class RequirementImporter {
 
 		// /* phase 2 : merge with the actual database content */
 
-		RequirementLibraryMerger merger = new RequirementLibraryMerger(service);
+		RequirementLibraryMerger merger = new RequirementLibraryMerger(service, milestoneService, featureManager);
 		merger.mergeIntoLibrary(library, root, organizedPseudoReqNodes);
 
 		summary.add(merger.getSummary());

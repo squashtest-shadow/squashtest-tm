@@ -26,18 +26,36 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
+import org.apache.commons.lang.StringUtils;
 import org.squashtest.tm.domain.Identified;
 import org.squashtest.tm.domain.audit.AuditableMixin;
 import org.squashtest.tm.domain.library.NodeContainer;
+import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.requirement.Requirement;
 import org.squashtest.tm.domain.requirement.RequirementFolder;
 import org.squashtest.tm.domain.requirement.RequirementLibrary;
 import org.squashtest.tm.domain.requirement.RequirementLibraryNode;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
+import org.squashtest.tm.service.feature.FeatureManager;
+import org.squashtest.tm.service.feature.FeatureManager.Feature;
 import org.squashtest.tm.service.internal.importer.RequirementLibraryMerger.DestinationManager;
+import org.squashtest.tm.service.milestone.MilestoneManagerService;
 
 class RequirementMerger extends DestinationManager {
+	
+	private FeatureManager featureManager;
+	
+	private MilestoneManagerService milestoneService;
+	
+	private ImportSummaryImpl summary;
+	
+	public RequirementMerger(MilestoneManagerService milestoneService, ImportSummaryImpl summary, FeatureManager featureManager) {
+	     this.milestoneService = milestoneService;
+	     this.summary = summary;
+	     this.featureManager = featureManager;
+	}
 
 	public void merge(List<PseudoRequirement> pseudoRequirements, RequirementLibrary library) {
 		setDestination(library);
@@ -71,6 +89,8 @@ class RequirementMerger extends DestinationManager {
 				mergeRequirementHierarchy(renamedRequirements, reqPath);
 			}
 
+			boolean milestoneAllowCreate = processMilestones(pseudoRequirement);
+			
 			// order version and rename last one
 			List<PseudoRequirementVersion> pseudoRequirementVersions = pseudoRequirement.getPseudoRequirementVersions();
 			Collections.sort(pseudoRequirementVersions);
@@ -87,6 +107,8 @@ class RequirementMerger extends DestinationManager {
 				addVersion(requirement, pseudoRequirementVersions.get(i));
 			}
 
+			if (milestoneAllowCreate){
+			
 			persistRequirement(requirement);
 
 			if (renamed) {
@@ -99,8 +121,44 @@ class RequirementMerger extends DestinationManager {
 				renamedRequirements.put(destination, renamedIdByOriginalName);
 			}
 			setRequirementDestination(null);
+			} else {
+				summary.incrMilestoneFailures();
+				summary.incrFailures();
+			}
 		}
 
+	}
+
+	private boolean processMilestones(PseudoRequirement pseudoRequirement) {
+
+		if (featureManager.isEnabled(Feature.MILESTONE)){
+			return true;
+		}
+		
+		for (PseudoRequirementVersion prv : pseudoRequirement.getPseudoRequirementVersions()){
+			String milestoneString = prv.getMilestoneString();	
+			
+			if (milestoneString != null && !StringUtils.isEmpty(milestoneString)){
+			String[] milestonesIds = milestoneString.split(Pattern.quote("|"));
+	
+			try {
+			for (String id : milestonesIds){
+				Milestone milestone = milestoneService.findById(Long.parseLong(id.trim()));
+				
+				if (milestone == null || !milestone.getStatus().isAllowObjectCreateAndDelete()){
+					//milestone not found or it's status don't allow object creation
+					return false;
+				}
+				prv.addMilestone(milestone);
+			}
+			} catch (NumberFormatException ex){
+				//milestone col contain wrong data, correct format is ID1|ID2|ID3
+				return false;
+			}
+			}
+		}
+		//all is good !
+		return true;
 	}
 
 	public void mergeRequirementHierarchy(Map<Identified, Map<String, Long>> renamedRequirements, String reqPath) {

@@ -20,9 +20,13 @@
  */
 package org.squashtest.tm.domain.requirement;
 
+import java.util.Collection;
 import java.util.Date;
+import java.util.List;
+import java.util.Set;
 
 import org.squashtest.tm.domain.infolist.ListItemReference;
+import org.squashtest.tm.domain.milestone.Milestone;
 
 /**
  * Interface to retrieve RequirementVersion attributes (such as criticality, category, description ...) from a bean.
@@ -35,6 +39,8 @@ public interface RequirementVersionImportMemento {
 	String getCategory();
 
 	ListItemReference formatCategory();
+	
+	Set<Milestone> getMilestones();
 
 	String getDescription();
 

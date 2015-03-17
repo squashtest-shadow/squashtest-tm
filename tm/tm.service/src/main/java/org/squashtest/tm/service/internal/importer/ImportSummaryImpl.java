@@ -29,11 +29,23 @@ public class ImportSummaryImpl implements ImportSummary {
 	private int modified=0;
 	private int failures=0;
 	private int rejected=0;
+	private int milestoneFailures=0;
 	
+	public int getMilestoneFailures() {
+		return milestoneFailures;
+	}
+
+	public void setMilestoneFailures(int milestoneFailures) {
+		this.milestoneFailures = milestoneFailures;
+	}
+
 	public ImportSummaryImpl(){
 		
 	}
 	
+	public void incrMilestoneFailures(){
+		milestoneFailures++;
+	}
 	public void incrTotal(){
 		total++;
 	}
@@ -112,6 +124,7 @@ public class ImportSummaryImpl implements ImportSummary {
 		this.modified+=summary.getModified();
 		this.renamed+=summary.getRenamed();
 		this.rejected+=summary.getRejected();
+		this.milestoneFailures+=summary.getMilestoneFailures();
 	}
 
 	

@@ -108,7 +108,7 @@ public class RequirementParserImpl implements RequirementParser {
 		String ref = readTextField(row, columnsMapping, REF_TAG);
 		pseudoRequirementVersion.setReference(ref);
 		String milestone = readTextField(row, columnsMapping, MILESTONE_TAG);
-		pseudoRequirementVersion.setReference(milestone);
+		pseudoRequirementVersion.setMilestoneString(milestone);
 		String description = readTextField(row, columnsMapping, DESCRIPTION_TAG);
 		pseudoRequirementVersion.setDescription(description);
 		String createdBy = readTextField(row, columnsMapping, CREATED_BY_TAG);

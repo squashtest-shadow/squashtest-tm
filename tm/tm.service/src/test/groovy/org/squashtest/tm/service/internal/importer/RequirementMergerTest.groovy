@@ -24,9 +24,11 @@ import static org.squashtest.tm.domain.requirement.RequirementStatus.*
 
 import org.squashtest.tm.domain.requirement.RequirementFolder
 import org.squashtest.tm.domain.requirement.RequirementStatus
+import org.squashtest.tm.service.feature.FeatureManager
 import org.squashtest.tm.service.internal.importer.PseudoRequirement
 import org.squashtest.tm.service.internal.importer.RequirementLibraryMerger
 import org.squashtest.tm.service.internal.importer.RequirementMerger
+import org.squashtest.tm.service.milestone.MilestoneManagerService;
 import org.squashtest.tm.service.requirement.RequirementLibraryNavigationService;
 
 import spock.lang.Specification
@@ -36,11 +38,14 @@ import spock.lang.Specification
  *
  */
 class RequirementMergerTest extends Specification {
-	RequirementMerger merger = new RequirementMerger()
+	MilestoneManagerService milestoneService = Mock()
 	RequirementLibraryNavigationService service = Mock()
-	RequirementLibraryMerger context = new RequirementLibraryMerger(service)
+	FeatureManager featureManager = Mock()
+	RequirementLibraryMerger context = new RequirementLibraryMerger(service, milestoneService, featureManager)
+	RequirementMerger merger = context.requirementMerger
 
 	def setup() {
+
 		merger.context = context
 		merger.destFolder = Mock(RequirementFolder)
 		merger.destFolder.content >> []

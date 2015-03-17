@@ -31,5 +31,6 @@ public interface ImportSummary {
 	 * adds the result of an import summary to this import summary 
 	 */
 	void add(ImportSummary summary);
+	int getMilestoneFailures();
 }
 

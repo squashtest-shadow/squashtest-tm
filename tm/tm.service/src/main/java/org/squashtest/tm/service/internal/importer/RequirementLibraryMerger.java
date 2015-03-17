@@ -32,9 +32,11 @@ import org.squashtest.tm.domain.requirement.RequirementFolder;
 import org.squashtest.tm.domain.requirement.RequirementLibrary;
 import org.squashtest.tm.domain.requirement.RequirementLibraryNode;
 import org.squashtest.tm.domain.requirement.RequirementLibraryNodeVisitor;
+import org.squashtest.tm.service.feature.FeatureManager;
 import org.squashtest.tm.service.importer.ImportSummary;
 import org.squashtest.tm.service.internal.library.AbstractLibraryNavigationService;
 import org.squashtest.tm.service.internal.library.LibraryUtils;
+import org.squashtest.tm.service.milestone.MilestoneManagerService;
 import org.squashtest.tm.service.requirement.RequirementLibraryNavigationService;
 
 /*
@@ -44,12 +46,13 @@ import org.squashtest.tm.service.requirement.RequirementLibraryNavigationService
 class RequirementLibraryMerger {
 
 	private RequirementLibraryNavigationService service;
+	
 
 	private ImportSummaryImpl summary = new ImportSummaryImpl();
 
-	public RequirementLibraryMerger(RequirementLibraryNavigationService service) {
+	public RequirementLibraryMerger(RequirementLibraryNavigationService service, MilestoneManagerService milestoneService, FeatureManager featureManager) {
 		this.service = service;
-
+        requirementMerger = new RequirementMerger(milestoneService, summary, featureManager);
 	}
 
 	public ImportSummary getSummary() {
@@ -57,7 +60,7 @@ class RequirementLibraryMerger {
 	}
 
 	private FolderMerger folderMerger = new FolderMerger();
-	private RequirementMerger requirementMerger = new RequirementMerger();
+	private RequirementMerger requirementMerger;
 
 	/**
 	 * the Library is the root of the hierarchy, and that's where we're importing our data. the data that couldn't be

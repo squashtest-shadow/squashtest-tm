@@ -34,13 +34,16 @@ define(['jquery', 'tree', 'workspace/workspace.import-popup'], function($, zetre
 			if (json.failures===0){ failSpan.removeClass("span-red"); }else{	failSpan.addClass("span-red"); }
 			
 			//notes
-			if ((json.renamed===0) && (json.modified===0)){
+			if ((json.renamed===0) && (json.modified===0) && (json.milestoneFailures ===0)){
 				$(".import-excel-dialog-note", panel).hide();
 			}else{
 				$(".import-excel-dialog-note", panel).show();
 				
 				var renamedDialog = $(".import-excel-dialog-renamed", panel);
 				if (json.renamed>0) { renamedDialog.show(); } else { renamedDialog.hide(); }
+				
+				var milestoneFailuresDialog = $(".import-excel-dialog-milestoneFailures", panel);
+				if (json.milestoneFailures>0) { milestoneFailuresDialog.show(); } else { milestoneFailuresDialog.hide(); }
 				
 			}
 		},

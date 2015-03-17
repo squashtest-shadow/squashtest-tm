@@ -373,7 +373,7 @@ public class RequirementVersion extends Resource implements BoundEntity, Milesto
 		res.setDescription(memento.getDescription());
 		res.criticality = memento.getCriticality();
 		res.category = memento.formatCategory();
-
+		res.milestones = memento.getMilestones();
 		res.reference = memento.getReference();
 		res.status = memento.getStatus();
 

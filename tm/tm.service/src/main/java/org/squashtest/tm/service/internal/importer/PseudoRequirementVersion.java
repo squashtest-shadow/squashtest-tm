@@ -21,11 +21,14 @@
 package org.squashtest.tm.service.internal.importer;
 
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.squashtest.tm.domain.infolist.ListItemReference;
+import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.requirement.RequirementCategory;
 import org.squashtest.tm.domain.requirement.RequirementCriticality;
 import org.squashtest.tm.domain.requirement.RequirementStatus;
@@ -62,6 +65,8 @@ RequirementVersionImportMemento {
 	private Double version = null;
 	private String label = "untitled";
 	private String reference = "";
+	private String milestoneString = "";
+	private Set<Milestone> milestones = new HashSet<Milestone>();
 	private RequirementCriticality criticality = RequirementCriticality.UNDEFINED;
 	private String category ;
 	private RequirementStatus status = RequirementStatus.WORK_IN_PROGRESS;
@@ -79,8 +84,18 @@ RequirementVersionImportMemento {
 	}
 
 	/* ***************************** getter and setters *********************************** */
+
+	
 	public Integer getRowNumber() {
 		return rowNumber;
+	}
+
+	public String getMilestoneString() {
+		return milestoneString;
+	}
+
+	public void setMilestoneString(String milestoneString) {
+		this.milestoneString = milestoneString;
 	}
 
 	public void setRowNumber(int rowNumber) {
@@ -290,6 +305,15 @@ RequirementVersionImportMemento {
 	//GENERATED:END
 	private int compareRowNumbers(PseudoRequirementVersion o1, PseudoRequirementVersion o2) {
 		return o1.getRowNumber().compareTo(o2.getRowNumber());
+	}
+
+	@Override
+	public Set<Milestone> getMilestones() {
+		return milestones;
+	}
+	
+	public void addMilestone(Milestone milestone){
+		milestones.add(milestone);
 	}
 
 }
