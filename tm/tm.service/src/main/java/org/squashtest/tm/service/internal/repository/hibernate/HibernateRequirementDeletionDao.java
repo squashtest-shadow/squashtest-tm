@@ -30,6 +30,7 @@ import org.hibernate.Query;
 import org.hibernate.type.LongType;
 import org.springframework.stereotype.Repository;
 import org.squashtest.tm.domain.event.RequirementAuditEvent;
+import org.squashtest.tm.domain.milestone.MilestoneStatus;
 import org.squashtest.tm.domain.requirement.Requirement;
 import org.squashtest.tm.domain.requirement.RequirementFolder;
 import org.squashtest.tm.domain.requirement.RequirementLibrary;
@@ -232,6 +233,19 @@ public class HibernateRequirementDeletionDao extends HibernateDeletionDao implem
 			cIds.add(rid.longValue());
 		}
 		return cIds;
+	}
+
+	@Override
+	public List<Long> findRequirementsWhichMilestonesForbidsDeletion(List<Long> nodeIds) {
+		if (! nodeIds.isEmpty()){
+			MilestoneStatus[] lockedStatuses = new MilestoneStatus[]{ MilestoneStatus.PLANNED, MilestoneStatus.FINISHED, MilestoneStatus.LOCKED};
+			Query query = getSession().getNamedQuery("requirement.findRequirementsWhichMilestonesForbidsDeletion");
+			query.setParameterList("requirementIds", nodeIds, LongType.INSTANCE);
+			query.setParameterList("lockedStatuses", lockedStatuses);
+			return query.list();
+		}else{
+			return new ArrayList<>();
+		}
 	}
 
 }

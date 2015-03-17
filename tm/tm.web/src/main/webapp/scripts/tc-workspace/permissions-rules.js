@@ -57,7 +57,7 @@ define(['jquery', 'workspace.tree-node-copier', 'tree', 'milestone-manager/miles
 				nodesAllowed = true;
 			// no nodes -> check the active milestone
 			// no active milestone -> true
-			activeAllowed = (activeMilestone !== undefined) ? activeMilestone[operation] : true;
+			activeAllowed = (!! activeMilestone) ? activeMilestone[operation] : true;
 			
 			if (nodes !== undefined){
 				// nodes : they must all allow the operation

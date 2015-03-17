@@ -22,7 +22,6 @@ package org.squashtest.tm.service.internal.deletion;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -40,6 +39,7 @@ import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseFolder;
 import org.squashtest.tm.domain.testcase.TestCaseLibraryNode;
 import org.squashtest.tm.domain.testcase.TestStep;
+import org.squashtest.tm.service.deletion.BoundToLockedMilestonesReport;
 import org.squashtest.tm.service.deletion.BoundToMultipleMilestonesReport;
 import org.squashtest.tm.service.deletion.LinkedToIterationPreviewReport;
 import org.squashtest.tm.service.deletion.MilestoneModeNoFolderDeletion;
@@ -120,6 +120,12 @@ AbstractNodeDeletionHandler<TestCaseLibraryNode, TestCaseFolder> implements Test
 
 		// milestone mode only :
 		if (milestoneId != null){
+
+			// check if some elements belong to milestones which status forbids that
+			if (someNodesAreLockedByMilestones(nodeIds)){
+				preview.add(new BoundToLockedMilestonesReport());
+			}
+
 			// check if there are some folders in the selection
 			List<Long>[] separatedIds = deletionDao.separateFolderFromTestCaseIds(nodeIds);
 			if (! separatedIds[0].isEmpty()){
@@ -130,6 +136,7 @@ AbstractNodeDeletionHandler<TestCaseLibraryNode, TestCaseFolder> implements Test
 			if (someNodesHaveMultipleMilestones(nodeIds)){
 				preview.add(new BoundToMultipleMilestonesReport());
 			}
+
 		}
 
 		return preview;
@@ -256,6 +263,10 @@ AbstractNodeDeletionHandler<TestCaseLibraryNode, TestCaseFolder> implements Test
 	protected OperationReport batchUnbindFromMilestone(List<Long> ids, Long milestoneId){
 
 		List<Long> remainingIds = deletionDao.findRemainingTestCaseIds(ids);
+
+		// some node should not be unbound.
+		List<Long> lockedIds = deletionDao.findTestCasesWhichMilestonesForbidsDeletion(remainingIds);
+		remainingIds.removeAll(lockedIds);
 
 		OperationReport report = new OperationReport();
 
@@ -399,6 +410,11 @@ AbstractNodeDeletionHandler<TestCaseLibraryNode, TestCaseFolder> implements Test
 		return ! (boundNodes.isEmpty());
 	}
 
+	private boolean someNodesAreLockedByMilestones(List<Long> nodeIds){
+		List<Long> lockedNodes = deletionDao.findTestCasesWhichMilestonesForbidsDeletion(nodeIds);
+		return ! (lockedNodes.isEmpty());
+	}
+
 
 	private DeletableIds findSeparateIds(List<Long> ids){
 		List<Long>[] separatedIds = deletionDao.separateFolderFromTestCaseIds(ids);
@@ -406,16 +422,6 @@ AbstractNodeDeletionHandler<TestCaseLibraryNode, TestCaseFolder> implements Test
 	}
 
 
-	private List<Long> collectAllNodeIds(LockedFileInferenceGraph graph){
-		Collection<Node> graphNodes = graph.getNodes();
-		List<Long> graphNodeIds = new ArrayList<>(graphNodes.size());
-
-		for (Node n : graphNodes){
-			graphNodeIds.add(n.getKey().getId());
-		}
-
-		return graphNodeIds;
-	}
 
 
 	/*
@@ -423,18 +429,21 @@ AbstractNodeDeletionHandler<TestCaseLibraryNode, TestCaseFolder> implements Test
 	 * - 1) no folder shall be deleted (enqueued outright)
 	 * - 2) no test case that doesn't belong to the milestone shall be deleted (needed for graph resolution)
 	 * - 3) no test case bound to more than one milestone shall be deleted (need for graph resolution) (they will be unbound though, but later).
+	 * - 4) no test case bound to a milestone which status forbids deletion shall be deleted.
 	 */
 	private List<Long> lockedByMilestoneMode(List<Long> nodeIds, Long milestoneId){
 
 		List<Long> folderIds = deletionDao.separateFolderFromTestCaseIds(nodeIds)[0];
 		List<Long> outOfMilestone = leafDao.findNonBoundTestCases(nodeIds, milestoneId);
 		List<Long> belongsToMoreMilestones = leafDao.findNodeIdsHavingMultipleMilestones(nodeIds);
+		List<Long> lockedByMilestones = deletionDao.findTestCasesWhichMilestonesForbidsDeletion(nodeIds);
 
-		List<Long> milestoneLocked = new ArrayList<>(folderIds.size()+outOfMilestone.size()+belongsToMoreMilestones.size());
+		List<Long> milestoneLocked = new ArrayList<>(folderIds.size()+outOfMilestone.size()+belongsToMoreMilestones.size()+lockedByMilestones.size());
 
 		milestoneLocked.addAll(folderIds);
 		milestoneLocked.addAll(outOfMilestone);
 		milestoneLocked.addAll(belongsToMoreMilestones);
+		milestoneLocked.addAll(lockedByMilestones);
 
 		return milestoneLocked;
 	}

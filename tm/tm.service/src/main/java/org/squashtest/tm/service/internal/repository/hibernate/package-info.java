@@ -112,8 +112,10 @@
 	+ " group by requirement1.id"),
 	@NamedQuery(name = "requirement.findRequirementIdsHavingMultipleMilestones", 
 	query = "select r.id from Requirement r join r.versions v join v.milestones stones where r.id in (:nodeIds) group by r.id having count(stones) > 1 "),
-	@NamedQuery(name = "requirement.findNonBoundRequirement", query = "select r.id from Requirement r join r.versions v where r.id in (:nodeIds) and v.id not in (select rvs.id from Milestone m join m.requirementVersions rvs where m.id = :milestoneId)"),
-
+	@NamedQuery(name = "requirement.findNonBoundRequirement", 
+	query = "select r.id from Requirement r where r.id in (:nodeIds) and r.id not in (select req.id from Milestone m join m.requirementVersions rvs join rvs.requirement req where m.id = :milestoneId and req.id in (:nodeIds))"),
+	@NamedQuery(name = "requirement.findRequirementsWhichMilestonesForbidsDeletion", 
+	query="select distinct r.id from Requirement r inner join r.versions v inner join v.milestones milestones where r.id in (:requirementIds) and milestones.status in (:lockedStatuses)"),
 	
 	//CampaignFolder
 	@NamedQuery(name = "campaignFolder.findAllContentById", query = "select f.content from CampaignFolder f where f.id = :folderId"),
@@ -205,6 +207,8 @@
 	@NamedQuery(name = "testCase.findAllSteps", query = "select step.id from TestCase testCase join testCase.steps step where testCase.id in (:testCaseIds)"),
 	@NamedQuery(name = "testCase.removeAllCallSteps", query = "delete CallTestStep cts where  cts.id in (:stepIds)"),
 	@NamedQuery(name = "testCase.removeAllActionSteps", query = "delete ActionTestStep ats where ats.id in (:stepIds)"),
+	@NamedQuery(name = "testCase.findTestCasesWhichMilestonesForbidsDeletion", 
+	query="select distinct tc.id from TestCase tc inner join tc.milestones milestones where tc.id in (:testCaseIds) and milestones.status in (:lockedStatuses)"),
 
 	// NOTE : Hibernate ignores any grouped entity when it is not projected
 	// NOTE : Hibernate ignores group by tc.nature.id unless we alias tc.nature (AND PROJECT THE ALIAS !)

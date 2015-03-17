@@ -22,7 +22,7 @@ package org.squashtest.tm.service.internal.repository.hibernate;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -31,9 +31,11 @@ import java.util.Map.Entry;
 
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
+import org.hibernate.type.EnumType;
 import org.hibernate.type.IntegerType;
 import org.hibernate.type.LongType;
 import org.springframework.stereotype.Repository;
+import org.squashtest.tm.domain.milestone.MilestoneStatus;
 import org.squashtest.tm.domain.testcase.TestCaseFolder;
 import org.squashtest.tm.domain.testcase.TestCaseLibrary;
 import org.squashtest.tm.domain.testcase.TestCaseLibraryNode;
@@ -349,6 +351,19 @@ public class HibernateTestCaseDeletionDao extends HibernateDeletionDao implement
 			query.executeUpdate();
 		}
 
+	}
+
+	@Override
+	public List<Long> findTestCasesWhichMilestonesForbidsDeletion(List<Long> originalId) {
+		if (! originalId.isEmpty()){
+			MilestoneStatus[] lockedStatuses = new MilestoneStatus[]{ MilestoneStatus.PLANNED, MilestoneStatus.FINISHED, MilestoneStatus.LOCKED};
+			Query query = getSession().getNamedQuery("testCase.findTestCasesWhichMilestonesForbidsDeletion");
+			query.setParameterList("testCaseIds", originalId, LongType.INSTANCE);
+			query.setParameterList("lockedStatuses", lockedStatuses);
+			return query.list();
+		}else{
+			return new ArrayList<>();
+		}
 	}
 
 

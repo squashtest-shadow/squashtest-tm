@@ -31,9 +31,13 @@ import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
+import org.squashtest.tm.service.requirement.RequirementVersionManagerService;
 import org.squashtest.tm.service.requirement.RequirementVersionResolverService;
 import org.squashtest.tm.web.internal.controller.RequestParams;
+import org.squashtest.tm.web.internal.model.jquery.RenameModel;
 
 
 /**
@@ -47,6 +51,9 @@ public class RequirementVersionResolverController {
 
 	@Inject
 	private RequirementVersionResolverService versionResolver;
+
+	@Inject
+	private RequirementVersionManagerService requirementVersionManager;
 
 
 	@RequestMapping(value = "/info", method = RequestMethod.GET)
@@ -71,5 +78,34 @@ public class RequirementVersionResolverController {
 		return "redirect:/requirement-versions/"+version.getId();
 	}
 
+
+
+	/*
+	 * Normally the method RequirementVersionModificationController#rename should
+	 * have been used.
+	 * 
+	 * Requests this method is mapped to come from the library tree, that doesn't know which
+	 * requirement version it is actually talking to and the purpose of this controller is
+	 * to redirect requests to the correct URL.
+	 * 
+	 * Unfortunately one can't redirect POST methods. So in this particular case we must handle
+	 * such requests (like 'POST newName') here.
+	 * 
+	 */
+	@RequestMapping(method = RequestMethod.POST, params = { "newName" })
+	public @ResponseBody
+	Object rename(@PathVariable(RequestParams.REQUIREMENT_ID) long requirementId, @RequestParam("newName") String newName,
+			@CookieValue(required=false, value="milestones") List<Long> milestoneIds) {
+		Long milestoneId = null;
+
+		if (milestoneIds != null && (! milestoneIds.isEmpty())){
+			milestoneId = milestoneIds.get(0);
+		}
+
+		RequirementVersion version = versionResolver.resolveByRequirementId(requirementId, milestoneId);
+		requirementVersionManager.rename(version.getId(), newName);
+
+		return new  RenameModel(newName);
+	}
 
 }

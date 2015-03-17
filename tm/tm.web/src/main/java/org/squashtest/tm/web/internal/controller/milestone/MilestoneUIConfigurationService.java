@@ -37,6 +37,8 @@ import org.squashtest.tm.domain.milestone.MilestoneMember;
 import org.squashtest.tm.domain.milestone.MilestoneStatus;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.testcase.TestCase;
+import org.squashtest.tm.service.feature.FeatureManager;
+import org.squashtest.tm.service.feature.FeatureManager.Feature;
 import org.squashtest.tm.service.milestone.MilestoneFinderService;
 import org.squashtest.tm.web.internal.model.json.JsonMilestone;
 
@@ -56,6 +58,9 @@ public class MilestoneUIConfigurationService {
 
 	@Inject
 	MilestoneFinderService milestoneFinder;
+
+	@Inject
+	FeatureManager featureManager;
 
 
 	public MilestoneFeatureConfiguration configure(List<Long> activeMilestones, TestCase testCase){
@@ -118,6 +123,7 @@ public class MilestoneUIConfigurationService {
 
 
 		// TODO : test whether the functionality is globally enabled
+		globallyEnabled = featureManager.isEnabled(Feature.MILESTONE);
 		if (! globallyEnabled){
 			conf.setGloballyEnabled(false);
 			return conf;

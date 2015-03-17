@@ -60,4 +60,13 @@ public interface TestCaseDeletionDao extends DeletionDao {
 	 * @return
 	 */
 	List<Long> findRemainingTestCaseIds(List<Long> originalIds);
+
+	/**
+	 * Given their ids, return the ids of test cases one cannot remove
+	 * due to restrictions on the status of their milestones
+	 * 
+	 * @param originalId
+	 * @return
+	 */
+	List<Long> findTestCasesWhichMilestonesForbidsDeletion(List<Long> originalId);
 }

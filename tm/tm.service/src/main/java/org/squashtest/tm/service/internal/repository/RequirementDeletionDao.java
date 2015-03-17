@@ -50,4 +50,14 @@ public interface RequirementDeletionDao extends DeletionDao {
 
 	void unbindFromMilestone(List<Long> requirementIds, Long milestoneId);
 
+
+	/**
+	 * Given their ids, return the ids of requirements one cannot remove
+	 * due to restrictions on the status of their milestones
+	 * 
+	 * @param originalId
+	 * @return
+	 */
+	List<Long> findRequirementsWhichMilestonesForbidsDeletion(List<Long> nodeIds);
+
 }

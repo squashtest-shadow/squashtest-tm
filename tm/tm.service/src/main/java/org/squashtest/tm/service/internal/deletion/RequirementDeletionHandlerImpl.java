@@ -40,6 +40,7 @@ import org.squashtest.tm.domain.requirement.Requirement;
 import org.squashtest.tm.domain.requirement.RequirementFolder;
 import org.squashtest.tm.domain.requirement.RequirementLibraryNode;
 import org.squashtest.tm.exception.requirement.IllegalRequirementModificationException;
+import org.squashtest.tm.service.deletion.BoundToLockedMilestonesReport;
 import org.squashtest.tm.service.deletion.BoundToMultipleMilestonesReport;
 import org.squashtest.tm.service.deletion.MilestoneModeNoFolderDeletion;
 import org.squashtest.tm.service.deletion.Node;
@@ -92,6 +93,12 @@ RequirementNodeDeletionHandler {
 
 		// milestone mode verification
 		if (milestoneId != null){
+
+			// check if some elements belong to milestones which status forbids that
+			if (someNodesAreLockedByMilestones(nodeIds)){
+				preview.add(new BoundToLockedMilestonesReport());
+			}
+
 			// check if there are some folders in the selection
 			List<Long>[] separatedIds = deletionDao.separateFolderFromRequirementIds(nodeIds);
 			if (! separatedIds[0].isEmpty()){
@@ -110,23 +117,41 @@ RequirementNodeDeletionHandler {
 	@Override
 	protected List<Long> detectLockedNodes(List<Long> nodeIds, Long milestoneId) {
 
-		List<Long> lockedIds = new LinkedList<Long>();
+		List<Long> lockedIds;
 
-		// milestone mode
+		/*
+		 * milestone mode :
+		 * - 1) no folder shall be deleted (enqueued outright)
+		 * - 2) no requirement that doesn't belong to the milestone shall be deleted
+		 * - 3) no requirement bound to more than one milestone shall be deleted (they will be unbound though, but later).
+		 * - 4) no requirement bound to a milestone which status forbids deletion shall be deleted.
+		 */
 		if (milestoneId != null){
 
-			// no folder shall be deleted
-			List<Long>[] separateIds = deletionDao.separateFolderFromRequirementIds(nodeIds);
+			// 1 - no folder shall be deleted
+			List<Long> folderIds = deletionDao.separateFolderFromRequirementIds(nodeIds)[0];
 
-			//no campaign bound to more than one milestone shall be deleted
-			List<Long> boundToMoreMilestones = requirementDao.findRequirementIdsHavingMultipleMilestones(nodeIds);
-
-			// no campaign that aren't bound to the current milestone shall be deleted
+			// 2 - no requirement that aren't bound to the current milestone shall be deleted
 			List<Long> notBoundToMilestone = requirementDao.findNonBoundRequirement(nodeIds, milestoneId);
 
-			lockedIds.addAll(separateIds[0]);
+			// 3 - no requirement bound to more than one milestone shall be deleted
+			List<Long> boundToMoreMilestones = requirementDao.findRequirementIdsHavingMultipleMilestones(nodeIds);
+
+			// 4 - no requirement bound to locked milestones shall be deleted
+			List<Long> lockedByMiletones = deletionDao.findRequirementsWhichMilestonesForbidsDeletion(nodeIds);
+
+			lockedIds = new ArrayList<>(folderIds.size()+
+					notBoundToMilestone.size()+
+					boundToMoreMilestones.size()+
+					lockedByMiletones.size());
+
+			lockedIds.addAll(folderIds);
 			lockedIds.addAll(boundToMoreMilestones);
 			lockedIds.addAll(notBoundToMilestone);
+			lockedIds.addAll(lockedByMiletones);
+		}
+		else{
+			lockedIds = new ArrayList<>();
 		}
 
 		return lockedIds;
@@ -253,7 +278,12 @@ RequirementNodeDeletionHandler {
 
 	@Override
 	protected OperationReport batchUnbindFromMilestone(List<Long> ids, Long milestoneId) {
+
 		List<Long> remainingIds = deletionDao.findRemainingRequirementIds(ids);
+
+		// some node should not be unbound.
+		List<Long> lockedIds = deletionDao.findRequirementsWhichMilestonesForbidsDeletion(remainingIds);
+		remainingIds.removeAll(lockedIds);
 
 		OperationReport report = new OperationReport();
 
@@ -267,6 +297,11 @@ RequirementNodeDeletionHandler {
 	private boolean someNodesHaveMultipleMilestones(List<Long> nodeIds){
 		List<Long> boundNodes = requirementDao.findRequirementIdsHavingMultipleMilestones(nodeIds);
 		return ! (boundNodes.isEmpty());
+	}
+
+	private boolean someNodesAreLockedByMilestones(List<Long> nodeIds){
+		List<Long> lockedNodes = deletionDao.findRequirementsWhichMilestonesForbidsDeletion(nodeIds);
+		return ! (lockedNodes.isEmpty());
 	}
 
 
