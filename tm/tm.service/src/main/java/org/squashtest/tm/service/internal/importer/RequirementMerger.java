@@ -131,7 +131,7 @@ class RequirementMerger extends DestinationManager {
 
 	private boolean processMilestones(PseudoRequirement pseudoRequirement) {
 
-		if (featureManager.isEnabled(Feature.MILESTONE)){
+		if (!featureManager.isEnabled(Feature.MILESTONE)){
 			return true;
 		}
 		
