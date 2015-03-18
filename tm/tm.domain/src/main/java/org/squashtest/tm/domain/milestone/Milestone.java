@@ -44,6 +44,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -86,6 +87,7 @@ public class Milestone  {
 	private String description;
 
 	@NotBlank
+	@Pattern(regexp="[^|]*")
 	@Size(min = 0, max = 30)
 	private String label;
 
