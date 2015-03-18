@@ -23,14 +23,13 @@ package org.squashtest.tm.domain.milestone;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.collections.iterators.AbstractListIteratorDecorator;
 import org.squashtest.tm.domain.Level;
 
 public enum MilestoneStatus implements Level {
 	// @formatter::off
 	PLANNED(1, true, false, false, false),
 	IN_PROGRESS(2, true, true, true, true),
-	FINISHED(3, false, false, false, true),
+	FINISHED(3, true, true, true, true),
 	LOCKED(4, false, false, false, false); 
 	// @formatter::on
 
