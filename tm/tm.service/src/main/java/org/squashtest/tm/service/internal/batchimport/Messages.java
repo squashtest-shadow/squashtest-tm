@@ -67,6 +67,8 @@ public final class Messages {
 	public static final String ERROR_INVALID_NATURE = "message.import.log.error.natureinvalid";
 	public static final String ERROR_INVALID_TYPE = "message.import.log.error.typeinvalid";
 	public static final String ERROR_MILESTONE_FEATURE_DEACTIVATED = "message.import.log.error.milestoneFeatureDeactivated";
+	public static final String ERROR_UNKNOWN_MILESTONE = "message.import.log.error.milestone.unknown";
+	public static final String ERROR_WRONG_MILESTONE_STATUS = "message.import.log.error.milestone.wrongStatus";
 
 	public static final String IMPACT_MAX_SIZE = "message.import.log.impact.truncatedValue";
 	public static final String IMPACT_DEFAULT_VALUE = "message.import.log.impact.useDefaultValue";
@@ -84,8 +86,11 @@ public final class Messages {
 	public static final String IMPACT_DEFAULT_ACTION = "message.import.log.impact.defaultAction";
 	public static final String IMPACT_NO_CALL_DATASET = "message.import.log.impact.callStepCallsNoDataset";
 	public static final String IMPACT_COLUMN_IGNORED = "message.import.log.impact.columnIgnored";
+	public static final String IMPACT_VALUE_IGNORED = "message.import.log.impact.valueIgnored";
 
 	public static final String WARN_MILESTONE_FEATURE_DEACTIVATED = "message.import.log.warn.milestoneFeatureDeactivated";
+	public static final String WARN_UNKNOWN_MILESTONE = ERROR_UNKNOWN_MILESTONE;
+	public static final String WARN_WRONG_MILESTONE_STATUS = ERROR_WRONG_MILESTONE_STATUS;
 
 	private Messages(){
 		super();

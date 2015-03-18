@@ -46,6 +46,7 @@ import org.squashtest.tm.service.importer.ImportStatus;
 import org.squashtest.tm.service.importer.LogEntry;
 import org.squashtest.tm.service.importer.Target;
 import org.squashtest.tm.service.infolist.InfoListItemFinderService;
+import org.squashtest.tm.service.internal.batchimport.MilestoneImportHelper.Partition;
 import org.squashtest.tm.service.internal.batchimport.Model.Existence;
 import org.squashtest.tm.service.internal.batchimport.Model.StepType;
 import org.squashtest.tm.service.internal.batchimport.Model.TargetStatus;
@@ -88,8 +89,11 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 	private UserDao userDao;
 
 	@Inject
-	@Value(Authorizations.MILESTONE_FEAT_ENABLED)
+	@Value("#{" + Authorizations.MILESTONE_FEAT_ENABLED + "}")
 	private boolean milestonesEnabled;
+
+	@Inject
+	private MilestoneImportHelper milestoneHelper;
 
 	private EntityValidator entityValidator = new EntityValidator(this);
 	private CustomFieldValidator cufValidator = new CustomFieldValidator();
@@ -105,11 +109,13 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 	}
 
 	@Override
+	@Deprecated
 	public LogTrain createTestCase(TestCaseTarget target, TestCase testCase, Map<String, String> cufValues) {
 		throw new RuntimeException(new NoSuchMethodError("This method is in the process of being removed"));
 	}
 
 	@Override
+	@Deprecated
 	public LogTrain updateTestCase(TestCaseTarget target, TestCase testCase, Map<String, String> cufValues) {
 		throw new RuntimeException(new NoSuchMethodError("This method is in the process of being removed"));
 	}
@@ -600,8 +606,8 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 		logs = entityValidator.createTestCaseChecks(target, testCase);
 
 		// 2 - custom fields (create)
-		logs.append(cufValidator.checkCreateCustomFields(target, (Map<String, String>) cufValues, model.getTestCaseCufs(target)));
-
+		logs.append(cufValidator.checkCreateCustomFields(target, (Map<String, String>) cufValues,
+				model.getTestCaseCufs(target)));
 
 		// 3 - other checks
 		// 3-1 : names clash
@@ -618,13 +624,21 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 		}
 
 		// 3-3 : name and path must be consistent, only if the name is not empty
-		if (! StringUtils.isBlank(name) && !PathUtils.arePathsAndNameConsistents(path, name)) {
+		if (!StringUtils.isBlank(name) && !PathUtils.arePathsAndNameConsistents(path, name)) {
 			logs.addEntry(LogEntry.warning().forTarget(target)
 					.withMessage(Messages.ERROR_INCONSISTENT_PATH_AND_NAME, path, name == null ? "" : name).build());
 		}
 
 		if (!(milestonesEnabled || instr.getMilestones().isEmpty())) {
-			logs.addEntry(LogEntry.failure().withMessage(Messages.ERROR_MILESTONE_FEATURE_DEACTIVATED).build());
+			logs.addEntry(LogEntry.failure().forTarget(target)
+					.withMessage(Messages.ERROR_MILESTONE_FEATURE_DEACTIVATED).build());
+		}
+
+		if (milestonesEnabled) {
+			Partition existing = milestoneHelper.partitionExisting(instr.getMilestones());
+			Partition bindables = milestoneHelper.partitionBindable(existing.passing);
+			logs.addEntries(rejectUnknownMilestones(target, existing.rejected));
+			logs.addEntries(rejectUnbindableMilestones(target, bindables.rejected));
 		}
 
 		// 3-4 : fix test case metadatas
@@ -632,6 +646,31 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 		logs.addEntries(logEntries);
 		return logs;
 
+	}
+
+	/**
+	 * @param rejected
+	 * @return
+	 */
+	private List<LogEntry> rejectUnbindableMilestones(TestCaseTarget target, List<String> rejected) {
+		ArrayList<LogEntry> logs = new ArrayList<>(rejected.size());
+		for (String name : rejected) {
+			logs.add(LogEntry.failure().forTarget(target).withMessage(Messages.ERROR_WRONG_MILESTONE_STATUS, name)
+					.build());
+		}
+		return logs;
+	}
+
+	/**
+	 * @param rejected
+	 * @return
+	 */
+	private List<LogEntry> rejectUnknownMilestones(TestCaseTarget target, List<String> rejected) {
+		ArrayList<LogEntry> logs = new ArrayList<>(rejected.size());
+		for (String name : rejected) {
+			logs.add(LogEntry.failure().forTarget(target).withMessage(Messages.ERROR_UNKNOWN_MILESTONE, name).build());
+		}
+		return logs;
 	}
 
 	/**
@@ -657,7 +696,8 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 			logs.append(entityValidator.updateTestCaseChecks(target, testCase));
 
 			// 2 - custom fields (create)
-			logs.append(cufValidator.checkUpdateCustomFields(target, (Map<String, String>) cufValues, model.getTestCaseCufs(target)));
+			logs.append(cufValidator.checkUpdateCustomFields(target, (Map<String, String>) cufValues,
+					model.getTestCaseCufs(target)));
 
 			// 3 - other checks
 			// 3-1 : check if the test case is renamed and would induce a
@@ -678,12 +718,56 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 			List<LogEntry> logEntries = fixMetadatas(target, (AuditableMixin) testCase, ImportMode.UPDATE);
 			logs.addEntries(logEntries);
 
-			if (!(milestonesEnabled || instr.getMilestones().isEmpty())) {
-				logs.addEntry(LogEntry.warning().withMessage(Messages.WARN_MILESTONE_FEATURE_DEACTIVATED).build());
+			if (!milestonesEnabled && !instr.getMilestones().isEmpty()) {
+				logs.addEntry(LogEntry.warning()
+					.forTarget(target)
+					.withMessage(Messages.WARN_MILESTONE_FEATURE_DEACTIVATED)
+					.build());
+			}
+
+			if (milestonesEnabled) {
+				Partition existing = milestoneHelper.partitionExisting(instr.getMilestones());
+				Partition bindables = milestoneHelper.partitionBindable(existing.passing);
+				logs.addEntries(warnUnknownMilestones(target, existing.rejected));
+				logs.addEntries(warnUnbindableMilestones(target, bindables.rejected));
 			}
 		}
 
 		return logs;
 
+	}
+
+	/**
+	 * @param rejected
+	 * @return
+	 */
+	private List<LogEntry> warnUnbindableMilestones(TestCaseTarget target, List<String> rejected) {
+		ArrayList<LogEntry> logs = new ArrayList<>(rejected.size());
+
+		for (String name : rejected) {
+			logs.add(LogEntry.warning()
+				.forTarget(target)
+				.withMessage(Messages.WARN_WRONG_MILESTONE_STATUS, name)
+				.withImpact(Messages.IMPACT_VALUE_IGNORED)
+				.build());
+		}
+		return logs;
+	}
+
+	/**
+	 * @param rejected
+	 * @return
+	 */
+	private List<LogEntry> warnUnknownMilestones(TestCaseTarget target, List<String> rejected) {
+		ArrayList<LogEntry> logs = new ArrayList<>(rejected.size());
+
+		for (String name : rejected) {
+			logs.add(LogEntry.warning()
+				.forTarget(target)
+				.withMessage(Messages.WARN_UNKNOWN_MILESTONE, name)
+				.withImpact(Messages.IMPACT_VALUE_IGNORED)
+				.build());
+		}
+		return logs;
 	}
 }

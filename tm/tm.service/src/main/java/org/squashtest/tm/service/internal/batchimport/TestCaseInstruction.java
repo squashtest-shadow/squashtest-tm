@@ -20,18 +20,17 @@
  */
 package org.squashtest.tm.service.internal.batchimport;
 
-import java.util.ArrayDeque;
-import java.util.Collection;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.Queue;
 
 import org.squashtest.tm.domain.testcase.TestCase;
 
 public class TestCaseInstruction extends Instruction<TestCaseTarget> implements CustomFieldHolder {
 	private final TestCase testCase;
 	private final Map<String, String> customFields = new HashMap<>();
-	private final Queue<String> milestones = new ArrayDeque<>();
+	private final String[] milestones = {};
 
 	public TestCaseInstruction(TestCaseTarget target, TestCase testCase) {
 		super(target);
@@ -68,11 +67,7 @@ public class TestCaseInstruction extends Instruction<TestCaseTarget> implements 
 		customFields.put(code, value);
 	}
 
-	public Collection<String> getMilestones() {
-		return milestones;
-	}
-
-	public void addMilestoneName(String name) {
-		milestones.add(name);
+	public List<String> getMilestones() {
+		return Arrays.asList(milestones);
 	}
 }

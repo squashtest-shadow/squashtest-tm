@@ -118,6 +118,7 @@ public class FacilityImplIT extends DbunitServiceSpecification {
 	def setup(){
 
 		impl = implProvider.get()
+		impl.validator.milestonesEnabled = true;
 
 		addMixins()
 	}
@@ -145,15 +146,15 @@ public class FacilityImplIT extends DbunitServiceSpecification {
 		TestCase tc = emptyTC()
 		stuffWith(tc, [name:"mytestcase", description :"<p>ouaaahpaaa</p>", nature: new ListItemReference("NAT_SECURITY_TESTING")])
 
-		def cufs = [
+		TestCaseInstruction instr = new TestCaseInstruction(target, tc)
+		instr.customFields.putAll([
 			"TXT_TC" : "shazam",
 			"CK_TC" : "false",
 			"inexistant" : "azeaer"
-		]
-
+		])
 
 		when :
-		LogTrain logtrain = impl.createTestCase(target, tc, cufs)
+		LogTrain logtrain = impl.createTestCase(instr)
 
 		flush()
 
@@ -190,11 +191,11 @@ public class FacilityImplIT extends DbunitServiceSpecification {
 		given :
 		TestCaseTarget target = new TestCaseTarget("/flawed target/flawed test")
 		TestCase tc = new TestCase(name:"")
-		def cufs = new HashMap()
 
+		TestCaseInstruction instr = new TestCaseInstruction(target, tc)
 
 		when :
-		LogTrain logtrain = impl.createTestCase(target, tc, cufs)
+		LogTrain logtrain = impl.createTestCase(instr)
 		flush()
 
 		then :
@@ -215,14 +216,13 @@ public class FacilityImplIT extends DbunitServiceSpecification {
 		TestCase tc = emptyTC()
 		stuffWith(tc, [name : "renamed", description : "this description has been modified", importance : TestCaseImportance.HIGH, reference : "modified"])
 
-		def cufs = [ TXT_TC : "changed the cuf value"]
-
+		TestCaseInstruction instr = new TestCaseInstruction(target, tc)
+		instr.customFields.putAll([ TXT_TC : "changed the cuf value"])
 
 		when :
-		LogTrain train = impl.updateTestCase(target, tc, cufs)
+		LogTrain train = impl.updateTestCase(instr)
 
 		flush()
-
 
 		then :
 		train.hasCriticalErrors() == false
@@ -263,8 +263,10 @@ public class FacilityImplIT extends DbunitServiceSpecification {
 		TestCase tc = emptyTC()
 		stuffWith(tc, [name : "flawednaturetype", nature : new ListItemReference("I_DONT_EXIST"), type : new ListItemReference("ME_NEITHER")])
 
+		TestCaseInstruction instr = new TestCaseInstruction(target, tc)
+
 		when :
-		LogTrain train = impl.createTestCase(target, tc, [:])
+		LogTrain train = impl.createTestCase(instr)
 
 		flush()
 
@@ -301,11 +303,10 @@ public class FacilityImplIT extends DbunitServiceSpecification {
 		TestCase tc = emptyTC()
 		stuffWith(tc, [name:"inexistant"])
 
-		def cufs = [:]
-
+		TestCaseInstruction instr = new TestCaseInstruction(target, tc)
 
 		when :
-		LogTrain logtrain = impl.updateTestCase(target, tc, cufs)
+		LogTrain logtrain = impl.updateTestCase(instr)
 
 		flush()
 
@@ -331,11 +332,10 @@ public class FacilityImplIT extends DbunitServiceSpecification {
 		TestCase tc = emptyTC()
 		stuffWith(tc, [name:"test case 1", description : "special description"])
 
-		def cufs = [:]
-
+		TestCaseInstruction instr = new TestCaseInstruction(target, tc)
 
 		when :
-		LogTrain logtrain = impl.createTestCase(target, tc, cufs)
+		LogTrain logtrain = impl.createTestCase(instr)
 
 		flush()
 

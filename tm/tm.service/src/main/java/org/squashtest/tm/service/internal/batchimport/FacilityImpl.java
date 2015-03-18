@@ -23,6 +23,7 @@ package org.squashtest.tm.service.internal.batchimport;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -43,6 +44,7 @@ import org.squashtest.tm.domain.customfield.CustomFieldValue;
 import org.squashtest.tm.domain.customfield.InputType;
 import org.squashtest.tm.domain.customfield.RawValue;
 import org.squashtest.tm.domain.infolist.InfoListItem;
+import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.testcase.ActionTestStep;
 import org.squashtest.tm.domain.testcase.CallTestStep;
 import org.squashtest.tm.domain.testcase.Dataset;
@@ -72,7 +74,8 @@ import org.squashtest.tm.service.testcase.TestCaseModificationService;
 
 /**
  *
- * Implementation of batch import methods that will actually update the database.
+ * Implementation of batch import methods that will actually update the
+ * database.
  *
  */
 @Component
@@ -93,7 +96,6 @@ public class FacilityImpl implements Facility {
 
 	@Inject
 	private TestCaseModificationService testcaseModificationService;
-
 
 	@Inject
 	private PrivateCustomFieldValueService cufvalueService;
@@ -122,12 +124,15 @@ public class FacilityImpl implements Facility {
 	@Inject
 	private CustomFieldDao cufDao;
 
+	@Inject
+	private MilestoneImportHelper milestoneHelper;
+
 	private FacilityImplHelper helper = new FacilityImplHelper();
 
 	private Map<String, CustomFieldInfos> cufInfosCache = new HashMap<String, CustomFieldInfos>();
 
-
-	// ************************ public (and nice looking) code **************************************
+	// ************************ public (and nice looking) code
+	// **************************************
 
 	@Override
 	@Deprecated
@@ -135,16 +140,25 @@ public class FacilityImpl implements Facility {
 		throw new RuntimeException(new NoSuchMethodError("This method is in the process of being removed"));
 	}
 
-	private LogTrain updateTCRoutine(LogTrain train, TestCaseTarget target, TestCase testCase,
-			Map<String, String> cufValues) {
+	/**
+	 * Same as below
+	 *
+	 * @param train
+	 * @param instruction
+	 * @return
+	 */
+	private LogTrain updateTCRoutine(LogTrain train, TestCaseInstruction instruction) {
+		TestCase testCase = instruction.getTestCase();
+		Map<String, String> cufValues = instruction.getCustomFields();
+		TestCaseTarget target = instruction.getTarget();
 
 		try {
-
 			helper.fillNullWithDefaults(testCase);
-			helper.truncate(testCase, cufValues);
+			helper.truncate(testCase, (Map<String, String>) cufValues);
 			fixNatureAndType(target, testCase);
 
-			doCreateTestcase(target, testCase, cufValues);
+			// why a method called "update" performs a "create" is beyond my comprehension
+			doCreateTestcase(instruction);
 			validator.getModel().setExists(target, testCase.getId());
 
 			LOGGER.debug(EXCEL_ERR_PREFIX + "Created Test Case \t'" + target + "'");
@@ -159,13 +173,20 @@ public class FacilityImpl implements Facility {
 		return train;
 	}
 
-	private LogTrain createTCRoutine(LogTrain train, TestCaseTarget target, TestCase testCase,
-			Map<String, String> cufValues) {
-
+	/**
+	 * SAme as above, different args
+	 *
+	 * @param train
+	 * @param target
+	 * @param testCase
+	 * @param cufValues
+	 * @return
+	 */
+	private LogTrain createTCRoutine(LogTrain train, TestCaseInstruction instruction) {
 		// when creating, tc name might be random crap or blank
-		testCase.setName(target.getName());
+		instruction.getTestCase().setName(instruction.getTarget().getName());
 
-		return updateTCRoutine(train, target, testCase, cufValues);
+		return updateTCRoutine(train, instruction);
 	}
 
 	@Override
@@ -464,22 +485,28 @@ public class FacilityImpl implements Facility {
 		// NOOP yet
 	}
 
-	// ************************* private (and hairy) code *********************************
+	// ************************* private (and hairy) code
+	// *********************************
 
 	// because this time we're not toying around man, this is the real thing
-	private void doCreateTestcase(TestCaseTarget target, TestCase testCase, Map<String, String> cufValues) {
+	private void doCreateTestcase(TestCaseInstruction instr) {
+		TestCase testCase = instr.getTestCase();
+		Map<String, String> cufValues = instr.getCustomFields();
+		TestCaseTarget target = instr.getTarget();
 
 		Map<Long, RawValue> acceptableCufs = toAcceptableCufs(cufValues);
 
 		// case 1 : this test case lies at the root of the project
 		if (target.isRootTestCase()) {
-			// libraryId is never null because the checks ensured that the project exists
+			// libraryId is never null because the checks ensured that the
+			// project exists
 			Long libraryId = validator.getModel().getProjectStatus(target.getProject()).getTestCaseLibraryId();
 
 			Collection<String> siblingNames = navigationService.findNamesInLibraryStartingWith(libraryId,
 					testCase.getName());
 			renameIfNeeded(testCase, siblingNames);
-			navigationService.addTestCaseToLibrary(libraryId, testCase, acceptableCufs, target.getOrder(), new ArrayList<Long>());
+			navigationService.addTestCaseToLibrary(libraryId, testCase, acceptableCufs, target.getOrder(),
+					new ArrayList<Long>());
 		}
 		// case 2 : this test case exists within a folder
 		else {
@@ -487,9 +514,30 @@ public class FacilityImpl implements Facility {
 			Collection<String> siblingNames = navigationService.findNamesInFolderStartingWith(folderId,
 					testCase.getName());
 			renameIfNeeded(testCase, siblingNames);
-			navigationService.addTestCaseToFolder(folderId, testCase, acceptableCufs, target.getOrder(), new ArrayList<Long>());
+
+			List<Long> msids = boundMilestonesIds(instr);
+
+			navigationService.addTestCaseToFolder(folderId, testCase, acceptableCufs, target.getOrder(),msids);
 		}
 
+	}
+
+	/**
+	 * Returnd the ids of the milestones to be bound as per test case instruction
+	 * @param instr the instruction holding the names of candidate milestones
+	 * @return
+	 */
+	private List<Long> boundMilestonesIds(TestCaseInstruction instr) {
+		if (instr.getMilestones().isEmpty()) {
+			return Collections.emptyList();
+		}
+
+		List<Milestone> ms =  milestoneHelper.findBindable(instr.getMilestones());
+		List<Long> msids = new ArrayList<>(ms.size());
+		for (Milestone m : ms) {
+			msids.add(m.getId());
+		}
+		return msids;
 	}
 
 	private void renameIfNeeded(TestCase testCase, Collection<String> siblingNames) {
@@ -499,7 +547,10 @@ public class FacilityImpl implements Facility {
 		}
 	}
 
-	private void doUpdateTestcase(TestCaseTarget target, TestCase testCase, Map<String, String> cufValues) {
+	private void doUpdateTestcase(TestCaseInstruction instr) {
+		TestCaseTarget target = instr.getTarget();
+		TestCase testCase = instr.getTestCase();
+		Map<String, String> cufValues = instr.getCustomFields();
 
 		TestCase orig = validator.getModel().get(target);
 		Long origId = orig.getId();
@@ -511,6 +562,8 @@ public class FacilityImpl implements Facility {
 		// the custom field values now
 
 		doUpdateCustomFields(cufValues, orig);
+
+		bindMilestones(instr, orig);
 
 		// move the test case if its index says it has to move
 		Integer order = target.getOrder();
@@ -686,7 +739,7 @@ public class FacilityImpl implements Facility {
 		}
 
 		InfoListItem newNat = testCase.getNature();
-		if (newNat != null && ! newNat.references(orig.getNature())) {
+		if (newNat != null && !newNat.references(orig.getNature())) {
 			testcaseModificationService.changeNature(origId, newNat.getCode());
 		}
 
@@ -799,7 +852,8 @@ public class FacilityImpl implements Facility {
 			}
 		}
 
-		// else we have to create it. Note that the services do not provide any facility for that
+		// else we have to create it. Note that the services do not provide any
+		// facility for that
 		// so we have to do it from scratch here. Tsss, lazy conception again.
 		DatasetParamValue dpv = new DatasetParamValue(dsParam, dbDs);
 		paramvalueDao.persist(dpv);
@@ -810,9 +864,9 @@ public class FacilityImpl implements Facility {
 
 	/**
 	 * because the service identifies cufs by their id, not their code<br/>
-	 * also populates the cache (cufIdByCode), and transform the
-	 * input data in a single string or a collection of string depending
-	 * on the type of the custom field (Tags on non-tags).
+	 * also populates the cache (cufIdByCode), and transform the input data in a
+	 * single string or a collection of string depending on the type of the
+	 * custom field (Tags on non-tags).
 	 */
 	private Map<Long, RawValue> toAcceptableCufs(Map<String, String> origCufs) {
 
@@ -825,7 +879,8 @@ public class FacilityImpl implements Facility {
 
 				CustomField customField = cufDao.findByCode(cufCode);
 
-				// that bit of code checks that if the custom field doesn't exist, the hashmap entry contains
+				// that bit of code checks that if the custom field doesn't
+				// exist, the hashmap entry contains
 				// a dummy value for this code.
 				CustomFieldInfos infos = null;
 				if (customField != null) {
@@ -837,16 +892,17 @@ public class FacilityImpl implements Facility {
 				cufInfosCache.put(cufCode, infos);
 			}
 
-			// now add to our map the id of the custom field, except if null : the custom field
+			// now add to our map the id of the custom field, except if null :
+			// the custom field
 			// does not exist and therefore wont be included.
 			CustomFieldInfos infos = cufInfosCache.get(cufCode);
 			if (infos != null) {
-				switch(infos.getType()){
-				case TAG :
+				switch (infos.getType()) {
+				case TAG:
 					List<String> values = Arrays.asList(origCuf.getValue().split("\\|"));
 					result.put(infos.getId(), new RawValue(values));
 					break;
-				default :
+				default:
 					result.put(infos.getId(), new RawValue(origCuf.getValue()));
 					break;
 				}
@@ -857,39 +913,41 @@ public class FacilityImpl implements Facility {
 
 	}
 
-	private void fixNatureAndType(TestCaseTarget target, TestCase testCase){
+	private void fixNatureAndType(TestCaseTarget target, TestCase testCase) {
 
-		// at this point of the process the target is assumed to be safe for use,
+		// at this point of the process the target is assumed to be safe for
+		// use,
 		// no need to defensively check that the project exists and such
 		TargetStatus projectStatus = validator.getModel().getProjectStatus(target.getProject());
 
 		InfoListItem nature = testCase.getNature();
-		if (nature != null){
-			if (! listItemFinderService.isNatureConsistent(projectStatus.getId(), nature.getCode())){
-				testCase.setNature( listItemFinderService.findDefaultTestCaseNature(projectStatus.getId()));
+		if (nature != null) {
+			if (!listItemFinderService.isNatureConsistent(projectStatus.getId(), nature.getCode())) {
+				testCase.setNature(listItemFinderService.findDefaultTestCaseNature(projectStatus.getId()));
 			}
 		}
 
 		InfoListItem type = testCase.getType();
-		if (type != null){
-			if (! listItemFinderService.isTypeConsistent(projectStatus.getId(), type.getCode())){
-				testCase.setType( listItemFinderService.findDefaultTestCaseType(projectStatus.getId()));
+		if (type != null) {
+			if (!listItemFinderService.isTypeConsistent(projectStatus.getId(), type.getCode())) {
+				testCase.setType(listItemFinderService.findDefaultTestCaseType(projectStatus.getId()));
 			}
 		}
 
 	}
 
-
-	private static final class CustomFieldInfos{
+	private static final class CustomFieldInfos {
 		private Long id;
 		private InputType type;
 
 		public Long getId() {
 			return id;
 		}
+
 		public InputType getType() {
 			return type;
 		}
+
 		public CustomFieldInfos(Long id, InputType type) {
 			super();
 			this.id = id;
@@ -897,7 +955,6 @@ public class FacilityImpl implements Facility {
 		}
 
 	}
-
 
 	/**
 	 * @see org.squashtest.tm.service.internal.batchimport.Facility#createTestCase(org.squashtest.tm.service.internal.batchimport.TestCaseInstruction)
@@ -907,10 +964,23 @@ public class FacilityImpl implements Facility {
 		LogTrain train = validator.createTestCase(instr);
 
 		if (!train.hasCriticalErrors()) {
-			train = createTCRoutine(train, instr.getTarget(), instr.getTestCase(), instr.getCustomFields());
+			train = createTCRoutine(train, instr);
 		}
 
 		return train;
+	}
+
+	/**
+	 * @param instr instruction read from import file, pointing to a TRANSIENT test case template
+	 * @param persistentSource the PERSISTENT test case
+	 */
+	private void bindMilestones(TestCaseInstruction instr, TestCase persistentSource) {
+		if (!instr.getMilestones().isEmpty()) {
+			List<Milestone> ms = milestoneHelper.findBindable(instr.getMilestones());
+			persistentSource.getMilestones().clear();
+			persistentSource.bindAllMilsetones(ms);
+		}
+
 	}
 
 	/**
@@ -924,13 +994,13 @@ public class FacilityImpl implements Facility {
 
 		TargetStatus status = validator.getModel().getStatus(target);
 
-		LogTrain train = validator.updateTestCase(target, testCase, cufValues);
+		LogTrain train = validator.updateTestCase(instr);
 
 		if (!train.hasCriticalErrors()) {
 
 			if (status.status == Existence.NOT_EXISTS) {
 
-				train = updateTCRoutine(train, target, testCase, (Map<String, String>) cufValues);
+				train = updateTCRoutine(train, instr);
 
 			} else {
 				try {
@@ -938,7 +1008,7 @@ public class FacilityImpl implements Facility {
 					helper.truncate(testCase, (Map<String, String>) cufValues);
 					fixNatureAndType(target, testCase);
 
-					doUpdateTestcase(target, testCase, (Map<String, String>) cufValues);
+					doUpdateTestcase(instr);
 
 					LOGGER.debug(EXCEL_ERR_PREFIX + "Updated Test Case \t'" + target + "'");
 

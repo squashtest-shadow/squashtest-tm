@@ -20,16 +20,20 @@
  */
 package org.squashtest.tm.service.milestone;
 
+import static org.squashtest.tm.service.security.Authorizations.MILESTONE_FEAT_ENABLED;
+
+import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.core.dynamicmanager.annotation.DynamicManager;
+import org.squashtest.tm.core.dynamicmanager.annotation.QueryParam;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.milestone.MilestoneRange;
 import org.squashtest.tm.domain.milestone.MilestoneStatus;
 import org.squashtest.tm.domain.users.User;
-import static org.squashtest.tm.service.security.Authorizations.MILESTONE_FEAT_ENABLED;
 
 @Transactional
 @DynamicManager(name = "squashtest.tm.service.MilestoneManagerService", entity = Milestone.class)
@@ -52,6 +56,28 @@ public interface MilestoneManagerService extends CustomMilestoneManager {
 	@PreAuthorize(MILESTONE_FEAT_ENABLED)
 	void changeRange(long milestoneId, MilestoneRange newRange);
 
+	/**
+	 * Given a collection of milestone names, returns the names of
+	 * the milestones which actually exist
+	 *
+	 * @param names
+	 * @return
+	 */
+	List<String> findExistingNames(@QueryParam("names") Collection<String> names);
 
+	/**
+	 * Given a collection of milestone names, returns the names of
+	 * the milestones which are bindable (as per import spec, ie status == IN-PROGRESS)
+	 *
+	 * @param names
+	 * @return
+	 */
+	List<String> findInProgressExistingNames(@QueryParam("names") Collection<String> names);
 
+	/**
+	 * @param names
+	 * @param status
+	 * @return
+	 */
+	List<Milestone> findAllByNamesAndStatus(@QueryParam("names") Collection<String> names, @QueryParam("status") MilestoneStatus status);
 }

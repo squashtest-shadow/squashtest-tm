@@ -228,10 +228,7 @@ public class SimulationFacility implements Facility {
 	@Override
 	public LogTrain createTestCase(TestCaseInstruction instr) {
 		TestCaseTarget target = instr.getTarget();
-		TestCase testCase = instr.getTestCase();
-		Map<String, String> cufValues = instr.getCustomFields();
-
-		LogTrain logs = validator.createTestCase(target, testCase, cufValues);
+		LogTrain logs = validator.createTestCase(instr);
 
 		/*
 		 * Create TestCase : how to update the model.
@@ -259,11 +256,7 @@ public class SimulationFacility implements Facility {
 	 */
 	@Override
 	public LogTrain updateTestCase(TestCaseInstruction instr) {
-		TestCaseTarget target = instr.getTarget();
-		TestCase testCase = instr.getTestCase();
-		Map<String, String> cufValues = instr.getCustomFields();
-
-		LogTrain logs = validator.updateTestCase(target, testCase, cufValues);
+		LogTrain logs = validator.updateTestCase(instr);
 
 		/*
 		 * In case of an update, we don't need to change the model regardless of the success or failure of the

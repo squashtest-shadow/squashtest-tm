@@ -32,9 +32,9 @@ import org.squashtest.tm.service.internal.batchimport.excel.ReflectionMutatorSet
 
 /**
  * Repository of {@link PropertySetter}s in the context of a specific {@link TemplateWorksheet}
- * 
+ *
  * @author Gregory Fouquet
- * 
+ *
  */
 final class PropertySetterRepository<COL extends Enum<COL> & TemplateColumn> {
 	private static final String PROPERTY_PATH = "path";
@@ -52,7 +52,7 @@ final class PropertySetterRepository<COL extends Enum<COL> & TemplateColumn> {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param worksheet
 	 * @return the {@link PropertySetterRepository} suitable fot the given worksheet
 	 */
@@ -175,7 +175,7 @@ final class PropertySetterRepository<COL extends Enum<COL> & TemplateColumn> {
 		// test case
 		r.propSetterByColumn.put(TestCaseSheetColumn.TC_REFERENCE, ReflectionFieldSetter.forOptionalField("reference"));
 		r.propSetterByColumn.put(TestCaseSheetColumn.TC_NAME, ReflectionFieldSetter.forOptionalField(PROPERTY_NAME));
-		r.propSetterByColumn.put(TestCaseSheetColumn.TC_MILESTONE, ReflectionFieldSetter.forOptionalField("milestone"));
+		r.propSetterByColumn.put(TestCaseSheetColumn.TC_MILESTONE, ReflectionFieldSetter.forOptionalField("milestones"));
 		r.propSetterByColumn.put(TestCaseSheetColumn.TC_WEIGHT_AUTO,
 				ReflectionFieldSetter.forOptionalField("importanceAuto"));
 		r.propSetterByColumn.put(TestCaseSheetColumn.TC_WEIGHT, ReflectionFieldSetter.forOptionalField("importance"));
@@ -206,7 +206,7 @@ final class PropertySetterRepository<COL extends Enum<COL> & TemplateColumn> {
 
 	/**
 	 * Finds the {@link PropertySetter} for the given column.
-	 * 
+	 *
 	 * @param col
 	 * @return the {@link PropertySetter} or <code>null</code> when nothing found.
 	 */

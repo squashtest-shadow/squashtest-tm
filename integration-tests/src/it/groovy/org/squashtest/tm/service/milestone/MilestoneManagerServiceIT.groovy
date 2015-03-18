@@ -29,6 +29,7 @@ import org.squashtest.tm.domain.milestone.MilestoneStatus
 import org.squashtest.tm.exception.milestone.MilestoneLabelAlreadyExistsException
 import org.squashtest.tm.service.CustomDbunitServiceSpecification
 import org.squashtest.tm.service.DbunitServiceSpecification
+import org.squashtest.tm.service.internal.repository.DatasetDao;
 import org.squashtest.tm.service.security.PermissionEvaluationService
 import org.unitils.dbunit.annotation.DataSet
 
@@ -99,20 +100,20 @@ class MilestoneManagerServiceIT extends DbunitServiceSpecification {
 
 	}
 
-	
+
 	@DataSet("/org/squashtest/tm/service/milestone/MilestoneManagerServiceIT.xml")
 	def "label should not contain forbiden characters"(){
 		given :
 		def badLabel = "Milestone |"
 		Milestone milestone = new Milestone(label:badLabel)
-		when :	
+		when :
 		manager.addMilestone(milestone)
 		def milestoneAdded = manager.findByName("Milestone |");
 		then :
 		thrown(org.hibernate.exception.ConstraintViolationException)
 
 	}
-	
+
 	@Unroll("for project : #id is bound to template : #boundToTemplate")
 	@DataSet("/org/squashtest/tm/service/milestone/MilestoneManagerServiceIT.xml")
 	def "should know if the milestone is bound to a template"(){
@@ -130,5 +131,42 @@ class MilestoneManagerServiceIT extends DbunitServiceSpecification {
 		-4L || false
 
 	}
-	
+
+	@DataSet("/org/squashtest/tm/service/milestone/MilestoneManagerServiceIT.xml")
+	def "should find milestones by names and status"() {
+		given:
+		def names = ["My milestone", "My milestone 3", "Whatever"]
+
+		when:
+		def res = manager.findAllByNamesAndStatus(names, MilestoneStatus.IN_PROGRESS);
+
+		then:
+		res*.label == ["My milestone 3"]
+	}
+
+	@DataSet("/org/squashtest/tm/service/milestone/MilestoneManagerServiceIT.xml")
+	def "should find existing milestones names"() {
+		given:
+		def names = ["My milestone", "My milestone 3", "Whatever"]
+
+		when:
+		def res = manager.findExistingNames(names);
+
+		then:
+		res.containsAll(["My milestone", "My milestone 3"])
+		res.size() == 2
+
+	}
+
+	@DataSet("/org/squashtest/tm/service/milestone/MilestoneManagerServiceIT.xml")
+	def "should find existing, in preogress milestones names"() {
+		given:
+		def names = ["My milestone", "My milestone 3", "Whatever"]
+
+		when:
+		def res = manager.findInProgressExistingNames(names);
+
+		then:
+		res == ["My milestone 3"]
+	}
 }

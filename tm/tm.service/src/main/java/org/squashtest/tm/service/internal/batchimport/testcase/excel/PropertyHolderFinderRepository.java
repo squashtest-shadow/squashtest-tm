@@ -45,9 +45,9 @@ import org.squashtest.tm.service.internal.batchimport.excel.PropertyHolderFinder
 
 /**
  * Repository of {@link PropertyHolderFinder}s in the context of a specific {@link TemplateWorksheet}.
- * 
+ *
  * @author Gregory Fouquet
- * 
+ *
  */
 final class PropertyHolderFinderRepository<COL extends Enum<COL> & TemplateColumn> {
 	private static final Map<TemplateWorksheet, PropertyHolderFinderRepository<?>> FINDER_REPO_BY_WORKSHEET = new HashMap<TemplateWorksheet, PropertyHolderFinderRepository<?>>(
@@ -80,6 +80,7 @@ final class PropertyHolderFinderRepository<COL extends Enum<COL> & TemplateColum
 				return instruction;
 			}
 		};
+		r.finderByColumn.put(TestCaseSheetColumn.TC_MILESTONE, instructionFinder);
 		r.finderByColumn.put(TestCaseSheetColumn.ACTION, instructionFinder);
 
 		PropertyHolderFinder<TestCaseInstruction, TestCase> testCaseFinder = new PropertyHolderFinder<TestCaseInstruction, TestCase>() {
@@ -262,7 +263,7 @@ final class PropertyHolderFinderRepository<COL extends Enum<COL> & TemplateColum
 	}
 
 	/**
-	 * 
+	 *
 	 * @param worksheet
 	 * @return the {@link PropertyHolderFinderRepository} suitable for the given worksheet.
 	 */
@@ -285,7 +286,7 @@ final class PropertyHolderFinderRepository<COL extends Enum<COL> & TemplateColum
 	/**
 	 * Finds a suitable {@link PropertyHolderFinder}. When no {@link PropertyHolderFinder} is found, returns the
 	 * {@link #defaultFinder}.
-	 * 
+	 *
 	 * @param col
 	 * @return the {@link PropertyHolderFinder} suitable for the given col.
 	 */

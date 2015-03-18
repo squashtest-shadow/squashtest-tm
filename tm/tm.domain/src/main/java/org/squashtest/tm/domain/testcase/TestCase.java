@@ -877,4 +877,14 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 		}
 		return allowed;
 	};
+
+	/**
+	 * @param findBindable
+	 */
+	public void bindAllMilsetones(List<Milestone> ms) {
+		milestones.addAll(ms);
+
+	}
+
 }
+

@@ -112,8 +112,7 @@
 	+ " group by requirement1.id"),
 	@NamedQuery(name = "requirement.findRequirementIdsHavingMultipleMilestones", 
 	query = "select r.id from Requirement r join r.versions v join v.milestones stones where r.id in (:nodeIds) group by r.id having count(stones) > 1 "),
-	@NamedQuery(name = "requirement.findNonBoundRequirement", 
-	query = "select r.id from Requirement r where r.id in (:nodeIds) and r.id not in (select req.id from Milestone m join m.requirementVersions rvs join rvs.requirement req where m.id = :milestoneId and req.id in (:nodeIds))"),
+	@NamedQuery(name = "requirement.findNonBoundRequirement", query = "select r.id from Requirement r join r.versions v where r.id in (:nodeIds) and v.id not in (select rvs.id from Milestone m join m.requirementVersions rvs where m.id = :milestoneId)"),
 	@NamedQuery(name = "requirement.findRequirementsWhichMilestonesForbidsDeletion", 
 	query="select distinct r.id from Requirement r inner join r.versions v inner join v.milestones milestones where r.id in (:requirementIds) and milestones.status in (:lockedStatuses)"),
 	
@@ -635,6 +634,10 @@
 	@NamedQuery(name = "milestone.findAllTestCasesForProjectAndMilestone", query = "select tc from TestCase tc join tc.milestones m where tc.project.id in (:projectIds) and m.id = :milestoneId"),
 	@NamedQuery(name = "milestone.findAllRequirementVersionsForProjectAndMilestone", query = "select rv from RequirementVersion rv join rv.requirement r join rv.milestones m where r.project.id in (:projectIds) and m.id = :milestoneId"),
 	@NamedQuery(name = "milestone.findAllCampaignsForProjectAndMilestone", query = "select c from Campaign c join c.milestones m  where c.project.id in (:projectIds) and m.id = :milestoneId"),
+	@NamedQuery(name = "Milestone.findExistingNames", query = "select m.label from Milestone m where m.label in (:names)"),
+	@NamedQuery(name = "Milestone.findInProgressExistingNames", query = "select m.label from Milestone m where m.label in (:names) and m.status = 'IN_PROGRESS'"),
+	@NamedQuery(name = "Milestone.findAllByNamesAndStatus", query = "from Milestone m where m.label in (:names) and m.status = :status"),
+
 	@NamedQuery(name = "TestCase.findAllBoundToMilestone", query = "select tc from TestCase tc join tc.milestones m where m.id = :milestoneId"),
 	@NamedQuery(name = "RequirementVersion.findAllBoundToMilestone", query = "select rv from RequirementVersion rv join rv.requirement r join rv.milestones m where m.id = :milestoneId"),
 	@NamedQuery(name = "Campaign.findAllBoundToMilestone", query = "select c from Campaign c join c.milestones m  where m.id = :milestoneId"),
