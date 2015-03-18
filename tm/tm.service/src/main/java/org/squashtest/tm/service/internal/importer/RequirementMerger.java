@@ -44,17 +44,18 @@ import org.squashtest.tm.service.internal.importer.RequirementLibraryMerger.Dest
 import org.squashtest.tm.service.milestone.MilestoneManagerService;
 
 class RequirementMerger extends DestinationManager {
-	
+
 	private FeatureManager featureManager;
-	
+
 	private MilestoneManagerService milestoneService;
-	
+
 	private ImportSummaryImpl summary;
-	
-	public RequirementMerger(MilestoneManagerService milestoneService, ImportSummaryImpl summary, FeatureManager featureManager) {
-	     this.milestoneService = milestoneService;
-	     this.summary = summary;
-	     this.featureManager = featureManager;
+
+	public RequirementMerger(MilestoneManagerService milestoneService, ImportSummaryImpl summary,
+			FeatureManager featureManager) {
+		this.milestoneService = milestoneService;
+		this.summary = summary;
+		this.featureManager = featureManager;
 	}
 
 	public void merge(List<PseudoRequirement> pseudoRequirements, RequirementLibrary library) {
@@ -90,7 +91,7 @@ class RequirementMerger extends DestinationManager {
 			}
 
 			boolean milestoneAllowCreate = processMilestones(pseudoRequirement);
-			
+
 			// order version and rename last one
 			List<PseudoRequirementVersion> pseudoRequirementVersions = pseudoRequirement.getPseudoRequirementVersions();
 			Collections.sort(pseudoRequirementVersions);
@@ -107,20 +108,20 @@ class RequirementMerger extends DestinationManager {
 				addVersion(requirement, pseudoRequirementVersions.get(i));
 			}
 
-			if (milestoneAllowCreate){
-			
-			persistRequirement(requirement);
+			if (milestoneAllowCreate) {
 
-			if (renamed) {
-				NodeContainer<? extends RequirementLibraryNode> destination = getDestination();
-				Map<String, Long> renamedIdByOriginalName = renamedRequirements.get(destination);
-				if (renamedIdByOriginalName == null) {
-					renamedIdByOriginalName = new HashMap<String, Long>();
+				persistRequirement(requirement);
+
+				if (renamed) {
+					NodeContainer<? extends RequirementLibraryNode> destination = getDestination();
+					Map<String, Long> renamedIdByOriginalName = renamedRequirements.get(destination);
+					if (renamedIdByOriginalName == null) {
+						renamedIdByOriginalName = new HashMap<String, Long>();
+					}
+					renamedIdByOriginalName.put(originalName, requirement.getId());
+					renamedRequirements.put(destination, renamedIdByOriginalName);
 				}
-				renamedIdByOriginalName.put(originalName, requirement.getId());
-				renamedRequirements.put(destination, renamedIdByOriginalName);
-			}
-			setRequirementDestination(null);
+				setRequirementDestination(null);
 			} else {
 				summary.incrMilestoneFailures();
 				summary.incrFailures();
@@ -131,29 +132,35 @@ class RequirementMerger extends DestinationManager {
 
 	private boolean processMilestones(PseudoRequirement pseudoRequirement) {
 
-		if (!featureManager.isEnabled(Feature.MILESTONE)){
+		if (!featureManager.isEnabled(Feature.MILESTONE)) {
 			return true;
 		}
-		
-		for (PseudoRequirementVersion prv : pseudoRequirement.getPseudoRequirementVersions()){
-			String milestoneString = prv.getMilestoneString();	
-			
-			if (milestoneString != null && !StringUtils.isEmpty(milestoneString)){
-			String[] milestonesNames = milestoneString.split(Pattern.quote("|"));
-	
-			for (String name : milestonesNames){
-				Milestone milestone = milestoneService.findByName(name);
-				
-				if (milestone == null || !milestone.getStatus().isAllowObjectCreateAndDelete()){
-					//milestone not found or it's status don't allow object creation
+
+		for (PseudoRequirementVersion prv : pseudoRequirement.getPseudoRequirementVersions()) {
+			String milestoneString = prv.getMilestoneString();
+
+			if (milestoneString != null && !StringUtils.isEmpty(milestoneString)) {
+				String[] milestonesNames = milestoneString.split(Pattern.quote("|"));
+
+				if (!milestonesAllowProcessing(prv, milestonesNames)) {
 					return false;
 				}
-				prv.addMilestone(milestone);
-			}
-		
 			}
 		}
-		//all is good !
+		// all is good !
+		return true;
+	}
+
+	private boolean milestonesAllowProcessing(PseudoRequirementVersion prv, String[] milestonesNames) {
+		for (String name : milestonesNames) {
+			Milestone milestone = milestoneService.findByName(name);
+
+			if (milestone == null || !milestone.getStatus().isAllowObjectCreateAndDelete()) {
+				// milestone not found or it's status don't allow object creation
+				return false;
+			}
+			prv.addMilestone(milestone);
+		}
 		return true;
 	}
 
