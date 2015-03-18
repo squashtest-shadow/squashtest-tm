@@ -374,4 +374,9 @@ public class HibernateMilestoneDao extends HibernateEntityDao<Milestone> impleme
 		
 		
 	}
+
+	@Override
+	public Milestone findByName(String name) {
+		return findMilestoneByLabel(name);
+	}
 }

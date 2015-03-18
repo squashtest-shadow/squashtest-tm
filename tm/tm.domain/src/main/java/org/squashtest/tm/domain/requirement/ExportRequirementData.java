@@ -130,7 +130,7 @@ public class ExportRequirementData extends ExportData {
 			if (index > 0) {
 				this.milestone += " | ";
 			}
-			this.milestone += m.getId();
+			this.milestone += m.getLabel();
 			index++;
 		}
 		this.category = requirement.getCategory().getCode();

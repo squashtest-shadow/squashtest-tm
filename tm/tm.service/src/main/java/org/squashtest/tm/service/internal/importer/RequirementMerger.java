@@ -139,11 +139,10 @@ class RequirementMerger extends DestinationManager {
 			String milestoneString = prv.getMilestoneString();	
 			
 			if (milestoneString != null && !StringUtils.isEmpty(milestoneString)){
-			String[] milestonesIds = milestoneString.split(Pattern.quote("|"));
+			String[] milestonesNames = milestoneString.split(Pattern.quote("|"));
 	
-			try {
-			for (String id : milestonesIds){
-				Milestone milestone = milestoneService.findById(Long.parseLong(id.trim()));
+			for (String name : milestonesNames){
+				Milestone milestone = milestoneService.findByName(name);
 				
 				if (milestone == null || !milestone.getStatus().isAllowObjectCreateAndDelete()){
 					//milestone not found or it's status don't allow object creation
@@ -151,10 +150,7 @@ class RequirementMerger extends DestinationManager {
 				}
 				prv.addMilestone(milestone);
 			}
-			} catch (NumberFormatException ex){
-				//milestone col contain wrong data, correct format is ID1|ID2|ID3
-				return false;
-			}
+		
 			}
 		}
 		//all is good !

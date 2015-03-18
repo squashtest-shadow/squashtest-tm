@@ -70,4 +70,6 @@ public interface MilestoneDao extends EntityDao<Milestone> {
 	boolean isBoundToAtleastOneObject(long milestoneId);
 
 	void unbindAllObjects(long milestoneId);
+
+	Milestone findByName(String name);
 }

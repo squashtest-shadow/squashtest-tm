@@ -478,6 +478,11 @@ public class CustomMilestoneManagerServiceImpl implements CustomMilestoneManager
 		Milestone milestone = findById(milestoneId);
 		milestone.clearObjects();
 		}
+
+	@Override
+	public Milestone findByName(String name) {
+		return milestoneDao.findByName(name);
+	}
 	
 	
 }

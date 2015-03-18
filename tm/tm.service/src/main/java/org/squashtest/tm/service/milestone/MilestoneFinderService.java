@@ -28,6 +28,7 @@ public interface MilestoneFinderService {
 
 	Milestone findById(long milestoneId);
 
+	Milestone findByName(String name);
 
 	/**
 	 * @return returns the list of all milestone a regular user can see
