@@ -110,8 +110,8 @@ public class CustomCampaignModificationServiceImpl implements CustomCampaignModi
 
 	@Override
 	@PreAuthorize(WRITE_CAMPAIGN_OR_ADMIN)
-	public void bindMilestones(long campaignId, Collection<Long> milestoneIds) {
-		milestoneService.bindCampaignToMilestones(campaignId, milestoneIds);
+	public void bindMilestone(long campaignId, long milestoneId) {
+		milestoneService.bindCampaignToMilestone(campaignId, milestoneId);
 	}
 
 

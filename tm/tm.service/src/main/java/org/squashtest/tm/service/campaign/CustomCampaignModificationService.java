@@ -49,7 +49,14 @@ public interface CustomCampaignModificationService {
 
 	/* ********************** milestones section ******************* */
 
-	void bindMilestones(long campaignId, Collection<Long> milestoneIds);
+	/**
+	 * Bind a milestone to a campaign. Any previous milestone will be unbound because a campaign can be bound to only
+	 * one milestone.
+	 * 
+	 * @param campaignId
+	 * @param milestoneId
+	 */
+	void bindMilestone(long campaignId, long milestoneId);
 
 	void unbindMilestones(long campaignId, Collection<Long> milestoneIds);
 

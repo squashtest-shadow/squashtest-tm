@@ -483,8 +483,13 @@ public class Campaign extends CampaignLibraryNode implements NodeContainer<Itera
 		return milestones.contains(milestone);
 	}
 
+	/**
+	 * A campaign can belong to one milestone at a time. When a milestone
+	 * is bound to a campaign, the previous milestone will be unbound.
+	 */
 	@Override
 	public void bindMilestone(Milestone milestone){
+		milestones.clear();
 		milestones.add(milestone);
 	}
 
@@ -518,15 +523,15 @@ public class Campaign extends CampaignLibraryNode implements NodeContainer<Itera
 	public boolean isBindableToMilestone() {
 		return milestonesAllowBind();
 	}
-	
+
 	private boolean milestonesAllowBind() {
-	
-			for (Milestone m : milestones) {
-				if (!m.getStatus().isAllowObjectModification()) {
-					return false;
-				}
+
+		for (Milestone m : milestones) {
+			if (!m.getStatus().isAllowObjectModification()) {
+				return false;
 			}
-			return true;
+		}
+		return true;
 
 	}
 

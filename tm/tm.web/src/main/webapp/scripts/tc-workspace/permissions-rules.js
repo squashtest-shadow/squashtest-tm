@@ -101,7 +101,7 @@ define(['jquery', 'workspace.tree-node-copier', 'tree', 'milestone-manager/miles
 			if (! milestonesAllowCreation()){
 				return "milestone-denied";
 			}
-			else if (! canCreateButton(nodes)){
+			else if (! this.canCreateButton(nodes)){
 				return "permission-denied";
 			}
 			else {

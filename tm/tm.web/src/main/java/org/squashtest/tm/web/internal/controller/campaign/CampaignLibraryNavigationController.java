@@ -130,7 +130,7 @@ LibraryNavigationController<CampaignLibrary, CampaignFolder, CampaignLibraryNode
 		Campaign newCampaign = campaignForm.getCampaign();
 		Map<Long, RawValue> customFieldValues = campaignForm.getCufs();
 
-		campaignLibraryNavigationService.addCampaignToCampaignLibrary(libraryId, newCampaign, customFieldValues, milestoneIds);
+		campaignLibraryNavigationService.addCampaignToCampaignLibrary(libraryId, newCampaign, customFieldValues, milestoneIds.get(0));
 
 		return createTreeNodeFromLibraryNode(newCampaign, milestoneIds);
 
@@ -154,7 +154,7 @@ LibraryNavigationController<CampaignLibrary, CampaignFolder, CampaignLibraryNode
 		Campaign newCampaign = campaignForm.getCampaign();
 		Map<Long, RawValue> customFieldValues = campaignForm.getCufs();
 
-		campaignLibraryNavigationService.addCampaignToCampaignFolder(folderId, newCampaign, customFieldValues, milestoneIds);
+		campaignLibraryNavigationService.addCampaignToCampaignFolder(folderId, newCampaign, customFieldValues, milestoneIds.get(0));
 
 		return createTreeNodeFromLibraryNode(newCampaign, milestoneIds);
 

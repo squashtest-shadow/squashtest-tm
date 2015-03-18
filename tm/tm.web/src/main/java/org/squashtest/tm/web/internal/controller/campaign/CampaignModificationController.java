@@ -438,11 +438,11 @@ public class CampaignModificationController {
 		return buildMilestoneModel(new ArrayList<>(allMilestones), params.getsEcho());
 	}
 
-	@RequestMapping(value = "/milestones/{milestoneIds}", method=RequestMethod.POST)
+	@RequestMapping(value = "/milestones/{milestoneId}", method=RequestMethod.POST)
 	@ResponseBody
-	public void bindMilestones(@PathVariable(CAMPAIGN_ID) long campaignId, @PathVariable("milestoneIds") List<Long> milestoneIds){
+	public void bindMilestone(@PathVariable(CAMPAIGN_ID) long campaignId, @PathVariable("milestoneId") Long milestoneId){
 
-		campaignModService.bindMilestones(campaignId, milestoneIds);
+		campaignModService.bindMilestone(campaignId, milestoneId);
 	}
 
 	@RequestMapping(value = "/milestones/{milestoneIds}", method=RequestMethod.DELETE)
@@ -476,7 +476,7 @@ public class CampaignModificationController {
 
 		String rootPath = "/campaigns/"+campaignId.toString();
 
-		Boolean editable = camp.isBindableToMilestone();	
+		Boolean editable = camp.isBindableToMilestone();
 
 		// add them to the model
 		conf.setNodeType("campaign");
@@ -484,6 +484,7 @@ public class CampaignModificationController {
 		conf.setIdentity(identity);
 		conf.setCurrentModel(currentModel);
 		conf.setEditable(editable);
+		conf.setMultilines(false);
 
 		model.addAttribute("conf", conf);
 

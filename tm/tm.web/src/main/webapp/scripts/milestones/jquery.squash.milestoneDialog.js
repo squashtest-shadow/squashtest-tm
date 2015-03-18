@@ -31,17 +31,18 @@
  * 		<table class="bind-milestone-dialog-table">
  * 			<thead>
  * 				<th data-def="sClass=bind-milestone-dialog-check"></th>
- * 				// et autre headers 
+ * 				// and other headers
  * 			</thead>
  * 			<tbody>
  * 
  * 			</tbody>
  * 		</table>
  * 
- * 		<span class="bind-milestone-dialog-selectall cursor-pointer"/>select all</span>
- * 		<span class="bind-milestone-dialog-selectnone cursor-pointer"/>select none</span>
- * 		<span class="bind-milestone-dialog-invertselect cursor-pointer"/>invert selection</span>
- * 	
+ * 		<div class="bind-milestone-dialog-selectors">
+ * 			<span class="bind-milestone-dialog-selectall cursor-pointer"/>select all</span>
+ * 			<span class="bind-milestone-dialog-selectnone cursor-pointer"/>select none</span>
+ * 			<span class="bind-milestone-dialog-invertselect cursor-pointer"/>invert selection</span>
+ *		</div> 	
  * 	</div>
  * 
  * 	<div class="popup-dialog-buttonpane">
@@ -77,6 +78,35 @@
 define(["jquery", "workspace.event-bus", "jqueryui", "jquery.squash.formdialog", "squashtable"], 
 		function($, eventBus){
 	
+	
+	
+	function handleClickMultilines(evt){
+		// don't trigger if the clicked element is 
+		// the checkbox itself 
+		if (! $(evt.target).is('input')){
+			var chk = $(evt.currentTarget).find('.bind-milestone-dialog-check input');								
+			var newstate = ! chk.is(':checked');
+			chk.prop('checked', newstate);
+		}		
+	}
+	
+	function handleClickSingleline(evt){
+		
+		var table = $(evt.currentTarget).parents('table');
+		
+		// don't trigger if the clicked element is 
+		// the checkbox itself 
+		if (! $(evt.target).is('input')){
+			var chk = $(evt.currentTarget).find('.bind-milestone-dialog-check input');								
+			var newstate = ! chk.is(':checked');
+			chk.prop('checked', newstate);
+			table.find('.bind-milestone-dialog-check input').not(chk).prop('checked', false);
+		}
+		else{
+			table.find('.bind-milestone-dialog-check input').not(evt.target).prop('checked', false);		
+		}		
+	}
+	
 	$.widget("squash.milestoneDialog", $.squash.formDialog, {
 	
 		options : {
@@ -96,21 +126,8 @@ define(["jquery", "workspace.event-bus", "jqueryui", "jquery.squash.formdialog",
 			
 			var table = element.find('.bind-milestone-dialog-table');
 			
-			element.on('click', '.bind-milestone-dialog-selectall', function(){
-				table.find('>tbody>tr>td.bind-milestone-dialog-check input').prop('checked', true);
-			});			
-			
-			element.on('click', '.bind-milestone-dialog-selectnone', function(){
-				table.find('>tbody>tr>td.bind-milestone-dialog-check input').prop('checked', false);				
-			});			
-			
-			element.on('click', '.bind-milestone-dialog-invertselect', function(){
-				table.find('>tbody>tr>td.bind-milestone-dialog-check input').each(function(){
-					this.checked = ! this.checked;					
-				});				
-			});
-			
-			
+
+			this.initBlanketSelectors();
 			
 		},
 		
@@ -141,26 +158,21 @@ define(["jquery", "workspace.event-bus", "jqueryui", "jquery.squash.formdialog",
 		 */
 		_configureTable : function(){
 			
-			var table = $(this.element[0]).find('.bind-milestone-dialog-table');	
+			var table = $(this.element[0]).find('.bind-milestone-dialog-table'),
+				multilines = this.options.multilines;
 			
-			table.on('click', '>tbody>tr', function(evt){
-				
-				// don't trigger if the clicked element is 
-				// the checkbox itself 
-				if (! $(evt.target).is('input')){
-					var chk = $(evt.currentTarget).find('.bind-milestone-dialog-check input');								
-					var newstate = ! chk.is(':checked');
-					chk.prop('checked', newstate);
-				}
-			});
+			var selecthandler = (multilines) ? handleClickMultilines : handleClickSingleline,
+				inputType = (multilines) ? "checkbox" : "radio";
 			
+			
+			table.on('click', '>tbody>tr', selecthandler);			
 			
 			var tblCnf = {
 					sAjaxSource : this.options.tableSource, 
 					bServerSide : false,
 					fnDrawCallback : function(){
 						table.find('>tbody>tr>td.bind-milestone-dialog-check').each(function(){
-							$(this).html('<input type="checkbox"/>');
+							$(this).html('<input type="'+inputType+'"/>');
 						});
 						table.find('>tbody>tr').addClass('cursor-pointer');
 					}
@@ -185,6 +197,12 @@ define(["jquery", "workspace.event-bus", "jqueryui", "jquery.squash.formdialog",
 				ids.push(id);
 			});
 			
+			// exit if nothing to do
+			if (ids.length===0){
+				self.close();
+				return;
+			}
+			
 			var url = this.options.milestonesURL + '/'+ ids.join(',');
 			
 			$.ajax({
@@ -203,6 +221,33 @@ define(["jquery", "workspace.event-bus", "jqueryui", "jquery.squash.formdialog",
 		
 		cancel : function(){
 			this.close();
+		},
+		
+		initBlanketSelectors : function(){
+			
+			var element = $(this.element[0]),
+				table = element.find('.bind-milestone-dialog-table');
+			
+			// if multiline -> init the links
+			if (this.options.multilines){			
+				element.on('click', '.bind-milestone-dialog-selectall', function(){
+					table.find('>tbody>tr>td.bind-milestone-dialog-check input').prop('checked', true);
+				});			
+				
+				element.on('click', '.bind-milestone-dialog-selectnone', function(){
+					table.find('>tbody>tr>td.bind-milestone-dialog-check input').prop('checked', false);				
+				});			
+				
+				element.on('click', '.bind-milestone-dialog-invertselect', function(){
+					table.find('>tbody>tr>td.bind-milestone-dialog-check input').each(function(){
+						this.checked = ! this.checked;					
+					});				
+				});
+			}
+			// if not multilines -> hide the links
+			else{
+				element.find('.bind-milestone-dialog-selectors').hide();
+			}
 		}
 		
 	});

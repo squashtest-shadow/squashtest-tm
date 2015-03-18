@@ -40,7 +40,14 @@ public interface MilestoneMembershipManager extends MilestoneMembershipFinder {
 
 	Collection<Milestone> findAssociableMilestonesToCampaign(long campaignId);
 
-	void bindCampaignToMilestones(long campaignId, Collection<Long> milestoneIds);
+	/**
+	 * unlike other entities, a campaign can belong to one milestone only. When a milestone is bound to
+	 * a campaign, any previous milestone will be unbound in the process.
+	 * 
+	 * @param campaignId
+	 * @param milestoneId
+	 */
+	void bindCampaignToMilestone(long campaignId, Long milestoneId);
 
 	void unbindCampaignFromMilestones(long campaignId, Collection<Long> milestoneIds);
 

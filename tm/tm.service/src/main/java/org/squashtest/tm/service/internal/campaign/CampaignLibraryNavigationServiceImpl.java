@@ -227,10 +227,10 @@ CampaignLibraryNavigationService {
 	@Override
 	@PreAuthorize("hasPermission(#libraryId, 'org.squashtest.tm.domain.campaign.CampaignLibrary', 'CREATE')"
 			+ OR_HAS_ROLE_ADMIN)
-	public void addCampaignToCampaignLibrary(long libraryId, Campaign campaign, Map<Long, RawValue> customFieldValues, List<Long> milestoneIds) {
+	public void addCampaignToCampaignLibrary(long libraryId, Campaign campaign, Map<Long, RawValue> customFieldValues, Long milestoneId) {
 		addCampaignToCampaignLibrary(libraryId, campaign);
 		initCustomFieldValues(campaign, customFieldValues);
-		milestoneManager.bindCampaignToMilestones(campaign.getId(), milestoneIds);
+		milestoneManager.bindCampaignToMilestone(campaign.getId(), milestoneId);
 	}
 
 	@Override
@@ -251,11 +251,11 @@ CampaignLibraryNavigationService {
 	@Override
 	@PreAuthorize("hasPermission(#folderId, 'org.squashtest.tm.domain.campaign.CampaignFolder', 'CREATE')"
 			+ OR_HAS_ROLE_ADMIN)
-	public void addCampaignToCampaignFolder(long folderId, Campaign campaign, Map<Long, RawValue> customFieldValues, List<Long> milestoneIds) {
+	public void addCampaignToCampaignFolder(long folderId, Campaign campaign, Map<Long, RawValue> customFieldValues, Long milestoneId) {
 
 		addCampaignToCampaignFolder(folderId, campaign);
 		initCustomFieldValues(campaign, customFieldValues);
-		milestoneManager.bindCampaignToMilestones(campaign.getId(), milestoneIds);
+		milestoneManager.bindCampaignToMilestone(campaign.getId(), milestoneId);
 
 	}
 

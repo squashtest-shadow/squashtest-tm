@@ -20,7 +20,7 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 --%>
-<%@ tag body-content="empty" description="the calling test case table" %>
+<%@ tag body-content="empty" description="test case toolbar and messages" %>
 
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
@@ -67,17 +67,7 @@
 							objectUrl="${ testCaseUrl }" />
 	</c:if>
   
-    <c:if test="${milestoneConf.messagesEnabled}">
-        <div data-milestones="${milestoneConf.totalMilestones}" class="milestone-count-notifier entity-edit-general-warning 
-              ${(milestoneConf.multipleBindings) ? '' : 'not-displayed'}">
-          <p><f:message key="messages.boundToMultipleMilestones"/></p>
-        </div>
-        <c:if test="${milestoneConf.locked}">
-        <div class="entity-edit-general-warning">
-          <p><f:message key="message.CannotModifyBecauseMilestoneLocking"/></p>
-        </div>        
-        </c:if>
-    </c:if>
+    <comp:milestone-messages milestoneConf="${milestoneConf}"/>
   
 	<div class="unsnap"></div>
  

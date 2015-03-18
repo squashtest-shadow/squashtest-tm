@@ -119,12 +119,11 @@ public class MilestoneMembershipManagerImpl implements MilestoneMembershipManage
 
 	@Override
 	@PreAuthorize(WRITE_CAMPAIGN + ROLE_ADMIN)
-	public void bindCampaignToMilestones(long campaignId, Collection<Long> milestoneIds) {
-		Campaign campaign = campaignDao.findById(campaignId);
-		Collection<Milestone> milestones = milestoneDao.findAllByIds(milestoneIds);
-
-		for (Milestone m : milestones) {
-			campaign.bindMilestone(m);
+	public void bindCampaignToMilestone(long campaignId, Long milestoneId) {
+		if (milestoneId != null){
+			Campaign campaign = campaignDao.findById(campaignId);
+			Milestone milestone = milestoneDao.findById(milestoneId);
+			campaign.bindMilestone(milestone);
 		}
 	}
 

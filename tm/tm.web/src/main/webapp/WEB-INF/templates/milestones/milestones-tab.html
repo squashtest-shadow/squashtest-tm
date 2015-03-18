@@ -43,6 +43,11 @@
 
   <div class="table-tab-wrap">
 
+    <div class="centered std-margin-top std-margin-bottom" th:if="${not conf.multilines}">
+      <span th:text="#{message.OnlyOneMilestoneAllowed}">if campaign, can belong to one milestone only</span>      
+    </div>
+    
+
     <table class="milestone-panel-table">
       <thead th:with="unbindClause=${(conf.editable) ? ', unbind-button=.unbind-milestone-dialog' : ''}">
         <th data-def="select, sWidth=2.5em, map=entity-index">#</th>
@@ -62,12 +67,14 @@
 
   <div class="bind-milestone-dialog popup-dialog not-displayed" th:title="#{title.bindMilestones}">
     <div>
-      <div class="center std-margin-top std-margin-bottom" th:if="${conf.nodeType == 'requirement-version'}" >
+      
+      <div class="centered std-margin-top std-margin-bottom" th:if="${conf.nodeType == 'requirement-version'}" >
           <span th:text="#{message.milestones.milestoneUnicityPerRequirementRule}">if requirement version, says that milestones bound to other versions of that requirement 
           will not be associable
           </span>
       </div>
-    
+      
+
       <table class="bind-milestone-dialog-table" data-def="filter">
         <thead>
           <th data-def="sClass=bind-milestone-dialog-check, map=empty-delete-holder"></th>
@@ -81,16 +88,19 @@
         </tbody>
       </table>
 
-      <ul style="list-style-type: none;">
-        <li class="clickable-item extra-small-margin-top"><span class="bind-milestone-dialog-selectall"    th:text="#{label.selectAllForSelection}">select all</span></li>
-        <li class="clickable-item extra-small-margin-top"><span class="bind-milestone-dialog-selectnone"   th:text="#{label.selectNoneForSelection}">select none</span></li>
-        <li class="clickable-item extra-small-margin-top"><span class="bind-milestone-dialog-invertselect" th:text="#{label.invertSelect}">invert selection</span></li>
-      </ul>
+      <div class="bind-milestone-dialog-selectors">
+        <ul style="list-style-type: none;">
+          <li class="clickable-item extra-small-margin-top"><span class="bind-milestone-dialog-selectall"    th:text="#{label.selectAllForSelection}">select all</span></li>
+          <li class="clickable-item extra-small-margin-top"><span class="bind-milestone-dialog-selectnone"   th:text="#{label.selectNoneForSelection}">select none</span></li>
+          <li class="clickable-item extra-small-margin-top"><span class="bind-milestone-dialog-invertselect" th:text="#{label.invertSelect}">invert selection</span></li>
+        </ul>
+      </div>
        
     </div>
 
-    <div class="popup-dialog-buttonpane">
-      <input type="button" class="bind-milestone-dialog-confirm" data-def="evt=confirm, mainbtn" th:value="#{label.Confirm}" />
+    <div class="popup-dialog-buttonpane" >
+      <input th:if="${conf.multilines}" type="button" class="bind-milestone-dialog-confirm" data-def="evt=confirm, mainbtn" th:value="#{label.Confirm}" />
+      <input th:if="${not conf.multilines}" type="button" class="bind-milestone-dialog-confirm" data-def="evt=confirm, mainbtn" th:value="#{label.Add}+'/'+#{label.Replace}" />
       <input type="button" class="bind-milestone-dialog-cancel" data-def="evt=cancel" th:value="#{label.Cancel}" />
     </div>
 

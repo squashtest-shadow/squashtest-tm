@@ -143,7 +143,8 @@ define(["jquery", "workspace.event-bus", "app/ws/squashtm.notification", "squash
 			var dialogOptions = {
 				tableSource : conf.bindTableSource,
 				milestonesURL : conf.milestonesURL,
-				identity : conf.identity
+				identity : conf.identity,
+				multilines : conf.multilines
 			};
 			
 			var bindDialog = element.find('.bind-milestone-dialog');

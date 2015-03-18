@@ -42,6 +42,9 @@ public class MilestonePanelConfiguration {
 
 	private boolean editable;
 
+	// whether you can select more than one milestone in the bind-milestone popup
+	private boolean multilines=true;
+
 	public String getRootPath() {
 		return rootPath;
 	}
@@ -82,7 +85,13 @@ public class MilestonePanelConfiguration {
 		this.nodeType = nodeType;
 	}
 
+	public boolean isMultilines() {
+		return multilines;
+	}
 
+	public void setMultilines(boolean multilines) {
+		this.multilines = multilines;
+	}
 
 
 }
