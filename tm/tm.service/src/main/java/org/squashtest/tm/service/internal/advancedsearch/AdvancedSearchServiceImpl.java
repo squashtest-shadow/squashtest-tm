@@ -60,13 +60,17 @@ import org.squashtest.tm.domain.search.AdvancedSearchTimeIntervalFieldModel;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.service.advancedsearch.AdvancedSearchService;
 import org.squashtest.tm.service.customfield.CustomFieldBindingFinderService;
+import org.squashtest.tm.service.feature.FeatureManager;
+import org.squashtest.tm.service.feature.FeatureManager.Feature;
 import org.squashtest.tm.service.project.ProjectManagerService;
 
 public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 	
 	private final static List<String> MILESTONE_SEARCH_FIELD = Arrays.asList("milestone.label", "milestone.status",
 			"milestone.endDate", "searchByMilestone");
-	
+       
+	@Inject 
+    private FeatureManager featureManager;
 
 	@Inject
 	private SessionFactory sessionFactory;
@@ -409,7 +413,9 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 	}
 
 	protected Query buildLuceneQuery(QueryBuilder qb, AdvancedSearchModel model, Locale locale) {
-		addMilestoneFilter(model);
+		if (featureManager.isEnabled(Feature.MILESTONE)){
+			addMilestoneFilter(model);
+			}
 		Query mainQuery = null;
 
 		Set<String> fieldKeys = model.getFields().keySet();

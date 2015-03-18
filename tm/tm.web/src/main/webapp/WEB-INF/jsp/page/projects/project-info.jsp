@@ -154,7 +154,9 @@
 				<li><a href="#main-informations"><f:message key="tabs.label.mainpanel"/></a></li>
 				<li><a href="${customFieldManagerURL}"><f:message key="tabs.label.cufbinding"/></a></li>
 				<li><a href="${infoListManagerURL}"><f:message key="tabs.label.infoList"/></a></li>
+			   <c:if test="${milestoneFeatureEnabled }">
 			    <li><a href="${milestoneManagerURL}"><f:message key="tabs.label.milestone"/></a></li>
+				</c:if>
 				<li><a href="${wizardsManagerURL}"><f:message key="tabs.label.wizards"/></a></li>
 			
 			</ul>

@@ -70,6 +70,8 @@ import org.squashtest.tm.service.campaign.CampaignTestPlanManagerService;
 import org.squashtest.tm.service.campaign.IterationModificationService;
 import org.squashtest.tm.service.campaign.IterationTestPlanManagerService;
 import org.squashtest.tm.service.campaign.TestSuiteTestPlanManagerService;
+import org.squashtest.tm.service.feature.FeatureManager;
+import org.squashtest.tm.service.feature.FeatureManager.Feature;
 import org.squashtest.tm.service.milestone.MilestoneFinderService;
 import org.squashtest.tm.service.project.ProjectFinder;
 import org.squashtest.tm.service.requirement.RequirementVersionAdvancedSearchService;
@@ -137,6 +139,9 @@ public class AdvancedSearchController {
 	@Inject
 	private MilestoneFinderService milestoneFinder;
 
+	@Inject
+	private FeatureManager featureManager;
+	
 	private Map<String, FormModelBuilder> formModelBuilder = new HashMap<String, AdvancedSearchController.FormModelBuilder>();
 
 	{
@@ -344,7 +349,7 @@ public class AdvancedSearchController {
 
 		AdvancedSearchModel searchModel = new ObjectMapper().readValue(model, AdvancedSearchModel.class);
 
-		if (milestoneIds.size() == 1) {
+		if (milestoneIds.size() == 1 && featureManager.isEnabled(Feature.MILESTONE) ) {
 			addMilestoneToSearchModel(searchModel, milestoneIds.get(0));
 		}
 
@@ -511,7 +516,7 @@ public class AdvancedSearchController {
 		model.addPanel(requirementVersionSearchInterfaceDescription.createRequirementAttributePanel(locale));
 
 		// Milestones
-		if (milestoneIds.size() != 1) {
+		if (milestoneIds.size() != 1 && featureManager.isEnabled(Feature.MILESTONE)) {
 			model.addPanel(requirementVersionSearchInterfaceDescription.createMilestonePanel(locale));
 		}
 		// Version
@@ -548,7 +553,7 @@ public class AdvancedSearchController {
 		model.addPanel(testcaseVersionSearchInterfaceDescription.createAttributePanel(locale));
 
 		// Milestones
-		if (milestoneIds.size() != 1) {
+		if (milestoneIds.size() != 1 && featureManager.isEnabled(Feature.MILESTONE)) {
 			model.addPanel(testcaseVersionSearchInterfaceDescription.createMilestonePanel(locale));
 		}
 

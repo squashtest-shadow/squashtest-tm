@@ -92,7 +92,6 @@
       </div>
     </div>
     <div id="sub-page" class="sub-page" >
-			
 			<div id="sub-page-header" class="sub-page-header">
 			
 				<div id="sub-page-title" class="sub-page-title">
@@ -145,7 +144,7 @@
 							id="modify-search-result-button"
 							class="button ui-button ui-widget ui-state-default ui-corner-all"
 							role="button" aria-disabled="false" /> 
-						   <input type="button" th:if="!${associateResult}" th:value="#{label.ModifyMilestone}" id="modify-search-result-milestone-button"
+						   <input type="button" th:if="!${associateResult} and ${application.milestoneFeatureEnabled} and (${sec.hasRole('ROLE_TM_PROJECT_MANAGER')} or ${sec.hasRole('ROLE_ADMIN')})" th:value="#{label.ModifyMilestone}" id="modify-search-result-milestone-button"
               class="button ui-button ui-widget ui-state-default ui-corner-all" role="button" aria-disabled="false" />
 						
 						
@@ -161,7 +160,7 @@
 				<div id="searchModel" class="not-displayed" th:text="${searchModel}"></div>
 				<div th:if="${associateResult}" id="associationType" class="not-displayed" th:text="${associateResultWithType}"></div>
 				<div th:if="${associateResult}" id="associationId" class="not-displayed" th:text="${associateId}"></div>
-				
+		
 				<div id="search-results">
 					<div id="search-results-panel" class="table-tab-wrap">
 						<table id="requirement-search-result-table"
@@ -184,7 +183,7 @@
 									
 									<th th:attr="data-def='map=requirement-status'"
 										th:text="#{label.Status}">requirement status</th>
-									<th th:attr="data-def='map=requirement-milestone-nb'"
+									<th th:if="${application.milestoneFeatureEnabled}" th:attr="data-def='map=requirement-milestone-nb'"
 										th:text="#{label.milestoneNb}">milestone nb</th>				
 									<th th:attr="data-def='map=requirement-version'"
 										th:text="#{label.version}">requirement version</th>										
