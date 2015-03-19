@@ -28,6 +28,8 @@ import java.util.Collections;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.SessionFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.squashtest.tm.core.dynamicmanager.annotation.QueryParam;
 import org.squashtest.tm.core.foundation.collection.Paging;
 
@@ -86,6 +88,7 @@ import org.squashtest.tm.core.foundation.collection.Paging;
  * @param <ENTITY>
  */
 public class ArbitraryQueryHandler<ENTITY> implements DynamicComponentInvocationHandler {
+	private static final Logger LOGGER = LoggerFactory.getLogger(ArbitraryQueryHandler.class);
 
 	private final Class<ENTITY> entityType;
 	private final SessionFactory sessionFactory;
@@ -136,6 +139,7 @@ public class ArbitraryQueryHandler<ENTITY> implements DynamicComponentInvocation
 			Query q = findQuery(method);
 			return (q != null);
 		} catch (HibernateException ex) {
+			LOGGER.debug("Could not find a named query matching method name " + method.getName(), ex);
 			return false;
 		}
 	}
@@ -205,7 +209,7 @@ public class ArbitraryQueryHandler<ENTITY> implements DynamicComponentInvocation
 	private Object executeQuery(Method method, Query query) {
 
 		Object result;
-		
+
 		Class<?> returnType = method.getReturnType();
 
 		if (isVoid(returnType)) {
@@ -216,7 +220,7 @@ public class ArbitraryQueryHandler<ENTITY> implements DynamicComponentInvocation
 		} else {
 			result = query.uniqueResult();
 		}
-		
+
 		return result;
 
 	}
@@ -224,7 +228,7 @@ public class ArbitraryQueryHandler<ENTITY> implements DynamicComponentInvocation
 	private Object abortQuery(Method method) {
 
 		Object result;
-		
+
 		Class<?> returnType = method.getReturnType();
 
 		if (isCollectionType(returnType)) {
@@ -234,7 +238,7 @@ public class ArbitraryQueryHandler<ENTITY> implements DynamicComponentInvocation
 		} else {
 			result = null;
 		}
-		
+
 		return result;
 	}
 

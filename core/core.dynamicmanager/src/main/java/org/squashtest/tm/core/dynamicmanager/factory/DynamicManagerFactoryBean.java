@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.hibernate.SessionFactory;
+import org.squashtest.tm.core.dynamicmanager.internal.handler.ArbitraryQueryHandler;
 import org.squashtest.tm.core.dynamicmanager.internal.handler.DynamicComponentInvocationHandler;
 import org.squashtest.tm.core.dynamicmanager.internal.handler.EntityFinderNamedQueryHandler;
 import org.squashtest.tm.core.dynamicmanager.internal.handler.EntityModifierHandler;
@@ -46,7 +47,7 @@ import org.squashtest.tm.core.dynamicmanager.internal.handler.PersistEntityHandl
  * <code>newSomething</code> using the entity's public <code>setSomething</code> method</dd>
  * </dl>
  * 
- * One can override or add custom methods to a dynamic manager. The dynamic manager needs to be defined this way : 
+ * One can override or add custom methods to a dynamic manager. The dynamic manager needs to be defined this way :
  * <code>
  * <p>
  * public interface MyManager extends MyCustomManager {<br/>
@@ -71,9 +72,9 @@ import org.squashtest.tm.core.dynamicmanager.internal.handler.PersistEntityHandl
  * <strong>Transaction demarcation and security constraints</strong>
  * 
  * When needed, transaction demarcation has to be declared in the dynamic manager interface using @Transactional annotations.
- * Security constraints such as @PostAuthorize also have to be declared in the interface. 
- * When using method parameters in security constraints, they must follow the "positional" naming convention : #arg0, #arg1, #arg2... 
- * If one uses the actual parameter name (e.g. #id), Spring will not be able to resolve it.    
+ * Security constraints such as @PostAuthorize also have to be declared in the interface.
+ * When using method parameters in security constraints, they must follow the "positional" naming convention : #arg0, #arg1, #arg2...
+ * If one uses the actual parameter name (e.g. #id), Spring will not be able to resolve it.
  * 
  * @author Gregory Fouquet
  * 
@@ -83,10 +84,7 @@ import org.squashtest.tm.core.dynamicmanager.internal.handler.PersistEntityHandl
  *            type of the entity which will be modified by the manager.
  */
 public class DynamicManagerFactoryBean<MANAGER, ENTITY> extends AbstractDynamicComponentFactoryBean<MANAGER> {
-	/**
-	 * 
-	 */
-	private static final int HANDLERS_COUNT = 6;
+	private static final int HANDLERS_COUNT = 7;
 	/**
 	 * Session factory used by dynamic method handler. Should be initialized.
 	 */
@@ -105,14 +103,15 @@ public class DynamicManagerFactoryBean<MANAGER, ENTITY> extends AbstractDynamicC
 
 	protected List<DynamicComponentInvocationHandler> createInvocationHandlers() {
 		List<DynamicComponentInvocationHandler> handlers =  new ArrayList<DynamicComponentInvocationHandler>(HANDLERS_COUNT);
-		
+
 		handlers.add(new PersistEntityHandler<ENTITY>(entityType, sessionFactory));
 		handlers.add(new EntityModifierHandler<ENTITY>(sessionFactory, entityType));
 		handlers.add(new FindAllByIdsHandler<ENTITY>(entityType, sessionFactory));
 		handlers.add(new FindByIdHandler(sessionFactory));
 		handlers.add(new EntityFinderNamedQueryHandler<ENTITY>(entityType, sessionFactory));
 		handlers.add(new ListOfEntitiesFinderNamedQueryHandler<ENTITY>(entityType, sessionFactory));
-		
+		handlers.add(new ArbitraryQueryHandler<ENTITY>(entityType, sessionFactory));
+
 		return handlers;
 	}
 

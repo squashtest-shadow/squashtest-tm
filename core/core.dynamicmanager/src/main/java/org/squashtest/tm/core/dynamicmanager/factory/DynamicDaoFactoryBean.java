@@ -47,7 +47,7 @@ import org.squashtest.tm.core.dynamicmanager.internal.handler.PersistEntityHandl
  * <dd>Will fetch the entity of id <code>entityId</code></dd>
  * </dl>
  * 
- * One can override or add custom methods to a dynamic manager. The dynamic manager needs to be defined this way : 
+ * One can override or add custom methods to a dynamic manager. The dynamic manager needs to be defined this way :
  * <code>
  * <p>
  * public interface MyDao extends MyCustomDao {<br/>
@@ -79,13 +79,10 @@ import org.squashtest.tm.core.dynamicmanager.internal.handler.PersistEntityHandl
  *            type of the entity which will be manipulated by the dynamic dao.
  */
 public class DynamicDaoFactoryBean<DAO, ENTITY> extends AbstractDynamicComponentFactoryBean<DAO> {
-	/**
-	 * 
-	 */
 	private static final int HANDLERS_COUNT = 9;
 	private SessionFactory sessionFactory;
 	private Class<ENTITY> entityType;
-	
+
 	/**
 	 * @param entityType the entityType to set
 	 */
@@ -108,7 +105,7 @@ public class DynamicDaoFactoryBean<DAO, ENTITY> extends AbstractDynamicComponent
 		handlers.add(new EntityFinderNamedQueryHandler<ENTITY>(entityType, sessionFactory));
 		handlers.add(new CountNamedQueryHandler<ENTITY>(entityType, sessionFactory));
 		handlers.add(new ArbitraryQueryHandler<ENTITY>(entityType, sessionFactory));
-		
+
 		return handlers;
 	}
 
@@ -119,5 +116,5 @@ public class DynamicDaoFactoryBean<DAO, ENTITY> extends AbstractDynamicComponent
 		this.sessionFactory = sessionFactory;
 	}
 
-	
+
 }
