@@ -211,9 +211,9 @@ LibraryNavigationController<RequirementLibrary, RequirementFolder, RequirementLi
 
 	@RequestMapping(value = "/requirements/{requirementId}/content", method = RequestMethod.GET)
 	public @ResponseBody
-	List<JsTreeNode> getChildrenRequirementsTreeModel(@PathVariable(RequestParams.REQUIREMENT_ID) long requirementId) {
+	List<JsTreeNode> getChildrenRequirementsTreeModel(@PathVariable(RequestParams.REQUIREMENT_ID) long requirementId, @CookieValue(value = "milestones", required = false, defaultValue = "") List<Long> milestoneIds) {
 		List<Requirement> requirements = requirementLibraryNavigationService.findChildrenRequirements(requirementId);
-		return createChildrenRequirementsModel(requirements);
+		return createChildrenRequirementsModel(requirements, milestoneIds);
 	}
 
 	@Override
@@ -288,9 +288,14 @@ LibraryNavigationController<RequirementLibrary, RequirementFolder, RequirementLi
 	 */
 
 	@SuppressWarnings("unchecked")
-	private List<JsTreeNode> createChildrenRequirementsModel(List<? extends RequirementLibraryNode> requirements) {
+	private List<JsTreeNode> createChildrenRequirementsModel(List<? extends RequirementLibraryNode> requirements, List<Long> milestoneIds) {
 
 		RequirementLibraryTreeNodeBuilder nodeBuilder = requirementLibraryTreeNodeBuilder.get();
+		
+		if (!milestoneIds.isEmpty()) {
+			nodeBuilder.filterByMilestone(milestoneFinder.findById(milestoneIds.get(0)));
+		}
+		
 		JsTreeNodeListBuilder<RequirementLibraryNode> listBuilder = new JsTreeNodeListBuilder<RequirementLibraryNode>(
 				nodeBuilder);
 

@@ -468,4 +468,17 @@ public class Requirement extends RequirementLibraryNode<RequirementVersion> impl
 		return null;
 	}
 
+	public boolean meOrMyChildHaveAVersionBoundToMilestone(Milestone milestone){
+		
+		if (findByMilestone(milestone) != null){
+			return true;
+		}
+		
+		for (Requirement child : children){
+			if (child.meOrMyChildHaveAVersionBoundToMilestone(milestone)){
+				return true;
+			}
+		}
+		return false;	
+	}
 }

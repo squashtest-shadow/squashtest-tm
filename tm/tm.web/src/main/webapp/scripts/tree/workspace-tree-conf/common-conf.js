@@ -39,7 +39,7 @@ define(function(){
 			
 			if(treepref == 1) {
 			return { 
-				"plugins" : ["json_data", "ui", "types", "hotkeys", "dnd", "cookies", "themes", "squash", "workspace_tree" ],
+				"plugins" : ["json_data", "ui", "types", "hotkeys", "dnd", "cookies", "themes", "squash", "workspace_tree", 'conditionalselect' ],
 				
 				"json_data" : { 
 					"data" : settings.model, 
@@ -103,12 +103,18 @@ define(function(){
 				"squash" : {
 					rootUrl : baseURL,
 					opened : (!!settings.selectedNode) ? [settings.selectedNode] : []
+				},
+				conditionalselect : function(node) {
+					if($(node).attr("milestones-dont-allow-click")){
+						return false ;
+					}
+					return true;
 				}
 				
 			};
 		} else {
 			return { 
-				"plugins" : ["json_data", "ui", "types", "sort", "hotkeys", "dnd", "cookies", "themes", "squash", "workspace_tree" ],
+				"plugins" : ["json_data", "ui", "types", "sort", "hotkeys", "dnd", "cookies", "themes", "squash", "workspace_tree", 'conditionalselect' ],
 				
 				"json_data" : { 
 					"data" : settings.model, 
@@ -172,6 +178,12 @@ define(function(){
 				"squash" : {
 					rootUrl : baseURL,
 					opened : (!!settings.selectedNode) ? [settings.selectedNode] : []
+				},
+				conditionalselect : function(node) {
+					if($(node).attr("milestones-dont-allow-click")){
+						return false ;
+					}
+					return true;
 				}
 				
 			};

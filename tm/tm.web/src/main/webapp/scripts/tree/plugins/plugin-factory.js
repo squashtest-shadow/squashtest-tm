@@ -30,6 +30,7 @@ define(['jquery', './jstree-dnd-override','./squash-plugin', './workspace-tree-p
 				applyDndOverride(settings);
 				applySquashPlugin();
 				applyWorkspacePlugin();
+				applyConditionalSelectPlugin();
 				break;
 				
 			case 'tree-picker' : 

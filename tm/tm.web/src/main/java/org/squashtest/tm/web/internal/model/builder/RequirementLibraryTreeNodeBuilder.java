@@ -75,6 +75,13 @@ public class RequirementLibraryTreeNodeBuilder extends LibraryTreeNodeBuilder<Re
 			// supposed not to be null;
 			RequirementVersion version = (milestoneFilter == null) ? requirement.getCurrentVersion() : requirement.findByMilestone(milestoneFilter);
 
+			//version can be null if it not in the current milestone but on of his child is.
+			if (version == null){
+				version = requirement.getCurrentVersion();
+				builtNode.addAttr("milestones-dont-allow-click", "true");
+			}
+
+			
 			// the name, usually treated as a common attributes, must be overriden in this case
 			String name = version.getName();
 			builtNode.addAttr("name", name);
@@ -95,9 +102,9 @@ public class RequirementLibraryTreeNodeBuilder extends LibraryTreeNodeBuilder<Re
 				builtNode.addAttr("reference", version.getReference());
 			} else {
 				builtNode.setTitle(version.getName());
-			}
-		}
-
+			}	
+		} 		
+				
 	}
 
 	private int totalMilestones(Requirement requirement){
@@ -187,7 +194,7 @@ public class RequirementLibraryTreeNodeBuilder extends LibraryTreeNodeBuilder<Re
 
 		@Override
 		public void visit(Requirement requirement) {
-			isValid = requirement.findByMilestone(milestone) != null;
+			isValid = requirement.meOrMyChildHaveAVersionBoundToMilestone(milestone);
 		}
 
 	}
