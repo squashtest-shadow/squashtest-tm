@@ -105,8 +105,9 @@ class MilestoneManagerServiceIT extends DbunitServiceSpecification {
 		given :
 		def badLabel = "Milestone |"
 		Milestone milestone = new Milestone(label:badLabel)
-		when :
+		when :	
 		manager.addMilestone(milestone)
+		def milestoneAdded = manager.findByName("Milestone |");
 		then :
 		thrown(org.hibernate.exception.ConstraintViolationException)
 
