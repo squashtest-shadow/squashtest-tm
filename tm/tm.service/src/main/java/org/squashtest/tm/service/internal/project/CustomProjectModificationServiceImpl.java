@@ -118,11 +118,27 @@ public class CustomProjectModificationServiceImpl implements CustomProjectModifi
 	}
 
 	private void copyMilestone(Project newProject, ProjectTemplate projectTemplate) {
-		newProject.bindMilestones(projectTemplate.getMilestones());	
 		
-		for (Milestone milestone: projectTemplate.getMilestones()){
+		List<Milestone> milestones = getOnlyBindableMilestones(projectTemplate.getMilestones()); 
+			
+		newProject.bindMilestones(milestones);	
+		
+		for (Milestone milestone: milestones){
 			milestone.addProjectToPerimeter(newProject);
 		}
+	}
+
+	
+	
+	
+	private List<Milestone> getOnlyBindableMilestones(List<Milestone> milestones) {
+		List<Milestone> bindableMilestones = new ArrayList<Milestone>();
+		for (Milestone m : milestones){
+			if (m.getStatus().isBindableToProject()){
+			bindableMilestones.add(m);
+			}
+		}
+		return bindableMilestones;
 	}
 
 	private void copyTestAutomationSettings(Project newProject, ProjectTemplate projectTemplate) {

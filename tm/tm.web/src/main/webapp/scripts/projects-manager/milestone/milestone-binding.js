@@ -319,13 +319,13 @@ define([ 'module', "jquery", "squash.basicwidgets", "workspace.routing", "squash
 
 				//created, bind to project and bind to all object in that project
 				createAndBindMilestoneDialog.on('formdialogbind', function(){
-				createMilestone(bindMilestoneToProjectAndAllObject);
+				createMilestone(bindMilestoneToProjectAndAllObject, "IN_PROGRESS");
   
 			   });
 			
 			   //create and bind to project
 			createAndBindMilestoneDialog.on('formdialogconfirm', function() {	
-				createMilestone(bindMilestoneToProject);
+				createMilestone(bindMilestoneToProject, "PLANNED");
 			});
 			
 			var bindMilestoneToProject = function bindMilestoneToProject(milestoneId){
@@ -355,11 +355,11 @@ define([ 'module', "jquery", "squash.basicwidgets", "workspace.routing", "squash
 				});	
 			};
 			
-			function createMilestone(callback){
+			function createMilestone(callback, milestone_status){
 				var urlCreate = routing.buildURL('administration.milestones');
 				var params = {
 					label: $( '#add-milestone-label' ).val(),
-					status: $( '#add-milestone-status' ).val(),
+					status: milestone_status,
 					endDate: getPostDate($( '#add-milestone-end-date').text()),
 					description: $( '#add-milestone-description' ).val()
 				};

@@ -211,13 +211,7 @@
             <td><label> <span th:text="#{label.EndDate}"/></label></td>    
             <td><span id="add-milestone-end-date"></span></td>
          </tr>  
-                <td><label for="add-milestone-status"><span th:text="#{label.Status}" /></label></td>
-            <td>
-		<select id="add-milestone-status" class="combobox">           
-            <option th:each="status : ${milestoneStatus}" th:value = "${status.key}" > <span th:text="${status.value}"/></option>
-		
-            </select>
-        </td> 
+            
         
           <tr>
             <td>
