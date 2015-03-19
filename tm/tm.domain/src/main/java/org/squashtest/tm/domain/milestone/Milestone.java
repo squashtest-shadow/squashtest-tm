@@ -329,13 +329,31 @@ public class Milestone  {
 
 	public boolean isBoundToATemplate() {
 
-		// XXX IMHO this may not work because of hibernate proxies
-		for (GenericProject project : projects) {
-			if (project instanceof ProjectTemplate) {
+		final boolean[] boundToTemplate = { false };
+		final Iterator<GenericProject> iter = projects.iterator();
+		while (iter.hasNext()) {
+			GenericProject proj = iter.next();
+			
+			proj.accept(new ProjectVisitor() {
+
+			@Override
+			public void visit(ProjectTemplate projectTemplate) {
+				boundToTemplate[0] = true;
+			}
+
+			@Override
+			public void visit(Project project) {
+				//do nothing
+			}
+			});
+			
+			if (boundToTemplate[0]){
 				return true;
 			}
 		}
+		
 		return false;
+		
 	}
 
 	public void removeTemplates() {

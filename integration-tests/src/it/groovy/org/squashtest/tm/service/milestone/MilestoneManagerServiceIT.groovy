@@ -34,6 +34,8 @@ import org.unitils.dbunit.annotation.DataSet
 
 
 
+
+import spock.lang.Unroll;
 import spock.unitils.UnitilsSupport
 
 
@@ -52,7 +54,7 @@ class MilestoneManagerServiceIT extends DbunitServiceSpecification {
 		def result = manager.findAll()
 		then :
 		result.size == 4
-		result.collect{it.id} as Set == [1, 2, 3, 4] as Set
+		result.collect{it.id} as Set == [-1, -2,-3, -4] as Set
 		result.collect{it.label} as Set == ["My milestone", "My milestone 2", "My milestone 3", "My milestone 4"] as Set
 		result.collect{it.status} as Set == [MilestoneStatus.PLANNED,MilestoneStatus.PLANNED,MilestoneStatus.IN_PROGRESS,MilestoneStatus.LOCKED] as Set
 	}
@@ -62,8 +64,8 @@ class MilestoneManagerServiceIT extends DbunitServiceSpecification {
 
 		given :
 		when :
-		manager.changeStatus(1L, MilestoneStatus.IN_PROGRESS)
-		def milestone = manager.findById(1L);
+		manager.changeStatus(-1L, MilestoneStatus.IN_PROGRESS)
+		def milestone = manager.findById(-1L);
 		then :
 		milestone.status == MilestoneStatus.IN_PROGRESS
 
@@ -73,13 +75,13 @@ class MilestoneManagerServiceIT extends DbunitServiceSpecification {
 	def "should delete milestone"(){
 
 		given :
-		def ids = [1L, 4L]
+		def ids = [-1L, -4L]
 		when :
 		manager.removeMilestones(ids)
 		def result = manager.findAll()
 		then :
 		result.size == 2
-		result.collect{it.id} as Set == [2, 3] as Set
+		result.collect{it.id} as Set == [-2, -3] as Set
 		result.collect{it.label} as Set == ["My milestone 2", "My milestone 3"]  as Set
 		result.collect{it.status}  as Set == [MilestoneStatus.PLANNED,MilestoneStatus.IN_PROGRESS]  as Set
 
@@ -97,5 +99,35 @@ class MilestoneManagerServiceIT extends DbunitServiceSpecification {
 
 	}
 
+	
+	@DataSet("/org/squashtest/tm/service/milestone/MilestoneManagerServiceIT.xml")
+	def "label should not contain forbiden characters"(){
+		given :
+		def badLabel = "Milestone |"
+		Milestone milestone = new Milestone(label:badLabel)
+		when :
+		manager.addMilestone(milestone)
+		then :
+		thrown(org.hibernate.exception.ConstraintViolationException)
+
+	}
+	
+	@Unroll("for project : #id is bound to template : #boundToTemplate")
+	@DataSet("/org/squashtest/tm/service/milestone/MilestoneManagerServiceIT.xml")
+	def "should know if the milestone is bound to a template"(){
+		given :
+
+		when :
+		def result = manager.isBoundToATemplate(id)
+		then :
+		result == boundToTemplate
+		where :
+		id || boundToTemplate
+		-1L || false
+		-2L || true
+		-3L || true
+		-4L || false
+
+	}
 	
 }
