@@ -178,27 +178,34 @@ RequirementNodeDeletionHandler {
 
 	/**
 	 * <p>
-	 * 	Because nowaway deleting requirements is highly toxic for brain cells here is a method that will help out with
+	 * 	Because nowaday deleting requirements is highly toxic for brain cells here is a method that will help out with
 	 * 	deciding if a node should :
 	 * </p>
 	 * 
-	 * <ul>
+	 * <ol>
 	 * 	<li>be deleted as a folder (which is simpler)</li>
-	 * 	<li>be deleted outright as a requirement with all its versions</li>
-	 * 	<li>rebind its subrequirements to its parent (usually the node is to be deleted afterward)</li>
+	 * 	<li>be deleted totally as a requirement (with all its versions). Note : a requirement that wont be deleted is named <strong>locked</strong></li>
+	 * 	<li>rebind its subrequirements to its parent (usually because it has to be deleted)</li>
 	 * 	<li>delete only a version which happen to belong to a given milestone</li>
 	 * 	<li>unbind only a version from a given milestone</li>
-	 * </ul>
+	 * </ol>
 	 * 
-	 * <p>Note that, in particular, the fate of the selected nodes depend on what the user specifically picked.
+	 * <p>
+	 * 	The generic name for those different situations is <strong>contextual-deletion</strong>.
+	 * 	Nodes that fall under one of those situations are thus labelled as
+	 *  <strong>contextually-deleted</strong>.
+	 * </p>
+	 * 
+	 * <p>Another concern now : the fate of the selected nodes depend on what the user specifically picked.
 	 * For each node picked by the user :
 	 * 	<ul>
-	 * 		<p><strong>rule D1</strong> : if it is a folder : proceed as usual (delete the whole hierarchy) </p>
-	 * 		<p><strong>rule D2</strong> : if it is a requirement : delete it and bind its children to its parent, then delete that requirement alone</p>
+	 * 		<p><strong>rule D1</strong> : if it is a folder : <strong>contextual-delete</strong> the whole subtree </p>
+	 * 		<p><strong>rule D2</strong> : if it is a requirement : <strong>contextual-delete</strong> that requirement alone</p>
 	 * </ul>
 	 * </p>
 	 * 
-	 * <p>Then, we can safely proceed with peace in mind knowing which node requires which treatment</p>
+	 * <p>Then, we can safely proceed with peace in mind knowing which node requires which treatment.</p>
+	 * 
 	 * 
 	 * (non-Javadoc)
 	 * 
@@ -213,46 +220,63 @@ RequirementNodeDeletionHandler {
 		List<Long> requirementsWithOneUnbindableVersion = null;
 
 		List<Long>[] candidateIds = deletionDao.separateFolderFromRequirementIds(nodeIds);
+		List<Long> candidateFolders = candidateIds[0];				// root nodes for rule D1 resolution
+		List<Long> candidateRequirementIds = candidateIds[1];		// root nodes for rule D2 resolution
 
 		// --------- find nodes deletable per rule D1 -------------
-		List<Long> candidateFolders = candidateIds[0];
 
-		LockedFolderInferenceTree tree = createLockedFileInferenceTree(candidateFolders, milestoneId);
-		List<Long> deletableFoldersAndChildrenIds = tree.collectDeletableIds();
+		LockedFolderInferenceTree folderTree = createLockedFileInferenceTree(candidateFolders, milestoneId);
+		List<Long> treeNodeIds = folderTree.collectKeys();			// these are the whole node hierarchy
 
-		deletableFolderIds = deletionDao.separateFolderFromRequirementIds(deletableFoldersAndChildrenIds)[0];
-		deletableRequirementIds = deletionDao.separateFolderFromRequirementIds(deletableFoldersAndChildrenIds)[1];
+		// detect deletable folders. The tree can tell us that.
+		List<Long> deletableNodeIds = folderTree.collectDeletableIds();
+		deletableFolderIds = deletionDao.separateFolderFromRequirementIds(deletableNodeIds)[0];
 
+		/*
+		 * detect the locked requirements. Now, in this case the tree is not applicable
+		 * because of subrequirements. Consider a requirement r1 and its subrequirement r2.
+		 * The tree considers that if r2 is locked (non deletable) then r1 is locked too.
+		 * However according to our spec this is not the case : if r2 is deletable, r1 can
+		 * still be deleted, and it entails that r2 will be attached to the parent of r1.
+		 * 
+		 * So we need just recompute the whole thing : find which requirements are actually
+		 * deletable on an individual basis.
+		 */
 
-		// ------- find nodes that needs children-rewiring then deletion per rule D2 ---------
-		List<Long> candidateRequirementIds = candidateIds[1];
+		List<Long> rule1DeletableRequirementIds = deletionDao.separateFolderFromRequirementIds(treeNodeIds)[1];
+		List<Long> lockedTreeRequirementIds = detectLockedNodes(rule1DeletableRequirementIds, milestoneId);
+		rule1DeletableRequirementIds.removeAll(lockedTreeRequirementIds);
+
+		deletableRequirementIds = new ArrayList<>(rule1DeletableRequirementIds);
+		requirementWithRewirableChildren = new ArrayList<>(rule1DeletableRequirementIds);
+
+		// ------- find deletable nodes per rule D2 ---------
+
 		List<Long> lockedCandidateIds = detectLockedNodes(candidateRequirementIds, milestoneId);
 
-		requirementWithRewirableChildren = new ArrayList<>(candidateRequirementIds);
-		requirementWithRewirableChildren.removeAll(lockedCandidateIds);
+		List<Long> rule2DeletableRequirementIds = new ArrayList<>(candidateRequirementIds);
+		rule2DeletableRequirementIds.removeAll(lockedCandidateIds);
 
-		// the rewirable nodes are also deletable nodes
-		deletableRequirementIds.addAll(requirementWithRewirableChildren);
+		deletableRequirementIds.addAll(rule2DeletableRequirementIds);
+		requirementWithRewirableChildren.addAll(rule2DeletableRequirementIds);
 
+		// ------- extra operations for milestone mode -------
 
-
-		/* ----------
+		/*
 		 * find the nodes which need special actions on
 		 * their versions in milestone mode.
 		 * 
 		 * Those, if applied, are performed on the requirements
 		 * encompassed by the selection minus those that
 		 * must be deleted
-		 * 
-		 ------------- */
+		 */
 		if (milestoneId != null){
-			List<Long> allRequirementsEncompassed = deletionDao.separateFolderFromRequirementIds(tree.collectKeys())[1];
+			List<Long> allRequirementsEncompassed = deletionDao.separateFolderFromRequirementIds(folderTree.collectKeys())[1];
 			allRequirementsEncompassed.removeAll(deletableRequirementIds);
 			allRequirementsEncompassed.addAll(lockedCandidateIds);
 
 			requirementsWithOneDeletableVersion = deletionDao.filterRequirementsHavingDeletableVersions(allRequirementsEncompassed, milestoneId);
 			requirementsWithOneUnbindableVersion = deletionDao.filterRequirementsHavingUnbindableVersions(allRequirementsEncompassed, milestoneId);
-
 		}
 
 		// -------- now fill our object ---------
