@@ -67,12 +67,14 @@ public final class SquashUnsafeHtmlAttrProcessor extends AbstractChildrenModifie
 
 		final Object fragment = StandardExpressionProcessor.processExpression(arguments, attributeValue);
 
+		
 		try {
 			final Configuration configuration = arguments.getConfiguration();
 			final ITemplateModeHandler templateModeHandler = configuration.getTemplateModeHandler("LEGACYHTML5");
 
+			String string = fragment == null ? "" : fragment.toString();
 			List<Node> parsedFragment = templateModeHandler.getTemplateParser().parseFragment(configuration,
-					fragment.toString());
+					string);
 
 			// we cannot lookup the template repository because it is backed by the main template parser. yet the
 			// fragment should change quite frequently.
