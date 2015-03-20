@@ -40,8 +40,16 @@ public interface CampaignStatisticsService {
 	 * @return
 	 */
 	List<IterationTestInventoryStatistics> gatherIterationTestInventoryStatistics(long campaignId);
-	
-	
+
+	/**
+	 * Given a milestone id (and so campaign ids), gathers and returns how many tests and at which status are planned in
+	 * this campaign. Only tests part of an iteration count. Those statistics are grouped and sorted by Iteration.
+	 * 
+	 * @param milestoneId
+	 * @return
+	 */
+	List<IterationTestInventoryStatistics> gatherIterationTestInventoryStatisticsByMilestone(long milestoneId);
+
 	/**
 	 * <p>Given a campaignId, gathers and return the theoterical and actual cumulative test count by iterations.
 	 * The theoterical cumulative test count by iterations means how many tests should have been executed per day on 
@@ -57,7 +65,6 @@ public interface CampaignStatisticsService {
 	 */
 	CampaignProgressionStatistics gatherCampaignProgressionStatistics(long campaignId);
 	
-	
 	/**
 	 * Given a campaign id, gathers all of the above in one package. 
 	 * 
@@ -65,6 +72,14 @@ public interface CampaignStatisticsService {
 	 * @return
 	 */
 	CampaignStatisticsBundle gatherCampaignStatisticsBundle(long campaignId);
+
+	/**
+	 * Given a campaign id, gathers all of the above in one package for a milestone.
+	 * 
+	 * @param milestoneId
+	 * @return
+	 */
+	CampaignStatisticsBundle gatherCampaignStatisticsBundleByMilestone(long milestoneId);
 
 	/**
 	 * Given a campaign id, gathers and returns the number of test cases grouped by execution status.
@@ -75,6 +90,15 @@ public interface CampaignStatisticsService {
 	CampaignTestCaseStatusStatistics gatherCampaignTestCaseStatusStatistics(long campaignId);
 
 	/**
+	 * Given a milestone id (and so find some campaign id), gathers and returns the number of test cases grouped by
+	 * execution status.
+	 * 
+	 * @param milestoneId
+	 * @return
+	 */
+	CampaignTestCaseStatusStatistics gatherCampaignTestCaseStatusStatisticsByMilestone(long milestoneId);
+
+	/**
 	 * Given a campaign id, gathers and returns the number of non-executed test cases grouped by weight.
 	 * 
 	 * @param campaignId
@@ -83,10 +107,29 @@ public interface CampaignStatisticsService {
 	CampaignNonExecutedTestCaseImportanceStatistics gatherCampaignNonExecutedTestCaseImportanceStatistics(long campaignId);
 
 	/**
+	 * Given a campaign id, gathers and returns the number of non-executed test cases grouped by weight.
+	 * 
+	 * @param campaignId
+	 * @return
+	 */
+	CampaignNonExecutedTestCaseImportanceStatistics gatherCampaignNonExecutedTestCaseImportanceStatisticsByMilestone(
+			long milestoneId);
+
+	/**
 	 * Given a campaign id, gathers and returns the number of passed and failed test cases grouped by weight.
 	 * 
 	 * @param campaignId
 	 * @return
 	 */
 	CampaignTestCaseSuccessRateStatistics gatherCampaignTestCaseSuccessRateStatistics(long campaignId);
+
+	/**
+	 * Given a milestoneId (and so campaign id), gathers and returns the number of passed and failed test cases grouped
+	 * by weight.
+	 * 
+	 * @param campaignId
+	 * @return
+	 */
+	CampaignTestCaseSuccessRateStatistics gatherCampaignTestCaseSuccessRateStatisticsByMilestone(long milestoneId);
+
 }

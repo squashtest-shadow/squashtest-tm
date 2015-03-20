@@ -379,4 +379,13 @@ public class HibernateMilestoneDao extends HibernateEntityDao<Milestone> impleme
 	public Milestone findByName(String name) {
 		return findMilestoneByLabel(name);
 	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public Collection<Campaign> findCampaignsForMilestone(long milestoneId) {
+		Query q = currentSession().getNamedQuery("milestone.findCampaignByMilestones");
+		q.setParameter("milestoneId", milestoneId);
+		return q.list();
+	}
+
 }

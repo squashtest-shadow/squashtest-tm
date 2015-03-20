@@ -188,4 +188,9 @@ public class MilestoneMembershipManagerImpl implements MilestoneMembershipManage
 		return milestoneDao.findMilestonesForTestSuite(testSuiteId);
 	}
 
+	@Override
+	public Collection<Campaign> findCampaignsByMilestoneId(long milestoneId) {
+		return milestoneDao.findCampaignsForMilestone(milestoneId);
+	}
+
 }

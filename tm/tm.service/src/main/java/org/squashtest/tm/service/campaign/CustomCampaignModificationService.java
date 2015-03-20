@@ -24,6 +24,7 @@ import java.util.Collection;
 import java.util.List;
 
 import org.springframework.transaction.annotation.Transactional;
+import org.squashtest.tm.domain.campaign.Campaign;
 import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.campaign.TestPlanStatistics;
 import org.squashtest.tm.domain.milestone.Milestone;
@@ -33,6 +34,8 @@ import org.squashtest.tm.service.statistics.campaign.CampaignStatisticsBundle;
 public interface CustomCampaignModificationService {
 
 	void rename(long campaignId, String newName);
+
+	Collection<Campaign> findCampaignsByMilestoneId(long milestoneId);
 
 	List<Iteration> findIterationsByCampaignId(long campaignId);
 
@@ -45,7 +48,7 @@ public interface CustomCampaignModificationService {
 
 	CampaignStatisticsBundle gatherCampaignStatisticsBundle(long campaignId);
 
-
+	CampaignStatisticsBundle gatherCampaignStatisticsBundleByMilestone(long milestoneId);
 
 	/* ********************** milestones section ******************* */
 
@@ -63,4 +66,5 @@ public interface CustomCampaignModificationService {
 	Collection<Milestone> findAssociableMilestones(long campaignId);
 
 	Collection<Milestone> findAllMilestones(long campaignId);
+
 }

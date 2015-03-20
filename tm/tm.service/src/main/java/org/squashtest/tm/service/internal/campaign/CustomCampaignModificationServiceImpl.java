@@ -101,6 +101,11 @@ public class CustomCampaignModificationServiceImpl implements CustomCampaignModi
 		return statisticsService.gatherCampaignStatisticsBundle(campaignId);
 	}
 
+	@Override
+	public CampaignStatisticsBundle gatherCampaignStatisticsBundleByMilestone(long milestoneId) {
+		return statisticsService.gatherCampaignStatisticsBundleByMilestone(milestoneId);
+	}
+
 
 	/*
 	 * 
@@ -133,6 +138,10 @@ public class CustomCampaignModificationServiceImpl implements CustomCampaignModi
 		return milestoneService.findAssociableMilestonesToCampaign(campaignId);
 	}
 
+	@Override
+	public Collection<Campaign> findCampaignsByMilestoneId(long milestoneId) {
+		return milestoneService.findCampaignsByMilestoneId(milestoneId);
+	}
 
 
 }

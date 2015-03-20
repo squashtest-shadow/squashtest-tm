@@ -24,10 +24,8 @@ define([ "require", "./campaign-progression-view", "./test-inventory-table",
 				SuperMasterView) {
 
 			function initCharts() {
-				return [ new ProgressionPlot({
-					el : this.$("#dashboard-cumulative-progression"),
-					model : this.model
-				}),
+				
+				 var res = [
 
 				new ImportancePie({
 					el : this.$("#dashboard-nonexecuted-testcase-importance"),
@@ -48,6 +46,16 @@ define([ "require", "./campaign-progression-view", "./test-inventory-table",
 					el : this.$("#dashboard-test-inventory"),
 					model : this.model
 				}) ];
+				 
+				 if ( this.$("#dashboard-cumulative-progression").length > 0 ) {
+					 res.push(
+							 new ProgressionPlot({
+									el : this.$("#dashboard-cumulative-progression"),
+									model : this.model
+								}))
+				 }
+				 
+				 return res
 			}
 
 			function doInit(settings) {

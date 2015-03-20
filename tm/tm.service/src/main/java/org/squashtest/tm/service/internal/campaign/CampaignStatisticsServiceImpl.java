@@ -109,20 +109,37 @@ public class CampaignStatisticsServiceImpl implements CampaignStatisticsService{
 	@Override
 	@PreAuthorize(PERM_CAN_READ_CAMPAIGN + PERM_IS_ADMIN)
 	public List<IterationTestInventoryStatistics> gatherIterationTestInventoryStatistics(long campaignId) {
-
-		List<IterationTestInventoryStatistics> result = new LinkedList<IterationTestInventoryStatistics>();
-
 		//get the data
 		Query query = sessionFactory.getCurrentSession().getNamedQuery("CampaignStatistics.testinventory");
 		query.setParameter("id", campaignId);
 		List<Object[]> res = query.list();
 
+		List<IterationTestInventoryStatistics> result = gatherIterationTestInventirtStatusticsByRes(res);
+
+		return result;
+	}
+
+	@Override
+	@PreAuthorize(PERM_CAN_READ_CAMPAIGN + PERM_IS_ADMIN)
+	public List<IterationTestInventoryStatistics> gatherIterationTestInventoryStatisticsByMilestone(long milestoneId) {
+		// get the data
+		Query query = sessionFactory.getCurrentSession().getNamedQuery("CampaignStatistics.testinventorybymilestone");
+		query.setParameter("id", milestoneId);
+		List<Object[]> res = query.list();
+		List<IterationTestInventoryStatistics> result = gatherIterationTestInventirtStatusticsByRes(res);
+		return result;
+	}
+
+
+	private List<IterationTestInventoryStatistics> gatherIterationTestInventirtStatusticsByRes(List<Object[]> res) {
 		/*
 		 * Process. Beware that the logic is a bit awkward here. Indeed we first insert new
 		 * IterationTestInventoryStatistics in the result list, then we populate them.
 		 */
 		IterationTestInventoryStatistics newStatistics = new IterationTestInventoryStatistics();
 		Long currentId = null;
+
+		List<IterationTestInventoryStatistics> result = new LinkedList<IterationTestInventoryStatistics>();
 
 		for (Object[] tuple : res){
 			Long id = (Long)tuple[0];
@@ -145,7 +162,6 @@ public class CampaignStatisticsServiceImpl implements CampaignStatisticsService{
 
 
 		}
-
 		return result;
 	};
 
@@ -165,6 +181,29 @@ public class CampaignStatisticsServiceImpl implements CampaignStatisticsService{
 
 			ExecutionStatus status = (ExecutionStatus)tuple[0];
 			Long howmany = (Long)tuple[1];
+
+			result.addNumber(howmany.intValue(), status.getCanonicalStatus());
+		}
+
+		return result;
+	}
+
+	@Override
+	@PreAuthorize(PERM_CAN_READ_CAMPAIGN + PERM_IS_ADMIN)
+	public CampaignTestCaseStatusStatistics gatherCampaignTestCaseStatusStatisticsByMilestone(long milestoneId) {
+
+		CampaignTestCaseStatusStatistics result = new CampaignTestCaseStatusStatistics();
+
+		// get the data
+		Query query = sessionFactory.getCurrentSession().getNamedQuery(
+				"CampaignStatistics.globaltestinventorybymilestone");
+		query.setParameter("id", milestoneId);
+		List<Object[]> res = query.list();
+
+		for (Object[] tuple : res) {
+
+			ExecutionStatus status = (ExecutionStatus) tuple[0];
+			Long howmany = (Long) tuple[1];
 
 			result.addNumber(howmany.intValue(), status.getCanonicalStatus());
 		}
@@ -201,6 +240,43 @@ public class CampaignStatisticsServiceImpl implements CampaignStatisticsService{
 
 	@Override
 	@PreAuthorize(PERM_CAN_READ_CAMPAIGN + PERM_IS_ADMIN)
+	public CampaignNonExecutedTestCaseImportanceStatistics gatherCampaignNonExecutedTestCaseImportanceStatisticsByMilestone(
+			long milestoneId) {
+
+		CampaignNonExecutedTestCaseImportanceStatistics result = new CampaignNonExecutedTestCaseImportanceStatistics();
+
+		// get the data
+		Query query = sessionFactory.getCurrentSession().getNamedQuery(
+				"CampaignStatistics.nonexecutedTestcaseImportanceByMilestone");
+		query.setParameter("id", milestoneId);
+		List<Object[]> res = query.list();
+
+		for (Object[] tuple : res) {
+
+			TestCaseImportance importance = (TestCaseImportance) tuple[0];
+			Long howmany = (Long) tuple[1];
+
+			switch (importance) {
+			case HIGH:
+				result.setPercentageHigh(howmany.intValue());
+				break;
+			case LOW:
+				result.setPercentageLow(howmany.intValue());
+				break;
+			case MEDIUM:
+				result.setPercentageMedium(howmany.intValue());
+				break;
+			case VERY_HIGH:
+				result.setPercentageVeryHigh(howmany.intValue());
+				break;
+			}
+		}
+
+		return result;
+	}
+
+	@Override
+	@PreAuthorize(PERM_CAN_READ_CAMPAIGN + PERM_IS_ADMIN)
 	public CampaignTestCaseSuccessRateStatistics gatherCampaignTestCaseSuccessRateStatistics(long campaignId) {
 
 		CampaignTestCaseSuccessRateStatistics result = new CampaignTestCaseSuccessRateStatistics();
@@ -229,6 +305,43 @@ public class CampaignStatisticsServiceImpl implements CampaignStatisticsService{
 
 	@Override
 	@PreAuthorize(PERM_CAN_READ_CAMPAIGN + PERM_IS_ADMIN)
+	public CampaignTestCaseSuccessRateStatistics gatherCampaignTestCaseSuccessRateStatisticsByMilestone(long milestoneId) {
+
+		CampaignTestCaseSuccessRateStatistics result = new CampaignTestCaseSuccessRateStatistics();
+
+		// get the data
+		Query query = sessionFactory.getCurrentSession().getNamedQuery("CampaignStatistics.successRateByMilestone");
+		query.setParameter("id", milestoneId);
+		List<Object[]> res = query.list();
+
+		// TODO : factoriser
+		for (Object[] tuple : res) {
+
+			TestCaseImportance importance = (TestCaseImportance) tuple[0];
+			ExecutionStatus status = (ExecutionStatus) tuple[1];
+			Long howmany = (Long) tuple[2];
+
+			switch (importance) {
+			case HIGH:
+				result.addNbHigh(status, howmany.intValue());
+				break;
+			case LOW:
+				result.addNbLow(status, howmany.intValue());
+				break;
+			case MEDIUM:
+				result.addNbMedium(status, howmany.intValue());
+				break;
+			case VERY_HIGH:
+				result.addNbVeryHigh(status, howmany.intValue());
+				break;
+			}
+		}
+
+		return result;
+	}
+
+	@Override
+	@PreAuthorize(PERM_CAN_READ_CAMPAIGN + PERM_IS_ADMIN)
 	public CampaignStatisticsBundle gatherCampaignStatisticsBundle(long campaignId) {
 
 		CampaignStatisticsBundle bundle = new CampaignStatisticsBundle();
@@ -248,4 +361,26 @@ public class CampaignStatisticsServiceImpl implements CampaignStatisticsService{
 
 	}
 
+	@Override
+	public CampaignStatisticsBundle gatherCampaignStatisticsBundleByMilestone(long milestoneId) {
+
+		CampaignStatisticsBundle bundle = new CampaignStatisticsBundle();
+
+		List<IterationTestInventoryStatistics> inventory = gatherIterationTestInventoryStatisticsByMilestone(milestoneId);
+		// Create one non-null and not really existing progression that doesn't exist when there are milestones
+		CampaignProgressionStatistics progression = new CampaignProgressionStatistics();
+		CampaignTestCaseStatusStatistics testcaseStatuses = gatherCampaignTestCaseStatusStatisticsByMilestone(milestoneId);
+		CampaignNonExecutedTestCaseImportanceStatistics testcaseImportance = gatherCampaignNonExecutedTestCaseImportanceStatisticsByMilestone(milestoneId);
+		CampaignTestCaseSuccessRateStatistics testcaseSuccessRate = gatherCampaignTestCaseSuccessRateStatisticsByMilestone(milestoneId);
+
+		bundle.setIterationTestInventoryStatisticsList(inventory);
+		bundle.setCampaignProgressionStatistics(progression);
+		bundle.setCampaignTestCaseStatusStatistics(testcaseStatuses);
+		bundle.setCampaignNonExecutedTestCaseImportanceStatistics(testcaseImportance);
+		bundle.setCampaignTestCaseSuccessRateStatistics(testcaseSuccessRate);
+		return bundle;
+
+	}
+
+	
 }

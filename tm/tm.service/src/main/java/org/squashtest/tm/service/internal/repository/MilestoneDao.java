@@ -23,6 +23,7 @@ package org.squashtest.tm.service.internal.repository;
 import java.util.Collection;
 import java.util.List;
 
+import org.squashtest.tm.domain.campaign.Campaign;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.milestone.MilestoneHolder;
 
@@ -58,6 +59,8 @@ public interface MilestoneDao extends EntityDao<Milestone> {
 	Collection<Milestone> findMilestonesForIteration(long iterationId);
 
 	Collection<Milestone> findMilestonesForTestSuite(long suiteId);
+
+	Collection<Campaign> findCampaignsForMilestone(long milestoneId);
 
 	void synchronizeCampaigns(long source, long target, List<Long> projectIds);
 

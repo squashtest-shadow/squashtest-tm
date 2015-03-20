@@ -52,11 +52,15 @@ define([ "jquery" ], function($) {
 
 			// override trigger : it works just the same, but can log if asked to 
 			trigger : function(){
+				
+				// Comment this log, it makes me sad and bugs MF 150320
 				if (squashtm.workspace.eventBus.debug === true){
 					console.log("triggering event : ", arguments);
 					console.log("at : ");
 					console.trace();
 				}
+				
+				//
 				$.fn.trigger.apply (this, arguments);
 			},
 			
