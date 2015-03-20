@@ -108,18 +108,6 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 		return infoListItemService;
 	}
 
-	@Override
-	@Deprecated
-	public LogTrain createTestCase(TestCaseTarget target, TestCase testCase, Map<String, String> cufValues) {
-		throw new RuntimeException(new NoSuchMethodError("This method is in the process of being removed"));
-	}
-
-	@Override
-	@Deprecated
-	public LogTrain updateTestCase(TestCaseTarget target, TestCase testCase, Map<String, String> cufValues) {
-		throw new RuntimeException(new NoSuchMethodError("This method is in the process of being removed"));
-	}
-
 	private void checkPathForUpdate(TestCaseTarget target, String name, LogTrain logs) {
 		if (StringUtils.isBlank(name)) {
 			// no name means no rename means we're good -> bail out

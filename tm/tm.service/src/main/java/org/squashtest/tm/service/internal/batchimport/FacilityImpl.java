@@ -134,12 +134,6 @@ public class FacilityImpl implements Facility {
 	// ************************ public (and nice looking) code
 	// **************************************
 
-	@Override
-	@Deprecated
-	public LogTrain createTestCase(TestCaseTarget target, TestCase testCase, Map<String, String> cufValues) {
-		throw new RuntimeException(new NoSuchMethodError("This method is in the process of being removed"));
-	}
-
 	/**
 	 * Same as below
 	 *
@@ -187,12 +181,6 @@ public class FacilityImpl implements Facility {
 		instruction.getTestCase().setName(instruction.getTarget().getName());
 
 		return updateTCRoutine(train, instruction);
-	}
-
-	@Override
-	@Deprecated
-	public LogTrain updateTestCase(TestCaseTarget target, TestCase testCase, Map<String, String> cufValues) {
-		throw new RuntimeException(new NoSuchMethodError("This method is in the process of being removed"));
 	}
 
 	@Override

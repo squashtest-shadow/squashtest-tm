@@ -24,9 +24,10 @@ import org.squashtest.tm.service.batchimport.excel.ColumnMismatch;
 
 /**
  * Thrown when an import file's worksheet has a {@link ColumnMismatch}
- * 
+ *
  */
 public class ColumnMismatchException extends RuntimeException {
+	private static final long serialVersionUID = -6513655859400997571L;
 
 	private ColumnMismatch type ;
 	private TemplateColumn colType;

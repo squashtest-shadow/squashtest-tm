@@ -27,7 +27,6 @@ import java.util.Map;
 import org.squashtest.tm.domain.testcase.ActionTestStep;
 import org.squashtest.tm.domain.testcase.CallTestStep;
 import org.squashtest.tm.domain.testcase.Parameter;
-import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.service.importer.EntityType;
 
 /**
@@ -43,10 +42,6 @@ public interface Facility {
 					EntityType.TEST_STEP,
 					EntityType.DATASET_PARAM_VALUES);
 
-	@Deprecated
-	LogTrain createTestCase(TestCaseTarget target, TestCase testCase, Map<String, String> cufValues);
-	@Deprecated
-	LogTrain updateTestCase(TestCaseTarget target, TestCase testCaseData, Map<String, String> cufValues);
 	LogTrain deleteTestCase(TestCaseTarget target);
 
 

@@ -29,7 +29,6 @@ import org.springframework.stereotype.Component;
 import org.squashtest.tm.domain.testcase.ActionTestStep;
 import org.squashtest.tm.domain.testcase.CallTestStep;
 import org.squashtest.tm.domain.testcase.Parameter;
-import org.squashtest.tm.domain.testcase.TestCase;
 
 /**
  *
@@ -45,16 +44,6 @@ public class SimulationFacility implements Facility {
 	@Inject
 	private ValidationFacility validator;
 
-
-	@Override
-	public LogTrain createTestCase(TestCaseTarget target, TestCase testCase, Map<String, String> cufValues) {
-		throw new RuntimeException(new NoSuchMethodError("This method is in the process of being removed"));
-	}
-
-	@Override
-	public LogTrain updateTestCase(TestCaseTarget target, TestCase testCase, Map<String, String> cufValues) {
-		throw new RuntimeException(new NoSuchMethodError("This method is in the process of being removed"));
-	}
 
 	@Override
 	public LogTrain deleteTestCase(TestCaseTarget target) {
