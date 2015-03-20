@@ -73,7 +73,7 @@ public class MilestoneImportHelper {
 	private final MilestoneManagerService milestoneFinder;
 
 	@Inject
-	protected MilestoneImportHelper(MilestoneManagerService milestoneFinder) {
+	protected MilestoneImportHelper(MilestoneManagerService milestoneFinder) { // NOSONAR This should be used by Spring only
 		super();
 		this.milestoneFinder = milestoneFinder;
 	}
