@@ -451,7 +451,7 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 
 		AdvancedSearchSingleFieldModel searchByMilestone = (AdvancedSearchSingleFieldModel) fields.get("searchByMilestone");
 
-		if ("true".equals(searchByMilestone.getValue())) {
+		if (searchByMilestone != null && "true".equals(searchByMilestone.getValue())) {
 
 		for (Entry<String, AdvancedSearchFieldModel> entry : fields.entrySet()) {
 
