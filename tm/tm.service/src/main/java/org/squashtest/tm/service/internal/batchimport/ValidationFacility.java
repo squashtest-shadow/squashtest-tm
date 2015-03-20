@@ -44,6 +44,7 @@ import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.service.importer.ImportMode;
 import org.squashtest.tm.service.importer.ImportStatus;
 import org.squashtest.tm.service.importer.LogEntry;
+import org.squashtest.tm.service.importer.LogEntry.Builder;
 import org.squashtest.tm.service.importer.Target;
 import org.squashtest.tm.service.infolist.InfoListItemFinderService;
 import org.squashtest.tm.service.internal.batchimport.MilestoneImportHelper.Partition;
@@ -65,6 +66,78 @@ import org.squashtest.tm.service.user.UserAccountService;
 @Component
 @Scope("prototype")
 public class ValidationFacility implements Facility, ValidationFacilitySubservicesProvider {
+	/**
+	 * Strategy for validating milestones. Should be specialized in create and update
+	 * @author Gregory Fouquet
+	 *
+	 */
+	private abstract class MilestonesValidationStrategy {
+		public void validateMilestones(TestCaseInstruction instr, LogTrain logs) {
+			TestCaseTarget target = instr.getTarget();
+
+			if (!(milestonesEnabled || instr.getMilestones().isEmpty())) {
+				logs.addEntry(logEntry().forTarget(target)
+						.withMessage(Messages.ERROR_MILESTONE_FEATURE_DEACTIVATED).build());
+			}
+
+			if (milestonesEnabled) {
+				Partition existing = milestoneHelper.partitionExisting(instr.getMilestones());
+				Partition bindables = milestoneHelper.partitionBindable(existing.passing);
+				logs.addEntries(logUnknownMilestones(target, existing.rejected));
+				logs.addEntries(logUnbindableMilestones(target, bindables.rejected));
+			}
+		}
+
+		protected abstract LogEntry.Builder logEntry();
+
+		/**
+		 * @param rejected
+		 * @return
+		 */
+		protected List<LogEntry> logUnbindableMilestones(TestCaseTarget target, List<String> rejected) {
+			ArrayList<LogEntry> logs = new ArrayList<>(rejected.size());
+			for (String name : rejected) {
+				logs.add(logEntry().forTarget(target).withMessage(Messages.ERROR_WRONG_MILESTONE_STATUS, name)
+						.build());
+			}
+			return logs;
+		}
+
+		/**
+		 * @param rejected
+		 * @return
+		 */
+		protected List<LogEntry> logUnknownMilestones(TestCaseTarget target, List<String> rejected) {
+			ArrayList<LogEntry> logs = new ArrayList<>(rejected.size());
+			for (String name : rejected) {
+				logs.add(logEntry().forTarget(target).withMessage(Messages.ERROR_UNKNOWN_MILESTONE, name)
+						.build());
+			}
+			return logs;
+		}
+
+	}
+
+	private final class CreationStrategy extends MilestonesValidationStrategy {
+		/**
+		 * @see org.squashtest.tm.service.internal.batchimport.ValidationFacility.MilestonesValidationStrategy#logEntry()
+		 */
+		@Override
+		protected Builder logEntry() {
+			return LogEntry.failure();
+		}
+	}
+
+	private final class UpdateStrategy extends MilestonesValidationStrategy {
+		/**
+		 * @see org.squashtest.tm.service.internal.batchimport.ValidationFacility.MilestonesValidationStrategy#logEntry()
+		 */
+		@Override
+		protected Builder logEntry() {
+			return LogEntry.warning();
+		}
+
+	}
 
 	private static final String ROLE_ADMIN = "ROLE_ADMIN";
 	private static final String PERM_CREATE = "CREATE";
@@ -97,6 +170,8 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 
 	private EntityValidator entityValidator = new EntityValidator(this);
 	private CustomFieldValidator cufValidator = new CustomFieldValidator();
+	private CreationStrategy creationStrategy = new CreationStrategy();
+	private UpdateStrategy updateStrategy = new UpdateStrategy();
 
 	@Override
 	public Model getModel() {
@@ -617,48 +692,13 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 					.withMessage(Messages.ERROR_INCONSISTENT_PATH_AND_NAME, path, name == null ? "" : name).build());
 		}
 
-		if (!(milestonesEnabled || instr.getMilestones().isEmpty())) {
-			logs.addEntry(LogEntry.failure().forTarget(target)
-					.withMessage(Messages.ERROR_MILESTONE_FEATURE_DEACTIVATED).build());
-		}
-
-		if (milestonesEnabled) {
-			Partition existing = milestoneHelper.partitionExisting(instr.getMilestones());
-			Partition bindables = milestoneHelper.partitionBindable(existing.passing);
-			logs.addEntries(rejectUnknownMilestones(target, existing.rejected));
-			logs.addEntries(rejectUnbindableMilestones(target, bindables.rejected));
-		}
+		creationStrategy.validateMilestones(instr, logs);
 
 		// 3-4 : fix test case metadatas
 		List<LogEntry> logEntries = fixMetadatas(target, (AuditableMixin) testCase, ImportMode.CREATE);
 		logs.addEntries(logEntries);
 		return logs;
 
-	}
-
-	/**
-	 * @param rejected
-	 * @return
-	 */
-	private List<LogEntry> rejectUnbindableMilestones(TestCaseTarget target, List<String> rejected) {
-		ArrayList<LogEntry> logs = new ArrayList<>(rejected.size());
-		for (String name : rejected) {
-			logs.add(LogEntry.failure().forTarget(target).withMessage(Messages.ERROR_WRONG_MILESTONE_STATUS, name)
-					.build());
-		}
-		return logs;
-	}
-
-	/**
-	 * @param rejected
-	 * @return
-	 */
-	private List<LogEntry> rejectUnknownMilestones(TestCaseTarget target, List<String> rejected) {
-		ArrayList<LogEntry> logs = new ArrayList<>(rejected.size());
-		for (String name : rejected) {
-			logs.add(LogEntry.failure().forTarget(target).withMessage(Messages.ERROR_UNKNOWN_MILESTONE, name).build());
-		}
-		return logs;
 	}
 
 	/**
@@ -706,56 +746,11 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 			List<LogEntry> logEntries = fixMetadatas(target, (AuditableMixin) testCase, ImportMode.UPDATE);
 			logs.addEntries(logEntries);
 
-			if (!milestonesEnabled && !instr.getMilestones().isEmpty()) {
-				logs.addEntry(LogEntry.warning()
-					.forTarget(target)
-					.withMessage(Messages.WARN_MILESTONE_FEATURE_DEACTIVATED)
-					.build());
-			}
-
-			if (milestonesEnabled) {
-				Partition existing = milestoneHelper.partitionExisting(instr.getMilestones());
-				Partition bindables = milestoneHelper.partitionBindable(existing.passing);
-				logs.addEntries(warnUnknownMilestones(target, existing.rejected));
-				logs.addEntries(warnUnbindableMilestones(target, bindables.rejected));
-			}
+			updateStrategy.validateMilestones(instr, logs);
 		}
 
 		return logs;
 
 	}
 
-	/**
-	 * @param rejected
-	 * @return
-	 */
-	private List<LogEntry> warnUnbindableMilestones(TestCaseTarget target, List<String> rejected) {
-		ArrayList<LogEntry> logs = new ArrayList<>(rejected.size());
-
-		for (String name : rejected) {
-			logs.add(LogEntry.warning()
-				.forTarget(target)
-				.withMessage(Messages.WARN_WRONG_MILESTONE_STATUS, name)
-				.withImpact(Messages.IMPACT_VALUE_IGNORED)
-				.build());
-		}
-		return logs;
-	}
-
-	/**
-	 * @param rejected
-	 * @return
-	 */
-	private List<LogEntry> warnUnknownMilestones(TestCaseTarget target, List<String> rejected) {
-		ArrayList<LogEntry> logs = new ArrayList<>(rejected.size());
-
-		for (String name : rejected) {
-			logs.add(LogEntry.warning()
-				.forTarget(target)
-				.withMessage(Messages.WARN_UNKNOWN_MILESTONE, name)
-				.withImpact(Messages.IMPACT_VALUE_IGNORED)
-				.build());
-		}
-		return logs;
-	}
 }

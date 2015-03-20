@@ -217,10 +217,10 @@ public class PrivateCustomFieldValueServiceImpl implements PrivateCustomFieldVal
 
 		/* **************************************************************************************************
 		 * [Issue 3808]
-		 * 
+		 *
 		 * It seems that after #2061 (revision 9540a9a08c49) a defensive block of code was added in order to
 		 * prevent the creation of a custom field if it exists already for the target entity.
-		 * 
+		 *
 		 * I don't know really why it was needed but it killed performances, so I'm rewriting it
 		 * and hope it makes it faster. Best should be to get rid of it completely.
 		 ************************************************************************************************* */
@@ -246,6 +246,7 @@ public class PrivateCustomFieldValueServiceImpl implements PrivateCustomFieldVal
 
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void createAllCustomFieldValues(Collection<? extends BoundEntity> entities, Project p) {
 
@@ -264,10 +265,10 @@ public class PrivateCustomFieldValueServiceImpl implements PrivateCustomFieldVal
 
 		/* **************************************************************************************************
 		 * [Issue 3808]
-		 * 
+		 *
 		 * It seems that after #2061 (revision 9540a9a08c49) a defensive block of code was added in order to
 		 * prevent the creation of a custom field if it exists already for the target entity.
-		 * 
+		 *
 		 * I don't know really why it was needed but it killed performances, so I'm rewriting it
 		 * and hope it makes it faster. Best should be to get rid of it completely. Its inefficient and ugly.
 		 ************************************************************************************************* */

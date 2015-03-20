@@ -73,7 +73,7 @@ public class MilestoneImportHelper {
 	private final MilestoneManagerService milestoneFinder;
 
 	@Inject
-	private MilestoneImportHelper(MilestoneManagerService milestoneFinder) {
+	protected MilestoneImportHelper(MilestoneManagerService milestoneFinder) {
 		super();
 		this.milestoneFinder = milestoneFinder;
 	}

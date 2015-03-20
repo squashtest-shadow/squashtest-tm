@@ -65,16 +65,16 @@ import org.squashtest.tm.service.feature.FeatureManager.Feature;
 import org.squashtest.tm.service.project.ProjectManagerService;
 
 public class AdvancedSearchServiceImpl implements AdvancedSearchService {
-	
+
 	private final static List<String> MILESTONE_SEARCH_FIELD = Arrays.asList("milestone.label", "milestone.status",
 			"milestone.endDate", "searchByMilestone");
-       
-	@Inject 
+
+	@Inject
     private FeatureManager featureManager;
 
 	@Inject
 	private SessionFactory sessionFactory;
-	
+
 	@Inject
 	private CustomFieldBindingFinderService customFieldBindingFinderService;
 
@@ -422,7 +422,7 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 
 		for (String fieldKey : fieldKeys) {
 
-		
+
 			AdvancedSearchFieldModel fieldModel = model.getFields().get(fieldKey);
 			AdvancedSearchFieldModelType type = fieldModel.getType();
 
@@ -435,7 +435,7 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 					mainQuery = qb.bool().must(mainQuery).must(query).createQuery();
 				}
 			}
-			
+
 		}
 
 		return mainQuery;
@@ -447,12 +447,12 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 		Criteria crit = session.createCriteria(Milestone.class);
 
 		Map<String, AdvancedSearchFieldModel> fields = searchModel.getFields();
-		
-		
+
+
 		AdvancedSearchSingleFieldModel searchByMilestone = (AdvancedSearchSingleFieldModel) fields.get("searchByMilestone");
-		
+
 		if ("true".equals(searchByMilestone.getValue())) {
-		
+
 		for (Entry<String, AdvancedSearchFieldModel> entry : fields.entrySet()) {
 
 			AdvancedSearchFieldModel model = entry.getValue();
@@ -461,7 +461,7 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 				switch (entry.getKey()) {
 
 				case "milestone.label":
-					
+
 					List<String> labelValues = ((AdvancedSearchListFieldModel) model).getValues();
 					if (labelValues != null){
 					crit.add(Restrictions.in("label", labelValues));
@@ -476,14 +476,14 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 				case "milestone.endDate":
 					Date startDate = ((AdvancedSearchTimeIntervalFieldModel) model).getStartDate();
 					Date endDate = ((AdvancedSearchTimeIntervalFieldModel) model).getEndDate();
-					
+
 					if (startDate != null && endDate != null){
 						crit.add(Restrictions.between("endDate", startDate, endDate));
 					} else if (startDate != null){
 						crit.add(Restrictions.gt("endDate", startDate));
 					} else if (endDate != null){
 						crit.add(Restrictions.le("endDate", endDate));
-						
+
 					}
 
 					break;
@@ -493,24 +493,24 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 			}
 		}
 
-	
-	
+
+
 		List<String> milestoneIds = new ArrayList<String>();
 		for (Milestone milestone : (List<Milestone>) crit.list()){
-			milestoneIds.add(String.valueOf(milestone.getId()));		
+			milestoneIds.add(String.valueOf(milestone.getId()));
 		}
-		
+
 		AdvancedSearchListFieldModel milestonesModel = new AdvancedSearchListFieldModel();
 		milestonesModel.setValues(milestoneIds);
 
 		fields.put("milestones.id", milestonesModel);
 		}
-		
-		
+
+
 		for (String s : MILESTONE_SEARCH_FIELD){
 			fields.remove(s);
 		}
-		
+
 	}
 	private List<MilestoneStatus> convertStatus(List<String> values) {
 		List<MilestoneStatus> status = new ArrayList<MilestoneStatus>();
@@ -520,8 +520,8 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 		}
 		return status;
 	}
-	
-	
+
+
 	protected Query buildLuceneTagsQuery(QueryBuilder qb, String fieldKey, List<String> tags, Operation operation ){
 
 		Query main = null;
@@ -559,8 +559,6 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 			throw new IllegalArgumentException("search on tag '"+fieldKey+"' : operation unknown");
 
 		}
-
-
 	}
 
 
