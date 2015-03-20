@@ -144,13 +144,20 @@ public class StubRequirementDao extends StubEntityDao<Requirement> implements Re
 	}
 
 	@Override
-	public List<Long> findRequirementIdsHavingMultipleMilestones(List<Long> nodeIds) {
+	public List<Long> findNonBoundRequirement(Collection<Long> nodeIds, Long milestoneId) {
 		return new ArrayList<>();
 	}
 
 	@Override
-	public List<Long> findNonBoundRequirement(Collection<Long> nodeIds, Long milestoneId) {
-		return new ArrayList<>();
+	public List<Long> findByRequirementVersion(Collection<Long> versionIds) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<Long> filterRequirementHavingManyVersions(Collection<Long> requirementIds) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

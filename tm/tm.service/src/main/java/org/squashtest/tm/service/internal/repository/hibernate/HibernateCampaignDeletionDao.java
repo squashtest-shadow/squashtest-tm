@@ -137,7 +137,7 @@ implements CampaignDeletionDao {
 	@Override
 	public List<Long> findCampaignsWhichMilestonesForbidsDeletion(List<Long> originalId) {
 		if (! originalId.isEmpty()){
-			MilestoneStatus[] lockedStatuses = new MilestoneStatus[]{ MilestoneStatus.PLANNED, MilestoneStatus.FINISHED, MilestoneStatus.LOCKED};
+			MilestoneStatus[] lockedStatuses = new MilestoneStatus[]{ MilestoneStatus.PLANNED, MilestoneStatus.LOCKED};
 			Query query = getSession().getNamedQuery("campaign.findCampaignsWhichMilestonesForbidsDeletion");
 			query.setParameterList("campaignIds", originalId, LongType.INSTANCE);
 			query.setParameterList("lockedStatuses", lockedStatuses);

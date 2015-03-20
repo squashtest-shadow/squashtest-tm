@@ -92,6 +92,18 @@ public class HibernateRequirementDao extends HibernateEntityDao<Requirement> imp
 		return executeListNamedQuery("requirement.findChildrenRequirements", setId);
 	}
 
+	@Override
+	public List<Long> findByRequirementVersion(Collection<Long> versionIds) {
+		if (! versionIds.isEmpty()){
+			Query q = currentSession().getNamedQuery("requirement.findByRequirementVersion");
+			q.setParameterList("versionIds", versionIds, LongType.INSTANCE);
+			return q.list();
+		}
+		else{
+			return new ArrayList<>();
+		}
+	}
+
 
 	/* ----------------------------------------------------EXPORT METHODS----------------------------------------- */
 
@@ -249,14 +261,6 @@ public class HibernateRequirementDao extends HibernateEntityDao<Requirement> imp
 		}
 	}
 
-	private List<Object[]> addRootContentToExportData(List<Requirement> rootRequirement, List<Object[]> folderContent) {
-		for (Requirement requirement : rootRequirement) {
-			Object[] tab = { requirement, "", ExportRequirementData.NO_REQUIREMENT_PARENT_PATH };
-			folderContent.add(tab);
-		}
-		return folderContent;
-	}
-
 	/* ----------------------------------------------------/EXPORT METHODS----------------------------------------- */
 
 	@SuppressWarnings("unchecked")
@@ -345,19 +349,30 @@ public class HibernateRequirementDao extends HibernateEntityDao<Requirement> imp
 		}
 	}
 
-	@Override
-	public List<Long> findRequirementIdsHavingMultipleMilestones(List<Long> nodeIds) {
-		Query q = currentSession().getNamedQuery("requirement.findRequirementIdsHavingMultipleMilestones");
-		q.setParameterList("nodeIds", nodeIds, LongType.INSTANCE);
-		return q.list();
-	}
 
 	@Override
 	public List<Long> findNonBoundRequirement(Collection<Long> nodeIds, Long milestoneId) {
-		Query q = currentSession().getNamedQuery("requirement.findNonBoundRequirement");
-		q.setParameterList("nodeIds", nodeIds, LongType.INSTANCE);
-		q.setParameter("milestoneId", milestoneId);
-		return q.list();
+		if (! nodeIds.isEmpty()){
+			Query q = currentSession().getNamedQuery("requirement.findNonBoundRequirement");
+			q.setParameterList("nodeIds", nodeIds, LongType.INSTANCE);
+			q.setParameter("milestoneId", milestoneId);
+			return q.list();
+		}
+		else{
+			return new ArrayList<>();
+		}
+	}
+
+	@Override
+	public List<Long> filterRequirementHavingManyVersions(Collection<Long> requirementIds) {
+		if (! requirementIds.isEmpty()){
+			Query q = currentSession().getNamedQuery("requirement.findRequirementHavingManyVersions");
+			q.setParameterList("requirementIds", requirementIds, LongType.INSTANCE);
+			return q.list();
+		}
+		else{
+			return new ArrayList<>();
+		}
 	}
 
 }

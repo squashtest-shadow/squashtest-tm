@@ -82,29 +82,17 @@ implements NodeDeletionHandler<NODE, FOLDER>{
 
 		if (! targetIds.isEmpty()){
 
-			//phase 1 : find all the nodes and build the tree
-			List<Long[]> hierarchy = findPairedNodeHierarchy(targetIds);
+			// create and resolve the tree of locked files and folder
+			LockedFolderInferenceTree tree = createLockedFileInferenceTree(targetIds, milestoneId);
 
-			LockedFolderInferenceTree tree = new LockedFolderInferenceTree();
-			tree.build(hierarchy);
-
-			//phase 2 : find the nodes that aren't deletable and mark them as such in the tree
-			List<Long> candidateNodeIds = tree.collectKeys();
-			List<Long> lockedNodeIds = detectLockedNodes(candidateNodeIds, milestoneId);
-
-			//phase 3 : resolve which folders are locked with respect to the locked content.
-			tree.markLockedNodes(lockedNodeIds);
-			tree.resolveLockedFolders();
-
-
-			//phase 4 : now the dependencies between the nodes are resolved we may collect the ids of deletable nodes
-			//and batch - delete them
+			// now we can collect which node ids are deletable
 			List<Long> deletableNodeIds =  tree.collectDeletableIds();
 
 			OperationReport deleteReport =  batchDeleteNodes(deletableNodeIds, milestoneId);
 
-			// phase 5 : if milestone mode, also unbind non deleted test cases
+			// phase 5 : if milestone mode, also unbind non deleted entities
 			if (milestoneId != null){
+				List<Long> candidateNodeIds = tree.collectKeys();
 				OperationReport unbindReport = batchUnbindFromMilestone(candidateNodeIds, milestoneId);
 				deleteReport.mergeWith(unbindReport);
 			}
@@ -114,6 +102,25 @@ implements NodeDeletionHandler<NODE, FOLDER>{
 		else{
 			return new OperationReport();	//empty operations
 		}
+	}
+
+
+	protected LockedFolderInferenceTree createLockedFileInferenceTree(List<Long> targetIds, Long milestoneId) {
+		//phase 1 : find all the nodes and build the tree
+		List<Long[]> hierarchy = findPairedNodeHierarchy(targetIds);
+
+		LockedFolderInferenceTree tree = new LockedFolderInferenceTree();
+		tree.build(hierarchy);
+
+
+		//phase 2 : find the nodes that aren't deletable and mark them as such in the tree
+		List<Long> lockedNodeIds = detectLockedNodes(tree.collectKeys(), milestoneId);
+
+
+		//phase 3 : resolve which folders are locked with respect to the locked content.
+		tree.markLockedNodes(lockedNodeIds);
+		tree.resolveLockedFolders();
+		return tree;
 	}
 
 
@@ -133,7 +140,7 @@ implements NodeDeletionHandler<NODE, FOLDER>{
 	protected List<Long[]> findPairedNodeHierarchy(List<Long> rootNodeIds){
 
 		if (rootNodeIds.isEmpty()) {
-			return Collections.emptyList();
+			return new ArrayList<>();
 		}
 
 		List<Long[]> nodeHierarchy = new ArrayList<Long[]>();

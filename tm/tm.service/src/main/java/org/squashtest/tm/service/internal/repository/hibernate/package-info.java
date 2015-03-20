@@ -82,6 +82,7 @@
 	@NamedQuery(name = "requirementFolder.findAllAttachmentLists", query = "select folder.resource.attachmentList.id from RequirementFolder folder where folder.id in (:folderIds)"),
 
 	//a Requirement
+	@NamedQuery(name = "requirement.findAllById", query="from Requirement r where r.id in (:requirementIds)"),
 	@NamedQuery(name = "requirement.findRequirementByName", query = "from RequirementLibraryNode r where r.resource.name like :requirementName order by r.resource.name asc"),
 	@NamedQuery(name = "requirement.findRequirementWithParentFolder", query = "select r, rf from RequirementFolder rf join rf.content r where r.id in (:requirementIds)"),
 	@NamedQuery(name = "requirement.findRootContentRequirement", query = "select r from RequirementLibrary rl join rl.rootContent r where r.id in (:paramIds) and r in (from Requirement)"),
@@ -110,11 +111,9 @@
 	+ " from Requirement requirement1, RequirementFolder folder, RequirementPathEdge closure "
 	+ " where closure.ancestorId = folder.id  and closure.descendantId = requirement1.id and requirement1.id in :requirementIds and closure.depth != 0 "
 	+ " group by requirement1.id"),
-	@NamedQuery(name = "requirement.findRequirementIdsHavingMultipleMilestones", 
-	query = "select r.id from Requirement r join r.versions v join v.milestones stones where r.id in (:nodeIds) group by r.id having count(stones) > 1 "),
 	@NamedQuery(name = "requirement.findNonBoundRequirement", query = "select r.id from Requirement r join r.versions v where r.id in (:nodeIds) and v.id not in (select rvs.id from Milestone m join m.requirementVersions rvs where m.id = :milestoneId)"),
-	@NamedQuery(name = "requirement.findRequirementsWhichMilestonesForbidsDeletion", 
-	query="select distinct r.id from Requirement r inner join r.versions v inner join v.milestones milestones where r.id in (:requirementIds) and milestones.status in (:lockedStatuses)"),
+	@NamedQuery(name = "requirement.findRequirementHavingManyVersions", query = "select r.id from Requirement r join r.versions v where r.id in (:requirementIds) group by r.id having count(v) > 1"),
+	@NamedQuery(name = "requirement.findByRequirementVersion", query = "select r.id from Requirement r join r.versions versions where versions.id in (:versionIds)"),
 	
 	//CampaignFolder
 	@NamedQuery(name = "campaignFolder.findAllContentById", query = "select f.content from CampaignFolder f where f.id = :folderId"),
@@ -436,8 +435,17 @@
 	//XXX RequirementVersion
 	@NamedQuery(name = "requirementAuditEvent.findAllByRequirementVersionIds", query = "select rae from RequirementAuditEvent rae inner join rae.requirementVersion r where r.id in (:ids) order by rae.requirementVersion asc, rae.date desc"),
 	@NamedQuery(name = "requirementAuditEvent.findAllByRequirementIds", query = "select rae from RequirementAuditEvent rae inner join rae.requirementVersion rv where rv.requirement.id in (:ids) order by rae.requirementVersion asc, rae.date desc"),
+	
 	@NamedQuery(name = "requirementDeletionDao.deleteRequirementAuditEvent", query = "delete RequirementAuditEvent rae where rae.id in (:eventIds)"),
-
+	@NamedQuery(name = "requirementDeletionDao.findVersionsWhichMilestonesForbidsDeletion", 
+	query="select distinct v.id from RequirementVersion v inner join v.milestones lockedMilestones " +
+			"where v.id in (:versionIds) and lockedMilestones.status in (:lockedStatuses)"),	
+	@NamedQuery(name = "requirementDeletionDao.findVersionIdsHavingMultipleMilestones", 
+	query = "select v.id from RequirementVersion v join v.milestones stones where v.id in (:versionIds) group by v.id having count(stones) > 1 "),
+	@NamedQuery(name = "requirementDeletionDao.findAllVersionForMilestone", query="select v.id from Requirement r join r.versions v join v.milestones m where r.id in (:nodeIds) and m.id = :milestoneId"),	
+	@NamedQuery(name = "requirementDeletionDao.deleteVersions", query = "delete from RequirementVersion rv where rv.id in (:versionIds)"),
+		
+	
 	@NamedQuery(name = "requirementVersion.countVerifiedByTestCases", query = "select count(distinct r) from TestCase tc join tc.requirementVersionCoverages rvc join rvc.verifiedRequirementVersion r where tc.id in (:verifiersIds)"),
 	@NamedQuery(name = "RequirementVersion.countVerifiedByTestCase", query = "select count(r) from TestCase tc join tc.requirementVersionCoverages rvc join rvc.verifiedRequirementVersion r where tc.id = ?1"),
 	@NamedQuery(name = "requirementVersion.findDistinctRequirementsCriticalitiesVerifiedByTestCases", query = "select distinct r.criticality from TestCase tc join tc.requirementVersionCoverages rvc join rvc.verifiedRequirementVersion r where tc.id in (:testCasesIds) "),
@@ -448,7 +456,10 @@
 
 	@NamedQuery(name = "RequirementVersion.countByRequirement", query = "select count(rv) from RequirementVersion rv join rv.requirement r where r.id = ?1"),
 	@NamedQuery(name = "requirementDeletionDao.findVersionIds", query = "select rv.id from RequirementVersion rv join rv.requirement r where r.id in (:reqIds)"),
-
+	@NamedQuery(name = "requirementVersion.findAllAttachmentLists", query = "select v.attachmentList.id from RequirementVersion v where v.id in (:versionIds)"),
+	
+	
+	
 	//AutomatedSuite
 	@NamedQuery(name = "automatedSuite.completeInitializationById", query = "select suite from AutomatedSuite suite join fetch suite.executionExtenders ext join fetch ext.automatedTest test "
 	+ "join fetch test.project project join fetch project.server server where suite.id = :suiteId"),

@@ -22,6 +22,7 @@ package org.squashtest.tm.service.internal.repository.hibernate;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.ListIterator;
@@ -35,6 +36,7 @@ import org.squashtest.tm.domain.requirement.Requirement;
 import org.squashtest.tm.domain.requirement.RequirementFolder;
 import org.squashtest.tm.domain.requirement.RequirementLibrary;
 import org.squashtest.tm.domain.requirement.RequirementLibraryNode;
+import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.service.internal.repository.ParameterNames;
 import org.squashtest.tm.service.internal.repository.RequirementDeletionDao;
 
@@ -42,7 +44,20 @@ import org.squashtest.tm.service.internal.repository.RequirementDeletionDao;
 public class HibernateRequirementDeletionDao extends HibernateDeletionDao implements RequirementDeletionDao {
 
 	private static final String REQUIREMENT_IDS = "requirementIds";
+	private static final String VERSION_IDS = "versionIds";
 	private static final String FOLDER_IDS = "folderIds";
+
+
+	/*
+	 * This method remove requirement versions. It assumes that no conflict will occur with Requirement#currentVersion
+	 */
+	@Override
+	public void deleteVersions(List<Long> versionIds) {
+		executeDeleteNamedQuery("requirementDeletionDao.deleteVersions", "versionIds", versionIds);
+	}
+
+
+
 
 	// note 1 : this method will be ran twice per batch : one for folder deletion, one for requirement deletion
 	// ( is is so because two distincts calls to #deleteNodes, see RequirementDeletionHandlerImpl#deleteNodes() )
@@ -156,7 +171,17 @@ public class HibernateRequirementDeletionDao extends HibernateDeletionDao implem
 			query.setParameterList(REQUIREMENT_IDS, requirementIds);
 			return query.list();
 		}
-		return Collections.emptyList();
+		return new ArrayList<>();
+	}
+
+	@Override
+	public List<Long> findRequirementVersionAttachmentListIds(List<Long> versionIds) {
+		if (!versionIds.isEmpty()) {
+			Query query = getSession().getNamedQuery("requirementVersion.findAllAttachmentLists");
+			query.setParameterList(VERSION_IDS, versionIds);
+			return query.list();
+		}
+		return new ArrayList<>();
 	}
 
 
@@ -172,6 +197,15 @@ public class HibernateRequirementDeletionDao extends HibernateDeletionDao implem
 		return Collections.emptyList();
 	}
 
+
+	@Override
+	public void removeFromVerifiedVersionsLists(List<Long> versionIds) {
+		if (!versionIds.isEmpty()) {
+			executeDeleteSQLQuery(NativeQueries.REQUIREMENT_SQL_REMOVEFROMVERIFIEDVERSIONSLISTS, VERSION_IDS,
+					versionIds);
+		}
+
+	}
 
 	@Override
 	public void removeFromVerifiedRequirementLists(List<Long> requirementIds) {
@@ -210,8 +244,146 @@ public class HibernateRequirementDeletionDao extends HibernateDeletionDao implem
 	}
 
 	@Override
+	public void deleteRequirementVersionAuditEvents(List<Long> versionIds) {
+		if (!versionIds.isEmpty()) {
+			// we borrow the following from RequirementAuditDao
+			List<RequirementAuditEvent> events = executeSelectNamedQuery(
+					"requirementAuditEvent.findAllByRequirementVersionIds", "ids", versionIds);
+
+			// because Hibernate sucks so much at polymorphic bulk delete, we're going to remove
+			// them one by one.
+			for (RequirementAuditEvent event : events) {
+				removeEntity(event);
+			}
+
+			flush();
+		}
+	}
+
+	@Override
 	public List<Long> findVersionIds(List<Long> requirementIds) {
 		return executeSelectNamedQuery("requirementDeletionDao.findVersionIds", "reqIds", requirementIds);
+	}
+
+	@Override
+	public List<Long> findRemainingRequirementIds(List<Long> originalIds) {
+		List<BigInteger> rawids = executeSelectSQLQuery(NativeQueries.REQUIREMENT_SQL_FINDNOTDELETED, "allRequirementIds", originalIds);
+		List<Long> cIds = new ArrayList<>(rawids.size());
+		for (BigInteger rid : rawids){
+			cIds.add(rid.longValue());
+		}
+		return cIds;
+	}
+
+
+
+
+	/* *************************************************************
+	 *  			Methods for the milestone mode
+	 ************************************************************ */
+
+	/**
+	 * See javadoc on the interface
+	 * 
+	 */
+	public List<Long> findDeletableVersions(List<Long> requirementIds, Long milestoneId) {
+
+		List<Long> deletableVersions = new ArrayList<>();
+
+		// 1 - must belong to milestone
+		List<Long> versionsBelongingToMilestone = findVersionIdsForMilestone(requirementIds, milestoneId);
+		deletableVersions.addAll(versionsBelongingToMilestone);
+
+		// 2 - must not be locked
+		List<Long> lockedVersions = filterVersionIdsWhichMilestonesForbidsDeletion(deletableVersions);
+		deletableVersions.removeAll(lockedVersions);
+
+		// 3 - must not belong to many milestones
+		List<Long> hasManyMilestones = filterVersionIdsHavingMultipleMilestones(deletableVersions);
+		deletableVersions.removeAll(hasManyMilestones);
+
+		return deletableVersions;
+	};
+
+
+	/**
+	 * See javadoc on the interface
+	 * 
+	 */
+	@Override
+	public List<Long> findUnbindableVersions(List<Long> requirementIds, Long milestoneId) {
+
+		List<Long> unbindableVersions = new ArrayList<>();
+
+		// 1 - must belong to the milestone
+		List<Long> versionsBelongingToMilestone = findVersionIdsForMilestone(requirementIds, milestoneId);
+		unbindableVersions.addAll(versionsBelongingToMilestone);
+
+		// 2 - must not be locked
+		List<Long> lockedVersions = filterVersionIdsWhichMilestonesForbidsDeletion(unbindableVersions);
+		versionsBelongingToMilestone.removeAll(lockedVersions);
+
+		// 3 - must belong to many milestones
+		versionsBelongingToMilestone = filterVersionIdsHavingMultipleMilestones(unbindableVersions);
+
+		return versionsBelongingToMilestone;
+	}
+
+
+	@Override
+	public List<Long> filterRequirementsHavingDeletableVersions(List<Long> requirementIds, Long milestoneId) {
+		List<Long> deletableVersions = findDeletableVersions(requirementIds, milestoneId);
+		return findByRequirementVersion(deletableVersions);
+	}
+
+	@Override
+	public List<Long> filterRequirementsHavingUnbindableVersions(List<Long> requirementIds, Long milestoneId) {
+		List<Long> deletableVersions = findUnbindableVersions(requirementIds, milestoneId);
+		return findByRequirementVersion(deletableVersions);
+	}
+
+
+
+
+	@Override
+	public List<Long> filterVersionIdsWhichMilestonesForbidsDeletion(List<Long> versionIds) {
+		if (! versionIds.isEmpty()){
+			MilestoneStatus[] lockedStatuses = new MilestoneStatus[]{ MilestoneStatus.PLANNED, MilestoneStatus.LOCKED};
+			Query query = getSession().getNamedQuery("requirementDeletionDao.findVersionsWhichMilestonesForbidsDeletion");
+			query.setParameterList("versionIds", versionIds, LongType.INSTANCE);
+			query.setParameterList("lockedStatuses", lockedStatuses);
+			return query.list();
+		}else{
+			return new ArrayList<>();
+		}
+	}
+
+
+
+	@Override
+	public List<Long> filterVersionIdsHavingMultipleMilestones(List<Long> versionIds) {
+		if (! versionIds.isEmpty()){
+			Query q = getSession().getNamedQuery("requirementDeletionDao.findVersionIdsHavingMultipleMilestones");
+			q.setParameterList("versionIds", versionIds, LongType.INSTANCE);
+			return q.list();
+		}
+		else{
+			return new ArrayList<>();
+		}
+	}
+
+
+	@Override
+	public List<Long> findVersionIdsForMilestone(List<Long> requirementIds, Long milestoneId) {
+		if (! requirementIds.isEmpty()){
+			Query query = getSession().getNamedQuery("requirementDeletionDao.findAllVersionForMilestone");
+			query.setParameterList("nodeIds", requirementIds, LongType.INSTANCE);
+			query.setParameter("milestoneId", milestoneId);
+			return query.list();
+		}
+		else{
+			return new ArrayList<>();
+		}
 	}
 
 	@Override
@@ -225,25 +397,46 @@ public class HibernateRequirementDeletionDao extends HibernateDeletionDao implem
 
 	}
 
-	@Override
-	public List<Long> findRemainingRequirementIds(List<Long> originalIds) {
-		List<BigInteger> rawids = executeSelectSQLQuery(NativeQueries.REQUIREMENT_SQL_FINDNOTDELETED, "allRequirementIds", originalIds);
-		List<Long> cIds = new ArrayList<>(rawids.size());
-		for (BigInteger rid : rawids){
-			cIds.add(rid.longValue());
-		}
-		return cIds;
-	}
+
 
 	@Override
-	public List<Long> findRequirementsWhichMilestonesForbidsDeletion(List<Long> nodeIds) {
-		if (! nodeIds.isEmpty()){
-			MilestoneStatus[] lockedStatuses = new MilestoneStatus[]{ MilestoneStatus.PLANNED, MilestoneStatus.FINISHED, MilestoneStatus.LOCKED};
-			Query query = getSession().getNamedQuery("requirement.findRequirementsWhichMilestonesForbidsDeletion");
-			query.setParameterList("requirementIds", nodeIds, LongType.INSTANCE);
-			query.setParameterList("lockedStatuses", lockedStatuses);
-			return query.list();
-		}else{
+	public void unsetRequirementCurrentVersion(List<Long> requirementIds) {
+		if (! requirementIds.isEmpty()){
+			Query q = getSession().getNamedQuery("requirement.findAllById");
+			q.setParameterList("requirementIds", requirementIds);
+
+			List<Requirement> requirements = q.list();
+
+			for (Requirement r : requirements){
+				r.setCurrentVersion(null);
+			}
+		}
+	}
+
+
+	@Override
+	public void resetRequirementCurrentVersion(List<Long> requirementIds) {
+		if (! requirementIds.isEmpty()){
+			Query q = getSession().getNamedQuery("requirement.findAllById");
+			q.setParameterList("requirementIds", requirementIds);
+
+			List<Requirement> requirements = q.list();
+
+			for (Requirement r : requirements){
+				List<RequirementVersion> versions = r.getRequirementVersions();
+				RequirementVersion latest = versions.get(versions.size()-1);
+				r.setCurrentVersion(latest);
+			}
+		}
+	}
+
+	private List<Long> findByRequirementVersion(List<Long> versionIds){
+		if (! versionIds.isEmpty()){
+			Query q = getSession().getNamedQuery("requirement.findByRequirementVersion");
+			q.setParameterList("versionIds", versionIds, LongType.INSTANCE);
+			return q.list();
+		}
+		else{
 			return new ArrayList<>();
 		}
 	}

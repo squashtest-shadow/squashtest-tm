@@ -34,6 +34,8 @@ public interface RequirementDao extends EntityDao<Requirement> {
 
 	List<Requirement> findChildrenRequirements(long requirementId);
 
+	List<Long> findByRequirementVersion(Collection<Long> versionIds);
+
 	List<ExportRequirementData> findRequirementToExportFromNodes(List<Long> folderIds);
 
 	List<ExportRequirementData> findRequirementToExportFromLibrary(List<Long> libraryId);
@@ -92,7 +94,14 @@ public interface RequirementDao extends EntityDao<Requirement> {
 	 */
 	List<Object[]> findAllParentsOf(List<Long> requirementIds);
 
-	List<Long> findRequirementIdsHavingMultipleMilestones(List<Long> nodeIds);
 
 	List<Long> findNonBoundRequirement(Collection<Long> nodeIds, Long milestoneId);
+
+	/**
+	 * given requirement ids, return which of them refer to requirements having more than one versions
+	 * 
+	 * @param requirementIds
+	 * @return
+	 */
+	List<Long> filterRequirementHavingManyVersions(Collection<Long> requirementIds);
 }

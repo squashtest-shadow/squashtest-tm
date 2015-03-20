@@ -61,6 +61,8 @@ public class RequirementNodeDeletionHandlerIT extends DbunitServiceSpecification
 		[
 			[-112, -11],
 			[-121, -12],
+			[-123, -13],
+			[-124, -14],
 			[-3, -3],
 			[-31, -31],
 			[-32, -32],

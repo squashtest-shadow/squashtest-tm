@@ -356,7 +356,7 @@ public class HibernateTestCaseDeletionDao extends HibernateDeletionDao implement
 	@Override
 	public List<Long> findTestCasesWhichMilestonesForbidsDeletion(List<Long> originalId) {
 		if (! originalId.isEmpty()){
-			MilestoneStatus[] lockedStatuses = new MilestoneStatus[]{ MilestoneStatus.PLANNED, MilestoneStatus.FINISHED, MilestoneStatus.LOCKED};
+			MilestoneStatus[] lockedStatuses = new MilestoneStatus[]{ MilestoneStatus.PLANNED, MilestoneStatus.LOCKED};
 			Query query = getSession().getNamedQuery("testCase.findTestCasesWhichMilestonesForbidsDeletion");
 			query.setParameterList("testCaseIds", originalId, LongType.INSTANCE);
 			query.setParameterList("lockedStatuses", lockedStatuses);

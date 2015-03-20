@@ -179,6 +179,9 @@ public final class NativeQueries {
 
 	public static final String TESTCASE_SQL_REMOVETESTSTEPFROMLIST = "delete from TEST_CASE_STEPS where step_id in (:testStepIds)";
 
+	public static final String REQUIREMENT_SQL_REMOVEFROMVERIFIEDVERSIONSLISTS = " delete from REQUIREMENT_VERSION_COVERAGE "
+			+ " where verified_req_version_id in (:versionIds)";
+
 	public static final String REQUIREMENT_SQL_REMOVEFROMVERIFIEDREQUIREMENTLISTS = " delete from REQUIREMENT_VERSION_COVERAGE "
 			+ " where verified_req_version_id in ( "
 			+ " select req_v.res_id from REQUIREMENT_VERSION req_v where req_v.requirement_id in (:requirementIds) "

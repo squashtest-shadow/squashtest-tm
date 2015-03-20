@@ -275,6 +275,10 @@ public class Requirement extends RequirementLibraryNode<RequirementVersion> impl
 		return resource;
 	}
 
+	public void setCurrentVersion(RequirementVersion version){
+		this.resource =version;
+	}
+
 	public void increaseVersion() {
 		RequirementVersion previous = resource;
 		RequirementVersion next = previous.createNextVersion();
