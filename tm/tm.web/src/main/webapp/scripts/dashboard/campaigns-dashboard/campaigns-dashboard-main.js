@@ -52,10 +52,10 @@ define([ "require", "./campaign-progression-view", "./test-inventory-table",
 							 new ProgressionPlot({
 									el : this.$("#dashboard-cumulative-progression"),
 									model : this.model
-								}))
+								}));
 				 }
 				 
-				 return res
+				 return res;
 			}
 
 			function doInit(settings) {
