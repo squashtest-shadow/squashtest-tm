@@ -898,11 +898,13 @@
   </changeSet>
 
   <changeSet author="flaurens" id="tm-1.12.0.feat-3764-1">
-  <!-- This schema comes from Spring Secutrity OAuth plugin -->
+  <!-- Note : This schema comes from Spring Secutrity OAuth plugin -->
   <!-- Token columns were originally VARCHAR(256), which cannot be indexed in mysql with a utf-8 collation -->
   <!-- Yet, default token provider uses a 128 bits UUID generator, so we "safely" truncated col width to 255 -->
+  <!-- Note : Table names are in lowercase. This violates uppercase convention but it is easier to implement -->
+  <!-- than overriding each and every oauth-related queries which are hardcoded in spring-security -->
     <comment>Tables for OAuth2 Support</comment>
-    <createTable tableName="OAUTH_CLIENT_DETAILS">
+    <createTable tableName="oauth_client_details">
       <column name="CLIENT_ID" type="java.sql.Types.VARCHAR(255)">
         <constraints primaryKey="true" nullable="false" />
       </column>
@@ -928,7 +930,7 @@
       </column>
     </createTable>
 
-    <createTable tableName="OAUTH_CLIENT_TOKEN">
+    <createTable tableName="oauth_client_token">
       <column name="TOKEN_ID" type="java.sql.Types.VARCHAR(255)">
         <constraints primaryKey="true" nullable="false" />
       </column>
@@ -943,7 +945,7 @@
       </column>
     </createTable>
 
-    <createTable tableName="OAUTH_ACCESS_TOKEN">
+    <createTable tableName="oauth_access_token">
       <column name="TOKEN_ID" type="java.sql.Types.VARCHAR(255)">
         <constraints primaryKey="true" nullable="false" />
       </column>
@@ -962,7 +964,7 @@
       </column>
     </createTable>
 
-    <createTable tableName="OAUTH_REFRESH_TOKEN">
+    <createTable tableName="oauth_refresh_token">
       <column name="TOKEN_ID" type="java.sql.Types.VARCHAR(255)">
         <constraints primaryKey="true" nullable="false" />
       </column>
@@ -972,7 +974,7 @@
       </column>
     </createTable>
 
-    <createTable tableName="OAUTH_CODE">
+    <createTable tableName="oauth_code">
       <column name="CODE" type="java.sql.Types.VARCHAR(255)">
         <constraints primaryKey="true" nullable="false" />
       </column>
@@ -980,7 +982,7 @@
       </column>
     </createTable>
 
-    <createTable tableName="OAUTH_APPROVALS">
+    <createTable tableName="oauth_approvals">
       <column name="USERID" type="java.sql.Types.VARCHAR(255)">
         <constraints nullable="false" />
       </column>
@@ -997,7 +999,7 @@
       </column>
     </createTable>
 
-    <addPrimaryKey columnNames="USERID, CLIENTID" constraintName="PK_OAUTH_APPROVALS" tableName="OAUTH_APPROVALS" />
+    <addPrimaryKey columnNames="USERID, CLIENTID" constraintName="PK_OAUTH_APPROVALS" tableName="oauth_approvals" />
   </changeSet>
 
   <changeSet id="tm-1.12.0.feat-4171-1" author="jsimon">
