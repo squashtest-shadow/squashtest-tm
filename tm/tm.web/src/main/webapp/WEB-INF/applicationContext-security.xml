@@ -86,6 +86,8 @@
 
     <intercept-url requires-channel="${authentication.application.securablechannels:http}" pattern="/administration/milestones"
       access="hasRole('ROLE_TM_PROJECT_MANAGER') or hasRole('ROLE_ADMIN')" />
+          <intercept-url requires-channel="${authentication.application.securablechannels:http}" pattern="/administration/milestones/**"
+      access="hasRole('ROLE_TM_PROJECT_MANAGER') or hasRole('ROLE_ADMIN')" />
     <intercept-url requires-channel="${authentication.application.securablechannels:http}" pattern="/administration/projects"
       access="hasRole('ROLE_TM_PROJECT_MANAGER') or hasRole('ROLE_ADMIN')" />
     <intercept-url requires-channel="${authentication.application.securablechannels:http}" pattern="/administration/projects/**"
