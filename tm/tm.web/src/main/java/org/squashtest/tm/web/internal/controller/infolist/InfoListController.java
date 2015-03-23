@@ -33,7 +33,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -45,7 +44,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.util.HtmlUtils;
 import org.squashtest.tm.domain.infolist.InfoList;
 import org.squashtest.tm.domain.infolist.InfoListItem;
-import org.squashtest.tm.domain.infolist.SystemInfoListCode;
 import org.squashtest.tm.domain.infolist.UserListItem;
 import org.squashtest.tm.service.infolist.InfoListItemManagerService;
 import org.squashtest.tm.service.infolist.InfoListManagerService;
@@ -56,7 +54,6 @@ import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelBuilder;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelConstants;
 import org.squashtest.tm.web.internal.model.json.JsonInfoListItem;
-import org.squashtest.tm.web.internal.util.IconLibrary;
 
 @Controller
 @RequestMapping("/info-lists")
@@ -72,19 +69,6 @@ public class InfoListController {
 
 	@Inject
 	private InfoListItemController itemsController;
-
-	@RequestMapping(value = "/{infoListId}", method = RequestMethod.GET)
-	public String showInfoListModificationPage(@PathVariable Long infoListId, Model model) {
-		InfoList list = infoListManager.findById(infoListId);
-		SystemInfoListCode.verifyModificationPermission(list);
-		model.addAttribute("infoList", list);
-		model.addAttribute("itemListIcons", IconLibrary.getIconNames());
-		LOGGER.debug("id " + list.getId());
-		LOGGER.debug("label " + list.getLabel());
-		LOGGER.debug("code " + list.getCode());
-		LOGGER.debug("description " + list.getDescription());
-		return "info-list-modification.html";
-	}
 
 	@RequestMapping(value = "/{infoListId}", method = RequestMethod.POST, params = { "id=info-list-label",
 			JEditablePostParams.VALUE })
@@ -219,39 +203,6 @@ public class InfoListController {
 			return data;
 		}
 	}
-
-	// @InitBinder
-	// public void initBinder(WebDataBinder binder) {
-	// binder.registerCustomEditor(InfoList.class, new PropertyEditorSupport() {
-	//
-	// /**
-	// * @see java.beans.PropertyEditorSupport#setSource(java.lang.Object)
-	// */
-	// @Override
-	// public void setSource(Object source) {
-	// LOGGER.warn(ToStringBuilder.reflectionToString(source));
-	// super.setSource(source);
-	// }
-	//
-	// /**
-	// * @see java.beans.PropertyEditorSupport#setValue(java.lang.Object)
-	// */
-	// @Override
-	// public void setValue(Object value) {
-	// LOGGER.warn(ToStringBuilder.reflectionToString(value));
-	// super.setValue(value);
-	// }
-	//
-	// /**
-	// * @see java.beans.PropertyEditorSupport#setAsText(java.lang.String)
-	// */
-	// @Override
-	// public void setAsText(String text) throws IllegalArgumentException {
-	// LOGGER.warn(ToStringBuilder.reflectionToString(text));
-	// super.setAsText(text);
-	// }
-	// });
-	// }
 
 	@RequestMapping(value = "/new", method = RequestMethod.POST, produces = ContentTypes.APPLICATION_JSON)
 	public JsonEmptyResponseEntity createNew(@RequestBody @Valid InfoList infoList) {

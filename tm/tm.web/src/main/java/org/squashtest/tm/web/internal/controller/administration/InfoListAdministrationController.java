@@ -25,14 +25,19 @@ import java.util.Locale;
 
 import javax.inject.Inject;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.squashtest.tm.core.foundation.collection.Pagings;
+import org.squashtest.tm.domain.infolist.InfoList;
+import org.squashtest.tm.domain.infolist.SystemInfoListCode;
 import org.squashtest.tm.service.infolist.InfoListFinderService;
 import org.squashtest.tm.service.infolist.IsBoundInfoListAdapter;
 import org.squashtest.tm.web.internal.controller.AcceptHeaders;
@@ -51,6 +56,7 @@ import org.squashtest.tm.web.internal.util.IconLibrary;
 @Controller
 @RequestMapping("/administration/info-lists")
 public class InfoListAdministrationController {
+	private static final Logger LOGGER = LoggerFactory.getLogger(InfoListAdministrationController.class);
 
 	@Inject
 	private InfoListFinderService infoListFinder;
@@ -84,4 +90,20 @@ public class InfoListAdministrationController {
 		model.setAaData(infoListFinder.findAllWithBoundInfo());
 		return DataTable10ModelAdaptor.adapt(model);
 	}
+
+	@RequestMapping(value = "/{infoListId}", method = RequestMethod.GET)
+	public String showInfoListModificationPage(@PathVariable Long infoListId, Model model) {
+		InfoList list = infoListFinder.findById(infoListId);
+		SystemInfoListCode.verifyModificationPermission(list);
+		model.addAttribute("infoList", list);
+		model.addAttribute("itemListIcons", IconLibrary.getIconNames());
+
+		LOGGER.debug("id " + list.getId());
+		LOGGER.debug("label " + list.getLabel());
+		LOGGER.debug("code " + list.getCode());
+		LOGGER.debug("description " + list.getDescription());
+
+		return "info-list-modification.html";
+	}
+
 }

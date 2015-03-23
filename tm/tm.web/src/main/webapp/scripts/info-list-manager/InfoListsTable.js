@@ -83,7 +83,7 @@ define(
 					_.bindAll(this, "refresh", "onInitTable", "removeSelectedItems");
 
 					this.apiRoot = this.$el.data("api-url");
-					this.tableModelUrl = this.$el.data("model-url");
+					this.viewUrl = this.$el.data("view-url");
 					this.selectedIds = [];
 
 					this.listenTo(squashtm.vent, "newinfolist:confirmed", function(event) {
@@ -98,7 +98,7 @@ define(
 					});
 
 					var editLink = SquashTable.renderer($("#name-cell-tpl").html())(function(data, type, row) {
-						return { url:  self.apiRoot + "/" + row.id, text: data };
+						return { url:  self.viewUrl + "/" + row.id, text: data };
 					});
 
 					var colDefs = SquashTable.colDefs()
@@ -126,7 +126,7 @@ define(
 							columnDefs: colDefs,
 							// we cannot init ajax with deferred fetch and client-side processing,
 							// so ajax is configured later on "init.dt" event
-//							ajax: this.tableModelUrl,
+//							ajax: this.viewUrl,
 							deferLoading: this.$("tbody > tr").size()
 					};
 
@@ -140,7 +140,7 @@ define(
 				},
 
 				onInitTable: function onInitTable(event) {
-					this.$el.DataTable().ajax.url(this.tableModelUrl);
+					this.$el.DataTable().ajax.url(this.viewUrl);
 				},
 
 				onDrawTable: function(event) {
