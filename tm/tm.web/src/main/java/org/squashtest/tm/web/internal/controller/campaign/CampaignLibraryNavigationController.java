@@ -143,7 +143,7 @@ public class CampaignLibraryNavigationController extends
 		Map<Long, RawValue> customFieldValues = campaignForm.getCufs();
 
 		campaignLibraryNavigationService.addCampaignToCampaignLibrary(libraryId, newCampaign, customFieldValues,
-				milestoneIds);
+				milestoneIds.get(0));
 
 		return createTreeNodeFromLibraryNode(newCampaign, milestoneIds);
 
@@ -167,7 +167,7 @@ public class CampaignLibraryNavigationController extends
 		Map<Long, RawValue> customFieldValues = campaignForm.getCufs();
 
 		campaignLibraryNavigationService.addCampaignToCampaignFolder(folderId, newCampaign, customFieldValues,
-				milestoneIds);
+				milestoneIds.get(0));
 
 		return createTreeNodeFromLibraryNode(newCampaign, milestoneIds);
 
