@@ -1312,15 +1312,15 @@ div.information-panel p {
     background-repeat : no-repeat;
 }
 
-.admin-user-icon{
+.admin-user-icon {
 	background-image :url(../images/Button_User.png); /** sprite-ref: sprites-icons; */
 }
 
-.admin-project-icon{
+.admin-project-icon {
 	background-image :url(../images/Button_Project.png); /** sprite-ref: sprites-icons; */
 }
 
-.admin-bugtracker-icon{
+.admin-bugtracker-icon {
 	background-image :url(../images/Button_Bugtracker.png); /** sprite-ref: sprites-icons; */
 }
 
@@ -1346,6 +1346,10 @@ div.information-panel p {
 
 .admin-milestone-icon{
 	background-image :url(../images/Button_Milestone.png);/** sprite-ref: sprites-icons; */
+}
+
+.admin-infolist-icon{
+	background-image :url(../images/Button_InfoList.png);/** sprite-ref: sprites-icons; */
 }
 
 .admin-msglogin-icon-small{

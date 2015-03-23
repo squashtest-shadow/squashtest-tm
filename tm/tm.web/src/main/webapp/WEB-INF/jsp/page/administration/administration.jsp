@@ -66,25 +66,26 @@
           <span class="admin-section-label"><f:message key="label.projectManagement" /></span>
         </a>
         
-          <sec:authorize var="isAdmin" access="hasRole('ROLE_ADMIN')" />
+        <sec:authorize var="isAdmin" access="hasRole('ROLE_ADMIN')" />
         <c:if test="${ isAdmin or milestoneFeatureEnabled }">
         <a href="${ milestoneUrl }" class="unstyledLink">
           <span id="milestone-admin" class="admin-section-icon admin-milestone-icon"></span>
           <span class="admin-section-label"><f:message key="label.milestoneManagement" /></span>
         </a>
         </c:if>
+        
         <sec:authorize access=" hasRole('ROLE_ADMIN')">
         <a href="${ customFieldsUrl }" class="unstyledLink">
           <span id="custom-fields-admin" class="admin-section-icon admin-customfields-icon"></span>
           <span class="admin-section-label"><f:message key="label.customFieldsManagement" /></span>
         </a>
         </sec:authorize>
+        
         <a href="<c:url value='/administration/info-lists' />" class="unstyledLink">
-          <span id="admin-info-list" class="admin-section-icon admin-sq-icon">
-            <img src="<c:url value='/images/Button_InfoList.jpg' />" title="Il n'y a personne pour me renseigner :-(" width="64px" height="64px" /> 
-          </span>
+          <span id="admin-info-list" class="admin-section-icon admin-infolist-icon"></span>
           <span class="admin-section-label"><f:message key="label.infoListManagement" /></span>
         </a>
+        
         <sec:authorize access=" hasRole('ROLE_ADMIN')">
         <a href="${ bugtrackerUrl }" class="unstyledLink">
           <span id="bug-tracker-admin" class="admin-section-icon admin-bugtracker-icon"></span>

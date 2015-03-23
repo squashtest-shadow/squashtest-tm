@@ -55,9 +55,6 @@
 <div class='display-table-row'>
   <div class='display-table-cell warning-cell'>
     <div class='generic-question-signal'></div>
-    <c:if test="${milestoneFeatureEnabled}">
-    <div><img src="<c:url value='/images/Button_InfoList.jpg' />" width="64px" height="64px" /></div>
-    </c:if>
   </div>
   <div class='display-table-cell'>
     <span>{{first}}</span>
