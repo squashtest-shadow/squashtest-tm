@@ -101,7 +101,6 @@ class RequirementTest extends Specification {
 
 		where :
 		property      | valueToSet
-		"name"        | "toto"
 		"description" | "successful test"
 		"reference"   | "blahblah"
 		"criticality" | RequirementCriticality.MAJOR
@@ -123,7 +122,6 @@ class RequirementTest extends Specification {
 
 		where :
 		property      | valueToSet
-		"name"        | "toto"
 		"description" | "successful test"
 		"reference"   | "blahblah"
 		"criticality" | RequirementCriticality.MAJOR

@@ -132,6 +132,16 @@ public interface RequirementDeletionDao extends DeletionDao {
 
 	// ================= simple predicates =========================
 
+
+	/**
+	 * Given their ids, returns the ids of <strong>requirements</strong> that have at least
+	 * one version that cannot be removed due to restriction on the milestone status.
+	 * 
+	 * @param requirementIds
+	 * @return
+	 */
+	List<Long> filterRequirementsIdsWhichMilestonesForbidsDeletion(List<Long> requirementIds);
+
 	/**
 	 * Given their ids, return the ids of <strong>requirement version</strong> one cannot remove
 	 * due to restrictions on the status of their milestones

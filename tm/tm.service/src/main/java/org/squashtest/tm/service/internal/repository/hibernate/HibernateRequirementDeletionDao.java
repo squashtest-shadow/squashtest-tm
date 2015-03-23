@@ -294,13 +294,13 @@ public class HibernateRequirementDeletionDao extends HibernateDeletionDao implem
 		List<Long> versionsBelongingToMilestone = findVersionIdsForMilestone(requirementIds, milestoneId);
 		deletableVersions.addAll(versionsBelongingToMilestone);
 
-		// 2 - must not be locked
-		List<Long> lockedVersions = filterVersionIdsWhichMilestonesForbidsDeletion(deletableVersions);
-		deletableVersions.removeAll(lockedVersions);
-
-		// 3 - must not belong to many milestones
+		// 2 - must not belong to many milestones
 		List<Long> hasManyMilestones = filterVersionIdsHavingMultipleMilestones(deletableVersions);
 		deletableVersions.removeAll(hasManyMilestones);
+
+		// 3 - must not be locked
+		List<Long> lockedVersions = filterVersionIdsWhichMilestonesForbidsDeletion(deletableVersions);
+		deletableVersions.removeAll(lockedVersions);
 
 		return deletableVersions;
 	};
@@ -319,12 +319,12 @@ public class HibernateRequirementDeletionDao extends HibernateDeletionDao implem
 		List<Long> versionsBelongingToMilestone = findVersionIdsForMilestone(requirementIds, milestoneId);
 		unbindableVersions.addAll(versionsBelongingToMilestone);
 
-		// 2 - must not be locked
+		// 2 - must belong to many milestones
+		versionsBelongingToMilestone = filterVersionIdsHavingMultipleMilestones(unbindableVersions);
+
+		// 3 - must not be locked
 		List<Long> lockedVersions = filterVersionIdsWhichMilestonesForbidsDeletion(unbindableVersions);
 		versionsBelongingToMilestone.removeAll(lockedVersions);
-
-		// 3 - must belong to many milestones
-		versionsBelongingToMilestone = filterVersionIdsHavingMultipleMilestones(unbindableVersions);
 
 		return versionsBelongingToMilestone;
 	}
@@ -343,6 +343,19 @@ public class HibernateRequirementDeletionDao extends HibernateDeletionDao implem
 	}
 
 
+	@Override
+	public List<Long> filterRequirementsIdsWhichMilestonesForbidsDeletion(List<Long> requirementIds) {
+		if (! requirementIds.isEmpty()){
+			MilestoneStatus[] lockedStatuses = new MilestoneStatus[]{ MilestoneStatus.PLANNED, MilestoneStatus.LOCKED};
+			Query query = getSession().getNamedQuery("requirementDeletionDao.findRequirementsWhichMilestonesForbidsDeletion");
+			query.setParameterList("requirementIds", requirementIds, LongType.INSTANCE);
+			query.setParameterList("lockedStatuses", lockedStatuses);
+			return query.list();
+		}
+		else{
+			return new ArrayList<>();
+		}
+	}
 
 
 	@Override

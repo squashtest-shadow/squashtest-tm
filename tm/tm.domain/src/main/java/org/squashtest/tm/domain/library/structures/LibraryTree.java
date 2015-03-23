@@ -21,11 +21,18 @@
 package org.squashtest.tm.domain.library.structures;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.Set;
+import java.util.SortedSet;
 
 import org.apache.commons.collections.Closure;
 import org.apache.commons.collections.CollectionUtils;
@@ -146,11 +153,63 @@ public class  LibraryTree<T extends TreeNode<T>>{
 	public void addNodes(List<TreeNodePair> unsortedFlatTree){
 
 		//we must ensure first that the data are sorted before inserting them.
-		List<TreeNodePair> sortedFlatTree = sortData(unsortedFlatTree);
+		//List<TreeNodePair> sortedFlatTree = sortData(unsortedFlatTree);
 
-		for (TreeNodePair pair : sortedFlatTree){
-			addNode(pair);
+		List<TreeNodePair> cleanPairs = cleanData(unsortedFlatTree);
+
+		// first pass : create all the nodes
+		Map<Long, T> newNodesByKey = new HashMap<>();
+		Set<T> rootNodes = new HashSet<>();
+
+		for (TreeNodePair pair : cleanPairs){
+			newNodesByKey.put(pair.child.getKey(), pair.child);
+			if (pair.parentKey == null){
+				rootNodes.add(pair.child);
+			}
+			pair.child.setTree(this);
 		}
+
+		// second pass : bind nodes together
+		for (TreeNodePair pair : cleanPairs){
+			if (rootNodes.contains(pair.child)){
+				continue;	// no parent to bind to
+			}
+			T parent = newNodesByKey.get(pair.parentKey);
+			T child = newNodesByKey.get(pair.child.getKey());
+
+			parent.addChild(child);
+		}
+
+		// third pass : integrate to the nodes
+		integrateNodes(0, rootNodes);
+
+
+	}
+
+	private void integrateNodes(int layerindex, Collection<T> nodes){
+		if (nodes.isEmpty()){
+			return;
+		}
+
+		List<T> layer = getLayer(layerindex);
+
+		Collection<T> nextLayer = new ArrayList<>();
+
+		for (T node : nodes){
+			node.setDepth(layerindex);
+			layer.add(node);
+			nextLayer.addAll(node.getChildren());
+		}
+
+		integrateNodes(layerindex+1, nextLayer);
+
+	}
+
+	private List<T> getLayer(int index){
+		if (layers.get(index) == null){
+			layers.put(index, new ArrayList<T>());
+		}
+		return layers.get(index);
 	}
 
 
@@ -173,24 +232,68 @@ public class  LibraryTree<T extends TreeNode<T>>{
 	 * @return the sorted list of TreeNodePair
 	 * @see TreeNode, TreeNodePair.
 	 */
-	protected List<TreeNodePair> sortData(List<TreeNodePair> unsortedData){
+	/*	protected List<TreeNodePair> sortData(List<TreeNodePair> corruptUnsortedData){
+
+		// first, clean up the data
+		List<TreeNodePair> unsortedData = cleanData(corruptUnsortedData);
+
 		List<TreeNodePair> sortedList = new ArrayList<TreeNodePair>(unsortedData.size());
 
-		//the list below will hold lists of all keys (node identifier) we treated. Since those keys are our main comparators it's a good idea to keep a shorthand on them.
+		// the list below will hold lists of all keys (node identifier) we treated. Since those keys are our main comparators it's a good idea to keep a shorthand on them.
 		List<Long> insertedNodes = new ArrayList<Long>(unsortedData.size());
 
+
 		for (TreeNodePair data : unsortedData){
-			//the following statement is true if the data has a parent in the output list
-			Long parentKey = data.parentKey;
 
-			int index = (insertedNodes.contains(parentKey)) ? insertedNodes.indexOf(parentKey)+1 : 0;
+			Long childKey = data.child.getKey();
 
-			insertedNodes.add(index, data.child.getKey());
-			sortedList.add(index, data);
+			Integer index = (insertedNodes.contains(childKey)) ? insertedNodes.indexOf(childKey) : null;
+
+			if (index != null){
+				insertedNodes.add(index, data.parentKey);
+				sortedList.add(index, data);
+			}
+			else{
+				insertedNodes.add(data.parentKey);
+				sortedList.add(data);
+			}
 
 		}
 
+
 		return sortedList;
+
+	}
+	 */
+	/**
+	 * 
+	 * <p>This method will also clean up some wrong data, for instance the data might say that a given node have multiple parent. In this case the last non null parent will
+	 * be selected and the other entries are discarded.</p>
+	 * 
+	 * @param corruptData
+	 * @return
+	 */
+	private List<TreeNodePair> cleanData(List<TreeNodePair> corruptData){
+
+		Map<Long, TreeNodePair> pairByChildKey = new HashMap<>();
+
+		for (TreeNodePair pair : corruptData){
+			Long childKey = pair.getChild().getKey();
+			TreeNodePair foundPair = pairByChildKey.get(childKey);
+
+			// case one : there were no entries yet
+			if (foundPair == null){
+				pairByChildKey.put(childKey, pair);
+			}
+			// case two : the new entry replaces the previous one if the parent key is not null
+			else if (pair.getParentKey() != null ){
+				pairByChildKey.put(childKey,  pair);
+			}
+
+			// else the pair is discarded
+		}
+
+		return new ArrayList<>(pairByChildKey.values());
 
 	}
 
@@ -378,6 +481,12 @@ public class  LibraryTree<T extends TreeNode<T>>{
 		public TreeNodePair(Long parentKey, T child){
 			this.parentKey = parentKey;
 			this.child = child;
+		}
+
+		@Override
+		public String toString(){
+			return "["+this.parentKey+" : "+this.child.getKey()+"]";
+
 		}
 
 

@@ -440,8 +440,11 @@
 	@NamedQuery(name = "requirementDeletionDao.findVersionsWhichMilestonesForbidsDeletion", 
 	query="select distinct v.id from RequirementVersion v inner join v.milestones lockedMilestones " +
 			"where v.id in (:versionIds) and lockedMilestones.status in (:lockedStatuses)"),	
+	@NamedQuery(name = "requirementDeletionDao.findRequirementsWhichMilestonesForbidsDeletion", 
+			query="select distinct r.id from Requirement r inner join r.versions v inner join v.milestones lockedMilestones " +
+					"where r.id in (:requirementIds) and lockedMilestones.status in (:lockedStatuses)"),	
 	@NamedQuery(name = "requirementDeletionDao.findVersionIdsHavingMultipleMilestones", 
-	query = "select v.id from RequirementVersion v join v.milestones stones where v.id in (:versionIds) group by v.id having count(stones) > 1 "),
+			query = "select v.id from RequirementVersion v join v.milestones stones where v.id in (:versionIds) group by v.id having count(stones) > 1 "),
 	@NamedQuery(name = "requirementDeletionDao.findAllVersionForMilestone", query="select v.id from Requirement r join r.versions v join v.milestones m where r.id in (:nodeIds) and m.id = :milestoneId"),	
 	@NamedQuery(name = "requirementDeletionDao.deleteVersions", query = "delete from RequirementVersion rv where rv.id in (:versionIds)"),
 		

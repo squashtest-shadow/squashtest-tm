@@ -103,7 +103,6 @@ class RequirementVersionTest extends Specification {
 
 		where :
 		property      | valueToSet
-		"name"        | "toto"
 		"description" | "successful test"
 		"reference"   | "blahblah"
 		"criticality" | RequirementCriticality.MAJOR
@@ -125,7 +124,6 @@ class RequirementVersionTest extends Specification {
 
 		where :
 		property      | valueToSet
-		"name"        | "toto"
 		"description" | "successful test"
 		"reference"   | "blahblah"
 		"criticality" | RequirementCriticality.MAJOR
@@ -211,7 +209,7 @@ class RequirementVersionTest extends Specification {
 		OBSOLETE			|	[]
 	}
 
-	
+
 
 	//same
 	private RequirementVersion prepareRequirement(RequirementStatus status, TestCase testCase){
@@ -311,8 +309,8 @@ class RequirementVersionTest extends Specification {
 		nextVersion.attachmentList.allAttachments.size() == 1
 		!nextVersion.attachmentList.allAttachments.contains(attachment)
 	}
-	
-	
+
+
 	//that (naive) method builds requirements with initial status that could bypass the workflow.
 	private RequirementVersion prepareRequirement(RequirementStatus status){
 		def req = new RequirementVersion(name:"req", description:"this is a req");

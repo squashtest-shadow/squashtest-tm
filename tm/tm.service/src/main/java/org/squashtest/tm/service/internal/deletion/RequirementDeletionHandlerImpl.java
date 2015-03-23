@@ -21,6 +21,7 @@
 package org.squashtest.tm.service.internal.deletion;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
@@ -30,6 +31,7 @@ import javax.inject.Provider;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.core.foundation.exception.ActionException;
 import org.squashtest.tm.domain.customfield.BindableEntity;
@@ -48,8 +50,10 @@ import org.squashtest.tm.service.deletion.NodeMovement;
 import org.squashtest.tm.service.deletion.OperationReport;
 import org.squashtest.tm.service.deletion.SuppressionPreviewReport;
 import org.squashtest.tm.service.internal.customfield.PrivateCustomFieldValueService;
+import org.squashtest.tm.service.internal.deletion.SubRequirementRewiringTree.Movement;
 import org.squashtest.tm.service.internal.library.LibraryUtils;
 import org.squashtest.tm.service.internal.repository.FolderDao;
+import org.squashtest.tm.service.internal.repository.LibraryNodeDao;
 import org.squashtest.tm.service.internal.repository.RequirementDao;
 import org.squashtest.tm.service.internal.repository.RequirementDeletionDao;
 import org.squashtest.tm.service.internal.repository.RequirementFolderDao;
@@ -72,6 +76,9 @@ RequirementNodeDeletionHandler {
 	@Inject
 	private RequirementDao requirementDao;
 
+	@Inject
+	@Qualifier("squashtest.tm.repository.RequirementLibraryNodeDao")
+	private LibraryNodeDao<RequirementLibraryNode> libraryNodeDao;
 
 	@Inject
 	private RequirementDeletionDao deletionDao;
@@ -93,9 +100,15 @@ RequirementNodeDeletionHandler {
 
 		List<SuppressionPreviewReport> preview = new LinkedList<SuppressionPreviewReport>();
 
-		// milestone mode verification
-		//
-		if (milestoneId != null){
+		// normal mode
+		if (milestoneId == null){
+			if (hasRequirementsLockedByMilestone(nodeIds)){
+				preview.add(new BoundToLockedMilestonesReport());
+			}
+		}
+
+		// milestone mode
+		else {
 
 
 			// check if there are some folders in the selection
@@ -140,7 +153,14 @@ RequirementNodeDeletionHandler {
 
 		List<Long> lockedIds = new ArrayList<>();
 
-		if (milestoneId != null){
+		// referential mode. Nodes locked by milestone are always locked
+		if (milestoneId == null){
+			List<Long> lockedRequirementIds = deletionDao.filterRequirementsIdsWhichMilestonesForbidsDeletion(nodeIds);
+			lockedIds.addAll(lockedRequirementIds);
+		}
+
+		// milestone mode
+		else {
 
 			List<Long>[] separateIds = deletionDao.separateFolderFromRequirementIds(nodeIds);
 
@@ -328,7 +348,7 @@ RequirementNodeDeletionHandler {
 
 		// rewire future orphan requirements
 		List<Long> childrenRewirableRequirements = sortedTargets.getRequirementsWithRewirableChildren();
-		OperationReport rewiredRequirementsReport = rewireChildrenRequirements(childrenRewirableRequirements);
+		OperationReport rewiredRequirementsReport = rewireChildrenRequirements2(childrenRewirableRequirements);
 		globalReport.mergeWith(rewiredRequirementsReport);
 
 
@@ -502,6 +522,118 @@ RequirementNodeDeletionHandler {
 	}
 
 
+	private OperationReport rewireChildrenRequirements2(List<Long> requirements){
+
+		OperationReport report = new OperationReport();
+
+		// first : find which node must move where
+		List<Long[]> treeData = findPairedNodeHierarchy(requirements);
+
+		SubRequirementRewiringTree rewirer = new SubRequirementRewiringTree();
+		rewirer.build(treeData);
+		rewirer.markDeletableNodes(requirements);
+
+		rewirer.resolveMovements();
+
+		Collection<Movement> movements = rewirer.getNodeMovements();
+
+		// second : clear each deleted nodes from their content
+		List<Requirement> deletedRequirements = requirementDao.findAllByIds(requirements);
+		for (Requirement r : deletedRequirements){
+			r.getContent().clear();
+		}
+
+		// third : perform the rewiring
+
+		for (Movement mouv : movements){
+
+			Long newParentId = mouv.getId();
+			boolean isknown = (! mouv.isTheParentOf());
+
+			NodeContainer<Requirement> newParent;
+
+			if (isknown){
+				newParent = (NodeContainer<Requirement>)libraryNodeDao.findById(newParentId);	// the cast is quite brutal indeed
+			}
+			else{
+				List<Object[]> allParents = requirementDao.findAllParentsOf(Arrays.asList(new Long[]{newParentId}));
+				newParent = (NodeContainer<Requirement>)allParents.get(0)[0]; 					// quite brutal too
+			}
+
+			List<Requirement> rewiredRequirements = requirementDao.findAllByIds(mouv.getNewChildren());
+
+			renameContentIfNeededThenAttach2(newParent, rewiredRequirements, report);
+
+		}
+
+		return report;
+
+	}
+
+	private void renameContentIfNeededThenAttach2(NodeContainer<Requirement> newParent, Collection<Requirement> rewired, OperationReport report){
+		// abort if no operation is necessary
+		if (rewired.isEmpty()) {
+			return;
+		}
+
+		// init
+		Collection<Requirement> children = new ArrayList<Requirement>(rewired);
+		List<Node> movedNodesLog = new ArrayList<Node>(rewired.size());
+
+		boolean needsRenaming = false;
+
+		// renaming loop. Loop over each children, and for each of them ensure that they wont namecrash within their new
+		// parent.
+		// Log all these operations in the report object.
+		for (Requirement child : children) {
+
+			needsRenaming = false;
+			String name = child.getName();
+
+			while (!newParent.isContentNameAvailable(name)) {
+				name = LibraryUtils.generateNonClashingName(name, newParent.getContentNames(), Requirement.MAX_NAME_SIZE);
+				needsRenaming = true;
+			}
+
+			// log the renaming operation if happened.
+			if (needsRenaming) {
+				child.setName(name);
+				report.addRenamed("requirement", child.getId(), name);
+			}
+
+			// log the movement operation.
+			movedNodesLog.add(new Node(child.getId(), "requirement"));
+
+		}
+
+		// attach the children to their new parent.
+		// TODO : perhaps use the navigation service facilities instead? For now I believe it's fine enough.
+		for (Requirement child : children) {
+			newParent.addContent(child);
+		}
+
+		// fill the report
+		NodeType type = new WhichNodeVisitor().getTypeOf(newParent);
+		String strtype;
+		switch (type) {
+		case REQUIREMENT_LIBRARY:
+			strtype = "drive";
+			break;
+		case REQUIREMENT_FOLDER:
+			strtype = "folder";
+			break;
+		default:
+			strtype = "requirement";
+			break;
+		}
+
+		NodeMovement nodeMovement = new NodeMovement(new Node(newParent.getId(), strtype), movedNodesLog);
+		report.addMoved(nodeMovement);
+	}
+
+
+	// ********* old code ? ************************
+
 
 	// todo : send back an object that describes which requirements where rebound to which entities, and how they were
 	// renamed if so.
@@ -604,11 +736,18 @@ RequirementNodeDeletionHandler {
 
 	}
 
+	// ********* / old code ? ************************
+
 	// ************************** predicates *****************************************
 
 	private boolean hasTargetVersionsBelongingToManyMilestones(List<Long> versionIds){
 		List<Long> boundNodes = deletionDao.filterVersionIdsHavingMultipleMilestones(versionIds);
 		return ! (boundNodes.isEmpty());
+	}
+
+	private boolean hasRequirementsLockedByMilestone(List<Long> requirementIds){
+		List<Long> lockedNodes = deletionDao.filterRequirementsIdsWhichMilestonesForbidsDeletion(requirementIds);
+		return ! (lockedNodes.isEmpty());
 	}
 
 	private boolean hasTargetVersionsLockedByMilestone(List<Long> versionIds){
