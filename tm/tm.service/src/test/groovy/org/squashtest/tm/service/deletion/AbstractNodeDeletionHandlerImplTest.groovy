@@ -240,7 +240,7 @@ class AbstractNodeDeletionHandlerImplTest extends Specification {
 		folderDao.findPairedContentForList([31, 32]) >> layer3
 
 		and :
-		nodeDao.findAllTestCasesIdsCalledByTestCases([2, 1, 14, 13, 12, 11, 24, 23, 22, 21, 32, 31]) >> [32l, 22l]
+		nodeDao.findAllTestCasesIdsCalledByTestCases(_) >> [32l, 22l]
 
 		and :
 		def expected = [2, 14, 13, 23, 21, 31]
@@ -250,7 +250,7 @@ class AbstractNodeDeletionHandlerImplTest extends Specification {
 		def deleted = handler.deleteNodes([1l, 2l], null)
 
 		then :
-		deleted.removed.collect{it.resid} == expected
+		deleted.removed.collect{it.resid} as Set == expected as Set
 
 
 

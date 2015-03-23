@@ -30,7 +30,7 @@ import org.apache.commons.collections.Closure;
 import org.squashtest.tm.domain.library.structures.LibraryTree;
 import org.squashtest.tm.domain.library.structures.TreeNode;
 
-class SubRequirementRewiringTree extends LibraryTree<SubRequirementRewiringTree.Node> {
+public class SubRequirementRewiringTree extends LibraryTree<SubRequirementRewiringTree.Node> {
 
 	private List<Movement> movements = new ArrayList<>();
 
@@ -198,9 +198,6 @@ class SubRequirementRewiringTree extends LibraryTree<SubRequirementRewiringTree.
 		Long getId() {
 			return id;
 		}
-
-
-
 
 	}
 

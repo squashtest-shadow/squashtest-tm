@@ -213,61 +213,10 @@ public class  LibraryTree<T extends TreeNode<T>>{
 	}
 
 
+
 	/**
 	 * 
-	 * <p>This method accepts a list of TreeNodePair and returns the sorted version of that list. Sorting means here that nodes will be grouped by layers and the layer will be ordered.</p>
-	 * 
-	 * <p>
-	 * 	For each TreeNodePair <i>d</i> from the input list:
-	 * <ul>
-	 *  <li>if there are no pair <i>x</i> such as <i>d.parent</i> == <i>x.child.key</i> (<i>d</i>'s parent is not part of the output list), then <i>d</i>.child is inserted first</li>
-	 *  <li>if there is a node <i>x</i> such as <i>d</i>.parent == <i>x</i>.child.key (<i>d</i>'s parent is part of the output list) then <i>d</i> is inserted at position(<i>x</i>)+1</li>
-	 * </ul>
-	 * <i>x</i> is taken from the output list. Note : the output implements a weak order. ie if two data have the same key their belong to the same layer of the tree, but their precise order within that layer is
-	 *  undefined.
-	 * 
-	 * </p>
-	 * 
-	 * @param unsortedData an unsorted list of TreeNodePair
-	 * @return the sorted list of TreeNodePair
-	 * @see TreeNode, TreeNodePair.
-	 */
-	/*	protected List<TreeNodePair> sortData(List<TreeNodePair> corruptUnsortedData){
-
-		// first, clean up the data
-		List<TreeNodePair> unsortedData = cleanData(corruptUnsortedData);
-
-		List<TreeNodePair> sortedList = new ArrayList<TreeNodePair>(unsortedData.size());
-
-		// the list below will hold lists of all keys (node identifier) we treated. Since those keys are our main comparators it's a good idea to keep a shorthand on them.
-		List<Long> insertedNodes = new ArrayList<Long>(unsortedData.size());
-
-
-		for (TreeNodePair data : unsortedData){
-
-			Long childKey = data.child.getKey();
-
-			Integer index = (insertedNodes.contains(childKey)) ? insertedNodes.indexOf(childKey) : null;
-
-			if (index != null){
-				insertedNodes.add(index, data.parentKey);
-				sortedList.add(index, data);
-			}
-			else{
-				insertedNodes.add(data.parentKey);
-				sortedList.add(data);
-			}
-
-		}
-
-
-		return sortedList;
-
-	}
-	 */
-	/**
-	 * 
-	 * <p>This method will also clean up some wrong data, for instance the data might say that a given node have multiple parent. In this case the last non null parent will
+	 * <p>This method will clean up some wrong data, for instance the data might say that a given node have multiple parent. In this case the last non null parent will
 	 * be selected and the other entries are discarded.</p>
 	 * 
 	 * @param corruptData
