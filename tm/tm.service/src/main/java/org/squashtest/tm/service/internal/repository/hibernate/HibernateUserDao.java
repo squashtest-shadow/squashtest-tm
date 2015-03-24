@@ -48,12 +48,12 @@ import org.squashtest.tm.service.internal.repository.UserDao;
 @Repository
 public class HibernateUserDao extends HibernateEntityDao<User> implements UserDao {
 
-	
+
 	static private String FIND_ALL_MANAGER_AND_ADMIN = "SELECT  member.party_id FROM  core_group_member member inner join core_group_authority cga on cga.group_id=member.group_id WHERE cga.authority = 'ROLE_ADMIN' UNION Select auth.PARTY_ID From  CORE_PARTY_AUTHORITY auth where auth.AUTHORITY = 'ROLE_TM_PROJECT_MANAGER'";
-	
+
 	@Inject
-	private SessionFactory sessionFactory; 
-	
+	private SessionFactory sessionFactory;
+
 	/**
 	 * @return users with all properties fetched, ordered by login
 	 */
@@ -111,12 +111,12 @@ public class HibernateUserDao extends HibernateEntityDao<User> implements UserDa
 
 		String filter = oFilter.getFilter();
 		return Restrictions.disjunction()
-				.add(Restrictions.like("login", filter, MatchMode.ANYWHERE))
-				.add(Restrictions.like("firstName", filter, MatchMode.ANYWHERE))
-				.add(Restrictions.like("lastName", filter, MatchMode.ANYWHERE))
-				.add(Restrictions.like("email", filter, MatchMode.ANYWHERE))
-				.add(Restrictions.like("audit.createdBy", filter, MatchMode.ANYWHERE))
-				.add(Restrictions.like("audit.lastModifiedBy", filter, MatchMode.ANYWHERE));
+				.add(Restrictions.ilike("login", filter, MatchMode.ANYWHERE))
+				.add(Restrictions.ilike("firstName", filter, MatchMode.ANYWHERE))
+				.add(Restrictions.ilike("lastName", filter, MatchMode.ANYWHERE))
+				.add(Restrictions.ilike("email", filter, MatchMode.ANYWHERE))
+				.add(Restrictions.ilike("audit.createdBy", filter, MatchMode.ANYWHERE))
+				.add(Restrictions.ilike("audit.lastModifiedBy", filter, MatchMode.ANYWHERE));
 
 
 	}
