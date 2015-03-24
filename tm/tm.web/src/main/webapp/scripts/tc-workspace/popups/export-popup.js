@@ -58,7 +58,7 @@ define(['jquery', 'tree',
 			return this.options.nameprefix+"_"+ dateutils.format(new Date(), this.options.dateformat);
 		},
 		
-		_createUrl : function(nodes, type, filename, includeCalls){
+		_createUrl : function(nodes, type, filename, includeCalls, keepRteFormat){
 			
 			var url = squashtm.app.contextRoot+'/test-case-browser/content/'+type;
 			
@@ -73,7 +73,8 @@ define(['jquery', 'tree',
 				'filename' : filename,
 				'libraries' : libIds,
 				'nodes' : nodeIds,
-				'calls' : includeCalls
+				'calls' : includeCalls,
+				'keep-rte-format' : keepRteFormat
 			};
 			
 			return url+"?"+$.param(params);
@@ -85,9 +86,10 @@ define(['jquery', 'tree',
 			if ((nodes.length>0) ){
 				var filename = $("#export-test-case-filename").val();
 				var includeCalls = $("#export-test-case-includecalls").prop('checked');
+				var keepRteFormat = $("#export-test-case-keepRteFormat").prop('checked');
 				var type = this.element.find('input[name="format"]:checked').data('val');
 				
-				var url = this._createUrl(nodes, type, filename, includeCalls);
+				var url = this._createUrl(nodes, type, filename, includeCalls, keepRteFormat);
 				document.location.href = url;
 				this.close();
 			}

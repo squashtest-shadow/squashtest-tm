@@ -190,26 +190,26 @@ public class RequirementLibraryNavigationController extends
 		return "page/requirement-libraries/show-requirement-library";
 	}
 
-	@RequestMapping(value = "/nodes/{nodeIds}/{exportformat}", method = RequestMethod.GET, params="name")
+	@RequestMapping(value = "/nodes/{nodeIds}/{exportformat}", method = RequestMethod.GET, params={"name", "keep-rte-format"})
 	public @ResponseBody
-	void exportRequirements(@PathVariable("nodeIds") List<Long> ids, @RequestParam("name") String filename, @PathVariable("exportformat") String exportformat,
+	void exportRequirements(@PathVariable("nodeIds") List<Long> ids, @RequestParam("name") String filename, @RequestParam("keep-rte-format") Boolean keepRteFormat, @PathVariable("exportformat") String exportformat,
 			HttpServletResponse response, Locale locale) {
 		
 		List<ExportRequirementData> dataSource = requirementLibraryNavigationService.findRequirementsToExportFromNodes(ids);
-		printExport(dataSource, filename,JASPER_EXPORT_FILE, response, locale, exportformat);
+		printExport(dataSource, filename,JASPER_EXPORT_FILE, response, locale, exportformat, keepRteFormat);
 
 	}
 	
 
 
-	@RequestMapping(value = "/drives/{libIds}/{exportformat}", method = RequestMethod.GET, params="name")
+	@RequestMapping(value = "/drives/{libIds}/{exportformat}", method = RequestMethod.GET,  params={"name", "keep-rte-format"})
 	public @ResponseBody
-	void exportLibrary(@PathVariable("libIds") List<Long> libIds, @RequestParam("name") String filename, @PathVariable("exportformat") String exportformat,
+	void exportLibrary(@PathVariable("libIds") List<Long> libIds, @RequestParam("name") String filename, @RequestParam("keep-rte-format") Boolean keepRteFormat, @PathVariable("exportformat") String exportformat,
 			HttpServletResponse response, Locale locale) {
 
 		List<ExportRequirementData> dataSource = requirementLibraryNavigationService.findRequirementsToExportFromLibrary(libIds);
 
-		printExport(dataSource, filename,JASPER_EXPORT_FILE, response, locale, exportformat);
+		printExport(dataSource, filename,JASPER_EXPORT_FILE, response, locale, exportformat, keepRteFormat);
 
 	}
 

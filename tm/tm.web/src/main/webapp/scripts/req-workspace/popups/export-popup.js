@@ -59,13 +59,13 @@ define(['jquery', 'tree',
 			return this.options.nameprefix+"_"+ dateutils.format(new Date(), this.options.dateformat);
 		},
 		
-		_createUrl : function(nodes, name, format){
+            _createUrl : function(nodes, name, format, keepRteFormat){
 			var url = squashtm.app.contextRoot+'/requirement-browser/';
 			if (nodes.is(':library')){
-				url += "drives/"+nodes.all('getResId').join(',')+"/"+format+"?name="+name;
+            url += "drives/"+nodes.all('getResId').join(',')+"/"+format+"?name="+name + "&keep-rte-format=" + keepRteFormat;
 			}
 			else{
-				url += "nodes/"+nodes.all('getResId').join(',')+"/"+format+"?name="+name;
+				url += "nodes/"+nodes.all('getResId').join(',')+"/"+format+"?name="+name + "&keep-rte-format=" + keepRteFormat;
 			}
 			
 			return url;
@@ -76,7 +76,8 @@ define(['jquery', 'tree',
 			if ((nodes.length>0) && (nodes.areSameLibs())){
 				var filename = $("#export-name-input").val();
 				var exportFormat = $("#export-option").val();
-				var url = this._createUrl(nodes, filename, exportFormat);
+				var keepRteFormat = $("#export-keepRteFormat").prop('checked');
+				var url = this._createUrl(nodes, filename, exportFormat, keepRteFormat);
 				document.location.href = url;
 				this.close();
 			}

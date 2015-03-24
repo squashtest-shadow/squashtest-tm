@@ -53,6 +53,8 @@ import org.squashtest.tm.domain.library.ExportData;
 import org.squashtest.tm.domain.library.Folder;
 import org.squashtest.tm.domain.library.Library;
 import org.squashtest.tm.domain.library.LibraryNode;
+import org.squashtest.tm.domain.testcase.ExportTestCaseData;
+import org.squashtest.tm.domain.testcase.ExportTestStepData;
 import org.squashtest.tm.exception.library.RightsUnsuficientsForOperationException;
 import org.squashtest.tm.service.deletion.OperationReport;
 import org.squashtest.tm.service.deletion.SuppressionPreviewReport;
@@ -89,16 +91,14 @@ public abstract class LibraryNavigationController<LIBRARY extends Library<? exte
 	
 	private static final int EOF = -1;
 
-	protected MessageSource getMessageSource(){
+	protected MessageSource getMessageSource() {
 		return messageSource;
 	}
-
 
 	protected abstract JsTreeNode createTreeNodeFromLibraryNode(NODE resource);
 
 	@RequestMapping(value = "/drives/{libraryId}/content", method = RequestMethod.GET)
-	public final @ResponseBody
-	List<JsTreeNode> getRootContentTreeModel(@PathVariable long libraryId) {
+	public final @ResponseBody List<JsTreeNode> getRootContentTreeModel(@PathVariable long libraryId) {
 		List<NODE> nodes = getLibraryNavigationService().findLibraryRootContent(libraryId);
 		List<JsTreeNode> model = createJsTreeModel(nodes);
 
@@ -219,6 +219,16 @@ public abstract class LibraryNavigationController<LIBRARY extends Library<? exte
 		return createJsTreeModel(nodeList);
 	}
 	
+		private void removeRteFormat(List<? extends ExportData> dataSource) {
+				
+				for (ExportData data : dataSource) {
+					String htmlDescription = data.getDescription();
+					String description = HTMLCleanupUtils.htmlToText(htmlDescription);
+					data.setDescription(description);
+				}
+			}
+			
+	
 	@RequestMapping(value = "/{destinationType}/{destinationId}/content/{nodeIds}", method = RequestMethod.PUT)
 	public @ResponseBody
 	void moveNodes(@PathVariable("nodeIds") Long[] nodeIds, 
@@ -266,15 +276,12 @@ public abstract class LibraryNavigationController<LIBRARY extends Library<? exte
 	
 	
 	protected void printExport(List<? extends ExportData> dataSource, String filename,String jasperFile, HttpServletResponse response,
-			Locale locale, String format) {
+			Locale locale, String format, Boolean keepRteFormat) {
 		try {
-			// it seems JasperReports doesn't like '\n' and the likes so we'll HTML-encode that first.
-			// that solution is quite weak though.
-			for (ExportData data : dataSource) {
-				String htmlDescription = data.getDescription();
-				String description = HTMLCleanupUtils.htmlToText(htmlDescription);
-				data.setDescription(description);
-			}
+			if (!keepRteFormat) {
+				removeRteFormat(dataSource);
+				 			}
+			
 
 			// report generation parameters
 			Map<String, Object> reportParameter = new HashMap<String, Object>();
@@ -288,8 +295,7 @@ public abstract class LibraryNavigationController<LIBRARY extends Library<? exte
 			exportParameter.put(JRExporterParameter.CHARACTER_ENCODING, "ISO-8859-1");
 			exportParameter.put(JRXlsExporterParameter.IS_WHITE_PAGE_BACKGROUND, Boolean.FALSE);
 
-			InputStream jsStream = Thread.currentThread().getContextClassLoader()
-					.getResourceAsStream(jasperFile);
+			InputStream jsStream = Thread.currentThread().getContextClassLoader().getResourceAsStream(jasperFile);
 			InputStream reportStream = jrServices.getReportAsStream(jsStream, format, dataSource, reportParameter,
 					exportParameter);
 
@@ -297,7 +303,7 @@ public abstract class LibraryNavigationController<LIBRARY extends Library<? exte
 			ServletOutputStream servletStream = response.getOutputStream();
 
 			response.setContentType("application/octet-stream");
-			response.setHeader("Content-Disposition", "attachment; filename=" + filename + "."+format);
+			response.setHeader("Content-Disposition", "attachment; filename=" + filename + "." + format);
 
 			flushStreams(reportStream, servletStream);
 
@@ -309,6 +315,7 @@ public abstract class LibraryNavigationController<LIBRARY extends Library<? exte
 		}
 
 	}
+
 	protected void flushStreams(InputStream inStream, ServletOutputStream outStream) throws IOException {
 		int readByte;
 

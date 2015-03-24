@@ -67,9 +67,11 @@ import org.squashtest.tm.web.internal.util.HTMLCleanupUtils;
 @Controller
 @RequestMapping("/test-case-browser")
 public class TestCaseLibraryNavigationController extends
-LibraryNavigationController<TestCaseLibrary, TestCaseFolder, TestCaseLibraryNode> {
+		LibraryNavigationController<TestCaseLibrary, TestCaseFolder, TestCaseLibraryNode> {
 	public static final Logger LOGGER = LoggerFactory.getLogger(TestCaseLibraryNavigationController.class);
 
+	private static final String RTEFORMAT = "keep-rte-format";
+	
 	@Inject
 	private Provider<TestCaseLibraryTreeNodeBuilder> testCaseLibraryTreeNodeBuilder;
 
@@ -128,10 +130,9 @@ LibraryNavigationController<TestCaseLibrary, TestCaseFolder, TestCaseLibraryNode
 		return createTreeNodeFromLibraryNode(testCase);
 	}
 
-
 	@RequestMapping(value = "/folders/{folderId}/content/new-test-case", method = RequestMethod.POST)
 	public @ResponseBody JsTreeNode addNewTestCaseToFolder(@PathVariable long folderId,
-			@Valid @ModelAttribute(ADD_TEST_CASE) TestCaseFormModel testCaseModel){
+			@Valid @ModelAttribute(ADD_TEST_CASE) TestCaseFormModel testCaseModel) {
 
 		TestCase testCase = testCaseModel.getTestCase();
 
@@ -142,12 +143,8 @@ LibraryNavigationController<TestCaseLibrary, TestCaseFolder, TestCaseLibraryNode
 		return createTreeNodeFromLibraryNode(testCase);
 	}
 
-
-
-
 	@RequestMapping(value = "/drives", method = RequestMethod.GET, params = { "linkables" })
-	public @ResponseBody
-	List<JsTreeNode> getLinkablesRootModel() {
+	public @ResponseBody List<JsTreeNode> getLinkablesRootModel() {
 		List<TestCaseLibrary> linkableLibraries = testCaseLibraryNavigationService.findLinkableTestCaseLibraries();
 		return createLinkableLibrariesModel(linkableLibraries);
 	}
@@ -159,45 +156,52 @@ LibraryNavigationController<TestCaseLibrary, TestCaseFolder, TestCaseLibraryNode
 		return listBuilder.setModel(linkableLibraries).build();
 	}
 
-	@RequestMapping(value = "/content/csv", produces="application/octet-stream", method = RequestMethod.GET, params={FILENAME, LIBRARIES, NODES, CALLS})
+	@RequestMapping(value = "/content/csv", produces = "application/octet-stream", method = RequestMethod.GET, params = {
+			FILENAME, LIBRARIES, NODES, CALLS, RTEFORMAT })
 	@ResponseBody
-	public void exportAsCsv(Locale locale, @RequestParam(FILENAME) String filename, @RequestParam(LIBRARIES) List<Long> libraryIds,
-			@RequestParam(NODES) List<Long> nodeIds, @RequestParam(CALLS) Boolean includeCalledTests, HttpServletResponse response) throws FileNotFoundException{
+	public void exportAsCsv(Locale locale, @RequestParam(FILENAME) String filename,
+			@RequestParam(LIBRARIES) List<Long> libraryIds, @RequestParam(NODES) List<Long> nodeIds,
+			@RequestParam(CALLS) Boolean includeCalledTests, @RequestParam(RTEFORMAT) Boolean keepRteFormat,
+			HttpServletResponse response) throws FileNotFoundException {
 
 		response.setContentType("application/octet-stream");
 		response.setHeader("Content-Disposition", "attachment; filename=" + filename + ".xls");
 
-		List<ExportTestCaseData> dataSource = testCaseLibraryNavigationService.findTestCasesToExport(libraryIds, nodeIds, includeCalledTests);
-		escapePrerequisiteAndSteps(dataSource);
+		List<ExportTestCaseData> dataSource = testCaseLibraryNavigationService.findTestCasesToExport(libraryIds,
+				nodeIds, includeCalledTests);
+		
+		if (!keepRteFormat) {
+			escapePrerequisiteAndSteps(dataSource);
+		}
 
-		printExport(dataSource, filename, JASPER_EXPORT_FILE, response, locale, "csv");
+		printExport(dataSource, filename, JASPER_EXPORT_FILE, response, locale, "csv", keepRteFormat);
 	}
 
-
-	@RequestMapping(value = "/content/xls", produces="application/octet-stream", method = RequestMethod.GET, params={FILENAME, LIBRARIES, NODES, CALLS})
+	@RequestMapping(value = "/content/xls", produces = "application/octet-stream", method = RequestMethod.GET, params = {
+			FILENAME, LIBRARIES, NODES, CALLS, RTEFORMAT })
 	@ResponseBody
-	public FileSystemResource exportAsExcel(@RequestParam(FILENAME) String filename, @RequestParam(LIBRARIES) List<Long> libraryIds,
-			@RequestParam(NODES) List<Long> nodeIds, @RequestParam(CALLS) Boolean includeCalledTests, HttpServletResponse response) throws FileNotFoundException{
-
+	public FileSystemResource exportAsExcel(@RequestParam(FILENAME) String filename,
+			@RequestParam(LIBRARIES) List<Long> libraryIds, @RequestParam(NODES) List<Long> nodeIds,
+			@RequestParam(CALLS) Boolean includeCalledTests, @RequestParam(RTEFORMAT) Boolean keepRteFormat,
+			HttpServletResponse response) throws FileNotFoundException {
 
 		response.setContentType("application/octet-stream");
 		response.setHeader("Content-Disposition", "attachment; filename=" + filename + ".xls");
 
-		File export = testCaseLibraryNavigationService.exportTestCaseAsExcel(libraryIds, nodeIds, includeCalledTests);
+		File export = testCaseLibraryNavigationService.exportTestCaseAsExcel(libraryIds, nodeIds, includeCalledTests,
+				keepRteFormat);
 		return new FileSystemResource(export);
 
 	}
 
-
-
 	private void escapePrerequisiteAndSteps(List<ExportTestCaseData> dataSource) {
 		for (ExportTestCaseData data : dataSource) {
-			//escape prerequisite
+			// escape prerequisite
 			String htmlPrerequisite = data.getPrerequisite();
 			String prerequisite = HTMLCleanupUtils.htmlToText(htmlPrerequisite);
 			data.setPrerequisite(prerequisite);
 
-			//escape first step
+			// escape first step
 			String htmlFirstAction = data.getFirstAction();
 			String firstAction = HTMLCleanupUtils.htmlToText(htmlFirstAction);
 			data.setFirstAction(firstAction);
@@ -206,8 +210,8 @@ LibraryNavigationController<TestCaseLibrary, TestCaseFolder, TestCaseLibraryNode
 			String firstResult = HTMLCleanupUtils.htmlToText(htmlFirstResult);
 			data.setFirstExpectedResult(firstResult);
 
-			//escape other steps
-			for(ExportTestStepData step : data.getSteps()){
+			// escape other steps
+			for (ExportTestStepData step : data.getSteps()) {
 				String htmlAction = step.getAction();
 				String action = HTMLCleanupUtils.htmlToText(htmlAction);
 				step.setAction(action);
@@ -220,26 +224,28 @@ LibraryNavigationController<TestCaseLibrary, TestCaseFolder, TestCaseLibraryNode
 		}
 	}
 
-
 	// ****************************** statistics section *******************************
 
-	@RequestMapping (value = "/statistics", method = RequestMethod.GET, produces=ContentTypes.APPLICATION_JSON, params = {LIBRARIES, NODES})
-	public @ResponseBody TestCaseStatisticsBundle getStatisticsAsJson(@RequestParam(value=LIBRARIES, defaultValue="") Collection<Long> libraryIds,
-			@RequestParam(value=NODES, defaultValue="") Collection<Long> nodeIds){
+	@RequestMapping(value = "/statistics", method = RequestMethod.GET, produces = ContentTypes.APPLICATION_JSON, params = {
+			LIBRARIES, NODES })
+	public @ResponseBody TestCaseStatisticsBundle getStatisticsAsJson(
+			@RequestParam(value = LIBRARIES, defaultValue = "") Collection<Long> libraryIds,
+			@RequestParam(value = NODES, defaultValue = "") Collection<Long> nodeIds) {
 
 		return testCaseLibraryNavigationService.getStatisticsForSelection(libraryIds, nodeIds);
 	}
 
-	@RequestMapping (value = "/dashboard", method = RequestMethod.GET, produces=ContentTypes.TEXT_HTML, params = {LIBRARIES, NODES})
+	@RequestMapping(value = "/dashboard", method = RequestMethod.GET, produces = ContentTypes.TEXT_HTML, params = {
+			LIBRARIES, NODES })
 	public String getDashboard(Model model, @RequestParam(LIBRARIES) Collection<Long> libraryIds,
-			@RequestParam(NODES) Collection<Long> nodeIds){
+			@RequestParam(NODES) Collection<Long> nodeIds) {
 
-		TestCaseStatisticsBundle stats = testCaseLibraryNavigationService.getStatisticsForSelection(libraryIds, nodeIds);
+		TestCaseStatisticsBundle stats = testCaseLibraryNavigationService
+				.getStatisticsForSelection(libraryIds, nodeIds);
 
 		model.addAttribute("statistics", stats);
 
 		return "fragment/test-cases/test-cases-dashboard";
 	}
-
 
 }

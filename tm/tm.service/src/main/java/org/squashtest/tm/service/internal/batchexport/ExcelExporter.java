@@ -19,6 +19,7 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.squashtest.tm.service.internal.batchexport;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -43,16 +44,18 @@ import org.squashtest.tm.service.internal.batchimport.testcase.excel.ParameterSh
 import org.squashtest.tm.service.internal.batchimport.testcase.excel.StepSheetColumn;
 import org.squashtest.tm.service.internal.batchimport.testcase.excel.TemplateWorksheet;
 import org.squashtest.tm.service.internal.batchimport.testcase.excel.TestCaseSheetColumn;
+
+
 /**
  * @author bsiri
  * 
  */
 class ExcelExporter {
 
-	private static final String DS_SHEET  = TemplateWorksheet.DATASETS_SHEET.sheetName;
+	private static final String DS_SHEET = TemplateWorksheet.DATASETS_SHEET.sheetName;
 	private static final String PRM_SHEET = TemplateWorksheet.PARAMETERS_SHEET.sheetName;
-	private static final String ST_SHEET  = TemplateWorksheet.STEPS_SHEET.sheetName;
-	private static final String TC_SHEET  = TemplateWorksheet.TEST_CASES_SHEET.sheetName;
+	private static final String ST_SHEET = TemplateWorksheet.STEPS_SHEET.sheetName;
+	private static final String TC_SHEET = TemplateWorksheet.TEST_CASES_SHEET.sheetName;
 	// that map will remember which column index is
 	private Map<String, Integer> cufColumnsByCode = new HashMap<String, Integer>();
 
@@ -64,12 +67,44 @@ class ExcelExporter {
 		createHeaders();
 	}
 
-	public void appendToWorkbook(ExportModel model) {
+	public void appendToWorkbook(ExportModel model, boolean keepRteFormat) {
 
+		if (!keepRteFormat) {
+			removeRteFormat(model);
+		}
 		appendTestCases(model);
 		appendTestSteps(model);
 		appendParameters(model);
 		appendDatasets(model);
+	}
+
+	private void removeRteFormat(ExportModel model) {
+		removeRteFormatFromParameters(model.getParameters());
+		removeRteFormatFromTestCases(model.getTestCases());
+		removeRteFormatFromTestSteps(model.getTestSteps());
+	}
+
+	private void removeRteFormatFromTestSteps(List<TestStepModel> testSteps) {
+		for (TestStepModel ts : testSteps) {
+			ts.setAction(removeHtml(ts.getAction()));
+			ts.setResult(removeHtml(ts.getResult()));
+		}
+	}
+
+	private void removeRteFormatFromTestCases(List<TestCaseModel> testCases) {
+		for (TestCaseModel tc : testCases) {
+			tc.setDescription(removeHtml(tc.getDescription()));
+		}
+	}
+
+	private void removeRteFormatFromParameters(List<ParameterModel> parameters) {
+		for (ParameterModel param : parameters) {
+			param.setDescription(removeHtml(param.getDescription()));
+		}
+	}
+
+	private String removeHtml(String html) {
+		return html.replaceAll("(?s)<[^>]*>(\\s*<[^>]*>)*", "");
 	}
 
 	public File print() {
