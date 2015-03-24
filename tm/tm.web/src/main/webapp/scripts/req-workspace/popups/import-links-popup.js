@@ -45,7 +45,6 @@ define(['jquery', 'workspace.event-bus', 'workspace/workspace.import-popup'], fu
 		},	
 	
 		showImportNormalErrors : function(panel, response){
-			
 			$(".import-links-excel-dialog-note", panel).show();
 			$(".import-links-excel-dialog-critical-errors", panel).hide();
 			$(".import-links-excel-dialog-normal-errors", panel).show();
