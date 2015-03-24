@@ -37,8 +37,10 @@ require([ "common" ], function(common) {
 		});
 
 		ps.subscribe("loaded.newItemDialog", function() {
-			$(document).on("click", "#add-item", function() {
-				var model = new InfoListModel();
+			$(document).on("click", "#add-item", function(event) {
+				var apiRoot = $(event.target).data("api-url");
+				var model = new InfoListModel({}, { apiRoot: apiRoot });
+
 				new NewInfoListPanel({ model: model });
 			});
 		});

@@ -47,6 +47,7 @@ import org.squashtest.tm.domain.infolist.InfoListItem;
 import org.squashtest.tm.domain.infolist.UserListItem;
 import org.squashtest.tm.service.infolist.InfoListItemManagerService;
 import org.squashtest.tm.service.infolist.InfoListManagerService;
+import org.squashtest.tm.web.exception.ResourceNotFoundException;
 import org.squashtest.tm.web.internal.helper.JEditablePostParams;
 import org.squashtest.tm.web.internal.http.ContentTypes;
 import org.squashtest.tm.web.internal.http.JsonEmptyResponseEntity;
@@ -130,6 +131,27 @@ public class InfoListController {
 	@ResponseBody
 	public JsonInfoListItem getItemByCode(@PathVariable String code) {
 		return itemsController.getItemByCode(code);
+	}
+
+	/**
+	 * Tells if an item identified by its code exists or not.
+	 * 
+	 * @param code
+	 * @return JSON <code>{ exists: <true|false> }</code>
+	 */
+	@RequestMapping(value = "/{prop}/{value}", method = RequestMethod.GET, produces = ContentTypes.APPLICATION_JSON, params = "format=exists")
+	@ResponseBody
+	public Map<String, Object> doesLabelExist(@PathVariable String prop, @PathVariable String value) {
+		if ("label".equals(prop) || "code".equals(prop)) {
+			InfoList item = infoListManager.findByUniqueProperty(prop, value);
+
+			Map<String, Object> res = new HashMap<>(1);
+			res.put("exists", item != null);
+
+			return res;
+		}
+
+		throw new ResourceNotFoundException();
 	}
 
 	@RequestMapping(value = "/{infoListId}/items/positions", method = RequestMethod.POST, params = { "itemIds[]",

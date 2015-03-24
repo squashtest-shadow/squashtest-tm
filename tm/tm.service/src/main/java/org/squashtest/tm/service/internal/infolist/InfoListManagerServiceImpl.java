@@ -28,8 +28,10 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 
 import javax.inject.Inject;
+import javax.validation.constraints.NotNull;
 
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.infolist.InfoList;
@@ -166,7 +168,7 @@ public class InfoListManagerServiceImpl implements InfoListManagerService {
 
 	/**
 	 * Returns a collection in the same (iterator) order as the given collection where systems lists have been filtered out.
-	 * 
+	 *
 	 * @param lists
 	 * @return
 	 */
@@ -203,6 +205,18 @@ public class InfoListManagerServiceImpl implements InfoListManagerService {
 		}
 
 		return infoList;
+	}
+
+	/**
+	 * @see org.squashtest.tm.service.infolist.InfoListFinderService#findByUniqueProperty(java.lang.String, java.lang.String)
+	 */
+	@Override
+	public InfoList findByUniqueProperty(@NotNull String prop, @NotNull String value) {
+		return (InfoList) sessionFactory.getCurrentSession()
+			.createCriteria(InfoList.class)
+			.add(Restrictions.eq(prop, value))
+			.uniqueResult();
+
 	}
 
 }

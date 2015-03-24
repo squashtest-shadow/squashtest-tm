@@ -18,10 +18,29 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ "backbone", "underscore", "squash.translator", "../app/squash.backbone.validation" ], function(Backbone, _,
+define([ "jquery", "backbone", "underscore", "squash.translator", "../app/squash.backbone.validation" ], function($, Backbone, _,
 		messages) {
 	"use strict";
-	messages.load([ "message.noDefaultOption" ]);
+
+	messages.load([ "message.noDefaultOption", "message.codeAlreadyDefined", "message.labelAlreadyDefined" ]);
+
+	function validateUniqueProp(val, attr, computed) {
+		var defined = false;
+
+		$.ajax({ // this is synchronous
+			url: this.apiRoot + "/" + attr + "/" + val,
+			method: "get",
+			async: false,
+			data: { format: "exists" },
+			success: function(data) {
+					defined = data.exists;
+			}
+		});
+
+		if (defined) {
+			return messages.get("message." + attr + "AlreadyDefined");
+		}
+	}
 
 	return Backbone.Model.extend({
 		defaults : {
@@ -30,9 +49,20 @@ define([ "backbone", "underscore", "squash.translator", "../app/squash.backbone.
 			code : "",
 			items : []
 		},
+
 		validation : {
-			label : { notBlank : true, maxLength : 100 },
-			code : { notBlank : true, maxLength : 30 },
+			label : {
+				notBlank : true,
+				maxLength : 100,
+				fn : validateUniqueProp
+			},
+
+			code : {
+				notBlank : true,
+				maxLength : 30,
+				fn : validateUniqueProp
+			},
+
 			items : {
 				fn : function(val, attr, computed) {
 					if ((val || []).length === 0 || _.where(val, { isDefault : true }).length !== 1) {
@@ -40,6 +70,10 @@ define([ "backbone", "underscore", "squash.translator", "../app/squash.backbone.
 					}
 				}
 			}
+		},
+
+		initialize : function(model, options) {
+			this.apiRoot = (!!options.apiRoot) ? options.apiRoot : "";
 		}
 	});
 });

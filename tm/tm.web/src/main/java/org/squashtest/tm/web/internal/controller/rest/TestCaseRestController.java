@@ -49,6 +49,12 @@ public class TestCaseRestController {
 	@Inject
 	private TestStepFinder testStepFinder;
 
+	/**
+	 * 
+	 * @deprecated consider using
+	 *             {@link org.squashtest.tm.web.exception.ResourceNotFoundException}
+	 * 
+	 */
 	@ResponseStatus(value = HttpStatus.NOT_FOUND)
 	private final class ResourceNotFoundException extends RuntimeException {
 

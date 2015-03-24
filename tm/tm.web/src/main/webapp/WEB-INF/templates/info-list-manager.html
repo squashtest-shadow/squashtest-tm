@@ -130,7 +130,8 @@
             <div class="btn-toolbar right cf">
               <input id="add-item" type="button" class="sq-btn snap-right" 
                 value="Add an info list" th:value="#{label.infoList.add}" 
-                title="Create new" th:title="#{tooltip.infoList.add}" />
+                title="Create new" th:title="#{tooltip.infoList.add}" 
+                th:attr="data-api-url=@{/info-lists}" />
               <input id="remove-selected-items" type="button" class="sq-btn snap-right" 
                 value="Delete selected info lists" th:value="#{label.infoList.remove}" 
                 title="Create new" th:title="#{tooltip.infoList.remove}" />

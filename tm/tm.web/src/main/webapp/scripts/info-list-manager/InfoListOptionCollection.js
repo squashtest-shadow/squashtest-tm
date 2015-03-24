@@ -24,10 +24,10 @@ define([ "backbone", "underscore", "jquery" ], function(Backbone, _, $) {
 		initialize: function(models, options) {
 			this.apiRoot = (!!options.apiRoot) ? options.apiRoot : "";
 
-			_.bindAll(this, "onValidateOption");
+			_.bindAll(this, "onValidateOptionCode", "onValidateOptionLabel");
 
-			squashtm.reqres.setHandler("list-option" +
-					":validate", this.onValidateOption);
+			squashtm.reqres.setHandler("list-option:code:validate", this.onValidateOptionCode);
+			squashtm.reqres.setHandler("list-option:label:validate", this.onValidateOptionLabel);
 		},
 
 		add: function(models, options) {
@@ -39,7 +39,7 @@ define([ "backbone", "underscore", "jquery" ], function(Backbone, _, $) {
 			Backbone.Collection.prototype.add.apply(this, arguments);
 		},
 
-		onValidateOption: function(event) {
+		onValidateOptionCode: function(event) {
 			var code = event.model.get("code");
 			var res = this.every(function(option) {
 				return option.get("code") !== code;
@@ -59,6 +59,14 @@ define([ "backbone", "underscore", "jquery" ], function(Backbone, _, $) {
 			}
 
 			return res;
+		},
+
+		onValidateOptionLabel: function(event) {
+			var label = event.model.get("label");
+
+			return this.every(function(option) {
+				return option.get("label") !== label;
+			});
 		},
 	});
 });

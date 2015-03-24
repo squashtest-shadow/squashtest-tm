@@ -20,12 +20,12 @@
  */
 package org.squashtest.tm.service.infolist;
 
+import static org.squashtest.tm.service.security.Authorizations.HAS_ROLE_ADMIN_OR_PROJECT_MANAGER;
+
 import java.util.List;
 
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.squashtest.tm.domain.infolist.InfoList;
-
-import static org.squashtest.tm.service.security.Authorizations.*;
 
 public interface InfoListManagerService extends InfoListFinderService {
 
@@ -48,7 +48,7 @@ public interface InfoListManagerService extends InfoListFinderService {
 
 	/**
 	 * Removes all the info lists matching the given ids.
-	 * 
+	 *
 	 * @param ids
 	 */
 	@PreAuthorize(HAS_ROLE_ADMIN_OR_PROJECT_MANAGER)

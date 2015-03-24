@@ -21,20 +21,33 @@
 define([ "backbone", "squash.translator", "../app/squash.backbone.validation" ], function(Backbone, messages,
 		Validation) {
 	"use strict";
-	messages.load(["message.optionCodeAlreadyDefined"]);
+	messages.load(["message.optionCodeAlreadyDefined", "message.optionLabelAlreadyDefined"]);
 
 	/**
 	 * returns a validator function which checks this model's code unicity.
 	 */
 	function isCodeUnique(val, attr, computed) {
-		var res = squashtm.reqres.request("list-option:validate", {
-			model : this
-		});
+		var res = triggerRequest("list-option:code:validate", this);
 
 		console.log("isCodeUnique", res);
 		if (res !== undefined && res !== true) {
 			return messages.get("message.optionCodeAlreadyDefined");
 		} // when valid, should return `undefined`
+	}
+
+	function isLabelUnique(val, attr, computed) {
+		var res = triggerRequest("list-option:label:validate", this);
+
+		console.log("isLabelUnique", res);
+		if (res !== undefined && res !== true) {
+			return messages.get("message.optionLabelAlreadyDefined");
+		} // when valid, should return `undefined`
+	}
+
+	function triggerRequest(name, model) {
+		return squashtm.reqres.request(name, {
+			model : model
+		});
 	}
 
 	return Backbone.Model.extend({
@@ -48,8 +61,10 @@ define([ "backbone", "squash.translator", "../app/squash.backbone.validation" ],
 		validation : {
 			label : {
 				notBlank : true,
-				maxLength : 100
+				maxLength : 100,
+				fn: isLabelUnique
 			},
+
 			code : {
 				notBlank : true,
 				maxLength : 30,

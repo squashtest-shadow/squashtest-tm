@@ -23,6 +23,7 @@ package org.squashtest.tm.service.infolist;
 import java.util.List;
 
 import org.squashtest.tm.domain.infolist.InfoList;
+import org.squashtest.tm.domain.infolist.InfoListItem;
 
 public interface InfoListFinderService {
 
@@ -34,9 +35,16 @@ public interface InfoListFinderService {
 
 	/**
 	 * Fetches all infolists and tryurns them in an adapter also containing the bound project count.
-	 * 
+	 *
 	 * @return
 	 */
 	List<IsBoundInfoListAdapter> findAllWithBoundInfo();
 
+	/**
+	 * Finds an InfoList by a given, supposedly unique property
+	 * @param prop
+	 * @param value
+	 * @return
+	 */
+	InfoList findByUniqueProperty(String prop, String value);
 }
