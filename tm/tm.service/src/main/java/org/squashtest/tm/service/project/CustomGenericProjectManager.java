@@ -39,13 +39,13 @@ import org.squashtest.tm.exception.NameAlreadyInUseException;
 
 /**
  * @author Gregory Fouquet
- * 
+ *
  */
 public interface CustomGenericProjectManager extends CustomGenericProjectFinder {
 	/**
 	 * Will find all Projects and Templates to which the user has management access to and return them ordered according
 	 * to the given params.
-	 * 
+	 *
 	 * @param pagingAndSorting
 	 *            the {@link PagingAndSorting} that holds order and paging params
 	 * @param filter
@@ -53,7 +53,7 @@ public interface CustomGenericProjectManager extends CustomGenericProjectFinder 
 	 * @return a {@link PagedCollectionHolder} containing all projects the user has management access to, ordered
 	 *         according to the given params.
 	 */
-	PagedCollectionHolder<List<GenericProject>> findSortedProjects(PagingAndSorting pagingAndSorting,
+	PagedCollectionHolder<List<GenericProject>> findSortedProjects(PagingAndMultiSorting pagingAndSorting,
 			Filtering filtering);
 
 	/**
@@ -62,7 +62,7 @@ public interface CustomGenericProjectManager extends CustomGenericProjectFinder 
 	void persist(GenericProject project) throws NameAlreadyInUseException;
 
 	/**
-	 * 
+	 *
 	 * @param templateId
 	 */
 	void coerceTemplateIntoProject(long templateId);
@@ -82,7 +82,7 @@ public interface CustomGenericProjectManager extends CustomGenericProjectFinder 
 	 * Will bind a TM project to a test automation server. Both are identified by their ID.
 	 * The serverId may be null, in which case the TM project is bound to nothing. It will be
 	 * then treated as a non automated project.
-	 * 
+	 *
 	 * @param tmProjectId
 	 * @param serverId
 	 */
@@ -90,7 +90,7 @@ public interface CustomGenericProjectManager extends CustomGenericProjectFinder 
 
 	/**
 	 * Will bind the TM project to a TA project. Will persist it if necessary.
-	 * 
+	 *
 	 * @param TMprojectId
 	 * @param TAproject
 	 */
@@ -106,7 +106,7 @@ public interface CustomGenericProjectManager extends CustomGenericProjectFinder 
 	 * Change the Bugtracker the Project is associated-to.<br>
 	 * If the Project had no Bugtracker, will add a new association.<br>
 	 * If the Project had a already a Bugtracker, it will keep the project-Name information
-	 * 
+	 *
 	 * @param projectId
 	 * @param newBugtrackerId
 	 */
@@ -116,7 +116,7 @@ public interface CustomGenericProjectManager extends CustomGenericProjectFinder 
 	 * Change the Bugtracker the Project is associated-to.<br>
 	 * If the Project had no Bugtracker, will add a new association.<br>
 	 * If the Project had a already a Bugtracker, it will keep the project-Name information
-	 * 
+	 *
 	 * @param project
 	 *            : the concerned GenericProject
 	 * @param bugtracker
@@ -126,14 +126,14 @@ public interface CustomGenericProjectManager extends CustomGenericProjectFinder 
 
 	/**
 	 * Will remove the association the Project has to it's Bugtracker.
-	 * 
+	 *
 	 * @param projectId
 	 */
 	void removeBugTracker(long projectId);
 
 	/**
 	 * Will change a bugtracker connexion parameter : the name of the bugtracker's project it's associated to.
-	 * 
+	 *
 	 * @param projectId
 	 *            the concerned project
 	 * @param projectBugTrackerName
@@ -162,7 +162,7 @@ public interface CustomGenericProjectManager extends CustomGenericProjectFinder 
 	/**
 	 * Applies the given configuration to a wizard for a given project. If the wizard wasn't enabled for this project
 	 * already, it will be during the process.
-	 * 
+	 *
 	 * @param projectId
 	 * @param workspace
 	 * @param wizardId
@@ -175,7 +175,7 @@ public interface CustomGenericProjectManager extends CustomGenericProjectFinder 
 
 	/**
 	 * Enables an execution status for a project
-	 * 
+	 *
 	 * @param projectId
 	 * @param executionStatus
 	 */
@@ -183,7 +183,7 @@ public interface CustomGenericProjectManager extends CustomGenericProjectFinder 
 
 	/**
 	 * Disables an execution status for a project
-	 * 
+	 *
 	 * @param projectId
 	 * @param executionStatus
 	 */
@@ -191,7 +191,7 @@ public interface CustomGenericProjectManager extends CustomGenericProjectFinder 
 
 	/**
 	 * Returns the list of enabled execution statuses given a project.
-	 * 
+	 *
 	 * @param projectId
 	 * @return
 	 */
@@ -199,7 +199,7 @@ public interface CustomGenericProjectManager extends CustomGenericProjectFinder 
 
 	/**
 	 * Returns the list of disabled execution statuses given a project.
-	 * 
+	 *
 	 * @param projectId
 	 * @return
 	 */
@@ -207,7 +207,7 @@ public interface CustomGenericProjectManager extends CustomGenericProjectFinder 
 
 	/**
 	 * Replaces an execution status with another within a project
-	 * 
+	 *
 	 * @param source
 	 * @param target
 	 */
@@ -215,7 +215,7 @@ public interface CustomGenericProjectManager extends CustomGenericProjectFinder 
 
 	/**
 	 * Returns true if a given execution status is enabled for a given project, false otherwise
-	 * 
+	 *
 	 * @param projectId
 	 * @param executionStatus
 	 * @return
@@ -225,6 +225,4 @@ public interface CustomGenericProjectManager extends CustomGenericProjectFinder 
 	boolean projectUsesExecutionStatus(long projectId,  ExecutionStatus executionStatus);
 
 	void changeName(long projectId, String newName) throws NameAlreadyInUseException;
-	
-	PagedCollectionHolder<List<GenericProject>> findCustomSortedProject(PagingAndMultiSorting sorter);
 }

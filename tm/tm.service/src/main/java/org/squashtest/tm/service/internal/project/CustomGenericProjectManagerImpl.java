@@ -138,70 +138,48 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 	@Inject
 	private InfoListFinderService infoListService;
 
-
 	private static final Logger LOGGER = LoggerFactory.getLogger(CustomGenericProjectManagerImpl.class);
 
-	// ************************* finding projects wrt user role ****************************
+	// ************************* finding projects wrt user role
+	// ****************************
 
 	/**
-	 * @see org.squashtest.tm.service.project.CustomGenericProjectManager#findSortedProjects(org.squashtest.tm.core.foundation.collection.PagingAndSorting)
+	 * @see org.squashtest.tm.service.project.CustomGenericProjectManager#findSortedProjects(PagingAndMultiSorting,
+	 *      Filtering))
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	@Transactional(readOnly = true)
 	@PreAuthorize(HAS_ROLE_ADMIN_OR_PROJECT_MANAGER)
-	public PagedCollectionHolder<List<GenericProject>> findSortedProjects(PagingAndSorting pagingAndSorting,
+	public PagedCollectionHolder<List<GenericProject>> findSortedProjects(PagingAndMultiSorting sorting,
 			Filtering filter) {
-		/*
-		 * Implementation note :
-		 * 
-		 * Here for once the paging will not be handled by the database, but programmatically. The reason is that we
-		 * want to filter the projects according to the caller's permissions, something that isn't doable using hql
-		 * alone (the acl system isn't part of the domain and thus wasn't modeled).
-		 * 
-		 * So, we just load all the projects and apply paging on the resultset
-		 */
 
-		List<? extends GenericProject> resultset;
-		PagingAndSorting unpaged = Pagings.disablePaging(pagingAndSorting);
+		Class<? extends GenericProject> type = permissionEvaluationService.hasRole("ROLE_ADMIN") ? GenericProject.class : Project.class;
+		List<? extends GenericProject> resultset = genericProjectDao.findAllWithTextProperty(type, filter);
 
-		if (permissionEvaluationService.hasRole("ROLE_ADMIN")) {
-			resultset = findAllSortedProjects(unpaged, filter);
-		} else {
-			resultset = findSortedActualProjects(unpaged, filter);
-		}
-
-		// filter on permissions
+		// filter on permission
 		List<? extends GenericProject> securedResultset = new LinkedList<GenericProject>(resultset);
 		CollectionUtils.filter(securedResultset, new IsManagerOnObject());
 
+		// Consolidate projects with additional information neeeded to do the
+		// sorting
+		List<ProjectForCustomCompare> projects = consolidateProjects(securedResultset);
+		sortProjects(projects, sorting);
+
 		// manual paging
-		int listsize = securedResultset.size();
-		int firstIdx = Math.min(listsize, pagingAndSorting.getFirstItemIndex());
-		int lastIdx = Math.min(listsize, firstIdx + pagingAndSorting.getPageSize());
-		securedResultset = securedResultset.subList(firstIdx, lastIdx);
+		int listsize = projects.size();
+		int firstIdx = Math.min(listsize, sorting.getFirstItemIndex());
+		int lastIdx = Math.min(listsize, firstIdx + sorting.getPageSize());
+		projects = projects.subList(firstIdx, lastIdx);
 
-		return new PagingBackedPagedCollectionHolder<List<GenericProject>>(pagingAndSorting, listsize,
+		securedResultset = extractProjectList(projects);
+
+		return new PagingBackedPagedCollectionHolder<List<GenericProject>>(sorting, listsize,
 				(List<GenericProject>) securedResultset);
-	}
 
-	private List<GenericProject> findAllSortedProjects(PagingAndSorting pagingAndSorting, Filtering filter) {
-		if (filter.isDefined()) {
-			return genericProjectDao.findProjectsFiltered(pagingAndSorting, "%" + filter.getFilter() + "%");
-		} else {
-			return genericProjectDao.findAll(pagingAndSorting);
-		}
 	}
-
-	private List<Project> findSortedActualProjects(PagingAndSorting pagingAndSorting, Filtering filter) {
-		if (filter.isDefined()) {
-			return projectDao.findProjectsFiltered(pagingAndSorting, "%" + filter.getFilter() + "%");
-		} else {
-			return projectDao.findAll(pagingAndSorting);
-		}
-	}
-
-	// ************************* finding projects wrt user role ****************************
+	// ************************* finding projects wrt user role
+	// ****************************
 
 	@Override
 	@PreAuthorize(HAS_ROLE_ADMIN)
@@ -314,7 +292,8 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 		return partyDao.findById(partyId);
 	}
 
-	// ********************************** Test automation section *************************************
+	// ********************************** Test automation section
+	// *************************************
 
 	public void bindTestAutomationServer(long tmProjectId, Long serverId) {
 		GenericProject genericProject = genericProjectDao.findById(tmProjectId);
@@ -484,7 +463,8 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 
 	}
 
-	// **************************** wizards section **********************************
+	// **************************** wizards section
+	// **********************************
 
 	@Override
 	@PreAuthorize(HAS_ROLE_ADMIN_OR_PROJECT_MANAGER)
@@ -526,7 +506,8 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 		binding.setProperties(configuration);
 	}
 
-	// ************************** status configuration section ****************************
+	// ************************** status configuration section
+	// ****************************
 
 	@Override
 	public void enableExecutionStatus(long projectId, ExecutionStatus executionStatus) {
@@ -598,37 +579,6 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 
 	// **************** Custom comparator **************
 
-	@SuppressWarnings("unchecked")
-	public PagedCollectionHolder<List<GenericProject>> findCustomSortedProject(final PagingAndMultiSorting sorter) {
-
-		List<? extends GenericProject> resultset;
-
-		if (permissionEvaluationService.hasRole("ROLE_ADMIN")) {
-			resultset = genericProjectDao.findAll();
-		} else {
-			resultset = projectDao.findAll();
-		}
-		// filter on permission
-		List<? extends GenericProject> securedResultset = new LinkedList<GenericProject>(resultset);
-		CollectionUtils.filter(securedResultset, new IsManagerOnObject());
-
-		// Consolidate projects with additional information neeeded to do the sorting
-		List<ProjectForCustomCompare> projects = consolidateProjects(securedResultset);
-		sortProjects(projects, sorter);
-
-		// manual paging
-		int listsize = projects.size();
-		int firstIdx = Math.min(listsize, sorter.getFirstItemIndex());
-		int lastIdx = Math.min(listsize, firstIdx + sorter.getPageSize());
-		projects = projects.subList(firstIdx, lastIdx);
-
-		securedResultset = extractProjectList(projects);
-
-		return new PagingBackedPagedCollectionHolder<List<GenericProject>>(sorter, listsize,
-				(List<GenericProject>) securedResultset);
-
-	}
-
 	/**
 	 * Get back the list of project from the list of consolidated project.
 	 * 
@@ -647,8 +597,9 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 	}
 
 	/**
-	 * Create a list of ProjectForCustomCompare from a list of projects. The ProjectForCustomCompare contains the
-	 * projects and some information needed to do the sorting.
+	 * Create a list of ProjectForCustomCompare from a list of projects. The
+	 * ProjectForCustomCompare contains the projects and some information needed
+	 * to do the sorting.
 	 * 
 	 * @param projects
 	 *            The list of project to consolidate with additional data
@@ -678,7 +629,6 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 		return consolidatedProjects;
 	}
 
-
 	private void sortProjects(final List<ProjectForCustomCompare> securedResultset, final PagingAndMultiSorting sorter) {
 
 		Collections.sort(securedResultset, new Comparator<ProjectForCustomCompare>() {
@@ -695,13 +645,17 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 
 	/**
 	 * Create the multiple sorter
-	 * @param sorter the rules used to sort
-	 * @param o1 the first item to compare
-	 * @param o2 the second item to compare
+	 *
+	 * @param sorter
+	 *            the rules used to sort
+	 * @param o1
+	 *            the first item to compare
+	 * @param o2
+	 *            the second item to compare
 	 * @return the sorter
 	 */
-	private CompareToBuilder buildProjectComparator(final PagingAndMultiSorting sorter, final ProjectForCustomCompare o1,
-			final ProjectForCustomCompare o2) {
+	private CompareToBuilder buildProjectComparator(final PagingAndMultiSorting sorter,
+			final ProjectForCustomCompare o1, final ProjectForCustomCompare o2) {
 		CompareToBuilder comp = new CompareToBuilder();
 		GenericProject firstProject = o1.getGenericProject();
 		GenericProject secondProject = o2.getGenericProject();
@@ -807,7 +761,8 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 	}
 
 	/**
-	 * @see org.squashtest.tm.service.project.CustomGenericProjectManager#changeName(long, java.lang.String)
+	 * @see org.squashtest.tm.service.project.CustomGenericProjectManager#changeName(long,
+	 *      java.lang.String)
 	 */
 	@PreAuthorize(HAS_ROLE_ADMIN_OR_PROJECT_MANAGER)
 	@Override

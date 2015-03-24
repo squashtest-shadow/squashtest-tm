@@ -20,30 +20,41 @@
  */
 package org.squashtest.tm.service.internal.repository;
 
+import java.util.List;
+
+import org.squashtest.tm.core.foundation.collection.Filtering;
+import org.squashtest.tm.domain.project.GenericProject;
 import org.squashtest.tm.domain.project.Project;
 
 /**
  * @author Gregory Fouquet
- * 
+ *
  */
 public interface CustomGenericProjectDao {
 	/**
 	 * Coerces the template of given id into a projet. This method evicts the template from the session cache, yet it
 	 * should not be invoked when the template is loaded.
-	 * 
+	 *
 	 * @param templateId
 	 * @return the coerced project.
 	 */
 	Project coerceTemplateIntoProject(long templateId);
-	
-	
-	
+
+
+
 	/**
 	 * Tells whether the project of id 'projectId' is a project template or not
-	 * 
+	 *
 	 * @param projectId
 	 * @return
 	 */
 	boolean isProjectTemplate(long projectId);
 
+	/**
+	 * Returns the list of all {@link GenericProject}s which match the given filter.
+	 * @param entity {@link GenericProject} or any subtype
+	 * @param filtering
+	 * @return
+	 */
+	<T extends GenericProject> List<T> findAllWithTextProperty(Class<T> entity, Filtering filtering);
 }

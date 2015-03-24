@@ -20,14 +20,23 @@
  */
 package org.squashtest.tm.service.internal.repository.hibernate;
 
+import java.util.List;
+
 import javax.inject.Inject;
 
+import org.apache.commons.lang.StringUtils;
+import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Disjunction;
+import org.hibernate.criterion.MatchMode;
+import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
+import org.squashtest.tm.core.foundation.collection.Filtering;
+import org.squashtest.tm.domain.project.GenericProject;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.project.ProjectTemplate;
 import org.squashtest.tm.service.internal.repository.CustomGenericProjectDao;
@@ -35,7 +44,7 @@ import org.squashtest.tm.service.internal.repository.ParameterNames;
 
 /**
  * @author Gregory Fouquet
- * 
+ *
  */
 @Repository("CustomGenericProjectDao")
 public class HibernateGenericProjectDao implements CustomGenericProjectDao {
@@ -54,7 +63,8 @@ public class HibernateGenericProjectDao implements CustomGenericProjectDao {
 		session.flush();
 		session.evict(template);
 
-		// TODO replace PROJECt_ID by PROJECT_ID in 1.10.0 Dont seem to break (even on case sensitive mysql) yet its not correct
+		// TODO replace PROJECt_ID by PROJECT_ID in 1.10.0 Dont seem to break
+		// (even on case sensitive mysql) yet its not correct
 		SQLQuery query = session.createSQLQuery("update PROJECT set PROJECT_TYPE = 'P' where PROJECt_ID = :id");
 		query.setParameter("id", templateId);
 		final int changedRows = query.executeUpdate();
@@ -66,16 +76,37 @@ public class HibernateGenericProjectDao implements CustomGenericProjectDao {
 		return (Project) session.load(Project.class, templateId);
 	}
 
-
 	@Override
 	public boolean isProjectTemplate(long projectId) {
 		Query query = sessionFactory.getCurrentSession().getNamedQuery("GenericProject.findProjectTypeOf");
 		query.setParameter(ParameterNames.PROJECT_ID, projectId);
 
-		String type = (String)query.uniqueResult();
+		String type = (String) query.uniqueResult();
 
 		return type.equals("T");
 	}
 
+	/**
+	 *
+	 * @see org.squashtest.tm.service.internal.repository.CustomGenericProjectDao#findAllWithTextProperty(java.lang.Class,
+	 *      org.squashtest.tm.core.foundation.collection.Filtering)
+	 */
+	@SuppressWarnings("unchecked")
+	public <T extends GenericProject> List<T> findAllWithTextProperty(Class<T> entity, Filtering filtering) {
+		Criteria allEntities = sessionFactory.getCurrentSession().createCriteria(entity);
 
+		if (filtering.isDefined() && StringUtils.isNotEmpty(filtering.getFilter())) {
+			final String ex = filtering.getFilter();
+			final String[] textProps = { "name", "label", "audit.createdBy", "audit.lastModifiedBy" };
+			Disjunction orPropsLikeFilter = Restrictions.disjunction();
+
+			for (String prop : textProps) {
+				orPropsLikeFilter.add(Restrictions.ilike(prop, ex, MatchMode.ANYWHERE));
+			}
+
+			allEntities.add(orPropsLikeFilter);
+		}
+
+		return allEntities.list();
+	}
 }

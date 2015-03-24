@@ -142,7 +142,8 @@ public class GenericProjectController {
 	DataTableModel getProjectsTableModel(final DataTableDrawParameters params, final Locale locale) {
 
 		final PagingAndMultiSorting sorter = new DataTableMultiSorting(params, allProjectsMapper);
-		PagedCollectionHolder<List<GenericProject>> holder = projectManager.findCustomSortedProject(sorter);
+		Filtering filtering = new DataTableFiltering(params);
+		PagedCollectionHolder<List<GenericProject>> holder = projectManager.findSortedProjects(sorter, filtering);
 
 		return new ProjectDataTableModelHelper(locale, messageSource, projectManager).buildDataModel(holder, params.getsEcho());
 
@@ -448,8 +449,8 @@ public class GenericProjectController {
 	}
 
 	private static final class ProjectDataTableModelHelper extends DataTableModelBuilder<GenericProject> {
-		
-		
+
+
 		private InternationalizationHelper messageSource;
 		private Locale locale;
 		private GenericProjectManagerService projectManager;
@@ -476,9 +477,9 @@ public class GenericProjectController {
 			data.put("last-mod-by", auditable.getLastModifiedBy());
 			data.put("raw-type", ProjectHelper.isTemplate(project) ? "template" : "project");
 			data.put("type", "&nbsp;");
-            data.put("habilitation", messageSource.internationalizeYesNo(hasPermissions(project),locale));
-            data.put("bugtracker", getBugtrackerKind(project));
-            data.put("automation",  messageSource.internationalizeYesNo(project.isTestAutomationEnabled(), locale));
+			data.put("habilitation", messageSource.internationalizeYesNo(hasPermissions(project),locale));
+			data.put("bugtracker", getBugtrackerKind(project));
+			data.put("automation",  messageSource.internationalizeYesNo(project.isTestAutomationEnabled(), locale));
 			return data;
 		}
 		private boolean hasPermissions(final GenericProject project){
@@ -489,7 +490,7 @@ public class GenericProjectController {
 			return hasPermissions;
 		}
 		private String getBugtrackerKind(final GenericProject project){
-			
+
 			String bugtrackerKind = null;
 			if (project.isBugtrackerConnected()){
 				bugtrackerKind = project.getBugtrackerBinding().getBugtracker().getKind();
@@ -499,7 +500,7 @@ public class GenericProjectController {
 			return bugtrackerKind;
 		}
 	}
-	
+
 
 
 	@RequestMapping(value = PROJECT_ID_URL + "/disable-execution-status/{executionStatus}", method = RequestMethod.POST)

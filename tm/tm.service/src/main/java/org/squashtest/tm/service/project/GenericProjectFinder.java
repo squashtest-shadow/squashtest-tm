@@ -45,7 +45,10 @@ public interface GenericProjectFinder extends CustomGenericProjectFinder{
 	 * 
 	 * @param filter the {@link PagingAndSorting} that holds order and paging params
 	 * @return a {@link PagedCollectionHolder} containing all projects the user has management access to, ordered according to the given params.
+	 *
+	 * @deprecated apparently no longer used w/o explanation
 	 */
+	@Deprecated
 	@PreAuthorize("hasRole('ROLE_TM_PROJECT_MANAGER')" + OR_HAS_ROLE_ADMIN)
 	PagedCollectionHolder<List<GenericProject>> findSortedProjects(PagingAndSorting pagingAndSorting);
 

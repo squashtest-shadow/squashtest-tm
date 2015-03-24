@@ -313,7 +313,7 @@
     </dependency>
 
     <dependency>
-      <groupId>org.squashtest.tm</groupId>
+      <groupId>${project.groupId}</groupId>
       <artifactId>tm.domain</artifactId>
       <version>${project.version}</version>
     </dependency>
