@@ -21,6 +21,7 @@
 package org.squashtest.tm.service.internal.requirement;
 
 import java.io.InputStream;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -38,6 +39,7 @@ import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.ReflectionUtils;
 import org.squashtest.tm.domain.infolist.InfoListItem;
 import org.squashtest.tm.domain.infolist.ListItemReference;
 import org.squashtest.tm.domain.projectfilter.ProjectFilter;
@@ -48,6 +50,7 @@ import org.squashtest.tm.domain.requirement.RequirementFolder;
 import org.squashtest.tm.domain.requirement.RequirementLibrary;
 import org.squashtest.tm.domain.requirement.RequirementLibraryNode;
 import org.squashtest.tm.domain.requirement.RequirementLibraryNodeVisitor;
+import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.exception.DuplicateNameException;
 import org.squashtest.tm.exception.InconsistentInfoListItemException;
 import org.squashtest.tm.exception.library.NameAlreadyExistsAtDestinationException;
@@ -491,11 +494,15 @@ RequirementLibraryNavigationService, RequirementLibraryFinderService {
 
 	private void replaceInfoListReferences(Requirement newReq){
 
+	   Field categoryField = ReflectionUtils.findField(RequirementVersion.class, "category");
+	  categoryField.setAccessible(true);
+ 
 		InfoListItem category = newReq.getCategory();
 
 		// if no category set -> set the default one
 		if (category == null){
-			newReq.setCategory( newReq.getProject().getRequirementCategories().getDefaultItem() );
+	        ReflectionUtils.setField(categoryField, newReq.getResource() , newReq.getProject().getRequirementCategories().getDefaultItem());
+		//	newReq.setCategory( newReq.getProject().getRequirementCategories().getDefaultItem() );
 		}
 		else{
 
@@ -508,7 +515,8 @@ RequirementLibraryNavigationService, RequirementLibraryFinderService {
 			// in case the item used here is merely a reference we need to replace it with
 			// a persistent instance
 			if (category instanceof ListItemReference){
-				newReq.setCategory( infoListItemService.findReference((ListItemReference)category));
+				ReflectionUtils.setField(categoryField, newReq.getResource(), infoListItemService.findReference((ListItemReference)category));
+			//	newReq.setCategory( infoListItemService.findReference((ListItemReference)category));
 			}
 		}
 
