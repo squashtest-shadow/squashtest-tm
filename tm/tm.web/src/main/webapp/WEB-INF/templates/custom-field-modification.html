@@ -172,7 +172,7 @@
                     <span class="error-message  optional-error"></span>
                   </div>
                   <div th:unless="${customField.inputType.name() == 'DROPDOWN_LIST'}" class="display-table-row">
-                    <label for="cuf-default-value" th:text="#{label.defaultValue}" class="display-table-cell" >Default value</label>
+                    <label for="cuf-default-value" th:text="#{label.defaultValue}" class="display-table-cell v-centered " >Default value</label>
                     
                     <div th:if="${customField.inputType.name() == 'PLAIN_TEXT'}" id="cuf-default-value"
                       class="display-table-cell" th:text="${customField.defaultValue}">false</div>
@@ -190,7 +190,7 @@
               
                      <div th:if="${customField.inputType.name() == 'TAG'}"
                      class="display-table-cell" style="line-height:normal">
-                        <ul id="cuf-default-value" >
+                        <ul id="cuf-default-value" style="margin:0">
                           <li th:text="${cfTag}" th:each="cfTag , iterStat: ${#strings.listSplit(customField.defaultValue, 
                                                                             T(org.squashtest.tm.domain.customfield.MultiSelectField).SEPARATOR.charAt(0))}" ></li>
                         </ul>

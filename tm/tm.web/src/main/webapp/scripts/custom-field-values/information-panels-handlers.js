@@ -37,7 +37,7 @@ define(["jquery", "handlebars", "./lib/cuf-values-utils","jqueryui", "./lib/jque
 	var template = handlebars.compile(
 		'{{#each this}}' +
 		'<div class="display-table-row control-group">' +
-			'<label class="display-table-cell">{{cuflabel this}}</label>' +
+			'<label class="display-table-cell v-centered">{{cuflabel this}}</label>' +
 			'<div class="display-table-cell controls">' +
 			
 			'{{#ifequals binding.customField.itype "RICH_TEXT"}}' +
