@@ -151,15 +151,17 @@
 	<div id="delete-client-popup" class="popup-dialog not-displayed" title="${deleteClientTitle}">
 		
 		<div class="display-table-row">
-            <div class="display-table-cell warning-cell">
-                <div class="generic-error-signal"></div>
-            </div>
-		 	<div class="display-table-cell">
-		        <span><f:message key="message.client.remove.first"/></span>
-		        <span class="red-warning-message"><f:message key="message.client.remove.second"/></span>
-		        <span><f:message key="message.client.remove.third"/></span>
-		        <span class="bold-warning-message"><f:message key="message.client.remove.fourth"/></span>
-		      </div>
+            <comp:notification-pane type="error">
+              <jsp:attribute name="htmlcontent">
+                  <div class="display-table-cell">
+                    <span><f:message key="message.client.remove.first"/></span>
+                    <span class="red-warning-message"><f:message key="message.client.remove.second"/></span>
+                    <span><f:message key="message.client.remove.third"/></span>
+                    <span class="bold-warning-message"><f:message key="message.client.remove.fourth"/></span>
+                  </div>              
+              </jsp:attribute>
+            </comp:notification-pane>
+
             <div id="warning-delete" class="display-table-cell">
 			</div>
 		</div>

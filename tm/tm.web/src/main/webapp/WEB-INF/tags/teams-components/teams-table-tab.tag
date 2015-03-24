@@ -103,14 +103,18 @@
             th:title="#{title.removeTestAutomationServer}" title="<f:message key='label.Delete' />">
             <!-- _____________CASE 1_______________ -->
             <div class="display-table-row">
-            	<div class="display-table-cell warning-cell">
-              	  <div class="generic-error-signal"></div>
-           		</div>
-	            <div class="display-table-cell">
-				  <p th:text="#{dialog.remove-team	}">Confirmez vous la suppression de ces équipes ?</p>
-	              <p th:text="#{dialog.label.delete-node.label.cantbeundone}">Cette action ne peut-être annulée.</p>
-	              <p th:text="#{dialog.label.delete-node.label.confirm }">Confirmez-vous la suppression ?</p>
-				</div>
+            
+                 <comp:notification-pane type="error">
+                  <jsp:attribute name="htmlcontent">
+      	            <div class="display-table-cell">
+      				  <p th:text="#{dialog.remove-team	}">Confirmez vous la suppression de ces équipes ?</p>
+      	              <p th:text="#{dialog.label.delete-node.label.cantbeundone}">Cette action ne peut-être annulée.</p>
+      	              <p th:text="#{dialog.label.delete-node.label.confirm }">Confirmez-vous la suppression ?</p>
+      				</div>        
+                  </jsp:attribute>
+                </comp:notification-pane>       
+
+
 			</div>
             <div class="popup-dialog-buttonpane">
               <input class="confirm" type="button" value="<f:message key='label.Confirm' />" th:value="#{label.Confirm}" data-def="evt=confirm, mainbtn" />

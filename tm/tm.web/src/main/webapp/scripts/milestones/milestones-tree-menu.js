@@ -20,7 +20,9 @@
  */
 
 
-define(['jquery', 'milestone-manager/milestone-activation', 'workspace.contextual-content', 'jquery.squash.formdialog' ], function($, milestones, ctxContent){
+define(['jquery', 'milestone-manager/milestone-activation', 'workspace.contextual-content',
+        'squash.translator', 'app/ws/squashtm.notification',
+        'jquery.squash.formdialog' ], function($, milestones, ctxContent, translator, notification){
 	
 	
 	function configureTable(){
@@ -89,10 +91,15 @@ define(['jquery', 'milestone-manager/milestone-activation', 'workspace.contextua
 		dialog.on('formdialogconfirm', function(){
 			var row = table.find('input:checked').parents('tr').get(0);
 			var id = table.squashTable().getODataId(row);
-
-			milestones.setActiveMilestone(id);
-			dialog.formDialog('close');
-			location.reload();
+			
+			if (!! id){
+				notification.showError(translator.get('message.EmptyTableSelection'));
+			}
+			else{
+				milestones.setActiveMilestone(id);
+				dialog.formDialog('close');
+				location.reload();
+			}
 
 		});
 		

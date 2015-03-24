@@ -19,10 +19,11 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 require(["common"], function() {
-	require(["jquery", "squash.translator", "workspace.routing", "squashtable", 
+	require(["jquery", "squash.translator", "workspace.routing",'app/ws/squashtm.notification', 
+	         "squashtable", 
 	         "app/ws/squashtm.workspace", 
 	         "jquery.squash.formdialog"], 
-			function($, translator, routing){					
+			function($, translator, routing, notification){					
 		
 		$(function() {		
 		
@@ -114,17 +115,10 @@ require(["common"], function() {
 				popup.confirmDialog('open');
 			}
 			else{
-				displayNothingSelected();
+				notification.showWarning(translator.get('message.EmptyTableSelection'));
 			}
 		});
-		
-		function displayNothingSelected(){
-			var warn = translator.get({
-				errorTitle : 'popup.title.Info',
-				errorMessage : 'message.EmptyTableSelection'
-			});
-			$.squash.openMessage(warn.errorTitle, warn.errorMessage);
-		}
+
 	
 	});			
 });		

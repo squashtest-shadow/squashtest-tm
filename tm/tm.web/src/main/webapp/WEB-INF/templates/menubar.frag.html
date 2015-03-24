@@ -27,7 +27,8 @@
 	<link rel="stylesheet" type="text/css" media="all" href="../../../../../../../tm/tm.web/src/main/webapp/styles/squash.blue.css" sq:css="squash.blue.css" />
 </head>
 <body>
-	<!-- MENUBAR FRAGMENT -->
+
+	<!-- MAIN MENUBAR FRAGMENT -->
 	<div class="main-menubar" th:fragment="menubar" >
 		<div th:remove="tag" class="this div exists for settings only, it will never be rendered" th:with="filter = ${#workspace.projectFilter()}">
 		
@@ -123,27 +124,12 @@
                 
         
         <div id="generic-error-dialog" class="not-displayed popup-dialog" th:title="#{popup.title.error}">        
-          <div>
-             <div class="display-table-row">
-                <div class="generic-error-main display-table-cell" style="padding-top:20px">
-                
-                </div>
-              </div>
-          </div>        
+          <div th:include="fragments-utils/static-panels :: error-pane"></div>        
           <input type="button" th:value="#{label.Ok}"/>  
         </div>
         
         <div id="generic-warning-dialog" class="not-displayed popup-dialog" th:title="#{label.warning}">        
-          <div>
-             <div class="display-table-row">
-                <div class="display-table-cell warning-cell">
-                  <div class="generic-warning-signal"></div>
-                </div>
-                <div class="generic-warning-main display-table-cell" style="padding-top:20px">
-                
-                </div>
-              </div>
-          </div>        
+          <div th:include="fragments-utils/static-panels :: warning-pane"></div>     
           <input type="button" th:value="#{label.Ok}"/>  
         </div>
         
@@ -151,5 +137,6 @@
       publish("load.notification");
       </script>
       </div>
+
 </body>
 </html>

@@ -28,6 +28,7 @@
    -->
 </div>
 
+
 <div class="milestone-panel-master">
   <div class="toolbar" th:if="${conf.editable}" >
   
@@ -112,8 +113,8 @@
     <div data-def="state=more-selected" class="centered">
         <span class="std-margin" th:text="#{title.unbindMilestones.moreselected}"></span>
     </div>
-    <div data-def="state=none-selected" class="centered">
-        <span class="std-margin" th:text="#{title.unbindMilestones.noneselected}"></span>
+    <div data-def="state=none-selected" class="display-table-row">
+        <div th:include="fragments-utils/static-panels :: warning-pane" th:with="txtcontent=#{title.unbindMilestones.noneselected}"></div>       
     </div>
     
     <div class="popup-dialog-buttonpane">

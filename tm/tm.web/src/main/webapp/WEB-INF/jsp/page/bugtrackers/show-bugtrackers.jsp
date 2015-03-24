@@ -96,15 +96,10 @@
 	<f:message var="deleteBugtrackerTitle" key="dialog.delete-bugtracker.title" />
 	<f:message var="warningDelete" key="dialog.deleteBugTracker.warning" />
 	<div id="delete-bugtracker-popup" class="popup-dialog not-displayed" title="${deleteBugtrackerTitle}">
-		
-		<div class="display-table-row">
-            <div class="display-table-cell warning-cell">
-                <div class="generic-error-signal"></div>
-            </div>
-            <div class="display-table-cell">
-			${warningDelete}
-			</div>
-		</div>
+
+        <comp:notification-pane type="error" txtcontent="${warningDelete}"/>
+
+
 		<div class="popup-dialog-buttonpane">
 		    <input class="confirm" type="button" value="${confirmLabel}" />
 		    <input class="cancel" type="button" value="${cancelLabel}" />				

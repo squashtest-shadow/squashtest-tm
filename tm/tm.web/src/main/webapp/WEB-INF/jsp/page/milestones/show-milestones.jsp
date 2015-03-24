@@ -146,13 +146,13 @@
 	<f:message var="deleteMilestoneTitle" key="dialog.delete-milestone.title" />
 	<div id="delete-milestone-popup" class="popup-dialog not-displayed" title="${deleteMilestoneTitle}">
 		
-		<div class="display-table-row">
-            <div class="display-table-cell warning-cell">
-                <div class="generic-error-signal"></div>
-            </div>
+        <comp:notification-pane type="error">
+          <jsp:attribute name="htmlcontent">
             <div id="warning-delete" class="display-table-cell">
-			</div>
-		</div>
+            </div>          
+          </jsp:attribute>
+        </comp:notification-pane>
+    
 		<div class="popup-dialog-buttonpane">
 		    <input class="confirm" type="button" value="${confirmLabel}" />
 		    <input class="cancel" type="button" value="${cancelLabel}" />

@@ -207,18 +207,18 @@
 		
 		<f:message var="deleteUsersTitle" key="title.delete-users" />
 		<div id="delete-user-dialog" class="popup-dialog not-displayed" title="${deleteUsersTitle}">
-			
-			<div class="display-table-row">
-	            <div class="display-table-cell warning-cell">
-	                <div class="generic-error-signal"></div>
-	            </div>
-	            <div class="display-table-cell">
+
+            <comp:notification-pane type="error">
+              <jsp:attribute name="htmlcontent">
+                <div class="display-table-cell">
 					<span> <f:message key="message.user.remove.first"/></span>
 					<span class="red-warning-message" > <f:message key="message.user.remove.second"/></span>
 					<span> <f:message key="message.user.remove.third"/></span>
 					<span class="bold-warning-message"> <f:message key="message.user.remove.fourth"/></span>
-				</div>
-			</div>
+				</div>      
+              </jsp:attribute>
+            </comp:notification-pane>         
+      
 			<div class="popup-dialog-buttonpane">
 			    <input class="confirm" type="button" value="<f:message key='label.Confirm' />" />
 			    <input class="cancel" type="button" value="<f:message key='label.Cancel' />" />				

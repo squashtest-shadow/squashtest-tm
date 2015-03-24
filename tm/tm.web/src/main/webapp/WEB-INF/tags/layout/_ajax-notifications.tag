@@ -22,8 +22,11 @@
 --%>
 <%@ tag body-content="empty" description="Add script which handles json content of ajax errors and populates error-message tagsaccordingly" %>
 <%@ attribute name="cssClass" description="additional css classes" %>
+
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component"%>
+
 
 <div id="ajax-processing-indicator" class="ui-corner-all ${cssClass} not-processing">
 	<div class="small-loading" ></div>
@@ -39,10 +42,7 @@
 <f:message var="okLabel" key="label.Ok"/>
 <div id="generic-error-dialog" class="not-displayed popup-dialog" title="${errorTitle}">
   <div>
-     <div class="display-table-row">
-        <div class="generic-error-main display-table-cell" style="padding-top:20px">
-        </div>
-      </div>
+    <comp:notification-pane type="error"/>
   </div>
   <input type="button" value="${okLabel}"/>  
 </div>
@@ -50,14 +50,7 @@
 <f:message var="warningTitle" key="label.warning" />
 <div id="generic-warning-dialog" class="not-displayed popup-dialog" title="${warningTitle}">
   <div>
-     <div class="display-table-row">
-        <div class="display-table-cell warning-cell">
-          <div class="generic-warning-signal"></div>
-        </div>
-        <div class="generic-warning-main display-table-cell" style="padding-top:20px">
-        
-        </div>
-      </div>
+    <comp:notification-pane type="warning"/>
   </div>
   <input type="button" value="${okLabel}"/>  
 </div>

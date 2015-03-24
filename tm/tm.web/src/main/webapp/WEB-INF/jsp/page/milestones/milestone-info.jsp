@@ -267,14 +267,8 @@
 	<f:message var="warningUnbind" key="dialog.milestone.unbind.project.warning" />
 	<div id="unbind-project-popup" class="popup-dialog not-displayed" title="${unbindProjectTitle}">
 		
-		<div class="display-table-row">
-            <div class="display-table-cell warning-cell">
-                <div class="generic-error-signal"></div>
-            </div>
-            <div class="display-table-cell">
-			${warningUnbind}
-			</div>
-		</div>
+        <comp:notification-pane type="error" txtcontent="${warningUnbind}"/>
+
 		<div class="popup-dialog-buttonpane">
 		    <input class="confirm" type="button" value="${confirmLabel}" />
 		    <input class="cancel" type="button" value="${cancelLabel}" />				
@@ -290,14 +284,8 @@
 	<f:message var="warningUnbind" key="dialog.milestone.unbind.project.warning" />
 	<div id="unbind-project-but-keep-in-perimeter-popup" class="popup-dialog not-displayed" title="${unbindProjectTitle}">
 		
-		<div class="display-table-row">
-            <div class="display-table-cell warning-cell">
-                <div class="generic-error-signal"></div>
-            </div>
-            <div class="display-table-cell">
-			${warningUnbind}
-			</div>
-		</div>
+        <comp:notification-pane type="error" txtcontent="${warningUnbind}"/>
+
 		<div class="popup-dialog-buttonpane">
 		    <input class="confirm" type="button" value="${confirmLabel}" />
 		    <input class="cancel" type="button" value="${cancelLabel}" />				
@@ -312,15 +300,9 @@
 	<f:message var="changeRangeTitle" key="dialog.milestone.changerange.title" />
 	<f:message var="warningChangeRange" key="dialog.milestone.changerange.warning" />
 	<div id="changeRange-popup" class="popup-dialog not-displayed" title="${changeRangeTitle}">
-		
-		<div class="display-table-row">
-            <div class="display-table-cell warning-cell">
-                <div class="generic-error-signal"></div>
-            </div>
-            <div class="display-table-cell">
-			${warningChangeRange}
-			</div>
-		</div>
+		        
+        <comp:notification-pane type="error" txtcontent="${warningChangeRange}"/>
+    
 		<div class="popup-dialog-buttonpane">
 		    <input class="confirm" type="button" value="${confirmLabel}" />
 		    <input class="cancel" type="button" value="${cancelLabel}" />				
@@ -335,14 +317,8 @@
 	<f:message var="warningChangeStatus" key="dialog.milestone.changestatus.warning" />
 	<div id="changeStatus-popup" class="popup-dialog not-displayed" title="${changeRangeTitle}">
 		
-		<div class="display-table-row">
-            <div class="display-table-cell warning-cell">
-                <div class="generic-error-signal"></div>
-            </div>
-            <div class="display-table-cell">
-			${warningChangeStatus}
-			</div>
-		</div>
+         <comp:notification-pane type="error" txtcontent="${warningChangeStatus}"/>
+    
 		<div class="popup-dialog-buttonpane">
 		    <input class="confirm" type="button" value="${confirmLabel}" />
 		    <input class="cancel" type="button" value="${cancelLabel}" />				

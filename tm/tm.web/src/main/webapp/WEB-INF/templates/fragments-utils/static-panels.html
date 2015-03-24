@@ -29,7 +29,9 @@
 
   1/ small-please-wait : displays the processing indicator + a message at the top. No arguments.
   2/ large-please-wait : displays the processing indicator + a message at the bottom, the pane will have a height of 300px. No arguments
-  3/ custom-please-wait : same than large please wait but with some customization. Accepts as argument height : string, represents the height (don't forget the unit).  
+  3/ custom-please-wait : same than large please wait but with some customization. Accepts as argument height : string, represents the height (don't forget the unit).
+  4/ warning-pane : will render some text as it would in the generic-warning-dialog. Accepts as argument txtcontent : string, the text to display in  
+  5/ error-pane   : will render some text as it would in the generic-error-dialog. Accepts as argument txtcontent : string, the text to display in  
  -->
 
 </div>
@@ -49,3 +51,21 @@
     <div class="please-wait-message" th:style="'margin-top : '+${height}+';'" th:text="#{message.PleaseWait}">zzz</div>
   </div>
 </div>
+
+<div th:fragment="warning-pane">
+   <div class="display-table-row">
+        <div class="display-table-cell warning-cell">
+          <div class="generic-warning-signal"></div>
+        </div>               
+      <div class="generic-warning-main display-table-cell" style="padding-top:20px" th:text="${txtcontent}"></div>
+    </div>
+</div>  
+
+<div th:fragment="error-pane">
+   <div class="display-table-row">
+        <div class="display-table-cell warning-cell">
+          <div class="generic-error-signal"></div>
+        </div>               
+      <div class="generic-error-main display-table-cell" style="padding-top:20px" th:text="${txtcontent}"></div>
+    </div>
+</div> 

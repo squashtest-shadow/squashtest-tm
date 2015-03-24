@@ -91,18 +91,9 @@
 				popup.confirmDialog('open');
 			}
 			else{
-				displayNothingSelected();
+				notification.showWarning(translator.get('message.EmptyTableSelection'));
 			}
 		});
-		
-		function displayNothingSelected(){
-			var warn = translator.get({
-				errorTitle : 'popup.title.Info',
-				errorMessage : 'message.EmptyTableSelection'
-			});
-			$.squash.openMessage(warn.errorTitle, warn.errorMessage);
-		}
-		
 		
 	
 	var addClientDialog = $("#add-client-dialog");
