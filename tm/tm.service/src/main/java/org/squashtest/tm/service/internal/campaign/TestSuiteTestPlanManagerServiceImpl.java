@@ -52,6 +52,7 @@ import org.squashtest.tm.service.internal.repository.TestSuiteDao;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.security.PermissionsUtils;
 import org.squashtest.tm.service.user.UserAccountService;
+import static org.squashtest.tm.service.security.Authorizations.*;
 
 @Service("squashtest.tm.service.TestSuiteTestPlanManagerService")
 @Transactional
@@ -74,8 +75,6 @@ public class TestSuiteTestPlanManagerServiceImpl implements TestSuiteTestPlanMan
 
 	@Inject
 	private PermissionEvaluationService permissionEvaluationService;
-
-	private static final String OR_HAS_ROLE_ADMIN = "or hasRole('ROLE_ADMIN')";
 
 	@Override
 	@PreAuthorize("hasPermission(#testSuiteId, 'org.squashtest.tm.domain.campaign.TestSuite', 'READ') "
@@ -173,7 +172,7 @@ public class TestSuiteTestPlanManagerServiceImpl implements TestSuiteTestPlanMan
 		PagingAndMultiSorting sorting = new DelegatePagingAndMultiSorting(noPaging, newSorting);
 		Filtering filtering = DefaultFiltering.NO_FILTERING;
 		ColumnFiltering columnFiltering = DefaultColumnFiltering.NO_FILTERING;
-		
+
 		List<IterationTestPlanItem> items = testSuiteDao.findTestPlan(suiteId, sorting, filtering, columnFiltering);
 
 		TestSuite testSuite = testSuiteDao.findById(suiteId);
@@ -228,7 +227,7 @@ public class TestSuiteTestPlanManagerServiceImpl implements TestSuiteTestPlanMan
 
 		return delegateIterationTestPlanManagerService.removeTestPlansFromIterationObj(testPlanIds, iteration);
 	}
-	
+
 	/**
 	 * @see TestSuiteTestPlanManagerService#findPlannedTestCasesIds(Long)
 	 */

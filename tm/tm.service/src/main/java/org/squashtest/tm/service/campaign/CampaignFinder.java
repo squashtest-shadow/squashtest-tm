@@ -20,7 +20,6 @@
  */
 package org.squashtest.tm.service.campaign;
 
-import java.util.Collection;
 import java.util.List;
 
 import org.springframework.security.access.prepost.PostAuthorize;
@@ -30,16 +29,16 @@ import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.campaign.Campaign;
 import org.squashtest.tm.domain.campaign.CampaignTestPlanItem;
-import org.squashtest.tm.domain.milestone.Milestone;
+import static org.squashtest.tm.service.security.Authorizations.*;
 
 @Transactional(readOnly = true)
 public interface CampaignFinder {
 
-	@PostAuthorize("hasPermission(returnObject,'READ') or hasRole('ROLE_ADMIN')")
+	@PostAuthorize("hasPermission(returnObject,'READ')"+ OR_HAS_ROLE_ADMIN)
 	Campaign findById(long campaignId);
 
 	@PreAuthorize("hasPermission(#arg0, 'org.squashtest.tm.domain.campaign.Campaign' ,'READ') "
-			+ "or hasRole('ROLE_ADMIN')")
+			+ OR_HAS_ROLE_ADMIN)
 	PagedCollectionHolder<List<CampaignTestPlanItem>> findTestPlanByCampaignId(long campaignId,
 			PagingAndSorting filter);
 

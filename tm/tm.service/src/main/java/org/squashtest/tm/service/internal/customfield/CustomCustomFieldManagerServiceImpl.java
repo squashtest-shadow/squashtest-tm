@@ -45,6 +45,7 @@ import org.squashtest.tm.service.customfield.CustomFieldBindingModificationServi
 import org.squashtest.tm.service.internal.repository.CustomFieldBindingDao;
 import org.squashtest.tm.service.internal.repository.CustomFieldDao;
 import org.squashtest.tm.service.internal.repository.CustomFieldValueDao;
+import static org.squashtest.tm.service.security.Authorizations.*;
 
 /**
  * Implementations for (non dynamically generated) custom-field management services.
@@ -107,7 +108,7 @@ public class CustomCustomFieldManagerServiceImpl implements CustomCustomFieldMan
 	 * @see org.squashtest.tm.service.customfield.CustomCustomFieldManagerService#persist(org.squashtest.tm.domain.customfield.CustomField)
 	 */
 	@Override
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize(HAS_ROLE_ADMIN)
 	public void persist(CustomField newCustomField) {
 		checkDuplicateName(newCustomField);
 		checkDuplicateCode(newCustomField);

@@ -20,18 +20,15 @@
  */
 package org.squashtest.tm.service.requirement;
 
-import java.util.Collection;
-import java.util.List;
-
 import javax.validation.constraints.NotNull;
 
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.core.dynamicmanager.annotation.DynamicManager;
-import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.requirement.RequirementStatus;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
+import static org.squashtest.tm.service.security.Authorizations.*;
 
 /**
  * Requirement Version mangement related services.
@@ -44,16 +41,16 @@ import org.squashtest.tm.domain.requirement.RequirementVersion;
 public interface RequirementVersionManagerService extends CustomRequirementVersionManagerService {
 
 	@Transactional(readOnly = true)
-	@PostAuthorize("hasPermission(returnObject,'READ') or hasRole('ROLE_ADMIN')")
+	@PostAuthorize("hasPermission(returnObject,'READ')" + OR_HAS_ROLE_ADMIN)
 	RequirementVersion findById(long requirementVersionId);
 
-	@PreAuthorize("hasPermission(#arg0, 'org.squashtest.tm.domain.requirement.RequirementVersion','WRITE') or hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasPermission(#arg0, 'org.squashtest.tm.domain.requirement.RequirementVersion','WRITE')" + OR_HAS_ROLE_ADMIN)
 	void changeDescription(long requirementId, @NotNull String newDescription);
 
-	@PreAuthorize("hasPermission(#arg0, 'org.squashtest.tm.domain.requirement.RequirementVersion', 'WRITE') or hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasPermission(#arg0, 'org.squashtest.tm.domain.requirement.RequirementVersion', 'WRITE')" + OR_HAS_ROLE_ADMIN)
 	void changeReference(long requirementVersionId, @NotNull String reference);
 
-	@PreAuthorize("hasPermission(#arg0, 'org.squashtest.tm.domain.requirement.RequirementVersion', 'WRITE') or hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasPermission(#arg0, 'org.squashtest.tm.domain.requirement.RequirementVersion', 'WRITE')" + OR_HAS_ROLE_ADMIN)
 	void changeStatus(long requirementVersionId, @NotNull RequirementStatus status);
 
 

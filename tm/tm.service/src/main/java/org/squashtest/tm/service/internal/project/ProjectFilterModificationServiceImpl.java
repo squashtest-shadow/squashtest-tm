@@ -34,6 +34,7 @@ import org.squashtest.tm.service.internal.repository.ProjectFilterDao;
 import org.squashtest.tm.service.project.ProjectFilterModificationService;
 import org.squashtest.tm.service.project.ProjectManagerService;
 import org.squashtest.tm.service.security.UserContextService;
+import static org.squashtest.tm.service.security.Authorizations.*;
 
 @Service("squashtest.tm.service.ProjectFilterModificationService")
 @Transactional
@@ -84,7 +85,7 @@ public class ProjectFilterModificationServiceImpl implements ProjectFilterModifi
 
 
 	@Override
-	@PostFilter("hasPermission(filterObject, 'READ') or hasRole('ROLE_ADMIN')")
+	@PostFilter("hasPermission(filterObject, 'READ')" + OR_HAS_ROLE_ADMIN)
 	@Transactional(readOnly = true)
 	public List<Project> getAllProjects() {
 		return projectManager.findAllOrderedByName();

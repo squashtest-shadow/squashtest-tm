@@ -24,19 +24,20 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.tm.core.dynamicmanager.annotation.DynamicManager;
+import static org.squashtest.tm.service.security.Authorizations.*;
 
 @Transactional
 @DynamicManager(name = "squashtest.tm.service.BugTrackerModificationService", entity = BugTracker.class)
 public interface BugTrackerModificationService extends CustomBugTrackerModificationService {
-		
 
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+
+	@PreAuthorize(HAS_ROLE_ADMIN)
 	void changeIframeFriendly(long bugtrackerId, boolean isIframeFriendly);
-	
-	@PreAuthorize(" hasRole('ROLE_ADMIN')")
+
+	@PreAuthorize(HAS_ROLE_ADMIN)
 	void changeKind(long bugtrackerId, String kind);
 
-	@PreAuthorize(" hasRole('ROLE_ADMIN')")
+	@PreAuthorize(HAS_ROLE_ADMIN)
 	void changeUrl(long bugtrackerId, String url);
 
 }

@@ -32,6 +32,7 @@ import org.squashtest.tm.service.internal.repository.LibraryDao;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.security.PermissionsUtils;
 import org.squashtest.tm.service.security.SecurityCheckableObject;
+import static org.squashtest.tm.service.security.Authorizations.*;
 
 /**
  * Generic management service for library nodes. It is responsible for common operations such as rename / move / copy
@@ -48,7 +49,7 @@ import org.squashtest.tm.service.security.SecurityCheckableObject;
  */
 @Transactional
 public class GenericNodeManagementService<MANAGED extends LibraryNode, NODE extends LibraryNode, FOLDER extends Folder<NODE>>
-		implements NodeManagementService<MANAGED, NODE, FOLDER> {
+implements NodeManagementService<MANAGED, NODE, FOLDER> {
 
 	private PermissionEvaluationService permissionService;
 
@@ -67,7 +68,7 @@ public class GenericNodeManagementService<MANAGED extends LibraryNode, NODE exte
 	 */
 	@Override
 	@Transactional(readOnly = true)
-	@PostAuthorize("hasPermission(returnObject, 'READ') or hasRole('ROLE_ADMIN')")
+	@PostAuthorize("hasPermission(returnObject, 'READ')" + OR_HAS_ROLE_ADMIN)
 	public MANAGED findNode(long nodeId) {
 		return nodeDao.findById(nodeId);
 	}
@@ -186,7 +187,7 @@ public class GenericNodeManagementService<MANAGED extends LibraryNode, NODE exte
 
 	/* ********************* security scaffolding ************************ */
 
-	
+
 
 	private void checkPermission(SecurityCheckableObject... checkableObjects) {
 		PermissionsUtils.checkPermission(permissionService, checkableObjects);

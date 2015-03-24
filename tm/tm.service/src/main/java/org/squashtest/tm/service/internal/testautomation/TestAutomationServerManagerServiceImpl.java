@@ -40,6 +40,7 @@ import org.squashtest.tm.service.internal.repository.TestAutomationProjectDao;
 import org.squashtest.tm.service.internal.repository.TestAutomationServerDao;
 import org.squashtest.tm.service.security.Authorizations;
 import org.squashtest.tm.service.testautomation.TestAutomationServerManagerService;
+import static org.squashtest.tm.service.security.Authorizations.*;
 
 @Transactional
 @Service("squashtest.tm.service.TestAutomationServerManagementService")
@@ -52,7 +53,7 @@ public class TestAutomationServerManagerServiceImpl implements TestAutomationSer
 	private TestAutomationProjectDao projectDao;
 
 	@Override
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_TM_PROJECT_MANAGER')")
+	@PreAuthorize(HAS_ROLE_ADMIN_OR_PROJECT_MANAGER)
 	public TestAutomationServer findById(long serverId) {
 		return serverDao.findById(serverId);
 	}
@@ -114,13 +115,13 @@ public class TestAutomationServerManagerServiceImpl implements TestAutomationSer
 	}
 
 	@Override
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_TM_PROJECT_MANAGER')")
+	@PreAuthorize(HAS_ROLE_ADMIN_OR_PROJECT_MANAGER)
 	public List<TestAutomationServer> findAllOrderedByName() {
 		return serverDao.findAllOrderedByName();
 	}
 
 	@Override
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_TM_PROJECT_MANAGER')")
+	@PreAuthorize(HAS_ROLE_ADMIN_OR_PROJECT_MANAGER)
 	public PagedCollectionHolder<List<TestAutomationServer>> findSortedTestAutomationServers(
 			PagingAndSorting pagingNsorting) {
 

@@ -25,6 +25,7 @@ import java.util.List;
 import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.NamedReference;
+import static org.squashtest.tm.service.security.Authorizations.*;
 
 /**
  * @author mpagnon
@@ -37,7 +38,7 @@ public interface ProjectTemplateFinder extends CustomProjectTemplateFinder {
 	 * 
 	 * @return
 	 */
-	@PostFilter("hasPermission(filterObject.id, 'org.squashtest.tm.domain.project.ProjectTemplate', 'READ') or hasRole('ROLE_ADMIN')")
+	@PostFilter("hasPermission(filterObject.id, 'org.squashtest.tm.domain.project.ProjectTemplate', 'READ')" + OR_HAS_ROLE_ADMIN)
 	List<NamedReference> findAllReferences();
-	
+
 }

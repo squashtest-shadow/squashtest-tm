@@ -37,12 +37,13 @@ import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.security.PermissionsUtils;
 import org.squashtest.tm.service.security.SecurityCheckableObject;
 import org.squashtest.tm.service.user.UserAccountService;
+import static org.squashtest.tm.service.security.Authorizations.*;
 
 @Service("squashtest.tm.service.TestSuiteExecutionProcessingService")
 @Transactional
 public class TestSuiteExecutionProcessingServiceImpl implements TestSuiteExecutionProcessingService {
 
-	private static final String CAN_EXECUTE_BY_TESTSUITE_ID = "hasPermission(#testSuiteId, 'org.squashtest.tm.domain.campaign.TestSuite', 'EXECUTE') or hasRole('ROLE_ADMIN')";
+	private static final String CAN_EXECUTE_BY_TESTSUITE_ID = "hasPermission(#testSuiteId, 'org.squashtest.tm.domain.campaign.TestSuite', 'EXECUTE')" + OR_HAS_ROLE_ADMIN;
 
 	@Inject
 	private TestSuiteDao suiteDao;
@@ -114,7 +115,7 @@ public class TestSuiteExecutionProcessingServiceImpl implements TestSuiteExecuti
 		for (IterationTestPlanItem iterationTestPlanItem : suiteTestPlan) {
 			if (testerLogin == null
 					|| (iterationTestPlanItem.getUser() != null && iterationTestPlanItem.getUser().getLogin()
-							.equals(testerLogin))) {
+					.equals(testerLogin))) {
 				List<Execution> executions = iterationTestPlanItem.getExecutions();
 				if (!executions.isEmpty()) {
 					campaignDeletionHandler.deleteExecutions(executions);

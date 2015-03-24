@@ -76,6 +76,8 @@ import org.squashtest.tm.service.requirement.RequirementLibraryFinderService;
 import org.squashtest.tm.service.requirement.RequirementLibraryNavigationService;
 import org.squashtest.tm.service.security.PermissionsUtils;
 import org.squashtest.tm.service.security.SecurityCheckableObject;
+import static org.squashtest.tm.service.security.Authorizations.*;
+import static org.squashtest.tm.service.security.Authorizations.*;
 
 @SuppressWarnings("rawtypes")
 @Service("squashtest.tm.service.RequirementLibraryNavigationService")
@@ -85,7 +87,6 @@ AbstractLibraryNavigationService<RequirementLibrary, RequirementFolder, Requirem
 RequirementLibraryNavigationService, RequirementLibraryFinderService {
 	private static final Logger LOGGER = LoggerFactory.getLogger(RequirementLibraryNavigationServiceImpl.class);
 
-	private static final String OR_HAS_ROLE_ADMIN = "or hasRole('ROLE_ADMIN')";
 	@Inject
 	private RequirementLibraryDao requirementLibraryDao;
 	@Inject
@@ -191,7 +192,7 @@ RequirementLibraryNavigationService, RequirementLibraryFinderService {
 
 	@Override
 	@PreAuthorize("hasPermission(#destinationId, 'org.squashtest.tm.domain.requirement.RequirementLibrary' , 'CREATE' )"
-			+ "or hasRole('ROLE_ADMIN')")
+			+ OR_HAS_ROLE_ADMIN)
 	public void addFolderToLibrary(long destinationId, RequirementFolder newFolder) {
 
 		RequirementLibrary container = getLibraryDao().findById(destinationId);
@@ -209,7 +210,7 @@ RequirementLibraryNavigationService, RequirementLibraryFinderService {
 
 	@Override
 	@PreAuthorize("hasPermission(#destinationId, 'org.squashtest.tm.domain.requirement.RequirementFolder' , 'CREATE' )"
-			+ "or hasRole('ROLE_ADMIN')")
+			+ OR_HAS_ROLE_ADMIN)
 	public final void addFolderToFolder(long destinationId, RequirementFolder newFolder) {
 
 		RequirementFolder container = getFolderDao().findById(destinationId);
@@ -494,15 +495,15 @@ RequirementLibraryNavigationService, RequirementLibraryFinderService {
 
 	private void replaceInfoListReferences(Requirement newReq){
 
-	   Field categoryField = ReflectionUtils.findField(RequirementVersion.class, "category");
-	  categoryField.setAccessible(true);
- 
+		Field categoryField = ReflectionUtils.findField(RequirementVersion.class, "category");
+		categoryField.setAccessible(true);
+
 		InfoListItem category = newReq.getCategory();
 
 		// if no category set -> set the default one
 		if (category == null){
-	        ReflectionUtils.setField(categoryField, newReq.getResource() , newReq.getProject().getRequirementCategories().getDefaultItem());
-		//	newReq.setCategory( newReq.getProject().getRequirementCategories().getDefaultItem() );
+			ReflectionUtils.setField(categoryField, newReq.getResource() , newReq.getProject().getRequirementCategories().getDefaultItem());
+			//	newReq.setCategory( newReq.getProject().getRequirementCategories().getDefaultItem() );
 		}
 		else{
 
@@ -516,7 +517,7 @@ RequirementLibraryNavigationService, RequirementLibraryFinderService {
 			// a persistent instance
 			if (category instanceof ListItemReference){
 				ReflectionUtils.setField(categoryField, newReq.getResource(), infoListItemService.findReference((ListItemReference)category));
-			//	newReq.setCategory( infoListItemService.findReference((ListItemReference)category));
+				//	newReq.setCategory( infoListItemService.findReference((ListItemReference)category));
 			}
 		}
 

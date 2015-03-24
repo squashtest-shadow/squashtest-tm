@@ -52,6 +52,7 @@ import org.squashtest.tm.service.library.LibraryNavigationService;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.security.PermissionsUtils;
 import org.squashtest.tm.service.security.SecurityCheckableObject;
+import static org.squashtest.tm.service.security.Authorizations.*;
 
 /**
  * Generic implementation of a library navigation service.
@@ -136,13 +137,13 @@ implements LibraryNavigationService<LIBRARY, FOLDER, NODE> {
 	}
 
 	@Override
-	@PostFilter("hasPermission(filterObject, 'READ') or hasRole('ROLE_ADMIN')")
+	@PostFilter("hasPermission(filterObject, 'READ')" + OR_HAS_ROLE_ADMIN)
 	public final List<NODE> findLibraryRootContent(long libraryId) {
 		return getLibraryDao().findAllRootContentById(libraryId);
 	}
 
 	@Override
-	@PostFilter("hasPermission(filterObject, 'READ') or hasRole('ROLE_ADMIN')")
+	@PostFilter("hasPermission(filterObject, 'READ')" + OR_HAS_ROLE_ADMIN)
 	public final List<NODE> findFolderContent(long folderId) {
 		return getFolderDao().findAllContentById(folderId);
 	}

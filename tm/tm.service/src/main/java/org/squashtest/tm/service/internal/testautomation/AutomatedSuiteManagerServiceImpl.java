@@ -79,6 +79,7 @@ import org.squashtest.tm.service.testautomation.model.TestAutomationProjectConte
 import org.squashtest.tm.service.testautomation.spi.TestAutomationConnector;
 import org.squashtest.tm.service.testautomation.spi.TestAutomationException;
 import org.squashtest.tm.service.testautomation.spi.UnknownConnectorKind;
+import static org.squashtest.tm.service.security.Authorizations.*;
 
 @Transactional
 @Service("squashtest.tm.service.AutomatedSuiteManagementService")
@@ -156,7 +157,7 @@ public class AutomatedSuiteManagerServiceImpl implements AutomatedSuiteManagerSe
 	 * @see org.squashtest.tm.service.testautomation.AutomatedSuiteManagerService#createFromIterationTestPlan(long)
 	 */
 	@Override
-	@PreAuthorize("hasPermission(#iterationId, 'org.squashtest.tm.domain.campaign.Iteration', 'EXECUTE') or hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasPermission(#iterationId, 'org.squashtest.tm.domain.campaign.Iteration', 'EXECUTE')" + OR_HAS_ROLE_ADMIN)
 	public AutomatedSuite createFromIterationTestPlan(long iterationId) {
 		Iteration iteration = iterationDao.findById(iterationId);
 		List<IterationTestPlanItem> items =  iteration.getTestPlans();
@@ -167,7 +168,7 @@ public class AutomatedSuiteManagerServiceImpl implements AutomatedSuiteManagerSe
 	 * @see org.squashtest.tm.service.testautomation.AutomatedSuiteManagerService#createFromTestSuiteTestPlan(long)
 	 */
 	@Override
-	@PreAuthorize("hasPermission(#testSuiteId, 'org.squashtest.tm.domain.campaign.TestSuite', 'EXECUTE') or hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasPermission(#testSuiteId, 'org.squashtest.tm.domain.campaign.TestSuite', 'EXECUTE')" + OR_HAS_ROLE_ADMIN)
 	public AutomatedSuite createFromTestSuiteTestPlan(long testSuiteId) {
 		TestSuite suite = testSuiteDao.findById(testSuiteId);
 		List<IterationTestPlanItem> items =  suite.getTestPlan();
@@ -263,7 +264,7 @@ public class AutomatedSuiteManagerServiceImpl implements AutomatedSuiteManagerSe
 
 
 	@Override
-	@PostFilter("hasPermission(filterObject, 'READ') or hasRole('ROLE_ADMIN')")
+	@PostFilter("hasPermission(filterObject, 'READ')" + OR_HAS_ROLE_ADMIN)
 	@Transactional(readOnly = true)
 	public List<Execution> findExecutionsByAutomatedTestSuiteId(String automatedTestSuiteId) {
 

@@ -26,13 +26,14 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.core.dynamicmanager.annotation.DynamicManager;
 import org.squashtest.tm.domain.campaign.Iteration;
+import static org.squashtest.tm.service.security.Authorizations.*;
 
 @Transactional
 @DynamicManager(name = "squashtest.tm.service.IterationModificationService", entity = Iteration.class)
 public interface IterationModificationService extends CustomIterationModificationService {
 
 	String WRITE_ITERATION_OR_ADMIN = "hasPermission(#arg0, 'org.squashtest.tm.domain.campaign.Iteration', 'WRITE') "
-			+ "or hasRole('ROLE_ADMIN')";
+			+ OR_HAS_ROLE_ADMIN;
 
 	@PreAuthorize(WRITE_ITERATION_OR_ADMIN)
 	void changeDescription(long iterationId, String newDescription);

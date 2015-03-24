@@ -44,6 +44,7 @@ import org.squashtest.tm.service.execution.ExecutionProcessingService;
 import org.squashtest.tm.service.internal.repository.ExecutionDao;
 import org.squashtest.tm.service.internal.repository.ExecutionStepDao;
 import org.squashtest.tm.service.security.UserContextService;
+import static org.squashtest.tm.service.security.Authorizations.*;
 
 @Service("squashtest.tm.service.ExecutionProcessingService")
 @Transactional
@@ -195,7 +196,7 @@ public class ExecutionProcessingServiceImpl implements ExecutionProcessingServic
 		}
 	}
 
-	@PreAuthorize("hasPermission(#execution, 'EXECUTE') or hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasPermission(#execution, 'EXECUTE')" + OR_HAS_ROLE_ADMIN)
 	@Override
 	public void updateExecutionMetadata(Execution execution) {
 		LOGGER.debug("update the executed by/on for given execution and it's test plan.");
@@ -218,7 +219,7 @@ public class ExecutionProcessingServiceImpl implements ExecutionProcessingServic
 
 	}
 
-	@PreAuthorize("hasPermission(#extender, 'EXECUTE') or hasRole('ROLE_ADMIN') or hasRole('ROLE_TA_API_CLIENT')")
+	@PreAuthorize("hasPermission(#extender, 'EXECUTE') or hasRole('ROLE_TA_API_CLIENT')" + OR_HAS_ROLE_ADMIN)
 	@Override
 	public void updateExecutionMetadata(AutomatedExecutionExtender extender) {
 

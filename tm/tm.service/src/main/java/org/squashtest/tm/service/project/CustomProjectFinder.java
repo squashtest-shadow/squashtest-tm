@@ -26,6 +26,7 @@ import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.project.GenericProject;
 import org.squashtest.tm.domain.project.Project;
+import static org.squashtest.tm.service.security.Authorizations.*;
 
 /**
  * @author mpagnon
@@ -34,9 +35,9 @@ import org.squashtest.tm.domain.project.Project;
 @Transactional(readOnly = true)
 public interface CustomProjectFinder {
 
-	@PostFilter("hasPermission(filterObject, 'READ') or  hasRole('ROLE_ADMIN')")
+	@PostFilter("hasPermission(filterObject, 'READ')" + OR_HAS_ROLE_ADMIN)
 	List<Project> findAllReadable();
-	
-	
+
+
 	List<GenericProject> findAllICanManage();
 }

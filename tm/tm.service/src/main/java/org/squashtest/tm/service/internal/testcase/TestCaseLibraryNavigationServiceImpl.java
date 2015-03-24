@@ -72,6 +72,7 @@ import org.squashtest.tm.service.project.ProjectFilterModificationService;
 import org.squashtest.tm.service.statistics.testcase.TestCaseStatisticsBundle;
 import org.squashtest.tm.service.testcase.TestCaseLibraryNavigationService;
 import org.squashtest.tm.service.testcase.TestCaseStatisticsService;
+import static org.squashtest.tm.service.security.Authorizations.*;
 
 @Service("squashtest.tm.service.TestCaseLibraryNavigationService")
 @Transactional
@@ -226,7 +227,7 @@ TestCaseLibraryNavigationService {
 
 	@Override
 	@PreAuthorize("hasPermission(#destinationId, 'org.squashtest.tm.domain.testcase.TestCaseLibrary' , 'CREATE' )"
-			+ "or hasRole('ROLE_ADMIN')")
+			+ OR_HAS_ROLE_ADMIN)
 	public void addFolderToLibrary(long destinationId, TestCaseFolder newFolder) {
 
 		TestCaseLibrary container = getLibraryDao().findById(destinationId);
@@ -244,7 +245,7 @@ TestCaseLibraryNavigationService {
 
 	@Override
 	@PreAuthorize("hasPermission(#destinationId, 'org.squashtest.tm.domain.testcase.TestCaseFolder' , 'CREATE' )"
-			+ "or hasRole('ROLE_ADMIN')")
+			+ OR_HAS_ROLE_ADMIN)
 	public final void addFolderToFolder(long destinationId, TestCaseFolder newFolder) {
 
 		TestCaseFolder container = getFolderDao().findById(destinationId);
@@ -263,7 +264,7 @@ TestCaseLibraryNavigationService {
 
 	@Override
 	@PreAuthorize("hasPermission(#libraryId, 'org.squashtest.tm.domain.testcase.TestCaseLibrary' , 'CREATE' )"
-			+ "or hasRole('ROLE_ADMIN')")
+			+ OR_HAS_ROLE_ADMIN)
 	public void addTestCaseToLibrary(long libraryId, TestCase testCase, Integer position) {
 
 		TestCaseLibrary library = testCaseLibraryDao.findById(libraryId);
@@ -289,7 +290,7 @@ TestCaseLibraryNavigationService {
 
 	@Override
 	@PreAuthorize("hasPermission(#libraryId, 'org.squashtest.tm.domain.testcase.TestCaseLibrary' , 'CREATE' )"
-			+ "or hasRole('ROLE_ADMIN')")
+			+ OR_HAS_ROLE_ADMIN)
 	public void addTestCaseToLibrary(long libraryId, TestCase testCase, Map<Long, RawValue> customFieldValues, Integer position, List<Long> milestoneIds) {
 		addTestCaseToLibrary(libraryId, testCase, position);
 		initCustomFieldValues(testCase, customFieldValues);
@@ -298,7 +299,7 @@ TestCaseLibraryNavigationService {
 
 	@Override
 	@PreAuthorize("hasPermission(#folderId, 'org.squashtest.tm.domain.testcase.TestCaseFolder' , 'CREATE') "
-			+ "or hasRole('ROLE_ADMIN')")
+			+ OR_HAS_ROLE_ADMIN)
 	public void addTestCaseToFolder(long folderId, TestCase testCase, Integer position) {
 		TestCaseFolder folder = testCaseFolderDao.findById(folderId);
 
@@ -319,7 +320,7 @@ TestCaseLibraryNavigationService {
 
 	@Override
 	@PreAuthorize("hasPermission(#folderId, 'org.squashtest.tm.domain.testcase.TestCaseFolder' , 'CREATE') "
-			+ "or hasRole('ROLE_ADMIN')")
+			+ OR_HAS_ROLE_ADMIN)
 	public void addTestCaseToFolder(long folderId, TestCase testCase, Map<Long, RawValue> customFieldValues, Integer position, List<Long> milestoneIds) {
 		addTestCaseToFolder(folderId, testCase, position);
 		initCustomFieldValues(testCase, customFieldValues);
@@ -410,7 +411,7 @@ TestCaseLibraryNavigationService {
 	 * same for requirement import
 	 */
 	@Override
-	@PreAuthorize("hasPermission(#libraryId, 'org.squashtest.tm.domain.testcase.TestCaseLibrary', 'IMPORT') or hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasPermission(#libraryId, 'org.squashtest.tm.domain.testcase.TestCaseLibrary', 'IMPORT')" + OR_HAS_ROLE_ADMIN)
 	public ImportSummary importZipTestCase(InputStream archiveStream, long libraryId, String encoding) {
 
 		ImportSummary summary = testCaseImporter.importExcelTestCases(archiveStream, libraryId, encoding);
@@ -429,7 +430,7 @@ TestCaseLibraryNavigationService {
 	}
 
 	@Override
-	@PostFilter("hasPermission(filterObject, 'LINK') or hasRole('ROLE_ADMIN')")
+	@PostFilter("hasPermission(filterObject, 'LINK')" + OR_HAS_ROLE_ADMIN)
 	public List<TestCaseLibrary> findLinkableTestCaseLibraries() {
 		ProjectFilter pf = projectFilterModificationService.findProjectFilterByUserLogin();
 		return pf.getActivated() ? libraryStrategy.getSpecificLibraries(pf.getProjects()) : testCaseLibraryDao
@@ -533,13 +534,13 @@ TestCaseLibraryNavigationService {
 	}
 
 	@Override
-	@PreAuthorize("hasPermission(#folderId, 'org.squashtest.tm.domain.testcase.TestCaseFolder', 'READ') or hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasPermission(#folderId, 'org.squashtest.tm.domain.testcase.TestCaseFolder', 'READ')" + OR_HAS_ROLE_ADMIN)
 	public List<String> findNamesInFolderStartingWith(long folderId, String nameStart) {
 		return testCaseFolderDao.findNamesInFolderStartingWith(folderId, nameStart);
 	}
 
 	@Override
-	@PreAuthorize("hasPermission(#libraryId, 'org.squashtest.tm.domain.testcase.TestCaseLibrary', 'READ') or hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasPermission(#libraryId, 'org.squashtest.tm.domain.testcase.TestCaseLibrary', 'READ')" + OR_HAS_ROLE_ADMIN)
 	public List<String> findNamesInLibraryStartingWith(long libraryId, String nameStart) {
 		return testCaseFolderDao.findNamesInLibraryStartingWith(libraryId, nameStart);
 	}

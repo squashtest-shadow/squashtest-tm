@@ -57,6 +57,7 @@ import org.squashtest.tm.service.security.acls.model.ObjectAclService;
 import org.squashtest.tm.service.user.AdministrationService;
 import org.squashtest.tm.service.user.AuthenticatedUser;
 import org.squashtest.tm.service.user.UserAccountService;
+import static org.squashtest.tm.service.security.Authorizations.*;
 
 /**
  * 
@@ -132,8 +133,8 @@ public class AdministrationServiceImpl implements AdministrationService {
 	}
 
 	/* ********************** proper admin section ******************* */
-	private static final String HAS_ROLE_ADMIN = "hasRole('ROLE_ADMIN')";
-	private static final String IS_ADMIN_OR_MANAGER = "hasRole('ROLE_TM_PROJECT_MANAGER') or hasRole('ROLE_ADMIN')";
+
+	private static final String IS_ADMIN_OR_MANAGER = "hasRole('ROLE_TM_PROJECT_MANAGER')" + OR_HAS_ROLE_ADMIN;
 
 	@Override
 	@PreAuthorize(HAS_ROLE_ADMIN)

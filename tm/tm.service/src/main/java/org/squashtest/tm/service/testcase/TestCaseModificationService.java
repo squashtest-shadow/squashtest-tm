@@ -20,13 +20,11 @@
  */
 package org.squashtest.tm.service.testcase;
 
-import java.util.Collection;
-import java.util.List;
+import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
 
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.core.dynamicmanager.annotation.DynamicManager;
-import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseImportance;
 import org.squashtest.tm.domain.testcase.TestCaseStatus;
@@ -37,7 +35,7 @@ public interface TestCaseModificationService extends CustomTestCaseModificationS
 	/**
 	 * 
 	 */
-	static final String TEST_CASE_IS_WRITABLE = "hasPermission(#arg0, 'org.squashtest.tm.domain.testcase.TestCase' , 'WRITE') or hasRole('ROLE_ADMIN')";
+	static final String TEST_CASE_IS_WRITABLE = "hasPermission(#arg0, 'org.squashtest.tm.domain.testcase.TestCase' , 'WRITE')" + OR_HAS_ROLE_ADMIN;
 
 	@PreAuthorize(TEST_CASE_IS_WRITABLE)
 	void changeDescription(long testCaseId, String newDescription);
@@ -51,7 +49,7 @@ public interface TestCaseModificationService extends CustomTestCaseModificationS
 	@PreAuthorize(TEST_CASE_IS_WRITABLE)
 	void changeStatus(long testCaseId, TestCaseStatus status);
 
-	@PreAuthorize("hasPermission(#arg0, 'org.squashtest.tm.domain.testcase.TestCase' , 'WRITE') or hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasPermission(#arg0, 'org.squashtest.tm.domain.testcase.TestCase' , 'WRITE')" + OR_HAS_ROLE_ADMIN)
 	void changePrerequisite(long testCaseId, String newPrerequisite);
 
 

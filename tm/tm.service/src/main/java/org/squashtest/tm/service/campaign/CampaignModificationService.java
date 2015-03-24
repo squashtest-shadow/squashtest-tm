@@ -26,12 +26,13 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.core.dynamicmanager.annotation.DynamicManager;
 import org.squashtest.tm.domain.campaign.Campaign;
+import static org.squashtest.tm.service.security.Authorizations.*;
 
 @Transactional
 @DynamicManager(name="squashtest.tm.service.CampaignModificationService" , entity=Campaign.class)
 public interface CampaignModificationService extends CustomCampaignModificationService, CampaignFinder {
 	String WRITE_CAMAIGN_OR_ADMIN = "hasPermission(#arg0, 'org.squashtest.tm.domain.campaign.Campaign' ,'WRITE') "
-		+ "or hasRole('ROLE_ADMIN')";
+			+ OR_HAS_ROLE_ADMIN;
 
 	@PreAuthorize(WRITE_CAMAIGN_OR_ADMIN)
 	void changeDescription(long campaignId, String newDescription);
@@ -54,5 +55,5 @@ public interface CampaignModificationService extends CustomCampaignModificationS
 	@PreAuthorize(WRITE_CAMAIGN_OR_ADMIN)
 	void changeActualEndAuto(long campaignId, boolean isAuto);
 
-	
+
 }

@@ -31,6 +31,7 @@ import org.squashtest.tm.service.internal.repository.FolderDao;
 import org.squashtest.tm.service.internal.repository.LibraryDao;
 import org.squashtest.tm.service.library.FolderModificationService;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
+import static org.squashtest.tm.service.security.Authorizations.*;
 
 /**
  * Generic management service for folders. It is responsible for common rename / move / copy / remove operations.
@@ -44,7 +45,7 @@ import org.squashtest.tm.service.security.PermissionEvaluationService;
  */
 @Transactional
 public class GenericFolderModificationService<FOLDER extends Folder<NODE>, NODE extends LibraryNode> implements
-		FolderModificationService<FOLDER>, InitializingBean {
+FolderModificationService<FOLDER>, InitializingBean {
 
 	private PermissionEvaluationService permissionService;
 
@@ -66,7 +67,7 @@ public class GenericFolderModificationService<FOLDER extends Folder<NODE>, NODE 
 
 	@Transactional(readOnly = true)
 	@Override
-	@PostAuthorize("hasPermission(returnObject, 'READ') or hasRole('ROLE_ADMIN')")
+	@PostAuthorize("hasPermission(returnObject, 'READ')" + OR_HAS_ROLE_ADMIN)
 	public FOLDER findFolder(long folderId) {
 		return delegate.findNode(folderId);
 	}

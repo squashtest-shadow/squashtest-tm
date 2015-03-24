@@ -30,6 +30,7 @@ import org.squashtest.tm.domain.projectfilter.ProjectFilter;
 import org.squashtest.tm.service.internal.repository.LibraryDao;
 import org.squashtest.tm.service.library.WorkspaceService;
 import org.squashtest.tm.service.project.ProjectFilterModificationService;
+import static org.squashtest.tm.service.security.Authorizations.*;
 
 /**
  * Generic service for workspace access. This service must be configured through XML.
@@ -41,7 +42,7 @@ import org.squashtest.tm.service.project.ProjectFilterModificationService;
  */
 @Transactional(readOnly = true)
 public class GenericWorkspaceService<LIBRARY extends Library<NODE>, NODE extends LibraryNode> implements
-		WorkspaceService<LIBRARY> {
+WorkspaceService<LIBRARY> {
 
 	private ProjectFilterModificationService projectFilterModificationService;
 
@@ -50,7 +51,7 @@ public class GenericWorkspaceService<LIBRARY extends Library<NODE>, NODE extends
 	private LibrarySelectionStrategy<LIBRARY, NODE> libraryStrategy;
 
 	@Override
-	@PostFilter("hasPermission(filterObject, 'READ') or hasRole('ROLE_ADMIN')")
+	@PostFilter("hasPermission(filterObject, 'READ')" + OR_HAS_ROLE_ADMIN)
 	public List<LIBRARY> findAllLibraries() {
 		ProjectFilter pf = projectFilterModificationService.findProjectFilterByUserLogin();
 		if(pf.getActivated()){
@@ -60,13 +61,13 @@ public class GenericWorkspaceService<LIBRARY extends Library<NODE>, NODE extends
 	}
 
 	@Override
-	@PostFilter("hasPermission(filterObject, 'WRITE') or hasRole('ROLE_ADMIN')")
+	@PostFilter("hasPermission(filterObject, 'WRITE')" + OR_HAS_ROLE_ADMIN)
 	public List<LIBRARY> findAllEditableLibraries() {
 		return libraryDao.findAll();
 	}
 
 	@Override
-	@PostFilter("hasPermission(filterObject, 'IMPORT') or hasRole('ROLE_ADMIN')")
+	@PostFilter("hasPermission(filterObject, 'IMPORT')" + OR_HAS_ROLE_ADMIN)
 	public List<LIBRARY> findAllImportableLibraries() {
 		return libraryDao.findAll();
 	}

@@ -45,13 +45,13 @@ import org.squashtest.tm.service.statistics.campaign.ScheduledIteration;
 import org.squashtest.tm.service.statistics.iteration.IterationProgressionStatistics;
 import org.squashtest.tm.service.statistics.iteration.IterationStatisticsBundle;
 import org.squashtest.tm.service.statistics.iteration.TestSuiteTestInventoryStatistics;
+import static org.squashtest.tm.service.security.Authorizations.*;
 
 @Transactional(readOnly=true)
 @Service("IterationStatisticsService")
 public class IterationStatisticsServiceImpl implements IterationStatisticsService{
 
 	private static final String PERM_CAN_READ_CAMPAIGN = "hasPermission(#campaignId, 'org.squashtest.tm.domain.campaign.Campaign', 'READ') ";
-	private static final String PERM_IS_ADMIN = "or hasRole('ROLE_ADMIN')";
 	private static final String PERM_CAN_READ_ITERATION = "hasPermission(#iterationId, 'org.squashtest.tm.domain.campaign.Iteration', 'READ') ";
 	private static final String ID = "id";
 	private static final Logger LOGGER = LoggerFactory.getLogger(IterationStatisticsService.class);
@@ -61,11 +61,8 @@ public class IterationStatisticsServiceImpl implements IterationStatisticsServic
 
 
 
-
-
-
 	@Override
-	@PreAuthorize(PERM_CAN_READ_ITERATION + PERM_IS_ADMIN)
+	@PreAuthorize(PERM_CAN_READ_ITERATION + OR_HAS_ROLE_ADMIN)
 	public CampaignTestCaseStatusStatistics gatherIterationTestCaseStatusStatistics(long iterationId){
 
 		CampaignTestCaseStatusStatistics result = new CampaignTestCaseStatusStatistics();
@@ -88,7 +85,7 @@ public class IterationStatisticsServiceImpl implements IterationStatisticsServic
 	}
 
 	@Override
-	@PreAuthorize(PERM_CAN_READ_ITERATION + PERM_IS_ADMIN)
+	@PreAuthorize(PERM_CAN_READ_ITERATION + OR_HAS_ROLE_ADMIN)
 	public CampaignNonExecutedTestCaseImportanceStatistics gatherIterationNonExecutedTestCaseImportanceStatistics(long iterationId){
 
 		CampaignNonExecutedTestCaseImportanceStatistics result = new CampaignNonExecutedTestCaseImportanceStatistics();
@@ -115,7 +112,7 @@ public class IterationStatisticsServiceImpl implements IterationStatisticsServic
 	}
 
 	@Override
-	@PreAuthorize(PERM_CAN_READ_CAMPAIGN + PERM_IS_ADMIN)
+	@PreAuthorize(PERM_CAN_READ_CAMPAIGN + OR_HAS_ROLE_ADMIN)
 	public CampaignTestCaseSuccessRateStatistics gatherIterationTestCaseSuccessRateStatistics(long iterationId) {
 
 		CampaignTestCaseSuccessRateStatistics result = new CampaignTestCaseSuccessRateStatistics();
@@ -164,7 +161,7 @@ public class IterationStatisticsServiceImpl implements IterationStatisticsServic
 	 * @see org.squashtest.tm.service.campaign.IterationStatisticsService#gatherTestSuiteTestInventoryStatistics(long)
 	 */
 	@Override
-	@PreAuthorize(PERM_CAN_READ_ITERATION + PERM_IS_ADMIN)
+	@PreAuthorize(PERM_CAN_READ_ITERATION + OR_HAS_ROLE_ADMIN)
 	public List<TestSuiteTestInventoryStatistics> gatherTestSuiteTestInventoryStatistics(long iterationId) {
 
 		List<TestSuiteTestInventoryStatistics> result = new LinkedList<TestSuiteTestInventoryStatistics>();
@@ -257,7 +254,7 @@ public class IterationStatisticsServiceImpl implements IterationStatisticsServic
 	}
 
 	@Override
-	@PreAuthorize(PERM_CAN_READ_ITERATION + PERM_IS_ADMIN)
+	@PreAuthorize(PERM_CAN_READ_ITERATION + OR_HAS_ROLE_ADMIN)
 	public IterationStatisticsBundle gatherIterationStatisticsBundle(long iterationId) {
 
 		IterationStatisticsBundle bundle = new IterationStatisticsBundle();

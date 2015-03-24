@@ -66,6 +66,7 @@ import org.squashtest.tm.service.internal.repository.UserDao;
 import org.squashtest.tm.service.internal.testcase.TestCaseNodeWalker;
 import org.squashtest.tm.service.project.ProjectFilterModificationService;
 import org.squashtest.tm.service.security.acls.model.ObjectAclService;
+import static org.squashtest.tm.service.security.Authorizations.*;
 
 @Service("squashtest.tm.service.CampaignTestPlanManagerService")
 @Transactional
@@ -73,16 +74,16 @@ public class CampaignTestPlanManagerServiceImpl implements CampaignTestPlanManag
 	/**
 	 * Permission string for reading returned object.
 	 */
-	private static final String CAN_READ_RETURNED_OBJECT = "hasPermission(returnObject, 'READ') or hasRole('ROLE_ADMIN')";
+	private static final String CAN_READ_RETURNED_OBJECT = "hasPermission(returnObject, 'READ')" + OR_HAS_ROLE_ADMIN;
 
 	/**
 	 * Permission string for linking campaigns to TP / Users based on campaignId param.
 	 */
-	private static final String CAN_LINK_CAMPAIGN_BY_ID = "hasPermission(#campaignId, 'org.squashtest.tm.domain.campaign.Campaign', 'LINK') or hasRole('ROLE_ADMIN')";
+	private static final String CAN_LINK_CAMPAIGN_BY_ID = "hasPermission(#campaignId, 'org.squashtest.tm.domain.campaign.Campaign', 'LINK')" + OR_HAS_ROLE_ADMIN;
 
-	private static final String CAN_REORDER_TEST_PLAN	= "hasPermission(#campaignId, 'org.squashtest.tm.domain.campaign.Campaign', 'LINK') or hasRole('ROLE_ADMIN')";
+	private static final String CAN_REORDER_TEST_PLAN	= "hasPermission(#campaignId, 'org.squashtest.tm.domain.campaign.Campaign', 'LINK')" + OR_HAS_ROLE_ADMIN;
 
-	private static final String CAN_READ_TEST_PLAN	=	"hasPermission(#campaignId, 'org.squashtest.tm.domain.campaign.Campaign' ,'READ') or hasRole('ROLE_ADMIN')";
+	private static final String CAN_READ_TEST_PLAN	=	"hasPermission(#campaignId, 'org.squashtest.tm.domain.campaign.Campaign' ,'READ')" + OR_HAS_ROLE_ADMIN;
 
 	@Inject
 	private TestCaseLibraryDao testCaseLibraryDao;
@@ -132,7 +133,7 @@ public class CampaignTestPlanManagerServiceImpl implements CampaignTestPlanManag
 
 	@Override
 	@Transactional(readOnly = true)
-	@PostFilter("hasPermission(filterObject, 'READ') or hasRole('ROLE_ADMIN')")
+	@PostFilter("hasPermission(filterObject, 'READ')" + OR_HAS_ROLE_ADMIN)
 	public List<TestCaseLibrary> findLinkableTestCaseLibraries() {
 		ProjectFilter pf = projectFilterModificationService.findProjectFilterByUserLogin();
 		return pf.getActivated() ? libraryStrategy.getSpecificLibraries(pf.getProjects()) : testCaseLibraryDao
@@ -312,7 +313,7 @@ public class CampaignTestPlanManagerServiceImpl implements CampaignTestPlanManag
 
 
 	@Override
-	@PreAuthorize("hasPermission(#itemId, 'org.squashtest.tm.domain.campaign.CampaignTestPlanItem', 'WRITE') or hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasPermission(#itemId, 'org.squashtest.tm.domain.campaign.CampaignTestPlanItem', 'WRITE')" + OR_HAS_ROLE_ADMIN)
 	public void changeDataset(long itemId, Long datasetId) {
 		CampaignTestPlanItem item = campaignTestPlanItemDao.findById(itemId);
 

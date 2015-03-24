@@ -42,6 +42,7 @@ import org.squashtest.tm.service.internal.repository.CampaignDao;
 import org.squashtest.tm.service.internal.repository.IterationDao;
 import org.squashtest.tm.service.milestone.MilestoneMembershipManager;
 import org.squashtest.tm.service.statistics.campaign.CampaignStatisticsBundle;
+import static org.squashtest.tm.service.security.Authorizations.*;
 
 @Service("CustomCampaignModificationService")
 @Transactional
@@ -50,9 +51,9 @@ public class CustomCampaignModificationServiceImpl implements CustomCampaignModi
 
 
 
-	private static final String READ_CAMPAIGN_OR_ADMIN = "hasPermission(#campaignId, 'org.squashtest.tm.domain.campaign.Campaign', 'READ') or hasRole('ROLE_ADMIN')";
+	private static final String READ_CAMPAIGN_OR_ADMIN = "hasPermission(#campaignId, 'org.squashtest.tm.domain.campaign.Campaign', 'READ')" + OR_HAS_ROLE_ADMIN;
 
-	private static final String WRITE_CAMPAIGN_OR_ADMIN = "hasPermission(#campaignId, 'org.squashtest.tm.domain.campaign.Campaign' ,'WRITE') or hasRole('ROLE_ADMIN')";
+	private static final String WRITE_CAMPAIGN_OR_ADMIN = "hasPermission(#campaignId, 'org.squashtest.tm.domain.campaign.Campaign' ,'WRITE')" + OR_HAS_ROLE_ADMIN;
 
 	@Inject
 	private CampaignDao campaignDao;

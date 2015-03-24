@@ -39,6 +39,7 @@ import org.squashtest.tm.service.execution.ExecutionModificationService;
 import org.squashtest.tm.service.internal.campaign.CampaignNodeDeletionHandler;
 import org.squashtest.tm.service.internal.repository.ExecutionDao;
 import org.squashtest.tm.service.internal.repository.ExecutionStepDao;
+import static org.squashtest.tm.service.security.Authorizations.*;
 
 @Service("squashtest.tm.service.ExecutionModificationService")
 public class ExecutionModificationServiceImpl implements ExecutionModificationService {
@@ -62,7 +63,7 @@ public class ExecutionModificationServiceImpl implements ExecutionModificationSe
 
 	@Override
 	@PreAuthorize("hasPermission(#executionId, 'org.squashtest.tm.domain.execution.Execution', 'EXECUTE') "
-			+ "or hasRole('ROLE_ADMIN')")
+			+ OR_HAS_ROLE_ADMIN)
 	public void setExecutionDescription(Long executionId, String description) {
 		Execution execution = executionDao.findById(executionId);
 		execution.setDescription(description);
@@ -80,7 +81,7 @@ public class ExecutionModificationServiceImpl implements ExecutionModificationSe
 
 	@Override
 	@PreAuthorize("hasPermission(#executionStepId, 'org.squashtest.tm.domain.execution.ExecutionStep', 'EXECUTE') "
-			+ "or hasRole('ROLE_ADMIN')")
+			+ OR_HAS_ROLE_ADMIN)
 	public void setExecutionStepComment(Long executionStepId, String comment) {
 		ExecutionStep executionStep = executionStepDao.findById(executionStepId);
 		executionStep.setComment(comment);
@@ -95,13 +96,13 @@ public class ExecutionModificationServiceImpl implements ExecutionModificationSe
 
 	@Override
 	@PreAuthorize("hasPermission(#execId, 'org.squashtest.tm.domain.execution.Execution', 'EXECUTE') "
-			+ "or hasRole('ROLE_ADMIN')")
+			+ OR_HAS_ROLE_ADMIN)
 	public List<SuppressionPreviewReport> simulateExecutionDeletion(Long execId) {
 		return deletionHandler.simulateExecutionDeletion(execId);
 	}
 
 	@Override
-	@PreAuthorize("hasPermission(#execution, 'EXECUTE') " + "or hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasPermission(#execution, 'EXECUTE') " + OR_HAS_ROLE_ADMIN)
 	public void deleteExecution(Execution execution) {
 		TestCase testCase = execution.getReferencedTestCase();
 		deletionHandler.deleteExecution(execution);

@@ -44,6 +44,7 @@ import org.squashtest.tm.service.testautomation.TestAutomationProjectFinderServi
 import org.squashtest.tm.service.testautomation.TestAutomationProjectManagerService;
 import org.squashtest.tm.service.testautomation.spi.TestAutomationConnector;
 import org.squashtest.tm.service.testautomation.spi.TestAutomationException;
+import static org.squashtest.tm.service.security.Authorizations.*;
 
 @Transactional
 @Service("squashtest.tm.service.TestAutomationProjectManagementService")
@@ -64,7 +65,7 @@ public class TestAutomationProjectManagerServiceImpl implements TestAutomationPr
 	private GenericProjectDao genericProjectDao;
 
 	@Override
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_TM_PROJECT_MANAGER')")
+	@PreAuthorize(HAS_ROLE_ADMIN_OR_PROJECT_MANAGER)
 	public void persist(TestAutomationProject newProject) {
 		projectDao.persist(newProject);
 	}
@@ -86,7 +87,7 @@ public class TestAutomationProjectManagerServiceImpl implements TestAutomationPr
 	}
 
 	@Override
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_TM_PROJECT_MANAGER')")
+	@PreAuthorize(HAS_ROLE_ADMIN_OR_PROJECT_MANAGER)
 	public void changeLabel(long projectId, String label) {
 		TestAutomationProject project = projectDao.findById(projectId);
 		if (!project.getLabel().equals(label)) {
@@ -99,14 +100,14 @@ public class TestAutomationProjectManagerServiceImpl implements TestAutomationPr
 	}
 
 	@Override
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_TM_PROJECT_MANAGER')")
+	@PreAuthorize(HAS_ROLE_ADMIN_OR_PROJECT_MANAGER)
 	public void changeJobName(long projectId, String jobName) {
 		TestAutomationProject project = projectDao.findById(projectId);
 		project.setJobName(jobName);
 	}
 
 	@Override
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_TM_PROJECT_MANAGER')")
+	@PreAuthorize(HAS_ROLE_ADMIN_OR_PROJECT_MANAGER)
 	public void changeSlaves(long projectId, String slaveList) {
 		TestAutomationProject project = projectDao.findById(projectId);
 		project.setSlaves(slaveList);
@@ -120,7 +121,7 @@ public class TestAutomationProjectManagerServiceImpl implements TestAutomationPr
 	}
 
 	@Override
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_TM_PROJECT_MANAGER')")
+	@PreAuthorize(HAS_ROLE_ADMIN_OR_PROJECT_MANAGER)
 	public Collection<TestAutomationProject> listProjectsOnServer(String serverName) {
 
 		TestAutomationServer server = serverDao.findByName(serverName);
@@ -129,7 +130,7 @@ public class TestAutomationProjectManagerServiceImpl implements TestAutomationPr
 	}
 
 	@Override
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_TM_PROJECT_MANAGER')")
+	@PreAuthorize(HAS_ROLE_ADMIN_OR_PROJECT_MANAGER)
 	public Collection<TestAutomationProject> listProjectsOnServer(Long serverId) {
 		TestAutomationServer server = serverDao.findById(serverId);
 
@@ -137,7 +138,7 @@ public class TestAutomationProjectManagerServiceImpl implements TestAutomationPr
 	}
 
 	@Override
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_TM_PROJECT_MANAGER')")
+	@PreAuthorize(HAS_ROLE_ADMIN_OR_PROJECT_MANAGER)
 	public Collection<TestAutomationProject> listProjectsOnServer(TestAutomationServer server) {
 
 		TestAutomationConnector connector = connectorRegistry.getConnectorForKind(server.getKind());

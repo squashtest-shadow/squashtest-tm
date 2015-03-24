@@ -69,13 +69,14 @@ import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.security.PermissionsUtils;
 import org.squashtest.tm.service.security.SecurityCheckableObject;
 import org.squashtest.tm.service.testcase.TestCaseImportanceManagerService;
+import static org.squashtest.tm.service.security.Authorizations.*;
 
 @Service("squashtest.tm.service.VerifiedRequirementsManagerService")
 @Transactional
 public class VerifiedRequirementsManagerServiceImpl implements VerifiedRequirementsManagerService {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(VerifiedRequirementsManagerServiceImpl.class);
-	private static final String LINK_TC_OR_ROLE_ADMIN = "hasPermission(#testCaseId, 'org.squashtest.tm.domain.testcase.TestCase' , 'LINK') or hasRole('ROLE_ADMIN')";
+	private static final String LINK_TC_OR_ROLE_ADMIN = "hasPermission(#testCaseId, 'org.squashtest.tm.domain.testcase.TestCase' , 'LINK')" + OR_HAS_ROLE_ADMIN;
 
 	@Inject
 	private TestCaseDao testCaseDao;
@@ -217,7 +218,7 @@ public class VerifiedRequirementsManagerServiceImpl implements VerifiedRequireme
 	 * (non-Javadoc)
 	 */
 	@Override
-	@PreAuthorize("hasPermission(#testCaseId, 'org.squashtest.tm.domain.testcase.TestCase' , 'READ') or hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasPermission(#testCaseId, 'org.squashtest.tm.domain.testcase.TestCase' , 'READ')" + OR_HAS_ROLE_ADMIN)
 	public PagedCollectionHolder<List<VerifiedRequirement>> findAllDirectlyVerifiedRequirementsByTestCaseId(
 			long testCaseId, PagingAndSorting pagingAndSorting) {
 		List<RequirementVersionCoverage> reqVersionCoverages = requirementVersionCoverageDao.findAllByTestCaseId(
@@ -279,7 +280,7 @@ public class VerifiedRequirementsManagerServiceImpl implements VerifiedRequireme
 	}
 
 	@Override
-	@PreAuthorize("hasPermission(#testStepId, 'org.squashtest.tm.domain.testcase.TestStep' , 'LINK') or hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasPermission(#testStepId, 'org.squashtest.tm.domain.testcase.TestStep' , 'LINK')" + OR_HAS_ROLE_ADMIN)
 	public Collection<VerifiedRequirementException> addVerifiedRequirementsToTestStep(List<Long> requirementsIds,
 			long testStepId, Long milestoneId) {
 		List<RequirementVersion> requirementVersions = findRequirementVersions(requirementsIds, milestoneId);
@@ -348,7 +349,7 @@ public class VerifiedRequirementsManagerServiceImpl implements VerifiedRequireme
 	 * @see VerifiedRequirementsManagerService#addVerifiedRequirementVersionToTestStep(long, long);
 	 */
 	@Override
-	@PreAuthorize("hasPermission(#testStepId, 'org.squashtest.tm.domain.testcase.TestStep' , 'LINK') and hasPermission(#requirementVersionId, 'org.squashtest.tm.domain.requirement.RequirementVersion' , 'LINK') or hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasPermission(#testStepId, 'org.squashtest.tm.domain.testcase.TestStep' , 'LINK') and hasPermission(#requirementVersionId, 'org.squashtest.tm.domain.requirement.RequirementVersion' , 'LINK')" + OR_HAS_ROLE_ADMIN)
 	public Collection<VerifiedRequirementException> addVerifiedRequirementVersionToTestStep(long requirementVersionId,
 			long testStepId) {
 		ActionTestStep step = testStepDao.findActionTestStepById(testStepId);

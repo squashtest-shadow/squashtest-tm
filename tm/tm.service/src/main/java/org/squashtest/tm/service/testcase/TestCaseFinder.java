@@ -29,6 +29,7 @@ import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.testcase.TestCase;
+import static org.squashtest.tm.service.security.Authorizations.*;
 
 /**
  * @author Gregory Fouquet
@@ -38,7 +39,7 @@ import org.squashtest.tm.domain.testcase.TestCase;
 public interface TestCaseFinder extends CustomTestCaseFinder {
 
 
-	@PostAuthorize("hasPermission(returnObject , 'READ') or hasRole('ROLE_ADMIN')")
+	@PostAuthorize("hasPermission(returnObject , 'READ')" + OR_HAS_ROLE_ADMIN)
 	TestCase findById(long testCaseId);
 
 	/**
@@ -47,7 +48,7 @@ public interface TestCaseFinder extends CustomTestCaseFinder {
 	 * @param ids
 	 * @return
 	 */
-	@PostFilter("hasPermission(filterObject , 'READ') or hasRole('ROLE_ADMIN')")
+	@PostFilter("hasPermission(filterObject , 'READ')" + OR_HAS_ROLE_ADMIN)
 	List<TestCase> findAllByIds(@NotNull Collection<Long> ids);
 
 

@@ -46,13 +46,11 @@ import org.squashtest.tm.service.statistics.campaign.CampaignTestCaseStatusStati
 import org.squashtest.tm.service.statistics.campaign.CampaignTestCaseSuccessRateStatistics;
 import org.squashtest.tm.service.statistics.campaign.IterationTestInventoryStatistics;
 import org.squashtest.tm.service.statistics.campaign.ScheduledIteration;
+import static org.squashtest.tm.service.security.Authorizations.*;
 
 @Transactional(readOnly=true)
 @Service("CampaignStatisticsService")
 public class CampaignStatisticsServiceImpl implements CampaignStatisticsService{
-
-	private static final String PERM_IS_ADMIN = "or hasRole('ROLE_ADMIN')";
-
 
 	private static final String PERM_CAN_READ_CAMPAIGN = "hasPermission(#campaignId, 'org.squashtest.tm.domain.campaign.Campaign', 'READ') ";
 
@@ -65,7 +63,7 @@ public class CampaignStatisticsServiceImpl implements CampaignStatisticsService{
 
 
 	@Override
-	@PreAuthorize(PERM_CAN_READ_CAMPAIGN + PERM_IS_ADMIN)
+	@PreAuthorize(PERM_CAN_READ_CAMPAIGN + OR_HAS_ROLE_ADMIN)
 	public CampaignProgressionStatistics gatherCampaignProgressionStatistics(long campaignId) {
 
 		CampaignProgressionStatistics progression = new CampaignProgressionStatistics();
@@ -107,7 +105,7 @@ public class CampaignStatisticsServiceImpl implements CampaignStatisticsService{
 
 
 	@Override
-	@PreAuthorize(PERM_CAN_READ_CAMPAIGN + PERM_IS_ADMIN)
+	@PreAuthorize(PERM_CAN_READ_CAMPAIGN + OR_HAS_ROLE_ADMIN)
 	public List<IterationTestInventoryStatistics> gatherIterationTestInventoryStatistics(long campaignId) {
 		//get the data
 		Query query = sessionFactory.getCurrentSession().getNamedQuery("CampaignStatistics.testinventory");
@@ -120,7 +118,7 @@ public class CampaignStatisticsServiceImpl implements CampaignStatisticsService{
 	}
 
 	@Override
-	@PreAuthorize(PERM_CAN_READ_CAMPAIGN + PERM_IS_ADMIN)
+	@PreAuthorize(PERM_CAN_READ_CAMPAIGN + OR_HAS_ROLE_ADMIN)
 	public List<IterationTestInventoryStatistics> gatherIterationTestInventoryStatisticsByMilestone(long milestoneId) {
 		// get the data
 		Query query = sessionFactory.getCurrentSession().getNamedQuery("CampaignStatistics.testinventorybymilestone");
@@ -167,7 +165,7 @@ public class CampaignStatisticsServiceImpl implements CampaignStatisticsService{
 
 
 	@Override
-	@PreAuthorize(PERM_CAN_READ_CAMPAIGN + PERM_IS_ADMIN)
+	@PreAuthorize(PERM_CAN_READ_CAMPAIGN + OR_HAS_ROLE_ADMIN)
 	public CampaignTestCaseStatusStatistics gatherCampaignTestCaseStatusStatistics(long campaignId){
 
 		CampaignTestCaseStatusStatistics result = new CampaignTestCaseStatusStatistics();
@@ -189,7 +187,7 @@ public class CampaignStatisticsServiceImpl implements CampaignStatisticsService{
 	}
 
 	@Override
-	@PreAuthorize(PERM_CAN_READ_CAMPAIGN + PERM_IS_ADMIN)
+	@PreAuthorize(PERM_CAN_READ_CAMPAIGN + OR_HAS_ROLE_ADMIN)
 	public CampaignTestCaseStatusStatistics gatherCampaignTestCaseStatusStatisticsByMilestone(long milestoneId) {
 
 		CampaignTestCaseStatusStatistics result = new CampaignTestCaseStatusStatistics();
@@ -212,7 +210,7 @@ public class CampaignStatisticsServiceImpl implements CampaignStatisticsService{
 	}
 
 	@Override
-	@PreAuthorize(PERM_CAN_READ_CAMPAIGN + PERM_IS_ADMIN)
+	@PreAuthorize(PERM_CAN_READ_CAMPAIGN + OR_HAS_ROLE_ADMIN)
 	public CampaignNonExecutedTestCaseImportanceStatistics gatherCampaignNonExecutedTestCaseImportanceStatistics(long campaignId){
 
 		CampaignNonExecutedTestCaseImportanceStatistics result = new CampaignNonExecutedTestCaseImportanceStatistics();
@@ -239,7 +237,7 @@ public class CampaignStatisticsServiceImpl implements CampaignStatisticsService{
 	}
 
 	@Override
-	@PreAuthorize(PERM_CAN_READ_CAMPAIGN + PERM_IS_ADMIN)
+	@PreAuthorize(PERM_CAN_READ_CAMPAIGN + OR_HAS_ROLE_ADMIN)
 	public CampaignNonExecutedTestCaseImportanceStatistics gatherCampaignNonExecutedTestCaseImportanceStatisticsByMilestone(
 			long milestoneId) {
 
@@ -276,7 +274,7 @@ public class CampaignStatisticsServiceImpl implements CampaignStatisticsService{
 	}
 
 	@Override
-	@PreAuthorize(PERM_CAN_READ_CAMPAIGN + PERM_IS_ADMIN)
+	@PreAuthorize(PERM_CAN_READ_CAMPAIGN + OR_HAS_ROLE_ADMIN)
 	public CampaignTestCaseSuccessRateStatistics gatherCampaignTestCaseSuccessRateStatistics(long campaignId) {
 
 		CampaignTestCaseSuccessRateStatistics result = new CampaignTestCaseSuccessRateStatistics();
@@ -304,7 +302,7 @@ public class CampaignStatisticsServiceImpl implements CampaignStatisticsService{
 	}
 
 	@Override
-	@PreAuthorize(PERM_CAN_READ_CAMPAIGN + PERM_IS_ADMIN)
+	@PreAuthorize(PERM_CAN_READ_CAMPAIGN + OR_HAS_ROLE_ADMIN)
 	public CampaignTestCaseSuccessRateStatistics gatherCampaignTestCaseSuccessRateStatisticsByMilestone(long milestoneId) {
 
 		CampaignTestCaseSuccessRateStatistics result = new CampaignTestCaseSuccessRateStatistics();
@@ -341,7 +339,7 @@ public class CampaignStatisticsServiceImpl implements CampaignStatisticsService{
 	}
 
 	@Override
-	@PreAuthorize(PERM_CAN_READ_CAMPAIGN + PERM_IS_ADMIN)
+	@PreAuthorize(PERM_CAN_READ_CAMPAIGN + OR_HAS_ROLE_ADMIN)
 	public CampaignStatisticsBundle gatherCampaignStatisticsBundle(long campaignId) {
 
 		CampaignStatisticsBundle bundle = new CampaignStatisticsBundle();
@@ -382,5 +380,5 @@ public class CampaignStatisticsServiceImpl implements CampaignStatisticsService{
 
 	}
 
-	
+
 }

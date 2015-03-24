@@ -46,6 +46,8 @@ import org.squashtest.tm.service.customfield.CustomFieldBindingModificationServi
 import org.squashtest.tm.service.internal.repository.CustomFieldBindingDao;
 import org.squashtest.tm.service.internal.repository.CustomFieldDao;
 import org.squashtest.tm.service.internal.repository.GenericProjectDao;
+import static org.squashtest.tm.service.security.Authorizations.*;
+import static org.squashtest.tm.service.security.Authorizations.*;
 
 @Service("squashtest.tm.service.CustomFieldBindingService")
 @Transactional
@@ -53,7 +55,7 @@ public class CustomFieldBindingModificationServiceImpl implements CustomFieldBin
 
 	@Inject
 	private CustomFieldDao customFieldDao;
-	
+
 	@Inject
 	private CustomFieldBindingDao customFieldBindingDao;
 
@@ -81,7 +83,7 @@ public class CustomFieldBindingModificationServiceImpl implements CustomFieldBin
 	public List<CustomField> findAvailableCustomFields(long projectId, BindableEntity entity) {
 		return customFieldDao.findAllBindableCustomFields(projectId, entity);
 	}
-	
+
 	@Override
 	@Transactional(readOnly = true)
 	public List<CustomField> findBoundCustomFields(long projectId, BindableEntity entity) {
@@ -119,7 +121,7 @@ public class CustomFieldBindingModificationServiceImpl implements CustomFieldBin
 	}
 
 	@Override
-	@PreAuthorize("hasRole('ROLE_TM_PROJECT_MANAGER') or hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasRole('ROLE_TM_PROJECT_MANAGER')" + OR_HAS_ROLE_ADMIN)
 	// TODO add check for permission MANAGEMENT on the project id
 	public void addNewCustomFieldBinding(long projectId, BindableEntity entity, long customFieldId,
 			CustomFieldBinding newBinding) {
@@ -128,21 +130,21 @@ public class CustomFieldBindingModificationServiceImpl implements CustomFieldBin
 	}
 
 	@Override
-	@PreAuthorize("hasRole('ROLE_TM_PROJECT_MANAGER') or hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasRole('ROLE_TM_PROJECT_MANAGER')" + OR_HAS_ROLE_ADMIN)
 	public void addRenderingLocation(long bindingId, RenderingLocation location) {
 		CustomFieldBinding binding = customFieldBindingDao.findById(bindingId);
 		binding.addRenderingLocation(location);
 	}
 
 	@Override
-	@PreAuthorize("hasRole('ROLE_TM_PROJECT_MANAGER') or hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasRole('ROLE_TM_PROJECT_MANAGER')" + OR_HAS_ROLE_ADMIN)
 	public void removeRenderingLocation(long bindingId, RenderingLocation location) {
 		CustomFieldBinding binding = customFieldBindingDao.findById(bindingId);
 		binding.removeRenderingLocation(location);
 	}
 
 	@Override
-	@PreAuthorize("hasRole('ROLE_TM_PROJECT_MANAGER') or hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasRole('ROLE_TM_PROJECT_MANAGER')" + OR_HAS_ROLE_ADMIN)
 	public void removeCustomFieldBindings(List<Long> bindingIds) {
 		customValueService.cascadeCustomFieldValuesDeletion(bindingIds);
 		customFieldBindingDao.removeCustomFieldBindings(bindingIds);
@@ -150,7 +152,7 @@ public class CustomFieldBindingModificationServiceImpl implements CustomFieldBin
 
 	@SuppressWarnings("unchecked")
 	@Override
-	@PreAuthorize("hasRole('ROLE_TM_PROJECT_MANAGER') or hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasRole('ROLE_TM_PROJECT_MANAGER')" + OR_HAS_ROLE_ADMIN)
 	// TODO add check for permission MANAGEMENT on the project id
 	public void removeCustomFieldBindings(Long projectId) {
 		List<CustomFieldBinding> bindings = customFieldBindingDao.findAllForGenericProject(projectId);
@@ -162,7 +164,7 @@ public class CustomFieldBindingModificationServiceImpl implements CustomFieldBin
 	 * @see CustomFieldBindingModificationService#copyCustomFieldsSettingsFromTemplate(Project, ProjectTemplate)
 	 */
 	@Override
-	@PreAuthorize("hasRole('ROLE_TM_PROJECT_MANAGER') or hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasRole('ROLE_TM_PROJECT_MANAGER')" + OR_HAS_ROLE_ADMIN)
 	public void moveCustomFieldbindings(List<Long> bindingIds, int newIndex) {
 
 		if (!bindingIds.isEmpty()) {
@@ -194,7 +196,7 @@ public class CustomFieldBindingModificationServiceImpl implements CustomFieldBin
 	 * @see CustomFieldBindingModificationService#copyCustomFieldsSettingsFromTemplate(Project, ProjectTemplate)
 	 */
 	@Override
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize(HAS_ROLE_ADMIN)
 	public void copyCustomFieldsSettingsFromTemplate(Project newProject, ProjectTemplate projectTemplate) {
 		List<CustomFieldBinding> templateCutomFieldBindings = findCustomFieldsForGenericProject(projectTemplate.getId());
 		for (CustomFieldBinding templateCustomFieldBinding : templateCutomFieldBindings) {

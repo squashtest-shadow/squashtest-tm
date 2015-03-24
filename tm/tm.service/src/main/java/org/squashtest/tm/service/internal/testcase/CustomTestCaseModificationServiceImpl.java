@@ -84,6 +84,7 @@ import org.squashtest.tm.service.testcase.CustomTestCaseModificationService;
 import org.squashtest.tm.service.testcase.ParameterModificationService;
 import org.squashtest.tm.service.testcase.TestCaseImportanceManagerService;
 import org.squashtest.tm.service.testcase.TestCaseLibraryNavigationService;
+import static org.squashtest.tm.service.security.Authorizations.*;
 
 /**
  * @author Gregory Fouquet
@@ -94,7 +95,7 @@ import org.squashtest.tm.service.testcase.TestCaseLibraryNavigationService;
 public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModificationService {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(CustomTestCaseModificationServiceImpl.class);
-	private static final String WRITE_TC_OR_ROLE_ADMIN = "hasPermission(#testCaseId, 'org.squashtest.tm.domain.testcase.TestCase' , 'WRITE') or hasRole('ROLE_ADMIN')";
+	private static final String WRITE_TC_OR_ROLE_ADMIN = "hasPermission(#testCaseId, 'org.squashtest.tm.domain.testcase.TestCase' , 'WRITE')" + OR_HAS_ROLE_ADMIN;
 
 	@Inject
 	private TestCaseDao testCaseDao;
@@ -141,13 +142,13 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	/* *************** TestCase section ***************************** */
 
 	@Override
-	@PreAuthorize("hasPermission(#testCaseId, 'org.squashtest.tm.domain.testcase.TestCase' , 'WRITE') or hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasPermission(#testCaseId, 'org.squashtest.tm.domain.testcase.TestCase' , 'WRITE')" + OR_HAS_ROLE_ADMIN)
 	public void rename(long testCaseId, String newName) throws DuplicateNameException {
 		testCaseManagementService.renameNode(testCaseId, newName);
 	}
 
 	@Override
-	@PreAuthorize("hasPermission(#testCaseId, 'org.squashtest.tm.domain.testcase.TestCase' , 'READ') or hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasPermission(#testCaseId, 'org.squashtest.tm.domain.testcase.TestCase' , 'READ')" + OR_HAS_ROLE_ADMIN)
 	@Transactional(readOnly = true)
 	public List<TestStep> findStepsByTestCaseId(long testCaseId) {
 
@@ -159,7 +160,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	/* *************** TestStep section ***************************** */
 
 	@Override
-	@PreAuthorize("hasPermission(#parentTestCaseId, 'org.squashtest.tm.domain.testcase.TestCase' , 'WRITE') or hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasPermission(#parentTestCaseId, 'org.squashtest.tm.domain.testcase.TestCase' , 'WRITE')" + OR_HAS_ROLE_ADMIN)
 	public ActionTestStep addActionTestStep(long parentTestCaseId, ActionTestStep newTestStep) {
 		TestCase parentTestCase = testCaseDao.findById(parentTestCaseId);
 
@@ -173,7 +174,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	}
 
 	@Override
-	@PreAuthorize("hasPermission(#parentTestCaseId, 'org.squashtest.tm.domain.testcase.TestCase' , 'WRITE') or hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasPermission(#parentTestCaseId, 'org.squashtest.tm.domain.testcase.TestCase' , 'WRITE')" + OR_HAS_ROLE_ADMIN)
 	public ActionTestStep addActionTestStep(long parentTestCaseId, ActionTestStep newTestStep,
 			Map<Long, RawValue> customFieldValues) {
 
@@ -184,7 +185,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	}
 
 	@Override
-	@PreAuthorize("hasPermission(#testStepId, 'org.squashtest.tm.domain.testcase.TestStep' , 'WRITE') or hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasPermission(#testStepId, 'org.squashtest.tm.domain.testcase.TestStep' , 'WRITE')" + OR_HAS_ROLE_ADMIN)
 	public void updateTestStepAction(long testStepId, String newAction) {
 		ActionTestStep testStep = actionStepDao.findById(testStepId);
 		testStep.setAction(newAction);
@@ -192,7 +193,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	}
 
 	@Override
-	@PreAuthorize("hasPermission(#testStepId, 'org.squashtest.tm.domain.testcase.TestStep' , 'WRITE') or hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasPermission(#testStepId, 'org.squashtest.tm.domain.testcase.TestStep' , 'WRITE')" + OR_HAS_ROLE_ADMIN)
 	public void updateTestStepExpectedResult(long testStepId, String newExpectedResult) {
 		ActionTestStep testStep = actionStepDao.findById(testStepId);
 		testStep.setExpectedResult(newExpectedResult);
@@ -252,7 +253,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	}
 
 	@Override
-	@PostAuthorize("hasPermission(returnObject, 'READ') or hasRole('ROLE_ADMIN')")
+	@PostAuthorize("hasPermission(returnObject, 'READ')" + OR_HAS_ROLE_ADMIN)
 	@Transactional(readOnly = true)
 	public TestCase findTestCaseWithSteps(long testCaseId) {
 		return testCaseDao.findAndInit(testCaseId);
@@ -271,7 +272,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	}
 
 	@Override
-	@PreAuthorize("hasPermission(#testCaseId, 'org.squashtest.tm.domain.testcase.TestCase' , 'READ') or hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasPermission(#testCaseId, 'org.squashtest.tm.domain.testcase.TestCase' , 'READ')" + OR_HAS_ROLE_ADMIN)
 	@Transactional(readOnly = true)
 	public PagedCollectionHolder<List<TestStep>> findStepsByTestCaseIdFiltered(long testCaseId, Paging paging) {
 		List<TestStep> list = testCaseDao.findAllStepsByIdFiltered(testCaseId, paging);
@@ -471,7 +472,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	 * @see org.squashtest.tm.service.testcase.CustomTestCaseFinder#findAllByAncestorIds(java.util.List)
 	 */
 	@Override
-	@PostFilter("hasPermission(filterObject , 'READ') or hasRole('ROLE_ADMIN')")
+	@PostFilter("hasPermission(filterObject , 'READ')" + OR_HAS_ROLE_ADMIN)
 	public List<TestCase> findAllByAncestorIds(Collection<Long> folderIds) {
 		List<TestCaseLibraryNode> nodes = testCaseLibraryNodeDao.findAllByIds(folderIds);
 		return new TestCaseNodeWalker().walk(nodes);
@@ -481,7 +482,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	 * @see org.squashtest.tm.service.testcase.CustomTestCaseFinder#findAllCallingTestCases(long)
 	 */
 	@Override
-	@PostFilter("hasPermission(filterObject , 'READ') or hasRole('ROLE_ADMIN')")
+	@PostFilter("hasPermission(filterObject , 'READ')" + OR_HAS_ROLE_ADMIN)
 	public List<TestCase> findAllCallingTestCases(long calleeId) {
 		return testCaseDao.findAllCallingTestCases(calleeId);
 	}
@@ -664,9 +665,9 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 
 	@Override
 	public Collection<Milestone> findAssociableMilestonesForMassModif(List<Long> testCaseIds) {
-		
+
 		Collection<Milestone> milestones = null;
-		
+
 		for (Long testCaseId : testCaseIds){
 			List<Milestone> mil = testCaseDao.findById(testCaseId).getProject().getMilestones();
 			if (milestones != null){
@@ -677,7 +678,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 				milestones = new ArrayList<Milestone>(mil);
 			}
 		}
-	
+
 		return milestones;
 	}
 

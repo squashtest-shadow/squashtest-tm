@@ -29,6 +29,7 @@ import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.Paging;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.project.GenericProject;
+import static org.squashtest.tm.service.security.Authorizations.*;
 
 /**
  * Finder service for Generic Projects ie both Projects and ProjectTemplates
@@ -37,7 +38,7 @@ import org.squashtest.tm.domain.project.GenericProject;
  */
 @Transactional(readOnly = true)
 public interface GenericProjectFinder extends CustomGenericProjectFinder{
-	@PostFilter("hasPermission(filterObject, 'READ') or  hasRole('ROLE_ADMIN')")
+	@PostFilter("hasPermission(filterObject, 'READ')" + OR_HAS_ROLE_ADMIN)
 	List<GenericProject> findAllOrderedByName(Paging paging);
 	/**
 	 * Will find all Projects and Templates to which the user has management access to and return them ordered according to the given params.
@@ -45,12 +46,12 @@ public interface GenericProjectFinder extends CustomGenericProjectFinder{
 	 * @param filter the {@link PagingAndSorting} that holds order and paging params
 	 * @return a {@link PagedCollectionHolder} containing all projects the user has management access to, ordered according to the given params.
 	 */
-	@PreAuthorize("hasRole('ROLE_TM_PROJECT_MANAGER') or hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasRole('ROLE_TM_PROJECT_MANAGER')" + OR_HAS_ROLE_ADMIN)
 	PagedCollectionHolder<List<GenericProject>> findSortedProjects(PagingAndSorting pagingAndSorting);
-	
+
 	GenericProject findById(long projectId);
-	
-	
-	
+
+
+
 
 }

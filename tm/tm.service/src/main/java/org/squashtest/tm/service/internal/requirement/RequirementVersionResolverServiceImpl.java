@@ -28,6 +28,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.service.internal.repository.RequirementVersionDao;
 import org.squashtest.tm.service.requirement.RequirementVersionResolverService;
+import static org.squashtest.tm.service.security.Authorizations.*;
 
 
 @Service("squashtest.tm.service.RequirementVersionResolverService")
@@ -38,7 +39,7 @@ public class RequirementVersionResolverServiceImpl implements RequirementVersion
 
 	@Override
 	@Transactional(readOnly = true)
-	@PreAuthorize("hasPermission(#requirementId, 'org.squashtest.tm.domain.requirement.Requirement', 'READ') or hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasPermission(#requirementId, 'org.squashtest.tm.domain.requirement.Requirement', 'READ')" + OR_HAS_ROLE_ADMIN)
 	public RequirementVersion resolveByRequirementId(long requirementId, Long milestoneId) {
 		return versionDao.findByRequirementIdAndMilestone(requirementId, milestoneId);
 	}

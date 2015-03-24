@@ -19,6 +19,7 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.squashtest.tm.service.internal.bugtracker;
+import static org.squashtest.tm.service.security.Authorizations.*;
 
 import java.net.URL;
 import java.util.ArrayList;
@@ -145,7 +146,7 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 	}
 
 	@Override
-	@PreAuthorize("hasPermission(#entity, 'EXECUTE') or hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasPermission(#entity, 'EXECUTE')" + OR_HAS_ROLE_ADMIN)
 	public BugTrackerStatus checkBugTrackerStatus(Project project) {
 		BugTrackerStatus status;
 
@@ -259,7 +260,7 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 	}
 
 	@Override
-	@PreAuthorize("hasPermission(#bugged, 'EXECUTE') or hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasPermission(#bugged, 'EXECUTE')" + OR_HAS_ROLE_ADMIN)
 	public void attachIssue(IssueDetector bugged, String remoteIssueKey) {
 
 		IssueList issueList = bugged.getIssueList();
@@ -304,7 +305,7 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 
 	/* ------------------------ExecutionStep--------------------------------------- */
 	@Override
-	@PreAuthorize("hasPermission(#stepId, 'org.squashtest.tm.domain.execution.ExecutionStep', 'READ') or hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasPermission(#stepId, 'org.squashtest.tm.domain.execution.ExecutionStep', 'READ')" + OR_HAS_ROLE_ADMIN)
 	public PagedCollectionHolder<List<IssueOwnership<RemoteIssueDecorator>>> findSortedIssueOwnerShipsForExecutionStep(
 			Long stepId, PagingAndSorting sorter) {
 
@@ -337,7 +338,7 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 
 	/* ------------------------Execution--------------------------------------- */
 	@Override
-	@PreAuthorize("hasPermission(#execId, 'org.squashtest.tm.domain.execution.Execution', 'READ') or hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasPermission(#execId, 'org.squashtest.tm.domain.execution.Execution', 'READ')" + OR_HAS_ROLE_ADMIN)
 	public PagedCollectionHolder<List<IssueOwnership<RemoteIssueDecorator>>> findSortedIssueOwnershipsforExecution(
 			Long execId, PagingAndSorting sorter) {
 		// find bug-tracker
@@ -354,7 +355,7 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 	/* ------------------------Iteration--------------------------------------- */
 
 	@Override
-	@PreAuthorize("hasPermission(#iterId, 'org.squashtest.tm.domain.campaign.Iteration', 'READ') or hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasPermission(#iterId, 'org.squashtest.tm.domain.campaign.Iteration', 'READ')" + OR_HAS_ROLE_ADMIN)
 	public PagedCollectionHolder<List<IssueOwnership<RemoteIssueDecorator>>> findSortedIssueOwnershipForIteration(
 			Long iterId, PagingAndSorting sorter) {
 		// find bug-tracker
@@ -371,7 +372,7 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 
 	/* ------------------------Campaign--------------------------------------- */
 	@Override
-	@PreAuthorize("hasPermission(#campId, 'org.squashtest.tm.domain.campaign.Campaign' ,'READ') or hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasPermission(#campId, 'org.squashtest.tm.domain.campaign.Campaign' ,'READ')" + OR_HAS_ROLE_ADMIN)
 	public PagedCollectionHolder<List<IssueOwnership<RemoteIssueDecorator>>> findSortedIssueOwnershipsForCampaigns(
 			Long campId, PagingAndSorting sorter) {
 		// find bug-tracker
@@ -388,7 +389,7 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 
 	/* ------------------------TestSuite--------------------------------------- */
 	@Override
-	@PreAuthorize("hasPermission(#testSuiteId, 'org.squashtest.tm.domain.campaign.TestSuite', 'READ') or hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasPermission(#testSuiteId, 'org.squashtest.tm.domain.campaign.TestSuite', 'READ')" + OR_HAS_ROLE_ADMIN)
 	public PagedCollectionHolder<List<IssueOwnership<RemoteIssueDecorator>>> findSortedIssueOwnershipsForTestSuite(
 			Long testSuiteId, PagingAndSorting sorter) {
 		// find bug-tracker
@@ -406,7 +407,7 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 	/* ------------------------TestCase--------------------------------------- */
 
 	@Override
-	@PreAuthorize("hasPermission(#tcId, 'org.squashtest.tm.domain.testcase.TestCase', 'READ') or hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasPermission(#tcId, 'org.squashtest.tm.domain.testcase.TestCase', 'READ')" + OR_HAS_ROLE_ADMIN)
 	public PagedCollectionHolder<List<IssueOwnership<RemoteIssueDecorator>>> findSortedIssueOwnershipForTestCase(
 			Long tcId, PagingAndSorting sorter) {
 
@@ -419,7 +420,7 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 	}
 
 	@Override
-	@PreAuthorize("hasPermission(#tcId, 'org.squashtest.tm.domain.testcase.TestCase', 'READ') or hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasPermission(#tcId, 'org.squashtest.tm.domain.testcase.TestCase', 'READ')" + OR_HAS_ROLE_ADMIN)
 	public List<IssueOwnership<RemoteIssueDecorator>> findIssueOwnershipForTestCase(long tcId) {
 
 		// create filtredCollection of IssueOwnership<BTIssue>
@@ -749,11 +750,11 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 		}
 	}
 
-	@Override 
+	@Override
 	public Execution findExecutionByIssueId(Long id){
 		return issueDao.findExecutionRelatedToIssue(id);
 	}
-	
+
 	@Override
 	public List<Execution> findExecutionsByRemoteIssue(String remoteid, String name) {
 		List<Issue> issues = getIssueList(remoteid, name);

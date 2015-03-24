@@ -40,6 +40,7 @@ import org.squashtest.tm.service.testcase.CallStepManagerService;
 import org.squashtest.tm.service.testcase.DatasetModificationService;
 import org.squashtest.tm.service.testcase.TestCaseCyclicCallChecker;
 import org.squashtest.tm.service.testcase.TestCaseImportanceManagerService;
+import static org.squashtest.tm.service.security.Authorizations.*;
 
 @Service("squashtest.tm.service.CallStepManagerService")
 @Transactional
@@ -63,7 +64,7 @@ public class CallStepManagerServiceImpl implements CallStepManagerService, TestC
 	@Override
 	@PreAuthorize("(hasPermission(#parentTestCaseId, 'org.squashtest.tm.domain.testcase.TestCase' , 'WRITE') "
 			+ "and hasPermission(#calledTestCaseId, 'org.squashtest.tm.domain.testcase.TestCase' , 'READ')) "
-			+ "or hasRole('ROLE_ADMIN')")
+			+ OR_HAS_ROLE_ADMIN)
 	public void addCallTestStep(long parentTestCaseId, long calledTestCaseId) {
 
 		if (parentTestCaseId == calledTestCaseId) {
@@ -96,21 +97,21 @@ public class CallStepManagerServiceImpl implements CallStepManagerService, TestC
 
 	@Override
 	@PreAuthorize("hasPermission(#testCaseId, 'org.squashtest.tm.domain.testcase.TestCase' , 'READ')"
-			+ " or hasRole('ROLE_ADMIN')	")
+			+ OR_HAS_ROLE_ADMIN)
 	public TestCase findTestCase(long testCaseId) {
 		return testCaseDao.findById(testCaseId);
 	}
 
 
 	@Override
-	@PreAuthorize("hasPermission(#destinationTestCaseId, 'org.squashtest.tm.domain.testcase.TestCase' , 'READ') or hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasPermission(#destinationTestCaseId, 'org.squashtest.tm.domain.testcase.TestCase' , 'READ')" + OR_HAS_ROLE_ADMIN)
 	public void checkForCyclicStepCallBeforePaste(long destinationTestCaseId, String[] pastedStepId) {
 		List<Long> idsAsList = parseLong(pastedStepId);
 		checkForCyclicStepCallBeforePaste(destinationTestCaseId, idsAsList);
 	}
 
 	@Override
-	@PreAuthorize("hasPermission(#destinationTestCaseId, 'org.squashtest.tm.domain.testcase.TestCase' , 'READ') or hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasPermission(#destinationTestCaseId, 'org.squashtest.tm.domain.testcase.TestCase' , 'READ')" + OR_HAS_ROLE_ADMIN)
 	public void checkForCyclicStepCallBeforePaste(long destinationTestCaseId, List<Long> pastedStepId) {
 		List<Long> firstCalledTestCasesIds = testCaseDao.findCalledTestCaseOfCallSteps(pastedStepId);
 
@@ -130,7 +131,7 @@ public class CallStepManagerServiceImpl implements CallStepManagerService, TestC
 	}
 
 	@Override
-	@PreAuthorize("hasPermission(#destinationTestCaseId, 'org.squashtest.tm.domain.testcase.TestCase' , 'READ') or hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasPermission(#destinationTestCaseId, 'org.squashtest.tm.domain.testcase.TestCase' , 'READ')" + OR_HAS_ROLE_ADMIN)
 	public void checkForCyclicStepCallBeforePaste(Long destinationTestCaseId, Long calledTestCaseId) {
 
 		// 1> check that first called test cases are not the destination one.
@@ -175,7 +176,7 @@ public class CallStepManagerServiceImpl implements CallStepManagerService, TestC
 
 
 	@Override
-	@PreAuthorize("hasPermission(#callStepId, 'org.squashtest.tm.domain.testcase.CallTestStep', 'WRITE') or hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasPermission(#callStepId, 'org.squashtest.tm.domain.testcase.CallTestStep', 'WRITE')" + OR_HAS_ROLE_ADMIN)
 	public void setParameterAssignationMode(long callStepId, ParameterAssignationMode mode, Long datasetId) {
 
 		// a class cast exception would be welcome if the call step id is not appropriate

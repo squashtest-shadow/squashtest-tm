@@ -97,13 +97,12 @@ import org.squashtest.tm.service.security.ObjectIdentityService;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.testautomation.TestAutomationProjectManagerService;
 import org.squashtest.tm.service.testautomation.TestAutomationServerManagerService;
+import static org.squashtest.tm.service.security.Authorizations.*;
 
 @Service("CustomGenericProjectManager")
 @Transactional
 public class CustomGenericProjectManagerImpl implements CustomGenericProjectManager {
 
-	private static final String IS_ADMIN_OR_MANAGER = "hasRole('ROLE_TM_PROJECT_MANAGER') or hasRole('ROLE_ADMIN')";
-	private static final String IS_ADMIN = "hasRole('ROLE_ADMIN')";
 
 	@Inject
 	private GenericProjectDao genericProjectDao;
@@ -150,7 +149,7 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 	@SuppressWarnings("unchecked")
 	@Override
 	@Transactional(readOnly = true)
-	@PreAuthorize(IS_ADMIN_OR_MANAGER)
+	@PreAuthorize(HAS_ROLE_ADMIN_OR_PROJECT_MANAGER)
 	public PagedCollectionHolder<List<GenericProject>> findSortedProjects(PagingAndSorting pagingAndSorting,
 			Filtering filter) {
 		/*
@@ -205,7 +204,7 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 	// ************************* finding projects wrt user role ****************************
 
 	@Override
-	@PreAuthorize(IS_ADMIN)
+	@PreAuthorize(HAS_ROLE_ADMIN)
 	public void persist(GenericProject project) {
 		Session session = sessionFactory.getCurrentSession();
 
@@ -251,7 +250,7 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 	 * @see org.squashtest.tm.service.project.CustomGenericProjectManager#coerceTemplateIntoProject(long)
 	 */
 	@Override
-	@PreAuthorize(IS_ADMIN)
+	@PreAuthorize(HAS_ROLE_ADMIN)
 	public void coerceTemplateIntoProject(long templateId) {
 		Project project = genericProjectDao.coerceTemplateIntoProject(templateId);
 
@@ -262,7 +261,7 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 	}
 
 	@Override
-	@PreAuthorize(IS_ADMIN_OR_MANAGER)
+	@PreAuthorize(HAS_ROLE_ADMIN_OR_PROJECT_MANAGER)
 	public void deleteProject(long projectId) {
 		projectDeletionHandler.deleteProject(projectId);
 	}
@@ -488,14 +487,14 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 	// **************************** wizards section **********************************
 
 	@Override
-	@PreAuthorize(IS_ADMIN_OR_MANAGER)
+	@PreAuthorize(HAS_ROLE_ADMIN_OR_PROJECT_MANAGER)
 	public void enableWizardForWorkspace(long projectId, WorkspaceType workspace, String wizardId) {
 		PluginReferencer<?> library = findLibrary(projectId, workspace);
 		library.enablePlugin(wizardId);
 	}
 
 	@Override
-	@PreAuthorize(IS_ADMIN_OR_MANAGER)
+	@PreAuthorize(HAS_ROLE_ADMIN_OR_PROJECT_MANAGER)
 	public void disableWizardForWorkspace(long projectId, WorkspaceType workspace, String wizardId) {
 		PluginReferencer<?> library = findLibrary(projectId, workspace);
 		library.disablePlugin(wizardId);
@@ -514,7 +513,7 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 	}
 
 	@Override
-	@PreAuthorize(IS_ADMIN_OR_MANAGER)
+	@PreAuthorize(HAS_ROLE_ADMIN_OR_PROJECT_MANAGER)
 	public void setWizardConfiguration(long projectId, WorkspaceType workspace, String wizardId,
 			Map<String, String> configuration) {
 
@@ -810,7 +809,7 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 	/**
 	 * @see org.squashtest.tm.service.project.CustomGenericProjectManager#changeName(long, java.lang.String)
 	 */
-	@PreAuthorize(IS_ADMIN_OR_MANAGER)
+	@PreAuthorize(HAS_ROLE_ADMIN_OR_PROJECT_MANAGER)
 	@Override
 	public void changeName(long projectId, String newName) {
 		GenericProject project = genericProjectDao.findById(projectId);

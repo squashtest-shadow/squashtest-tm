@@ -34,6 +34,7 @@ import org.squashtest.tm.domain.customfield.SingleSelectField;
 import org.squashtest.tm.exception.customfield.CannotDeleteDefaultOptionException;
 import org.squashtest.tm.exception.customfield.DefaultValueRequiredException;
 import org.squashtest.tm.exception.customfield.OptionAlreadyExistException;
+import static org.squashtest.tm.service.security.Authorizations.*;
 
 /**
  * Custom-Field manager services which cannot be dynamically generated.
@@ -42,7 +43,7 @@ import org.squashtest.tm.exception.customfield.OptionAlreadyExistException;
  * 
  */
 @Transactional
-@PreAuthorize("hasRole('ROLE_ADMIN')")
+@PreAuthorize(HAS_ROLE_ADMIN)
 public interface CustomCustomFieldManagerService {
 	/**
 	 * Will delete the custom-field entity
@@ -100,7 +101,7 @@ public interface CustomCustomFieldManagerService {
 	 *            : the potential new label for the concerned custom-field's option
 	 */
 	void changeOptionLabel(Long customFieldId, String optionLabel, String newLabel);
-	
+
 	/**
 	 * Will check if the new code is available among all the concerned {@link CustomField}'s {@link CustomFieldOption},
 	 * if so, will change the code of the concerned custom-field's option.
@@ -179,5 +180,5 @@ public interface CustomCustomFieldManagerService {
 	 */
 	void changeCode(long customFieldId, String code);
 
-	
+
 }

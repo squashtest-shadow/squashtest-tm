@@ -43,6 +43,7 @@ import org.squashtest.tm.service.project.GenericProjectManagerService;
 import org.squashtest.tm.service.project.ProjectManagerService;
 import org.squashtest.tm.service.project.ProjectsPermissionManagementService;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
+import static org.squashtest.tm.service.security.Authorizations.*;
 
 /**
  * 
@@ -70,13 +71,13 @@ public class CustomProjectModificationServiceImpl implements CustomProjectModifi
 	private GenericProjectDao genericProjectDao;
 
 	@Override
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize(HAS_ROLE_ADMIN)
 	public void deleteProject(long projectId) {
 		projectDeletionHandler.deleteProject(projectId);
 	}
 
 	@Override
-	@PostFilter("hasPermission(filterObject, 'READ') or  hasRole('ROLE_ADMIN')")
+	@PostFilter("hasPermission(filterObject, 'READ')" + OR_HAS_ROLE_ADMIN)
 	@Transactional(readOnly = true)
 	public List<Project> findAllReadable() {
 		return projectDao.findAll();
@@ -86,7 +87,7 @@ public class CustomProjectModificationServiceImpl implements CustomProjectModifi
 	 * @see ProjectManagerService#addProjectAndCopySettingsFromTemplate(Project, long, boolean, boolean, boolean,
 	 *      boolean)
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize(HAS_ROLE_ADMIN)
 	@Override
 	public Project addProjectAndCopySettingsFromTemplate(Project newProject, long templateId,
 			boolean copyAssignedUsers, boolean copyCustomFieldsSettings, boolean copyBugtrackerSettings,
@@ -109,33 +110,33 @@ public class CustomProjectModificationServiceImpl implements CustomProjectModifi
 		if (copyInfolists){
 			copyInfolists(newProject, projectTemplate);
 		}
-		
+
 		if (copyMilestone){
 			copyMilestone(newProject, projectTemplate);
 		}
-		
+
 		return newProject;
 	}
 
 	private void copyMilestone(Project newProject, ProjectTemplate projectTemplate) {
-		
-		List<Milestone> milestones = getOnlyBindableMilestones(projectTemplate.getMilestones()); 
-			
-		newProject.bindMilestones(milestones);	
-		
+
+		List<Milestone> milestones = getOnlyBindableMilestones(projectTemplate.getMilestones());
+
+		newProject.bindMilestones(milestones);
+
 		for (Milestone milestone: milestones){
 			milestone.addProjectToPerimeter(newProject);
 		}
 	}
 
-	
-	
-	
+
+
+
 	private List<Milestone> getOnlyBindableMilestones(List<Milestone> milestones) {
 		List<Milestone> bindableMilestones = new ArrayList<Milestone>();
 		for (Milestone m : milestones){
 			if (m.getStatus().isBindableToProject()){
-			bindableMilestones.add(m);
+				bindableMilestones.add(m);
 			}
 		}
 		return bindableMilestones;

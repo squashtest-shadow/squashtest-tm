@@ -42,9 +42,10 @@ import org.squashtest.tm.service.internal.repository.UserDao;
 import org.squashtest.tm.service.security.acls.model.ObjectAclService;
 import org.squashtest.tm.service.user.CustomTeamFinderService;
 import org.squashtest.tm.service.user.CustomTeamModificationService;
+import static org.squashtest.tm.service.security.Authorizations.*;
 
 @Service("CustomTeamModificationService")
-@PreAuthorize("hasRole('ROLE_ADMIN')")
+@PreAuthorize(HAS_ROLE_ADMIN)
 public class CustomTeamModificationServiceImpl implements CustomTeamModificationService {
 
 	@Inject
@@ -142,7 +143,7 @@ public class CustomTeamModificationServiceImpl implements CustomTeamModification
 		Team team = teamDao.findById(teamId);
 		removeMembers(team, memberIds);
 	}
-	
+
 	private void removeMembers(Team team , List<Long> memberIds){
 		List<User> users = userDao.findAllByIds(memberIds);
 		team.removeMember(users);

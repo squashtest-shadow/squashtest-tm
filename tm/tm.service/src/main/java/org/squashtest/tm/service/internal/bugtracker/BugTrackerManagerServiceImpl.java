@@ -47,6 +47,7 @@ import org.squashtest.tm.service.internal.repository.BugTrackerBindingDao;
 import org.squashtest.tm.service.internal.repository.BugTrackerDao;
 import org.squashtest.tm.service.internal.repository.IssueDao;
 import org.squashtest.tm.service.project.GenericProjectManagerService;
+import static org.squashtest.tm.service.security.Authorizations.*;
 
 @Service("squashtest.tm.service.BugTrackerManagerService")
 public class BugTrackerManagerServiceImpl implements BugTrackerManagerService, BugTrackerSystemManager {
@@ -67,21 +68,21 @@ public class BugTrackerManagerServiceImpl implements BugTrackerManagerService, B
 	private BugTrackersLocalService bugtrackersLocalService;
 
 	@Override
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize(HAS_ROLE_ADMIN)
 	public void addBugTracker(BugTracker bugTracker) {
 		bugTrackerDao.checkNameAvailability(bugTracker.getName());
 		bugTrackerDao.persist(bugTracker);
 	}
 
 	@Override
-	@PostFilter("hasPermission(filterObject, 'READ') or  hasRole('ROLE_ADMIN')")
+	@PostFilter("hasPermission(filterObject, 'READ')" + OR_HAS_ROLE_ADMIN)
 	public List<BugTracker> findAll() {
 		return bugTrackerDao.findAll();
 
 	}
 
 	@Override
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize(HAS_ROLE_ADMIN)
 	public PagedCollectionHolder<List<BugTracker>> findSortedBugtrackers(PagingAndSorting filter) {
 		List<BugTracker> bugTrackers = bugTrackerDao.findSortedBugTrackers(filter);
 		long count = bugTrackerDao.countBugTrackers();
@@ -109,7 +110,7 @@ public class BugTrackerManagerServiceImpl implements BugTrackerManagerService, B
 	}
 
 	@Override
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize(HAS_ROLE_ADMIN)
 	public void deleteBugTrackers(final Collection<Long> bugtrackerIds) {
 
 		for (final Long id : bugtrackerIds) {

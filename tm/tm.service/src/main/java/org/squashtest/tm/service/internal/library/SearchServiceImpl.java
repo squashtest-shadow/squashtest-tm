@@ -37,6 +37,7 @@ import org.squashtest.tm.service.campaign.CampaignLibraryNavigationService;
 import org.squashtest.tm.service.internal.repository.CampaignDao;
 import org.squashtest.tm.service.library.SearchService;
 import org.squashtest.tm.service.project.ProjectFilterModificationService;
+import static org.squashtest.tm.service.security.Authorizations.*;
 
 @Service("squashtest.tm.service.SearchService")
 @Transactional(readOnly = true)
@@ -45,7 +46,7 @@ public class SearchServiceImpl implements SearchService {
 
 	@Inject
 	private CampaignDao campaignDao;
-	
+
 	@Inject
 	private CampaignLibraryNavigationService campaignLibraryNavigationService;
 
@@ -65,7 +66,7 @@ public class SearchServiceImpl implements SearchService {
 	 * org.squashtest.csp.tm.service.SearchService#findAllBySearchCriteria(org.squashtest.tm.domain.requirement.
 	 * RequirementSearchCriteria)
 	 */
-	private static final String FILTRED_READ_OR_ADMIN = "hasPermission(filterObject, 'READ') or hasRole('ROLE_ADMIN')";
+	private static final String FILTRED_READ_OR_ADMIN = "hasPermission(filterObject, 'READ')" + OR_HAS_ROLE_ADMIN;
 
 	@Override
 	@PostFilter(FILTRED_READ_OR_ADMIN)
@@ -97,8 +98,8 @@ public class SearchServiceImpl implements SearchService {
 		return filtered;
 	}
 
-	
-	
+
+
 	// -------------------------------------TODO mutualize duplicated code
 
 

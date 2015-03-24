@@ -24,6 +24,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.core.dynamicmanager.annotation.DynamicManager;
 import org.squashtest.tm.domain.project.GenericProject;
+import static org.squashtest.tm.service.security.Authorizations.*;
 
 /**
  * @author Gregory Fouquet
@@ -37,7 +38,7 @@ public interface GenericProjectManagerService extends CustomGenericProjectManage
 	 * Issue 2341 : the test for manager permissions on project failed because 'GenericProject' is not a valid ACL_CLASS.classname in the database.
 	 * So I had to split it and explicitly refer to the actual implementation 'Project'. A project manager cannot manage project templates anyway.
 	 */
-	String ADMIN_OR_PROJECT_MANAGER = "hasRole('ROLE_ADMIN') or hasPermission(#arg0, 'org.squashtest.tm.domain.project.Project', 'MANAGEMENT') ";
+	String ADMIN_OR_PROJECT_MANAGER = HAS_ROLE_ADMIN + " or hasPermission(#arg0, 'org.squashtest.tm.domain.project.Project', 'MANAGEMENT') ";
 
 	@PreAuthorize(ADMIN_OR_PROJECT_MANAGER)
 	void changeDescription(long projectId, String newDescription);
@@ -45,7 +46,7 @@ public interface GenericProjectManagerService extends CustomGenericProjectManage
 	@PreAuthorize(ADMIN_OR_PROJECT_MANAGER)
 	void changeLabel(long projectId, String newLabel);
 
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize(HAS_ROLE_ADMIN)
 	void changeActive(long projectId, boolean isActive);
 
 }
