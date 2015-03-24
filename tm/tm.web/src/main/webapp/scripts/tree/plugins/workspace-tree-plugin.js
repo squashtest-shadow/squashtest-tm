@@ -23,9 +23,9 @@
  * 
  */
 
-define(['jquery', 'workspace.tree-node-copier', 'workspace.permissions-rules-broker', 'squash.translator', 
+define(['jquery', 'underscore', 'workspace.tree-node-copier', 'workspace.permissions-rules-broker', 'squash.translator', 
         "jquery.squash.oneshotdialog", 'workspace.projects',  'jstree'], 
-        function($, nodecopier, rulesbroker, translator, oneshot, projects){
+        function($, _, nodecopier, rulesbroker, translator, oneshot, projects){
 	
 	
 	/* *******************************************************************************
@@ -195,16 +195,14 @@ define(['jquery', 'workspace.tree-node-copier', 'workspace.permissions-rules-bro
 		
 		var defer = $.Deferred();
 		
-		var targetLib = $(moveObject.np).treeNode().getLibrary().getResId(),
-			srcLibs = $(moveObject.op).treeNode().getLibrary().map(function(){
-				return $(this).attr('resid');
-			}).get(),
+		var targetProject = $(moveObject.np).treeNode().getProjectId(),
+			srcProjects = _.unique($(moveObject.op).treeNode().all('getProjectId')),
 			isCrossProject = false;
 		
 
 		// check if cross project
-		for ( var i = 0; i < srcLibs.length; i++) {
-			if (targetLib != srcLibs[i]) {
+		for ( var i = 0; i < srcProjects.length; i++) {
+			if (targetProject != srcProjects[i]) {
 				isCrossProject = true;
 				break;
 			}
@@ -215,7 +213,7 @@ define(['jquery', 'workspace.tree-node-copier', 'workspace.permissions-rules-bro
 
 			// if cross-project, also check whether
 			// the nature/type/category settings are different				
-			var areInfoListsDifferent = projects.haveDifferentInfolists(srcLibs.concat(targetLib));
+			var areInfoListsDifferent = projects.haveDifferentInfolists(srcProjects.concat(targetProject));
 			var addendum;
 			
 			if (areInfoListsDifferent){
@@ -226,7 +224,7 @@ define(['jquery', 'workspace.tree-node-copier', 'workspace.permissions-rules-bro
 				msg = msg.replace('</ul>', addendum + '</ul>');
 			}
 			
-			var lostMilestones = projects.willMilestonesBeLost(targetLib, srcLibs);
+			var lostMilestones = projects.willMilestonesBeLost(targetProject, srcProjects);
 			if (lostMilestones){
 				addendum = translator.get('message.warnCopyToDifferentLibrary.milestonesDiffer');
 				msg = msg.replace('</ul>', addendum + '</ul>');

@@ -104,20 +104,20 @@ define(["jquery", "underscore"], function($, _){
 	
 	
 	
-	function willMilestonesBeLost(destLibId, srcLibIds){
+	function willMilestonesBeLost(destProjId, srcProjIds){
 		
-		if (srcLibIds.length === 0){
+		if (srcProjIds.length === 0){
 			return false;
 		}
 		
-		var destP = findProject(destLibId);
+		var destP = findProject(destProjId);
 		
 		var destMilestoneIds = destP.milestones.map(function(m){
 			return m.id;
 		});
 		
-		for (var i=0;i<srcLibIds.length; i++){
-			var srcP = findProject(srcLibIds[i]);
+		for (var i=0;i<srcProjIds.length; i++){
+			var srcP = findProject(srcProjIds[i]);
 			
 			var srcMilestoneIds = srcP.milestones.map(function(m){
 				return m.id;

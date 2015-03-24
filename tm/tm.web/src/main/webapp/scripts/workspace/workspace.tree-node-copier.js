@@ -25,8 +25,8 @@
  * 
  */
 
-define([ 'jquery', 'squash.translator', "jquery.squash.oneshotdialog", "workspace.projects" ], 
-		function($, translator, oneshot, projects) {
+define([ 'jquery', 'underscore', 'squash.translator', "jquery.squash.oneshotdialog", "workspace.projects" ], 
+		function($, _, translator, oneshot, projects) {
 
 	squashtm = squashtm || {};
 	squashtm.workspace = squashtm.workspace || {};
@@ -70,13 +70,10 @@ define([ 'jquery', 'squash.translator', "jquery.squash.oneshotdialog", "workspac
 			var nodes = tree.jstree('get_selected');
 
 			var nodesData = nodes.toData();
-			var libIds = [];
-			nodes.getLibrary().each(function() {
-				libIds.push($(this).attr("id"));
-			});
+			var projectIds = _.unique(nodes.all('getProjectId'));
 
 			return {
-				libraries : libIds,
+				projects : projectIds,
 				nodes : nodesData
 			};
 
@@ -139,17 +136,15 @@ define([ 'jquery', 'squash.translator', "jquery.squash.oneshotdialog", "workspac
 
 			var defer = $.Deferred();
 
-			var targetLib = target.getLibrary().getResId(), 
+			var targetProject = target.getProjectId(), 
 				isCrossProject = false;
 			
 			// convert the dom-id to a res-id
-			var srcLibs = $.map(data.libraries, function(domid){
-				return $("#"+domid).attr('resid');
-			});
+			var srcProjects = data.projects;
 
 			// check if cross project
-			for ( var i = 0; i < srcLibs.length; i++) {
-				if (targetLib != srcLibs[i]) {
+			for ( var i = 0; i < srcProjects.length; i++) {
+				if (targetProject != srcProjects[i]) {
 					isCrossProject = true;
 					break;
 				}
@@ -161,7 +156,7 @@ define([ 'jquery', 'squash.translator', "jquery.squash.oneshotdialog", "workspac
 
 				// if cross-project, also check whether
 				// the nature/type/category settings are different				
-				var areInfoListsDifferent = projects.haveDifferentInfolists(srcLibs.concat(targetLib));
+				var areInfoListsDifferent = projects.haveDifferentInfolists(srcProjects.concat(targetProject));
 				var addendum;
 				
 				if (areInfoListsDifferent){
@@ -172,7 +167,7 @@ define([ 'jquery', 'squash.translator', "jquery.squash.oneshotdialog", "workspac
 					msg = msg.replace('</ul>', addendum + '</ul>');
 				}
 				
-				var lostMilestones = projects.willMilestonesBeLost(targetLib, srcLibs);
+				var lostMilestones = projects.willMilestonesBeLost(targetProject, srcProjects);
 				if (lostMilestones){
 					addendum = translator.get('message.warnCopyToDifferentLibrary.milestonesDiffer');
 					msg = msg.replace('</ul>', addendum + '</ul>');
