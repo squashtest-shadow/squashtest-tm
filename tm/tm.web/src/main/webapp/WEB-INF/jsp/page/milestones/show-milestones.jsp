@@ -45,7 +45,7 @@
       squashtm = squashtm || {}
       squashtm.milestoneManager = {
         data: {
-          currentUser : '${currentUser}',
+          currentUser : "${currentUser}",
           isAdmin : ${isAdmin},
           editableMilestoneIds : ${editableMilestoneIds}
         }

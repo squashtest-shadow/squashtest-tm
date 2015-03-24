@@ -28,6 +28,7 @@ import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.validation.Valid;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -112,7 +113,7 @@ public class MilestoneAdministrationController {
 		ModelAndView mav = new ModelAndView("page/milestones/show-milestones");
 		mav.addObject("milestoneStatus", statusComboDataBuilderProvider.get().useLocale(locale).buildMap());
 		mav.addObject("editableMilestoneIds", milestoneManager.findAllIdsOfEditableMilestone());
-		mav.addObject("currentUser", userService.findCurrentUser().getName());
+		mav.addObject("currentUser", StringEscapeUtils.escapeJavaScript(userService.findCurrentUser().getName()));
 		mav.addObject("isAdmin", permissionEvaluationService.hasRole("ROLE_ADMIN"));
 		return mav;
 	}

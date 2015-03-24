@@ -31,6 +31,7 @@ import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -87,7 +88,7 @@ public class MilestoneModificationController {
 		mav.addObject("milestoneRange", rangeComboDataBuilderProvider.get().useLocale(locale).buildMarshalled());
 		mav.addObject("userList", buildMarshalledUserMap(adminManager.findAllAdminOrManager()));
 		mav.addObject("canEdit", milestoneManager.canEditMilestone(milestoneId));
-		mav.addObject("currentUser", userService.findCurrentUser().getLogin());
+		mav.addObject("currentUser", StringEscapeUtils.escapeJavaScript(userService.findCurrentUser().getLogin()));
 		return mav;
 	}
 
@@ -174,20 +175,20 @@ public class MilestoneModificationController {
 
 		return milestoneManager.isBoundToATemplate(milestoneId);
 	}
-	
+
 	@RequestMapping(method = RequestMethod.GET,  params = { "isBoundToAtleastOneObject" })
 	@ResponseBody
 	public boolean isBoundToAtleastOneObject(@PathVariable long milestoneId) {
 
 		return milestoneManager.isBoundToAtleastOneObject(milestoneId);
 	}
-	
+
 	@RequestMapping(value = "/unbindallobjects", method = RequestMethod.DELETE)
 	@ResponseBody
 	public void unbindAllObjects(@PathVariable long milestoneId) {
 
-		 milestoneManager.unbindAllObjects(milestoneId);
-	}	
-	
+		milestoneManager.unbindAllObjects(milestoneId);
+	}
+
 
 }

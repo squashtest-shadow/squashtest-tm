@@ -364,8 +364,8 @@ requirejs.config({
 			      },
 			data: {
 				canEdit : ${canEdit},
-				currentUser : '${currentUser}',
-				userList : '${userList}',
+				currentUser : "${currentUser}",
+				userList : ${userList},
 				milestone : {
 					currentStatus : '${milestone.status}',
 					status : '${milestoneStatus}',
