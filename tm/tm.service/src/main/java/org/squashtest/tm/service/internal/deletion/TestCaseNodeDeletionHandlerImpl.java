@@ -161,20 +161,24 @@ AbstractNodeDeletionHandler<TestCaseLibraryNode, TestCaseFolder> implements Test
 
 		List<Long> candidateIds = new ArrayList<>(nodeIds);
 
+
 		/*
-		 * If needed, apply the milestone mode. Those not removable according to
-		 * the milestone rule must be added to the list, also they are de facto
+		 * Find test cases that cannot be removed because of milestones. Note that
+		 * the definition of "locked by milestone" may change depending on whether the
+		 * user actually uses the milestone mode or not. Also the test cases are de facto
 		 * removed from the test case call graph before computation.
 		 */
-		if (milestoneId != null){
-
-			lockedByMilestoneRule = lockedByMilestoneMode(nodeIds, milestoneId);
-
-			lockedCandidateIds.addAll(lockedByMilestoneRule);
-
-			candidateIds.removeAll(lockedByMilestoneRule);
-
+		if (milestoneId  == null){
+			lockedByMilestoneRule = lockedByMilestoneNormalMode(nodeIds);
 		}
+		else {
+			lockedByMilestoneRule = lockedByMilestoneMilestoneMode(nodeIds, milestoneId);
+		}
+
+		lockedCandidateIds.addAll(lockedByMilestoneRule);
+
+		candidateIds.removeAll(lockedByMilestoneRule);
+
 
 		// now init the graph with test case calls
 		LockedFileInferenceGraph graph = createCallTestCaseGraph(candidateIds);
@@ -326,20 +330,22 @@ AbstractNodeDeletionHandler<TestCaseLibraryNode, TestCaseFolder> implements Test
 
 		NotDeletablePreviewReport report = null;
 
+
 		List<Long> candidateIds = new ArrayList<>(nodeIds);
 
-		/*
-		 * If needed, apply the milestone mode. We need add to the locked candidates
-		 * all nodes falling under it. Also, we need them for the graph resolution.
-		 */
-		if (milestoneId != null){
-
-			List<Long> lockedByMilestoneRule = lockedByMilestoneMode(nodeIds, milestoneId);
-
-			candidateIds.removeAll(lockedByMilestoneRule);
-
+		// find the nodes locked by milestone. The rules differ depending on
+		// whether the milestone mode is on or not
+		List<Long> lockedByMilestoneRule;
+		if (milestoneId == null){
+			lockedByMilestoneRule = lockedByMilestoneNormalMode(nodeIds);
+		}
+		else{
+			lockedByMilestoneRule = lockedByMilestoneMilestoneMode(nodeIds, milestoneId);
 		}
 
+		candidateIds.removeAll(lockedByMilestoneRule);
+
+		// compute the graph of called test cases
 		LockedFileInferenceGraph graph = createCallTestCaseGraph(candidateIds);
 
 		graph.setCandidatesToDeletion(candidateIds);
@@ -423,6 +429,14 @@ AbstractNodeDeletionHandler<TestCaseLibraryNode, TestCaseFolder> implements Test
 
 
 
+	/*
+	 * Just find the test cases locked by non deletable milestones. This is used
+	 * even in normal mode.
+	 * 
+	 */
+	private List<Long> lockedByMilestoneNormalMode(List<Long> nodeIds){
+		return deletionDao.findTestCasesWhichMilestonesForbidsDeletion(nodeIds);
+	}
 
 	/*
 	 * milestone mode :
@@ -431,7 +445,7 @@ AbstractNodeDeletionHandler<TestCaseLibraryNode, TestCaseFolder> implements Test
 	 * - 3) no test case bound to more than one milestone shall be deleted (need for graph resolution) (they will be unbound though, but later).
 	 * - 4) no test case bound to a milestone which status forbids deletion shall be deleted.
 	 */
-	private List<Long> lockedByMilestoneMode(List<Long> nodeIds, Long milestoneId){
+	private List<Long> lockedByMilestoneMilestoneMode(List<Long> nodeIds, Long milestoneId){
 
 		List<Long> folderIds = deletionDao.separateFolderFromTestCaseIds(nodeIds)[0];
 		List<Long> outOfMilestone = leafDao.findNonBoundTestCases(nodeIds, milestoneId);
