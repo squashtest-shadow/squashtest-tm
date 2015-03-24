@@ -1,26 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-
-        This file is part of the Squashtest platform.
-        Copyright (C) 2010 - 2015 Henix, henix.fr
-
-        See the NOTICE file distributed with this work for additional
-        information regarding copyright ownership.
-
-        This is free software: you can redistribute it and/or modify
-        it under the terms of the GNU Lesser General Public License as published by
-        the Free Software Foundation, either version 3 of the License, or
-        (at your option) any later version.
-
-        this software is distributed in the hope that it will be useful,
-        but WITHOUT ANY WARRANTY; without even the implied warranty of
-        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-        GNU Lesser General Public License for more details.
-
-        You should have received a copy of the GNU Lesser General Public License
-        along with this software.  If not, see <http://www.gnu.org/licenses/>.
-
--->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="requirement-export" pageWidth="2210" pageHeight="595" orientation="Landscape" columnWidth="2210" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" resourceBundle="WEB-INF/messages/tm/messages" whenResourceMissingType="Key" uuid="6d4c9bc5-00fd-4450-b9ad-57347d3c1d78">
 	<property name="ireport.zoom" value="0.8264462809917362"/>
 	<property name="ireport.x" value="0"/>
@@ -161,7 +139,7 @@
 				<textElement>
 					<font isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA["*REQUIREMENT_PATH"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["REQ_PATH"]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement style="table_TH" mode="Opaque" x="1870" y="0" width="170" height="20" uuid="a6af67c6-5574-404f-8127-81b403bdc573"/>
