@@ -18,7 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ "backbone", "underscore", "app/lnf/Forms" ], function(Backbone, _, Forms) {
+define([ "jquery", "backbone", "underscore", "app/lnf/Forms" ], function($, Backbone, _, Forms) {
 	"use strict";
 	/**
 	 * Backbone.BindView
@@ -44,11 +44,9 @@ define([ "backbone", "underscore", "app/lnf/Forms" ], function(Backbone, _, Form
 	 * change event callback which sets the current model's property
 	 */
 	var setProp = function(event) {
-
-
 		if (!!this.model && !event.wasBound) {
 			var control = event.target;
-			this.model.set(control.dataset.prop, control.value);
+			this.model.set($(control).data("prop"), control.value);
 			event.wasBound = true;
 		}
 	};
