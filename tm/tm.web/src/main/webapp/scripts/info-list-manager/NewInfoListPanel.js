@@ -221,19 +221,19 @@ define(
 				},
 
 				validate : function(event) {
-					var err = false;
-					this.model.save(null, {
+					var sserr = false;
+					var csok = this.model.save(null, {
 
 						url: this.apiRoot + "/new",
 						wait: true, // that's a sync request
 						error : function() {
 							console.log("save error", arguments);
-							err = true;
+							sserr = true;
 							event.preventDefault();
 						}
 					});
 
-					return !err;
+					return csok && !sserr;
 				},
 
 				onChangeDefaultOption: function(event) {
