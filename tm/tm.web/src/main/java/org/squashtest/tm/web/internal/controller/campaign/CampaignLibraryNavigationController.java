@@ -96,7 +96,7 @@ import org.squashtest.tm.web.internal.util.HTMLCleanupUtils;
 @Controller
 @RequestMapping(value = "/campaign-browser")
 public class CampaignLibraryNavigationController extends
-		LibraryNavigationController<CampaignLibrary, CampaignFolder, CampaignLibraryNode> {
+LibraryNavigationController<CampaignLibrary, CampaignFolder, CampaignLibraryNode> {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(CampaignLibraryNavigationController.class);
 
@@ -128,7 +128,7 @@ public class CampaignLibraryNavigationController extends
 	JsTreeNode addNewCampaignToLibraryRootContent(@PathVariable Long libraryId,
 			@RequestBody CampaignFormModel campaignForm,
 			@CookieValue(value = "milestones", required = false, defaultValue = "") List<Long> milestoneIds)
-			throws BindException {
+					throws BindException {
 
 		BindingResult validation = new BeanPropertyBindingResult(campaignForm, "add-campaign");
 		CampaignFormModelValidator validator = new CampaignFormModelValidator(getMessageSource());
@@ -142,8 +142,9 @@ public class CampaignLibraryNavigationController extends
 		Campaign newCampaign = campaignForm.getCampaign();
 		Map<Long, RawValue> customFieldValues = campaignForm.getCufs();
 
+		Long milestoneId = (! milestoneIds.isEmpty()) ? milestoneIds.get(0) : null;
 		campaignLibraryNavigationService.addCampaignToCampaignLibrary(libraryId, newCampaign, customFieldValues,
-				milestoneIds.get(0));
+				milestoneId);
 
 		return createTreeNodeFromLibraryNode(newCampaign, milestoneIds);
 
@@ -153,7 +154,7 @@ public class CampaignLibraryNavigationController extends
 	public @ResponseBody
 	JsTreeNode addNewCampaignToFolderContent(@PathVariable long folderId, @RequestBody CampaignFormModel campaignForm,
 			@CookieValue(value = "milestones", required = false, defaultValue = "") List<Long> milestoneIds)
-			throws BindException {
+					throws BindException {
 
 		BindingResult validation = new BeanPropertyBindingResult(campaignForm, "add-campaign");
 		CampaignFormModelValidator validator = new CampaignFormModelValidator(getMessageSource());
