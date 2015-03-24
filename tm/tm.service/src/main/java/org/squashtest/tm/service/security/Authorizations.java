@@ -37,4 +37,9 @@ public final class Authorizations {
 
 	public static final String MILESTONE_FEAT_ENABLED = "@featureManager.isEnabled('MILESTONE')";
 
+	public static final String HAS_ROLE_ADMIN_OR_PROJECT_MANAGER = "hasRole('ROLE_ADMIN') or hasRole('ROLE_TM_PROJECT_MANAGER')";
+
+	public static final String OR_HAS_ROLE_ADMIN_OR_PROJECT_MANAGER = " or (hasRole('ROLE_ADMIN') or hasRole('ROLE_TM_PROJECT_MANAGER'))";
+
+
 }

@@ -81,21 +81,36 @@
     <intercept-url pattern="/login" access="permitAll" />
 
     <!-- Pages restricted to admins -->
+    
+    <intercept-url requires-channel="${application.channel:any}" pattern="/administration" access="hasRole('ROLE_TM_PROJECT_MANAGER') or hasRole('ROLE_ADMIN')" />
+    
     <intercept-url requires-channel="${application.channel:any}" pattern="/admin" access="hasRole('ROLE_ADMIN')" />
+    
     <intercept-url requires-channel="${application.channel:any}" pattern="/admin/**" access="hasRole('ROLE_ADMIN')" />
 
     <intercept-url requires-channel="${authentication.application.securablechannels:http}" pattern="/administration/milestones"
       access="hasRole('ROLE_TM_PROJECT_MANAGER') or hasRole('ROLE_ADMIN')" />
-          <intercept-url requires-channel="${authentication.application.securablechannels:http}" pattern="/administration/milestones/**"
+    
+    <intercept-url requires-channel="${authentication.application.securablechannels:http}" pattern="/administration/milestones/**"
       access="hasRole('ROLE_TM_PROJECT_MANAGER') or hasRole('ROLE_ADMIN')" />
+    
+
+    <intercept-url requires-channel="${authentication.application.securablechannels:http}" pattern="/administration/info-lists"
+      access="hasRole('ROLE_TM_PROJECT_MANAGER') or hasRole('ROLE_ADMIN')" />
+    
+    <intercept-url requires-channel="${authentication.application.securablechannels:http}" pattern="/administration/info-lists/**"
+      access="hasRole('ROLE_TM_PROJECT_MANAGER') or hasRole('ROLE_ADMIN')" />    
+    
     <intercept-url requires-channel="${authentication.application.securablechannels:http}" pattern="/administration/projects"
       access="hasRole('ROLE_TM_PROJECT_MANAGER') or hasRole('ROLE_ADMIN')" />
+   
     <intercept-url requires-channel="${authentication.application.securablechannels:http}" pattern="/administration/projects/**"
       access="hasRole('ROLE_TM_PROJECT_MANAGER') or hasRole('ROLE_ADMIN')" />
-    <intercept-url requires-channel="${application.channel:any}" pattern="/administration" access="hasRole('ROLE_TM_PROJECT_MANAGER') or hasRole('ROLE_ADMIN')" />
+       
     <intercept-url requires-channel="${application.channel:any}" pattern="/administration/**" access="hasRole('ROLE_ADMIN')" />
-
+    
     <intercept-url requires-channel="${application.channel:any}" pattern="/configuration" access="hasRole('ROLE_ADMIN')" />
+    
     <intercept-url requires-channel="${application.channel:any}" pattern="/configuration/**" access="hasRole('ROLE_ADMIN')" />
 
     <intercept-url requires-channel="${authentication.application.securablechannels:http}" pattern="/milestone/**"
