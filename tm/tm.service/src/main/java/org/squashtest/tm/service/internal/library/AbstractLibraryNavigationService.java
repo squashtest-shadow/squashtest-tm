@@ -411,7 +411,9 @@ implements LibraryNavigationService<LIBRARY, FOLDER, NODE> {
 				for (String name : getLibraryNodeDao().getParentsName(id)) {
 					path.append('/' + name);
 				}
-				path.deleteCharAt(0);
+				if (path.length() != 0) {
+					path.deleteCharAt(0);
+				}
 			}
 			data.setFolderName(path.toString());
 		}
