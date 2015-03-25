@@ -439,7 +439,7 @@
                   </div>
                   <div class="display-table-cell">
                     <select id="import-project-list" name="projectId" disabled="disabled">
-                      <option th:each="lib : ${editableLibraries}" value="${lib.id}" th:selected="${libStat.first}"
+                      <option th:each="lib : ${editableLibraries}" th:value="${lib.id}" th:selected="${libStat.first}"
                         th:text="${lib.project.name}">project name</option>
                     </select>
                     <div class="icon-helper no-print small-margin-left" th:title="#{message.import.info.targetproject}"></div>
