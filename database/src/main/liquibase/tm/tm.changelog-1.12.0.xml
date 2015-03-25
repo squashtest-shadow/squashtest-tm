@@ -277,6 +277,13 @@
         <constraints nullable="false" unique="true" />
       </column>
     </createIndex>
+
+    <createIndex tableName="INFO_LIST" indexName="idx_info_list_label">
+      <column name="LABEL" type="VARCHAR(100)">
+        <constraints nullable="false" unique="true" />
+      </column>
+    </createIndex>
+
   </changeSet>
 
 
