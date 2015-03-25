@@ -242,7 +242,7 @@ public class Milestone  {
 
 	public boolean isInPerimeter(GenericProject genericProject) {
 		for (GenericProject project : perimeter) {
-			if (project.getLabel().equals(genericProject.getLabel())) {
+			if (project.getName().equals(genericProject.getName())) {
 				return true;
 			}
 		}
