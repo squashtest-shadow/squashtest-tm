@@ -247,7 +247,7 @@ define(
 
 				onClickOptionDelete: function(event) {
 					var tgt = event.currentTarget;
-					var code = tgt.dataset.value;
+					var code = $(tgt).data("value");
 					var opt = this.options.findWhere({ code: code });
 					var self = this;
 
@@ -268,7 +268,7 @@ define(
 				 */
 				changeRowIconCallback: function(event) {
 					var tgt = event.currentTarget;
-					var code = tgt.dataset.code;
+					var code = $(tgt).data("code");
 					var opt = this.options.findWhere({ code: code });
 					var $tr = $(tgt).closest("tr");
 					var self = this;
@@ -300,7 +300,7 @@ define(
 					renderIconPicker();
 					this.iconPickedCallback = this.changeRowIconCallback(event);
 					var tgt = event.currentTarget;
-					var opt = this.options.findWhere({ code: tgt.dataset.code });
+					var opt = this.options.findWhere({ code: $(tgt).data("code") });
 					this.iconPicker = this.iconPicker || new IconPicker({ el: "#icon-picker-dialog", model: { icon: opt.get("iconName") } });
 				},
 

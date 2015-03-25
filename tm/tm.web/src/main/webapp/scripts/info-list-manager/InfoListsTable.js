@@ -223,7 +223,7 @@ define(
 					var tpl = removeTemplate()(props(isBound));
 
 					oneshot.show(messages.get("label.Delete"), tpl).done(function() {
-						$.ajax(self.apiRoot + "/" + tgt.dataset.value, { type: "DELETE" })
+						$.ajax(self.apiRoot + "/" + $(tgt).data("value"), { type: "DELETE" })
 							.done(self.refresh);
 					});
 				},
