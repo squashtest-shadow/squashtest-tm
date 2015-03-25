@@ -80,7 +80,6 @@
     <createIndex tableName="MILESTONE" indexName="idx_milestone">
       <column name="MILESTONE_ID" />
     </createIndex>
-
   </changeSet>
 
   <changeSet author="jsimon" id="tm-1.12.0.feature-3608-1">
@@ -191,9 +190,7 @@
       </column>
 
       <column name="LABEL" type="VARCHAR(100)"
-        remarks="the label for this list. Would noly be displayed in the administration page as the name 
-  														actually displayed to regular uses would depend on the role of that list on a given projet 
-  														(criticality, nature etc)">
+        remarks="the label for this list. Would noly be displayed in the administration page as the name  actually displayed to regular uses would depend on the role of that list on a given projet (criticality, nature etc)">
         <constraints unique="true" />
       </column>
 
@@ -220,16 +217,14 @@
 
     </createTable>
 
-
 		<!--  index on the code for faster lookup -->
     <createIndex tableName="INFO_LIST" indexName="idx_info_list_code">
       <column name="CODE" type="VARCHAR(30)">
         <constraints nullable="false" unique="true" />
       </column>
     </createIndex>
-		
-		
-		<!--  =========== the INFO_LIST_ITEM table =============== -->
+
+<!--  =========== the INFO_LIST_ITEM table =============== -->
 
     <createTable tableName="INFO_LIST_ITEM">
 
@@ -238,8 +233,7 @@
       </column>
 
       <column name="ITEM_TYPE" type="VARCHAR(3)"
-        remarks="discriminator telling whether this item is user-made or builtin in the app.
-															Pick one of 'USR' or 'SYS'">
+        remarks="discriminator telling whether this item is user-made or builtin in the app. Pick one of 'USR' or 'SYS'">
         <constraints nullable="false" />
       </column>
 
@@ -255,10 +249,8 @@
       </column>
 
       <column name="LABEL" type="VARCHAR(100)"
-        remarks="a label to be displayed. If the item is builtin 
-															this label will be a i18n key, else the label will 
-															be displayed verbatim">
-        <constraints nullable="false" unique="true" />
+        remarks="a label to be displayed. If the item is builtin this label will be a i18n key, else the label will be displayed verbatim">
+        <constraints nullable="false" />
       </column>
 
       <column name="CODE" type="VARCHAR(30)" remarks="a code that helps identifying that item">
@@ -285,7 +277,6 @@
         <constraints nullable="false" unique="true" />
       </column>
     </createIndex>
-
   </changeSet>
 
 
@@ -307,8 +298,7 @@
       </column>
 
       <column name="TC_TYP_LABEL" type="VARCHAR(100)"
-        remarks="a label to be displayed. If the item is builtin this label will be a i18n key, else the label will 
-						be displayed verbatim">
+        remarks="a label to be displayed. If the item is builtin this label will be a i18n key, else the label will  be displayed verbatim">
       </column>
 
       <column name="TC_TYP_CODE" type="VARCHAR(30)"
