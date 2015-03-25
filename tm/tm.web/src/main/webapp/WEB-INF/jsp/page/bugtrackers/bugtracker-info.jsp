@@ -35,7 +35,7 @@
 </s:url>
 <s:url var="bugtrackersUrl" value="/administration/bugtrackers" />
 
-
+<f:message var="confirmLabel"   key="label.Confirm"/>
 <f:message var="renameLabel" key="label.Rename" />
 <f:message var="cancelLabel" key="label.Cancel" />
 
@@ -53,6 +53,7 @@
 	<jsp:attribute name="subPageButtons">
 		<f:message var="backButtonLabel" key="label.Back" />
 		<input type="button" class="button" value="${backButtonLabel}" onClick="document.location.href= '${bugtrackersUrl}'"/>	
+	
 	</jsp:attribute>
 	<jsp:attribute name="informationContent">
 
@@ -82,6 +83,9 @@
 				<f:message var="rename" key="rename" />
 				<input type="button" value="${ rename }" id="rename-bugtracker-button"
 							class="sq-btn" />
+											<f:message var="delete" key='project.button.delete.label' />
+    				<input type="button" value="${ delete }" id="delete-bugtracker-button"
+    						class="sq-btn" />
 			</div>
 			</div>
 			<%--------End Toolbar ---------------%>
@@ -153,6 +157,21 @@
   
 <!-- ------------------------------------END RENAME POPUP------------------------------------------------------- -->
 
+<f:message var="deleteBugtrackerTitle" key="dialog.delete-bugtracker.title" />
+	<f:message var="warningDelete" key="dialog.deleteBugTracker.warning" />
+	<div id="delete-bugtracker-popup" class="popup-dialog not-displayed" title="${deleteBugtrackerTitle}">
+
+        <comp:notification-pane type="error" txtcontent="${warningDelete}"/>
+
+
+		<div class="popup-dialog-buttonpane">
+		    <input class="confirm" type="button" value="${confirmLabel}" />
+		    <input class="cancel" type="button" value="${cancelLabel}" />				
+		</div>
+	
+
+
+
 <script type="text/javascript">
 
   //*****************Back button  
@@ -210,6 +229,27 @@
     
   }
   
+  function initDeletePopup(){
+		
+  $("#delete-bugtracker-popup").confirmDialog().on('confirmdialogconfirm', function() {
+
+
+		var url = "${ bugtrackerUrl }";
+
+		$.ajax({
+			url : url,
+			type : 'delete'
+		});
+		
+		document.location.href = squashtm.app.contextRoot + '/administration/bugtrackers'
+
+	});
+  
+  $("#delete-bugtracker-button").on('click', function() {
+		var popup = $("#delete-bugtracker-popup");
+		popup.confirmDialog('open');
+	});
+  }
   
   require(["common"], function(){
 	  require(["jquery", "squash.basicwidgets", "jquery.squash.formdialog"], function(jquery, basic){
@@ -218,6 +258,7 @@
 	      $("#back").click(clickBugtackerBackButton);
 	      $("#bugtracker-iframeFriendly-checkbx").change(clickBugTrackerIframeFriendly);
 	      initRenameDialog();
+	      initDeletePopup();  
 	    });
 	  });	  
   });
