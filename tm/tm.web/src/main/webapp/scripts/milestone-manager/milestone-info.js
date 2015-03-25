@@ -572,7 +572,7 @@ $("#unbind-project-popup").confirmDialog().on('confirmdialogconfirm', function()
 		
 		function currentStatusIsEditable(){
 			var curStat = config.data.milestone.currentStatus;
-			if (curStat == "FINISHED" || curStat == "LOCKED"){
+			if (curStat == "LOCKED"){
 				return false;
 			}
 			return true;
