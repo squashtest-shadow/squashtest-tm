@@ -66,15 +66,55 @@ require(["common"], function(){
 		return $("#milestones-table").squashTable();
 	}
 
+	// When you open the dialog, change the message in it (with or without associated project)
+	$("#delete-milestone-popup").confirmDialog().on('confirmdialogopen', function(){
+		var ids = $table().getSelectedIds();
+		if (ids.length == 1){
+			var milestoneTable = $("#milestones-table").squashTable();		
+			var nbofProjectMax = 0;		
+			$.each( ids, function( key, value ) {
+				var nbofProject = milestoneTable.getDataById(value).nbOfProjects;
+				if (nbofProject > nbofProjectMax ) {
+					nbofProjectMax = nbofProject ;
+				}
+			});
+		  
+			if (nbofProjectMax === 0) {
+				$("#errorMessageDeleteMilestone").text(translator.get("dialog.delete-milestone.message"));
+			}
+			else {
+				$("#errorMessageDeleteMilestone").text(translator.get("dialog.delete-milestone.messageproject"));
+			}
+		}
+		if (ids.length > 1){
+			var milestoneTable = $("#milestones-table").squashTable();		
+			var nbofProjectMax = 0;		
+			$.each( ids, function( key, value ) {
+				var nbofProject = milestoneTable.getDataById(value).nbOfProjects;
+				if (nbofProject > nbofProjectMax ) {
+					nbofProjectMax = nbofProject ;
+				}
+			});
+		  
+			if (nbofProjectMax === 0) {
+				$("#errorMessageDeleteMilestone").text(translator.get("dialog.delete-milestone.messagemulti"));
+			}
+			else {
+				$("#errorMessageDeleteMilestone").text(translator.get("dialog.delete-milestone.messageprojectmulti"));
+			}
+		}
+	});
+	
+	// When you click, choose dialog if a milestone is selected
 	$(document).on("click", "#delete-milestone-button", function() {
 		var ids = $table().getSelectedIds();
-
 		if (ids.length>0){
 			var popup = $("#delete-milestone-popup");
 			popup.data('entity-id', ids);
 			popup.confirmDialog('open');
 		} else {
-			warningWithTranslation ('message.EmptyTableSelection');
+			var errorPopup = $("#milestone-noselection-error-dialog").messageDialog();	
+			errorPopup.messageDialog('open');
 		}
 	});
 

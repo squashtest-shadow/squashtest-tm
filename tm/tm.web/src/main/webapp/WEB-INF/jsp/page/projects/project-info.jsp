@@ -725,7 +725,7 @@ require(["common"], function() {
 				if (json.length === 0){
 					permpopup.formDialog('setState', "allbound");
 				}
-				else{
+				else{ 
 					permpopup.data('source', json);
 					$("#party-input").autocomplete({
 						source : json

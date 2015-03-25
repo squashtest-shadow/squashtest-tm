@@ -143,16 +143,44 @@
     </tbody>
   </table>
 
-	<f:message var="deleteMilestoneTitle" key="dialog.delete-milestone.title" />
-	<div id="delete-milestone-popup" class="popup-dialog not-displayed" title="${deleteMilestoneTitle}">
-		
-        <comp:notification-pane type="error">
-          <jsp:attribute name="htmlcontent">
+  <%-- 
+   Here we define a generic error dialog, much like in the notification system
+   used in every other pages. The thing is there is no notification section 
+   in the OER so we have to insert a copycat of that dialog here 
+   so that the js module squashtm.notification can use it seamlessly.
+   --%>
+	<f:message var="errorTitle" key="popup.title.error"/>
+	<f:message var="noSelectedMilestone" key="dialog.milestone.noselection"/>
+	<f:message var="okLabel" key="label.Ok"/>
+	<div id="milestone-noselection-error-dialog" class="not-displayed popup-dialog" title="${errorTitle}">
+	  <div>
+	     <div class="display-table-row">
+	        <div class="generic-error-main display-table-cell" style="padding-top:20px">
+	        </div>
+	        <div class="display-table-cell">		
+			 	<p>
+	              <span>	${noSelectedMilestone} </span>
+	            </p>     	            
+          </div>
+	      </div>
+	  </div>
+	  <input type="button" value="${okLabel}"/>  
+	</div>
+	
+	<f:message var="deleteMilestoneTitle" key="dialog.delete-milestone.title" />	
+	<div id="delete-milestone-popup" class="popup-dialog not-displayed" title="${deleteMilestoneTitle}" data-action="menu">
+		<div class="display-table-row">
+            <div class="display-table-cell warning-cell">
+                <div class="generic-error-signal"></div>
+            </div>
             <div id="warning-delete" class="display-table-cell">
             </div>          
-          </jsp:attribute>
-        </comp:notification-pane>
-    
+			<div class="display-table-cell">		
+			 	<p>
+	              <span id="errorMessageDeleteMilestone">	  </span>
+	            </p>     	            
+          </div>
+		</div>
 		<div class="popup-dialog-buttonpane">
 		    <input class="confirm" type="button" value="${confirmLabel}" />
 		    <input class="cancel" type="button" value="${cancelLabel}" />
