@@ -135,7 +135,7 @@ define([], function(){
 		'milestone.bindableproject'   :     root + '/milestones-binding/milestone/{\\d+}/project?bindable',
 		'milestone.bind-projects-to-milestone':  root + '/milestones-binding/milestone/{\\d+}/project',
 		'milestone.bind-milestones-to-project':  root + '/milestones-binding/project/{\\d+}/milestone',
-		'milestone.info'                      : root + '/milestone/{\\d+}/info',
+		'milestone.info'                      : root + '/milestones/{\\d+}/info',
 		'milestone.unbind-templates'          : root + '/milestones-binding/milestone/{\\d+}/template',
 		'milestone.unbind-objects'          : root + '/milestones/{\\d+}/unbindallobjects',
 		'info-list.info'                      : root + '/info-lists/{\\d+}',
