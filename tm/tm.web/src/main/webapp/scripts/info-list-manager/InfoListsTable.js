@@ -87,7 +87,6 @@ define(
 					this.selectedIds = [];
 
 					this.listenTo(squashtm.vent, "newinfolist:confirmed", function(event) {
-						self.$el.DataTable().ajax.reload();
 						self.refresh();
 					});
 

@@ -225,6 +225,7 @@ define(
 					var csok = this.model.save(null, {
 
 						url: this.apiRoot + "/new",
+						async: false,
 						wait: true, // that's a sync request
 						error : function() {
 							console.log("save error", arguments);
