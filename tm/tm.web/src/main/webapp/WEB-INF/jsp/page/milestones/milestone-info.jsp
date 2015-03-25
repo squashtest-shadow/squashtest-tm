@@ -124,7 +124,16 @@
 							<label for="milestone-range" class="display-table-cell">
 							<f:message key="label.Range" />
 							</label>
-							<div class="display-table-cell" ><span id="milestone-range" >	${ milestoneRangeLabel } </span></div>
+							<div class="display-table-cell" >
+							<c:choose>
+							<c:when test="${isAdmin}">  
+							<span id="milestone-range" >	${ milestoneRangeLabel } </span>
+							</c:when>
+							<c:otherwise>
+							${ milestoneRangeLabel }
+							</c:otherwise>
+							</c:choose>
+							</div>
 						</div>
 						
 								<div class="display-table-row">
@@ -310,12 +319,13 @@
 	
 	</div>
 
-<!-- ------------------------------------CHANGE RANGE WITH TEMPLATE POPUP------------------------------------------------------- -->
+<!-- ------------------------------------END CHANGE RANGE WITH TEMPLATE POPUP------------------------------------------------------- -->
 
 
+<!-- ------------------------------------CHANGE STATUS POPUP------------------------------------------------------- -->
 	<f:message var="changeStatusTitle" key="dialog.milestone.changestatus.title" />
 	<f:message var="warningChangeStatus" key="dialog.milestone.changestatus.warning" />
-	<div id="changeStatus-popup" class="popup-dialog not-displayed" title="${changeRangeTitle}">
+	<div id="changeStatus-popup" class="popup-dialog not-displayed" title="${changeStatusTitle}">
 		
          <comp:notification-pane type="error" txtcontent="${warningChangeStatus}"/>
     
@@ -326,6 +336,24 @@
 	
 	</div>
 
+<!-- ------------------------------------END CHANGE STATUS POPUP------------------------------------------------------- -->
+
+<!-- ------------------------------------CHANGE OWNER POPUP------------------------------------------------------- -->
+	<f:message var="changeOwnerTitle" key="dialog.milestone.changeower.title" />
+	<f:message var="warningChangeOwner" key="dialog.milestone.changeowner.warning" />
+	<div id="changeOwner-popup" class="popup-dialog not-displayed" title="${changeOwnerTitle}">
+		
+         <comp:notification-pane type="error" txtcontent="${warningChangeOwner}"/>
+    
+		<div class="popup-dialog-buttonpane">
+		    <input class="confirm" type="button" value="${confirmLabel}" />
+		    <input class="cancel" type="button" value="${cancelLabel}" />				
+		</div>
+	
+	</div>
+
+
+<!-- ------------------------------------END CHANGE OWNER POPUP------------------------------------------------------- -->
 
 
 <!-- --------------------------------RENAME POPUP--------------------------------------------------------- -->
@@ -365,6 +393,7 @@ requirejs.config({
 			data: {
 				canEdit : ${canEdit},
 				currentUser : "${currentUser}",
+				isAdmin : ${isAdmin},
 				userList : ${userList},
 				milestone : {
 					currentStatus : '${milestone.status}',

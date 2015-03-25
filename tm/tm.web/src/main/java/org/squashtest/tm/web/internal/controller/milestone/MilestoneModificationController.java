@@ -47,6 +47,7 @@ import org.squashtest.tm.domain.milestone.MilestoneRange;
 import org.squashtest.tm.domain.milestone.MilestoneStatus;
 import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.service.milestone.MilestoneManagerService;
+import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.user.AdministrationService;
 import org.squashtest.tm.service.user.UserAccountService;
 import org.squashtest.tm.web.internal.helper.JsonHelper;
@@ -66,6 +67,9 @@ public class MilestoneModificationController {
 	@Inject
 	private UserAccountService userService;
 
+	@Inject
+	private PermissionEvaluationService permissionEvaluationService;
+	
 	@Inject
 	private Provider<MilestoneStatusComboDataBuilder> statusComboDataBuilderProvider;
 
@@ -88,6 +92,7 @@ public class MilestoneModificationController {
 		mav.addObject("milestoneRange", rangeComboDataBuilderProvider.get().useLocale(locale).buildMarshalled());
 		mav.addObject("userList", buildMarshalledUserMap(adminManager.findAllAdminOrManager()));
 		mav.addObject("canEdit", milestoneManager.canEditMilestone(milestoneId));
+		mav.addObject("isAdmin", permissionEvaluationService.hasRole("ROLE_ADMIN"));
 		mav.addObject("currentUser", StringEscapeUtils.escapeJavaScript(userService.findCurrentUser().getLogin()));
 		return mav;
 	}

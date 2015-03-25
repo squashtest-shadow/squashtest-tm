@@ -24,7 +24,7 @@
 
 		var config = module.config();
 
-		function clickBugtackerBackButton() {
+		function clickBackButton() {
 			document.location.href = config.urls.milestonesUrl;
 		}
 
@@ -104,19 +104,65 @@
 			},
 		});
 		
-		var ownerEditable = createOwnerEditable();
+		createOwnerEditable();
 		};
 		
 		
 		function createOwnerEditable(){ 
-			new SelectJEditable({
-			target : config.urls.milestoneUrl,
+			var ownerEditable = new SelectJEditable({ 
+			target : function(value){ changeOwner(value, ownerEditable);},
 			componentId : "milestone-owner",
 			jeditableSettings : {
 				data : config.data.userList
 			}});
 		}
 
+		
+		var changeOwner = function changeOwner(value, ownerEditable){
+			//warning you are going to give your milestone !!
+			if (!config.data.isAdmin && config.data.currentUser != value){
+
+					var popup = $("#changeOwner-popup");
+					popup.data('value', value);
+					popup.data('ownerEditable', ownerEditable);
+					popup.confirmDialog('open');	
+
+			} else {
+				changeOwnerRequest(value, ownerEditable);
+			}		
+		};
+		
+		
+$("#changeOwner-popup").confirmDialog().on('confirmdialogconfirm', function(){	
+			var $this = $(this);
+			var value = $this.data('value');
+			var ownerEditable = $this.data('ownerEditable');			
+			changeOwnerRequest(value, ownerEditable);	
+			clickBackButton();
+		});
+		
+$("#changeOwner-popup").confirmDialog().on('confirmdialogcancel', function(){	
+	var $this = $(this);
+	var ownerEditable = $this.data('ownerEditable');	
+	var data = ownerEditable.settings.jeditableSettings.data;
+	var user = data[config.data.currentUser];
+	ownerEditable.component.html(user);
+});
+		
+		function changeOwnerRequest(value, ownerEditable){
+
+			$.ajax({
+				type : "POST",
+				url : config.urls.milestoneUrl,
+				data: {
+					id: ownerEditable.settings.componentId,
+					value: value
+				}
+			}).then(function(value) {
+				ownerEditable.component.html(value);
+			});	
+		}
+		
 		
 		var changeStatus = function changeStatus(value, statusEditable){
 
@@ -280,9 +326,6 @@ $("#changeStatus-popup").confirmDialog().on('confirmdialogcancel', function(){
 		});
 	};
 		
-		
-		
-		
 	
 		function updateAfterRangeChange(newRange) {
 
@@ -390,7 +433,7 @@ $("#changeStatus-popup").confirmDialog().on('confirmdialogcancel', function(){
 			$("#bind-to-projects-table").squashTable({"bServerSide":false, "fnRowCallback" : projectTableRowCallback}, {});
 		
 			basic.init();
-			$("#back").click(clickBugtackerBackButton);
+			$("#back").click(clickBackButton);
 			initRenameDialog();
 	
 		});
@@ -534,6 +577,10 @@ $("#unbind-project-popup").confirmDialog().on('confirmdialogconfirm', function()
 			}
 			return true;
 		}
+		
+		
+
+		
 		
 		var bindProjectDialog = $("#bind-project-dialog");
 
