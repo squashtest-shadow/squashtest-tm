@@ -18,7 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define(["jquery", "underscore", "jqueryui"], function($, _){
+define(["jquery", "underscore", "isIE",  "jqueryui"], function($, _, isIE){
 	
 	var searchwidget = $.widget("search.searchMultiCascadeFlatWidget", {
 		options : {},
@@ -36,8 +36,22 @@ define(["jquery", "underscore", "jqueryui"], function($, _){
 			var self = this;
 			
 			var primarySelect = this._primarySelect(),
-				secondarySelect = this._secondarySelect();			
+				secondarySelect = this._secondarySelect();	
 			
+			// Issue 4362 : have to delegate show/hide to 
+			// a secondary object depending on the browser ability
+			// if you think : "modernizr" I say : "*** u"
+			if (isIE()){
+				this.options.isIE = true;
+				this.options.primaryManager = new RetardedOptionDisplayManager(primarySelect);
+				this.options.secondaryManager = new RetardedOptionDisplayManager(secondarySelect);
+			}
+			else{
+				this.options.isIE = false;
+				this.options.primaryManager = new RegularOptionDisplayManager(primarySelect);
+				this.options.secondaryManager = new RegularOptionDisplayManager(secondarySelect);
+			}
+						
 			// add the on change handlers on the primary select
 			primarySelect.on('change', function(){
 				self.update();
@@ -55,9 +69,10 @@ define(["jquery", "underscore", "jqueryui"], function($, _){
 		fieldvalue : function(value){
 			//case : getter
 			if (!value){
+				var filter = (this.options.isIE) ? ':selected' : ':visible:selected';
 				var values = this._secondarySelect()
 								 .find('option')
-								 .filter(':visible:selected')
+								 .filter(filter)
 								 .map(function(i,e){ return e.value;})
 								 .get();
 				
@@ -85,6 +100,8 @@ define(["jquery", "underscore", "jqueryui"], function($, _){
 			}
 		},
 		
+		// ************* show / hide option boilerplate ************
+		
 		update : function(){
 			var select = this._primarySelect().get(0);
 			for (var i=0; i < select.length; i++){
@@ -107,28 +124,35 @@ define(["jquery", "underscore", "jqueryui"], function($, _){
 		},
 		
 		hideAll : function(){
-			this._primarySelect().find('option').hide();
-			this._secondarySelect().find('option').hide();
+			var self = this;
+			this._primarySelect().find('option').each(function(elt){
+				self.options.primaryManager.hide(elt.value);
+			});
+			this._secondarySelect().find('option').each(function(elt){
+				self.options.secondaryManager.hide(elt.value);
+			});
 		},
 		
 		showAll : function(){
-			this._primarySelect().find('option').show();
-			this._secondarySelect().find('option').show();			
+			var self = this;
+			this._primarySelect().find('option').each(function(elt){
+				self.options.primaryManager.show(elt.value);
+			});
+			this._secondarySelect().find('option').each(function(elt){
+				self.options.secondaryManager.show(elt.value);
+			});			
 		},
 		
 		hidePrimary : function(code){
-			var primarySelect = this._primarySelect();		
-			
-			primarySelect.find("option[value='"+code+"']").hide();
-			
+			this.options.primaryManager.hide(code);			
 			this.hideSecondaryFrom(code);
 		},
 		
 		showPrimary : function(code){
-			var primarySelect = this._primarySelect();		
-		
+			this.options.primaryManager.show(code);
+			
+			var primarySelect = this._primarySelect();			
 			var opt = primarySelect.find("option[value='"+code+"']");
-			opt.show();
 			if (opt.is(':selected')){
 				this.showSecondaryFrom(code);
 			}
@@ -145,13 +169,113 @@ define(["jquery", "underscore", "jqueryui"], function($, _){
 				if (primaryOpt.code === primaryCode){
 					for (var si=0; si < primaryValues.length; si++){
 						var subopt = primaryValues[si];
+						this.options.secondaryManager[methodname](subopt.code);
 						secondarySelect.find('option[value="'+subopt.code+'"]')[methodname]();
 					}
 				}
 			}
-		}
+		}, 
 		
 	});
+	
+	
+	// *********************** Issue 4362 handler *************************
+	
+	 function RegularOptionDisplayManager(select){
+		this.select = select
+		this.show = function(code){
+			this.select.find('option[value="'+code+'"]').show();
+		};
+		this.hide = function(code){
+			this.select.find('option[value="'+code+'"]').hide();
+		}
+	}
+	 
+	/*
+	 * Issue 4362
+	 * 
+	 * Internet explorer (any version) is unable to :
+	 * - change the 'display' of an option of a select, 
+	 * - answer correctly to predicates on visibility about them
+	 * 
+	 * Because of this, we have to explicitly remove 
+	 * or add the options in the select.
+	 * 
+	 * We also have to maintain a state for the 
+	 * secondary select options too.
+	 * 
+	 * Also, insert unprofessional comments here 
+	 * on that retarded browser.
+	 * 
+	 */
+	function RetardedOptionDisplayManager(select){
+		
+		this.select = select;
+		this.indexes = [];
+		this.reverseindexes = {};
+		this.options = {};
+		
+		
+		// ************* init **********
+		var self = this;
+		this.select.find('option').each(function(i, opt){
+			self.indexes[i] = opt.value;
+			self.reverseindexes[opt.value] = i;
+			self.options[opt.value] = opt;			
+		});
+		
+		
+		// ********** methods ************
+		
+		this.show = function(code){
+			
+			// careful : 'option' here is a native js element, not jQuery
+			var option = this.options[code];
+			
+			var insertionPoint = this.findInsertionPoint(option.value);
+			
+			if (insertionPoint.length > 0){
+				$(option).insertBefore(insertionPoint);
+			}
+			else{			
+				this.select.append(option);	
+			}
+		};
+		
+		this.hide = function(code){
+			var option = this.select.find('option[value="'+code+'"]');
+			option.detach();
+		};
+		
+		// returns the option where to in
+		this.findInsertionPoint = function(code){
+			
+			var select = this.select;
+			
+			var idxcode = this.reverseindexes[code];
+			if (idxcode === this.indexes.length-1){
+				return $();
+			}
+			
+			var higherindexcodes = this.indexes.slice(idxcode+1);
+			
+			// prepare a jquerystring to locate options 
+			// this option should be inserted before
+			var querystring = "";
+			higherindexcodes.forEach(function(code, idx){
+				querystring += "option[value='"+code+"'], ";
+			});
+			
+			// remove the extra comma then select
+			querystring = querystring.substr(0, querystring.length-2);
+
+			return optionwhereinsert = select.find(querystring).first();
+	
+
+		}
+	}
+	
+	
 	
 	return searchwidget;
 	

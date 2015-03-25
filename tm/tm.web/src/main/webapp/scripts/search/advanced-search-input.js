@@ -436,7 +436,7 @@ define([ "jquery", "backbone", "app/squash.handlebars.helpers", "squash.translat
 		},
 
 		extractSearchModel : function(){
-			var fields = self.$("div.search-input");
+			var fields = this.$el.find("div.search-input");
 
 			var jsonVariable = {};
 

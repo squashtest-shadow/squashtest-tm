@@ -70,7 +70,7 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 			"milestone.endDate", "searchByMilestone");
 
 	@Inject
-    private FeatureManager featureManager;
+	private FeatureManager featureManager;
 
 	@Inject
 	private SessionFactory sessionFactory;
@@ -138,24 +138,29 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 
 		Query mainQuery = null;
 
-		for (String value : values) {
+		if (! values.isEmpty()){
+			for (String value : values) {
 
-			if ("".equals(value.trim())) {
-				value = "$NO_VALUE";
-			}
+				if ("".equals(value.trim())) {
+					value = "$NO_VALUE";
+				}
 
-			Query query = qb
-					.bool()
-					.should(qb.keyword().onField(fieldName).ignoreFieldBridge().ignoreAnalyzer().matching(value)
-							.createQuery()).createQuery();
+				Query query = qb
+						.bool()
+						.should(qb.keyword().onField(fieldName).ignoreFieldBridge().ignoreAnalyzer().matching(value)
+								.createQuery()).createQuery();
 
-			if (query != null && mainQuery == null) {
-				mainQuery = query;
-			} else if (query != null) {
-				mainQuery = qb.bool().should(mainQuery).should(query).createQuery();
+				if (query != null && mainQuery == null) {
+					mainQuery = query;
+				} else if (query != null) {
+					mainQuery = qb.bool().should(mainQuery).should(query).createQuery();
+				}
 			}
 		}
-
+		else{
+			// create a query that should match anything
+			mainQuery = qb.bool().must(qb.keyword().onField(fieldName).ignoreFieldBridge().ignoreAnalyzer().matching("$NO_VALUE").createQuery()).createQuery();
+		}
 		return qb.bool().must(mainQuery).createQuery();
 	}
 
@@ -415,7 +420,7 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 	protected Query buildLuceneQuery(QueryBuilder qb, AdvancedSearchModel model, Locale locale) {
 		if (featureManager.isEnabled(Feature.MILESTONE)){
 			addMilestoneFilter(model);
-			}
+		}
 		Query mainQuery = null;
 
 		Set<String> fieldKeys = model.getFields().keySet();
@@ -453,57 +458,57 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 
 		if (searchByMilestone != null && "true".equals(searchByMilestone.getValue())) {
 
-		for (Entry<String, AdvancedSearchFieldModel> entry : fields.entrySet()) {
+			for (Entry<String, AdvancedSearchFieldModel> entry : fields.entrySet()) {
 
-			AdvancedSearchFieldModel model = entry.getValue();
-			if (model != null) {
+				AdvancedSearchFieldModel model = entry.getValue();
+				if (model != null) {
 
-				switch (entry.getKey()) {
+					switch (entry.getKey()) {
 
-				case "milestone.label":
+					case "milestone.label":
 
-					List<String> labelValues = ((AdvancedSearchListFieldModel) model).getValues();
-					if (labelValues != null){
-					crit.add(Restrictions.in("label", labelValues));
+						List<String> labelValues = ((AdvancedSearchListFieldModel) model).getValues();
+						if (labelValues != null){
+							crit.add(Restrictions.in("label", labelValues));
+						}
+						break;
+					case "milestone.status":
+						List<String> statusValues = ((AdvancedSearchListFieldModel) model).getValues();
+						if (statusValues != null){
+							crit.add(Restrictions.in("status", convertStatus(statusValues)));
+						}
+						break;
+					case "milestone.endDate":
+						Date startDate = ((AdvancedSearchTimeIntervalFieldModel) model).getStartDate();
+						Date endDate = ((AdvancedSearchTimeIntervalFieldModel) model).getEndDate();
+
+						if (startDate != null && endDate != null){
+							crit.add(Restrictions.between("endDate", startDate, endDate));
+						} else if (startDate != null){
+							crit.add(Restrictions.gt("endDate", startDate));
+						} else if (endDate != null){
+							crit.add(Restrictions.le("endDate", endDate));
+
+						}
+
+						break;
+					default:
+						// do nothing
 					}
-					break;
-				case "milestone.status":
-					List<String> statusValues = ((AdvancedSearchListFieldModel) model).getValues();
-					if (statusValues != null){
-					crit.add(Restrictions.in("status", convertStatus(statusValues)));
-					}
-					break;
-				case "milestone.endDate":
-					Date startDate = ((AdvancedSearchTimeIntervalFieldModel) model).getStartDate();
-					Date endDate = ((AdvancedSearchTimeIntervalFieldModel) model).getEndDate();
-
-					if (startDate != null && endDate != null){
-						crit.add(Restrictions.between("endDate", startDate, endDate));
-					} else if (startDate != null){
-						crit.add(Restrictions.gt("endDate", startDate));
-					} else if (endDate != null){
-						crit.add(Restrictions.le("endDate", endDate));
-
-					}
-
-					break;
-				default:
-					// do nothing
 				}
 			}
-		}
 
 
 
-		List<String> milestoneIds = new ArrayList<String>();
-		for (Milestone milestone : (List<Milestone>) crit.list()){
-			milestoneIds.add(String.valueOf(milestone.getId()));
-		}
+			List<String> milestoneIds = new ArrayList<String>();
+			for (Milestone milestone : (List<Milestone>) crit.list()){
+				milestoneIds.add(String.valueOf(milestone.getId()));
+			}
 
-		AdvancedSearchListFieldModel milestonesModel = new AdvancedSearchListFieldModel();
-		milestonesModel.setValues(milestoneIds);
+			AdvancedSearchListFieldModel milestonesModel = new AdvancedSearchListFieldModel();
+			milestonesModel.setValues(milestoneIds);
 
-		fields.put("milestones.id", milestonesModel);
+			fields.put("milestones.id", milestonesModel);
 		}
 
 
