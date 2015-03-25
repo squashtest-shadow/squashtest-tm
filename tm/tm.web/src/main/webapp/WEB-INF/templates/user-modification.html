@@ -67,6 +67,8 @@
         deactivate : /*[[ #{label.Deactivate} ]]*/ "deactivate",
         addPermissionField : /*[[ #{title.AddPermission} ]]*/ "add permission",
         removePermissionField : /*[[ #{title.RemovePermission} ]]*/ "remove permission",
+        addAccreditationField : /*[[ #{title.AddAccreditation} ]]*/ "add Accreditation",
+        removeAccreditationField : /*[[ #{title.DisassociateAccreditation} ]]*/ "remove Accreditation",
         addTeamField : /*[[ #{label.addTeam} ]]*/ "add team",
         removeTeamField : /*[[ #{label.removeTeam} ]]*/ "remove team"
       },
@@ -216,11 +218,11 @@
               <div class="tg-head">
                 <h3><a th:text="#{user.project-rights.title.label}">Permissions</a></h3>
                 <div class="tg-toolbar">
-                  <button id="add-permission-button" th:title=" #{title.AddPermission}" title="add"
+                  <button id="add-permission-button" th:title=" #{title.AddAccreditation}" title="add"
                     class="sq-icon-btn btn-sm">
                     <span class="ui-icon ui-icon-plus squared-icons">+</span>
                   </button>
-                  <button id="remove-permission-button" th:title="#{title.RemovePermission}" title="remove"
+                  <button id="remove-permission-button" th:title="#{title.DisassociateAccreditation}" title="remove"
                     class="sq-icon-btn btn-sm">
                     <span class="ui-icon ui-icon-minus squared-icons">-</span>
                   </button>
