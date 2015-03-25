@@ -200,6 +200,8 @@
 				<div class="display-table">			
 				<div class="display-table-row">
 					<div class="display-table-cell">  
+							<c:choose>
+				<c:when  test= "${ milestoneList.size() != 0}">			
 					<label for="toggle-activation-checkbox" ><f:message key="user-preferences.tree-order.mode.label"/></label>
 					</div>
 					<div class="customHeigth">
@@ -209,7 +211,6 @@
                  		</div>
                  	</div>
 			</div>
-							
 			<div class="display-table-row">
 				<div class="display-table-cell">  
 				<label for="choose-your-mode" ><f:message key="user-preferences.milestone"/></label>
@@ -221,6 +222,11 @@
 		            </c:forEach>                    
 				</select>
 			</div>
+			</c:when>
+			   <c:otherwise>
+  <f:message key="message.library-display-mode.no-milestones"/>
+      </c:otherwise>
+      </c:choose>
 			</jsp:attribute>
 			</comp:toggle-panel>
 		 </c:if>
@@ -247,19 +253,25 @@
   	  var milestoneGroup = $("#milestone-group") ;
   	  
   	  $(function() {
+  		  if (${ milestoneList.size()} != 0){
   	  			milestoneActivation.init(milestoneGroup);
+  		  }
 		 		init(projectsManager, Frag);	
+		 		
 	 		
 		 		new ProjectToolbar(); 		
-
-			  	$("#toggle-MODE-checkbox").change(function(){
+		 		
+			  	$("#toggle-MODE-checkbox").change(function(value){
+		
+			  		
 			  		toggleStatusActivation("MODE");
 			  	 		if ($("#toggle-MODE-checkbox").prop('checked')) {
-					 		 document.getElementById("milestone-group").disabled = false; 		
+					 		 document.getElementById("milestone-group").disabled = false; 
 						 		}
 			  	 		else 	{
 					 		 document.getElementById("milestone-group").disabled = true;		
 					 		}
+
 			  	  });
 	  	});
 
@@ -273,6 +285,10 @@
   			if (shouldActivate){
   				$("#milestone-group option[value='']").remove();
   				activateStatus();
+  				if ($("#milestone-group").find(":selected").length == 0){
+  					$("#milestone-group").find("option")[0].setAttribute("selected", true);
+  					milestoneActivation.setActiveMilestone($("#milestone-group").find("option")[0].value);
+  				}
   			}
   			else{
   				deactivateStatus();
