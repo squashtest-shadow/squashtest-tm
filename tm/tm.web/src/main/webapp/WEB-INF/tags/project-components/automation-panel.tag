@@ -73,7 +73,7 @@
       
       <%-- =================================== projects block =============================================================== --%>
       
-      <f:message var="addTAProjectLabel" key="title.addJob"  />
+      <f:message var="addTAProjectLabel" key="title.associateJob"  />
       <c:if test="${ empty project.testAutomationServer}">
       <c:set var="dispayedJobBlock" value="display: none"/>
       </c:if>
@@ -190,7 +190,7 @@
 ================================================= --%>
 
 
-<f:message var="bindProjectPopup" key="title.addJob" />
+<f:message var="bindProjectPopup" key="title.associateJob" />
 <div id="ta-projects-bind-popup" title="${bindProjectPopup}" class="popup-dialog not-displayed">
 
   <div data-def="state=pleasewait">
