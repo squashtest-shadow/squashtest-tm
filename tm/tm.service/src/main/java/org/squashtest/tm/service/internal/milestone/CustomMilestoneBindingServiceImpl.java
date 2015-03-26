@@ -139,6 +139,7 @@ public class CustomMilestoneBindingServiceImpl implements MilestoneBindingManage
 		List<Milestone> milestones = milestoneDao.findAllByIds(milestoneIds);
 		project.unbindMilestones(milestones);
 		for (Milestone milestone : milestones) {
+			milestoneDao.unbindAllObjects(milestone.getId());
 			milestone.removeProjectFromPerimeter(project);
 		}
 	}
@@ -150,6 +151,7 @@ public class CustomMilestoneBindingServiceImpl implements MilestoneBindingManage
 		List<GenericProject> projects = projectDao.findAllByIds(projectIds);
 		milestone.unbindProjects(projects);
 		milestone.removeProjectsFromPerimeter(projects);
+		milestoneDao.unbindAllObjects(milestoneId);
 	}
 
 	@Override
@@ -241,6 +243,7 @@ public class CustomMilestoneBindingServiceImpl implements MilestoneBindingManage
 		Milestone milestone = milestoneDao.findById(milestoneId);
 		List<GenericProject> projects = projectDao.findAllByIds(projectIds);
 		milestone.unbindProjects(projects);
+		milestoneDao.unbindAllObjects(milestoneId);
 	}
 
 	@Override
