@@ -26,9 +26,9 @@ define([ "jquery", "backbone", "app/util/StringUtil", "underscore" ], function($
 	var ProjectFilterModel = Backbone.Model.extend({
 
 		defaults : {
-			projectIds :[]
+			projectIds :[],
 		},
-		
+
 		allProjectIds : [],
 		initiallySelectedIds : [],
 		

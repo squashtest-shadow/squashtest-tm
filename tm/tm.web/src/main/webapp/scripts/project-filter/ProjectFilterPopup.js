@@ -68,7 +68,8 @@
 			});
 			// set model
 			var url  = this.$el.data("url");
-			self.model = new ProjectFilterModel({projectIds : ids},{url : url});
+			self.model = new ProjectFilterModel({projectIds : ids} );
+			self.model.url = url;
 			
 			// init confirm dialog
 			this.$el.confirmDialog({
