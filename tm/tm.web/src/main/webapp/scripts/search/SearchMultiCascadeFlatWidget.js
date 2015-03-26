@@ -40,17 +40,15 @@ define(["jquery", "underscore", "isIE",  "jqueryui"], function($, _, isIE){
 			
 			// Issue 4362 : have to delegate show/hide to 
 			// a secondary object depending on the browser ability
-			// if you think : "modernizr" I say : "*** u"
-			if (isIE()){
-				this.options.isIE = true;
-				this.options.primaryManager = new RetardedOptionDisplayManager(primarySelect);
-				this.options.secondaryManager = new RetardedOptionDisplayManager(secondarySelect);
-			}
-			else{
-				this.options.isIE = false;
-				this.options.primaryManager = new RegularOptionDisplayManager(primarySelect);
-				this.options.secondaryManager = new RegularOptionDisplayManager(secondarySelect);
-			}
+			// if you think : "modernizr" I say : "**** u"
+			
+			var isie = isIE(),
+				Manager = (isie) ? RetardedOptionDisplayManager : RegularOptionDisplayManager;
+			
+			this.options.isIE = isie;
+			this.options.primaryManager = new Manager(primarySelect);
+			this.options.secondaryManager = new Manager(secondarySelect);
+		
 						
 			// add the on change handlers on the primary select
 			primarySelect.on('change', function(){
@@ -174,7 +172,7 @@ define(["jquery", "underscore", "isIE",  "jqueryui"], function($, _, isIE){
 					}
 				}
 			}
-		}, 
+		} 
 		
 	});
 	
@@ -182,13 +180,13 @@ define(["jquery", "underscore", "isIE",  "jqueryui"], function($, _, isIE){
 	// *********************** Issue 4362 handler *************************
 	
 	 function RegularOptionDisplayManager(select){
-		this.select = select
+		this.select = select;
 		this.show = function(code){
 			this.select.find('option[value="'+code+'"]').show();
 		};
 		this.hide = function(code){
 			this.select.find('option[value="'+code+'"]').hide();
-		}
+		};
 	}
 	 
 	/*
@@ -269,10 +267,9 @@ define(["jquery", "underscore", "isIE",  "jqueryui"], function($, _, isIE){
 			// remove the extra comma then select
 			querystring = querystring.substr(0, querystring.length-2);
 
-			return optionwhereinsert = select.find(querystring).first();
-	
+			return select.find(querystring).first();	
 
-		}
+		};
 	}
 	
 	

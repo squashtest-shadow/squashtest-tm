@@ -20,7 +20,7 @@
  */
 
 /*
- * That blody module is back !
+ * That bloody module is back ! Capable of detecting IE up to version 12.
  * 
  * Returns : 
  * - version of IE if relevant, 
