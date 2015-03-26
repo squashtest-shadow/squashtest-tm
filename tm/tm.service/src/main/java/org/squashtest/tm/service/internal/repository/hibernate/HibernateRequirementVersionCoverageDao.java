@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.service.internal.repository.hibernate;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -29,11 +30,13 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.sql.JoinType;
+import org.hibernate.type.LongType;
 import org.springframework.stereotype.Repository;
 import org.squashtest.tm.core.foundation.collection.DefaultPagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.testcase.RequirementVersionCoverage;
+import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.service.internal.foundation.collection.PagingUtils;
 import org.squashtest.tm.service.internal.foundation.collection.SortingUtils;
 import org.squashtest.tm.service.internal.repository.CustomRequirementVersionCoverageDao;
@@ -45,53 +48,67 @@ CustomRequirementVersionCoverageDao {
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<RequirementVersionCoverage> findAllByTestCaseId(long testCaseId, PagingAndSorting pas) {
-		Criteria crit = createFindAllCoverageCriteria();
 
-		crit.add(Restrictions.eq("TestCase.id", Long.valueOf(testCaseId)));
-		PagingUtils.addPaging(crit, pas);
-		SortingUtils.addOrder(crit, pas);
+		// we have to fetch our query and modify the hql a bit, hence the weird operation below
+		Query namedquery = currentSession().getNamedQuery("requirementVersionCoverage.findAllByTestCaseId");
+		String hql = namedquery.getQueryString();
+		hql = SortingUtils.addOrder(hql, pas);
 
-		return crit.list();
+		Query q = currentSession().createQuery(hql);
+		if(!pas.shouldDisplayAll()){
+			PagingUtils.addPaging(q, pas);
+		}
+
+		q.setParameter("testCaseId", testCaseId);
+
+		List<Object[]> raw = q.list();
+
+		// now we have to collect from the result set the only thing
+		// we want : the coverages
+		List<RequirementVersionCoverage> res = new ArrayList<>(raw.size());
+		for (Object[] tuple : raw){
+			res.add((RequirementVersionCoverage)tuple[0]);
+		}
+
+		return res;
 	}
 
-	private Criteria createFindAllCoverageCriteria() {
-		Criteria crit = currentSession().createCriteria(RequirementVersionCoverage.class, "RequirementVersionCoverage");
-		crit.createAlias("RequirementVersionCoverage.verifiedRequirementVersion", "RequirementVersion");
-		crit.createAlias("RequirementVersion.category", "RequirementCategory");
-		crit.createAlias("RequirementVersion.requirement", "Requirement", JoinType.LEFT_OUTER_JOIN);
-		crit.createAlias("RequirementVersionCoverage.verifyingTestCase", "TestCase");
-		crit.createAlias("Requirement.project", "Project", JoinType.LEFT_OUTER_JOIN);
 
-		return crit;
-	}
 
-	private Criteria createFindAllVerifiedCriteria(PagingAndSorting pagingAndSorting) {
-		Criteria crit = currentSession().createCriteria(RequirementVersion.class, "RequirementVersion");
-		crit.createAlias("RequirementVersion.category", "RequirementCategory");
-		crit.createAlias("requirement", "Requirement", JoinType.LEFT_OUTER_JOIN);
-		crit.createAlias("requirementVersionCoverages", "rvc");
-		crit.createAlias("rvc.verifyingTestCase", "TestCase");
-		crit.createAlias("requirement.project", "Project", JoinType.LEFT_OUTER_JOIN);
-
-		PagingUtils.addPaging(crit, pagingAndSorting);
-		SortingUtils.addOrder(crit, pagingAndSorting);
-
-		return crit;
-	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<RequirementVersion> findDistinctRequirementVersionsByTestCases(Collection<Long> testCaseIds,
 			PagingAndSorting pagingAndSorting) {
+
+
 		if (testCaseIds.isEmpty()) {
 			return Collections.emptyList();
 		}
 
-		Criteria crit = createFindAllVerifiedCriteria(pagingAndSorting);
+		// we have to fetch our query and modify the hql a bit, hence the weird operation below
+		Query namedquery = currentSession().getNamedQuery("requirementVersion.findDistinctRequirementVersionsByTestCases");
+		String hql = namedquery.getQueryString();
+		hql = SortingUtils.addOrder(hql, pagingAndSorting);
 
-		crit.add(Restrictions.in("TestCase.id", testCaseIds)).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+		Query q = currentSession().createQuery(hql);
+		if(!pagingAndSorting.shouldDisplayAll()){
+			PagingUtils.addPaging(q, pagingAndSorting);
+		}
 
-		return crit.list();
+		q.setParameterList("testCaseIds", testCaseIds, LongType.INSTANCE);
+
+		List<Object[]> raw = q.list();
+
+		// now we have to collect from the result set the only thing
+		// we want : the RequirementVersions
+		List<RequirementVersion> res = new ArrayList<>(raw.size());
+		for (Object[] tuple : raw){
+			res.add((RequirementVersion)tuple[0]);
+		}
+
+		return res;
+
 	}
 
 	@Override

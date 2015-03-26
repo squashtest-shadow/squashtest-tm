@@ -176,6 +176,17 @@
 	@NamedQuery(name = "testCase.findRootContentTestCase", query = "from TestCase where id in (:paramIds) and id in (select rootnodes.id from TestCaseLibrary tcl join tcl.rootContent rootnodes)"),
 	@NamedQuery(name = "testCase.findTestCasesWithParentFolder", query = "select tc, tcf from TestCaseFolder tcf join tcf.content tc where tc.id in (:testCasesIds)"),
 	@NamedQuery(name = "testCase.findAllLinkedToIteration", query = "select tc from IterationTestPlanItem item join item.referencedTestCase tc where tc.id in (:testCasesIds)"),
+	
+	/*
+	 *  The following query uses pretty long aliases. They MUST match the 
+	 *  name of the class, because the client code assumes this will be the 
+	 *  case.  
+	 */
+	@NamedQuery(name = "testCase.findVerifyingTestCases", 
+	query="select TestCase, (select min(m.endDate) from TestCase tc left join tc.milestones m where tc.id = TestCase.id) as endDate from TestCase TestCase " +
+			"inner join TestCase.requirementVersionCoverages rvc inner join rvc.verifiedRequirementVersion RequirementVersion " +
+			"inner join RequirementVersion.requirement Requirement join TestCase.project Project where RequirementVersion.id = :versionId "),
+			
 	@NamedQuery(name = "TestCase.findAllTestCaseIdsByLibraries", query = "select tc.id from TestCase tc join tc.project p join p.testCaseLibrary tcl where tcl.id in (:libraryIds)"),
 	@NamedQuery(name = "testCase.countSiblingsInFolder", query = "select maxindex(node) from TestCaseFolder f join f.content node where :nodeId in (select n.id from TestCaseFolder f2 join f2.content n where f2=f)"),
 	@NamedQuery(name = "testCase.countSiblingsInLibrary", query = "select maxindex(node) from TestCaseLibrary tcl join tcl.rootContent node where :nodeId in (select n.id from TestCaseLibrary tcl2 join tcl2.rootContent n where tcl2=tcl)"),
@@ -456,11 +467,45 @@
 	@NamedQuery(name = "requirementVersion.findLatestRequirementVersion", query = "select version from Requirement req join req.resource version where req.id = :requirementId"),
 	@NamedQuery(name = "requirementVersion.findVersionByRequirementAndMilestone", query = "select version from Requirement req join req.versions version join version.milestones milestone where req.id = :requirementId and milestone.id = :milestoneId"),
 	@NamedQuery(name = "RequirementVersion.findAllWithMilestones", query = "from RequirementVersion rv where rv.milestones is empty"),
-
+	
+	/*
+	 *  The following query uses pretty long aliases. They MUST match the 
+	 *  name of the class, because the client code assumes this will be the 
+	 *  case.  
+	 */
+	@NamedQuery(name = "requirementVersionCoverage.findAllByTestCaseId", 
+				query = "select RequirementVersionCoverage," +
+						"(select min(m.endDate) from RequirementVersion v left join v.milestones m " +
+						"inner join v.requirementVersionCoverages cov where cov.id = RequirementVersionCoverage.id" +
+						") as endDate " +
+						" from RequirementVersionCoverage RequirementVersionCoverage " +
+						"inner join RequirementVersionCoverage.verifiedRequirementVersion RequirementVersion " +
+						"inner join RequirementVersion.category RequirementCategory " +
+						"inner join RequirementVersionCoverage.verifyingTestCase TestCase " +
+						"inner join RequirementVersion.requirement Requirement "+
+						"inner join Requirement.project Project " +
+						"where TestCase.id = :testCaseId "),
+	
 	@NamedQuery(name = "RequirementVersion.countByRequirement", query = "select count(rv) from RequirementVersion rv join rv.requirement r where r.id = ?1"),
 	@NamedQuery(name = "requirementDeletionDao.findVersionIds", query = "select rv.id from RequirementVersion rv join rv.requirement r where r.id in (:reqIds)"),
 	@NamedQuery(name = "requirementVersion.findAllAttachmentLists", query = "select v.attachmentList.id from RequirementVersion v where v.id in (:versionIds)"),
 	
+	/*
+	 *  The following query uses pretty long aliases. They MUST match the 
+	 *  name of the class, because the client code assumes this will be the 
+	 *  case.  
+	 */
+	@NamedQuery(name = "requirementVersion.findDistinctRequirementVersionsByTestCases", 
+				query = "select RequirementVersion, " +
+						"(select min(m.endDate) from RequirementVersion v left join v.milestones m " +
+						"where v.id = RequirementVersion.id) as endDate " +
+						"from RequirementVersion RequirementVersion " +
+						"inner join RequirementVersion.category RequirementCategory " +
+						"inner join RequirementVersion.requirement Requirement " +
+						"inner join RequirementVersion.requirementVersionCoverages rvc " +
+						"inner join rvc.verifyingTestCase TestCase " +
+						"inner join Requirement.project Project " +
+						"where TestCase.id in (:testCaseIds) "),
 	
 	
 	//AutomatedSuite

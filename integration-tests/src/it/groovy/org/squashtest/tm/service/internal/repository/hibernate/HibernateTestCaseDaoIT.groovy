@@ -26,12 +26,14 @@ import java.lang.reflect.Proxy
 
 import javax.inject.Inject
 
+import org.hibernate.Query;
 import org.hibernate.SessionFactory
 import org.springframework.transaction.annotation.Transactional
 import org.squashtest.csp.tools.unittest.assertions.ListAssertions
 import org.squashtest.tm.core.foundation.collection.Paging
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting
 import org.squashtest.tm.core.foundation.collection.SortOrder
+import org.squashtest.tm.core.foundation.collection.Sorting;
 import org.squashtest.tm.domain.NamedReference
 import org.squashtest.tm.domain.requirement.RequirementCategory
 import org.squashtest.tm.domain.requirement.RequirementCriticality
@@ -40,6 +42,8 @@ import org.squashtest.tm.domain.testcase.TestCaseNature
 import org.squashtest.tm.domain.testcase.TestCaseStatus
 import org.squashtest.tm.domain.testcase.TestCaseType
 import org.squashtest.tm.domain.NamedReferencePair;
+import org.squashtest.tm.service.internal.foundation.collection.PagingUtils;
+import org.squashtest.tm.service.internal.foundation.collection.SortingUtils;
 import org.squashtest.tm.service.internal.repository.TestCaseDao
 import org.unitils.dbunit.annotation.DataSet
 
@@ -442,6 +446,58 @@ class HibernateTestCaseDaoIT extends DbunitDaoSpecification {
 		result.containsKey(-3L)
 		result.get(-1L) == TestCaseImportance.LOW
 		result.get(-3L) == TestCaseImportance.MEDIUM
+	}
+
+	/*
+	 * Dataset :
+	 *
+	 * test cases : [ id : name ]
+	 *
+	 * 	[239 : "1 to 10"],
+	 * 	[240 : "2 to 10"],
+	 * 	[241 : "1 to 5"],
+	 * 	[242 : "3 to 7"],
+	 * 	[243 : "6 to 10"],
+	 * 	[244 : "1 to 8"]
+	 *
+	 * milestones : [ id : name : endDate ]
+	 *
+	 * [1 	: "jalon1" 	: 2015/01/01],
+	 * [2 	: "jalon2" 	: 2015/02/01],
+	 * [3 	: "jalon3" 	: 2015/03/01],
+	 * [4 	: "jalon4" 	: 2015/04/01],
+	 * [5 	: "jalon5" 	: 2015/05/01],
+	 * [6 	: "jalon6" 	: 2015/06/01],
+	 * [7 	: "jalon7" 	: 2015/07/01],
+	 * [8 	: "jalon8" 	: 2015/08/01],
+	 * [9 	: "jalon9" 	: 2015/09/01],
+	 * [10 	: "jalon10" : 2015/10/01],
+	 *
+	 * The names of the test cases tells which milestones it belongs to.
+	 *
+	 * The purpose of that test is to sort the test cases by :
+	 * min(dataset.endDate), then ref, finally the name.
+	 *
+	 * We want them as verifying test cases for the requirement version 255
+	 *
+	 */
+	@DataSet("HibernateTestCaseDaoIT.verifying TC sorted by milestone.xml")
+	def "should find verifying test cases sorted by milestone dates"(){
+
+		given :
+
+		PagingAndSorting pas = Mock(PagingAndSorting)
+		pas.getSortedAttribute() >> "endDate"
+		pas.getSortOrder() >> SortOrder.ASCENDING
+		pas.shouldDisplayAll() >> true
+
+		when :
+
+		def res = testCaseDao.findAllByVerifiedRequirementVersion(255l, pas)
+
+		then :
+		res.collect {it.id} == [239, 241, 244, 240, 242, 243]
+
 	}
 
 	// ************* scaffolding ************

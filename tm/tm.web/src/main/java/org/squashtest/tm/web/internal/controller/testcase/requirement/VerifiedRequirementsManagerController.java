@@ -111,6 +111,19 @@ public class VerifiedRequirementsManagerController {
 	@Inject
 	private MilestoneFinderService milestoneFinder;
 
+
+
+	private DatatableMapper<String> verifiedRequirementVersionsMapper = new NameBasedMapper(8)
+	.mapAttribute(DataTableModelConstants.DEFAULT_ENTITY_ID_KEY, "id", RequirementVersion.class)
+	.mapAttribute(DataTableModelConstants.DEFAULT_ENTITY_NAME_KEY,"name", RequirementVersion.class)
+	.mapAttribute("project", "name", Project.class)
+	.mapAttribute("reference", "reference", RequirementVersion.class)
+	.mapAttribute("versionNumber", "versionNumber", RequirementVersion.class)
+	.mapAttribute("criticality", "criticality", RequirementVersion.class)
+	.mapAttribute("category", "category", RequirementVersion.class)
+	.map("milestone-dates", "endDate");
+
+
 	@RequestMapping(value = "/test-cases/{testCaseId}/verified-requirement-versions/manager", method = RequestMethod.GET)
 	public String showTestCaseManager(@PathVariable long testCaseId, Model model,
 			@CookieValue(value = "jstree_open", required = false, defaultValue = "") String[] openedNodes,
@@ -410,13 +423,5 @@ public class VerifiedRequirementsManagerController {
 
 	}
 
-	private DatatableMapper<String> verifiedRequirementVersionsMapper = new NameBasedMapper(7)
-	.mapAttribute(DataTableModelConstants.DEFAULT_ENTITY_ID_KEY, "id", RequirementVersion.class)
-	.mapAttribute(DataTableModelConstants.DEFAULT_ENTITY_NAME_KEY,"name", RequirementVersion.class)
-	.mapAttribute("project", "name", Project.class)
-	.mapAttribute("reference", "reference", RequirementVersion.class)
-	.mapAttribute("versionNumber", "versionNumber", RequirementVersion.class)
-	.mapAttribute("criticality", "criticality", RequirementVersion.class)
-	.mapAttribute("category", "category", RequirementVersion.class);
 
 }

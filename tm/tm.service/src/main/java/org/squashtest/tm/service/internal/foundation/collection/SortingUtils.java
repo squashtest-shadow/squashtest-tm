@@ -82,6 +82,14 @@ public final class SortingUtils {
 
 	// ***************** for HQL **********************
 
+	public static String addOrders(String hql, Collection<Sorting> sortings){
+		StringBuilder builder = new StringBuilder(hql);
+		for (Sorting sorting : sortings){
+			addOrder(builder, sorting);
+		}
+		return builder.toString();
+	}
+
 	public static void addOrder(StringBuilder hqlbuilder, Sorting sorting) {
 
 		// escapes if nothing needs to be done

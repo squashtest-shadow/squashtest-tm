@@ -394,20 +394,56 @@ public class HibernateTestCaseDao extends HibernateEntityDao<TestCase> implement
 		return query.list();
 	}
 
+
+
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see org.squashtest.csp.tm.internal.repository.TestCaseDao#findAllVerifyingRequirementVersion(long,
 	 * org.squashtest.tm.core.foundation.collection.PagingAndSorting)
 	 */
+
+	/*
+	 * Issue #1629
+	 * 
+	 * Observed problem : test cases sorted by references are indeed sorted by reference, but no more by name. Actual
+	 * problem : We always want them to be sorted by reference and name, even when we want primarily sort them by
+	 * project or execution type or else. Solution : The resultset will be sorted on all the attributes (ascending), and
+	 * the Sorting specified by the user will have an higher priority.
+	 * 
+	 * See #createEffectiveSorting(Sorting sorting), just below
+	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<TestCase> findAllByVerifiedRequirementVersion(long verifiedId, PagingAndSorting sorting) {
-		Criteria crit = createFindAllVerifyingCriteria(sorting);
 
-		crit.add(Restrictions.eq("RequirementVersion.id", Long.valueOf(verifiedId)));
+		// create the sorting, see comments above
+		List<Sorting> effectiveSortings = createEffectiveSorting(sorting);
 
-		return crit.list();
+		// we have to fetch our query and modify the hql a bit, hence the weird operation below
+		Query namedquery = currentSession().getNamedQuery("testCase.findVerifyingTestCases");
+		String hql = namedquery.getQueryString();
+		hql = SortingUtils.addOrders(hql, effectiveSortings);
+
+		Query q = currentSession().createQuery(hql);
+		if(!sorting.shouldDisplayAll()){
+			PagingUtils.addPaging(q, sorting);
+		}
+
+		q.setParameter("versionId", verifiedId);
+
+		List<Object[]> raw = q.list();
+
+		// now we have to collect from the result set the only thing
+		// we want : the test cases
+		List<TestCase> res = new ArrayList<>(raw.size());
+		for (Object[] tuple : raw){
+			res.add((TestCase)tuple[0]);
+		}
+
+
+		return res;
+
 	}
 
 	/**
@@ -424,22 +460,6 @@ public class HibernateTestCaseDao extends HibernateEntityDao<TestCase> implement
 	 * 
 	 * See #createEffectiveSorting(Sorting sorting), just below
 	 */
-	private Criteria createFindAllVerifyingCriteria(PagingAndSorting sorting) {
-
-		Criteria crit = currentSession().createCriteria(TestCase.class, "TestCase");
-		crit.createAlias("requirementVersionCoverages", "rvc");
-		crit.createAlias("rvc.verifiedRequirementVersion", "RequirementVersion");
-		crit.createAlias("RequirementVersion.requirement", "Requirement", JoinType.LEFT_OUTER_JOIN);
-		crit.createAlias("project", "Project", JoinType.LEFT_OUTER_JOIN);
-
-		List<Sorting> effectiveSortings = createEffectiveSorting(sorting);
-		if(!sorting.shouldDisplayAll()){
-			PagingUtils.addPaging(crit, sorting);
-		}
-		SortingUtils.addOrders(crit, effectiveSortings);
-
-		return crit;
-	}
 
 	private List<Sorting> createEffectiveSorting(Sorting userSorting) {
 

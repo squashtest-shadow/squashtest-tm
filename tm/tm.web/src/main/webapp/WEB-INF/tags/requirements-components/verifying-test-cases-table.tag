@@ -63,7 +63,7 @@
       <th data-def="map=tc-index, select">#</th>
       <th data-def="map=project-name, sortable"><f:message key="label.project" /></th>
       <c:if test="${not empty cookie['milestones']}">
-      <th data-def="map=milestone-dates"><f:message key="label.Milestone"/></th>
+      <th data-def="sortable, map=milestone-dates"><f:message key="label.Milestone"/></th>
       </c:if>       
       <th data-def="map=tc-reference, sortable"><f:message key="test-case.reference.label" /></th>
       <th data-def="map=tc-name, sortable, link=${testCaseUrl}/{tc-id}/info"><f:message key="test-case.name.label" /></th>

@@ -98,7 +98,8 @@ public class VerifyingTestCaseManagerController {
 	.mapAttribute(DataTableModelConstants.PROJECT_NAME_KEY, "name", Project.class)
 	.mapAttribute("tc-reference", "reference", TestCase.class)
 	.mapAttribute("tc-name", "name", TestCase.class)
-	.mapAttribute("tc-type", "executionMode", TestCase.class);
+	.mapAttribute("tc-type", "executionMode", TestCase.class)
+	.map("milestone-dates", "endDate");
 
 
 	@RequestMapping(value = "/requirement-versions/{requirementVersionId}/verifying-test-cases/manager", method = RequestMethod.GET)
