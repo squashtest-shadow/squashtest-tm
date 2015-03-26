@@ -66,7 +66,7 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil", "app/ws/squa
 			}, {
 				unbindButtons : {
 					delegate : "#remove-permission-dialog",
-					tooltip : translator.get('dialog.unbind-ta-project.tooltip')
+					tooltip : translator.get('dialog.unbind-habilitation.tooltip')
 				}
 			}); // pure DOM conf
 		},
