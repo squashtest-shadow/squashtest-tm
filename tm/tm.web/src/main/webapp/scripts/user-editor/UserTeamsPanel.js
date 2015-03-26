@@ -56,7 +56,7 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil", "squash.tran
 			$("#teams-table").squashTable({}, {
 				unbindButtons : {
 					delegate : "#remove-teams-dialog",
-					tooltip : translator.get('dialog.unbind-ta-project.tooltip')
+					tooltip : translator.get('dialog.unbind-team.tooltip')
 				}
 			}); // pure DOM conf
 		},
