@@ -66,7 +66,7 @@
           <span class="admin-section-label"><f:message key="label.projectManagement" /></span>
         </a>
         
-        
+          <sec:authorize var="isAdmin" access="hasRole('ROLE_ADMIN')" />
         <c:if test="${ isAdmin or milestoneFeatureEnabled }">
         <a href="${ milestoneUrl }" class="unstyledLink">
           <span id="milestone-admin" class="admin-section-icon admin-milestone-icon"></span>
