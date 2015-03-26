@@ -61,7 +61,7 @@
 	
 	<jsp:attribute name="subPageButtons">
 		<f:message var="backButtonLabel" key="label.Back" />
-		<input type="button" class="button" value="${backButtonLabel}" onClick="document.location.href= '${milestonesUrl}'"/>	
+		<a class="sq-btn" href="${milestonesUrl}">${backButtonLabel}</a>	
 	</jsp:attribute>
 	<jsp:attribute name="informationContent">
 

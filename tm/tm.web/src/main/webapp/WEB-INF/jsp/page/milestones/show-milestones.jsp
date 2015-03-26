@@ -78,7 +78,7 @@
 	
 	<jsp:attribute name="subPageButtons">
 		<f:message var="backButtonLabel" key="label.Back" />
-		<input type="button" class="sq-btn" value="${backButtonLabel}" onClick="document.location.href= '${administrationUrl}'"/>	
+		<a class="sq-btn" href="${administrationUrl}">${backButtonLabel}</a>
 	</jsp:attribute>
 	<jsp:attribute name="informationContent">
 		<c:url var="milestonesUrl" value="/administration/milestones/list" />
