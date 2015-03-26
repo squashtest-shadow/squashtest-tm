@@ -423,7 +423,7 @@
                 <input id="zip-import-opt" type="radio" name="import-type" value="zip" class="centered" />
                 <span style="text-decoration: underline;">ZIP</span>
                 <div class="nota-bene" th:text="#{test-case.import.dialog.zip.description}">description</div>
-                <a href="$@{/static/}+#{file.testcase.import.template.zip}"
+                <a th:href="@{/static/}+#{file.testcase.import.template.zip}"
                   th:text="#{test-case.import.dialog.zip.template}">zip template </a>
               </div>
 
