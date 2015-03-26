@@ -49,10 +49,6 @@ require([ "common" ], function(common) {
 			event.view.remove();
 		});
 
-		$(document).on("click", "#back", function() {
-			window.history.back();
-		});
-
 		$(function() {
 			WS.init();
 		});

@@ -23,7 +23,6 @@ define([ 'module', "info-list/info-list-modification-information-view", "info-li
 		SimpleJEditable, routing, translator) {
 
 	var config = module.config();
-	
 
 	var infoListModificationView = Backbone.View.extend({
 		el : "#information-content",
@@ -32,26 +31,26 @@ define([ 'module', "info-list/info-list-modification-information-view", "info-li
 			this.config = config;
 			this.configureRenameInfoListPopup();
 			this.configureDeleteInfoListPopup();
-			
+
 			var infoView =	new InfoView(config);
 			var tableView =	new TableView(config);
 
 		},
 		basicInit : function() {
 			basic.init();
-			
-		}, 
-		
+
+		},
+
 		events : {
 			"click #rename-info-list-button" : "renameInfoListPopup",
 			"click #delete-info-list-button" : "deleteInfoListPopup"
 			},
-		
+
 		renameInfoListPopup : function(){
 			var self = this;
 			self.RenameInfoListPopup.formDialog("open");
 		},
-		
+
 		deleteInfoListPopup : function(){
 			var self = this;
 			var message = $("#delete-info-list-warning");
@@ -66,42 +65,42 @@ define([ 'module', "info-list/info-list-modification-information-view", "info-li
 					message.text(translator.get("dialog.delete.info-list.unused.message"));
 				}
 
-			});	
+			});
 			self.DeleteInfoListPopup.formDialog("open");
-		}, 
+		},
 		configureRenameInfoListPopup : function(){
 			var self = this;
-			
+
 			var dialog = $("#rename-info-list-popup");
 			this.RenameInfoListPopup = dialog;
-			
+
 			dialog.formDialog();
-			
+
 			dialog.on('formdialogconfirm', function(){
 				self.renameInfoList.call(self);
 			});
-			
+
 			dialog.on('formdialogcancel', this.closePopup);
-		
+
 		},
 		configureDeleteInfoListPopup : function(){
 			var self = this;
-			
+
 			var dialog = $("#delete-info-list-popup");
 			this.DeleteInfoListPopup = dialog;
-			
+
 			dialog.formDialog();
-			
+
 			dialog.on('formdialogconfirm', function(){
 				self.deleteInfoList.call(self);
 			});
-			
+
 			dialog.on('formdialogcancel', this.closePopup);
-		}, 
+		},
 		renameInfoList : function(){
 			var self = this;
 			var newName = self.RenameInfoListPopup.find("#rename-popup-info-list-label").val();
-		
+
 			$.ajax({
 				type : 'POST',
 				data : {
@@ -113,21 +112,21 @@ define([ 'module', "info-list/info-list-modification-information-view", "info-li
 				self.$("#info-list-name-header").text(data);
 				self.RenameInfoListPopup.formDialog('close');
 			});
-			
-			
-		}, 
+
+
+		},
 		deleteInfoList : function(){
 			$.ajax({
 				type : 'DELETE',
 				url : routing.buildURL("info-list.info", self.config.data.infoList.id),
 			}).done(function(data) {
 			});
-			
+
 		},
 		closePopup : function() {
 			$(this).formDialog('close');
 		},
-		
+
 
 	});
 	return infoListModificationView;

@@ -63,12 +63,9 @@
 						personnalisé de test</h2>
 				</div>
 
-				<div id="sub-page-buttons" class="sub-page-buttons">
-
-					<input id="back" type="button" th:value="#{ label.Back }"
-						class="sq-btn" value="Back" />
-
-				</div>
+        <div id="sub-page-buttons" class="sub-page-buttons">
+            <a id="back" href="/squash/administration/info-lists" th:href="@{/administration/info-lists}" th:text="#{ label.Back }" class="sq-btn">Back</a>
+        </div>
 
 				<div class="unsnap"></div>
 			</div>
@@ -130,12 +127,12 @@
 						</div>
 
 						<div class="sq-tg expand" id="table-view">
-                            <div class="tg-head">                            
+                            <div class="tg-head">
                               <div class="tg-toolbar">
                                 <button id="add-info-list-item-button"
                                   class="sq-icon-btn btn-sm">
                                   <span class="ui-icon ui-icon-plus squared-icons">+</span>
-                                </button>                          
+                                </button>
                               </div>
                             </div>
 
