@@ -23,7 +23,8 @@
 			module, $, translator, basic, SelectJEditable, confman, routing) {
 
 		var config = module.config();
-
+	
+		
 		function clickBackButton() {
 			document.location.href = config.urls.milestonesUrl;
 		}

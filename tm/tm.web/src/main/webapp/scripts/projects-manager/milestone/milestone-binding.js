@@ -20,10 +20,11 @@
  */
 define([ 'module', "jquery", "squash.basicwidgets", "workspace.routing", "squash.translator", "squash.configmanager", "squashtable", "jquery.squash.formdialog", "jeditable.datepicker" ], function(module, $, basic, routing, translator, confman) {
 
-	
+
 			basic.init();
 			var config = module.config();
-
+			var emptyDate = "-";
+			
 			$(function() {
 				$("#binded-milestone-table").squashTable({"bServerSide":false}, {});
 				$("#global-milestone-table").squashTable({sAjaxSource:config.urls.globalMilestones, "bServerSide":false},{});
@@ -131,15 +132,25 @@ define([ 'module', "jquery", "squash.basicwidgets", "workspace.routing", "squash
 				//config date picker
 				var dateSettings = confman.getStdDatepicker(); 
 				$("#add-milestone-end-date").editable(function(value){
+					if (value.trim() === ""){
+						$("#add-milestone-end-date").text(emptyDate);
+					} else {
 					$("#add-milestone-end-date").text(value);
+					}
 			    }, {
 					type : 'datepicker',
 					datepicker : dateSettings,
 					name : "value"
+		
 				});
 				
+				function emptyDatePicker(){
+					$("#add-milestone-end-date").text(emptyDate);
+				}
+	
+				
 				//config RTE
-				this.$textAreas = $("textarea");
+			this.$textAreas = $("textarea");
 				function decorateArea() {
 					$(this).ckeditor(function() {
 					}, {
@@ -293,10 +304,12 @@ define([ 'module', "jquery", "squash.basicwidgets", "workspace.routing", "squash
 						$.squash.openMessage(warn.errorTitle, warn.errorMessage);
 					}
 		
-					
+				
+						
 					
            //create and bind milestone to the project
             $("#create-and-bind-milestone-button").on('click', function() {
+            	emptyDatePicker();
 				createAndBindMilestoneDialog.formDialog('open');
 			});
 
@@ -305,6 +318,7 @@ define([ 'module', "jquery", "squash.basicwidgets", "workspace.routing", "squash
 			createAndBindMilestoneDialog.formDialog();
 
 			createAndBindMilestoneDialog.on('formdialogcancel', function() {
+				
 				createAndBindMilestoneDialog.formDialog('close');
 				});			
 					
