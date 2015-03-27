@@ -132,6 +132,7 @@ public class RequirementFormModel {
 		dto.setReference(reference);
 		dto.setCategory(category);
 		dto.setCriticality(criticality);
+		dto.setDescription(description);
 
 
 		Map<Long, RawValue> cufs = new HashMap<Long, RawValue>(customFields.size());
