@@ -22,11 +22,9 @@
 -->
   <div th:fragment="icon-picker-dialog(id, icons)">
     <div id="icon-picker-dialog" class="not-displayed popup-dialog" th:id="${id}" th:title="#{title.infoList.item.icon.choose}">
-      <table class="form-horizontal">
-        <tr>
-          <td th:each="icon :${icons}" th:class="'sq-icon sq-spaced-icon ' + ${icon} " />
-        </tr>
-      </table>
+      <div class="form-horizontal">
+          <span th:each="icon :${icons}" th:class="'sq-icon sq-spaced-icon ' + ${icon} "></span>
+      </div>
       <div class="popup-dialog-buttonpane">
         <input class="confirm" type="button" th:value="#{label.Add}" value="add" /> <input class="cancel" type="button"
           th:value="#{label.Cancel}" value="cancel" />

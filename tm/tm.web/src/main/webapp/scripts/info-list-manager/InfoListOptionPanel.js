@@ -106,7 +106,7 @@ define([ "underscore", "app/BindView", "handlebars", "backbone.validation", "squ
 			var $optIcon = this.$("#sel-opt-icon");
 
 			if (_.isEmpty(icon)) {
-				$optIcon.removeClass().text($optIcon.data("none"));
+				$optIcon.attr("class", "").text($optIcon.data("none"));
 			} else {
 				$optIcon.addClass("sq-icon sq-icon-" + icon).text("");
 			}

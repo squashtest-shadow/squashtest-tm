@@ -19,6 +19,7 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 define([ "jquery", "backbone", "handlebars", "workspace.routing", "jquery.squash.confirmdialog" ], function($, Backbone, Handlebars, routing) {
+	"use strict";
 	var ICON_PREFIX = "sq-icon-";
 
 	var View = Backbone.View.extend({
@@ -38,7 +39,7 @@ define([ "jquery", "backbone", "handlebars", "workspace.routing", "jquery.squash
 		},
 
 		events : {
-			"click td"           : "selectIcon",
+			"click .sq-icon" : "selectIcon",
 			"confirmdialogcancel" : "cancel",
 			"confirmdialogconfirm" : "confirm",
 
@@ -47,43 +48,45 @@ define([ "jquery", "backbone", "handlebars", "workspace.routing", "jquery.squash
 		changeIconOpacity: function (event){
 			var icon = event.currentTarget;
 			var $icon = this.$(icon);
-			this.$("td").addClass("low-opacity");
+			this.$icons().addClass("low-opacity");
 			$icon.removeClass("low-opacity");
 
 		},
 		restoreIconOpacity : function (event){
-			this.$("td").removeClass("low-opacity");
+			this.$icons().removeClass("low-opacity");
 		},
 		initIcon : function(){
-	        //clean the style
-			this.$("td").removeClass("info-list-item-icon-selected");
-			this.$("td").removeClass("low-opacity");
+			var $icons = this.$icons();
+			//clean the style
+
+			$icons.removeClass("info-list-item-icon-selected")
+				.removeClass("low-opacity");
 
 			//if icon is selected add correct style
-			if (this.model.icon && this.model.icon !== "sq-icon-noicon"){
-			this.$("td").addClass("low-opacity");
-			var selected = this.$("." + this.model.icon);
-			selected.addClass("info-list-item-icon-selected");
-			selected.removeClass("low-opacity");
+			if (this.model.icon && this.model.icon !== "sq-icon-noicon") {
+				$icons.addClass("low-opacity");
+				var selected = this.$("." + this.model.icon);
+				selected.addClass("info-list-item-icon-selected");
+				selected.removeClass("low-opacity");
 			}
 
 		},
+
+		"$icons": function() {
+			return this.$(".sq-icon");
+		},
+
 		selectIcon : function(event){
-			var icon = event.currentTarget;
-			var selected = this.$(".info-list-item-icon-selected");
-			selected.removeClass("info-list-item-icon-selected");
-			var $icon = this.$(icon);
+			var $clicked = $(event.currentTarget);
+			$clicked.toggleClass("info-list-item-icon-selected");
 
+			if ($clicked.hasClass("info-list-item-icon-selected")) {
+				this.$icons().addClass("low-opacity");
+				$clicked.removeClass("low-opacity");
 
-			if (!selected[0] || selected[0].cellIndex !== $icon[0].cellIndex){
-			$icon.addClass("info-list-item-icon-selected");
-			this.$("td").addClass("low-opacity");
-			$icon.removeClass("low-opacity");
 			} else {
-				this.$("td").removeClass("low-opacity");
-
+				this.$icons().removeClass("low-opacity");
 			}
-
 		},
 
 

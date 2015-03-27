@@ -263,7 +263,7 @@
               <label for="sel-opt-icon" class="control-label" th:text="#{label.icon}">Icon</label>
               <div class="controls">
                 <a id="choose-sel-opt-icon" href="javascript:void(0)" value="choose icon" th:value="#{label.chooseIcon}">
-                  <span id="sel-opt-icon" class="sq-icon" data-none="#{label.infoListItems.icon.none}" th:text="#{label.infoListItems.icon.none}">none</span>
+                  <span id="sel-opt-icon" class="sq-icon" th:attr="data-none=#{label.infoListItems.icon.none}" th:text="#{label.infoListItems.icon.none}">none</span>
                 </a>
               </div>
             </div>
@@ -273,27 +273,25 @@
             </div>
           </script>
 
-          <script id="default-cell-tpl" type="text/x-handlebars-template" th:inline="text">
-          {{!--<![CDATA[--}}
-          <input type="radio" name="option-default" value="{{option}}" {{checked}} />
-          {{!--]]>--}}
-          </script>
+        <script id="default-cell-tpl" type="text/x-handlebars-template" th:inline="text">
+        {{!--<![CDATA[--}}
+        <input type="radio" name="option-default" value="{{option}}" {{checked}} />
+        {{!--]]>--}}
+        </script>
 
-          <script id="icon-cell-tpl" type="text/x-handlebars-template" th:inline="text">
-          <a data-code="{{code}}" href="javascript:void(0)" class="option-icon">
-            <span class="sq-icon sq-icon-{{icon}}" title="{{icon}}"></span>
-          </a>
-          </script>
-          
-          <script id="noicon-cell-tpl" type="text/x-handlebars-template" th:inline="text">
-          <a data-code="{{code}}" href="javascript:void(0)" class="option-icon" th:text="#{label.infoListItems.icon.none}">None</a>
-          </script>
-          
-          <script id="icon-picker-dialog-tpl" type="text/x-handlebars-template" th:inline="text" th:include="icon-library.frag :: icon-picker-dialog(id='icon-picker-dialog', icons=${icons})">
-          </script>
-          
-          <script id="icon-picker-dialog-tpl" type="text/x-handlebars-template" th:inline="text" th:include="icon-library.frag :: icon-picker-dialog(id='icon-picker-dialog', icons=${icons})">
-          </script>
+        <script id="icon-cell-tpl" type="text/x-handlebars-template" th:inline="text">
+        <a data-code="{{code}}" href="javascript:void(0)" class="option-icon">
+          <span class="sq-icon sq-icon-{{icon}}" title="{{icon}}"></span>
+        </a>
+        </script>
+
+        <script id="noicon-cell-tpl" type="text/x-handlebars-template" th:inline="text">
+        <a data-code="{{code}}" href="javascript:void(0)" class="option-icon" th:text="#{label.infoListItems.icon.none}">None</a>
+        </script>
+
+        <script id="icon-picker-dialog-tpl" type="text/x-handlebars-template" th:inline="text" th:include="icon-library.frag :: icon-picker-dialog(id='icon-picker-dialog', icons=${icons})">
+        </script>
+
         <script type="text/javascript">
         publish("loaded.newItemDialog");
         </script>
