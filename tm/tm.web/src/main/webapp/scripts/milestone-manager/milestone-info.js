@@ -132,6 +132,25 @@
 				changeOwnerRequest(value, ownerEditable);
 			}		
 		};
+
+
+		$("#delete-milestone-button").on('click', function() {
+			var popup = $("#delete-milestone-popup");
+			popup.confirmDialog('open');
+		});		
+		
+		$("#delete-milestone-popup").confirmDialog().on('confirmdialogconfirm', function() {
+			var url =  config.urls.deleteMilestoneUrl;
+			$.ajax({
+				url : url,
+				type : 'delete'
+			}).done(function(){
+				document.location.href = config.urls.milestonesUrl;
+			});
+		
+		});
+		
+		
 		
 		
 $("#changeOwner-popup").confirmDialog().on('confirmdialogconfirm', function(){	

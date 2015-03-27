@@ -33,6 +33,11 @@
 <s:url var="milestoneUrl" value="/milestones/{milestoneId}">
 	<s:param name="milestoneId" value="${milestone.id}" />
 </s:url>
+
+<s:url var="deleteMilestoneUrl" value="/administration/milestones/{milestoneId}">
+	<s:param name="milestoneId" value="${milestone.id}" />
+</s:url>
+
 <s:url var="milestonesUrl" value="/administration/milestones" />
 
 <s:url var="projectsUrl" value="/milestones-binding/milestone/{milestoneId}/project">
@@ -59,6 +64,7 @@
 		<h2><f:message key="workspace.milestone.info.title" /></h2>
 	</jsp:attribute>
 	
+
 	<jsp:attribute name="subPageButtons">
 		<f:message var="backButtonLabel" key="label.Back" />
 		<a class="sq-btn" href="${milestonesUrl}">${backButtonLabel}</a>	
@@ -81,6 +87,13 @@
 
 		</div>
 	
+			<div id="milestone-toolbar" class="toolbar-class ui-corner-all">
+	<div class="snap-left">
+<comp:general-information-panel auditableEntity="${milestone}"  />
+				</div>
+	</div>
+	
+	
 		<div class="fragment-body">
 			<%------------------------------------------------ BODY -----------------------------------------------%>
 	
@@ -91,7 +104,10 @@
 				<f:message var="rename" key="rename" />
 			<c:if test="${canEdit }">
 				<input type="button" value="${ rename }" id="rename-milestone-button"
-							class="sq-btn" />
+							class="sq-btn" title="<f:message key="milestone.button.rename.label" />"/>
+							
+	<f:message var="delete" key='button.delete.label' />
+ 				<input type="button" value="${ delete }" id="delete-milestone-button" class="sq-btn" title = 	"<f:message key='milestone.button.delete.label' />"/>		
 							</c:if>
 			</div>
 			</div>
@@ -380,6 +396,22 @@
   
 <!-- ------------------------------------END RENAME POPUP------------------------------------------------------- -->
 
+
+<f:message var="deleteMilestoneTitle" key="dialog.delete-milestone.title" />
+	<f:message var="warningDelete" key="dialog.delete-milestone.message" />
+	<div id="delete-milestone-popup" class="popup-dialog not-displayed" title="${deleteMilestoneTitle}">
+
+        <comp:notification-pane type="error" txtcontent="${warningDelete}"/>
+
+
+		<div class="popup-dialog-buttonpane">
+		    <input class="confirm" type="button" value="${confirmLabel}" />
+		    <input class="cancel" type="button" value="${cancelLabel}" />				
+		</div>
+
+
+
+
 <script type="text/javascript">
 
 
@@ -389,6 +421,7 @@ requirejs.config({
 			urls: {
 				milestonesUrl : "${milestonesUrl}",
 				milestoneUrl :  "${milestoneUrl}",
+				deleteMilestoneUrl: "${deleteMilestoneUrl}"
 			      },
 			data: {
 				canEdit : ${canEdit},
