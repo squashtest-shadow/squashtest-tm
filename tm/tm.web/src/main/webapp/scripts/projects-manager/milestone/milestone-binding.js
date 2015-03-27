@@ -45,7 +45,7 @@ define([ 'module', "jquery", "squash.basicwidgets", "workspace.routing", "squash
 				table.find(":checkbox").prop('checked', false);
 			}
 			
-		    function checkAll(table) {
+			function checkAll(table) {
 				table.find(":checkbox").prop('checked', true);
 			}
 
@@ -137,7 +137,7 @@ define([ 'module', "jquery", "squash.basicwidgets", "workspace.routing", "squash
 					} else {
 					$("#add-milestone-end-date").text(value);
 					}
-			    }, {
+				},{
 					type : 'datepicker',
 					datepicker : dateSettings,
 					name : "value"
@@ -303,13 +303,10 @@ define([ 'module', "jquery", "squash.basicwidgets", "workspace.routing", "squash
 						});
 						$.squash.openMessage(warn.errorTitle, warn.errorMessage);
 					}
-		
-				
-						
 					
-           //create and bind milestone to the project
-            $("#create-and-bind-milestone-button").on('click', function() {
-            	emptyDatePicker();
+			//create and bind milestone to the project
+			$("#create-and-bind-milestone-button").on('click', function() {
+				emptyDatePicker();
 				createAndBindMilestoneDialog.formDialog('open');
 			});
 
