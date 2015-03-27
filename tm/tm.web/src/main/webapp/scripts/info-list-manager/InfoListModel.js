@@ -27,15 +27,17 @@ define([ "jquery", "backbone", "underscore", "squash.translator", "../app/squash
 	function validateUniqueProp(val, attr, computed) {
 		var defined = false;
 
-		$.ajax({ // this is synchronous
-			url: this.apiRoot + "/" + attr + "/" + val,
-			method: "get",
-			async: false,
-			data: { format: "exists" },
-			success: function(data) {
+		if (!_.isEmpty(val)) {
+			$.ajax({ // this is synchronous
+				url: this.apiRoot + "/" + attr + "/" + val,
+				method: "get",
+				async: false,
+				data: { format: "exists" },
+				success: function(data) {
 					defined = data.exists;
-			}
-		});
+				}
+			});
+		}
 
 		if (defined) {
 			return messages.get("message." + attr + "AlreadyDefined");
