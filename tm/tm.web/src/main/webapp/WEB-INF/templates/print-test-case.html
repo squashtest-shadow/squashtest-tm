@@ -324,7 +324,7 @@
 						<td th:text="*{name}">Couleurs des banières</td>
 						<td th:text="*{versionNumber}">3</td>
 						<td th:text="#{__*{criticality.i18nKey}__}">crit</td>
-						<td th:text="${(catLabel != null) ? catLabel : siblingVersion.category.label}">cat</td>
+						<td th:text="${(catLabel != null) ? catLabel : verifReq.category.label}">cat</td>
 						<td th:text="${ #sets.isEmpty(verifReq.verifyingSteps) ? '' :  
 										#sets.size(verifReq.verifyingSteps) > 1  ? '*' : 
 										verifReq.verifyingSteps[0].index + 1}">0</td>
