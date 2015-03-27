@@ -63,6 +63,7 @@
 
 
 <f:message var="refreshLabel" key="label.Refresh" />
+<f:message var="campaignProgressHelper" key="dashboard.campaigns.progression.helper"/>
 
 <div id="dashboard-master" data-def="url=${url}">
 
