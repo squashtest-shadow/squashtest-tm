@@ -46,7 +46,7 @@ define([ "jquery", "backbone", "underscore", "app/lnf/Forms" ], function($, Back
 	var setProp = function(event) {
 		if (!!this.model && !event.wasBound) {
 			var control = event.target;
-			this.model.set($(control).data("prop"), control.value);
+			this.model.set($(control).data("prop"), $(control).val());
 			event.wasBound = true;
 		}
 	};
