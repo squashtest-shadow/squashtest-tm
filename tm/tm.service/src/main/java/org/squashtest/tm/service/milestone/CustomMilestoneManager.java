@@ -37,10 +37,16 @@ public interface CustomMilestoneManager extends MilestoneFinderService {
 	@PreAuthorize(MILESTONE_FEAT_ENABLED)
 	void addMilestone(Milestone milestone);
 
+	@PreAuthorize(MILESTONE_FEAT_ENABLED)
+	void changeLabel(long milestoneId, String newLabel);
+
 	List<Milestone> findAll();
 
 	@PreAuthorize(MILESTONE_FEAT_ENABLED)
 	void removeMilestones(Collection<Long> ids);
+
+
+
 
 	/**
 	 *
@@ -108,7 +114,7 @@ public interface CustomMilestoneManager extends MilestoneFinderService {
 	void disableFeature();
 
 	boolean isBoundToAtleastOneObject(long milestoneId);
-	
+
 	void unbindAllObjects(long milestoneId);
 
 

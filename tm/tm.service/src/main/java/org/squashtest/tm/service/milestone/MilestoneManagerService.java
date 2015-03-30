@@ -42,9 +42,6 @@ public interface MilestoneManagerService extends CustomMilestoneManager {
 	void changeDescription(long milestoneId, String newDescription);
 
 	@PreAuthorize(MILESTONE_FEAT_ENABLED)
-	void changeLabel(long milestoneId, String newLabel);
-
-	@PreAuthorize(MILESTONE_FEAT_ENABLED)
 	void changeStatus(long milestoneId, MilestoneStatus newStatus);
 
 	@PreAuthorize(MILESTONE_FEAT_ENABLED)

@@ -33,6 +33,7 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.squashtest.tm.domain.campaign.Campaign;
 import org.squashtest.tm.domain.milestone.Milestone;
@@ -78,6 +79,13 @@ public class CustomMilestoneManagerServiceImpl implements CustomMilestoneManager
 		milestoneDao.checkLabelAvailability(milestone.getLabel());
 		milestone.setOwner(userService.findCurrentUser());
 		milestoneDao.persist(milestone);
+	}
+
+	@Override
+	public void changeLabel(long milestoneId, String newLabel) {
+		milestoneDao.checkLabelAvailability(newLabel);
+		Milestone m = milestoneDao.findById(milestoneId);
+		m.setLabel(newLabel);
 	}
 
 	@Override
@@ -329,7 +337,7 @@ public class CustomMilestoneManagerServiceImpl implements CustomMilestoneManager
 
 		if (isUnion
 				&& (source.getStatus() != MilestoneStatus.IN_PROGRESS || !permissionEvaluationService
-						.hasRole("ROLE_ADMIN") && isGlobal(source))) {
+				.hasRole("ROLE_ADMIN") && isGlobal(source))) {
 			throw new IllegalArgumentException(
 					"milestone can't be synchronized because it's status or range don't allow it");
 		}
@@ -473,16 +481,16 @@ public class CustomMilestoneManagerServiceImpl implements CustomMilestoneManager
 
 	@Override
 	public void unbindAllObjects(long milestoneId) {
-		
+
 		milestoneDao.unbindAllObjects(milestoneId);
 		Milestone milestone = findById(milestoneId);
 		milestone.clearObjects();
-		}
+	}
 
 	@Override
 	public Milestone findByName(String name) {
 		return milestoneDao.findByName(name);
 	}
-	
-	
+
+
 }

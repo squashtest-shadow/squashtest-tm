@@ -42,7 +42,7 @@
       </column>
 
       <column name="LABEL" type="java.sql.Types.VARCHAR(30)" remarks="Milestone label">
-        <constraints nullable="false" />
+        <constraints nullable="false" unique="true"/>
       </column>
 
       <column name="STATUS" type="java.sql.Types.VARCHAR(30)" remarks="Milestone status">
