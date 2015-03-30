@@ -265,6 +265,14 @@ public class RequirementVersionModificationController {
 		return new  RenameModel(newName);
 	}
 
+	// that one performs the same operation than #rename, but some jeditables like it more that way
+	@RequestMapping(method = RequestMethod.POST, params = { "id=requirement-name", VALUE })
+	@ResponseBody
+	public String changeName(@PathVariable long requirementVersionId, @RequestParam(VALUE) String value, Locale locale) {
+		requirementVersionManager.rename(requirementVersionId, value);
+		return value;
+	}
+
 
 	private DataTableModel getEventsTableModel(RequirementVersion requirementVersion){
 		PagedCollectionHolder<List<RequirementAuditEvent>> auditTrail = auditTrailService

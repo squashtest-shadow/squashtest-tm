@@ -20,11 +20,13 @@
  */
 define([ "jquery", "backbone", "underscore", "app/util/StringUtil","workspace.routing","workspace.event-bus",
         "./RequirementSearchResultTable", "squash.translator", "app/ws/squashtm.notification",
-        "workspace.projects", "jquery.squash", "jqueryui",
+        "workspace.projects", "workspace.routing", 
+        "jquery.squash", "jqueryui",
 		"jquery.squash.togglepanel", "squashtable",
 		"jquery.squash.oneshotdialog", "jquery.squash.messagedialog",
 		"jquery.squash.confirmdialog", "jquery.squash.milestoneDialog" ], 
-		function($, Backbone, _, StringUtil, routing, eventBus, RequirementSearchResultTable, translator, notification, projects) {
+		function($, Backbone, _, StringUtil, routing, eventBus, RequirementSearchResultTable, 
+				translator, notification, projects, routing) {
 	
 	var RequirementSearchResultPanel = Backbone.View.extend({
 
@@ -34,6 +36,7 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil","workspace.ro
 		initialize : function() {
 			this.configureModifyResultsDialog();
 			this.getIdsOfSelectedTableRowList =  $.proxy(this._getIdsOfSelectedTableRowList, this);
+			this.getVersionIdsOfSelectedTableRowList = $.proxy(this._getVersionIdsOfSelectedTableRowList, this); 
 			this.getIdsOfEditableSelectedTableRowList = $.proxy(this._getIdsOfEditableSelectedTableRowList, this);
 			this.updateDisplayedValueInColumn =  $.proxy(this._updateDisplayedValueInColumn, this);
 			var model = JSON.parse($("#searchModel").text());
@@ -264,6 +267,21 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil","workspace.ro
 			
 			return ids;
 		},
+		
+		_getVersionIdsOfSelectedTableRowList : function(dataTable){
+			var rows = dataTable.fnGetNodes();
+			var ids = [];
+			
+			$( rows ).each(function(index, row) {
+				if ($( row ).attr('class').search('selected') != -1) {
+					var data = dataTable.fnGetData(row);
+					ids.push(data["requirement-version-id"]);
+				}
+			});
+			
+			return ids;		
+		},
+		
 		_getRequirementVersionIdSelectedTableRowList : function(dataTable) {
 			var rows = dataTable.fnGetNodes();
 			var ids = [];
@@ -403,7 +421,7 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil","workspace.ro
 
 			addModifyResultDialog.on("confirmdialogconfirm",function() {
 				var table = $('#requirement-search-result-table').dataTable();
-				var ids = self.getIdsOfSelectedTableRowList(table);
+				var ids = self.getVersionIdsOfSelectedTableRowList(table);
 				var columns = ["criticality","category","status"];
 				var index = 0;
 				
@@ -412,7 +430,7 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil","workspace.ro
 						self.updateDisplayedValueInColumn(table, columns[index]);
 						var value = $("#"+columns[index]+"-combo").find('option:selected').val();
 						for(var i=0; i<ids.length; i++){
-							var urlPOST = squashtm.app.contextRoot + "/requirements/" + ids[i];
+							var urlPOST = routing.buildURL('requirementversions', ids[i]);
 							$.post(urlPOST, {
 								value : value,
 								id : "requirement-"+columns[index]	

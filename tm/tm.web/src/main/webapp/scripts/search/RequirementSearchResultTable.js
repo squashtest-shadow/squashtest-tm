@@ -19,9 +19,9 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 define([ "jquery", "backbone", "squash.translator","jeditable.simpleJEditable", "workspace.projects", 
-         "squash.configmanager",  "squashtable", 
+         "squash.configmanager", "workspace.routing", "squashtable", 
          "jqueryui", "jquery.squash.jeditable", "jquery.cookie" ], 
-         function($, Backbone, translator, SimpleJEditable, projects, confman) {
+         function($, Backbone, translator, SimpleJEditable, projects, confman, routing) {
 
 	var RequirementSearchResultTable = Backbone.View.extend({
 		el : "#requirement-search-result-table",
@@ -290,7 +290,7 @@ define([ "jquery", "backbone", "squash.translator","jeditable.simpleJEditable", 
 
 		_addSelectEditableToCriticality : function(row, data) {
 			var self = this;
-			var urlPOST = squashtm.app.contextRoot + "/requirements/" + data["requirement-id"];
+			var urlPOST = routing.buildURL('requirementversions', data['requirement-version-id']);
 			var urlGET = squashtm.app.contextRoot + "/requirements/criticality-combo-data";
 			var ok = translator.get("rich-edit.button.ok.label");
 			var cancel = translator.get("label.Cancel");
@@ -309,7 +309,7 @@ define([ "jquery", "backbone", "squash.translator","jeditable.simpleJEditable", 
 		},
 		
 		_addSelectEditableToCategory : function(row, data) {
-			var urlPOST = squashtm.app.contextRoot + "/requirements/" + data["requirement-id"];
+			var urlPOST = routing.buildURL('requirementversions', data['requirement-version-id']);
 			var projectCategories = projects.findProject(data['project-id']).requirementCategories;
 			var catsData = confman.toJeditableSelectFormat(projectCategories.items, {'code' : 'friendlyLabel'});			
 			
@@ -331,7 +331,7 @@ define([ "jquery", "backbone", "squash.translator","jeditable.simpleJEditable", 
 		
 		_addSelectEditableToStatus : function(row, data) {
 			var self = this;
-			var urlPOST = squashtm.app.contextRoot + "/requirements/" + data["requirement-id"];
+			var urlPOST = routing.buildURL('requirementversions', data['requirement-version-id']);
 			var urlGET = squashtm.app.contextRoot + "/requirements/status-combo-data";
 			var ok = translator.get("rich-edit.button.ok.label");
 			var cancel = translator.get("label.Cancel");
@@ -350,7 +350,7 @@ define([ "jquery", "backbone", "squash.translator","jeditable.simpleJEditable", 
 		},
 		
 		_addSimpleEditableToReference : function(row, data) {
-			var url = squashtm.app.contextRoot + "/requirements/" + data["requirement-id"];
+			var url = routing.buildURL('requirementversions', data['requirement-version-id']);
 			var component = $("td.editable_ref", row);
 			new SimpleJEditable({
 				targetUrl : url,
@@ -366,7 +366,7 @@ define([ "jquery", "backbone", "squash.translator","jeditable.simpleJEditable", 
 		},
 		
 		_addSimpleEditableToLabel : function(row, data) {
-			var url = squashtm.app.contextRoot + "/requirements/" + data["requirement-id"];
+			var url = routing.buildURL('requirementversions', data['requirement-version-id']);
 			var component = $("td.editable_label", row);
 			new SimpleJEditable({
 				targetUrl : url,
