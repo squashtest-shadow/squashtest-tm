@@ -44,11 +44,12 @@
 <f:message var="cancelLabel" key="label.Cancel" />
 
 
-<div>
-  <div class="icon"><span class="ui-icon ui-icon-volume-off"></span></div>
-  <input type="checkbox" id="menu-toggle-filter-ckbox" ${filterCheckedClause}></input>
-  <a id="menu-project-filter-link" href="#" class="${filterLabelClass}">${filterLabelText}</a>
-</div>
+	<div style="display: inline-flex;">
+ 	 <input type="checkbox" id="menu-toggle-filter-ckbox" ${filterCheckedClause}></input>
+  	 <div class="icon iconmargin menubarmargintop"><span class="ui-icon  ui-icon-volume-off rotateright"></span></div>
+ 	 <a id="menu-project-filter-link" style=" margin-top: 3px" href="#" class="${filterLabelClass}">${filterLabelText}</a>
+	</div>
+		
 <sec:authorize access="hasRole('ROLE_TM_PROJECT_MANAGER') or hasRole('ROLE_ADMIN')">
   <div>
     <div class="icon"><span class="ui-icon ui-icon-wrench"></span></div>
