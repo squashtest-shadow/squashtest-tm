@@ -172,9 +172,11 @@
       th:attr="data-idopened=${input.name}, data-disabledby=${input.disabledBy}" data-idopened="rpt-project-crit" />
   </div>
 
-  <div th:if="${application.milestoneFeatureEnabled}" th:fragment="milestonepicker">
+
+  <div th:if="${application.milestoneFeatureEnabled}" th:fragment="milestonepicker" >
   
-    <label th:text="#{__${input.labelKey}__}" th:for="${input.name}+'-open'">Milestone</label>
+    <label th:if="${hasLabel}" th:text="#{${input.labelKey}}" th:for="${input.name}+'-open'">Milestone</label>
+    
     <span th:id="'rpt-milestone-crit-result-'+${input.name}" class="rpt-milestone-crit-result small"></span>
     <input th:id="${input.name} + '-open'" type="button" class="sq-btn btn-sm rpt-milestone-crit-open" th:value="#{label.Choose}"
           th:attr="data-idopened=${input.name}, data-disabledby=${input.disabledBy}" />

@@ -156,7 +156,7 @@
                         
                       <div th:if="${application.milestoneFeatureEnabled}" th:case="'MILESTONE_PICKER'" class="report-selector" 
                       th:include="contextual-report-inputs.frag :: milestonepicker"
-                      th:with="input = ${opt.content}">
+                      th:with="input = ${opt.content}, hasLabel = ${false}">
                       
                       </div>
   
