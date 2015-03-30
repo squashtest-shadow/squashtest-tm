@@ -169,7 +169,7 @@
    <div class="unsnap"></div>
 </div>
 
-<csst:jq-tab activeContentIndex="2">
+<csst:jq-tab activeContentIndex="3">
   <div class="fragment-tabs fragment-body">
     <ul class="tab-menu">
       <li>
@@ -182,16 +182,16 @@
           <f:message key="tabs.label.information" />
         </a>
       </li>
-      <li>
-        <a href="#iteration-test-plans-panel">
-          <f:message key="tabs.label.test-plan" />
-        </a>
-      </li>
       <c:if test="${milestoneConf.displayTab}">
       <li>
           <a href="${iterationUrl}/milestones/panel"><f:message key="tabs.label.milestone"/></a>
       </li>        
       </c:if>
+      <li>
+        <a href="#iteration-test-plans-panel">
+          <f:message key="tabs.label.test-plan" />
+        </a>
+      </li>
       <li>
         <a href="#tabs-3">
           <f:message key="label.Attachments" />

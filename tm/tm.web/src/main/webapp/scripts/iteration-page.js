@@ -60,7 +60,7 @@ require([ "common" ], function() {
 			// ****** tabs configuration *******
 
 			var fragConf = {
-					active : 2,
+					active : 3,
 					cookie : "iteration-tab-cookie",
 					activate : function(event, ui) {
 						if (ui.newPanel.is("#dashboard-iteration")) {

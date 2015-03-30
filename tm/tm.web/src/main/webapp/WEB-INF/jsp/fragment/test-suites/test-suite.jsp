@@ -189,16 +189,16 @@
           <f:message key="tabs.label.information" />
         </a>
       </li>
-      <li>
-        <a href="#test-suite-test-plans-panel">
-          <f:message key="tabs.label.test-plan" />
-        </a>
-      </li>
       <c:if test="${milestoneConf.displayTab}">
         <li>
             <a href="${testSuiteUrl}/milestones/panel"><f:message key="tabs.label.milestone"/></a>
         </li>         
         </c:if>
+      <li>
+        <a href="#test-suite-test-plans-panel">
+          <f:message key="tabs.label.test-plan" />
+        </a>
+      </li>
       <li>
         <a href="#tabs-3">
           <f:message key="label.Attachments" />
