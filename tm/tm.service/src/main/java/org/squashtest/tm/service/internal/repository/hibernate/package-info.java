@@ -496,7 +496,7 @@
 	 *  case.  
 	 */
 	@NamedQuery(name = "requirementVersion.findDistinctRequirementVersionsByTestCases", 
-				query = "select RequirementVersion, " +
+				query = "select distinct RequirementVersion, " +
 						"(select min(m.endDate) from RequirementVersion v left join v.milestones m " +
 						"where v.id = RequirementVersion.id) as endDate " +
 						"from RequirementVersion RequirementVersion " +
