@@ -34,7 +34,7 @@
  * ======================Introduction===================================
  *
  * Legacy Ajax ----------------------------------------------
- * 
+ *
  * Support for datatables v 1.10 is not ready yet. We force DataTable.ext.legacy.ajax=true.
  *
  * keys used for data lookup -------------------------
@@ -283,18 +283,18 @@ define(["jquery",
         "./squashtable.defaults",
         "./squashtable.pagination",
         "./squashtable.dnd"
-        ], function($, _, KeyEventListener, statusfactory, confman, oneshot, translator){
+        ], function($, _, KeyEventListener, statusfactory, confman, oneshot, translator) {
 
 	if (!! $.fn.squashTable ){
 		return ;
 	}
-	
+
 	$.fn.DataTable.ext.legacy.ajax=true;
 
 	function showTable(table){
 		table.removeClass('unstyled-table');
 	}
-	
+
 	// for ajax-loaded tables, wait for full table init before showing it
 	$(document).on("init.dt", function(event) {
 		showTable($(event.target));
@@ -542,9 +542,9 @@ define(["jquery",
 
 	}
 
-	
-	
-	
+
+
+
 	/* private */function _selectRows(ids) {
 		var rows = this.fnGetNodes();
 
@@ -864,27 +864,27 @@ define(["jquery",
 			var icon = icons[i];
 			var cells = self.find(icon.tdSelector);
 			cells.each(function(i, cell) {
-				
+
 				var	$cell = $(cell),
 					row = $cell.parent("tr")[0],
 					data = self.fnGetData(row);
-				
+
 				// find value if function
 				var value = ($.isFunction(icon.value) ) ? icon.value(row, data) : icon.value;
-				
+
 				self.drawIcon(value, $cell);
-				
-				
+
+
 			});
 		}
-		
+
 	}
-	
+
 	function _drawIcon(value, cell){
-		value += " sq-icon ";	
+		value += " sq-icon ";
 		cell.addClass(value);
 	}
-	
+
 	function _configureTooltips() {
 		var self = this;
 		//console.log("tooltip configuration for table : "+self.selector);
@@ -917,18 +917,18 @@ define(["jquery",
 
 	function _configureCheckBox(){
 		$("td.checkbox", this).each(function(i, item){
-			
+
 			var $item = $(item);
-			// If the item has a text, store the text into val, used for initilization 
+			// If the item has a text, store the text into val, used for initilization
 			if ($item.text() !== ""){
-				$item.val($item.text());	
+				$item.val($item.text());
 			}
 			var data = $item.val();
-			
+
 			var template = '<input type="checkbox"';
 			if (data === "true"){
 				template = template + 'checked="true"';
-			} 
+			}
 			template = template + '/>';
 			$item.html(template);
 		});
@@ -945,18 +945,18 @@ define(["jquery",
 		var cells = $('td.delete-button', this);
 		this.drawDeleteButton(template, cells);
 	}
-	
+
 	function _drawDeleteButton(template, cells){
-		
+
 		cells.html(template);
 		cells.find('a').button({
 			text : false,
 			icons : {
 				primary : "ui-icon-trash",
 			}
-		});		
+		});
 	}
-	
+
 	function _configureUnbindButtons(){
 		var unbindConf = this.squashSettings.unbindButtons;
 		if (!unbindConf) {
@@ -964,10 +964,10 @@ define(["jquery",
 		}
 		var template = '<a >' + unbindConf.tooltip + '</a>';
 		var cellsUnbind = $('td.unbind-button', this);
-		
-		this.drawUnbindButton(template, cellsUnbind);	
+
+		this.drawUnbindButton(template, cellsUnbind);
 	}
-	
+
 	function _drawUnbindButton(template, cell){
 		cell.html(template);
 		cell.find('a').button({
@@ -975,22 +975,22 @@ define(["jquery",
 			icons : {
 				primary : "ui-icon-minus"
 			}
-		});	
+		});
 	}
 
-	
+
 	function _bindUnbindButtons(){
 		var self = this;
 		var conf = self.squashSettings.unbindButtons;
 		_bindUnbindOrDeleteButtons(conf, self, 'td.unbind-button > a');
 	}
-	
+
 	function _bindDeleteButtons() {
 		var self = this;
 		var conf = self.squashSettings.deleteButtons;
 		_bindUnbindOrDeleteButtons(conf, self, 'td.delete-button > a');
 	}
-	
+
 	function _bindUnbindOrDeleteButtons(conf, self, target){
 		var popconf = self.squashSettings.confirmPopup;
 
@@ -1050,7 +1050,7 @@ define(["jquery",
 		};
 		self.delegate(target, 'click', deleteFunction);
 	}
-	
+
 
 
 	/**
@@ -1513,7 +1513,7 @@ define(["jquery",
 		aDrawCallbacks.push(_applyFilteredStyle);
 		aDrawCallbacks.push(_configureTooltips);
 		aDrawCallbacks.push(_configureIcons);
-		
+
 
 
 		var userDrawCallback = datatableEffective.fnDrawCallback;
@@ -1573,7 +1573,7 @@ define(["jquery",
 		} else {
 			this.bindDeleteButtons = _bindDeleteButtons;
 		}
-		
+
 
 		this.refresh = function() {
 			this.fnDraw(false);
@@ -1626,7 +1626,7 @@ define(["jquery",
 		if (squashEffective.deleteButtons) {
 			_bindDeleteButtons.call(this);
 		}
-		
+
 		if (squashEffective.unbindButtons) {
 			_bindUnbindButtons.call(this);
 		}
@@ -1636,10 +1636,10 @@ define(["jquery",
 		}
 
 		this.addClass("is-contextual");
-		
+
 		// also, if the table uses defered loading, we must render it immediately (ie remove the class unstyle-table
 		showTable(this);
-		
+
 		return this;
 	};
 
@@ -1736,14 +1736,14 @@ define(["jquery",
 					conf.current.sClass += ' delete-button centered ' + cls;
 					conf.current.sWidth = '2em';
 
-					// additionally, if this flag got a value (ie 'delete-button=#some-delegate-selector') we must specify it as the 
+					// additionally, if this flag got a value (ie 'delete-button=#some-delegate-selector') we must specify it as the
 					// delegate
 					// cautious : the following expression must read it as "was a delegate defined ?"
 					if (assignation.value !== "true"){
 						conf.squash.deleteButtons = {
 								delegate : assignation.value,
 								tooltip : $(assignation.value).prev().find('span.ui-dialog-title').text()
-							};					
+							};
 					}
 				},
 				'unbind-button' : function(conf, assignation) {
@@ -1756,7 +1756,7 @@ define(["jquery",
 						conf.squash.unbindButtons = {
 								delegate : assignation.value,
 								tooltip : $(assignation.value).prev().find('span.ui-dialog-title').text()
-							};					
+							};
 					}
 				},
 				'tooltip': function(conf, assignation){
@@ -1809,7 +1809,7 @@ define(["jquery",
 				'checkbox' : function(conf, assignation){
 					var cls = 'checkbox-' + Math.random().toString().substr(2, 3);
 					conf.current.sClass += 'checkbox centered ' + cls;
-				
+
 				},
 				'icon' : function(conf, assignation){
 					var cls = 'icon-' + Math.random().toString().substr(2, 3);

@@ -23,6 +23,12 @@ define(["jquery", "backbone", "underscore", "squash.basicwidgets", "jeditable.si
 		SimpleJEditable, routing, NewInfoListItemDialog, IconSelectDialog, translator) {
 	"use strict";
 
+  translator.load(["label.infoListItems.icon.none",
+                   "dialog.delete.info-list-item.isDefault",
+                   "dialog.delete.info-list-item.used.message",
+                   "dialog.delete.info-list-item.unused.message",
+                   "label.Delete"]);
+
 	var TableView = Backbone.View.extend({
 		el : "#table-view",
 		initialize : function(config) {
@@ -34,6 +40,7 @@ define(["jquery", "backbone", "underscore", "squash.basicwidgets", "jeditable.si
 			this.configureChangeCodePopup();
 			this.$("#add-info-list-item-button").on("click", $.proxy(this.openAddItemPopup, this));
 		},
+
 		events : {
 		"click .isDefault>input:checkbox" : "changeDefaultOption",
 		"click td.opt-label" : "openChangeLabelPopup",
@@ -41,6 +48,7 @@ define(["jquery", "backbone", "underscore", "squash.basicwidgets", "jeditable.si
 		"click td.sq-icon" : "openChangeIconPopup",
 		"click td.delete-button" : "openDeleteOptionPopup"
 		},
+
 		initErrorPopup : function(){
 			this.errorPopup = $("#generic-error-dialog").messageDialog();
 		},
@@ -52,6 +60,13 @@ define(["jquery", "backbone", "underscore", "squash.basicwidgets", "jeditable.si
 			var squashSettings = {
 
 					enableDnD : true,
+
+					buttons : [ {
+						tooltip : translator.get("label.Delete"),
+						tdSelector : "td.delete-button",
+						uiIcon : "ui-icon-trash",
+						jquery: true
+					} ],
 
 					functions : {
 						dropHandler : function(dropData) {
