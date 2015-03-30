@@ -45,16 +45,6 @@ define([ "jquery", "backbone", "handlebars", "underscore", "workspace.routing", 
 
 		},
 
-		changeIconOpacity: function (event){
-			var icon = event.currentTarget;
-			var $icon = this.$(icon);
-			this.$icons().addClass("low-opacity");
-			$icon.removeClass("low-opacity");
-
-		},
-		restoreIconOpacity : function (event){
-			this.$icons().removeClass("low-opacity");
-		},
 		initIcon : function(){
 			var $icons = this.$icons();
 			//clean the style
