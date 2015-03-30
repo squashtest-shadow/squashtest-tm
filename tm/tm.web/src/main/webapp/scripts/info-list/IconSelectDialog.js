@@ -18,14 +18,14 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ "jquery", "backbone", "handlebars", "workspace.routing", "jquery.squash.confirmdialog" ], function($, Backbone, Handlebars, routing) {
+define([ "jquery", "backbone", "handlebars", "underscore", "workspace.routing", "jquery.squash.confirmdialog" ], function($, Backbone, Handlebars, _, routing) {
 	"use strict";
 	var ICON_PREFIX = "sq-icon-";
 
 	var View = Backbone.View.extend({
 		initialize : function() {
 
-			if (!!this.model.icon && this.model.icon.indexOf(ICON_PREFIX) !== 0) {
+			if (!_.isEmpty(this.model.icon) && this.model.icon.indexOf(ICON_PREFIX) !== 0) {
 				// i wanna be consistent with output model which is icon name, not icon class
 				// yet i dont change existing code coz "no refactoring BS"
 				this.model.icon = ICON_PREFIX + this.model.icon;
@@ -63,7 +63,7 @@ define([ "jquery", "backbone", "handlebars", "workspace.routing", "jquery.squash
 				.removeClass("low-opacity");
 
 			//if icon is selected add correct style
-			if (this.model.icon && this.model.icon !== "sq-icon-noicon") {
+			if (!_.isEmpty(this.model.icon) && this.model.icon !== "sq-icon-noicon") {
 				$icons.addClass("low-opacity");
 				var selected = this.$("." + this.model.icon);
 				selected.addClass("info-list-item-icon-selected");
@@ -81,9 +81,8 @@ define([ "jquery", "backbone", "handlebars", "workspace.routing", "jquery.squash
 			$clicked.toggleClass("info-list-item-icon-selected");
 
 			if ($clicked.hasClass("info-list-item-icon-selected")) {
-				this.$icons().addClass("low-opacity");
 				$clicked.removeClass("low-opacity");
-
+				this.$icons().not($clicked).removeClass("info-list-item-icon-selected").addClass("low-opacity");
 			} else {
 				this.$icons().removeClass("low-opacity");
 			}
@@ -120,7 +119,7 @@ define([ "jquery", "backbone", "handlebars", "workspace.routing", "jquery.squash
 			}
 
 			this.model.icon = icon;
-			this.trigger("selectIcon.confirm", icon === undefined ? "none" : icon);
+			this.trigger("selectIcon.confirm", icon === undefined ? "noicon" : icon);
 
 			if (!!window.squashtm.vent) {
 				window.squashtm.vent.trigger("iconselectdialog:confirmed", {
