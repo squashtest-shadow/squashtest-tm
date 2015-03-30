@@ -20,13 +20,13 @@
  */
 define([ "jquery", "backbone", "underscore", "app/util/StringUtil","workspace.routing","workspace.event-bus",
         "./RequirementSearchResultTable", "squash.translator", "app/ws/squashtm.notification",
-        "workspace.projects", "workspace.routing", 
+        "workspace.projects", 
         "jquery.squash", "jqueryui",
 		"jquery.squash.togglepanel", "squashtable",
 		"jquery.squash.oneshotdialog", "jquery.squash.messagedialog",
 		"jquery.squash.confirmdialog", "jquery.squash.milestoneDialog" ], 
 		function($, Backbone, _, StringUtil, routing, eventBus, RequirementSearchResultTable, 
-				translator, notification, projects, routing) {
+				translator, notification, projects) {
 	
 	var RequirementSearchResultPanel = Backbone.View.extend({
 
