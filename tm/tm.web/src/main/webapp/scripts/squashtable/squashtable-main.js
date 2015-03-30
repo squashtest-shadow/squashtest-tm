@@ -1031,12 +1031,22 @@ define(["jquery",
 							var finalUrl = _resolvePlaceholders.call(self, conf.url, self.fnGetData(row));
 							var request;
 
+							if (self.squashSettings.deleteButtons != undefined ) {
 							request = $.ajax({
 								type : 'delete',
 								url : finalUrl,
-								dataType : self.squashSettings.deleteButtons.dataType || "text"
+								dataType : self.squashSettings.deleteButtons.dataType || "text" 
 							});
-
+						}
+							
+							if (self.squashSettings.unbindButtons != undefined ) {
+								request = $.ajax({
+									type : 'delete',
+									url : finalUrl,
+									dataType :  self.squashSettings.unbindButtons.dataType
+								});
+							}	
+						
 							if (conf.success) {
 								request.done(conf.success);
 							}
