@@ -23,184 +23,181 @@ define(
 				"./NewCustomFieldModel", "app/ws/squashtm.notification", "squash.translator", "squashtable",
 				"jqueryui", "jquery.squash.confirmdialog" ],
 		function($, Backbone, NewCustomFieldPanelView, NewCustomFieldModel, notification, translator) {
-			var cfTable = squashtm.app.cfTable;
-			/*
-			 * Defines the controller for the custom fields table.
-			 */
-			var CustomFieldsTableView = Backbone.View
-					.extend({
-						el : "#cf-table-pane",
-						initialize : function() {
-							var self = this;
-							// this.el is decorated with an ajax sourced
-							// datatable
-							var config = $.extend({
-								"oLanguage" : {
-									"sUrl" : cfTable.languageUrl
-								},
-								"bJQueryUI" : true,
-								"bAutoWidth" : false,
-								"bFilter" : false,
-								"bPaginate" : true,
-								"sPaginationType" : "squash",
-								"iDisplayLength" : cfTable.displayLength,
-								"bServerSide" : true,
-								"sAjaxSource" : cfTable.ajaxSource,
-								"bDeferRender" : true,
-								"bRetrieve" : true,
-								"sDom" : 't<"dataTables_footer"lp>',
-								"iDeferLoading" : 0,
-								"aaSorting" : [ [ 2, "asc" ] ],
-								"fnRowCallback" : function() {
-								},
-								"aoColumnDefs" : [
-									{
-										"bVisible" : false,
-										"aTargets" : [ 0 ],
-										"sClass" : "cf-id",
-										"mDataProp" : "entity-id"
-									},
-									{
-										'bSortable' : false,
-										'sClass' : 'centered ui-state-default drag-handle select-handle',
-										'aTargets' : [ 1 ],
-										'mDataProp' : 'entity-index',
-										'sWidth' : '2em'
-									},
-									{
-										"bSortable" : true,
-										"aTargets" : [ 2 ],
-										"mDataProp" : "name"
-									},
-									{
-										"bSortable" : true,
-										"aTargets" : [ 3 ],
-										"mDataProp" : "label"
-									},
-									{
-										"bVisible" : false,
-										"aTargets" : [ 4 ],
-										"sClass" : "raw-input-type",
-										"mDataProp" : "raw-input-type"
-									},
-									{
-										"bSortable" : true,
-										"aTargets" : [ 5 ],
-										"mDataProp" : "input-type"
-									},
-									{
-										'bSortable' : false,
-										'sWidth' : '2em',
-										'sClass' : 'delete-button',
-										'aTargets' : [ 6 ],
-										'mDataProp' : 'empty-delete-holder'
-									} ]
-							}, squashtm.datatable.defaults);
+	var cfTable = squashtm.app.cfTable;
+	/*
+	 * Defines the controller for the custom fields table.
+	 */
+	var CustomFieldsTableView = Backbone.View.extend({
+		el : "#cf-table-pane",
 
-							var squashSettings = {
-								enableHover : true,
+		initialize : function() {
+			var self = this;
+			// this.el is decorated with an ajax sourced
+			// datatable
+			var config = $.extend({
+				"oLanguage" : {
+					"sUrl" : cfTable.languageUrl
+				},
+				"bJQueryUI" : true,
+				"bAutoWidth" : false,
+				"bFilter" : false,
+				"bPaginate" : true,
+				"sPaginationType" : "squash",
+				"iDisplayLength" : cfTable.displayLength,
+				"bServerSide" : true,
+				"sAjaxSource" : cfTable.ajaxSource,
+				"bDeferRender" : true,
+				"bRetrieve" : true,
+				"sDom" : 't<"dataTables_footer"lp>',
+				"iDeferLoading" : 0,
+				"aaSorting" : [ [ 2, "asc" ] ],
+				"fnRowCallback" : function() {
+				},
+				"aoColumnDefs" : [
+					{
+						"bVisible" : false,
+						"aTargets" : [ 0 ],
+						"sClass" : "cf-id",
+						"mDataProp" : "entity-id"
+					},
+					{
+						'bSortable' : false,
+						'sClass' : 'centered ui-state-default drag-handle select-handle',
+						'aTargets' : [ 1 ],
+						'mDataProp' : 'entity-index',
+						'sWidth' : '2em'
+					},
+					{
+						"bSortable" : true,
+						"aTargets" : [ 2 ],
+						"mDataProp" : "name"
+					},
+					{
+						"bSortable" : true,
+						"aTargets" : [ 3 ],
+						"mDataProp" : "label"
+					},
+					{
+						"bVisible" : false,
+						"aTargets" : [ 4 ],
+						"sClass" : "raw-input-type",
+						"mDataProp" : "raw-input-type"
+					},
+					{
+						"bSortable" : true,
+						"aTargets" : [ 5 ],
+						"mDataProp" : "input-type"
+					},
+					{
+						'bSortable' : false,
+						'sWidth' : '2em',
+						'sClass' : 'delete-button',
+						'aTargets' : [ 6 ],
+						'mDataProp' : 'empty-delete-holder'
+					} ]
+			}, squashtm.datatable.defaults);
 
-								confirmPopup : {
-									oklabel : cfTable.confirmLabel,
-									cancellabel : cfTable.cancelLabel
-								},
+			var squashSettings = {
+				enableHover : true,
 
-								deleteButtons : {
-									url : cfTable.ajaxSource + "/{entity-id}",
-									popupmessage : "<div class='display-table-row'><div class='display-table-cell warning-cell'><div class='generic-error-signal'></div></div><div class='display-table-cell'>"+cfTable.deleteConfirmMessageFirst+"<span class='red-warning-message'> "+cfTable.deleteConfirmMessageSecond+"</span>"+cfTable.deleteConfirmMessageThird+"<span class='bold-warning-message'> "+cfTable.deleteConfirmMessageFourth+"</span></div></div>",
-									tooltip : cfTable.deleteTooltip,
-									success : function(data) {
-										self.table.refresh();
-									}
-								},
+				confirmPopup : {
+					oklabel : cfTable.confirmLabel,
+					cancellabel : cfTable.cancelLabel
+				},
 
-								bindLinks : {
-									list : [ {
-										url : cfTable.customFieldUrl + "/{entity-id}",
-										target : 2,
-										isOpenInTab : false
-									} ]
-								}
-							};
+				deleteButtons : {
+					url : cfTable.ajaxSource + "/{entity-id}",
+					popupmessage : "<div class='display-table-row'><div class='display-table-cell warning-cell'><div class='generic-error-signal'></div></div><div class='display-table-cell'>"+cfTable.deleteConfirmMessageFirst+"<span class='red-warning-message'> "+cfTable.deleteConfirmMessageSecond+"</span>"+cfTable.deleteConfirmMessageThird+"<span class='bold-warning-message'> "+cfTable.deleteConfirmMessageFourth+"</span></div></div>",
+					tooltip : cfTable.deleteTooltip,
+					success : function(data) {
+						self.table.refresh();
+					}
+				},
 
-							this.table = this.$("table");
-							this.table.squashTable(config, squashSettings);
-							
-							var deleteDialog = $("#delete-cf-popup");
-							deleteDialog.confirmDialog();
-							
-							this.configureDeleteCfPanel();
-							
-						},
+				bindLinks : {
+					list : [ {
+						url : cfTable.customFieldUrl + "/{entity-id}",
+						target : 2,
+						isOpenInTab : false
+					} ]
+				}
+			};
 
-						events : {
-							"click #add-cf" : "showNewCfPanel",
-							"click #delete-cf" : "showDeleteCfPanel"
-						},
-						
+			this.table = this.$("table");
+			this.table.squashTable(config, squashSettings);
 
-						// ******** delete dialog init ***********
-						
-						configureDeleteCfPanel :  function(event) {
-							var tableCf = $("#cf-table").squashTable();
-							var self = this;
-							var deleteDialog = $("#delete-cf-popup");
-							deleteDialog.confirmDialog();
-							
-							deleteDialog.on('confirmdialogconfirm', function(){
-								var removedIds = tableCf.getSelectedIds().join(',');
-								var urlDelete = cfTable.ajaxSource + "/" + removedIds;
-									$.ajax({
-										type : 'DELETE',
-										url : urlDelete ,
-									}).done(function(){
-										deleteDialog.confirmDialog('close');
-										tableCf.refresh();	
-										}); 
-							});
-						},
-						
-						showDeleteCfPanel :  function(event) {
-							var table = $("#cf-table").squashTable();
-								if (table.getSelectedRows().size()>0){
-									$("#delete-cf-popup").confirmDialog();
-									$("#delete-cf-popup").confirmDialog('open');
-			
-								}
-								else{
-										notification.showError(translator.get('message.NoCUFSelected'));
-								}
-							},
+			var deleteDialog = $("#delete-cf-popup");
+			deleteDialog.confirmDialog();
 
-						// ******** add dialog init ***********
-						
-						showNewCfPanel : function(event) {
-							var self = this, showButton = event.target;
+			this.configureDeleteCfPanel();
 
-							function discard() {
-								self.newCfPanel
-										.off("newcustomfield.cancel newcustomfield.confirm");
-								self.newCfPanel.undelegateEvents();
-								self.newCfPanel = null;
-								$(showButton).prop("disabled", true);
-								self.table.squashTable().fnDraw();
-							}
+		},
 
-							function discardAndRefresh() {
-								discard();
-								self.table.squashTable().fnDraw();
-							}
+		events : {
+			"click #add-cf" : "showNewCfPanel",
+			"click #delete-cf" : "showDeleteCfPanel"
+		},
 
-							$(event.target).prop("disabled", false);
-							self.newCfPanel = new NewCustomFieldPanelView({
-								model : new NewCustomFieldModel()
-							});
 
-							self.newCfPanel
-									.on("newcustomfield.cancel", discard);
-							self.newCfPanel.on("newcustomfield.confirm",
-									discardAndRefresh);
-						}
-					});
-			return CustomFieldsTableView;
-		});
+		// ******** delete dialog init ***********
+
+		configureDeleteCfPanel :  function(event) {
+			var tableCf = $("#cf-table").squashTable();
+			var self = this;
+			var deleteDialog = $("#delete-cf-popup");
+			deleteDialog.confirmDialog();
+
+			deleteDialog.on('confirmdialogconfirm', function(){
+				var removedIds = tableCf.getSelectedIds().join(',');
+				var urlDelete = cfTable.ajaxSource + "/" + removedIds;
+					$.ajax({
+						type : 'DELETE',
+						url : urlDelete ,
+					}).done(function(){
+						deleteDialog.confirmDialog('close');
+						tableCf.refresh();
+						});
+			});
+		},
+
+		showDeleteCfPanel :  function(event) {
+			var table = $("#cf-table").squashTable();
+			if (table.getSelectedRows().size() > 0) {
+				$("#delete-cf-popup").confirmDialog();
+				$("#delete-cf-popup").confirmDialog('open');
+			} else {
+				notification.showError(translator.get('message.NoCUFSelected'));
+			}
+		},
+
+		// ******** add dialog init ***********
+
+		showNewCfPanel : function(event) {
+			var self = this, showButton = event.target;
+
+			function discard() {
+				self.newCfPanel
+						.off("newcustomfield.cancel newcustomfield.confirm");
+				self.newCfPanel.undelegateEvents();
+				self.newCfPanel = null;
+				$(showButton).prop("disabled", true);
+				self.table.squashTable().fnDraw();
+			}
+
+			function discardAndRefresh() {
+				discard();
+				self.table.squashTable().fnDraw();
+			}
+
+			$(event.target).prop("disabled", false);
+			self.newCfPanel = new NewCustomFieldPanelView({
+				model : new NewCustomFieldModel()
+			});
+
+			self.newCfPanel.on("newcustomfield.cancel", discard);
+			self.newCfPanel.on("newcustomfield.confirm", discardAndRefresh);
+		}
+	});
+
+	return CustomFieldsTableView;
+});
