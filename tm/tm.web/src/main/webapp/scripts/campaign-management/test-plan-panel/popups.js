@@ -108,6 +108,7 @@ define(['jquery',  'underscore', 'handlebars', 'squash.translator', 'app/ws/squa
 	}
 
 	function closeDialog() {
+		/*jshint validthis: true */
 		$(this).formDialog('close');
 	}
 
