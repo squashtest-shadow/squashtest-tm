@@ -259,11 +259,8 @@ require(["common"], function(){
 		} else if (ids.length == 1) {
 
 			var mil = $table().getDataById(ids[0]);
-			var trans = translator.get({
-				statusFinished : "milestone.status.FINISHED",
-				statusInProgress :"milestone.status.IN_PROGRESS"
-				});
-			if (mil.status == trans.statusFinished || mil.status == trans.statusInProgress){
+
+			if (mil.bindableToObject){
 			cloneMilestoneDialog.data('entity-id', ids);
 			cloneMilestoneDialog.formDialog('open');
 			} else {
@@ -342,11 +339,10 @@ require(["common"], function(){
 			synchronizeMilestoneDialog.data('mil2', mil2);
 			var trans = translator.get({
 				rangeGlobal : "milestone.range.GLOBAL",
-				statusInProgress :"milestone.status.IN_PROGRESS"
 				});
 
-			if (mil1.status == trans.statusInProgress || mil2.status == trans.statusInProgress){
-				// you need at least one milestone in progress to synchronize
+			if (mil1.bindableToObject || mil2.bindableToObject){
+				// you need at least one milestone bindable to object to synchronize
 
 				if (config.data.isAdmin){
 					//ok you're admin you can skip some additional check
@@ -359,8 +355,8 @@ require(["common"], function(){
 					if (mil1.range == trans.rangeGlobal && mil2.range == trans.rangeGlobal){
 						//you loose you're not admin and want to synchronize 2 global milestone
 						warningWithTranslation('message.milestone.synchronize.wrongrange');
-					} else if (mil1.range == trans.rangeGlobal && mil2.status != trans.statusInProgress || mil2.range == trans.rangeGlobal && mil1.status != trans.statusInProgress ) {
-						//you have selected one global and a restricted non in progress milestone...too bad you loose again !
+					} else if (mil1.range == trans.rangeGlobal && !mil2.bindableToObject || mil2.range == trans.rangeGlobal && !mil1.bindableToObject ) {
+						//you have selected one global and a restricted non bindable to object milestone...too bad you loose again !
 
 					} else {
 						//You're still here ?? ok you can now have your pop up !
@@ -381,9 +377,9 @@ require(["common"], function(){
 		function configAdminSynchroPopup(){
 			var mil1 = synchronizeMilestoneDialog.data('mil1');
 			var mil2 = synchronizeMilestoneDialog.data('mil2');
-			$("#mil1").attr("disabled", mil1.status != trans.statusInProgress);
-			$("#mil2").attr("disabled", mil2.status != trans.statusInProgress);
-			$("#union").attr("disabled", mil1.status != trans.statusInProgress || mil2.status != trans.statusInProgress);
+			$("#mil1").attr("disabled", !mil1.bindableToObject);
+			$("#mil2").attr("disabled", !mil2.bindableToObject);
+			$("#union").attr("disabled", !mil1.bindableToObject || !mil2.bindableToObject);
 			$("#perim").attr("disabled", true);
 			writeMilestonesLabel();
 
@@ -392,8 +388,8 @@ require(["common"], function(){
 		function configNonAdminSynchroPopup(){
 			var mil1 = synchronizeMilestoneDialog.data('mil1');
 			var mil2 = synchronizeMilestoneDialog.data('mil2');
-			var mil1CantBeTarget = mil1.status != trans.statusInProgress ||  mil1.range == trans.rangeGlobal;
-			var mil2CantBeTarget = mil2.status != trans.statusInProgress ||  mil2.range == trans.rangeGlobal;
+			var mil1CantBeTarget = !mil1.bindableToObject ||  mil1.range == trans.rangeGlobal;
+			var mil2CantBeTarget = !mil2.bindableToObject ||  mil2.range == trans.rangeGlobal;
 			$("#mil1").attr("disabled", mil1CantBeTarget);
 			$("#mil2").attr("disabled", mil2CantBeTarget);
 			$("#union").attr("disabled", mil1CantBeTarget || mil2CantBeTarget);
@@ -417,8 +413,8 @@ require(["common"], function(){
 		}
 
 		function greyTextForDisabledLabel( radioButtonSelector,labelSelector){
-			$radioButtonSelector = $(radioButtonSelector);
-			$labelSelector = $(labelSelector);
+			var $radioButtonSelector = $(radioButtonSelector);
+			var $labelSelector = $(labelSelector);
 			if ($radioButtonSelector.attr("disabled")){
 				$labelSelector.addClass("nota-bene");
 			} else {

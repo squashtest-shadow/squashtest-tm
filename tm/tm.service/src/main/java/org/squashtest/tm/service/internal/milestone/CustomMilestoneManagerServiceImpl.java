@@ -336,13 +336,13 @@ public class CustomMilestoneManagerServiceImpl implements CustomMilestoneManager
 	private void verifyCanSynchronize(Milestone source, Milestone target, boolean isUnion) {
 
 		if (isUnion
-				&& (source.getStatus() != MilestoneStatus.IN_PROGRESS || !permissionEvaluationService
+				&& (!source.getStatus().isBindableToObject()  || !permissionEvaluationService
 				.hasRole("ROLE_ADMIN") && isGlobal(source))) {
 			throw new IllegalArgumentException(
 					"milestone can't be synchronized because it's status or range don't allow it");
 		}
 
-		if (target.getStatus() != MilestoneStatus.IN_PROGRESS || !permissionEvaluationService.hasRole("ROLE_ADMIN")
+		if (!target.getStatus().isBindableToObject()  || !permissionEvaluationService.hasRole("ROLE_ADMIN")
 				&& isGlobal(target)) {
 			throw new IllegalArgumentException(
 					"milestone can't be synchronized because it's status or range don't allow it");

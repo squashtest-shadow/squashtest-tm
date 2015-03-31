@@ -161,7 +161,6 @@ class MilestoneManagerAsProjectLeaderServiceIT extends CustomDbunitServiceSpecif
 			-1    |     -5    | false   ||  _
 			-1    |     -10   | false   ||  _
 			-1    |     -11   | false   ||  _
-			-1    |     -12   | false   ||  _
 			-1    |     -2    | true    ||  _
 			-1    |     -3    | true    ||  _
 			-1    |     -4    | true    ||  _
@@ -179,7 +178,7 @@ class MilestoneManagerAsProjectLeaderServiceIT extends CustomDbunitServiceSpecif
 			-6    |     -5    | true    ||  _
 			-6    |     -10   | true    ||  _
 			-6    |     -11   | true    ||  _
-			-6    |     -12   | true    ||  _
+		
 			
 
 	}
