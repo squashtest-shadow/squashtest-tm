@@ -21,6 +21,8 @@
 package org.squashtest.tm.service.internal.repository.hibernate;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -66,7 +68,11 @@ public class HibernateIterationDao extends HibernateEntityDao<Iteration> impleme
 	 * Because it is impossible to sort over the indices of ordered collection in a criteria query we must then build an
 	 * hql string which will let us do that.
 	 */
-	private static final String HQL_INDEXED_TEST_PLAN_TEMPLATE_START = "select index(IterationTestPlanItem), IterationTestPlanItem, coalesce(group_concat(TestSuite.name, 'order by', TestSuite.name), '') as suitenames "
+	private static final String HQL_INDEXED_TEST_PLAN_TEMPLATE_START = "select index(IterationTestPlanItem), " +
+			"IterationTestPlanItem, " +
+			"coalesce(group_concat(TestSuite.name, 'order by', TestSuite.name), '') as suitenames, " +
+			"(select min(m.endDate) from IterationTestPlanItem itpi " +
+			"left join itpi.referencedTestCase ctc left join ctc.milestones m where itpi.id = IterationTestPlanItem.id) as endDate "
 			+ "from Iteration as Iteration inner join Iteration.testPlans as IterationTestPlanItem "
 			+ "left outer join IterationTestPlanItem.referencedTestCase as TestCase "
 			+ "left outer join TestCase.project as Project "
@@ -84,6 +90,11 @@ public class HibernateIterationDao extends HibernateEntityDao<Iteration> impleme
 	private static final String HQL_INDEXED_TEST_PLAN_TEMPLATE_END = "group by IterationTestPlanItem.iteration.id, IterationTestPlanItem.id, Iteration.id, index(IterationTestPlanItem) ";
 	private static final String HQL_INDEXED_TEST_PLAN_TESTSUITE_FILTER = " having group_concat(TestSuite.name, 'order by', TestSuite.name) like :testsuiteFilter ";
 
+	/*
+	 * the following collection will forbid group by on certain columns
+	 * because Hibernate would not call those columns as we asked it to.
+	 */
+	private static final Collection<String> HQL_NO_GROUP_BY_COLUMNS =  Arrays.asList(new String[]{"suitenames","endDate"});
 	/**
 	 * HQL query which looks up the whole iteration test plan
 	 */
@@ -353,7 +364,7 @@ public class HibernateIterationDao extends HibernateEntityDao<Iteration> impleme
 
 		// Strict SQL (postgres) : sort colums have to appear in group by clause.
 		for (Sorting sorting : multiSorting.getSortings()) {
-			if (!"suitenames".equals(sorting.getSortedAttribute())) {
+			if (! HQL_NO_GROUP_BY_COLUMNS.contains(sorting.getSortedAttribute())){
 				hqlBuilder.append(", ").append(sorting.getSortedAttribute());
 			}
 		}

@@ -109,7 +109,9 @@ public class IterationTestPlanManagerController {
 	.mapAttribute("status", "executionStatus", IterationTestPlanItem.class)
 	.mapAttribute("assignee-login", "login", User.class)
 	.mapAttribute("last-exec-on", "lastExecutedOn", IterationTestPlanItem.class)
-	.mapAttribute("exec-mode", "automatedTest", TestCase.class).map("suite", "suitenames");
+	.mapAttribute("exec-mode", "automatedTest", TestCase.class)
+	.map("suite", "suitenames")
+	.map("milestone-dates", "endDate");
 
 	@RequestMapping(value = "/iterations/{iterationId}/test-plan-manager", method = RequestMethod.GET)
 	public ModelAndView showManager(@PathVariable long iterationId,

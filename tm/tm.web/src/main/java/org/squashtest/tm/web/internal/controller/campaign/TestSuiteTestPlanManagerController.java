@@ -140,7 +140,8 @@ public class TestSuiteTestPlanManagerController {
 	.mapAttribute("status", "executionStatus", IterationTestPlanItem.class)
 	.mapAttribute("assignee-login", "login", User.class)
 	.mapAttribute("last-exec-on", "lastExecutedOn", IterationTestPlanItem.class)
-	.mapAttribute("exec-mode", "automatedTest", TestCase.class);
+	.mapAttribute("exec-mode", "automatedTest", TestCase.class)
+	.map("milestone-dates", "endDate");
 
 	@Inject
 	private InternationalizationHelper messageSource;

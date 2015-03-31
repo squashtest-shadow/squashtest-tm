@@ -60,7 +60,9 @@ public class HibernateTestSuiteDao extends HibernateEntityDao<TestSuite> impleme
 	 * Because it is impossible to sort over the indices of ordered collection in a criteria query we must then build an
 	 * hql string which will let us do that.
 	 */
-	private static final String HQL_INDEXED_TEST_PLAN = "select index(IterationTestPlanItem), IterationTestPlanItem "
+	private static final String HQL_INDEXED_TEST_PLAN = "select index(IterationTestPlanItem), IterationTestPlanItem," +
+			"(select min(m.endDate) from IterationTestPlanItem itpi " +
+			"left join itpi.referencedTestCase ctc left join ctc.milestones m where itpi.id = IterationTestPlanItem.id) as endDate "
 			+ "from TestSuite as TestSuite inner join TestSuite.testPlan as IterationTestPlanItem "
 			+ "left outer join IterationTestPlanItem.referencedTestCase as TestCase "
 			+ "left outer join TestCase.project as Project "

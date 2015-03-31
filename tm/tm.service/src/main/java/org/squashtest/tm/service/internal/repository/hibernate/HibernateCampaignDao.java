@@ -77,7 +77,9 @@ public class HibernateCampaignDao extends HibernateEntityDao<Campaign> implement
 	 * we must then build an hql string which will let us do that.
 	 */
 	private static final String HQL_INDEXED_TEST_PLAN =
-			"select index(CampaignTestPlanItem), CampaignTestPlanItem "+
+			"select index(CampaignTestPlanItem), CampaignTestPlanItem, " +
+					"(select min(m.endDate) from CampaignTestPlanItem ctpi " +
+					"left join ctpi.referencedTestCase ctc left join ctc.milestones m where ctpi.id = CampaignTestPlanItem.id) as endDate "+
 					"from Campaign as Campaign inner join Campaign.testPlan as CampaignTestPlanItem "+
 					"left outer join CampaignTestPlanItem.referencedTestCase as TestCase " +
 					"left outer join CampaignTestPlanItem.referencedDataset as Dataset " +

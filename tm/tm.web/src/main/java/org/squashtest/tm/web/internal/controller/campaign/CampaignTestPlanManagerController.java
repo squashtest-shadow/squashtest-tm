@@ -95,7 +95,8 @@ public class CampaignTestPlanManagerController {
 	.mapAttribute("dataset.selected.name", "name", 		Dataset.class)
 	.mapAttribute("assigned-user", 	"login", 			User.class)
 	.mapAttribute("importance",		"importance", 		TestCase.class)
-	.mapAttribute("exec-mode", 		"automatedTest", 	TestCase.class);
+	.mapAttribute("exec-mode", 		"automatedTest", 	TestCase.class)
+	.map("milestone-dates", "endDate");
 
 
 

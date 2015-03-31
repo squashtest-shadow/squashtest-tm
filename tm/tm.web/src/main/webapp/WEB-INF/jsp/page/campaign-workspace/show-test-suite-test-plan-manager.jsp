@@ -76,7 +76,7 @@
     
     <jsp:attribute name="tablePane">
         <comp:opened-object otherViewers="${ otherViewers }" objectUrl="${ testSuiteUrl }"/>
-        <tsuites:test-suite-test-plan-manager-table managerMode="true" testSuite="${testSuite}" />  
+        <tsuites:test-suite-test-plan-manager-table testSuite="${testSuite}" />  
     </jsp:attribute>
 
   <jsp:attribute name="foot">

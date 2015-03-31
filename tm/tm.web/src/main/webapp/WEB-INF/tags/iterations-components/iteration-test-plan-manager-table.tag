@@ -30,8 +30,6 @@
 <%@ tag body-content="empty" description="the test plan panel of an iteration when displayed in the test plan manager" %>
 
 <%@ attribute name="iteration" type="java.lang.Object" description="the instance of iteration"%>
-<%@ attribute name="managerMode" type="java.lang.Boolean" required="false" 
-description="if displayed in the test plan manager page and milestone mode is on, an additional column may appear"  %>
 
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="s" uri="http://www.springframework.org/tags"%>
@@ -128,7 +126,11 @@ description="if displayed in the test plan manager page and milestone mode is on
   </div>
 
   <%-- ===================== THE TABLE ===================== --%>
- <c:set var="milestoneVisibility" value="${((not empty managerMode and managerMode) and (not empty cookie['milestones']) ) ? '' : ', invisible'}"/>
+  <%--
+    Because the filtering/sorting system might not like that a column may be defined or not,
+    the column must always be present. It may, however, be displayed or not.
+   --%>
+ <c:set var="milestoneVisibility" value="${(not empty cookie['milestones']) ? '' : ', invisible'}"/>
 
   <div class="std-margin-top">
 
@@ -141,9 +143,9 @@ description="if displayed in the test plan manager page and milestone mode is on
           <th class="no-user-select tp-th-filter tp-th-project-name" data-def="map=project-name, sortable">
             <f:message key="label.project" />
           </th>
-          <th class="no-user-select" data-def="map=milestone-dates ${milestoneVisibility}">
+          <th class="no-user-select" data-def="sortable, map=milestone-dates ${milestoneVisibility}">
             <f:message key="label.Milestone"/>
-          </th>          
+          </th> 
           <th class="no-user-select tp-th-filter tp-th-reference" data-def="map=reference, sortable">
             <f:message key="label.Reference" />
           </th>

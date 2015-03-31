@@ -153,6 +153,11 @@
   </div>
 
   <%-- ===================== THE TABLE ===================== --%>
+  <%--
+    Because the filtering/sorting system might not like that a column may be defined or not,
+    the column must always be present. It may, however, be displayed or not.
+   --%>
+ <c:set var="milestoneVisibility" value="${(not empty cookie['milestones']) ? '' : ', invisible'}"/>
 
   <div class="table-tab-wrap">
     <c:if test="${editable}">
@@ -167,6 +172,9 @@
           <th class="no-user-select tp-th-filter tp-th-project-name" data-def="map=project-name, sortable">
             <f:message key="label.project" />
           </th>
+          <th class="no-user-select" data-def="sortable, map=milestone-dates ${milestoneVisibility}">
+            <f:message key="label.Milestone"/>
+          </th>         
           <th title="<f:message key='label.Mode' />" class="no-user-select tp-th-filter tp-th-exec-mode"
             data-def="map=exec-mode, sortable, narrow, center, visible=${iteration.project.testAutomationEnabled}, sClass=exec-mode">&nbsp;</th>
             

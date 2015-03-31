@@ -72,7 +72,7 @@
   
   <jsp:attribute name="tablePane">
     <comp:opened-object otherViewers="${ otherViewers }" objectUrl="${ iterationUrl }" />
-    <it:iteration-test-plan-manager-table managerMode="true" iteration="${iteration}"/>      
+    <it:iteration-test-plan-manager-table iteration="${iteration}"/>      
     <it:test-suite-managment  iteration="${iteration}"/>  
   </jsp:attribute>
 
