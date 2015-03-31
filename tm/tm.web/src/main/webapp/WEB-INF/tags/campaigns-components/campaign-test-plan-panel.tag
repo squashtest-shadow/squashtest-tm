@@ -180,9 +180,8 @@
     </div>
   </div>
   
-  
-  <div id="delete-multiple-test-cases-dialog" class="not-displayed popup-dialog" title="<f:message key='dialog.remove-testcase-associations.title'/>">
-  
+  <script id="delete-dialog-tpl" type="text/x-handlebars-template">
+  <div id="{{dialogId}}" class="not-displayed popup-dialog" title="<f:message key='dialog.remove-testcase-associations.title'/>">
     <div data-def="state=confirm-deletion">
       <span><f:message key="dialog.remove-testcase-associations.message.first"/></span>
       <span><f:message key="message.permissions.confirm"/></span>
@@ -191,13 +190,12 @@
       <span><f:message key="dialog.remove-testcase-associations.message.multiple"/></span>
       <span><f:message key="message.permissions.confirm"/></span>
     </div>
-    
     <div class="popup-dialog-buttonpane">
-      <input type="button" class="button" value="${okLabel}" data-def="state=confirm-deletion multiple-tp, evt=confirm, mainbtn=confirm-deletion multiple-tp"/>
+      <input type="button" class="button" value="${okLabel}" data-def="evt=confirm, mainbtn"/>
       <input type="button" class="button" value="${cancelLabel}" data-def="evt=cancel"/>
     </div>
-  
   </div>
+  </script>
 
 </div>
 

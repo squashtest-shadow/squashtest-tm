@@ -18,7 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-/*
+/**
  * Documentation  :
  *
  * ======== structure ===========
@@ -121,7 +121,6 @@
  *					is invoked (see API), instead of the default one.
  *
  */
-
 define([ 'jquery', "underscore", 'squash.attributeparser', 'squash.configmanager', 'jqueryui', './jquery.squash.squashbutton', 'squashtest/jquery.squash.popuperror' ], function($, _, attrparser, confman) {
 
 	if (($.squash !== undefined) && ($.squash.formDialog !== undefined)) {
@@ -168,7 +167,6 @@ define([ 'jquery', "underscore", 'squash.attributeparser', 'squash.configmanager
 			listeners.push(handler);
 		},
 
-		// FIXME : is this method ever used ?
 		cancel : function(event) {
 			var isclose = this.close();
 			if (isclose === false) {
@@ -292,7 +290,7 @@ define([ 'jquery', "underscore", 'squash.attributeparser', 'squash.configmanager
 			elt.find('.error-message').each(function(){
 				$(this).text('');
 			});
-			
+
 			this._trigger('cleanup');
 		},
 

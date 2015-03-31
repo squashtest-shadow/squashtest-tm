@@ -129,7 +129,7 @@ description="if displayed in the test plan manager page and milestone mode is on
           <th class="no-user-select tp-th-filter tp-th-dataset" data-def="map=dataset.selected.name, sortable, sWidth=10%, sClass=dataset-combo">
             <f:message key="label.Dataset" />
           </th>       
-          <th class="no-user-select" data-def="map=empty-delete-holder, unbind-button=#delete-multiple-test-cases-dialog">&nbsp;</th>
+          <th class="no-user-select" data-def="map=empty-delete-holder, unbind-button=#unbind-test-case-dialog">&nbsp;</th>
         </tr>
       </thead>
       <tbody>
@@ -167,20 +167,21 @@ description="if displayed in the test plan manager page and milestone mode is on
     </div>
   </div>
   
-  
-  <div id="delete-multiple-test-cases-dialog" class="not-displayed popup-dialog" title="<f:message key='dialog.remove-testcase-associations.title'/>">
-  
+  <script id="delete-dialog-tpl" type="text/x-handlebars-template">
+  <div id="{{dialogId}}" class="not-displayed popup-dialog" title="<f:message key='dialog.remove-testcase-associations.title'/>">
     <div data-def="state=confirm-deletion">
       <span><f:message key="dialog.remove-testcase-associations.message"/></span>
     </div>
-
-    
+    <div data-def="state=multiple-tp">
+      <span><f:message key="dialog.remove-testcase-associations.message.multiple"/></span>
+      <span><f:message key="message.permissions.confirm"/></span>
+    </div>
     <div class="popup-dialog-buttonpane">
-      <input type="button" class="button" value="${okLabel}" data-def="state=confirm-deletion, evt=confirm, mainbtn=confirm-deletion"/>
+      <input type="button" class="button" value="${okLabel}" data-def="evt=confirm, mainbtn"/>
       <input type="button" class="button" value="${cancelLabel}" data-def="evt=cancel"/>
     </div>
-  
   </div>
+  </script>
 
   </div>
 </div>

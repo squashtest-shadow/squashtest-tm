@@ -158,18 +158,7 @@ define(['jquery', '../../test-plan-panel/sortmode', 'squash.configmanager',
 			"aaSorting" : [ [ 2, "asc" ] ]
 		};
 
-		var squashSettings = {
-				deleteButtons : {
-					delegate : "#delete-multiple-test-cases-dialog",
-					tooltip : translator.get('dialog.testsuites.remove.label')
-				},
-			/* UnbindButtons now to dessasociate and not delete */
-				unbindButtons : {
-					delegate : "#delete-multiple-test-cases-dialog",
-					tooltip : translator.get('dialog.testsuites.remove.label')
-		}
-				
-		};
+		var squashSettings = {};
 
 		if (conf.features.reorderable){
 			squashSettings.enableDnD = true;
@@ -201,15 +190,15 @@ define(['jquery', '../../test-plan-panel/sortmode', 'squash.configmanager',
 
 			var sortmode = smode.newInst(enhconf);
 			var filtermode = fmode.newInst(enhconf);
-			
+
 			tableconf.tconf.aaSorting = sortmode.loadaaSorting();
 			tableconf.tconf.searchCols = filtermode.loadSearchCols();
-			
-			
+
+
 			var table = $("#campaign-test-plans-table").squashTable(tableconf.tconf, tableconf.sconf);
 			table.data('sortmode', sortmode);
-			
-			// glue code between the filter and the sort mode				
+
+			// glue code between the filter and the sort mode
 			function toggleSortmode(locked){
 				if (locked){
 					sortmode.disableReorder();
@@ -218,10 +207,10 @@ define(['jquery', '../../test-plan-panel/sortmode', 'squash.configmanager',
 					sortmode.enableReorder();
 				}
 			}
-			
-			
+
+
 			toggleSortmode(filtermode.isFiltering());
-			
+
 			table.toggleFiltering = function(){
 				var isFiltering = filtermode.toggleFilter();
 				toggleSortmode(isFiltering);

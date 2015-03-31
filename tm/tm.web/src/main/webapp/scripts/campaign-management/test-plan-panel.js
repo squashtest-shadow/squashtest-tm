@@ -66,8 +66,6 @@ define(['squash.translator', './test-plan-panel/table', './test-plan-panel/popup
 	}
 
 	function _bindButtons(conf){
-
-
 		if (conf.features.editable){
 			$("#assign-users-button").on('click', function(){
 				$("#camp-test-plan-batch-assign").formDialog('open');

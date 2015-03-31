@@ -18,150 +18,183 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define(['jquery', 'squash.translator', 'app/ws/squashtm.notification', 'jquery.squash.confirmdialog', 'jquery.squash.formdialog' ], 
-		function($, translator, notification) {
+define(['jquery',  'underscore', 'handlebars', 'squash.translator', 'app/ws/squashtm.notification', 'jquery.squash.confirmdialog', 'jquery.squash.formdialog' ],
+		function($, _, Handlebars, translator, notification) {
+	"use strict";
 
 	function _initBatchAssignUsers(conf){
-		
+
 		var batchAssignUsersDialog = $("#camp-test-plan-batch-assign");
-		
+
 		batchAssignUsersDialog.formDialog();
-		
+
 		batchAssignUsersDialog.on('formdialogopen', function(){
 			var selIds = $("#campaign-test-plans-table").squashTable().getSelectedIds();
-			
-			if (selIds.length === 0){			
+
+			if (selIds.length === 0) {
 				$(this).formDialog('close');
 				notification.showError(translator.get('campaign.test-plan.action.empty-selection.message'));
+			} else {
+				$(this).formDialog('setState', 'assign');
 			}
-			else{
-				$(this).formDialog('setState','assign');				
-			}
-			
+
 		});
-		
+
 		batchAssignUsersDialog.on('formdialogconfirm', function(){
-			
 			var table = $("#campaign-test-plans-table").squashTable(),
 				select = $('.batch-select', this);
-			
+
 			var rowIds = table.getSelectedIds(),
 				assigneeId = select.val(),
 				assigneeLogin = select.find('option:selected').text();
-			
+
 			var url = conf.urls.testplanUrl + rowIds.join(',');
-			
+
 			$.post(url, {assignee : assigneeId}, function(){
 				table.getSelectedRows().find('td.assignee-combo span').text(assigneeLogin);
 			});
-			
+
 			$(this).formDialog('close');
 		});
-		
-		batchAssignUsersDialog.on('formdialogcancel', function(){
-			$(this).formDialog('close');
-		});
-		
+
+		batchAssignUsersDialog.on('formdialogcancel', closeDialog);
+
 	}
-	
+
 	function _initReorderTestPlan(conf){
 		var dialog = $("#camp-test-plan-reorder-dialog");
-		
+
 		dialog.confirmDialog();
-		
+
 		dialog.on('confirmdialogconfirm', function(){
 			var table = $("#campaign-test-plans-table").squashTable();
 			var drawParameters = table.getAjaxParameters();
-			
+
 			var url = conf.urls.testplanUrl+'/order';
 			$.post(url, drawParameters, 'json')
-			.success(function(){
+			.success(function() {
 				table.data('sortmode').resetTableOrder(table);
-				table.refresh();			
+				table.refresh();
 			});
 		});
-		
-		dialog.on('confirmdialogcancel', function(){
-			$(this).confirmDialog('close');
-		});
+
+		dialog.on('confirmdialogcancel', closeDialog);
 	}
-	
-	
+	/**
+	 * Creates an unbind functino with the given configuration
+	 * @param conf the configuration for the created function
+	 *
+	 * @return function which posts an unbind request for the given id(s)
+	 * @param ids either an id or an array of ids
+	 * @return a promise (the xhr's)
+	 */
+	function unbindCallback(conf) {
+		return function (ids) {
+			var url = conf.urls.testplanUrl + (_.isArray(ids) ? ids.join(',') : ids);
+
+			return $.ajax({
+				url : url,
+				type : 'DELETE',
+				dataType : 'json'
+			});
+		};
+	}
+
+	function dialogSucceed(self) {
+		return function() {
+			$("#campaign-test-plans-table").squashTable().refresh();
+			$(self).formDialog('close');
+		};
+	}
+
+	function closeDialog() {
+		$(this).formDialog('close');
+	}
+
 	function _initBatchRemove(conf){
-		
-		var dialog = $("#delete-multiple-test-cases-dialog");
-		
-		dialog.formDialog();
-		
-		dialog.on('formdialogopen', function(){
-			
+		// 1. we prepare the dom so that it meets our future requirements
+		var tpl = Handlebars.compile($("#delete-dialog-tpl").html());
+		var dlgs = tpl({dialogId: "delete-multiple-test-cases-dialog"}) + tpl({dialogId: "unbind-test-case-dialog"});
+		$("body").append(dlgs);
+		var unbind = unbindCallback(conf);
+
+		// 2.
+		var $batch = $("#delete-multiple-test-cases-dialog");
+		$batch.formDialog();
+		$batch.on("formdialogopen", function() {
 			// read the ids from the table selection
 			var ids = $("#campaign-test-plans-table").squashTable().getSelectedIds();
-			
-			if (ids.length === 0){	
-				// if empty, try to see if the delete buttons embedded in the table rows 
-				// left something for us
-				var _id = dialog.data('entity-id');
-				dialog.data('entity-id', null);
-				if (!! _id){
-					ids = [ _id ];
-				}
-			}
-			
-			if (ids.length === 0){
+
+			if (ids.length === 0) {
 				$(this).formDialog('close');
 				notification.showError(translator.get('iteration.test-plan.action.empty-selection.message'));
+
+			} else if (ids.length === 1) {
+				$(this).formDialog("setState", "confirm-deletion");
+
+			} else {
+				$(this).formDialog("setState", "multiple-tp");
 			}
-			else if(ids.length === 1){
-				this.selIds = ids;
-				dialog.formDialog("setState", "confirm-deletion");
-			}
-			else {
-				this.selIds = ids;
-				dialog.formDialog("setState", "multiple-tp");
-			}
-				
-			
 		});
-		
-		
-		dialog.on('formdialogconfirm', function(){
-			var ids = this.selIds;
-			
-			var url = conf.urls.testplanUrl + ids.join(',');
-			
-			if (ids.length > 0){
-				$.ajax({
-					url : url, 
-					type : 'DELETE',
-					dataType : 'json'
-				})
-				.done(function(){
-					$("#campaign-test-plans-table").squashTable().refresh();
-					dialog.formDialog('close');
+
+		var batchSucceed = dialogSucceed($batch);
+		$batch.on('formdialogconfirm', function(){
+			var ids = $("#campaign-test-plans-table").squashTable().getSelectedIds();
+			if (ids.length > 0) {
+				unbind(ids).done(batchSucceed);
+			}
+		});
+
+		$batch.on('formdialogcancel', function(){
+			$(this).formDialog('close');
+		});
+
+		var $single = $("#unbind-test-case-dialog");
+		$single.formDialog();
+
+		$single.on("formdialogopen", function() {
+			var id = $(this).data('entity-id');
+
+			if (id === undefined) {
+				$(this).formDialog('close');
+				notification.showError(translator.get('iteration.test-plan.action.empty-selection.message'));
+			} else {
+				$(this).formDialog("setState", "confirm-deletion");
+			}
+		});
+
+		// 3.
+		var singleSucceed = dialogSucceed($single);
+		$single.on('formdialogconfirm', function(){
+			var self = this;
+			var id = $(this).data('entity-id');
+
+			if (id !== undefined) {
+				unbind(id).done(function() {
+					singleSucceed();
+					$(self).data('entity-id', null);
 				});
 			}
 		});
-		
-		dialog.on('formdialogcancel', function(){
-			dialog.formDialog('close');
-		});
 
-		
+		$single.on('formdialogcancel', function(){
+			$(this).formDialog('close');
+			$(this).data('entity-id', null);
+		});
 	}
-	
+
 	return {
-		init : function(conf){
-			if (conf.features.editable){				
+		init : function(conf) {
+			if (conf.features.editable) {
 				_initBatchAssignUsers(conf);
 			}
-			if (conf.features.reorderable){
+			if (conf.features.reorderable) {
 				_initReorderTestPlan(conf);
 			}
-			if (conf.features.linkable){
+			if (conf.features.linkable) {
 				_initBatchRemove(conf);
 			}
 		}
 	};
-	
+
 });
