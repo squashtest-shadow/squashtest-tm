@@ -212,7 +212,7 @@ define(['jquery', 'workspace.tree-node-copier', 'tree', 'milestone-manager/miles
 		}, this);
 		
 		this.canDelete = function(nodes){
-			return (nodes.filter(':deletable').not(':library').length == nodes.length) && (nodes.length>0);
+			return milestonesAllowCreation(nodes) && (nodes.filter(':deletable').not(':library').length == nodes.length) && (nodes.length>0);
 		};
 		
 		this.whyCantDelete = function(nodes){
