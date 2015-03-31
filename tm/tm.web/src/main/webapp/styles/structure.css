@@ -1392,6 +1392,12 @@ div#admin-small-link-pane{
 	display:table-cell;
     vertical-align:middle;
 }
+
+#admin-small-link-pane a.unstyledLink {
+    float:left;
+    width: 100%;
+}
+
 /* =================STATISTICS==================== */
 div#admin-stats {
 	float:right;
