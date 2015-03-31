@@ -21,6 +21,7 @@
 package org.squashtest.tm.domain.denormalizedfield;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -36,6 +37,7 @@ import javax.persistence.OrderColumn;
 import org.squashtest.tm.domain.customfield.CustomFieldOption;
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
 import org.squashtest.tm.domain.customfield.CustomFieldValueOption;
+import org.squashtest.tm.domain.customfield.MultiSelectField;
 import org.squashtest.tm.domain.customfield.RawValue;
 
 @Entity
@@ -98,6 +100,30 @@ public class DenormalizedMultiSelectField extends DenormalizedFieldValue {
 	public void accept(DenormalizedFieldVisitor visitor){
 		visitor.visit(this);
 	}
+
+	@Override
+	public String getValue(){
+		String result = "";
+		if (! selectedOptions.isEmpty()){
+			StringBuilder builder = new StringBuilder();
+			for (CustomFieldValueOption option : selectedOptions){
+				builder.append(option.getLabel()+ MultiSelectField.SEPARATOR);
+			}
+			int lastidx = builder.lastIndexOf(MultiSelectField.SEPARATOR);
+			result = builder.substring(0,lastidx);
+		}
+		return result;
+	}
+
+	/**
+	 * Not the preferred way to set the values of this field,
+	 * use adCUFieldValueOption when possible.
+	 */
+	@Deprecated
+	public void setValue(String value){
+		setValues(Arrays.asList(value.split(MultiSelectField.SEPARATOR_EXPR)));
+	}
+
 
 
 }
