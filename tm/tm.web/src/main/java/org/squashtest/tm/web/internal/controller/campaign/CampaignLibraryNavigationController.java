@@ -166,9 +166,10 @@ LibraryNavigationController<CampaignLibrary, CampaignFolder, CampaignLibraryNode
 
 		Campaign newCampaign = campaignForm.getCampaign();
 		Map<Long, RawValue> customFieldValues = campaignForm.getCufs();
-
+		
+		Long milestoneId = (! milestoneIds.isEmpty()) ? milestoneIds.get(0) : null;
 		campaignLibraryNavigationService.addCampaignToCampaignFolder(folderId, newCampaign, customFieldValues,
-				milestoneIds.get(0));
+				milestoneId);
 
 		return createTreeNodeFromLibraryNode(newCampaign, milestoneIds);
 
