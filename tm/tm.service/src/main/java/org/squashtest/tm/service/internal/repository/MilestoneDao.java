@@ -75,4 +75,6 @@ public interface MilestoneDao extends EntityDao<Milestone> {
 	void unbindAllObjects(long milestoneId);
 
 	Milestone findByName(String name);
+
+	boolean isMilestoneBoundToOneObjectOfProject(Long milestoneId, Long projectId);
 }

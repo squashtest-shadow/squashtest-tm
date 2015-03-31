@@ -121,7 +121,7 @@ public class MilestoneBindingController {
 	}
 
 	private DataTableModel buildProjectTableModel(Collection<GenericProject> data, Milestone milestone, Locale locale){
-		ProjectDataTableModelHelper helper = new ProjectDataTableModelHelper(milestone, messageSource, locale);
+		ProjectDataTableModelHelper helper = new ProjectDataTableModelHelper(milestone, messageSource, locale, milestoneService);
 		Collection<Object> aaData = helper.buildRawModel(data);
 	    DataTableModel model = new DataTableModel("");
 	    model.setAaData((List<Object>) aaData);
@@ -173,14 +173,15 @@ public class MilestoneBindingController {
 
 		private Milestone milestone;
 		private InternationalizationHelper messageSource;
-		
+		private MilestoneManagerService milestoneService;
 		private Locale locale;
 
 		
-		public ProjectDataTableModelHelper(Milestone milestone, InternationalizationHelper messageSource, Locale locale) {
+		public ProjectDataTableModelHelper(Milestone milestone, InternationalizationHelper messageSource, Locale locale, MilestoneManagerService milestoneService) {
 			this.milestone = milestone;
 			this.messageSource = messageSource;
 			this.locale = locale;
+			this.milestoneService = milestoneService;
 		}
 
 		@Override
@@ -194,6 +195,7 @@ public class MilestoneBindingController {
 			data.put(DataTableModelConstants.DEFAULT_ENTITY_NAME_KEY, project.getName());
 			data.put("label", project.getLabel());
 			data.put("binded", messageSource.internationalizeYesNo(project.isBoundToMilestone(milestone), locale) );
+			data.put("isUsed", milestoneService.isMilestoneBoundToOneObjectOfProject(milestone, project));
 			data.put(DataTableModelConstants.DEFAULT_EMPTY_DELETE_HOLDER_KEY, " ");
 			return data;
 		}

@@ -21,13 +21,13 @@
 package org.squashtest.tm.service.milestone;
 
 import java.util.Collection;
-
 import java.util.List;
 
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.milestone.MilestoneHolder;
+import org.squashtest.tm.domain.project.GenericProject;
 
 import static org.squashtest.tm.service.security.Authorizations.*;
 
@@ -117,5 +117,7 @@ public interface CustomMilestoneManager extends MilestoneFinderService {
 
 	void unbindAllObjects(long milestoneId);
 
+
+	boolean isMilestoneBoundToOneObjectOfProject(Milestone milestone, GenericProject project);
 
 }

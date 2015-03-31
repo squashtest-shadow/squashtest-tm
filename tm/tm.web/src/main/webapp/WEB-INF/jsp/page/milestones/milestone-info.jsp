@@ -200,10 +200,10 @@
 	
 		<jsp:attribute name="panelButtons">
 			<c:if test="${canEdit }">
-        <button id="bind-project-button" title=<f:message key="label.milestone.bindProject" /> class="sq-icon-btn btn-sm">
+        <button id="bind-project-button" title="<f:message key="label.milestone.bindProject" />" class="sq-icon-btn btn-sm">
           <span class="ui-icon ui-icon-plus squared-icons">+</span>
         </button>
-             <button id="unbind-project-button" title=<f:message key="label.milestone.unbindProject" /> class="sq-icon-btn btn-sm">
+             <button id="unbind-project-button" title="<f:message key="label.milestone.unbindProject" />" class="sq-icon-btn btn-sm">
           <span class="ui-icon ui-icon-minus squared-icons">-</span>
           </c:if>
         </button>
@@ -211,12 +211,13 @@
 				</jsp:attribute>	
 				<jsp:attribute name="body">
 				
-				<table id="projects-table" class="unstyled-table" data-def="ajaxsource=${projectsUrl}?binded, hover, filter, pre-sort=1-asc">
+				<table id="projects-table" class="unstyled-table" data-def="ajaxsource=${projectsUrl}?binded, hover, filter, pre-sort=2-asc">
 		<thead>
 			<tr>
 			    <th data-def="map=entity-id, invisible"> </th>
 				<th data-def="map=entity-index, select">#</th>				
 				<th data-def="map=name, sortable, link=${projectDetailBaseUrl}/{entity-id}/info"  class="datatable-filterable"><f:message key="label.project" /></th>
+				<th data-def="map=isUsed, sortable"><f:message key="label.used" /></th>
 				<th data-def="map=binded, sortable, sClass=binded-to-project" class="datatable-filterable"><f:message key="label.project.isBoundToMilestone" /></th>
 				<th data-def="map=empty-delete-holder, unbind-button=#unbind-project-popup"></th>
 				

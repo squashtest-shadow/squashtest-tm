@@ -491,6 +491,11 @@ public class CustomMilestoneManagerServiceImpl implements CustomMilestoneManager
 	public Milestone findByName(String name) {
 		return milestoneDao.findByName(name);
 	}
-
+	
+        @Override
+	public boolean isMilestoneBoundToOneObjectOfProject(Milestone milestone, GenericProject project) {
+		
+		return milestoneDao.isMilestoneBoundToOneObjectOfProject(milestone.getId(), project.getId());
+	}
 
 }

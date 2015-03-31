@@ -433,30 +433,7 @@ $("#changeStatus-popup").confirmDialog().on('confirmdialogcancel', function(){
 			});	
 		}
 		
-		$(function() {
-			
-			var squashSettings;
-			
-			if (config.data.canEdit === true){
-				initJEditables();
-			} else {
-				squashSettings = {
-						functions:{					
-							drawUnbindButton: function(template, cell){
-								// do nothing so the unbind button are not displayed
-							}	
-						}
-				};
-				
-			}
-			$("#projects-table").squashTable({"bServerSide":false, fnDrawCallback : drawCallBack}, squashSettings);
-			$("#bind-to-projects-table").squashTable({"bServerSide":false, "fnRowCallback" : projectTableRowCallback}, {});
 		
-			basic.init();
-			$("#back").click(clickBackButton);
-			initRenameDialog();
-	
-		});
 
 		
 		var projectTableRowCallback = function(row, data, displayIndex) {
@@ -635,5 +612,30 @@ $("#unbind-project-popup").confirmDialog().on('confirmdialogconfirm', function()
 
 				bindProjectDialog.formDialog('close');
 			});	
+		});
+		
+          $(function() {
+			
+			var squashSettings;
+			
+			if (config.data.canEdit === true){
+				initJEditables();
+			} else {
+				squashSettings = {
+						functions:{					
+							drawUnbindButton: function(template, cell){
+								// do nothing so the unbind button are not displayed
+							}	
+						}
+				};
+				
+			}
+			$("#projects-table").squashTable({"bServerSide":false, fnDrawCallback : drawCallBack}, squashSettings);
+			$("#bind-to-projects-table").squashTable({"bServerSide":false, "fnRowCallback" : projectTableRowCallback}, {});
+		
+			basic.init();
+			$("#back").click(clickBackButton);
+			initRenameDialog();
+	
 		});
 	});

@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.service.internal.repository.hibernate;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -29,7 +30,6 @@ import org.hibernate.CacheMode;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.ScrollMode;
-import org.squashtest.tm.domain.milestone.MilestoneStatus;
 import org.hibernate.ScrollableResults;
 import org.hibernate.Session;
 import org.slf4j.Logger;
@@ -38,6 +38,7 @@ import org.springframework.stereotype.Repository;
 import org.squashtest.tm.domain.campaign.Campaign;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.milestone.MilestoneHolder;
+import org.squashtest.tm.domain.milestone.MilestoneStatus;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.exception.milestone.MilestoneLabelAlreadyExistsException;
@@ -386,6 +387,36 @@ public class HibernateMilestoneDao extends HibernateEntityDao<Milestone> impleme
 		Query q = currentSession().getNamedQuery("milestone.findCampaignByMilestones");
 		q.setParameter("milestoneId", milestoneId);
 		return q.list();
+	}
+
+	@Override
+	public boolean isMilestoneBoundToOneObjectOfProject(Long milestoneId, Long projectId) {
+
+		List<Long> projectIds = new ArrayList<Long>();
+		projectIds.add(projectId);
+		
+		Query queryTc = currentSession().getNamedQuery("milestone.findAllTestCasesForProjectAndMilestone");
+		queryTc.setParameterList("projectIds", projectIds);
+		queryTc.setParameter("milestoneId", milestoneId);
+	
+		if (queryTc.list().size() != 0){
+			return true; //return now so we don't do useless request
+		}
+	
+		Query queryCamp = currentSession().getNamedQuery("milestone.findAllCampaignsForProjectAndMilestone");
+		queryCamp.setParameterList("projectIds", projectIds);
+		queryCamp.setParameter("milestoneId", milestoneId);
+		if (queryCamp.list().size() != 0){
+			return true;//return now so we don't do useless request
+		}
+		Query queryReq = currentSession().getNamedQuery("milestone.findAllRequirementVersionsForProjectAndMilestone");
+		queryReq.setParameterList("projectIds", projectIds);
+		queryReq.setParameter("milestoneId", milestoneId);
+		if (queryReq.list().size() != 0){
+			return true;
+		}
+		
+		return false;
 	}
 
 }
