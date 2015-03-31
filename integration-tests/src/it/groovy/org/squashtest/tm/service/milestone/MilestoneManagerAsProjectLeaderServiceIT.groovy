@@ -202,27 +202,27 @@ class MilestoneManagerAsProjectLeaderServiceIT extends CustomDbunitServiceSpecif
 
 
 		where :
-		motherId |   bindToRequirements | bindToTestCases | bindToCampaigns   || targetProjectIds | targetReqVIds   | targetTcIds    | targetCampIds
-			-1L   |      false           |     false       |     false         ||   [-1, -3, -5, -7]   |  []            |     []        |     []
-			-2L   |      false           |     false       |     false         ||   [-1, -3, -5, -7]   |  []            |     []        |     []
+		motherId |   bindToRequirements | bindToTestCases | bindToCampaigns   || targetProjectIds      | targetReqVIds   | targetTcIds    | targetCampIds
+			-1L   |      false           |     false       |     false         ||   [-1, -3]           |  []            |     []        |     []
+			-2L   |      false           |     false       |     false         ||   [-3, -5]           |  []            |     []        |     []
 			-6L   |      false           |     false       |     false         ||   [-1, -2, -3, -4]   |  []            |     []        |     []
 			-7L   |      false           |     false       |     false         ||   [-3, -4, -5, -6]   |  []            |     []        |     []
-			-8L   |      false           |     false       |     false         ||   [-1, -3, -5, -7]   |  []            |     []        |     []
-			-9L   |      false           |     false       |     false         ||   [-1, -3, -5, -7]   |  []            |     []        |     []
+			-8L   |      false           |     false       |     false         ||   [-1, -3]           |  []            |     []        |     []
+			-9L   |      false           |     false       |     false         ||   [-3, -5]           |  []            |     []        |     []
 	
-			-1L   |       true           |      true        |      true        ||   [-1, -3, -5, -7]   |  [-1, -5]        |     [-1, -5]    |     [-1, -5]
-			-2L   |       true           |      true        |      true        ||   [-1, -3, -5, -7]   |  [-6, -9]        |     [-6, -9]    |     [-6, -9]
-			-6L   |       true           |      true        |      true        ||   [-1, -2, -3, -4]   |  [-1, -3 ,-5 ,-7]  | [-1, -3 ,-5 ,-7]  |     [-1, -3 ,-5 ,-7]
+			-1L   |       true           |      true        |      true        ||   [-1, -3]           |  [-1, -5]        |     [-1, -5]    |     [-1, -5]
+			-2L   |       true           |      true        |      true        ||   [-3, -5]           |  [-6, -9]        |     [-6, -9]    |     [-6, -9]
+			-6L   |       true           |      true        |      true        ||  [-1, -2, -3, -4]    |  [-1, -3 ,-5 ,-7]  | [-1, -3 ,-5 ,-7]  |     [-1, -3 ,-5 ,-7]
 			-7L   |       true           |      true        |      true        ||   [-3, -4, -5, -6]   |  [-6, -8, -9, -11] | [-6, -8, -9, -11] |     [-6, -8, -9, -11]
-			-8L   |       true           |      true        |      true        ||   [-1, -3, -5, -7]   |  [-1, -5]        |     [-1, -5]    |     [-1, -5]
-			-9L   |       true           |      true        |      true        ||   [-1, -3, -5, -7]   |  [-6, -9]        |     [-6, -9]    |     [-6, -9]
+			-8L   |       true           |      true        |      true        ||   [-1, -3]           |  [-1, -5]        |     [-1, -5]    |     [-1, -5]
+			-9L   |       true           |      true        |      true        ||    [-3, -5]          |  [-6, -9]        |     [-6, -9]    |     [-6, -9]
 
-        	-1L   |       true           |      true        |      false       ||   [-1, -3, -5, -7]   |  [-1, -5]        |     [-1, -5]    |     []
-			-1L   |       true           |      false       |      true        ||   [-1, -3, -5, -7]   |  [-1, -5]        |     []        |     [-1, -5]
-			-1L   |       false          |      true        |      true        ||   [-1, -3, -5, -7]   |  []            |     [-1, -5]    |     [-1, -5]
-			-1L   |       false          |      false       |      true        ||   [-1, -3, -5, -7]   |  []            |     []        |     [-1, -5]
-			-1L   |       false          |      true        |      false       ||   [-1, -3, -5, -7]   |  []            |     [-1, -5]    |     []
-			-1L   |       true           |      false       |      false       ||   [-1, -3, -5, -7]   |  [-1, -5]        |     []        |     []
+        	-1L   |       true           |      true        |      false       ||   [-1, -3]           |  [-1, -5]        |     [-1, -5]    |     []
+			-1L   |       true           |      false       |      true        ||   [-1, -3]           |  [-1, -5]        |     []        |     [-1, -5]
+			-1L   |       false          |      true        |      true        ||  [-1, -3]            |  []            |     [-1, -5]    |     [-1, -5]
+			-1L   |       false          |      false       |      true        ||    [-1, -3]          |  []            |     []        |     [-1, -5]
+			-1L   |       false          |      true        |      false       ||   [-1, -3]           |  []            |     [-1, -5]    |     []
+			-1L   |       true           |      false       |      false       ||   [-1, -3]           |  [-1, -5]        |     []        |     []
 }
 
 }

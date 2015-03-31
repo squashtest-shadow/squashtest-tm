@@ -283,8 +283,15 @@ public class CustomMilestoneManagerServiceImpl implements CustomMilestoneManager
 			milestone.bindProjects(mother.getProjects());
 			milestone.addProjectsToPerimeter(mother.getPerimeter());
 		} else {
-			milestone.bindProjects(projectFinder.findAllICanManage());
-			milestone.addProjectsToPerimeter(projectFinder.findAllICanManage());
+	
+			List<GenericProject> projects = new ArrayList<GenericProject>(mother.getProjects());
+			projects.retainAll(projectFinder.findAllICanManage());
+			
+			List<GenericProject> perim = new ArrayList<GenericProject>(mother.getPerimeter());
+			perim.retainAll(projectFinder.findAllICanManage());
+			
+			milestone.bindProjects(projects);
+			milestone.addProjectsToPerimeter(perim);
 
 		}
 
@@ -310,8 +317,7 @@ public class CustomMilestoneManagerServiceImpl implements CustomMilestoneManager
 		}
 	}
 
-	private void bindRequirements(Milestone mother, Milestone milestone, boolean bindToRequirements,
-			boolean copyAllPerimeter) {
+	private void bindRequirements(Milestone mother, Milestone milestone, boolean bindToRequirements, boolean copyAllPerimeter) {
 		if (bindToRequirements) {
 			for (RequirementVersion req : mother.getRequirementVersions()) {
 				if (copyAllPerimeter || canIManageThisProject(req.getProject())) {
