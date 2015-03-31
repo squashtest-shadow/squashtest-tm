@@ -25,6 +25,7 @@ import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.context.MessageSource;
 import org.squashtest.tm.domain.customfield.CustomField;
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
 import org.squashtest.tm.domain.customfield.RawValue;
@@ -171,7 +172,7 @@ LibraryNavigationService<TestCaseLibrary, TestCaseFolder, TestCaseLibraryNode>, 
 	 * @param includeCalledTests
 	 * @return
 	 */
-	File exportTestCaseAsExcel(List<Long> libraryIds, List<Long> nodeIds, boolean includeCalledTests, boolean keepRteFormat);
+	File exportTestCaseAsExcel(List<Long> libraryIds, List<Long> nodeIds, boolean includeCalledTests, boolean keepRteFormat, MessageSource messageSource);
 
 
 	List<String> getParentNodesAsStringList(Long nodeId);

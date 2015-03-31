@@ -34,6 +34,7 @@ import javax.inject.Inject;
 import javax.inject.Provider;
 
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 import org.squashtest.tm.service.internal.batchexport.ExportModel.DatasetModel;
 import org.squashtest.tm.service.internal.batchexport.ExportModel.ParameterModel;
@@ -56,13 +57,14 @@ public class TestCaseExcelExporterService {
 
 	@Inject private Provider<ExcelExporter> exporterProvider;
 
-	public File exportAsExcel(List<Long> testCaseIds, boolean keepRteFormat){
+	public File exportAsExcel(List<Long> testCaseIds, boolean keepRteFormat, MessageSource messageSource){
 
 		// let's chunk the job by batches of 20 test cases
 		List<Long> ids;
 		int idx=0;
 		int max = Math.min(idx+20, testCaseIds.size());
 		ExcelExporter exporter = exporterProvider.get();
+		exporter.setMessageSource(messageSource);
 
 		Map<Long, String> pathById = new HashMap<Long, String>(testCaseIds.size());
 		populatePathsCache(pathById, testCaseIds);

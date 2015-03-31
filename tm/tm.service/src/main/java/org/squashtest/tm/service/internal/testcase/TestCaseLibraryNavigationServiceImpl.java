@@ -33,6 +33,7 @@ import javax.inject.Inject;
 import javax.inject.Provider;
 
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.MessageSource;
 import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
@@ -454,12 +455,17 @@ TestCaseLibraryNavigationService {
 
 	@Override
 	@Transactional(readOnly = true)
-	public File exportTestCaseAsExcel(List<Long> libraryIds, List<Long> nodeIds, boolean includeCalledTests, boolean keepRteFormat) {
+	public File exportTestCaseAsExcel(
+			List<Long> libraryIds,
+			List<Long> nodeIds,
+			boolean includeCalledTests,
+			boolean keepRteFormat,
+			MessageSource messageSource) {
 
 		Collection<Long> allIds = findTestCaseIdsFromSelection(libraryIds, nodeIds, includeCalledTests);
 		allIds = securityFilterIds(allIds, "org.squashtest.tm.domain.testcase.TestCase", "EXPORT");
 
-		return excelService.exportAsExcel(new ArrayList<Long>(allIds), keepRteFormat);
+		return excelService.exportAsExcel(new ArrayList<Long>(allIds), keepRteFormat, messageSource);
 	}
 
 	@Override

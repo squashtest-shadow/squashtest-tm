@@ -35,7 +35,9 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Scope;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.core.foundation.lang.DateUtils;
 import org.squashtest.tm.service.feature.FeatureManager;
@@ -69,12 +71,25 @@ class ExcelExporter {
 
 	private boolean milestonesEnabled;
 
+	private MessageSource messageSource;
+
+	private String errorCellTooLargeMessage;
+
 	@Inject
-	public ExcelExporter(FeatureManager featureManager) {
+	public ExcelExporter(FeatureManager featureManager, MessageSource messageSource) {
 		super();
 		milestonesEnabled = featureManager.isEnabled(Feature.MILESTONE);
+
 		createWorkbook();
 		createHeaders();
+
+	}
+
+	void setMessageSource(MessageSource messageSource){
+
+		this.messageSource = messageSource;
+		errorCellTooLargeMessage = this.messageSource.getMessage("test-case.export.errors.celltoolarge",null, LocaleContextHolder.getLocale());
+
 	}
 
 	public void appendToWorkbook(ExportModel model, boolean keepRteFormat) {
@@ -143,33 +158,42 @@ class ExcelExporter {
 
 			r = tcSheet.createRow(rIdx);
 
-			r.createCell(cIdx++).setCellValue(tcm.getProjectId());
-			r.createCell(cIdx++).setCellValue(tcm.getProjectName());
-			r.createCell(cIdx++).setCellValue(tcm.getPath());
-			r.createCell(cIdx++).setCellValue(tcm.getOrder());
-			r.createCell(cIdx++).setCellValue(tcm.getId());
-			r.createCell(cIdx++).setCellValue(tcm.getReference());
-			r.createCell(cIdx++).setCellValue(tcm.getName());
-			if (milestonesEnabled) {
-				r.createCell(cIdx++).setCellValue(tcm.getMilestone());
+			try{
+				r.createCell(cIdx++).setCellValue(tcm.getProjectId());
+				r.createCell(cIdx++).setCellValue(tcm.getProjectName());
+				r.createCell(cIdx++).setCellValue(tcm.getPath());
+				r.createCell(cIdx++).setCellValue(tcm.getOrder());
+				r.createCell(cIdx++).setCellValue(tcm.getId());
+				r.createCell(cIdx++).setCellValue(tcm.getReference());
+				r.createCell(cIdx++).setCellValue(tcm.getName());
+				if (milestonesEnabled) {
+					r.createCell(cIdx++).setCellValue(tcm.getMilestone());
+				}
+				r.createCell(cIdx++).setCellValue(tcm.getWeightAuto());
+				r.createCell(cIdx++).setCellValue(tcm.getWeight().toString());
+				r.createCell(cIdx++).setCellValue(tcm.getNature().getCode());
+				r.createCell(cIdx++).setCellValue(tcm.getType().getCode());
+				r.createCell(cIdx++).setCellValue(tcm.getStatus().toString());
+				r.createCell(cIdx++).setCellValue(tcm.getDescription());
+				r.createCell(cIdx++).setCellValue(tcm.getPrerequisite());
+				r.createCell(cIdx++).setCellValue(tcm.getNbReq());
+				r.createCell(cIdx++).setCellValue(tcm.getNbCaller());
+				r.createCell(cIdx++).setCellValue(tcm.getNbAttachments());
+				r.createCell(cIdx++).setCellValue(format(tcm.getCreatedOn()));
+				r.createCell(cIdx++).setCellValue(tcm.getCreatedBy());
+				r.createCell(cIdx++).setCellValue(format(tcm.getLastModifiedOn()));
+				r.createCell(cIdx++).setCellValue(tcm.getLastModifiedBy());
+
+				appendCustomFields(r, "TC_CUF_", tcm.getCufs());
 			}
-			r.createCell(cIdx++).setCellValue(tcm.getWeightAuto());
-			r.createCell(cIdx++).setCellValue(tcm.getWeight().toString());
-			r.createCell(cIdx++).setCellValue(tcm.getNature().getCode());
-			r.createCell(cIdx++).setCellValue(tcm.getType().getCode());
-			r.createCell(cIdx++).setCellValue(tcm.getStatus().toString());
-			r.createCell(cIdx++).setCellValue(tcm.getDescription());
-			r.createCell(cIdx++).setCellValue(tcm.getPrerequisite());
-			r.createCell(cIdx++).setCellValue(tcm.getNbReq());
-			r.createCell(cIdx++).setCellValue(tcm.getNbCaller());
-			r.createCell(cIdx++).setCellValue(tcm.getNbAttachments());
-			r.createCell(cIdx++).setCellValue(format(tcm.getCreatedOn()));
-			r.createCell(cIdx++).setCellValue(tcm.getCreatedBy());
-			r.createCell(cIdx++).setCellValue(format(tcm.getLastModifiedOn()));
-			r.createCell(cIdx++).setCellValue(tcm.getLastModifiedBy());
+			catch(IllegalArgumentException wtf){
 
-			appendCustomFields(r, "TC_CUF_", tcm.getCufs());
+				tcSheet.removeRow(r);
+				r = tcSheet.createRow(rIdx);
 
+				r.createCell(0).setCellValue(errorCellTooLargeMessage);
+
+			}
 			rIdx++;
 			cIdx = 0;
 		}
@@ -188,18 +212,28 @@ class ExcelExporter {
 
 			r = stSheet.createRow(rIdx);
 
-			r.createCell(cIdx++).setCellValue(tsm.getTcOwnerPath());
-			r.createCell(cIdx++).setCellValue(tsm.getTcOwnerId());
-			r.createCell(cIdx++).setCellValue(tsm.getId());
-			r.createCell(cIdx++).setCellValue(tsm.getOrder());
-			r.createCell(cIdx++).setCellValue(tsm.getIsCallStep());
-			r.createCell(cIdx++).setCellValue(tsm.getDsName());
-			r.createCell(cIdx++).setCellValue(tsm.getAction());
-			r.createCell(cIdx++).setCellValue(tsm.getResult());
-			r.createCell(cIdx++).setCellValue(tsm.getNbReq());
-			r.createCell(cIdx++).setCellValue(tsm.getNbAttach());
+			try{
+				r.createCell(cIdx++).setCellValue(tsm.getTcOwnerPath());
+				r.createCell(cIdx++).setCellValue(tsm.getTcOwnerId());
+				r.createCell(cIdx++).setCellValue(tsm.getId());
+				r.createCell(cIdx++).setCellValue(tsm.getOrder());
+				r.createCell(cIdx++).setCellValue(tsm.getIsCallStep());
+				r.createCell(cIdx++).setCellValue(tsm.getDsName());
+				r.createCell(cIdx++).setCellValue(tsm.getAction());
+				r.createCell(cIdx++).setCellValue(tsm.getResult());
+				r.createCell(cIdx++).setCellValue(tsm.getNbReq());
+				r.createCell(cIdx++).setCellValue(tsm.getNbAttach());
 
-			appendCustomFields(r, "TC_STEP_CUF_", tsm.getCufs());
+				appendCustomFields(r, "TC_STEP_CUF_", tsm.getCufs());
+			}
+			catch(IllegalArgumentException wtf){
+
+				stSheet.removeRow(r);
+				r = stSheet.createRow(rIdx);
+
+				r.createCell(0).setCellValue(errorCellTooLargeMessage);
+
+			}
 
 			rIdx++;
 			cIdx = 0;
@@ -218,11 +252,21 @@ class ExcelExporter {
 		for (ParameterModel pm : models) {
 			r = pSheet.createRow(rIdx);
 
-			r.createCell(cIdx++).setCellValue(pm.getTcOwnerPath());
-			r.createCell(cIdx++).setCellValue(pm.getTcOwnerId());
-			r.createCell(cIdx++).setCellValue(pm.getId());
-			r.createCell(cIdx++).setCellValue(pm.getName());
-			r.createCell(cIdx++).setCellValue(pm.getDescription());
+			try{
+				r.createCell(cIdx++).setCellValue(pm.getTcOwnerPath());
+				r.createCell(cIdx++).setCellValue(pm.getTcOwnerId());
+				r.createCell(cIdx++).setCellValue(pm.getId());
+				r.createCell(cIdx++).setCellValue(pm.getName());
+				r.createCell(cIdx++).setCellValue(pm.getDescription());
+			}
+			catch(IllegalArgumentException wtf){
+
+				pSheet.removeRow(r);
+				r = pSheet.createRow(rIdx);
+
+				r.createCell(0).setCellValue(errorCellTooLargeMessage);
+
+			}
 
 			rIdx++;
 			cIdx = 0;
@@ -241,14 +285,24 @@ class ExcelExporter {
 		for (DatasetModel dm : models) {
 			r = dsSheet.createRow(rIdx);
 
-			r.createCell(cIdx++).setCellValue(dm.getTcOwnerPath());
-			r.createCell(cIdx++).setCellValue(dm.getOwnerId());
-			r.createCell(cIdx++).setCellValue(dm.getId());
-			r.createCell(cIdx++).setCellValue(dm.getName());
-			r.createCell(cIdx++).setCellValue(dm.getParamOwnerPath());
-			r.createCell(cIdx++).setCellValue(dm.getParamOwnerId());
-			r.createCell(cIdx++).setCellValue(dm.getParamName());
-			r.createCell(cIdx++).setCellValue(dm.getParamValue());
+			try{
+				r.createCell(cIdx++).setCellValue(dm.getTcOwnerPath());
+				r.createCell(cIdx++).setCellValue(dm.getOwnerId());
+				r.createCell(cIdx++).setCellValue(dm.getId());
+				r.createCell(cIdx++).setCellValue(dm.getName());
+				r.createCell(cIdx++).setCellValue(dm.getParamOwnerPath());
+				r.createCell(cIdx++).setCellValue(dm.getParamOwnerId());
+				r.createCell(cIdx++).setCellValue(dm.getParamName());
+				r.createCell(cIdx++).setCellValue(dm.getParamValue());
+			}
+			catch(IllegalArgumentException wtf){
+
+				dsSheet.removeRow(r);
+				r = dsSheet.createRow(rIdx);
+
+				r.createCell(0).setCellValue(errorCellTooLargeMessage);
+
+			}
 
 			rIdx++;
 			cIdx = 0;

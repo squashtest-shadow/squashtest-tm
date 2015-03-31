@@ -211,7 +211,7 @@ LibraryNavigationController<TestCaseLibrary, TestCaseFolder, TestCaseLibraryNode
 		response.setHeader("Content-Disposition", "attachment; filename=" + filename + ".xls");
 
 		File export = testCaseLibraryNavigationService.exportTestCaseAsExcel(libraryIds, nodeIds, includeCalledTests,
-				keepRteFormat);
+				keepRteFormat, getMessageSource());
 		return new FileSystemResource(export);
 
 	}
