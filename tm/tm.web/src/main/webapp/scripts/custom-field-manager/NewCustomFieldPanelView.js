@@ -43,12 +43,6 @@ define(
 							this.$("input:checkbox[name='optional']").get()[0].checked = model.get("optional");
 							this.$("select[name='inputType']").val(model.get("inputType"));
 
-							this.$("input:button").button();
-							
-							this.$("#add-cf").button();
-							
-							// Icons don't work with an <input ... /> , but work with a <button />
-										
 							this.render();
 							this.$el.formDialog({
 								autoOpen : true,
@@ -65,10 +59,10 @@ define(
 							var source = $("#" + inputType + "-default-tpl").html();
 							var template = Handlebars.compile(source);
 							this.$("#default-value-pane").html(template(this.model.toJSON()));
-							
+
 							// in case the input type was previously rich text.
 							confman.destroyCkeditor("#defaultValue");
-							
+
 							switch (inputType) {
 							case "DROPDOWN_LIST":
 								this.renderOptionsTable();
@@ -85,12 +79,12 @@ define(
 								$("#defaultValue").datepicker({
 									dateFormat : squashtm.app.localizedDateFormat
 								});
-								break;								
+								break;
 							case "RICH_TEXT" :
 								this.renderOptional(true);
 								var conf = confman.getStdCkeditor();
 								$("#defaultValue").ckeditor(function(){}, conf);
-								// the following reroute the blur event from the ckeditor and relocate it as thrown by the textarea 
+								// the following reroute the blur event from the ckeditor and relocate it as thrown by the textarea
 								CKEDITOR.instances["defaultValue"].on('change', function(){
 									$("#defaultValue").trigger('change');
 								});
@@ -107,7 +101,7 @@ define(
 										else{
 											return true;
 										}
-									},									
+									},
 									afterTagAdded:  function(event, ui){
 										$("#defaultValue").trigger('change');
 									},
@@ -121,7 +115,7 @@ define(
 							this._resize();
 							return this;
 						},
-						
+
 						_resize : function(){
 							if (this.$el.data().formDialog !== undefined){
 								var type = this.model.get("inputType");
@@ -180,7 +174,7 @@ define(
 
 							this.render();
 						},
-						
+
 
 						changeOptional : function(event) {
 							this.model.set("optional", event.target.checked);
@@ -195,14 +189,14 @@ define(
 							this.cleanup();
 							this.trigger("newcustomfield.confirm");
 						},
-						
+
 						invalidTag : function(event) {
 							var res = true, invalidTag = this.model.invalidTag();
 							Forms.form(this.$el).clearState();
 							Forms.input(this.$("ul[name='" + "defaultValue" + "']")).setState("error", invalidTag["tagCode"]);
 							return false;
 						},
-						
+
 						addanother : function(event) {
 							var res = true, validationErrors = this.model.validateAll();
 
@@ -228,7 +222,7 @@ define(
 							this._resetForm();
 							return res;
 						},
-						
+
 						validate : function(event) {
 							var res = true, validationErrors = this.model.validateAll();
 
@@ -302,10 +296,6 @@ define(
 								} ]
 							});
 
-							this.$("input:button").button();
-							
-							this.$("#add-cf").button();
-
 						},
 
 						_resetForm : function() {
@@ -315,7 +305,7 @@ define(
 							this.$errorMessages.text("");
 							Forms.form(this.$el).clearState();
 						},
-						
+
 						addOption : function() {
 							var optionLabelInput = Forms.input(this.$("input[name='new-option-label']"));
 							var optionLabel = optionLabelInput.$el.val();
@@ -381,10 +371,10 @@ define(
 						 */
 						decorateOptionRow : function(self) {
 							return function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {
-								var row = $(nRow), 
-									defaultCell = row.find(".is-default"), 
-									removeCell = row.find(".remove-row"), 
-									option = aData[0], 
+								var row = $(nRow),
+									defaultCell = row.find(".is-default"),
+									removeCell = row.find(".remove-row"),
+									option = aData[0],
 									checked = option === self.model.get("defaultValue"),
 									tplData = {
 										option : option,
