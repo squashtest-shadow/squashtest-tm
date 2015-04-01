@@ -339,11 +339,13 @@ require(["common"], function(){
 			synchronizeMilestoneDialog.data('mil2', mil2);
 			var trans = translator.get({
 				rangeGlobal : "milestone.range.GLOBAL",
+				statusPlanned : "milestone.status.PLANNED"
 				});
 
-			if (mil1.bindableToObject || mil2.bindableToObject){
+			if (mil1.status != trans.statusPlanned && mil2.status != trans.statusPlanned && (mil1.bindableToObject || mil2.bindableToObject)){
 				// you need at least one milestone bindable to object to synchronize
-
+				//and no planned milestone
+				
 				if (config.data.isAdmin){
 					//ok you're admin you can skip some additional check
 					configAdminSynchroPopup();
@@ -357,7 +359,7 @@ require(["common"], function(){
 						warningWithTranslation('message.milestone.synchronize.wrongrange');
 					} else if (mil1.range == trans.rangeGlobal && !mil2.bindableToObject || mil2.range == trans.rangeGlobal && !mil1.bindableToObject ) {
 						//you have selected one global and a restricted non bindable to object milestone...too bad you loose again !
-
+						warningWithTranslation('message.milestone.synchronize.wrongstatus');
 					} else {
 						//You're still here ?? ok you can now have your pop up !
 						configNonAdminSynchroPopup();
@@ -369,9 +371,11 @@ require(["common"], function(){
 				}
 
 			} else {
-				// 2 milestone not in progress, you loose again
+				// 2 milestone not bindable to object, you loose again
+				// or 1 of the milestone is PLANNED...so you loose (unfair isn't it ?)
 				warningWithTranslation('message.milestone.synchronize.wrongstatus');
 			}
+		
 		}
 
 		function configAdminSynchroPopup(){
