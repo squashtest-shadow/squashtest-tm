@@ -32,6 +32,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -45,6 +46,8 @@ import org.squashtest.tm.service.customfield.CustomFieldValueFinderService;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.testcase.TestStepModificationService;
 import org.squashtest.tm.web.internal.controller.generic.ServiceAwareAttachmentTableModelHelper;
+import org.squashtest.tm.web.internal.controller.milestone.MilestoneFeatureConfiguration;
+import org.squashtest.tm.web.internal.controller.milestone.MilestoneUIConfigurationService;
 import org.squashtest.tm.web.internal.controller.testcase.requirement.RequirementVerifierView;
 import org.squashtest.tm.web.internal.model.customfield.CustomFieldJsonConverter;
 import org.squashtest.tm.web.internal.model.customfield.CustomFieldValueModel;
@@ -70,6 +73,9 @@ public class TestStepController {
 	@Inject
 	private CustomFieldJsonConverter cufJsonConverter;
 
+	@Inject
+	private MilestoneUIConfigurationService milestoneConfService;
+
 
 	/**
 	 * Shows the step modification page.
@@ -80,7 +86,10 @@ public class TestStepController {
 	 * @return
 	 */
 	@RequestMapping(method = RequestMethod.GET)
-	public String showStepInfos(@PathVariable long testStepId, Model model) {
+	public String showStepInfos(@PathVariable long testStepId, Model model,
+			@CookieValue(value="milestones", required=false, defaultValue="") List<Long> milestoneIds
+			) {
+
 		LOGGER.info("Show Test Step initiated");
 		LOGGER.debug("Find and show TestStep #{}", testStepId);
 		TestStep testStep = testStepService.findById(testStepId);
@@ -89,12 +98,20 @@ public class TestStepController {
 		model.addAttribute("testStepView", testStepView);
 		model.addAttribute("workspace", "test-case");
 
+		// ------------------------------------ MILLESTONE FEATURE
+		MilestoneFeatureConfiguration milestoneConf = milestoneConfService.configure(milestoneIds, testStep.getTestCase());
+		model.addAttribute("milestoneConf", milestoneConf);
+
 		// ------------------------------------RIGHTS PART
 		// waiting for [Task 1843]
 		boolean writable = permissionEvaluationService.hasRoleOrPermissionOnObject("ROLE_ADMIN", "WRITE", testStep);
+		writable = writable && milestoneConf.isEditable();
 		model.addAttribute("writable", writable); // right to modify steps
+
 		boolean attachable = permissionEvaluationService.hasRoleOrPermissionOnObject("ROLE_ADMIN", "ATTACH", testStep);
+		attachable = attachable && milestoneConf.isEditable();
 		model.addAttribute("attachable", attachable); // right to modify steps
+
 		boolean linkable = permissionEvaluationService.hasRoleOrPermissionOnObject("ROLE_ADMIN", "LINK", testStep);
 		model.addAttribute("linkable", linkable); // right to bind steps to requirement
 
@@ -129,6 +146,8 @@ public class TestStepController {
 		model.addAttribute("cufDefinitions", cufModels);
 
 		model.addAttribute("hasCUF", hasCUF);
+
+
 
 		return "edit-test-step.html";
 	}

@@ -40,6 +40,7 @@ import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.service.feature.FeatureManager;
 import org.squashtest.tm.service.feature.FeatureManager.Feature;
 import org.squashtest.tm.service.milestone.MilestoneFinderService;
+import org.squashtest.tm.service.testcase.TestCaseFinder;
 import org.squashtest.tm.web.internal.model.json.JsonMilestone;
 
 
@@ -62,11 +63,18 @@ public class MilestoneUIConfigurationService {
 	@Inject
 	FeatureManager featureManager;
 
+	@Inject
+	TestCaseFinder testCaseFinder;
+
 
 	public MilestoneFeatureConfiguration configure(List<Long> activeMilestones, TestCase testCase){
 		MilestoneFeatureConfiguration conf = createCommonConf(activeMilestones, testCase);
 		Map<String, String> identity = createIdentity(testCase);
 		conf.setIdentity(identity);
+
+		// for the test cases one must account for inherited milestones
+		boolean locked = isMilestoneLocked(testCase);
+		conf.setMilestoneLocked(locked);
 		return conf;
 	}
 
@@ -156,9 +164,10 @@ public class MilestoneUIConfigurationService {
 		return conf;
 	}
 
-	private boolean isMilestoneLocked(MilestoneMember member){
+	private boolean isMilestoneLocked(TestCase testCase){
 		boolean locked = false;
-		Collection<Milestone> milestones = member.getMilestones();
+		Collection<Milestone> milestones = testCaseFinder.findAllMilestones(testCase.getId());
+
 
 		for (Milestone m : milestones){
 			MilestoneStatus status = m.getStatus();
@@ -170,6 +179,11 @@ public class MilestoneUIConfigurationService {
 
 		return locked;
 	}
+
+	private boolean isMilestoneLocked(MilestoneMember member){
+		return member.doMilestonesAllowEdition();
+	}
+
 
 	private Map<String, String> createIdentity(TestCase testCase){
 		Map<String, String> identity = new HashMap<>();
