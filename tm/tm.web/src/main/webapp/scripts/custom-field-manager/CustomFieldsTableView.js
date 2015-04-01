@@ -19,10 +19,10 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 define(
-		[ "jquery", "backbone", "./NewCustomFieldPanelView",
-				"./NewCustomFieldModel", "app/ws/squashtm.notification", "squash.translator", "squashtable",
+		[ "jquery", "backbone", "./NewCustomFieldPanelView", "app/ws/squashtm.notification", "squash.translator", "squashtable",
 				"jqueryui", "jquery.squash.confirmdialog" ],
-		function($, Backbone, NewCustomFieldPanelView, NewCustomFieldModel, notification, translator) {
+		function($, Backbone, NewCustomFieldPanelView, notification, translator) {
+	"use strict";
 	var cfTable = squashtm.app.cfTable;
 	/*
 	 * Defines the controller for the custom fields table.
@@ -142,28 +142,24 @@ define(
 		// ******** delete dialog init ***********
 
 		configureDeleteCfPanel :  function(event) {
-			var tableCf = $("#cf-table").squashTable();
-			var self = this;
-			var deleteDialog = $("#delete-cf-popup");
-			deleteDialog.confirmDialog();
 
-			deleteDialog.on('confirmdialogconfirm', function(){
+			$("#delete-cf-popup").on('confirmdialogconfirm', function(){
+				var tableCf = $("#cf-table").squashTable();
 				var removedIds = tableCf.getSelectedIds().join(',');
 				var urlDelete = cfTable.ajaxSource + "/" + removedIds;
-					$.ajax({
-						type : 'DELETE',
-						url : urlDelete ,
-					}).done(function(){
-						deleteDialog.confirmDialog('close');
-						tableCf.refresh();
-						});
+
+				$.ajax({
+					type : 'DELETE',
+					url : urlDelete ,
+				}).done(function() {
+					tableCf.refresh();
+				});
 			});
 		},
 
 		showDeleteCfPanel :  function(event) {
 			var table = $("#cf-table").squashTable();
 			if (table.getSelectedRows().size() > 0) {
-				$("#delete-cf-popup").confirmDialog();
 				$("#delete-cf-popup").confirmDialog('open');
 			} else {
 				notification.showError(translator.get('message.NoCUFSelected'));
@@ -177,25 +173,22 @@ define(
 
 			function discard() {
 				self.newCfPanel
-						.off("newcustomfield.cancel newcustomfield.confirm");
+						.off("newcustomfield.cancel newcustomfield.added");
 				self.newCfPanel.undelegateEvents();
 				self.newCfPanel = null;
-				$(showButton).prop("disabled", true);
+				$(showButton).prop("disabled", false);
 				self.table.squashTable().fnDraw();
 			}
 
-			function discardAndRefresh() {
-				discard();
+			function refresh() {
 				self.table.squashTable().fnDraw();
 			}
 
-			$(event.target).prop("disabled", false);
-			self.newCfPanel = new NewCustomFieldPanelView({
-				model : new NewCustomFieldModel()
-			});
+			$(event.target).prop("disabled", true);
+			self.newCfPanel = new NewCustomFieldPanelView();
 
 			self.newCfPanel.on("newcustomfield.cancel", discard);
-			self.newCfPanel.on("newcustomfield.confirm", discardAndRefresh);
+			self.newCfPanel.on("newcustomfield.added", refresh);
 		}
 	});
 

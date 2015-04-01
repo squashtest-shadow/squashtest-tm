@@ -28,7 +28,6 @@
   
   <style th:include="admin/admin-subpage.frag :: subpage-css" th:remove="tag"></style>
   
-  
   <script th:remove="all" type="text/javascript" src="../../scripts/lib/jquery/jquery-1.8.3.min.js"></script>
   <script th:remove="all" type="text/javascript" src="../../js/thymol.js"></script>
   <script type="text/javascript" th:inline="javascript">
@@ -295,7 +294,7 @@
      <script id="DATE_PICKER-default-tpl" type="text/x-handlebars-template" th:inline="text">
          <label class="control-label" for="defaultValue" th:text="#{label.defaultValue}">Default value</label>
     <div class="controls">
-      <input name="defaultValue" id="defaultValue" class="date-hidden dateprop" value="" size="10" maxlength="10" type="text" />    
+      <input name="defaultValue" id="defaultValue" class="date-hidden dateprop" value="" size="10" maxlength="10" type="text" />
       <span id="defaultValue-label" style="color:#4297d7;font-weight: bold "></span>
       <span class="help-inline">&nbsp;</span>    
     </div>
@@ -304,7 +303,7 @@
         <script id="TAG-default-tpl" type="text/x-handlebars-template" th:inline="text">
           <label class="control-label" for="defaultValue" th:text="#{label.defaultValue}">Default value</label>
           <div class="controls">
-            <ul id="defaultValue" name="defaultValue" class="tagprop" style="margin-left:0;width:367px;border : 1px solid black;" value=""/>    
+            <ul id="defaultValue" name="defaultValue" class="tagprop" style="margin-left:0;width:367px;border : 1px solid black;" value=""/>
             <span class="help-inline">&nbsp;</span>
           </div>
         </script>

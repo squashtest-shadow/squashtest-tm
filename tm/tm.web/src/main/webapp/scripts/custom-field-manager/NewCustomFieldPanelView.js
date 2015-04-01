@@ -20,30 +20,66 @@
  */
 define(
 		[ "jquery", "backbone", "handlebars", "app/lnf/SquashDatatablesLnF", "app/lnf/Forms", "squash.configmanager",
-				"jquery.squash.formdialog", "datepicker/jquery.squash.datepicker-locales", "jquery.squash.tagit" ],
-		function($, Backbone, Handlebars, SD, Forms, confman) {
+		  "./NewCustomFieldModel", "jquery.squash.formdialog", "datepicker/jquery.squash.datepicker-locales", "jquery.squash.tagit" ],
+		function($, Backbone, Handlebars, SD, Forms, confman, NewCustomFieldModel) {
+			"use strict";
+			/**
+			 * Validates model and sets error messages accordingly
+			 * @param view the NewCustomFieldPanelView to validate
+			 * @returns {Boolean} true if model validates
+			 */
+			function validateView(view) {
+				var validationErrors = view.model.validateAll();
+
+				Forms.form(view.$el).clearState();
+
+				if (validationErrors !== null) {
+					for (var key in validationErrors) {
+						Forms.input(view.$("input[name='" + key + "']")).setState("error",
+								validationErrors[key]);
+					}
+
+					return false;
+				}
+
+				return true;
+			}
+
+			/**
+			 * Saves the model (it should be valid !)
+			 * @param model
+			 * @returns {Boolean} true if model was saved without errors
+			 */
+			function saveModel(model) {
+				var ssok = true;
+
+				var csok = model.save(null, {
+					async : false,
+					error : function() {
+						ssok = false;
+						event.preventDefault();
+					}
+				});
+
+				return csok && ssok;
+			}
+
 			/*
 			 * Defines the controller for the new custom field panel.
 			 */
-			var NewCustomFieldPanelView = Backbone.View
-					.extend({
+			var NewCustomFieldPanelView = Backbone.View.extend({
 						el : "#new-cf-pane",
 						defaultWidth : 600,
 						richWidth : 1000,
 						initialize : function() {
 							var self = this;
-							var model = this.model;
+							this.model = new NewCustomFieldModel();
 							$.datepicker.setDefaults($.datepicker.regional[squashtm.app.locale]);
 							this.defaultValueField = this.$("input:text[name='defaultValue']");
 
-							this.$("input:text.strprop").each(function() {
-								var self = this;
-								self.value = model.get(self.name);
-							});
-							this.$("input:checkbox[name='optional']").get()[0].checked = model.get("optional");
-							this.$("select[name='inputType']").val(model.get("inputType"));
-
+							this.initializeForm();
 							this.render();
+
 							this.$el.formDialog({
 								autoOpen : true,
 								close : function() {
@@ -51,7 +87,15 @@ define(
 								}
 							});
 							this._resize();
+						},
 
+						initializeForm: function() {
+							var model = this.model;
+							this.$("input:text.strprop").each(function() {
+								this.value = model.get(this.name);
+							});
+							this.$("input:checkbox[name='optional']").get()[0].checked = model.get("optional");
+							this.$("select[name='inputType']").val(model.get("inputType"));
 						},
 
 						render : function() {
@@ -97,8 +141,7 @@ define(
 										if (label.indexOf("|") !== -1){
 											$("#defaultValue").trigger('invalidtag');
 											return false;
-										}
-										else{
+										} else{
 											return true;
 										}
 									},
@@ -136,9 +179,8 @@ define(
 							"change select[name='inputType']" : "changeInputType",
 							"click input:checkbox[name='optional']" : "changeOptional",
 							"formdialogcancel" : "cancel",
-							"formdialogvalidate" : "validate",
-							"formdialogaddanother" : "addanother",
-							"formdialogconfirm" : "confirm",
+							"formdialogvalidate" : "addAndClose",
+							"formdialogaddanother" : "addAnother",
 							"click .add-option" : "addOption",
 							"click .remove-row>a" : "removeOption",
 							"click .is-default>input:checkbox" : "changeDefaultOption"
@@ -148,24 +190,29 @@ define(
 							var textbox = event.target;
 							this.model.set(textbox.name, textbox.value);
 						},
+
 						changeDateProp : function(event) {
 							var textbox = event.target;
 							var date = $(textbox).datepicker("getDate");
 							var dateToString = $.datepicker.formatDate($.datepicker.ATOM, date);
 							this.model.set(textbox.name, dateToString);
 						},
+
 						changeOptProp : function(event) {
 							var option = event.target;
 							this.model.set(option.name, option.value);
 						},
+
 						changeRichProp : function(event){
 							var area = $("#defaultValue");
 							this.model.set(area.attr('id'), area.val());
 						},
+
 						changeTagProp : function(event){
 							tags = $("#defaultValue").squashTagit("assignedTags").join("|");
 							this.model.set("defaultValue", tags);
 						},
+
 						changeInputType : function(event) {
 							var model = this.model;
 
@@ -174,7 +221,6 @@ define(
 
 							this.render();
 						},
-
 
 						changeOptional : function(event) {
 							this.model.set("optional", event.target.checked);
@@ -185,11 +231,6 @@ define(
 							this.trigger("newcustomfield.cancel");
 						},
 
-						confirm : function(event) {
-							this.cleanup();
-							this.trigger("newcustomfield.confirm");
-						},
-
 						invalidTag : function(event) {
 							var res = true, invalidTag = this.model.invalidTag();
 							Forms.form(this.$el).clearState();
@@ -197,57 +238,19 @@ define(
 							return false;
 						},
 
-						addanother : function(event) {
-							var res = true, validationErrors = this.model.validateAll();
-
-							Forms.form(this.$el).clearState();
-
-							if (validationErrors !== null) {
-								for ( var key in validationErrors) {
-									Forms.input(this.$("input[name='" + key + "']")).setState("error",
-											validationErrors[key]);
-								}
-
-								return false;
+						addAnother : function(event) {
+							if (validateView(this) && saveModel(this.model)) {
+								this.trigger("newcustomfield.added", { source: event, view: this, model: this.model });
+								this._resetForm();
 							}
-
-							this.model.save(null, {
-								async : false,
-								error : function() {
-									res = false;
-									event.preventDefault();
-								}
-							});
-							$('#cf-table').squashTable().refresh();
-							this._resetForm();
-							return res;
 						},
 
-						validate : function(event) {
-							var res = true, validationErrors = this.model.validateAll();
-
-							Forms.form(this.$el).clearState();
-
-							if (validationErrors !== null) {
-								for ( var key in validationErrors) {
-									Forms.input(this.$("input[name='" + key + "']")).setState("error",
-											validationErrors[key]);
-								}
-
-								return false;
+						addAndClose: function(event) {
+							if (validateView(this) && saveModel(this.model)) {
+								this.trigger("newcustomfield.added", { source: event, view: this, model: this.model });
+								this.cleanup();
+								this.trigger("newcustomfield.cancel", { source: event, view: this });
 							}
-
-							this.model.save(null, {
-								async : false,
-								error : function() {
-									res = false;
-									event.preventDefault();
-								}
-							});
-							this.$el.addClass("not-displayed");
-							this.$el.formDialog("close");
-							$('#cf-table').squashTable().refresh();
-							return res;
 						},
 
 						cleanup : function() {
@@ -299,11 +302,11 @@ define(
 						},
 
 						_resetForm : function() {
-							this.$textFields = this.$el.find("input:text");
-							this.$textFields.val("");
-							this.$textAreas.val("");
-							this.$errorMessages.text("");
+							this.model = new NewCustomFieldModel();
+							confman.destroyCkeditor("#defaultValue");
 							Forms.form(this.$el).clearState();
+							this.initializeForm();
+							this.render();
 						},
 
 						addOption : function() {
