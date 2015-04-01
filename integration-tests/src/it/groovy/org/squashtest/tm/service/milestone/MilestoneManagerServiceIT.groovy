@@ -169,4 +169,42 @@ class MilestoneManagerServiceIT extends DbunitServiceSpecification {
 		then:
 		res == ["My milestone 3"]
 	}
+	
+	/*
+	 * Please see MilestoneManagerAsProjectLeaderServiceIT for informations about the dataset
+	 */
+	@Unroll("should  synchronize for admin : source id : #sourceId, targetId :  #targetId union : #isUnion")
+	@DataSet("/org/squashtest/tm/service/milestone/MilestoneManagerService2IT.xml")
+	def "should synchronize as Admin"(){
+		given :
+		when :
+		manager.synchronize(sourceId, targetId, extendPerimeter, isUnion)
+		def target = manager.findById(targetId)
+		def source = manager.findById(sourceId)
+		then :
+		target.perimeter*.id as Set == targetProjectIds as Set
+		target.projects*.id as Set == targetProjectIds as Set
+		target.testCases*.id as Set == targetObjIds as Set
+		target.campaigns*.id as Set == targetObjIds as Set
+		target.requirementVersions*.id as Set == targetObjIds as Set
+
+		source.perimeter*.id as Set == sourceProjectIds as Set
+		source.projects*.id as Set == sourceProjectIds as Set
+		source.testCases*.id as Set == sourceObjIds as Set
+		source.campaigns*.id as Set == sourceObjIds as Set
+		source.requirementVersions*.id as Set == sourceObjIds as Set
+		where :
+		sourceId | targetId | extendPerimeter | isUnion  ||  sourceProjectIds           |  targetProjectIds           |    sourceObjIds                   |    targetObjIds
+		   -1    |     -2    |       false     |   false ||      [-1, -2, -3, -4]       |  [-1, -2, -3, -4, -5, -6]   |	  [-1, -3, -5, -7]                |     [-1,-3, -5, -6, -7, -8, -9, -11]
+		   -1    |     -7    |       false     |   false ||      [-1, -2, -3, -4]       |  [-3, -4, -5, -6]           |	  [-1, -3, -5, -7]                |     [-5, -6, -7, -8, -9, -11]
+		   -6    |     -7    |       false     |   false ||      [-1, -2, -3, -4]       |  [-3, -4, -5, -6]           |	  [-1, -3, -5, -7]                |     [-5, -6, -7, -8, -9, -11]
+
+			
+			-1    |     -2    |       false     |   true  ||   [-1, -2, -3, -4, -5, -6] |  [-1, -2, -3, -4, -5, -6]   | [-1, -3, -5, -6, -7, -8, -9, -11] |     [-1, -3, -5, -6, -7, -8, -9, -11]
+			-1    |     -7    |       false     |   true  ||      [-1, -2, -3, -4]      |  [-3, -4, -5, -6]           |    [-1, -3, -5, -6, -7, -8]       |     [-5, -6, -7, -8, -9, -11]
+			-6    |     -7    |       false     |   true  ||      [-1, -2, -3, -4]      |  [-3, -4, -5, -6]           |    [-1, -3, -5, -6, -7, -8]       |     [-5, -6, -7, -8, -9, -11]
+			
+	
+	}
+	
 }
