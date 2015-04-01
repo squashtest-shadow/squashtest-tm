@@ -180,6 +180,7 @@
 		 */
 		openMessage : function(title, htmlMessage, size) {
 			var dialog = $('<div></div>');
+						
 			dialog.attr('title', title);
 
 			dialog.append('<div class="centered" style="margin-top:15px;">'+htmlMessage+'</div>');
@@ -188,6 +189,7 @@
 			var discardDialog = function() {
 				dialog.remove();
 			};
+
 
 			dialog.bind('destroy', discardDialog);
 
