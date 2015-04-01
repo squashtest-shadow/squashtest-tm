@@ -30,6 +30,7 @@ public class JsonTestCase {
 	private String uri;
 	private String ref;
 	private String name;
+	private String description;
 	private JsonInternationalizableItem type;
 	private JsonProject project;
 
@@ -122,4 +123,14 @@ public class JsonTestCase {
 	public void setProject(JsonProject project) {
 		this.project = project;
 	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+
 }

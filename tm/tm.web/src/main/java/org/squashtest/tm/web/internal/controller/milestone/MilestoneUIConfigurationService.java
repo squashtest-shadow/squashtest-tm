@@ -181,7 +181,7 @@ public class MilestoneUIConfigurationService {
 	}
 
 	private boolean isMilestoneLocked(MilestoneMember member){
-		return member.doMilestonesAllowEdition();
+		return (! member.doMilestonesAllowEdition());
 	}
 
 

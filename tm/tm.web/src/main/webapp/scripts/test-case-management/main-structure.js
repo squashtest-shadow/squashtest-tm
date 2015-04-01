@@ -86,15 +86,30 @@ define(["jquery",
 		var dialog = $("#create-test-case-version-dialog").formDialog();
 		
 		dialog.on('formdialogopen', function(){
-			var hiddenRawName = $('#test-case-raw-name');
-			var name = $.trim(hiddenRawName.text());
 			
-			var fullname = name;
-			if (!! settings.milestone){
-				fullname+='-'+settings.milestone.label;
-			}
+			dialog.formDialog('setState', 'wait');
 			
-			$("#new-version-test-case-name").val(fullname);		
+			$.ajax({
+				url : url,
+				dataType : 'json'
+			})
+			.success(function(json){
+				var name = json.name,
+					ref = json.ref,
+					description = json.description;
+				
+				var fullname = name;
+				if (!! settings.milestone){
+					fullname+='-'+settings.milestone.label;
+				}
+				
+				$("#new-version-test-case-name").val(fullname);		
+				$("#new-version-test-case-reference").val(ref);
+				CKEDITOR.instances['new-version-test-case-description'].setData(json.description);
+				
+				dialog.formDialog('setState','confirm');
+			});
+			
 		});
 		
 		dialog.on('formdialogconfirm', function(){

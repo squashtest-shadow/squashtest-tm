@@ -23,6 +23,7 @@ package org.squashtest.tm.web.internal.controller.testcase;
 import static org.squashtest.tm.web.internal.helper.JEditablePostParams.VALUE;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -120,6 +121,7 @@ import org.squashtest.tm.web.internal.model.json.JsonEnumValue;
 import org.squashtest.tm.web.internal.model.json.JsonGeneralInfo;
 import org.squashtest.tm.web.internal.model.json.JsonInfoList;
 import org.squashtest.tm.web.internal.model.json.JsonTestCase;
+import org.squashtest.tm.web.internal.model.json.JsonTestCaseBuilder;
 import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
 import org.squashtest.tm.web.internal.model.viewmapper.NameBasedMapper;
 
@@ -202,6 +204,10 @@ public class TestCaseModificationController {
 
 	@Inject
 	private MilestoneUIConfigurationService milestoneConfService;
+
+
+	@Inject
+	private Provider<JsonTestCaseBuilder> builder;
 
 
 	/**
@@ -315,6 +321,20 @@ public class TestCaseModificationController {
 		}
 
 		return testCaseDescription;
+	}
+
+
+	@RequestMapping(value = "/new-version", method = RequestMethod.GET)
+	public @ResponseBody JsonTestCase getNewVersionTemplate(@PathVariable("testCaseId") Long testCaseId){
+
+		TestCase testCase = testCaseModificationService.findById(testCaseId);
+
+		return builder.get()
+				.extended()
+				.entities(Arrays.asList(new TestCase[]{testCase}))
+				.toJson()
+				.get(0);
+
 	}
 
 

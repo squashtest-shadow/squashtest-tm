@@ -102,51 +102,56 @@
     
     <div id="create-test-case-version-dialog" class="popup-dialog not-displayed" title="${createNewVersionLabel}">
       
-       <div class="std-margin-top std-margin-bottom centered">
-        <c:if test="${not empty cookie['milestones'] }">
-          <f:message key="message.newTestCaseVersionWillDisassociateMilestone"/>
-        </c:if>
-       </div>
-    
-       <div >     
-         <table class="add-node-attributes">
-
-        <tr>
-          <td>
-            <label for="new-version-test-case-name" >${nameLabel}</label>
-          </td>
-
-          <td>
-            <input id="new-version-test-case-name" type="text" size="50" maxlength="255" />
-            <br />
-            <span class="error-message name-error"></span>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            <label for="new-version-test-case-reference" >${referenceLabel}</label>
-          </td>
-
-          <td>
-            <input id="new-version-test-case-reference" type="text" size="20" maxlength="50" />
-            <br />
-            <span class="error-message reference-error"></span>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            <label for="new-version-test-case-description">${descriptionLabel}</label>
-          </td>
-          <td>
-            <textarea id="new-version-test-case-description" data-def="isrich"></textarea>
-          </td>
-        </tr>
-      </table>
+      <div data-def="state=wait">
+        <comp:waiting-pane />
       </div>
       
+      <div data-def="state=confirm">
+         <div class="std-margin-top std-margin-bottom centered">
+          <c:if test="${not empty cookie['milestones'] }">
+            <f:message key="message.newTestCaseVersionWillDisassociateMilestone"/>
+          </c:if>
+         </div>
+      
+         <div >     
+           <table class="add-node-attributes">
+  
+          <tr>
+            <td>
+              <label for="new-version-test-case-name" >${nameLabel}</label>
+            </td>
+  
+            <td>
+              <input id="new-version-test-case-name" type="text" size="50" maxlength="255" />
+              <br />
+              <span class="error-message name-error"></span>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <label for="new-version-test-case-reference" >${referenceLabel}</label>
+            </td>
+  
+            <td>
+              <input id="new-version-test-case-reference" type="text" size="20" maxlength="50" />
+              <br />
+              <span class="error-message reference-error"></span>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <label for="new-version-test-case-description">${descriptionLabel}</label>
+            </td>
+            <td>
+              <textarea id="new-version-test-case-description" data-def="isrich"></textarea>
+            </td>
+          </tr>
+        </table>
+        </div>
+      </div>
       
       <div class="popup-dialog-buttonpane">
-        <input type="button" value="${okLabel}" data-def="evt=confirm, mainbtn"/>
+        <input type="button" value="${okLabel}" data-def="state=confirm, evt=confirm, mainbtn=confirm"/>
         <input type="button" value="${cancelLabel}" data-def="evt=cancel" />      
       </div>
       

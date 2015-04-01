@@ -57,6 +57,8 @@ public class JsonTestCaseBuilder {
 
 	private List<TestCase> entities;
 
+	private boolean extended = false;
+
 	public JsonTestCaseBuilder locale(@NotNull Locale locale) {
 		this.locale = locale;
 		return this;
@@ -73,6 +75,13 @@ public class JsonTestCaseBuilder {
 
 		};
 	}
+
+
+	public JsonTestCaseBuilder extended(){
+		extended = true;
+		return this;
+	}
+
 
 	/**
 	 * Simplistic implementation - we could cache projets and other referencial data.
@@ -101,6 +110,10 @@ public class JsonTestCaseBuilder {
 		res.setProject(projectBuilder.toSimpleJson(tc.getProject()));
 		res.setType(buildType(tc.getType()));
 
+		if (extended){
+			res.setDescription(tc.getDescription());
+		}
+
 		return res;
 	}
 
@@ -114,4 +127,6 @@ public class JsonTestCaseBuilder {
 		res.setLabel(internationalizationHelper.getMessage(type.getLabel(),null, type.getLabel(), locale));
 		return res;
 	}
+
+
 }
