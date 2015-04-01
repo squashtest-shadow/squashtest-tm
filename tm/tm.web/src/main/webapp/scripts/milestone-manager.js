@@ -476,17 +476,30 @@ require(["common"], function(){
 	synchronizeMilestoneDialog.on('formdialogconfirm', function(){
 		var mil1 = synchronizeMilestoneDialog.data('mil1');
 		var mil2 = synchronizeMilestoneDialog.data('mil2');
+
+		synchronizeMilestoneConfirmDialog.data("mil1",mil1);
+		synchronizeMilestoneConfirmDialog.data("mil2",mil2);
+		synchronizeMilestoneConfirmDialog.confirmDialog('open');
+		synchronizeMilestoneDialog.formDialog('close');
+		});
+	
+	var synchronizeMilestoneConfirmDialog = $("#synchronize-milestone-dialog-confirm");
+	synchronizeMilestoneConfirmDialog.confirmDialog();
+
+	
+	synchronizeMilestoneConfirmDialog.on('confirmdialogconfirm', function(){
+		var mil1 = synchronizeMilestoneConfirmDialog.data('mil1');
+		var mil2 = synchronizeMilestoneConfirmDialog.data('mil2');
+
 		$.ajax({
 			url : routing.buildURL("milestone.synchronize" , mil1["entity-id"], mil2["entity-id"]),
 			type : 'POST',
 			data : {extendPerimeter: $("#perim").prop("checked"),
 				isUnion:$("#union").prop("checked")}
 		});
-
-
-
-		synchronizeMilestoneDialog.formDialog('close');
-		});
+		
+	});
+	
 	});
 	});
 });

@@ -338,5 +338,24 @@
 </div>
 <!--  synchronize popup end-->
 
+
+	<f:message var="synchronizeWarning" key="dialog.milestone.synchronizeWarning"/>
+	<div id="synchronize-milestone-dialog-confirm" class="popup-dialog not-displayed" title="${synchronizeMilestoneTitle}" data-action="menu">
+		<div class="display-table-row">
+           
+             
+                ${synchronizeWarning } 
+			
+		</div>
+		<div class="popup-dialog-buttonpane">
+		    <input class="confirm" type="button" value="${confirmLabel}" />
+		    <input class="cancel" type="button" value="${cancelLabel}" />
+		</div>
+	
+	</div>
+
+
+
+
 </jsp:attribute>
 </layout:info-page-layout>
