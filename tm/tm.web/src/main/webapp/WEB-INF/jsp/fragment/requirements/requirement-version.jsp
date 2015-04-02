@@ -357,7 +357,7 @@ publish('reload.requirement.attachments');
         HEY MAN, THIS IS MILESTONE MODE
       </c:if>
     
-		<input type="button" value="${okLabel}" />
+		<input type="button" value="${confirmLabel}" />
 		<input type="button" value="${cancelLabel}" />
 	</div>
   		
