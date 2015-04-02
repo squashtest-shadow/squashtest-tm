@@ -136,8 +136,6 @@ define(["jquery", "workspace.event-bus", "app/ws/squashtm.notification", "squash
 		currentTable.fnSettings().sAjaxSource=conf.currentTableSource;
 		
 		
-		// write features
-		if (conf.editable){
 			
 			// add milestones dialog
 			var dialogOptions = {
@@ -233,7 +231,7 @@ define(["jquery", "workspace.event-bus", "app/ws/squashtm.notification", "squash
 			
 		}		
 		
-	}
+
 	
 	
 	return {
