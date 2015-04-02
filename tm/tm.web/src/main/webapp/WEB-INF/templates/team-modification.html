@@ -144,9 +144,9 @@
 								th:remove="tag"></div>
 
 							<div class="toolbar-button-panel">
-								<input type="button" th:value="#{ label.Rename }" value="Rename"
+								<input type="button" th:value="#{ label.Rename }" th:title="#{ label.Rename }" value="Rename"
 									id="rename-team-button" class="button" /> <input type="button"
-									th:value="#{ label.Delete }" value="Delete"
+									th:value="#{ label.Delete }" th:title="#{ label.deleteTeam }"  value="Delete"
 									id="delete-team-button" class="button" />
 							</div>
 						</div>
