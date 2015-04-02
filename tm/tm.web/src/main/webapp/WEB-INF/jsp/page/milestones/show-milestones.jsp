@@ -309,23 +309,26 @@
           <tr>
 <td><input id="mil1" type="radio" name="synchro"></td>
 <td><span id="mil1Label"/></td>
+<td><span id="mil1warn"/></td>
           </tr>
         
      
          <tr>
 <td><input id="mil2" type="radio" name="synchro"></td>
 <td><span id="mil2Label"/></td>
+<td><span id="mil2warn"/></td>
          </tr>  
 
           <tr>
 <td><input id="union" type="radio" name="synchro" ></td>
 <td><span id="unionLabel"/></td>
+<td><span id="unionwarn"/></td>
           </tr>   
           
           
           <tr>
         <td><input id="perim" type="checkbox" ></td>
-<td></td>
+<td><f:message key="label.milestone.synchronize.extendperim"/></td>
    </tr>
        
         </table>

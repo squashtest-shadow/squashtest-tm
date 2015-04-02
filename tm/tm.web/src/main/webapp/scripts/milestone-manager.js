@@ -339,7 +339,11 @@ require(["common"], function(){
 			synchronizeMilestoneDialog.data('mil2', mil2);
 			var trans = translator.get({
 				rangeGlobal : "milestone.range.GLOBAL",
-				statusPlanned : "milestone.status.PLANNED"
+				statusPlanned : "milestone.status.PLANNED",
+				unionStatusForbid : "message.milestone.synchronize.warn.union.status-forbid",
+				unionRangeForbid : "message.milestone.synchronize.warn.union.range-forbid",
+				statusForbid : "message.milestone.synchronize.warn.status-forbid",
+				rangeForbid : "message.milestone.synchronize.warn.range-forbid"
 				});
 
 			if (mil1.status != trans.statusPlanned && mil2.status != trans.statusPlanned && (mil1.bindableToObject || mil2.bindableToObject)){
@@ -385,6 +389,7 @@ require(["common"], function(){
 			$("#mil2").attr("disabled", !mil2.bindableToObject);
 			$("#union").attr("disabled", !mil1.bindableToObject || !mil2.bindableToObject);
 			$("#perim").attr("disabled", true);
+			writeMilestonesWarning(mil1, mil2, true);
 			writeMilestonesLabel();
 
 		}
@@ -397,7 +402,29 @@ require(["common"], function(){
 			$("#mil1").attr("disabled", mil1CantBeTarget);
 			$("#mil2").attr("disabled", mil2CantBeTarget);
 			$("#union").attr("disabled", mil1CantBeTarget || mil2CantBeTarget);
+			writeMilestonesWarning(mil1, mil2, false);
 			writeMilestonesLabel();
+		}
+		
+		function writeMilestonesWarning(mil1, mil2, isAdmin){
+			
+			$("#mil1warn").text("");
+			$("#mil2warn").text("");
+			$("#unionwarn").text("");
+			
+	    	milestoneWarn(mil1, $("#mil1warn"), isAdmin);
+	    	milestoneWarn(mil2, $("#mil2warn"), isAdmin);
+	    		
+		}
+		
+		function milestoneWarn(milestone, $text, isAdmin){
+		 	if (!isAdmin && milestone.range == trans.rangeGlobal){
+		 		$text.text(trans.rangeForbid);
+				$("#unionwarn").text(trans.unionRangeForbid);
+			} else if (!milestone.bindableToObject){
+				$text.text(trans.statusForbid);
+				$("#unionwarn").text(trans.unionStatusForbid);
+			}
 		}
 
 		function writeMilestonesLabel(){
