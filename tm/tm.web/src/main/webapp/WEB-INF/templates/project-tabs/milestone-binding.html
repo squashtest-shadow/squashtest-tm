@@ -28,17 +28,17 @@
     <div class="tg-head">
       <h3 th:text="#{project.milestonetitle}"></h3>
       <div class="tg-toolbar">
-        <button id="bind-milestone-button" class="sq-icon-btn btn-sm" title="${addMilestoneField}">
+        <button id="bind-milestone-button" class="sq-icon-btn btn-sm" th:title="#{project.milestone.associate}">
             <span class="ui-icon ui-icon-plus squared-icons">+</span>
         </button>
                   
-        <button id="unbind-milestone-button" class="sq-icon-btn btn-sm" title="${deleteMilestoneField}">
+        <button id="unbind-milestone-button" class="sq-icon-btn btn-sm" th:title="#{project.milestone.remove}">
             <span class="ui-icon ui-icon-minus squared-icons">-</span>        
         </button>      
-                          
-        <input th:if="${!isTemplate}" type="button" id="create-and-bind-milestone-button" th:value="#{label.create}" class="sq-btn btn-sm" />      
+                   
+        <input th:if="${!isTemplate}" type="button" id="create-and-bind-milestone-button" th:title="#{project.milestone.create}" th:value="#{label.create}" class="sq-btn btn-sm" />      
             
-        <input th:if="${!isTemplate}" type="button" id="duplicate-milestone-button" th:value="#{label.milestone.duplicate}" class="sq-btn btn-sm" />       
+        <input th:if="${!isTemplate}" type="button" id="duplicate-milestone-button" th:title="#{project.milestone.duplicate}" th:value="#{label.milestone.duplicate}" class="sq-btn btn-sm" />       
       </div>
     </div>
 
