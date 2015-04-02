@@ -165,7 +165,7 @@
               <script id="textfield-template" type="text/x-handlebars-template">
 				<div class="display-search-table-row">
                   	<label for="{{text-field-id}}" class="display-search-table-cell">{{text-field-title}}</label>
-                    <div id="{{text-field-id}}" class="search-input">
+                    <div id="{{text-field-id}}" class="search-input" style="display: inline;">
                       <input type="text" data-widgetname="TextField" data-fieldid="F{{text-field-id}}" value="{{fieldValue}}" class="search-input" />
                     </div>
                 </div>
@@ -173,8 +173,8 @@
 				
               <script id="textfield-id-template" type="text/x-handlebars-template">
 				<div class="display-search-table-row">
-                  	<label for="{{text-field-id}}" class="display-search-table-cell">{{text-field-title}}</label>
-                    <div id="{{text-field-id}}" class="search-input" style="width: 5em">
+                  	<label for="{{text-field-id}}" class="display-search-table-cell" >{{text-field-title}}</label>
+                    <div id="{{text-field-id}}" class="search-input" style="width: 5em; display: inline;">
                       <input type="text" data-widgetname="TextField" data-fieldid="F{{text-field-id}}" value="{{fieldValue}}" class="search-input" style="width: 4em" />
                     </div>
                 </div>
@@ -183,7 +183,7 @@
 				<script id="textfield-reference-template" type="text/x-handlebars-template">
 				<div class="display-search-table-row">
                   	<label for="{{text-field-id}}" class="display-search-table-cell">{{text-field-title}}</label>
-                    <div id="{{text-field-id}}" class="search-input" style="width: 7em">
+                    <div id="{{text-field-id}}" class="search-input" style="width: 7em; display: inline;">
                       <input type="text" data-widgetname="TextField" data-fieldid="F{{text-field-id}}" value="{{fieldValue}}" class="search-input" style="width: 6em" />
                     </div>
                 </div>
@@ -192,8 +192,8 @@
 
               <script id="textarea-template" type="text/x-handlebars-template">
 				<div class="display-search-table-row">
-                  	<label for="{{text-area-id}}" class="display-search-table-cell">{{text-area-title}}</label>
-                    <div id="{{text-area-id}}" class="search-input">
+                  	<label for="{{text-area-id}}" style="vertical-align: top;" class="display-search-table-cell">{{text-area-title}}</label>
+                    <div id="{{text-area-id}}" class="search-input" style="display: inline;">
                       <textarea data-widgetname="TextArea" data-fieldid="F{{text-field-id}}" rows="2" class="search-input">{{fieldValue}}</textarea>
                     </div>
                 </div>
@@ -202,8 +202,8 @@
             <script id="multiselect-template" type="text/x-handlebars-template">
             {{!--<![CDATA[--}}
             <div class="display-search-table-row">
-              <label for="{{multiselect-id}}" class="display-search-table-cell">{{multiselect-title}}</label>
-              <div id="{{multiselect-id}}" class="search-input">
+              <label for="{{multiselect-id}}" style="vertical-align: top;" class="display-search-table-cell" style="vertical-align: top;">{{multiselect-title}}</label>
+              <div id="{{multiselect-id}}" class="search-input" style="display: inline;">
                 <select data-widgetname="MultiSelect" data-fieldid="F{{multiselect-id}}" multiple="multiple" class="search-input">
                 {{#each options}}
                   <option value="{{this.code}}" {{selected}}>{{this.value}}</option>
@@ -217,7 +217,7 @@
             <script id="multiselect-perimeter-template" type="text/x-handlebars-template">
             {{!--<![CDATA[--}}
             <div class="display-search-table-row">
-               <div id="{{multiselect-id}}" class="search-input">
+               <div id="{{multiselect-id}}" class="search-input" style="display: inline;">
                 <select id="perimeter-multiple-custom" data-widgetname="MultiSelect" data-fieldid="F{{multiselect-id}}" multiple="multiple" class="search-input">
                 {{#each options}}
                   <option value="{{this.code}}" {{selected}}>{{this.value}}</option>
@@ -231,8 +231,8 @@
 			<script id="multiautocomplete-template" type="text/x-handlebars-template">
             {{!--<![CDATA[--}}
             <div class="display-search-table-row">
-              <label for="{{multiautocomplete-id}}" class="display-search-table-cell">{{multiautocomplete-title}}</label>
-              <div id="{{multiautocomplete-id}}" class="search-input">
+              <label for="{{multiautocomplete-id}}" class="display-search-table-cell" style="vertical-align: top;">{{multiautocomplete-title}}</label>
+              <div id="{{multiautocomplete-id}}" class="search-input" style="display: inline;">
                 <input data-widgetname="MultiAutocomplete" data-fieldid="F{{multiautocomplete-id}}" class="search-input"/>
               </div>
             </div>
@@ -242,10 +242,10 @@
             <script id="multicascadeflat-template" type="text/x-handlebars-template">
 			{{!--<![CDATA[--}}
 			<div class="display-search-table-row">
-				<label for="{{multicascadeflat-id}}" class="display-search-table-cell">{{multicascadeflat-title}}</label>
-				<div id="{{multicascadeflat-id}}" class="search-input" style="width:100%;">
-					<div data-widgetname="MultiCascadeFlat" data-fieldid="F{{multicascadeflat-id}}" >
-					<table>
+				<label for="{{multicascadeflat-id}}" class="display-search-table-cell" style="vertical-align: top;">{{multicascadeflat-title}}</label>
+				<div id="{{multicascadeflat-id}}" class="search-input" style="display: inline-table;">
+					<div data-widgetname="MultiCascadeFlat" data-fieldid="F{{multicascadeflat-id}}" style="display: inline;" >
+					<table  >
 					<tr>
 					<td>
 						<select class="multicascadeflat-primary" multiple="multiple" style="display:inline-block">
@@ -341,9 +341,9 @@
 
               <script id="combomultiselect-template" type="text/x-handlebars-template">
 				<div class="display-search-table-row">
-                  	<label for="{{combomultiselect-id}}" class="display-search-table-cell">{{combomultiselect-title}}</label>
-					<div id="{{combomultiselect-id}}" class="search-input">
-						<div class="search-line" data-widgetname="ComboMultiSelect">
+                  	<label for="{{combomultiselect-id}}" class="display-search-table-cell" style="vertical-align: top;">{{combomultiselect-title}}</label>
+					<div id="{{combomultiselect-id}}" class="search-input" style="display: inline;">
+						<div class="search-line" data-widgetname="ComboMultiSelect" >
 							<input type="checkbox" style="vertical-align:top; margin-top:6px"></input>
 							<select multiple="multiple" class="shorter-search-input"></select>	
 						</div>

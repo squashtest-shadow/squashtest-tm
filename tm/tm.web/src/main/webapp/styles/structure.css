@@ -49,6 +49,7 @@ label {
 
 label:after {
 	content: "\0000a0: ";
+	float: none;
 }
 
 label.afterDisabled:after, input + label:after {
