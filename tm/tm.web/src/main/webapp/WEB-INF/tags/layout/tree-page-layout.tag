@@ -49,7 +49,8 @@
 <%@ attribute name="foot" fragment="true" description="Pseudo html foot fragment where one can put inlined script and js libraries imports" %>
 <%@ attribute name="footer" fragment="true" description="Optional page foot" %>
 <%@ attribute name="linkable" %>
- 
+<%@ attribute name="main" required="false" %>
+
 <%@ attribute name="tree" fragment="true" required="true" description="Tree definition" %>
 <%@ attribute name="contextualContent" fragment="true" description="Optional contextual content" %>
 <%@ attribute name="i18nLibraryTabTitle" required="false" description="a i18n key that should be displayed on the first tab above the tree.
@@ -119,7 +120,7 @@
 
 <c:choose>
 <c:when test="${not empty isSubPaged and isSubPaged }">
-<layout:sub-page-layout highlightedWorkspace="${ highlightedWorkspace }" titleKey="${ titleKey }" >
+<layout:sub-page-layout highlightedWorkspace="${ highlightedWorkspace }" titleKey="${ titleKey }" main="${ main }" >
 	<jsp:attribute name="head" >	
 	 	<jsp:invoke fragment="head"/>
 		<%-- tabed tree panel specific code --%>
@@ -194,7 +195,7 @@
 </c:when>
 
 <c:otherwise>
-<layout:common-import-outer-frame-layout highlightedWorkspace="${ highlightedWorkspace }" titleKey="${ titleKey }" >
+<layout:common-import-outer-frame-layout highlightedWorkspace="${ highlightedWorkspace }" titleKey="${ titleKey }" main="${ main }" >
 	<jsp:attribute name="head" >	
 		<jsp:invoke fragment="head"/>
 

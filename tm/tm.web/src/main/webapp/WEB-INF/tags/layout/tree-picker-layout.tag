@@ -27,6 +27,7 @@
 <%@ attribute name="foot" fragment="true" description="Pseudo html foot fragment where one can put inlined script and js libraries imports" %>
 <%@ attribute name="tableTitlePane" fragment="true" %>
 <%@ attribute name="tablePane" fragment="true" %>
+<%@ attribute name="main" required="false" %>
 
 
 <%@ attribute name="subPageTitle" fragment="true" description="the sub page has its own title. Define it there."%>
@@ -58,7 +59,8 @@ it will insert sub-page-layout.tag between the top template and this one." %>
   highlightedWorkspace="${ highlightedWorkspace }" 
   i18nLibraryTabTitle="${i18nLibraryTabTitle}"
   linkable="${linkable}" 
-  isSubPaged="${isSubPaged}">
+  isSubPaged="${isSubPaged}"
+  main="${ main }">
 	
 	<jsp:attribute name="head">
 		<jsp:invoke fragment="head" />
