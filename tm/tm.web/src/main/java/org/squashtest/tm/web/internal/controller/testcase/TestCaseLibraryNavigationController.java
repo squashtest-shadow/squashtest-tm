@@ -22,7 +22,9 @@ package org.squashtest.tm.web.internal.controller.testcase;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -274,25 +276,23 @@ LibraryNavigationController<TestCaseLibrary, TestCaseFolder, TestCaseLibraryNode
 	public @ResponseBody
 	TestCaseStatisticsBundle getStatisticsAsJson(
 			@CookieValue(value = "milestones", required = false, defaultValue = "") List<Long> milestoneIds) {
-		// Find library and node ids for specific milestone
-		List<Long> libraryIds = (List<Long>) testCaseLibraryNavigationService
-				.findAllTestCasesLibraryForMilestone(milestoneIds);
+
+		// Find node ids for specific milestone
 		List<Long> nodeIds = (List<Long>) testCaseLibraryNavigationService
 				.findAllTestCasesLibraryNodeForMilestone(milestoneIds);
 
-		return testCaseLibraryNavigationService.getStatisticsForSelection(libraryIds, nodeIds);
+		return testCaseLibraryNavigationService.getStatisticsForSelection(new ArrayList<Long>(), nodeIds);
 	}
 
 	@RequestMapping(value = "/dashboard", method = RequestMethod.GET, produces = ContentTypes.TEXT_HTML)
 	public String getDashboardByMilestone(Model model,
 			@CookieValue(value = "milestones", required = false, defaultValue = "") List<Long> milestoneIds) {
 
-		// Find library and node ids for specific milestone
-		List<Long> libraryIds = (List<Long>) testCaseLibraryNavigationService.findAllTestCasesLibraryForMilestone(milestoneIds);
+		// Find ids for specific milestone
 		List<Long> nodeIds = (List<Long>) testCaseLibraryNavigationService.findAllTestCasesLibraryNodeForMilestone(milestoneIds);
 
 		TestCaseStatisticsBundle stats = testCaseLibraryNavigationService
-				.getStatisticsForSelection(libraryIds, nodeIds);
+				.getStatisticsForSelection(new ArrayList<Long>(), nodeIds);
 		model.addAttribute("statistics", stats);
 		model.addAttribute("milestone", milestoneFinder.findById(milestoneIds.get(0)));
 

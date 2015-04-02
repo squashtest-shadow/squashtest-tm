@@ -195,7 +195,11 @@
 	@NamedQuery(name = "TestCase.findNonBoundTestCases", query = "select tc.id from TestCase tc where tc.id in (:nodeIds) and tc.id not in (select tcs.id from Milestone m join m.testCases tcs where m.id = :milestoneId)"),
 	@NamedQuery(name = "TestCase.findAllWithMilestones", query = "from TestCase tc where tc.milestones is empty"),
 	@NamedQuery(name = "TestCase.findAllTestCasesLibraryForMilestone", query = "select tcl.id from TestCase tc join tc.project p join p.testCaseLibrary tcl join tc.milestones milestones where milestones.id = :milestoneId"),
-	@NamedQuery(name = "TestCase.findAllTestCasesLibraryNodeForMilestone", query = "select tcln.id from TestCase tc, TestCaseLibraryNode tcln join tc.milestones milestones where milestones.id = :milestoneId"),
+	@NamedQuery(name = "TestCase.findAllTestCasesLibraryNodeForMilestone", 
+	query = "select distinct tc.id from TestCase tc where tc.id in " +
+			"(select directTC.id from TestCase directTC join directTC.milestones milestones where milestones.id = :milestoneId) or " +
+			"tc.id in (select indirectTC.id from TestCase indirectTC join indirectTC.requirementVersionCoverages cov join cov.verifiedRequirementVersion " +
+			"ver join ver.milestones milestones where milestones.id = :milestoneId)"),
 	
 	@NamedQuery(name = "testCase.findTestCaseDetails", query = "select new org.squashtest.tm.domain.NamedReference(tc.id, tc.name) from TestCase tc where tc.id in (:testCaseIds)"),
 
