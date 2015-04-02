@@ -275,9 +275,7 @@
    </br>
           <input id="bindToTestCases" name="bindToTestCases" type="checkbox" />
          <label class=" afterDisabled" for="bindToTestCases"><f:message key="label.milestone.bindToTestCases" /></label>
-   </br>  
-         <input id="bindToCampaigns" name="bindToCampaigns" type="checkbox" />
-         <label class=" afterDisabled" for="bindToCampaigns"><f:message key="label.milestone.bindToCampaigns" /></label>
+   </br>          
        </td>
    </tr>
        

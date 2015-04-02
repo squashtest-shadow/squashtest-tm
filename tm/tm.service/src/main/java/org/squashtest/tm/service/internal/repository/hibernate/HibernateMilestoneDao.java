@@ -209,47 +209,6 @@ public class HibernateMilestoneDao extends HibernateEntityDao<Milestone> impleme
 	}
 
 	@Override
-	public void bindMilestoneToProjectCampaigns(long projectId, long milestoneId) {
-		Query query = currentSession().getNamedQuery("BoundEntityDao.findAllCampaignsForProject");
-		query.setParameter("projectId", projectId);
-		ScrollableResults campaigns = scrollableResults(query);
-
-		Milestone milestone = findById(milestoneId);
-		int count = 0;
-		while (campaigns.next()) {
-			Campaign camp = (Campaign) campaigns.get(0);
-			milestone.bindCampaign(camp);
-			if (++count % 20 == 0) {
-				// flush a batch of updates and release memory:
-				currentSession().flush();
-				currentSession().clear();
-				milestone = findById(milestoneId);
-			}
-		}
-	}
-
-	@Override
-	public void synchronizeCampaigns(long source, long target, List<Long> projectIds) {
-		Query query = currentSession().getNamedQuery("milestone.findAllCampaignsForProjectAndMilestone");
-		query.setParameterList("projectIds", projectIds);
-		query.setParameter("milestoneId", source);
-		ScrollableResults campaigns = scrollableResults(query);
-
-		Milestone milestone = findById(target);
-		int count = 0;
-		while (campaigns.next()) {
-			Campaign camp = (Campaign) campaigns.get(0);
-			milestone.bindCampaign(camp);
-			if (++count % 20 == 0) {
-				// flush a batch of updates and release memory:
-				currentSession().flush();
-				currentSession().clear();
-				milestone = findById(target);
-			}
-		}
-	}
-
-	@Override
 	public void synchronizeRequirementVersions(long source, long target, List<Long> projectIds) {
 		Query query = currentSession().getNamedQuery("milestone.findAllRequirementVersionsForProjectAndMilestone");
 		query.setParameterList("projectIds", projectIds);

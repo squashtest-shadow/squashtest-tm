@@ -185,13 +185,13 @@ class MilestoneManagerServiceIT extends DbunitServiceSpecification {
 		target.perimeter*.id as Set == targetProjectIds as Set
 		target.projects*.id as Set == targetProjectIds as Set
 		target.testCases*.id as Set == targetObjIds as Set
-		target.campaigns*.id as Set == targetObjIds as Set
+
 		target.requirementVersions*.id as Set == targetObjIds as Set
 
 		source.perimeter*.id as Set == sourceProjectIds as Set
 		source.projects*.id as Set == sourceProjectIds as Set
 		source.testCases*.id as Set == sourceObjIds as Set
-		source.campaigns*.id as Set == sourceObjIds as Set
+
 		source.requirementVersions*.id as Set == sourceObjIds as Set
 		where :
 		sourceId | targetId | extendPerimeter | isUnion  ||  sourceProjectIds           |  targetProjectIds           |    sourceObjIds                   |    targetObjIds

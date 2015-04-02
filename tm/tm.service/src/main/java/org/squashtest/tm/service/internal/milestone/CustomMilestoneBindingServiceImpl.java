@@ -258,7 +258,7 @@ public class CustomMilestoneBindingServiceImpl implements MilestoneBindingManage
 		for (Long milestoneId : milestoneIds) {
 			milestoneDao.bindMilestoneToProjectTestCases(projectId, milestoneId);
 			milestoneDao.bindMilestoneToProjectRequirementVersions(projectId, milestoneId);
-			milestoneDao.bindMilestoneToProjectCampaigns(projectId, milestoneId);
+
 		}
 
 	}

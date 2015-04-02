@@ -108,13 +108,11 @@ class MilestoneManagerAsProjectLeaderServiceIT extends CustomDbunitServiceSpecif
 		target.perimeter*.id as Set == targetProjectIds as Set
 		target.projects*.id as Set == targetProjectIds as Set
 		target.testCases*.id as Set == targetObjIds as Set
-		target.campaigns*.id as Set == targetObjIds as Set
 		target.requirementVersions*.id as Set == targetObjIds as Set
 
 		source.perimeter*.id as Set == sourceProjectIds as Set
 		source.projects*.id as Set == sourceProjectIds as Set
 		source.testCases*.id as Set == sourceObjIds as Set
-		source.campaigns*.id as Set == sourceObjIds as Set
 		source.requirementVersions*.id as Set == sourceObjIds as Set
 		where :
 		sourceId | targetId | extendPerimeter | isUnion ||  sourceProjectIds       |  targetProjectIds       |    sourceObjIds                           |    targetObjIds
@@ -191,7 +189,7 @@ class MilestoneManagerAsProjectLeaderServiceIT extends CustomDbunitServiceSpecif
 		Milestone milestone = new Milestone(range: template.range, owner : template.owner, status : template.status, endDate : template.endDate, description : "", label:"clone")
 
 		when :
-			manager.cloneMilestone(motherId, milestone, bindToRequirements, bindToTestCases, bindToCampaigns)
+			manager.cloneMilestone(motherId, milestone, bindToRequirements, bindToTestCases)
 
 		then :
 		milestone.perimeter*.id as Set == targetProjectIds as Set
@@ -202,27 +200,27 @@ class MilestoneManagerAsProjectLeaderServiceIT extends CustomDbunitServiceSpecif
 
 
 		where :
-		motherId |   bindToRequirements | bindToTestCases | bindToCampaigns   || targetProjectIds      | targetReqVIds   | targetTcIds    | targetCampIds
-			-1L   |      false           |     false       |     false         ||   [-1, -3]           |  []            |     []        |     []
-			-2L   |      false           |     false       |     false         ||   [-3, -5]           |  []            |     []        |     []
-			-6L   |      false           |     false       |     false         ||   [-1, -2, -3, -4]   |  []            |     []        |     []
-			-7L   |      false           |     false       |     false         ||   [-3, -4, -5, -6]   |  []            |     []        |     []
-			-8L   |      false           |     false       |     false         ||   [-1, -3]           |  []            |     []        |     []
-			-9L   |      false           |     false       |     false         ||   [-3, -5]           |  []            |     []        |     []
-	
-			-1L   |       true           |      true        |      true        ||   [-1, -3]           |  [-1, -5]        |     [-1, -5]    |     [-1, -5]
-			-2L   |       true           |      true        |      true        ||   [-3, -5]           |  [-6, -9]        |     [-6, -9]    |     [-6, -9]
-			-6L   |       true           |      true        |      true        ||  [-1, -2, -3, -4]    |  [-1, -3 ,-5 ,-7]  | [-1, -3 ,-5 ,-7]  |     [-1, -3 ,-5 ,-7]
-			-7L   |       true           |      true        |      true        ||   [-3, -4, -5, -6]   |  [-6, -8, -9, -11] | [-6, -8, -9, -11] |     [-6, -8, -9, -11]
-			-8L   |       true           |      true        |      true        ||   [-1, -3]           |  [-1, -5]        |     [-1, -5]    |     [-1, -5]
-			-9L   |       true           |      true        |      true        ||    [-3, -5]          |  [-6, -9]        |     [-6, -9]    |     [-6, -9]
+		motherId |   bindToRequirements | bindToTestCases   || targetProjectIds      | targetReqVIds      | targetTcIds       | targetCampIds
+			-1L   |      false           |     false        ||   [-1, -3]            |  []                |     []            |     []
+			-2L   |      false           |     false        ||   [-3, -5]            |  []                |     []            |     []
+			-6L   |      false           |     false        ||   [-1, -2, -3, -4]    |  []                |     []            |     []
+			-7L   |      false           |     false        ||   [-3, -4, -5, -6]    |  []                |     []            |     []
+			-8L   |      false           |     false        ||   [-1, -3]            |  []                |     []            |     []
+			-9L   |      false           |     false        ||   [-3, -5]            |  []                |     []            |     []
+	 
+			-1L   |       true           |      true        ||   [-1, -3]            |  [-1, -5]          |     [-1, -5]      |     []
+			-2L   |       true           |      true        ||   [-3, -5]            |  [-6, -9]          |     [-6, -9]      |     []
+			-6L   |       true           |      true        ||   [-1, -2, -3, -4]    |  [-1, -3 ,-5 ,-7]  | [-1, -3 ,-5 ,-7]  |     []
+			-7L   |       true           |      true        ||   [-3, -4, -5, -6]    |  [-6, -8, -9, -11] | [-6, -8, -9, -11] |     []
+			-8L   |       true           |      true        ||   [-1, -3]            |  [-1, -5]          |     [-1, -5]      |     []
+			-9L   |       true           |      true        ||   [-3, -5]            |  [-6, -9]          |     [-6, -9]      |     []
 
-        	-1L   |       true           |      true        |      false       ||   [-1, -3]           |  [-1, -5]        |     [-1, -5]    |     []
-			-1L   |       true           |      false       |      true        ||   [-1, -3]           |  [-1, -5]        |     []        |     [-1, -5]
-			-1L   |       false          |      true        |      true        ||  [-1, -3]            |  []            |     [-1, -5]    |     [-1, -5]
-			-1L   |       false          |      false       |      true        ||    [-1, -3]          |  []            |     []        |     [-1, -5]
-			-1L   |       false          |      true        |      false       ||   [-1, -3]           |  []            |     [-1, -5]    |     []
-			-1L   |       true           |      false       |      false       ||   [-1, -3]           |  [-1, -5]        |     []        |     []
+        	-1L   |       true           |      true        ||   [-1, -3]            |  [-1, -5]          |     [-1, -5]      |     []
+			-1L   |       true           |      false       ||   [-1, -3]            |  [-1, -5]          |     []            |     []
+			-1L   |       false          |      true        ||   [-1, -3]            |  []                |     [-1, -5]      |     []
+			-1L   |       false          |      false       ||   [-1, -3]            |  []                |     []            |     []
+			-1L   |       false          |      true        ||   [-1, -3]            |  []                |     [-1, -5]      |     []
+			-1L   |       true           |      false       ||   [-1, -3]            |  [-1, -5]          |     []            |     []
 }
 
 }

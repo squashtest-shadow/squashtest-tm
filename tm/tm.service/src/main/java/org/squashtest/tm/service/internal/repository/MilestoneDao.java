@@ -46,7 +46,6 @@ public interface MilestoneDao extends EntityDao<Milestone> {
 
 	void bindMilestoneToProjectRequirementVersions(long projectId, long milestoneId);
 
-	void bindMilestoneToProjectCampaigns(long projectId, long milestoneId);
 
 	Collection<Milestone> findAssociableMilestonesForRequirementVersion(long versionId);
 
@@ -62,7 +61,6 @@ public interface MilestoneDao extends EntityDao<Milestone> {
 
 	Collection<Campaign> findCampaignsForMilestone(long milestoneId);
 
-	void synchronizeCampaigns(long source, long target, List<Long> projectIds);
 
 	void synchronizeRequirementVersions(long source, long target, List<Long> projectIds);
 

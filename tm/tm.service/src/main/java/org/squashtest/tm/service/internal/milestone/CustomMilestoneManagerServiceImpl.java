@@ -34,7 +34,6 @@ import org.hibernate.SessionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-import org.squashtest.tm.domain.campaign.Campaign;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.milestone.MilestoneHolder;
 import org.squashtest.tm.domain.milestone.MilestoneRange;
@@ -247,8 +246,7 @@ public class CustomMilestoneManagerServiceImpl implements CustomMilestoneManager
 	}
 
 	@Override
-	public void cloneMilestone(long motherId, Milestone milestone, boolean bindToRequirements, boolean bindToTestCases,
-			boolean bindToCampaigns) {
+	public void cloneMilestone(long motherId, Milestone milestone, boolean bindToRequirements, boolean bindToTestCases) {
 		Milestone mother = findById(motherId);
 		boolean copyAllPerimeter = permissionEvaluationService.hasRole("ROLE_ADMIN") || !isGlobal(mother)
 				&& isCreatedBySelf(mother);
@@ -256,7 +254,6 @@ public class CustomMilestoneManagerServiceImpl implements CustomMilestoneManager
 		bindProjectsAndPerimeter(mother, milestone, copyAllPerimeter);
 		bindRequirements(mother, milestone, bindToRequirements, copyAllPerimeter);
 		bindTestCases(mother, milestone, bindToTestCases, copyAllPerimeter);
-		bindCampaigns(mother, milestone, bindToCampaigns, copyAllPerimeter);
 		addMilestone(milestone);
 	}
 
@@ -295,15 +292,7 @@ public class CustomMilestoneManagerServiceImpl implements CustomMilestoneManager
 
 	}
 
-	private void bindCampaigns(Milestone mother, Milestone milestone, boolean bindToCampaigns, boolean copyAllPerimeter) {
-		if (bindToCampaigns) {
-			for (Campaign camp : mother.getCampaigns()) {
-				if (copyAllPerimeter || canIManageThisProject(camp.getProject())) {
-					milestone.bindCampaign(camp);
-				}
-			}
-		}
-	}
+
 
 	private void bindTestCases(Milestone mother, Milestone milestone, boolean bindToTestCases, boolean copyAllPerimeter) {
 		if (bindToTestCases) {
@@ -335,7 +324,6 @@ public class CustomMilestoneManagerServiceImpl implements CustomMilestoneManager
 		synchronizePerimeterAndProjects(source, target, extendPerimeter, isUnion);
 		synchronizeTestCases(source, target, isUnion, extendPerimeter);
 		synchronizeRequirementVersions(source, target, isUnion, extendPerimeter);
-		synchronizeCampaigns(source, target, isUnion, extendPerimeter);
 	}
 
 	private void verifyCanSynchronize(Milestone source, Milestone target, boolean isUnion) {
@@ -355,15 +343,6 @@ public class CustomMilestoneManagerServiceImpl implements CustomMilestoneManager
 
 	}
 
-	private void synchronizeCampaigns(Milestone source, Milestone target, boolean isUnion, boolean extendPerimeter) {
-
-		milestoneDao.synchronizeCampaigns(source.getId(), target.getId(),
-				getProjectsToSynchronize(source, target, extendPerimeter, isUnion));
-		if (isUnion) {
-			milestoneDao.synchronizeCampaigns(target.getId(), source.getId(),
-					getProjectsToSynchronize(target, source, extendPerimeter, isUnion));
-		}
-	}
 
 	private void synchronizeRequirementVersions(Milestone source, Milestone target, boolean isUnion,
 			boolean extendPerimeter) {

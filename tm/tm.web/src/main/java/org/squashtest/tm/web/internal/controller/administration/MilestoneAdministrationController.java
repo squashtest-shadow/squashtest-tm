@@ -131,7 +131,7 @@ public class MilestoneAdministrationController {
 	}
 
 	@RequestMapping(value = "/{motherId}/clone", method = RequestMethod.POST)
-	public @ResponseBody long cloneMilestone(@Valid @ModelAttribute("new-milestone") Milestone milestone, @RequestParam boolean bindToRequirements, @RequestParam boolean bindToTestCases, @RequestParam boolean bindToCampaigns, @PathVariable("motherId") long motherId) {
+	public @ResponseBody long cloneMilestone(@Valid @ModelAttribute("new-milestone") Milestone milestone, @RequestParam boolean bindToRequirements, @RequestParam boolean bindToTestCases,  @PathVariable("motherId") long motherId) {
 
 		if (permissionEvaluationService.hasRole("ROLE_ADMIN")) {
 			//keep range for admin user
@@ -141,7 +141,7 @@ public class MilestoneAdministrationController {
 			milestone.setRange(MilestoneRange.RESTRICTED);
 		}
 		milestone.setStatus(MilestoneStatus.IN_PROGRESS);
-		milestoneManager.cloneMilestone(motherId, milestone, bindToRequirements, bindToTestCases, bindToCampaigns);
+		milestoneManager.cloneMilestone(motherId, milestone, bindToRequirements, bindToTestCases);
 		return milestone.getId();
 	}
 

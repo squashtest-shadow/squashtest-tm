@@ -87,8 +87,7 @@ public interface CustomMilestoneManager extends MilestoneFinderService {
 	boolean isBoundToATemplate(Long milestoneId);
 
 	@PreAuthorize(MILESTONE_FEAT_ENABLED)
-	void cloneMilestone(long motherId, Milestone milestone, boolean bindToRequirements, boolean bindToTestCases,
-			boolean bindToCampaigns);
+	void cloneMilestone(long motherId, Milestone milestone, boolean bindToRequirements, boolean bindToTestCases);
 
 	@PreAuthorize(MILESTONE_FEAT_ENABLED)
 	void synchronize(long sourceId, long targetId, boolean extendPerimeter, boolean isUnion);
