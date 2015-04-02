@@ -213,7 +213,6 @@ define([ 'module', "jquery", "squash.basicwidgets", "workspace.routing", "squash
 			});
 			
 			var translatedStatus = translator.get({
-				finished :"milestone.status.FINISHED",
 				locked :"milestone.status.LOCKED"		
 			});
 			
@@ -222,7 +221,7 @@ define([ 'module', "jquery", "squash.basicwidgets", "workspace.routing", "squash
 				for(var i= 0; i < ids.length; i++)
 				{
 				var curStat = table.getDataById(ids[i])["status"]; 
-				if (curStat == translatedStatus.finished || curStat == translatedStatus.locked){
+				if (curStat == translatedStatus.locked){
 					return true;
 				}	
 				}
