@@ -26,6 +26,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import javax.inject.Inject;
 
@@ -37,11 +38,14 @@ import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.customfield.CustomField;
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
+import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.service.bugtracker.BugTrackersLocalService;
 import org.squashtest.tm.service.customfield.CustomFieldHelper;
 import org.squashtest.tm.service.customfield.CustomFieldHelperService;
+import org.squashtest.tm.service.feature.FeatureManager;
+import org.squashtest.tm.service.feature.FeatureManager.Feature;
 
 @Component
 @Scope("prototype")
@@ -53,6 +57,9 @@ public class SimpleCampaignExportCSVModelImpl implements WritableCampaignCSVMode
 	@Inject
 	private BugTrackersLocalService bugTrackerService;
 
+	@Inject
+	private FeatureManager featureManager;
+	
 	private char separator = ';';
 
 	private Campaign campaign;
@@ -66,9 +73,12 @@ public class SimpleCampaignExportCSVModelImpl implements WritableCampaignCSVMode
 	private MultiValueMap tcCUFValues; // same here
 
 	private int nbColumns;
+	
+	private boolean milestonesEnabled;
 
 	public SimpleCampaignExportCSVModelImpl() {
 		super();
+
 	}
 
 	public void setCampaign(Campaign campaign) {
@@ -85,7 +95,7 @@ public class SimpleCampaignExportCSVModelImpl implements WritableCampaignCSVMode
 
 	public void init() {
 		initCustomFields();
-
+		milestonesEnabled = featureManager.isEnabled(Feature.MILESTONE);
 	}
 
 	private void initCustomFields() {
@@ -161,6 +171,9 @@ public class SimpleCampaignExportCSVModelImpl implements WritableCampaignCSVMode
 		headerCells.add(new CellImpl("IT_ID"));
 		headerCells.add(new CellImpl("IT_NUM"));
 		headerCells.add(new CellImpl("IT_NAME"));
+		if (milestonesEnabled){
+		headerCells.add(new CellImpl("IT_MILESTONE"));
+		}
 		headerCells.add(new CellImpl("IT_SCHEDULED_START_ON"));
 		headerCells.add(new CellImpl("IT_SCHEDULED_END_ON"));
 		headerCells.add(new CellImpl("IT_ACTUAL_START_ON"));
@@ -171,6 +184,9 @@ public class SimpleCampaignExportCSVModelImpl implements WritableCampaignCSVMode
 		headerCells.add(new CellImpl("TC_NAME"));
 		headerCells.add(new CellImpl("TC_PROJECT_ID"));
 		headerCells.add(new CellImpl("TC_PROJECT"));
+		if (milestonesEnabled){
+		headerCells.add(new CellImpl("TC_MILESTONE"));
+		}
 		headerCells.add(new CellImpl("TC_WEIGHT"));
 		headerCells.add(new CellImpl("TEST_SUITE"));
 		headerCells.add(new CellImpl("#_EXECUTIONS"));
@@ -290,6 +306,9 @@ public class SimpleCampaignExportCSVModelImpl implements WritableCampaignCSVMode
 			dataCells.add(new CellImpl(itp.getLabel()));
 			dataCells.add(new CellImpl(testCase.getProject().getId().toString()));
 			dataCells.add(new CellImpl(testCase.getProject().getName()));
+			if (milestonesEnabled){
+			dataCells.add(new CellImpl(formatMilestone(testCase.getMilestones())));
+			}
 			dataCells.add(new CellImpl(testCase.getImportance().toString()));
 			dataCells.add(new CellImpl(itp.getTestSuiteNames().replace(", ",",").replace("<", "&lt;").replace(">", "&gt;")));
 			dataCells.add(new CellImpl(Integer.toString(itp.getExecutions().size())));
@@ -304,11 +323,26 @@ public class SimpleCampaignExportCSVModelImpl implements WritableCampaignCSVMode
 			dataCells.add(new CellImpl(testCase.getStatus().toString()));
 		}
 
+		private String formatMilestone(Set<Milestone> milestones) {
+			
+			StringBuilder sb = new StringBuilder();
+			for (Milestone m : milestones){
+				sb.append(m.getLabel());
+				sb.append("|");
+			}
+			sb.setLength(Math.max(sb.length() - 1, 0));
+			
+			return sb.toString();
+		}
+
 		private void populateIterationRowData(List<CellImpl> dataCells) {
 
 			dataCells.add(new CellImpl(iteration.getId().toString()));
 			dataCells.add(new CellImpl(Integer.toString(iterIndex + 1)));
 			dataCells.add(new CellImpl(iteration.getName()));
+			if (milestonesEnabled){
+			dataCells.add(new CellImpl(formatMilestone(iteration.getMilestones())));
+			}
 			dataCells.add(new CellImpl(formatDate(iteration.getScheduledStartDate())));
 			dataCells.add(new CellImpl(formatDate(iteration.getScheduledEndDate())));
 			dataCells.add(new CellImpl(formatDate(iteration.getActualStartDate())));
