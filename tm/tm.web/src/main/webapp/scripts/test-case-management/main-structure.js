@@ -30,9 +30,6 @@ define(["jquery",
 		"jqueryui",
 		"jquery.squash.formdialog"],
 		function($, pubsub, basic, contentHandlers, Frag, eventBus, milestonePanel, milestoneNotifier){
-	
-	"use strict";
-
 
 	
 	function initRenameDialog(settings){
