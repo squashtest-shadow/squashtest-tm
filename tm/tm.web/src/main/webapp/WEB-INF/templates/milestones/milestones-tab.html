@@ -116,10 +116,14 @@
     <div data-def="state=none-selected" class="display-table-row">
         <div th:include="fragments-utils/static-panels :: warning-pane" th:with="txtcontent=#{title.unbindMilestones.noneselected}"></div>       
     </div>
+        <div data-def="state=one-legacy-selected" class="display-table-row">
+        <div th:include="fragments-utils/static-panels :: warning-pane" th:with="txtcontent=#{title.unbindMilestones.legacyselected}"></div>       
+    </div>
     
     <div class="popup-dialog-buttonpane">
       <input type="button" th:value="#{label.Confirm}" data-def="state=one-selected more-selected, mainbtn=one-selected more-selected, evt=confirm"/>
-      <input type="button" th:value="#{label.Cancel}" data-def="evt=cancel"/>
+      <input type="button" th:value="#{label.Cancel}" data-def="state=one-selected more-selected, mainbtn=one-selected more-selected, evt=cancel"/>
+      <input type="button" th:value="#{label.Close}" data-def="state=one-legacy-selected none-selected, mainbtn=one-legacy-selected none-selected, evt=cancel"/>
     </div>
   </div>
   

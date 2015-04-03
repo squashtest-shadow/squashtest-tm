@@ -37,7 +37,7 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil",
 
 			return {
 				buttons : [ {
-					tooltip : VRTS.messages.remove,
+					tooltip : translator.get('label.DisassociateRequirement'),
 					condition : function(row, data) {
 						var verified = data.directlyVerified == "false" ? false : data.directlyVerified;
 						return verified && VRTS.linkable;

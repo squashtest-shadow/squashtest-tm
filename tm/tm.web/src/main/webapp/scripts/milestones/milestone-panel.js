@@ -160,13 +160,30 @@ define(["jquery", "workspace.event-bus", "app/ws/squashtm.notification", "squash
 			unbindDialog.on('formdialogopen', function(){
 				
 				var ids = currentTable.getSelectedIds(),
-					state;
+									state;
+							
+				// For every milestone selected, if (tcDirectMember===false), we can't delete
+				var legacy = false;
+				
+				ids.forEach(function(idCheck) {
+						var tcDirectMember = currentTable.getDataById(idCheck).directMember;
+						if (tcDirectMember===false){
+							legacy = true;
+						//}
+						};
+				});
+				
+				
 				
 				switch(ids.length){
 				case 0 : state="none-selected"; break;
 				case 1 : state="one-selected";break;
 				default : state="more-selected";
 				};
+				
+				if (legacy === true ) {
+					state="one-legacy-selected";
+				};	
 				
 				unbindDialog.formDialog('setState', state);
 			});
