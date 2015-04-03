@@ -251,7 +251,7 @@ public class AdvancedSearchController {
 			Locale locale,
 			@CookieValue(value = "milestones", required = false, defaultValue = "") List<Long> milestoneIds) {
 
-		initModelForPage(model, associateResultWithType, id);
+		initModelForPage(model, associateResultWithType, id, milestoneIds);
 		model.addAttribute(SEARCH_DOMAIN, searchDomain);
 		if (TESTCASE_VIA_REQUIREMENT.equals(searchDomain)) {
 			searchDomain = REQUIREMENT;
@@ -270,7 +270,8 @@ public class AdvancedSearchController {
 		return searchDomain + "-search-input.html";
 	}
 
-	private void initModelForPage(Model model, String associateResultWithType, Long id) {
+	private void initModelForPage(Model model, String associateResultWithType, Long id, List<Long> isMilestoneMode) {
+		model.addAttribute("isMilestoneMode", !isMilestoneMode.isEmpty());
 		if (StringUtils.isNotBlank(associateResultWithType)) {
 			model.addAttribute("associateResult", true);
 			model.addAttribute("associateResultWithType", associateResultWithType);
@@ -291,9 +292,10 @@ public class AdvancedSearchController {
 
 	@RequestMapping(value = "/results", params = TESTCASE)
 	public String getTestCaseSearchResultPage(Model model, @RequestParam String searchModel,
-			@RequestParam(required = false) String associateResultWithType, @RequestParam(required = false) Long id) {
+			@RequestParam(required = false) String associateResultWithType, @RequestParam(required = false) Long id,
+			@CookieValue(value = "milestones", required = false, defaultValue = "") List<Long> milestoneIds) {
 
-		initModelForPage(model, associateResultWithType, id);
+		initModelForPage(model, associateResultWithType, id, milestoneIds);
 		model.addAttribute(SEARCH_MODEL, searchModel);
 		model.addAttribute(SEARCH_DOMAIN, TESTCASE);
 
@@ -304,9 +306,10 @@ public class AdvancedSearchController {
 
 	@RequestMapping(value = "/results", params = REQUIREMENT)
 	public String getRequirementSearchResultPage(Model model, @RequestParam String searchModel,
-			@RequestParam(required = false) String associateResultWithType, @RequestParam(required = false) Long id) {
+			@RequestParam(required = false) String associateResultWithType, @RequestParam(required = false) Long id,
+			@CookieValue(value = "milestones", required = false, defaultValue = "") List<Long> milestoneIds) {
 
-		initModelForPage(model, associateResultWithType, id);
+		initModelForPage(model, associateResultWithType, id, milestoneIds);
 		model.addAttribute(SEARCH_MODEL, searchModel);
 		model.addAttribute(SEARCH_DOMAIN, REQUIREMENT);
 
@@ -317,9 +320,10 @@ public class AdvancedSearchController {
 
 	@RequestMapping(value = "/results", params = TESTCASE_VIA_REQUIREMENT)
 	public String getTestCaseThroughRequirementSearchResultPage(Model model, @RequestParam String searchModel,
-			@RequestParam(required = false) String associateResultWithType, @RequestParam(required = false) Long id) {
+			@RequestParam(required = false) String associateResultWithType, @RequestParam(required = false) Long id,
+			@CookieValue(value = "milestones", required = false, defaultValue = "") List<Long> milestoneIds) {
 
-		initModelForPage(model, associateResultWithType, id);
+		initModelForPage(model, associateResultWithType, id, milestoneIds);
 		model.addAttribute(SEARCH_MODEL, searchModel);
 		model.addAttribute(SEARCH_DOMAIN, TESTCASE_VIA_REQUIREMENT);
 
@@ -437,9 +441,9 @@ public class AdvancedSearchController {
 		// mode
 		AdvancedSearchListFieldModel model = new AdvancedSearchListFieldModel();
 		List<String> milestones = new ArrayList<String>();
-		milestones.add(milestoneFinder.findById(milestoneId).getLabel());
+		milestones.add(milestoneId.toString());
 		model.setValues(milestones);
-		searchModel.addField("milestone.label", model);
+		searchModel.addField("milestones.id", model);
 	}
 
 	private Set<Long> getIdsOfRequirementsAssociatedWithObjects(String associateResultWithType, Long id) {

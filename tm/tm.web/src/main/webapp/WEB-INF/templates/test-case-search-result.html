@@ -120,7 +120,7 @@
               class="button ui-button ui-widget ui-state-default ui-corner-all" role="button" aria-disabled="false" />
             <input type="button" th:if="!${associateResult}" th:value="#{label.Modify}" id="modify-search-result-button"
               class="button ui-button ui-widget ui-state-default ui-corner-all" role="button" aria-disabled="false" />
-                 <input type="button" th:if="!${associateResult} and ${application.milestoneFeatureEnabled} and (${sec.hasRole('ROLE_TM_PROJECT_MANAGER')} or ${sec.hasRole('ROLE_ADMIN')})" th:value="#{label.ModifyMilestone}" id="modify-search-result-milestone-button"
+                 <input type="button" th:if="!${associateResult} and ${application.milestoneFeatureEnabled} and not ${isMilestoneMode} and (${sec.hasRole('ROLE_TM_PROJECT_MANAGER')} or ${sec.hasRole('ROLE_ADMIN')})" th:value="#{label.ModifyMilestone}" id="modify-search-result-milestone-button"
               class="button ui-button ui-widget ui-state-default ui-corner-all" role="button" aria-disabled="false" />
 
             <input type="button" th:if="!${associateResult}" th:value="#{label.Export}" id="export-search-result-button"
@@ -156,7 +156,7 @@
                     <th th:attr="data-def='map=test-case-type'" th:text="#{test-case.type.label}">test-case type</th>
                     <th th:attr="data-def='map=test-case-status'" th:text="#{test-case.status.label}">test-case
                       status</th>
-                    <th th:if="${application.milestoneFeatureEnabled}" th:attr="data-def='map=test-case-milestone-nb'" th:text="#{label.milestoneNb}">milestone nb</th>	
+                    <th th:if="${application.milestoneFeatureEnabled and not isMilestoneMode}" th:attr="data-def='map=test-case-milestone-nb'" th:text="#{label.milestoneNb}">milestone nb</th>	
                     <th th:attr="data-def='map=test-case-requirement-nb'"
                       th:text="#{label.numberOfAssociatedRequirements}"
                       th:title="#{label.long.numberOfAssociatedRequirements}">nb of covered requirements</th>
