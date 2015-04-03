@@ -25,7 +25,6 @@ define([ "jquery", "backbone", "handlebars", "./IconSelectDialog","squash.transl
 		el : "#add-info-list-item-popup",
 
 		initialize : function() {
-
 			this.$el.find("input:text").val("");
 			this.$el.confirmDialog({
 				autoOpen : true
@@ -50,10 +49,7 @@ define([ "jquery", "backbone", "handlebars", "./IconSelectDialog","squash.transl
 		},
 
 		openChangeIconPopup : function(){
-
-	        var self = this;
-
-
+				var self = this;
 
 				function discard() {
 					self.newIconDialog.off("selectIcon.cancel selectIcon.confirm");

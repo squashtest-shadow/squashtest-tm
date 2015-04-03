@@ -44,7 +44,6 @@
 
 <f:message var="labelConfirm" key="label.Confirm"/>
 <f:message var="labelCancel"  key="label.Cancel"/>
-<f:message var="removeAssoc"  key="dialog.remove-testcase-requirement-association.message" />
 
 <c:set var="tblRemoveBtnClause" value=""/>
 <c:if test="${editable}" >
@@ -73,22 +72,10 @@
   </tbody>
 </table>
 
-<div id="remove-verifying-test-case-dialog" class="popup-dialog not-displayed" title="${labelConfirm}">
-  <div><c:out value="${removeAssoc}"/></div>
-  <div class="popup-dialog-buttonpane">
-    <input class="confirm" type="button" value="${labelConfirm}" />
-     <input class="cancel" type="button" value="${labelCancel}" />
-  </div>
-</div>
-
 <c:if test="${empty autoJsInit or autoJsInit}" >
 <script type="text/javascript">
   require([ "common" ], function() {
-    require(['jquery', "backbone.wreqr", "squash.translator", 'squashtable'], function($, Wreqr, translator) {
-      squashtm = squashtm || {};
-      squashtm.vent = squashtm.vent || new Wreqr.EventAggregator();
-      squashtm.reqres = new Wreqr.RequestResponse();
-      
+    require(['jquery', "app/squash.wreqr.init", "squash.translator", 'squashtable'], function($, Wreqr, translator) {      
       <c:if test="${editable}">
       $(document).on("click", "#${batchRemoveButtonId}", function(event) {
         squash.vent.trigger("verifying-test-cases:unbind-selected", { source: event });
@@ -109,8 +96,6 @@
   });
 </script>
 </c:if>
-<f:message var="cancelLabel" key="label.Cancel" />
-<f:message var="okLabel" key="label.Ok" />
 <script type="text/x-handlebars-template" id="unbind-dialog-tpl">
   <div id="{{dialogId}}" class="not-displayed popup-dialog" title="<f:message key='dialog.remove-testcase-associations.title'/>">
     <div data-def="state=confirm-deletion">
@@ -120,8 +105,8 @@
       <span><f:message key="dialog.remove-testcase-requirement-associations.message"/></span>
     </div>
     <div class="popup-dialog-buttonpane">
-      <input type="button" class="button" value="${okLabel}" data-def="evt=confirm, mainbtn"/>
-      <input type="button" class="button" value="${cancelLabel}" data-def="evt=cancel"/>
+      <input type="button" class="button" value="${labelConfirm}" data-def="evt=confirm, mainbtn"/>
+      <input type="button" class="button" value="${labelCancel}" data-def="evt=cancel"/>
     </div>
   </div>
 </script>
