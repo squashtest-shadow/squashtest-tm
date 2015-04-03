@@ -375,11 +375,10 @@
 
 <!-- --------------------------------RENAME POPUP--------------------------------------------------------- -->
   
-    <f:message var="renameMilestoneTitle" key="dialog.rename-bugtracker.title" />
-    <div id="rename-milestone-dialog" class="not-displayed popup-dialog"
+        <f:message var="renameMilestoneTitle" key="dialog.rename-milestone.title" />
+      <div id="rename-milestone-dialog" class="not-displayed popup-dialog"
         title="${renameMilestoneTitle}">
   
-
          <tr>
             <td><label for="rename-milestone-input"><f:message
               key="label.Label" /></label></td>
