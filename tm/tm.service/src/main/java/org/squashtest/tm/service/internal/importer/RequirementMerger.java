@@ -131,7 +131,6 @@ class RequirementMerger extends DestinationManager {
 	}
 
 	private boolean processMilestones(PseudoRequirement pseudoRequirement) {
-
 		if (!featureManager.isEnabled(Feature.MILESTONE)) {
 			return true;
 		}
@@ -140,7 +139,9 @@ class RequirementMerger extends DestinationManager {
 			String milestoneString = prv.getMilestoneString();
 
 			if (milestoneString != null && !StringUtils.isEmpty(milestoneString)) {
-				String[] milestonesNames = milestoneString.split(Pattern.quote("|"));
+				Pattern pattern = Pattern.compile("\\s*\\|\\s*");
+		
+				String[] milestonesNames = pattern.split(milestoneString);
 
 				if (!milestonesAllowProcessing(prv, milestonesNames)) {
 					return false;
