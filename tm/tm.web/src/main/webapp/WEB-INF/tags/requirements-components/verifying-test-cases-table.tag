@@ -42,11 +42,9 @@
 <c:url var="tableLanguageUrl" value="/datatables/messages"/>
 <c:url var="testCaseUrl" value="/test-cases"/>
 
-<f:message var="emptyMessage" key="message.EmptyTableSelection" />
 <f:message var="labelConfirm" key="label.Confirm"/>
 <f:message var="labelCancel"  key="label.Cancel"/>
 <f:message var="removeAssoc"  key="dialog.remove-testcase-requirement-association.message" />
-<f:message var="titleError"   key="popup.title.error" />
 
 <c:set var="tblRemoveBtnClause" value=""/>
 <c:if test="${editable}" >
@@ -68,7 +66,7 @@
       <th data-def="map=tc-reference, sortable"><f:message key="test-case.reference.label" /></th>
       <th data-def="map=tc-name, sortable, link=${testCaseUrl}/{tc-id}/info"><f:message key="test-case.name.label" /></th>
       <th data-def="map=tc-type, sortable"><f:message key="verifying-test-cases.table.column-header.type.label"/></th>
-      <th data-def="map=empty-delete-holder${tblRemoveBtnClause}">&nbsp;</th>        
+      <th data-def="map=empty-delete-holder${tblRemoveBtnClause}">&nbsp;</th>
     </tr>
   </thead>
   <tbody>
@@ -86,44 +84,44 @@
 <c:if test="${empty autoJsInit or autoJsInit}" >
 <script type="text/javascript">
   require([ "common" ], function() {
-      require(['jquery', 'workspace.event-bus', "squash.translator", 'squashtable', 'jquery.squash.confirmdialog'], function($, eventBus, translator){
+    require(['jquery', "backbone.wreqr", "squash.translator", 'squashtable'], function($, Wreqr, translator) {
+      squashtm = squashtm || {};
+      squashtm.vent = squashtm.vent || new Wreqr.EventAggregator();
+      squashtm.reqres = new Wreqr.RequestResponse();
+      
+      <c:if test="${editable}">
+      $(document).on("click", "#${batchRemoveButtonId}", function(event) {
+        squash.vent.trigger("verifying-test-cases:unbind-selected", { source: event });
+      });
+      </c:if>
+
       $(function() {
-          var table = $("#verifying-test-cases-table").squashTable({
-            'aaData' : ${json:serialize(model.aaData)}
-          }, {
-          	unbindButtons : {
-      				delegate : "#remove-verified-requirement-version-dialog",
-      				tooltip : translator.get('dialog.unbind-ta-project.tooltip')	
-      			}
-	        });
-          <c:if test="${editable}">
-          var removeDialog = $("#remove-verifying-test-case-dialog").confirmDialog();
-          
-          $( '#${batchRemoveButtonId}' ).click(function() {
-            var table = $( '#verifying-test-cases-table' ).squashTable();
-            var ids = table.getSelectedIds();
-            
-            if (ids.length > 0) {
-              removeDialog.confirmDialog('open');
-            } else {
-              $.squash.openMessage("${titleError}","${emptyMessage}");
-            }
-          });
-          
-          removeDialog.on('confirmdialogconfirm', function(){
-            var ids = table.getSelectedIds();
-            $.ajax({
-              url : "${verifyingTestCasesUrl}/"+ids.join(','),
-              type : 'DELETE',
-              dataType : 'json'
-            }).success(function() {
-              table.refresh();
-              eventBus.trigger("node.update-reqCoverage", {targetIds : ids});
-            })
-          });
-          </c:if>
+        var table = $("#verifying-test-cases-table").squashTable({
+          'aaData' : ${json:serialize(model.aaData)}
+        }, {
+          unbindButtons : {
+            delegate : "#unbind-active-row-dialog",
+            tooltip : translator.get('dialog.unbind-ta-project.tooltip')
+          }
         });
+      });
     });
   });
 </script>
 </c:if>
+<f:message var="cancelLabel" key="label.Cancel" />
+<f:message var="okLabel" key="label.Ok" />
+<script type="text/x-handlebars-template" id="unbind-dialog-tpl">
+  <div id="{{dialogId}}" class="not-displayed popup-dialog" title="<f:message key='dialog.remove-testcase-associations.title'/>">
+    <div data-def="state=confirm-deletion">
+      <span><f:message key="dialog.remove-testcase-requirement-association.message"/></span>
+    </div>
+    <div data-def="state=multiple-tp">
+      <span><f:message key="dialog.remove-testcase-requirement-associations.message"/></span>
+    </div>
+    <div class="popup-dialog-buttonpane">
+      <input type="button" class="button" value="${okLabel}" data-def="evt=confirm, mainbtn"/>
+      <input type="button" class="button" value="${cancelLabel}" data-def="evt=cancel"/>
+    </div>
+  </div>
+</script>

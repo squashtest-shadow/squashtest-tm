@@ -160,6 +160,12 @@
 				name : "user-page",
 				include : [ "jquery", "user-editor/UserModificationView", "app/ws/squashtm.workspace", "app/pubsub" ],
 				exclude : [ "common" ]
+			},
+			{
+				name : "verifying-test-case-manager",
+				include : [ "jquery", "backbone.wreqr", "handlebars", "underscore", "workspace.event-bus", "workspace.tree-event-handler",
+				            "squash.translator", "jqueryui", "jquery.squash.messagedialog", "squashtable", "jquery.squash.formdialog" ],
+				exclude : [ "common" ]
 			}
 			]
 }) // DONT ADD NO SEMICOLON!
