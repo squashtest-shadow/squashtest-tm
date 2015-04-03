@@ -128,9 +128,10 @@
 
 						<div class="sq-tg expand" id="table-view">
                             <div class="tg-head">
+                            <h3 th:text="#{label.infoLists}"></h3>
                               <div class="tg-toolbar">
                                 <button id="add-info-list-item-button"
-                                  class="sq-icon-btn btn-sm">
+                                  class="sq-icon-btn btn-sm" th:title="#{title.infoList.item.add}">
                                   <span class="ui-icon ui-icon-plus squared-icons">+</span>
                                 </button>
                               </div>
@@ -155,7 +156,7 @@
 											<th
 												th:attr="data-def='map=default, checkbox, sClass=isDefault'"
 												th:text="#{label.default}">Default</th>
-              <th th:attr="data-def='sWidth=2em, map=empty-delete-holder, sClass=delete-button'">消</th>
+              <th th:attr="data-def='sWidth=2em, map=empty-delete-holder, sClass=delete-button'"></th>
 										</tr>
 									</thead>
 
