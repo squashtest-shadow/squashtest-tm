@@ -65,7 +65,7 @@
                 	<span class="ui-icon ui-icon-plus squared-icons">+</span>
                 </button>
 			
-			<f:message var="removeLabel" key="label.removeRequirementsAssociation" />
+			<f:message var="removeLabel" key="label.desassociationRequirements" />
 				<button id="remove-verified-requirements-button" class="sq-icon-btn btn-sm" type="submit" title="${removeLabel}" >
                 	<span class="ui-icon ui-icon-minus squared-icons">-</span>
           	  	</button>					
