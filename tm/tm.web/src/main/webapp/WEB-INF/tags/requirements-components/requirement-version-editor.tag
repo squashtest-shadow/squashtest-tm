@@ -157,10 +157,10 @@
 
   <div class="toolbar-button-panel">
     <c:if test="${ writable }">
-      <input type="button" value='<f:message key="requirement.button.rename.label" />' id="rename-requirement-button"
+      <input type="button" value='<f:message key="requirement.button.rename.label" />' value='<f:message key="requirement.button.rename.label" />' id="rename-requirement-button"
         class="sq-btn" />
     </c:if>
-    <input type="button" value="<f:message key='label.print'/>" id="print-requirement-version-button" class="sq-btn" />
+    <input type="button" value="<f:message key='label.print'/>" title='<f:message key="requirement.button.new-version.label" />' id="print-requirement-version-button" class="sq-btn" />
   </div>
   
   <comp:milestone-messages milestoneConf="${milestoneConf}"/>

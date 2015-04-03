@@ -163,12 +163,12 @@ that page won't be editable if
 
 	<div class="toolbar-button-panel">
 		<c:if test="${ writable }">
-			<input type="button" value='<f:message key="requirement.button.rename.label" />' id="rename-requirement-button" class="sq-btn"/> 
+			<input type="button" value='<f:message key="requirement.button.rename.label" />' title='<f:message key="requirement.button.rename.label" />' id="rename-requirement-button" class="sq-btn"/> 
 		</c:if>
 		<c:if test="${ creatable }">
-			<input type="button" value='<f:message key="requirement.button.new-version.label" />' id="new-version-button" class="sq-btn"/>		
+			<input type="button" value='<f:message key="requirement.button.new-version.label" />' title='<f:message key="requirement.button.new-version.label" />' id="new-version-button" class="sq-btn"/>		
 		</c:if>
-		<input type="button" value="<f:message key='label.print'/>" id="print-requirement-version-button" class="sq-btn"/>
+		<input type="button" value="<f:message key='label.print'/>" title='<f:message key='label.print'/>' id="print-requirement-version-button" class="sq-btn"/>
 	</div>	
 
 
