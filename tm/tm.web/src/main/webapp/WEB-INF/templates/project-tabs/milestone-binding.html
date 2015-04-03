@@ -231,9 +231,9 @@
         </table>  
        
       <div class="popup-dialog-buttonpane">
-        <input type="button" th:value="#{label.Confirm}" data-def="mainbtn, evt=confirm"/>
-          <input type="button" th:value="#{label.createAndBind}" data-def="evt=bind"/>
-        <input type="button" th:value="#{label.Cancel}" data-def="evt=cancel"/>
+        <input type="button" th:value="#{label.create}" th:title="#{label.createMilestone}" data-def="mainbtn, evt=confirm"/>
+          <input type="button" th:value="#{label.createAndBind}" th:title="#{label.createAndAssociateMilestone}" data-def="evt=bind"/>
+        <input type="button" th:value="#{label.Cancel}" th:title="#{label.CancelCreation}" data-def="evt=cancel"/>
       </div>       
 </div>
 
