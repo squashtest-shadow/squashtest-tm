@@ -36,15 +36,10 @@
 <layout:tree-picker-layout  workspaceTitleKey="workspace.requirement.title" 
               highlightedWorkspace="requirement"
               linkable="test-case" 
-              isSubPaged="true"
-              main="verifying-test-case-manager">
+              isSubPaged="true">
               
   <jsp:attribute name="head">
     <comp:sq-css name="squash.blue.css" />
-    <script type="text/javascript">	
-      var squashtm = squashtm || {};
-      squashtm.bindingsManager = { bindingsUrl: "${verifyingTestCasesUrl}" };
-    </script>
   </jsp:attribute>
   
   <jsp:attribute name="tree">
@@ -81,6 +76,89 @@
   
   
   <jsp:attribute name="foot">
+
+    <script type="text/javascript">
+require([ "common" ], function() {
+  require([ "jquery","workspace.event-bus", "workspace.tree-event-handler", "jqueryui", "jquery.squash.messagedialog", "squashtable" ], function($, eventBus, treehandler) {
+    $(function() {
+      //the case 'get ids from the research tab' is disabled here, waiting for refactoring. 
+      function getTestCasesIds(){
+        var ids =  [];
+        var nodes = $( '#linkable-test-cases-tree' ).jstree('get_selected').not(':library').treeNode();
+        if (nodes.length>0){
+          ids = nodes.all('getResId');
+        }
+      
+        return $.map(ids, function(id){ return parseInt(id);});
+      }
+      
+      $( "#add-summary-dialog" ).messageDialog();
+
+      var summaryMessages = {
+        alreadyVerifiedRejections: "<f:message key='requirement-version.verifying-test-case.already-verified-rejection' />",
+        notLinkableRejections: "<f:message key='requirement-version.verifying-test-case.not-linkable-rejection' />"
+      };
+
+      var showAddSummary = function(summary) {
+        if (summary) {
+          var summaryRoot = $( "#add-summary-dialog > ul" );
+          summaryRoot.empty();
+          
+          for(var rejectionType in summary) {
+            var message = summaryMessages[rejectionType];
+            
+            if (message) {
+              summaryRoot.append('<li>' + message + '</li>');
+            }
+          }
+          
+            if (summaryRoot.children().length > 0) {
+              $( "#add-summary-dialog" ).messageDialog("open");
+            }
+        }
+          
+      };
+      
+      $( '#add-items-button' ).click(function() {
+        var tree = $('#linkable-test-cases-tree');
+        var table = $("#verifying-test-cases-table").squashTable();
+        var ids = getTestCasesIds();
+        
+        if (ids.length > 0) {
+          $.ajax({
+            url : '${ verifyingTestCasesUrl }/'+ids.join(','),
+            type : 'POST', 
+            dataType :'json'
+          })
+          .success(function(data){
+            showAddSummary(data);
+            table.refresh();
+            sendUpdateTree(data.linkedIds);  
+          });
+        }
+        tree.jstree('deselect_all');
+      });
+      
+      $("#remove-items-button").click(function(){
+        var table = $("#verifying-test-cases-table").squashTable();
+        var ids = table.getSelectedIds();
+        $.ajax({
+          url : '${verifyingTestCasesUrl}/'+ids.join(','),
+          type : 'DELETE',
+          dataType : 'json'
+        }).success(function(){
+          table.refresh();
+          sendUpdateTree(ids);  
+        });
+      });
+      
+      function sendUpdateTree(ids){
+        eventBus.trigger("node.update-reqCoverage", {targetIds : ids});
+      }
+    });
+  });
+});
+    </script>  
   </jsp:attribute>
 </layout:tree-picker-layout>
 
