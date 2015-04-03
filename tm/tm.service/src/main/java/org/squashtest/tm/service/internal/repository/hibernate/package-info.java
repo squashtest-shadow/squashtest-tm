@@ -197,9 +197,9 @@
 	@NamedQuery(name = "TestCase.findAllTestCasesLibraryForMilestone", query = "select tcl.id from TestCase tc join tc.project p join p.testCaseLibrary tcl join tc.milestones milestones where milestones.id = :milestoneId"),
 	@NamedQuery(name = "TestCase.findAllTestCasesLibraryNodeForMilestone", 
 	query = "select distinct tc.id from TestCase tc where tc.id in " +
-			"(select directTC.id from TestCase directTC join directTC.milestones milestones where milestones.id = :milestoneId) or " +
+			"(select directTC.id from TestCase directTC join directTC.milestones milestones where milestones.id in (:milestoneIds)) or " +
 			"tc.id in (select indirectTC.id from TestCase indirectTC join indirectTC.requirementVersionCoverages cov join cov.verifiedRequirementVersion " +
-			"ver join ver.milestones milestones where milestones.id = :milestoneId)"),
+			"ver join ver.milestones milestones where milestones.id in (:milestoneIds))"),
 	
 	@NamedQuery(name = "testCase.findTestCaseDetails", query = "select new org.squashtest.tm.domain.NamedReference(tc.id, tc.name) from TestCase tc where tc.id in (:testCaseIds)"),
 

@@ -83,6 +83,11 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 
 	private final static Integer EXPECTED_LENGTH = 7;
 
+
+	protected FeatureManager getFeatureManager(){
+		return featureManager;
+	}
+
 	@Override
 	public List<CustomField> findAllQueryableCustomFieldsByBoundEntityType(BindableEntity entity) {
 
@@ -134,7 +139,7 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 		return query;
 	}
 
-	private Query buildLuceneValueInListQuery(QueryBuilder qb, String fieldName, List<String> values) {
+	protected Query buildLuceneValueInListQuery(QueryBuilder qb, String fieldName, List<String> values) {
 
 		Query mainQuery = null;
 
@@ -164,7 +169,7 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 		return qb.bool().must(mainQuery).createQuery();
 	}
 
-	private Query buildLuceneSingleValueQuery(QueryBuilder qb, String fieldName, List<String> values, Locale locale) {
+	protected Query buildLuceneSingleValueQuery(QueryBuilder qb, String fieldName, List<String> values, Locale locale) {
 
 		Query mainQuery = null;
 
@@ -418,9 +423,21 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 	}
 
 	protected Query buildLuceneQuery(QueryBuilder qb, AdvancedSearchModel model, Locale locale) {
+
+		// find the milestone ids and add them to the model
 		if (featureManager.isEnabled(Feature.MILESTONE)){
 			addMilestoneFilter(model);
 		}
+
+		// now remove the criteria from the form before the main search begins
+		removeMilestoneSearchFields(model);
+
+
+		return buildCoreLuceneQuery(qb, model, locale);
+	}
+
+	protected Query buildCoreLuceneQuery(QueryBuilder qb, AdvancedSearchModel model, Locale locale) {
+
 		Query mainQuery = null;
 
 		Set<String> fieldKeys = model.getFields().keySet();
@@ -447,7 +464,7 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 	}
 
 	@SuppressWarnings("unchecked")
-	private void  addMilestoneFilter (AdvancedSearchModel searchModel){
+	protected void  addMilestoneFilter (AdvancedSearchModel searchModel){
 		Session session = sessionFactory.getCurrentSession();
 		Criteria crit = session.createCriteria(Milestone.class);
 
@@ -511,12 +528,17 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 			fields.put("milestones.id", milestonesModel);
 		}
 
+	}
+
+	protected void removeMilestoneSearchFields(AdvancedSearchModel model){
+		Map<String, AdvancedSearchFieldModel> fields = model.getFields();
 
 		for (String s : MILESTONE_SEARCH_FIELD){
 			fields.remove(s);
 		}
-
 	}
+
+
 	private List<MilestoneStatus> convertStatus(List<String> values) {
 		List<MilestoneStatus> status = new ArrayList<MilestoneStatus>();
 		for (String value : values) {

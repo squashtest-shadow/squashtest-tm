@@ -26,16 +26,29 @@ import java.util.Map;
 public class AdvancedSearchModel {
 
 	private Map<String, AdvancedSearchFieldModel> fields = new HashMap<String, AdvancedSearchFieldModel>();
-	
-	public AdvancedSearchModel(){
 
+	public AdvancedSearchModel(){
+		super();
 	}
-	
+
+	AdvancedSearchModel(Map<String, AdvancedSearchFieldModel> entries){
+		super();
+		this.fields = entries;
+	}
+
 	public void addField(String fieldName, AdvancedSearchFieldModel value){
 		fields.put(fieldName, value);
 	}
-	
+
 	public Map<String, AdvancedSearchFieldModel> getFields(){
 		return this.fields;
+	}
+
+	public AdvancedSearchModel shallowCopy(){
+
+		Map<String, AdvancedSearchFieldModel> copyfields = new HashMap<>(fields);
+
+		return new AdvancedSearchModel(copyfields);
+
 	}
 }

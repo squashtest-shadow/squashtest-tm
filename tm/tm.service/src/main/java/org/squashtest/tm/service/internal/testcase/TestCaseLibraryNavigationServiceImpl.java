@@ -656,7 +656,12 @@ TestCaseLibraryNavigationService {
 
 	@Override
 	public List<Long> findAllTestCasesLibraryNodeForMilestone(List<Long> milestoneIds) {
-		return testCaseDao.findAllTestCasesLibraryNodeForMilestone(milestoneIds);
+		if (! milestoneIds.isEmpty()){
+			return testCaseDao.findAllTestCasesLibraryNodeForMilestone(milestoneIds);
+		}
+		else{
+			return new ArrayList<>();
+		}
 	}
 
 }
