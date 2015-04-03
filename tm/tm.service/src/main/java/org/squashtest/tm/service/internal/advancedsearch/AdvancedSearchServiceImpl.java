@@ -22,6 +22,7 @@ package org.squashtest.tm.service.internal.advancedsearch;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -499,11 +500,14 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 						Date startDate = ((AdvancedSearchTimeIntervalFieldModel) model).getStartDate();
 						Date endDate = ((AdvancedSearchTimeIntervalFieldModel) model).getEndDate();
 
-						if (startDate != null && endDate != null){
-							crit.add(Restrictions.between("endDate", startDate, endDate));
-						} else if (startDate != null){
-							crit.add(Restrictions.gt("endDate", startDate));
-						} else if (endDate != null){
+						if (startDate != null){
+							Calendar cal = Calendar.getInstance();
+							cal.setTime(startDate);
+							cal.set(Calendar.HOUR, 0);
+							crit.add(Restrictions.ge("endDate", cal.getTime()));
+						}
+						
+						if (endDate != null){
 							crit.add(Restrictions.le("endDate", endDate));
 
 						}
