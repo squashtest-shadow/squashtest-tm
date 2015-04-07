@@ -19,22 +19,33 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 define([ "jquery", "backbone", "underscore", "app/util/StringUtil",
-		"./VerifiedRequirementsTable", "jquery.squash", "jqueryui",
+		"./VerifiedRequirementsTable","squash.translator", "jquery.squash", "jqueryui",
 		"jquery.squash.togglepanel", "squashtable",
 		"jquery.squash.oneshotdialog", "jquery.squash.messagedialog",
 		"jquery.squash.confirmdialog" ], function($, Backbone, _, StringUtil,
-		VerifiedRequirementsTable) {
+		VerifiedRequirementsTable, translator) {
 	var VRTS = squashtm.app.verifiedRequirementsTableSettings;
 	var TestCaseDirectVerifiedRequirementsTable = VerifiedRequirementsTable
 			.extend({
 
 				initialize : function(options) {
-					this.constructor.__super__.initialize.apply(this,
-							[ options ]);
-
+					VerifiedRequirementsTable.prototype.initialize.apply(this);
 				},
 
-				events : {}
+				events : {},
+
+				squashSettings : function(self) {
+
+					return {
+						buttons : [ {
+							tooltip : translator.get('label.DisassociateRequirement'),
+							tdSelector : "td.unbind-button",
+							uiIcon : "ui-icon-minus",
+							jquery : true,
+							onClick : self.removeRowRequirementVersion
+						} ]
+					};
+				},
 
 			});
 	return TestCaseDirectVerifiedRequirementsTable;
