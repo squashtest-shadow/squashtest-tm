@@ -166,33 +166,6 @@
 	};
 	
 	/**
-	 * Opens a messageDialog created on the fly and discards it afterwards. eg :
-	 * $('#dialogDef").openMessage().done(function () { console.log('closed') })
-	 *
-	 * @return a promise
-	 */
-	$.fn.openMessageClose = function(size) {
-		var self = this;
-
-		var deferred = $.Deferred();
-
-		var close = function() {
-			self.messageDialog('destroy');
-			deferred.resolve();
-		};
-
-		if (size !== null) {
-			self.messageDialog({
-				width : size
-			}).bind('messagedialogclose', close).messageDialog('open');
-		} else {
-			self.messageDialog().bind('messagedialogclose', close).messageDialog('open');
-		}
-
-		return deferred.promise();
-	};
-	
-	/**
 	 * Adds functions in the $.squash namespace
 	 */
 	$.extend($.squash, {
@@ -225,42 +198,4 @@
 		}
 	});
 	
-	$.extend($.squash, {
-		/**
-		 * Creates a modal message dialog out of the blue using the given title and message. Created DOM are discarded
-		 * when dialog is closed.
-		 *
-		 * @param title
-		 *            text title of message dialog
-		 * @param html
-		 *            chunk used as the body of the dialog.
-		 * @return a promise
-		 */
-		openMessageClose : function(title, htmlMessage, size) {
-			var dialog = $('<div></div>');
-						
-			dialog.attr('title', title);
-
-			dialog.append('<div class="centered" style="margin-top:15px;">'+htmlMessage+'</div>');
-			dialog.buttons(
-				text : "COOL",
-				click : function() {
-					$(this).messageDialog("close");
-				}
-			);
-	
-	
-			$(document.body).append(dialog);
-
-			var discardDialog = function() {
-				dialog.remove();
-			};
-
-
-			dialog.bind('destroy', discardDialog);
-
-			return dialog.openMessageClose(size);
-		}
-	});
-
 }(jQuery));
