@@ -82,12 +82,12 @@ define([ "jquery", "app/squash.wreqr.init", "backbone", "handlebars", "underscor
 			}) + tpl({
 				dialogId : "unbind-active-row-dialog"
 			});
-			$("body").append(dlgs);
+			this.$el.append(dlgs);
 
 			var unbind = bindingActionCallback(this.apiUrl, "delete");
 
 			// unbind multiple items dialog
-			var $batch = $("#unbind-selected-rows-dialog");
+			var $batch = this.$("#unbind-selected-rows-dialog");
 			$batch.formDialog();
 
 			$batch.on("formdialogopen", this.onOpenBatch);
@@ -95,7 +95,7 @@ define([ "jquery", "app/squash.wreqr.init", "backbone", "handlebars", "underscor
 			$batch.on("formdialogcancel", this.onCloseBatch);
 
 			// unbind single item dialog
-			var $single = $("#unbind-active-row-dialog");
+			var $single = this.$("#unbind-active-row-dialog");
 			$single.formDialog();
 
 			$single.on("formdialogopen", this.onOpenSingle);
@@ -108,10 +108,10 @@ define([ "jquery", "app/squash.wreqr.init", "backbone", "handlebars", "underscor
 		},
 
 		remove : function() {
-			$("#unbind-selected-rows-dialog").off();
-			$("#unbind-selected-rows-dialog").formDialog("destroy");
-			$("#unbind-active-rows-dialog").off();
-			$("#unbind-active-rows-dialog").formDialog("destroy");
+			this.$("#unbind-selected-rows-dialog").off();
+			this.$("#unbind-selected-rows-dialog").formDialog("destroy");
+			this.$("#unbind-active-rows-dialog").off();
+			this.$("#unbind-active-rows-dialog").formDialog("destroy");
 			Backbone.View.prototype.remove.apply(this, arguments);
 		},
 
