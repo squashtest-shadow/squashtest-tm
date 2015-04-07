@@ -138,6 +138,7 @@ define([], function(){
 		'milestone.info'                      : root + '/milestones/{\\d+}/info',
 		'milestone.unbind-templates'          : root + '/milestones-binding/milestone/{\\d+}/template',
 		'milestone.unbind-objects'          : root + '/milestones/{\\d+}/unbindallobjects',
+	    'milestones?selectable' 			: 	root + '/milestones/selectable',
 		'info-list.info'                      : root + '/info-lists/{\\d+}',
 		'info-list-item.info'                 : root + '/info-list-items/{\\d+}',
 		'info-list.position'                     : root + '/info-lists/{\\d+}/items/positions',
@@ -154,7 +155,7 @@ define([], function(){
 	    'search-tc.mass-change.bindmilestones' : root + '/advanced-search/tcs/{\\d+}/milestones',
 	    'search-reqV.mass-change.associable-milestone'  : root + '/advanced-search/milestones/reqV-mass-modif-associables/{\\d+}',
 	    'search-reqV.mass-change.bindmilestones' : root + '/advanced-search/reqVersions/{\\d+}/milestones',
-	     
+	    
 	     // helper methods
 		buildURL : function(){
 			var args = Array.prototype.slice.call(arguments);

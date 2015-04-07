@@ -18,15 +18,18 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ "jquery", "workspace.storage", "squash.translator", "squash.attributeparser", "jquery.cookie" ], 
-		function($, storage, translator, attrparser) {
+define([ "jquery", "workspace.storage", "jquery.cookie"], 
+		function($, storage) {
 
 	// local storage data 
-	var LOCAL_STORAGE = "milestones";
+	var MILESTONES_KEY = "milestones";
 
-	var milestoneFeatureStatus = {
+	var milestoneFeature = {
 		enabled : false,
-		milestoneId : ''
+		milestone : {
+			id : '',
+			label : ''	
+		}
 	};
 
 	// cookie data
@@ -36,106 +39,58 @@ define([ "jquery", "workspace.storage", "squash.translator", "squash.attributepa
 		path : "/"
 	};
 	
-	function initCookieIfNeeded(){
-		var mId = $.cookie(COOKIE_NAME);
-		if (mId === undefined){
-			$.cookie(COOKIE_NAME, '', oPath);
-		}
-	}
-	
-	function initFeatureIfNeeded(){
-		var feature = storage.get(LOCAL_STORAGE);
-		if (feature === undefined){
-			storage.set(LOCAL_STORAGE, milestoneFeatureStatus);
-		}
+	// init if needed
+	var feature = storage.get(MILESTONES_KEY);
+	if (feature === undefined){
+		storage.set(MILESTONES_KEY, milestoneFeature);
 	}
 
 	return {
-		/*
-		 * milestones-group is the component argument here but some
-		 * stuff can't be directly argumented
-		 */
-		/* init the milestones select and create the cookie if needed */
-		init : function(component) {					
 
-			// those functions will ensure that sensible defaults are set.
-			initCookieIfNeeded();
-			initFeatureIfNeeded();
+		activateStatus : function() {
 			
-			// get our feature variables
-			var mId = $.cookie(COOKIE_NAME);
-			var feature = storage.get(LOCAL_STORAGE);
-			
-			
-			// ****** init the switch button ******		
-			
-			var modeCbx = $("#toggle-MODE-checkbox"); 
-			var modeConf = attrparser.parse(modeCbx.data('def'));
-			modeConf.checked = feature.enabled;
-			modeCbx.switchButton(modeConf);
-		
-			modeCbx.siblings('.switch-button-background').css({position : 'relative', top : '6px'});
-			
-			// ********* combobox init *****
-
-			component.prop('disabled', (! feature.enabled));
-			
-			if (mId === '') {					
-				component.prepend(new Option(translator.get('user-preferences.choosemilestone.label'),
-										'', true, true));
-			} 
-			
-			component.val(mId);			
-
-			
-			// event handling
-			component.change(function() {
-				var activeId = encodeURIComponent($("#milestone-group").val());
-				$.cookie(COOKIE_NAME, activeId, oPath);
-			});
-			
-
-
-		},
-
-		activateStatus : function(component) {
-			var feature = storage.get(LOCAL_STORAGE);	
+			var feature = storage.get(MILESTONES_KEY);	
 			
 			feature.enabled = true;
-			$.cookie(COOKIE_NAME, feature.milestoneId, oPath);
-			component.val(feature.milestoneId);
+			$.cookie(COOKIE_NAME, feature.milestone.id, oPath);
 			
-			storage.set(LOCAL_STORAGE, feature);
+			storage.set(MILESTONES_KEY, feature);
 		},
 
-		deactivateStatus : function(component) {
-
-			var mId = $.cookie(COOKIE_NAME);
-			
-			var feature = storage.get(LOCAL_STORAGE);
+		deactivateStatus : function() {
+									
+			var feature = storage.get(MILESTONES_KEY);
 			
 			feature.enabled = false;
-			feature.milestoneId = mId;
 			$.cookie(COOKIE_NAME, '', oPath);
 			
-			storage.set(LOCAL_STORAGE, feature);
+			storage.set(MILESTONES_KEY, feature);
 		},
 		
-		setActiveMilestone : function(milestoneId){
-			$.cookie(COOKIE_NAME, milestoneId, oPath);
+		setActiveMilestone : function(milestone){
+			
+			var feature = storage.get(MILESTONES_KEY);	
+			
+			feature.milestone=milestone;
+			storage.set(MILESTONES_KEY, feature);
+			
+			$.cookie(COOKIE_NAME, milestone.id, oPath);
 		},
 		
 		getActiveMilestone : function(){
-			return $.cookie(COOKIE_NAME);
+			
+			var feature = storage.get(MILESTONES_KEY);
+			return feature.milestone;
 		},
+		
 		
 		deleteCookie : function(){
 			document.cookie = COOKIE_NAME +'=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;'; 
 		},
 		
 		isEnabled : function(){
-			initFeatureIfNeeded();
-			var feature = storage.get(LOCAL_STORAGE); 
+
+			var feature = storage.get(MILESTONES_KEY); 
 			return feature.enabled;
 		}
 

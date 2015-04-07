@@ -24,7 +24,6 @@
 <%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
     
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
-<%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="s" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="json" uri="http://org.squashtest.tm/taglib/json"%>
@@ -33,6 +32,10 @@
 
 
 <f:message var="userAccountPasswordLabel" key="label.password" />
+<f:message var="bindMilestoneDialogTitle" key="message.PickAMilestone"/>
+<f:message var="confirmLabel" key="label.Confirm"/>
+<f:message var="cancelLabel" key="label.Cancel"/>
+
 <c:url var="userAccountUrl" value="/user-account/update" />
 
 <layout:info-page-layout titleKey="dialog.settings.account.title" highlightedWorkspace="home">
@@ -200,33 +203,67 @@
 				<div class="display-table">			
 				<div class="display-table-row">
 					<div class="display-table-cell">  
-							<c:choose>
-				<c:when  test= "${ milestoneList.size() != 0}">			
+					<c:choose>
+				     <c:when  test= "${ milestoneList.size() != 0}">			
 					<label for="toggle-activation-checkbox" ><f:message key="user-preferences.tree-order.mode.label"/></label>
 					</div>
 					<div class="customHeigth">
 					<div class="display-table-cell">                  		
-                 			<input id="toggle-MODE-checkbox" type="checkbox" 
+                 		<input id="toggle-milestone-checkbox" type="checkbox" 
                  	          data-def="width=35, on_label='${milestoneMilestoneMode}', off_label='${milestoneReferentialMode}'" style="display: none;"/>
                  		</div>
                  	</div>
-			</div>
-			<div class="display-table-row">
-				<div class="display-table-cell">  
-				<label for="choose-your-mode" ><f:message key="user-preferences.milestone"/></label>
-				</div>
-				<div id="labelchoose" class="customHeigth">
-				 <select id="milestone-group" class="combobox" >
-			        <c:forEach items="${ milestoneList }" var="milestone"> 
-			           <option value = "${milestone.id}" >${milestone.label}</option>
-		            </c:forEach>                    
-				</select>
-			</div>
-			</c:when>
+        			</div>
+        			<div class="display-table-row">
+        				<div class="display-table-cell">  
+        				    <label for="choose-your-mode" ><f:message key="user-preferences.milestone"/></label>
+        				</div>
+        				<div id="labelchoose" class="customHeigth">
+                            <c:if test="${not empty activeMilestone}">
+                            <span id="toggle-milestone-label" data-state="enabled">${activeMilestone.label}</span>
+                            </c:if>
+                            <c:if test="${empty activeMilestone}">
+                             <span id="toggle-milestone-label" data-state="disabled" class="disabled-transparent"><f:message key="label.Choose"/></span>
+                            </c:if>
+
+        			     </div>
+                   
+                <div class="bind-milestone-dialog popup-dialog not-displayed" title="${bindMilestoneDialogTitle}">
+                  <div>
+               
+                    <table class="bind-milestone-dialog-table" data-def="filter, pre-sort=2-desc">
+                      <thead>
+                        <th data-def="sClass=bind-milestone-dialog-check, map=empty-delete-holder"></th>
+                        <th data-def="map=label, sortable" ><f:message key="label.Label"/></th>
+                        <th data-def="map=date, sortable"><f:message key="label.EndDate"/></th>
+                        <th data-def="map=description, sortable" ><f:message key="label.Description"/></th>
+                      </thead>
+                      <tbody>
+              
+                      </tbody>
+                    </table>
+              
+                    <div class="bind-milestone-dialog-selectors">
+                      <ul style="list-style-type: none;">
+                        <li class="clickable-item extra-small-margin-top"><span class="bind-milestone-dialog-selectall"    ><f:message key="label.selectAllForSelection"/></span></li>
+                        <li class="clickable-item extra-small-margin-top"><span class="bind-milestone-dialog-selectnone"   ><f:message key="label.selectNoneForSelection"/></span></li>
+                        <li class="clickable-item extra-small-margin-top"><span class="bind-milestone-dialog-invertselect" ><f:message key="label.invertSelect"/></span></li>
+                      </ul>
+                    </div>
+                     
+                  </div>
+              
+                  <div class="popup-dialog-buttonpane" >
+                    <input type="button" class="bind-milestone-dialog-confirm" data-def="evt=confirm, mainbtn" value="${confirmLabel}" />
+                    <input type="button" class="bind-milestone-dialog-cancel" data-def="evt=cancel" value="${cancelLabel}" />
+                  </div>
+              
+                </div>
+        		</c:when>
 			   <c:otherwise>
-  <f:message key="message.library-display-mode.no-milestones"/>
-      </c:otherwise>
-      </c:choose>
+                   <f:message key="message.library-display-mode.no-milestones"/>
+               </c:otherwise>
+              </c:choose>
 			</jsp:attribute>
 			</comp:toggle-panel>
 		 </c:if>
@@ -241,67 +278,28 @@
 <script type="text/javascript">
   require(["common"], function() {
     require(["jquery", "projects-manager", "jquery.squash.fragmenttabs", "squash.attributeparser", 
-  	         "project/ProjectToolbar", "app/ws/squashtm.notification", "squash.translator", "milestone-manager/milestone-activation", "squashtable", "jquery.switchButton", "jquery.cookie"], 
-        function($, projectsManager, Frag, attrparser, ProjectToolbar, notification, translator, milestoneActivation){    	
+  	         "project/ProjectToolbar", "app/ws/squashtm.notification", "squash.translator", 
+  	         "user-account/milestones-preferences", "squashtable", "jquery.switchButton", "jquery.cookie"], 
+        function($, projectsManager, Frag, attrparser, ProjectToolbar, notification, 
+        		translator, milestonesPrefs){    	
       
-  	  $("#project-permission-table").squashTable({
-  		  'bServerSide' : false,
-  		  'sDom' : '<r>t<i>',
-  		  'sPaginationType' : 'full_numbers'
-  	  },{});
+        	  $("#project-permission-table").squashTable({
+        		  'bServerSide' : false,
+        		  'sDom' : '<r>t<i>',
+        		  'sPaginationType' : 'full_numbers'
+        	  },{});
 
-  	  var milestoneGroup = $("#milestone-group") ;
   	  
-  	  $(function() {
-  		  if (${ milestoneList.size()} != 0){
-  	  			milestoneActivation.init(milestoneGroup);
-  		  }
-		 		init(projectsManager, Frag);	
-		 		
-	 		
-		 		new ProjectToolbar(); 		
-		 		
-			  	$("#toggle-MODE-checkbox").change(function(value){
-		
-			  		
-			  		toggleStatusActivation("MODE");
-			  	 		if ($("#toggle-MODE-checkbox").prop('checked')) {
-					 		 document.getElementById("milestone-group").disabled = false; 
-						 		}
-			  	 		else 	{
-					 		 document.getElementById("milestone-group").disabled = true;		
-					 		}
-
-			  	  });
-	  	});
-
-  		function init(projectsManager, Frag){
-   			Frag.init();
-
-  		};
-
-  		function toggleStatusActivation(status){
-  			var shouldActivate = $("#toggle-"+status+"-checkbox").prop('checked');
-  			if (shouldActivate){
-  				$("#milestone-group option[value='']").remove();
-  				activateStatus();
-  				if ($("#milestone-group").find(":selected").length == 0){
-  					$("#milestone-group").find("option")[0].setAttribute("selected", true);
-  					milestoneActivation.setActiveMilestone($("#milestone-group").find("option")[0].value);
-  				}
-  			}
-  			else{
-  				deactivateStatus();
-  			}
-  		};	
-
-  		function activateStatus(){
-  			milestoneActivation.activateStatus(milestoneGroup);
-  		};
-  		
-  		function deactivateStatus(){
-  			milestoneActivation.deactivateStatus(milestoneGroup);
-  		};
-    })
+          	  $(function() {
+              		<c:if test="${ not milestoneList.isEmpty()}">
+              		milestonesPrefs.init();
+                    </c:if>
+                  
+                    Frag.init();
+            
+             		new ProjectToolbar(); 	
+        
+				});
+  		});
   });
 </script>	

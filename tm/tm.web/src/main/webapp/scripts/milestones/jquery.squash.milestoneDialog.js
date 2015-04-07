@@ -57,7 +57,8 @@
  * available options : 
  * 
  * {
- *	multilines : boolean, whether the table allows for multilines selection
+ *	multilines : boolean, whether the table allows for multilines selection,
+ *	mustChoose : boolean, says whether empty choice is allowed or not. Default is false.
  *	tableSource : the URL from where the data should be fetch to 
  *  
  *  milestonesURL : which URL the bindings should be posted to 
@@ -75,8 +76,10 @@
  * 
  * 
  */
-define(["jquery", "workspace.event-bus", "jqueryui", "jquery.squash.formdialog", "squashtable"], 
-		function($, eventBus){
+define(["jquery", "workspace.event-bus", "app/ws/squashtm.notification", 
+        "squash.translator",
+        "jqueryui", "jquery.squash.formdialog", "squashtable"], 
+		function($, eventBus, notification, translator){
 	
 	
 	
@@ -110,7 +113,8 @@ define(["jquery", "workspace.event-bus", "jqueryui", "jquery.squash.formdialog",
 	$.widget("squash.milestoneDialog", $.squash.formDialog, {
 	
 		options : {
-			multilines : true
+			multilines : true,
+			mustChoose : false
 		},
 		
 		_create : function(){
@@ -197,25 +201,41 @@ define(["jquery", "workspace.event-bus", "jqueryui", "jquery.squash.formdialog",
 				ids.push(id);
 			});
 			
-			// exit if nothing to do
+			// if nothing selected : 
 			if (ids.length===0){
-				self.close();
+				if (this.options.mustChoose){					
+					notification.showError(translator.get('message.EmptyTableSelection'));						
+				}
+				else{
+					self.close();
+				}
 				return;
 			}
 			
-			var url = this.options.milestonesURL + '/'+ ids.join(',');
 			
-			$.ajax({
-				url : url,
-				type : 'POST'
-			})
-			.success(function(){
+			if ( !! this.options.milestonesURL){
+				var url = this.options.milestonesURL + '/'+ ids.join(',');
+				
+				$.ajax({
+					url : url,
+					type : 'POST'
+				})
+				.success(function(){
+					self.close();
+					eventBus.trigger('node.bindmilestones', {
+						identity : self.options.identity,
+						milestones : ids
+					});
+				});
+			}
+			else{
+				// just trigger the event
 				self.close();
 				eventBus.trigger('node.bindmilestones', {
 					identity : self.options.identity,
 					milestones : ids
 				});
-			});
+			}
 			
 		},
 		

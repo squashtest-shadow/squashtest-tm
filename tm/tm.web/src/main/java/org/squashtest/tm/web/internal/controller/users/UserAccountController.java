@@ -32,6 +32,7 @@ import javax.validation.Valid;
 
 import org.springframework.osgi.extensions.annotation.ServiceReference;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -46,6 +47,8 @@ import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.service.milestone.MilestoneManagerService;
 import org.squashtest.tm.service.project.ProjectsPermissionFinder;
 import org.squashtest.tm.service.user.UserAccountService;
+import org.squashtest.tm.web.internal.model.builder.DriveNodeBuilder;
+import org.squashtest.tm.web.internal.model.json.JsonMilestone;
 import org.squashtest.tm.web.internal.security.authentication.AuthenticationProviderContext;
 
 
@@ -73,9 +76,12 @@ public class UserAccountController {
 	}
 
 	@RequestMapping(method=RequestMethod.GET)
-	public ModelAndView getUserAccountDetails(){
+	public ModelAndView getUserAccountDetails(@CookieValue(value = "milestones", required = false, defaultValue = "") List<Long> milestoneIds){
 		User user = userService.findCurrentUser();
+
 		List<Milestone> milestoneList = new ArrayList<>();
+
+
 		try {
 			milestoneList = milestoneManager.findAllVisibleToCurrentUser();
 		} catch (Exception e) {
@@ -84,19 +90,32 @@ public class UserAccountController {
 		;
 		List<ProjectPermission> projectPermissions = permissionFinder.findProjectPermissionByUserLogin(user.getLogin());
 
-		// Sort List
-		/*
-		 * Collections.sort(milestoneList, new Comparator<Milestone>() {
-		 * 
-		 * @Override public int compare(Milestone m1, Milestone m2) { return m1.getLabel().compareTo(m2.getLabel()); }
-		 * });
-		 */
 		Collections.sort(milestoneList, new SortMilestoneList());
 
 		ModelAndView mav = new ModelAndView("page/users/user-account");
 		mav.addObject("user", user);
 		mav.addObject("milestoneList", milestoneList);
 		mav.addObject("projectPermissions", projectPermissions);
+
+		// also, active milestone
+		Milestone activeMilestone = null;
+		if (!milestoneIds.isEmpty()){
+			activeMilestone = milestoneManager.findById(milestoneIds.get(0));
+		}
+
+		if (activeMilestone != null){
+			JsonMilestone jsMilestone =
+					new JsonMilestone(
+							activeMilestone.getId(),
+							activeMilestone.getLabel(),
+							activeMilestone.getStatus(),
+							activeMilestone.getRange(),
+							activeMilestone.getEndDate(),
+							activeMilestone.getOwner().getLogin()
+							);
+			mav.addObject("activeMilestone", jsMilestone);
+		}
+
 		return mav;
 
 	}

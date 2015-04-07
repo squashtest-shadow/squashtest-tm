@@ -20,6 +20,8 @@
  */
 package org.squashtest.tm.web.internal.controller.milestone;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 
@@ -62,8 +64,19 @@ public class MilestoneController {
 	public DataTableModel<Milestone> findUserSelectableMilestones(){
 
 		List<Milestone> milestones = milestoneFinder.findAllVisibleToCurrentUser();
+
+		// they must be initially sorted by date descending
+		Collections.sort(milestones, new Comparator<Milestone>() {
+			@Override
+			public int compare(Milestone o1, Milestone o2) {
+				return (o2.getEndDate().before(o1.getEndDate())) ? -1 : 1;
+			}
+		});
+
+		// now make the model
 		PagedCollectionHolder<List<Milestone>> holderCollection =
 				new SinglePageCollectionHolder<List<Milestone>>(milestones);
+
 
 		Locale locale = LocaleContextHolder.getLocale();
 		return new MilestoneTableModelHelper(i18nHelper, locale).buildDataModel(holderCollection, "0");

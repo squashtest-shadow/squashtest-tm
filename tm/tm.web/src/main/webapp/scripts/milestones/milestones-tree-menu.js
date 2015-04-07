@@ -90,17 +90,22 @@ define(['jquery', 'milestone-manager/milestone-activation', 'workspace.contextua
 		
 		dialog.on('formdialogconfirm', function(){
 			var row = table.find('input:checked').parents('tr').get(0);
-			var id = table.squashTable().getODataId(row);
 			
-			if (!! id){
-				notification.showError(translator.get('message.EmptyTableSelection'));
+			if (row === undefined){
+				notification.showError(translator.get('message.EmptyTableSelection'));				
+				return;
 			}
-			else{
-				milestones.setActiveMilestone(id);
-				dialog.formDialog('close');
-				location.reload();
+			
+			var data = table.squashTable().fnGetData(row);		
+		
+			var milestone = {
+				id : data['entity-id'],
+				label : data['label'] 
 			}
-
+			milestones.setActiveMilestone(milestone);
+			dialog.formDialog('close');
+			location.reload();
+		
 		});
 		
 		$("#tree-milestone-selector").on('click', function(){

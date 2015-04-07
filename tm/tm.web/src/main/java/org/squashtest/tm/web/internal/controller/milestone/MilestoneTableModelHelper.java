@@ -51,7 +51,7 @@ public class MilestoneTableModelHelper extends DataTableModelBuilder<Milestone> 
 
 		Map<String, Object> row = new HashMap<>();
 
-		String date = i18nHelper.localizeDate(item.getEndDate(), locale);
+		String date = i18nHelper.localizeShortDate(item.getEndDate(), locale);
 		String status = formatStatus(item.getStatus());
 
 		row.put(DataTableModelConstants.DEFAULT_ENTITY_INDEX_KEY, getCurrentIndex());

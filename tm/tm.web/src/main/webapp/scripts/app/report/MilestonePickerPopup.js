@@ -50,7 +50,7 @@ define(['jquery', 'milestone-manager/milestone-activation', 'jquery.squash.formd
 		var critName = dialog.attr('id');
 		
 		var selectedId = (milestone.isEnabled()) ? 
-				parseInt(milestone.getActiveMilestone(), 10) : 
+				parseInt(milestone.getActiveMilestone().id, 10) : 
 				settings.model.get(critName).val[0];
 				
 		table.on('init.dt', function(){
