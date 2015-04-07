@@ -21,6 +21,9 @@
 define([ "jquery", "backbone", "handlebars", "./IconSelectDialog","squash.translator", "workspace.routing" ,"app/lnf/Forms",
 		"jquery.squash.confirmdialog" ], function($, Backbone, Handlebars, IconSelectDialog, translator, routing,
 		Forms) {
+	
+	var ICON_PREFIX = "sq-icon-";
+	
 	var View = Backbone.View.extend({
 		el : "#add-info-list-item-popup",
 
@@ -63,7 +66,7 @@ define([ "jquery", "backbone", "handlebars", "./IconSelectDialog","squash.transl
 
 				var classList = $icon.attr('class').split(/\s+/);
 				classList.forEach(function(item, index) {
-					if (item.indexOf("sq-icon-") > -1) {
+					if (item.indexOf(ICON_PREFIX) > -1) {
 						 $icon.removeClass(item);
 					}
 				});
@@ -129,8 +132,8 @@ define([ "jquery", "backbone", "handlebars", "./IconSelectDialog","squash.transl
 			var selected = $el.find("#new-info-list-item-icon");
 			var classList = selected.attr('class').split(/\s+/);
 			classList.forEach(function(item, index){
-			if (item.indexOf("sq-icon-") > -1){
-				self.model.icon = item;
+			if (item.indexOf(ICON_PREFIX) > -1){
+				self.model.icon = item.substring(ICON_PREFIX.length);
 			}
 			});
 
