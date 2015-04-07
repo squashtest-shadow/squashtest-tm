@@ -96,6 +96,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(CustomTestCaseModificationServiceImpl.class);
 	private static final String WRITE_TC_OR_ROLE_ADMIN = "hasPermission(#testCaseId, 'org.squashtest.tm.domain.testcase.TestCase' , 'WRITE')" + OR_HAS_ROLE_ADMIN;
+	private static final String READ_TC_OR_ROLE_ADMIN = "hasPermission(#testCaseId, 'org.squashtest.tm.domain.testcase.TestCase' , 'READ')" + OR_HAS_ROLE_ADMIN;
 
 	@Inject
 	private TestCaseDao testCaseDao;
@@ -652,7 +653,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	}
 
 	@Override
-	@PreAuthorize(WRITE_TC_OR_ROLE_ADMIN)
+	@PreAuthorize(READ_TC_OR_ROLE_ADMIN)
 	public Collection<Milestone> findAllMilestones(long testCaseId) {
 		return milestoneService.findAllMilestonesForTestCase(testCaseId);
 	}
