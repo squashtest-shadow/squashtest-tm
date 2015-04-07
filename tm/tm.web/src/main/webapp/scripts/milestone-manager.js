@@ -27,6 +27,15 @@ require(["common"], function(){
 		squashtm = squashtm || {};
 		squashtm.vent = squashtm.vent || new Wreqr.EventAggregator();
 
+		var trans = translator.get({
+			rangeGlobal : "milestone.range.GLOBAL",
+			statusPlanned : "milestone.status.PLANNED",
+			unionStatusForbid : "message.milestone.synchronize.warn.union.status-forbid",
+			unionRangeForbid : "message.milestone.synchronize.warn.union.range-forbid",
+			statusForbid : "message.milestone.synchronize.warn.status-forbid",
+			rangeForbid : "message.milestone.synchronize.warn.range-forbid"
+			});
+		
 		function getPostDate(localizedDate) {
 			try {
 				var postDateFormat = $.datepicker.ATOM;
@@ -260,7 +269,7 @@ require(["common"], function(){
 
 			var mil = $table().getDataById(ids[0]);
 
-			if (mil.bindableToObject){
+			if (mil.status != trans.statusPlanned){
 			cloneMilestoneDialog.data('entity-id', ids);
 			cloneMilestoneDialog.formDialog('open');
 			} else {
@@ -337,15 +346,7 @@ require(["common"], function(){
 			var mil2 = table.getDataById(ids[1]);
 			synchronizeMilestoneDialog.data('mil1', mil1);
 			synchronizeMilestoneDialog.data('mil2', mil2);
-			var trans = translator.get({
-				rangeGlobal : "milestone.range.GLOBAL",
-				statusPlanned : "milestone.status.PLANNED",
-				unionStatusForbid : "message.milestone.synchronize.warn.union.status-forbid",
-				unionRangeForbid : "message.milestone.synchronize.warn.union.range-forbid",
-				statusForbid : "message.milestone.synchronize.warn.status-forbid",
-				rangeForbid : "message.milestone.synchronize.warn.range-forbid"
-				});
-
+			
 			if (mil1.status != trans.statusPlanned && mil2.status != trans.statusPlanned && (mil1.bindableToObject || mil2.bindableToObject)){
 				// you need at least one milestone bindable to object to synchronize
 				//and no planned milestone
