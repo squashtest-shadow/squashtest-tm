@@ -108,12 +108,12 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil", "app/ws/squa
 			if (ids.length === 0) {
 				return;
 			}
-			
+			 
 			$.ajax({
 				url : UMod.permission.url.remove,
 				type : 'post',
-				data : {
-					project : ids[0]
+				data : { 
+					"project" : ids.join(',') 
 				}
 			}).done($.proxy(table.refresh, table));
 				
