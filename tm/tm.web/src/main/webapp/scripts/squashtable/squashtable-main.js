@@ -918,21 +918,24 @@ define(["jquery",
 	}
 
 	function _configureCheckBox(){
-		$("td.checkbox", this).each(function(i, item){
+		var self=this;
+		["checkbox", "radio"].forEach(function(inputType){
+			$("td."+inputType, self).each(function(i, item){
 
-			var $item = $(item);
-			// If the item has a text, store the text into val, used for initilization
-			if ($item.text() !== ""){
-				$item.val($item.text());
-			}
-			var data = $item.val();
+				var $item = $(item);
+				// If the item has a text, store the text into val, used for initilization
+				if ($item.text() !== ""){
+					$item.val($item.text());
+				}
+				var data = $item.val();
 
-			var template = '<input type="checkbox"';
-			if (data === "true"){
-				template = template + 'checked="true"';
-			}
-			template = template + '/>';
-			$item.html(template);
+				var template = '<input type="'+inputType+'"';
+				if (data === "true"){
+					template = template + 'checked="true"';
+				}
+				template = template + '/>';
+				$item.html(template);
+			});
 		});
 
 	}
@@ -1821,6 +1824,11 @@ define(["jquery",
 				'checkbox' : function(conf, assignation){
 					var cls = 'checkbox-' + Math.random().toString().substr(2, 3);
 					conf.current.sClass += 'checkbox centered ' + cls;
+
+				},
+				'radio' : function(conf, assignation){
+					var cls = 'radio-' + Math.random().toString().substr(2, 3);
+					conf.current.sClass += 'radio centered ' + cls;
 
 				},
 				'icon' : function(conf, assignation){

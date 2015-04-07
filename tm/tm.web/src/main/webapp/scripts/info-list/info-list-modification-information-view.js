@@ -19,8 +19,9 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 define(["jquery", "backbone", "underscore", "squash.basicwidgets", "jeditable.simpleJEditable",
+        "squash.configmanager",
 		"workspace.routing", "jquery.squash.togglepanel", "squashtable" ], function($, backbone, _, basic,
-		SimpleJEditable, routing) {
+		SimpleJEditable, confman, routing) {
 
 
 
@@ -37,6 +38,14 @@ define(["jquery", "backbone", "underscore", "squash.basicwidgets", "jeditable.si
 		editableInit : function() {
 			var infoListUrl = routing.buildURL("info-list.info", this.config.data.infoList.id);
 
+			var descOptions = confman.getStdJeditable();
+			$.extend(descOptions ,{
+				type : 'textarea',
+				cols : 80,
+				rows : 10,
+			});
+			$("#info-list-description").editable(infoListUrl, descOptions);
+			
 			var codeEditable = new SimpleJEditable({
 				target : infoListUrl,
 				componentId : "info-list-code",

@@ -173,12 +173,12 @@ define(
 					var $wrapper = $(this.wrapper);
 					this.$el.attr("title", $wrapper.attr("title"));
 					this.$el.addClass($wrapper.attr("class"));
-					var conf = confman.getStdCkeditor();
+					/*var conf = confman.getStdCkeditor();
 					this.$("#description").ckeditor(function(){}, conf);
 
 					CKEDITOR.instances["description"].on('change', function(){
 						$("#description").trigger('change');
-					});
+					});*/
 					
 					$wrapper.html(this.$el);
 

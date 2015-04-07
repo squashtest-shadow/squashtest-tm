@@ -1375,7 +1375,7 @@ div.information-panel p {
 
 div#admin-small-link-pane{
     float:left;
-	padding: 100px 20% 30px;
+	padding: 100px 0px 30px 20%;
 	font-size: 1.2em;
 	display :table;
 }

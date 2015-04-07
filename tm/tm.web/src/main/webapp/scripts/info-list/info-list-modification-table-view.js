@@ -42,7 +42,7 @@ define(["jquery", "backbone", "underscore", "squash.basicwidgets", "jeditable.si
 		},
 
 		events : {
-		"click .isDefault>input:checkbox" : "changeDefaultOption",
+		"click .isDefault>input:radio" : "changeDefaultOption",
 		"click td.opt-label" : "openChangeLabelPopup",
 		"click td.opt-code" : "openChangeCodePopup",
 		"click td.sq-icon" : "openChangeIconPopup",
@@ -77,7 +77,7 @@ define(["jquery", "backbone", "underscore", "squash.basicwidgets", "jeditable.si
 						},
 						drawIcon : function(value, cell){
 							if (value !== "noicon"){
-								cell.addClass("sq-icon");
+								//cell.addClass("sq-icon");
 								cell.html('<span class="sq-icon sq-icon-' + value + '"></span>');
 								} else {
 									//if there is no icon name display [None]
@@ -94,15 +94,15 @@ define(["jquery", "backbone", "underscore", "squash.basicwidgets", "jeditable.si
 		changeDefaultOption : function(event) {
 
 			var self = this;
-			var checkbox = event.currentTarget;
+			var radio = event.currentTarget;
 
-			if (!checkbox.checked) {
-				checkbox.checked = true;
+			if (!radio.checked) {
+				radio.checked = true;
 				notification.showError("ERROR");
 				return;
 			}
 
-			var cell = checkbox.parentElement;
+			var cell = radio.parentElement;
 			var row = cell.parentElement;
 			var data = self.optionsTable.fnGetData(row);
 
@@ -113,10 +113,10 @@ define(["jquery", "backbone", "underscore", "squash.basicwidgets", "jeditable.si
 					id:'info-list-item-default',
 				}
 			}).done(function() {
-				self.optionsTable.find(".isDefault>input:checkbox").prop("checked", false);
-				checkbox.checked = true;
+				self.optionsTable.find(".isDefault>input:radio").prop("checked", false);
+				radio.checked = true;
 			}).fail(function() {
-				checkbox.checked = !checkbox.checked;
+				radio.checked = !radio.checked;
 			});
 		},
 

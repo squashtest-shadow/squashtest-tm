@@ -106,9 +106,8 @@
 										<label for="info-list-description"
 											th:text="#{label.Description}" class="display-table-cell">Label</label>
 										<div id="info-list-description"
-											class="display-table-cell editable rich-editable"
-											th:utext="${infoList.description}"
-											th:attr="data-def='url='+@{/info-lists/__${infoList.id}__}+''">Description</div>
+											class="display-table-cell editable"
+											th:utext="${infoList.description}">Description</div>
 										<span class="help-inline">&nbsp;</span>
 									</div>
 									<div class="display-table-row controls control-group">
@@ -151,17 +150,16 @@
 												th:text="#{label.Label}">Label</th>
 											<th th:attr="data-def='map=code, sortable, sClass=opt-code'"
 												th:text="#{label.code}">Code</th>
-											<th th:attr="data-def='map=empty-icon-holder,icon=iconName'"
+											<th th:attr="data-def='map=empty-icon-holder,icon=iconName, center'"
 												th:text="#{label.icon}" />
 											<th
-												th:attr="data-def='map=default, checkbox, sClass=isDefault'"
+												th:attr="data-def='map=default, radio, sClass=isDefault'"
 												th:text="#{label.default}">Default</th>
-              <th th:attr="data-def='sWidth=2em, map=empty-delete-holder, sClass=delete-button'"></th>
+                                            <th th:attr="data-def='sWidth=2em, map=empty-delete-holder, sClass=delete-button'"></th>
 										</tr>
 									</thead>
 
 								</table>
-
 
 							</div>
 						</div>
@@ -211,7 +209,7 @@
 
 <!-- 	DELETE INFO-LIST-ITEM POPUP -->
 	<div id="delete-info-list-item-popup"
-		class="not-displayed popup-dialog" th:title="#{title.infoListItem.delete}">
+		class="not-displayed popup-dialog" th:title="#{title.infoList.item.delete}">
 
 <span id="delete-info-list-item-warning" />
 	<span id="delete-info-list-item-popup-info-list-item-id" />
