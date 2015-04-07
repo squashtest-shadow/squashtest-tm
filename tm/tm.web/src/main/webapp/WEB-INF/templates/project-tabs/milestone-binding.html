@@ -44,7 +44,7 @@
 
       <div id="parameters-panel" class="tg-body" >
         <table id="binded-milestone-table" class="unstyled-table"
-          th:attr="data-def='datakeys-id=entity-id ,ajaxsource='+@{/milestones-binding/project/__${proj.id}__/milestone(binded)}+', pre-sort=1'">
+          th:attr="data-def='datakeys-id=entity-id ,ajaxsource='+@{/milestones-binding/project/__${proj.id}__/milestone(binded)}+', pre-sort=3, filter'">
           <thead>
             <tr>
               <th th:attr="data-def='select, map=index'">#</th>
@@ -54,7 +54,7 @@
               <th th:attr="data-def='sortable, map=range'" th:text="#{label.Range}"> range</th>
               <th th:attr="data-def='map=owner, sortable'" th:text="#{label.Owner}" ></th>
               <th th:attr="data-def='sortable, map=description'" th:text="#{label.Description}"> description</th>
-              <th th:attr="data-def='map=binded-to-objects'" th:text="#{label.used}"></th>
+              <th th:attr="data-def='map=binded-to-objects, sortable'" th:text="#{label.used}"></th>
               <th  th:attr="data-def='sWidth=2em, map=delete, unbind-button=#unbind-milestone-popup'"></th>
                
             </tr>

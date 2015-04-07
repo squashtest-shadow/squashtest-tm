@@ -30,6 +30,24 @@ define([ 'module', "jquery", "squash.basicwidgets", "workspace.routing", "squash
 				$("#global-milestone-table").squashTable({sAjaxSource:config.urls.globalMilestones, "bServerSide":false},{});
 				$("#personal-milestone-table").squashTable({sAjaxSource:config.urls.myMilestones, "bServerSide":false},{});
 				$("#other-milestone-table").squashTable({sAjaxSource:config.urls.otherMilestones, "bServerSide":false},{});
+			
+			
+				var table = $("#binded-milestone-table").squashTable();
+				
+				table.on('order.dt search.dt', function () {
+			
+					 $.each(table.fnGetNodes(), function(index, cell){
+						 cell._DT_RowIndex= index;
+						 cell.firstChild.innerHTML = index + 1;
+					 });
+				});
+			
+			
+			
+			
+			
+			
+			
 			});
 
 			function refreshAllTables(){
