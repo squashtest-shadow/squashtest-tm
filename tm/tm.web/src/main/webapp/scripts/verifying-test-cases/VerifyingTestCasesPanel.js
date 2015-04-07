@@ -19,8 +19,8 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-define([ "jquery", "app/squash.wreqr.init", "backbone", "handlebars", "underscore", "workspace.routing", "squash.translator" ], function($,
-		squash, Backbone, Handlebars, _, api, msg) {
+define([ "jquery", "app/squash.wreqr.init", "backbone", "handlebars", "underscore", "workspace.routing", "squash.translator", "jquery.squash.formdialog" ],
+	function($, squash, Backbone, Handlebars, _, api, msg) {
 	"use strict";
 
 	msg.load([

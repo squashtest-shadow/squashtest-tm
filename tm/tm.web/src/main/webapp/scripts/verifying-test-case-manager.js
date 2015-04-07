@@ -25,9 +25,9 @@
  * * `verifying-test-cases:unbind-selected` unbinds the TCs matching the selected rows of the table
  */
 require([ "common" ], function() {
-	require([ "jquery", "app/squash.wreqr.init", "handlebars", "underscore", "workspace.event-bus", "workspace.tree-event-handler",
-    "squash.translator", "verifying-test-cases/VerifyingTestCasesPanel", "jqueryui", "jquery.squash.messagedialog", "squashtable", "jquery.squash.formdialog" ],
-			function($, squash, Handlebars, _, eventBus, treehandler, msg, VerifyingTestCasesPanel) {
+	require([ "jquery", "app/squash.wreqr.init", "workspace.event-bus", "workspace.tree-event-handler",
+    "squash.translator", "verifying-test-cases/VerifyingTestCasesPanel", "jqueryui", "jquery.squash.messagedialog", "squashtable" ],
+			function($, squash, eventBus, treehandler, msg, VerifyingTestCasesPanel) {
 		"use strict";
 
 		msg.load([

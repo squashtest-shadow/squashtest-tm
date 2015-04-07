@@ -231,14 +231,12 @@ define(["module", "jquery", "app/pubsub", "squash.basicwidgets", "app/ws/squasht
 				});
 			});
 
-			var verifPanel = new VerifyingTestCasesPanel({ apiUrl: routing.buildURL('requirements.testcases', config.basic.currentVersionId) })
-			console.log("inited verifpanel")
+			var verifPanel = new VerifyingTestCasesPanel({ apiUrl: routing.buildURL('requirements.testcases', config.basic.currentVersionId) });
 
 			eventBus.one("contextualcontent.clear", function() {
 				verifPanel.remove();
-				verifPanel = undefined
-				console.log("destroyed verifpanel")
-			})
+				verifPanel = undefined;
+			});
 		}
 	}
 
