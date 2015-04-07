@@ -785,7 +785,9 @@ define(["jquery",
 		}
 		$(buttons).each(function(i, button) {
 			self.delegate(button.tdSelector + " > .table-button", "click", function() {
-				button.onClick(self, this);
+				if (!! button.onClick){
+					button.onClick(self, this);
+				}
 			});
 		});
 	}
