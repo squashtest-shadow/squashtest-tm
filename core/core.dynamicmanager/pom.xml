@@ -10,7 +10,7 @@
   <packaging>bundle</packaging>
   <name>core.dynamicmanager</name>
 
-  <properties />
+  <properties></properties>
 
   <dependencies>
     <!-- <dependency>

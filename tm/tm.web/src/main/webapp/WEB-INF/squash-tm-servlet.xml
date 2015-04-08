@@ -152,9 +152,8 @@
       <bean class="org.squashtest.tm.web.internal.interceptor.openedentity.TestCaseViewInterceptor" />
     </mvc:interceptor>
     <mvc:interceptor>
-      <mvc:mapping path="/requirements/*" />
-      <mvc:mapping path="/requirements/*/info" />
-      <mvc:mapping path="/requirements/*/versions/manager" />
+      <mvc:mapping path="/requirement-versions/*" />
+      <mvc:mapping path="/requirement-versions/*/info" />
       <mvc:mapping path="/requirement-versions/*/verifying-test-cases/manager" />
       <bean class="org.squashtest.tm.web.internal.interceptor.openedentity.RequirementViewInterceptor" />
     </mvc:interceptor>

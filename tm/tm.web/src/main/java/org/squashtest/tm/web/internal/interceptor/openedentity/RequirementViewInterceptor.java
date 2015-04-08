@@ -45,7 +45,7 @@ public class RequirementViewInterceptor extends ObjectViewsInterceptor {
 	public void postHandle(WebRequest request, ModelMap model) {
 		// check model is not null in case we are intercepting an ajax request on the campaign page
 		if (model != null) {
-			Identified identified = (Identified) model.get("requirement");
+			Identified identified = (Identified) model.get("requirementVersion");
 			if (identified != null) {
 				if (LOGGER.isTraceEnabled()) {
 					LOGGER.trace("Requirement request  description " + request.getDescription(true));
