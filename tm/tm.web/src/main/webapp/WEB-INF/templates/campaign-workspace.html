@@ -100,10 +100,10 @@
 
           <ul th:class="'milestones-mode'" >
 
-			<li class="tab">
+			<li class="tab" th:class="${(usesMilestone) ? 'not-displayed' : 'tab'}" >
 			       <a href="#tree-pane" th:text="#{library.header.title}"></a>
 			</li>
-           <li class="tab">
+           <li class="tab" th:class="${(usesMilestone) ? 'not-displayed' : 'tab'}" >
              <a href="/squash/campaign-browser/search" th:href="@{'/campaign-browser/search'}" th:text="#{tabbed_panel.search.pane.label}"></a>
            </li>
             <li class="tab" th:class="${(usesMilestone) ? 'tab' : 'not-displayed'}"  >
