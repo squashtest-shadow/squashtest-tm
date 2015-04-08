@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.hibernate.CacheMode;
@@ -298,6 +299,47 @@ public class HibernateMilestoneDao extends HibernateEntityDao<Milestone> impleme
 		return count != 0 ? true : false;
 	}
 
+
+	@Override
+	public void unbindAllObjectsForProject(Long milestoneId, Long projectId) {
+		List<Long> projectIds = new ArrayList<Long>();
+		projectIds.add(projectId);
+		unbindAllObjectsForProjects(milestoneId, projectIds);
+	}
+	
+	
+	@Override
+	public void unbindAllObjectsForProjects(Long milestoneId, List<Long> projectIds){
+		final String[] entities = { "TestCase", "RequirementVersion", "Campaign" };
+		
+		Session session = currentSession();
+
+		for (String entity : entities) {
+			LOGGER.info("About to fetch entities {}", entity);
+
+			String namedQuery = "milestone.findAll" + entity + "ForProjectAndMilestone";
+			LOGGER.debug("Fetching bound entities with query named {}", namedQuery);
+            Query query = session.getNamedQuery(namedQuery);
+    		query.setParameter("milestoneId", milestoneId);
+    		query.setParameterList("projectIds", projectIds);
+    		
+			ScrollableResults holders = scrollableResults(query);
+
+			int count = 0;
+
+			while (holders.next()) {
+				MilestoneHolder holder = (MilestoneHolder) holders.get(0);
+				holder.unbindMilestone(milestoneId);
+				if (++count % BATCH_UPDATE_SIZE == 0) {
+					// flush a batch of updates and release memory:
+					session.flush();
+					session.clear();
+				}
+			}
+		}		
+	}
+	
+
 	@Override
 	public void unbindAllObjects(long milestoneId) {
 
@@ -325,16 +367,10 @@ public class HibernateMilestoneDao extends HibernateEntityDao<Milestone> impleme
 					session.clear();
 				}
 			}
-		}
-
-		
-		
-		
-		
-		
-		
+		}	
 	}
 
+	
 	@Override
 	public Milestone findByName(String name) {
 		return findMilestoneByLabel(name);
@@ -377,5 +413,7 @@ public class HibernateMilestoneDao extends HibernateEntityDao<Milestone> impleme
 		
 		return false;
 	}
+
+
 
 }
