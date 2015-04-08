@@ -22,6 +22,7 @@ package org.squashtest.tm.service.configuration;
 
 public interface ConfigurationService {
 	String MILESTONE_FEATURE_ENABLED = "feature.milestone.enabled";
+	String CASE_INSENSITIVE_LOGIN_FEATURE_ENABLED = "feature.caseInsensitiveLogin.enabled";
 
 	void createNewConfiguration(String key, String value);
 

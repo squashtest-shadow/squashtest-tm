@@ -46,6 +46,8 @@ import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.domain.users.UsersGroup;
 import org.squashtest.tm.exception.user.LoginAlreadyExistsException;
 import org.squashtest.tm.service.configuration.ConfigurationService;
+import org.squashtest.tm.service.feature.FeatureManager;
+import org.squashtest.tm.service.feature.FeatureManager.Feature;
 import org.squashtest.tm.service.internal.repository.AdministrationDao;
 import org.squashtest.tm.service.internal.repository.ProjectDao;
 import org.squashtest.tm.service.internal.repository.TeamDao;
@@ -60,9 +62,9 @@ import org.squashtest.tm.service.user.UserAccountService;
 import static org.squashtest.tm.service.security.Authorizations.*;
 
 /**
- * 
+ *
  * @author bsiri
- * 
+ *
  */
 @Service("squashtest.tm.service.AdministrationService")
 @Transactional
@@ -94,6 +96,8 @@ public class AdministrationServiceImpl implements AdministrationService {
 
 	@Inject
 	private AdministratorAuthenticationService adminAuthentService;
+
+	@Inject private FeatureManager features;
 
 	private final static String WELCOME_MESSAGE_KEY = "WELCOME_MESSAGE";
 	private final static String LOGIN_MESSAGE_KEY = "LOGIN_MESSAGE";
@@ -350,7 +354,8 @@ public class AdministrationServiceImpl implements AdministrationService {
 	}
 
 	/**
-	 * @see AdministrationService#findSortedAssociatedTeams(long, PagingAndSorting, Filtering)
+	 * @see AdministrationService#findSortedAssociatedTeams(long,
+	 *      PagingAndSorting, Filtering)
 	 */
 	@Override
 	@PreAuthorize(HAS_ROLE_ADMIN)
@@ -373,7 +378,7 @@ public class AdministrationServiceImpl implements AdministrationService {
 
 	/**
 	 * This is not secured on purpose.
-	 * 
+	 *
 	 * @see org.squashtest.tm.service.user.AdministrationService#findByLogin(java.lang.String)
 	 */
 	@Override
@@ -387,9 +392,7 @@ public class AdministrationServiceImpl implements AdministrationService {
 	@Override
 	public User createUserFromLogin(@NotNull String login) throws LoginAlreadyExistsException {
 		String loginTrim = login.trim();
-		if (findByLogin(loginTrim) != null) {
-			throw new LoginAlreadyExistsException("User " + loginTrim + " cannot be created because it already exists");
-		}
+		checkLoginAvailability(loginTrim);
 
 		User user = User.createFromLogin(loginTrim);
 		UsersGroup defaultGroup = groupDao.findByQualifiedName(UsersGroup.USER);
@@ -405,7 +408,7 @@ public class AdministrationServiceImpl implements AdministrationService {
 	 */
 	@Override
 	public void createUserWithoutCredentials(User user, long groupId) {
-		userDao.checkLoginAvailability(user.getLogin());
+		checkLoginAvailability(user.getLogin());
 
 		UsersGroup group = groupDao.findById(groupId);
 		user.setGroup(group);
@@ -414,7 +417,8 @@ public class AdministrationServiceImpl implements AdministrationService {
 	}
 
 	/**
-	 * @see org.squashtest.tm.service.user.AdministrationService#createAuthentication(long, java.lang.String)
+	 * @see org.squashtest.tm.service.user.AdministrationService#createAuthentication(long,
+	 *      java.lang.String)
 	 */
 	@Override
 	public void createAuthentication(long userId, String password) throws LoginAlreadyExistsException {
@@ -449,4 +453,14 @@ public class AdministrationServiceImpl implements AdministrationService {
 
 		return user;
 	}
+
+	@Override
+	public void checkLoginAvailability(String login) {
+		boolean caseInsensitive = features.isEnabled(Feature.CASE_INSENSITIVE_LOGIN);
+
+		if ((caseInsensitive && userDao.findUserByCiLogin(login) != null) || (!caseInsensitive && userDao.findUserByLogin(login) != null)) {
+			throw new LoginAlreadyExistsException("User " + login + " cannot be created because it already exists");
+		}
+	}
+
 }

@@ -22,7 +22,6 @@ package org.squashtest.tm.service.user;
 
 import org.squashtest.tm.domain.users.User;
 import java.util.Collection;
-import java.util.List;
 
 import org.squashtest.tm.domain.milestone.Milestone;
 
@@ -42,16 +41,16 @@ public interface UserAccountService {
 	void deactivateUser(long userId);
 
 	void activateUser(long userId);
-	
+
 	void deleteUser(long userId);
 
 	/* ** services using no ID : the modified user is the calling user ** */
 	/**
 	 * Fetches the {@link User} which matches the current authenticated username / principal.
-	 * 
+	 *
 	 * If one is authenticated (through a third party authentication provider) but no {@link User} is defined, this
 	 * method returns <code>null</code>.
-	 * 
+	 *
 	 * @return the current {@link User} or <code>null</code>
 	 */
 	User findCurrentUser();

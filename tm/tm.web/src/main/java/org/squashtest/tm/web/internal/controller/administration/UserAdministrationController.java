@@ -163,10 +163,10 @@ public class UserAdministrationController extends PartyControllerSupport {
 		} else {
 			// If this happens, it's either a bug or a forged request
 			LOGGER.warn(
-					"Received a password while password are managed by auth provider. This is either a bug or a forged request. User form : {}",
+					"Received a password while passwords are managed by auth provider. This is either a bug or a forged request. User form : {}",
 					ToStringBuilder.reflectionToString(userForm));
 			throw new IllegalArgumentException(
-					"Received a password while password are managed by auth provider. This is either a bug or a forged request.");
+					"Received a password while passwords are managed by auth provider. This is either a bug or a forged request.");
 		}
 	}
 
@@ -179,10 +179,10 @@ public class UserAdministrationController extends PartyControllerSupport {
 		} else {
 			// If this happens, it's either a bug or a forged request
 			LOGGER.warn(
-					"Received no password while password are managed by Squash. This is either a bug or a forged request. User form : {}",
+					"Received no password while passwords are managed by Squash. This is either a bug or a forged request. User form : {}",
 					ToStringBuilder.reflectionToString(userForm));
 			throw new IllegalArgumentException(
-					"Received no password while password are managed by Squash. This is either a bug or a forged request.");
+					"Received no password while passwords are managed by Squash. This is either a bug or a forged request.");
 		}
 	}
 

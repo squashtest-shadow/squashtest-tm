@@ -38,8 +38,12 @@ public class LoginAlreadyExistsException extends ActionException {
 		super(message);
 	}
 
-	public LoginAlreadyExistsException() {
+	public LoginAlreadyExistsException(String message, Exception ex) {
+		super(message, ex);
+	}
 
+	public LoginAlreadyExistsException() {
+		super();
 	}
 
 	@Override

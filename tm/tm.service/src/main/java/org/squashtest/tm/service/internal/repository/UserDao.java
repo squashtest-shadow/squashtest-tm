@@ -25,34 +25,33 @@ import java.util.List;
 import org.squashtest.tm.core.foundation.collection.Filtering;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.users.User;
-import org.squashtest.tm.exception.user.LoginAlreadyExistsException;
 
 public interface UserDao extends EntityDao<User> {
 
 	List<User> findAllUsersOrderedByLogin();
 
 	List<User> findAllActiveUsersOrderedByLogin();
-	
+
 	List<User> findAllUsers(PagingAndSorting sorter, Filtering filter);
-	
+
 	User findUserByLogin(String login);
 
 	List<User> findUsersByLoginList(List<String> loginList);
-	
-	/**
-	 * checks if a user already exist with the same login in the database.<br>
-	 * If so, raise a {@linkplain  LoginAlreadyExistsException}
-	 * @param login	 * 
-	 */
-	void checkLoginAvailability(String login) ;
-	
+
 	List<User> findAllNonTeamMembers(long teamId);
-	
+
 	List<User> findAllTeamMembers(long teamId, PagingAndSorting paging, Filtering filtering);
-	
+
 	int countAllTeamMembers(long teamId);
-	
+
 	void unassignUserFromAllTestPlan(long userId);
 
 	List<User> findAllAdminOrManager();
+
+	/**
+	 * Finds a user by her login using case-insensitive search
+	 * @param login
+	 * @return
+	 */
+	User findUserByCiLogin(String login);
 }

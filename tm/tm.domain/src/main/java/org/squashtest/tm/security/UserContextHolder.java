@@ -20,6 +20,8 @@
  */
 package org.squashtest.tm.security;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -29,6 +31,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
  * 
  */
 public final class UserContextHolder {
+	private static final Logger LOGGER = LoggerFactory.getLogger(UserContextHolder.class);
+
 	private UserContextHolder() {
 		super();
 	}
@@ -44,11 +48,14 @@ public final class UserContextHolder {
 	 */
 	public static Authentication getPrincipal() {
 		SecurityContext context = getContext();
+		LOGGER.debug("Gotten authentication {}", context.getAuthentication());
 		return context.getAuthentication();
 	}
 
 	/**
 	 * Returns the username registered by the security manager for the current thread.
+	 * Note : the username is extracted ffrom current Principal, which was built from the UserDetailManager.usersByUsernameQuery query.
+	 * It should be the exact username, not the one input when logging in (which means it has the right case)
 	 * 
 	 * @return
 	 */

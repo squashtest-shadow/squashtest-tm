@@ -34,11 +34,11 @@ import org.squashtest.tm.domain.users.UsersGroup;
 import org.squashtest.tm.exception.user.LoginAlreadyExistsException;
 
 /**
- * 
- * 
+ *
+ *
  * @author bsiri
  * @author Gregory Fouquet
- * 
+ *
  */
 public interface UserManagerService {
 
@@ -79,7 +79,7 @@ public interface UserManagerService {
 	/**
 	 * Will remove user from teams members lists. <br>
 	 * access restricted to admins
-	 * 
+	 *
 	 * @param userId
 	 *            : the id of the concerned {@link User}
 	 * @param teamIds
@@ -90,7 +90,7 @@ public interface UserManagerService {
 	/**
 	 * Will return an paged and filtered list of {@link Team}s that have the concerned user as a member. <br>
 	 * access restricted to admins
-	 * 
+	 *
 	 * @param userId
 	 *            : the id of the concerned user
 	 * @param paging
@@ -105,7 +105,7 @@ public interface UserManagerService {
 	/**
 	 * Will return a list of all {@link Team} that do not have the concerned {@link User} as a member <br>
 	 * access restricted to admins
-	 * 
+	 *
 	 * @param userId
 	 *            : the id of the concerned {@link User}
 	 * @return the list of all non associated {@link Team}s
@@ -114,9 +114,9 @@ public interface UserManagerService {
 
 	/**
 	 * Creates a stub {@link User} using the given login and returns it.
-	 * 
+	 *
 	 * This should throw an exception when the user already exists.
-	 * 
+	 *
 	 * @return the new User
 	 * @throws LoginAlreadyExistsException
 	 *             when user already exists
@@ -126,7 +126,7 @@ public interface UserManagerService {
 	/**
 	 * Creates a user without credentials. This should be used when authentication is managed by an external provider
 	 * only.
-	 * 
+	 *
 	 * @param user
 	 * @param groupId
 	 */
@@ -134,7 +134,7 @@ public interface UserManagerService {
 
 	/**
 	 * Creates authentication data for given user.
-	 * 
+	 *
 	 * @param userId
 	 * @param newPassword
 	 * @throws LoginAlreadyExistsException
@@ -148,13 +148,22 @@ public interface UserManagerService {
 
 	/**
 	 * Creates a user with the given password. This new user shall have the ROLE_ADMIN role.
-	 * 
+	 *
 	 * This method should not have any security constraint because we might need it to provision the authentication
 	 * system (ie there is no user yet).
-	 * 
+	 *
 	 * @param user
 	 * @param password
 	 */
 	User createAdministrator(User user, String password);
+	/**
+	 * Checks if a user already exist with the same login in the database.<br/>
+	 * If so, raises a {@linkplain  LoginAlreadyExistsException}
+	 *
+	 * The login is checked <strong>according to the state of the case-sensitivity feature</strong>.
+	 *
+	 * @param login
+	 */
+	void checkLoginAvailability(String login) ;
 
 }

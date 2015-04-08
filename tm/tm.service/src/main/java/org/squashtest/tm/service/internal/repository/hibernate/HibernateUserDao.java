@@ -20,7 +20,6 @@
  */
 package org.squashtest.tm.service.internal.repository.hibernate;
 
-import java.math.BigInteger;
 import java.util.Collections;
 import java.util.List;
 
@@ -40,7 +39,6 @@ import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.SortOrder;
 import org.squashtest.tm.domain.users.Team;
 import org.squashtest.tm.domain.users.User;
-import org.squashtest.tm.exception.user.LoginAlreadyExistsException;
 import org.squashtest.tm.service.internal.foundation.collection.PagingUtils;
 import org.squashtest.tm.service.internal.foundation.collection.SortingUtils;
 import org.squashtest.tm.service.internal.repository.UserDao;
@@ -157,13 +155,12 @@ public class HibernateUserDao extends HibernateEntityDao<User> implements UserDa
 		return executeListNamedQuery("user.findAllNonTeamMembers", new SetTeamIdParameterCallback(teamId));
 	}
 
-
-	@Override
-	public void checkLoginAvailability(String login) {
-		if (findUserByLogin(login) != null) {
-			throw new LoginAlreadyExistsException();
-		}
-
+	/**
+	 * @param login
+	 * @return
+	 */
+	public User findUserByCiLogin(String login) {
+		return executeEntityNamedQuery("User.findUserByCiLogin", new SetUserLoginParameterCallback(login));
 	}
 
 	@Override

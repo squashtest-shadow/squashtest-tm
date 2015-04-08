@@ -41,6 +41,7 @@ import org.squashtest.tm.service.security.UserAuthenticationService;
 import org.squashtest.tm.service.security.UserContextService;
 import org.squashtest.tm.service.user.TeamModificationService;
 import org.squashtest.tm.service.user.UserAccountService;
+import org.squashtest.tm.service.user.UserManagerService;
 
 import static org.squashtest.tm.service.security.Authorizations.HAS_ROLE_ADMIN;
 
@@ -58,11 +59,13 @@ public class UserAccountServiceImpl implements UserAccountService {
 	@Inject
 	private UserAuthenticationService authService;
 
-    @Inject
-    private TeamModificationService teamModificationService;
+	@Inject
+	private TeamModificationService teamModificationService;
 
-    @Inject
-    private ProjectsPermissionManagementService projectsPermissionManagementService;
+	@Inject
+	private ProjectsPermissionManagementService projectsPermissionManagementService;
+
+	@Inject private UserManagerService userManager;
 
 	@Override
 	public void modifyUserFirstName(long userId, String newName) {
@@ -94,7 +97,7 @@ public class UserAccountServiceImpl implements UserAccountService {
 			// check
 			checkPermissions(user);
 			// proceed
-			userDao.checkLoginAvailability(newtrimedLogin);
+			userManager.checkLoginAvailability(newtrimedLogin);
 			authService.changeUserlogin(newtrimedLogin, user.getLogin());
 			user.setLogin(newtrimedLogin);
 		} else {
@@ -113,8 +116,10 @@ public class UserAccountServiceImpl implements UserAccountService {
 		user.setEmail(newEmail);
 	}
 
-
-	/* ************ surprise : no security check is needed for the methods below ********** */
+	/*
+	 *  ************ surprise : no security check is needed for the methods below
+	 * **********
+	 */
 
 	@Override
 	@Transactional(readOnly = true)
@@ -144,7 +149,6 @@ public class UserAccountServiceImpl implements UserAccountService {
 
 	}
 
-
 	/* ******************* admin only *********** */
 
 	@Override
@@ -171,7 +175,7 @@ public class UserAccountServiceImpl implements UserAccountService {
 
 		userDao.unassignUserFromAllTestPlan(userId);
 		teamModificationService.removeMemberFromAllTeams(userId);
-        projectsPermissionManagementService.removeProjectPermissionForAllProjects(userId);
+		projectsPermissionManagementService.removeProjectPermissionForAllProjects(userId);
 
 	}
 
@@ -179,7 +183,6 @@ public class UserAccountServiceImpl implements UserAccountService {
 	public Collection<Milestone> findAllMilestonesForUser(long userId) {
 		return null;
 	}
-
 
 	/* ************ private stuffs ****************** */
 
@@ -190,7 +193,5 @@ public class UserAccountServiceImpl implements UserAccountService {
 			throw new AccessDeniedException("Access is denied");
 		}
 	}
-
-
 
 }

@@ -31,7 +31,8 @@ package org.squashtest.tm.service.feature;
 public interface FeatureManager {
 	// @formatter:off
 	public enum Feature {
-		MILESTONE
+		MILESTONE,
+		CASE_INSENSITIVE_LOGIN
 	}
 	// @formatter:on
 	boolean isEnabled(Feature feature);

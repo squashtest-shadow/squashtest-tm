@@ -42,6 +42,13 @@ public class FeatureManagerImpl implements FeatureManager {
 	private MilestoneManagerService milestoneManager;
 
 	/**
+	 * This feature is polled once per thread (because il could be polled many
+	 * times). If more features require caching, consider something more
+	 * scalable than adding a field.
+	 */
+	private final ThreadLocal<Boolean> caseInsensitiveLogin = new ThreadLocal<>();
+
+	/**
 	 * @see org.squashtest.tm.service.feature.FeatureManager#isEnabled(org.squashtest.tm.service.feature.FeatureManager.Feature)
 	 */
 	@Override
@@ -53,6 +60,13 @@ public class FeatureManagerImpl implements FeatureManager {
 			enabled = configuration.getBoolean(ConfigurationService.MILESTONE_FEATURE_ENABLED);
 			break;
 
+		case CASE_INSENSITIVE_LOGIN:
+			if (caseInsensitiveLogin.get() == null) {
+				caseInsensitiveLogin.set(configuration
+						.getBoolean(ConfigurationService.CASE_INSENSITIVE_LOGIN_FEATURE_ENABLED));
+			}
+			enabled = caseInsensitiveLogin.get();
+			break;
 		default:
 			throw new IllegalArgumentException("I don't know feature '" + feature
 					+ "'. I am unable to tell if it's enabled or not");
@@ -73,10 +87,23 @@ public class FeatureManagerImpl implements FeatureManager {
 			setMilestoneFeatureEnabled(enabled);
 			break;
 
+		case CASE_INSENSITIVE_LOGIN:
+			setCaseInsensitiveLoginFeatureEnabled(enabled);
+			break;
+
 		default:
 			throw new IllegalArgumentException("I don't know feature '" + feature
 					+ "'. I am unable to switch its enabled status to " + enabled);
 		}
+	}
+
+	/**
+	 * @param enabled
+	 */
+	private void setCaseInsensitiveLoginFeatureEnabled(boolean enabled) {
+		// TODO check if possible
+		configuration.set(ConfigurationService.CASE_INSENSITIVE_LOGIN_FEATURE_ENABLED, enabled);
+		caseInsensitiveLogin.set(enabled);
 	}
 
 	private void setMilestoneFeatureEnabled(boolean enabled) {

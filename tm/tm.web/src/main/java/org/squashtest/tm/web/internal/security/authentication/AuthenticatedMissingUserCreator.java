@@ -70,12 +70,16 @@ public class AuthenticatedMissingUserCreator implements ApplicationListener<Auth
 
 	private void createMissingUser(Authentication principal) {
 		LOGGER.debug("Will try to create user from principal if it does not exist");
-		User currentUser = userAccountManager.findByLogin(principal.getName());
 
-		if (currentUser == null) {
-			LOGGER.info("Authenticated principal does not match any User, a new User will be created");
-			createUserFromPrincipal(principal);
+		try {
+			userAccountManager.checkLoginAvailability(principal.getName());
+		} catch (LoginAlreadyExistsException ex) {
+			// user already exists -> bail out
+			return;
 		}
+
+		LOGGER.info("Authenticated principal does not match any User, a new User will be created");
+		createUserFromPrincipal(principal);
 	}
 
 	private void createUserFromPrincipal(Authentication principal) {

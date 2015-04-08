@@ -28,28 +28,28 @@ import org.squashtest.tm.domain.users.Team;
 import org.squashtest.tm.domain.users.User;
 
 /**
- * 
- * 
+ *
+ *
  * //TODO : should be split between USerAdminService and WhateverAdminService
- * 
- * 
+ *
+ *
  * Will handle CRUD on Squash user accounts, groups, permissions and the like. For all operations about user
  * authentication, the said operation will be delegated to the UserAuthenticationManagerService.
- * 
+ *
  * Security should ensure that :
- * 
+ *
  * - access to user informations (both reading and writing) are opened to the said user ROLE_ADMIN authority only, - the
  * rest requires ROLE_ADMIN authority only.
- * 
+ *
  * @author bsiri
- * 
+ *
  */
 
 public interface AdministrationService extends UserManagerService {
 
 	/**
 	 * will ask database how much there is of some entities and return it in a {@link AdministrationStatistics} bean.
-	 * 
+	 *
 	 * @return {@link AdministrationStatistics} as result of counts in database.
 	 */
 	AdministrationStatistics findAdministrationStatistics();
@@ -69,11 +69,12 @@ public interface AdministrationService extends UserManagerService {
 	/**
 	 * Will add user to teams members lists.<br>
 	 * access restricted to admins
-	 * 
+	 *
 	 * @param userId
 	 *            : the id of the concerned {@link User}
 	 * @param teamIds
 	 *            : ids of the {@link Team}s to add user to.
 	 */
 	void associateToTeams(long userId, List<Long> teamIds);
+
 }

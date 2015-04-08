@@ -30,8 +30,8 @@ import org.squashtest.tm.security.UserContextHolder;
 
 /**
  * A {@link UserContextService} backed by Spring Security.
- * 
- * 
+ *
+ *
  * @author Gregory Fouquet
  */
 @Component("squashtest.core.user.UserContextService")
