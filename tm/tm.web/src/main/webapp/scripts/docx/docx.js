@@ -18,6 +18,8 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
+
+
 define(['module',"jquery", "workerWithoutFake!docxWebWorker.js", "docxgen", "workspace.routing", "openxml","jszip-utils",  "FileSaver"], function(module, $, worker, DocxGen, routing,openXml){        
 	
 	startLoading();
@@ -268,9 +270,6 @@ define(['module',"jquery", "workerWithoutFake!docxWebWorker.js", "docxgen", "wor
 
     		};
 	
-	
-});
-
 
 // need for IE9	
 (function checkTypedArrayCompatibility() {
@@ -333,3 +332,7 @@ define(['module',"jquery", "workerWithoutFake!docxWebWorker.js", "docxgen", "wor
 	  window.Float32Array = TypedArray;
 	  window.Float64Array = TypedArray;
 	})();
+
+
+});
+

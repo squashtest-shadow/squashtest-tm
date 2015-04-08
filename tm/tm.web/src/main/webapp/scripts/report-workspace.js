@@ -19,13 +19,12 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 require([ "common" ], function() {
-	require(["lib/jquery/jquery-ui-1.9.2.custom"], function(){
 		require([ "jquery", "app/ws/squashtm.workspace", "app/report/squashtm.reportworkspace" ], function($, WS,
 				ReportWorkspace) {
 			$(function() {
 				WS.init();
 				ReportWorkspace.init(squashtm.app.reportWorkspaceConf);
 			});
-		});		
+		
 	});
 });

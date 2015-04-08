@@ -19,19 +19,14 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 importScripts('require.js');
-var window = self; //common.js need window 
-importScripts('common.js');
-
 
 var eventRecived;
 self.onmessage = function(e) {
 	//sometime the worker get the message before init so need to catch the event so it's not lost
 	eventRecived = e;
 };
-require(["common"], function(){
-
-		
-require(["docxgen"], function( DocxGen) {
+	
+require(["lib/docxgen/docxgen.min"], function( DocxGen) {
 
 	doAction = function(e) {
 	
@@ -52,5 +47,5 @@ require(["docxgen"], function( DocxGen) {
 	};
 	
 });
-});
+
 
