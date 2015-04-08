@@ -385,13 +385,12 @@
         </div>
       </div>
       
-      <div class="not-displayed" data-def="state=copyconfirm">
-      
-      </div>
+       <!--
+      <div class="not-displayed" data-def="state=copyconfirm">        </div>
 
-      <div data-def="state=lol" >
+     <div data-def="state=lol" >
         <div class="delete-node-dialog-lol" style="overflow:visible; font-size:50px; font-weight:bold;"></div>
-      </div>
+      </div>  -->
 
 
 
@@ -402,9 +401,9 @@
         <input id="del-node-confirm-btn" type="button" th:value="#{label.Confirm}" value="confirm" data-def="evt=confirm, mainbtn=confirm, state=confirm" />
 
         <input type="button" th:value="#{label.Confirm}" value="deadlyconfirm" data-def="state=copyconfirm" /> 
-
+ <!--
         <input id="del-node-lol-btn" type="button" th:value="#{label.Confirm}" value="deadlyconfirm" data-def="evt=deadlyconfirm, state=lol" /> 
-        
+        -->
         <input type="button" th:value="#{label.Cancel}" value="cancel" data-def="evt=cancel, mainbtn=rejected, state=pleasewait confirm copyconfirm lol rejected" />
   
       </div>
