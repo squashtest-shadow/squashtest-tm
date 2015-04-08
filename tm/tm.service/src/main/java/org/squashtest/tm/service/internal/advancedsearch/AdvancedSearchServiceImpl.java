@@ -30,6 +30,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import javax.inject.Inject;
 
@@ -37,11 +38,13 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Transformer;
 import org.apache.commons.lang.StringUtils;
 import org.apache.lucene.document.DateTools;
+import org.apache.lucene.search.PhraseQuery;
 import org.apache.lucene.search.Query;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.search.query.dsl.PhraseContext;
 import org.hibernate.search.query.dsl.QueryBuilder;
 import org.squashtest.tm.domain.customfield.BindableEntity;
 import org.squashtest.tm.domain.customfield.CustomField;
@@ -67,6 +70,11 @@ import org.squashtest.tm.service.project.ProjectManagerService;
 
 public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 
+	private static final String LUCENE_ESCAPE_CHARS = "[\\\\+\\-\\!\\(\\)\\:\\^\\]\\{\\}\\~\\*\\?]";
+	private static final Pattern LUCENE_PATTERN = Pattern.compile(LUCENE_ESCAPE_CHARS);
+	private static final String REPLACEMENT_STRING = "\\\\$0";
+	
+	
 	private final static List<String> MILESTONE_SEARCH_FIELD = Arrays.asList("milestone.label", "milestone.status",
 			"milestone.endDate", "searchByMilestone");
 
@@ -140,7 +148,7 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 		return query;
 	}
 
-	protected Query buildLuceneValueInListQuery(QueryBuilder qb, String fieldName, List<String> values) {
+	protected Query buildLuceneValueInListQuery(QueryBuilder qb, String fieldName, List<String> values, boolean isTag) {
 
 		Query mainQuery = null;
 
@@ -150,12 +158,20 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 				if ("".equals(value.trim())) {
 					value = "$NO_VALUE";
 				}
-
-				Query query = qb
+				Query query;
+				
+				if (isTag){
+					query = qb
+							.bool()
+							.should(qb.phrase().onField(fieldName).ignoreFieldBridge().ignoreAnalyzer().sentence(value)
+									.createQuery()).createQuery();
+				} else {
+				query = qb
 						.bool()
 						.should(qb.keyword().onField(fieldName).ignoreFieldBridge().ignoreAnalyzer().matching(value)
 								.createQuery()).createQuery();
-
+				}
+				
 				if (query != null && mainQuery == null) {
 					mainQuery = query;
 				} else if (query != null) {
@@ -268,7 +284,7 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 
 		AdvancedSearchListFieldModel listModel = (AdvancedSearchListFieldModel) fieldModel;
 		if (listModel.getValues() != null) {
-			return buildLuceneValueInListQuery(qb, fieldKey, listModel.getValues());
+			return buildLuceneValueInListQuery(qb, fieldKey, listModel.getValues(), false);
 		}
 
 		return null;
@@ -558,19 +574,25 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 		Query main = null;
 
 
+		
+		
 		List<String> lowerTags = (List<String>)CollectionUtils.collect(tags, new Transformer() {
 			@Override
 			public Object transform(Object input) {
 				return ((String)input).toLowerCase();
 			}
 		});
+		
 
 		switch(operation){
 		case AND :
 			Query query = null;
 			for (String tag : lowerTags){
-				query = qb.bool().must(qb.keyword().onField(fieldKey).ignoreFieldBridge().ignoreAnalyzer().matching(tag).createQuery()).createQuery();
-
+		//		query = qb.bool().must(qb.keyword().onField(fieldKey).ignoreFieldBridge().ignoreAnalyzer().matching(tag).createQuery()).createQuery();
+				
+				query = qb.bool().must(qb.phrase().withSlop(0).onField(fieldKey).ignoreFieldBridge().ignoreAnalyzer().sentence(tag).createQuery()).createQuery();
+				
+				
 				if (query == null){
 					break;
 				}
@@ -584,7 +606,7 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 			return qb.bool().must(main).createQuery();
 
 		case OR :
-			return buildLuceneValueInListQuery(qb, fieldKey, lowerTags);
+			return buildLuceneValueInListQuery(qb, fieldKey, lowerTags, true);
 
 		default :
 			throw new IllegalArgumentException("search on tag '"+fieldKey+"' : operation unknown");

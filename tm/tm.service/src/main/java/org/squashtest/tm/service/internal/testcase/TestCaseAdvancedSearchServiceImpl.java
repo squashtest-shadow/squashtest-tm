@@ -329,7 +329,7 @@ TestCaseAdvancedSearchService {
 		}
 
 		// finally, add a criteria that restrict the test case ids
-		Query idQuery = buildLuceneValueInListQuery(qb, "id", testcaseIds);
+		Query idQuery = buildLuceneValueInListQuery(qb, "id", testcaseIds, false);
 
 		return qb.bool().must(mainQuery).must(idQuery).createQuery();
 
