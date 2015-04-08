@@ -19,9 +19,9 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 define([ "jquery", "backbone", "squash.translator","jeditable.simpleJEditable", "workspace.projects", 
-         "squash.configmanager", "workspace.routing", "squashtable", 
+         "squash.configmanager", "workspace.routing", "app/ws/squashtm.notification", "squashtable", 
          "jqueryui", "jquery.squash.jeditable", "jquery.cookie" ], 
-         function($, Backbone, translator, SimpleJEditable, projects, confman, routing) {
+         function($, Backbone, translator, SimpleJEditable, projects, confman, routing, notification) {
 
 	var RequirementSearchResultTable = Backbone.View.extend({
 		el : "#requirement-search-result-table",
@@ -374,6 +374,11 @@ define([ "jquery", "backbone", "squash.translator","jeditable.simpleJEditable", 
 				jeditableSettings : {
 					"submitdata" : function(value, settings) {
 						return {"id": "requirement-name"};
+					},
+					'onerror' : function(settings, self, xhr){
+						xhr.errorIsHandled=true;
+						notification.showXhrInDialog(xhr);
+						self.reset();
 					}
 				}
 			});
