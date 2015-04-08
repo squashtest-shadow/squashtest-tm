@@ -45,7 +45,7 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil",
 							onClick : self.removeRowRequirementVersion
 						} ]
 					};
-				},
+				}
 
 			});
 	return TestCaseDirectVerifiedRequirementsTable;
