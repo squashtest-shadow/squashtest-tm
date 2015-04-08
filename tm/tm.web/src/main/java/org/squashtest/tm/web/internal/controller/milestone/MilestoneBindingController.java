@@ -195,7 +195,7 @@ public class MilestoneBindingController {
 			data.put(DataTableModelConstants.DEFAULT_ENTITY_NAME_KEY, project.getName());
 			data.put("label", project.getLabel());
 			data.put("binded", messageSource.internationalizeYesNo(project.isBoundToMilestone(milestone), locale) );
-			data.put("isUsed", milestoneService.isMilestoneBoundToOneObjectOfProject(milestone, project));
+			data.put("isUsed", messageSource.internationalizeYesNo(milestoneService.isMilestoneBoundToOneObjectOfProject(milestone, project), locale));
 			data.put(DataTableModelConstants.DEFAULT_EMPTY_DELETE_HOLDER_KEY, " ");
 			return data;
 		}
