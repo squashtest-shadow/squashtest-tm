@@ -220,10 +220,10 @@
         				</div>
         				<div id="labelchoose" class="customHeigth">
                             <c:if test="${not empty activeMilestone}">
-                            <span id="toggle-milestone-label" data-state="enabled">${activeMilestone.label}</span>
+                            <span id="toggle-milestone-label" >${activeMilestone.label}</span>
                             </c:if>
                             <c:if test="${empty activeMilestone}">
-                             <span id="toggle-milestone-label" data-state="disabled" class="disabled-transparent"><f:message key="label.Choose"/></span>
+                             <span id="toggle-milestone-label" class="disabled-transparent"><f:message key="label.Choose"/></span>
                             </c:if>
 
         			     </div>

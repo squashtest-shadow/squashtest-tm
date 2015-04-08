@@ -221,20 +221,20 @@ define(["jquery", "workspace.event-bus", "app/ws/squashtm.notification",
 					type : 'POST'
 				})
 				.success(function(){
-					self.close();
 					eventBus.trigger('node.bindmilestones', {
 						identity : self.options.identity,
 						milestones : ids
 					});
+					self.close();
 				});
 			}
 			else{
 				// just trigger the event
-				self.close();
 				eventBus.trigger('node.bindmilestones', {
 					identity : self.options.identity,
 					milestones : ids
 				});
+				self.close();
 			}
 			
 		},
