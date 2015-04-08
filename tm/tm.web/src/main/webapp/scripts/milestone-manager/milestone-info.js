@@ -575,10 +575,6 @@ $("#unbind-project-popup").confirmDialog().on('confirmdialogconfirm', function()
 			return true;
 		}
 		
-		
-
-		
-		
 		var bindProjectDialog = $("#bind-project-dialog");
 
 		bindProjectDialog.formDialog();
@@ -630,6 +626,23 @@ $("#unbind-project-popup").confirmDialog().on('confirmdialogconfirm', function()
 				};
 				
 			}
+			
+			// When you open the dialog, change the message in it (with or without associated project)
+			$("#delete-milestone-popup").confirmDialog().on('confirmdialogopen', function(){
+								
+				var projects = $("#projects-table").squashTable().fnGetData(0);
+				
+				if (projects == null ){
+						$("#errorMessageDeleteMilestone").text(translator.get("dialog.delete-milestone.message"));
+					}
+					else {
+						$("#errorMessageDeleteMilestone").text(translator.get("dialog.delete-milestone.messageproject"));
+					}
+
+			});
+			
+			
+			
 			$("#projects-table").squashTable({"bServerSide":false, fnDrawCallback : drawCallBack}, squashSettings);
 			$("#bind-to-projects-table").squashTable({"bServerSide":false, "fnRowCallback" : projectTableRowCallback}, {});
 		

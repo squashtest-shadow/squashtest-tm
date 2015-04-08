@@ -125,7 +125,7 @@ require(["common"], function(){
 					$("#errorMessageDeleteMilestone").text(translator.get("dialog.delete-milestone.messagemulti"));
 				}
 				else {
-					$("#errorMessageDeleteMilestone").text(translator.get("dialog.delete-milestone.messageprojectmulti"));
+					$("#errorMessageDeleteMilestone").text(translator.get("dialog.deleteMilestone.warning.multiple.linked"));
 				}
 			}
 		});

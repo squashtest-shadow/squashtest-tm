@@ -33,6 +33,7 @@
 <s:url var="administrationUrl" value="/administration" />
 
 <f:message var="addLabel"       key="label.Add"/>
+<f:message var="confirmLabelDelete"   key="label.ConfirmDelete"/>
 <f:message var="confirmLabel"   key="label.Confirm"/>
 <f:message var="cancelLabel"    key="label.Cancel"/>
 <jsp:useBean id="now" class="java.util.Date"  />   
@@ -149,6 +150,7 @@
 	<f:message var="errorTitle" key="popup.title.error"/>
 	<f:message var="noSelectedMilestone" key="dialog.milestone.noselection"/>
 	<f:message var="okLabel" key="label.Ok"/>
+	<f:message var="closeLabel" key="label.Close"/>
 	<div id="milestone-noselection-error-dialog" class="not-displayed popup-dialog" title="${errorTitle}">
 	  <div>
 	     <div class="display-table-row">
@@ -161,7 +163,7 @@
           </div>
 	      </div>
 	  </div>
-	  <input type="button" value="${okLabel}"/>  
+	  <input type="button" value="${closeLabel}"/>  
 	</div>
 	
 	<f:message var="deleteMilestoneTitle" key="dialog.delete-milestone.title" />	

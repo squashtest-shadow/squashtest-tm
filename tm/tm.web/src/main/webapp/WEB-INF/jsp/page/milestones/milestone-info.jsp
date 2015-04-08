@@ -48,6 +48,7 @@
 <s:url var="projectDetailBaseUrl" value="/administration/projects" />
 
 <f:message var="confirmLabel" key="label.Confirm" />
+<f:message var="confirmLabelDelete"   key="label.ConfirmDelete"/>
 <f:message var="renameLabel" key="label.Rename" />
 <f:message var="cancelLabel" key="label.Cancel" />
 <f:message var="dateFormat" key="squashtm.dateformatShort" />
@@ -401,9 +402,19 @@
 	<f:message var="warningDelete" key="dialog.delete-milestone.message" />
 	<div id="delete-milestone-popup" class="popup-dialog not-displayed" title="${deleteMilestoneTitle}">
 
-        <comp:notification-pane type="error" txtcontent="${warningDelete}"/>
-
-
+		<div class="display-table-row">
+            <div class="display-table-cell warning-cell">
+                <div class="generic-error-signal"></div>
+            </div>
+            <div id="warning-delete" class="display-table-cell">
+            </div>          
+			<div class="display-table-cell">		
+			 	<p>
+	              <span id="errorMessageDeleteMilestone">	  </span>
+	            </p>     	            
+          </div>
+		</div>
+		
 		<div class="popup-dialog-buttonpane">
 		    <input class="confirm" type="button" value="${confirmLabel}" />
 		    <input class="cancel" type="button" value="${cancelLabel}" />				
