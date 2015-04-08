@@ -45,7 +45,7 @@ define(["jquery", "backbone", "underscore", "squash.basicwidgets", "jeditable.si
 		"click .isDefault>input:radio" : "changeDefaultOption",
 		"click td.opt-label" : "openChangeLabelPopup",
 		"click td.opt-code" : "openChangeCodePopup",
-		"click td.sq-icon" : "openChangeIconPopup",
+		"click span.sq-icon" : "openChangeIconPopup",
 		"click td.delete-button" : "openDeleteOptionPopup"
 		},
 
