@@ -519,8 +519,11 @@ require(["common"], function(){
 		var mil1 = synchronizeMilestoneConfirmDialog.data('mil1');
 		var mil2 = synchronizeMilestoneConfirmDialog.data('mil2');
 
+        var source = $("#mil1").prop('checked') ? mil2["entity-id"] : mil1["entity-id"];
+        var target = $("#mil1").prop('checked') ? mil1["entity-id"] : mil2["entity-id"];
+			
 		$.ajax({
-			url : routing.buildURL("milestone.synchronize" , mil1["entity-id"], mil2["entity-id"]),
+			url : routing.buildURL("milestone.synchronize", source, target),
 			type : 'POST',
 			data : {extendPerimeter: $("#perim").prop("checked"),
 				isUnion:$("#union").prop("checked")}
