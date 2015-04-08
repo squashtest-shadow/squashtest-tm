@@ -96,14 +96,24 @@
     <div id="tree-panel-left" style="z-index: 1" class="left-frame">
       <div class="position-layout-fix">
         <div id="tabbed-pane"     
-              th:with="usesMilestone = ${(activeMilestone!=null)}, milestoneLabel = ${(activeMilestone!=null) ? activeMilestone.label : ''}">    
-          <ul th:class="${(usesMilestone) ? 'milestones-mode' : ''}" >
-            <li class="tab" >
+              th:with="usesMilestone = ${(activeMilestone!=null)}, milestoneLabel = ${(activeMilestone!=null) ? activeMilestone.label : ''}">  
+
+          <ul th:class="'milestones-mode'" >
+
+			<li class="tab">
+			       <a href="#tree-pane" th:text="#{library.header.title}"></a>
+			</li>
+           <li class="tab">
+             <a href="/squash/campaign-browser/search" th:href="@{'/campaign-browser/search'}" th:text="#{tabbed_panel.search.pane.label}"></a>
+           </li>
+            <li class="tab" th:class="${(usesMilestone) ? 'tab' : 'not-displayed'}"  >
               <a href="#tree-pane">
                <span  id="campaignDashboardMilestone"  th:text="#{label.Milestone} + ' : ' + ${milestoneLabel}"  class="clickable-item" style="text-decoration:none"></span> 
                <span id="tree-milestone-selector" class="clickable-item small-down-white-arrow"></span>
               </a>
             </li>  
+            
+   
           </ul>
           <div id="tree-pane">
             <!-- ________________TREE MENU_______________ -->
@@ -214,6 +224,7 @@
         </div>
       </div>
     </div>
+
 
     <div id="contextual-content">
       <!--empty -->

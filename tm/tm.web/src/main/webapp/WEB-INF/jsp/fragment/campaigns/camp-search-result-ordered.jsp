@@ -97,11 +97,53 @@
 <script type="text/javascript">
   require(["common"], function() {
     require(["jquery", "squashtable"], function($){
+      /*
   	  $("#search-result-datatable").squashTable({
   		  'sDom' : '<r>t<<l><ip>>',
   		  'sPaginationType' : 'full_numbers'
   	  },{});
   	  
     })
-  });
+  });*/
+  $(function() {
+		var dataTable = $( "#search-result-datatable" ).dataTable({
+			"oLanguage":{
+				"sLengthMenu": '<f:message key="generics.datatable.lengthMenu" />',
+				"sZeroRecords": '<f:message key="generics.datatable.zeroRecords" />',
+				"sInfo": 'Affichage _START_ à _END_ sur _TOTAL_ élément(s)',
+				"sInfoEmpty": 'Affichage 0 à 0 sur 0 élément(s)',
+				"sInfoFiltered": '(filtré de _MAX_ éléments au total)',
+				"oPaginate":{
+					"sFirst":    'Premier',
+					"sPrevious": 'Précédent',
+					"sNext":     'Suivant',
+					"sLast":     'Dernier'
+				}
+			},
+// 			"sScrollY": "350px",
+			"bJQueryUI": true,
+			"bAutoWidth": false,
+			"bFilter": false,
+			"bPaginate": false,
+			"sPaginationType": "full_numbers",
+
+"aaSorting": [[1,'asc']],  
+
+			"sDom" : '<r>t<<l><ip>>',
+			"aoColumnDefs": [
+				
+{'bVisible': false, 'bSortable': false, 'aTargets': [0]},
+
+{'bVisible': true, 'bSortable': false, 'aTargets': [1]}
+
+			] 
+		});
+		
+		//bindHover(dataTable);
+	});
+	});
+});	
+	
+
+	
 </script>
