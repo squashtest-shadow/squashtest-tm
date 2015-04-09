@@ -304,7 +304,7 @@ public class TestSuiteModificationController {
 
 		model.addAttribute("conf", conf);
 
-		return "milestones/milestones-tab.html";
+		return "milestones/milestones-tab-uneditable.html";
 
 	}
 
