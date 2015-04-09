@@ -746,6 +746,15 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 		return milestones;
 	}
 
+	public Set<Milestone> getAllMilestones(){
+		Set<Milestone> allMilestones = new HashSet<>();
+		allMilestones.addAll(milestones);
+		for (RequirementVersionCoverage coverage : requirementVersionCoverages){
+			allMilestones.addAll(coverage.getVerifiedRequirementVersion().getMilestones());
+		}
+		return allMilestones;
+	}
+
 	public void bindMilestone(Milestone milestone) {
 		milestones.add(milestone);
 	}
@@ -846,7 +855,7 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	}
 
 	private boolean milestonesAllowEdit() {
-		for (Milestone m : milestones) {
+		for (Milestone m : getAllMilestones()) {
 			if (!m.getStatus().isAllowObjectModification()) {
 				return false;
 			}
@@ -856,26 +865,12 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 
 	@Override
 	public Boolean doMilestonesAllowCreation() {
-		Boolean allowed=Boolean.TRUE;
-		for (Milestone m : getMilestones()){
-			if (! m.getStatus().isAllowObjectCreateAndDelete()){
-				allowed = Boolean.FALSE;
-				break;
-			}
-		}
-		return allowed;
+		return Milestone.allowsCreationOrDeletion(getAllMilestones());
 	}
 
 	@Override
 	public Boolean doMilestonesAllowEdition() {
-		Boolean allowed=Boolean.TRUE;
-		for (Milestone m : getMilestones()){
-			if (! m.getStatus().isAllowObjectModification()){
-				allowed = Boolean.FALSE;
-				break;
-			}
-		}
-		return allowed;
+		return Milestone.allowsEdition(getAllMilestones());
 	};
 
 	/**

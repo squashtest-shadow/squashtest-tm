@@ -320,8 +320,8 @@ public class Milestone  {
 		return false;
 
 	}
-	
-	
+
+
 	public void bindCampaign(Campaign campaign) {
 		campaigns.add(campaign);
 	}
@@ -333,27 +333,27 @@ public class Milestone  {
 		final Iterator<GenericProject> iter = projects.iterator();
 		while (iter.hasNext()) {
 			GenericProject proj = iter.next();
-			
+
 			proj.accept(new ProjectVisitor() {
 
-			@Override
-			public void visit(ProjectTemplate projectTemplate) {
-				boundToTemplate[0] = true;
-			}
+				@Override
+				public void visit(ProjectTemplate projectTemplate) {
+					boundToTemplate[0] = true;
+				}
 
-			@Override
-			public void visit(Project project) {
-				//do nothing
-			}
+				@Override
+				public void visit(Project project) {
+					//do nothing
+				}
 			});
-			
+
 			if (boundToTemplate[0]){
 				return true;
 			}
 		}
-		
+
 		return false;
-		
+
 	}
 
 	public void removeTemplates() {
@@ -365,22 +365,45 @@ public class Milestone  {
 		final Iterator<GenericProject> iter = col.iterator();
 		while (iter.hasNext()) {
 			GenericProject proj = iter.next();
-			
+
 			proj.accept(new ProjectVisitor() {
 
-			@Override
-			public void visit(ProjectTemplate projectTemplate) {
-				iter.remove();
-			}
+				@Override
+				public void visit(ProjectTemplate projectTemplate) {
+					iter.remove();
+				}
 
-			@Override
-			public void visit(Project project) {
-				//do nothing, keep the projects !
-			}
+				@Override
+				public void visit(Project project) {
+					//do nothing, keep the projects !
+				}
 			});
 		}
 	}
-	
+
+	public static final Boolean allowsEdition(Collection<Milestone> milestones){
+		Boolean allowed = Boolean.TRUE;
+		for (Milestone m : milestones){
+			if (! m.getStatus().isAllowObjectModification()){
+				allowed =Boolean.FALSE;
+				break;
+			}
+		}
+		return allowed;
+	}
+
+
+	public static final Boolean allowsCreationOrDeletion(Collection<Milestone> milestones){
+		Boolean allowed = Boolean.TRUE;
+		for (Milestone m : milestones){
+			if (! m.getStatus().isAllowObjectCreateAndDelete()){
+				allowed =Boolean.FALSE;
+				break;
+			}
+		}
+		return allowed;
+	}
+
 
 
 	/**
@@ -413,5 +436,5 @@ public class Milestone  {
 		testCases.clear();
 		requirementVersions.clear();
 	}
-	
+
 }
