@@ -310,7 +310,7 @@ public class HibernateMilestoneDao extends HibernateEntityDao<Milestone> impleme
 	
 	@Override
 	public void unbindAllObjectsForProjects(Long milestoneId, List<Long> projectIds){
-		final String[] entities = { "TestCase", "RequirementVersion", "Campaign" };
+		final String[] entities = { "TestCases", "RequirementVersions", "Campaigns" };
 		
 		Session session = currentSession();
 
