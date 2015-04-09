@@ -157,7 +157,7 @@
     Because the filtering/sorting system might not like that a column may be defined or not,
     the column must always be present. It may, however, be displayed or not.
    --%>
- <c:set var="milestoneVisibility" value="${(not empty cookie['milestones']) ? '' : ', invisible'}"/>
+ <c:set var="milestoneVisibility" value="${(not empty cookie['milestones']) ? ', invisible' : ''}"/>
 
   <div class="table-tab-wrap">
     <c:if test="${editable}">
