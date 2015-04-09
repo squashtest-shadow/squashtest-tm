@@ -80,10 +80,11 @@ define([ "underscore", "app/BindView", "handlebars", "backbone.validation", "squ
 
 		onClickAdd : function(event) {
 			if (this.model.isValid(true)) {
+				// Go to InfoListOptionCollection  : add (check default) then NewInfoListPanel : onAddListOption
 				squashtm.vent.trigger("list-option:add", {
-					model : this.model,
-					source : event,
-					view : this
+				  	model : this.model,
+				  	source : event,
+				  	view : this
 				});
 			}
 		},
