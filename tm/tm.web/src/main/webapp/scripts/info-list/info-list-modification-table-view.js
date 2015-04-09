@@ -143,7 +143,7 @@ define(["jquery", "backbone", "underscore", "squash.basicwidgets", "jeditable.si
 
 			var labelCell = event.currentTarget;
 
-			var row = labelCell.parentElement;
+			var row = labelCell.parentElement.parentElement;
 			var data = self.optionsTable.fnGetData(row);
 			var id = data['entity-id'];
 			var iconName = data['iconName'];
@@ -157,9 +157,10 @@ define(["jquery", "backbone", "underscore", "squash.basicwidgets", "jeditable.si
 
 			function discardAndRefresh(icon) {
 				discard();
+				
 				$.ajax({
 					url : routing.buildURL("info-list-item.info", id),
-					type : 'POST',
+					type : 'POST', 
 					data : {
 						id:'info-list-item-icon',
 						value:icon
