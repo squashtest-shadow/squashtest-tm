@@ -614,12 +614,12 @@ public class FacilityImpl implements Facility {
 		ActionTestStep orig = (ActionTestStep) validator.getModel().getStep(target);
 
 		String newAction = testStep.getAction();
-		if (!StringUtils.isBlank(newAction) && !orig.getAction().equals(newAction)) {
+		if (!StringUtils.isBlank(newAction) && !newAction.equals(orig.getAction())) {
 			orig.setAction(newAction);
 		}
 
 		String newResult = testStep.getExpectedResult();
-		if (!StringUtils.isBlank(newResult) && !orig.getExpectedResult().equals(newResult)) {
+		if (!StringUtils.isBlank(newResult) && !newResult.equals(orig.getExpectedResult())) {
 			orig.setExpectedResult(newResult);
 		}
 
@@ -702,22 +702,22 @@ public class FacilityImpl implements Facility {
 		Long origId = orig.getId();
 		String newName = testCase.getName();
 
-		if (!StringUtils.isBlank(newName) && !orig.getName().equals(newName)) {
+		if (!StringUtils.isBlank(newName) && !newName.equals(orig.getName())) {
 			testcaseModificationService.rename(origId, newName);
 		}
 
 		String newRef = testCase.getReference();
-		if (!StringUtils.isBlank(newRef) && !orig.getReference().equals(newRef)) {
+		if (!StringUtils.isBlank(newRef) && !newRef.equals(orig.getReference())){
 			testcaseModificationService.changeReference(origId, newRef);
 		}
 
 		String newDesc = testCase.getDescription();
-		if (!StringUtils.isBlank(newDesc) && !orig.getDescription().equals(newDesc)) {
+		if (!StringUtils.isBlank(newDesc) && !newDesc.equals(orig.getDescription())) {
 			testcaseModificationService.changeDescription(origId, newDesc);
 		}
 
 		String newPrereq = testCase.getPrerequisite();
-		if (!StringUtils.isBlank(newPrereq) && !orig.getPrerequisite().equals(newPrereq)) {
+		if (!StringUtils.isBlank(newPrereq) && !newPrereq.equals(orig.getPrerequisite())) {
 			testcaseModificationService.changePrerequisite(origId, newPrereq);
 		}
 
