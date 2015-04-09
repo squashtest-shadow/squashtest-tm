@@ -118,13 +118,13 @@ AbstractNodeDeletionHandler<TestCaseLibraryNode, TestCaseFolder> implements Test
 			preview.add(previewAffectedNodes);
 		}
 
+		// check if some elements belong to milestones which status forbids that
+		if (someNodesAreLockedByMilestones(nodeIds)){
+			preview.add(new BoundToLockedMilestonesReport());
+		}
+
 		// milestone mode only :
 		if (milestoneId != null){
-
-			// check if some elements belong to milestones which status forbids that
-			if (someNodesAreLockedByMilestones(nodeIds)){
-				preview.add(new BoundToLockedMilestonesReport());
-			}
 
 			// check if there are some folders in the selection
 			List<Long>[] separatedIds = deletionDao.separateFolderFromTestCaseIds(nodeIds);

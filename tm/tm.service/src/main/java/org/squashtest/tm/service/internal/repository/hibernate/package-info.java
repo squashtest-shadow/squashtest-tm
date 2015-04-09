@@ -221,8 +221,14 @@
 	@NamedQuery(name = "testCase.removeAllCallSteps", query = "delete CallTestStep cts where  cts.id in (:stepIds)"),
 	@NamedQuery(name = "testCase.removeAllActionSteps", query = "delete ActionTestStep ats where ats.id in (:stepIds)"),
 	@NamedQuery(name = "testCase.findTestCasesWhichMilestonesForbidsDeletion", 
-	query="select distinct tc.id from TestCase tc inner join tc.milestones milestones where tc.id in (:testCaseIds) and milestones.status in (:lockedStatuses)"),
-
+				query = "select distinct tc.id from TestCase tc where tc.id in (:testCaseIds) and " +
+						"(tc.id in (select directTC.id from TestCase directTC inner join directTC.milestones mstones where mstones.status in (:lockedStatuses)) " +
+						"or tc.id in (select indirectTC.id from TestCase indirectTC join indirectTC.requirementVersionCoverages cov join cov.verifiedRequirementVersion " +
+						"ver join ver.milestones milestones where milestones.status in (:lockedStatuses)))" ),
+				
+	/*
+				query="select distinct tc.id from TestCase tc inner join tc.milestones milestones where tc.id in (:testCaseIds) and milestones.status in (:lockedStatuses)"),
+	 */
 	// NOTE : Hibernate ignores any grouped entity when it is not projected
 	// NOTE : Hibernate ignores group by tc.nature.id unless we alias tc.nature (AND PROJECT THE ALIAS !)
 	// NOTE : "from f join f.content c where c.class = TestCase group by c.id" generates SQL w/o grouped TCLN.TCLN_ID, only TC.TCLN_ID, which breaks under postgresql
