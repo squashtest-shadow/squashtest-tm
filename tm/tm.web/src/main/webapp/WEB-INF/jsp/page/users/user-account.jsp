@@ -235,6 +235,7 @@
                       <thead>
                         <th data-def="sClass=bind-milestone-dialog-check, map=empty-delete-holder"></th>
                         <th data-def="map=label, sortable" ><f:message key="label.Label"/></th>
+                        <th data-def="map=status, sortable"><f:message key="label.Status"/></th>
                         <th data-def="map=date, sortable"><f:message key="label.EndDate"/></th>
                         <th data-def="map=description, sortable" ><f:message key="label.Description"/></th>
                       </thead>

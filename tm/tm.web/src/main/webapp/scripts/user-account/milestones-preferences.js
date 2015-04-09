@@ -51,9 +51,11 @@ define(["jquery", "milestone-manager/milestone-activation", "squash.attributepar
 						.addClass('disabled-transparent')
 						.off('click', labelClick);
 				}
+
 			}
 			
 			function updateStatus(){
+				
 				var checked = checkbox.is(':checked');
 				if (checked){
 					milestoneDao.activateStatus();
@@ -83,7 +85,8 @@ define(["jquery", "milestone-manager/milestone-activation", "squash.attributepar
 			// ****** init the label ***********************
 			
 			function labelClick(){
-				dialog.milestoneDialog('open');
+				dialog.milestoneDialog('open'); 		
+			
 			}
 
 			updateLabel(enabled);
@@ -101,6 +104,12 @@ define(["jquery", "milestone-manager/milestone-activation", "squash.attributepar
 			
 			
 			// ***** events ********************
+			
+			$.ajaxSetup({
+		    complete: function () {
+		        if ($(".bind-milestone-dialog-table").length>0) 
+		        	$(".bind-milestone-dialog-table tr input:first").attr('checked', true ); 
+		    }});
 			
 			checkbox.on('change', updateStatus);
 			
@@ -122,7 +131,7 @@ define(["jquery", "milestone-manager/milestone-activation", "squash.attributepar
 				milestoneDao.setActiveMilestone(newMilestone);
 				label.text(lbl);
 			});
-			
+
 			// disable the whole thing if no active milestone 
 			// was selected and no active milestone was set previously
 			
