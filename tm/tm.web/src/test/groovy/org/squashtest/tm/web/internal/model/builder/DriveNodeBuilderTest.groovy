@@ -29,11 +29,13 @@ import org.apache.commons.collections.map.MultiValueMap
 import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory
 import org.squashtest.tm.domain.library.Library
 import org.squashtest.tm.domain.milestone.Milestone;
+import org.squashtest.tm.domain.milestone.MilestoneStatus;
 import org.squashtest.tm.domain.project.Project
 import org.squashtest.tm.domain.testcase.TestCase
 import org.squashtest.tm.domain.testcase.TestCaseImportance
 import org.squashtest.tm.domain.testcase.TestCaseLibrary
 import org.squashtest.tm.domain.testcase.TestCaseStatus
+import org.squashtest.tm.service.milestone.MilestoneMembershipFinder;
 import org.squashtest.tm.service.requirement.VerifiedRequirementsManagerService
 import org.squashtest.tm.service.security.PermissionEvaluationService
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper
@@ -48,18 +50,24 @@ class DriveNodeBuilderTest extends Specification {
 	VerifiedRequirementsManagerService verifiedRequirementsManagerService = Mock()
 	Provider nodeBuilderPovider = Mock()
 	DriveNodeBuilder builder = new DriveNodeBuilder(permissionEvaluationService, nodeBuilderPovider)
+	MilestoneMembershipFinder milestoneMembershipFinder = Mock()
 	InternationalizationHelper internationalizationHelper = Mock()
 	def setup() {
 		internationalizationHelper.internationalize(_,_)>> ""
 		internationalizationHelper.internationalizeYesNo(false, _)>>"non"
 		internationalizationHelper.internationalizeYesNo(true, _)>>"oui"
 		internationalizationHelper.getMessage(_, _, _, _)>>"message"
-		nodeBuilderPovider.get() >> new TestCaseLibraryTreeNodeBuilder(permissionEvaluationService, verifiedRequirementsManagerService, internationalizationHelper)
+		nodeBuilderPovider.get() >> {
+			TestCaseLibraryTreeNodeBuilder builder = new TestCaseLibraryTreeNodeBuilder(permissionEvaluationService, verifiedRequirementsManagerService, internationalizationHelper)
+			builder.setMilestoneMembershipFinder(milestoneMembershipFinder)
+			return builder
+		}
 	}
 
 	def "should build root node of test case library"() {
 		given:
 		def library = theTestCaseLibrary(10L).ofProject("foo")
+		milestoneMembershipFinder.findAllMilestonesForTestCase(_) >> []
 
 		when:
 		JsTreeNode res = builder.setModel(library).build();
@@ -94,6 +102,7 @@ class DriveNodeBuilderTest extends Specification {
 	def "should build editable node"() {
 		given:
 		permissionEvaluationService.hasRoleOrPermissionOnObject (_, _, _) >> true
+		milestoneMembershipFinder.findAllMilestonesForTestCase(_) >> []
 
 		and:
 		def library = theTestCaseLibrary(10L).ofProject("foo")
@@ -110,6 +119,7 @@ class DriveNodeBuilderTest extends Specification {
 		def library = theTestCaseLibrary(10L).ofProject("foo")
 		library.enablePlugin("foo");
 		library.enablePlugin("bar");
+		milestoneMembershipFinder.findAllMilestonesForTestCase(_) >> []
 
 		when:
 		JsTreeNode res = builder.setModel(library).build();
@@ -129,9 +139,12 @@ class DriveNodeBuilderTest extends Specification {
 		tc.getSteps()>>[]
 		tc.getRequirementVersionCoverages() >> []
 		tc.getId()>>23L
-		tc.getMilestones() >> [Mock(Milestone)]
-		tc.doMilestonesAllowCreation() >> Boolean.TRUE
-		tc.doMilestonesAllowEdition() >> Boolean.TRUE
+
+
+		Milestone m = Mock()
+		m.getStatus() >> MilestoneStatus.IN_PROGRESS
+		milestoneMembershipFinder.findAllMilestonesForTestCase(_) >> [m]
+
 		library.addContent tc
 
 		and:

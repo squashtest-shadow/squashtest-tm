@@ -31,6 +31,7 @@ import org.squashtest.tm.domain.testcase.TestCaseFolder
 import org.squashtest.tm.domain.testcase.TestCaseImportance;
 import org.squashtest.tm.domain.testcase.TestCaseLibraryNode
 import org.squashtest.tm.domain.testcase.TestCaseStatus;
+import org.squashtest.tm.service.milestone.MilestoneMembershipFinder;
 import org.squashtest.tm.service.requirement.VerifiedRequirementsManagerService;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.testcase.TestCaseLibraryNavigationService
@@ -47,9 +48,13 @@ class TestCaseLibraryNavigationControllerTest extends Specification {
 	TestCaseLibraryNavigationService testCaseLibraryNavigationService = Mock()
 	VerifiedRequirementsManagerService verifiedRequirementManagerService = Mock()
 	Provider driveNodeBuilder = Mock();
+	MilestoneMembershipFinder milestoneMembershipFinder = Mock()
 	Provider testCaseLibraryTreeNodeBuilder = Mock();
 	PermissionEvaluationService permissionEvaluationService = Mock()
 	InternationalizationHelper internationalizationHelper = Mock()
+
+
+
 	def setup() {
 		controller.testCaseLibraryNavigationService = testCaseLibraryNavigationService
 
@@ -61,11 +66,17 @@ class TestCaseLibraryNavigationControllerTest extends Specification {
 		verifiedRequirementManagerService.testCaseHasUndirectRequirementCoverage(_)>>false
 
 		driveNodeBuilder.get() >> new DriveNodeBuilder(permissionEvaluationService, null)
-		testCaseLibraryTreeNodeBuilder.get() >> new TestCaseLibraryTreeNodeBuilder(permissionEvaluationService, verifiedRequirementManagerService, internationalizationHelper)
+		testCaseLibraryTreeNodeBuilder.get() >> {
+			TestCaseLibraryTreeNodeBuilder builder = new TestCaseLibraryTreeNodeBuilder(permissionEvaluationService, verifiedRequirementManagerService, internationalizationHelper)
+			builder.setMilestoneMembershipFinder(milestoneMembershipFinder)
+			return builder
+		}
+
 		internationalizationHelper.internationalize(_,_)>> ""
 		internationalizationHelper.internationalizeYesNo(false, _)>>"non";
 		internationalizationHelper.internationalizeYesNo(true, _)>>"oui";
 		internationalizationHelper.getMessage(_, _, _, _)>>"message";
+		milestoneMembershipFinder.findAllMilestonesForTestCase(_) >> []
 	}
 
 	def "should return root nodes of library"() {

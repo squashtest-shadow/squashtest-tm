@@ -26,6 +26,7 @@ import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory
 import org.squashtest.tm.domain.testcase.TestCase
 import org.squashtest.tm.domain.testcase.TestCaseFolder
 import org.squashtest.tm.domain.testcase.TestCaseLibraryNode
+import org.squashtest.tm.service.milestone.MilestoneMembershipFinder;
 import org.squashtest.tm.service.requirement.VerifiedRequirementsManagerService;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.web.internal.controller.testcase.TestCaseFolderModificationController;
@@ -40,11 +41,16 @@ class TestCaseLibraryTreeNodeBuilderTest extends Specification {
 	VerifiedRequirementsManagerService verifiedRequirementsManagerService = Mock()
 	InternationalizationHelper internationalizationHelper = Mock()
 	TestCaseLibraryTreeNodeBuilder builder = new TestCaseLibraryTreeNodeBuilder(permissionEvaluationService, verifiedRequirementsManagerService, internationalizationHelper)
+	MilestoneMembershipFinder milestoneMembershipFinder = Mock()
+
 	def setup() {
 		internationalizationHelper.internationalize(_,_)>> ""
 		internationalizationHelper.internationalizeYesNo(false, _)>>"non"
 		internationalizationHelper.internationalizeYesNo(true, _)>>"oui"
 		internationalizationHelper.getMessage(_, _, _, _)>>"message"
+
+		builder.setMilestoneMembershipFinder(milestoneMembershipFinder)
+		milestoneMembershipFinder.findAllMilestonesForTestCase(_) >> []
 	}
 	def "should build a TestCase tree node"() {
 		given:
@@ -83,53 +89,53 @@ class TestCaseLibraryTreeNodeBuilderTest extends Specification {
 		res.attr['resType'] == "test-case-folders"
 		res.state == State.leaf.name()
 	}
-	
+
 	def "should build a folder with leaf state"(){
 		given :
-			TestCaseFolder node = new TestCaseFolder(name:"folder")
-			
+		TestCaseFolder node = new TestCaseFolder(name:"folder")
+
 		when :
-			def res = builder.setNode(node).build()
-		
+		def res = builder.setNode(node).build()
+
 		then :
-			res.state == State.leaf.name()
-		
+		res.state == State.leaf.name()
+
 	}
-	
+
 	def "should build a folder with closed state"(){
 		given :
-			TestCaseFolder node = new TestCaseFolder(name:"folder")
-			node.addContent(new TestCaseFolder());
-		
+		TestCaseFolder node = new TestCaseFolder(name:"folder")
+		node.addContent(new TestCaseFolder());
+
 		when :
-			def res = builder.setNode(node).build()
-		
+		def res = builder.setNode(node).build()
+
 		then :
-			res.state == State.closed.name()
-		
+		res.state == State.closed.name()
+
 	}
-	
+
 	def "should expand a folder "(){
 		given :
-			TestCaseFolder node = new TestCaseFolder(name:"folder")
-			TestCaseFolder child = new TestCaseFolder(name:"folder child")
-			node.addContent(child);
-			
-			use(ReflectionCategory) {
-				TestCaseLibraryNode.set field: "id", of: node, to: 10L
-				TestCaseLibraryNode.set field: "id", of: child, to: 100L
-			}
-			
-		and: 
+		TestCaseFolder node = new TestCaseFolder(name:"folder")
+		TestCaseFolder child = new TestCaseFolder(name:"folder child")
+		node.addContent(child);
+
+		use(ReflectionCategory) {
+			TestCaseLibraryNode.set field: "id", of: node, to: 10L
+			TestCaseLibraryNode.set field: "id", of: child, to: 100L
+		}
+
+		and:
 		MultiMap expanded = new MultiValueMap()
 		expanded.put("TestCaseFolder", 10L)
-		
+
 		when :
-			def res = builder.expand(expanded).setNode(node).build()
-		
+		def res = builder.expand(expanded).setNode(node).build()
+
 		then :
-			res.state == State.open.name()
-			res.children.size() == 1
-		
+		res.state == State.open.name()
+		res.children.size() == 1
+
 	}
 }
