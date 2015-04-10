@@ -18,114 +18,108 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-	define(['module', "jquery", "squash.translator", "workspace.routing","squash.configmanager","app/ws/squashtm.notification", "squashtable", 
-	         "app/ws/squashtm.workspace", 
-	         "jquery.squash.formdialog", "jquery.squash.confirmdialog"], 
-			function(module, $, translator, routing, confman, notification){					
-		
-		var config = module.config();
+define([ "jquery", "squash.translator", "app/ws/squashtm.notification", "squashtable", "app/ws/squashtm.workspace",
+		"jquery.squash.formdialog", "jquery.squash.confirmdialog" ], function($, translator, notification) {
+	"use strict;"
 
-		$(function() {			
-			
-			var squashSettings = {
-					functions:{					
-						drawDeleteButton: function(template, cells){
-				
-							$.each(cells, function(index, cell) {
-								var row = cell.parentNode; // should be the tr
-								var id = clientTable.getODataId(row);
-								var $cell = $(cell);
-								
-									$cell.html(template);
-									$cell.find('a').button({
-										text : false,
-										icons : {
-											primary : "ui-icon-trash"
-										}
-									});		
-													
-							});
-						},
-						getODataId : function(arg) {
-							var key = clientTable.squashSettings.dataKeys.entityId;
-							var id = clientTable.fnGetData(arg)[key];
-							if (!!id) {
-								return id;
-							} else {
-								return null;
+	$(function() {
+
+		var squashSettings = {
+			functions : {
+				drawDeleteButton : function(template, cells) {
+
+					$.each(cells, function(index, cell) {
+						var row = cell.parentNode; // should be the tr
+						var id = clientTable.getODataId(row);
+						var $cell = $(cell);
+
+						$cell.html(template);
+						$cell.find('a').button({
+							text : false,
+							icons : {
+								primary : "ui-icon-trash"
 							}
-						}
+						});
+
+					});
+				},
+				getODataId : function(arg) {
+					var key = clientTable.squashSettings.dataKeys.entityId;
+					var id = clientTable.fnGetData(arg)[key];
+					if (!!id) {
+						return id;
+					} else {
+						return null;
 					}
-			};
-			
-			var clientTable = $("#client-table").squashTable({"bServerSide":false},squashSettings);			
-		});	
+				}
+			}
+		};
 
-		$("#delete-client-popup").confirmDialog().on('confirmdialogconfirm', function(event){
-			
-			var $this = $(this);
-			var id = $this.data('entity-id');
-			var ids = ( !! id) ? [id] : id ;
-			var url = squashtm.app.contextRoot+'/administration/config/clients/'+ ids.join(",");
-			var table = $("#client-table").squashTable();
-			var selectedRow = table.getRowsByIds(ids);
-			
-			$.ajax({
-				url : url,
-				type : 'delete'
-			})
-			.done(function(){
-				table._fnAjaxUpdate();
-			});
-			
-			
+		var clientTable = $("#client-table").squashTable({
+			"bServerSide" : false
+		}, squashSettings);
+	});
+
+	$("#delete-client-popup").confirmDialog().on('confirmdialogconfirm', function(event) {
+
+		var $this = $(this);
+		var id = $this.data('entity-id');
+		var ids = (!!id) ? [ id ] : id;
+		var url = squashtm.app.contextRoot + '/administration/config/clients/' + ids.join(",");
+		var table = $("#client-table").squashTable();
+		var selectedRow = table.getRowsByIds(ids);
+
+		$.ajax({
+			url : url,
+			type : 'delete'
+		}).done(function() {
+			table._fnAjaxUpdate();
 		});
 
-		$("#delete-client-button").on('click', function(){
+	});
 
-			var ids = $("#client-table").squashTable().getSelectedIds();
-	
-			if (ids.length>0){
-				var popup = $("#delete-client-popup");
-				popup.data('entity-id', ids);
-				popup.confirmDialog('open');
-			}
-			else{
-				notification.showWarning(translator.get('message.EmptyTableSelection'));
-			}
-		});
-		
-	
+	$("#delete-client-button").on('click', function() {
+
+		var ids = $("#client-table").squashTable().getSelectedIds();
+
+		if (ids.length > 0) {
+			var popup = $("#delete-client-popup");
+			popup.data('entity-id', ids);
+			popup.confirmDialog('open');
+		} else {
+			notification.showWarning(translator.get('message.EmptyTableSelection'));
+		}
+	});
+
 	var addClientDialog = $("#add-client-dialog");
-		
+
 	addClientDialog.formDialog();
 
-	addClientDialog.on('formdialogconfirm', function(){
-		var url = squashtm.app.contextRoot+'/administration/config/clients/';
+	addClientDialog.on('formdialogconfirm', function() {
+		var url = squashtm.app.contextRoot + '/administration/config/clients/';
 		var params = {
-			clientId: $( '#add-client-name' ).val(),
-			clientSecret: $( '#add-client-secret' ).val(),
-			registeredRedirectUri : $( '#add-client-uri' ).val()
+			clientId : $('#add-client-name').val(),
+			clientSecret : $('#add-client-secret').val(),
+			registeredRedirectUri : $('#add-client-uri').val()
 		};
 		$.ajax({
 			url : url,
 			type : 'POST',
 			dataType : 'json',
-			data : params				
-		}).success(function(data){
+			data : params
+		}).success(function(data) {
 			$('#client-table').squashTable()._fnAjaxUpdate();
 			addClientDialog.formDialog('close');
 		});
-	
+
 	});
-	
-	addClientDialog.on('formdialogcancel', function(){
+
+	addClientDialog.on('formdialogcancel', function() {
 		addClientDialog.formDialog('close');
 	});
-		
-	$('#new-client-button').on('click', function(){
+
+	$('#new-client-button').on('click', function() {
 		addClientDialog.formDialog('open');
 	});
-	
-	});			
-	
+
+});
