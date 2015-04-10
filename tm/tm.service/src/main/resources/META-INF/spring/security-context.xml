@@ -103,6 +103,78 @@
 
     <property name="dataSource" ref="squashtest.core.persistence.jdbc.DataSource" />
 
+    <property name="groupAuthoritiesByUsernameQuery">
+      <value>
+        select g.ID, g.QUALIFIED_NAME, ga.AUTHORITY 
+        from CORE_GROUP g 
+          inner join CORE_GROUP_AUTHORITY ga on ga.GROUP_ID = g.ID
+          inner join CORE_GROUP_MEMBER gm on gm.GROUP_ID = g.ID
+          inner join CORE_PARTY party on party.PARTY_ID = gm.PARTY_ID
+          left join CORE_TEAM team on team.PARTY_ID = party.PARTY_ID
+          left join CORE_TEAM_MEMBER tmemb on tmemb.TEAM_ID = team.PARTY_ID,
+          CORE_USER u 
+        where( (u.PARTY_ID = tmemb.USER_ID AND u.ACTIVE = true) or (u.PARTY_ID = party.PARTY_ID) ) and ( u.LOGIN = ?)
+
+      </value>
+    </property> 
+
+    <property name="authoritiesByUsernameQuery">
+      <value>
+      select cpa.PARTY_ID,  cpa.AUTHORITY from CORE_PARTY_AUTHORITY cpa
+      inner join CORE_PARTY party on party.PARTY_ID = cpa.PARTY_ID
+      left join CORE_TEAM team on team.PARTY_ID = party.PARTY_ID
+      left join CORE_TEAM_MEMBER tmemb on tmemb.TEAM_ID = team.PARTY_ID,
+      CORE_USER u 
+      where( (u.PARTY_ID = tmemb.USER_ID AND u.ACTIVE = true) or (u.PARTY_ID = party.PARTY_ID) ) and ( u.LOGIN = ?)
+    </value>
+    </property>
+
+    <property name="changePasswordSql">
+      <value>
+        update AUTH_USER
+        set PASSWORD = ?
+        where LOGIN = ?
+      </value>
+    </property>
+
+    <property name="updateUserSql">
+      <value>
+        update AUTH_USER
+        set PASSWORD = ?, ACTIVE = ?
+        where LOGIN = ?
+      </value>
+    </property>
+
+    <property name="deleteUserSql">
+      <value>
+        delete from AUTH_USER
+        where LOGIN = ?
+      </value>
+    </property>
+
+    <property name="createUserSql">
+      <value>
+        insert into AUTH_USER (LOGIN, PASSWORD, ACTIVE) values (?,?,?)
+      </value>
+    </property>
+    
+    <property name="createAuthoritySql">
+      <value>
+        insert into CORE_PARTY_AUTHORITY (PARTY_ID, AUTHORITY)
+        values ((select cu.PARTY_ID from CORE_USER cu where cu.LOGIN = ?), ?)
+      </value>
+    </property>
+
+    <property name="deleteUserAuthoritiesSql">
+      <value>
+        delete from CORE_PARTY_AUTHORITY
+        where PARTY_ID in (
+          select cu.PARTY_ID from CORE_USER cu
+          where cu.LOGIN = ?
+        )
+      </value>
+    </property>
+
     <!--  
       A successful login attempt requires the user to have at least one authority set (and also a valid login/pass).
       
@@ -139,163 +211,11 @@
 
   <bean id="userDetailsManager.caseSensitive" class="org.squashtest.tm.service.internal.security.SquashUserDetailsManagerImpl" parent="userDetailsManager.template">
     <property name="usersByUsernameQuery" value="select LOGIN, PASSWORD, ACTIVE from AUTH_USER where LOGIN = ?" />
-
-    <property name="groupAuthoritiesByUsernameQuery">
-      <value>
-        select g.ID, g.QUALIFIED_NAME, ga.AUTHORITY 
-        from CORE_GROUP g 
-          inner join CORE_GROUP_AUTHORITY ga on ga.GROUP_ID = g.ID
-          inner join CORE_GROUP_MEMBER gm on gm.GROUP_ID = g.ID
-          inner join CORE_PARTY party on party.PARTY_ID = gm.PARTY_ID
-          left join CORE_TEAM team on team.PARTY_ID = party.PARTY_ID
-          left join CORE_TEAM_MEMBER tmemb on tmemb.TEAM_ID = team.PARTY_ID,
-          CORE_USER u 
-        where( (u.PARTY_ID = tmemb.USER_ID AND u.ACTIVE = true) or (u.PARTY_ID = party.PARTY_ID) ) and ( u.LOGIN = ?)
-
-      </value>
-    </property> 
-    
-   
-    <property name="authoritiesByUsernameQuery">
-      <value>
-      select cpa.PARTY_ID,  cpa.AUTHORITY from CORE_PARTY_AUTHORITY cpa
-      inner join CORE_PARTY party on party.PARTY_ID = cpa.PARTY_ID
-      left join CORE_TEAM team on team.PARTY_ID = party.PARTY_ID
-      left join CORE_TEAM_MEMBER tmemb on tmemb.TEAM_ID = team.PARTY_ID,
-      CORE_USER u 
-      where( (u.PARTY_ID = tmemb.USER_ID AND u.ACTIVE = true) or (u.PARTY_ID = party.PARTY_ID) ) and ( u.LOGIN = ?)
-    </value>
-    </property>
-
-    <property name="changePasswordSql">
-      <value>
-        update AUTH_USER
-        set PASSWORD = ?
-        where LOGIN = ?
-      </value>
-    </property>
-
-    <property name="updateUserSql">
-      <value>
-        update AUTH_USER
-        set PASSWORD = ?, ACTIVE = ?
-        where LOGIN = ?
-      </value>
-    </property>
-
-    <property name="deleteUserSql">
-      <value>
-        delete from AUTH_USER
-        where LOGIN = ?
-      </value>
-    </property>
-
-
-    <property name="createUserSql">
-      <value>
-        insert into AUTH_USER (LOGIN, PASSWORD, ACTIVE) values (?,?,?)
-      </value>
-    </property>
-    
-    <property name="createAuthoritySql">
-      <value>
-        insert into CORE_PARTY_AUTHORITY (PARTY_ID, AUTHORITY)
-        values ((select cu.PARTY_ID from CORE_USER cu where cu.LOGIN = ?), ?)
-      </value>
-    </property>
-    
-    
-    <property name="deleteUserAuthoritiesSql">
-      <value>
-        delete from CORE_PARTY_AUTHORITY
-        where PARTY_ID in (
-          select cu.PARTY_ID from CORE_USER cu
-          where cu.LOGIN = ?
-        )
-      </value>
-    </property>
-
     <property name="userExistsSql" value="select LOGIN from AUTH_USER where LOGIN = ?" />
   </bean>
   
   <bean id="userDetailsManager.caseInsensitive" class="org.squashtest.tm.service.internal.security.SquashUserDetailsManagerImpl" parent="userDetailsManager.template">
     <property name="usersByUsernameQuery" value="select LOGIN, PASSWORD, ACTIVE from AUTH_USER where lcase(LOGIN) = lcase(?)" />
-
-    <property name="groupAuthoritiesByUsernameQuery">
-      <value>
-        select g.ID, g.QUALIFIED_NAME, ga.AUTHORITY 
-        from CORE_GROUP g 
-          inner join CORE_GROUP_AUTHORITY ga on ga.GROUP_ID = g.ID
-          inner join CORE_GROUP_MEMBER gm on gm.GROUP_ID = g.ID
-          inner join CORE_PARTY party on party.PARTY_ID = gm.PARTY_ID
-          left join CORE_TEAM team on team.PARTY_ID = party.PARTY_ID
-          left join CORE_TEAM_MEMBER tmemb on tmemb.TEAM_ID = team.PARTY_ID,
-          CORE_USER u 
-        where( (u.PARTY_ID = tmemb.USER_ID AND u.ACTIVE = true) or (u.PARTY_ID = party.PARTY_ID) ) and ( u.LOGIN = ?)
-
-      </value>
-    </property> 
-
-    <property name="authoritiesByUsernameQuery">
-      <value>
-      select cpa.PARTY_ID,  cpa.AUTHORITY from CORE_PARTY_AUTHORITY cpa
-      inner join CORE_PARTY party on party.PARTY_ID = cpa.PARTY_ID
-      left join CORE_TEAM team on team.PARTY_ID = party.PARTY_ID
-      left join CORE_TEAM_MEMBER tmemb on tmemb.TEAM_ID = team.PARTY_ID,
-      CORE_USER u 
-      where( (u.PARTY_ID = tmemb.USER_ID AND u.ACTIVE = true) or (u.PARTY_ID = party.PARTY_ID) ) and ( u.LOGIN = ?)
-    </value>
-    </property>
-
-    <property name="changePasswordSql">
-      <value>
-        update AUTH_USER
-        set PASSWORD = ?
-        where LOGIN = ?
-      </value>
-    </property>
-
-    <property name="updateUserSql">
-      <value>
-        update AUTH_USER
-        set PASSWORD = ?, ACTIVE = ?
-        where LOGIN = ?
-      </value>
-    </property>
-
-    <property name="deleteUserSql">
-      <value>
-        delete from AUTH_USER
-        where LOGIN = ?
-      </value>
-    </property>
-
-
-    <property name="createUserSql">
-      <value>
-        insert into AUTH_USER (LOGIN, PASSWORD, ACTIVE) values (?,?,?)
-      </value>
-    </property>
-    
-    <property name="createAuthoritySql">
-      <value>
-        insert into CORE_PARTY_AUTHORITY (PARTY_ID, AUTHORITY)
-        values ((select cu.PARTY_ID from CORE_USER cu where cu.LOGIN = ?), ?)
-      </value>
-    </property>
-    
-    
-    <property name="deleteUserAuthoritiesSql">
-      <value>
-        delete from CORE_PARTY_AUTHORITY
-        where PARTY_ID in (
-          select cu.PARTY_ID from CORE_USER cu
-          where cu.LOGIN = ?
-        )
-      </value>
-    </property>
-
-    
     <property name="userExistsSql" value="select LOGIN from AUTH_USER where lcase(LOGIN) = ?" />    
   </bean>
   

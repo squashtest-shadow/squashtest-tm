@@ -66,6 +66,11 @@
 				exclude : [ "common" ]
 			},
 			{
+				name : "advanced-config-page",
+				include : [ "jquery", "squash.translator", "app/ws/squashtm.workspace", "client-manager/client-manager", "jquery.switchButton" ],
+				exclude : [ "common" ]
+			},
+			{
 				name : "advanced-search-input",
 				include : [ "search/advanced-search-input", "app/ws/squashtm.workspace" ],
 				exclude : [ "common" ]
