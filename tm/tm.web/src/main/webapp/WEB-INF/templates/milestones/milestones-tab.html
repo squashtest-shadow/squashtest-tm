@@ -29,8 +29,10 @@
 </div>
 
 
-<div class="milestone-panel-master">
-  <div class="toolbar" >
+<div class="milestone-panel-master" 
+th:with="isWritable = ${(#authorization.expression('hasRole(''ROLE_ADMIN'')') or sec.hasPermission(testCase , 'WRITE')) and conf.editable}">
+  
+  <div class="toolbar" th:if="${isWritable}">
   
     <button class="sq-icon-btn btn-sm milestone-panel-bind-button" th:title="#{label.AssociateMilestoneToRequirement}" >
        <span class="ui-icon ui-icon-plus squared-icons">+</span>
@@ -50,7 +52,7 @@
     
 
     <table class="milestone-panel-table">
-      <thead th:with="unbindClause=${(conf.editable) ? ', unbind-button=.unbind-milestone-dialog' : ''}">
+      <thead th:with="unbindClause=${(isWritable) ? ', unbind-button=.unbind-milestone-dialog' : ''}">
         <th data-def="select, sWidth=2.5em, map=entity-index">#</th>
         <th data-def="map=label, sortable" th:text="#{label.Label}">label</th>
         <th data-def="map=status, sortable" th:text="#{label.Status}">status</th>
