@@ -49,7 +49,10 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.ModelAndView;
 import org.squashtest.tm.event.ConfigUpdateEvent;
 import org.squashtest.tm.service.configuration.ConfigurationService;
+import org.squashtest.tm.service.feature.FeatureManager;
+import org.squashtest.tm.service.feature.FeatureManager.Feature;
 import org.squashtest.tm.service.security.OAuth2ClientService;
+import org.squashtest.tm.service.user.UserManagerService;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
@@ -71,6 +74,12 @@ public class ConfigAdministrationController implements ApplicationContextAware, 
 
 	@Inject
 	private InternationalizationHelper messageSource;
+
+	@Inject
+	private FeatureManager features;
+
+	@Inject
+	private UserManagerService userManager;
 
 	/**
 	 * bundle context needed to create osgi event
@@ -113,11 +122,15 @@ public class ConfigAdministrationController implements ApplicationContextAware, 
 
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView administration() {
-
 		ModelAndView mav = new ModelAndView("page/administration/config");
+
 		mav.addObject("whiteList", configService.findConfiguration(WHITE_LIST));
 		mav.addObject("uploadSizeLimit", configService.findConfiguration(UPLOAD_SIZE_LIMIT));
 		mav.addObject("uploadImportSizeLimit", configService.findConfiguration(IMPORT_SIZE_LIMIT));
+
+		mav.addObject("caseInsensitiveLogin", features.isEnabled(Feature.CASE_INSENSITIVE_LOGIN));
+		mav.addObject("duplicateLogins", userManager.findAllDuplicateLogins());
+
 		return mav;
 	}
 

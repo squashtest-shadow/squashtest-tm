@@ -166,4 +166,10 @@ public interface UserManagerService {
 	 */
 	void checkLoginAvailability(String login) ;
 
+	/**
+	 * Logins are considered as duplicate when they are equal without case-sensitivity.
+	 * @return the list of duplicate logins / username
+	 */
+	List<String> findAllDuplicateLogins();
+
 }

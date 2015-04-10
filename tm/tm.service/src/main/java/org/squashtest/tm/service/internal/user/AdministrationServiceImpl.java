@@ -30,6 +30,7 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
 
+import org.hibernate.SessionFactory;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -98,6 +99,8 @@ public class AdministrationServiceImpl implements AdministrationService {
 	private AdministratorAuthenticationService adminAuthentService;
 
 	@Inject private FeatureManager features;
+
+	@Inject private SessionFactory sessionFactory;
 
 	private final static String WELCOME_MESSAGE_KEY = "WELCOME_MESSAGE";
 	private final static String LOGIN_MESSAGE_KEY = "LOGIN_MESSAGE";
@@ -461,6 +464,15 @@ public class AdministrationServiceImpl implements AdministrationService {
 		if ((caseInsensitive && userDao.findUserByCiLogin(login) != null) || (!caseInsensitive && userDao.findUserByLogin(login) != null)) {
 			throw new LoginAlreadyExistsException("User " + login + " cannot be created because it already exists");
 		}
+	}
+
+	/**
+	 * @see org.squashtest.tm.service.user.UserManagerService#findAllDuplicateLogins()
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<String> findAllDuplicateLogins() {
+		return sessionFactory.getCurrentSession().createQuery("select lower(u.login) from User u group by lower(u.login) having count(u.login) > 1").list();
 	}
 
 }

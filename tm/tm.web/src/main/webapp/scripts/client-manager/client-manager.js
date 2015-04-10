@@ -18,12 +18,13 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ "jquery", "squash.translator", "app/ws/squashtm.notification", "squashtable", "app/ws/squashtm.workspace",
+define([ "jquery", "squash.translator", "app/ws/squashtm.notification", "squashtable",
 		"jquery.squash.formdialog", "jquery.squash.confirmdialog" ], function($, translator, notification) {
 	"use strict;"
 
-	$(function() {
+	translator.load(['message.EmptyTableSelection']);
 
+	$(function() {
 		var squashSettings = {
 			functions : {
 				drawDeleteButton : function(template, cells) {

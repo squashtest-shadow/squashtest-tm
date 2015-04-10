@@ -1,23 +1,23 @@
 <%--
 
-    This file is part of the Squashtest platform.
-    Copyright (C) 2010 - 2015 Henix, henix.fr
+        This file is part of the Squashtest platform.
+        Copyright (C) 2010 - 2015 Henix, henix.fr
 
-    See the NOTICE file distributed with this work for additional
-    information regarding copyright ownership.
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
 
-    This is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Lesser General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
 
-    this software is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Lesser General Public License for more details.
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
 
-    You should have received a copy of the GNU Lesser General Public License
-    along with this software.  If not, see <http://www.gnu.org/licenses/>.
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 --%>
 <%@ page language="java" contentType="text/html; charset=utf-8"
@@ -38,6 +38,10 @@
 
 <layout:info-page-layout titleKey="label.ModifyConfig" isSubPaged="true" main="advanced-config-page">
   <jsp:attribute name="head">
+  <script type="text/javascript">
+  squashtm = squashtm || {};
+  squashtm.appRoot = '<c:url value="/" />';
+  </script>
   <comp:sq-css name="squash.grey.css" />
   </jsp:attribute>
 
@@ -65,7 +69,7 @@
 
   <div id="config-page-content" class="admin-message-page-content">
     <div id="config-info-panel" class="expand sq-tg">
-      <div class="th-head">
+      <div class="tg-head">
         <h3><f:message key="label.ModifyConfig" /></h3>
       </div>
       
@@ -93,6 +97,7 @@
       </div>
     </div>
   
+    <%-- oauth clients config --%>
     <div id="client-config-panel" class="sq-tg expand">
       <div class="tg-head">
         <h3><f:message key="label.ModifyClientConfig" /></h3>
@@ -174,6 +179,56 @@
         </div>
       </div>
     </div>
+    <%-- /oauth clients config --%>
+    
+    <%-- case sensitivity feature --%>
+    <div id="client-config-panel" class="sq-tg expand">
+      <div class="tg-head">
+        <h3><f:message key="title.loginCaseSensitivity" /></h3>
+      </div>
+      <div class="tg-body">
+        <div>
+          <div class="control-group">
+            <label class="control-label" for="case-insensitive-login"><f:message key="message.caseInsensitiveLogins" /></label>
+            <div class="controls">
+              <c:if test="${ empty duplicateLogins }">
+              <c:set var="checked" value="${ caseInsensitiveLogin ? 'checked=checked' : '' }" />
+              <input id="case-insensitive-login" type="checkbox" value="enabled" ${ checked } />
+              <span class="help-inline">&nbsp;</span>
+              </c:if>
+              
+              <c:if test="${ not empty duplicateLogins }">
+              <span>
+                <c:choose>
+                <c:when test="${ caseInsensitiveLogin }">
+                <f:message key="label.Enabled" />
+                </c:when>
+                <c:otherwise>
+                <f:message key="label.disabled" />
+                </c:otherwise>
+                </c:choose>
+              </span>
+              <span class="help-inline"><f:message key="message.removeDuplicateLogins" /></span>
+              </c:if>
+            </div>
+          </div>
+          
+          <c:if test="${ not empty duplicateLogins }">
+          <div class="control-group">
+            <label class="control-label" for="label"><f:message key="label.duplicateLogins" /></label>
+            <div class="controls">
+              <ul>
+                <c:forEach items="${ duplicateLogins }" var="login">
+                <li>${ login }</li>
+                </c:forEach>
+              </ul>
+            </div>
+          </div>
+        </div>
+        </c:if>
+      </div>
+    </div>
+    <%-- /case sensitivity feature --%>
   </div>
   </jsp:attribute>
 </layout:info-page-layout>

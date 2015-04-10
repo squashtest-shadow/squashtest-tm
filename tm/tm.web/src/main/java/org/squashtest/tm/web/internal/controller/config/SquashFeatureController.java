@@ -45,10 +45,12 @@ import org.squashtest.tm.web.internal.listener.SquashConfigContextExposer;
 @RequestMapping("/features")
 public class SquashFeatureController {
 	/**
-	 * This "monitor" should be synchronized when performing changes on the app scope to emulate transactions. Consider
-	 * using something higher level from java.concurrent when this class gets more complex.
+	 * This "monitor" should be synchronized when performing changes on the app
+	 * scope to emulate transactions. Consider using something higher level from
+	 * java.concurrent when this class gets more complex.
 	 * 
-	 * Note that we do **not** want to synchronize ServletContext for a potentially long time.
+	 * Note that we do **not** want to synchronize ServletContext for a
+	 * potentially long time.
 	 */
 	private final String monitor = "";
 
@@ -65,7 +67,8 @@ public class SquashFeatureController {
 	public void setMilestonesFeature(@RequestParam("enabled") boolean enabled) {
 		synchronized (monitor) {
 			Object prevState = applicationScope.getAttribute(SquashConfigContextExposer.MILESTONE_FEATURE_ENABLED);
-			// nobody should be able to use the feature while it is being turned on/off
+			// nobody should be able to use the feature while it is being turned
+			// on/off
 			applicationScope.setAttribute(SquashConfigContextExposer.MILESTONE_FEATURE_ENABLED, false);
 
 			try {
@@ -81,4 +84,11 @@ public class SquashFeatureController {
 
 	}
 
+	@RequestMapping(value = "/case-insensitive-login", method = RequestMethod.POST, params = "enabled")
+	@ResponseBody
+	@ResponseStatus(HttpStatus.NO_CONTENT)
+	@Secured("ROLE_ADMIN")
+	public void setCaseInsensitiveLoginFeature(@RequestParam("enabled") boolean enabled) {
+		featureManager.setEnabled(Feature.CASE_INSENSITIVE_LOGIN, enabled);
+	}
 }
