@@ -35,6 +35,4 @@ public interface MilestoneFinderService {
 	 */
 	List<Milestone> findAllVisibleToCurrentUser();
 
-	List<Milestone> findAllByIds(List<Long> milestoneIds);
-
 }
