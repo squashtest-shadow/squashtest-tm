@@ -20,6 +20,8 @@
  */
 package org.squashtest.tm.service.requirement;
 
+import java.util.List;
+
 import javax.validation.constraints.NotNull;
 
 import org.springframework.security.access.prepost.PostAuthorize;
@@ -28,6 +30,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.core.dynamicmanager.annotation.DynamicManager;
 import org.squashtest.tm.domain.requirement.RequirementStatus;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
+
 import static org.squashtest.tm.service.security.Authorizations.*;
 
 /**

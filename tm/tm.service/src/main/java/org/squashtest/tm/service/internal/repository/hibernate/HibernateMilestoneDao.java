@@ -24,7 +24,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import org.hibernate.CacheMode;
@@ -412,6 +411,14 @@ public class HibernateMilestoneDao extends HibernateEntityDao<Milestone> impleme
 		}
 		
 		return false;
+	}
+
+	@Override
+	public boolean isOneMilestoneAlreadyBindToAnotherRequirementVersion(List<Long> reqVIds, List<Long> milestoneIds) {
+		Query query= currentSession().getNamedQuery("milestone.otherRequirementVersionBindToOneMilestone");
+		query.setParameterList("reqVIds", reqVIds);
+		query.setParameterList("milestoneIds", milestoneIds);
+		return query.list().size() != 0;
 	}
 
 

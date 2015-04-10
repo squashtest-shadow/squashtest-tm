@@ -113,6 +113,10 @@ public interface CustomRequirementVersionManagerService {
 
 	Collection<Milestone> findAssociableMilestonesForMassModif(List<Long> reqVersionIds);
 
+	Collection<Long> findBindedMilestonesIdForMassModif(List<Long> reqVersionIds);
 
+	boolean haveSamePerimeter(List<Long> reqVersionIds);
+	
+	boolean isOneMilestoneAlreadyBindToAnotherRequirementVersion(List<Long> reqVIds, List<Long> milestoneIds);
 
 }

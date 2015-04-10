@@ -79,4 +79,6 @@ public interface MilestoneDao extends EntityDao<Milestone> {
 	void unbindAllObjectsForProjects(Long milestoneId, List<Long> projectIds);
 
 	void unbindAllObjectsForProject(Long id, Long projectId);
+
+	boolean isOneMilestoneAlreadyBindToAnotherRequirementVersion(List<Long> reqVIds, List<Long> milestoneIds);
 }

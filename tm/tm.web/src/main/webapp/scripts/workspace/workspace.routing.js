@@ -152,8 +152,10 @@ define([], function(){
 		'ie9sucks'								: root + '/reports/0/0/ie9',
 		'milestone.synchronize'					: root + '/administration/milestones/{\\d+}/synchronize/{\\d+}',
 		'search-tc.mass-change.associable-milestone'  : root + '/advanced-search/milestones/tc-mass-modif-associables/{\\d+}',
+		'search-tc.mass-change.data'  : root + '/advanced-search/milestones/tc-mass-modif-data/{\\d+}',
 		'search-tc.mass-change.bindmilestones' : root + '/advanced-search/tcs/{\\d+}/milestones',
 		'search-reqV.mass-change.associable-milestone'  : root + '/advanced-search/milestones/reqV-mass-modif-associables/{\\d+}',
+		'search-reqV.mass-change.data'  : root + '/advanced-search/milestones/reqV-mass-modif-data/{\\d+}',
 		'search-reqV.mass-change.bindmilestones' : root + '/advanced-search/reqVersions/{\\d+}/milestones',
 
 		// helper methods

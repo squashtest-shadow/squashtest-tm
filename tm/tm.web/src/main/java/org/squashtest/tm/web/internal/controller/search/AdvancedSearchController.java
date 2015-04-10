@@ -93,6 +93,7 @@ import org.squashtest.tm.web.internal.model.datatable.DataTableModelBuilder;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelConstants;
 import org.squashtest.tm.web.internal.model.datatable.DataTableMultiSorting;
 import org.squashtest.tm.web.internal.model.json.JsonProject;
+import org.squashtest.tm.web.internal.model.search.MilestoneMassModifData;
 import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
 import org.squashtest.tm.web.internal.model.viewmapper.NameBasedMapper;
 
@@ -594,24 +595,64 @@ public class AdvancedSearchController {
 	}
 
 	
-	
-	@RequestMapping(value = "/tcs/{testCaseIds}/milestones/{milestoneIds}", method = RequestMethod.POST)
+	@RequestMapping(value = "/milestones/tc-mass-modif-data/{testCaseIds}", method = RequestMethod.GET)
 	@ResponseBody
-	public void bindMilestonesToTcs(@PathVariable List<Long> testCaseIds, @PathVariable List<Long> milestoneIds) {
+	public MilestoneMassModifData getMilestoneMassModifDataForTc(@PathVariable List<Long> testCaseIds){
+		
+		MilestoneMassModifData data = new MilestoneMassModifData();
+		data.setCheckedIds(testCaseModificationService.findBindedMilestonesIdForMassModif(testCaseIds));
+		boolean hasData = testCaseModificationService.findAssociableMilestonesForMassModif(testCaseIds).size() != 0 ? true : false;
+		data.setHasData(hasData);
+		data.setSamePerimeter(testCaseModificationService.haveSamePerimeter(testCaseIds));
+		return data;
+	}
+	
+	
+	
+	@RequestMapping(value = "/milestones/reqV-mass-modif-data/{reqVersionIds}", method = RequestMethod.GET)
+	@ResponseBody
+	public MilestoneMassModifData getMilestoneMassModifDataForReqVersion(@PathVariable List<Long> reqVersionIds){
+		
+		MilestoneMassModifData data = new MilestoneMassModifData();
+		data.setCheckedIds(versionService.findBindedMilestonesIdForMassModif(reqVersionIds));
+		boolean hasData = versionService.findAssociableMilestonesForMassModif(reqVersionIds).size() != 0 ? true : false;
+		data.setHasData(hasData);
+		data.setSamePerimeter(versionService.haveSamePerimeter(reqVersionIds));
+		return data;
+	}
+	
+	
+	
+	
+	@RequestMapping(value = "/tcs/{testCaseIds}/milestones", method = RequestMethod.POST, params = "ids[]")
+	@ResponseBody
+	public void bindMilestonesToTcs(@PathVariable List<Long> testCaseIds, @RequestParam("ids[]") List<Long> milestoneIds) {
 
+		Collection<Long> bindedBefore = testCaseModificationService.findBindedMilestonesIdForMassModif(testCaseIds);
+		bindedBefore.removeAll(milestoneIds);
+		
 		for (Long testCaseId : testCaseIds) {
 			testCaseModificationService.bindMilestones(testCaseId, milestoneIds);
-		}
+			testCaseModificationService.unbindMilestones(testCaseId, bindedBefore);
+		}		
 	}
 	
 
-	@RequestMapping(value = "/reqVersions/{reqVIds}/milestones/{milestoneIds}", method = RequestMethod.POST)
+	@RequestMapping(value = "/reqVersions/{reqVIds}/milestones", method = RequestMethod.POST, params = "ids[]")
 	@ResponseBody
-	public void bindMilestonesToReqV(@PathVariable List<Long> reqVIds, @PathVariable List<Long> milestoneIds) {
-
+	public boolean bindMilestonesToReqV(@PathVariable List<Long> reqVIds, @RequestParam("ids[]") List<Long> milestoneIds) {
+		Collection<Long> bindedBefore = versionService.findBindedMilestonesIdForMassModif(reqVIds);
+		//was binded before but is not now so need to unbind
+		bindedBefore.removeAll(milestoneIds);	
+		
+		 boolean isOneVersionAlreadyBind = versionService.isOneMilestoneAlreadyBindToAnotherRequirementVersion(reqVIds, milestoneIds);
+		
 		for (Long reqVId : reqVIds) {
 			versionService.bindMilestones(reqVId, milestoneIds);
+			versionService.unbindMilestones(reqVId, bindedBefore);
 		}
+		
+		return isOneVersionAlreadyBind;
 	}
 	
 	

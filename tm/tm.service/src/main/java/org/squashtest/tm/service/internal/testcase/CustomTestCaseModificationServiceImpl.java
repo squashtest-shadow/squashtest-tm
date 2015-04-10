@@ -33,6 +33,7 @@ import javax.inject.Named;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
+import org.apache.commons.collections.Transformer;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,6 +54,7 @@ import org.squashtest.tm.domain.customfield.CustomFieldValue;
 import org.squashtest.tm.domain.customfield.RawValue;
 import org.squashtest.tm.domain.infolist.InfoListItem;
 import org.squashtest.tm.domain.milestone.Milestone;
+import org.squashtest.tm.domain.milestone.MilestoneStatus;
 import org.squashtest.tm.domain.project.GenericProject;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.testautomation.AutomatedTest;
@@ -84,6 +86,7 @@ import org.squashtest.tm.service.testcase.CustomTestCaseModificationService;
 import org.squashtest.tm.service.testcase.ParameterModificationService;
 import org.squashtest.tm.service.testcase.TestCaseImportanceManagerService;
 import org.squashtest.tm.service.testcase.TestCaseLibraryNavigationService;
+
 import static org.squashtest.tm.service.security.Authorizations.*;
 
 /**
@@ -679,8 +682,66 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 				milestones = new ArrayList<Milestone>(mil);
 			}
 		}
-
+		filterLockedStatus(milestones);
 		return milestones;
+	}
+	
+	
+	private void filterLockedStatus(Collection<Milestone> milestones){
+		CollectionUtils.filter(milestones, new Predicate() {		
+			@Override
+			public boolean evaluate(Object milestone) {
+
+				return !((Milestone) milestone).getStatus().equals(MilestoneStatus.LOCKED);
+			}
+		});
+	}
+	@Override
+	public Collection<Long> findBindedMilestonesIdForMassModif(List<Long> testCaseIds) {
+
+		Collection<Milestone> milestones = null;
+
+		for (Long testCaseId : testCaseIds){
+			Set<Milestone> mil = testCaseDao.findById(testCaseId).getMilestones();
+			if (milestones != null){
+				//keep only milestone that in ALL selected tc
+				milestones.retainAll(mil);
+			} else {
+				//populate the collection for the first time
+				milestones = new ArrayList<Milestone>(mil);
+			}
+		}
+		filterLockedStatus(milestones);
+	
+		return 	CollectionUtils.collect(milestones, new Transformer() {
+			
+			@Override
+			public Object transform(Object milestone) {
+				
+				return ((Milestone) milestone).getId();
+			}
+		});
+	}
+
+	
+	
+	@Override
+	public boolean haveSamePerimeter(List<Long> testCaseIds) {
+		if (testCaseIds.size() != 1) {
+
+			Long first = testCaseIds.remove(0);
+			List<Milestone> toCompare = testCaseDao.findById(first).getProject().getMilestones();
+
+			for (Long testCaseId : testCaseIds) {
+				List<Milestone> mil = testCaseDao.findById(testCaseId).getProject().getMilestones();
+
+				if (mil.size() != toCompare.size() || !mil.containsAll(toCompare)) {
+					return false;
+				}
+			}
+		}
+
+		return true;
 	}
 
 

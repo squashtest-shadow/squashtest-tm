@@ -23,7 +23,6 @@ package org.squashtest.tm.service.testcase;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.squashtest.tm.domain.customfield.CustomField;
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
@@ -170,4 +169,8 @@ public interface CustomTestCaseModificationService extends CustomTestCaseFinder 
 	
 	Collection<Milestone> findAssociableMilestonesForMassModif(List<Long> testCaseIds);
 
+
+	Collection<Long> findBindedMilestonesIdForMassModif(List<Long> testCaseIds);
+
+	boolean haveSamePerimeter(List<Long> testCaseIds);
 }

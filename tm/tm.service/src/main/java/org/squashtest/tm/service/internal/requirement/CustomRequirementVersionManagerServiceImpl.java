@@ -23,9 +23,13 @@ package org.squashtest.tm.service.internal.requirement;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 import javax.inject.Inject;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.Predicate;
+import org.apache.commons.collections.Transformer;
 import org.hibernate.SessionFactory;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
@@ -37,6 +41,7 @@ import org.squashtest.tm.core.foundation.collection.PagingBackedPagedCollectionH
 import org.squashtest.tm.core.foundation.collection.SortOrder;
 import org.squashtest.tm.domain.infolist.InfoListItem;
 import org.squashtest.tm.domain.milestone.Milestone;
+import org.squashtest.tm.domain.milestone.MilestoneStatus;
 import org.squashtest.tm.domain.requirement.Requirement;
 import org.squashtest.tm.domain.requirement.RequirementCriticality;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
@@ -44,10 +49,12 @@ import org.squashtest.tm.exception.InconsistentInfoListItemException;
 import org.squashtest.tm.service.advancedsearch.IndexationService;
 import org.squashtest.tm.service.infolist.InfoListItemFinderService;
 import org.squashtest.tm.service.internal.customfield.PrivateCustomFieldValueService;
+import org.squashtest.tm.service.internal.repository.MilestoneDao;
 import org.squashtest.tm.service.internal.repository.RequirementVersionDao;
 import org.squashtest.tm.service.milestone.MilestoneMembershipManager;
 import org.squashtest.tm.service.requirement.CustomRequirementVersionManagerService;
 import org.squashtest.tm.service.testcase.TestCaseImportanceManagerService;
+
 import static org.squashtest.tm.service.security.Authorizations.*;
 
 /**
@@ -58,6 +65,9 @@ import static org.squashtest.tm.service.security.Authorizations.*;
 @Transactional
 public class CustomRequirementVersionManagerServiceImpl implements CustomRequirementVersionManagerService {
 
+	@Inject
+	private MilestoneDao milestoneDao;
+	
 	@Inject
 	private RequirementVersionDao requirementVersionDao;
 
@@ -76,18 +86,19 @@ public class CustomRequirementVersionManagerServiceImpl implements CustomRequire
 	@Inject
 	private PrivateCustomFieldValueService customFieldValueService;
 
-
 	@Inject
 	private SessionFactory sessionFactory;
 
 	@Override
-	@PreAuthorize("hasPermission(#requirementId, 'org.squashtest.tm.domain.requirement.Requirement', 'READ')" + OR_HAS_ROLE_ADMIN)
-	public Requirement findRequirementById(long requirementId){
+	@PreAuthorize("hasPermission(#requirementId, 'org.squashtest.tm.domain.requirement.Requirement', 'READ')"
+			+ OR_HAS_ROLE_ADMIN)
+	public Requirement findRequirementById(long requirementId) {
 		return requirementVersionDao.findRequirementById(requirementId);
 	}
 
 	@Override
-	@PreAuthorize("hasPermission(#requirementId, 'org.squashtest.tm.domain.requirement.Requirement', 'CREATE')" + OR_HAS_ROLE_ADMIN)
+	@PreAuthorize("hasPermission(#requirementId, 'org.squashtest.tm.domain.requirement.Requirement', 'CREATE')"
+			+ OR_HAS_ROLE_ADMIN)
 	public void createNewVersion(long requirementId) {
 		Requirement req = requirementVersionDao.findRequirementById(requirementId);
 		RequirementVersion previousVersion = req.getCurrentVersion();
@@ -100,14 +111,15 @@ public class CustomRequirementVersionManagerServiceImpl implements CustomRequire
 	}
 
 	@Override
-	@PreAuthorize("hasPermission(#requirementId, 'org.squashtest.tm.domain.requirement.Requirement', 'CREATE')" + OR_HAS_ROLE_ADMIN)
+	@PreAuthorize("hasPermission(#requirementId, 'org.squashtest.tm.domain.requirement.Requirement', 'CREATE')"
+			+ OR_HAS_ROLE_ADMIN)
 	public void createNewVersion(long requirementId, Collection<Long> milestoneIds) {
 
 		createNewVersion(requirementId);
 		Requirement req = requirementVersionDao.findRequirementById(requirementId);
 
-		for (RequirementVersion version : req.getRequirementVersions()){
-			for (Long mid : milestoneIds){
+		for (RequirementVersion version : req.getRequirementVersions()) {
+			for (Long mid : milestoneIds) {
 				version.unbindMilestone(mid);
 			}
 		}
@@ -116,31 +128,35 @@ public class CustomRequirementVersionManagerServiceImpl implements CustomRequire
 
 	}
 
-
 	/**
 	 * @see org.squashtest.tm.service.requirement.CustomRequirementVersionManagerService#changeCriticality(long,
 	 *      org.squashtest.tm.domain.requirement.RequirementCriticality)
 	 */
 	@Override
-	@PreAuthorize("hasPermission(#requirementVersionId, 'org.squashtest.tm.domain.requirement.RequirementVersion', 'WRITE')" + OR_HAS_ROLE_ADMIN)
+	@PreAuthorize("hasPermission(#requirementVersionId, 'org.squashtest.tm.domain.requirement.RequirementVersion', 'WRITE')"
+			+ OR_HAS_ROLE_ADMIN)
 	public void changeCriticality(long requirementVersionId, RequirementCriticality criticality) {
 		RequirementVersion requirementVersion = requirementVersionDao.findById(requirementVersionId);
 		RequirementCriticality oldCriticality = requirementVersion.getCriticality();
 		requirementVersion.setCriticality(criticality);
-		testCaseImportanceManagerService.changeImportanceIfRequirementCriticalityChanged(requirementVersionId, oldCriticality);
+		testCaseImportanceManagerService.changeImportanceIfRequirementCriticalityChanged(requirementVersionId,
+				oldCriticality);
 	}
 
 	@Override
-	@PreAuthorize("hasPermission(#requirementVersionId, 'org.squashtest.tm.domain.requirement.RequirementVersion', 'WRITE')" + OR_HAS_ROLE_ADMIN)
+	@PreAuthorize("hasPermission(#requirementVersionId, 'org.squashtest.tm.domain.requirement.RequirementVersion', 'WRITE')"
+			+ OR_HAS_ROLE_ADMIN)
 	public void rename(long requirementVersionId, String newName) {
 		RequirementVersion v = requirementVersionDao.findById(requirementVersionId);
 
 		/*
-		 *  FIXME : there is a loophole here. What exactly means DuplicateNameException for requirements, that can have multiple names (one for each
-		 *  version) ? What happens when the library is displayed in milestone mode and that two versions of different requirements happens to have the
-		 *  same name and same milestone (hint : they would be displayed both anyway).
+		 * FIXME : there is a loophole here. What exactly means DuplicateNameException for requirements, that can have
+		 * multiple names (one for each version) ? What happens when the library is displayed in milestone mode and that
+		 * two versions of different requirements happens to have the same name and same milestone (hint : they would be
+		 * displayed both anyway).
 		 * 
-		 *    Because of this we are waiting for better specs on that matter, and the implementation here remains trivial in the mean time.
+		 * Because of this we are waiting for better specs on that matter, and the implementation here remains trivial
+		 * in the mean time.
 		 */
 
 		v.setName(newName.trim());
@@ -151,7 +167,8 @@ public class CustomRequirementVersionManagerServiceImpl implements CustomRequire
 	 *      org.squashtest.tm.core.foundation.collection.PagingAndSorting)
 	 */
 	@Override
-	@PreAuthorize("hasPermission(#requirementId, 'org.squashtest.tm.domain.requirement.Requirement', 'READ')" + OR_HAS_ROLE_ADMIN)
+	@PreAuthorize("hasPermission(#requirementId, 'org.squashtest.tm.domain.requirement.Requirement', 'READ')"
+			+ OR_HAS_ROLE_ADMIN)
 	@Transactional(readOnly = true)
 	public PagedCollectionHolder<List<RequirementVersion>> findAllByRequirement(long requirementId, PagingAndSorting pas) {
 		List<RequirementVersion> versions = requirementVersionDao.findAllByRequirement(requirementId, pas);
@@ -161,48 +178,53 @@ public class CustomRequirementVersionManagerServiceImpl implements CustomRequire
 	}
 
 	@Override
-	@PreAuthorize("hasPermission(#requirementId, 'org.squashtest.tm.domain.requirement.Requirement', 'READ')" + OR_HAS_ROLE_ADMIN)
+	@PreAuthorize("hasPermission(#requirementId, 'org.squashtest.tm.domain.requirement.Requirement', 'READ')"
+			+ OR_HAS_ROLE_ADMIN)
 	public List<RequirementVersion> findAllByRequirement(long requirementId) {
 		DefaultPagingAndSorting pas = new DefaultPagingAndSorting("versionNumber", true);
 		pas.setSortOrder(SortOrder.DESCENDING);
 		return findAllByRequirement(requirementId, pas).getPagedItems();
 	}
 
-	@PreAuthorize("hasPermission(#requirementVersionId, 'org.squashtest.tm.domain.requirement.RequirementVersion', 'WRITE')" + OR_HAS_ROLE_ADMIN)
-	public void changeCategory(long requirementVersionId, String categoryCode){
+	@PreAuthorize("hasPermission(#requirementVersionId, 'org.squashtest.tm.domain.requirement.RequirementVersion', 'WRITE')"
+			+ OR_HAS_ROLE_ADMIN)
+	public void changeCategory(long requirementVersionId, String categoryCode) {
 		RequirementVersion version = requirementVersionDao.findById(requirementVersionId);
 		InfoListItem category = infoListItemService.findByCode(categoryCode);
 
-		if (infoListItemService.isCategoryConsistent(version.getProject().getId(), categoryCode)){
+		if (infoListItemService.isCategoryConsistent(version.getProject().getId(), categoryCode)) {
 			version.setCategory(category);
-		}
-		else{
+		} else {
 			throw new InconsistentInfoListItemException("requirementCategory", categoryCode);
 		}
 	}
 
 	@Override
 	@Transactional(readOnly = true)
-	@PreAuthorize("hasPermission(#versionId, 'org.squashtest.tm.domain.requirement.RequirementVersion', 'READ')" + OR_HAS_ROLE_ADMIN)
+	@PreAuthorize("hasPermission(#versionId, 'org.squashtest.tm.domain.requirement.RequirementVersion', 'READ')"
+			+ OR_HAS_ROLE_ADMIN)
 	public Collection<Milestone> findAllMilestones(long versionId) {
 		return milestoneManager.findMilestonesForRequirementVersion(versionId);
 	}
 
 	@Override
 	@Transactional(readOnly = true)
-	@PreAuthorize("hasPermission(#versionId, 'org.squashtest.tm.domain.requirement.RequirementVersion', 'READ')" + OR_HAS_ROLE_ADMIN)
+	@PreAuthorize("hasPermission(#versionId, 'org.squashtest.tm.domain.requirement.RequirementVersion', 'READ')"
+			+ OR_HAS_ROLE_ADMIN)
 	public Collection<Milestone> findAssociableMilestones(long versionId) {
 		return milestoneManager.findAssociableMilestonesToRequirementVersion(versionId);
 	}
 
 	@Override
-	@PreAuthorize("hasPermission(#versionId, 'org.squashtest.tm.domain.requirement.RequirementVersion', 'WRITE')" + OR_HAS_ROLE_ADMIN)
+	@PreAuthorize("hasPermission(#versionId, 'org.squashtest.tm.domain.requirement.RequirementVersion', 'WRITE')"
+			+ OR_HAS_ROLE_ADMIN)
 	public void bindMilestones(long versionId, Collection<Long> milestoneIds) {
 		milestoneManager.bindRequirementVersionToMilestones(versionId, milestoneIds);
 	}
 
 	@Override
-	@PreAuthorize("hasPermission(#versionId, 'org.squashtest.tm.domain.requirement.RequirementVersion', 'WRITE')" + OR_HAS_ROLE_ADMIN)
+	@PreAuthorize("hasPermission(#versionId, 'org.squashtest.tm.domain.requirement.RequirementVersion', 'WRITE')"
+			+ OR_HAS_ROLE_ADMIN)
 	public void unbindMilestones(long versionId, Collection<Long> milestoneIds) {
 		milestoneManager.unbindRequirementVersionFromMilestones(versionId, milestoneIds);
 	}
@@ -211,18 +233,79 @@ public class CustomRequirementVersionManagerServiceImpl implements CustomRequire
 	public Collection<Milestone> findAssociableMilestonesForMassModif(List<Long> reqVersionIds) {
 		Collection<Milestone> milestones = null;
 
-		for (Long reqVersionId : reqVersionIds){
+		for (Long reqVersionId : reqVersionIds) {
 			List<Milestone> mil = requirementVersionDao.findById(reqVersionId).getProject().getMilestones();
-			if (milestones != null){
-				//keep only milestone that in ALL selected requirementVersion
+			if (milestones != null) {
+				// keep only milestone that in ALL selected requirementVersion
 				milestones.retainAll(mil);
 			} else {
-				//populate the collection for the first time
+				// populate the collection for the first time
 				milestones = new ArrayList<Milestone>(mil);
 			}
 		}
-
+		filterLockedStatus(milestones);
 		return milestones;
 	}
+
+	private void filterLockedStatus(Collection<Milestone> milestones) {
+		CollectionUtils.filter(milestones, new Predicate() {
+			@Override
+			public boolean evaluate(Object milestone) {
+
+				return !((Milestone) milestone).getStatus().equals(MilestoneStatus.LOCKED);
+			}
+		});
+	}
+
+	@Override
+	public Collection<Long> findBindedMilestonesIdForMassModif(List<Long> reqVersionIds) {
+		Collection<Milestone> milestones = null;
+
+		for (Long reqVersionId : reqVersionIds) {
+			Set<Milestone> mil = requirementVersionDao.findById(reqVersionId).getMilestones();
+			if (milestones != null) {
+				// keep only milestone that in ALL selected requirementVersion
+				milestones.retainAll(mil);
+			} else {
+				// populate the collection for the first time
+				milestones = new ArrayList<Milestone>(mil);
+			}
+		}
+		filterLockedStatus(milestones);
+		return CollectionUtils.collect(milestones, new Transformer() {
+
+			@Override
+			public Object transform(Object milestone) {
+
+				return ((Milestone) milestone).getId();
+			}
+		});
+	}
+
+	@Override
+	public boolean haveSamePerimeter(List<Long> reqVersionIds) {
+
+		if (reqVersionIds.size() != 1) {
+
+			Long first = reqVersionIds.remove(0);
+			List<Milestone> toCompare = requirementVersionDao.findById(first).getProject().getMilestones();
+
+			for (Long reqVersionId : reqVersionIds) {
+				List<Milestone> mil = requirementVersionDao.findById(reqVersionId).getProject().getMilestones();
+
+				if (mil.size() != toCompare.size() || !mil.containsAll(toCompare)) {
+					return false;
+				}
+			}
+		}
+
+		return true;
+	}
+
+	@Override
+	public boolean isOneMilestoneAlreadyBindToAnotherRequirementVersion(List<Long> reqVIds, List<Long> milestoneIds) {
+		return milestoneDao.isOneMilestoneAlreadyBindToAnotherRequirementVersion(reqVIds, milestoneIds);
+		
+	};
 
 }

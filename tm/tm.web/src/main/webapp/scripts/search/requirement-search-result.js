@@ -20,13 +20,13 @@
  */
 define([ "jquery", "backbone", "underscore", "app/util/StringUtil","workspace.routing","workspace.event-bus",
         "./RequirementSearchResultTable", "squash.translator", "app/ws/squashtm.notification",
-        "workspace.projects", 
+        "workspace.projects", "./milestone-mass-modif-popup", 
         "jquery.squash", "jqueryui",
 		"jquery.squash.togglepanel", "squashtable",
 		"jquery.squash.oneshotdialog", "jquery.squash.messagedialog",
 		"jquery.squash.confirmdialog", "jquery.squash.milestoneDialog" ], 
 		function($, Backbone, _, StringUtil, routing, eventBus, RequirementSearchResultTable, 
-				translator, notification, projects) {
+				translator, notification, projects, milestoneMassModif) {
 	
 	var RequirementSearchResultPanel = Backbone.View.extend({
 
@@ -47,6 +47,9 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil","workspace.ro
 			}
 			this.model = model;
 			new RequirementSearchResultTable(model, this.isAssociation, this.associationType, this.associationId);
+			this.milestoneMassModif = new milestoneMassModif();
+			this.initTableCallback();
+			
 		},
 
 		events : {
@@ -62,9 +65,17 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil","workspace.ro
 		},
 
 	
-		
+		initTableCallback : function(){
+			//little hack to select only previously selected requirement version and not every requirement version
+			var self = this;
+			var table = $('#requirement-search-result-table').squashTable();
+			table.drawcallbacks.push(function() {  
+				table.deselectRows();
+			self._restoreSelect();}
+			);
+		},
 		editMilestone : function(){
-			
+			var self = this;
 			var table = $('#requirement-search-result-table').squashTable();
 			var ids = table.getSelectedIds(); //ids of requirement
 			if (this._containsDuplicate(ids)){
@@ -76,61 +87,23 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil","workspace.ro
 				$.squash.openMessage(warn.errorTitle, warn.errorMessage);	
 			} else {
 				
-				if (! this.addModifyMilestoneDialog){
-					this.initModifyMilestoneDialog();
-				} else {
-					this.updateMilestoneDialog();
-				}
-				
-				this.addModifyMilestoneDialog.milestoneDialog('open');
-			}
+				var requirementVersionIds = this._getRequirementVersionIdSelectedTableRowList(table);
 			
-			
+				var dialogOptions = {
+						tableSource : routing.buildURL('search-reqV.mass-change.associable-milestone', requirementVersionIds),
+						milestonesURL : routing.buildURL('search-reqV.mass-change.bindmilestones', requirementVersionIds), 
+						requirementVersionIds : requirementVersionIds,
+						dataURL : routing.buildURL('search-reqV.mass-change.data', requirementVersionIds),
+						searchTableCallback : function(){
+							var table = $('#requirement-search-result-table').squashTable();
+							self._saveSelect();//little hack to keep the real selection that'll be restored by callback in initTableCallback 
+			                table._fnAjaxUpdate();
+						}
+					};
+				this.milestoneMassModif.open(dialogOptions);
+			}	
 		},
 
-	
-		initModifyMilestoneDialog : function() {
-
-			var self = this;
-			
-			var table = $('#requirement-search-result-table').squashTable();
-			var ids = this._getRequirementVersionIdSelectedTableRowList(table);
-		
-			var dialogOptions = {
-					tableSource : routing.buildURL('search-reqV.mass-change.associable-milestone', ids),
-					milestonesURL : routing.buildURL('search-reqV.mass-change.bindmilestones', ids), 
-					identity : ""
-				};
-		
-			var addModifyMilestoneDialog = $('.bind-milestone-dialog');
-            addModifyMilestoneDialog.milestoneDialog(dialogOptions);
-			this.addModifyMilestoneDialog = addModifyMilestoneDialog;
-			
-			
-			eventBus.on("node.bindmilestones", function(){
-				var table = $('#requirement-search-result-table').squashTable();
-				
-				table.drawcallbacks.push(function() {   table.deselectRows();
-				self._restoreSelect();});
-				self._saveSelect();
-                table._fnAjaxUpdate();
-
-			});
-			
-		},
-		
-		updateMilestoneDialog : function(){
-			var self = this;	
-			var table = $('#requirement-search-result-table').squashTable();
-			var ids = this._getRequirementVersionIdSelectedTableRowList(table);
-			
-			var tab = $('.bind-milestone-dialog-table').squashTable();
-			tab.fnSettings().sAjaxSource = routing.buildURL('search-reqV.mass-change.associable-milestone', ids);
-			var addModifyMilestoneDialog = $('.bind-milestone-dialog').milestoneDialog();
-			addModifyMilestoneDialog.data().milestoneDialog.options.milestonesURL = routing.buildURL('search-reqV.mass-change.bindmilestones', ids);
-	
-		},
-		
 		associateSelection : function(){
 			var table = $('#requirement-search-result-table').dataTable();
 			var ids = table.squashTable().getSelectedIds();

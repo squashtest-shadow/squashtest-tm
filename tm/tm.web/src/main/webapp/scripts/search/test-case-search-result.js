@@ -20,11 +20,11 @@
  */
 define([ "jquery", "backbone", "underscore", "app/util/StringUtil", "workspace.routing","workspace.event-bus",
         "./TestCaseSearchResultTable", "squash.translator", "app/ws/squashtm.notification",
-        "squash.configmanager", "workspace.projects" , "jquery.squash", "jqueryui",
+        "squash.configmanager", "workspace.projects" , "./milestone-mass-modif-popup", "jquery.squash", "jqueryui",
 		"jquery.squash.togglepanel", "squashtable",
 		"jquery.squash.oneshotdialog", "jquery.squash.messagedialog",
 		"jquery.squash.confirmdialog", "jquery.squash.milestoneDialog" ], 
-		function($, Backbone, _, StringUtil, routing, eventBus, TestCaseSearchResultTable, translator, notification, confman, projects) {
+		function($, Backbone, _, StringUtil, routing, eventBus, TestCaseSearchResultTable, translator, notification, confman, projects, milestoneMassModif) {
 	
 	var TestCaseSearchInputPanel = Backbone.View.extend({
 
@@ -44,6 +44,7 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil", "workspace.r
 			}
 			this.model = model;		
 			new TestCaseSearchResultTable(model, this.domain, this.isAssociation, this.associationType, this.associationId);
+			this.milestoneMassModif = new milestoneMassModif();
 		},
 
 		events : {
@@ -172,13 +173,20 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil", "workspace.r
 		},
 		
 		editMilestone : function(){
-			if (! this.addModifyMilestoneDialog){
-				this.initModifyMilestoneDialog();
-			} else {
-				this.updateMilestoneDialog();
-			}
-	
-			this.addModifyMilestoneDialog.milestoneDialog('open');
+			var self = this;
+			var table = $('#test-case-search-result-table').squashTable();
+			var ids = table.getSelectedIds();
+			var dialogOptions = {
+					tableSource : routing.buildURL('search-tc.mass-change.associable-milestone', ids),
+					milestonesURL : routing.buildURL('search-tc.mass-change.bindmilestones', ids), 
+					requirementVersionIds : ids,
+					dataURL : routing.buildURL('search-tc.mass-change.data', ids),
+					searchTableCallback : function(){
+						var table = $('#test-case-search-result-table').squashTable();
+		                table._fnAjaxUpdate();
+					}
+				};
+			this.milestoneMassModif.open(dialogOptions);
 		},
 		
 		validateSelection : function(dataTable) {
