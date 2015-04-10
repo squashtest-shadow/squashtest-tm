@@ -173,11 +173,13 @@ define(
 				$td.append(strmenu);
 
 				// if the test case is deleted : just disable the whole thing
+				// Plot twist  : Launch button has to be greyed
 				if (isTcDel) {
 					$td.find('.execute-arrow').addClass('disabled-transparent');
+					$("#test-suite-execution-button").addClass('disabled-transparent');
 				}
 
-				// if the test case is manual : configure a button menu,
+				// if the test case is manual : configure a button menu, 
 				// althgouh we don't want it
 				// to be skinned as a regular jquery button
 				else if (isManual) {
