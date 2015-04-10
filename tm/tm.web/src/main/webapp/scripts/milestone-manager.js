@@ -390,8 +390,9 @@ require(["common"], function(){
 			$("#mil2").attr("disabled", !mil2.bindableToObject);
 			$("#union").attr("disabled", !mil1.bindableToObject || !mil2.bindableToObject);
 			$("#perim").attr("disabled", true);
-			writeMilestonesWarning(mil1, mil2, true);
 			writeMilestonesLabel();
+			writeMilestonesWarning(mil1, mil2, true);
+			
 
 		}
 
@@ -403,8 +404,9 @@ require(["common"], function(){
 			$("#mil1").attr("disabled", mil1CantBeTarget);
 			$("#mil2").attr("disabled", mil2CantBeTarget);
 			$("#union").attr("disabled", mil1CantBeTarget || mil2CantBeTarget);
-			writeMilestonesWarning(mil1, mil2, false);
 			writeMilestonesLabel();
+			writeMilestonesWarning(mil1, mil2, false);
+		
 		}
 		
 		function writeMilestonesWarning(mil1, mil2, isAdmin){
@@ -413,16 +415,19 @@ require(["common"], function(){
 			$("#mil2warn").text("");
 			$("#unionwarn").text("");
 			
-	    	milestoneWarn(mil1, $("#mil1warn"), isAdmin);
-	    	milestoneWarn(mil2, $("#mil2warn"), isAdmin);
+	    	milestoneWarn(mil1, $("#mil1Label") , $("#mil1warn"), isAdmin);
+	    	milestoneWarn(mil2, $("#mil2Label"), $("#mil2warn"), isAdmin);
 	    		
 		}
 		
-		function milestoneWarn(milestone, $text, isAdmin){
+		function milestoneWarn(milestone, $milestone, $text, isAdmin){
 		 	if (!isAdmin && milestone.range == trans.rangeGlobal){
+		 		$milestone.text($milestone.text().split("(")[0]);
 		 		$text.text(trans.rangeForbid);
+		 		$("#unionLabel").text($("#unionLabel").text().split("(")[0]);
 				$("#unionwarn").text(trans.unionRangeForbid);
 			} else if (!milestone.bindableToObject){
+				$milestone.text($milestone.text().split("(")[0]);
 				$text.text(trans.statusForbid);
 				$("#unionwarn").text(trans.unionStatusForbid);
 			}

@@ -308,34 +308,37 @@
      <table>
           <tr>
 <td><input id="mil1" type="radio" name="synchro"></td>
-<td><span id="mil1Label"/></td>
-<td><span id="mil1warn"/></td>
+<td><span id="mil1Label"></span>
+<span id="mil1warn"></span></td>
           </tr>
         
      
          <tr>
 <td><input id="mil2" type="radio" name="synchro"></td>
-<td><span id="mil2Label"/></td>
-<td><span id="mil2warn"/></td>
+<td><span id="mil2Label"></span>
+<span id="mil2warn"> </span>
+</td>
          </tr>  
 
           <tr>
 <td><input id="union" type="radio" name="synchro" ></td>
-<td><span id="unionLabel"/></td>
-<td><span id="unionwarn"/></td>
+<td><span id="unionLabel"></span>
+<span id="unionwarn"></span></td>
           </tr>   
           
           
           <tr>
         <td><input id="perim" type="checkbox" ></td>
-<td><f:message key="label.milestone.synchronize.extendperim"/></td>
+<td><f:message key="label.milestone.synchronize.extendperim1"/>
+</br>
+<f:message key="label.milestone.synchronize.extendperim2"/></td>
    </tr>
        
         </table>
     
     
       <div class="popup-dialog-buttonpane">
-        <input type="button" value="${addLabel}" data-def="mainbtn, evt=confirm"/>
+        <input type="button" value="${confirmLabel}" data-def="mainbtn, evt=confirm"/>
         <input type="button" value="${cancelLabel}" data-def="evt=cancel"/>
       </div>     
 </div>
