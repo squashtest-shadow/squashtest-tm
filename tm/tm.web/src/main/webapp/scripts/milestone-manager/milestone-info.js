@@ -527,6 +527,7 @@ $("#unbind-project-popup").confirmDialog().on('confirmdialogconfirm', function()
 		});
 
 		$("#unbind-project-button").on('click', function(){
+			var bindedTable = $("#projects-table").squashTable();
 			var ids = bindedTable.getSelectedIds();
 
 			if (ids.length>0){
