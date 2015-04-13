@@ -28,7 +28,7 @@ define([ "jquery", "backbone", "underscore", "workspace.routing", "squash.transl
 
 			this.dialog = this.$el.confirmDialog({
 				autoOpen : false,
-				width : 800,
+				width : 800
 			});
 			this.initTable();
 			this.initBlanketSelectors();
@@ -38,7 +38,7 @@ define([ "jquery", "backbone", "underscore", "workspace.routing", "squash.transl
 		
 		events : {
 			"confirmdialogcancel" : "cancel",
-			"confirmdialogconfirm" : "confirm",
+			"confirmdialogconfirm" : "confirm"
 
 		},
 		
@@ -64,7 +64,7 @@ define([ "jquery", "backbone", "underscore", "workspace.routing", "squash.transl
 
 			this.dialog = this.$el.confirmDialog({
 				autoOpen : false,
-				width : 800,
+				width : 800
 			});
 			this._openDialog();
 		},
@@ -86,7 +86,7 @@ define([ "jquery", "backbone", "underscore", "workspace.routing", "squash.transl
 		initTable : function(){
 			var table = this.$el.find('.bind-milestone-dialog-table');
 			var tblCnf = {
-					bServerSide : false,
+					bServerSide : false
 				},
 			squashCnf = {};	
 			table.squashTable(tblCnf, squashCnf);
@@ -111,10 +111,10 @@ define([ "jquery", "backbone", "underscore", "workspace.routing", "squash.transl
 
 		},
 		initData : function(){
-			self = this;
+			var self = this;
 			$.ajax({
 				type: "GET",
-				url : this.options.dataURL,
+				url : this.options.dataURL
 			}).done(function(data) {
 				self.data = data;
 				self._afterDataInit();
@@ -146,7 +146,7 @@ define([ "jquery", "backbone", "underscore", "workspace.routing", "squash.transl
 			$.ajax({
 				url : this.options.milestonesURL,
 				type : 'POST',
-				data : data,
+				data : data
 			}).success(function(oneVersionAlreadyBind){
 				self.refreshSearchTable();
 				if (oneVersionAlreadyBind){
@@ -166,21 +166,21 @@ define([ "jquery", "backbone", "underscore", "workspace.routing", "squash.transl
 		},
 		
          checkBindedMilestone : function(){
-        	 this._check(this.data.checkedIds);
+ 			this._check(this.data.checkedIds);
 
          },
          
          _check: function(ids){
-        	 var tab = $('.bind-milestone-dialog-table').squashTable();
- 			var checks = tab.find('>tbody>tr>td.bind-milestone-dialog-check input');
- 			checks.each(function(){
- 				var r = this.parentNode.parentNode;
- 				var id = tab.fnGetData(r)['entity-id'];
- 				if (_.contains(ids, id)){
- 					$(this).prop('checked', true);
- 				}
- 			});
-         },
+ 			var tab = $('.bind-milestone-dialog-table').squashTable();
+			var checks = tab.find('>tbody>tr>td.bind-milestone-dialog-check input');
+			checks.each(function(){
+				var r = this.parentNode.parentNode;
+				var id = tab.fnGetData(r)['entity-id'];
+				if (_.contains(ids, id)){
+					$(this).prop('checked', true);
+					}
+				});
+			},
 		
 		cleanup : function() {
 			this.$el.addClass("not-displayed");
