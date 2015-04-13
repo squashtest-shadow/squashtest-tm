@@ -42,7 +42,7 @@ define([ "jquery", "app/ws/squashtm.toggleworkspace", "jquery.squash.squashbutto
 				contextualList.each(function() {
 					var jqThis = $(this);
 					if (jqThis.hasClass("ui-dialog-content")) {
-						jqThis.dialog("destroy").remove();
+						jqThis.formDialog("destroy").remove();
 					}
 				});
 			}

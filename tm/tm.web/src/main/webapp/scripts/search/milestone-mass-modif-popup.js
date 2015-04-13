@@ -166,12 +166,12 @@ define([ "jquery", "backbone", "underscore", "workspace.routing", "squash.transl
 		},
 		
          checkBindedMilestone : function(){
- 			this._check(this.data.checkedIds);
+			this._check(this.data.checkedIds);
 
          },
          
          _check: function(ids){
- 			var tab = $('.bind-milestone-dialog-table').squashTable();
+			var tab = $('.bind-milestone-dialog-table').squashTable();
 			var checks = tab.find('>tbody>tr>td.bind-milestone-dialog-check input');
 			checks.each(function(){
 				var r = this.parentNode.parentNode;
@@ -186,7 +186,7 @@ define([ "jquery", "backbone", "underscore", "workspace.routing", "squash.transl
 			this.$el.addClass("not-displayed");
 			this.$el.find('#warning-mass-modif').text("");
 			// if we destroy twice, jqui blows up
-			this.$el.hasClass("ui-dialog-content") && this.$el.confirmDialog("destroy");
+			this.$el.hasClass("ui-dialog-content") && this.$el.confirmDialog("destroy");/* jshint expr: true */
 		},
 
 		remove : function() {
