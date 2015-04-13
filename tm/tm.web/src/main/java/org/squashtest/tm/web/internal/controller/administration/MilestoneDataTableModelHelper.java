@@ -20,6 +20,9 @@
  */
 package org.squashtest.tm.web.internal.controller.administration;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -68,8 +71,9 @@ public class MilestoneDataTableModelHelper  extends DataTableModelBuilder<Milest
 		row.put("owner", ownerToPrint(item));
 		row.put("status", i18nStatus(item.getStatus()));
 		row.put("binded-to-objects",messageSource.internationalizeYesNo(item.isBoundToObjects() ,locale));
-		row.put("endDate",  messageSource.localizeDate(item.getEndDate(), locale));
-		row.put("created-on", messageSource.localizeDate(auditable.getCreatedOn(), locale));
+		row.put("endDate", messageSource.localizeDate(item.getEndDate(), locale).substring(0, 10));
+		// Could be done with a SimpleDateFormat but substring works very well.
+		row.put("created-on", messageSource.localizeDate(auditable.getCreatedOn(), locale).substring(0, 10));
 		row.put("created-by", auditable.getCreatedBy());
 		row.put("last-mod-on", messageSource.localizeDate(auditable.getLastModifiedOn(), locale));
 		row.put("last-mod-by", auditable.getLastModifiedBy());

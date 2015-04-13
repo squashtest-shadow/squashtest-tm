@@ -367,7 +367,8 @@ public class UserAdministrationController extends PartyControllerSupport {
 			result.put("user-firstname", item.getFirstName());
 			result.put("user-lastname", item.getLastName());
 			result.put("user-email", item.getEmail());
-			result.put("user-created-on", formatDate(newP.getCreatedOn(), locale));
+			// Could be done with a SimpleDateFormat but substring works very well.
+			result.put("user-created-on", formatDate(newP.getCreatedOn(), locale).substring(0, 10));
 			result.put("user-created-by", formatString(newP.getCreatedBy(), locale));
 			result.put("user-modified-on", formatDate(newP.getLastModifiedOn(), locale));
 			result.put("user-modified-by", formatString(newP.getLastModifiedBy(), locale));
