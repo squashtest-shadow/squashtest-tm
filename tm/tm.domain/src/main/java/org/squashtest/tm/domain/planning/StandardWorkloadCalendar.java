@@ -50,7 +50,7 @@ public class StandardWorkloadCalendar implements WorkloadCalendar {
 	public float getWorkload(LocalDate start, LocalDate end){
 		
 		if (end.isBefore(start)){
-			throw new IllegalArgumentException("the end date should not predate the start date");
+			throw new IllegalArgumentException("dashboard.error.date");
 		}
 		
 		LocalDate lstart = skipWeekendToMonday(start);

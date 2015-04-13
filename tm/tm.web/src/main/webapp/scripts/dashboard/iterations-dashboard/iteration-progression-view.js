@@ -249,6 +249,7 @@ define([
 			
 			var model = this._getModelData();
 			
+			// 
 			var msg = getMessage(model.errors[0]);
 			this.$el.find('.cumulative-progression-errormsg').text(msg);
 			
