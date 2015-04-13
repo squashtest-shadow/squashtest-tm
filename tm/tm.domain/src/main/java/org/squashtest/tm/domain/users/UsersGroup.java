@@ -33,7 +33,7 @@ public class UsersGroup {
 	/**
 	 * Qualified name of User group
 	 */
-	public static final String USER = "squashtest.authz.group.tm.Admin";
+	public static final String USER = "squashtest.authz.group.tm.User";
 	/**
 	 * Qualified name of Admin group
 	 */

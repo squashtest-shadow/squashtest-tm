@@ -96,24 +96,15 @@ public class UserAdministrationController extends PartyControllerSupport {
 	@Inject
 	private AuthenticationProviderContext authenticationProviderContext;
 
-	private DatatableMapper<String> userMapper = new NameBasedMapper(10)
-	.map("user-id", "id")
-	.map("user-active", "active")
-	.map("user-login", "login")
-	.map("user-group", "group")
-	.map("user-firstname", "firstName")
-	.map("user-lastname", "lastName")
-	.map("user-email", "email")
-	.map("user-created-on", "audit.createdOn")
-	.map("user-created-by", "audit.createdBy")
-	.map("user-modified-on", "audit.lastModifiedOn")
-	.map("user-modified-by", "audit.lastModifiedBy");
+	private DatatableMapper<String> userMapper = new NameBasedMapper(10).map("user-id", "id")
+			.map("user-active", "active").map("user-login", "login").map("user-group", "group")
+			.map("user-firstname", "firstName").map("user-lastname", "lastName").map("user-email", "email")
+			.map("user-created-on", "audit.createdOn").map("user-created-by", "audit.createdBy")
+			.map("user-modified-on", "audit.lastModifiedOn").map("user-modified-by", "audit.lastModifiedBy");
 
-	private DatatableMapper<String> permissionMapper = new NameBasedMapper(2)
-	.mapAttribute(DataTableModelConstants.PROJECT_NAME_KEY,"project.name", ProjectPermission.class)
-	.mapAttribute("permission-name", "permissionGroup.qualifiedName", ProjectPermission.class);
-
-
+	private DatatableMapper<String> permissionMapper = new NameBasedMapper(2).mapAttribute(
+			DataTableModelConstants.PROJECT_NAME_KEY, "project.name", ProjectPermission.class).mapAttribute(
+					"permission-name", "permissionGroup.qualifiedName", ProjectPermission.class);
 
 	@RequestMapping(value = "/list", method = RequestMethod.GET)
 	public ModelAndView getUserList(Locale locale) {
@@ -130,7 +121,8 @@ public class UserAdministrationController extends PartyControllerSupport {
 		mav.addObject("usersGroupList", list);
 		mav.addObject("userList", model.getAaData());
 
-		PagedCollectionHolder<List<Team>> teams = teamFinderService.findAllFiltered(TEAMS_DEFAULT_PAGING, TEAMS_DEFAULT_FILTERING);
+		PagedCollectionHolder<List<Team>> teams = teamFinderService.findAllFiltered(TEAMS_DEFAULT_PAGING,
+				TEAMS_DEFAULT_FILTERING);
 		mav.addObject("pagedTeams", teams);
 		mav.addObject("teamsPageSize", TEAMS_DEFAULT_PAGING.getPageSize());
 		return mav;
@@ -191,8 +183,7 @@ public class UserAdministrationController extends PartyControllerSupport {
 		return new DataTableSorting(params, mapper);
 	}
 
-
-	@RequestMapping(value = USER_URLS +"/deactivate", method = RequestMethod.POST)
+	@RequestMapping(value = USER_URLS + "/deactivate", method = RequestMethod.POST)
 	public @ResponseBody
 	void deactivateUsers(@PathVariable("userIds") List<Long> userIds) {
 		adminService.deactivateUsers(userIds);
@@ -200,13 +191,13 @@ public class UserAdministrationController extends PartyControllerSupport {
 
 	@RequestMapping(value = USER_URLS + "/activate", method = RequestMethod.POST)
 	public @ResponseBody
-	void activateUsers(@PathVariable("userIds") List<Long> userIds){
+	void activateUsers(@PathVariable("userIds") List<Long> userIds) {
 		adminService.activateUsers(userIds);
 	}
 
 	@RequestMapping(value = USER_URLS, method = RequestMethod.DELETE)
 	public @ResponseBody
-	void deleteUsers(@PathVariable("userIds") List<Long> userIds){
+	void deleteUsers(@PathVariable("userIds") List<Long> userIds) {
 		adminService.deleteUsers(userIds);
 	}
 
@@ -283,7 +274,8 @@ public class UserAdministrationController extends PartyControllerSupport {
 		if (!currentProviderFeatures().isManagedPassword()) {
 			adminService.createAuthentication(userId, form.getPassword());
 		}
-		// when password are managed, we should not create internal authentications.
+		// when password are managed, we should not create internal
+		// authentications.
 	}
 
 	// *********************************************************************************
@@ -352,10 +344,18 @@ public class UserAdministrationController extends PartyControllerSupport {
 		@Override
 		public Map<?, ?> buildItemData(User item) {
 			AuditableMixin newP = (AuditableMixin) item;
-			String group = messageSource.internationalize("user.account.group." + item.getGroup().getQualifiedName()
-					+ ".label", locale);
-			if (group == null) {
-				group = item.getGroup().getSimpleName();
+			String group;
+
+			if (item.getGroup() == null) {
+				// just in case there is no group, even though it should not
+				// happen. otherwise, breaks user admin page.
+				group = "";
+			} else {
+				group = messageSource.internationalize("user.account.group." + item.getGroup().getQualifiedName()
+						+ ".label", locale);
+				if (group == null) {
+					group = item.getGroup().getSimpleName();
+				}
 			}
 
 			Map<Object, Object> result = new HashMap<Object, Object>();
@@ -375,7 +375,6 @@ public class UserAdministrationController extends PartyControllerSupport {
 			result.put("empty-delete-holder", null);
 
 			return result;
-
 		}
 	}
 

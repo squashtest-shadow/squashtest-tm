@@ -23,7 +23,7 @@ package org.squashtest.tm.service.internal.security;
 import org.springframework.security.provisioning.UserDetailsManager;
 import org.squashtest.tm.service.security.UserDetailsService;
 
-public interface SquashUserDetailsManager extends UserDetailsManager, UserDetailsService{
+public interface SquashUserDetailsManager extends UserDetailsManager, UserDetailsService {
 
-	
+
 }
