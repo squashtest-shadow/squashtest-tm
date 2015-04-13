@@ -33,6 +33,7 @@ import org.squashtest.tm.domain.Identified;
 import org.squashtest.tm.domain.audit.AuditableMixin;
 import org.squashtest.tm.domain.library.NodeContainer;
 import org.squashtest.tm.domain.milestone.Milestone;
+import org.squashtest.tm.domain.project.GenericProject;
 import org.squashtest.tm.domain.requirement.Requirement;
 import org.squashtest.tm.domain.requirement.RequirementFolder;
 import org.squashtest.tm.domain.requirement.RequirementLibrary;
@@ -135,6 +136,8 @@ class RequirementMerger extends DestinationManager {
 			return true;
 		}
 
+		GenericProject targetProject = getDestination().getProject();
+		
 		for (PseudoRequirementVersion prv : pseudoRequirement.getPseudoRequirementVersions()) {
 			String milestoneString = prv.getMilestoneString();
 
@@ -143,7 +146,7 @@ class RequirementMerger extends DestinationManager {
 		
 				String[] milestonesNames = pattern.split(milestoneString);
 
-				if (!milestonesAllowProcessing(prv, milestonesNames)) {
+				if (!milestonesAllowProcessing(prv, milestonesNames, targetProject)) {
 					return false;
 				}
 			}
@@ -152,12 +155,12 @@ class RequirementMerger extends DestinationManager {
 		return true;
 	}
 
-	private boolean milestonesAllowProcessing(PseudoRequirementVersion prv, String[] milestonesNames) {
+	private boolean milestonesAllowProcessing(PseudoRequirementVersion prv, String[] milestonesNames, GenericProject targetProject) {
 		for (String name : milestonesNames) {
 			Milestone milestone = milestoneService.findByName(name);
-
-			if (milestone == null || !milestone.getStatus().isAllowObjectCreateAndDelete()) {
-				// milestone not found or it's status don't allow object creation
+			
+			if (milestone == null || !milestone.getStatus().isAllowObjectCreateAndDelete() || ! targetProject.getMilestones().contains(milestone)) {
+				// milestone not found, it's status don't allow object creation or the milestone is not bound to project.
 				return false;
 			}
 			prv.addMilestone(milestone);
