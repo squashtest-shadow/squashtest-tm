@@ -68,6 +68,8 @@ th:with="isWritable = ${(#authorization.expression('hasRole(''ROLE_ADMIN'')') or
 
   </div>
 
+    <!-- Bind milestone -->
+    
   <div class="bind-milestone-dialog popup-dialog not-displayed" th:title="#{title.bindMilestones}">
     <div>
       
@@ -76,7 +78,6 @@ th:with="isWritable = ${(#authorization.expression('hasRole(''ROLE_ADMIN'')') or
           will not be associable
           </span>
       </div>
-      
 
       <table class="bind-milestone-dialog-table" data-def="filter">
         <thead>
@@ -96,8 +97,7 @@ th:with="isWritable = ${(#authorization.expression('hasRole(''ROLE_ADMIN'')') or
           <li class="clickable-item extra-small-margin-top"><span class="bind-milestone-dialog-selectnone"   th:text="#{label.selectNoneForSelection}">select none</span></li>
           <li class="clickable-item extra-small-margin-top"><span class="bind-milestone-dialog-invertselect" th:text="#{label.invertSelect}">invert selection</span></li>
         </ul>
-      </div>
-       
+      </div>      
     </div>
 
     <div class="popup-dialog-buttonpane" >
@@ -107,6 +107,19 @@ th:with="isWritable = ${(#authorization.expression('hasRole(''ROLE_ADMIN'')') or
     </div>
 
   </div>
+  
+  <!-- No associated milestone -->
+  
+  <div class="no-milestone-dialog popup-dialog not-displayed" th:title="#{title.bindMilestones}">
+    <div class="display-table-row">
+        <div th:include="fragments-utils/static-panels :: warning-pane" th:with="txtcontent=#{title.bindMilestones.noneassociated}"></div>       
+    </div>
+    <div class="popup-dialog-buttonpane">
+      <input type="button" th:value="#{label.Close}"  data-def="evt=close" />
+    </div>
+  </div>
+  
+    <!-- Unbind milestone -->
   
   <div class="unbind-milestone-dialog popup-dialog not-displayed" th:title="#{title.unbindMilestones}">
     <div data-def="state=one-selected" class="centered">

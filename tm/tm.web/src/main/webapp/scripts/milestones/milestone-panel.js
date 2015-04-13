@@ -134,9 +134,7 @@ define(["jquery", "workspace.event-bus", "app/ws/squashtm.notification", "squash
 		
 		// now we can set the ajax source
 		currentTable.fnSettings().sAjaxSource=conf.currentTableSource;
-		
-		
-			
+				
 			// add milestones dialog
 			var dialogOptions = {
 				tableSource : conf.bindTableSource,
@@ -147,9 +145,22 @@ define(["jquery", "workspace.event-bus", "app/ws/squashtm.notification", "squash
 			
 			var bindDialog = element.find('.bind-milestone-dialog');
 			bindDialog.milestoneDialog(dialogOptions);
+			var bindDialogNoMilestone = element.find('.no-milestone-dialog');
+			bindDialogNoMilestone.formDialog();
 			
 			$(".milestone-panel-bind-button").on('click', function(){
+				// if there's at least one milestone
+				if (conf.currentModel.length > 0) {
 				bindDialog.milestoneDialog('open');
+			  }
+				// else 
+				else {
+					bindDialogNoMilestone.formDialog('open');
+				}
+			});
+			
+			bindDialogNoMilestone.on('formdialogclose', function(){
+				bindDialogNoMilestone.formDialog('close');
 			});
 
 			// remove milestones 			
