@@ -45,6 +45,9 @@ define(['jquery', 'tree', 'workspace/workspace.import-popup'], function($, zetre
 				var milestoneFailuresDialog = $(".import-excel-dialog-milestoneFailures", panel);
 				if (json.milestoneFailures>0) { milestoneFailuresDialog.show(); } else { milestoneFailuresDialog.hide(); }
 				
+				var milestoneNotActivatedDialog = $(".import-excel-dialog-milestoneNotActivated", panel);
+				if (json.milestoneNotActivatedFailures>0) { milestoneNotActivatedDialog.show(); } else { milestoneNotActivatedDialog.hide(); }
+				
 			}
 		},
 		

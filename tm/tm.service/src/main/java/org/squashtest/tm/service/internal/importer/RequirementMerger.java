@@ -124,7 +124,6 @@ class RequirementMerger extends DestinationManager {
 				}
 				setRequirementDestination(null);
 			} else {
-				summary.incrMilestoneFailures();
 				summary.incrFailures();
 			}
 		}
@@ -133,7 +132,8 @@ class RequirementMerger extends DestinationManager {
 
 	private boolean processMilestones(PseudoRequirement pseudoRequirement) {
 		if (!featureManager.isEnabled(Feature.MILESTONE)) {
-			return true;
+			summary.incrMilestoneNotActivatedFailures();
+			return false;
 		}
 
 		GenericProject targetProject = getDestination().getProject();
@@ -147,6 +147,7 @@ class RequirementMerger extends DestinationManager {
 				String[] milestonesNames = pattern.split(milestoneString);
 
 				if (!milestonesAllowProcessing(prv, milestonesNames, targetProject)) {
+					summary.incrMilestoneFailures();
 					return false;
 				}
 			}

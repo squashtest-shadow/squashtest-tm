@@ -30,7 +30,13 @@ public class ImportSummaryImpl implements ImportSummary {
 	private int failures=0;
 	private int rejected=0;
 	private int milestoneFailures=0;
+	private int milestoneNotActivatedFailures=0;
 	
+	public int getMilestoneNotActivatedFailures() {
+		return milestoneNotActivatedFailures;
+	}
+
+
 	public int getMilestoneFailures() {
 		return milestoneFailures;
 	}
@@ -41,6 +47,10 @@ public class ImportSummaryImpl implements ImportSummary {
 
 	public ImportSummaryImpl(){
 		
+	}
+	
+	public void incrMilestoneNotActivatedFailures(){
+		milestoneNotActivatedFailures++;
 	}
 	
 	public void incrMilestoneFailures(){
@@ -125,6 +135,7 @@ public class ImportSummaryImpl implements ImportSummary {
 		this.renamed+=summary.getRenamed();
 		this.rejected+=summary.getRejected();
 		this.milestoneFailures+=summary.getMilestoneFailures();
+		this.milestoneNotActivatedFailures+=summary.getMilestoneNotActivatedFailures();
 	}
 
 	

@@ -181,12 +181,13 @@ define([ "jquery", "backbone", "underscore", "workspace.routing", "squash.transl
 					}
 				});
 			},
-		
+	
 		cleanup : function() {
+			/*jshint validthis: true */
 			this.$el.addClass("not-displayed");
 			this.$el.find('#warning-mass-modif').text("");
 			// if we destroy twice, jqui blows up
-			this.$el.hasClass("ui-dialog-content") && this.$el.confirmDialog("destroy");/* jshint expr: true */
+			this.$el.hasClass("ui-dialog-content") && this.$el.confirmDialog("destroy");
 		},
 
 		remove : function() {
