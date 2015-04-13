@@ -304,6 +304,7 @@ public class TestSuiteModificationController {
 
 		model.addAttribute("conf", conf);
 
+		// TODO : due to #4717 I think the milestones/milestones-tab.html is fine for the job too
 		return "milestones/milestones-tab-uneditable.html";
 
 	}

@@ -71,6 +71,13 @@ public class HibernateMilestoneDao extends HibernateEntityDao<Milestone> impleme
 		return query.list();
 	}
 
+	@Override
+	public Collection<Milestone> findProjectMilestones(long projectId) {
+		Query query = currentSession().getNamedQuery("milestone.findProjectMilestones");
+		query.setParameter("projectId", projectId);
+		return query.list();
+	}
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public Collection<Milestone> findAllMilestonesForTestCase(long testCaseId) {
@@ -114,7 +121,7 @@ public class HibernateMilestoneDao extends HibernateEntityDao<Milestone> impleme
 	public Collection<Milestone> findAssociableMilestonesForCampaign(long campaignId) {
 		Query q = currentSession().getNamedQuery("milestone.findAssociableMilestonesForCampaign");
 		q.setParameterList("validStatus", MilestoneStatus.getAllStatusAllowingObjectBind());
-                q.setParameter("campaignId", campaignId);
+		q.setParameter("campaignId", campaignId);
 		return q.list();
 	}
 
@@ -166,6 +173,7 @@ public class HibernateMilestoneDao extends HibernateEntityDao<Milestone> impleme
 		return query.list();
 	}
 
+	// TODO : use HQL update
 	@Override
 	public void bindMilestoneToProjectTestCases(long projectId, long milestoneId) {
 
@@ -187,6 +195,7 @@ public class HibernateMilestoneDao extends HibernateEntityDao<Milestone> impleme
 		}
 	}
 
+	// TODO : use HQL update
 	@Override
 	public void bindMilestoneToProjectRequirementVersions(long projectId, long milestoneId) {
 		Query query = currentSession().getNamedQuery("milestone.findLastNonObsoleteReqVersionsForProject");
@@ -305,12 +314,12 @@ public class HibernateMilestoneDao extends HibernateEntityDao<Milestone> impleme
 		projectIds.add(projectId);
 		unbindAllObjectsForProjects(milestoneId, projectIds);
 	}
-	
-	
+
+
 	@Override
 	public void unbindAllObjectsForProjects(Long milestoneId, List<Long> projectIds){
 		final String[] entities = { "TestCases", "RequirementVersions", "Campaigns" };
-		
+
 		Session session = currentSession();
 
 		for (String entity : entities) {
@@ -318,10 +327,10 @@ public class HibernateMilestoneDao extends HibernateEntityDao<Milestone> impleme
 
 			String namedQuery = "milestone.findAll" + entity + "ForProjectAndMilestone";
 			LOGGER.debug("Fetching bound entities with query named {}", namedQuery);
-            Query query = session.getNamedQuery(namedQuery);
-    		query.setParameter("milestoneId", milestoneId);
-    		query.setParameterList("projectIds", projectIds);
-    		
+			Query query = session.getNamedQuery(namedQuery);
+			query.setParameter("milestoneId", milestoneId);
+			query.setParameterList("projectIds", projectIds);
+
 			ScrollableResults holders = scrollableResults(query);
 
 			int count = 0;
@@ -335,9 +344,9 @@ public class HibernateMilestoneDao extends HibernateEntityDao<Milestone> impleme
 					session.clear();
 				}
 			}
-		}		
+		}
 	}
-	
+
 
 	@Override
 	public void unbindAllObjects(long milestoneId) {
@@ -351,8 +360,8 @@ public class HibernateMilestoneDao extends HibernateEntityDao<Milestone> impleme
 
 			String namedQuery = entity + ".findAllBoundToMilestone";
 			LOGGER.debug("Fetching bound entities with query named {}", namedQuery);
-            Query query = session.getNamedQuery(namedQuery);
-    		query.setParameter("milestoneId", milestoneId);
+			Query query = session.getNamedQuery(namedQuery);
+			query.setParameter("milestoneId", milestoneId);
 			ScrollableResults holders = scrollableResults(query);
 
 			int count = 0;
@@ -366,10 +375,10 @@ public class HibernateMilestoneDao extends HibernateEntityDao<Milestone> impleme
 					session.clear();
 				}
 			}
-		}	
+		}
 	}
 
-	
+
 	@Override
 	public Milestone findByName(String name) {
 		return findMilestoneByLabel(name);
@@ -388,15 +397,15 @@ public class HibernateMilestoneDao extends HibernateEntityDao<Milestone> impleme
 
 		List<Long> projectIds = new ArrayList<Long>();
 		projectIds.add(projectId);
-		
+
 		Query queryTc = currentSession().getNamedQuery("milestone.findAllTestCasesForProjectAndMilestone");
 		queryTc.setParameterList("projectIds", projectIds);
 		queryTc.setParameter("milestoneId", milestoneId);
-	
+
 		if (queryTc.list().size() != 0){
 			return true; //return now so we don't do useless request
 		}
-	
+
 		Query queryCamp = currentSession().getNamedQuery("milestone.findAllCampaignsForProjectAndMilestone");
 		queryCamp.setParameterList("projectIds", projectIds);
 		queryCamp.setParameter("milestoneId", milestoneId);
@@ -409,7 +418,7 @@ public class HibernateMilestoneDao extends HibernateEntityDao<Milestone> impleme
 		if (queryReq.list().size() != 0){
 			return true;
 		}
-		
+
 		return false;
 	}
 

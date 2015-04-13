@@ -36,6 +36,14 @@ public interface MilestoneDao extends EntityDao<Milestone> {
 
 	void checkLabelAvailability(String label);
 
+	/**
+	 * returns the milestones available for the given project
+	 * 
+	 * @param projectId
+	 * @return
+	 */
+	Collection<Milestone> findProjectMilestones(long projectId);
+
 	Collection<Milestone> findAssociableMilestonesForTestCase(long testCaseId);
 
 	Collection<Milestone> findAllMilestonesForTestCase(long testCaseId);

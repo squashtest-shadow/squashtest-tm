@@ -134,14 +134,75 @@ public class FacilityImpl implements Facility {
 	// ************************ public (and nice looking) code
 	// **************************************
 
+
 	/**
-	 * Same as below
+	 * @see org.squashtest.tm.service.internal.batchimport.Facility#createTestCase(org.squashtest.tm.service.internal.batchimport.TestCaseInstruction)
+	 */
+	@Override
+	public LogTrain createTestCase(TestCaseInstruction instr) {
+		LogTrain train = validator.createTestCase(instr);
+
+		if (!train.hasCriticalErrors()) {
+			instr.getTestCase().setName(instr.getTarget().getName());
+			train = createTCRoutine(train, instr);
+		}
+
+		return train;
+	}
+
+
+	/**
+	 * @see org.squashtest.tm.service.internal.batchimport.Facility#updateTestCase(org.squashtest.tm.service.internal.batchimport.TestCaseInstruction)
+	 */
+	@Override
+	public LogTrain updateTestCase(TestCaseInstruction instr) {
+		TestCaseTarget target = instr.getTarget();
+		TestCase testCase = instr.getTestCase();
+		Map<String, String> cufValues = instr.getCustomFields();
+
+		TargetStatus status = validator.getModel().getStatus(target);
+
+		LogTrain train = validator.updateTestCase(instr);
+
+		if (!train.hasCriticalErrors()) {
+
+			if (status.status == Existence.NOT_EXISTS) {
+
+				train = createTCRoutine(train, instr);
+
+			} else {
+				try {
+
+					helper.truncate(testCase, (Map<String, String>) cufValues);
+					fixNatureAndType(target, testCase);
+
+					doUpdateTestcase(instr);
+
+					LOGGER.debug(EXCEL_ERR_PREFIX + "Updated Test Case \t'" + target + "'");
+
+				} catch (Exception ex) {
+					train.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_UNEXPECTED_ERROR,
+							new Object[] { ex.getClass().getName() }));
+					LOGGER.error(EXCEL_ERR_PREFIX + "unexpected error while updating " + target + " : ", ex);
+				}
+
+			}
+
+		}
+
+		return train;
+	}
+
+
+	/**
+	 * May be called either by the create test case scenario, or in an update scenario (business says that
+	 * updating a test case that dont exist implies to create it first).
 	 *
 	 * @param train
 	 * @param instruction
 	 * @return
 	 */
-	private LogTrain updateTCRoutine(LogTrain train, TestCaseInstruction instruction) {
+	private LogTrain createTCRoutine(LogTrain train, TestCaseInstruction instruction) {
 		TestCase testCase = instruction.getTestCase();
 		Map<String, String> cufValues = instruction.getCustomFields();
 		TestCaseTarget target = instruction.getTarget();
@@ -151,7 +212,6 @@ public class FacilityImpl implements Facility {
 			helper.truncate(testCase, (Map<String, String>) cufValues);
 			fixNatureAndType(target, testCase);
 
-			// why a method called "update" performs a "create" is beyond my comprehension
 			doCreateTestcase(instruction);
 			validator.getModel().setExists(target, testCase.getId());
 
@@ -167,21 +227,7 @@ public class FacilityImpl implements Facility {
 		return train;
 	}
 
-	/**
-	 * SAme as above, different args
-	 *
-	 * @param train
-	 * @param target
-	 * @param testCase
-	 * @param cufValues
-	 * @return
-	 */
-	private LogTrain createTCRoutine(LogTrain train, TestCaseInstruction instruction) {
-		// when creating, tc name might be random crap or blank
-		instruction.getTestCase().setName(instruction.getTarget().getName());
 
-		return updateTCRoutine(train, instruction);
-	}
 
 	@Override
 	public LogTrain deleteTestCase(TestCaseTarget target) {
@@ -508,25 +554,10 @@ public class FacilityImpl implements Facility {
 			navigationService.addTestCaseToFolder(folderId, testCase, acceptableCufs, target.getOrder(),msids);
 		}
 
+		bindMilestones(instr, testCase);
+
 	}
 
-	/**
-	 * Returnd the ids of the milestones to be bound as per test case instruction
-	 * @param instr the instruction holding the names of candidate milestones
-	 * @return
-	 */
-	private List<Long> boundMilestonesIds(TestCaseInstruction instr) {
-		if (instr.getMilestones().isEmpty()) {
-			return Collections.emptyList();
-		}
-
-		List<Milestone> ms =  milestoneHelper.findBindable(instr.getMilestones());
-		List<Long> msids = new ArrayList<>(ms.size());
-		for (Milestone m : ms) {
-			msids.add(m.getId());
-		}
-		return msids;
-	}
 
 	private void renameIfNeeded(TestCase testCase, Collection<String> siblingNames) {
 		String newName = LibraryUtils.generateNonClashingName(testCase.getName(), siblingNames, TestCase.MAX_NAME_SIZE);
@@ -944,19 +975,25 @@ public class FacilityImpl implements Facility {
 
 	}
 
-	/**
-	 * @see org.squashtest.tm.service.internal.batchimport.Facility#createTestCase(org.squashtest.tm.service.internal.batchimport.TestCaseInstruction)
-	 */
-	@Override
-	public LogTrain createTestCase(TestCaseInstruction instr) {
-		LogTrain train = validator.createTestCase(instr);
 
-		if (!train.hasCriticalErrors()) {
-			train = createTCRoutine(train, instr);
+	/**
+	 * Returnd the ids of the milestones to be bound as per test case instruction
+	 * @param instr the instruction holding the names of candidate milestones
+	 * @return
+	 */
+	private List<Long> boundMilestonesIds(TestCaseInstruction instr) {
+		if (instr.getMilestones().isEmpty()) {
+			return Collections.emptyList();
 		}
 
-		return train;
+		List<Milestone> ms =  milestoneHelper.findBindable(instr.getMilestones());
+		List<Long> msids = new ArrayList<>(ms.size());
+		for (Milestone m : ms) {
+			msids.add(m.getId());
+		}
+		return msids;
 	}
+
 
 	/**
 	 * @param instr instruction read from import file, pointing to a TRANSIENT test case template
@@ -969,48 +1006,6 @@ public class FacilityImpl implements Facility {
 			persistentSource.bindAllMilsetones(ms);
 		}
 
-	}
-
-	/**
-	 * @see org.squashtest.tm.service.internal.batchimport.Facility#updateTestCase(org.squashtest.tm.service.internal.batchimport.TestCaseInstruction)
-	 */
-	@Override
-	public LogTrain updateTestCase(TestCaseInstruction instr) {
-		TestCaseTarget target = instr.getTarget();
-		TestCase testCase = instr.getTestCase();
-		Map<String, String> cufValues = instr.getCustomFields();
-
-		TargetStatus status = validator.getModel().getStatus(target);
-
-		LogTrain train = validator.updateTestCase(instr);
-
-		if (!train.hasCriticalErrors()) {
-
-			if (status.status == Existence.NOT_EXISTS) {
-
-				train = updateTCRoutine(train, instr);
-
-			} else {
-				try {
-
-					helper.truncate(testCase, (Map<String, String>) cufValues);
-					fixNatureAndType(target, testCase);
-
-					doUpdateTestcase(instr);
-
-					LOGGER.debug(EXCEL_ERR_PREFIX + "Updated Test Case \t'" + target + "'");
-
-				} catch (Exception ex) {
-					train.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_UNEXPECTED_ERROR,
-							new Object[] { ex.getClass().getName() }));
-					LOGGER.error(EXCEL_ERR_PREFIX + "unexpected error while updating " + target + " : ", ex);
-				}
-
-			}
-
-		}
-
-		return train;
 	}
 
 }

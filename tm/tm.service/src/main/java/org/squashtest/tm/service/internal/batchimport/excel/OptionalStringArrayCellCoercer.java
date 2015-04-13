@@ -35,7 +35,7 @@ public class OptionalStringArrayCellCoercer extends TypeBasedCellValueCoercer<St
 	/**
 	 * Default list separator.
 	 */
-	private static final char DEFAULT_SEPARATOR = '|';
+	private static final String DEFAULT_SEPARATOR = "\\s*|\\s*";
 	private static final String[] EMPTY = {};
 	/**
 	 * Instance of {@link OptionalStringArrayCellCoercer} using default
@@ -45,7 +45,7 @@ public class OptionalStringArrayCellCoercer extends TypeBasedCellValueCoercer<St
 	/**
 	 * List separator for this object.
 	 */
-	private final char separator;
+	private final String separator;
 
 	/**
 	 * Creates a coercer with default separator.
@@ -73,7 +73,11 @@ public class OptionalStringArrayCellCoercer extends TypeBasedCellValueCoercer<St
 		String val = cell.getStringCellValue();
 		if (val != null) {
 			// Rem : `String.split("", "|") == [""]` which is not what we want. Hence, `StringUtils`
-			return StringUtils.split(val, separator);
+			String[] milestones =  StringUtils.split(val, separator);
+			for (int i=0;i<milestones.length;i++){
+				milestones[i] = StringUtils.trim(milestones[i]);
+			}
+			return milestones;
 		}
 		return EMPTY;
 	}

@@ -32,7 +32,7 @@ import org.squashtest.tm.domain.testcase.Parameter;
 
 /**
  *
- * @Implementation of batch import method that won't update the database. It justs updates an internal model
+ * @Implementation of batch import method that won't update the database. It just updates an internal model
  * (held by a ValidationFacility) when it sees fit, depending on the sanity of the data and the operation being
  * simulated.
  *
