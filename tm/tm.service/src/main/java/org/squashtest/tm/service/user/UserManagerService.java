@@ -25,6 +25,7 @@ import java.util.List;
 
 import javax.validation.constraints.NotNull;
 
+import org.hibernate.HibernateException;
 import org.squashtest.tm.core.foundation.collection.Filtering;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
@@ -53,6 +54,17 @@ public interface UserManagerService {
 	AuthenticatedUser findUserById(long userId);
 
 	User findByLogin(@NotNull String login);
+
+	/**
+	 * Given a login, returns the unique actual matching login without case
+	 * sensisivity
+	 *
+	 * @param login
+	 * @return actual login or `null` when the login was not found.
+	 * @throws HibernateException
+	 *             when more than one login is gound
+	 */
+	String findCaseAwareLogin(String login);
 
 	List<User> findAllUsersOrderedByLogin();
 
@@ -88,13 +100,15 @@ public interface UserManagerService {
 	void deassociateTeams(long userId, List<Long> teamIds);
 
 	/**
-	 * Will return an paged and filtered list of {@link Team}s that have the concerned user as a member. <br>
+	 * Will return an paged and filtered list of {@link Team}s that have the
+	 * concerned user as a member. <br>
 	 * access restricted to admins
 	 *
 	 * @param userId
 	 *            : the id of the concerned user
 	 * @param paging
-	 *            : the {@link PagingAndSorting} criteria that the result has to match
+	 *            : the {@link PagingAndSorting} criteria that the result has to
+	 *            match
 	 * @param filtering
 	 *            : the {@link Filtering} criteria that the result has to match
 	 * @return
@@ -103,7 +117,8 @@ public interface UserManagerService {
 			Filtering filtering);
 
 	/**
-	 * Will return a list of all {@link Team} that do not have the concerned {@link User} as a member <br>
+	 * Will return a list of all {@link Team} that do not have the concerned
+	 * {@link User} as a member <br>
 	 * access restricted to admins
 	 *
 	 * @param userId
@@ -124,8 +139,8 @@ public interface UserManagerService {
 	User createUserFromLogin(@NotNull String login);
 
 	/**
-	 * Creates a user without credentials. This should be used when authentication is managed by an external provider
-	 * only.
+	 * Creates a user without credentials. This should be used when
+	 * authentication is managed by an external provider only.
 	 *
 	 * @param user
 	 * @param groupId
@@ -147,27 +162,32 @@ public interface UserManagerService {
 	List<UsersGroup> findAllUsersGroupOrderedByQualifiedName();
 
 	/**
-	 * Creates a user with the given password. This new user shall have the ROLE_ADMIN role.
+	 * Creates a user with the given password. This new user shall have the
+	 * ROLE_ADMIN role.
 	 *
-	 * This method should not have any security constraint because we might need it to provision the authentication
-	 * system (ie there is no user yet).
+	 * This method should not have any security constraint because we might need
+	 * it to provision the authentication system (ie there is no user yet).
 	 *
 	 * @param user
 	 * @param password
 	 */
 	User createAdministrator(User user, String password);
+
 	/**
 	 * Checks if a user already exist with the same login in the database.<br/>
-	 * If so, raises a {@linkplain  LoginAlreadyExistsException}
+	 * If so, raises a {@linkplain LoginAlreadyExistsException}
 	 *
-	 * The login is checked <strong>according to the state of the case-sensitivity feature</strong>.
+	 * The login is checked <strong>according to the state of the
+	 * case-sensitivity feature</strong>.
 	 *
 	 * @param login
 	 */
-	void checkLoginAvailability(String login) ;
+	void checkLoginAvailability(String login);
 
 	/**
-	 * Logins are considered as duplicate when they are equal without case-sensitivity.
+	 * Logins are considered as duplicate when they are equal without
+	 * case-sensitivity.
+	 *
 	 * @return the list of duplicate logins / username
 	 */
 	List<String> findAllDuplicateLogins();

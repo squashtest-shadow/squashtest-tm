@@ -30,6 +30,7 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
 
+import org.hibernate.Query;
 import org.hibernate.SessionFactory;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.GrantedAuthority;
@@ -472,7 +473,17 @@ public class AdministrationServiceImpl implements AdministrationService {
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<String> findAllDuplicateLogins() {
-		return sessionFactory.getCurrentSession().createQuery("select lower(u.login) from User u group by lower(u.login) having count(u.login) > 1").list();
+		return sessionFactory.getCurrentSession().getNamedQuery("User.findAllDuplicateLogins").list();
+	}
+
+	/**
+	 * @see org.squashtest.tm.service.user.UserManagerService#findCaseAwareLogin(java.lang.String)
+	 */
+	@Override
+	public String findCaseAwareLogin(String login) {
+		Query query = sessionFactory.getCurrentSession().getNamedQuery("User.findCaseAwareLogin");
+		query.setParameter("login", login);
+		return (String) query.uniqueResult();
 	}
 
 }

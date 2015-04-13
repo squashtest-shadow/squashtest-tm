@@ -103,32 +103,6 @@
 
     <property name="dataSource" ref="squashtest.core.persistence.jdbc.DataSource" />
 
-    <property name="groupAuthoritiesByUsernameQuery">
-      <value>
-        select g.ID, g.QUALIFIED_NAME, ga.AUTHORITY 
-        from CORE_GROUP g 
-          inner join CORE_GROUP_AUTHORITY ga on ga.GROUP_ID = g.ID
-          inner join CORE_GROUP_MEMBER gm on gm.GROUP_ID = g.ID
-          inner join CORE_PARTY party on party.PARTY_ID = gm.PARTY_ID
-          left join CORE_TEAM team on team.PARTY_ID = party.PARTY_ID
-          left join CORE_TEAM_MEMBER tmemb on tmemb.TEAM_ID = team.PARTY_ID,
-          CORE_USER u 
-        where( (u.PARTY_ID = tmemb.USER_ID AND u.ACTIVE = true) or (u.PARTY_ID = party.PARTY_ID) ) and ( u.LOGIN = ?)
-
-      </value>
-    </property> 
-
-    <property name="authoritiesByUsernameQuery">
-      <value>
-      select cpa.PARTY_ID,  cpa.AUTHORITY from CORE_PARTY_AUTHORITY cpa
-      inner join CORE_PARTY party on party.PARTY_ID = cpa.PARTY_ID
-      left join CORE_TEAM team on team.PARTY_ID = party.PARTY_ID
-      left join CORE_TEAM_MEMBER tmemb on tmemb.TEAM_ID = team.PARTY_ID,
-      CORE_USER u 
-      where( (u.PARTY_ID = tmemb.USER_ID AND u.ACTIVE = true) or (u.PARTY_ID = party.PARTY_ID) ) and ( u.LOGIN = ?)
-    </value>
-    </property>
-
     <property name="changePasswordSql">
       <value>
         update AUTH_USER
@@ -212,11 +186,63 @@
   <bean id="userDetailsManager.caseSensitive" class="org.squashtest.tm.service.internal.security.SquashUserDetailsManagerImpl" parent="userDetailsManager.template">
     <property name="usersByUsernameQuery" value="select LOGIN, PASSWORD, ACTIVE from AUTH_USER where LOGIN = ?" />
     <property name="userExistsSql" value="select LOGIN from AUTH_USER where LOGIN = ?" />
+    <property name="groupAuthoritiesByUsernameQuery">
+      <value>
+        select g.ID, g.QUALIFIED_NAME, ga.AUTHORITY 
+        from CORE_GROUP g 
+          inner join CORE_GROUP_AUTHORITY ga on ga.GROUP_ID = g.ID
+          inner join CORE_GROUP_MEMBER gm on gm.GROUP_ID = g.ID
+          inner join CORE_PARTY party on party.PARTY_ID = gm.PARTY_ID
+          left join CORE_TEAM team on team.PARTY_ID = party.PARTY_ID
+          left join CORE_TEAM_MEMBER tmemb on tmemb.TEAM_ID = team.PARTY_ID,
+          CORE_USER u 
+        where( (u.PARTY_ID = tmemb.USER_ID AND u.ACTIVE = true) or (u.PARTY_ID = party.PARTY_ID) ) and ( u.LOGIN = ?)
+
+      </value>
+    </property> 
+
+    <property name="authoritiesByUsernameQuery">
+      <value>
+      select cpa.PARTY_ID,  cpa.AUTHORITY from CORE_PARTY_AUTHORITY cpa
+      inner join CORE_PARTY party on party.PARTY_ID = cpa.PARTY_ID
+      left join CORE_TEAM team on team.PARTY_ID = party.PARTY_ID
+      left join CORE_TEAM_MEMBER tmemb on tmemb.TEAM_ID = team.PARTY_ID,
+      CORE_USER u 
+      where( (u.PARTY_ID = tmemb.USER_ID AND u.ACTIVE = true) or (u.PARTY_ID = party.PARTY_ID) ) and ( u.LOGIN = ?)
+    </value>
+    </property>
   </bean>
   
   <bean id="userDetailsManager.caseInsensitive" class="org.squashtest.tm.service.internal.security.SquashUserDetailsManagerImpl" parent="userDetailsManager.template">
-    <property name="usersByUsernameQuery" value="select LOGIN, PASSWORD, ACTIVE from AUTH_USER where lcase(LOGIN) = lcase(?)" />
-    <property name="userExistsSql" value="select LOGIN from AUTH_USER where lcase(LOGIN) = ?" />    
+    <property name="usersByUsernameQuery" value="select LOGIN, PASSWORD, ACTIVE from AUTH_USER where lower(LOGIN) = lower(?)" />
+    <property name="userExistsSql" value="select LOGIN from AUTH_USER where lower(LOGIN) = lower(?)" />    
+    <property name="groupAuthoritiesByUsernameQuery">
+      <value>
+        select g.ID, g.QUALIFIED_NAME, ga.AUTHORITY 
+        from CORE_GROUP g 
+          inner join CORE_GROUP_AUTHORITY ga on ga.GROUP_ID = g.ID
+          inner join CORE_GROUP_MEMBER gm on gm.GROUP_ID = g.ID
+          inner join CORE_PARTY party on party.PARTY_ID = gm.PARTY_ID
+          left join CORE_TEAM team on team.PARTY_ID = party.PARTY_ID
+          left join CORE_TEAM_MEMBER tmemb on tmemb.TEAM_ID = team.PARTY_ID,
+          CORE_USER u 
+        where ((u.PARTY_ID = tmemb.USER_ID AND u.ACTIVE = true) or (u.PARTY_ID = party.PARTY_ID)) 
+          and (lower(u.LOGIN) = lower(?))
+      </value>
+    </property> 
+
+    <property name="authoritiesByUsernameQuery">
+      <value>
+      select cpa.PARTY_ID,  cpa.AUTHORITY 
+      from CORE_PARTY_AUTHORITY cpa
+        inner join CORE_PARTY party on party.PARTY_ID = cpa.PARTY_ID
+        left join CORE_TEAM team on team.PARTY_ID = party.PARTY_ID
+        left join CORE_TEAM_MEMBER tmemb on tmemb.TEAM_ID = team.PARTY_ID,
+        CORE_USER u 
+      where ((u.PARTY_ID = tmemb.USER_ID AND u.ACTIVE = true) or (u.PARTY_ID = party.PARTY_ID) ) 
+        and (lower(u.LOGIN) = lower(?))
+    </value>
+    </property>
   </bean>
   
     <!-- ====== SECURITY PLUMBING ====== -->

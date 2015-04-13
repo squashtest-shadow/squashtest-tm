@@ -441,6 +441,8 @@
 	@NamedQuery(name = "user.countAllTeamMembers", query = "select members.size from Team where id = :teamId"),
 	@NamedQuery(name = "user.unassignFromAllCampaignTestPlan", query = "update CampaignTestPlanItem set user = null where user.id = :userId"),
 	@NamedQuery(name = "user.unassignFromAllIterationTestPlan", query = "update IterationTestPlanItem set user = null where user.id = :userId"),
+	@NamedQuery(name = "User.findAllDuplicateLogins", query = "select lower(u.login) from User u group by lower(u.login) having count(u.login) > 1"),
+	@NamedQuery(name = "User.findCaseAwareLogin", query = "select u.login from User u where lower(u.login) = lower(:login)"),
 
 	//Party
 	@NamedQuery(name = "party.findAllActive", query = "select party from Party party where party.id in (select user.id from User user where user.active = true) or party.id in (select team.id from Team team)"),
