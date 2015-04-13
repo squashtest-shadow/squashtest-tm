@@ -711,7 +711,7 @@
 	@NamedQuery(name = "milestone.findCampaignMilestones", query="select milestones from Campaign camp join camp.milestones milestones where camp.id = :campaignId"),
 	@NamedQuery(name = "milestone.findIterationMilestones", query="select milestones from Iteration iter join iter.campaign camp join camp.milestones milestones where iter.id = :iterId"),
 	@NamedQuery(name = "milestone.findTestSuiteMilestones", query="select milestones from TestSuite ts join ts.iteration iter join iter.campaign camp join camp.milestones milestones where ts.id = :tsId"),
-    @NamedQuery(name = "milestone.findLastNonObsoleteReqVersionsForProject", query = "select rv from RequirementVersion rv join rv.requirement r where r.project.id = :projectId and rv.status != 'OBSOLETE'  "),
+    @NamedQuery(name = "milestone.findLastNonObsoleteReqVersionsForProject", query = "select rv from RequirementVersion rv join rv.requirement r where r.project.id = :projectId  and rv.versionNumber = (select max(reqV.versionNumber) from RequirementVersion reqV where reqV.requirement.id = r.id and reqV.status != 'OBSOLETE')"),
 	@NamedQuery(name = "milestone.findAllTestCasesForProjectAndMilestone", query = "select tc from TestCase tc join tc.milestones m where tc.project.id in (:projectIds) and m.id = :milestoneId"),
 	@NamedQuery(name = "milestone.findAllRequirementVersionsForProjectAndMilestone", query = "select rv from RequirementVersion rv join rv.requirement r join rv.milestones m where r.project.id in (:projectIds) and m.id = :milestoneId"),
 	@NamedQuery(name = "milestone.findAllCampaignsForProjectAndMilestone", query = "select c from Campaign c join c.milestones m  where c.project.id in (:projectIds) and m.id = :milestoneId"),
