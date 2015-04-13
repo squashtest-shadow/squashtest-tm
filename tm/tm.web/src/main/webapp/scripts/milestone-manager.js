@@ -228,7 +228,7 @@ require(["common"], function(){
 	addMilestoneDialog.on('formdialogconfirm', function(){
 		var url = routing.buildURL('administration.milestones');
 		var params = {
-			label: $( '#add-milestone-label' ).val(),
+			label: $( '#add-milestone-label' ).val().trim(),
 			status: $( '#add-milestone-status' ).val(),
 			endDate: getPostDate($( '#add-milestone-end-date' ).text()),
 			description: $( '#add-milestone-description' ).val()
@@ -300,7 +300,7 @@ require(["common"], function(){
 		var motherId  = $this.data('entity-id');
 		var url = routing.buildURL('administration.milestones.clone', motherId);
 		var params = {
-				label: $( '#clone-milestone-label' ).val(),
+				label: $( '#clone-milestone-label' ).val().trim(),
 				endDate: getPostDate($( '#clone-milestone-end-date' ).text()),
 				description: $( '#clone-milestone-description' ).val(),
 				bindToRequirements : cloneMilestoneDialog.find("input:checkbox[name='bindToRequirements']").prop("checked"),

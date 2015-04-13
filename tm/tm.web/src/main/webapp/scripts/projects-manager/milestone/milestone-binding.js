@@ -386,7 +386,7 @@ define([ 'module', "jquery", "squash.basicwidgets", "workspace.routing", "squash
 			function createMilestone(callback, milestone_status){
 				var urlCreate = routing.buildURL('administration.milestones');
 				var params = {
-					label: $( '#add-milestone-label' ).val(),
+					label: $( '#add-milestone-label' ).val().trim(),
 					status: milestone_status,
 					endDate: getPostDate($( '#add-milestone-end-date').text()),
 					description: $( '#add-milestone-description' ).val()
