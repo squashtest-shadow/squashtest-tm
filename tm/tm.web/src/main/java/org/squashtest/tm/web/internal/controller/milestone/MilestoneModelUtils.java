@@ -51,8 +51,8 @@ public final class MilestoneModelUtils {
 			}
 		}
 
-		String strMindate = i18nHelper.localizeDate(minDate, locale);
-		String strMaxdate = i18nHelper.localizeDate(maxDate, locale);
+		String strMindate = i18nHelper.localizeShortDate(minDate, locale);
+		String strMaxdate = i18nHelper.localizeShortDate(maxDate, locale);
 
 		return strMindate + " - " + strMaxdate;
 	}
