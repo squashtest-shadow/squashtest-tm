@@ -131,10 +131,7 @@ class RequirementMerger extends DestinationManager {
 	}
 
 	private boolean processMilestones(PseudoRequirement pseudoRequirement) {
-		if (!featureManager.isEnabled(Feature.MILESTONE)) {
-			summary.incrMilestoneNotActivatedFailures();
-			return false;
-		}
+	
 
 		GenericProject targetProject = getDestination().getProject();
 		
@@ -145,7 +142,12 @@ class RequirementMerger extends DestinationManager {
 				Pattern pattern = Pattern.compile("\\s*\\|\\s*");
 		
 				String[] milestonesNames = pattern.split(milestoneString);
-
+				
+				if (!featureManager.isEnabled(Feature.MILESTONE)) {
+					summary.incrMilestoneNotActivatedFailures();
+					return false;
+				}
+				
 				if (!milestonesAllowProcessing(prv, milestonesNames, targetProject)) {
 					summary.incrMilestoneFailures();
 					return false;
