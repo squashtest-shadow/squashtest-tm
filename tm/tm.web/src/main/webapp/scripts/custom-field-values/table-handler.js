@@ -59,12 +59,16 @@ define([ "jquery", "./lib/cuf-values-utils", "./lib/jquery.staticCustomfield", "
 			// special delivery for tags : 
 			if (cufDefinitions[i].itype === "TAG"){
 				newColumn.mRender = function ( data, type, full ) {
+					if (data != null){ // check for call step
 			        var html = "<ul>";
 			        $.each(data, function(idx, t){
 						html += "<li>"+t+"</li>";
 					});
 			        html += "</ul>";
 			        return html;
+					} else {
+						return "";
+					}
 				};
 			}
 			
