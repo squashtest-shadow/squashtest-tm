@@ -48,16 +48,19 @@ define(
 			/**
 			 * Saves the model (it should be valid !)
 			 * @param model
+			 * @param event (optional) if invoked in repsonse to an event, please provide that event.
 			 * @returns {Boolean} true if model was saved without errors
 			 */
-			function saveModel(model) {
+			function saveModel(model, event) {
 				var ssok = true;
 
 				var csok = model.save(null, {
 					async : false,
 					error : function() {
 						ssok = false;
-						event.preventDefault();
+						if (!! event) {
+							event.preventDefault();
+						}
 					}
 				});
 
@@ -209,7 +212,7 @@ define(
 						},
 
 						changeTagProp : function(event){
-							tags = $("#defaultValue").squashTagit("assignedTags").join("|");
+							var tags = $("#defaultValue").squashTagit("assignedTags").join("|");
 							this.model.set("defaultValue", tags);
 						},
 
@@ -239,14 +242,14 @@ define(
 						},
 
 						addAnother : function(event) {
-							if (validateView(this) && saveModel(this.model)) {
+							if (validateView(this) && saveModel(this.model, event)) {
 								this.trigger("newcustomfield.added", { source: event, view: this, model: this.model });
 								this._resetForm();
 							}
 						},
 
 						addAndClose: function(event) {
-							if (validateView(this) && saveModel(this.model)) {
+							if (validateView(this) && saveModel(this.model, event)) {
 								this.trigger("newcustomfield.added", { source: event, view: this, model: this.model });
 								this.cleanup();
 								this.trigger("newcustomfield.cancel", { source: event, view: this });
