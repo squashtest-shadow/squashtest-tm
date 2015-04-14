@@ -21,15 +21,15 @@
 
 --%>
 <%-- 
-	Winner of the Golden WTF Award here ! Whenever we have time for refractoring DUMP THIS along with 
-		- search-result-display-by-requirement
-		- search-result-display-ordered-by-requirement
-		- search-result-display
-		
-	13/10/04 : that page is still there and I still hate it
-	
-	14/01/24 : pruned lot of dead code and waiting for the day I will dump the remainder
-	
+  Winner of the Golden WTF Award here ! Whenever we have time for refractoring DUMP THIS along with 
+    - search-result-display-by-requirement
+    - search-result-display-ordered-by-requirement
+    - search-result-display
+    
+  13/10/04 : that page is still there and I still hate it
+  
+  14/01/24 : pruned lot of dead code and waiting for the day I will dump the remainder
+  
  --%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="f"%>
@@ -98,52 +98,46 @@
   require(["common"], function() {
     require(["jquery", "squashtable"], function($){
       /*
-  	  $("#search-result-datatable").squashTable({
-  		  'sDom' : '<r>t<<l><ip>>',
-  		  'sPaginationType' : 'full_numbers'
-  	  },{});
-  	  
+      $("#search-result-datatable").squashTable({
+        'sDom' : '<r>t<<l><ip>>',
+        'sPaginationType' : 'full_numbers'
+      },{});
+      
     })
   });*/
   $(function() {
-		var dataTable = $( "#search-result-datatable" ).dataTable({
-			"oLanguage":{
-				"sLengthMenu": '<f:message key="generics.datatable.lengthMenu" />',
-				"sZeroRecords": '<f:message key="generics.datatable.zeroRecords" />',
-				"sInfo": 'Affichage _START_ à _END_ sur _TOTAL_ élément(s)',
-				"sInfoEmpty": 'Affichage 0 à 0 sur 0 élément(s)',
-				"sInfoFiltered": '(filtré de _MAX_ éléments au total)',
-				"oPaginate":{
-					"sFirst":    'Premier',
-					"sPrevious": 'Précédent',
-					"sNext":     'Suivant',
-					"sLast":     'Dernier'
-				}
-			},
-// 			"sScrollY": "350px",
-			"bJQueryUI": true,
-			"bAutoWidth": false,
-			"bFilter": false,
-			"bPaginate": false,
-			"sPaginationType": "full_numbers",
+    	console.log("BORK")
+    var dataTable = $( "#search-result-datatable" ).dataTable({
+      "oLanguage":{
+        "sLengthMenu": '<f:message key="generics.datatable.lengthMenu" />',
+        "sZeroRecords": '<f:message key="generics.datatable.zeroRecords" />',
+        "sInfo": '<f:message key="generics.datatable.info" />',
+        "sInfoEmpty": '<f:message key="generics.datatable.infoEmpty" />',
+        "sInfoFiltered": '<f:message key="generics.datatable.infoFiltered" />',
+        "oPaginate":{
+          "sFirst":    '<f:message key="generics.datatable.paginate.first" />',
+          "sPrevious": '<f:message key="generics.datatable.paginate.previous" />',
+          "sNext":     '<f:message key="generics.datatable.paginate.next" />',
+          "sLast":     '<f:message key="generics.datatable.paginate.last" />'
+        }
+      },
+      "bJQueryUI": true,
+      "bAutoWidth": false,
+      "bFilter": false,
+      "bPaginate": false,
+      "sPaginationType": "full_numbers",
+      "aaSorting": [[2,'asc']],  
+      "sDom" : '<r>t<<l><ip>>',
+      "aoColumnDefs": [
+        {'bVisible': false, 'bSortable': false, 'aTargets': [0]},
+        {'bVisible': true, 'bSortable': false, 'aTargets': [1]}, 
+        {'bVisible': false, 'bSortable': true, 'aTargets': [2]}
+      ] 
+    });
+  });
+  });
+});  
+  
 
-"aaSorting": [[1,'asc']],  
-
-			"sDom" : '<r>t<<l><ip>>',
-			"aoColumnDefs": [
-				
-{'bVisible': false, 'bSortable': false, 'aTargets': [0]},
-
-{'bVisible': true, 'bSortable': false, 'aTargets': [1]}
-
-			] 
-		});
-		
-		//bindHover(dataTable);
-	});
-	});
-});	
-	
-
-	
+  
 </script>
