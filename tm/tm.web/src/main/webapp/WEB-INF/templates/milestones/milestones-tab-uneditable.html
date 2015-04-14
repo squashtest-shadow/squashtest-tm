@@ -55,7 +55,7 @@
 
   </div>
 
-  <div class="bind-milestone-dialog popup-dialog not-displayed" th:title="#{title.bindMilestones}">
+  <div class="bind-milestone-dialog popup-dialog not-displayed" th:title="#{dialog.milestone.bind.campaign}">
     <div>
       
       <div class="centered std-margin-top std-margin-bottom" th:if="${conf.nodeType == 'requirement-version'}" >
@@ -95,6 +95,21 @@
 
   </div>
   
+  
+    <!-- No associated milestone -->
+  
+  <div class="no-milestone-dialog popup-dialog not-displayed" th:title="#{dialog.milestone.bind.campaign}">
+    <div class="display-table-row">
+        <div th:include="fragments-utils/static-panels :: warning-pane" th:with="txtcontent=#{title.bindMilestones.noneassociated}"></div>       
+    </div>
+    <div class="popup-dialog-buttonpane">
+      <input type="button" th:value="#{label.Close}"  data-def="evt=close" />
+    </div>
+  </div>
+  
+    <!-- Unbind milestone -->
+    
+    
   <div class="unbind-milestone-dialog popup-dialog not-displayed" th:title="#{title.unbindMilestones}">
     <div data-def="state=one-selected" class="centered">
         <span class="std-margin" th:text="#{title.unbindMilestones.oneselected}"></span>
