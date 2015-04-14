@@ -24,6 +24,8 @@ import static org.junit.Assert.*
 
 import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.domain.users.UsersGroup
+import org.squashtest.tm.service.feature.FeatureManager;
+import org.squashtest.tm.service.feature.FeatureManager.Feature;
 import org.squashtest.tm.service.internal.repository.UserDao;
 import org.squashtest.tm.service.internal.repository.UsersGroupDao;
 import org.squashtest.tm.service.internal.user.AdministrationServiceImpl;
@@ -38,11 +40,15 @@ class AdministrationServiceImplTest extends Specification {
 	UserDao userDao = Mock()
 	UsersGroupDao groupDao = Mock()
 	AdministratorAuthenticationService adminService = Mock()
+	FeatureManager features  = Mock()
 
 	def setup(){
 		service.userDao = userDao
 		service.groupDao = groupDao
 		service.adminAuthentService = adminService
+		service.features = features
+
+		features.isEnabled(_) >> false
 	}
 
 	def "shoud add a group to a specific user" (){
@@ -62,7 +68,7 @@ class AdministrationServiceImplTest extends Specification {
 		user.group == group
 	}
 
-	def "should check login availability"(){
+	def "should check login availability"() {
 		given:
 		User user = new User()
 		user.setLogin("login")
@@ -72,10 +78,28 @@ class AdministrationServiceImplTest extends Specification {
 		service.addUser(user, 2L, "password")
 
 		then:
-		userDao.checkLoginAvailability("login")
+		1 * userDao.findUserByLogin("login")
 	}
 
-	def "should put new user in admin group"() {
+	def "should check case insensitive login availability"() {
+		given:
+		User user = new User()
+		user.setLogin("login")
+		String login = "login"
+
+		and:
+		FeatureManager feats = Mock()
+		feats.isEnabled(FeatureManager.Feature.CASE_INSENSITIVE_LOGIN) >> true
+		service.features = feats
+
+		when:
+		service.addUser(user, 2L, "password")
+
+		then:
+		1 * userDao.findUserByCiLogin("login")
+	}
+
+		def "should put new user in admin group"() {
 		given:
 		User u = new User(login:"batman")
 

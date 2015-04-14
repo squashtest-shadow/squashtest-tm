@@ -24,6 +24,7 @@ import org.springframework.security.authentication.event.AuthenticationSuccessEv
 import org.springframework.security.core.Authentication;
 import org.squashtest.tm.api.security.authentication.AuthenticationProviderFeatures;
 import org.squashtest.tm.domain.users.User;
+import org.squashtest.tm.exception.user.LoginAlreadyExistsException;
 import org.squashtest.tm.service.user.AdministrationService;
 import org.squashtest.tm.service.user.UserAccountService;
 
@@ -62,7 +63,7 @@ class AuthenticatedMissingUserCreatorTest extends Specification {
 		listener.onApplicationEvent authenticatedEvent
 
 		then:
-		1 * userAccountManager.findByLogin("chris.jericho") >> Mock(User)
+		1 * userAccountManager.checkLoginAvailability("chris.jericho") >> { throw new LoginAlreadyExistsException()  }
 	}
 
 	def "should create stub user when it does not exist"() {
@@ -71,7 +72,7 @@ class AuthenticatedMissingUserCreatorTest extends Specification {
 
 		and:
 		userAccountManager.findByLogin("chris.jericho") >> null
-		
+
 		when:
 		listener.onApplicationEvent authenticatedEvent
 

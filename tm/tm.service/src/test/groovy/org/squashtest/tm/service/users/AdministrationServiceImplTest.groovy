@@ -26,6 +26,7 @@ import org.squashtest.tm.domain.users.User
 import org.squashtest.tm.domain.users.UsersGroup;
 import org.squashtest.tm.exception.user.LoginAlreadyExistsException;
 import org.squashtest.tm.service.configuration.ConfigurationService
+import org.squashtest.tm.service.feature.FeatureManager;
 import org.squashtest.tm.service.internal.repository.AdministrationDao
 import org.squashtest.tm.service.internal.repository.ProjectDao
 import org.squashtest.tm.service.internal.repository.TeamDao
@@ -49,6 +50,7 @@ class AdministrationServiceImplTest extends Specification {
 	ConfigurationService configurationService = Mock()
 	TeamDao teamDao = Mock()
 	AdministratorAuthenticationService adminAuthentService = Mock()
+	FeatureManager features = Mock()
 
 
 	def setup(){
@@ -60,6 +62,9 @@ class AdministrationServiceImplTest extends Specification {
 		service.configurationService = configurationService
 		service.teamDao = teamDao
 		service.adminAuthentService = adminAuthentService
+		service.features = features
+
+		features.isEnabled(_) >> false
 	}
 
 	def "should associate user to team"(){
