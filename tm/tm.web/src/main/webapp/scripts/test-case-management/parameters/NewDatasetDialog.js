@@ -38,7 +38,7 @@ define([ "jquery", "backbone", "underscore", "app/lnf/Forms", "app/util/StringUt
 		_initializeDialog : function(){
 			this.$el.formDialog({
 				autoOpen : true,
-				width : 1000
+				width : 600
 			});
 
 		},
