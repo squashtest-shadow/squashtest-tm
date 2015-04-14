@@ -924,7 +924,7 @@
 }
 
 
-.sq-icon-def_cat_technic {
+.sq-icon-def_cat_technical {
 	background-image : url(../images/icon-lib/def_cat_technic.png); /** sprite-ref: sprites-icons; */
 	background-repeat : no-repeat;
 }
@@ -3932,7 +3932,7 @@ li[rel="requirement"][category-icon="def_cat_security"] > a > .jstree-icon{
 }
 
 
-li[rel="requirement"][category-icon="def_cat_technic"] > a > .jstree-icon{
+li[rel="requirement"][category-icon="def_cat_technical"] > a > .jstree-icon{
 	background-image: url(../images/icon-lib/def_cat_technic.png); /** sprite-ref: sprites-icons; */
 }
 
