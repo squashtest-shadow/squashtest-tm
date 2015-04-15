@@ -70,7 +70,10 @@ squashtm.app = squashtm.app || {};
 squashtm.app.contextRoot = /*[[@{/}]]*/ "http://localhost:8080/squash";
 squashtm.page = squashtm.page || {};
 require(["common"], function(){
-	require(["docx/docx"], function(){});
+	require(["docx/docx"], function(docx){
+		console.log(docx);
+		docx.init();
+	});
 });
 /*]]>*/
 		

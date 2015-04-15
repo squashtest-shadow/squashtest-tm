@@ -22,6 +22,9 @@
 
 define(['module',"jquery", "workerWithoutFake!docxWebWorker.js", "docxgen", "workspace.routing", "openxml","jszip-utils",  "FileSaver"], function(module, $, worker, DocxGen, routing,openXml){        
 	
+	var init =  function (){
+		
+
 	startLoading();
 	var config = module.config();
 	
@@ -131,7 +134,7 @@ define(['module',"jquery", "workerWithoutFake!docxWebWorker.js", "docxgen", "wor
    		loadForBrowserWithoutWorker();
 		stopLoading();
 	}       
-    
+	}
 	
     
     var Base64 = {
@@ -333,6 +336,7 @@ define(['module',"jquery", "workerWithoutFake!docxWebWorker.js", "docxgen", "wor
 	  window.Float64Array = TypedArray;
 	})();
 
+return {init : init};
 
 });
 
