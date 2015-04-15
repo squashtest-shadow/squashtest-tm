@@ -105,6 +105,10 @@ define(["module", "jquery", "app/pubsub", "squash.basicwidgets", "app/ws/squasht
 					for (var i=0;i<cats.length;i++){
 						if (cats[i].code === value){
 							icon = cats[i].iconName;
+							// feat 4553
+							if (icon === "noicon"){
+								icon = "def_cat_noicon";
+							}
 						}
 					}
 

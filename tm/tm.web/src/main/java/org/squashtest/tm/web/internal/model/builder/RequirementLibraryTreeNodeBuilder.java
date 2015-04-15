@@ -27,6 +27,7 @@ import javax.inject.Inject;
 
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
+import org.squashtest.tm.domain.infolist.InfoListItem;
 import org.squashtest.tm.domain.library.NodeContainer;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.requirement.Requirement;
@@ -81,7 +82,7 @@ public class RequirementLibraryTreeNodeBuilder extends LibraryTreeNodeBuilder<Re
 				builtNode.addAttr("milestones-dont-allow-click", "true");
 			}
 
-			
+
 			// the name, usually treated as a common attributes, must be overriden in this case
 			String name = version.getName();
 			builtNode.addAttr("name", name);
@@ -90,7 +91,13 @@ public class RequirementLibraryTreeNodeBuilder extends LibraryTreeNodeBuilder<Re
 
 			State state = (requirement.hasContent() ? State.closed : State.leaf);
 			builtNode.setState(state);
-			builtNode.addAttr("category-icon", version.getCategory().getIconName());
+
+			// spec 4553
+			String iconName = version.getCategory().getIconName();
+			if (InfoListItem.NO_ICON.equals(iconName)){
+				iconName = "def_cat_noicon";
+			}
+			builtNode.addAttr("category-icon", iconName);
 
 			//miletsones
 			builtNode.addAttr("milestones", totalMilestones(requirement));
@@ -102,9 +109,9 @@ public class RequirementLibraryTreeNodeBuilder extends LibraryTreeNodeBuilder<Re
 				builtNode.addAttr("reference", version.getReference());
 			} else {
 				builtNode.setTitle(version.getName());
-			}	
-		} 		
-				
+			}
+		}
+
 	}
 
 	private int totalMilestones(Requirement requirement){

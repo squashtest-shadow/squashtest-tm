@@ -34,12 +34,15 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.validation.constraints.Size;
 
+import org.apache.commons.lang.StringUtils;
 import org.hibernate.validator.constraints.NotBlank;
 
 @Entity
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "ITEM_TYPE", discriminatorType = DiscriminatorType.STRING)
 public abstract class InfoListItem {
+
+	public static final String NO_ICON = "noicon";
 
 	@Id
 	@Column(name = "ITEM_ID")
@@ -101,7 +104,12 @@ public abstract class InfoListItem {
 	}
 
 	public String getIconName() {
-		return iconName;
+		if (! StringUtils.isBlank(iconName)){
+			return iconName;
+		}
+		else{
+			return NO_ICON;
+		}
 	}
 
 	public void setIconName(String iconName) {

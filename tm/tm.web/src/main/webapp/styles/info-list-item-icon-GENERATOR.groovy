@@ -124,7 +124,7 @@ f.append (writer.toString())
 // get main dir
 def mainDir =  webappDir.substring(0,  webappDir.lastIndexOf("/"))
 def javaDir =  mainDir + "/java/org/squashtest/tm/web/internal/util/"
-def javaFileName = javaDir + "InfoListItemList.java"
+def javaFileName = javaDir + "IconLibrary.java"
 
 File javaFile = new File(javaFileName)
 boolean isJavaFileNew = javaFile.createNewFile()
@@ -135,8 +135,8 @@ if(!isJavaFileNew){
 println("create new java file : "+ javaFileName)
 javaFile = new File(javaFileName)
 
-javaFile.append('package org.squashtest.tm.web.internal.util;\n import java.util.Arrays;\n import java.util.List;\n\n public class InfoListItemList {\n');
-javaFile.append('private static List<String> infoListItems = Arrays.asList(');
+javaFile.append('package org.squashtest.tm.web.internal.util;\n import java.util.Arrays;\n import java.util.List;\n\n public class IconLibrary {\n');
+javaFile.append('private static List<String> ICON_NAMES = Arrays.asList(');
 list.each {
 	
 	def name = it.getName()
@@ -154,8 +154,8 @@ list.each {
 	
 }	
 javaFile.append(');\n')
-javaFile.append('public static List<String> getInfoListItems() {\n')	
-javaFile.append('return infoListItems;\n')
+javaFile.append('public static List<String> getIconNames() {\n')	
+javaFile.append('return ICON_NAMES;\n')
 javaFile.append('}\n')
 javaFile.append('}')
 

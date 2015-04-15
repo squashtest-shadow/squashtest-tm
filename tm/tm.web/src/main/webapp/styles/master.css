@@ -22,7 +22,7 @@
 @import "global-properties.less";
 @import url("features.css");
 @import url(features.less);
-@import url("info-list-item-icon.css");
+@import url("icon-lib-item-icon.css");
 @import url("typography.css");
 @import url("components.css");
 @import url("bootstrap-lite.css");
