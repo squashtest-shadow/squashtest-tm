@@ -147,7 +147,7 @@
 	<%----------------------------------- Information -----------------------------------------------%>
 	
 	<comp:toggle-panel id="execution-information-panel"
-		titleKey="generics.information.title" 
+		titleKey="label.Description" 
 		open="true">
 		<jsp:attribute name="body">
 		<div id="execution-information-table" class="display-table">
