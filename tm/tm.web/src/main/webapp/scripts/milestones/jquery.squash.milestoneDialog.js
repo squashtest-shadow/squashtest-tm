@@ -144,6 +144,17 @@ define(["jquery", "workspace.event-bus", "app/ws/squashtm.notification",
 			var url = this.options.tableSource;
 			var table = $(this.element[0]).find('.bind-milestone-dialog-table');
 			
+			
+			multilines = this.options.multilines;
+			if (!multilines) {
+		  var tableLength = $('.milestone-panel-table >tbody >tr >td').length;
+		  confirmLabel = (tableLength > 1) ? translator.get('label.Replace') : translator.get('label.Add');
+		  $(".bind-milestone-dialog-confirm").val(confirmLabel);
+			}
+			else {
+			confirmLabel = translator.get('label.Add');
+			$(".bind-milestone-dialog-confirm").val(confirmLabel);		
+			}
 			// if initialized -> refresh
 			if (!! table.data('squashtableInstance')){
 				table.squashTable()._fnAjaxUpdate();
@@ -167,8 +178,7 @@ define(["jquery", "workspace.event-bus", "app/ws/squashtm.notification",
 			
 			var selecthandler = (multilines) ? handleClickMultilines : handleClickSingleline,
 				inputType = (multilines) ? "checkbox" : "radio";
-			
-			
+
 			table.on('click', '>tbody>tr', selecthandler);			
 			
 			var tblCnf = {
