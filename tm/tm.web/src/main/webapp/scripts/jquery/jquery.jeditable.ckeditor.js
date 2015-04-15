@@ -1,6 +1,6 @@
 /*
  * CKEditor input for Jeditable
- * 
+ *
  * Adapted from Wysiwyg input for Jeditable by Mike Tuupola
  *   http://www.appelsiini.net/2008/9/wysiwyg-for-jeditable
  *
@@ -8,12 +8,12 @@
  *
  * Licensed under the MIT license:
  *   http://www.opensource.org/licenses/mit-license.php
- * 
+ *
  * Depends on CKEditor:
  *   http://ckeditor/
  *
  * Revision: $Id$
- * 
+ *
  *
  */
 
@@ -21,6 +21,10 @@
 //found at http://blog.amps211.com/this-is-me-professing-my-love-for-jquery-and-how-i-got-ckeditor-working-with-jeditable/
 //modified to add css class 'is-contextual' to the textarea so the widget could be targeted and destroyed, instead of polluting the page.
 (function($) {
+	function letItGo(editable) {
+		$(editable).closest(".sq-tg").removeClass("frozen");
+	}
+
 $.editable.addInputType('ckeditor', {
     /* Use default textarea instead of writing code here again. */
     //element : $.editable.types.textarea.element,
@@ -41,9 +45,12 @@ $.editable.addInputType('ckeditor', {
             textarea.width(settings.width);
         }
         $(this).append(textarea);
+
+        $(original).closest(".sq-tg").addClass("frozen");
+
         return(textarea);
     },
-    content : function(string, settings, original) { 
+    content : function(string, settings, original) {
         /* jWYSIWYG plugin uses .text() instead of .val()        */
         /* For some reason it did not work work with generated   */
         /* textareas so I am forcing the value here with .text() */
@@ -61,6 +68,11 @@ $.editable.addInputType('ckeditor', {
     	var area = $('textarea', this);
         area.val(CKEDITOR.instances[area.attr('id')].getData());
         CKEDITOR.instances[area.attr('id')].destroy();
+        letItGo(original);
+    },
+    reset: function(settings, original) {
+      letItGo(original);
+      return original.reset(this);
     }
 });
 })(jQuery);
