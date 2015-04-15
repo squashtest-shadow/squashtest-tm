@@ -30,7 +30,7 @@
 
 
 <div class="milestone-panel-master" 
-th:with="isWritable = ${(#authorization.expression('hasRole(''ROLE_ADMIN'')') or sec.hasPermission(testCase , 'WRITE')) and conf.editable}">
+th:with="isWritable = ${(#authorization.expression('hasRole(''ROLE_ADMIN'')') or sec.hasPermission(testCase , 'WRITE'))}">
   
   <div class="toolbar" th:if="${isWritable}">
   
@@ -134,11 +134,16 @@ th:with="isWritable = ${(#authorization.expression('hasRole(''ROLE_ADMIN'')') or
         <div data-def="state=one-legacy-selected" class="display-table-row">
         <div th:include="fragments-utils/static-panels :: warning-pane" th:with="txtcontent=#{title.unbindMilestones.legacyselected}"></div>       
     </div>
+       
+       <div data-def="state=one-statusDontAllowDelete-selected" class="display-table-row">
+        <div th:include="fragments-utils/static-panels :: warning-pane" th:with="txtcontent=#{title.unbindMilestones.statusDontAllowDelete}"></div>       
+    </div>
+    
     
     <div class="popup-dialog-buttonpane">
       <input type="button" th:value="#{label.Confirm}" data-def="state=one-selected more-selected, mainbtn=one-selected more-selected, evt=confirm"/>
       <input type="button" th:value="#{label.Cancel}" data-def="state=one-selected more-selected, mainbtn=one-selected more-selected, evt=cancel"/>
-      <input type="button" th:value="#{label.Close}" data-def="state=one-legacy-selected none-selected, mainbtn=one-legacy-selected none-selected, evt=cancel"/>
+      <input type="button" th:value="#{label.Close}" data-def="state=one-legacy-selected none-selected one-statusDontAllowDelete-selected, mainbtn=one-legacy-selected none-selected one-statusDontAllowDelete-selected, evt=cancel"/>
     </div>
   </div>
   

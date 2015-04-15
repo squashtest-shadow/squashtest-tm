@@ -582,12 +582,12 @@ public class TestCaseModificationController {
 		Boolean editable = tc.isModifiable();
 
 		// add them to the model
-
+        Boolean isMilestoneInProject = tc.getProject().getMilestones().size() == 0 ? false : true;
 		conf.setRootPath(rootPath);
 		conf.setIdentity(identity);
 		conf.setCurrentModel(currentModel);
 		conf.setEditable(editable);
-
+		conf.setIsMilestoneInProject(isMilestoneInProject);
 		model.addAttribute("conf", conf);
 
 		return "milestones/milestones-tab.html";

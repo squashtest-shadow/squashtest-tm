@@ -63,6 +63,9 @@ public class MetaMilestone{
 		return directMembership;
 	}
 
+	public boolean isStatusAllowUnbind(){
+		return milestone.getStatus().isAllowObjectModification();
+	}
 
 
 }

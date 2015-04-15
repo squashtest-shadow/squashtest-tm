@@ -61,7 +61,8 @@ public class TestCaseBoundMilestoneTableModelHelper extends DataTableModelBuilde
 		row.put("date", date.substring(0, 10));
 		row.put("description", item.getDescription());
 		row.put(DataTableModelConstants.DEFAULT_EMPTY_DELETE_HOLDER_KEY, null);
-
+		row.put("isStatusAllowUnbind", item.isStatusAllowUnbind());
+		
 		return row;
 	}
 

@@ -449,14 +449,14 @@ public class RequirementVersionModificationController {
 		String rootPath = "/requirement-versions/"+requirementVersionId.toString();
 
 		Boolean editable = version.isModifiable();
-
+		Boolean isMilestoneInProject = version.getProject().getMilestones().size() == 0 ? false : true;
 		// add them to the model
 		conf.setNodeType("requirement-version");
 		conf.setRootPath(rootPath);
 		conf.setIdentity(identity);
 		conf.setCurrentModel(currentModel);
 		conf.setEditable(editable);
-
+		conf.setIsMilestoneInProject(isMilestoneInProject);
 		model.addAttribute("conf", conf);
 
 		return "milestones/milestones-tab.html";

@@ -41,6 +41,8 @@ public class MilestonePanelConfiguration {
 	private List<?> currentModel;
 
 	private boolean editable;
+	
+	private boolean milestoneInProject;
 
 	// whether you can select more than one milestone in the bind-milestone popup
 	private boolean multilines=true;
@@ -91,6 +93,14 @@ public class MilestonePanelConfiguration {
 
 	public void setMultilines(boolean multilines) {
 		this.multilines = multilines;
+	}
+
+	public boolean isMilestoneInProject() {
+		return milestoneInProject;
+	}
+
+	public void setIsMilestoneInProject(boolean isMilestoneInProject) {
+		this.milestoneInProject = isMilestoneInProject;
 	}
 
 

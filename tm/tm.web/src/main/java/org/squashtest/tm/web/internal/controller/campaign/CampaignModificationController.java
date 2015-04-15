@@ -479,7 +479,7 @@ public class CampaignModificationController {
 		String rootPath = "/campaigns/"+campaignId.toString();
 
 		Boolean editable = camp.isBindableToMilestone();
-
+		Boolean isMilestoneInProject = camp.getProject().getMilestones().size() == 0 ? false : true;
 		// add them to the model
 		conf.setNodeType("campaign");
 		conf.setRootPath(rootPath);
@@ -487,7 +487,7 @@ public class CampaignModificationController {
 		conf.setCurrentModel(currentModel);
 		conf.setEditable(editable);
 		conf.setMultilines(false);
-
+		conf.setIsMilestoneInProject(isMilestoneInProject);
 		model.addAttribute("conf", conf);
 
 		return "milestones/milestones-tab.html";

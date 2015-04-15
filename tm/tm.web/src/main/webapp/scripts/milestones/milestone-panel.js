@@ -117,13 +117,19 @@ define(["jquery", "workspace.event-bus", "app/ws/squashtm.notification", "squash
 			bDeferLoading : true,
 			fnRowCallback : function(nRow, aData){
 				// this callback is necessary only for test case milestones
+				var row = $(nRow);
 				var tcDirectMember = aData['directMember'];
-				if (tcDirectMember===false){
-					var row = $(nRow);
+				if (tcDirectMember===false){	
 					row.addClass('milestone-indirect-membership');
 					row.find('.unbind-button').removeClass('unbind-button');
 					
 				}
+				
+				var isStatusAllowUnbind = aData['isStatusAllowUnbind'];
+				if (isStatusAllowUnbind===false){
+					row.find('.unbind-button').removeClass('unbind-button');				
+				}
+				
 			}
 		},
 		squashCnf = {
@@ -149,15 +155,19 @@ define(["jquery", "workspace.event-bus", "app/ws/squashtm.notification", "squash
 			bindDialogNoMilestone.formDialog();
 			
 			$(".milestone-panel-bind-button").on('click', function(){
-				// if there's at least one milestone
-				if (conf.currentModel.length > 0) {
+			
 				bindDialog.milestoneDialog('open');
-			  }
-				// else 
-				else {
-					bindDialogNoMilestone.formDialog('open');
-				}
+
 			});
+			
+			bindDialog.on('milestonedialogopen', function(){
+				// if there's not at least one milestone in project
+				if (!conf.milestoneInProject) {
+			bindDialogNoMilestone.formDialog('open');
+			bindDialog.milestoneDialog('close');
+				} 
+				});
+			
 			
 			bindDialogNoMilestone.on('formdialogclose', function(){
 				bindDialogNoMilestone.formDialog('close');
@@ -175,13 +185,18 @@ define(["jquery", "workspace.event-bus", "app/ws/squashtm.notification", "squash
 							
 				// For every milestone selected, if (tcDirectMember===false), we can't delete
 				var legacy = false;
-				
+				// For every milestone selected, if (isStatusAllowUnbind ===false), we can't delete
+				var statusDontAllowDelete = false;
 				ids.forEach(function(idCheck) {
 						var tcDirectMember = currentTable.getDataById(idCheck).directMember;
 						if (tcDirectMember===false){
 							legacy = true;
-						//}
-						};
+						}
+						var isStatusAllowUnbind = currentTable.getDataById(idCheck).isStatusAllowUnbind;
+						if (isStatusAllowUnbind===false){
+							statusDontAllowDelete = true;
+						}
+						
 				});
 				
 				
@@ -190,11 +205,17 @@ define(["jquery", "workspace.event-bus", "app/ws/squashtm.notification", "squash
 				case 0 : state="none-selected"; break;
 				case 1 : state="one-selected";break;
 				default : state="more-selected";
-				};
+				}
+				
+				if (statusDontAllowDelete === true ) {
+					state="one-statusDontAllowDelete-selected";
+				}
 				
 				if (legacy === true ) {
 					state="one-legacy-selected";
-				};	
+				}
+				
+			
 				
 				unbindDialog.formDialog('setState', state);
 			});
