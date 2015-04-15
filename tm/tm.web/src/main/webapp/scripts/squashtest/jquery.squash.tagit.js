@@ -46,7 +46,7 @@
  * 
  */
 
-define(["jquery", "jqueryui", "jquery.tagit"], function($){
+define(["jquery", "workspace.event-bus","jqueryui", "jquery.tagit"], function($, eventBus){
 	
 	$.widget('squash.squashTagit', $.ui.tagit, {
 		

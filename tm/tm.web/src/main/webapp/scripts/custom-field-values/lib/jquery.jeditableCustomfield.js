@@ -19,10 +19,10 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 define(
-		[ "jquery", "./cuf-values-utils", "squash.configmanager", "jqueryui",
+		[ "jquery", "./cuf-values-utils", "squash.configmanager", "underscore", "workspace.event-bus", "jqueryui",
 				"jquery.squash.jeditable", "jeditable.datepicker",
 				"datepicker/jquery.squash.datepicker-locales", "jquery.squash.tagit" ],
-		function($, utils, confman) {
+		function($, utils, confman, _, eventBus) {
 
 			/* ***************************************************************************************************
 			 * 
@@ -264,6 +264,8 @@ define(
 			// 'editableCustomfield'.
 			function initAsTag(elts, cufDefinition, idOrURLOrPostfunction){
 				
+				var addEvtname = "cuf.tag-added";
+				
 				if (elts.length === 0){
 					return;
 				}
@@ -285,7 +287,57 @@ define(
 					var tags = elt.squashTagit('assignedTags');
 					if (elt.squashTagit("validate", evt, ui)){
 						postFunction.call(elt, tags);
+						
+						/*
+						 * if this is a new tag, tell all instances of this cuf 
+						 * that it should add the new tag to the autocompletion list
+						 */
+						if (evt.type==="squashtagitaftertagadded"){
+							
+						}
 					}
+				});
+				
+				/* **************************************
+				 *  Autocompletion list management
+				 * **************************************/
+				
+				/*
+				 * when a new tag is aded, notify other instances of this cuf 
+				 * that the tag list has changed
+				 */
+				elts.on('squashtagitaftertagadded', function(evt, ui){
+					var elt = $(evt.currentTarget);
+					var source = elt.squashTagit('option').autocomplete.source;
+					var availableLabels = _.pluck(source, 'label');
+					
+					if (elt.squashTagit("validate", evt, ui) && 
+						(! _.contains(availableLabels, ui.tagLabel))){
+
+						eventBus.trigger(addEvtname, {
+							code : cufDefinition.code,
+							tagLabel : ui.tagLabel
+						});
+
+					}
+				});				
+				
+				/*
+				 * listen to new tag events and add the new tag to its 
+				 * autocompletion list, if it comes from another instance 
+				 * of this custom field
+				 */
+				eventBus.onContextual(addEvtname, function(evt, data){
+					if (data.code !== cufDefinition.code){
+						return;
+					}
+					
+					// all 'elts' elements share the same source so we 
+					// dont need to iterate over all 'elts'.
+					elts.squashTagit('option').autocomplete.source.push({
+						label : data.tagLabel
+					});		
+					
 				});
 							
 			}
