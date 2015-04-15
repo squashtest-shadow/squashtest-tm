@@ -132,9 +132,10 @@ define(["jquery", "backbone", "underscore", "squash.basicwidgets", "jeditable.si
 			var id = data['entity-id'];
 			var value = $(labelCell).text();
 
-			self.ChangeLabelPopup.find("#rename-popup-info-list-item-label").val(value);
+
 			self.ChangeLabelPopup.find("#rename-popup-info-list-item-id").val(id);
 			self.ChangeLabelPopup.formDialog("open");
+			self.ChangeLabelPopup.find("#rename-popup-info-list-item-label").val(value);
 		},
 
 		openChangeIconPopup : function(event){
@@ -190,7 +191,7 @@ define(["jquery", "backbone", "underscore", "squash.basicwidgets", "jeditable.si
 			this.ChangeLabelPopup = dialog;
 
 			dialog.formDialog();
-
+					
 			dialog.on('formdialogconfirm', function(){
 				self.changeLabel.call(self);
 			});
@@ -292,9 +293,10 @@ define(["jquery", "backbone", "underscore", "squash.basicwidgets", "jeditable.si
 			var id = data['entity-id'];
 			var value = $(codeCell).text();
 
-			self.ChangeCodePopup.find("#change-code-popup-info-list-item-code").val(value);
+
 			self.ChangeCodePopup.find("#change-code-popup-info-list-item-id").val(id);
 			self.ChangeCodePopup.formDialog("open");
+			self.ChangeCodePopup.find("#change-code-popup-info-list-item-code").val(value);
 		},
 
 		configureChangeCodePopup : function() {

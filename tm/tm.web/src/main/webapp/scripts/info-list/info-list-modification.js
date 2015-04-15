@@ -49,8 +49,11 @@ define([ 'module', "info-list/info-list-modification-information-view", "info-li
 		renameInfoListPopup : function(){
 			var self = this;
 			self.RenameInfoListPopup.formDialog("open");
-		},
 
+			var listName = $("#info-list-name-header").text();
+			$("#rename-popup-info-list-label").val(listName);
+		},
+ 
 		deleteInfoListPopup : function(){
 			var self = this;
 			var message = $("#delete-info-list-warning");
