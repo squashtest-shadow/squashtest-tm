@@ -78,7 +78,12 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil","workspace.ro
 			var self = this;
 			var table = $('#requirement-search-result-table').squashTable();
 			var ids = table.getSelectedIds(); //ids of requirement
-			if (this._containsDuplicate(ids)){
+			
+			
+			
+			if (ids.length === 0){
+				notification.showError(translator.get('message.noLinesSelected'));				
+			} else if (this._containsDuplicate(ids)){
 
 				var warn = translator.get({
 					errorTitle : 'popup.title.Info',

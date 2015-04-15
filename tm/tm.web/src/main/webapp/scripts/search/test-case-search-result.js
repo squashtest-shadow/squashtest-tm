@@ -186,7 +186,11 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil", "workspace.r
 		                table._fnAjaxUpdate();
 					}
 				};
+			if (ids.length === 0){
+				notification.showError(translator.get('message.noLinesSelected'));				
+			} else {
 			this.milestoneMassModif.open(dialogOptions);
+			}
 		},
 		
 		validateSelection : function(dataTable) {
@@ -311,19 +315,7 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil", "workspace.r
 			});
 			
 		},
-		
-		updateMilestoneDialog : function(){
-			var self = this;
-			var table = $('#test-case-search-result-table').squashTable();
-			var ids = table.getSelectedIds();
-			
-			var tab = $('.bind-milestone-dialog-table').squashTable();
-			tab.fnSettings().sAjaxSource = routing.buildURL('search-tc.mass-change.associable-milestone', ids);
-			var addModifyMilestoneDialog = $('.bind-milestone-dialog').milestoneDialog();
-			addModifyMilestoneDialog.data().milestoneDialog.options.milestonesURL = routing.buildURL('search-tc.mass-change.bindmilestones', ids);
-	
-		},
-		
+
 		configureModifyResultsDialog : function() {
 			
 			var self = this;
