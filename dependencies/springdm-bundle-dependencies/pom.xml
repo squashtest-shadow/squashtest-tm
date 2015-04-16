@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.squashtest.tm</groupId>
     <artifactId>squashtest-csp-dependencies</artifactId>
-    <version>1.12.0.RC4</version>
+    <version>1.12.0.RC5-SNAPSHOT</version>
   </parent>
 
   <artifactId>springdm-bundle-dependencies</artifactId>

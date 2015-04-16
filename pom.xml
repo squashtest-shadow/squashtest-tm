@@ -9,7 +9,7 @@
   </parent>
 
   <artifactId>squash-tm</artifactId>
-  <version>1.12.0.RC4</version>
+  <version>1.12.0.RC5-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <name>squash-tm</name>
@@ -611,7 +611,7 @@
                         </goals>
                       </pluginExecutionFilter>
                       <action>
-                        <execute></execute>
+                        <execute />
                       </action>
                     </pluginExecution>
 
@@ -625,7 +625,7 @@
                         </goals>
                       </pluginExecutionFilter>
                       <action>
-                        <execute></execute>
+                        <execute />
                       </action>
                     </pluginExecution>
 
