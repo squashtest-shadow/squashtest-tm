@@ -48,6 +48,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.ModelAndView;
 import org.squashtest.tm.event.ConfigUpdateEvent;
+import org.squashtest.tm.exception.client.ClientNameAlreadyExistsException;
 import org.squashtest.tm.service.configuration.ConfigurationService;
 import org.squashtest.tm.service.feature.FeatureManager;
 import org.squashtest.tm.service.feature.FeatureManager.Feature;
@@ -56,6 +57,7 @@ import org.squashtest.tm.service.user.UserManagerService;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
+import org.springframework.security.oauth2.provider.ClientAlreadyExistsException;
 import org.springframework.security.oauth2.provider.ClientDetails;
 import org.springframework.security.oauth2.provider.BaseClientDetails;
 
@@ -172,15 +174,23 @@ public class ConfigAdministrationController implements ApplicationContextAware, 
 	@RequestMapping(value = "clients", method = RequestMethod.POST)
 	@ResponseStatus(HttpStatus.CREATED)
 	public @ResponseBody ClientDetails addClient(@Valid @ModelAttribute("addClient") ClientModel model) {
+		BaseClientDetails clientDetails = convertClientModelToBaseClientDetails(model);
+		try{
+			clientService.addClientDetails(clientDetails);
+		}
+		catch(ClientAlreadyExistsException ex){
+			throw new ClientNameAlreadyExistsException(ex);
+		}
+		return clientDetails;
+	}
 
+	private BaseClientDetails convertClientModelToBaseClientDetails(ClientModel model){
 		BaseClientDetails clientDetails = new BaseClientDetails();
 		clientDetails.setClientId(model.getClientId());
 		clientDetails.setClientSecret(model.getClientSecret());
 		Set<String> uris = new HashSet<String>();
 		uris.add(model.getRegisteredRedirectUri());
 		clientDetails.setRegisteredRedirectUri(uris);
-		clientService.addClientDetails(clientDetails);
-
 		return clientDetails;
 	}
 

@@ -20,7 +20,7 @@
  */
 package org.squashtest.tm.web.internal.controller.administration;
 
-import java.util.List;
+import org.hibernate.validator.constraints.NotBlank;
 
 public class ClientModel {
 
@@ -32,7 +32,7 @@ public class ClientModel {
 
 	}
 
-	public ClientModel(String clientId, String clientSecret, String registeredRedirectUri){
+	public ClientModel(@NotBlank String clientId, @NotBlank String clientSecret, String registeredRedirectUri){
 		this.clientId = clientId;
 		this.clientSecret = clientSecret;
 		this.registeredRedirectUri = registeredRedirectUri;
@@ -42,16 +42,16 @@ public class ClientModel {
 		return clientId;
 	}
 
-	public void setClientId(String clientId) {
-		this.clientId = clientId;
+	public void setClientId(@NotBlank  String clientId) {
+		this.clientId = clientId.trim();
 	}
 
 	public String getClientSecret() {
 		return clientSecret;
 	}
 
-	public void setClientSecret(String clientSecret) {
-		this.clientSecret = clientSecret;
+	public void setClientSecret(@NotBlank String clientSecret) {
+		this.clientSecret = clientSecret.trim();
 	}
 
 	public String getRegisteredRedirectUri() {
@@ -59,7 +59,7 @@ public class ClientModel {
 	}
 
 	public void setRegisteredRedirectUri(String registeredRedirectUri) {
-		this.registeredRedirectUri = registeredRedirectUri;
+		this.registeredRedirectUri = registeredRedirectUri.trim();
 	}
 
 
