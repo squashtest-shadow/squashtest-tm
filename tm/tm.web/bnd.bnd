@@ -5,6 +5,7 @@ Bundle-ClassPath: .,\
 Include-Resource: src/main/webapp,\
 	src/main/resources
 Import-Package: com.fasterxml.jackson.databind,\
+	com.fasterxml.jackson.datatype.hibernate4,\
 	com.fasterxml.jackson.core,\
 	javax.servlet.jsp.jstl.core;version=${jstl.version},\
 	javax.servlet.jsp.jstl.fmt;version=${jstl.version},\

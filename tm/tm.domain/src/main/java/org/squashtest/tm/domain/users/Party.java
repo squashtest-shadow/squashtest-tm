@@ -22,6 +22,7 @@ package org.squashtest.tm.domain.users;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -48,7 +49,10 @@ public abstract class Party implements Identified{
 	@SequenceGenerator(name = "core_party_party_id_seq", sequenceName = "core_party_party_id_seq")
 	protected Long id;
 
-	@OneToOne
+	/**
+	 * This is only used when administering the user, we can fetch lazy
+	 */
+	@OneToOne(fetch = FetchType.LAZY)
 	@JoinTable(name = "CORE_GROUP_MEMBER", joinColumns = @JoinColumn(name = "PARTY_ID"), inverseJoinColumns = @JoinColumn(name = "GROUP_ID"))
 	private UsersGroup group;
 

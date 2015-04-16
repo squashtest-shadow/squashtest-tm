@@ -149,11 +149,11 @@
       <version>${fasterxml.jackson.version}</version>
     </dependency>
 
-<dependency>
-  <groupId>com.fasterxml.jackson.datatype</groupId>
-  <artifactId>jackson-datatype-hibernate3</artifactId>
- <version>${fasterxml.jackson.version}</version>
-</dependency>    
+    <dependency>
+      <groupId>com.fasterxml.jackson.datatype</groupId>
+      <artifactId>jackson-datatype-hibernate4</artifactId>
+      <version>${fasterxml.jackson.version}</version>
+    </dependency>
 
     <!-- ===== / ASPECTJ ===== -->
 
@@ -394,7 +394,6 @@
       <scope>test</scope>
     </dependency>
     <!-- ====== /SPRING INTEGRATION TEST SUPPORT ====== -->
-
 
   </dependencies>
   <build>

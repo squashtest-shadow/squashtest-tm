@@ -34,6 +34,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -110,11 +111,11 @@ public class IterationTestPlanItem implements HasExecutionStatus, Identified {
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date lastExecutedOn;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "TCLN_ID", referencedColumnName = "TCLN_ID")
 	private TestCase referencedTestCase;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "DATASET_ID", referencedColumnName = "DATASET_ID")
 	private Dataset referencedDataset;
 
@@ -123,7 +124,7 @@ public class IterationTestPlanItem implements HasExecutionStatus, Identified {
 	@JoinTable(name = "ITEM_TEST_PLAN_EXECUTION", joinColumns = @JoinColumn(name = "ITEM_TEST_PLAN_ID"), inverseJoinColumns = @JoinColumn(name = "EXECUTION_ID"))
 	private final List<Execution> executions = new ArrayList<Execution>();
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinTable(name = "ITEM_TEST_PLAN_LIST", joinColumns = @JoinColumn(name = "ITEM_TEST_PLAN_ID", insertable = false, updatable = false), inverseJoinColumns = @JoinColumn(name = "ITERATION_ID", insertable = false, updatable = false))
 	private Iteration iteration;
 
