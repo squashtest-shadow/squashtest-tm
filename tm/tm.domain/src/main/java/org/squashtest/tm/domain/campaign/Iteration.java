@@ -36,7 +36,6 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -116,7 +115,7 @@ BoundEntity, MilestoneMember {
 	 * See bug HHH-5390 for a concise discussion about this.
 	 */
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne
 	@JoinTable(name = "CAMPAIGN_ITERATION", joinColumns = @JoinColumn(name = ITERATION_ID, updatable = false, insertable = false), inverseJoinColumns = @JoinColumn(name = "CAMPAIGN_ID", updatable = false, insertable = false))
 	private Campaign campaign;
 
@@ -130,7 +129,7 @@ BoundEntity, MilestoneMember {
 
 	/* *********************** attachment attributes ************************ */
 
-	@OneToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, fetch = FetchType.LAZY)
+	@OneToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
 	@JoinColumn(name = "ATTACHMENT_LIST_ID")
 	private final AttachmentList attachmentList = new AttachmentList();
 
