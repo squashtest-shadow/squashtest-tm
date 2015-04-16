@@ -126,6 +126,7 @@ that page won't be editable if
 	
 	require(['common'], function(){
 		require(['requirement-version-page'], function(){});
+
 	});
 
 </script>
@@ -139,9 +140,7 @@ that page won't be editable if
   </div>
   </c:if>
 	<div style="float:left;height:100%;" class="small-margin-left">	
-  
-		<h2>
-		
+  		<h2>
 			<c:set var="completeRequirementName" value="${ requirementVersion.name }" />
 			<c:if test="${not empty requirementVersion.reference && fn:length(requirementVersion.reference) > 0}" >
 				<c:set var="completeRequirementName" value='${ requirementVersion.reference } - ${ requirementVersion.name }' />

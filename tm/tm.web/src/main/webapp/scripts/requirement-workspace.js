@@ -19,7 +19,7 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 require([ "common" ], function() {
-	require([ "jquery", 'req-workspace' ,"app/ws/squashtm.workspace", "domReady" , 'jquery.cookie' ], function($, ReqWorkspace,  WS, domReady) {
+	require([ "jquery", 'req-workspace' ,"app/ws/squashtm.workspace", "domReady", 'jquery.cookie' ], function($, ReqWorkspace,  WS, domReady) {
 		domReady(function() {
 			WS.init();
 			
@@ -27,6 +27,9 @@ require([ "common" ], function() {
 				path : '/'
 			});
 			ReqWorkspace.init(squashtm.app.requirementWorkspaceConf);
+
+			
+			
 		});
 	});
 });

@@ -378,11 +378,9 @@
 					hasBugtracker : ${campaign.project.bugtrackerConnected},
 					hasCUF : ${hasCUF}
 				}
-			}
-			
-			manager.init(conf);
+			}		
+			manager.init(conf);		
 		});
 	});
 	
 </script>
-

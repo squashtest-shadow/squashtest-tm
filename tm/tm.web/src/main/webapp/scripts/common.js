@@ -216,6 +216,7 @@ requirejs.config({
 				"workspace.contextual-content" : "workspace/workspace.contextual-content",
 				"workspace.event-bus" : "workspace/workspace.event-bus",
 				"workspace.storage" : "workspace/workspace.storage",
+				"workspace.sessionStorage" : "workspace/workspace.sessionStorage",
 				"workspace.routing" : "workspace/workspace.routing",
 				"workspace.breadcrumb" : "workspace/workspace.breadcrumb",
 				"workspace.projects" : "workspace/workspace.projects",
