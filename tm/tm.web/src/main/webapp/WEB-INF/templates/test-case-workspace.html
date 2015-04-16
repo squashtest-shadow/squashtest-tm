@@ -799,10 +799,64 @@
   </div>
 
 
+    <div id="export-requirement-dialog" class="popup-dialog not-displayed" th:title="#{label.Export}"
+      th:attr="data-def='nameprefix='+#{label.lower.dash.exportRequirements}+', dateformat='+#{export.dateformat}"
+      data-def="nameprefix=nameprefix, dateformat=dd_MM_yyyy">
+
+      <div data-def="state=main">
+
+        <div class="display-table" style="width: 100%">
+          <div style="display: table-column-group">
+            <div style="display: table-column"></div>
+            <div style="display: table-column; width: 70%"></div>
+          </div>
+          <div class="display-table-row">
+            <label th:text="#{dialog.rename.label}"> rename </label>
+            <div class="display-table-cell">
+              <input type="text" id="export-name-input" style="width: 100%" />
+            </div>
+          </div>
+          <div class="display-table-row">
+            <label th:text="#{label.ExportFormat}"> export format </label>
+            <div class="display-table-cell">
+              <select id="export-option">
+                <option value="csv">csv</option>
+                <option value="xls">xls</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="std-margin-top">
+          <input type="checkbox" id="export-keepRteFormat" checked="checked" />
+          <span th:text="#{test-case.export.dialog.keeprteformat}"> keep rte format </span>
+          <div class="nota-bene" th:text="#{test-case.export.dialog.keeprteformat.description}"></div>
+        </div>
+      </div>
+
+      <div data-def="state=crossproerror">
+        <span th:text="#{message.exportRequirementCrossProjectError}"> export requirement cross project error </span>
+      </div>
+
+      <div data-def="state=nonodeserror">
+        <span th:text="#{message.exportRequirementNoNodeSelected}"> export requirement no node selected </span>
+      </div>
+
+      <div class="popup-dialog-buttonpane">
+        <input type="button" th:value="#{label.Export}" value="export" data-def="evt=confirm, mainbtn=main, state=main !nonodeserror" />
+        <input type="button" th:value="#{label.Cancel}" value="cancel"
+          data-def="evt=cancel, mainbtn=crossproerror, mainbtn=nonodeserror, state=main !nonodeserror" />
+         <input type="button" th:value="#{label.Close}" value="cancel"
+          data-def="evt=cancel, mainbtn=crossproerror, state=nonodeserror" />  
+      </div>
+      
+    </div>
+
   <!--  ================= EXPORT TC POPUP ======================= -->
 
   <div id="export-test-case-dialog" class="popup-dialog not-displayed" th:title="#{label.Export}" title="export"
-    th:attr="data-def='nameprefix='+#{label.lower.dash.exportTestCase}+', dateformat='+#{export.dateformat}">
+    th:attr="data-def='nameprefix='+#{label.lower.dash.exportTestCase}+', dateformat='+#{export.dateformat}"
+    data-def="nameprefix=nameprefix, dateformat=dd_MM_yyyy">
 
     <div data-def="state=main" class="std-margin-top">
 
@@ -853,8 +907,11 @@
     </div>
 
     <div class="popup-dialog-buttonpane">
-      <input type="button" th:value="#{label.Export}" value="export" data-def="evt=confirm, mainbtn=main" />
-      <input type="button" th:value="#{label.Cancel}" value="cancel" data-def="evt=cancel, mainbtn=nonodeserror" />
+        <input type="button" th:value="#{label.Export}" value="export" data-def="evt=confirm, mainbtn=main, state=main !nonodeserror" />
+        <input type="button" th:value="#{label.Cancel}" value="cancel"
+          data-def="evt=cancel, mainbtn=crossproerror, mainbtn=nonodeserror, state=main !nonodeserror" />
+         <input type="button" th:value="#{label.Close}" value="cancel"
+          data-def="evt=cancel, mainbtn=crossproerror, state=nonodeserror" />  
     </div>
   </div>
 

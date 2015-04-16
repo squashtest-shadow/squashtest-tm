@@ -443,6 +443,41 @@
       </div>
     </div>
     
+    
+    
+    
+    
+    
+    
+    
+      <!--  ================= EXPORT CAMPAIGN ERROR POPUP ======================= -->
+
+  <div id="export-campaign-error-dialog" class="popup-dialog not-displayed" th:title="#{label.Export}" title="export">
+
+
+    <div class="std-margin-top">
+      <span th:text="#{message.exportNoCampaignSelected}">export campaign no node selected</span>
+    </div>
+
+    <div class="popup-dialog-buttonpane">
+          <input type="button" th:value="#{label.Close}" value="cancel"  data-def="evt=cancel"/>  
+    </div>
+  </div>
+
+
+  	<!--  ================= /EXPORT CAMPAIGN ERROR POPUP  =======================  -->
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+    
         <!--  ================= MILESTONE POPUP =======================  -->
   
   <div th:include="milestones/workspace-tree-milestone-popup :: tree-milestone-dialog-fragment" />

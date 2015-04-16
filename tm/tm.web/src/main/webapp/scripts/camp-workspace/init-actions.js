@@ -136,19 +136,53 @@ define(["jquery", "tree","./permissions-rules", "workspace.contextual-content", 
 			// ****************** exports *********************
 			
 			// NOTE : DO NOT BIND USING $("menu").on("click", "button", handler), this breaks under (true) IE8. See #3268
-			$("#export-L-tree-button").on("click", function(){				
-				var nodeId = tree.jstree("get_selected").attr("resid");				
+			$("#export-L-tree-button").on("click", function(){
+				
+				var dialog = $("#export-campaign-error-dialog").formDialog();
+				dialog.on('formdialogcancel', function(){
+					dialog.formDialog('close');
+				});
+				var nodeId = tree.jstree("get_selected").attr("resid");		
+				var nodeType = tree.jstree("get_selected").attr("restype");	
+				
+				if (nodeId == undefined || nodeType == "campaign-libraries") {
+					dialog.formDialog('open');
+				}
+				else {
 				document.location.href= squashtm.app.contextRoot+"/campaign-browser/export-campaign/"+nodeId+"?export=csv&exportType=L";
+				}
 			});
 			
 			$("#export-S-tree-button").on("click", function(){				
-				var nodeId = tree.jstree("get_selected").attr("resid");				
-				document.location.href= squashtm.app.contextRoot+"/campaign-browser/export-campaign/"+nodeId+"?export=csv&exportType=S";
+				var dialog = $("#export-campaign-error-dialog").formDialog();
+				dialog.on('formdialogcancel', function(){
+					dialog.formDialog('close');
+				});
+				var nodeId = tree.jstree("get_selected").attr("resid");		
+				var nodeType = tree.jstree("get_selected").attr("restype");	
+				
+				if (nodeId == undefined || nodeType == "campaign-libraries") {
+					dialog.formDialog('open');
+				}
+				else {
+					document.location.href= squashtm.app.contextRoot+"/campaign-browser/export-campaign/"+nodeId+"?export=csv&exportType=S";
+				}
 			}); 
 			
 			$("#export-F-tree-button").on("click", function(){				
-				var nodeId = tree.jstree("get_selected").attr("resid");				
+				var dialog = $("#export-campaign-error-dialog").formDialog();
+				dialog.on('formdialogcancel', function(){
+					dialog.formDialog('close');
+				});
+				var nodeId = tree.jstree("get_selected").attr("resid");		
+				var nodeType = tree.jstree("get_selected").attr("restype");	
+				
+				if (nodeId == undefined || nodeType == "campaign-libraries") {
+					dialog.formDialog('open');
+				}
+				else {
 				document.location.href=  squashtm.app.contextRoot+"/campaign-browser/export-campaign/"+nodeId+"?export=csv&exportType=F";
+				}
 			});		
 			
 			

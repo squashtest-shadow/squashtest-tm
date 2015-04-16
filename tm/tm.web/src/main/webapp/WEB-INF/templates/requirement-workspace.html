@@ -745,9 +745,11 @@
       </div>
 
       <div class="popup-dialog-buttonpane">
-        <input type="button" th:value="#{label.Export}" value="export" data-def="evt=confirm, mainbtn=main" />
+        <input type="button" th:value="#{label.Export}" value="export" data-def="evt=confirm, mainbtn=main, state=main !nonodeserror" />
         <input type="button" th:value="#{label.Cancel}" value="cancel"
-          data-def="evt=cancel, mainbtn=crossproerror, mainbtn=nonodeserror" />
+          data-def="evt=cancel, mainbtn=crossproerror, mainbtn=nonodeserror, state=main !nonodeserror" />
+         <input type="button" th:value="#{label.Close}" value="cancel"
+          data-def="evt=cancel, mainbtn=crossproerror, state=nonodeserror" />  
       </div>
       
     </div>

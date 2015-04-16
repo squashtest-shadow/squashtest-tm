@@ -173,9 +173,9 @@ define(["jquery", "tree","./permissions-rules", "workspace.contextual-content", 
 			// ******************* export ********************
 			
 			$("#export-tree-button").on("click", function(){
-				if(!$("#export-tree-button").hasClass("ui-state-disabled")){
+				
 					$("#export-test-case-dialog").exportDialog("open");
-				}
+				
 			});
 			
 			// *****************  search  ********************
