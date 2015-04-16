@@ -20,7 +20,9 @@
  */
 package org.squashtest.tm.web.internal.controller.administration;
 
-import org.hibernate.validator.constraints.NotBlank;
+import javax.validation.constraints.Size;
+
+import org.squashtest.tm.exception.client.ClientIDCannotBeEmptyException;
 
 public class ClientModel {
 
@@ -32,7 +34,7 @@ public class ClientModel {
 
 	}
 
-	public ClientModel(@NotBlank String clientId, @NotBlank String clientSecret, String registeredRedirectUri){
+	public ClientModel(String clientId, String clientSecret, String registeredRedirectUri){
 		this.clientId = clientId;
 		this.clientSecret = clientSecret;
 		this.registeredRedirectUri = registeredRedirectUri;
@@ -42,7 +44,10 @@ public class ClientModel {
 		return clientId;
 	}
 
-	public void setClientId(@NotBlank  String clientId) {
+	public void setClientId(String clientId) {
+		if(clientId.isEmpty()){
+			throw new ClientIDCannotBeEmptyException();
+		}
 		this.clientId = clientId.trim();
 	}
 
@@ -50,7 +55,7 @@ public class ClientModel {
 		return clientSecret;
 	}
 
-	public void setClientSecret(@NotBlank String clientSecret) {
+	public void setClientSecret(String clientSecret) {
 		this.clientSecret = clientSecret.trim();
 	}
 
