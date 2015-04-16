@@ -373,6 +373,13 @@ th.width-tenperc, td.width-tenperc {
 	display : inline-block;
 }
 
+.inline-sq-icon{
+	width : 16px;
+	height : 16px;
+	background-repeat : no-repeat;
+	display : inline;
+}
+
 .icon-test-case{
 	background-image : url(../images/Icon_Tree_TestCase.png);	/** sprite-ref: sprites-icons; */
 }

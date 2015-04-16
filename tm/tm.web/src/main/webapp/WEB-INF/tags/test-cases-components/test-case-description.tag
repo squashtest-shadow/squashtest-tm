@@ -60,7 +60,8 @@
 		<div class="display-table-row">
 			<label for="test-case-status" class="display-table-cell"><f:message key="test-case.status.combo.label" /></label>
 			<div class="display-table-cell">
-			<span id="test-case-status-icon" class="test-case-status-${testCase.status}"> &nbsp &nbsp</span> <span id="test-case-status">${ testCaseStatusLabel }</span>
+			<span id="test-case-status-icon" style="vertical-align:middle" class="test-case-status-${testCase.status}"> &nbsp &nbsp</span> 
+            <span id="test-case-status">${ testCaseStatusLabel }</span>
 			</div>
 		</div>
 		

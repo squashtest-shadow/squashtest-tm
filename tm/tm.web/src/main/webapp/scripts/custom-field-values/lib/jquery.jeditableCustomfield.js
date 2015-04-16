@@ -275,9 +275,9 @@ define(
 				var conf = confman.getStdTagit();
 				
 				$.extend(true, conf, {
-					autocomplete: {
-						source : cufDefinition.options
-					}
+					availableTags : _.map(cufDefinition.options, function(elt){
+						return elt.label;
+					})
 				});
 				
 				elts.squashTagit(conf);	
@@ -287,14 +287,6 @@ define(
 					var tags = elt.squashTagit('assignedTags');
 					if (elt.squashTagit("validate", evt, ui)){
 						postFunction.call(elt, tags);
-						
-						/*
-						 * if this is a new tag, tell all instances of this cuf 
-						 * that it should add the new tag to the autocompletion list
-						 */
-						if (evt.type==="squashtagitaftertagadded"){
-							
-						}
 					}
 				});
 				
@@ -308,11 +300,10 @@ define(
 				 */
 				elts.on('squashtagitaftertagadded', function(evt, ui){
 					var elt = $(evt.currentTarget);
-					var source = elt.squashTagit('option').autocomplete.source;
-					var availableLabels = _.pluck(source, 'label');
+					var availableTags = elts.squashTagit('option').availableTags;
 					
 					if (elt.squashTagit("validate", evt, ui) && 
-						(! _.contains(availableLabels, ui.tagLabel))){
+						(! _.contains(availableTags, ui.tagLabel))){
 
 						eventBus.trigger(addEvtname, {
 							code : cufDefinition.code,
@@ -334,9 +325,7 @@ define(
 					
 					// all 'elts' elements share the same source so we 
 					// dont need to iterate over all 'elts'.
-					elts.squashTagit('option').autocomplete.source.push({
-						label : data.tagLabel
-					});		
+					elts.squashTagit('option').availableTags.push(data.tagLabel);		
 					
 				});
 							
