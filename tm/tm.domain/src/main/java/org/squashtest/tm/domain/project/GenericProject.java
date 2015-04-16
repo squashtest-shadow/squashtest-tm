@@ -124,24 +124,24 @@ public abstract class GenericProject implements Identified, AttachmentHolder {
 	private Set<TestAutomationProject> testAutomationProjects = new HashSet<TestAutomationProject>();
 
 	@JoinColumn(name = "TA_SERVER_ID")
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	private TestAutomationServer testAutomationServer;
 
-	@OneToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+	@OneToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, fetch = FetchType.LAZY)
 	@JoinColumn(name = "ATTACHMENT_LIST_ID", updatable = false)
 	private final AttachmentList attachmentList = new AttachmentList();
 
 
 	// the so-called information lists
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name="REQ_CATEGORIES_LIST")
 	private InfoList requirementCategories;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name="TC_NATURES_LIST")
 	private InfoList testCaseNatures;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name="TC_TYPES_LIST")
 	private InfoList testCaseTypes;
 
