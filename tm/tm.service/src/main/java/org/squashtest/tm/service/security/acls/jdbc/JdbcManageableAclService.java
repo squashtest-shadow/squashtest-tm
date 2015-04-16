@@ -154,7 +154,7 @@ public class JdbcManageableAclService extends JdbcAclService implements Manageab
 			+ "inner join ACL_CLASS ac on ac.ID = oid.CLASS_ID  where arse.PARTY_ID = ? and ac.CLASSNAME in ( ? , ? )";
 
 	//11-02-13 : this query is ready for task 1865
-	private static final String USER_AND_ACL_GROUP_NAME_FROM_IDENTITY_AND_CLASS = "select arse.PARTY_ID, ag.ID, ag.QUALIFIED_NAME, CONCAT(COALESCE(cu.LOGIN, ''), COALESCE(ct.NAME, '')) as sorting_key, CONCAT(COALESCE(cu.LOGIN, 'TEAM'), COALESCE(ct.NAME, 'USER')) as party_type from "
+	private static final String USER_AND_ACL_GROUP_NAME_FROM_IDENTITY_AND_CLASS = "select arse.PARTY_ID, ag.ID, ag.QUALIFIED_NAME, CONCAT(COALESCE(cu.LOGIN, ''), COALESCE(ct.NAME, '')) as sorting_key, CONCAT(case when cu.LOGIN is NULL then 'TEAM' else 'USER' end, COALESCE(cu.LOGIN, ct.NAME)) as party_type from "
 			+ "ACL_GROUP ag inner join ACL_RESPONSIBILITY_SCOPE_ENTRY arse on ag.ID = arse.ACL_GROUP_ID "
 			+ "inner join ACL_OBJECT_IDENTITY oid on oid.ID = arse.OBJECT_IDENTITY_ID "
 			+ "inner join ACL_CLASS ac on ac.ID = oid.CLASS_ID "
@@ -163,7 +163,7 @@ public class JdbcManageableAclService extends JdbcAclService implements Manageab
 			+ "where oid.IDENTITY = ? and ac.CLASSNAME = ? ";
 
 	//11-02-13 : this query is ready for task 1865
-	private static final String USER_AND_ACL_GROUP_NAME_FROM_IDENTITY_AND_CLASS_FILTERED = "select arse.PARTY_ID, ag.ID, ag.QUALIFIED_NAME, CONCAT(COALESCE(cu.LOGIN, ''), COALESCE(ct.NAME, '')) as sorting_key, CONCAT(COALESCE(cu.LOGIN, 'TEAM'), COALESCE(ct.NAME, 'USER')) as party_type from "
+	private static final String USER_AND_ACL_GROUP_NAME_FROM_IDENTITY_AND_CLASS_FILTERED = "select arse.PARTY_ID, ag.ID, ag.QUALIFIED_NAME, CONCAT(COALESCE(cu.LOGIN, ''), COALESCE(ct.NAME, '')) as sorting_key, CONCAT(case when cu.LOGIN is NULL then 'TEAM' else 'USER' end, COALESCE(cu.LOGIN, ct.NAME)) as party_type from "
 			+ "ACL_GROUP ag inner join ACL_RESPONSIBILITY_SCOPE_ENTRY arse on ag.ID = arse.ACL_GROUP_ID "
 			+ "inner join ACL_OBJECT_IDENTITY oid on oid.ID = arse.OBJECT_IDENTITY_ID "
 			+ "inner join ACL_CLASS ac on ac.ID = oid.CLASS_ID "
