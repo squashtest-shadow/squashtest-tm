@@ -145,7 +145,7 @@ define(["jquery", "tree","./permissions-rules", "workspace.contextual-content", 
 				var nodeId = tree.jstree("get_selected").attr("resid");		
 				var nodeType = tree.jstree("get_selected").attr("restype");	
 				
-				if (nodeId == undefined || nodeType == "campaign-libraries") {
+				if (nodeId === undefined || nodeType == "campaign-libraries") {
 					dialog.formDialog('open');
 				}
 				else {
@@ -161,7 +161,7 @@ define(["jquery", "tree","./permissions-rules", "workspace.contextual-content", 
 				var nodeId = tree.jstree("get_selected").attr("resid");		
 				var nodeType = tree.jstree("get_selected").attr("restype");	
 				
-				if (nodeId == undefined || nodeType == "campaign-libraries") {
+				if (nodeId === undefined || nodeType == "campaign-libraries") {
 					dialog.formDialog('open');
 				}
 				else {
@@ -177,7 +177,7 @@ define(["jquery", "tree","./permissions-rules", "workspace.contextual-content", 
 				var nodeId = tree.jstree("get_selected").attr("resid");		
 				var nodeType = tree.jstree("get_selected").attr("restype");	
 				
-				if (nodeId == undefined || nodeType == "campaign-libraries") {
+				if (nodeId === undefined || nodeType == "campaign-libraries") {
 					dialog.formDialog('open');
 				}
 				else {
