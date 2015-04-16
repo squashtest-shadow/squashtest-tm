@@ -589,7 +589,7 @@ public class TestCaseModificationController {
 		conf.setEditable(editable);
 		conf.setIsMilestoneInProject(isMilestoneInProject);
 		model.addAttribute("conf", conf);
-
+		model.addAttribute("item", tc);
 		return "milestones/milestones-tab.html";
 
 	}

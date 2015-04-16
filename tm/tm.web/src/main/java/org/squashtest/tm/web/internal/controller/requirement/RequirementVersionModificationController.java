@@ -458,7 +458,7 @@ public class RequirementVersionModificationController {
 		conf.setEditable(editable);
 		conf.setIsMilestoneInProject(isMilestoneInProject);
 		model.addAttribute("conf", conf);
-
+		model.addAttribute("item", version);
 		return "milestones/milestones-tab.html";
 
 	}

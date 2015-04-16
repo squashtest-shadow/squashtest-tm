@@ -489,7 +489,7 @@ public class CampaignModificationController {
 		conf.setMultilines(false);
 		conf.setIsMilestoneInProject(isMilestoneInProject);
 		model.addAttribute("conf", conf);
-
+		model.addAttribute("item", camp);
 		return "milestones/milestones-tab.html";
 
 	}

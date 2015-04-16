@@ -30,7 +30,7 @@
 
 
 <div class="milestone-panel-master" 
-th:with="isWritable = ${(#authorization.expression('hasRole(''ROLE_ADMIN'')') or sec.hasPermission(testCase , 'WRITE'))}">
+th:with="isWritable = ${#authorization.expression('hasRole(''ROLE_ADMIN'')')  or sec.hasPermission(item , 'WRITE')}">
   
   <div class="toolbar" th:if="${isWritable}">
   
