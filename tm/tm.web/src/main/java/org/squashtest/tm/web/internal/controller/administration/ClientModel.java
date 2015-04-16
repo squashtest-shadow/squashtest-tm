@@ -20,14 +20,15 @@
  */
 package org.squashtest.tm.web.internal.controller.administration;
 
-import javax.validation.constraints.Size;
-
-import org.squashtest.tm.exception.client.ClientIDCannotBeEmptyException;
+import org.hibernate.validator.constraints.NotBlank;
 
 public class ClientModel {
 
+	@NotBlank
 	private String clientId;
+	@NotBlank
 	private String clientSecret;
+	@NotBlank
 	private String registeredRedirectUri;
 
 	public ClientModel(){
@@ -44,10 +45,7 @@ public class ClientModel {
 		return clientId;
 	}
 
-	public void setClientId(String clientId) {
-		if(clientId.isEmpty()){
-			throw new ClientIDCannotBeEmptyException();
-		}
+	public void setClientId(String clientId){
 		this.clientId = clientId.trim();
 	}
 

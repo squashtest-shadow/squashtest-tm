@@ -154,20 +154,20 @@
               <td><label for="add-client-name"><f:message key="label.Name" /></label></td>
               <td>
                 <input id="add-client-name" type="text" size="30" maxlength="30"/>
-                <comp:error-message forField="label" />
+                <comp:error-message forField="clientId" />
               </td>
             </tr>
             <tr>
               <td><label for="add-client-secret"><f:message key="label.secret" /></label></td>
               <td><input id="add-client-secret" type="text" size="30" maxlength="30"/>
-                <comp:error-message forField="label" />
+                <comp:error-message forField="clientSecret" />
               </td>
             </tr>
             <tr>
               <td><label for="add-redirect_uri"><f:message key="label.redirect_uri" /></label></td>
               <td>
                 <input id="add-client-uri" type="text" size="30"/>
-                <comp:error-message forField="label" />
+                <comp:error-message forField="registeredRedirectUri" />
               </td>
             </tr>
           </table>

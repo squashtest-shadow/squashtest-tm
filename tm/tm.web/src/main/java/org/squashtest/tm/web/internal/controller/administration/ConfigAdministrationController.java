@@ -173,7 +173,7 @@ public class ConfigAdministrationController implements ApplicationContextAware, 
 
 	@RequestMapping(value = "clients", method = RequestMethod.POST)
 	@ResponseStatus(HttpStatus.CREATED)
-	public @ResponseBody ClientDetails addClient(@Valid @ModelAttribute("addClient") ClientModel model) {
+	public @ResponseBody ClientDetails addClient(@Valid @ModelAttribute("add-client") ClientModel model) {
 		BaseClientDetails clientDetails = convertClientModelToBaseClientDetails(model);
 		try{
 			clientService.addClientDetails(clientDetails);
