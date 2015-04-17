@@ -62,7 +62,7 @@
       <div class="tg-head">
         <h3 th:text="#{label.parameters}">params</h3>
         <div class="tg-toolbar">
-           <button id="add-parameter-button" th:if="${isWritable}" class="sq-icon-btn sq-btn btn-sm" title="add" th:title="${addButtonTitle}" 
+           <button id="add-parameter-button" th:if="${isWritable}" class="sq-icon-btn sq-btn btn-sm" title="add" th:title="#{title.addParameter}" 
            value="+"  type="submit" >
              <span class="ui-icon ui-icon-plus squared-icons">+</span>
           </button>
@@ -115,7 +115,7 @@
       <div class="tg-head">
         <h3 th:text="#{label.datasets}"></h3>
         <div class="tg-toolbar">
-           <button id="add-dataset-button" th:if="${isWritable}" class="sq-icon-btn sq-btn btn-sm" title="add" th:title="${addButtonTitle}" 
+           <button id="add-dataset-button" th:if="${isWritable}" class="sq-icon-btn sq-btn btn-sm" title="add" th:title="#{title.addDataset}" 
            value="+"  type="submit" >
              <span class="ui-icon ui-icon-plus squared-icons">+</span>
           </button>       
