@@ -778,7 +778,7 @@ require(["common"], function() {
 			language : {
 				ok : '${confirmLabel}',
 				cancel : '${cancelLabel}',
-				deleteMessage : "<f:message key='message.permissions.remove.teamOrUser.first'/> <f:message key='message.permissions.confirm'/>",
+				deleteMessage : "<f:message key='message.permissions.remove.teamOrUser.first'/> <f:message key='message.permissions.confirmSimple'/>",
 				deleteTooltip : '<f:message key="tooltips.permissions.remove"/>'
 			}
 		};
