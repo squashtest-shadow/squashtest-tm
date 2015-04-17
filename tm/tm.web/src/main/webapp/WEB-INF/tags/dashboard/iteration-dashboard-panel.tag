@@ -299,8 +299,7 @@
 								<th title="${SuccessRateLabel}" class="std-border light-border" ><f:message key="shortLabel.SuccessRate"/></th>
 								<th title="${FailureRateLabel}" class="std-border light-border" ><f:message key="shortLabel.FailureRate"/></th>
 								<th style="border:none;"></th>
-								
-								<th title="${ToDoVsPrevLabel}" style="width:8%"  class="std-border light-border"><f:message key="shortLabel.ToDoComparedToPrev"/></th>
+								<th title="${ProgressVsPrevLabel}" style="width:8%"><f:message key="shortLabel.ExecutionProgressComparedToPrev"/></th>
 								<th style="border:none;"></th>								
 								<th title="${VeryHighLabel}"  class="std-border light-border"><f:message key="shortLabel.VeryHigh"/></th>
 								<th title="${HighLabel}"  class="std-border light-border"><f:message key="shortLabel.High"/></th>
