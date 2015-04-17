@@ -114,7 +114,8 @@
 	@NamedQuery(name = "requirement.findNonBoundRequirement", query = "select r.id from Requirement r join r.versions v where r.id in (:nodeIds) and v.id not in (select rvs.id from Milestone m join m.requirementVersions rvs where m.id = :milestoneId)"),
 	@NamedQuery(name = "requirement.findRequirementHavingManyVersions", query = "select r.id from Requirement r join r.versions v where r.id in (:requirementIds) group by r.id having count(v) > 1"),
 	@NamedQuery(name = "requirement.findByRequirementVersion", query = "select r.id from Requirement r join r.versions versions where versions.id in (:versionIds)"),
-	
+	@NamedQuery(name = "requirement.findAllRequirementsWithLatestVersionByIds", query= "select r, rv from Requirement r join r.versions rv where r.id in (:requirementIds) and rv.versionNumber = (select max (rvcur.versionNumber) from RequirementVersion rvcur where rvcur.requirement = r)"),
+
 	//CampaignFolder
 	@NamedQuery(name = "campaignFolder.findAllContentById", query = "select f.content from CampaignFolder f where f.id = :folderId"),
 	@NamedQuery(name = "campaignFolder.findByContent", query = "from CampaignFolder where :content in elements(content)"),
@@ -176,17 +177,17 @@
 	@NamedQuery(name = "testCase.findRootContentTestCase", query = "from TestCase where id in (:paramIds) and id in (select rootnodes.id from TestCaseLibrary tcl join tcl.rootContent rootnodes)"),
 	@NamedQuery(name = "testCase.findTestCasesWithParentFolder", query = "select tc, tcf from TestCaseFolder tcf join tcf.content tc where tc.id in (:testCasesIds)"),
 	@NamedQuery(name = "testCase.findAllLinkedToIteration", query = "select tc from IterationTestPlanItem item join item.referencedTestCase tc where tc.id in (:testCasesIds)"),
-	
+
 	/*
-	 *  The following query uses pretty long aliases. They MUST match the 
-	 *  name of the class, because the client code assumes this will be the 
-	 *  case.  
+	 *  The following query uses pretty long aliases. They MUST match the
+	 *  name of the class, because the client code assumes this will be the
+	 *  case.
 	 */
-	@NamedQuery(name = "testCase.findVerifyingTestCases", 
+	@NamedQuery(name = "testCase.findVerifyingTestCases",
 	query="select TestCase, (select min(m.endDate) from TestCase tc left join tc.milestones m where tc.id = TestCase.id) as endDate from TestCase TestCase " +
 			"inner join TestCase.requirementVersionCoverages rvc inner join rvc.verifiedRequirementVersion RequirementVersion " +
 			"inner join RequirementVersion.requirement Requirement join TestCase.project Project where RequirementVersion.id = :versionId "),
-			
+
 	@NamedQuery(name = "TestCase.findAllTestCaseIdsByLibraries", query = "select tc.id from TestCase tc join tc.project p join p.testCaseLibrary tcl where tcl.id in (:libraryIds)"),
 	@NamedQuery(name = "testCase.countSiblingsInFolder", query = "select maxindex(node) from TestCaseFolder f join f.content node where :nodeId in (select n.id from TestCaseFolder f2 join f2.content n where f2=f)"),
 	@NamedQuery(name = "testCase.countSiblingsInLibrary", query = "select maxindex(node) from TestCaseLibrary tcl join tcl.rootContent node where :nodeId in (select n.id from TestCaseLibrary tcl2 join tcl2.rootContent n where tcl2=tcl)"),
@@ -195,12 +196,12 @@
 	@NamedQuery(name = "TestCase.findNonBoundTestCases", query = "select tc.id from TestCase tc where tc.id in (:nodeIds) and tc.id not in (select tcs.id from Milestone m join m.testCases tcs where m.id = :milestoneId)"),
 	@NamedQuery(name = "TestCase.findAllWithMilestones", query = "from TestCase tc where tc.milestones is empty"),
 	@NamedQuery(name = "TestCase.findAllTestCasesLibraryForMilestone", query = "select tcl.id from TestCase tc join tc.project p join p.testCaseLibrary tcl join tc.milestones milestones where milestones.id = :milestoneId"),
-	@NamedQuery(name = "TestCase.findAllTestCasesLibraryNodeForMilestone", 
+	@NamedQuery(name = "TestCase.findAllTestCasesLibraryNodeForMilestone",
 	query = "select distinct tc.id from TestCase tc where tc.id in " +
 			"(select directTC.id from TestCase directTC join directTC.milestones milestones where milestones.id in (:milestoneIds)) or " +
 			"tc.id in (select indirectTC.id from TestCase indirectTC join indirectTC.requirementVersionCoverages cov join cov.verifiedRequirementVersion " +
 			"ver join ver.milestones milestones where milestones.id in (:milestoneIds))"),
-	
+
 	@NamedQuery(name = "testCase.findTestCaseDetails", query = "select new org.squashtest.tm.domain.NamedReference(tc.id, tc.name) from TestCase tc where tc.id in (:testCaseIds)"),
 
 	@NamedQuery(name = "testCase.findTestCasesHavingCallerDetails", query = "select new org.squashtest.tm.domain.NamedReferencePair(caller.id, caller.name, called.id, called.name) "
@@ -220,12 +221,12 @@
 	@NamedQuery(name = "testCase.findAllSteps", query = "select step.id from TestCase testCase join testCase.steps step where testCase.id in (:testCaseIds)"),
 	@NamedQuery(name = "testCase.removeAllCallSteps", query = "delete CallTestStep cts where  cts.id in (:stepIds)"),
 	@NamedQuery(name = "testCase.removeAllActionSteps", query = "delete ActionTestStep ats where ats.id in (:stepIds)"),
-	@NamedQuery(name = "testCase.findTestCasesWhichMilestonesForbidsDeletion", 
+	@NamedQuery(name = "testCase.findTestCasesWhichMilestonesForbidsDeletion",
 				query = "select distinct tc.id from TestCase tc where tc.id in (:testCaseIds) and " +
 						"(tc.id in (select directTC.id from TestCase directTC inner join directTC.milestones mstones where mstones.status in (:lockedStatuses)) " +
 						"or tc.id in (select indirectTC.id from TestCase indirectTC join indirectTC.requirementVersionCoverages cov join cov.verifiedRequirementVersion " +
 						"ver join ver.milestones milestones where milestones.status in (:lockedStatuses)))" ),
-				
+
 	// NOTE : Hibernate ignores any grouped entity when it is not projected
 	// NOTE : Hibernate ignores group by tc.nature.id unless we alias tc.nature (AND PROJECT THE ALIAS !)
 	// NOTE : "from f join f.content c where c.class = TestCase group by c.id" generates SQL w/o grouped TCLN.TCLN_ID, only TC.TCLN_ID, which breaks under postgresql
@@ -248,7 +249,7 @@
 	+ " where content.id = tc.id and tc.id in (:testCaseIds) group by p.id, tc.id, index(content)+1 , content.id, type.id, nat.id  "
 	),
 
-	@NamedQuery(name = "testCase.excelExportDataFromLibrary", query = "select p.id, p.name, index(content)+1, tc.id, tc.reference, content.name, " 
+	@NamedQuery(name = "testCase.excelExportDataFromLibrary", query = "select p.id, p.name, index(content)+1, tc.id, tc.reference, content.name, "
 	+ "group_concat(milestones.label, 'order by', milestones, 'asc', '|'), tc.importanceAuto, tc.importance, nat, "
 	+ "type, tc.status, content.description, tc.prerequisite, "
 	+ "("
@@ -288,10 +289,10 @@
 	@NamedQuery(name = "campaign.findCampaignIdsHavingMultipleMilestones", query = "select c.id from Campaign c join c.milestones stones where c.id in (:nodeIds) group by c.id having count(stones) > 1 "),
 	@NamedQuery(name = "campaign.findNonBoundCampaign", query = "select c.id from Campaign c where c.id in (:nodeIds) and c.id not in (select cs.id from Milestone m join m.campaigns cs where m.id = :milestoneId)"),
 	@NamedQuery(name = "Campaign.findAllWithMilestones", query = "from Campaign c where c.milestones is empty"),
-	@NamedQuery(name = "campaign.findCampaignsWhichMilestonesForbidsDeletion", 
+	@NamedQuery(name = "campaign.findCampaignsWhichMilestonesForbidsDeletion",
 	query="select distinct c.id from Campaign c inner join c.milestones milestones where c.id in (:campaignIds) and milestones.status in (:lockedStatuses)"),
-	
-	
+
+
 	//TestStep
 	@NamedQuery(name = "testStep.findParentNode", query = "select testcase from TestCase as testcase join testcase.steps tcSteps where tcSteps.id= :childId "),
 	@NamedQuery(name = "testStep.findAllByParentId", query = "select step.id from TestCase testCase join testCase.steps step where testCase.id in (:testCaseIds)"),
@@ -402,7 +403,7 @@
 	@NamedQuery(name = "Project.findAllUsersWhoModifiedTestCases", query = "select distinct tc.audit.lastModifiedBy from TestCase tc join tc.project p where p.id in :projectIds order by tc.audit.lastModifiedBy asc"),
 	@NamedQuery(name = "Project.findAllUsersWhoCreatedRequirementVersions", query = "select distinct rv.audit.createdBy from RequirementVersion rv join rv.requirement r join r.project p where p.id in :projectIds order by rv.audit.createdBy asc"),
 	@NamedQuery(name = "Project.findAllUsersWhoModifiedRequirementVersions", query = "select distinct rv.audit.lastModifiedBy from RequirementVersion rv join rv.requirement r join r.project p where p.id in :projectIds order by rv.audit.lastModifiedBy asc"),
-	
+
 	//Attachement et al
 	@NamedQuery(name = "attachment.findContentId", query = "select aContent.id from Attachment attachment join attachment.content aContent where attachment.id = :attachId"),
 	@NamedQuery(name = "attachment.removeContent", query = "delete from AttachmentContent where id = :contentId"),
@@ -456,20 +457,20 @@
 	//XXX RequirementVersion
 	@NamedQuery(name = "requirementAuditEvent.findAllByRequirementVersionIds", query = "select rae from RequirementAuditEvent rae inner join rae.requirementVersion r where r.id in (:ids) order by rae.requirementVersion asc, rae.date desc"),
 	@NamedQuery(name = "requirementAuditEvent.findAllByRequirementIds", query = "select rae from RequirementAuditEvent rae inner join rae.requirementVersion rv where rv.requirement.id in (:ids) order by rae.requirementVersion asc, rae.date desc"),
-	
+
 	@NamedQuery(name = "requirementDeletionDao.deleteRequirementAuditEvent", query = "delete RequirementAuditEvent rae where rae.id in (:eventIds)"),
-	@NamedQuery(name = "requirementDeletionDao.findVersionsWhichMilestonesForbidsDeletion", 
+	@NamedQuery(name = "requirementDeletionDao.findVersionsWhichMilestonesForbidsDeletion",
 	query="select distinct v.id from RequirementVersion v inner join v.milestones lockedMilestones " +
-			"where v.id in (:versionIds) and lockedMilestones.status in (:lockedStatuses)"),	
-	@NamedQuery(name = "requirementDeletionDao.findRequirementsWhichMilestonesForbidsDeletion", 
+			"where v.id in (:versionIds) and lockedMilestones.status in (:lockedStatuses)"),
+	@NamedQuery(name = "requirementDeletionDao.findRequirementsWhichMilestonesForbidsDeletion",
 			query="select distinct r.id from Requirement r inner join r.versions v inner join v.milestones lockedMilestones " +
-					"where r.id in (:requirementIds) and lockedMilestones.status in (:lockedStatuses)"),	
-	@NamedQuery(name = "requirementDeletionDao.findVersionIdsHavingMultipleMilestones", 
+					"where r.id in (:requirementIds) and lockedMilestones.status in (:lockedStatuses)"),
+	@NamedQuery(name = "requirementDeletionDao.findVersionIdsHavingMultipleMilestones",
 			query = "select v.id from RequirementVersion v join v.milestones stones where v.id in (:versionIds) group by v.id having count(stones) > 1 "),
-	@NamedQuery(name = "requirementDeletionDao.findAllVersionForMilestone", query="select v.id from Requirement r join r.versions v join v.milestones m where r.id in (:nodeIds) and m.id = :milestoneId"),	
+	@NamedQuery(name = "requirementDeletionDao.findAllVersionForMilestone", query="select v.id from Requirement r join r.versions v join v.milestones m where r.id in (:nodeIds) and m.id = :milestoneId"),
 	@NamedQuery(name = "requirementDeletionDao.deleteVersions", query = "delete from RequirementVersion rv where rv.id in (:versionIds)"),
-		
-	
+
+
 	@NamedQuery(name = "requirementVersion.countVerifiedByTestCases", query = "select count(distinct r) from TestCase tc join tc.requirementVersionCoverages rvc join rvc.verifiedRequirementVersion r where tc.id in (:verifiersIds)"),
 	@NamedQuery(name = "RequirementVersion.countVerifiedByTestCase", query = "select count(r) from TestCase tc join tc.requirementVersionCoverages rvc join rvc.verifiedRequirementVersion r where tc.id = ?1"),
 	@NamedQuery(name = "requirementVersion.findDistinctRequirementsCriticalitiesVerifiedByTestCases", query = "select distinct r.criticality from TestCase tc join tc.requirementVersionCoverages rvc join rvc.verifiedRequirementVersion r where tc.id in (:testCasesIds) "),
@@ -477,13 +478,13 @@
 	@NamedQuery(name = "requirementVersion.findLatestRequirementVersion", query = "select version from Requirement req join req.resource version where req.id = :requirementId"),
 	@NamedQuery(name = "requirementVersion.findVersionByRequirementAndMilestone", query = "select version from Requirement req join req.versions version join version.milestones milestone where req.id = :requirementId and milestone.id = :milestoneId"),
 	@NamedQuery(name = "RequirementVersion.findAllWithMilestones", query = "from RequirementVersion rv where rv.milestones is empty"),
-	
+
 	/*
-	 *  The following query uses pretty long aliases. They MUST match the 
-	 *  name of the class, because the client code assumes this will be the 
-	 *  case.  
+	 *  The following query uses pretty long aliases. They MUST match the
+	 *  name of the class, because the client code assumes this will be the
+	 *  case.
 	 */
-	@NamedQuery(name = "requirementVersionCoverage.findAllByTestCaseId", 
+	@NamedQuery(name = "requirementVersionCoverage.findAllByTestCaseId",
 				query = "select RequirementVersionCoverage," +
 						"(select min(m.endDate) from RequirementVersion v left join v.milestones m " +
 						"inner join v.requirementVersionCoverages cov where cov.id = RequirementVersionCoverage.id" +
@@ -495,17 +496,17 @@
 						"inner join RequirementVersion.requirement Requirement "+
 						"inner join Requirement.project Project " +
 						"where TestCase.id = :testCaseId "),
-	
+
 	@NamedQuery(name = "RequirementVersion.countByRequirement", query = "select count(rv) from RequirementVersion rv join rv.requirement r where r.id = ?1"),
 	@NamedQuery(name = "requirementDeletionDao.findVersionIds", query = "select rv.id from RequirementVersion rv join rv.requirement r where r.id in (:reqIds)"),
 	@NamedQuery(name = "requirementVersion.findAllAttachmentLists", query = "select v.attachmentList.id from RequirementVersion v where v.id in (:versionIds)"),
-	
+
 	/*
-	 *  The following query uses pretty long aliases. They MUST match the 
-	 *  name of the class, because the client code assumes this will be the 
-	 *  case.  
+	 *  The following query uses pretty long aliases. They MUST match the
+	 *  name of the class, because the client code assumes this will be the
+	 *  case.
 	 */
-	@NamedQuery(name = "requirementVersion.findDistinctRequirementVersionsByTestCases", 
+	@NamedQuery(name = "requirementVersion.findDistinctRequirementVersionsByTestCases",
 				query = "select distinct RequirementVersion, " +
 						"(select min(m.endDate) from RequirementVersion v left join v.milestones m " +
 						"where v.id = RequirementVersion.id) as endDate " +
@@ -516,8 +517,8 @@
 						"inner join rvc.verifyingTestCase TestCase " +
 						"inner join Requirement.project Project " +
 						"where TestCase.id in (:testCaseIds) "),
-	
-	
+
+
 	//AutomatedSuite
 	@NamedQuery(name = "automatedSuite.completeInitializationById", query = "select suite from AutomatedSuite suite join fetch suite.executionExtenders ext join fetch ext.automatedTest test "
 	+ "join fetch test.project project join fetch project.server server where suite.id = :suiteId"),
@@ -603,7 +604,7 @@
 
 	@NamedQuery(name = "CampaignStatistics.globaltestinventory", query = "select itp.executionStatus, count(itp.executionStatus) "
 	+ "from Campaign c join c.iterations iter join iter.testPlans itp where c.id = :id and itp.referencedTestCase is not null group by itp.executionStatus"),
-	
+
 	@NamedQuery(name = "CampaignStatistics.globaltestinventorybymilestone", query = "select itp.executionStatus, count(itp.executionStatus) "
 	+ "from Campaign c join c.iterations iter join iter.testPlans itp join c.milestones mil where mil.id = :id and itp.referencedTestCase is not null group by itp.executionStatus"),
 
@@ -721,13 +722,13 @@
 	@NamedQuery(name = "Milestone.findAllByNamesAndStatus", query = "from Milestone m where m.label in (:names) and m.status = :status"),
 	@NamedQuery(name = "milestone.otherRequirementVersionBindToOneMilestone", query = "select rv from RequirementVersion rv join rv.requirement r join r.versions versions join rv.milestones m where versions.id in (:reqVIds) and rv.id not in (:reqVIds) and m.id in (:milestoneIds)"),
   @NamedQuery(name = "milestone.findProjectMilestones", query="select p.milestones from Project p where p.id = :projectId"),
-	
+
 	@NamedQuery(name = "TestCase.findAllBoundToMilestone", query = "select tc from TestCase tc join tc.milestones m where m.id = :milestoneId"),
 	@NamedQuery(name = "RequirementVersion.findAllBoundToMilestone", query = "select rv from RequirementVersion rv join rv.requirement r join rv.milestones m where m.id = :milestoneId"),
 	@NamedQuery(name = "Campaign.findAllBoundToMilestone", query = "select c from Campaign c join c.milestones m  where m.id = :milestoneId"),
-	
 
-	
+
+
    //InfoList
 	@NamedQuery(name = "infoList.findByCode", query = "from InfoList where code = :code"),
 	@NamedQuery(name = "infoList.findProjectUsingInfoList", query ="from Project p where p.requirementCategories.id = :id or p.testCaseNatures.id = :id or p.testCaseTypes.id = :id"),

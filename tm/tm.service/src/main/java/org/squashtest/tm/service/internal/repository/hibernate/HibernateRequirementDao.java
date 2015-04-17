@@ -85,7 +85,6 @@ public class HibernateRequirementDao extends HibernateEntityDao<Requirement> imp
 	}
 
 
-
 	@Override
 	public List<Requirement> findChildrenRequirements(long requirementId) {
 		SetQueryParametersCallback setId = new SetIdParameter("requirementId", requirementId);
@@ -159,7 +158,7 @@ public class HibernateRequirementDao extends HibernateEntityDao<Requirement> imp
 
 	/**
 	 * Returns a list of objects that holds infos for requirements and their position in requirement hierarchy
-	 * 
+	 *
 	 * @param requirements
 	 * @return list of object with, for all objects obj[0] = requirement , obj[1] folder path , obj[2] requirement path
 	 */

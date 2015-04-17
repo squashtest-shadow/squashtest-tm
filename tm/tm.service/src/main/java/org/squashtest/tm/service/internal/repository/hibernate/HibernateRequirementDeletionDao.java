@@ -22,7 +22,6 @@ package org.squashtest.tm.service.internal.repository.hibernate;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.ListIterator;
@@ -55,7 +54,6 @@ public class HibernateRequirementDeletionDao extends HibernateDeletionDao implem
 	public void deleteVersions(List<Long> versionIds) {
 		executeDeleteNamedQuery("requirementDeletionDao.deleteVersions", "versionIds", versionIds);
 	}
-
 
 
 
@@ -284,7 +282,7 @@ public class HibernateRequirementDeletionDao extends HibernateDeletionDao implem
 
 	/**
 	 * See javadoc on the interface
-	 * 
+	 *
 	 */
 	public List<Long> findDeletableVersions(List<Long> requirementIds, Long milestoneId) {
 
@@ -308,7 +306,7 @@ public class HibernateRequirementDeletionDao extends HibernateDeletionDao implem
 
 	/**
 	 * See javadoc on the interface
-	 * 
+	 *
 	 */
 	@Override
 	public List<Long> findUnbindableVersions(List<Long> requirementIds, Long milestoneId) {
@@ -430,15 +428,14 @@ public class HibernateRequirementDeletionDao extends HibernateDeletionDao implem
 	@Override
 	public void resetRequirementCurrentVersion(List<Long> requirementIds) {
 		if (! requirementIds.isEmpty()){
-			Query q = getSession().getNamedQuery("requirement.findAllById");
+			Query q = getSession().getNamedQuery("requirement.findAllRequirementsWithLatestVersionByIds" );
 			q.setParameterList("requirementIds", requirementIds);
 
-			List<Requirement> requirements = q.list();
+			List<Object[]> tuples = q.list();
 
-			for (Requirement r : requirements){
-				List<RequirementVersion> versions = r.getRequirementVersions();
-				RequirementVersion latest = versions.get(versions.size()-1);
-				r.setCurrentVersion(latest);
+			for (Object[] tuple : tuples){
+				RequirementVersion latest = (RequirementVersion) tuple[1];
+				((Requirement) tuple[0]).setCurrentVersion(latest);
 			}
 		}
 	}
