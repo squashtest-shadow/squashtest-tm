@@ -276,7 +276,7 @@ publish('reload.requirement.toolbar');
         <jsp:attribute name="panelButtons">
 			<c:if test="${ linkable }">
 				<f:message var="associateLabel" key="requirement.verifying_test-case.manage.button.label" />
-				<f:message var="removeLabel" key="label.removeRequirementsAssociation" />
+				<f:message var="removeLabel" key="label.removeRequirementsTestCase" />
 					<button id="verifying-test-case-button" class="sq-icon-btn btn-sm" type="submit" title="${associateLabel}">
                 	    <span class="ui-icon ui-icon-plus squared-icons">+</span>
                     </button>
