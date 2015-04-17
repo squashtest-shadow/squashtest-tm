@@ -20,15 +20,14 @@
  */
 package org.squashtest.tm.service.deletion;
 
+public class SingleOrMultipleMilestonesReport extends MilestoneRuleReport implements SuppressionPreviewReport{
 
-public class BoundToMultipleMilestonesReport extends MilestoneRuleReport implements SuppressionPreviewReport{
+	private static final String MESSAGE_KEY = "message.deletionWarning.milestonesmode.singleOrMultipleMilestones";
 
-	private static final String MESSAGE_KEY = "message.deletionWarning.milestonesmode.boundToMultipleMilestones";
 
-	public BoundToMultipleMilestonesReport(String type){
+	public SingleOrMultipleMilestonesReport(String type) {
 		super(type);
 	}
-
 
 	@Override
 	protected String getKey() {

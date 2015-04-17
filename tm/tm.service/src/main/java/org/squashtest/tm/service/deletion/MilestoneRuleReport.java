@@ -20,19 +20,25 @@
  */
 package org.squashtest.tm.service.deletion;
 
+import java.util.Locale;
 
-public class BoundToMultipleMilestonesReport extends MilestoneRuleReport implements SuppressionPreviewReport{
+import org.springframework.context.MessageSource;
 
-	private static final String MESSAGE_KEY = "message.deletionWarning.milestonesmode.boundToMultipleMilestones";
 
-	public BoundToMultipleMilestonesReport(String type){
-		super(type);
+public abstract class MilestoneRuleReport implements SuppressionPreviewReport{
+
+	// please choose one of "test-cases", "requirements", "campaigns"
+	// please don't make me another enum just for that.
+	private String nodeType = "test-cases";
+
+	public MilestoneRuleReport(String type){
+		this.nodeType = type;
 	}
 
+	protected abstract String getKey();
 
 	@Override
-	protected String getKey() {
-		return MESSAGE_KEY;
+	public String toString(MessageSource source, Locale locale) {
+		return source.getMessage(getKey()+"."+nodeType, null, locale);
 	}
-
 }

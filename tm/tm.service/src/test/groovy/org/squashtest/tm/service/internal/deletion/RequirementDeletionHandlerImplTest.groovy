@@ -36,33 +36,33 @@ import spock.lang.Specification;
 class RequirementDeletionHandlerImplTest extends Specification {
 	RequirementDeletionHandlerImpl handler = new RequirementDeletionHandlerImpl()
 	RequirementDeletionDao deletionDao = Mock()
-	
+
 	def setup() {
 		handler.deletionDao = deletionDao
 	}
-	
+
 	def "Issue 2767 : clashing names should be replaced with 'clashing name (n)'"() {
 		given:
 		Requirement deleted = new Requirement(new RequirementVersion())
 		deleted.name = "deleted"
-		
+
 		Requirement renamed = new Requirement(new RequirementVersion())
 		renamed.name = "clashing name"
 		deleted.content << renamed
-		
+
 		NodeContainer parent = Mock()
 		parent.isContentNameAvailable("clashing name") >> false
 		parent.isContentNameAvailable(_) >> true
 		parent.contentNames >> ["whatever name", "clashing name"]
-		
+
 		and:
 		OperationReport report = Mock()
-		
+
 		when:
-		handler.renameContentIfNeededThenAttach parent, deleted, report
-		
+		handler.renameContentIfNeededThenAttach parent, [renamed], report
+
 		then:
 		renamed.name == "clashing name (1)"
-	} 
+	}
 
 }

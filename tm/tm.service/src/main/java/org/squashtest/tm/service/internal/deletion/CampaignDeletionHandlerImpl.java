@@ -46,6 +46,7 @@ import org.squashtest.tm.service.deletion.BoundToMultipleMilestonesReport;
 import org.squashtest.tm.service.deletion.MilestoneModeNoFolderDeletion;
 import org.squashtest.tm.service.deletion.NotDeletableCampaignsPreviewReport;
 import org.squashtest.tm.service.deletion.OperationReport;
+import org.squashtest.tm.service.deletion.SingleOrMultipleMilestonesReport;
 import org.squashtest.tm.service.deletion.SuppressionPreviewReport;
 import org.squashtest.tm.service.internal.campaign.CampaignNodeDeletionHandler;
 import org.squashtest.tm.service.internal.customfield.PrivateCustomFieldValueService;
@@ -64,6 +65,8 @@ import org.squashtest.tm.service.security.SecurityCheckableObject;
 @Component("squashtest.tm.service.deletion.CampaignNodeDeletionHandler")
 public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandler<CampaignLibraryNode, CampaignFolder>
 implements CampaignNodeDeletionHandler {
+
+	private static final String CAMPAIGNS_TYPE = "campaigns";
 
 	@Inject
 	private CampaignFolderDao folderDao;
@@ -103,10 +106,65 @@ implements CampaignNodeDeletionHandler {
 	protected List<SuppressionPreviewReport> diagnoseSuppression(List<Long> nodeIds, Long milestoneId) {
 
 		List<SuppressionPreviewReport> reportList = new ArrayList<SuppressionPreviewReport>();
-		NotDeletableCampaignsPreviewReport report;
+
 		List<Campaign> campaigns = campaignDao.findAllByIds(nodeIds);
 
 		//by default the user is assumed to be allowed to delete the campaigns without warning
+		reportLocksByInsufficientPrivileges(campaigns, reportList);
+
+		// always check for nodes locked by milestones
+		reportLocksByMilestone(nodeIds, reportList);
+
+		// milestone mode : additional checks
+		if (milestoneId != null){
+
+			// separate the campaigns from the folders
+			List<Long>[] separateIds = deletionDao.separateFolderFromCampaignIds(nodeIds);
+
+			// no folder shall be deleted
+			reportNoFoldersAllowed(separateIds[0], reportList);
+
+			// check if some elements are bound to multiple milestones
+			reportMultipleMilestoneBinding(separateIds[1], reportList);
+		}
+
+		return reportList;
+	}
+
+	protected void reportMultipleMilestoneBinding(List<Long> campaignIds, List<SuppressionPreviewReport> reportList) {
+		List<Long> boundNodes = campaignDao.findCampaignIdsHavingMultipleMilestones(campaignIds);
+		if (! boundNodes.isEmpty()){
+			// case 1 : all the test cases are bound to multiple milestones
+			if (campaignIds.size() == boundNodes.size()){
+				reportList.add(new BoundToMultipleMilestonesReport(CAMPAIGNS_TYPE));
+			}
+			// case 2 : there is a mixed cases of test cases that will be removed
+			// from the milestone and some will be removed - period
+			else{
+				reportList.add(new SingleOrMultipleMilestonesReport(CAMPAIGNS_TYPE));
+			}
+		}
+	}
+
+	protected void reportNoFoldersAllowed(List<Long> folderIds, List<SuppressionPreviewReport> reportList) {
+		if (! folderIds.isEmpty()){
+			reportList.add(new MilestoneModeNoFolderDeletion(CAMPAIGNS_TYPE));
+		}
+	}
+
+
+	protected void reportLocksByMilestone(List<Long> nodeIds, List<SuppressionPreviewReport> reportList) {
+		List<Long> lockedNodes = deletionDao.findCampaignsWhichMilestonesForbidsDeletion(nodeIds);
+		if (! lockedNodes.isEmpty()){
+			reportList.add(new BoundToLockedMilestonesReport(CAMPAIGNS_TYPE));
+		}
+	}
+
+
+
+	protected void reportLocksByInsufficientPrivileges(List<Campaign> campaigns,
+			List<SuppressionPreviewReport> reportList) {
+		NotDeletableCampaignsPreviewReport report;
 		for(Campaign campaign : campaigns){
 
 			if(campaignDao.countRunningOrDoneExecutions(campaign.getId()) > 0){
@@ -131,29 +189,6 @@ implements CampaignNodeDeletionHandler {
 
 			}
 		}
-
-		// always check for nodes locked by milestones
-		if (someNodesAreLockedByMilestones(nodeIds)){
-			reportList.add(new BoundToLockedMilestonesReport());
-		}
-
-		// milestone mode : additional checks
-		if (milestoneId != null){
-
-
-			// no folder shall be deleted
-			List<Long>[] separateIds = deletionDao.separateFolderFromCampaignIds(nodeIds);
-			if (! separateIds[0].isEmpty()){
-				reportList.add(new MilestoneModeNoFolderDeletion());
-			}
-
-			// check if some elements are bound to multiple milestones
-			if (someCampaignsHaveMultipleMilestones(nodeIds)){
-				reportList.add(new BoundToMultipleMilestonesReport());
-			}
-		}
-
-		return reportList;
 	}
 
 	@Override
@@ -336,16 +371,7 @@ implements CampaignNodeDeletionHandler {
 		return report;
 	}
 
-	private boolean someNodesAreLockedByMilestones(List<Long> nodeIds){
-		List<Long> lockedNodes = deletionDao.findCampaignsWhichMilestonesForbidsDeletion(nodeIds);
-		return ! (lockedNodes.isEmpty());
-	}
 
-
-	private boolean someCampaignsHaveMultipleMilestones(List<Long> nodeIds){
-		List<Long> boundNodes = campaignDao.findCampaignIdsHavingMultipleMilestones(nodeIds);
-		return ! (boundNodes.isEmpty());
-	}
 
 
 	@Override

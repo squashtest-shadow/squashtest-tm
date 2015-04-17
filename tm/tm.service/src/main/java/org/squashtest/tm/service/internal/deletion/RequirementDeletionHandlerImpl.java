@@ -48,6 +48,7 @@ import org.squashtest.tm.service.deletion.MilestoneModeNoFolderDeletion;
 import org.squashtest.tm.service.deletion.Node;
 import org.squashtest.tm.service.deletion.NodeMovement;
 import org.squashtest.tm.service.deletion.OperationReport;
+import org.squashtest.tm.service.deletion.SingleOrMultipleMilestonesReport;
 import org.squashtest.tm.service.deletion.SuppressionPreviewReport;
 import org.squashtest.tm.service.internal.customfield.PrivateCustomFieldValueService;
 import org.squashtest.tm.service.internal.deletion.SubRequirementRewiringTree.Movement;
@@ -64,6 +65,8 @@ import org.squashtest.tm.service.requirement.VerifiedRequirementsManagerService;
 public class RequirementDeletionHandlerImpl extends
 AbstractNodeDeletionHandler<RequirementLibraryNode, RequirementFolder> implements
 RequirementNodeDeletionHandler {
+
+	private static final String REQUIREMENTS_TYPE = "requirements";
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(RequirementDeletionHandlerImpl.class);
 
@@ -102,36 +105,67 @@ RequirementNodeDeletionHandler {
 
 		// normal mode
 		if (milestoneId == null){
-			if (hasRequirementsLockedByMilestone(nodeIds)){
-				preview.add(new BoundToLockedMilestonesReport());
-			}
+			reportLocksByMilestone(nodeIds, preview);
 		}
 
 		// milestone mode
 		else {
 
+			// separate the folders from the requirements
+			List<Long>[] separatedIds = deletionDao.separateFolderFromRequirementIds(nodeIds);
+			List<Long> targetVersionIds = deletionDao.findVersionIdsForMilestone(separatedIds[1], milestoneId);
 
 			// check if there are some folders in the selection
-			List<Long>[] separatedIds = deletionDao.separateFolderFromRequirementIds(nodeIds);
-			if (! separatedIds[0].isEmpty()){
-				preview.add(new MilestoneModeNoFolderDeletion());
-			}
+			reportNoFoldersAllowed(separatedIds[0], preview);
 
-			List<Long> targetVersionIds = deletionDao.findVersionIdsForMilestone(nodeIds, milestoneId);
 
 			// check if some elements belong to milestones which status forbids that
-			if (hasTargetVersionsLockedByMilestone(targetVersionIds)){
-				preview.add(new BoundToLockedMilestonesReport());
-			}
+			reportVersionLocksByMilestone(targetVersionIds, preview);
 
-
+			// RG 3613-R2.05
 			// check if some versions are bound to multiple milestones
-			if (hasTargetVersionsBelongingToManyMilestones(targetVersionIds)){
-				preview.add(new BoundToMultipleMilestonesReport());
-			}
+			reportMultipleMilestoneBinding(targetVersionIds, preview);
 		}
 
 		return preview;
+	}
+
+
+	protected void reportMultipleMilestoneBinding(List<Long> targetVersionIds, List<SuppressionPreviewReport> preview) {
+		List<Long> boundNodes = deletionDao.filterVersionIdsHavingMultipleMilestones(targetVersionIds);
+		if (! boundNodes.isEmpty()){
+			//case 1 : all the requirement versions belong to multiple milestones
+			if (boundNodes.size() == targetVersionIds.size()){
+				preview.add(new BoundToMultipleMilestonesReport(REQUIREMENTS_TYPE));
+			}
+			//case 2 : there is a mix of versions that must be unbound from the milestone or deleted outright
+			else{
+				preview.add(new SingleOrMultipleMilestonesReport(REQUIREMENTS_TYPE));
+			}
+		}
+	}
+
+
+	protected void reportVersionLocksByMilestone(List<Long> versionIds, List<SuppressionPreviewReport> preview) {
+		List<Long> lockedNodes = deletionDao.filterVersionIdsWhichMilestonesForbidsDeletion(versionIds);
+		if (! lockedNodes.isEmpty()){
+			preview.add(new BoundToLockedMilestonesReport(REQUIREMENTS_TYPE));
+		}
+	}
+
+
+	protected void reportNoFoldersAllowed(List<Long> folderIds, List<SuppressionPreviewReport> preview) {
+		if (! folderIds.isEmpty()){
+			preview.add(new MilestoneModeNoFolderDeletion(REQUIREMENTS_TYPE));
+		}
+	}
+
+
+	protected void reportLocksByMilestone(List<Long> nodeIds, List<SuppressionPreviewReport> preview) {
+		List<Long> lockedNodes = deletionDao.filterRequirementsIdsWhichMilestonesForbidsDeletion(nodeIds);
+		if (lockedNodes.isEmpty()){
+			preview.add(new BoundToLockedMilestonesReport(REQUIREMENTS_TYPE));
+		}
 	}
 
 
@@ -204,7 +238,7 @@ RequirementNodeDeletionHandler {
 	 * 
 	 * <ol>
 	 * 	<li>be deleted as a folder (which is simpler)</li>
-	 * 	<li>be deleted totally as a requirement (with all its versions). Note : a requirement that wont be deleted is named <strong>locked</strong></li>
+	 * 	<li>be deleted totally as a requirement (with all its versions). Note : a requirement that wont be deleted is said to be <strong>locked</strong></li>
 	 * 	<li>rebind its subrequirements to its parent (usually because it has to be deleted)</li>
 	 * 	<li>delete only a version which happen to belong to a given milestone</li>
 	 * 	<li>unbind only a version from a given milestone</li>
@@ -212,7 +246,7 @@ RequirementNodeDeletionHandler {
 	 * 
 	 * <p>
 	 * 	The generic name for those different situations is <strong>contextual-deletion</strong>.
-	 * 	Nodes that fall under one of those situations are thus labelled as
+	 * 	Nodes that fall under one of those situations are thus referred to as
 	 *  <strong>contextually-deleted</strong>.
 	 * </p>
 	 * 
@@ -348,7 +382,7 @@ RequirementNodeDeletionHandler {
 
 		// rewire future orphan requirements
 		List<Long> childrenRewirableRequirements = sortedTargets.getRequirementsWithRewirableChildren();
-		OperationReport rewiredRequirementsReport = rewireChildrenRequirements2(childrenRewirableRequirements);
+		OperationReport rewiredRequirementsReport = rewireChildrenRequirements(childrenRewirableRequirements);
 		globalReport.mergeWith(rewiredRequirementsReport);
 
 
@@ -522,7 +556,7 @@ RequirementNodeDeletionHandler {
 	}
 
 
-	private OperationReport rewireChildrenRequirements2(List<Long> requirements){
+	private OperationReport rewireChildrenRequirements(List<Long> requirements){
 
 		OperationReport report = new OperationReport();
 
@@ -562,7 +596,7 @@ RequirementNodeDeletionHandler {
 
 			List<Requirement> rewiredRequirements = requirementDao.findAllByIds(mouv.getNewChildren());
 
-			renameContentIfNeededThenAttach2(newParent, rewiredRequirements, report);
+			renameContentIfNeededThenAttach(newParent, rewiredRequirements, report);
 
 		}
 
@@ -570,7 +604,7 @@ RequirementNodeDeletionHandler {
 
 	}
 
-	private void renameContentIfNeededThenAttach2(NodeContainer<Requirement> newParent, Collection<Requirement> rewired, OperationReport report){
+	private void renameContentIfNeededThenAttach(NodeContainer<Requirement> newParent, Collection<Requirement> rewired, OperationReport report){
 		// abort if no operation is necessary
 		if (rewired.isEmpty()) {
 			return;
@@ -632,128 +666,6 @@ RequirementNodeDeletionHandler {
 	}
 
 
-	// ********* old code ? ************************
-
-
-	// todo : send back an object that describes which requirements where rebound to which entities, and how they were
-	// renamed if so.
-	private OperationReport rewireChildrenRequirements(List<Long> requirements) {
-
-		try{
-			if (!requirements.isEmpty()) {
-				OperationReport rewireReport = new OperationReport();
-
-				List<Object[]> pairedParentChildren = requirementDao.findAllParentsOf(requirements);
-
-				for (Object[] pair : pairedParentChildren) {
-
-					NodeContainer<Requirement> parent = (NodeContainer<Requirement>) pair[0];
-					Requirement requirement = (Requirement) pair[1];
-
-					renameContentIfNeededThenAttach(parent, requirement, rewireReport);
-
-				}
-
-				requirementDao.flush();
-
-				return rewireReport;
-			} else {
-				return new OperationReport();
-			}
-		}catch(IllegalRequirementModificationException ex){
-			throw new ImpossibleSuppression(ex);
-		}
-	}
-
-	private void renameContentIfNeededThenAttach(NodeContainer<Requirement> parent, Requirement toBeDeleted,
-			OperationReport report) {
-
-		// abort if no operation is necessary
-		if (toBeDeleted.getContent().isEmpty()) {
-			return;
-		}
-
-		// init
-		Collection<Requirement> children = new ArrayList<Requirement>(toBeDeleted.getContent());
-		List<Node> movedNodesLog = new ArrayList<Node>(toBeDeleted.getContent().size());
-
-		boolean needsRenaming = false;
-
-		// renaming loop. Loop over each children, and for each of them ensure that they wont namecrash within their new
-		// parent.
-		// Log all these operations in the report object.
-		for (Requirement child : children) {
-
-			needsRenaming = false;
-			String name = child.getName();
-
-			while (!parent.isContentNameAvailable(name)) {
-				name = LibraryUtils.generateNonClashingName(name, parent.getContentNames(), Requirement.MAX_NAME_SIZE);
-				needsRenaming = true;
-			}
-
-			// log the renaming operation if happened.
-			if (needsRenaming) {
-				child.setName(name);
-				report.addRenamed("requirement", child.getId(), name);
-			}
-
-			// log the movement operation.
-			movedNodesLog.add(new Node(child.getId(), "requirement"));
-
-		}
-
-		// detach the children from their old parent.
-		toBeDeleted.getContent().clear();
-		parent.removeContent(toBeDeleted);
-
-		// flushing here ensures that the DB calls will be carried on in the proper order.
-		deletionDao.flush();
-
-		// attach the children to their new parent.
-		// TODO : perhaps use the navigation service facilities instead? For now I believe it's fine enough.
-		for (Requirement child : children) {
-			parent.addContent(child);
-		}
-
-		// fill the report
-		NodeType type = new WhichNodeVisitor().getTypeOf(parent);
-		String strtype;
-		switch (type) {
-		case REQUIREMENT_LIBRARY:
-			strtype = "drive";
-			break;
-		case REQUIREMENT_FOLDER:
-			strtype = "folder";
-			break;
-		default:
-			strtype = "requirement";
-			break;
-		}
-
-		NodeMovement nodeMovement = new NodeMovement(new Node(parent.getId(), strtype), movedNodesLog);
-		report.addMoved(nodeMovement);
-
-	}
-
-	// ********* / old code ? ************************
-
-	// ************************** predicates *****************************************
-
-	private boolean hasTargetVersionsBelongingToManyMilestones(List<Long> versionIds){
-		List<Long> boundNodes = deletionDao.filterVersionIdsHavingMultipleMilestones(versionIds);
-		return ! (boundNodes.isEmpty());
-	}
-
-	private boolean hasRequirementsLockedByMilestone(List<Long> requirementIds){
-		List<Long> lockedNodes = deletionDao.filterRequirementsIdsWhichMilestonesForbidsDeletion(requirementIds);
-		return ! (lockedNodes.isEmpty());
-	}
-
-	private boolean hasTargetVersionsLockedByMilestone(List<Long> versionIds){
-		List<Long> lockedNodes = deletionDao.filterVersionIdsWhichMilestonesForbidsDeletion(versionIds);
-		return ! (lockedNodes.isEmpty());
-	}
 
 	// *********************** inner classes *****************************************
 

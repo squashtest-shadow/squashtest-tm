@@ -20,18 +20,18 @@
  */
 package org.squashtest.tm.service.deletion;
 
-import java.util.Locale;
 
-import org.springframework.context.MessageSource;
-
-public class BoundToLockedMilestonesReport implements SuppressionPreviewReport {
+public class BoundToLockedMilestonesReport extends MilestoneRuleReport implements SuppressionPreviewReport {
 
 	private static final String MESSAGE_KEY = "message.deletionWarning.milestonesmode.boundToLockedMilestones";
 
-	@Override
-	public String toString(MessageSource source, Locale locale) {
-		return source.getMessage(MESSAGE_KEY, null, locale);
+	public BoundToLockedMilestonesReport(String type) {
+		super(type);
 	}
 
+	@Override
+	protected String getKey() {
+		return MESSAGE_KEY;
+	}
 
 }

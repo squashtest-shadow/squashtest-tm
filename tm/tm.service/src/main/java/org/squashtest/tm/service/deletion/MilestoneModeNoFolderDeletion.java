@@ -24,6 +24,7 @@ import java.util.Locale;
 
 import org.springframework.context.MessageSource;
 
+
 /**
  * 
  * This notifies the user that he tried to remove a folder in milestone mode, yet that folder has a content he cannot see
@@ -32,13 +33,22 @@ import org.springframework.context.MessageSource;
  * @author bsiri
  *
  */
-public class MilestoneModeNoFolderDeletion implements SuppressionPreviewReport{
+public class MilestoneModeNoFolderDeletion extends MilestoneRuleReport implements SuppressionPreviewReport{
 
 	private static final String MESSAGE_KEY = "message.deletionWarning.milestonesmode.nofoldersallowed";
 
+	public MilestoneModeNoFolderDeletion(String type){
+		super(type);
+	}
+
+	@Override
+	protected String getKey() {
+		return MESSAGE_KEY;
+	}
+
+	// we don't want to use the super implementation for that one
 	@Override
 	public String toString(MessageSource source, Locale locale) {
 		return source.getMessage(MESSAGE_KEY, null, locale);
 	}
-
 }

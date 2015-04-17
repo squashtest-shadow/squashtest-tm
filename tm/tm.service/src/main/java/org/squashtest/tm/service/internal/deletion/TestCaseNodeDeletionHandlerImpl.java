@@ -21,7 +21,6 @@
 package org.squashtest.tm.service.internal.deletion;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -45,6 +44,7 @@ import org.squashtest.tm.service.deletion.LinkedToIterationPreviewReport;
 import org.squashtest.tm.service.deletion.MilestoneModeNoFolderDeletion;
 import org.squashtest.tm.service.deletion.NotDeletablePreviewReport;
 import org.squashtest.tm.service.deletion.OperationReport;
+import org.squashtest.tm.service.deletion.SingleOrMultipleMilestonesReport;
 import org.squashtest.tm.service.deletion.SuppressionPreviewReport;
 import org.squashtest.tm.service.internal.customfield.PrivateCustomFieldValueService;
 import org.squashtest.tm.service.internal.deletion.LockedFileInferenceGraph.Node;
@@ -64,6 +64,8 @@ import org.squashtest.tm.service.testcase.TestCaseImportanceManagerService;
 public class TestCaseNodeDeletionHandlerImpl extends
 AbstractNodeDeletionHandler<TestCaseLibraryNode, TestCaseFolder> implements TestCaseNodeDeletionHandler {
 
+	private static final String TEST_CASES_TYPE = "test-cases";
+
 	@Inject
 	private TestCaseFolderDao folderDao;
 
@@ -72,6 +74,7 @@ AbstractNodeDeletionHandler<TestCaseLibraryNode, TestCaseFolder> implements Test
 
 	@Inject
 	private TestCaseDeletionDao deletionDao;
+
 	@Inject
 	private TestCaseImportanceManagerService testCaseImportanceManagerService;
 
@@ -107,40 +110,74 @@ AbstractNodeDeletionHandler<TestCaseLibraryNode, TestCaseFolder> implements Test
 		List<SuppressionPreviewReport> preview = new LinkedList<SuppressionPreviewReport>();
 
 		// check test cases that are called by other test cases
-		NotDeletablePreviewReport report = previewLockedNodes(nodeIds, milestoneId);
-		if (report != null){
-			preview.add(report);
-		}
+		reportLocksByCallSteps(nodeIds, milestoneId, preview);
 
 		// check test cases that have been planned or executed
-		LinkedToIterationPreviewReport previewAffectedNodes = previewAffectedNodes(nodeIds);
-		if (previewAffectedNodes != null){
-			preview.add(previewAffectedNodes);
-		}
+		reportExecutedTestCases(nodeIds, preview);
 
 		// check if some elements belong to milestones which status forbids that
-		if (someNodesAreLockedByMilestones(nodeIds)){
-			preview.add(new BoundToLockedMilestonesReport());
-		}
+		reportLocksByMilestones(nodeIds, preview);
 
 		// milestone mode only :
 		if (milestoneId != null){
 
-			// check if there are some folders in the selection
+			// separate the folders from the test cases
 			List<Long>[] separatedIds = deletionDao.separateFolderFromTestCaseIds(nodeIds);
-			if (! separatedIds[0].isEmpty()){
-				preview.add(new MilestoneModeNoFolderDeletion());
-			}
 
-			// check if some elements are bound to multiple milestones
-			if (someNodesHaveMultipleMilestones(nodeIds)){
-				preview.add(new BoundToMultipleMilestonesReport());
-			}
+			// check if there are some folders in the selection
+			reportNoFoldersAllowed(separatedIds[0], preview);
+
+			// RG 3613-R2.05
+			// check if some test cases are bound to multiple milestones
+			reportMultipleMilestoneBinding(separatedIds[1], preview);
 
 		}
 
 		return preview;
 
+	}
+
+	protected void reportMultipleMilestoneBinding(List<Long> testCaseIds, List<SuppressionPreviewReport> preview) {
+		List<Long> boundNodes = leafDao.findNodeIdsHavingMultipleMilestones(testCaseIds);
+		if (! boundNodes.isEmpty()){
+			// case 1 : all the test cases are bound to multiple milestones
+			if (testCaseIds.size() == boundNodes.size()){
+				preview.add(new BoundToMultipleMilestonesReport(TEST_CASES_TYPE));
+			}
+			// case 2 : there is a mixed cases of test cases that will be removed
+			// from the milestone and some will be removed - period
+			else{
+				preview.add(new SingleOrMultipleMilestonesReport(TEST_CASES_TYPE));
+			}
+		}
+	}
+
+	protected void reportNoFoldersAllowed(List<Long> folderIds, List<SuppressionPreviewReport> preview) {
+		if (! folderIds.isEmpty()){
+			preview.add(new MilestoneModeNoFolderDeletion(TEST_CASES_TYPE));
+		}
+	}
+
+	protected void reportExecutedTestCases(List<Long> nodeIds, List<SuppressionPreviewReport> preview) {
+		LinkedToIterationPreviewReport previewAffectedNodes = previewAffectedNodes(nodeIds);
+		if (previewAffectedNodes != null){
+			preview.add(previewAffectedNodes);
+		}
+	}
+
+	protected void reportLocksByCallSteps(List<Long> nodeIds, Long milestoneId, List<SuppressionPreviewReport> preview) {
+		NotDeletablePreviewReport report = previewLockedNodes(nodeIds, milestoneId);
+		if (report != null){
+			preview.add(report);
+		}
+	}
+
+
+	protected void reportLocksByMilestones(List<Long> nodeIds, List<SuppressionPreviewReport> preview){
+		List<Long> lockedNodes = deletionDao.findTestCasesWhichMilestonesForbidsDeletion(nodeIds);
+		if (! lockedNodes.isEmpty()){
+			preview.add(new BoundToLockedMilestonesReport(TEST_CASES_TYPE));
+		}
 	}
 
 
@@ -411,22 +448,15 @@ AbstractNodeDeletionHandler<TestCaseLibraryNode, TestCaseFolder> implements Test
 		deletionDao.removeEntity(step);
 	}
 
-	private boolean someNodesHaveMultipleMilestones(List<Long> nodeIds){
-		List<Long> boundNodes = leafDao.findNodeIdsHavingMultipleMilestones(nodeIds);
-		return ! (boundNodes.isEmpty());
-	}
 
-	private boolean someNodesAreLockedByMilestones(List<Long> nodeIds){
-		List<Long> lockedNodes = deletionDao.findTestCasesWhichMilestonesForbidsDeletion(nodeIds);
-		return ! (lockedNodes.isEmpty());
-	}
+
+
 
 
 	private DeletableIds findSeparateIds(List<Long> ids){
 		List<Long>[] separatedIds = deletionDao.separateFolderFromTestCaseIds(ids);
 		return new DeletableIds(separatedIds[0], separatedIds[1]);
 	}
-
 
 
 	/*
