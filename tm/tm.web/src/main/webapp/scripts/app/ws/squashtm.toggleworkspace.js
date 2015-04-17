@@ -21,13 +21,13 @@
 var squashtm = squashtm || {};
 /**
  * Controller for the ToggleWS workspace type page (report-workspace.html) Depends on : -
- * jquery 
+ * jquery
  */
 define(["jquery", "workspace.sessionStorage"],
 		function($, storage) {
 			var settings = {
 				expandSidebarLabel : ">>",
-				collapseSidebarLabel : "<<"	
+				collapseSidebarLabel : "<<"
 			};
 
 			function setEditToggleWSNormalState() {
@@ -41,12 +41,12 @@ define(["jquery", "workspace.sessionStorage"],
 			function toggleEditToggleWSState() {
 				$("#contextual-content").toggleClass("expanded");
 			}
-		
+
 			function setLeftFrameNormalState() {
 				$(".left-frame").removeClass("expanded");
 				$("#toggle-expand-left-frame-button").attr("value",
 						settings.collapseSidebarLabel);
-				var pathname = window.location.pathname; 
+				var pathname = window.location.pathname;
 				storage.remove(pathname);
 			}
 
@@ -54,8 +54,8 @@ define(["jquery", "workspace.sessionStorage"],
 				$(".left-frame").addClass("expanded");
 				$("#toggle-expand-left-frame-button").attr("value",
 						settings.expandSidebarLabel);
-				var pathname = window.location.pathname; 
-				storage.set(pathname, "leftexpanded");	
+				var pathname = window.location.pathname;
+				storage.set(pathname, "leftexpanded");
 			}
 
 			function toggleLeftFrameState() {
@@ -73,11 +73,11 @@ define(["jquery", "workspace.sessionStorage"],
 
 			/**
 			 * initializes the workspace.
-			 * 
+			 *
 			 * @returns
 			 */
 			function init(options) {
-				
+
 				var defaults = settings;
 				settings = $.extend(defaults, options);
 
@@ -87,14 +87,14 @@ define(["jquery", "workspace.sessionStorage"],
 
 				// settings.workspace is the pathname in every workspace html
 					if(settings.workspace !== undefined) {
-							var urlSession = storage.get(settings.workspace);		
-							if ( urlSession !== undefined ) {						
+							var urlSession = storage.get(settings.workspace);
+							if ( urlSession !== undefined ) {
 								if ( urlSession == "leftexpanded" ) {
 									setLeftFrameExpandState();
 									setEditToggleWSExpandState();
 								}
 						}
-			  	}
+				}
 			}
 
 			squashtm.toggleWorkspace = {
@@ -106,7 +106,7 @@ define(["jquery", "workspace.sessionStorage"],
 				setToggleWSWorkspaceExpandState : function() {
 					setLeftFrameExpandState();
 					setEditToggleWSExpandState();
-				},				
+				},
 				init : init
 			};
 
