@@ -26,12 +26,13 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component"%>
 <%@ taglib prefix="s" uri="http://www.springframework.org/tags"%>
-<%@ taglib prefix="aggr" tagdir="/WEB-INF/tags/aggregates"%>
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ taglib prefix="authz" tagdir="/WEB-INF/tags/authz"%>
 <%@ taglib prefix="at" tagdir="/WEB-INF/tags/attachments"%>
 <%@ taglib prefix="issues" tagdir="/WEB-INF/tags/issues"%>
 <%@ taglib prefix="json" uri="http://org.squashtest.tm/taglib/json" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
+
 
 
 <c:url var="executionUrl" value="/executions/${execution.id}"/>
@@ -167,6 +168,19 @@
                   <span id="test-case-status-icon" class="test-case-status-${ execution.status }"> &nbsp &nbsp </span> <span id="test-case-status"><comp:level-message level="${ execution.status }"/></span>
                 </div>
 			</div>
+          
+<c:if test="${execution.datasetLabel != null}">
+          <div class="display-table-row">
+            <label class="display-table-cell" for="testcase-dataset"><f:message key="label.dataset" /></label>
+            <div  class="display-table-cell">
+                    <span>    
+      <f:message var="noneLabel" key="label.None" />
+      <c:out value="${(fn:length(execution.datasetLabel) == 0) ? noneLabel : execution.datasetLabel}"/>
+    </span>
+            </div>
+          </div>      
+</c:if>
+      
 <c:if test="${execution.automated}">
 			<div class="display-table-row">
 				<label class="display-table-cell" for="automated-script"><f:message key="test-case.testautomation.section.label" /></label>
