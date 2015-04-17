@@ -261,7 +261,7 @@
 		  <th data-def="map=raw-type, invisible">raw type (not shown)</th> 
           <th data-def="map=type, sClass=icon-cell type" >&nbsp;</th> 
 				<th data-def="map=name, sortable, link=${projectDetailBaseUrl}/{entity-id}/info"  class="datatable-filterable"><f:message key="label.Name" /></th>
-		    	<th data-def="map=label, sortable"><f:message key="label.Label" /></th>
+		    	<th data-def="map=label, sortable"><f:message key="label.tag" /></th>
 		    	
 			</tr>
 		</thead>
@@ -271,9 +271,9 @@
 <div>
 <ul>
 
-<li><a id="checkAll"> checkAll</a></li>
-<li><a id="uncheckAll">uncheckAll</a></li>
-<li><a id="invertSelect">invertSelect</a></li>
+<li><a id="checkAll"> <f:message key="label.CheckAll" /></a></li>
+<li><a id="uncheckAll"><f:message key="label.UncheckAll" /></a></li>
+<li><a id="invertSelect"><f:message key="label.InvertSelection" /></a></li>
 
 </ul>
 </div>
