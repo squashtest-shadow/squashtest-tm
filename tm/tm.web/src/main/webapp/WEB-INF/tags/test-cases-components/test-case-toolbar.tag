@@ -51,7 +51,7 @@
 
 	<div class="toolbar-button-panel">
 	<c:if test="${ writable }">
-		<input type="button" value="${renameLabel}"
+		<input type="button" value="${renameLabel}"  title="${renameLabel}"
 				id="rename-test-case-button" class="sq-btn" />
 	</c:if>
     
@@ -59,7 +59,7 @@
         <input type="button" value="${createNewVersionLabel}" id="create-test-case-version-button" class="sq-btn"/>
     </c:if>
     
-		<input type="button" value="${printLabel}" id="print-test-case-button" class="sq-btn"/>
+		<input type="button" value="${printLabel}" id="print-test-case-button" title="${printLabel}" class="sq-btn"/>
 	</div>
 	
 	<c:if test="${ moreThanReadOnly }">
