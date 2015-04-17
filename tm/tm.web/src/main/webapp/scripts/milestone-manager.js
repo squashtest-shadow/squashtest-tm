@@ -27,6 +27,8 @@ require(["common"], function(){
 		squashtm = squashtm || {};
 		squashtm.vent = squashtm.vent || new Wreqr.EventAggregator();
 
+
+		
 		var trans = translator.get({
 			rangeGlobal : "milestone.range.GLOBAL",
 			statusPlanned : "milestone.status.PLANNED",
@@ -168,6 +170,15 @@ require(["common"], function(){
 
 			var milestoneTable = $("#milestones-table").squashTable({"bServerSide":false},squashSettings);
 
+			
+			milestoneTable.on('order.dt search.dt', function () {
+				
+				 $.each(milestoneTable.fnGetNodes(), function(index, cell){
+					 cell._DT_RowIndex= index;
+					 cell.firstChild.innerHTML = index + 1;
+				 });
+			});
+			
 		var dateSettings = confman.getStdDatepicker();
 
 		$("#add-milestone-end-date").editable(function(value){
