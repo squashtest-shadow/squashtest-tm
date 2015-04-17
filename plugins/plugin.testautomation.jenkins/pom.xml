@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.squashtest.tm</groupId>
     <artifactId>squash-tm-plugins</artifactId>
-    <version>1.12.0.RC5</version>
+    <version>1.12.0.RC6-SNAPSHOT</version>
   </parent>
 
   <artifactId>plugin.testautomation.jenkins</artifactId>
@@ -238,8 +238,8 @@
             <phase>pre-integration-test</phase>
             <configuration>
               <tasks>
-                <echo message="Create document base for IT's tomcat"></echo>
-                <mkdir dir="${stubTaServer.webapp.path}"></mkdir>
+                <echo message="Create document base for IT's tomcat" />
+                <mkdir dir="${stubTaServer.webapp.path}" />
               </tasks>
             </configuration>
           </execution>
