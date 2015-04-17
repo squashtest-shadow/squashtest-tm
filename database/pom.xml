@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.squashtest.tm</groupId>
     <artifactId>squash-tm</artifactId>
-    <version>1.12.0.RC5-SNAPSHOT</version>
+    <version>1.12.0.RC5</version>
   </parent>
 
   <artifactId>squashtest-tm-database</artifactId>
@@ -189,7 +189,7 @@
       <plugin>
         <groupId>org.codehaus.gmaven</groupId>
         <artifactId>gmaven-plugin</artifactId>
-        <configuration />
+        <configuration></configuration>
         <executions>
           <execution>
             <goals>

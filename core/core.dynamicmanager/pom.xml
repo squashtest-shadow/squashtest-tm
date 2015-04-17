@@ -4,13 +4,13 @@
   <parent>
     <groupId>org.squashtest.tm</groupId>
     <artifactId>squashtest-csp-core</artifactId>
-    <version>1.12.0.RC5-SNAPSHOT</version>
+    <version>1.12.0.RC5</version>
   </parent>
   <artifactId>core.dynamicmanager</artifactId>
   <packaging>bundle</packaging>
   <name>core.dynamicmanager</name>
 
-  <properties />
+  <properties></properties>
 
   <dependencies>
     <!-- <dependency>
