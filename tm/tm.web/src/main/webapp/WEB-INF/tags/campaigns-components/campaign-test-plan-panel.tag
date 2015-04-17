@@ -199,7 +199,7 @@
       <span><f:message key="message.permissions.confirm"/></span>
     </div>
     <div class="popup-dialog-buttonpane">
-      <input type="button" class="button" value="${okLabel}" data-def="evt=confirm, mainbtn"/>
+      <input type="button" class="button" value="${confirmLabel}" data-def="evt=confirm, mainbtn"/>
       <input type="button" class="button" value="${cancelLabel}" data-def="evt=cancel"/>
     </div>
   </div>

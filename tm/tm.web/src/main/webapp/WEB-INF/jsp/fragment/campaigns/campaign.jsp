@@ -92,6 +92,7 @@
 </c:if>
 
 <f:message var="okLabel" key="label.Ok" />
+<f:message var="confirmLabel" key="label.Confirm" />
 <f:message var="cancelLabel" key="label.Cancel" />
 
 <div class="ui-widget-header ui-state-default ui-corner-all fragment-header">
@@ -131,7 +132,7 @@
       <comp:error-message forField="name" />
 
       <div class="popup-dialog-buttonpane">
-        <input type="button" class="button" value="${okLabel}" data-def="evt=confirm, mainbtn" />
+        <input type="button" class="button" value="${confirmLabel}" data-def="evt=confirm, mainbtn" />
         <input type="button" class="button" value="${cancelLabel}" data-def="evt=cancel" />
       </div>
 
