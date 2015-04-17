@@ -185,7 +185,7 @@
                                   allowsUntestable="${allowsUntestable}" allowsSettled="${allowsSettled}" selected="${executionStep.executionStatus}"/>
     							<c:if test="${allowsUntestable}">
     							<button id="execute-untestable-button" class="sq-btn std-btn ui-button control-button status-button" 
-                                    data-status="UNTESTABLE" title="${untestableTitle}">
+                                    data-status="UNTESTABLE" title="${untestableLabel}">
                                     <span class="ui-icon exec-status-untestable"></span>
     							</button>
     							</c:if>
