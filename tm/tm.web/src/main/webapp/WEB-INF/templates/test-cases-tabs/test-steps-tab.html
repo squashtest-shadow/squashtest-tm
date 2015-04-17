@@ -43,21 +43,24 @@
 	<div class="toolbar">
 
 		<span class="group"><button id="collapse-steps-button"
-				class="button test-step-toolbar-button" style="float: left" data-icon="ui-icon-zoomout"  th:text="#{test-case.step.button.collapse.label}">collapse</button>
+				class="button test-step-toolbar-button" style="float: left" data-icon="ui-icon-zoomout"  th:text="#{test-case.step.button.collapse.label}"
+				th:title="#{test-case.step.button.collapse.label}">collapse</button>
 		</span>
 		
 		<span class="group" th:if="${isWritable}">
 			<button id="add-test-step-button"
 					data-icon="ui-icon-plusthick"
 				    class="button test-step-toolbar-button" 				    
-				    th:text="#{test-case.step.button.add.label}">
+				    th:text="#{test-case.step.button.add.label}"
+				    th:title="#{test-case.step.button.add.label}">
 				    add a step
 			</button>
 			<a id="add-call-step-button" 
 					data-icon="ui-icon-arrowthickstop-1-e"
 					class="button test-step-toolbar-button"
                     th:href="@{/test-cases/__${testCase.id}__/call}"					
-					th:text="#{test-case.step.button.call.label}">
+					th:text="#{test-case.step.button.call.label}"
+					th:title="#{test-case.step.button.call.label}">
 					call a test case
 			</a> 
 		</span>
@@ -66,13 +69,15 @@
 			<button id="copy-step"
 					data-icon="ui-icon-clipboard"
 					class="button test-step-toolbar-button" 
-					th:text="#{test-case.step.button.copy.label}">
+					th:text="#{test-case.step.button.copy.label}"
+					th:title="#{test-case.step.button.copy.label}">
 					copy step(s)
 			</button>
 			<button id="paste-step" 
 					data-icon="ui-icon-copy"
 					class="button test-step-toolbar-button" 
-					th:text="#{test-case.step.button.paste.label}">
+					th:text="#{test-case.step.button.paste.label}"
+					th:title="#{test-case.step.button.paste.label}">
 					paste step(s)
 			</button> 
 		</span>
@@ -81,7 +86,8 @@
 			<button id="delete-all-steps-button"
 					data-icon="ui-icon-trash"
 				     class="button test-step-toolbar-button" 				     
-				     th:text="#{test-case.step.delete.button}">
+				     th:text="#{test-case.step.delete.button}"
+				     th:title="#{test-case.step.delete.button}">
 					 remove selected steps
 			</button>
 		</span>	
