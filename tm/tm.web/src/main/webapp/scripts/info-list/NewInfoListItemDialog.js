@@ -47,6 +47,20 @@ define([ "jquery", "backbone", "handlebars", "./IconSelectDialog","squash.transl
 		},
 
 		confirm : function(event) {
+			var url = routing.buildURL('info-list.items', this.model.listId);
+
+			var params = {
+					"label" : this.model.label,
+					"code" : this.model.code,
+					"iconName" : this.model.icon || "noicon",
+			};
+			
+			
+			$.ajax({
+				url : url,
+				type : 'POST',
+				dataType : 'json',
+				data : params});
 			this.cleanup();
 			this.trigger("newOption.confirm");
 		},
@@ -99,22 +113,18 @@ define([ "jquery", "backbone", "handlebars", "./IconSelectDialog","squash.transl
 			var self = this;
 			Forms.form(this.$el).clearState();
 
-			var url = routing.buildURL('info-list.items', this.model.listId);
-
-			var params = {
-					"label" : this.model.label,
-					"code" : this.model.code,
-					"iconName" : this.model.icon || "noicon",
-			};
 			$.ajax({
-				url : url,
-				type : 'POST',
-				dataType : 'json',
-				data : params
-			}).success(function(data){
-
-			});
-
+			url: "/squash/info-lists/items/code/" + this.model.code +"?format=exists",
+			async: false,
+			wait: true, // that's a sync request
+		}).done(function(data){
+			if (data.exists){
+				res = false;
+				event.preventDefault();
+				Forms.input($("#new-info-list-item-code")).setState("error", translator.get("message.optionCodeAlreadyDefined"));
+			}
+		});
+			
 			return res;
 		},
 
