@@ -86,45 +86,15 @@ define(["jquery", "workspace.sessionStorage"],
 						toggleToggleWSWorkspaceState);
 
 				// settings.workspace is the pathname in every workspace html
-			  	if(settings.workspace != undefined) {
-						var urlSession = storage.get(settings.workspace);		
-						if ( urlSession != undefined ) {						
+					if(settings.workspace !== undefined) {
+							var urlSession = storage.get(settings.workspace);		
+							if ( urlSession !== undefined ) {						
 								if ( urlSession == "leftexpanded" ) {
 									setLeftFrameExpandState();
 									setEditToggleWSExpandState();
 								}
 						}
 			  	}
-				
-				/*
-				 * 
-				 * 
-				 * 
-				 * 				if(settings.workspace != undefined) {
-					var urlSession = storage.get(pathname);		
-						if ( urlSession != undefined ) {						
-								if ( urlSession == "leftexpanded" ) {
-									setLeftFrameExpandState();
-									setEditToggleWSExpandState();
-								}
-						}
-				}
-				
-				
-				
-				-------------
-				 * 				if(settings.workspace != undefined) {
-					var url = settings.workspace;
-					var urlSession = storage.get(pathname);		
-						if ( urlSession != undefined ) {						
-								if ( urlSession.indexOf( url ) != -1 ) {
-									console.log("good");
-									setLeftFrameExpandState();
-									setEditToggleWSExpandState
-								}
-						}
-				}
-				 */
 			}
 
 			squashtm.toggleWorkspace = {
