@@ -187,7 +187,7 @@
 	
 	</div>	
 
-    <f:message var="addMilestoneTitle" key="dialog.new-milestone.title"/>
+    <f:message var="addMilestoneTitle" key="milestone.create"/>
     <div id="add-milestone-dialog" class="not-displayed popup-dialog" 
           title="${addMilestoneTitle}" />
           
