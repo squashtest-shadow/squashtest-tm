@@ -57,15 +57,18 @@ define([ 'module', "info-list/info-list-modification-information-view", "info-li
 		deleteInfoListPopup : function(){
 			var self = this;
 			var message = $("#delete-info-list-warning");
+		
 			$.ajax({
 				type : 'GET',
 				url : routing.buildURL("info-list.isUsed", self.config.data.infoList.id),
 			}).done(function(data) {
 				if (data === true){
 					message.text(translator.get("dialog.delete.info-list.used.message"));
+					reindexWarn.text(translator.get("dialog.info-list.warning.reindex.before"));
 				}
 				else {
 					message.text(translator.get("dialog.delete.info-list.unused.message"));
+					reindexWarn.text("");
 				}
 
 			});

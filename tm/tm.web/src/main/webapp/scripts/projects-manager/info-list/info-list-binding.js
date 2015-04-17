@@ -28,7 +28,12 @@ define([ 'module', "jquery", "squash.basicwidgets", "jeditable.selectJEditable",
 	var changeListDialog = $("#change-list-popup");
 
 	changeListDialog.formDialog();
+	
+	var changeListDialogAfter = $("#change-list-popup-after");
 
+	changeListDialogAfter.formDialog();
+	
+	
 	changeListDialog.on('formdialogcancel', function() {
 		var $this = $(this);
 		var selectJEdit = $this.data('selectJEdit');	
@@ -53,8 +58,22 @@ define([ 'module', "jquery", "squash.basicwidgets", "jeditable.selectJEditable",
 			selectJEdit.settings.jeditableSettings.oldValue = selectJEdit.component.text();
 		});	
 	
-		changeListDialog.formDialog('close');
+        changeListDialog.formDialog('close');
+        changeListDialogAfter.formDialog('open');
 	});
+	
+
+	
+	changeListDialogAfter.on('formdialogcancel', function() {
+		changeListDialogAfter.formDialog('close');
+	});
+
+	changeListDialogAfter.on('formdialogconfirm', function() {
+		document.location.href=  squashtm.app.contextRoot + "/administration/indexes";
+	});
+	
+
+	
 	
 	var submitFn = function (value, settings, self){
 		changeListDialog.data("projectId", config.data.project.id);

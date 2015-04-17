@@ -33,6 +33,7 @@
   <script type="text/javascript" th:inline="javascript">
     var squashtm = {};
     squashtm.app = {
+      isAdmin : /*[[ ${sec.hasRole('ROLE_ADMIN')} ]]*/,
       contextRoot : /*[[ @{/} ]]*/"http://localhost:8080/squash",
       localizedDateFormat : /*[[ #{squashtm.dateformatShort.datepicker} ]]*/"dd/mm/yy",
       locale : /*[[ #{squashtm.locale} ]]*/"fr",
@@ -89,9 +90,24 @@
               <span class='red-warning-message'>{{second}}</span>
               <span>{{third}}</span>
               <span class='bold-warning-message'>{{fourth}}</span>
+              <br/>
+              <span class='red-warning-message'>{{warn-index}}</span>
             </div>
           </div>
           </script>
+          
+          <script id="confirm-remove-reindex" type="text/x-handlebars-template" th:inline="text">
+          <div class='display-table-row'>
+            <div class='display-table-cell warning-cell'>
+              <div class='delete-node-dialog-warning'></div>
+            </div>
+            <div class='display-table-cell'>
+              <span class='red-warning-message'>{{warn-index}}</span>
+            </div>
+          </div>
+          </script>
+          
+          
 </head>
 <body>
   <div id="navigation" th:include="navbar.frag :: navbar">

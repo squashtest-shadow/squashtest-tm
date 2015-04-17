@@ -40,12 +40,37 @@ define(
 				"message.infoList.bound.batchRemove.second",
 				"message.infoList.bound.batchRemove.third",
 				"message.infoList.bound.batchRemove.fourth",
-				"message.noLinesSelected"
+				"message.noLinesSelected",
+				"dialog.info-list.warning.reindex.before",
+				"dialog.info-list.warning.reindex.after"
 			]);
 
 			var itemsTableConf = window.squashtm.app.itemsTable;
 			console.log("table conf" ,itemsTableConf);
-
+			
+			var gotoIndexButton = {
+					'text' : messages.get("label.GotoIndex"),
+					'click' : function() {
+						var jqDialog = $(this);
+						jqDialog.dialog('close');
+						jqDialog.dialog('destroy');
+						this.remove();
+						document.location.href=  squashtm.app.contextRoot + "/administration/indexes";
+					}
+				};
+			
+			var closeButton = {
+					'text' : messages.get("label.Close"),
+					'click' : function() {
+						var jqDialog = $(this);
+						jqDialog.dialog('close');
+						jqDialog.dialog('destroy');
+						this.remove();
+					}
+				};
+			
+			var isAdmin = window.squashtm.app.isAdmin;
+			
 			function selectTr($tr) {
 				$tr.removeClass("ui-state-highlight").addClass("ui-state-row-selected");
 			}
@@ -58,17 +83,35 @@ define(
 				removeTemplate.tpl = removeTemplate.tpl || Handlebars.compile($("#confirm-remove-tpl").html());
 				return removeTemplate.tpl;
 			}
+			
+			function reindexTemplate(){
+				reindexTemplate.tpl = reindexTemplate.tpl || Handlebars.compile($("#confirm-remove-reindex").html())({ 'warn-index': messages.get("dialog.info-list.warning.reindex.after")});
+				return reindexTemplate.tpl;
+				
+			}
+			
+			function popupReindex(){
+                var indxTpl = reindexTemplate();
+				var buttonConf = [ ];
+				if (isAdmin){
+				buttonConf.push(gotoIndexButton);
+				}
+				buttonConf.push(closeButton);
+				var conf =  {'buttons' : buttonConf};
+				oneshot.show(messages.get("label.Delete"), indxTpl, conf);
+			}
 
 			function removeProps(batch) {
 				var flavor = batch ? "batchRemove." : "remove.";
 
 				return function(bound) {
 					var binding = bound ? "bound." : "";
+					var memo = bound ? {'warn-index':  messages.get("dialog.info-list.warning.reindex.before")} : {'warn-index': ""};
 
 					return ["first", "second", "third", "fourth"].reduce(function(memo, item) {
 						memo[item] = messages.get("message.infoList." + binding + flavor + item);
 						return memo;
-					}, {});
+					}, memo);
 				};
 			}
 
@@ -218,11 +261,13 @@ define(
 					var self = this;
 					var tgt =  event.currentTarget;
 					var $tr = $(tgt).closest("tr");
-					var isBound = this.$el.DataTable().row($tr).data().isBound;
+					var isBound = this.$el.DataTable().row($tr).data().bound === true;
 					var props = removeProps(false /* not batch */);
 					var tpl = removeTemplate()(props(isBound));
-
 					oneshot.show(messages.get("label.Delete"), tpl).done(function() {
+						if (isBound){
+						popupReindex();
+						}						
 						$.ajax(self.apiRoot + "/" + $(tgt).data("value"), { type: "DELETE" })
 							.done(self.refresh);
 					});
@@ -243,8 +288,10 @@ define(
 					var tpl = removeTemplate()(props(hasBound));
 
 					oneshot.show(messages.get("label.Delete"), tpl).done(function() {
+						if (hasBound){
+							popupReindex();
+							}
 						var ids = rows.data().map(itemIdMapper).join(",");
-
 						$.ajax(self.apiRoot + "/" + ids, { type: "DELETE" })
 							.done(self.refresh);
 					});
