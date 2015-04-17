@@ -30,7 +30,7 @@ define(["jquery", "tree","./permissions-rules", "workspace.contextual-content", 
 			"not-creatable"			: "tree.button.copy-node.error.notOneEditable",
 			"empty-selection"		: "tree.button.copy-node.error.nothing-to-paste",
 			"invalid-content"		: "tree.button.copy-node.error.pastenothere",
-			"not-deletable"			: "dialog.label.delete-node.rejected",
+			"not-deletable"			: "dialog.label.delete-node.rejectedCampaign",
 			"mixed-nodes-iteration-selection" : "tree.button.copy-node.mixediteration",
 			"mixed-nodes-testsuite-selection" : "tree.button.copy-node.mixedsuite",
 			"milestone-denied"		: "squashtm.action.exception.milestonelocked"
