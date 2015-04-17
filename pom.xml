@@ -277,6 +277,7 @@
           <keepBlankLines>true</keepBlankLines>
           <sortDependencies>scope, artifactId</sortDependencies>
           <nrOfIndentSpace>2</nrOfIndentSpace>
+	  <expandEmptyElements>false</expandEmptyElements>
         </configuration>
         <executions>
           <execution>
