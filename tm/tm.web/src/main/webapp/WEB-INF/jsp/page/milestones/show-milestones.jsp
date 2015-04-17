@@ -103,7 +103,7 @@
     <c:set var="actionState" value="${ milestoneFeatureEnabled ? '' : 'disabled=\"disabled\"' }" />
     <div class="btn-toolbar right">
       <button id="new-milestone-button" ${ actionState } class="sq-btn milestone-dep" title="<f:message key='label.AddMilestone' />">
-        <span class="ui-icon ui-icon-plusthick">+</span>&nbsp;<f:message key="label.AddMilestone" />
+        <span class="ui-icon ui-icon-plusthick">+</span>&nbsp;<f:message key="label.Add" />
       </button>
       
       <button id="clone-milestone-button" ${ actionState } class="sq-btn milestone-dep" title="<f:message key='label.milestone.duplicate' />">
@@ -115,7 +115,7 @@
       </button>
       
       <button id="delete-milestone-button" ${ actionState } class="sq-btn milestone-dep" title="<f:message key='label.deleteMilestone' />">
-        <span class="ui-icon ui-icon-trash">-</span>&nbsp;<f:message key="label.deleteMilestone" />
+        <span class="ui-icon ui-icon-trash">-</span>&nbsp;<f:message key="label.Delete" />
       </button>
     </div>
   </div>
