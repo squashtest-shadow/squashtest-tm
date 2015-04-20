@@ -19,7 +19,8 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 define(["jquery", "tree","./permissions-rules", "workspace.contextual-content", "workspace.event-bus", "squash.translator" ,
-        "workspace.tree-node-copier", "workspace.tree-event-handler"], function($, zetree, rules, ctxcontent, eventBus,  translator, copier, treehandler){
+        "workspace.tree-node-copier", "workspace.tree-event-handler", "app/ws/squashtm.notification"], 
+        function($, zetree, rules, ctxcontent, eventBus,  translator, copier, treehandler, notification){
 	"use strict";
 
 	function showError(messageName){
@@ -36,7 +37,7 @@ define(["jquery", "tree","./permissions-rules", "workspace.contextual-content", 
 			"milestone-denied"		: "squashtm.action.exception.milestonelocked"
 		});
 
-		squashtm.notification.showInfo(messages[messageName]);
+		notification.showInfo(messages[messageName]);
 	}
 
 
@@ -91,7 +92,7 @@ define(["jquery", "tree","./permissions-rules", "workspace.contextual-content", 
 	}
 
 	function exportUrl(nodeId) {
-		return squashtm.app.contextRoot+"/campaign-browser/export-campaign/" + nodeId;
+		return window.squashtm.app.contextRoot+"/campaign-browser/export-campaign/" + nodeId;
 	}
 
 	return {
