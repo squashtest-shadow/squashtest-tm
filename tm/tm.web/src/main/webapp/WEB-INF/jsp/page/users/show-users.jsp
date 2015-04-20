@@ -211,10 +211,7 @@
             <comp:notification-pane type="error">
               <jsp:attribute name="htmlcontent">
                 <div class="display-table-cell">
-					<span> <f:message key="message.user.remove.first"/></span>
-					<span class="red-warning-message" > <f:message key="message.user.remove.second"/></span>
-					<span> <f:message key="message.user.remove.third"/></span>
-					<span class="bold-warning-message"> <f:message key="message.user.remove.fourth"/></span>
+					<span> <f:message key="message.user.remove"/></span>
 				</div>      
               </jsp:attribute>
             </comp:notification-pane>         
