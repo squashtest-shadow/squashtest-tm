@@ -43,7 +43,7 @@ define(["jquery", "backbone", "underscore", "squash.basicwidgets", "jeditable.si
 		},
 
 		events : {
-		"click .isDefault>input:radio" : "changeDefaultOption",
+		"click .isDefault>input:checkbox" : "changeDefaultOption",
 		"click td.opt-label" : "openChangeLabelPopup",
 		"click td.opt-code" : "openChangeCodePopup",
 		"click span.sq-icon" : "openChangeIconPopup",
@@ -95,6 +95,7 @@ define(["jquery", "backbone", "underscore", "squash.basicwidgets", "jeditable.si
 		changeDefaultOption : function(event) {
 
 			var self = this;
+			// It's now checkboxesx
 			var radio = event.currentTarget;
 
 			if (!radio.checked) {
@@ -114,7 +115,7 @@ define(["jquery", "backbone", "underscore", "squash.basicwidgets", "jeditable.si
 					id:'info-list-item-default',
 				}
 			}).done(function() {
-				self.optionsTable.find(".isDefault>input:radio").prop("checked", false);
+				self.optionsTable.find(".isDefault>input:checkbox").prop("checked", false);
 				radio.checked = true;
 			}).fail(function() {
 				radio.checked = !radio.checked;
