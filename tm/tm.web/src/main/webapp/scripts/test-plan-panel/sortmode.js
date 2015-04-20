@@ -29,8 +29,8 @@
  * </pre>
  *
  */
-define([ "jquery", "workspace.storage", "app/util/ButtonUtil" ],
-	function($, storage, ButtonUtil) {
+define([ "jquery", "workspace.storage", "app/util/ButtonUtil", "squash.attributeparser" ],
+	function($, storage, ButtonUtil, attrparser) {
 	"use strict";
 
 	var tableSelector = ".test-plan-table";
@@ -67,11 +67,61 @@ define([ "jquery", "workspace.storage", "app/util/ButtonUtil" ],
 		// ******************* state logic ***********************
 
 
-		function isDefaultSorting (someSorting) {
+		function isDefaultSorting (_someSorting) {
+			var someSorting = fromIndexedToNamed(_someSorting);
 			var defaultSorting = StaticSortMode.defaultSorting();
 			return (someSorting.length === 1 && someSorting[0][0] === defaultSorting[0][0] && someSorting[0][1] === defaultSorting[0][1]);
 		};
 		
+		/* 
+		 * This function will initialize an index that maps
+		 * the name (mDataProp) of a column to its index. 
+		 * 
+		 * We need to handle the conversion between column names 
+		 * and their index. It is so because storing the index 
+		 * (as it should) could lead to inconsistencies because of 
+		 * invisible column, table header being different depending 
+		 * on the page it is displayed etc
+		 * 
+		 * The trick here is, when the sortmode is initialized the 
+		 * squashtable might not be ready so we can't rely on its API.
+		 * We have to parse the table header from scratch.
+		 */
+		
+
+		var initIndex = $.proxy(function(){
+			this.byIndex = {};
+			this.byName = {};
+			var self = this;
+			
+			var headers = $table.find('>thead>tr>th');
+			
+			for (var i=0; i< headers.length; i++){
+				var head = $(headers[i]);
+				var opts = attrparser.parse(head.data('def'));
+				var name = opts.map;
+				self.byIndex[i] = name;
+				self.byName[name] = i;
+			}
+		}, this);
+		
+		function _convert(inputSorting, mapping){
+			var outputSorting = [];
+			for (var i=0; i<inputSorting.length; i++){
+				var sorting = inputSorting[i];
+				var converted = mapping[sorting[0]];
+				outputSorting.push([ converted, sorting[1] ]);
+			}
+			return outputSorting;
+		}
+		
+		var fromIndexedToNamed = $.proxy(function(sorting){
+			return _convert(sorting, this.byIndex);
+		}, this);
+		
+		var fromNamedToIndexed = $.proxy(function(sorting){
+			return _convert(sorting, this.byName);
+		}, this);
 		
 		// ****** private state transition function ********
 		
@@ -140,23 +190,19 @@ define([ "jquery", "workspace.storage", "app/util/ButtonUtil" ],
 		// ******************** I/O ********************
 
 		this.loadaaSorting = function() {
-			var sorting = this.storage.get(this.key);
-			if (!!sorting) {
-				return sorting;
+			var _sorting = this.storage.get(this.key);
+			if (!! _sorting) {
+				return fromNamedToIndexed(_sorting);
 			} else {
-				return StaticSortMode.defaultSorting();
+				return fromNamedToIndexed(StaticSortMode.defaultSorting());
 			}
 		};
 
 		this._saveaaSorting = function(aaSorting) {
-			var trimedSorting = [], _buf;
 
-			for ( var i = 0, len = aaSorting.length; i < len; i++) {
-				_buf = aaSorting[i];
-				trimedSorting.push([ _buf[0], _buf[1] ]);
-			}
+			var sorting = fromIndexedToNamed(aaSorting);
 
-			this.storage.set(this.key, trimedSorting);
+			this.storage.set(this.key, sorting);
 		};
 
 		this._deleteaaSorting = function() {
@@ -166,6 +212,7 @@ define([ "jquery", "workspace.storage", "app/util/ButtonUtil" ],
 		
 		// **************** init state ***************
 
+		initIndex();
 		var initialsort = this.loadaaSorting();
 		this.update(initialsort);
 
@@ -176,7 +223,7 @@ define([ "jquery", "workspace.storage", "app/util/ButtonUtil" ],
 			return new SortMode(conf);
 		},
 		defaultSorting : function() {
-			return [ [ 0, "asc" ] ];
+			return [ [ "entity-index", "asc" ] ];
 		}
 	};
 

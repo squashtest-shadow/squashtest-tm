@@ -141,7 +141,7 @@ define(["jquery",  "jquery.squash.rangedatepicker", "squash.translator", "worksp
 				if ($th.is('.tp-th-filter')){
 					$th.find('.filter_input').val(filter[idx].sSearch);
 				}
-			})
+			});
 		};
 		
 
