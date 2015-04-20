@@ -112,9 +112,7 @@ public class CampaignStatisticsServiceImpl implements CampaignStatisticsService{
 		query.setParameter("id", campaignId);
 		List<Object[]> res = query.list();
 
-		List<IterationTestInventoryStatistics> result = gatherIterationTestInventirtStatusticsByRes(res);
-
-		return result;
+		return gatherIterationTestInventirtStatusticsByRes(res);
 	}
 
 	@Override
@@ -124,8 +122,7 @@ public class CampaignStatisticsServiceImpl implements CampaignStatisticsService{
 		Query query = sessionFactory.getCurrentSession().getNamedQuery("CampaignStatistics.testinventorybymilestone");
 		query.setParameter("id", milestoneId);
 		List<Object[]> res = query.list();
-		List<IterationTestInventoryStatistics> result = gatherIterationTestInventirtStatusticsByRes(res);
-		return result;
+		return gatherIterationTestInventirtStatusticsByRes(res);
 	}
 
 

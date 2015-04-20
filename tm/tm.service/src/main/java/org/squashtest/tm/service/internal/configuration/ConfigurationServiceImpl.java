@@ -65,8 +65,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 	}
 
 	private Session currentSession() throws HibernateException {
-		Session session = sessionFactory.getCurrentSession();
-		return session;
+		return sessionFactory.getCurrentSession();
 	}
 
 	@Override
@@ -79,8 +78,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 		Session session = currentSession();
 		Query sqlQuery = session.createSQLQuery(FIND_VALUE_BY_KEY_SQL);
 		sqlQuery.setParameter(0, key);
-		Object value = sqlQuery.uniqueResult();
-		return value;
+		return sqlQuery.uniqueResult();
 	}
 
 	/**

@@ -61,8 +61,7 @@ public final class AutomatedExecutionViewUtils {
 			return 100;
 		}
 
-		int percentage = MathsUtils.percent(totalTerminated, totalExec);
-		return percentage;
+		return MathsUtils.percent(totalTerminated, totalExec);
 	}
 
 	public static ExecutionAutoView translateExecutionInView(AutomatedExecutionExtender autoExec, Locale locale

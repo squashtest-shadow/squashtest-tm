@@ -111,6 +111,7 @@ public class AdvancedSearchController {
 		SearchInputInterfaceModel build(Locale locale, List<Long> milestoneIds);
 	}
 
+	private static final String IDS = "ids[]";
 	private static final String TEXTFIELD = "textfield";
 	private static final String DATE = "date";
 	private static final String COMBOMULTISELECT = "combomultiselect";
@@ -624,9 +625,9 @@ public class AdvancedSearchController {
 	
 	
 	
-	@RequestMapping(value = "/tcs/{testCaseIds}/milestones", method = RequestMethod.POST, params = "ids[]")
+	@RequestMapping(value = "/tcs/{testCaseIds}/milestones", method = RequestMethod.POST, params = IDS)
 	@ResponseBody
-	public void bindMilestonesToTcs(@PathVariable List<Long> testCaseIds, @RequestParam("ids[]") List<Long> milestoneIds) {
+	public void bindMilestonesToTcs(@PathVariable List<Long> testCaseIds, @RequestParam(IDS) List<Long> milestoneIds) {
 
 		Collection<Long> bindedBefore = testCaseModificationService.findBindedMilestonesIdForMassModif(testCaseIds);
 		bindedBefore.removeAll(milestoneIds);
@@ -638,9 +639,9 @@ public class AdvancedSearchController {
 	}
 	
 
-	@RequestMapping(value = "/reqVersions/{reqVIds}/milestones", method = RequestMethod.POST, params = "ids[]")
+	@RequestMapping(value = "/reqVersions/{reqVIds}/milestones", method = RequestMethod.POST, params = IDS)
 	@ResponseBody
-	public boolean bindMilestonesToReqV(@PathVariable List<Long> reqVIds, @RequestParam("ids[]") List<Long> milestoneIds) {
+	public boolean bindMilestonesToReqV(@PathVariable List<Long> reqVIds, @RequestParam(IDS) List<Long> milestoneIds) {
 		Collection<Long> bindedBefore = versionService.findBindedMilestonesIdForMassModif(reqVIds);
 		//was binded before but is not now so need to unbind
 		bindedBefore.removeAll(milestoneIds);	

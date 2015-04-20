@@ -261,8 +261,7 @@ public class HibernateMilestoneDao extends HibernateEntityDao<Milestone> impleme
 	}
 
 	private ScrollableResults scrollableResults(Query query) throws HibernateException {
-		ScrollableResults tcs = query.setCacheMode(CacheMode.IGNORE).scroll(ScrollMode.FORWARD_ONLY);
-		return tcs;
+		return query.setCacheMode(CacheMode.IGNORE).scroll(ScrollMode.FORWARD_ONLY);
 	}
 
 	/**
