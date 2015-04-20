@@ -134,9 +134,10 @@
         <div id="sub-page-title" class="sub-page-title">
             <h2 th:text="#{title.infoListManager}">User lists manager</h2> 
         </div>
-
+        
         <div id="sub-page-buttons" class="sub-page-buttons">
-          <a id="back" href="/squash/administration" th:href="@{/administration}" th:text="#{ label.Back }" class="sq-btn">Back</a>
+          <input id="back" type="button" th:value="#{label.Back}" class="sq-btn" value="#{ label.Back }"
+            th:onclick="'document.location.href=\''+@{/administration}+'\''" />
         </div>
       </div>
 

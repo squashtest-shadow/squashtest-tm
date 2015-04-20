@@ -96,7 +96,8 @@
         </div>
 
         <div id="sub-page-buttons" class="sub-page-buttons">
-          <a id="back" class="sq-btn" th:text="#{label.Back}" th:href="@{/administration}">Retour</a>  
+          <input id="back" type="button" th:value="#{label.Back}" class="sq-btn" value="#{ label.Back }"
+            th:onclick="'document.location.href=\''+@{/administration}+'\''" />
         </div>
       </div>
       
