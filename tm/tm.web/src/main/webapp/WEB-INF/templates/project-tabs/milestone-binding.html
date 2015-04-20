@@ -96,11 +96,12 @@
 			    <li  id="other-milestone-panel" class="ui-state-default ui-corner-top"><a class="ui-tabs-anchor" th:text="#{label.Other}" th:if="${!isTemplate}"></a></li>
 			</ul>		
 		</div>
-			
+		<br/>	
+			<br/>	
  <div id="global-milestone">
 		<div>
         <table id="global-milestone-table" class="unstyled-table"
-          th:attr="data-def='datakeys-id=entity-id, pre-sort=1'">
+          th:attr="data-def='datakeys-id=entity-id, pre-sort=1,  filter'">
           <thead>
             <tr>
               <th th:attr="data-def='map=checkbox, checkbox'">#</th>
@@ -125,7 +126,7 @@
   <div id="personal-milestone" hidden="true">
 	   <div>
         <table id="personal-milestone-table" class="unstyled-table"
-          th:attr="data-def='datakeys-id=entity-id, pre-sort=1'">
+          th:attr="data-def='datakeys-id=entity-id, pre-sort=1,  filter'">
           <thead>
             <tr>
               <th th:attr="data-def='map=checkbox, checkbox'">#</th>
@@ -152,7 +153,7 @@
 		<div id="other-milestone" hidden="true">
 		<div>
         <table id="other-milestone-table" class="unstyled-table"
-          th:attr="data-def='datakeys-id=entity-id, pre-sort=1'">
+          th:attr="data-def='datakeys-id=entity-id, pre-sort=1, filter'">
           <thead>
             <tr>
               <th th:attr="data-def='map=checkbox, checkbox'">#</th>
