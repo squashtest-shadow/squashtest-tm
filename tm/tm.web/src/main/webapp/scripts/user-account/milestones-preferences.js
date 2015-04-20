@@ -80,7 +80,7 @@ define(["jquery", "milestone-manager/milestone-activation", "squash.attributepar
 			
 			checkbox.switchButton(checkConf);
 			
-			checkbox.siblings('.switch-button-background').css({position : 'relative', top : '6px'});
+			checkbox.siblings('.switch-button-background').css({position : 'relative', top : '5px'});
 			
 			// ****** init the label ***********************
 			

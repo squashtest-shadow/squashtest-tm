@@ -202,12 +202,12 @@
 			<jsp:attribute name="body">
 				<div class="display-table">			
 				<div class="display-table-row">
-					<div class="display-table-cell">  
+					<div class="display-table-cell" style="vertical-align: bottom;">  
 					<c:choose>
 				     <c:when  test= "${ milestoneList.size() != 0}">			
 					<label for="toggle-activation-checkbox" ><f:message key="user-preferences.tree-order.mode.label"/></label>
 					</div>
-					<div class="customHeigth">
+					<div class="display-table-cell">
 					<div class="display-table-cell">                  		
                  		<input id="toggle-milestone-checkbox" type="checkbox" 
                  	          data-def="width=35, on_label='${milestoneMilestoneMode}', off_label='${milestoneReferentialMode}'" style="display: none;"/>

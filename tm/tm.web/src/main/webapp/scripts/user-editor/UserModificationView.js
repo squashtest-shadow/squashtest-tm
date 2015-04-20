@@ -119,7 +119,7 @@ define([ "jquery", "backbone", "underscore", "jeditable.simpleJEditable", "app/u
 			activCbx.switchButton(activConf);
 			
 			//a bit of css tweak now
-			activCbx.siblings('.switch-button-background').css({position : 'relative', top : '6px'});
+			activCbx.siblings('.switch-button-background').css({position : 'relative', top : '5px'});
 		},
 		
 		toggleUserActivation : function(){
