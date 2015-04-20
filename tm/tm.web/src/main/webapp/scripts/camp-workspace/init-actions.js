@@ -23,20 +23,19 @@ define(["jquery", "tree","./permissions-rules", "workspace.contextual-content", 
         function($, zetree, rules, ctxcontent, eventBus,  translator, copier, treehandler, notification){
 	"use strict";
 
+	translator.load({
+		"no-libraries-allowed"	: "tree.button.copy-node.error.nolibrary",
+		"not-unique"			: "tree.button.copy-node.error.notOneEditable",
+		"not-creatable"			: "tree.button.copy-node.error.notOneEditable",
+		"empty-selection"		: "tree.button.copy-node.error.nothing-to-paste",
+		"invalid-content"		: "tree.button.copy-node.error.pastenothere",
+		"not-deletable"			: "dialog.label.delete-node.rejectedCampaign",
+		"mixed-nodes-iteration-selection" : "tree.button.copy-node.mixediteration",
+		"mixed-nodes-testsuite-selection" : "tree.button.copy-node.mixedsuite",
+		"milestone-denied"		: "squashtm.action.exception.milestonelocked"
+	});
+
 	function showError(messageName){
-
-		var messages = translator.get({
-			"no-libraries-allowed"	: "tree.button.copy-node.error.nolibrary",
-			"not-unique"			: "tree.button.copy-node.error.notOneEditable",
-			"not-creatable"			: "tree.button.copy-node.error.notOneEditable",
-			"empty-selection"		: "tree.button.copy-node.error.nothing-to-paste",
-			"invalid-content"		: "tree.button.copy-node.error.pastenothere",
-			"not-deletable"			: "dialog.label.delete-node.rejectedCampaign",
-			"mixed-nodes-iteration-selection" : "tree.button.copy-node.mixediteration",
-			"mixed-nodes-testsuite-selection" : "tree.button.copy-node.mixedsuite",
-			"milestone-denied"		: "squashtm.action.exception.milestonelocked"
-		});
-
 		notification.showInfo(messages[messageName]);
 	}
 
