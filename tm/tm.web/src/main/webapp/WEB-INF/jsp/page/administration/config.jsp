@@ -70,7 +70,7 @@
   <div id="config-page-content" class="admin-message-page-content">
     <div id="config-info-panel" class="expand sq-tg">
       <div class="tg-head">
-        <h3><f:message key="label.ModifyConfig" /></h3>
+        <h3><f:message key="label.Attachments" /></h3>
       </div>
       
       <div class="tg-body">
