@@ -121,7 +121,7 @@
             <input type="button" th:if="!${associateResult}" th:value="#{label.Modify}" id="modify-search-result-button"
               class="button ui-button ui-widget ui-state-default ui-corner-all" role="button" aria-disabled="false" />
                  <input type="button" th:if="!${associateResult} and ${application.milestoneFeatureEnabled} and not ${isMilestoneMode} and (${sec.hasRole('ROLE_TM_PROJECT_MANAGER')} or ${sec.hasRole('ROLE_ADMIN')})" th:value="#{label.ModifyMilestone}" id="modify-search-result-milestone-button"
-              class="button ui-button ui-widget ui-state-default ui-corner-all" role="button" aria-disabled="false" />
+              class="button ui-button ui-widget ui-state-default ui-corner-all" role="button" aria-disabled="false" th:title ="#{label.search.modify-milestone.tc}"/>
 
             <input type="button" th:if="!${associateResult}" th:value="#{label.Export}" id="export-search-result-button"
               class="button ui-button ui-widget ui-state-default ui-corner-all" role="button" aria-disabled="false" />
