@@ -604,6 +604,10 @@ table.ta-project-bind-listdiv tr.listdiv-item.even {
 	line-height:1.2;
 }
 
+.paddingnull	{
+	padding : 0;
+}
+
 td.editable:HOVER {
 	border: 1px solid transparent;
 }

@@ -135,12 +135,16 @@
 </c:if>
 					<f:message var="rename" key="project.button.rename.label" />
 					<input type="button" value="${ rename }" id="rename-project-button"
-								class="button" />
+								class="button" style=" padding: .6em 1em;" />
 </sec:authorize>
 <sec:authorize access="hasRole('ROLE_ADMIN')">
     				<f:message var="delete" key='project.button.delete.label' />
-    				<input type="button" value="${ delete }" id="delete-project-button"
-    						class="button" />
+ 		
+ 					<%-------------------------- Trash appear but too much padding.   ------------------------%>
+    				<button id="delete-project-button" ${ delete }  class="sq-btn paddingnull" style="padding: 0" title="<f:message key='project.button.delete.label' />">
+        			   <span class="ui-icon ui-icon-trash">-</span>&nbsp;<f:message key="label.Delete" />
+      				</button>
+
 </sec:authorize>						
 				</div>
 				<div class="unsnap"></div>
