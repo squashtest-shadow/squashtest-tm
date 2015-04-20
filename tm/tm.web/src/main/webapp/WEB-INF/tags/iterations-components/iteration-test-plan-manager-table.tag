@@ -165,7 +165,7 @@
             <f:message var="stsHeader" key="iteration.executions.table.column-header.status.label" />
             ${fn:substring(stsHeader,0,2)}.
           </th>
-          <th class="no-user-select" data-def="map=empty-delete-holder, delete-button=#iter-test-plan-delete-dialog">&nbsp;</th>
+          <th class="no-user-select" data-def="map=empty-delete-holder, unbind-button=#iter-test-plan-delete-dialog">&nbsp;</th>
         </tr>
       </thead>
       <tbody>
