@@ -644,12 +644,24 @@ $("#unbind-project-popup").confirmDialog().on('confirmdialogconfirm', function()
 			
 			
 			
-			$("#projects-table").squashTable({"bServerSide":false, fnDrawCallback : drawCallBack}, squashSettings);
+			var projectTable = $("#projects-table").squashTable({"bServerSide":false, fnDrawCallback : drawCallBack}, squashSettings);
 			$("#bind-to-projects-table").squashTable({"bServerSide":false, "fnRowCallback" : projectTableRowCallback}, {});
 		
 			basic.init();
 			$("#back").click(clickBackButton);
 			initRenameDialog();
 	
+			
+			
+			//fix order
+			projectTable.on('order.dt search.dt', function () {
+				
+				 $.each(projectTable.fnGetNodes(), function(index, cell){
+					 cell._DT_RowIndex= index;
+					 cell.firstChild.innerHTML = index + 1;
+				 });
+			});
+			
+			
 		});
 	});

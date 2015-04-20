@@ -170,7 +170,7 @@ require(["common"], function(){
 
 			var milestoneTable = $("#milestones-table").squashTable({"bServerSide":false},squashSettings);
 
-			
+			//fix order
 			milestoneTable.on('order.dt search.dt', function () {
 				
 				 $.each(milestoneTable.fnGetNodes(), function(index, cell){

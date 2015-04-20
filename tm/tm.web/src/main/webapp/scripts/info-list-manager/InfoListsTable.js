@@ -178,9 +178,22 @@ define(
 				events: {
 					"click button[name='list-delete']": "onClickListDelete",
 					"click td.select-handle": "onClickSelectHandle",
-					"draw.dt": "onDrawTable"
+					"draw.dt": "onDrawTable",
+					"order.dt" : "fixorder",
+					"search.dt" : "fixorder",
 				},
 
+				fixorder : function(){
+					//fix order
+					var self = this;
+				    
+					 $.each(self.$el.dataTable().fnGetNodes(), function(index, cell){
+						 cell._DT_RowIndex= index;
+						 cell.firstElementChild.innerHTML = index + 1;
+					 });
+				    
+				    
+				},
 				onInitTable: function onInitTable(event) {
 					this.$el.DataTable().ajax.url(this.viewUrl);
 				},
