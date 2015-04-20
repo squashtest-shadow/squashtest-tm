@@ -44,7 +44,22 @@ define(
 				"dialog.info-list.warning.reindex.before",
 				"dialog.info-list.warning.reindex.after"
 			]);
-
+			
+			var oLanguage = messages.get({
+				'sLengthMenu' : 'generics.datatable.lengthMenu',
+				'sZeroRecords' : 'generics.datatable.zeroRecords',
+				'sInfo' : 'generics.datatable.info',
+				'sInfoEmpty' : 'generics.datatable.infoEmpty',
+				'sInfoFiltered' : 'generics.datatable.infoFiltered',
+				'sSearch' : 'generics.datatable.search',
+				'oPaginage' : {
+					'sFirst' : 'generics.datatable.paginate.first',
+					'sPrevious' : 'generics.datatable.paginate.previous',
+					'sNext' : 'generics.datatable.paginate.next',
+					'sLast' : 'generics.datatable.paginate.last'
+				}
+			});
+			
 			var itemsTableConf = window.squashtm.app.itemsTable;
 			console.log("table conf" ,itemsTableConf);
 			
@@ -166,6 +181,7 @@ define(
 							dom: '<"dataTables_header"fr>t<"dataTables_footer"lp>',
 							order: [ [ 2, "asc" ] ],
 							columnDefs: colDefs,
+							"language" : oLanguage,
 							// we cannot init ajax with deferred fetch and client-side processing,
 							// so ajax is configured later on "init.dt" event
 //							ajax: this.viewUrl,
