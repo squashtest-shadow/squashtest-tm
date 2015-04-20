@@ -76,7 +76,7 @@ public class InfoListController {
 	@ResponseBody
 	public String changeLabel(@PathVariable Long infoListId, @RequestParam(JEditablePostParams.VALUE) String label) {
 		infoListManager.changeLabel(infoListId, label);
-		return HtmlUtils.htmlEscape(label);
+		return label;
 	}
 
 	@RequestMapping(value = "/{infoListId}", method = RequestMethod.POST, params = { "id=info-list-code",
