@@ -657,7 +657,6 @@ $("#unbind-project-popup").confirmDialog().on('confirmdialogconfirm', function()
 			projectTable.on('order.dt search.dt', function () {
 				
 				 $.each(projectTable.fnGetNodes(), function(index, cell){
-					 cell._DT_RowIndex= index;
 					 cell.firstChild.innerHTML = index + 1;
 				 });
 			});

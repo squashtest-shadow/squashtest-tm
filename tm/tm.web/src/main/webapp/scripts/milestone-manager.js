@@ -174,7 +174,6 @@ require(["common"], function(){
 			milestoneTable.on('order.dt search.dt', function () {
 				
 				 $.each(milestoneTable.fnGetNodes(), function(index, cell){
-					 cell._DT_RowIndex= index;
 					 cell.firstChild.innerHTML = index + 1;
 				 });
 			});

@@ -37,7 +37,6 @@ define([ 'module', "jquery", "squash.basicwidgets", "workspace.routing", "squash
 				table.on('order.dt search.dt', function () {
 			
 					 $.each(table.fnGetNodes(), function(index, cell){
-						 cell._DT_RowIndex= index;
 						 cell.firstChild.innerHTML = index + 1;
 					 });
 				});
