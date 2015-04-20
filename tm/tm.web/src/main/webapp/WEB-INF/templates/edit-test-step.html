@@ -69,7 +69,7 @@
   sq:css="squash.subpage.override.css" />
 </head>
 <body>
-  <div id="navigation" th:include="navbar.frag :: navbar" th:with="highlightedWorkspace='test-case'">NAVBAR</div>
+  <div id="navigation" th:include="navbar.frag :: navbar('test-case')">NAVBAR</div>
   <div id="workspace">
     <div id="workspace-title">
       <div class="snap-left">

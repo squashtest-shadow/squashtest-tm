@@ -27,7 +27,7 @@
     
     Parameters : 
     
-      - highlightedWorkspace : the name of the workspace this instance of navbar is displayed in. 
+      - highlight : the name of the workspace this instance of navbar is displayed in. 
         Pick one of 'home', 'test-case', 'requirement', 'campaign', 'report' 
 
  -->
@@ -35,61 +35,61 @@
 <!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-transitional-thymeleaf-spring3-3.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 <head>
-	<link rel="stylesheet" type="text/css" media="all" href="../../../../../../../tm/tm.web/src/main/webapp/styles/squash.core.css" sq:css="squash.core.css" />
-	<link rel="stylesheet" type="text/css" media="all" href="../../../../../../../tm/tm.web/src/main/webapp/styles/squash.blue.css" sq:css="squash.blue.css" />
+  <link rel="stylesheet" type="text/css" media="all" href="../../../../../../../tm/tm.web/src/main/webapp/styles/squash.core.css" sq:css="squash.core.css" />
+  <link rel="stylesheet" type="text/css" media="all" href="../../../../../../../tm/tm.web/src/main/webapp/styles/squash.blue.css" sq:css="squash.blue.css" />
 </head>
 <body>
-	<div id="workspace" th:fragment="navbar">
-        <div id="test_mgt_nav" th:with="bugtrackers = ${#workspace.visibleBugtrackers()}">
-			<a id="home-link" 			
+  <div id="workspace" th:fragment="navbar(highlight)">
+    <div id="test_mgt_nav" th:with="bugtrackers = ${#workspace.visibleBugtrackers()}">
+      <a id="home-link"
                class="navigation-link navigation-home"
                th:href="@{/home-workspace/}" 
                th:title="#{workspace.home.button.label}" 
-               th:classappend="${highlightedWorkspace == 'home'} ? 'navigation-selected'"></a>
-			
-            <a id="requirement-link"
+               th:classappend="${highlight == 'home'} ? 'navigation-selected'">
+      </a>
+      <a id="requirement-link"
                class="navigation-link navigation-requirement"
                th:href="@{/requirement-workspace/}" 
                th:title="#{workspace.requirement.button.label}" 
-               th:classappend="${highlightedWorkspace == 'requirement'} ? 'navigation-selected'"></a>
-               
-			<a id="test-case-link"
+               th:classappend="${highlight == 'requirement'} ? 'navigation-selected'">
+      </a>
+      <a id="test-case-link"
                class="navigation-link navigation-test-case"
                th:href="@{/test-case-workspace/}" 
                th:title="#{workspace.test-case.button.label}" 
-               th:classappend="${highlightedWorkspace == 'test-case'} ? 'navigation-selected'"></a>
+               th:classappend="${highlight == 'test-case'} ? 'navigation-selected'"></a>
                 
-			<a id="campaign-link" 		
+      <a id="campaign-link"     
                class="navigation-link navigation-campaign" 
                th:href="@{/campaign-workspace/}" 
                th:title="#{workspace.campaign.button.label}" 
-               th:classappend="${highlightedWorkspace == 'campaign'} ? 'navigation-selected'"></a>
-			
-			<a id="bugtracker-link"	 	
-                class="navigation-link navigation-bugtracker" 		
+               th:classappend="${highlight == 'campaign'} ? 'navigation-selected'"></a>
+      
+      <a id="bugtracker-link"     
+                class="navigation-link navigation-bugtracker"     
                 th:classappend="${#lists.isEmpty(bugtrackers)} ? 'not-displayed'" 
                 th:title="#{workspace.bugtracker.button.label}"></a>
                 
-			<ul class="not-displayed width:130px;">			
-				<li th:each="bugtracker : ${bugtrackers}" >
-					<a th:id="'bugtracker-'+${bugtracker.id}" th:href="${bugtracker.iframeFriendly} ? @{/bugtracker/}+${bugtracker.id}+'/workspace' : ${bugtracker.URL}" 
-															  th:target="${bugtracker.iframeFriendly} ? '_blank' : ''" 
-															  th:text="${bugtracker.name}">mantis</a>			
-				</li>			
-			</ul>					
-			
-			<a id="report-link" 		
-               class="navigation-link navigation-report"  	
+      <ul class="not-displayed width:130px;">      
+        <li th:each="bugtracker : ${bugtrackers}" >
+          <a th:id="'bugtracker-'+${bugtracker.id}" th:href="${bugtracker.iframeFriendly} ? @{/bugtracker/}+${bugtracker.id}+'/workspace' : ${bugtracker.URL}" 
+                                th:target="${bugtracker.iframeFriendly} ? '_blank' : ''" 
+                                th:text="${bugtracker.name}">mantis</a>      
+        </li>      
+      </ul>          
+      
+      <a id="report-link"     
+               class="navigation-link navigation-report"    
                th:href="@{/report-workspace}" 
                th:title="#{workspace.report.button.label}" 
-               th:classappend="${highlightedWorkspace == 'report'} ? 'navigation-selected'"></a>
+               th:classappend="${highlight == 'report'} ? 'navigation-selected'"></a>
                
-		</div>
-		
-		<div id="nav_logo" class="vertical-logo"></div>
+    </div>
+    
+    <div id="nav_logo" class="vertical-logo"></div>
 <script type="text/javascript">
 publish("load.navBar");
 </script>
-	</div>
+  </div>
 </body>
 </html>
