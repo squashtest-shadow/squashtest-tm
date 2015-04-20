@@ -79,7 +79,7 @@ th:with="isWritable = ${#authorization.expression('hasRole(''ROLE_ADMIN'')')  or
           </span>
       </div>
 
-      <table class="bind-milestone-dialog-table" data-def="filter">
+      <table class="bind-milestone-dialog-table" data-def="filter, pre-sort=3">
         <thead>
           <th data-def="sClass=bind-milestone-dialog-check, map=empty-delete-holder"></th>
           <th data-def="map=label, sortable" th:text="#{label.Label}">label</th>

@@ -158,6 +158,7 @@ define(["jquery", "workspace.event-bus", "app/ws/squashtm.notification",
 			// if initialized -> refresh
 			if (!! table.data('squashtableInstance')){
 				table.squashTable()._fnAjaxUpdate();
+				table.squashTable().refresh();
 			}
 			// else -> init
 			else{
