@@ -103,7 +103,7 @@
                <f:message key="label.testAutomationProject.url" />
               </th>
               <th data-def="map=empty-edit-holder, narrow, sClass=edit-job-button">&nbsp;</th>
-              <th data-def="map=empty-delete-holder, delete-button=#ta-projects-unbind-popup">&nbsp;</th>
+              <th data-def="map=empty-delete-holder, unbind-button=#ta-projects-unbind-popup">&nbsp;</th>
             </tr>
           </thead>
           <tbody>
