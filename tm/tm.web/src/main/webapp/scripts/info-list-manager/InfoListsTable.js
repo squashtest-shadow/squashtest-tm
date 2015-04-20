@@ -40,7 +40,7 @@ define(
 				"message.infoList.bound.batchRemove.second",
 				"message.infoList.bound.batchRemove.third",
 				"message.infoList.bound.batchRemove.fourth",
-				"message.noLinesSelected",
+				"message.noListSelected",
 				"dialog.info-list.warning.reindex.before",
 				"dialog.info-list.warning.reindex.after"
 			]);
@@ -308,7 +308,7 @@ define(
 					var rows = this.$el.DataTable().rows($sel);
 
 					if (rows.data().length === 0) {
-						notif.showWarning(messages.get("message.noLinesSelected"));
+						notif.showWarning(messages.get("message.noListSelected"));
 						return;
 					}
 
