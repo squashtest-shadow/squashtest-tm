@@ -22,6 +22,8 @@ package org.squashtest.tm.service.internal.feature;
 
 import javax.inject.Inject;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.service.configuration.ConfigurationService;
@@ -35,6 +37,8 @@ import org.squashtest.tm.service.milestone.MilestoneManagerService;
 @Service("featureManager")
 @Transactional
 public class FeatureManagerImpl implements FeatureManager {
+	private static final Logger LOGGER = LoggerFactory.getLogger(FeatureManagerImpl.class);
+
 	@Inject
 	private ConfigurationService configuration;
 
@@ -42,17 +46,12 @@ public class FeatureManagerImpl implements FeatureManager {
 	private MilestoneManagerService milestoneManager;
 
 	/**
-	 * This feature is polled once per thread (because il could be polled many
-	 * times). If more features require caching, consider something more
-	 * scalable than adding a field.
-	 */
-	private final ThreadLocal<Boolean> caseInsensitiveLogin = new ThreadLocal<>();
-
-	/**
 	 * @see org.squashtest.tm.service.feature.FeatureManager#isEnabled(org.squashtest.tm.service.feature.FeatureManager.Feature)
 	 */
 	@Override
 	public boolean isEnabled(Feature feature) {
+		LOGGER.trace("Polling feature {}", feature);
+
 		boolean enabled;
 
 		switch (feature) {
@@ -61,11 +60,7 @@ public class FeatureManagerImpl implements FeatureManager {
 			break;
 
 		case CASE_INSENSITIVE_LOGIN:
-			if (caseInsensitiveLogin.get() == null) {
-				caseInsensitiveLogin.set(configuration
-						.getBoolean(ConfigurationService.CASE_INSENSITIVE_LOGIN_FEATURE_ENABLED));
-			}
-			enabled = caseInsensitiveLogin.get();
+			enabled = configuration.getBoolean(ConfigurationService.CASE_INSENSITIVE_LOGIN_FEATURE_ENABLED);
 			break;
 		default:
 			throw new IllegalArgumentException("I don't know feature '" + feature
@@ -82,6 +77,8 @@ public class FeatureManagerImpl implements FeatureManager {
 	 */
 	@Override
 	public void setEnabled(Feature feature, boolean enabled) {
+		LOGGER.trace("Setting feature {} to {}", feature, enabled);
+
 		switch (feature) {
 		case MILESTONE:
 			setMilestoneFeatureEnabled(enabled);
@@ -103,7 +100,6 @@ public class FeatureManagerImpl implements FeatureManager {
 	private void setCaseInsensitiveLoginFeatureEnabled(boolean enabled) {
 		// TODO check if possible
 		configuration.set(ConfigurationService.CASE_INSENSITIVE_LOGIN_FEATURE_ENABLED, enabled);
-		caseInsensitiveLogin.set(enabled);
 	}
 
 	private void setMilestoneFeatureEnabled(boolean enabled) {
