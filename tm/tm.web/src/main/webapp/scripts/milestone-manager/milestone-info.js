@@ -26,7 +26,8 @@
 	
 		
 		function clickBackButton() {
-			document.location.href = config.urls.milestonesUrl;
+			console.log('back');
+			history.back();
 		}
 
 		function initRenameDialog() {
