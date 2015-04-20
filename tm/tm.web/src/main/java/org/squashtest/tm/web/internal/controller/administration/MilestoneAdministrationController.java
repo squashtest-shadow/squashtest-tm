@@ -49,6 +49,7 @@ import org.squashtest.tm.service.milestone.MilestoneManagerService;
 import org.squashtest.tm.service.project.ProjectFinder;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.user.UserAccountService;
+import org.squashtest.tm.web.internal.controller.milestone.MilestoneCloneStatusComboDataBuilder;
 import org.squashtest.tm.web.internal.controller.milestone.MilestoneStatusComboDataBuilder;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
@@ -68,6 +69,9 @@ public class MilestoneAdministrationController {
 	private PermissionEvaluationService permissionEvaluationService;
 	@Inject
 	private Provider<MilestoneStatusComboDataBuilder> statusComboDataBuilderProvider;
+	@Inject
+	private Provider<MilestoneCloneStatusComboDataBuilder> cloneStatusComboDataBuilderProvider;
+
 	@Inject
 	private ProjectFinder projectFinder;
 	@Inject
@@ -115,6 +119,7 @@ public class MilestoneAdministrationController {
 		mav.addObject("editableMilestoneIds", milestoneManager.findAllIdsOfEditableMilestone());
 		mav.addObject("currentUser", StringEscapeUtils.escapeJavaScript(userService.findCurrentUser().getName()));
 		mav.addObject("isAdmin", permissionEvaluationService.hasRole("ROLE_ADMIN"));
+		mav.addObject("milestoneCloneStatus",  cloneStatusComboDataBuilderProvider.get().useLocale(locale).buildMap());
 		return mav;
 	}
 
@@ -140,7 +145,6 @@ public class MilestoneAdministrationController {
 			//set to restricted if non admin
 			milestone.setRange(MilestoneRange.RESTRICTED);
 		}
-		milestone.setStatus(MilestoneStatus.IN_PROGRESS);
 		milestoneManager.cloneMilestone(motherId, milestone, bindToRequirements, bindToTestCases);
 		return milestone.getId();
 	}

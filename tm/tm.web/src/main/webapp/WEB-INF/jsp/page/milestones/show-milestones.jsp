@@ -247,8 +247,20 @@
             <td><input id="clone-milestone-label" type="text" size="30" maxlength="30"/>
             <comp:error-message forField="label" /></td>
           </tr>
+        <tr>
         
-     
+         <td><label for="add-milestone-status"><f:message
+              key="label.Status" /></label></td>
+            <td>
+        	<select id="clone-milestone-status" class="combobox">
+            <c:forEach items="${milestoneCloneStatus}" var="status" > 
+            <option value = "${status.key}" >${status.value} </option>
+            </c:forEach>
+            </select>
+        
+        </td>
+        </tr>
+   
          <tr>
        
             <td><label><f:message key="label.EndDate" /></td>    
@@ -272,10 +284,10 @@
           <td> <f:message key="label.milestone.cloneoptions" /> </td>
           
           <td>
-           <input id="bindToRequirements"  name="bindToRequirements" type="checkbox" />
+           <input id="bindToRequirements"  name="bindToRequirements" type="checkbox" checked="checked"/>
           <label class=" afterDisabled" for="bindToRequirements"><f:message key="label.milestone.bindToRequirements" /></label>
    </br>
-          <input id="bindToTestCases" name="bindToTestCases" type="checkbox" />
+          <input id="bindToTestCases" name="bindToTestCases" type="checkbox" checked="checked"/>
          <label class=" afterDisabled" for="bindToTestCases"><f:message key="label.milestone.bindToTestCases" /></label>
    </br>          
        </td>
@@ -284,9 +296,9 @@
         </table>
         
         <ul>
-
-<li><a id="checkAll"> checkAll</a></li>
-<li><a id="uncheckAll">uncheckAll</a></li>
+	
+<li><a id="checkAll"><f:message key= "label.selectAllForSelection"/></a></li>
+<li><a id="uncheckAll"><f:message key= "label.selectNoneForSelection"/></a></li>
 
 </ul>
 

@@ -311,6 +311,7 @@ require(["common"], function(){
 		var url = routing.buildURL('administration.milestones.clone', motherId);
 		var params = {
 				label: $( '#clone-milestone-label' ).val().trim(),
+				status: $( '#clone-milestone-status' ).val(),
 				endDate: getPostDate($( '#clone-milestone-end-date' ).text()),
 				description: $( '#clone-milestone-description' ).val(),
 				bindToRequirements : cloneMilestoneDialog.find("input:checkbox[name='bindToRequirements']").prop("checked"),
