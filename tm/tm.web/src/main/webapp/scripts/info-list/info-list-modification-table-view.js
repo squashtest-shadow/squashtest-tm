@@ -46,7 +46,8 @@ define(["jquery", "backbone", "underscore", "squash.basicwidgets", "jeditable.si
 			"click .isDefault>input:checkbox" : "changeDefaultOption",
 			"click td.opt-label" : "openChangeLabelPopup",
 			"click td.opt-code" : "openChangeCodePopup",
-			"click span.sq-icon" : "openChangeIconPopup",
+			"click .sq-icon" : "openChangeIconPopup",
+			"click .sq-icon-noicon" : "openChangeIconPopup", // cf. drawIcon to know why
 			"click td.delete-button" : "openDeleteOptionPopup"
 		},
 
@@ -76,14 +77,11 @@ define(["jquery", "backbone", "underscore", "squash.basicwidgets", "jeditable.si
 						});
 					},
 					drawIcon : function(value, cell) {
-						if (value !== "noicon") {
-							// cell.addClass("sq-icon");
-							cell.html('<span class="sq-icon sq-icon-' + value + '"></span>');
-						} else {
-							// if there is no icon name display [None]
-							cell.addClass("sq-icon");
-							cell.text(translator.get("label.infoListItems.icon.none"));
-						}
+						// rem: handlebars would be nicer...
+						// rem: we cannot put .sq-icon when no icon because (1) it sets a width, (2) cell is centered => broken rendering
+						var tpl = '<span class="@class@">@text@</span>';
+						var span = tpl.replace(/@class@/, (value === "noicon" ? "" : "sq-icon ") + "sq-icon-" + value).replace(/@text@/, value === "noicon" ? translator.get("label.infoListItems.icon.none") : "");
+						cell.html(span);
 					}
 				}
 
