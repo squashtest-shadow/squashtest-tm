@@ -27,9 +27,9 @@
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component"%>
 <div id="team-table-pane" class="table-tab" >
   <div class="toolbar">
-    <button id="new-team-button" class="test-step-toolbar-button ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-primary .squash-button-initialized" title="<f:message key="label.addTeams" />">    
+    <button id="new-team-button" class="test-step-toolbar-button ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-primary .squash-button-initialized" title="<f:message key="label.addTeam" />">    
      <span class="ui-icon ui-icon-plusthick">+</span> <span class="ui-button-text"><f:message key="label.Add" /> </span> </button>
-     <button id="delete-team-button" class="test-step-toolbar-button ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-primary .squash-button-initialized" title="<f:message key="label.deleteTeams" />">    
+     <button id="delete-team-button" class="test-step-toolbar-button ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-primary .squash-button-initialized" title="<f:message key="label.deleteTeam" />">    
      <span class="ui-icon ui-icon-trash">-</span> <span class="ui-button-text"><f:message key="label.Delete" /> </span> </button>
   </div>
   <div class="table-tab-wrap">
