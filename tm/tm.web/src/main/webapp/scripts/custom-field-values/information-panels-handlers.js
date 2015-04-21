@@ -57,7 +57,6 @@ define(["jquery", "handlebars", "./lib/cuf-values-utils","jqueryui", "./lib/jque
 				'<span id="{{cufid this}}" class="{{cufclass this}}" data-value-id="{{id}}">{{value}}</span>' +
 			
 			'{{/ifequals}} {{/ifequals}}' +
-			'<span class="help-inline not-displayed">&nbsp;</span>' +
 			'</div>' +
 		'</div>' +
 		'{{/each}}'
