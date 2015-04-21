@@ -286,14 +286,16 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 
 		for (IterationTestPlanItem item : items) {
 			// We do not allow deletion if there are execution and the user does not have sufficient rights
-			unauthorizedDeletion = removeTestPlanItemIfOkWithExecsAndRights(iteration, unauthorizedDeletion, item);
+			// so we keep track of whether at lease one item couldn't be deleted
+			unauthorizedDeletion = unauthorizedDeletion || removeTestPlanItemIfOkWithExecsAndRights(iteration, item);
 		}
 
 		return unauthorizedDeletion;
 	}
 
-	private boolean removeTestPlanItemIfOkWithExecsAndRights(Iteration iteration, boolean unauthorizedDeletion,
-			IterationTestPlanItem item) {
+	private boolean removeTestPlanItemIfOkWithExecsAndRights(Iteration iteration, IterationTestPlanItem item) {
+		boolean unauhorized = false;
+
 		if (item.getExecutions().isEmpty()) {
 			doRemoveTestPlanItemFromIteration(iteration, item);
 		} else {
@@ -302,11 +304,11 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 						"EXTENDED_DELETE"));
 				doRemoveTestPlanItemFromIteration(iteration, item);
 			} catch (AccessDeniedException exception) {
-				unauthorizedDeletion = true;
+				unauhorized = true;
 			}
 
 		}
-		return unauthorizedDeletion;
+		return unauhorized;
 	}
 
 	private void doRemoveTestPlanItemFromIteration(Iteration iteration, IterationTestPlanItem item) {
@@ -330,8 +332,8 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 		IterationTestPlanItem item = iterationTestPlanDao.findById(testPlanItemId);
 		Iteration iteration = item.getIteration();
 
-		// We do not allow deletion if there are execution
-		unauthorizedDeletion = removeTestPlanItemIfOkWithExecsAndRights(iteration, unauthorizedDeletion, item);
+		// We do not allow deletion if there are execution and the user isn't authorized to do that
+		unauthorizedDeletion = removeTestPlanItemIfOkWithExecsAndRights(iteration, item);
 
 		return unauthorizedDeletion;
 

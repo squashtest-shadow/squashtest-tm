@@ -271,12 +271,12 @@ public class TestSuiteTestPlanManagerController {
 
 	@RequestMapping(value = TEST_PLAN_IDS_URL_MAPPING, method = RequestMethod.DELETE)
 	public @ResponseBody
-	String removeTestCaseFromTestSuiteAndIteration(@PathVariable(TESTPLAN_IDS) List<Long> testPlanIds,
+	Boolean removeTestCaseFromTestSuiteAndIteration(@PathVariable(TESTPLAN_IDS) List<Long> testPlanIds,
 			@PathVariable(TEST_SUITE_ID) long suiteId) {
 		// check if a test plan was already executed and therefore not removed from the iteration
 		Boolean response = testSuiteTestPlanManagerService.detachTestPlanFromTestSuiteAndRemoveFromIteration(
 				testPlanIds, suiteId);
-		return response.toString();
+		return response;
 	}
 
 	@RequestMapping(value = TEST_PLAN_IDS_URL_MAPPING, method = RequestMethod.DELETE, params = { "detach=true" })

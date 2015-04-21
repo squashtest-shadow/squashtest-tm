@@ -208,11 +208,11 @@ public class IterationTestPlanManagerController {
 
 	@RequestMapping(value = "/iterations/{iterationId}/test-plan/{testPlanItemsIds}", method = RequestMethod.DELETE)
 	public @ResponseBody
-	String removeTestPlanItemsFromIteration(@PathVariable("testPlanItemsIds") List<Long> testPlanItemsIds,
+	Boolean removeTestPlanItemsFromIteration(@PathVariable("testPlanItemsIds") List<Long> testPlanItemsIds,
 			@PathVariable long iterationId) {
 		// check if a test plan item was already executed and therefore not removed
 		Boolean response = iterationTestPlanManagerService.removeTestPlansFromIteration(testPlanItemsIds, iterationId);
-		return response.toString();
+		return response;
 	}
 
 	private List<JsTreeNode> createLinkableLibrariesModel(List<TestCaseLibrary> linkableLibraries, String[] openedNodes, Long milestoneId) {
