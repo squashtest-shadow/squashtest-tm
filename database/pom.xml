@@ -189,7 +189,7 @@
       <plugin>
         <groupId>org.codehaus.gmaven</groupId>
         <artifactId>gmaven-plugin</artifactId>
-        <configuration></configuration>
+        <configuration />
         <executions>
           <execution>
             <goals>

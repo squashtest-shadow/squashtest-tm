@@ -346,7 +346,7 @@
       <column name="ITEM_INDEX" value="0" />
       <column name="LABEL" value="requirement.category.CAT_FUNCTIONAL" />
       <column name="CODE" value="CAT_FUNCTIONAL" />
-      <column name="IS_DEFAULT" valueBoolean="true" />
+      <column name="IS_DEFAULT" valueBoolean="false" />
       <column name="ICON_NAME" value="def_cat_functional" />
     </insert>
 
@@ -401,7 +401,7 @@
       <column name="ITEM_INDEX" value="5" />
       <column name="LABEL" value="requirement.category.CAT_UNDEFINED" />
       <column name="CODE" value="CAT_UNDEFINED" />
-      <column name="IS_DEFAULT" valueBoolean="false" />
+      <column name="IS_DEFAULT" valueBoolean="true" />
       <column name="ICON_NAME" value="def_cat_undefined" />
     </insert>
 
