@@ -58,12 +58,11 @@ define([ 'jquery', 'tree', 'custom-field-values', 'workspace.projects', '../perm
 			for (var i=0; i < categories.length; i++){
 				var item = categories[i];
 				var strOption = (item['default']) ? '<option selected="selected" ' : '<option ';
-				strOption += 'value="'+item.code+'">'+item.friendlyLabel+'</option>';
-				
-				catSelect.append(strOption);
-				
+				strOption += 'value="'+item.code+'">'+item.friendlyLabel+'</option>';	
+				catSelect.append(strOption);	
 			}
-			
+			// Select by default the undefined value
+			catSelect.val("CAT_UNDEFINED")
 			
 			// the cufs
 			var bindings = project.customFieldBindings['REQUIREMENT_VERSION'];
