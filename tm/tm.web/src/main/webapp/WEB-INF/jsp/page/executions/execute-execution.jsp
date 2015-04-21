@@ -167,10 +167,11 @@
 					<td class="centered " id="execute-next-test-case-panel">
                           <c:url var="nextTCUrl" value='${ testPlanItemUrl }/next-execution/runner?optimized=false' />
 						<form action="${nextTCUrl}" method="post">
+                            <c:set var="nextTCdisabled" value="${(empty hasNextTestCase) or (not hasNextTestCase) or hasNextStep}"/> 
 							<button id="execute-next-test-case" name="classic" class="sq-btn std-btn control-button" 
-                                ${ not hasNextTestCase ? 'disabled="disabled"' : ''} 
+                                ${ nextTCdisabled ? 'disabled="disabled"' : ''} 
                                 title="${ nextTestCaseTitle }">
-								${ nextTestCaseTitle }
+                                <span class="ui-button-icon-primary ui-icon ui-icon-seek-next"></span>		
 							</button>
 						</form>
 					</td>
