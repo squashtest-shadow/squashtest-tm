@@ -11,7 +11,7 @@
         the Free Software Foundation, either version 3 of the License, or
         (at your option) any later version.
 
-        this software is distributed in the hope that it will be useful,
+        this software is distributed in the hope that it will be useful, 
         but WITHOUT ANY WARRANTY; without even the implied warranty of
         MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
         GNU Lesser General Public License for more details.
@@ -44,6 +44,7 @@
         confirmLabel: /*[[ #{label.Confirm} ]]*/ 'Confirmer',
       cancelLabel: /*[[ #{label.Cancel} ]]*/ 'Annuler',
       deleteTooltip: /*[[ #{label.Delete} ]]*/ 'Delete',
+      deleteConfirmMessage : /*[[ #{message.customField.remove} ]]*/ 'Remove',
       deleteConfirmMessageFirst : /*[[ #{message.customField.remove.first} ]]*/ 'Remove',
       deleteConfirmMessageSecond : /*[[ #{message.customField.remove.second} ]]*/ 'Remove',
       deleteConfirmMessageThird : /*[[ #{message.customField.remove.third} ]]*/ 'Remove',
@@ -159,7 +160,6 @@
             </div>
             <div class="display-table-cell">
 				<span th:text="#{message.customField.remove.dialog}"></span>
-				<span th:text="#{message.permissions.confirm}"></span>
 			</div>
 		</div>
 		<div class="popup-dialog-buttonpane">

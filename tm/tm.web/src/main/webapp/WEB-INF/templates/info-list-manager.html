@@ -44,6 +44,7 @@
         confirmLabel: /*[[ #{label.Confirm} ]]*/ 'Confirmer',
       cancelLabel: /*[[ #{label.Cancel} ]]*/ 'Annuler',
       deleteTooltip: /*[[ #{label.Delete} ]]*/ 'Delete',
+      deleteConfirmMessage : /*[[ #{message.customField.remove} ]]*/ 'Remove',
       deleteConfirmMessageFirst : /*[[ #{message.customField.remove.first} ]]*/ 'Remove',
       deleteConfirmMessageSecond : /*[[ #{message.customField.remove.second} ]]*/ 'Remove',
       deleteConfirmMessageThird : /*[[ #{message.customField.remove.third} ]]*/ 'Remove',
@@ -86,12 +87,7 @@
               <div class='delete-node-dialog-warning'></div>
             </div>
             <div class='display-table-cell'>
-              <span>{{first}}</span>
-              <span class='red-warning-message'>{{second}}</span>
-              <span>{{third}}</span>
-              <span class='bold-warning-message'>{{fourth}}</span>
-              <br/>
-              <span class='red-warning-message'>{{warn-index}}</span>
+              <span>{{}}</span>             
             </div>
           </div>
           </script>
