@@ -40,6 +40,7 @@
 <f:message var="createNewVersionLabel" key="label.createNewVersion"/>
 <f:message var="renameLabel" key="test-case.button.rename.label"/>
 <f:message var="printLabel" key="label.print"/>
+<f:message var="createNewVersionHint" key="hint.createNewVersion" />
 
 <%---------------------------- Test Case Informations ------------------------------%>
 
@@ -56,7 +57,8 @@
 	</c:if>
     
     <c:if test="${milestoneConf.userEnabled and milestoneConf.editable and milestoneConf.globallyEnabled}">
-        <input type="button" value="${createNewVersionLabel}" id="create-test-case-version-button" class="sq-btn"/>
+        <input type="button" value="${createNewVersionLabel}" id="create-test-case-version-button" class="sq-btn"
+        title="${createNewVersionHint}"/>
     </c:if>
     
 		<input type="button" value="${printLabel}" id="print-test-case-button" title="${printLabel}" class="sq-btn"/>
