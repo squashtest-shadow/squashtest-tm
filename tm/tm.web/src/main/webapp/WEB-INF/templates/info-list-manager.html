@@ -37,32 +37,6 @@
       contextRoot : /*[[ @{/} ]]*/"http://localhost:8080/squash",
       localizedDateFormat : /*[[ #{squashtm.dateformatShort.datepicker} ]]*/"dd/mm/yy",
       locale : /*[[ #{squashtm.locale} ]]*/"fr",
-      itemsTable : {
-        languageUrl : /*[[ @{/datatables/messages} ]]*/"http://localhost:8080/squash/datatables/messages",
-        pageLength : /*[[ ${tablePageSize} ]]*/50,
-        ajaxSource : /*[[ @{/administration/custom-fields} ]]*/"http://localhost:8080/squash/administration/custom-fields",
-        confirmLabel: /*[[ #{label.Confirm} ]]*/ 'Confirmer',
-      cancelLabel: /*[[ #{label.Cancel} ]]*/ 'Annuler',
-      deleteTooltip: /*[[ #{label.Delete} ]]*/ 'Delete',
-      deleteConfirmMessageFirst : /*[[ #{message.customField.remove.first} ]]*/ 'Remove',
-      deleteConfirmMessageSecond : /*[[ #{message.customField.remove.second} ]]*/ 'Remove',
-      deleteConfirmMessageThird : /*[[ #{message.customField.remove.third} ]]*/ 'Remove',
-      deleteConfirmMessageFourth : /*[[ #{message.customField.remove.fourth} ]]*/ 'Remove',
-      },
-      messages: {
-        "label.Confirm": /*[[ #{label.Confirm} ]]*/ 'Confirmer',
-        "label.Cancel": /*[[ #{label.Cancel} ]]*/ 'Annuler',
-        "label.Delete": /*[[ #{label.Delete} ]]*/ 'Delete',
-        "message.optionAlreadyDefined": /*[[ #{message.optionAlreadyDefined} ]]*/ "Option is already defined", 
-        "message.optionCodeAlreadyDefined": /*[[ #{message.optionCodeAlreadyDefined} ]]*/ "Code is already defined", 
-        "message.optionCodeInvalidPattern" : /*[[ #{message.optionCodeInvalidPattern} ]]*/ "Code must have only letters, numbers and under-scores",
-        "message.defaultOptionMandatory": /*[[ #{message.defaultOptionMandatory} ]]*/ "Default option is mandatory when field is not optional", 
-        "message.defaultValueMandatory": /*[[ #{message.defaultValueMandatory} ]]*/ "Default value is mandatory when field is not optional", 
-        "message.notBlank": /*[[ #{message.notBlank} ]]*/ "Value should not be blank", 
-        "message.customFieldTag.add.notValid": /*[[ #{message.customFieldTag.add.notValid} ]]*/ "Tags cannot contain pipe '|'", 
-      },
-      menuBarConf: {
-      }
     };
   </script>
   <script src="../../scripts/pubsub-boot.js" th:src="@{/scripts/pubsub-boot.js}"></script>  
@@ -70,39 +44,39 @@
     src="../../scripts/require.js" th:src="@{/scripts/require-min.js}">
   </script>
 
-          <script id="name-cell-tpl" type="text/x-handlebars-template" th:inline="text">
-          <a href="{{url}}">{{text}}</a>
-          </script>
+  <script id="name-cell-tpl" type="text/x-handlebars-template" th:inline="text">
+  <a href="{{url}}">{{text}}</a>
+  </script>
 
-          <script id="remove-cell-tpl" type="text/x-handlebars-template" th:inline="text">
-          <button data-value="{{value}}" name="{{name}}" class="sq-icon-btn btn-sm" th:title="#{label.Delete}" title="Delete">
-            <span class="ui-icon ui-icon-trash"></span>
-          </button>
-          </script>
-          
-          <script id="confirm-remove-tpl" type="text/x-handlebars-template" th:inline="text">
-          <div class='display-table-row'>
-            <div class='display-table-cell warning-cell'>
-              <div class='delete-node-dialog-warning'></div>
-            </div>
-            <div class='display-table-cell'>
-              <span>{{first}}</span>
-              <span class='red-warning-message'>{{second}}</span>
-              <span>{{third}}</span>
-              <span class='bold-warning-message'>{{fourth}}</span>
-              <br/>
-              <span class='red-warning-message'>{{warn-index}}</span>
-            </div>
-          </div>
-          </script>
-          
+  <script id="remove-cell-tpl" type="text/x-handlebars-template" th:inline="text">
+  <button data-value="{{value}}" name="{{name}}" class="sq-icon-btn btn-sm" th:title="#{label.Delete}" title="Delete">
+    <span class="ui-icon ui-icon-trash"></span>
+  </button>
+  </script>
+
+  <script id="confirm-remove-tpl" type="text/x-handlebars-template" th:inline="text">
+  <div class='display-table-row'>
+    <div class='display-table-cell warning-cell'>
+      <div class='delete-node-dialog-warning'></div>
+    </div>
+    <div class='display-table-cell'>
+      <span>{{first}}</span>
+      <span class='red-warning-message'>{{second}}</span>
+      <span>{{third}}</span>
+      <span class='bold-warning-message'>{{fourth}}</span>
+      <br/>
+      <span class='red-warning-message'>{{warn-index}}</span>
+    </div>
+  </div>
+  </script>
+
           <script id="confirm-remove-reindex" type="text/x-handlebars-template" th:inline="text">
           <div class='display-table-row'>
             <div class='display-table-cell warning-cell'>
               <div class='delete-node-dialog-warning'></div>
             </div>
             <div class='display-table-cell'>
-              <span class='red-warning-message'>{{warn-index}}</span>
+              <span class='red-warning-message' th:text="#{dialog.info-list.warning.reindex.after}">I shall reindex</span>
             </div>
           </div>
           </script>
@@ -153,9 +127,10 @@
                 value="Delete selected info lists" th:value="#{label.infoList.remove}" 
                 title="Create new" th:title="#{tooltip.infoList.remove}" />
             </div>
-               
+
             <div>
-              <table id="items-table" class="unstyled-table" th:attr="data-api-url=@{/info-lists}, data-view-url=@{/administration/info-lists}">
+              <table id="items-table" class="unstyled-table" 
+                th:attr="data-api-url=@{/info-lists}, data-view-url=@{/administration/info-lists}, data-language-url=@{/datatables/language}, data-page-length=${tablePageSize}">
                 <thead>
                   <tr>
                     <th class="not-displayed">Id</th>
