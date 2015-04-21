@@ -18,8 +18,8 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ "jquery", "backbone", "jeditable.simpleJEditable", "jquery.squash.confirmdialog",
-		"jquery.squash.messagedialog", "squashtable" ], function($, Backbone, SimpleJEditable) {
+define([ "jquery", "backbone", "jeditable.simpleJEditable", "app/ws/squashtm.notification", "jquery.squash.confirmdialog",
+		"jquery.squash.messagedialog", "squashtable" ], function($, Backbone, SimpleJEditable, notification) {
 	var ParametersTable = Backbone.View.extend({
 
 		el : "#parameters-table",
@@ -173,15 +173,16 @@ define([ "jquery", "backbone", "jeditable.simpleJEditable", "jquery.squash.confi
 				targetUrl : urlPOST,
 				component : component,
 				jeditableSettings : {
-					ajaxoptions : {
-						complete : function(jqXHR, textStatus){
-							self.trigger("parameter.name.update",
-									{
-										id : data['entity-id'],
-										name : jqXHR.responseText
-									}
-							);
-						}
+					callback : function(newname){
+						self.trigger("parameter.name.update",{
+							id : data['entity-id'],
+							name : newname
+						});						
+					},
+					onerror : function(settings, original, xhr){
+						xhr.errorIsHandled = true;
+						notification.showXhrInDialog(xhr);
+						original.reset(this);
 					}
 				}
 			});
