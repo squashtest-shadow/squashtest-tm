@@ -142,21 +142,15 @@
 
     <!-- ==================== POPUPS ==================== -->
     <!-- ====================parameter popup ==================== -->
-    <div id="remove-parameter-confirm-dialog" class="popup-dialog not-displayed" th:title="#{title.removeParameter}"
-      title="info">
-      	<div class="display-table-row">
-	        <div class="display-table-cell warning-cell">
-	           <div class="generic-error-signal"></div>
-	       </div>
-	        <div class="display-table-cell">
-				 <div th:text="#{message.parameter.remove.confirm}" class="bold-warning-message">Confirmez vous la suppression du paramètre ?</div>		
-			</div>
-		</div>
+
+     <div id="remove-parameter-confirm-dialog" class="not-displayed popup-dialog" th:title="#{title.removeParameter}">        
+      <div th:include="fragments-utils/static-panels :: error-pane" th:with="txtcontent=#{message.parameter.remove.confirm}"></div>        
       <div class="popup-dialog-buttonpane">
         <input class="confirm" type="button" value="confirm" th:value="#{label.Confirm}" />
         <input class="cancel" type="button" value="cancel" th:value="#{label.Cancel}" />
-      </div>
-    </div>
+      </div> 
+    </div>   
+    
     <div id="remove-parameter-used-dialog" class="popup-dialog not-displayed" th:title="#{title.removeParameter}"
       title="info">
       <span th:text="#{message.parameter.remove.used}">le paramètre est utilisé, il est impossible de le
@@ -194,21 +188,14 @@
       </div>
     </div>
     <!-- ==================== dataset popup ==================== -->
-    <div id="remove-dataset-confirm-dialog" class="popup-dialog not-displayed" th:title="#{title.removeDataset}"
-      title="info">
-      	<div class="display-table-row">
-	        <div class="display-table-cell warning-cell">
-	           <div class="generic-error-signal"></div>
-	       </div>
-	        <div class="display-table-cell">
-				 <div th:text="#{message.dataset.remove.confirm}" class="bold-warning-message">Confirmez vous la suppression du dataset?</div>	
-			</div>
-		</div>      
-    <div class="popup-dialog-buttonpane">
+
+    <div id="remove-dataset-confirm-dialog" class="popup-dialog not-displayed" th:title="#{title.removeDataset}">        
+      <div th:include="fragments-utils/static-panels :: error-pane" th:with="txtcontent=#{message.dataset.remove.confirm}"></div>        
+      <div class="popup-dialog-buttonpane">
         <input class="confirm" type="button" value="confirm" th:value="#{label.Confirm}" />
         <input class="cancel" type="button" value="cancel" th:value="#{label.Cancel}" />
       </div>
-    </div>
+    </div>       
 
     <div id="add-dataset-dialog" class="control-group not-displayed popup-dialog form-horizontal" title="Add Dataset"
       th:title="#{title.addDataset}">
