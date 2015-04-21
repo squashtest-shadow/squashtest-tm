@@ -19,8 +19,8 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 define([ 'module', "info-list/info-list-modification-information-view", "info-list/info-list-modification-table-view",  "jquery", "backbone", "underscore", "squash.basicwidgets", "jeditable.simpleJEditable",
-		"workspace.routing", "squash.translator", "jquery.squash.togglepanel", "squashtable"], function(module, InfoView, TableView  , $, backbone, _, basic,
-		SimpleJEditable, routing, translator) {
+		"workspace.routing", "squash.translator", "jquery.squash.togglepanel", "squashtable"],
+		function(module, InfoView, TableView  , $, backbone, _, basic, SimpleJEditable, routing, translator) {
 	"use strict";
 
 	var config = module.config();

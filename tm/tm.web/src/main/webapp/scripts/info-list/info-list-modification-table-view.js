@@ -19,8 +19,8 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 define(["jquery", "backbone", "underscore", "squash.basicwidgets", "jeditable.simpleJEditable",
-		"workspace.routing", "./NewInfoListItemDialog", "./IconSelectDialog", "squash.translator", "jquery.squash.togglepanel", "squashtable", "jquery.squash.formdialog","jquery.squash", "jqueryui",  "jquery.squash.confirmdialog", "jquery.squash.messagedialog" ], function($, backbone, _, basic,
-		SimpleJEditable, routing, NewInfoListItemDialog, IconSelectDialog, translator) {
+		"workspace.routing", "./NewInfoListItemDialog", "./IconSelectDialog", "squash.translator", "jquery.squash.togglepanel", "squashtable", "jquery.squash.formdialog","jquery.squash", "jqueryui",  "jquery.squash.confirmdialog", "jquery.squash.messagedialog" ],
+		function($, backbone, _, basic,	SimpleJEditable, routing, NewInfoListItemDialog, IconSelectDialog, translator) {
 	"use strict";
 
 	translator.load(["label.infoListItems.icon.none",
@@ -33,13 +33,14 @@ define(["jquery", "backbone", "underscore", "squash.basicwidgets", "jeditable.si
 		el : "#table-view",
 		initialize : function(config) {
 			this.config = config;
+			_.bindAll(this, "openAddItemPopup");
 			this.initErrorPopup();
 			this.tableInit();
 			this.configureDeleteInfoListItemPopup();
 			this.configureChangeLabelPopup();
 			this.configureChangeCodePopup();
 			this.configureReindexPopup();
-			this.$("#add-info-list-item-button").on("click", $.proxy(this.openAddItemPopup, this));
+			this.$("#add-info-list-item-button").on("click", this.openAddItemPopup);
 		},
 
 		events : {
