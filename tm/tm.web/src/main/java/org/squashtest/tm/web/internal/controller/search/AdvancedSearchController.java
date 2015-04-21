@@ -518,6 +518,9 @@ public class AdvancedSearchController {
 		// Information
 		model.addPanel(requirementVersionSearchInterfaceDescription.createRequirementInformationPanel(locale));
 
+		// History
+		model.addPanel(requirementVersionSearchInterfaceDescription.createRequirementHistoryPanel(locale));
+
 		// Attributes
 		model.addPanel(requirementVersionSearchInterfaceDescription.createRequirementAttributePanel(locale));
 
@@ -525,6 +528,7 @@ public class AdvancedSearchController {
 		if (milestoneIds.size() != 1 && featureManager.isEnabled(Feature.MILESTONE)) {
 			model.addPanel(requirementVersionSearchInterfaceDescription.createMilestonePanel(locale));
 		}
+
 		// Version
 		model.addPanel(requirementVersionSearchInterfaceDescription.createRequirementVersionPanel(locale));
 
@@ -533,9 +537,6 @@ public class AdvancedSearchController {
 
 		// Associations
 		model.addPanel(requirementVersionSearchInterfaceDescription.createRequirementAssociationPanel(locale));
-
-		// History
-		model.addPanel(requirementVersionSearchInterfaceDescription.createRequirementHistoryPanel(locale));
 
 		// CUFs
 		model.addPanel(createCUFPanel(locale, BindableEntity.REQUIREMENT_VERSION));
@@ -555,6 +556,9 @@ public class AdvancedSearchController {
 		// Information
 		model.addPanel(testcaseVersionSearchInterfaceDescription.createGeneralInfoPanel(locale));
 
+		// History
+		model.addPanel(testcaseVersionSearchInterfaceDescription.createTestCaseHistoryPanel(locale));
+
 		// Attributes
 		model.addPanel(testcaseVersionSearchInterfaceDescription.createAttributePanel(locale));
 
@@ -563,14 +567,14 @@ public class AdvancedSearchController {
 			model.addPanel(testcaseVersionSearchInterfaceDescription.createMilestonePanel(locale));
 		}
 
+		// Version
+		model.addPanel(requirementVersionSearchInterfaceDescription.createRequirementVersionPanel(locale));
+
 		// Content
 		model.addPanel(testcaseVersionSearchInterfaceDescription.createContentPanel(locale));
 
 		// Associations
 		model.addPanel(testcaseVersionSearchInterfaceDescription.createAssociationPanel(locale));
-
-		// History
-		model.addPanel(testcaseVersionSearchInterfaceDescription.createTestCaseHistoryPanel(locale));
 
 		// CUF
 		model.addPanel(createCUFPanel(locale, BindableEntity.TEST_CASE));
