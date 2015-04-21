@@ -35,7 +35,8 @@ require(["common"], function(){
 			unionStatusForbid : "message.milestone.synchronize.warn.union.status-forbid",
 			unionRangeForbid : "message.milestone.synchronize.warn.union.range-forbid",
 			statusForbid : "message.milestone.synchronize.warn.status-forbid",
-			rangeForbid : "message.milestone.synchronize.warn.range-forbid"
+			rangeForbid : "message.milestone.synchronize.warn.range-forbid",
+			chooseDate : "milestone.chooseDate"	
 			});
 		
 		function getPostDate(localizedDate) {
@@ -245,7 +246,10 @@ require(["common"], function(){
 		return dateutils.dateExists(formatedDate, format) ? formatedDate :"";
 	}
 
-
+	addMilestoneDialog.on('formdialogopen', function(){
+		$( '#add-milestone-end-date' ).text(translator.get("milestone.chooseDate"));	
+	});
+	
 	addMilestoneDialog.on('formdialogconfirm', function(){
 		var url = routing.buildURL('administration.milestones');
 		var params = {
@@ -259,7 +263,7 @@ require(["common"], function(){
 			type : 'POST',
 			dataType : 'json',
 			data : params
-		}).success(function(id){
+		}).success(function(id){ 
 			config.data.editableMilestoneIds.push(id);
 			$('#milestones-table').squashTable()._fnAjaxUpdate();
 			addMilestoneDialog.formDialog('close');
