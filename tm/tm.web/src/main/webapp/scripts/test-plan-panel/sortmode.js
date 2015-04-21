@@ -110,7 +110,9 @@ define([ "jquery", "workspace.storage", "app/util/ButtonUtil", "squash.attribute
 			for (var i=0; i<inputSorting.length; i++){
 				var sorting = inputSorting[i];
 				var converted = mapping[sorting[0]];
-				outputSorting.push([ converted, sorting[1] ]);
+				if (converted !== undefined){ // prevent cases where the target column is not defined
+					outputSorting.push([ converted, sorting[1] ]);
+				}
 			}
 			return outputSorting;
 		}
