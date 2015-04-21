@@ -2976,10 +2976,12 @@
 					$.vakata.context.hide(); 
 					e.preventDefault();
 				})
+				/*
+					issue 4511 : 
 				.bind("keydown", "space", function (e) { 
 					$.vakata.context.cnt.find(".vakata-hover").last().children("a").click();
 					e.preventDefault();
-				});
+				})*/;
 		}
 	});
 
