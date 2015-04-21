@@ -21,8 +21,14 @@
 define([ 'module', "info-list/info-list-modification-information-view", "info-list/info-list-modification-table-view",  "jquery", "backbone", "underscore", "squash.basicwidgets", "jeditable.simpleJEditable",
 		"workspace.routing", "squash.translator", "jquery.squash.togglepanel", "squashtable"], function(module, InfoView, TableView  , $, backbone, _, basic,
 		SimpleJEditable, routing, translator) {
+	"use strict";
 
 	var config = module.config();
+
+	translator.load([
+	"dialog.delete.info-list.used.message",
+	"dialog.info-list.warning.reindex.before",
+	"dialog.delete.info-list.unused.message"]);
 
 	var infoListModificationView = Backbone.View.extend({
 		el : "#information-content",
@@ -53,11 +59,11 @@ define([ 'module', "info-list/info-list-modification-information-view", "info-li
 			var listName = $("#info-list-name-header").text();
 			$("#rename-popup-info-list-label").val(listName);
 		},
- 
+
 		deleteInfoListPopup : function(){
 			var self = this;
 			var message = $("#delete-info-list-warning");
-		
+
 			$.ajax({
 				type : 'GET',
 				url : routing.buildURL("info-list.isUsed", self.config.data.infoList.id),
@@ -123,11 +129,11 @@ define([ 'module', "info-list/info-list-modification-information-view", "info-li
 		},
 		deleteInfoList : function(){
 			$.ajax({
-				type : 'DELETE', 
+				type : 'DELETE',
 				url : routing.buildURL("info-list.info", config.data.infoList.id),
-			}).done(function(data) { 
+			}).done(function(data) {
 				document.location.href = squashtm.app.contextRoot + "/administration/info-lists/";
-			}); 
+			});
 
 		},
 		closePopup : function() {

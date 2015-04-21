@@ -21,24 +21,38 @@
 define([ "jquery", "backbone", "handlebars", "./IconSelectDialog","squash.translator", "workspace.routing" ,"app/lnf/Forms",
 		"jquery.squash.confirmdialog" ], function($, Backbone, Handlebars, IconSelectDialog, translator, routing,
 		Forms) {
-	
+	"use strict";
+
+	translator.load(["label.infoListItems.icon.none",
+	"message.optionCodeAlreadyDefined"]);
+
 	var ICON_PREFIX = "sq-icon-";
-	
+
 	var View = Backbone.View.extend({
 		el : "#add-info-list-item-popup",
 
 		initialize : function() {
 			this.$el.find("input:text").val("");
+			this.render();
 			this.$el.confirmDialog({
 				autoOpen : true
 			});
+
+		},
+
+		render: function() {
+			this.$("#new-info-list-item-icon")
+				.attr("class", "").addClass("sq-icon")
+				.html(translator.get("label.infoListItems.icon.none"));
+
+			return this;
 		},
 
 		events : {
 			"confirmdialogcancel" : "cancel",
 			"confirmdialogvalidate" : "validate",
 			"confirmdialogconfirm" : "confirm",
-			"click td.sq-icon" : "openChangeIconPopup"
+			"click .sq-icon" : "openChangeIconPopup"
 		},
 
 		cancel : function(event) {
@@ -50,38 +64,38 @@ define([ "jquery", "backbone", "handlebars", "./IconSelectDialog","squash.transl
 			var url = routing.buildURL('info-list.items', this.model.listId);
 
 			var params = {
-					"label" : this.model.label,
-					"code" : this.model.code,
-					"iconName" : this.model.icon || "noicon",
+				"label" : this.model.label,
+				"code" : this.model.code,
+				"iconName" : this.model.icon || "noicon",
 			};
-			
-			
+
 			$.ajax({
 				url : url,
 				type : 'POST',
 				dataType : 'json',
-				data : params});
+				data : params
+			});
 			this.cleanup();
 			this.trigger("newOption.confirm");
 		},
 
-		openChangeIconPopup : function(){
-				var self = this;
+		openChangeIconPopup : function() {
+			var self = this;
 
-				function discard() {
-					self.newIconDialog.off("selectIcon.cancel selectIcon.confirm");
-					self.newIconDialog.undelegateEvents();
-					self.newIconDialog = null;
-				}
+			function discard() {
+				self.newIconDialog.off("selectIcon.cancel selectIcon.confirm");
+				self.newIconDialog.undelegateEvents();
+				self.newIconDialog = null;
+			}
 
 			function discardAndRefresh(icon) {
 				discard();
-				$icon = $("#new-info-list-item-icon");
+				var $icon = $("#new-info-list-item-icon");
 
 				var classList = $icon.attr('class').split(/\s+/);
 				classList.forEach(function(item, index) {
 					if (item.indexOf(ICON_PREFIX) > -1) {
-						 $icon.removeClass(item);
+						$icon.removeClass(item);
 					}
 				});
 
@@ -94,18 +108,17 @@ define([ "jquery", "backbone", "handlebars", "./IconSelectDialog","squash.transl
 				self.populateModel();
 			}
 
-				self.newIconDialog = new IconSelectDialog(	{
-					el: "#choose-item-icon-popup",
-					model : {
-					icon: this.model.icon
-					}
-				});
+			self.newIconDialog = new IconSelectDialog({
+				el : "#choose-item-icon-popup",
+				model : {
+					icon : this.model.icon
+				}
+			});
 
-				self.newIconDialog.on("selectIcon.cancel", discard);
-				self.newIconDialog.on("selectIcon.confirm", discardAndRefresh);
+			self.newIconDialog.on("selectIcon.cancel", discard);
+			self.newIconDialog.on("selectIcon.confirm", discardAndRefresh);
 
-
-			},
+		},
 
 		validate : function(event) {
 			var res = true;
@@ -114,17 +127,18 @@ define([ "jquery", "backbone", "handlebars", "./IconSelectDialog","squash.transl
 			Forms.form(this.$el).clearState();
 
 			$.ajax({
-			url: "/squash/info-lists/items/code/" + this.model.code +"?format=exists",
-			async: false,
-			wait: true, // that's a sync request
-		}).done(function(data){
-			if (data.exists){
-				res = false;
-				event.preventDefault();
-				Forms.input($("#new-info-list-item-code")).setState("error", translator.get("message.optionCodeAlreadyDefined"));
-			}
-		});
-			
+				url : "/squash/info-lists/items/code/" + this.model.code + "?format=exists",
+				async : false,
+				wait : true, // that's a sync request
+			}).done(function(data) {
+				if (data.exists) {
+					res = false;
+					event.preventDefault();
+					Forms.input($("#new-info-list-item-code")).setState("error",
+							translator.get("message.optionCodeAlreadyDefined"));
+				}
+			});
+
 			return res;
 		},
 
@@ -141,12 +155,12 @@ define([ "jquery", "backbone", "handlebars", "./IconSelectDialog","squash.transl
 			self.model.code = $el.find("#new-info-list-item-code").val();
 			var selected = $el.find("#new-info-list-item-icon");
 			var classList = selected.attr('class').split(/\s+/);
-			classList.forEach(function(item, index){
-			if (item.indexOf(ICON_PREFIX) > -1){
-				self.model.icon = item.substring(ICON_PREFIX.length);
-			}
-			});
 
+			classList.forEach(function(item, index) {
+				if (item.indexOf(ICON_PREFIX) > -1) {
+					self.model.icon = item.substring(ICON_PREFIX.length);
+				}
+			});
 
 		}
 

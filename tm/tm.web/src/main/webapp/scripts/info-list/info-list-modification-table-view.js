@@ -23,17 +23,17 @@ define(["jquery", "backbone", "underscore", "squash.basicwidgets", "jeditable.si
 		SimpleJEditable, routing, NewInfoListItemDialog, IconSelectDialog, translator) {
 	"use strict";
 
-  translator.load(["label.infoListItems.icon.none",
-                   "dialog.delete.info-list-item.isDefault",
-                   "dialog.delete.info-list-item.used.message",
-                   "dialog.delete.info-list-item.unused.message",
-                   "label.Delete"]);
+	translator.load(["label.infoListItems.icon.none",
+		"dialog.delete.info-list-item.isDefault",
+		"dialog.delete.info-list-item.used.message",
+		"dialog.delete.info-list-item.unused.message",
+		"label.Delete"]);
 
 	var TableView = Backbone.View.extend({
 		el : "#table-view",
 		initialize : function(config) {
 			this.config = config;
-            this.initErrorPopup();
+			this.initErrorPopup();
 			this.tableInit();
 			this.configureDeleteInfoListItemPopup();
 			this.configureChangeLabelPopup();
@@ -43,57 +43,57 @@ define(["jquery", "backbone", "underscore", "squash.basicwidgets", "jeditable.si
 		},
 
 		events : {
-		"click .isDefault>input:checkbox" : "changeDefaultOption",
-		"click td.opt-label" : "openChangeLabelPopup",
-		"click td.opt-code" : "openChangeCodePopup",
-		"click span.sq-icon" : "openChangeIconPopup",
-		"click td.delete-button" : "openDeleteOptionPopup"
+			"click .isDefault>input:checkbox" : "changeDefaultOption",
+			"click td.opt-label" : "openChangeLabelPopup",
+			"click td.opt-code" : "openChangeCodePopup",
+			"click span.sq-icon" : "openChangeIconPopup",
+			"click td.delete-button" : "openDeleteOptionPopup"
 		},
 
-		initErrorPopup : function(){
+		initErrorPopup : function() {
 			this.errorPopup = $("#generic-error-dialog").messageDialog();
 		},
+
 		tableInit : function() {
 
 			this.optionsTable = this.$("#info-list-item-table");
 			var self = this;
 
 			var squashSettings = {
+				enableDnD : true,
+				buttons : [ {
+					tooltip : translator.get("label.Delete"),
+					tdSelector : "td.delete-button",
+					uiIcon : "ui-icon-trash",
+					jquery : true
+				} ],
 
-					enableDnD : true,
-
-					buttons : [ {
-						tooltip : translator.get("label.Delete"),
-						tdSelector : "td.delete-button",
-						uiIcon : "ui-icon-trash",
-						jquery: true
-					} ],
-
-					functions : {
-						dropHandler : function(dropData) {
-							var url = routing.buildURL('info-list.position', self.config.data.infoList.id);
-							$.post(url,	dropData, function() {
-								self.optionsTable._fnAjaxUpdate();
-							});
-						},
-						drawIcon : function(value, cell){
-							if (value !== "noicon"){
-								//cell.addClass("sq-icon");
-								cell.html('<span class="sq-icon sq-icon-' + value + '"></span>');
-								} else {
-									//if there is no icon name display [None]
-									cell.addClass("sq-icon");
-									cell.text(translator.get("label.infoListItems.icon.none"));
-								}
+				functions : {
+					dropHandler : function(dropData) {
+						var url = routing.buildURL('info-list.position', self.config.data.infoList.id);
+						$.post(url, dropData, function() {
+							self.optionsTable._fnAjaxUpdate();
+						});
+					},
+					drawIcon : function(value, cell) {
+						if (value !== "noicon") {
+							// cell.addClass("sq-icon");
+							cell.html('<span class="sq-icon sq-icon-' + value + '"></span>');
+						} else {
+							// if there is no icon name display [None]
+							cell.addClass("sq-icon");
+							cell.text(translator.get("label.infoListItems.icon.none"));
 						}
 					}
+				}
 
-				};
-			this.optionsTable.squashTable({"bServerSide" : false}, squashSettings);
+			};
+			this.optionsTable.squashTable({
+				"bServerSide" : false
+			}, squashSettings);
 		},
 
 		changeDefaultOption : function(event) {
-
 			var self = this;
 			// It's now checkboxesx
 			var radio = event.currentTarget;
@@ -112,7 +112,7 @@ define(["jquery", "backbone", "underscore", "squash.basicwidgets", "jeditable.si
 				url : routing.buildURL("info-list-item.info", data['entity-id']),
 				type : 'POST',
 				data : {
-					id:'info-list-item-default',
+					id : 'info-list-item-default',
 				}
 			}).done(function() {
 				self.optionsTable.find(".isDefault>input:checkbox").prop("checked", false);
@@ -121,9 +121,6 @@ define(["jquery", "backbone", "underscore", "squash.basicwidgets", "jeditable.si
 				radio.checked = !radio.checked;
 			});
 		},
-
-
-
 
 		openChangeLabelPopup : function(event) {
 			var self = this;
@@ -134,23 +131,19 @@ define(["jquery", "backbone", "underscore", "squash.basicwidgets", "jeditable.si
 			var id = data['entity-id'];
 			var value = $(labelCell).text();
 
-
 			self.ChangeLabelPopup.find("#rename-popup-info-list-item-id").val(id);
 			self.ChangeLabelPopup.formDialog("open");
 			self.ChangeLabelPopup.find("#rename-popup-info-list-item-label").val(value);
 		},
 
-		openChangeIconPopup : function(event){
-
+		openChangeIconPopup : function(event) {
 			var self = this;
 
 			var labelCell = event.currentTarget;
-
 			var row = labelCell.parentElement.parentElement;
 			var data = self.optionsTable.fnGetData(row);
 			var id = data['entity-id'];
 			var iconName = data['iconName'];
-
 
 			function discard() {
 				self.newIconDialog.off("selectIcon.cancel selectIcon.confirm");
@@ -160,13 +153,13 @@ define(["jquery", "backbone", "underscore", "squash.basicwidgets", "jeditable.si
 
 			function discardAndRefresh(icon) {
 				discard();
-				
+
 				$.ajax({
 					url : routing.buildURL("info-list-item.info", id),
-					type : 'POST', 
+					type : 'POST',
 					data : {
-						id:'info-list-item-icon',
-						value:icon
+						id : 'info-list-item-icon',
+						value : icon
 					}
 				}).done(function() {
 					self.optionsTable._fnAjaxUpdate();
@@ -176,9 +169,10 @@ define(["jquery", "backbone", "underscore", "squash.basicwidgets", "jeditable.si
 				});
 			}
 
-			self.newIconDialog = new IconSelectDialog({ el: "#choose-item-icon-popup",
+			self.newIconDialog = new IconSelectDialog({
+				el : "#choose-item-icon-popup",
 				model : {
-					icon:"sq-icon-"+iconName
+					icon : "sq-icon-" + iconName
 				}
 			});
 
@@ -193,8 +187,8 @@ define(["jquery", "backbone", "underscore", "squash.basicwidgets", "jeditable.si
 			this.ChangeLabelPopup = dialog;
 
 			dialog.formDialog();
-					
-			dialog.on('formdialogconfirm', function(){
+
+			dialog.on('formdialogconfirm', function() {
 				self.changeLabel.call(self);
 			});
 
@@ -203,7 +197,6 @@ define(["jquery", "backbone", "underscore", "squash.basicwidgets", "jeditable.si
 		},
 
 		changeLabel : function() {
-
 			var self = this;
 			var id = self.ChangeLabelPopup.find("#rename-popup-info-list-item-id").val();
 			var newValue = self.ChangeLabelPopup.find("#rename-popup-info-list-item-label").val();
@@ -211,7 +204,7 @@ define(["jquery", "backbone", "underscore", "squash.basicwidgets", "jeditable.si
 			$.ajax({
 				type : 'POST',
 				data : {
-					id:'info-list-item-label',
+					id : 'info-list-item-label',
 					'value' : newValue
 				},
 				url : routing.buildURL("info-list-item.info", id),
@@ -221,7 +214,7 @@ define(["jquery", "backbone", "underscore", "squash.basicwidgets", "jeditable.si
 			});
 		},
 
-		openDeleteOptionPopup : function (event){
+		openDeleteOptionPopup : function(event) {
 			var self = this;
 			var cell = event.currentTarget;
 
@@ -231,10 +224,10 @@ define(["jquery", "backbone", "underscore", "squash.basicwidgets", "jeditable.si
 
 			$.ajax({
 				type : 'GET',
-			url : routing.buildURL('info-list.defaultItem',self.config.data.infoList.id)
+				url : routing.buildURL('info-list.defaultItem', self.config.data.infoList.id)
 			}).done(function(defaultItemId) {
 
-				if (defaultItemId === id){
+				if (defaultItemId === id) {
 					self.errorPopup.find('.generic-error-main').html(translator.get("dialog.delete.info-list-item.isDefault"));
 					self.errorPopup.messageDialog('open');
 				} else {
@@ -243,10 +236,10 @@ define(["jquery", "backbone", "underscore", "squash.basicwidgets", "jeditable.si
 					var reindexWarn = $("#delete-info-list-item-warning-reindex");
 					$.ajax({
 						type : 'GET',
-					url : routing.buildURL('info-list-item.isUsed',id)
+						url : routing.buildURL('info-list-item.isUsed', id)
 					}).done(function(isUsed) {
 
-						if (isUsed === true){
+						if (isUsed === true) {
 							message.text(translator.get("dialog.delete.info-list-item.used.message"));
 							reindexWarn.text(translator.get("dialog.info-list.warning.reindex.before"));
 						} else {
@@ -261,29 +254,25 @@ define(["jquery", "backbone", "underscore", "squash.basicwidgets", "jeditable.si
 			});
 		},
 
-		
-		
-		configureReindexPopup : function(){
-			
+		configureReindexPopup : function() {
 			var self = this;
 			var reindexPopup = $("#reindex-popup");
 			this.reindexPopup = reindexPopup.formDialog();
-			
-			
+
 			reindexPopup.on('formdialogcancel', function() {
 				self.reindexPopup.formDialog('close');
 			});
 
 			reindexPopup.on('formdialogconfirm', function() {
-				document.location.href=  squashtm.app.contextRoot + "/administration/indexes";
-			});	
+				document.location.href = squashtm.app.contextRoot + "/administration/indexes";
+			});
 		},
-		
-		openReindexPopup : function(){
+
+		openReindexPopup : function() {
 			var self = this;
 			self.reindexPopup.formDialog('open');
 		},
-		configureDeleteInfoListItemPopup : function(){
+		configureDeleteInfoListItemPopup : function() {
 			var self = this;
 
 			var dialog = $("#delete-info-list-item-popup");
@@ -291,32 +280,32 @@ define(["jquery", "backbone", "underscore", "squash.basicwidgets", "jeditable.si
 
 			dialog.formDialog();
 
-			dialog.on('formdialogconfirm', function(){
-				
+			dialog.on('formdialogconfirm', function() {
+
 				self.deleteInfoListItem.call(self);
 			});
 
 			dialog.on('formdialogcancel', this.closePopup);
 		},
-		deleteInfoListItem : function(){
+
+		deleteInfoListItem : function() {
 			var self = this;
 			var id = self.DeleteInfoListItemPopup.find("#delete-info-list-item-popup-info-list-item-id").val();
 
 			var isUsed = self.DeleteInfoListItemPopup.data('isUsed');
-			
+
 			$.ajax({
 				type : 'DELETE',
 				url : routing.buildURL("info-list-item.delete", self.config.data.infoList.id, id),
 			}).done(function(data) {
 				self.optionsTable._fnAjaxUpdate();
-				if (isUsed){
-				self.openReindexPopup();
+				if (isUsed) {
+					self.openReindexPopup();
 				}
 				self.DeleteInfoListItemPopup.formDialog('close');
 			});
-
-
 		},
+
 		openChangeCodePopup : function(event) {
 			var self = this;
 			var codeCell = event.currentTarget;
@@ -326,22 +315,22 @@ define(["jquery", "backbone", "underscore", "squash.basicwidgets", "jeditable.si
 			var id = data['entity-id'];
 			var value = $(codeCell).text();
 			var reindexWarn = $("#change-code-reindex-warn");
-			
+
 			$.ajax({
 				type : 'GET',
-			url : routing.buildURL('info-list-item.isUsed',id)
+				url : routing.buildURL('info-list-item.isUsed', id)
 			}).done(function(isUsed) {
 
-				if (isUsed === true){		
+				if (isUsed === true) {
 					reindexWarn.text(translator.get("dialog.info-list.warning.reindex.before"));
 				} else {
 					reindexWarn.text("");
 				}
 
-			self.ChangeCodePopup.find("#change-code-popup-info-list-item-id").val(id);
-			self.ChangeCodePopup.formDialog("open");
-			self.ChangeCodePopup.data('isUsed', isUsed);
-			self.ChangeCodePopup.find("#change-code-popup-info-list-item-code").val(value);
+				self.ChangeCodePopup.find("#change-code-popup-info-list-item-id").val(id);
+				self.ChangeCodePopup.formDialog("open");
+				self.ChangeCodePopup.data('isUsed', isUsed);
+				self.ChangeCodePopup.find("#change-code-popup-info-list-item-code").val(value);
 			});
 		},
 
@@ -353,7 +342,7 @@ define(["jquery", "backbone", "underscore", "squash.basicwidgets", "jeditable.si
 
 			dialog.formDialog();
 
-			dialog.on('formdialogconfirm', function(){
+			dialog.on('formdialogconfirm', function() {
 				self.changeCode.call(self);
 			});
 
@@ -369,14 +358,14 @@ define(["jquery", "backbone", "underscore", "squash.basicwidgets", "jeditable.si
 			$.ajax({
 				type : 'POST',
 				data : {
-					id:'info-list-item-code',
+					id : 'info-list-item-code',
 					'value' : newValue
 				},
 				url : routing.buildURL("info-list-item.info", id),
 			}).done(function() {
 				self.optionsTable._fnAjaxUpdate();
-				if (isUsed){
-				self.openReindexPopup();
+				if (isUsed) {
+					self.openReindexPopup();
 				}
 				self.ChangeCodePopup.formDialog('close');
 			});
@@ -386,7 +375,6 @@ define(["jquery", "backbone", "underscore", "squash.basicwidgets", "jeditable.si
 		},
 
 		openAddItemPopup : function() {
-
 			var self = this;
 
 			function discard() {
@@ -408,10 +396,10 @@ define(["jquery", "backbone", "underscore", "squash.basicwidgets", "jeditable.si
 
 			self.newItemDialog.on("newOption.cancel", discard);
 			self.newItemDialog.on("newOption.confirm", discardAndRefresh);
-
 		}
 
 	});
+
 	return TableView;
 
 });
