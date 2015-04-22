@@ -30,7 +30,7 @@
 <%@ attribute name="milestoneConf" required="true" type="java.lang.Object" description="an instance of MilestoneFeatureConfiguration" %>
 
 <f:message var="renameDialogTitle" key="dialog.rename-test-case.title"/>
-<f:message var="renameButtonLabel" key="dialog.rename-test-case.title"/>
+<f:message var="confirmLabel" key="label.Confirm" />
 <f:message var="cancelLabel" key="label.Cancel" />
 <f:message var="okLabel" key="label.Ok" />
 <f:message var="createNewVersionLabel" key="label.createNewVersion" />
@@ -91,7 +91,7 @@
 	</div>
 	
 	<div class="popup-dialog-buttonpane">
-		<input type="button" value="${renameButtonLabel}" data-def="evt=confirm, mainbtn"/>
+		<input type="button" value="${confirmLabel}" data-def="evt=confirm, mainbtn"/>
 		<input type="button" value="${cancelLabel}" data-def="evt=cancel"/>
 	</div>
 </div>
