@@ -104,7 +104,7 @@
 
 	<div style="float: left; height: 100%; width: 90%;">
 		<h2>
-			<a id="execution-name" href="${ executionUrl }">&#35;<c:out
+			<a id="execution-name" href="${ executionUrl }"><f:message key="label.ExecuteDot" /> &#35;<c:out
 				value="${executionRank} - ${ execution.name }" escapeXml="true" />
 			</a>
 		</h2>
