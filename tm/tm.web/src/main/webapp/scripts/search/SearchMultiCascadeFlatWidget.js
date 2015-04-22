@@ -123,20 +123,20 @@ define(["jquery", "underscore", "isIE",  "jqueryui"], function($, _, isIE){
 		
 		hideAll : function(){
 			var self = this;
-			this._primarySelect().find('option').each(function(elt){
+			this._primarySelect().find('option').each(function(i, elt){
 				self.options.primaryManager.hide(elt.value);
 			});
-			this._secondarySelect().find('option').each(function(elt){
+			this._secondarySelect().find('option').each(function(i, elt){
 				self.options.secondaryManager.hide(elt.value);
 			});
 		},
 		
 		showAll : function(){
 			var self = this;
-			this._primarySelect().find('option').each(function(elt){
+			this._primarySelect().find('option').each(function(i, elt){
 				self.options.primaryManager.show(elt.value);
 			});
-			this._secondarySelect().find('option').each(function(elt){
+			this._secondarySelect().find('option').each(function(i, elt){
 				self.options.secondaryManager.show(elt.value);
 			});			
 		},
