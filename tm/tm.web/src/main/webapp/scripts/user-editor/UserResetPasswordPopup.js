@@ -80,9 +80,9 @@ define([ "jquery", "backbone", "handlebars", "app/util/StringUtil", "jquery.squa
 				},
 				success : function() {
 					self.userPasswordSuccess.call(self);
+					this.$dialog.remove();
 				}
 			});
-
 		},
 
 		// <%-- we validate the passwords only. Note that
@@ -136,7 +136,6 @@ define([ "jquery", "backbone", "handlebars", "app/util/StringUtil", "jquery.squa
 		},
 
 		userPasswordSuccess : function() {
-			this.$dialog.dialog('close');
 			squashtm.notification.showInfo(UMod.message.passSuccess);
 			this.model.set("hasAuthentication", true);
 		},
