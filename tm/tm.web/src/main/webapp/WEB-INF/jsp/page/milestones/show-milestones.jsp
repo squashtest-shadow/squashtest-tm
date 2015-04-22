@@ -119,7 +119,7 @@
       </button>
     </div>
   </div>
-  <table id="milestones-table" class="unstyled-table" data-def="ajaxsource=${milestonesUrl}, hover, filter, pre-sort=1-asc">
+  <table id="milestones-table" class="unstyled-table" data-def="ajaxsource=${milestonesUrl}, hover, filter, pre-sort=3-desc">
     <thead>
       <tr>
         <th data-def="map=index, select">#</th>
