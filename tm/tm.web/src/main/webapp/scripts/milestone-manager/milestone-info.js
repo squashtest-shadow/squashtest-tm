@@ -614,19 +614,27 @@ $("#unbind-project-popup").confirmDialog().on('confirmdialogconfirm', function()
 		
           $(function() {
 			
-			var squashSettings;
+			var squashSettings = {functions:{}};
 			
+			squashSettings.functions.computeSelectionRange = function(row) {
+				var baseRow = this.data("lastSelectedRow");
+				var baseIndex = baseRow ? baseRow.rowIndex -1 : 0;
+				var currentIndex = row.rowIndex - 1;
+				var rangeMin = Math.min(baseIndex, currentIndex);
+
+				var rangeMax = Math.max(baseIndex, currentIndex);
+				var rows = this.$("tr");
+
+				return [ rangeMin , rangeMax ];
+			};
+	  
 			if (config.data.canEdit === true){
 				initJEditables();
 			} else {
-				squashSettings = {
-						functions:{					
-							drawUnbindButton: function(template, cell){
+				squashSettings.functions.drawUnbindButton = function(template, cell){
 								// do nothing so the unbind button are not displayed
-							}	
-						}
-				};
-				
+							}	;
+							
 			}
 			
 			// When you open the dialog, change the message in it (with or without associated project)
@@ -645,7 +653,7 @@ $("#unbind-project-popup").confirmDialog().on('confirmdialogconfirm', function()
 			
 			
 			
-			var projectTable = $("#projects-table").squashTable({"bServerSide":false, fnDrawCallback : drawCallBack}, squashSettings);
+			var projectTable = $("#projects-table").squashTable({"bServerSide":false, fnDrawCallback : drawCallBack, }, squashSettings);
 			$("#bind-to-projects-table").squashTable({"bServerSide":false, "fnRowCallback" : projectTableRowCallback}, {});
 		
 			basic.init();

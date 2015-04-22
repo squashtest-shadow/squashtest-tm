@@ -24,9 +24,23 @@ define([ 'module', "jquery", "squash.basicwidgets", "workspace.routing", "squash
 			basic.init();
 			var config = module.config();
 			var emptyDate = "-";
-			
+			var squashSettings = {
+					functions:{
+						computeSelectionRange : function(row) {
+							var baseRow = this.data("lastSelectedRow");
+							var baseIndex = baseRow ? baseRow.rowIndex -1 : 0;
+							var currentIndex = row.rowIndex - 1;
+							var rangeMin = Math.min(baseIndex, currentIndex);
+
+							var rangeMax = Math.max(baseIndex, currentIndex);
+							var rows = this.$("tr");
+
+							return [ rangeMin , rangeMax ];
+						}
+					}
+			};
 			$(function() {
-				$("#binded-milestone-table").squashTable({"bServerSide":false}, {});
+				$("#binded-milestone-table").squashTable({"bServerSide":false}, squashSettings);
 				$("#global-milestone-table").squashTable({sAjaxSource:config.urls.globalMilestones, "bServerSide":false},{});
 				$("#personal-milestone-table").squashTable({sAjaxSource:config.urls.myMilestones, "bServerSide":false},{});
 				$("#other-milestone-table").squashTable({sAjaxSource:config.urls.otherMilestones, "bServerSide":false},{});

@@ -491,7 +491,7 @@ define(["jquery",
 
 	/* private */function _growSelectedRangeToRow(row) {
 		var rows = this.$("tr");
-		var range = _computeSelectionRange.call(this, row);
+		var range = this.computeSelectionRange.call(this, row);
 
 		for ( var i = range[0]; i <= range[1]; i++) {
 			var r = rows[i];
@@ -1553,7 +1553,7 @@ define(["jquery",
 		 * 2 - public methods definition
 		 *
 		 ***************************************************** */
-
+		this.computeSelectionRange = _computeSelectionRange;
 		this.dropHandler = _dropHandler;
 		this.getODataId = _getODataId;
 		this.saveTableSelection = _saveTableSelection;

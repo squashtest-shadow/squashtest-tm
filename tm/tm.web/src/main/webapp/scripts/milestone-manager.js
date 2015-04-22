@@ -147,6 +147,17 @@ require(["common"], function(){
 		
 		var squashSettings = {
 					functions:{
+						computeSelectionRange : function(row) {
+							var baseRow = this.data("lastSelectedRow");
+							var baseIndex = baseRow ? baseRow.rowIndex -1 : 0;
+							var currentIndex = row.rowIndex - 1;
+							var rangeMin = Math.min(baseIndex, currentIndex);
+
+							var rangeMax = Math.max(baseIndex, currentIndex);
+							var rows = this.$("tr");
+
+							return [ rangeMin , rangeMax ];
+						},
 						drawDeleteButton: function(template, cells){
 
 							$.each(cells, function(index, cell) {
