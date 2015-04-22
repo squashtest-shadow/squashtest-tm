@@ -79,7 +79,7 @@ data-def='datakeys-id=entity-id ,ajaxsource=${ verifiedRequirementsTableUrl }'>
 		<tr>
 			<th data-def="select, map=entity-index">#</th>
 			<th data-def="sortable, map=project"><f:message key="label.project" /></th>
-            <th data-def="sortable, map=milestone-dates"><f:message key="label.Milestones"/></th>   
+          <th data-def="sortable, map=milestone-dates, tooltip-target=milestone"><f:message key="label.Milestone"/></th>
 			<th data-def="sortable, map=entity-id"><f:message key="label.versionId"/></th>
 			<th data-def="sortable, map=reference"><f:message key="label.Reference"/></th>
 			<th data-def="sortable, map=name, link=${requirementVersionsUrl}/{entity-id}/info"><f:message key="requirement.name.label" /></th>
