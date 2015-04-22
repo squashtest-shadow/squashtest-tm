@@ -65,7 +65,7 @@
   </div>
   </sec:authorize>
   <table id="projects-table" class="unstyled-table" 
-    data-def="ajaxsource=${dtModel}, hover, datakeys-id=project-id, deferLoading=${fn:length(projects)}, filter, pre-sort=2-asc">
+    data-def="ajaxsource=${dtModel}, hover, datakeys-id=project-id, deferLoading=${fn:length(projects)}, filter, pre-sort=2-desc">
     <thead>
       <tr>
         <th data-def="map=project-id,invisible">Id(not shown)</th> 
