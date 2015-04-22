@@ -20,6 +20,35 @@
  */
 define([ "jquery", "backbone", "handlebars", "app/lnf/Forms",
 		"jquery.squash.formdialog" ], function($, Backbone, Handlebars,  Forms) {
+	"use strict";
+	/**
+	 * Saves the model
+	 * @param model
+	 * @param event (optional) if invoked in repsonse to an event, please provide that event.
+	 * @returns {Boolean} true if model was saved without errors
+	 */
+	function saveModel(model, event) {
+		var res = true;
+
+		$.ajax({
+			type : 'post',
+			url : squashtm.app.contextRoot + "/generic-projects/new",
+			dataType : 'json',
+			// note : we cannot use promise api with async param. see
+			// http://bugs.jquery.com/ticket/11013#comment:40
+			async : false,
+			data : model,
+			error : function(jqXHR, textStatus, errorThrown) {
+				res = false;
+				if (!!event) {
+					event.preventDefault();
+				}
+			}
+		});
+
+		return res;
+	}
+
 	var View = Backbone.View.extend({
 		el : "#add-project-dialog",
 
@@ -33,69 +62,35 @@ define([ "jquery", "backbone", "handlebars", "app/lnf/Forms",
 		},
 
 		events : {
-			"formdialogaddanother" : "addanother",
-			"formdialogconfirm" : "confirm",
+			"formdialogaddanother" : "addAnother",
+			"formdialogconfirm" : "addAndClose",
 			"formdialogcancel" : "cancel",
-			"formdialogvalidate" : "validate"
 		},
 
 		cancel : function(event) {
 			this.cleanup();
-			this.trigger("newproject.cancel");
+			this.trigger("newproject.cancel", { source: event, view: this });
 		},
 
-		addanother : function(event) {
-			var res = true, self = this;
+		addProject: function(event, postStep) {
 			this._populateModel();
 			Forms.form(this.$el).clearState();
 
-			$.ajax({
-				type : 'post',
-				url : squashtm.app.contextRoot + "/generic-projects/new",
-				dataType : 'json',
-				// note : we cannot use promise api with async param. see
-				// http://bugs.jquery.com/ticket/11013#comment:40
-				async : false,
-				data : self.model,
-				error : function(jqXHR, textStatus, errorThrown) {
-					res = false;
-					event.preventDefault();
-				}
-			});
-			this.$el.addClass("not-displayed");
-			this._resetForm();
-			$('#projects-table').squashTable().refresh();
-			return res;
+			if (saveModel(this.model, event)) {
+				this.trigger("newproject.added", { source: event, view: this, model: this.model });
+				postStep.call(this, event);
+			}
 		},
 
-		confirm: function(event) {
-			this.trigger("newproject.confirm");
-			this.validate();
-			this._resetForm();
-			$('#projects-table').squashTable().refresh();
-			this.$el.formDialog("close");
+		addAnother : function(event) {
+			this.addProject(event, function() {
+				this.$el.addClass("not-displayed");
+				this._resetForm();
+			});
 		},
 
-		validate : function(event) {
-			var res = true, self = this;
-			this._populateModel();
-			Forms.form(this.$el).clearState();
-
-			$.ajax({
-				type : 'post',
-				url : squashtm.app.contextRoot + "/generic-projects/new",
-				dataType : 'json',
-				// note : we cannot use promise api with async param. see
-				// http://bugs.jquery.com/ticket/11013#comment:40
-				async : false,
-				data : self.model,
-				error : function(jqXHR, textStatus, errorThrown) {
-					res = false;
-					event.preventDefault();
-				}
-			});
-
-			return res;
+		addAndClose: function(event) {
+			this.addProject(event, this.cleanup);
 		},
 
 		cleanup : function() {

@@ -55,7 +55,7 @@ define([ "jquery", "backbone", "./ProjectsTable", "./NewProjectDialog", "./NewPr
 						collection : this.templates
 					});
 
-					this.listenTo(this.newProjectDialog, "newproject.confirm", $.proxy(this.projectsTable.refresh,
+					this.listenTo(this.newProjectDialog, "newproject.added", $.proxy(this.projectsTable.refresh,
 							this.projectsTable));
 					this.listenTo(this.newProjectFromTemplateDialog, "newprojectFromTemplate.confirm", $.proxy(
 							this.projectsTable.refresh, this.projectsTable));
