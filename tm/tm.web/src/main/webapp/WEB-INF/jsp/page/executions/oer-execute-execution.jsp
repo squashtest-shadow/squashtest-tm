@@ -174,7 +174,7 @@
 			<table style="width: 100%; table-layout: fixed; white-space: nowrap;">
 			<tr>
 				<td style="width:50px;" class="left-aligned"><button id="execute-stop-button" ><f:message key="execute.header.button.stop.title" /></button></td>
-				<td style="padding-left: 20px; width: 120px" class="centered">
+				<td style="padding-left: 20px; " class="centered">
 					<button id="execute-previous-button"><f:message key="execute.header.button.previous.title" /></button>
 					<span id="execute-header-numbers-label">${executionStep.executionStepOrder +1} / ${totalSteps}</span>
 					<button id="execute-next-button"><f:message key="execute.header.button.next.title" /></button>
