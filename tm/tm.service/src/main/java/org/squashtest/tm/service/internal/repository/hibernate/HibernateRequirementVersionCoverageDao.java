@@ -140,7 +140,7 @@ private int compareReqMilestoneDate(RequirementVersion req1, RequirementVersion 
 		} else if (isEmpty2){
 			return -1;
 		} else {
-			return getMinDate(req1).before(getMinDate(req2)) ? 1 : -1;
+			return getMinDate(req1).before(getMinDate(req2)) ?  getMinDate(req1).after(getMinDate(req2))? 0 : 1 : -1;
 		}	
 	}
 
@@ -148,7 +148,7 @@ private int compareReqMilestoneDate(RequirementVersion req1, RequirementVersion 
 		return Collections.min(req.getMilestones(), new Comparator<Milestone>(){
 			@Override
 			public int compare(Milestone m1, Milestone m2) {
-				int result = m1.getEndDate().before(m2.getEndDate()) ? 1 : -1;
+				int result = m1.getEndDate().before(m2.getEndDate()) ? -1 : 1;
 				return result;
 			}	
 		}).getEndDate();

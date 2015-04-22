@@ -475,7 +475,9 @@ public class HibernateTestCaseDao extends HibernateEntityDao<TestCase> implement
 		} else if (isEmpty2){
 			return -1;
 		} else {
-			return getMinDate(tc1).before(getMinDate(tc2)) ? 1 : -1;
+			return getMinDate(tc1).before(getMinDate(tc2)) ? getMinDate(tc1).after(getMinDate(tc2)) ? 0 : 1 : -1;
+			
+
 		}	
 	}
 
@@ -483,7 +485,7 @@ public class HibernateTestCaseDao extends HibernateEntityDao<TestCase> implement
 		return Collections.min(tc.getMilestones(), new Comparator<Milestone>(){
 			@Override
 			public int compare(Milestone m1, Milestone m2) {
-				int result = m1.getEndDate().before(m2.getEndDate()) ? 1 : -1;
+				int result = m1.getEndDate().before(m2.getEndDate()) ? -1 : 1;
 				return result;
 			}	
 		}).getEndDate();
