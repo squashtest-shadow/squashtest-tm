@@ -358,6 +358,7 @@ public class TestCaseModificationController {
 	@ResponseBody
 	public String changeReference(@RequestParam(VALUE) String testCaseReference, @PathVariable long testCaseId) {
 
+        testCaseReference = testCaseReference.substring(0, Math.min( testCaseReference.length(), 50));
 		testCaseModificationService.changeReference(testCaseId, testCaseReference);
 		if (LOGGER.isTraceEnabled()) {
 			LOGGER.trace(TEST_CASE_ + testCaseId + ": updated reference to " + testCaseReference);
