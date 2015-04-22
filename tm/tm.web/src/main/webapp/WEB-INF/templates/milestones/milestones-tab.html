@@ -111,7 +111,7 @@ th:with="isWritable = ${#authorization.expression('hasRole(''ROLE_ADMIN'')')  or
   
   <!-- No associated milestone -->
   
-  <div class="no-milestone-dialog popup-dialog not-displayed" th:title="#{dialog.milestone.bind.campaign}">
+  <div class="no-milestone-dialog popup-dialog not-displayed" th:title="#{dialog.milestone.bind. + ${conf.nodeType}}">
     <div class="display-table-row">
         <div th:include="fragments-utils/static-panels :: warning-pane" th:with="txtcontent=#{title.bindMilestones.noneassociated}"></div>       
     </div>
