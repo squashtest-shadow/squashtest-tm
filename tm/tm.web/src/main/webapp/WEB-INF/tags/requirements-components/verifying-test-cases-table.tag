@@ -57,7 +57,7 @@
 <table id="verifying-test-cases-table" class="unstyled-table" data-def="ajaxsource=${tableModelUrl}, deferloading=${model.iTotalRecords}, 
   datakeys-id=tc-id, pre-sort=2-asc, pagesize=50 ">
   <thead>
-    <tr>
+    <tr> 
       <th data-def="map=tc-index, select">#</th>
       <th data-def="map=project-name, sortable"><f:message key="label.project" /></th>
       <th data-def="sortable, map=milestone-dates"><f:message key="label.Milestones"/></th>  
