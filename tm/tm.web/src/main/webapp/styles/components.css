@@ -596,6 +596,10 @@ table.ta-project-bind-listdiv tr.listdiv-item.even {
 	border: 1px solid #bbbbbb;
 }
 
+.editable.large {
+	width: 100%
+}
+
 .editable form	{
 	display:inline;
 }

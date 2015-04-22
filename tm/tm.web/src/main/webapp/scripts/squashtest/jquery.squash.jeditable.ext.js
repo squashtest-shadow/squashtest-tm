@@ -18,9 +18,9 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define(['jquery', 'squash.configmanager', 'squash.attributeparser', "jeditable", "jeditable.ckeditor"], 
+define(['jquery', 'squash.configmanager', 'squash.attributeparser', "jeditable", "jeditable.ckeditor"],
 		function($, confman, attrparser){
-	
+
 
 	// Adding maxlength attribute for text
 	// thanks to
@@ -47,18 +47,18 @@ define(['jquery', 'squash.configmanager', 'squash.attributeparser', "jeditable",
 	 * purpose of it is that we hook the object with additional handlers that
 	 * will enable or disable hyperlinks with respect to the state of the
 	 * editable (edit-mode or display-mode).
-	 * 
+	 *
 	 * It accepts one object for argument, with the regular options of a
 	 * jeditable. : - this : a dom element javascript object. Not part of the
 	 * settings. - url : the url where to post. - ckeditor : the config for the
 	 * nested ckeditor instance - placeholder : message displayed when the
 	 * content is empty - submit : text for the submit button - cancel : text
 	 * for the cancel button
-	 * 
-	 * Also accepts (simple) options passed as 'data-def' on the dom element. 
-	 * Note : options 'cols' and 'rows' can be set to 'auto', such dimensions 
-	 * will then be unbounded. 
-	 * 
+	 *
+	 * Also accepts (simple) options passed as 'data-def' on the dom element.
+	 * Note : options 'cols' and 'rows' can be set to 'auto', such dimensions
+	 * will then be unbounded.
+	 *
 	 */
 
 	$.widget('squash.richEditable', {
@@ -67,60 +67,64 @@ define(['jquery', 'squash.configmanager', 'squash.attributeparser', "jeditable",
 
 		_init : function() {
 			var defoptions = this.options;
-			
+
 			this.element.each(function(){
 				var $this = $(this);
 				var stropt = $this.data('def');
 				var options = (!! stropt) ? attrparser.parse(stropt) : {};
-				
+
 				var finaloptions = $.extend(true, {}, defoptions, options);
-				
+
 				if (options.cols === "auto"){
 					delete finaloptions.cols;
 				}
 				if (options.rows === "auto"){
 					delete finaloptions.rows;
 				}
-				
-				$this.editable(finaloptions.url, finaloptions);				
+
+				$this.editable(finaloptions.url, finaloptions);
 			});
 		}
 
-	});	
-	
+	});
+
 	// ripped from the now defunct-and-removed simple-editable.tag (see version 1.11 and prior)
 	// if you like archeology)
 	$.widget('squash.textEditable', {
-	
+
 		options : confman.getStdJeditable(),
-		
+
 		_init : function(){
 			var defoptions = this.options;
-			
+
 			this.element.each(function(){
 				var $this = $(this);
-				
+
 				// fix the text
 				var txt = $this.text();
 				$this.text( $.trim(txt) );
-				
-				// configure 
+
+				// configure
 				var stropt = $this.data('def');
 				var options = (!! stropt) ? attrparser.parse(stropt) : {};
-				
-				var finaloptions = $.extend(true, {}, defoptions, options);	
-				
+				var inbetweenoptions = {};
+				if ($this.hasClass("large")) {
+					inbetweenoptions.width = "100%";
+				}
+
+				var finaloptions = $.extend(true, inbetweenoptions, defoptions, options);
+
 				finaloptions.onerror =  function(settings, self, xhr){
-					var spanError = $("<span/>" ,{					
+					var spanError = $("<span/>" ,{
 						'class':'error-message'
-					}); 
+					});
 					self.reset();
 					self.click();
-					$(self).append(spanError);				
+					$(self).append(spanError);
 					xhr.label = spanError;
 					$(spanError).on("mouseover",function(){ spanError.fadeOut('slow').remove(); });
 				};
-				
+
 				// enhance the callback if needed
 				if (finaloptions.callback !== undefined){
 					var oldc = finaloptions.callback;
@@ -133,13 +137,13 @@ define(['jquery', 'squash.configmanager', 'squash.attributeparser', "jeditable",
 						window[oldc](fixedvalue, settings);
 					};
 				}
-				
+
 				// invoke
 				$this.editable(finaloptions.url, finaloptions);
-				
+
 			});
 		}
 	});
-	
+
 });
 

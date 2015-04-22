@@ -62,7 +62,6 @@
   </jsp:attribute>
 
   <jsp:attribute name="footer" />
-
   <jsp:attribute name="informationContent">
   <c:url var="clientsUrl" value="/administration/config/clients/list" />
   <c:url var="addClientUrl" value="/administration/config/clients" />
@@ -77,7 +76,7 @@
         <div id="config-table" class="display-table">
           <div class="display-table-row">
             <label for="whiteList" class="display-table-cell"><f:message key="label.whiteList" /></label>
-            <div class="display-table-cell editable text-editable" id="whiteList">${whiteList}</div>
+            <div class="display-table-cell editable text-editable large" id="whiteList">${whiteList}</div>
           </div>
         </div>
   
