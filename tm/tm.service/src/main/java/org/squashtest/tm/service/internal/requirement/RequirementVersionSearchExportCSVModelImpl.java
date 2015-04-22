@@ -112,7 +112,7 @@ public class RequirementVersionSearchExportCSVModelImpl implements SearchExportC
 			List<CellImpl> dataCells = new ArrayList<CellImpl>(nbColumns);
 
 			dataCells.add(new CellImpl(requirementVersion.getProject().getName()));
-			dataCells.add(new CellImpl(Long.toString(requirementVersion.getId())));
+			dataCells.add(new CellImpl(Long.toString(requirementVersion.getRequirement().getId())));
 			dataCells.add(new CellImpl(requirementVersion.getReference()));
 			dataCells.add(new CellImpl(requirementVersion.getName()));
 			dataCells.add(new CellImpl(requirementVersion.getCriticality().toString()));
