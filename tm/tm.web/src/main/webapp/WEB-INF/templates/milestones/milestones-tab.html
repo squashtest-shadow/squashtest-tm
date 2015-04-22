@@ -70,7 +70,7 @@ th:with="isWritable = ${#authorization.expression('hasRole(''ROLE_ADMIN'')')  or
 
     <!-- Bind milestone -->
     
-  <div class="bind-milestone-dialog popup-dialog not-displayed" th:title="#{dialog.milestone.bind}">
+  <div class="bind-milestone-dialog popup-dialog not-displayed" th:title="#{dialog.milestone.bind. + ${conf.nodeType}}">
     <div>
       
       <div class="centered std-margin-top std-margin-bottom" th:if="${conf.nodeType == 'requirement-version'}" >

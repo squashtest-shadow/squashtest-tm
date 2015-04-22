@@ -583,7 +583,8 @@ public class TestCaseModificationController {
 
 		// add them to the model
         Boolean isMilestoneInProject = tc.getProject().getMilestones().size() == 0 ? false : true;
-		conf.setRootPath(rootPath);
+        conf.setNodeType("testcase");
+        conf.setRootPath(rootPath);
 		conf.setIdentity(identity);
 		conf.setCurrentModel(currentModel);
 		conf.setEditable(editable);
