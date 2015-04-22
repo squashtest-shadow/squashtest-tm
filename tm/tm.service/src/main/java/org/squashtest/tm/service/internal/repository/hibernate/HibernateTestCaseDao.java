@@ -23,6 +23,8 @@ package org.squashtest.tm.service.internal.repository.hibernate;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -30,6 +32,7 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.ListUtils;
 import org.hibernate.Criteria;
 import org.hibernate.Hibernate;
@@ -45,11 +48,13 @@ import org.springframework.stereotype.Repository;
 import org.squashtest.tm.core.foundation.collection.DefaultSorting;
 import org.squashtest.tm.core.foundation.collection.Paging;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
+import org.squashtest.tm.core.foundation.collection.SortOrder;
 import org.squashtest.tm.core.foundation.collection.Sorting;
 import org.squashtest.tm.domain.IdentifiedUtil;
 import org.squashtest.tm.domain.NamedReference;
 import org.squashtest.tm.domain.NamedReferencePair;
 import org.squashtest.tm.domain.execution.Execution;
+import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.testcase.CallTestStep;
 import org.squashtest.tm.domain.testcase.ExportTestCaseData;
 import org.squashtest.tm.domain.testcase.TestCase;
@@ -441,11 +446,50 @@ public class HibernateTestCaseDao extends HibernateEntityDao<TestCase> implement
 			res.add((TestCase)tuple[0]);
 		}
 
+		if ("endDate".equals(sorting.getSortedAttribute())){	
+			 Collections.sort(res, new Comparator<TestCase>() {
+				@Override
+				public int compare(TestCase tc1, TestCase tc2) {
+					return compareTcMilestoneDate(tc1, tc2);
+				}
+			});
+			 
+			if (sorting.getSortOrder().equals(SortOrder.ASCENDING)){
+				Collections.reverse(res);
+			}	
+		}
 
 		return res;
 
 	}
+	
+	private int compareTcMilestoneDate(TestCase tc1, TestCase tc2){
+		
+		boolean isEmpty1 = tc1.getMilestones().isEmpty(); 
+		boolean isEmpty2 = tc2.getMilestones().isEmpty();
+	
+		if (isEmpty1 && isEmpty2){
+			return 0;
+		} else if (isEmpty1){
+			return 1;
+		} else if (isEmpty2){
+			return -1;
+		} else {
+			return getMinDate(tc1).before(getMinDate(tc1)) ? 1 : -1;
+		}	
+	}
 
+	private Date getMinDate(TestCase tc){
+		return Collections.min(tc.getMilestones(), new Comparator<Milestone>(){
+			@Override
+			public int compare(Milestone m1, Milestone m2) {
+				int result = m1.getEndDate().before(m2.getEndDate()) ? 1 : -1;
+				return result;
+			}	
+		}).getEndDate();
+	}
+	
+	
 	/**
 	 * @param sorting
 	 * @return
