@@ -475,7 +475,7 @@ public class HibernateTestCaseDao extends HibernateEntityDao<TestCase> implement
 		} else if (isEmpty2){
 			return -1;
 		} else {
-			return getMinDate(tc1).before(getMinDate(tc1)) ? 1 : -1;
+			return getMinDate(tc1).before(getMinDate(tc2)) ? 1 : -1;
 		}	
 	}
 

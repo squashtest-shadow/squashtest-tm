@@ -365,6 +365,7 @@ public class VerifiedRequirementsManagerController {
 			res.put("status", item.getStatus().toString());
 			res.put("milestone-dates", MilestoneModelUtils.timeIntervalToString(item.getMilestones(), internationalizationHelper, locale));
 			res.put(DataTableModelConstants.DEFAULT_EMPTY_DELETE_HOLDER_KEY, " ");
+			res.put("milestone", MilestoneModelUtils.milestoneLabelsOrderByDate(item.getMilestones()));
 			return res;
 		}
 	}

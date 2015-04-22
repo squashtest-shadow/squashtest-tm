@@ -88,6 +88,7 @@ data-def='datakeys-id=entity-id ,ajaxsource=${ verifiedRequirementsTableUrl }'>
 			<th data-def="sortable, map=category"><f:message key="requirement.category.label"/></th>
 			<th data-def='map=verifyingSteps'><f:message key="label.test-step.short"/></th>
 			<th data-def='unbind-button,narrow,  map=empty-delete-holder'>&nbsp;</th>
+			  <th data-def="map=milestone, invisible"></th>
 		</tr>
 	</thead>
 	<tbody>

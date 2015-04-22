@@ -56,6 +56,7 @@ class VerifyingTestCasesTableModelHelper extends DataTableModelBuilder<TestCase>
 		row.put("tc-type", type);
 		row.put("milestone-dates", MilestoneModelUtils.timeIntervalToString(tc.getMilestones(), helper, locale));
 		row.put("empty-delete-holder", null);
+		row.put("milestone", MilestoneModelUtils.milestoneLabelsOrderByDate(tc.getMilestones()));
 
 		return row;
 	}

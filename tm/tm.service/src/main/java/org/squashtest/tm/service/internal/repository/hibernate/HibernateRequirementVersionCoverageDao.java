@@ -140,7 +140,7 @@ private int compareReqMilestoneDate(RequirementVersion req1, RequirementVersion 
 		} else if (isEmpty2){
 			return -1;
 		} else {
-			return getMinDate(req1).before(getMinDate(req1)) ? 1 : -1;
+			return getMinDate(req1).before(getMinDate(req2)) ? 1 : -1;
 		}	
 	}
 

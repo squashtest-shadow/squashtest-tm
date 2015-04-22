@@ -83,7 +83,8 @@
 							<th data-def="map=status"><f:message key="requirement.versions.table.col-header.status" /></th>
 							<th data-def="map=criticality"><f:message key="requirement.versions.table.col-header.criticality" /></th>
 							<th data-def="map=category"><f:message key="requirement.versions.table.col-header.category" /></th>
-                            <th data-def="map=milestone-dates"><f:message key="label.Milestones"/></th>
+                            <th data-def="map=milestone-dates, tooltip-target=milestone"><f:message key="label.Milestones"/></th>
+                            <th data-def="map=milestone, invisible"></th>
 						</tr>
 					</thead>
 					<tbody >

@@ -221,7 +221,7 @@ public class RequirementVersionManagerController {
 			row.put("criticality", internationalize(version.getCriticality(), locale, levelFormatterProvider));
 			row.put("category", i18nHelper.getMessage(version.getCategory().getLabel(), null, version.getCategory().getLabel(), locale)  );
 			row.put("milestone-dates", MilestoneModelUtils.timeIntervalToString(version.getMilestones(),i18nHelper, locale));
-
+			row.put("milestone", MilestoneModelUtils.milestoneLabelsOrderByDate(version.getMilestones()));
 			return row;
 
 		}
