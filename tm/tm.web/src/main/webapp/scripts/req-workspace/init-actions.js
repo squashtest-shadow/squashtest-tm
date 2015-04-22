@@ -155,14 +155,19 @@ define(["jquery", "tree","./permissions-rules", "workspace.contextual-content", 
 			});
 
 			// ***************** deletion ********************
+			function openDeleteDialogIfDeletable(){
+				var nodes = tree.jstree('get_selected');
+				if (!rules.canDelete(nodes)) {
+					showError(rules.whyCantDelete(nodes));
+				}
+				else{
+					$("#delete-node-dialog").delnodeDialog("open");
+				}
+			}
 			
-			$("#delete-node-tree-button").on("click", function(){
-				$("#delete-node-dialog").delnodeDialog("open");
-			});
+			$("#delete-node-tree-button").on("click", openDeleteDialogIfDeletable);
 			
-			tree.on("suppr.squashtree", function(){
-				$("#delete-node-dialog").delnodeDialog("open");
-			});
+			tree.on("suppr.squashtree", openDeleteDialogIfDeletable);
 			
 		}
 	};	

@@ -23,7 +23,7 @@ define(["jquery", "tree","./permissions-rules", "workspace.contextual-content", 
         function($, zetree, rules, ctxcontent, eventBus,  translator, copier, treehandler, notification){
 	"use strict";
 
-	translator.load({
+	var messages = {
 		"no-libraries-allowed"	: "tree.button.copy-node.error.nolibrary",
 		"not-unique"			: "tree.button.copy-node.error.notOneEditable",
 		"not-creatable"			: "tree.button.copy-node.error.notOneEditable",
@@ -33,10 +33,12 @@ define(["jquery", "tree","./permissions-rules", "workspace.contextual-content", 
 		"mixed-nodes-iteration-selection" : "tree.button.copy-node.mixediteration",
 		"mixed-nodes-testsuite-selection" : "tree.button.copy-node.mixedsuite",
 		"milestone-denied"		: "squashtm.action.exception.milestonelocked"
-	});
+	};
+	
+	translator.load(messages);
 
 	function showError(messageName){
-		notification.showInfo(translator.get(messageName));
+		notification.showInfo(translator.get(messages[messageName]));
 	}
 
 	function copyIfOk(tree){
@@ -171,13 +173,19 @@ define(["jquery", "tree","./permissions-rules", "workspace.contextual-content", 
 
 			// ***************** deletion ********************
 
-			$("#delete-node-tree-button").on("click", function(){
-				$("#delete-node-dialog").delcampDialog("open");
-			});
-
-			tree.on("suppr.squashtree", function(){
-				$("#delete-node-dialog").delcampDialog("open");
-			});
+			function openDeleteDialogIfDeletable(){
+				var nodes = tree.jstree('get_selected');
+				if (!rules.canDelete(nodes)) {
+					showError(rules.whyCantDelete(nodes));
+				}
+				else{
+					$("#delete-node-dialog").delnodeDialog("open");
+				}
+			}
+			
+			$("#delete-node-tree-button").on("click", openDeleteDialogIfDeletable);
+			
+			tree.on("suppr.squashtree", openDeleteDialogIfDeletable);
 		}
 	};
 
