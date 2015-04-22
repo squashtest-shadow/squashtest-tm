@@ -19,8 +19,8 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 define(["jquery", "backbone", "underscore", "squash.basicwidgets", "jeditable.simpleJEditable",
-		"workspace.routing", "./NewInfoListItemDialog", "./IconSelectDialog", "squash.translator", "jquery.squash.togglepanel", "squashtable", "jquery.squash.formdialog","jquery.squash", "jqueryui",  "jquery.squash.confirmdialog", "jquery.squash.messagedialog" ],
-		function($, backbone, _, basic,	SimpleJEditable, routing, NewInfoListItemDialog, IconSelectDialog, translator) {
+		"workspace.routing", "./NewInfoListItemDialog", "./IconSelectDialog", "squash.translator","app/lnf/Forms", "jquery.squash.togglepanel", "squashtable", "jquery.squash.formdialog","jquery.squash", "jqueryui",  "jquery.squash.confirmdialog", "jquery.squash.messagedialog" ],
+		function($, backbone, _, basic,	SimpleJEditable, routing, NewInfoListItemDialog, IconSelectDialog, translator, Forms) {
 	"use strict";
 
 	translator.load(["label.infoListItems.icon.none",
@@ -367,7 +367,11 @@ define(["jquery", "backbone", "underscore", "squash.basicwidgets", "jeditable.si
 					self.openReindexPopup();
 				}
 				self.ChangeCodePopup.formDialog('close');
-			});
+			}).fail(function(){
+				Forms.input($("#change-code-popup-info-list-item-code")).setState("error",
+						translator.get("message.optionCodeAlreadyDefined"));
+		
+				});
 		},
 		closePopup : function() {
 			$(this).formDialog('close');
