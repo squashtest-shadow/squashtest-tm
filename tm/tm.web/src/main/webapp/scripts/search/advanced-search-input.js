@@ -388,8 +388,13 @@ define([ "jquery", "backbone", "app/squash.handlebars.helpers", "squash.translat
 
 		},
 		
-		makeMultiCascadeFlat : function(tableId, fieldId, fieldTitle, options, enteredValue){
+		makeMultiCascadeFlat : function(tableId, fieldId, fieldTitle, unsortedOptions, enteredValue){
 			enteredValue = enteredValue || {};
+			
+			// issue 4597 : sort the lists alphabetically
+			var options = unsortedOptions.sort(function(l1, l2){
+				return l1.value.localeCompare(l2.value);
+			});
 			
 			/*
 			 *  Setting the initial state.
