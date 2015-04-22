@@ -353,9 +353,7 @@
 		<%---------------------------------------------------------------END  BODY -----------------------------------------------%>
 		
 		<%----------------------------------- add User Popup-----------------------------------------------%>
-		
-		<f:message var="adduserTitle" key="title.AddUser" />	
-		<div id="add-permission-dialog" class="popup-dialog not-displayed" title="${adduserTitle}">
+		<div id="add-permission-dialog" class="popup-dialog not-displayed" title="<f:message key='title.AddPermission' />">
 		
 			<input type="hidden" id="source-status"></input>
 			
