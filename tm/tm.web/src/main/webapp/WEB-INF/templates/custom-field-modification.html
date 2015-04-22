@@ -203,10 +203,10 @@
               </div>
               <div id="cuf-options-panel" class="sq-tg expand" th:if="${customField.inputType.name() == 'DROPDOWN_LIST'}">
                <div class="tg-head">
-                <h3 th:text="#{title.optionsDefinition}"></h3>
+                <h3 th:text="#{title.itemDefinition}"></h3>
                 <div class="tg-toolbar">
                   <input id="add-cuf-option-button"
-               	  class="add-option button" type="button" th:value="#{label.addOption}" value="Add an option" />
+               	  class="add-option button" type="button" th:value="#{label.add}" value="Add an item" />
                 </div>
                </div>
                <div class="tg-body">
@@ -291,7 +291,7 @@
     <table class="form-horizontal">
       <tr class="control-group">
         <td>
-          <label class="control-label" for="new-cuf-option-label" th:text="#{label.newOption}">New option</label>
+          <label class="control-label" for="new-cuf-option-label" th:text="#{label.newOption}">New Option</label>
         </td>
         <td class="controls">
           <input id="new-cuf-option-label" name="new-cuf-option-label" type="text" value="" maxlength="255" size="50" />
