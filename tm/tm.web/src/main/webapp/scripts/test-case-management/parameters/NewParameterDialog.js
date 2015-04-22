@@ -87,11 +87,12 @@ define([ "jquery", "backbone", "app/lnf/Forms", 'workspace.event-bus',
 		},
 
 		confirm : function(event) {
-			this.validate();
-			this._resetForm();
-			$('#parameters-table').squashTable().refresh();
-			this.$el.formDialog("close");
-			this.trigger("newparameterdialog.confirm");
+			if (this.validate()){			
+				this._resetForm();
+				$('#parameters-table').squashTable().refresh();
+				this.$el.formDialog("close");
+				this.trigger("newparameterdialog.confirm");
+			}
 		},
 
 		validate : function(event) {
