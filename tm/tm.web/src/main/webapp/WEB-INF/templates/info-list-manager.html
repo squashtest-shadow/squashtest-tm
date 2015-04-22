@@ -70,18 +70,17 @@
   </div>
   </script>
 
-          <script id="confirm-remove-reindex" type="text/x-handlebars-template" th:inline="text">
-          <div class='display-table-row'>
-            <div class='display-table-cell warning-cell'>
-              <div class='delete-node-dialog-warning'></div>
-            </div>
-            <div class='display-table-cell'>
-              <span class='red-warning-message' th:text="#{dialog.info-list.warning.reindex.after}">I shall reindex</span>
-            </div>
-          </div>
-          </script>
-          
-          
+  <script id="confirm-remove-reindex" type="text/x-handlebars-template" th:inline="text">
+  <div class='display-table-row'>
+    <div class='display-table-cell warning-cell'>
+      <div class='delete-node-dialog-warning'></div>
+    </div>
+    <div class='display-table-cell'>
+      <span class='red-warning-message' th:text="#{dialog.info-list.warning.reindex.after}">I shall reindex</span>
+    </div>
+  </div>
+  </script>
+
 </head>
 <body>
   <div id="navigation" th:include="navbar.frag :: navbar('')">
@@ -118,14 +117,14 @@
       <div id="sub-page-content" class="sub-page-content">
         <div class="fragment-body">
           <div id="cf-table-pane" class="cf">
-            <div class="btn-toolbar right cf">
-              <input id="add-item" type="button" class="sq-btn snap-right" 
+            <div class="btn-toolbar right">
+              <input id="add-item" type="button" class="sq-btn" 
                 value="Add an info list" th:value="#{label.infoList.add}" 
                 title="Create new" th:title="#{tooltip.infoList.add}" 
                 th:attr="data-api-url=@{/info-lists}" />
-              <input id="remove-selected-items" type="button" class="sq-btn snap-right" 
+              <input id="remove-selected-items" type="button" class="sq-btn" 
                 value="Delete selected info lists" th:value="#{label.infoList.remove}" 
-                title="Create new" th:title="#{tooltip.infoList.remove}" />
+                title="Delete selected" th:title="#{tooltip.infoList.remove}" />
             </div>
 
             <div>
