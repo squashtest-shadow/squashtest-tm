@@ -495,9 +495,9 @@
           <label class="confirm-label" th:text="#{dialog.import.file.confirm}">import file confirm</label>
           <span class="confirm-span confirm-file"></span>
         </div>
-        <div class="confirm-div import-project-confirm not-displayed">
+        <div class="confirm-div import-project-confirm not-displayed" th:with="libs=${editableLibraries}">
           <label class="confirm-label" th:text="#{dialog.import.project.confirm}">import project confirm</label>
-          <span class="confirm-span confirm-project" th:text="${editableLibraries[0].project.name}"></span>
+          <span class="confirm-span confirm-project" th:text="${(not libs.isEmpty()) ? libs[0].project.name : ''}"></span>
         </div>
 
         <div th:text="#{dialog.import.confirm.message}">import confirm message</div>

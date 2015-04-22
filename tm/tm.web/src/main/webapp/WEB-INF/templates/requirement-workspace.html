@@ -466,9 +466,9 @@
           <label class="confirm-label" th:text="#{dialog.import.file.confirm}">confirm file</label>
           <span class="confirm-span confirm-file"></span>
         </div>
-        <div class="confirm-div">
+        <div class="confirm-div" th:with="libs=${editableLibraries}">
           <label class="confirm-label" th:text="#{dialog.import.project.confirm}">confirm project</label>
-          <span class="confirm-span confirm-project" th:text="${editableLibraries[0].project.name}">project
+          <span class="confirm-span confirm-project" th:text="${(not libs.isEmpty()) ? libs[0].project.name : ''}">project
             name</span>
         </div>
 

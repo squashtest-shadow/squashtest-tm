@@ -179,7 +179,7 @@ define(["jquery", "tree","./permissions-rules", "workspace.contextual-content", 
 					showError(rules.whyCantDelete(nodes));
 				}
 				else{
-					$("#delete-node-dialog").delnodeDialog("open");
+					$("#delete-node-dialog").delcampDialog("open");
 				}
 			}
 			
