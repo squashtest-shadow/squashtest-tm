@@ -46,7 +46,7 @@ import org.squashtest.tm.validation.constraint.UniqueItems;
 
 @Entity
 @Auditable
-public class InfoList {
+public class InfoList implements Comparable<InfoList> {
 
 	@Id
 	@Column(name = "INFO_LIST_ID")
@@ -159,6 +159,19 @@ public class InfoList {
 
 	public void addItems(int newIndex, List<InfoListItem> addedItems) {
 		items.addAll(newIndex, addedItems);
+	}
+
+	@Override
+	public int compareTo(InfoList infoList) {
+
+		if (this.label != null && infoList.label != null) {
+			return this.label.compareToIgnoreCase(infoList.label);
+		}
+		return 0;
+	}
+
+	public int compare(final InfoList object1, final InfoList object2) {
+		return object1.getLabel().compareTo(object2.getLabel());
 	}
 
 }

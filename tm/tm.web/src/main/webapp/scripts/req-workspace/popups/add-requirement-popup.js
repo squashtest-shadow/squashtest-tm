@@ -36,7 +36,7 @@ define([ 'jquery', 'tree', 'custom-field-values', 'workspace.projects', '../perm
 
 		$.extend(params, cufParams);
 
-		return tree.jstree('postNewNode', 'new-requirement', params, false);
+		return tree.jstree('postNewNode', 'new-requirement', params, true);
 	}
 
 	function addCufHandler(dialog, tree) {

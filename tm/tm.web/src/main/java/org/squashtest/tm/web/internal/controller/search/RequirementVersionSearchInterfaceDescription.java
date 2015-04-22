@@ -22,6 +22,8 @@ package org.squashtest.tm.web.internal.controller.search;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -318,6 +320,16 @@ public class RequirementVersionSearchInterfaceDescription extends SearchInterfac
 		for (Project p : readableProjects){
 			categories.add(p.getRequirementCategories());
 		}
+		// Collections.sort((List<InfoList>) categories);
+		// Collections.sort((List<InfoList>) categories, ALPHABETICAL_ORDER);
+
+		if (categories.size() > 0) {
+			Collections.sort((List<InfoList>) categories, new Comparator<InfoList>() {
+				public int compare(final InfoList object1, final InfoList object2) {
+					return object1.getLabel().compareTo(object2.getLabel());
+				}
+			});
+		}
 
 		populateInfoListFieldModel(categoryField, categories, locale);
 
@@ -325,6 +337,15 @@ public class RequirementVersionSearchInterfaceDescription extends SearchInterfac
 
 	}
 
+	private static Comparator<String> ALPHABETICAL_ORDER = new Comparator<String>() {
+		public int compare(String str1, String str2) {
+			int res = String.CASE_INSENSITIVE_ORDER.compare(str1, str2);
+			if (res == 0) {
+				res = str1.compareTo(str2);
+			}
+			return res;
+		}
+	};
 
 	// get ready to puke !
 	private void populateInfoListFieldModel(SearchInputFieldModel model, Collection<InfoList> infoLists, Locale locale){

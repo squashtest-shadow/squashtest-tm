@@ -82,7 +82,7 @@ define(['jquery', 'tree', 'custom-field-values', 'workspace.projects', '../permi
 			}
 			else{
 				dialog.formDialog('setState','confirm');
-				var name = node.getName();
+				var name = node.getName(); 
 				dialog.find("#new-test-case-tree-button").val(name);				
 			}			
 		});
