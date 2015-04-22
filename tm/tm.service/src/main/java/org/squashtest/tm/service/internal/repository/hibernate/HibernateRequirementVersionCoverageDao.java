@@ -23,6 +23,8 @@ package org.squashtest.tm.service.internal.repository.hibernate;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 
 import org.hibernate.Criteria;
@@ -34,6 +36,8 @@ import org.hibernate.type.LongType;
 import org.springframework.stereotype.Repository;
 import org.squashtest.tm.core.foundation.collection.DefaultPagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
+import org.squashtest.tm.core.foundation.collection.SortOrder;
+import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.testcase.RequirementVersionCoverage;
 import org.squashtest.tm.domain.testcase.TestCase;
@@ -70,6 +74,8 @@ CustomRequirementVersionCoverageDao {
 			res.add((RequirementVersionCoverage)tuple[0]);
 		}
 
+		
+		
 		return res;
 	}
 
@@ -106,11 +112,49 @@ CustomRequirementVersionCoverageDao {
 		for (Object[] tuple : raw){
 			res.add((RequirementVersion)tuple[0]);
 		}
-
+		if ("endDate".equals(pagingAndSorting.getSortedAttribute())){	
+			 Collections.sort(res, new Comparator<RequirementVersion>() {
+				@Override
+				public int compare(RequirementVersion req1, RequirementVersion req2) {
+					return compareReqMilestoneDate(req1, req2);
+				}
+			});
+			 
+			if (pagingAndSorting.getSortOrder().equals(SortOrder.ASCENDING)){
+				Collections.reverse(res);
+			}	
+		}
 		return res;
 
 	}
 
+private int compareReqMilestoneDate(RequirementVersion req1, RequirementVersion req2){
+		
+		boolean isEmpty1 = req1.getMilestones().isEmpty(); 
+		boolean isEmpty2 = req2.getMilestones().isEmpty();
+	
+		if (isEmpty1 && isEmpty2){
+			return 0;
+		} else if (isEmpty1){
+			return 1;
+		} else if (isEmpty2){
+			return -1;
+		} else {
+			return getMinDate(req1).before(getMinDate(req1)) ? 1 : -1;
+		}	
+	}
+
+	private Date getMinDate(RequirementVersion req){
+		return Collections.min(req.getMilestones(), new Comparator<Milestone>(){
+			@Override
+			public int compare(Milestone m1, Milestone m2) {
+				int result = m1.getEndDate().before(m2.getEndDate()) ? 1 : -1;
+				return result;
+			}	
+		}).getEndDate();
+	}
+	
+	
 	@Override
 	public List<RequirementVersion> findDistinctRequirementVersionsByTestCases(Collection<Long> testCaseIds) {
 		PagingAndSorting pas = new DefaultPagingAndSorting("RequirementVersion.name", true);
