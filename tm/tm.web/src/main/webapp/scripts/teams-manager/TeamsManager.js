@@ -32,7 +32,7 @@ define([ "jquery", "backbone", "./TeamsTable", "./NewTeamDialog", "./DeleteTeamD
 					description : ""
 				}
 			});
-			
+
 			this.deleteTeamDialog = new DeleteTeamDialog({
 				model : {
 					name : "",
@@ -54,19 +54,18 @@ define([ "jquery", "backbone", "./TeamsTable", "./NewTeamDialog", "./DeleteTeamD
 		},
 
 		showDeleteTeamDialog : function(event) {
-			
+
 			var table = $("#teams-table").squashTable();
 			var ids = table.getSelectedIds();
-			
+
 			if (ids.length === 0) {
 				notification.showError(translator.get('message.noTeamSelected'));
-			}
-		 else {
+			} else {
 			 this.deleteTeamDialog.show();
 		}
-			
+
 		}
-		
+
 	});
 
 	return View;
