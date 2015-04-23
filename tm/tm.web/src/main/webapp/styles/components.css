@@ -608,6 +608,10 @@ table.ta-project-bind-listdiv tr.listdiv-item.even {
 	line-height:1.2;
 }
 
+.italic{
+	font-style: italic;
+}
+
 .paddingnull	{
 	padding : 0;
 }

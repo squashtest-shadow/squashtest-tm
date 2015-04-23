@@ -192,13 +192,13 @@
           <div class="display-table-cell">
             <label th:text="#{label.callstepdataset.PickNoDataset}">choose none and delegate</label>
             <br/>
-            <span id="pick-call-step-dataset-consequence" th:attr="data-template=#{label.callstepdataset.PickNoDatasetConsequences}"></span>
+           <span id="pick-call-step-dataset-consequence" th:attr="data-template=#{label.callstepdataset.PickNoDatasetConsequences}" class="italic"></span>
           </div>
         </div>
       </div>
     
       <div class="popup-dialog-buttonpane">
-          <input type="button" th:value="#{label.Confirm}" data-def="mainbtn, evt=confirm, state=main"/>
+          <input type="button" th:value="#{label.Add}" data-def="mainbtn, evt=confirm, state=main"/>
           <input type="button" th:value="#{label.Cancel}" data-def="evt=cancel, state=main loading"/>
       </div>
     </div>    
