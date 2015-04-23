@@ -78,7 +78,7 @@ define([ "jquery", "backbone", "handlebars", "app/util/StringUtil", "jquery.squa
 				data : {
 					"password" : newPassword
 				},
-				success : function() {
+				success : function(self) {
 					self.userPasswordSuccess.call(self);
 					this.$dialog.remove();
 				}
