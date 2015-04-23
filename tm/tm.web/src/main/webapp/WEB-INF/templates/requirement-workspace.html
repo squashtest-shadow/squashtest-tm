@@ -541,7 +541,7 @@
       <div id="import-excel-dump" class="not-displayed dump"></div>
 
       <div class="popup-dialog-buttonpane">
-        <input type="button" th:value="#{label.Import}" value="import"
+        <input type="button" th:value="#{label.Import}" value="import"  th:title="#{label.ImportSelectedFile}"
           data-def="evt=import, state=parametrization, mainbtn=parametrization" />
         <input type="button" th:value="#{label.Confirm}" value="confirm"
           data-def="evt=confirm, state=confirm, mainbtn=confirm" />
@@ -550,9 +550,9 @@
           data-def="evt=okerrsize, state=error-size, mainbtn=error-size" />
         <input type="button" th:value="#{label.Ok}" value="ok"
           data-def="evt=okerrformat, state=error-format error-type, mainbtn=error-format error-type" />
-        <input type="button" th:value="#{label.Cancel}" value="cancel"
+        <input type="button" th:value="#{label.Cancel}" value="cancel" th:title="#{label.CancelImport}"
           data-def="evt=cancel, state=parametrization confirm" />
-        <input type="button" th:value="#{label.Cancel}" value="cancel"
+        <input type="button" th:value="#{label.Cancel}" value="cancel" th:title="#{label.CancelImport}"
           data-def="evt=cancel-progression, state=progression" />
       </div>
 

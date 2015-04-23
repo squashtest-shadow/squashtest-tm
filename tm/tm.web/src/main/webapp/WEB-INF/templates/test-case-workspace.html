@@ -617,9 +617,9 @@
       <div id="import-excel-dump" class="not-displayed dump"></div>
 
       <div class="popup-dialog-buttonpane">
-        <input id="simulateButton" type="button" value="simulateLabel" th:value="#{label.Simulate}"
+        <input id="simulateButton" type="button" value="simulateLabel" th:value="#{label.Simulate}" th:title="#{label.SimulateImport}"
           data-def="evt=simulate, state=parametrization" />
-        <input type="button" th:value="#{label.Import}" value="importLabel"
+        <input type="button" th:value="#{label.Import}" value="importLabel" th:title="#{label.ImportSelectedFile}"
           data-def="evt=import, state=parametrization, mainbtn=parametrization" />
         <input type="button" th:value="#{label.Confirm}" value="confirmLabel"
           data-def="evt=confirm, state=confirm, mainbtn=confirm" />
@@ -628,9 +628,9 @@
           data-def="evt=okerrsize, state=error-size, mainbtn=error-size" />
         <input type="button" th:value="#{label.Ok}" value="okLabel"
           data-def="evt=okerrformat, state=error-type error-format, mainbtn=error-type error-format" />
-        <input type="button" th:value="#{label.Cancel}" value="cancelLabel"
+        <input type="button" th:value="#{label.Cancel}" value="cancelLabel"  th:title="#{label.CancelImport}"
           data-def="evt=cancel, state=parametrization confirm" />
-        <input type="button" th:value="#{label.Cancel}" value="cancelLabel"
+        <input type="button" th:value="#{label.Cancel}" value="cancelLabel" th:title="#{label.CancelImport}"
           data-def="evt=cancel-progression, state=progression" />
       </div>
 
