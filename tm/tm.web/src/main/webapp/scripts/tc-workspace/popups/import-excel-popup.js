@@ -90,12 +90,15 @@ define([ "jquery", "tree", "handlebars", "underscore", "workspace/workspace.impo
 			this.element.on("change", "input[name='import-type']", function() {
 				var value = $(this).val();
 				self.importType = value;
-				self.options.formats = self.options.typeFormats[value];
+				self.options.formats = self.options.typeFormats[value]; 
 				$("#simulateButton").prop("disabled", value === "zip");
 				$("#import-err-filetype").text(self.options.formats);
 				$(".import-err-filetype-text").hide();
 				$(".import-project-confirm").hide();
-				if(_.contains(self.options.formats, "zip")){
+				if(!_.isNull()){
+					
+				}
+				else if(_.contains(self.options.formats, "zip")){
 					$("#import-err-filetype-text-zip").show();
 					$(".import-project-confirm").show();
 				} else {

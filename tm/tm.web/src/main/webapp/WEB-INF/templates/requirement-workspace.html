@@ -526,8 +526,14 @@
 
       <div class="error-type" data-def="state=error-type">
         <span class="import-err-filetype-text" id="import-err-filetype-text-xls">
-          <span th:remove="tag" th:text="#{dialog.import.wrongfile}">wrong file , accepts</span>
+          <span th:remove="tag" th:text="#{dialog.import-excel.requirement.empty}">wrong file , accepts</span>
           <span id="import-err-filetype">xls, xlsx</span>
+        </span>
+      </div>
+      
+      <div class="error-type" data-def="state=error-null">
+        <span class="import-err-null-text" id="import-err-null-text">
+          <span th:remove="tag" th:text="#{dialog.import-excel.requirement.empty}">no file</span>
         </span>
       </div>
 
@@ -671,7 +677,7 @@
 
         <div class="error-type" data-def="state=error-type">
           <span class="import-err-filetype-text" id="import-err-filetype-text-xls">
-            <span th:remove="tag" th:text="#{dialog.import.wrongfile}">wrong file</span>
+            <span th:remove="tag" th:text="#{dialog.import-excel.requirement.empty}">wrong file</span>
             <span id="import-err-filetype">xls, xlsx</span>
           </span>
         </div>
