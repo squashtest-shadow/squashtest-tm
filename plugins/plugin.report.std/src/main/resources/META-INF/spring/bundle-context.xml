@@ -290,10 +290,12 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
 								<property name="value" value="1" />
 								<property name="defaultSelected" value="true" />
 								<property name="labelKey" value="report.criteria.panel.requirement.version.include.all.label" />
+								<property name="givesAccessTo" value="radio-allversions" />
 							</bean>
 							<bean class="org.squashtest.tm.api.report.form.OptionInput">
 								<property name="value" value="2" />
 								<property name="labelKey" value="report.criteria.panel.requirement.version.include.last.label" />
+								<property name="givesAccessTo" value="radio-lastversion" />
 							</bean>
 						</list>
 					</property>
