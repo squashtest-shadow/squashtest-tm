@@ -34,11 +34,11 @@ th:with="isWritable = ${#authorization.expression('hasRole(''ROLE_ADMIN'')')  or
   
   <div class="toolbar" th:if="${isWritable}">
   
-    <button class="sq-icon-btn btn-sm milestone-panel-bind-button" th:title="#{label.AssociateMilestoneToRequirement}" >
+    <button class="sq-icon-btn btn-sm milestone-panel-bind-button" th:title="#{dialog.milestone.add. + ${conf.nodeType}}" >
        <span class="ui-icon ui-icon-plus squared-icons">+</span>
     </button>
   
-    <button class="sq-icon-btn btn-sm milestone-panel-unbind-button" th:title="#{label.DisssociateMilestoneToRequirement}">
+    <button class="sq-icon-btn btn-sm milestone-panel-unbind-button" th:title="#{dialog.milestone.unbind. + ${conf.nodeType}}" >
        <span class="ui-icon ui-icon-minus squared-icons">-</span>
     </button>
     
