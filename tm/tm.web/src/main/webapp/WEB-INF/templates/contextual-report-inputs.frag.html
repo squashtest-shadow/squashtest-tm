@@ -68,9 +68,9 @@
   <!-- CHECKBOX -->
   <!--  params = input -->
   <div th:fragment="checkbox">
-    <input name="rpt-chk-crit" th:id="${input.name}" th:name="${input.name}" type="checkbox" th:value="${input.value}"
+    <input name="rpt-chk-crit" th:id="${checkboxId}" th:name="${input.name}" type="checkbox" th:value="${input.value}"
       th:checked="${input.defaultSelected}" th:attr="data-grouped=${grouped ne null and grouped}, data-disabledby=${input.disabledBy}"/>
-    <label for="rpt-chk-crit" th:for="${input.name}" th:text="${input.label}">Checkbox criteria</label>
+    <label for="rpt-chk-crit" th:for="${checkboxId}" th:text="${input.label}">Checkbox criteria</label>
   </div>
 
 
