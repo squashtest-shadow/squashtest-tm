@@ -32,7 +32,7 @@ define([ "jquery", "backbone", "handlebars", "app/lnf/Forms",
 
 		$.ajax({
 			type : 'post',
-			url : squashtm.app.contextRoot + "/generic-projects/new",
+			url : window.squashtm.app.contextRoot + "/generic-projects/new",
 			dataType : 'json',
 			// note : we cannot use promise api with async param. see
 			// http://bugs.jquery.com/ticket/11013#comment:40
@@ -121,8 +121,8 @@ define([ "jquery", "backbone", "handlebars", "app/lnf/Forms",
 			function decorateArea() {
 				$(this).ckeditor(function() {
 				}, {
-					customConfig : squashtm.app.contextRoot + "/styles/ckeditor/ckeditor-config.js",
-					language : squashtm.app.ckeditorLanguage
+					customConfig : window.squashtm.app.contextRoot + "/styles/ckeditor/ckeditor-config.js",
+					language : window.squashtm.app.ckeditorLanguage
 				});
 			}
 
