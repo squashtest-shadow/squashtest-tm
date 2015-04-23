@@ -18,34 +18,20 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define(["jquery", "backbone", "underscore", "squash.basicwidgets", "jeditable.simpleJEditable",
+define(["jquery", "backbone", "underscore",  "jeditable.simpleJEditable",
 	"squash.configmanager", "workspace.routing", "jquery.squash.togglepanel", "squashtable" ],
-	function($, backbone, _, basic, SimpleJEditable, confman, routing) {
+	function($, backbone, _,  SimpleJEditable, confman, routing) {
 	"use strict";
 
+	
+	/*
+	 * That Backbone view is left for the sake of completedness but 
+	 * is no more necessary : all its content is now handled by some DOM attribute directives 
+	 * and the module basicwidget
+	 * 
+	 */
 	var InformationView = Backbone.View.extend({
-		el : "#information-view",
-		initialize : function(config) {
-			this.config = config;
-			this.editableInit();
-		},
-
-		editableInit : function() {
-			var infoListUrl = routing.buildURL("info-list.info", this.config.data.infoList.id);
-
-			var descOptions = confman.getStdJeditable();
-			$.extend(descOptions, {
-				type : 'textarea',
-				cols : 80,
-				rows : 10,
-			});
-			$("#info-list-description").editable(infoListUrl, descOptions);
-
-			var codeEditable = new SimpleJEditable({
-				target : infoListUrl,
-				componentId : "info-list-code",
-			});
-		}
+		el : "#information-view"		
 	});
 
 	return InformationView;

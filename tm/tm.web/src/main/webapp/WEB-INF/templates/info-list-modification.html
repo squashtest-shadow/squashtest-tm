@@ -100,23 +100,20 @@
                       <div class="tg-head">
                               <h3 th:text="#{label.infoList.info}"></h3>
                             </div>
-              <div id="info-list-info-panel"
-                class="information-panel tg-body">
+              <div id="info-list-info-panel"  class="information-panel tg-body" th:with="url=@{/info-lists/}+${infoList.id}">
                 <div class="display-table" id="info-list-infos-table">
                   <div class="display-table-row controls control-group">
                     <label for="info-list-description"
                       th:text="#{label.Description}" class="display-table-cell">Label</label>
                     <div id="info-list-description"
-                      class="display-table-cell editable"
-                      th:utext="${infoList.description}">Description</div>
+                      class="display-table-cell editable rich-editable"
+                      th:utext="${infoList.description}" th:attr="data-def='url='+${url}">Description</div>
                     <span class="help-inline">&nbsp;</span>
                   </div>
                   <div class="display-table-row controls control-group">
-                    <label for="info-list-code"
-                      class="control-label display-table-cell"
-                      th:text="#{label.code}">Code</label>
-                    <div id="info-list-code" class="display-table-cell"
-                      th:text="${infoList.code}">code</div>
+                    <label for="info-list-code" class="control-label display-table-cell" th:text="#{label.code}">Code</label>
+                    <div id="info-list-code" class="display-table-cell text-editable" th:text="${infoList.code}"
+                        th:attr="data-def='url='+${url}">code</div>
                     <span class="help-inline">&nbsp;</span>
                   </div>
 
