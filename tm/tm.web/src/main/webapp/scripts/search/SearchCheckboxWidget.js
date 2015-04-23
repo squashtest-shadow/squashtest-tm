@@ -31,40 +31,30 @@ define(["jquery", "jqueryui"], function($){
 		},
 		
 		fieldvalue : function(value){
+			var box = $(this.element).find('input'),
+				label = $(this.element).find('label');
 			
-			if(!value){
-			
-			var checked = $($(this.element.children()[0]).children()[0]).prop('checked');
-			var selectedValue = $($(this.element.children()[0]).children()[1]).val();
-			if(checked){
+			if(arguments.length===0){			
+				var checked = box.prop('checked');
 				var id = $(this.element).attr("id");
-				return {"type" : "LIST",
-						"values" : selectedValue};
+				
+				return {
+					"type" : "SINGLE",
+					"value" : checked
+				};
 			} else {
-				return null;
+				var isChecked = (value === 'true');
+				box.prop('checked', isChecked);
 			}
-			} else {
-				$($(this.element.children()[0]).children()[0]).attr('checked', 'checked');
-				$("option", $($(this.element.children()[0]).children()[1]).removeAttr("selected"));
-				for (var i=0, len = value.values.length; i<len;i++){
-					$("option[value='"+value.values[i]+"']", $($(this.element.children()[0]).children()[1]).attr("selected", "selected"));
-				}
-			}
+			
+			label.on('click', function(){
+				var chk = box.prop('checked');
+				box.prop('checked', !chk);
+			});
 		}, 
 		
 		createDom : function(id, options){
-			
-			var input = $("select", this.element);
-			
-			var opt;
-			for (var i=0, len = options.length; i<len;i++){
-				opt = $('<option>', {
-					'text' : options[i].value,
-					'value' : options[i].code
-				});
-				opt.html(options[i].value);
-				input.append(opt);
-			}
+
 		}
 	 });
 	return searchwidget;

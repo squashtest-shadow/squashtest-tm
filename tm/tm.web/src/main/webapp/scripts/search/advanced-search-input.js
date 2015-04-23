@@ -313,12 +313,11 @@ define([ "jquery", "backbone", "app/squash.handlebars.helpers", "squash.translat
 		},
 
 		makeCheckboxField : function(tableId, fieldId, fieldTitle, options, enteredValue) {
-			// FIXME I cannot find the matching template ?!
 			var context = {"text-checkbox-id": fieldId, "text-checkbox-title": fieldTitle};
 			var $fieldDom = this._appendFieldDom(tableId, fieldId, this._compileTemplate("#checkbox-template", context));
 			$fieldDom.searchCheckboxWidget();
 			$fieldDom.searchCheckboxWidget("createDom", "F"+fieldId, options);
-			$fieldDom.searchCheckboxWidget("fieldvalue", enteredValue);
+			$fieldDom.searchCheckboxWidget("fieldvalue", (enteredValue !== undefined)? enteredValue : 'true');
 
 		},
 

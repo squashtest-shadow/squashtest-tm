@@ -22,6 +22,8 @@ package org.squashtest.tm.web.internal.controller.search;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -122,51 +124,7 @@ public class TestcaseSearchInterfaceDescription extends SearchInterfaceDescripti
 		return panel;
 	}
 
-	public SearchInputPanelModel createMilestonePanel(Locale locale){
-		SearchInputPanelModel panel = new SearchInputPanelModel();
-		panel.setTitle(getMessageSource().internationalize("label.Milestone", locale));
-		panel.setOpen(true);
-		panel.setId("milestone");
-		panel.setLocation("column1");
-		panel.addCssClass("search-icon-attributes");
-		
-		SearchInputFieldModel searchByMilestone = new SearchInputFieldModel("searchByMilestone", getMessageSource()
-				.internationalize("search.requirement.content.version.label", locale), RADIOBUTTON);
-		panel.addField(searchByMilestone);
 
-		OptionBuilder optionBuilder = optionBuilder(locale);
-		searchByMilestone.addPossibleValue(optionBuilder.labelI18nKey("search.milestone.search-by-milestone.no").optionKey(FALSE)
-				.selected().build());
-		searchByMilestone.addPossibleValue(optionBuilder.labelI18nKey("search.milestone.search-by-milestone.yes")
-				.optionKey(TRUE).build());	
-		
-		SearchInputFieldModel labelField = new SearchInputFieldModel("milestone.label", getMessageSource()
-				.internationalize("label.Label", locale), MULTISELECT);
-		panel.addField(labelField);
-
-		for (Milestone milestone : milestoneFinder.findAllVisibleToCurrentUser()){
-			labelField.addPossibleValue(optionBuilder.label(milestone.getLabel()).optionKey(milestone.getLabel()).build());
-		}	 
-		
-		SearchInputFieldModel statusField = new SearchInputFieldModel("milestone.status", getMessageSource()
-				.internationalize("label.Status", locale), MULTISELECT);
-		panel.addField(statusField);
-
-		List<SearchInputPossibleValueModel>  statusOptions = levelComboBuilder(MilestoneStatus.values())
-				.useLocale(locale).build();
-		 statusField.addPossibleValues( statusOptions);
-		 
-		 
-		 SearchInputFieldModel endDateField = new SearchInputFieldModel("milestone.endDate", getMessageSource()
-					.internationalize("label.EndDate", locale), DATE);
-			panel.addField(endDateField);
-		 
-		
-		 
-		return panel;
-		
-	}
-	
 	public SearchInputPanelModel createAssociationPanel(Locale locale) {
 
 		SearchInputPanelModel panel = new SearchInputPanelModel();

@@ -21,6 +21,7 @@
 package org.squashtest.tm.web.internal.controller.search;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
@@ -34,7 +35,10 @@ import org.springframework.context.i18n.LocaleContextHolder;
 import org.squashtest.tm.core.foundation.i18n.Internationalizable;
 import org.squashtest.tm.domain.Level;
 import org.squashtest.tm.domain.LevelComparator;
+import org.squashtest.tm.domain.milestone.Milestone;
+import org.squashtest.tm.domain.milestone.MilestoneStatus;
 import org.squashtest.tm.domain.project.Project;
+import org.squashtest.tm.service.milestone.MilestoneFinderService;
 import org.squashtest.tm.service.project.ProjectFilterModificationService;
 import org.squashtest.tm.web.internal.helper.InternationalizableLabelFormatter;
 import org.squashtest.tm.web.internal.helper.LevelLabelFormatter;
@@ -218,6 +222,7 @@ public abstract class SearchInterfaceDescription {
 	protected static final String MULTIAUTOCOMPLETE = "multiautocomplete";
 	protected static final String MULTICASCADEFLAT = "multicascadeflat";
 	protected static final String RADIOBUTTON = "radiobutton";
+	protected static final String CHECKBOX = "checkbox";
 	protected static final String ATLEASTONE = "1";
 	protected static final String NONE = "0";
 	protected static final String EMPTY = "";
@@ -229,11 +234,15 @@ public abstract class SearchInterfaceDescription {
 
 	@Inject
 	private Provider<LevelLabelFormatter> levelLabelFormatter;
+
 	@Inject
 	private Provider<InternationalizableLabelFormatter> internationalizableLabelFormatter;
 
 	@Inject
 	private ProjectFilterModificationService projectFilterService;
+
+	@Inject
+	private MilestoneFinderService milestoneFinder;
 
 	/**
 	 * 
@@ -241,6 +250,76 @@ public abstract class SearchInterfaceDescription {
 	public SearchInterfaceDescription() {
 		super();
 	}
+
+
+	public SearchInputPanelModel createMilestonePanel(Locale locale){
+
+		/*
+		 * Additional specs from issue 4667
+		 * 
+		 * 1/ the whole feature is now activated by a checkbox,
+		 * 2/ sort the milestones alphabetically,
+		 * 3/ don't show milestones having status=PLANNED
+		 */
+
+
+		SearchInputPanelModel panel = new SearchInputPanelModel();
+		panel.setTitle(getMessageSource().internationalize("label.Milestone", locale));
+		panel.setOpen(true);
+		panel.setId("milestone");
+		panel.setLocation("column1");
+		panel.addCssClass("search-icon-attributes");
+
+		OptionBuilder optionBuilder = optionBuilder(locale);
+
+		// fields declaration
+
+		SearchInputFieldModel searchByMilestone = new SearchInputFieldModel("searchByMilestone", getMessageSource()
+				.internationalize("search.milestone.search-by-milestone", locale), CHECKBOX);
+
+		SearchInputFieldModel labelField = new SearchInputFieldModel("milestone.label", getMessageSource()
+				.internationalize("label.Label", locale), MULTISELECT);
+
+		SearchInputFieldModel statusField = new SearchInputFieldModel("milestone.status", getMessageSource()
+				.internationalize("label.Status", locale), MULTISELECT);
+
+		SearchInputFieldModel endDateField = new SearchInputFieldModel("milestone.endDate", getMessageSource()
+				.internationalize("label.EndDate", locale), DATE);
+
+
+		panel.addField(searchByMilestone);
+		panel.addField(labelField);
+		panel.addField(statusField);
+		panel.addField(endDateField);
+
+		// populate the content of these fields
+
+		List<Milestone> milestones = milestoneFinder.findAllVisibleToCurrentUser();
+		Collections.sort(milestones, new Comparator<Milestone>() {
+			@Override
+			public int compare(Milestone o1, Milestone o2) {
+				return o1.getLabel().compareTo(o2.getLabel());
+			}
+		});
+
+		for (Milestone milestone : milestones){
+			if (! milestone.getStatus().equals(MilestoneStatus.PLANNED)){
+				labelField.addPossibleValue(optionBuilder.label(milestone.getLabel()).optionKey(milestone.getLabel()).build());
+			}
+		}
+
+
+		List<SearchInputPossibleValueModel>  statusOptions = levelComboBuilder(new MilestoneStatus[]{
+				MilestoneStatus.IN_PROGRESS, MilestoneStatus.FINISHED, MilestoneStatus.LOCKED
+		})
+		.useLocale(locale).build();
+		statusField.addPossibleValues( statusOptions);
+
+
+		return panel;
+
+	}
+
 
 	protected final <T extends Enum<?> & Level> OptionListBuilder levelComboBuilder(T[] values) {
 		return new OptionListBuilder(delegateLevelComboBuilder(values));
