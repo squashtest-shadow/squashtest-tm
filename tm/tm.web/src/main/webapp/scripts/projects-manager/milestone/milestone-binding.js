@@ -311,28 +311,28 @@ define([ 'module', "jquery", "squash.basicwidgets", "workspace.routing", "squash
 			}
 			
 			$("#unbind-milestone-button").on('click', function(){
-						var ids = $("#binded-milestone-table").squashTable().getSelectedIds();
+				var ids = $("#binded-milestone-table").squashTable().getSelectedIds();
 
-						$("#warning-unbind-message").text(warn.errorMulti);
-						
-						if (ids.length>0){
-							var popup = $("#unbind-milestone-popup");
-							popup.data('entity-id', ids);
-							popup.confirmDialog('open');
+				$("#warning-unbind-message").text(warn.errorMulti);
 				
-						}
-						else{
-							displayNothingSelected();
-						}
-					});
-					
-					function displayNothingSelected(){
-						var warn = translator.get({
-							errorTitle : 'popup.title.Info',
-							errorMessage : 'message.EmptyTableSelection'
-						});
-						$.squash.openMessage(warn.errorTitle, warn.errorMessage);
-					}
+				if (ids.length>0){
+					var popup = $("#unbind-milestone-popup");
+					popup.data('entity-id', ids);
+					popup.confirmDialog('open');
+		
+				}
+				else{
+					displayNothingSelected();
+				}
+			});
+			
+			function displayNothingSelected(){
+				var warn = translator.get({
+					errorTitle : 'popup.title.Info',
+					errorMessage : 'message.EmptyTableSelection'
+				});
+				$.squash.openMessage(warn.errorTitle, warn.errorMessage);
+			}
 					
 			//create and bind milestone to the project
 			$("#create-and-bind-milestone-button").on('click', function() {
@@ -344,25 +344,23 @@ define([ 'module', "jquery", "squash.basicwidgets", "workspace.routing", "squash
 
 			createAndBindMilestoneDialog.formDialog();
 
-			createAndBindMilestoneDialog.on('formdialogcancel', function() {
-				
+			createAndBindMilestoneDialog.on('formdialogcancel', function() {				
 				createAndBindMilestoneDialog.formDialog('close');
-				});			
+			});			
 					
-			   function getPostDate(localizedDate){
-					try{
-					var postDateFormat = $.datepicker.ATOM;   
-					var date = $.datepicker.parseDate(translator.get("squashtm.dateformatShort.datepicker"), localizedDate);
-					var postDate = $.datepicker.formatDate(postDateFormat, date);
-					return postDate;
-					} catch(err){ return null;}
-					}
+		   function getPostDate(localizedDate){
+				try{
+				var postDateFormat = $.datepicker.ATOM;   
+				var date = $.datepicker.parseDate(translator.get("squashtm.dateformatShort.datepicker"), localizedDate);
+				var postDate = $.datepicker.formatDate(postDateFormat, date);
+				return postDate;
+				} catch(err){ return null;}
+			}
 
-				//created, bind to project and bind to all object in that project
-				createAndBindMilestoneDialog.on('formdialogbind', function(){
-				createMilestone(bindMilestoneToProjectAndAllObject, "IN_PROGRESS");
-  
-			   });
+			//created, bind to project and bind to all object in that project
+			createAndBindMilestoneDialog.on('formdialogbind', function(){
+				createMilestone(bindMilestoneToProjectAndAllObject, "IN_PROGRESS");  
+			});
 			
 			   //create and bind to project
 			createAndBindMilestoneDialog.on('formdialogconfirm', function() {	
@@ -388,8 +386,7 @@ define([ 'module', "jquery", "squash.basicwidgets", "workspace.routing", "squash
 				$.ajax({
 					url : urlBind,
 					type : 'POST',
-					data : {Ids : id,
-						bindObjects: ""}
+					data : {Ids : id, bindObjects: ""}
 				}).success(function() {
 					refreshAllTables();
 					createAndBindMilestoneDialog.formDialog('close');
@@ -404,6 +401,10 @@ define([ 'module', "jquery", "squash.basicwidgets", "workspace.routing", "squash
 					endDate: getPostDate($( '#add-milestone-end-date').text()),
 					description: $( '#add-milestone-description' ).val()
 				};
+				
+				// issue 4691 : clear the error messages
+				createAndBindMilestoneDialog.find('.error-message').text('');
+				
 				$.ajax({
 					url : urlCreate,
 					type : 'POST',
