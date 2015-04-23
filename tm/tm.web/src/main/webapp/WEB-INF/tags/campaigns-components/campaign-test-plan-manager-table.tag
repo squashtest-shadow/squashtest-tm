@@ -96,7 +96,7 @@
     
   </div>
 
-  <%-- ===================== THE TABLE ===================== --%>
+  <%-- ===================== THE TABLE ===================== --%> 
   <%--
     Because the filtering/sorting system might not like that a column may be defined or not,
     the column must always be present. It may, however, be displayed or not.
@@ -129,7 +129,7 @@
           <th class="no-user-select tp-th-filter tp-th-dataset" data-def="map=dataset.selected.name, sortable, sWidth=10%, sClass=dataset-combo">
             <f:message key="label.Dataset" />
           </th>       
-          <th class="no-user-select" data-def="map=empty-delete-holder, unbind-button=#unbind-test-case-dialog">&nbsp;</th>
+          <th class="no-user-select" data-def="map=empty-delete-holder, unbind-button=#unbind-test-case-dialog">">&nbsp;</th> 
         </tr>
       </thead>
       <tbody>
@@ -189,8 +189,7 @@
 
 <script type="text/javascript">
   require(["common"], function(){
-    require(["domReady", "campaign-management"], function(domReady, campInit){
-      
+    require(["domReady", "campaign-management", "squash.translator"], function(domReady, campInit, translator){
     <%--
       Note about module 'campaign-management' :
       
@@ -224,7 +223,12 @@
             },
             data : {
               campaignId : ${campaign.id}
-            }
+            },
+            table : $("#campaign-test-plans-table").squashTable({}, {
+              unbindButtons : {
+                tooltip : translator.get('label.UnbindTestCase')
+              }
+            }),
           };
           
         campInit.initTestPlanPanel(conf);
