@@ -88,8 +88,8 @@ it will insert sub-page-layout.tag between the top template and this one." %>
 		<div style="overflow:hidden;height:100%;">
 			<div  id="tree-picker-actions-pane" class="centered">
 				<div style="position:absolute;top:45%;margin-right:2em;">
-					<div id="add-items-button" class="association-button" ></div>  
-					<div id="remove-items-button" class="association-button" ></div>
+					<div id="add-items-button" class="association-button" title="<f:message key="label.Associate" />"  ></div>  
+					<div id="remove-items-button" class="association-button" title="<f:message key="label.Unbind" />" ></div>  
 				</div>
 			</div>
 			
