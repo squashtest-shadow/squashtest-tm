@@ -24,29 +24,18 @@ define([ "jquery", "backbone", "handlebars", "app/lnf/Forms",
 	/**
 	 * Saves the model
 	 * @param model
-	 * @param event (optional) if invoked in repsonse to an event, please provide that event.
-	 * @returns {Boolean} true if model was saved without errors
+	 * @returns the ajax call's promise
 	 */
-	function saveModel(model, event) {
-		var res = true;
-
-		$.ajax({
+	function saveModel(model) {
+		return $.ajax({
 			type : 'post',
 			url : window.squashtm.app.contextRoot + "/generic-projects/new",
 			dataType : 'json',
 			// note : we cannot use promise api with async param. see
 			// http://bugs.jquery.com/ticket/11013#comment:40
 			async : false,
-			data : model,
-			error : function(jqXHR, textStatus, errorThrown) {
-				res = false;
-				if (!!event) {
-					event.preventDefault();
-				}
-			}
+			data : model
 		});
-
-		return res;
 	}
 
 	var View = Backbone.View.extend({
@@ -58,13 +47,15 @@ define([ "jquery", "backbone", "handlebars", "app/lnf/Forms",
 			this.$textFields = this.$el.find("input:text");
 			this.$errorMessages = this.$el.find("span.error-message");
 
+			_.bindAll(this, "cleanup");
+
 			this._resetForm();
 		},
 
 		events : {
 			"formdialogaddanother" : "addAnother",
 			"formdialogconfirm" : "addAndClose",
-			"formdialogcancel" : "cancel",
+			"formdialogcancel" : "cancel"
 		},
 
 		cancel : function(event) {
@@ -72,25 +63,25 @@ define([ "jquery", "backbone", "handlebars", "app/lnf/Forms",
 			this.trigger("newproject.cancel", { source: event, view: this });
 		},
 
-		addProject: function(event, postStep) {
+		addProject: function(postStep) {
 			this._populateModel();
 			Forms.form(this.$el).clearState();
 
-			if (saveModel(this.model, event)) {
+			saveModel(this.model).done(function() {
 				this.trigger("newproject.added", { source: event, view: this, model: this.model });
-				postStep.call(this, event);
-			}
+				postStep.call(this);
+			}.bind(this));
 		},
 
 		addAnother : function(event) {
-			this.addProject(event, function() {
+			this.addProject(function() {
 				this.$el.addClass("not-displayed");
 				this._resetForm();
 			});
 		},
 
 		addAndClose: function(event) {
-			this.addProject(event, this.cleanup);
+			this.addProject(this.cleanup);
 		},
 
 		cleanup : function() {
@@ -118,6 +109,7 @@ define([ "jquery", "backbone", "handlebars", "app/lnf/Forms",
 		_initializeDialog : function() {
 			this.$el.formDialog();
 
+			/*jshint validthis: true */
 			function decorateArea() {
 				$(this).ckeditor(function() {
 				}, {
