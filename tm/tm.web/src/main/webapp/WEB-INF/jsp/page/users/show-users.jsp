@@ -37,8 +37,8 @@
 <s:url var="userInfoUrl" value="/administration/users/{user-id}/info" />
 <s:url var="tableModelUrl" value="/administration/users/table" />
 
-<c:set var="tableModel" 		value="${json:serialize(userList)}"/>
-<c:set var="tableModelLength" 	value="${fn:length(tableModel)}" />
+<c:set var="tableModel"     value="${json:serialize(userList)}"/>
+<c:set var="tableModelLength"   value="${fn:length(tableModel)}" />
 
 
 <f:message var="addAnotherLabel" key="label.addAnother" />
@@ -52,77 +52,77 @@
 
 
 <layout:info-page-layout titleKey="squashtm.users.title" isSubPaged="true">
-	<jsp:attribute  name="head">	
-		<comp:sq-css name="squash.grey.css" />	
-	</jsp:attribute>
-	
-	<jsp:attribute name="titlePane">
-		<h2 class="admin"><f:message key="label.administration" /></h2>	
-	</jsp:attribute>
-	<jsp:attribute name="subPageTitle">
-		<h2><f:message key="workspace.project.info" /></h2>
-	</jsp:attribute>
-	
-	<jsp:attribute name="subPageButtons">
-			<f:message var="back" key="label.Back" /> 
-				<input id="back" type="button" value="${ back }" class="sq-btn" />
-	</jsp:attribute>
-	<jsp:attribute name="informationContent">	
-			<div class="fragment-tabs fragment-body">
-			<ul class="tab-menu">
-				<li><a href="#users-table-pane"><f:message key="label.users"/></a></li>
-				<li><a href="#team-table-pane"><f:message key="label.teams"/></a></li>
-			</ul>
-			<div id="users-table-pane" class="table-tab">
-				<!-- z-index fix needed for button pane because it would be partially shadowed by the table filter input otherwise -->
-				<div class="toolbar" style="z-index:1;">
-					<a id="add-user-button" class="test-step-toolbar-button ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-primary .squash-button-initialized"
-					 title="<f:message key="user.add.label" />" >
-					 <span class="ui-icon ui-icon-plusthick" style="padding: 0;">+</span> <span class="ui-button-text"><f:message key="label.Add" /></span></a>
-					<a id="activate-user-button" href="#" ><f:message key="label.activate-users"/></a>
-					<a id="deactivate-user-button" href="#" ><f:message key="label.deactivate-users"/></a>
-					<button id="delete-user-button" href="#" class="test-step-toolbar-button ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-primary .squash-button-initialized"
-					 title="<f:message key="label.delete-users" />" >
-					<span class="ui-icon ui-icon-trash"></span>
-					<span class="ui-button-text"><f:message key="label.Delete" /></span></button>
-				</div>
-				<div class="table-tab-wrap">
-					<table id="users-list-table"  class="unstyled-table" 
-							data-def="ajaxsource=${tableModelUrl}, datakeys-id=user-id, deferLoading=${tableModelLength},
-							pagesize=50, filter, pre-sort=2-asc">
-						<thead>
-							<tr>
-								<th class="user-index" 							data-def="map=user-index, select">#</th>
-								<th class="user-active"							data-def="map=user-active, narrow, center, sClass=user-active-cell"><f:message key="label.active"/></th>								
-								<th class="user-login datatable-filterable" 	data-def="map=user-login, sortable, link=${userInfoUrl}"><f:message key="label.Login" /></th>
-								<th class="user-group" 							data-def="map=user-group, sortable"><f:message key="label.Group" /></th>
-								<th class="user-firstname datatable-filterable" data-def="map=user-firstname, sortable"><f:message key="label.FirstName" /></th>
-								<th class="user-lastname datatable-filterable"	data-def="map=user-lastname, sortable"><f:message key="label.LastName" /></th>
-								<th class="user-email datatable-filterable"		data-def="map=user-email, sortable"><f:message key="label.Email" /></th>
-								<th class="user-created-on"						data-def="map=user-created-on, sortable"><f:message key="label.CreatedOn" /></th>
-								<th class="user-created-by datatable-filterable"data-def="map=user-created-by, sortable"><f:message key="label.createdBy" /></th>
-								<th class="user-modified-on"					data-def="map=user-modified-on, sortable"><f:message key="label.modifiedOn" /></th>	
-								<th class="user-modified-by datatable-filterable"data-def="map=user-modified-by, sortable"><f:message key="label.modifiedBy" /></th>
-								<th class="empty-delete-holder" 				data-def="map=empty-delete-holder, delete-button=#delete-user-dialog"></th>
-							</tr>
-						</thead>
-						<tbody>
-							<%-- Will be populated through ajax --%>
-						</tbody>
-					</table>
+  <jsp:attribute  name="head">  
+    <comp:sq-css name="squash.grey.css" />  
+  </jsp:attribute>
+  
+  <jsp:attribute name="titlePane">
+    <h2 class="admin"><f:message key="label.administration" /></h2>  
+  </jsp:attribute>
+  <jsp:attribute name="subPageTitle">
+    <h2><f:message key="workspace.project.info" /></h2>
+  </jsp:attribute>
+  
+  <jsp:attribute name="subPageButtons">
+      <f:message var="back" key="label.Back" /> 
+        <input id="back" type="button" value="${ back }" class="sq-btn" />
+  </jsp:attribute>
+  <jsp:attribute name="informationContent">  
+      <div class="fragment-tabs fragment-body">
+      <ul class="tab-menu">
+        <li><a href="#users-table-pane"><f:message key="label.users"/></a></li>
+        <li><a href="#team-table-pane"><f:message key="label.teams"/></a></li>
+      </ul>
+      <div id="users-table-pane" class="table-tab">
+        <!-- z-index fix needed for button pane because it would be partially shadowed by the table filter input otherwise -->
+        <div class="toolbar" style="z-index:1;">
+          <a id="add-user-button" class="test-step-toolbar-button ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-primary .squash-button-initialized"
+           title="<f:message key="user.add.label" />" >
+           <span class="ui-icon ui-icon-plusthick" style="padding: 0;">+</span> <span class="ui-button-text"><f:message key="label.Add" /></span></a>
+          <a id="activate-user-button" href="#" ><f:message key="label.activate-users"/></a>
+          <a id="deactivate-user-button" href="#" ><f:message key="label.deactivate-users"/></a>
+          <button id="delete-user-button" href="#" class="test-step-toolbar-button ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-primary .squash-button-initialized"
+           title="<f:message key="label.delete-users" />" >
+          <span class="ui-icon ui-icon-trash"></span>
+          <span class="ui-button-text"><f:message key="label.Delete" /></span></button>
+        </div>
+        <div class="table-tab-wrap">
+          <table id="users-list-table"  class="unstyled-table" 
+              data-def="ajaxsource=${tableModelUrl}, datakeys-id=user-id, deferLoading=${tableModelLength},
+              pagesize=50, filter, pre-sort=2-asc">
+            <thead>
+              <tr>
+                <th class="user-index"               data-def="map=user-index, select">#</th>
+                <th class="user-active"              data-def="map=user-active, narrow, center, sClass=user-active-cell"><f:message key="label.active"/></th>                
+                <th class="user-login datatable-filterable"   data-def="map=user-login, sortable, link=${userInfoUrl}"><f:message key="label.Login" /></th>
+                <th class="user-group"               data-def="map=user-group, sortable"><f:message key="label.Group" /></th>
+                <th class="user-firstname datatable-filterable" data-def="map=user-firstname, sortable"><f:message key="label.FirstName" /></th>
+                <th class="user-lastname datatable-filterable"  data-def="map=user-lastname, sortable"><f:message key="label.LastName" /></th>
+                <th class="user-email datatable-filterable"    data-def="map=user-email, sortable"><f:message key="label.Email" /></th>
+                <th class="user-created-on"            data-def="map=user-created-on, sortable"><f:message key="label.CreatedOn" /></th>
+                <th class="user-created-by datatable-filterable"data-def="map=user-created-by, sortable"><f:message key="label.createdBy" /></th>
+                <th class="user-modified-on"          data-def="map=user-modified-on, sortable"><f:message key="label.modifiedOn" /></th>  
+                <th class="user-modified-by datatable-filterable"data-def="map=user-modified-by, sortable"><f:message key="label.modifiedBy" /></th>
+                <th class="empty-delete-holder"         data-def="map=empty-delete-holder, delete-button=#delete-user-dialog"></th>
+              </tr>
+            </thead>
+            <tbody>
+              <%-- Will be populated through ajax --%>
+            </tbody>
+          </table>
 
-				</div>
-		
-			</div><%-- /div#users-table-pane --%>
-	
-			<teams:teams-table-tab />
-	
-	
-	</div><%-- /div.fragment-body.fragment-tabs --%>
-	
-	
-	<%-- ------------------------------ Add User Dialog ------------------------------------------------ --%>
-	
+        </div>
+    
+      </div><%-- /div#users-table-pane --%>
+  
+      <teams:teams-table-tab />
+  
+  
+  </div><%-- /div.fragment-body.fragment-tabs --%>
+  
+  
+  <%-- ------------------------------ Add User Dialog ------------------------------------------------ --%>
+  
         <f:message var="adduserTitle" key="title.AddUser"/>
         <div id="add-user-dialog" class="popup-dialog not-displayed" title="${adduserTitle}">
         
@@ -197,73 +197,73 @@
           
         
           <div class="popup-dialog-buttonpane">
-			<input type="button" value="${addAnotherLabel}" data-def="mainbtn, evt=addanother"/>
+      <input type="button" value="${addAnotherLabel}" data-def="mainbtn, evt=addanother"/>
             <input type="button" value="${addLabel}" data-def="mainbtn, evt=confirm"/>
             <input type="button" value="${cancelLabel}" data-def="evt=cancel" />        
           </div>        
         </div>
   
-		
-		
-		<f:message var="deleteUsersTitle" key="title.delete-users" />
-		<div id="delete-user-dialog" class="popup-dialog not-displayed" title="${deleteUsersTitle}">
+    
+    
+    <f:message var="deleteUsersTitle" key="title.delete-users" />
+    <div id="delete-user-dialog" class="popup-dialog not-displayed" title="${deleteUsersTitle}">
 
             <comp:notification-pane type="error">
               <jsp:attribute name="htmlcontent">
                 <div class="display-table-cell">
-					<span> <f:message key="message.user.remove"/></span>
-				</div>      
+          <span> <f:message key="message.user.remove"/></span>
+        </div>      
               </jsp:attribute>
             </comp:notification-pane>         
       
-			<div class="popup-dialog-buttonpane">
-			    <input class="confirm" type="button" value="<f:message key='label.Confirm' />" />
-			    <input class="cancel" type="button" value="<f:message key='label.Cancel' />" />				
-			</div>
-		
-		</div>	
-		
+      <div class="popup-dialog-buttonpane">
+          <input class="confirm" type="button" value="<f:message key='label.Confirm' />" />
+          <input class="cancel" type="button" value="<f:message key='label.Cancel' />" />        
+      </div>
+    
+    </div>  
+    
 
-		
-	<script type="text/javascript">
-	//<![CDATA[
-		squashtm.app.teamsManager = {
-			table : {
-				deleteButtons : {
-					popupmessage : "<div class='display-table-row'><div class='display-table-cell warning-cell'><div class='generic-error-signal'></div></div><div class='display-table-cell'><f:message key='message.team.remove.first'/><span class='red-warning-message'> <f:message key='message.team.remove.second'/> </span><f:message key='message.team.remove.third'/><span class='bold-warning-message'> <f:message key='message.team.remove.fourth'/> </span></div></div>",
-					tooltip : "<f:message key='label.deleteTeam' />"
-				}
-			}
-		}
-		require([ "common" ], function() {
-    		require(["users-manager/user-list", "jquery", "teams-manager/TeamsManager"], function(userAdmin, $, TeamsManager){
-    			var settings = {
-    				data : {
-    					tableData : ${tableModel}
-    				},
-    				urls : {
-    					rootContext : "${rootContext}",
-    					backUrl : "${backUrl}",
-    					baseUrl : "${baseUrl}"
-    				},
-    				language : {
-    					missingNewPassword : "${missingNewPassword}",
-    					missingConfirmPassword : "${missingConfirmPassword}",
-    					differentConfirmation : "${differentConfirmation}",
-    					ok : "${okLabel}",
-    					cancel :"${cancelLabel}"
-    				},
-    				managedPassword: ${ authenticationProvider.managedPassword }
-    			};
-    			
-  				$(function() {
-    				userAdmin.initUserListPage(settings);
-  				});
-    			
-    			new TeamsManager();
-    		});
-		});
-	//]]>
-	</script>	
-	</jsp:attribute>
+    
+  <script type="text/javascript">
+  //<![CDATA[
+    squashtm.app.teamsManager = {
+      table : {
+        deleteButtons : {
+          popupmessage : "<div class='display-table-row'><div class='display-table-cell warning-cell'><div class='generic-error-signal'></div></div><div class='display-table-cell'><f:message key='message.team.remove.first'/><span class='red-warning-message'> <f:message key='message.team.remove.second'/> </span><f:message key='message.team.remove.third'/><span class='bold-warning-message'> <f:message key='message.team.remove.fourth'/> </span></div></div>",
+          tooltip : "<f:message key='label.deleteTeam' />"
+        }
+      }
+    }
+    require([ "common" ], function() {
+        require(["users-manager/user-list", "jquery", "teams-manager/TeamsManager"], function(userAdmin, $, TeamsManager){
+          var settings = {
+            data : {
+              tableData : ${tableModel}
+            },
+            urls : {
+              rootContext : "${rootContext}",
+              backUrl : "${backUrl}",
+              baseUrl : "${baseUrl}"
+            },
+            language : {
+              missingNewPassword : "${missingNewPassword}",
+              missingConfirmPassword : "${missingConfirmPassword}",
+              differentConfirmation : "${differentConfirmation}",
+              ok : "${okLabel}",
+              cancel :"${cancelLabel}"
+            },
+            managedPassword: ${ authenticationProvider.managedPassword }
+          };
+          
+          $(function() {
+            userAdmin.initUserListPage(settings);
+          });
+          
+          new TeamsManager();
+        });
+    });
+  //]]>
+  </script>  
+  </jsp:attribute>
 </layout:info-page-layout>
