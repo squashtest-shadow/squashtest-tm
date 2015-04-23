@@ -20,13 +20,13 @@
  */
 /**
  * squashButton widget. Applies standard theme to buttons.
- * 
+ *
  * If the button has a data-icon attribute, it will be used as primary icon. If
  * a primary icon is defined in options, it will override the attribute-defined
  * icon.
- * 
+ *
  * If the button has a data-text="false" attribute, then no text is shown.
- * 
+ *
  * @author Gregory Fouquet
  */
 (function($) {
@@ -55,8 +55,8 @@
 			// else, dataText is either true or crap
 
 			this._super();
-			
-			this.element.addClass('.squash-button-initialized');
+
+			this.element.addClass('squash-button-initialized');
 		},
 
 		_setOption : function(key, value) {
@@ -65,6 +65,12 @@
 
 	});
 
+	function makeSquashButton(selectFn) {
+		selectFn.call(this, "a.button, input:submit.button, input:button.button, button.button")
+		.not('.squash-button-initialized').not(".sq-btn").not(".sq-icon-btn")
+		.squashButton();
+	}
+
 	/**
 	 * Adds functions in the $.squash namespace : $.squash.decorateButtons()
 	 * will decorate all links and buttons whit the "button" class with the
@@ -72,9 +78,7 @@
 	 */
 	$.extend($.squash, {
 		decorateButtons : function() {
-			$("a.button, input:submit.button, input:button.button, button.button")
-					.not('.squash-button-initialized')
-					.squashButton();
+			makeSquashButton($);
 		}
 	});
 
@@ -84,9 +88,7 @@
 	 */
 	$.fn.extend({
 		decorateButtons : function() {
-			$(this).find("a.button, input:submit.button, input:button.button, button.button")
-					.not('squash-button-initialized')
-					.squashButton();
+			makeSquashButton($(this).find);
 		}
 	});
 }(jQuery));
