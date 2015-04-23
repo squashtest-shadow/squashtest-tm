@@ -182,10 +182,13 @@ define(
 				//fix order
 				var self = this;
 
-				 $.each(self.$el.dataTable().fnGetNodes(), function(index, cell){
-					 cell._DT_RowIndex= index;
-					 cell.firstElementChild.innerHTML = index + 1;
-				 });
+				self.$el.DataTable().rows().data().each(function(rowdata, index){
+				
+				var row =	self.$el.DataTable().row(function ( idx, data, node ) {return data.id === rowdata.id;});
+				row.data()['1'] = index+1;
+				self.$el.DataTable().cell(row.node(), 1).node().innerHTML = index+1;
+				});
+
 
 
 			},
@@ -231,20 +234,21 @@ define(
 				var addToSelection = function($tr) {
 					selectTr($tr);
 					var row = self.$el.DataTable().row($tr);
-					self.lastSelectedRow = row.index();
+					self.lastSelectedRow = row.data()['1'];
 					self.selectedIds.push(row.data().id);
 				};
 
 				var growSelection = function($tr) {
 					var range = computeSelectionRange($tr);
-					self.$el.DataTable().rows(range).nodes().each(function(row) {
+
+					self.$el.DataTable().rows(function ( idx, data, node ) {return  _.contains(range, data['1']);}).nodes().each(function(row) {
 						addToSelection($(row));
 					});
 				};
 
 				var computeSelectionRange = function($tr) {
 					var base = self.lastSelectedRow || 0;
-					var current = self.$el.DataTable().row($tr).index();
+					var current = self.$el.DataTable().row($tr).data()['1'];
 
 					var min = Math.min(base, current);
 					min = Math.max(min, 0);
