@@ -271,9 +271,9 @@
 <div>
 <ul>
 
-<li><a id="checkAll"> <f:message key="label.CheckAll" /></a></li>
-<li><a id="uncheckAll"><f:message key="label.UncheckAll" /></a></li>
-<li><a id="invertSelect"><f:message key="label.InvertSelection" /></a></li>
+<li><a class="clickable-item" id="checkAll"> <f:message key="label.CheckAll" /></a></li>
+<li><a class="clickable-item" id="uncheckAll"><f:message key="label.UncheckAll" /></a></li>
+<li><a class="clickable-item" id="invertSelect"><f:message key="label.InvertSelection" /></a></li>
 
 </ul>
 </div>
