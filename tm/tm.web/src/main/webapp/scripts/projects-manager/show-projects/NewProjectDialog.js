@@ -31,9 +31,6 @@ define([ "jquery", "backbone", "handlebars", "app/lnf/Forms",
 			type : 'post',
 			url : window.squashtm.app.contextRoot + "/generic-projects/new",
 			dataType : 'json',
-			// note : we cannot use promise api with async param. see
-			// http://bugs.jquery.com/ticket/11013#comment:40
-			async : false,
 			data : model
 		});
 	}
@@ -63,7 +60,7 @@ define([ "jquery", "backbone", "handlebars", "app/lnf/Forms",
 			this.trigger("newproject.cancel", { source: event, view: this });
 		},
 
-		addProject: function(postStep) {
+		addProject: function(postStep, event) {
 			this._populateModel();
 			Forms.form(this.$el).clearState();
 
@@ -77,11 +74,11 @@ define([ "jquery", "backbone", "handlebars", "app/lnf/Forms",
 			this.addProject(function() {
 				this.$el.addClass("not-displayed");
 				this._resetForm();
-			});
+			}, event);
 		},
 
 		addAndClose: function(event) {
-			this.addProject(this.cleanup);
+			this.addProject(this.cleanup, event);
 		},
 
 		cleanup : function() {
