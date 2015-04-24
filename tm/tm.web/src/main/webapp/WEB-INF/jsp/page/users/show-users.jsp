@@ -32,7 +32,6 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
 <s:url var="rootContext" value="/" />
-<s:url var="backUrl" value="/administration" />
 <s:url var="baseUrl" value="/administration/users"/>
 <s:url var="userInfoUrl" value="/administration/users/{user-id}/info" />
 <s:url var="tableModelUrl" value="/administration/users/table" />
@@ -51,9 +50,38 @@
 <f:message var="okLabel" key="label.Confirm"/>
 
 
-<layout:info-page-layout titleKey="squashtm.users.title" isSubPaged="true">
+<layout:info-page-layout titleKey="squashtm.users.title" isSubPaged="true" main="user-manager" >
   <jsp:attribute  name="head">  
     <comp:sq-css name="squash.grey.css" />  
+    <script type="text/javascript">
+    //<![CDATA[
+      squashtm.app.teamsManager = {
+        table : {
+          deleteButtons : {
+            popupmessage : "<div class='display-table-row'><div class='display-table-cell warning-cell'><div class='generic-error-signal'></div></div><div class='display-table-cell'><f:message key='message.team.remove.first'/><span class='red-warning-message'> <f:message key='message.team.remove.second'/> </span><f:message key='message.team.remove.third'/><span class='bold-warning-message'> <f:message key='message.team.remove.fourth'/> </span></div></div>",
+            tooltip : "<f:message key='label.deleteTeam' />"
+          }
+        }, 
+      settings : {
+          data : {
+            tableData : ${tableModel}
+          },
+          urls : {
+            rootContext : "${rootContext}",
+            baseUrl : "${baseUrl}"
+          },
+          language : {
+            missingNewPassword : "${missingNewPassword}",
+            missingConfirmPassword : "${missingConfirmPassword}",
+            differentConfirmation : "${differentConfirmation}",
+            ok : "${okLabel}",
+            cancel :"${cancelLabel}"
+          },
+          managedPassword: ${ authenticationProvider.managedPassword }
+        }
+      }
+    //]]>
+    </script>  
   </jsp:attribute>
   
   <jsp:attribute name="titlePane">
@@ -64,8 +92,7 @@
   </jsp:attribute>
   
   <jsp:attribute name="subPageButtons">
-      <f:message var="back" key="label.Back" /> 
-        <input id="back" type="button" value="${ back }" class="sq-btn" />
+    <a id="back" type="button" href="<s:url value='/administration' />" class="sq-btn"><f:message key="label.Back" /></a>&nbsp;
   </jsp:attribute>
   <jsp:attribute name="informationContent">  
       <div class="fragment-tabs fragment-body">
@@ -75,16 +102,24 @@
       </ul>
       <div id="users-table-pane" class="table-tab">
         <!-- z-index fix needed for button pane because it would be partially shadowed by the table filter input otherwise -->
-        <div class="toolbar" style="z-index:1;">
-          <a id="add-user-button" class="test-step-toolbar-button ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-primary .squash-button-initialized"
-           title="<f:message key="user.add.label" />" >
-           <span class="ui-icon ui-icon-plusthick" style="padding: 0;">+</span> <span class="ui-button-text"><f:message key="label.Add" /></span></a>
-          <a id="activate-user-button" href="#" ><f:message key="label.activate-users"/></a>
-          <a id="deactivate-user-button" href="#" ><f:message key="label.deactivate-users"/></a>
-          <button id="delete-user-button" href="#" class="test-step-toolbar-button ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-primary .squash-button-initialized"
-           title="<f:message key="label.delete-users" />" >
-          <span class="ui-icon ui-icon-trash"></span>
-          <span class="ui-button-text"><f:message key="label.Delete" /></span></button>
+        <div class="btn-toolbar right" style="z-index:1;">
+          <button id="add-user-button" class="sq-icon-btn btn-sm"
+            title="<f:message key="user.add.label" />" >
+            <span class="ui-icon ui-icon-plusthick">+</span> <span class="ui-button-text"><f:message key="label.Add" />&nbsp;</span>
+          </button>
+          <button id="activate-user-button" class="sq-icon-btn btn-sm">
+            <span class="ui-icon ui-icon-none"></span>
+            <f:message key="label.activate-users" />
+          </button>
+          <button id="deactivate-user-button" class="sq-icon-btn btn-sm">
+            <span class="ui-icon ui-icon-none"></span>
+            <f:message key="label.deactivate-users" />
+          </button>
+          <button type="button" id="delete-user-button" href="#" class="sq-icon-btn btn-sm"
+            title="<f:message key="label.delete-users" />" >
+            <span class="ui-icon ui-icon-trash"></span>
+            <span class="ui-button-text"><f:message key="label.Delete" />&nbsp;</span>
+          </button>
         </div>
         <div class="table-tab-wrap">
           <table id="users-list-table"  class="unstyled-table" 
@@ -222,48 +257,5 @@
       </div>
     
     </div>  
-    
-
-    
-  <script type="text/javascript">
-  //<![CDATA[
-    squashtm.app.teamsManager = {
-      table : {
-        deleteButtons : {
-          popupmessage : "<div class='display-table-row'><div class='display-table-cell warning-cell'><div class='generic-error-signal'></div></div><div class='display-table-cell'><f:message key='message.team.remove.first'/><span class='red-warning-message'> <f:message key='message.team.remove.second'/> </span><f:message key='message.team.remove.third'/><span class='bold-warning-message'> <f:message key='message.team.remove.fourth'/> </span></div></div>",
-          tooltip : "<f:message key='label.deleteTeam' />"
-        }
-      }
-    }
-    require([ "common" ], function() {
-        require(["users-manager/user-list", "jquery", "teams-manager/TeamsManager"], function(userAdmin, $, TeamsManager){
-          var settings = {
-            data : {
-              tableData : ${tableModel}
-            },
-            urls : {
-              rootContext : "${rootContext}",
-              backUrl : "${backUrl}",
-              baseUrl : "${baseUrl}"
-            },
-            language : {
-              missingNewPassword : "${missingNewPassword}",
-              missingConfirmPassword : "${missingConfirmPassword}",
-              differentConfirmation : "${differentConfirmation}",
-              ok : "${okLabel}",
-              cancel :"${cancelLabel}"
-            },
-            managedPassword: ${ authenticationProvider.managedPassword }
-          };
-          
-          $(function() {
-            userAdmin.initUserListPage(settings);
-          });
-          
-          new TeamsManager();
-        });
-    });
-  //]]>
-  </script>  
   </jsp:attribute>
 </layout:info-page-layout>

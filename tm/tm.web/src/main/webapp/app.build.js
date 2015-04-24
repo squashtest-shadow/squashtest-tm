@@ -162,6 +162,11 @@
 				exclude : [ "common" ]
 			},
 			{
+				name : "user-manager",
+				include : [ "users-manager/user-list", "jquery", "teams-manager/TeamsManager" ],
+				exclude : [ "common" ]
+			},
+			{
 				name : "user-page",
 				include : [ "jquery", "user-editor/UserModificationView", "app/ws/squashtm.workspace", "app/pubsub" ],
 				exclude : [ "common" ]

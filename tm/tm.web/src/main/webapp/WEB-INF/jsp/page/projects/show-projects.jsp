@@ -57,7 +57,7 @@
 <div class="fragment-body">
   <sec:authorize access=" hasRole('ROLE_ADMIN')">
    <div class="toolbar">
-   <button id="new-project-button" type="button" class="test-step-toolbar-button ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-primary .squash-button-initialized"
+   <button id="new-project-button" type="button" class="test-step-toolbar-button ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-primary squash-button-initialized"
      title="<f:message key='project.button.add.label' />" >
     <span class="ui-icon ui-icon-plusthick" >+</span><span class="ui-button-text"><f:message key='label.Add' /></span>
     </button>
