@@ -29,10 +29,8 @@ define([ "jquery", "backbone", "underscore", "handlebars", "app/util/StringUtil"
 			this.options = options;
 			_.bindAll(this, "validatePassword", "userPasswordSuccess", "submitPassword");
 
-			// TODO looks like this is called for nothing : no events hash, no reference to this.$el...
+			// TODO I should not handle events from an outside dialog, I SHOULD BE the dialog
 			this.render();
-
-		// TODO I should not handle events from an outside dialog, I SHOULD BE the dialog
 			var dialog = $("#"+ this.options.popupId);
 
 			dialog.formDialog({width:420});
