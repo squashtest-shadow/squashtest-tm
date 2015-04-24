@@ -36,21 +36,21 @@
   </div>
   <div class="table-tab-wrap">
     <table id="teams-table" data-def="deferloading=${ pagedTeams.totalNumberOfItems }, pagesize=${ teamsPageSize }"  class="unstyled-table">
-    	<thead>
-    		<tr>
-    			<th class="not-displayed">Id(masked)</th>
-    			<th>#</th>
-    			<th class="datatable-filterable"><f:message key="label.Name" /></th>
-    			<th><f:message key="label.Description"/></th>
-    			<th><f:message key="label.numberOfAssociatedUsers"/></th>
-    			<th><f:message key="label.CreatedOn" /></th>
-    			<th class="datatable-filterable"><f:message key="label.createdBy" /></th>
-    			<th><f:message key="label.modifiedOn"/></th>
-    			<th class="datatable-filterable"><f:message key="label.modifiedBy"/></th>
-    			<th>&nbsp;</th>	
-    		</tr>
-    	</thead>
-    	<tbody>
+      <thead>
+        <tr>
+          <th class="not-displayed">Id(masked)</th>
+          <th>#</th>
+          <th class="datatable-filterable"><f:message key="label.Name" /></th>
+          <th><f:message key="label.Description"/></th>
+          <th><f:message key="label.numberOfAssociatedUsers"/></th>
+          <th><f:message key="label.CreatedOn" /></th>
+          <th class="datatable-filterable"><f:message key="label.createdBy" /></th>
+          <th><f:message key="label.modifiedOn"/></th>
+          <th class="datatable-filterable"><f:message key="label.modifiedBy"/></th>
+          <th>&nbsp;</th>  
+        </tr>
+      </thead>
+      <tbody>
         <c:forEach var="team" varStatus="teamStat" items="${ pagedTeams.pagedItems }">
         <tr>
           <td class="not-displayed">${ team.id }</td>
@@ -65,8 +65,8 @@
           <td>&nbsp;</td>
         </tr>
         </c:forEach>
-    		<%-- Will be populated through ajax --%>
-    	</tbody>
+        <%-- Will be populated through ajax --%>
+      </tbody>
     </table>
   </div>
 </div><%-- /div#team-table-pane --%>
@@ -92,7 +92,7 @@
       </td>
     </tr>
   </table>
-  
+
   <div class="popup-dialog-buttonpane">
     <input class="confirm" type="button" value="<f:message key='label.fem.addAnother' />" data-def="mainbtn, evt=addanother"/>
     <input class="confirm" type="button" value="<f:message key='label.Add' />" data-def="mainbtn, evt=confirm"/>
@@ -100,24 +100,22 @@
   </div>  
 </div>
 
-
           <div id="remove-team-dialog" class="popup-dialog not-displayed"
             th:title="#{title.removeTestAutomationServer}" title="<f:message key='label.Delete' />">
             <!-- _____________CASE 1_______________ -->
             <div class="display-table-row">
-            
+
                  <comp:notification-pane type="error">
                   <jsp:attribute name="htmlcontent">
-      	            <div class="display-table-cell">
-      				  <p th:text="#{dialog.remove-team	}">Confirmez vous la suppression de ces équipes ?</p>
-      	              <p th:text="#{dialog.label.delete-node.label.cantbeundone}">Cette action ne peut-être annulée.</p>
-      	              <p th:text="#{dialog.label.delete-node.label.confirm }">Confirmez-vous la suppression ?</p>
-      				</div>        
+                    <div class="display-table-cell">
+                <p th:text="#{dialog.remove-team  }">Confirmez vous la suppression de ces équipes ?</p>
+                      <p th:text="#{dialog.label.delete-node.label.cantbeundone}">Cette action ne peut-être annulée.</p>
+                      <p th:text="#{dialog.label.delete-node.label.confirm }">Confirmez-vous la suppression ?</p>
+              </div>        
                   </jsp:attribute>
                 </comp:notification-pane>
 
-
-			</div>
+      </div>
             <div class="popup-dialog-buttonpane">
               <input class="confirm" type="button" value="<f:message key='label.Confirm' />" th:value="#{label.Confirm}" data-def="evt=confirm, mainbtn" />
               <input class="cancel" type="button" value="<f:message key='label.Cancel' />" th:value="#{label.Cancel}" data-def="evt=cancel" />
