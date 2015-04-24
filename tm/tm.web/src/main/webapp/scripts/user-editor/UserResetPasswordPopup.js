@@ -23,7 +23,7 @@ define([ "jquery", "backbone", "underscore", "handlebars", "app/util/StringUtil"
 		"jquery.squash.messagedialog", "jquery.squash.confirmdialog", "jquery.squash.formdialog" ], function($, Backbone, _, Handlebars, StringUtil) {
 	"use strict";
 
-	var UMod = squashtm.app.UMod;
+	var UMod = window.squashtm.app.UMod;
 	var UserResetPasswordPopup = Backbone.View.extend({
 		initialize : function(options) {
 			this.options = options;
@@ -134,7 +134,7 @@ define([ "jquery", "backbone", "underscore", "handlebars", "app/util/StringUtil"
 		},
 
 		userPasswordSuccess : function() {
-			squashtm.notification.showInfo(UMod.message.passSuccess);
+			window.squashtm.notification.showInfo(UMod.message.passSuccess);
 			this.$dialog.formDialog("close");
 			this.model.set("hasAuthentication", true);
 		},
