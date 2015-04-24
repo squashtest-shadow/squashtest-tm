@@ -26,14 +26,14 @@ define([ "jquery", "backbone", "underscore", "workspace.routing", "squash.transl
 		el : ".bind-milestone-dialog",
 		initialize : function() {
 
+			var self = this;
 			this.dialog = this.$el.confirmDialog({
 				autoOpen : false,
 				width : 800
 			});
 			this.initTable();
 			this.initBlanketSelectors();
-			
-			
+
 		},
 		
 		events : {
@@ -53,19 +53,24 @@ define([ "jquery", "backbone", "underscore", "workspace.routing", "squash.transl
 			this.initWarning();
 			this.updateTable();
 			var table = this.$el.find('.bind-milestone-dialog-table');
-			table.unbind();
-			table.on('draw.dt', function(){
+			table.one('draw.dt', function(){
 				table.find('>tbody>tr>td.bind-milestone-dialog-check').each(function(){
 					$(this).html('<input type="checkbox"/>');
 				});
 				table.find('>tbody>tr').addClass('cursor-pointer');
 				self.checkBindedMilestone();
+				table.trigger('refresh.squashTable' );
 			});
 
+			table.one('refresh.squashTable', function(){
+				self.refreshTable();
+			});
 			this.dialog = this.$el.confirmDialog({
 				autoOpen : false,
 				width : 800
 			});
+
+
 			this._openDialog();
 		},
 		_openDialog : function (){
@@ -164,10 +169,11 @@ define([ "jquery", "backbone", "underscore", "workspace.routing", "squash.transl
 		refreshSearchTable : function(){
 			this.options.searchTableCallback();
 		},
-		
+		refreshTable : function(){
+			this.table.squashTable().refresh();
+		},
          checkBindedMilestone : function(){
 			this._check(this.data.checkedIds);
-
          },
          
          _check: function(ids){
