@@ -497,7 +497,12 @@ $("#changeStatus-popup").confirmDialog().on('confirmdialogcancel', function(){
 			}	
 		});
 
-	
+		$("#unbind-project-popup").confirmDialog().on("confirmdialogcancel", function(){
+			$("#projects-table").squashTable().deselectRows();
+		});
+		
+		
+		
 		function displayStatusForbidUnbind(){
 			var warn = translator.get({
 				errorTitle : 'popup.title.Info',
