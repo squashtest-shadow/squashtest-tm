@@ -32,7 +32,7 @@ define(["jquery", "jqueryui"], function($){
 				var text = $(this.element.children()[0]).val();
 				var id = $(this.element).attr("id");
 				if (text){
-					text = text.map(function(val){return parseInt(val);});
+					text = text.map(function(val){return parseInt(val, 10);});
 				}
 				var max = $(this.element.children()[0]).find("option").length;
 				if (text && text.length === max){
