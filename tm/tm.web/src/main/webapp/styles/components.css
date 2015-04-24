@@ -784,16 +784,6 @@ span.span-green {
 	display : inline-block;
 }
 
-.search-open-interface2{
-	background-position : center;
-	background-image: url("../images/pencil.png"); /** sprite-ref: sprites-icons;  */
-	background-color : transparent;
-	background-repeat : no-repeat;
-	width : 16px;
-	height : 16px;
-	display : inline-block;
-}
-
 /*******************************
  * test case / execution mode 
  *******************************/

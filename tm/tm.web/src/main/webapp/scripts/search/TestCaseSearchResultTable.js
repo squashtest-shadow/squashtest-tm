@@ -18,8 +18,8 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ "jquery", "backbone", "squash.translator", "jeditable.simpleJEditable", "app/ws/squashtm.notification", 
-         "workspace.projects", "squash.configmanager", "squashtable", "jqueryui", "jquery.squash.jeditable", "jquery.cookie" ], 
+define([ "jquery", "backbone", "squash.translator", "jeditable.simpleJEditable", "app/ws/squashtm.notification",
+         "workspace.projects", "squash.configmanager", "squashtable", "jqueryui", "jquery.squash.jeditable", "jquery.cookie" ],
 		function($, Backbone, translator, SimpleJEditable, notification, projects, confman) {
 
 	var TestCaseSearchResultTable = Backbone.View.extend({
@@ -43,21 +43,21 @@ define([ "jquery", "backbone", "squash.translator", "jeditable.simpleJEditable",
 			this.getTableRowId = $.proxy(this._getTableRowId, this);
 			this.tableRowCallback = $.proxy(this._tableRowCallback, this);
 			this.addAssociationCheckboxes  = $.proxy(this._addAssociationCheckboxes, this);
-			
+
 			var self,
-				tableConf, 
+				tableConf,
 				squashConf;
-			
+
 			if(isAssociation){
-				
+
 				self = this;
 				tableConf = {
 						"oLanguage" : {
 							"sUrl" : squashtm.app.contextRoot + "/datatables/messages"
 						},
-					    "bServerSide": true,  
+					    "bServerSide": true,
 						"sAjaxSource" : squashtm.app.contextRoot + "/advanced-search/table",
-						"fnServerParams": function ( aoData )   
+						"fnServerParams": function ( aoData )
 							{
 								aoData.push( { "name": domain, "value": domain } );
 								aoData.push( { "name": "model", "value": JSON.stringify(model) } );
@@ -85,7 +85,7 @@ define([ "jquery", "backbone", "squash.translator", "jeditable.simpleJEditable",
 							"aTargets" : [ 2 ],
 							"mDataProp" : "project-name",
 							"bSortable" : true
-						}, {		
+						}, {
 							"aTargets" : [ 3 ],
 							"mDataProp" : "test-case-id",
 							"bSortable" : true,
@@ -120,7 +120,7 @@ define([ "jquery", "backbone", "squash.translator", "jeditable.simpleJEditable",
 							"mDataProp" : "test-case-status",
 							"bSortable" : true,
 							"sClass" : "editable editable_status"
-						}, 
+						},
 						{
 							"aTargets" : [ 10 ],
 							"mDataProp" : "test-case-milestone-nb",
@@ -176,7 +176,7 @@ define([ "jquery", "backbone", "squash.translator", "jeditable.simpleJEditable",
 				squashConf = {
 						enableHover : true
 					};
-				
+
 				this.$el.squashTable(tableConf, squashConf);
 			} else {
 				self = this;
@@ -206,7 +206,7 @@ define([ "jquery", "backbone", "squash.translator", "jeditable.simpleJEditable",
 							"aTargets" : [ 1 ],
 							"mDataProp" : "project-name",
 							"bSortable" : true
-						}, {		
+						}, {
 							"aTargets" : [ 2 ],
 							"mDataProp" : "test-case-id",
 							"bSortable" : true,
@@ -303,15 +303,15 @@ define([ "jquery", "backbone", "squash.translator", "jeditable.simpleJEditable",
 				squashConf = {
 						enableHover : true
 					};
-				
+
 				this.$el.squashTable(tableConf, squashConf);
 			}
-			
+
 
 		},
 
 		_getTableRowId : function(rowData) {
-			return rowData[2];	
+			return rowData[2];
 		},
 
 		_addSelectEditableToImportance : function(row, data) {
@@ -333,14 +333,14 @@ define([ "jquery", "backbone", "squash.translator", "jeditable.simpleJEditable",
 			var $impCell = $('.editable_importance', row);
 			$impCell.attr("title", squashtm.app.messages["label.weightAuto"]);
 			$impCell.addClass("nonEditable");
-		
+
 		},
-		
+
 		_addSelectEditableToNature : function(row, data) {
 			var urlPOST = squashtm.app.contextRoot + "/test-cases/" + data["test-case-id"];
 			var projectNatures = projects.findProject(data['project-id']).testCaseNatures;
 			var naturesData = confman.toJeditableSelectFormat(projectNatures.items, {'code' : 'friendlyLabel'});
-			
+
 			var ok = translator.get("rich-edit.button.ok.label");
 			var cancel = translator.get("label.Cancel");
 			//TODO use SelectJEditable obj
@@ -352,12 +352,12 @@ define([ "jquery", "backbone", "squash.translator", "jeditable.simpleJEditable",
 				submitdata : function(){return {id : 'test-case-nature'};}
 			});
 		},
-		
+
 		_addSelectEditableToType : function(row, data) {
 			var urlPOST = squashtm.app.contextRoot + "/test-cases/" + data["test-case-id"];
 			var projectTypes = projects.findProject(data['project-id']).testCaseTypes;
-			var typesData = confman.toJeditableSelectFormat(projectTypes.items, {'code' : 'friendlyLabel'});			
-			
+			var typesData = confman.toJeditableSelectFormat(projectTypes.items, {'code' : 'friendlyLabel'});
+
 			var ok = translator.get("rich-edit.button.ok.label");
 			var cancel = translator.get("label.Cancel");
 			//TODO use SelectJEditable obj
@@ -369,7 +369,7 @@ define([ "jquery", "backbone", "squash.translator", "jeditable.simpleJEditable",
 				submitdata : function(){return {id : 'test-case-type'};}
 			});
 		},
-		
+
 		_addSelectEditableToStatus : function(row, data) {
 			var self = this;
 			var urlPOST = squashtm.app.contextRoot + "/test-cases/" + data["test-case-id"];
@@ -385,7 +385,7 @@ define([ "jquery", "backbone", "squash.translator", "jeditable.simpleJEditable",
 				submitdata : function(){return {id : 'test-case-status'};}
 			});
 		},
-		
+
 		_addSimpleEditableToReference : function(row, data) {
 			var component = $("td.editable_ref", row);
 			var url = squashtm.app.contextRoot + "/test-cases/" + data["test-case-id"];
@@ -401,26 +401,26 @@ define([ "jquery", "backbone", "squash.translator", "jeditable.simpleJEditable",
 		_addAssociationCheckboxes : function(row, data) {
 			$(".association-checkbox", row).html("<input type='checkbox'/>");
 		},
-		
+
 		_addSimpleEditableToLabel : function(row, data) {
 			var component = $('td.editable_label', row);
 			var url = squashtm.app.contextRoot + "/test-cases/" + data["test-case-id"];
-						
+
 			new SimpleJEditable({
 				targetUrl : url,
 				component : component,
 				jeditableSettings : {
 					submitdata : function(){return {id : 'test-case-newname'};},
-					"onerror" : function(settings, self, xhr){	
+					"onerror" : function(settings, self, xhr){
 						xhr.errorIsHandled = true;
-						notification.showXhrInDialog(xhr);	
+						notification.showXhrInDialog(xhr);
 						self.reset();
 					}
 				}
 			});
-			
+
 		},
-	
+
 		_tableRowCallback : function(row, data, displayIndex) {
 			if(data["editable"]){
 				this.addSimpleEditableToReference(row,data);
@@ -439,7 +439,7 @@ define([ "jquery", "backbone", "squash.translator", "jeditable.simpleJEditable",
 		         }
 			this.addInterfaceLevel2Link(row,data);
 			this.addTreeLink(row,data);
-	
+
 			if(this.isAssociation){
 				this.addIconToAssociatedToColumn(row,data);
 			}
@@ -448,16 +448,16 @@ define([ "jquery", "backbone", "squash.translator", "jeditable.simpleJEditable",
 		_addInterfaceLevel2Link : function(row, data) {
 			var id = data["test-case-id"];
 			var $cell = $(".search-open-interface2-holder",row);
-			$cell.append('<span class="search-open-interface2"></span>')
+			$cell.append('<span class="ui-icon ui-icon-pencil"></span>')
 			.click(function(){
 				window.location = squashtm.app.contextRoot + "/test-cases/" + id + "/info";
 			});
 		},
-		
+
 		_addIconToAssociatedToColumn : function(row, data) {
-			
+
 			var associatedTo = data["is-associated"];
-			
+
 			if(associatedTo){
 				if(this.associateType == "requirement"){
 					$(".is-associated",row).append('<span class="associated-icon-requirement" title="'+translator.get('search.associatedwith.requirement.image.tooltip')+'"></span>');
@@ -466,7 +466,7 @@ define([ "jquery", "backbone", "squash.translator", "jeditable.simpleJEditable",
 				}
 			}
 		},
-		
+
 		_addTreeLink : function(row, data){
 			var self = this;
 			var id = data["test-case-id"];
@@ -477,7 +477,7 @@ define([ "jquery", "backbone", "squash.translator", "jeditable.simpleJEditable",
 					window.location = squashtm.app.contextRoot + "test-case-workspace/";
 			});
 		},
-				
+
 		refresh : function() {
 			this.$el.squashTable().fnDraw(false);
 		}

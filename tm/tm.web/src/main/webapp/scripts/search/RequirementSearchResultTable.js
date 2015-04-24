@@ -18,9 +18,9 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ "jquery", "backbone", "squash.translator","jeditable.simpleJEditable", "workspace.projects", 
-         "squash.configmanager", "workspace.routing", "app/ws/squashtm.notification", "squashtable", 
-         "jqueryui", "jquery.squash.jeditable", "jquery.cookie" ], 
+define([ "jquery", "backbone", "squash.translator","jeditable.simpleJEditable", "workspace.projects",
+         "squash.configmanager", "workspace.routing", "app/ws/squashtm.notification", "squashtable",
+         "jqueryui", "jquery.squash.jeditable", "jquery.cookie" ],
          function($, Backbone, translator, SimpleJEditable, projects, confman, routing, notification) {
 
 	var RequirementSearchResultTable = Backbone.View.extend({
@@ -45,7 +45,7 @@ define([ "jquery", "backbone", "squash.translator","jeditable.simpleJEditable", 
 			var tableConf ;
 			var squashConf;
 			if(isAssociation){
-				
+
 				tableConf = {
 						"oLanguage" : {
 							"sUrl" : squashtm.app.contextRoot + "/datatables/messages"
@@ -80,7 +80,7 @@ define([ "jquery", "backbone", "squash.translator","jeditable.simpleJEditable", 
 							"aTargets" : [ 2 ],
 							"mDataProp" : "project-name",
 							"bSortable" : true
-						}, {		
+						}, {
 							"aTargets" : [ 3 ],
 							"mDataProp" : "requirement-id",
 							"bSortable" : true,
@@ -156,18 +156,18 @@ define([ "jquery", "backbone", "squash.translator","jeditable.simpleJEditable", 
 						} ],
 						"sDom" : 'ft<"dataTables_footer"lip>'
 					};
-				
+
 				squashConf = {
 						enableHover : true
 					};
-				
+
 				this.$el.squashTable(tableConf, squashConf);
 			} else {
 				tableConf = {
 						"oLanguage" : {
 							"sUrl" : squashtm.app.contextRoot + "/datatables/messages"
 						},
-						"bServerSide": true,  
+						"bServerSide": true,
 						"sAjaxSource" : squashtm.app.contextRoot + "/advanced-search/table",
 						"fnServerParams": function ( aoData )
 							{
@@ -189,7 +189,7 @@ define([ "jquery", "backbone", "squash.translator","jeditable.simpleJEditable", 
 							"aTargets" : [ 1 ],
 							"mDataProp" : "project-name",
 							"bSortable" : true
-						}, {		
+						}, {
 							"aTargets" : [ 2 ],
 							"mDataProp" : "requirement-id",
 							"bSortable" : true,
@@ -273,19 +273,19 @@ define([ "jquery", "backbone", "squash.translator","jeditable.simpleJEditable", 
 						} ],
 						"sDom" : 'ft<"dataTables_footer"lip>'
 					};
-				
+
 				squashConf = {
 					enableHover : true
 				};
-				
+
 				this.$el.squashTable(tableConf, squashConf);
 			}
-			
+
 
 		},
 
 		_getTableRowId : function(rowData) {
-			return rowData[2];	
+			return rowData[2];
 		},
 
 		_addSelectEditableToCriticality : function(row, data) {
@@ -294,7 +294,7 @@ define([ "jquery", "backbone", "squash.translator","jeditable.simpleJEditable", 
 			var urlGET = squashtm.app.contextRoot + "/requirements/criticality-combo-data";
 			var ok = translator.get("rich-edit.button.ok.label");
 			var cancel = translator.get("label.Cancel");
-			var component =$('.editable_criticality', row); 
+			var component =$('.editable_criticality', row);
 			//TODO use SelectJEditable obj
 			component.editable(urlPOST, {
 						type : 'select',
@@ -307,12 +307,12 @@ define([ "jquery", "backbone", "squash.translator","jeditable.simpleJEditable", 
 					});
 			return component;
 		},
-		
+
 		_addSelectEditableToCategory : function(row, data) {
 			var urlPOST = routing.buildURL('requirementversions', data['requirement-version-id']);
 			var projectCategories = projects.findProject(data['project-id']).requirementCategories;
-			var catsData = confman.toJeditableSelectFormat(projectCategories.items, {'code' : 'friendlyLabel'});			
-			
+			var catsData = confman.toJeditableSelectFormat(projectCategories.items, {'code' : 'friendlyLabel'});
+
 			var ok = translator.get("rich-edit.button.ok.label");
 			var cancel = translator.get("label.Cancel");
 			var component = $('.editable_category', row);
@@ -328,7 +328,7 @@ define([ "jquery", "backbone", "squash.translator","jeditable.simpleJEditable", 
 			});
 			return component;
 		},
-		
+
 		_addSelectEditableToStatus : function(row, data) {
 			var self = this;
 			var urlPOST = routing.buildURL('requirementversions', data['requirement-version-id']);
@@ -348,7 +348,7 @@ define([ "jquery", "backbone", "squash.translator","jeditable.simpleJEditable", 
 			});
 			return component;
 		},
-		
+
 		_addSimpleEditableToReference : function(row, data) {
 			var url = routing.buildURL('requirementversions', data['requirement-version-id']);
 			var component = $("td.editable_ref", row);
@@ -362,9 +362,9 @@ define([ "jquery", "backbone", "squash.translator","jeditable.simpleJEditable", 
 				}
 			});
 			return component;
-			
+
 		},
-		
+
 		_addSimpleEditableToLabel : function(row, data) {
 			var url = routing.buildURL('requirementversions', data['requirement-version-id']);
 			var component = $("td.editable_label", row);
@@ -384,7 +384,7 @@ define([ "jquery", "backbone", "squash.translator","jeditable.simpleJEditable", 
 			});
 			return component;
 		},
-	
+
 		_tableRowCallback : function(row, data, displayIndex) {
 			if(data.editable){
 				this.addSimpleEditableToReference(row,data);
@@ -398,7 +398,7 @@ define([ "jquery", "backbone", "squash.translator","jeditable.simpleJEditable", 
 			}
 			this.addInterfaceLevel2Link(row,data);
 			this.addTreeLink(row,data);
-	
+
 			if(this.isAssociation){
 				this.addIconToAssociatedToColumn(row,data);
 			}
@@ -407,16 +407,16 @@ define([ "jquery", "backbone", "squash.translator","jeditable.simpleJEditable", 
 		_addInterfaceLevel2Link : function(row, data) {
 			var id = data["requirement-id"];
 			var $cell = $(".search-open-interface2-holder",row);
-			$cell.append('<span class="search-open-interface2"></span>')
+			$cell.append('<span class="ui-icon ui-icon-pencil"></span>')
 			.click(function(){
 				window.location = squashtm.app.contextRoot + "/requirements/" + id + "/info";
 			});
 		},
-		
+
 		_addIconToAssociatedToColumn : function(row, data) {
-			
+
 			var associatedTo = data["is-associated"];
-			
+
 			if(associatedTo){
 				if(this.associateType == "requirement"){
 					$(".is-associated",row).append('<span class="associated-icon-requirement"></span>');
@@ -427,7 +427,7 @@ define([ "jquery", "backbone", "squash.translator","jeditable.simpleJEditable", 
 				}
 			}
 		},
-		
+
 		_addTreeLink : function(row, data){
 			var self = this;
 			var id = data["requirement-id"];
@@ -438,7 +438,7 @@ define([ "jquery", "backbone", "squash.translator","jeditable.simpleJEditable", 
 					window.location = squashtm.app.contextRoot + "requirement-workspace/";
 			});
 		},
-				
+
 		refresh : function() {
 			this.$el.squashTable().fnDraw(false);
 		}
