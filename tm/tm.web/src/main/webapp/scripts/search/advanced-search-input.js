@@ -20,7 +20,7 @@
  */
 define([ "jquery", "backbone", "app/squash.handlebars.helpers", "squash.translator", "app/ws/squashtm.notification", "underscore", "workspace.projects", 
          "squash.configmanager", "./SearchDateWidget", "./SearchRangeWidget", 
-		"./SearchExistsWidget","./SearchMultiAutocompleteWidget", "./SearchMultiSelectWidget", "./SearchCheckboxWidget",
+		"./SearchExistsWidget","./SearchMultiAutocompleteWidget", "./SearchMultiSelectWidget", "./SearchMultiSelectProjectWidget",  "./SearchCheckboxWidget",
 		"./SearchComboMultiselectWidget", "./SearchRadioWidget", "./SearchTagsWidget", "./SearchMultiCascadeFlatWidget",
 		"jquery.squash", "jqueryui", "jquery.squash.togglepanel", "squashtable",
 		"jquery.squash.oneshotdialog", "jquery.squash.messagedialog",
@@ -366,7 +366,7 @@ define([ "jquery", "backbone", "app/squash.handlebars.helpers", "squash.translat
 			enteredValue = enteredValue || {};
 			// no enteredValue.values means 'select everything'
 			_.each(options, function(option) {
-				option.selected = (!enteredValue.values) || _.contains(enteredValue.values, option.code);
+				option.selected = (!enteredValue.values) || (enteredValue.values.length === 0)|| _.contains(enteredValue.values, option.code);
 			});
 			var context = {"multiselect-id": fieldId, "multiselect-title": fieldTitle, options: options};
 			var $fieldDom = this._appendFieldDom(tableId, fieldId, this._compileTemplate("#multiselect-template", context));
@@ -376,13 +376,13 @@ define([ "jquery", "backbone", "app/squash.handlebars.helpers", "squash.translat
 		makeMultiselectPerimeter : function(tableId, fieldId, fieldTitle, options, enteredValue) {
 			// adds a "selected" property to options
 			enteredValue = enteredValue || {};
-			// no enteredValue.values means 'select everything'
+			// no enteredValue.values means 'select everything', empty array mean everything
 			_.each(options, function(option) {
-				option.selected = (!enteredValue.values) || _.contains(enteredValue.values, option.code);
+				option.selected = (!enteredValue.values) || (enteredValue.values.length === 0) || _.contains(enteredValue.values, option.code);
 			});
 			var context = {"multiselect-id": fieldId, "multiselect-title": fieldTitle, options: options};
 			var $fieldDom = this._appendFieldDom(tableId, fieldId, this._compileTemplate("#multiselect-perimeter-template", context));
-			$fieldDom.searchMultiSelectWidget();
+			$fieldDom.searchMultiSelectProjectWidget();
 
 
 		},
@@ -403,7 +403,7 @@ define([ "jquery", "backbone", "app/squash.handlebars.helpers", "squash.translat
 			 
 			_.each(options, function(primaryOpt){				
 				_.each(primaryOpt.subInput.possibleValues, function(secondaryOpt){
-					secondaryOpt.selected = (! enteredValue.values) || _.contains(enteredValue.values, secondaryOpt.code);					
+					secondaryOpt.selected = (! enteredValue.values) || (enteredValue.values.length === 0)|| _.contains(enteredValue.values, secondaryOpt.code);					
 				});
 				
 				primaryOpt.selected = _.some(primaryOpt.subInput.possibleValues, function(sub){return (sub.selected === true);});

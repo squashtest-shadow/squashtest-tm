@@ -304,7 +304,7 @@ public abstract class SearchInterfaceDescription {
 
 		for (Milestone milestone : milestones){
 			if (! milestone.getStatus().equals(MilestoneStatus.PLANNED)){
-				labelField.addPossibleValue(optionBuilder.label(milestone.getLabel()).optionKey(milestone.getLabel()).build());
+				labelField.addPossibleValue(optionBuilder.label(milestone.getLabel()).optionKey(milestone.getId().toString()).build());
 			}
 		}
 

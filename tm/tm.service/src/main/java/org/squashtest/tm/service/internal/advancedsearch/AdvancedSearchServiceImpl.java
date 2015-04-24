@@ -23,6 +23,7 @@ package org.squashtest.tm.service.internal.advancedsearch;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Date;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -181,7 +182,8 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 		}
 		else{
 			// create a query that should match anything
-			mainQuery = qb.bool().must(qb.keyword().onField(fieldName).ignoreFieldBridge().ignoreAnalyzer().matching("$NO_VALUE").createQuery()).createQuery();
+			//mainQuery = qb.bool().must(qb.keyword().onField(fieldName).ignoreFieldBridge().ignoreAnalyzer().matching("$NO_VALUE").createQuery()).createQuery();
+			mainQuery = qb.all().createQuery();
 		}
 		return qb.bool().must(mainQuery).createQuery();
 	}
@@ -502,13 +504,24 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 					case "milestone.label":
 
 						List<String> labelValues = ((AdvancedSearchListFieldModel) model).getValues();
-						if (labelValues != null){
-							crit.add(Restrictions.in("label", labelValues));
+						
+					
+						
+						if (labelValues != null && !labelValues.isEmpty()){
+							
+							Collection<Long> ids =  CollectionUtils.collect(labelValues, new Transformer() {
+								
+								@Override
+								public Object transform(Object val) {								
+									return Long.parseLong((String)val);
+								}
+							});
+							crit.add(Restrictions.in("id", ids));//milestone.label now contains ids
 						}
 						break;
 					case "milestone.status":
 						List<String> statusValues = ((AdvancedSearchListFieldModel) model).getValues();
-						if (statusValues != null){
+						if (statusValues != null && !statusValues.isEmpty()){
 							crit.add(Restrictions.in("status", convertStatus(statusValues)));
 						}
 						break;

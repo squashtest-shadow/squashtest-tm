@@ -74,6 +74,12 @@ define(["jquery", "underscore", "isIE",  "jqueryui"], function($, _, isIE){
 								 .map(function(i,e){ return e.value;})
 								 .get();
 				
+				var max = this._secondarySelect().find('option').length;
+				
+				if (values && values.length === max){
+					values = [];
+				}
+				
 				return {type : 'LIST', values : values};
 			}
 			//case : setter
