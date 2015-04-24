@@ -277,6 +277,14 @@
 	opacity : 0.35;
 }
 
+.ui-icon-none {
+	background-position: -160px 0;
+	width: 0px;
+}
+.ui-icon-blank { // does not exist yet in our css
+	background-position: -160px 0;	
+}
+
 /*****************************
  Squash tags
 ******************************/
@@ -288,11 +296,11 @@ ul.squash-tagit {
 	
 	border:none;
 	
-	.create-node-custom-field-row &{
+	.create-node-custom-field-row &{ // page dependent, so not a widget rule
 		border : 1px solid lightgray
 	}
 	
-	.issue-field-control-holder &{
+	.issue-field-control-holder &{ // page dependent, so not a widget rule
 		display : inline-block;
 		width : 98%;
 		border-color : lightgray;	
