@@ -36,13 +36,18 @@ define([ "jquery", "backbone", "underscore", "handlebars", "app/util/StringUtil"
 			dialog.formDialog({width:420});
 
 			dialog.on('formdialogconfirm', this.submitPassword);
+
+
+			
 			dialog.on('formdialogcancel', function(){
+
 				dialog.formDialog('close');
 			});
 			dialog.on("formdialogclose", this.dialogCleanUp);
 
 			// TODO I should not handle events from an outside button
 			$("#" + this.options.openerId).on('click', function(){
+				dialog.formDialog({width:420});
 				dialog.formDialog('open');
 			});
 
@@ -137,6 +142,7 @@ define([ "jquery", "backbone", "underscore", "handlebars", "app/util/StringUtil"
 			window.squashtm.notification.showInfo(UMod.message.passSuccess);
 			this.$dialog.formDialog("close");
 			this.model.set("hasAuthentication", true);
+
 		},
 
 		/**
