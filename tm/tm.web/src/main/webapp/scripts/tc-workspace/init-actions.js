@@ -175,7 +175,10 @@ define(["jquery", "tree","./permissions-rules", "workspace.contextual-content", 
 			$("#export-tree-button").on("click", function(){
 				
 					$("#export-test-case-dialog").exportDialog("open");
-				
+					$('input:radio[data-val=xls]').prop('checked', true);
+					$('#export-test-case-includecalls').prop('checked', false);
+					$('#export-test-case-keepRteFormat').prop('checked', true);
+				 
 			});
 			
 			// *****************  search  ********************
