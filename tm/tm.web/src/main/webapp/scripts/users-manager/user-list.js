@@ -232,7 +232,7 @@ define([ "jquery", "squash.translator",
 	}
 
 	// ----------- table ---------------------
-
+	/*jshint validthis: true */
 	function drawCallback(){
 		var table = this;
 
