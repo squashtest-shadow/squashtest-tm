@@ -18,35 +18,36 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ "jquery", "backbone", "handlebars", "app/util/StringUtil", "jquery.squash", "jqueryui",
+define([ "jquery", "backbone", "underscore", "handlebars", "app/util/StringUtil", "jquery.squash", "jqueryui",
 		"jquery.squash.togglepanel", "squashtable", "jquery.squash.oneshotdialog",
-		"jquery.squash.messagedialog", "jquery.squash.confirmdialog", "jquery.squash.formdialog" ], function($, Backbone, Handlebars, StringUtil) {
+		"jquery.squash.messagedialog", "jquery.squash.confirmdialog", "jquery.squash.formdialog" ], function($, Backbone, _, Handlebars, StringUtil) {
+	"use strict";
+
 	var UMod = squashtm.app.UMod;
 	var UserResetPasswordPopup = Backbone.View.extend({
 		initialize : function(options) {
-			
 			this.options = options;
-			var self = this;
+			_.bindAll(this, "validatePassword", "userPasswordSuccess", "submitPassword");
 
+			// TODO looks like this is called for nothing : no events hash, no reference to this.$el...
 			this.render();
-			
-			var dialog = $("#"+ self.options.popupId);
-			
+
+		// TODO I should not handle events from an outside dialog, I SHOULD BE the dialog
+			var dialog = $("#"+ this.options.popupId);
+
 			dialog.formDialog({width:420});
-			
-			dialog.on('formdialogconfirm', function(){
-				self.submitPassword.call(self);
-			});
+
+			dialog.on('formdialogconfirm', this.submitPassword);
 			dialog.on('formdialogcancel', function(){
 				dialog.formDialog('close');
 			});
+			dialog.on("formdialogclose", this.dialogCleanUp);
 
-			dialog.on("formdialogclose", self.dialogCleanUp);
-			
-			$("#" + self.options.openerId).on('click', function(){
+			// TODO I should not handle events from an outside button
+			$("#" + this.options.openerId).on('click', function(){
 				dialog.formDialog('open');
 			});
-			
+
 			this.$dialog = dialog;
 
 		},
@@ -64,13 +65,13 @@ define([ "jquery", "backbone", "handlebars", "app/util/StringUtil", "jquery.squa
 		events : {},
 
 		submitPassword : function() {
-			var self = this;
-			if (!self.validatePassword.call(self)) {
+			if (!this.validatePassword()) {
 				return;
 			}
 
 			var newPassword = this.$dialog.find(".password").val();
 
+			var self = this;
 			$.ajax({
 				url : self.options.url,
 				type : self.options.type,
@@ -79,8 +80,7 @@ define([ "jquery", "backbone", "handlebars", "app/util/StringUtil", "jquery.squa
 					"password" : newPassword
 				},
 				success : function() {
-					self.userPasswordSuccess.call(self);
-					this.$dialog.remove();
+					self.userPasswordSuccess();
 				}
 			});
 		},
@@ -137,6 +137,7 @@ define([ "jquery", "backbone", "handlebars", "app/util/StringUtil", "jquery.squa
 
 		userPasswordSuccess : function() {
 			squashtm.notification.showInfo(UMod.message.passSuccess);
+			this.$dialog.formDialog("close");
 			this.model.set("hasAuthentication", true);
 		},
 
