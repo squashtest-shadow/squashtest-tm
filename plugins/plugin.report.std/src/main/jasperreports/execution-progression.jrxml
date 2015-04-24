@@ -540,10 +540,10 @@
 					<printWhenExpression><![CDATA[($P{milestoneLabel} != null)]]></printWhenExpression>
 				</reportElement>
 				<textElement verticalAlignment="Middle">
-					<font size="13"/>
+					<font size="13" isBold="true" isItalic="false"/>
 					<paragraph leftIndent="20"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{report.executionprogression.main.milestone}+" "+$P{milestoneLabel}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{report.executionprogression.main.milestone}+" : "+$P{milestoneLabel}]]></textFieldExpression>
 			</textField>
 		</band>
 	</columnHeader>

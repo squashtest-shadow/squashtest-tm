@@ -261,7 +261,7 @@ public class HibernateExecutionProgressQuery extends HibernateReportQuery {
 		if (milestoneCrit != null) {
 			Object[] ids = milestoneCrit.getParameters();
 
-			if (ids != null && ids.length > 0) {
+			if (ids != null && ids.length > 0 && (!campaignList.isEmpty())) {
 				// for now we support only one milestone
 				Long milestoneId = Long.valueOf(ids[0].toString());
 

@@ -54,6 +54,8 @@ public class ReqCoverageByTestRequirementSingleDto {
 	 */
 	private RequirementStatus status;
 
+	private String milestone;
+
 	// ACCESSORS
 
 	public String getParent() {
@@ -123,4 +125,14 @@ public class ReqCoverageByTestRequirementSingleDto {
 	public ReqCoverageByTestStatType convertCritVerif() {
 		return ReqCoverageByTestStatType.valueOf(this.criticality.toString() + "_VERIFIED");
 	}
+
+	public String getMilestone() {
+		return milestone;
+	}
+
+	public void setMilestone(String milestone) {
+		this.milestone = milestone;
+	}
+
+
 }

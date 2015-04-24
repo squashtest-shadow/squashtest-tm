@@ -313,8 +313,18 @@ public class HibernateRequirementCoverageByTestsQuery extends HibernateReportQue
 		}
 	}
 
+	// Issue 4818 : if the scope used for this report is a given milestone,
+	// here is where we find its label. We extract it from one of the projects
+	// and stuff it in  the dtos.
+	// another maggot on the pile of shit.
 	private Map<Long, ReqCoverageByTestProjectDto> populateRequirementDtosAndUpdateProjectStatistics(
 			List<Object[]> filteredData) {
+
+		if (filteredData.isEmpty()){
+			return new HashMap<>();
+		}
+
+		String milestone = extractMilestoneLabel((Requirement)filteredData.get(0)[0]);
 
 		// First initiate the projectDTO map, project id is the key
 		Map<Long, ReqCoverageByTestProjectDto> projectList = new HashMap<Long, ReqCoverageByTestProjectDto>();
@@ -332,6 +342,10 @@ public class HibernateRequirementCoverageByTestsQuery extends HibernateReportQue
 					requirement, parentName);
 
 			currentProject = findProjectDto(projectList, requirement, projectId);
+			if (milestone!=null){
+				currentProject.setMilestone(milestone);
+			}
+
 			// add the requirementDtos
 			for (ReqCoverageByTestRequirementSingleDto requirementSingleDto : requirementSingleDtos) {
 				currentProject.addRequirement(requirementSingleDto);
@@ -341,6 +355,30 @@ public class HibernateRequirementCoverageByTestsQuery extends HibernateReportQue
 
 		}
 		return projectList;
+	}
+
+	private String extractMilestoneLabel(Requirement req){
+
+		// stuff for
+		String milestone = null;
+
+		ReportCriterion milestoneCrit = criterions.get(MILESTONE_IDS);
+		if (milestoneCrit != null){
+			Object[] ids = milestoneCrit.getParameters();
+			if (ids != null && ids.length > 0){
+				Long milestoneId = Long.valueOf(ids[0].toString());
+
+				Project p = req.getProject();
+				for (Milestone m : p.getMilestones()){
+					if (m.getId().equals(milestoneId)){
+						milestone = m.getLabel();
+					}
+				}
+			}
+		}
+
+		return milestone;
+
 	}
 
 	/**
@@ -432,7 +470,7 @@ public class HibernateRequirementCoverageByTestsQuery extends HibernateReportQue
 	private void createSingleDtoReportMilestoneVersion(Requirement requirement, String parentName,
 			List<ReqCoverageByTestRequirementSingleDto> reqCovByTestReqSingleDtos) {
 
-		// TODO : ce sont des entiers
+
 		Object[] oIds =  getCriterions().get(MILESTONE_IDS).getParameters();
 		Collection<Long> milestoneIds = new ArrayList<>(oIds.length);
 		for (Object o : oIds){

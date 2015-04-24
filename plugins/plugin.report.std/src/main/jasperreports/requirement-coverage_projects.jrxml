@@ -56,6 +56,7 @@
 		<defaultValueExpression><![CDATA["D:\\xpetitrenaud\\workspace\\squash\\squashtest-csp\\tm\\org.squashtest.csp.tm.web\\src\\main\\jasperreports\\"]]></defaultValueExpression>
 	</parameter>
 	<parameter name="subReportParamName" class="net.sf.jasperreports.engine.JasperReport"/>
+	<parameter name="milestoneLabel" class="java.lang.String"/>
 	<queryString>
 		<![CDATA[]]>
 	</queryString>
@@ -116,6 +117,15 @@
 					<font isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$R{report.requirementcoverage.main.version.label}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="ff9ce7d5-3756-4d29-9a4c-ff1938e0c431" x="0" y="10" width="232" height="20">
+					<printWhenExpression><![CDATA[($P{milestoneLabel} != null)]]></printWhenExpression>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font size="14" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$R{report.requirementcoverage.milestone}+ $P{milestoneLabel}]]></textFieldExpression>
 			</textField>
 		</band>
 	</columnHeader>
