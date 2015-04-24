@@ -163,7 +163,7 @@
 			},
 			{
 				name : "user-manager",
-				include : [ "users-manager/user-list", "jquery", "teams-manager/TeamsManager" ],
+				include : [ "jquery", "app/ws/squashtm.workspace", "users-manager/user-list", "teams-manager/TeamsManager" ],
 				exclude : [ "common" ]
 			},
 			{
