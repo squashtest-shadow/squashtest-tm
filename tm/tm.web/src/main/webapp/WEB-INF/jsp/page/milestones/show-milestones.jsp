@@ -36,6 +36,7 @@
 <f:message var="confirmLabelDelete"   key="label.ConfirmDelete"/>
 <f:message var="confirmLabel"   key="label.Confirm"/>
 <f:message var="cancelLabel"    key="label.Cancel"/>
+<f:message var="closeLabel"    key="label.Close"/>
 <jsp:useBean id="now" class="java.util.Date"  />   
 <f:message var="dateFormat" key="squashtm.dateformatShort" />
 
@@ -230,7 +231,7 @@
         </table>
       <div class="popup-dialog-buttonpane">
         <input type="button" value="${addLabel}" data-def="mainbtn, evt=confirm"/>
-        <input type="button" value="${cancelLabel}" data-def="evt=cancel"/>
+        <input type="button" value="${closeLabel}" data-def="evt=cancel"/>
       </div>     
 </div>
 
