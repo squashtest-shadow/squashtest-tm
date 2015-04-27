@@ -51,7 +51,7 @@ define(['jquery', 'milestone-manager/milestone-activation', 'workspace.contextua
 				bServerSide : false,
 				fnDrawCallback : function(){
 					table.find('>tbody>tr>td.select-milestone-dialog-check').each(function(){
-						$(this).html('<input type="checkbox"/>');
+						$(this).html('<input type="radio"/>');
 					});
 					table.find('>tbody>tr').addClass('cursor-pointer');
 				}
