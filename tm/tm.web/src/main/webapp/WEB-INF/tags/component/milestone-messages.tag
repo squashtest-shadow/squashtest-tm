@@ -28,6 +28,8 @@
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component"%>
 
 <%@ attribute name="milestoneConf" required="true" type="java.lang.Object" description="an instance of MilestoneFeatureConfiguration"%>
+<%@ attribute name="isCampaign" required="false" type="java.lang.Boolean" description="is a campaign "%>
+
 
 <c:if test="${milestoneConf.messagesEnabled}">
     <div data-milestones="${milestoneConf.totalMilestones}" class="milestone-count-notifier entity-edit-general-warning 
@@ -35,8 +37,17 @@
       <p><f:message key="messages.boundToMultipleMilestones"/></p>
     </div>
     <c:if test="${milestoneConf.locked}">
+    
+    <c:choose>
+    <c:when test="${isCampaign == true}">
+   <f:message var="warningMsg" key="message.CannotModifyBecauseMilestoneLocking.campaign"/>
+     </c:when>
+    <c:otherwise>
+      <f:message var="warningMsg" key="message.CannotModifyBecauseMilestoneLocking"/>
+    </c:otherwise>
+    </c:choose>
     <div class="entity-edit-general-warning">
-      <p><f:message key="message.CannotModifyBecauseMilestoneLocking"/></p>
+      <p>${warningMsg} </p>
     </div>        
     </c:if>
 </c:if>
