@@ -65,7 +65,7 @@
                     </goals>
                   </pluginExecutionFilter>
                   <action>
-                    <execute></execute>
+                    <execute />
                   </action>
                 </pluginExecution>
               </pluginExecutions>

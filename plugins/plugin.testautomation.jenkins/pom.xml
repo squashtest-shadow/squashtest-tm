@@ -238,8 +238,8 @@
             <phase>pre-integration-test</phase>
             <configuration>
               <tasks>
-                <echo message="Create document base for IT's tomcat"></echo>
-                <mkdir dir="${stubTaServer.webapp.path}"></mkdir>
+                <echo message="Create document base for IT's tomcat" />
+                <mkdir dir="${stubTaServer.webapp.path}" />
               </tasks>
             </configuration>
           </execution>

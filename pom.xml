@@ -277,7 +277,7 @@
           <keepBlankLines>true</keepBlankLines>
           <sortDependencies>scope, artifactId</sortDependencies>
           <nrOfIndentSpace>2</nrOfIndentSpace>
-	  <expandEmptyElements>false</expandEmptyElements>
+          <expandEmptyElements>false</expandEmptyElements>
         </configuration>
         <executions>
           <execution>
@@ -612,7 +612,7 @@
                         </goals>
                       </pluginExecutionFilter>
                       <action>
-                        <execute></execute>
+                        <execute />
                       </action>
                     </pluginExecution>
 
@@ -626,7 +626,7 @@
                         </goals>
                       </pluginExecutionFilter>
                       <action>
-                        <execute></execute>
+                        <execute />
                       </action>
                     </pluginExecution>
 

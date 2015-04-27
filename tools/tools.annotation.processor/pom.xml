@@ -9,7 +9,7 @@
   <artifactId>tools.annotation.processor</artifactId>
   <name>${project.groupId}.${project.artifactId}</name>
 
-  <properties></properties>
+  <properties />
 
   <dependencies>
 
