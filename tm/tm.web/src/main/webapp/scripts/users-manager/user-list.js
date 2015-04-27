@@ -232,8 +232,9 @@ define([ "jquery", "squash.translator",
 	}
 
 	// ----------- table ---------------------
-	/*jshint validthis: true */
+
 	function drawCallback(){
+		/*jshint validthis: true */
 		var table = this;
 
 		// activation button
