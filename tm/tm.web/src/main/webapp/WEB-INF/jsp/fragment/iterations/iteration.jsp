@@ -182,11 +182,7 @@
           <f:message key="tabs.label.information" />
         </a>
       </li>
-      <c:if test="${milestoneConf.displayTab}">
-      <li>
-          <a href="${iterationUrl}/milestones/panel"><f:message key="tabs.label.milestone"/></a>
-      </li>        
-      </c:if>
+
       <li>
         <a href="#iteration-test-plans-panel">
           <f:message key="tabs.label.test-plan" />
