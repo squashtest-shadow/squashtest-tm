@@ -35,6 +35,8 @@ import java.util.Map;
 import javax.inject.Inject;
 import javax.inject.Provider;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.Predicate;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.osgi.extensions.annotation.ServiceReference;
 import org.springframework.stereotype.Controller;
@@ -449,7 +451,17 @@ public class RequirementVersionModificationController {
 		String rootPath = "/requirement-versions/"+requirementVersionId.toString();
 
 		Boolean editable = version.isModifiable();
-		Boolean isMilestoneInProject = version.getProject().getMilestones().size() == 0 ? false : true;
+		
+		List<Milestone> mil = version.getProject().getMilestones();
+		CollectionUtils.filter(mil, new Predicate() {
+			@Override
+			public boolean evaluate(Object milestone) {
+				return ((Milestone)milestone).getStatus().isBindableToObject();
+			}
+		});
+
+		
+		Boolean isMilestoneInProject = mil.size() == 0 ? false : true;
 		// add them to the model
 		conf.setNodeType("requirement-version");
 		conf.setRootPath(rootPath);

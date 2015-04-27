@@ -40,6 +40,8 @@ import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.Predicate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -478,8 +480,15 @@ public class CampaignModificationController {
 
 		String rootPath = "/campaigns/"+campaignId.toString();
 
+		List<Milestone> mil = camp.getProject().getMilestones();
+		CollectionUtils.filter(mil, new Predicate() {
+			@Override
+			public boolean evaluate(Object milestone) {
+				return ((Milestone)milestone).getStatus().isBindableToObject();
+			}
+		});
 		Boolean editable = camp.isBindableToMilestone();
-		Boolean isMilestoneInProject = camp.getProject().getMilestones().size() == 0 ? false : true;
+		Boolean isMilestoneInProject = mil.size() == 0 ? false : true;
 		// add them to the model
 		conf.setNodeType("campaign");
 		conf.setRootPath(rootPath);

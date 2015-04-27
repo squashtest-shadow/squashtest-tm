@@ -161,7 +161,7 @@ define(["jquery", "workspace.event-bus", "app/ws/squashtm.notification", "squash
 			});
 			
 			bindDialog.on('milestonedialogopen', function(){
-				// if there's not at least one milestone in project
+				// if there's not at least one milestone in project or only planned and locked status
 				if (!conf.milestoneInProject) {
 			bindDialogNoMilestone.formDialog('open');
 			bindDialog.milestoneDialog('close');

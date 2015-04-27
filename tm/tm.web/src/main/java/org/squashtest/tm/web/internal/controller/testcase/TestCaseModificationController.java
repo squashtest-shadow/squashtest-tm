@@ -36,6 +36,8 @@ import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.Predicate;
 import org.apache.commons.lang.NullArgumentException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -583,7 +585,16 @@ public class TestCaseModificationController {
 		Boolean editable = tc.isModifiable();
 
 		// add them to the model
-        Boolean isMilestoneInProject = tc.getProject().getMilestones().size() == 0 ? false : true;
+		List<Milestone> mil = tc.getProject().getMilestones();
+		CollectionUtils.filter(mil, new Predicate() {
+			@Override
+			public boolean evaluate(Object milestone) {
+				return ((Milestone)milestone).getStatus().isBindableToObject();
+			}
+		});
+
+		
+		Boolean isMilestoneInProject = mil.size() == 0 ? false : true;
         conf.setNodeType("testcase");
         conf.setRootPath(rootPath);
 		conf.setIdentity(identity);
