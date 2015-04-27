@@ -42,7 +42,7 @@
 
 <f:message var="addAnotherLabel" key="label.addAnother" />
 <f:message var="addLabel" key="label.Add" />
-<f:message var="cancelLabel" key="label.Cancel"/>
+<f:message var="cancelLabel" key="label.Close"/>
   
 <f:message var="missingNewPassword" key="user.account.newpass.error"/>
 <f:message var="missingConfirmPassword" key="user.account.confirmpass.error"/>
