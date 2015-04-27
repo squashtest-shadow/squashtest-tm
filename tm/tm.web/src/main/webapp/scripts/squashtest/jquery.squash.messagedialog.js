@@ -18,7 +18,8 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-(function($) {
+define(["jquery", "squash.translator"],
+			function($, translator) {
 	if ($.squash !== undefined && $.squash.messageDialog !== undefined) {
 		// already loaded -> bail out
 		return;
@@ -44,7 +45,7 @@
 			closeOnEscape : true,
 			closeOnEnter : true,
 			buttons : [ {
-				text : "Ok",
+				text : translator.get('label.Close'),
 				click : function() {
 					$(this).messageDialog("close");
 				}
@@ -86,8 +87,7 @@
 			var okButton = $("input:button", self.element);
 
 			if (okButton.length) {
-				var okLabel = okButton[0].value;
-				buttons[0].text = okLabel;
+				buttons[0].text = translator.get('label.Close');
 			}
 
 			$.ui.dialog.prototype._createButtons.apply(this, arguments);
@@ -198,4 +198,4 @@
 		}
 	});
 	
-}(jQuery));
+});
