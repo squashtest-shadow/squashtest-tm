@@ -121,7 +121,6 @@ define([ "jquery", "backbone", "underscore", "handlebars", "app/util/StringUtil"
 			}
 
 			return ((newPassOkay) && (confirmPassOkay) && (samePassesOkay));
-
 		},
 
 		isFilled : function(selector) {
@@ -132,10 +131,6 @@ define([ "jquery", "backbone", "underscore", "handlebars", "app/util/StringUtil"
 				return true;
 			}
 
-		},
-
-		hasPasswdChanged : function() {
-			return ((isFilled(".password")) || (isFilled(".user-account-confirmpass")));
 		},
 
 		userPasswordSuccess : function() {
