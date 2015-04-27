@@ -34,7 +34,7 @@ define(['jquery', 'tree', 'workspace/workspace.import-popup'], function($, zetre
 			if (json.failures===0){ failSpan.removeClass("span-red"); }else{	failSpan.addClass("span-red"); }
 			
 			//notes
-			if ((json.renamed===0) && (json.modified===0) && (json.milestoneFailures ===0)){
+			if ((json.renamed===0) && (json.modified===0) && (json.milestoneFailures ===0) && (json.milestoneNotActivatedFailures === 0)){
 				$(".import-excel-dialog-note", panel).hide();
 			}else{
 				$(".import-excel-dialog-note", panel).show();
