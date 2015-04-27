@@ -102,19 +102,19 @@
     </sec:authorize>
     <c:set var="actionState" value="${ milestoneFeatureEnabled ? '' : 'disabled=\"disabled\"' }" />
     <div class="btn-toolbar right">
-      <button id="new-milestone-button" ${ actionState } class="sq-btn milestone-dep" title="<f:message key='label.AddMilestone' />">
+      <button id="new-milestone-button" ${ actionState } class="sq-btn milestone-dep" title="<f:message key='milestone.tooltip.add' />">
         <span class="ui-icon ui-icon-plusthick">+</span>&nbsp;<f:message key="label.Add" />
       </button>
       
-      <button id="clone-milestone-button" ${ actionState } class="sq-btn milestone-dep" title="<f:message key='label.milestone.duplicate' />">
+      <button id="clone-milestone-button" ${ actionState } class="sq-btn milestone-dep" title="<f:message key='milestone.tooltip.duplicate' />">
         <f:message key="label.milestone.duplicate" />
       </button>
        
-      <button id="synchronize-milestone-button" ${ actionState } class="sq-btn milestone-dep" title="<f:message key='label.milestone.synchronize' />">
+      <button id="synchronize-milestone-button" ${ actionState } class="sq-btn milestone-dep" title="<f:message key='milestone.tooltip.synchronize' />">
         <f:message key="label.milestone.synchronize" />
       </button>
       
-      <button id="delete-milestone-button" ${ actionState } class="sq-btn milestone-dep" title="<f:message key='label.deleteMilestone' />">
+      <button id="delete-milestone-button" ${ actionState } class="sq-btn milestone-dep" title="<f:message key='milestone.tooltip.delete' />">
         <span class="ui-icon ui-icon-trash">-</span>&nbsp;<f:message key="label.Delete" />
       </button>
     </div>
