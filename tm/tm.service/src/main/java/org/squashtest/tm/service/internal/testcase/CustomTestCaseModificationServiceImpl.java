@@ -20,6 +20,8 @@
  */
 package org.squashtest.tm.service.internal.testcase;
 
+import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -86,8 +88,6 @@ import org.squashtest.tm.service.testcase.CustomTestCaseModificationService;
 import org.squashtest.tm.service.testcase.ParameterModificationService;
 import org.squashtest.tm.service.testcase.TestCaseImportanceManagerService;
 import org.squashtest.tm.service.testcase.TestCaseLibraryNavigationService;
-
-import static org.squashtest.tm.service.security.Authorizations.*;
 
 /**
  * @author Gregory Fouquet
@@ -531,7 +531,14 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 
 	@Override
 	// TODO : secure this
-	public TestCase addNewTestCaseVersion(long originalTcId, TestCase newVersionData, List<Long> milestoneIds){
+	public TestCase addNewTestCaseVersion(long originalTcId, TestCase newVersionData, Milestone activeMilestone){
+
+		List<Long> milestoneIds =  new ArrayList<Long>();
+		
+		if (activeMilestone  != null){
+			milestoneIds.add(activeMilestone.getId());
+		}
+
 
 		TestCase orig = testCaseDao.findById(originalTcId);
 		TestCase newTC = orig.createCopy();

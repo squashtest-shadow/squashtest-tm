@@ -41,10 +41,12 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.squashtest.tm.domain.attachment.Attachment;
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
+import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.testcase.TestStep;
 import org.squashtest.tm.service.customfield.CustomFieldValueFinderService;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.testcase.TestStepModificationService;
+import org.squashtest.tm.web.internal.argumentresolver.MilestoneConfigResolver.CurrentMilestone;
 import org.squashtest.tm.web.internal.controller.generic.ServiceAwareAttachmentTableModelHelper;
 import org.squashtest.tm.web.internal.controller.milestone.MilestoneFeatureConfiguration;
 import org.squashtest.tm.web.internal.controller.milestone.MilestoneUIConfigurationService;
@@ -87,8 +89,7 @@ public class TestStepController {
 	 */
 	@RequestMapping(method = RequestMethod.GET)
 	public String showStepInfos(@PathVariable long testStepId, Model model,
-			@CookieValue(value="milestones", required=false, defaultValue="") List<Long> milestoneIds
-			) {
+			@CurrentMilestone Milestone activeMilestone) {
 
 		LOGGER.info("Show Test Step initiated");
 		LOGGER.debug("Find and show TestStep #{}", testStepId);
@@ -99,7 +100,7 @@ public class TestStepController {
 		model.addAttribute("workspace", "test-case");
 
 		// ------------------------------------ MILLESTONE FEATURE
-		MilestoneFeatureConfiguration milestoneConf = milestoneConfService.configure(milestoneIds, testStep.getTestCase());
+		MilestoneFeatureConfiguration milestoneConf = milestoneConfService.configure(activeMilestone, testStep.getTestCase());
 		model.addAttribute("milestoneConf", milestoneConf);
 
 		// ------------------------------------RIGHTS PART

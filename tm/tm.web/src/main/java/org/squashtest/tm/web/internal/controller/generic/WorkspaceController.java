@@ -45,6 +45,7 @@ import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.service.library.WorkspaceService;
 import org.squashtest.tm.service.milestone.MilestoneFinderService;
 import org.squashtest.tm.service.project.ProjectFinder;
+import org.squashtest.tm.web.internal.argumentresolver.MilestoneConfigResolver.CurrentMilestone;
 import org.squashtest.tm.web.internal.controller.campaign.MenuItem;
 import org.squashtest.tm.web.internal.helper.JsTreeHelper;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
@@ -84,13 +85,13 @@ public abstract class WorkspaceController<LN extends LibraryNode> {
 	 */
 	@RequestMapping(method = RequestMethod.GET)
 	public String showWorkspace(Model model, Locale locale,
-			@CookieValue(value = "milestones", required = false, defaultValue = "") List<Long> milestoneIds,
+			@CurrentMilestone Milestone activeMilestone,
 			@CookieValue(value = "jstree_open", required = false, defaultValue = "") String[] openedNodes,
 			@CookieValue(value = "workspace-prefs", required = false, defaultValue = "") String elementId) {
 
 		List<Library<LN>> libraries = getWorkspaceService().findAllLibraries();
 		String[] nodesToOpen = null;
-		Milestone activeMilestone = null;
+	
 
 		if(elementId == null || "".equals(elementId)){
 			nodesToOpen = openedNodes;
@@ -104,8 +105,7 @@ public abstract class WorkspaceController<LN extends LibraryNode> {
 		MultiMap expansionCandidates = mapIdsByType(nodesToOpen);
 
 		DriveNodeBuilder<LN> nodeBuilder = driveNodeBuilderProvider().get();
-		if (!milestoneIds.isEmpty()){
-			activeMilestone = milestoneFinder.findById(milestoneIds.get(0));
+		if (activeMilestone != null){
 			nodeBuilder.filterByMilestone(activeMilestone);
 		}
 

@@ -53,11 +53,13 @@ import org.squashtest.tm.domain.library.ExportData;
 import org.squashtest.tm.domain.library.Folder;
 import org.squashtest.tm.domain.library.Library;
 import org.squashtest.tm.domain.library.LibraryNode;
+import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.testcase.ExportTestCaseData;
 import org.squashtest.tm.exception.library.RightsUnsuficientsForOperationException;
 import org.squashtest.tm.service.deletion.OperationReport;
 import org.squashtest.tm.service.deletion.SuppressionPreviewReport;
 import org.squashtest.tm.service.library.LibraryNavigationService;
+import org.squashtest.tm.web.internal.argumentresolver.MilestoneConfigResolver.CurrentMilestone;
 import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.model.jstree.JsTreeNode;
 import org.squashtest.tm.web.internal.report.service.JasperReportsService;
@@ -94,22 +96,22 @@ public abstract class LibraryNavigationController<LIBRARY extends Library<? exte
 		return messageSource;
 	}
 
-	protected abstract JsTreeNode createTreeNodeFromLibraryNode(NODE resource, List<Long> milestoneIds);
+	protected abstract JsTreeNode createTreeNodeFromLibraryNode(NODE resource, Milestone activeMilestone);
 
 	@RequestMapping(value = "/drives/{libraryId}/content", method = RequestMethod.GET)
 	public final @ResponseBody List<JsTreeNode> getRootContentTreeModel(@PathVariable long libraryId,
-			@CookieValue(value="milestones", required=false, defaultValue="") List<Long> milestoneIds) {
+			@CurrentMilestone Milestone activeMilestone) {
 		List<NODE> nodes = getLibraryNavigationService().findLibraryRootContent(libraryId);
-		List<JsTreeNode> model = createJsTreeModel(nodes, milestoneIds);
+		List<JsTreeNode> model = createJsTreeModel(nodes, activeMilestone);
 
 		return model;
 	}
 
-	protected List<JsTreeNode> createJsTreeModel(Collection<NODE> nodes, List<Long> milestoneIds) {
+	protected List<JsTreeNode> createJsTreeModel(Collection<NODE> nodes, Milestone activeMilestone) {
 		List<JsTreeNode> jstreeNodes = new ArrayList<JsTreeNode>();
 
 		for (NODE node : nodes) {
-			JsTreeNode jsnode = createTreeNodeFromLibraryNode(node, milestoneIds);
+			JsTreeNode jsnode = createTreeNodeFromLibraryNode(node, activeMilestone);
 			if (jsnode != null){
 				jstreeNodes.add(jsnode);
 			}
@@ -122,31 +124,31 @@ public abstract class LibraryNavigationController<LIBRARY extends Library<? exte
 	@ResponseStatus(HttpStatus.CREATED)
 	@RequestMapping(value = "/drives/{libraryId}/content/new-folder", method = RequestMethod.POST)
 	public final @ResponseBody JsTreeNode addNewFolderToLibraryRootContent(@PathVariable long libraryId,
-			@RequestBody FOLDER newFolder, @CookieValue(value="milestones", required=false, defaultValue="") List<Long> milestoneIds) {
+			@RequestBody FOLDER newFolder, @CurrentMilestone Milestone activeMilestone) {
 
 		getLibraryNavigationService().addFolderToLibrary(libraryId, newFolder);
 
-		return createTreeNodeFromLibraryNode((NODE) newFolder, milestoneIds);
+		return createTreeNodeFromLibraryNode((NODE) newFolder, activeMilestone);
 	}
 
 	@SuppressWarnings("unchecked")
 	@ResponseStatus(HttpStatus.CREATED)
 	@RequestMapping(value = "/folders/{folderId}/content/new-folder", method = RequestMethod.POST)
 	public final @ResponseBody JsTreeNode addNewFolderToFolderContent(@PathVariable long folderId,
-			@RequestBody FOLDER newFolder, @CookieValue(value="milestones", required=false, defaultValue="") List<Long> milestoneIds) {
+			@RequestBody FOLDER newFolder, @CurrentMilestone Milestone activeMilestone) {
 
 		getLibraryNavigationService().addFolderToFolder(folderId, newFolder);
 
-		return createTreeNodeFromLibraryNode((NODE) newFolder, milestoneIds);
+		return createTreeNodeFromLibraryNode((NODE) newFolder, activeMilestone);
 	}
 
 	@RequestMapping(value = "/folders/{folderId}/content", method = RequestMethod.GET)
 	public final @ResponseBody
 	List<JsTreeNode> getFolderContentTreeModel(@PathVariable long folderId,
-			@CookieValue(value="milestones", required=false, defaultValue="") List<Long> milestoneIds) {
+			@CurrentMilestone Milestone activeMilestone) {
 
 		List<NODE> nodes = getLibraryNavigationService().findFolderContent(folderId);
-		List<JsTreeNode> model = createJsTreeModel(nodes, milestoneIds);
+		List<JsTreeNode> model = createJsTreeModel(nodes, activeMilestone);
 
 		return model;
 	}
@@ -165,13 +167,10 @@ public abstract class LibraryNavigationController<LIBRARY extends Library<? exte
 
 	@RequestMapping(value = "/content/{nodeIds}/deletion-simulation", method = RequestMethod.GET)
 	public @ResponseBody Messages simulateNodeDeletion(@PathVariable(RequestParams.NODE_IDS) List<Long> nodeIds,
-			@CookieValue(value="milestones", required=false, defaultValue="") List<Long> milestoneIds,
+			@CurrentMilestone Milestone activeMilestone,
 			Locale locale) {
 
-		Long milestoneId = null;
-		if ( ! milestoneIds.isEmpty()){
-			milestoneId = milestoneIds.get(0);
-		}
+		Long milestoneId = activeMilestone != null ? activeMilestone.getId() : null;
 
 		List<SuppressionPreviewReport> reportList = getLibraryNavigationService().simulateDeletion(nodeIds, milestoneId);
 
@@ -187,13 +186,9 @@ public abstract class LibraryNavigationController<LIBRARY extends Library<? exte
 	@RequestMapping(value = "/content/{nodeIds}", method = RequestMethod.DELETE)
 	public @ResponseBody OperationReport confirmNodeDeletion(
 			@PathVariable(RequestParams.NODE_IDS) List<Long> nodeIds,
-			@CookieValue(value="milestones", required=false, defaultValue="") List<Long> milestoneIds) {
+			@CurrentMilestone Milestone activeMilestone) {
 
-		Long milestoneId = null;
-		if ( ! milestoneIds.isEmpty()){
-			milestoneId = milestoneIds.get(0);
-		}
-
+		Long milestoneId = activeMilestone != null ? activeMilestone.getId() : null;
 
 		return getLibraryNavigationService().deleteNodes(nodeIds, milestoneId);
 	}
@@ -201,8 +196,7 @@ public abstract class LibraryNavigationController<LIBRARY extends Library<? exte
 
 	@RequestMapping(value = "/{destinationType}/{destinationId}/content/new", method = RequestMethod.POST, params = { "nodeIds[]" })
 	public @ResponseBody List<JsTreeNode> copyNodes(@RequestParam("nodeIds[]") Long[] nodeIds,
-			@PathVariable("destinationId") long destinationId, @PathVariable("destinationType") String destType, @CookieValue(value="milestones",
-			required=false, defaultValue="") List<Long> milestoneIds) {
+			@PathVariable("destinationId") long destinationId, @PathVariable("destinationType") String destType, @CurrentMilestone Milestone activeMilestone) {
 
 		List<NODE> nodeList;
 		try {
@@ -218,7 +212,7 @@ public abstract class LibraryNavigationController<LIBRARY extends Library<? exte
 			throw new RightsUnsuficientsForOperationException(ade);
 		}
 
-		return createJsTreeModel(nodeList, milestoneIds);
+		return createJsTreeModel(nodeList, activeMilestone);
 	}
 
 

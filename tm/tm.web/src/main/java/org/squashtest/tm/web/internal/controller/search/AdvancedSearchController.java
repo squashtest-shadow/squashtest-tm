@@ -82,6 +82,7 @@ import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.testcase.TestCaseAdvancedSearchService;
 import org.squashtest.tm.service.testcase.TestCaseModificationService;
 import org.squashtest.tm.service.testcase.VerifyingTestCaseManagerService;
+import org.squashtest.tm.web.internal.argumentresolver.MilestoneConfigResolver.CurrentMilestone;
 import org.squashtest.tm.web.internal.controller.AcceptHeaders;
 import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.controller.administration.MilestoneDataTableModelHelper;
@@ -108,7 +109,7 @@ public class AdvancedSearchController {
 	private static final Logger LOGGER = LoggerFactory.getLogger(AdvancedSearchController.class);
 
 	private static interface FormModelBuilder {
-		SearchInputInterfaceModel build(Locale locale, List<Long> milestoneIds);
+		SearchInputInterfaceModel build(Locale locale, boolean isMilestoneMode);
 	}
 
 	private static final String IDS = "ids[]";
@@ -149,8 +150,8 @@ public class AdvancedSearchController {
 	{
 		formModelBuilder.put(TESTCASE, new FormModelBuilder() {
 			@Override
-			public SearchInputInterfaceModel build(Locale locale, List<Long> milestoneIds) {
-				SearchInputInterfaceModel model = getTestCaseSearchInputInterfaceModel(locale, milestoneIds);
+			public SearchInputInterfaceModel build(Locale locale, boolean isMilestoneMode) {
+				SearchInputInterfaceModel model = getTestCaseSearchInputInterfaceModel(locale, isMilestoneMode);
 				populateMetadata(model);
 				return model;
 			}
@@ -158,9 +159,9 @@ public class AdvancedSearchController {
 
 		formModelBuilder.put(TESTCASE_VIA_REQUIREMENT, new FormModelBuilder() {
 			@Override
-			public SearchInputInterfaceModel build(Locale locale, List<Long> milestoneIds) {
+			public SearchInputInterfaceModel build(Locale locale, boolean isMilestoneMode) {
 				SearchInputInterfaceModel model = getTestCaseViaRequirementSearchInputInterfaceModel(locale,
-						milestoneIds);
+						isMilestoneMode);
 				populateMetadata(model);
 				return model;
 			}
@@ -168,8 +169,8 @@ public class AdvancedSearchController {
 
 		formModelBuilder.put(REQUIREMENT, new FormModelBuilder() {
 			@Override
-			public SearchInputInterfaceModel build(Locale locale, List<Long> milestoneIds) {
-				SearchInputInterfaceModel model = getRequirementSearchInputInterfaceModel(locale, milestoneIds);
+			public SearchInputInterfaceModel build(Locale locale, boolean isMilestoneMode) {
+				SearchInputInterfaceModel model = getRequirementSearchInputInterfaceModel(locale, isMilestoneMode);
 				populateMetadata(model);
 				return model;
 			}
@@ -251,9 +252,9 @@ public class AdvancedSearchController {
 	public String showSearchPage(Model model, @RequestParam String searchDomain,
 			@RequestParam(required = false) String associateResultWithType, @RequestParam(required = false) Long id,
 			Locale locale,
-			@CookieValue(value = "milestones", required = false, defaultValue = "") List<Long> milestoneIds) {
+			@CurrentMilestone Milestone activeMilestone) {
 
-		initModelForPage(model, associateResultWithType, id, milestoneIds);
+		initModelForPage(model, associateResultWithType, id, activeMilestone);
 		model.addAttribute(SEARCH_DOMAIN, searchDomain);
 		if (TESTCASE_VIA_REQUIREMENT.equals(searchDomain)) {
 			searchDomain = REQUIREMENT;
@@ -262,7 +263,7 @@ public class AdvancedSearchController {
 		FormModelBuilder builder = formModelBuilder.get(searchDomain);
 
 		if (builder != null) {
-			model.addAttribute("formModel", builder.build(locale, milestoneIds));
+			model.addAttribute("formModel", builder.build(locale, (activeMilestone != null)));
 		} else {
 			LOGGER.error(
 					"Could not find a FormModelBuilder for search domain : {}. This is either caused by a bug or a hand-written request",
@@ -272,8 +273,8 @@ public class AdvancedSearchController {
 		return searchDomain + "-search-input.html";
 	}
 
-	private void initModelForPage(Model model, String associateResultWithType, Long id, List<Long> isMilestoneMode) {
-		model.addAttribute("isMilestoneMode", !isMilestoneMode.isEmpty());
+	private void initModelForPage(Model model, String associateResultWithType, Long id, Milestone activeMilestone) {
+		model.addAttribute("isMilestoneMode", (activeMilestone != null));
 		if (StringUtils.isNotBlank(associateResultWithType)) {
 			model.addAttribute("associateResult", true);
 			model.addAttribute("associateResultWithType", associateResultWithType);
@@ -287,17 +288,17 @@ public class AdvancedSearchController {
 	public String showSearchPageFilledWithParams(Model model, @RequestParam String searchDomain,
 			@RequestParam String searchModel, @RequestParam(required = false) String associateResultWithType,
 			@RequestParam(required = false) Long id, Locale locale,
-			@CookieValue(value = "milestones", required = false, defaultValue = "") List<Long> milestoneIds) {
+			@CurrentMilestone Milestone activeMilestone) {
 		model.addAttribute(SEARCH_MODEL, searchModel);
-		return showSearchPage(model, searchDomain, associateResultWithType, id, locale, milestoneIds);
+		return showSearchPage(model, searchDomain, associateResultWithType, id, locale, activeMilestone);
 	}
 
 	@RequestMapping(value = "/results", params = TESTCASE)
 	public String getTestCaseSearchResultPage(Model model, @RequestParam String searchModel,
 			@RequestParam(required = false) String associateResultWithType, @RequestParam(required = false) Long id,
-			@CookieValue(value = "milestones", required = false, defaultValue = "") List<Long> milestoneIds) {
+			@CurrentMilestone Milestone activeMilestone) {
 
-		initModelForPage(model, associateResultWithType, id, milestoneIds);
+		initModelForPage(model, associateResultWithType, id, activeMilestone);
 		model.addAttribute(SEARCH_MODEL, searchModel);
 		model.addAttribute(SEARCH_DOMAIN, TESTCASE);
 
@@ -309,9 +310,9 @@ public class AdvancedSearchController {
 	@RequestMapping(value = "/results", params = REQUIREMENT)
 	public String getRequirementSearchResultPage(Model model, @RequestParam String searchModel,
 			@RequestParam(required = false) String associateResultWithType, @RequestParam(required = false) Long id,
-			@CookieValue(value = "milestones", required = false, defaultValue = "") List<Long> milestoneIds) {
+			@CurrentMilestone Milestone activeMilestone) {
 
-		initModelForPage(model, associateResultWithType, id, milestoneIds);
+		initModelForPage(model, associateResultWithType, id, activeMilestone);
 		model.addAttribute(SEARCH_MODEL, searchModel);
 		model.addAttribute(SEARCH_DOMAIN, REQUIREMENT);
 
@@ -323,9 +324,9 @@ public class AdvancedSearchController {
 	@RequestMapping(value = "/results", params = TESTCASE_VIA_REQUIREMENT)
 	public String getTestCaseThroughRequirementSearchResultPage(Model model, @RequestParam String searchModel,
 			@RequestParam(required = false) String associateResultWithType, @RequestParam(required = false) Long id,
-			@CookieValue(value = "milestones", required = false, defaultValue = "") List<Long> milestoneIds) {
+			@CurrentMilestone Milestone activeMilestone) {
 
-		initModelForPage(model, associateResultWithType, id, milestoneIds);
+		initModelForPage(model, associateResultWithType, id, activeMilestone);
 		model.addAttribute(SEARCH_MODEL, searchModel);
 		model.addAttribute(SEARCH_DOMAIN, TESTCASE_VIA_REQUIREMENT);
 
@@ -350,13 +351,13 @@ public class AdvancedSearchController {
 	public DataTableModel getTestCaseThroughRequirementTableModel(final DataTableDrawParameters params,
 			final Locale locale, @RequestParam(value = RequestParams.MODEL) String model,
 			@RequestParam(required = false) String associateResultWithType, @RequestParam(required = false) Long id,
-			@CookieValue(value = "milestones", required = false, defaultValue = "") List<Long> milestoneIds)
+			@CurrentMilestone Milestone activeMilestone)
 			throws JsonParseException, JsonMappingException, IOException {
 
 		AdvancedSearchModel searchModel = new ObjectMapper().readValue(model, AdvancedSearchModel.class);
 
-		if (milestoneIds.size() == 1 && featureManager.isEnabled(Feature.MILESTONE) ) {
-			addMilestoneToSearchModel(searchModel, milestoneIds.get(0));
+		if (activeMilestone != null && featureManager.isEnabled(Feature.MILESTONE) ) {
+			addMilestoneToSearchModel(searchModel, activeMilestone);
 		}
 
 		PagingAndMultiSorting paging = new DataTableMultiSorting(params, testCaseSearchResultMapper);
@@ -382,12 +383,12 @@ public class AdvancedSearchController {
 	public DataTableModel getTestCaseTableModel(final DataTableDrawParameters params, final Locale locale,
 			@RequestParam(value = RequestParams.MODEL) String model,
 			@RequestParam(required = false) String associateResultWithType, @RequestParam(required = false) Long id,
-			@CookieValue(value = "milestones", required = false, defaultValue = "") List<Long> milestoneIds)
+			@CurrentMilestone Milestone activeMilestone)
 			throws JsonParseException, JsonMappingException, IOException {
 
 		AdvancedSearchModel searchModel = new ObjectMapper().readValue(model, AdvancedSearchModel.class);
-		if (milestoneIds.size() == 1) {
-			addMilestoneToSearchModel(searchModel, milestoneIds.get(0));
+		if (activeMilestone != null) {
+			addMilestoneToSearchModel(searchModel, activeMilestone);
 		}
 		PagingAndMultiSorting paging = new DataTableMultiSorting(params, testCaseSearchResultMapper);
 
@@ -412,13 +413,13 @@ public class AdvancedSearchController {
 	public DataTableModel getRequirementTableModel(final DataTableDrawParameters params, final Locale locale,
 			@RequestParam(value = RequestParams.MODEL) String model,
 			@RequestParam(required = false) String associateResultWithType, @RequestParam(required = false) Long id,
-			@CookieValue(value = "milestones", required = false, defaultValue = "") List<Long> milestoneIds)
+			@CurrentMilestone Milestone activeMilestone)
 			throws JsonParseException, JsonMappingException, IOException {
 
 		AdvancedSearchModel searchModel = new ObjectMapper().readValue(model, AdvancedSearchModel.class);
 
-		if (milestoneIds.size() == 1) {
-			addMilestoneToSearchModel(searchModel, milestoneIds.get(0));
+		if (activeMilestone != null) {
+			addMilestoneToSearchModel(searchModel, activeMilestone);
 		}
 
 		PagingAndMultiSorting paging = new DataTableMultiSorting(params, requirementSearchResultMapper);
@@ -438,12 +439,12 @@ public class AdvancedSearchController {
 				isInAssociationContext, ids).buildDataModel(holder, params.getsEcho());
 	}
 
-	private void addMilestoneToSearchModel(AdvancedSearchModel searchModel, Long milestoneId) {
+	private void addMilestoneToSearchModel(AdvancedSearchModel searchModel, Milestone activeMilestone) {
 		// yes this is a list field for only one value ! But this allow us to handle milestone mode same as reference
 		// mode
 		AdvancedSearchListFieldModel model = new AdvancedSearchListFieldModel();
 		List<String> milestones = new ArrayList<String>();
-		milestones.add(milestoneId.toString());
+		milestones.add(activeMilestone.getId().toString());
 		model.setValues(milestones);
 		searchModel.addField("milestones.id", model);
 	}
@@ -501,14 +502,14 @@ public class AdvancedSearchController {
 	@RequestMapping(value = "/input", method = RequestMethod.GET, headers = AcceptHeaders.CONTENT_JSON, params = TESTCASE_VIA_REQUIREMENT)
 	@ResponseBody
 	public SearchInputInterfaceModel getTestCaseViaRequirementSearchInputInterfaceModel(Locale locale,
-			List<Long> milestoneIds) {
+			boolean isMilestoneMode) {
 		// TODO should no longer be called through HTTP, put it private
-		return getRequirementSearchInputInterfaceModel(locale, milestoneIds);
+		return getRequirementSearchInputInterfaceModel(locale, isMilestoneMode);
 	}
 
 	@RequestMapping(value = "/input", method = RequestMethod.GET, headers = AcceptHeaders.CONTENT_JSON, params = REQUIREMENT)
 	@ResponseBody
-	public SearchInputInterfaceModel getRequirementSearchInputInterfaceModel(Locale locale, List<Long> milestoneIds) {
+	public SearchInputInterfaceModel getRequirementSearchInputInterfaceModel(Locale locale, boolean isMilestoneMode) {
 		// TODO should no longer be called through HTTP, put it private
 		SearchInputInterfaceModel model = new SearchInputInterfaceModel();
 
@@ -525,7 +526,7 @@ public class AdvancedSearchController {
 		model.addPanel(requirementVersionSearchInterfaceDescription.createRequirementAttributePanel(locale));
 
 		// Milestones
-		if (milestoneIds.size() != 1 && featureManager.isEnabled(Feature.MILESTONE)) {
+		if (isMilestoneMode && featureManager.isEnabled(Feature.MILESTONE)) {
 			model.addPanel(requirementVersionSearchInterfaceDescription.createMilestonePanel(locale));
 		}
 
@@ -546,7 +547,7 @@ public class AdvancedSearchController {
 
 	@RequestMapping(value = "/input", method = RequestMethod.GET, headers = AcceptHeaders.CONTENT_JSON, params = TESTCASE)
 	@ResponseBody
-	public SearchInputInterfaceModel getTestCaseSearchInputInterfaceModel(Locale locale, List<Long> milestoneIds) {
+	public SearchInputInterfaceModel getTestCaseSearchInputInterfaceModel(Locale locale, boolean isMilestoneMode) {
 		// TODO should no longer be called through HTTP, put it private
 		SearchInputInterfaceModel model = new SearchInputInterfaceModel();
 
@@ -563,7 +564,7 @@ public class AdvancedSearchController {
 		model.addPanel(testcaseVersionSearchInterfaceDescription.createAttributePanel(locale));
 
 		// Milestones
-		if (milestoneIds.size() != 1 && featureManager.isEnabled(Feature.MILESTONE)) {
+		if (isMilestoneMode && featureManager.isEnabled(Feature.MILESTONE)) {
 			model.addPanel(testcaseVersionSearchInterfaceDescription.createMilestonePanel(locale));
 		}
 

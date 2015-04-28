@@ -67,40 +67,40 @@ public class MilestoneUIConfigurationService {
 	TestCaseFinder testCaseFinder;
 
 
-	public MilestoneFeatureConfiguration configure(List<Long> activeMilestones, TestCase testCase){
-		MilestoneFeatureConfiguration conf = createCommonConf(activeMilestones, testCase);
-		Map<String, String> identity = createIdentity(testCase);
+	public MilestoneFeatureConfiguration configure(Milestone activeMilestone, TestCase testcase){
+		MilestoneFeatureConfiguration conf = createCommonConf(activeMilestone, testcase);
+		Map<String, String> identity = createIdentity(testcase);
 		conf.setIdentity(identity);
 
 		// for the test cases one must account for inherited milestones
-		boolean locked = isMilestoneLocked(testCase);
+		boolean locked = isMilestoneLocked(testcase);
 		conf.setMilestoneLocked(locked);
 		return conf;
 	}
 
-	public MilestoneFeatureConfiguration configure(List<Long> activeMilestones, RequirementVersion version){
-		MilestoneFeatureConfiguration conf = createCommonConf(activeMilestones, version);
+	public MilestoneFeatureConfiguration configure(Milestone activeMilestone, RequirementVersion version){
+		MilestoneFeatureConfiguration conf = createCommonConf(activeMilestone, version);
 		Map<String, String> identity = createIdentity(version);
 		conf.setIdentity(identity);
 		return conf;
 	}
 
-	public MilestoneFeatureConfiguration configure(List<Long> activeMilestones, Campaign campaign){
-		MilestoneFeatureConfiguration conf = createCommonConf(activeMilestones, campaign);
+	public MilestoneFeatureConfiguration configure(Milestone activeMilestone, Campaign campaign){
+		MilestoneFeatureConfiguration conf = createCommonConf(activeMilestone, campaign);
 		Map<String, String> identity = createIdentity(campaign);
 		conf.setIdentity(identity);
 		return conf;
 	}
 
-	public MilestoneFeatureConfiguration configure(List<Long> activeMilestones, Iteration iteration){
-		MilestoneFeatureConfiguration conf = createCommonConf(activeMilestones, iteration);
+	public MilestoneFeatureConfiguration configure(Milestone activeMilestone, Iteration iteration){
+		MilestoneFeatureConfiguration conf = createCommonConf(activeMilestone, iteration);
 		Map<String, String> identity = createIdentity(iteration);
 		conf.setIdentity(identity);
 		return conf;
 	}
 
-	public MilestoneFeatureConfiguration configure(List<Long> activeMilestones, TestSuite testSuite){
-		MilestoneFeatureConfiguration conf = createCommonConf(activeMilestones, testSuite);
+	public MilestoneFeatureConfiguration configure(Milestone activeMilestone, TestSuite testSuite){
+		MilestoneFeatureConfiguration conf = createCommonConf(activeMilestone, testSuite);
 		Map<String, String> identity = createIdentity(testSuite);
 		conf.setIdentity(identity);
 		return conf;
@@ -111,7 +111,7 @@ public class MilestoneUIConfigurationService {
 	// ************************** private stuffs *******************************************
 
 
-	private MilestoneFeatureConfiguration createCommonConf(List<Long> milestones, MilestoneMember member){
+	private MilestoneFeatureConfiguration createCommonConf(Milestone currentMilestone, MilestoneMember member){
 
 		MilestoneFeatureConfiguration conf = new MilestoneFeatureConfiguration();
 
@@ -120,15 +120,6 @@ public class MilestoneUIConfigurationService {
 		boolean userEnabled = true;
 		boolean locked = false;
 		int totalMilestones = 0;
-
-		List<Long> activeMilestones;
-		if (milestones != null){
-			activeMilestones = milestones;
-		}
-		else{
-			activeMilestones = new ArrayList<>();
-		}
-
 
 		// TODO : test whether the functionality is globally enabled
 		globallyEnabled = featureManager.isEnabled(Feature.MILESTONE);
@@ -143,7 +134,7 @@ public class MilestoneUIConfigurationService {
 		conf.setMilestoneLocked(locked);
 
 		// does the user actually use the feature
-		userEnabled = ! (activeMilestones.isEmpty());
+		userEnabled = (currentMilestone != null);
 		if (! userEnabled){
 			conf.setUserEnabled(false);
 		}
@@ -153,10 +144,10 @@ public class MilestoneUIConfigurationService {
 		conf.setTotalMilestones(totalMilestones);
 
 		// if both globally and user enabled, fetch the active milestones etc
-		if (globallyEnabled && userEnabled && ! activeMilestones.isEmpty()){
-			Milestone milestone = milestoneFinder.findById(activeMilestones.get(0));
-			activeMilestone.setId(milestone.getId());
-			activeMilestone.setLabel(milestone.getLabel());
+		if (globallyEnabled && userEnabled && (currentMilestone != null)){
+			
+			activeMilestone.setId(currentMilestone.getId());
+			activeMilestone.setLabel(currentMilestone.getLabel());
 			conf.setActiveMilestone(activeMilestone);
 
 		}

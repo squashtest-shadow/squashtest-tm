@@ -88,7 +88,7 @@ class TestCaseLibraryNavigationControllerTest extends Specification {
 		testCaseLibraryNavigationService.findLibraryRootContent(10) >> [rootFolder]
 
 		when:
-		def res = controller.getRootContentTreeModel(10, [])
+		def res = controller.getRootContentTreeModel(10, null)
 
 		then:
 		res.size() == 1
@@ -104,7 +104,7 @@ class TestCaseLibraryNavigationControllerTest extends Specification {
 		}
 
 		when:
-		def res = controller.createTreeNodeFromLibraryNode(node, [])
+		def res = controller.createTreeNodeFromLibraryNode(node, null)
 
 		then:
 		res.state == State.leaf.name()
@@ -115,7 +115,7 @@ class TestCaseLibraryNavigationControllerTest extends Specification {
 
 
 		when:
-		def res = controller.createTreeNodeFromLibraryNode(node, [])
+		def res = controller.createTreeNodeFromLibraryNode(node, null)
 
 		then:
 		res.state == State.closed.name()
@@ -132,7 +132,7 @@ class TestCaseLibraryNavigationControllerTest extends Specification {
 		testCaseLibraryNavigationService.findFolderContent(10) >> [content]
 
 		when:
-		def res = controller.getFolderContentTreeModel(folderId, [])
+		def res = controller.getFolderContentTreeModel(folderId, null)
 
 		then:
 		res.size() == 1
@@ -145,7 +145,7 @@ class TestCaseLibraryNavigationControllerTest extends Specification {
 		folder.id >> 50
 
 		when:
-		def res = controller.addNewFolderToLibraryRootContent(10, folder, [])
+		def res = controller.addNewFolderToLibraryRootContent(10, folder, null)
 
 		then:
 		1 * testCaseLibraryNavigationService.addFolderToLibrary(10, folder)
@@ -175,7 +175,7 @@ class TestCaseLibraryNavigationControllerTest extends Specification {
 		tcfm.getCustomFields() >> [:]
 		tcfm.getName() >> "test case"
 		when:
-		def res = controller.addNewTestCaseToLibraryRootContent(10, tcfm, [])
+		def res = controller.addNewTestCaseToLibraryRootContent(10, tcfm, null)
 
 		then:
 		1 * testCaseLibraryNavigationService.addTestCaseToLibrary(10, {it.getName() == "test case"}, [:], null, [])
@@ -204,7 +204,7 @@ class TestCaseLibraryNavigationControllerTest extends Specification {
 		tcfm.getCustomFields() >> [:]
 		tcfm.getName() >> "test case"
 		when:
-		def res = controller.addNewTestCaseToFolder(10, tcfm, [])
+		def res = controller.addNewTestCaseToFolder(10, tcfm, null)
 
 		then:
 		1 * testCaseLibraryNavigationService.addTestCaseToFolder(10, {it.getName() == "test case"}, [:], null, [])

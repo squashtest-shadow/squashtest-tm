@@ -20,6 +20,8 @@
  */
 package org.squashtest.tm.service.internal.testcase;
 
+import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
+
 import java.io.File;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -41,6 +43,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.customfield.RawValue;
 import org.squashtest.tm.domain.infolist.InfoListItem;
 import org.squashtest.tm.domain.infolist.ListItemReference;
+import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.projectfilter.ProjectFilter;
 import org.squashtest.tm.domain.testcase.ExportTestCaseData;
 import org.squashtest.tm.domain.testcase.TestCase;
@@ -73,7 +76,6 @@ import org.squashtest.tm.service.project.ProjectFilterModificationService;
 import org.squashtest.tm.service.statistics.testcase.TestCaseStatisticsBundle;
 import org.squashtest.tm.service.testcase.TestCaseLibraryNavigationService;
 import org.squashtest.tm.service.testcase.TestCaseStatisticsService;
-import static org.squashtest.tm.service.security.Authorizations.*;
 
 @Service("squashtest.tm.service.TestCaseLibraryNavigationService")
 @Transactional
@@ -650,13 +652,17 @@ TestCaseLibraryNavigationService {
 	}
 
 	@Override
-	public List<Long> findAllTestCasesLibraryForMilestone(List<Long> milestoneIds) {
+	public List<Long> findAllTestCasesLibraryForMilestone(Milestone activeMilestone) {
+		List<Long> milestoneIds = new ArrayList<Long>();
+		milestoneIds.add(activeMilestone.getId());
 		return testCaseDao.findAllTestCasesLibraryForMilestone(milestoneIds);
 	}
 
 	@Override
-	public List<Long> findAllTestCasesLibraryNodeForMilestone(List<Long> milestoneIds) {
-		if (! milestoneIds.isEmpty()){
+	public List<Long> findAllTestCasesLibraryNodeForMilestone(Milestone activeMilestone) {
+		if (activeMilestone != null){
+			List<Long> milestoneIds = new ArrayList<Long>();
+			milestoneIds.add(activeMilestone.getId());
 			return testCaseDao.findAllTestCasesLibraryNodeForMilestone(milestoneIds);
 		}
 		else{

@@ -114,9 +114,9 @@ public class VerifiedRequirementsManagerServiceImpl implements VerifiedRequireme
 	@Override
 	@PreAuthorize(LINK_TC_OR_ROLE_ADMIN)
 	public Collection<VerifiedRequirementException> addVerifiedRequirementsToTestCase(List<Long> requirementsIds,
-			long testCaseId, Long milestoneId) {
+			long testCaseId, Milestone activeMilestone) {
 
-		List<RequirementVersion> requirementVersions = findRequirementVersions(requirementsIds, milestoneId);
+		List<RequirementVersion> requirementVersions = findRequirementVersions(requirementsIds, activeMilestone);
 
 		TestCase testCase = testCaseDao.findById(testCaseId);
 		if (!requirementVersions.isEmpty()) {
@@ -125,23 +125,20 @@ public class VerifiedRequirementsManagerServiceImpl implements VerifiedRequireme
 		return Collections.emptyList();
 	}
 
-	private List<RequirementVersion> extractVersions(List<Requirement> requirements, Long milestoneId) {
+	private List<RequirementVersion> extractVersions(List<Requirement> requirements, Milestone activeMilestone) {
 
-		Milestone m = null;
-		if (milestoneId != null){
-			m = milestoneManager.findById(milestoneId);
-		}
+
 
 		List<RequirementVersion> rvs = new ArrayList<RequirementVersion>(requirements.size());
 		for (Requirement requirement : requirements) {
 
 			// normal mode
-			if (m == null){
+			if (activeMilestone == null){
 				rvs.add(requirement.getResource());
 			}
 			// milestone mode
 			else{
-				rvs.add(requirement.findByMilestone(m));
+				rvs.add(requirement.findByMilestone(activeMilestone));
 			}
 
 		}
@@ -282,8 +279,8 @@ public class VerifiedRequirementsManagerServiceImpl implements VerifiedRequireme
 	@Override
 	@PreAuthorize("hasPermission(#testStepId, 'org.squashtest.tm.domain.testcase.TestStep' , 'LINK')" + OR_HAS_ROLE_ADMIN)
 	public Collection<VerifiedRequirementException> addVerifiedRequirementsToTestStep(List<Long> requirementsIds,
-			long testStepId, Long milestoneId) {
-		List<RequirementVersion> requirementVersions = findRequirementVersions(requirementsIds, milestoneId);
+			long testStepId, Milestone activeMilestone) {
+		List<RequirementVersion> requirementVersions = findRequirementVersions(requirementsIds, activeMilestone);
 		// init rejections
 		Collection<VerifiedRequirementException> rejections = new ArrayList<VerifiedRequirementException>();
 		// check if list not empty
@@ -374,14 +371,14 @@ public class VerifiedRequirementsManagerServiceImpl implements VerifiedRequireme
 		return rejections;
 	}
 
-	private List<RequirementVersion> findRequirementVersions(List<Long> requirementsIds, Long milestoneId) {
+	private List<RequirementVersion> findRequirementVersions(List<Long> requirementsIds, Milestone activeMilestone) {
 
 		List<RequirementLibraryNode> nodes = requirementLibraryNodeDao.findAllByIds(requirementsIds);
 
 		if (!nodes.isEmpty()) {
 			List<Requirement> requirements = new RequirementNodeWalker().walk(nodes);
 			if (!requirements.isEmpty()) {
-				return extractVersions(requirements, milestoneId);
+				return extractVersions(requirements, activeMilestone);
 			}
 		}
 		return Collections.emptyList();

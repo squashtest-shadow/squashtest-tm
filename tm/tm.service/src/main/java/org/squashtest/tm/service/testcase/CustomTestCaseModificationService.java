@@ -125,9 +125,9 @@ public interface CustomTestCaseModificationService extends CustomTestCaseFinder 
 	 * @return the newly created test case version
 	 * @param originalTcId
 	 * @param newVersionData
-	 * @param milestoneIds
+	 * @param activeMilestone
 	 */
-	public TestCase addNewTestCaseVersion(long originalTcId, TestCase newVersionData, List<Long> milestoneIds);
+	public TestCase addNewTestCaseVersion(long originalTcId, TestCase newVersionData, Milestone activeMilestone);
 
 
 

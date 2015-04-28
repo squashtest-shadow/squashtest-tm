@@ -49,6 +49,7 @@ import org.squashtest.tm.exception.requirement.VerifiedRequirementException;
 import org.squashtest.tm.service.milestone.MilestoneFinderService;
 import org.squashtest.tm.service.requirement.RequirementVersionManagerService;
 import org.squashtest.tm.service.testcase.VerifyingTestCaseManagerService;
+import org.squashtest.tm.web.internal.argumentresolver.MilestoneConfigResolver.CurrentMilestone;
 import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.helper.JsTreeHelper;
 import org.squashtest.tm.web.internal.helper.VerifiedRequirementActionSummaryBuilder;
@@ -105,17 +106,13 @@ public class VerifyingTestCaseManagerController {
 	@RequestMapping(value = "/requirement-versions/{requirementVersionId}/verifying-test-cases/manager", method = RequestMethod.GET)
 	public String showManager(@PathVariable long requirementVersionId, Model model,
 			@CookieValue(value = "jstree_open", required = false, defaultValue = "") String[] openedNodes,
-			@CookieValue(value = "milestones", required = false, defaultValue = "") List<Long> milestoneIds) {
+			@CurrentMilestone Milestone activeMilestone) {
 
 		RequirementVersion requirementVersion = requirementVersionFinder.findById(requirementVersionId);
 		List<TestCaseLibrary> linkableLibraries = verifyingTestCaseManager.findLinkableTestCaseLibraries();
 
-		Long milestoneId = null;
-		if (! milestoneIds.isEmpty()){
-			milestoneId = milestoneIds.get(0);
-		}
 
-		List<JsTreeNode> linkableLibrariesModel = createLinkableLibrariesModel(linkableLibraries, openedNodes, milestoneId);
+		List<JsTreeNode> linkableLibrariesModel = createLinkableLibrariesModel(linkableLibraries, openedNodes, activeMilestone);
 		DefaultPagingAndSorting pas = new DefaultPagingAndSorting("Project.name");
 		DataTableModel verifyingTCModel = buildVerifyingTestCaseModel(requirementVersionId, pas, "");
 
@@ -128,13 +125,13 @@ public class VerifyingTestCaseManagerController {
 		return "page/requirement-workspace/show-verifying-testcase-manager";
 	}
 
-	private List<JsTreeNode> createLinkableLibrariesModel(List<TestCaseLibrary> linkableLibraries, String[] openedNodes, Long milestoneId) {
+	private List<JsTreeNode> createLinkableLibrariesModel(List<TestCaseLibrary> linkableLibraries, String[] openedNodes, Milestone activeMilestone) {
 		MultiMap expansionCandidates = JsTreeHelper.mapIdsByType(openedNodes);
 
 		DriveNodeBuilder<TestCaseLibraryNode> nodeBuilder = driveNodeBuilder.get();
 
-		if (milestoneId != null){
-			nodeBuilder.filterByMilestone(milestoneFinder.findById(milestoneId));
+		if (activeMilestone != null){
+			nodeBuilder.filterByMilestone(activeMilestone);
 		}
 
 		return new JsTreeNodeListBuilder<TestCaseLibrary>(nodeBuilder)

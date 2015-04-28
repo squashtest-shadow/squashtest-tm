@@ -63,6 +63,7 @@ import org.squashtest.tm.domain.campaign.CampaignTestPlanItem;
 import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.campaign.TestSuite;
 import org.squashtest.tm.domain.customfield.RawValue;
+import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.service.campaign.CampaignFinder;
 import org.squashtest.tm.service.campaign.CampaignLibraryNavigationService;
 import org.squashtest.tm.service.campaign.CampaignModificationService;
@@ -74,6 +75,7 @@ import org.squashtest.tm.service.library.LibraryNavigationService;
 import org.squashtest.tm.service.milestone.MilestoneFinderService;
 import org.squashtest.tm.service.statistics.campaign.CampaignNonExecutedTestCaseImportanceStatistics;
 import org.squashtest.tm.service.statistics.campaign.CampaignStatisticsBundle;
+import org.squashtest.tm.web.internal.argumentresolver.MilestoneConfigResolver.CurrentMilestone;
 import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.controller.campaign.CampaignFormModel.CampaignFormModelValidator;
 import org.squashtest.tm.web.internal.controller.campaign.IterationFormModel.IterationFormModelValidator;
@@ -127,7 +129,7 @@ LibraryNavigationController<CampaignLibrary, CampaignFolder, CampaignLibraryNode
 	public @ResponseBody
 	JsTreeNode addNewCampaignToLibraryRootContent(@PathVariable Long libraryId,
 			@RequestBody CampaignFormModel campaignForm,
-			@CookieValue(value = "milestones", required = false, defaultValue = "") List<Long> milestoneIds)
+			@CurrentMilestone Milestone activeMilestone)
 					throws BindException {
 
 		BindingResult validation = new BeanPropertyBindingResult(campaignForm, "add-campaign");
@@ -142,18 +144,18 @@ LibraryNavigationController<CampaignLibrary, CampaignFolder, CampaignLibraryNode
 		Campaign newCampaign = campaignForm.getCampaign();
 		Map<Long, RawValue> customFieldValues = campaignForm.getCufs();
 
-		Long milestoneId = (! milestoneIds.isEmpty()) ? milestoneIds.get(0) : null;
+		Long milestoneId = activeMilestone != null ? activeMilestone.getId() : null;
 		campaignLibraryNavigationService.addCampaignToCampaignLibrary(libraryId, newCampaign, customFieldValues,
 				milestoneId);
 
-		return createTreeNodeFromLibraryNode(newCampaign, milestoneIds);
+		return createTreeNodeFromLibraryNode(newCampaign, activeMilestone);
 
 	}
 
 	@RequestMapping(value = "/folders/{folderId}/content/new-campaign", method = RequestMethod.POST)
 	public @ResponseBody
 	JsTreeNode addNewCampaignToFolderContent(@PathVariable long folderId, @RequestBody CampaignFormModel campaignForm,
-			@CookieValue(value = "milestones", required = false, defaultValue = "") List<Long> milestoneIds)
+			@CurrentMilestone Milestone activeMilestone)
 					throws BindException {
 
 		BindingResult validation = new BeanPropertyBindingResult(campaignForm, "add-campaign");
@@ -167,11 +169,11 @@ LibraryNavigationController<CampaignLibrary, CampaignFolder, CampaignLibraryNode
 		Campaign newCampaign = campaignForm.getCampaign();
 		Map<Long, RawValue> customFieldValues = campaignForm.getCufs();
 		
-		Long milestoneId = (! milestoneIds.isEmpty()) ? milestoneIds.get(0) : null;
+		Long milestoneId = activeMilestone != null ? activeMilestone.getId() : null;
 		campaignLibraryNavigationService.addCampaignToCampaignFolder(folderId, newCampaign, customFieldValues,
 				milestoneId);
 
-		return createTreeNodeFromLibraryNode(newCampaign, milestoneIds);
+		return createTreeNodeFromLibraryNode(newCampaign, activeMilestone);
 
 	}
 
@@ -181,11 +183,11 @@ LibraryNavigationController<CampaignLibrary, CampaignFolder, CampaignLibraryNode
 	}
 
 	@Override
-	protected JsTreeNode createTreeNodeFromLibraryNode(CampaignLibraryNode model, List<Long> milestoneIds) {
+	protected JsTreeNode createTreeNodeFromLibraryNode(CampaignLibraryNode model, Milestone activeMilestone) {
 		CampaignLibraryTreeNodeBuilder builder = campaignLibraryTreeNodeBuilder.get();
 
-		if (!milestoneIds.isEmpty()) {
-			builder.filterByMilestone(milestoneFinder.findById(milestoneIds.get(0)));
+		if (activeMilestone != null) {
+			builder.filterByMilestone(activeMilestone);
 		}
 
 		return builder.setNode(model).build();
@@ -387,36 +389,33 @@ LibraryNavigationController<CampaignLibrary, CampaignFolder, CampaignLibraryNode
 
 	@RequestMapping(value = "/dashboard-milestones-statistics", method = RequestMethod.GET, produces = ContentTypes.APPLICATION_JSON)
 	public @ResponseBody
-	CampaignStatisticsBundle getStatisticsAsJson(
-			@CookieValue(value = "milestones", required = false, defaultValue = "") List<Long> milestoneIds) {
+	CampaignStatisticsBundle getStatisticsAsJson(@CurrentMilestone Milestone activeMilestone) {
 		// Find campaignIds for specific milestone
 		Collection<Campaign> campaignCollection = null;
 
-		// Take only the first milestone (a wild tweak may appear, be careful, it's dangerous to milestone alone)
-		for (Long milestone : milestoneIds) {
-			campaignCollection = customCampaignModService.findCampaignsByMilestoneId(milestone);
-		}
-		;
+	
+	if (activeMilestone != null){
+		campaignCollection = customCampaignModService.findCampaignsByMilestoneId(activeMilestone.getId());
+	}
+
 		List<Campaign> campaignList = new ArrayList<Campaign>(campaignCollection);
 		Campaign campaign = campaignList.get(0);
 		return campaignModService.gatherCampaignStatisticsBundle(campaign.getId());
 	}
 
 	@RequestMapping(value = "/dashboard-milestones", method = RequestMethod.GET, produces = ContentTypes.TEXT_HTML)
-	public ModelAndView getDashboard(Model model,
-			@CookieValue(value = "milestones", required = false, defaultValue = "") List<Long> milestoneIds) {
+	public ModelAndView getDashboard(Model model, @CurrentMilestone Milestone activeMilestone) {
 
 		// Get a list of all the campaign for a milestone
 		Collection<Campaign> campaignCollection = null;
-		for (Long milestone : milestoneIds) {
-			campaignCollection = customCampaignModService.findCampaignsByMilestoneId(milestone);
+		if (activeMilestone != null){
+			campaignCollection = customCampaignModService.findCampaignsByMilestoneId(activeMilestone.getId());
 		}
-		;
 		List<Campaign> campaignList = new ArrayList<Campaign>(campaignCollection);
 
 		ModelAndView mav = new ModelAndView("fragment/campaigns/campaign-milestone-dashboard");
 
-		long milestoneId = milestoneIds.get(0);
+		long milestoneId = activeMilestone.getId();
 		CampaignStatisticsBundle csbundle = campaignModService.gatherCampaignStatisticsBundleByMilestone(milestoneId);
 
 		mav.addObject("milestone", milestoneFinder.findById(milestoneId));

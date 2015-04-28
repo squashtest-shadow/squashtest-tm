@@ -57,12 +57,14 @@ import org.squashtest.tm.domain.denormalizedfield.DenormalizedFieldValue;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.domain.execution.ExecutionStep;
+import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.service.customfield.CustomFieldHelper;
 import org.squashtest.tm.service.customfield.CustomFieldHelperService;
 import org.squashtest.tm.service.customfield.DenormalizedFieldHelper;
 import org.squashtest.tm.service.denormalizedfield.DenormalizedFieldValueManager;
 import org.squashtest.tm.service.execution.ExecutionModificationService;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
+import org.squashtest.tm.web.internal.argumentresolver.MilestoneConfigResolver.CurrentMilestone;
 import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.controller.generic.DataTableColumnDefHelper;
 import org.squashtest.tm.web.internal.controller.generic.ServiceAwareAttachmentTableModelHelper;
@@ -118,7 +120,7 @@ public class ExecutionModificationController {
 
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getExecution(@PathVariable long executionId,
-			@CookieValue(value="milestones", required=false, defaultValue="") List<Long> milestoneIds) {
+			@CurrentMilestone Milestone activeMilestone) {
 
 		// execution properties
 		Execution execution = executionModService.findAndInitExecution(executionId);
@@ -142,7 +144,7 @@ public class ExecutionModificationController {
 
 		}
 
-		MilestoneFeatureConfiguration milestoneConf = milestoneConfService.configure(milestoneIds, execution.getIteration());
+		MilestoneFeatureConfiguration milestoneConf = milestoneConfService.configure(activeMilestone, execution.getIteration());
 
 		ModelAndView mav = new ModelAndView("page/campaign-workspace/show-execution");
 		mav.addObject("execution", execution);

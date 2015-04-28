@@ -70,6 +70,7 @@ import org.squashtest.tm.service.customfield.CustomFieldValueFinderService;
 import org.squashtest.tm.service.deletion.OperationReport;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.statistics.iteration.IterationStatisticsBundle;
+import org.squashtest.tm.web.internal.argumentresolver.MilestoneConfigResolver.CurrentMilestone;
 import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.controller.generic.ServiceAwareAttachmentTableModelHelper;
 import org.squashtest.tm.web.internal.controller.milestone.MilestoneFeatureConfiguration;
@@ -136,22 +137,22 @@ public class IterationModificationController {
 
 	@RequestMapping(method = RequestMethod.GET)
 	public String showIteration(Model model, @PathVariable long iterationId,
-			@CookieValue(value="milestones", required=false, defaultValue="") List<Long> milestoneIds) {
+			@CurrentMilestone Milestone activeMilestone) {
 
-		populateIterationModel(model, iterationId, milestoneIds);
+		populateIterationModel(model, iterationId, activeMilestone);
 		return "fragment/iterations/iteration";
 	}
 
 	// will return the iteration in a full page
 	@RequestMapping(value = "/info", method = RequestMethod.GET)
 	public String showIterationInfo(Model model, @PathVariable long iterationId,
-			@CookieValue(value="milestones", required=false, defaultValue="") List<Long> milestoneIds) {
+			@CurrentMilestone Milestone activeMilestone) {
 
-		populateIterationModel(model, iterationId, milestoneIds);
+		populateIterationModel(model, iterationId, activeMilestone);
 		return "page/campaign-workspace/show-iteration";
 	}
 
-	private void populateIterationModel(Model model, long iterationId, List<Long> milestoneIds){
+	private void populateIterationModel(Model model, long iterationId, Milestone activeMilestone){
 
 		Iteration iteration = iterationModService.findById(iterationId);
 		boolean hasCUF = cufValueService.hasCustomFields(iteration);
@@ -159,7 +160,7 @@ public class IterationModificationController {
 		Map<String, String> assignableUsers = getAssignableUsers(iterationId);
 		Map<String, String> weights = getWeights();
 
-		MilestoneFeatureConfiguration milestoneConf = milestoneConfService.configure(milestoneIds, iteration);
+		MilestoneFeatureConfiguration milestoneConf = milestoneConfService.configure(activeMilestone, iteration);
 
 		model.addAttribute(ITERATION_KEY, iteration);
 		model.addAttribute("hasCUF", hasCUF);
@@ -406,7 +407,7 @@ public class IterationModificationController {
 	@RequestMapping(value = "/test-plan/{itemId}/executions", method = RequestMethod.GET)
 	public ModelAndView getExecutionsForTestPlan(@PathVariable("iterationId") long iterationId,
 			@PathVariable("itemId") long itemId,
-			@CookieValue(value="milestones", required=false, defaultValue="") List<Long> milestoneIds) {
+			@CurrentMilestone Milestone activeMilestone) {
 
 		List<Execution> executionList = iterationModService.findExecutionsByTestPlan(iterationId,
 				itemId);
@@ -415,7 +416,7 @@ public class IterationModificationController {
 		IterationTestPlanItem testPlanItem = testPlanFinder.findTestPlanItem(itemId);
 		ModelAndView mav = new ModelAndView("fragment/iterations/iteration-test-plan-row");
 
-		MilestoneFeatureConfiguration milestoneConf = milestoneConfService.configure(milestoneIds, iter);
+		MilestoneFeatureConfiguration milestoneConf = milestoneConfService.configure(activeMilestone, iter);
 
 		mav.addObject("testPlanItem", testPlanItem);
 		mav.addObject(ITERATION_ID_KEY, iterationId);

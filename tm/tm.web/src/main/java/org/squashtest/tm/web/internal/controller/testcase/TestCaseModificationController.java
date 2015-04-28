@@ -94,6 +94,7 @@ import org.squashtest.tm.service.requirement.VerifiedRequirement;
 import org.squashtest.tm.service.requirement.VerifiedRequirementsManagerService;
 import org.squashtest.tm.service.testcase.ParameterFinder;
 import org.squashtest.tm.service.testcase.TestCaseModificationService;
+import org.squashtest.tm.web.internal.argumentresolver.MilestoneConfigResolver.CurrentMilestone;
 import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.controller.bugtracker.BugTrackerControllerHelper;
 import org.squashtest.tm.web.internal.controller.generic.ServiceAwareAttachmentTableModelHelper;
@@ -221,12 +222,12 @@ public class TestCaseModificationController {
 	 */
 	@RequestMapping(method = RequestMethod.GET)
 	public final ModelAndView showTestCase(@PathVariable long testCaseId, Locale locale,
-			@CookieValue(value="milestones", required=false, defaultValue="") List<Long> milestoneIds) {
+			@CurrentMilestone Milestone activeMilestone) {
 		ModelAndView mav = new ModelAndView("fragment/test-cases/test-case");
 
 		TestCase testCase = testCaseModificationService.findById(testCaseId);
 
-		populateModelWithTestCaseEditionData(mav, testCase, locale, milestoneIds);
+		populateModelWithTestCaseEditionData(mav, testCase, locale, activeMilestone);
 
 		return mav;
 	}
@@ -240,7 +241,7 @@ public class TestCaseModificationController {
 	 */
 	@RequestMapping(value = "/info", method = RequestMethod.GET)
 	public ModelAndView showTestCaseInfo(@PathVariable long testCaseId, Locale locale,
-			@CookieValue(value="milestones", required=false, defaultValue="") List<Long> milestoneIds) {
+			@CurrentMilestone Milestone activeMilestone) {
 
 		LOGGER.trace("TestCaseModificationController : getting infos");
 
@@ -248,12 +249,12 @@ public class TestCaseModificationController {
 
 		TestCase testCase = testCaseModificationService.findTestCaseWithSteps(testCaseId);
 
-		populateModelWithTestCaseEditionData(mav, testCase, locale, milestoneIds);
+		populateModelWithTestCaseEditionData(mav, testCase, locale, activeMilestone);
 
 		return mav;
 	}
 
-	private void populateModelWithTestCaseEditionData(ModelAndView mav, TestCase testCase, Locale locale, List<Long> activeMilestones) {
+	private void populateModelWithTestCaseEditionData(ModelAndView mav, TestCase testCase, Locale locale, Milestone activeMilestone) {
 
 		boolean hasCUF = cufHelperService.hasCustomFields(testCase);
 
@@ -279,7 +280,7 @@ public class TestCaseModificationController {
 		mav.addObject("callingTestCasesModel", getCallingTestCaseTableModel(testCase.getId(), new DefaultPagingAndSorting("TestCase.name"), ""));
 		mav.addObject("hasCUF", hasCUF);
 
-		MilestoneFeatureConfiguration milestoneConf = milestoneConfService.configure(activeMilestones, testCase);
+		MilestoneFeatureConfiguration milestoneConf = milestoneConfService.configure(activeMilestone, testCase);
 		mav.addObject("milestoneConf", milestoneConf);
 	}
 
@@ -342,9 +343,9 @@ public class TestCaseModificationController {
 
 	@RequestMapping(value = "/new-version", method = RequestMethod.POST, consumes="application/json", produces="application/json")
 	public @ResponseBody JsonTestCase createNewVersion(@PathVariable("testCaseId") Long originalId, @RequestBody TestCase newVersionData,
-			@CookieValue(value="milestones", required=false, defaultValue="") List<Long> milestoneIds){
+			@CurrentMilestone Milestone activeMilestone){
 
-		TestCase newTestCase = testCaseModificationService.addNewTestCaseVersion(originalId, newVersionData, milestoneIds);
+		TestCase newTestCase = testCaseModificationService.addNewTestCaseVersion(originalId, newVersionData, activeMilestone);
 
 		JsonTestCase jsTestCase = new JsonTestCase();
 		jsTestCase.setId(newTestCase.getId());

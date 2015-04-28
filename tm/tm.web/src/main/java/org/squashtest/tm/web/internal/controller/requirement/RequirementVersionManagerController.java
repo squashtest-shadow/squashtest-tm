@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.web.internal.controller.requirement;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -42,6 +43,7 @@ import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.SinglePageCollectionHolder;
 import org.squashtest.tm.domain.Level;
 import org.squashtest.tm.domain.event.RequirementAuditEvent;
+import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.requirement.Requirement;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.testcase.TestCase;
@@ -49,6 +51,7 @@ import org.squashtest.tm.service.audit.RequirementAuditTrailService;
 import org.squashtest.tm.service.customfield.CustomFieldValueFinderService;
 import org.squashtest.tm.service.requirement.RequirementVersionManagerService;
 import org.squashtest.tm.service.testcase.VerifyingTestCaseManagerService;
+import org.squashtest.tm.web.internal.argumentresolver.MilestoneConfigResolver.CurrentMilestone;
 import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.controller.audittrail.RequirementAuditEventTableModelBuilder;
 import org.squashtest.tm.web.internal.controller.milestone.MilestoneFeatureConfiguration;
@@ -113,10 +116,13 @@ public class RequirementVersionManagerController {
 
 	@RequestMapping(value = "/new", method = RequestMethod.POST)
 	@ResponseBody
-	public void createNewVersion(@PathVariable long requirementId, @CookieValue(value="milestones", required=false, defaultValue="") List<Long> milestoneIds) {
-		if (milestoneIds.isEmpty()){
+	public void createNewVersion(@PathVariable long requirementId, @CurrentMilestone Milestone activeMilestone) {
+		
+		if (activeMilestone == null){
 			versionService.createNewVersion(requirementId);
 		}else{
+			ArrayList<Long> milestoneIds = new ArrayList<Long>();
+			milestoneIds.add(activeMilestone.getId());
 			versionService.createNewVersion(requirementId, milestoneIds);
 		}
 	}
@@ -126,7 +132,7 @@ public class RequirementVersionManagerController {
 
 	@RequestMapping(value = "/manager")
 	public String showRequirementVersionsManager(@PathVariable long requirementId, Model model, Locale locale,
-			@CookieValue(value="milestones", defaultValue="", required=false) List<Long> milestoneIds) {
+			@CurrentMilestone Milestone activeMilestone) {
 
 		Requirement req = versionService.findRequirementById(requirementId);
 
@@ -135,7 +141,7 @@ public class RequirementVersionManagerController {
 		DataTableModel tableModel = new RequirementVersionDataTableModel(locale, levelFormatterProvider, i18nHelper).buildDataModel(holder,
 				"0");
 
-		MilestoneFeatureConfiguration milestoneConf = milestoneConfService.configure(milestoneIds, req.getCurrentVersion());
+		MilestoneFeatureConfiguration milestoneConf = milestoneConfService.configure(activeMilestone, req.getCurrentVersion());
 
 		model.addAttribute("requirement", req);
 		model.addAttribute("versions", req.getUnmodifiableVersions());

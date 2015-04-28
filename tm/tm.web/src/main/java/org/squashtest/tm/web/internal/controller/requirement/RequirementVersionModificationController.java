@@ -70,6 +70,7 @@ import org.squashtest.tm.service.customfield.CustomFieldValueFinderService;
 import org.squashtest.tm.service.infolist.InfoListItemFinderService;
 import org.squashtest.tm.service.requirement.RequirementVersionManagerService;
 import org.squashtest.tm.service.testcase.VerifyingTestCaseManagerService;
+import org.squashtest.tm.web.internal.argumentresolver.MilestoneConfigResolver.CurrentMilestone;
 import org.squashtest.tm.web.internal.controller.audittrail.RequirementAuditEventTableModelBuilder;
 import org.squashtest.tm.web.internal.controller.generic.ServiceAwareAttachmentTableModelHelper;
 import org.squashtest.tm.web.internal.controller.milestone.MilestoneFeatureConfiguration;
@@ -138,20 +139,20 @@ public class RequirementVersionModificationController {
 
 
 	@RequestMapping(value = "/editor-fragment", method = RequestMethod.GET)
-	public String getRequirementEditor(@PathVariable long requirementVersionId, Model model, @CookieValue(value="milestones", required=false, defaultValue="") List<Long> milestoneIds, Locale locale) {
-		populateRequirementEditorModel(requirementVersionId, model, milestoneIds, locale);
+	public String getRequirementEditor(@PathVariable long requirementVersionId, Model model, @CurrentMilestone Milestone activeMilestone, Locale locale) {
+		populateRequirementEditorModel(requirementVersionId, model, activeMilestone, locale);
 		return "fragment/requirements/requirement-version-editor";
 	}
 
 	@RequestMapping(method = RequestMethod.GET)
-	public String showRequirementVersion(@PathVariable long requirementVersionId, Model model, @CookieValue(value="milestones", required=false, defaultValue="") List<Long> milestoneIds, Locale locale) {
-		populateRequirementEditorModel(requirementVersionId, model,  milestoneIds, locale);
+	public String showRequirementVersion(@PathVariable long requirementVersionId, Model model, @CurrentMilestone Milestone activeMilestone, Locale locale) {
+		populateRequirementEditorModel(requirementVersionId, model,  activeMilestone, locale);
 		return "fragment/requirements/requirement-version";
 	}
 
 	@RequestMapping(value = "/info", method = RequestMethod.GET)
-	public String showRequirementVersionInfos(@PathVariable long requirementVersionId, Model model,@CookieValue(value="milestones", required=false, defaultValue="") List<Long> milestoneIds,  Locale locale) {
-		populateRequirementEditorModel(requirementVersionId, model,  milestoneIds, locale);
+	public String showRequirementVersionInfos(@PathVariable long requirementVersionId, Model model, @CurrentMilestone Milestone activeMilestone,  Locale locale) {
+		populateRequirementEditorModel(requirementVersionId, model,  activeMilestone, locale);
 		return "page/requirement-workspace/show-requirement-version";
 	}
 
@@ -206,7 +207,7 @@ public class RequirementVersionModificationController {
 	}
 
 
-	private void populateRequirementEditorModel(long requirementVersionId, Model model, List<Long> milestoneIds, Locale locale) {
+	private void populateRequirementEditorModel(long requirementVersionId, Model model, Milestone activeMilestone, Locale locale) {
 
 		RequirementVersion requirementVersion = requirementVersionManager.findById(requirementVersionId);
 		String criticalities = buildMarshalledCriticalities(locale);
@@ -224,7 +225,7 @@ public class RequirementVersionModificationController {
 		model.addAttribute("attachmentsModel", attachmentsModel);
 		model.addAttribute("auditTrailModel", auditTrailModel);
 
-		MilestoneFeatureConfiguration milestoneConf = milestoneConfService.configure(milestoneIds, requirementVersion);
+		MilestoneFeatureConfiguration milestoneConf = milestoneConfService.configure(activeMilestone, requirementVersion);
 
 		model.addAttribute("milestoneConf", milestoneConf);
 

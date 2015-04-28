@@ -46,12 +46,14 @@ import org.squashtest.tm.core.foundation.collection.SinglePageCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.SortOrder;
 import org.squashtest.tm.core.foundation.collection.Sorting;
 import org.squashtest.tm.domain.IdentifiedUtil;
+import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.testcase.Parameter;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.exception.DomainException;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.testcase.ParameterModificationService;
 import org.squashtest.tm.service.testcase.TestCaseFinder;
+import org.squashtest.tm.web.internal.argumentresolver.MilestoneConfigResolver.CurrentMilestone;
 import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.controller.milestone.MilestoneFeatureConfiguration;
 import org.squashtest.tm.web.internal.controller.milestone.MilestoneUIConfigurationService;
@@ -123,7 +125,7 @@ public class TestCaseParametersController {
 	 */
 	@RequestMapping(value = "/panel", method = RequestMethod.GET)
 	public String getParametersPanel(@PathVariable("testCaseId") long testCaseId, Model model, Locale locale,
-			@CookieValue(value="milestones", required=false, defaultValue="") List<Long> milestoneIds) {
+			@CurrentMilestone Milestone activeMilestone) {
 
 		// the main entities
 		TestCase testCase = testCaseFinder.findById(testCaseId);
@@ -151,7 +153,7 @@ public class TestCaseParametersController {
 		List<AoColumnDef> columnDefs = new DatasetsTableColumnDefHelper().getAoColumnDefs(paramIds, editable);
 		List<HashMap<String, String>> paramHeaders = ParametersModelHelper.findDatasetParamHeaders(testCaseId, locale, directAndCalledParameters, messageSource);
 
-		MilestoneFeatureConfiguration milestoneConf = milestoneConfService.configure(milestoneIds, testCase);
+		MilestoneFeatureConfiguration milestoneConf = milestoneConfService.configure(activeMilestone, testCase);
 
 		// populate the model
 		model.addAttribute(TEST_CASE, testCase);

@@ -29,6 +29,7 @@ import org.springframework.context.MessageSource;
 import org.squashtest.tm.domain.customfield.CustomField;
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
 import org.squashtest.tm.domain.customfield.RawValue;
+import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.testcase.ExportTestCaseData;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseFolder;
@@ -182,8 +183,8 @@ LibraryNavigationService<TestCaseLibrary, TestCaseFolder, TestCaseLibraryNode>, 
 
 	public List<String> findNamesInLibraryStartingWith(final long libraryId, final String nameStart);
 
-	public List<Long> findAllTestCasesLibraryForMilestone(List<Long> milestoneIds);
+	public List<Long> findAllTestCasesLibraryForMilestone(Milestone activeMilestone);
 
-	public List<Long> findAllTestCasesLibraryNodeForMilestone(List<Long> milestoneIds);
+	public List<Long> findAllTestCasesLibraryNodeForMilestone(Milestone activeMilestone);
 
 }

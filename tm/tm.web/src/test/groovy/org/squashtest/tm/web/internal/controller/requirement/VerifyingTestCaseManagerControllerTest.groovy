@@ -73,7 +73,7 @@ class VerifyingTestCaseManagerControllerTest extends Specification {
 		verifyingTestCaseManager.findLinkableTestCaseLibraries() >> []
 
 		when:
-		controller.showManager(10L, model, [] as String[], [])
+		controller.showManager(10L, model, [] as String[], null)
 
 		then:
 		model.asMap()['requirementVersion'] == requirementVersion
@@ -87,7 +87,7 @@ class VerifyingTestCaseManagerControllerTest extends Specification {
 		mockVerifyingTestCaseService()
 
 		when:
-		def view = controller.showManager(10L, Mock(Model), [] as String[], [])
+		def view = controller.showManager(10L, Mock(Model), [] as String[], null)
 
 		then:
 		view == "page/requirement-workspace/show-verifying-testcase-manager"

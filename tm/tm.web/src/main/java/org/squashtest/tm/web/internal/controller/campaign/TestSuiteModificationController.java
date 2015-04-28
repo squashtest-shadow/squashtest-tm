@@ -60,6 +60,7 @@ import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.service.campaign.IterationTestPlanFinder;
 import org.squashtest.tm.service.campaign.TestSuiteModificationService;
 import org.squashtest.tm.service.customfield.CustomFieldValueFinderService;
+import org.squashtest.tm.web.internal.argumentresolver.MilestoneConfigResolver.CurrentMilestone;
 import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.controller.generic.ServiceAwareAttachmentTableModelHelper;
 import org.squashtest.tm.web.internal.controller.milestone.MilestoneFeatureConfiguration;
@@ -116,22 +117,22 @@ public class TestSuiteModificationController {
 	// will return the fragment only
 	@RequestMapping(method = RequestMethod.GET)
 	public String showTestSuite(Model model, @PathVariable("suiteId") long suiteId,
-			@CookieValue(value="milestones", required=false, defaultValue="") List<Long> milestoneIds) {
+			@CurrentMilestone Milestone activeMilestone) {
 
-		populateTestSuiteModel(model, suiteId, milestoneIds);
+		populateTestSuiteModel(model, suiteId, activeMilestone);
 		return "fragment/test-suites/test-suite";
 	}
 
 	// will return the iteration in a full page
 	@RequestMapping(value = "/info", method = RequestMethod.GET)
 	public String showTestSuiteInfo(Model model, @PathVariable("suiteId") long suiteId,
-			@CookieValue(value="milestones", required=false, defaultValue="") List<Long> milestoneIds) {
+			@CurrentMilestone Milestone activeMilestone) {
 
-		populateTestSuiteModel(model, suiteId, milestoneIds);
+		populateTestSuiteModel(model, suiteId, activeMilestone);
 		return "page/campaign-workspace/show-test-suite";
 	}
 
-	private void populateTestSuiteModel(Model model, long testSuiteId, List<Long> milestoneIds) {
+	private void populateTestSuiteModel(Model model, long testSuiteId, Milestone activeMilestone) {
 
 		TestSuite testSuite = service.findById(testSuiteId);
 		TestPlanStatistics testSuiteStats = service.findTestSuiteStatistics(testSuiteId);
@@ -140,7 +141,7 @@ public class TestSuiteModificationController {
 		Map<String, String> assignableUsers = getAssignableUsers(testSuiteId);
 		Map<String, String> weights = getWeights();
 
-		MilestoneFeatureConfiguration milestoneConf = milestoneConfService.configure(milestoneIds, testSuite);
+		MilestoneFeatureConfiguration milestoneConf = milestoneConfService.configure(activeMilestone, testSuite);
 
 
 		model.addAttribute(TEST_SUITE, testSuite);

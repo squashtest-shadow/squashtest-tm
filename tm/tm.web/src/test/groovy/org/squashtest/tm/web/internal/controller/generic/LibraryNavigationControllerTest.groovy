@@ -31,6 +31,7 @@ import org.squashtest.tm.domain.library.Library
 import org.squashtest.tm.domain.library.LibraryNode
 import org.squashtest.tm.domain.library.NodeContainerVisitor;
 import org.squashtest.tm.domain.library.NodeVisitor
+import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.project.GenericProject
 import org.squashtest.tm.domain.project.Project
 import org.squashtest.tm.domain.testcase.TestCaseLibraryPluginBinding;
@@ -55,7 +56,7 @@ class LibraryNavigationControllerTest extends Specification {
 		DummyFolder folder = new DummyFolder()
 
 		when:
-		def res = controller.addNewFolderToLibraryRootContent(10, folder, [])
+		def res = controller.addNewFolderToLibraryRootContent(10, folder, null)
 
 		then:
 		1 * service.addFolderToLibrary(10, folder)
@@ -70,7 +71,7 @@ class LibraryNavigationControllerTest extends Specification {
 		service.findLibraryRootContent(10) >> [rootFolder]
 
 		when:
-		def res = controller.getRootContentTreeModel(10, [])
+		def res = controller.getRootContentTreeModel(10, null)
 
 		then:
 		res.size() == 1
@@ -84,7 +85,7 @@ class LibraryNavigationControllerTest extends Specification {
 		service.findFolderContent(10) >> [content]
 
 		when:
-		def res = controller.getFolderContentTreeModel(10, [])
+		def res = controller.getFolderContentTreeModel(10, null)
 
 		then:
 		res.size() == 1
@@ -96,7 +97,7 @@ class LibraryNavigationControllerTest extends Specification {
 		DummyFolder folder = new DummyFolder();
 
 		when:
-		JsTreeNode res = controller.addNewFolderToFolderContent(100, folder, [])
+		JsTreeNode res = controller.addNewFolderToFolderContent(100, folder, null)
 
 		then:
 		1 * service.addFolderToFolder(100, folder)
@@ -128,6 +129,11 @@ class DummyController extends LibraryNavigationController<DummyLibrary, DummyFol
 	@Override
 	JsTreeNode createTreeNodeFromLibraryNode(DummyNode resource) {
 		null
+	}
+
+	@Override
+	protected JsTreeNode createTreeNodeFromLibraryNode(DummyNode resource, Milestone activeMilestone) {
+			new JsTreeNode()
 	}
 
 }

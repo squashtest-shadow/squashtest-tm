@@ -32,7 +32,6 @@ import javax.validation.Valid;
 
 import org.springframework.osgi.extensions.annotation.ServiceReference;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -47,6 +46,7 @@ import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.service.milestone.MilestoneManagerService;
 import org.squashtest.tm.service.project.ProjectsPermissionFinder;
 import org.squashtest.tm.service.user.UserAccountService;
+import org.squashtest.tm.web.internal.argumentresolver.MilestoneConfigResolver.CurrentMilestone;
 import org.squashtest.tm.web.internal.model.json.JsonMilestone;
 import org.squashtest.tm.web.internal.security.authentication.AuthenticationProviderContext;
 
@@ -75,18 +75,11 @@ public class UserAccountController {
 	}
 
 	@RequestMapping(method=RequestMethod.GET)
-	public ModelAndView getUserAccountDetails(@CookieValue(value = "milestones", required = false, defaultValue = "") List<Long> milestoneIds){
+	public ModelAndView getUserAccountDetails(@CurrentMilestone Milestone activeMilestone){
 		User user = userService.findCurrentUser();
 
-		List<Milestone> milestoneList = new ArrayList<>();
+		List<Milestone> milestoneList = milestoneManager.findAllVisibleToCurrentUser();
 
-
-		try {
-			milestoneList = milestoneManager.findAllVisibleToCurrentUser();
-		} catch (Exception e) {
-			// TODO: handle exception
-		}
-		;
 		List<ProjectPermission> projectPermissions = permissionFinder.findProjectPermissionByUserLogin(user.getLogin());
 
 		Collections.sort(milestoneList, new SortMilestoneList());
@@ -97,10 +90,6 @@ public class UserAccountController {
 		mav.addObject("projectPermissions", projectPermissions);
 
 		// also, active milestone
-		Milestone activeMilestone = null;
-		if (!milestoneIds.isEmpty()){
-			activeMilestone = milestoneManager.findById(milestoneIds.get(0));
-		}
 
 		if (activeMilestone != null){
 			JsonMilestone jsMilestone =

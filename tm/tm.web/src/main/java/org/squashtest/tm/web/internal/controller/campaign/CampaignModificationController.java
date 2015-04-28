@@ -74,6 +74,7 @@ import org.squashtest.tm.service.campaign.IterationModificationService;
 import org.squashtest.tm.service.customfield.CustomFieldValueFinderService;
 import org.squashtest.tm.service.milestone.MilestoneFinderService;
 import org.squashtest.tm.service.statistics.campaign.CampaignStatisticsBundle;
+import org.squashtest.tm.web.internal.argumentresolver.MilestoneConfigResolver.CurrentMilestone;
 import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.controller.generic.ServiceAwareAttachmentTableModelHelper;
 import org.squashtest.tm.web.internal.controller.milestone.MetaMilestone;
@@ -155,20 +156,19 @@ public class CampaignModificationController {
 	// will return the Campaign in a full page
 	@RequestMapping(value = "/info", method = RequestMethod.GET)
 	public String showCampaignInfo(@PathVariable long campaignId,
-			@CookieValue(value="milestones", required=false, defaultValue="") List<Long> milestoneIds, Model model) {
-		populateCampaignModel(campaignId, milestoneIds, model);
+			@CurrentMilestone Milestone activeMilestone, Model model) {
+		populateCampaignModel(campaignId, activeMilestone, model);
 		return "page/campaign-workspace/show-campaign";
 	}
 
 	// will return the fragment only
 	@RequestMapping(method = RequestMethod.GET)
-	public String showCampaign(@PathVariable long campaignId,
-			@CookieValue(value="milestones", required=false, defaultValue="") List<Long> milestoneIds, Model model) {
-		populateCampaignModel(campaignId,milestoneIds, model);
+	public String showCampaign(@PathVariable long campaignId, @CurrentMilestone Milestone activeMilestone, Model model) {
+		populateCampaignModel(campaignId,activeMilestone, model);
 		return "fragment/campaigns/campaign";
 	}
 
-	private Model populateCampaignModel(long campaignId, List<Long> milestoneIds, Model model) {
+	private Model populateCampaignModel(long campaignId, Milestone activeMilestone, Model model) {
 
 		Campaign campaign = campaignModService.findById(campaignId);
 		TestPlanStatistics statistics = campaignModService.findCampaignStatistics(campaignId);
@@ -187,7 +187,7 @@ public class CampaignModificationController {
 		model.addAttribute("allowsUntestable",
 				campaign.getProject().getCampaignLibrary().allowsStatus(ExecutionStatus.UNTESTABLE));
 
-		MilestoneFeatureConfiguration milestoneConf = milestoneConfService.configure(milestoneIds, campaign);
+		MilestoneFeatureConfiguration milestoneConf = milestoneConfService.configure(activeMilestone, campaign);
 		model.addAttribute("milestoneConf", milestoneConf);
 
 		return model;

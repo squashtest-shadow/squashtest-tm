@@ -68,7 +68,7 @@ class VerifiedRequirementsManagerControllerTest extends Specification{
 		requirementLibraryFinder.findLinkableRequirementLibraries() >> []
 
 		when:
-		def res = controller.showTestCaseManager(20L, Mock(Model), [] as String[], [])
+		def res = controller.showTestCaseManager(20L, Mock(Model), [] as String[], null)
 
 		then:
 		res == "page/test-case-workspace/show-verified-requirements-manager"
@@ -79,7 +79,7 @@ class VerifiedRequirementsManagerControllerTest extends Specification{
 		requirementLibraryFinder.findLinkableRequirementLibraries() >> []
 
 		when:
-		def res = controller.showTestStepManager(20L, Mock(Model), [] as String[], [])
+		def res = controller.showTestStepManager(20L, Mock(Model), [] as String[], null)
 
 		then:
 		res == "page/test-case-workspace/show-step-verified-requirements-manager"
@@ -102,7 +102,7 @@ class VerifiedRequirementsManagerControllerTest extends Specification{
 		def model = new ExtendedModelMap()
 
 		when:
-		def res = controller.showTestCaseManager(20L, model, [] as String[], [])
+		def res = controller.showTestCaseManager(20L, model, [] as String[], null)
 
 		then:
 		model['testCase'] == testCase
@@ -126,7 +126,7 @@ class VerifiedRequirementsManagerControllerTest extends Specification{
 		def model = new ExtendedModelMap()
 
 		when:
-		def res = controller.showTestStepManager(20L, model, [] as String[], [])
+		def res = controller.showTestStepManager(20L, model, [] as String[], null)
 
 		then:
 		model['testStep'] == testStep
@@ -135,7 +135,7 @@ class VerifiedRequirementsManagerControllerTest extends Specification{
 
 	def "should add requirements to verified requirements to test case"() {
 		when:
-		controller.addVerifiedRequirementsToTestCase([5, 15], 10, [])
+		controller.addVerifiedRequirementsToTestCase([5, 15], 10, null)
 
 		then:
 		1 * verifiedRequirementsManagerService.addVerifiedRequirementsToTestCase([5, 15], 10, null) >> []
@@ -143,7 +143,7 @@ class VerifiedRequirementsManagerControllerTest extends Specification{
 
 	def "should add requirements to verified requirements of test step"() {
 		when:
-		controller.addVerifiedRequirementsToTestStep([5, 15], 10, [])
+		controller.addVerifiedRequirementsToTestStep([5, 15], 10, null)
 
 		then:
 		1 * verifiedRequirementsManagerService.addVerifiedRequirementsToTestStep([5, 15], 10, null) >> []
@@ -151,7 +151,7 @@ class VerifiedRequirementsManagerControllerTest extends Specification{
 
 	def "should add requirements to verified requirement of test step"() {
 		when:
-		controller.addVerifiedRequirementsToTestStep([5L], 10L, [])
+		controller.addVerifiedRequirementsToTestStep([5L], 10L, null)
 
 		then:
 		1 * verifiedRequirementsManagerService.addVerifiedRequirementsToTestStep([5L], 10L, null) >> []
@@ -180,7 +180,7 @@ class VerifiedRequirementsManagerControllerTest extends Specification{
 		verifiedRequirementsManagerService.addVerifiedRequirementsToTestCase([5, 15], 10, null) >> [ex]
 
 		when:
-		def res = controller.addVerifiedRequirementsToTestCase([5, 15], 10, [])
+		def res = controller.addVerifiedRequirementsToTestCase([5, 15], 10, null)
 
 		then:
 		res.noVerifiableVersionRejections
