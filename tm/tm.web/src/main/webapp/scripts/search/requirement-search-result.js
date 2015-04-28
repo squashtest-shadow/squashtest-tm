@@ -306,7 +306,7 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil","workspace.ro
 			
 			// find the selected projects unique ids
 			var selectedProjects = [];
-			rows.each(function(row){
+			rows.each(function(indx, row){
 				selectedProjects.push(table.fnGetData(row)['project-id']);
 			});
 			selectedProjects = _.uniq(selectedProjects);
