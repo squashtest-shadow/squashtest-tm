@@ -79,7 +79,7 @@ public class MilestoneConfigResolver   implements HandlerMethodArgumentResolver 
 			Milestone milestone = (Milestone) CollectionUtils.find(visibles, new Predicate() {	
 				@Override
 				public boolean evaluate(Object milestone) {		
-					return ((Milestone)milestone).getId() == milestoneId;
+					return ((Milestone)milestone).getId().equals(milestoneId);
 				}
 			});		
 		   return milestone != null ? milestone : null;  
