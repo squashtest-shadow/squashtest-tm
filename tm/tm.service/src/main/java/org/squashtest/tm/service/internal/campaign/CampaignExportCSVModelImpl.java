@@ -189,17 +189,17 @@ public class CampaignExportCSVModelImpl implements WritableCampaignCSVModel {
 
 		// test case fixed fields
 		headerCells.add(new CellImpl("TEST_CASE"));
-		headerCells.add(new CellImpl("PROJECT"));
+		headerCells.add(new CellImpl("TC_PROJECT"));
 		if (milestonesEnabled){
 			headerCells.add(new CellImpl("TC_MILESTONE"));
 			}
-		headerCells.add(new CellImpl("WEIGHT"));
+		headerCells.add(new CellImpl("TC_WEIGHT"));
 		headerCells.add(new CellImpl("TEST_SUITE"));
 		headerCells.add(new CellImpl("#_EXECUTIONS"));
 		headerCells.add(new CellImpl("#_REQUIREMENTS"));
 		headerCells.add(new CellImpl("#_ISSUES"));
 		headerCells.add(new CellImpl("EXEC_STATUS"));
-		headerCells.add(new CellImpl("USER"));
+		headerCells.add(new CellImpl("EXEC_USER"));
 		headerCells.add(new CellImpl("EXECUTION_DATE"));
 		headerCells.add(new CellImpl("DESCRIPTION"));
 		headerCells.add(new CellImpl("TC_REF"));
