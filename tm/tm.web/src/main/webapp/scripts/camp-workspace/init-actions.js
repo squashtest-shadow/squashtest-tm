@@ -32,7 +32,7 @@ define(["jquery", "tree","./permissions-rules", "workspace.contextual-content", 
 		"not-deletable"			: "dialog.label.delete-node.rejectedCampaign",
 		"mixed-nodes-iteration-selection" : "tree.button.copy-node.mixediteration",
 		"mixed-nodes-testsuite-selection" : "tree.button.copy-node.mixedsuite",
-		"milestone-denied"		: "squashtm.action.exception.milestonelocked"
+		"milestone-denied"		: "squashtm.action.exception.milestonelocked.campaign" 
 	};
 	
 	translator.load(messages);

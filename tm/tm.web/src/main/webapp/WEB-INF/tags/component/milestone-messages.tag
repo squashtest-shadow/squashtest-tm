@@ -34,7 +34,10 @@
 <c:if test="${milestoneConf.messagesEnabled}">
     <div data-milestones="${milestoneConf.totalMilestones}" class="milestone-count-notifier entity-edit-general-warning 
           ${(milestoneConf.multipleBindings) ? '' : 'not-displayed'}">
-      <p><f:message key="messages.boundToMultipleMilestones"/></p>
+      <p><f:message key="messages.boundToMultipleMilestones"/>
+          <c:if test="${isRequirement == true}"> COCOUC
+   		<f:message var="warningMsg" key="message.CannotModifyBecauseMilestoneLocking.campaign"/></p>
+     </c:if>
     </div>
     <c:if test="${milestoneConf.locked}">
     

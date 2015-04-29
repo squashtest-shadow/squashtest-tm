@@ -1856,7 +1856,7 @@ define(["jquery",
 		}
 
 	};
-
+	
 
 	return $.fn.squashTable;
 

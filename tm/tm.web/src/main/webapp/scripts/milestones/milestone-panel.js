@@ -140,7 +140,7 @@ define(["jquery", "workspace.event-bus", "app/ws/squashtm.notification", "squash
 		
 		// now we can set the ajax source
 		currentTable.fnSettings().sAjaxSource=conf.currentTableSource;
-				
+
 			// add milestones dialog
 			var dialogOptions = {
 				tableSource : conf.bindTableSource,
