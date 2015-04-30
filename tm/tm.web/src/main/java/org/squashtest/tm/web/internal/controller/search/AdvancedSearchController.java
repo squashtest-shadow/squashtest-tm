@@ -526,7 +526,7 @@ public class AdvancedSearchController {
 		model.addPanel(requirementVersionSearchInterfaceDescription.createRequirementAttributePanel(locale));
 
 		// Milestones
-		if (isMilestoneMode && featureManager.isEnabled(Feature.MILESTONE)) {
+		if (!isMilestoneMode && featureManager.isEnabled(Feature.MILESTONE)) {
 			model.addPanel(requirementVersionSearchInterfaceDescription.createMilestonePanel(locale));
 		}
 
@@ -564,7 +564,7 @@ public class AdvancedSearchController {
 		model.addPanel(testcaseVersionSearchInterfaceDescription.createAttributePanel(locale));
 
 		// Milestones
-		if (isMilestoneMode && featureManager.isEnabled(Feature.MILESTONE)) {
+		if (!isMilestoneMode && featureManager.isEnabled(Feature.MILESTONE)) {
 			model.addPanel(testcaseVersionSearchInterfaceDescription.createMilestonePanel(locale));
 		}
 
