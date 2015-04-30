@@ -96,7 +96,8 @@ public class TestCaseExcelExporterService {
 
 	private void populatePathsCache(Map<Long, String> pathById, List<Long> ids){
 
-		List<String> paths = pathService.buildTestCasesPaths(ids);
+	
+		List<String> paths = !ids.isEmpty() ? pathService.buildTestCasesPaths(ids) : Collections.<String>emptyList();
 
 		for (int i=0; i< ids.size(); i++){
 			pathById.put(ids.get(i), paths.get(i));
