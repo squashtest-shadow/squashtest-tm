@@ -298,6 +298,22 @@ select.th_input {
 	overflow: auto;
 }
 
+.dialog-details{
+	padding-left : 1.5em;
+	padding-top : 0.2em;
+	padding-bottom : 0.2em;
+	padding-right : 0.2em;
+	background-color : #EFEFEF;
+}
+
+.dialog-details p{
+	font-weight : bold;
+}
+
+.dialog-details ul{
+	text-align: justify;
+	padding-right: 10px;
+}
 
 .search-div-campaign {
 	top: 3cm;

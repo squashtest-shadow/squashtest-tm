@@ -123,24 +123,31 @@ th:with="isWritable = ${#authorization.expression('hasRole(''ROLE_ADMIN'')')  or
     <!-- Unbind milestone -->
   
   <div class="unbind-milestone-dialog popup-dialog not-displayed" th:title="#{title.unbindMilestones}">
+
+    
+            <div class="display-table-row">
+          <div class="display-table-cell warning-cell">
+            <div class="generic-warning-signal"></div>
+          </div>
+          <div class="display-table-cell">
+        
     <div data-def="state=one-selected" class="centered">
         <span class="std-margin" th:text="#{title.unbindMilestones.oneselected}"></span>
     </div>
     <div data-def="state=more-selected" class="centered">
         <span class="std-margin" th:text="#{title.unbindMilestones.moreselected}"></span>
     </div>
-    <div data-def="state=none-selected" class="display-table-row">
+        <div data-def="state=none-selected" class="display-table-row">
         <div th:include="fragments-utils/static-panels :: warning-pane" th:with="txtcontent=#{title.unbindMilestones.noneselected}"></div>       
     </div>
-        <div data-def="state=one-legacy-selected" class="display-table-row">
-        <div th:include="fragments-utils/static-panels :: warning-pane" th:with="txtcontent=#{title.unbindMilestones.legacyselected}"></div>       
-    </div>
-       
-       <div data-def="state=one-statusDontAllowDelete-selected" class="display-table-row">
-        <div th:include="fragments-utils/static-panels :: warning-pane" th:with="txtcontent=#{title.unbindMilestones.statusDontAllowDelete}"></div>       
-    </div>
-    
-    
+          <div class="not-displayed dialog-details">
+              <p th:text="#{dialog.delete-tree-node.details}">details :</p>
+              <ul>
+              </ul>
+            </div>
+           
+        </div>
+        </div>
     <div class="popup-dialog-buttonpane">
       <input type="button" th:value="#{label.Confirm}" data-def="state=one-selected more-selected, mainbtn=one-selected more-selected, evt=confirm"/>
       <input type="button" th:value="#{label.Cancel}" data-def="state=one-selected more-selected, mainbtn=one-selected more-selected, evt=cancel"/>

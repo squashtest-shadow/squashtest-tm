@@ -84,9 +84,9 @@
  * 		
  * 
  */
-define(["jquery", "workspace.event-bus", "app/ws/squashtm.notification", "squashtable", 
+define(["jquery", "workspace.event-bus", "app/ws/squashtm.notification", "squash.translator", "squashtable", 
         "./jquery.squash.milestoneDialog", "jquery.squash.formdialog"], 
-		function($, eventBus, notification){
+		function($, eventBus, notification, translator){
 	
 	
 	function init(conf){
@@ -208,16 +208,15 @@ define(["jquery", "workspace.event-bus", "app/ws/squashtm.notification", "squash
 				default : state="more-selected";
 				}
 				
-				if (statusDontAllowDelete === true ) {
-					state="one-statusDontAllowDelete-selected";
+				var htmlWarn = '<li>' + translator.get('title.unbindMilestones.status-or-legacy-warning') + '</li>';
+				
+				if (statusDontAllowDelete === true || legacy === true ) {
+					unbindDialog .find('.dialog-details').removeClass('not-displayed').find('ul').html(
+							htmlWarn);
+				} else {
+					unbindDialog .find('.dialog-details').addClass('not-displayed');
 				}
-				
-				if (legacy === true ) {
-					state="one-legacy-selected";
-				}
-				
-			
-				
+	
 				unbindDialog.formDialog('setState', state);
 			});
 			
@@ -236,7 +235,7 @@ define(["jquery", "workspace.event-bus", "app/ws/squashtm.notification", "squash
 
 					// the test is a success if 'directMember' 
 					// is true or undefined (that is intended).
-					if (data['directMember'] !== false){
+					if (data['directMember'] !== false && data['isStatusAllowUnbind'] !== false){
 						ids.push(data['entity-id']);
 					}					
 				});
