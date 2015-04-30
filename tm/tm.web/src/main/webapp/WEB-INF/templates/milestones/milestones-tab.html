@@ -32,8 +32,7 @@
 <div class="milestone-panel-master" 
 th:with="isWritable = ${#authorization.expression('hasRole(''ROLE_ADMIN'')')  or sec.hasPermission(item , 'WRITE')}">
   
-  <div class="toolbar" th:if="${isWritable}">
-  
+  <div class="toolbar" th:if="${isWritable }">
     <button class="sq-icon-btn btn-sm milestone-panel-bind-button" th:title="#{dialog.milestone.add. + ${conf.nodeType}}" >
        <span class="ui-icon ui-icon-plus squared-icons">+</span>
     </button>

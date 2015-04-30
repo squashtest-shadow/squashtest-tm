@@ -166,6 +166,18 @@ define(["jquery", "workspace.event-bus", "app/ws/squashtm.notification", "squash
 			bindDialogNoMilestone.formDialog('open');
 			bindDialog.milestoneDialog('close');
 				} 
+				
+				//Campaign with locked milestone can't bind another milestone because that would remove locked milestone.
+				if (conf.nodeType === "campaign" && !conf.editable){
+					var warn = translator.get({
+						errorTitle : 'popup.title.Info',
+						errorMessage : 'dialog.milestone.bind.statusforbid'
+					});
+					$.squash.openMessage(warn.errorTitle, warn.errorMessage);
+					bindDialog.milestoneDialog('close');	
+				}
+				
+				
 				});
 			
 			
