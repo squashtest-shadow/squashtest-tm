@@ -46,6 +46,7 @@
     <property name="resolverMap">
       <map>
         <entry key=".*/import/upload.*" value-ref="importMultipartResolver" />
+        <entry key=".*/importer/.*" value-ref="importMultipartResolver" />
       </map>
     </property>
 
@@ -58,6 +59,15 @@
     <property name="defaultEncoding" value="UTF-8" />
   </bean>
 
+	
+  <bean id="importMultipartResolver" class="org.squashtest.tm.web.internal.fileupload.SquashMultipartResolver" init-method="init">
+   <property name="config" ref="squashtest.core.configuration.ConfigurationService" />
+    <property name="publisher" ref="OsgiMultiCast" />
+    <property name="maxUploadSizeKey" value="uploadfilter.upload.import.sizeLimitInBytes" />
+    <property name="defaultEncoding" value="UTF-8" />
+  </bean>
+
+
     <!-- This bean is referenced by an osgi:list, so it has to be instanciated in appContext*xml (not visible when in *servlet.xml) -->
   <bean id="squash.tm.report.WorkspaceWizardManager" class="org.squashtest.tm.web.internal.wizard.WorkspaceWizardManagerImpl">
     <property name="projectFinder" ref="squashtest.tm.service.GenericProjectManagerService" />
@@ -65,17 +75,6 @@
 	
 	<!-- same thing for this one -->
   <bean id="squash.tm.report.ExportPluginManager" class="org.squashtest.tm.web.internal.export.ExportPluginManagerImpl" />
-	
-	<!--  TODO
-		once everyting it takes is implemented, replace the class of this resolver by the following :
-		class="org.squashtest.tm.web.internal.fileupload.ProgressAwareMultipartResolver">
-	 -->
-  <bean id="importMultipartResolver" class="org.squashtest.tm.web.internal.fileupload.SquashMultipartResolver" init-method="init">
-   <property name="config" ref="squashtest.core.configuration.ConfigurationService" />
-    <property name="publisher" ref="OsgiMultiCast" />
-    <property name="maxUploadSizeKey" value="uploadfilter.upload.import.sizeLimitInBytes" />
-    <property name="defaultEncoding" value="UTF-8" />
-  </bean>
 
   <bean class="org.squashtest.tm.web.internal.fileupload.UploadContentFilterUtil" init-method="init" >
      <property name="config" ref="squashtest.core.configuration.ConfigurationService" />
