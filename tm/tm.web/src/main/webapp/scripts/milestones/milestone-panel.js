@@ -179,9 +179,10 @@ define(["jquery", "workspace.event-bus", "app/ws/squashtm.notification", "squash
 			unbindDialog.formDialog();
 			
 			unbindDialog.on('formdialogopen', function(){
-				
-				var ids = currentTable.getSelectedIds(),
-									state;
+				var $this = $(this);
+				var id = $this.data('entity-id');
+				var ids = ! $.isArray(id) ? [id] : id ;
+				var state;
 							
 				// For every milestone selected, if (tcDirectMember===false), we can't delete
 				var legacy = false;
@@ -268,6 +269,8 @@ define(["jquery", "workspace.event-bus", "app/ws/squashtm.notification", "squash
 			});
 			
 			$(".milestone-panel-unbind-button").on('click', function(){
+				var ids = currentTable.getSelectedIds();
+				unbindDialog.data('entity-id', ids);
 				unbindDialog.formDialog('open');
 			});
 			
