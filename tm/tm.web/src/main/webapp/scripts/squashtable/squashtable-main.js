@@ -1040,18 +1040,18 @@ define(["jquery",
 							request = $.ajax({
 								type : 'delete',
 								url : finalUrl,
-								dataType : self.squashSettings.deleteButtons.dataType || "text" 
+								dataType : self.squashSettings.deleteButtons.dataType || "text"
 							});
 						}
-							
+
 							if (self.squashSettings.unbindButtons != undefined ) {
 								request = $.ajax({
 									type : 'delete',
 									url : finalUrl,
 									dataType :  self.squashSettings.unbindButtons.dataType
 								});
-							}	
-						
+							}
+
 							if (conf.success) {
 								request.done(conf.success);
 							}
@@ -1473,6 +1473,31 @@ define(["jquery",
 		// ---------- merge programmatic and DOM-based configuration --------
 
 		var domConf = $.fn.squashTable.configurator.fromDOM(this);
+
+		// aoColumnDefs array are not correctly merged with $.extend :
+		// $.extend([{target: 0}, {target:1}], [{target: 1}]) == [{target: 1}, {target:1}]
+		if (!!datatableSettings.aoColumnDefs) {
+			var nColDefs = domConf.table.aoColumnDefs.length;
+			var colDefs = new Array(nColDefs);
+
+			/**
+			 * Puts each `colDef` at the `colDef.aTarget` pos of `memo`
+			 * When `aTargets` contains several items, it's pushed at the end of `memo`
+			 */
+			var colDefsReducer = function(memo, colDef) {
+				if (colDef.aTargets === undefined) {
+					return;
+				}
+				if (colDef.aTargets.length === 1 && colDef.aTargets[0] < nColDefs) {
+					memo[colDef.aTargets[0]] = colDef;
+				} else {
+					memo.push(colDef);
+				}
+				return memo;
+			};
+
+			datatableSettings.aoColumnDefs = datatableSettings.aoColumnDefs.reduce(colDefsReducer, colDefs);
+		}
 
 		var datatableEffective = $.extend(true, {}, datatableDefaults, domConf.table, datatableSettings);
 		var squashEffective = $.extend(true, {}, squashDefaults, domConf.squash, squashSettings);
