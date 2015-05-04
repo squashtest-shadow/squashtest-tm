@@ -49,6 +49,8 @@
 <f:message var="messageSortmode"  key="message.TestPlanSortMode" />
 <f:message var="associateLabel"   key="label.Add" />
 <f:message var="removeLabel"      key="label.Remove" />
+<f:message var="removeLabel"	  key="label.removeFromExecutionPlan" />
+<f:message var="removeTooltip" 	  key="label.removeFromExecutionPlan" />
 <f:message var="assignLabel"      key="label.Assign" />
 <f:message var="reorderLabel"     key="label.Reorder" />
 <f:message var="filterLabel"      key="label.Filter" />
@@ -91,8 +93,9 @@
           <button id="add-test-case-button" class="sq-btn btn-sm" title="${tooltipAddTPI}">
             <span class="ui-icon ui-icon-plusthick"></span>${associateLabel}
           </button>
-          <button id="remove-test-plan-button" class="sq-btn btn-sm" title="${tooltipRemoveTPI}">
-            <span class="ui-icon ui-icon-trash"></span>${removeLabel}
+          <button id="remove-test-plan-button" class="sq-btn btn-sm" title="${removeTooltip}">
+            <span class="ui-icon ui-icon-trash"></span>
+            ${removeLabel}
           </button>
         </span>
       </c:if>

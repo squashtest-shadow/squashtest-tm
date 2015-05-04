@@ -64,7 +64,8 @@
     <f:message var="filterTooltip" key="tooltips.FilterTestPlan" />
     <f:message var="reorderTooltip" key="tooltips.ReorderTestPlan" />
     <f:message var="associateLabel" key="label.Add" />
-    <f:message var="removeLabel" key="label.Remove" />
+    <f:message var="removeLabel" key="label.removeFromExecutionPlan" />
+    <f:message var="removeTooltip" key="label.removeFromExecutionPlan" />
     <f:message var="statusLabel" key="label.Status" />
     <f:message var="assignLabel" key="label.Assign" />
     <f:message var="removeEverywhereLabel" key="label.RemoveTSAndIT" />
@@ -115,10 +116,10 @@
               <span class="ui-icon ui-icon-plusthick"></span>
               ${associateLabel}
             </button>
-            <button id="remove-test-plan-button" class="sq-btn btn-sm" title="${tooltipRemoveTPI}">
-              <span class="ui-icon ui-icon-trash"></span>
-              ${removeLabel}
-            </button>
+          <button id="remove-test-plan-button" class="sq-btn btn-sm" title="${removeTooltip}">
+            <span class="ui-icon ui-icon-trash"></span>
+            ${removeLabel}
+          </button>
           </span>
         </c:if>
       </div>

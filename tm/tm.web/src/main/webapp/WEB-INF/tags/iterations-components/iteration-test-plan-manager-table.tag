@@ -61,7 +61,8 @@
     <f:message var="filterLabel" key="label.Filter" />
     <f:message var="filterTooltip" key="tooltips.FilterTestPlan" />
     <f:message var="reorderTooltip" key="tooltips.ReorderTestPlan" />
-    <f:message var="removeLabel" key="label.Remove" />
+    <f:message var="removeLabel" key="label.removeFromExecutionPlan" />
+    <f:message var="removeTooltip" key="label.removeFromExecutionPlan" />
     <f:message var="manageTS" key='iteration.test-plan.testsuite.manage.label' />
     <f:message var="tooltipAddSuite" key="tooltips.AddTSToTPI" />
     <f:message var="confirmLabel" key="label.Confirm" />
@@ -114,8 +115,7 @@
         </div>
 
         <span class="btn-group">
-
-          <button id="remove-test-plan-button" class="sq-btn btn-sm" title="${tooltipRemoveTPI}">
+          <button id="remove-test-plan-button" class="sq-btn btn-sm" title="${removeTooltip}">
             <span class="ui-icon ui-icon-trash"></span>
             ${removeLabel}
           </button>
