@@ -400,7 +400,7 @@
 		<f:message var="removeuserTitle" key="tooltips.permissions.remove" />	
 		<div id="remove-permission-dialog" class="popup-dialog not-displayed" title="${removeuserTitle}">
 			
-		<f:message key="message.permissions.remove.teamOrUser"/>
+		<f:message key="message.permissions.remove.teamOrUser.first"/><f:message key='message.permissions.confirmSimple'/>
 		
 		<div class="popup-dialog-buttonpane">
 				<input type="button" value="${confirmLabel}" data-def="state=normal, mainbtn=normal, evt=confirm"/>
@@ -780,7 +780,7 @@ require(["common"], function() {
 			language : {
 				ok : '${confirmLabel}',
 				cancel : '${cancelLabel}',
-				deleteMessage : "<f:message key='message.permissions.remove.teamOrUser.first'/> <f:message key='message.permissions.confirmSimple'/>",
+				deleteMessage : "<f:message key='message.permissions.remove.teamOrUser'/> <f:message key='message.permissions.confirmSimple'/>",
 				deleteTooltip : '<f:message key="tooltips.permissions.remove"/>'
 			}
 		};
