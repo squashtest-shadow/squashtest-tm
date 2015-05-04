@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.squashtest.tm</groupId>
     <artifactId>squashtest-csp-core</artifactId>
-    <version>1.12.0.RC7</version>
+    <version>1.12.0.RC8-SNAPSHOT</version>
   </parent>
   <artifactId>core.jasper.fragment</artifactId>
   <packaging>bundle</packaging>
