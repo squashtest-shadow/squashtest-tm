@@ -101,7 +101,7 @@ public class JQueryTabsHeader extends SimpleTagSupport {
 	private static final String LI_ELT = "li";
 	private static final String A_ELT = "a";
 	
-	private static final String[] TAB_COOKIES = {"testcase-tab-cookie", "iteration-tab-cookie"};
+	private static final String[] TAB_COOKIES = { "testcase-tab-cookie", "iteration-tab-cookie" };
 	
 	/* attributes */
 	private Collection<String> contentIds = new LinkedList<String>();

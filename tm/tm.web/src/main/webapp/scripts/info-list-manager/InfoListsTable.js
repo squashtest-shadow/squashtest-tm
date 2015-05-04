@@ -39,12 +39,27 @@ define(
 			"message.infoList.batchRemove.first",
 			"message.infoList.bound.batchRemove.second",
 			"message.infoList.bound.batchRemove.third",
-			"message.infoList.bound.batchRemove.fourth",
+			"message.infoList.bound.batchRemove.fourth",	
 			"message.noListSelected",
 			"dialog.info-list.warning.reindex.before",
 			"label.GotoIndex"
 		]);
 
+		var oLanguage = messages.get({
+			'sLengthMenu' : 'generics.datatable.lengthMenu',
+			'sZeroRecords' : 'generics.datatable.zeroRecords',
+			'sInfo' : 'generics.datatable.info',
+			'sInfoEmpty' : 'generics.datatable.infoEmpty',
+			'sInfoFiltered' : 'generics.datatable.infoFiltered',
+			'sSearch' : 'generics.datatable.search', 
+			'oPaginage' : {
+				'sFirst' : 'generics.datatable.paginate.first',
+				'sPrevious' : 'generics.datatable.paginate.previous',
+				'sNext' : 'generics.datatable.paginate.next',
+				'sLast' : 'generics.datatable.paginate.last'
+			}
+		});
+		
 		var itemsTableConf = window.squashtm.app.itemsTable;
 		console.log("table conf" ,itemsTableConf);
 
@@ -157,10 +172,10 @@ define(
 						pageLength: this.$el.data("pageLength"),
 						dom: '<"dataTables_header"fr>t<"dataTables_footer"lp>',
 						order: [ [ 2, "asc" ] ],
-						columnDefs: colDefs,
-						language : {
-							url: this.$el.data("language-url")
-						},
+						columnDefs: colDefs, 
+						language :  oLanguage,
+						//	url: this.$el.data("language-url")
+						// },
 						// we cannot init ajax with deferred fetch and client-side processing,
 						// so ajax is configured later on "init.dt" event
 //							ajax: this.viewUrl,

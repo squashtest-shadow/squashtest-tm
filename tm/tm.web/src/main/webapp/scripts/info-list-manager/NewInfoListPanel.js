@@ -19,8 +19,8 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 define(
-		[ "jquery", "app/BindView", "handlebars", "backbone.validation", "./InfoListOptionPanel", "./InfoListOptionModel", "./InfoListOptionCollection", "app/lnf/Forms", "squashtable/squashtable.options", "squash.configmanager", "info-list/IconSelectDialog", "jquery.squash.confirmdialog" ],
-		function InfoListPanel($, BindView, Handlebars, Validation, InfoListOptionPanel, InfoListOptionModel, InfoListOptionCollection, Forms, SquashTable, confman, IconPicker) {
+		[ "jquery", "app/BindView", "handlebars", "backbone.validation", "./InfoListOptionPanel", "./InfoListOptionModel", "./InfoListOptionCollection", "app/lnf/Forms", "squashtable/squashtable.options", "squash.configmanager", "info-list/IconSelectDialog", "squash.translator", "jquery.squash.confirmdialog" ],
+		function InfoListPanel($, BindView, Handlebars, Validation, InfoListOptionPanel, InfoListOptionModel, InfoListOptionCollection, Forms, SquashTable, confman, IconPicker, messages) {
 			"use strict";
 
 			var validationOptions = {
@@ -42,6 +42,21 @@ define(
 					}
 				}
 			};
+			
+			var oLanguage = messages.get({
+				'sLengthMenu' : 'generics.datatable.lengthMenu',
+				'sZeroRecords' : 'generics.datatable.zeroRecords',
+				'sInfo' : 'generics.datatable.info',
+				'sInfoEmpty' : 'generics.datatable.infoEmpty',
+				'sInfoFiltered' : 'generics.datatable.infoFiltered',
+				'sSearch' : 'generics.datatable.search',
+				'oPaginage' : {
+					'sFirst' : 'generics.datatable.paginate.first',
+					'sPrevious' : 'generics.datatable.paginate.previous',
+					'sNext' : 'generics.datatable.paginate.next',
+					'sLast' : 'generics.datatable.paginate.last'
+				}
+			});
 
 			function initOptionsTable(view) {
 				var radio = SquashTable.renderer($("#default-cell-tpl").html())(function(data, type, row) {
@@ -86,6 +101,7 @@ define(
 					filter : false,
 					paginate : false,
 					columnDefs: colDefs,
+					language :  oLanguage,
 					data: []
 				});
 			}

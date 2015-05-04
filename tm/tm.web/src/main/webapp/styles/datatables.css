@@ -161,7 +161,7 @@ a.edit-pencil{
 a.table-cell-add, 
 a.add-attachments{
 /*	background-image: url("../images/add.png");	 sprite-ref: sprites-icons; */
-	background-image: url("../styles/jquery/ui/images/ui-icons_a8a8a8_256x240.png");
+	background-image: url("../styles/jquery/ui/images/ui-icons_a8a8a8_256x240.png"); 
     background-position: -240px -112px;
 	width : 16px;
 	height : 16px;				

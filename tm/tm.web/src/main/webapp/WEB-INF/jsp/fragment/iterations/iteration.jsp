@@ -189,7 +189,7 @@
         </a>
       </li>
       <li>
-        <a href="#tabs-3">
+        <a href="#tabs-1">
           <f:message key="label.Attachments" />
           <c:if test="${ iteration.attachmentList.notEmpty }">
             <span class="hasAttach">!</span>
