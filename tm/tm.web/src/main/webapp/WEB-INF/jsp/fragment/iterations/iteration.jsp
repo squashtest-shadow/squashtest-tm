@@ -169,7 +169,7 @@
    <div class="unsnap"></div>
 </div>
 
-<csst:jq-tab activeContentIndex="4">
+<csst:jq-tab activeContentIndex="2">
   <div class="fragment-tabs fragment-body">
     <ul class="tab-menu">
       <li>

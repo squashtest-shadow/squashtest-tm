@@ -60,14 +60,17 @@ require([ "common" ], function() {
 			// ****** tabs configuration *******
 
 			var fragConf = {
-					active : 4,
+					active : 2,
 					cookie : "iteration-tab-cookie",
 					activate : function(event, ui) {
 						if (ui.newPanel.is("#dashboard-iteration")) {
 							eventBus.trigger("dashboard.appear");
 						}
+						if (ui.newPanel.is("#iteration-test-plans-panel")) {
+							console.log("yeah");
+						}
 					}
-			};
+			};  
 			Frag.init(fragConf);
 
 			if (config.hasBugtracker) {
