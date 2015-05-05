@@ -85,6 +85,7 @@
             <label for="uploadSizeLimit" class="display-table-cell"><f:message key="label.uploadSizeLimit" /></label>
             <div class="display-table-cell editable text-editable" id="uploadSizeLimit">${uploadSizeLimit}</div>
           </div>
+                <span><f:message key="label.uploadSize.warning" /></span>
         </div>
   
         <div id="config-table" class="display-table">
@@ -92,6 +93,7 @@
             <label for="uploadImportSizeLimit" class="display-table-cell"><f:message key="label.uploadImportSizeLimit" /></label>
             <div class="display-table-cell editable text-editable" id="uploadImportSizeLimit"> ${uploadImportSizeLimit} </div>
           </div>
+         <span><f:message key="label.uploadSize.warning" /></span>
         </div>
       </div>
     </div>
