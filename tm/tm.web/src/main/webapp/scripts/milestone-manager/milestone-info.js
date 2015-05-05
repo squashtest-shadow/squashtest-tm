@@ -19,7 +19,8 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 	define([ 'module', "jquery", "handlebars", "squash.translator", "squash.basicwidgets", "jeditable.selectJEditable",
-			"squash.configmanager", "workspace.routing", "jquery.squash.formdialog", "jeditable.datepicker", "squashtable", "jquery.squash.confirmdialog" ], function(
+			"squash.configmanager", "workspace.routing", "jquery.squash.formdialog", "jeditable.datepicker", 
+			"squashtable", "jquery.squash.confirmdialog" ], function(
 			module, $, Handlebars, translator, basic, SelectJEditable, confman, routing) {
 
 		var config = module.config();
@@ -151,24 +152,24 @@
 		});
 
 
-
-
-$("#changeOwner-popup").confirmDialog().on('confirmdialogconfirm', function(){
+		$("#changeOwner-popup").confirmDialog().on('confirmdialogconfirm', function(){
 			var $this = $(this);
 			var value = $this.data('value');
 			var ownerEditable = $this.data('ownerEditable');
 			changeOwnerRequest(value, ownerEditable);
 			clickBackButton();
 		});
+		
+		
+		$("#changeOwner-popup").confirmDialog().on('confirmdialogcancel', function(){
+			var $this = $(this);
+			var ownerEditable = $this.data('ownerEditable');
+			var data = ownerEditable.settings.jeditableSettings.data;
+			var user = data[config.data.currentUser];
+			ownerEditable.component.html(user);
+		});
 
-$("#changeOwner-popup").confirmDialog().on('confirmdialogcancel', function(){
-	var $this = $(this);
-	var ownerEditable = $this.data('ownerEditable');
-	var data = ownerEditable.settings.jeditableSettings.data;
-	var user = data[config.data.currentUser];
-	ownerEditable.component.html(user);
-});
-
+		
 		function changeOwnerRequest(value, ownerEditable){
 
 			$.ajax({
@@ -225,19 +226,19 @@ $("#changeOwner-popup").confirmDialog().on('confirmdialogcancel', function(){
 				id: statusEditable.settings.componentId,
 				value: value
 			}
-		}).then(function(value) {
-			var data = JSON.parse(statusEditable.settings.jeditableSettings.data);
-			var newStatus;
-			for(var prop in data) {
-				if(data.hasOwnProperty(prop)){
-					if (data[prop] === value){
-						newStatus = prop;
+			}).then(function(value) {
+				var data = JSON.parse(statusEditable.settings.jeditableSettings.data);
+				var newStatus;
+				for(var prop in data) {
+					if(data.hasOwnProperty(prop)){
+						if (data[prop] === value){
+							newStatus = prop;
+							}
 						}
 					}
-				}
-			config.data.milestone.currentStatus = newStatus;
-			statusEditable.component.html(value);
-		});
+				config.data.milestone.currentStatus = newStatus;
+				statusEditable.component.html(value);
+			});
 		};
 
 
@@ -296,7 +297,7 @@ $("#changeOwner-popup").confirmDialog().on('confirmdialogcancel', function(){
 		});
 
 
-$("#changeStatus-popup").confirmDialog().on('confirmdialogconfirm', function(){
+		$("#changeStatus-popup").confirmDialog().on('confirmdialogconfirm', function(){
 
 			var $this = $(this);
 			var value = $this.data('value');
@@ -310,17 +311,17 @@ $("#changeStatus-popup").confirmDialog().on('confirmdialogconfirm', function(){
 
 			changeStatusRequest(value, statusEditable);
 		});
+		
 
-$("#changeStatus-popup").confirmDialog().on('confirmdialogcancel', function(){
-
-	var $this = $(this);
-	var value = $this.data('value');
-	var statusEditable = $this.data('statusEditable');
-	var data = JSON.parse(statusEditable.settings.jeditableSettings.data);
-	statusEditable.component.html(data[config.data.milestone.currentStatus]);
-});
-
-
+		$("#changeStatus-popup").confirmDialog().on('confirmdialogcancel', function(){
+		
+			var $this = $(this);
+			var value = $this.data('value');
+			var statusEditable = $this.data('statusEditable');
+			var data = JSON.parse(statusEditable.settings.jeditableSettings.data);
+			statusEditable.component.html(data[config.data.milestone.currentStatus]);
+		});
+		
 
 		var changeRangeRequest = function changeRange(value, rangeEditable){
 			$.ajax({
@@ -346,49 +347,49 @@ $("#changeStatus-popup").confirmDialog().on('confirmdialogcancel', function(){
 	};
 
 
-		function updateAfterRangeChange(newRange) {
+	function updateAfterRangeChange(newRange) {
 
-			var ownerEditable = $("#milestone-owner-cell");
-			// update the currentRange with the new value
-			config.data.milestone.currentRange = newRange;
-			// redraw the table so the project binding is editable or not depending on range
-			$('#projects-table').squashTable().fnDraw();
-			if (newRange === "GLOBAL"){
-				// If new range is global, the owner is not editable and equal to <Admin>
-				ownerEditable.html(translator.get("label.milestone.global.owner"));
-			} else {
-				// If new range is restricted, we must update the owner to the current user
-				$.ajax({
-					type : "POST",
-					url : config.urls.milestoneUrl,
-					data: {
-						id: "milestone-owner",
-						value: config.data.currentUser
-					}
-				}).then(function(value) {
-					// recreate the editable
-					ownerEditable.html('<span id="milestone-owner" >' + value + '</span>');
-			        createOwnerEditable();
-				});
-			}
-
-			$('#projects-table').squashTable()._fnAjaxUpdate();
-			$('#bind-to-projects-table').squashTable()._fnAjaxUpdate();
-		}
-
-
-
-		var drawCallBack = function editableBinding() {
-// the bind to project is editable only if range is restricted
-			if (config.data.milestone.currentRange === "RESTRICTED"){
-			$("td.binded-to-project").editable('enable');
+		var ownerEditable = $("#milestone-owner-cell");
+		// update the currentRange with the new value
+		config.data.milestone.currentRange = newRange;
+		// redraw the table so the project binding is editable or not depending on range
+		$('#projects-table').squashTable().fnDraw();
+		if (newRange === "GLOBAL"){
+			// If new range is global, the owner is not editable and equal to <Admin>
+			ownerEditable.html(translator.get("label.milestone.global.owner"));
 		} else {
-			$("td.binded-to-project").editable('disable');
-
+			// If new range is restricted, we must update the owner to the current user
+			$.ajax({
+				type : "POST",
+				url : config.urls.milestoneUrl,
+				data: {
+					id: "milestone-owner",
+					value: config.data.currentUser
+				}
+			}).then(function(value) {
+				// recreate the editable
+				ownerEditable.html('<span id="milestone-owner" >' + value + '</span>');
+		        createOwnerEditable();
+			});
 		}
 
+		$('#projects-table').squashTable()._fnAjaxUpdate();
+		$('#bind-to-projects-table').squashTable()._fnAjaxUpdate();
+	}
 
-		$("td.binded-to-project").editable(function(value, settings) {
+
+
+		var drawCallBack = function() {
+			
+			// the bind to project is editable only if range is restricted
+			if (config.data.milestone.currentRange === "RESTRICTED"){
+				$("td.binded-to-project").editable('enable');
+			} else {
+				$("td.binded-to-project").editable('disable');	
+			}
+			
+			// turn elements to editable
+			$("td.binded-to-project").editable(function(value, settings) {
 			    var returned;
 			    var cell = this.parentElement;
 			    var id = $("#projects-table").squashTable().getODataId(cell);
@@ -398,14 +399,14 @@ $("#changeStatus-popup").confirmDialog().on('confirmdialogcancel', function(){
 					returned = origvalue;
 				}
 				else {
-				if (value === "yes"){
-					bindProjectInPerimeter(id);
-				} else {
-					unbindProjectInPerimeter (id);
-					returned = 	origvalue;
+					if (value === "yes"){
+						bindProjectInPerimeter(id);
+					} else {
+						unbindProjectInPerimeter (id);
+						returned = 	origvalue;
+					}
 				}
-				}
-			     return(returned);
+			    return(returned);
 			  }, {
 				 data   : " {'yes':'" + translator.get("squashtm.yesno.true") + "', 'no' :'"  + translator.get("squashtm.yesno.false") +"'}",
 				 type   : 'select',
@@ -446,21 +447,32 @@ $("#changeStatus-popup").confirmDialog().on('confirmdialogcancel', function(){
 
 
 		var uncheck = function() {
-			$("#bind-to-projects-table").find(":checkbox").prop('checked', false);
+			var chkbx = $("#bind-to-projects-table").find(":checkbox");
+			chkbx.prop('checked', false);
+			chkbx.trigger('change');
 		};
+		
 		var checkAll = function() {
-			$("#bind-to-projects-table").find(":checkbox").prop('checked', true);
+			var chkbx = $("#bind-to-projects-table").find(":checkbox");
+			chkbx.prop('checked', true);
+			chkbx.trigger('change');
 		};
 
 		var invertCheck = function() {
 			var checked = $("#bind-to-projects-table").find(":checkbox").filter(":checked");
 			var unchecked = $("#bind-to-projects-table").find(":checkbox").filter(":not(:checked)");
+			/*
 			checked.each(function() {
 				$(this).prop('checked', false);
 			});
 			unchecked.each(function() {
 				$(this).prop('checked', true);
 			});
+			*/
+			checked.prop('checked', false);
+			unchecked.prop('checked', true);
+			
+			checked.add(unchecked).trigger('change');
 		};
 
 		// unbind project but keep in perimeter
@@ -508,8 +520,9 @@ $("#changeStatus-popup").confirmDialog().on('confirmdialogcancel', function(){
 			});
 			$.squash.openMessage(warn.errorTitle, warn.errorMessage);
 		}
+		
 
-$("#unbind-project-popup").confirmDialog().on('confirmdialogconfirm', function(){
+		$("#unbind-project-popup").confirmDialog().on('confirmdialogconfirm', function(){
 
 			var $this = $(this);
 			var id = $this.data('entity-id');
@@ -615,7 +628,9 @@ $("#unbind-project-popup").confirmDialog().on('confirmdialogconfirm', function()
 			});
 		});
 
-          $(function() {
+		// ************** init *******************
+		
+        $(function() {
 
 			var squashSettings = {functions:{}};
 
@@ -671,12 +686,15 @@ $("#unbind-project-popup").confirmDialog().on('confirmdialogconfirm', function()
 					mRender: projectLinkRenderer
 				} ]
 			}, squashSettings);
-			$("#bind-to-projects-table").squashTable({"bServerSide":false, "fnRowCallback" : projectTableRowCallback}, {});
+			
+			var bindTable = $("#bind-to-projects-table").squashTable({
+				"bServerSide":false, 
+				"fnRowCallback" : projectTableRowCallback
+			}, {});
 
 			basic.init();
 			$("#back").click(clickBackButton);
 			initRenameDialog();
-
 
 
 			//fix order
@@ -686,7 +704,44 @@ $("#unbind-project-popup").confirmDialog().on('confirmdialogconfirm', function()
 					 cell.firstChild.innerHTML = index + 1;
 				 });
 			});
+			
 
+			// *******save/restore selection (issue 4816) ********
+			
+			// save on click
+			bindTable.on('change', 'input[type="checkbox"]', function(){
+				
+				var selection = (bindTable.selection || []),
+					$cbox = $(this),
+					checked = this.checked,
+					$row = $cbox.parents('tr:first'),
+					id = bindTable.getODataId($row.get(0)),
+					index = selection.indexOf(id);
+				
+				// add
+				if (checked && index === -1){
+					selection.push(id);
+				}
+				// remove
+				else if (index !== -1){
+					selection.splice(index, 1);
+				}
+				
+				bindTable.selection = selection;
+				
+			});
+			
+			// restore
+			bindTable.drawcallbacks.push(function(oSettins){
+				var selection = bindTable.selection || [];
+				
+				bindTable.find('>tbody>tr').each(function(){
+					if (selection.indexOf(bindTable.getODataId(this)) > -1){
+						$(this).find('input').prop('checked', true);
+					}
+				});		
+			});
+			
 
 		});
 	});

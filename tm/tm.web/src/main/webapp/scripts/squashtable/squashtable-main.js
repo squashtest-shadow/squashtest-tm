@@ -1504,7 +1504,7 @@ define(["jquery",
 
 
 		this.drawcallbacks = [];
-		this.rowcalbacks = [];
+		this.rowcallbacks = [];
 
 
 		this.squashSettings = squashEffective;
@@ -1537,7 +1537,7 @@ define(["jquery",
 
 		};
 
-		//----------------- draw callback ------------------------
+		//----------------- row and draw callback ------------------------
 
 		var aDrawCallbacks = this.drawcallbacks;
 
@@ -1566,10 +1566,24 @@ define(["jquery",
 
 			var i=0, len = this.drawcallbacks.length;
 			for (i=0; i<len; i++){
-				this.drawcallbacks[i].call(this);
+				this.drawcallbacks[i].call(this, oSettings);
 			}
 
 		};
+		
+		var userRowCallback = datatableEffective.fnRowCallback;
+		
+		datatableEffective.fnRowCallback = function( nRow, aData, iDisplayIndex, iDisplayIndexFull){
+			if (userRowCallback){
+				userRowCallback.call(this, nRow, aData, iDisplayIndex, iDisplayIndexFull);
+			}
+			
+			var i=0, len = this.rowcallbacks.length;
+			for (i=0; i<len; i++){
+				this.rowcallbacks[i].call(this,  nRow, aData, iDisplayIndex, iDisplayIndexFull);
+			}
+			
+		}
 
 
 
