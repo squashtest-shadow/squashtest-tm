@@ -50,7 +50,7 @@ public class AnnotatedPropertyObjectIdentityRetrievalStrategy implements ObjectI
 			.getLogger(AnnotatedPropertyObjectIdentityRetrievalStrategy.class);
 
 	private ObjectIdentityRetrievalStrategy delegate = new ObjectIdentityRetrievalStrategyImpl();
-	
+
 	private Map<Class<?>, Method> identityMethodMap = new ConcurrentHashMap<Class<?>, Method>();
 
 	@Override
@@ -82,7 +82,7 @@ public class AnnotatedPropertyObjectIdentityRetrievalStrategy implements ObjectI
 
 	private Method getTargetProperty(Class<?> candidateClass) {
 		Method targetProperty = null;
-		
+
 		if (isMapped(candidateClass)){
 			targetProperty = identityMethodMap.get(candidateClass);
 		}
@@ -110,39 +110,39 @@ public class AnnotatedPropertyObjectIdentityRetrievalStrategy implements ObjectI
 	}
 
 	private Method findAnnotatedProperty(Class<?> candidateClass) {
-		
-		Set<Class<?>> exploredClasses = new HashSet<Class<?>>(); 
-		
+
+		Set<Class<?>> exploredClasses = new HashSet<Class<?>>();
+
 		LinkedList<Class<?>> explorationQueue= new LinkedList<Class<?>>();
 		Method targetProperty = null;
 		Class<?> currentClass = null;
-		
+
 		explorationQueue.add(candidateClass);
-		
+
 		while ( (targetProperty == null) && (! explorationQueue.isEmpty())){
-			
+
 			currentClass = explorationQueue.removeFirst();
-			
+
 			if ( (currentClass==null) || (exploredClasses.contains(currentClass))){ continue;}
-						
+
 			if (LOGGER.isDebugEnabled()){
 				LOGGER.trace("Looking for @AclConstrainedObject in class '"+candidateClass.getName()+"'");
 			}
-			
+
 			targetProperty = findAnnotatedPropertyInClass(currentClass);
-			
+
 			//next step is to explore the interfaces and classes
 			if (targetProperty == null){
 				explorationQueue.addAll(Arrays.asList(currentClass.getInterfaces()));
 				explorationQueue.add(currentClass.getSuperclass());
 			}
-			
+
 			//remember the class
 			exploredClasses.add(currentClass);
 		}
-		
+
 		return targetProperty;
-		
+
 	}
 
 	private Method findAnnotatedPropertyInClass(Class<?> candidateClass) {
@@ -173,7 +173,7 @@ public class AnnotatedPropertyObjectIdentityRetrievalStrategy implements ObjectI
 	private boolean isMapped(Class<?> someClass){
 		return identityMethodMap.containsKey(someClass);
 	}
-	
+
 	private void mapClass(Class<?> someClass, Method identityMethod){
 		if (LOGGER.isDebugEnabled()){
 			LOGGER.debug("AnnotatedPropertyObjectIdentityRetrievalStrategy : identity method '"+identityMethod.getName()+"' found for class '"+someClass.getName()+"', registering now");
@@ -181,7 +181,7 @@ public class AnnotatedPropertyObjectIdentityRetrievalStrategy implements ObjectI
 		identityMethodMap.put(someClass, identityMethod);
 		nukeMapIfTooLarge();
 	}
-	
+
 	private void nukeMapIfTooLarge(){
 		if (identityMethodMap.size()>50){
 			if (LOGGER.isDebugEnabled()){

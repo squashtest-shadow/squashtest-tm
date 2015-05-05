@@ -34,7 +34,6 @@ import org.squashtest.tm.domain.customfield.BoundEntity;
 import org.squashtest.tm.domain.infolist.InfoListItem;
 import org.squashtest.tm.domain.library.NodeVisitor;
 import org.squashtest.tm.domain.milestone.MilestoneHolder;
-import org.squashtest.tm.domain.milestone.MilestoneMember;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.requirement.Requirement;
 import org.squashtest.tm.domain.requirement.RequirementFolder;
@@ -60,9 +59,9 @@ import org.squashtest.tm.service.testcase.TestCaseModificationService;
  * <li>issues (see {@linkplain #updateIssues(List)})</li>
  * <li>automated scripts (see {@linkplain #updateAutomationParams(TestCase)})</li>
  * </ul>
- * 
+ *
  * @author mpagnon
- * 
+ *
  */
 @Component
 public class TreeNodeUpdater implements NodeVisitor {
@@ -120,7 +119,7 @@ public class TreeNodeUpdater implements NodeVisitor {
 	/**
 	 * TestSuite cannot be moved, if we go through this method it is because we moved  an iteration.
 	 * Hence there is no need to update executions because there were all updated when iteration was updated.
-	 * 
+	 *
 	 */
 	public void visit(TestSuite testSuite) {
 		updateCustomFields(testSuite);
@@ -169,7 +168,7 @@ public class TreeNodeUpdater implements NodeVisitor {
 
 	/**
 	 * Will remove issue if they are bound to a bugtracker that is not the bugtracker of the current project.
-	 * 
+	 *
 	 * @param executions
 	 */
 	public void updateIssues(List<Issue> issues, Project project) {
@@ -185,15 +184,15 @@ public class TreeNodeUpdater implements NodeVisitor {
 	/**
 	 * <p>Will remove script of test-case if the script's automated-project is not bound to the current test-case's
 	 * project.<p>
-	 * 
+	 *
 	 * <p>Here a test case just copied might have been copied from a different project
 	 * that his own now. If that test case was referencing an automated script
 	 * we must create a copy of that automated script that match the configuration of
 	 * the TM project the test case was copied into.</p>
-	 * 
+	 *
 	 * <p>Of course we do so iif there is a matching TA project bound to the TM project,
 	 * namely if they refer to the same TA jobs.</p>
-	 * 
+	 *
 	 * @param testCase
 	 */
 	public void updateAutomationParams(TestCase testCase) {
