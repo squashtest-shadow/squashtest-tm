@@ -20,6 +20,10 @@
  */
 package org.squashtest.tm.service.internal.project;
 
+import static org.squashtest.tm.service.security.Authorizations.HAS_ROLE_ADMIN;
+import static org.squashtest.tm.service.security.Authorizations.HAS_ROLE_ADMIN_OR_PROJECT_MANAGER;
+import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -54,7 +58,6 @@ import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndMultiSorting;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.PagingBackedPagedCollectionHolder;
-import org.squashtest.tm.core.foundation.collection.Pagings;
 import org.squashtest.tm.core.foundation.collection.SortOrder;
 import org.squashtest.tm.core.foundation.collection.Sorting;
 import org.squashtest.tm.domain.audit.AuditableMixin;
@@ -97,12 +100,10 @@ import org.squashtest.tm.service.security.ObjectIdentityService;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.testautomation.TestAutomationProjectManagerService;
 import org.squashtest.tm.service.testautomation.TestAutomationServerManagerService;
-import static org.squashtest.tm.service.security.Authorizations.*;
 
 @Service("CustomGenericProjectManager")
 @Transactional
 public class CustomGenericProjectManagerImpl implements CustomGenericProjectManager {
-
 
 	@Inject
 	private GenericProjectDao genericProjectDao;
@@ -154,7 +155,8 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 	public PagedCollectionHolder<List<GenericProject>> findSortedProjects(PagingAndMultiSorting sorting,
 			Filtering filter) {
 
-		Class<? extends GenericProject> type = permissionEvaluationService.hasRole("ROLE_ADMIN") ? GenericProject.class : Project.class;
+		Class<? extends GenericProject> type = permissionEvaluationService.hasRole("ROLE_ADMIN") ? GenericProject.class
+				: Project.class;
 		List<? extends GenericProject> resultset = genericProjectDao.findAllWithTextProperty(type, filter);
 
 		// filter on permission
@@ -178,6 +180,7 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 				(List<GenericProject>) securedResultset);
 
 	}
+
 	// ************************* finding projects wrt user role
 	// ****************************
 
@@ -245,6 +248,9 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 	}
 
 	@Override
+	@PreAuthorize("hasPermission(#projectId, 'org.squashtest.tm.domain.project.Project' , 'MANAGEMENT')"
+			+ " or hasPermission(#projectId, 'org.squashtest.tm.domain.project.ProjectTemplate' , 'MANAGEMENT')"
+			+ OR_HAS_ROLE_ADMIN)
 	public AdministrableProject findAdministrableProjectById(long projectId) {
 		GenericProject genericProject = genericProjectDao.findById(projectId);
 		checkManageProjectOrAdmin(genericProject);
@@ -395,7 +401,8 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 		return availableTaProjects;
 	}
 
-	// ********************************** bugtracker section *************************************
+	// ********************************** bugtracker section
+	// *************************************
 
 	@Override
 	public void changeBugTracker(long projectId, Long newBugtrackerId) {
@@ -581,7 +588,7 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 
 	/**
 	 * Get back the list of project from the list of consolidated project.
-	 * 
+	 *
 	 * @param projects
 	 *            The list to be converted
 	 * @return The list of generic projects
@@ -600,7 +607,7 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 	 * Create a list of ProjectForCustomCompare from a list of projects. The
 	 * ProjectForCustomCompare contains the projects and some information needed
 	 * to do the sorting.
-	 * 
+	 *
 	 * @param projects
 	 *            The list of project to consolidate with additional data
 	 * @return the list of consolidated data

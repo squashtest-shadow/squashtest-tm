@@ -33,14 +33,49 @@ import org.springframework.security.acls.model.ObjectIdentityRetrievalStrategy;
 import org.springframework.stereotype.Component;
 
 /**
- * This {@link ObjectIdentityGenerator} fetches the entity using hibernate and delegates the creation of
- * {@link ObjectIdentity} to a {@link ObjectIdentityRetrievalStrategy}.
- * 
+ * This {@link ObjectIdentityGenerator} fetches the entity using hibernate and
+ * delegates the creation of {@link ObjectIdentity} to a
+ * {@link ObjectIdentityRetrievalStrategy}.
+ *
  * @author bsiri
  * @reviewed-on 2011/11/23
  */
 @Component("squashtest.core.security.ObjectIdentityGeneratorStrategy")
 public class DatabaseBackedObjectIdentityGeneratorStrategy implements ObjectIdentityGenerator {
+	/**
+	 * Object identity which won't match anything. Identifier is "0" to prevent
+	 * funky behaviour when querying the ACLs. Type is target type suffixed with
+	 * ":Unknown", which should not match any type known by the ACL system.
+	 *
+	 * @author Gregory Fouquet
+	 *
+	 */
+	@SuppressWarnings("serial")
+	private static class UnknownObjectIdentity implements ObjectIdentity {
+		private final String type;
+
+		private UnknownObjectIdentity(String type) {
+			super();
+			this.type = type + ":Unknown";
+		}
+
+		/**
+		 * @see org.springframework.security.acls.model.ObjectIdentity#getIdentifier()
+		 */
+		@Override
+		public Serializable getIdentifier() {
+			return 0;
+		}
+
+		/**
+		 * @see org.springframework.security.acls.model.ObjectIdentity#getType()
+		 */
+		@Override
+		public String getType() {
+			return type;
+		}
+
+	}
 
 	@Inject
 	private SessionFactory sessionFactory;
@@ -54,26 +89,28 @@ public class DatabaseBackedObjectIdentityGeneratorStrategy implements ObjectIden
 	}
 
 	/**
-	 * Creates an ObjectIdentity by :
-	 * 1. fetching the entity using the given id and type
-	 * 2. delegating to <code>objectRetrivalStrategy</code>
+	 * Creates an ObjectIdentity by : 1. fetching the entity using the given id
+	 * and type 2. delegating to <code>objectRetrivalStrategy</code>
+	 *
+	 * When the entity is unknown, this return an object identity which matches
+	 * nothing
 	 */
 	@Override
 	public ObjectIdentity createObjectIdentity(Serializable id, String type) {
-
 		try {
-
 			Class<?> clazz = Thread.currentThread().getContextClassLoader().loadClass(type);
 			Session session = sessionFactory.getCurrentSession();
 
-			Object instance = session.load(clazz, id);
+			Object instance = session.get(clazz, id);
+
+			if (instance == null) {
+				return new UnknownObjectIdentity(type);
+			}
 
 			return objectRetrievalStrategy.getObjectIdentity(instance);
-
 		} catch (ClassNotFoundException e) {
 			throw new RuntimeException(e);
 		}
 
 	}
-
 }
