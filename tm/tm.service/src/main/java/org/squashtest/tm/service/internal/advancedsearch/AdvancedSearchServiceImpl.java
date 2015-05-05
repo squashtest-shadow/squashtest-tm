@@ -1,22 +1,18 @@
 /**
- *     This file is part of the Squashtest platform.
- *     Copyright (C) 2010 - 2015 Henix, henix.fr
+ * This file is part of the Squashtest platform. Copyright (C) 2010 - 2015 Henix, henix.fr
  *
- *     See the NOTICE file distributed with this work for additional
- *     information regarding copyright ownership.
+ * See the NOTICE file distributed with this work for additional information regarding copyright ownership.
  *
- *     This is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU Lesser General Public License as published by
- *     the Free Software Foundation, either version 3 of the License, or
- *     (at your option) any later version.
+ * This is free software: you can redistribute it and/or modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later
+ * version.
  *
- *     this software is distributed in the hope that it will be useful,
- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU Lesser General Public License for more details.
+ * this software is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied
+ * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
  *
- *     You should have received a copy of the GNU Lesser General Public License
- *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU Lesser General Public License along with this software. If not, see
+ * <http://www.gnu.org/licenses/>.
  */
 package org.squashtest.tm.service.internal.advancedsearch;
 
@@ -31,7 +27,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-import java.util.regex.Pattern;
 
 import javax.inject.Inject;
 
@@ -39,13 +34,11 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Transformer;
 import org.apache.commons.lang.StringUtils;
 import org.apache.lucene.document.DateTools;
-import org.apache.lucene.search.PhraseQuery;
 import org.apache.lucene.search.Query;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
-import org.hibernate.search.query.dsl.PhraseContext;
 import org.hibernate.search.query.dsl.QueryBuilder;
 import org.squashtest.tm.domain.customfield.BindableEntity;
 import org.squashtest.tm.domain.customfield.CustomField;
@@ -67,17 +60,20 @@ import org.squashtest.tm.service.advancedsearch.AdvancedSearchService;
 import org.squashtest.tm.service.customfield.CustomFieldBindingFinderService;
 import org.squashtest.tm.service.feature.FeatureManager;
 import org.squashtest.tm.service.feature.FeatureManager.Feature;
+import org.squashtest.tm.service.project.ProjectFilterModificationService;
 import org.squashtest.tm.service.project.ProjectManagerService;
+import org.squashtest.tm.service.security.PermissionEvaluationService;
 
 public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 
-	private static final String LUCENE_ESCAPE_CHARS = "[\\\\+\\-\\!\\(\\)\\:\\^\\]\\{\\}\\~\\*\\?]";
-	private static final Pattern LUCENE_PATTERN = Pattern.compile(LUCENE_ESCAPE_CHARS);
-	private static final String REPLACEMENT_STRING = "\\\\$0";
-	
-	
 	private final static List<String> MILESTONE_SEARCH_FIELD = Arrays.asList("milestone.label", "milestone.status",
 			"milestone.endDate", "searchByMilestone");
+
+	@Inject
+	private ProjectFilterModificationService projectFilterService;
+
+	@Inject
+	private PermissionEvaluationService permissionService;
 
 	@Inject
 	private FeatureManager featureManager;
@@ -93,8 +89,7 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 
 	private final static Integer EXPECTED_LENGTH = 7;
 
-
-	protected FeatureManager getFeatureManager(){
+	protected FeatureManager getFeatureManager() {
 		return featureManager;
 	}
 
@@ -150,40 +145,55 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 	}
 
 	protected Query buildLuceneValueInListQuery(QueryBuilder qb, String fieldName, List<String> values, boolean isTag) {
-
+//TODO write something better when we have some time to do something not 'a minima'
 		Query mainQuery = null;
 
-		if (! values.isEmpty()){
+		if (!values.isEmpty()) {
 			for (String value : values) {
 
 				if ("".equals(value.trim())) {
 					value = "$NO_VALUE";
 				}
 				Query query;
-				
-				if (isTag){
+
+				if (isTag) {
 					query = qb
 							.bool()
 							.should(qb.phrase().onField(fieldName).ignoreFieldBridge().ignoreAnalyzer().sentence(value)
 									.createQuery()).createQuery();
 				} else {
-				query = qb
-						.bool()
-						.should(qb.keyword().onField(fieldName).ignoreFieldBridge().ignoreAnalyzer().matching(value)
-								.createQuery()).createQuery();
+					query = qb
+							.bool()
+							.should(qb.keyword().onField(fieldName).ignoreFieldBridge().ignoreAnalyzer()
+									.matching(value).createQuery()).createQuery();
 				}
-				
+
 				if (query != null && mainQuery == null) {
 					mainQuery = query;
 				} else if (query != null) {
 					mainQuery = qb.bool().should(mainQuery).should(query).createQuery();
 				}
 			}
-		}
-		else{
+		} else {
 			// create a query that should match anything
-			//mainQuery = qb.bool().must(qb.keyword().onField(fieldName).ignoreFieldBridge().ignoreAnalyzer().matching("$NO_VALUE").createQuery()).createQuery();
-			mainQuery = qb.all().createQuery();
+			//if not admin and project field, filter on all available project to user
+			if (fieldName.equals("project.id") && !permissionService.hasRole("ADMIN")) {
+				Query query;
+				for (Project p : projectFilterService.getAllProjects()) {
+					query = qb
+							.bool()
+							.should(qb.keyword().onField(fieldName).ignoreFieldBridge().ignoreAnalyzer()
+									.matching(p.getId()).createQuery()).createQuery();
+					if (query != null && mainQuery == null) {
+						mainQuery = query;
+					} else if (query != null) {
+						mainQuery = qb.bool().should(mainQuery).should(query).createQuery();
+					}
+				}
+
+			} else {
+				mainQuery = qb.all().createQuery();
+			}
 		}
 		return qb.bool().must(mainQuery).createQuery();
 	}
@@ -264,7 +274,7 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 				.bool()
 				.must(qb.range().onField(fieldName).ignoreFieldBridge()
 						.above(DateTools.dateToString(startdate, DateTools.Resolution.DAY)).createQuery())
-						.createQuery();
+				.createQuery();
 
 		return query;
 	}
@@ -402,13 +412,12 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 		return query;
 	}
 
-	private Query buildQueryForTagsCriterium(String fieldKey,  AdvancedSearchFieldModel fieldModel,
-			QueryBuilder qb) {
+	private Query buildQueryForTagsCriterium(String fieldKey, AdvancedSearchFieldModel fieldModel, QueryBuilder qb) {
 
 		AdvancedSearchTagsFieldModel model = (AdvancedSearchTagsFieldModel) fieldModel;
 		Query query = null;
 
-		if (model == null){
+		if (model == null) {
 			return query;
 		}
 
@@ -420,7 +429,6 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 		return query;
 
 	}
-
 
 	protected Query buildLuceneQuery(QueryBuilder qb, List<TestCase> testcaseList, Locale locale) {
 
@@ -444,13 +452,12 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 	protected Query buildLuceneQuery(QueryBuilder qb, AdvancedSearchModel model, Locale locale) {
 
 		// find the milestone ids and add them to the model
-		if (featureManager.isEnabled(Feature.MILESTONE)){
+		if (featureManager.isEnabled(Feature.MILESTONE)) {
 			addMilestoneFilter(model);
 		}
 
 		// now remove the criteria from the form before the main search begins
 		removeMilestoneSearchFields(model);
-
 
 		return buildCoreLuceneQuery(qb, model, locale);
 	}
@@ -462,7 +469,6 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 		Set<String> fieldKeys = model.getFields().keySet();
 
 		for (String fieldKey : fieldKeys) {
-
 
 			AdvancedSearchFieldModel fieldModel = model.getFields().get(fieldKey);
 			AdvancedSearchFieldModelType type = fieldModel.getType();
@@ -483,14 +489,14 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 	}
 
 	@SuppressWarnings("unchecked")
-	protected void  addMilestoneFilter (AdvancedSearchModel searchModel){
+	protected void addMilestoneFilter(AdvancedSearchModel searchModel) {
 		Session session = sessionFactory.getCurrentSession();
 		Criteria crit = session.createCriteria(Milestone.class);
 
 		Map<String, AdvancedSearchFieldModel> fields = searchModel.getFields();
 
-
-		AdvancedSearchSingleFieldModel searchByMilestone = (AdvancedSearchSingleFieldModel) fields.get("searchByMilestone");
+		AdvancedSearchSingleFieldModel searchByMilestone = (AdvancedSearchSingleFieldModel) fields
+				.get("searchByMilestone");
 
 		if (searchByMilestone != null && "true".equals(searchByMilestone.getValue())) {
 
@@ -504,24 +510,22 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 					case "milestone.label":
 
 						List<String> labelValues = ((AdvancedSearchListFieldModel) model).getValues();
-						
-					
-						
-						if (labelValues != null && !labelValues.isEmpty()){
-							
-							Collection<Long> ids =  CollectionUtils.collect(labelValues, new Transformer() {
-								
+
+						if (labelValues != null && !labelValues.isEmpty()) {
+
+							Collection<Long> ids = CollectionUtils.collect(labelValues, new Transformer() {
+
 								@Override
-								public Object transform(Object val) {								
-									return Long.parseLong((String)val);
+								public Object transform(Object val) {
+									return Long.parseLong((String) val);
 								}
 							});
-							crit.add(Restrictions.in("id", ids));//milestone.label now contains ids
+							crit.add(Restrictions.in("id", ids));// milestone.label now contains ids
 						}
 						break;
 					case "milestone.status":
 						List<String> statusValues = ((AdvancedSearchListFieldModel) model).getValues();
-						if (statusValues != null && !statusValues.isEmpty()){
+						if (statusValues != null && !statusValues.isEmpty()) {
 							crit.add(Restrictions.in("status", convertStatus(statusValues)));
 						}
 						break;
@@ -529,14 +533,14 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 						Date startDate = ((AdvancedSearchTimeIntervalFieldModel) model).getStartDate();
 						Date endDate = ((AdvancedSearchTimeIntervalFieldModel) model).getEndDate();
 
-						if (startDate != null){
+						if (startDate != null) {
 							Calendar cal = Calendar.getInstance();
 							cal.setTime(startDate);
 							cal.set(Calendar.HOUR, 0);
 							crit.add(Restrictions.ge("endDate", cal.getTime()));
 						}
-						
-						if (endDate != null){
+
+						if (endDate != null) {
 							crit.add(Restrictions.le("endDate", endDate));
 
 						}
@@ -548,10 +552,8 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 				}
 			}
 
-
-
 			List<String> milestoneIds = new ArrayList<String>();
-			for (Milestone milestone : (List<Milestone>) crit.list()){
+			for (Milestone milestone : (List<Milestone>) crit.list()) {
 				milestoneIds.add(String.valueOf(milestone.getId()));
 			}
 
@@ -563,14 +565,13 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 
 	}
 
-	protected void removeMilestoneSearchFields(AdvancedSearchModel model){
+	protected void removeMilestoneSearchFields(AdvancedSearchModel model) {
 		Map<String, AdvancedSearchFieldModel> fields = model.getFields();
 
-		for (String s : MILESTONE_SEARCH_FIELD){
+		for (String s : MILESTONE_SEARCH_FIELD) {
 			fields.remove(s);
 		}
 	}
-
 
 	private List<MilestoneStatus> convertStatus(List<String> values) {
 		List<MilestoneStatus> status = new ArrayList<MilestoneStatus>();
@@ -581,53 +582,50 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 		return status;
 	}
 
-
-	protected Query buildLuceneTagsQuery(QueryBuilder qb, String fieldKey, List<String> tags, Operation operation ){
+	protected Query buildLuceneTagsQuery(QueryBuilder qb, String fieldKey, List<String> tags, Operation operation) {
 
 		Query main = null;
 
-
-		
-		
-		List<String> lowerTags = (List<String>)CollectionUtils.collect(tags, new Transformer() {
+		@SuppressWarnings("unchecked")
+		List<String> lowerTags = (List<String>) CollectionUtils.collect(tags, new Transformer() {
 			@Override
 			public Object transform(Object input) {
-				return ((String)input).toLowerCase();
+				return ((String) input).toLowerCase();
 			}
 		});
-		
 
-		switch(operation){
-		case AND :
+		switch (operation) {
+		case AND:
 			Query query = null;
-			for (String tag : lowerTags){
-		//		query = qb.bool().must(qb.keyword().onField(fieldKey).ignoreFieldBridge().ignoreAnalyzer().matching(tag).createQuery()).createQuery();
-				
-				query = qb.bool().must(qb.phrase().withSlop(0).onField(fieldKey).ignoreFieldBridge().ignoreAnalyzer().sentence(tag).createQuery()).createQuery();
-				
-				
-				if (query == null){
+			for (String tag : lowerTags) {
+				// query =
+				// qb.bool().must(qb.keyword().onField(fieldKey).ignoreFieldBridge().ignoreAnalyzer().matching(tag).createQuery()).createQuery();
+
+				query = qb
+						.bool()
+						.must(qb.phrase().withSlop(0).onField(fieldKey).ignoreFieldBridge().ignoreAnalyzer()
+								.sentence(tag).createQuery()).createQuery();
+
+				if (query == null) {
 					break;
 				}
-				if (main == null){
+				if (main == null) {
 					main = query;
-				}else {
+				} else {
 					main = qb.bool().must(main).must(query).createQuery();
 				}
 			}
 
 			return qb.bool().must(main).createQuery();
 
-		case OR :
+		case OR:
 			return buildLuceneValueInListQuery(qb, fieldKey, lowerTags, true);
 
-		default :
-			throw new IllegalArgumentException("search on tag '"+fieldKey+"' : operation unknown");
+		default:
+			throw new IllegalArgumentException("search on tag '" + fieldKey + "' : operation unknown");
 
 		}
 	}
-
-
 
 	private Query buildQueryDependingOnType(QueryBuilder qb, Locale locale, String fieldKey,
 			AdvancedSearchFieldModel fieldModel, AdvancedSearchFieldModelType type) {
@@ -648,7 +646,7 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 		case TIME_INTERVAL:
 			query = buildQueryForTimeIntervalCriterium(fieldKey, fieldModel, qb);
 			break;
-		case TAGS :
+		case TAGS:
 			query = buildQueryForTagsCriterium(fieldKey, fieldModel, qb);
 			break;
 		default:

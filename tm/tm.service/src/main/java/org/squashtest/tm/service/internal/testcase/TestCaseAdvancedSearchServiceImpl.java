@@ -32,8 +32,6 @@ import java.util.Set;
 import javax.inject.Inject;
 import javax.inject.Provider;
 
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.Transformer;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.Sort;
 import org.apache.lucene.search.SortField;
