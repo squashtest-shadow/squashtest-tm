@@ -34,6 +34,7 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil", "workspace.r
 		initialize : function() {
 			this.configureModifyResultsDialog();
 			this.getIdsOfSelectedTableRowList =  $.proxy(this._getIdsOfSelectedTableRowList, this);
+			this.getIdsOfEditableSelectedTableRowList = $.proxy(this._getIdsOfEditableSelectedTableRowList, this);
 			this.updateDisplayedValueInColumn =  $.proxy(this._updateDisplayedValueInColumn, this);
 			var model = JSON.parse($("#searchModel").text());
 			this.domain = $("#searchDomain").text();
@@ -191,20 +192,7 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil", "workspace.r
 			} else {
 			this.milestoneMassModif.open(dialogOptions);
 			}
-		},
-		
-		validateSelection : function(dataTable) {
-			var rows = dataTable.fnGetNodes();
-			$( rows ).each(function(index, row) {
-				if ($( row ).attr('class').search('selected') != -1) {
-					var data = dataTable.fnGetData(row);
-					if(!data["editable"]){
-						notification.showWarning(translator.get('message.search.modify.noWritingRights'));
-					}
-				}
-			});			
-		},
-		
+		},	
 		enableTypeAndNatureModification : function(dialog, table){
 			
 			var rows = table.getSelectedRows();
@@ -273,6 +261,20 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil", "workspace.r
 			$( rows ).each(function(index, row) {
 				if ($( row ).attr('class').search('selected') != -1) {
 					var data = dataTable.fnGetData(row);
+						ids.push(data["test-case-id"]);
+				}
+			});
+			
+			return ids;
+		},
+		
+		_getIdsOfEditableSelectedTableRowList : function(dataTable){
+			var rows = dataTable.fnGetNodes();
+			var ids = [];
+			
+			$( rows ).each(function(index, row) {
+				if ($( row ).attr('class').search('selected') != -1) {
+					var data = dataTable.fnGetData(row);
 					if(data["editable"]){
 						ids.push(data["test-case-id"]);
 					} 
@@ -280,6 +282,8 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil", "workspace.r
 			});
 			
 			return ids;
+			
+			
 		},
 		
 		_updateDisplayedValueInColumn : function(dataTable, column) {
@@ -364,7 +368,7 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil", "workspace.r
 
 			addModifyResultDialog.on("confirmdialogconfirm",function() {
 				var table = $('#test-case-search-result-table').dataTable();
-				var ids = self.getIdsOfSelectedTableRowList(table);
+				var ids = self.getIdsOfEditableSelectedTableRowList(table);
 				var columns = ["importance","status","type","nature"];
 				var index = 0;
 				
@@ -389,13 +393,19 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil", "workspace.r
 				addModifyResultDialog.find('select').prop('disabled', true);
 				var table = $('#test-case-search-result-table').squashTable();
 				var ids = self.getIdsOfSelectedTableRowList(table);
+				var editableIds = self.getIdsOfEditableSelectedTableRowList(table);
 				
 				if(ids.length === 0) {
 					notification.showError(translator.get('message.noLinesSelected'));
 					$(this).confirmDialog('close');
+				} else if (editableIds.length === 0){
+					notification.showError(translator.get('message.search.modify.noLineWithWritingRights'));
+					$(this).confirmDialog('close');
+				}else if (editableIds.length < ids.length){		
+					notification.showError(translator.get('message.search.modify.noWritingRights'));
 				}
 				
-				self.validateSelection(table);
+			
 				
 				self.enableTypeAndNatureModification(addModifyResultDialog, table);
 
