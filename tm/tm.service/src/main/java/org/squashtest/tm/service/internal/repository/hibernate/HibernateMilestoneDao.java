@@ -423,10 +423,15 @@ public class HibernateMilestoneDao extends HibernateEntityDao<Milestone> impleme
 
 	@Override
 	public boolean isOneMilestoneAlreadyBindToAnotherRequirementVersion(List<Long> reqVIds, List<Long> milestoneIds) {
-		Query query= currentSession().getNamedQuery("milestone.otherRequirementVersionBindToOneMilestone");
-		query.setParameterList("reqVIds", reqVIds);
-		query.setParameterList("milestoneIds", milestoneIds);
-		return query.list().size() != 0;
+		if (reqVIds.isEmpty() || milestoneIds.isEmpty()){
+			return false;
+		}
+		else{
+			Query query= currentSession().getNamedQuery("milestone.otherRequirementVersionBindToOneMilestone");
+			query.setParameterList("reqVIds", reqVIds);
+			query.setParameterList("milestoneIds", milestoneIds);
+			return query.list().size() != 0;
+		}
 	}
 
 

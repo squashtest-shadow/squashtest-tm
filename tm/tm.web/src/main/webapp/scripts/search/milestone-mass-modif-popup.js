@@ -18,7 +18,8 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ "jquery", "backbone", "underscore", "workspace.routing", "squash.translator", "jquery.squash.confirmdialog" ], function($, Backbone, _, routing, translator) {
+define([ "jquery", "backbone", "underscore", "workspace.routing", "squash.translator", "jquery.squash.formdialog" ], 
+		function($, Backbone, _, routing, translator) {
 	"use strict";
 	
 	
@@ -27,7 +28,7 @@ define([ "jquery", "backbone", "underscore", "workspace.routing", "squash.transl
 		initialize : function() {
 
 			var self = this;
-			this.dialog = this.$el.confirmDialog({
+			this.dialog = this.$el.formDialog({
 				autoOpen : false,
 				width : 800
 			});
@@ -37,9 +38,9 @@ define([ "jquery", "backbone", "underscore", "workspace.routing", "squash.transl
 		},
 		
 		events : {
-			"confirmdialogcancel" : "cancel",
-			"confirmdialogconfirm" : "confirm"
-
+			"formdialogcancel" : "cancel",
+			"formdialogconfirm" : "confirm",
+			"formdialogselection" : "selection"
 		},
 		
 		open : function(options){
@@ -65,7 +66,7 @@ define([ "jquery", "backbone", "underscore", "workspace.routing", "squash.transl
 			table.one('refresh.squashTable', function(){
 				self.refreshTable();
 			});
-			this.dialog = this.$el.confirmDialog({
+			this.dialog = this.$el.formDialog({
 				autoOpen : false,
 				width : 800
 			});
@@ -76,7 +77,8 @@ define([ "jquery", "backbone", "underscore", "workspace.routing", "squash.transl
 		_openDialog : function (){
 			var data = this.data;
 			if (data.hasData) {
-				this.dialog.confirmDialog('open');	
+				this.dialog.formDialog('setState', 'selection');
+				this.dialog.formDialog('open');	
 			} else {
 				
 				var warn = translator.get({
@@ -128,10 +130,13 @@ define([ "jquery", "backbone", "underscore", "workspace.routing", "squash.transl
 	
 		cancel : function(event) {
 			this.cleanup();
-
 		},
 		
-		confirm : function(event) {
+		selection : function(){
+			this.dialog.formDialog('setState', 'confirm');
+		},
+		
+		confirm : function() {
 			this.cleanup();
 			var self = this;
 			
@@ -193,7 +198,7 @@ define([ "jquery", "backbone", "underscore", "workspace.routing", "squash.transl
 			this.$el.find('#warning-mass-modif').text("");
 			// if we destroy twice, jqui blows up
 			if (this.$el.hasClass("ui-dialog-content")){
-			this.$el.confirmDialog("destroy");
+			this.$el.formDialog("destroy");
 			}
 		},
 
@@ -201,7 +206,8 @@ define([ "jquery", "backbone", "underscore", "workspace.routing", "squash.transl
 			this.cleanup();
 			this.undelegateEvents();
 		},
-	initBlanketSelectors : function(){
+	
+		initBlanketSelectors : function(){
 			
 
 		   var table = this.$el.find('.bind-milestone-dialog-table');
