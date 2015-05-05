@@ -169,7 +169,7 @@
    <div class="unsnap"></div>
 </div>
 
-<csst:jq-tab activeContentIndex="3">
+<csst:jq-tab activeContentIndex="4">
   <div class="fragment-tabs fragment-body">
     <ul class="tab-menu">
       <li>
@@ -195,7 +195,7 @@
             <span class="hasAttach">!</span>
           </c:if>
         </a>
-      </li>
+      </li> 
       
 <c:if test="${iteration.project.bugtrackerConnected}">
         <li>

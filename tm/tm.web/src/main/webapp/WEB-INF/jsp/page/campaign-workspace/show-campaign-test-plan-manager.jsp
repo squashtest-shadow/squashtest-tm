@@ -98,7 +98,7 @@
                           eventBus.trigger('context.content-modified');
                         })
                       }
-                      tree.jstree('deselect_all'); 
+                      tree.jstree('deselect_all');  
                 });
                 
                 $("#remove-items-button").on('click', function(){

@@ -396,7 +396,7 @@ define(
 					},
 					unbindButtons : {
 						delegate : "#iter-test-plan-delete-dialog",
-						tooltip : translator.get('dialog.unbind-ta-project.tooltip')
+						tooltip : translator.get('dialog.unbind-testcase.tooltip')
 				  },
 					toggleRows : {
 						'td.toggle-row' : function(table, jqold, jqnew) {

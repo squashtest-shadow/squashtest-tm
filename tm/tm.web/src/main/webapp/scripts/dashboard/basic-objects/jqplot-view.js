@@ -110,7 +110,6 @@ define(["jquery", "backbone", "squash.attributeparser", "workspace.event-bus", "
 			// 3) render when eventually possible
 			eventbus.onContextual("dashboard.appear", proxRequestRender);
 			
-			
 			// 4) destroys itself properly when the content is removed
 			var removeOnClear = $.proxy(function() {
 				this.remove();

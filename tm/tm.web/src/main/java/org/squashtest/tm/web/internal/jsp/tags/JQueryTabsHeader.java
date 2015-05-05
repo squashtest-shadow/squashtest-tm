@@ -141,10 +141,10 @@ public class JQueryTabsHeader extends SimpleTagSupport {
 		
 		body.invoke(writer);
 		String strBody = writer.toString();
-		
+
 		source = new Source(strBody);
 		output = new OutputDocument(source);
-		
+
 		modify();
 		
 		context.getOut().println(output.toString());
@@ -188,8 +188,7 @@ public class JQueryTabsHeader extends SimpleTagSupport {
 			css = MAIN_MENUITEM_ADDITIONAL_CLASSES;
 			
 			// UNUSED for now, it'd require to process the cookies. The cookies themselves are malfunctionning.
-			css+= (counter == activeContentIndex) ? MAIN_MENUITEM_ACTIVE_ADD_CLASSES : "";
-			
+			css += (counter == activeContentIndex) ? MAIN_MENUITEM_ACTIVE_ADD_CLASSES : "";
 			process(elt, css);
 			counter++;
 		}

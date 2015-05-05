@@ -78,7 +78,7 @@ define(['squash.translator', './test-plan-panel/table', './test-plan-panel/popup
 			});
 		}
 
-		if (conf.features.linkable){
+		if (conf.features.linkable){ 
 			$("#add-test-case-button").on('click', function(){
 				document.location.href=conf.urls.testplanUrl + "/manager";
 			});
@@ -86,7 +86,7 @@ define(['squash.translator', './test-plan-panel/table', './test-plan-panel/popup
 
 			$("#remove-test-plan-button").on('click', function(){
 				$("#delete-multiple-test-cases-dialog").formDialog('open');
-			});
+			}); 
 		}
 
 

@@ -52,7 +52,7 @@ define(['jquery', '../../test-plan-panel/sortmode', 'squash.configmanager',
         function($, smode, confman, fmode, translator) {
 
 	function createTableConfiguration(conf){
-
+ 
 		var rowCallback = function(row, data, displayIndex) {
 
 			var $row = $(row);
@@ -163,7 +163,9 @@ define(['jquery', '../../test-plan-panel/sortmode', 'squash.configmanager',
 			"aaSorting" : [ [ 2, "asc" ] ]
 		};
 
-		var squashSettings = {};
+		var squashSettings = {unbindButtons : {
+			tooltip : translator.get('dialog.unbind-testcase.tooltip')
+		}};
 
 		if (conf.features.reorderable){
 			squashSettings.enableDnD = true;
