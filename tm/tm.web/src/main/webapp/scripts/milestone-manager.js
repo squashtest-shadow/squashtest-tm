@@ -416,6 +416,9 @@ require(["common"], function(){
 			$("#mil2").attr("disabled", !mil2.bindableToObject);
 			$("#union").attr("disabled", !mil1.bindableToObject || !mil2.bindableToObject);
 			$("#perim").attr("disabled", true);
+			$("#perim").hide();
+			$("#perimtxt").hide();
+		
 			writeMilestonesLabel();
 			writeMilestonesWarning(mil1, mil2, true);
 			

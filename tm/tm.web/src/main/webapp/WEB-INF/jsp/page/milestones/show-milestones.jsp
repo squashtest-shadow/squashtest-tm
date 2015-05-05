@@ -342,7 +342,7 @@
           
           <tr>
         <td><input id="perim" type="checkbox" ></td>
-<td><f:message key="label.milestone.synchronize.extendperim1"/>
+<td id="perimtxt"><f:message key="label.milestone.synchronize.extendperim1"/>
 </br>
 <f:message key="label.milestone.synchronize.extendperim2"/></td>
    </tr>
