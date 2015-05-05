@@ -124,7 +124,12 @@ th:with="isWritable = ${#authorization.expression('hasRole(''ROLE_ADMIN'')')  or
   <div class="unbind-milestone-dialog popup-dialog not-displayed" th:title="#{title.unbindMilestones}">
 
     
-            <div class="display-table-row">
+    <div data-def="state=none-can-be-removed">
+     <span class="std-margin" th:text="#{title.unbindMilestones.none-can-be-removed}"></span>
+    </div>
+    
+    
+            <div data-def="state=one-selected more-selected none-selected" class="display-table-row">
           <div class="display-table-cell warning-cell">
             <div class="generic-warning-signal"></div>
           </div>
@@ -150,7 +155,7 @@ th:with="isWritable = ${#authorization.expression('hasRole(''ROLE_ADMIN'')')  or
     <div class="popup-dialog-buttonpane">
       <input type="button" th:value="#{label.Confirm}" data-def="state=one-selected more-selected, mainbtn=one-selected more-selected, evt=confirm"/>
       <input type="button" th:value="#{label.Cancel}" data-def="state=one-selected more-selected, mainbtn=one-selected more-selected, evt=cancel"/>
-      <input type="button" th:value="#{label.Close}" data-def="state=one-legacy-selected none-selected one-statusDontAllowDelete-selected, mainbtn=one-legacy-selected none-selected one-statusDontAllowDelete-selected, evt=cancel"/>
+      <input type="button" th:value="#{label.Close}" data-def="state=one-legacy-selected none-selected none-can-be-removed, mainbtn=one-legacy-selected none-selected none-can-be-removed, evt=cancel"/>
     </div>
   </div>
   

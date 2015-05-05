@@ -200,14 +200,18 @@ define(["jquery", "workspace.event-bus", "app/ws/squashtm.notification", "squash
 				var legacy = false;
 				// For every milestone selected, if (isStatusAllowUnbind ===false), we can't delete
 				var statusDontAllowDelete = false;
+				//if all selection can't be unbound then we have to show another message
+				var atLeastOneOk = false;
+				
 				ids.forEach(function(idCheck) {
 						var tcDirectMember = currentTable.getDataById(idCheck).directMember;
+						var isStatusAllowUnbind = currentTable.getDataById(idCheck).isStatusAllowUnbind;
 						if (tcDirectMember===false){
 							legacy = true;
-						}
-						var isStatusAllowUnbind = currentTable.getDataById(idCheck).isStatusAllowUnbind;
-						if (isStatusAllowUnbind===false){
+						} else if (isStatusAllowUnbind===false){
 							statusDontAllowDelete = true;
+						} else {
+							atLeastOneOk = true;
 						}
 						
 				});
@@ -222,13 +226,17 @@ define(["jquery", "workspace.event-bus", "app/ws/squashtm.notification", "squash
 				
 				var htmlWarn = '<li>' + translator.get('title.unbindMilestones.status-or-legacy-warning') + '</li>';
 				
-				if (statusDontAllowDelete === true || legacy === true ) {
+				if (statusDontAllowDelete || legacy ) {
 					unbindDialog .find('.dialog-details').removeClass('not-displayed').find('ul').html(
 							htmlWarn);
 				} else {
 					unbindDialog .find('.dialog-details').addClass('not-displayed');
 				}
 	
+				if (!atLeastOneOk){
+					state = "none-can-be-removed";
+				}
+				
 				unbindDialog.formDialog('setState', state);
 			});
 			
