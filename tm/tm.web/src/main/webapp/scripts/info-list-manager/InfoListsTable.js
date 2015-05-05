@@ -207,7 +207,16 @@ define(
 
 
 			},
-
+			/*
+			 * that method programatically remove the highlight due to native range selection.
+			 */
+			clearRangeSelection : function clearRangeSelection() {
+				if (window.getSelection) {
+					window.getSelection().removeAllRanges();
+				} else if (document.selection) { // should come last; Opera!
+					document.selection.empty();
+				}
+			},
 			onInitTable: function onInitTable(event) {
 				this.$el.DataTable().ajax.url(this.viewUrl);
 			},
@@ -251,12 +260,13 @@ define(
 					var row = self.$el.DataTable().row($tr);
 					self.lastSelectedRow = row.data()['1'];
 					self.selectedIds.push(row.data().id);
+					self.clearRangeSelection();
 				};
 
 				var growSelection = function($tr) {
 					var range = computeSelectionRange($tr);
 
-					self.$el.DataTable().rows(function ( idx, data, node ) {return  _.contains(range, data['1']);}).nodes().each(function(row) {
+					self.$el.DataTable().rows(function ( idx, data, node ) {return  _.contains(range, parseInt(data['1']));}).nodes().each(function(row) {
 						addToSelection($(row));
 					});
 				};
