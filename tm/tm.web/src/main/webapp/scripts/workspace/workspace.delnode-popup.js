@@ -149,7 +149,10 @@ define([ 'jquery', 'underscore', 'jquery.squash.formdialog' ], function($, _) {
 			this.uiDialog.data('selected-nodes', nodes);
 
 			if (!rules.canDelete(nodes)) {
+				var why = rule.whyCantDelete(nodes);
+				this.uiDialog.find('[data-def="state=rejected"]').text(why);
 				this.setState('rejected');
+				
 				return;
 			}
 
