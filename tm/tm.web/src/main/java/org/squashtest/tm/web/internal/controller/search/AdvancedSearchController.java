@@ -651,7 +651,7 @@ public class AdvancedSearchController {
 		//was binded before but is not now so need to unbind
 		bindedBefore.removeAll(milestoneIds);	
 		
-		 boolean isOneVersionAlreadyBind = versionService.isOneMilestoneAlreadyBindToAnotherRequirementVersion(reqVIds, milestoneIds);
+		 boolean isOneVersionAlreadyBind = milestoneIds.isEmpty() ? false : versionService.isOneMilestoneAlreadyBindToAnotherRequirementVersion(reqVIds, milestoneIds);
 		
 		for (Long reqVId : reqVIds) {
 			versionService.bindMilestones(reqVId, milestoneIds);
