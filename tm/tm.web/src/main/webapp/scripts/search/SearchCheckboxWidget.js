@@ -43,7 +43,7 @@ define(["jquery", "jqueryui"], function($){
 					"value" : checked
 				};
 			} else {
-				var isChecked = (value === 'true');
+				var isChecked = (value === true);
 				box.prop('checked', isChecked);
 			}
 			

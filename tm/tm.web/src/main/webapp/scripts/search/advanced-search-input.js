@@ -317,7 +317,7 @@ define([ "jquery", "backbone", "app/squash.handlebars.helpers", "squash.translat
 			var $fieldDom = this._appendFieldDom(tableId, fieldId, this._compileTemplate("#checkbox-template", context));
 			$fieldDom.searchCheckboxWidget();
 			$fieldDom.searchCheckboxWidget("createDom", "F"+fieldId, options);
-			$fieldDom.searchCheckboxWidget("fieldvalue", (enteredValue !== undefined)? enteredValue : 'true');
+			$fieldDom.searchCheckboxWidget("fieldvalue", (enteredValue !== undefined)? enteredValue.value : false);
 
 		},
 
