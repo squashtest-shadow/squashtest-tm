@@ -130,7 +130,7 @@
           <th class="no-user-select tp-th-filter tp-th-dataset" data-def="map=dataset.selected.name, sortable, sWidth=10%, sClass=dataset-combo">
             <f:message key="label.Dataset" />
           </th>       
-          <th class="no-user-select" data-def="map=empty-delete-holder, unbind-button=#unbind-test-case-dialog">">&nbsp;</th> 
+          <th class="no-user-select" data-def="map=empty-delete-holder, unbind-button=#unbind-test-case-dialog">&nbsp;</th> 
         </tr>
       </thead>
       <tbody>
@@ -224,15 +224,11 @@
             },
             data : {
               campaignId : ${campaign.id}
-            },
-            table : $("#campaign-test-plans-table").squashTable({}, {
-              unbindButtons : {
-                tooltip : translator.get('label.UnbindTestCase')
-              }
-            }),
+            }
           };
           
         campInit.initTestPlanPanel(conf);
+        $("#campaign-test-plans-table").squashTable().squashSettings.unbindButtons.tooltip = translator.get('label.UnbindTestCase');
       });
       
     });
