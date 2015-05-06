@@ -433,7 +433,6 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil","workspace.ro
 					$(this).confirmDialog('close');
 				}else if (editableIds.length < ids.length){							
 					notification.showError(translator.get('message.search.modify.noWritingRightsOrWrongStatus'));
-					noWritingRightsDialog.messageDialog('open');
 				}
 				
 				self.enableCategoryModification(addModifyResultDialog, table);
