@@ -49,7 +49,7 @@ public class TestCaseBoundMilestoneTableModelHelper extends DataTableModelBuilde
 
 		Map<String, Object> row = new HashMap<>();
 
-		String date = i18nHelper.localizeDate(item.getEndDate(), locale);
+		String date = i18nHelper.localizeShortDate(item.getEndDate(), locale);
 		String status = formatStatus(item.getStatus());
 
 		row.put(DataTableModelConstants.DEFAULT_ENTITY_INDEX_KEY, getCurrentIndex());
@@ -57,12 +57,11 @@ public class TestCaseBoundMilestoneTableModelHelper extends DataTableModelBuilde
 		row.put("directMember", item.isDirectMembership());
 		row.put("status", status);
 		row.put("label", item.getLabel());
-		// Could be done with a SimpleDateFormat but substring works very well.
-		row.put("date", date.substring(0, 10));
+		row.put("date", date);
 		row.put("description", item.getDescription());
 		row.put(DataTableModelConstants.DEFAULT_EMPTY_DELETE_HOLDER_KEY, null);
 		row.put("isStatusAllowUnbind", item.isStatusAllowUnbind());
-		
+
 		return row;
 	}
 

@@ -58,8 +58,7 @@ public class MilestoneTableModelHelper extends DataTableModelBuilder<Milestone> 
 		row.put(DataTableModelConstants.DEFAULT_ENTITY_ID_KEY, item.getId());
 		row.put("status", status);
 		row.put("label", item.getLabel());
-		// Could be done with a SimpleDateFormat but substring works very well.
-		row.put("date", date.substring(0, 10));
+		row.put("date", date);
 		row.put("description", item.getDescription());
 		row.put(DataTableModelConstants.DEFAULT_EMPTY_DELETE_HOLDER_KEY, null);
 		row.put("isStatusAllowUnbind", item.getStatus().isAllowObjectModification());
