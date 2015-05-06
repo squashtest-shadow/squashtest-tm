@@ -275,7 +275,11 @@
 		
 		<div id="popup" th:id="${HTMLID}+'-binding-popup'" class="popup-dialog cuf-binding-popup" th:title="#{message.customfieldbinding.bind}">
 			
-			<div class="component left-div dataTables_wrapper">
+            <div data-def="state=pleasewait">
+              <div class="wait please-wait-message waiting-loading full-size-hack" th:text="#{message.PleaseWait}">zzz</div>
+            </div>
+            
+			<div data-def="state=select" class="component left-div dataTables_wrapper">
 				<table class="dataTable" >
 					<thead>
 						<tr>
@@ -309,12 +313,12 @@
 			</div>
 			 -->
             <div class="popup-dialog-buttonpane">
-              <input type="button" th:value="#{label.Confirm}" data-def="mainbtn,evt=confirm" />
-              <input type="button" th:value="#{label.Cancel}" data-def="evt=cancel"/>
+              <input type="button" th:value="#{label.Confirm}" data-def="state=select, mainbtn=select, evt=confirm" />
+              <input type="button" th:value="#{label.Cancel}" data-def="evt=cancel, mainbtn=pleasewait"/>
             </div>
 		</div>
 		
-			<div id="popup-delete" th:id="${HTMLID}+'-binding-popup-delete'" class="popup-dialog not-displayed cuf-binding-popup-delete" th:title="#{message.customfieldbinding.unbind.tooltip}">
+		<div id="popup-delete" th:id="${HTMLID}+'-binding-popup-delete'" class="popup-dialog not-displayed cuf-binding-popup-delete" th:title="#{message.customfieldbinding.unbind.tooltip}">
 			
 			<div class='display-table-row'>
 			<div class='display-table-cell warning-cell'>

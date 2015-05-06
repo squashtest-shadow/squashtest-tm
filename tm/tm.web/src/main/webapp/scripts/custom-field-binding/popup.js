@@ -110,7 +110,9 @@ define([ "require", "./models", "app/util/ButtonUtil", "jquery.squash", "jquery.
 		};
 
 		var reload = function() {
-
+			
+			popup.formDialog('setState', 'pleasewait');
+			
 			$.ajax({
 				type : 'GET',
 				dataType : 'json',
@@ -118,6 +120,7 @@ define([ "require", "./models", "app/util/ButtonUtil", "jquery.squash", "jquery.
 			}).success(function(json) {
 				reset();
 				populate(json);
+				popup.formDialog('setState', 'select');
 			});
 
 		};
@@ -134,6 +137,8 @@ define([ "require", "./models", "app/util/ButtonUtil", "jquery.squash", "jquery.
 		};
 
 		function submit(event) {
+			popup.formDialog('setState', 'pleasewait');
+			
 			ButtonUtil.disable($(event.target));
 			var payload = makePayload();
 			if (payload.length === 0) {
