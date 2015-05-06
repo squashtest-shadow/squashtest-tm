@@ -61,7 +61,7 @@
     <f:message var="filterTooltip" key="tooltips.FilterTestPlan" />
     <f:message var="reorderTooltip" key="tooltips.ReorderTestPlan" />
     <f:message var="associateLabel" key="label.Add" />
-    <f:message var="removeLabel" key="label.Remove" />
+    <f:message var="removeLabel" key="label.removeFromExecutionPlan" />
     <f:message var="statusLabel" key="label.Status" />
     <f:message var="assignLabel" key="label.Assign" />
     <f:message var="manageTS" key='iteration.test-plan.testsuite.manage.label' />
