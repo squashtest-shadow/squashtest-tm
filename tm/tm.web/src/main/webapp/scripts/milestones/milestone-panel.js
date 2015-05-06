@@ -154,17 +154,15 @@ define(["jquery", "workspace.event-bus", "app/ws/squashtm.notification", "squash
 			var bindDialogNoMilestone = element.find('.no-milestone-dialog');
 			bindDialogNoMilestone.formDialog();
 			
-			$(".milestone-panel-bind-button").on('click', function(){
-			
+			$(".milestone-panel-bind-button").on('click', function(){			
 				bindDialog.milestoneDialog('open');
-
 			});
 			
 			bindDialog.on('milestonedialogopen', function(){
 				// if there's not at least one milestone in project or only planned and locked status
 				if (!conf.milestoneInProject) {
-			bindDialogNoMilestone.formDialog('open');
-			bindDialog.milestoneDialog('close');
+					bindDialogNoMilestone.formDialog('open');
+					bindDialog.milestoneDialog('close');
 				} 
 				
 				//Campaign with locked milestone can't bind another milestone because that would remove locked milestone.
@@ -178,7 +176,7 @@ define(["jquery", "workspace.event-bus", "app/ws/squashtm.notification", "squash
 				}
 				
 				
-				});
+			});
 			
 			
 			bindDialogNoMilestone.on('formdialogclose', function(){
@@ -195,48 +193,40 @@ define(["jquery", "workspace.event-bus", "app/ws/squashtm.notification", "squash
 				var id = $this.data('entity-id');
 				var ids = ! $.isArray(id) ? [id] : id ;
 				var state;
-							
-				// For every milestone selected, if (tcDirectMember===false), we can't delete
-				var legacy = false;
-				// For every milestone selected, if (isStatusAllowUnbind ===false), we can't delete
-				var statusDontAllowDelete = false;
-				//if all selection can't be unbound then we have to show another message
-				var atLeastOneOk = false;
 				
-				ids.forEach(function(idCheck) {
-						var tcDirectMember = currentTable.getDataById(idCheck).directMember;
-						var isStatusAllowUnbind = currentTable.getDataById(idCheck).isStatusAllowUnbind;
-						if (tcDirectMember===false){
-							legacy = true;
-						} else if (isStatusAllowUnbind===false){
-							statusDontAllowDelete = true;
-						} else {
-							atLeastOneOk = true;
-						}
+				// if the original selection is empty, bail out
+				if (ids.length === 0){
+					unbindDialog.formDialog('setState', "none-selected");
+					return;
+				}
 						
+				// from the original set of ids, we must filter out ids that 
+				// can't be unbound because their status doesn't allow it, 
+				// or - specifically for test cases - because they are inherited from verified requirements.
+				
+				var unbindableIds = $.grep(ids, function(id){
+					var data = currentTable.getDataById(id);
+					// for non test cases tables, directMember will be undefined and allways count as 'true'
+					return data['isStatusAllowUnbind'] && (data['directMember'] !== false);
 				});
 				
-				
-				
-				switch(ids.length){
-				case 0 : state="none-selected"; break;
+
+				switch(unbindableIds.length){
+				case 0 : state="none-can-be-removed"; break;
 				case 1 : state="one-selected";break;
 				default : state="more-selected";
 				}
 				
-				var htmlWarn = '<li>' + translator.get('title.unbindMilestones.status-or-legacy-warning') + '</li>';
-				
-				if (statusDontAllowDelete || legacy ) {
-					unbindDialog .find('.dialog-details').removeClass('not-displayed').find('ul').html(
-							htmlWarn);
-				} else {
-					unbindDialog .find('.dialog-details').addClass('not-displayed');
+				// needs details ?
+				var details = unbindDialog.find('.dialog-details');
+				if (ids.length > unbindableIds.length){
+					details.show();
 				}
-	
-				if (!atLeastOneOk){
-					state = "none-can-be-removed";
+				else{
+					details.hide();
 				}
 				
+				// now show the panel
 				unbindDialog.formDialog('setState', state);
 			});
 			

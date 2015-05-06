@@ -163,7 +163,7 @@ RequirementNodeDeletionHandler {
 
 	protected void reportLocksByMilestone(List<Long> nodeIds, List<SuppressionPreviewReport> preview) {
 		List<Long> lockedNodes = deletionDao.filterRequirementsIdsWhichMilestonesForbidsDeletion(nodeIds);
-		if (lockedNodes.isEmpty()){
+		if (! lockedNodes.isEmpty()){
 			preview.add(new BoundToLockedMilestonesReport(REQUIREMENTS_TYPE));
 		}
 	}
