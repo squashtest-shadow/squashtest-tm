@@ -18,9 +18,9 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ "jquery", "backbone", "handlebars", "app/lnf/Forms",
+define([ "jquery", "backbone", "handlebars", "app/lnf/Forms", "app/ws/squashtm.notification",
 		"jquery.squash.formdialog" ], function($, Backbone, Handlebars,
-		Forms) {
+		Forms, notification) {
 	var View = Backbone.View.extend({
 		el : "#add-cuf-option-popup",
 
@@ -67,6 +67,8 @@ define([ "jquery", "backbone", "handlebars", "app/lnf/Forms",
 			}).fail(function(jqXHR, textStatus, errorThrown) {
 				res = false;
 				event.preventDefault();
+				var errormsg = notification.getErrorMessage(jqXHR);
+				Forms.input(self.$("#" + inputId)).setState("error", errormsg);		
 			});
 			$('#options-table').squashTable().refresh();
 			this._resetForm();
@@ -90,8 +92,10 @@ define([ "jquery", "backbone", "handlebars", "app/lnf/Forms",
 			}).fail(function(jqXHR, textStatus, errorThrown) {
 				res = false;
 				event.preventDefault();
+				var errormsg = notification.getErrorMessage(jqXHR);
+				Forms.input(self.$("#" + inputId)).setState("error", errormsg);		
 			});
-			$('#options-table').squashTable().refresh();
+			$('#options-table').squashTable().refresh(); 
 			this.$el.formDialog("close");
 			return res;
 		},
@@ -99,10 +103,10 @@ define([ "jquery", "backbone", "handlebars", "app/lnf/Forms",
 		_resetForm : function() {
 			this.$textFields = this.$el.find("input:text");
 			this.$textFields.val("");
-			this.$errorMessages.text("");
+		//	this.$errorMessages.text("");
 			Forms.form(this.$el).clearState();
 		},
-		
+		 
 		cleanup : function() {
 			this.$el.addClass("not-displayed");
 			Forms.form(this.$el).clearState();
