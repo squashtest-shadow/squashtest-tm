@@ -320,16 +320,16 @@ public class HibernateExecutionDao extends HibernateEntityDao<Execution> impleme
 	@Override
 	public List<Execution> findAllByTestCaseId(long testCaseId, PagingAndSorting pas) {
 		Criteria crit = currentSession().createCriteria(Execution.class, EXECUTION);
-		crit.createAlias("testPlan.iteration", ITERATION, JoinType.LEFT_OUTER_JOIN);
-		crit.createAlias(ITERATION_CAMPAIGN, CAMPAIGN, JoinType.LEFT_OUTER_JOIN);
-		crit.createAlias(CAMPAIGN_PROJECT, PROJECT, JoinType.LEFT_OUTER_JOIN);
+		crit.createAlias("testPlan.iteration", ITERATION);
+		crit.createAlias(ITERATION_CAMPAIGN, CAMPAIGN);
+		crit.createAlias(CAMPAIGN_PROJECT, PROJECT);
 		crit.createAlias("referencedTestCase", TEST_CASE, JoinType.LEFT_OUTER_JOIN);
 		crit.createAlias("testPlan.testSuites", TEST_SUITE, JoinType.LEFT_OUTER_JOIN);
 
 		crit.add(Restrictions.eq("TestCase.id", Long.valueOf(testCaseId)));
 
 		crit.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
-
+		
 		PagingUtils.addPaging(crit, pas);
 		SortingUtils.addOrder(crit, pas);
 
