@@ -39,27 +39,39 @@ class DatabaseBackedObjectIdentityGeneratorStrategyTest  extends Specification {
 	SessionFactory sessionFactory = Mock()
 	Session session = Mock()
 	ObjectIdentityRetrievalStrategy objectIdentityRetrievalStrategy = Mock()
-	
+
 	def setup() {
 		sessionFactory.getCurrentSession() >> session
-		
+
 		objectIdentityGenerator.sessionFactory = sessionFactory
 		objectIdentityGenerator.objectRetrievalStrategy = objectIdentityRetrievalStrategy
 	}
-	
+
 	def "should fetch the entity and delegate object identity generation"() {
 		given:
 		Object entity = Mock()
-		session.load(Object, 10L) >> entity
-		
+		session.get(Object, 10L) >> entity
+
 		and:
 		ObjectIdentity expectedOid = Mock()
-		
+
 		when:
 		def oid = objectIdentityGenerator.createObjectIdentity(10L, "java.lang.Object")
-		
+
 		then:
 		1 * objectIdentityRetrievalStrategy.getObjectIdentity(entity) >> expectedOid
 		oid == expectedOid
+	}
+	def "should return unknown OID on unknown entity"() {
+		given:
+		Object entity = Mock()
+		session.get(Object, 10L) >> null
+
+		when:
+		def oid = objectIdentityGenerator.createObjectIdentity(10L, "java.lang.Object")
+
+		then:
+		0 * objectIdentityRetrievalStrategy.getObjectIdentity(entity)
+		oid.type == "java.lang.Object:Unknown"
 	}
 }
