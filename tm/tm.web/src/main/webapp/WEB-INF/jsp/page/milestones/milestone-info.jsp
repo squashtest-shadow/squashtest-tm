@@ -219,8 +219,8 @@
         <th data-def="map=entity-id, invisible"> </th>
         <th data-def="map=entity-index, select">#</th>
         <th data-def="map=name, sortable"  class="datatable-filterable"><f:message key="label.project" /></th>
-        <th data-def="map=isUsed, sortable"><f:message key="label.used" /></th>
-        <th data-def="map=binded, sortable, sClass=binded-to-project" class="datatable-filterable"><f:message key="label.project.isBoundToMilestone" /></th>
+       <th data-def="map=binded, sortable, sClass=binded-to-project" class="datatable-filterable"><f:message key="label.project.isBoundToMilestone" /></th>
+        <th data-def="map=isUsed, sortable"><f:message key="label.used" /></th>   
         <th data-def="map=empty-delete-holder, unbind-button=#unbind-project-popup"></th>
         <th data-def="map=link, invisible"></th>
       </tr>
