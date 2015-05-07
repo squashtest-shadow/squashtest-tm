@@ -46,6 +46,30 @@ define(
 		}
 
 		/**
+		 * returns the function which should be used as a callback.
+		 */
+	function optionRow(self) {
+		return function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {
+			var row = $(nRow),
+				defaultCell = row.find(".is-default"),
+				removeCell = row.find(".remove-row"),
+				option = aData[0],
+				checked = option === self.model.get("defaultValue"),
+				tplData = {
+					option : option,
+					checked : checked
+				};
+
+			optionRow.removeTpl = optionRow.removeTpl || Handlebars.compile($("#remove-cell-tpl").html());
+			removeCell.html(optionRow.removeTpl(tplData));
+
+			optionRow.defaultTpl = optionRow.defaultTpl || Handlebars.compile($("#default-cell-tpl").html());
+			defaultCell.html(optionRow.defaultTpl(tplData));
+		};
+	}
+
+
+		/**
 		 * Saves the model (it should be valid !)
 		 * @param model
 		 * @param event (optional) if invoked in repsonse to an event, please provide that event.
@@ -102,16 +126,18 @@ define(
 			},
 
 			render : function() {
+				// in case the input type was previously rich text.
+				// MUST be done before template is inserted, otherwise the text field wont be in the dom anymore
+				confman.destroyCkeditor("#defaultValue");
+
 				var inputType = this.model.get("inputType");
 				var source = $("#" + inputType + "-default-tpl").html();
 				var template = Handlebars.compile(source);
 				this.$("#default-value-pane").html(template(this.model.toJSON()));
 
-				// in case the input type was previously rich text.
-				confman.destroyCkeditor("#defaultValue");
-
 				switch (inputType) {
 				case "DROPDOWN_LIST":
+					this.renderNewOptionPane();
 					this.renderOptionsTable();
 					this.renderOptional(true);
 					break;
@@ -286,7 +312,7 @@ define(
 					"bRetrieve" : false,
 					"bSort" : false,
 					"aaSorting" : [],
-					"fnRowCallback" : this.decorateOptionRow(this),
+					"fnRowCallback" : optionRow(this),
 					"fnDrawCallback" : this.decorateOptionsTable,
 					"aoColumnDefs" : [ {
 						"aTargets" : [ 0 ],
@@ -302,7 +328,12 @@ define(
 						"sClass" : "remove-row"
 					} ]
 				});
+			},
 
+			renderNewOptionPane: function() {
+				var src = $("#new-option-pane-tpl").html();
+				var tpl =  Handlebars.compile(src);
+				this.$("#new-option-pane").html(tpl({}));
 			},
 
 			_resetForm : function() {
@@ -314,44 +345,34 @@ define(
 			},
 
 			addOption : function() {
-				var optionLabelInput = Forms.input(this.$("input[name='new-option-label']"));
-				var optionLabel = optionLabelInput.$el.val();
-
-				var optionCodeInput = Forms.input(this.$("input[name='new-option-code']"));
-				var optionCode = optionCodeInput.$el.val();
+				Forms.form(this.$("#new-option-pane")).clearState();
+				var $label = this.$("input[name='new-option-label']");
+				var $code = this.$("input[name='new-option-code']");
 
 				try {
-					this.model.addOption([ optionLabel, optionCode ]);
-
-					this.optionsTable.dataTable().fnAddData([ optionLabel, optionCode, false, "" ]);
-
-					optionCodeInput.clearState();
-					optionCodeInput.$el.val("");
-					optionLabelInput.clearState();
-					optionLabelInput.$el.val("");
-
+					this.model.addOption([ $label.val(), $code.val() ]);
+					this.optionsTable.dataTable().fnAddData([ $label.val(), $code.val(), false, "" ]);
+					this.renderNewOptionPane();
 				} catch (ex) {
 					if (ex.name === "ValidationException") {
-						if (ex.validationErrors.optionLabel) {
-							optionLabelInput.setState("error", ex.validationErrors.optionLabel);
+						var errs = ex.validationErrors;
+						if (errs.optionLabel) {
+							Forms.input($label).setState("error", errs.optionLabel);
 						}
-						if (ex.validationErrors.optionCode) {
-							optionCodeInput.setState("error", ex.validationErrors.optionCode);
+						if (errs.optionCode) {
+							Forms.input($code).setState("error", errs.optionCode);
 						}
 					}
 				}
-
 			},
 
 			removeOption : function(event) {
-				// target of click event is a <span> inside of
-				// <button>, so we use currentTarget
+				// target of click event is a <span> inside of <button>, so we use currentTarget
 				var button = event.currentTarget, $button = $(button), option = $button.data("value"), row = $button
 						.parents("tr")[0];
 
 				this.model.removeOption(option);
 				this.optionsTable.dataTable().fnDeleteRow(row);
-
 			},
 
 			changeDefaultOption : function(event) {
@@ -371,31 +392,6 @@ define(
 				this.model.set("defaultValue", defaultValue);
 				this.optionsTable.find(uncheckSelector).attr("checked", false);
 
-			},
-
-			/**
-			 * returns the function which should be used as a callback.
-			 */
-			decorateOptionRow : function(self) {
-				return function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {
-					var row = $(nRow),
-						defaultCell = row.find(".is-default"),
-						removeCell = row.find(".remove-row"),
-						option = aData[0],
-						checked = option === self.model.get("defaultValue"),
-						tplData = {
-							option : option,
-							checked : checked
-						};
-
-					var source = $("#remove-cell-tpl").html();
-					var template = Handlebars.compile(source);
-					removeCell.html(template(tplData));
-
-					source = $("#default-cell-tpl").html();
-					template = Handlebars.compile(source);
-					defaultCell.html(template(tplData));
-				};
 			},
 
 			decorateOptionsTable : function() {

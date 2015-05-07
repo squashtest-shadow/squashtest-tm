@@ -251,47 +251,62 @@
           </div>
       </script>
 
-        <script id="DROPDOWN_LIST-default-tpl" type="text/x-handlebars-template" th:inline="text">
-          <h3 th:text="#{title.optionsDefinition}">Options definition</h3>
-          <div class="control-group">
-             <label class="control-label" for="new-option-label" th:text="#{label.newOption}">New option</label>
-            <div class="controls">
-              <input name="new-option-label" type="text" value="" />
-              <span class="not-displayed help-inline">&nbsp;</span>
-            </div>
-            <label class="control-label" for="new-option-code" th:text="#{label.code}">Code</label>
-            <div class="controls">
-              <input name="new-option-code" type="text" value="" />
-              <span class="not-displayed help-inline">&nbsp;</span>
-            </div>
-            <input class="add-option sq-btn" type="button" th:value="#{label.addOption}" value="Add an option" />
-          </div>
-          <span th:remove="all">
-            <!-- class="dataTables_wrapper" : ugly hack to get the desired style. usually, because of table footer, this div is inserted by dataTables. here we have no footer. -->
-          </span>
-          <div class="dataTables_wrapper">
-            <table id="options-table">
-              <thead>
-                <tr>
-                    <th th:text="#{label.option}">Option</th>
-          <th th:text="#{label.code}">Code</th>
-            <th style="width: 2em;" th:text="#{label.default}">Default</th>
-            <th style="width: 1.5em;">&nbsp;</th>
-                </tr>
-              </thead>
-              <tbody>
-              </tbody>
-            </table>
-          </div>
-          <div class="control-group">
-            <div class="controls">
-              <input name="defaultValue" type="hidden" value="" />
-              <input name="options" type="hidden" value="" />
-              <span class="not-displayed help-inline">&nbsp;</span>
-            </div>
-          </div>
-        </script>
-        
+      <script id="DROPDOWN_LIST-default-tpl" type="text/x-handlebars-template" th:inline="text">
+      <h3 th:text="#{title.optionsDefinition}">Options definition</h3>
+      <div id="new-option-pane">
+      </div>
+
+      <div class="control-group">
+        <span th:remove="all">
+        <!-- class="dataTables_wrapper" : ugly hack to get the desired style. usually, because of table footer, this div is inserted by dataTables. here we have no footer. -->
+        </span>
+        <div class="dataTables_wrapper">
+          <table id="options-table">
+            <thead>
+              <tr>
+                <th th:text="#{label.option}">Option</th>
+                <th th:text="#{label.code}">Code</th>
+                <th style="width: 2em;" th:text="#{label.default}">Default</th>
+                <th style="width: 1.5em;">&nbsp;</th>
+              </tr>
+            </thead>
+            <tbody>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="control-group">
+        <div class="controls">
+          <input name="defaultValue" type="hidden" value="" />
+          <input name="options" type="hidden" value="" />
+          <span class="not-displayed help-inline">&nbsp;</span>
+        </div>
+      </div>
+      </script>
+
+      <script id="new-option-pane-tpl" type="text/x-handlebars-template" th:inline="text">
+      <div class="control-group">
+        <label class="control-label" for="new-option-label" th:text="#{label.newOption}">New option</label>
+        <div class="controls">
+          <input name="new-option-label" type="text" value="" />
+          <span class="not-displayed help-inline">&nbsp;</span>
+        </div>
+      </div>
+
+      <div class="control-group">
+        <label class="control-label" for="new-option-code" th:text="#{label.code}">Code</label>
+        <div class="controls">
+          <input name="new-option-code" type="text" value="" />
+          <span class="not-displayed help-inline">&nbsp;</span>
+        </div>
+      </div>
+
+      <div class="control-group">
+        <input class="add-option sq-btn" type="button" th:value="#{label.addOption}" value="Add an option" />
+      </div>
+      </script>
+
      <script id="DATE_PICKER-default-tpl" type="text/x-handlebars-template" th:inline="text">
          <label class="control-label" for="defaultValue" th:text="#{label.defaultValue}">Default value</label>
     <div class="controls">

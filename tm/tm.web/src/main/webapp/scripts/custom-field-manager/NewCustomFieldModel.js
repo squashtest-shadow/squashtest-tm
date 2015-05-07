@@ -21,6 +21,8 @@
 define(
 		[ "jquery", "backbone", "app/util/StringUtil" ],
 		function($, Backbone, StringUtil) {
+			"use strict";
+
 			var defaultValueByInputType = {
 				PLAIN_TEXT : "",
 				CHECKBOX : "false",
@@ -59,7 +61,7 @@ define(
 
 						/**
 						 * Validates an option and then adds it.
-						 * 
+						 *
 						 * @throws an
 						 *             exception when option does not validate.
 						 *             exception.name === "ValidationException"
@@ -78,7 +80,7 @@ define(
 
 						/**
 						 * Validates a tag and then adds it.
-						 * 
+						 *
 						 * @throws an
 						 *             exception when option does not validate.
 						 *             exception.name === "ValidationException"
@@ -99,7 +101,7 @@ define(
 						 * we want>]; }; var isDefined =
 						 * this.optionPropertyAlreadyDefined(mapper) if
 						 * (isDefined("candidate prop")) { ... }
-						 * 
+						 *
 						 * @param mapper
 						 *            function which should receive an item from
 						 *            the options array and return the property
@@ -212,20 +214,20 @@ define(
 							} else if (this.optionCodeAlreadyDefined(option[1])) {
 								errors = errors || {};
 								errors.optionCode = "message.optionCodeAlreadyDefined";
-
 							}
-							
+
+							return errors;
 						},
-						
-												
+
+
 						invalidTag : function(option) {
 							var errors = null;
 							errors = errors || {};
 							errors.tagCode = "message.customFieldTag.add.notValid";
 							return errors;
 						}
-	
-					
+
+
 					});
 
 			return NewCustomFieldModel;
