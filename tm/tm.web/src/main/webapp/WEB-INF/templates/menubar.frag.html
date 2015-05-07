@@ -79,7 +79,7 @@
                 <td class="td-check">
                   <input type="checkbox" class="project-checkbox"
                     id="project-checkbox-1" th:id="'project-checkbox-'+${projectData[0]}" name="project-filter"
-                    value="1" th:value="${projectData[0]}" data-previous-checked="false" />
+                    value="1" th:value="${projectData[0]}" th:attr="data-previous-checked=${projectData[2]}, checked=${projectData[2]}" />
                 </td>
                 <td class="project-name" th:text="${projectData[1]}">P1</td>
                 <td class="project-label" th:text="${projectData[3]}">P1 label</td>
