@@ -299,7 +299,7 @@ define(
 				var self = this;
 				var tgt =  event.currentTarget;
 				var $tr = $(tgt).closest("tr");
-				var isBound = this.$el.DataTable().row($tr).data().bound === "true";
+				var isBound = $.parseJSON(this.$el.DataTable().row($tr).data().bound) === true;
 				var props = removeProps(false /* not batch */);
 				var tpl = removeTemplate()(props(isBound));
 				oneshot.show(messages.get("label.Delete"), tpl, { width: "50%" }).done(function() {
@@ -319,7 +319,7 @@ define(
 					return;
 				}
 
-				var hasBound = _.some(rows.data(), function(data) { return data.bound === "true"; });
+				var hasBound = _.some(rows.data(), function(data) { return $.parseJSON(data.bound) === true; });
 				var props = removeProps(true /* batch */);
 				var tpl = removeTemplate()(props(hasBound));
 
