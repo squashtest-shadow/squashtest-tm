@@ -32,7 +32,7 @@
 <f:message var="renameDialogTitle" key="dialog.rename-test-case.title"/>
 <f:message var="confirmLabel" key="label.Confirm" />
 <f:message var="cancelLabel" key="label.Cancel" />
-<f:message var="okLabel" key="label.Ok" />
+<f:message var="createLabel" key="label.Create" />
 <f:message var="createNewVersionLabel" key="label.createNewVersion" />
 <f:message var="nameLabel" key="label.Name"/>
 <f:message var="referenceLabel" key="label.Reference"/>
@@ -151,7 +151,7 @@
       </div>
       
       <div class="popup-dialog-buttonpane">
-        <input type="button" value="${okLabel}" data-def="state=confirm, evt=confirm, mainbtn=confirm"/>
+        <input type="button" value="${createLabel}" data-def="state=confirm, evt=confirm, mainbtn=confirm"/>
         <input type="button" value="${cancelLabel}" data-def="evt=cancel" />      
       </div>
       
