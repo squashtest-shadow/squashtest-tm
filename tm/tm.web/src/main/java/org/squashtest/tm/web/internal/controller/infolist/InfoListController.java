@@ -105,7 +105,35 @@ public class InfoListController {
 	}
 
 	/**
-	 * Tells if an item identified by its code exists or not.
+	 * Tells if an item identified by its code exists or not. Existence is
+	 * checked across all items of all info lists.
+	 * 
+	 * @param code
+	 * @return JSON <code>{ exists: <true|false> }</code>
+	 */
+	@RequestMapping(value = "{id}/items/label/{label}", method = RequestMethod.GET, produces = ContentTypes.APPLICATION_JSON, params = "format=exists")
+	@ResponseBody
+	public Map<String, Object> doesLabelExist(@PathVariable long id,  @PathVariable String label) {
+		InfoList list = infoListManager.findById(id);
+
+		InfoListItem found = null;
+
+		for (InfoListItem item : list.getItems()) {
+			if (item.getLabel().equals(label)) {
+				found = item;
+				break;
+			}
+		}
+
+		Map<String, Object> res = new HashMap<>(1);
+		res.put("exists", found != null);
+
+		return res;
+	}
+
+	/**
+	 * Tells if an item identified by its code exists or not. Existence is
+	 * checked across all items of all info lists.
 	 * 
 	 * @param code
 	 * @return JSON <code>{ exists: <true|false> }</code>
@@ -134,14 +162,16 @@ public class InfoListController {
 	}
 
 	/**
-	 * Tells if an item identified by its code exists or not.
+	 * Tells if a list identified by a unique property exists or not.
 	 * 
-	 * @param code
+	 * @param prop
+	 *            name of the property. `label` and `code` are supported
+	 * @value
 	 * @return JSON <code>{ exists: <true|false> }</code>
 	 */
 	@RequestMapping(value = "/{prop}/{value}", method = RequestMethod.GET, produces = ContentTypes.APPLICATION_JSON, params = "format=exists")
 	@ResponseBody
-	public Map<String, Object> doesLabelExist(@PathVariable String prop, @PathVariable String value) {
+	public Map<String, Object> doesListExist(@PathVariable String prop, @PathVariable String value) {
 		if ("label".equals(prop) || "code".equals(prop)) {
 			InfoList item = infoListManager.findByUniqueProperty(prop, value);
 
@@ -165,8 +195,8 @@ public class InfoListController {
 
 	@RequestMapping(value = "/{infoListId}/items", method = RequestMethod.POST)
 	@ResponseStatus(HttpStatus.CREATED)
-	public @ResponseBody void addInfoListItem(@PathVariable long infoListId,
-			@Valid @ModelAttribute("item") UserListItem item) {
+	public @ResponseBody
+	void addInfoListItem(@PathVariable long infoListId, @Valid @ModelAttribute("item") UserListItem item) {
 
 		infoListItemManager.addInfoListItem(infoListId, item);
 	}
@@ -188,7 +218,7 @@ public class InfoListController {
 	@ResponseBody
 	public long getDefaultItemId(@PathVariable long infoListId) {
 		InfoList infoList = infoListManager.findById(infoListId);
-		return 	infoList.getDefaultItem().getId();
+		return infoList.getDefaultItem().getId();
 	}
 
 	@RequestMapping(value = "/{infoListId}/items/{infoListItemId}", method = RequestMethod.DELETE)

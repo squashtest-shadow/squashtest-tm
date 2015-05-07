@@ -21,8 +21,8 @@
 
 -->
 <!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-transitional-thymeleaf-spring3-3.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml"
-  xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <title th:text="#{title.customField}">Espace detail info list</title>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
@@ -51,29 +51,26 @@
       <div class="snap-right">
         <div class="main-menubar " th:include="menubar.frag :: menubar">MENUBAR</div>
         <div class="unstyled-notification-pane"
-          th:include="menubar.frag :: notification">NOTIFICATION</div>
+           th:include="menubar.frag :: notification">NOTIFICATION
+      </div>
       </div>
     </div>
     <div id="sub-page" class="sub-page">
-
-      <div id="sub-page-header"
-        class="sub-page-header shadow ui-corner-all">
-
+    <div id="sub-page-header" class="sub-page-header shadow ui-corner-all">
         <div id="sub-page-title" class="sub-page-title">
           <h2 th:text="#{title.infoList.consultation}">Espace detail champ
             personnalisé de test</h2>
         </div>
 
         <div id="sub-page-buttons" class="sub-page-buttons">
-            <a id="back" href="/squash/administration/info-lists" th:href="@{/administration/info-lists}" th:text="#{ label.Back }" class="sq-btn">Back</a>
+        <a id="back" href="/squash/administration/info-lists" th:href="@{/administration/info-lists}"
+           th:text="#{ label.Back }" class="sq-btn">Back</a>
         </div>
 
         <div class="unsnap"></div>
       </div>
 
-      <div id="sub-page-content"
-        class="sub-page-content shadow ui-corner-all">
-
+    <div id="sub-page-content" class="sub-page-content shadow ui-corner-all">
         <div id="information-content">
           <div id="info-list-name-div"
             class="ui-widget-header ui-corner-all ui-state-default fragment-header">
@@ -91,39 +88,50 @@
           <div class="fragment-body" id="information-view">
             <div id="info-list-toolbar" class="toolbar-class ui-corner-all ">
               <div class="toolbar-button-panel">
-                <input type="button" th:value="#{ label.Rename }" th:title="#{ label.RenameList }" value="Rename" id="rename-info-list-button" class="sq-btn button" />
-                  <input type="button" th:value="#{ label.Delete }" th:title="#{ label.deleteList }" value="Delete" id="delete-info-list-button" class="sq-btn button" />
+              <input type="button" th:value="#{ label.Rename }" th:title="#{ label.RenameList }"
+                     value="Rename" id="rename-info-list-button" class="sq-btn button"/>
+              <input type="button" th:value="#{ label.Delete }" th:title="#{ label.deleteList }"
+                     value="Delete" id="delete-info-list-button" class="sq-btn button"/>
               </div>
             </div>
             <br /> <br />
+
             <div class="sq-tg expand">
                       <div class="tg-head">
                               <h3 th:text="#{label.infoList.info}"></h3>
                             </div>
-              <div id="info-list-info-panel"  class="information-panel tg-body" th:with="url=@{/info-lists/}+${infoList.id}">
+            <div id="info-list-info-panel" class="information-panel tg-body"
+                 th:with="url=@{/info-lists/}+${infoList.id}">
                 <div class="display-table" id="info-list-infos-table">
                 
                  <div class="display-table-row controls control-group">
-                    <label for="info-list-label" class="control-label display-table-cell" th:text="#{label.Label}">Label</label>
+                  <label for="info-list-label" class="control-label display-table-cell"
+                         th:text="#{label.Label}">Label</label>
+
                     <div id="info-list-code" class="display-table-cell" th:text="${infoList.label}"
-                        th:attr="data-def='url='+${url}">Label</div>
+                       th:attr="data-def='url='+${url}">Label
+                  </div>
                     <span class="help-inline">&nbsp;</span>
                   </div>              
                   <div class="display-table-row controls control-group">   
                     <label for="info-list-description"
                       th:text="#{label.Description}" class="display-table-cell">Label</label>                 
+
                     <div id="info-list-description"
                       class="display-table-cell editable text-editable"
                       th:utext="${infoList.description}" th:attr="data-def='url='+${url} +', type =textarea, cols=80, rows=10' ">Description</div>
                     <span class="help-inline">&nbsp;</span>
                   </div>
                   <div class="display-table-row controls control-group">
-                    <label for="info-list-code" class="control-label display-table-cell" th:text="#{label.code}">Code</label>
-                    <div id="info-list-code" class="display-table-cell text-editable" th:text="${infoList.code}"
-                        th:attr="data-def='url='+${url}">code</div>
-                    <span class="help-inline">&nbsp;</span>
-                  </div>
+                  <label for="info-list-code" class="control-label display-table-cell"
+                         th:text="#{label.code}">Code</label>
 
+                  <div id="info-list-code" class="display-table-cell text-editable"
+                       th:text="${infoList.code}"
+                       th:attr="data-def='url='+${url}">code
+                  </div>
+                  <span class="help-inline">&nbsp;</span>
+                </div>
 
                   <span class="error-message  defaultValue-error"></span>
                 </div>
@@ -149,17 +157,21 @@
                   <thead>
                     <tr>
                       <th
-                        th:attr="data-def='select, map=entity-index, sClass=drag-handle'">#</th>
+                    th:attr="data-def='select, map=entity-index, sClass=drag-handle'">#
+                  </th>
                       <th
                         th:attr="data-def='map=label, sortable, sClass=opt-label'"
-                        th:text="#{label.Label}">Label</th>
+                    th:text="#{label.Label}">Label
+                  </th>
                       <th th:attr="data-def='map=code, sortable, sClass=opt-code'"
-                        th:text="#{label.code}">Code</th>
+                      th:text="#{label.code}">Code
+                  </th>
                       <th th:attr="data-def='map=empty-icon-holder,icon=iconName, center'"
                         th:text="#{label.icon}" />
                       <th
                         th:attr="data-def='map=default, radio, sClass=isDefault'"
-                        th:text="#{label.default}">Default</th>
+                    th:text="#{label.default}">Default
+                  </th>
                                             <th th:attr="data-def='sWidth=2em, map=empty-delete-holder, sClass=delete-button'"></th>
                     </tr>
                   </thead>
@@ -183,8 +195,9 @@
       <tr class="control-group">
 
         <span id="rename-popup-info-list-id" />
-        <td><label for="rename-popup-info-list-label"
-          class="control-label" th:text="#{label.Label}">Label</label></td>
+      <td>
+        <label for="rename-popup-info-list-label" class="control-label" th:text="#{label.Label}">Label</label>
+      </td>
         <td class="controls"><input
           id="rename-popup-info-list-label" name="info-list-label"
           type="text" maxlength="255" size="50" /> <span class="help-inline">&nbsp;</span>
@@ -203,6 +216,7 @@
     class="not-displayed popup-dialog" th:title="#{title.infoList.delete}">
 
 <span id="delete-info-list-warning" />
+
     <div class="popup-dialog-buttonpane">
       <input type="button" th:value="#{label.Confirm}"
         data-def="mainbtn, evt=confirm" /> <input type="button"
@@ -219,10 +233,10 @@
 <br/>
 <span id="delete-info-list-item-warning-reindex" class="red-warning-message"/>
   <span id="delete-info-list-item-popup-info-list-item-id" />
+
     <div class="popup-dialog-buttonpane">
-      <input type="button" th:value="#{label.Delete}"
-        data-def="mainbtn, evt=confirm" /> <input type="button"
-        th:value="#{label.Cancel}" data-def="evt=cancel" />
+    <input type="button" th:value="#{label.Confirm}" data-def="mainbtn, evt=confirm"/>
+    <input type="button" th:value="#{label.Cancel}" data-def="evt=cancel"/>
     </div>
   </div>
 
@@ -271,6 +285,7 @@
         
     <br/>
 <span id="change-code-reindex-warn" class="red-warning-message"/>
+
     <div class="popup-dialog-buttonpane">
       <input type="button" th:value="#{label.Confirm}"
         data-def="mainbtn, evt=confirm" /> <input type="button"
@@ -283,14 +298,14 @@
     
     <div class="display-table-row">
          
-<span class="red-warning-message" id="warning-index-after" th:text="#{dialog.info-list.warning.reindex.after}"></span> 
+        <span class="red-warning-message" id="warning-index-after"
+              th:text="#{dialog.info-list.warning.reindex.after}"></span>
   </div>
            <div class="popup-dialog-buttonpane">
               <input th:if="${sec.hasRole('ROLE_ADMIN')}" type="button" th:value="#{label.GotoIndex}" data-def="evt=confirm" />
               <input type="button" th:value="#{label.Close}" data-def="mainbtn, evt=cancel"/>
             </div>
   </div>
-
 
 
   <!--   ADD ITEM POPUP  -->
@@ -318,7 +333,8 @@
           <label class="control-label" for="new-info-list-item-icon" th:text="#{label.icon}">icon</label>
         </td>
         <td class="controls">
-          <span class="sq-icon" id="new-info-list-item-icon" th:text="#{label.infoListItems.icon.none}">None</span>
+                <span class="sq-icon" id="new-info-list-item-icon"
+                      th:text="#{label.infoListItems.icon.none}">None</span>
         </td>
       </tr> 
 
@@ -363,15 +379,11 @@ requirejs.config({
    
   config : {
     'info-list/info-list-modification' : {
-      urls: {
-
-      },
+        urls: {},
       data: {
                     infoList: {
                       id: /*[[${infoList.id}]]*/ 0,
-
                              }
-        
              }
                    }
       }
@@ -384,7 +396,9 @@ squashtm.app.contextRoot = /*[[@{/}]]*/ "http://localhost:8080/squash";
 squashtm.page = squashtm.page || {};
 
 require(["common"], function(){
-  require(["info-list/info-list-modification"], function(view){ new view();});
+    require(["info-list/info-list-modification"], function (view) {
+      new view();
+    });
 });
 /*]]>*/
 

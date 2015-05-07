@@ -18,7 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ "backbone", "squash.translator", "../app/squash.backbone.validation" ], function(Backbone, messages,
+define([ "backbone", "squash.translator", "../app/squash.backbone.validation", "app/squash.wreqr.init" ], function(Backbone, messages,
 		Validation) {
 	"use strict";
 	messages.load(["message.optionCodeAlreadyDefined", "message.optionLabelAlreadyDefined"]);
