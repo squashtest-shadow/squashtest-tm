@@ -185,6 +185,10 @@ body {
 	display : inline-block;
 }
 
+.dashboard-item-legend > div.not-displayed{
+	display : none;
+}
+
 /**
  we don't want that in a @media print clause because we want the user to preview in the browser
  how the page will be printed. That's why the .no-print class belongs to the global media

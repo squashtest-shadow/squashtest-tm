@@ -61,10 +61,12 @@ import org.squashtest.tm.core.foundation.collection.SinglePageCollectionHolder;
 import org.squashtest.tm.core.foundation.lang.DateUtils;
 import org.squashtest.tm.domain.audit.AuditableMixin;
 import org.squashtest.tm.domain.campaign.Campaign;
+import org.squashtest.tm.domain.campaign.CampaignLibrary;
 import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.campaign.TestPlanStatistics;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.domain.milestone.Milestone;
+import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.users.User;
@@ -182,15 +184,20 @@ public class CampaignModificationController {
 		model.addAttribute("assignableUsers", getAssignableUsers(campaignId));
 		model.addAttribute("weights", getWeights());
 		model.addAttribute("modes", getModes());
-		model.addAttribute("allowsSettled",
-				campaign.getProject().getCampaignLibrary().allowsStatus(ExecutionStatus.SETTLED));
-		model.addAttribute("allowsUntestable",
-				campaign.getProject().getCampaignLibrary().allowsStatus(ExecutionStatus.UNTESTABLE));
 
 		MilestoneFeatureConfiguration milestoneConf = milestoneConfService.configure(activeMilestone, campaign);
 		model.addAttribute("milestoneConf", milestoneConf);
 
+		populateOptionalExecutionStatuses(campaign, model);
+
 		return model;
+	}
+
+	private void populateOptionalExecutionStatuses(Campaign campaign, Model model){
+		model.addAttribute("allowsSettled",
+				campaign.getProject().getCampaignLibrary().allowsStatus(ExecutionStatus.SETTLED));
+		model.addAttribute("allowsUntestable",
+				campaign.getProject().getCampaignLibrary().allowsStatus(ExecutionStatus.UNTESTABLE));
 	}
 
 	private Map<String, String> getAssignableUsers(long campaignId) {
@@ -415,11 +422,14 @@ public class CampaignModificationController {
 	public ModelAndView getDashboard(Model model, @PathVariable(RequestParams.CAMPAIGN_ID) long campaignId) {
 
 		Campaign campaign = campaignModService.findById(campaignId);
+
 		CampaignStatisticsBundle bundle = campaignModService.gatherCampaignStatisticsBundle(campaignId);
 
 		ModelAndView mav = new ModelAndView("fragment/campaigns/campaign-dashboard");
 		mav.addObject("campaign", campaign);
 		mav.addObject("dashboardModel", bundle);
+
+		populateOptionalExecutionStatuses(campaign, model);
 
 		return mav;
 

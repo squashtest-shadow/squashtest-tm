@@ -55,6 +55,7 @@ import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.SinglePageCollectionHolder;
 import org.squashtest.tm.core.foundation.lang.DateUtils;
 import org.squashtest.tm.domain.audit.AuditableMixin;
+import org.squashtest.tm.domain.campaign.Campaign;
 import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.campaign.TestSuite;
@@ -169,10 +170,17 @@ public class IterationModificationController {
 		model.addAttribute("weights", weights);
 		model.addAttribute("modes", getModes());
 		model.addAttribute("statuses", getStatuses(iteration.getProject().getId()));
-		model.addAttribute("allowsSettled", iteration.getProject().getCampaignLibrary().allowsStatus(ExecutionStatus.SETTLED));
-		model.addAttribute("allowsUntestable", iteration.getProject().getCampaignLibrary().allowsStatus(ExecutionStatus.UNTESTABLE));
 		model.addAttribute("milestoneConf", milestoneConf);
 
+		populateOptionalExecutionStatuses(iteration, model);
+
+	}
+
+	private void populateOptionalExecutionStatuses(Iteration iteration, Model model){
+		model.addAttribute("allowsSettled",
+				iteration.getCampaign().getProject().getCampaignLibrary().allowsStatus(ExecutionStatus.SETTLED));
+		model.addAttribute("allowsUntestable",
+				iteration.getCampaign().getProject().getCampaignLibrary().allowsStatus(ExecutionStatus.UNTESTABLE));
 	}
 
 	/**
@@ -231,6 +239,8 @@ public class IterationModificationController {
 		ModelAndView mav  = new ModelAndView("fragment/iterations/iteration-dashboard");
 		mav.addObject("iteration", iteration);
 		mav.addObject("dashboardModel", bundle);
+
+		populateOptionalExecutionStatuses(iteration, model);
 
 		return mav;
 	}

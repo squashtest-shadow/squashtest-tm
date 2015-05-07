@@ -403,13 +403,6 @@ LibraryNavigationController<CampaignLibrary, CampaignFolder, CampaignLibraryNode
 	@RequestMapping(value = "/dashboard-milestones", method = RequestMethod.GET, produces = ContentTypes.TEXT_HTML)
 	public ModelAndView getDashboard(Model model, @CurrentMilestone Milestone activeMilestone) {
 
-		// Get a list of all the campaign for a milestone
-		Collection<Campaign> campaignCollection = null;
-		if (activeMilestone != null){
-			campaignCollection = customCampaignModService.findCampaignsByMilestoneId(activeMilestone.getId());
-		}
-		List<Campaign> campaignList = new ArrayList<Campaign>(campaignCollection);
-
 		ModelAndView mav = new ModelAndView("fragment/campaigns/campaign-milestone-dashboard");
 
 		long milestoneId = activeMilestone.getId();
@@ -417,6 +410,13 @@ LibraryNavigationController<CampaignLibrary, CampaignFolder, CampaignLibraryNode
 
 		mav.addObject("milestone", milestoneFinder.findById(milestoneId));
 		mav.addObject("dashboardModel", csbundle);
+
+		boolean allowsSettled = (csbundle.getCampaignTestCaseStatusStatistics().getNbSettled() > 0);
+		boolean allowsUntestable = (csbundle.getCampaignTestCaseStatusStatistics().getNbUntestable() > 0);
+
+		mav.addObject("allowsSettled", allowsSettled);
+		mav.addObject("asslowUntestable", allowsUntestable);
+
 		return mav;
 	}
 
