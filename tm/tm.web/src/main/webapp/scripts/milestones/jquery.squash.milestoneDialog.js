@@ -148,11 +148,11 @@ define(["jquery", "workspace.event-bus", "app/ws/squashtm.notification",
 			multilines = this.options.multilines;
 			if (!multilines) {
 		  var tableLength = $('.milestone-panel-table >tbody >tr >td').length;
-		  confirmLabel = (tableLength > 1) ? translator.get('label.Replace') : translator.get('label.Add');
+		  confirmLabel = (tableLength > 1) ? translator.get('label.Replace') : translator.get('label.Confirm');
 		  $(".bind-milestone-dialog-confirm").val(confirmLabel);
 			}
 			else {
-			confirmLabel = translator.get('label.Add');
+			confirmLabel = translator.get('label.Confirm');
 			$(".bind-milestone-dialog-confirm").val(confirmLabel);		
 			}
 			// if initialized -> refresh
