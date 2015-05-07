@@ -266,11 +266,12 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
 					<property name="labelKey" value="report.coverage.criteria.selectionMode.label" />
 					<property name="options">
 						<list>
-							<bean class="org.squashtest.tm.api.report.form.composite.ProjectPickerOption">
-								<property name="pickerName" value="projectIds" />
-								<property name="pickerLabelKey" value="report.criteria.panel.projectlist.label" />
-								<property name="defaultSelected" value="true" />
-							</bean>
+			              <bean class="org.squashtest.tm.api.report.form.composite.ProjectPickerOption">
+			                <property name="labelKey" value="report.coverage.criteria.selectionMode.projectPicker.label" />
+			                <property name="pickerName" value="projectIds" />
+			                <property name="pickerLabelKey" value="report.criteria.panel.projectlist.label" />
+			                <property name="defaultSelected" value="true" />
+			              </bean>
 							<bean class="org.squashtest.tm.api.report.form.composite.MilestonePickerOption">
 								<property name="labelKey" value="report.criteria.panel.milestone.label"/>
 								<property name="pickerLabelKey" value="report.criteria.panel.milestone.label"/>
