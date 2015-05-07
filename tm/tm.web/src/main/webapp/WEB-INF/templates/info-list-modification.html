@@ -113,8 +113,8 @@
                     <label for="info-list-description"
                       th:text="#{label.Description}" class="display-table-cell">Label</label>                 
                     <div id="info-list-description"
-                      class="display-table-cell editable rich-editable"
-                      th:utext="${infoList.description}" th:attr="data-def='url='+${url}">Description</div>
+                      class="display-table-cell editable text-editable"
+                      th:utext="${infoList.description}" th:attr="data-def='url='+${url} +', type =textarea, cols=80, rows=10' ">Description</div>
                     <span class="help-inline">&nbsp;</span>
                   </div>
                   <div class="display-table-row controls control-group">
