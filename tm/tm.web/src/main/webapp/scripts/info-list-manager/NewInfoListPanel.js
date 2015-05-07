@@ -268,7 +268,7 @@ define(
 				onClickOptionDelete: function(event) {
 					var tgt = event.currentTarget;
 					var code = $(tgt).data("value");
-					var opt = this.options.findWhere({ code: code });
+					var opt = this.options.findWhere({ "code": String(code) });
 					var self = this;
 
 					var confirm = opt.get("isDefault") === true ? confirmDeleteDefaultOpt : confirmDeleteStdOpt;
