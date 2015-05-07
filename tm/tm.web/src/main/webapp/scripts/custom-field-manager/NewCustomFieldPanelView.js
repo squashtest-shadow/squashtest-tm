@@ -25,6 +25,7 @@ define(
 		"use strict";
 		/**
 		 * Validates model and sets error messages accordingly
+		 * /!\ Inputs are fetched BY NAME
 		 * @param view the NewCustomFieldPanelView to validate
 		 * @returns {Boolean} true if model validates
 		 */
@@ -35,7 +36,7 @@ define(
 
 			if (validationErrors !== null) {
 				for (var key in validationErrors) {
-					Forms.input(view.$("input[name='" + key + "']")).setState("error",
+					Forms.input(view.$("[name='" + key + "']")).setState("error",
 							validationErrors[key]);
 				}
 
@@ -141,47 +142,30 @@ define(
 					this.renderOptionsTable();
 					this.renderOptional(true);
 					break;
+
 				case "CHECKBOX":
 					this.renderOptional(false);
 					break;
+
 				case "PLAIN_TEXT":
 					this.renderOptional(true);
 					break;
+
 				case "DATE_PICKER":
 					this.renderOptional(true);
 					$("#defaultValue").datepicker({
 						dateFormat : squashtm.app.localizedDateFormat
 					});
 					break;
+
 				case "RICH_TEXT" :
 					this.renderOptional(true);
-					var conf = confman.getStdCkeditor();
-					$("#defaultValue").ckeditor(function(){}, conf);
-					// the following reroute the blur event from the ckeditor and relocate it as thrown by the textarea
-					CKEDITOR.instances["defaultValue"].on('change', function(){
-						$("#defaultValue").trigger('change');
-					});
+					this.renderRichText();
 					break;
+
 				case "TAG" :
 					this.renderOptional(true);
-					var tagconf = confman.getStdTagit();
-					$.extend(true, tagconf, {
-						validate :  function(label){
-							if (label.indexOf("|") !== -1){
-								$("#defaultValue").trigger('invalidtag');
-								return false;
-							} else{
-								return true;
-							}
-						},
-						afterTagAdded:  function(event, ui){
-							$("#defaultValue").trigger('change');
-						},
-						afterTagRemoved:  function(event, ui){
-							$("#defaultValue").trigger('change');
-						}
-					});
-					$("#defaultValue").squashTagit(tagconf);
+					this.renderTagList();
 					break;
 				}
 				this._resize();
@@ -334,6 +318,36 @@ define(
 				var src = $("#new-option-pane-tpl").html();
 				var tpl =  Handlebars.compile(src);
 				this.$("#new-option-pane").html(tpl({}));
+			},
+
+			renderRichText: function() {
+				var conf = confman.getStdCkeditor();
+				$("#defaultValue").ckeditor(function(){}, conf);
+				// the following reroute the blur event from the ckeditor and relocate it as thrown by the textarea
+				CKEDITOR.instances["defaultValue"].on('change', function(){
+					$("#defaultValue").trigger('change');
+				});
+			},
+
+			renderTagList: function() {
+				var tagconf = confman.getStdTagit();
+				var triggerChange = function(event, ui){
+					$("#defaultValue").trigger('change');
+				};
+
+				$.extend(true, tagconf, {
+					validate :  function(label){
+						if (label.indexOf("|") !== -1){
+							$("#defaultValue").trigger('invalidtag');
+							return false;
+						} else{
+							return true;
+						}
+					},
+					afterTagAdded: triggerChange,
+					afterTagRemoved: triggerChange
+				});
+				$("#defaultValue").squashTagit(tagconf);
 			},
 
 			_resetForm : function() {
