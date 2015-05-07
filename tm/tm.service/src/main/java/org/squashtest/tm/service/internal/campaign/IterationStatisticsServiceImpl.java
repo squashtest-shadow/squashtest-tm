@@ -289,7 +289,7 @@ public class IterationStatisticsServiceImpl implements IterationStatisticsServic
 
 		try{
 			progression.setScheduledIteration(scheduledIteration);
-			ScheduledIteration.checkIterationDatesIntegrity(scheduledIteration);
+			ScheduledIteration.checkIterationDatesAreSet(scheduledIteration);
 
 			progression.computeSchedule();
 

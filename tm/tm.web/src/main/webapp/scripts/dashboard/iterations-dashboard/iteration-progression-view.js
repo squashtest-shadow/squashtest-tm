@@ -253,7 +253,14 @@ define([
 			var msg = getMessage(model.errors[0]);
 			this.$el.find('.cumulative-progression-errormsg').text(msg);
 			
-			// if no planning popup is available, hide the <a>details</a> link
+			/*
+			 * if no planning popup is available, hide the <a>details</a> link
+			 *
+			 * note : the block of code below is useless because there is no 
+			 * iteration planning popup here (unlike the same dashboard for campaigns) :
+			 * we can just set the iteration dates in the same page directly. 
+			 * However it stays there in case one day we add such popup.
+			 */
 			var detailLink = this.$el.find('.dashboard-cumulative-progression-details');
 			if (document.getElementById("iteration-planning-popup") !== null){
 				detailLink.show();

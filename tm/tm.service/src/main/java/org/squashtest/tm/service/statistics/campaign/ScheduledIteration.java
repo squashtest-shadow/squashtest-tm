@@ -30,25 +30,26 @@ import org.squashtest.tm.domain.planning.WorkloadCalendar;
 
 
 public final class ScheduledIteration{
-	
+
 	public static final String SCHED_ITER_NO_ITERATIONS_I18N = "dashboard.campaigns.progression.errors.nodata";
 	public static final String SCHED_ITER_MISSING_DATES_I18N = "dashboard.campaigns.progression.errors.nulldates";
 	public static final String SCHED_ITER_OVERLAP_DATES_I18N = "dashboard.campaigns.progression.errors.overlap";
-	
+	public static final String LONE_ITERATION_MISSING_DATES_I18N = "dashboard.iteration.progression.errors.nulldates";
+
 	private long id;
 	private String name;
 	private long testplanCount;
 	private Date scheduledStart;
 	private Date scheduledEnd;
-	
+
 	// an entry = { Date, int }
 	private Collection<Object[]> cumulativeTestsByDate = new LinkedList<Object[]>();
-	
+
 	public ScheduledIteration(){
 		super();
 	}
-	
-	
+
+
 	public ScheduledIteration(long id, String name, long testplanCount,
 			Date scheduledStart, Date scheduledEnd) {
 		super();
@@ -58,26 +59,26 @@ public final class ScheduledIteration{
 		this.scheduledStart = scheduledStart;
 		this.scheduledEnd = scheduledEnd;
 	}
-	
-	
+
+
 
 	public long getId() {
 		return id;
 	}
-	
+
 	public void setId(long id) {
 		this.id = id;
 	}
-	
+
 	public String getName() {
 		return name;
 	}
-	
+
 	public void setName(String name) {
 		this.name = name;
 	}
-	
-	
+
+
 	public long getTestplanCount() {
 		return testplanCount;
 	}
@@ -89,15 +90,15 @@ public final class ScheduledIteration{
 	public Date getScheduledStart() {
 		return scheduledStart;
 	}
-	
+
 	public void setScheduledStart(Date scheduledStart) {
 		this.scheduledStart = scheduledStart;
 	}
-	
+
 	public Date getScheduledEnd() {
 		return scheduledEnd;
 	}
-	
+
 	public void setScheduledEnd(Date scheduledEnd) {
 		this.scheduledEnd = scheduledEnd;
 	}
@@ -105,14 +106,14 @@ public final class ScheduledIteration{
 	public Collection<Object[]> getCumulativeTestsByDate() {
 		return cumulativeTestsByDate;
 	}
-	
+
 	public void addCumulativeTestByDate(Object[] testByDate) {
 		cumulativeTestsByDate.add(testByDate);
 	}
 
-	
+
 	/**
-	 * Will fill the informations of field cumulativeTestsByDate. Basically it means the cumulative average number of test that must be run 
+	 * Will fill the informations of field cumulativeTestsByDate. Basically it means the cumulative average number of test that must be run
 	 * within the scheduled time period per day, according to their workload.
 	 */
 	public void computeCumulativeTestByDate(float initialCumulativeTests){
@@ -120,64 +121,73 @@ public final class ScheduledIteration{
 		Calendar calendar = Calendar.getInstance();
 		calendar.setTime(scheduledStart);
 		WorkloadCalendar workloadCalendar = new StandardWorkloadCalendar();
-		
+
 		float workload = workloadCalendar.getWorkload(scheduledStart, scheduledEnd);
 		float incrementPerDay = testplanCount / workload;
-		
+
 		// ready to iterate
 		Date curDate = scheduledStart;
 		float cumulativeTests = initialCumulativeTests;
 		do{
 			cumulativeTests += workloadCalendar.getWorkload(curDate) * incrementPerDay;
 			cumulativeTestsByDate.add(new Object[]{curDate, cumulativeTests});
-			
+
 			calendar.add(Calendar.DAY_OF_YEAR, 1);
 			curDate = calendar.getTime();
 		}
 		while(! curDate.after(scheduledEnd));
 
-		
+
 	}
 
 
 	// ********************** static part *************************
-	
+
 	public static void checkIterationDatesIntegrity(ScheduledIteration iteration){
 		Date start = iteration.scheduledStart;
 		Date end = iteration.scheduledEnd;
-		
+
 		if (start == null || end == null){
 			throw new IllegalArgumentException(SCHED_ITER_MISSING_DATES_I18N);
-		}	
+		}
 	}
-	
+
+	public static void checkIterationDatesAreSet(ScheduledIteration iteration){
+		Date start = iteration.scheduledStart;
+		Date end = iteration.scheduledEnd;
+
+		if (start == null || end == null){
+			throw new IllegalArgumentException(LONE_ITERATION_MISSING_DATES_I18N);
+		}
+	}
+
 	public static void checkIterationsDatesIntegrity(Collection<ScheduledIteration> iterations){
 
 		Date prevEnd = null;
 		Date start = null;
 		Date end = null;
-		
+
 		if (iterations.isEmpty()){
 			throw new IllegalArgumentException(SCHED_ITER_NO_ITERATIONS_I18N);
 		}
-		
+
 		for (ScheduledIteration iter : iterations){
-			
+
 			start = iter.scheduledStart;
 			end = iter.scheduledEnd;
-			
+
 			if (start == null || end == null){
 				throw new IllegalArgumentException(SCHED_ITER_MISSING_DATES_I18N);
 			}
-			
+
 			if (end.before(start)){
 				throw new IllegalArgumentException(SCHED_ITER_OVERLAP_DATES_I18N);
 			}
-			
+
 			if (prevEnd != null && ! start.after(prevEnd)){
 				throw new IllegalArgumentException(SCHED_ITER_OVERLAP_DATES_I18N);
 			}
-			
+
 			prevEnd = end;
 		}
 	}
