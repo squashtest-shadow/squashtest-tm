@@ -86,7 +86,8 @@ require(["common"], function() {
     				return;
     			}
     			
-    			$("#search-result-datatable tr").removeClass("jstree-clicked ui-state-default");
+
+    			$("#search-result-datatable td").removeClass("jstree-clicked ui-state-default");
     			$(this).addClass("jstree-clicked ui-state-default");
     			
    				var url = getEntityURL($(this));   				
