@@ -1265,6 +1265,56 @@ define(["jquery",
 
 	// ************************ functions used by the static functions
 	// *****************************
+	
+	// ******** used by the main init method 
+	
+	// [Issue 4891]
+	// that method will make sure that conflicting column definitions 
+	// between DOM annotations and programmatic configuration
+	// will merge nicely
+	function mergeColumnDefs(domConf, jsConf){
+		
+		// fast pass if no work is needed
+		if (domConf.aoColumnDefs === undefined || 
+			domConf.aoColumnDefs.length ===0 ||
+			jsConf.aoColumnDefs === undefined ||
+			jsConf.aoColumnDefs.length===0){
+			return;
+		}
+		
+		// utility function
+		function findByTarget(columnDefs, aTarget){
+			for (var i=0; i < columnDefs.length; i++){
+				var def = columnDefs[i];
+				// compare the targets
+				var diff = _.difference((def.aTargets || []), aTarget);
+				if (diff.length === 0){
+					// if found, remove the element then return it
+					// Array.prototype.splice just does that for us, wonderfull isnt it ?
+					return columnDefs.splice(i, 1)[0];
+				}
+			}
+			// when nothing was found in the array we return a new element
+			return {};
+		}
+
+		// init with a copy of the domConf columns
+		var mergedColumns = domConf.aoColumnDefs.slice();
+		
+		for (var j=0; j<jsConf.aoColumnDefs.length; j++){
+			var jsDef = jsConf.aoColumnDefs[j],
+				domDef = findByTarget(mergedColumns, jsDef.aTargets);
+			
+			var finalConf = $.extend(true, domDef, jsDef)
+			mergedColumns.push(finalConf);
+		}
+		
+		// now : those merged columns become the jsConf columnDefs, 
+		// the domConf columnDefs are wiped
+		delete domConf.aoColumnDefs
+		jsConf.aoColumnDefs = mergedColumns;
+		
+	}
 
 	// ******** configurator
 
@@ -1328,15 +1378,23 @@ define(["jquery",
 
 		var headers = $table.find('thead th'), handlers = $.fn.squashTable.configurator._DOMExprHandlers.columns;
 
-		conf.table.aoColumnDefs = conf.table.aoColumnDefs || [];
-
 		headers.each(function(index) {
-			var td = $(this), defSeq = td.data('def') || '', defs = _parseSequence(defSeq);
+			var td = $(this), 
+				defSeq = td.data('def');
+			
+			// [Issue 4891] prevent useless column definition if nothing was defined for it
+			if (defSeq === undefined){
+				return;
+			}
+
+			var defs = _parseSequence(defSeq);
 
 			conf.current = $.extend({}, defaultCol);
 			conf.current.aTargets = [ index ];
 
 			_loopConfiguration(defs, handlers, conf);
+			
+			conf.table.aoColumnDefs = conf.table.aoColumnDefs || [];
 			conf.table.aoColumnDefs.push(conf.current);
 		});
 
@@ -1473,32 +1531,17 @@ define(["jquery",
 		// ---------- merge programmatic and DOM-based configuration --------
 
 		var domConf = $.fn.squashTable.configurator.fromDOM(this);
-
-		// aoColumnDefs array are not correctly merged with $.extend :
-		// $.extend([{target: 0}, {target:1}], [{target: 1}]) == [{target: 1}, {target:1}]
-		if (!!datatableSettings.aoColumnDefs) {
-			var nColDefs = domConf.table.aoColumnDefs.length;
-			var colDefs = new Array(nColDefs);
-
-			/**
-			 * Puts each `colDef` at the `colDef.aTarget` pos of `memo`
-			 * When `aTargets` contains several items, it's pushed at the end of `memo`
-			 */
-			var colDefsReducer = function(memo, colDef) {
-				if (colDef.aTargets === undefined) {
-					return;
-				}
-				if (colDef.aTargets.length === 1 && colDef.aTargets[0] < nColDefs) {
-					memo[colDef.aTargets[0]] = colDef;
-				} else {
-					memo.push(colDef);
-				}
-				return memo;
-			};
-
-			datatableSettings.aoColumnDefs = datatableSettings.aoColumnDefs.reduce(colDefsReducer, colDefs);
-		}
-
+		
+		/* 
+		 * [Issue 4891]
+		 * aoColumnDefs array are not correctly merged with $.extend :
+		 * the merge is done by matching the content by their index, however 
+		 * in this case the aoColumnDefs must be matched by targets. 
+		 * $.extend([{target: 0}, {target:1}], [{target: 1}]) == [{target: 1}, {target:1}]
+		 * so we have to manually merge the aoColumnDefs
+		 */
+		mergeColumnDefs(domConf.table, datatableSettings);
+		
 		var datatableEffective = $.extend(true, {}, datatableDefaults, domConf.table, datatableSettings);
 		var squashEffective = $.extend(true, {}, squashDefaults, domConf.squash, squashSettings);
 
