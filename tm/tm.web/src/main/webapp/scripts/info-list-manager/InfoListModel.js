@@ -29,7 +29,7 @@ define([ "jquery", "backbone", "underscore", "squash.translator", "../app/squash
 
 		if (!_.isEmpty(val)) {
 			$.ajax({ // this is synchronous
-				url: this.apiRoot + "/" + attr + "/" + val,
+				url: this.apiRoot + "/" + attr + "/" + encodeURIComponent(val),
 				method: "get",
 				async: false,
 				data: { format: "exists" },

@@ -48,7 +48,7 @@ define([ "backbone", "underscore", "jquery" ], function(Backbone, _, $) {
 			if (res === true && !_.isEmpty(code)) {
 				// we check the code is unique across the repository
 				$.ajax({
-					url: this.apiRoot + "/items/code/" + code,
+					url: this.apiRoot + "/items/code/" + encodeURIComponent(code),
 					method: "get",
 					async: false,
 					data: { format: "exists" },
