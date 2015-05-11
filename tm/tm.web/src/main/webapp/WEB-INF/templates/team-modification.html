@@ -53,12 +53,12 @@
 			membersPanelLabel : /*[[#{label.Members}]]*/'Teammates',
 			permissionPanelLabel : /*[[ #{user.project-rights.title.label} ]]*/ "Permissions",
 			permissionsPanelTitle : /*[[ #{user.project-rights.title.label} ]]*/ "Permissions",
-			addPermissionField : /*[[ #{title.AddPermission} ]]*/ "Add a permission",
+			addPermissionField : /*[[ #{title.AddHabilitation} ]]*/ "Add a permission",
 			removePermissionField : /*[[ #{title.RemovePermission} ]]*/ "Remove a permission",
 			addMemberField : /*[[ #{title.AddMember} ]]*/ "Add a member",
 			removeMemberField : /*[[ #{title.RemoveMember} ]]*/ "Remove a member",
 			message :{
-				addPermissionPopupTitle : /*[[#{title.AddPermission}]]*/ 'add permission',
+				addPermissionPopupTitle : /*[[#{title.AddHabilitation}]]*/ 'add permission',
 				error : /*[[ #{popup.title.error} ]]*/ "Error",
 				empty : /*[[ #{message.AllProjectsAlreadyLinkedToUser} ]]*/ "tous les projets sont liés à l'utilisateur",
 				permissionsPanelTitle : /*[[ #{user.project-rights.title.label} ]]*/ "Permissions",
@@ -167,7 +167,7 @@
                           <div class="tg-head">
                             <h3 th:text="#{user.project-rights.title.label}"></h3>
                             <div class="tg-toolbar">
-                              <button id="add-permission-button" class="sq-icon-btn btn-sm" type="submit" th:title="#{title.AddPermission}">
+                              <button id="add-permission-button" class="sq-icon-btn btn-sm" type="submit" th:title="#{title.AddHabilitation}">
                                 <span class="ui-icon ui-icon-plus squared-icons">+</span>
                               </button>
                               <button id="remove-permission-button" class="sq-icon-btn btn-sm" type="submit" th:title="#{title.RemovePermission}">
@@ -343,7 +343,7 @@
 	</div>
 
 	<div id="add-permission-dialog" class="not-displayed popup-dialog"
-		title="AddPermission" th:title="#{title.AddPermission}">
+		title="AddPermission" th:title="#{title.AddHabilitation}">
 		<div class="main">
 			<table id="add-permission-dialog-table">
 				<tr>
