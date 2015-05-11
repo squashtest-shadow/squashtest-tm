@@ -88,7 +88,7 @@
     <h2 class="admin"><f:message key="label.administration" /></h2>  
   </jsp:attribute>
   <jsp:attribute name="subPageTitle">
-    <h2><f:message key="workspace.project.info" /></h2>
+    <h2><f:message key="workspace.user.title" /></h2>
   </jsp:attribute>
   
   <jsp:attribute name="subPageButtons">
