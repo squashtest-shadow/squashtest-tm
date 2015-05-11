@@ -513,14 +513,14 @@
             </li> 
           </ul>
         </div>
-      </div>
+      </div> 
 
       <div data-def="state=error-size">
         <span class="error-size" th:text="#{dialog.import.error.sizeexceeded}">size exceeded</span>
       </div>
 
       <div data-def="state=error-format">
-        <span th:text="#{dialog.import.wrongfile}+ 'xls, xlsx'">wrong file, accepts : xls, xlsx</span>
+        <span th:remove="tag" th:text="#{dialog.import-excel.requirement.empty}">wrong file , accepts</span>
       </div>
 
 
@@ -548,7 +548,7 @@
         <input type="button" th:value="#{label.Close}" value="ok" data-def="evt=ok, state=summary, mainbtn=summary" />
         <input type="button" th:value="#{label.Close}" value="ok"
           data-def="evt=okerrsize, state=error-size, mainbtn=error-size" />
-        <input type="button" th:value="#{label.Ok}" value="ok"
+        <input type="button" th:value="#{label.Close}" value="ok"
           data-def="evt=okerrformat, state=error-format error-type, mainbtn=error-format error-type" />
         <input type="button" th:value="#{label.Cancel}" value="cancel" th:title="#{label.CancelImport}"
           data-def="evt=cancel, state=parametrization confirm" />

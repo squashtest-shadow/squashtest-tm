@@ -490,7 +490,7 @@
         </div>
       </div>
 
-      <div data-def="state=confirm">
+      <div data-def="state=confirm"> 
         <div class="confirm-div">
           <label class="confirm-label" th:text="#{dialog.import.file.confirm}">import file confirm</label>
           <span class="confirm-span confirm-file"></span>
@@ -599,13 +599,14 @@
          </ul></p>
          </script>
 
-      <div data-def="state=error-size">
+      <div data-def="state=error-size"> 
         <span class="error-size" th:text="#{dialog.import.error.sizeexceeded}">size exceeded</span>
       </div>
 
       <div class="error-type" data-def="state=error-type">
         <span class="import-err-filetype-text" id="import-err-filetype-text-xls">
-          <span th:text="#{dialog.import.wrongfile}" th:remove="tag">import wrong file</span>
+       
+           <span th:remove="tag" th:text="#{dialog.import-excel.requirement.empty}">wrong file , accepts</span>
           <span id="import-err-filetype">xls, xlsx</span>
         </span>
         <span class="import-err-filetype-text" id="import-err-filetype-text-zip" style="display: none;">
@@ -613,6 +614,13 @@
           <span id="import-err-filetype">zip</span>
         </span>
       </div>
+
+      <div class="error-type" data-def="state=error-null">
+        <span class="import-err-null-text" id="import-err-null-text">
+          <span th:remove="tag" th:text="#{dialog.import-excel.requirement.empty}">no file</span>
+        </span>
+      </div>
+      
       <div class="error-format" data-def="state=error-format"></div>
       <div id="import-excel-dump" class="not-displayed dump"></div>
 
@@ -626,7 +634,7 @@
         <input type="button" th:value="#{label.Ok}" value="okLabel" data-def="evt=ok, state=summary, mainbtn=summary" />
         <input type="button" th:value="#{label.Ok}" value="okLabel"
           data-def="evt=okerrsize, state=error-size, mainbtn=error-size" />
-        <input type="button" th:value="#{label.Ok}" value="okLabel"
+        <input type="button" th:value="#{label.Close}" value="okLabel"
           data-def="evt=okerrformat, state=error-type error-format, mainbtn=error-type error-format" />
         <input type="button" th:value="#{label.Cancel}" value="cancelLabel"  th:title="#{label.CancelImport}"
           data-def="evt=cancel, state=parametrization confirm" />
