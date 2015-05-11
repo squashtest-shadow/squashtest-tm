@@ -41,7 +41,7 @@
 
 <f:message var="confirmLabel"     key="label.Confirm" />
 <f:message var="cancelLabel"      key="label.Cancel" />
-<f:message var="okLabel"          key="label.Ok" />
+<f:message var="closeLabel"          key="label.Close" />
 <f:message var="renameLabel"      key="label.Rename" />
 
 
@@ -387,7 +387,7 @@
 			<div class="popup-dialog-buttonpane">
 				<input type="button" value="${confirmLabel}" data-def="state=normal, mainbtn=normal, evt=confirm"/>
 				<input type="button" value="${cancelLabel}" data-def="state=normal loading, mainbtn=loading, evt=cancel" />
-				<input type="button" value="${okLabel}"  data-def="state=allbound noselect, mainbtn=allbound noselect, evt=cancel"/>
+				<input type="button" value="${closeLabel}"  data-def="state=allbound noselect, mainbtn=allbound noselect, evt=cancel"/>
 			</div>
 		
 		</div>
