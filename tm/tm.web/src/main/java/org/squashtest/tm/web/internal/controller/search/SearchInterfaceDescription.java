@@ -264,7 +264,7 @@ public abstract class SearchInterfaceDescription {
 
 
 		SearchInputPanelModel panel = new SearchInputPanelModel();
-		panel.setTitle(getMessageSource().internationalize("label.Milestone", locale));
+		panel.setTitle(getMessageSource().internationalize("label.Milestones", locale));
 		panel.setOpen(true);
 		panel.setId("milestone");
 		panel.setLocation("column1");
