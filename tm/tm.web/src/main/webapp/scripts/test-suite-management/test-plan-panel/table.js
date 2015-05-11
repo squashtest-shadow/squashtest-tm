@@ -44,7 +44,7 @@
  *		}
  *	}
  *
- */
+ */ 
 
 define(
 		[ 'jquery', 'squash.translator', '../../test-plan-panel/exec-runner', '../../test-plan-panel/sortmode', 
@@ -357,6 +357,10 @@ define(
 				};
 
 				var squashSettings = {
+										 
+					unbindButtons : {
+							tooltip : translator.get('dialog.unbind-testcase.tooltip')
+						},
 
 					toggleRows : {
 						'td.toggle-row' : function(table, jqold, jqnew) {
@@ -375,7 +379,7 @@ define(
 									jqnew.find('.tp-row-dataset').hide();
 								}
 
-								// the delete buttons
+								// the delete buttons 
 								if (initconf.permissions.executable) {
 									jqnew.find('.delete-execution-table-button').button({
 										text : false,
@@ -397,7 +401,7 @@ define(
 											document.location.href = initconf.urls.executionsUrl + id;
 										});
 										return false;
-									});
+									}); 
 
 									newautoexecBtn.click(function() {
 										var tpiIds =  [];
