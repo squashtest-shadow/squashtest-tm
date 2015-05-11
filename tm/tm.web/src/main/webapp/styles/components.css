@@ -588,6 +588,11 @@ table.ta-project-bind-listdiv tr.listdiv-item.even {
 /*******************************
 	misc
 ********************************/
+
+.aligntop {
+	vertical-align: top;
+}
+
 .editable {
 	border: 1px solid transparent;
 }

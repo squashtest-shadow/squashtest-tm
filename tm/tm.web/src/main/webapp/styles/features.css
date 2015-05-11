@@ -143,6 +143,10 @@ tr.nodrop td.drag-handle {
 	margin-top: 1.6em;
 }
 
+.aligntop {
+	vertical-align: top;
+}
+
 .no-user-select{
 	-webkit-touch-callout: none;
 	-webkit-user-select: none;
