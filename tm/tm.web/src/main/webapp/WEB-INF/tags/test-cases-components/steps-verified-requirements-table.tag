@@ -71,7 +71,7 @@
 		
 		<div class="toolbar">
 <input  id="remove-verified-requirements-from-step-button"
-				type="button" value="<f:message key='label.removeRequirementsTestCase'/>"
+				type="button" value="<f:message key='label.removeRequirementsFromTestCase'/>"
 				class="button" />
 				</div>
 <table id="verified-requirements-table" 
