@@ -37,7 +37,7 @@ define([ "jquery", "tree", "handlebars", "underscore", "workspace/workspace.impo
 		recap.hasRenamed = recap.renamed > 0;
 		recap.hasModified = recap.modified > 0;
 		recap.hasRejects = recap.rejected > 0;
-
+		recap.notimported = recap.rejected + recap.failures;
 		return this.template(recap);
 	};
 

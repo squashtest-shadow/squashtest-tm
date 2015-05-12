@@ -515,11 +515,10 @@
 
         <div><span  th:text="#{dialog.import-excel.test-case.success}">import success </span><span class="success-import span-bold span-green">{{success}}</span></div>
 
-        <div><span th:text="#{dialog.import-excel.test-case.rejected}">import reject</span><span class="rejected-import span-bold span-green">{{rejected}}</span></div>
 
         <div>
           <span th:text="#{dialog.import-excel.test-case.failed}"></span>
-          <span class="failures-import span-bold {{failuresClass}}">{{failures}}</span>
+          <span class="failures-import span-bold {{failuresClass}}">{{notimported}} </span>
         </div>      
         {{#unless createdOnly}}
         <div class="import-excel-dialog-note">
