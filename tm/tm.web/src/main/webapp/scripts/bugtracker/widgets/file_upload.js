@@ -69,6 +69,10 @@ define(["jquery", "../domain/FieldValue", "squash.translator", "handlebars", "fi
 			//weeeeell, very special case here.
 		}, 
 		
+		disable : function(){
+			this._getDelegate().find("input").prop('disabled', true);
+		},
+		
 		getForm : function(){
 			return this._getDelegate();
 		},		
