@@ -22,7 +22,7 @@ define([ 'jquery', 'tree', 'custom-field-values', 'workspace.projects', '../perm
 		function($, zetree, cufValuesManager, projects, rules, eventBus) {
 	"use strict";
 
-	function postNode(dialog, tree) {
+	function postNode(dialog, tree, isSelectNewNode) {
 
 		var params = {
 			name : dialog.find('#add-requirement-name').val(),
@@ -36,7 +36,7 @@ define([ 'jquery', 'tree', 'custom-field-values', 'workspace.projects', '../perm
 
 		$.extend(params, cufParams);
 
-		return tree.jstree('postNewNode', 'new-requirement', params, true);
+		return tree.jstree('postNewNode', 'new-requirement', params, isSelectNewNode);
 	}
 
 	function addCufHandler(dialog, tree) {
@@ -108,13 +108,13 @@ define([ 'jquery', 'tree', 'custom-field-values', 'workspace.projects', '../perm
 		// end
 		
 		dialog.on('formdialogadd-close', function() {
-			postNode(dialog, tree).then(function() {
+			postNode(dialog, tree, true).then(function() {
 				dialog.formDialog('close');
 			});
 		});
 
 		dialog.on('formdialogadd-another', function() {
-			postNode(dialog, tree).then(function() {
+			postNode(dialog, tree, false).then(function() {
 				dialog.formDialog('cleanup');
 			});
 		});
