@@ -221,17 +221,24 @@ div.sub-page div.table-tab-wrap .dataTables_footer{
 }
 
 #tabbed-pane>ul {
-	position: relative;
-    top: -0.75cm;
-    padding: 0;
-    float: right;    
+	visibility : hidden;
 }
 
 #tabbed-pane>ul.milestones-mode {
-	float : left;
+	position: relative;
+	top: -0.75cm;
+	padding: 0;
+	float : right;
 	visibility : visible;
 }
 
+#tabbed-pane>ul.library-mode {
+	position: relative;
+	top: -0.75cm;
+	padding: 0;
+	float : left;
+	visibility : visible;
+}
 
 .search-input {
 	width: 200px;

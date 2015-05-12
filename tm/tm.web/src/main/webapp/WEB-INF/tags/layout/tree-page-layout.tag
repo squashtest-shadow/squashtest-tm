@@ -163,7 +163,7 @@
 						<%-- Milestone are to the right, Library of test cases is left sided --%>
 						<c:choose>
 						   <c:when test="${not empty i18nLibraryTabTitle}">
-						    <ul class="milestones-mode">
+						    <ul class="library-mode">
 								<li class="tab" > <a href="#tree-pane">${libraryTabTitle}</a></li>
 								<c:if test="${usesObsoleteSearch}">						
 									<li class="tab"> <a href="#search-pane"><f:message key="tabbed_panel.search.pane.label"/></a></li>	
