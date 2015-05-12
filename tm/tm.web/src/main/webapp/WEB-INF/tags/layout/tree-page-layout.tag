@@ -159,13 +159,27 @@
 		<div id="tree-panel-left" style="z-index:1;">
 			<div class="position-layout-fix">
 				<div id="tabbed-pane">
-					<ul>
-						<li class="tab" > <a href="#tree-pane">${libraryTabTitle}</a></li>
-						<c:if test="${usesObsoleteSearch}">						
-						<li class="tab"> <a href="#search-pane"><f:message key="tabbed_panel.search.pane.label"/></a></li>	
-						</c:if>
-					</ul>
-					
+				
+						<%-- Milestone are to the right, Library of test cases is left sided --%>
+						<c:choose>
+						   <c:when test="${not empty i18nLibraryTabTitle}">
+						    <ul class="milestones-mode">
+								<li class="tab" > <a href="#tree-pane">${libraryTabTitle}</a></li>
+								<c:if test="${usesObsoleteSearch}">						
+									<li class="tab"> <a href="#search-pane"><f:message key="tabbed_panel.search.pane.label"/></a></li>	
+								</c:if>
+							</ul>	
+							</c:when>
+						   <c:otherwise>
+						       <ul>
+								<li class="tab" > <a href="#tree-pane">${libraryTabTitle}</a></li>
+								<c:if test="${usesObsoleteSearch}">						
+									<li class="tab"> <a href="#search-pane"><f:message key="tabbed_panel.search.pane.label"/></a></li>	
+								</c:if>
+							   </ul>
+						   </c:otherwise>   
+						</c:choose>
+		
 					<div id="tree-pane"  >
 						<jsp:invoke fragment="tree" />
 					</div>
