@@ -48,3 +48,15 @@ tr.ui-state-highlight span.ui-icon, a.ui-state-default span.ui-icon  {
 	background-image:url("jquery/ui/images/ui-icons_ffffff_256x240.png");
 }
 
+a.manage-attachments{
+/*	background-image: url("../images/attachment.png");	 sprite-ref: sprites-icons; */
+    font-weight: normal;
+    color: #fff;
+    background-image: url("../styles/jquery/ui/images/ui-icons_01ff73_256x240.png");
+    background-position: -240px -112px;
+    font-weight: normal;
+    color: #fff;
+	width : 16px;
+	height : 16px;    
+}
+
