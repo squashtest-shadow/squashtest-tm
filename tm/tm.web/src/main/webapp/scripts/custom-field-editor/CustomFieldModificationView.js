@@ -20,11 +20,11 @@
  */
 define([ "jquery", "./NewCustomFieldOptionDialog", "backbone", "underscore",
 	"jeditable.simpleJEditable", "jeditable.selectJEditable", "app/util/StringUtil", "app/lnf/Forms", 
-	"jquery.squash.oneshotdialog", "squash.configmanager", "app/ws/squashtm.notification",
+	"jquery.squash.oneshotdialog", "squash.configmanager", "app/ws/squashtm.notification", "squash.translator", 
 	"jquery.squash", "jqueryui",
 	"jquery.squash.togglepanel", "squashtable", "jquery.squash.confirmdialog", "jeditable.datepicker", 
 	"jquery.squash.formdialog", "jquery.squash.tagit"  ],
-	function($, NewCustomFieldOptionDialog, Backbone, _, SimpleJEditable,SelectJEditable, StringUtil, Forms, oneshot, confman, notification) {
+	function($, NewCustomFieldOptionDialog, Backbone, _, SimpleJEditable,SelectJEditable, StringUtil, Forms, oneshot, confman, notification, translator) {
 		var cfMod = squashtm.app.cfMod;
 		/*
 		 * Defines the controller for the custom fields table.
@@ -219,6 +219,13 @@ define([ "jquery", "./NewCustomFieldOptionDialog", "backbone", "underscore",
 						"#rename-cuf-option-previous").text();
 				var newValue = self.renameCufOptionPopup.find(
 						"#rename-cuf-option-label").val();
+				
+				if (newValue.trim() == ""){
+					// Error
+					var errormsg = translator.get("squashtm.domain.exception.option.pattern");
+					document.getElementById("nospace").innerHTML = errormsg;
+				}
+				else {
 				$.ajax({
 					type : 'POST',
 					data : {
@@ -230,6 +237,7 @@ define([ "jquery", "./NewCustomFieldOptionDialog", "backbone", "underscore",
 					self.optionsTable.refresh();
 					self.renameCufOptionPopup.formDialog('close');
 				});
+				};
 
 			},
 
