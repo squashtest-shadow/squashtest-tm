@@ -66,7 +66,7 @@
 					ids.push(id);
 				}
 			});
-			// set model
+			// set model 
 			var url  = this.$el.data("url");
 			self.model = new ProjectFilterModel({projectIds : ids} );
 			self.model.url = url;
@@ -76,7 +76,8 @@
 					width : 800});
 			
 			// init datatable
-			self.table = this.$el.find("table").bind('filter', self.filterTable).squashTable({
+			// change filter by search.dt
+			self.table = this.$el.find("table").bind('search.dt', self.filterTable).squashTable({
 					"sScrollY": "500px",
 					"bFilter":true,
 					"bPaginate" : false, 
