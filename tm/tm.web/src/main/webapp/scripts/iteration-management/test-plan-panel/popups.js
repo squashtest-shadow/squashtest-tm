@@ -91,9 +91,10 @@ define([ 'jquery', 'workspace.event-bus', 'app/util/ComponentUtil', 'squash.stat
 				type : 'delete',
 				dataType : 'json'
 			}).done(function(unauthorized) {
+				/* Why ? If done, it shouldn't show this message after (also in test-suite-management)
 				if (unauthorized) {
 					squashtm.notification.showInfo(conf.messages.unauthorizedTestplanRemoval);
-				}
+				}*/
 				eventBus.trigger('context.content-modified');
 			});
 
