@@ -104,15 +104,19 @@
                  th:with="url=@{/info-lists/}+${infoList.id}">
                 <div class="display-table" id="info-list-infos-table">
                 
+                
                  <div class="display-table-row controls control-group">
                   <label for="info-list-label" class="control-label display-table-cell"
                          th:text="#{label.Label}">Label</label>
 
-                    <div id="info-list-code" class="display-table-cell" th:text="${infoList.label}"
-                       th:attr="data-def='url='+${url}">Label
+                  <div id="info-list-label" class="display-table-cell"
+                       th:text="${infoList.label}"
+                       th:attr="data-def='url='+${url}">Label 
                   </div>
-                    <span class="help-inline">&nbsp;</span>
-                  </div>              
+                  <span class="help-inline">&nbsp; </span>
+                </div>
+                
+      
                   <div class="display-table-row controls control-group">   
                     <label for="info-list-description"
                       th:text="#{label.Description}" class="display-table-cell">Label</label>                 
@@ -128,9 +132,9 @@
 
                   <div id="info-list-code" class="display-table-cell text-editable"
                        th:text="${infoList.code}"
-                       th:attr="data-def='url='+${url}">code
+                       th:attr="data-def='url='+${url}">code 
                   </div>
-                  <span class="help-inline">&nbsp;</span>
+                  <span class="help-inline">&nbsp; </span>
                 </div>
 
                   <span class="error-message  defaultValue-error"></span>

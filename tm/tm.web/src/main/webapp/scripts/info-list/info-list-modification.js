@@ -19,7 +19,7 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 define([ 'module', "info-list/info-list-modification-information-view", "info-list/info-list-modification-table-view",  "jquery", "backbone", "underscore", "squash.basicwidgets", "jeditable.simpleJEditable",
-		"workspace.routing", "squash.translator", "jquery.squash.togglepanel", "squashtable"],
+		"workspace.routing", "squash.translator", "jquery.squash.togglepanel", "squashtable", "app/ws/squashtm.workspace"],
 		function(module, InfoView, TableView  , $, backbone, _, basic, SimpleJEditable, routing, translator) {
 	"use strict";
 
@@ -122,6 +122,7 @@ define([ 'module', "info-list/info-list-modification-information-view", "info-li
 				url : routing.buildURL("info-list.info", self.config.data.infoList.id),
 			}).done(function(data) {
 				self.$("#info-list-name-header").text(data);
+				self.$("#info-list-label").text(data);
 				self.RenameInfoListPopup.formDialog('close');
 			});
 
