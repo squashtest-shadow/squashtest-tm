@@ -292,13 +292,13 @@ define([ "jquery", "backbone", "squash.translator","jeditable.simpleJEditable", 
 			var self = this;
 			var urlPOST = routing.buildURL('requirementversions', data['requirement-version-id']);
 			var urlGET = squashtm.app.contextRoot + "/requirements/criticality-combo-data";
-			var ok = translator.get("rich-edit.button.ok.label");
+			var confirm = translator.get("rich-edit.button.confirm.label");
 			var cancel = translator.get("label.Cancel");
 			var component =$('.editable_criticality', row);
 			//TODO use SelectJEditable obj
 			component.editable(urlPOST, {
 						type : 'select',
-						submit : ok,
+						submit : confirm,
 						cancel : cancel,
 						loadurl : urlGET,
 						"submitdata" : function(value, settings) {
@@ -312,14 +312,13 @@ define([ "jquery", "backbone", "squash.translator","jeditable.simpleJEditable", 
 			var urlPOST = routing.buildURL('requirementversions', data['requirement-version-id']);
 			var projectCategories = projects.findProject(data['project-id']).requirementCategories;
 			var catsData = confman.toJeditableSelectFormat(projectCategories.items, {'code' : 'friendlyLabel'});
-
-			var ok = translator.get("rich-edit.button.ok.label");
+			var confirm = translator.get("rich-edit.button.confirm.label");
 			var cancel = translator.get("label.Cancel");
 			var component = $('.editable_category', row);
 			//TODO use SelectJEditable obj
 			component.editable(urlPOST, {
 				type : 'select',
-				submit : ok,
+				submit : confirm,
 				cancel : cancel,
 				data : catsData,
 				"submitdata" : function(value, settings) {
@@ -333,13 +332,13 @@ define([ "jquery", "backbone", "squash.translator","jeditable.simpleJEditable", 
 			var self = this;
 			var urlPOST = routing.buildURL('requirementversions', data['requirement-version-id']);
 			var urlGET = squashtm.app.contextRoot + "/requirements/status-combo-data";
-			var ok = translator.get("rich-edit.button.ok.label");
+			var confirm = translator.get("rich-edit.button.confirm.label");
 			var cancel = translator.get("label.Cancel");
 			var component = $('.editable_status', row);
 			//TODO use SelectJEditable obj
 			component.editable(urlPOST, {
 				type : 'select',
-				submit : ok,
+				submit : confirm,
 				cancel : cancel,
 				loadurl : urlGET,
 				"submitdata" : function(value, settings) {
