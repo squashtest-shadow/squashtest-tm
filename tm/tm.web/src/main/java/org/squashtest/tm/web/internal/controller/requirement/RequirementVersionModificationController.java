@@ -156,7 +156,7 @@ public class RequirementVersionModificationController {
 		return "page/requirement-workspace/show-requirement-version";
 	}
 
-	@RequestMapping(method = RequestMethod.POST, params = { "id=requirement-description", VALUE })
+	@RequestMapping(method = RequestMethod.POST, params = { "id=requirement-description", VALUE }, produces = "text/plain;charset=UTF-8")
 	public @ResponseBody
 	String changeDescription(@PathVariable long requirementVersionId, @RequestParam(VALUE) String newDescription) {
 		requirementVersionManager.changeDescription(requirementVersionId, newDescription);

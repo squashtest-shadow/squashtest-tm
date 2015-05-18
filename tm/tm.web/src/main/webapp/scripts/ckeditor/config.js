@@ -8,6 +8,4 @@ CKEDITOR.editorConfig = function( config )
 	// Define changes to default configuration here. For example:
 	// config.language = 'fr';
 	// config.uiColor = '#AADC6E';
-	config.docType = '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">';
-	config.entities = false;
 };
