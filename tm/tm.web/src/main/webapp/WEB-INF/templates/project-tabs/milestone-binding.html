@@ -37,9 +37,8 @@
         </button>      
                    
         <input th:if="${!isTemplate}" type="button" id="create-and-bind-milestone-button" th:title="#{project.milestone.create}" th:value="#{label.create}" class="sq-btn btn-sm" />      
-            
-        <input th:if="${!isTemplate}" type="button" id="duplicate-milestone-button" th:title="#{project.milestone.duplicate}" th:value="#{label.milestone.duplicate}" class="sq-btn btn-sm" />       
-      </div>
+    
+       </div>
     </div>
 
       <div id="parameters-panel" class="tg-body" >
@@ -55,7 +54,7 @@
               <th th:attr="data-def='map=owner, sortable'" th:text="#{label.Owner}" ></th>
               <th th:attr="data-def='sortable, map=description'" th:text="#{label.Description}"> description</th>
               <th th:attr="data-def='map=binded-to-objects, sortable'" th:text="#{label.used}"></th>
-              <th  th:attr="data-def='sWidth=2em, map=delete, unbind-button=#unbind-milestone-popup'"></th>
+              <th th:attr="data-def='sWidth=2em, map=delete, unbind-button=#unbind-milestone-popup'"></th>
                
             </tr>
           </thead>
