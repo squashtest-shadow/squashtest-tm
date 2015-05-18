@@ -353,7 +353,7 @@ publish('reload.requirement.attachments');
 		<strong><f:message key="requirement.new-version.confirm-dialog.label" /></strong>
     
       <c:if test="${milestone_mode}">
-        HEY MAN, THIS IS MILESTONE MODE
+         
       </c:if>
     
 		<input type="button" value="${confirmLabel}" />
