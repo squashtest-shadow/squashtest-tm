@@ -220,7 +220,7 @@ define([ "jquery", "./NewCustomFieldOptionDialog", "backbone", "underscore",
 				var newValue = self.renameCufOptionPopup.find(
 						"#rename-cuf-option-label").val();
 				
-				if (newValue.trim() == ""){
+				if (newValue.trim() === ""){
 					// Error
 					var errormsg = translator.get("squashtm.domain.exception.option.pattern");
 					document.getElementById("nospace").innerHTML = errormsg;
@@ -237,7 +237,7 @@ define([ "jquery", "./NewCustomFieldOptionDialog", "backbone", "underscore",
 					self.optionsTable.refresh();
 					self.renameCufOptionPopup.formDialog('close');
 				});
-				};
+				}
 
 			},
 
