@@ -428,7 +428,7 @@ public class TestCaseModificationController {
 
 
 
-	@RequestMapping(method = RequestMethod.POST, params = { "id=test-case-prerequisite", VALUE })
+	@RequestMapping(method = RequestMethod.POST, params = { "id=test-case-prerequisite", VALUE }, produces = "text/plain;charset=UTF-8")
 	@ResponseBody
 	public String changePrerequisite(@RequestParam(VALUE) String testCasePrerequisite, @PathVariable long testCaseId) {
 
@@ -436,7 +436,6 @@ public class TestCaseModificationController {
 		if (LOGGER.isTraceEnabled()) {
 			LOGGER.trace(TEST_CASE_ + testCaseId + ": updated prerequisite to " + testCasePrerequisite);
 		}
-
 		return testCasePrerequisite;
 	}
 
