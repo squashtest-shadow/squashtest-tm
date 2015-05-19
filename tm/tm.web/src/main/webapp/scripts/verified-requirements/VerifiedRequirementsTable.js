@@ -63,7 +63,7 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil",
 			var settings = {};
 			
 			settings.unbindButtons = {
-				delegate : "#remove-verifying-test-case-dialog",
+				delegate : "#remove-verified-requirement-version-dialog", 
 				tooltip : translator.get('dialog.unbind-ta-project.tooltip')
 			  };
 	
@@ -140,7 +140,7 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil",
 
 		_removeRequirements : function() {
 			var self = this;
-			var ids = this.toDeleteIds;
+			var ids = this.table.getSelectedIds();	
 			if (ids.length === 0) {
 				return;
 			}

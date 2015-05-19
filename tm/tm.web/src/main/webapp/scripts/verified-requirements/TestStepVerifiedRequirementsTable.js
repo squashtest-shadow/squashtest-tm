@@ -114,8 +114,8 @@ define([ "jquery", "backbone", "underscore", "handlebars", "app/util/StringUtil"
 
 		_detachRequirements : function() {
 			var self = this;
-			var ids = this.toDetachIds;
-			if (ids.length === 0) {
+			var ids = this.table.getSelectedIds();	
+			if (ids.length === 0 ) { 
 				return;
 			}
 			$.ajax({
