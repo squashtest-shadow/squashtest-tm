@@ -20,6 +20,9 @@
  */
 package org.squashtest.tm.domain.infolist;
 
+import org.squashtest.tm.domain.customfield.CustomField;
+import org.squashtest.tm.exception.customfield.CodeAlreadyExistsException;
+
 public enum SystemInfoListItemCode {
 	CAT_FUNCTIONAL("CAT_FUNCTIONAL"), CAT_NON_FUNCTIONAL("CAT_NON_FUNCTIONAL"), CAT_USE_CASE("CAT_USE_CASE"), CAT_BUSINESS("CAT_BUSINESS")
 	, CAT_TEST_REQUIREMENT("CAT_TEST_REQUIREMENT"), CAT_UNDEFINED("CAT_UNDEFINED"), CAT_ERGONOMIC("CAT_ERGONOMIC"),
@@ -42,7 +45,10 @@ public enum SystemInfoListItemCode {
 
 		for (SystemInfoListItemCode id : SystemInfoListItemCode.values()) {
 			if (id.getCode().equals(item.getCode())) {
-				throw new IllegalAccessError("You shall not pass ! This is a system info list item, go away ! Play with your own info list items");
+				// throw new
+				// IllegalAccessError("You shall not pass ! This is a system info list item, go away ! Play with your own info list items");
+				throw new CodeAlreadyExistsException(item.getCode(), id.getCode(), CustomField.class);
+
 			}
 		}
 

@@ -30,6 +30,7 @@ import java.util.TreeSet;
 import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
 
+import org.apache.commons.lang.StringUtils;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Service;
@@ -37,6 +38,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.infolist.InfoList;
 import org.squashtest.tm.domain.infolist.InfoListItem;
 import org.squashtest.tm.domain.infolist.SystemInfoListCode;
+import org.squashtest.tm.exception.customfield.CodeAlreadyExistsException;
 import org.squashtest.tm.service.infolist.IsBoundInfoListAdapter;
 import org.squashtest.tm.service.infolist.InfoListManagerService;
 import org.squashtest.tm.service.internal.repository.InfoListDao;
@@ -83,9 +85,17 @@ public class InfoListManagerServiceImpl implements InfoListManagerService {
 	@Override
 	public void changeCode(long infoListId, String newCode) {
 		InfoList infoList = findById(infoListId);
-		SystemInfoListCode.verifyModificationPermission(infoList);
+		checkDuplicateCode(infoList, newCode);
 		infoList.setCode(newCode);
+	}
 
+	private void checkDuplicateCode(InfoList infoList, String newCode) {
+		if (StringUtils.equals(infoList.getCode(), newCode)) {
+			return;
+		}
+		if (infoListDao.findByCode(newCode) != null) {
+			throw new CodeAlreadyExistsException(infoList.getCode(), newCode, InfoList.class);
+		}
 	}
 
 	@Override

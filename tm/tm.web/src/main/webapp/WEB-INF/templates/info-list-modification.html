@@ -126,18 +126,13 @@
                       th:utext="${infoList.description}" th:attr="data-def='url='+${url} +', type =textarea, cols=80, rows=10' ">Description</div>
                     <span class="help-inline">&nbsp;</span>
                   </div>
-                  <div class="display-table-row controls control-group">
-                  <label for="info-list-code" class="control-label display-table-cell"
-                         th:text="#{label.code}">Code</label>
-
-                  <div id="info-list-code" class="display-table-cell text-editable"
-                       th:text="${infoList.code}"
-                       th:attr="data-def='url='+${url}">code 
-                  </div>
-                  <span class="help-inline">&nbsp; </span>
+                <div class="display-table-row controls control-group">
+                  <label for="info-list-code" class="control-label display-table-cell" th:text="#{label.code}">Code</label>
+                   <div id="info-list-code" class="display-table-cell text-editable" th:text="${infoList.code}" th:attr="data-def='url='+${url}">code     </div>
+                    <span class="error-message" style="display: inline-block;">&nbsp; </span>
                 </div>
 
-                  <span class="error-message  defaultValue-error"></span>
+                  
                 </div>
               </div>
             </div>
