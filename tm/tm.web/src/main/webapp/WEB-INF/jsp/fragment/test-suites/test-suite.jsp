@@ -299,7 +299,7 @@
     <div id="confirm-duplicate-test-suite-dialog" class="not-displayed popup-dialog"
       title="<f:message key="title.DuplicateTestSuite" />">
       <strong><f:message key="message.DuplicateTestSuite" /> "${testSuite.name}" ?</strong>
-      <input type="button" value="<f:message key='label.Ok' />" />
+      <input type="button" value="<f:message key='label.Confirm' />" />
       <input type="button" value="<f:message key='label.Cancel' />" />
     </div>
 
