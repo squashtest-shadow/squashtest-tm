@@ -116,7 +116,7 @@
               <li class="suite-manager-buttonpane suite-manager-newsection ui-menu-item">
                 <div class="snap-right">
                   <input type="button" id="suite-manager-menu-ok-button" role="button" class="sq-btn btn-sm"
-                    value="${okLabel}" />
+                    value="${confirmLabel}" />
                   <input type="button" id="suite-manager-menu-cancel-button" role="button" class="sq-btn btn-sm"
                     value="${cancelLabel}" />
                 </div>
