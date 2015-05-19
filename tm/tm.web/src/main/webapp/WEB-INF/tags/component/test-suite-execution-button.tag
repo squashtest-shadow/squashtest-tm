@@ -82,7 +82,7 @@
 		<div id="confirm-restart-dialog" class="not-displayed popup-dialog"	title="${confirmRestartTitle}">
 			<span><f:message key="test-suite.execution.restart.warning-message" /> </span>
 			<div class="popup-dialog-buttonpane">
-				<input type="button" value="<f:message key='label.Ok' />" />
+				<input type="button" value="<f:message key='label.Confirm' />" />
 				<input type="button" value="<f:message key='label.Cancel' />" />
 			</div>
 		</div>
