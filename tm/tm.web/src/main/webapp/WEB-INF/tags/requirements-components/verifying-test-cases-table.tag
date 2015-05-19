@@ -52,7 +52,7 @@
 
 <%-- ======================== /VARIABLES & URLS ============================ --%>
 
-<c:set var="milestoneVisibility" value="${(not empty cookie['milestones']) ? ', invisible' : ''}"/> 
+<c:set var="milestoneVisibility" value="${(empty cookie['milestones']) ? ', invisible' : ''}"/> 
         
 <table id="verifying-test-cases-table" class="unstyled-table" data-def="ajaxsource=${tableModelUrl}, deferloading=${model.iTotalRecords}, 
   datakeys-id=tc-id, pre-sort=2-asc, pagesize=50 ">
@@ -60,7 +60,7 @@
     <tr> 
       <th data-def="map=tc-index, select">#</th>
       <th data-def="map=project-name, sortable"><f:message key="label.project" /></th>
-      <th data-def="sortable, map=milestone-dates, tooltip-target=milestone"><f:message key="label.Milestones"/></th>
+      <th data-def="sortable, map=milestone-dates, tooltip-target=milestone ${milestoneVisibility}"><f:message key="label.Milestones"/></th>
       <th data-def="map=tc-reference, sortable"><f:message key="test-case.reference.label" /></th>
       <th data-def="map=tc-name, sortable, link=${testCaseUrl}/{tc-id}/info"><f:message key="test-case.name.label" /></th>
       <th data-def="map=tc-type, sortable"><f:message key="verifying-test-cases.table.column-header.type.label"/></th>
