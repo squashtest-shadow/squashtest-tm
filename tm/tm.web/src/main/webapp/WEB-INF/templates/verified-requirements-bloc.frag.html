@@ -98,7 +98,7 @@
             th:value="#{label.removeRequirementsAssociation.test-steps}" value="Remove from step" class="button" />
         </div>
       </div>
-      <div id="verified-requirements-panel" th:title="#{l}"
+      <div id="verified-requirements-panel" 
         th:attr="data-init-open=${! requirementVerifier.verifier.verifiedRequirementVersions.empty}" class="tg-body">
         <table id="verified-requirements-table"
           th:attr="data-def='pre-filled, datakeys-id=entity-id, ajaxsource='+@{/test-steps/__${requirementVerifier.verifyingStep.id}__/verified-requirement-versions/}">
@@ -107,7 +107,7 @@
               <th th:attr="data-def='select, map=entity-index'">#</th>
               <th th:attr="data-def='sClass=link-checkbox, map=empty-link-checkbox, center, narrow'">&nbsp;</th>
               <th th:attr="data-def='sortable, map=project'" th:text="#{label.project}">Project</th>
-              <th th:attr="data-def='sortable, map=entity-id'" th:text="#{label.versionId}">Id</th>
+              <th th:attr="data-def='sortable, map=entity-id'" th:text="#{label.versionId}">Id</th> 
               <th th:attr="data-def='sortable, map=reference'" th:text="#{label.Reference}">Reference</th>
               <th th:attr="data-def='sortable, map=name, link='+@{/requirement-versions/{entity-id}/info}"
                 th:text="#{requirement.name.label}">Name</th>
