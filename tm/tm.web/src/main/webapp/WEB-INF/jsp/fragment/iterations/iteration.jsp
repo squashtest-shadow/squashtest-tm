@@ -150,11 +150,11 @@
 
     </c:if>
     <c:if test="${ writable }">
-      <input type="button" value=' <f:message key="iteration.test-plan.testsuite.manage.label"/>'
+      <input type="button" value=' <f:message key="iteration.test-plan.testsuite.manage.label"/>' title=' <f:message key="iteration.button.testsuite.tooltip"/>'
         id="manage-test-suites-button" class="sq-btn" />
     </c:if>
     <c:if test="${ writable }">
-      <input type="button" value='<f:message key="iteration.button.rename.label" />' id="rename-iteration-button"
+      <input type="button" value='<f:message key="iteration.button.rename.label" />' id="rename-iteration-button" title='<f:message key="dialog.rename-iteration.title" />'
         class="sq-btn" />
     </c:if>
 

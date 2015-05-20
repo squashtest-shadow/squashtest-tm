@@ -162,11 +162,11 @@
       </c:if>
     </c:if>
     <c:if test="${ writable }">
-      <input type="button" value="<f:message key='test-suite.button.rename.label' />" id="rename-test-suite-button"
+      <input type="button" value="<f:message key='test-suite.button.rename.label' />" id="rename-test-suite-button" title="<f:message key='dialog.testsuites.rename.title' />"
         class="sq-btn" title="<f:message key='test-suite.button.rename.label' />"/>
     </c:if>
     <c:if test="${ creatable }">
-      <input type="button" value="<f:message key='test-suite.button.duplicate.label' />"
+      <input type="button" value="<f:message key='test-suite.button.duplicate.label' />" title="<f:message key='title.DuplicateTestSuite' />"
         id="duplicate-test-suite-button" class="sq-btn" />
     </c:if>
   </div>

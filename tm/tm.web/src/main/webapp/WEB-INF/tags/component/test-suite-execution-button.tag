@@ -38,16 +38,18 @@
 
 <c:if test="${ statisticsEntity.status == 'READY' }">
 	<f:message var='startResumeLabel' key='test-suite.execution.start.label' />
+	<f:message var='startResumeTooltip' key='test-suite.execution.start.tooltip' />
 </c:if>
 <c:if test="${ statisticsEntity.status == 'RUNNING' }">
 	<f:message var='startResumeLabel' key='test-suite.execution.resume.label' />
+	<f:message var='startResumeTooltip' key='test-suite.execution.resume.tooltip' />
 </c:if>
 
 
 <div id="test-suite-execution-button" class="btn-group" data-runner-url="${ runnerUrl }" data-execs-url="${ deleteOnRestartUrl }">
 
 	<c:if test="${ statisticsEntity.status == 'RUNNING' || statisticsEntity.status == 'READY'}">
-		<input type="button" id="start-resume-button" class="sq-btn run-menu" value="${startResumeLabel}"/>		
+		<input type="button" id="start-resume-button" class="sq-btn run-menu" value="${startResumeLabel}" title="${startResumeTooltip}"/>		
 		<ul class="not-displayed">
 			<li class="cursor-pointer">
 				<a id="start-suite-classic-button" ><f:message key='test-suite.execution.classic.label' /> </a>
@@ -68,7 +70,8 @@
 	<c:if test="${ statisticsEntity.status != 'READY' }">
 	
 		<f:message var="restartSuiteButton" key="test-suite.execution.restart.label"/>
-		<input type="button" id="restart-button" class="sq-btn run-menu" value="${restartSuiteButton}"/>		
+		<f:message var="restartSuiteTooltip" key="test-suite.execution.restart.tooltip"/>
+		<input type="button" id="restart-button" class="sq-btn run-menu" value="${restartSuiteButton}" title="${restartSuiteTooltip}"/>		
 		<ul class="not-displayed">
 			<li class="cursor-pointer">
 				<a id="restart-suite-classic-button" ><f:message key='test-suite.execution.classic.label' /> </a>

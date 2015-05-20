@@ -150,7 +150,7 @@
 
     <c:if test="${ writable }">
 
-      <input type="button" class="sq-btn" value='<f:message key="label.Rename" />' id="rename-campaign-button" />
+      <input type="button" class="sq-btn" value='<f:message key="label.Rename" />' id="rename-campaign-button" title='<f:message key="dialog.rename-campaign.title" />' />
     </c:if>
 
   </div>
