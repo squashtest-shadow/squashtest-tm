@@ -597,7 +597,7 @@
 
 		bindProjectDialog.formDialog();
 
-		bindProjectDialog.on('formdialogcancel', function() {
+		bindProjectDialog.on('formdialogcancel', function() { 
 			bindProjectDialog.formDialog('close');
 		});
 
@@ -614,7 +614,11 @@
 
 		bindProjectDialog.on('formdialogconfirm', function() {
 
-			var ids = getCheckedId();
+			var ids = getCheckedId(); 
+			if ( ids == 0 ) {
+				bindProjectDialog.formDialog('close');
+			}
+			else {
 			var url = routing.buildURL('milestone.bind-projects-to-milestone',config.data.milestone.id);
 			$.ajax({
 				url : url,
@@ -626,6 +630,7 @@
 
 				bindProjectDialog.formDialog('close');
 			});
+			}
 		});
 
 		// ************** init *******************

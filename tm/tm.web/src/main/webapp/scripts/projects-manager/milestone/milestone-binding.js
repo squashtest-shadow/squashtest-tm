@@ -208,7 +208,11 @@ define([ 'module', "jquery", "squash.basicwidgets", "workspace.routing", "squash
 			bindMilestoneDialog.on('formdialogconfirm', function() {
 				var ids = getAllCheckedIds();
 				var url = routing.buildURL('milestone.bind-milestones-to-project', config.data.project.id); 
-		
+				
+				if ( ids == 0 ) {
+					bindMilestoneDialog.formDialog('close');
+				}
+				else {
 				$.ajax({
 					url : url,
 					type : 'POST',
@@ -217,7 +221,7 @@ define([ 'module', "jquery", "squash.basicwidgets", "workspace.routing", "squash
 					refreshAllTables();
 					bindMilestoneDialog.formDialog('close');
 				});	
-			
+				}
 			});
 			
 			
