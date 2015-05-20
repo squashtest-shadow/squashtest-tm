@@ -461,7 +461,7 @@
 		<comp:error-message forField="name" />
     </div>
     <div class="popup-dialog-buttonpane">
-      <input type="button" value="${renameLabel}" data-def="evt=confirm, mainbtn" />
+      <input type="button" value="${confirmLabel}" data-def="evt=confirm, mainbtn" />
       <input type="button" value="${cancelLabel}" data-def="evt=cancel" />
     </div>
   </div>
