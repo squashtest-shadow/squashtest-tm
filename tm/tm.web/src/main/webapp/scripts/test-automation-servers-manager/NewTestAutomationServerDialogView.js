@@ -86,7 +86,7 @@ define([ "jquery", "underscore", "backbone", "handlebars", "app/lnf/Forms", "./N
 		},
 
 		changeBoolProp : function(event) {
-			var cbox = event.target;
+			var cbox = event.target; 
 			this.model.set(cbox.name, cbox.checked);
 		},
 
@@ -96,7 +96,7 @@ define([ "jquery", "underscore", "backbone", "handlebars", "app/lnf/Forms", "./N
 		},
 
 		onConfirm : function(event) {
-			if (this.validate(event)) {
+			if (this.validate(event)) { 
 				this.cleanup();
 				this.trigger("newtestautomationserver.confirm");
 			}
