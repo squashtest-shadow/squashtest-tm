@@ -37,6 +37,7 @@
 
 <f:message var="confirmLabel" key="label.Confirm" />
 <f:message var="cancelLabel" key="label.Cancel" />
+<f:message var="closeLabel" key="label.Close" />
 <f:message var="okLabel" key="label.Ok" />
 <f:message var="noServerLabel" key="label.NoServer" />
 
@@ -227,7 +228,7 @@
     <input type="button" value="${cancelLabel}" data-def="mainbtn=main, evt=cancel, state=pleasewait" />
     <input type="button" value="${confirmLabel}" data-def="mainbtn=main, evt=confirm, state=main" />
     <input type="button" value="${cancelLabel}" data-def="evt=cancel, state=main" />
-    <input type="button" value="${okLabel}" data-def="mainbtn=main, evt=cancel, state=noTAProjectAvailable" />
+    <input type="button" value="${closeLabel}" data-def="mainbtn=main, evt=cancel, state=noTAProjectAvailable" />
   </div>
 
 </div>
