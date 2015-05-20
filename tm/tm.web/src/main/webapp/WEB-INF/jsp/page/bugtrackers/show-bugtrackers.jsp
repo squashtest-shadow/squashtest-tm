@@ -33,6 +33,7 @@
 <f:message var="addLabel"       key="label.Add"/>
 <f:message var="confirmLabel"   key="label.Confirm"/>
 <f:message var="cancelLabel"    key="label.Cancel"/>
+<f:message var="closeLabel"    key="label.Close"/>
 
 <layout:info-page-layout titleKey="squashtm.bugtrackers.title" isSubPaged="true" main="bugtracker-manager/bugtracker-manager.js">
 	<jsp:attribute  name="head">	
@@ -147,7 +148,7 @@
       <div class="popup-dialog-buttonpane">
      	 <input type="button" value="${addAnotherLabel}" data-def="mainbtn, evt=addanother"/>
         <input type="button" value="${addLabel}" data-def="mainbtn, evt=confirm"/>
-        <input type="button" value="${cancelLabel}" data-def="evt=cancel"/>
+        <input type="button" value="${closeLabel}" data-def="evt=cancel"/>
       </div>
           
 </div>
