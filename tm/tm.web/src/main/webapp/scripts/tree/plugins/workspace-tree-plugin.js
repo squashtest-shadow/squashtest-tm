@@ -226,10 +226,19 @@ define(['jquery', 'underscore', 'workspace.tree-node-copier', 'workspace.permiss
 			
 			var lostMilestones = projects.willMilestonesBeLost(targetProject, srcProjects);
 			if (lostMilestones){
-				addendum = translator.get('message.warnCopyToDifferentLibrary.milestonesDiffer');
+				if (target.getName() === 'RequirementLibrary'){
+					addendum = translator.get('message.warnCopyToDifferentLibrary.milestonesDiffer.requirement');
+					msg = msg.replace('</ul>', addendum + '</ul>');
+				}
+				else if (target.getName() === 'TestCaseLibrary'){
+				addendum = translator.get('message.warnCopyToDifferentLibrary.milestonesDiffer.testcase');
 				msg = msg.replace('</ul>', addendum + '</ul>');
+				}
+				else {
+					addendum = translator.get('message.warnCopyToDifferentLibrary.milestonesDiffer.campaign');
+					msg = msg.replace('</ul>', addendum + '</ul>');
+				}
 			}
-			
 			oneshot.show('Info', msg)
 			.done(function() {
 				defer.resolve();
