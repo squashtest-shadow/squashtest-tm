@@ -315,6 +315,10 @@ require(["common"], function(){
 		});
 		$.squash.openMessage(warn.errorTitle, warn.errorMessage);
 	}
+	
+	cloneMilestoneDialog.on('formdialogopen', function(){
+		$( '#clone-milestone-end-date' ).text(translator.get("milestone.chooseDate"));	
+	});
 
 	cloneMilestoneDialog.on('formdialogcancel', function(){
 		cloneMilestoneDialog.formDialog('close');
