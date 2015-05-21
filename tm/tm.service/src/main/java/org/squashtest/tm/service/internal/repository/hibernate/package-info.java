@@ -506,10 +506,14 @@
 	 *  name of the class, because the client code assumes this will be the
 	 *  case.
 	 */
+	/*
+	 * Issue 4927 : have to add the project name in the select clause, whatever if we don't want it
+	 */
 	@NamedQuery(name = "requirementVersion.findDistinctRequirementVersionsByTestCases",
 				query = "select distinct RequirementVersion, " +
 						"(select min(m.endDate) from RequirementVersion v left join v.milestones m " +
-						"where v.id = RequirementVersion.id) as endDate " +
+						"where v.id = RequirementVersion.id) as endDate," +
+						"Project.name " +
 						"from RequirementVersion RequirementVersion " +
 						"inner join RequirementVersion.category RequirementCategory " +
 						"inner join RequirementVersion.requirement Requirement " +
