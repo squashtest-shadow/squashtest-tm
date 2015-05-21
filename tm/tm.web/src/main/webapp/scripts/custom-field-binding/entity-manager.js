@@ -47,6 +47,12 @@ define([ "require", "./panel", "./table", "./popup", "./popupDelete" ], function
 	function getTableEditURL(settings) {
 		return settings.baseURL;
 	}
+	
+	function getPopupDeleteBindingSelector(settings){
+		//get the delete popup id before the selector becomes invalid because JQuery popup moved to the end of page
+		//Mantis 4962
+		return "#"+$(settings.mainSelector+" .cuf-binding-popup-delete").attr('id');
+	}
 
 	function getTableConf(settings) {
 		return {
@@ -64,7 +70,8 @@ define([ "require", "./panel", "./table", "./popup", "./popupDelete" ], function
 			deleteMessageThird : settings.tableDeleteMessageThird,
 			deleteMessageFourth : settings.tableDeleteMessageFourth,
 			deleteTooltip : settings.tableDeleteTooltip,
-			renderingLocations : settings.tableRenderingLocations
+			renderingLocations : settings.tableRenderingLocations,
+			deletePopupSelector : getPopupDeleteBindingSelector(settings)
 		};
 	}
 

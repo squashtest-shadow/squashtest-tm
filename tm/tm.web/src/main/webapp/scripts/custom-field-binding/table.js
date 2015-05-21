@@ -199,7 +199,7 @@ define(
 
 					unbindButtons : {
 						url : settings.deleteUrl + "/{id}",
-						popupmessage : "<div class='display-table-row'><div class='display-table-cell warning-cell'><div class='generic-error-signal'></div></div><div class='display-table-cell'>"+settings.deleteMessage+"</span></div></div>",
+						delegate : settings.deletePopupSelector,
 						tooltip : settings.deleteTooltip,
 						success : function() {
 							$(settings.selector).squashTable().refresh();
