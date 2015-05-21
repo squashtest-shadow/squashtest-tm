@@ -214,7 +214,9 @@ define([ "jquery", "squashtable/squashtable.collapser", "custom-field-values", "
 		var cufColumnPosition = 4;
 		var language = settings.language, urls = makeTableUrls(settings), permissions = settings.permissions;
 
-		var table = $("#test-steps-table-"+urls.testCaseId);
+		// select the table and the panel that holds the scrollbar
+		var table = $("#test-steps-table-"+urls.testCaseId),
+			tablePanel = $("#test-steps-tabs-panel .table-tab-wrap");
 
 		var cufTableHandler = cufValuesManager.cufTableSupport;
 
@@ -415,7 +417,31 @@ define([ "jquery", "squashtable/squashtable.collapser", "custom-field-values", "
 
 				popup.formDialog('open');
 			});
+			
+			/*
+			 * [Issue 4932] : 
+			 * 
+			 * 1 - the plugin jeditable-ckeditor creates the "input" as it should. This input is a compound of a 
+			 * a div (the actual elemeent which the user actually interact with) and a textarea 
+			 * (invisible, and backs the data of the div), both required by CKEditor 
+			 * to work properly. Note that the textarea is a regular input while the div is not.
+			 *  
+			 * 2 - jeditable at some point does the following : $(':input:visible:enabled:first', form).focus(); 
+			 * which makes it focus on the textarea while we want it to focus on the div instead.
+			 * 
+			 * The only working solution was to amend the source of jeditable and have it trigger an event 
+			 * (named opencomplete.editable) and make the viewport refocus on the correct element this time.
+			 * 
+			 */
 
+			
+			table.on('opencomplete.editable', 'td', function(evt){
+				var td = $(evt.currentTarget);
+				var zediv = td.find('div.cke');
+				if (zediv.length>0){
+					zediv.focus();
+				}
+			})
 		}
 
 		if (permissions.isAttachable) {

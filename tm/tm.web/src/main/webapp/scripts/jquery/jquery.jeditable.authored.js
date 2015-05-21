@@ -256,6 +256,9 @@
                 if (settings.select) {
                     input.select();
                 }
+                
+                // Issue 4932 : issue an event when the DOM is created
+                $(self).trigger('opencomplete.editable');
         
                 /* discard changes if pressing esc */
                 input.keydown(function(e) {

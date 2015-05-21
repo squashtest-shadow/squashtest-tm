@@ -40,7 +40,12 @@ define([ "jquery", "squash.translator", "datepicker/jquery.squash.datepicker-loc
 			// abort edit if clicked on a hyperlink (being the tag itself or its content)
 			onedit : function(settings, editable, evt){
 				var $target = $(evt.target);
-				return ! ( $target.is('a') || $target.parents('a').length > 0);
+				var canOpen = ! ( $target.is('a') || $target.parents('a').length > 0);
+				if (canOpen){
+					// relay to any listener that the widget will enter the editable state  
+					$(editable).trigger('onedit.editable', { settings : settings, editable : editable, event : evt});
+				}
+				return canOpen;
 			}
 		});
 

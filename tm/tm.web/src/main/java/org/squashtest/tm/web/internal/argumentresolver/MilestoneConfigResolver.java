@@ -32,6 +32,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.core.MethodParameter;
 import org.springframework.web.bind.support.WebDataBinderFactory;
 import org.springframework.web.context.request.NativeWebRequest;
@@ -51,15 +52,15 @@ public class MilestoneConfigResolver   implements HandlerMethodArgumentResolver 
 
 	@Inject
 	private MilestoneFinderService milestoneFinderService;
-	
-	
+
+
 	@Retention(RetentionPolicy.RUNTIME)
 	@Target(ElementType.PARAMETER)
-	 public static @interface CurrentMilestone {  
+	public static @interface CurrentMilestone {
 
-		 }
+	}
 
-	private static final String MILESTONE = "milestones";  
+	private static final String MILESTONE = "milestones";
 
 	@Override
 	public boolean supportsParameter(MethodParameter parameter) {
@@ -69,19 +70,19 @@ public class MilestoneConfigResolver   implements HandlerMethodArgumentResolver 
 	@Override
 	public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer,
 			NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
-        
-		    HttpServletRequest servletRequest = (HttpServletRequest) webRequest.getNativeRequest();
-            Cookie cookie = WebUtils.getCookie(servletRequest, MILESTONE);
-            //it's under 9000 ! just a fake id in case we don't find cookie.
-		    String cookieId = cookie != null ? cookie.getValue() : "-9000";
-			final Long milestoneId = Long.parseLong(cookieId);
-			List<Milestone> visibles = milestoneFinderService.findAllVisibleToCurrentUser();
-			Milestone milestone = (Milestone) CollectionUtils.find(visibles, new Predicate() {	
-				@Override
-				public boolean evaluate(Object milestone) {		
-					return ((Milestone)milestone).getId().equals(milestoneId);
-				}
-			});		
-		   return milestone != null ? milestone : null;  
+
+		HttpServletRequest servletRequest = (HttpServletRequest) webRequest.getNativeRequest();
+		Cookie cookie = WebUtils.getCookie(servletRequest, MILESTONE);
+		//it's under 9000 ! just a fake id in case we don't find cookie.
+		String cookieId = (cookie != null && (!StringUtils.isBlank(cookie.getValue()))) ? cookie.getValue() : "-9000";
+		final Long milestoneId = Long.parseLong(cookieId);
+		List<Milestone> visibles = milestoneFinderService.findAllVisibleToCurrentUser();
+		Milestone milestone = (Milestone) CollectionUtils.find(visibles, new Predicate() {
+			@Override
+			public boolean evaluate(Object milestone) {
+				return ((Milestone)milestone).getId().equals(milestoneId);
+			}
+		});
+		return milestone != null ? milestone : null;
 	}
 }
