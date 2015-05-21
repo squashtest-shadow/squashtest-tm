@@ -400,6 +400,7 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil","workspace.ro
 			addModifyResultDialog.on("confirmdialogconfirm",function() {
 				var table = $('#requirement-search-result-table').dataTable();
 				var ids = self.getVersionIdsOfSelectedTableRowList(table);
+				var editableIds = self.getIdsOfEditableSelectedTableRowList(table);
 				var columns = ["criticality","category","status"];
 				var index = 0;
 				
@@ -407,8 +408,8 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil","workspace.ro
 					if($("#"+columns[index]+"-checkbox").prop('checked')){
 						self.updateDisplayedValueInColumn(table, columns[index]);
 						var value = $("#"+columns[index]+"-combo").find('option:selected').val();
-						for(var i=0; i<ids.length; i++){
-							var urlPOST = routing.buildURL('requirementversions', ids[i]);
+						for(var i=0; i<editableIds.length; i++){
+							var urlPOST = routing.buildURL('requirementversions', editableIds[i]);
 							$.post(urlPOST, {
 								value : value,
 								id : "requirement-"+columns[index]	
