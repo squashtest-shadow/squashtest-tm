@@ -568,9 +568,6 @@ public class AdvancedSearchController {
 			model.addPanel(testcaseVersionSearchInterfaceDescription.createMilestonePanel(locale));
 		}
 
-		// Version
-		model.addPanel(requirementVersionSearchInterfaceDescription.createRequirementVersionPanel(locale));
-
 		// Content
 		model.addPanel(testcaseVersionSearchInterfaceDescription.createContentPanel(locale));
 
