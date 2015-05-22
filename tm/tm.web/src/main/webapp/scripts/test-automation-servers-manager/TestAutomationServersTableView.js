@@ -91,7 +91,6 @@ define([ 'jquery', 'backbone', "underscore", './NewTestAutomationServerDialogVie
 
 			function discard() {
 				self.stopListening(self.newTasDialog);
-				self.newTasDialog.undelegateEvents();
 				self.newTasDialog = null;
 				ButtonUtil.enable($(showButton));
 				self.table.squashTable().fnDraw();
@@ -118,7 +117,8 @@ define([ 'jquery', 'backbone', "underscore", './NewTestAutomationServerDialogVie
 
 			function discard() {
 				self.stopListening(self.newTasDialog);
-				self.newTasDialog.undelegateEvents();
+			//	self.newTasDialog.undelegateEvents();
+				self.newTasDialog.$el.formDialog('close');
 				self.newTasDialog = null;
 				ButtonUtil.enable($(showButton));
 				self.table.squashTable().fnDraw();

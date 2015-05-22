@@ -18,8 +18,8 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ "jquery", "underscore", "backbone", "handlebars", "app/lnf/Forms", "./NewTestAutomationServerModel", "jquery.squash.formdialog", "jquery.ckeditor",
-		"datepicker/jquery.squash.datepicker-locales" ], function($, _, Backbone, Handlebars, Forms, Model) {
+define([ "jquery", "underscore", "backbone", "handlebars", "app/lnf/Forms", "./NewTestAutomationServerModel", "squash.configmanager", "jquery.squash.formdialog", "jquery.ckeditor",
+		"datepicker/jquery.squash.datepicker-locales" ], function($, _, Backbone, Handlebars, Forms, Model, confman) {
 	"use strict";
 
 	/*
@@ -40,9 +40,11 @@ define([ "jquery", "underscore", "backbone", "handlebars", "app/lnf/Forms", "./N
 
 			this.render();
 
-			this.$el.formDialog();
-			this.$el.formDialog("open");
-		},
+			this.$el.formDialog({
+				autoOpen : true
+			});
+
+		}, 
 
 		render: function() {
 			Forms.form(this.$el).clearState();
@@ -91,15 +93,17 @@ define([ "jquery", "underscore", "backbone", "handlebars", "app/lnf/Forms", "./N
 		},
 
 		onCancel : function(event) {
-			this.cleanup();
+			
 			this.trigger("newtestautomationserver.cancel");
+			this.cleanup();
 		},
 
 		onConfirm : function(event) {
+		
 			if (this.validate(event)) { 
-				this.cleanup();
 				this.trigger("newtestautomationserver.confirm");
 			}
+			this.cleanup();
 		},
 
 		onConfirmAndCarryOn : function(event) {
@@ -136,14 +140,31 @@ define([ "jquery", "underscore", "backbone", "handlebars", "app/lnf/Forms", "./N
 		},
 
 		cleanup : function() {
-			this.$el.addClass("not-displayed");
-			Forms.form(this.$el).clearState();
+			// this.$el.addClass("not-displayed");
+		//	Forms.form(this.$el).clearState();
 			this.$el.off("formdialogconfirm formdialogcancel formdialogclose formdialogconfirm-carry-on");
-			this.$el.formDialog("destroy");
+			
+			this.$el = null;
+			// this.$el.formDialog("destroy");
 		},
 
 		configureCKEs : function() {
 			var self = this;
+			var textareas = this.$el.find("textarea"),
+				ckconf = confman.getStdCkeditor();
+			
+			textareas.each(function() {
+				$(this).ckeditor(function() {
+				}, ckconf);
+
+				CKEDITOR.instances[$(this).attr("id")].on('change', function(e) {
+					self.updateCKEModelAttr.call(self, e);
+				});
+			});
+		},
+		/*
+		configureCKEs : function() {
+			var self = this; 
 			var textareas = this.$el.find("textarea");
 			textareas.each(function() {
 				$(this).ckeditor(function() {
@@ -154,6 +175,7 @@ define([ "jquery", "underscore", "backbone", "handlebars", "app/lnf/Forms", "./N
 				});
 			});
 		},
+		*/
 		updateCKEModelAttr : function(event) {
 			var attrInput = event.sender;
 			var attrName = attrInput.element.$.getAttribute("name");
