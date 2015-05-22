@@ -378,7 +378,11 @@ define([ "jquery", "backbone", "app/squash.handlebars.helpers", "squash.translat
 			enteredValue = enteredValue || {};
 			// no enteredValue.values means 'select everything', empty array mean everything
 			_.each(options, function(option) {
-				option.selected = (!enteredValue.values) || (enteredValue.values.length === 0) || _.contains(enteredValue.values, option.code);
+				// Issue 4970 : _.contains failed because tried to find a string in a collection of int
+				// the check on isNaN is not necessary but rather be safe than sorry
+				var code = parseInt(option.code, 10);
+				code = (isNaN(code)) ? option.code : code;
+				option.selected = (!enteredValue.values) || (enteredValue.values.length === 0) || _.contains(enteredValue.values, code);
 			});
 			var context = {"multiselect-id": fieldId, "multiselect-title": fieldTitle, options: options};
 			var $fieldDom = this._appendFieldDom(tableId, fieldId, this._compileTemplate("#multiselect-perimeter-template", context));
