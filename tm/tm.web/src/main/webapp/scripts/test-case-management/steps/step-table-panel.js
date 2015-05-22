@@ -441,7 +441,7 @@ define([ "jquery", "squashtable/squashtable.collapser", "custom-field-values", "
 				if (zediv.length>0){
 					zediv.focus();
 				}
-			})
+			});
 		}
 
 		if (permissions.isAttachable) {
