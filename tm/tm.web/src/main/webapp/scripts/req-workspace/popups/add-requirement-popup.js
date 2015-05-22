@@ -90,13 +90,22 @@ define([ 'jquery', 'tree', 'custom-field-values', 'workspace.projects', '../perm
 		dialog.on('formdialogopen', function(){
 			var node = tree.jstree('get_selected');	
 			if (! rules.canCreateRequirement(node)){
-				var errorState;
-				switch (rules.whyCantCreate(node)){
-				case 'milestone-denied' : errorState = 'milestone-denied'; break;
-				case 'permission-denied': errorState = 'permission-denied';break;
-				default : throw "there is a bug : permission-rules said you can't create a node but you actually can";
-				}
-				dialog.formDialog('setState', errorState);
+				/* Acknowledged by Safi, David and Gregory : 
+				 * Inactivated buttons and item-menu should not be clickable. 
+				 * No error popup should be visible despite the fact a lot of these error popup have been implemented since 1.11.
+				 * Due to event flow bug in jQuery, we cant't prevent the popup 'onopen' event to be triggered,
+				 * so it was decided to close the popup immediately if rules check function return false,
+				 * and inactivate the code dedicated to the error message.
+				 * See Issue 4972
+				 * */
+				dialog.formDialog('close');
+//				var errorState;
+//				switch (rules.whyCantCreate(node)){
+//				case 'milestone-denied' : errorState = 'milestone-denied'; break;
+//				case 'permission-denied': errorState = 'permission-denied';break;
+//				default : throw "there is a bug : permission-rules said you can't create a node but you actually can";
+//				}
+//				dialog.formDialog('setState', errorState);
 			}
 			else{
 				dialog.formDialog('setState','confirm');
