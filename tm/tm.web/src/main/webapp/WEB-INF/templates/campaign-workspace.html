@@ -121,7 +121,7 @@
             <!-- ________________TREE MENU_______________ -->
             <div id="tree_element_menu" class="tree-top-toolbar unstyled-pane">
               <div class="button-group">
-                <a id="tree-create-button" class="sq-icon-btn" th:title="#{label.create} +'...'"
+                <a id="tree-create-button" role="buttonmenu" class="sq-icon-btn" th:title="#{label.create} +'...'"
                   title="create">
                   <span class="ui-icon ui-icon-plusthick"></span>
                 </a>
@@ -139,23 +139,23 @@
               </div>
 
               <div class="button-group">
-                <a id="copy-node-tree-button" class="sq-icon-btn" th:title="#{tree.button.copy-node.label}"
+                <a id="copy-node-tree-button" role="button" class="sq-icon-btn" th:title="#{tree.button.copy-node.label}"
                   title="copy node">
                   <span class="ui-icon ui-icon-copy"></span>
                 </a>
-                <a id="paste-node-tree-button" class="sq-icon-btn" th:title="#{tree.button.paste-node.label}"
+                <a id="paste-node-tree-button" role="button" class="sq-icon-btn" th:title="#{tree.button.paste-node.label}"
                   title="paste node">
                   <span class="ui-icon ui-icon-clipboard"></span>
                 </a>
               </div>
 
               <div class="button-group">
-                <a id="rename-node-tree-button" class="sq-icon-btn" th:title="#{tree.button.rename-node.label} + '...'"
+                <a id="rename-node-tree-button" role="button" class="sq-icon-btn" th:title="#{tree.button.rename-node.label} + '...'"
                   title="rename node">
                   <span class="ui-icon ui-icon-pencil"></span>
                 </a>
 
-                <a id="tree-import-button" class="buttonmenu sq-icon-btn"
+                <a id="tree-import-button" role="buttonmenu" class="buttonmenu sq-icon-btn"
                   th:title="#{squashtm.treemenu.import.label}+'...'" title="rename node">
                   <span class="ui-icon ui-icon-transferthick-e-w"></span>
                 </a>
@@ -178,7 +178,7 @@
               </div>
               <div id="wizard-tree-pane" class="button-group" th:if="${ not #lists.isEmpty(wizards)}">
                 <a id="wizard-tree-button" class="buttonmenu sq-icon-btn" th:title="#{label.wizards}+'...'"
-                  title="wizards...">
+                  title="wizards..." role="buttonmenu" >
                   <span class="ui-icon ui-icon-star"></span>
                 </a>
                 <script id="ws-wizard-tree-menu-template" type="text/x-handlebars-template">		
@@ -199,7 +199,7 @@
               </div>
 
               <div class="button-group snap-right">
-                <a id="delete-node-tree-button" class="sq-icon-btn" th:title="#{tree.button.delete.label}+'...'"
+                <a id="delete-node-tree-button" role="button" class="sq-icon-btn" th:title="#{tree.button.delete.label}+'...'"
                   title="delete...">
                   <span class="ui-icon ui-icon-trash"></span>
                 </a>

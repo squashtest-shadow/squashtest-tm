@@ -72,6 +72,7 @@ define([ "jquery", "jqueryui" ], function($) {
 			var btn = this.element, menu = this.element.next(), components = btn.add(menu);
 
 			btn.addClass("buttonmenu-button");
+			btn.attr('role', 'buttonmenu');
 			menu.addClass("buttonmenu-menu");
 
 			var div = $("<div/>", {
@@ -100,6 +101,10 @@ define([ "jquery", "jqueryui" ], function($) {
 
 			// events
 			button.on("click", function() {
+				if (button.hasClass('ui-state-disabled')){
+					return false;
+				}
+				
 				if (menu.hasClass("expand")) {
 					self.close();
 				} else {
@@ -132,12 +137,12 @@ define([ "jquery", "jqueryui" ], function($) {
 		},
 
 		enable : function() {
-			this.element.prop("disabled", false);
+			this.element.removeClass('ui-state-disabled');
 		},
 
 		disable : function(selector) {
 			this.close();
-			this.element.prop("disabled", true);
+			this.element.addClass('ui-state-disabled');
 		},
 
 		open : function() {
@@ -178,21 +183,25 @@ define([ "jquery", "jqueryui" ], function($) {
 				menu.css("right", 0);
 			}
 		},
-
+		
 		_bindLi : function() {
 			var self = this, settings = this.options, menu = this.element.next();
-
+			
+			// item disabled ? event prevented !
+			menu.find('li').each(function(){
+				$(this).bindFirst('click', function(evt){
+					if ($(this).hasClass('ui-state-disabled')){
+						evt.stopImmediatePropagation();
+						return false;
+					}
+				});
+			});
+			
 			menu.on("click", "li", function(evt) {
 				var $li = $(this);
 
-				// item disabled ? event prevented !
-				if ($li.hasClass("ui-state-disabled")) {
-					evt.stopImmediatePropagation();
-					return false;
-				}
-
 				// if no policy was set to prevent the menu from closing, let the menu close
-				else if (!($li.hasClass("no-auto-hide") || settings["no-auto-hide"])) {
+				if (!($li.hasClass("no-auto-hide") || settings["no-auto-hide"])) {
 					self.close();
 				}
 			});

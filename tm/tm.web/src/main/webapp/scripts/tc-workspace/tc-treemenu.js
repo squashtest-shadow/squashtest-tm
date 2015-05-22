@@ -30,31 +30,31 @@ define(["jquery", "./utils", "./permissions-rules", "workspace/WorkspaceWizardMe
 	function decorateEnablingMethods(buttons){
 		var i=0, len = buttons.length;
 		
-		function btnenable(){
-			this.prop("disabled", false);
+		function cssenable(){
+			this.removeClass("disabled ui-state-disabled");
 		}
 		
-		function btndisable(){
-			this.prop("disabled", true);
+		function cssdisable(){
+			this.addClass("disabled ui-state-disabled");
 		}
 		
-		function itemenable(){
-			this.removeClass("ui-state-disabled");
+		function menuenable(){
+			this.buttonmenu('enable');
 		}
 		
-		function itemdisable(){
-			this.addClass("ui-state-disabled");
+		function menudisable(){
+			this.buttonmenu('disable');
 		}
 		
 		for (i=0;i<len;i++){
 			var jqbtn = buttons[i];
-			if (jqbtn.attr("role")==="button"){
-				jqbtn.enable = btnenable;
-				jqbtn.disable = btndisable;
+			if (jqbtn.attr('role') === "buttonmenu"){
+				jqbtn.enable = menuenable;
+				jqbtn.disable = menudisable;
 			}
 			else{
-				jqbtn.enable = itemenable;
-				jqbtn.disable = itemdisable;
+				jqbtn.enable = cssenable;
+				jqbtn.disable = cssdisable;
 			}
 		}
 	}
