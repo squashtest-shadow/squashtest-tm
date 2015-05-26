@@ -790,4 +790,10 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 
 	}
 
+	boolean areMilestoneValid(TestCaseInstruction instr){
+		LogTrain dummy = new LogTrain();
+		updateStrategy.validateMilestones(instr, dummy);
+		return dummy.hasNoErrorWhatsoever();
+	}
+
 }

@@ -35,7 +35,7 @@ public class OptionalStringArrayCellCoercer extends TypeBasedCellValueCoercer<St
 	/**
 	 * Default list separator.
 	 */
-	private static final String DEFAULT_SEPARATOR = "\\s*|\\s*";
+	private static final String DEFAULT_SEPARATOR = "|";
 	private static final String[] EMPTY = {};
 	/**
 	 * Instance of {@link OptionalStringArrayCellCoercer} using default

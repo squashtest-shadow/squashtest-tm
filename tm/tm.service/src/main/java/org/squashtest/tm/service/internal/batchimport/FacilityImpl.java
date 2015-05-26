@@ -582,7 +582,9 @@ public class FacilityImpl implements Facility {
 
 		doUpdateCustomFields(cufValues, orig);
 
-		bindMilestones(instr, orig);
+		if (validator.areMilestoneValid(instr)){
+			bindMilestones(instr, orig);
+		}
 
 		// move the test case if its index says it has to move
 		Integer order = target.getOrder();
