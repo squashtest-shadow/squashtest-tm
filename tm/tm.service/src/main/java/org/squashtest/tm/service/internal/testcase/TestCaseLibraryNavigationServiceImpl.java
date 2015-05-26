@@ -34,6 +34,7 @@ import java.util.Set;
 import javax.inject.Inject;
 import javax.inject.Provider;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.MessageSource;
 import org.springframework.security.access.prepost.PostFilter;
@@ -477,6 +478,19 @@ TestCaseLibraryNavigationService {
 
 		return statisticsService.gatherTestCaseStatisticsBundle(tcIds);
 	}
+	
+	@Override
+	public TestCaseStatisticsBundle getStatisticsForSelection(Collection<Long> libraryIds, Collection<Long> nodeIds,Milestone activeMilestone) {
+		
+		Collection<Long> tcIds = findTestCaseIdsFromSelection(libraryIds, nodeIds);
+		
+		if (activeMilestone!=null) {
+			tcIds = filterTcIdsListsByMilestone(tcIds,activeMilestone);
+		}
+		
+		return statisticsService.gatherTestCaseStatisticsBundle(tcIds);
+	}
+
 
 	@Override
 	public Collection<Long> findTestCaseIdsFromSelection(Collection<Long> libraryIds, Collection<Long> nodeIds) {
@@ -668,6 +682,15 @@ TestCaseLibraryNavigationService {
 		else{
 			return new ArrayList<>();
 		}
+	}
+	
+
+	private Collection<Long> filterTcIdsListsByMilestone(
+			Collection<Long> tcIds, Milestone activeMilestone) {
+		
+		List<Long> tcInMilestone = findAllTestCasesLibraryNodeForMilestone(activeMilestone);
+		Collection<Long> tcFiltered =  CollectionUtils.retainAll(tcIds, tcInMilestone);
+		return tcFiltered;
 	}
 
 }

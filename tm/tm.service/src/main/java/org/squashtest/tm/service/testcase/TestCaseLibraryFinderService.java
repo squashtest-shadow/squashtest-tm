@@ -23,6 +23,7 @@ package org.squashtest.tm.service.testcase;
 import java.util.Collection;
 import java.util.List;
 
+import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseLibrary;
 import org.squashtest.tm.domain.testcase.TestCaseLibraryNode;
@@ -120,6 +121,19 @@ public interface TestCaseLibraryFinderService {
 	 * @return TestcaseStatisticsBundle
 	 */
 	TestCaseStatisticsBundle getStatisticsForSelection(Collection<Long> libraryIds, Collection<Long> nodeIds);
+	
+	/**
+	 * Passing the ids of some selected TestCaseLibrary and TestCaseLibraryNodes (in separate collections), will return
+	 * the statistics covering all the TestCases encompassed by this selection. This selection will be filtered by the milestone.
+	 * The test case ids that cannot be accessed for security reason will be filtered out.
+	 * 
+	 * 
+	 * @param libraryIds
+	 * @param nodeIds
+	 * @param activeMilestone
+	 * @return TestcaseStatisticsBundle
+	 */
+	TestCaseStatisticsBundle getStatisticsForSelection(Collection<Long> libraryIds, Collection<Long> nodeIds, Milestone activeMilestone);
 
 	/**
 	 * Passing the ids of some selected TestCaseLibrary and TestCaseLibraryNodes (in separate collections), will return

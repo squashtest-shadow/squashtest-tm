@@ -266,9 +266,10 @@ LibraryNavigationController<TestCaseLibrary, TestCaseFolder, TestCaseLibraryNode
 			LIBRARIES, NODES })
 	public @ResponseBody TestCaseStatisticsBundle getStatisticsAsJson(
 			@RequestParam(value = LIBRARIES, defaultValue = "") Collection<Long> libraryIds,
-			@RequestParam(value = NODES, defaultValue = "") Collection<Long> nodeIds) {
+			@RequestParam(value = NODES, defaultValue = "") Collection<Long> nodeIds, 
+			@CurrentMilestone Milestone activeMilestone) {
 
-		return testCaseLibraryNavigationService.getStatisticsForSelection(libraryIds, nodeIds);
+		return testCaseLibraryNavigationService.getStatisticsForSelection(libraryIds, nodeIds, activeMilestone);
 	}
 
 	@RequestMapping(value = "/dashboard", method = RequestMethod.GET, produces = ContentTypes.TEXT_HTML, params = {
