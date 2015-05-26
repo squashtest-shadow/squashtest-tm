@@ -317,13 +317,12 @@ define([ 'module', "jquery", "squash.basicwidgets", "workspace.routing", "squash
 			$("#unbind-milestone-button").on('click', function(){
 				var ids = $("#binded-milestone-table").squashTable().getSelectedIds();
 
-				$("#warning-unbind-message").text(warn.errorMulti);
+				//$("#warning-unbind-message").text(warn.errorMulti);
 				
 				if (ids.length>0){
 					var popup = $("#unbind-milestone-popup");
 					popup.data('entity-id', ids);
 					popup.confirmDialog('open');
-		
 				}
 				else{
 					displayNothingSelected();

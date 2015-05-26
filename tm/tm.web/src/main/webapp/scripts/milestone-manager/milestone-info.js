@@ -549,12 +549,20 @@
 
 			if (ids.length>0){
 				var popup = $("#unbind-project-popup");
+				var popupTxt = $("#unbind-project-popup .generic-error-main");
 				popup.data('entity-id', ids);
 				popup.confirmDialog('open');
+				popupTxt.text(translator.get('dialog.milestone.unbind.milestone.warning.single'));
+				//checking for multiselection
+				if(ids.length>1){
+					popupTxt.text(translator.get('dialog.milestone.unbind.milestone.warning.multi'));
+				}
 			}
 			else{
 				displayNothingSelected();
 			}
+			
+			
 		});
 
 		function displayNothingSelected(){

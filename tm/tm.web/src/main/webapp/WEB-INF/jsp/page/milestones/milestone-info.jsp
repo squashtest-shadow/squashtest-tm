@@ -291,7 +291,7 @@
 
 <!-- ------------------------------------UNBIND PROJECT POPUP------------------------------------------------------- -->
   <f:message var="unbindProjectTitle" key="dialog.milestone.unbind.project.title" />
-  <f:message var="warningUnbind" key="dialog.milestone.unbind.project.warning" />
+  <f:message var="warningUnbind" key="dialog.milestone.unbind.milestone.warning.single" />
   <div id="unbind-project-popup" class="popup-dialog not-displayed" title="${unbindProjectTitle}">
     
         <comp:notification-pane type="error" txtcontent="${warningUnbind}"/>
