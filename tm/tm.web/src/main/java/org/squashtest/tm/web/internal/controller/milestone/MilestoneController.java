@@ -20,14 +20,19 @@
  */
 package org.squashtest.tm.web.internal.controller.milestone;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -36,9 +41,13 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.SinglePageCollectionHolder;
 import org.squashtest.tm.domain.milestone.Milestone;
+import org.squashtest.tm.domain.project.Project;
+import org.squashtest.tm.domain.projectfilter.ProjectFilter;
 import org.squashtest.tm.service.milestone.MilestoneFinderService;
+import org.squashtest.tm.service.project.ProjectFilterModificationService;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
+import org.squashtest.tm.web.internal.model.jquery.FilterModel;
 
 @Controller
 @RequestMapping("/milestones")
@@ -52,6 +61,9 @@ public class MilestoneController {
 
 	@Inject
 	private InternationalizationHelper i18nHelper;
+	
+	@Inject
+	private ProjectFilterModificationService projectFilterService;
 
 	@RequestMapping(value = "/status-combo-data", method = RequestMethod.GET)
 	@ResponseBody
@@ -64,7 +76,15 @@ public class MilestoneController {
 	public DataTableModel<Milestone> findUserSelectableMilestones(){
 
 		List<Milestone> milestones = milestoneFinder.findAllVisibleToCurrentUser();
-
+		
+		//checking global project filter and filter milestone who aren't binded to at least one project in filter
+		ProjectFilter projectFilter = projectFilterService.findProjectFilterByUserLogin();
+		if (projectFilter.isEnabled()) {
+			 Collection<Milestone> milestonesCollection = CollectionUtils.retainAll(milestones, getMilestoneFromProjectFilter(projectFilter));
+			 milestones = new ArrayList<Milestone>(0);
+			 milestones.addAll(milestonesCollection);
+		}
+		
 		// they must be initially sorted by date descending
 		Collections.sort(milestones, new Comparator<Milestone>() {
 			@Override
@@ -81,6 +101,18 @@ public class MilestoneController {
 		Locale locale = LocaleContextHolder.getLocale();
 		return new MilestoneTableModelHelper(i18nHelper, locale).buildDataModel(holderCollection, "0");
 
+	}
+	
+	//--------------------------------- PRIVATE STUFF ---------------------------------//
+	
+	private Set<Milestone> getMilestoneFromProjectFilter(ProjectFilter projectFilter){
+		HashSet<Milestone> milestoneFiltered = new HashSet<Milestone>();
+		
+		List<Project> projects = projectFilter.getProjects();
+		for (Project project : projects) {
+			milestoneFiltered.addAll(project.getMilestones());
+		}
+		return milestoneFiltered;
 	}
 
 
