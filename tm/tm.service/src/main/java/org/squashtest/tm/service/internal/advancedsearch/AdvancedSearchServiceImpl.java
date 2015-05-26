@@ -527,12 +527,18 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 							crit.add(Restrictions.in("id", ids));// milestone.label now contains ids
 						}
 						break;
+
 					case "milestone.status":
 						List<String> statusValues = ((AdvancedSearchListFieldModel) model).getValues();
-						if (statusValues != null && !statusValues.isEmpty()) {
-							crit.add(Restrictions.in("status", convertStatus(statusValues)));
+						if (statusValues.isEmpty()) {
+							// We don't add crit and must not add some crit = null}
+						} else if (statusValues != null && !statusValues.isEmpty()) {
+							for (MilestoneStatus milestoneStatus : convertStatus(statusValues)) {
+								crit.add(Restrictions.eq("status", milestoneStatus));
+							}
 						}
 						break;
+
 					case "milestone.endDate":
 						Date startDate = ((AdvancedSearchTimeIntervalFieldModel) model).getStartDate();
 						Date endDate = ((AdvancedSearchTimeIntervalFieldModel) model).getEndDate();
@@ -575,6 +581,7 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 		for (String s : MILESTONE_SEARCH_FIELD) {
 			fields.remove(s);
 		}
+
 	}
 
 	private List<MilestoneStatus> convertStatus(List<String> values) {
