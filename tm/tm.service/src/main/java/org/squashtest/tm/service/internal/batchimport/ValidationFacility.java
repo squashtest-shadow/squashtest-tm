@@ -280,6 +280,11 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 			logs.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_REMOVE_CALLED_TC));
 		}
 
+		// 4 - milestone lock ?
+		if (model.isTestCaseLockedByMilestones(target)){
+			logs.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_MILESTONE_LOCKED));
+		}
+
 		return logs;
 	}
 
@@ -300,7 +305,12 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 			logs.addEntry(hasntPermission);
 		}
 
-		// 4 - check the index
+		// 4 - the test case must not be locked by a milestone
+		if (model.isTestCaseLockedByMilestones(target.getTestCase())){
+			logs.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_MILESTONE_LOCKED));
+		}
+
+		// 5 - check the index
 		TestCaseTarget testCase = target.getTestCase();
 		TargetStatus tcStatus = getModel().getStatus(testCase);
 		if (tcStatus.status == TO_BE_CREATED || tcStatus.status == EXISTS) {
@@ -342,6 +352,11 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 					Messages.IMPACT_CALL_AS_ACTION_STEP));
 		}
 
+		// 4.3 - the test case must not be locked by a milestone
+		if (model.isTestCaseLockedByMilestones(target.getTestCase())){
+			logs.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_MILESTONE_LOCKED));
+		}
+
 		// 5 - check the index
 		LogEntry indexCheckLog = checkStepIndex(ImportMode.CREATE, target, ImportStatus.WARNING,
 				Messages.IMPACT_STEP_CREATED_LAST);
@@ -369,7 +384,12 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 			logs.addEntry(hasntPermission);
 		}
 
-		// 4 - the step must exist
+		// 4 - the test case must not be locked by a milestone
+		if (model.isTestCaseLockedByMilestones(target.getTestCase())){
+			logs.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_MILESTONE_LOCKED));
+		}
+
+		// 5 - the step must exist
 		boolean exists = model.stepExists(target);
 		if (!exists) {
 			if (target.getIndex() == null) {
@@ -417,6 +437,11 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 
 		}
 
+		// 4.3 - the test case must not be locked by a milestone
+		if (model.isTestCaseLockedByMilestones(target.getTestCase())){
+			logs.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_MILESTONE_LOCKED));
+		}
+
 		// 5 - the step must exist
 		boolean exists = model.stepExists(target);
 		if (!exists) {
@@ -452,7 +477,12 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 			logs.addEntry(hasntPermission);
 		}
 
-		// 3 - can that step be identified precisely ?
+		// 3 - the test case must not be locked by a milestone
+		if (model.isTestCaseLockedByMilestones(target.getTestCase())){
+			logs.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_MILESTONE_LOCKED));
+		}
+
+		// 4 - can that step be identified precisely ?
 		LogEntry indexCheckLog = checkStepIndex(ImportMode.DELETE, target, ImportStatus.FAILURE, null);
 		if (indexCheckLog != null) {
 			logs.addEntry(indexCheckLog);
@@ -742,7 +772,13 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 			if (hasntPermission != null) {
 				logs.addEntry(hasntPermission);
 			}
-			// 3-3 : check audit datas
+
+			// 3-3 : milestone lock ?
+			if (model.isTestCaseLockedByMilestones(target)){
+				logs.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_MILESTONE_LOCKED));
+			}
+
+			// 3-4 : check audit datas
 			// backup the audit log
 			List<LogEntry> logEntries = fixMetadatas(target, (AuditableMixin) testCase, ImportMode.UPDATE);
 			logs.addEntries(logEntries);

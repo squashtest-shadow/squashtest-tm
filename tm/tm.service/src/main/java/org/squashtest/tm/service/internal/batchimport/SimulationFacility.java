@@ -45,6 +45,7 @@ public class SimulationFacility implements Facility {
 	private ValidationFacility validator;
 
 
+	// TODO : Use of TestCaseNodeDeletionHandler#simulate ?
 	@Override
 	public LogTrain deleteTestCase(TestCaseTarget target) {
 

@@ -143,6 +143,18 @@ public class MilestoneMembershipManagerImpl implements MilestoneMembershipManage
 
 	@Override
 	@PreAuthorize(READ_TC + OR_HAS_ROLE_ADMIN)
+	public boolean isTestCaseMilestoneDeletable(long testCaseId) {
+		return milestoneDao.isTestCaseMilestoneDeletable(testCaseId);
+	}
+
+	@Override
+	@PreAuthorize(READ_TC + OR_HAS_ROLE_ADMIN)
+	public boolean isTestCaseMilestoneModifiable(long testCaseId) {
+		return milestoneDao.isTestCaseMilestoneModifiable(testCaseId);
+	}
+
+	@Override
+	@PreAuthorize(READ_TC + OR_HAS_ROLE_ADMIN)
 	public Collection<Milestone> findAssociableMilestonesToTestCase(long testCaseId) {
 		return milestoneDao.findAssociableMilestonesForTestCase(testCaseId);
 	}

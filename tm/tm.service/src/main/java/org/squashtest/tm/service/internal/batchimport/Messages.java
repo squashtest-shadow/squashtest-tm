@@ -69,6 +69,7 @@ public final class Messages {
 	public static final String ERROR_MILESTONE_FEATURE_DEACTIVATED = "message.import.log.error.milestoneFeatureDeactivated";
 	public static final String ERROR_UNKNOWN_MILESTONE = "message.import.log.error.milestone.unknown";
 	public static final String ERROR_WRONG_MILESTONE_STATUS = "message.import.log.error.milestone.wrongStatus";
+	public static final String ERROR_MILESTONE_LOCKED = "message.import.log.error.milestone.locked";
 
 	public static final String IMPACT_MAX_SIZE = "message.import.log.impact.truncatedValue";
 	public static final String IMPACT_DEFAULT_VALUE = "message.import.log.impact.useDefaultValue";

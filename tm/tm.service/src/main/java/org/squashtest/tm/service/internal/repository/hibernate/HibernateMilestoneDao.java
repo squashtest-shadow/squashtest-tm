@@ -21,6 +21,7 @@
 package org.squashtest.tm.service.internal.repository.hibernate;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -32,6 +33,7 @@ import org.hibernate.Query;
 import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
 import org.hibernate.Session;
+import org.hibernate.type.LongType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
@@ -97,6 +99,31 @@ public class HibernateMilestoneDao extends HibernateEntityDao<Milestone> impleme
 
 		return allMilestones;
 
+	}
+
+
+	/*
+	 * Note : for now the implementation for isTestCaseMilestoneDeletable and
+	 * isTestCaseMilestoneModifiable is the same. That might change in the future.
+	 * (non-Javadoc)
+	 * @see org.squashtest.tm.service.internal.repository.MilestoneDao#isTestCaseMilestoneDeletable(long)
+	 */
+	@Override
+	public boolean isTestCaseMilestoneDeletable(long testCaseId) {
+		return doesTestCaseBelongToMilestonesWithStatus(testCaseId, MilestoneStatus.PLANNED, MilestoneStatus.LOCKED);
+	}
+
+	@Override
+	public boolean isTestCaseMilestoneModifiable(long testCaseId) {
+		return doesTestCaseBelongToMilestonesWithStatus(testCaseId, MilestoneStatus.PLANNED, MilestoneStatus.LOCKED);
+	}
+
+	private boolean doesTestCaseBelongToMilestonesWithStatus(long testCaseId, MilestoneStatus... statuses){
+		Query query = currentSession().getNamedQuery("testCase.findTestCasesWithMilestonesHavingStatuses");
+		query.setParameterList("testCaseIds", Arrays.asList(testCaseId), LongType.INSTANCE);
+		query.setParameterList("statuses", statuses);
+		List<Long> ids = query.list();
+		return ids.contains(testCaseId);
 	}
 
 	@SuppressWarnings("unchecked")

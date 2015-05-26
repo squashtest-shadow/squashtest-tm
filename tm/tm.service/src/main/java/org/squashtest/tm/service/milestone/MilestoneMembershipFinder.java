@@ -37,6 +37,28 @@ public interface MilestoneMembershipFinder {
 	 */
 	Collection<Milestone> findAllMilestonesForTestCase(long testCaseId);
 
+	/**
+	 * Says whether a test case cannot be deleted because of milestone
+	 * it belongs directly, and also because of those of the requirements
+	 * this test case verifies.
+	 * 
+	 * @param testCaseId
+	 * @return
+	 */
+	boolean isTestCaseMilestoneDeletable(long testCaseId);
+
+	/**
+	 * Says whether a test case cannot be modified because of milestone
+	 * it belongs directly, and also because of those of the requirements
+	 * this test case verifies.
+	 * 
+	 * @param testCaseId
+	 * @return
+	 */
+	boolean isTestCaseMilestoneModifiable(long testCaseId);
+
+
+
 	Collection<Milestone> findAllMilestonesForUser(long userId);
 	Collection<Milestone> findMilestonesForRequirementVersion(long versionId);
 

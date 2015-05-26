@@ -58,7 +58,9 @@ import org.squashtest.tm.service.internal.batchimport.TestCaseCallGraph.Node;
 import org.squashtest.tm.service.internal.repository.CustomFieldDao;
 import org.squashtest.tm.service.internal.repository.DatasetDao;
 import org.squashtest.tm.service.internal.testcase.TestCaseCallTreeFinder;
+import org.squashtest.tm.service.milestone.MilestoneMembershipFinder;
 import org.squashtest.tm.service.testcase.ParameterFinder;
+import org.squashtest.tm.service.testcase.TestCaseFinder;
 import org.squashtest.tm.service.testcase.TestCaseLibraryFinderService;
 
 @Component
@@ -78,7 +80,13 @@ public class Model {
 	private TestCaseCallTreeFinder calltreeFinder;
 
 	@Inject
+	private TestCaseFinder testCaseFinder;
+
+	@Inject
 	private ParameterFinder paramFinder;
+
+	@Inject
+	private MilestoneMembershipFinder milestoneMemberFinder;
 
 	@Inject
 	private DatasetDao dsDao;
@@ -116,6 +124,37 @@ public class Model {
 	 * 
 	 */
 	private Map<TestCaseTarget, List<InternalStepModel>> testCaseStepsByTarget = new HashMap<TestCaseTarget, List<InternalStepModel>>();
+
+	/*
+	 * Introduced with issue 4973
+	 */
+	/**
+	 * 
+	 * <p>This maps says whether a given test case is locked because of its milestones or not
+	 * The answer is yes if :</p>
+	 * 
+	 * <ul>
+	 * 	<li>The test case exists in the database (ie it's not new : status is EXISTS)</li>
+	 * 	<li>The test case indeed belongs to a milestone which status forbids any modification</li>
+	 * </ul>
+	 * 
+	 * <p>
+	 * 	Note that when the TestCase doesn't exist yet the answer is always no, because
+	 * 	one can never add or remove a test case from a locked milestone. Same goes
+	 * 	for test cases that are deleted or plain inexistant (status NOT_EXIST : neither in DB nor
+	 *  in the import file)
+	 * </p>
+	 * 
+	 * <p>
+	 * 	Also note that for now we make no distinction between milestones that
+	 *	prevent deletion and milestones that prevent edition
+	 *	because they are exactly the same at the moment
+	 * </p>
+	 * 
+	 * @param target
+	 * @return
+	 */
+	private Map<TestCaseTarget, Boolean> isTargetMilestoneLocked = new HashMap<>();
 
 	/**
 	 * nothing special, plain wysiwyg
@@ -224,8 +263,18 @@ public class Model {
 		if (id == null) {
 			return null;
 		} else {
-			return (TestCase) sessionFactory.getCurrentSession().load(TestCase.class, id);
+			return testCaseFinder.findById(id);
 		}
+	}
+
+
+
+	public boolean isTestCaseLockedByMilestones(TestCaseTarget target){
+		if (!testCaseStatusByTarget.containsKey(target)) {
+			init(target);
+		}
+
+		return isTargetMilestoneLocked.get(target);
 	}
 
 	// ************************ test case calls code
@@ -758,6 +807,14 @@ public class Model {
 			TargetStatus status = new TargetStatus(existence, id);
 
 			testCaseStatusByTarget.put(t, status);
+
+			// Issue 4973
+			// see comment on the attribute "isTargetMilestoneLocked"
+			Boolean milestoneLocked = Boolean.FALSE;
+			if (existence == Existence.EXISTS){
+				milestoneLocked = milestoneMemberFinder.isTestCaseMilestoneDeletable(id);
+			}
+			isTargetMilestoneLocked.put(t, milestoneLocked);
 		}
 	}
 

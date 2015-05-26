@@ -226,7 +226,15 @@
 						"(tc.id in (select directTC.id from TestCase directTC inner join directTC.milestones mstones where mstones.status in (:lockedStatuses)) " +
 						"or tc.id in (select indirectTC.id from TestCase indirectTC join indirectTC.requirementVersionCoverages cov join cov.verifiedRequirementVersion " +
 						"ver join ver.milestones milestones where milestones.status in (:lockedStatuses)))" ),
-
+	
+	// Note : for now the query is exactly the same than testCase.findTestCasesWhichMilestonesForbidsDeletion
+	// But, it might change in the future
+	@NamedQuery(name = "testCase.findTestCasesWithMilestonesHavingStatuses",
+		query = "select distinct tc.id from TestCase tc where tc.id in (:testCaseIds) and " +
+			"(tc.id in (select directTC.id from TestCase directTC inner join directTC.milestones mstones where mstones.status in (:statuses)) " +
+			"or tc.id in (select indirectTC.id from TestCase indirectTC join indirectTC.requirementVersionCoverages cov join cov.verifiedRequirementVersion " +
+			"ver join ver.milestones milestones where milestones.status in (:statuses)))" ),						
+	
 	// NOTE : Hibernate ignores any grouped entity when it is not projected
 	// NOTE : Hibernate ignores group by tc.nature.id unless we alias tc.nature (AND PROJECT THE ALIAS !)
 	// NOTE : "from f join f.content c where c.class = TestCase group by c.id" generates SQL w/o grouped TCLN.TCLN_ID, only TC.TCLN_ID, which breaks under postgresql

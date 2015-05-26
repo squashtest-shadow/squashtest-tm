@@ -48,6 +48,16 @@ public interface MilestoneDao extends EntityDao<Milestone> {
 
 	Collection<Milestone> findAllMilestonesForTestCase(long testCaseId);
 
+	// check whether some milestone could block the deletion of this test case
+	// the said milestone could also be inherited by verified requirements
+	// hence this specific method
+	boolean isTestCaseMilestoneDeletable(long testCaseId);
+
+	// check whether some milestone could block the deletion of this test case
+	// the said milestone could also be inherited by verified requirements
+	// hence this specific method
+	boolean isTestCaseMilestoneModifiable(long testCaseId);
+
 	Collection<Milestone> findAssociableMilestonesForUser(long UserId);
 
 	void bindMilestoneToProjectTestCases(long projectId, long milestoneId);
