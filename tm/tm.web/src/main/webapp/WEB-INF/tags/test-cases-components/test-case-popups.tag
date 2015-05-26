@@ -151,7 +151,7 @@
       </div>
       
       <div class="popup-dialog-buttonpane">
-        <input type="button" value="${createLabel}" data-def="state=confirm, evt=confirm, mainbtn=confirm"/>
+        <input type="button" value="${confirmLabel}" data-def="state=confirm, evt=confirm, mainbtn=confirm"/>
         <input type="button" value="${cancelLabel}" data-def="evt=cancel" />      
       </div>
       
