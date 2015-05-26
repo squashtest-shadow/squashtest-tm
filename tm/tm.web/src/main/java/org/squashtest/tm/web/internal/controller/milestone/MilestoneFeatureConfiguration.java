@@ -183,5 +183,9 @@ public class MilestoneFeatureConfiguration {
 	public boolean isEditable(){
 		return ! isLocked();
 	}
+	
+	public boolean milestoneDatesColumnIsVisible(){
+		return activeMilestone !=null;
+	}
 
 }

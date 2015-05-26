@@ -23,12 +23,14 @@ package org.squashtest.tm.web.internal.controller.testcase.steps;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 
 import javax.inject.Inject;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -51,6 +53,7 @@ import org.squashtest.tm.web.internal.controller.generic.ServiceAwareAttachmentT
 import org.squashtest.tm.web.internal.controller.milestone.MilestoneFeatureConfiguration;
 import org.squashtest.tm.web.internal.controller.milestone.MilestoneUIConfigurationService;
 import org.squashtest.tm.web.internal.controller.testcase.requirement.RequirementVerifierView;
+import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.customfield.CustomFieldJsonConverter;
 import org.squashtest.tm.web.internal.model.customfield.CustomFieldValueModel;
 
@@ -78,6 +81,8 @@ public class TestStepController {
 	@Inject
 	private MilestoneUIConfigurationService milestoneConfService;
 
+	@Inject
+	private InternationalizationHelper internationalizationHelper;
 
 	/**
 	 * Shows the step modification page.
@@ -90,6 +95,8 @@ public class TestStepController {
 	@RequestMapping(method = RequestMethod.GET)
 	public String showStepInfos(@PathVariable long testStepId, Model model,
 			@CurrentMilestone Milestone activeMilestone) {
+		
+		Locale locale = LocaleContextHolder.getLocale();
 
 		LOGGER.info("Show Test Step initiated");
 		LOGGER.debug("Find and show TestStep #{}", testStepId);
@@ -132,7 +139,7 @@ public class TestStepController {
 					testStepView.getActionStep().getBoundEntityType());
 			hasCUF = cufValueFinder.hasCustomFields(testStepView.getActionStep());
 			// verified requirements
-			RequirementVerifierView requirementVerifierView = new RequirementVerifierView(testStepView.getActionStep());
+			RequirementVerifierView requirementVerifierView = new RequirementVerifierView(testStepView.getActionStep(),internationalizationHelper,locale);
 			model.addAttribute("requirementVerifier", requirementVerifierView);
 
 		} else {

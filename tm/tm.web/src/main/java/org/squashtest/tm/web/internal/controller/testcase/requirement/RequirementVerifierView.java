@@ -24,16 +24,23 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Locale;
 
+import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.testcase.ActionTestStep;
 import org.squashtest.tm.domain.testcase.RequirementVersionCoverage;
 import org.squashtest.tm.domain.testcase.TestCase;
+import org.squashtest.tm.web.internal.controller.milestone.MilestoneModelUtils;
+import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 
 public class RequirementVerifierView {
 	private TestCase verifier;
 	private ActionTestStep verifyingStep;
 	private String type;
+	private InternationalizationHelper internationalizationHelper;
+	private Locale locale;
+	
 
 	public RequirementVerifierView(TestCase requirementVerifier) {
 		this.verifier = requirementVerifier;
@@ -43,6 +50,14 @@ public class RequirementVerifierView {
 	public RequirementVerifierView(ActionTestStep verifyingStep) {
 		this.verifier = verifyingStep.getTestCase();
 		this.verifyingStep = verifyingStep;
+		type = "test-step";
+	}
+	
+	public RequirementVerifierView(ActionTestStep verifyingStep,InternationalizationHelper internationalizationHelper,Locale locale) {
+		this.verifier = verifyingStep.getTestCase();
+		this.verifyingStep = verifyingStep;
+		this.internationalizationHelper = internationalizationHelper;
+		this.locale = locale;
 		type = "test-step";
 	}
 	
@@ -74,6 +89,7 @@ public class RequirementVerifierView {
 		List<RequirementVersionCoverageView> coverages = new ArrayList<RequirementVersionCoverageView>(0);
 		for(RequirementVersionCoverage rc : verifier.getRequirementVersionCoverages()){
 			RequirementVersionCoverageView coverage = new RequirementVersionCoverageView(rc, verifyingStep);
+			coverage.calculateMilestoneTimeInterval(internationalizationHelper, locale);
 			coverages.add(coverage);
 		}
 		
@@ -92,6 +108,7 @@ public class RequirementVerifierView {
 	
 	public static final class RequirementVersionCoverageView{
 		private RequirementVersion version;
+		private String milestoneTimeInterval;
 		private boolean verifiedByStep = false;
 
 		public RequirementVersionCoverageView(RequirementVersionCoverage rc, ActionTestStep step) {
@@ -105,6 +122,10 @@ public class RequirementVerifierView {
 				}
 			}
 		}
+		
+		public void calculateMilestoneTimeInterval(InternationalizationHelper internationalizationHelper, Locale locale){
+			milestoneTimeInterval = MilestoneModelUtils.timeIntervalToString(version.getMilestones(),internationalizationHelper,locale);
+		}
 
 		public RequirementVersion getVersion() {
 			return version;
@@ -114,6 +135,13 @@ public class RequirementVerifierView {
 			return verifiedByStep;
 		}
 		
+		public String getMilestoneTimeInterval() {
+			return milestoneTimeInterval;
+		}
+		
+		public void setMilestoneTimeInterval(String milestoneTimeInterval) {
+			this.milestoneTimeInterval = milestoneTimeInterval;
+		}
 		
 	}
 	
