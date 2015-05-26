@@ -40,6 +40,7 @@ import org.squashtest.tm.service.internal.batchimport.Model.StepType
 import org.squashtest.tm.service.internal.batchimport.Model.TargetStatus
 import org.squashtest.tm.service.internal.repository.CustomFieldDao
 import org.squashtest.tm.service.internal.testcase.TestCaseCallTreeFinder
+import org.squashtest.tm.service.milestone.MilestoneMembershipFinder;
 import org.squashtest.tm.service.testcase.TestCaseLibraryFinderService
 
 import spock.lang.Specification
@@ -51,6 +52,7 @@ public class ModelTest extends Specification{
 	CustomFieldDao cufDao
 	TestCaseLibraryFinderService finderService
 	TestCaseCallTreeFinder calltreeFinder
+	MilestoneMembershipFinder milestoneMemberFinder
 
 	Model model
 
@@ -60,7 +62,7 @@ public class ModelTest extends Specification{
 		cufDao = Mock(CustomFieldDao)
 		finderService = Mock(TestCaseLibraryFinderService)
 		calltreeFinder = Mock(TestCaseCallTreeFinder)
-
+		milestoneMemberFinder = Mock(MilestoneMembershipFinder)
 
 		model = new Model()
 		model.sessionFactory = factory
@@ -68,7 +70,7 @@ public class ModelTest extends Specification{
 		model.finderService = finderService
 		model.calltreeFinder = calltreeFinder
 		model.callGraph = new TestCaseCallGraph()
-
+		model.milestoneMemberFinder = milestoneMemberFinder
 
 	}
 
@@ -115,6 +117,7 @@ public class ModelTest extends Specification{
 
 		and :
 		finderService.findNodeIdsByPath(_) >> [10l, null, 20l]
+		milestoneMemberFinder.isTestCaseMilestoneDeletable(_) >> false
 
 		when :
 		model.initTestCases(targets)
