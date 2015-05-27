@@ -83,18 +83,32 @@
 
   <script type="text/javascript">
   require(["common"], function() {
-    require(["jquery", "tree", "workspace.event-bus"], function($, zetree, eventBus) {
+    require(["jquery", "tree", "workspace.event-bus", "squash.translator", "app/ws/squashtm.notification", "app/ws/squashtm.workspace" ], function($, zetree, eventBus, msg, notification) {
       $(function(){
   
             $( '#add-items-button' ).on('click', function() {
-              var tree = zetree.get();
-              var ids = tree.jstree('get_selected').all('getResId');
-              if (ids.length > 0) {
-                $.post('${ testPlanUrl }', { testCasesIds: ids})
-                .done(function(){
-                  eventBus.trigger('context.content-modified');
-            })
-          }
+
+     					var tree = zetree.get(); 
+    					var ids =	[];
+    					var nodes = 0;
+    					if( tree.jstree('get_selected').length > 0 ) {
+    						 nodes = tree.jstree('get_selected').not(':library').treeNode();
+    						 ids = nodes.all('getResId');
+    					}	
+
+
+    					if (ids.length === 0) {
+    						notification.showError(msg.get('message.emptySelectionTestCase'));
+    						
+    					}
+    					
+    					if (ids.length > 0) {
+    						 $.post('${ testPlanUrl }', { testCasesIds: ids})
+              				   .done(function(){
+               				    eventBus.trigger('context.content-modified');
+    							})
+    					}
+
           tree.jstree('deselect_all'); //todo : each panel should define that method too.
           firstIndex = null;
           lastIndex = null;

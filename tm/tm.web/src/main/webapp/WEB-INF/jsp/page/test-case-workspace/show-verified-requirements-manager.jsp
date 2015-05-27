@@ -43,8 +43,8 @@
     <c:url var="addVerifiedRequirementsUrl" value="/test-cases/${ testCase.id }/verified-requirements" />
     <script type="text/javascript">
   require([ "common" ], function() {
-    require([ "jquery", "jqueryui", "jquery.squash.messagedialog", "datatables" ], function($) {
-
+  	require([ "jquery", "squash.translator", "app/ws/squashtm.notification", "jqueryui", "jquery.squash.messagedialog", "datatables", "app/ws/squashtm.workspace" ], function($, msg, notification) {
+  		
       $(function() {
         $( "#add-summary-dialog" ).messageDialog();
         
@@ -86,13 +86,26 @@
         });
         
         <%-- verified requirements addition --%>
-        $( '#add-items-button' ).click(function() {
-          var tree = $("#linkable-requirements-tree");
-          ids = tree.jstree('get_selected').not(':library').treeNode().all('getResId');      
-          if (ids.length > 0) {
-            $.post('${ addVerifiedRequirementsUrl }', { requirementsIds: ids}, addHandler);
-          }
-          tree.jstree('deselect_all');
+
+				$( '#add-items-button' ).click(function() {
+					var tree = $("#linkable-requirements-tree");
+					var ids =	[];
+					var nodes = 0; 
+					if( $( '#linkable-requirements-tree' ).jstree('get_selected').length > 0 ) {
+						 nodes = $( '#linkable-requirements-tree' ).jstree('get_selected').not(':library').treeNode();
+						 ids = nodes.all('getResId');
+					}	
+
+
+					if (ids.length === 0) {
+						notification.showError(msg.get('message.emptySelectionRequirement'));
+						return;
+					}
+					
+					if (ids.length > 0) {
+						$.post('${ addVerifiedRequirementsUrl }', { requirementsIds: ids}, addHandler);
+					}
+					tree.jstree('deselect_all');
         });        
       });        
     });

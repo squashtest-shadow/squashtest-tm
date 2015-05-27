@@ -26,8 +26,8 @@
  */
 require([ "common" ], function() {
 	require([ "jquery", "app/squash.wreqr.init", "workspace.event-bus", "workspace.tree-event-handler",
-    "squash.translator", "verifying-test-cases/VerifyingTestCasesPanel", "jqueryui", "jquery.squash.messagedialog", "squashtable" ],
-			function($, squash, eventBus, treehandler, msg, VerifyingTestCasesPanel) {
+    "squash.translator", "app/ws/squashtm.notification", "verifying-test-cases/VerifyingTestCasesPanel", "jqueryui", "jquery.squash.messagedialog", "squashtable", "app/ws/squashtm.workspace" ],
+			function($, squash, eventBus, treehandler, msg, notification, VerifyingTestCasesPanel) {
 		"use strict";
 
 		msg.load([
@@ -70,6 +70,11 @@ require([ "common" ], function() {
 			return $("#verifying-test-cases-table").squashTable();
 		}
 
+		$(document).on("click", "#add-items-button", function(event){
+			squash.vent.trigger("verifying-test-cases:bind-selected", { source: event });
+		});
+
+		
 		// maybe here
 		$(document).on("click", "#remove-items-button", function(event){
 			squash.vent.trigger("verifying-test-cases:unbind-selected", { source: event });
@@ -81,12 +86,13 @@ require([ "common" ], function() {
 
 		//the case 'get ids from the research tab' is disabled here, waiting for refactoring.
 		function getTestCasesIds(){
+			
 			var ids =	[];
-			var nodes = $( '#linkable-test-cases-tree' ).jstree('get_selected').not(':library').treeNode();
-			if (nodes.length>0){
-				ids = nodes.all('getResId');
-			}
-
+			var nodes = 0;
+			if( $( '#linkable-test-cases-tree' ).jstree('get_selected').length > 0 ) {
+				 nodes = $( '#linkable-test-cases-tree' ).jstree('get_selected').not(':library').treeNode();
+				 ids = nodes.all('getResId');
+			}	 
 			return $.map(ids, function(id) { return parseInt(id); });
 		}
 
@@ -100,19 +106,20 @@ require([ "common" ], function() {
 			$("#add-items-button").on("click", function() {
 				var tree = $('#linkable-test-cases-tree');
 				var ids = getTestCasesIds();
-
+			
 				if (ids.length === 0) {
+					notification.showError(msg.get('message.emptySelectionTestCase'));
 					return;
 				}
 
 				bind(ids).success(function(data){
 					showAddSummary(data);
 					table().refresh();
-					sendUpdateTree(data.linkedIds);
+					sendUpdateTree(data.linkedIds); 
 				});
 
 				tree.jstree('deselect_all');
-			});
+			}); 
 		});
 	});
 });

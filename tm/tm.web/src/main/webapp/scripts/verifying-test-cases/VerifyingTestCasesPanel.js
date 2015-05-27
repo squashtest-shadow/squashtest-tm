@@ -137,7 +137,7 @@ define([ "jquery", "app/squash.wreqr.init", "backbone", "handlebars", "underscor
 				if (ids.length > 0) {
 					unbind(ids).done(batchSucceed(ids));
 				}
-			};
+			}; 
 		},
 
 		onCloseBatch : function() {
@@ -149,7 +149,7 @@ define([ "jquery", "app/squash.wreqr.init", "backbone", "handlebars", "underscor
 
 			if (id === undefined) {
 				$(this).formDialog("close");
-				notification.showError(translator.get('iteration.test-plan.action.empty-selection.message'));
+				notification.showError(translator.get('message.EmptyTableSelection'));
 			} else {
 				$(this).formDialog("setState", "confirm-deletion");
 			}

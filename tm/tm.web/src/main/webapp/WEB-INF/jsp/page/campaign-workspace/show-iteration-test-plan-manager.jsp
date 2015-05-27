@@ -80,18 +80,30 @@
   <jsp:attribute name="foot"> 
   	<script type="text/javascript">
     	require([ "common" ], function() {
-          	require(["jquery", "iteration-management", "tree", "workspace.event-bus"], function($, iterManager, zetree, eventBus) {
+          	require(["jquery", "iteration-management", "tree", "workspace.event-bus", "squash.translator", "app/ws/squashtm.notification", "app/ws/squashtm.workspace"], function($, iterManager, zetree, eventBus, msg, notification) {
           		$(function(){
           			
           			 $( '#add-items-button' ).on('click', function() {
-                       var tree = zetree.get();
-                       var ids = tree.jstree('get_selected').all('getResId');
-                       if (ids.length > 0) {
-                         $.post('${ testPlanUrl }', { testCasesIds: ids})
-                         .done(function(){
-                           eventBus.trigger('context.content-modified');
-                         })
-                       }
+          					var tree = zetree.get(); 
+          					var ids =	[];
+          					var nodes = 0;
+          					if( tree.jstree('get_selected').length > 0 ) {
+          						 nodes = tree.jstree('get_selected').not(':library').treeNode();
+          						 ids = nodes.all('getResId');
+          					}	
+
+
+          					if (ids.length === 0) {
+          						notification.showError(msg.get('message.emptySelectionTestCase'));
+          						
+          					}
+          					
+          					if (ids.length > 0) {
+          						 $.post('${ testPlanUrl }', { testCasesIds: ids})
+                    				   .done(function(){
+                     				    eventBus.trigger('context.content-modified');
+          							})
+          					}
                        tree.jstree('deselect_all'); 
                      });
                      
