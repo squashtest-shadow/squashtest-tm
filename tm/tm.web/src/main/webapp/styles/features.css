@@ -269,11 +269,16 @@ th.width-tenperc, td.width-tenperc {
 }
 
 .extra-small-margin-top {
-	margin-tim : 0.2em;
+	margin-top : 0.2em;
 }
 
 .std-margin-bottom {
 	margin-bottom : 1em;
+}
+
+/** for sq-icon only : makes them have *almost* the same margins than a checkbox (as defined natively by the browser)**/
+.sq-icon.sq-icon-checkboxmargin {
+	margin : 3px 3px 3px 2px;
 }
 
 /** *********** display options ********** */

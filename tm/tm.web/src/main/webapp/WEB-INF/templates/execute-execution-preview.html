@@ -256,7 +256,7 @@ documentation :
     			_updateStatusIcon = function (value){
   					var statusIcon = $("#test-case-status-icon");
   					statusIcon.attr("class", ""); //reset
-  					statusIcon.addClass("small-icon test-case-status-" + value);
+  					statusIcon.addClass("test-case-status-" + value);
   				};
     			_updateStatusInTree = function(value){
   					var self = this;
@@ -270,7 +270,7 @@ documentation :
   				_updateImportanceIcon = function (value){
   					var status = $("#test-case-importance-icon");
   					status.attr("class", ""); // reset
-  					status.addClass("small-icon test-case-importance-" + value);
+  					status.addClass("test-case-importance-" + value);
   				};
   				
   				
