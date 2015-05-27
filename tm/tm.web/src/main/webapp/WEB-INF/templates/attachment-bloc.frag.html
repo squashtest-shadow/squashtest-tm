@@ -52,9 +52,9 @@
               <h3 th:text="#{label.Attachments}"></h3>
               <div class="tg-toolbar">
                 <input th:if="${attachable}" id="upload-attachment-button" type="button"
-                      th:value="#{label.UploadAttachment}" value="Upload" class="button" />
+                      th:value="#{label.UploadAttachment}" th:title="#{label.UploadAttachment}" value="Upload" class="button" />
                 <input th:if="${attachable}" id="manage-attachment-bloc-button"
-                      type="button" th:value="#{label.Organize}" value="Organize"
+                      type="button" th:value="#{label.Organize}" th:title="#{label.OrganizeAttachment}" value="Organize" 
                       class="button" />               
               </div>
            </div>
