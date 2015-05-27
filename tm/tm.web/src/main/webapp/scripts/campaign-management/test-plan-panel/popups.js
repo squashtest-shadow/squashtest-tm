@@ -128,7 +128,7 @@ define(['jquery',  'underscore', 'handlebars', 'squash.translator', 'app/ws/squa
 
 			if (ids.length === 0) {
 				$(this).formDialog('close');
-				notification.showError(translator.get('iteration.test-plan.action.empty-selection.message'));
+				notification.showError(translator.get('message.EmptyTableSelection'));
 
 			} else if (ids.length === 1) {
 				$(this).formDialog("setState", "confirm-deletion");
@@ -158,7 +158,7 @@ define(['jquery',  'underscore', 'handlebars', 'squash.translator', 'app/ws/squa
 
 			if (id === undefined) {
 				$(this).formDialog('close');
-				notification.showError(translator.get('iteration.test-plan.action.empty-selection.message'));
+				notification.showError(translator.get('message.EmptyTableSelection'));
 			} else {
 				$(this).formDialog("setState", "confirm-deletion");
 			}

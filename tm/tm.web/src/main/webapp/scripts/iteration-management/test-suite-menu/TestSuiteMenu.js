@@ -299,7 +299,7 @@ define([ "jquery", "underscore", "app/ws/squashtm.notification", "squash.transla
 						// no item selected: close menu and warn
 						self.menucontrol.buttonmenu('close');
 						evt.stopImmediatePropagation();
-						notification.showError(translator.get('iteration.test-plan.action.empty-selection.message'));
+						notification.showError(translator.get('message.EmptyTableSelection'));
 
 					} else {
 						var suites = self.model.getData();
