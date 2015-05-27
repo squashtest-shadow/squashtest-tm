@@ -126,14 +126,14 @@
         <th data-def="map=index, select">#</th>
         <th data-def="map=label, sortable, link=${milestoneDetailsBaseUrl}/{entity-id}/info"  class="datatable-filterable"><f:message key="label.Milestones" /></th>
         <th data-def="map=status, sortable" class="datatable-filterable"><f:message key="label.Status"   /></th>
-        <th data-def="map=endDate, sortable"><f:message key="label.EndDate"/></th>
+        <th data-def="map=endDate, sortable, sType=squashdateShort"><f:message key="label.EndDate"/></th>
         <th data-def="map=nbOfProjects, sortable"><f:message key="label.projectsSharp"/></th>
         <th data-def="map=range, sortable"><f:message key="label.Range" /></th>
         <th data-def="map=owner, sortable"><f:message key="label.Owner" /></th>
         <th data-def="map=description, sortable"><f:message key="label.Description" /></th>
-        <th data-def="map=created-on, sortable"><f:message key="label.CreatedOn" /></th>
+        <th data-def="map=created-on, sortable, sType=squashdateShort"><f:message key="label.CreatedOn" /></th>
         <th data-def="map=created-by, sortable" ><f:message key="label.createdBy" /></th>
-        <th data-def="map=last-mod-on, sortable"><f:message key="label.modifiedOn" /></th>
+        <th data-def="map=last-mod-on, sortable, sType=squashdateLong"><f:message key="label.modifiedOn" /></th>
         <th data-def="map=last-mod-by, sortable"><f:message key="label.modifiedBy" /></th> 
         <th data-def="map=delete, delete-button=#delete-milestone-popup"></th>
       </tr>
@@ -141,7 +141,6 @@
     <tbody>
     </tbody>
   </table>
-
   <%-- 
    Here we define a generic error dialog, much like in the notification system
    used in every other pages. The thing is there is no notification section 

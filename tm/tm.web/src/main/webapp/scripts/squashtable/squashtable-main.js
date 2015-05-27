@@ -282,7 +282,8 @@ define(["jquery",
         "datatables",
         "./squashtable.defaults",
         "./squashtable.pagination",
-        "./squashtable.dnd"
+        "./squashtable.dnd",
+        "./squashtable.datatype"
         ], function($, _, KeyEventListener, statusfactory, confman, oneshot, translator) {
 
 	if (!! $.fn.squashTable ){
@@ -1826,6 +1827,9 @@ define(["jquery",
 				},
 				'target' : function(conf, assignation) {
 					conf.current.aTargets = [ assignation.value ];
+				},
+				'sType' : function(conf, assignation){
+					conf.current.sType = assignation.value;
 				},
 				'delete-button' : function(conf, assignation) {
 					// the following attributes must always be defined
