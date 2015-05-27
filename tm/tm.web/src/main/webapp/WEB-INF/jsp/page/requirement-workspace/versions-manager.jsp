@@ -62,7 +62,7 @@
 				
 				<div id="sub-page-buttons" class="sub-page-buttons">
 					<f:message var="backButtonLabel" key="label.Back" />
-					<input type="button" class="sq-btn" value="${backButtonLabel}" onClick="history.back();"/>	
+					<input type="button" id="back" class="sq-btn" value="${backButtonLabel}" onClick="document.location.href=squashtm.workspace.backurl"/>	
 				</div>
 				
 				
