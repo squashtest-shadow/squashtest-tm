@@ -50,7 +50,7 @@
 <f:message var="okLabel" key="label.Confirm"/>
 
 
-<layout:info-page-layout titleKey="squashtm.users.title" isSubPaged="true" main="user-manager" >
+<layout:info-page-layout titleKey="workspace.user.title" isSubPaged="true" main="user-manager" >
   <jsp:attribute  name="head">  
     <comp:sq-css name="squash.grey.css" />  
     <script type="text/javascript">
