@@ -248,7 +248,7 @@
 					<table  >
 					<tr>
 					<td>
-						<select class="multicascadeflat-primary" multiple="multiple" style="display:inline-block">
+						<select class="multicascadeflat-primary" multiple="multiple" style="display:inline-block; height:65px;">
 							{{#each options}}
 							<option value="{{this.code}}" {{selected}}>{{this.value}}</option>
 							{{/each}}
@@ -258,7 +258,7 @@
 						<span>&nbsp;&gt;&nbsp;</span>
 					</td>
 					<td>
-						<select class="multicascadeflat-secondary" multiple="multiple" style="display:inline-block">
+						<select class="multicascadeflat-secondary" multiple="multiple" style="display:inline-block; height:65px">
 							{{#each options}}
 							{{#each this.subInput.possibleValues}}
 							<option value="{{this.code}}" {{selected}}>{{this.value}}</option>
