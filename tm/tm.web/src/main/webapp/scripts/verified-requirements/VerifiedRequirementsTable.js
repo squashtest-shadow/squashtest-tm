@@ -140,7 +140,7 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil",
 
 		_removeRequirements : function() {
 			var self = this;
-			var ids = this.table.getSelectedIds();	
+			var ids = this.toDeleteIds;	
 			if (ids.length === 0) {
 				return;
 			}
