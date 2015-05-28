@@ -1398,7 +1398,9 @@ div.information-panel p {
 
 div#admin-small-link-pane{
     float:left;
-	padding: 100px 0px 30px 20%;
+    margin-left: 20%;
+    width: 50%;
+	padding: 100px 0px 30px;
 	font-size: 1.2em;
 	display :table;
 }
@@ -1425,7 +1427,9 @@ div#admin-small-link-pane{
 /* =================STATISTICS==================== */
 div#admin-stats {
 	float:right;
-	padding: 100px 30px 30px;
+	margin-right: 10%;
+	width: 20%;
+	padding: 100px 0 30px;
 	font-size: 1.2em;
 }
 div.admin-stats-table {
