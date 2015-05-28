@@ -18,8 +18,8 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ "jquery", "squash.configmanager", "squash.translator", "moment",
-		"datatables" ], function($, confman, translator, moment) {
+define([ "jquery", "squash.configmanager", "squash.translator", "moment","squash.dateutils",
+		"datatables" ], function($, confman, translator, moment,dateUtils) {
 	/*
 	 * This module define a correct comparator for sorting date in squashtable where sorting is done client side
 	 * The column should be tagged with a sType attribute in data-def, in the jsp file.
@@ -28,33 +28,35 @@ define([ "jquery", "squash.configmanager", "squash.translator", "moment",
 	 * Look in show-milestones.jsp for reference
 	 * */
 
-	//get the date format for moment.js and for the user's locale in message file
-	var shortDateFormat = translator.get("squashtm.dateformatShort.js.moment");
-	var longDateFormat = translator.get("squashtm.dateformat.js.moment");
+	//get the date format for squash.dateutils.js and for the user's locale in message file
+	var shortDateFormat = translator.get("squashtm.dateformatShort");
+	var longDateFormat = translator.get("squashtm.dateformat");
 
-	function formatDateForSort(dateString,dateFormat) {
-		return moment(dateString, dateFormat);
+	function formatDateForSort(dateString, dateFormat) {
+		//parsing with the java format as required by squash.dateutils.parse method
+		var dateFormated = dateUtils.parse(dateString, dateFormat);
+		return dateFormated;
 	}
 
-	squashdateShortAsc = function(dateStringA, dateStringB) {
+	var squashdateShortAsc = function(dateStringA, dateStringB) {
 		var dateA = formatDateForSort(dateStringA,shortDateFormat);
 		var dateB = formatDateForSort(dateStringB,shortDateFormat);
 		return moment(dateA).isAfter(dateB);
 	};
 
-	squashdateShortDesc = function(dateStringA, dateStringB) {
+	var squashdateShortDesc = function(dateStringA, dateStringB) {
 		var dateA = formatDateForSort(dateStringA,shortDateFormat);
 		var dateB = formatDateForSort(dateStringB,shortDateFormat);
 		return moment(dateA).isBefore(dateB);
 	};
 	
-	squashdateLongAsc = function(dateStringA, dateStringB) {
+	var squashdateLongAsc = function(dateStringA, dateStringB) { 
 		var dateA = formatDateForSort(dateStringA,longDateFormat);
 		var dateB = formatDateForSort(dateStringB,longDateFormat);
 		return moment(dateA).isAfter(dateB);
 	};
 	
-	squashdateLongDesc = function(dateStringA, dateStringB) {
+	var squashdateLongDesc = function(dateStringA, dateStringB) {
 		var dateA = formatDateForSort(dateStringA,longDateFormat);
 		var dateB = formatDateForSort(dateStringB,longDateFormat);
 		return moment(dateA).isBefore(dateB);
