@@ -386,7 +386,7 @@
 			
 			<div class="popup-dialog-buttonpane">
 				<input type="button" value="${confirmLabel}" data-def="state=normal, mainbtn=normal, evt=confirm"/>
-				<input type="button" value="${cancelLabel}" data-def="state=normal loading, mainbtn=loading, evt=cancel" />
+				<input type="button" value="${closeLabel}" data-def="state=normal loading, mainbtn=loading, evt=cancel" />
 				<input type="button" value="${closeLabel}"  data-def="state=allbound noselect, mainbtn=allbound noselect, evt=cancel"/>
 			</div>
 		

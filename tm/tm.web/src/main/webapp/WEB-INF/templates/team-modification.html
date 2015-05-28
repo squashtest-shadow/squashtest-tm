@@ -248,8 +248,8 @@
 							<input type="text" id="rename-team-input" maxlength="50"
 								size="50" /> <br /> <span class="error-message name-error"></span>
                             <div class="popup-dialog-buttonpane">
-                              <input type="button" th:value="#{label.Rename}" data-def="mainbtn, evt=confirm" />
-                              <input type="button" th:value="#{label.Cancel}" data-def="evt=cancel"/>                            
+                              <input type="button" th:value="#{label.Confirm}" data-def="mainbtn, evt=confirm" />
+                              <input type="button" th:value="#{label.Close}" data-def="evt=cancel"/>                            
                             </div>
 						</div>
 
@@ -270,7 +270,7 @@
 							<div class="popup-dialog-buttonpane">
 								<input class="confirm" type="button" value="Proceed"
 									th:value="#{label.Confirm}" /> <input class="cancel"
-									type="button" value="Cancel" th:value="#{label.Cancel}" />
+									type="button" value="Cancel" th:value="#{label.Close}" />
 							</div>
 						</div>
 
@@ -283,7 +283,7 @@
 							<div class="popup-dialog-buttonpane">
 								<input class="confirm" type="button" value="confirm"
 									th:value="#{label.Confirm}" /> <input class="cancel"
-									type="button" value="cancel" th:value="#{label.Cancel}" />
+									type="button" value="cancel" th:value="#{label.Close}" />
 							</div>
 						</div>
 
@@ -321,7 +321,7 @@
 							<div class="popup-dialog-buttonpane">
 								<input class="confirm" type="button" value="confirm"
 									th:value="#{label.Confirm}" /> <input class="cancel"
-									type="button" value="cancel" th:value="#{label.Cancel}" />
+									type="button" value="cancel" th:value="#{label.Close}" />
 							</div>
 						</div>
 
@@ -338,7 +338,7 @@
 		<div th:text="#{message.permissions.confirm}"></div>
 		<div class="popup-dialog-buttonpane">
 			<input class="confirm" type="button" value="confirm" th:value="#{label.Confirm}" /> 
-			<input class="cancel" type="button"	value="cancel" th:value="#{label.Cancel}" />
+			<input class="cancel" type="button"	value="cancel" th:value="#{label.Close}" />
 		</div>
 	</div>
 
@@ -379,7 +379,7 @@
 		<div class="popup-dialog-buttonpane">
 			<input class="confirm" type="button" value="confirm"
 				th:value="#{label.Confirm}" /> <input class="cancel" type="button"
-				value="cancel" th:value="#{label.Cancel}" />
+				value="cancel" th:value="#{label.Close}" />
 		</div>
 	</div>
 </body>
