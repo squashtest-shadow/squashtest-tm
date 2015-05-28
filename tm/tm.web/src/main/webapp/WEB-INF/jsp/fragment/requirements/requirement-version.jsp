@@ -349,11 +349,13 @@ publish('reload.requirement.attachments');
 <%--------------------------- New version popup -------------------------------------%>
 <c:if test="${ creatable }">
 	<f:message var="confirmNewVersionDialogTitle" key="requirement.new-version.confirm-dialog.title" />	
-	<div id="confirm-new-version-dialog" class="not-displayed popup-dialog" title="${ confirmNewVersionDialogTitle }">
-		<strong><f:message key="requirement.new-version.confirm-dialog.label" /></strong>
+	<div id="confirm-new-version-dialog" class="not-displayed popup-dialog" 
+          title="${ confirmNewVersionDialogTitle }" style="font-weight:bold">
+		  
+        <p><f:message key="requirement.new-version.confirm-dialog.label"/></p>
     
       <c:if test="${milestone_mode}">
-        HEY MAN, THIS IS MILESTONE MODE
+          <p><f:message key="requirement.new-version.confirm-dialog.milestonemode"/></p>
       </c:if>
     
 		<input type="button" value="${confirmLabel}" />
