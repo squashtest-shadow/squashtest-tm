@@ -138,7 +138,7 @@
         <comp:opened-object otherViewers="${ otherViewers }" objectUrl="${ executionUrl }" />
       </c:if>
       
-      <comp:milestone-messages milestoneConf="${milestoneConf}" />
+      <comp:milestone-messages milestoneConf="${milestoneConf}"  nodeType = "execution"/>
       
       <div class="unsnap"></div>
 	</div>

@@ -160,7 +160,7 @@
   
   </c:if>  
   
-  <comp:milestone-messages milestoneConf="${milestoneConf}" isCampaign="true"/>
+  <comp:milestone-messages milestoneConf="${milestoneConf}" nodeType = "campaign"/>
   <div class="unsnap"></div>
 </div>
 

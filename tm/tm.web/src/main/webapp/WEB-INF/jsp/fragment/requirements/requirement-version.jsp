@@ -175,7 +175,7 @@ that page won't be editable if
 	<comp:opened-object otherViewers="${ otherViewers }" objectUrl="${ requirementUrl }" />
 	</c:if>
   
-    <comp:milestone-messages milestoneConf="${milestoneConf}"/>
+    <comp:milestone-messages milestoneConf="${milestoneConf}" nodeType = "requirement"/>
   
 	<div class="unsnap"></div>	
 </div>

@@ -163,7 +163,7 @@
     <input type="button" value="<f:message key='label.print'/>" title='<f:message key="requirement.button.new-version.label" />' id="print-requirement-version-button" class="sq-btn" />
   </div>
   
-  <comp:milestone-messages milestoneConf="${milestoneConf}"/>
+  <comp:milestone-messages milestoneConf="${milestoneConf}" nodeType="requirement"/>
   
   <div class="unsnap"></div>
 </div>

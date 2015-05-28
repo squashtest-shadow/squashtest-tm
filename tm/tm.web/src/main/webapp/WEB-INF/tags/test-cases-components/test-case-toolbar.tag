@@ -69,7 +69,7 @@
 							objectUrl="${ testCaseUrl }" />
 	</c:if>
   
-    <comp:milestone-messages milestoneConf="${milestoneConf}"/>
+    <comp:milestone-messages milestoneConf="${milestoneConf}" nodeType = "testcase"/>
   
 	<div class="unsnap"></div>
  

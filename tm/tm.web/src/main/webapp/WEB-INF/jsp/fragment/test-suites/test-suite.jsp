@@ -175,7 +175,7 @@
     <comp:opened-object otherViewers="${ otherViewers }" objectUrl="${ testSuiteUrl }" />
   </c:if>
   
-  <comp:milestone-messages milestoneConf="${milestoneConf}" />
+  <comp:milestone-messages milestoneConf="${milestoneConf}" nodeType="testsuite"/>
   
   <div class="unsnap"></div>
 </div>

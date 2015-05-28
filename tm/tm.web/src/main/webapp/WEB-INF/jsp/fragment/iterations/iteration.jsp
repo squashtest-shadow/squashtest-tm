@@ -164,7 +164,7 @@
     <comp:opened-object otherViewers="${ otherViewers }" objectUrl="${ iterationUrl }" />
   </c:if>
   
-  <comp:milestone-messages milestoneConf="${milestoneConf}" />
+  <comp:milestone-messages milestoneConf="${milestoneConf}" nodeType = "iteration"/>
   
    <div class="unsnap"></div>
 </div>
