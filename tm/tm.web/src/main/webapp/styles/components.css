@@ -155,6 +155,7 @@ table.datepicker-table td.datepicker-table-col {
 	background-repeat: no-repeat;
 	height: 16px;
 	line-height: 1.2;
+	white-space: nowrap;
 }
 
 
