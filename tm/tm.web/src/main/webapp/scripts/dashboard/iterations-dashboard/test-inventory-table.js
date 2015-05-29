@@ -78,7 +78,6 @@ define([ "../basic-objects/table-view", "squash.translator" ], function(TableVie
 				0, // pc success
 				0, // pc failure
 				0, // pc prev
-				0, // difference prev vs execute
 				0, // very high
 				0, // high
 				0, // medium
@@ -89,7 +88,7 @@ define([ "../basic-objects/table-view", "squash.translator" ], function(TableVie
 					var m = inventory[i];
 					var rowdata = [ m.testsuiteName, m.nbTotal, m.nbToExecute, m.nbExecuted, m.nbReady, m.nbRunning,
 							m.nbSuccess, m.nbSettled, m.nbFailure, m.nbBlocked, m.nbUntestable, m.pcProgress,
-							m.pcSuccess, m.pcFailure, m.pcPrevProgress, m.nbPrevToExecute, m.nbVeryHigh, m.nbHigh,
+							m.pcSuccess, m.pcFailure, m.pcPrevProgress, m.nbVeryHigh, m.nbHigh,
 							m.nbMedium, m.nbLow ];
 					data.push(rowdata);
 

@@ -298,7 +298,6 @@
 								<th title="${ProgressLabel}" class="std-border light-border" ><f:message key="shortLabel.ExecutionProgress"/></th>								
 								<th title="${SuccessRateLabel}" class="std-border light-border" ><f:message key="shortLabel.SuccessRate"/></th>
 								<th title="${FailureRateLabel}" class="std-border light-border" ><f:message key="shortLabel.FailureRate"/></th>
-								<th style="border:none;"></th>
 								<th title="${ProgressVsPrevLabel}" style="width:8%"><f:message key="shortLabel.ExecutionProgressComparedToPrev"/></th>
 								<th style="border:none;"></th>								
 								<th title="${VeryHighLabel}"  class="std-border light-border"><f:message key="shortLabel.VeryHigh"/></th>
@@ -331,14 +330,12 @@
 								<td class="std-border light-border">{{this.[11]}}%</td>								
 								<td class="std-border light-border">{{this.[12]}}%</td>
 								<td class="std-border light-border">{{this.[13]}}%</td>
-								<td class="std-border light-border"></td>
-								
-								<td class="std-border light-border">{{this.[15]}}</td>
+								<td class="std-border light-border">{{this.[14]}}%</td>
 								<td style="border:none;"></td>
-								<td class="std-border light-border">{{this.[16]}}</td>								
+								<td class="std-border light-border">{{this.[15]}}</td>								
+								<td class="std-border light-border">{{this.[16]}}</td>
 								<td class="std-border light-border">{{this.[17]}}</td>
-								<td class="std-border light-border">{{this.[18]}}</td>
-								<td class="std-border light-border ">{{this.[19]}}</td>
+								<td class="std-border light-border ">{{this.[18]}}</td>
 				
 							</tr>
 						</tbody>			
