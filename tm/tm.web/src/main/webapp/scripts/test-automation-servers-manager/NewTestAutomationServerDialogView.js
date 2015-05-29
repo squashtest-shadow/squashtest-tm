@@ -140,12 +140,8 @@ define([ "jquery", "underscore", "backbone", "handlebars", "app/lnf/Forms", "./N
 		},
 
 		cleanup : function() {
-			// this.$el.addClass("not-displayed");
-		//	Forms.form(this.$el).clearState();
+			// Issue 4954 : cleanup too much killed forever the popup : be more gentle (maybe too much ?)
 			this.$el.off("formdialogconfirm formdialogcancel formdialogclose formdialogconfirm-carry-on");
-			
-			this.$el = null;
-			// this.$el.formDialog("destroy");
 		},
 
 		configureCKEs : function() {
@@ -162,20 +158,7 @@ define([ "jquery", "underscore", "backbone", "handlebars", "app/lnf/Forms", "./N
 				});
 			});
 		},
-		/*
-		configureCKEs : function() {
-			var self = this; 
-			var textareas = this.$el.find("textarea");
-			textareas.each(function() {
-				$(this).ckeditor(function() {
-				}, squashtm.app.ckeditorSettings.ckeditor);
 
-				CKEDITOR.instances[$(this).attr("id")].on('change', function(e) {
-					self.updateCKEModelAttr.call(self, e);
-				});
-			});
-		},
-		*/
 		updateCKEModelAttr : function(event) {
 			var attrInput = event.sender;
 			var attrName = attrInput.element.$.getAttribute("name");
