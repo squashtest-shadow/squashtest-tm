@@ -124,13 +124,16 @@
       <div id="sub-page-content" class="sub-page-content">
         <div id="information-content">
           <div id="user-login-div" class="ui-widget-header ui-corner-all ui-state-default fragment-header">
-            <div class="sub-page-fragment-title">
+            <div class="sub-page-fragment-title controls control-group" > 
+            <div class="display-table-row controls control-group" >
               <h2>
                 <label for="user-login-header" th:text="#{user.header.title}">User</label>
-                <a id="user-name-header" href="#" th:text="${user.login}">Machin</a>
+                <a id="user-name-header" href="#" th:text="${user.login}">Machin</a> 
+                <span class="help-inline">&nbsp;</span>
                 <span id="user-name-deactivated-hint" th:text="'(' + #{label.Deactivated} + ')'"
                   th:class="${user.active} ? 'not-displayed'"> (deactivated) </span>
               </h2>
+              </div>
             </div>
 
             <div class="snap-right"></div>
@@ -156,11 +159,12 @@
                 <h3><a th:text="#{user.info.panel.title}">Infos</a></h3>
               </div>
               <div id="user-info-panel" class="information-panel tg-body">
-                  <div class="display-table" id="user-infos-table">
-                    <div class="display-table-row">
+                  <div class="display-table controls control-group" id="user-infos-table">
+                    <div class="display-table-row controls control-group">
                       <label for="user-login" th:text="#{label.Login}">Login</label>
                       <div class="display-table-cell">
                         <span id="user-login" th:text="${user.login}">Machin</span>
+                                        <span class="help-inline">&nbsp;</span>
                       </div>
                     </div>
                     <div class="display-table-row">

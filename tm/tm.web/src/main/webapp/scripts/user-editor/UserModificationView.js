@@ -19,10 +19,10 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 define([ "jquery", "backbone", "underscore", "jeditable.simpleJEditable", "app/util/StringUtil",
-		"./UserResetPasswordPopup", "./UserPermissionsPanel", "./UserTeamsPanel", "squash.attributeparser", "jquery.squash", "jqueryui",
+		"./UserResetPasswordPopup", "./UserPermissionsPanel", "./UserTeamsPanel", "squash.attributeparser", "app/lnf/Forms", "app/ws/squashtm.notification", "squash.translator", "jquery.squash", "jqueryui",
 		"jquery.squash.togglepanel", "squashtable", "jquery.squash.oneshotdialog",
 		"jquery.squash.messagedialog", "jquery.squash.confirmdialog", "jquery.squash.jeditable", "jquery.switchButton" ], function($, Backbone, _,
-		SimpleJEditable, StringUtil, UserResetPasswordPopup, UserPermissionsPanel, UserTeamsPanel, attrparser) {
+		SimpleJEditable, StringUtil, UserResetPasswordPopup, UserPermissionsPanel, UserTeamsPanel, attrparser, Forms, notification, translator) {
 	var UMod = squashtm.app.UMod;
 	var UserModificationView = Backbone.View.extend({
 		el : "#information-content",
@@ -100,7 +100,7 @@ define([ "jquery", "backbone", "underscore", "jeditable.simpleJEditable", "app/u
 		
 
 		configureEditables : function() {
-			this.makeSimpleJEditable("user-login");
+			this.makeSimpleJEditable("user-login"); 
 			this.makeSimpleJEditable("user-first-name");
 			this.makeSimpleJEditable("user-last-name");
 			this.makeSimpleJEditable("user-email");
@@ -147,14 +147,26 @@ define([ "jquery", "backbone", "underscore", "jeditable.simpleJEditable", "app/u
 			});			
 		},
 		
-		makeSimpleJEditable : function(imputId) {
+		makeSimpleJEditable : function(inputId) {
+			var self = this;
+
+			var onerror = function(settings, original, xhr) {
+				xhr.errorIsHandled = true;
+				var errormsg = notification.getErrorMessage(xhr);
+				Forms.input(self.$("#" + inputId)).setState("error", errormsg);					
+				return ($.editable.types[settings.type].reset || $.editable.types.defaults.reset).apply(this, arguments);
+			};
+
 			new SimpleJEditable({
-				targetUrl : UMod.user.url.admin,
-				componentId : imputId,
-				jeditableSettings : {}
+				targetUrl : UMod.user.url.admin,  
+				componentId : inputId,
+				jeditableSettings : {
+					onerror: onerror,
+					onsubmit: function() { Forms.input(self.$("#" + inputId)).clearState(); }
+				}
 			});
 		},
-		
+
 		createResetPasswordPopup: function() {
 			return new UserResetPasswordPopup({
 				el: "#pass-pop-pane",
