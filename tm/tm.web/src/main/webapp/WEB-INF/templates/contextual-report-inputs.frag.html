@@ -203,5 +203,29 @@
     </div>
   </div>
 
+
+ <!--  TAG PICKER -->
+  <div  th:fragment="tagpicker" >
+    <label th:if="${hasLabel}" th:text="#{${input.labelKey}}" th:for="${input.name}+'-open'">Tag</label>
+    
+    <span th:id="'rpt-tag-crit-result-'+${input.name}" class="rpt-milestone-crit-result small"></span>
+    <input th:id="${input.name} + '-open'" type="button" class="sq-btn btn-sm rpt-tag-crit-open" th:value="#{report.form.project-picker.button.label}"
+          th:attr="data-idopened=${input.name}, data-disabledby=${input.disabledBy}" />
+  
+    <div class="tag-picker popup-dialog not-displayed" th:id="${input.name}"
+      th:title="#{message.choose-a-tag}" data-def="nocleanup"
+      th:attr="data-idresult='rpt-tag-crit-result-'+${input.name}, data-url= @{/custom-fields/tags/__${input.boundEntity}__}">
+   
+    <ul class="custom-field tagit ui-widget ui-widget-content squash-tagit" th:id="choose-tag"/>
+      
+      <div class="popup-dialog-buttonpane">
+        <input type="button" th:value="#{label.Confirm}" data-def="evt=confirm, mainbtn"/>
+        <input type="button" th:value="#{label.Cancel}" data-def="evt=cancel"/>
+      </div>
+    </div>
+  </div>
+
+
+
 </body>
 </html>

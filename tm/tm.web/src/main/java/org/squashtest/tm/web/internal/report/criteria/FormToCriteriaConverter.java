@@ -25,6 +25,7 @@ import static org.squashtest.tm.api.report.form.InputType.DATE;
 import static org.squashtest.tm.api.report.form.InputType.TEXT;
 import static org.squashtest.tm.api.report.form.InputType.TREE_PICKER;
 import static org.squashtest.tm.api.report.form.InputType.MILESTONE_PICKER;
+import static org.squashtest.tm.api.report.form.InputType.TAG_PICKER;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -63,6 +64,7 @@ public class FormToCriteriaConverter {
 		simpleEntryConverterByType.put(TEXT, simpleEntryDefaultConverter);
 		simpleEntryConverterByType.put(TREE_PICKER, simpleEntryDefaultConverter);
 		simpleEntryConverterByType.put(MILESTONE_PICKER, simpleEntryDefaultConverter);
+		simpleEntryConverterByType.put(TAG_PICKER, simpleEntryDefaultConverter);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -125,10 +127,28 @@ public class FormToCriteriaConverter {
 		case MILESTONE_PICKER :
 			res = createMilestoneMultiCriteria(name, multiValued, inputType);
 			break;
+			
+		case TAG_PICKER :
+			res = createTagCriteria(name, multiValued, inputType); 
+			break;
 		default:
 			res = EmptyCriteria.createEmptyCriteria(name, inputType);
 		}
 		return res;
+	}
+
+	private Criteria createTagCriteria(String name, Collection<Map<String, Object>> multiValued, InputType inputType) {
+		
+		MultiOptionsCriteria crit = new MultiOptionsCriteria(name, inputType);
+
+		for (Map<String, Object> valueItem : multiValued){
+			Collection<String> tags = (Collection) valueItem.get(INPUT_VALUE);
+			for (String tag : tags){
+				crit.addOption(tag, Boolean.TRUE);
+			}
+		}
+
+		return crit;
 	}
 
 	/**

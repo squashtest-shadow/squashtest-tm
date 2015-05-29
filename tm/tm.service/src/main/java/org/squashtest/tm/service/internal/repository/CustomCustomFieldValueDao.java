@@ -20,10 +20,13 @@
  */
 package org.squashtest.tm.service.internal.repository;
 
+import java.util.List;
+
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
 
 public interface CustomCustomFieldValueDao extends EntityDao<CustomFieldValue> {
 
+	List<String> getAvailableTagsForEntity(String boundEntityType, List<Long> projectIds);
 
 
 }

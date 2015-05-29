@@ -180,5 +180,6 @@ public interface CustomCustomFieldManagerService {
 	 */
 	void changeCode(long customFieldId, String code);
 
+	List<String> getAvailableTagsForEntity(String boundEntityType, List<Long> projectIds);
 
 }

@@ -159,6 +159,9 @@
                     th:with="input = ${opt.content}, hasLabel = ${false}">
                     </div>
 
+                    <div th:case="'TAG_PICKER'" class="report-selector" th:include="contextual-report-inputs.frag :: tagpicker"
+                    th:with="input = ${opt.content}, hasLabel = ${false}"></div>
+                    
                     <div th:case="*">Unsupported type : ${opt.content.type.name()}</div>
                   </span>
                 </li>

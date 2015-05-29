@@ -589,6 +589,8 @@
 	+ " and copy.binding = orig.binding"),
 	@NamedQuery(name = "CustomFieldValue.findAllCustomFieldValueOfBindingAndEntity", query = "select cv from CustomFieldValue cv join cv.binding binding where binding.id = ?1 and cv.boundEntityId = ?2 and cv.boundEntityType = ?3 "),
 
+	@NamedQuery(name = "CustomFieldValue.findAllAvailableTagForEntityInProjects", query = "select distinct opt.label from TagsValue tv join tv.selectedOptions opt join tv.binding cfb join cfb.customField cf  join cfb.boundProject bp  where  cfb.boundEntity = :boundEntityType and  bp.id in (:projectsIds)"),
+	
 	//BoundEntity
 	@NamedQuery(name = "BoundEntityDao.findAllTestCasesForProject", query = "select tc from TestCase tc where tc.project.id = :projectId"),
 	@NamedQuery(name = "BoundEntityDao.findAllReqVersionsForProject", query = "select rv from RequirementVersion rv join rv.requirement r where r.project.id = :projectId"),

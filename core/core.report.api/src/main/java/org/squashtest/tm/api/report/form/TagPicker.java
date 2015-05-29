@@ -18,25 +18,26 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.internal.repository.hibernate;
+package org.squashtest.tm.api.report.form;
 
-import java.util.List;
 
-import org.hibernate.Query;
-import org.springframework.stereotype.Repository;
-import org.squashtest.tm.domain.customfield.BindableEntity;
-import org.squashtest.tm.domain.customfield.CustomFieldValue;
-import org.squashtest.tm.service.internal.repository.CustomCustomFieldValueDao;
+public class TagPicker extends BasicInput  {
 
-@Repository("CustomCustomFieldValueDao")
-public class HibernateCustomFieldValueDao extends HibernateEntityDao<CustomFieldValue> implements CustomCustomFieldValueDao {
-
+	private String boundEntity;
+	
 	@Override
-	public List<String> getAvailableTagsForEntity(String boundEntityType, List<Long> projectIds) {
-
-		Query q = currentSession().getNamedQuery("CustomFieldValue.findAllAvailableTagForEntityInProjects");
-		q.setParameter("boundEntityType", BindableEntity.valueOf(boundEntityType) );	
-		q.setParameterList("projectsIds", projectIds);
-		return q.list();
+	public InputType getType() {
+		return InputType.TAG_PICKER;
 	}
+	
+	public void setBoundEntity(String boundEntity){
+		this.boundEntity = boundEntity;
+	}
+	
+	public String getBoundEntity(){
+		return boundEntity;
+	}
+
+
+
 }

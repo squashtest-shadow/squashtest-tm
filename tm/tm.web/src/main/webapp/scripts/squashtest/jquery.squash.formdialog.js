@@ -78,7 +78,7 @@
  *	is removed. Not more 'is-contextual' bullshit !
  *
  *	3/ all the inputs defined in this dialog will be cleaned up automatically whenever the dialog is opened again.
- *
+ *     If you don't want to clean, you can  activate use the nocleanup option.
  *	4/ a popup can define several alternative content that are displayed one at a time, representing a state.
  *	Displaying one will automatically hide the other alternatives.
  *	Those elements are declared using data-def="state=<state-id>", or directly using class="popup-dialog-state-<state-id>".
@@ -106,7 +106,7 @@
  *
  *	2/ DOM conf : reads parts of the conf from the datatable, see the handlers at the end of the document for details.
  *	for now, supports :
- *
+ *  -nocleanup : don't cleanup input when the dialog is reopened
  *	- isrich : for textarea. If set, will be turned into a ckeditor.
  *	- evt=<eventname> : for buttons. If set, clicking on that button will trigger <eventname> on the dialog.
  *	- state=<state id>[ <stat id> ...] : for any elements in the popup. Multiple elements can declare the same <state-id> and they'll
@@ -131,6 +131,7 @@ define([ 'jquery', "underscore", 'squash.attributeparser', 'squash.configmanager
 	$.widget("squash.formDialog", $.ui.dialog, {
 
 		options : {
+			nocleanup : false,
 			autoOpen : false,
 			resizable : false,
 			modal : true,
@@ -270,7 +271,9 @@ define([ 'jquery', "underscore", 'squash.attributeparser', 'squash.configmanager
 		},
 
 		open : function() {
-			this.cleanup();
+			if (!this.options.nocleanup){
+				this.cleanup();
+			}
 			this._super();
 
 		},
@@ -367,6 +370,9 @@ define([ 'jquery', "underscore", 'squash.attributeparser', 'squash.configmanager
 	});
 
 	$.squash.formDialog.domconf = {
+		'nocleanup': function($elt, value){
+			this.options.nocleanup = true;
+		},
 		'isrich' : function($elt, value) {
 			var randomKey = Math.random().toString().substring(3,6);
 			this.options._richeditors[randomKey]=$elt;

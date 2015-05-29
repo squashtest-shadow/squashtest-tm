@@ -102,6 +102,7 @@ define([ "jquery", "app/report/squashtm.reportworkspace", "tree", "underscore", 
 			});
 		}
 
+	
 
 		var checkerByControl = {
 				"PROJECT_PICKER" : hasProjectPicked,

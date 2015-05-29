@@ -236,4 +236,7 @@ public interface CustomFieldValueDao extends CustomCustomFieldValueDao{
 	List<CustomFieldValue> findAllForEntityAndRenderingLocation(long entityId, BindableEntity entityType, RenderingLocation renderingLocation);
 
 
+
+
+
 }

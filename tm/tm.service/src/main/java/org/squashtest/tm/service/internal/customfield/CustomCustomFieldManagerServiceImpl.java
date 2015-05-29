@@ -45,6 +45,7 @@ import org.squashtest.tm.service.customfield.CustomFieldBindingModificationServi
 import org.squashtest.tm.service.internal.repository.CustomFieldBindingDao;
 import org.squashtest.tm.service.internal.repository.CustomFieldDao;
 import org.squashtest.tm.service.internal.repository.CustomFieldValueDao;
+
 import static org.squashtest.tm.service.security.Authorizations.*;
 
 /**
@@ -253,6 +254,12 @@ public class CustomCustomFieldManagerServiceImpl implements CustomCustomFieldMan
 		if(customFieldDao.findByCode(newCode) != null){
 			throw new CodeAlreadyExistsException(field.getCode(), newCode, CustomField.class);
 		}
+	}
+
+	@Override
+	public List<String> getAvailableTagsForEntity(String boundEntityType, List<Long> projectIds) {
+		
+		return customFieldValueDao.getAvailableTagsForEntity(boundEntityType, projectIds);
 	}
 
 

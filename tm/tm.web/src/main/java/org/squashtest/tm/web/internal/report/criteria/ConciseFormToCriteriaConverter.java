@@ -197,6 +197,20 @@ public class ConciseFormToCriteriaConverter {
 			expanded = milestones;
 			break;
 		}
+		case TAG_PICKER : {
+			Collection tagsVal = (Collection) concise.get(CON_VAL);
+
+			List<Object> tags = new ArrayList<>(tagsVal.size());
+
+			Map<String, Object> mMap = new HashMap<>();
+			mMap.put(EXP_TYPE, concise.get(CON_TYPE));
+			mMap.put(EXP_VALUE, tagsVal);
+
+			tags.add(mMap);
+
+			expanded = tags;
+			break;
+		}
 		}
 
 		expandedForm.put(inputName, expanded);

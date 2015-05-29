@@ -19,10 +19,10 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 define([ "backbone", "underscore", "./ConciseFormModel", "app/util/ButtonUtil", "tree",
-         "./ProjectsPickerPopup", "./SingleProjectPickerPopup", "./MilestonePickerPopup", 
+         "./ProjectsPickerPopup", "./SingleProjectPickerPopup", "./MilestonePickerPopup", "./TagPickerPopup",
          "milestone-manager/milestone-activation", "jeditable.datepicker",
          "jquery.squash.formdialog"],
-function(Backbone, _, FormModel, ButtonUtil, treeBuilder, ProjectsPickerPopup, SingleProjectPickerPopup, MilestonePickerPopup, milestone) {
+function(Backbone, _, FormModel, ButtonUtil, treeBuilder, ProjectsPickerPopup, SingleProjectPickerPopup, MilestonePickerPopup, TagPickerPopup, milestone) {
 	"use strict";
 
 	var postDateFormat = $.datepicker.ATOM;
@@ -90,6 +90,7 @@ function(Backbone, _, FormModel, ButtonUtil, treeBuilder, ProjectsPickerPopup, S
 			this._renderTreePickers();
 			this._renderProjectPickers();
 			this._renderMilestonePickers();
+			this._renderTagPickers();
 			
 			
 			// we must also handle the milestone mode
@@ -117,6 +118,7 @@ function(Backbone, _, FormModel, ButtonUtil, treeBuilder, ProjectsPickerPopup, S
 			"click .rpt-tree-crit-open": "openTreePicker",
 			"click .rpt-projects-crit-open": "openProjectPicker",
 			"click .rpt-milestone-crit-open" : "openMilestonePicker",
+			"click .rpt-tag-crit-open" : "openTagPicker",
 			"change input" : "updateDeactivableInputs"
 		},
 
@@ -264,6 +266,15 @@ function(Backbone, _, FormModel, ButtonUtil, treeBuilder, ProjectsPickerPopup, S
 				});				
 			});
 		},
+		_renderTagPickers : function (){
+			var self = this;
+			this.$(".tag-picker").each(function(i, dom){
+				TagPickerPopup.init({
+					selector : "#"+dom.id,
+					model : self.model
+				});				
+			});
+		},
 
 		_initModel: function() {
 			this._initTexts();
@@ -275,6 +286,7 @@ function(Backbone, _, FormModel, ButtonUtil, treeBuilder, ProjectsPickerPopup, S
 			this._initPickers(".rpt-tree-crit", "TREE_PICKER");
 			this._initPickers(".project-picker", "PROJECT_PICKER");
 			this._initPickers(".milestone-picker", "MILESTONE_PICKER");
+			this._initPickers(".tag-picker", "TAG_PICKER");
 		},
 
 		_initTexts: function() {
@@ -406,6 +418,12 @@ function(Backbone, _, FormModel, ButtonUtil, treeBuilder, ProjectsPickerPopup, S
 			var dialogId = $(target).data("idopened");
 			$("#"+dialogId).formDialog("open");
 		},
+		openTagPicker : function(event){
+			var target = event.currentTarget;
+			var dialogId = $(target).data("idopened");
+			$("#"+dialogId).formDialog("open");
+		},
+		
 
 		/**
 		 * /!\ this is a jeditable handler builder

@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.web.internal.controller.customfield;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -28,7 +29,10 @@ import java.util.Map;
 import javax.inject.Inject;
 import javax.validation.Valid;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.Transformer;
 import org.apache.commons.lang.builder.ToStringBuilder;
+import org.hibernate.mapping.Array;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
@@ -51,8 +55,13 @@ import org.squashtest.tm.domain.customfield.CustomField;
 import org.squashtest.tm.domain.customfield.CustomFieldOption;
 import org.squashtest.tm.domain.customfield.InputType;
 import org.squashtest.tm.domain.customfield.SingleSelectField;
+import org.squashtest.tm.domain.project.GenericProject;
 import org.squashtest.tm.exception.DomainException;
 import org.squashtest.tm.service.customfield.CustomFieldManagerService;
+import org.squashtest.tm.service.project.GenericProjectFinder;
+import org.squashtest.tm.service.project.GenericProjectManagerService;
+import org.squashtest.tm.service.project.ProjectFinder;
+import org.squashtest.tm.service.user.UserAccountService;
 import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.helper.JEditablePostParams;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
@@ -79,6 +88,9 @@ public class CustomFieldController {
 	@Inject
 	private CustomFieldManagerService customFieldManager;
 
+	@Inject 
+	private ProjectFinder projectFinder;
+	
 	@Inject
 	private MessageSource messageSource;
 
@@ -394,5 +406,20 @@ public class CustomFieldController {
 	public @ResponseBody
 	void deleteCustomField(@PathVariable("customFieldIds") List<Long> customFieldIds) {
 		customFieldManager.deleteCustomField(customFieldIds);
+	}
+	
+	@RequestMapping(value = "/tags/{boundEntity}", method = RequestMethod.GET)
+	@ResponseBody
+	public List<String> getPossibleTagValues(@PathVariable("boundEntity") String boundEntity){
+		
+	List<Long> projectIds = (List<Long>) CollectionUtils.collect(projectFinder.findAllOrderedByName(), new Transformer() {
+			
+			@Override
+			public Object transform(Object input) {
+				return 	((GenericProject) input).getId();
+			}
+		});
+		
+		return customFieldManager.getAvailableTagsForEntity(boundEntity, projectIds);
 	}
 }
