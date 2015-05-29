@@ -314,6 +314,9 @@ define(["jquery", "backbone", "underscore", "squash.basicwidgets", "jeditable.si
 			var id = data['entity-id'];
 			var value = $(codeCell).text();
 			var reindexWarn = $("#change-code-reindex-warn");
+			
+			//clean previous error message in popup
+			Forms.input($("#change-code-popup-info-list-item-code")).clearState();
 
 			$.ajax({
 				type : 'GET',
@@ -348,31 +351,52 @@ define(["jquery", "backbone", "underscore", "squash.basicwidgets", "jeditable.si
 			dialog.on('formdialogcancel', this.closePopup);
 
 		},
+		
+		checkIfCodeExists : function checkIfCodeExists(newValue){
+			var exists = false;
+			
+			
+			return exists;
+		},
 
 		changeCode : function() {
 			var self = this;
 			var id = self.ChangeCodePopup.find("#change-code-popup-info-list-item-id").val();
 			var newValue = self.ChangeCodePopup.find("#change-code-popup-info-list-item-code").val();
 			var isUsed = self.ChangeCodePopup.data('isUsed');
+
 			$.ajax({
-				type : 'POST',
+				type : 'GET',
+				url : routing.buildURL("info-list-item.exist", newValue),
 				data : {
-					id : 'info-list-item-code',
-					'value' : newValue
+					format : "exists"
 				},
-				url : routing.buildURL("info-list-item.info", id),
-			}).done(function() {
-				self.optionsTable._fnAjaxUpdate();
-				if (isUsed) {
-					self.openReindexPopup();
+			}).done(function(data) {
+				if (data.exists) {
+					Forms.input($("#change-code-popup-info-list-item-code")).setState("error",
+							translator.get("message.optionCodeAlreadyDefined"));
 				}
-				self.ChangeCodePopup.formDialog('close');
-			}).fail(function(){
-				Forms.input($("#change-code-popup-info-list-item-code")).setState("error",
-						translator.get("message.optionCodeAlreadyDefined"));
-		
-				});
+				else {
+					$.ajax({
+						type : 'POST',
+						data : {
+							id : 'info-list-item-code',
+							'value' : newValue
+						},
+						url : routing.buildURL("info-list-item.info", id),
+					}).done(function() {
+						self.optionsTable._fnAjaxUpdate();
+						if (isUsed) {
+							self.openReindexPopup();
+						}
+						self.ChangeCodePopup.formDialog('close');
+					});
+				}
+			});
+			
 		},
+		
+		
 		closePopup : function() {
 			$(this).formDialog('close');
 		},

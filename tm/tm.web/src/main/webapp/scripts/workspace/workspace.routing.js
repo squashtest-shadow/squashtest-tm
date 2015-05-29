@@ -147,6 +147,7 @@ define([], function(){
 		'info-list.defaultItem'					: root + '/info-lists/{\\d+}/defaultItem ',
 		'info-list-item.isUsed'					: root + '/info-list-items/{\\d+}/isUsed',
 		'info-list-item.delete'					: root + '/info-lists/{\\d+}/items/{\\d+}',
+		'info-list-item.exist'					: root + '/info-lists/items/code/{\\d}',
 		'info-list.bind-to-project'				: root + '/info-list-binding/project/{\\d+}/{\\w+}',
 		'docxtemplate'							: root + '/reports/{\\w+}/{\\d+}/views/{\\d+}/docxtemplate',
 		'ie9sucks'								: root + '/reports/0/0/ie9',
