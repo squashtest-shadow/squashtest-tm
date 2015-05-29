@@ -32,7 +32,7 @@
 				<constraints nullable="false" primaryKey="true" />
 			</column>
 
-			<column name="VALUE" type="java.sql.Types.VARCHAR(32000)" remarks="Configuration value" />
+			<column name="VALUE" type="TEXT" remarks="Configuration value" />
 		</createTable>
 	</changeSet>
 	<changeSet id="core-0.20.0.02" author="gfouquet">
