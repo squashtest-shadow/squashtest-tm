@@ -60,7 +60,7 @@
           <td>${ fn:length(team.members) }</td>
           <td><comp:date value="${ team.createdOn }" /></td>
           <td>${ team.createdBy }</td>
-          <td><comp:date value="${ team.lastModifiedOn }" /></td>
+          <td><comp:date value="${ team.lastModifiedOn }" noValueKey="label.lower.Never" /></td> 
           <td>${ team.lastModifiedBy }</td>
           <td>&nbsp;</td>
         </tr>
