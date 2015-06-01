@@ -139,8 +139,9 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil",
 		},
 
 		_removeRequirements : function() {
-			var self = this;
-			var ids = this.toDeleteIds;	
+			var self = this;	
+			// Issue 4948 : Selected Id(s) can be a number or an array
+			var ids =  (this.toDeleteIds !== undefined) ? this.toDeleteIds : this.$el.getSelectedIds() ;
 			if (ids.length === 0) {
 				return;
 			}
@@ -150,8 +151,6 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil",
 			}).done(self.refresh);
 
 		},
-		
-		
 		
 		configureRemoveRequirementDialogs : function() {
 			// confirmRemoveRequirementDialog
