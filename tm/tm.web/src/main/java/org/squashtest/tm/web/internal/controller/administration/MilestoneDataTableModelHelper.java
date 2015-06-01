@@ -58,6 +58,10 @@ public class MilestoneDataTableModelHelper  extends DataTableModelBuilder<Milest
 		this.messageSource = messageSource;
 	}
 	
+	public MilestoneDataTableModelHelper(InternationalizationHelper messageSource, Locale locale) {
+		this.messageSource = messageSource;
+	}
+
 	@Override
 	protected Object buildItemData(Milestone item) {
 		Map<String, Object> row = new HashMap<String, Object>(12);

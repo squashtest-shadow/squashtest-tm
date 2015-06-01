@@ -583,18 +583,18 @@ public class AdvancedSearchController {
 	@RequestMapping(value = "/milestones/tc-mass-modif-associables/{testCaseIds}", method = RequestMethod.GET)
 	@ResponseBody
 	public DataTableModel getMilestonesForMassTcModif(@PathVariable List<Long> testCaseIds,
-			DataTableDrawParameters params) {
+			DataTableDrawParameters params, Locale locale) {
 		Collection<Milestone> milestones = testCaseModificationService
 				.findAssociableMilestonesForMassModif(testCaseIds);
-		return buildMilestoneTableModelForMassModif(milestones);
+		return buildMilestoneTableModelForMassModif(milestones, locale);
 	}
 
 	@RequestMapping(value = "/milestones/reqV-mass-modif-associables/{reqVersionIds}", method = RequestMethod.GET)
 	@ResponseBody
 	public DataTableModel getMilestonesForMassReqVersionModif(@PathVariable List<Long> reqVersionIds,
-			DataTableDrawParameters params) {
+			DataTableDrawParameters params, Locale locale) {
 		Collection<Milestone> milestones = versionService.findAssociableMilestonesForMassModif(reqVersionIds);
-		return buildMilestoneTableModelForMassModif(milestones);
+		return buildMilestoneTableModelForMassModif(milestones, locale);
 	}
 
 	
@@ -614,7 +614,8 @@ public class AdvancedSearchController {
 	
 	@RequestMapping(value = "/milestones/reqV-mass-modif-data/{reqVersionIds}", method = RequestMethod.GET)
 	@ResponseBody
-	public MilestoneMassModifData getMilestoneMassModifDataForReqVersion(@PathVariable List<Long> reqVersionIds){
+	public MilestoneMassModifData getMilestoneMassModifDataForReqVersion(@PathVariable List<Long> reqVersionIds,
+			Locale locale) {
 		
 		MilestoneMassModifData data = new MilestoneMassModifData();
 		data.setCheckedIds(versionService.findBindedMilestonesIdForMassModif(reqVersionIds));
@@ -660,8 +661,8 @@ public class AdvancedSearchController {
 	
 	
 
-	private DataTableModel buildMilestoneTableModelForMassModif(Collection<Milestone> data) {
-		MilestoneDataTableModelHelper helper = new MilestoneDataTableModelHelper(internationalizationHelper);
+	private DataTableModel buildMilestoneTableModelForMassModif(Collection<Milestone> data, Locale locale) {
+		MilestoneDataTableModelHelper helper = new MilestoneDataTableModelHelper(internationalizationHelper, locale);
 		Collection<Object> aaData = helper.buildRawModel(data);
 		DataTableModel model = new DataTableModel("");
 		model.setAaData((List<Object>) aaData);
