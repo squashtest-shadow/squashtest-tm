@@ -33,6 +33,11 @@ define([ "jquery", "underscore", "backbone", "handlebars", "app/lnf/Forms", "./N
 			this.configureCKEs();
 
 			// tried the more convenient `this.listenTo` but it generates errors in jq event processing
+			
+			// Issue 4954 bis : this hack will ensure the buttons still work despite the odd 
+			// dialog lifecycle 
+			this.$el.off("formdialogconfirm formdialogcancel formdialogclose formdialogconfirm-carry-on");
+			
 			this.$el.on("formdialogconfirm", this.onConfirm);
 			this.$el.on("formdialogcancel", this.onCancel);
 			this.$el.on("formdialogclose", this.onCancel);
@@ -140,8 +145,7 @@ define([ "jquery", "underscore", "backbone", "handlebars", "app/lnf/Forms", "./N
 		},
 
 		cleanup : function() {
-			// Issue 4954 : cleanup too much killed forever the popup : be more gentle (maybe too much ?)
-			this.$el.off("formdialogconfirm formdialogcancel formdialogclose formdialogconfirm-carry-on");
+			// issue 4954 : shouldn't clean anything after all
 		},
 
 		configureCKEs : function() {
