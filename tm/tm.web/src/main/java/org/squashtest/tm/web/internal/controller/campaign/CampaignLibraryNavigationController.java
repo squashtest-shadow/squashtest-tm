@@ -387,17 +387,8 @@ LibraryNavigationController<CampaignLibrary, CampaignFolder, CampaignLibraryNode
 	@RequestMapping(value = "/dashboard-milestones-statistics", method = RequestMethod.GET, produces = ContentTypes.APPLICATION_JSON)
 	public @ResponseBody
 	CampaignStatisticsBundle getStatisticsAsJson(@CurrentMilestone Milestone activeMilestone) {
-		// Find campaignIds for specific milestone
-		Collection<Campaign> campaignCollection = null;
 
-
-		if (activeMilestone != null){
-			campaignCollection = customCampaignModService.findCampaignsByMilestoneId(activeMilestone.getId());
-		}
-
-		List<Campaign> campaignList = new ArrayList<Campaign>(campaignCollection);
-		Campaign campaign = campaignList.get(0);
-		return campaignModService.gatherCampaignStatisticsBundle(campaign.getId());
+		return campaignModService.gatherCampaignStatisticsBundleByMilestone(activeMilestone.getId());
 	}
 
 	@RequestMapping(value = "/dashboard-milestones", method = RequestMethod.GET, produces = ContentTypes.TEXT_HTML)
@@ -415,7 +406,7 @@ LibraryNavigationController<CampaignLibrary, CampaignFolder, CampaignLibraryNode
 		boolean allowsUntestable = (csbundle.getCampaignTestCaseStatusStatistics().getNbUntestable() > 0);
 
 		mav.addObject("allowsSettled", allowsSettled);
-		mav.addObject("asslowUntestable", allowsUntestable);
+		mav.addObject("allowsUntestable", allowsUntestable);
 
 		return mav;
 	}
