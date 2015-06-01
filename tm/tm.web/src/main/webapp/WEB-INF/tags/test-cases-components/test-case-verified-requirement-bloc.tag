@@ -72,7 +72,10 @@
 			</c:if>		
 		</jsp:attribute>
 		<jsp:attribute name="body">
-			<tc:verified-requirements-table includeIndirectlyVerified="${ true }" linkable="${ linkable }" verifiedRequirementsTableUrl="${ verifiedRequirementsTableUrl }" verifiedRequirementsUrl="${verifiedRequirementsUrl }" containerId="contextual-content" />
+			<tc:verified-requirements-table includeIndirectlyVerified="${ true }" linkable="${ linkable }" 
+                                            verifiedRequirementsTableUrl="${ verifiedRequirementsTableUrl }" 
+                                            verifiedRequirementsUrl="${verifiedRequirementsUrl }" 
+                                            containerId="contextual-content" />
 		</jsp:attribute>
 	</comp:toggle-panel>
 </div>

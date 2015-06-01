@@ -28,6 +28,9 @@
 <%@ attribute name="testStep" required="true"  type="java.lang.Object" description="the concerned test step" %>
 <%@ attribute name="containerId" required="true" description="if of dom container that will hold the table events" %>
 
+<%--
+<%@ attribute name="milestoneConf" required="true" type="java.lang.Object" description="an instance of MilestoneFeatureConfiguration"%>
+ --%>
 
 <c:url var="tableLanguageUrl" value="/datatables/messages" />
 <c:url var="requirementVersionsUrl" value="/requirement-versions" />
@@ -82,7 +85,7 @@ data-def='datakeys-id=entity-id ,ajaxsource=${ stepVerifiedRequirementsUrl }'>
 			<th data-def="sClass=link-checkbox, map=empty-link-checkbox, narrow" style="width:32px;">&nbsp;</th>
 			<th data-def="sortable, map=project"><f:message key="label.project" /></th>
 			<th data-def="sortable, map=entity-id"><f:message key="label.versionId"/></th>
-			<c:if test="${not empty cookie['milestones']}"> 
+			<c:if test="${milestoneConf.}"> 
             <th data-def="sortable, map=milestone-dates"><f:message key="label.Milestone"/></th>
             </c:if>
 			<th data-def="sortable, map=reference"><f:message key="label.Reference"/></th>

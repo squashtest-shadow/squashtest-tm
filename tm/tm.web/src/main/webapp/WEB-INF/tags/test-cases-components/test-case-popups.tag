@@ -78,7 +78,7 @@
 <div id="rename-test-case-dialog" title="${renameDialogTitle}" class="popup-dialog not-displayed">
 	
 	<div>
-        <c:if test="${milestoneConf.messagesEnabled}">
+        <c:if test="${milestoneConf.showMultipleBindingMessage}">
           <div data-milestones="${milestoneConf.totalMilestones}" 
           class="milestone-count-notifier centered std-margin-top std-margin-bottom ${(milestoneConf.multipleBindings) ? '' : 'not-displayed'}">
             <f:message key="message.RenameTestCaseBoundToMultipleMilestones"/>

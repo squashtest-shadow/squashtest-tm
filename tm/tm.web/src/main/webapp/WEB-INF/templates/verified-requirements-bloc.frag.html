@@ -108,7 +108,7 @@
               <th th:attr="data-def='sClass=link-checkbox, map=empty-link-checkbox, center, narrow'">&nbsp;</th>
               <th th:attr="data-def='sortable, map=project'" th:text="#{label.project}">Project</th>
               <th th:attr="data-def='sortable, map=entity-id'" th:text="#{label.versionId}">Id</th>
-              <th th:if="${milestoneConf.milestoneDatesColumnIsVisible()} == true" data-def="sortable, map=milestone-dates" th:text="#{label.Milestone}"></th>
+              <th th:if="${milestoneConf.milestoneDatesColumnVisible} == true" data-def="sortable, map=milestone-dates" th:text="#{label.Milestone}"></th>
               <th th:attr="data-def='sortable, map=reference'" th:text="#{label.Reference}">Reference</th>
               <th th:attr="data-def='sortable, map=name, link='+@{/requirement-versions/{entity-id}/info}"
                 th:text="#{requirement.name.label}">Name</th>
@@ -128,7 +128,7 @@
               <td></td>
               <td th:text="${coverage.version.requirement.project.name}">project</td>
               <td th:text="${coverage.version.id}">1221</td>
-              <td th:if="${milestoneConf.milestoneDatesColumnIsVisible()} == true" th:text="${coverage.milestoneTimeInterval}">Milestone Dates Interval</td>
+              <td th:if="${milestoneConf.milestoneDatesColumnVisible} == true" th:text="${coverage.milestoneTimeInterval}">Milestone Dates Interval</td>
               <td th:text="${coverage.version.reference}">ref 1</td>
               <td th:text="${coverage.version.name}">name 1</td>
               <td th:text="${coverage.version.versionNumber}">3</td>

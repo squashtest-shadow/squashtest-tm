@@ -173,7 +173,7 @@ public class MilestoneFeatureConfiguration {
 	}
 
 	public boolean isLocked(){
-		return globallyEnabled && milestoneLocked;
+		return milestoneLocked;
 	}
 
 	public boolean isMultipleBindings(){
@@ -183,9 +183,35 @@ public class MilestoneFeatureConfiguration {
 	public boolean isEditable(){
 		return ! isLocked();
 	}
-	
-	public boolean milestoneDatesColumnIsVisible(){
-		return activeMilestone !=null;
+
+	public boolean isMilestoneDatesColumnVisible(){
+		return globallyEnabled;
+	}
+
+	// this method is an alias of the other
+	public boolean isShowLockMessage(){
+		return isMessagesEnabled() && isLocked();
+	}
+
+	/*
+	 * Cautious : split your eyes and read it as :
+	 * 
+	 * "Regardless of whether it is actually the case,
+	 * should the message about multiple milestones binding
+	 * be displayed when relevant ? "
+	 * 
+	 * 
+	 * Here is the point :
+	 * 
+	 * returns true -> the message could appear or disappear
+	 * according to the modifications that the user applies
+	 * when the page is displayed
+	 * 
+	 * returns false -> no such message is ever displayed
+	 * regardless of what the user is doing
+	 */
+	public boolean isShowMultipleBindingMessage(){
+		return isMessagesEnabled() && userEnabled && isEditable();
 	}
 
 }

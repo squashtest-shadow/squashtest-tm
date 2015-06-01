@@ -322,6 +322,13 @@ publish('reload.requirement.attachments');
     <div  id="rename-requirement-dialog" class="not-displayed popup-dialog"
           title="${renameDialogTitle}">
     
+       <c:if test="${milestoneConf.showMultipleBindingMessage}">
+            <div data-milestones="${milestoneConf.totalMilestones}" 
+                class="milestone-count-notifier centered std-margin-top std-margin-bottom ${(milestoneConf.multipleBindings) ? '' : 'not-displayed'}">
+                <f:message key="message.RenameRequirementBoundToMultipleMilestones"/>
+            </div>
+        </c:if> 
+    
         <label><f:message key="dialog.rename.label" /></label>
         <input type="text" id="rename-requirement-input" maxlength="255" size="50" /><br/>
         <comp:error-message forField="name"/>

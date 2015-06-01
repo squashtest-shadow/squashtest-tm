@@ -117,13 +117,6 @@
     <f:message var="renameTitle" key="dialog.rename-campaign.title" />
     <div id="rename-campaign-dialog" class="popup-dialog not-displayed" title="${renameTitle}">
 
-        <c:if test="${milestoneConf.messagesEnabled}">
-        <div data-milestones="${milestoneConf.totalMilestones}" 
-          class="milestone-count-notifier centered std-margin-top std-margin-bottom ${(milestoneConf.multipleBindings) ? '' : 'not-displayed'}">
-        <f:message key="message.RenameCampaignBoundToMultipleMilestones"/>
-      </div>
-      </c:if> 
-
       <label>
         <f:message key="dialog.rename.label" />
       </label>
