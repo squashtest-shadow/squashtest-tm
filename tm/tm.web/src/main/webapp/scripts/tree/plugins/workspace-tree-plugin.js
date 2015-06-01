@@ -196,6 +196,7 @@ define(['jquery', 'underscore', 'workspace.tree-node-copier', 'workspace.permiss
 		var defer = $.Deferred();
 		
 		var targetProject = $(moveObject.np).treeNode().getProjectId(),
+		libName = $(moveObject.np).treeNode().getName(),
 			srcProjects = _.unique($(moveObject.op).treeNode().all('getProjectId')),
 			isCrossProject = false;
 		
@@ -226,11 +227,11 @@ define(['jquery', 'underscore', 'workspace.tree-node-copier', 'workspace.permiss
 			
 			var lostMilestones = projects.willMilestonesBeLost(targetProject, srcProjects);
 			if (lostMilestones){
-				if (target.getName() === 'RequirementLibrary'){
+				if (libName === 'RequirementLibrary'){
 					addendum = translator.get('message.warnCopyToDifferentLibrary.milestonesDiffer.requirement');
 					msg = msg.replace('</ul>', addendum + '</ul>');
 				}
-				else if (target.getName() === 'TestCaseLibrary'){
+				else if (libName === 'TestCaseLibrary'){
 				addendum = translator.get('message.warnCopyToDifferentLibrary.milestonesDiffer.testcase');
 				msg = msg.replace('</ul>', addendum + '</ul>');
 				}
