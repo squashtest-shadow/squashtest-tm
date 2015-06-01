@@ -22,12 +22,13 @@ require([ "common" ], function(common) {
 	require([ "domReady", "jquery", "squash.basicwidgets", "test-step-editor/TestStepModificationView",
 			"app/ws/squashtm.workspace" ],
 			function(domReady, $, basic, TestStepModificationView, WS) {
+		
 				var closeWindow = function() {
 					/* Allow the parent to be refreshed */
 					/* We can now access from informations where there's no table to refresh */
 					if (window.opener.squashtm.app.reloadSteps() !== undefined) {
 					window.opener.squashtm.app.reloadSteps();}
-					window.close();
+					window.close(); 
 				};
 
 				domReady(function() {
