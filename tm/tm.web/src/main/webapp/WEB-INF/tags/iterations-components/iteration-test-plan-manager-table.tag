@@ -67,7 +67,8 @@
     <f:message var="tooltipAddSuite" key="tooltips.AddTSToTPI" />
     <f:message var="confirmLabel" key="label.Confirm" />
     <f:message var="cancelLabel" key="label.Cancel" />
-    <f:message var="assignLabel" key="label.Assign" />
+    <f:message var="closeLabel" key="label.Close" />
+    <f:message var="assignLabel" key="label.Assign" /> 
     <f:message var="okLabel" key="label.Ok" />
 
 
@@ -108,7 +109,7 @@
                 <input type="button" id="suite-manager-menu-ok-button" role="button" class="sq-btn btn-sm"
                   value="${confirmLabel}" />
                 <input type="button" id="suite-manager-menu-cancel-button" role="button" class="sq-btn btn-sm"
-                  value="${cancelLabel}" />
+                  value="${closeLabel}" />
               </div>
             </li>
           </ul>
@@ -191,7 +192,7 @@
       <div class="popup-dialog-buttonpane">
         <input type="button" value="${confirmLabel}"
           data-def="state=single-tp multiple-tp, mainbtn=single-tp multiple-tp, evt=confirm" />
-        <input type="button" value="${cancelLabel}" data-def="evt=cancel" />
+        <input type="button" value="${closeLabel}" data-def="evt=cancel" />
       </div>
     </div>
 
@@ -201,7 +202,7 @@
       </span>
       <div class="popup-dialog-buttonpane">
         <input type="button" value="${confirmLabel}" />
-        <input type="button" value="${cancelLabel}" />
+        <input type="button" value="${closeLabel}" />
       </div>
     </div>
 

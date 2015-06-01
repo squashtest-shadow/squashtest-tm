@@ -75,6 +75,7 @@
     <f:message var="tooltipAssign" key="tooltips.AssignUserToTPI" />
     <f:message var="confirmLabel" key="label.Confirm" />
     <f:message var="cancelLabel" key="label.Cancel" />
+    <f:message var="closeLabel" key="label.Close" />
     <f:message var="modeLabel" key="label.Mode" />
 
     <c:if test="${ reorderable }">
@@ -210,7 +211,7 @@
         <input type="button" value="${removeLabel}"
           data-def="state=single-tp multiple-tp, mainbtn=single-tp multiple-tp, evt=confirm" />
         <input type="button" value="${removeEverywhereLabel}" data-def="state=single-tp multiple-tp, evt=confirmall" />
-        <input type="button" value="${cancelLabel}" data-def="evt=cancel" />
+        <input type="button" value="${closeLabel}" data-def="evt=cancel" />
       </div>
     </div>
 
@@ -221,7 +222,7 @@
       </span>
       <div class="popup-dialog-buttonpane">
         <input type="button" value="${confirmLabel}" />
-        <input type="button" value="${cancelLabel}" />
+        <input type="button" value="${closeLabel}" />
       </div>
     </div>
 
@@ -239,7 +240,7 @@
 
       <div class="popup-dialog-buttonpane">
         <input type="button" value="${assignLabel}" data-def="state=assign, mainbtn=assign, evt=confirm" />
-        <input type="button" value="${cancelLabel}" data-def="evt=cancel" />
+        <input type="button" value="${closeLabel}" data-def="evt=cancel" />
       </div>
     </div>
     <div id="ts-test-plan-batch-edit-status" class="not-displayed popup-dialog"
@@ -257,7 +258,7 @@
 
       <div class="popup-dialog-buttonpane">
         <input type="button" value="${confirmLabel}" data-def="state=edit, mainbtn=edit, evt=confirm" />
-        <input type="button" value="${cancelLabel}" data-def="evt=cancel" />
+        <input type="button" value="${closeLabel}" data-def="evt=cancel" />
       </div>
     </div>
     <div id="ts-test-plan-reorder-dialog" class="not-displayed popup-dialog" title="${reorderLabel}">
@@ -266,7 +267,7 @@
       </span>
       <div class="popup-dialog-buttonpane">
         <input type="button" value="${confirmLabel}" />
-        <input type="button" value="${cancelLabel}" />
+        <input type="button" value="${closeLabel}" />
       </div>
     </div>
 

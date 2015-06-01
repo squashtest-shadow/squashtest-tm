@@ -40,7 +40,8 @@
 
 <f:message var="okLabel"          key="label.Ok" />
 <f:message var="cancelLabel"      key="label.Cancel" />
-
+<f:message var="closeLabel"       key="label.Close" />
+ 
 <f:message var="assignLabel"      key="label.Assign" />
 <f:message var="confirmLabel"     key="label.Confirm" />
 <f:message var="reorderLabel"     key="label.Reorder" />
@@ -169,7 +170,7 @@
     <span><f:message key="message.ReorderTestPlan" /></span>
     <div class="popup-dialog-buttonpane">
       <input type="button" value="${confirmLabel}" />
-      <input type="button" value="${cancelLabel}" />
+      <input type="button" value="${closeLabel}" />
     </div>
   </div>
 
@@ -187,7 +188,7 @@
 
     <div class="popup-dialog-buttonpane">
       <input type="button" value="${assignLabel}" data-def="state=assign, mainbtn=assign, evt=confirm" />
-      <input type="button" value="${cancelLabel}" data-def="evt=cancel" />
+      <input type="button" value="${closeLabel}" data-def="evt=cancel" />
     </div>
   </div>
   
@@ -203,7 +204,7 @@
     </div>
     <div class="popup-dialog-buttonpane">
       <input type="button" class="button" value="${confirmLabel}" data-def="evt=confirm, mainbtn"/>
-      <input type="button" class="button" value="${cancelLabel}" data-def="evt=cancel"/>
+      <input type="button" class="button" value="${closeLabel}" data-def="evt=cancel"/>
     </div>
   </div>
   </script>

@@ -64,7 +64,8 @@
     <f:message var="removeEverywhereLabel" key="label.RemoveTSAndIT" />
     <f:message var="tooltipAddSuite" key="tooltips.AddTSToTPI" />
     <f:message var="confirmLabel" key="label.Confirm" />
-    <f:message var="cancelLabel" key="label.Cancel" />
+    <f:message var="cancelLabel" key="label.Cancel" /> 
+    <f:message var="closeLabel" key="label.Close" />
     <f:message var="assignLabel" key="label.Assign" />
     <f:message var="okLabel" key="label.Ok" />
 
@@ -157,7 +158,7 @@
         <input type="button" value="${removeLabel}"
           data-def="state=single-tp multiple-tp, mainbtn=single-tp multiple-tp, evt=confirm" />
         <input type="button" value="${removeEverywhereLabel}" data-def="state=single-tp multiple-tp, evt=confirmall" />
-        <input type="button" value="${cancelLabel}" data-def="evt=cancel" />
+        <input type="button" value="${closeLabel}" data-def="evt=cancel" />
       </div>
     </div>
 
@@ -167,7 +168,7 @@
       </span>
       <div class="popup-dialog-buttonpane">
         <input type="button" value="${confirmLabel}" />
-        <input type="button" value="${cancelLabel}" />
+        <input type="button" value="${closeLabel}" />
       </div>
     </div>
 
