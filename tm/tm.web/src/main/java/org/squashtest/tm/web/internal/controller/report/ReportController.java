@@ -265,7 +265,7 @@ public class ReportController {
 			if (input.getType() == InputType.RADIO_BUTTONS_GROUP){
 				RadioButtonsGroup container = (RadioButtonsGroup)input;
 				for (OptionInput opt : container.getOptions()){
-					if (opt.getClass().isAssignableFrom(TagPickerOption.class)){
+					if (opt instanceof TagPickerOption){
 						String entityType = ((TagPickerOption)opt).getPickerBoundEntity();
 						List<String> availableTags = getPossibleTagValues(entityType);
 						if (availableTags.isEmpty()){
