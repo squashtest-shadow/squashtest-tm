@@ -209,7 +209,7 @@ define([ 'module', "jquery", "squash.basicwidgets", "workspace.routing", "squash
 				var ids = getAllCheckedIds();
 				var url = routing.buildURL('milestone.bind-milestones-to-project', config.data.project.id); 
 				
-				if ( ids === 0 ) {
+				if ( ids.length === 0 ) {
 					bindMilestoneDialog.formDialog('close');
 				}
 				else {
