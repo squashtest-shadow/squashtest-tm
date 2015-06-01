@@ -154,7 +154,7 @@
         id="manage-test-suites-button" class="sq-btn" />
     </c:if>
     <c:if test="${ writable }">
-      <input type="button" value='<f:message key="iteration.button.rename.label" />' id="rename-iteration-button" title='<f:message key="dialog.rename-iteration.title" />'
+      <input type="button" value='<f:message key="iteration.button.rename.label" />' id="rename-iteration-button" title="<f:message key="dialog.rename-iteration.title" />"
         class="sq-btn" />
     </c:if>
 
