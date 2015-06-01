@@ -70,6 +70,7 @@ import org.squashtest.tm.service.testcase.VerifyingTestCaseManagerService;
 public class TestCaseAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl implements
 TestCaseAdvancedSearchService {
 
+	
 	@Inject
 	protected SessionFactory sessionFactory;
 
@@ -104,6 +105,8 @@ TestCaseAdvancedSearchService {
 
 	private final static List<String> LONG_SORTABLE_FIELDS = Arrays.asList("requirements", "steps", "id", "iterations",
 			"attachments");
+
+	private static final String FAKE_TC_ID = "-9000";
 
 	@Override
 	public List<String> findAllUsersWhoCreatedTestCases() {
@@ -319,11 +322,19 @@ TestCaseAdvancedSearchService {
 		for (String str : strMilestoneIds){
 			milestoneIds.add(Long.valueOf(str));
 		}
+		
+
 
 		List<Long> lTestcaseIds = testCaseDao.findAllTestCasesLibraryNodeForMilestone(milestoneIds);
 		List<String> testcaseIds = new ArrayList<>(lTestcaseIds.size());
 		for (Long l : lTestcaseIds){
 			testcaseIds.add(l.toString());
+		}
+		
+		//if no tc are found then use fake id so the lucene query will not find anything
+
+		if (testcaseIds.isEmpty()){
+			testcaseIds.add(FAKE_TC_ID);
 		}
 
 		// finally, add a criteria that restrict the test case ids

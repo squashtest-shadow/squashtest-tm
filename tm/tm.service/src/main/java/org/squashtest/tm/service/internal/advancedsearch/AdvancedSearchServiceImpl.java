@@ -93,6 +93,8 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 
 	private final static Integer EXPECTED_LENGTH = 7;
 
+	private static final String FAKE_MILESTONE_ID = "-9000";
+
 	protected FeatureManager getFeatureManager() {
 		return featureManager;
 	}
@@ -566,7 +568,13 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 			for (Milestone milestone : (List<Milestone>) crit.list()) {
 				milestoneIds.add(String.valueOf(milestone.getId()));
 			}
-
+			
+			//if there is no milestone id that means we didn't found any milestones
+			//matching search criteria, so we use a fake milestoneId to find no result.
+			if (milestoneIds.isEmpty()){
+				milestoneIds.add(FAKE_MILESTONE_ID);
+			}
+			
 			AdvancedSearchListFieldModel milestonesModel = new AdvancedSearchListFieldModel();
 			milestonesModel.setValues(milestoneIds);
 
