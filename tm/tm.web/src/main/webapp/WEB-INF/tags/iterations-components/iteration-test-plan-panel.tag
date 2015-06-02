@@ -68,7 +68,8 @@
     <f:message var="manageTS" key='iteration.test-plan.testsuite.manage.label' />
     <f:message var="tooltipStatus" key="tooltips.changeExecutionStatuses" />
     <f:message var="tooltipAddTPI" key="tooltips.AddTPIToTP" />
-    <f:message var="tooltipRemoveTPI" key="tooltips.RemoveTPIFromTP" /> 
+    <f:message var="tooltipRemoveTPI" key="tooltips.RemoveTPIFromTP" />  
+    <f:message var="removeTooltip" key="label.removeFromExecutionPlan" />
     <f:message var="tooltipAssign" key="tooltips.AssignUserToTPI" />
     <f:message var="tooltipAddSuite" key="tooltips.AddTSToTPI" />
     <f:message var="confirmLabel" key="label.Confirm" />
@@ -144,7 +145,7 @@
               <span class="ui-icon ui-icon-plusthick"></span>
               ${ associateLabel }
             </button>
-            <button id="remove-test-plan-button" class="sq-btn btn-sm" title="${tooltipRemoveTPI}">
+            <button id="remove-test-plan-button" class="sq-btn btn-sm" title="${tooltipRemove}">
               <span class="ui-icon ui-icon-trash"></span>
               ${removeLabel}
             </button>
