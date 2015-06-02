@@ -30,6 +30,7 @@
 <%@ tag body-content="empty" description="the test plan panel of an iteration when displayed in the test plan manager" %>
 
 <%@ attribute name="testSuite" type="java.lang.Object" description="the instance of test suite"%>
+<%@ attribute name="milestoneConf" type="java.lang.Object" description="an instance of MilestoneFeatureConfiguration" %>
 
 
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
@@ -103,8 +104,13 @@
   <%--
     Because the filtering/sorting system might not like that a column may be defined or not,
     the column must always be present. It may, however, be displayed or not.
+    
+    As per stupid specification, instead of the normal conditions the milestone dates column 
+    must be displayed if the feature is globally-enabled but not user-enabled 
+    
+    for f*** sakes
    --%>
- <c:set var="milestoneVisibility" value="${(empty cookie['milestones']) ? ', invisible' : ''}"/>
+ <c:set var="milestoneVisibility" value="${(milestoneConf.globallyEnabled and not milestoneConf.userEnabled) ? '' : ', invisible'}"/>
 
   <div class="std-margin-top">
 

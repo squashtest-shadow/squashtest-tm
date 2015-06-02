@@ -56,6 +56,8 @@ import org.squashtest.tm.service.milestone.MilestoneFinderService;
 import org.squashtest.tm.web.internal.argumentresolver.MilestoneConfigResolver.CurrentMilestone;
 import org.squashtest.tm.web.internal.controller.AcceptHeaders;
 import org.squashtest.tm.web.internal.controller.RequestParams;
+import org.squashtest.tm.web.internal.controller.milestone.MilestoneFeatureConfiguration;
+import org.squashtest.tm.web.internal.controller.milestone.MilestoneUIConfigurationService;
 import org.squashtest.tm.web.internal.helper.JsTreeHelper;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.builder.DriveNodeBuilder;
@@ -102,6 +104,10 @@ public class IterationTestPlanManagerController {
 	@Inject
 	private MilestoneFinderService milestoneFinder;
 
+
+	@Inject
+	private MilestoneUIConfigurationService milestoneConfService;
+
 	private final DatatableMapper<String> testPlanMapper = new NameBasedMapper()
 	.map("entity-index", "index(IterationTestPlanItem)")
 	// index is a special case which means : no sorting.
@@ -124,11 +130,15 @@ public class IterationTestPlanManagerController {
 		List<TestCaseLibrary> linkableLibraries = iterationTestPlanManagerService.findLinkableTestCaseLibraries();
 
 		List<JsTreeNode> linkableLibrariesModel = createLinkableLibrariesModel(linkableLibraries, openedNodes, activeMilestone);
+		MilestoneFeatureConfiguration milestoneConf = milestoneConfService.configure(activeMilestone, iteration);
+
 
 		ModelAndView mav = new ModelAndView("page/campaign-workspace/show-iteration-test-plan-manager");
 		mav.addObject("iteration", iteration);
 		mav.addObject("baseURL", "/iterations/" + iterationId);
 		mav.addObject("linkableLibrariesModel", linkableLibrariesModel);
+		mav.addObject("milestoneConf", milestoneConf);
+
 		return mav;
 	}
 

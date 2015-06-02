@@ -25,9 +25,9 @@
 <%@ taglib prefix="layout" tagdir="/WEB-INF/tags/layout"%>
 <%@ taglib prefix="tree" tagdir="/WEB-INF/tags/jstree"%>
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component"%>
+<%@ taglib prefix="json" uri="http://org.squashtest.tm/taglib/json" %>
 <%@ taglib prefix="reqs" tagdir="/WEB-INF/tags/requirements-components" %>
 <%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
-
 
 <c:url var="backUrl" value="/requirement-workspace/" />
 <c:url var="requirementUrl" value="/requirements/${ requirement.id }" />
@@ -43,7 +43,10 @@
     <comp:sq-css name="squash.blue.css" />
     <script type="text/javascript">	
       var squashtm = squashtm || {};
-      squashtm.bindingsManager = { bindingsUrl: "${verifyingTestCasesUrl}" };
+      squashtm.bindingsManager = { 
+    		  bindingsUrl: "${verifyingTestCasesUrl}",
+    		  model : ${json:serialize(verifyingTestCaseModel.aaData)}
+   	  };
     </script>
   </jsp:attribute>
   
@@ -63,7 +66,12 @@
   <jsp:attribute name="tablePane">
     <comp:opened-object otherViewers="${ otherViewers }" objectUrl="${ requirementUrl }" />
     
-    <reqs:verifying-test-cases-table editable="true" model="${verifyingTestCaseModel}" requirementVersion="${requirementVersion}" batchRemoveButtonId="none"/>
+    <reqs:verifying-test-cases-table 
+            editable="true" 
+            model="${verifyingTestCaseModel}" 
+            requirementVersion="${requirementVersion}" 
+            batchRemoveButtonId="none"
+            milestoneConf="${milestoneConf}"/>
         
     <div id="add-summary-dialog" class="not-displayed" title="<f:message key='requirement-version.verifying-test-case.add-summary-dialog.title' />">
       <ul><li>summary message here</li></ul>

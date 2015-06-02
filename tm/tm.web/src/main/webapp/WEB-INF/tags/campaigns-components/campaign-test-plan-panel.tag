@@ -26,6 +26,7 @@
 <%@ attribute name="editable" type="java.lang.Boolean"       description="Right to edit content. Default to false."%>
 <%@ attribute name="reorderable" type="java.lang.Boolean"    description="Right to reorder the test plan. Default to false."%>
 <%@ attribute name="linkable" type="java.lang.Boolean"       description="Right to add test cases to the test plan. Default to false."%>
+<%@ attribute name="milestoneConf" type="java.lang.Object"  description="an instance of MilestoneFeatureConfiguration"%>
 
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt"%>
@@ -60,7 +61,6 @@
 <f:message var="tooltipAddTPI"    key="tooltips.AddTPIToTP" />
 <f:message var="tooltipRemoveTPI" key="tooltips.RemoveTPIFromTP" />
 <f:message var="tooltipAssign"    key="tooltips.AssignUserToTPI" />
-
 
 <%-- ================== the toolbar ==================== --%>
 <div class="cf">
@@ -111,8 +111,10 @@
   <%--
     Because the filtering/sorting system might not like that a column may be defined or not,
     the column must always be present. It may, however, be displayed or not.
+
    --%>
- <c:set var="milestoneVisibility" value="${(empty cookie['milestones']) ? ', invisible' : ''}"/>
+ <c:set var="milestoneVisibility" 
+    value="${(milestoneConf.milestoneDatesColumnVisible) ? '' : ', invisible'}"/>
 
 <div class="table-tab-wrap">
   <c:if test="${editable}">
@@ -211,5 +213,4 @@
 
 </div>
 
-<%-- the init code must now be in the main jsp (campaign jsp or the test plan manager jsp) --%>
 

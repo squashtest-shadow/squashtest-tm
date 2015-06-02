@@ -53,6 +53,8 @@ import org.squashtest.tm.service.campaign.IndexedCampaignTestPlanItem;
 import org.squashtest.tm.service.milestone.MilestoneFinderService;
 import org.squashtest.tm.web.internal.argumentresolver.MilestoneConfigResolver.CurrentMilestone;
 import org.squashtest.tm.web.internal.controller.RequestParams;
+import org.squashtest.tm.web.internal.controller.milestone.MilestoneFeatureConfiguration;
+import org.squashtest.tm.web.internal.controller.milestone.MilestoneUIConfigurationService;
 import org.squashtest.tm.web.internal.helper.JsTreeHelper;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.builder.DriveNodeBuilder;
@@ -89,6 +91,9 @@ public class CampaignTestPlanManagerController {
 	@Inject
 	private MilestoneFinderService milestoneFinder;
 
+	@Inject
+	private MilestoneUIConfigurationService milestoneConfService;
+
 	private final DatatableMapper<String> testPlanMapper = new NameBasedMapper()
 	.map		 ("entity-index", 	"index(CampaignTestPlanItem)")
 	.mapAttribute(DataTableModelConstants.PROJECT_NAME_KEY, 	"name", 			Project.class)
@@ -110,13 +115,15 @@ public class CampaignTestPlanManagerController {
 
 		Campaign campaign = testPlanManager.findCampaign(campaignId);
 		List<TestCaseLibrary> linkableLibraries = testPlanManager.findLinkableTestCaseLibraries();
-
+		MilestoneFeatureConfiguration milestoneConf = milestoneConfService.configure(activeMilestone, campaign);
 
 		List<JsTreeNode> linkableLibrariesModel = createLinkableLibrariesModel(linkableLibraries, openedNodes, activeMilestone);
 
 		ModelAndView mav = new ModelAndView("page/campaign-workspace/show-campaign-test-plan-manager");
 		mav.addObject("campaign", campaign);
 		mav.addObject("linkableLibrariesModel", linkableLibrariesModel);
+		mav.addObject("milestoneConf", milestoneConf);
+
 		return mav;
 	}
 

@@ -162,13 +162,15 @@ public class TestSuiteTestPlanManagerController {
 		TestSuite testSuite = testSuiteTestPlanManagerService.findTestSuite(suiteId);
 
 		List<TestCaseLibrary> linkableLibraries = iterationTestPlanManagerService.findLinkableTestCaseLibraries();
-
 		List<JsTreeNode> linkableLibrariesModel = createLinkableLibrariesModel(linkableLibraries, openedNodes, activeMilestone);
+		MilestoneFeatureConfiguration milestoneConf = milestoneConfService.configure(activeMilestone, testSuite);
 
 		ModelAndView mav = new ModelAndView("page/campaign-workspace/show-test-suite-test-plan-manager");
 		mav.addObject("testSuite", testSuite);
 		mav.addObject("baseURL", "/test-suites/" + suiteId);
 		mav.addObject("linkableLibrariesModel", linkableLibrariesModel);
+		mav.addObject("milestoneConf", milestoneConf);
+
 		return mav;
 	}
 

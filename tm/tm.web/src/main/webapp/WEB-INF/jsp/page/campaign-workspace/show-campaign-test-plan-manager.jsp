@@ -76,7 +76,7 @@
 	<jsp:attribute name="tablePane">
 		<comp:opened-object otherViewers="${ otherViewers }" objectUrl="${ campaignUrl }" />
 		
-		<camp:campaign-test-plan-manager-table campaign="${campaign}"/>
+		<camp:campaign-test-plan-manager-table campaign="${campaign}" milestoneConf="${milestoneConf}"/>
 		
 	</jsp:attribute>
   

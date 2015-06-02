@@ -51,6 +51,8 @@ import org.squashtest.tm.service.requirement.RequirementVersionManagerService;
 import org.squashtest.tm.service.testcase.VerifyingTestCaseManagerService;
 import org.squashtest.tm.web.internal.argumentresolver.MilestoneConfigResolver.CurrentMilestone;
 import org.squashtest.tm.web.internal.controller.RequestParams;
+import org.squashtest.tm.web.internal.controller.milestone.MilestoneFeatureConfiguration;
+import org.squashtest.tm.web.internal.controller.milestone.MilestoneUIConfigurationService;
 import org.squashtest.tm.web.internal.helper.JsTreeHelper;
 import org.squashtest.tm.web.internal.helper.VerifiedRequirementActionSummaryBuilder;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
@@ -89,6 +91,10 @@ public class VerifyingTestCaseManagerController {
 	@Inject
 	private MilestoneFinderService milestoneFinder;
 
+
+	@Inject
+	private MilestoneUIConfigurationService milestoneConfService;
+
 	/*
 	 * Kind of a hack : we rely on mDataProp sent by squash table. IndexBasedMapper looks up into mataProps unmarchalled
 	 * as a Map<String, String>. The found value is used as a key in a Map<Long, Object>, so it breaks.
@@ -110,7 +116,7 @@ public class VerifyingTestCaseManagerController {
 
 		RequirementVersion requirementVersion = requirementVersionFinder.findById(requirementVersionId);
 		List<TestCaseLibrary> linkableLibraries = verifyingTestCaseManager.findLinkableTestCaseLibraries();
-
+		MilestoneFeatureConfiguration milestoneConf = milestoneConfService.configure(activeMilestone, requirementVersion);
 
 		List<JsTreeNode> linkableLibrariesModel = createLinkableLibrariesModel(linkableLibraries, openedNodes, activeMilestone);
 		DefaultPagingAndSorting pas = new DefaultPagingAndSorting("Project.name");
@@ -121,6 +127,7 @@ public class VerifyingTestCaseManagerController {
 		model.addAttribute("requirementVersion", requirementVersion);
 		model.addAttribute("linkableLibrariesModel", linkableLibrariesModel);
 		model.addAttribute("verifyingTestCaseModel", verifyingTCModel);
+		model.addAttribute("milestoneConf", milestoneConf);
 
 		return "page/requirement-workspace/show-verifying-testcase-manager";
 	}

@@ -290,8 +290,12 @@ publish('reload.requirement.toolbar');
 
 		<jsp:attribute name="body">
 			<reqs:verifying-test-cases-table 
-			batchRemoveButtonId="remove-verifying-test-case-button" requirementVersion="${requirementVersion}" 
-				editable="${ linkable }" model="${verifyingTestCasesModel}" autoJsInit="${false}"/>
+			     batchRemoveButtonId="remove-verifying-test-case-button" 
+                 requirementVersion="${requirementVersion}" 
+				 editable="${ linkable }" 
+                 model="${verifyingTestCasesModel}" 
+                 milestoneConf="${milestoneConf}"
+                 />
 		</jsp:attribute>
 	</comp:toggle-panel>
   

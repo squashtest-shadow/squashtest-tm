@@ -37,6 +37,7 @@
 <%@ attribute name="statuses" type="java.lang.Object"
   description="a map of execution statuses paired by id -> internationalized text. The id must be a string."%>
 <%@ attribute name="testSuite" type="java.lang.Object" description="the instance of test suite"%>
+<%@ attribute name="milestoneConf" type="java.lang.Object" description="an instance of MilestoneFeatureConfiguration" %>
 
 
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
@@ -132,7 +133,7 @@
     Because the filtering/sorting system might not like that a column may be defined or not,
     the column must always be present. It may, however, be displayed or not.
    --%>
- <c:set var="milestoneVisibility" value="${(empty cookie['milestones']) ? ', invisible' : ''}"/>
+ <c:set var="milestoneVisibility" value="${(milestoneConf.milestoneDatesColumnVisible) ? '' : ', invisible'}"/>
   
   <div class="table-tab-wrap">
     <c:if test="${editable}">

@@ -32,7 +32,8 @@ require([ "common" ], function() {
 
 		msg.load([
 			"requirement-version.verifying-test-case.already-verified-rejection",
-			"requirement-version.verifying-test-case.not-linkable-rejection"
+			"requirement-version.verifying-test-case.not-linkable-rejection",
+			"dialog.unbind-ta-project.tooltip"
 		]);
 
 		function sendUpdateTree(ids){
@@ -97,6 +98,19 @@ require([ "common" ], function() {
 		}
 
 		$(function() {
+			
+
+			// init the table
+			$("#verifying-test-cases-table").squashTable({
+				aaData : window.squashtm.bindingsManager.model
+			},{
+	          unbindButtons : {
+	            delegate : "#unbind-active-row-dialog",
+	            tooltip : msg.get('dialog.unbind-ta-project.tooltip')
+	          }		
+			});
+			
+			// init the panel
 			new VerifyingTestCasesPanel({ apiUrl: window.squashtm.bindingsManager.bindingsUrl })
 
 			$("#add-summary-dialog").messageDialog();
@@ -119,7 +133,9 @@ require([ "common" ], function() {
 				});
 
 				tree.jstree('deselect_all');
-			}); 
+			});
+			
+			
 		});
 	});
 });

@@ -157,12 +157,14 @@ public class VerifiedRequirementsManagerController {
 
 		TestStep testStep = testStepService.findById(testStepId);
 		PermissionsUtils.checkPermission(permissionService, new SecurityCheckableObject(testStep, "LINK"));
+		MilestoneFeatureConfiguration milestoneConf = milestoneConfService.configure(activeMilestone, testStep.getTestCase());
 
 
 		List<JsTreeNode> linkableLibrariesModel = createLinkableLibrariesModel(openedNodes, activeMilestone);
 
 		model.addAttribute("testStep", testStep);
 		model.addAttribute("linkableLibrariesModel", linkableLibrariesModel);
+		model.addAttribute("milestoneConf", milestoneConf);
 
 		return "page/test-case-workspace/show-step-verified-requirements-manager";
 

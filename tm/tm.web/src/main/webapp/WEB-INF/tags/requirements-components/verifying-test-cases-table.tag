@@ -25,9 +25,7 @@
 <%@ attribute name="editable" type="java.lang.Boolean" description="Right to edit content. Default to false." %>
 <%@ attribute name="requirementVersion" type="java.lang.Object" required="true" description="The RequirementVersion instance for which we render the verifying testcases" %>
 <%@ attribute name="model" type="java.lang.Object" required="true" description="the initial rows of the table"%>
-<%@ attribute name="autoJsInit" type="java.lang.Boolean" required="false" 
-              description="TRANSITIONAL. If set to true, will insert the javascript initialization block. Defaults is true."%>
-
+<%@ attribute name="milestoneConf" type="java.lang.Object" required="true" description="an instance of MilestoneFeatureConfiguration" %>
 
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
@@ -52,7 +50,7 @@
 
 <%-- ======================== /VARIABLES & URLS ============================ --%>
 
-<c:set var="milestoneVisibility" value="${(empty cookie['milestones']) ? ', invisible' : ''}"/> 
+<c:set var="milestoneVisibility" value="${(milestoneConf.milestoneDatesColumnVisible) ? '' : ', invisible'}"/> 
         
 <table id="verifying-test-cases-table" class="unstyled-table" data-def="ajaxsource=${tableModelUrl}, deferloading=${model.iTotalRecords}, 
   datakeys-id=tc-id, pre-sort=2-asc, pagesize=50 ">
@@ -72,30 +70,7 @@
   </tbody>
 </table>
 
-<c:if test="${empty autoJsInit or autoJsInit}" >
-<script type="text/javascript">
-  require([ "common" ], function() {
-    require(['jquery', "app/squash.wreqr.init", "squash.translator", 'squashtable'], function($, Wreqr, translator) {      
-      <c:if test="${editable}">
-      $(document).on("click", "#${batchRemoveButtonId}", function(event) {
-        squash.vent.trigger("verifying-test-cases:unbind-selected", { source: event });
-      });
-      </c:if>
 
-      $(function() {
-        var table = $("#verifying-test-cases-table").squashTable({
-          'aaData' : ${json:serialize(model.aaData)}
-        }, {
-          unbindButtons : {
-            delegate : "#unbind-active-row-dialog",
-            tooltip : translator.get('dialog.unbind-ta-project.tooltip')
-          }
-        });
-      });
-    });
-  });
-</script>
-</c:if>
 <script type="text/x-handlebars-template" id="unbind-dialog-tpl">
   <div id="{{dialogId}}" class="not-displayed popup-dialog" title="<f:message key='dialog.remove-testcase-associations.title'/>">
     <div data-def="state=confirm-deletion">

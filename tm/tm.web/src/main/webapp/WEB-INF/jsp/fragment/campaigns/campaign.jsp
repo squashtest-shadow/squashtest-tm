@@ -318,8 +318,12 @@
 
       <%--------------------------- Test plan section ------------------------------------%>
 
-      <camp:campaign-test-plan-panel editable="${ linkable }" reorderable="${linkable}" linkable="${linkable}"
-        campaign="${campaign}" />
+      <camp:campaign-test-plan-panel 
+          editable="${ linkable }" 
+          reorderable="${linkable}" 
+          linkable="${linkable}"
+          campaign="${campaign}" 
+          milestoneConf="${milestoneConf}"/>
 
     </div>
 
