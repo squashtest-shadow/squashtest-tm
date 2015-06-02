@@ -106,7 +106,7 @@
  *
  *	2/ DOM conf : reads parts of the conf from the datatable, see the handlers at the end of the document for details.
  *	for now, supports :
- *  -nocleanup : don't cleanup input when the dialog is reopened
+ *  -nocleanup : for main div, don't cleanup input when the dialog is reopened
  *	- isrich : for textarea. If set, will be turned into a ckeditor.
  *	- evt=<eventname> : for buttons. If set, clicking on that button will trigger <eventname> on the dialog.
  *	- state=<state id>[ <stat id> ...] : for any elements in the popup. Multiple elements can declare the same <state-id> and they'll
@@ -186,6 +186,7 @@ define([ 'jquery', "underscore", 'squash.attributeparser', 'squash.configmanager
 			tobedisplayed.show();
 
 			this.options._state = (tobedisplayed.length === 0) ? "default" : state;
+			this._triggerInternal("statechange"+state);
 		},
 
 		getState : function(){

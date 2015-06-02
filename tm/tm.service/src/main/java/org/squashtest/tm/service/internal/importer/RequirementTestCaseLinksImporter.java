@@ -97,6 +97,7 @@ public class RequirementTestCaseLinksImporter {
 		catch(ColumnHeaderNotFoundException ex){
 			//abort the import. The summary already contains the relevant informations. We just need to log the exception here.
 			summary.setFailures(sheet.getPhysicalNumberOfRows() -1);	//euristic estimation of the number of imported relationships
+			summary.setTotal(sheet.getPhysicalNumberOfRows() -1);
 			LOGGER.info("import failed due to bad format : ", ex);
 		}
 	}

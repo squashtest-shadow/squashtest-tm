@@ -43,7 +43,7 @@
  * }
  *
  */
-define([ "jquery", "underscore",  "app/ws/squashtm.notification", "jquery.squash.formdialog", "jform" ], function($, _, WTF) {
+define([ "jquery", "underscore",  "app/ws/squashtm.notification", "squash.translator" ,"jquery.squash.formdialog", "jform" ], function($, _, WTF, translator) {
 			"use strict";
 
 			if (($.squash !== undefined) && ($.squash.importDialog !== undefined)) {
@@ -100,9 +100,16 @@ define([ "jquery", "underscore",  "app/ws/squashtm.notification", "jquery.squash
 				});
 		
 				this.onOwnBtn("cancel", selfClose);
-		
+				
+				//quick fix. Stateparam is the first state, so put the 'normal' title on this state, then change to 'summary' title when state is summary
+				this.onOwnBtn("statechangeparametrization", function(){	self.changeTitle(translator.get("dialog.import-excel.title"));});
+				this.onOwnBtn("statechangesummary", function(){	self.changeTitle(translator.get("dialog.import-excel.title.summary"));});
+				
 			},
 		
+			changeTitle : function(title){
+				this.element.parent().find(".ui-dialog-titlebar").html(title);
+			},
 			open : function() {
 				this._super();
 				this.reset();
