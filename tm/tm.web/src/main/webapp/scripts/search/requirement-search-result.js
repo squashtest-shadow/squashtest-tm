@@ -281,7 +281,7 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil","workspace.ro
 				if ($( row ).attr('class').search('selected') != -1) {
 					var data = dataTable.fnGetData(row);
 					if(data["editable"]){
-						ids.push(data["requirement-id"]);
+						ids.push(data["requirement-version-id"]);
 					} 
 				}
 			});
@@ -424,7 +424,7 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil","workspace.ro
 				addModifyResultDialog.find('select').prop('disabled', true);
 			
 				var table = $('#requirement-search-result-table').squashTable();
-				var ids = self.getIdsOfSelectedTableRowList(table);
+				var ids = self.getVersionIdsOfSelectedTableRowList(table);
 				var editableIds = self.getIdsOfEditableSelectedTableRowList(table);
 				if(ids.length === 0) {							
 					notification.showError(translator.get('message.noLinesSelected'));
