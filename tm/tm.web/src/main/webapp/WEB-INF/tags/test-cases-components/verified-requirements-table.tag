@@ -31,6 +31,7 @@
 <%@ attribute name="verifiedRequirementsTableUrl" required="true" description="URL for the verified requirements table" %>
 <%@ attribute name="linkable" required="true" description=" boolean that says if the concerned test case is viewed by a user who has LINK rights on this entity" %>
 <%@ attribute name="includeIndirectlyVerified" required="true" description="boolean that says if the table must include indirectly verified requirements" %>
+<%@ attribute name="milestoneConf"  required="true" description="an instance of MilestoneFeatureConfiguration"  type="java.lang.Object"%>
 
 
 <s:url var="tableLanguageUrl" value="/datatables/messages" />
@@ -73,6 +74,7 @@
 			};
 		</script>
 
+
 <table id="verified-requirements-table" class="unstyled-table"
 data-def='datakeys-id=entity-id ,ajaxsource=${ verifiedRequirementsTableUrl }'>
 	<thead>
@@ -80,8 +82,8 @@ data-def='datakeys-id=entity-id ,ajaxsource=${ verifiedRequirementsTableUrl }'>
 			<th data-def="select, map=entity-index">#</th>
 			<th data-def="sortable, map=project"><f:message key="label.project" /></th>
 			<th data-def="sortable, map=entity-id"><f:message key="label.versionId"/></th>
-            <c:if test="${not empty cookie['milestones']}">
-			          	<th data-def="sortable, map=milestone-dates, tooltip-target=milestone"><f:message key="label.Milestones"/></th>
+            <c:if test="${milestoneConf.milestoneDatesColumnVisible}">
+            <th data-def="sortable, map=milestone-dates, tooltip-target=milestone"><f:message key="label.Milestones"/></th>
             </c:if>
           	<th data-def="sortable, map=reference"><f:message key="label.Reference"/></th>
 			<th data-def="sortable, map=name, link=${requirementVersionsUrl}/{entity-id}/info"><f:message key="requirement.name.label" /></th>

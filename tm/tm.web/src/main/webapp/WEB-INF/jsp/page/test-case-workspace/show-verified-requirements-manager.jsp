@@ -30,6 +30,12 @@
 <%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
 
 
+<%--
+  requires some things in the context, including :
+  - milestoneConf : an instance of MilestoneFeatureConfiguration 
+  
+ --%>
+
 <c:url var="testCaseUrl" value="/requirements/${ testCase.id }" />
 <c:url var="verifiedRequirementsUrl" value="/test-cases/${ testCase.id }/verified-requirement-versions" />
 
@@ -138,7 +144,14 @@
   
   <jsp:attribute name="tablePane">
   <comp:opened-object otherViewers="${ otherViewers }" objectUrl="${ testCaseUrl }" />
-    <tc:verified-requirements-table includeIndirectlyVerified="${ false }" linkable="${ true }" verifiedRequirementsTableUrl="${ verifiedRequirementsUrl }" verifiedRequirementsUrl="${verifiedRequirementsUrl }" containerId="contextual-content" />
+    <tc:verified-requirements-table 
+        includeIndirectlyVerified="${ false }" 
+        linkable="${ true }" 
+        verifiedRequirementsTableUrl="${ verifiedRequirementsUrl }" 
+        verifiedRequirementsUrl="${verifiedRequirementsUrl }" 
+        containerId="contextual-content"
+        milestoneConf="${milestoneConf}"/>
+        
       <div id="add-summary-dialog" class="not-displayed" title="<f:message key='test-case.verified-requirement-version.add-summary-dialog.title' />">
       <ul><li>summary message here</li></ul>
     </div>

@@ -66,7 +66,9 @@ import org.squashtest.tm.service.testcase.TestCaseModificationService;
 import org.squashtest.tm.service.testcase.TestStepModificationService;
 import org.squashtest.tm.web.internal.argumentresolver.MilestoneConfigResolver.CurrentMilestone;
 import org.squashtest.tm.web.internal.controller.RequestParams;
+import org.squashtest.tm.web.internal.controller.milestone.MilestoneFeatureConfiguration;
 import org.squashtest.tm.web.internal.controller.milestone.MilestoneModelUtils;
+import org.squashtest.tm.web.internal.controller.milestone.MilestoneUIConfigurationService;
 import org.squashtest.tm.web.internal.helper.JsTreeHelper;
 import org.squashtest.tm.web.internal.helper.VerifiedRequirementActionSummaryBuilder;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
@@ -113,6 +115,9 @@ public class VerifiedRequirementsManagerController {
 	@Inject
 	private MilestoneFinderService milestoneFinder;
 
+	@Inject
+	private MilestoneUIConfigurationService milestoneConfService;
+
 
 
 	private DatatableMapper<String> verifiedRequirementVersionsMapper = new NameBasedMapper(8)
@@ -133,10 +138,12 @@ public class VerifiedRequirementsManagerController {
 
 		TestCase testCase = testCaseModificationService.findById(testCaseId);
 		PermissionsUtils.checkPermission(permissionService, new SecurityCheckableObject(testCase, "LINK"));
+		MilestoneFeatureConfiguration milestoneConf = milestoneConfService.configure(activeMilestone, testCase);
 
 		List<JsTreeNode> linkableLibrariesModel = createLinkableLibrariesModel(openedNodes, activeMilestone);
 		model.addAttribute("testCase", testCase);
 		model.addAttribute("linkableLibrariesModel", linkableLibrariesModel);
+		model.addAttribute("milestoneConf", milestoneConf);
 
 		return "page/test-case-workspace/show-verified-requirements-manager";
 	}

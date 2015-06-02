@@ -179,7 +179,7 @@ require(["common"], function() {
 
 		<%--------------------------- Verified Requirements section ------------------------------------%>
 
-		<tc:test-case-verified-requirement-bloc linkable="${ linkable }" testCase="${testCase}"  containerId="contextual-content"/>
+		<tc:test-case-verified-requirement-bloc linkable="${ linkable }" testCase="${testCase}"  containerId="contextual-content" milestoneConf="${milestoneConf}"/>
 
 
 		<%--------------------------- calling test case section ------------------------------------%>

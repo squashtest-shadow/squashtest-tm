@@ -27,10 +27,10 @@
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component"%>
 
 
-<%@ attribute name="containerId" required="true" description="if of dom container that will hold the table events" %>
-<%@ attribute name="linkable" 	 required="true" description=" boolean that says if the concerned test case is viewed by a user who has LINK rights on this entity" %>
-<%@ attribute name="testCase" 	 required="true" description="the test case" type="java.lang.Object"%>
-
+<%@ attribute name="containerId"    required="true" description="if of dom container that will hold the table events" %>
+<%@ attribute name="linkable" 	    required="true" description="boolean that says if the concerned test case is viewed by a user who has LINK rights on this entity" %>
+<%@ attribute name="testCase" 	    required="true" description="the test case" type="java.lang.Object"%>
+<%@ attribute name="milestoneConf"  required="true" description="an instance of MilestoneFeatureConfiguration"   type="java.lang.Object"%>
 
 
 <c:url var="root" value="/" />
@@ -72,10 +72,12 @@
 			</c:if>		
 		</jsp:attribute>
 		<jsp:attribute name="body">
-			<tc:verified-requirements-table includeIndirectlyVerified="${ true }" linkable="${ linkable }" 
+			<tc:verified-requirements-table includeIndirectlyVerified="${ true }" 
+                                            linkable="${ linkable }" 
                                             verifiedRequirementsTableUrl="${ verifiedRequirementsTableUrl }" 
                                             verifiedRequirementsUrl="${verifiedRequirementsUrl }" 
-                                            containerId="contextual-content" />
+                                            containerId="contextual-content" 
+                                            milestoneConf="${milestoneConf}"/>
 		</jsp:attribute>
 	</comp:toggle-panel>
 </div>
