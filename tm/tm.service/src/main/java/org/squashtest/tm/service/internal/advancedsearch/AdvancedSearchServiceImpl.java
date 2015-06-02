@@ -183,7 +183,7 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 		} else {
 			// create a query that should match anything
 			//if not admin and project field, filter on all available project to user
-			if (fieldName.equals("project.id") && !permissionService.hasRole("ADMIN")) {
+			if (fieldName.contains("project.id") && !permissionService.hasRole("ADMIN")) {
 				Query query;
 				for (Project p : projectFilterService.getAllProjects()) {
 					query = qb
@@ -535,9 +535,9 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 						if (statusValues.isEmpty()) {
 							// We don't add crit and must not add some crit = null}
 						} else if (statusValues != null && !statusValues.isEmpty()) {
-							for (MilestoneStatus milestoneStatus : convertStatus(statusValues)) {
-								crit.add(Restrictions.eq("status", milestoneStatus));
-							}
+
+								crit.add(Restrictions.in("status", convertStatus(statusValues)));
+	
 						}
 						break;
 
