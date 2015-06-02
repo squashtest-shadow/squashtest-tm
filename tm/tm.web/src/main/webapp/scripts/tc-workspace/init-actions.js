@@ -101,18 +101,7 @@ define(["jquery", "tree","./permissions-rules", "workspace.contextual-content", 
 	
 	return { 
 		init : function(){
-			
-			// refresh the table
-			squashtm.app.reloadSteps = function() { $("#verified-requirements-table").squashTable().refresh(); };
-			
-			var closeWindow = function() {
-				/* Allow the parent to be refreshed */
-				/* We can now access from informations where there's no table to refresh */
-				if (window.opener.squashtm.app.reloadSteps() !== undefined) {
-				window.opener.squashtm.app.reloadSteps();}
-				window.close(); 
-			};
-			
+		
 			var tree = zetree.get();
 			
 			tree.on("select_node.jstree deselect_node.jstree", function(){

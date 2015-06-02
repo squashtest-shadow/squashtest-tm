@@ -174,6 +174,15 @@ define(["jquery",
 		});
 	}
 
+	function initReloadSteps(){	
+	// refresh the table
+		squashtm.app.reloadSteps = function() { $("#verified-requirements-table").squashTable().refresh(); };
+		if ((window.opener !== null) {
+		if (window.opener.squashtm.app.reloadSteps() !== undefined) {
+			window.opener.squashtm.app.reloadSteps();}
+			window.close(); }
+	}
+	
 	function init(settings){
 		basic.init();
 		initButtons(settings);
@@ -182,8 +191,8 @@ define(["jquery",
 		initRenameListener(settings);
 		initNewVersionDialog(settings);
 		initFragmentTab();
+		initReloadSteps();
 	}
-
 
 	return {
 		init : init
