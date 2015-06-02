@@ -103,7 +103,7 @@ define(["jquery", "tree","./permissions-rules", "workspace.contextual-content", 
 		init : function(){
 			
 			// refresh the table
-			squashtm.app.reloadSteps = function() { $("#verified-requirements-table").squashTable().refresh() };
+			squashtm.app.reloadSteps = function() { $("#verified-requirements-table").squashTable().refresh(); };
 			
 			var closeWindow = function() {
 				/* Allow the parent to be refreshed */
