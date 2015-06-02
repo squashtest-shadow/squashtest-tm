@@ -28,6 +28,7 @@ import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder
 import org.squashtest.tm.domain.project.Project
 import org.squashtest.tm.domain.requirement.Requirement
 import org.squashtest.tm.domain.requirement.RequirementLibrary
+import org.squashtest.tm.domain.testcase.ActionTestStep;
 import org.squashtest.tm.domain.testcase.TestCase
 import org.squashtest.tm.domain.testcase.TestStep
 import org.squashtest.tm.exception.NoVerifiableRequirementVersionException
@@ -36,6 +37,8 @@ import org.squashtest.tm.service.requirement.VerifiedRequirementsManagerService
 import org.squashtest.tm.service.security.PermissionEvaluationService
 import org.squashtest.tm.service.testcase.TestCaseModificationService
 import org.squashtest.tm.service.testcase.TestStepModificationService
+import org.squashtest.tm.web.internal.controller.milestone.MilestoneFeatureConfiguration;
+import org.squashtest.tm.web.internal.controller.milestone.MilestoneUIConfigurationService;
 import org.squashtest.tm.web.internal.controller.testcase.requirement.VerifiedRequirementsManagerController
 import org.squashtest.tm.web.internal.model.builder.DriveNodeBuilder
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters
@@ -51,6 +54,7 @@ class VerifiedRequirementsManagerControllerTest extends Specification{
 	RequirementLibraryFinderService requirementLibraryFinder = Mock()
 	TestStepModificationService testStepService = Mock()
 	PermissionEvaluationService permissionService = Mock();
+	MilestoneUIConfigurationService milestoneConfService = Mock()
 
 	def setup() {
 		controller.verifiedRequirementsManagerService = verifiedRequirementsManagerService
@@ -58,6 +62,9 @@ class VerifiedRequirementsManagerControllerTest extends Specification{
 		controller.testCaseModificationService = testCaseFinder
 		controller.requirementLibraryFinder = requirementLibraryFinder
 		controller.testStepService = testStepService;
+		controller.milestoneConfService = milestoneConfService
+		milestoneConfService.configure(_,_) >> new MilestoneFeatureConfiguration()
+
 		driveNodeBuilder.get() >> new DriveNodeBuilder(Mock(PermissionEvaluationService), null)
 		controller.permissionService = permissionService;
 		permissionService.hasRoleOrPermissionOnObject(_, _, _) >> true
@@ -77,6 +84,10 @@ class VerifiedRequirementsManagerControllerTest extends Specification{
 	def "should show test step manager page"() {
 		given:
 		requirementLibraryFinder.findLinkableRequirementLibraries() >> []
+
+		and :
+		testStepService.findById(_) >> Mock(ActionTestStep)
+
 
 		when:
 		def res = controller.showTestStepManager(20L, Mock(Model), [] as String[], null)

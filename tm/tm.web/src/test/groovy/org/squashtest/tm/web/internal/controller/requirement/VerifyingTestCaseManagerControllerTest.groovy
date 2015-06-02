@@ -34,6 +34,8 @@ import org.squashtest.tm.exception.requirement.RequirementAlreadyVerifiedExcepti
 import org.squashtest.tm.service.requirement.RequirementVersionManagerService
 import org.squashtest.tm.service.security.PermissionEvaluationService
 import org.squashtest.tm.service.testcase.VerifyingTestCaseManagerService
+import org.squashtest.tm.web.internal.controller.milestone.MilestoneFeatureConfiguration;
+import org.squashtest.tm.web.internal.controller.milestone.MilestoneUIConfigurationService;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper
 import org.squashtest.tm.web.internal.model.builder.DriveNodeBuilder
 
@@ -45,12 +47,16 @@ class VerifyingTestCaseManagerControllerTest extends Specification {
 	Provider<DriveNodeBuilder> driveNodeBuilder = driveNodeBuilderProvider()
 	VerifyingTestCaseManagerService verifyingTestCaseManager = Mock()
 	RequirementVersionManagerService requirementVersionManager = Mock()
+	MilestoneUIConfigurationService milestoneConfService = Mock()
 
 	def setup() {
 		controller.i18nHelper = i18nHelper
 		controller.driveNodeBuilder = driveNodeBuilder
 		controller.verifyingTestCaseManager = verifyingTestCaseManager
 		controller.requirementVersionFinder = requirementVersionManager
+		controller.milestoneConfService = milestoneConfService
+
+		milestoneConfService.configure(_,_) >> new MilestoneFeatureConfiguration()
 	}
 
 	def driveNodeBuilderProvider() {
