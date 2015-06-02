@@ -185,7 +185,7 @@ define(["jquery", "./default-field-view", "./advanced-field-view", "file-upload"
 		this.idText = this.find(".id-text");
 		
 		//the submit button
-		this.postButton = this.find('.post-button').button();
+		this.postButton = this.parent().find('.post-button').button();
 		
 		//search issue buttons. We also turn it into a jQuery button on the fly.
 		this.searchButton = this.find('.attach-issue input[type="button"]').button();
