@@ -84,9 +84,13 @@ define(["jquery", "milestone-manager/milestone-activation", "squash.attributepar
 			
 			// ****** init the label ***********************
 			
-			function labelClick(){
-				dialog.milestoneDialog('open'); 		
+			var currMilestone = milestoneDao.getActiveMilestone();
+			if (currMilestone.label !== ""){
+				label.text(currMilestone.label);
+			}
 			
+			function labelClick(){
+				dialog.milestoneDialog('open'); 				
 			}
 
 			updateLabel(enabled);
