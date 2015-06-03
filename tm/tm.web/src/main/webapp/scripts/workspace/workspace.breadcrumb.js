@@ -156,7 +156,9 @@ define(["jquery", "workspace.routing", "workspace.storage"],
 	function extractPath(rawurl){
 		var url = document.createElement('a');
 		url.href = rawurl;
-		return url.pathname;
+
+		//Issue 4998 IE don't put / at the start of the url so the match fail. Add / at first if it not the first char
+		return url.pathname.charAt(0) != '/' ? '/' + url.pathname : url.pathname;
 	}
 
 	// removes the current url from the breadcrumb if
@@ -250,11 +252,9 @@ define(["jquery", "workspace.routing", "workspace.storage"],
 
 			var locationMapped = false,
 				referrerMapped = false;
-
+			
 			for (var l in module.routes){
-
 				if (routing.matches(l, locationPath)){
-
 					locationMapped = true;
 					var approvedList = module.routes[l];
 
@@ -270,6 +270,7 @@ define(["jquery", "workspace.routing", "workspace.storage"],
 
 			// step 5
 			window.squashtm.workspace.backurl = breadcrumb[breadcrumb.length-1];
+			
 		}
 
 
