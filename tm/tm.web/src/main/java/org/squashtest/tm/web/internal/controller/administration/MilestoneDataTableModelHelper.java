@@ -59,6 +59,7 @@ public class MilestoneDataTableModelHelper  extends DataTableModelBuilder<Milest
 	}
 	
 	public MilestoneDataTableModelHelper(InternationalizationHelper messageSource, Locale locale) {
+		this.locale = locale;
 		this.messageSource = messageSource;
 	}
 
