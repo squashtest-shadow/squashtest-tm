@@ -443,7 +443,7 @@ public class VerifiedRequirementsManagerServiceImpl implements VerifiedRequireme
 		if(testCaseHasDirectCoverage(updatedTestCaseId)|| testCaseHasUndirectRequirementCoverage(updatedTestCaseId)){
 			//set isReqCovered = true for all calling test cases
 			for(Long id : toUpdateIds){
-				result.put(id, Boolean.valueOf(true));
+				result.put(id, Boolean.TRUE);
 			}
 		}else{
 			//check each calling testCase to see if their status changed

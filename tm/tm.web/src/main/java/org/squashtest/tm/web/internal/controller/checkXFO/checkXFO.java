@@ -24,8 +24,6 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.List;
-import java.util.Map;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -34,7 +32,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
-public class checkXFO {
+public class CheckXFO {
 
     @RequestMapping(value = "/checkXFO", method = RequestMethod.POST, params = ("URL"))
     public @ResponseBody boolean XFOAllowForAll(@RequestParam("URL") String url) {
@@ -45,13 +43,7 @@ public class checkXFO {
             obj = new URL(url);
             URLConnection conn = obj.openConnection();
 
-            // get all headers
-            Map<String, List<String>> map = conn.getHeaderFields();
-            for (Map.Entry<String, List<String>> entry : map.entrySet()) {
-                System.out.println("Key : " + entry.getKey() + " ,Value : " + entry.getValue());
-            }
-
-            // get header by 'key'
+           // get header by 'key'
             String XFrameOptions = conn.getHeaderField("X-Frame-Options");
 
             if (!("DENY").equals(XFrameOptions) && !("SAMEORIGIN").equals(XFrameOptions)) {

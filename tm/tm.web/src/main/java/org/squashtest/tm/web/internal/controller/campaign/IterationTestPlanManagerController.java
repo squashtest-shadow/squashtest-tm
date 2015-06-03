@@ -219,8 +219,7 @@ public class IterationTestPlanManagerController {
 	Boolean removeTestPlanItemsFromIteration(@PathVariable("testPlanItemsIds") List<Long> testPlanItemsIds,
 			@PathVariable long iterationId) {
 		// check if a test plan item was already executed and therefore not removed
-		Boolean response = iterationTestPlanManagerService.removeTestPlansFromIteration(testPlanItemsIds, iterationId);
-		return response;
+		return iterationTestPlanManagerService.removeTestPlansFromIteration(testPlanItemsIds, iterationId);
 	}
 
 	private List<JsTreeNode> createLinkableLibrariesModel(List<TestCaseLibrary> linkableLibraries, String[] openedNodes, Milestone activeMilestone) {

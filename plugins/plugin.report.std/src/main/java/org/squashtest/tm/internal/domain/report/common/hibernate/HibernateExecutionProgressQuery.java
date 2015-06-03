@@ -250,8 +250,7 @@ public class HibernateExecutionProgressQuery extends HibernateReportQuery {
 	}
 
 	private ExProgressTestPlanDto makeTestPlanDto(IterationTestPlanItem testPlan) {
-		ExProgressTestPlanDto testPlanDto = new ExProgressTestPlanDto().fillBasicInfo(testPlan);
-		return testPlanDto;
+		return new ExProgressTestPlanDto().fillBasicInfo(testPlan);
 	}
 
 	private String findMilestoneLabel(List<Campaign> campaignList) {

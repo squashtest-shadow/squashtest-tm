@@ -343,7 +343,8 @@ TestCaseLibraryNavigationService {
 		// build all the paths on the way.
 		buffer.append("/" + split[0]);
 		for (int i = 1; i < split.length; i++) {
-			buffer.append("/" + split[i]);
+			buffer.append("/");
+			buffer.append(split[i]);
 			paths.add(buffer.toString());
 		}
 
@@ -689,8 +690,7 @@ TestCaseLibraryNavigationService {
 			Collection<Long> tcIds, Milestone activeMilestone) {
 		
 		List<Long> tcInMilestone = findAllTestCasesLibraryNodeForMilestone(activeMilestone);
-		Collection<Long> tcFiltered =  CollectionUtils.retainAll(tcIds, tcInMilestone);
-		return tcFiltered;
+		return CollectionUtils.retainAll(tcIds, tcInMilestone);
 	}
 
 }
