@@ -177,10 +177,10 @@ define(["jquery",
 	function initReloadSteps(){	
 	// refresh the table
 		squashtm.app.reloadSteps = function() { $("#verified-requirements-table").squashTable().refresh(); };
-		if ((window.opener !== null) {
-		if (window.opener.squashtm.app.reloadSteps() !== undefined) {
-			window.opener.squashtm.app.reloadSteps();}
-			window.close(); }
+		if (window.opener !== null) {
+			if (window.opener.squashtm.app.reloadSteps() !== undefined) {
+				window.opener.squashtm.app.reloadSteps();}
+				window.close(); }
 	}
 	
 	function init(settings){
