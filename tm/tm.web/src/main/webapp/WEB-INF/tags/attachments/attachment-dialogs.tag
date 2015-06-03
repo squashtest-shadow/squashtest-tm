@@ -29,6 +29,7 @@
 <f:message var="attachSubmit" key="label.Upload"/>
 <f:message var="okLabel" key="label.Ok"/>
 <f:message var="cancelLabel" key="label.Cancel" />
+<f:message var="closeLabel" key="label.Close" />
 <f:message var="confirmLabel" key="label.Confirm"/>
 <f:message var="removeFileBrowser" key="dialog.attachment.add.button.remove.label" />
 <f:message var="deleteDialogTitle" key="title.RemoveAttachment"/>
@@ -92,7 +93,7 @@
 	<div class="popup-dialog-buttonpane">
 		<input type="button" value="${attachSubmit}" data-def="evt=submit, state=selection, mainbtn=selection"/>
 		<input type="button" value="${cancelLabel}" data-def="evt=cancel, state=selection uploading, mainbtn=uploading"/>
-		<input type="button" value="${okLabel}" data-def="evt=done, state=summary error, mainbtn=summary error"/>
+		<input type="button" value="${closeLabel}" data-def="evt=done, state=summary error, mainbtn=summary error"/>
 	</div>
 
 </div>

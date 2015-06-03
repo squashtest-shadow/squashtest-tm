@@ -90,6 +90,7 @@ define(["jquery", "workspace.sessionStorage"],
 							var urlSession = storage.get(settings.workspace);
 							if ( urlSession !== undefined ) {
 								if ( urlSession == "leftexpanded" ) {
+									
 									setLeftFrameExpandState();
 									setEditToggleWSExpandState();
 								}
