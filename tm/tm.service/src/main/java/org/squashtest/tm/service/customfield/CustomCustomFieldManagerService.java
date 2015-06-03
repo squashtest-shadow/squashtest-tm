@@ -43,7 +43,6 @@ import static org.squashtest.tm.service.security.Authorizations.*;
  * 
  */
 @Transactional
-@PreAuthorize(HAS_ROLE_ADMIN)
 public interface CustomCustomFieldManagerService {
 	/**
 	 * Will delete the custom-field entity
@@ -51,8 +50,10 @@ public interface CustomCustomFieldManagerService {
 	 * @param customFieldId
 	 *            : the id of the custom field to delete
 	 */
+	@PreAuthorize(HAS_ROLE_ADMIN)
 	void deleteCustomField(long customFieldId);
 
+	@PreAuthorize(HAS_ROLE_ADMIN)
 	void deleteCustomField(List<Long> customFieldIds);
 
 	/**
@@ -61,6 +62,7 @@ public interface CustomCustomFieldManagerService {
 	 * @param newCustomField
 	 *            : the custom field to persist
 	 */
+	@PreAuthorize(HAS_ROLE_ADMIN)
 	void persist(@NotNull CustomField newCustomField);
 
 	/**
@@ -72,6 +74,7 @@ public interface CustomCustomFieldManagerService {
 	 * @param newName
 	 *            the {@link CustomField} potential new name
 	 */
+	@PreAuthorize(HAS_ROLE_ADMIN)
 	void changeName(long customFieldId, String newName);
 
 	/**
@@ -86,6 +89,7 @@ public interface CustomCustomFieldManagerService {
 	 *            <code>false</code> if it changes to be mandatory
 	 * @throws DefaultValueRequiredException
 	 */
+	@PreAuthorize(HAS_ROLE_ADMIN)
 	void changeOptional(Long customFieldId, Boolean optional);
 
 	/**
@@ -100,6 +104,7 @@ public interface CustomCustomFieldManagerService {
 	 * @param newLabel
 	 *            : the potential new label for the concerned custom-field's option
 	 */
+	@PreAuthorize(HAS_ROLE_ADMIN)
 	void changeOptionLabel(Long customFieldId, String optionLabel, String newLabel);
 
 	/**
@@ -114,6 +119,7 @@ public interface CustomCustomFieldManagerService {
 	 * @param newCode
 	 *            : the potential new code for the concerned custom-field's option
 	 */
+	@PreAuthorize(HAS_ROLE_ADMIN)
 	void changeOptionCode(long customFieldId, String optionLabel, String newCode);
 
 	/**
@@ -125,6 +131,7 @@ public interface CustomCustomFieldManagerService {
 	 *            : the id of the concerned {@link CustomField}
 	 * @param option : the new {@link CustomFieldOption}
 	 */
+	@PreAuthorize(HAS_ROLE_ADMIN)
 	void addOption(Long customFieldId, CustomFieldOption option);
 
 	/**
@@ -137,6 +144,7 @@ public interface CustomCustomFieldManagerService {
 	 *            : the label of the {@link CustomFieldOption} to remove.
 	 * @throws CannotDeleteDefaultOptionException
 	 */
+	@PreAuthorize(HAS_ROLE_ADMIN)
 	void removeOption(long customFieldId, String optionLabel);
 
 	/**
@@ -149,6 +157,7 @@ public interface CustomCustomFieldManagerService {
 	 * @param optionsLabels
 	 *            : the labels of the moved options
 	 */
+	@PreAuthorize(HAS_ROLE_ADMIN)
 	void changeOptionsPositions(long customFieldId, int newIndex, List<String> optionsLabels);
 
 	/**
@@ -178,6 +187,7 @@ public interface CustomCustomFieldManagerService {
 	 * @param code
 	 *            : the new code
 	 */
+	@PreAuthorize(HAS_ROLE_ADMIN)
 	void changeCode(long customFieldId, String code);
 
 	List<String> getAvailableTagsForEntity(String boundEntityType, List<Long> projectIds);
