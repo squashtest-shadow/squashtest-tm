@@ -93,7 +93,7 @@ public class InfoListController {
 	public String changeDescription(@PathVariable Long infoListId,
 			@RequestParam(JEditablePostParams.VALUE) String description) {
 		infoListManager.changeDescription(infoListId, description);
-		return description;
+		return HtmlUtils.htmlEscape(description);
 	}
 
 	@RequestMapping(value = "/{infoListId}/items", method = RequestMethod.GET)
