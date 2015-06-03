@@ -104,7 +104,7 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil","workspace.ro
 							self._saveSelect();//little hack to keep the real selection that'll be restored by callback in initTableCallback 
 			                table._fnAjaxUpdate();
 						},
-						workspace : "requirement",
+						workspace : "requirement"
 					};
 				this.milestoneMassModif.open(dialogOptions);
 			}	
