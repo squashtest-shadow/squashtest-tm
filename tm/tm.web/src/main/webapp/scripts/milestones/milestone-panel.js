@@ -109,10 +109,11 @@ define(["jquery", "workspace.event-bus", "app/ws/squashtm.notification", "squash
 		 * 
 		 * So we need to trick it by initializing it with no ajax source specified, then we supply it when it's complete.  
 		 * 
-		 */
+		 */ 
 		var tblCnf = {		
 			aaData : conf.currentModel,
 			iDeferLoading : conf.currentModel.length,
+			aaSorting : [ [ 3, 'asc' ] ], 
 			bServerSide : false,
 			bDeferLoading : true,
 			fnRowCallback : function(nRow, aData){
