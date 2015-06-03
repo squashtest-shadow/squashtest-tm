@@ -68,7 +68,7 @@ define([ 'jquery', 'workspace.event-bus', 'app/util/ComponentUtil', 'squash.stat
 			switch (selIds.length) {
 			case 0:
 				$(this).formDialog('close');
-				notification.showError(translator.get('message.EmptyTableSelection'));
+				notification.showError(translator.get('message.EmptyExecPlanSelection'));
 				break;
 			case 1:
 				$(this).formDialog('setState', 'single-tp');
@@ -118,7 +118,7 @@ define([ 'jquery', 'workspace.event-bus', 'app/util/ComponentUtil', 'squash.stat
 
 			if (selIds.length === 0) {
 				$(this).formDialog('close');
-				notification.showError(translator.get('message.EmptyTableSelection'));
+				notification.showError(translator.get('message.EmptyExecPlanSelection'));
 			} else {
 				$(this).formDialog('setState', 'assign');
 			}
@@ -163,7 +163,7 @@ define([ 'jquery', 'workspace.event-bus', 'app/util/ComponentUtil', 'squash.stat
 			ComponentUtil.updateStatusCboxIcon(cbox);
 			if (selIds.length === 0) {				
 				$(this).formDialog('close');
-				notification.showError(translator.get('message.EmptyTableSelection'));
+				notification.showError(translator.get('message.EmptyExecPlanSelection'));
 			} else {
 				$(this).formDialog('setState', 'edit');
 			}

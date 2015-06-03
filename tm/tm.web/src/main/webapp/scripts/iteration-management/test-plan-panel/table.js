@@ -390,10 +390,6 @@ define(
 
 				var squashSettings = {
 
-					deleteButtons : {
-							delegate : "#iter-test-plan-delete-dialog",
-							tooltip : translator.get('label.Remove')
-					},
 					unbindButtons : {
 						delegate : "#iter-test-plan-delete-dialog",
 						tooltip : translator.get('dialog.unbind-testcase.tooltip')
