@@ -95,6 +95,7 @@ define(["jquery", "backbone", "underscore", "handlebars", "./IconSelectDialog", 
 			},
 
 			confirm: function (event) {
+				var self = this;
 				var url = routing.buildURL('info-list.items', this.model.listId);
 
 				var params = {
@@ -108,9 +109,11 @@ define(["jquery", "backbone", "underscore", "handlebars", "./IconSelectDialog", 
 					type: 'POST',
 					dataType: 'json',
 					data: params
+				})
+				.success(function(){
+					self.cleanup();
+					self.trigger("newOption.confirm");			
 				});
-				this.cleanup();
-				this.trigger("newOption.confirm");
 			},
 
 			openChangeIconPopup: function () {
