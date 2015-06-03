@@ -76,17 +76,18 @@ define([ "jquery", "backbone", "underscore", "workspace.routing", "squash.transl
 		},
 		_openDialog : function (){
 			var data = this.data;
+			var workspace = this.options.workspace;
+			
 			if (data.hasData) {
 				this.dialog.formDialog('setState', 'selection');
 				this.dialog.formDialog('open');	
 			} else {
-				
+				var errorMessageKey = 'message.search.mass-modif.milestone.wrongperim.'+workspace;
 				var warn = translator.get({
 					errorTitle : 'popup.title.Info',
-					errorMessage : 'message.search.mass-modif.milestone.wrongperim'
+					errorMessage : errorMessageKey
 				});
 				$.squash.openMessage(warn.errorTitle, warn.errorMessage);	
-				
 			}
 		},
 		

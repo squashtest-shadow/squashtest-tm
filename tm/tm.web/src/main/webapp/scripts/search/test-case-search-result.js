@@ -185,7 +185,8 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil", "workspace.r
 					searchTableCallback : function(){
 						var table = $('#test-case-search-result-table').squashTable();
 		                table._fnAjaxUpdate();
-					}
+					},
+					workspace : "test-case",
 				};
 			if (ids.length === 0){
 				notification.showError(translator.get('message.noLinesSelected'));				

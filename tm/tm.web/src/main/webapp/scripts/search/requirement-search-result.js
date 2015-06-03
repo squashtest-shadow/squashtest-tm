@@ -103,7 +103,8 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil","workspace.ro
 							var table = $('#requirement-search-result-table').squashTable();
 							self._saveSelect();//little hack to keep the real selection that'll be restored by callback in initTableCallback 
 			                table._fnAjaxUpdate();
-						}
+						},
+						workspace : "requirement",
 					};
 				this.milestoneMassModif.open(dialogOptions);
 			}	
