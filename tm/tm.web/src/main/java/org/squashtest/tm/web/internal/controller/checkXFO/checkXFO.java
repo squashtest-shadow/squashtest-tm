@@ -32,7 +32,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
-public class CheckXFO {
+public class checkXFO {
 
     @RequestMapping(value = "/checkXFO", method = RequestMethod.POST, params = ("URL"))
     public @ResponseBody boolean XFOAllowForAll(@RequestParam("URL") String url) {
