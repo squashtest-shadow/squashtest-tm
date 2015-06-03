@@ -41,25 +41,29 @@ define([ "jquery", "squash.configmanager", "squash.translator", "moment","squash
 	var squashdateShortAsc = function(dateStringA, dateStringB) {
 		var dateA = formatDateForSort(dateStringA,shortDateFormat);
 		var dateB = formatDateForSort(dateStringB,shortDateFormat);
-		return moment(dateA).isAfter(dateB);
+		var isBefore = moment(dateA).isBefore(dateB);
+		return (isBefore) ? -1 : 1;
 	};
 
 	var squashdateShortDesc = function(dateStringA, dateStringB) {
 		var dateA = formatDateForSort(dateStringA,shortDateFormat);
 		var dateB = formatDateForSort(dateStringB,shortDateFormat);
-		return moment(dateA).isBefore(dateB);
+		var isBefore = moment(dateA).isBefore(dateB);
+		return (isBefore) ? 1 : -1;
 	};
 	
 	var squashdateLongAsc = function(dateStringA, dateStringB) { 
 		var dateA = formatDateForSort(dateStringA,longDateFormat);
 		var dateB = formatDateForSort(dateStringB,longDateFormat);
-		return moment(dateA).isAfter(dateB);
+		var isBefore = moment(dateA).isBefore(dateB);
+		return (isBefore) ? -1 : 1;
 	};
 	
 	var squashdateLongDesc = function(dateStringA, dateStringB) {
 		var dateA = formatDateForSort(dateStringA,longDateFormat);
 		var dateB = formatDateForSort(dateStringB,longDateFormat);
-		return moment(dateA).isBefore(dateB);
+		var isBefore = moment(dateA).isBefore(dateB);
+		return (isBefore) ? 1 : -1;
 	};
 
 	//define the sort function in the squashtable object for the sType squashdateShort
