@@ -19,8 +19,11 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 define(["jquery", "backbone", "underscore", "squash.basicwidgets", "jeditable.simpleJEditable",
-		"workspace.routing", "./NewInfoListItemDialog", "./IconSelectDialog", "squash.translator","app/lnf/Forms", "jquery.squash.togglepanel", "squashtable", "jquery.squash.formdialog","jquery.squash", "jqueryui",  "jquery.squash.confirmdialog", "jquery.squash.messagedialog" ],
-		function($, backbone, _, basic,	SimpleJEditable, routing, NewInfoListItemDialog, IconSelectDialog, translator, Forms) {
+		"workspace.routing", "./NewInfoListItemDialog", "./IconSelectDialog", "squash.translator",
+		"app/lnf/Forms", "app/util/StringUtil", 
+		"jquery.squash.togglepanel", "squashtable", "jquery.squash.formdialog",
+		"jquery.squash", "jqueryui",  "jquery.squash.confirmdialog", "jquery.squash.messagedialog" ],
+		function($, backbone, _, basic,	SimpleJEditable, routing, NewInfoListItemDialog, IconSelectDialog, translator, Forms, StringUtil) {
 	"use strict";
 
 	translator.load(["label.infoListItems.icon.none",
@@ -364,6 +367,12 @@ define(["jquery", "backbone", "underscore", "squash.basicwidgets", "jeditable.si
 			var id = self.ChangeCodePopup.find("#change-code-popup-info-list-item-id").val();
 			var newValue = self.ChangeCodePopup.find("#change-code-popup-info-list-item-code").val();
 			var isUsed = self.ChangeCodePopup.data('isUsed');
+			
+			if (StringUtil.isBlank(newValue)){
+				Forms.input($("#change-code-popup-info-list-item-code")).setState("error",
+						translator.get("message.notBlank"));
+				return;
+			}
 
 			$.ajax({
 				type : 'GET',
