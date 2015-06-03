@@ -111,10 +111,13 @@
   <%--
     Because the filtering/sorting system might not like that a column may be defined or not,
     the column must always be present. It may, however, be displayed or not.
-
+    
+    As per stupid specification, instead of the normal conditions the milestone dates column 
+    must be displayed if the feature is globally-enabled but not user-enabled 
+    
+    for f*** sakes
    --%>
- <c:set var="milestoneVisibility" 
-    value="${(milestoneConf.milestoneDatesColumnVisible) ? '' : ', invisible'}"/>
+ <c:set var="milestoneVisibility" value="${(milestoneConf.globallyEnabled and not milestoneConf.userEnabled) ? '' : ', invisible'}"/>
 
 <div class="table-tab-wrap">
   <c:if test="${editable}">
