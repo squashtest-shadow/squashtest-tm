@@ -72,7 +72,7 @@ define(["jquery", "workspace.sessionStorage"],
 			}
 
 			/**
-			 * initializes the workspace.
+			 * initializes the workspace. 
 			 *
 			 * @returns
 			 */
@@ -89,10 +89,9 @@ define(["jquery", "workspace.sessionStorage"],
 					if(settings.workspace !== undefined) {
 							var urlSession = storage.get(settings.workspace);
 							if ( urlSession !== undefined ) {
-								if ( urlSession == "leftexpanded" ) {
-									
+								if ( urlSession == "leftexpanded" ) {								
 									setLeftFrameExpandState();
-									setEditToggleWSExpandState();
+									setEditToggleWSExpandState();								
 								}
 						}
 				}
@@ -107,6 +106,19 @@ define(["jquery", "workspace.sessionStorage"],
 				setToggleWSWorkspaceExpandState : function() {
 					setLeftFrameExpandState();
 					setEditToggleWSExpandState();
+				},
+				 
+				updateButtonState : function(){
+					if ($("#toggle-expand-left-frame-button").length) {
+						if ($(".left-frame").hasClass("expanded")) {
+							$("#toggle-expand-left-frame-button").attr("value",
+									settings.expandSidebarLabel);
+						}
+					  else {
+							$("#toggle-expand-left-frame-button").attr("value",
+									settings.collapseSidebarLabel);
+						}
+					}			
 				},
 				init : init
 			};
