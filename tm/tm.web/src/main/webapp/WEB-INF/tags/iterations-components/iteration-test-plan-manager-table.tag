@@ -198,7 +198,7 @@
       <div class="popup-dialog-buttonpane">
         <input type="button" value="${confirmLabel}"
           data-def="state=single-tp multiple-tp, mainbtn=single-tp multiple-tp, evt=confirm" />
-        <input type="button" value="${closeLabel}" data-def="evt=cancel" />
+        <input type="button" value="${cancelLabel}" data-def="evt=cancel" />
       </div>
     </div>
 
@@ -208,7 +208,7 @@
       </span>
       <div class="popup-dialog-buttonpane">
         <input type="button" value="${confirmLabel}" />
-        <input type="button" value="${closeLabel}" />
+        <input type="button" value="${cancelLabel}" />
       </div>
     </div>
 

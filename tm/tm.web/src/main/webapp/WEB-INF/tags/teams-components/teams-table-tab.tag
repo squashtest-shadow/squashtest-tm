@@ -118,6 +118,6 @@
       </div>
             <div class="popup-dialog-buttonpane">
               <input class="confirm" type="button" value="<f:message key='label.Confirm' />" th:value="#{label.Confirm}" data-def="evt=confirm, mainbtn" />
-              <input class="cancel" type="button" value="<f:message key='label.Close' />" th:value="#{label.Close}" data-def="evt=cancel" />
+              <input class="cancel" type="button" value="<f:message key='label.Cancel' />" th:value="#{label.Cancel}" data-def="evt=cancel" />
             </div>
           </div>

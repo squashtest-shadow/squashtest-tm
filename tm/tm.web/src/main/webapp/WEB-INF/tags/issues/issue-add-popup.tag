@@ -39,6 +39,7 @@
 
 <f:message var="addIssueLabel" key="label.Add" />
 <f:message var="cancelLabel" key="label.Cancel" />
+<f:message var="closeLabel" key="label.Close" />
 <f:message var="bugreportTitle" key="dialog.issue.report.title" />
 
 <c:url var="remoteIssues" value="/bugtracker/find-issue/" />
@@ -95,7 +96,7 @@
 
   <div class="popup-dialog-buttonpane">
     <input type="button" value="${addIssueLabel}" class="post-button" data-def="evt=confirm"/>
-    <input type="button" value="${cancelLabel}" class="cancel-button" data-def="evt=cancel"/>
+    <input type="button" value="${closeLabel}" class="cancel-button" data-def="evt=cancel"/>
   </div> 
 
 </div>
