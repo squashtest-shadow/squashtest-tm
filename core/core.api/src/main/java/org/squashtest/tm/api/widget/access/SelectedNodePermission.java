@@ -33,7 +33,7 @@ import org.squashtest.tm.core.foundation.lang.Assert;
  * @author Gregory Fouquet
  * 
  */
-class SelectedNodePermission implements AccessRule {
+public class SelectedNodePermission implements AccessRule {
 	private final TreeNodeType nodeType;
 	private final Permission permission;
 
@@ -76,17 +76,22 @@ class SelectedNodePermission implements AccessRule {
 	 */
 	@Override
 	public boolean equals(Object obj) { // GENERATED:START
-		if (this == obj)
+		if (this == obj) {
 			return true;
-		if (obj == null)
+		}
+		if (obj == null) {
 			return false;
-		if (getClass() != obj.getClass())
+		}
+		if (getClass() != obj.getClass()) {
 			return false;
+		}
 		SelectedNodePermission other = (SelectedNodePermission) obj;
-		if (getNodeType() != other.getNodeType())
+		if (getNodeType() != other.getNodeType()) {
 			return false;
-		if (getPermission() != other.getPermission())
+		}
+		if (getPermission() != other.getPermission()) {
 			return false;
+		}
 		return true;
 	} // GENERATED:END
 

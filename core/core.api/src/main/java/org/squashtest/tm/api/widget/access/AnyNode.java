@@ -30,7 +30,7 @@ import org.squashtest.tm.core.foundation.lang.Assert;
  * @author Gregory Fouquet
  *
  */
-class AnyNode implements AccessRule {
+public class AnyNode implements AccessRule {
 	private final Permission permission;
 
 	public AnyNode(@NotNull Permission permission) {

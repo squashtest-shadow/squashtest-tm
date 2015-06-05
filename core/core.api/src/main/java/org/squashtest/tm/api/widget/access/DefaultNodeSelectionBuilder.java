@@ -29,7 +29,7 @@ import org.squashtest.tm.api.widget.TreeNodeType;
  * @author Gregory
  * 
  */
-class DefaultNodeSelectionBuilder implements NodeSelectionBuilder, OperationBuilder {
+public class DefaultNodeSelectionBuilder implements NodeSelectionBuilder, OperationBuilder {
 	private final NodeSelection selection;
 
 	/**

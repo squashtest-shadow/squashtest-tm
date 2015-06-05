@@ -26,7 +26,7 @@ import org.squashtest.tm.api.security.acls.AccessRule;
  * @author Gregory Fouquet
  * 
  */
-final class Anybody implements AccessRule {
+public final class Anybody implements AccessRule {
 	private static Anybody instance;
 
 	public static Anybody instance() {
