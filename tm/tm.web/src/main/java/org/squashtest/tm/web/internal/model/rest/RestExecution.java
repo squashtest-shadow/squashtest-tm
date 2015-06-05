@@ -61,7 +61,7 @@ public class RestExecution {
 		this.name = execution.getName();
 		this.project = new RestProject(execution.getProject());
 		this.testcasePath = testcasePath;
-		this.description = execution.getDescription();
+		this.description = execution.getTcdescription();
 		this.restCampaignStub = new RestCampaignStub(execution.getCampaign());
 		this.restIterationStub = new RestIterationStub(execution.getIteration());
 		this.restTestCaseStub = new RestTestCaseStub(execution.getReferencedTestCase());
