@@ -147,7 +147,9 @@ public class CustomProjectModificationServiceImpl implements CustomProjectModifi
 		newProject.setTestAutomationServer(projectTemplate.getTestAutomationServer());
 
 		for (TestAutomationProject automationProject : projectTemplate.getTestAutomationProjects()) {
-			newProject.bindTestAutomationProject(automationProject);
+			TestAutomationProject TACopy = automationProject.createCopy();
+			genericProjectManager.bindTestAutomationProject(newProject.getId(), TACopy);
+
 		}
 	}
 

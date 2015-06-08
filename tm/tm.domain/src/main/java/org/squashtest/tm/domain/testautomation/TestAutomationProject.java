@@ -173,4 +173,11 @@ public class TestAutomationProject {
 		this(jobName, jobName, server);
 	}
 
+	public TestAutomationProject createCopy(){
+		TestAutomationProject copy = new TestAutomationProject(this.jobName, this.label, this.server);
+		copy.setSlaves(slaves);
+		copy.setTmProject(null);
+		return copy;
+	}
+
 }

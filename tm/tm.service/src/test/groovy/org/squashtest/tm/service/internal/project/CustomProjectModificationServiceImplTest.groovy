@@ -57,8 +57,12 @@ class CustomProjectModificationServiceImplTest extends Specification {
 		ProjectTemplate template = Mock()
 		template.isTestAutomationEnabled() >> Boolean.TRUE
 		projectTemplateDao.findById(1L) >> template
+
 		TestAutomationProject automationProject = Mock()
+		TestAutomationProject automationCopy = Mock()
+		automationProject.createCopy() >> automationCopy
 		template.getTestAutomationProjects() >> [automationProject]
+
 		template.isBugtrackerConnected() >> true
 		BugTrackerBinding binding = Mock()
 		template.getBugtrackerBinding() >> binding
@@ -75,7 +79,7 @@ class CustomProjectModificationServiceImplTest extends Specification {
 		service.addProjectAndCopySettingsFromTemplate(project, 1L, true, true, true, true, false, false)
 
 		then:
-		1* project.bindTestAutomationProject(automationProject)
+		1* genericProjectManagerService.bindTestAutomationProject(2L, automationCopy)
 		1* genericProjectManagerService.changeBugTracker(_, _)
 		1* customFieldBindingModificationService.copyCustomFieldsSettingsFromTemplate(project, template)
 		1* projectsPermissionManagementService.copyAssignedUsersFromTemplate(project, template)
@@ -87,8 +91,12 @@ class CustomProjectModificationServiceImplTest extends Specification {
 		ProjectTemplate template = Mock()
 		template.isTestAutomationEnabled() >> Boolean.TRUE
 		projectTemplateDao.findById(1L) >> template
+
 		TestAutomationProject automationProject = Mock()
+		TestAutomationProject automationCopy = Mock()
+		automationProject.createCopy() >> automationCopy
 		template.getTestAutomationProjects() >> [automationProject]
+
 		template.isBugtrackerConnected() >> true
 
 
@@ -102,7 +110,7 @@ class CustomProjectModificationServiceImplTest extends Specification {
 		service.addProjectAndCopySettingsFromTemplate(project, 1L, true, true, false, true, false, false)
 
 		then:
-		1* project.bindTestAutomationProject(automationProject)
+		1* genericProjectManagerService.bindTestAutomationProject(2L, automationCopy)
 		0* genericProjectManagerService.changeBugTracker(_, _)
 		1* customFieldBindingModificationService.copyCustomFieldsSettingsFromTemplate(project, template)
 		1* projectsPermissionManagementService.copyAssignedUsersFromTemplate(project, template)
@@ -112,8 +120,13 @@ class CustomProjectModificationServiceImplTest extends Specification {
 		ProjectTemplate template = Mock()
 		template.isTestAutomationEnabled() >> Boolean.TRUE
 		projectTemplateDao.findById(1L) >> template
+
 		TestAutomationProject automationProject = Mock()
+		TestAutomationProject automationCopy = Mock()
+		automationProject.createCopy() >> automationCopy
 		template.getTestAutomationProjects() >> [automationProject]
+
+
 		template.isBugtrackerConnected() >> false
 
 		and: "a project"
@@ -126,7 +139,7 @@ class CustomProjectModificationServiceImplTest extends Specification {
 
 		then:
 
-		1* project.bindTestAutomationProject(automationProject)
+		1* genericProjectManagerService.bindTestAutomationProject(2L, automationCopy)
 		0* genericProjectManagerService.changeBugTracker(_, _)
 		1* customFieldBindingModificationService.copyCustomFieldsSettingsFromTemplate(project, template)
 		1* projectsPermissionManagementService.copyAssignedUsersFromTemplate(project, template)
@@ -137,8 +150,13 @@ class CustomProjectModificationServiceImplTest extends Specification {
 		ProjectTemplate template = Mock()
 		template.isTestAutomationEnabled() >> Boolean.TRUE
 		projectTemplateDao.findById(1L) >> template
+
 		TestAutomationProject automationProject = Mock()
+		TestAutomationProject automationCopy = Mock()
+		automationProject.createCopy() >> automationCopy
 		template.getTestAutomationProjects() >> [automationProject]
+
+
 		template.isBugtrackerConnected() >> true
 		BugTrackerBinding binding = Mock()
 		template.getBugtrackerBinding() >> binding
@@ -156,7 +174,7 @@ class CustomProjectModificationServiceImplTest extends Specification {
 
 		then:
 		0* project.setTestAutomationEnabled(_)
-		0* project.bindTestAutomationProject(automationProject)
+		0* genericProjectManagerService.bindTestAutomationProject(2L, automationCopy)
 		1* genericProjectManagerService.changeBugTracker(_, _)
 		1* customFieldBindingModificationService.copyCustomFieldsSettingsFromTemplate(project, template)
 		1* projectsPermissionManagementService.copyAssignedUsersFromTemplate(project, template)
@@ -166,8 +184,13 @@ class CustomProjectModificationServiceImplTest extends Specification {
 		ProjectTemplate template = Mock()
 		template.isTestAutomationEnabled() >> Boolean.TRUE
 		projectTemplateDao.findById(1L) >> template
+
 		TestAutomationProject automationProject = Mock()
+		TestAutomationProject automationCopy = Mock()
+		automationProject.createCopy() >> automationCopy
 		template.getTestAutomationProjects() >> [automationProject]
+
+
 		template.isBugtrackerConnected() >> true
 		BugTrackerBinding binding = Mock()
 		template.getBugtrackerBinding() >> binding
@@ -185,7 +208,7 @@ class CustomProjectModificationServiceImplTest extends Specification {
 
 		then:
 
-		1* project.bindTestAutomationProject(automationProject)
+		1* genericProjectManagerService.bindTestAutomationProject(2L, automationCopy)
 		1* genericProjectManagerService.changeBugTracker(_, _)
 		1* customFieldBindingModificationService.copyCustomFieldsSettingsFromTemplate(project, template)
 		0* projectsPermissionManagementService.copyAssignedUsersFromTemplate(_, _)
@@ -196,8 +219,13 @@ class CustomProjectModificationServiceImplTest extends Specification {
 		ProjectTemplate template = Mock()
 		template.isTestAutomationEnabled() >> Boolean.TRUE
 		projectTemplateDao.findById(1L) >> template
+
 		TestAutomationProject automationProject = Mock()
+		TestAutomationProject automationCopy = Mock()
+		automationProject.createCopy() >> automationCopy
 		template.getTestAutomationProjects() >> [automationProject]
+
+
 		template.isBugtrackerConnected() >> true
 		BugTrackerBinding binding = Mock()
 		template.getBugtrackerBinding() >> binding
@@ -215,7 +243,7 @@ class CustomProjectModificationServiceImplTest extends Specification {
 
 		then:
 
-		1* project.bindTestAutomationProject(automationProject)
+		1* genericProjectManagerService.bindTestAutomationProject(2L, automationCopy)
 		1* genericProjectManagerService.changeBugTracker(_, _)
 		0* customFieldBindingModificationService.copyCustomFieldsSettingsFromTemplate(_, _)
 		1* projectsPermissionManagementService.copyAssignedUsersFromTemplate(project, template)
@@ -246,7 +274,7 @@ class CustomProjectModificationServiceImplTest extends Specification {
 
 		then:
 
-		0* project.bindTestAutomationProject(_)
+		0* genericProjectManagerService.bindTestAutomationProject(_,_)
 		0* genericProjectManagerService.changeBugTracker(_, _)
 		0* customFieldBindingModificationService.copyCustomFieldsSettingsFromTemplate(_, _)
 		0* projectsPermissionManagementService.copyAssignedUsersFromTemplate(project, template)
@@ -255,5 +283,6 @@ class CustomProjectModificationServiceImplTest extends Specification {
 		newP.getRequirementCategories() == categorylist
 
 	}
+
 
 }
