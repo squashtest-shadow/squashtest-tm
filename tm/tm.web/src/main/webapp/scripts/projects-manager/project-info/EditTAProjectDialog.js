@@ -39,7 +39,9 @@ define([ "jquery", "backbone", "app/ws/squashtm.notification", "app/lnf/Forms", 
 				errors.label = "message.notBlank";
 			}
 			return errors;
-		}
+		}, 
+		
+		urlRoot  : squashtm.app.contextRoot + "/test-automation-projects/"
 
 	});
 
@@ -113,9 +115,9 @@ define([ "jquery", "backbone", "app/ws/squashtm.notification", "app/lnf/Forms", 
 			this.$el.formDialog("open");
 			var self = this;
 			this.taProjectId = taProjectId;
-			this.model = new TAProjectModel(taProject, {
-				url : squashtm.app.contextRoot + "/test-automation-projects/" + taProjectId
-			});
+			
+			this.model = new TAProjectModel(taProject);
+			
 			// populate inputs
 			this.$el.find("input[name=label]").val(taProject.label);
 			this.$el.find("input[name=slaves]").val(taProject.slaves);

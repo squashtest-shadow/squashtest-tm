@@ -217,6 +217,7 @@ define([ "jquery","backbone", "jeditable.selectJEditable", "./AddTAProjectsDialo
 									var jobId = table.getODataId(row);
 									var data = table.getDataById(jobId);
 									var taProject = {
+											id : data['entity-id'],
 											jobName :data["jobName"],
 											label : data["label"],
 											slaves : data["slaves"]

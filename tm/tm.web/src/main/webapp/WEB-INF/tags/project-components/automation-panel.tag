@@ -112,7 +112,7 @@
             <tr>
               <td>${taproj.id}</td>
               <td>${taproj.slaves}</td>
-              <td>${status.index}</td>
+              <td>${status.index +1}</td>
               <td>${taproj.label}</td>
               <td>${taproj.jobName}</td>
               <td>${jobUrls[taproj.jobName]}</td>

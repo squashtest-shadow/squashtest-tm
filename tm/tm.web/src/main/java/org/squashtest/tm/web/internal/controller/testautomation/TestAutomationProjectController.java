@@ -56,7 +56,7 @@ public class TestAutomationProjectController {
 		service.deleteProject(projectId);
 	}
 
-	@RequestMapping(value = PROJECT_ID, method = RequestMethod.POST)
+	@RequestMapping(value = PROJECT_ID, method = RequestMethod.PUT)
 	@ResponseBody
 	public void editTestAutomationProject(@PathVariable long projectId, @RequestBody TestAutomationProject newValues) {
 		LOGGER.info("Edit test automation project of id #{}", projectId);

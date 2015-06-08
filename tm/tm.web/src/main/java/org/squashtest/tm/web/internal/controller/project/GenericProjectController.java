@@ -437,7 +437,7 @@ public class GenericProjectController {
 			Map<String, Object> res = new HashMap<String, Object>();
 
 			res.put(DataTableModelConstants.DEFAULT_ENTITY_ID_KEY, item.getId());
-			res.put(DataTableModelConstants.DEFAULT_ENTITY_INDEX_KEY, getCurrentIndex() + 1);
+			res.put(DataTableModelConstants.DEFAULT_ENTITY_INDEX_KEY, getCurrentIndex());
 			res.put("label", item.getLabel());
 			res.put("jobName", item.getJobName());
 			res.put("slaves", item.getSlaves());
