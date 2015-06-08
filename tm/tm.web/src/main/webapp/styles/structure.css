@@ -657,13 +657,15 @@ div#contextual-content p {
 /* ------------------------------------------------------*/
 
 #toggle-expand-left-frame-button {
-  background-image : url(../images/report_generic.png); /** sprite-ref: sprites-icons; */
+  width: 40px;
+  height: 23px;
+  background-image : url(../images/Icon_DoubleArrowLeft.png); /** sprite-ref: sprites-icons; */
 }
 
 #contextual-content.expanded #toggle-expand-left-frame-button {
-  min-width: 100%;
-  height: 1cm;
-  background-image: url("../images/fond_nav_rotate.gif"); 
+  width: 40px;
+  height: 23px;
+  background-image: url("../images/Icon_DoubleArrowRight.png"); /** sprite-ref: sprites-icons; */
 }
 
 /* ------------------------------------------*/

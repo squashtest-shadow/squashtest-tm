@@ -26,8 +26,8 @@ var squashtm = squashtm || {};
 define(["jquery", "workspace.sessionStorage"],
 		function($, storage) {
 			var settings = {
-				expandSidebarLabel : ">>",
-				collapseSidebarLabel : "<<"
+				expandSidebarLabel : " ",
+				collapseSidebarLabel : " "
 			};
 
 			function setEditToggleWSNormalState() {
@@ -43,17 +43,17 @@ define(["jquery", "workspace.sessionStorage"],
 			}
 
 			function setLeftFrameNormalState() {
-				$(".left-frame").removeClass("expanded");
+				$(".left-frame").removeClass("expanded");/*
 				$("#toggle-expand-left-frame-button").attr("value",
-						settings.collapseSidebarLabel);
+						settings.collapseSidebarLabel);*/
 				var pathname = window.location.pathname;
 				storage.remove(pathname);
 			}
 
 			function setLeftFrameExpandState() {
 				$(".left-frame").addClass("expanded");
-				$("#toggle-expand-left-frame-button").attr("value",
-						settings.expandSidebarLabel);
+			/*	$("#toggle-expand-left-frame-button").attr("value",
+						settings.expandSidebarLabel);*/
 				var pathname = window.location.pathname;
 				storage.set(pathname, "leftexpanded");
 			}
@@ -102,24 +102,12 @@ define(["jquery", "workspace.sessionStorage"],
 					setLeftFrameNormalState();
 					setEditToggleWSNormalState();
 				},
-
+ 
 				setToggleWSWorkspaceExpandState : function() {
 					setLeftFrameExpandState();
 					setEditToggleWSExpandState();
 				},
 				 
-				updateButtonState : function(){
-					if ($("#toggle-expand-left-frame-button").length) {
-						if ($(".left-frame").hasClass("expanded")) {
-							$("#toggle-expand-left-frame-button").attr("value",
-									settings.expandSidebarLabel);
-						}
-					  else {
-							$("#toggle-expand-left-frame-button").attr("value",
-									settings.collapseSidebarLabel);
-						}
-					}			
-				},
 				init : init
 			};
 
