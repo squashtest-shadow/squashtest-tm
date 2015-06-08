@@ -58,9 +58,11 @@ define([ "jquery", "backbone", "handlebars", "app/lnf/Forms",
 					event.preventDefault();
 				}
 			});
-			this.$el.addClass("not-displayed");
-			this._resetForm();
-			$('#teams-table').squashTable().refresh();
+			if (res) {
+				this.$el.addClass("not-displayed");
+				this._resetForm();
+				$('#teams-table').squashTable().refresh();
+			}
 			return res;
 		},
 		
@@ -87,12 +89,12 @@ define([ "jquery", "backbone", "handlebars", "app/lnf/Forms",
 					event.preventDefault();
 				}
 			});
-			$('#teams-table').squashTable().refresh();
-			this.trigger("newteam.confirm");
-			this.$el.formDialog("close");
+			if(res){
+				$('#teams-table').squashTable().refresh();
+				this.trigger("newteam.confirm");
+				this.$el.formDialog("close");
+			}
 			return res;
-			
-
 		},
 
 		validate : function(event) {
