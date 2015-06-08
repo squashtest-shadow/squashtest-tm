@@ -769,11 +769,7 @@ define([ "jquery", "squashtable/squashtable.collapser", "custom-field-values", "
 		table.data("collapser", collapser);
 
 	}
-	
-	function reloading(testCase){
-		$("#test-steps-table-"+testCase).squashTable().refresh(); 
-		}
-	
+
 
 	// ******************************* main
 	// *********************************
@@ -807,10 +803,7 @@ define([ "jquery", "squashtable/squashtable.collapser", "custom-field-values", "
 		// table collapser
 		initCollapser(language, urls, permissions.isWritable,  settings.basic.testCaseId);
 		
-		// refresh the table
-		squashtm.app.reloadSteps = function() { reloading(settings.basic.testCaseId); };
-		
-		}
+	}
 
 	return {
 		init : init,

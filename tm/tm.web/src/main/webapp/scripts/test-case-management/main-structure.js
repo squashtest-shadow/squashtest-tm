@@ -174,13 +174,21 @@ define(["jquery",
 		});
 	}
 
-	function initReloadSteps(){	
-	// refresh the table
-		squashtm.app.reloadSteps = function() { $("#verified-requirements-table").squashTable().refresh(); };
-		if (window.opener !== null) {
-			if (window.opener.squashtm.app.reloadSteps() !== undefined) {
-				window.opener.squashtm.app.reloadSteps();}
-				window.close(); }
+	// defines which actions should be made when a test step has been edited
+	// in full screen page : reload the verified requirements table and the 
+	// steps table
+	function initReloadSteps(settings){	
+		squashtm.app.reloadSteps = function() { 
+			var reqTable = $("#verified-requirements-table"),
+				stepTable = $("#test-steps-table-"+settings.testCaseId);
+			
+			reqTable.squashTable().refresh();
+			
+			// the steps table might not be present yet, hence the test 
+			if (stepTable.length>0){
+				stepTable.squashTable().refresh(); 
+			}
+		};
 	}
 	
 	function init(settings){
@@ -191,7 +199,7 @@ define(["jquery",
 		initRenameListener(settings);
 		initNewVersionDialog(settings);
 		initFragmentTab();
-		initReloadSteps();
+		initReloadSteps(settings);
 	}
 
 	return {
