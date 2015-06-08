@@ -68,6 +68,7 @@ import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelBuilder;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelConstants;
 import org.squashtest.tm.web.internal.model.datatable.DataTableSorting;
+import org.squashtest.tm.web.internal.model.jquery.UserLoginForm;
 import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
 import org.squashtest.tm.web.internal.model.viewmapper.NameBasedMapper;
 import org.squashtest.tm.web.internal.security.authentication.AuthenticationProviderContext;
@@ -234,7 +235,8 @@ public class UserAdministrationController extends PartyControllerSupport {
 
 	@RequestMapping(value = USER_URL, method = RequestMethod.POST, params = { "id=user-login", VALUE }, produces = "text/plain;charset=UTF-8")
 	@ResponseBody
-	public String updateLogin(@RequestParam(VALUE) String userLogin, @PathVariable long userId) {
+	public String updateLogin(@ModelAttribute @Valid UserLoginForm userLoginform, @PathVariable long userId) {
+		String userLogin = userLoginform.getValue();
 		adminService.modifyUserLogin(userId, userLogin);
 		return HtmlUtils.htmlEscape(userLogin);
 	}
