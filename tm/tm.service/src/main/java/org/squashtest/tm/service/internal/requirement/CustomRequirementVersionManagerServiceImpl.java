@@ -243,16 +243,17 @@ public class CustomRequirementVersionManagerServiceImpl implements CustomRequire
 				milestones = new ArrayList<Milestone>(mil);
 			}
 		}
-		filterLockedStatus(milestones);
+		filterLockedAndPlannedStatus(milestones);
 		return milestones;
 	}
 
-	private void filterLockedStatus(Collection<Milestone> milestones) {
+	private void filterLockedAndPlannedStatus(Collection<Milestone> milestones) {
 		CollectionUtils.filter(milestones, new Predicate() {
 			@Override
 			public boolean evaluate(Object milestone) {
 
-				return !((Milestone) milestone).getStatus().equals(MilestoneStatus.LOCKED);
+				return !((Milestone) milestone).getStatus().equals(MilestoneStatus.LOCKED)
+						&&!((Milestone) milestone).getStatus().equals(MilestoneStatus.PLANNED);
 			}
 		});
 	}
@@ -271,7 +272,7 @@ public class CustomRequirementVersionManagerServiceImpl implements CustomRequire
 				milestones = new ArrayList<Milestone>(mil);
 			}
 		}
-		filterLockedStatus(milestones);
+		filterLockedAndPlannedStatus(milestones);
 		return CollectionUtils.collect(milestones, new Transformer() {
 
 			@Override
