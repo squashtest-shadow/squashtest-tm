@@ -306,9 +306,12 @@
   <div data-def="state=pleasewait">
     <comp:waiting-pane />
   </div>
-  <script id="remove-message-tpl" type="text/x-handlebars-template">
+  <script id="remove-message-tpl-case1" type="text/x-handlebars-template">
   <f:message key="message.testAutomationBinding.removeJob" />
   </script>
+  <script id="remove-message-tpl-case2" type="text/x-handlebars-template">
+  <f:message key="message.testAutomationBinding.removeExecutedJob" />
+  </script>  
   <!-- _____________Buttons_______________ -->
   <div class="popup-dialog-buttonpane">
     <input class="confirm" type="button" value="${confirmLabel}" data-def="evt=confirm,  state=case1, mainbtn=case1" />

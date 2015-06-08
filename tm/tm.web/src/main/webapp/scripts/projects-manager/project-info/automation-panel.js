@@ -136,22 +136,26 @@ define([ "jquery","backbone", "jeditable.selectJEditable", "./AddTAProjectsDialo
 					this.deletedId = this.$el.data('entity-id');
 					this.jobName = this.$el.data('jobName');
 					this.$el.formDialog("setState", "pleaseWait");
-					//edit remove message
-					var $removeP = this.$el.find(".remove-message");
-					$removeP.empty();
-					var source = $("#remove-message-tpl").html();
-					var template = Handlebars.compile(source);
-					var message = template({jobName : this.jobName});
-					$removeP.html(message);
+					
+					function displayState(whichcase){
+						var $removeP = self.$el.find(".remove-message");
+						$removeP.empty();
+						var source = $("#remove-message-tpl-"+whichcase).html();
+						var template = Handlebars.compile(source);
+						var message = template({jobName : self.jobName});
+						$removeP.html(message);	
+						self.$el.formDialog('setState', whichcase);
+					}
+
 					// set state with or without warnin message depending on project's usage status
 					$.ajax({
 						url: squashtm.app.contextRoot + "/test-automation-projects/"+this.deletedId+"/usage-status",
 						type : "get"
 					}).then(function(status){
 						if (!status.hasExecutedTests){
-							self.$el.formDialog('setState','case1');
+							displayState("case1");
 						}else{
-							self.$el.formDialog('setState','case2');
+							displayState("case2");
 						}
 					});
 				},
