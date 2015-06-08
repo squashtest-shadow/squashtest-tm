@@ -18,7 +18,9 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ 'module', "jquery", "squash.basicwidgets", "workspace.routing", "squash.translator", "squash.configmanager", "squashtable", "jquery.squash.formdialog", "jeditable.datepicker" ], function(module, $, basic, routing, translator, confman) {
+define([ 'module', "jquery", "squash.basicwidgets", "workspace.routing", "squash.translator", "squash.configmanager", 
+         "squashtable", "jquery.squash.formdialog", "jeditable.datepicker", "jqueryui" ], 
+         function(module, $, basic, routing, translator, confman ) {
 
 
 			basic.init();
@@ -40,6 +42,12 @@ define([ 'module', "jquery", "squash.basicwidgets", "workspace.routing", "squash
 					}
 			};
 			$(function() {
+				
+				$("#bind-milestone-dialog-tabs").tabs({
+					cache : true,
+					active: 0
+				});
+				
 				$("#binded-milestone-table").squashTable({"bServerSide":false}, squashSettings);
 				$("#global-milestone-table").squashTable({sAjaxSource:config.urls.globalMilestones, "bServerSide":false},{});
 				$("#personal-milestone-table").squashTable({sAjaxSource:config.urls.myMilestones, "bServerSide":false},{});
@@ -54,13 +62,7 @@ define([ 'module', "jquery", "squash.basicwidgets", "workspace.routing", "squash
 						 cell.firstChild.innerHTML = index + 1;
 					 });
 				});
-			
-			
-			
-			
-			
-			
-			
+						
 			});
 
 			function refreshAllTables(){
@@ -93,9 +95,9 @@ define([ 'module', "jquery", "squash.basicwidgets", "workspace.routing", "squash
 			
 			//Add check/unchuck functions to panel
 			var initButtons = function initButtons(table){
-			table.find(".checkAll").on('click', function(){checkAll(table);});
-			table.find(".uncheckAll").on('click', function(){uncheck(table);});
-			table.find(".invertSelect").on('click', function(){invertCheck(table);});
+				table.find(".checkAll").on('click', function(){checkAll(table);});
+				table.find(".uncheckAll").on('click', function(){uncheck(table);});
+				table.find(".invertSelect").on('click', function(){invertCheck(table);});
 			};
 		
 			var pers = $("#personal-milestone");
@@ -111,6 +113,7 @@ define([ 'module', "jquery", "squash.basicwidgets", "workspace.routing", "squash
 			var persPanel = $("#personal-milestone-panel");
 			var otherPanel = $("#other-milestone-panel");
 			
+			/*
 			var showGlobalPanel = function () {
 				global.attr("hidden", false);
 				pers.attr("hidden", true);
@@ -132,54 +135,54 @@ define([ 'module', "jquery", "squash.basicwidgets", "workspace.routing", "squash
 			globalPanel.on('click', function(){ showGlobalPanel();});
 			persPanel.on('click', function(){ showPersPanel();});
 			otherPanel.on('click',function(){  showOtherPanel();});
-			
+			*/
 		
-		// Get ids from all panels
-				function getAllCheckedIds(){
-					var tableGlobal = $("#global-milestone-table");
-					var tablePersonal = $("#personal-milestone-table");
-					var tableOther = $("#other-milestone-table");
-					
-					var idsGlobal = getCheckedId(tableGlobal);
-					var idsPersonal = getCheckedId(tablePersonal);
-					var idsOther =  getCheckedId(tableOther);
-					var total = [];
-			
-					Array.prototype.push.apply(total, idsGlobal);
-					Array.prototype.push.apply(total, idsPersonal);
-					Array.prototype.push.apply(total, idsOther);
+			// Get ids from all panels
+			function getAllCheckedIds(){
+				var tableGlobal = $("#global-milestone-table");
+				var tablePersonal = $("#personal-milestone-table");
+				var tableOther = $("#other-milestone-table");
 				
-					return total;
-				}
-	
-				function getCheckedId(table) {
-					table.find(":checkbox:checked").parent("td").parent("tr").addClass(
-							'ui-state-row-selected');
-					var ids = table.squashTable().getSelectedIds();
-					table.squashTable().deselectRows();
-					return ids;
-				}	
-				
-				//config date picker
-				var dateSettings = confman.getStdDatepicker(); 
-				$("#add-milestone-end-date").editable(function(value){
-					if (value.trim() === ""){
-						$("#add-milestone-end-date").text(emptyDate);
-					} else {
-					$("#add-milestone-end-date").text(value);
-					}
-				},{
-					type : 'datepicker',
-					datepicker : dateSettings,
-					name : "value"
+				var idsGlobal = getCheckedId(tableGlobal);
+				var idsPersonal = getCheckedId(tablePersonal);
+				var idsOther =  getCheckedId(tableOther);
+				var total = [];
 		
-				});
-				
-				function emptyDatePicker(){
+				Array.prototype.push.apply(total, idsGlobal);
+				Array.prototype.push.apply(total, idsPersonal);
+				Array.prototype.push.apply(total, idsOther);
+			
+				return total;
+			}
+
+			function getCheckedId(table) {
+				table.find(":checkbox:checked").parent("td").parent("tr").addClass(
+						'ui-state-row-selected');
+				var ids = table.squashTable().getSelectedIds();
+				table.squashTable().deselectRows();
+				return ids;
+			}	
+			
+			//config date picker
+			var dateSettings = confman.getStdDatepicker(); 
+			$("#add-milestone-end-date").editable(function(value){
+				if (value.trim() === ""){
 					$("#add-milestone-end-date").text(emptyDate);
+				} else {
+				$("#add-milestone-end-date").text(value);
 				}
+			},{
+				type : 'datepicker',
+				datepicker : dateSettings,
+				name : "value"
 	
-				
+			});
+			
+			function emptyDatePicker(){
+				$("#add-milestone-end-date").text(emptyDate);
+			}
+
+			
 				//config RTE
 			this.$textAreas = $("textarea");
 				function decorateArea() {
