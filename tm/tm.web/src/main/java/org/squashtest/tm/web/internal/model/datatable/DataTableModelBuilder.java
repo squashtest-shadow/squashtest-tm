@@ -25,6 +25,7 @@ import java.util.Collection;
 import java.util.List;
 
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
+import org.squashtest.tm.domain.milestone.Milestone;
 
 /**
  * Superclass to create builders of {@link DataTableModel} AND NOTHING ELSE !
@@ -69,6 +70,23 @@ public abstract class DataTableModelBuilder<X> {
 		return model;
 	}
 
+	public List<Object> buildRawModel(Collection<X> pagedItems, Long projectId) {
+		List<Object> model = new ArrayList<Object>(pagedItems.size());
+
+		for (X item : pagedItems) {
+			Object itemData = buildItemData(item, projectId);
+			model.add(itemData);
+			currentIndex++;
+		}
+
+		return model;
+	}
+
+	public List<Object> buildRawModel(Collection<X> pagedItems, int startIndex, Long projectId) {
+		currentIndex = startIndex;
+		return buildRawModel(pagedItems, projectId);
+	}
+
 	public List<Object> buildRawModel(Collection<X> pagedItems, int startIndex) {
 		currentIndex = startIndex;
 		return buildRawModel(pagedItems);
@@ -103,5 +121,7 @@ public abstract class DataTableModelBuilder<X> {
 	// NOSONAR:END
 
 	protected abstract Object buildItemData(X item);
+
+	protected abstract Object buildItemData(X item, Long projectId);
 
 }

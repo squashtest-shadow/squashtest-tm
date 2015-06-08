@@ -119,4 +119,6 @@ public interface CustomMilestoneManager extends MilestoneFinderService {
 
 	boolean isMilestoneBoundToOneObjectOfProject(Milestone milestone, GenericProject project);
 
+	boolean isMilestoneBoundToOneObjectOfProject(Milestone milestone, Long projectId);
+
 }

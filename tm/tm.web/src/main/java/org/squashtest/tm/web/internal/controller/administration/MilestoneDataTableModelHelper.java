@@ -27,15 +27,23 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import org.squashtest.tm.domain.audit.AuditableMixin;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.milestone.MilestoneRange;
 import org.squashtest.tm.domain.milestone.MilestoneStatus;
+import org.squashtest.tm.domain.project.Project;
+import org.squashtest.tm.service.internal.milestone.CustomMilestoneManagerServiceImpl;
+import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelBuilder;
 
 public class MilestoneDataTableModelHelper  extends DataTableModelBuilder<Milestone> {
 	
+	@Inject
+	private CustomMilestoneManagerServiceImpl customMilestoneManagerServiceImpl;
+
 	private InternationalizationHelper messageSource;
 	private Locale locale;
 	public Locale getLocale() {
@@ -89,6 +97,38 @@ public class MilestoneDataTableModelHelper  extends DataTableModelBuilder<Milest
 		return row;
 	}
 	
+	@Override
+	protected Object buildItemData(Milestone item, Long projectId) {
+		Map<String, Object> row = new HashMap<String, Object>(12);
+		final AuditableMixin auditable = (AuditableMixin) item;
+		row.put("entity-id", item.getId());
+		row.put("index", getCurrentIndex() + 1);
+		row.put("label", item.getLabel());
+		row.put("nbOfProjects", item.getNbOfBindedProject());
+		row.put("description", item.getDescription());
+		row.put("range", i18nRange(item.getRange()));
+		row.put("owner", ownerToPrint(item));
+		row.put("status", i18nStatus(item.getStatus()));
+		// Issue 5065 There we check if milestone is binded to the current project, don't care about the others
+		Boolean isBoundToThisProject = item.isBoundToObjects();
+		// TODO : getProjectById(projectId)
+		if (!customMilestoneManagerServiceImpl.isMilestoneBoundToOneObjectOfProject(item, projectId)) {
+			isBoundToThisProject = false;
+		}
+		row.put("binded-to-objects", messageSource.internationalizeYesNo(isBoundToThisProject, locale));
+		row.put("endDate", messageSource.localizeDate(item.getEndDate(), locale).substring(0, 10));
+		// Could be done with a SimpleDateFormat but substring works very well.
+		row.put("created-on", messageSource.localizeDate(auditable.getCreatedOn(), locale).substring(0, 10));
+		row.put("created-by", auditable.getCreatedBy());
+		row.put("last-mod-on", messageSource.localizeDate(auditable.getLastModifiedOn(), locale));
+		row.put("last-mod-by", auditable.getLastModifiedBy());
+		row.put("bindableToObject", item.getStatus().isBindableToObject());
+		row.put("delete", "");
+		row.put("checkbox", "");
+
+		return row;
+	}
+
 	private Object ownerToPrint(Milestone item) {
 		String owner = null;
 		if (item.getRange().equals(MilestoneRange.GLOBAL)){
