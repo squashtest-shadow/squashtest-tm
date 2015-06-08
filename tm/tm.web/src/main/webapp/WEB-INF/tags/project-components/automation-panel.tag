@@ -225,9 +225,9 @@
 
 
   <div class="popup-dialog-buttonpane">
-    <input type="button" value="${closeLabel}" data-def="mainbtn=main, evt=cancel, state=pleasewait" />
+    <input type="button" value="${cancelLabel}" data-def="mainbtn=main, evt=cancel, state=pleasewait" />
     <input type="button" value="${confirmLabel}" data-def="mainbtn=main, evt=confirm, state=main" />
-    <input type="button" value="${closeLabel}" data-def="evt=cancel, state=main" />
+    <input type="button" value="${cancelLabel}" data-def="evt=cancel, state=main" />
     <input type="button" value="${closeLabel}" data-def="mainbtn=main, evt=cancel, state=noTAProjectAvailable" />
   </div>
 
