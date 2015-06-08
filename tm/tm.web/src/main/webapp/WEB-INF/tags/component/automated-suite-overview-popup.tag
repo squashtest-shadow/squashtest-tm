@@ -30,6 +30,7 @@
 
 <f:message var="popupTitle" key='dialog.execute-auto.title'/>
 <f:message var="closeLabel" key='label.Close' />
+<f:message var="confirmLabel" key='label.Confirm' />
 <f:message var="okLabel" 	key='label.Ok' />
 <f:message var="cancelLabel" 	key='label.Cancel' />
 <div>
@@ -125,7 +126,7 @@
     
 	<div class="popup-dialog-buttonpane">
 		<input type="button" value="${closeLabel}" data-def="evt=mainclose, state=main, mainbtn=main"/>
-		<input type="button" value="${okLabel}" data-def="evt=warningok, state=warning"/>
+		<input type="button" value="${confirmLabel}" data-def="evt=warningok, state=warning"/>
 		<input type="button" value="${cancelLabel}" data-def="evt=warningcancel, state=warning, mainbtn=warning"/>	
     <input type="button" value="<f:message key="label.Confirm" />" data-def="evt=submitNodes, state=node-selector"/>
     <input type="button" value="<f:message key="label.Cancel" />" data-def="evt=discardNodes, state=node-selector"/>
