@@ -72,6 +72,7 @@ define([ 'jquery', 'tree', 'custom-field-values', 'workspace.projects', '../perm
 
 		dialog.on('formdialogcleanup', function() {
 			cufHandler.reset();
+			document.getElementById('add-requirement-category').value="CAT_UNDEFINED";
 		});
 
 		dialog.on('formdialogclose', function() {
