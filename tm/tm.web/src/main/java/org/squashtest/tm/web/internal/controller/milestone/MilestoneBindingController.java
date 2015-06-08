@@ -131,6 +131,7 @@ public class MilestoneBindingController {
 	private DataTableModel buildMilestoneTableModel(Collection<Milestone> data, Locale locale, Long projectId) {
 		MilestoneDataTableModelHelper helper = new MilestoneDataTableModelHelper(messageSource);
 		helper.setLocale(locale);
+		helper.setProjectId(projectId);
 		Collection<Object> aaData = helper.buildRawModel(data);
 		DataTableModel model = new DataTableModel("");
 		model.setAaData((List<Object>) aaData);
@@ -196,25 +197,5 @@ public class MilestoneBindingController {
 			return data;
 		}
 
-		// Because we have edited DataTableModelBuilder to allow project in it
-		@Override
-		protected Object buildItemData(GenericProject project, Long projectId) {
-			Map<String, Object> data = new HashMap<String, Object>(4);
-			data.put(DataTableModelConstants.DEFAULT_ENTITY_ID_KEY, project.getId());
-			data.put(DataTableModelConstants.DEFAULT_ENTITY_INDEX_KEY, getCurrentIndex() + 1);
-			data.put("type", "&nbsp;");
-			data.put("raw-type", ProjectHelper.isTemplate(project) ? "template" : "project");
-			data.put("checkbox", " ");
-			data.put(DataTableModelConstants.DEFAULT_ENTITY_NAME_KEY, project.getName());
-			data.put("label", project.getLabel());
-			data.put("binded", messageSource.internationalizeYesNo(project.isBoundToMilestone(milestone), locale));
-			data.put(
-					"isUsed",
-					messageSource.internationalizeYesNo(
-							milestoneService.isMilestoneBoundToOneObjectOfProject(milestone, project), locale));
-			data.put(DataTableModelConstants.DEFAULT_EMPTY_DELETE_HOLDER_KEY, " ");
-			data.put("link", permissionEvaluator.hasRoleOrPermissionOnObject("ROLE_ADMIN", "MANAGEMENT", project));
-			return data;
-		}
 	}
 }
