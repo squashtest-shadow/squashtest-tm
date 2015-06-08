@@ -145,7 +145,7 @@
               <span class="ui-icon ui-icon-plusthick"></span>
               ${ associateLabel }
             </button>
-            <button id="remove-test-plan-button" class="sq-btn btn-sm" title="${tooltipRemove}">
+            <button id="remove-test-plan-button" class="sq-btn btn-sm" title="${removeTooltip}"> 
               <span class="ui-icon ui-icon-trash"></span>
               ${removeLabel}
             </button>
