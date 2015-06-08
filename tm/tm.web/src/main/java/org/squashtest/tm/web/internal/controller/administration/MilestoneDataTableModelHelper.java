@@ -20,9 +20,6 @@
  */
 package org.squashtest.tm.web.internal.controller.administration;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -33,16 +30,14 @@ import org.squashtest.tm.domain.audit.AuditableMixin;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.milestone.MilestoneRange;
 import org.squashtest.tm.domain.milestone.MilestoneStatus;
-import org.squashtest.tm.domain.project.Project;
-import org.squashtest.tm.service.internal.milestone.CustomMilestoneManagerServiceImpl;
-import org.squashtest.tm.service.security.PermissionEvaluationService;
+import org.squashtest.tm.service.milestone.MilestoneManagerService;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelBuilder;
 
 public class MilestoneDataTableModelHelper  extends DataTableModelBuilder<Milestone> {
 	
 	@Inject
-	private CustomMilestoneManagerServiceImpl customMilestoneManagerServiceImpl;
+	private MilestoneManagerService milestoneManagerService;
 
 	private InternationalizationHelper messageSource;
 	private Locale locale;
@@ -89,7 +84,7 @@ public class MilestoneDataTableModelHelper  extends DataTableModelBuilder<Milest
 		row.put("status", i18nStatus(item.getStatus()));
 		// Issue 5065 There we check if milestone is binded to the current project, don't care about the others
 		Boolean isBoundToThisProject = false;
-		if (projectId != null && customMilestoneManagerServiceImpl.isMilestoneBoundToOneObjectOfProject(item, projectId)) {
+		if (projectId != null && milestoneManagerService.isMilestoneBoundToOneObjectOfProject(item, projectId)) {
 			isBoundToThisProject = true;
 		}
 		row.put("binded-to-objects", messageSource.internationalizeYesNo(isBoundToThisProject, locale));
