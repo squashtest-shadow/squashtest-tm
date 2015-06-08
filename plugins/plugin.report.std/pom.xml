@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.squashtest.tm</groupId>
     <artifactId>squash-tm-plugins</artifactId>
-    <version>1.12.0.RC11</version>
+    <version>1.12.0.RC12-SNAPSHOT</version>
   </parent>
   <artifactId>plugin.report.std</artifactId>
   <packaging>bundle</packaging>
