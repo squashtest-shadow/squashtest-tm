@@ -81,7 +81,7 @@ define([ "jquery", "squashtable", "jqueryui" ],
 						"aTargets" : [ 3 ],
 						"mDataProp" : "iteration-name"
 					}, {
-						"bSortable" : true,
+						"bSortable" : false,
 						"aTargets" : [ 4 ],
 						"sClass" : "exec-name",
 						"mDataProp" : "exec-name"
