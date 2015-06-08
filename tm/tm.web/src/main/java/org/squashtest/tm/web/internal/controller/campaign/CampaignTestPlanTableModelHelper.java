@@ -81,6 +81,7 @@ final class CampaignTestPlanTableModelHelper extends DataTableModelBuilder<Index
 		result.put(DataTableModelConstants.DEFAULT_EMPTY_DELETE_HOLDER_KEY, " ");
 		result.put("milestone-dates", MilestoneModelUtils.timeIntervalToString(testCase.getMilestones(), messageSource, locale));
 		result.put("tc-id", testCase.getId());
+		result.put("milestone-labels", MilestoneModelUtils.milestoneLabelsOrderByDate(testCase.getMilestones()));
 
 		return result;
 

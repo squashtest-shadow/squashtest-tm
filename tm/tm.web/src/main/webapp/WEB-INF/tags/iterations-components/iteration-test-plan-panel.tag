@@ -180,7 +180,7 @@
           <th class="no-user-select tp-th-filter tp-th-project-name" data-def="map=project-name, sortable">
             <f:message key="label.project" />
           </th>
-          <th class="no-user-select" data-def="sortable, map=milestone-dates ${milestoneVisibility}">
+          <th class="no-user-select" data-def="sortable, map=milestone-dates, tooltip-target=milestone-labels ${milestoneVisibility}">
             <f:message key="label.Milestone"/>
           </th>         
           <th title="<f:message key='label.Mode' />" class="no-user-select tp-th-filter tp-th-exec-mode"

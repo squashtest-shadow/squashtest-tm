@@ -80,6 +80,8 @@ class TestPlanTableModelHelper extends DataTableModelBuilder<IndexedIterationTes
 		String importance;
 		String reference;
 		String milestoneDates = "--";
+		String milestoneLabels = "--";
+
 		if (item.isTestCaseDeleted()) {
 			projectName = formatNoData(locale);
 			testCaseName = formatDeleted(locale);
@@ -97,6 +99,7 @@ class TestPlanTableModelHelper extends DataTableModelBuilder<IndexedIterationTes
 			}
 			importance 		= messageSource.internationalize(item.getReferencedTestCase().getImportance(), locale);
 			milestoneDates 	= MilestoneModelUtils.timeIntervalToString(item.getReferencedTestCase().getMilestones(), messageSource, locale);
+			milestoneLabels = MilestoneModelUtils.milestoneLabelsOrderByDate(item.getReferencedTestCase().getMilestones());
 		}
 
 
@@ -142,6 +145,7 @@ class TestPlanTableModelHelper extends DataTableModelBuilder<IndexedIterationTes
 		res.put("exec-mode", automationMode);
 		res.put("milestone-dates", milestoneDates);
 		res.put("dataset", dsIndos);
+		res.put("milestone-labels", milestoneLabels);
 
 		return res;
 	}
