@@ -64,6 +64,8 @@ define([ 'jquery', 'tree', 'custom-field-values', 'workspace.projects', '../perm
 		dialog.on('formdialogopen', function() {
 			selectDefaultCategory();		
 			// the cufs
+			var projectId = tree.jstree('get_selected').getProjectId();
+			var project = projects.findProject(projectId);
 			var bindings = project.customFieldBindings['REQUIREMENT_VERSION'];
 			var cufs = $.map(bindings, function(b){return b.customField;});	
 			cufHandler.loadPanel(cufs);	
