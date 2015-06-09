@@ -70,7 +70,9 @@ th:with="isWritable = ${#authorization.expression('hasRole(''ROLE_ADMIN'')')  or
     <!-- Bind milestone -->
     
   <div class="bind-milestone-dialog popup-dialog not-displayed" th:title="#{dialog.milestone.bind. + ${conf.nodeType}}">
-    <div>
+    
+    
+    <div data-def="state=select-milestone">
       
       <div class="centered std-margin-top std-margin-bottom" th:if="${conf.nodeType == 'requirement-version'}" >
           <span th:text="#{message.milestones.milestoneUnicityPerRequirementRule}">if requirement version, says that milestones bound to other versions of that requirement 
@@ -99,26 +101,28 @@ th:with="isWritable = ${#authorization.expression('hasRole(''ROLE_ADMIN'')')  or
         </ul>
       </div>      
     </div>
+    
+    <div data-def="state=no-available-milestone">
+      <div class="display-table-row">
+          <div th:include="fragments-utils/static-panels :: warning-pane" th:with="txtcontent=#{title.bindMilestones.noneassociated}"></div>       
+      </div>       
+    </div>
+
+    <div data-def="state=forbidden">
+      <div class="display-table-row">
+          <div th:include="fragments-utils/static-panels :: warning-pane" th:with="txtcontent=#{dialog.milestone.bind.statusforbid}"></div>       
+      </div> 
+    </div>
 
     <div class="popup-dialog-buttonpane" >
-      <input th:if="${conf.multilines}" type="button" class="bind-milestone-dialog-confirm" data-def="evt=confirm, mainbtn" th:value="#{label.Confirm}" />
-      <input th:if="${not conf.multilines}" type="button" class="bind-milestone-dialog-confirm" data-def="evt=confirm, mainbtn" th:value="#{label.Add}+'/'+#{label.Replace}" />
-      <input type="button" class="bind-milestone-dialog-cancel" data-def="evt=cancel" th:value="#{label.Cancel}" />
+      <input th:if="${conf.multilines}" type="button" class="bind-milestone-dialog-confirm" data-def="state=select-milestone, evt=confirm, mainbtn=select-milestone" th:value="#{label.Confirm}" />
+      <input th:if="${not conf.multilines}" type="button" class="bind-milestone-dialog-confirm" data-def="state=select-milestone, evt=confirm, mainbtn=select-milestone" th:value="#{label.Add}+'/'+#{label.Replace}" />
+      <input type="button" class="bind-milestone-dialog-cancel" data-def="evt=cancel, mainbtn=no-available-milestone forbidden" th:value="#{label.Cancel}" />
     </div>
 
   </div>
-  
-  <!-- No associated milestone -->
-  
-  <div class="no-milestone-dialog popup-dialog not-displayed" th:title="#{dialog.milestone.bind. + ${conf.nodeType}}">
-    <div class="display-table-row">
-        <div th:include="fragments-utils/static-panels :: warning-pane" th:with="txtcontent=#{title.bindMilestones.noneassociated}"></div>       
-    </div>
-    <div class="popup-dialog-buttonpane">
-      <input type="button" th:value="#{label.Close}"  data-def="evt=close" />
-    </div>
-  </div>
-  
+
+
     <!-- Unbind milestone -->
   
   <div class="unbind-milestone-dialog popup-dialog not-displayed" th:title="#{title.unbindMilestones}">

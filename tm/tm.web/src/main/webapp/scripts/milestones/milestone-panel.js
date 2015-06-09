@@ -152,8 +152,6 @@ define(["jquery", "workspace.event-bus", "app/ws/squashtm.notification", "squash
 			
 			var bindDialog = element.find('.bind-milestone-dialog');
 			bindDialog.milestoneDialog(dialogOptions);
-			var bindDialogNoMilestone = element.find('.no-milestone-dialog');
-			bindDialogNoMilestone.formDialog();
 			
 			$(".milestone-panel-bind-button").on('click', function(){			
 				bindDialog.milestoneDialog('open');
@@ -162,27 +160,20 @@ define(["jquery", "workspace.event-bus", "app/ws/squashtm.notification", "squash
 			bindDialog.on('milestonedialogopen', function(){
 				// if there's not at least one milestone in project or only planned and locked status
 				if (!conf.milestoneInProject) {
-					bindDialogNoMilestone.formDialog('open');
-					bindDialog.milestoneDialog('close');
+					bindDialog.milestoneDialog('setState', 'no-available-milestone');
 				} 
 				
 				//Campaign with locked milestone can't bind another milestone because that would remove locked milestone.
-				if (conf.nodeType === "campaign" && !conf.editable){
-					var warn = translator.get({
-						errorTitle : 'popup.title.Info',
-						errorMessage : 'dialog.milestone.bind.statusforbid'
-					});
-					$.squash.openMessage(warn.errorTitle, warn.errorMessage);
-					bindDialog.milestoneDialog('close');	
+				else if (conf.nodeType === "campaign" && !conf.editable){
+					bindDialog.milestoneDialog('setState', 'forbidden');
 				}
 				
+				// else, we're fine
+				else bindDialog.milestoneDialog('setState','select-milestone');
+				
 				
 			});
 			
-			
-			bindDialogNoMilestone.on('formdialogclose', function(){
-				bindDialogNoMilestone.formDialog('close');
-			});
 
 			// remove milestones 			
 			var unbindDialog = $(".unbind-milestone-dialog");
