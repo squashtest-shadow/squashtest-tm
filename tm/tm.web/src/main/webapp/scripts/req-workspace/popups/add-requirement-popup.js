@@ -44,12 +44,10 @@ define([ 'jquery', 'tree', 'custom-field-values', 'workspace.projects', '../perm
 		var cufHandler = cufValuesManager.newCreationPopupCUFHandler({
 			table : table
 		});
-
-		dialog.on('formdialogopen', function() {
-			
+		
+		function selectDefaultCategory(){
 			var projectId = tree.jstree('get_selected').getProjectId();
 			var project = projects.findProject(projectId);
-			
 			// the category
 			var categories = project.requirementCategories.items;
 			var catSelect = $("#add-requirement-category");
@@ -60,19 +58,21 @@ define([ 'jquery', 'tree', 'custom-field-values', 'workspace.projects', '../perm
 				var strOption = (item['default']) ? '<option selected="selected" ' : '<option ';
 				strOption += 'value="'+item.code+'">'+item.friendlyLabel+'</option>';	
 				catSelect.append(strOption);	
-			}
-			
+			} 
+		};
+
+		dialog.on('formdialogopen', function() {
+			selectDefaultCategory();		
 			// the cufs
 			var bindings = project.customFieldBindings['REQUIREMENT_VERSION'];
-			var cufs = $.map(bindings, function(b){return b.customField;});
-			
+			var cufs = $.map(bindings, function(b){return b.customField;});	
 			cufHandler.loadPanel(cufs);	
 
 		});
 
 		dialog.on('formdialogcleanup', function() {
-			cufHandler.reset();
-			document.getElementById('add-requirement-category').value="CAT_UNDEFINED";
+			cufHandler.reset();		
+			selectDefaultCategory();		 
 		});
 
 		dialog.on('formdialogclose', function() {
