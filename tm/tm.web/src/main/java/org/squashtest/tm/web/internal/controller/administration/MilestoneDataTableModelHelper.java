@@ -28,6 +28,8 @@ import org.squashtest.tm.domain.audit.AuditableMixin;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.milestone.MilestoneRange;
 import org.squashtest.tm.domain.milestone.MilestoneStatus;
+import org.squashtest.tm.domain.project.GenericProject;
+import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.service.milestone.MilestoneManagerService;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelBuilder;
@@ -38,7 +40,7 @@ public class MilestoneDataTableModelHelper  extends DataTableModelBuilder<Milest
 
 	private InternationalizationHelper messageSource;
 	private Locale locale;
-	private Long projectId;
+	private GenericProject project;
 	public Locale getLocale() {
 		return locale;
 	}
@@ -85,7 +87,7 @@ public class MilestoneDataTableModelHelper  extends DataTableModelBuilder<Milest
 		row.put("status", i18nStatus(item.getStatus()));
 		// Issue 5065 There we check if milestone is binded to the current project, don't care about the others
 		Boolean isBoundToThisProject = false;
-		if (projectId != null && milestoneManagerService.isMilestoneBoundToOneObjectOfProject(item, projectId)) {
+		if (project != null && milestoneManagerService.isMilestoneBoundToOneObjectOfProject(item, project)) {
 			isBoundToThisProject = true;
 		}
 		row.put("binded-to-objects", messageSource.internationalizeYesNo(isBoundToThisProject, locale));
@@ -122,8 +124,10 @@ private String i18nStatus(final MilestoneStatus milestoneStatus){
 	return  messageSource.internationalize(i18nKey, locale);
 	}
 
-public void setProjectId(Long projectId) {
-	this.projectId = projectId;
+
+
+public void setProject(GenericProject project) {
+	this.project = project;
 	
 }
 

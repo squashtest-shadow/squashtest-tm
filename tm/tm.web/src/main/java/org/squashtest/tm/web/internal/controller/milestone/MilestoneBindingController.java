@@ -38,6 +38,7 @@ import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.project.GenericProject;
 import org.squashtest.tm.service.milestone.MilestoneBindingManagerService;
 import org.squashtest.tm.service.milestone.MilestoneManagerService;
+import org.squashtest.tm.service.project.GenericProjectFinder;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.controller.administration.MilestoneDataTableModelHelper;
@@ -61,6 +62,8 @@ public class MilestoneBindingController {
 	private MilestoneBindingManagerService service;
 	@Inject
 	private MilestoneManagerService milestoneService;
+	@Inject
+	private GenericProjectFinder projectFinder;
 
 	@Inject
 	private PermissionEvaluationService permissionEvaluator;
@@ -131,7 +134,7 @@ public class MilestoneBindingController {
 	private DataTableModel buildMilestoneTableModel(Collection<Milestone> data, Locale locale, Long projectId) {
 		MilestoneDataTableModelHelper helper = new MilestoneDataTableModelHelper(messageSource);
 		helper.setLocale(locale);
-		helper.setProjectId(projectId);
+		helper.setProject(projectFinder.findById(projectId));
 		helper.setMilestoneManagerService(milestoneService);
 		Collection<Object> aaData = helper.buildRawModel(data);
 		DataTableModel model = new DataTableModel("");

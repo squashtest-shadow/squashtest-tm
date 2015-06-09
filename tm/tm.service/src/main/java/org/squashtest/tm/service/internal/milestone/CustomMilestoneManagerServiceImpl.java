@@ -511,10 +511,4 @@ public class CustomMilestoneManagerServiceImpl implements CustomMilestoneManager
 		return milestoneDao.isMilestoneBoundToOneObjectOfProject(milestone.getId(), project.getId());
 	}
 
-	@Override
-	public boolean isMilestoneBoundToOneObjectOfProject(Milestone milestone, Long projectId) {
-
-		return milestoneDao.isMilestoneBoundToOneObjectOfProject(milestone.getId(), projectId);
-	}
-
 }
