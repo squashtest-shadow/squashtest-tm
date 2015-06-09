@@ -132,6 +132,7 @@ public class MilestoneBindingController {
 		MilestoneDataTableModelHelper helper = new MilestoneDataTableModelHelper(messageSource);
 		helper.setLocale(locale);
 		helper.setProjectId(projectId);
+		helper.setMilestoneManagerService(milestoneService);
 		Collection<Object> aaData = helper.buildRawModel(data);
 		DataTableModel model = new DataTableModel("");
 		model.setAaData((List<Object>) aaData);

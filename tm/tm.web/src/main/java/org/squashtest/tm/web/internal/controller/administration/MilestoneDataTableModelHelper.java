@@ -24,8 +24,6 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
-import javax.inject.Inject;
-
 import org.squashtest.tm.domain.audit.AuditableMixin;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.milestone.MilestoneRange;
@@ -36,7 +34,6 @@ import org.squashtest.tm.web.internal.model.datatable.DataTableModelBuilder;
 
 public class MilestoneDataTableModelHelper  extends DataTableModelBuilder<Milestone> {
 	
-	@Inject
 	private MilestoneManagerService milestoneManagerService;
 
 	private InternationalizationHelper messageSource;
@@ -44,6 +41,10 @@ public class MilestoneDataTableModelHelper  extends DataTableModelBuilder<Milest
 	private Long projectId;
 	public Locale getLocale() {
 		return locale;
+	}
+
+	public void setMilestoneManagerService(MilestoneManagerService milestoneManagerService) {
+		this.milestoneManagerService = milestoneManagerService;
 	}
 
 	public void setLocale(Locale locale) {
