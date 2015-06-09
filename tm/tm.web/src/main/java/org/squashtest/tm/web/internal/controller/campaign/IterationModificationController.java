@@ -107,9 +107,6 @@ public class IterationModificationController {
 	private IterationTestPlanManagerService iterationTestPlanManagerService;
 
 	@Inject
-	private PermissionEvaluationService permissionService;
-
-	@Inject
 	private CustomFieldValueFinderService cufValueService;
 
 	@Inject
@@ -472,55 +469,6 @@ public class IterationModificationController {
 		return report;
 	}
 
-
-	/* **************************************************************************************************
-	 * 
-	 * 	Milestones
-	 * 
-	 ************************************************************************************************* */
-
-	@RequestMapping(value = "/milestones/panel", method=RequestMethod.GET)
-	public String getMilestonesPanel(@PathVariable("iterationId") Long iterationId, Model model){
-
-		MilestonePanelConfiguration conf = new MilestonePanelConfiguration();
-
-		// build the needed data
-		Collection<Milestone> allMilestones = iterationModService.findAllMilestones(iterationId);
-		List<?> currentModel = buildMilestoneModel(new ArrayList<>(allMilestones),  "0").getAaData();
-
-		Map<String, String> identity = new HashMap<>();
-		identity.put("restype", "iterations");
-		identity.put("resid", iterationId.toString());
-
-		String rootPath = "/iterations/"+iterationId.toString();
-
-		Boolean editable = Boolean.FALSE;
-
-		// add them to the model
-		conf.setNodeType("iteration");
-		conf.setRootPath(rootPath);
-		conf.setIdentity(identity);
-		conf.setCurrentModel(currentModel);
-		conf.setEditable(editable);
-
-		model.addAttribute("conf", conf);
-
-		// TODO : due to #4717 I think the milestones/milestones-tab.html is fine for the job too
-		return "milestones/milestones-tab-uneditable.html";
-
-	}
-
-
-	private DataTableModel buildMilestoneModel(List<Milestone> milestones, String sEcho){
-
-
-		PagedCollectionHolder<List<Milestone>> collectionHolder =
-				new SinglePageCollectionHolder<List<Milestone>>(milestones);
-
-		Locale locale = LocaleContextHolder.getLocale();
-		return new MilestoneTableModelHelper(messageSource, locale).buildDataModel(collectionHolder, sEcho);
-
-	}
 
 	// ******************** other stuffs ***********************
 

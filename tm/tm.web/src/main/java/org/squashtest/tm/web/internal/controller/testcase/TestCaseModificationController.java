@@ -45,7 +45,6 @@ import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -92,6 +91,7 @@ import org.squashtest.tm.service.execution.ExecutionFinder;
 import org.squashtest.tm.service.infolist.InfoListItemFinderService;
 import org.squashtest.tm.service.requirement.VerifiedRequirement;
 import org.squashtest.tm.service.requirement.VerifiedRequirementsManagerService;
+import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.testcase.ParameterFinder;
 import org.squashtest.tm.service.testcase.TestCaseModificationService;
 import org.squashtest.tm.web.internal.argumentresolver.MilestoneConfigResolver.CurrentMilestone;
@@ -212,6 +212,8 @@ public class TestCaseModificationController {
 	@Inject
 	private Provider<JsonTestCaseBuilder> builder;
 
+	@Inject
+	private PermissionEvaluationService permissionService;
 
 	/**
 	 * Returns the fragment html view of test case
@@ -361,7 +363,7 @@ public class TestCaseModificationController {
 	@ResponseBody
 	public String changeReference(@RequestParam(VALUE) String testCaseReference, @PathVariable long testCaseId) {
 
-        testCaseReference = testCaseReference.substring(0, Math.min( testCaseReference.length(), 50));
+		testCaseReference = testCaseReference.substring(0, Math.min( testCaseReference.length(), 50));
 		testCaseModificationService.changeReference(testCaseId, testCaseReference);
 		if (LOGGER.isTraceEnabled()) {
 			LOGGER.trace(TEST_CASE_ + testCaseId + ": updated reference to " + testCaseReference);
@@ -582,9 +584,8 @@ public class TestCaseModificationController {
 
 		String rootPath = "/test-cases/"+testCaseId.toString();
 
-		Boolean editable = tc.isModifiable();
+		Boolean editable = permissionService.hasRoleOrPermissionOnObject("ROLE_ADMIN", "LINK", tc);
 
-		// add them to the model
 		List<Milestone> mil = tc.getProject().getMilestones();
 		CollectionUtils.filter(mil, new Predicate() {
 			@Override
@@ -593,16 +594,18 @@ public class TestCaseModificationController {
 			}
 		});
 
-		
+
+		// add them to the model
 		Boolean isMilestoneInProject = mil.size() == 0 ? false : true;
-        conf.setNodeType("testcase");
-        conf.setRootPath(rootPath);
+		conf.setNodeType("testcase");
+		conf.setRootPath(rootPath);
 		conf.setIdentity(identity);
 		conf.setCurrentModel(currentModel);
 		conf.setEditable(editable);
 		conf.setIsMilestoneInProject(isMilestoneInProject);
+
 		model.addAttribute("conf", conf);
-		model.addAttribute("item", tc);
+
 		return "milestones/milestones-tab.html";
 
 	}

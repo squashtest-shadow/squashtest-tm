@@ -75,6 +75,7 @@ import org.squashtest.tm.service.campaign.CampaignTestPlanManagerService;
 import org.squashtest.tm.service.campaign.IterationModificationService;
 import org.squashtest.tm.service.customfield.CustomFieldValueFinderService;
 import org.squashtest.tm.service.milestone.MilestoneFinderService;
+import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.statistics.campaign.CampaignStatisticsBundle;
 import org.squashtest.tm.web.internal.argumentresolver.MilestoneConfigResolver.CurrentMilestone;
 import org.squashtest.tm.web.internal.controller.RequestParams;
@@ -138,6 +139,9 @@ public class CampaignModificationController {
 
 	@Inject
 	private MilestoneUIConfigurationService milestoneConfService;
+
+	@Inject
+	private PermissionEvaluationService permissionService;
 
 
 	@RequestMapping(value = "/statistics", method = RequestMethod.GET)
@@ -490,6 +494,8 @@ public class CampaignModificationController {
 
 		String rootPath = "/campaigns/"+campaignId.toString();
 
+		Boolean editable = permissionService.hasRole("ROLE_ADMIN") || permissionService.hasRole("ROLE_TM_PROJECT_MANAGER");
+
 		List<Milestone> mil = camp.getProject().getMilestones();
 		CollectionUtils.filter(mil, new Predicate() {
 			@Override
@@ -497,8 +503,9 @@ public class CampaignModificationController {
 				return ((Milestone)milestone).getStatus().isBindableToObject();
 			}
 		});
-		Boolean editable = camp.isBindableToMilestone();
 		Boolean isMilestoneInProject = mil.size() == 0 ? false : true;
+
+
 		// add them to the model
 		conf.setNodeType("campaign");
 		conf.setRootPath(rootPath);
@@ -507,8 +514,9 @@ public class CampaignModificationController {
 		conf.setEditable(editable);
 		conf.setMultilines(false);
 		conf.setIsMilestoneInProject(isMilestoneInProject);
+
 		model.addAttribute("conf", conf);
-		model.addAttribute("item", camp);
+
 		return "milestones/milestones-tab.html";
 
 	}

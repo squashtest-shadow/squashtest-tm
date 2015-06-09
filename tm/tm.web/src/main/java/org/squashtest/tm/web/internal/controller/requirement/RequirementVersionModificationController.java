@@ -69,6 +69,7 @@ import org.squashtest.tm.service.customfield.CustomFieldHelperService;
 import org.squashtest.tm.service.customfield.CustomFieldValueFinderService;
 import org.squashtest.tm.service.infolist.InfoListItemFinderService;
 import org.squashtest.tm.service.requirement.RequirementVersionManagerService;
+import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.testcase.VerifyingTestCaseManagerService;
 import org.squashtest.tm.web.internal.argumentresolver.MilestoneConfigResolver.CurrentMilestone;
 import org.squashtest.tm.web.internal.controller.audittrail.RequirementAuditEventTableModelBuilder;
@@ -131,6 +132,9 @@ public class RequirementVersionModificationController {
 
 	@Inject
 	private MilestoneUIConfigurationService milestoneConfService;
+
+	@Inject
+	private PermissionEvaluationService permissionService;
 
 
 	public RequirementVersionModificationController() {
@@ -451,8 +455,8 @@ public class RequirementVersionModificationController {
 
 		String rootPath = "/requirement-versions/"+requirementVersionId.toString();
 
-		Boolean editable = version.isModifiable();
-		
+		Boolean editable = permissionService.hasRoleOrPermissionOnObject("ROLE_ADMIN", "LINK", version);
+
 		List<Milestone> mil = version.getProject().getMilestones();
 		CollectionUtils.filter(mil, new Predicate() {
 			@Override
@@ -460,9 +464,9 @@ public class RequirementVersionModificationController {
 				return ((Milestone)milestone).getStatus().isBindableToObject();
 			}
 		});
-
-		
 		Boolean isMilestoneInProject = mil.size() == 0 ? false : true;
+
+
 		// add them to the model
 		conf.setNodeType("requirement-version");
 		conf.setRootPath(rootPath);
@@ -471,7 +475,7 @@ public class RequirementVersionModificationController {
 		conf.setEditable(editable);
 		conf.setIsMilestoneInProject(isMilestoneInProject);
 		model.addAttribute("conf", conf);
-		model.addAttribute("item", version);
+
 		return "milestones/milestones-tab.html";
 
 	}

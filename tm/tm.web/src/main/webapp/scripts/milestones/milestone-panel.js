@@ -88,6 +88,23 @@ define(["jquery", "workspace.event-bus", "app/ws/squashtm.notification", "squash
         "./jquery.squash.milestoneDialog", "jquery.squash.formdialog"], 
 		function($, eventBus, notification, translator){
 	
+	function isLocked(table){
+		
+		var data = table.fnGetData();
+		if (data.length === 0){
+			return false;
+		}
+		
+		var locked = false;
+		
+		data.forEach(function(val){
+			if (val['isStatusAllowUnbind']===false){
+				locked = true;
+			};
+		});
+		
+		return locked;
+	}
 	
 	function init(conf){
 		
@@ -117,18 +134,23 @@ define(["jquery", "workspace.event-bus", "app/ws/squashtm.notification", "squash
 			bServerSide : false,
 			bDeferLoading : true,
 			fnRowCallback : function(nRow, aData){
-				// this callback is necessary only for test case milestones
-				var row = $(nRow);
-				var tcDirectMember = aData['directMember'];
-				if (tcDirectMember===false){	
-					row.addClass('milestone-indirect-membership');
-					row.find('.unbind-button').removeClass('unbind-button');
+
+				if (conf.editable){
 					
-				}
+					var row = $(nRow);
 				
-				var isStatusAllowUnbind = aData['isStatusAllowUnbind'];
-				if (isStatusAllowUnbind===false){
-					row.find('.unbind-button').removeClass('unbind-button');				
+					var isStatusAllowUnbind = aData['isStatusAllowUnbind'];
+					if (isStatusAllowUnbind===false){
+						row.find('.unbind-button').removeClass('unbind-button');				
+					}
+					
+					// this callback is necessary only for test case milestones
+					var tcDirectMember = aData['directMember'];
+					if (tcDirectMember===false){	
+						row.addClass('milestone-indirect-membership');
+						row.find('.unbind-button').removeClass('unbind-button');
+						
+					}
 				}
 				
 			}
@@ -141,6 +163,9 @@ define(["jquery", "workspace.event-bus", "app/ws/squashtm.notification", "squash
 		
 		// now we can set the ajax source
 		currentTable.fnSettings().sAjaxSource=conf.currentTableSource;
+		
+		// editable features : 		
+		if (conf.editable){
 
 			// add milestones dialog
 			var dialogOptions = {
@@ -158,23 +183,26 @@ define(["jquery", "workspace.event-bus", "app/ws/squashtm.notification", "squash
 			});
 			
 			bindDialog.on('milestonedialogopen', function(){
+				
+				// maybe I'll need that flag later :
+				var locked = isLocked(currentTable);
+				
 				// if there's not at least one milestone in project or only planned and locked status
 				if (!conf.milestoneInProject) {
 					bindDialog.milestoneDialog('setState', 'no-available-milestone');
 				} 
 				
 				//Campaign with locked milestone can't bind another milestone because that would remove locked milestone.
-				else if (conf.nodeType === "campaign" && !conf.editable){
+				else if (conf.nodeType === "campaign" && locked){
 					bindDialog.milestoneDialog('setState', 'forbidden');
 				}
 				
 				// else, we're fine
 				else bindDialog.milestoneDialog('setState','select-milestone');
 				
-				
 			});
 			
-
+	
 			// remove milestones 			
 			var unbindDialog = $(".unbind-milestone-dialog");
 			
@@ -202,7 +230,7 @@ define(["jquery", "workspace.event-bus", "app/ws/squashtm.notification", "squash
 					return data['isStatusAllowUnbind'] && (data['directMember'] !== false);
 				});
 				
-
+	
 				switch(unbindableIds.length){
 				case 0 : state="none-can-be-removed"; break;
 				case 1 : state="one-selected";break;
@@ -229,12 +257,12 @@ define(["jquery", "workspace.event-bus", "app/ws/squashtm.notification", "squash
 			unbindDialog.on('formdialogconfirm', function(){			
 				
 				var ids = [];
-
+	
 				var rows = currentTable.getSelectedRows();
 				rows.each(function(){
 					
 					var data = currentTable.fnGetData(this);
-
+	
 					// the test is a success if 'directMember' 
 					// is true or undefined (that is intended).
 					if (data['directMember'] !== false && data['isStatusAllowUnbind'] !== false){
@@ -262,7 +290,7 @@ define(["jquery", "workspace.event-bus", "app/ws/squashtm.notification", "squash
 						unbindDialog.formDialog('close');
 					});
 				}
-
+	
 			});
 			
 			unbindDialog.on('formdialogcancel', function(){
@@ -280,9 +308,9 @@ define(["jquery", "workspace.event-bus", "app/ws/squashtm.notification", "squash
 			eventBus.onContextual('node.bindmilestones node.unbindmilestones', function(){
 				currentTable._fnAjaxUpdate();
 			});
-			
-			
-		}		
+		
+		}
+	}		
 		
 
 	

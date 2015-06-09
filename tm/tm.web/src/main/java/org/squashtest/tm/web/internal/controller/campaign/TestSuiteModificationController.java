@@ -273,54 +273,7 @@ public class TestSuiteModificationController {
 		return result;
 	}
 
-	/* **************************************************************************************************
-	 * 
-	 * 	Milestones
-	 * 
-	 ************************************************************************************************* */
 
-	@RequestMapping(value = "/milestones/panel", method=RequestMethod.GET)
-	public String getMilestonesPanel(@PathVariable("suiteId") Long suiteId, Model model){
-
-		MilestonePanelConfiguration conf = new MilestonePanelConfiguration();
-
-		// build the needed data
-		Collection<Milestone> allMilestones = service.findAllMilestones(suiteId);
-		List<?> currentModel = buildMilestoneModel(new ArrayList<>(allMilestones),  "0").getAaData();
-
-		Map<String, String> identity = new HashMap<>();
-		identity.put("restype", "test-suites");
-		identity.put("resid", suiteId.toString());
-
-		String rootPath = "/iterations/"+suiteId.toString();
-
-		Boolean editable = Boolean.FALSE;	// fix that later
-
-		// add them to the model
-		conf.setNodeType("test-suite");
-		conf.setRootPath(rootPath);
-		conf.setIdentity(identity);
-		conf.setCurrentModel(currentModel);
-		conf.setEditable(editable);
-
-		model.addAttribute("conf", conf);
-
-		// TODO : due to #4717 I think the milestones/milestones-tab.html is fine for the job too
-		return "milestones/milestones-tab-uneditable.html";
-
-	}
-
-
-	private DataTableModel buildMilestoneModel(List<Milestone> milestones, String sEcho){
-
-
-		PagedCollectionHolder<List<Milestone>> collectionHolder =
-				new SinglePageCollectionHolder<List<Milestone>>(milestones);
-
-		Locale locale = LocaleContextHolder.getLocale();
-		return new MilestoneTableModelHelper(messageSource, locale).buildDataModel(collectionHolder, sEcho);
-
-	}
 
 	// ******************** other stuffs ********************
 
