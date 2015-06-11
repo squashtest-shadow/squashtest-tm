@@ -670,15 +670,28 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 		return query;
 	}
 
-	// Issue #4079 : ensure that criteria project.id contains only
+	// Issue #5079 : ensure that criteria project.id contains only
 	// projects the user can read
 	private void secureProjectCriteria(AdvancedSearchModel model){
-		AdvancedSearchListFieldModel projectCriteria =(AdvancedSearchListFieldModel) model.getFields().get(PROJECT_CRITERIA_NAME);
 
+		// Issue #5079 again
+		// first task is to locate which name has the project criteria because it may differ depending on the interface
+		// (test case, requirement, test-case-through-requirements
+		String key = null;
+		Set<String> keys = model.getFields().keySet();
+		for (String k : keys){
+			if (k.contains(PROJECT_CRITERIA_NAME)){
+				key=k;
+				break;
+			}
+		}
 		// if no projectCriteria was set -> nothing to do
-		if (projectCriteria == null){
+		if (key == null){
 			return;
 		}
+
+		AdvancedSearchListFieldModel projectCriteria = (AdvancedSearchListFieldModel) model.getFields().get(key);
+
 
 		List<String> approvedIds;
 		List<String> selectedIds = projectCriteria.getValues();
