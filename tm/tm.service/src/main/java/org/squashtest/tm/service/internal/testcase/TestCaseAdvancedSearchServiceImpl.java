@@ -70,7 +70,7 @@ import org.squashtest.tm.service.testcase.VerifyingTestCaseManagerService;
 public class TestCaseAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl implements
 TestCaseAdvancedSearchService {
 
-	
+
 	@Inject
 	protected SessionFactory sessionFactory;
 
@@ -135,6 +135,15 @@ TestCaseAdvancedSearchService {
 	 * 
 	 * (non-Javadoc)
 	 * @see org.squashtest.tm.service.testcase.TestCaseAdvancedSearchService#searchForTestCases(org.squashtest.tm.domain.search.AdvancedSearchModel, java.util.Locale)
+	 */
+	/*
+	 * TODO :
+	 * 
+	 * This method is basically an override of "buildLuceneQuery" defined in the superclass -> thus we could rename it accordingly.
+	 * However in method "searchForTestCasesThroughRequirementModel" we must use the super implementation of "buildLuceneQuery" -> thus renaming
+	 * "searchTestCaseQuery" to "buildLuceneQuery" could lead to ambiguity.
+	 * 
+	 * I don't know what to do about it.
 	 */
 	protected Query searchTestCasesQuery(AdvancedSearchModel model, FullTextSession ftSession, Locale locale){
 
@@ -261,7 +270,7 @@ TestCaseAdvancedSearchService {
 
 		QueryBuilder qb = ftSession.getSearchFactory().buildQueryBuilder().forEntity(TestCase.class).get();
 
-		Query luceneQuery = buildLuceneQuery(qb, testcases, locale);
+		Query luceneQuery = super.buildLuceneQuery(qb, testcases, locale);
 
 		List<TestCase> result = Collections.emptyList();
 		int countAll = 0;
@@ -322,7 +331,7 @@ TestCaseAdvancedSearchService {
 		for (String str : strMilestoneIds){
 			milestoneIds.add(Long.valueOf(str));
 		}
-		
+
 
 
 		List<Long> lTestcaseIds = testCaseDao.findAllTestCasesLibraryNodeForMilestone(milestoneIds);
@@ -330,7 +339,7 @@ TestCaseAdvancedSearchService {
 		for (Long l : lTestcaseIds){
 			testcaseIds.add(l.toString());
 		}
-		
+
 		//if no tc are found then use fake id so the lucene query will not find anything
 
 		if (testcaseIds.isEmpty()){

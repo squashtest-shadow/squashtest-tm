@@ -123,10 +123,10 @@ public class AdvancedSearchController {
 	private static final String SEARCH_MODEL = "searchModel";
 	private static final String SEARCH_DOMAIN = "searchDomain";
 	private static final String TESTCASE_VIA_REQUIREMENT = "testcaseViaRequirement";
-	
+
 	@Inject
 	private RequirementVersionManagerService versionService;
-	
+
 	@Inject
 	private ProjectFinder projectFinder;
 
@@ -144,7 +144,7 @@ public class AdvancedSearchController {
 
 	@Inject
 	private FeatureManager featureManager;
-	
+
 	private Map<String, FormModelBuilder> formModelBuilder = new HashMap<String, AdvancedSearchController.FormModelBuilder>();
 
 	{
@@ -216,37 +216,37 @@ public class AdvancedSearchController {
 	// These are used by Lucene - Thus the columns are mapped to index
 	// properties rather than class properties
 	private DatatableMapper<String> testCaseSearchResultMapper = new NameBasedMapper(15)
-			.mapAttribute(DataTableModelConstants.PROJECT_NAME_KEY, "name", Project.class)
-			.mapAttribute("test-case-id", "id", TestCase.class)
-			.mapAttribute("test-case-ref", "reference", TestCase.class)
-			.mapAttribute("test-case-label", "labelUpperCased", TestCase.class)
-			.mapAttribute("test-case-weight", "importance", TestCase.class)
-			.mapAttribute("test-case-nature", "nature", TestCase.class)
-			.mapAttribute("test-case-type", "type", TestCase.class)
-			.mapAttribute("test-case-status", "status", TestCase.class)
-			.mapAttribute("test-case-milestone-nb", "milestones", TestCase.class)
-			.mapAttribute("test-case-requirement-nb", "requirements", TestCase.class)
-			.mapAttribute("test-case-teststep-nb", "steps", TestCase.class)
-			.mapAttribute("test-case-iteration-nb", "iterations", TestCase.class)
-			.mapAttribute("test-case-attachment-nb", "attachments", TestCase.class)
-			.mapAttribute("test-case-created-by", "createdBy", TestCase.class)
-			.mapAttribute("test-case-modified-by", "lastModifiedBy", TestCase.class);
+	.mapAttribute(DataTableModelConstants.PROJECT_NAME_KEY, "name", Project.class)
+	.mapAttribute("test-case-id", "id", TestCase.class)
+	.mapAttribute("test-case-ref", "reference", TestCase.class)
+	.mapAttribute("test-case-label", "labelUpperCased", TestCase.class)
+	.mapAttribute("test-case-weight", "importance", TestCase.class)
+	.mapAttribute("test-case-nature", "nature", TestCase.class)
+	.mapAttribute("test-case-type", "type", TestCase.class)
+	.mapAttribute("test-case-status", "status", TestCase.class)
+	.mapAttribute("test-case-milestone-nb", "milestones", TestCase.class)
+	.mapAttribute("test-case-requirement-nb", "requirements", TestCase.class)
+	.mapAttribute("test-case-teststep-nb", "steps", TestCase.class)
+	.mapAttribute("test-case-iteration-nb", "iterations", TestCase.class)
+	.mapAttribute("test-case-attachment-nb", "attachments", TestCase.class)
+	.mapAttribute("test-case-created-by", "createdBy", TestCase.class)
+	.mapAttribute("test-case-modified-by", "lastModifiedBy", TestCase.class);
 
 	private DatatableMapper<String> requirementSearchResultMapper = new NameBasedMapper(14)
-			.mapAttribute(DataTableModelConstants.PROJECT_NAME_KEY, "name", Project.class)
-			.mapAttribute("requirement-id", "requirement.id", RequirementVersion.class)
-			.mapAttribute("requirement-reference", "reference", RequirementVersion.class)
-			.mapAttribute("requirement-label", "labelUpperCased", RequirementVersion.class)
-			.mapAttribute("requirement-criticality", "criticality", RequirementVersion.class)
-			.mapAttribute("requirement-category", "category", RequirementVersion.class)
-			.mapAttribute("requirement-status", "status", RequirementVersion.class)
-			.mapAttribute("requirement-milestone-nb", "milestones", RequirementVersion.class)
-			.mapAttribute("requirement-version", "versionNumber", RequirementVersion.class)
-			.mapAttribute("requirement-version-nb", "versions", Requirement.class)
-			.mapAttribute("requirement-testcase-nb", "testcases", RequirementVersion.class)
-			.mapAttribute("requirement-attachment-nb", "attachments", RequirementVersion.class)
-			.mapAttribute("requirement-created-by", "createdBy", RequirementVersion.class)
-			.mapAttribute("requirement-modified-by", "lastModifiedBy", RequirementVersion.class);
+	.mapAttribute(DataTableModelConstants.PROJECT_NAME_KEY, "name", Project.class)
+	.mapAttribute("requirement-id", "requirement.id", RequirementVersion.class)
+	.mapAttribute("requirement-reference", "reference", RequirementVersion.class)
+	.mapAttribute("requirement-label", "labelUpperCased", RequirementVersion.class)
+	.mapAttribute("requirement-criticality", "criticality", RequirementVersion.class)
+	.mapAttribute("requirement-category", "category", RequirementVersion.class)
+	.mapAttribute("requirement-status", "status", RequirementVersion.class)
+	.mapAttribute("requirement-milestone-nb", "milestones", RequirementVersion.class)
+	.mapAttribute("requirement-version", "versionNumber", RequirementVersion.class)
+	.mapAttribute("requirement-version-nb", "versions", Requirement.class)
+	.mapAttribute("requirement-testcase-nb", "testcases", RequirementVersion.class)
+	.mapAttribute("requirement-attachment-nb", "attachments", RequirementVersion.class)
+	.mapAttribute("requirement-created-by", "createdBy", RequirementVersion.class)
+	.mapAttribute("requirement-modified-by", "lastModifiedBy", RequirementVersion.class);
 
 	@RequestMapping(method = RequestMethod.GET)
 	public String showSearchPage(Model model, @RequestParam String searchDomain,
@@ -352,7 +352,7 @@ public class AdvancedSearchController {
 			final Locale locale, @RequestParam(value = RequestParams.MODEL) String model,
 			@RequestParam(required = false) String associateResultWithType, @RequestParam(required = false) Long id,
 			@CurrentMilestone Milestone activeMilestone)
-			throws JsonParseException, JsonMappingException, IOException {
+					throws JsonParseException, JsonMappingException, IOException {
 
 		AdvancedSearchModel searchModel = new ObjectMapper().readValue(model, AdvancedSearchModel.class);
 
@@ -384,7 +384,7 @@ public class AdvancedSearchController {
 			@RequestParam(value = RequestParams.MODEL) String model,
 			@RequestParam(required = false) String associateResultWithType, @RequestParam(required = false) Long id,
 			@CurrentMilestone Milestone activeMilestone)
-			throws JsonParseException, JsonMappingException, IOException {
+					throws JsonParseException, JsonMappingException, IOException {
 
 		AdvancedSearchModel searchModel = new ObjectMapper().readValue(model, AdvancedSearchModel.class);
 		if (activeMilestone != null) {
@@ -414,7 +414,7 @@ public class AdvancedSearchController {
 			@RequestParam(value = RequestParams.MODEL) String model,
 			@RequestParam(required = false) String associateResultWithType, @RequestParam(required = false) Long id,
 			@CurrentMilestone Milestone activeMilestone)
-			throws JsonParseException, JsonMappingException, IOException {
+					throws JsonParseException, JsonMappingException, IOException {
 
 		AdvancedSearchModel searchModel = new ObjectMapper().readValue(model, AdvancedSearchModel.class);
 
@@ -597,11 +597,11 @@ public class AdvancedSearchController {
 		return buildMilestoneTableModelForMassModif(milestones, locale);
 	}
 
-	
+
 	@RequestMapping(value = "/milestones/tc-mass-modif-data/{testCaseIds}", method = RequestMethod.GET)
 	@ResponseBody
 	public MilestoneMassModifData getMilestoneMassModifDataForTc(@PathVariable List<Long> testCaseIds){
-		
+
 		MilestoneMassModifData data = new MilestoneMassModifData();
 		data.setCheckedIds(testCaseModificationService.findBindedMilestonesIdForMassModif(testCaseIds));
 		boolean hasData = testCaseModificationService.findAssociableMilestonesForMassModif(testCaseIds).size() != 0 ? true : false;
@@ -609,14 +609,14 @@ public class AdvancedSearchController {
 		data.setSamePerimeter(testCaseModificationService.haveSamePerimeter(testCaseIds));
 		return data;
 	}
-	
-	
-	
+
+
+
 	@RequestMapping(value = "/milestones/reqV-mass-modif-data/{reqVersionIds}", method = RequestMethod.GET)
 	@ResponseBody
 	public MilestoneMassModifData getMilestoneMassModifDataForReqVersion(@PathVariable List<Long> reqVersionIds,
 			Locale locale) {
-		
+
 		MilestoneMassModifData data = new MilestoneMassModifData();
 		data.setCheckedIds(versionService.findBindedMilestonesIdForMassModif(reqVersionIds));
 		boolean hasData = versionService.findAssociableMilestonesForMassModif(reqVersionIds).size() != 0 ? true : false;
@@ -624,42 +624,42 @@ public class AdvancedSearchController {
 		data.setSamePerimeter(versionService.haveSamePerimeter(reqVersionIds));
 		return data;
 	}
-	
-	
-	
-	
+
+
+
+
 	@RequestMapping(value = "/tcs/{testCaseIds}/milestones", method = RequestMethod.POST, params = IDS)
 	@ResponseBody
 	public void bindMilestonesToTcs(@PathVariable List<Long> testCaseIds, @RequestParam(IDS) List<Long> milestoneIds) {
 
 		Collection<Long> bindedBefore = testCaseModificationService.findBindedMilestonesIdForMassModif(testCaseIds);
 		bindedBefore.removeAll(milestoneIds);
-		
+
 		for (Long testCaseId : testCaseIds) {
 			testCaseModificationService.bindMilestones(testCaseId, milestoneIds);
 			testCaseModificationService.unbindMilestones(testCaseId, bindedBefore);
-		}		
+		}
 	}
-	
+
 
 	@RequestMapping(value = "/reqVersions/{reqVIds}/milestones", method = RequestMethod.POST, params = IDS)
 	@ResponseBody
 	public boolean bindMilestonesToReqV(@PathVariable List<Long> reqVIds, @RequestParam(IDS) List<Long> milestoneIds) {
 		Collection<Long> bindedBefore = versionService.findBindedMilestonesIdForMassModif(reqVIds);
 		//was binded before but is not now so need to unbind
-		bindedBefore.removeAll(milestoneIds);	
-		
-		 boolean isOneVersionAlreadyBind = milestoneIds.isEmpty() ? false : versionService.isOneMilestoneAlreadyBindToAnotherRequirementVersion(reqVIds, milestoneIds);
-		
+		bindedBefore.removeAll(milestoneIds);
+
+		boolean isOneVersionAlreadyBind = milestoneIds.isEmpty() ? false : versionService.isOneMilestoneAlreadyBindToAnotherRequirementVersion(reqVIds, milestoneIds);
+
 		for (Long reqVId : reqVIds) {
 			versionService.bindMilestones(reqVId, milestoneIds);
 			versionService.unbindMilestones(reqVId, bindedBefore);
 		}
-		
+
 		return isOneVersionAlreadyBind;
 	}
-	
-	
+
+
 
 	private DataTableModel buildMilestoneTableModelForMassModif(Collection<Milestone> data, Locale locale) {
 		MilestoneDataTableModelHelper helper = new MilestoneDataTableModelHelper(internationalizationHelper, locale);
@@ -670,7 +670,7 @@ public class AdvancedSearchController {
 	}
 
 	private static final class RequirementSearchResultDataTableModelHelper extends
-			DataTableModelBuilder<RequirementVersion> {
+	DataTableModelBuilder<RequirementVersion> {
 
 		private boolean isInAssociationContext;
 		private Set<Long> associatedRequirementIds;
@@ -912,7 +912,7 @@ public class AdvancedSearchController {
 	private SearchInputFieldModel convertToSearchInputFieldModel(SingleSelectField selectField, Locale locale) {
 		List<SearchInputPossibleValueModel> possibleValues = new ArrayList<SearchInputPossibleValueModel>();
 		possibleValues
-				.add(new SearchInputPossibleValueModel(messageSource.internationalize("label.Empty", locale), ""));
+		.add(new SearchInputPossibleValueModel(messageSource.internationalize("label.Empty", locale), ""));
 		for (CustomFieldOption option : selectField.getOptions()) {
 			possibleValues.add(new SearchInputPossibleValueModel(option.getLabel(), option.getLabel()));
 		}

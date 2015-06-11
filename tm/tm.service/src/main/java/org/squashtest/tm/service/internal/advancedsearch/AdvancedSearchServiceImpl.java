@@ -25,6 +25,7 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
@@ -44,11 +45,17 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.search.query.dsl.QueryBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.security.access.AccessDeniedException;
+import org.squashtest.tm.domain.IdCollector;
+import org.squashtest.tm.domain.Identified;
 import org.squashtest.tm.domain.customfield.BindableEntity;
 import org.squashtest.tm.domain.customfield.CustomField;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.milestone.MilestoneStatus;
 import org.squashtest.tm.domain.project.Project;
+import org.squashtest.tm.domain.projectfilter.ProjectFilter;
 import org.squashtest.tm.domain.search.AdvancedSearchFieldModel;
 import org.squashtest.tm.domain.search.AdvancedSearchFieldModelType;
 import org.squashtest.tm.domain.search.AdvancedSearchListFieldModel;
@@ -69,6 +76,10 @@ import org.squashtest.tm.service.project.ProjectManagerService;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 
 public class AdvancedSearchServiceImpl implements AdvancedSearchService {
+
+	private static final String PROJECT_CRITERIA_NAME = "project.id";
+
+	private static final Logger LOGGER = LoggerFactory.getLogger(AdvancedSearchServiceImpl.class);
 
 	private final static List<String> MILESTONE_SEARCH_FIELD = Arrays.asList("milestone.label", "milestone.status",
 			"milestone.endDate", "searchByMilestone");
@@ -151,7 +162,7 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 	}
 
 	protected Query buildLuceneValueInListQuery(QueryBuilder qb, String fieldName, List<String> values, boolean isTag) {
-//TODO write something better when we have some time to do something not 'a minima'
+		//TODO write something better when we have some time to do something not 'a minima'
 		Query mainQuery = null;
 
 		if (!values.isEmpty()) {
@@ -181,25 +192,7 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 				}
 			}
 		} else {
-			// create a query that should match anything
-			//if not admin and project field, filter on all available project to user
-			if (fieldName.contains("project.id") && !permissionService.hasRole("ADMIN")) {
-				Query query;
-				for (Project p : projectFilterService.getAllProjects()) {
-					query = qb
-							.bool()
-							.should(qb.keyword().onField(fieldName).ignoreFieldBridge().ignoreAnalyzer()
-									.matching(p.getId()).createQuery()).createQuery();
-					if (query != null && mainQuery == null) {
-						mainQuery = query;
-					} else if (query != null) {
-						mainQuery = qb.bool().should(mainQuery).should(query).createQuery();
-					}
-				}
-
-			} else {
-				mainQuery = qb.all().createQuery();
-			}
+			mainQuery = qb.all().createQuery();
 		}
 		return qb.bool().must(mainQuery).createQuery();
 	}
@@ -280,7 +273,7 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 				.bool()
 				.must(qb.range().onField(fieldName).ignoreFieldBridge()
 						.above(DateTools.dateToString(startdate, DateTools.Resolution.DAY)).createQuery())
-				.createQuery();
+						.createQuery();
 
 		return query;
 	}
@@ -472,6 +465,9 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 
 		Query mainQuery = null;
 
+		// issue #5079
+		secureProjectCriteria(model);
+
 		Set<String> fieldKeys = model.getFields().keySet();
 
 		for (String fieldKey : fieldKeys) {
@@ -536,8 +532,8 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 							// We don't add crit and must not add some crit = null}
 						} else if (statusValues != null && !statusValues.isEmpty()) {
 
-								crit.add(Restrictions.in("status", convertStatus(statusValues)));
-	
+							crit.add(Restrictions.in("status", convertStatus(statusValues)));
+
 						}
 						break;
 
@@ -568,13 +564,13 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 			for (Milestone milestone : (List<Milestone>) crit.list()) {
 				milestoneIds.add(String.valueOf(milestone.getId()));
 			}
-			
+
 			//if there is no milestone id that means we didn't found any milestones
 			//matching search criteria, so we use a fake milestoneId to find no result.
 			if (milestoneIds.isEmpty()){
 				milestoneIds.add(FAKE_MILESTONE_ID);
 			}
-			
+
 			AdvancedSearchListFieldModel milestonesModel = new AdvancedSearchListFieldModel();
 			milestonesModel.setValues(milestoneIds);
 
@@ -673,5 +669,49 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 		}
 		return query;
 	}
+
+	// Issue #4079 : ensure that criteria project.id contains only
+	// projects the user can read
+	private void secureProjectCriteria(AdvancedSearchModel model){
+		AdvancedSearchListFieldModel projectCriteria =(AdvancedSearchListFieldModel) model.getFields().get(PROJECT_CRITERIA_NAME);
+
+		// if no projectCriteria was set -> nothing to do
+		if (projectCriteria == null){
+			return;
+		}
+
+		List<String> approvedIds;
+		List<String> selectedIds = projectCriteria.getValues();
+
+
+		// case 1 : no project is selected
+		if (selectedIds == null || selectedIds.isEmpty()){
+			List<Project> ps = projectFinder.findAllReadable();
+			approvedIds = (List<String>)CollectionUtils.collect(ps, new Transformer() {
+				@Override
+				public Object transform(Object project) {
+					return ((Identified)project).getId().toString();
+				}
+			});
+		}
+		// case 2 : some projects were selected
+		else{
+			approvedIds = new ArrayList<>();
+			for (String id : selectedIds){
+				if (permissionService.hasRoleOrPermissionOnObject("ROLE_ADMIN", "READ", Long.valueOf(id), Project.class.getName())){
+					approvedIds.add(id);
+				}
+				else{
+					LOGGER.info("AdvancedSearchService : removed element '"+id+"' from criteria 'project.id' because the user is not approved for 'READ' operation on it");
+				}
+			}
+		}
+
+		projectCriteria.setValues(approvedIds);
+
+	}
+
+
+
 
 }
