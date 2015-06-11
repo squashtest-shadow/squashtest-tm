@@ -34,15 +34,18 @@ import org.squashtest.tm.domain.project.GenericProject;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.project.ProjectTemplate;
 import org.squashtest.tm.domain.testautomation.TestAutomationProject;
+import org.squashtest.tm.exception.NameAlreadyInUseException;
 import org.squashtest.tm.service.customfield.CustomFieldBindingModificationService;
 import org.squashtest.tm.service.internal.repository.GenericProjectDao;
 import org.squashtest.tm.service.internal.repository.ProjectDao;
 import org.squashtest.tm.service.internal.repository.ProjectTemplateDao;
 import org.squashtest.tm.service.project.CustomProjectModificationService;
+import org.squashtest.tm.service.project.GenericProjectCopyParameter;
 import org.squashtest.tm.service.project.GenericProjectManagerService;
 import org.squashtest.tm.service.project.ProjectManagerService;
 import org.squashtest.tm.service.project.ProjectsPermissionManagementService;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
+
 import static org.squashtest.tm.service.security.Authorizations.*;
 
 /**
@@ -83,54 +86,17 @@ public class CustomProjectModificationServiceImpl implements CustomProjectModifi
 		return projectDao.findAll();
 	}
 
-	/**
-	 * @see ProjectManagerService#addProjectAndCopySettingsFromTemplate(Project, long, boolean, boolean, boolean,
-	 *      boolean)
-	 */
-	@PreAuthorize(HAS_ROLE_ADMIN)
 	@Override
-	public Project addProjectAndCopySettingsFromTemplate(Project newProject, long templateId,
-			boolean copyAssignedUsers, boolean copyCustomFieldsSettings, boolean copyBugtrackerSettings,
-			boolean copyTestAutomationSettings, boolean copyInfolists, boolean copyMilestone) {
+	public Project addProjectFromtemplate(Project newProject, long templateId,
+			GenericProjectCopyParameter params)
+			throws NameAlreadyInUseException {
 		genericProjectManager.persist(newProject);
 
 		ProjectTemplate projectTemplate = projectTemplateDao.findById(templateId);
-		if (copyAssignedUsers) {
-			copyAssignedUsers(newProject, projectTemplate);
-		}
-		if (copyCustomFieldsSettings) {
-			copyCustomFieldsSettings(newProject, projectTemplate);
-		}
-		if (copyBugtrackerSettings) {
-			copyBugtrackerSettings(newProject, projectTemplate);
-		}
-		if (copyTestAutomationSettings) {
-			copyTestAutomationSettings(newProject, projectTemplate);
-		}
-		if (copyInfolists){
-			copyInfolists(newProject, projectTemplate);
-		}
-
-		if (copyMilestone){
-			copyMilestone(newProject, projectTemplate);
-		}
-
+		genericProjectManager.synchronizeGenericProject(newProject, projectTemplate, params);
+		
 		return newProject;
 	}
-
-	private void copyMilestone(Project newProject, ProjectTemplate projectTemplate) {
-
-		List<Milestone> milestones = getOnlyBindableMilestones(projectTemplate.getMilestones());
-
-		newProject.bindMilestones(milestones);
-
-		for (Milestone milestone: milestones){
-			milestone.addProjectToPerimeter(newProject);
-		}
-	}
-
-
-
 
 	private List<Milestone> getOnlyBindableMilestones(List<Milestone> milestones) {
 		List<Milestone> bindableMilestones = new ArrayList<Milestone>();
@@ -140,39 +106,6 @@ public class CustomProjectModificationServiceImpl implements CustomProjectModifi
 			}
 		}
 		return bindableMilestones;
-	}
-
-	private void copyTestAutomationSettings(Project newProject, ProjectTemplate projectTemplate) {
-
-		newProject.setTestAutomationServer(projectTemplate.getTestAutomationServer());
-
-		for (TestAutomationProject automationProject : projectTemplate.getTestAutomationProjects()) {
-			TestAutomationProject TACopy = automationProject.createCopy();
-			genericProjectManager.bindTestAutomationProject(newProject.getId(), TACopy);
-
-		}
-	}
-
-	private void copyBugtrackerSettings(Project newProject, ProjectTemplate projectTemplate) {
-		if (projectTemplate.isBugtrackerConnected()) {
-			genericProjectManager.changeBugTracker(newProject, projectTemplate.getBugtrackerBinding().getBugtracker());
-		}
-	}
-
-	private void copyCustomFieldsSettings(Project newProject, ProjectTemplate projectTemplate) {
-		customFieldBindingModificationService.copyCustomFieldsSettingsFromTemplate(newProject, projectTemplate);
-
-	}
-
-	private void copyAssignedUsers(Project newProject, ProjectTemplate projectTemplate) {
-		permissionService.copyAssignedUsersFromTemplate(newProject, projectTemplate);
-
-	}
-
-	private void copyInfolists(Project newProject, ProjectTemplate projectTemplate){
-		newProject.setRequirementCategories(projectTemplate.getRequirementCategories());
-		newProject.setTestCaseNatures(projectTemplate.getTestCaseNatures());
-		newProject.setTestCaseTypes(projectTemplate.getTestCaseTypes());
 	}
 
 	@Override
@@ -187,5 +120,6 @@ public class CustomProjectModificationServiceImpl implements CustomProjectModifi
 		}
 		return manageableProjects;
 	}
+
 
 }

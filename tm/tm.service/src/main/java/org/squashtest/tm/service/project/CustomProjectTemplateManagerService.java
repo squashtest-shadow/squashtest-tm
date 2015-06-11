@@ -20,7 +20,11 @@
  */
 package org.squashtest.tm.service.project;
 
+import org.squashtest.tm.domain.project.ProjectTemplate;
 
 public interface CustomProjectTemplateManagerService extends CustomProjectTemplateFinder {
+	
+	ProjectTemplate addTemplateFromProject(ProjectTemplate newTemplate,
+			long sourceGenericProjectId, GenericProjectCopyParameter params);
 	
 }

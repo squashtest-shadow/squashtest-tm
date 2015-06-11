@@ -37,15 +37,16 @@ public interface CustomProjectModificationService extends CustomProjectFinder {
 	 * 
 	 * @param newProject : the new {@link Project} entity to persist
 	 * @param templateId : the id of the {@link ProjectTemplate} to copy the settings from
-	 * @param copyAssignedUsers : whether to copy the Template's assigned Users or not
-	 * @param copyCustomFieldsSettings : whether to copy the Template's CustomFields settings or not
-	 * @param copyBugtrackerSettings : whether to copy the Template's bug-tracker settings or not
-	 * @param copyTestAutomationSettings : whether to copy the Template's automation settings or not
-	 * @param copyInfolists : whether to use the Template's custom categories/natures/types
-	 * @param copyMilestone 
+	 * @param params : conf object containing the following params : 
+	 *  copyAssignedUsers : whether to copy the Template's assigned Users or not
+	 *  copyCustomFieldsSettings : whether to copy the Template's CustomFields settings or not
+	 *  copyBugtrackerSettings : whether to copy the Template's bug-tracker settings or not
+	 *  copyTestAutomationSettings : whether to copy the Template's automation settings or not
+	 *  copyInfolists : whether to use the Template's custom categories/natures/types
+	 *  copyMilestone 
 	 * @return the persisted new {@link Project}
 	 */
-	Project addProjectAndCopySettingsFromTemplate(Project newProject, long templateId, boolean copyAssignedUsers, boolean copyCustomFieldsSettings, boolean copyBugtrackerSettings , boolean copyTestAutomationSettings, boolean copyInfolists, boolean copyMilestone) throws NameAlreadyInUseException;
+	Project addProjectFromtemplate(Project newProject, long templateId, GenericProjectCopyParameter params) throws NameAlreadyInUseException;
 
 	void deleteProject(long projectId);
 

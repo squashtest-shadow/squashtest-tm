@@ -26,9 +26,12 @@ import javax.inject.Inject;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.squashtest.tm.domain.project.GenericProject;
 import org.squashtest.tm.domain.project.ProjectTemplate;
 import org.squashtest.tm.service.internal.repository.ProjectTemplateDao;
 import org.squashtest.tm.service.project.CustomProjectTemplateManagerService;
+import org.squashtest.tm.service.project.GenericProjectCopyParameter;
+import org.squashtest.tm.service.project.GenericProjectManagerService;
 
 /**
  * 
@@ -41,10 +44,23 @@ public class CustomProjectTemplateManagerServiceImpl implements CustomProjectTem
 	@Inject
 	private ProjectTemplateDao projectTemplateDao;
 	
+	@Inject
+	private GenericProjectManagerService genericProjectManager;
+	
 	@Override
 	@Transactional(readOnly = true)
 	public List<ProjectTemplate> findAll() {
 		return projectTemplateDao.findAll();
 	}
 
+	@Override
+	public ProjectTemplate addTemplateFromProject(ProjectTemplate newTemplate,
+			long sourceGenericProjectId, GenericProjectCopyParameter params) {
+
+		genericProjectManager.persist(newTemplate);
+		GenericProject source = genericProjectManager.findById(sourceGenericProjectId);
+		
+		genericProjectManager.synchronizeGenericProject(newTemplate, source, params);
+		return newTemplate;
+	}
 }

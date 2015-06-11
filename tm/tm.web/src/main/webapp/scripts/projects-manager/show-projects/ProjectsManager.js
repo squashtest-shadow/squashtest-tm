@@ -18,8 +18,10 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ "jquery", "backbone", "./ProjectsTable", "./NewProjectDialog", "./NewProjectFromTemplateDialog", "jqueryui" ],
-		function($, Backbone, ProjectsTable, NewProjectDialog, NewProjectFromTemplateDialog) {
+define([ "jquery", "backbone","handlebars", "./ProjectsTable", "./NewProjectFromTemplateDialog","./NewTemplateDialog","./NewTemplateFromProjectDialog","./NewTemplateFromProjectDialogModel", "jqueryui","jquery.squash", "jquery.squash.buttonmenu","jquery.squash.formdialog" ],
+		function($, Backbone, Handlebars, ProjectsTable, NewProjectFromTemplateDialog, NewTemplateDialog, NewTemplateFromProjectDialog, NewTemplateFromProjectDialogModel) {
+		"use strict";
+	
 			var View = Backbone.View.extend({
 				el : ".fragment-body",
 
@@ -31,47 +33,51 @@ define([ "jquery", "backbone", "./ProjectsTable", "./NewProjectDialog", "./NewPr
 						}
 					});
 					this.templates.url = squashtm.app.contextRoot + "/project-templates?dropdownList"; 
-
-					this.newProjectDialog = new NewProjectDialog({
-						model : {
-							name : "",
-							description : "",
-							label : ""
-						}
-					});
-
-					this.newProjectFromTemplateDialog = new NewProjectFromTemplateDialog({
-						model : {
-							name : "",
-							description : "",
-							label : "",
-							templateId : "",
-							copyPermissions : true,
-							copyCUF : true,
-							copyBugtrackerBinding : true,
-							copyAutomatedProjects : true,
-							copyMilestone : true
-						},
-						collection : this.templates
-					});
-
-					this.listenTo(this.newProjectDialog, "newproject.added", $.proxy(this.projectsTable.refresh,
-							this.projectsTable));
-					this.listenTo(this.newProjectFromTemplateDialog, "newprojectFromTemplate.confirm", $.proxy(
-							this.projectsTable.refresh, this.projectsTable));
+					this.$("#add-template-button").buttonmenu();
 				},
 
 				events : {
-					"click #new-project-button" : "showNewProjectDialog",
-					"click #new-project-from-template-button" : "showNewProjectFromTemplateDialog"
+					"click #new-project-button" : "showNewProjectFromTemplateDialog",
+					"click #new-template-button" : "showNewTemplateDialogTpl",
+					"click #new-template-from-project-button" : "showNewTemplateFromProjectDialogTpl",
+					"click #projects-table tr": "updateNewTemplateFromProjectButton"
 				},
 
-				showNewProjectDialog : function(event) {
-					this.newProjectDialog.show();
+				showNewTemplateDialog : function(event) {
+					this.newTemplateDialog.show();
+				},
+				
+				showNewTemplateDialogTpl : function(event) {
+					this.newTemplateDialog = new NewTemplateDialog();
 				},
 
 				showNewProjectFromTemplateDialog : function() {
-					this.newProjectFromTemplateDialog.show();
+					this.newProjectFromTemplateDialog = new NewProjectFromTemplateDialog({
+						collection : this.templates
+					});
+					this.listenTo(this.newProjectFromTemplateDialog, "newproject.confirm", this.projectsTable.refresh);
+				},
+				
+				showNewTemplateFromProjectDialog : function() {
+					this.newTemplateFromProjectDialog.model.templateId = this.$("#projects-table").squashTable().getSelectedIds()[0];
+					this.newTemplateFromProjectDialog.show();
+				},
+				
+				showNewTemplateFromProjectDialogTpl : function() {
+					this.newTemplateFromProjectDialog = new NewTemplateFromProjectDialog({
+						model : new NewTemplateFromProjectDialogModel({
+							templateId : this.$("#projects-table").squashTable().getSelectedIds()[0]
+						})
+					});
+				},
+				
+				updateNewTemplateFromProjectButton : function() {
+					if (this.$("#projects-table").squashTable().getSelectedIds().length == 1) {
+						this.$("#new-template-from-project-button").removeClass("disabled ui-state-disabled");
+					}
+					else{
+						this.$("#new-template-from-project-button").addClass("disabled ui-state-disabled");
+					}
 				}
 			});
 

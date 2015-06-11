@@ -57,11 +57,29 @@
 <div class="fragment-body">
   <sec:authorize access=" hasRole('ROLE_ADMIN')">
    <div class="toolbar">
-   <button id="new-project-button" type="button" class="test-step-toolbar-button ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-primary squash-button-initialized"
+    <button id="add-template-button" role="buttonmenu" class="buttonmenu sq-btn buttonmenu-button ">
+    <span class="ui-icon ui-icon-plusthick" >+</span>
+    <span>
+    <f:message key='label.addTemplate'/>
+    </span>
+    </button>
+    <ul id="add-template-menu" class="not-displayed">
+                  <li id="new-template-button" class="cursor-pointer">
+                    <a>
+                    <f:message key='label.createTemplate'/>
+                    </a>
+                  </li>
+                  <li id="new-template-from-project-button" class="cursor-pointer disabled ui-state-disabled">
+                    <a>
+                    <f:message key='label.createTemplateFromProject'/>
+                    </a>
+                  </li>
+	</ul>
+   <button id="new-project-button" type="button" class="sq-btn"
      title="<f:message key='project.button.add.label' />" >
     <span class="ui-icon ui-icon-plusthick" >+</span><span class="ui-button-text"><f:message key='label.Add' /></span>
     </button>
-    <input id="new-project-from-template-button" type="button" class="sq-btn" value="<f:message key='label.createFromATemplate'/>"/>
+    
   </div>
   </sec:authorize>
   <table id="projects-table" class="unstyled-table" 
@@ -127,59 +145,9 @@
   </script>
 
   <sec:authorize access="hasRole('ROLE_ADMIN')">
-  <!--   ===========================CREATE PROJECT DIALOG=======================================  -->
-  <div id="add-project-dialog" class="not-displayed popup-dialog form-horizontal" title="<f:message key='title.addProject' />">
-    <table class="form-horizontal">
-      <tr class="control-group">
-        <td>
-          <label class="control-label" for="add-project-name">
-            <f:message key="label.Name" />
-          </label>
-        </td>
-        <td class="controls">
-          <input id="add-project-name" name="add-project-name" type="text" size="50" maxlength="255" />
-          <span class="help-inline">&nbsp;</span>
-        </td>
-      </tr>
-      <tr class="control-group">
-        <td>
-          <label class="control-label" for="isTemplate"><f:message key="label.projectTemplate" /></label>
-        </td>
-        <td class="controls">
-          <input name="isTemplate" type="checkbox" />
-          <span class="help-inline">&nbsp;</span>
-        </td>
-      </tr>
-      <tr class="control-group">
-        <td>
-          <label class="control-label" for="add-project-description"><f:message key="label.Description" /></label>
-        </td>
-        <td class="controls">
-          <textarea id="add-project-description" name="add-project-description"></textarea>
-          <span class="help-inline">&nbsp;</span>
-        </td>
-      </tr>
-      <tr class="control-group">
-        <td>
-          <label class="control-label" for="add-project-label"><f:message key="label.tag" /></label>
-        </td>
-        <td class="controls">
-          <input id="add-project-label" name="add-project-label" type="text" size="50" maxlength="255" />
-          <span class="help-inline">&nbsp;</span>
-        </td>
-      </tr>
-    </table>
-    
-    <div class="popup-dialog-buttonpane">
-      <input class="confirm" type="button" value="<f:message key='label.addAnother' />" data-def="mainbtn, evt=addanother"/>
-      <input class="confirm" type="button" value="<f:message key='label.Add' />" data-def="evt=confirm"/>
-      <input class="cancel" type="button" value="<f:message key='label.Close' />" data-def="evt=cancel"/>
-    </div>
-  </div>
-  
-  <!--   ===========================/CREATE PROJECT DIALOG=======================================  -->
 <!--   ===========================CREATE FROM TEMPLATE DIALOG=======================================  -->
-  <div id="add-project-from-template-dialog" class="not-displayed popup-dialog form-horizontal" title="<f:message key='title.addProjectFromTemplate' />">
+   <script id="add-project-from-template-dialog-tpl" type="text/x-handlebars-template">
+  <div id="add-project-from-template-dialog" class="not-displayed popup-dialog form-horizontal" title="<f:message key='title.addProject' />">
     <table class="form-horizontal">
       <tr class="control-group">
         <td>
@@ -188,7 +156,7 @@
           </label>
         </td>
         <td class="controls">
-          <input id="add-project-from-template-name" name="add-project-from-template-name" type="text" size="50" maxlength="255" />
+          <input id="add-project-from-template-name" name="add-project-from-template-name" type="text" size="50" maxlength="255" data-prop="name" data-object="jsonProjectFromTemplate"/>
           <span class="help-inline">&nbsp;</span>
         </td>
       </tr>
@@ -197,7 +165,7 @@
           <label class="control-label" for="add-project-from-template-description"><f:message key="label.Description" /></label>
         </td>
         <td class="controls">
-          <textarea id="add-project-from-template-description" name="add-project-from-template-description"></textarea>
+          <textarea id="add-project-from-template-description" name="add-project-from-template-description" data-def="isrich"></textarea>
           <span class="help-inline">&nbsp;</span>
         </td>
       </tr>
@@ -215,8 +183,12 @@
         <td>
           <label class="control-label" for="add-project-from-template-tempate"><f:message key="label.projectTemplate" /></label>
         </td>
-      <td class="controls">
-          <div id="add-project-from-template-template" ></div>
+      	<td class="controls">
+  			<select id="add-project-from-template-template" data-prop="templateId">
+       	 		{{#each items}}
+       	 			<option value="{{this.id}}">{{this.name}}</option>
+        		{{/each}}
+      		</select>
          </td>
       </tr>
       <tr class="control-group">
@@ -225,41 +197,148 @@
       </td>
       <td>
       <!--        CHECKBOXES -->
-          <input id="copyPermissions" name="copyPermissions" type="checkbox" />
+          <input id="copyPermissions" name="copyPermissions" type="checkbox" data-prop="copyPermissions"/>
           <label class=" afterDisabled" for="copyPermissions"><f:message key="label.copyPermissions" /></label>
          <br/>
-         <input id="copyCUF"  name="copyCUF" type="checkbox" />
+         <input id="copyCUF"  name="copyCUF" type="checkbox" data-prop="copyCUF"/>
          <label class=" afterDisabled" for="copyCUF"><f:message key="label.copyCUF" /></label>
          <br/>
-          <input id="copyBugtrackerBinding" name="copyBugtrackerBinding" type="checkbox" />
+          <input id="copyBugtrackerBinding" name="copyBugtrackerBinding" type="checkbox" data-prop="copyBugtrackerBinding"/>
          <label class=" afterDisabled" for="copyBugtrackerBinding"><f:message key="label.copyBugtrackerBinding" /></label>
          <br/>
-         <input id="copyAutomatedProjects" name="copyAutomatedProjects" type="checkbox" />
+         <input id="copyAutomatedProjects" name="copyAutomatedProjects" type="checkbox" data-prop="copyAutomatedProjects"/>
          <label class=" afterDisabled" for="copyAutomatedProjects"><f:message key="label.copyAutomatedProjects" /></label>
          <br/>
-         <input id="copyInfolists" name="copyInfolists" type="checkbox" />
+         <input id="copyInfolists" name="copyInfolists" type="checkbox" data-prop="copyInfolists"/>
          <label class=" afterDisabled" for="copyInfolists"><f:message key="label.copyInfolists" /></label>
                 <br/>
-         <input id="copyMilestone" name="copyMilestone" type="checkbox" />
+         <input id="copyMilestone" name="copyMilestone" type="checkbox" data-prop="copyMilestone"/>
          <label class=" afterDisabled" for="copyMilestone"><f:message key="label.copyMilestone" /></label>
         </td>
       </table>
     
-    <div class="popup-dialog-buttonpane">
-      <input class="confirm" type="button" value="<f:message key='label.Add' />" />
-      <input class="cancel" type="button" value="<f:message key='label.Cancel' />" />
+   <div class="popup-dialog-buttonpane">
+      <input class="confirm" type="button" value="<f:message key='label.addAnother' />" data-def="mainbtn, evt=addanother"/>
+      <input class="confirm" type="button" value="<f:message key='label.Add' />" data-def="evt=confirm"/>
+      <input class="cancel" type="button" value="<f:message key='label.Close' />" data-def="evt=cancel"/>
     </div>
     
-    <script id="templates-list-tpl" type="text/x-handlebars-template">
-      <select>
-        {{#each items}}
-        <option value="{{this.id}}">{{this.name}}</option>
-        {{/each}}
-      </select>
-     </script>
+    
     
   </div>
+     </script>
   <!--   ===========================/CREATE FROM TEMPLATE DIALOG=======================================  -->
+
+<!--   =========================== CREATE TEMPLATE FROM PROJECT DIALOG =======================================  -->
+<script id="add-template-from-project-dialog-tpl" type="text/x-handlebars-template">
+  <div id="add-template-from-project-dialog" class="not-displayed popup-dialog form-horizontal" title="<f:message key='title.addTemplateFromProject' />">
+    <table class="form-horizontal">
+      <tr class="control-group">
+        <td>
+          <label class="control-label" for="add-template-from-project-name" >
+            <f:message key="label.Name" />
+          </label>
+        </td>
+        <td class="controls">
+          <input id="add-template-from-project-name" name="add-template-from-project-name" type="text" size="50" maxlength="255" data-prop="name" data-object="jsonTemplateFromProject"/>
+          <span class="help-inline">&nbsp;</span>
+        </td>
+      </tr>
+         <tr class="control-group">
+        <td>
+          <label class="control-label" for="add-template-from-project-description"><f:message key="label.Description" /></label>
+        </td>
+        <td class="controls">
+          <textarea id="add-template-from-project-description" name="add-template-from-project-description" data-def="isrich" data-prop="description"></textarea>
+          <span class="help-inline">&nbsp;</span>
+        </td>
+      </tr>
+      <tr class="control-group">
+        <td>
+          <label class="control-label" for="add-template-from-project-label"><f:message key="label.tag" /></label>
+        </td>
+        <td class="controls">
+          <input id="add-template-from-project-label" name="add-template-from-project-label"  type="text" size="50" maxlength="255" data-prop="label"/>
+          <span class="help-inline">&nbsp;</span>
+        </td>
+      </tr>
+      <tr class="control-group">
+      <td>
+          <label class="control-label"><f:message key="label.parametersFromTemplate" /></label>
+      </td>
+      <td>
+      <!--        CHECKBOXES -->
+          <input id="add-template-from-project-copyPermissions" name="add-template-from-project-copyPermissions" type="checkbox" data-prop="copyPermissions"/>
+          <label class=" afterDisabled" for="add-template-from-project-copyPermissions"><f:message key="label.copyPermissions" /></label>
+         <br/>
+         <input id="add-template-from-project-copyCUF"  name="add-template-from-project-copyCUF" type="checkbox" data-prop="copyCUF"/>
+         <label class=" afterDisabled" for="add-template-from-project-copyCUF"><f:message key="label.copyCUF" /></label>
+         <br/>
+         <input id="add-template-from-project-copyBugtrackerBinding" name="add-template-from-project-copyBugtrackerBinding" type="checkbox" data-prop="copyBugtrackerBinding"/>
+         <label class=" afterDisabled" for="add-template-from-project-copyBugtrackerBinding"><f:message key="label.copyBugtrackerBinding" /></label>
+         <br/>
+         <input id="add-template-from-project-copyAutomatedProjects" name="add-template-from-project-copyAutomatedProjects" type="checkbox" data-prop="copyAutomatedProjects"/>
+         <label class=" afterDisabled" for="add-template-from-project-copyAutomatedProjects"><f:message key="label.copyAutomatedProjects" /></label>
+         <br/>
+         <input id="add-template-from-project-copyInfolists" name="add-template-from-project-copyInfolists" type="checkbox" data-prop="copyInfolists"/>
+         <label class=" afterDisabled" for="add-template-from-project-copyInfolists"><f:message key="label.copyInfolists" /></label>
+         <br/>
+         <input id="add-template-from-project-copyMilestone" name="add-template-from-project-copyMilestone" type="checkbox" data-prop="copyMilestone"/>
+         <label class=" afterDisabled" for="add-template-from-project-copyMilestone"><f:message key="label.copyMilestone" /></label>
+        </td>
+      </table>
+    
+    <div class="popup-dialog-buttonpane">
+      	<input class="confirm" type="button" value="<f:message key='label.Add' />" data-def="evt=confirm"/>
+      	<input class="cancel" type="button" value="<f:message key='label.Cancel' />" data-def="evt=cancel"/>
+    </div>
+    
+  </div>
+</script>
+  <!--   =========================== /CREATE TEMPLATE FROM PROJECT DIALOG =======================================  -->
+  
+  <!--   ===========================CREATE TEMPLATE DIALOG=======================================  -->
+  <script id="add-template-dialog-tpl" type="text/x-handlebars-template">
+  <div id="add-template-dialog" class="not-displayed popup-dialog form-horizontal" title="<f:message key='title.addTemplate' />">
+    <table class="form-horizontal">
+      <tr class="control-group">
+        <td>
+          <label class="control-label" for="add-template-name">
+            <f:message key="label.Name" />
+          </label>
+        </td>
+        <td class="controls">
+          <input id="add-template-name" name="add-template-name" type="text" size="50" maxlength="255" data-prop="name" data-object="projectTemplate"/>
+          <span class="help-inline">&nbsp;</span>
+        </td>
+      </tr>
+      <tr class="control-group">
+        <td>
+          <label class="control-label" for="add-template-description"><f:message key="label.Description" /></label>
+        </td>
+        <td class="controls">
+          <textarea id="add-template-description" name="add-template-description" data-def="isrich" data-prop="description" data-object="projectTemplate"></textarea>
+          <span class="help-inline">&nbsp;</span>
+        </td>
+      </tr>
+      <tr class="control-group">
+        <td>
+          <label class="control-label" for="add-template-label"><f:message key="label.tag" /></label>
+        </td>
+        <td class="controls">
+          <input id="add-template-label" name="add-template-label" data-prop="label" data-object="projectTemplate" type="text" size="50" maxlength="255" />
+          <span class="help-inline">&nbsp;</span>
+        </td>
+      </tr>
+    </table>
+    
+    <div class="popup-dialog-buttonpane">
+      <input class="confirm" type="button" value="<f:message key='label.Add' />" data-def="evt=confirm, mainbtn"/>
+      <input class="cancel" type="button" value="<f:message key='label.Close' />" data-def="evt=cancel"/>
+    </div>
+  </div>
+ 	</script>
+  <!--   ===========================/CREATE TEMPLATE DIALOG=======================================  -->
   </sec:authorize>
 </div>
 </jsp:attribute>

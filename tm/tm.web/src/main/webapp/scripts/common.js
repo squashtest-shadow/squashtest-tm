@@ -189,6 +189,7 @@ requirejs.config({
 				"jquery.squash.confirmdialog" : "squashtest/jquery.squash.confirmdialog",
 				"jquery.squash.oneshotdialog" : "squashtest/jquery.squash.oneshotdialog",
 				"jquery.squash.formdialog" : "squashtest/jquery.squash.formdialog",
+				"jquery.squash.bindviewformdialog" : "squashtest/jquery.squash.bindviewformdialog",
 				"jquery.squash.squashbutton" : "squashtest/jquery.squash.squashbutton",
 				"jquery.squash.jedpassword" : "squashtest/jquery.squash.jedpassword",
 				"jquery.squash.jeditable" : "squashtest/jquery.squash.jeditable.ext",

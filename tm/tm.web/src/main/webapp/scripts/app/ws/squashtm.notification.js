@@ -108,7 +108,8 @@ define([ "jquery", "app/pubsub", "squash.translator", "app/lnf/Forms", "jquery.s
 						var fve = validationErrorList[counter];
 						if (!!request.label) {
 							request.label.html(fve.errorMessage);
-						} else if (!showBootstrapErrorMessage(fve) && !showLegacyErrorMessage(fve)) {
+						} else if (!showBootstrapErrorMessage(fve) && !showLegacyErrorMessage(fve) 
+								&& !showBootstrapErrorMessageWithDataObjectAndDataProp(fve)) {
 							throw 'exception';
 						}
 					}
@@ -170,6 +171,19 @@ define([ "jquery", "app/pubsub", "squash.translator", "app/lnf/Forms", "jquery.s
 
 		$input = $("input[name='" + inputName + "'], input[id='" + inputName + "'],  textarea[name='" + inputName +
 				"'], #"+inputName);
+		input = Forms.input($input);
+
+		input.setState("error", fieldValidationError.errorMessage);
+
+		return input.hasHelp;
+	}
+	
+	function showBootstrapErrorMessageWithDataObjectAndDataProp(fieldValidationError){
+		var inputName = fieldValidationError.fieldName;
+		var objectName = fieldValidationError.objectName;
+		
+		$input = $("input[data-prop='" + inputName + "'][data-object='" + objectName + "']");
+		
 		input = Forms.input($input);
 
 		input.setState("error", fieldValidationError.errorMessage);

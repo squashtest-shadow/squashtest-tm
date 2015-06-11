@@ -18,36 +18,12 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ "jquery", "backbone", "underscore", "squashtable", "jqueryui" ], function($, Backbone, _) {
-
-	var View = Backbone.View.extend({
-		el : "#projects-table",
-		initialize : function() {
-			var tableConf = {
-					"fnRowCallback" : this.projectTableRowCallback
-				}, 
-				squashConf = {};
-
-			this.$el.squashTable(tableConf, squashConf);
-			_.bindAll(this, "refresh");
+define(["backbone"], function(Backbone) {
+	"use strict";
+	return Backbone.Model.extend({
+		defaults : {
+			name : ""
 		},
-
-		hasTemplate : function() {
-			return this.$el.find("td.type-template").length > 0;
-		},
-
-		refresh : function() {
-			this.$el.squashTable().fnDraw(false);
-		},
-		
-		projectTableRowCallback : function(row, data, displayIndex) {
-			// add template icon
-			var type = data["raw-type"];
-			$(row).find(".type").addClass("type-" + type).attr("title", squashtm.app.projectsManager.tooltips[type]);
-			
-			return row;
-		}
+		url : squashtm.app.contextRoot +  "/project-templates/new",
 	});
-
-	return View;
 });

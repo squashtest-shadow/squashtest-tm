@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.service.project;
 
+import org.squashtest.tm.domain.project.GenericProject;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.project.ProjectTemplate;
 
@@ -65,5 +66,15 @@ public interface ProjectsPermissionManagementService extends ProjectsPermissionF
 	void removeAllPermissionsFromObject(Class<?> clazz, long id);
 
 	void removeProjectPermissionForAllProjects(long partyId);
+
+	/**
+	 * Will copy all user permissions of source generic project and apply them to the target generic project and it's libraries.
+	 * 
+	 * @param target
+	 *            : the {@link GenericProject} to copy the permissions to
+	 * @param source
+	 *            : the {@link GenericProject} to copy the permissions from
+	 */
+	void copyAssignedUsers(GenericProject target, GenericProject source);
 
 }

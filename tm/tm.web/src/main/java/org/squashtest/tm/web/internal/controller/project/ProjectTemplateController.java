@@ -23,13 +23,26 @@ package org.squashtest.tm.web.internal.controller.project;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.validation.Valid;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import org.springframework.web.util.UriComponents;
 import org.squashtest.tm.domain.NamedReference;
+import org.squashtest.tm.domain.project.GenericProject;
+import org.squashtest.tm.exception.NameAlreadyInUseException;
 import org.squashtest.tm.service.project.ProjectTemplateFinder;
+import org.squashtest.tm.service.project.ProjectTemplateManagerService;
+import org.squashtest.tm.web.internal.model.json.JsonTemplateFromProject;
 
 @Controller
 @RequestMapping("/project-templates")
@@ -38,9 +51,35 @@ public class ProjectTemplateController {
 	@Inject
 	private ProjectTemplateFinder projectFinder;
 	
-
+	@Inject
+	private ProjectTemplateManagerService projectTemplateManagerService;
+	
+	private static final Logger LOGGER = LoggerFactory.getLogger(GenericProjectController.class);
+	
 	@RequestMapping(method = RequestMethod.GET, params="dropdownList")
 	public @ResponseBody List<NamedReference> getTemplateDropdownModel() {
 		return projectFinder.findAllReferences();
+	}
+	
+	@RequestMapping(value = "/new", method = RequestMethod.POST)
+	@ResponseStatus(value = HttpStatus.CREATED)
+	public @ResponseBody
+	HttpHeaders createTemplateFromProject(@Valid @RequestBody JsonTemplateFromProject jsonTemplateFromProject) {
+		try {
+			projectTemplateManagerService.addTemplateFromProject(jsonTemplateFromProject.getProjectTemplate(),
+					jsonTemplateFromProject.getTemplateId(), jsonTemplateFromProject.getParams());
+		} catch (NameAlreadyInUseException ex) {
+			ex.setObjectName("add-template-from-project");
+			throw ex;
+		}
+		return getUrlToProjectInfoPage(jsonTemplateFromProject.getProjectTemplate());
+	}
+	
+	private HttpHeaders getUrlToProjectInfoPage(GenericProject project){
+		UriComponents uri = ServletUriComponentsBuilder.fromCurrentContextPath().path("/administration/projects/{id}/info")
+				.buildAndExpand(project.getId());
+		HttpHeaders head = new HttpHeaders();
+		head.setLocation(uri.toUri());
+		return head;
 	}
 }

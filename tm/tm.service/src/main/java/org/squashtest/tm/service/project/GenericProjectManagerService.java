@@ -24,6 +24,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.core.dynamicmanager.annotation.DynamicManager;
 import org.squashtest.tm.domain.project.GenericProject;
+import org.squashtest.tm.domain.project.ProjectTemplate;
+
 import static org.squashtest.tm.service.security.Authorizations.*;
 
 /**
@@ -48,5 +50,7 @@ public interface GenericProjectManagerService extends CustomGenericProjectManage
 
 	@PreAuthorize(HAS_ROLE_ADMIN)
 	void changeActive(long projectId, boolean isActive);
+
+	
 
 }

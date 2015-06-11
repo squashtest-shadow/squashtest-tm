@@ -33,6 +33,7 @@ import org.squashtest.tm.core.foundation.collection.PagingAndMultiSorting;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.domain.project.GenericProject;
+import org.squashtest.tm.domain.project.ProjectTemplate;
 import org.squashtest.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.tm.domain.users.Party;
 import org.squashtest.tm.exception.NameAlreadyInUseException;
@@ -225,4 +226,7 @@ public interface CustomGenericProjectManager extends CustomGenericProjectFinder 
 	boolean projectUsesExecutionStatus(long projectId,  ExecutionStatus executionStatus);
 
 	void changeName(long projectId, String newName) throws NameAlreadyInUseException;
+	
+	GenericProject synchronizeGenericProject(GenericProject target,
+			GenericProject source, GenericProjectCopyParameter params);
 }

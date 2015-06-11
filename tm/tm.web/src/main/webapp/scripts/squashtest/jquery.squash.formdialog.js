@@ -241,6 +241,7 @@ define([ 'jquery', "underscore", 'squash.attributeparser', 'squash.configmanager
 						var btn = self.options._mainBtns[state];
 
 						if (btn !== undefined) {
+							btn.focus();
 							btn.click();
 						}
 					}
