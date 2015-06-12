@@ -54,7 +54,7 @@ that page won't be editable if
  
  
  <%-- permission 'linkable' is not subject to the milestone statuses, ACL only --%> 
-<authz:authorized hasRole="ROLE_ADMIN" hasPermission="WRITE" domainObject="${ requirementVersion }">
+<authz:authorized hasRole="ROLE_ADMIN" hasPermission="LINK" domainObject="${ requirementVersion }">
   <c:set var="linkable" value="${ requirementVersion.linkable }" />
 </authz:authorized> 
  
