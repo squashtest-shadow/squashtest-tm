@@ -215,6 +215,25 @@ define([ 'jquery', "underscore", 'squash.attributeparser', 'squash.configmanager
 					break;
 
 				case $.ui.keyCode.ENTER:
+
+					/*
+					 * Issue 5108
+					 * 
+					 * Due to unknown changes elsewhere in the app the following code breaks 
+					 * although it worked fined in previous versions
+					 * 
+					 *  Fixing it by adding an exception on the Enter event, when the event 
+					 *  originates from within a textarea  
+					 */
+					var target = $(event.target);
+					if (target.is('textarea')){
+						event.stopPropagation();
+						return;
+					}
+					
+					// the following activate the main button for the current 
+					// form state, unless another button was explicitly focused
+					// (in which case it just let the event run).
 					var button = self.uiDialog.find(".ui-dialog-buttonset .ui-button:focus")[0];
 					if(!button){
 						event.preventDefault();
