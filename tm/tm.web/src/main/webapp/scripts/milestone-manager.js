@@ -19,16 +19,11 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 require(["common"], function(){
-	require(["app/pubsub", "backbone.wreqr", "jquery", "squash.translator", "workspace.routing","squash.configmanager","squash.dateutils", "milestone-manager/MilestoneFeatureSwitch", 
+	require(["app/pubsub", "app/squash.wreqr.init", "jquery", "squash.translator", "workspace.routing","squash.configmanager","squash.dateutils", "milestone-manager/MilestoneFeatureSwitch",
 	         "milestone-manager/milestone-activation", "jeditable.datepicker",  "squashtable", "app/ws/squashtm.workspace", "jquery.squash.formdialog", "jquery.squash.confirmdialog"],
-			function(ps, Wreqr, $, translator, routing, confman, dateutils, MilestoneFeatureSwitch, MilestoneActivation){
+			function(ps, squashtm, $, translator, routing, confman, dateutils, MilestoneFeatureSwitch, MilestoneActivation){
 		"use strict";
 
-		squashtm = squashtm || {};
-		squashtm.vent = squashtm.vent || new Wreqr.EventAggregator();
-
-
-		
 		var trans = translator.get({
 			rangeGlobal : "milestone.range.GLOBAL",
 			statusPlanned : "milestone.status.PLANNED",

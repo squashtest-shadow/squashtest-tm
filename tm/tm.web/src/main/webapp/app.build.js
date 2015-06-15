@@ -123,7 +123,7 @@
 			},
 			{
 				name : "milestone-manager",
-				include : [ "app/pubsub", "backbone.wreqr", "jquery", "squash.translator", "workspace.routing", "squash.configmanager",
+				include : [ "app/pubsub", "app/squash.wreqr.init", "jquery", "squash.translator", "workspace.routing", "squash.configmanager",
 				            "squash.dateutils", "milestone-manager/MilestoneFeatureSwitch",
 				            "jeditable.datepicker",  "squashtable", "app/ws/squashtm.workspace", "jquery.squash.formdialog", "jquery.squash.confirmdialog"
 				            ],
