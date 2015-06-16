@@ -29,6 +29,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import javax.inject.Named;
+import javax.inject.Provider;
 
 import javax.inject.Inject;
 
@@ -98,6 +100,30 @@ import org.squashtest.tm.web.internal.model.search.MilestoneMassModifData;
 import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
 import org.squashtest.tm.web.internal.model.viewmapper.NameBasedMapper;
 
+//Added more
+import org.squashtest.tm.web.internal.model.builder.DriveNodeBuilder;
+import org.squashtest.tm.web.internal.model.builder.JsTreeNodeListBuilder;
+import org.squashtest.tm.web.internal.model.jstree.JsTreeNode;
+
+
+
+import org.squashtest.tm.web.internal.controller.generic.WorkspaceController;
+import org.squashtest.tm.service.testcase.TestCaseLibraryFinderService;
+import org.apache.commons.collections.MultiMap;
+import org.springframework.web.bind.annotation.CookieValue;
+import org.springframework.web.servlet.ModelAndView;
+import org.squashtest.tm.api.workspace.WorkspaceType;
+import org.squashtest.tm.domain.campaign.CampaignLibrary;
+import org.squashtest.tm.domain.campaign.CampaignLibraryNode;
+import org.squashtest.tm.domain.library.Library;
+import org.squashtest.tm.domain.library.LibraryNode;
+import org.squashtest.tm.domain.testcase.TestCaseLibrary;
+import org.squashtest.tm.domain.testcase.TestCaseLibraryNode;
+import org.squashtest.tm.service.campaign.CampaignLibraryFinderService;
+import org.squashtest.tm.service.campaign.CampaignLibraryNavigationService;
+import org.squashtest.tm.service.library.WorkspaceService;
+import org.squashtest.tm.service.testcase.CallStepManagerService;
+
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -135,6 +161,14 @@ public class AdvancedSearchController {
 	private JsonProjectBuilder jsProjectBuilder;
 
 	@Inject
+	@Named("campaign.driveNodeBuilder")
+	private Provider<DriveNodeBuilder<CampaignLibraryNode>> cammpaignDriveNodeBuilder;
+
+	@Inject
+	private CampaignLibraryFinderService campaignLibraryFinder;
+
+
+	@Inject
 	private TestCaseModificationService testCaseModificationService;
 
 	@Inject
@@ -170,8 +204,8 @@ public class AdvancedSearchController {
 
 		formModelBuilder.put(CAMPAIGN, new FormModelBuilder() {
 			@Override
-			public SearchInputInterfaceModel build(Locale locale) {
-				SearchInputInterfaceModel model = getCampaignSearchInputInterfaceModel(locale);
+			public SearchInputInterfaceModel build(Locale locale, boolean isMilestoneMode) {
+				SearchInputInterfaceModel model = getCampaignSearchInputInterfaceModel(locale, isMilestoneMode);
 				populateMetadata(model);
 				return model;
 			}
@@ -345,9 +379,10 @@ public class AdvancedSearchController {
 
 	@RequestMapping(value = "/results", params = CAMPAIGN)
 	public String getCampaignSearchResultPage(Model model, @RequestParam String searchModel,
-			@RequestParam(required = false) String associateResultWithType, @RequestParam(required = false) Long id) {
+			@RequestParam(required = false) String associateResultWithType, @RequestParam(required = false) Long id,
+			@CurrentMilestone Milestone activeMilestone) {
 
-		initModelForPage(model, associateResultWithType, id);
+		initModelForPage(model, associateResultWithType, id, activeMilestone);
 		model.addAttribute(SEARCH_MODEL, searchModel);
 		model.addAttribute(SEARCH_DOMAIN, CAMPAIGN);
 
@@ -555,9 +590,7 @@ public class AdvancedSearchController {
 		// Information
 		model.addPanel(requirementVersionSearchInterfaceDescription.createRequirementInformationPanel(locale));
 
-		// History
-		model.addPanel(requirementVersionSearchInterfaceDescription.createRequirementHistoryPanel(locale));
-
+                // TODO : could be delete ?
 		// History
 		model.addPanel(requirementVersionSearchInterfaceDescription.createRequirementHistoryPanel(locale));
 
@@ -599,9 +632,6 @@ public class AdvancedSearchController {
 		// History
 		model.addPanel(testcaseVersionSearchInterfaceDescription.createTestCaseHistoryPanel(locale));
 
-		// History
-		model.addPanel(testcaseVersionSearchInterfaceDescription.createTestCaseHistoryPanel(locale));
-
 		// Attributes
 		model.addPanel(testcaseVersionSearchInterfaceDescription.createAttributePanel(locale));
 
@@ -621,6 +651,38 @@ public class AdvancedSearchController {
 
 		return model;
 	}
+
+
+	@RequestMapping(value = "/input", method = RequestMethod.GET, headers = AcceptHeaders.CONTENT_JSON, params = CAMPAIGN)
+	@ResponseBody
+	public SearchInputInterfaceModel getCampaignSearchInputInterfaceModel(Locale locale, boolean isMilestoneMode) {
+
+		// TODO should no longer be called through HTTP, put it private
+		SearchInputInterfaceModel model = new SearchInputInterfaceModel();
+
+		// Information
+		model.addPanel(campaignSearchInterfaceDescription.createGeneralInfoPanel(locale));
+
+		// Attributes
+		model.addPanel(campaignSearchInterfaceDescription.createAttributePanel(locale));
+
+		// Milestones
+		if (!isMilestoneMode && featureManager.isEnabled(Feature.MILESTONE)) {
+			model.addPanel(requirementVersionSearchInterfaceDescription.createMilestonePanel(locale));
+		}
+
+		// Content
+		model.addPanel(campaignSearchInterfaceDescription.createContentPanel(locale));
+
+		// TODO : executions there
+		model.addPanel(campaignSearchInterfaceDescription.createExecutionPanel(locale));
+
+		// CUF
+		model.addPanel(createCUFPanel(locale, BindableEntity.CAMPAIGN));
+
+		return model;
+	}
+
 
 	@RequestMapping(value = "/milestones/tc-mass-modif-associables/{testCaseIds}", method = RequestMethod.GET)
 	@ResponseBody

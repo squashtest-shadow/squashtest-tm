@@ -171,6 +171,12 @@ define(["jquery", "tree","./permissions-rules", "workspace.contextual-content", 
 				document.location.href = exportUrl(event.nodeId) + "?export=csv&exportType=F";
 			}));
 
+			// *****************  search  ********************
+			
+			$("#search-tree-button").on("click", function(){
+				document.location.href = squashtm.app.contextRoot + "/advanced-search?searchDomain=campaign";
+			});
+
 			// ***************** deletion ********************
 
 			function openDeleteDialogIfDeletable(){

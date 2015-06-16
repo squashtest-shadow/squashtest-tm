@@ -22,55 +22,15 @@ package org.squashtest.tm.service.internal.campaign;
 
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Locale;
-
 import javax.inject.Inject;
-import javax.inject.Provider;
-
-import org.apache.lucene.search.Sort;
-import org.apache.lucene.search.SortField;
-import org.hibernate.Query;
-import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.search.FullTextSession;
-import org.hibernate.search.Search;
-import org.hibernate.search.query.dsl.QueryBuilder;
-import org.hibernate.type.LongType;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.context.MessageSource;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
-import org.squashtest.tm.core.foundation.collection.PagingAndMultiSorting;
-import org.squashtest.tm.core.foundation.collection.PagingBackedPagedCollectionHolder;
-import org.squashtest.tm.core.foundation.collection.SortOrder;
-import org.squashtest.tm.core.foundation.collection.Sorting;
-import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.domain.project.Project;
-import org.squashtest.tm.domain.requirement.RequirementVersion;
-import org.squashtest.tm.domain.search.AdvancedSearchModel;
-import org.squashtest.tm.domain.search.SearchExportCSVModel;
-import org.squashtest.tm.domain.testcase.TestCaseImportance;
 import org.squashtest.tm.service.campaign.CampaignAdvancedSearchService;
-import org.squashtest.tm.service.campaign.CampaignStatisticsService;
 import org.squashtest.tm.service.internal.repository.ProjectDao;
-import org.squashtest.tm.service.internal.requirement.InfoListItemComparatorSource;
-import org.squashtest.tm.service.internal.requirement.RequirementVersionSearchExportCSVModelImpl;
 import org.squashtest.tm.service.project.ProjectManagerService;
-import org.squashtest.tm.service.statistics.campaign.CampaignNonExecutedTestCaseImportanceStatistics;
-import org.squashtest.tm.service.statistics.campaign.CampaignProgressionStatistics;
-import org.squashtest.tm.service.statistics.campaign.CampaignStatisticsBundle;
-import org.squashtest.tm.service.statistics.campaign.CampaignTestCaseStatusStatistics;
-import org.squashtest.tm.service.statistics.campaign.CampaignTestCaseSuccessRateStatistics;
-import org.squashtest.tm.service.statistics.campaign.IterationTestInventoryStatistics;
-import org.squashtest.tm.service.statistics.campaign.ScheduledIteration;
 
 @Transactional(readOnly=true)
 @Service("CampaignAdvancedSearchService")

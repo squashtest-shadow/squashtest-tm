@@ -101,21 +101,12 @@
               th:with="usesMilestone = ${(activeMilestone!=null)}, milestoneLabel = ${(activeMilestone!=null) ? activeMilestone.label : ''}">  
 
           <ul th:class="'milestones-mode'" >
-
-			<li class="tab" th:class="${(usesMilestone) ? 'not-displayed' : 'tab'}" >
-			       <a href="#tree-pane" th:text="#{library.header.title}"></a>
-			</li>
-           <li class="tab" th:class="${(usesMilestone) ? 'not-displayed' : 'tab'}" >
-             <a href="/squash/campaign-browser/search" th:href="@{'/campaign-browser/search'}" th:text="#{tabbed_panel.search.pane.label}"></a>
-           </li>
             <li class="tab" th:class="${(usesMilestone) ? 'tab' : 'not-displayed'}"  >
               <a href="#tree-pane">
                <span  id="campaignDashboardMilestone"  th:text="#{label.Milestone} + ' : ' + ${milestoneLabel}"  class="clickable-item" style="text-decoration:none"></span> 
                <span id="tree-milestone-selector" class="clickable-item small-down-white-arrow"></span>
               </a>
             </li>  
-            
-   
           </ul>
           <div id="tree-pane">
             <!-- ________________TREE MENU_______________ -->
@@ -175,6 +166,11 @@
                     <a th:text="${plugin.name}+'...'">plugin ...</a>
                   </li>
                 </ul>
+              </div>
+              <div class="button-group">
+                <a id="search-tree-button" role="button" class="sq-icon-btn" th:title="#{tree.button.search.label}" title="search">
+                  <span class="ui-icon ui-icon-search"></span>
+                </a>
               </div>
               <div id="wizard-tree-pane" class="button-group" th:if="${ not #lists.isEmpty(wizards)}">
                 <a id="wizard-tree-button" class="buttonmenu sq-icon-btn" th:title="#{label.wizards}+'...'"

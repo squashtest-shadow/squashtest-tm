@@ -117,11 +117,8 @@
 
 </head>
 <body>
-	<div id="navigation" th:include="navbar.frag :: navbar" th:with="highlightedWorkspace='campaign'">NAVBAR</div>
+	<div id="navigation" th:include="navbar.frag :: navbar('campaign')">NAVBAR</div>
 	<div id="workspace">
-	
-
-    
 		<div id="workspace-title">
 			<div class="snap-left">
 				<h2 th:text="#{workspace.campaign.title}">Espace campagne</h2>
@@ -154,30 +151,38 @@
 			
 	<div id="tree-panel-left" style="z-index: 1" class="left-frame">
       <div class="position-layout-fix">
-        <div id="tabbed-pane">
-          <ul>
-            <li class="tab">
-              <a href="#tree-pane" th:text="#{tabbed_panel.tree.pane.label}"></a>
-            </li>
-          </ul>
+       <div id="tabbed-pane-search">
+        <div id="tabbed-pane" style="top:0!important">
           <div id="tree-pane">
+          
             <!--  ____________________HTML TREE__________________________ -->
             <!-- 	<tree:_html-tree treeId="tree" /> -->
-
 
             <div th:remove="tag"
               th:with="importable = ( ${sec.hasRole('ROLE_TM_PROJECT_MANAGER')} or ${sec.hasRole('ROLE_ADMIN')})">
               <div th:remove="tag" th:with="filter = ${#workspace.projectFilter()}">
-                <div class="tree-filter-reminder-div">
+			
+			    <div class="tree-filter-reminder-div">
                   <span th:class="${filter.enabled} ? '' : 'not-displayed'"
                     th:text="#{tabbed_panel.tree.pane.filter.enabled.label}">filter enabled</span>
                 </div>
+                
+                <div class="tree-filter-reminder-div">
+                  <span th:class="${filter.enabled} ? '' : 'not-displayed'"
+                    th:text="#{search.campaign.noCampaignForMilestone}">No campaign for this milestone</span>
+                </div>
+                            
+			    <div class="tree-selectAll-div">
+			    <input id="selectAll" type="checkbox"/>
+                  <span th:text="#{label.SelectAllForSelection}">Select all</span>
+                </div>
 
-                <div id="tree" class="tree" th:attr="data-importable=${ importable }" data-importable="true"></div>
+                <div id="tree" class="tree" th:attr="data-importable=${ importable }" data-importable="true" style="top:1.3cm!important"></div>
               </div>
             </div>
             <!-- /	_________________HTML TREE___________________ -->
           </div>
+        </div>
         </div>
       </div>
     </div>

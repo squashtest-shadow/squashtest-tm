@@ -408,11 +408,6 @@ LibraryNavigationController<CampaignLibrary, CampaignFolder, CampaignLibraryNode
 		return mav;
 	}
 
-	@RequestMapping(value = "/search", method = RequestMethod.GET, produces = ContentTypes.TEXT_HTML)
-	public String getSearch() {
-		return "/fragment/campaigns/campaign-search-panel";
-	}
-
 	private File exportToFile(CampaignExportCSVModel model) {
 
 		File file;

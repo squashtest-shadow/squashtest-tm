@@ -116,6 +116,16 @@ public abstract class WorkspaceController<LN extends LibraryNode> {
 
 		populateModel(model, locale);
 
+/*
+		if(elementId == null || "".equals(elementId)){
+			model.addAttribute("selectedNode", "");
+		} else {
+			Long id = Long.valueOf(elementId);
+			model.addAttribute("selectedNode", getTreeElementIdInWorkspace(id));
+		}
+
+*/
+
 		// also add meta data about projects
 		Collection<Project> projects = projectFinder.findAllReadable();
 		Collection<JsonProject> jsProjects = new ArrayList<JsonProject>(projects.size());
@@ -158,6 +168,9 @@ public abstract class WorkspaceController<LN extends LibraryNode> {
 		DriveNodeBuilder<LN> nodeBuilder = driveNodeBuilderProvider().get();
 		List<JsTreeNode> rootNodes = new JsTreeNodeListBuilder<Library<LN>>(nodeBuilder).expand(expansionCandidates)
 				.setModel(libraries).build();
+
+//List<JsTreeNode> rootNodes = getRootModel(openedNodes, elementId);
+
 		return rootNodes;
 	}
 
