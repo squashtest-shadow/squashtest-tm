@@ -57,6 +57,7 @@ define(function(){
 				"ui": {
 					"disable_selecting_children" : true,
 					"select_multiple_modifier" : "ctrl",
+					"select_range_modifier" : "shift",
 					"select_prev_on_delete" : false
 				},
 				
@@ -132,6 +133,7 @@ define(function(){
 				"ui": {
 					"disable_selecting_children" : true,
 					"select_multiple_modifier" : "ctrl",
+					"select_range_modifier" : "shift",
 					"select_prev_on_delete" : false
 				},
 				

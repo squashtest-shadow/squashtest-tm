@@ -53,7 +53,7 @@ define(['jquery', 'jstree', './tree-node', 'jquery.squash'], function($){
 		var node = target.parent().treeNode();
 
 		if (node.canContainNodes()) {
-			if (event.ctrlKey) {
+			if (event.ctrlKey || event.shiftKey) {
 				return true;
 			}
 			event.stopImmediatePropagation();
