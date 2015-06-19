@@ -1,0 +1,63 @@
+/**
+ *     This file is part of the Squashtest platform.
+ *     Copyright (C) 2010 - 2015 Henix, henix.fr
+ *
+ *     See the NOTICE file distributed with this work for additional
+ *     information regarding copyright ownership.
+ *
+ *     This is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU Lesser General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     this software is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU Lesser General Public License for more details.
+ *
+ *     You should have received a copy of the GNU Lesser General Public License
+ *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
+ */
+package org.squashtest.tm.domain.campaign;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.SequenceGenerator;
+
+import org.squashtest.tm.domain.audit.Auditable;
+import org.squashtest.tm.domain.library.GenericLibraryNode;
+import org.squashtest.tm.domain.library.Library;
+import org.squashtest.tm.security.annotation.AclConstrainedObject;
+
+@Entity
+@Inheritance(strategy = InheritanceType.JOINED)
+@Auditable
+public abstract class CampaignLibraryNode extends GenericLibraryNode {
+	@Id
+	@Column(name = "CLN_ID")
+	@GeneratedValue(strategy = GenerationType.AUTO, generator = "campaign_library_node_cln_id_seq")
+	@SequenceGenerator(name = "campaign_library_node_cln_id_seq", sequenceName = "campaign_library_node_cln_id_seq")
+	private Long id;
+
+	public CampaignLibraryNode() {
+		super();
+	}
+
+	@Override
+	public Long getId() {
+		return id;
+	}
+
+	public abstract void accept(CampaignLibraryNodeVisitor visitor);
+
+	@Override
+	@AclConstrainedObject
+	public Library<?> getLibrary() {
+		return getProject().getCampaignLibrary();
+	}
+}

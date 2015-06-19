@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) 2010 - 2013 Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+	  	http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd
+	">
+	
+	<!--  infrastructure to mock Spring DM -->
+  <bean class="org.squashtest.it.infrastructure.AopSquashProxyUtil" />
+  <bean class="org.squashtest.it.infrastructure.StubBeanPostProcessor" lazy-init="false" />
+
+	<!--  stubs  -->
+	
+  <bean id="javax.validation.ValidatorFactory" class="org.squashtest.it.infrastructure.StubValidatorFactory" />	
+  <bean id="bugTrackersService" class="org.squashtest.csp.core.bugtracker.service.StubBugTrackerService" primary="true"
+    lazy-init="false" />
+  <bean class="org.squashtest.tm.service.security.StubUserContextService" primary="true" lazy-init="false" />
+  <bean class="org.squashtest.tm.service.security.StubPermissionEvaluationService" primary="true" lazy-init="false" />
+  <bean class="org.squashtest.tm.service.security.StubObjectIdentityService" primary="true" lazy-init="false" />
+  <bean class="org.squashtest.tm.service.security.StubPermissionEvaluator" primary="true" lazy-init="false" />
+  <bean class="org.squashtest.tm.service.security.StubPermissionFactory" primary="true" lazy-init="false" />
+<!--   <bean class="org.squashtest.tm.service.security.StubObjectAclService" primary="true" lazy-init="false" />
+ -->  
+<!--  <bean id="lookupStrategy" class="org.squashtest.tm.service.security.StubLookupStrategy" primary="true" lazy-init="false" />
+ -->  <bean id="aclCache" class="org.squashtest.tm.service.security.acls.model.NullAclCache" primary="true" lazy-init="false" />
+  <bean id="squashtest.core.security.JdbcUserDetailsManager" class="org.squashtest.tm.service.security.StubUserDetailsManager" primary="true" lazy-init="false" />
+ <bean id="clientDetails" class="org.springframework.security.oauth2.provider.JdbcClientDetailsService">
+    	 <constructor-arg name="dataSource" ref="squashtest.core.persistence.jdbc.DataSource"/>
+    </bean>	
+	<!--  tm/ta beans -->
+  <bean class="java.util.Properties" id="squashtest.tm.ta.defaults" primary="true" />
+
+  <context:component-scan base-package="org.squashtest.tm.service.internal" />
+  <context:component-scan base-package="org.squashtest.tm.service.security" />
+  
+</beans>

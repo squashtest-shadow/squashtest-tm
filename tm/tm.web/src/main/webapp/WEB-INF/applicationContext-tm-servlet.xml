@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) 2010 - 2015 Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:p="http://www.springframework.org/schema/p" xmlns:context="http://www.springframework.org/schema/context"
+  xmlns:aop="http://www.springframework.org/schema/aop" xmlns:util="http://www.springframework.org/schema/util"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.1.xsd
+		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd">
+
+  <context:component-scan base-package="org.squashtest.tm" use-default-filters="false">
+    <context:include-filter type="annotation" expression="org.squashtest.tm.web.internal.annotation.ApplicationComponent" />
+  </context:component-scan>
+
+		<!-- we need to configure this bean here because  component-scan occurs when *-servlet.xml is read, which is later -->
+  <bean name="squash.tm.report.ReportsRegistry" class="org.squashtest.tm.web.internal.report.ReportsRegistry" />
+  <bean name="squash.tm.report.JasperReportsViewDefinitionsRegistry" class="org.squashtest.tm.web.internal.report.ReportViewServletContextInitializer" />
+
+	<!-- ============================== multipart files handling =============================================== -->
+
+  <bean id="multipartResolver" class="org.squashtest.tm.web.internal.fileupload.MultipartResolverDispatcher">
+
+    <property name="defaultResolver" ref="defaultMultipartResolver" />
+
+    <property name="resolverMap">
+      <map>
+        <entry key=".*/import/upload.*" value-ref="importMultipartResolver" />
+        <entry key=".*/importer/.*" value-ref="importMultipartResolver" />
+      </map>
+    </property>
+
+  </bean>
+
+  <bean id="defaultMultipartResolver" class="org.squashtest.tm.web.internal.fileupload.SquashMultipartResolver" init-method="init">
+      <property name="config" ref="squashtest.core.configuration.ConfigurationService" />
+     <property name="publisher" ref="OsgiMultiCast" />
+    <property name="maxUploadSizeKey" value="uploadfilter.upload.sizeLimitInBytes" />
+    <property name="defaultEncoding" value="UTF-8" />
+  </bean>
+
+	
+  <bean id="importMultipartResolver" class="org.squashtest.tm.web.internal.fileupload.SquashMultipartResolver" init-method="init">
+   <property name="config" ref="squashtest.core.configuration.ConfigurationService" />
+    <property name="publisher" ref="OsgiMultiCast" />
+    <property name="maxUploadSizeKey" value="uploadfilter.upload.import.sizeLimitInBytes" />
+    <property name="defaultEncoding" value="UTF-8" />
+  </bean>
+
+
+    <!-- This bean is referenced by an osgi:list, so it has to be instanciated in appContext*xml (not visible when in *servlet.xml) -->
+  <bean id="squash.tm.report.WorkspaceWizardManager" class="org.squashtest.tm.web.internal.wizard.WorkspaceWizardManagerImpl">
+    <property name="projectFinder" ref="squashtest.tm.service.GenericProjectManagerService" />
+  </bean>
+	
+	<!-- same thing for this one -->
+  <bean id="squash.tm.report.ExportPluginManager" class="org.squashtest.tm.web.internal.export.ExportPluginManagerImpl" />
+
+  <bean class="org.squashtest.tm.web.internal.fileupload.UploadContentFilterUtil" init-method="init" >
+     <property name="config" ref="squashtest.core.configuration.ConfigurationService" />
+      <property name="publisher" ref="OsgiMultiCast" />
+    <property name="whiteListKey" value="uploadfilter.fileExtensions.whitelist" />
+  </bean>
+  
+  <!-- event publisher  -->
+<bean id="applicationEventMulticaster"  
+              class="org.springframework.context.event.SimpleApplicationEventMulticaster" >  
+ </bean>
+ 
+   <!-- Osgi adapter for the event publisher -->
+ <bean id="OsgiMultiCast"  
+              class="org.springframework.osgi.context.event.OsgiBundleApplicationContextEventMulticasterAdapter" >  
+                <constructor-arg ref="applicationEventMulticaster"/>
+ </bean>
+
+ 
+	<!-- ============================== /multipart files handling =============================================== -->
+
+  <!-- 
+    Message source for this context, loaded from localized "messages_xx" files.
+    It has to be declared in app context, not in spring-mvc context, this way, it is both inherited by spring-mvc context and available outside of it (e.g. in fragments)
+  -->
+  <bean id="messageSource" class="org.squashtest.tm.web.internal.context.ReloadableSquashTmMessageSource">
+    <property name="basenames">
+      <list>
+    <!-- TODO merge core and tm files -->
+        <value>file:${bundles.configuration.location}/lang/core/messages</value>
+        <value>/WEB-INF/messages/core/messages</value>
+        <value>/WEB-INF/messages/tm/messages</value>
+        <value>org/springframework/security/messages</value>
+      </list>
+    </property>
+    <property name="cacheSeconds" value="60" />
+  </bean>
+
+  <beans profile="eclipse">
+    <context:component-scan base-package="target/classes/org.squashtest.tm" use-default-filters="false">
+      <context:include-filter type="annotation"
+        expression="org.squashtest.tm.web.internal.annotation.ApplicationComponent" />
+    </context:component-scan>
+  </beans>
+</beans>

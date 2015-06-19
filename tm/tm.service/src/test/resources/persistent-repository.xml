@@ -1,0 +1,226 @@
+<?xml version="1.0"?>
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) 2010 - 2015 Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<!DOCTYPE Repository
+          PUBLIC "-//The Apache Software Foundation//DTD Jackrabbit 2.0//EN"
+          "http://jackrabbit.apache.org/dtd/repository-2.0.dtd">
+
+	<!--
+		Example Repository Configuration File Used by -
+		org.apache.jackrabbit.core.config.RepositoryConfigTest.java -
+	-->
+<Repository>
+	<DataSources>
+		<DataSource name="derbyDataSource">
+			<param name="driver" value="org.apache.derby.jdbc.EmbeddedDriver" />
+			<param name="url" value="jdbc:derby:${rep.home}/derbydb;create=true" />
+			<param name="user" value="sa" />
+			<param name="password" value="" />
+			<param name="databaseType" value="derby" />
+			<param name="validationQuery" value="select 1 from SYS.SYSTABLES" />
+			<param name="maxPoolSize" value="5" />
+		</DataSource>
+	</DataSources>
+	<!--
+		virtual file system where the repository stores global state (e.g.
+		registered namespaces, custom node types, etc.)
+	-->
+	<!--
+		In-memory virtual FS - to be used in conjunction with in-memory
+		DB-based persistence manager - For unit tests purpose
+	-->
+	<!--
+		<FileSystem
+		class="org.apache.jackrabbit.core.fs.mem.MemoryFileSystem">
+		</FileSystem>
+	-->
+	<!--
+		File-system based FS - to be used in conjunction with XML persistence
+		manager - For dev purpose, not production-grade quality
+	-->
+	<!--
+		<FileSystem
+		class="org.apache.jackrabbit.core.fs.local.LocalFileSystem"> <param
+		name="path" value="${rep.home}/version-root" /> </FileSystem>
+	-->
+	<FileSystem class="org.apache.jackrabbit.core.fs.db.DerbyFileSystem">
+		<param name="dataSourceName" value="derbyDataSource" />
+		<param name="schemaObjectPrefix" value="fs_" />
+	</FileSystem>
+
+	<!--
+        data store configuration
+    -->
+	<DataStore class="org.apache.jackrabbit.core.data.FileDataStore" />
+
+	<!--
+        security configuration
+    -->
+	<Security appName="Jackrabbit">
+		<!--
+			security manager: class: FQN of class implementing the
+			JackrabbitSecurityManager interface
+		-->
+		<SecurityManager
+			class="org.apache.jackrabbit.core.security.simple.SimpleSecurityManager"
+			workspaceName="security">
+			<!--
+				workspace access: class: FQN of class implementing the
+				WorkspaceAccessManager interface
+			-->
+			<!-- <WorkspaceAccessManager class="..."/> -->
+			<!-- <param name="config" value="${rep.home}/security.xml"/> -->
+		</SecurityManager>
+
+		<!--
+			access manager: class: FQN of class implementing the AccessManager
+			interface
+		-->
+		<AccessManager
+			class="org.apache.jackrabbit.core.security.simple.SimpleAccessManager">
+			<!-- <param name="config" value="${rep.home}/access.xml"/> -->
+		</AccessManager>
+
+		<LoginModule
+			class="org.apache.jackrabbit.core.security.simple.SimpleLoginModule">
+			<!--
+				anonymous user name ('anonymous' is the default value)
+			-->
+			<param name="anonymousId" value="anonymous" />
+			<!--
+				administrator user id (default value if param is missing is 'admin')
+			-->
+			<param name="adminId" value="admin" />
+		</LoginModule>
+	</Security>
+
+	<!--
+		location of workspaces root directory and name of default workspace
+	-->
+	<Workspaces rootPath="${rep.home}/workspaces"
+		defaultWorkspace="default" />
+	<!--
+		workspace configuration template: used to create the initial workspace
+		if there's no workspace yet
+	-->
+	<Workspace name="${wsp.name}">
+		<!--
+			virtual file system of the workspace: class: FQN of class
+			implementing the FileSystem interface
+		-->
+		<!--
+			<FileSystem
+			class="org.apache.jackrabbit.core.fs.local.LocalFileSystem"> <param
+			name="path" value="${rep.home}/${wsp.name}-workspace-root" />
+			</FileSystem>
+		-->
+		<FileSystem class="org.apache.jackrabbit.core.fs.db.DerbyFileSystem">
+			<param name="dataSourceName" value="derbyDataSource" />
+			<param name="schemaObjectPrefix" value="fs_${wsp.name}_" />
+		</FileSystem>
+		<!--
+			persistence manager of the workspace: class: FQN of class
+			implementing the PersistenceManager interface
+		-->
+		<!--
+			Configuration using an embedded in-memory Derby db - For unit tests
+			purpose
+		-->
+		<!--
+			<PersistenceManager
+			class="org.apache.jackrabbit.core.persistence.pool.DerbyPersistenceManager">
+			<param name="url"
+			value="jdbc:derby:memory:${wsp.home}/db;create=true"/> <param
+			name="schemaObjectPrefix" value="${wsp.name}_"/>
+			</PersistenceManager>
+		-->
+		<!--
+			Configuration which persists to XML files - For dev purposes, not
+			production-grade quality
+		-->
+		<!--
+			<PersistenceManager
+			class="org.apache.jackrabbit.core.persistence.xml.XMLPersistenceManager">
+			</PersistenceManager>
+		-->
+		<PersistenceManager
+			class="org.apache.jackrabbit.core.persistence.pool.DerbyPersistenceManager">
+			<param name="dataSourceName" value="derbyDataSource" />
+			<param name="schemaObjectPrefix" value="pm_${wsp.name}_" />
+		</PersistenceManager>
+
+		<!--
+			Search index and the file system it uses. class: FQN of class
+			implementing the QueryHandler interface
+		-->
+		<SearchIndex class="org.apache.jackrabbit.core.query.lucene.SearchIndex">
+			<param name="path" value="${wsp.home}/index" />
+			<param name="supportHighlighting" value="true" />
+		</SearchIndex>
+	</Workspace>
+
+	<!--
+        Configures the versioning
+    -->
+	<Versioning rootPath="${rep.home}/version">
+		<!--
+			Configures the filesystem to use for versioning for the respective
+			persistence manager
+		-->
+		<!--
+			<FileSystem
+			class="org.apache.jackrabbit.core.fs.local.LocalFileSystem"> <param
+			name="path" value="${rep.home}/version-root" /> </FileSystem>
+		-->
+		<FileSystem class="org.apache.jackrabbit.core.fs.db.DerbyFileSystem">
+			<param name="dataSourceName" value="derbyDataSource" />
+			<param name="schemaObjectPrefix" value="fs_ver_" />
+		</FileSystem>
+
+		<!--
+			Configures the persistence manager to be used for persisting version
+			state. Please note that the current versioning implementation is
+			based on a 'normal' persistence manager, but this could change in
+			future implementations.
+		-->
+		<!--
+			<PersistenceManager
+			class="org.apache.jackrabbit.core.persistence.xml.XMLPersistenceManager">
+			</PersistenceManager>
+		-->
+		<PersistenceManager
+			class="org.apache.jackrabbit.core.persistence.pool.DerbyPersistenceManager">
+			<param name="dataSourceName" value="derbyDataSource" />
+			<param name="schemaObjectPrefix" value="pm_ver_" />
+		</PersistenceManager>
+	</Versioning>
+
+	<!--
+		Search index for content that is shared repository wide (/jcr:system
+		tree, contains mainly versions)
+	-->
+	<SearchIndex class="org.apache.jackrabbit.core.query.lucene.SearchIndex">
+		<param name="path" value="${rep.home}/repository/index" />
+		<param name="supportHighlighting" value="true" />
+	</SearchIndex>
+</Repository>

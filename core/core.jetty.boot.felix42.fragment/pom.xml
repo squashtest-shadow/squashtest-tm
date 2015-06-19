@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>org.squashtest.tm</groupId>
+    <artifactId>squashtest-csp-core</artifactId>
+    <version>1.12.1.RC1-SNAPSHOT</version>
+  </parent>
+
+  <artifactId>core.jetty.boot.felix42.fragment</artifactId>
+  <!--  Packaging is NOT bundle, look at  <plugins> for more info -->
+  <packaging>jar</packaging>
+  <name>${project.groupId}.${project.artifactId}</name>
+  <description>Fragment of jetty-osgi-boot which enables to load wars in a Felix 4.2 container. Default implementation is broken from Felix 4.0.0</description>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.eclipse.jetty.osgi</groupId>
+      <artifactId>jetty-osgi-boot</artifactId>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.osgi</groupId>
+      <artifactId>org.osgi.core</artifactId>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.felix</groupId>
+      <artifactId>org.apache.felix.framework</artifactId>
+      <version>4.2.1</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <sourceDirectory>src/main/java</sourceDirectory>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+      </plugin>
+
+      <plugin>
+        <!-- We cannot rely on maven-bundle-plugin to produce the jar, we use the MANIFEST.MF it produced and include it in the jar -->
+        <artifactId>maven-jar-plugin</artifactId>
+        <configuration>
+          <archive>
+            <manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
+          </archive>
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <!-- 
+          This bundle implements a class from the org.eclipse.jetty.osgi.boot.utils package, also present in the host bundle.
+          If we use a bundle packaging and the bundle goal, maven-bundle-plugin will include any binary class from the 
+          org.eclipse.jetty.osgi.boot.utils package, which is way more that what we need.
+          
+          Note : no package is exported by this fragment, as they are exported by the host. 
+         -->
+        <groupId>org.apache.felix</groupId>
+        <artifactId>maven-bundle-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>bundle-manifest</id>
+            <goals>
+              <goal>manifest</goal>
+            </goals>
+            <phase>process-classes</phase>
+            <configuration>
+              <instructions>
+                <_include>bnd.bnd</_include>
+              </instructions>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+</project>

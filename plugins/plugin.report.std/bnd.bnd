@@ -1,0 +1,8 @@
+-include: pom.xml
+-nouses: true
+DynamicImport-Package: *
+Include-Resource: jasperreports=target/classes/jasperreports,{maven-resources}
+Import-Package: net.sf.cglib.reflect;version='[2.1.3,3.0)',\
+	net.sf.cglib.proxy;version='[2.1.3,3.0)',\
+	net.sf.cglib.core;version='[2.1.3,3.0)',\
+	*

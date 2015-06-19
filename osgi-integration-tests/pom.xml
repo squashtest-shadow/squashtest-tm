@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<artifactId>squash-tm</artifactId>
+		<groupId>org.squashtest.tm</groupId>
+		<version>1.12.1.RC1-SNAPSHOT</version>
+	</parent>
+
+	<groupId>org.squashtest</groupId>
+	<artifactId>osgi-integration-tests</artifactId>
+	<name>${project.groupId}.${project.artifactId}</name>
+	<description>Squash TM osgi integration tests - produces a bundle which should be deployed in the container. Failures are logged using logger.</description>
+	<packaging>bundle</packaging>
+
+	<dependencies>
+		<!-- ====== SQUASHTEST ====== -->
+		<dependency>
+			<groupId>org.squashtest.tm</groupId>
+			<artifactId>springdm-bundle-dependencies</artifactId>
+			<version>${project.version}</version>
+			<type>pom</type>
+		</dependency>
+		<dependency>
+			<groupId>org.squashtest.tm</groupId>
+			<artifactId>core.api</artifactId>
+			<version>${project.version}</version>
+			<scope>compile</scope>
+		</dependency>
+		<!-- ====== /SQUASHTEST ====== -->
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.felix</groupId>
+				<artifactId>maven-bundle-plugin</artifactId>
+				<extensions>true</extensions>
+				<configuration>
+					<instructions>
+						<_include>bnd.bnd</_include>
+					</instructions>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+</project>

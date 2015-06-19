@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>org.squashtest.tm</groupId>
+    <artifactId>squashtest-csp-tm</artifactId>
+    <version>1.12.1.RC1-SNAPSHOT</version>
+  </parent>
+
+  <artifactId>squash-tm-config</artifactId>
+  <packaging>jar</packaging>
+  <name>tm.config.resources</name>
+  <description>Squash TM Configuration files packaged as remote resources</description>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-remote-resources-plugin</artifactId>
+        <executions>
+          <execution>
+            <goals>
+              <goal>bundle</goal>
+            </goals>
+            <configuration>
+              <includes>
+                <include>**/*.*</include>
+              </includes>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+</project>

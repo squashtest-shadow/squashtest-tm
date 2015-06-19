@@ -1,0 +1,285 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>org.squashtest.tm</groupId>
+    <artifactId>squash-tm-plugins</artifactId>
+    <version>1.12.1.RC1-SNAPSHOT</version>
+  </parent>
+  <artifactId>plugin.bugtracker.mantis</artifactId>
+  <packaging>bundle</packaging>
+  <name>plugin.bugtracker.mantis</name>
+  <description>Squash TM connector for MantisBT bugtrackers</description>
+
+  <properties>
+    <bundle.name>${project.groupId}.${project.artifactId}</bundle.name>
+    <bundle.symbolicName>${bundle.name}</bundle.symbolicName>
+    <cxf.version>2.3.3</cxf.version>
+    <project.build.sourceEncoding>ISO-8859-1</project.build.sourceEncoding>
+  </properties>
+  <dependencies>
+    <dependency>
+      <groupId>javax.activation</groupId>
+      <artifactId>com.springsource.javax.activation</artifactId>
+      <version>1.1.1</version>
+    </dependency>
+    <dependency>
+      <groupId>javax.jms</groupId>
+      <artifactId>com.springsource.javax.jms</artifactId>
+      <version>1.1.0</version>
+    </dependency>
+    <dependency>
+      <groupId>javax.mail</groupId>
+      <artifactId>com.springsource.javax.mail</artifactId>
+      <version>1.4.1</version>
+    </dependency>
+    <dependency>
+      <groupId>javax.wsdl</groupId>
+      <artifactId>com.springsource.javax.wsdl</artifactId>
+      <version>1.6.1</version>
+    </dependency>
+    <dependency>
+      <groupId>javax.xml.rpc</groupId>
+      <artifactId>com.springsource.javax.xml.rpc</artifactId>
+      <version>1.1.0</version>
+    </dependency>
+    <dependency>
+      <groupId>javax.xml.soap</groupId>
+      <artifactId>com.springsource.javax.xml.soap</artifactId>
+      <version>1.3.0</version>
+    </dependency>
+    <dependency>
+      <groupId>org.aopalliance</groupId>
+      <artifactId>com.springsource.org.aopalliance</artifactId>
+    </dependency>
+    <!-- ====== /SPRING FRAMEWORK ====== -->
+
+    <!-- ====== MANTIS ====== -->
+
+    <!-- ====== AXIS 1.4 ====== -->
+    <dependency>
+      <groupId>org.apache.axis</groupId>
+      <artifactId>com.springsource.org.apache.axis</artifactId>
+      <version>1.4.0</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.apache.commons</groupId>
+          <artifactId>com.springsource.org.apache.commons.logging</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>com.springsource.org.apache.commons.codec</artifactId>
+      <version>1.4.0</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>com.springsource.org.apache.commons.discovery</artifactId>
+      <version>0.4.0</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.apache.commons</groupId>
+          <artifactId>com.springsource.org.apache.commons.logging</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>com.springsource.org.apache.commons.logging</artifactId>
+      <version>1.1.1</version>
+      <optional>true</optional>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>com.springsource.org.apache.commons.net</artifactId>
+      <version>1.4.1</version>
+    </dependency>
+    <!-- ====== /DEPENDENCY POMS ====== -->
+
+    <!-- ====== FOUNDATION ====== -->
+    <dependency>
+      <groupId>commons-lang</groupId>
+      <artifactId>commons-lang</artifactId>
+      <scope>compile</scope>
+    </dependency>
+    <!-- ====== /AXIS 1.4 ====== -->
+
+    <!-- ====== /MANTIS ====== -->
+
+    <!-- ====== SQUASH APIS ========= -->
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>core.bugtracker.api</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.eclipse.jetty.orbit</groupId>
+      <artifactId>javax.servlet</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>org.springframework.aop</artifactId>
+    </dependency>
+    <!-- ====== /FOUNDATION ====== -->
+
+    <!-- ====== SPRING FRAMEWORK ====== -->
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>org.springframework.transaction</artifactId>
+      <scope>compile</scope>
+    </dependency>
+    <!-- ====== DEPENDENCY POMS ====== -->
+    <dependency>
+      <groupId>org.squashtest.tm</groupId>
+      <artifactId>springdm-bundle-dependencies</artifactId>
+      <version>${project.version}</version>
+      <type>pom</type>
+    </dependency>
+    <dependency>
+      <groupId>org.squashtest.tm</groupId>
+      <artifactId>org.squashtest.csp.tools.unittest</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.squashtest.tm</groupId>
+      <artifactId>spock-test-dependencies</artifactId>
+      <version>${project.version}</version>
+      <type>pom</type>
+      <scope>test</scope>
+    </dependency>
+
+    <!-- ====== /SQUASH APIS ======== -->
+  </dependencies>
+  <build>
+    <testSourceDirectory>src/test/groovy</testSourceDirectory>
+    <resources>
+      <resource>
+        <filtering>true</filtering>
+        <directory>${project.basedir}/src/main/resources</directory>
+      </resource>
+    </resources>
+    <testResources>
+      <testResource>
+        <filtering>true</filtering>
+        <directory>${project.basedir}/src/test/resources</directory>
+      </testResource>
+    </testResources>
+    <plugins>
+      <!-- ====== AXIS 1.4 ====== -->
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>axistools-maven-plugin</artifactId>
+        <version>1.4</version>
+        <dependencies>
+          <dependency>
+            <groupId>javax.activation</groupId>
+            <artifactId>activation</artifactId>
+            <version>1.1</version>
+          </dependency>
+          <dependency>
+            <groupId>javax.mail</groupId>
+            <artifactId>mail</artifactId>
+            <version>1.4</version>
+          </dependency>
+        </dependencies>
+        <executions>
+          <execution>
+            <id>generate-sources</id>
+            <goals>
+              <goal>wsdl2java</goal>
+            </goals>
+            <phase>generate-sources</phase>
+            <configuration>
+              <sourceDirectory>${basedir}/src/main/resources</sourceDirectory>
+              <packageSpace>org.squashtest.csp.core.bugtracker.mantis.binding</packageSpace>
+              <testCases>false</testCases>
+              <serverSide>false</serverSide>
+              <typeMappingVersion>1.2</typeMappingVersion>
+              <!-- corresponds to what the ant build was generating -->
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <!-- ====== /AXIS 1.4 ====== -->
+
+      <plugin>
+        <groupId>org.apache.felix</groupId>
+        <artifactId>maven-bundle-plugin</artifactId>
+        <extensions>true</extensions>
+        <configuration>
+          <instructions>
+            <_include>bnd.bnd</_include>
+          </instructions>
+        </configuration>
+      </plugin>
+
+      <!-- <plugin> <groupId>org.apache.maven.plugins</groupId> <artifactId>maven-jar-plugin</artifactId> <configuration> 
+        <archive> <manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile> <index /> </archive> </configuration> 
+        </plugin> -->
+      <!-- ====== SPOCK TESTS ====== -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+      </plugin>
+      <!-- ====== /SPOCK TESTS ====== -->
+    </plugins>
+  </build>
+  <profiles>
+    <profile>
+      <id>eclipse</id>
+      <activation>
+        <file>
+          <exists>.project</exists>
+        </file>
+      </activation>
+      <build>
+        <pluginManagement>
+          <plugins>
+            <!-- This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven 
+              build itself. -->
+            <plugin>
+              <groupId>org.eclipse.m2e</groupId>
+              <artifactId>lifecycle-mapping</artifactId>
+              <version>1.0.0</version>
+              <configuration>
+                <lifecycleMappingMetadata>
+                  <pluginExecutions>
+                    <pluginExecution>
+                      <pluginExecutionFilter>
+                        <groupId>com.springsource.bundlor</groupId>
+                        <artifactId>com.springsource.bundlor.maven</artifactId>
+                        <versionRange>[1.0.0.RC1,)</versionRange>
+                        <goals>
+                          <goal>bundlor</goal>
+                        </goals>
+                      </pluginExecutionFilter>
+                      <action>
+                        <ignore />
+                      </action>
+                    </pluginExecution>
+                    <pluginExecution>
+                      <pluginExecutionFilter>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>aspectj-maven-plugin</artifactId>
+                        <versionRange>[1.3,)</versionRange>
+                        <goals>
+                          <goal>test-compile</goal>
+                          <goal>compile</goal>
+                        </goals>
+                      </pluginExecutionFilter>
+                      <action>
+                        <ignore />
+                      </action>
+                    </pluginExecution>
+                  </pluginExecutions>
+                </lifecycleMappingMetadata>
+              </configuration>
+            </plugin>
+          </plugins>
+        </pluginManagement>
+      </build>
+    </profile>
+  </profiles>
+</project>
