@@ -225,11 +225,6 @@
     <!-- ====== SQUASHTEST ====== -->
     <!-- Squashtest core modules -->
     <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>org.squashtest.csp.core.log4j</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
       <groupId>org.ops4j.pax.confman</groupId>
       <artifactId>pax-confman-propsloader</artifactId>
     </dependency>
