@@ -75,6 +75,7 @@ import org.squashtest.tm.service.campaign.TestSuiteTestPlanManagerService;
 import org.squashtest.tm.service.feature.FeatureManager;
 import org.squashtest.tm.service.feature.FeatureManager.Feature;
 import org.squashtest.tm.service.milestone.MilestoneFinderService;
+import org.squashtest.tm.service.project.CustomProjectFinder;
 import org.squashtest.tm.service.project.ProjectFinder;
 import org.squashtest.tm.service.requirement.RequirementVersionAdvancedSearchService;
 import org.squashtest.tm.service.requirement.RequirementVersionManagerService;
@@ -113,6 +114,7 @@ import org.apache.commons.collections.MultiMap;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.servlet.ModelAndView;
 import org.squashtest.tm.api.workspace.WorkspaceType;
+import org.squashtest.tm.domain.campaign.Campaign;
 import org.squashtest.tm.domain.campaign.CampaignLibrary;
 import org.squashtest.tm.domain.campaign.CampaignLibraryNode;
 import org.squashtest.tm.domain.library.Library;
@@ -144,6 +146,8 @@ public class AdvancedSearchController {
 	private static final String COMBOMULTISELECT = "combomultiselect";
 	private static final String TAGS = "tags";
 
+	private static final String LIBRARIES = "libraries";
+	private static final String NODES = "nodes";
 	private static final String CAMPAIGN = "campaign";
 	private static final String TESTCASE = "test-case";
 	private static final String REQUIREMENT = "requirement";
@@ -167,6 +171,11 @@ public class AdvancedSearchController {
 	@Inject
 	private CampaignLibraryFinderService campaignLibraryFinder;
 
+	@Inject
+	private CustomProjectFinder customProjectFinder;
+
+	@Inject
+	private CampaignLibraryNavigationService campaignLibraryNavigationService;
 
 	@Inject
 	private TestCaseModificationService testCaseModificationService;
@@ -299,6 +308,8 @@ public class AdvancedSearchController {
 	
 	@RequestMapping(method = RequestMethod.GET)
 	public String showSearchPage(Model model, @RequestParam String searchDomain,
+			@RequestParam(value = LIBRARIES, defaultValue = "") Collection<Long> libraryIds,
+			@RequestParam(value = NODES, defaultValue = "") Collection<Long> nodeIds,
 			@RequestParam(required = false) String associateResultWithType, @RequestParam(required = false) Long id,
 			Locale locale,
 			@CurrentMilestone Milestone activeMilestone) {
@@ -312,8 +323,31 @@ public class AdvancedSearchController {
 			searchDomain = CAMPAIGN;
 			List<JsTreeNode> rootModel = createCampaignTreeRootModel();
 			model.addAttribute("rootModel", rootModel);
-			LOGGER.warn("COUCOU GET");
 
+			Collection<Project> numberOfCampaignsAvailable = customProjectFinder.findAllReadable();
+
+			/*
+			 * librarySelectionStrategy.getSpecificLibraries((List<Project>) numberOfCampaignsAvailable); TODO : find
+			 * all the campaign and say if there is one to show a message
+			 */
+
+			/*
+			 * campaignLibraryNavigationService .findCampaignIdsFromSelection(libraryIds, nodeIds);
+			 */
+			/*
+			 * boolean isCampaignAvailable = false; if (numberOfCampaignsAvailable.size() > 0) { isCampaignAvailable =
+			 * true; }
+			 */
+			List<Project> projectList = new ArrayList<Project>();
+			
+			for (Project project : numberOfCampaignsAvailable) {
+				projectList.add(project);
+			}
+			
+			boolean isCampaignAvailable = campaignTestPlanManagerService.findCampaignByProjectId(projectList,
+					activeMilestone);
+
+			model.addAttribute("isCampaignAvailable", isCampaignAvailable);
 		}
 
 		FormModelBuilder builder = formModelBuilder.get(searchDomain);
@@ -342,11 +376,14 @@ public class AdvancedSearchController {
 
 	@RequestMapping(method = RequestMethod.POST)
 	public String showSearchPageFilledWithParams(Model model, @RequestParam String searchDomain,
+			@RequestParam(value = LIBRARIES, defaultValue = "") Collection<Long> libraryIds,
+			@RequestParam(value = NODES, defaultValue = "") Collection<Long> nodeIds,
 			@RequestParam String searchModel, @RequestParam(required = false) String associateResultWithType,
 			@RequestParam(required = false) Long id, Locale locale,
 			@CurrentMilestone Milestone activeMilestone) {
 		model.addAttribute(SEARCH_MODEL, searchModel);
-		return showSearchPage(model, searchDomain, associateResultWithType, id, locale, activeMilestone);
+		return showSearchPage(model, searchDomain, libraryIds, nodeIds, associateResultWithType, id, locale,
+				activeMilestone);
 	}
 
 	@RequestMapping(value = "/results", params = TESTCASE)

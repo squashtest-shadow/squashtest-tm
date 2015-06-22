@@ -22,6 +22,7 @@ package org.squashtest.tm.service.internal.campaign;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -372,6 +373,23 @@ CampaignLibraryNavigationService {
 		}
 
 		return parents;
+	}
+
+	@Override
+	public Collection<Campaign> findCampaignIdsFromSelection(Collection<Long> libraryIds, Collection<Long> nodeIds) {
+		// get all the campaigns
+
+		Collection<Campaign> campaignList = new ArrayList<Campaign>();
+		if (!libraryIds.isEmpty()) {
+			campaignList.addAll(campaignDao.findAllByIds(libraryIds));
+		}
+		if (!nodeIds.isEmpty()) {
+			campaignList.addAll(campaignDao.findAllByIds(nodeIds));
+		}
+
+		// Don't care about duplicates and stuff
+
+		return campaignList;
 	}
 
 }

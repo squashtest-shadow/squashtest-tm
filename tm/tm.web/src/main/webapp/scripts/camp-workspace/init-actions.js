@@ -192,6 +192,8 @@ define(["jquery", "tree","./permissions-rules", "workspace.contextual-content", 
 			$("#delete-node-tree-button").on("click", openDeleteDialogIfDeletable);
 			
 			tree.on("suppr.squashtree", openDeleteDialogIfDeletable);
+
+			
 		}
 	};
 

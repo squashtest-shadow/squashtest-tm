@@ -19,8 +19,8 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 require([ "common" ], function() {
-	require([ "jquery", 'camp-workspace/camp-workspace-search' ,"app/ws/squashtm.workspace", "domReady" , "search/advanced-search-input", "app/ws/squashtm.workspace", 'jquery.cookie' ],
-			function($, CampWorkspaceSearch,  WS, domReady, AdvancedSearchView, WS) {
+	require([ "jquery", 'camp-workspace/camp-workspace-search' ,"app/ws/squashtm.workspace", "domReady" , "search/advanced-search-input", 'jquery.cookie' ],
+			function($, CampWorkspaceSearch,  WS, domReady, AdvancedSearchView) {
 
 		domReady(function() {
 			WS.init();
@@ -36,8 +36,6 @@ require([ "common" ], function() {
 			var view = new AdvancedSearchView();
 			
 		});
-		
-		
 	});
 });
 

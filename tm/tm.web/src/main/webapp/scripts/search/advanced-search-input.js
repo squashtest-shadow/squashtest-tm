@@ -92,11 +92,10 @@ define([ "jquery", "backbone", "app/squash.handlebars.helpers", "squash.translat
 				var sizeWithoutPadding = parseInt(sizeWithPadding, 10) - 20;
 				$("#perimeter-multiple-custom").css('width', sizeWithoutPadding);
 				};
-				
+				 
 			resizePerimeter();
 			$( window ).on('resize', resizePerimeter);
 			window.onresize = resizePerimeter;
-			
 			
 		},
 
@@ -556,6 +555,8 @@ define([ "jquery", "backbone", "app/squash.handlebars.helpers", "squash.translat
 				typListCodes = [],
 				catListCodes = [];
 			
+			// TODO : check that 
+			if (allProjects !== null) {
 			for (var i=0; i < allProjects.length; i++){
 				var project = allProjects[i],
 					pId = project.id;
@@ -570,7 +571,7 @@ define([ "jquery", "backbone", "app/squash.handlebars.helpers", "squash.translat
 				}
 				
 			}
-			
+			}
 			// now remove the duplicates
 			natListCodes = _.uniq(natListCodes, true);
 			typListCodes = _.uniq(typListCodes, true);
