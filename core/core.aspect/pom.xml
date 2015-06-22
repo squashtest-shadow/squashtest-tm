@@ -8,7 +8,7 @@
   </parent>
 
   <artifactId>core.aspect</artifactId>
-  <packaging>bundle</packaging>
+  <packaging>jar</packaging>
   <name>${project.groupId}.${project.artifactId}</name>
   <description>Squash TM core aspect library</description>
 
@@ -51,17 +51,6 @@
           <source>${jdk.version}</source>
           <target>${jdk.version}</target>
           <compatibilityLevel>${jdk.version}</compatibilityLevel>
-        </configuration>
-      </plugin>
-
-      <plugin>
-        <groupId>org.apache.felix</groupId>
-        <artifactId>maven-bundle-plugin</artifactId>
-        <extensions>true</extensions>
-        <configuration>
-          <instructions>
-            <_include>bnd.bnd</_include>
-          </instructions>
         </configuration>
       </plugin>
     </plugins>
