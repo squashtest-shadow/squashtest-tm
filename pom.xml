@@ -487,7 +487,6 @@
       <id>acceptance-tests</id>
 
       <modules>
-        <module>osgi-integration-tests</module>
         <module>integration-tests</module>
       </modules>
 
