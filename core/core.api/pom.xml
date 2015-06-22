@@ -8,7 +8,7 @@
   </parent>
 
   <artifactId>core.api</artifactId>
-  <packaging>bundle</packaging>
+  <packaging>jar</packaging>
   <name>${project.groupId}.${project.artifactId}</name>
   <description>API offering entry points to Squash core webapp which can be used by plugins</description>
 
@@ -72,17 +72,6 @@
         <artifactId>maven-surefire-plugin</artifactId>
       </plugin>
       <!-- ====== /SPOCK TESTS ====== -->
-
-      <plugin>
-        <groupId>org.apache.felix</groupId>
-        <artifactId>maven-bundle-plugin</artifactId>
-        <extensions>true</extensions>
-        <configuration>
-          <instructions>
-            <_include>bnd.bnd</_include>
-          </instructions>
-        </configuration>
-      </plugin>
     </plugins>
   </build>
 </project>
