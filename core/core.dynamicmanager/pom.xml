@@ -7,17 +7,12 @@
     <version>1.12.1.RC1-SNAPSHOT</version>
   </parent>
   <artifactId>core.dynamicmanager</artifactId>
-  <packaging>bundle</packaging>
-  <name>core.dynamicmanager</name>
+  <packaging>jar</packaging>
+  <name>${project.groupId}.${project.artifactId}</name>
 
   <properties />
 
   <dependencies>
-    <!-- <dependency>
-      <groupId>org.hibernate</groupId>
-      <artifactId>org.squashtest.org.hibernate.search</artifactId>
-    </dependency> -->
-
     <!-- ====== SPRING FRAMEWORK ====== -->
     <dependency>
       <groupId>javax.inject</groupId>
@@ -87,7 +82,6 @@
   </dependencies>
 
   <build>
-
     <testSourceDirectory>src/test/groovy</testSourceDirectory>
     <resources>
       <resource>
@@ -107,17 +101,6 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
-      </plugin>
-
-      <plugin>
-        <groupId>org.apache.felix</groupId>
-        <artifactId>maven-bundle-plugin</artifactId>
-        <extensions>true</extensions>
-        <configuration>
-          <instructions>
-            <_include>bnd.bnd</_include>
-          </instructions>
-        </configuration>
       </plugin>
 
       <!-- ====== SPOCK TESTS ====== -->
