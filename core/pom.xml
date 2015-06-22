@@ -27,6 +27,5 @@
     <module>core.jasper.fragment</module>
     <module>core.jasperreports.fragment</module>
     <module>core.wizard.api</module>
-    <module>core.jetty.boot.felix42.fragment</module>
   </modules>
 </project>
