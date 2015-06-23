@@ -64,10 +64,14 @@
 					model : /*[[${ rootModel }]]*/ '',
 					workspace : "campaign",
 					treeselector : "#tree",
-					selectedNode : /*[[${selectedNode}]]*/[]
+					selectedNode : /*[[${selectedNode}]]*/[],
+					state : {  opened    : true },
+  					openedNode : /*[[${openedNode}]]*/[]
 				},
 				treemenu: {
   					wizards: /*[[${ wizards }]]*/ '',
+  					state : {  opened    : true },
+  					openedNode : /*[[${openedNode}]]*/[]
 				},
 				toggleWS : {
 					expandSidebarLabel: /*[[ #{report.workspace.togglebutton.expand.label} ]]*/ '>>', 

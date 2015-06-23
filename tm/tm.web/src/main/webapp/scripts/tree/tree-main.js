@@ -50,6 +50,16 @@ define([ "jquery",
 				});
 			var instance = treeDiv.jstree(conf);
 			squashtm.tree = instance;
+			treeDiv.bind("select_node.jstree", function (e, data) { 
+        data.rslt.obj.parents('.jstree-closed').each(function () { 
+          data.inst.open_node(this); 
+        }); 
+			}); 
+			$('#tree').bind("select_node.jstree", function (e, data) { 
+        data.rslt.obj.parents('.jstree-closed').each(function () { 
+          data.inst.open_node(this); 
+        }); 
+			}); 
 		},
 
 		initLinkableTree : function(settings) {

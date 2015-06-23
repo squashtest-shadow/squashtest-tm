@@ -79,6 +79,10 @@ define(['jquery', './utils', './permissions-rules',
 
 		var tree = $("#tree");	
 		
+		// Tweak for this. If it's available everywhere, I could access it from the search
+		// It will work fine but it's a disaster in terms of evolution.
+		// We allow to get the same thing in search and in campaign workspace
+		
 		function loopupdate(event, data){
 			
 			var rules = permissions.buttonrules;

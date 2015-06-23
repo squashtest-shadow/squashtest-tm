@@ -91,7 +91,6 @@ public abstract class WorkspaceController<LN extends LibraryNode> {
 
 		List<Library<LN>> libraries = getWorkspaceService().findAllLibraries();
 		String[] nodesToOpen = null;
-	
 
 		if(elementId == null || "".equals(elementId)){
 			nodesToOpen = openedNodes;
@@ -115,16 +114,6 @@ public abstract class WorkspaceController<LN extends LibraryNode> {
 		model.addAttribute("rootModel", rootNodes);
 
 		populateModel(model, locale);
-
-/*
-		if(elementId == null || "".equals(elementId)){
-			model.addAttribute("selectedNode", "");
-		} else {
-			Long id = Long.valueOf(elementId);
-			model.addAttribute("selectedNode", getTreeElementIdInWorkspace(id));
-		}
-
-*/
 
 		// also add meta data about projects
 		Collection<Project> projects = projectFinder.findAllReadable();
@@ -169,7 +158,6 @@ public abstract class WorkspaceController<LN extends LibraryNode> {
 		List<JsTreeNode> rootNodes = new JsTreeNodeListBuilder<Library<LN>>(nodeBuilder).expand(expansionCandidates)
 				.setModel(libraries).build();
 
-//List<JsTreeNode> rootNodes = getRootModel(openedNodes, elementId);
 
 		return rootNodes;
 	}

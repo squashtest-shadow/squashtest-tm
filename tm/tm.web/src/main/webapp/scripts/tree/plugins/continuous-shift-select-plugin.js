@@ -30,6 +30,12 @@ define([ 'jquery', 'jstree' ], function($) {
 		"use strict";
 		$.jstree.defaults.select_range_modifier = "shift" ;
 		
+		// Bind here maybe it'll work !
+		$('#tree').bind("select_node.jstree", function (e, data) { 
+      data.rslt.obj.parents('.jstree-closed').each(function () { 
+        data.inst.open_node(this); 
+      }); 
+		}); 
 
 		/*		$.jstree.plugin("continuousselect", {
 			_fn : {

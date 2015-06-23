@@ -64,10 +64,14 @@ import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.search.AdvancedSearchListFieldModel;
 import org.squashtest.tm.domain.search.AdvancedSearchModel;
 import org.squashtest.tm.domain.testcase.TestCase;
+import org.squashtest.tm.domain.library.Library;
+import org.squashtest.tm.domain.library.LibraryNode;
+import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.testcase.TestCaseImportance;
 import org.squashtest.tm.domain.testcase.TestCaseNature;
 import org.squashtest.tm.domain.testcase.TestCaseStatus;
 import org.squashtest.tm.domain.testcase.TestCaseType;
+import org.squashtest.tm.web.internal.model.builder.JsTreeNodeListBuilder;
 import org.squashtest.tm.service.campaign.CampaignTestPlanManagerService;
 import org.squashtest.tm.service.campaign.IterationModificationService;
 import org.squashtest.tm.service.campaign.IterationTestPlanManagerService;
@@ -89,6 +93,8 @@ import org.squashtest.tm.web.internal.argumentresolver.MilestoneConfigResolver.C
 import org.squashtest.tm.web.internal.controller.AcceptHeaders;
 import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.controller.administration.MilestoneDataTableModelHelper;
+import org.squashtest.tm.web.internal.controller.campaign.CampaignWorkspaceController;
+import org.squashtest.tm.web.internal.helper.JsTreeHelper;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.builder.JsonProjectBuilder;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
@@ -103,11 +109,7 @@ import org.squashtest.tm.web.internal.model.viewmapper.NameBasedMapper;
 
 //Added more
 import org.squashtest.tm.web.internal.model.builder.DriveNodeBuilder;
-import org.squashtest.tm.web.internal.model.builder.JsTreeNodeListBuilder;
 import org.squashtest.tm.web.internal.model.jstree.JsTreeNode;
-
-
-
 import org.squashtest.tm.web.internal.controller.generic.WorkspaceController;
 import org.squashtest.tm.service.testcase.TestCaseLibraryFinderService;
 import org.apache.commons.collections.MultiMap;
@@ -117,8 +119,6 @@ import org.squashtest.tm.api.workspace.WorkspaceType;
 import org.squashtest.tm.domain.campaign.Campaign;
 import org.squashtest.tm.domain.campaign.CampaignLibrary;
 import org.squashtest.tm.domain.campaign.CampaignLibraryNode;
-import org.squashtest.tm.domain.library.Library;
-import org.squashtest.tm.domain.library.LibraryNode;
 import org.squashtest.tm.domain.testcase.TestCaseLibrary;
 import org.squashtest.tm.domain.testcase.TestCaseLibraryNode;
 import org.squashtest.tm.service.campaign.CampaignLibraryFinderService;
@@ -176,6 +176,9 @@ public class AdvancedSearchController {
 
 	@Inject
 	private CampaignLibraryNavigationService campaignLibraryNavigationService;
+
+	@Inject
+	private CampaignWorkspaceController campaignWorkspaceController;
 
 	@Inject
 	private TestCaseModificationService testCaseModificationService;
@@ -269,6 +272,14 @@ public class AdvancedSearchController {
 	@Inject
 	private TestSuiteTestPlanManagerService testSuiteTestPlanManagerService;
 
+	@Inject
+	@Named("campaign.driveNodeBuilder")
+	private Provider<DriveNodeBuilder<LibraryNode>> driveNodeBuilderProvider;
+
+	@Inject
+	@Named("squashtest.tm.service.CampaignsWorkspaceService")
+	private WorkspaceService<Library<CampaignLibraryNode>> workspaceService;
+
 	// These are used by Lucene - Thus the columns are mapped to index
 	// properties rather than class properties
 	private DatatableMapper<String> testCaseSearchResultMapper = new NameBasedMapper(15)
@@ -307,12 +318,26 @@ public class AdvancedSearchController {
 	// TODO TO CAMPAIGN
 	
 	@RequestMapping(method = RequestMethod.GET)
+	// TODO faire plusieurs méthodes et discriminer avec params = "searchDomain=campaign" etc
 	public String showSearchPage(Model model, @RequestParam String searchDomain,
+			@RequestParam("cookieValueSelect") String cookieValueSelect,
+			@RequestParam("cookieValueOpen") String[] cookieValueOpen,
 			@RequestParam(value = LIBRARIES, defaultValue = "") Collection<Long> libraryIds,
 			@RequestParam(value = NODES, defaultValue = "") Collection<Long> nodeIds,
+			@CookieValue(value = "jstree_open", required = false, defaultValue = "") String[] openedNodes,
+			@CookieValue(value = "jstree_select", required = false, defaultValue = "") String[] selectedNodes,
+			@CookieValue(value = "workspace-prefs", required = false, defaultValue = "") String elementId,
 			@RequestParam(required = false) String associateResultWithType, @RequestParam(required = false) Long id,
 			Locale locale,
 			@CurrentMilestone Milestone activeMilestone) {
+
+		// Wow, so much params.
+		// Libraries, nodes, jstree_open, jstreee-select and workspace-prefs are useless I think
+		// TODO : refactor this mess
+		// But those cookieValueOpen and cookieValueSelect are great. They allow to get the cookie value from the
+		// workspace to be put in the search tree
+		// Abracajava ! You get the value, you put it in the mixer, nodesToOpen or selectedNode, some go to
+		// expansionCandidates then to the rootNodes
 
 		initModelForPage(model, associateResultWithType, id, activeMilestone);
 		model.addAttribute(SEARCH_DOMAIN, searchDomain);
@@ -321,23 +346,43 @@ public class AdvancedSearchController {
 		}
  else if (CAMPAIGN.equals(searchDomain)) {
 			searchDomain = CAMPAIGN;
+
 			List<JsTreeNode> rootModel = createCampaignTreeRootModel();
-			model.addAttribute("rootModel", rootModel);
+			List<Library<CampaignLibraryNode>> libraries = getWorkspaceService().findAllLibraries();
+
+			String[] nodesToOpen = null;
+
+			if (elementId == null || "".equals(elementId)) {
+				nodesToOpen = cookieValueOpen;
+				// model.addAttribute("selectedNode", "");
+				model.addAttribute("selectedNode", cookieValueSelect);
+				model.addAttribute("openedNode", cookieValueOpen);
+			} else {
+				Long id1 = Long.valueOf(elementId);
+				nodesToOpen = cookieValueOpen;
+				// model.addAttribute("selectedNode", getTreeElementIdInWorkspace(id1));
+				model.addAttribute("selectedNode", cookieValueSelect);
+				model.addAttribute("openedNode", cookieValueOpen);
+			}
+			MultiMap expansionCandidates = mapIdsByType(nodesToOpen);
+
+			DriveNodeBuilder<LibraryNode> nodeBuilder = driveNodeBuilderProvider().get();
+			if (activeMilestone != null) {
+				nodeBuilder.filterByMilestone(activeMilestone);
+			}
+
+		//	List<JsTreeNode> rootNodes = new JsTreeNodeListBuilder<Library<LibraryNode>>(nodeBuilder).expand(expansionCandidates)
+//.setModel(getWorkspaceService().findAllLibraries()).build();
+			
+			List<JsTreeNode> rootNodes = new JsTreeNodeListBuilder<Library<LibraryNode>>(nodeBuilder).expand(expansionCandidates)
+					.setModel(libraries).build();
+
+			// TODo : add rootmodel and rootnodes
+
+			model.addAttribute("rootModel", rootNodes);
 
 			Collection<Project> numberOfCampaignsAvailable = customProjectFinder.findAllReadable();
 
-			/*
-			 * librarySelectionStrategy.getSpecificLibraries((List<Project>) numberOfCampaignsAvailable); TODO : find
-			 * all the campaign and say if there is one to show a message
-			 */
-
-			/*
-			 * campaignLibraryNavigationService .findCampaignIdsFromSelection(libraryIds, nodeIds);
-			 */
-			/*
-			 * boolean isCampaignAvailable = false; if (numberOfCampaignsAvailable.size() > 0) { isCampaignAvailable =
-			 * true; }
-			 */
 			List<Project> projectList = new ArrayList<Project>();
 			
 			for (Project project : numberOfCampaignsAvailable) {
@@ -360,7 +405,29 @@ public class AdvancedSearchController {
 					searchDomain);
 		}
 
+
+
 		return searchDomain + "-search-input.html";
+	}
+
+	protected Provider<DriveNodeBuilder<LibraryNode>> driveNodeBuilderProvider() {
+		return driveNodeBuilderProvider;
+	}
+
+	protected WorkspaceService<Library<CampaignLibraryNode>> getWorkspaceService() {
+		return workspaceService;
+	}
+
+	protected String[] getNodeParentsInWorkspace(Long elementId) {
+		List<String> parents = campaignLibraryNavigationService.getParentNodesAsStringList(elementId);
+		return parents.toArray(new String[parents.size()]);
+	}
+
+	protected MultiMap mapIdsByType(String[] openedNodes) {
+		return JsTreeHelper.mapIdsByType(openedNodes);
+	}
+	protected String getTreeElementIdInWorkspace(Long elementId) {
+		return "Campaign-" + elementId;
 	}
 
 	private void initModelForPage(Model model, String associateResultWithType, Long id, Milestone activeMilestone) {
@@ -376,13 +443,21 @@ public class AdvancedSearchController {
 
 	@RequestMapping(method = RequestMethod.POST)
 	public String showSearchPageFilledWithParams(Model model, @RequestParam String searchDomain,
+			@RequestParam("cookieValueSelect") String cookieValueSelect,
+			@RequestParam("cookieValueOpen") String[] cookieValueOpen,
 			@RequestParam(value = LIBRARIES, defaultValue = "") Collection<Long> libraryIds,
 			@RequestParam(value = NODES, defaultValue = "") Collection<Long> nodeIds,
+			@CookieValue(value = "jstree_open", required = false, defaultValue = "") String[] openedNodes,
+			@CookieValue(value = "jstree_select", required = false, defaultValue = "") String[] selectedNodes,
+			@CookieValue(value = "workspace-prefs", required = false, defaultValue = "") String elementId,
 			@RequestParam String searchModel, @RequestParam(required = false) String associateResultWithType,
 			@RequestParam(required = false) Long id, Locale locale,
 			@CurrentMilestone Milestone activeMilestone) {
 		model.addAttribute(SEARCH_MODEL, searchModel);
-		return showSearchPage(model, searchDomain, libraryIds, nodeIds, associateResultWithType, id, locale,
+		return showSearchPage(model, searchDomain, cookieValueSelect, cookieValueOpen, libraryIds, nodeIds,
+				openedNodes, selectedNodes,
+				elementId,
+				associateResultWithType, id, locale,
 				activeMilestone);
 	}
 
