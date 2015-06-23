@@ -25,9 +25,11 @@
     <module>core</module>
     <module>tm</module>
     <module>plugins</module>
+    <module>bom</module>
   </modules>
 
   <properties>
+    <java.version>1.7</java.version>
     <groovy.version>2.0.7</groovy.version>
     <hibernate.version>4.2.2.Final</hibernate.version>
 
