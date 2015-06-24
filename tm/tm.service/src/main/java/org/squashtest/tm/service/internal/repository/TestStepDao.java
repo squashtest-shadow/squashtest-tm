@@ -29,8 +29,6 @@ public interface TestStepDao extends EntityDao<TestStep>{
 
 	void removeById(long testStepId);
 
-	<STEP extends TestStep> void persist(STEP testStep);
-	
 	List<TestStep> findListById(List<Long> testStepIds);
 	
 	/**

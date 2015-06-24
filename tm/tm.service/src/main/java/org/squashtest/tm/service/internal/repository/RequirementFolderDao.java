@@ -24,5 +24,5 @@ import org.squashtest.tm.domain.requirement.RequirementFolder;
 import org.squashtest.tm.domain.requirement.RequirementLibraryNode;
 
 @SuppressWarnings("rawtypes")
-public interface RequirementFolderDao extends FolderDao<RequirementFolder, RequirementLibraryNode> {
+public interface RequirementFolderDao extends FolderDao<RequirementFolder, RequirementLibraryNode>, EntityDao<RequirementFolder> {
 }

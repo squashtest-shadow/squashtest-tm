@@ -28,13 +28,20 @@ import org.springframework.security.authentication.encoding.PasswordEncoder;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.stereotype.Component;
 import org.squashtest.tm.service.security.AdministratorAuthenticationService;
 
+import javax.inject.Inject;
+
+@Component("squashtest.core.security.AdministratorAuthenticationService")
 public class AdministratorAuthenticationServiceImpl implements AdministratorAuthenticationService {
 	private static final Logger LOGGER = LoggerFactory.getLogger(AdministratorAuthenticationServiceImpl.class);
 
+	@Inject
 	private SquashUserDetailsManager userManager;
+	@Inject
 	private PasswordEncoder encoder;
+
 	private Object salt = null;
 
 	public void setUserDetailsManager(SquashUserDetailsManager userManager) {

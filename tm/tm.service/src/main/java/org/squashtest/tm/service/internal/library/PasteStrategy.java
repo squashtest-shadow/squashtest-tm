@@ -29,6 +29,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import javax.inject.Inject;
+import javax.inject.Provider;
 
 import org.springframework.beans.factory.ObjectFactory;
 import org.squashtest.tm.domain.library.NodeContainer;
@@ -75,10 +76,10 @@ public class PasteStrategy<CONTAINER extends NodeContainer<NODE>, NODE extends T
 
 	// **************** collaborators **************************
 
-	private ObjectFactory<? extends PasteOperation> nextLayersOperationFactory;
-	private ObjectFactory<? extends PasteOperation> firstLayerOperationFactory;
+	private Provider<? extends PasteOperation> nextLayersOperationFactory;
+	private Provider<? extends PasteOperation> firstLayerOperationFactory;
 	@Inject
-	private ObjectFactory<NextLayerFeeder> nextLayerFeederOperationFactory;
+	private Provider<NextLayerFeeder> nextLayerFeederOperationFactory;
 	private PasteOperation firstOperation;
 	private PasteOperation nextsOperation;
 	private GenericDao<Object> genericDao;
@@ -89,7 +90,7 @@ public class PasteStrategy<CONTAINER extends NodeContainer<NODE>, NODE extends T
 		this.genericDao = genericDao;
 	}
 
-	public void setContainerDao(EntityDao<CONTAINER> containerDao) {
+	public <R extends EntityDao<CONTAINER>> void setContainerDao(R containerDao) {
 		this.containerDao = containerDao;
 	}
 
@@ -97,15 +98,15 @@ public class PasteStrategy<CONTAINER extends NodeContainer<NODE>, NODE extends T
 		this.nodeDao = nodeDao;
 	}
 
-	public void setNextLayersOperationFactory(ObjectFactory<? extends PasteOperation> nextLayersOperationFactory) {
+	public void setNextLayersOperationFactory(Provider<? extends PasteOperation> nextLayersOperationFactory) {
 		this.nextLayersOperationFactory = nextLayersOperationFactory;
 	}
 
-	public void setFirstLayerOperationFactory(ObjectFactory<? extends PasteOperation> firstLayerOperationFactory) {
+	public void setFirstLayerOperationFactory(Provider<? extends PasteOperation> firstLayerOperationFactory) {
 		this.firstLayerOperationFactory = firstLayerOperationFactory;
 	}
 
-	public void setNextLayerFeederOperationFactory(ObjectFactory<NextLayerFeeder> nextLayerFeederOperationFactory) {
+	public void setNextLayerFeederOperationFactory(Provider<NextLayerFeeder> nextLayerFeederOperationFactory) {
 		this.nextLayerFeederOperationFactory = nextLayerFeederOperationFactory;
 	}
 
@@ -256,11 +257,11 @@ public class PasteStrategy<CONTAINER extends NodeContainer<NODE>, NODE extends T
 	}
 
 	private PasteOperation createNextLayerOperation() {
-		return nextLayersOperationFactory.getObject();
+		return nextLayersOperationFactory.get();
 	}
 
 	private PasteOperation createFirstLayerOperation() {
-		return firstLayerOperationFactory.getObject();
+		return firstLayerOperationFactory.get();
 	}
 
 	/**
@@ -270,7 +271,7 @@ public class PasteStrategy<CONTAINER extends NodeContainer<NODE>, NODE extends T
 	 * @param sourceNode
 	 */
 	private void appendNextLayerNodes(TreeNode sourceNode, TreeNode destNode) {
-		NextLayerFeeder feeder = nextLayerFeederOperationFactory.getObject();
+		NextLayerFeeder feeder = nextLayerFeederOperationFactory.get();
 		feeder.feedNextLayer(destNode, sourceNode, this.nextLayer, this.outputList);
 	}
 

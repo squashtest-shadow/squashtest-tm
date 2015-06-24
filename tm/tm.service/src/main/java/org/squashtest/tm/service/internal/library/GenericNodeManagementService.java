@@ -59,7 +59,7 @@ implements NodeManagementService<MANAGED, NODE, FOLDER> {
 
 	private EntityDao<MANAGED> nodeDao;
 	private FolderDao<FOLDER, NODE> folderDao;
-	private LibraryDao<Library<NODE>, NODE> libraryDao;
+	private LibraryDao<? extends Library<NODE>, NODE> libraryDao;
 
 	/*
 	 * (non-Javadoc)
@@ -177,7 +177,7 @@ implements NodeManagementService<MANAGED, NODE, FOLDER> {
 		return !node.getName().equals(newName);
 	}
 
-	public void setLibraryDao(LibraryDao<Library<NODE>, NODE> libraryDao) {
+	public <R extends Library<NODE>> void setLibraryDao(LibraryDao<R, NODE> libraryDao) {
 		this.libraryDao = libraryDao;
 	}
 

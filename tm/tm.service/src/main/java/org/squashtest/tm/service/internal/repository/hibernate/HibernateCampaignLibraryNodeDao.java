@@ -26,11 +26,12 @@ import org.hibernate.SQLQuery;
 import org.hibernate.type.LongType;
 import org.springframework.stereotype.Repository;
 import org.squashtest.tm.domain.campaign.CampaignLibraryNode;
+import org.squashtest.tm.service.internal.repository.EntityDao;
 import org.squashtest.tm.service.internal.repository.LibraryNodeDao;
 import org.squashtest.tm.service.internal.repository.ParameterNames;
 
 @Repository("squashtest.tm.repository.CampaignLibraryNodeDao")
-public class HibernateCampaignLibraryNodeDao extends HibernateEntityDao<CampaignLibraryNode> implements LibraryNodeDao<CampaignLibraryNode>{
+public class HibernateCampaignLibraryNodeDao extends HibernateEntityDao<CampaignLibraryNode> implements LibraryNodeDao<CampaignLibraryNode>, EntityDao<CampaignLibraryNode> {
 
 	@SuppressWarnings("unchecked")
 	@Override

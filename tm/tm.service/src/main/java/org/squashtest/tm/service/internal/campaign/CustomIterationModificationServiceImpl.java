@@ -124,7 +124,7 @@ IterationTestPlanManager {
 	private Provider<PasteStrategy<Iteration, TestSuite>> pasteToIterationStrategyProvider;
 
 	@Inject
-	private ObjectFactory<TreeNodeCopier> treeNodeCopierFactory;
+	private Provider<TreeNodeCopier> treeNodeCopierFactory;
 
 	@Inject
 	private IterationTestPlanManagerService iterationTestPlanManager;

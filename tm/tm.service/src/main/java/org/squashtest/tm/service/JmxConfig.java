@@ -18,15 +18,33 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.internal.repository;
+package org.squashtest.tm.service;
 
-import org.squashtest.tm.domain.requirement.Requirement;
-import org.squashtest.tm.domain.requirement.RequirementLibrary;
-import org.squashtest.tm.domain.requirement.RequirementLibraryNode;
+import org.springframework.beans.factory.annotation.Configurable;
+import org.springframework.context.annotation.Bean;
+import org.springframework.jmx.export.MBeanExporter;
+import org.squashtest.tm.service.internal.logging.Log4jLoggerLevelModifier;
 
-@SuppressWarnings("rawtypes")
-public interface RequirementLibraryDao extends LibraryDao<RequirementLibrary, RequirementLibraryNode>, EntityDao<RequirementLibrary> {
+import javax.inject.Inject;
+import java.util.HashMap;
+import java.util.Map;
 
-    void persist(RequirementLibrary library);
+/**
+ * @author Gregory Fouquet
+ */
+@Configurable
+public class JmxConfig {
+    @Inject
+    private Log4jLoggerLevelModifier log4jLoggerLevelModifier;
 
+    @Bean
+    public MBeanExporter mBeanExporter() {
+        Map<String, Object> beans = new HashMap<>();
+        beans.put("squash.core:name=squash.core.logging.LoggerLevelModifier", log4jLoggerLevelModifier);
+
+        MBeanExporter exporter = new MBeanExporter();
+        exporter.setBeans(beans);
+
+        return exporter;
+    }
 }

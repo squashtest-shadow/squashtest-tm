@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
+import javax.inject.Provider;
 
 import org.apache.commons.lang.NullArgumentException;
 import org.slf4j.Logger;
@@ -126,11 +127,11 @@ implements LibraryNavigationService<LIBRARY, FOLDER, NODE> {
 	@Inject
 	private PrivateCustomFieldValueService customFieldValuesService;
 	@Inject
-	private ObjectFactory<TreeNodeCopier> treeNodeCopierProvider;
+	private Provider<TreeNodeCopier> treeNodeCopierProvider;
 	@Inject
-	private ObjectFactory<FirstLayerTreeNodeMover> firstLayerMoverProvider;
+	private Provider<FirstLayerTreeNodeMover> firstLayerMoverProvider;
 	@Inject
-	private ObjectFactory<NextLayersTreeNodeMover> nextLayersMoverProvider;
+	private Provider<NextLayersTreeNodeMover> nextLayersMoverProvider;
 
 	public AbstractLibraryNavigationService() {
 		super();

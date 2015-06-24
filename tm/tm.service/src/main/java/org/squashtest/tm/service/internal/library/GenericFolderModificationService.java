@@ -52,7 +52,7 @@ FolderModificationService<FOLDER>, InitializingBean {
 	private final GenericNodeManagementService<FOLDER, NODE, FOLDER> delegate = new GenericNodeManagementService<FOLDER, NODE, FOLDER>();
 
 	private FolderDao<FOLDER, NODE> folderDao;
-	private LibraryDao<Library<NODE>, NODE> libraryDao;
+	private LibraryDao<? extends Library<NODE>, NODE> libraryDao;
 
 	// [Issue 2735] it seems that the @PostConstruct annotation is no longer processed. We must have fiddled with Spring
 	// too much.
@@ -103,7 +103,7 @@ FolderModificationService<FOLDER>, InitializingBean {
 		delegate.updateNodeDescription(folderId, newDescription);
 	}
 
-	public void setLibraryDao(LibraryDao<Library<NODE>, NODE> libraryDao) {
+	public void setLibraryDao(LibraryDao<? extends Library<NODE>, NODE> libraryDao) {
 		this.libraryDao = libraryDao;
 	}
 

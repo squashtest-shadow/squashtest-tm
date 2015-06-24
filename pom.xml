@@ -528,46 +528,6 @@
       </activation>
       <build>
         <plugins>
-          <!--           <plugin>
-            <artifactId>maven-remote-resources-plugin</artifactId>
-            <executions>
-              <execution>
-              <id>remote-tools-resources</id>
-                <phase>generate-resources</phase>
-                <goals>
-                  <goal>process</goal>
-                </goals>
-                <configuration>
-                  <resourceBundles>
-                    <resourceBundle>org.squashtest.tm:squashtest-tools-resources:${project.version}</resourceBundle>
-                  </resourceBundles>
-                    <outputDirectory>${project.build.directory}/maven-shared-tools-resources</outputDirectory>
-                </configuration>
-              </execution>
-            </executions>
-          </plugin>
- -->
-          <!--           <plugin>
-            <artifactId>maven-resources-plugin</artifactId>
-            <executions>
-              <execution>
-                <id>copy-eclipse-settings</id>
-                <phase>install</phase>
-                <goals>
-                  <goal>copy-resources</goal>
-                </goals>
-                <configuration>
-                  <outputDirectory>${basedir}/.settings</outputDirectory>
-                  <overwrite>true</overwrite>
-                  <resources>
-                    <resource>
-                      <directory>${project.build.directory}/maven-shared-tools-resources/eclipse/settings</directory>
-                    </resource>
-                  </resources>
-                </configuration>
-              </execution>
-            </executions>
-          </plugin> -->
         </plugins>
       </build>
     </profile>

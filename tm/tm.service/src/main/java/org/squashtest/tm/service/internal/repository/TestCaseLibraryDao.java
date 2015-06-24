@@ -23,7 +23,7 @@ package org.squashtest.tm.service.internal.repository;
 import org.squashtest.tm.domain.testcase.TestCaseLibrary;
 import org.squashtest.tm.domain.testcase.TestCaseLibraryNode;
 
-public interface TestCaseLibraryDao extends LibraryDao<TestCaseLibrary, TestCaseLibraryNode> {
+public interface TestCaseLibraryDao extends LibraryDao<TestCaseLibrary, TestCaseLibraryNode>, EntityDao<TestCaseLibrary> {
 
 	void persist(TestCaseLibrary library);
 

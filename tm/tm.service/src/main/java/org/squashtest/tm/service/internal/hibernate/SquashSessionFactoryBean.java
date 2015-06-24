@@ -21,6 +21,7 @@
 package org.squashtest.tm.service.internal.hibernate;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 
@@ -50,8 +51,8 @@ public class SquashSessionFactoryBean extends LocalSessionFactoryBean {
 	private static final String HIBERNATE_PROPERTIES_DIALECT = "hibernate.dialect";
 	private static final String JAVAX_VALIDATION_FACTORY = "javax.persistence.validation.factory";
 
-	private List<String> dialectsSupportingGroupConcat = new ArrayList<String>();
-	private List<String> dialectsSupportingStringAgg = new ArrayList<String>();
+	private String[] dialectsSupportingGroupConcat = {};
+	private String[] dialectsSupportingStringAgg = {};
 
 	private ValidatorFactory validatorFactory;
 
@@ -111,19 +112,19 @@ public class SquashSessionFactoryBean extends LocalSessionFactoryBean {
 		}
 	}
 
-	public void setDialectsSupportingStringAgg(List<String> dialectsSupportingStringAgg) {
+	public void setDialectsSupportingStringAgg(String... dialectsSupportingStringAgg) {
 		this.dialectsSupportingStringAgg = dialectsSupportingStringAgg;
 	}
 
-	public List<String> getDialectsSupportingStringAgg() {
+	public String[] getDialectsSupportingStringAgg() {
 		return dialectsSupportingStringAgg;
 	}
 
-	public void setDialectsSupportingGroupConcat(List<String> dialectsSupportingGroupConcat) {
+	public void setDialectsSupportingGroupConcat(String... dialectsSupportingGroupConcat) {
 		this.dialectsSupportingGroupConcat = dialectsSupportingGroupConcat;
 	}
 
-	public List<String> getDialectsSupportingGroupConcat() {
+	public String[] getDialectsSupportingGroupConcat() {
 		return dialectsSupportingGroupConcat;
 	}
 
@@ -146,10 +147,10 @@ public class SquashSessionFactoryBean extends LocalSessionFactoryBean {
 
 		}
 
-		if (dialectsSupportingGroupConcat.contains(choosenDialect)) {
+		if (Arrays.asList(dialectsSupportingGroupConcat).contains(choosenDialect)) {
 			return new GroupConcatFunction(FN_NAME_GROUP_CONCAT, new StringType());
 		}
-		if (dialectsSupportingStringAgg.contains(choosenDialect)) {
+		if (Arrays.asList(dialectsSupportingStringAgg).contains(choosenDialect)) {
 			return new StringAggFunction(FN_NAME_GROUP_CONCAT, new StringType());
 		}
 

@@ -82,12 +82,10 @@ public final class ValidatorFactoryBean {
 		return INSTANCE;
 	}
 
+	/**
+	 * Old school static factory, use #getInstance
+	 */
 	private ValidatorFactoryBean() {
 		super();
 	}
-
-	
-	
-	
-
 }
