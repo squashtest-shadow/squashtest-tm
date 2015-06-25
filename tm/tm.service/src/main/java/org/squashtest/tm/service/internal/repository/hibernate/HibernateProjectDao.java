@@ -20,17 +20,39 @@
  */
 package org.squashtest.tm.service.internal.repository.hibernate;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.springframework.stereotype.Repository;
 import org.squashtest.tm.domain.project.Project;
+import org.squashtest.tm.domain.users.Party;
+import org.squashtest.tm.domain.users.PartyProjectPermissionsBean;
+import org.squashtest.tm.security.acls.PermissionGroup;
 import org.squashtest.tm.service.internal.repository.CustomProjectDao;
 import org.squashtest.tm.service.internal.repository.ParameterNames;
+import org.squashtest.tm.service.internal.repository.PartyDao;
+import org.squashtest.tm.service.project.ProjectsPermissionManagementService;
+import org.squashtest.tm.service.security.acls.jdbc.JdbcManageableAclService;
+import org.squashtest.tm.service.security.acls.model.ObjectAclService;
 
 
 @Repository("CustomProjectDao")
 public class HibernateProjectDao extends HibernateEntityDao<Project> implements CustomProjectDao {
+
+	@Inject
+	private ObjectAclService aclService;
+
+	@Inject
+	private PartyDao partyDao;
+
+	@Inject
+	private ProjectsPermissionManagementService projectsPermissionManagementService;
+
+	@Inject
+	private JdbcManageableAclService jdbcManageableAclService;
 	@Override
 	public long countNonFoldersInProject(long projectId) {
 		Long req = (Long) executeEntityNamedQuery("project.countNonFolderInRequirement", idParameter(projectId));
@@ -82,9 +104,30 @@ public class HibernateProjectDao extends HibernateEntityDao<Project> implements 
 
 	@Override
 	public List<String> findUsersWhoCanAccessProject(List<Long> projectIds) {
-		if (projectIds.isEmpty()) {
-			return Collections.emptyList();
+
+		List<String> list = new ArrayList<>();
+
+		List<PartyProjectPermissionsBean> findPartyPermissionBeanByProject = new ArrayList<PartyProjectPermissionsBean>();
+
+		for (Long projectId : projectIds) {
+			findPartyPermissionBeanByProject.addAll(projectsPermissionManagementService
+					.findPartyPermissionsBeanByProject(projectId));
 		}
-		return executeListNamedQuery("Project.findAllAuthorizedUsersForProject", idParameters(projectIds));
+
+		for (PartyProjectPermissionsBean partyProjectPermissionsBean : findPartyPermissionBeanByProject) {
+			if (partyProjectPermissionsBean.isUser()) {
+				list.add(partyProjectPermissionsBean.getParty().getName());
+			}
+		}
+		/*
+		 * old for (Long projectId : projectIds) { List<Object[]> objectList =
+		 * jdbcManageableAclService.retrieveUsersFromIdentityAndClass(projectId); for (Object[] objects : objectList) {
+		 * for (Object object : objects) { list.add((String) object); }
+		 * 
+		 * } }
+		 */
+
+		return list;
+
 	}
 }

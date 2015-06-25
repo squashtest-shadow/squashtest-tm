@@ -320,10 +320,8 @@ public class AdvancedSearchController {
 	@RequestMapping(method = RequestMethod.GET)
 	// TODO faire plusieurs méthodes et discriminer avec params = "searchDomain=campaign" etc
 	public String showSearchPage(Model model, @RequestParam String searchDomain,
-			@RequestParam("cookieValueSelect") String cookieValueSelect,
-			@RequestParam("cookieValueOpen") String[] cookieValueOpen,
-			@RequestParam(value = LIBRARIES, defaultValue = "") Collection<Long> libraryIds,
-			@RequestParam(value = NODES, defaultValue = "") Collection<Long> nodeIds,
+			@RequestParam(value = "cookieValueSelect", required = false, defaultValue = "") String cookieValueSelect,
+			@RequestParam(value = "cookieValueOpen", required = false, defaultValue = "") String[] cookieValueOpen,
 			@CookieValue(value = "jstree_open", required = false, defaultValue = "") String[] openedNodes,
 			@CookieValue(value = "jstree_select", required = false, defaultValue = "") String[] selectedNodes,
 			@CookieValue(value = "workspace-prefs", required = false, defaultValue = "") String elementId,
@@ -445,8 +443,6 @@ public class AdvancedSearchController {
 	public String showSearchPageFilledWithParams(Model model, @RequestParam String searchDomain,
 			@RequestParam("cookieValueSelect") String cookieValueSelect,
 			@RequestParam("cookieValueOpen") String[] cookieValueOpen,
-			@RequestParam(value = LIBRARIES, defaultValue = "") Collection<Long> libraryIds,
-			@RequestParam(value = NODES, defaultValue = "") Collection<Long> nodeIds,
 			@CookieValue(value = "jstree_open", required = false, defaultValue = "") String[] openedNodes,
 			@CookieValue(value = "jstree_select", required = false, defaultValue = "") String[] selectedNodes,
 			@CookieValue(value = "workspace-prefs", required = false, defaultValue = "") String elementId,
@@ -454,8 +450,7 @@ public class AdvancedSearchController {
 			@RequestParam(required = false) Long id, Locale locale,
 			@CurrentMilestone Milestone activeMilestone) {
 		model.addAttribute(SEARCH_MODEL, searchModel);
-		return showSearchPage(model, searchDomain, cookieValueSelect, cookieValueOpen, libraryIds, nodeIds,
-				openedNodes, selectedNodes,
+		return showSearchPage(model, searchDomain, cookieValueSelect, cookieValueOpen, openedNodes, selectedNodes,
 				elementId,
 				associateResultWithType, id, locale,
 				activeMilestone);
@@ -776,6 +771,7 @@ public class AdvancedSearchController {
 		model.addPanel(campaignSearchInterfaceDescription.createGeneralInfoPanel(locale));
 
 		// Attributes
+
 		model.addPanel(campaignSearchInterfaceDescription.createAttributePanel(locale));
 
 		// Milestones

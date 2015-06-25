@@ -36,13 +36,15 @@ import org.squashtest.tm.domain.testcase.TestCaseImportance;
 import org.squashtest.tm.domain.testcase.TestCaseStatus;
 import org.squashtest.tm.domain.testcase.TestCaseExecutionMode;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
+import org.squashtest.tm.service.campaign.CampaignAdvancedSearchService;
 import org.squashtest.tm.service.project.ProjectFinder;
-import org.squashtest.tm.web.internal.controller.search.SearchInterfaceDescription.OptionBuilder;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 
 @Component
 public class CampaignSearchInterfaceDescription extends SearchInterfaceDescription {
 
+	@Inject
+	private CampaignAdvancedSearchService campaignAdvancedSearchService;
 
 	@Inject
 	private ProjectFinder projectFinder;
@@ -87,23 +89,19 @@ public class CampaignSearchInterfaceDescription extends SearchInterfaceDescripti
 				.useLocale(locale).build();
 		importanceField.addPossibleValues(importanceOptions);
 
-		// **************** /natures and types ************************
-
-
-		SearchInputFieldModel natureField = buildNatureFieldModel(locale);
-		panel.addField(natureField);
-
-		SearchInputFieldModel typeField = buildTypeFieldModel(locale);
-		panel.addField(typeField);
-
-
-		// *************** /natures and types ****************************
+		// *************** Assignment ****************************
 
 		SearchInputFieldModel assignmentField = new SearchInputFieldModel("assignment", getMessageSource()
 				.internationalize("search.execution.assignation", locale), MULTIAUTOCOMPLETE);
 		panel.addField(assignmentField);
 
 		/* TODO : Get all assignmentable users */
+		OptionBuilder optionBuilder = optionBuilder(locale);
+
+		List<String> users = campaignAdvancedSearchService.findAllAuthorizedUsersForACampaign();
+		for (String user : users) {
+			assignmentField.addPossibleValue(optionBuilder.label(user).optionKey(user).build());
+		}
 
 		return panel;
 	}

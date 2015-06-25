@@ -252,6 +252,11 @@
 		interface="org.squashtest.tm.service.requirement.RequirementVersionAdvancedSearchService"
 		availability="mandatory" />
 
+	<osgi:reference id="squashtest.tm.service.CampaignAdvancedSearchService"
+		bean-name="squashtest.tm.service.CampaignAdvancedSearchService"
+		interface="org.squashtest.tm.service.campaign.CampaignAdvancedSearchService"
+		availability="mandatory" />
+		
 
 	<osgi:reference id="squashtest.tm.service.SearchService"
 		bean-name="squashtest.tm.service.SearchService" interface="org.squashtest.tm.service.library.SearchService"

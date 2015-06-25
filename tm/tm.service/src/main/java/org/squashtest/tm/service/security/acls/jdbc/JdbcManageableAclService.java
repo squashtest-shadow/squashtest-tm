@@ -162,7 +162,16 @@ public class JdbcManageableAclService extends JdbcAclService implements Manageab
 			+ "left outer join CORE_TEAM ct on arse.PARTY_ID = ct.PARTY_ID "
 			+ "where oid.IDENTITY = ? and ac.CLASSNAME = ? ";
 
-	//11-02-13 : this query is ready for task 1865
+	// 2015
+	private static final String USER_NAME_FROM_IDENTITY_AND_CLASS = "select cu.LOGIN from "
+			+ "ACL_GROUP ag inner join ACL_RESPONSIBILITY_SCOPE_ENTRY arse on ag.ID = arse.ACL_GROUP_ID "
+			+ "inner join ACL_OBJECT_IDENTITY oid on oid.ID = arse.OBJECT_IDENTITY_ID "
+			+ "inner join ACL_CLASS ac on ac.ID = oid.CLASS_ID "
+			+ "left outer join CORE_USER cu on arse.PARTY_ID = cu.PARTY_ID "
+			+ "left outer join CORE_TEAM ct on arse.PARTY_ID = ct.PARTY_ID "
+			+ "where oid.IDENTITY = ? ";
+
+	// 11-02-13 : this query is ready for task 1865
 	private static final String USER_AND_ACL_GROUP_NAME_FROM_IDENTITY_AND_CLASS_FILTERED = "select arse.PARTY_ID, ag.ID, ag.QUALIFIED_NAME, CONCAT(COALESCE(cu.LOGIN, ''), COALESCE(ct.NAME, '')) as sorting_key, CONCAT(case when cu.LOGIN is NULL then 'TEAM' else 'USER' end, COALESCE(cu.LOGIN, ct.NAME)) as party_type from "
 			+ "ACL_GROUP ag inner join ACL_RESPONSIBILITY_SCOPE_ENTRY arse on ag.ID = arse.ACL_GROUP_ID "
 			+ "inner join ACL_OBJECT_IDENTITY oid on oid.ID = arse.OBJECT_IDENTITY_ID "
@@ -563,6 +572,18 @@ public class JdbcManageableAclService extends JdbcAclService implements Manageab
 				aclgroupMapper);
 
 	}
+	
+	/* (non-Javadoc)
+	 * 
+	 */
+	@Override
+	public List<Object[]> retrieveUsersFromIdentityAndClass(long entityId) {
+		return jdbcTemplate.query(USER_NAME_FROM_IDENTITY_AND_CLASS,
+ new Object[] { entityId },
+				aclgroupMapper);
+
+	}
+	
 
 	/* (non-Javadoc)
 	 * @see org.squashtest.tm.service.security.acls.jdbc.ManageableAclService#findUsersWithoutPermissionByObject(long, java.lang.String)

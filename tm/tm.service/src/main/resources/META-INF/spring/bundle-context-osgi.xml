@@ -292,6 +292,9 @@
 	<osgi:service ref="squashtest.tm.service.TestCaseAdvancedSearchService"
 		interface="org.squashtest.tm.service.testcase.TestCaseAdvancedSearchService" />
 
+	<osgi:service ref="squashtest.tm.service.CampaignAdvancedSearchService"
+		interface="org.squashtest.tm.service.campaign.CampaignAdvancedSearchService" />
+		
 	<osgi:service
 		ref="squashtest.tm.service.RequirementVersionAdvancedSearchService"
 		interface="org.squashtest.tm.service.requirement.RequirementVersionAdvancedSearchService" />

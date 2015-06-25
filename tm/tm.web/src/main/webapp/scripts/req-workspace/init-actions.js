@@ -151,7 +151,10 @@ define(["jquery", "tree","./permissions-rules", "workspace.contextual-content", 
 			// *****************  search  ********************
 			
 			$("#search-tree-button").on("click", function(){
-				document.location.href = squashtm.app.contextRoot + "/advanced-search?searchDomain=requirement";
+			  // get value of Campaign Workspace Cookie
+				var cookieValueSelect = $.cookie("jstree_select");
+				var cookieValueOpen = $.cookie("jstree_open");
+				document.location.href = squashtm.app.contextRoot + "/advanced-search?searchDomain=requirement&cookieValueSelect=" + encodeURIComponent(cookieValueSelect) + "&cookieValueOpen=" + encodeURIComponent(cookieValueOpen);
 			});
 
 			// ***************** deletion ********************

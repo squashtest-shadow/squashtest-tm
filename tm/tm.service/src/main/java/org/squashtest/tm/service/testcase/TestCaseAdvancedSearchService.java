@@ -30,8 +30,6 @@ import org.squashtest.tm.domain.search.SearchExportCSVModel;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.service.advancedsearch.AdvancedSearchService;
 
-
-
 public interface TestCaseAdvancedSearchService extends AdvancedSearchService{
 
 	

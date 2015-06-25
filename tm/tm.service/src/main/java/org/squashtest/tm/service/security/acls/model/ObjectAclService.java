@@ -106,4 +106,6 @@ public interface ObjectAclService {
 	 * basically ensures that recent modification affecting the ACL will be taken into account immediately.
 	 */
 	void refreshAcls();
+
+	List<Object[]> retrieveUsersFromIdentityAndClass(long entityId);
 }
