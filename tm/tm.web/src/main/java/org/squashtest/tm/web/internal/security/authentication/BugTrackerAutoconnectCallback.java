@@ -33,6 +33,7 @@ import org.squashtest.csp.core.bugtracker.core.BugTrackerRemoteException;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.csp.core.bugtracker.net.AuthenticationCredentials;
 import org.squashtest.csp.core.bugtracker.service.BugTrackerContext;
+import org.squashtest.csp.core.bugtracker.service.BugTrackerContextHolder;
 import org.squashtest.csp.core.bugtracker.web.BugTrackerContextPersistenceFilter;
 import org.squashtest.tm.domain.IdentifiedUtil;
 import org.squashtest.tm.domain.project.Project;
@@ -62,6 +63,8 @@ public class BugTrackerAutoconnectCallback implements AuthenticationSuccessCallb
 
 	private BugTrackerFinderService bugTrackerFinder;
 	
+	private BugTrackerContextHolder contextHolder;
+	
 	private TaskExecutor taskExecutor;
 
 	public void setProjectFinder(ProjectFinder projectFinder) {
@@ -79,6 +82,12 @@ public class BugTrackerAutoconnectCallback implements AuthenticationSuccessCallb
 	
 	public void setTaskExecutor(TaskExecutor taskExecutor){
 		this.taskExecutor = taskExecutor;
+	}
+	
+	
+
+	public void setContextHolder(BugTrackerContextHolder contextHolder) {
+		this.contextHolder = contextHolder;
 	}
 
 	@Override
@@ -98,6 +107,8 @@ public class BugTrackerAutoconnectCallback implements AuthenticationSuccessCallb
 			taskExecutor.execute(autoconnector);
 		}
 	}
+	
+	
 
 
 	private class AsynchronousBugTrackerAutoconnect implements Runnable{
@@ -122,29 +133,36 @@ public class BugTrackerAutoconnectCallback implements AuthenticationSuccessCallb
 		@Override
 		public void run() {
 
-			SecurityContextHolder.setContext(secContext);
-			
 			BugTrackerContext newContext = new BugTrackerContext();
-			List<BugTracker> bugTrackers = findBugTrackers();
 			
-			for (BugTracker bugTracker : bugTrackers) {
-				try {
-					LOGGER.debug("try connexion of bug-tracker : {}", bugTracker.getName());
-					bugTrackersLocalService.setCredentials(username, password, bugTracker);
-					// if success, store the credential in context
-					LOGGER.debug("add credentials for bug-tracker : {}", bugTracker.getName());
-					AuthenticationCredentials creds = new AuthenticationCredentials(username, password);
-					newContext.setCredentials(bugTracker, creds);
-					
-				} catch (BugTrackerRemoteException ex) {
-					LOGGER.info("failed to connect user '" + username + "' to the bugtracker " + bugTracker.getName()
-							+ " with the supplied "
-							+ "credentials. He will have to connect manually later. Exception thrown is :", ex);
+			SecurityContextHolder.setContext(secContext);
+			contextHolder.setContext(newContext);
+			
+			try{
+				List<BugTracker> bugTrackers = findBugTrackers();
+				
+				for (BugTracker bugTracker : bugTrackers) {
+					try {
+						LOGGER.debug("try connexion of bug-tracker : {}", bugTracker.getName());
+						bugTrackersLocalService.setCredentials(username, password, bugTracker);
+						// if success, store the credential in context
+						LOGGER.debug("add credentials for bug-tracker : {}", bugTracker.getName());
+						AuthenticationCredentials creds = new AuthenticationCredentials(username, password);
+						newContext.setCredentials(bugTracker, creds);
+						
+					} catch (BugTrackerRemoteException ex) {
+						LOGGER.info("failed to connect user '" + username + "' to the bugtracker " + bugTracker.getName()
+								+ " with the supplied "
+								+ "credentials. He will have to connect manually later. Exception thrown is :", ex);
+					}
 				}
+				
+				// store context into session
+				mergeIntoSession(newContext);
+				}
+			finally{
+				contextHolder.clearContext();
 			}
-			
-			// store context into session
-			mergeIntoSession(newContext);
 	
 		}
 		
@@ -163,12 +181,13 @@ public class BugTrackerAutoconnectCallback implements AuthenticationSuccessCallb
 			if (existingContext == null){
 				//if no existing context was found the newContext is entirely stored
 				session.setAttribute(BugTrackerContextPersistenceFilter.BUG_TRACKER_CONTEXT_SESSION_KEY, newContext);
+				LOGGER.trace("BugTrackerAutoconnectCallback : storing into session #{} new context #{}", session.getId(),newContext.toString());
 			}
 			else{
 				existingContext.absorb(newContext);
+				LOGGER.trace("BugTrackerAutoconnectCallback : done merging into session #{} and context #{}", session.getId(),existingContext.toString());
 			}
-			
-			session.setAttribute(BugTrackerContextPersistenceFilter.BUG_TRACKER_CONTEXT_SESSION_KEY, newContext);
+
 			LOGGER.debug("BugTrackerContext stored to session");
 		}
 

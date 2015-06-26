@@ -89,6 +89,7 @@ public class AuthenticationSuccessCallbacksHandler extends
 				
 		for (AuthenticationSuccessCallback action : callbacks){
 			try{
+				LOGGER.trace("AuthenticationSuccessHandler : ceating btcontext in session #{} for user '{}'", session.getId(), user);
 				action.onSuccess(user, password, session);
 			}catch(Exception ex){
 				LOGGER.info("Authentication success callbacks : callback class '"
