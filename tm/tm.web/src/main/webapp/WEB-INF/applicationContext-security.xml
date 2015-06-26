@@ -230,6 +230,7 @@
           <beans:property name="projectFinder" ref="squashtest.tm.service.ProjectManagerService" />
           <beans:property name="bugTrackerFinder" ref="squashtest.tm.service.BugTrackerManagerService" />
           <beans:property name="taskExecutor" ref="core.executor.service" />
+          <beans:property name="contextHolder" ref="squashtest.core.bugtracker.BugTrackerContextHolder" />
         </beans:bean>
       </beans:list>
     </beans:property>

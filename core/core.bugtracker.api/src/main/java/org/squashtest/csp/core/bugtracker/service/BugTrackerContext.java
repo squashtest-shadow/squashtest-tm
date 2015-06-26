@@ -25,6 +25,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.csp.core.bugtracker.net.AuthenticationCredentials;
 
@@ -36,6 +38,10 @@ import org.squashtest.csp.core.bugtracker.net.AuthenticationCredentials;
  */
 @SuppressWarnings("serial")
 public class BugTrackerContext implements Serializable {
+	
+	private static final Logger LOGGER = LoggerFactory.getLogger(BugTrackerContext.class);
+	
+	
 	Map<Long, AuthenticationCredentials> bugTrackersCredentials = new HashMap<Long, AuthenticationCredentials>();
 
 	public AuthenticationCredentials getCredentials(BugTracker bugTracker) {
@@ -43,6 +49,8 @@ public class BugTrackerContext implements Serializable {
 	}
 
 	public void setCredentials(BugTracker bugTracker, AuthenticationCredentials credentials) {
+		String login = (credentials != null) ? credentials.getUsername() : null;
+		LOGGER.trace("BugTrackerContext #{} : settings credentials for user '{}' (set credentials)", this.toString(), login);
 		bugTrackersCredentials.put(bugTracker.getId(), credentials);
 	}
 
@@ -65,6 +73,7 @@ public class BugTrackerContext implements Serializable {
 			AuthenticationCredentials creds = anotherEntry.getValue();
 			
 			if (! bugTrackersCredentials.containsKey(id)){
+				LOGGER.trace("BugTrackerContext #{} : settings credentials for user '{}' (via merge)",this.toString(), creds.getUsername());
 				bugTrackersCredentials.put(id, creds);
 			}
 		}
