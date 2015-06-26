@@ -26,6 +26,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.squashtest.tm.core.foundation.lang.MathsUtils;
 import org.squashtest.tm.domain.search.AdvancedSearchIndexMonitoring;
 import org.squashtest.tm.domain.search.AdvancedSearchIndexMonitoringForRequirementVersions;
 import org.squashtest.tm.domain.search.AdvancedSearchIndexMonitoringForTestcases;
@@ -71,15 +72,15 @@ public class AdvancedSearchIndexingController {
 		
 		model.setTotalEntities(AdvancedSearchIndexMonitoring.getAddToTotalCount());
 		model.setWrittenEntities(AdvancedSearchIndexMonitoring.getDocumentsBuilt());
-		model.setProgressPercentage(AdvancedSearchIndexMonitoring.getProgressPercentage()*100);
+		model.setProgressPercentage(((Double)(AdvancedSearchIndexMonitoring.getProgressPercentage()*100)).intValue());
 		
 		model.setTotalEntitiesForTestcases(AdvancedSearchIndexMonitoringForTestcases.getAddToTotalCount());
 		model.setWrittenEntitiesForTestcases(AdvancedSearchIndexMonitoringForTestcases.getDocumentsBuilt());
-		model.setProgressPercentageForTestcases(AdvancedSearchIndexMonitoringForTestcases.getProgressPercentage()*100);
+		model.setProgressPercentageForTestcases(((Double)(AdvancedSearchIndexMonitoringForTestcases.getProgressPercentage()*100)).intValue());
 	
 		model.setTotalEntitiesForRequirementVersions(AdvancedSearchIndexMonitoringForRequirementVersions.getAddToTotalCount());
 		model.setWrittenEntitiesForRequirementVersions(AdvancedSearchIndexMonitoringForRequirementVersions.getDocumentsBuilt());
-		model.setProgressPercentageForRequirementVersions(AdvancedSearchIndexMonitoringForRequirementVersions.getProgressPercentage()*100);
+		model.setProgressPercentageForRequirementVersions(((Double)(AdvancedSearchIndexMonitoringForRequirementVersions.getProgressPercentage()*100)).intValue());
 		
 		return model;
 	} 	
