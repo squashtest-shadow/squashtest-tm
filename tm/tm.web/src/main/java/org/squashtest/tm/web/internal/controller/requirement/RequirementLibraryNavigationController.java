@@ -39,7 +39,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -96,9 +95,6 @@ public class RequirementLibraryNavigationController extends
 	private Provider<RequirementLibraryTreeNodeBuilder> requirementLibraryTreeNodeBuilder;
 	@Inject
 	private RequirementLibraryNavigationService requirementLibraryNavigationService;
-
-	@Inject
-	private MilestoneFinderService milestoneFinder;
 
 	@Inject
 	private FeatureManager featureManager;
