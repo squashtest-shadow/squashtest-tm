@@ -52,7 +52,7 @@ define(["jquery", "squash.dateutils", "squash.attributeparser", "squash.statusfa
 			if (opts.url){
 				$.ajax({
 					type : 'GET',
-					url : opts.url+'/general',
+					url : opts.url,
 					dataType : 'json'
 				})
 				.done(function(json){
