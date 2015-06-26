@@ -162,7 +162,7 @@ define(
 									var file = attach[i].files[0];
 									formData.append("attachment[]", file);
 								}
-							}
+						
 							
 							// Catch if there's a JDBC Exception
 								
@@ -176,6 +176,10 @@ define(
 								}
 							};
 							xhr.send(formData);
+							} else { //no attach
+								
+								self.close();
+							}
 						} else {
 							// for browser that don't support xhr2, like IE9.
 
