@@ -48,6 +48,7 @@ import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.Predicate;
 import org.hibernate.annotations.Type;
 import org.hibernate.search.annotations.Analyze;
 import org.hibernate.search.annotations.DocumentId;
@@ -311,8 +312,15 @@ public class Milestone  {
 	public boolean isOneVersionAlreadyBound(RequirementVersion version) {
 
 
-		// check that no other version of this requirement is bound already
-		Collection<RequirementVersion> allVersions = version.getRequirement().getRequirementVersions();
+		// check that no other version of this requirement is bound already to this milestone
+		Collection<RequirementVersion> allVersions = new ArrayList<RequirementVersion>(version.getRequirement().getRequirementVersions());
+		CollectionUtils.filter(allVersions, new Predicate() {
+			
+			@Override
+			public boolean evaluate(Object reqV) {
+				return ((RequirementVersion) reqV).getMilestones().contains(this);
+			}
+		});
 
 		if (CollectionUtils.containsAny(requirementVersions, allVersions)) {
 			return true;
