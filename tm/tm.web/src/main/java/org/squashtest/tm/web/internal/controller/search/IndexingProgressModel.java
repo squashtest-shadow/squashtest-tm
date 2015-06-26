@@ -22,22 +22,22 @@ package org.squashtest.tm.web.internal.controller.search;
 
 public class IndexingProgressModel {
 
-	private double progressPercentage;
+	private int progressPercentage;
 	private long writtenEntities;
 	private long totalEntities;
 
-	private double progressPercentageForTestcases;
+	private int progressPercentageForTestcases;
 	private long writtenEntitiesForTestcases;
 	private long totalEntitiesForTestcases;
 	
-	private double progressPercentageForRequirementVersions;
+	private int progressPercentageForRequirementVersions;
 	private long writtenEntitiesForRequirementVersions;
 	private long totalEntitiesForRequirementVersions;
 	
-	public double getProgressPercentage() {
+	public int getProgressPercentage() {
 		return progressPercentage;
 	}
-	public void setProgressPercentage(double progressPercentage) {
+	public void setProgressPercentage(int progressPercentage) {
 		this.progressPercentage = progressPercentage;
 	}
 	public long getWrittenEntities() {
@@ -52,11 +52,11 @@ public class IndexingProgressModel {
 	public void setTotalEntities(long totalEntities) {
 		this.totalEntities = totalEntities;
 	}
-	public double getProgressPercentageForTestcases() {
+	public int getProgressPercentageForTestcases() {
 		return progressPercentageForTestcases;
 	}
 	public void setProgressPercentageForTestcases(
-			double progressPercentageForTestcases) {
+			int progressPercentageForTestcases) {
 		this.progressPercentageForTestcases = progressPercentageForTestcases;
 	}
 	public long getWrittenEntitiesForTestcases() {
@@ -71,11 +71,11 @@ public class IndexingProgressModel {
 	public void setTotalEntitiesForTestcases(long totalEntitiesForTestcases) {
 		this.totalEntitiesForTestcases = totalEntitiesForTestcases;
 	}
-	public double getProgressPercentageForRequirementVersions() {
+	public int getProgressPercentageForRequirementVersions() {
 		return progressPercentageForRequirementVersions;
 	}
 	public void setProgressPercentageForRequirementVersions(
-			double progressPercentageForRequirementVersions) {
+			int progressPercentageForRequirementVersions) {
 		this.progressPercentageForRequirementVersions = progressPercentageForRequirementVersions;
 	}
 	public long getWrittenEntitiesForRequirementVersions() {
