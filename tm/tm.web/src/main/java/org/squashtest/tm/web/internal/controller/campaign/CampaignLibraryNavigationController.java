@@ -25,7 +25,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -65,7 +64,6 @@ import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.service.campaign.CampaignFinder;
 import org.squashtest.tm.service.campaign.CampaignLibraryNavigationService;
 import org.squashtest.tm.service.campaign.CampaignModificationService;
-import org.squashtest.tm.service.campaign.CustomCampaignModificationService;
 import org.squashtest.tm.service.campaign.IterationModificationService;
 import org.squashtest.tm.service.deletion.OperationReport;
 import org.squashtest.tm.service.deletion.SuppressionPreviewReport;
@@ -105,8 +103,7 @@ LibraryNavigationController<CampaignLibrary, CampaignFolder, CampaignLibraryNode
 
 	@Inject
 	private CampaignModificationService campaignModService;
-	@Inject
-	private CustomCampaignModificationService customCampaignModService;
+
 	@Inject
 	private Provider<IterationNodeBuilder> iterationNodeBuilder;
 	@Inject

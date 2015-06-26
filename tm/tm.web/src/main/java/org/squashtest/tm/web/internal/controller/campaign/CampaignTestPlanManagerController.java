@@ -50,7 +50,6 @@ import org.squashtest.tm.domain.testcase.TestCaseLibraryNode;
 import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.service.campaign.CampaignTestPlanManagerService;
 import org.squashtest.tm.service.campaign.IndexedCampaignTestPlanItem;
-import org.squashtest.tm.service.milestone.MilestoneFinderService;
 import org.squashtest.tm.web.internal.argumentresolver.MilestoneConfigResolver.CurrentMilestone;
 import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.controller.milestone.MilestoneFeatureConfiguration;
@@ -88,8 +87,6 @@ public class CampaignTestPlanManagerController {
 	@Inject
 	private InternationalizationHelper messageSource;
 
-	@Inject
-	private MilestoneFinderService milestoneFinder;
 
 	@Inject
 	private MilestoneUIConfigurationService milestoneConfService;

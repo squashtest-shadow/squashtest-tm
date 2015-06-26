@@ -23,7 +23,6 @@ package org.squashtest.tm.service.internal.repository;
 import java.util.Collection;
 import java.util.List;
 
-import org.squashtest.tm.core.dynamicmanager.annotation.QueryParam;
 import org.squashtest.tm.core.foundation.collection.ColumnFiltering;
 import org.squashtest.tm.core.foundation.collection.PagingAndMultiSorting;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;

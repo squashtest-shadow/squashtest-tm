@@ -88,9 +88,6 @@ public class VerifyingTestCaseManagerController {
 	@Inject
 	private RequirementVersionManagerService requirementVersionFinder;
 
-	@Inject
-	private MilestoneFinderService milestoneFinder;
-
 
 	@Inject
 	private MilestoneUIConfigurationService milestoneConfService;
