@@ -171,7 +171,7 @@ define([ "jquery", "backbone", "jeditable.simpleJEditable", "app/ws/squashtm.not
 			var component = $('td.parameter-name', row);
 			var validate = function(value, settings){
 				settings.oldName = settings.oldName === undefined ? data['name'] : settings.oldName;
-				var pattern = /^[A-Za-z0-9_-]{1,255}$/ ;
+				var pattern = /^[A-Za-z0-9_\-]{1,255}$/ ;
 				if (!pattern.test(value)){
 					notification.showError(translator.get("message.parameterInvalidPattern"));
 					return settings.oldName;
