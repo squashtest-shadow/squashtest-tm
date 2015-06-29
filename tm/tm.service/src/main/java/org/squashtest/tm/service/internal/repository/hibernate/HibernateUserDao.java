@@ -47,7 +47,7 @@ import org.squashtest.tm.service.internal.repository.UserDao;
 public class HibernateUserDao extends HibernateEntityDao<User> implements UserDao {
 
 
-	static private String FIND_ALL_MANAGER_AND_ADMIN = "SELECT  member.party_id FROM  core_group_member member inner join core_group_authority cga on cga.group_id=member.group_id WHERE cga.authority = 'ROLE_ADMIN' UNION Select auth.PARTY_ID From  CORE_PARTY_AUTHORITY auth where auth.AUTHORITY = 'ROLE_TM_PROJECT_MANAGER'";
+	static private String FIND_ALL_MANAGER_AND_ADMIN = "SELECT  member.PARTY_ID FROM  CORE_GROUP_MEMBER member inner join CORE_GROUP_AUTHORITY cga on cga.GROUP_ID=member.GROUP_ID WHERE cga.AUTHORITY = 'ROLE_ADMIN' UNION Select auth.PARTY_ID From  CORE_PARTY_AUTHORITY auth where auth.AUTHORITY = 'ROLE_TM_PROJECT_MANAGER'";
 
 	@Inject
 	private SessionFactory sessionFactory;
