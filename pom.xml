@@ -29,9 +29,9 @@
   </modules>
 
   <properties>
-    <java.version>1.7</java.version>
     <groovy.version>2.0.7</groovy.version>
     <hibernate.version>4.2.2.Final</hibernate.version>
+    <java.version>1.7</java.version>
 
     <org.osgi.framework.system.packages.extra>com.sun.org.apache.xalan.internal.res,com.sun.org.apache.xml.internal.utils,com.sun.org.apache.xpath.internal,com.sun.org.apache.xpath.internal.jaxp,com.sun.org.apache.xpath.internal.objects</org.osgi.framework.system.packages.extra>
 
@@ -527,8 +527,7 @@
         </file>
       </activation>
       <build>
-        <plugins>
-        </plugins>
+        <plugins />
       </build>
     </profile>
 
@@ -636,6 +635,7 @@
           <plugin>
             <groupId>org.codehaus.gmaven</groupId>
             <artifactId>gmaven-plugin</artifactId>
+            <version>1.5</version>
             <executions>
               <execution>
                 <id>add-windows-hg-hooks</id>
