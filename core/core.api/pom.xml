@@ -16,31 +16,33 @@
     <sonar.java.coveragePlugin>cobertura</sonar.java.coveragePlugin>
   </properties>
 
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>${project.groupId}</groupId>
+        <artifactId>squash-tm-bom</artifactId>
+        <version>${project.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
   <dependencies>
 
     <dependency>
       <groupId>commons-lang</groupId>
       <artifactId>commons-lang</artifactId>
     </dependency>
-    <!-- ====== SQUASHTEST ====== -->
+
     <dependency>
       <groupId>org.squashtest.tm</groupId>
       <artifactId>core.foundation</artifactId>
       <version>${project.version}</version>
     </dependency>
-
     <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>org.springframework.context</artifactId>
-    </dependency>
-    <!-- ====== /SQUASHTEST ====== -->
-
-    <dependency>
-      <groupId>org.squashtest.tm</groupId>
-      <artifactId>springdm-bundle-dependencies</artifactId>
-      <version>${project.version}</version>
-      <type>pom</type>
-      <scope>compile</scope>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter</artifactId>
     </dependency>
 
     <dependency>
@@ -48,6 +50,7 @@
       <artifactId>com.springsource.javax.inject</artifactId>
       <scope>test</scope>
     </dependency>
+
     <dependency>
       <groupId>org.squashtest.tm</groupId>
       <artifactId>spock-test-dependencies</artifactId>
