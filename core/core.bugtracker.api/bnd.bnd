@@ -1,6 +1,0 @@
--include: pom.xml
--nouses: true
-Import-Package: !org.squashtest.csp.core.bugtracker*,\
-	org.hibernate.proxy,\
-	javassist.util.proxy,\
-	*
