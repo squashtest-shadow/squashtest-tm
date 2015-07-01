@@ -84,10 +84,6 @@ public class ConfigAdministrationController implements ApplicationContextAware, 
 	private UserManagerService userManager;
 
 	/**
-	 * bundle context needed to create osgi event
-	 */
-	private BundleContext bundleCtx;
-	/**
 	 * application context needed to create osgi event
 	 */
 	private ApplicationContext applicationCtx;
@@ -162,7 +158,7 @@ public class ConfigAdministrationController implements ApplicationContextAware, 
 
 
 	private void sendUpdateEvent(){
-		ConfigUpdateEvent event = new ConfigUpdateEvent(applicationCtx, bundleCtx.getBundle());
+		ConfigUpdateEvent event = new ConfigUpdateEvent(applicationCtx);
 		publisher.multicastEvent(event);
 	}
 

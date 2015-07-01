@@ -20,7 +20,6 @@
  */
 package org.squashtest.tm.search.bridge;
 
-import org.jgroups.protocols.relay.Relayer.Bridge;
 import org.squashtest.tm.domain.requirement.RequirementCriticality;
 import org.squashtest.tm.domain.search.LevelEnumBridge;
 

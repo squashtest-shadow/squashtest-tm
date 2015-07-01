@@ -43,6 +43,7 @@
     <thymeleaf.version>2.1.4.A</thymeleaf.version>
 
     <verbose.compiler>false</verbose.compiler>
+    <aspectj.tm.version>1.8.5</aspectj.tm.version>
   </properties>
 
   <dependencyManagement>
@@ -99,43 +100,6 @@
     </dependencies>
   </dependencyManagement>
 
-  <dependencies>
-    <dependency>
-      <groupId>org.springframework.security.oauth</groupId>
-      <artifactId>spring-security-oauth2</artifactId>
-      <exclusions>
-        <exclusion>
-          <groupId>org.springframework</groupId>
-          <artifactId>spring-core</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.springframework.security</groupId>
-          <artifactId>spring-security-web</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.springframework.security</groupId>
-          <artifactId>spring-security-config</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.springframework.security</groupId>
-          <artifactId>spring-security-core</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.springframework</groupId>
-          <artifactId>spring-webmvc</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.springframework</groupId>
-          <artifactId>spring-beans</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.springframework</groupId>
-          <artifactId>spring-context</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-  </dependencies>
-
   <build>
     <pluginManagement>
       <plugins>
@@ -155,6 +119,31 @@
               <groupId>org.codehaus.groovy</groupId>
               <artifactId>groovy-eclipse-compiler</artifactId>
               <version>${groovy-eclipse-compiler.version}</version>
+            </dependency>
+          </dependencies>
+        </plugin>
+
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>aspectj-maven-plugin</artifactId>
+          <version>1.4</version>
+          <executions>
+            <execution>
+              <goals>
+                <goal>compile</goal>
+                <goal>test-compile</goal>
+              </goals>
+            </execution>
+          </executions>
+          <configuration>
+            <source>${jdk.version}</source>
+            <target>${jdk.version}</target>
+          </configuration>
+          <dependencies>
+            <dependency>
+              <groupId>org.aspectj</groupId>
+              <artifactId>aspectjtools</artifactId>
+              <version>${aspectj.tm.version}</version>
             </dependency>
           </dependencies>
         </plugin>
