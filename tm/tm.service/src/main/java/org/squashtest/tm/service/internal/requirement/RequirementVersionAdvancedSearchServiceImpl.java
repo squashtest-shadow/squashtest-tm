@@ -20,15 +20,6 @@
  */
 package org.squashtest.tm.service.internal.requirement;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Locale;
-
-import javax.inject.Inject;
-import javax.inject.Provider;
-
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.Sort;
 import org.apache.lucene.search.SortField;
@@ -39,11 +30,7 @@ import org.hibernate.search.Search;
 import org.hibernate.search.query.dsl.QueryBuilder;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
-import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
-import org.squashtest.tm.core.foundation.collection.PagingAndMultiSorting;
-import org.squashtest.tm.core.foundation.collection.PagingBackedPagedCollectionHolder;
-import org.squashtest.tm.core.foundation.collection.SortOrder;
-import org.squashtest.tm.core.foundation.collection.Sorting;
+import org.squashtest.tm.core.foundation.collection.*;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.search.AdvancedSearchModel;
@@ -52,6 +39,10 @@ import org.squashtest.tm.service.internal.advancedsearch.AdvancedSearchServiceIm
 import org.squashtest.tm.service.internal.infolist.InfoListItemComparatorSource;
 import org.squashtest.tm.service.internal.repository.ProjectDao;
 import org.squashtest.tm.service.requirement.RequirementVersionAdvancedSearchService;
+
+import javax.inject.Inject;
+import javax.inject.Provider;
+import java.util.*;
 
 @Service("squashtest.tm.service.RequirementVersionAdvancedSearchService")
 public class RequirementVersionAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl implements
@@ -67,10 +58,10 @@ public class RequirementVersionAdvancedSearchServiceImpl extends AdvancedSearchS
 	private Provider<RequirementVersionSearchExportCSVModelImpl> requirementVersionSearchExportCSVModelProvider;
 
 	private final static SortField[] DEFAULT_SORT_REQUIREMENTS = new SortField[] {
-			new SortField("requirement.project.name", SortField.STRING, false),
-			new SortField("reference", SortField.STRING, false), new SortField("criticality", SortField.STRING, false),
-			new SortField("category", SortField.STRING, false), new SortField("status", SortField.STRING, false),
-			new SortField("labelUpperCased", SortField.STRING, false) };
+			new SortField("requirement.project.name", SortField.Type.STRING, false),
+			new SortField("reference", SortField.Type.STRING, false), new SortField("criticality", SortField.Type.STRING, false),
+			new SortField("category", SortField.Type.STRING, false), new SortField("status", SortField.Type.STRING, false),
+			new SortField("labelUpperCased", SortField.Type.STRING, false) };
 
 	private final static List<String> LONG_SORTABLE_FIELDS = Arrays.asList("requirement.id", "versionNumber", "id",
 			"requirement.versions", "testcases", "attachments");
@@ -132,12 +123,12 @@ public class RequirementVersionAdvancedSearchServiceImpl extends AdvancedSearchS
 			fieldName = formatSortedFieldName(fieldName);
 
 			if (LONG_SORTABLE_FIELDS.contains(fieldName)) {
-				sortFieldArray[i] = new SortField(fieldName, SortField.LONG, isReverse);
+				sortFieldArray[i] = new SortField(fieldName, SortField.Type.LONG, isReverse);
 			} else if ("category".equals(fieldName)) {
 				sortFieldArray[i] = new SortField(fieldName, new InfoListItemComparatorSource(source, locale),
 						isReverse);
 			} else {
-				sortFieldArray[i] = new SortField(fieldName, SortField.STRING, isReverse);
+				sortFieldArray[i] = new SortField(fieldName, SortField.Type.STRING, isReverse);
 			}
 		}
 

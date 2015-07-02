@@ -99,9 +99,9 @@ TestCaseAdvancedSearchService {
 	private MessageSource source;
 
 	private final static SortField[] DEFAULT_SORT_TESTCASES = new SortField[] {
-		new SortField("project.name", SortField.STRING, false),
-		new SortField("reference", SortField.STRING, false), new SortField("importance", SortField.STRING, false),
-		new SortField("label", SortField.STRING, false) };
+		new SortField("project.name", SortField.Type.STRING, false),
+		new SortField("reference", SortField.Type.STRING, false), new SortField("importance", SortField.Type.STRING, false),
+		new SortField("label", SortField.Type.STRING, false) };
 
 	private final static List<String> LONG_SORTABLE_FIELDS = Arrays.asList("requirements", "steps", "id", "iterations",
 			"attachments");
@@ -235,13 +235,13 @@ TestCaseAdvancedSearchService {
 			fieldName = formatSortFieldName(fieldName);
 
 			if (LONG_SORTABLE_FIELDS.contains(fieldName)) {
-				sortFieldArray[i] = new SortField(fieldName, SortField.LONG, isReverse);
+				sortFieldArray[i] = new SortField(fieldName, SortField.Type.LONG, isReverse);
 			}
 			else if ("nature".equals(fieldName) || "type".equals(fieldName)) {
 				sortFieldArray[i] = new SortField(fieldName, new InfoListItemComparatorSource(source,
 						locale), isReverse);
 			} else {
-				sortFieldArray[i] = new SortField(fieldName, SortField.STRING, isReverse);
+				sortFieldArray[i] = new SortField(fieldName, SortField.Type.STRING, isReverse);
 			}
 		}
 
