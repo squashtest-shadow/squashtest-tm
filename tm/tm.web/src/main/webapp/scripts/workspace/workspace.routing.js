@@ -158,6 +158,9 @@ define([], function(){
 		'search-reqV.mass-change.associable-milestone'  : root + '/advanced-search/milestones/reqV-mass-modif-associables/{\\d+}',
 		'search-reqV.mass-change.data'  : root + '/advanced-search/milestones/reqV-mass-modif-data/{\\d+}',
 		'search-reqV.mass-change.bindmilestones' : root + '/advanced-search/reqVersions/{\\d+}/milestones',
+		'project.new' 							: root + '/projects/new',
+		'generic.template.new' 					: root + '/generic-projects/new-template',
+		'template.new' 							: root + '/project-templates/new',
 
 		// helper methods
 		buildURL : function(){
