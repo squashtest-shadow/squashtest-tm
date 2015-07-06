@@ -33,6 +33,7 @@ import javax.inject.Inject;
 import org.springframework.beans.factory.ObjectFactory;
 import org.squashtest.tm.domain.library.NodeContainer;
 import org.squashtest.tm.domain.library.TreeNode;
+import org.squashtest.tm.service.annotation.CacheScope;
 import org.squashtest.tm.service.internal.repository.EntityDao;
 import org.squashtest.tm.service.internal.repository.GenericDao;
 
@@ -117,7 +118,7 @@ public class PasteStrategy<CONTAINER extends NodeContainer<NODE>, NODE extends T
 	private Map<NodeContainer<TreeNode>, Collection<TreeNode>> sourceLayerParents;
 
 	// ******************* code *****************************
-
+	@CacheScope
 	public List<NODE> pasteNodes(long containerId, List<Long> list) {
 
 		// fetch
@@ -143,6 +144,7 @@ public class PasteStrategy<CONTAINER extends NodeContainer<NODE>, NODE extends T
 		return outputList;
 	}
 
+	@CacheScope
 	public List<NODE> pasteNodes(long containerId, List<Long> list, int position) {
 
 		// fetch

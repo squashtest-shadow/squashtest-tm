@@ -88,8 +88,6 @@ LibraryNavigationController<TestCaseLibrary, TestCaseFolder, TestCaseLibraryNode
 	@Inject
 	private TestCaseLibraryNavigationService testCaseLibraryNavigationService;
 
-	@Inject
-	private MilestoneFinderService milestoneFinder;
 
 	private static final String JASPER_EXPORT_FILE = "/WEB-INF/reports/test-case-export.jasper";
 	private static final String ADD_TEST_CASE = "add-test-case";
