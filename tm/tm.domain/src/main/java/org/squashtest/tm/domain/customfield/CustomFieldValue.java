@@ -23,6 +23,7 @@ package org.squashtest.tm.domain.customfield;
 import java.text.ParseException;
 import java.util.Date;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorType;
@@ -67,7 +68,7 @@ public class CustomFieldValue implements Identified, SingleValuedCustomFieldValu
 	@Enumerated(EnumType.STRING)
 	protected BindableEntity boundEntityType;
 
-	@ManyToOne
+	@ManyToOne(cascade=CascadeType.DETACH)
 	@JoinColumn(name = "CFB_ID")
 	protected CustomFieldBinding binding;
 

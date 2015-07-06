@@ -23,6 +23,7 @@ package org.squashtest.tm.domain.resource;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -97,7 +98,7 @@ public abstract class Resource implements AttachmentHolder, Identified{
 	private String description;
 
 	@NotNull
-	@OneToOne(cascade = { CascadeType.ALL }, orphanRemoval = true)
+	@OneToOne(cascade = { CascadeType.ALL }, orphanRemoval = true, fetch=FetchType.LAZY)
 	@JoinColumn(name = "ATTACHMENT_LIST_ID")
 	private final AttachmentList attachmentList = new AttachmentList();
 

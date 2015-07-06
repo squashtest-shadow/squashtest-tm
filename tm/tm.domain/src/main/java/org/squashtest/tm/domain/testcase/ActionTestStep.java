@@ -56,11 +56,11 @@ public class ActionTestStep extends TestStep implements BoundEntity, AttachmentH
 	@Type(type="org.hibernate.type.StringClobType")
 	private String expectedResult = "";
 
-	@OneToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+	@OneToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH })
 	@JoinColumn(name = "ATTACHMENT_LIST_ID")
 	private final AttachmentList attachmentList = new AttachmentList();
 
-	@ManyToMany(cascade = {CascadeType.REFRESH})
+	@ManyToMany(cascade = {CascadeType.REFRESH, CascadeType.DETACH})
 	@JoinTable(name = "VERIFYING_STEPS", joinColumns = @JoinColumn(name = "TEST_STEP_ID", updatable = false, insertable = false), inverseJoinColumns = @JoinColumn(name = "REQUIREMENT_VERSION_COVERAGE_ID", updatable = false, insertable = false))
 	private Set<RequirementVersionCoverage> requirementVersionCoverages= new HashSet<RequirementVersionCoverage>();
 

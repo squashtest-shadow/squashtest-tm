@@ -50,4 +50,8 @@ public interface IndexationService {
 
 	void reindexTestCases(List<TestCase> testCaseList);
 
+	void batchReindexTc(List<Long> tcIdsToIndex);
+
+	void batchReindexReqVersion(List<Long> reqVersionIdsToIndex);
+
 }

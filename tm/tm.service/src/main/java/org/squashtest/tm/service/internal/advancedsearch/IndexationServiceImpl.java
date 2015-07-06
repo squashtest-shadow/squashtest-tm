@@ -29,8 +29,13 @@ import java.util.List;
 import javax.inject.Inject;
 
 import org.hibernate.CacheMode;
+import org.hibernate.Criteria;
+import org.hibernate.FlushMode;
+import org.hibernate.ScrollMode;
+import org.hibernate.ScrollableResults;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Restrictions;
 import org.hibernate.search.FullTextSession;
 import org.hibernate.search.Search;
 import org.hibernate.search.batchindexing.MassIndexerProgressMonitor;
@@ -188,6 +193,44 @@ public class IndexationServiceImpl extends AdvancedSearchServiceImpl implements 
 		ftSession.createIndexer(TestCase.class).purgeAllOnStart(true).threadsToLoadObjects(1)
 				.threadsForSubsequentFetching(1).batchSizeToLoadObjects(10).cacheMode(CacheMode.NORMAL)
 				.progressMonitor(monitor).start();
+	}
+
+	@Override
+	public void batchReindexTc(List<Long> tcIdsToIndex) {
+		batchReindex(TestCase.class, tcIdsToIndex);	
+	}
+	
+	private <T> void batchReindex(Class<T> entity, List<Long> ids){
+		Session session = sessionFactory.getCurrentSession();
+		
+		session.flush();
+		session.clear();
+		
+		// get FullText session
+		FullTextSession ftSession = Search.getFullTextSession(session);
+		ftSession.setFlushMode(FlushMode.MANUAL);
+		ftSession.setCacheMode(CacheMode.IGNORE);
+		//define criteria to load entities
+		Criteria query = session.createCriteria(entity);
+		query.add(Restrictions.in("id", ids));
+		// update index going through the search results
+	
+		int batch = 0;
+		ScrollableResults scroll = query.scroll(ScrollMode.FORWARD_ONLY); 
+		while (scroll.next()) {
+		   ftSession.index(scroll.get(0)); //indexing of a single entity
+		       if (batch % 20 == 0) { // commit batch                
+		           ftSession.flushToIndexes();                
+		           ftSession.clear();   
+		        
+		      }
+		}
+	}
+
+	@Override
+	public void batchReindexReqVersion(List<Long> reqVersionIdsToIndex) {
+		batchReindex(RequirementVersion.class, reqVersionIdsToIndex);
+		
 	}
 
 }

@@ -375,4 +375,10 @@ public class FirstLayerTreeNodeMover implements PasteOperation, InitializingBean
 
 	}
 
+	@Override
+	public void reindexAfterCopy() {
+		// do nothing
+		
+	}
+
 }

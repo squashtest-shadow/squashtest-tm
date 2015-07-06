@@ -27,6 +27,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -73,7 +74,7 @@ public class RequirementVersionCoverage implements Identified {
 	private Long id;
 
 	@NotNull
-	@ManyToOne
+	@ManyToOne(cascade=CascadeType.DETACH)
 	@JoinColumn(name = "VERIFYING_TEST_CASE_ID", referencedColumnName = "TCLN_ID")
 	private TestCase verifyingTestCase;
 
@@ -82,7 +83,7 @@ public class RequirementVersionCoverage implements Identified {
 	private RequirementVersion verifiedRequirementVersion;
 
 	@NotNull
-	@ManyToMany(mappedBy="requirementVersionCoverages")
+	@ManyToMany(mappedBy="requirementVersionCoverages", cascade=CascadeType.DETACH)
 	private Set<ActionTestStep> verifyingSteps = new HashSet<ActionTestStep>();
 
 	/**
@@ -149,6 +150,7 @@ public class RequirementVersionCoverage implements Identified {
 		verifiedRequirementVersion.addRequirementCoverage(this);
 
 	}
+	
 
 	public Long getId() {
 		return id;
@@ -203,9 +205,10 @@ public class RequirementVersionCoverage implements Identified {
 	}
 
 	public RequirementVersionCoverage copyForRequirementVersion(RequirementVersion rvCopy) {
-		RequirementVersionCoverage rvcCopy = new RequirementVersionCoverage(this.verifyingTestCase);
-		rvcCopy.addAllVerifyingSteps(this.verifyingSteps);
-		rvcCopy.setVerifiedRequirementVersion(rvCopy);
+		RequirementVersionCoverage rvcCopy = new RequirementVersionCoverage();
+		rvcCopy.verifyingTestCase = this.verifyingTestCase;
+		rvcCopy.verifiedRequirementVersion = rvCopy;
+		rvcCopy.verifyingSteps.addAll(this.verifyingSteps);
 		return rvcCopy;
 	}
 
@@ -239,7 +242,15 @@ public class RequirementVersionCoverage implements Identified {
 			return null;
 		}
 		// copy verified requirement
-		RequirementVersionCoverage rvcCopy = new RequirementVersionCoverage(this.verifiedRequirementVersion);
+		
+		RequirementVersionCoverage rvcCopy = new RequirementVersionCoverage();
+		/*For performance issue it's better to construct an empty ReqVersionCoverage then set the verifiedRequirementVersion without using the setter
+		If you use the setter or the constructor with verifiedRequirementVersion, you will call addRequirementCoverage on the requirementVersion
+		It's a set so hibernate will load ALL requirementVersionCoverage just to add the new requirementVersionCoverage. It may take a quite
+		long time for the request, and also load alot of entities in the session, resulting in a large increase in flushing time for every operation after
+		this one. When performing copy/paste on data with alot of requirement coverage this increase dramaticaly the time needed to perform the operation
+		See Issue 4943*/
+		rvcCopy.verifiedRequirementVersion = this.verifiedRequirementVersion;
 		// set verifying test case
 		rvcCopy.setVerifyingTestCase(tcCopy);
 		tcCopy.addRequirementCoverage(rvcCopy);

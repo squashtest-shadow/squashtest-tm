@@ -121,7 +121,7 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	private String prerequisite = "";
 
 	@NotNull
-	@OneToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+	@OneToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH })
 	@OrderColumn(name = "STEP_ORDER")
 	@JoinTable(name = "TEST_CASE_STEPS", joinColumns = @JoinColumn(name = "TEST_CASE_ID"), inverseJoinColumns = @JoinColumn(name = "STEP_ID"))
 	@FieldBridge(impl = CollectionSizeBridge.class)
@@ -129,7 +129,7 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	private final List<TestStep> steps = new ArrayList<TestStep>();
 
 	@NotNull
-	@OneToMany(cascade = { CascadeType.REMOVE, CascadeType.REFRESH, CascadeType.MERGE })
+	@OneToMany(cascade = { CascadeType.REMOVE, CascadeType.REFRESH, CascadeType.MERGE, CascadeType.DETACH})
 	@JoinColumn(name = "VERIFYING_TEST_CASE_ID")
 	@FieldBridge(impl = CollectionSizeBridge.class)
 	@Field(name = "requirements", analyze = Analyze.NO, store = Store.YES)
@@ -156,18 +156,19 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	private TestCaseImportance importance = LOW;
 
 	@NotNull
-	@ManyToOne
+	@ManyToOne(cascade=CascadeType.DETACH)
 	@JoinColumn(name = "TC_NATURE")
 	@Field(analyze = Analyze.NO, store = Store.YES)
 	@FieldBridge(impl = InfoListItemBridge.class)
 	private InfoListItem nature = null;
 
 	@NotNull
-	@ManyToOne
+	@ManyToOne(cascade=CascadeType.DETACH)
 	@JoinColumn(name = "TC_TYPE")
 	@Field(analyze = Analyze.NO, store = Store.YES)
 	@FieldBridge(impl = InfoListItemBridge.class)
 	private InfoListItem type = null;
+
 
 	@NotNull
 	@Enumerated(EnumType.STRING)
@@ -194,7 +195,7 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	@FieldBridge(impl = CollectionSizeBridge.class)
 	@Field(analyze=Analyze.NO, store=Store.YES)
 	@IndexedEmbedded
-	@ManyToMany
+	@ManyToMany(cascade=CascadeType.DETACH)
 	@JoinTable(name = "MILESTONE_TEST_CASE", joinColumns = @JoinColumn(name = "TEST_CASE_ID"), inverseJoinColumns = @JoinColumn(name = "MILESTONE_ID"))
 	private Set<Milestone> milestones = new HashSet<Milestone>();
 

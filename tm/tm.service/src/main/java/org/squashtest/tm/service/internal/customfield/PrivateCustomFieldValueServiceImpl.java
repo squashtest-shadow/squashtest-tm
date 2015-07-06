@@ -50,6 +50,7 @@ import org.squashtest.tm.service.annotation.CacheResult;
 import org.squashtest.tm.service.annotation.CachableType;
 import org.squashtest.tm.service.internal.repository.BoundEntityDao;
 import org.squashtest.tm.service.internal.repository.CustomFieldBindingDao;
+import org.squashtest.tm.service.internal.repository.CustomFieldDao;
 import org.squashtest.tm.service.internal.repository.CustomFieldValueDao;
 import org.squashtest.tm.service.internal.repository.CustomFieldValueDao.CustomFieldValuesPair;
 import org.squashtest.tm.service.internal.repository.GenericDao;
@@ -333,7 +334,8 @@ public class PrivateCustomFieldValueServiceImpl implements PrivateCustomFieldVal
 		}
 
 		customFieldValueDao.persist(copies);
-
+		customFieldValueDao.clearFromCache(copies);
+		customFieldValueDao.clearFromCache(sourceValues);
 	}
 
 	/**
@@ -368,6 +370,8 @@ public class PrivateCustomFieldValueServiceImpl implements PrivateCustomFieldVal
 			copies.add(copy);
 		}
 		customFieldValueDao.persist(copies);
+		customFieldValueDao.clearFromCache(copies);
+		customFieldValueDao.clearFromCache(sourceValues);
 
 	}
 	@Override
@@ -436,10 +440,10 @@ public class PrivateCustomFieldValueServiceImpl implements PrivateCustomFieldVal
 
 				updatedCUFValue.setBoundEntity(entity);
 				customFieldValueDao.persist(updatedCUFValue);
-				
+				customFieldValueDao.clearFromCache(updatedCUFValue);
 			}
 		}
-
+		
 		deleteCustomFieldValues(valuesToUpdate);
 		
 
@@ -518,6 +522,7 @@ public class PrivateCustomFieldValueServiceImpl implements PrivateCustomFieldVal
 	private void deleteCustomFieldValues(List<CustomFieldValue> values) {
 		List<Long> valueIds = IdentifiedUtil.extractIds(values);
 		customFieldValueDao.deleteAll(valueIds);
+		customFieldValueDao.clearFromCache(values);
 	}
 
 }

@@ -28,6 +28,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -105,30 +106,30 @@ public class Milestone  {
 	@DateTimeFormat(pattern = "yy-MM-dd")
 	private Date endDate;
 
-	@ManyToMany
+	@ManyToMany(cascade=CascadeType.DETACH)
 	@JoinTable(name = "MILESTONE_BINDING", joinColumns = @JoinColumn(name = "MILESTONE_ID"), inverseJoinColumns = @JoinColumn(name = "PROJECT_ID"))
 	private Set<GenericProject> projects = new HashSet<GenericProject>();
 
-	@ManyToMany
+	@ManyToMany(cascade=CascadeType.DETACH)
 	@JoinTable(name = "MILESTONE_BINDING_PERIMETER", joinColumns = @JoinColumn(name = "MILESTONE_ID"), inverseJoinColumns = @JoinColumn(name = "PROJECT_ID"))
 	private Set<GenericProject> perimeter = new HashSet<GenericProject>();
 
 	@JoinColumn(name = "USER_ID")
-	@ManyToOne
+	@ManyToOne(cascade=CascadeType.DETACH)
 	private User owner;
 
 	@Deprecated
-	@ManyToMany(fetch = FetchType.LAZY)
+	@ManyToMany(fetch = FetchType.LAZY, cascade=CascadeType.DETACH)
 	@JoinTable(name = "MILESTONE_TEST_CASE", joinColumns = @JoinColumn(name = "MILESTONE_ID"), inverseJoinColumns = @JoinColumn(name = "TEST_CASE_ID"))
 	private Set<TestCase> testCases = new HashSet<>();
 
 	@Deprecated
-	@ManyToMany(fetch = FetchType.LAZY)
+	@ManyToMany(fetch = FetchType.LAZY, cascade=CascadeType.DETACH)
 	@JoinTable(name = "MILESTONE_REQ_VERSION", joinColumns = @JoinColumn(name = "MILESTONE_ID"), inverseJoinColumns = @JoinColumn(name = "REQ_VERSION_ID"))
 	private Set<RequirementVersion> requirementVersions = new HashSet<>();
 
 	@Deprecated
-	@ManyToMany(fetch = FetchType.LAZY)
+	@ManyToMany(fetch = FetchType.LAZY, cascade=CascadeType.DETACH)
 	@JoinTable(name = "MILESTONE_CAMPAIGN", joinColumns = @JoinColumn(name = "MILESTONE_ID"), inverseJoinColumns = @JoinColumn(name = "CAMPAIGN_ID"))
 	private Set<Campaign> campaigns = new HashSet<>();
 
