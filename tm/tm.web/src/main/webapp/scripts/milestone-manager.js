@@ -49,6 +49,15 @@ require(["common"], function(){
 		function setActionsEnabled(enabled) {
 			$(".milestone-dep").prop("disabled", !enabled);
 		}
+		
+		function getFormValues(){
+			return	{
+					label: $( '#add-milestone-label' ).val().trim(),
+					status: $( '#add-milestone-status' ).val(),
+					endDate: getPostDate($( '#add-milestone-end-date' ).text()),
+					description: $( '#add-milestone-description' ).val()
+			}
+		}
 
 	ps.subscribe("loaded.milestoneFeatureSwitch", function() {
 		console.log("loaded.milestoneFeatureSwitch");
@@ -205,16 +214,6 @@ require(["common"], function(){
 
 		var $textAreas = $("textarea");
 
-		function decorateArea() {
-			$(this).ckeditor(function() {}, {
-				customConfig : squashtm.app.contextRoot + "/styles/ckeditor/ckeditor-config.js",
-				language : squashtm.app.ckeditorLanguage
-			});
-		}
-
-		$textAreas.each(decorateArea);
-
-
 		$("#delete-milestone-popup").confirmDialog().on('confirmdialogconfirm', function(){
 			var $this = $(this);
 			var id = $this.data('entity-id');
@@ -231,6 +230,8 @@ require(["common"], function(){
 			});
 
 		});
+		
+		//Add milestone
 
 	var addMilestoneDialog = $("#add-milestone-dialog");
 	addMilestoneDialog.formDialog();
@@ -247,12 +248,7 @@ require(["common"], function(){
 	
 	addMilestoneDialog.on('formdialogconfirm', function(){
 		var url = routing.buildURL('administration.milestones');
-		var params = {
-			label: $( '#add-milestone-label' ).val().trim(),
-			status: $( '#add-milestone-status' ).val(),
-			endDate: getPostDate($( '#add-milestone-end-date' ).text()),
-			description: $( '#add-milestone-description' ).val()
-		};
+		var params = getFormValues();
 		$.ajax({
 			url : url,
 			type : 'POST',
@@ -264,6 +260,23 @@ require(["common"], function(){
 			addMilestoneDialog.formDialog('close');
 		});
 
+	});
+	
+	addMilestoneDialog.on('formdialogaddanother', function(){
+		var url = routing.buildURL('administration.milestones');
+		var params = getFormValues();
+		$.ajax({
+			url : url,
+			type : 'POST',
+			dataType : 'json',
+			data : params
+		}).success(function(id){ 
+			config.data.editableMilestoneIds.push(id);
+			$('#milestones-table').squashTable()._fnAjaxUpdate();
+			addMilestoneDialog.formDialog('cleanup');
+			$("#clone-milestone-end-date").text("");
+		});
+		
 	});
 
 	addMilestoneDialog.on('formdialogcancel', function(){

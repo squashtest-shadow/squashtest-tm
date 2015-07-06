@@ -32,6 +32,7 @@
 
 <s:url var="administrationUrl" value="/administration" />
 
+<f:message var="addAnotherLabel"       key="label.addAnother"/>
 <f:message var="addLabel"       key="label.Add"/>
 <f:message var="confirmLabelDelete"   key="label.ConfirmDelete"/>
 <f:message var="confirmLabel"   key="label.Confirm"/>
@@ -224,12 +225,13 @@
                 </label>
             </td>
             <td>
-                <textarea id="add-milestone-description" name="add-milestone-description"></textarea>
+                <textarea id="add-milestone-description" name="add-milestone-description" data-def="isrich"></textarea>
             <comp:error-message forField="description" /></td>
           </tr>     
         </table>
       <div class="popup-dialog-buttonpane">
-        <input type="button" value="${addLabel}" data-def="mainbtn, evt=confirm"/>
+        <input type="button" value="${addAnotherLabel}" data-def="mainbtn, evt=addanother"/>
+        <input type="button" value="${addLabel}" data-def="evt=confirm"/>
         <input type="button" value="${closeLabel}" data-def="evt=cancel"/>
       </div>     
 </div>

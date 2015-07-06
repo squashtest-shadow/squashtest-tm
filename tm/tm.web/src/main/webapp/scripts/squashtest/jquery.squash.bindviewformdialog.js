@@ -24,9 +24,9 @@
  * This module provide support to create formdialogs on top of Backbone views/model and app/BindView.
  * 
  * The main benefits are :
- *  - Reducing boilerplate code in formdialog
- * 	- Avoid bugs with dialog reuse, as the View and the model are instancied each time the popup is opened
- * 	- Avoid bugs with the "AddAnother" as the View is retemplated and the model is cleared.
+ *-Reducing boilerplate code in dialogs
+ *-Avoid bugs with dialog reuse, as the View and the model are instancied each time the popup is opened
+ *-Avoid bugs with the "AddAnother" as the View is retemplated and the model is cleared.
  * As this module use jquery.squash.formdialog and BindView, see doc of these two modules for additionnal information.
  * 
  * HTML Structure in a JSP page:
