@@ -161,6 +161,7 @@ define([], function(){
 		'project.new' 							: root + '/projects/new',
 		'generic.template.new' 					: root + '/generic-projects/new-template',
 		'template.new' 							: root + '/project-templates/new',
+		'template' 								: root + '/project-templates?dropdownList',
 
 		// helper methods
 		buildURL : function(){

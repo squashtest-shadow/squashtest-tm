@@ -18,8 +18,8 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ "jquery", "backbone","handlebars", "./ProjectsTable", "./NewProjectFromTemplateDialog","./NewTemplateDialog","./NewTemplateFromProjectDialog","./NewTemplateFromProjectDialogModel", "jqueryui","jquery.squash", "jquery.squash.buttonmenu","jquery.squash.formdialog" ],
-		function($, Backbone, Handlebars, ProjectsTable, NewProjectFromTemplateDialog, NewTemplateDialog, NewTemplateFromProjectDialog, NewTemplateFromProjectDialogModel) {
+define([ "jquery", "backbone","handlebars", "./ProjectsTable", "./NewProjectFromTemplateDialog","./NewTemplateDialog","./NewTemplateFromProjectDialog","./NewTemplateFromProjectDialogModel","workspace.routing", "jqueryui","jquery.squash", "jquery.squash.buttonmenu","jquery.squash.formdialog" ],
+		function($, Backbone, Handlebars, ProjectsTable, NewProjectFromTemplateDialog, NewTemplateDialog, NewTemplateFromProjectDialog, NewTemplateFromProjectDialogModel, router) {
 		"use strict";
 	
 			var View = Backbone.View.extend({
@@ -32,7 +32,7 @@ define([ "jquery", "backbone","handlebars", "./ProjectsTable", "./NewProjectFrom
 							return template.get("name");
 						}
 					});
-					this.templates.url = squashtm.app.contextRoot + "/project-templates?dropdownList"; 
+					this.templates.url = router.buildURL("project.new");
 					this.$("#add-template-button").buttonmenu();
 				},
 
