@@ -32,7 +32,7 @@ define([ "jquery", "backbone","handlebars", "./ProjectsTable", "./NewProjectFrom
 							return template.get("name");
 						}
 					});
-					this.templates.url = router.buildURL("project.new");
+					this.templates.url = router.buildURL("template");
 					this.$("#add-template-button").buttonmenu();
 				},
 

@@ -24,9 +24,9 @@
  * This module provide support to create formdialogs on top of Backbone views/model and app/BindView.
  * 
  * The main benefits are :
- * 		- Reducing boilerplate code in formdialog
- * 		- Avoid bugs with dialog reuse, as the View and the model are instancied each time the popup is opened
- * 		- Avoid bugs with the "AddAnother" as the View is retemplated and the model is cleared.
+ *  - Reducing boilerplate code in formdialog
+ * 	- Avoid bugs with dialog reuse, as the View and the model are instancied each time the popup is opened
+ * 	- Avoid bugs with the "AddAnother" as the View is retemplated and the model is cleared.
  * As this module use jquery.squash.formdialog and BindView, see doc of these two modules for additionnal information.
  * 
  * HTML Structure in a JSP page:
@@ -57,10 +57,10 @@
  * 
  * Note the two additional attributes in <input> :
  * data-prop -> Bind the value of the input to the data-prop value in backbone model. In the example, an attribute {name : value} will be added to the model.
- *  			This value is binded to user input and will be updated each time user input change (See app/bindView for details)
+ *              This value is binded to user input and will be updated each time user input change (See app/bindView for details)
  *  
  * data-objet -> Class of the @RequestBody Object in spring MVC controller. Used by tm.notification to show error message.
- * 				Ignore this attribute on fields who don't require server side validation.
+ *              Ignore this attribute on fields who don't require server side validation.
  * 
  * ==================================
  * 
@@ -77,8 +77,8 @@
  * popupSelector -> the selector of dialog's main div
  * 
  * */
-define([ "jquery", "app/BindView", "backbone", "underscore", "handlebars", "app/lnf/Forms", "jqueryui","jquery.squash","jquery.squash.formdialog",
-		"jquery.squash.formdialog" ], function($, BindView, BackBone,_, Handlebars,  Forms) {
+define([ "jquery","backbone", "app/BindView", "backbone", "underscore", "handlebars", "app/lnf/Forms", "jqueryui","jquery.squash","jquery.squash.formdialog",
+		"jquery.squash.formdialog" ], function($, Backbone,BindView, BackBone,_, Handlebars,  Forms) {
 	"use strict";
 
 	var newBindViewFormDialog = BindView.extend({
@@ -128,7 +128,6 @@ define([ "jquery", "app/BindView", "backbone", "underscore", "handlebars", "app/
 		
 		callRemove : function(){
 			this.model.clear();
-			this.unbind();
 			this.$el.formDialog("destroy");
 			this.stopListening();
 			this.remove();
@@ -138,13 +137,13 @@ define([ "jquery", "app/BindView", "backbone", "underscore", "handlebars", "app/
 		//If only different behavior in view after request success is needed, override onConfirmSuccess.
 		callConfirm : function(event){
 			this.model.save(null,{
-				success : this.onConfirmSuccess,
+				success : this.onConfirmSuccess
 			});
 		},
 		
 		callConfirmAndResetPopup : function(){
 			this.model.save(null,{
-				success : this.onConfirmAndResetPopupSuccess,
+				success : this.onConfirmAndResetPopupSuccess
 			});
 		},
 		
