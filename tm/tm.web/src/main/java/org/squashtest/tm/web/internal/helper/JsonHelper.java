@@ -24,13 +24,15 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.squashtest.tm.web.json.SquashObjectMapper;
+
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public final class JsonHelper {
-	private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+	private static final ObjectMapper OBJECT_MAPPER = new SquashObjectMapper();
 
 	private JsonHelper() {
 		super();

@@ -27,6 +27,7 @@ import org.squashtest.tm.web.internal.model.json.InfoListMixin;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.hibernate4.Hibernate4Module;
 
 /**
  * Custom implementation of Json deserializer to suit our needs.
@@ -36,8 +37,9 @@ import com.fasterxml.jackson.databind.SerializationFeature;
  */
 public class SquashObjectMapper extends ObjectMapper {
 
-	private SquashObjectMapper() {
+	public SquashObjectMapper() {
 		super();
+		registerModule(new Hibernate4Module());
 		// serializes dates as ISO timestamps in GMT timezone
 		configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
 		configure(SerializationFeature.WRITE_DATE_KEYS_AS_TIMESTAMPS, false);
@@ -45,6 +47,8 @@ public class SquashObjectMapper extends ObjectMapper {
 		// configures various domain objects (un)marshalling w/O the use of DTOs or jackson annotations
 		addMixInAnnotations(InfoList.class, InfoListMixin.class);
 		addMixInAnnotations(InfoListItem.class, InfoListItemMixin.class);
+		
+		
 	}
 
 }
