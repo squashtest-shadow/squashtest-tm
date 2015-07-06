@@ -14,11 +14,26 @@ public aspect CachingAspect percflow(copy()){
 	private static final Logger LOGGER = LoggerFactory.getLogger(CachingAspect.class);
 	
 	private Map<String, List<CustomFieldBinding>> cache = new HashMap<String, List<CustomFieldBinding>>();
+	private Map<String, Boolean> infoListCache = new HashMap<String, Boolean>();
 
 pointcut copy() : execution (@CacheScope * *(..));
 
 pointcut cachedMethod(CacheResult anno) : execution (@CacheResult  * *(..)) && @annotation(anno);
 
+
+boolean around(CacheResult anno, long projectId, String itemCode) : cachedMethod(anno) && args(projectId, itemCode){
+
+String key = anno.type().toString() + String.valueOf(projectId) + itemCode;
+Boolean cached = infoListCache.get(key);
+if (cached == null){
+ Boolean result = proceed(anno, projectId, itemCode);
+ infoListCache.put(key, result);
+ return result;
+} else {
+return cached;
+}
+
+}
 
 List<CustomFieldBinding> around(CacheResult anno, BoundEntity entity) : cachedMethod(anno) && if (anno.type() == CachableType.CUSTOM_FIELD) && args(entity){
 
