@@ -46,14 +46,12 @@ import org.squashtest.tm.domain.customfield.RawValue;
 import org.squashtest.tm.domain.customfield.RenderingLocation;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.service.advancedsearch.IndexationService;
-import org.squashtest.tm.service.annotation.CacheResult;
 import org.squashtest.tm.service.annotation.CachableType;
+import org.squashtest.tm.service.annotation.CacheResult;
 import org.squashtest.tm.service.internal.repository.BoundEntityDao;
 import org.squashtest.tm.service.internal.repository.CustomFieldBindingDao;
-import org.squashtest.tm.service.internal.repository.CustomFieldDao;
 import org.squashtest.tm.service.internal.repository.CustomFieldValueDao;
 import org.squashtest.tm.service.internal.repository.CustomFieldValueDao.CustomFieldValuesPair;
-import org.squashtest.tm.service.internal.repository.GenericDao;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 
 @Service("squashtest.tm.service.CustomFieldValueManagerService")

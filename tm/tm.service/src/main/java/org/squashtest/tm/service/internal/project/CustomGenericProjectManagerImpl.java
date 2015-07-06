@@ -821,8 +821,8 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 		target.setTestAutomationServer(source.getTestAutomationServer());
 
 		for (TestAutomationProject automationProject : source.getTestAutomationProjects()) {
-			TestAutomationProject TACopy = automationProject.createCopy();
-			bindTestAutomationProject(target.getId(), TACopy);
+			TestAutomationProject taCopy = automationProject.createCopy();
+			bindTestAutomationProject(target.getId(), taCopy);
 
 		}
 	}

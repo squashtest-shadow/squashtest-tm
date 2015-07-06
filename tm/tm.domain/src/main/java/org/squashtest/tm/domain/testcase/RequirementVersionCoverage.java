@@ -198,11 +198,6 @@ public class RequirementVersionCoverage implements Identified {
 		super();
 	}
 
-	private RequirementVersionCoverage(TestCase verifyingTestCase) {
-		super();
-		this.verifyingTestCase = verifyingTestCase;
-		verifyingTestCase.addRequirementCoverage(this);
-	}
 
 	public RequirementVersionCoverage copyForRequirementVersion(RequirementVersion rvCopy) {
 		RequirementVersionCoverage rvcCopy = new RequirementVersionCoverage();

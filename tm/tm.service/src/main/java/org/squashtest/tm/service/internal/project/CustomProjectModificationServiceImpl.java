@@ -20,6 +20,9 @@
  */
 package org.squashtest.tm.service.internal.project;
 
+import static org.squashtest.tm.service.security.Authorizations.HAS_ROLE_ADMIN;
+import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,7 +36,6 @@ import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.project.GenericProject;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.project.ProjectTemplate;
-import org.squashtest.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.tm.exception.NameAlreadyInUseException;
 import org.squashtest.tm.service.customfield.CustomFieldBindingModificationService;
 import org.squashtest.tm.service.internal.repository.GenericProjectDao;
@@ -42,11 +44,8 @@ import org.squashtest.tm.service.internal.repository.ProjectTemplateDao;
 import org.squashtest.tm.service.project.CustomProjectModificationService;
 import org.squashtest.tm.service.project.GenericProjectCopyParameter;
 import org.squashtest.tm.service.project.GenericProjectManagerService;
-import org.squashtest.tm.service.project.ProjectManagerService;
 import org.squashtest.tm.service.project.ProjectsPermissionManagementService;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
-
-import static org.squashtest.tm.service.security.Authorizations.*;
 
 /**
  * 
