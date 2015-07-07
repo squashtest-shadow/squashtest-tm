@@ -180,7 +180,6 @@ define(["jquery", "backbone", "underscore", "handlebars", "./IconSelectDialog", 
 			cleanup: function () {
 				this.$el.addClass("not-displayed");
 				Forms.form(this.$el).clearState();
-				this.$el.confirmDialog("destroy");
 			},
 
 			populateModel: function () {
