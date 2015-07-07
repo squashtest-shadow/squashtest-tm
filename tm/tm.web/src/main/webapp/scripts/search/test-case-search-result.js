@@ -166,7 +166,7 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil", "workspace.r
 		},
 		
 		exportResults : function(){
-			document.location.href= squashtm.app.contextRoot +"/advanced-search?testcase&export=csv&searchModel="+JSON.stringify(this.model);
+			document.location.href= squashtm.app.contextRoot +"/advanced-search?testcase&export=csv&searchModel="+ encodeURIComponent(JSON.stringify(this.model));
 		},
 		
 		editResults : function(){
