@@ -45,6 +45,8 @@ public interface CustomTestCaseModificationService extends CustomTestCaseFinder 
 	void rename(long testCaseId, String newName);
 
 	ActionTestStep addActionTestStep(long parentTestCaseId, ActionTestStep newTestStep);
+	
+	ActionTestStep addActionTestStep(long parentTestCaseId, ActionTestStep newTestStep, int index);
 
 	/**
 	 * Adds an action test step to a test case, and its initial custom field values.
@@ -56,6 +58,18 @@ public interface CustomTestCaseModificationService extends CustomTestCaseFinder 
 	 * @param customFieldValues
 	 */
 	ActionTestStep addActionTestStep(long parentTestCaseId, ActionTestStep newTestStep, Map<Long, RawValue> customFieldValues);
+	
+	/**
+	 * Adds an action test step to a test case, and its initial custom field values, inserted at the index value
+	 * The initial custom field values are passed as a Map<Long, String>, that maps the id of the {@link CustomField} to the values of the corresponding {@link CustomFieldValue}.
+	 * Read that last sentence again.
+	 * 
+	 * @param libraryId
+	 * @param testCase
+	 * @param customFieldValues
+	 * @param index
+	 */
+	ActionTestStep addActionTestStep(long parentTestCaseId, ActionTestStep newTestStep, Map<Long, RawValue> customFieldValues,int index);
 
 	void updateTestStepAction(long testStepId, String newAction);
 

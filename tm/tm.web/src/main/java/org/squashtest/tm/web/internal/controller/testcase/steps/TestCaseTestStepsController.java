@@ -182,13 +182,16 @@ public class TestCaseTestStepsController {
 			throw new BindException(validation);
 		}
 
-
 		ActionTestStep step = stepModel.getActionTestStep();
-
+		
 		Map<Long, RawValue> customFieldValues = stepModel.getCufs();
+		int index = stepModel.getIndex();
 
-		testCaseModificationService.addActionTestStep(testCaseId, step, customFieldValues);
-
+		if (index!=0) {
+			testCaseModificationService.addActionTestStep(testCaseId, step, customFieldValues,index);
+		} else {
+			testCaseModificationService.addActionTestStep(testCaseId, step, customFieldValues);
+		}
 		LOGGER.trace(TEST_CASE_ + testCaseId + ": step added, action : " + step.getAction() + ", expected result : "
 				+ step.getExpectedResult());
 	}

@@ -501,6 +501,10 @@ define([ "jquery", "squashtable/squashtable.collapser", "custom-field-values", "
 		var params = {};
 		params.action = $("#add-test-step-action").val();
 		params.expectedResult = $("#add-test-step-result").val();
+		var idSelected = $(".test-steps-table").squashTable().getSelectedIds()[0];
+		if (idSelected!=null) {
+			params.index = $(".test-steps-table").squashTable().getDataById(idSelected)["step-index"];
+		}
 		$.extend(params, cufSupport.readValues());
 
 		return params;

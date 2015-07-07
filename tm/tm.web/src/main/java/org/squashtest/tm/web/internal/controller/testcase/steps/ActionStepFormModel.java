@@ -43,6 +43,8 @@ public class ActionStepFormModel {
 	private String expectedResult="";
 
 	private RawValueModelMap customFields = new RawValueModelMap();
+	
+	private int index;
 
 	public String getAction() {
 		return action;
@@ -66,6 +68,14 @@ public class ActionStepFormModel {
 
 	public void setCustomFields(RawValueModelMap customFields) {
 		this.customFields = customFields;
+	}
+
+	public int getIndex() {
+		return index;
+	}
+
+	public void setIndex(int index) {
+		this.index = index;
 	}
 
 	@JsonIgnore
