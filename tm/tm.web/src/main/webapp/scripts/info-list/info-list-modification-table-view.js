@@ -421,6 +421,10 @@ define(["jquery", "backbone", "underscore", "squash.basicwidgets", "jeditable.si
 
 			function discardAndRefresh() {
 				discard();
+				refresh();
+			}
+			
+			function refresh() {
 				self.optionsTable._fnAjaxUpdate();
 			}
 
@@ -432,6 +436,7 @@ define(["jquery", "backbone", "underscore", "squash.basicwidgets", "jeditable.si
 
 			self.newItemDialog.on("newOption.cancel", discard);
 			self.newItemDialog.on("newOption.confirm", discardAndRefresh);
+			self.newItemDialog.on("newOption.addanother", refresh);
 		}
 
 	});

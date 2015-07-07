@@ -196,8 +196,7 @@ public class InfoListController {
 	@RequestMapping(value = "/{infoListId}/items", method = RequestMethod.POST)
 	@ResponseStatus(HttpStatus.CREATED)
 	public @ResponseBody
-	void addInfoListItem(@PathVariable long infoListId, @Valid @ModelAttribute("item") UserListItem item) {
-
+	void addInfoListItem(@PathVariable long infoListId, @Valid @ModelAttribute("new-info-list-item") UserListItem item) {
 		infoListItemManager.addInfoListItem(infoListId, item);
 	}
 
