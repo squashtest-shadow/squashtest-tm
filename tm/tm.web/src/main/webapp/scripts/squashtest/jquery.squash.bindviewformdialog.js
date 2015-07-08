@@ -81,7 +81,7 @@ define([ "jquery","backbone", "app/BindView", "backbone", "underscore", "handleb
 		"jquery.squash.formdialog" ], function($, Backbone,BindView, BackBone,_, Handlebars,  Forms) {
 	"use strict";
 
-	var newBindViewFormDialog = BindView.extend({
+	var BindViewFormDialog = BindView.extend({
 		initialize : function(){
 			this.render();
 			_.bindAll(this, 'onConfirmSuccess','onConfirmAndResetPopupSuccess');
@@ -111,19 +111,12 @@ define([ "jquery","backbone", "app/BindView", "backbone", "underscore", "handleb
 		//Override with a custom Backbone.Model if required
 		model : new Backbone.Model(),
 		
-		events : function() {
-		      return _.extend({},this.buttonsEvents,this.customEvents);
-		   }, 
-		
-		buttonsEvents : {
+		//events for buttons.
+		events : {
 			"formdialogcancel" : "callRemove",
 			"formdialogclose" : "callRemove",
 			"formdialogconfirm" : "callConfirm",
-			"formdialogaddanother" : "callConfirmAndResetPopup"
-		},
-		
-		//Override this to add custom events in View
-		customEvents : {
+			"formdialogaddanother" : "callConfirmAndResetDialog"
 		},
 		
 		callRemove : function(){
@@ -134,16 +127,16 @@ define([ "jquery","backbone", "app/BindView", "backbone", "underscore", "handleb
 		},
 		
 		//Override only if data from response is needed or partial saving necessary
-		//If only different behavior in view after request success is needed, override onConfirmSuccess.
+		//If only different behavior in view after request success is needed, override onConfirmSuccess and onConfirmAndResetPopupSuccess.
 		callConfirm : function(event){
 			this.model.save(null,{
 				success : this.onConfirmSuccess
 			});
 		},
 		
-		callConfirmAndResetPopup : function(){
+		callConfirmAndResetDialog : function(){
 			this.model.save(null,{
-				success : this.onConfirmAndResetPopupSuccess
+				success : this.onConfirmSuccessAndResetDialog
 			});
 		},
 		
@@ -151,7 +144,7 @@ define([ "jquery","backbone", "app/BindView", "backbone", "underscore", "handleb
 			this.callRemove();
 		},
 		
-		onConfirmAndResetPopupSuccess : function(){
+		onConfirmSuccessAndResetDialog : function(){
 			this.model.clear();
 			this.callRemove();
 			this._elOnTemplate();
@@ -170,5 +163,16 @@ define([ "jquery","backbone", "app/BindView", "backbone", "underscore", "handleb
 		
 	});
 	
-	return newBindViewFormDialog;
+	//now overriding BindViewFormDialog extend function to mix events in a childview derivated from newBindViewFormDialog
+	BindViewFormDialog.extend = function(protoProps, staticProps){
+		//call the Bindview extend function to "inherit" from BindView
+		var view = BindView.extend.call(this,protoProps,staticProps);
+		//overriding events prop in child view with an _extend of events already in BindViewFormDialog(event for buttons and events coming from BindView)
+		//and events in child view (protoProps.events)
+		view.prototype.events = _.extend({}, this.prototype.events, protoProps.events);
+		//return the childView
+		return view;
+	};
+	
+	return BindViewFormDialog;
 });

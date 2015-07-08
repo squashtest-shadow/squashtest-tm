@@ -38,7 +38,7 @@ define(["jquery.squash.bindviewformdialog","./NewProjectFromTemplateDialogModel"
 			});
 		},
 		
-		customEvents : {
+		events : {
 			"change #add-project-from-template-template" : "changeTemplateSelection"
 		},
 		
