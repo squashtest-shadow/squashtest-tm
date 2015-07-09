@@ -20,19 +20,23 @@
  */
 package org.squashtest.tm.domain.bugtracker;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
+import javax.persistence.OrderColumn;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.ForeignKey;
-import org.hibernate.validator.constraints.NotBlank;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.tm.domain.project.GenericProject;
 
@@ -51,10 +55,15 @@ public class BugTrackerBinding {
 	@SequenceGenerator(name = "bugtracker_binding_bugtracker_binding_id_seq", sequenceName = "bugtracker_binding_bugtracker_binding_id_seq")
 	private Long id;
 
-	@Column(name = "PROJECT_NAME")
-	@NotBlank
-	@Size(min = 0, max = 255)
-	private String projectName;
+	/*@NotNull
+	@OneToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH })
+	@OrderColumn(name = "BUGTRACKER_PROJECT_ORDER")
+	@JoinTable(name = "BUGTRACKER_PROJECT", joinColumns = @JoinColumn(name = "BUGTRACKER_BINDING_ID"), inverseJoinColumns = @JoinColumn(name = "BUGTRACKER_PROJECT_ID"))
+	*/
+	@ElementCollection
+	@CollectionTable(name = "BUGTRACKER_PROJECT", joinColumns = @JoinColumn(name = "BUGTRACKER_BINDING_ID"))
+	@OrderColumn(name = "BUGTRACKER_PROJECT_ORDER")
+	private List<String> bugtrackerProjectName = new ArrayList<String>();
 
 	@OneToOne(optional = false)
 	@ForeignKey(name="FK_BugtrackerBinding_Bugtracker")
@@ -69,9 +78,8 @@ public class BugTrackerBinding {
 
 	}
 
-	public BugTrackerBinding(String projectName, BugTracker newBugtracker, GenericProject project) {
+	public BugTrackerBinding(BugTracker newBugtracker, GenericProject project) {
 		super();
-		this.projectName = projectName;
 		this.bugtracker = newBugtracker;
 		this.project = project;
 	}
@@ -80,12 +88,16 @@ public class BugTrackerBinding {
 	 * 
 	 * @return the name of a project in the bugtracker ({@link BugTrackerBinding#getBugtracker()})
 	 */
-	public String getProjectName() {
-		return projectName;
+	public List<String> getProjectNames() {
+		return bugtrackerProjectName;
+	}
+	
+	public void setProjectNames(List<String> projectNames){
+		this.bugtrackerProjectName = projectNames;
 	}
 
-	public void setProjectName(String projectName) {
-		this.projectName = projectName;
+	public void addProjectName(String projectName){
+		bugtrackerProjectName.add(projectName);
 	}
 
 	public BugTracker getBugtracker() {

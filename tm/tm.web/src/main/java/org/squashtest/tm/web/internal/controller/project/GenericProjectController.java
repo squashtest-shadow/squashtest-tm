@@ -124,6 +124,8 @@ public class GenericProjectController {
 	private static final String PROJECT_ID_URL = "/{"+RequestParams.PROJECT_ID+"}";
 	private static final String PROJECT_BUGTRACKER_NAME_UNDEFINED = "project.bugtracker.name.undefined";
 
+	private static final String VALUES = "values[]";
+
 	private DatatableMapper<String> allProjectsMapper = new NameBasedMapper(9)
 	.map(DataTableModelConstants.DEFAULT_ENTITY_NAME_KEY, "name")
 	.map("label", "label")
@@ -235,12 +237,12 @@ public class GenericProjectController {
 	}
 
 	@RequestMapping(value = PROJECT_ID_URL, method = RequestMethod.POST, params = {
-			"id=project-bugtracker-project-name", VALUE })
+			"id=project-bugtracker-project-name", VALUES })
 	@ResponseBody
-	public String changeBugtrackerProjectName(@RequestParam(VALUE) String projectBugTrackerName,
+	public List<String> changeBugtrackerProjectName(@RequestParam(VALUES) List<String> projectBugTrackerNames,
 			@PathVariable long projectId, Locale locale) {
-		projectManager.changeBugTrackerProjectName(projectId, projectBugTrackerName);
-		return projectBugTrackerName;
+		projectManager.changeBugTrackerProjectName(projectId, projectBugTrackerNames);
+		return projectBugTrackerNames;
 	}
 
 	@RequestMapping(value = PROJECT_ID_URL, method = RequestMethod.POST, params = { "id=project-description", VALUE })
@@ -255,10 +257,10 @@ public class GenericProjectController {
 
 	@RequestMapping(value = PROJECT_ID_URL + "/bugtracker/projectName", method = RequestMethod.GET)
 	@ResponseBody
-	public String getBugtrackerProject(@PathVariable long projectId) {
+	public List<String> getBugtrackerProject(@PathVariable long projectId) {
 		GenericProject project = projectManager.findById(projectId);
 		if (project.isBugtrackerConnected()) {
-			return project.getBugtrackerBinding().getProjectName();
+			return project.getBugtrackerBinding().getProjectNames();
 		} else {
 			throw new NoBugTrackerBindingException();
 		}

@@ -82,7 +82,6 @@ import org.squashtest.tm.domain.users.Party;
 import org.squashtest.tm.domain.users.PartyProjectPermissionsBean;
 import org.squashtest.tm.exception.CompositeDomainException;
 import org.squashtest.tm.exception.NameAlreadyInUseException;
-import org.squashtest.tm.exception.NoBugTrackerBindingException;
 import org.squashtest.tm.exception.UnknownEntityException;
 import org.squashtest.tm.exception.testautomation.DuplicateTMLabelException;
 import org.squashtest.tm.security.acls.PermissionGroup;
@@ -429,7 +428,8 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 		checkManageProjectOrAdmin(project);
 		// the project doesn't have bug-tracker connection yet
 		if (!project.isBugtrackerConnected()) {
-			BugTrackerBinding bugTrackerBinding = new BugTrackerBinding(project.getName(), newBugtracker, project);
+			BugTrackerBinding bugTrackerBinding = new BugTrackerBinding(newBugtracker, project);
+			bugTrackerBinding.addProjectName(project.getName());
 			project.setBugtrackerBinding(bugTrackerBinding);
 		}
 		// the project has a bug-tracker connection
@@ -463,17 +463,7 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 		}
 	}
 
-	@Override
-	public void changeBugTrackerProjectName(long projectId, String projectBugTrackerName) {
-		GenericProject project = genericProjectDao.findById(projectId);
-		checkManageProjectOrAdmin(project);
-		BugTrackerBinding bugtrackerBinding = project.getBugtrackerBinding();
-		if (bugtrackerBinding == null) {
-			throw new NoBugTrackerBindingException();
-		}
-		bugtrackerBinding.setProjectName(projectBugTrackerName);
 
-	}
 
 	// **************************** wizards section
 	// **********************************
@@ -872,6 +862,18 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 		}
 		
 		return target;
+	}
+
+	@Override
+	public void changeBugTrackerProjectName(long projectId, List<String> projectBugTrackerNames) {
+		
+		GenericProject project = genericProjectDao.findById(projectId);
+		checkManageProjectOrAdmin(project);
+		if (project.isBugtrackerConnected()) {
+			BugTrackerBinding bugtrackerBinding = project.getBugtrackerBinding();
+			bugtrackerBinding.setProjectNames(projectBugTrackerNames);
+		}
+		
 	}
 
 }

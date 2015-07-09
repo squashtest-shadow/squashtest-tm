@@ -211,7 +211,7 @@
 											<f:message key="project.bugtracker.name.undefined" />
 										</c:when>
 										<c:otherwise>
-											${ adminproject.project.bugtrackerBinding.bugtracker.name }						
+											${ adminproject.project.bugtrackerBinding.bugtracker.name }			 			
 										</c:otherwise>
 									</c:choose>
 								</div>
@@ -221,16 +221,19 @@
 									<c:if test="${ ! adminproject.template }">
 										  if(value != "<f:message key='project.bugtracker.name.undefined'/>"){								        	 
 								        	 $("#project-bugtracker-project-name-row").show();
-												refreshBugTrackerProjectName();
+		
 									     }else{
 								        	 $("#project-bugtracker-project-name-row").hide();	
 								         }
-								      </c:if>
+								      </c:if> 
 								}
 								</script>
+								
+								
+							
 								<comp:select-jeditable componentId="project-bugtracker"
 										jsonData="${bugtrackersList}" targetUrl="${projectUrl}"
-										submitCallback="projectBugTrackerCallBack" />
+										submitCallback="projectBugTrackerCallBack" /> 
 								
 							</div>
 						</div>
@@ -242,13 +245,20 @@
 								<f:message key="project.bugtracker.project.name.label" />
 							</label>
 
-							<div class="display-table-cell editable text-editable" data-def="url=${projectUrl}, width=200" 
-									id="project-bugtracker-project-name">
+<ul id="project-bugtracker-project-name"  class="tagprop tagit ui-widget ui-widget-content squash-tagit" style="margin:0;line-height:normal;" value="">
+
+					
+	
+								<!-- 
 								<c:choose>
-									<c:when test="${ adminproject.project.bugtrackerConnected }">${ adminproject.project.bugtrackerBinding.projectName }</c:when>
+									<c:when test="${ adminproject.project.bugtrackerConnected }">
+							
+									</c:when>
 									<c:otherwise>${ adminproject.project.name }</c:otherwise>
 								</c:choose>
-							</div>
+								
+								 -->
+							
 						</div>
 						</c:if>
 					</div>
@@ -480,30 +490,70 @@ squashtm.app.messages["message.notBlank"] =  "<f:message key='message.notBlank' 
 
 require(["common"], function() {
 
-	require(["jquery", "projects-manager", "jquery.squash.fragmenttabs", "squash.attributeparser", 
+	require(["jquery", "projects-manager","squash.configmanager", "jquery.squash.fragmenttabs", "squash.attributeparser", 
 	         "project/ProjectToolbar", "jquery.squash.oneshotdialog", "app/ws/squashtm.notification", "squash.translator",
 	         "squashtable", "jquery.squash.formdialog", "jquery.switchButton", 
-	         "app/ws/squashtm.workspace", "jquery.squash.formdialog"], 
-	         function($, projectsManager, Frag, attrparser, ProjectToolbar, oneshot, notification, translator){
+	         "app/ws/squashtm.workspace", "jquery.squash.formdialog",  "jquery.squash.tagit"], 
+	         function($, projectsManager, confman, Frag, attrparser, ProjectToolbar, oneshot, notification, translator){
 
 
 	
 	function clickProjectBackButton(){
 		document.location.href = "${projectsUrl}";
 	}
+
 	
-	function refreshBugTrackerProjectName() {
-		$.ajax({
-			type: 'GET',
-			 url: "${projectUrl}/bugtracker/projectName",
-		}).done(function(data){
-			$( "#project-bugtracker-project-name")[0].reset();
-			$( "#project-bugtracker-project-name").text(data);
+	function initBugTrackerTag(){
+		var tagconf = confman.getStdTagit();
+		var $tag = $("#project-bugtracker-project-name"); 
+		
+		tagconf.validate = function(){
+			var assignedTags = $tag.squashTagit('assignedTags');
+			//need at least one project name
+			return assignedTags.length > 0 ? true : false;
+		}
+	
+		$tag.squashTagit(tagconf).sortable({
+			stop: function() {
+				sendBugTrackerTag($tag.squashTagit('assignedTags'));
+				}
 		});
+	
+		$tag.on('squashtagitbeforetagremoved', function(event, ui){ 
+			var assignedTags = $tag.squashTagit('assignedTags');
+			//don't remove if there is only one
+			return assignedTags.length > 1 ? true : false; 
+		});
+
+		
+		$tag.on('squashtagitaftertagadded squashtagitaftertagremoved', function(event, ui){
+			if (! $tag.squashTagit("validate", event, ui)){
+				return;
+			}	
+			sendBugTrackerTag($tag.squashTagit('assignedTags'));
+		});
+		
+		$.ajax({type: 'GET',
+			url: "${projectUrl}/bugtracker/projectName"}).done(
+					function(data){
+						data.forEach(function(val){
+							$tag.squashTagit("createTag", val);
+						});
+						});
+	}
+	
+	function sendBugTrackerTag(tags){
+		$.ajax({type: 'POST',
+			url: "${projectUrl}",
+			data : {id:"project-bugtracker-project-name",
+				values:tags}
+	});
+
 		
 	}
 	
 	$(function() {
+
 		 		init(projectsManager, Frag);	
 		 		configureActivation("UNTESTABLE");
 		 		configureActivation("SETTLED");
@@ -514,6 +564,7 @@ require(["common"], function() {
 		 			toggleStatusActivation("SETTLED");
 		 		}); 
 		 		
+		 		initBugTrackerTag();
 		 		new ProjectToolbar();
 	});
 	

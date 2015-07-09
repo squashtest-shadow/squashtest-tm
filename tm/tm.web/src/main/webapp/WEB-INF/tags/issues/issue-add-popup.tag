@@ -85,8 +85,15 @@
           <span class="issue-radio-label">
             <f:message key="dialog.issue.radio.new.label" />
           </span>
+            <span id="project-selector" />
          </span>
-         
+           <script id="project-selector-tpl" type="text/x-handlebars-template">         
+               <select>
+                {{#each options}}
+                  <option value="{{this.code}}">{{this.value}}</option>
+                {{/each}}
+                </select>
+           </script>
          <div class="issue-report-fields">
           <%-- populated by javascript --%>
         </div>

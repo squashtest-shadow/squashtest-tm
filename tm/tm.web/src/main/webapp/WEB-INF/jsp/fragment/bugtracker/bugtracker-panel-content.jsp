@@ -265,15 +265,22 @@
 
 <script type="text/javascript">
 require([ "common" ], function() {
-  require([ "jquery", "squash.basicwidgets", "workspace.event-bus", "jquery.squash.formdialog" ], 
-      function($, basicwidg, eventBus) {
+  require([ "jquery", "workspace.storage", "squash.basicwidgets", "workspace.event-bus", "jquery.squash.formdialog" ], 
+      function($, storage, basicwidg, eventBus) {
     $(function() {    
       basicwidg.init();
       <c:if test="${executable}">
-      $("#issue-report-dialog-openbutton").click(function() {
-        $(this).removeClass("ui-state-focus ui-state-hover");
-        checkAndReportIssue( {reportUrl:"${entityUrl}/new-issue" } );
-      });
+        $("#issue-report-dialog-openbutton").click(function() {
+            $(this).removeClass("ui-state-focus ui-state-hover");
+            
+            var projectPrefs = storage.get("bugtracker.projects-preferences");
+            var currentProjectId = ${projectId};
+         	var projectNames = ${projectNames};
+            var projectName = projectPrefs[currentProjectId] == undefined ? projectNames[0] : projectPrefs[currentProjectId];
+          
+            
+            checkAndReportIssue( {reportUrl:"${entityUrl}/new-issue/" , projectNames : projectNames, selectedProject: projectName, currentProjectId: currentProjectId } );
+          });
       </c:if>
 
       

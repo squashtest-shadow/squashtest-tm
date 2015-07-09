@@ -18,10 +18,10 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define(["jquery", "./default-field-view", "./advanced-field-view", "file-upload", 
+define(["jquery",  "workspace.storage", "jeditable.selectJEditable", "./default-field-view", "./advanced-field-view", "file-upload", 
         "workspace.event-bus", "jqueryui", "squashtest/jquery.squash.popuperror", 
         "jquery.squash.formdialog"], 
-        function($, DefaultFieldView, AdvancedFieldView, fileUploadUtils, eventBus){
+        function($, storage, SelectJEditable, DefaultFieldView, AdvancedFieldView, fileUploadUtils, eventBus){
 	
 	squashtm.eventBus = eventBus;
 	
@@ -158,7 +158,7 @@ define(["jquery", "./default-field-view", "./advanced-field-view", "file-upload"
 	 */
 	
 	function init(settings){
-		
+	
 		// turn to dialog
 		this.formDialog({
 			height : 500,
@@ -190,7 +190,7 @@ define(["jquery", "./default-field-view", "./advanced-field-view", "file-upload"
 		//search issue buttons. We also turn it into a jQuery button on the fly.
 		this.searchButton = this.find('.attach-issue input[type="button"]').button();
 		
-		
+		this.selectedProject = settings.selectedProject;
 		//the error display
 		this.error = this.find(".issue-report-error");
 		this.error.popupError();
@@ -376,12 +376,12 @@ define(["jquery", "./default-field-view", "./advanced-field-view", "file-upload"
 		
 		
 		var getIssueModelTemplate = $.proxy(function(){
-			
+	
 			var jobDone = $.Deferred();				
 			if (! this.mdlTemplate){
 				flipToPleaseWait();		
 				$.ajax({
-					url : self.reportUrl,
+					url : self.reportUrl + self.selectedProject,
 					type : "GET",
 					dataType : "json"			
 				})
@@ -427,7 +427,7 @@ define(["jquery", "./default-field-view", "./advanced-field-view", "file-upload"
 				url : self.searchUrl+id,
 				type : 'GET',
 				dataType : 'json',
-				data : {"bugTrackerId" : self.bugTrackerId}
+				data : {"bugTrackerId" : self.bugTrackerId, projectNames: self.projectNames}
 			})
 			.done(function(response){
 				setModel(response);
@@ -463,12 +463,45 @@ define(["jquery", "./default-field-view", "./advanced-field-view", "file-upload"
 		
 		/* ************* events ************************ */
 		
+		this.changeBugTrackerProject = function(project){
+
+		      var projectPrefs = storage.get("bugtracker.projects-preferences");
+	          projectPrefs[this.currentProjectId] = project;
+	          storage.set("bugtracker.projects-preferences", projectPrefs);
+	          self.selectedProject = project;
+	          self.mdlTemplate= null;
+	          self.fieldsView = null;
+	          resetModel();
+	          
+		},
 		
 		this.open = function(settings){
+			var self = this;
 			this.reportUrl = settings.reportUrl;
+			this.selectedProject = settings.selectedProject;
+			this.projectNames = settings.projectNames; 
+			this.currentProjectId = settings.currentProjectId;
+			var data = [];
+			this.projectNames.forEach(function(val){
+				data.push({code:val, value:val});	
+			});
+
+			var template = Handlebars.compile(self.find("#project-selector-tpl").html());
+			self.find("#project-selector").html(template({options:data}));
+			self.find("#project-selector").on("change", function(){
+			var selected = self.find("#project-selector").find(":selected").val();
+			self.changeBugTrackerProject(selected);
+			});
 			self.postButton.focus();
 			self.reportRadio.click();
 			this.formDialog("open");
+		    
+			
+			self.find("#project-selector").find("option").each(function(idx, opt){
+				if (opt.value == self.selectedProject){
+					$(opt).attr("selected", "selected");
+				}
+				});
 		};
 		
 		//the opening of the popup :

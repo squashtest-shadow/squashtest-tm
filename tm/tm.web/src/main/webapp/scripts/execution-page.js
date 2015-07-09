@@ -190,7 +190,6 @@ define(['module', 'jquery', 'app/pubsub', 'squash.basicwidgets', 'app/ws/squasht
 					
 					// TODO : yes, that function is defined in the global scope in bugtracker-panel.jsp,
 					// refactoring would be good here too
-					
 					checkAndReportIssue( {
 						reportUrl : routing.buildURL('bugtracker.execsteps.new', executionStepId), 
 						callback : function(json){
