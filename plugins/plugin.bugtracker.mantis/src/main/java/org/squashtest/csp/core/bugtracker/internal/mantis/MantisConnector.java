@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.NullArgumentException;
+import org.squashtest.csp.core.bugtracker.core.BugTrackerNotFoundException;
 import org.squashtest.csp.core.bugtracker.domain.BTIssue;
 import org.squashtest.csp.core.bugtracker.domain.BTProject;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
@@ -230,10 +231,15 @@ public class MantisConnector implements BugTrackerConnector {
 		List<BTIssue> toReturn = new ArrayList<BTIssue>();
 		for (String issueKey : issueKeyList) {
 			// Get the mantis issue data....
+			
+			try{
 			IssueData mantisIssue = client.getIssue(credentialsHolder.get(), MantisEntityConverter.squash2MantisId(issueKey));
 			// ... and convert it
 			BTIssue issue = MantisEntityConverter.mantis2squashIssue(mantisIssue);
 			toReturn.add(issue);
+			} catch (BugTrackerNotFoundException ex){
+				toReturn.add(MantisEntityConverter.issueNotFound(issueKey, exConverter));
+			}
 		}
 		return toReturn;
 	}
