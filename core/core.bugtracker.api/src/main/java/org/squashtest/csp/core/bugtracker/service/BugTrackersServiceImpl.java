@@ -26,6 +26,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.Future;
 
+import org.springframework.context.i18n.LocaleContext;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.scheduling.annotation.AsyncResult;
 import org.squashtest.csp.core.bugtracker.core.BugTrackerConnectorFactory;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
@@ -124,10 +126,12 @@ public class BugTrackersServiceImpl implements BugTrackersService {
 	}
 
 	@Override
-	public Future<List<RemoteIssue>> getIssues(Collection<String> issueKeyList, BugTracker bugTracker, BugTrackerContext context) {
+	public Future<List<RemoteIssue>> getIssues(Collection<String> issueKeyList, BugTracker bugTracker, BugTrackerContext context, LocaleContext localeContext) {
 
 		// reinstate the bugtrackercontext (since this method will execute in a different thread, see comments in the interface
 		contextHolder.setContext(context);
+
+         LocaleContextHolder.setLocaleContext(localeContext);
 
 		List<RemoteIssue> issues = connect(bugTracker).findIssues(issueKeyList);
 

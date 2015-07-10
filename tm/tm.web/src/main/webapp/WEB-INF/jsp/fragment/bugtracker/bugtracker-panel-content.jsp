@@ -265,8 +265,8 @@
 
 <script type="text/javascript">
 require([ "common" ], function() {
-  require([ "jquery", "workspace.storage", "squash.basicwidgets", "workspace.event-bus", "jquery.squash.formdialog" ], 
-      function($, storage, basicwidg, eventBus) {
+  require([ "jquery","underscore", "workspace.storage", "squash.basicwidgets", "workspace.event-bus", "jquery.squash.formdialog" ], 
+      function($,_,  storage, basicwidg, eventBus) {
     $(function() {    
       basicwidg.init();
       <c:if test="${executable}">
@@ -278,6 +278,9 @@ require([ "common" ], function() {
          	var projectNames = ${projectNames};
             var projectName = projectPrefs[currentProjectId] == undefined ? projectNames[0] : projectPrefs[currentProjectId];
           
+            if (! _.contains(projectNames, projectName)){ //check if the preference still exist, if not use the first project
+            	projectName = projectNames[0];
+            }
             
             checkAndReportIssue( {reportUrl:"${entityUrl}/new-issue/" , projectNames : projectNames, selectedProject: projectName, currentProjectId: currentProjectId } );
           });

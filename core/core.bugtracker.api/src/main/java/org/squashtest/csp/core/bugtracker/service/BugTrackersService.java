@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.Future;
 
+import org.springframework.context.i18n.LocaleContext;
 import org.springframework.scheduling.annotation.Async;
 import org.squashtest.csp.core.bugtracker.core.BugTrackerNotFoundException;
 import org.squashtest.csp.core.bugtracker.core.BugTrackerRemoteException;
@@ -149,7 +150,7 @@ public interface BugTrackersService {
 	 */
 
 	@Async
-	Future<List<RemoteIssue>> getIssues(Collection<String> issueKeyList, BugTracker bugTracker, BugTrackerContext context);
+	Future<List<RemoteIssue>> getIssues(Collection<String> issueKeyList, BugTracker bugTracker, BugTrackerContext context, LocaleContext localeContext);
 
 
 	/**

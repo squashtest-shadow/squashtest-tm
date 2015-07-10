@@ -42,6 +42,8 @@ import org.apache.commons.collections.map.MultiValueMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.i18n.LocaleContext;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.squashtest.csp.core.bugtracker.core.BugTrackerNotFoundException;
@@ -145,6 +147,10 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 		return remoteBugTrackersService.getInterfaceDescriptor(bugTracker);
 	}
 
+	private LocaleContext getLocaleContext(){
+		return LocaleContextHolder.getLocaleContext();
+	}
+	
 	@Override
 	@PreAuthorize("hasPermission(#entity, 'EXECUTE')" + OR_HAS_ROLE_ADMIN)
 	public BugTrackerStatus checkBugTrackerStatus(Project project) {
@@ -211,7 +217,7 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 	public List<RemoteIssue> getIssues(List<String> issueKeyList, BugTracker bugTracker) {
 
 		try {
-			Future<List<RemoteIssue>> futureIssues = remoteBugTrackersService.getIssues(issueKeyList, bugTracker, contextHolder.getContext());
+			Future<List<RemoteIssue>> futureIssues = remoteBugTrackersService.getIssues(issueKeyList, bugTracker, contextHolder.getContext(), getLocaleContext());
 			return futureIssues.get(timeout, TimeUnit.SECONDS);
 		}catch(TimeoutException timex){
 			throw new BugTrackerRemoteException(timex);
@@ -475,7 +481,7 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 
 		// Find the BT issues out of the remote ids
 		try{
-			Future<List<RemoteIssue>> futureIssues = remoteBugTrackersService.getIssues(issuesRemoteIds, bugTracker, contextHolder.getContext());
+			Future<List<RemoteIssue>> futureIssues = remoteBugTrackersService.getIssues(issuesRemoteIds, bugTracker, contextHolder.getContext(), getLocaleContext());
 			List<RemoteIssue> btIssues = futureIssues.get(timeout, TimeUnit.SECONDS);
 
 			List<RemoteIssueDecorator> btIssueDecorators = decorateRemoteIssues(btIssues, localIdsByRemoteId);
@@ -567,7 +573,7 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 		try{
 			for (Entry<BugTracker, List<String>> remoteIdsByBugTracker : issueRemoteIdsByBugTrackers.entrySet()) {
 				Future<List<RemoteIssue>> futureIssues = remoteBugTrackersService.getIssues(
-						remoteIdsByBugTracker.getValue(), remoteIdsByBugTracker.getKey(), contextHolder.getContext());
+						remoteIdsByBugTracker.getValue(), remoteIdsByBugTracker.getKey(), contextHolder.getContext(), getLocaleContext());
 
 				List<RemoteIssue> btIssuesOfBugTracker = futureIssues.get(timeout, TimeUnit.SECONDS);
 

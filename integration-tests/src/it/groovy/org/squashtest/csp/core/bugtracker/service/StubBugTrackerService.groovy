@@ -24,6 +24,7 @@ package org.squashtest.csp.core.bugtracker.service
 import java.util.List;
 import java.util.concurrent.Future;
 
+import org.springframework.context.i18n.LocaleContext
 import org.squashtest.csp.core.bugtracker.domain.BTIssue
 import org.squashtest.csp.core.bugtracker.domain.BTProject
 import org.squashtest.csp.core.bugtracker.domain.BugTracker
@@ -92,7 +93,7 @@ class StubBugTrackerService implements BugTrackersService {
 	}
 
 	@Override
-	public Future<List<RemoteIssue>> getIssues(Collection<String> issueKeyList, BugTracker bugTracker, BugTrackerContext context) {
+	public Future<List<RemoteIssue>> getIssues(Collection<String> issueKeyList, BugTracker bugTracker, BugTrackerContext context, LocaleContext localeContext) {
 		return null;
 	}
 
