@@ -74,7 +74,7 @@ require( ["common"], function(){
 			$("#issue-table").squashTable({
 				fnRowCallback : function(row, data){
 					var correctAssignee = (data["assignee"]!=="") ? data["assignee"] : "${interfaceDescriptor.tableNoAssigneeLabel}";
-					var td=$(row).find("td:eq(4)");
+					var td=$(row).find("td:eq(5)");
 					$(td).html(correctAssignee);
 					return row;				
 				},

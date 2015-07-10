@@ -75,16 +75,16 @@ require( ["common"], function(){
 	
 			var issueTableRowCallback = function(row, data, displayIndex) {
 				var correctAssignee = (data["issue-assignee"]!=="") ? data["issue-assignee"] : "${interfaceDescriptor.tableNoAssigneeLabel}";
-				var td=$(row).find("td:eq(4)");
+				var td=$(row).find("td:eq(5)");
 				$(td).html(correctAssignee);
 		
-				td =  $(row).find("td:eq(5)");
-				var linkText = $(row).find("td:eq(5)").text();
+				td =  $(row).find("td:eq(6)");
+				var linkText = $(row).find("td:eq(6)").text();
 				var link = $('<a></a>');
 				link.attr('href', "${pageContext.servletContext.contextPath}"+data["issue-owner-url"]);
 				link.text(linkText);
 				$(td).html(link);
-				$(row).find("td:eq(5) a").on("click", function(){
+				$(row).find("td:eq(6) a").on("click", function(){
 					var currentTab = $(".fragment-tabs").tabs("option", "active");
 					$.cookie("iteration-tab-cookie", currentTab, { expires: 1, path: '/' });
 				});

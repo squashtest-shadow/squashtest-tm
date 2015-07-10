@@ -65,7 +65,7 @@
 	function checkEmptyValues(row, data){
 		var assignee = data['assignee'];
 		var correctAssignee = (assignee!=="") ? assignee : "${interfaceDescriptor.tableNoAssigneeLabel}"; 
-		var td=$(row).find("td:eq(4)");
+		var td=$(row).find("td:eq(5)");
 		$(td).html(correctAssignee);
 	}
 	
