@@ -40,6 +40,8 @@ import org.hibernate.search.FullTextSession;
 import org.hibernate.search.Search;
 import org.hibernate.search.batchindexing.MassIndexerProgressMonitor;
 import org.springframework.stereotype.Service;
+import org.squashtest.tm.domain.campaign.Campaign;
+import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.library.IndexModel;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.search.AdvancedSearchIndexMonitoring;
@@ -105,9 +107,11 @@ public class IndexationServiceImpl extends AdvancedSearchServiceImpl implements 
 		List<Class> domains = new ArrayList<Class>();
 		domains.add(TestCase.class);
 		domains.add(RequirementVersion.class);
+		domains.add(Execution.class);
 		MassIndexerProgressMonitor monitor = new AdvancedSearchIndexingMonitor(domains, this.configurationService);
 
-		ftSession.createIndexer(TestCase.class, RequirementVersion.class).purgeAllOnStart(true).threadsToLoadObjects(1)
+		ftSession.createIndexer(TestCase.class, RequirementVersion.class, Execution.class).purgeAllOnStart(true)
+				.threadsToLoadObjects(1)
 				.threadsForSubsequentFetching(1).batchSizeToLoadObjects(10).cacheMode(CacheMode.IGNORE)
 				.progressMonitor(monitor).start();
 	}
@@ -117,8 +121,10 @@ public class IndexationServiceImpl extends AdvancedSearchServiceImpl implements 
 		String currentVersion = configurationService.findConfiguration(SQUASH_VERSION_KEY);
 		String testcaseIndexVersion = configurationService.findConfiguration(TESTCASE_INDEXING_VERSION_KEY);
 		String requirementIndexVersion = configurationService.findConfiguration(REQUIREMENT_INDEXING_VERSION_KEY);
+		String campaignIndexVersion = configurationService.findConfiguration(CAMPAIGN_INDEXING_VERSION_KEY);
 
-		boolean result = currentVersion.equals(requirementIndexVersion) && currentVersion.equals(testcaseIndexVersion);
+		boolean result = currentVersion.equals(requirementIndexVersion) && currentVersion.equals(testcaseIndexVersion)
+				&& currentVersion.equals(campaignIndexVersion);
 
 		return !result;
 	}
@@ -224,6 +230,35 @@ public class IndexationServiceImpl extends AdvancedSearchServiceImpl implements 
 		           ftSession.clear();   
 		        
 		      }
+	/* ----------------------------EXECUTIONS -------------------------------- */
+	@Override
+	public void indexCampaigns() {
+		// It's called Campaigns but we need first to index Executions only // Maybe more later, will see
+		Session session = sessionFactory.getCurrentSession();
+		FullTextSession ftSession = Search.getFullTextSession(session);
+
+		@SuppressWarnings("rawtypes")
+		List<Class> domains = new ArrayList<Class>();
+		domains.add(Execution.class);
+		MassIndexerProgressMonitor monitor = new AdvancedSearchIndexingMonitor(domains, this.configurationService);
+
+		ftSession.createIndexer(Execution.class).purgeAllOnStart(true).threadsToLoadObjects(1)
+				.threadsForSubsequentFetching(1).batchSizeToLoadObjects(10).cacheMode(CacheMode.NORMAL)
+				.progressMonitor(monitor).start();
+	}
+
+	@Override
+	public void reindexCampaign(Long campaignId) {
+		Session session = sessionFactory.getCurrentSession();
+		FullTextSession ftSession = Search.getFullTextSession(session);
+		Object execution = ftSession.load(Execution.class, campaignId);
+		ftSession.index(execution);
+	}
+
+	@Override
+	public void reindexCampaigns(List<Execution> campaignList) {
+		for (Execution execution : campaignList) {
+			reindexTestCase(execution.getId());
 		}
 	}
 

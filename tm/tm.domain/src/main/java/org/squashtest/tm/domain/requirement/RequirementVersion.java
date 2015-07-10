@@ -84,12 +84,12 @@ import org.squashtest.tm.security.annotation.InheritsAcls;
 @ClassBridges({
 	@ClassBridge(name = "attachments", store = Store.YES, analyze = Analyze.NO, impl = RequirementVersionAttachmentBridge.class),
 	@ClassBridge(name = "cufs", store = Store.YES, impl = CUFBridge.class, params = {
-		@Parameter(name = "type", value = "requirement"), @Parameter(name = "inputType", value = "ALL") }),
+				@Parameter(name = "type", value = "requirement"), @Parameter(name = "inputType", value = "ALL") }),
 		@ClassBridge(name = "cufs", store = Store.YES, analyze = Analyze.NO, impl = CUFBridge.class, params = {
-			@Parameter(name = "type", value = "requirement"),
-			@Parameter(name = "inputType", value = "DROPDOWN_LIST") }),
-			@ClassBridge(name = "isCurrentVersion", store = Store.YES, analyze = Analyze.NO, impl = RequirementVersionIsCurrentBridge.class),
-			@ClassBridge(name = "parent", store = Store.YES, analyze = Analyze.NO, impl = RequirementVersionHasParentBridge.class) })
+				@Parameter(name = "type", value = "requirement"),
+				@Parameter(name = "inputType", value = "DROPDOWN_LIST") }),
+		@ClassBridge(name = "isCurrentVersion", store = Store.YES, analyze = Analyze.NO, impl = RequirementVersionIsCurrentBridge.class),
+		@ClassBridge(name = "parent", store = Store.YES, analyze = Analyze.NO, impl = RequirementVersionHasParentBridge.class) })
 public class RequirementVersion extends Resource implements BoundEntity, MilestoneHolder {
 
 	@NotNull

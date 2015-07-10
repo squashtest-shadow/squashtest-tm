@@ -28,6 +28,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.squashtest.tm.core.foundation.lang.MathsUtils;
 import org.squashtest.tm.domain.search.AdvancedSearchIndexMonitoring;
+
+import org.squashtest.tm.domain.search.AdvancedSearchIndexMonitoringForCampaigns;
 import org.squashtest.tm.domain.search.AdvancedSearchIndexMonitoringForRequirementVersions;
 import org.squashtest.tm.domain.search.AdvancedSearchIndexMonitoringForTestcases;
 import org.squashtest.tm.service.advancedsearch.IndexationService;
@@ -61,7 +63,7 @@ public class AdvancedSearchIndexingController {
 	@RequestMapping(value = "/index-campaigns", method = RequestMethod.POST)
 	@ResponseBody
 	public void indexCampaigns(){
-		//TODO implement
+		indexationService.indexCampaigns();
 	} 	
 
 	@RequestMapping(value = "/refresh", method = RequestMethod.POST)
@@ -82,6 +84,10 @@ public class AdvancedSearchIndexingController {
 		model.setWrittenEntitiesForRequirementVersions(AdvancedSearchIndexMonitoringForRequirementVersions.getDocumentsBuilt());
 		model.setProgressPercentageForRequirementVersions(((Double)(AdvancedSearchIndexMonitoringForRequirementVersions.getProgressPercentage()*100)).intValue());
 		
+		model.setTotalEntitiesForCampaigns(AdvancedSearchIndexMonitoringForCampaigns.getAddToTotalCount());
+		model.setWrittenEntitiesForCampaigns(AdvancedSearchIndexMonitoringForCampaigns.getDocumentsBuilt());
+		model.setProgressPercentageForCampaigns(AdvancedSearchIndexMonitoringForCampaigns.getProgressPercentage() * 100);
+
 		return model;
 	} 	
 }

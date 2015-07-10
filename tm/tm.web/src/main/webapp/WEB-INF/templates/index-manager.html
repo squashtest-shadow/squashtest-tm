@@ -135,22 +135,24 @@
                   <span id="testcase-monitor-message" class="not-displayed" th:text="#{search.index.monitor.message}"></span>
                 </div>
               </div>
-              <!--  <div class="index-inline-center-block">
-								<div class="index-block-title" th:text="#{search.index.campaign.label}"></div>
-								<div class="index-info-line">
-									<span th:text="#{search.index.lastindexing.label}"></span>
-									<span th:text="${indexModel.campaignIndexDate} ?
-													${#dates.format(indexModel.campaignIndexDate, dateformat)}+' '+#{search.index.lastindexing.version.label} :
-													'('+#{label.lower.Never}+')'"></span>
-									<span th:text="${indexModel.campaignIndexVersion}"></span>
-								</div>
-								<div>
-									<input type="button" th:value="#{ search.index.index.label }"
-										value="Réindexer" id="campaign-index-button" class="button ui-button ui-widget ui-state-default ui-corner-all" />
-								</div>
-								<div class="index-warning" th:text="#{search.index.running.label}"></div>
-							</div>
-						</div>-->
+              <div class="index-inline-center-block">
+				<div class="index-block-title" th:text="#{search.index.campaign.label}"></div>
+				<div class="index-info-line">
+					<span th:text="#{search.index.lastindexing.label}"></span>
+					<span th:text="${indexModel.campaignIndexDate} ?
+									${#dates.format(indexModel.campaignIndexDate, dateformat)}+' '+#{search.index.lastindexing.version.label} :
+									'('+#{label.lower.Never}+')'"></span>
+					<span th:text="${indexModel.campaignIndexVersion}"></span>
+				</div>
+				<div>
+					<input type="button" th:value="#{ search.index.index.label }"
+						value="Réindexer" id="campaign-index-button" class="button ui-button ui-widget ui-state-default ui-corner-all" />
+				</div>
+				<div class="index-warning">
+                  <span id="campaign-monitor-percentage" class="not-displayed">0 / 0 (0%)</span>
+                  <span id="campaign-monitor-message" class="not-displayed" th:text="#{search.index.monitor.message}"></span>
+                </div>				
+			  </div>
 
               <div align="center">
                 <div class="index-inline-left-block" align="left">

@@ -155,31 +155,31 @@ public class CampaignSearchInterfaceDescription extends SearchInterfaceDescripti
 		panel.setLocation("column1");
 		panel.addCssClass("search-icon-execution");
 
+		// Created on
 		SearchInputFieldModel createdOnField = new SearchInputFieldModel("createdOn", getMessageSource()
 				.internationalize("search.execution.executed.label", locale), DATE);
 		panel.addField(createdOnField);
-
 		OptionBuilder optionBuilder = optionBuilder(locale);
 
-		SearchInputFieldModel authorizedUsersField = new SearchInputFieldModel("authorizedUsersField",
-				getMessageSource()
-				.internationalize("search.execution.executedby.label", locale), MULTIAUTOCOMPLETE);
-		panel.addField(authorizedUsersField);
-
+		// Executed by
 		/*
 		 * TODO List<String> users = advancedSearchService.findAllAuthorizedUsersForACampaign(); for (String user :
-		 * users) { createdByField.addPossibleValue(optionBuilder.label(user).optionKey(user).build()); }
+		 * users) { createdByField.addPossibleValue(optionBuilder.label(user).optionKey(user).build()); } Already done
+		 * in the Attribute block. Something different here ?
 		 */
+		SearchInputFieldModel authorizedUsersField = new SearchInputFieldModel("authorizedUsersField",
+				getMessageSource().internationalize("search.execution.executedby.label", locale), MULTIAUTOCOMPLETE);
+		panel.addField(authorizedUsersField);
 
+		// Status
 		SearchInputFieldModel statusField = new SearchInputFieldModel("status", getMessageSource().internationalize(
 				"test-case.status.label", locale), MULTISELECT);
 		panel.addField(statusField);
-
 		List<SearchInputPossibleValueModel> statusOptions = levelComboBuilder(ExecutionStatus.values())
 				.useLocale(locale).build();
 		statusField.addPossibleValues(statusOptions);
 
-		/* TODO : get the mode list */
+		// Mode
 		SearchInputFieldModel executionModeField = new SearchInputFieldModel("executionMode", getMessageSource()
 				.internationalize("search.execution.mode.label", locale), EXISTSBEFORE);
 		panel.addField(executionModeField);
@@ -188,31 +188,22 @@ public class CampaignSearchInterfaceDescription extends SearchInterfaceDescripti
 				.useLocale(locale).build();
 		executionModeField.addPossibleValues(modeOptions);
 
-
-		SearchInputFieldModel lastExecutionField = new SearchInputFieldModel("lastExecution", getMessageSource()
-				.internationalize(
-				"search.testcase.content.dataset.label", locale), EXISTS);
-		panel.addField(lastExecutionField);
 		/*
-		 * TODO LastExecution
+		 * // LastExecution : TODO : everything behind it, nothing is selected yet SearchInputFieldModel
+		 * lastExecutionField = new SearchInputFieldModel("lastExecution", getMessageSource()
+		 * .internationalize("search.execution.lastExecution", locale), CHECKBOX); panel.addField(lastExecutionField);
 		 */
 
+		// Issue
 		SearchInputFieldModel issuesField = new SearchInputFieldModel("issues", getMessageSource().internationalize(
 				"search.testcase.association.issue.label", locale), RANGE);
 		panel.addField(issuesField);
-		/*
-		 * TODO issue
-		 */
 
 		return panel;
 	}
 
 	public SearchInputPanelModel createPerimeterPanel(Locale locale) {
 		return perimeterPanelBuilder(locale).cssClass("search-icon-perimeter").htmlId("project.id").build();
-	}
-
-	public SearchInputPanelModel createRequirementPerimeterPanel(Locale locale) {
-		return perimeterPanelBuilder(locale).cssClass("search-icon-perimeter").htmlId("requirement.project.id").build();
 	}
 
 	public SearchInputPanelModel createContentPanel(Locale locale) {

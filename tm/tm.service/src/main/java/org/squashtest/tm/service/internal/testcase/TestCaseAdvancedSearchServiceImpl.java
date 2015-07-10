@@ -292,7 +292,7 @@ TestCaseAdvancedSearchService {
 		Session session = sessionFactory.getCurrentSession();
 		FullTextSession ftSession = Search.getFullTextSession(session);
 
-		Query luceneQuery = searchTestCasesQuery(model, ftSession ,locale);
+		Query luceneQuery = searchTestCasesQuery(model, ftSession, locale);
 
 		List<TestCase> result = Collections.emptyList();
 		int countAll = 0;

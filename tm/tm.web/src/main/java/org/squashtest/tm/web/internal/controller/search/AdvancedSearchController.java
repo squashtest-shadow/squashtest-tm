@@ -21,8 +21,11 @@
 package org.squashtest.tm.web.internal.controller.search;
 
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -67,11 +70,13 @@ import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.library.Library;
 import org.squashtest.tm.domain.library.LibraryNode;
 import org.squashtest.tm.domain.milestone.Milestone;
+import org.squashtest.tm.domain.testcase.TestCaseExecutionMode;
 import org.squashtest.tm.domain.testcase.TestCaseImportance;
 import org.squashtest.tm.domain.testcase.TestCaseNature;
 import org.squashtest.tm.domain.testcase.TestCaseStatus;
 import org.squashtest.tm.domain.testcase.TestCaseType;
 import org.squashtest.tm.web.internal.model.builder.JsTreeNodeListBuilder;
+import org.squashtest.tm.service.campaign.CampaignAdvancedSearchService;
 import org.squashtest.tm.service.campaign.CampaignTestPlanManagerService;
 import org.squashtest.tm.service.campaign.IterationModificationService;
 import org.squashtest.tm.service.campaign.IterationTestPlanManagerService;
@@ -119,6 +124,8 @@ import org.squashtest.tm.api.workspace.WorkspaceType;
 import org.squashtest.tm.domain.campaign.Campaign;
 import org.squashtest.tm.domain.campaign.CampaignLibrary;
 import org.squashtest.tm.domain.campaign.CampaignLibraryNode;
+import org.squashtest.tm.domain.campaign.Iteration;
+import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.testcase.TestCaseLibrary;
 import org.squashtest.tm.domain.testcase.TestCaseLibraryNode;
 import org.squashtest.tm.service.campaign.CampaignLibraryFinderService;
@@ -145,9 +152,6 @@ public class AdvancedSearchController {
 	private static final String DATE = "date";
 	private static final String COMBOMULTISELECT = "combomultiselect";
 	private static final String TAGS = "tags";
-
-	private static final String LIBRARIES = "libraries";
-	private static final String NODES = "nodes";
 	private static final String CAMPAIGN = "campaign";
 	private static final String TESTCASE = "test-case";
 	private static final String REQUIREMENT = "requirement";
@@ -237,6 +241,9 @@ public class AdvancedSearchController {
 	private TestCaseAdvancedSearchService testCaseAdvancedSearchService;
 
 	@Inject
+	private CampaignAdvancedSearchService campaignAdvancedSearchService;
+
+	@Inject
 	private RequirementVersionAdvancedSearchService requirementVersionAdvancedSearchService;
 
 	@Inject
@@ -315,10 +322,22 @@ public class AdvancedSearchController {
 	.mapAttribute("requirement-created-by", "createdBy", RequirementVersion.class)
 	.mapAttribute("requirement-modified-by", "lastModifiedBy", RequirementVersion.class);
 
-	// TODO TO CAMPAIGN
+	// TODO : get the good stuff in the good class // maybe take execution instead of campaign, surely it seems
+	private DatatableMapper<String> campaignSearchResultMapper = new NameBasedMapper(11)
+			.mapAttribute(DataTableModelConstants.PROJECT_NAME_KEY, "name", Project.class)
+			.mapAttribute("campaign-name", "id", Execution.class)
+			.mapAttribute("iteration-name", "name", Execution.class)
+			.mapAttribute("execution-id", "id", Execution.class)
+			.mapAttribute("execution-mode", "lastExecutedBy", Execution.class)
+			.mapAttribute("execution-milestone-nb", "id", Execution.class)
+			.mapAttribute("testsuite-execution", "id", Execution.class)
+			.mapAttribute("execution-status", "status", Execution.class)
+			.mapAttribute("execution-executed-by", "lastExecutedBy", Execution.class)
+			.mapAttribute("execution-executed-on", "lastExecutedOn", Execution.class)
+			.mapAttribute("execution-datasets", "id", Execution.class);
 	
 	@RequestMapping(method = RequestMethod.GET)
-	// TODO faire plusieurs méthodes et discriminer avec params = "searchDomain=campaign" etc
+	// TODO faire plusieurs méthodes et discriminer avec params = "searchDomain=campaign" etc nut not necessary
 	public String showSearchPage(Model model, @RequestParam String searchDomain,
 			@RequestParam(value = "cookieValueSelect", required = false, defaultValue = "") String cookieValueSelect,
 			@RequestParam(value = "cookieValueOpen", required = false, defaultValue = "") String[] cookieValueOpen,
@@ -330,8 +349,8 @@ public class AdvancedSearchController {
 			@CurrentMilestone Milestone activeMilestone) {
 
 		// Wow, so much params.
-		// Libraries, nodes, jstree_open, jstreee-select and workspace-prefs are useless I think
-		// TODO : refactor this mess
+		// jstree_open, jstreee-select and workspace-prefs are useless I think
+		// TODO : refactor this mess (already done with libraries and nodes)
 		// But those cookieValueOpen and cookieValueSelect are great. They allow to get the cookie value from the
 		// workspace to be put in the search tree
 		// Abracajava ! You get the value, you put it in the mixer, nodesToOpen or selectedNode, some go to
@@ -368,33 +387,23 @@ public class AdvancedSearchController {
 			if (activeMilestone != null) {
 				nodeBuilder.filterByMilestone(activeMilestone);
 			}
-
-		//	List<JsTreeNode> rootNodes = new JsTreeNodeListBuilder<Library<LibraryNode>>(nodeBuilder).expand(expansionCandidates)
-//.setModel(getWorkspaceService().findAllLibraries()).build();
 			
 			List<JsTreeNode> rootNodes = new JsTreeNodeListBuilder<Library<LibraryNode>>(nodeBuilder).expand(expansionCandidates)
 					.setModel(libraries).build();
-
-			// TODo : add rootmodel and rootnodes
-
 			model.addAttribute("rootModel", rootNodes);
-
 			Collection<Project> numberOfCampaignsAvailable = customProjectFinder.findAllReadable();
 
 			List<Project> projectList = new ArrayList<Project>();
-			
 			for (Project project : numberOfCampaignsAvailable) {
 				projectList.add(project);
 			}
 			
 			boolean isCampaignAvailable = campaignTestPlanManagerService.findCampaignByProjectId(projectList,
 					activeMilestone);
-
 			model.addAttribute("isCampaignAvailable", isCampaignAvailable);
 		}
 
 		FormModelBuilder builder = formModelBuilder.get(searchDomain);
-
 		if (builder != null) {
 			model.addAttribute("formModel", builder.build(locale, (activeMilestone != null)));
 		} else {
@@ -402,8 +411,6 @@ public class AdvancedSearchController {
 					"Could not find a FormModelBuilder for search domain : {}. This is either caused by a bug or a hand-written request",
 					searchDomain);
 		}
-
-
 
 		return searchDomain + "-search-input.html";
 	}
@@ -617,6 +624,42 @@ public class AdvancedSearchController {
 				isInAssociationContext, ids).buildDataModel(holder, params.getsEcho());
 	}
 
+	// TODO
+
+	@RequestMapping(value = "/table", method = RequestMethod.POST, params = { RequestParams.MODEL, CAMPAIGN,
+			RequestParams.S_ECHO_PARAM })
+	@ResponseBody
+	public DataTableModel getCampaignTableModel(final DataTableDrawParameters params, final Locale locale,
+			@RequestParam(value = RequestParams.MODEL) String model,
+			@RequestParam(required = false) String associateResultWithType, @RequestParam(required = false) Long id,
+			@CurrentMilestone Milestone activeMilestone) throws JsonParseException, JsonMappingException, IOException {
+
+		AdvancedSearchModel searchModel = new ObjectMapper().readValue(model, AdvancedSearchModel.class);
+		if (activeMilestone != null) {
+			addMilestoneToSearchModel(searchModel, activeMilestone);
+		}
+		PagingAndMultiSorting paging = new DataTableMultiSorting(params, campaignSearchResultMapper);
+
+		PagedCollectionHolder<List<Execution>> holder = campaignAdvancedSearchService.searchForCampaign(searchModel,
+				paging, locale);
+
+		boolean isInAssociationContext = isInAssociationContext(associateResultWithType);
+
+		// TODO wtf ids is null ?!
+		Set<Long> ids = null;
+
+		if (isInAssociationContext) {
+			ids = getIdsOfTestCasesAssociatedWithObjects(associateResultWithType, id);
+		}
+
+		return new CampaignSearchResultDataTableModelHelper(locale, messageSource, permissionService, iterationService,
+				isInAssociationContext, ids).buildDataModel(holder, params.getsEcho());
+	}
+
+	/*
+	 * 
+	 */
+
 	private void addMilestoneToSearchModel(AdvancedSearchModel searchModel, Milestone activeMilestone) {
 		// yes this is a list field for only one value ! But this allow us to handle milestone mode same as reference
 		// mode
@@ -771,7 +814,6 @@ public class AdvancedSearchController {
 		model.addPanel(campaignSearchInterfaceDescription.createGeneralInfoPanel(locale));
 
 		// Attributes
-
 		model.addPanel(campaignSearchInterfaceDescription.createAttributePanel(locale));
 
 		// Milestones
@@ -987,14 +1029,6 @@ public class AdvancedSearchController {
 			return status.getLevel() + "-" + messageSource.internationalize(status, locale);
 		}
 
-		private String formatNature(TestCaseNature nature, Locale locale) {
-			return messageSource.internationalize(nature, locale);
-		}
-
-		private String formatType(TestCaseType type, Locale locale) {
-			return messageSource.internationalize(type, locale);
-		}
-
 		private boolean isTestCaseEditable(TestCase item) {
 			if (item.isModifiable()) {
 				return permissionService.hasRoleOrPermissionOnObject("ROLE_ADMIN", "WRITE", item);
@@ -1043,7 +1077,99 @@ public class AdvancedSearchController {
 			return messageSource.getMessage(item.getLabel(), null, item.getLabel(), locale);
 		}
 	}
+	
+	/* Execution */
 
+	private static final class CampaignSearchResultDataTableModelHelper extends DataTableModelBuilder<Execution> {
+		private InternationalizationHelper messageSource;
+		private Locale locale;
+		private PermissionEvaluationService permissionService;
+		private IterationModificationService iterationService;
+		private boolean isInAssociationContext;
+		private Set<Long> associatedTestCaseIds;
+
+		private CampaignSearchResultDataTableModelHelper(Locale locale, InternationalizationHelper messageSource,
+				PermissionEvaluationService permissionService, IterationModificationService iterationService,
+				boolean isInAssociationContext, Set<Long> associatedTestCaseIds) {
+			this.locale = locale;
+			this.messageSource = messageSource;
+			this.permissionService = permissionService;
+			this.iterationService = iterationService;
+			this.isInAssociationContext = isInAssociationContext;
+			this.associatedTestCaseIds = associatedTestCaseIds;
+		}
+
+		private boolean isInAssociationContext() {
+			return this.isInAssociationContext;
+		}
+
+		private boolean isExecutionEditable(Execution item) {
+			// Milestone dependent ?
+			return permissionService.hasRoleOrPermissionOnObject("ROLE_ADMIN", "WRITE", item);
+		}
+
+		@Override
+		public Map<String, Object> buildItemData(Execution item) {
+			final AuditableMixin auditable = (AuditableMixin) item;
+			Map<String, Object> res = new HashMap<String, Object>();
+			res.put(DataTableModelConstants.PROJECT_NAME_KEY, item.getProject().getName());
+			res.put("project-id", item.getProject().getId());
+			if (isInAssociationContext()) {
+				res.put("empty-is-associated-holder", " ");
+				res.put("is-associated", associatedTestCaseIds.contains(item.getId()));
+			}
+			res.put(DataTableModelConstants.DEFAULT_ENTITY_INDEX_KEY, getCurrentIndex());
+			res.put("campaign-name", item.getCampaign().getName().toString());
+			res.put("iteration-name", item.getIteration().getName().toString());
+			res.put("editable", isExecutionEditable(item));
+			res.put("execution-id", item.getId().toString());
+			res.put("execution-mode", formatMode(item.getExecutionMode(), locale));
+			res.put("execution-milestone-nb", item.getCampaign().getMilestones().toString());
+			res.put("testsuite-execution", item.getTestPlan().getLabel());
+			res.put("execution-status", formatStatus(item.getStatus(), locale));
+			res.put("execution-executed-by", formatUsername(item.getLastExecutedBy()));
+			res.put("execution-executed-on", formatDateItem(item));
+			res.put("execution-datasets", formatDatasetsItem(item));
+			res.put("empty-openinterface2-holder", " ");
+			res.put("empty-opentree-holder", " ");
+			return res;
+		}
+
+		private String formatStatus(TestCaseStatus status, Locale locale) {
+			return status.getLevel() + "-" + messageSource.internationalize(status, locale);
+		}
+
+		private String formatMode(TestCaseExecutionMode mode, Locale locale) {
+			return messageSource.internationalize(mode, locale);
+		}
+
+		private String formatType(TestCaseType type, Locale locale) {
+			return messageSource.internationalize(type, locale);
+		}
+
+		private String formatInfoItem(InfoListItem item, Locale locale) {
+			return messageSource.getMessage(item.getLabel(), null, item.getLabel(), locale);
+		}
+
+		private String formatDatasetsItem(Execution item) {
+			String dataset = "-";
+			if (item.getDatasetLabel() != null) {
+				dataset = item.getDatasetLabel();
+			}
+			return dataset;
+		}
+
+		private String formatDateItem(Execution item) {
+			String reportDate = "-";
+			// Get the i18n thing
+			DateFormat df = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
+			if (item.getLastExecutedOn() != null) {
+				reportDate = df.format(item.getLastExecutedOn());
+			}
+			return reportDate;
+		}
+	}
+	
 	public SearchInputPanelModel getCustomFielModel(Locale locale, BindableEntity bindableEntity) {
 		List<CustomField> customFields = testCaseAdvancedSearchService
 				.findAllQueryableCustomFieldsByBoundEntityType(bindableEntity);

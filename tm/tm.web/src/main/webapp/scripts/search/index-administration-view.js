@@ -52,6 +52,7 @@ define([ 'jquery', 'backbone', 'underscore', 'app/util/ButtonUtil', 'jquery.squa
 			ButtonUtil.disable($("#index-all-button"));
 			ButtonUtil.disable($("#requirement-index-button"));
 			ButtonUtil.disable($("#testcase-index-button"));
+			ButtonUtil.disable($("#campaign-index-button"));
 			ButtonUtil.enable($("#refresh-index-button"));
 
 			$("#should-reindex-message").addClass("not-displayed");
@@ -97,6 +98,13 @@ define([ 'jquery', 'backbone', 'underscore', 'app/util/ButtonUtil', 'jquery.squa
 		},
 
 		indexCampaigns : function() {
+			ButtonUtil.disable($("#index-all-button"));
+			ButtonUtil.disable($("#campaign-index-button"));
+			ButtonUtil.enable($("#refresh-index-button"));
+
+			$("#campaign-monitor-percentage").removeClass("not-displayed");
+			$("#campaign-monitor-message").removeClass("not-displayed");
+
 			$.ajax({
 				type : "POST",
 				url : squashtm.app.contextRoot + "advanced-search/index-campaigns",
@@ -121,6 +129,10 @@ define([ 'jquery', 'backbone', 'underscore', 'app/util/ButtonUtil', 'jquery.squa
 						$("#testcase-monitor-percentage").html(
 								json.writtenEntitiesForTestcases + " / " + json.totalEntitiesForTestcases + " (" +
 										json.progressPercentageForTestcases + "%) ");
+						$("#campaign-monitor-percentage").html(
+								json.writtenEntitiesForCampaigns + " / " +
+										json.totalEntitiesForCampaigns + " (" +
+										json.progressPercentageForCampaigns + "%) ");
 					});
 		}
 	});

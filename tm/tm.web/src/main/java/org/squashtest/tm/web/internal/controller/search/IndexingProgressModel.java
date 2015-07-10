@@ -33,6 +33,11 @@ public class IndexingProgressModel {
 	private int progressPercentageForRequirementVersions;
 	private long writtenEntitiesForRequirementVersions;
 	private long totalEntitiesForRequirementVersions;
+
+	public int getProgressPercentage() {
+	private double progressPercentageForCampaigns;
+	private long writtenEntitiesForCampaigns;
+	private long totalEntitiesForCampaigns;
 	
 	public int getProgressPercentage() {
 		return progressPercentage;
@@ -92,4 +97,29 @@ public class IndexingProgressModel {
 			long totalEntitiesForRequirementVersions) {
 		this.totalEntitiesForRequirementVersions = totalEntitiesForRequirementVersions;
 	}
+
+	public double getProgressPercentageForCampaigns() {
+		return progressPercentageForCampaigns;
+	}
+
+	public void setProgressPercentageForCampaigns(double progressPercentageForCampaigns) {
+		this.progressPercentageForCampaigns = progressPercentageForCampaigns;
+	}
+
+	public long getWrittenEntitiesForCampaigns() {
+		return writtenEntitiesForCampaigns;
+	}
+
+	public void setWrittenEntitiesForCampaigns(long writtenEntitiesForCampaigns) {
+		this.writtenEntitiesForCampaigns = writtenEntitiesForCampaigns;
+	}
+
+	public long getTotalEntitiesForCampaigns() {
+		return totalEntitiesForCampaigns;
+	}
+
+	public void setTotalEntitiesForCampaigns(long totalEntitiesForCampaigns) {
+		this.totalEntitiesForCampaigns = totalEntitiesForCampaigns;
+	}
+
 }

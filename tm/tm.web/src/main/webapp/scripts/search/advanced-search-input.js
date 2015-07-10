@@ -457,9 +457,66 @@ define([ "jquery", "backbone", "app/squash.handlebars.helpers", "squash.translat
 		},
 
 		extractSearchModel : function(){
+			
 			var fields = this.$el.find("div.search-input");
-
 			var jsonVariable = {};
+			
+			// A little hack for the jstree if it exists (campaign only on july 2015)
+			// We need to get the id value and stuff from the project from the tree and put them on the jsonVariable 
+			// This method extractModel puts them in the model and it's been sent to the controller (check showResults to see the url)
+
+			if( !!$("#tree").attr("id") ){
+				var key = "project.id";
+				var selectedInTree = $("#tree").jstree('get_selected');
+				
+				var arr = [];
+				for (var i = 0; i < selectedInTree.size() ; i++) {		
+					// TODO : id from campaign-libraries
+							if ( selectedInTree[i].getAttribute("restype") == "campaign-libraries" ) {
+								arr.push( selectedInTree[i].getAttribute("resid") );	
+							}
+							
+							/*
+					// TODO : id from campaign-folders
+							if ( selectedInTree[i].getAttribute("restype") == "campaign-folders" ) {
+								arr.push( selectedInTree[i].getAttribute("resid") );	
+							}
+							
+					// TODO : id from campaigns
+							if ( selectedInTree[i].getAttribute("restype") == "campaigns" ) {
+								arr.push( selectedInTree[i].getAttribute("resid") );	
+							}
+							
+					// TODO : id from iterations
+							if ( selectedInTree[i].getAttribute("restype") == "iterations" ) {
+								arr.push( selectedInTree[i].getAttribute("resid") );	
+							}
+							
+					// TODO : id from test-suites
+							if ( selectedInTree[i].getAttribute("restype") == "test-suites" ) {
+								arr.push( selectedInTree[i].getAttribute("resid") );	
+							}				*/			
+							
+				}
+				
+				var valueForTree = Object.create( {
+				  'type' : {
+				    value: ""
+				  },
+				  'values': {
+				    value: []
+				  }
+				});
+				
+				valueForTree.type = "LIST";
+				valueForTree.values = arr;
+				
+				jsonVariable[key] = valueForTree;
+							
+			}
+			
+			
+			// Looking for informations in all the widgets to check if there's something to add to the model
 
 			for (var i = 0, $field; i < fields.length; i++) {
 				$field = $(fields[i]);
@@ -474,6 +531,7 @@ define([ "jquery", "backbone", "app/squash.handlebars.helpers", "squash.translat
 					}
 				}
 			}
+
 			this.model = {fields : jsonVariable};
 		},
 

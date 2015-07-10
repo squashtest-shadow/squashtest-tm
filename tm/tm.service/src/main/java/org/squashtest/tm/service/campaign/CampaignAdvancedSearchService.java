@@ -24,6 +24,10 @@ import java.util.List;
 import java.util.Locale;
 
 import org.springframework.transaction.annotation.Transactional;
+import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
+import org.squashtest.tm.core.foundation.collection.PagingAndMultiSorting;
+import org.squashtest.tm.domain.campaign.Campaign;
+import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.search.AdvancedSearchModel;
 import org.squashtest.tm.domain.search.SearchExportCSVModel;
@@ -33,5 +37,7 @@ public interface CampaignAdvancedSearchService extends AdvancedSearchService {
 
 	List<String> findAllAuthorizedUsersForACampaign();
 
+	PagedCollectionHolder<List<Execution>> searchForCampaign(AdvancedSearchModel searchModel,
+			PagingAndMultiSorting paging, Locale locale);
 
 }

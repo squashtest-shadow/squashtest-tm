@@ -25,8 +25,10 @@ import java.util.Date;
 import java.util.List;
 
 import org.hibernate.search.batchindexing.MassIndexerProgressMonitor;
+import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.search.AdvancedSearchIndexMonitoring;
+import org.squashtest.tm.domain.search.AdvancedSearchIndexMonitoringForCampaigns;
 import org.squashtest.tm.domain.search.AdvancedSearchIndexMonitoringForRequirementVersions;
 import org.squashtest.tm.domain.search.AdvancedSearchIndexMonitoringForTestcases;
 import org.squashtest.tm.domain.testcase.TestCase;
@@ -52,6 +54,10 @@ public class AdvancedSearchIndexingMonitor implements MassIndexerProgressMonitor
 		if(this.indexedDomains.contains(RequirementVersion.class)){
 			AdvancedSearchIndexMonitoringForRequirementVersions.reset();
 		}
+		if (this.indexedDomains.contains(Execution.class)) {
+			AdvancedSearchIndexMonitoringForCampaigns.reset();
+		}
+
 	}
 	
 	@Override
@@ -65,6 +71,10 @@ public class AdvancedSearchIndexingMonitor implements MassIndexerProgressMonitor
 		
 		if(this.indexedDomains.contains(RequirementVersion.class)){
 			AdvancedSearchIndexMonitoringForRequirementVersions.setDocumentsAdded(arg0);
+		}
+
+		if (this.indexedDomains.contains(Execution.class)) {
+			AdvancedSearchIndexMonitoringForCampaigns.setDocumentsAdded(arg0);
 		}
 	}
 
@@ -80,6 +90,10 @@ public class AdvancedSearchIndexingMonitor implements MassIndexerProgressMonitor
 		if(this.indexedDomains.contains(RequirementVersion.class)){
 			AdvancedSearchIndexMonitoringForRequirementVersions.setAddToTotalCount(arg0);	
 		}
+
+		if (this.indexedDomains.contains(Execution.class)) {
+			AdvancedSearchIndexMonitoringForCampaigns.setAddToTotalCount(arg0);
+		}
 	}
 
 	@Override
@@ -93,6 +107,10 @@ public class AdvancedSearchIndexingMonitor implements MassIndexerProgressMonitor
 		
 		if(this.indexedDomains.contains(RequirementVersion.class)){
 			AdvancedSearchIndexMonitoringForRequirementVersions.setDocumentsBuilt(arg0);		
+		}
+
+		if (this.indexedDomains.contains(Execution.class)) {
+			AdvancedSearchIndexMonitoringForCampaigns.setDocumentsBuilt(arg0);
 		}
 	}
 
@@ -108,6 +126,10 @@ public class AdvancedSearchIndexingMonitor implements MassIndexerProgressMonitor
 		
 		if(this.indexedDomains.contains(RequirementVersion.class)){
 			AdvancedSearchIndexMonitoringForRequirementVersions.setEntitiesLoaded(arg0);		
+		}
+
+		if (this.indexedDomains.contains(Execution.class)) {
+			AdvancedSearchIndexMonitoringForCampaigns.setEntitiesLoaded(arg0);
 		}
 	}
 
@@ -125,6 +147,11 @@ public class AdvancedSearchIndexingMonitor implements MassIndexerProgressMonitor
 			AdvancedSearchIndexMonitoringForRequirementVersions.setIndexingOver(true);
 			this.updateRequirementVersionIndexingDateAndVersion();
 		} 	
+
+		if (this.indexedDomains.contains(Execution.class)) {
+			AdvancedSearchIndexMonitoringForCampaigns.setIndexingOver(true);
+			this.updateCampaignIndexingDateAndVersion();
+		}
 	}
 
 	private void updateRequirementVersionIndexingDateAndVersion(){
@@ -139,5 +166,14 @@ public class AdvancedSearchIndexingMonitor implements MassIndexerProgressMonitor
 		this.configurationService.updateConfiguration(IndexationServiceImpl.TESTCASE_INDEXING_DATE_KEY, dateFormat.format(indexingDate));
 		String currentVersion = this.configurationService.findConfiguration(IndexationServiceImpl.SQUASH_VERSION_KEY);
 		this.configurationService.updateConfiguration(IndexationServiceImpl.TESTCASE_INDEXING_VERSION_KEY, currentVersion);
+	}
+
+	private void updateCampaignIndexingDateAndVersion() {
+		Date indexingDate = new Date();
+		this.configurationService.updateConfiguration(IndexationServiceImpl.CAMPAIGN_INDEXING_DATE_KEY,
+				dateFormat.format(indexingDate));
+		String currentVersion = this.configurationService.findConfiguration(IndexationServiceImpl.SQUASH_VERSION_KEY);
+		this.configurationService.updateConfiguration(IndexationServiceImpl.CAMPAIGN_INDEXING_VERSION_KEY,
+				currentVersion);
 	}
 }

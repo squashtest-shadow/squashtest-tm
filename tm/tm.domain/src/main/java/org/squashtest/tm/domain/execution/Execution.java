@@ -56,6 +56,14 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.Formula;
 import org.hibernate.annotations.Type;
+import org.hibernate.search.annotations.Analyze;
+import org.hibernate.search.annotations.ClassBridge;
+import org.hibernate.search.annotations.ClassBridges;
+import org.hibernate.search.annotations.Field;
+import org.hibernate.search.annotations.Indexed;
+import org.hibernate.search.annotations.IndexedEmbedded;
+import org.hibernate.search.annotations.Parameter;
+import org.hibernate.search.annotations.Store;
 import org.hibernate.validator.constraints.NotBlank;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.tm.domain.Identified;
@@ -78,6 +86,10 @@ import org.squashtest.tm.domain.infolist.DenormalizedType;
 import org.squashtest.tm.domain.infolist.InfoListItem;
 import org.squashtest.tm.domain.library.HasExecutionStatus;
 import org.squashtest.tm.domain.project.Project;
+import org.squashtest.tm.domain.requirement.RequirementVersionAttachmentBridge;
+import org.squashtest.tm.domain.requirement.RequirementVersionHasParentBridge;
+import org.squashtest.tm.domain.requirement.RequirementVersionIsCurrentBridge;
+import org.squashtest.tm.domain.search.CUFBridge;
 import org.squashtest.tm.domain.testautomation.AutomatedExecutionExtender;
 import org.squashtest.tm.domain.testautomation.AutomatedSuite;
 import org.squashtest.tm.domain.testautomation.AutomatedTest;
@@ -94,7 +106,14 @@ import org.squashtest.tm.exception.execution.IllegalExecutionStatusException;
 import org.squashtest.tm.security.annotation.AclConstrainedObject;
 
 @Auditable
+@Indexed
 @Entity
+@ClassBridges({
+		@ClassBridge(name = "attachments", store = Store.YES, analyze = Analyze.NO, impl = ExecutionAttachmentBridge.class),
+		@ClassBridge(name = "cufs", store = Store.YES, impl = CUFBridge.class, params = {
+				@Parameter(name = "type", value = "execution"), @Parameter(name = "inputType", value = "ALL") }),
+		@ClassBridge(name = "cufs", store = Store.YES, analyze = Analyze.NO, impl = CUFBridge.class, params = {
+				@Parameter(name = "type", value = "execution"), @Parameter(name = "inputType", value = "DROPDOWN_LIST") }) })
 public class Execution implements AttachmentHolder, IssueDetector, Identified, HasExecutionStatus,
 DenormalizedFieldHolder, BoundEntity {
 
@@ -117,33 +136,41 @@ DenormalizedFieldHolder, BoundEntity {
 
 	@Id
 	@Column(name = "EXECUTION_ID")
+	@Field(analyze = Analyze.NO, store = Store.YES)
 	@GeneratedValue(strategy = GenerationType.AUTO, generator = "execution_execution_id_seq")
 	@SequenceGenerator(name = "execution_execution_id_seq", sequenceName = "execution_execution_id_seq")
 	private Long id;
 
+	@Field(analyze = Analyze.NO, store = Store.YES)
 	@Enumerated(EnumType.STRING)
 	private ExecutionStatus executionStatus = ExecutionStatus.READY;
 
+	@Field(analyze = Analyze.NO, store = Store.YES)
 	@Enumerated(EnumType.STRING)
 	protected TestCaseExecutionMode executionMode = TestCaseExecutionMode.MANUAL;
 
 	@Lob
+	@Field(analyze = Analyze.NO, store = Store.YES)
 	@Type(type="org.hibernate.type.StringClobType")
 	private String description;
 
 	@Lob
+	@Field(analyze = Analyze.NO, store = Store.YES)
 	@Type(type="org.hibernate.type.StringClobType")
 	private String prerequisite = "";
 
 	@NotNull
+	@Field(analyze = Analyze.NO, store = Store.YES)
 	private String reference = "";
 
 	@Lob
+	@Field(analyze = Analyze.NO, store = Store.YES)
 	@Type(type="org.hibernate.type.StringClobType")
 	@Column(name = "TC_DESCRIPTION")
 	private String tcdescription;
 
 	@Enumerated(EnumType.STRING)
+	@Field(analyze = Analyze.NO, store = Store.YES)
 	@Basic(optional = false)
 	private TestCaseImportance importance = LOW;
 
@@ -156,13 +183,16 @@ DenormalizedFieldHolder, BoundEntity {
 	@Enumerated(EnumType.STRING)
 	@Basic(optional = false)
 	@Column(name = "TC_STATUS")
+	@Field(analyze = Analyze.NO, store = Store.YES)
 	private TestCaseStatus status = TestCaseStatus.WORK_IN_PROGRESS;
 
+	@Field(analyze = Analyze.NO, store = Store.YES)
 	@NotBlank
 	@Size(min = 0, max = 255)
 	private String name;
 
 	@Column
+	@Field(analyze = Analyze.NO, store = Store.YES)
 	private String datasetLabel;
 
 	// TODO rename as testPlanItem
@@ -172,6 +202,7 @@ DenormalizedFieldHolder, BoundEntity {
 
 	@ManyToOne
 	@JoinColumn(name = "TCLN_ID", referencedColumnName = "TCLN_ID")
+	// @IndexedEmbedded
 	private TestCase referencedTestCase;
 
 	@OneToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
@@ -183,9 +214,11 @@ DenormalizedFieldHolder, BoundEntity {
 	private Integer executionOrder;
 
 	@Column(insertable = false)
+	@Field(analyze = Analyze.NO, store = Store.YES)
 	private String lastExecutedBy;
 
 	@Column(insertable = false)
+	@Field(analyze = Analyze.NO, store = Store.YES)
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date lastExecutedOn;
 
@@ -204,6 +237,7 @@ DenormalizedFieldHolder, BoundEntity {
 
 	@OneToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE })
 	@JoinColumn(name = "ISSUE_LIST_ID")
+	@IndexedEmbedded
 	private IssueList issueList = new IssueList();
 
 	/* *********************** /issues attributes ************************ */
@@ -477,6 +511,8 @@ DenormalizedFieldHolder, BoundEntity {
 	}
 
 	/* ***************** Bugged implementation *********************** */
+
+	@IndexedEmbedded
 	@Override
 	public Project getProject() {
 		return testPlan.getProject();
@@ -711,6 +747,7 @@ DenormalizedFieldHolder, BoundEntity {
 		return testPlan.getIteration();
 	}
 
+	@IndexedEmbedded
 	public Campaign getCampaign() {
 		return getIteration().getCampaign();
 	}
