@@ -79,8 +79,8 @@ class TestPlanTableModelHelper extends DataTableModelBuilder<IndexedIterationTes
 		Long tcId;
 		String importance;
 		String reference;
-		String milestoneDates = "--";
-		String milestoneLabels = "--";
+		String milestoneDates = "-";
+		String milestoneLabels = "-";
 
 		if (item.isTestCaseDeleted()) {
 			projectName = formatNoData(locale);
