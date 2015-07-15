@@ -126,6 +126,7 @@ import org.squashtest.tm.domain.campaign.CampaignLibrary;
 import org.squashtest.tm.domain.campaign.CampaignLibraryNode;
 import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.execution.Execution;
+import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.domain.testcase.TestCaseLibrary;
 import org.squashtest.tm.domain.testcase.TestCaseLibraryNode;
 import org.squashtest.tm.service.campaign.CampaignLibraryFinderService;
@@ -336,20 +337,19 @@ public class AdvancedSearchController {
 			.mapAttribute("execution-executed-on", "lastExecutedOn", Execution.class)
 			.mapAttribute("execution-datasets", "id", Execution.class);
 	
-	@RequestMapping(method = RequestMethod.GET)
 	// TODO faire plusieurs méthodes et discriminer avec params = "searchDomain=campaign" etc nut not necessary
+	@RequestMapping(method = RequestMethod.GET)
 	public String showSearchPage(Model model, @RequestParam String searchDomain,
 			@RequestParam(value = "cookieValueSelect", required = false, defaultValue = "") String cookieValueSelect,
 			@RequestParam(value = "cookieValueOpen", required = false, defaultValue = "") String[] cookieValueOpen,
-			@CookieValue(value = "jstree_open", required = false, defaultValue = "") String[] openedNodes,
-			@CookieValue(value = "jstree_select", required = false, defaultValue = "") String[] selectedNodes,
 			@CookieValue(value = "workspace-prefs", required = false, defaultValue = "") String elementId,
-			@RequestParam(required = false) String associateResultWithType, @RequestParam(required = false) Long id,
+			@RequestParam(required = false, defaultValue = "") String associateResultWithType,
+			@RequestParam(required = false, defaultValue = "") Long id,
 			Locale locale,
 			@CurrentMilestone Milestone activeMilestone) {
 
 		// Wow, so much params.
-		// jstree_open, jstreee-select and workspace-prefs are useless I think
+		// workspace-prefs is useless I think
 		// TODO : refactor this mess (already done with libraries and nodes)
 		// But those cookieValueOpen and cookieValueSelect are great. They allow to get the cookie value from the
 		// workspace to be put in the search tree
@@ -448,17 +448,14 @@ public class AdvancedSearchController {
 
 	@RequestMapping(method = RequestMethod.POST)
 	public String showSearchPageFilledWithParams(Model model, @RequestParam String searchDomain,
-			@RequestParam("cookieValueSelect") String cookieValueSelect,
-			@RequestParam("cookieValueOpen") String[] cookieValueOpen,
-			@CookieValue(value = "jstree_open", required = false, defaultValue = "") String[] openedNodes,
-			@CookieValue(value = "jstree_select", required = false, defaultValue = "") String[] selectedNodes,
+			@RequestParam(value = "cookieValueSelect", required = false, defaultValue = "") String cookieValueSelect,
+			@RequestParam(value = "cookieValueOpen", required = false, defaultValue = "") String[] cookieValueOpen,
 			@CookieValue(value = "workspace-prefs", required = false, defaultValue = "") String elementId,
 			@RequestParam String searchModel, @RequestParam(required = false) String associateResultWithType,
 			@RequestParam(required = false) Long id, Locale locale,
 			@CurrentMilestone Milestone activeMilestone) {
 		model.addAttribute(SEARCH_MODEL, searchModel);
-		return showSearchPage(model, searchDomain, cookieValueSelect, cookieValueOpen, openedNodes, selectedNodes,
-				elementId,
+		return showSearchPage(model, searchDomain, cookieValueSelect, cookieValueOpen, elementId,
 				associateResultWithType, id, locale,
 				activeMilestone);
 	}
@@ -1104,7 +1101,7 @@ public class AdvancedSearchController {
 		}
 
 		private boolean isExecutionEditable(Execution item) {
-			// Milestone dependent ?
+			// Milestone dependent ? Not for now.
 			return permissionService.hasRoleOrPermissionOnObject("ROLE_ADMIN", "WRITE", item);
 		}
 
@@ -1126,16 +1123,17 @@ public class AdvancedSearchController {
 			res.put("execution-mode", formatMode(item.getExecutionMode(), locale));
 			res.put("execution-milestone-nb", item.getCampaign().getMilestones().toString());
 			res.put("testsuite-execution", item.getTestPlan().getLabel());
-			res.put("execution-status", formatStatus(item.getStatus(), locale));
+			res.put("execution-status", formatExecutionStatus(item.getExecutionStatus(), locale));
 			res.put("execution-executed-by", formatUsername(item.getLastExecutedBy()));
 			res.put("execution-executed-on", formatDateItem(item));
 			res.put("execution-datasets", formatDatasetsItem(item));
+			res.put("execution-suiteId", item.getTestPlan().getId());
 			res.put("empty-openinterface2-holder", " ");
 			res.put("empty-opentree-holder", " ");
 			return res;
 		}
 
-		private String formatStatus(TestCaseStatus status, Locale locale) {
+		private String formatExecutionStatus(ExecutionStatus status, Locale locale) {
 			return status.getLevel() + "-" + messageSource.internationalize(status, locale);
 		}
 

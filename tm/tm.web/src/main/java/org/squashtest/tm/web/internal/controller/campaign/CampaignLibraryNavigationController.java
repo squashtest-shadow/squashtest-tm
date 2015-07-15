@@ -60,6 +60,7 @@ import org.squashtest.tm.domain.campaign.CampaignLibraryNode;
 import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.campaign.TestSuite;
 import org.squashtest.tm.domain.customfield.RawValue;
+import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.service.campaign.CampaignFinder;
 import org.squashtest.tm.service.campaign.CampaignLibraryNavigationService;
@@ -67,6 +68,7 @@ import org.squashtest.tm.service.campaign.CampaignModificationService;
 import org.squashtest.tm.service.campaign.IterationModificationService;
 import org.squashtest.tm.service.deletion.OperationReport;
 import org.squashtest.tm.service.deletion.SuppressionPreviewReport;
+import org.squashtest.tm.service.execution.ExecutionFinder;
 import org.squashtest.tm.service.library.LibraryNavigationService;
 import org.squashtest.tm.service.milestone.MilestoneFinderService;
 import org.squashtest.tm.service.statistics.campaign.CampaignStatisticsBundle;
@@ -114,6 +116,8 @@ LibraryNavigationController<CampaignLibrary, CampaignFolder, CampaignLibraryNode
 	private CampaignLibraryNavigationService campaignLibraryNavigationService;
 	@Inject
 	private CampaignFinder campaignFinder;
+	@Inject
+	private ExecutionFinder executionFinder;
 	@Inject
 	private IterationModificationService iterationModificationService;
 	@Inject
@@ -366,6 +370,28 @@ LibraryNavigationController<CampaignLibrary, CampaignFolder, CampaignLibraryNode
 
 		Campaign campaign = campaignFinder.findById(campaignId);
 		CampaignExportCSVModel model = campaignLibraryNavigationService.exportCampaignToCSV(campaignId, exportType);
+
+		// prepare the response
+		response.setContentType("application/octet-stream");
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HHmmss");
+
+		response.setHeader("Content-Disposition", "attachment; filename=" + "EXPORT_CPG_" + exportType + "_"
+				+ campaign.getName().replace(" ", "_") + "_" + sdf.format(new Date()) + ".csv");
+
+		File exported = exportToFile(model);
+		return new FileSystemResource(exported);
+	}
+
+	// Export Campaign from Execution
+	@RequestMapping(value = "/export-campaign-by-execution/{executionId}", method = RequestMethod.GET, params = "export=csv")
+	public @ResponseBody
+	FileSystemResource exportCampaignByExecution(@PathVariable(RequestParams.EXECUTION_ID) long executionId,
+			@RequestParam(value = "exportType", defaultValue = "S") String exportType, HttpServletResponse response) {
+
+		Execution execution = executionFinder.findById(executionId);
+		Campaign campaign = campaignFinder.findById(execution.getCampaign().getId());
+
+		CampaignExportCSVModel model = campaignLibraryNavigationService.exportCampaignToCSV(execution.getCampaign().getId(), exportType);
 
 		// prepare the response
 		response.setContentType("application/octet-stream");

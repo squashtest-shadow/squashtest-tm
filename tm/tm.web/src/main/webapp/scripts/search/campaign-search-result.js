@@ -95,16 +95,16 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil","workspace.ro
 		
 		modifySearch : function(){
 			if(this.isAssociation){
-				this.post(squashtm.app.contextRoot + "/advanced-search?searchDomain=campaign&id="+this.associationId+"&associateResultWithType="+this.associationType, {
+				this.post(squashtm.app.contextRoot + "advanced-search?searchDomain=campaign&id="+this.associationId+"&associateResultWithType="+this.associationType, {
 					searchModel : JSON.stringify(this.model)
 				});	
 			} else {
 				this.post(squashtm.app.contextRoot + "/advanced-search?searchDomain=campaign", {
-					searchModel : JSON.stringify(this.model)
+					searchModel : JSON.stringify(this.model) 
 				});	
 			}
 		},
-		
+
 		post : function (URL, PARAMS) {
 			var temp=document.createElement("form");
 			temp.action=URL;
@@ -133,15 +133,21 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil","workspace.ro
 		
 		exportResults : function(){
 			// document.location.href= squashtm.app.contextRoot +"/advanced-search?campaign&export=csv";
-			var selectedIds = this.selectedIds;
-			if (selectedIds !== 1){
-				// throw exception
+			var selectedIds = $("#campaign-search-result-table").squashTable().getSelectedIds();
+			if (selectedIds.length === 0){
+					notification.showError(translator.get('message.exportNoExecutionSelected'));
 				return;
 			} 
+			else if (selectedIds.length > 1) {
+				notification.showError(translator.get('message.exportMultipleExecutionSelected'));
+				return;
+			}
 			else {
 				// We have a campaign to export :)
+				var table = $('#campaign-search-result-table').dataTable();
+				var selectedRow = table.find(".ui-state-row-selected");
 				
-				document.location.href = window.squashtm.app.contextRoot + "/campaign-browser/export-campaign/" + event.nodeId + "?export=csv&exportType=S";
+				document.location.href = window.squashtm.app.contextRoot + "/campaign-browser/export-campaign-by-execution/" + selectedIds.toString() + "?export=csv&exportType=S";
 			}
 
 		},

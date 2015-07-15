@@ -188,9 +188,9 @@ public class CampaignSearchInterfaceDescription extends SearchInterfaceDescripti
 				.useLocale(locale).build();
 		executionModeField.addPossibleValues(modeOptions);
 
+		// Last execution
 		/*
-		 * // LastExecution : TODO : everything behind it, nothing is selected yet SearchInputFieldModel
-		 * lastExecutionField = new SearchInputFieldModel("lastExecution", getMessageSource()
+		 * SearchInputFieldModel lastExecutionField = new SearchInputFieldModel("lastExecution", getMessageSource()
 		 * .internationalize("search.execution.lastExecution", locale), CHECKBOX); panel.addField(lastExecutionField);
 		 */
 

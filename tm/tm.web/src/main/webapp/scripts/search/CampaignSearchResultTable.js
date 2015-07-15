@@ -18,10 +18,10 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ "jquery", "backbone", "squash.translator","jeditable.simpleJEditable", "workspace.projects",
+define([ "jquery", "backbone", "squash.translator", '../test-plan-panel/exec-runner',"jeditable.simpleJEditable", "workspace.projects",
          "squash.configmanager", "workspace.routing", "app/ws/squashtm.notification", "squashtable",
          "jqueryui", "jquery.squash.jeditable", "jquery.cookie" ],
-         function($, Backbone, translator, SimpleJEditable, projects, confman, routing, notification) {
+         function($, Backbone, translator, execrunner, SimpleJEditable, projects, confman, routing, notification) {
 
 	var CampaignSearchResultTable = Backbone.View.extend({
 		el : "#campaign-search-result-table",
@@ -35,7 +35,6 @@ define([ "jquery", "backbone", "squash.translator","jeditable.simpleJEditable", 
 			this.addSelectEditableToStatus = $.proxy(this._addSelectEditableToStatus, this);
 			this.addSimpleEditableToReference = $.proxy(this._addSimpleEditableToReference, this);
 			this.addSimpleEditableToLabel = $.proxy(this._addSimpleEditableToLabel, this);
-			this.addInterfaceLevel2Link = $.proxy(this._addInterfaceLevel2Link, this);
 			this.addIconToAssociatedToColumn = $.proxy(this._addIconToAssociatedToColumn, this);
 			this.addTreeLink = $.proxy(this._addTreeLink, this);
 			this.getTableRowId = $.proxy(this._getTableRowId, this);
@@ -192,33 +191,30 @@ define([ "jquery", "backbone", "squash.translator","jeditable.simpleJEditable", 
 							"bSortable" : true
 						}, {
 							"aTargets" : [ 6 ],
-							"mDataProp" : "execution-milestone-nb",
-							"bSortable" : true,
-							"sClass" : "centered"
-						}, {
-							"aTargets" : [ 7 ],
 							"mDataProp" : "testsuite-execution",
 							"bSortable" : true
 						}, {
-							"aTargets" : [ 8 ],
+							"aTargets" : [ 7 ],
 							"mDataProp" : "execution-status",
-							"bSortable" : true,
-							"sClass" : "centered"
+							"bSortable" : true
 						},{
-							"aTargets" : [ 9 ],
+							"aTargets" : [ 8 ],
 							"mDataProp" : "execution-executed-by",
-							"bSortable" : true,
-							"sClass" : "centered"
+							"bSortable" : true
+						}, {
+							"aTargets" : [ 9 ],
+							"mDataProp" : "execution-executed-on",
+							"bSortable" : true
 						}, {
 							"aTargets" : [ 10 ],
-							"mDataProp" : "execution-executed-on",
-							"bSortable" : true,
-							"sClass" : "centered"
+							"mDataProp" : "execution-datasets",
+							"bSortable" : true
 						}, {
 							"aTargets" : [ 11 ],
-							"mDataProp" : "execution-datasets",
-							"bSortable" : true,
-							"sClass" : "centered"
+							"mDataProp" : "empty-opentree-holder",
+							"sClass" : "centered search-open-tree-holder",
+							"sWidth" : "2em",
+							"bSortable" : false
 						}, {
 							"aTargets" : [ 12 ],
 							"mDataProp" : "empty-openinterface2-holder",
@@ -227,12 +223,6 @@ define([ "jquery", "backbone", "squash.translator","jeditable.simpleJEditable", 
 							"bSortable" : false
 						}, {
 							"aTargets" : [ 13 ],
-							"mDataProp" : "empty-opentree-holder",
-							"sClass" : "centered search-open-tree-holder",
-							"sWidth" : "2em",
-							"bSortable" : false
-						}, {
-							"aTargets" : [ 14 ],
 							"mDataProp" : "editable",
 							"bVisible" : false,
 							"bSortable" : false
@@ -264,7 +254,98 @@ define([ "jquery", "backbone", "squash.translator","jeditable.simpleJEditable", 
 
 		// _addSimpleEditableToLabel 
 
+		manualHandler : function() {
+
+			var $this = $(this),
+				tpid = $this.data('tpid'),
+				suiteId = $this.data('suiteid'),
+				
+				ui = ($this.is('.run-popup')) ? "popup" : "oer", newurl = squashtm.app.contextRoot + '/test-suites/' + tpid + '/test-plan/' + suiteId + '/executions/new';
+
+			$.post(newurl, {
+				mode : 'manual'
+			}, 'json').done(function(execId) {
+				var execurl = squashtm.app.contextRoot + "/executions/" + execId + '/runner'; 
+				if (ui === "popup") {
+					execrunner.runInPopup(execurl);
+				} else {
+					execrunner.runInOER(execurl);
+				}
+
+			});
+		},
+
+		automatedHandler : function() {
+			var row = $(this).parents('tr').get(0);
+			var	table = $("#iteration-test-plans-table").squashTable();
+			var	data = table.fnGetData(row);
+
+			var tpiIds =  [];
+			var tpiId = data['entity-id'];
+			tpiIds.push(tpiId);
+
+			var url = squashtm.app.contextRoot + "/automated-suites/new";
+
+			var formParams = {};
+			var ent =  squashtm.page.identity.restype === "iterations" ? "iterationId" : "testSuiteId";
+			formParams[ent] = squashtm.page.identity.resid;
+			formParams.testPlanItemsIds = tpiIds;
+
+			$.ajax({
+				url : url,
+				dataType:'json',
+				type : 'post',
+				data : formParams,
+				contentType : "application/x-www-form-urlencoded;charset=UTF-8"
+			}).done(function(suite) {
+				squashtm.context.autosuiteOverview.start(suite);
+			});
+			return false;
+ 
+		},
+		
 		_tableRowCallback : function(row, data, displayIndex) {
+			 
+			// add the execute shortcut menu
+			
+			// Instead of "Manuel", get the i18n thing TODO !
+			var manual = translator.get("test-case.execution-mode.MANUAL");
+			var isTcDel = data['is-tc-deleted'], isManual = (data['execution-mode'] === manual);
+			
+			// There tpId is wrong
+			var tpId = data['execution-id'], suiteId = data['execution-suiteId'], $td = $(row).find('.search-open-interface2-holder'); 
+			strmenu1 = $("#shortcut-exec-menu-template").html().replace(/#placeholder-tpid#/g, tpId);
+			strmenu = strmenu1.replace(/#placeholder-suiteid#/g, suiteId);
+
+			$td.empty();  
+			$td.append(strmenu);
+			
+			// if the test case is deleted : just disable the whole thing
+			// Plot twist  : Launch button has to be greyed
+			if (isTcDel) {
+				$td.find('.execute-arrow').addClass('disabled-transparent');
+				$("#test-suite-execution-button").addClass('disabled-transparent');
+			}
+
+			// if the test case is manual : configure a button menu,
+			// althgouh we don't want it
+			// to be skinned as a regular jquery button
+			else if (isManual) {
+				$td.find('.buttonmenu').buttonmenu({
+					anchor : "right"
+				}); 
+				$td.on('click', '.run-menu-item', this.manualHandler);
+			}
+
+			// if the test case is automated : just configure the button
+			else {
+				$td.find('.execute-arrow').click(this.automatedHandler);
+			}
+			
+			
+			// Add another stuff
+			
+			
 		/*	if(data.editable){
 				this.addSimpleEditableToReference(row,data);
 				this.addSimpleEditableToLabel(row,data);
@@ -275,23 +356,11 @@ define([ "jquery", "backbone", "squash.translator","jeditable.simpleJEditable", 
 				$(row).addClass("nonEditable");
 			//	$(row).attr('title', squashtm.app.campaignSearchResultConf.messages.nonEditableTooltip);
 			//}
-			this.addInterfaceLevel2Link(row,data);
 			this.addTreeLink(row,data);
 
 			if(this.isAssociation){
 				this.addIconToAssociatedToColumn(row,data);
 			}
-		},
-
-		_addInterfaceLevel2Link : function(row, data) {
-			var id = data["execution-id"];
-			var $cell = $(".search-open-interface2-holder",row);
-			$cell.append('<span class="ui-icon ui-icon-pencil"></span>')
-			.click(function(){
-				
-				// TODO : get the exact url
-				window.location = squashtm.app.contextRoot + "/campaigns/" + id + "/info";
-			});
 		},
 
 		_addIconToAssociatedToColumn : function(row, data) {
@@ -311,12 +380,14 @@ define([ "jquery", "backbone", "squash.translator","jeditable.simpleJEditable", 
 
 		_addTreeLink : function(row, data){
 			var self = this;
+			// Get id of execution to put in the link when clicked
 			var id = data["execution-id"];
+			
 			var $cell = $(".search-open-tree-holder", row);
 			$cell.append('<span class="search-open-tree"></span>')
 				.click(function(){
 					$.cookie("workspace-prefs", id, {path : "/"});
-					window.location = squashtm.app.contextRoot + "campaign-workspace/";
+					window.location = squashtm.app.contextRoot + "executions/" + id ;
 			});
 		},
 

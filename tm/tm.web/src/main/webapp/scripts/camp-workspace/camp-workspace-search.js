@@ -47,26 +47,9 @@ define([ 'tree', './camp-treemenu', './popups/init-all', './init-actions', 'squa
 			
 			function initSelectionCampaign() {
 				
-				// ***************** Searching for Campaigns ********************
-/*				
-				if( $("#tree").find('li').filter(':campaign').length === 0 ) {
-					$("#noCampaignInTheTree").hide();
-				}	
-	*/
-				// Get the number of campaigns with a service in 
-		/*		if (numberOfCampaignsAvailable > 0 ) {
-				$("#noCampaignInTheTree").hide();
-			}	*/
-			 // ***************** Select all, deselect all ********************
-				
-				// Check the box, select all // Not anymore
-				// $("#getAllTheCampaigns").prop("checked", true);
-				// $("#tree").find('li').filter(':library').treeNode().select();
-				
-				// Check / Select all VS Uncheck, deselect
-				
 				$("#getAllTheCampaigns").on("click", function(){
 						if($("#getAllTheCampaigns").prop("checked") ) {
+							$("#tree").find('li').filter(':library').treeNode().deselect();
 							$("#tree").jstree('findNodes', { restype : 'campaign-libraries'}).select();
 						}
 						else {
