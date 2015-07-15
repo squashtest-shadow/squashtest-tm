@@ -56,10 +56,10 @@ class GenericProjectManagerServiceIT extends DbunitServiceSpecification {
 		given :
 		Project project = findEntity(Project.class, -1L)
 		when:
-		modService.changeBugTrackerProjectName(-1L, "this")
+		modService.changeBugTrackerProjectName(-1L, ["this", "that"])
 
 		then:
-		project.getBugtrackerBinding().getProjectName() == "this"
+		project.getBugtrackerBinding().getProjectNames() == ["this", "that"]
 	}
 
 	@DataSet("ProjectModificationServiceIT.xml")

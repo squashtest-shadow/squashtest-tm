@@ -23,6 +23,7 @@ package org.squashtest.tm.service.requirement
 import javax.inject.Inject
 
 import org.hibernate.Query
+import org.spockframework.util.NotThreadSafe;
 import org.springframework.transaction.annotation.Transactional
 import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory
 import org.squashtest.tm.domain.customfield.BindableEntity
@@ -176,6 +177,7 @@ class RequirementLibraryNavigationServiceIT extends DbunitServiceSpecification {
 		destination.content.size() == 1
 	}
 
+	
 	@DataSet("RequirementLibraryNavigationServiceIT.should copy paste folder with requirements.xml")
 	def "should copy paste folder with requirements"(){
 		given:
