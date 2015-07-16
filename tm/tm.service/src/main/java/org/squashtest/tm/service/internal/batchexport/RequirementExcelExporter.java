@@ -66,7 +66,7 @@ import org.squashtest.tm.service.internal.requirement.RequirementLibraryNavigati
 @Component
 @Scope("prototype")
 public class RequirementExcelExporter {
-	private static final String REQUIREMENT_SHEET = TemplateWorksheet.REQUIREMENT_COVERAGE_SHEET.sheetName;
+	private static final String REQUIREMENT_SHEET = TemplateWorksheet.REQUIREMENT_SHEET.sheetName;
 	// that map will remember which column index is
 	private Map<String, Integer> cufColumnsByCode = new HashMap<String, Integer>();
 

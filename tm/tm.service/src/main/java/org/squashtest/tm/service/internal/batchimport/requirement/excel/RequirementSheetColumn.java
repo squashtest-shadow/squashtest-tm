@@ -36,6 +36,8 @@ import org.squashtest.tm.service.internal.batchimport.testcase.excel.TemplateWor
  */
 public enum RequirementSheetColumn implements TemplateColumn {
 	ACTION,
+	PROJECT_ID(IGNORED),
+	PROJECT_NAME(IGNORED),
 	REQ_PATH(MANDATORY),
 	TC_PATH(MANDATORY),
 	REQ_NUM,
