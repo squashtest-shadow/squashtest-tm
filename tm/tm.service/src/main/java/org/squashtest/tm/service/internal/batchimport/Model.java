@@ -54,6 +54,7 @@ import org.squashtest.tm.domain.testcase.Parameter;
 import org.squashtest.tm.domain.testcase.ParameterAssignationMode;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestStep;
+import org.squashtest.tm.service.importer.Target;
 import org.squashtest.tm.service.internal.batchimport.TestCaseCallGraph.Node;
 import org.squashtest.tm.service.internal.repository.CustomFieldDao;
 import org.squashtest.tm.service.internal.repository.DatasetDao;
@@ -96,8 +97,11 @@ public class Model {
 	 * The following properties are initialized all together during
 	 * init(List<TestCaseTarget>) :
 	 * 
-	 * - testCaseStatusByTarget - testCaseStepsByTarget - projectStatusByName -
-	 * tcCufsPerProjectname - stepCufsPerProjectname
+	 * - testCaseStatusByTarget
+	 * - testCaseStepsByTarget
+	 * - projectStatusByName
+	 * - tcCufsPerProjectname
+	 * - stepCufsPerProjectname
 	 * 
 	 * **************************************************************************
 	 * **************************************** *****************
@@ -106,13 +110,14 @@ public class Model {
 	/**
 	 * 
 	 * Maps a reference to a TestCase (namely a TestCaseTarget). It keeps track
-	 * of its status (see ModelizedStatus) and possibly its id (when there is a
+	 * of its status (see TargetStatus) and possibly its id (when there is a
 	 * concrete instance of it in the database).<br/>
 	 * <br/>
 	 * Because a test case might be referenced multiple time, once a test case
 	 * is loaded in that map it'll stay there.
 	 */
 	private Map<TestCaseTarget, TargetStatus> testCaseStatusByTarget = new HashMap<TestCaseTarget, TargetStatus>();
+
 
 	/**
 	 * Maps a test case (given its target) to a list of step models. We only
@@ -134,14 +139,14 @@ public class Model {
 	 * The answer is yes if :</p>
 	 * 
 	 * <ul>
-	 * 	<li>The test case exists in the database (ie it's not new : status is EXISTS)</li>
-	 * 	<li>The test case indeed belongs to a milestone which status forbids any modification</li>
+	 * 	<li>The entity exists in the database (ie it's not new : status is EXISTS)</li>
+	 * 	<li>The entity indeed belongs to a milestone which status forbids any modification</li>
 	 * </ul>
 	 * 
 	 * <p>
-	 * 	Note that when the TestCase doesn't exist yet the answer is always no, because
-	 * 	one can never add or remove a test case from a locked milestone. Same goes
-	 * 	for test cases that are deleted or plain inexistant (status NOT_EXIST : neither in DB nor
+	 * 	Note that when the entity doesn't exist yet the answer is always no, because
+	 * 	one can never add or remove an entity a locked milestone. Same goes
+	 * 	for entities that are deleted or plain inexistant (status NOT_EXIST : neither in DB nor
 	 *  in the import file)
 	 * </p>
 	 * 
@@ -154,7 +159,7 @@ public class Model {
 	 * @param target
 	 * @return
 	 */
-	private Map<TestCaseTarget, Boolean> isTargetMilestoneLocked = new HashMap<>();
+	private Map<Target, Boolean> isTargetMilestoneLocked = new HashMap<>();
 
 	/**
 	 * nothing special, plain wysiwyg
@@ -190,6 +195,11 @@ public class Model {
 	 */
 	private TestCaseCallGraph callGraph = new TestCaseCallGraph();
 
+	/**
+	 * This property tracks a hierarchy of requirement folders, requirements and their versions
+	 */
+	private ImportedRequirementTree requirementTree = new ImportedRequirementTree();
+
 	// ===============================================================================================
 	// ===============================================================================================
 
@@ -209,7 +219,7 @@ public class Model {
 	public TargetStatus getStatus(TestCaseTarget target) {
 
 		if (!testCaseStatusByTarget.containsKey(target)) {
-			init(target);
+			mainInitTestCase(target);
 		}
 
 		return testCaseStatusByTarget.get(target);
@@ -271,7 +281,7 @@ public class Model {
 
 	public boolean isTestCaseLockedByMilestones(TestCaseTarget target){
 		if (!testCaseStatusByTarget.containsKey(target)) {
-			init(target);
+			mainInitTestCase(target);
 		}
 
 		return isTargetMilestoneLocked.get(target);
@@ -478,7 +488,7 @@ public class Model {
 		Integer index = target.getIndex();
 		TestCaseTarget tc = target.getTestCase();
 		if (!testCaseStatusByTarget.containsKey(tc)) {
-			init(tc);
+			mainInitTestCase(tc);
 		}
 		List<InternalStepModel> steps = testCaseStepsByTarget.get(tc);
 		if (index == null || steps == null) {
@@ -547,7 +557,7 @@ public class Model {
 		TestCaseTarget tc = step.getTestCase();
 
 		if (!testCaseStatusByTarget.containsKey(tc)) {
-			init(tc);
+			mainInitTestCase(tc);
 		}
 
 		return testCaseStepsByTarget.get(tc);
@@ -723,7 +733,7 @@ public class Model {
 	@SuppressWarnings("unchecked")
 	public Collection<CustomField> getTestCaseCufs(TestCaseTarget target) {
 		if (!testCaseStatusByTarget.containsKey(target)) {
-			init(target);
+			mainInitTestCase(target);
 		}
 
 		String projectName = PathUtils.extractProjectName(target.getPath());
@@ -741,7 +751,7 @@ public class Model {
 		TestCaseTarget tc = target.getTestCase();
 
 		if (!testCaseStatusByTarget.containsKey(tc)) {
-			init(tc);
+			mainInitTestCase(tc);
 		}
 
 		String projectName = PathUtils.extractProjectName(tc.getPath());
@@ -753,14 +763,24 @@ public class Model {
 		}
 	}
 
+	// *********************** Requirement management *******************************
+
+	public TargetStatus getStatus(RequirementVersionTarget target){
+		if (! requirementTree.targetExists(target)){
+			mainInitRequirements(target);
+		}
+
+		return requirementTree.getStatus(target);
+	}
+
 	// ************************** loading code
 	// **************************************
 
-	public void init(TestCaseTarget target) {
-		init(Arrays.asList(new TestCaseTarget[] { target }));
+	public void mainInitTestCase(TestCaseTarget target) {
+		mainInitTestCase(Arrays.asList(new TestCaseTarget[] { target }));
 	}
 
-	public void init(List<TestCaseTarget> targets) {
+	public void mainInitTestCase(List<TestCaseTarget> targets) {
 
 		// ensures unicity
 		List<TestCaseTarget> uniqueTargets = uniqueList(targets);
@@ -814,6 +834,7 @@ public class Model {
 			if (existence == Existence.EXISTS){
 				milestoneLocked = milestoneMemberFinder.isTestCaseMilestoneDeletable(id);
 			}
+
 			isTargetMilestoneLocked.put(t, milestoneLocked);
 		}
 	}
@@ -920,8 +941,8 @@ public class Model {
 
 		// add the projects that were found
 		for (Project p : projects) {
-			ProjectTargetStatus status = new ProjectTargetStatus(Existence.EXISTS, p.getId(), p.getTestCaseLibrary()
-					.getId());
+			ProjectTargetStatus status = new ProjectTargetStatus(Existence.EXISTS, p.getId(),
+					p.getTestCaseLibrary().getId(), p.getRequirementLibrary().getId());
 			projectStatusByName.put(p.getName(), status);
 			initCufs(p.getName());
 		}
@@ -949,6 +970,32 @@ public class Model {
 
 	}
 
+
+	public void mainInitRequirements(RequirementVersionTarget target){
+		mainInitRequirements(Arrays.asList(new RequirementVersionTarget[]{target}));
+	}
+
+
+	public void mainInitRequirements(List<RequirementVersionTarget> targets){
+
+		// ensures unicity
+		List<RequirementVersionTarget> uniqueTargets = uniqueList(targets);
+
+		// init the requirements
+		initRequirements(uniqueTargets);
+
+		// init the projects TODO
+		//initProjects(uniqueTargets);
+
+	}
+
+	public void initRequirements(List<RequirementVersionTarget> initialTargets){
+
+
+
+	}
+
+
 	// *************************** private methods
 	// *************************************
 
@@ -957,16 +1004,23 @@ public class Model {
 		return new ArrayList<OBJ>(filtered);
 	}
 
-	private List<String> collectProjects(List<TestCaseTarget> targets) {
+	private <TARGET extends Target> List<String> collectProjects(List<TARGET> targets) {
 		List<String> paths = collectPaths(targets);
 		return PathUtils.extractProjectNames(paths);
 	}
 
 	@SuppressWarnings("unchecked")
-	private List<String> collectPaths(List<TestCaseTarget> targets) {
-		return (List<String>) CollectionUtils.collect(targets, TestCasePathCollector.INSTANCE, new ArrayList<String>(
+	private <TARGET extends Target> List<String> collectPaths(List<TARGET> targets) {
+		return (List<String>) CollectionUtils.collect(targets, PathCollector.INSTANCE, new ArrayList<String>(
 				targets.size()));
 	}
+
+	@SuppressWarnings("unchecked")
+	private <TARGET extends Target> List<String> collectRequirementPaths(List<RequirementVersionTarget> targets) {
+		return (List<String>) CollectionUtils.collect(targets, RequirementPathCollector.INSTANCE, new ArrayList<String>(
+				targets.size()));
+	}
+
 
 	@SuppressWarnings("unchecked")
 	private List<Project> loadProjects(List<String> names) {
@@ -1066,6 +1120,10 @@ public class Model {
 	 */
 	static class TargetStatus {// NOSONAR this class is not final so that it can
 		// be tested in ValidationFacilityTest
+
+		// convenient alias
+		static final TargetStatus NOT_EXISTS = new TargetStatus(Existence.NOT_EXISTS);
+
 		/**
 		 * The {@link Existence} status of the concerned entity.
 		 */
@@ -1080,7 +1138,7 @@ public class Model {
 
 		// the implementor knows what he's doing
 
-		private TargetStatus(Existence status) {
+		TargetStatus(Existence status) {
 			if (status == Existence.EXISTS) {
 				throw new IllegalArgumentException(
 						"internal error : a TargetStatus representing an actually existent target should specify an id");
@@ -1088,7 +1146,7 @@ public class Model {
 			this.status = status;
 		}
 
-		private TargetStatus(Existence status, Long id) {
+		TargetStatus(Existence status, Long id) {
 			this.status = status;
 			this.id = id;
 		}
@@ -1105,10 +1163,18 @@ public class Model {
 
 	static class ProjectTargetStatus extends TargetStatus {
 		private Long testCaseLibraryId;
+		private Long requirementLibraryId;
 
 		private ProjectTargetStatus(Existence status, Long id, Long testCaseLibraryId) {
 			super(status, id);
+			this.testCaseLibraryId = testCaseLibraryId;;
+		}
+
+		private ProjectTargetStatus(Existence status, Long id, Long testCaseLibraryId,
+				Long requirementLibraryId) {
+			super(status, id);
 			this.testCaseLibraryId = testCaseLibraryId;
+			this.requirementLibraryId = requirementLibraryId;
 		}
 
 		private ProjectTargetStatus(Existence status) {
@@ -1118,19 +1184,39 @@ public class Model {
 		public Long getTestCaseLibraryId() {
 			return testCaseLibraryId;
 		}
+
+		public Long getRequirementLibraryId() {
+			return requirementLibraryId;
+		}
+
+
 	}
 
-	private static final class TestCasePathCollector implements Transformer {
+	private static final class PathCollector implements Transformer {
 
-		private static final TestCasePathCollector INSTANCE = new TestCasePathCollector();
+		private static final PathCollector INSTANCE = new PathCollector();
 
-		private TestCasePathCollector() {
+		private PathCollector() {
 			super();
 		}
 
 		@Override
 		public Object transform(Object value) {
 			return ((TestCaseTarget) value).getPath();
+		}
+	}
+
+	private static final class RequirementPathCollector implements Transformer {
+
+		private static final RequirementPathCollector INSTANCE = new RequirementPathCollector();
+
+		private RequirementPathCollector() {
+			super();
+		}
+
+		@Override
+		public Object transform(Object value) {
+			return ((RequirementVersionTarget) value).getRequirement().getPath();
 		}
 	}
 
@@ -1192,5 +1278,6 @@ public class Model {
 		}
 
 	}
+
 
 }

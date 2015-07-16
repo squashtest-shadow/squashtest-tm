@@ -142,12 +142,39 @@ public final class PathUtils {
 		return path.replaceAll(oldpatt, name);
 	}
 
-	/**
+	/*
 	 * a well formed path starts with a '/' and we remove it right away before splitting (or else a false positive empty
 	 * string would appear before it)
 	 */
 	public static String[] splitPath(String path) {
-		return path.substring(1).split(SPLIT);
+		return path.replaceFirst("^/+", "").split(SPLIT);
+	}
+
+	/**
+	 * <p>Accepts a well formed path and returns the list of paths of all of its ancestors, and then itself.</p>
+	 * 
+	 *  <p>example : scanPath("/project/folder1/folder2/element") => ["/project", "/project/folder1/", "/project/folder1/folder2" ,"/project/folder1/folder2/element"]</p>
+	 * 
+	 * 	<p>Some Scala guy would think of it as path.split("/").scanLeft("")(_ + "/" + _)</p>
+	 * 
+	 * 
+	 * @param path
+	 * @return
+	 */
+	public static List<String> scanPath(String path){
+
+		String[] split = splitPath(path);
+		List<String> paths = new ArrayList<String>(split.length);
+		StringBuffer buffer = new StringBuffer();
+
+		// build all the paths on the way.
+		for (int i = 0; i < split.length; i++) {
+			buffer.append("/");
+			buffer.append(split[i]);
+			paths.add(buffer.toString());
+		}
+
+		return paths;
 	}
 
 }

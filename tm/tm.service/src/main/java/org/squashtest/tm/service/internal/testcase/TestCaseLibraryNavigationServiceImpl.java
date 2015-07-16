@@ -41,6 +41,7 @@ import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.squashtest.tm.core.foundation.lang.PathUtils;
 import org.squashtest.tm.domain.customfield.RawValue;
 import org.squashtest.tm.domain.infolist.InfoListItem;
 import org.squashtest.tm.domain.infolist.ListItemReference;
@@ -334,6 +335,7 @@ TestCaseLibraryNavigationService {
 	@Override
 	public Long mkdirs(String folderpath) {
 
+
 		String path = folderpath.replaceFirst("^/", "").replaceFirst("/$", "");
 
 		StringBuffer buffer = new StringBuffer();
@@ -479,16 +481,16 @@ TestCaseLibraryNavigationService {
 
 		return statisticsService.gatherTestCaseStatisticsBundle(tcIds);
 	}
-	
+
 	@Override
 	public TestCaseStatisticsBundle getStatisticsForSelection(Collection<Long> libraryIds, Collection<Long> nodeIds,Milestone activeMilestone) {
-		
+
 		Collection<Long> tcIds = findTestCaseIdsFromSelection(libraryIds, nodeIds);
-		
+
 		if (activeMilestone!=null) {
 			tcIds = filterTcIdsListsByMilestone(tcIds,activeMilestone);
 		}
-		
+
 		return statisticsService.gatherTestCaseStatisticsBundle(tcIds);
 	}
 
@@ -684,11 +686,11 @@ TestCaseLibraryNavigationService {
 			return new ArrayList<>();
 		}
 	}
-	
+
 
 	private Collection<Long> filterTcIdsListsByMilestone(
 			Collection<Long> tcIds, Milestone activeMilestone) {
-		
+
 		List<Long> tcInMilestone = findAllTestCasesLibraryNodeForMilestone(activeMilestone);
 		return CollectionUtils.retainAll(tcIds, tcInMilestone);
 	}

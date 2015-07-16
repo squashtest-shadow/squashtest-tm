@@ -31,6 +31,7 @@ import org.squashtest.tm.domain.customfield.CustomField
 import org.squashtest.tm.domain.library.structures.LibraryGraph
 import org.squashtest.tm.domain.library.structures.LibraryGraph.SimpleNode
 import org.squashtest.tm.domain.project.Project
+import org.squashtest.tm.domain.requirement.RequirementLibrary;
 import org.squashtest.tm.domain.testcase.ParameterAssignationMode
 import org.squashtest.tm.domain.testcase.TestCaseLibrary
 import org.squashtest.tm.service.internal.batchimport.Model.Existence
@@ -182,9 +183,15 @@ public class ModelTest extends Specification{
 
 		and :
 		Project p = mockProject("project a", 10l)
+
 		TestCaseLibrary tcl = Mock(TestCaseLibrary)
 		tcl.getId() >> 10l
 		p.getTestCaseLibrary() >> tcl
+
+		RequirementLibrary rl = Mock(RequirementLibrary)
+		rl.getId() >> 10l
+		p.getRequirementLibrary() >> rl
+
 		mockSessionQuery([p])
 
 		and :
