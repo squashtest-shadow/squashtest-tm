@@ -511,6 +511,21 @@ public class FacilityImpl implements Facility {
 		return train;
 	}
 
+	@Override
+	public LogTrain createRequirementVersion(RequirementVersionInstruction instr) {
+		throw new RuntimeException("implement me");
+	}
+
+	@Override
+	public LogTrain updateRequirementVersion(RequirementVersionInstruction instr) {
+		throw new RuntimeException("implement me");
+	}
+
+	@Override
+	public LogTrain deleteRequirementVersion(RequirementVersionInstruction instr) {
+		throw new RuntimeException("implement me - must return a Failure : Not implemented in the log train instead of throwing this exception");
+	}
+
 	/**
 	 * for all other stuffs that need to be done afterward
 	 *

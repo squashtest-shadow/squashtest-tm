@@ -20,51 +20,64 @@
  */
 package org.squashtest.tm.service.internal.batchimport;
 
-import org.apache.commons.lang.StringUtils;
 import org.squashtest.tm.service.importer.EntityType;
 import org.squashtest.tm.service.importer.Target;
 
-public class DatasetTarget extends Target {
-	private final TestCaseTarget testCase;
-	private String name;
+public class RequirementVersionTarget extends Target {
 
-	public DatasetTarget() {
+	private RequirementTarget requirement;
+
+	private Integer version;
+
+
+	public RequirementVersionTarget(RequirementTarget requirement, Integer version) {
 		super();
-		testCase = new TestCaseTarget();
+		this.requirement = requirement;
+		this.version = version;
 	}
 
-	public DatasetTarget(TestCaseTarget testCase, String name) {
-		super();
-		this.testCase = testCase;
-		this.name = name;
-	}
 
 	@Override
 	public EntityType getType() {
-		return EntityType.DATASET;
+		return EntityType.REQUIREMENT_VERSION;
 	}
 
-	public TestCaseTarget getTestCase() {
-		return testCase;
+	@Override
+	public boolean isWellFormed() {
+		return requirement.isWellFormed() && (version != null);
 	}
 
-	public String getName() {
-		return name;
+	@Override
+	public String getProject() {
+		return requirement.getProject();
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	@Override
+	public String getPath() {
+		return requirement.getPath()+"/versions/"+version;
 	}
 
-	// GENERATED:START
+	public Integer getVersion() {
+		return version;
+	}
+
+	public void setVersion(Integer version) {
+		this.version = version;
+	}
+
+	public RequirementTarget getRequirement(){
+		return requirement;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((name == null) ? 0 : name.hashCode());
-		result = prime * result + ((testCase == null) ? 0 : testCase.hashCode());
+		result = prime * result + ((requirement == null) ? 0 : requirement.hashCode());
+		result = prime * result + ((version == null) ? 0 : version.hashCode());
 		return result;
 	}
+
 
 	@Override
 	public boolean equals(Object obj) {
@@ -77,53 +90,26 @@ public class DatasetTarget extends Target {
 		if (getClass() != obj.getClass()) {
 			return false;
 		}
-		DatasetTarget other = (DatasetTarget) obj;
-		if (name == null) {
-			if (other.name != null) {
+		RequirementVersionTarget other = (RequirementVersionTarget) obj;
+		if (requirement == null) {
+			if (other.requirement != null) {
 				return false;
 			}
-		} else if (!name.equals(other.name)) {
+		} else if (!requirement.equals(other.requirement)) {
 			return false;
 		}
-		if (testCase == null) {
-			if (other.testCase != null) {
+		if (version == null) {
+			if (other.version != null) {
 				return false;
 			}
-		} else if (!testCase.equals(other.testCase)) {
+		} else if (!version.equals(other.version)) {
 			return false;
 		}
 		return true;
 	}
 
-	// GENERATED:END
-
-	@Override
-	public boolean isWellFormed() {
-		return testCase.isWellFormed() && (!StringUtils.isBlank(name));
-	}
-
-	@Override
-	public String getProject() {
-		return testCase.getProject();
-	}
 
 
-	@Override
-	public String getPath() {
-		return testCase.getPath() + "/datasets/" + name;
-	}
 
-	/**
-	 * @param path
-	 * @see org.squashtest.tm.service.internal.batchimport.TestCaseTarget#setPath(java.lang.String)
-	 */
-	public void setPath(String path) {
-		testCase.setPath(path);
-	}
-
-	@Override
-	public String toString() {
-		return getPath();
-	}
 
 }

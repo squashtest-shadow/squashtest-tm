@@ -114,6 +114,7 @@ public class ParameterTarget extends Target{
 	 * @return
 	 * @see org.squashtest.tm.service.internal.batchimport.TestCaseTarget#getPath()
 	 */
+	@Override
 	public String getPath() {
 		return owner.getPath()+"/parameters/"+name;
 	}

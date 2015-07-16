@@ -20,39 +20,28 @@
  */
 package org.squashtest.tm.service.internal.batchimport;
 
-import java.util.Arrays;
-
-import org.apache.commons.lang.StringUtils;
 import org.squashtest.tm.core.foundation.lang.PathUtils;
 import org.squashtest.tm.service.importer.EntityType;
 import org.squashtest.tm.service.importer.Target;
 
-/**
- * Bean that holds the property of a test case target.<br/>
- * Properties are : <br/>
- * {@link #path}<br/>
- * {@link #order}
- */
-public class TestCaseTarget extends Target {
-	/**
-	 * The path from the project name to the targeted test case.
-	 */
+public class RequirementTarget extends Target{
+
 	private String path;
-	/**
-	 * The order of the test case in it's container.
-	 */
+
 	private Integer order;
 
-	public TestCaseTarget() {
+
+	public RequirementTarget(){
 		super();
 	}
 
-	public TestCaseTarget(String path) {
+
+	public RequirementTarget(String path) {
 		super();
 		this.path = path;
 	}
 
-	public TestCaseTarget(String path, Integer order) {
+	public RequirementTarget(String path, Integer order) {
 		super();
 		this.path = path;
 		this.order = order;
@@ -60,65 +49,7 @@ public class TestCaseTarget extends Target {
 
 	@Override
 	public EntityType getType() {
-		return EntityType.TEST_CASE;
-	}
-
-	@Override
-	public String getPath() {
-		return path;
-	}
-
-	public void setPath(String path) {
-		this.path = path;
-	}
-
-	public Integer getOrder() {
-		return order;
-	}
-
-	public void setOrder(Integer order) {
-		this.order = order;
-	}
-
-	@Override
-	// GENERATED:START
-	public int hashCode() {
-		final int prime = 31;
-		int result = 47;
-		result = prime * result + ((path == null) ? 0 : path.hashCode());
-		return result;
-	}
-
-	// GENERATED:END
-
-	@Override
-	// GENERATED:START
-	public boolean equals(Object obj) {
-		if (this == obj) {
-			return true;
-		}
-		if (obj == null) {
-			return false;
-		}
-		if (getClass() != obj.getClass()) {
-			return false;
-		}
-		TestCaseTarget other = (TestCaseTarget) obj;
-		if (path == null) {
-			if (other.path != null) {
-				return false;
-			}
-		} else if (!path.equals(other.path)) {
-			return false;
-		}
-		return true;
-	}
-
-	// GENERATED:END
-
-	@Override
-	public String toString() {
-		return path;
+		return EntityType.REQUIREMENT;
 	}
 
 	@Override
@@ -131,26 +62,46 @@ public class TestCaseTarget extends Target {
 		return PathUtils.extractProjectName(path);
 	}
 
-	public String getName() {
-		return PathUtils.extractTestCaseName(path);
+	@Override
+	public String getPath() {
+		return path;
 	}
 
-	/**
-	 * note : return the names of each folders, including the project, of this test case. Assumes that the path is well
-	 * formed.
-	 * 
-	 * @return
-	 */
-	public String getFolder() {
-
-		String[] names = PathUtils.splitPath(path);
-		String[] shortened = Arrays.copyOf(names, names.length - 1);
-
-		return "/" + StringUtils.join(shortened, '/');
+	public Integer getOrder() {
+		return order;
 	}
 
-	public boolean isRootTestCase() {
-		String[] names = PathUtils.splitPath(path);
-		return names.length == 2; // that is, composed of a project and a test case name only.
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((path == null) ? 0 : path.hashCode());
+		return result;
 	}
+
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
+			return false;
+		}
+		if (getClass() != obj.getClass()) {
+			return false;
+		}
+		RequirementTarget other = (RequirementTarget) obj;
+		if (path == null) {
+			if (other.path != null) {
+				return false;
+			}
+		} else if (!path.equals(other.path)) {
+			return false;
+		}
+		return true;
+	}
+
+
 }

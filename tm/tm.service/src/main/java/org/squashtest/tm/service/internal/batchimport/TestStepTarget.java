@@ -39,10 +39,8 @@ public class TestStepTarget extends Target {
 		this.index = index;
 	}
 
-	/**
-	 * @return
-	 * @see org.squashtest.tm.service.internal.batchimport.TestCaseTarget#getPath()
-	 */
+
+	@Override
 	public String getPath() {
 		return testCase.getPath() + "/steps/" + index;
 	}

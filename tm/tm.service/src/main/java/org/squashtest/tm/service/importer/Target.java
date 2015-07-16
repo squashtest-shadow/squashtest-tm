@@ -24,10 +24,12 @@ package org.squashtest.tm.service.importer;
 
 public abstract class Target {
 
-	public abstract EntityType getType();	
-	
+	public abstract EntityType getType();
+
 	public abstract boolean isWellFormed();
-	
+
 	public abstract String getProject();
-	
+
+	public abstract String getPath();
+
 }

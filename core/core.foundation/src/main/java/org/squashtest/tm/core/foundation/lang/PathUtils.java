@@ -59,8 +59,11 @@ public final class PathUtils {
 	// thanks to
 	// toString()
 
-	/** the last element is the test case name */
-	private static final Pattern TEST_CASE_PATTERN = Pattern.compile(".*[^\\\\]\\/(.*)$");
+	/** the last element is the entity name */
+	private static final Pattern GENERIC_NAME_PATTERN = Pattern.compile(".*[^\\\\]\\/(.*)$");
+
+
+
 
 	private PathUtils() {
 		super();
@@ -92,19 +95,33 @@ public final class PathUtils {
 		return new ArrayList<String>(res);
 	}
 
-	public static String extractTestCaseName(String path) {
-		Matcher matcher = TEST_CASE_PATTERN.matcher(path);
+
+	public static String extractName(String path) {
+		Matcher matcher = GENERIC_NAME_PATTERN.matcher(path);
 		if (matcher.matches()) {
 			return matcher.group(1);
 		} else {
-			throw new IllegalArgumentException("couldn't find a valid test case name in path '" + path
+			throw new IllegalArgumentException("couldn't find a valid name in path '" + path
 					+ "'. It might be malformed.");
 		}
 	}
 
+
+	/**
+	 * Just an alias for {@link #extractName(String)}.
+	 * 
+	 * @param path
+	 * @return
+	 */
+	public static String extractTestCaseName(String path) {
+		return extractName(path);
+	}
+
+
+
 	public static boolean arePathsAndNameConsistents(String path, String name) {
 		try{
-			String pathName = extractTestCaseName(path);
+			String pathName = extractName(path);
 			return pathName.equals(name);
 
 		} catch(IllegalArgumentException ex){

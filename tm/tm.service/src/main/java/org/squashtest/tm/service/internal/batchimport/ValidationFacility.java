@@ -790,6 +790,21 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 
 	}
 
+	@Override
+	public LogTrain createRequirementVersion(RequirementVersionInstruction instr) {
+		throw new RuntimeException("implement me");
+	}
+
+	@Override
+	public LogTrain updateRequirementVersion(RequirementVersionInstruction instr) {
+		throw new RuntimeException("implement me");
+	}
+
+	@Override
+	public LogTrain deleteRequirementVersion(RequirementVersionInstruction instr) {
+		throw new RuntimeException("implement me - must return a Failure : Not implemented in the log train instead of throwing this exception");
+	}
+
 	boolean areMilestoneValid(TestCaseInstruction instr){
 		LogTrain dummy = new LogTrain();
 		updateStrategy.validateMilestones(instr, dummy);

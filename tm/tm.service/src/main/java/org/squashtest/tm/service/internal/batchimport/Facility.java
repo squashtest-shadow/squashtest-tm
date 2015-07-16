@@ -40,7 +40,8 @@ public interface Facility {
 					EntityType.PARAMETER,
 					EntityType.DATASET,
 					EntityType.TEST_STEP,
-					EntityType.DATASET_PARAM_VALUES);
+					EntityType.DATASET_PARAM_VALUES,
+					EntityType.REQUIREMENT_VERSION);
 
 	LogTrain deleteTestCase(TestCaseTarget target);
 
@@ -89,6 +90,32 @@ public interface Facility {
 	 */
 	LogTrain updateTestCase(TestCaseInstruction instr);
 
+
+	/**
+	 * Will create a RequirementVersion. If the Requirement it depends on doesn't exist
+	 * it will be created on the fly.
+	 * 
+	 * @param instr
+	 * @return
+	 */
+	LogTrain createRequirementVersion(RequirementVersionInstruction instr);
+
+	/**
+	 * Updates a RequiremenVersion with a new content.
+	 * 
+	 * @param instr
+	 * @return
+	 */
+	LogTrain updateRequirementVersion(RequirementVersionInstruction instr);
+
+	/**
+	 * Will delete a RequirementVersion when implemented some day, today it
+	 * is not and will log a Failure if invoked.
+	 * 
+	 * @param instr
+	 * @return
+	 */
+	LogTrain deleteRequirementVersion(RequirementVersionInstruction instr);
 
 }
 
