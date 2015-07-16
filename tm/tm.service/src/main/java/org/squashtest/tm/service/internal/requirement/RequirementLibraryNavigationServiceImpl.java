@@ -20,11 +20,16 @@
  */
 package org.squashtest.tm.service.internal.requirement;
 
+import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
+
+import java.io.File;
 import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
@@ -34,6 +39,7 @@ import org.apache.commons.lang.NullArgumentException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.MessageSource;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -60,6 +66,8 @@ import org.squashtest.tm.service.advancedsearch.IndexationService;
 import org.squashtest.tm.service.importer.ImportRequirementTestCaseLinksSummary;
 import org.squashtest.tm.service.importer.ImportSummary;
 import org.squashtest.tm.service.infolist.InfoListItemFinderService;
+import org.squashtest.tm.service.internal.batchexport.ExportDao;
+import org.squashtest.tm.service.internal.batchexport.RequirementExportModel;
 import org.squashtest.tm.service.internal.importer.RequirementImporter;
 import org.squashtest.tm.service.internal.importer.RequirementTestCaseLinksImporter;
 import org.squashtest.tm.service.internal.library.AbstractLibraryNavigationService;
@@ -76,8 +84,7 @@ import org.squashtest.tm.service.requirement.RequirementLibraryFinderService;
 import org.squashtest.tm.service.requirement.RequirementLibraryNavigationService;
 import org.squashtest.tm.service.security.PermissionsUtils;
 import org.squashtest.tm.service.security.SecurityCheckableObject;
-import static org.squashtest.tm.service.security.Authorizations.*;
-import static org.squashtest.tm.service.security.Authorizations.*;
+import org.squashtest.tm.service.internal.batchexport.RequirementExcelExporter;
 
 @SuppressWarnings("rawtypes")
 @Service("squashtest.tm.service.RequirementLibraryNavigationService")
@@ -124,6 +131,12 @@ RequirementLibraryNavigationService, RequirementLibraryFinderService {
 
 	@Inject
 	private InfoListItemFinderService infoListItemService;
+	
+	@Inject
+	private ExportDao exportDao;
+	
+	@Inject 
+	private Provider<RequirementExcelExporter> exporterProvider;
 
 	@Override
 	protected NodeDeletionHandler<RequirementLibraryNode, RequirementFolder> getDeletionHandler() {
@@ -575,6 +588,37 @@ RequirementLibraryNavigationService, RequirementLibraryFinderService {
 			fix(folder);
 		}
 
+	}
+
+	@Override
+	public File exportRequirementAsExcel(List<Long> libraryIds,
+			List<Long> nodeIds, boolean keepRteFormat,
+			MessageSource messageSource) {
+		LOGGER.debug("JTH - IN SERVICE");
+		//1. Injecting by provider to have a different instance for each export
+		RequirementExcelExporter exporter = exporterProvider.get();
+		
+		//2. Check permissions for all librairies and all nodes selecteds
+		PermissionsUtils.checkPermission(permissionService, libraryIds, "EXPORT", RequirementLibrary.class.getName());
+		PermissionsUtils.checkPermission(permissionService, nodeIds, "EXPORT", RequirementLibraryNode.class.getName());
+
+		//3. Find the list of all req ids that belongs to library and node selection.
+		Set<Long> reqIds = new HashSet<Long>();
+		reqIds.addAll(requirementDao.findAllRequirementsIdsByLibrary(libraryIds));
+		LOGGER.debug("JTH - Req From Librairies" + reqIds);
+		reqIds.addAll(requirementDao.findAllRequirementsIdsByNodes(nodeIds));
+		LOGGER.debug("JTH - Req From Nodes" + reqIds);
+		
+		//4. For each req, find all versions and add to export model
+		List<Long> reqVersionIds = requirementDao.findIdsVersionsForAll(new ArrayList<Long>(reqIds));
+		LOGGER.debug("JTH - All versions from requirement " + reqVersionIds);
+		
+		//5. Convert export model to xls file
+		RequirementExportModel exportModel = exportDao.findAllRequirementModel(reqVersionIds);
+		exporter.appendToWorkbook(exportModel, keepRteFormat);
+		
+		//6. Return file
+		return exporter.print();
 	}
 
 }

@@ -31,17 +31,22 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.type.LongType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 import org.squashtest.tm.service.internal.batchexport.ExportModel.CustomField;
 import org.squashtest.tm.service.internal.batchexport.ExportModel.DatasetModel;
 import org.squashtest.tm.service.internal.batchexport.ExportModel.ParameterModel;
 import org.squashtest.tm.service.internal.batchexport.ExportModel.TestCaseModel;
 import org.squashtest.tm.service.internal.batchexport.ExportModel.TestStepModel;
+import org.squashtest.tm.service.internal.batchexport.RequirementExportModel.RequirementModel;
 import org.squashtest.tm.service.internal.repository.hibernate.EasyConstructorResultTransformer;
 
 @Repository
 public class ExportDao {
 
+	private static final Logger LOGGER = LoggerFactory.getLogger(ExportDao.class);
+	
 	@Inject
 	private SessionFactory factory;
 
@@ -51,6 +56,22 @@ public class ExportDao {
 	}
 	
 	
+	public RequirementExportModel findAllRequirementModel(List<Long> versionIds){
+		LOGGER.debug("JTH - IN DAO");
+		
+		RequirementExportModel model = new RequirementExportModel();
+		List<RequirementModel> requirementsModel = findRequirementModel(versionIds);
+		model.setRequirementsModels(requirementsModel);
+		
+		LOGGER.debug("JTH - " + model.getRequirementsModels().toString());
+		
+		LOGGER.debug("JTH - OUT DAO");
+		return model;
+	}
+	
+	
+
+
 	public ExportModel findModel(List<Long> tclnIds){
 		
 		ExportModel model = new ExportModel();
@@ -156,6 +177,7 @@ public class ExportDao {
 		Query q = session.getNamedQuery(query);
 		q.setParameterList("testCaseIds", tcIds, LongType.INSTANCE);
 		q.setResultTransformer(new EasyConstructorResultTransformer(resclass));
+		LOGGER.debug("JTH - Query " + q.getQueryString());
 		return q.list();
 	}
 	
@@ -163,6 +185,70 @@ public class ExportDao {
 		Session s = factory.getCurrentSession();
 		s.setFlushMode(FlushMode.MANUAL);
 		return s;
+	}
+	
+	@SuppressWarnings("unchecked")
+	private List<RequirementModel> findRequirementModel(List<Long> versionIds) {
+		Session session = getStatelessSession();
+		Query q = session.getNamedQuery("requirement.findVersionsModels");
+		q.setParameterList("versionIds", versionIds, LongType.INSTANCE);
+		q.setResultTransformer(new EasyConstructorResultTransformer(RequirementModel.class));
+		List<RequirementModel> requirementModels = q.list();
+		getModelsRequirementPosition(requirementModels);
+		return requirementModels;
+	}
+	
+	private void getModelsRequirementPosition(List<RequirementModel> requirementModels) {
+		for (RequirementModel requirementModel : requirementModels) {
+			Long reqId = requirementModel.getRequirementId();
+			LOGGER.debug("JTH - Looking for inf of requirement : " + reqId);
+			int index = getRequirementPositionInLibrary(reqId);
+			if (index == 0) {
+				index = getRequirementPositionInFolder(reqId);
+			}
+			if (index == 0) {
+				index = getPositionChildrenRequirement(reqId);
+			}
+			LOGGER.debug("JTH - Index in library" + index);
+			requirementModel.setRequirementIndex(index);
+		}
+
+	}
+
+
+	private int getPositionChildrenRequirement(Long reqId) {
+		Session session = getStatelessSession();
+		Query qFolder = session.getNamedQuery("requirement.findVersionsModelsIndexInFolder");
+		qFolder.setLong("requirementId",reqId);
+		Object result =  qFolder.uniqueResult();
+		if (result!=null) {
+			return (int) result;
+		}
+		return 0;
+	}
+
+
+	private int getRequirementPositionInFolder(Long reqId) {
+		Session session = getStatelessSession();
+		Query qFolder = session.getNamedQuery("requirement.findVersionsModelsIndexInFolder");
+		qFolder.setLong("requirementId",reqId);
+		Object result =  qFolder.uniqueResult();
+		if (result!=null) {
+			return (int) result;
+		}
+		return 0;
+	}
+
+
+	private int getRequirementPositionInLibrary(Long reqId){
+		Session session = getStatelessSession();
+		Query qLibrary = session.getNamedQuery("requirement.findVersionsModelsIndexChildrenRequirement");
+		qLibrary.setLong("requirementId",reqId);
+		Object result =  qLibrary.uniqueResult();
+		if (result!=null) {
+			return (int) result;
+		}
+		return 0;
 	}
 	
 }

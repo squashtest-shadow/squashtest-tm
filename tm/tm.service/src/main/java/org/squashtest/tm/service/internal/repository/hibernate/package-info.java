@@ -115,7 +115,32 @@
 	@NamedQuery(name = "requirement.findRequirementHavingManyVersions", query = "select r.id from Requirement r join r.versions v where r.id in (:requirementIds) group by r.id having count(v) > 1"),
 	@NamedQuery(name = "requirement.findByRequirementVersion", query = "select r.id from Requirement r join r.versions versions where versions.id in (:versionIds)"),
 	@NamedQuery(name = "requirement.findAllRequirementsWithLatestVersionByIds", query= "select r, rv from Requirement r join r.versions rv where r.id in (:requirementIds) and rv.versionNumber = (select max (rvcur.versionNumber) from RequirementVersion rvcur where rvcur.requirement = r)"),
-
+	@NamedQuery(name = "requirement.findAllRequirementIdsByLibraries", query = "select r.id from Requirement r join r.project p join p.requirementLibrary rl where rl.id in (:libraryIds)"),
+	@NamedQuery(name = "requirement.findAllRequirementIdsByNodesId", query = "select reqDescendant.id from Requirement reqDescendant, RequirementPathEdge closure where closure.ancestorId in :nodeIds and closure.descendantId = reqDescendant.id"),
+	@NamedQuery(name = "requirement.findVersionsIdsForAll", query = "select rv.id from RequirementVersion rv join rv.requirement r where r.id in (:requirementIds)"),
+	@NamedQuery(name = "requirement.findVersionsModels", query = "select rv.id,r.id,p.id,p.name,concat('"+HibernatePathService.PATH_SEPARATOR+"',p.name,'"+HibernatePathService.PATH_SEPARATOR
+			+ "',("
+			+ " select group_concat(requirementFolder.resource.name, 'order by', closure.depth, 'desc','"+HibernatePathService.PATH_SEPARATOR+"')" 
+			+ " from RequirementFolder requirementFolder,Requirement requirement2, RequirementPathEdge closure"
+			+ " where closure.ancestorId = requirementFolder.id and closure.descendantId = requirement2.id and requirement2=rv.requirement.id"
+			+ " group by requirement2.id"
+			+ "),'"+HibernatePathService.PATH_SEPARATOR+"',("
+			+ " select group_concat(requirement.resource.name, 'order by', closure.depth, 'desc','"+HibernatePathService.PATH_SEPARATOR+"')" 
+			+ " from Requirement requirement,Requirement requirement1, RequirementPathEdge closure"
+			+ " where closure.ancestorId = requirement.id and closure.descendantId = requirement1.id and requirement1=rv.requirement.id"
+			+ " group by requirement1.id))"
+		+ ",rv.versionNumber,rv.reference,rv.name,rv.criticality,listItem.code,rv.status,rv.description"
+		+ ",(select count(distinct coverages) from RequirementVersion rv2 join rv2.requirementVersionCoverages coverages where rv2.id=rv.id)"
+		+ ",(select count(distinct attachments) from RequirementVersion rv3 join rv3.attachmentList attachmentList left join attachmentList.attachments attachments where rv3.id=rv.id)"
+		+ ",rv.audit.createdOn, rv.audit.createdBy, rv.audit.lastModifiedOn, rv.audit.lastModifiedBy"
+		+ ",(select group_concat(milestones.label, 'order by', milestones, 'asc', '|') from RequirementVersion rv4 join rv4.milestones milestones where rv4.id=rv.id)"
+		+ " from RequirementVersion rv"
+		+ " join rv.requirement r join r.project p join rv.category listItem"
+		+ " where rv.id in (:versionIds)"),
+	@NamedQuery(name = "requirement.findVersionsModelsIndexInLibrary", query = "select index(content)+1 from RequirementLibrary rl join rl.rootContent content where content.id=:requirementId"),
+	@NamedQuery(name = "requirement.findVersionsModelsIndexInFolder", query = "select index(content)+1 from RequirementFolder rf join rf.content content where content.id=:requirementId"),
+	@NamedQuery(name = "requirement.findVersionsModelsIndexChildrenRequirement", query = "select index(child)+1 from Requirement r join r.children child where child.id=:requirementId"),
+	
 	//CampaignFolder
 	@NamedQuery(name = "campaignFolder.findAllContentById", query = "select f.content from CampaignFolder f where f.id = :folderId"),
 	@NamedQuery(name = "campaignFolder.findByContent", query = "from CampaignFolder where :content in elements(content)"),

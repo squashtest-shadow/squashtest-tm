@@ -27,6 +27,7 @@ import java.util.Collection;
 import java.util.Collections;
 
 import org.apache.commons.collections.map.MultiValueMap;
+import org.squashtest.tm.service.internal.batchimport.requirement.excel.RequirementSheetColumn;
 
 /**
  * Enum of worksheet which are expected in the import file.
@@ -35,11 +36,13 @@ import org.apache.commons.collections.map.MultiValueMap;
  *
  */
 public enum TemplateWorksheet {
+	REQUIREMENT_SHEET("REQUIREMENT", RequirementSheetColumn.class),
 	TEST_CASES_SHEET("TEST_CASES", TestCaseSheetColumn.class, TEST_CASE_CUSTOM_FIELD),
 	STEPS_SHEET("STEPS", StepSheetColumn.class, STEP_CUSTOM_FIELD),
 	PARAMETERS_SHEET("PARAMETERS", ParameterSheetColumn.class),
 	DATASETS_SHEET("DATASETS", DatasetSheetColumn.class),
-	DATASET_PARAM_VALUES_SHEET("DATASETS", DatasetParamValuesSheetColumn.class);	// the same sheet is shared for both dataset and values
+	// the same sheet is shared for both dataset and values
+	DATASET_PARAM_VALUES_SHEET("DATASETS", DatasetParamValuesSheetColumn.class);	
 
 	// MultiValueMap<String, TemplateWorksheet>
 	private static final MultiValueMap ENUM_BY_SHEET_NAME = new MultiValueMap();

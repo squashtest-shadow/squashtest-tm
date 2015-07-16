@@ -20,11 +20,13 @@
  */
 package org.squashtest.tm.service.requirement;
 
+import java.io.File;
 import java.io.InputStream;
 import java.util.List;
 
 import javax.validation.constraints.NotNull;
 
+import org.springframework.context.MessageSource;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.requirement.ExportRequirementData;
 import org.squashtest.tm.domain.requirement.NewRequirementVersionDto;
@@ -104,4 +106,19 @@ RequirementLibraryFinderService {
 	ImportRequirementTestCaseLinksSummary importLinksExcel(InputStream stream);
 
 	List<String> getParentNodesAsStringList(Long elementId);
+	
+	/**
+	 * Genrate a xls file to export requirements
+	 * @param libraryIds List of libraryIds (ie project ids) selected for export
+	 * @param nodeIds List of nodeIds (ie req id or folder id) selected for export
+	 * @param keepRteFormat
+	 * @param messageSource
+	 * @return
+	 */
+	File exportRequirementAsExcel(
+			List<Long> libraryIds,
+			List<Long> nodeIds,
+			boolean keepRteFormat,
+			MessageSource messageSource);
+
 }
