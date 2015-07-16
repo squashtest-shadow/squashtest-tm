@@ -75,7 +75,7 @@ public class CustomFieldBinding {
 	@Column(name = "RENDERING_LOCATION")
 	private Set<RenderingLocation> renderingLocations = new HashSet<RenderingLocation>(5);
 
-	@ManyToOne(cascade=CascadeType.DETACH)
+	@ManyToOne
 	@JoinColumn(name = "BOUND_PROJECT_ID", updatable = false)
 	@NotNull
 	private GenericProject boundProject;
