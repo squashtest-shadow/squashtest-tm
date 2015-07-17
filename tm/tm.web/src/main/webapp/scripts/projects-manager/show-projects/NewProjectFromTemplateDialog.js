@@ -81,9 +81,9 @@ define(["jquery.squash.bindviewformdialog","./NewProjectFromTemplateDialogModel"
 			BindViewFormDialog.prototype.onConfirmSuccess.call(this);
 		},
 		
-		onConfirmAndResetPopupSuccess : function(){
+		onConfirmSuccessAndResetDialog : function(){
 			this.trigger("newproject.confirm");
-			BindViewFormDialog.prototype.onConfirmAndResetPopupSuccess.call(this);
+			BindViewFormDialog.prototype.onConfirmSuccessAndResetDialog.call(this);
 		}
 	});
 

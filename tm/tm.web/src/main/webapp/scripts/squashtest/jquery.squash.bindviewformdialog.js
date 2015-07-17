@@ -84,7 +84,7 @@ define([ "jquery","backbone", "app/BindView", "backbone", "underscore", "handleb
 	var BindViewFormDialog = BindView.extend({
 		initialize : function(){
 			this.render();
-			_.bindAll(this, 'onConfirmSuccess','onConfirmAndResetPopupSuccess');
+			_.bindAll(this, 'onConfirmSuccess','onConfirmSuccessAndResetDialog');
 		},
 		
 		//Override with caution as you need to follow the same logic of templating 
