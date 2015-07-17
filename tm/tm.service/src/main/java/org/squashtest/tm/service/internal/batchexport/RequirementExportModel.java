@@ -24,15 +24,10 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 
-import org.apache.commons.lang.StringUtils;
-import org.squashtest.tm.domain.customfield.BindableEntity;
-import org.squashtest.tm.domain.customfield.InputType;
 import org.squashtest.tm.domain.requirement.RequirementCriticality;
 import org.squashtest.tm.domain.requirement.RequirementStatus;
-import org.squashtest.tm.domain.requirement.RequirementVersion;
-import org.squashtest.tm.domain.testcase.RequirementVersionCoverage;
+import org.squashtest.tm.service.internal.batchexport.ExportModel.CustomField;
 
 public class RequirementExportModel {
 	private List<RequirementModel> requirementsModels = new LinkedList<RequirementModel>();
@@ -48,7 +43,6 @@ public class RequirementExportModel {
 	public void setRequirementsModels(List<RequirementModel> requirementsModels) {
 		this.requirementsModels = requirementsModels;
 	}
-
 
 	public static final class RequirementModel {
 		public static final Comparator<RequirementModel> COMPARATOR = new Comparator<RequirementExportModel.RequirementModel>() {
@@ -78,14 +72,40 @@ public class RequirementExportModel {
 		private Date lastModifiedOn;
 		private String lastModifiedBy;
 		private String milestonesLabels;
+		private List<CustomField> cufs = new LinkedList<CustomField>();
 
 		// That monster constructor will be used by Hibernate in a hql query.
 		// Note that attributes not present in the hql request mustn't be in this constructor
 		// as Hibernate use index to map the result set to this object attribute.
-
+		public RequirementModel(Long id, Long requirementId, Long projectId,
+				String projectName, int requirementVersionNumber,
+				String reference, String name,
+				RequirementCriticality criticality, String categoryCode,
+				RequirementStatus status, String description,
+				Long requirementVersionCoveragesSize, Long attachmentListSize,
+				Date createdOn, String createdBy, Date lastModifiedOn,
+				String lastModifiedBy, String milestonesLabels) {
+			super();
+			this.id = id;
+			this.requirementId = requirementId;
+			this.projectId = projectId;
+			this.projectName = projectName;
+			this.requirementVersionNumber = requirementVersionNumber;
+			this.reference = reference;
+			this.name = name;
+			this.criticality = criticality;
+			this.categoryCode = categoryCode;
+			this.status = status;
+			this.description = description;
+			this.requirementVersionCoveragesSize = requirementVersionCoveragesSize;
+			this.attachmentListSize = attachmentListSize;
+			this.createdOn = createdOn;
+			this.createdBy = createdBy;
+			this.lastModifiedOn = lastModifiedOn;
+			this.lastModifiedBy = lastModifiedBy;
+			this.milestonesLabels = milestonesLabels;
+		}
 		
-		
-
 		public Long getId() {
 			return id;
 		}
@@ -247,35 +267,12 @@ public class RequirementExportModel {
 			this.milestonesLabels = milestonesLabels;
 		}
 
+		public List<CustomField> getCufs() {
+			return cufs;
+		}
 
-		public RequirementModel(Long id, Long requirementId, Long projectId,
-				String projectName, String path, int requirementVersionNumber,
-				String reference, String name,
-				RequirementCriticality criticality, String categoryCode,
-				RequirementStatus status, String description,
-				Long requirementVersionCoveragesSize, Long attachmentListSize,
-				Date createdOn, String createdBy, Date lastModifiedOn,
-				String lastModifiedBy, String milestonesLabels) {
-			super();
-			this.id = id;
-			this.requirementId = requirementId;
-			this.projectId = projectId;
-			this.projectName = projectName;
-			this.path = path;
-			this.requirementVersionNumber = requirementVersionNumber;
-			this.reference = reference;
-			this.name = name;
-			this.criticality = criticality;
-			this.categoryCode = categoryCode;
-			this.status = status;
-			this.description = description;
-			this.requirementVersionCoveragesSize = requirementVersionCoveragesSize;
-			this.attachmentListSize = attachmentListSize;
-			this.createdOn = createdOn;
-			this.createdBy = createdBy;
-			this.lastModifiedOn = lastModifiedOn;
-			this.lastModifiedBy = lastModifiedBy;
-			this.milestonesLabels = milestonesLabels;
+		public void setCufs(List<CustomField> cufs) {
+			this.cufs = cufs;
 		}
 
 		@Override
@@ -297,44 +294,44 @@ public class RequirementExportModel {
 
 	}
 	
-	public static final class CustomField {
-		private Long ownerId;
-		private BindableEntity ownerType;
-		private String code;
-		private String value;
-		private InputType type;
-		private String selectedOptions;
-		public CustomField(Long ownerId, BindableEntity ownerType, String code, String value, String largeValue, InputType type, String selectedOptions) {
-			super();
-			this.ownerId = ownerId;
-			this.ownerType = ownerType;
-			this.code = code;
-			this.value = (! StringUtils.isBlank(largeValue)) ? largeValue : value;
-			this.type = type;
-			this.selectedOptions = selectedOptions;
-		}
-		
-		public Long getOwnerId() {
-			return this.ownerId;
-		}
-		
-		public BindableEntity getOwnerType() {
-			return ownerType;
-		}
-		
-		public String getCode() {
-			return code;
-		}
-		
-		public String getValue() {
-			return (! StringUtils.isBlank(selectedOptions)) ? selectedOptions : value ;
-		}
-		
-		public InputType getType() {
-			return type;
-		}
-		
-	}
+//	public static final class CustomField {
+//		private Long ownerId;
+//		private BindableEntity ownerType;
+//		private String code;
+//		private String value;
+//		private InputType type;
+//		private String selectedOptions;
+//		public CustomField(Long ownerId, BindableEntity ownerType, String code, String value, String largeValue, InputType type, String selectedOptions) {
+//			super();
+//			this.ownerId = ownerId;
+//			this.ownerType = ownerType;
+//			this.code = code;
+//			this.value = (! StringUtils.isBlank(largeValue)) ? largeValue : value;
+//			this.type = type;
+//			this.selectedOptions = selectedOptions;
+//		}
+//		
+//		public Long getOwnerId() {
+//			return this.ownerId;
+//		}
+//		
+//		public BindableEntity getOwnerType() {
+//			return ownerType;
+//		}
+//		
+//		public String getCode() {
+//			return code;
+//		}
+//		
+//		public String getValue() {
+//			return (! StringUtils.isBlank(selectedOptions)) ? selectedOptions : value ;
+//		}
+//		
+//		public InputType getType() {
+//			return type;
+//		}
+//		
+//	}
 	/*
 	public static final class RequirementModel {
 		public static final Comparator<RequirementModel> COMPARATOR = new Comparator<RequirementExportModel.RequirementModel>() {

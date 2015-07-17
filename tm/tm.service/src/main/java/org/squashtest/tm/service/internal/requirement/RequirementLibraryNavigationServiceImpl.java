@@ -67,6 +67,7 @@ import org.squashtest.tm.service.importer.ImportRequirementTestCaseLinksSummary;
 import org.squashtest.tm.service.importer.ImportSummary;
 import org.squashtest.tm.service.infolist.InfoListItemFinderService;
 import org.squashtest.tm.service.internal.batchexport.ExportDao;
+import org.squashtest.tm.service.internal.batchexport.RequirementExcelExporter;
 import org.squashtest.tm.service.internal.batchexport.RequirementExportModel;
 import org.squashtest.tm.service.internal.importer.RequirementImporter;
 import org.squashtest.tm.service.internal.importer.RequirementTestCaseLinksImporter;
@@ -84,7 +85,6 @@ import org.squashtest.tm.service.requirement.RequirementLibraryFinderService;
 import org.squashtest.tm.service.requirement.RequirementLibraryNavigationService;
 import org.squashtest.tm.service.security.PermissionsUtils;
 import org.squashtest.tm.service.security.SecurityCheckableObject;
-import org.squashtest.tm.service.internal.batchexport.RequirementExcelExporter;
 
 @SuppressWarnings("rawtypes")
 @Service("squashtest.tm.service.RequirementLibraryNavigationService")
@@ -594,30 +594,24 @@ RequirementLibraryNavigationService, RequirementLibraryFinderService {
 	public File exportRequirementAsExcel(List<Long> libraryIds,
 			List<Long> nodeIds, boolean keepRteFormat,
 			MessageSource messageSource) {
-		LOGGER.debug("JTH - IN SERVICE");
-		//1. Injecting by provider to have a different instance for each export
-		RequirementExcelExporter exporter = exporterProvider.get();
-		
-		//2. Check permissions for all librairies and all nodes selecteds
+		//1. Check permissions for all librairies and all nodes selecteds
 		PermissionsUtils.checkPermission(permissionService, libraryIds, "EXPORT", RequirementLibrary.class.getName());
 		PermissionsUtils.checkPermission(permissionService, nodeIds, "EXPORT", RequirementLibraryNode.class.getName());
-
-		//3. Find the list of all req ids that belongs to library and node selection.
+		
+		//2. Find the list of all req ids that belongs to library and node selection.
 		Set<Long> reqIds = new HashSet<Long>();
 		reqIds.addAll(requirementDao.findAllRequirementsIdsByLibrary(libraryIds));
-		LOGGER.debug("JTH - Req From Librairies" + reqIds);
 		reqIds.addAll(requirementDao.findAllRequirementsIdsByNodes(nodeIds));
-		LOGGER.debug("JTH - Req From Nodes" + reqIds);
 		
-		//4. For each req, find all versions and add to export model
+		//3. For each req, find all versions
 		List<Long> reqVersionIds = requirementDao.findIdsVersionsForAll(new ArrayList<Long>(reqIds));
-		LOGGER.debug("JTH - All versions from requirement " + reqVersionIds);
 		
-		//5. Convert export model to xls file
+		//4. Get exportModel from database
 		RequirementExportModel exportModel = exportDao.findAllRequirementModel(reqVersionIds);
-		exporter.appendToWorkbook(exportModel, keepRteFormat);
 		
-		//6. Return file
+		//5. convert to excel file and return
+		RequirementExcelExporter exporter = exporterProvider.get();
+		exporter.appendToWorkbook(exportModel, keepRteFormat);
 		return exporter.print();
 	}
 

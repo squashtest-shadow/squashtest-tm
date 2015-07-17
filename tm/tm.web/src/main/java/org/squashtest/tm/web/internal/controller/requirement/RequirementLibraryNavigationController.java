@@ -34,8 +34,6 @@ import javax.inject.Named;
 import javax.inject.Provider;
 import javax.servlet.http.HttpServletResponse;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
@@ -63,13 +61,11 @@ import org.squashtest.tm.service.feature.FeatureManager;
 import org.squashtest.tm.service.feature.FeatureManager.Feature;
 import org.squashtest.tm.service.importer.ImportSummary;
 import org.squashtest.tm.service.library.LibraryNavigationService;
-import org.squashtest.tm.service.milestone.MilestoneFinderService;
 import org.squashtest.tm.service.requirement.RequirementLibraryNavigationService;
 import org.squashtest.tm.web.internal.argumentresolver.MilestoneConfigResolver.CurrentMilestone;
 import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.controller.generic.LibraryNavigationController;
 import org.squashtest.tm.web.internal.controller.requirement.RequirementFormModel.RequirementFormModelValidator;
-import org.squashtest.tm.web.internal.controller.testcase.TestCaseModificationController;
 import org.squashtest.tm.web.internal.listener.SquashConfigContextExposer;
 import org.squashtest.tm.web.internal.model.builder.DriveNodeBuilder;
 import org.squashtest.tm.web.internal.model.builder.JsTreeNodeListBuilder;
@@ -92,8 +88,6 @@ public class RequirementLibraryNavigationController extends
 
 	private static final String JASPER_EXPORT_FILE = "/WEB-INF/reports/requirement-export.jasper";
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(RequirementLibraryNavigationController.class);
-	
 	private static final String FILENAME = "filename";
 	private static final String LIBRARIES = "libraries";
 	private static final String NODES = "nodes";
@@ -260,11 +254,6 @@ public class RequirementLibraryNavigationController extends
 	public @ResponseBody FileSystemResource exportRequirementExcel(@RequestParam(FILENAME) String filename,
 			@RequestParam(LIBRARIES) List<Long> libraryIds, @RequestParam(NODES) List<Long> nodeIds,
 			@RequestParam(RequestParams.RTEFORMAT) Boolean keepRteFormat, HttpServletResponse response){
-		LOGGER.debug("JTH - in exportRequirementExcel controller");
-		LOGGER.debug("JTH - " + filename);
-		LOGGER.debug("JTH - " + libraryIds);
-		LOGGER.debug("JTH - " + nodeIds);
-		LOGGER.debug("JTH - " + keepRteFormat);
 		
 		response.setContentType("application/octet-stream");
 		response.setHeader("Content-Disposition", "attachment; filename=" + filename + ".xls");

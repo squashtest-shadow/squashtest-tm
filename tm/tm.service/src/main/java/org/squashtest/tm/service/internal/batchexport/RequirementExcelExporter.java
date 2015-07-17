@@ -45,19 +45,10 @@ import org.squashtest.tm.core.foundation.lang.DateUtils;
 import org.squashtest.tm.service.feature.FeatureManager;
 import org.squashtest.tm.service.feature.FeatureManager.Feature;
 import org.squashtest.tm.service.internal.batchexport.ExportModel.CustomField;
-import org.squashtest.tm.service.internal.batchexport.ExportModel.DatasetModel;
-import org.squashtest.tm.service.internal.batchexport.ExportModel.ParameterModel;
-import org.squashtest.tm.service.internal.batchexport.ExportModel.TestCaseModel;
-import org.squashtest.tm.service.internal.batchexport.ExportModel.TestStepModel;
 import org.squashtest.tm.service.internal.batchexport.RequirementExportModel.RequirementModel;
 import org.squashtest.tm.service.internal.batchimport.requirement.excel.RequirementSheetColumn;
-import org.squashtest.tm.service.internal.batchimport.testcase.excel.DatasetSheetColumn;
-import org.squashtest.tm.service.internal.batchimport.testcase.excel.ParameterSheetColumn;
-import org.squashtest.tm.service.internal.batchimport.testcase.excel.StepSheetColumn;
 import org.squashtest.tm.service.internal.batchimport.testcase.excel.TemplateWorksheet;
-import org.squashtest.tm.service.internal.batchimport.testcase.excel.TestCaseSheetColumn;
 import org.squashtest.tm.service.internal.library.HibernatePathService;
-import org.squashtest.tm.service.internal.requirement.RequirementLibraryNavigationServiceImpl;
 
 /**
  * @author jthebault
@@ -142,6 +133,8 @@ public class RequirementExcelExporter {
 		if (milestonesEnabled) {
 			row.createCell(cIdx++).setCellValue(RequirementSheetColumn.REQ_VERSION_MILESTONE.header);
 		}
+		
+		
 	}
 
 	private void appendOneRequirement(Sheet reqSheet, int rowIndex,
@@ -152,7 +145,7 @@ public class RequirementExcelExporter {
 		try {
 			row.createCell(colIndex++).setCellValue(reqModel.getProjectId());
 			row.createCell(colIndex++).setCellValue(reqModel.getProjectName());
-			row.createCell(colIndex++).setCellValue(HibernatePathService.escapePath(reqModel.getPath()));
+			row.createCell(colIndex++).setCellValue(reqModel.getPath());
 			row.createCell(colIndex++).setCellValue(reqModel.getRequirementIndex());
 			row.createCell(colIndex++).setCellValue(reqModel.getRequirementVersionNumber());
 			row.createCell(colIndex++).setCellValue(reqModel.getReference());
@@ -170,6 +163,7 @@ public class RequirementExcelExporter {
 			if (milestonesEnabled) {
 				row.createCell(colIndex++).setCellValue(reqModel.getMilestonesLabels());
 				}
+			appendCustomFields(row, "REQ_VERSION_CUF_", reqModel.getCufs());
 		} catch (IllegalArgumentException wtf) {
 			reqSheet.removeRow(row);
 			row = reqSheet.createRow(rowIndex);
@@ -196,18 +190,16 @@ public class RequirementExcelExporter {
 		try {
 			File temp = File.createTempFile("req_export_", "xls");
 			temp.deleteOnExit();
-			LOGGER.debug("JTH - " + temp.getAbsolutePath());
-
+			
 			FileOutputStream fos = new FileOutputStream(temp);
 			workbook.write(fos);
 			fos.close();
-
+			
 			return temp;
 		} catch (IOException ex) {
 			throw new RuntimeException(ex);
 		}
 	}
-
 
 	private void appendCustomFields(Row r, String codePrefix, List<CustomField> cufs) {
 

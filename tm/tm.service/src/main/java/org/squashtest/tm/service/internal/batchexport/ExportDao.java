@@ -40,6 +40,7 @@ import org.squashtest.tm.service.internal.batchexport.ExportModel.ParameterModel
 import org.squashtest.tm.service.internal.batchexport.ExportModel.TestCaseModel;
 import org.squashtest.tm.service.internal.batchexport.ExportModel.TestStepModel;
 import org.squashtest.tm.service.internal.batchexport.RequirementExportModel.RequirementModel;
+import org.squashtest.tm.service.internal.library.HibernatePathService;
 import org.squashtest.tm.service.internal.repository.hibernate.EasyConstructorResultTransformer;
 
 @Repository
@@ -57,21 +58,12 @@ public class ExportDao {
 	
 	
 	public RequirementExportModel findAllRequirementModel(List<Long> versionIds){
-		LOGGER.debug("JTH - IN DAO");
-		
 		RequirementExportModel model = new RequirementExportModel();
 		List<RequirementModel> requirementsModel = findRequirementModel(versionIds);
 		model.setRequirementsModels(requirementsModel);
-		
-		LOGGER.debug("JTH - " + model.getRequirementsModels().toString());
-		
-		LOGGER.debug("JTH - OUT DAO");
 		return model;
 	}
 	
-	
-
-
 	public ExportModel findModel(List<Long> tclnIds){
 		
 		ExportModel model = new ExportModel();
@@ -177,7 +169,6 @@ public class ExportDao {
 		Query q = session.getNamedQuery(query);
 		q.setParameterList("testCaseIds", tcIds, LongType.INSTANCE);
 		q.setResultTransformer(new EasyConstructorResultTransformer(resclass));
-		LOGGER.debug("JTH - Query " + q.getQueryString());
 		return q.list();
 	}
 	
@@ -194,14 +185,30 @@ public class ExportDao {
 		q.setParameterList("versionIds", versionIds, LongType.INSTANCE);
 		q.setResultTransformer(new EasyConstructorResultTransformer(RequirementModel.class));
 		List<RequirementModel> requirementModels = q.list();
-		getModelsRequirementPosition(requirementModels);
+		getOtherProperties(requirementModels);
 		return requirementModels;
 	}
 	
-	private void getModelsRequirementPosition(List<RequirementModel> requirementModels) {
+	private void getOtherProperties(List<RequirementModel> requirementModels){
 		for (RequirementModel requirementModel : requirementModels) {
+			requirementModel.setPath(getPathAsString(requirementModel));
+			getModelRequirementPosition(requirementModel);
+			getModelRequirementCUF(requirementModel);
+		}
+	}
+	
+
+	@SuppressWarnings("unchecked")
+	private void getModelRequirementCUF(RequirementModel requirementModel) {
+		Session session = getStatelessSession();
+		Query q = session.getNamedQuery("requirement.excelRequirementExportCUF");
+		q.setLong("requirementVersionId", requirementModel.getId());
+		q.setResultTransformer(new EasyConstructorResultTransformer(CustomField.class));
+		requirementModel.setCufs(q.list());
+	}
+
+	private void getModelRequirementPosition(RequirementModel requirementModel) {
 			Long reqId = requirementModel.getRequirementId();
-			LOGGER.debug("JTH - Looking for inf of requirement : " + reqId);
 			int index = getRequirementPositionInLibrary(reqId);
 			if (index == 0) {
 				index = getRequirementPositionInFolder(reqId);
@@ -209,16 +216,13 @@ public class ExportDao {
 			if (index == 0) {
 				index = getPositionChildrenRequirement(reqId);
 			}
-			LOGGER.debug("JTH - Index in library" + index);
 			requirementModel.setRequirementIndex(index);
-		}
-
 	}
 
 
 	private int getPositionChildrenRequirement(Long reqId) {
 		Session session = getStatelessSession();
-		Query qFolder = session.getNamedQuery("requirement.findVersionsModelsIndexInFolder");
+		Query qFolder = session.getNamedQuery("requirement.findVersionsModelsIndexChildrenRequirement");
 		qFolder.setLong("requirementId",reqId);
 		Object result =  qFolder.uniqueResult();
 		if (result!=null) {
@@ -239,16 +243,52 @@ public class ExportDao {
 		return 0;
 	}
 
-
+	
 	private int getRequirementPositionInLibrary(Long reqId){
 		Session session = getStatelessSession();
-		Query qLibrary = session.getNamedQuery("requirement.findVersionsModelsIndexChildrenRequirement");
+		Query qLibrary = session.getNamedQuery("requirement.findVersionsModelsIndexInLibrary");
 		qLibrary.setLong("requirementId",reqId);
 		Object result =  qLibrary.uniqueResult();
 		if (result!=null) {
 			return (int) result;
 		}
 		return 0;
+	}
+	
+
+	public String getPathAsString(RequirementModel exportedRequirement) {
+		StringBuffer sb = new StringBuffer(HibernatePathService.PATH_SEPARATOR);
+		sb.append(exportedRequirement.getProjectName());
+		sb.append(HibernatePathService.PATH_SEPARATOR);
+		String pathFromFolder = getPathFromFolder(exportedRequirement.getRequirementId());
+		String pathFromParents = getPathFromParentsRequirements(exportedRequirement.getRequirementId());
+		sb.append(pathFromFolder);
+		sb.append(pathFromParents);
+		return HibernatePathService.escapePath(sb.toString());
+	}
+
+
+	private String getPathFromParentsRequirements(Long requirementId) {
+		Session session = getStatelessSession();
+		Query q = session.getNamedQuery("requirement.findReqParentPath");
+		q.setParameter("requirementId", requirementId);
+		Object result = q.uniqueResult();
+		if (result!=null) {
+			return result.toString();
+		}
+		return "";
+	}
+
+
+	private String getPathFromFolder(Long requirementId) {
+		Session session = getStatelessSession();
+		Query q = session.getNamedQuery("requirement.findReqFolderPath");
+		q.setParameter("requirementId", requirementId);
+		Object result = q.uniqueResult();
+		if (result!=null) {
+			return result.toString()+HibernatePathService.PATH_SEPARATOR;
+		}
+		return "";
 	}
 	
 }

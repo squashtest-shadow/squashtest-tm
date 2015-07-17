@@ -86,10 +86,8 @@ class ExcelExporter {
 	}
 
 	void setMessageSource(MessageSource messageSource){
-
 		this.messageSource = messageSource;
 		errorCellTooLargeMessage = this.messageSource.getMessage("test-case.export.errors.celltoolarge",null, LocaleContextHolder.getLocale());
-
 	}
 
 	public void appendToWorkbook(ExportModel model, boolean keepRteFormat) {

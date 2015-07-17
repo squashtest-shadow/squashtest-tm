@@ -39,7 +39,6 @@ public enum RequirementSheetColumn implements TemplateColumn {
 	PROJECT_ID(IGNORED),
 	PROJECT_NAME(IGNORED),
 	REQ_PATH(MANDATORY),
-	TC_PATH(MANDATORY),
 	REQ_NUM,
 	REQ_VERSION_NUM,
 	REQ_VERSION_REFERENCE,
