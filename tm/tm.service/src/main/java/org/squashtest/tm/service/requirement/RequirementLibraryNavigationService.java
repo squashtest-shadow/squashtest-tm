@@ -34,6 +34,7 @@ import org.squashtest.tm.domain.requirement.Requirement;
 import org.squashtest.tm.domain.requirement.RequirementFolder;
 import org.squashtest.tm.domain.requirement.RequirementLibrary;
 import org.squashtest.tm.domain.requirement.RequirementLibraryNode;
+import org.squashtest.tm.service.importer.ImportLog;
 import org.squashtest.tm.service.importer.ImportRequirementTestCaseLinksSummary;
 import org.squashtest.tm.service.importer.ImportSummary;
 import org.squashtest.tm.service.library.LibraryNavigationService;
@@ -120,5 +121,9 @@ RequirementLibraryFinderService {
 			List<Long> nodeIds,
 			boolean keepRteFormat,
 			MessageSource messageSource);
+
+	ImportLog simulateImportExcelRequirement(File xls);
+
+	ImportLog importExcelRequirement(File xls);
 
 }

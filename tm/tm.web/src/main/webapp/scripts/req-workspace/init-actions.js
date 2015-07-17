@@ -133,7 +133,7 @@ define(["jquery", "tree","./permissions-rules", "workspace.contextual-content", 
 			
 			// NOTE : DO NOT BIND USING $("menu").on("click", "button", handler), this breaks under (true) IE8. See #3268
 			$("#import-excel-tree-button").on("click", function(){
-				$("#import-excel-dialog").reqimportDialog("open");
+				$("#import-excel-dialog").reqImportDialog("open");
 			});
 			
 			// **************** import links *****************

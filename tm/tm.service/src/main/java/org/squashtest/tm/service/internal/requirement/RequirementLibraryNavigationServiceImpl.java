@@ -63,6 +63,7 @@ import org.squashtest.tm.exception.library.NameAlreadyExistsAtDestinationExcepti
 import org.squashtest.tm.exception.requirement.CopyPasteObsoleteException;
 import org.squashtest.tm.exception.requirement.IllegalRequirementModificationException;
 import org.squashtest.tm.service.advancedsearch.IndexationService;
+import org.squashtest.tm.service.importer.ImportLog;
 import org.squashtest.tm.service.importer.ImportRequirementTestCaseLinksSummary;
 import org.squashtest.tm.service.importer.ImportSummary;
 import org.squashtest.tm.service.infolist.InfoListItemFinderService;
@@ -609,10 +610,22 @@ RequirementLibraryNavigationService, RequirementLibraryFinderService {
 		//4. Get exportModel from database
 		RequirementExportModel exportModel = exportDao.findAllRequirementModel(reqVersionIds);
 		
-		//5. convert to excel file and return
+		//5. Instantiate a fresh exporter, append to excel file and return
 		RequirementExcelExporter exporter = exporterProvider.get();
 		exporter.appendToWorkbook(exportModel, keepRteFormat);
 		return exporter.print();
 	}
 
+	@Override
+	public ImportLog simulateImportExcelRequirement(File xls) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public ImportLog importExcelRequirement(File xls) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+ 
 }
