@@ -27,6 +27,8 @@ import javax.validation.constraints.NotNull;
 
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.domain.infolist.ListItemReference;
+import org.squashtest.tm.domain.requirement.RequirementCriticality;
+import org.squashtest.tm.domain.requirement.RequirementStatus;
 import org.squashtest.tm.domain.testcase.TestCaseImportance;
 import org.squashtest.tm.domain.testcase.TestCaseStatus;
 import org.squashtest.tm.service.internal.batchimport.excel.CellValueCoercer;
@@ -36,10 +38,12 @@ import org.squashtest.tm.service.internal.batchimport.excel.InfoListItemCoercer.
 import org.squashtest.tm.service.internal.batchimport.excel.OptionalBooleanCellCoercer;
 import org.squashtest.tm.service.internal.batchimport.excel.OptionalDateCellCoercer;
 import org.squashtest.tm.service.internal.batchimport.excel.OptionalEnumCellCoercer;
+import org.squashtest.tm.service.internal.batchimport.excel.OptionalIntegerCellCoercer;
 import org.squashtest.tm.service.internal.batchimport.excel.OptionalOneBasedIndexCellCoercer;
 import org.squashtest.tm.service.internal.batchimport.excel.OptionalStringArrayCellCoercer;
 import org.squashtest.tm.service.internal.batchimport.excel.ParamAssignationModeCellCoercer;
 import org.squashtest.tm.service.internal.batchimport.excel.StringCellCoercer;
+import org.squashtest.tm.service.internal.batchimport.requirement.excel.RequirementSheetColumn;
 
 /**
  * Repository of {@link CellValueCoercer} for a given {@link TemplateColumn}s
@@ -58,6 +62,7 @@ final class CellValueCoercerRepository<COL extends Enum<COL> & TemplateColumn> {
 		COERCER_REPO_BY_WORKSHEET.put(TemplateWorksheet.PARAMETERS_SHEET, createParamsSheetRepo());
 		COERCER_REPO_BY_WORKSHEET.put(TemplateWorksheet.DATASETS_SHEET, createDatasetsSheetRepo());
 		COERCER_REPO_BY_WORKSHEET.put(TemplateWorksheet.DATASET_PARAM_VALUES_SHEET, createDatasetParamValuesSheetRepo());
+		COERCER_REPO_BY_WORKSHEET.put(TemplateWorksheet.REQUIREMENT_SHEET, createRequirementSheetRepo());
 	}
 
 	/**
@@ -70,6 +75,22 @@ final class CellValueCoercerRepository<COL extends Enum<COL> & TemplateColumn> {
 	public static final <C extends Enum<C> & TemplateColumn> CellValueCoercerRepository<C> forWorksheet(
 			@NotNull TemplateWorksheet worksheet) {
 		return (CellValueCoercerRepository<C>) COERCER_REPO_BY_WORKSHEET.get(worksheet);
+	}
+
+	private static CellValueCoercerRepository<?> createRequirementSheetRepo() {
+		CellValueCoercerRepository<RequirementSheetColumn> repo = new CellValueCoercerRepository<RequirementSheetColumn>();
+		repo.coercerByColumn.put(RequirementSheetColumn.ACTION, ImportModeCellCoercer.INSTANCE);
+
+		repo.coercerByColumn.put(RequirementSheetColumn.REQ_NUM, OptionalOneBasedIndexCellCoercer.INSTANCE);
+		
+		repo.coercerByColumn.put(RequirementSheetColumn.REQ_VERSION_CATEGORY, new InfoListItemCoercer<ListItemReference>(ListRole.ROLE_CATEGORY));
+		repo.coercerByColumn.put(RequirementSheetColumn.REQ_VERSION_CREATED_ON, OptionalDateCellCoercer.INSTANCE);
+		repo.coercerByColumn.put(RequirementSheetColumn.REQ_VERSION_CRITICALITY, OptionalEnumCellCoercer.forEnum(RequirementCriticality.class));
+		repo.coercerByColumn.put(RequirementSheetColumn.REQ_VERSION_MILESTONE, OptionalStringArrayCellCoercer.INSTANCE);
+		repo.coercerByColumn.put(RequirementSheetColumn.REQ_VERSION_NUM, OptionalIntegerCellCoercer.INSTANCE);
+
+		repo.coercerByColumn.put(RequirementSheetColumn.REQ_VERSION_STATUS, OptionalEnumCellCoercer.forEnum(RequirementStatus.class));
+		return repo;
 	}
 
 	/**

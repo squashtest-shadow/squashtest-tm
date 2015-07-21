@@ -28,12 +28,19 @@ public class RequirementVersionTarget extends Target {
 	private RequirementTarget requirement;
 
 	private Integer version;
+	
+
 
 
 	public RequirementVersionTarget(RequirementTarget requirement, Integer version) {
 		super();
 		this.requirement = requirement;
 		this.version = version;
+	}
+
+
+	public RequirementVersionTarget() {
+		super();
 	}
 
 

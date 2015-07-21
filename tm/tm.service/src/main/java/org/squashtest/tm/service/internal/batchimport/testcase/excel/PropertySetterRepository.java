@@ -29,6 +29,7 @@ import org.squashtest.tm.service.internal.batchimport.excel.NullPropertySetter;
 import org.squashtest.tm.service.internal.batchimport.excel.PropertySetter;
 import org.squashtest.tm.service.internal.batchimport.excel.ReflectionFieldSetter;
 import org.squashtest.tm.service.internal.batchimport.excel.ReflectionMutatorSetter;
+import org.squashtest.tm.service.internal.batchimport.requirement.excel.RequirementSheetColumn;
 
 /**
  * Repository of {@link PropertySetter}s in the context of a specific {@link TemplateWorksheet}
@@ -49,6 +50,7 @@ final class PropertySetterRepository<COL extends Enum<COL> & TemplateColumn> {
 		FINDER_REPO_BY_WORKSHEET.put(TemplateWorksheet.PARAMETERS_SHEET, createParamsWorksheetRepo());
 		FINDER_REPO_BY_WORKSHEET.put(TemplateWorksheet.DATASETS_SHEET, createDatasetsWorksheetRepo());
 		FINDER_REPO_BY_WORKSHEET.put(TemplateWorksheet.DATASET_PARAM_VALUES_SHEET, createDatasetParamValuesWorksheetRepo());
+		FINDER_REPO_BY_WORKSHEET.put(TemplateWorksheet.REQUIREMENT_SHEET, createRequirementWorksheetRepo());
 	}
 
 	/**
@@ -60,6 +62,38 @@ final class PropertySetterRepository<COL extends Enum<COL> & TemplateColumn> {
 	public static <C extends Enum<C> & TemplateColumn> PropertySetterRepository<C> forWorksheet(
 			@NotNull TemplateWorksheet worksheet) {
 		return (PropertySetterRepository<C>) FINDER_REPO_BY_WORKSHEET.get(worksheet);
+	}
+
+	private static PropertySetterRepository<?> createRequirementWorksheetRepo() {
+		PropertySetterRepository<RequirementSheetColumn> r = new PropertySetterRepository<RequirementSheetColumn>();
+		
+		
+		
+		r.propSetterByColumn.put(RequirementSheetColumn.REQ_PATH, ReflectionFieldSetter.forField(PROPERTY_PATH));
+		r.propSetterByColumn.put(RequirementSheetColumn.REQ_NUM, ReflectionFieldSetter.forOptionalField("order"));
+
+		r.propSetterByColumn.put(RequirementSheetColumn.REQ_VERSION_REFERENCE, ReflectionFieldSetter.forOptionalField("reference"));
+		r.propSetterByColumn.put(RequirementSheetColumn.REQ_VERSION_NAME, ReflectionFieldSetter.forOptionalField(PROPERTY_NAME));
+		r.propSetterByColumn.put(RequirementSheetColumn.REQ_VERSION_MILESTONE, ReflectionFieldSetter.forOptionalField("milestones"));
+		r.propSetterByColumn.put(RequirementSheetColumn.REQ_VERSION_NUM, ReflectionFieldSetter.forOptionalField("version"));
+		r.propSetterByColumn.put(RequirementSheetColumn.REQ_VERSION_CATEGORY, ReflectionFieldSetter.forOptionalField("category"));
+		r.propSetterByColumn.put(RequirementSheetColumn.REQ_VERSION_STATUS, ReflectionFieldSetter.forOptionalField("status"));
+		r.propSetterByColumn.put(RequirementSheetColumn.REQ_VERSION_CRITICALITY, ReflectionFieldSetter.forOptionalField("criticality"));
+		
+		r.propSetterByColumn.put(RequirementSheetColumn.REQ_VERSION_DESCRIPTION,
+				ReflectionFieldSetter.forOptionalField("description"));
+
+		// createdOn and createdBy field name is not known, we use mutators to set'em
+		r.propSetterByColumn.put(RequirementSheetColumn.REQ_VERSION_CREATED_ON,
+				ReflectionMutatorSetter.forOptionalProperty("createdOn"));
+		r.propSetterByColumn.put(RequirementSheetColumn.REQ_VERSION_CREATED_BY,
+				ReflectionMutatorSetter.forOptionalProperty("createdBy"));
+
+		// instruction
+		r.propSetterByColumn.put(RequirementSheetColumn.ACTION, ReflectionMutatorSetter.forOptionalProperty(PROPERTY_MODE));
+
+		
+		return r;
 	}
 
 	/**

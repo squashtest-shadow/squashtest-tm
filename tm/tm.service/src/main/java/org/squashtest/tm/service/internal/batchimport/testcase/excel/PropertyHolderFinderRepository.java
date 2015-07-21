@@ -25,6 +25,7 @@ import java.util.Map;
 
 import javax.validation.constraints.NotNull;
 
+import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.testcase.Parameter;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.service.importer.Target;
@@ -37,11 +38,15 @@ import org.squashtest.tm.service.internal.batchimport.DatasetValue;
 import org.squashtest.tm.service.internal.batchimport.Instruction;
 import org.squashtest.tm.service.internal.batchimport.ParameterInstruction;
 import org.squashtest.tm.service.internal.batchimport.ParameterTarget;
+import org.squashtest.tm.service.internal.batchimport.RequirementTarget;
+import org.squashtest.tm.service.internal.batchimport.RequirementVersionInstruction;
+import org.squashtest.tm.service.internal.batchimport.RequirementVersionTarget;
 import org.squashtest.tm.service.internal.batchimport.StepInstruction;
 import org.squashtest.tm.service.internal.batchimport.TestCaseInstruction;
 import org.squashtest.tm.service.internal.batchimport.TestCaseTarget;
 import org.squashtest.tm.service.internal.batchimport.TestStepTarget;
 import org.squashtest.tm.service.internal.batchimport.excel.PropertyHolderFinder;
+import org.squashtest.tm.service.internal.batchimport.requirement.excel.RequirementSheetColumn;
 
 /**
  * Repository of {@link PropertyHolderFinder}s in the context of a specific {@link TemplateWorksheet}.
@@ -59,6 +64,7 @@ final class PropertyHolderFinderRepository<COL extends Enum<COL> & TemplateColum
 		FINDER_REPO_BY_WORKSHEET.put(TemplateWorksheet.PARAMETERS_SHEET, createParamsWorksheetRepo());
 		FINDER_REPO_BY_WORKSHEET.put(TemplateWorksheet.DATASETS_SHEET, createDatasetsWorksheetRepo());
 		FINDER_REPO_BY_WORKSHEET.put(TemplateWorksheet.DATASET_PARAM_VALUES_SHEET, createDatasetParamValuesWorksheetRepo());
+		FINDER_REPO_BY_WORKSHEET.put(TemplateWorksheet.REQUIREMENT_SHEET, createRequirementWorksheetRepo());
 	}
 
 	private static PropertyHolderFinderRepository<TestCaseSheetColumn> createTestCasesWorksheetRepo() {
@@ -92,6 +98,52 @@ final class PropertyHolderFinderRepository<COL extends Enum<COL> & TemplateColum
 
 		r.defaultFinder = testCaseFinder;
 
+		return r;
+	}
+
+	private static PropertyHolderFinderRepository<?> createRequirementWorksheetRepo() {
+		
+		PropertyHolderFinderRepository<RequirementSheetColumn> r = new PropertyHolderFinderRepository<RequirementSheetColumn>();
+		
+		PropertyHolderFinder<RequirementVersionInstruction, RequirementVersionTarget> targetFinder = new PropertyHolderFinder<RequirementVersionInstruction, RequirementVersionTarget>(){
+			
+			@Override
+			public RequirementVersionTarget find(RequirementVersionInstruction instruction) {
+				return instruction.getTarget();
+			}
+		};
+		PropertyHolderFinder<RequirementVersionInstruction, RequirementTarget> targetRequirementFinder = new PropertyHolderFinder<RequirementVersionInstruction, RequirementTarget>(){
+			
+			@Override
+			public RequirementTarget find(RequirementVersionInstruction instruction) {
+				return instruction.getTarget().getRequirement();
+			}
+		};
+		
+		
+		
+		PropertyHolderFinder<RequirementVersionInstruction, RequirementVersion> requirementVersionFinder = new PropertyHolderFinder<RequirementVersionInstruction, RequirementVersion>(){
+			
+			@Override
+			public RequirementVersion find(RequirementVersionInstruction instruction) {
+				return instruction.getRequirementVersion();
+			}
+		};
+		
+		PropertyHolderFinder<RequirementVersionInstruction, RequirementVersionInstruction> instructionFinder = new PropertyHolderFinder<RequirementVersionInstruction, RequirementVersionInstruction>() {
+			@Override
+			public RequirementVersionInstruction find(RequirementVersionInstruction instruction) {
+				return instruction;
+			}
+		};
+		
+		r.finderByColumn.put(RequirementSheetColumn.REQ_VERSION_MILESTONE, instructionFinder);
+		r.finderByColumn.put(RequirementSheetColumn.REQ_VERSION_NUM, targetFinder);
+		r.finderByColumn.put(RequirementSheetColumn.REQ_NUM, targetRequirementFinder);
+		r.finderByColumn.put(RequirementSheetColumn.REQ_PATH, targetRequirementFinder);
+		r.defaultFinder = requirementVersionFinder;
+
+		
 		return r;
 	}
 

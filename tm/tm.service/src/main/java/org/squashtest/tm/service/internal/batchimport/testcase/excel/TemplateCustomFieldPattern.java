@@ -31,6 +31,7 @@ import org.apache.commons.lang.StringUtils;
 public enum TemplateCustomFieldPattern {
 	TEST_CASE_CUSTOM_FIELD("TC_CUF_"), 
 	STEP_CUSTOM_FIELD("TC_STEP_CUF_"), 
+	REQUIREMENT_VERSION_CUSTOM_FIELD("REQ_VERSION_CUF_"),
 	NO_CUSTOM_FIELD;
 
 	private final String prefix;
