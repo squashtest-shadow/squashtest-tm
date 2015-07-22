@@ -1,0 +1,69 @@
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) 2010 - 2015 Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-transitional-thymeleaf-spring3-3.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title th:text="#{title.infoListManager}">User lists manager</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  
+  <style th:include="admin/admin-subpage.frag :: subpage-css" th:remove="tag"></style>
+  
+  <script th:remove="all" type="text/javascript" src="../../scripts/lib/jquery/jquery-1.8.3.min.js"></script>
+  <script th:remove="all" type="text/javascript" src="../../js/thymol.js"></script>
+  <script type="text/javascript" th:inline="javascript">
+    var squashtm = {};
+    squashtm.app = {
+      isAdmin : /*[[ ${sec.hasRole('ROLE_ADMIN')} ]]*/,
+      contextRoot : /*[[ @{/} ]]*/"http://localhost:8080/squash",
+      localizedDateFormat : /*[[ #{squashtm.dateformatShort.datepicker} ]]*/"dd/mm/yy",
+      locale : /*[[ #{squashtm.locale} ]]*/"fr",
+    };
+  </script>
+  <script src="../../scripts/pubsub-boot.js" th:src="@{/scripts/pubsub-boot.js}"></script>  
+  
+  </head>
+  
+  <body>
+ <div id="navigation" th:include="navbar.frag :: navbar('test-case')">NAVBAR</div>
+
+  <div id="workspace">
+    <div id="workspace-title">
+      <div class="snap-left">
+        <h2 th:text="#{workspace.test-case.title}">Espace Cas de tests</h2>
+      </div>
+      <div class="snap-right">
+        <div class="main-menubar" th:include="menubar.frag :: menubar">MENUBAR</div>
+        <div class="unstyled-notification-pane" th:include="menubar.frag :: notification">NOTIFICATION</div>
+      </div>
+    </div>
+    
+    <div id="contextual-content">
+        
+    
+    </div>
+    
+    
+  </div>
+  </body>
+  
+</html>
