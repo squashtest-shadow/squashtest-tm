@@ -92,6 +92,9 @@ import org.squashtest.tm.security.annotation.InheritsAcls;
 		@ClassBridge(name = "parent", store = Store.YES, analyze = Analyze.NO, impl = RequirementVersionHasParentBridge.class) })
 public class RequirementVersion extends Resource implements BoundEntity, MilestoneHolder {
 
+	public static final int MAX_REF_SIZE = 50;
+	
+	
 	@NotNull
 	@OneToMany(cascade = { CascadeType.REMOVE, CascadeType.REFRESH, CascadeType.MERGE, CascadeType.DETACH }, mappedBy = "verifiedRequirementVersion", fetch=FetchType.LAZY)
 	@Field(name = "testcases", analyze = Analyze.NO, store = Store.YES)
@@ -103,7 +106,7 @@ public class RequirementVersion extends Resource implements BoundEntity, Milesto
 	 */
 	@NotNull
 	@Field(analyze = Analyze.NO, store = Store.YES)
-	@Size(min = 0, max = 50)
+	@Size(min = 0, max = MAX_REF_SIZE)
 	private String reference = "";
 
 	@NotNull

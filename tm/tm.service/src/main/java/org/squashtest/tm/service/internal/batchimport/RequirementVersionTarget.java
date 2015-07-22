@@ -29,6 +29,8 @@ public class RequirementVersionTarget extends Target {
 
 	private Integer version;
 	
+	private String name;
+
 
 
 
@@ -42,6 +44,10 @@ public class RequirementVersionTarget extends Target {
 	public RequirementVersionTarget() {
 		super();
 	}
+	
+	public RequirementVersionTarget() {
+		super();
+	}
 
 
 	@Override
@@ -51,7 +57,7 @@ public class RequirementVersionTarget extends Target {
 
 	@Override
 	public boolean isWellFormed() {
-		return requirement.isWellFormed() && (version != null);
+		return requirement!=null && requirement.isWellFormed();
 	}
 
 	@Override
@@ -61,7 +67,7 @@ public class RequirementVersionTarget extends Target {
 
 	@Override
 	public String getPath() {
-		return requirement.getPath()+"/versions/"+version;
+		return requirement.getPath();
 	}
 
 	public Integer getVersion() {
@@ -74,6 +80,14 @@ public class RequirementVersionTarget extends Target {
 
 	public RequirementTarget getRequirement(){
 		return requirement;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	@Override

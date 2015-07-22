@@ -70,6 +70,7 @@ import org.squashtest.tm.service.infolist.InfoListItemFinderService;
 import org.squashtest.tm.service.internal.batchexport.ExportDao;
 import org.squashtest.tm.service.internal.batchexport.RequirementExcelExporter;
 import org.squashtest.tm.service.internal.batchexport.RequirementExportModel;
+import org.squashtest.tm.service.internal.batchimport.TestCaseExcelBatchImporter;
 import org.squashtest.tm.service.internal.importer.RequirementImporter;
 import org.squashtest.tm.service.internal.importer.RequirementTestCaseLinksImporter;
 import org.squashtest.tm.service.internal.library.AbstractLibraryNavigationService;
@@ -138,6 +139,9 @@ RequirementLibraryNavigationService, RequirementLibraryFinderService {
 	
 	@Inject 
 	private Provider<RequirementExcelExporter> exporterProvider;
+	
+	@Inject
+	private TestCaseExcelBatchImporter batchImporter;
 
 	@Override
 	protected NodeDeletionHandler<RequirementLibraryNode, RequirementFolder> getDeletionHandler() {
@@ -610,7 +614,7 @@ RequirementLibraryNavigationService, RequirementLibraryFinderService {
 		//4. Get exportModel from database
 		RequirementExportModel exportModel = exportDao.findAllRequirementModel(reqVersionIds);
 		
-		//5. Instantiate a fresh exporter, append to excel file and return
+		//5. Instantiate a fresh exporter, append model to excel file and return
 		RequirementExcelExporter exporter = exporterProvider.get();
 		exporter.appendToWorkbook(exportModel, keepRteFormat);
 		return exporter.print();
@@ -618,14 +622,12 @@ RequirementLibraryNavigationService, RequirementLibraryFinderService {
 
 	@Override
 	public ImportLog simulateImportExcelRequirement(File xls) {
-		// TODO Auto-generated method stub
-		return null;
+		return batchImporter.simulateImport(xls);
 	}
 
 	@Override
 	public ImportLog importExcelRequirement(File xls) {
-		// TODO Auto-generated method stub
-		return null;
+		return batchImporter.performImport(xls);
 	}
  
 }

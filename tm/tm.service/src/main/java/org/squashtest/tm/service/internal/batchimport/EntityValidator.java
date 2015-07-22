@@ -24,12 +24,16 @@ import static org.squashtest.tm.service.internal.batchimport.Model.Existence.NOT
 import static org.squashtest.tm.service.internal.batchimport.Model.Existence.TO_BE_DELETED;
 import static org.squashtest.tm.service.internal.batchimport.testcase.excel.TestCaseSheetColumn.TC_NAME;
 import static org.squashtest.tm.service.internal.batchimport.testcase.excel.TestCaseSheetColumn.TC_REFERENCE;
+import static org.squashtest.tm.service.internal.batchimport.requirement.excel.RequirementSheetColumn.REQ_VERSION_NAME;
+import static org.squashtest.tm.service.internal.batchimport.requirement.excel.RequirementSheetColumn.REQ_VERSION_REFERENCE;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
 import org.squashtest.tm.domain.infolist.InfoListItem;
+import org.squashtest.tm.domain.requirement.RequirementLibraryNode;
+import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.testcase.Parameter;
 import org.squashtest.tm.domain.testcase.ParameterAssignationMode;
 import org.squashtest.tm.domain.testcase.TestCase;
@@ -40,6 +44,7 @@ import org.squashtest.tm.service.importer.LogEntry;
 import org.squashtest.tm.service.importer.Target;
 import org.squashtest.tm.service.infolist.InfoListItemFinderService;
 import org.squashtest.tm.service.internal.batchimport.Model.Existence;
+import org.squashtest.tm.service.internal.batchimport.Model.ProjectTargetStatus;
 import org.squashtest.tm.service.internal.batchimport.Model.TargetStatus;
 import org.squashtest.tm.service.internal.batchimport.testcase.excel.StepSheetColumn;
 
@@ -241,6 +246,59 @@ class EntityValidator {
 		return mustExistAndBeValidMessage;
 
 	}
+	
+	//********************* REQUIREMENTS CHECKS **********************//
+	
+	public LogTrain createRequirementVersionChecks(
+			RequirementVersionTarget target, RequirementVersion reqVersion) {
+		LogTrain logs = new LogTrain();
+		String name = reqVersion.getName();
+		
+		// 1 - path must be supplied and and well formed
+		checkMalformedPath(target,logs);
+		
+		// 2 - the project actually exists
+		checkExistenceProject(target,logs);
+		
+		// 3 - req version name has length between 0 and 255 if name exist
+		if (name != null && name.length() > RequirementLibraryNode.MAX_NAME_SIZE) {
+			logs.addEntry(LogEntry.warning().forTarget(target).withMessage(Messages.ERROR_MAX_SIZE, REQ_VERSION_NAME.header)
+					.withImpact(Messages.IMPACT_MAX_SIZE).build());
+		}
+		
+		// 4 - req reference, if exists, has length between 0 and 50
+		String reference = reqVersion.getReference();
+		if (!StringUtils.isBlank(reference) && reference.length() > RequirementVersion.MAX_REF_SIZE) {
+			logs.addEntry(LogEntry.warning().forTarget(target)
+					.withMessage(Messages.ERROR_MAX_SIZE, REQ_VERSION_REFERENCE.header).withImpact(Messages.IMPACT_MAX_SIZE)
+					.build());
+		}
+		
+		// 5 - requirement category now
+		logs.append(checkCategoryAndFixIfNeeded(target, reqVersion));
+		
+		return logs;
+	}
+	
+
+	private void checkExistenceProject(RequirementVersionTarget target,
+			LogTrain logs) {
+		if (target.isWellFormed()) {
+			TargetStatus projectStatus = getModel().getProjectStatus(target.getProject());
+			if (projectStatus.getStatus() != Existence.EXISTS) {
+				logs.addEntry(LogEntry.failure().forTarget(target).withMessage(Messages.ERROR_PROJECT_NOT_EXIST)
+						.build());
+			}
+		}
+	}
+
+	private void checkMalformedPath(RequirementVersionTarget target,
+			LogTrain logs) {
+		if (!target.isWellFormed()) {
+			logs.addEntry(LogEntry.failure().forTarget(target)
+					.withMessage(Messages.ERROR_MALFORMED_PATH, target.getPath()).build());
+		}
+	}
 
 	private void logMustExistAndBeValidCalledTest(TestStepTarget target, ImportMode mode, LogTrain logs, String message) {
 		switch (mode) {
@@ -401,6 +459,52 @@ class EntityValidator {
 
 		return logs;
 	}
+	
+	/*
+	 * This method will check that, in case a nature and/or a type were supplied,
+	 * this element is consistent with the set of natures/types available in the
+	 * given project.
+	 */
+	private LogTrain checkCategoryAndFixIfNeeded(RequirementVersionTarget target, RequirementVersion reqVersion){
+		
+		LogTrain logs = new LogTrain();
+		
+		if (target.isWellFormed()){
+			
+			TargetStatus projectStatus = getModel().getProjectStatus(target.getProject());
+			if (projectStatus.getStatus() == Existence.EXISTS) {
+				
+				// 2-1 category, if specified, must be consistent with the categories of the target project
+				if (! categoryDefinedAndConsistent(projectStatus, reqVersion)){
+					logs.addEntry(
+							LogEntry.warning().forTarget(target)
+							.withMessage(Messages.ERROR_INVALID_CATEGORY, target.getPath())
+							.withImpact(Messages.IMPACT_DEFAULT_VALUE)
+							.build()
+							);
+				}
+			}
+		}
+		
+		return logs;
+	}
+
+	/**
+	 * Check if a category defined in an imported {@link RequirementVersion} is defined and exist in database.
+	 * @param projectStatus the target project represented by a {@link ProjectTargetStatus}
+	 * @param reqVersion the {@link RequirementVersion} being imported
+	 * @return
+	 */
+	
+	private boolean categoryDefinedAndConsistent(TargetStatus projectStatus,
+			RequirementVersion reqVersion) {
+		boolean isConsistent = true;
+		InfoListItem category = reqVersion.getCategory();
+		if (category!=null) {
+			isConsistent = getInfoListItemService().isCategoryConsistent(projectStatus.getId(), category.getCode());
+		}
+		return isConsistent;
+	}
 
 	private boolean natureDefinedAndConsistent(TargetStatus projectStatus, TestCase testCase){
 		boolean isConsistent = true;
@@ -430,6 +534,8 @@ class EntityValidator {
 
 		return isConsistent;
 	}
+
+	
 
 
 }

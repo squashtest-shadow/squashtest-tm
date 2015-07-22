@@ -60,6 +60,7 @@ import org.squashtest.tm.service.internal.repository.CustomFieldDao;
 import org.squashtest.tm.service.internal.repository.DatasetDao;
 import org.squashtest.tm.service.internal.testcase.TestCaseCallTreeFinder;
 import org.squashtest.tm.service.milestone.MilestoneMembershipFinder;
+import org.squashtest.tm.service.requirement.RequirementLibraryFinderService;
 import org.squashtest.tm.service.testcase.ParameterFinder;
 import org.squashtest.tm.service.testcase.TestCaseFinder;
 import org.squashtest.tm.service.testcase.TestCaseLibraryFinderService;
@@ -76,6 +77,9 @@ public class Model {
 
 	@Inject
 	private TestCaseLibraryFinderService finderService;
+	
+	@Inject
+	private RequirementLibraryFinderService reqFinderService;
 
 	@Inject
 	private TestCaseCallTreeFinder calltreeFinder;
@@ -177,6 +181,11 @@ public class Model {
 	 * same as tcCufsPerProjectname, but regarding the test steps
 	 */
 	private MultiValueMap stepCufsPerProjectname = new MultiValueMap();
+
+	/**
+	 * same as tcCufsPerProjectname, but regarding requirement
+	 */
+	private MultiValueMap reqCufsPerProjectname = new MultiValueMap();
 
 	/**
 	 * keeps track of which parameters are defined for which test cases
@@ -745,6 +754,24 @@ public class Model {
 			return Collections.emptyList();
 		}
 	}
+	
+	@SuppressWarnings("unchecked")
+	public Collection<CustomField> getRequirementVersionCufs(RequirementVersionTarget target) {
+		//if requirement version is unknown in model (ie in req tree), 
+		//init the requirement version
+		if (requirementTree.targetAlreadyLoaded(target)) {
+			mainInitRequirements(target);
+		}
+		
+		String projectName = PathUtils.extractProjectName(target.getPath());
+		Collection<CustomField> cufs = reqCufsPerProjectname.getCollection(projectName);
+		
+		if (cufs != null) {
+			return cufs;
+		} else {
+			return Collections.emptyList();
+		}
+	}
 
 	@SuppressWarnings("unchecked")
 	public Collection<CustomField> getTestStepCufs(TestStepTarget target) {
@@ -763,10 +790,11 @@ public class Model {
 		}
 	}
 
+
 	// *********************** Requirement management *******************************
 
 	public TargetStatus getStatus(RequirementVersionTarget target){
-		if (! requirementTree.targetExists(target)){
+		if (! requirementTree.targetAlreadyLoaded(target)){
 			mainInitRequirements(target);
 		}
 
@@ -967,6 +995,9 @@ public class Model {
 
 		List<CustomField> stcufs = cufDao.findAllBoundCustomFields(projectId, BindableEntity.TEST_STEP);
 		stepCufsPerProjectname.putAll(projectName, stcufs);
+	
+		List<CustomField> reqcufs = cufDao.findAllBoundCustomFields(projectId, BindableEntity.REQUIREMENT_VERSION);
+		reqCufsPerProjectname.putAll(projectName, reqcufs);
 
 	}
 
@@ -990,9 +1021,60 @@ public class Model {
 	}
 
 	public void initRequirements(List<RequirementVersionTarget> initialTargets){
+		
 
+		// filter out the requirement version we already know of
+		List<RequirementVersionTarget> targets = new LinkedList<RequirementVersionTarget>();
+		for (RequirementVersionTarget target : initialTargets) {
+			if (!requirementTree.targetAlreadyLoaded(target)) {
+				targets.add(target);
+			}
+		}
 
+		// exit if they are all known
+		if (targets.isEmpty()) {
+			return;
+		}
 
+		// collect their paths
+		List<String> paths = collectPaths(targets);
+
+		// find their ids -> IMPLEMENTS FOR REQUIREMENT VERSION
+		// always get all existing requirement version in db, as we want getStatus method to be consistant with db state
+		// i.e if a RequirementVersion of an already loaded Requirement has a NOT_EXISTS status, it means that it is NOT in db
+		//List<Long> ids = reqFinderService.findNodeIdsByPathAndVersionNumber(paths);
+		
+		List<Long> ids = new ArrayList<Long>();
+		ids.add(null);
+		
+		// now store them
+		for (int i = 0; i < paths.size(); i++) {
+
+			RequirementVersionTarget t = targets.get(i);
+			Long id = ids.get(i);
+
+			Existence existence = (id == null) ? Existence.NOT_EXISTS : Existence.EXISTS;
+			TargetStatus status = new TargetStatus(existence, id);
+
+			// Warning add requirements and after, add versions
+			requirementTree.addOrUpdateNode(t, status);
+
+			// Issue 4973
+			// see comment on the attribute "isTargetMilestoneLocked"
+			Boolean milestoneLocked = Boolean.FALSE;
+			if (existence == Existence.EXISTS){
+				milestoneLocked = milestoneMemberFinder.isTestCaseMilestoneDeletable(id);
+			}
+
+			isTargetMilestoneLocked.put(t, milestoneLocked);
+		}
+
+	}
+	
+	
+	//********************* REQUIREMENT STATUS METHOD *****************
+	public void setNotExists(RequirementVersionTarget target) {
+		requirementTree.setNotExists(target);
 	}
 
 
@@ -1278,6 +1360,8 @@ public class Model {
 		}
 
 	}
+
+	
 
 
 }

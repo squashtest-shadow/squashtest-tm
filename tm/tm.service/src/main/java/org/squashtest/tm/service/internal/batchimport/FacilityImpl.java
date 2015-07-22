@@ -45,6 +45,9 @@ import org.squashtest.tm.domain.customfield.InputType;
 import org.squashtest.tm.domain.customfield.RawValue;
 import org.squashtest.tm.domain.infolist.InfoListItem;
 import org.squashtest.tm.domain.milestone.Milestone;
+import org.squashtest.tm.domain.requirement.RequirementLibrary;
+import org.squashtest.tm.domain.requirement.RequirementLibraryNode;
+import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.testcase.ActionTestStep;
 import org.squashtest.tm.domain.testcase.CallTestStep;
 import org.squashtest.tm.domain.testcase.Dataset;
@@ -513,7 +516,13 @@ public class FacilityImpl implements Facility {
 
 	@Override
 	public LogTrain createRequirementVersion(RequirementVersionInstruction instr) {
-		throw new RuntimeException("implement me");
+		LogTrain train = validator.createRequirementVersion(instr);
+		if (!train.hasCriticalErrors()){
+			//CREATE REQUIREMENT VERSION IN DB
+			createReqVersionRoutine(train, instr);
+		}
+		return train;
+		//throw new RuntimeException("implement me");
 	}
 
 	@Override
@@ -525,6 +534,46 @@ public class FacilityImpl implements Facility {
 	public LogTrain deleteRequirementVersion(RequirementVersionInstruction instr) {
 		throw new RuntimeException("implement me - must return a Failure : Not implemented in the log train instead of throwing this exception");
 	}
+	
+	private LogTrain createReqVersionRoutine(LogTrain train, RequirementVersionInstruction instruction) {
+		RequirementVersion reqVersion = instruction.getRequirementVersion();
+		Map<String, String> cufValues = instruction.getCustomFields();
+		RequirementVersionTarget target = instruction.getTarget();
+
+		try {
+//			helper.fillNullWithDefaults(testCase);
+//			helper.truncate(testCase, (Map<String, String>) cufValues);
+//			fixNatureAndType(target, testCase);
+
+			doCreateRequirementVersion(instruction);
+//			validator.getModel().setExists(target, testCase.getId());
+
+			LOGGER.debug(EXCEL_ERR_PREFIX + "Created Test Case \t'" + target + "'");
+
+		} catch (Exception ex) {
+			train.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_UNEXPECTED_ERROR,
+					new Object[] { ex.getClass().getName() }));
+			validator.getModel().setNotExists(target);
+			LOGGER.error(EXCEL_ERR_PREFIX + UNEXPECTED_ERROR_WHILE_IMPORTING + target + " : ", ex);
+		}
+
+		return train;
+	}
+	/**
+	 * 1 . First create the requirement if status is -TO BE CREATED-
+			1.1 - Requirement is root (ie under a {@link RequirementLibrary})
+					This one is simple, just create the requirement and set the status in requirement tree
+			1.2 - Requirement is under another {@link RequirementLibraryNode}
+					Must create all the node above the requirement that doesn't exists
+		 	2 . Create the requirement version :
+	 * @param instruction
+	 */
+	private void doCreateRequirementVersion(
+			RequirementVersionInstruction instruction) {
+		
+		
+	}
+
 
 	/**
 	 * for all other stuffs that need to be done afterward

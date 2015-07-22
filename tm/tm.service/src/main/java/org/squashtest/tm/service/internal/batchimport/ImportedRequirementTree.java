@@ -23,6 +23,8 @@ package org.squashtest.tm.service.internal.batchimport;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 import org.squashtest.tm.core.foundation.lang.PathUtils;
 import org.squashtest.tm.domain.library.structures.GraphNode;
@@ -139,7 +141,7 @@ class ImportedRequirementTree extends LibraryGraph<RequirementTarget, ImportedRe
 			requirement = getNode(version.getRequirement());
 		}
 
-		requirement.addVersion(status);
+		requirement.addVersion(version.getVersion(),status);
 
 	}
 
@@ -149,10 +151,13 @@ class ImportedRequirementTree extends LibraryGraph<RequirementTarget, ImportedRe
 		Node req = getNode(target);
 		return (req != null && req.getStatus().getStatus() != Existence.NOT_EXISTS);
 	}
-
-	public boolean targetExists(RequirementVersionTarget target){
+	
+	public boolean targetAlreadyLoaded(RequirementVersionTarget target){
 		Node req = getNode(target.getRequirement());
-		return (req != null && req.getVersionStatus(target.getVersion()).getStatus() != Existence.NOT_EXISTS);
+		if (req==null||req.versionAlreadyLoaded(target.getVersion())) {
+			return false;//If requirement isn't loaded, the requirement version can't be loaded 
+		}
+		return true;
 	}
 
 
@@ -169,11 +174,11 @@ class ImportedRequirementTree extends LibraryGraph<RequirementTarget, ImportedRe
 
 	public TargetStatus getStatus(RequirementVersionTarget target){
 		Node requirement = getNode(target.getRequirement());
-		if (requirement != null && requirement.hasVersion(target.getVersion())){
+		if (requirement != null && requirement.versionAlreadyLoaded(target.getVersion())){
 			return requirement.getVersionStatus(target.getVersion());
 		}
 		else{
-			return TargetStatus.NOT_EXISTS;
+			return TargetStatus.NOT_EXISTS;//Maybe make a NOT_LOADED STATUS or throw an exception ?
 		}
 	}
 
@@ -274,6 +279,21 @@ class ImportedRequirementTree extends LibraryGraph<RequirementTarget, ImportedRe
 		foundNode.updateAsRequirement(target, status);
 
 	}
+	
+	/**
+	 * Set a RequirementVersionTarget status to not exists
+	 * @param target
+	 */
+	public void setNotExists(RequirementVersionTarget target) {
+		Node req = getNode(target.getRequirement());
+		if (req!=null) {
+			req.setNotExists(target.getVersion());
+		}
+		else {
+			throw new IllegalStateException("The RequirementVersionTarget MUST have a RequirementTarget in the requirement tree");
+		}
+	}
+
 
 
 	// ***************** the class of the node ****************************
@@ -284,14 +304,16 @@ class ImportedRequirementTree extends LibraryGraph<RequirementTarget, ImportedRe
 		private boolean isRequirement = true;
 		private boolean virtual = false;
 		private List<TargetStatus> versions = new ArrayList<>();
-
-
+		private SortedMap<Integer,TargetStatus> requirementVersions = new TreeMap<Integer, TargetStatus>();
+		
 		public Node(RequirementTarget target, TargetStatus status) {
 			super(target);
 			this.status = status;
 		}
 
-
+		public void setNotExists(Integer version) {
+			requirementVersions.put(version,new TargetStatus(Existence.NOT_EXISTS));
+		}
 
 		public Node(RequirementTarget target, TargetStatus status, boolean isRequirement, boolean virtual) {
 			super(target);
@@ -328,28 +350,28 @@ class ImportedRequirementTree extends LibraryGraph<RequirementTarget, ImportedRe
 		void setStatus(TargetStatus status){
 			this.status = status;
 		}
+		
+		boolean versionAlreadyLoaded(Integer versionNo){
+			return requirementVersions.containsKey(versionNo);
+		}
 
 		TargetStatus getVersionStatus(int versionNo){
-			if (hasVersion(versionNo)){
-				return versions.get(versionNo);
-			}
-			else{
-				return TargetStatus.NOT_EXISTS;
-			}
+			TargetStatus targetStatus = requirementVersions.get(new Integer(versionNo));
+			return targetStatus;
 		}
 
-		boolean hasVersion(int versionNo){
-			TargetStatus versionStatus = versions.get(versionNo);
-			if (versionStatus != null){
-				return versionStatus.getStatus() == Existence.EXISTS;
-			}
-			else{
-				return false;
-			}
-		}
+//		boolean hasVersion(int versionNo){
+//			TargetStatus versionStatus = requirementVersions.get(new Integer(versionNo));
+//			if (versionStatus != null){
+//				return versionStatus.getStatus() == Existence.EXISTS;
+//			}
+//			else{
+//				return false;
+//			}
+//		}
 
-		void addVersion(TargetStatus status){
-			versions.add(status);
+		void addVersion(Integer noVersion, TargetStatus status){
+			requirementVersions.put(noVersion, status);
 		}
 
 		void updateAsRequirement(RequirementTarget target, TargetStatus status){
@@ -366,4 +388,5 @@ class ImportedRequirementTree extends LibraryGraph<RequirementTarget, ImportedRe
 
 	}
 
+	
 }

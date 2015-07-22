@@ -41,6 +41,7 @@ import org.squashtest.tm.service.importer.ImportLog;
 import org.squashtest.tm.service.requirement.RequirementLibraryNavigationService;
 import org.squashtest.tm.web.importer.ImportHelper;
 import org.squashtest.tm.web.internal.controller.testcase.importer.ImportFormatFailure;
+import org.squashtest.tm.web.internal.controller.testcase.importer.TestCaseImportLogHelper;
 
 @Controller
 @RequestMapping("/requirements/importer")
@@ -55,6 +56,9 @@ public class RequirementImportController {
 	
 	@Inject
 	private ImportHelper importHelper;
+	
+	@Inject
+	private TestCaseImportLogHelper logHelper; 
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(RequirementImportController.class);
 	
@@ -82,6 +86,7 @@ public class RequirementImportController {
 		);
 	}
 	
+	//A factoriser avec l'import de TC ?
 	private ModelAndView importWorkbook(MultipartFile uploadedFile, WebRequest request,
 			Command<File, ImportLog> callback) {
 		ModelAndView mav = new ModelAndView("fragment/import/import-summary");
@@ -89,11 +94,11 @@ public class RequirementImportController {
 		File xls = null;
 
 		try {
-			xls = importHelper.multipartToImportFile(uploadedFile,"test-case-import-", ".xls");
+			xls = importHelper.multipartToImportFile(uploadedFile,"requirement-import-", ".xls");
 			ImportLog summary = callback.execute(xls); // TODO parser may throw ex we should handle
-//			summary.recompute(); // TODO why is it here ? shouldnt it be in service ?
-//			generateImportLog(request, summary); // TODO
-//			mav.addObject("summary", summary); // TODO
+			summary.recompute(); // TODO why is it here ? shouldnt it be in service ?
+			generateImportLog(request, summary); // TODO
+			mav.addObject("summary", summary); // TODO
 
 		} catch (IOException e) {
 			LOGGER.error("An exception prevented processing of requirement import file", e);
@@ -113,8 +118,41 @@ public class RequirementImportController {
 				xls.deleteOnExit();
 			}
 		}
-//		mav.addObject("workspace", "requirement"); // TODO
+		mav.addObject("workspace", "requirement"); // TODO
 
+		LOGGER.debug("Req-Import" + "OUT controller, RUN");
 		return mav;
+	}
+	
+	/**
+	 * Generates a downloadable xls import log file and stores it where it should.
+	 * 
+	 * @param request
+	 *            : the {@link WebRequest} that lead here
+	 * @param summary
+	 *            : the {@link ImportLog} summary of the xls import/simulation
+	 */
+	private void generateImportLog(WebRequest request, ImportLog summary) {
+		File xlsSummary = null;
+
+		try {
+			xlsSummary = importLogToLogFile(summary);
+
+			String reportUrl = request.getContextPath() + "/test-cases/import-logs/" + xlsSummary.getName();
+			summary.setReportUrl(reportUrl);
+
+		} catch (IOException e) {
+			LOGGER.warn("An error occured during import log generation", e);
+
+		} finally {
+			if (xlsSummary != null) {
+				xlsSummary.deleteOnExit();
+			}
+
+		}
+	}
+	
+	private File importLogToLogFile(ImportLog summary) throws IOException {
+		return logHelper.storeLogFile(summary);
 	}
 }

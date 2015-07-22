@@ -45,7 +45,7 @@ import org.squashtest.tm.service.importer.LogEntry;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 
 @Component
-class TestCaseImportLogHelper {
+public class TestCaseImportLogHelper {
 	public static final String XLS_SUFFIX = ".xls";
 
 	private static final String IMPORT_LOG_PREFIX = "test-case-import-log-";
@@ -150,7 +150,12 @@ class TestCaseImportLogHelper {
 
 		Collection<LogEntry> logEntriesForDatasets = importLog.findAllFor(EntityType.DATASET);
 		writeToTab(logEntriesForDatasets, workbook, "DATASET", locale);
+		
+		Collection<LogEntry> logEntriesForRequirements = importLog.findAllFor(EntityType.REQUIREMENT_VERSION);
+		writeToTab(logEntriesForRequirements, workbook, "REQUIREMENT", locale);
 
+		LOGGER.debug("Req-Import - LOG FILE " + logEntriesForRequirements);
+		
 		return workbook;
 	}
 

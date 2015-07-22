@@ -65,6 +65,7 @@ public final class Messages {
 	public static final String ERROR_ACTION_STEP_HAS_DATASET = "message.import.log.error.tc.tcStep.actionStepYetHasDataset";
 	public static final String ERROR_UNKNOWN_COLUMN_HEADER = "message.import.log.error.unknowncolumnheader";
 	public static final String ERROR_INVALID_NATURE = "message.import.log.error.natureinvalid";
+	public static final String ERROR_INVALID_CATEGORY = "message.import.log.error.categoryinvalid";
 	public static final String ERROR_INVALID_TYPE = "message.import.log.error.typeinvalid";
 	public static final String ERROR_MILESTONE_FEATURE_DEACTIVATED = "message.import.log.error.milestoneFeatureDeactivated";
 	public static final String ERROR_UNKNOWN_MILESTONE = "message.import.log.error.milestone.unknown";

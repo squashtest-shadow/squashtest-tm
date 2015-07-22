@@ -31,11 +31,14 @@ import java.util.Map;
 import javax.inject.Inject;
 
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.core.foundation.lang.PathUtils;
 import org.squashtest.tm.domain.audit.AuditableMixin;
+import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.testcase.ActionTestStep;
 import org.squashtest.tm.domain.testcase.CallTestStep;
 import org.squashtest.tm.domain.testcase.Parameter;
@@ -145,7 +148,12 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 	private static final String PERM_DELETE = "DELETE";
 	private static final String PERM_READ = "READ";
 	private static final String LIBRARY_CLASSNAME = "org.squashtest.tm.domain.testcase.TestCaseLibrary";
+	private static final String REQUIREMENT_VERSION_LIBRARY_CLASSNAME = "org.squashtest.tm.domain.requirement.RequirementVersion";
 
+	
+	private static final Logger LOGGER = LoggerFactory.getLogger(ValidationFacility.class);
+	
+	
 	@Inject
 	private PermissionEvaluationService permissionService;
 
@@ -172,6 +180,8 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 	private CustomFieldValidator cufValidator = new CustomFieldValidator();
 	private CreationStrategy creationStrategy = new CreationStrategy();
 	private UpdateStrategy updateStrategy = new UpdateStrategy();
+	
+	
 
 	@Override
 	public Model getModel() {
@@ -659,6 +669,20 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 
 		return entry;
 	}
+	
+	private LogEntry checkPermissionOnProject(String permission, RequirementVersionTarget target, Target checkedTarget) {
+		
+		LogEntry entry = null;
+		
+		Long libid = model.getProjectStatus(target.getProject()).getRequirementLibraryId();
+		if ((libid != null)
+				&& (!permissionService.hasRoleOrPermissionOnObject(ROLE_ADMIN, permission, libid, REQUIREMENT_VERSION_LIBRARY_CLASSNAME))) {
+			entry = new LogEntry(checkedTarget, ImportStatus.FAILURE, Messages.ERROR_NO_PERMISSION, new String[] {
+					permission, target.getPath() });
+		}
+		
+		return entry;
+	}
 
 	private LogEntry checkStepIndex(ImportMode mode, TestStepTarget target, ImportStatus importStatus,
 			String optionalImpact) {
@@ -792,7 +816,35 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 
 	@Override
 	public LogTrain createRequirementVersion(RequirementVersionInstruction instr) {
-		throw new RuntimeException("implement me");
+		
+		RequirementVersionTarget target = instr.getTarget();
+		RequirementVersion reqVersion = instr.getRequirementVersion();
+		Map<String, String> cufValues = instr.getCustomFields();
+
+		LogTrain logs;
+		String path = target.getPath();
+		
+		LOGGER.debug("Req-Import - In Validation Facility");
+		
+		// 1 - basic verifications
+		logs = entityValidator.createRequirementVersionChecks(target, reqVersion);
+
+		// 2 - custom fields (create)
+		logs.append(cufValidator.checkCreateCustomFields(target, (Map<String, String>) cufValues, 
+				model.getRequirementVersionCufs(target)));
+		
+		// 3 - Check permissions
+		LogEntry hasntPermission = checkPermissionOnProject(PERM_CREATE, target, target);
+		if (hasntPermission != null) {
+			logs.addEntry(hasntPermission);
+		}
+		
+		// 4 - Check version number 
+		//		-> change it to the last index +1 if problem and keep trace of the user wtf version number !!!
+		
+		// 5 - 
+		
+		return logs;
 	}
 
 	@Override
