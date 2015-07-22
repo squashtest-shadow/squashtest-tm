@@ -137,6 +137,7 @@ final class PropertyHolderFinderRepository<COL extends Enum<COL> & TemplateColum
 			}
 		};
 		
+		r.finderByColumn.put(RequirementSheetColumn.ACTION, instructionFinder);
 		r.finderByColumn.put(RequirementSheetColumn.REQ_VERSION_MILESTONE, instructionFinder);
 		r.finderByColumn.put(RequirementSheetColumn.REQ_VERSION_NUM, targetFinder);
 		r.finderByColumn.put(RequirementSheetColumn.REQ_NUM, targetRequirementFinder);
