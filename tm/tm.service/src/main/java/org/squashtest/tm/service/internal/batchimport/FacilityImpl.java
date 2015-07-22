@@ -38,6 +38,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
+import org.squashtest.tm.core.foundation.lang.PathUtils;
 import org.squashtest.tm.domain.customfield.BoundEntity;
 import org.squashtest.tm.domain.customfield.CustomField;
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
@@ -69,6 +70,7 @@ import org.squashtest.tm.service.internal.repository.CustomFieldDao;
 import org.squashtest.tm.service.internal.repository.DatasetDao;
 import org.squashtest.tm.service.internal.repository.DatasetParamValueDao;
 import org.squashtest.tm.service.internal.repository.ParameterDao;
+import org.squashtest.tm.service.requirement.RequirementLibraryNavigationService;
 import org.squashtest.tm.service.testcase.CallStepManagerService;
 import org.squashtest.tm.service.testcase.DatasetModificationService;
 import org.squashtest.tm.service.testcase.ParameterModificationService;
@@ -111,6 +113,9 @@ public class FacilityImpl implements Facility {
 
 	@Inject
 	private DatasetModificationService datasetService;
+	
+	@Inject
+	private RequirementLibraryNavigationService requirementLibraryNavigationService;
 
 	@Inject
 	private DatasetDao datasetDao;
@@ -560,18 +565,22 @@ public class FacilityImpl implements Facility {
 		return train;
 	}
 	/**
-	 * 1 . First create the requirement if status is -TO BE CREATED-
+	 * 1 . First create the requirement if not exist in database
 			1.1 - Requirement is root (ie under a {@link RequirementLibrary})
 					This one is simple, just create the requirement and set the status in requirement tree
 			1.2 - Requirement is under another {@link RequirementLibraryNode}
-					Must create all the node above the requirement that doesn't exists
+					Must create all the node above the requirement that doesn't exists. 
+					As specified in 5085 all new nodes above the requirement will be treated as folder
 		 	2 . Create the requirement version :
 	 * @param instruction
 	 */
 	private void doCreateRequirementVersion(
 			RequirementVersionInstruction instruction) {
-		
-		
+		LOGGER.debug("ReqImport - VERIFYING REQUIREMENT EXISTENCE FOR" + instruction.getRequirementVersion().toString());
+		List<String> paths = PathUtils.scanPath(instruction.getTarget().getPath());
+		for (String string : paths) {
+			LOGGER.debug("ReqImport - " + string);
+		}
 	}
 
 

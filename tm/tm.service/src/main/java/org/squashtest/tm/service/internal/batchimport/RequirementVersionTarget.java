@@ -29,11 +29,6 @@ public class RequirementVersionTarget extends Target {
 
 	private Integer version;
 	
-	private String name;
-
-
-
-
 	public RequirementVersionTarget(RequirementTarget requirement, Integer version) {
 		super();
 		this.requirement = requirement;
@@ -41,10 +36,6 @@ public class RequirementVersionTarget extends Target {
 	}
 
 
-	public RequirementVersionTarget() {
-		super();
-	}
-	
 	public RequirementVersionTarget() {
 		super();
 	}
@@ -80,14 +71,6 @@ public class RequirementVersionTarget extends Target {
 
 	public RequirementTarget getRequirement(){
 		return requirement;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
 	}
 
 	@Override
