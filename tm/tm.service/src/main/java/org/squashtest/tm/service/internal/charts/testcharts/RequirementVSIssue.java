@@ -65,11 +65,12 @@ public class RequirementVSIssue implements Perimeter {
 
 	static {
 
-		Collection<Column> columns = new ArrayList<>(6);
+		Collection<Column> columns = new ArrayList<>(7);
 
 		columns.add(new Column("requirement-criticality", Datatype.CRITICALITY, "criticality", "rv.criticality"));
 		columns.add(new Column("requirement-category", Datatype.INFOLIST, "category", "rv.category"));
 		columns.add(new Column("requirement-creator", Datatype.STRING, "creator login", "rv.audit.createdBy"));
+		columns.add(new Column("testcase-importance", Datatype.IMPORTANCE, "test case importance", "tc.importance"));
 		columns.add(new Column("campaign-name", Datatype.STRING, "campaign name", "c.name"));
 		columns.add(new Column("iteration-name", Datatype.STRING, "iteration name", "it.name"));
 		columns.add(new Column("issue-id", Datatype.INT, "issue id", "issue.remoteIssueId"));

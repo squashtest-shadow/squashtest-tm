@@ -20,15 +20,12 @@
  */
 package org.squashtest.tm.service.internal.charts;
 
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
-import java.util.SortedSet;
-import java.util.TreeSet;
 
 import org.squashtest.tm.service.charts.Column;
 import org.squashtest.tm.service.charts.Datatype;
@@ -105,8 +102,8 @@ public class PerimeterUtils {
 	 * <p>Rules for group by are follow :</p>
 	 * 
 	 *  <ul>
-	 *  	<li>Axis column will NOT be grouped upon</li>
-	 *  	<li>Data column MUST be grouped upon</li>
+	 *  	<li>Axis column MUST be grouped upon</li>
+	 *  	<li>Data column will NOT be grouped upon</li>
 	 *  </ul>
 	 * 
 	 * 
@@ -115,12 +112,12 @@ public class PerimeterUtils {
 	 */
 	private void addGroupByClause(StringBuilder builder, PerimeterQuery perimeter){
 
-		Collection<Column> data = perimeter.getData();
+		Collection<Column> axes = perimeter.getAxes();
 
 		builder.append(" group by ");
 
-		for (Column d : data){
-			builder.append(d.getColumnAlias()+", ");
+		for (Column axe : axes){
+			builder.append(axe.getColumnAlias()+", ");
 		}
 
 		//strip extra comma. We assume there is always one because no chart
@@ -175,12 +172,15 @@ public class PerimeterUtils {
 	public List<Object[]> mergeResultSet(PerimeterQuery perimeter, List<Object[]> resultSet1, List<Object[]> resultSet2){
 
 		TupleComparator comparator = new TupleComparator(perimeter);
+		TupleAggregator aggregator = new TupleAggregator();
 
 		// Linked list is our choice here because we'll need to modify the content and have fast insertion/deletion
 		// performances
 		List<Object[]> result = new LinkedList<>();
 
 		result.addAll(resultSet1);
+		result.addAll(resultSet2);
+		Collections.sort(result, comparator);
 
 
 		// now the result are sorted,
@@ -193,6 +193,7 @@ public class PerimeterUtils {
 
 			// skip if no preceding row
 			if (precRow == null){
+				precRow = currentRow;
 				continue;
 			}
 
@@ -200,10 +201,8 @@ public class PerimeterUtils {
 
 			// merge if data the axes for the two row have exact same value
 			if (comparison == 0){
-				// TODO : check which aggregator use according to the perimeter query
-				AggregationStrategy aggregator = AggregationStrategy.COUNT;
 
-				Object[] newValue = aggregator.aggregate(perimeter, resultSet1, resultSet2);
+				Object[] newValue = aggregator.aggregate(perimeter, currentRow, precRow);
 
 				// now remove the current row, the preceeding row, and insert the new one
 				iter.remove();
@@ -220,26 +219,6 @@ public class PerimeterUtils {
 
 		return result;
 
-	}
-
-	private enum AggregationStrategy{
-
-		COUNT(){
-			@Override
-			Object[] aggregate(PerimeterQuery perimeter, List<Object[]> resultSet1, List<Object[]> resultSet2) {
-				// TODO Auto-generated method stub
-				return null;
-			}
-		},
-		AVG(){
-			@Override
-			Object[] aggregate(PerimeterQuery perimeter, List<Object[]> resultSet1, List<Object[]> resultSet2) {
-				// TODO Auto-generated method stub
-				return null;
-			}
-		};
-
-		abstract Object[] aggregate(PerimeterQuery perimeter, List<Object[]> resultSet1, List<Object[]> resultSet2);
 	}
 
 

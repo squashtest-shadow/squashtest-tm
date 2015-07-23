@@ -25,6 +25,7 @@ import java.sql.Date;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.domain.infolist.InfoListItem;
 import org.squashtest.tm.domain.requirement.RequirementCriticality;
+import org.squashtest.tm.domain.testcase.TestCaseImportance;
 
 public enum Datatype{
 
@@ -68,6 +69,14 @@ public enum Datatype{
 			RequirementCriticality c1 = (RequirementCriticality)o1;
 			RequirementCriticality c2 = (RequirementCriticality)o2;
 			return c1.compareTo(c2);
+		}
+
+	}, IMPORTANCE(){
+		@Override
+		public int compare(Object o1, Object o2) {
+			TestCaseImportance i1 = (TestCaseImportance)o1;
+			TestCaseImportance i2 = (TestCaseImportance)o2;
+			return i1.compareTo(i2);
 		}
 
 	}, INFOLIST(){
