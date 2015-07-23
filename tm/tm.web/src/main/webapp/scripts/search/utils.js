@@ -1,4 +1,4 @@
-/**
+/*
  *     This file is part of the Squashtest platform.
  *     Copyright (C) 2010 - 2015 Henix, henix.fr
  *
@@ -18,28 +18,16 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.project;
-
-import java.util.List;
-
-import org.springframework.security.access.prepost.PostFilter;
-import org.springframework.transaction.annotation.Transactional;
-import org.squashtest.tm.domain.project.GenericProject;
-import org.squashtest.tm.domain.project.Project;
-import static org.squashtest.tm.service.security.Authorizations.*;
-
-/**
- * @author mpagnon
- * 
- */
-@Transactional(readOnly = true)
-public interface CustomProjectFinder {
-
-	@PostFilter("hasPermission(filterObject, 'READ')" + OR_HAS_ROLE_ADMIN)
-	List<Project> findAllReadable();
-
-	@PostFilter("hasPermission(filterObject, 'READ')" + OR_HAS_ROLE_ADMIN)
-	List<Project> findByExecutionId(long Id);
-
-	List<GenericProject> findAllICanManage();
-}
+define(['jquery'], function($){
+	
+	return {
+		btnconf : function(css){
+			return {
+				text : false,
+				icons : {
+					primary : css
+				}
+			};
+		}
+	};
+});

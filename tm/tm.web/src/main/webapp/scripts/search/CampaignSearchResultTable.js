@@ -162,7 +162,7 @@ define([ "jquery", "backbone", "squash.translator", '../test-plan-panel/exec-run
 						"bFilter" : false,
 						"fnRowCallback" : this.tableRowCallback,
 						"fnDrawCallback" : this.tableDrawCallback,
-						"aaSorting" : [ [ 1, "asc" ], [ 3, "asc" ], [ 5, "asc" ], [ 6, "asc" ], [ 7, "asc" ], [ 4, "asc" ] ],
+						"aaSorting" : [ [ 1, "asc" ], [ 2, "asc" ], [ 3, "asc" ], [ 4, "asc" ], [ 5, "asc" ], [ 6, "asc" ], [ 7, "asc" ], [ 8, "asc" ], [ 9, "asc" ], [ 10, "asc" ]],
 						"aoColumnDefs" : [ {
 							"bSortable" : false,
 							"aTargets" : [ 0 ],

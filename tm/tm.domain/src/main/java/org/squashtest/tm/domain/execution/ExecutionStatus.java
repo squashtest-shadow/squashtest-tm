@@ -22,12 +22,14 @@ package org.squashtest.tm.domain.execution;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import org.squashtest.tm.core.foundation.i18n.Internationalizable;
 import org.squashtest.tm.domain.Level;
+import org.squashtest.tm.domain.requirement.RequirementStatus;
 
 /**
  * 
@@ -709,5 +711,48 @@ public enum ExecutionStatus implements Internationalizable, Level {
 			ExecutionStatus formerStepStatus) {
 		return (formerExecutionStatus.equals(formerStepStatus));
 	}
+
+	// ---------------------------------- Comparator -------------------------------------
+
+	public static StringComparator stringComparator() {
+		return new StringComparator();
+	}
+
+	/**
+	 * inner class used to sort RequirementStatus over their string representation. In case we have to sort stringified
+	 * statuses with other arbitrary strings, stringified statuses will have a lower rank than other strings.
+	 */
+	private static class StringComparator implements Comparator<String> {
+		@Override
+		public int compare(String o1, String o2) {
+			RequirementStatus status1, status2;
+
+			try {
+				String comparableString1 = removeDisableString(o1);
+				status1 = RequirementStatus.valueOf(comparableString1);
+			} catch (IllegalArgumentException iae) {
+				return 1;
+			}
+
+			try {
+				String comparableString2 = removeDisableString(o2);
+				status2 = RequirementStatus.valueOf(comparableString2);
+			} catch (IllegalArgumentException iae) {
+				return -1;
+			}
+
+			return status1.compareTo(status2);
+		}
+
+		private String removeDisableString(String o) {
+			String newString = o;
+			String disabled = "disabled.";
+			if (o.startsWith(disabled)) {
+				newString = o.substring(disabled.length());
+			}
+			return newString;
+		}
+	}
+
 
 }

@@ -59,6 +59,21 @@
         disabledTxt: /*[[ #{workspace.menubar.filter.disabled.label} ]]*/ 'Inactif',
         enabledCallbacks: [ function(){ $("div.tree-filter-reminder-div > span").removeClass("not-displayed");} ]
       }, 
+  	campaignWorkspaceConf: {
+				tree : {
+					model : /*[[${ rootModel }]]*/ '',
+					workspace : "campaign",
+					treeselector : "#tree",
+					selectedNode : /*[[${selectedNode}]]*/[],
+					state : {  opened    : true },
+  					openedNode : /*[[${openedNode}]]*/[]
+				},
+				treemenu: {
+  					wizards: /*[[${ wizards }]]*/ '',
+  					state : {  opened    : true },
+  					openedNode : /*[[${openedNode}]]*/[]
+				}
+			},
      campaignSearchResultConf: {
     	 messages : {
     		 nonEditableTooltip : /*[[ #{tooltips.nonEditable}]]*/ 'non editable'
@@ -154,7 +169,7 @@
 							role="button" aria-disabled="false" />				
 
 					<div class="unsnap"></div>
-				</div>
+	</div>
 				
 				<div id="searchModel" class="not-displayed" th:text="${searchModel}"></div>
 				<div th:if="${associateResult}" id="associationType" class="not-displayed" th:text="${associateResultWithType}"></div>
@@ -214,13 +229,65 @@
 				</div>
 			</div>
 
-			<!-- Need two popups there -->
-
 			<!-- Add one popup to edit stuff -->
 
-			<!-- Get another popup to add the selected execution in an existing iteration and also allow user to add a new iteration where they want -->
-
+			<div id="modify-search-result-dialog"
+				class="not-displayed popup-dialog" th:title="#{label.Modify}">
+				<div class="main">
+                    <div id="modify-search-result-dialog-project-conf-warning"
+                         class="not-displayed" 
+                         th:text="#{message.search.modify.differentInfolists}">
+                         
+                      Warning : hey, something's wrong !
+                    </div>
+					<table id="modify-search-result-dialog-table">
+						<tr>
+							<td><input id="status-checkbox" type="checkbox"></input></td>
+							<td><label th:text="#{label.Status}"></label></td>
+							<td id="status-combo"></td>
+						</tr>
+					</table>
+				</div>
+				<div class="popup-dialog-buttonpane">
+					<input class="confirm" type="button" value="confirm"
+						th:value="#{label.Confirm}" /> <input class="cancel"
+						type="button" value="cancel" th:value="#{label.Cancel}" />
+				</div>
 			</div>
+			
+			<!-- Get another popup to add the selected execution in an existing iteration and also allow user to add a new iteration where they want -->
+			
+			<div id="add-new-execution-dialog" style="height: 200px!important"
+				class="not-displayed popup-dialog search-minimal-height" th:title="#{report.form.tree-picker.dialog.title}" >
+
+            
+				<div class="main">
+	         	 	<div id="tree-pane">
+	          
+			            <!--  ____________________HTML TREE__________________________ -->
+			            <!-- 	<tree:_html-tree treeId="tree" /> -->
+			
+			        
+			               <div id="tree" class="tree" th:attr="data-importable=${ importable }" data-importable="true"></div>
+			               
+			                <div th:remove="tag"
+			              th:with="importable = ( ${sec.hasRole('ROLE_TM_PROJECT_MANAGER')} or ${sec.hasRole('ROLE_ADMIN')})">
+			              
+			              
+			
+			            <!-- /	_________________HTML TREE___________________ -->
+			          </div>
+					</div>
+				<div class="popup-dialog-buttonpane">
+			        <input type="button" th:value="#{label.Confirm}" value="confirm"
+          data-def="evt=confirm, mainbtn=confirm, state=confirm" />
+        <input type="button" th:value="#{label.Cancel}" value="cancel" data-def="evt=cancel, mainbtn" />
+       
+				</div>
+			</div>
+			
+			
+			</div></div>
       </div>
     </div>
 </body>

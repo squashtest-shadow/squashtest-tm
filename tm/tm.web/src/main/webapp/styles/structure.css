@@ -392,6 +392,10 @@ span.search-text {
 	display: inline-block;
 }
 
+.search-minimal-height {
+    min-height : 250px!important; 
+}
+
 .search-panel-tc-importance .options {
 	width: 64%;
 	display: inline-block;

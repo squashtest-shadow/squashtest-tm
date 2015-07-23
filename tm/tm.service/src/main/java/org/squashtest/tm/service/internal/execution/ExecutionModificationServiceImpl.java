@@ -31,8 +31,10 @@ import org.squashtest.tm.core.foundation.collection.Paging;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.PagingBackedPagedCollectionHolder;
 import org.squashtest.tm.domain.execution.Execution;
+import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.domain.execution.ExecutionStep;
 import org.squashtest.tm.domain.testcase.TestCase;
+import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.service.advancedsearch.IndexationService;
 import org.squashtest.tm.service.deletion.SuppressionPreviewReport;
 import org.squashtest.tm.service.execution.ExecutionModificationService;
@@ -141,6 +143,24 @@ public class ExecutionModificationServiceImpl implements ExecutionModificationSe
 	@Override
 	public boolean exists(long id) {
 		return executionDao.exists(id);
+	}
+
+	@Override
+	@PreAuthorize("hasPermission(#executionId, 'org.squashtest.tm.domain.execution.Execution', 'EXECUTE') "
+			+ OR_HAS_ROLE_ADMIN)
+	public void setExecutionAssignment(Long executionId, User user) {
+		Execution execution = executionDao.findById(executionId);
+		// Do nothing yet 'lol'
+
+	}
+
+	@Override
+	@PreAuthorize("hasPermission(#executionId, 'org.squashtest.tm.domain.execution.Execution', 'EXECUTE') "
+			+ OR_HAS_ROLE_ADMIN)
+	public void setExecutionStatus(Long executionId, ExecutionStatus status) {
+		Execution execution = executionDao.findById(executionId);
+		execution.setExecutionStatus(status);
+
 	}
 
 }

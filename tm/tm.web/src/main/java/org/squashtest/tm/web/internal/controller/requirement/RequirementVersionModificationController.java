@@ -99,9 +99,9 @@ public class RequirementVersionModificationController {
 	@Inject
 	private Provider<RequirementCriticalityComboDataBuilder> criticalityComboBuilderProvider;
 
-
 	@Inject
 	private Provider<RequirementStatusComboDataBuilder> statusComboDataBuilderProvider;
+
 	@Inject
 	private Provider<LevelLabelFormatter> levelFormatterProvider;
 

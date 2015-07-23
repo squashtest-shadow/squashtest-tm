@@ -60,6 +60,7 @@ import org.hibernate.search.annotations.Analyze;
 import org.hibernate.search.annotations.ClassBridge;
 import org.hibernate.search.annotations.ClassBridges;
 import org.hibernate.search.annotations.Field;
+import org.hibernate.search.annotations.FieldBridge;
 import org.hibernate.search.annotations.Indexed;
 import org.hibernate.search.annotations.IndexedEmbedded;
 import org.hibernate.search.annotations.Parameter;
@@ -86,10 +87,12 @@ import org.squashtest.tm.domain.infolist.DenormalizedType;
 import org.squashtest.tm.domain.infolist.InfoListItem;
 import org.squashtest.tm.domain.library.HasExecutionStatus;
 import org.squashtest.tm.domain.project.Project;
+import org.squashtest.tm.domain.requirement.RequirementStatus;
 import org.squashtest.tm.domain.requirement.RequirementVersionAttachmentBridge;
 import org.squashtest.tm.domain.requirement.RequirementVersionHasParentBridge;
 import org.squashtest.tm.domain.requirement.RequirementVersionIsCurrentBridge;
 import org.squashtest.tm.domain.search.CUFBridge;
+import org.squashtest.tm.domain.search.LevelEnumBridge;
 import org.squashtest.tm.domain.testautomation.AutomatedExecutionExtender;
 import org.squashtest.tm.domain.testautomation.AutomatedSuite;
 import org.squashtest.tm.domain.testautomation.AutomatedTest;
@@ -141,8 +144,10 @@ DenormalizedFieldHolder, BoundEntity {
 	@SequenceGenerator(name = "execution_execution_id_seq", sequenceName = "execution_execution_id_seq")
 	private Long id;
 
-	@Field(analyze = Analyze.NO, store = Store.YES)
+	// Not Null & Column missed comparing to requirementStatus
 	@Enumerated(EnumType.STRING)
+	@Field(analyze = Analyze.NO, store = Store.YES)
+	@FieldBridge(impl = LevelEnumBridge.class)
 	private ExecutionStatus executionStatus = ExecutionStatus.READY;
 
 	@Field(analyze = Analyze.NO, store = Store.YES)
@@ -172,6 +177,7 @@ DenormalizedFieldHolder, BoundEntity {
 	@Enumerated(EnumType.STRING)
 	@Field(analyze = Analyze.NO, store = Store.YES)
 	@Basic(optional = false)
+	@FieldBridge(impl = LevelEnumBridge.class)
 	private TestCaseImportance importance = LOW;
 
 	@Embedded

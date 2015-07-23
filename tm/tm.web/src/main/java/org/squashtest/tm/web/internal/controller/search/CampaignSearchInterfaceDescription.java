@@ -57,8 +57,8 @@ public class CampaignSearchInterfaceDescription extends SearchInterfaceDescripti
 		panel.setLocation("column1");
 		panel.addCssClass("search-icon-information");
 
-		SearchInputFieldModel labelField = new SearchInputFieldModel("name", getMessageSource().internationalize(
-				"label.Label", locale), TEXTFIELD);
+		SearchInputFieldModel labelField = new SearchInputFieldModel("id", getMessageSource().internationalize(
+				"label.id", locale), TEXTFIELD);
 		panel.addField(labelField);
 		SearchInputFieldModel referenceField = new SearchInputFieldModel("reference", getMessageSource()
 				.internationalize("label.reference", locale), TEXTFIELDREFERENCE);
@@ -172,7 +172,8 @@ public class CampaignSearchInterfaceDescription extends SearchInterfaceDescripti
 		panel.addField(authorizedUsersField);
 
 		// Status
-		SearchInputFieldModel statusField = new SearchInputFieldModel("status", getMessageSource().internationalize(
+		SearchInputFieldModel statusField = new SearchInputFieldModel("executionStatus", getMessageSource()
+				.internationalize(
 				"test-case.status.label", locale), MULTISELECT);
 		panel.addField(statusField);
 		List<SearchInputPossibleValueModel> statusOptions = levelComboBuilder(ExecutionStatus.values())

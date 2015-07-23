@@ -121,4 +121,14 @@ public class CustomProjectModificationServiceImpl implements CustomProjectModifi
 	}
 
 
+	@Override
+	@PostFilter("hasPermission(filterObject, 'READ') or hasRole('ROLE_ADMIN')")
+	@Transactional(readOnly = true)
+	public List<Project> findByExecutionId(long Id) {
+		Project project = projectDao.findByExecutionId(Id);
+		List<Project> projectList = new ArrayList<Project>();
+		projectList.add(project);
+		return projectList;
+	}
+
 }

@@ -26,7 +26,9 @@ import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.Paging;
 import org.squashtest.tm.domain.execution.Execution;
+import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.domain.execution.ExecutionStep;
+import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.service.deletion.SuppressionPreviewReport;
 
 @Transactional(readOnly = false)
@@ -35,6 +37,10 @@ public interface ExecutionModificationService extends ExecutionFinder {
 	Execution findAndInitExecution(Long executionId);
 
 	void setExecutionDescription(Long executionId, String description);
+
+	void setExecutionAssignment(Long executionId, User user);
+
+	void setExecutionStatus(Long executionId, ExecutionStatus status);
 
 	/*********************************** Steps methods *****************************************/
 
