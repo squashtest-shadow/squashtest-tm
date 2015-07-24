@@ -387,8 +387,8 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil","workspace.ro
 
 			function loadTree(executionId){
 				$.ajax({
-					url : squashtm.app.contextRoot + "/executions/getTree/" + executionId ,
-					dataType : 'json'
+					url : squashtm.app.contextRoot + "/executions/getTree",
+					datatype : 'json' 
 				})
 				.success(function(json) {
 				 // Add tree in the dialog > rootModel is supposed to be given thanks to the controller
@@ -408,11 +408,13 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil","workspace.ro
 				  notification.showError(translator.get('message.NoExecutionSelected'));
 					return; 
 				} 
+				/* Get more Ids
 				else if (selectedIds.length > 1) {
 					addExecutionDialog.formDialog('close');
 				  notification.showError(translator.get('message.MultipleExecutionSelected'));
 					return;
 				}
+				*/
 				else {
 				// get the execution id, give it to the controller which gives back the rootmodel for the tree
 				loadTree(selectedIds.toString());
@@ -421,17 +423,40 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil","workspace.ro
 			});
 			
 			addExecutionDialog.on('formdialogconfirm',function() {
-				// TODO stuff (add the execution where we want to)
 				
-				$.ajax({
-					url : squashtm.app.contextRoot + "/executions/getTree/" + executionId ,
-					dataType : 'json'
-				})
-				.success(function(json) {
-				 // Add tree in the dialog > rootModel is supposed to be given thanks to the controller
-					squashtm.app.campaignWorkspaceConf.tree.model = json;
-					tree.initWorkspaceTree(squashtm.app.campaignWorkspaceConf.tree);
-				});
+				// Get all executions we want to add
+				var selectedIds = $("#campaign-search-result-table").squashTable().getSelectedIds();
+
+				var arraySelectedIds = new Array();
+				for (var j = 0  ; j < selectedIds.length ; j++)
+				 { arraySelectedIds.push(selectedIds[j]);
+				 }
+				
+				// Get the place where we want to put the executions 
+				var nodes = $("#tree").jstree('get_selected');
+				
+				// Node must be an iteration (and only one for now)
+				if (nodes.getResType() !== "iterations") {
+					 notification.showError(translator.get('message.SelectIteration'));
+				}
+				else if(nodes.length > 1){
+					 notification.showError(translator.get('message.SelectOneIteration'));
+				}
+				else {
+						$.ajax({
+							//+ selectedIds.toString() + "/"
+							url : squashtm.app.contextRoot + "/executions/add-execution/"  + nodes.getResId() ,
+							type : 'POST',
+							data : {
+										executionIds : arraySelectedIds 
+							}
+						})
+						.success(function(json) {
+						 // refresh table ?
+							console.log("success");
+						});
+				}
+
 				
 				
 				addExecutionDialog.formDialog('close');

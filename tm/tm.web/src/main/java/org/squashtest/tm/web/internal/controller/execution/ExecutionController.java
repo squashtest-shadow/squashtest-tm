@@ -35,14 +35,19 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.squashtest.tm.domain.campaign.CampaignLibrary;
 import org.squashtest.tm.domain.campaign.CampaignLibraryNode;
+import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.library.Library;
 import org.squashtest.tm.domain.library.LibraryNode;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.project.Project;
+import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.service.campaign.CampaignLibraryFinderService;
+import org.squashtest.tm.service.campaign.IterationTestPlanManagerService;
+import org.squashtest.tm.service.execution.ExecutionProcessingService;
 import org.squashtest.tm.service.library.WorkspaceService;
 import org.squashtest.tm.service.project.CustomProjectFinder;
 import org.squashtest.tm.web.internal.argumentresolver.MilestoneConfigResolver.CurrentMilestone;
@@ -54,6 +59,12 @@ import org.squashtest.tm.web.internal.model.jstree.JsTreeNode;
 @Controller
 @RequestMapping("/executions")
 public class ExecutionController {
+
+	@Inject
+	private IterationTestPlanManagerService iterationTestPlanManagerService;
+
+	@Inject
+	private ExecutionProcessingService executionProcessingService;
 
 	@Inject
 	private Provider<ExecutionAssignmentComboDataBuilder> assignmentComboBuilderProvider;
@@ -91,9 +102,9 @@ public class ExecutionController {
 		return statusComboDataBuilderProvider.get().useLocale(locale).buildMap();
 	}
 
-	@RequestMapping(value = "/getTree/{executionId}", method = RequestMethod.GET)
+	@RequestMapping(value = "/getTree", method = RequestMethod.GET)
 	public @ResponseBody
-	List<JsTreeNode> buildTreeModel(@PathVariable long executionId, Locale locale,
+	List<JsTreeNode> buildTreeModel(Locale locale,
 			@CurrentMilestone Milestone activeMilestone) {
 
 		// @ModelAttribute("wizards")
@@ -139,6 +150,28 @@ public class ExecutionController {
 		// model.addAttribute("isCampaignAvailable", isCampaignAvailable);
 
 		return rootNodes;
+	}
+
+	@RequestMapping(value = "/add-execution/{iterationId}", method = RequestMethod.POST, params = { "executionIds[]" })
+	public @ResponseBody
+	List<JsTreeNode> addNewExecution(@RequestParam("executionIds[]") Long[] executionIds,
+			@PathVariable long iterationId,
+			Locale locale,
+			@CurrentMilestone Milestone activeMilestone) {
+
+		List<Long> testCaseIds = new ArrayList<Long>();
+
+		for (long executionId : executionIds) {
+			Execution execution = executionProcessingService.findExecution(executionId);
+			TestCase testCaseFromExecution = execution.getReferencedTestCase();
+			// Find TestCasesIds from the execution
+			testCaseIds.add(testCaseFromExecution.getId());
+		}
+
+		iterationTestPlanManagerService.addTestCasesToIteration(testCaseIds, iterationId);
+		// Should put void. Or get something. Think about it
+		return null;
+
 	}
 
 	private List<JsTreeNode> createCampaignTreeRootModel() {

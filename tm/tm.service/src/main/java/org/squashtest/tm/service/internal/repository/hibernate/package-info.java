@@ -427,7 +427,7 @@
 	//Project
 	@NamedQuery(name = "Project.findByName", query = "from Project where name = ?1"),
 	@NamedQuery(name = "Project.findAllByName", query = "from Project where name in (:names)"),
-	@NamedQuery(name = "Project.findByExecutionId", query = "select p from Project p join Execution exec where exec.id = :projectId"),
+	@NamedQuery(name = "Project.findByExecutionId", query = "select p from Project p"),
 	@NamedQuery(name = "Project.findAllOrderedByName", query = "from Project fetch all properties order by name"),
 	@NamedQuery(name = "Project.findProjectsFiltered", query = "from Project p where p.name like :filter or p.label like :filter or p.audit.createdBy like :filter or p.audit.lastModifiedBy like :filter"),
 	@NamedQuery(name = "Project.countProjects", query = "select count(p) from Project p"),
