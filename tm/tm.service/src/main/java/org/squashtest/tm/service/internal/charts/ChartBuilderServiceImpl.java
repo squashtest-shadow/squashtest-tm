@@ -29,6 +29,8 @@ import org.squashtest.tm.service.charts.Chart;
 import org.squashtest.tm.service.charts.ChartBuilderService;
 import org.squashtest.tm.service.charts.ChartInstance;
 import org.squashtest.tm.service.charts.Perimeter;
+import org.squashtest.tm.service.charts.PerimeterQuery;
+import org.squashtest.tm.service.charts.PerimeterResponse;
 
 @Service("squashtest.tm.service.ChartBuilderService")
 public class ChartBuilderServiceImpl implements ChartBuilderService {
@@ -43,8 +45,20 @@ public class ChartBuilderServiceImpl implements ChartBuilderService {
 
 	@Override
 	public ChartInstance buildChart(Chart chart) {
-		// TODO Auto-generated method stub
-		return null;
+
+		PerimeterQuery query = chart.toPerimeterQuery();
+
+		Perimeter p = chart.getPerimeter();
+
+		PerimeterResponse response = p.process(query);
+
+		ChartInstance instance = new ChartInstance();
+
+		instance.setChart(chart);
+		instance.setResponse(response);
+
+		return instance;
+
 	}
 
 }

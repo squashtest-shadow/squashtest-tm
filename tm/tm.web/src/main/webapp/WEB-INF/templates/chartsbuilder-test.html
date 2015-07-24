@@ -38,9 +38,31 @@
       localizedDateFormat : /*[[ #{squashtm.dateformatShort.datepicker} ]]*/"dd/mm/yy",
       locale : /*[[ #{squashtm.locale} ]]*/"fr",
     };
+    
+    
+    
   </script>
+  <script type="text/javascript" th:inline="javascript" th:include="fragments-utils/various-headers :: env-setup"/>
   <script src="../../scripts/pubsub-boot.js" th:src="@{/scripts/pubsub-boot.js}"></script>  
-  
+   <script th:src="@{/scripts/require-min.js}"></script> 
+   
+   <style type="text/css">
+    body{
+      background-color: #ebeae5;
+    }
+    
+    .chart-definition-field{
+      margin-bottom : 15px; 
+    }
+    
+    .chart-builder-area{
+      margin-top : 100px;
+    }
+    
+    #contextual-content{
+      left : 20px;
+    }
+   </style>
   </head>
   
   <body>
@@ -59,9 +81,56 @@
     
     <div id="contextual-content">
         
+        
+       <div class="chart-builder-area">
+          <div class="chart-definition-area">
+            <div class="chart-definition-field">
+              <label>sélectionnez un périmètre</label>
+              <select id="perimeter-select" th:size="${builderModel.perimeters.size()+1}">
+                <option th:each="p : ${builderModel.perimeters}" th:value="${p.id}" th:text="${p.label}"></option>        
+              </select>
+            </div>
+            
+            <div class="chart-definition-field">
+              <label>sélectionnez un type de graphique</label>
+              <select id="charttype-select" th:size="${builderModel.chartTypes.length}">
+                <option th:each="t : ${builderModel.chartTypes}" th:value="${t.toString()}" th:text="${t.toString()}"></option>
+              </select>
+            </div>
+            
+            <div class="chart-definition-field">
+              <label>Sélectionnez le(s) axes</label>
+              <select id="axis-select" multiple="multiple"></select>            
+            </div>
+            
+            <div class="chart-definition-field">
+              <label>Sélectionnez la donnée à afficher</label>              
+              <select id="data-select" multiple="multiple"></select>            
+            </div>
+            
+            <div class="chart-definition-field">            
+              <input id="generate-chart-button" type="button" value="generer"/>
+            </div>
+            
+          </div>
+        </div> 
     </div>
-    
+   
   </div>
+  
+  
+  <script type="text/javascript" th:inline="javascript">
+  	/*<![CDATA[*/
+    var conf = /*[[ ${builderModel} ]]*/{};
+    
+    require(["common"], function(){
+        require(["dynamic-charts/chartsbuilder-main"], function(main){
+          main.init(conf);
+        });
+    });
+    /*]]>*/
+  </script>
+  
   </body>
   
 </html>

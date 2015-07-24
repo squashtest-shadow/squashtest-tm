@@ -20,19 +20,106 @@
  */
 package org.squashtest.tm.web.internal.controller.charts;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.NoSuchElementException;
+
+import javax.inject.Inject;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.squashtest.tm.service.charts.Chart;
+import org.squashtest.tm.service.charts.ChartBuilderService;
+import org.squashtest.tm.service.charts.ChartInstance;
+import org.squashtest.tm.service.charts.ChartType;
+import org.squashtest.tm.service.charts.Perimeter;
 
 
 @Controller
 @RequestMapping("/charts-workspace")
 public class ChartsBuilderController {
 
+
+	@Inject
+	private ChartBuilderService service;
+
+
 	@RequestMapping(value="/builder")
 	public String getBuilder(Model model){
+
+		ChartsBuilderModel builderModel = buildModel();
+		model.addAttribute("builderModel", builderModel);
+
 		return "chartsbuilder-test.html";
 	}
+
+
+	@RequestMapping(value="/processor", consumes="application/json", produces="application/json", method = RequestMethod.POST)
+	@ResponseBody
+	public JsonChart getChart(@RequestBody JsonChart jsonChart){
+		/*
+		String perimeterId = jsonChart.getPerimeterId();
+		Perimeter perimeter = findPerimeterById(perimeterId);
+
+		Chart c = new Chart();
+		c.setPerimeter(perimeter);
+		c.setAxes(jsonChart.getAxes());
+		c.setData(jsonChart.getData());
+		c.setChartType(ChartType.valueOf(jsonChart.getChartType()));
+
+		ChartInstance instance = service.buildChart(c);
+
+		jsonChart.setResultSet(instance.getResponse().getData());
+		 */
+		return jsonChart;
+
+	}
+
+
+
+
+
+
+
+
+
+	private Perimeter findPerimeterById(String id){
+
+		Collection<Perimeter> perimeters = service.getAvailablePerimeters();
+		for (Perimeter p : perimeters){
+			if (p.getId().equals(id)){
+				return p;
+			}
+		}
+
+		throw new NoSuchElementException();
+	}
+
+
+	private ChartsBuilderModel buildModel(){
+
+		ChartsBuilderModel builderModel = new ChartsBuilderModel();
+
+		// the perimeters
+		Collection<Perimeter> perimeters = service.getAvailablePerimeters();
+		Collection<JsonPerimeter> jperimeters = new ArrayList<>();
+
+		for (Perimeter p : perimeters){
+			JsonPerimeter jp = new JsonPerimeter(p.getId(), p.getLabel(), p.getAvailableColumns());
+			jperimeters.add(jp);
+		}
+
+		builderModel.setPerimeters(jperimeters);
+
+
+		return builderModel;
+
+	}
+
 
 
 }

@@ -43,6 +43,8 @@ public class RequirementVSIssue implements Perimeter {
 
 	private static final String PERIMETER_ID = "requirement-vs-issues";
 
+	private static final String NAME = "Périmètre Anomalies";
+
 	@Inject
 	private SessionFactory sessionFactory;
 
@@ -81,6 +83,11 @@ public class RequirementVSIssue implements Perimeter {
 	@Override
 	public String getId() {
 		return PERIMETER_ID;
+	}
+
+	@Override
+	public String getLabel() {
+		return NAME;
 	}
 
 	@Override

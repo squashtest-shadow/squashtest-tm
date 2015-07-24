@@ -18,89 +18,64 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.charts;
+package org.squashtest.tm.web.internal.controller.charts;
 
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
-public class Chart {
+import org.squashtest.tm.service.charts.AxisColumn;
+import org.squashtest.tm.service.charts.DataColumn;
 
-	private Perimeter perimeter;
+public class JsonChart {
 
-	private ChartType chartType;
+	private String perimeterId;
 
-	/**
-	 * What axes, picked among the columns available in the perimeter, will be plotted. Size of the collection must be consistent
-	 * with the selected ChartType;
-	 */
+	private String chartType;
+
 	private Collection<AxisColumn> axes;
 
-
-	/**
-	 * What data, picked among the columns available in the perimeter, will be plotted. Size of the collection must be consistent
-	 * with the selected ChartType;
-	 */
 	private Collection<DataColumn> data;
 
+	private List<Object[]> resultSet;
 
-	public Perimeter getPerimeter() {
-		return perimeter;
+	public String getPerimeterId() {
+		return perimeterId;
 	}
 
-
-	public void setPerimeter(Perimeter perimeter) {
-		this.perimeter = perimeter;
+	public void setPerimeterId(String perimeterId) {
+		this.perimeterId = perimeterId;
 	}
 
-
-	public ChartType getChartType() {
+	public String getChartType() {
 		return chartType;
 	}
 
-
-	public void setChartType(ChartType chartType) {
+	public void setChartType(String chartType) {
 		this.chartType = chartType;
 	}
-
 
 	public Collection<AxisColumn> getAxes() {
 		return axes;
 	}
 
-
 	public void setAxes(Collection<AxisColumn> axes) {
 		this.axes = axes;
 	}
-
 
 	public Collection<DataColumn> getData() {
 		return data;
 	}
 
-
 	public void setData(Collection<DataColumn> data) {
 		this.data = data;
 	}
 
-
-	public PerimeterQuery toPerimeterQuery(){
-		Collection<Column> naxes = new ArrayList<>();
-		Collection<Column> ndata = new ArrayList<>();
-
-		for (AxisColumn c : axes){
-			naxes.add(c.getColumn());
-		}
-
-		for (DataColumn c : data){
-			ndata.add(c.getColumn());
-		}
-
-		PerimeterQuery pquery = new PerimeterQuery();
-		pquery.setAxes(naxes);
-		pquery.setData(ndata);
-
-		return pquery;
+	public List<Object[]> getResultSet() {
+		return resultSet;
 	}
 
+	public void setResultSet(List<Object[]> resultSet) {
+		this.resultSet = resultSet;
+	}
 
 }

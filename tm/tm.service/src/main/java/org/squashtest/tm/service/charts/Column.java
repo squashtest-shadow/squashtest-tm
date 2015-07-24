@@ -38,24 +38,24 @@ public class Column {
 	 * an identifier for this column.
 	 * Must be unique among the columns proposed by a Perimeter
 	 */
-	private final String id;
+	private String id;
 
 	/**
 	 * The datatype of this column;
 	 */
-	private final Datatype datatype;
+	private Datatype datatype;
 
 	/**
 	 * A default userfriendly name for this column. This is just a default : once embedded in an Axis,
 	 * a column might change name
 	 */
-	private final String defaultLabel;
+	private String defaultLabel;
 
 
 	/**
 	 * Used internally. Represents the alias of the column in an hql query.
 	 */
-	private final String columnAlias;
+	private String columnAlias;
 
 
 
@@ -73,6 +73,31 @@ public class Column {
 
 	public String getColumnAlias() {
 		return columnAlias;
+	}
+
+
+
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public void setDatatype(Datatype datatype) {
+		this.datatype = datatype;
+	}
+
+	public void setDefaultLabel(String defaultLabel) {
+		this.defaultLabel = defaultLabel;
+	}
+
+	public void setColumnAlias(String columnAlias) {
+		this.columnAlias = columnAlias;
+	}
+
+
+
+	public Column() {
+		super();
 	}
 
 	public Column(String id, Datatype datatype, String defaultLabel, String columnAlias) {

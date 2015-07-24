@@ -451,6 +451,10 @@
 			<value>org.squashtest.tm.service.milestone.MilestoneMembershipManager</value>
 		</osgi:interfaces>
 	</osgi:service>
+	
+	
+	<osgi:service ref="squashtest.tm.service.ChartBuilderService"
+		interface="org.squashtest.tm.service.charts.ChartBuilderService" />
 
   <osgi:service ref="featureManager" interface="org.squashtest.tm.service.feature.FeatureManager" />
 

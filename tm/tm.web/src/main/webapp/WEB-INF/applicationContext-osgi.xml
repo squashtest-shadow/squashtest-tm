@@ -529,7 +529,10 @@
 		</osgi:interfaces>
 	</osgi:reference>
 
-
+	<osgi:reference id="squashtest.tm.service.ChartBuilderService"
+		bean-name="squashtest.tm.service.ChartBuilderService"
+		interface="org.squashtest.tm.service.charts.ChartBuilderService"
+		availability="mandatory" />
 
 	<osgix:cm-properties id="squash.tm.auth.config"
 		persistent-id="org.squashtest.csp.core.auth.config" />

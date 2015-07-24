@@ -18,48 +18,25 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.charts;
+package org.squashtest.tm.web.internal.controller.charts;
 
 import java.util.Collection;
 
-/**
- * The Perimeter of a chart represents which data are encompassed by this charts before someone selects the axises, filters and aggregation.
- * It also defines a HQL/Criteria/SQL query, that may be tuned by a PerimeterQuery.
- * 
- * @author bsiri
- *
- */
-public interface Perimeter {
+import org.squashtest.tm.service.charts.ChartType;
 
-	/**
-	 * Each Perimeter is identified by an ID. This method returns it.
-	 * 
-	 * @return
-	 */
-	String getId();
+public class ChartsBuilderModel {
 
+	private Collection<JsonPerimeter> perimeters;
 
-	/**
-	 * A user friendly name for that perimeter
-	 * 
-	 * @return
-	 */
-	String getLabel();
+	public Collection<JsonPerimeter> getPerimeters() {
+		return perimeters;
+	}
 
+	public void setPerimeters(Collection<JsonPerimeter> perimeters) {
+		this.perimeters = perimeters;
+	}
 
-	/**
-	 * Must return an non null collection of Column, that are available for dataplot
-	 * 
-	 * @return
-	 */
-	Collection<Column> getAvailableColumns();
-
-	/**
-	 * Consumes a query that defines filters, aggregations etc and produces a response accordingly.
-	 * 
-	 * @param query
-	 * @return
-	 */
-	PerimeterResponse process(PerimeterQuery query);
-
+	public ChartType[] getChartTypes(){
+		return ChartType.values();
+	}
 }

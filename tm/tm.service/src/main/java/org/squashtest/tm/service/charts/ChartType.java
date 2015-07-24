@@ -22,84 +22,11 @@ package org.squashtest.tm.service.charts;
 
 public enum ChartType {
 
-	SINGLE_TABLE(){
-
-		@Override
-		int getAxesNumber() {
-			return 1;
-		}
-
-		@Override
-		int getDataNumber() {
-			return 1;
-		}
-
-	},CROSS_TABLE(){
-
-		@Override
-		int getAxesNumber() {
-			return 2;
-		}
-
-		@Override
-		int getDataNumber() {
-			return 1;
-		}
-
-	},
-	LINE_CHART(){
-
-		@Override
-		int getAxesNumber() {
-			return 1;
-		}
-
-		@Override
-		int getDataNumber() {
-			return -1;
-		}
-
-	},
-	PIE_CHART(){
-
-		@Override
-		int getAxesNumber() {
-			return -1;
-		}
-
-		@Override
-		int getDataNumber() {
-			return 1;
-		}
-
-	},
-	BAR_CHART(){
-
-		@Override
-		int getAxesNumber() {
-			return 1;
-		}
-
-		@Override
-		int getDataNumber() {
-			return -1;
-		}
-
-	};
+	SINGLE_TABLE,CROSS_TABLE,
+	LINE_CHART,
+	PIE_CHART,
+	BAR_CHART;
 
 
-	/**
-	 * Says how many axis may appear in that chart. -1 means "unlimited".
-	 * 
-	 * @return
-	 */
-	abstract int getAxesNumber();
-
-	/**
-	 * Says how many data (lines, cell values etc) are associated to this chart type.
-	 * -1 means "unlimited".
-	 * @return
-	 */
-	abstract int getDataNumber();
 
 }

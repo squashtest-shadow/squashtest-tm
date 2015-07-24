@@ -18,48 +18,53 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.charts;
+package org.squashtest.tm.web.internal.controller.charts;
 
 import java.util.Collection;
 
-/**
- * The Perimeter of a chart represents which data are encompassed by this charts before someone selects the axises, filters and aggregation.
- * It also defines a HQL/Criteria/SQL query, that may be tuned by a PerimeterQuery.
- * 
- * @author bsiri
- *
- */
-public interface Perimeter {
+import org.squashtest.tm.service.charts.Column;
 
-	/**
-	 * Each Perimeter is identified by an ID. This method returns it.
-	 * 
-	 * @return
-	 */
-	String getId();
+public class JsonPerimeter {
 
+	private String id;
 
-	/**
-	 * A user friendly name for that perimeter
-	 * 
-	 * @return
-	 */
-	String getLabel();
+	private String label;
 
+	private Collection<Column> availableColumns;
 
-	/**
-	 * Must return an non null collection of Column, that are available for dataplot
-	 * 
-	 * @return
-	 */
-	Collection<Column> getAvailableColumns();
+	public JsonPerimeter(String id, String label, Collection<Column> availableColumns) {
+		super();
+		this.id = id;
+		this.label = label;
+		this.availableColumns = availableColumns;
+	}
 
-	/**
-	 * Consumes a query that defines filters, aggregations etc and produces a response accordingly.
-	 * 
-	 * @param query
-	 * @return
-	 */
-	PerimeterResponse process(PerimeterQuery query);
+	public JsonPerimeter(){
+		super();
+	}
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public Collection<Column> getAvailableColumns() {
+		return availableColumns;
+	}
+
+	public void setAvailableColumns(Collection<Column> availableColumns) {
+		this.availableColumns = availableColumns;
+	}
+
+	public String getLabel() {
+		return label;
+	}
+
+	public void setLabel(String label) {
+		this.label = label;
+	}
 
 }

@@ -44,7 +44,7 @@ class PerimeterUtilsTest extends Specification {
 
 
 		then :
-		hql == """select town.name, count(p.name) from Person p inner join p.town town group by town.name order by town.name asc"""
+		hql == """select town.name, count(distinct p.name) from Person p inner join p.town town group by town.name order by town.name asc"""
 
 
 	}

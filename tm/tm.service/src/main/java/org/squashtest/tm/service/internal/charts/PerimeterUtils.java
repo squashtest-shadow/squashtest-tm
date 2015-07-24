@@ -29,6 +29,7 @@ import java.util.ListIterator;
 
 import org.squashtest.tm.service.charts.Column;
 import org.squashtest.tm.service.charts.Datatype;
+import org.squashtest.tm.service.charts.DatatypeComparators;
 import org.squashtest.tm.service.charts.PerimeterQuery;
 
 
@@ -89,7 +90,7 @@ public class PerimeterUtils {
 		}
 
 		for (Column d : data){
-			builder.append("count("+d.getColumnAlias()+"), ");
+			builder.append("count(distinct "+d.getColumnAlias()+"), ");
 		}
 
 		//strip extra comma. We assume there is always one because no chart
@@ -241,7 +242,7 @@ public class PerimeterUtils {
 				Datatype type = axe.getDatatype();
 				Object v1 = o1[colnum];
 				Object v2 = o2[colnum];
-				comparison = type.compare(v1, v2);
+				comparison = DatatypeComparators.getComparator(type).compare(v1, v2);
 
 				if (comparison !=0){
 					break;
