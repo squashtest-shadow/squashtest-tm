@@ -230,6 +230,9 @@ public class IndexationServiceImpl extends AdvancedSearchServiceImpl implements 
 		           ftSession.clear();   
 		        
 		      }
+		}
+
+	}
 	/* ----------------------------EXECUTIONS -------------------------------- */
 	@Override
 	public void indexCampaigns() {
