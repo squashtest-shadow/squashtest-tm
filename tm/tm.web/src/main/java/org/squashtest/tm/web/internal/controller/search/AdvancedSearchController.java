@@ -323,7 +323,6 @@ public class AdvancedSearchController {
 	.mapAttribute("requirement-created-by", "createdBy", RequirementVersion.class)
 	.mapAttribute("requirement-modified-by", "lastModifiedBy", RequirementVersion.class);
 
-	// TODO : get the good stuff in the good class // maybe take execution instead of campaign, surely it seems
 	private DatatableMapper<String> campaignSearchResultMapper = new NameBasedMapper(11)
 			.mapAttribute(DataTableModelConstants.PROJECT_NAME_KEY, "name", Project.class)
 			.mapAttribute("campaign-name", "id", Execution.class)
@@ -337,7 +336,7 @@ public class AdvancedSearchController {
 			.mapAttribute("execution-executed-on", "lastExecutedOn", Execution.class)
 			.mapAttribute("execution-datasets", "id", Execution.class);
 	
-	// TODO faire plusieurs méthodes et discriminer avec params = "searchDomain=campaign" etc nut not necessary
+	// Could be change and discriminate params = "searchDomain=campaign" but not necessary
 	@RequestMapping(method = RequestMethod.GET)
 	public String showSearchPage(Model model, @RequestParam String searchDomain,
 			@RequestParam(value = "cookieValueSelect", required = false, defaultValue = "") String cookieValueSelect,
@@ -349,8 +348,7 @@ public class AdvancedSearchController {
 			@CurrentMilestone Milestone activeMilestone) {
 
 		// Wow, so much params.
-		// workspace-prefs is useless I think
-		// TODO : refactor this mess (already done with libraries and nodes)
+		// workspace-prefs could be useless
 		// But those cookieValueOpen and cookieValueSelect are great. They allow to get the cookie value from the
 		// workspace to be put in the search tree
 		// Abracajava ! You get the value, you put it in the mixer, nodesToOpen or selectedNode, some go to
@@ -371,13 +369,11 @@ public class AdvancedSearchController {
 
 			if (elementId == null || "".equals(elementId)) {
 				nodesToOpen = cookieValueOpen;
-				// model.addAttribute("selectedNode", "");
 				model.addAttribute("selectedNode", cookieValueSelect);
 				model.addAttribute("openedNode", cookieValueOpen);
 			} else {
 				Long id1 = Long.valueOf(elementId);
 				nodesToOpen = cookieValueOpen;
-				// model.addAttribute("selectedNode", getTreeElementIdInWorkspace(id1));
 				model.addAttribute("selectedNode", cookieValueSelect);
 				model.addAttribute("openedNode", cookieValueOpen);
 			}
@@ -737,7 +733,6 @@ public class AdvancedSearchController {
 		// Information
 		model.addPanel(requirementVersionSearchInterfaceDescription.createRequirementInformationPanel(locale));
 
-                // TODO : could be delete ?
 		// History
 		model.addPanel(requirementVersionSearchInterfaceDescription.createRequirementHistoryPanel(locale));
 

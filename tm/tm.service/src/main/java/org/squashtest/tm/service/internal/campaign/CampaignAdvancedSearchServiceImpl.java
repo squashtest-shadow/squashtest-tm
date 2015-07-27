@@ -119,10 +119,6 @@ public class CampaignAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 			projectIds.add(project.getId());
 		}
 		return projectDao.findUsersWhoCanAccessProject(projectIds);
-		/*
-		 * List<String> temp = new ArrayList<String>(); return temp;
-		 */
-
 	}
 
 	@Override
@@ -134,22 +130,14 @@ public class CampaignAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 	@Override
 	public PagedCollectionHolder<List<Execution>> searchForCampaign(AdvancedSearchModel searchModel,
 			PagingAndMultiSorting paging, Locale locale) {
-		// Actually, it's more searchForExecution than searcgForCampaign
+		// Actually, it's more searchForExecution than searchForCampaign
 
 		Session session = sessionFactory.getCurrentSession();
 		FullTextSession ftSession = Search.getFullTextSession(session);
 
-		/*
-		 * QueryBuilder qb = ftSession.getSearchFactory().buildQueryBuilder().forEntity(Campaign.class).get();
-		 * 
-		 * Query luceneQuery = buildLuceneQuery(qb, searchModel, locale);
-		 */
-
 		// Let's try without milestones
 		QueryBuilder qb = ftSession.getSearchFactory().buildQueryBuilder().forEntity(Execution.class).get();
 		Query luceneQuery = buildLuceneQuery(qb, searchModel, locale);
-
-		// Query luceneQuery = searchExecutionQuery(searchModel, ftSession, locale);
 
 		List<Execution> result = Collections.emptyList();
 		int countAll = 0;
@@ -157,20 +145,11 @@ public class CampaignAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 			Sort sort = getExecutionSort(paging);
 
 			org.hibernate.Query hibQuery = ftSession.createFullTextQuery(luceneQuery, Execution.class).setSort(sort);
-
-			// Trytest
-			org.hibernate.Query hibQueryTest1 = ftSession.createFullTextQuery(luceneQuery, Execution.class);
-			int countAll1 = hibQueryTest1.list().size();
-			int countAllTest = countAll1;
-			// End trytest
-
 			countAll = hibQuery.list().size();
-
-			// TODO : it should be good if this result get something...
 			result = hibQuery.setFirstResult(paging.getFirstItemIndex()).setMaxResults(paging.getPageSize()).list();
 		}
 
-		// TODO please, don't return null there, it will explode everything. It did.
+		// Please, don't return null there, it will explode everything. It did.
 		return new PagingBackedPagedCollectionHolder<List<Execution>>(paging, countAll, result);
 
 	}
@@ -284,8 +263,6 @@ public class CampaignAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 
 		List<String> strMilestoneIds = ((AdvancedSearchListFieldModel) modelCopy.getFields().get("milestones.id"))
 				.getValues();
-
-		// NOW FIND THE CAMPAIGN DUDE CAAAAAAAAAAAAAAAAAAAAAAMPAIGN
 
 		// now find the test cases
 		Collection<Long> milestoneIds = new ArrayList<>(strMilestoneIds.size());

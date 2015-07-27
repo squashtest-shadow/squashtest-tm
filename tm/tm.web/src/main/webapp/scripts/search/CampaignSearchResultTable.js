@@ -244,16 +244,6 @@ define([ "jquery", "backbone", "squash.translator", '../test-plan-panel/exec-run
 			return rowData[2];
 		},
 
-		// _addSelectEditableToCriticality 
-
-	  //	_addSelectEditableToCategory 
-
-		// _addSelectEditableToStatus 
-
-		// _addSimpleEditableToReference 
-
-		// _addSimpleEditableToLabel 
-
 		manualHandler : function() {
 
 			var $this = $(this),
@@ -307,8 +297,7 @@ define([ "jquery", "backbone", "squash.translator", '../test-plan-panel/exec-run
 		_tableRowCallback : function(row, data, displayIndex) {
 			 
 			// add the execute shortcut menu
-			
-			// Instead of "Manuel", get the i18n thing TODO !
+
 			var manual = translator.get("test-case.execution-mode.MANUAL");
 			var isTcDel = data['is-tc-deleted'], isManual = (data['execution-mode'] === manual);
 			
@@ -341,12 +330,11 @@ define([ "jquery", "backbone", "squash.translator", '../test-plan-panel/exec-run
 			else {
 				$td.find('.execute-arrow').click(this.automatedHandler);
 			}
-			
-			
-			// Add another stuff
-			
-			
-		/*	if(data.editable){
+						
+		/*	This is a comment that could be useful
+		 *  Specs could be modified to be harmonized with others search
+		 *  So, some cells could be editable and that would happen :
+		 * if(data.editable){
 				this.addSimpleEditableToReference(row,data);
 				this.addSimpleEditableToLabel(row,data);
 				this.addSelectEditableToCriticality(row,data);

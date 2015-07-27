@@ -38,7 +38,8 @@ import org.squashtest.tm.web.internal.model.builder.ListJeditableComboDataBuilde
 
 /**
  * Jeditable combo data builder which model is {@link --} Useless for the moment but could be used if the specification
- * morphs. It was written that we could change assignment user but, after thinking, it's absurd and means nothing
+ * morphs. It was written that we could change assignment user but, after thinking, it's absurd and means nothing Wait
+ * for it
  * 
  * @author MF
  * @param -

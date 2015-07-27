@@ -62,10 +62,7 @@ define([ 'tree', './camp-treemenu', './popups/init-all', './init-actions', 'squa
 				initResizer();
 				initTabbedPane();
 				ToggleWorkspace.init(settings.toggleWS);
-				tree.initWorkspaceTree(settings.tree);
-	//		treemenu.init(settings.treemenu);
-	//		Deactivated			popups.init();
-	//		actions.init();
+				tree.initWorkspaceTree(settings.tree);W
 				initSelectionCampaign();
 			}
 

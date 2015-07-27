@@ -59,8 +59,6 @@ public interface IndexationService {
 
 	void reindexCampaigns(List<Execution> campaignList);
 
-	// Maybe add some reindex...
-
 	void batchReindexTc(List<Long> tcIdsToIndex);
 
 	void batchReindexReqVersion(List<Long> reqVersionIdsToIndex);

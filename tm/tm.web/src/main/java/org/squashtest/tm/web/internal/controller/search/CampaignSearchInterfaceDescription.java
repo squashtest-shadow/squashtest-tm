@@ -189,7 +189,7 @@ public class CampaignSearchInterfaceDescription extends SearchInterfaceDescripti
 				.useLocale(locale).build();
 		executionModeField.addPossibleValues(modeOptions);
 
-		// Last execution
+		// Last execution not working yet in the Lucene query
 		/*
 		 * SearchInputFieldModel lastExecutionField = new SearchInputFieldModel("lastExecution", getMessageSource()
 		 * .internationalize("search.execution.lastExecution", locale), CHECKBOX); panel.addField(lastExecutionField);
@@ -289,7 +289,6 @@ public class CampaignSearchInterfaceDescription extends SearchInterfaceDescripti
 		return typeField;
 
 	}
-
 
 	// get ready to puke !
 	private void populateInfoListFieldModel(SearchInputFieldModel model, Collection<InfoList> infoLists, Locale locale){

@@ -119,14 +119,6 @@ public class HibernateProjectDao extends HibernateEntityDao<Project> implements 
 				list.add(partyProjectPermissionsBean.getParty().getName());
 			}
 		}
-		/*
-		 * old for (Long projectId : projectIds) { List<Object[]> objectList =
-		 * jdbcManageableAclService.retrieveUsersFromIdentityAndClass(projectId); for (Object[] objects : objectList) {
-		 * for (Object object : objects) { list.add((String) object); }
-		 * 
-		 * } }
-		 */
-
 		return list;
 
 	}
