@@ -61,16 +61,16 @@ define([ 'jquery', 'jstree' ], function($) {
 									this.data.ui.last_selected.addClass("jstree-last-selected");
 							    obj = obj[ obj.index() < this.data.ui.last_selected.index() ? "nextUntil" : "prevUntil" ](".jstree-last-selected").andSelf();
 							    if(s.select_limit == -1 || obj.length < s.select_limit) {
-							    	this.data.ui.last_selected.removeClass("jstree-last-selected");
-							    	this.data.ui.selected.each(function () {
-							    		if(this !== t.data.ui.last_selected[0]) { t.deselect_node(this); }
-							    	});
-							    	is_selected = false;
-							    	proceed = true;
-							    }
+								    this.data.ui.last_selected.removeClass("jstree-last-selected");
+								    this.data.ui.selected.each(function () {
+									    if(this !== t.data.ui.last_selected[0]) { t.deselect_node(this); }
+									    });
+								    is_selected = false;
+								    proceed = true;
+								    }
 							    else {
-							    		proceed = false;
-							    }
+								    proceed = false;
+								    }
 							    break;
 							case (is_selected && !is_multiple): 
 								this.deselect_all();
@@ -102,6 +102,6 @@ define([ 'jquery', 'jstree' ], function($) {
 						this.data.ui.selected = this.data.ui.selected.add(obj);
 						this.__callback({ "obj" : obj, "e" : e });
 					}
-				}
-				}
+				};
+				};
 		});

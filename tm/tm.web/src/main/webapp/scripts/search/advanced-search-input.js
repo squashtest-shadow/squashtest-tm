@@ -521,13 +521,13 @@ define([ "jquery", "backbone", "app/squash.handlebars.helpers", "squash.translat
 			for (var k = 0, $field; k < fields.length; k++) {
 				$field = $(fields[k]);
 				var type = $($field.children()[0]).attr("data-widgetname");
-				var key = $field.attr("id");
-				var escapedKey = key.replace(/\./g, "\\.");
+				var newKey = $field.attr("id");
+				var escapedKey = newKey.replace(/\./g, "\\.");
 				var field = $("#"+escapedKey).data("search"+type+"Widget");
 				if(field && !!field.fieldvalue()){
 					var value = field.fieldvalue();
 					if( value ) {
-						jsonVariable[key] = value;
+						jsonVariable[newKey] = value;
 					}
 				}
 			}

@@ -427,7 +427,7 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil","workspace.ro
 				// Get all executions we want to add
 				var selectedIds = $("#campaign-search-result-table").squashTable().getSelectedIds();
 
-				var arraySelectedIds = new Array();
+				var arraySelectedIds = [];
 				for (var j = 0  ; j < selectedIds.length ; j++)
 				 { arraySelectedIds.push(selectedIds[j]);
 				 }
@@ -490,7 +490,7 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil","workspace.ro
 				else {
 						$.ajax({
 							url : squashtm.app.contextRoot + "/executions/add-iteration/"  + nodes.getResId() ,
-							type : 'POST',
+							type : 'POST'
 							})
 						.success(function() {
 						 // refresh tree
