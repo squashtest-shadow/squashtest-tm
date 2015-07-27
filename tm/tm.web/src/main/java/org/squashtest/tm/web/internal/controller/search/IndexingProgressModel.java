@@ -34,7 +34,6 @@ public class IndexingProgressModel {
 	private long writtenEntitiesForRequirementVersions;
 	private long totalEntitiesForRequirementVersions;
 
-	public int getProgressPercentage() {
 	private double progressPercentageForCampaigns;
 	private long writtenEntitiesForCampaigns;
 	private long totalEntitiesForCampaigns;
