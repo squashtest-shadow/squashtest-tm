@@ -37,7 +37,8 @@ import org.squashtest.tm.web.internal.model.builder.EnumJeditableComboDataBuilde
 import org.squashtest.tm.web.internal.model.builder.ListJeditableComboDataBuilder;
 
 /**
- * Jeditable combo data builder which model is {@link --}
+ * Jeditable combo data builder which model is {@link --} Useless for the moment but could be used if the specification
+ * morphs. It was written that we could change assignment user but, after thinking, it's absurd and means nothing
  * 
  * @author MF
  * @param -

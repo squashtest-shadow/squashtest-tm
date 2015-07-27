@@ -385,7 +385,7 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil","workspace.ro
 			var self = this;
 			var addExecutionDialog = $("#add-new-execution-dialog").formDialog();
 
-			function loadTree(executionId){
+			function loadTree(){
 				$.ajax({
 					url : squashtm.app.contextRoot + "/executions/getTree",
 					datatype : 'json' 
@@ -417,7 +417,7 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil","workspace.ro
 				*/
 				else {
 				// get the execution id, give it to the controller which gives back the rootmodel for the tree
-				loadTree(selectedIds.toString());
+				loadTree();
 				}
 				
 			});
@@ -444,7 +444,6 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil","workspace.ro
 				}
 				else {
 						$.ajax({
-							//+ selectedIds.toString() + "/"
 							url : squashtm.app.contextRoot + "/executions/add-execution/"  + nodes.getResId() ,
 							type : 'POST',
 							data : {
@@ -452,8 +451,7 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil","workspace.ro
 							}
 						})
 						.success(function(json) {
-						 // refresh table ?
-							console.log("success");
+							// not need to refresh yet
 						});
 				}
 
@@ -461,6 +459,60 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil","workspace.ro
 				
 				addExecutionDialog.formDialog('close');
 			});
+			
+			addExecutionDialog.on('formdialogadd',function() {
+				
+				
+				/* copypasta from this file (look it up) for the moment to check if it works */
+				function loadTree(){
+					$.ajax({
+						url : squashtm.app.contextRoot + "/executions/getTree",
+						datatype : 'json' 
+					})
+					.success(function(json) {
+					 // Add tree in the dialog > rootModel is supposed to be given thanks to the controller
+						squashtm.app.campaignWorkspaceConf.tree.model = json;
+						tree.initWorkspaceTree(squashtm.app.campaignWorkspaceConf.tree);
+					});
+				}
+				/* end copypasta*/
+				
+				// Get the place where we want to add the iteration
+				var nodes = $("#tree").jstree('get_selected');
+
+				// Node must be a campaign (and only one for now)
+				if (nodes.getResType() !== "campaigns") {
+					 notification.showError(translator.get('message.SelectCampaign'));
+				}
+				else if(nodes.length > 1){
+					 notification.showError(translator.get('message.SelectOneCampaign'));
+				}
+				else {
+						$.ajax({
+							url : squashtm.app.contextRoot + "/executions/add-iteration/"  + nodes.getResId() ,
+							type : 'POST',
+							})
+						.success(function() {
+						 // refresh tree
+							console.log("success");
+							loadTree();
+						});
+				}
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				console.log("coucou");
+			});
+			
+			
 			
 			addExecutionDialog.on('formdialogcancel',function() {
 				addExecutionDialog.formDialog('close');
