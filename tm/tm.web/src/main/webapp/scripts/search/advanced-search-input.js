@@ -518,8 +518,8 @@ define([ "jquery", "backbone", "app/squash.handlebars.helpers", "squash.translat
 			
 			// Looking for informations in all the widgets to check if there's something to add to the model
 
-			for (var i = 0, $field; i < fields.length; i++) {
-				$field = $(fields[i]);
+			for (var k = 0, $field; k < fields.length; k++) {
+				$field = $(fields[k]);
 				var type = $($field.children()[0]).attr("data-widgetname");
 				var key = $field.attr("id");
 				var escapedKey = key.replace(/\./g, "\\.");

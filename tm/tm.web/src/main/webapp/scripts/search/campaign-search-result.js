@@ -494,22 +494,9 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil","workspace.ro
 							})
 						.success(function() {
 						 // refresh tree
-							console.log("success");
 							loadTree();
 						});
 				}
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				console.log("coucou");
 			});
 			
 			
