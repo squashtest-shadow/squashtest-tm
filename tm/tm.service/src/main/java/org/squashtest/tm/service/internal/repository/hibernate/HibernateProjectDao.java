@@ -28,31 +28,20 @@ import javax.inject.Inject;
 
 import org.springframework.stereotype.Repository;
 import org.squashtest.tm.domain.project.Project;
-import org.squashtest.tm.domain.users.Party;
 import org.squashtest.tm.domain.users.PartyProjectPermissionsBean;
-import org.squashtest.tm.security.acls.PermissionGroup;
 import org.squashtest.tm.service.internal.repository.CustomProjectDao;
 import org.squashtest.tm.service.internal.repository.ParameterNames;
-import org.squashtest.tm.service.internal.repository.PartyDao;
 import org.squashtest.tm.service.project.ProjectsPermissionManagementService;
-import org.squashtest.tm.service.security.acls.jdbc.JdbcManageableAclService;
-import org.squashtest.tm.service.security.acls.model.ObjectAclService;
 
 
 @Repository("CustomProjectDao")
 public class HibernateProjectDao extends HibernateEntityDao<Project> implements CustomProjectDao {
 
-	@Inject
-	private ObjectAclService aclService;
 
-	@Inject
-	private PartyDao partyDao;
 
 	@Inject
 	private ProjectsPermissionManagementService projectsPermissionManagementService;
 
-	@Inject
-	private JdbcManageableAclService jdbcManageableAclService;
 	@Override
 	public long countNonFoldersInProject(long projectId) {
 		Long req = (Long) executeEntityNamedQuery("project.countNonFolderInRequirement", idParameter(projectId));

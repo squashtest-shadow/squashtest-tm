@@ -8,6 +8,7 @@
   </parent>
 
   <artifactId>squashtest-integration-tests</artifactId>
+  <packaging>pom</packaging>
   <name>Squashtest TM - Integration tests module</name>
 
   <properties>
@@ -693,5 +694,4 @@
       </properties>
     </profile>
   </profiles>
-  <packaging>pom</packaging>
 </project>
