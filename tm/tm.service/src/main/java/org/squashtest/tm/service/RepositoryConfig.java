@@ -54,7 +54,7 @@ public class RepositoryConfig {
 
     @Bean(name = "squashtest.tm.persistence.hibernate.SessionFactory")
     @DependsOn("org.springframework.context.config.internalBeanConfigurerAspect")
-    public SessionFactory sessionFactory() {
+    public SquashSessionFactoryBean sessionFactory() {
         SquashSessionFactoryBean factoryBean = new SquashSessionFactoryBean();
         factoryBean.setDataSource(dataSource);
         factoryBean.setAnnotatedPackages(
@@ -70,10 +70,10 @@ public class RepositoryConfig {
         factoryBean.setDialectsSupportingStringAgg("org.hibernate.dialect.PostgreSQLDialect");
         factoryBean.setValidatorFactory(validatorFactory);
 
-        return factoryBean.getObject();
+        return factoryBean;
     }
 
     @Bean(name="squashtest.tm.hibernate.TransactionManager") public HibernateTransactionManager transactionManager() {
-        return new HibernateTransactionManager(sessionFactory());
+        return new HibernateTransactionManager(sessionFactory().getObject());
     }
 }

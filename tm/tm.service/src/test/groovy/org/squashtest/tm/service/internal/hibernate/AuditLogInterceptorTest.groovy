@@ -43,7 +43,7 @@ class AuditLogInterceptorTest extends Specification {
 	def "should set creation info on auditable object save"() {
 		given:
 		Auditable entity = new Auditable()
-		
+
 		and:
 		Object[] state = [new AuditableSupport()]
 		String[] propertyNames = ["audit"]
@@ -94,11 +94,12 @@ class AuditLogInterceptorTest extends Specification {
 		}
 
 		then:
+		sf != null
 		res.createdBy == "nandemo"
 		res.createdOn != null
 
-		cleanup:
-			sf.close()
+//		cleanup:
+//		sf.close()
 	}
 
 	def "should set modification info on auditable object update"() {

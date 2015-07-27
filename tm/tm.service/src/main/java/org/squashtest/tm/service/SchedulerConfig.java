@@ -35,7 +35,9 @@ import java.lang.reflect.Method;
 import java.util.concurrent.Executor;
 
 /**
- * Created by Gregory on 23/06/2015.
+ * Spring config for Squash TM's thread pool / scheduler
+ *
+ * @author gfouquet
  */
 @Configuration
 @EnableAsync
