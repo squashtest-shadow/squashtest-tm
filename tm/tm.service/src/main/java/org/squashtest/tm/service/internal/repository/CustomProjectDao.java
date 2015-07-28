@@ -38,5 +38,4 @@ public interface CustomProjectDao {
 
 	List<String> findUsersWhoModifiedRequirementVersions(List<Long> projectIds);
 
-	List<String> findUsersWhoCanAccessProject(List<Long> projectIds);
 }

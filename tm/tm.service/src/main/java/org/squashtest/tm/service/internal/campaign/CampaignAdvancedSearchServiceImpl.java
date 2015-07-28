@@ -40,36 +40,28 @@ import org.hibernate.search.Search;
 import org.hibernate.search.query.dsl.QueryBuilder;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndMultiSorting;
 import org.squashtest.tm.core.foundation.collection.PagingBackedPagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.SortOrder;
 import org.squashtest.tm.core.foundation.collection.Sorting;
-import org.squashtest.tm.domain.campaign.Campaign;
-import org.squashtest.tm.domain.campaign.CampaignLibrary;
-import org.squashtest.tm.domain.campaign.CampaignLibraryNode;
 import org.squashtest.tm.domain.customfield.BindableEntity;
 import org.squashtest.tm.domain.customfield.CustomField;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.project.Project;
-import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.search.AdvancedSearchListFieldModel;
 import org.squashtest.tm.domain.search.AdvancedSearchModel;
 import org.squashtest.tm.domain.search.AdvancedSearchSingleFieldModel;
-import org.squashtest.tm.domain.testcase.TestCase;
-import org.squashtest.tm.service.advancedsearch.AdvancedSearchService;
+import org.squashtest.tm.domain.users.PartyProjectPermissionsBean;
 import org.squashtest.tm.service.campaign.CampaignAdvancedSearchService;
 import org.squashtest.tm.service.feature.FeatureManager.Feature;
 import org.squashtest.tm.service.internal.advancedsearch.AdvancedSearchServiceImpl;
 import org.squashtest.tm.service.internal.infolist.InfoListItemComparatorSource;
-import org.squashtest.tm.service.internal.repository.CampaignDao;
 import org.squashtest.tm.service.internal.repository.ProjectDao;
 import org.squashtest.tm.service.internal.repository.TestCaseDao;
 import org.squashtest.tm.service.project.ProjectManagerService;
-import org.squashtest.tm.service.testcase.TestCaseAdvancedSearchService;
+import org.squashtest.tm.service.project.ProjectsPermissionManagementService;
 
 @Service("squashtest.tm.service.CampaignAdvancedSearchService")
 public class CampaignAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl implements
@@ -86,13 +78,14 @@ public class CampaignAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 	private ProjectDao projectDao;
 
 	@Inject
-	private CampaignDao campaignDao;
-
-	@Inject
 	private TestCaseDao testCaseDao;
 
 	@Inject
 	private MessageSource source;
+	
+	@Inject
+	private ProjectsPermissionManagementService projectsPermissionManagementService;
+
 
 	private final static SortField[] DEFAULT_SORT_EXECUTION = new SortField[] {
 			new SortField("project.name", SortField.STRING, false),
@@ -118,9 +111,29 @@ public class CampaignAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 		for (Project project : readableProjects) {
 			projectIds.add(project.getId());
 		}
-		return projectDao.findUsersWhoCanAccessProject(projectIds);
+		
+		return findUsersWhoCanAccessProject(projectIds);
 	}
 
+	private List<String> findUsersWhoCanAccessProject(List<Long> projectIds){
+	List<String> list = new ArrayList<>();
+
+	List<PartyProjectPermissionsBean> findPartyPermissionBeanByProject = new ArrayList<PartyProjectPermissionsBean>();
+
+	for (Long projectId : projectIds) {
+		findPartyPermissionBeanByProject.addAll(projectsPermissionManagementService
+				.findPartyPermissionsBeanByProject(projectId));
+	}
+
+	for (PartyProjectPermissionsBean partyProjectPermissionsBean : findPartyPermissionBeanByProject) {
+		if (partyProjectPermissionsBean.isUser()) {
+			list.add(partyProjectPermissionsBean.getParty().getName());
+		}
+	}
+	return list;
+	}
+	
+	
 	@Override
 	public List<CustomField> findAllQueryableCustomFieldsByBoundEntityType(BindableEntity entity) {
 		// TODO Auto-generated method stub

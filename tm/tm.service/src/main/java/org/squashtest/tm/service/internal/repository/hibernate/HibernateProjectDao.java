@@ -20,27 +20,18 @@
  */
 package org.squashtest.tm.service.internal.repository.hibernate;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import javax.inject.Inject;
-
 import org.springframework.stereotype.Repository;
 import org.squashtest.tm.domain.project.Project;
-import org.squashtest.tm.domain.users.PartyProjectPermissionsBean;
 import org.squashtest.tm.service.internal.repository.CustomProjectDao;
 import org.squashtest.tm.service.internal.repository.ParameterNames;
-import org.squashtest.tm.service.project.ProjectsPermissionManagementService;
 
 
 @Repository("CustomProjectDao")
 public class HibernateProjectDao extends HibernateEntityDao<Project> implements CustomProjectDao {
 
-
-
-	@Inject
-	private ProjectsPermissionManagementService projectsPermissionManagementService;
 
 	@Override
 	public long countNonFoldersInProject(long projectId) {
@@ -91,24 +82,4 @@ public class HibernateProjectDao extends HibernateEntityDao<Project> implements 
 		return executeListNamedQuery("Project.findAllUsersWhoModifiedRequirementVersions", idParameters(projectIds));
 	}
 
-	@Override
-	public List<String> findUsersWhoCanAccessProject(List<Long> projectIds) {
-
-		List<String> list = new ArrayList<>();
-
-		List<PartyProjectPermissionsBean> findPartyPermissionBeanByProject = new ArrayList<PartyProjectPermissionsBean>();
-
-		for (Long projectId : projectIds) {
-			findPartyPermissionBeanByProject.addAll(projectsPermissionManagementService
-					.findPartyPermissionsBeanByProject(projectId));
-		}
-
-		for (PartyProjectPermissionsBean partyProjectPermissionsBean : findPartyPermissionBeanByProject) {
-			if (partyProjectPermissionsBean.isUser()) {
-				list.add(partyProjectPermissionsBean.getParty().getName());
-			}
-		}
-		return list;
-
-	}
 }
