@@ -29,21 +29,21 @@
   </modules>
 
   <properties>
-    <groovy.version>2.0.7</groovy.version>
+    <aspectj.tm.version>1.8.5</aspectj.tm.version>
+    <groovy-eclipse-batch.version>2.0.4-04</groovy-eclipse-batch.version>
+    <groovy-eclipse-compiler.version>2.9.2-01</groovy-eclipse-compiler.version>
+    <groovy.version>2.0.8</groovy.version>
     <hibernate.version>4.2.2.Final</hibernate.version>
     <java.version>1.7</java.version>
+    <maven-failsafe-plugin.version>2.18.1</maven-failsafe-plugin.version>
+    <maven-surefire-plugin.version>2.18.1</maven-surefire-plugin.version>
 
-    <org.osgi.framework.system.packages.extra>com.sun.org.apache.xalan.internal.res,com.sun.org.apache.xml.internal.utils,com.sun.org.apache.xpath.internal,com.sun.org.apache.xpath.internal.jaxp,com.sun.org.apache.xpath.internal.objects</org.osgi.framework.system.packages.extra>
-
-    <org.osgi.service.http.port>9090</org.osgi.service.http.port>
-    <org.osgi.service.http.port.secure>9443</org.osgi.service.http.port.secure>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <provisionBom.version>1.4</provisionBom.version>
 
     <thymeleaf.version>2.1.4.A</thymeleaf.version>
 
     <verbose.compiler>false</verbose.compiler>
-    <aspectj.tm.version>1.8.5</aspectj.tm.version>
   </properties>
 
   <dependencyManagement>
@@ -106,7 +106,10 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-compiler-plugin</artifactId>
+          <version>3.3</version>
           <configuration>
+            <source>${jdk.version}</source>
+            <target>${jdk.version}</target>
             <compilerId>groovy-eclipse-compiler</compilerId>
           </configuration>
           <dependencies>
@@ -127,14 +130,6 @@
           <groupId>org.codehaus.mojo</groupId>
           <artifactId>aspectj-maven-plugin</artifactId>
           <version>1.4</version>
-          <executions>
-            <execution>
-              <goals>
-                <goal>compile</goal>
-                <goal>test-compile</goal>
-              </goals>
-            </execution>
-          </executions>
           <configuration>
             <source>${jdk.version}</source>
             <target>${jdk.version}</target>
@@ -146,6 +141,14 @@
               <version>${aspectj.tm.version}</version>
             </dependency>
           </dependencies>
+          <executions>
+            <execution>
+              <goals>
+                <goal>compile</goal>
+                <goal>test-compile</goal>
+              </goals>
+            </execution>
+          </executions>
         </plugin>
 
         <plugin>
@@ -180,10 +183,15 @@
             </execution>
           </executions>
         </plugin>
-
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-failsafe-plugin</artifactId>
+          <version>${maven-failsafe-plugin.version}</version>
+        </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-surefire-plugin</artifactId>
+          <version>${maven-surefire-plugin.version}</version>
           <configuration>
             <systemProperties>
               <property>
@@ -266,23 +274,6 @@
       </plugin>
 
       <plugin>
-        <groupId>org.ops4j</groupId>
-        <artifactId>maven-pax-plugin</artifactId>
-        <configuration>
-          <runner>1.4.0</runner>
-          <provision>
-            <param>--platform=equinox</param>
-            <param>--system-packages=com.sun.org.apache.xalan.internal.res,com.sun.org.apache.xml.internal.utils,com.sun.org.apache.xpath.internal,com.sun.org.apache.xpath.internal.jaxp,com.sun.org.apache.xpath.internal.objects</param>
-            <param>--vmOptions="-Dbundles.configuration.location=${project.basedir}/provision/target/config"</param>
-          </provision>
-        </configuration>
-        <executions>
-          <!-- | uncomment to auto-generate IDE files <execution> <id>ide-support</id> 
-						<goals> <goal>eclipse</goal> </goals> </execution> -->
-        </executions>
-      </plugin>
-
-      <plugin>
         <!-- Checks license headers throughout the project -->
         <groupId>com.mycila.maven-license-plugin</groupId>
         <artifactId>maven-license-plugin</artifactId>
@@ -294,7 +285,7 @@
 
           <properties>
             <license.yearSpan>${project.inceptionYear} - 2015</license.yearSpan>
-            <license.copyrightOwner>${project.organization.Name}</license.copyrightOwner>
+            <license.copyrightOwner>${project.organization.name}</license.copyrightOwner>
           </properties>
           <excludes>
             <!-- license files -->
@@ -342,6 +333,8 @@
             <exclude>**/scripts/sinon*.js</exclude>
             <exclude>**/styles/**/bootstrap*.css</exclude>
             <exclude>**/pubsub-boot.js</exclude>
+
+            <exclude>**/*.properties</exclude>
 
             <!-- generated stylesheets -->
             <exclude>**/styles/**/squash.*.css</exclude>
@@ -448,7 +441,6 @@
     <repository>
       <id>squash-release-deploy-repo</id>
       <name>Squash releases deployment repo</name>
-      <url>${deploy-repo.release.url}</url>
     </repository>
     <snapshotRepository>
       <id>squash-snapshot-deploy-repo</id>

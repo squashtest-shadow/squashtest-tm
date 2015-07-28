@@ -25,7 +25,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.squashtest.tm.domain.requirement.Requirement;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
-import org.squashtest.tm.service.internal.repository.RequirementDao;
 import org.squashtest.tm.domain.event.AbstractRequirementEventPublisher;
 import org.squashtest.tm.domain.event.RequirementCreation;
 
@@ -38,10 +37,10 @@ import org.squashtest.tm.domain.event.RequirementCreation;
 public aspect RequirementCreationEventPublisherAspect extends AbstractRequirementEventPublisher {
 	private static final Logger LOGGER = LoggerFactory.getLogger(RequirementCreationEventPublisherAspect.class);
 	
-	private pointcut executeRequirementPersister(RequirementDao dao, Requirement requirement) : execution(public void org.squashtest.tm.service.internal.repository.GenericDao+.persist(Object)) && target(dao) && args(requirement);
+	private pointcut callRequirementPersister(Session session, Requirement requirement) : call(public void org.hibernate.Session+.persist(Object)) && target(session) && args(requirement);
 	private pointcut callRequirementVersionPersister(Session session, RequirementVersion requirementVersion) : call(public void org.hibernate.Session+.persist(Object)) && target(session) && args(requirementVersion);
 	
-	after(RequirementDao dao, Requirement requirement) : executeRequirementPersister(dao, requirement) {
+	after(Session session, Requirement requirement) : callRequirementPersister(session, requirement) {
 		if (aspectIsEnabled()) {
 			RequirementCreation event = new RequirementCreation(requirement.getCurrentVersion(), currentUser());
 			publish(event);

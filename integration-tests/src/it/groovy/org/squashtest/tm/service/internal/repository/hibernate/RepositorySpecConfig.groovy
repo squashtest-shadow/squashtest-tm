@@ -16,50 +16,26 @@
  *     GNU Lesser General Public License for more details.
  *
  *     You should have received a copy of the GNU Lesser General Public License
- *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this software.  If not, see &lt;http://www.gnu.org/licenses/&gt;.
  */
-package org.squashtest.it.infrastructure;
+package org.squashtest.tm.service.internal.repository.hibernate
 
-import javax.validation.*;
+import org.springframework.context.annotation.Bean
+import org.springframework.context.annotation.ComponentScan
+import org.springframework.context.annotation.Configuration
+import org.springframework.context.annotation.aspectj.EnableSpringConfigured
+import org.unitils.database.UnitilsDataSourceFactoryBean
 
-public class StubValidatorFactory implements ValidatorFactory {
-	@Override
-	public Validator getValidator() {
-		return null;
-	}
-
-	@Override
-	public ValidatorContext usingContext() {
-		return null;
-	}
-
-	@Override
-	public MessageInterpolator getMessageInterpolator() {
-		return null;
-	}
-
-	@Override
-	public TraversableResolver getTraversableResolver() {
-		return null;
-	}
-
-	@Override
-	public ConstraintValidatorFactory getConstraintValidatorFactory() {
-		return null;
-	}
-
-	@Override
-	public ParameterNameProvider getParameterNameProvider() {
-		return null;
-	}
-
-	@Override
-	public <T> T unwrap(Class<T> type) {
-		return null;
-	}
-
-	@Override
-	public void close() {
-		// noop
-	}
+/**
+ * @author Gregory Fouquet
+ * @since 1.13.0
+ */
+@Configuration
+@ComponentScan
+@EnableSpringConfigured
+class RepositorySpecConfig {
+    @Bean(name = "squashtest.core.persistence.jdbc.DataSource")
+    UnitilsDataSourceFactoryBean dataSource() {
+        return new UnitilsDataSourceFactoryBean()
+    }
 }

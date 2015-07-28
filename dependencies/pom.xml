@@ -11,8 +11,8 @@
   <name>squashtest-csp-dependencies</name>
   <description>This modules contains dependencies-grouping modules</description>
   <modules>
-    <module>springdm-bundle-dependencies</module>
     <module>spock-test-dependencies</module>
+    <module>springdm-bundle-dependencies</module>
     <module>hibernate-dependencies</module>
   </modules>
 </project>

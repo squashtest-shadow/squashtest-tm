@@ -20,21 +20,11 @@
  */
 package org.squashtest.tm.service.internal.requirement
 
-import java.util.List;
-
-import javax.inject.Inject;
-import javax.xml.crypto.dsig.keyinfo.RetrievalMethod;
-
-import org.jgroups.stack.Retransmitter.RetransmitCommand;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.transaction.annotation.Transactional;
-import org.squashtest.tm.domain.requirement.RequirementLibraryNode;
+import org.springframework.transaction.annotation.Transactional
+import org.squashtest.tm.domain.requirement.RequirementLibraryNode
 import org.squashtest.tm.service.DbunitServiceSpecification
-import org.squashtest.tm.service.internal.repository.LibraryNodeDao;
-import org.squashtest.tm.service.requirement.RequirementLibraryNavigationService;
 import org.unitils.dbunit.annotation.DataSet
-
-import spock.unitils.UnitilsSupport;
+import spock.unitils.UnitilsSupport
 
 @UnitilsSupport
 @Transactional
@@ -54,7 +44,7 @@ class RequirementNodeWalkerIT extends DbunitServiceSpecification {
 		List retrieveNodes = walker.walk([node])
 
 		then :
-		retrieveNodes.size()== 1
+		retrieveNodes.size() == 1
 		retrieveNodes[0].getId() == selectedNodeId
 	}
 
