@@ -251,37 +251,65 @@ class EntityValidator {
 	
 	public LogTrain createRequirementVersionChecks(
 			RequirementVersionTarget target, RequirementVersion reqVersion) {
-		LogTrain logs = new LogTrain();
-		String name = reqVersion.getName();
+		return basicReqVersionTests(target, reqVersion);
+	}
+	
+	public LogTrain updateRequirementChecks(RequirementVersionTarget target,
+			RequirementVersion reqVersion) {
+		LogTrain logs = basicReqVersionTests(target, reqVersion);
 		
-		// 1 - path must be supplied and and well formed
-		checkMalformedPath(target,logs);
+		// 2 - Checking if requirement version number value isn't empty and > 0
+		checkRequirementVersionNumber(target, logs);
 		
-		// 2 - the project actually exists
-		checkExistenceProject(target,logs);
-		
-		// 3 - req version name has length between 0 and 255 if name exist
-		if (name != null && name.length() > RequirementLibraryNode.MAX_NAME_SIZE) {
-			logs.addEntry(LogEntry.warning().forTarget(target).withMessage(Messages.ERROR_MAX_SIZE, REQ_VERSION_NAME.header)
-					.withImpact(Messages.IMPACT_MAX_SIZE).build());
+		return logs;
+	}
+	
+	private void checkRequirementVersionNumber(RequirementVersionTarget target, LogTrain logs) {
+		if (target.getVersion() == null ||target.getVersion() < 1) {
+			logs.addEntry(LogEntry.failure().forTarget(target)
+					.withMessage(Messages.ERROR_REQUIREMENT_VERSION_INVALID)
+					.build());
 		}
+	}
+
+	/**
+	 * Basics check commons to create and update requirements
+	 * @param target
+	 * @param reqVersion
+	 * @return
+	 */
+	private LogTrain basicReqVersionTests(RequirementVersionTarget target,
+			RequirementVersion reqVersion){
+		LogTrain logs = new LogTrain();
+		checkMalformedPath(target,logs);
+		checkProjectExists(target,logs);
+		checkVersionName(target,reqVersion, logs);
+		checkVersionReference(target,reqVersion, logs);
+		logs.append(checkCategoryAndFixIfNeeded(target, reqVersion));
+		return logs;
 		
-		// 4 - req reference, if exists, has length between 0 and 50
+	}
+	
+
+	private void checkVersionReference(RequirementVersionTarget target,
+			RequirementVersion reqVersion, LogTrain logs) {
 		String reference = reqVersion.getReference();
 		if (!StringUtils.isBlank(reference) && reference.length() > RequirementVersion.MAX_REF_SIZE) {
 			logs.addEntry(LogEntry.warning().forTarget(target)
 					.withMessage(Messages.ERROR_MAX_SIZE, REQ_VERSION_REFERENCE.header).withImpact(Messages.IMPACT_MAX_SIZE)
 					.build());
 		}
-		
-		// 5 - requirement category now
-		logs.append(checkCategoryAndFixIfNeeded(target, reqVersion));
-		
-		return logs;
 	}
-	
 
-	private void checkExistenceProject(RequirementVersionTarget target,
+	private void checkVersionName(RequirementVersionTarget target, RequirementVersion reqVersion, LogTrain logs) {
+		String name = reqVersion.getName();
+		if (name != null && name.length() > RequirementLibraryNode.MAX_NAME_SIZE) {
+			logs.addEntry(LogEntry.warning().forTarget(target).withMessage(Messages.ERROR_MAX_SIZE, REQ_VERSION_NAME.header)
+					.withImpact(Messages.IMPACT_MAX_SIZE).build());
+		}
+	}
+
+	private void checkProjectExists(RequirementVersionTarget target,
 			LogTrain logs) {
 		if (target.isWellFormed()) {
 			TargetStatus projectStatus = getModel().getProjectStatus(target.getProject());
@@ -534,6 +562,8 @@ class EntityValidator {
 
 		return isConsistent;
 	}
+
+	
 
 	
 

@@ -27,6 +27,8 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Provider;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.service.importer.EntityType;
 import org.squashtest.tm.service.importer.ImportLog;
@@ -42,6 +44,8 @@ public class TestCaseExcelBatchImporter {
 
 	@Inject
 	private Provider<FacilityImpl> facilityImplProvider;
+	
+	private static final Logger LOGGER = LoggerFactory.getLogger(TestCaseExcelBatchImporter.class);
 
 
 	public ImportLog simulateImport(File excelFile) {
@@ -63,6 +67,7 @@ public class TestCaseExcelBatchImporter {
 	}
 
 	public ImportLog performImport(File excelFile) {
+		LOGGER.debug("ReqImport - In Batch import Service" );
 
 		FacilityImpl impl = facilityImplProvider.get();
 
@@ -72,11 +77,19 @@ public class TestCaseExcelBatchImporter {
 		LogTrain unknownHeaders = parser.logUnknownHeaders();
 
 		List<Instruction<?>> instructions = buildOrderedInstruction(parser);
+		
+		LOGGER.debug("ReqImport - " + instructions.size());
+		
+		for (Instruction<?> instruction : instructions) {
+			LOGGER.debug("ReqImport - " + instruction.getMode());
+		}
+		
 		ImportLog importLog = run(instructions, impl);
 
-		impl.postprocess();
+		impl.postprocess(instructions);
 
 		importLog.appendLogTrain(unknownHeaders);
+		LOGGER.debug("ReqImport - Out Batch import Service" );
 		return importLog;
 
 	}
@@ -108,6 +121,9 @@ public class TestCaseExcelBatchImporter {
 			break;
 		case DATASET_PARAM_VALUES :
 			instructions.addAll(parser.getDatasetParamValuesInstructions());
+			break;
+		case REQUIREMENT_VERSION :
+			instructions.addAll(parser.getRequirementVersionInstructions());
 			break;
 		default:
 

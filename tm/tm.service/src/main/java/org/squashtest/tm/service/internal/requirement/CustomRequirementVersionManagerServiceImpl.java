@@ -20,6 +20,8 @@
  */
 package org.squashtest.tm.service.internal.requirement;
 
+import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -31,6 +33,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
 import org.apache.commons.collections.Transformer;
 import org.hibernate.SessionFactory;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -44,18 +47,18 @@ import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.milestone.MilestoneStatus;
 import org.squashtest.tm.domain.requirement.Requirement;
 import org.squashtest.tm.domain.requirement.RequirementCriticality;
+import org.squashtest.tm.domain.requirement.RequirementLibraryNode;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.exception.InconsistentInfoListItemException;
 import org.squashtest.tm.service.advancedsearch.IndexationService;
 import org.squashtest.tm.service.infolist.InfoListItemFinderService;
 import org.squashtest.tm.service.internal.customfield.PrivateCustomFieldValueService;
+import org.squashtest.tm.service.internal.repository.LibraryNodeDao;
 import org.squashtest.tm.service.internal.repository.MilestoneDao;
 import org.squashtest.tm.service.internal.repository.RequirementVersionDao;
 import org.squashtest.tm.service.milestone.MilestoneMembershipManager;
 import org.squashtest.tm.service.requirement.CustomRequirementVersionManagerService;
 import org.squashtest.tm.service.testcase.TestCaseImportanceManagerService;
-
-import static org.squashtest.tm.service.security.Authorizations.*;
 
 /**
  * @author Gregory Fouquet
@@ -88,6 +91,11 @@ public class CustomRequirementVersionManagerServiceImpl implements CustomRequire
 
 	@Inject
 	private SessionFactory sessionFactory;
+	
+	@SuppressWarnings("rawtypes")
+	@Inject
+	@Qualifier("squashtest.tm.repository.RequirementLibraryNodeDao")
+	private LibraryNodeDao<RequirementLibraryNode> requirementLibraryNodeDao;
 
 	@Override
 	@PreAuthorize("hasPermission(#requirementId, 'org.squashtest.tm.domain.requirement.Requirement', 'READ')"
@@ -307,6 +315,16 @@ public class CustomRequirementVersionManagerServiceImpl implements CustomRequire
 	public boolean isOneMilestoneAlreadyBindToAnotherRequirementVersion(List<Long> reqVIds, List<Long> milestoneIds) {
 		return milestoneDao.isOneMilestoneAlreadyBindToAnotherRequirementVersion(reqVIds, milestoneIds);
 		
-	};
+	}
+
+	@Override
+	public Long findReqVersionIdByRequirementAndVersionNumber(
+			long requirementId, Integer versionNumber) {
+		RequirementVersion requirementVersion = requirementVersionDao.findByRequirementIdAndVersionNumber(requirementId,versionNumber);
+		if (requirementVersion!=null) {
+			return requirementVersion.getId();
+		}
+		return null;
+	}
 
 }

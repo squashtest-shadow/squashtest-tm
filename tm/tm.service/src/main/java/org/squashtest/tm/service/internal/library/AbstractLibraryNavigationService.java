@@ -99,7 +99,7 @@ import static org.squashtest.tm.service.security.Authorizations.*;
 @Transactional
 public abstract class AbstractLibraryNavigationService<LIBRARY extends Library<NODE>, FOLDER extends Folder<NODE>, NODE extends LibraryNode>
 implements LibraryNavigationService<LIBRARY, FOLDER, NODE> {
-	private static final Logger LOGGER = LoggerFactory.getLogger(AbstractLibraryNavigationService.class);
+	
 	private static final String CREATE = "CREATE";
 	private static final String READ = "READ";
 
@@ -269,7 +269,6 @@ implements LibraryNavigationService<LIBRARY, FOLDER, NODE> {
 				RawValue newValue = initialCustomFieldValues.get(customFieldId);
 				newValue.setValueFor(value);
 			}
-
 		}
 	}
 

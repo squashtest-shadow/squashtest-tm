@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.inject.Inject;
@@ -46,8 +47,11 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ReflectionUtils;
+import org.squashtest.tm.core.foundation.lang.PathUtils;
+import org.squashtest.tm.domain.customfield.RawValue;
 import org.squashtest.tm.domain.infolist.InfoListItem;
 import org.squashtest.tm.domain.infolist.ListItemReference;
+import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.projectfilter.ProjectFilter;
 import org.squashtest.tm.domain.requirement.ExportRequirementData;
 import org.squashtest.tm.domain.requirement.NewRequirementVersionDto;
@@ -78,6 +82,7 @@ import org.squashtest.tm.service.internal.library.LibrarySelectionStrategy;
 import org.squashtest.tm.service.internal.library.NodeDeletionHandler;
 import org.squashtest.tm.service.internal.library.PasteStrategy;
 import org.squashtest.tm.service.internal.repository.LibraryNodeDao;
+import org.squashtest.tm.service.internal.repository.ProjectDao;
 import org.squashtest.tm.service.internal.repository.RequirementDao;
 import org.squashtest.tm.service.internal.repository.RequirementFolderDao;
 import org.squashtest.tm.service.internal.repository.RequirementLibraryDao;
@@ -142,6 +147,9 @@ RequirementLibraryNavigationService, RequirementLibraryFinderService {
 	
 	@Inject
 	private TestCaseExcelBatchImporter batchImporter;
+	
+	@Inject
+	private ProjectDao projectDao;
 
 	@Override
 	protected NodeDeletionHandler<RequirementLibraryNode, RequirementFolder> getDeletionHandler() {
@@ -628,6 +636,95 @@ RequirementLibraryNavigationService, RequirementLibraryFinderService {
 	@Override
 	public ImportLog importExcelRequirement(File xls) {
 		return batchImporter.performImport(xls);
+	}
+
+	@Override
+	public List<Long> findNodeIdsByPath(List<String> paths) {
+		return requirementLibraryNodeDao.findNodeIdsByPath(paths);
+	}
+
+	@Override
+	public Long findNodeIdByPath(String path) {
+		return requirementLibraryNodeDao.findNodeIdByPath(path);
+	}
+
+	@Override
+	public Long mkdirs(String folderpath) {
+		List<String> paths = PathUtils.scanPath(folderpath);
+		String[] splits = PathUtils.splitPath(folderpath);
+		if (splits.length < 2) {
+			throw new IllegalArgumentException("Folder path for mkdir must contains at least a /projectName/folder");
+		}
+		
+		List<Long> ids = findNodeIdsByPath(paths);
+		RequirementFolder folderTree = null;
+		
+		int position = ids.indexOf(null);
+		switch (position) {
+			case -1 ://no null value so all node exists, returning ids of the last folder
+				return ids.get(ids.size()-1);
+			case 0 ://no member of the path exists, we must create the hierachy under the Requirement librairy
+				folderTree = makeFolderTree(1, splits);
+				Project project = projectDao.findByName(splits[0]);
+				addFolderToLibrary(project.getRequirementLibrary().getId(), folderTree);
+				break;
+			default://Some folder already exists
+				folderTree = makeFolderTree(position + 1, splits);
+				addFolderToFolder(ids.get(position-1), folderTree);
+				break;
+		}
+		
+		//now get the last folder on path and return id
+		RequirementFolder lastfolder = folderTree;
+		
+		while (lastfolder.hasContent()) {
+			lastfolder = (RequirementFolder) lastfolder.getContent().get(0);
+		}
+		
+		return lastfolder.getId();
+	}
+	
+	private RequirementFolder makeFolderTree(int startIndex,String[] names){
+		RequirementFolder baseFolder = null;
+		RequirementFolder childFolder = null;
+		RequirementFolder parentFolder = null;
+		
+		for (int i = startIndex; i < names.length; i++) {
+			childFolder = new RequirementFolder();
+			childFolder.setName(names[i]);
+			childFolder.setDescription("");
+			if (baseFolder==null) {//if we have no folder yet, we are creating the base, witch will be also the first parent
+				baseFolder = childFolder;
+			}
+			else {
+				parentFolder.addContent(childFolder);
+			}
+			parentFolder = childFolder;
+		}
+		
+		return baseFolder;
+	}
+
+	@Override
+	public void changeCurrentVersionNumber(Requirement requirement, Integer noVersion) {
+		//if target noVersion = actual noVersion, nothing to change, return
+		if (requirement.getCurrentVersion().getVersionNumber() == noVersion.intValue()) {
+			return;
+		}
+		if (requirement.findRequirementVersion(noVersion)==null) {
+			RequirementVersion lastCreatedReqVersion = requirement.getCurrentVersion();
+			lastCreatedReqVersion.setVersionNumber(noVersion);
+			requirement.setCurrentVersion(requirement.findLastNonObsoleteVersionAfterImport());
+		}
+		else {
+			throw new IllegalArgumentException("RequirementVersion with version number " + noVersion + " already exist in this Requirement, id : " + requirement.getId());
+		}
+	}
+
+	@Override
+	public void initCUFvalues(RequirementVersion reqVersion,
+			Map<Long, RawValue> initialCustomFieldValues) {
+		initCustomFieldValues(reqVersion, initialCustomFieldValues);
 	}
  
 }

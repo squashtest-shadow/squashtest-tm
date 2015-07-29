@@ -69,9 +69,6 @@ public class RequirementExcelExporter {
 
 	private String errorCellTooLargeMessage;
 	
-	private static final Logger LOGGER = LoggerFactory.getLogger(RequirementExcelExporter.class);
-
-	
 	@Inject
 	public RequirementExcelExporter(FeatureManager featureManager, MessageSource messageSource) {
 		super();

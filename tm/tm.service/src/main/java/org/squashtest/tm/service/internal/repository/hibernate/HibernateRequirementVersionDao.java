@@ -89,4 +89,19 @@ public class HibernateRequirementVersionDao implements CustomRequirementVersionD
 		}
 	}
 
+	@SuppressWarnings("unchecked")
+	@Override
+	public RequirementVersion findByRequirementIdAndVersionNumber(
+			Long requirementId, Integer versionNumber) {
+		Query q = currentSession().getNamedQuery("RequirementVersion.findByRequirementIdAndVersionNumber");
+		q.setLong("requirementId", requirementId);
+		q.setInteger("versionNumber", versionNumber);
+		List<RequirementVersion> result = q.list();
+		if (result.size() == 0) {
+			return null;
+		}
+		else {
+			return result.get(0);
+		}
+	}
 }

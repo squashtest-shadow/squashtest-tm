@@ -29,6 +29,9 @@ public class RequirementTarget extends Target{
 	private String path;
 
 	private Integer order;
+	
+	//convenient attribute to keep the id of the requirement in database
+	private Long id;
 
 
 	public RequirementTarget(){
@@ -61,6 +64,11 @@ public class RequirementTarget extends Target{
 	public String getProject() {
 		return PathUtils.extractProjectName(path);
 	}
+	
+	public void setPath(String path) {
+		this.path = path;
+	}
+
 
 	@Override
 	public String getPath() {
@@ -69,6 +77,16 @@ public class RequirementTarget extends Target{
 
 	public Integer getOrder() {
 		return order;
+	}
+
+
+	public Long getId() {
+		return id;
+	}
+
+
+	public void setId(Long id) {
+		this.id = id;
 	}
 
 
@@ -103,5 +121,9 @@ public class RequirementTarget extends Target{
 		return true;
 	}
 
+	public boolean isRootRequirement() {
+		String[] names = PathUtils.splitPath(path);
+		return names.length == 2; // that is, composed of a project and a requirement name only.
+	}
 
 }

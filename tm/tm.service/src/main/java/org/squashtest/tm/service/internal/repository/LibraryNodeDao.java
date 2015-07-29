@@ -43,4 +43,14 @@ public interface LibraryNodeDao<NODE extends LibraryNode> extends EntityDao<NODE
 	 */
 	List<Long> getParentsIds(long entityId);
 
+	/**
+	 * Returns the ids of the node for each path in list. 
+	 * The paths must be the splits of an unique path. If a node doesn't exist, insert a null in the list
+	 * @param paths The paths list. This method expect that the first path of the list is the project.
+	 * @return ids of all entity sorted from elder to younger. The list size is @param paths size -1 because first path in list is the project.
+	 */
+	List<Long> findNodeIdsByPath(List<String> paths);
+
+	Long findNodeIdByPath(String path);
+
 }

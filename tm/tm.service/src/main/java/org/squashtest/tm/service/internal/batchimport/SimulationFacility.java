@@ -261,7 +261,9 @@ public class SimulationFacility implements Facility {
 
 	@Override
 	public LogTrain createRequirementVersion(RequirementVersionInstruction instr) {
-		throw new RuntimeException("implement me");
+		LogTrain train = validator.createRequirementVersion(instr);
+		//no need to update model as the validator do it after all checks.
+		return train;
 	}
 
 	@Override

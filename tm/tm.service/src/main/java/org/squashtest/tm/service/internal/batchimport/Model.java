@@ -40,6 +40,8 @@ import org.apache.commons.collections.map.MultiValueMap;
 import org.hibernate.Query;
 import org.hibernate.SessionFactory;
 import org.hibernate.type.LongType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.core.foundation.lang.PathUtils;
@@ -48,6 +50,8 @@ import org.squashtest.tm.domain.customfield.BindableEntity;
 import org.squashtest.tm.domain.customfield.CustomField;
 import org.squashtest.tm.domain.library.structures.LibraryGraph;
 import org.squashtest.tm.domain.library.structures.LibraryGraph.SimpleNode;
+import org.squashtest.tm.domain.milestone.Milestone;
+import org.squashtest.tm.domain.milestone.MilestoneStatus;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.testcase.Dataset;
 import org.squashtest.tm.domain.testcase.Parameter;
@@ -55,12 +59,14 @@ import org.squashtest.tm.domain.testcase.ParameterAssignationMode;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestStep;
 import org.squashtest.tm.service.importer.Target;
+import org.squashtest.tm.service.internal.batchimport.Model.TargetStatus;
 import org.squashtest.tm.service.internal.batchimport.TestCaseCallGraph.Node;
 import org.squashtest.tm.service.internal.repository.CustomFieldDao;
 import org.squashtest.tm.service.internal.repository.DatasetDao;
 import org.squashtest.tm.service.internal.testcase.TestCaseCallTreeFinder;
 import org.squashtest.tm.service.milestone.MilestoneMembershipFinder;
 import org.squashtest.tm.service.requirement.RequirementLibraryFinderService;
+import org.squashtest.tm.service.requirement.RequirementVersionManagerService;
 import org.squashtest.tm.service.testcase.ParameterFinder;
 import org.squashtest.tm.service.testcase.TestCaseFinder;
 import org.squashtest.tm.service.testcase.TestCaseLibraryFinderService;
@@ -77,7 +83,7 @@ public class Model {
 
 	@Inject
 	private TestCaseLibraryFinderService finderService;
-	
+
 	@Inject
 	private RequirementLibraryFinderService reqFinderService;
 
@@ -95,17 +101,17 @@ public class Model {
 
 	@Inject
 	private DatasetDao dsDao;
+	
+	@Inject
+	private RequirementVersionManagerService requirementVersionManagerService;
 
 	/* **********************************************************************************************************************************
 	 * 
 	 * The following properties are initialized all together during
 	 * init(List<TestCaseTarget>) :
 	 * 
-	 * - testCaseStatusByTarget
-	 * - testCaseStepsByTarget
-	 * - projectStatusByName
-	 * - tcCufsPerProjectname
-	 * - stepCufsPerProjectname
+	 * - testCaseStatusByTarget - testCaseStepsByTarget - projectStatusByName -
+	 * tcCufsPerProjectname - stepCufsPerProjectname
 	 * 
 	 * **************************************************************************
 	 * **************************************** *****************
@@ -121,7 +127,6 @@ public class Model {
 	 * is loaded in that map it'll stay there.
 	 */
 	private Map<TestCaseTarget, TargetStatus> testCaseStatusByTarget = new HashMap<TestCaseTarget, TargetStatus>();
-
 
 	/**
 	 * Maps a test case (given its target) to a list of step models. We only
@@ -139,25 +144,29 @@ public class Model {
 	 */
 	/**
 	 * 
-	 * <p>This maps says whether a given test case is locked because of its milestones or not
-	 * The answer is yes if :</p>
+	 * <p>
+	 * This maps says whether a given test case is locked because of its
+	 * milestones or not The answer is yes if :
+	 * </p>
 	 * 
 	 * <ul>
-	 * 	<li>The entity exists in the database (ie it's not new : status is EXISTS)</li>
-	 * 	<li>The entity indeed belongs to a milestone which status forbids any modification</li>
+	 * <li>The entity exists in the database (ie it's not new : status is
+	 * EXISTS)</li>
+	 * <li>The entity indeed belongs to a milestone which status forbids any
+	 * modification</li>
 	 * </ul>
 	 * 
 	 * <p>
-	 * 	Note that when the entity doesn't exist yet the answer is always no, because
-	 * 	one can never add or remove an entity a locked milestone. Same goes
-	 * 	for entities that are deleted or plain inexistant (status NOT_EXIST : neither in DB nor
-	 *  in the import file)
+	 * Note that when the entity doesn't exist yet the answer is always no,
+	 * because one can never add or remove an entity a locked milestone. Same
+	 * goes for entities that are deleted or plain inexistant (status NOT_EXIST
+	 * : neither in DB nor in the import file)
 	 * </p>
 	 * 
 	 * <p>
-	 * 	Also note that for now we make no distinction between milestones that
-	 *	prevent deletion and milestones that prevent edition
-	 *	because they are exactly the same at the moment
+	 * Also note that for now we make no distinction between milestones that
+	 * prevent deletion and milestones that prevent edition because they are
+	 * exactly the same at the moment
 	 * </p>
 	 * 
 	 * @param target
@@ -205,9 +214,12 @@ public class Model {
 	private TestCaseCallGraph callGraph = new TestCaseCallGraph();
 
 	/**
-	 * This property tracks a hierarchy of requirement folders, requirements and their versions
+	 * This property tracks a hierarchy of requirement folders, requirements and
+	 * their versions
 	 */
 	private ImportedRequirementTree requirementTree = new ImportedRequirementTree();
+
+	private static final Logger LOGGER = LoggerFactory.getLogger(Model.class);
 
 	// ===============================================================================================
 	// ===============================================================================================
@@ -221,7 +233,7 @@ public class Model {
 		}
 		return projectStatusByName.get(projectName);
 	}
-
+	
 	// ************************** Test Case status management
 	// ****************************************
 
@@ -236,30 +248,35 @@ public class Model {
 	}
 
 	public void setExists(TestCaseTarget target, Long id) {
-		testCaseStatusByTarget.put(target, new TargetStatus(Existence.EXISTS, id));
+		testCaseStatusByTarget.put(target, new TargetStatus(Existence.EXISTS,
+				id));
 	}
 
 	public void setToBeCreated(TestCaseTarget target) {
-		testCaseStatusByTarget.put(target, new TargetStatus(Existence.TO_BE_CREATED));
+		testCaseStatusByTarget.put(target, new TargetStatus(
+				Existence.TO_BE_CREATED));
 		clearSteps(target);
 	}
 
 	public void setToBeDeleted(TestCaseTarget target) {
 		TargetStatus oldStatus = testCaseStatusByTarget.get(target);
-		testCaseStatusByTarget.put(target, new TargetStatus(Existence.TO_BE_DELETED, oldStatus.id));
+		testCaseStatusByTarget.put(target, new TargetStatus(
+				Existence.TO_BE_DELETED, oldStatus.id));
 		clearSteps(target);
 		callGraph.removeNode(target);
 	}
 
 	public void setDeleted(TestCaseTarget target) {
-		testCaseStatusByTarget.put(target, new TargetStatus(Existence.NOT_EXISTS, null));
+		testCaseStatusByTarget.put(target, new TargetStatus(
+				Existence.NOT_EXISTS, null));
 		clearSteps(target);
 		callGraph.removeNode(target);
 	}
 
 	/** virtually an alias of setDeleted */
 	public void setNotExists(TestCaseTarget target) {
-		testCaseStatusByTarget.put(target, new TargetStatus(Existence.NOT_EXISTS, null));
+		testCaseStatusByTarget.put(target, new TargetStatus(
+				Existence.NOT_EXISTS, null));
 		clearSteps(target);
 	}
 
@@ -286,9 +303,7 @@ public class Model {
 		}
 	}
 
-
-
-	public boolean isTestCaseLockedByMilestones(TestCaseTarget target){
+	public boolean isTestCaseLockedByMilestones(TestCaseTarget target) {
 		if (!testCaseStatusByTarget.containsKey(target)) {
 			mainInitTestCase(target);
 		}
@@ -321,7 +336,8 @@ public class Model {
 		return wouldCreateCycle(called, caller);
 	}
 
-	public boolean wouldCreateCycle(TestCaseTarget srcTestCase, TestCaseTarget destTestCase) {
+	public boolean wouldCreateCycle(TestCaseTarget srcTestCase,
+			TestCaseTarget destTestCase) {
 		if (!callGraph.knowsNode(srcTestCase)) {
 			initCallGraph(srcTestCase);
 		}
@@ -333,7 +349,8 @@ public class Model {
 		return callGraph.wouldCreateCycle(srcTestCase, destTestCase);
 	}
 
-	public boolean wouldCreateCycle(TestStepTarget step, TestCaseTarget destTestCase) {
+	public boolean wouldCreateCycle(TestStepTarget step,
+			TestCaseTarget destTestCase) {
 		return wouldCreateCycle(step.getTestCase(), destTestCase);
 	}
 
@@ -350,8 +367,8 @@ public class Model {
 			return;
 		}
 
-		LibraryGraph<NamedReference, SimpleNode<NamedReference>> targetCallers = calltreeFinder.getExtendedGraph(Arrays
-				.asList(id));
+		LibraryGraph<NamedReference, SimpleNode<NamedReference>> targetCallers = calltreeFinder
+				.getExtendedGraph(Arrays.asList(id));
 
 		// some data transform now
 		Collection<SimpleNode<NamedReference>> refs = targetCallers.getNodes();
@@ -388,9 +405,11 @@ public class Model {
 		return addStep(target, StepType.ACTION, null);
 	}
 
-	public Integer addCallStep(TestStepTarget target, TestCaseTarget calledTestCase, CallStepParamsInfo paramInfo) {
+	public Integer addCallStep(TestStepTarget target,
+			TestCaseTarget calledTestCase, CallStepParamsInfo paramInfo) {
 
-		Boolean delegates = (paramInfo.getParamMode().equals(ParameterAssignationMode.DELEGATE)) ? true : false;
+		Boolean delegates = (paramInfo.getParamMode()
+				.equals(ParameterAssignationMode.DELEGATE)) ? true : false;
 
 		// set the call graph
 		addCallGraphEdge(target.getTestCase(), calledTestCase);
@@ -400,7 +419,8 @@ public class Model {
 
 	}
 
-	private Integer addStep(TestStepTarget target, StepType type, TestCaseTarget calledTestCase, Boolean delegates) {
+	private Integer addStep(TestStepTarget target, StepType type,
+			TestCaseTarget calledTestCase, Boolean delegates) {
 
 		List<InternalStepModel> steps = findInternalStepModels(target);
 
@@ -416,7 +436,8 @@ public class Model {
 
 	}
 
-	private Integer addStep(TestStepTarget target, StepType type, TestCaseTarget calledTestCase) {
+	private Integer addStep(TestStepTarget target, StepType type,
+			TestCaseTarget calledTestCase) {
 
 		List<InternalStepModel> steps = findInternalStepModels(target);
 
@@ -436,19 +457,23 @@ public class Model {
 	 * warning : won't check that the operation will not create a cycle. Such
 	 * check needs to be done beforehand.
 	 */
-	public void updateCallStepTarget(TestStepTarget step, TestCaseTarget newTarget, CallStepParamsInfo paramInfo) {
+	public void updateCallStepTarget(TestStepTarget step,
+			TestCaseTarget newTarget, CallStepParamsInfo paramInfo) {
 
 		if (!stepExists(step)) {
-			throw new IllegalArgumentException("cannot update non existant step '" + step + "'");
+			throw new IllegalArgumentException(
+					"cannot update non existant step '" + step + "'");
 		}
 
 		if (getType(step) != StepType.CALL) {
-			throw new IllegalArgumentException("cannot update the called test case for step '" + step
-					+ "' because that step is not a call step");
+			throw new IllegalArgumentException(
+					"cannot update the called test case for step '" + step
+							+ "' because that step is not a call step");
 		}
 
 		InternalStepModel model = findInternalStepModel(step);
-		Boolean delegates = (paramInfo.getParamMode().equals(ParameterAssignationMode.DELEGATE)) ? true : false;
+		Boolean delegates = (paramInfo.getParamMode()
+				.equals(ParameterAssignationMode.DELEGATE)) ? true : false;
 		model.setDelegates(delegates);
 		TestCaseTarget src = step.getTestCase();
 		TestCaseTarget oldDest = model.getCalledTC();
@@ -465,7 +490,8 @@ public class Model {
 	public void remove(TestStepTarget target) {
 
 		if (!stepExists(target)) {
-			throw new IllegalArgumentException("cannot remove non existant step '" + target + "'");
+			throw new IllegalArgumentException(
+					"cannot remove non existant step '" + target + "'");
 		}
 
 		List<InternalStepModel> steps = findInternalStepModels(target);
@@ -534,7 +560,8 @@ public class Model {
 			return null;
 		}
 
-		Query q = sessionFactory.getCurrentSession().getNamedQuery("testStep.findIdByTestCaseAndPosition");
+		Query q = sessionFactory.getCurrentSession().getNamedQuery(
+				"testStep.findIdByTestCaseAndPosition");
 		q.setParameter(":tcId", tcId);
 		q.setParameter("position", index);
 
@@ -554,7 +581,8 @@ public class Model {
 			return null;
 		}
 
-		Query q = sessionFactory.getCurrentSession().getNamedQuery("testStep.findByTestCaseAndPosition");
+		Query q = sessionFactory.getCurrentSession().getNamedQuery(
+				"testStep.findByTestCaseAndPosition");
 		q.setParameter("tcId", tcId);
 		q.setParameter("position", index);
 
@@ -655,7 +683,8 @@ public class Model {
 			// modification patron
 			for (Node child : current.getOutbounds()) {
 
-				List<InternalStepModel> steps = testCaseStepsByTarget.get(current.getKey());
+				List<InternalStepModel> steps = testCaseStepsByTarget
+						.get(current.getKey());
 				extractParametersFromSteps(processing, processed, child, steps);
 				processed.add(current);
 			}
@@ -667,11 +696,13 @@ public class Model {
 
 	}
 
-	private void extractParametersFromSteps(Collection<Node> processing, Set<Node> processed, Node child,
-			List<InternalStepModel> steps) {
+	private void extractParametersFromSteps(Collection<Node> processing,
+			Set<Node> processed, Node child, List<InternalStepModel> steps) {
 		if (steps != null) {
 			for (InternalStepModel step : steps) {
-				if (step.type == StepType.CALL && step.calledTC.equals(child.getKey()) && step.getDeleguates()
+				if (step.type == StepType.CALL
+						&& step.calledTC.equals(child.getKey())
+						&& step.getDeleguates()
 						&& !processed.contains(step.calledTC)) {
 					processing.add(child);
 				}
@@ -685,7 +716,8 @@ public class Model {
 	 *         otherwise
 	 */
 	public boolean isParamInDataset(ParameterTarget param, DatasetTarget ds) {
-		Collection<ParameterTarget> allparams = getAllParameters(ds.getTestCase());
+		Collection<ParameterTarget> allparams = getAllParameters(ds
+				.getTestCase());
 		return (allparams.contains(param));
 	}
 
@@ -746,7 +778,8 @@ public class Model {
 		}
 
 		String projectName = PathUtils.extractProjectName(target.getPath());
-		Collection<CustomField> cufs = tcCufsPerProjectname.getCollection(projectName);
+		Collection<CustomField> cufs = tcCufsPerProjectname
+				.getCollection(projectName);
 
 		if (cufs != null) {
 			return cufs;
@@ -754,18 +787,20 @@ public class Model {
 			return Collections.emptyList();
 		}
 	}
-	
+
 	@SuppressWarnings("unchecked")
-	public Collection<CustomField> getRequirementVersionCufs(RequirementVersionTarget target) {
-		//if requirement version is unknown in model (ie in req tree), 
-		//init the requirement version
+	public Collection<CustomField> getRequirementVersionCufs(
+			RequirementVersionTarget target) {
+		// if requirement version is unknown in model (ie in req tree),
+		// init the requirement version
 		if (requirementTree.targetAlreadyLoaded(target)) {
 			mainInitRequirements(target);
 		}
-		
+
 		String projectName = PathUtils.extractProjectName(target.getPath());
-		Collection<CustomField> cufs = reqCufsPerProjectname.getCollection(projectName);
-		
+		Collection<CustomField> cufs = reqCufsPerProjectname
+				.getCollection(projectName);
+
 		if (cufs != null) {
 			return cufs;
 		} else {
@@ -782,7 +817,8 @@ public class Model {
 		}
 
 		String projectName = PathUtils.extractProjectName(tc.getPath());
-		Collection<CustomField> cufs = stepCufsPerProjectname.getCollection(projectName);
+		Collection<CustomField> cufs = stepCufsPerProjectname
+				.getCollection(projectName);
 		if (cufs != null) {
 			return cufs;
 		} else {
@@ -790,11 +826,32 @@ public class Model {
 		}
 	}
 
+	// *********************** Requirement management
+	// *******************************
 
-	// *********************** Requirement management *******************************
+	public TargetStatus getStatus(RequirementTarget target) {
+		if (!requirementTree.targetAlreadyLoaded(target)) {
+			loadRequirement(target);
+		}
+		return requirementTree.getStatus(target);
+	}
+	
+	private void loadRequirement(RequirementTarget target) {
+		Long reqId = reqFinderService.findNodeIdByPath(target.getPath());
+		LOGGER.debug("ReqImport - result find by node : " + reqId);
+		//only add existing requirement in tree. 
+		//New requirement will be created with good status by adding the requirement version
+		if (reqId!=null) {
+			requirementTree.addOrUpdateNode(target, new TargetStatus(Existence.EXISTS,reqId));
+		}
+		else {
+			requirementTree.addOrUpdateNode(target, new TargetStatus(Existence.NOT_EXISTS));
+		}
+	}
 
-	public TargetStatus getStatus(RequirementVersionTarget target){
-		if (! requirementTree.targetAlreadyLoaded(target)){
+	public TargetStatus getStatus(RequirementVersionTarget target) {
+		//init the requirement version in tree if unknown
+		if (!requirementTree.targetAlreadyLoaded(target)) {
 			mainInitRequirements(target);
 		}
 
@@ -851,7 +908,8 @@ public class Model {
 			TestCaseTarget t = targets.get(i);
 			Long id = ids.get(i);
 
-			Existence existence = (id == null) ? Existence.NOT_EXISTS : Existence.EXISTS;
+			Existence existence = (id == null) ? Existence.NOT_EXISTS
+					: Existence.EXISTS;
 			TargetStatus status = new TargetStatus(existence, id);
 
 			testCaseStatusByTarget.put(t, status);
@@ -859,8 +917,9 @@ public class Model {
 			// Issue 4973
 			// see comment on the attribute "isTargetMilestoneLocked"
 			Boolean milestoneLocked = Boolean.FALSE;
-			if (existence == Existence.EXISTS){
-				milestoneLocked = milestoneMemberFinder.isTestCaseMilestoneDeletable(id);
+			if (existence == Existence.EXISTS) {
+				milestoneLocked = milestoneMemberFinder
+						.isTestCaseMilestoneDeletable(id);
 			}
 
 			isTargetMilestoneLocked.put(t, milestoneLocked);
@@ -878,8 +937,10 @@ public class Model {
 			TargetStatus status = getStatus(t);
 
 			if (status.id != null && status.status != Existence.TO_BE_DELETED) {
-				Collection<Parameter> params = paramFinder.findOwnParameters(status.id);
-				Collection<ParameterTarget> parameters = new HashSet<ParameterTarget>(params.size());
+				Collection<Parameter> params = paramFinder
+						.findOwnParameters(status.id);
+				Collection<ParameterTarget> parameters = new HashSet<ParameterTarget>(
+						params.size());
 				for (Parameter p : params) {
 					parameters.add(new ParameterTarget(t, p.getName()));
 				}
@@ -901,8 +962,10 @@ public class Model {
 			TargetStatus status = getStatus(t);
 
 			if (status.id != null && status.status != Existence.TO_BE_DELETED) {
-				Collection<Dataset> datasets = dsDao.findOwnDatasetsByTestCase(status.id);
-				Set<DatasetTarget> dstargets = new HashSet<DatasetTarget>(datasets.size());
+				Collection<Dataset> datasets = dsDao
+						.findOwnDatasetsByTestCase(status.id);
+				Set<DatasetTarget> dstargets = new HashSet<DatasetTarget>(
+						datasets.size());
 				for (Dataset ds : datasets) {
 					dstargets.add(new DatasetTarget(t, ds.getName()));
 				}
@@ -969,8 +1032,11 @@ public class Model {
 
 		// add the projects that were found
 		for (Project p : projects) {
-			ProjectTargetStatus status = new ProjectTargetStatus(Existence.EXISTS, p.getId(),
-					p.getTestCaseLibrary().getId(), p.getRequirementLibrary().getId());
+			LOGGER.debug("ReqImport - Trying to import project in model " + p.getId());
+			ProjectTargetStatus status = new ProjectTargetStatus(
+					Existence.EXISTS, p.getId(),
+					p.getTestCaseLibrary().getId(), p.getRequirementLibrary()
+							.getId());
 			projectStatusByName.put(p.getName(), status);
 			initCufs(p.getName());
 		}
@@ -979,7 +1045,8 @@ public class Model {
 		Set<String> knownProjects = projectStatusByName.keySet();
 		for (String name : projectNames) {
 			if (!knownProjects.contains(name)) {
-				projectStatusByName.put(name, new ProjectTargetStatus(Existence.NOT_EXISTS));
+				projectStatusByName.put(name, new ProjectTargetStatus(
+						Existence.NOT_EXISTS));
 			}
 		}
 
@@ -990,38 +1057,45 @@ public class Model {
 
 		Long projectId = projectStatusByName.get(projectName).id;
 
-		List<CustomField> tccufs = cufDao.findAllBoundCustomFields(projectId, BindableEntity.TEST_CASE);
+		List<CustomField> tccufs = cufDao.findAllBoundCustomFields(projectId,
+				BindableEntity.TEST_CASE);
 		tcCufsPerProjectname.putAll(projectName, tccufs);
 
-		List<CustomField> stcufs = cufDao.findAllBoundCustomFields(projectId, BindableEntity.TEST_STEP);
+		List<CustomField> stcufs = cufDao.findAllBoundCustomFields(projectId,
+				BindableEntity.TEST_STEP);
 		stepCufsPerProjectname.putAll(projectName, stcufs);
-	
-		List<CustomField> reqcufs = cufDao.findAllBoundCustomFields(projectId, BindableEntity.REQUIREMENT_VERSION);
+
+		List<CustomField> reqcufs = cufDao.findAllBoundCustomFields(projectId,
+				BindableEntity.REQUIREMENT_VERSION);
 		reqCufsPerProjectname.putAll(projectName, reqcufs);
 
 	}
 
-
-	public void mainInitRequirements(RequirementVersionTarget target){
-		mainInitRequirements(Arrays.asList(new RequirementVersionTarget[]{target}));
+	public void mainInitRequirements(RequirementVersionTarget target) {
+		mainInitRequirements(Arrays
+				.asList(new RequirementVersionTarget[] { target }));
 	}
 
-
-	public void mainInitRequirements(List<RequirementVersionTarget> targets){
+	public void mainInitRequirements(List<RequirementVersionTarget> targets) {
 
 		// ensures unicity
 		List<RequirementVersionTarget> uniqueTargets = uniqueList(targets);
 
 		// init the requirements
-		initRequirements(uniqueTargets);
+		initRequirementVersions(uniqueTargets);
 
 		// init the projects TODO
-		//initProjects(uniqueTargets);
+		initRequirementProjects(uniqueTargets);
 
 	}
 
-	public void initRequirements(List<RequirementVersionTarget> initialTargets){
-		
+	private void initRequirementProjects(List<RequirementVersionTarget> uniqueTargets) {
+		LOGGER.debug("ReqImport - Looking for project " + collectRequirementProjects(uniqueTargets));
+		initProjectsByName(collectRequirementProjects(uniqueTargets));
+	}
+
+	public void initRequirementVersions(List<RequirementVersionTarget> initialTargets) {
+		LOGGER.debug("ReqImport - Initialize targets");
 
 		// filter out the requirement version we already know of
 		List<RequirementVersionTarget> targets = new LinkedList<RequirementVersionTarget>();
@@ -1036,46 +1110,72 @@ public class Model {
 			return;
 		}
 
-		// collect their paths
-		List<String> paths = collectPaths(targets);
-
-		// find their ids -> IMPLEMENTS FOR REQUIREMENT VERSION
-		// always get all existing requirement version in db, as we want getStatus method to be consistant with db state
-		// i.e if a RequirementVersion of an already loaded Requirement has a NOT_EXISTS status, it means that it is NOT in db
-		//List<Long> ids = reqFinderService.findNodeIdsByPathAndVersionNumber(paths);
-		
-		List<Long> ids = new ArrayList<Long>();
-		ids.add(null);
-		
-		// now store them
-		for (int i = 0; i < paths.size(); i++) {
-
-			RequirementVersionTarget t = targets.get(i);
-			Long id = ids.get(i);
-
-			Existence existence = (id == null) ? Existence.NOT_EXISTS : Existence.EXISTS;
-			TargetStatus status = new TargetStatus(existence, id);
-
-			// Warning add requirements and after, add versions
-			requirementTree.addOrUpdateNode(t, status);
-
-			// Issue 4973
-			// see comment on the attribute "isTargetMilestoneLocked"
-			Boolean milestoneLocked = Boolean.FALSE;
-			if (existence == Existence.EXISTS){
-				milestoneLocked = milestoneMemberFinder.isTestCaseMilestoneDeletable(id);
+		for (RequirementVersionTarget target : targets) {
+			//Now we look in database for the requirement version
+			LOGGER.debug("ReqImport - Initialize target " + target.getPath());
+			Existence reqExistence = getStatus(target.getRequirement()).getStatus();
+			if (reqExistence != Existence.EXISTS) {
+				//requirement not exist so requirement version can't exist in db
+				LOGGER.debug("ReqImport - requirement doesn't exist so we don't need to check version");
+				requirementTree.addOrUpdateNode(target, TargetStatus.NOT_EXISTS);
 			}
-
-			isTargetMilestoneLocked.put(t, milestoneLocked);
+			else {
+				Long reqId = requirementTree.getNodeId(target.getRequirement());
+				Integer versionNumber = target.getVersion();
+				Long reqVersionId = requirementVersionManagerService.
+						findReqVersionIdByRequirementAndVersionNumber(reqId, versionNumber);
+				if (reqVersionId!=null) {
+					requirementTree.addOrUpdateNode(target, new TargetStatus(Existence.EXISTS,reqVersionId));
+					//here get milestone and milestoneLocked
+					Collection<Milestone> milestones = milestoneMemberFinder.findMilestonesForRequirementVersion(reqVersionId);
+					for (Milestone milestone : milestones) {
+						requirementTree.bindMilestone(target, milestone.getLabel());
+						if (milestone.getStatus()==MilestoneStatus.LOCKED||milestone.getStatus()==MilestoneStatus.PLANNED) {
+							requirementTree.milestoneLock(target);
+						}
+					}
+				}
+				else {
+					requirementTree.addOrUpdateNode(target, new TargetStatus(Existence.NOT_EXISTS));
+				}
+			}
 		}
-
 	}
 	
+	/**
+	 * Add a requirement version to model, not to database.
+	 * @param target
+	 */
+	public void addRequirementVersion(RequirementVersionTarget target, TargetStatus targetStatus){
+		requirementTree.addOrUpdateNode(target, targetStatus);
+	}
 	
-	//********************* REQUIREMENT STATUS METHOD *****************
+	public void addRequirementVersion(RequirementVersionTarget target,
+			TargetStatus targetStatus, List<String> milestones) {
+		requirementTree.addOrUpdateNode(target, targetStatus);
+		requirementTree.bindMilestone(target, milestones);
+	}
+
+	
+	public void addRequirement(RequirementTarget target,
+			TargetStatus status) {
+		requirementTree.addOrUpdateNode(target, status);
+	}
+
+	// ********************* REQUIREMENT STATUS METHOD *****************
 	public void setNotExists(RequirementVersionTarget target) {
 		requirementTree.setNotExists(target);
 	}
+	
+	public boolean checkMilestonesAlreadyUsedInRequirement(String milestone,
+			RequirementVersionTarget target) {
+		return requirementTree.isMilestoneUsedByOneVersion(target, milestone);
+	}
+	
+	public boolean isRequirementFolder(RequirementVersionTarget target) {
+		return requirementTree.isRequirementFolder(target);
+	}
+
 
 
 	// *************************** private methods
@@ -1086,39 +1186,51 @@ public class Model {
 		return new ArrayList<OBJ>(filtered);
 	}
 
-	private <TARGET extends Target> List<String> collectProjects(List<TARGET> targets) {
+	private <TARGET extends Target> List<String> collectProjects(
+			List<TARGET> targets) {
 		List<String> paths = collectPaths(targets);
+		return PathUtils.extractProjectNames(paths);
+	}
+	
+	private <TARGET extends Target> List<String> collectRequirementProjects(
+			List<RequirementVersionTarget> targets) {
+		List<String> paths = collectRequirementPaths(targets);
 		return PathUtils.extractProjectNames(paths);
 	}
 
 	@SuppressWarnings("unchecked")
-	private <TARGET extends Target> List<String> collectPaths(List<TARGET> targets) {
-		return (List<String>) CollectionUtils.collect(targets, PathCollector.INSTANCE, new ArrayList<String>(
-				targets.size()));
+	private <TARGET extends Target> List<String> collectPaths(
+			List<TARGET> targets) {
+		return (List<String>) CollectionUtils.collect(targets,
+				PathCollector.INSTANCE, new ArrayList<String>(targets.size()));
 	}
 
 	@SuppressWarnings("unchecked")
-	private <TARGET extends Target> List<String> collectRequirementPaths(List<RequirementVersionTarget> targets) {
-		return (List<String>) CollectionUtils.collect(targets, RequirementPathCollector.INSTANCE, new ArrayList<String>(
-				targets.size()));
+	private <TARGET extends Target> List<String> collectRequirementPaths(
+			List<RequirementVersionTarget> targets) {
+		return (List<String>) CollectionUtils.collect(targets,
+				RequirementPathCollector.INSTANCE, new ArrayList<String>(
+						targets.size()));
 	}
-
 
 	@SuppressWarnings("unchecked")
 	private List<Project> loadProjects(List<String> names) {
-		Query q = sessionFactory.getCurrentSession().getNamedQuery("Project.findAllByName");
+		Query q = sessionFactory.getCurrentSession().getNamedQuery(
+				"Project.findAllByName");
 		q.setParameterList("names", names);
 		return q.list();
 	}
 
 	@SuppressWarnings("unchecked")
 	private List<InternalStepModel> loadStepsModel(Long tcId) {
-		Query query = sessionFactory.getCurrentSession().getNamedQuery("testStep.findBasicInfosByTcId");
+		Query query = sessionFactory.getCurrentSession().getNamedQuery(
+				"testStep.findBasicInfosByTcId");
 		query.setParameter("tcId", tcId, LongType.INSTANCE);
 
 		List<Object[]> stepdata = query.list();
 
-		List<InternalStepModel> steps = new ArrayList<InternalStepModel>(stepdata.size());
+		List<InternalStepModel> steps = new ArrayList<InternalStepModel>(
+				stepdata.size());
 		for (Object[] tuple : stepdata) {
 			StepType type = StepType.valueOf((String) tuple[0]);
 			TestCaseTarget calledTC = null;
@@ -1141,15 +1253,18 @@ public class Model {
 	 * saves more bloat
 	 */
 	@SuppressWarnings("unchecked")
-	private void swapNameForPath(Collection<SimpleNode<NamedReference>> references) {
+	private void swapNameForPath(
+			Collection<SimpleNode<NamedReference>> references) {
 
 		// first ensures that the references will be iterated in a constant
 		// order
-		List<SimpleNode<NamedReference>> listedRefs = new ArrayList<LibraryGraph.SimpleNode<NamedReference>>(references);
+		List<SimpleNode<NamedReference>> listedRefs = new ArrayList<LibraryGraph.SimpleNode<NamedReference>>(
+				references);
 
 		// now collect the ids. Node : the javadoc claims that the result is a
 		// new list.
-		List<Long> ids = (List<Long>) CollectionUtils.collect(listedRefs, NamedReferenceIdCollector.INSTANCE);
+		List<Long> ids = (List<Long>) CollectionUtils.collect(listedRefs,
+				NamedReferenceIdCollector.INSTANCE);
 
 		List<String> paths = finderService.getPathsAsString(ids);
 
@@ -1204,8 +1319,9 @@ public class Model {
 		// be tested in ValidationFacilityTest
 
 		// convenient alias
-		static final TargetStatus NOT_EXISTS = new TargetStatus(Existence.NOT_EXISTS);
-
+		static final TargetStatus NOT_EXISTS = new TargetStatus(
+				Existence.NOT_EXISTS);
+	
 		/**
 		 * The {@link Existence} status of the concerned entity.
 		 */
@@ -1247,13 +1363,15 @@ public class Model {
 		private Long testCaseLibraryId;
 		private Long requirementLibraryId;
 
-		private ProjectTargetStatus(Existence status, Long id, Long testCaseLibraryId) {
+		private ProjectTargetStatus(Existence status, Long id,
+				Long testCaseLibraryId) {
 			super(status, id);
-			this.testCaseLibraryId = testCaseLibraryId;;
+			this.testCaseLibraryId = testCaseLibraryId;
+			;
 		}
 
-		private ProjectTargetStatus(Existence status, Long id, Long testCaseLibraryId,
-				Long requirementLibraryId) {
+		private ProjectTargetStatus(Existence status, Long id,
+				Long testCaseLibraryId, Long requirementLibraryId) {
 			super(status, id);
 			this.testCaseLibraryId = testCaseLibraryId;
 			this.requirementLibraryId = requirementLibraryId;
@@ -1270,7 +1388,6 @@ public class Model {
 		public Long getRequirementLibraryId() {
 			return requirementLibraryId;
 		}
-
 
 	}
 
@@ -1298,7 +1415,8 @@ public class Model {
 
 		@Override
 		public Object transform(Object value) {
-			return ((RequirementVersionTarget) value).getRequirement().getPath();
+			return ((RequirementVersionTarget) value).getRequirement()
+					.getPath();
 		}
 	}
 
@@ -1333,7 +1451,8 @@ public class Model {
 			this.calledTC = calledTC;
 		}
 
-		public InternalStepModel(StepType type, TestCaseTarget calledTC, boolean delegates) {
+		public InternalStepModel(StepType type, TestCaseTarget calledTC,
+				boolean delegates) {
 			this.type = type;
 			this.calledTC = calledTC;
 			this.delegates = delegates;
@@ -1362,6 +1481,10 @@ public class Model {
 	}
 
 	
+	
+	
 
+
+	
 
 }

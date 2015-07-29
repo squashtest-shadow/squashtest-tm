@@ -22,6 +22,8 @@ package org.squashtest.tm.service.importer;
 
 import static org.squashtest.tm.service.importer.EntityType.DATASET;
 import static org.squashtest.tm.service.importer.EntityType.PARAMETER;
+import static org.squashtest.tm.service.importer.EntityType.REQUIREMENT;
+import static org.squashtest.tm.service.importer.EntityType.REQUIREMENT_VERSION;
 import static org.squashtest.tm.service.importer.EntityType.TEST_CASE;
 import static org.squashtest.tm.service.importer.EntityType.TEST_STEP;
 import static org.squashtest.tm.service.importer.ImportStatus.FAILURE;
@@ -37,10 +39,14 @@ import java.util.ListIterator;
 import java.util.TreeSet;
 
 import org.apache.commons.collections.map.MultiValueMap;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.squashtest.tm.service.internal.batchimport.LogTrain;
 
 public class ImportLog{
 
+	private static final Logger LOGGER = LoggerFactory.getLogger(ImportLog.class);
+	
 	// key : EntityType, values : LogEntry
 	@SuppressWarnings("rawtypes")
 	private MultiValueMap logEntriesPerType = MultiValueMap.decorate(new HashMap(), TreeSet.class);
@@ -60,6 +66,10 @@ public class ImportLog{
 	private int datasetSuccesses = 0;
 	private int datasetWarnings = 0;
 	private int datasetFailures = 0;
+
+	private int requirementVersionSuccesses = 0;
+	private int requirementVersionWarnings = 0;
+	private int requirementVersionFailures = 0;
 
 	private String reportUrl;
 
@@ -162,10 +172,12 @@ public class ImportLog{
 
 
 	public void recompute() {
+		LOGGER.debug("ReqImport - Compute requirement import results");
 		recomputeFor(TEST_CASE);
 		recomputeFor(TEST_STEP);
 		recomputeFor(PARAMETER);
 		recomputeFor(DATASET);
+		recomputeFor(REQUIREMENT_VERSION);
 	}
 
 
@@ -243,6 +255,9 @@ public class ImportLog{
 		case DATASET :
 			countDataset(errors, warnings);
 			break;
+		case REQUIREMENT_VERSION :
+			countRequirementVersion(errors, warnings);
+			break;
 		case NONE :
 			break;
 
@@ -298,6 +313,19 @@ public class ImportLog{
 			datasetSuccesses++;
 		}
 	}
+	
+	private void countRequirementVersion(boolean errors, boolean warnings){
+		LOGGER.debug("ReqImport Compute requirements");
+		if (errors){
+			requirementVersionFailures++;
+		}
+		else if (warnings){
+			requirementVersionWarnings ++;
+		}
+		else{
+			requirementVersionSuccesses++;
+		}
+	}
 
 	public int getTestCaseSuccesses() {
 		return testCaseSuccesses;
@@ -345,6 +373,18 @@ public class ImportLog{
 
 	public int getDatasetFailures() {
 		return datasetFailures;
+	}
+
+	public int getRequirementVersionSuccesses() {
+		return requirementVersionSuccesses;
+	}
+
+	public int getRequirementVersionWarnings() {
+		return requirementVersionWarnings;
+	}
+
+	public int getRequirementVersionFailures() {
+		return requirementVersionFailures;
 	}
 
 	public String getReportUrl() {

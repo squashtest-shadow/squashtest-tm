@@ -23,10 +23,12 @@ package org.squashtest.tm.service.requirement;
 import java.io.File;
 import java.io.InputStream;
 import java.util.List;
+import java.util.Map;
 
 import javax.validation.constraints.NotNull;
 
 import org.springframework.context.MessageSource;
+import org.squashtest.tm.domain.customfield.RawValue;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.requirement.ExportRequirementData;
 import org.squashtest.tm.domain.requirement.NewRequirementVersionDto;
@@ -34,6 +36,7 @@ import org.squashtest.tm.domain.requirement.Requirement;
 import org.squashtest.tm.domain.requirement.RequirementFolder;
 import org.squashtest.tm.domain.requirement.RequirementLibrary;
 import org.squashtest.tm.domain.requirement.RequirementLibraryNode;
+import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.service.importer.ImportLog;
 import org.squashtest.tm.service.importer.ImportRequirementTestCaseLinksSummary;
 import org.squashtest.tm.service.importer.ImportSummary;
@@ -125,5 +128,27 @@ RequirementLibraryFinderService {
 	ImportLog simulateImportExcelRequirement(File xls);
 
 	ImportLog importExcelRequirement(File xls);
-
+	
+	/**
+	 * Create a hierarchy of requirement library node folder
+	 * @param folderpath the complete path
+	 * @return
+	 */
+	public Long mkdirs(String folderpath);
+	
+	/**
+	 * Change the current version number. 
+	 * Used by import to change the last created version number.
+	 * This method also modify the {@link Requirement#getCurrentVersion()} if needed. 
+	 */
+	public void changeCurrentVersionNumber(Requirement requirement, Integer noVersion);
+	
+	/**
+	 * Initialize the CUF values for a {@link RequirementVersion}
+	 * @param reqVersion
+	 * @param initialCustomFieldValues map the id of the CUF to the value. 
+	 * Beware, it's not the id of the CUFValue entry in db but the id of the CUF itself
+	 */
+	void initCUFvalues(RequirementVersion reqVersion, Map<Long, RawValue> initialCustomFieldValues);
+	
 }

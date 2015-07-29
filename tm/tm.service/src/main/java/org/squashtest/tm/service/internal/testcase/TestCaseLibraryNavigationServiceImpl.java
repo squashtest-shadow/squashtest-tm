@@ -688,6 +688,7 @@ TestCaseLibraryNavigationService {
 	}
 
 
+	@SuppressWarnings("unchecked")
 	private Collection<Long> filterTcIdsListsByMilestone(
 			Collection<Long> tcIds, Milestone activeMilestone) {
 

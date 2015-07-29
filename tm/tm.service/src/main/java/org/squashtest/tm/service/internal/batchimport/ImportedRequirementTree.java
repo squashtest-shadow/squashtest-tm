@@ -22,7 +22,9 @@ package org.squashtest.tm.service.internal.batchimport;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -152,12 +154,17 @@ class ImportedRequirementTree extends LibraryGraph<RequirementTarget, ImportedRe
 		return (req != null && req.getStatus().getStatus() != Existence.NOT_EXISTS);
 	}
 	
+	public boolean targetAlreadyLoaded(RequirementTarget target){
+		Node req = getNode(target);
+		return req != null;
+	}
+	
 	public boolean targetAlreadyLoaded(RequirementVersionTarget target){
 		Node req = getNode(target.getRequirement());
-		if (req==null||req.versionAlreadyLoaded(target.getVersion())) {
+		if (req==null) {
 			return false;//If requirement isn't loaded, the requirement version can't be loaded 
 		}
-		return true;
+		return req.versionAlreadyLoaded(target.getVersion());
 	}
 
 
@@ -174,12 +181,7 @@ class ImportedRequirementTree extends LibraryGraph<RequirementTarget, ImportedRe
 
 	public TargetStatus getStatus(RequirementVersionTarget target){
 		Node requirement = getNode(target.getRequirement());
-		if (requirement != null && requirement.versionAlreadyLoaded(target.getVersion())){
-			return requirement.getVersionStatus(target.getVersion());
-		}
-		else{
-			return TargetStatus.NOT_EXISTS;//Maybe make a NOT_LOADED STATUS or throw an exception ?
-		}
+		return requirement.getVersionStatus(target.getVersion());
 	}
 
 
@@ -259,7 +261,6 @@ class ImportedRequirementTree extends LibraryGraph<RequirementTarget, ImportedRe
 				createdNodes.add(parent);
 				lastCreated = parent;
 			}
-
 		}
 	}
 
@@ -289,30 +290,71 @@ class ImportedRequirementTree extends LibraryGraph<RequirementTarget, ImportedRe
 		if (req!=null) {
 			req.setNotExists(target.getVersion());
 		}
-		else {
-			throw new IllegalStateException("The RequirementVersionTarget MUST have a RequirementTarget in the requirement tree");
+	}
+	
+
+	public Long getNodeId(RequirementTarget requirement) {
+		Node reqNode = getNode(requirement);
+		if (reqNode!=null && reqNode.getStatus().getStatus() == Existence.EXISTS) {
+			return reqNode.getStatus().getId();
+		}
+		return null;
+	}
+	
+	public void bindMilestone(RequirementVersionTarget target, String milestone) {
+		Node req = getNode(target.getRequirement());
+		req.bindMilestoneToVersion(target.getVersion(), milestone);
+	}
+	
+	public void bindMilestone(RequirementVersionTarget target,
+			List<String> milestones) {
+		for (String milestone : milestones) {
+			bindMilestone(target, milestone);
 		}
 	}
+	
+	public boolean isMilestoneUsedByOneVersion(RequirementVersionTarget target, String milestone){
+		Node req = getNode(target.getRequirement());
+		return req.isMilestoneUsedByOneVersion(milestone);
+	}
+	
+	public boolean isMilestoneLocked(RequirementVersionTarget target, String milestone){
+		Node req = getNode(target.getRequirement());
+		return req.isVersionMilestoneLocked(target.getVersion(),milestone);
+	}
+	
+	public void milestoneLock(RequirementVersionTarget target){
+		Node req = getNode(target.getRequirement());
+		req.setVersionMilestoneLocked(target.getVersion());
+	}
+	
 
-
+	public boolean isRequirementFolder(RequirementVersionTarget target) {
+		Node req = getNode(target.getRequirement());
+		if (req!=null) {
+			return req.isRequirementFolder() && req.getStatus().getStatus()!=Existence.NOT_EXISTS;
+		}
+		return false;
+	}
 
 	// ***************** the class of the node ****************************
 
-	static class Node extends GraphNode<RequirementTarget, Node>{
+	public static class Node extends GraphNode<RequirementTarget, Node>{
 
 		private TargetStatus status;
 		private boolean isRequirement = true;
 		private boolean virtual = false;
-		private List<TargetStatus> versions = new ArrayList<>();
-		private SortedMap<Integer,TargetStatus> requirementVersions = new TreeMap<Integer, TargetStatus>();
+		private SortedMap<Integer,RequirementVersionModel> requirementVersions = new TreeMap<Integer, RequirementVersionModel>();
+		private Set<String> milestonesInVersion = new HashSet<String>();
 		
 		public Node(RequirementTarget target, TargetStatus status) {
 			super(target);
 			this.status = status;
 		}
 
+		
 		public void setNotExists(Integer version) {
-			requirementVersions.put(version,new TargetStatus(Existence.NOT_EXISTS));
+			requirementVersions.put(version,new RequirementVersionModel(TargetStatus.NOT_EXISTS));
 		}
 
 		public Node(RequirementTarget target, TargetStatus status, boolean isRequirement, boolean virtual) {
@@ -324,6 +366,10 @@ class ImportedRequirementTree extends LibraryGraph<RequirementTarget, ImportedRe
 
 		boolean isRequirement(){
 			return isRequirement;
+		}
+		
+		public boolean isRequirementFolder() {
+			return !isRequirement;
 		}
 
 		void setRequirement(boolean isReq){
@@ -355,9 +401,11 @@ class ImportedRequirementTree extends LibraryGraph<RequirementTarget, ImportedRe
 			return requirementVersions.containsKey(versionNo);
 		}
 
-		TargetStatus getVersionStatus(int versionNo){
-			TargetStatus targetStatus = requirementVersions.get(new Integer(versionNo));
-			return targetStatus;
+		TargetStatus getVersionStatus(Integer versionNo){
+			if (versionAlreadyLoaded(versionNo)) {
+				return requirementVersions.get(versionNo).getStatus();
+			}
+			return null;//NPE is better than a false information from tree
 		}
 
 //		boolean hasVersion(int versionNo){
@@ -371,7 +419,28 @@ class ImportedRequirementTree extends LibraryGraph<RequirementTarget, ImportedRe
 //		}
 
 		void addVersion(Integer noVersion, TargetStatus status){
-			requirementVersions.put(noVersion, status);
+			requirementVersions.put(noVersion, new RequirementVersionModel(status));
+		}
+		
+		boolean isMilestoneUsedByOneVersion(String milestone){
+			return milestonesInVersion.contains(milestone);
+		}
+		
+		boolean isVersionMilestoneLocked(Integer noVersion, String milestone){
+			return requirementVersions.get(noVersion).isMilestoneLocked();
+		}
+		
+		void bindMilestoneToVersion(Integer noVersion, String milestone){
+			if (!isMilestoneUsedByOneVersion(milestone)) {
+				RequirementVersionModel rvModel = requirementVersions.get(noVersion);
+				rvModel.addMilestone(milestone);
+				milestonesInVersion.add(milestone);
+			}
+		}
+		
+		public void setVersionMilestoneLocked(Integer noVersion) {
+			RequirementVersionModel rvModel = requirementVersions.get(noVersion);
+			rvModel.setMilestoneLocked(true);
 		}
 
 		void updateAsRequirement(RequirementTarget target, TargetStatus status){
@@ -387,6 +456,14 @@ class ImportedRequirementTree extends LibraryGraph<RequirementTarget, ImportedRe
 		}
 
 	}
+
+
+
+
+	
+
+
+
 
 	
 }

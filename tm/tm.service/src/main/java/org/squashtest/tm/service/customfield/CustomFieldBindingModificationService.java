@@ -28,7 +28,6 @@ import org.squashtest.tm.domain.customfield.CustomFieldBinding;
 import org.squashtest.tm.domain.customfield.RenderingLocation;
 import org.squashtest.tm.domain.project.GenericProject;
 import org.squashtest.tm.domain.project.Project;
-import org.squashtest.tm.domain.project.ProjectTemplate;
 
 /**
  * An interface for services around {@link CustomField}. The user calling the following methods must have a role 'admin'

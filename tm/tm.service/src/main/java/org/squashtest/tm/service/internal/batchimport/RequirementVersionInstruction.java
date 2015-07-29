@@ -29,7 +29,7 @@ import org.squashtest.tm.domain.requirement.RequirementVersion;
 
 public class RequirementVersionInstruction extends Instruction<RequirementVersionTarget> implements CustomFieldHolder {
 
-	private final RequirementVersion requirementVersion;
+	private RequirementVersion requirementVersion;
 	private final Map<String, String> customFields = new HashMap<>();
 	private final String[] milestones = {};
 
@@ -65,6 +65,10 @@ public class RequirementVersionInstruction extends Instruction<RequirementVersio
 		return requirementVersion;
 	}
 
+	public void setRequirementVersion(RequirementVersion requirementVersion) {
+		this.requirementVersion = requirementVersion;
+	}
+	
 	public Map<String, String> getCustomFields() {
 		return customFields;
 	}
@@ -72,6 +76,5 @@ public class RequirementVersionInstruction extends Instruction<RequirementVersio
 	public List<String> getMilestones() {
 		return Arrays.asList(milestones);
 	}
-
-
+	
 }

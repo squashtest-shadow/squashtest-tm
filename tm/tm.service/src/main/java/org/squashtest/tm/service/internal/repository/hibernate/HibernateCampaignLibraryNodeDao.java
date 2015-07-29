@@ -49,4 +49,14 @@ public class HibernateCampaignLibraryNodeDao extends HibernateEntityDao<Campaign
 		return query.list();
 	}
 
+	@Override
+	public List<Long> findNodeIdsByPath(List<String> paths) {
+		throw new RuntimeException("Pleeeaaaase implements me !!");
+	}
+
+	@Override
+	public Long findNodeIdByPath(String path) {
+		throw new RuntimeException("Pleeeaaaase implements me !!");
+	}
+
 }

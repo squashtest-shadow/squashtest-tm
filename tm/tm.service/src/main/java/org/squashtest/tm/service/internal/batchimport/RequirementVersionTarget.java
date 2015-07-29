@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.service.internal.batchimport;
 
+import org.squashtest.tm.domain.requirement.RequirementStatus;
 import org.squashtest.tm.service.importer.EntityType;
 import org.squashtest.tm.service.importer.Target;
 
@@ -28,6 +29,10 @@ public class RequirementVersionTarget extends Target {
 	private RequirementTarget requirement;
 
 	private Integer version;
+	
+	private String unconsistentName;
+	
+	private RequirementStatus importedRequirementStatus = RequirementStatus.WORK_IN_PROGRESS;
 	
 	public RequirementVersionTarget(RequirementTarget requirement, Integer version) {
 		super();
@@ -73,6 +78,27 @@ public class RequirementVersionTarget extends Target {
 		return requirement;
 	}
 
+	public String getUnconsistentName() {
+		return unconsistentName;
+	}
+
+
+	public void setUnconsistentName(String unconsistentName) {
+		this.unconsistentName = unconsistentName;
+	}
+
+
+	public RequirementStatus getImportedRequirementStatus() {
+		return importedRequirementStatus;
+	}
+
+
+	public void setImportedRequirementStatus(
+			RequirementStatus importedRequirementStatus) {
+		this.importedRequirementStatus = importedRequirementStatus;
+	}
+
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -111,9 +137,5 @@ public class RequirementVersionTarget extends Target {
 		}
 		return true;
 	}
-
-
-
-
 
 }

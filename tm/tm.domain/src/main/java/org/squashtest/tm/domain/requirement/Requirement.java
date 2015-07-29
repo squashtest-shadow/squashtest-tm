@@ -27,11 +27,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.SortedMap;
 import java.util.TreeMap;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
-import javax.persistence.EntityNotFoundException;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.OneToMany;
@@ -73,7 +73,6 @@ import org.squashtest.tm.exception.requirement.CopyPasteObsoleteException;
 @Indexed
 @PrimaryKeyJoinColumn(name = "RLN_ID")
 public class Requirement extends RequirementLibraryNode<RequirementVersion> implements NodeContainer<Requirement> {
-	private static final Logger LOGGER = LoggerFactory.getLogger(Requirement.class);
 
 	/**
 	 * The resource of this requirement is the latest version of the requirement.
@@ -356,30 +355,32 @@ public class Requirement extends RequirementLibraryNode<RequirementVersion> impl
 	}
 
 	/**
-	 * 
 	 * @return the last non obsolete requirement version <br>
 	 *         or null if all versions are obsolete
 	 */
 	public RequirementVersion findLastNonObsoleteVersion() {
+		
 		for (RequirementVersion version : this.versions) {
 			if (!version.getStatus().equals(OBSOLETE)) {
 				return version;
 			}
 		}
+		
 		return null;
 	}
 
+	/**
+	 * Modified for [Feat 5085] as we can now have non successive RequirementVersion number
+	 * @param versionNumber
+	 * @return
+	 */
 	public RequirementVersion findRequirementVersion(int versionNumber) {
-		int versionIndexInAscVersionList = versionNumber - 1;
-		int indexOflastVersionInList = versions.size() - 1;
-		int versionIndexInDescVersionList = indexOflastVersionInList - versionIndexInAscVersionList;
-		try {
-			return versions.get(versionIndexInDescVersionList);
-		} catch (IndexOutOfBoundsException e) {
-			LOGGER.error(e.getMessage(), e);
-			throw new EntityNotFoundException("Version #" + versionNumber + " of Requirement #" + this.getId()
-					+ " do not exist");	// NOSONAR we cannot pass in the original exception
+		for (RequirementVersion requirementVersion : versions) {
+			if (requirementVersion.getVersionNumber()==versionNumber) {
+				return requirementVersion;
+			}
 		}
+		return null;
 	}
 
 	// ****************************** implementation of NodeContainer ************************************
@@ -485,4 +486,42 @@ public class Requirement extends RequirementLibraryNode<RequirementVersion> impl
 		}
 		return false;	
 	}
+	
+	/**
+	 * Add a requirement version which is not a copy of current version.
+	 * Used by import [Feat 5085] because we need to create non successive RequirementVersion
+	 * @param requirementVersion
+	 */
+	public void addExistingRequirementVersion (RequirementVersion requirementVersion){
+		Integer newVersionNumber = requirementVersion.getVersionNumber();
+		if (findRequirementVersion(newVersionNumber)==null) {
+			versions.add(0,requirementVersion);
+			requirementVersion.setRequirement(this);
+			//checking if the imported RequirementVersion has a versionNumber superior to the current version number
+			if (newVersionNumber > resource.getVersionNumber()) {
+				resource = requirementVersion;
+			}
+		}
+		else {
+			throw new RuntimeException("RequirementVersion with version number " + newVersionNumber + " already exist in this Requirement, id : " + getId());
+		}
+	}
+	
+	/**
+	 * @return the last non obsolete requirement version after an import [Feat 5085]<br>
+	 *         or null if all versions are obsolete
+	 */
+	public RequirementVersion findLastNonObsoleteVersionAfterImport() {
+		SortedMap<Integer, RequirementVersion> sortedVersions = new TreeMap<Integer, RequirementVersion>();
+		
+		for (RequirementVersion version : this.versions) {
+			if (!version.getStatus().equals(OBSOLETE)) {
+				sortedVersions.put(version.getVersionNumber(), version);
+			}
+		}
+		
+		return (sortedVersions.size() == 0) ? null : sortedVersions.get(sortedVersions.lastKey());
+	}
+	
+	
 }

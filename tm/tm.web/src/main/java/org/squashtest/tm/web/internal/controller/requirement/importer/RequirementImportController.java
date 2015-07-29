@@ -96,8 +96,8 @@ public class RequirementImportController {
 		try {
 			xls = importHelper.multipartToImportFile(uploadedFile,"requirement-import-", ".xls");
 			ImportLog summary = callback.execute(xls); // TODO parser may throw ex we should handle
-			summary.recompute(); // TODO why is it here ? shouldnt it be in service ?
-			generateImportLog(request, summary); // TODO
+			summary.recompute(); // why is it here ? shouldnt it be in service ?
+			generateImportLog(request, summary);
 			mav.addObject("summary", summary); // TODO
 
 		} catch (IOException e) {

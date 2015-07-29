@@ -298,7 +298,7 @@ public class RequirementVersion extends Resource implements BoundEntity, Milesto
 		return versionNumber;
 	}
 
-	protected void setVersionNumber(int versionNumber) {
+	public void setVersionNumber(int versionNumber) {
 		this.versionNumber = versionNumber;
 	}
 

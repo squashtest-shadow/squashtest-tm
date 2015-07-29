@@ -50,7 +50,7 @@ public interface CustomRequirementVersionManagerService {
 	 * @param requirementId
 	 */
 	void createNewVersion(long requirementId);
-
+	
 	/**
 	 * Increase the current version of the given requirement and associates the requirement to the given milestones. If other versions of the same requirements
 	 * were bound to those milestones, they won't be anymore.
@@ -94,6 +94,9 @@ public interface CustomRequirementVersionManagerService {
 	 */
 	@Transactional(readOnly=true)
 	List<RequirementVersion> findAllByRequirement(long requirementId);
+	
+	@Transactional(readOnly=true)
+	Long findReqVersionIdByRequirementAndVersionNumber(long requirementId, Integer versionNumber);
 
 	/*
 	 * 

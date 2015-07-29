@@ -109,4 +109,15 @@ public class MilestoneImportHelper {
 	public List<Milestone> findBindable(Collection<String> names) {
 		return milestoneFinder.findAllByNamesAndStatus(names, MilestoneStatus.IN_PROGRESS);
 	}
+	
+	/**
+	 * @param milestones
+	 * @return
+	 */
+	public List<Milestone> findInProgressAndFinished(Collection<String> names) {
+		List<Milestone> milestones = new ArrayList<Milestone>();
+		milestones.addAll(milestoneFinder.findAllByNamesAndStatus(names, MilestoneStatus.IN_PROGRESS));
+		milestones.addAll(milestoneFinder.findAllByNamesAndStatus(names, MilestoneStatus.FINISHED));
+		return milestones;
+	}
 }

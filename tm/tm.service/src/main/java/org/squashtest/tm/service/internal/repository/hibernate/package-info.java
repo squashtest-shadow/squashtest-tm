@@ -515,6 +515,7 @@
 	@NamedQuery(name = "requirementVersion.findLatestRequirementVersion", query = "select version from Requirement req join req.resource version where req.id = :requirementId"),
 	@NamedQuery(name = "requirementVersion.findVersionByRequirementAndMilestone", query = "select version from Requirement req join req.versions version join version.milestones milestone where req.id = :requirementId and milestone.id = :milestoneId"),
 	@NamedQuery(name = "RequirementVersion.findAllWithMilestones", query = "from RequirementVersion rv where rv.milestones is empty"),
+	@NamedQuery(name = "RequirementVersion.findByRequirementIdAndVersionNumber", query = "from RequirementVersion rv where rv.requirement.id=:requirementId and rv.versionNumber=:versionNumber"),
 
 	/*
 	 *  The following query uses pretty long aliases. They MUST match the
@@ -725,6 +726,13 @@
 	+ "where clos.ancestorId = tcln.id "
 	+ "group by  clos.descendantId, p.name "
 	+ "having concat('/', p.name, '/', group_concat(tcln.name, 'order by', clos.depth, 'desc', '/')) in :paths"),
+	
+	@NamedQuery(name = "RequirementPathEdge.findNodeIdsByPath", query = "select distinct  concat('/', p.name, '/', group_concat(rln.resource.name, 'order by', clos.depth, 'desc', '/')) as cp, clos.descendantId   "
+			+ "from RequirementPathEdge clos, RequirementLibraryNode rln "
+			+ "join rln.project p "
+			+ "where clos.ancestorId = rln.id "
+			+ "group by  clos.descendantId, p.name "
+			+ "having concat('/', p.name, '/', group_concat(rln.resource.name, 'order by', clos.depth, 'desc', '/')) in :paths"),
 
 	//Milestones
 	@NamedQuery(name = "milestone.count", query = "select count(milestone) from Milestone milestone"),
