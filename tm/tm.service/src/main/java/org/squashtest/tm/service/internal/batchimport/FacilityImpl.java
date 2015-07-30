@@ -75,7 +75,6 @@ import org.squashtest.tm.service.internal.repository.CustomFieldDao;
 import org.squashtest.tm.service.internal.repository.DatasetDao;
 import org.squashtest.tm.service.internal.repository.DatasetParamValueDao;
 import org.squashtest.tm.service.internal.repository.ParameterDao;
-import org.squashtest.tm.service.milestone.MilestoneManagerService;
 import org.squashtest.tm.service.milestone.MilestoneMembershipManager;
 import org.squashtest.tm.service.requirement.RequirementLibraryFinderService;
 import org.squashtest.tm.service.requirement.RequirementLibraryNavigationService;
@@ -153,9 +152,6 @@ public class FacilityImpl implements Facility {
 	@Inject
 	private MilestoneMembershipManager milestoneService;
 	
-	@Inject
-	private MilestoneManagerService milestoneFinder;
-
 	private FacilityImplHelper helper = new FacilityImplHelper();
 
 	private Map<String, CustomFieldInfos> cufInfosCache = new HashMap<String, CustomFieldInfos>();
@@ -621,22 +617,6 @@ public class FacilityImpl implements Facility {
 		return train;
 	}
 	
-
-	/**
-	 * at his stage of process we known that the milestones are legal
-	 * @param target
-	 * @param reqVersion
-	 * @param milestoneNames 
-	 */
-	private void bindValidMilestones(RequirementVersionTarget target,
-			RequirementVersion reqVersion, List<String> milestoneNames) {
-		for (String milestoneName : milestoneNames) {
-			Milestone milestone = milestoneFinder.findByName(milestoneName);
-			reqVersion.bindMilestone(milestone);
-		}
-	}
-
-
 	/**
 	 * 1 . First create the requirement if not exist in database
 			1.1 - Requirement is root (ie under a {@link RequirementLibrary})
@@ -776,10 +756,13 @@ public class FacilityImpl implements Facility {
 			helper.fillNullWithDefaults(reqVersion);
 			helper.truncate(reqVersion, (Map<String, String>) cufValues);
 			fixCategory(target,reqVersion);
-			RequirementVersion newVersion = doUpdateRequirementVersion(instruction);
+			RequirementVersion newVersion = doUpdateRequirementVersion(instruction,cufValues);
 			
 			//update the instruction, needed for postProcess.
 			instruction.setRequirementVersion(newVersion);
+			
+			//update model
+			validator.getModel().bindMilestonesToRequirementVersion(target,instruction.getMilestones());
 			
 			LOGGER.debug(EXCEL_ERR_PREFIX + "Updated Requirement Version \t'" + target + "'");
 
@@ -793,7 +776,7 @@ public class FacilityImpl implements Facility {
 	
 
 	private RequirementVersion doUpdateRequirementVersion(
-			RequirementVersionInstruction instruction) {
+			RequirementVersionInstruction instruction, Map<String, String> cufValues) {
 		
 		RequirementVersionTarget target = instruction.getTarget();
 		RequirementVersion reqVersion = instruction.getRequirementVersion();
@@ -805,8 +788,9 @@ public class FacilityImpl implements Facility {
 		
 		doUpdateRequirementCoreAttributes(reqVersion, orig);
 		doUpdateRequirementCategory(reqVersion, orig);
-		
-		//we return the persisted RequirementVersion for postprocess
+		bindRequirementVersionToMilestones(orig, boundMilestonesIds(instruction));
+		doUpdateCustomFields(cufValues,orig);
+		//we return the persisted RequirementVersion for post process
 		return orig;
 	}
 

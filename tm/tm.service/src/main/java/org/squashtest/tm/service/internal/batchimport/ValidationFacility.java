@@ -981,8 +981,10 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 
 	private void checkExistingRequirementVersionStatus(
 			RequirementVersionTarget target, LogTrain logs) {
+
 		
 		if (!logs.hasCriticalErrors()) {
+			
 			Requirement requirement = reqLibNavigationService.findRequirement(target.getRequirement().getId());
 			RequirementVersion persistedReqVersion = requirement.findRequirementVersion(target.getVersion());
 			RequirementStatus persistedStatus = persistedReqVersion.getStatus();
@@ -1005,16 +1007,14 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 
 		// 1 - basic verifications
 		logs = entityValidator.updateRequirementChecks(target, reqVersion);
-		
 		checkImportedRequirementVersionStatus(target, reqVersion);
+		
 		
 		logs.append(cufValidator.checkUpdateCustomFields(target, (Map<String, String>) cufValues, 
 				model.getRequirementVersionCufs(target)));
 		
 		// 2 - Check if target requirement version exists in database (targetStatus == EXISTS) and id isn't null
 		checkRequirementVersionExists(target, logs);
-		checkExistingRequirementVersionStatus(target,logs);
-		
 		// if something is wrong at this stage, either the requirement or the version are unknown or locked,
 		// return now to avoid nasty exception in next checks
 		if (logs.hasCriticalErrors()) {
@@ -1022,6 +1022,7 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 			return logs;
 		}
 		
+		checkExistingRequirementVersionStatus(target,logs);
 		
 		LogEntry hasntPermission = checkPermissionOnProject(PERM_WRITE, target, target);
 		if (hasntPermission != null) {
@@ -1063,6 +1064,10 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 					withMessage(Messages.ERROR_REQUIREMENT_VERSION_NOT_EXISTS).build());
 		}
 		
+		else {
+			//setting the id also in the instruction target, more convenient for updating operations
+			target.getRequirement().setId(reqStatus.getId());
+		}
 	}
 
 	private void checkFolderConflict(RequirementVersionInstruction instr, LogTrain logs) {

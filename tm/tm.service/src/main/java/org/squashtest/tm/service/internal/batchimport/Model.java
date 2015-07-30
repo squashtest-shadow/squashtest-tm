@@ -1177,7 +1177,10 @@ public class Model {
 		return requirementTree.isRequirementFolder(target);
 	}
 
-
+	public void bindMilestonesToRequirementVersion(
+			RequirementVersionTarget target, List<String> milestones) {
+		requirementTree.bindMilestone(target, milestones);
+	}
 
 	// *************************** private methods
 	// *************************************
@@ -1480,6 +1483,8 @@ public class Model {
 		}
 
 	}
+
+	
 
 	
 	

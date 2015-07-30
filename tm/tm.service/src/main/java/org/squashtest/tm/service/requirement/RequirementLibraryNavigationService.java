@@ -130,9 +130,17 @@ RequirementLibraryFinderService {
 	ImportLog importExcelRequirement(File xls);
 	
 	/**
-	 * Create a hierarchy of requirement library node folder
+	 * Create a hierarchy of requirement library node.
+	 * The type of node depends of the first existing node in hierarchy :
+	 * <code>
+	 * <ul>
+	 * <li>If no node exist before, all created node will be {@link RequirementFolder}</li>
+	 * <li>If the last existing node on path is a {@link RequirementFolder}, all created node will be {@link RequirementFolder} </li>
+	 * <li>If the last existing node on path is a {@link Requirement}, all created node will be {@link Requirement} </li>
+	 * </ul>
+	 * </code>
 	 * @param folderpath the complete path
-	 * @return
+	 * @return the ID of the created node. Take care that it can be an ID corresponding to a {@link RequirementFolder} or a {@link Requirement}. See above...
 	 */
 	public Long mkdirs(String folderpath);
 	
