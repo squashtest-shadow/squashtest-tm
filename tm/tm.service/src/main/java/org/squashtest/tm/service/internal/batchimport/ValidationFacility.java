@@ -40,6 +40,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.core.foundation.lang.PathUtils;
 import org.squashtest.tm.domain.audit.AuditableMixin;
+import org.squashtest.tm.domain.requirement.Requirement;
 import org.squashtest.tm.domain.requirement.RequirementStatus;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.testcase.ActionTestStep;
@@ -58,6 +59,7 @@ import org.squashtest.tm.service.internal.batchimport.Model.Existence;
 import org.squashtest.tm.service.internal.batchimport.Model.StepType;
 import org.squashtest.tm.service.internal.batchimport.Model.TargetStatus;
 import org.squashtest.tm.service.internal.repository.UserDao;
+import org.squashtest.tm.service.requirement.RequirementLibraryNavigationService;
 import org.squashtest.tm.service.security.Authorizations;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.user.UserAccountService;
@@ -251,6 +253,9 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 
 	@Inject
 	private MilestoneImportHelper milestoneHelper;
+	
+	@Inject
+	private RequirementLibraryNavigationService reqLibNavigationService;
 
 	private EntityValidator entityValidator = new EntityValidator(this);
 	private CustomFieldValidator cufValidator = new CustomFieldValidator();
@@ -911,7 +916,7 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 		
 		//   - Check status and put the requirement version status to WIP if needed
 		//   - The required status will be affected to requirement version in post process
-		checkRequirementVersionStatus(target, reqVersion);
+		checkImportedRequirementVersionStatus(target, reqVersion);
 		
 		// 2 - custom fields (create)
 		logs.append(cufValidator.checkCreateCustomFields(target, (Map<String, String>) cufValues, 
@@ -950,10 +955,21 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 				model.addRequirement(reqTarget, new TargetStatus(TO_BE_CREATED));
 			}
 		}
+		else {
+			//this instruction smell bad..
+			instr.fatalError();
+		}
 		return logs;
 	}
 	
-	private void checkRequirementVersionStatus(RequirementVersionTarget target,
+	/**
+	 * Set the requirementVersionStatus to {@link RequirementStatus#WORK_IN_PROGRESS} to avoid
+	 * illegal modification exception on {@link RequirementVersion} with other status
+	 * and save the modified {@link RequirementStatus} in target to reassign it in postprocess
+	 * @param target
+	 * @param reqVersion
+	 */
+	private void checkImportedRequirementVersionStatus(RequirementVersionTarget target,
 			RequirementVersion reqVersion) {
 		RequirementStatus requirementVersionStatus = reqVersion.getStatus();
 		if (requirementVersionStatus!=null && requirementVersionStatus!=RequirementStatus.WORK_IN_PROGRESS) {
@@ -961,6 +977,21 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 			reqVersion.setStatus(RequirementStatus.WORK_IN_PROGRESS);
 		}
 		
+	}
+
+	private void checkExistingRequirementVersionStatus(
+			RequirementVersionTarget target, LogTrain logs) {
+		
+		if (!logs.hasCriticalErrors()) {
+			Requirement requirement = reqLibNavigationService.findRequirement(target.getRequirement().getId());
+			RequirementVersion persistedReqVersion = requirement.findRequirementVersion(target.getVersion());
+			RequirementStatus persistedStatus = persistedReqVersion.getStatus();
+			
+			if (!persistedStatus.isRequirementModifiable()) {
+				logs.addEntry(LogEntry.failure().forTarget(target).
+						withMessage(Messages.ERROR_REQUIREMENT_VERSION_STATUS).build());
+			}
+		}
 	}
 
 	@Override
@@ -975,11 +1006,22 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 		// 1 - basic verifications
 		logs = entityValidator.updateRequirementChecks(target, reqVersion);
 		
+		checkImportedRequirementVersionStatus(target, reqVersion);
+		
 		logs.append(cufValidator.checkUpdateCustomFields(target, (Map<String, String>) cufValues, 
 				model.getRequirementVersionCufs(target)));
 		
 		// 2 - Check if target requirement version exists in database (targetStatus == EXISTS) and id isn't null
 		checkRequirementVersionExists(target, logs);
+		checkExistingRequirementVersionStatus(target,logs);
+		
+		// if something is wrong at this stage, either the requirement or the version are unknown or locked,
+		// return now to avoid nasty exception in next checks
+		if (logs.hasCriticalErrors()) {
+			instr.fatalError();
+			return logs;
+		}
+		
 		
 		LogEntry hasntPermission = checkPermissionOnProject(PERM_WRITE, target, target);
 		if (hasntPermission != null) {
@@ -994,18 +1036,33 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 		
 		fixMetadatas(reqTarget, (AuditableMixin) reqVersion, ImportMode.UPDATE);
 		
+		if (logs.hasCriticalErrors()) {
+			instr.fatalError();
+		}
+		
 		return logs;
 	}
+
 
 
 	private void checkRequirementVersionExists(RequirementVersionTarget target,
 			LogTrain logs) {
 		
 		TargetStatus status = model.getStatus(target);
-		if (status.getStatus()!=Existence.EXISTS || status.getId()==null) {
+		TargetStatus reqStatus = model.getStatus(target.getRequirement());
+		
+		//checking requirement and loading his id
+		if (reqStatus.getStatus()!=Existence.EXISTS || reqStatus.getId()==null) {
 			logs.addEntry(LogEntry.failure().forTarget(target).
 					withMessage(Messages.ERROR_REQUIREMENT_VERSION_NOT_EXISTS).build());
 		}
+		
+		//checking requirement version and loading his id
+		else if (status.getStatus()!=Existence.EXISTS || status.getId()==null) {
+			logs.addEntry(LogEntry.failure().forTarget(target).
+					withMessage(Messages.ERROR_REQUIREMENT_VERSION_NOT_EXISTS).build());
+		}
+		
 	}
 
 	private void checkFolderConflict(RequirementVersionInstruction instr, LogTrain logs) {

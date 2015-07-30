@@ -843,6 +843,7 @@ public class Model {
 		//New requirement will be created with good status by adding the requirement version
 		if (reqId!=null) {
 			requirementTree.addOrUpdateNode(target, new TargetStatus(Existence.EXISTS,reqId));
+			target.setId(reqId);
 		}
 		else {
 			requirementTree.addOrUpdateNode(target, new TargetStatus(Existence.NOT_EXISTS));

@@ -65,12 +65,21 @@ public interface MilestoneManagerService extends CustomMilestoneManager {
 
 	/**
 	 * Given a collection of milestone names, returns the names of
-	 * the milestones which are bindable (as per import spec, ie status == IN-PROGRESS)
+	 * the milestones which are in progress
 	 *
 	 * @param names
 	 * @return
 	 */
 	List<String> findInProgressExistingNames(@QueryParam("names") Collection<String> names);
+	
+	/**
+	 * Given a collection of milestone names, returns the names of
+	 * the milestones which are bindable
+	 *
+	 * @param names
+	 * @return
+	 */
+	List<String> findBindableExistingNames(@QueryParam("names") Collection<String> names, @QueryParam("status") List<MilestoneStatus> status);
 
 	/**
 	 * @param names

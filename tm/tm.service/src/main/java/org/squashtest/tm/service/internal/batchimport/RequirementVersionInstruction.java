@@ -32,6 +32,14 @@ public class RequirementVersionInstruction extends Instruction<RequirementVersio
 	private RequirementVersion requirementVersion;
 	private final Map<String, String> customFields = new HashMap<>();
 	private final String[] milestones = {};
+	
+	/**
+	 * Used to avoid exception during postprocess. If something went wrong in import process, 
+	 * postprocess on this instruction should not be performed
+	 */
+	private boolean fatalError = false;
+
+	
 
 	public RequirementVersionInstruction(RequirementVersionTarget target, RequirementVersion requirementVersion) {
 		super(target);
@@ -75,6 +83,14 @@ public class RequirementVersionInstruction extends Instruction<RequirementVersio
 
 	public List<String> getMilestones() {
 		return Arrays.asList(milestones);
+	}
+	
+	public boolean isFatalError() {
+		return fatalError;
+	}
+
+	public void fatalError() {
+		this.fatalError = true;
 	}
 	
 }

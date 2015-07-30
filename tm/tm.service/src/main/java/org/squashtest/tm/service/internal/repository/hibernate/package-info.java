@@ -770,6 +770,7 @@
 	@NamedQuery(name = "Milestone.findExistingNames", query = "select m.label from Milestone m where m.label in (:names)"),
 	@NamedQuery(name = "milestone.findCampaignByMilestones", query="select c from Campaign c join c.milestones m where m.id = :milestoneId"),
 	@NamedQuery(name = "Milestone.findInProgressExistingNames", query = "select m.label from Milestone m where m.label in (:names) and m.status = 'IN_PROGRESS'"),
+	@NamedQuery(name = "Milestone.findBindableExistingNames", query = "select m.label from Milestone m where m.label in (:names) and m.status in (:status)"),
 	@NamedQuery(name = "Milestone.findAllByNamesAndStatus", query = "from Milestone m where m.label in (:names) and m.status = :status"),
 	@NamedQuery(name = "milestone.otherRequirementVersionBindToOneMilestone", query = "select rv from RequirementVersion rv join rv.requirement r join r.versions versions join rv.milestones m where versions.id in (:reqVIds) and rv.id not in (:reqVIds) and m.id in (:milestoneIds)"),
   @NamedQuery(name = "milestone.findProjectMilestones", query="select p.milestones from Project p where p.id = :projectId"),

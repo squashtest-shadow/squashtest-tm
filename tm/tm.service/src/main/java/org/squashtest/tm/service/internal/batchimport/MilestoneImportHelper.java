@@ -94,8 +94,10 @@ public class MilestoneImportHelper {
 		if (names.isEmpty()) {
 			return EMPTY_PARTITION;
 		}
+		
+		List<MilestoneStatus> bindableStatus = MilestoneStatus.getAllStatusAllowingObjectBind();
 
-		List<String> bindable = milestoneFinder.findInProgressExistingNames(names);
+		List<String> bindable = milestoneFinder.findBindableExistingNames(names, bindableStatus);
 		List<String> notBindable = new ArrayList<>(names);
 		notBindable.removeAll(bindable);
 
@@ -107,7 +109,12 @@ public class MilestoneImportHelper {
 	 * @return
 	 */
 	public List<Milestone> findBindable(Collection<String> names) {
-		return milestoneFinder.findAllByNamesAndStatus(names, MilestoneStatus.IN_PROGRESS);
+		List<MilestoneStatus> bindableStatus = MilestoneStatus.getAllStatusAllowingObjectBind();
+		List<Milestone> result = new ArrayList<Milestone>();
+		for (MilestoneStatus milestoneStatus : bindableStatus) {
+			result.addAll( milestoneFinder.findAllByNamesAndStatus(names, milestoneStatus));
+		}
+		return result;
 	}
 	
 	/**

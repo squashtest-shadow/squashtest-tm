@@ -25,6 +25,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -560,6 +561,7 @@ public class FacilityImpl implements Facility {
 		LogTrain train = validator.updateRequirementVersion(instr);
 		if (!train.hasCriticalErrors()) {
 			updateRequirementVersionRoutine(train, instr);
+			postProcessHandler = new UpdateRequirementVersionPostProcessStrategy();
 		}
 		return train;
 	}
@@ -675,15 +677,24 @@ public class FacilityImpl implements Facility {
 		requirementVersion.setVersionNumber(instruction.getTarget().getVersion());
 		LOGGER.debug("ReqImport - Before addinng new version we have " + requirement.getRequirementVersions().size());
 		LOGGER.debug("ReqImport - Before addinng new version we have current version " + requirement.getCurrentVersion());
-		requirementVersionManagerService.createNewVersion(reqId, boundMilestonesIds(instruction));
+		requirementVersionManagerService.createNewVersion(reqId);
 		LOGGER.debug("ReqImport - After addinng new version we have " + requirement.getRequirementVersions().size());
 		LOGGER.debug("ReqImport - After addinng new version we have current version " + requirement.getCurrentVersion());
 		RequirementVersion requirementVersionPersisted = requirement.getCurrentVersion();
 		reqLibNavigationService.initCUFvalues(requirementVersionPersisted, acceptableCufs);
+		bindRequirementVersionToMilestones(requirementVersionPersisted, boundMilestonesIds(instruction));
+		//do the reverse bind milestone -> requirement version as transaction is global to all import process
+		//and 
+		//i.e several requirement version could be linked to the same milestone
 		doUpdateRequirementCoreAttributes(requirementVersion, requirementVersionPersisted);
 		fixVersionNumber(requirement, target.getVersion());
 		return requirement.findRequirementVersion(target.getVersion());
 	}
+
+	
+
+
+
 
 	@SuppressWarnings("unchecked")
 	private RequirementVersion doCreateRequirementAndVersion(
@@ -727,13 +738,24 @@ public class FacilityImpl implements Facility {
 					}
 				}
 				// 1.2 - If no -> makeDir to create the hierarchy
+				// Beware, mkDirOrRequirement will return an id who can be a requirement or a folder, 
+				// so we need to test the return type under this id
 				else{
 					parentId = reqLibNavigationService.mkdirs(parentPath);
-					persistedRequirement = reqLibNavigationService.addRequirementToRequirementFolder
-							(parentId, dto, boundMilestonesIds(instruction));
+					Requirement parentRequirement = reqLibNavigationService.findRequirement(parentId);
+					if (parentRequirement==null) {
+						persistedRequirement = reqLibNavigationService.addRequirementToRequirementFolder
+								(parentId, dto, boundMilestonesIds(instruction));
+					}
+					else {
+						persistedRequirement = reqLibNavigationService.addRequirementToRequirement
+								(parentId, dto, boundMilestonesIds(instruction));
+					}
 				}
 		}
-		
+		//bind milestone for import
+		bindRequirementVersionToMilestones(persistedRequirement.getCurrentVersion(), boundMilestonesIds(instruction));
+
 		//updating attributes that creation process haven't set (Category... )
 		doUpdateRequirementCategory(requirementVersion,persistedRequirement.getCurrentVersion());
 		
@@ -756,13 +778,6 @@ public class FacilityImpl implements Facility {
 			fixCategory(target,reqVersion);
 			RequirementVersion newVersion = doUpdateRequirementVersion(instruction);
 			
-			//update model
-			validator.getModel().addRequirement(target.getRequirement(), 
-					new TargetStatus(Existence.EXISTS, newVersion.getRequirement().getId()));
-
-			validator.getModel().addRequirementVersion
-				(target, new TargetStatus(Existence.EXISTS, newVersion.getId()));
-			
 			//update the instruction, needed for postProcess.
 			instruction.setRequirementVersion(newVersion);
 			
@@ -774,8 +789,6 @@ public class FacilityImpl implements Facility {
 			validator.getModel().setNotExists(target);
 			LOGGER.error(EXCEL_ERR_PREFIX + UNEXPECTED_ERROR_WHILE_IMPORTING + target + " : ", ex);
 		}
-
-		
 	}
 	
 
@@ -784,6 +797,7 @@ public class FacilityImpl implements Facility {
 		
 		RequirementVersionTarget target = instruction.getTarget();
 		RequirementVersion reqVersion = instruction.getRequirementVersion();
+		
 		Requirement req = reqLibNavigationService.
 				findRequirement(target.getRequirement().getId());
 		
@@ -791,7 +805,9 @@ public class FacilityImpl implements Facility {
 		
 		doUpdateRequirementCoreAttributes(reqVersion, orig);
 		doUpdateRequirementCategory(reqVersion, orig);
-		return reqVersion;
+		
+		//we return the persisted RequirementVersion for postprocess
+		return orig;
 	}
 
 	private void doUpdateRequirementCategory(
@@ -830,9 +846,40 @@ public class FacilityImpl implements Facility {
 	private void fixVersionNumber(Requirement requirement, Integer version) {
 		reqLibNavigationService.changeCurrentVersionNumber(requirement, version);
 	}
-
-
 	
+
+	/**
+	 * This method ensure that multiple milestone binding to several {@link RequirementVersion} of
+	 * the same {@link Requirement} is forbidden. The method in service can't prevent this for import as we are
+	 * in a unique transaction for all import lines. So the n-n relationship between milestones and requirementVersion isn't
+	 * fixed until transaction is closed and {@link MilestoneMembershipManager#bindRequirementVersionToMilestones(long, Collection)} 
+	 * will let horrible things appends if this list isn't up to date
+	 */
+	private void bindRequirementVersionToMilestones(RequirementVersion requirementVersionPersisted,
+			List<Long> boundMilestonesIds) {
+		List<RequirementVersion> allVersion = requirementVersionPersisted.getRequirement().getRequirementVersions();
+		Set<Milestone> milestoneBinded = new HashSet<Milestone>();
+		Set<Long> milestoneBindedId = new HashSet<Long>();
+		Set<Long> checkedMilestones = new HashSet<Long>();
+		
+		for (RequirementVersion requirementVersion : allVersion) {
+			milestoneBinded.addAll(requirementVersion.getMilestones());
+		}
+		
+		for (Milestone milestone : milestoneBinded) {
+			milestoneBindedId.add(milestone.getId());
+		}
+		
+		for (Long id : boundMilestonesIds) {
+			if (!milestoneBindedId.contains(id)) {
+				checkedMilestones.add(id);
+			}
+		}
+	
+		requirementVersionManagerService.bindMilestones(requirementVersionPersisted.getId(), checkedMilestones);
+
+	}
+
 
 	// because this time we're not toying around man, this is the real thing
 	private void doCreateTestcase(TestCaseInstruction instr) {
@@ -869,6 +916,8 @@ public class FacilityImpl implements Facility {
 		bindMilestones(instr, testCase);
 
 	}
+	
+	
 
 
 	private void renameIfNeeded(TestCase testCase, Collection<String> siblingNames) {
@@ -1357,36 +1406,52 @@ public class FacilityImpl implements Facility {
 		public void doPostProcess(List<Instruction<?>> instructions) {
 			for (Instruction<?> instruction : instructions) {
 				RequirementVersionInstruction rvi = (RequirementVersionInstruction) instruction;
-				renameRequirementVersion(rvi);
-				changeRequirementVersionStatus(rvi);
+				if (!rvi.isFatalError()) {
+					renameRequirementVersion(rvi);
+					changeRequirementVersionStatus(rvi);
+				}
 			}
 		}
+	}
+	
+	private class UpdateRequirementVersionPostProcessStrategy implements ImportPostProcessHandler {
 
-		private void renameRequirementVersion(RequirementVersionInstruction rvi) {
-			String unconsistentName = rvi.getTarget().getUnconsistentName();
-			if (unconsistentName!=null && !StringUtils.isEmpty(unconsistentName)) {
-				String newName = PathUtils.unescapePathPartSlashes(unconsistentName);
-				requirementVersionManagerService.rename(rvi.getRequirementVersion().getId(), newName);
+		@Override
+		public void doPostProcess(List<Instruction<?>> instructions) {
+			for (Instruction<?> instruction : instructions) {
+				RequirementVersionInstruction rvi = (RequirementVersionInstruction) instruction;
+				if (!rvi.isFatalError()) {
+					renameRequirementVersion(rvi);
+					changeRequirementVersionStatus(rvi);
+				}
 			}
 		}
-
-		private void changeRequirementVersionStatus(
-				RequirementVersionInstruction rvi) {
-			RequirementStatus newstatus = rvi.getTarget().getImportedRequirementStatus();
-			RequirementStatus oldStatus = rvi.getRequirementVersion().getStatus();
-			
-			if (newstatus == null || newstatus.equals(oldStatus)) {
-				return;
-			}
-			
-			//The only forbidden transition is from WORK_IN_PROGRESS to APPROVED, 
-			// so we need to update to UNDER_REVIEW before updating to APPROVED
-			if (newstatus == RequirementStatus.APPROVED && oldStatus == RequirementStatus.WORK_IN_PROGRESS) {
-				requirementVersionManagerService.changeStatus
-					(rvi.getRequirementVersion().getId(), RequirementStatus.UNDER_REVIEW);
-			}
-			
-			requirementVersionManagerService.changeStatus(rvi.getRequirementVersion().getId(), newstatus);
+	}
+	
+	private void renameRequirementVersion(RequirementVersionInstruction rvi) {
+		String unconsistentName = rvi.getTarget().getUnconsistentName();
+		if (unconsistentName!=null && !StringUtils.isEmpty(unconsistentName)) {
+			String newName = PathUtils.unescapePathPartSlashes(unconsistentName);
+			requirementVersionManagerService.rename(rvi.getRequirementVersion().getId(), newName);
 		}
+	}
+	
+	private void changeRequirementVersionStatus(
+			RequirementVersionInstruction rvi) {
+		RequirementStatus newstatus = rvi.getTarget().getImportedRequirementStatus();
+		RequirementStatus oldStatus = rvi.getRequirementVersion().getStatus();
+		
+		if (newstatus == null || newstatus.equals(oldStatus)) {
+			return;
+		}
+		
+		//The only forbidden transition is from WORK_IN_PROGRESS to APPROVED, 
+		// so we need to update to UNDER_REVIEW before updating to APPROVED
+		if (newstatus == RequirementStatus.APPROVED && oldStatus == RequirementStatus.WORK_IN_PROGRESS) {
+			requirementVersionManagerService.changeStatus
+				(rvi.getRequirementVersion().getId(), RequirementStatus.UNDER_REVIEW);
+		}
+		
+		requirementVersionManagerService.changeStatus(rvi.getRequirementVersion().getId(), newstatus);
 	}
 }

@@ -74,6 +74,7 @@ public final class Messages {
 	public static final String ERROR_REQUIREMENT_VERSION_COLLISION = "message.import.log.error.requirement.version.collision";
 	public static final String ERROR_REQUIREMENT_VERSION_INVALID = "message.import.log.error.requirement.version.invalidVersionNumber";
 	public static final String ERROR_REQUIREMENT_VERSION_NOT_EXISTS = "message.import.log.error.requirement.version.notExists";
+	public static final String ERROR_REQUIREMENT_VERSION_STATUS = "message.import.log.error.requirement.version.statusLocked";
 
 	public static final String IMPACT_MAX_SIZE = "message.import.log.impact.truncatedValue";
 	public static final String IMPACT_DEFAULT_VALUE = "message.import.log.impact.useDefaultValue";

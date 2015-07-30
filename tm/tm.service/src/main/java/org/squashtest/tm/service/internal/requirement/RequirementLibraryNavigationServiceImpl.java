@@ -27,6 +27,7 @@ import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -47,6 +48,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ReflectionUtils;
+import org.squashtest.tm.core.dynamicmanager.internal.handler.FindByIdHandler;
 import org.squashtest.tm.core.foundation.lang.PathUtils;
 import org.squashtest.tm.domain.customfield.RawValue;
 import org.squashtest.tm.domain.infolist.InfoListItem;
@@ -652,26 +654,36 @@ RequirementLibraryNavigationService, RequirementLibraryFinderService {
 	public Long mkdirs(String folderpath) {
 		List<String> paths = PathUtils.scanPath(folderpath);
 		String[] splits = PathUtils.splitPath(folderpath);
+		Project project = projectDao.findByName(splits[0]);
+		
 		if (splits.length < 2) {
-			throw new IllegalArgumentException("Folder path for mkdir must contains at least a /projectName/folder");
+			throw new IllegalArgumentException("Folder path for mkdir must contains at least a valid /projectName/folder");
+		}
+		
+		if (project == null) {
+			throw new IllegalArgumentException("Folder path for mkdir must concern an existing project");
 		}
 		
 		List<Long> ids = findNodeIdsByPath(paths);
 		RequirementFolder folderTree = null;
 		
 		int position = ids.indexOf(null);
+		
 		switch (position) {
 			case -1 ://no null value so all node exists, returning ids of the last folder
 				return ids.get(ids.size()-1);
 			case 0 ://no member of the path exists, we must create the hierachy under the Requirement librairy
-				folderTree = makeFolderTree(1, splits);
-				Project project = projectDao.findByName(splits[0]);
+				folderTree = makeFolderTree(project,1, splits);
 				addFolderToLibrary(project.getRequirementLibrary().getId(), folderTree);
 				break;
-			default://Some folder already exists
-				folderTree = makeFolderTree(position + 1, splits);
-				addFolderToFolder(ids.get(position-1), folderTree);
-				break;
+			default://Something already exists... requirement or folder ?
+				Requirement requirement = findRequirement(ids.get(position-1));
+				if (requirement == null) {
+					return createFolderTree(project,position, ids.get(position-1),splits);
+				}
+				else {
+					return createRequirementTree(project,position, ids.get(position-1),splits);
+				}
 		}
 		
 		//now get the last folder on path and return id
@@ -684,7 +696,38 @@ RequirementLibraryNavigationService, RequirementLibraryFinderService {
 		return lastfolder.getId();
 	}
 	
-	private RequirementFolder makeFolderTree(int startIndex,String[] names){
+	private Long createRequirementTree(Project project, int position, Long idBaseRequirement, String[] splits) {
+		Requirement requirementTree = makeRequirementTree(project,position +1, splits);
+		List<Long> emptyIds = Collections.emptyList();
+		addRequirementToRequirement(idBaseRequirement, requirementTree, emptyIds);
+		
+		//now get the last requirement on path and return his id
+		
+		Requirement lastRequirement = requirementTree;
+		
+		while (lastRequirement.hasContent()) {
+			lastRequirement =  lastRequirement.getContent().get(0);
+		}
+
+		return lastRequirement.getId();
+	}
+
+	private Long createFolderTree(Project project, int position, Long idBaseFolder, String[] splits) {
+		RequirementFolder folderTree = makeFolderTree(project,position + 1, splits);
+		addFolderToFolder(idBaseFolder, folderTree);
+		
+		//now get the last folder on path and return his id
+		
+		RequirementFolder lastfolder = folderTree;
+
+		while (lastfolder.hasContent()) {
+			lastfolder = (RequirementFolder) lastfolder.getContent().get(0);
+		}
+
+		return lastfolder.getId();
+	}
+
+	private RequirementFolder makeFolderTree(Project project, int startIndex,String[] names){
 		RequirementFolder baseFolder = null;
 		RequirementFolder childFolder = null;
 		RequirementFolder parentFolder = null;
@@ -693,6 +736,7 @@ RequirementLibraryNavigationService, RequirementLibraryFinderService {
 			childFolder = new RequirementFolder();
 			childFolder.setName(names[i]);
 			childFolder.setDescription("");
+			childFolder.notifyAssociatedWithProject(project);
 			if (baseFolder==null) {//if we have no folder yet, we are creating the base, witch will be also the first parent
 				baseFolder = childFolder;
 			}
@@ -703,6 +747,29 @@ RequirementLibraryNavigationService, RequirementLibraryFinderService {
 		}
 		
 		return baseFolder;
+	}
+	
+	private Requirement makeRequirementTree(Project project, int startIndex,String[] names){
+		Requirement baseRequirement = null;
+		Requirement childRequirement = null;
+		Requirement parentRequirement = null;
+		
+		for (int i = startIndex; i < names.length; i++) {
+			childRequirement = new Requirement(new RequirementVersion());
+			childRequirement.setName(names[i]);
+			childRequirement.setDescription("");
+			childRequirement.setCategory(infoListItemService.findDefaultRequirementCategory(project.getId()));
+			childRequirement.notifyAssociatedWithProject(project);
+			if (baseRequirement==null) {//if we have no folder yet, we are creating the base, witch will be also the first parent
+				baseRequirement = childRequirement;
+			}
+			else {
+				parentRequirement.addContent(childRequirement);
+			}
+			parentRequirement = childRequirement;
+		}
+		
+		return baseRequirement;
 	}
 
 	@Override
