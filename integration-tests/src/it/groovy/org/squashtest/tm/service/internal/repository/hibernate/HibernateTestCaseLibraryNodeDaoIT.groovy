@@ -28,6 +28,7 @@ import org.springframework.transaction.annotation.Transactional
 import org.squashtest.tm.service.DbunitServiceSpecification
 import org.squashtest.tm.service.testcase.TestCaseLibraryNavigationService
 import org.unitils.dbunit.annotation.DataSet
+import spock.lang.Ignore
 
 import spock.unitils.UnitilsSupport
 
@@ -180,6 +181,24 @@ class HibernateTestCaseLibraryNodeDaoIT extends DbunitServiceSpecification {
 		res.size() == 3
 		res[1] == null
 		res.collect{ it?.id } == [-237L,null, -242L]
+	}
+	
+	/**
+	 * Fail probably because insufficient restriction of Cartesian product between TestCasePathEdge and TestCaseLibraryNode
+	 * in named query : 
+	 * @return
+	 */
+	@Ignore
+	@DataSet("HibernateTestCaseLibraryNodeDaoIT.should not find test case by path.xml")
+	def "should not find test case by path"(){
+		given :
+		def path = "/Projet1/TestCase1"
+		
+		when  :
+		def id = service.findNodeIdByPath(path)
+		
+		then :
+		id == null
 	}
 
 }
