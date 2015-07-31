@@ -30,6 +30,7 @@ import org.squashtest.tm.service.internal.repository.hibernate.DbunitDaoSpecific
 import org.squashtest.tm.api.repository.SqlQueryRunner
 import org.unitils.database.util.TransactionMode
 import org.unitils.dbunit.annotation.DataSet
+import spock.lang.Ignore
 
 import spock.lang.Specification
 import spock.unitils.UnitilsSupport
@@ -45,8 +46,10 @@ import spock.unitils.UnitilsSupport
 @TransactionConfiguration(transactionManager = "squashtest.tm.hibernate.TransactionManager", defaultRollback = true)
 @org.unitils.database.annotations.Transactional(TransactionMode.DISABLED)
 @DataSet("SqlQueryRunnerIT.should select all active core users.xml")
+@Ignore
 class SqlQueryRunnerIT extends Specification {
 	@Inject SqlQueryRunner runner
+
 
 	def "should select all active core user logins"() {
 		when:
