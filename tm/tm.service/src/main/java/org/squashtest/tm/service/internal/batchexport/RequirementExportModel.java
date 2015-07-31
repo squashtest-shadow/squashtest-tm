@@ -25,17 +25,31 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.squashtest.tm.core.foundation.lang.PathUtils;
 import org.squashtest.tm.domain.requirement.RequirementCriticality;
 import org.squashtest.tm.domain.requirement.RequirementStatus;
+import org.squashtest.tm.service.internal.batchexport.ExportModel.CoverageModel;
 import org.squashtest.tm.service.internal.batchexport.ExportModel.CustomField;
 
 public class RequirementExportModel {
 	private List<RequirementModel> requirementsModels = new LinkedList<RequirementModel>();
 
+	private List<CoverageModel> coverages = new LinkedList<CoverageModel>();
+
+	public List<CoverageModel> getCoverages() {
+		return coverages;
+	}
+
+
+	public void setCoverages(List<CoverageModel> coverages) {
+		this.coverages = coverages;
+	}
+
+
 	public RequirementExportModel() {
 		super();
 	}
-	
+
 	public List<RequirementModel> getRequirementsModels() {
 		return requirementsModels;
 	}
@@ -48,10 +62,24 @@ public class RequirementExportModel {
 		public static final Comparator<RequirementModel> COMPARATOR = new Comparator<RequirementExportModel.RequirementModel>() {
 			@Override
 			public int compare(RequirementModel o1, RequirementModel o2) {
-				return o1.getPath().compareTo(o2.getPath());
+
+				int path1 = PathUtils.splitPath(o1.getPath()).length;
+				int path2 = PathUtils.splitPath(o2.getPath()).length;
+
+				int compareProjectName = o1.getProjectName().compareTo(o2.getProjectName());
+
+				int comparePathSize = Integer.compare(path1, path2);
+
+				int comparePathName = o1.getPath().compareTo(o2.getPath());
+
+				int compareVersionNumber = Integer.compare(o1.getRequirementVersionNumber(), o2.getRequirementVersionNumber());
+
+				return compareProjectName == 0 ? compareProjectName
+						: comparePathSize == 0 ? comparePathSize
+								: comparePathName == 0 ? comparePathName : compareVersionNumber;
 			}
 		};
-		
+
 		private Long id;
 		private Long requirementId;
 		private Long projectId;
@@ -105,7 +133,7 @@ public class RequirementExportModel {
 			this.lastModifiedBy = lastModifiedBy;
 			this.milestonesLabels = milestonesLabels;
 		}
-		
+
 		public Long getId() {
 			return id;
 		}
@@ -293,7 +321,7 @@ public class RequirementExportModel {
 		}
 
 	}
-	
+
 //	public static final class CustomField {
 //		private Long ownerId;
 //		private BindableEntity ownerType;
@@ -310,27 +338,27 @@ public class RequirementExportModel {
 //			this.type = type;
 //			this.selectedOptions = selectedOptions;
 //		}
-//		
+//
 //		public Long getOwnerId() {
 //			return this.ownerId;
 //		}
-//		
+//
 //		public BindableEntity getOwnerType() {
 //			return ownerType;
 //		}
-//		
+//
 //		public String getCode() {
 //			return code;
 //		}
-//		
+//
 //		public String getValue() {
 //			return (! StringUtils.isBlank(selectedOptions)) ? selectedOptions : value ;
 //		}
-//		
+//
 //		public InputType getType() {
 //			return type;
 //		}
-//		
+//
 //	}
 	/*
 	public static final class RequirementModel {
@@ -584,7 +612,7 @@ public class RequirementExportModel {
 		}
 
 	}
-	
+
 	public static final class CustomField {
 		private Long ownerId;
 		private BindableEntity ownerType;

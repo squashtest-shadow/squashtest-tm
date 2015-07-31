@@ -23,6 +23,8 @@ package org.squashtest.tm.service.internal.batchexport;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -30,6 +32,7 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -44,11 +47,13 @@ import org.springframework.stereotype.Component;
 import org.squashtest.tm.core.foundation.lang.DateUtils;
 import org.squashtest.tm.service.feature.FeatureManager;
 import org.squashtest.tm.service.feature.FeatureManager.Feature;
+import org.squashtest.tm.service.internal.batchexport.ExportModel.CoverageModel;
 import org.squashtest.tm.service.internal.batchexport.ExportModel.CustomField;
 import org.squashtest.tm.service.internal.batchexport.RequirementExportModel.RequirementModel;
 import org.squashtest.tm.service.internal.batchimport.requirement.excel.RequirementSheetColumn;
+import org.squashtest.tm.service.internal.batchimport.testcase.excel.CoverageSheetColumn;
+import org.squashtest.tm.service.internal.batchimport.testcase.excel.TemplateColumn;
 import org.squashtest.tm.service.internal.batchimport.testcase.excel.TemplateWorksheet;
-import org.squashtest.tm.service.internal.library.HibernatePathService;
 
 /**
  * @author jthebault
@@ -58,6 +63,35 @@ import org.squashtest.tm.service.internal.library.HibernatePathService;
 @Scope("prototype")
 public class RequirementExcelExporter {
 	private static final String REQUIREMENT_SHEET = TemplateWorksheet.REQUIREMENT_SHEET.sheetName;
+	private static final String COV_SHEET = TemplateWorksheet.COVERAGE_SHEET.sheetName;
+	
+	private static final List<CoverageSheetColumn> COVERAGE_COLUMNS = Arrays.asList(
+			CoverageSheetColumn.REQ_PATH,
+			CoverageSheetColumn.REQ_VERSION_NUM, 
+			CoverageSheetColumn.TC_PATH);
+	
+	private static final RequirementSheetColumn[] BASIC_REQ_COLUMNS = {
+		RequirementSheetColumn.PROJECT_ID,
+		RequirementSheetColumn.PROJECT_NAME,
+		RequirementSheetColumn.REQ_PATH,
+		RequirementSheetColumn.REQ_NUM,
+		RequirementSheetColumn.REQ_VERSION_NUM,
+		RequirementSheetColumn.REQ_VERSION_REFERENCE,
+		RequirementSheetColumn.REQ_VERSION_NAME,
+		RequirementSheetColumn.REQ_VERSION_CRITICALITY,
+		RequirementSheetColumn.REQ_VERSION_CATEGORY,
+		RequirementSheetColumn.REQ_VERSION_STATUS,
+		RequirementSheetColumn.REQ_VERSION_DESCRIPTION,
+		RequirementSheetColumn.REQ_VERSION_NB_TC,
+		RequirementSheetColumn.REQ_VERSION_NB_ATTACHEMENT,
+		RequirementSheetColumn.REQ_VERSION_CREATED_ON,
+		RequirementSheetColumn.REQ_VERSION_CREATED_BY,
+		RequirementSheetColumn.REQ_VERSION_LAST_MODIFIED_ON,
+		RequirementSheetColumn.REQ_VERSION_LAST_MODIFIED_BY};
+	
+	private static final List<RequirementSheetColumn> REQUIREMENT_COLUMNS_MILESTONES = Arrays.asList((RequirementSheetColumn[])ArrayUtils.add(BASIC_REQ_COLUMNS,  RequirementSheetColumn.REQ_VERSION_MILESTONE));
+	
+	private static final List<RequirementSheetColumn> REQUIREMENT_COLUMNS = Arrays.asList(BASIC_REQ_COLUMNS);
 	// that map will remember which column index is
 	private Map<String, Integer> cufColumnsByCode = new HashMap<String, Integer>();
 
@@ -90,9 +124,38 @@ public class RequirementExcelExporter {
 		if (!keepRteFormat) {
 			removeRteFormat(model);
 		}
+		sort(model);
 		appendRequirementModel(model);
+		appendCoverage(model);
 	}
 
+	private void sort(RequirementExportModel model) {
+		Collections.sort(model.getCoverages(), CoverageModel.REQ_COMPARATOR);
+		Collections.sort(model.getRequirementsModels(), RequirementModel.COMPARATOR);
+	}
+
+	private void appendCoverage(RequirementExportModel model) {
+		List<CoverageModel> models = model.getCoverages();
+		Sheet covSheet = workbook.getSheet(COV_SHEET);
+
+		Row r;
+		int rIdx = covSheet.getLastRowNum() + 1;
+		int cIdx = 0;
+
+		for (CoverageModel cm : models) {
+			r = covSheet.createRow(rIdx);
+
+
+				r.createCell(cIdx++).setCellValue(cm.getReqPath());
+				r.createCell(cIdx++).setCellValue(cm.getRequirementId());
+				r.createCell(cIdx++).setCellValue(cm.getTcPath());
+		
+			rIdx++;
+			cIdx = 0;
+		}
+		
+	}
+	
 	private void appendRequirementModel(RequirementExportModel model) {
 		List<RequirementModel> models = model.getRequirementsModels();
 		Sheet reqSheet = workbook.getSheet(REQUIREMENT_SHEET);
@@ -105,33 +168,24 @@ public class RequirementExcelExporter {
 		
 	}
 
-	private void createRequirementHeaders() {
-		Sheet reqSheet = workbook.getSheet(REQUIREMENT_SHEET);
-		Row row = reqSheet.createRow(0);
+	
+
+	private void createCoverageHeaders() {
+		createSheetHeaders(COV_SHEET, COVERAGE_COLUMNS);
+	}
+	
+	private void createSheetHeaders(String sheetName, List<? extends TemplateColumn> cols){
+		Sheet dsSheet = workbook.getSheet(sheetName);
+		Row h = dsSheet.createRow(0);
 		int cIdx = 0;
-		
-		row.createCell(cIdx++).setCellValue(RequirementSheetColumn.PROJECT_ID.header);
-		row.createCell(cIdx++).setCellValue(RequirementSheetColumn.PROJECT_NAME.header);
-		row.createCell(cIdx++).setCellValue(RequirementSheetColumn.REQ_PATH.header);
-		row.createCell(cIdx++).setCellValue(RequirementSheetColumn.REQ_NUM.header);
-		row.createCell(cIdx++).setCellValue(RequirementSheetColumn.REQ_VERSION_NUM.header);
-		row.createCell(cIdx++).setCellValue(RequirementSheetColumn.REQ_VERSION_REFERENCE.header);
-		row.createCell(cIdx++).setCellValue(RequirementSheetColumn.REQ_VERSION_NAME.header);
-		row.createCell(cIdx++).setCellValue(RequirementSheetColumn.REQ_VERSION_CRITICALITY.header);
-		row.createCell(cIdx++).setCellValue(RequirementSheetColumn.REQ_VERSION_CATEGORY.header);
-		row.createCell(cIdx++).setCellValue(RequirementSheetColumn.REQ_VERSION_STATUS.header);
-		row.createCell(cIdx++).setCellValue(RequirementSheetColumn.REQ_VERSION_DESCRIPTION.header);
-		row.createCell(cIdx++).setCellValue(RequirementSheetColumn.REQ_VERSION_NB_TC.header);
-		row.createCell(cIdx++).setCellValue(RequirementSheetColumn.REQ_VERSION_NB_ATTACHEMENT.header);
-		row.createCell(cIdx++).setCellValue(RequirementSheetColumn.REQ_VERSION_CREATED_ON.header);
-		row.createCell(cIdx++).setCellValue(RequirementSheetColumn.REQ_VERSION_CREATED_BY.header);
-		row.createCell(cIdx++).setCellValue(RequirementSheetColumn.REQ_VERSION_LAST_MODIFIED_ON.header);
-		row.createCell(cIdx++).setCellValue(RequirementSheetColumn.REQ_VERSION_LAST_MODIFIED_BY.header);
-		if (milestonesEnabled) {
-			row.createCell(cIdx++).setCellValue(RequirementSheetColumn.REQ_VERSION_MILESTONE.header);
+		for (TemplateColumn t : cols){
+			h.createCell(cIdx++).setCellValue(t.getHeader());	
 		}
-		
-		
+	}
+	
+	private void createRequirementHeaders() {
+		List<RequirementSheetColumn> columns = milestonesEnabled ? REQUIREMENT_COLUMNS_MILESTONES : REQUIREMENT_COLUMNS;
+		createSheetHeaders(REQUIREMENT_SHEET, columns);	
 	}
 
 	private void appendOneRequirement(Sheet reqSheet, int rowIndex,
@@ -244,12 +298,15 @@ public class RequirementExcelExporter {
 	private void createWorkbook() {
 		Workbook wb = new HSSFWorkbook();
 		wb.createSheet(REQUIREMENT_SHEET);
+		wb.createSheet(COV_SHEET);
 
 		this.workbook = wb;
 	}
 
 	private void createHeaders() {
 		createRequirementHeaders();
+		createCoverageHeaders();
 	}
+
 	
 }

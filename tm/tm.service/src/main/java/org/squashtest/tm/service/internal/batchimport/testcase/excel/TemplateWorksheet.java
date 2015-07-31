@@ -42,7 +42,9 @@ public enum TemplateWorksheet {
 	PARAMETERS_SHEET("PARAMETERS", ParameterSheetColumn.class),
 	DATASETS_SHEET("DATASETS", DatasetSheetColumn.class),
 	// the same sheet is shared for both dataset and values
-	DATASET_PARAM_VALUES_SHEET("DATASETS", DatasetParamValuesSheetColumn.class);	
+	DATASET_PARAM_VALUES_SHEET("DATASETS", DatasetParamValuesSheetColumn.class),	
+	
+	COVERAGE_SHEET("COVERAGE", CoverageSheetColumn.class);
 
 	// MultiValueMap<String, TemplateWorksheet>
 	private static final MultiValueMap ENUM_BY_SHEET_NAME = new MultiValueMap();

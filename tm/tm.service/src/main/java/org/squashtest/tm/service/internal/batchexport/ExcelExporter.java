@@ -23,6 +23,8 @@ package org.squashtest.tm.service.internal.batchexport;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -30,6 +32,7 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -42,14 +45,17 @@ import org.springframework.stereotype.Component;
 import org.squashtest.tm.core.foundation.lang.DateUtils;
 import org.squashtest.tm.service.feature.FeatureManager;
 import org.squashtest.tm.service.feature.FeatureManager.Feature;
+import org.squashtest.tm.service.internal.batchexport.ExportModel.CoverageModel;
 import org.squashtest.tm.service.internal.batchexport.ExportModel.CustomField;
 import org.squashtest.tm.service.internal.batchexport.ExportModel.DatasetModel;
 import org.squashtest.tm.service.internal.batchexport.ExportModel.ParameterModel;
 import org.squashtest.tm.service.internal.batchexport.ExportModel.TestCaseModel;
 import org.squashtest.tm.service.internal.batchexport.ExportModel.TestStepModel;
+import org.squashtest.tm.service.internal.batchimport.testcase.excel.CoverageSheetColumn;
 import org.squashtest.tm.service.internal.batchimport.testcase.excel.DatasetSheetColumn;
 import org.squashtest.tm.service.internal.batchimport.testcase.excel.ParameterSheetColumn;
 import org.squashtest.tm.service.internal.batchimport.testcase.excel.StepSheetColumn;
+import org.squashtest.tm.service.internal.batchimport.testcase.excel.TemplateColumn;
 import org.squashtest.tm.service.internal.batchimport.testcase.excel.TemplateWorksheet;
 import org.squashtest.tm.service.internal.batchimport.testcase.excel.TestCaseSheetColumn;
 
@@ -64,6 +70,8 @@ class ExcelExporter {
 	private static final String PRM_SHEET = TemplateWorksheet.PARAMETERS_SHEET.sheetName;
 	private static final String ST_SHEET = TemplateWorksheet.STEPS_SHEET.sheetName;
 	private static final String TC_SHEET = TemplateWorksheet.TEST_CASES_SHEET.sheetName;
+
+	private static final String COV_SHEET = TemplateWorksheet.COVERAGE_SHEET.sheetName;
 	// that map will remember which column index is
 	private Map<String, Integer> cufColumnsByCode = new HashMap<String, Integer>();
 
@@ -75,6 +83,68 @@ class ExcelExporter {
 
 	private String errorCellTooLargeMessage;
 
+	
+	private static final List<CoverageSheetColumn> COVERAGE_COLUMNS = Arrays.asList(
+		CoverageSheetColumn.REQ_PATH,
+		CoverageSheetColumn.REQ_VERSION_NUM, 
+		CoverageSheetColumn.TC_PATH);
+	
+	private static final List<DatasetSheetColumn> DS_COLUMNS = Arrays.asList(
+		DatasetSheetColumn.TC_OWNER_PATH, 
+		DatasetSheetColumn.TC_OWNER_ID, 
+		DatasetSheetColumn.TC_DATASET_ID, 
+		DatasetSheetColumn.TC_DATASET_NAME, 
+		DatasetSheetColumn.TC_PARAM_OWNER_PATH, 
+		DatasetSheetColumn.TC_PARAM_OWNER_ID, 
+		DatasetSheetColumn.TC_DATASET_PARAM_NAME, 
+		DatasetSheetColumn.TC_DATASET_PARAM_VALUE);
+	
+	private static final List<ParameterSheetColumn> PRM_COLUMNS = Arrays.asList(
+		ParameterSheetColumn.TC_OWNER_PATH,
+		ParameterSheetColumn.TC_OWNER_ID,
+		ParameterSheetColumn.TC_PARAM_ID,
+		ParameterSheetColumn.TC_PARAM_NAME,
+		ParameterSheetColumn.TC_PARAM_DESCRIPTION);
+	
+	private static final List<StepSheetColumn> ST_COLUMNS = Arrays.asList(StepSheetColumn.TC_OWNER_PATH,
+			StepSheetColumn.TC_OWNER_ID,
+			StepSheetColumn.TC_STEP_ID,
+			StepSheetColumn.TC_STEP_NUM,
+			StepSheetColumn.TC_STEP_IS_CALL_STEP,
+			StepSheetColumn.TC_STEP_CALL_DATASET,
+			StepSheetColumn.TC_STEP_ACTION,
+			StepSheetColumn.TC_STEP_EXPECTED_RESULT,
+			StepSheetColumn.TC_STEP_NB_REQ,
+			StepSheetColumn.TC_STEP_NB_ATTACHMENT);
+	
+	
+	private static final TestCaseSheetColumn[] BASIC_TC_COLUMNS = { TestCaseSheetColumn.PROJECT_ID,
+	TestCaseSheetColumn.PROJECT_NAME,
+	TestCaseSheetColumn.TC_PATH,
+	TestCaseSheetColumn.TC_NUM,
+	TestCaseSheetColumn.TC_ID,
+	TestCaseSheetColumn.TC_REFERENCE,
+    TestCaseSheetColumn.TC_NAME,
+	TestCaseSheetColumn.TC_WEIGHT_AUTO,
+	TestCaseSheetColumn.TC_WEIGHT,
+	TestCaseSheetColumn.TC_NATURE,
+	TestCaseSheetColumn.TC_TYPE,
+	TestCaseSheetColumn.TC_STATUS,
+	TestCaseSheetColumn.TC_DESCRIPTION,
+	TestCaseSheetColumn.TC_PRE_REQUISITE,
+	TestCaseSheetColumn.TC_NB_REQ,
+	TestCaseSheetColumn.TC_NB_CALLED_BY,
+	TestCaseSheetColumn.TC_NB_ATTACHMENT,
+	TestCaseSheetColumn.TC_CREATED_ON,
+	TestCaseSheetColumn.TC_CREATED_BY,
+	TestCaseSheetColumn.TC_LAST_MODIFIED_ON,
+	TestCaseSheetColumn.TC_LAST_MODIFIED_BY};
+	
+	private static final List<TestCaseSheetColumn> TC_COLUMNS_MILESTONES = new ArrayList<TestCaseSheetColumn>(Arrays.asList((TestCaseSheetColumn[])ArrayUtils.add(BASIC_TC_COLUMNS, 7, TestCaseSheetColumn.TC_MILESTONE)));
+	
+	private static final List<TestCaseSheetColumn> TC_COLUMNS =  Arrays.asList(BASIC_TC_COLUMNS);  
+	
+	
 	@Inject
 	public ExcelExporter(FeatureManager featureManager, MessageSource messageSource) {
 		super();
@@ -99,6 +169,7 @@ class ExcelExporter {
 		appendTestSteps(model);
 		appendParameters(model);
 		appendDatasets(model);
+		appendCoverage(model);
 	}
 
 	private void removeRteFormat(ExportModel model) {
@@ -326,6 +397,31 @@ class ExcelExporter {
 		}
 	}
 
+
+
+	private void appendCoverage(ExportModel model) {
+		List<CoverageModel> models = model.getCoverages();
+		Sheet covSheet = workbook.getSheet(COV_SHEET);
+
+		Row r;
+		int rIdx = covSheet.getLastRowNum() + 1;
+		int cIdx = 0;
+
+		for (CoverageModel cm : models) {
+			r = covSheet.createRow(rIdx);
+
+
+				r.createCell(cIdx++).setCellValue(cm.getReqPath());
+				r.createCell(cIdx++).setCellValue(cm.getRequirementId());
+				r.createCell(cIdx++).setCellValue(cm.getTcPath());
+		
+			rIdx++;
+			cIdx = 0;
+		}
+		
+	}
+
+	
 	private String nullSafeValue(CustomField customField) {
 		String value = customField.getValue();
 		return value == null ? "" : value;
@@ -357,7 +453,7 @@ class ExcelExporter {
 		wb.createSheet(ST_SHEET);
 		wb.createSheet(PRM_SHEET);
 		wb.createSheet(DS_SHEET);
-
+		wb.createSheet(COV_SHEET);
 		this.workbook = wb;
 	}
 
@@ -367,82 +463,41 @@ class ExcelExporter {
 		createStepSheetHeaders();
 		createParameterSheetHeaders();
 		createDatasetSheetHeaders();
+		createCoverageSheetHeaders();
 
 	}
 
-	private void createDatasetSheetHeaders() {
-		Sheet dsSheet = workbook.getSheet(DS_SHEET);
+	private void createCoverageSheetHeaders() {
+		createSheetHeaders(COV_SHEET, COVERAGE_COLUMNS);
+	}
+	
+	private void createSheetHeaders(String sheetName, List<? extends TemplateColumn> cols){
+		Sheet dsSheet = workbook.getSheet(sheetName);
 		Row h = dsSheet.createRow(0);
 		int cIdx = 0;
+		for (TemplateColumn t : cols){
+			h.createCell(cIdx++).setCellValue(t.getHeader());	
+		}
+	}
 
-		h.createCell(cIdx++).setCellValue(DatasetSheetColumn.TC_OWNER_PATH.header);
-		h.createCell(cIdx++).setCellValue(DatasetSheetColumn.TC_OWNER_ID.header);
-		h.createCell(cIdx++).setCellValue(DatasetSheetColumn.TC_DATASET_ID.header);
-		h.createCell(cIdx++).setCellValue(DatasetSheetColumn.TC_DATASET_NAME.header);
-		h.createCell(cIdx++).setCellValue(DatasetSheetColumn.TC_PARAM_OWNER_PATH.header);
-		h.createCell(cIdx++).setCellValue(DatasetSheetColumn.TC_PARAM_OWNER_ID.header);
-		h.createCell(cIdx++).setCellValue(DatasetSheetColumn.TC_DATASET_PARAM_NAME.header);
-		h.createCell(cIdx++).setCellValue(DatasetSheetColumn.TC_DATASET_PARAM_VALUE.header);
+	private void createDatasetSheetHeaders() {	
+		createSheetHeaders(DS_SHEET, DS_COLUMNS);
 	}
 
 	private void createParameterSheetHeaders() {
-		Sheet pSheet = workbook.getSheet(PRM_SHEET);
-		Row h = pSheet.createRow(0);
-		int cIdx = 0;
-
-		h.createCell(cIdx++).setCellValue(ParameterSheetColumn.TC_OWNER_PATH.header);
-		h.createCell(cIdx++).setCellValue(ParameterSheetColumn.TC_OWNER_ID.header);
-		h.createCell(cIdx++).setCellValue(ParameterSheetColumn.TC_PARAM_ID.header);
-		h.createCell(cIdx++).setCellValue(ParameterSheetColumn.TC_PARAM_NAME.header);
-		h.createCell(cIdx++).setCellValue(ParameterSheetColumn.TC_PARAM_DESCRIPTION.header);
+		createSheetHeaders(PRM_SHEET, PRM_COLUMNS);
 	}
 
 	private void createStepSheetHeaders() {
-		Sheet stSheet = workbook.getSheet(ST_SHEET);
-		Row h = stSheet.createRow(0);
-		int cIdx = 0;
-
-		h.createCell(cIdx++).setCellValue(StepSheetColumn.TC_OWNER_PATH.header);
-		h.createCell(cIdx++).setCellValue(StepSheetColumn.TC_OWNER_ID.header);
-		h.createCell(cIdx++).setCellValue(StepSheetColumn.TC_STEP_ID.header);
-		h.createCell(cIdx++).setCellValue(StepSheetColumn.TC_STEP_NUM.header);
-		h.createCell(cIdx++).setCellValue(StepSheetColumn.TC_STEP_IS_CALL_STEP.header);
-		h.createCell(cIdx++).setCellValue(StepSheetColumn.TC_STEP_CALL_DATASET.header);
-		h.createCell(cIdx++).setCellValue(StepSheetColumn.TC_STEP_ACTION.header);
-		h.createCell(cIdx++).setCellValue(StepSheetColumn.TC_STEP_EXPECTED_RESULT.header);
-		h.createCell(cIdx++).setCellValue(StepSheetColumn.TC_STEP_NB_REQ.header);
-		h.createCell(cIdx++).setCellValue(StepSheetColumn.TC_STEP_NB_ATTACHMENT.header);
+		createSheetHeaders(ST_SHEET, ST_COLUMNS);
 	}
 
 	private void createTestCaseSheetHeaders() {
-		Sheet tcSheet = workbook.getSheet(TC_SHEET);
-		Row h = tcSheet.createRow(0);
-		int cIdx = 0;
-
-		h.createCell(cIdx++).setCellValue(TestCaseSheetColumn.PROJECT_ID.header);
-		h.createCell(cIdx++).setCellValue(TestCaseSheetColumn.PROJECT_NAME.header);
-		h.createCell(cIdx++).setCellValue(TestCaseSheetColumn.TC_PATH.header);
-		h.createCell(cIdx++).setCellValue(TestCaseSheetColumn.TC_NUM.header);
-		h.createCell(cIdx++).setCellValue(TestCaseSheetColumn.TC_ID.header);
-		h.createCell(cIdx++).setCellValue(TestCaseSheetColumn.TC_REFERENCE.header);
-		h.createCell(cIdx++).setCellValue(TestCaseSheetColumn.TC_NAME.header);
-		if (milestonesEnabled) {
-			h.createCell(cIdx++).setCellValue(TestCaseSheetColumn.TC_MILESTONE.header);
-		}
-		h.createCell(cIdx++).setCellValue(TestCaseSheetColumn.TC_WEIGHT_AUTO.header);
-		h.createCell(cIdx++).setCellValue(TestCaseSheetColumn.TC_WEIGHT.header);
-		h.createCell(cIdx++).setCellValue(TestCaseSheetColumn.TC_NATURE.header);
-		h.createCell(cIdx++).setCellValue(TestCaseSheetColumn.TC_TYPE.header);
-		h.createCell(cIdx++).setCellValue(TestCaseSheetColumn.TC_STATUS.header);
-		h.createCell(cIdx++).setCellValue(TestCaseSheetColumn.TC_DESCRIPTION.header);
-		h.createCell(cIdx++).setCellValue(TestCaseSheetColumn.TC_PRE_REQUISITE.header);
-		h.createCell(cIdx++).setCellValue(TestCaseSheetColumn.TC_NB_REQ.header);
-		h.createCell(cIdx++).setCellValue(TestCaseSheetColumn.TC_NB_CALLED_BY.header);
-		h.createCell(cIdx++).setCellValue(TestCaseSheetColumn.TC_NB_ATTACHMENT.header);
-		h.createCell(cIdx++).setCellValue(TestCaseSheetColumn.TC_CREATED_ON.header);
-		h.createCell(cIdx++).setCellValue(TestCaseSheetColumn.TC_CREATED_BY.header);
-		h.createCell(cIdx++).setCellValue(TestCaseSheetColumn.TC_LAST_MODIFIED_ON.header);
-		h.createCell(cIdx++).setCellValue(TestCaseSheetColumn.TC_LAST_MODIFIED_BY.header);
+		
+		List<TestCaseSheetColumn> columns = milestonesEnabled ? TC_COLUMNS_MILESTONES : TC_COLUMNS;
+		createSheetHeaders(TC_SHEET, columns);
+		
 	}
+		
 
 }

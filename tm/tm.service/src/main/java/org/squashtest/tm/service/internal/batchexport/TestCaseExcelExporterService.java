@@ -36,6 +36,7 @@ import javax.inject.Provider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
+import org.squashtest.tm.service.internal.batchexport.ExportModel.CoverageModel;
 import org.squashtest.tm.service.internal.batchexport.ExportModel.DatasetModel;
 import org.squashtest.tm.service.internal.batchexport.ExportModel.ParameterModel;
 import org.squashtest.tm.service.internal.batchexport.ExportModel.TestCaseModel;
@@ -216,6 +217,7 @@ public class TestCaseExcelExporterService {
 		Collections.sort(models.getTestSteps(), TestStepModel.COMPARATOR);
 		Collections.sort(models.getParameters(), ParameterModel.COMPARATOR);
 		Collections.sort(models.getDatasets(), DatasetModel.COMPARATOR);
+		Collections.sort(models.getCoverages(), CoverageModel.TC_COMPARATOR);
 	}
 
 

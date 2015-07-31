@@ -34,6 +34,7 @@ import org.hibernate.type.LongType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
+import org.squashtest.tm.service.internal.batchexport.ExportModel.CoverageModel;
 import org.squashtest.tm.service.internal.batchexport.ExportModel.CustomField;
 import org.squashtest.tm.service.internal.batchexport.ExportModel.DatasetModel;
 import org.squashtest.tm.service.internal.batchexport.ExportModel.ParameterModel;
@@ -41,6 +42,7 @@ import org.squashtest.tm.service.internal.batchexport.ExportModel.TestCaseModel;
 import org.squashtest.tm.service.internal.batchexport.ExportModel.TestStepModel;
 import org.squashtest.tm.service.internal.batchexport.RequirementExportModel.RequirementModel;
 import org.squashtest.tm.service.internal.library.HibernatePathService;
+import org.squashtest.tm.service.internal.library.PathService;
 import org.squashtest.tm.service.internal.repository.hibernate.EasyConstructorResultTransformer;
 
 @Repository
@@ -51,6 +53,8 @@ public class ExportDao {
 	@Inject
 	private SessionFactory factory;
 
+	@Inject
+	private PathService pathService;
 	
 	public ExportDao(){
 		super();
@@ -72,7 +76,11 @@ public class ExportDao {
 		List<TestStepModel> stepModels = findStepsModel(tclnIds);
 		List<ParameterModel> paramModels = findParametersModel(tclnIds);
 		List<DatasetModel> datasetModels = findDatasetsModel(tclnIds);
+		List<CoverageModel> coverageModels = findCoverageModel(tclnIds);
 		
+		setPathForCoverage(coverageModels);
+	
+		model.setCoverages(coverageModels);
 		model.setTestCases(tclnModels);
 		model.setTestSteps(stepModels);
 		model.setParameters(paramModels);
@@ -82,6 +90,20 @@ public class ExportDao {
 		
 	}
 	
+	private void setPathForCoverage(List<CoverageModel> coverageModels) {
+		for (CoverageModel model : coverageModels){
+			model.setReqPath(getRequirementPath(model.getRequirementId(), model.getRequirementProjectName()));
+			model.setTcPath(pathService.buildTestCasePath(model.getTcId()));
+		}
+		
+	}
+
+
+	private List<CoverageModel> findCoverageModel(List<Long> tcIds) {
+		return findModels(getStatelessSession(), "testCase.excelExportCoverage", tcIds, CoverageModel.class);
+	}
+
+
 	private List<TestCaseModel> findTestCaseModels(List<Long> tclnIds){
 		
 		Session session = getStatelessSession();
@@ -256,17 +278,23 @@ public class ExportDao {
 	}
 	
 
-	public String getPathAsString(RequirementModel exportedRequirement) {
+	public String getPathAsString(RequirementModel exportedRequirement) {	
+		return getRequirementPath(exportedRequirement.getRequirementId(), exportedRequirement.getProjectName());
+	}
+
+	
+	private String getRequirementPath(Long requirementId, String requirementProjectName){
 		StringBuffer sb = new StringBuffer(HibernatePathService.PATH_SEPARATOR);
-		sb.append(exportedRequirement.getProjectName());
+		sb.append(requirementProjectName);
 		sb.append(HibernatePathService.PATH_SEPARATOR);
-		String pathFromFolder = getPathFromFolder(exportedRequirement.getRequirementId());
-		String pathFromParents = getPathFromParentsRequirements(exportedRequirement.getRequirementId());
+		String pathFromFolder = getPathFromFolder(requirementId);
+		String pathFromParents = getPathFromParentsRequirements(requirementId);
 		sb.append(pathFromFolder);
 		sb.append(pathFromParents);
 		return HibernatePathService.escapePath(sb.toString());
+		
+		
 	}
-
 
 	private String getPathFromParentsRequirements(Long requirementId) {
 		Session session = getStatelessSession();
