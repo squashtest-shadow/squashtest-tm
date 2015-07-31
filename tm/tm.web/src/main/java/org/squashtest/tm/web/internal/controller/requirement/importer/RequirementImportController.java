@@ -41,7 +41,7 @@ import org.squashtest.tm.service.importer.ImportLog;
 import org.squashtest.tm.service.requirement.RequirementLibraryNavigationService;
 import org.squashtest.tm.web.importer.ImportHelper;
 import org.squashtest.tm.web.internal.controller.testcase.importer.ImportFormatFailure;
-import org.squashtest.tm.web.internal.controller.testcase.importer.TestCaseImportLogHelper;
+import org.squashtest.tm.web.internal.controller.testcase.importer.RequirementImportLogHelper;
 
 @Controller
 @RequestMapping("/requirements/importer")
@@ -58,7 +58,7 @@ public class RequirementImportController {
 	private ImportHelper importHelper;
 	
 	@Inject
-	private TestCaseImportLogHelper logHelper; 
+	private RequirementImportLogHelper logHelper; 
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(RequirementImportController.class);
 	
@@ -138,7 +138,7 @@ public class RequirementImportController {
 		try {
 			xlsSummary = importLogToLogFile(summary);
 
-			String reportUrl = request.getContextPath() + "/test-cases/import-logs/" + xlsSummary.getName();
+			String reportUrl = request.getContextPath() + "/requirement/import-logs/" + xlsSummary.getName();
 			summary.setReportUrl(reportUrl);
 
 		} catch (IOException e) {
@@ -148,7 +148,6 @@ public class RequirementImportController {
 			if (xlsSummary != null) {
 				xlsSummary.deleteOnExit();
 			}
-
 		}
 	}
 	

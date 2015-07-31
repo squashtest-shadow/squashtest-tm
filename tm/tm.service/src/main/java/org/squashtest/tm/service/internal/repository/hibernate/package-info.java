@@ -730,13 +730,6 @@
 	+ "group by  clos.descendantId, p.name "
 	+ "having concat('/', p.name, '/', group_concat(tcln.name, 'order by', clos.depth, 'desc', '/')) in :paths"),
 	
-	@NamedQuery(name = "RequirementPathEdge.findNodeIdsByPath", query = "select distinct  concat('/', p.name, '/', group_concat(rln.resource.name, 'order by', clos.depth, 'desc', '/')) as cp, clos.descendantId   "
-			+ "from RequirementPathEdge clos, RequirementLibraryNode rln "
-			+ "join rln.project p "
-			+ "where clos.ancestorId = rln.id "
-			+ "group by  clos.descendantId, p.name "
-			+ "having concat('/', p.name, '/', group_concat(rln.resource.name, 'order by', clos.depth, 'desc', '/')) in :paths"),
-
 	//Milestones
 	@NamedQuery(name = "milestone.count", query = "select count(milestone) from Milestone milestone"),
 	@NamedQuery(name = "milestone.countBoundObject", query = "select mil.testCases.size + mil.requirementVersions.size + mil.campaigns.size from Milestone mil where mil.id = :milestoneId"),

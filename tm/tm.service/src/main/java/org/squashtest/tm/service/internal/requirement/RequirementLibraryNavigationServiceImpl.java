@@ -726,7 +726,7 @@ RequirementLibraryNavigationService, RequirementLibraryFinderService {
 
 		for (int i = startIndex; i < names.length; i++) {
 			childFolder = new RequirementFolder();
-			childFolder.setName(names[i]);
+			childFolder.setName(PathUtils.unescapePathPartSlashes(names[i]));
 			childFolder.setDescription("");
 			childFolder.notifyAssociatedWithProject(project);
 			if (baseFolder==null) {//if we have no folder yet, we are creating the base, witch will be also the first parent
@@ -748,7 +748,7 @@ RequirementLibraryNavigationService, RequirementLibraryFinderService {
 
 		for (int i = startIndex; i < names.length; i++) {
 			childRequirement = new Requirement(new RequirementVersion());
-			childRequirement.setName(names[i]);
+			childRequirement.setName(PathUtils.unescapePathPartSlashes(names[i]));
 			childRequirement.setDescription("");
 			childRequirement.setCategory(infoListItemService.findDefaultRequirementCategory(project.getId()));
 			childRequirement.notifyAssociatedWithProject(project);
