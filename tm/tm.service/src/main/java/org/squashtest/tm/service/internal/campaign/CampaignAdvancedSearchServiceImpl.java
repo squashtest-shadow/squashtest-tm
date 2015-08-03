@@ -58,7 +58,6 @@ import org.squashtest.tm.service.campaign.CampaignAdvancedSearchService;
 import org.squashtest.tm.service.feature.FeatureManager.Feature;
 import org.squashtest.tm.service.internal.advancedsearch.AdvancedSearchServiceImpl;
 import org.squashtest.tm.service.internal.infolist.InfoListItemComparatorSource;
-import org.squashtest.tm.service.internal.repository.ProjectDao;
 import org.squashtest.tm.service.internal.repository.TestCaseDao;
 import org.squashtest.tm.service.project.ProjectManagerService;
 import org.squashtest.tm.service.project.ProjectsPermissionManagementService;
@@ -73,9 +72,6 @@ public class CampaignAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 
 	@Inject
 	private SessionFactory sessionFactory;
-
-	@Inject
-	private ProjectDao projectDao;
 
 	@Inject
 	private TestCaseDao testCaseDao;
@@ -105,6 +101,7 @@ public class CampaignAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 
 	private static final String FAKE_TC_ID = "-9000";
 
+	@Override
 	public List<String> findAllAuthorizedUsersForACampaign() {
 		List<Project> readableProjects = projectFinder.findAllReadable();
 		List<Long> projectIds = new ArrayList<Long>(readableProjects.size());

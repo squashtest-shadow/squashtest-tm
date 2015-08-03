@@ -20,6 +20,8 @@
  */
 package org.squashtest.tm.service.internal.milestone;
 
+import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
+
 import java.util.Collection;
 
 import javax.inject.Inject;
@@ -31,13 +33,10 @@ import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.service.internal.repository.CampaignDao;
-import org.squashtest.tm.service.internal.repository.IterationDao;
 import org.squashtest.tm.service.internal.repository.MilestoneDao;
 import org.squashtest.tm.service.internal.repository.RequirementVersionDao;
 import org.squashtest.tm.service.internal.repository.TestCaseDao;
-import org.squashtest.tm.service.internal.repository.TestSuiteDao;
 import org.squashtest.tm.service.milestone.MilestoneMembershipManager;
-import static org.squashtest.tm.service.security.Authorizations.*;
 
 @Service("squashtest.tm.service.MilestoneMembershipManager")
 public class MilestoneMembershipManagerImpl implements MilestoneMembershipManager {
@@ -64,11 +63,6 @@ public class MilestoneMembershipManagerImpl implements MilestoneMembershipManage
 	@Inject
 	private CampaignDao campaignDao;
 
-	@Inject
-	private IterationDao iterDao;
-
-	@Inject
-	private TestSuiteDao tsDao;
 
 	@Inject
 	private MilestoneDao milestoneDao;
@@ -164,6 +158,7 @@ public class MilestoneMembershipManagerImpl implements MilestoneMembershipManage
 		return milestoneDao.findAssociableMilestonesForUser(userId);
 	}
 
+	@Override
 	@PreAuthorize(READ_REQVERSION + OR_HAS_ROLE_ADMIN)
 	public Collection<Milestone> findAssociableMilestonesToRequirementVersion(long versionId) {
 		return milestoneDao.findAssociableMilestonesForRequirementVersion(versionId);

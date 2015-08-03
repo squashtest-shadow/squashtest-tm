@@ -22,7 +22,6 @@ package org.squashtest.tm.service.importer;
 
 import static org.squashtest.tm.service.importer.EntityType.DATASET;
 import static org.squashtest.tm.service.importer.EntityType.PARAMETER;
-import static org.squashtest.tm.service.importer.EntityType.REQUIREMENT;
 import static org.squashtest.tm.service.importer.EntityType.REQUIREMENT_VERSION;
 import static org.squashtest.tm.service.importer.EntityType.TEST_CASE;
 import static org.squashtest.tm.service.importer.EntityType.TEST_STEP;

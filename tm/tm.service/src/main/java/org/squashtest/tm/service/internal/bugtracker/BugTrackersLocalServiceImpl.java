@@ -39,8 +39,6 @@ import javax.inject.Inject;
 
 import org.apache.commons.collections.MultiMap;
 import org.apache.commons.collections.map.MultiValueMap;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.i18n.LocaleContext;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -95,7 +93,6 @@ import org.squashtest.tm.service.security.SecurityCheckableObject;
 @Service("squashtest.tm.service.BugTrackersLocalService")
 public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(BugTrackersLocalServiceImpl.class);
 
 	@Value("${squashtm.bugtracker.timeout:15}")
 	private long timeout;
@@ -477,7 +474,7 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 
 		MultiMap localIdsByRemoteId = mapLocalIssuesByRemoteIssue(localIssues);
 
-		Collection<String> issuesRemoteIds = (Collection<String>)localIdsByRemoteId.keySet();
+		Collection<String> issuesRemoteIds = localIdsByRemoteId.keySet();
 
 		// Find the BT issues out of the remote ids
 		try{
@@ -645,10 +642,10 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 		Map<Long, RemoteIssueDecorator> remoteIssueByLocalId = mapRemoteIssueByLocalId(btIssues);
 
 		for (Issue issue : issues) {
-			Long listId = (Long) issue.getIssueList().getId();
+			Long listId = issue.getIssueList().getId();
 			IssueDetector detector = issueDetectorByListId.get(listId);
 
-			Long localId = (Long) issue.getId();
+			Long localId = issue.getId();
 			RemoteIssueDecorator ish = remoteIssueByLocalId.get(localId);
 			if(ish != null){
 				bindings.add(new IssueOwnership<RemoteIssueDecorator>(ish, detector));

@@ -20,11 +20,8 @@
  */
 package org.squashtest.tm.service.campaign;
 
-import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
-
 import java.util.List;
 
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.squashtest.tm.core.foundation.collection.ColumnFiltering;
 import org.squashtest.tm.core.foundation.collection.MultiSorting;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;

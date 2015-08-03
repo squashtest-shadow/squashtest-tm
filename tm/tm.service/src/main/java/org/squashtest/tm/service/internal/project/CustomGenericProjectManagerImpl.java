@@ -93,7 +93,6 @@ import org.squashtest.tm.service.internal.repository.BugTrackerDao;
 import org.squashtest.tm.service.internal.repository.ExecutionDao;
 import org.squashtest.tm.service.internal.repository.GenericProjectDao;
 import org.squashtest.tm.service.internal.repository.PartyDao;
-import org.squashtest.tm.service.internal.repository.ProjectDao;
 import org.squashtest.tm.service.project.CustomGenericProjectFinder;
 import org.squashtest.tm.service.project.CustomGenericProjectManager;
 import org.squashtest.tm.service.project.GenericProjectCopyParameter;
@@ -109,8 +108,7 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 
 	@Inject
 	private GenericProjectDao genericProjectDao;
-	@Inject
-	private ProjectDao projectDao;
+
 	@Inject
 	private BugTrackerBindingDao bugTrackerBindingDao;
 	@Inject
@@ -305,6 +303,7 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 	// ********************************** Test automation section
 	// *************************************
 
+	@Override
 	public void bindTestAutomationServer(long tmProjectId, Long serverId) {
 		GenericProject genericProject = genericProjectDao.findById(tmProjectId);
 		checkManageProjectOrAdmin(genericProject);
@@ -337,6 +336,7 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 		genericProject.bindTestAutomationProject(taProject);
 	}
 
+	@Override
 	public void bindTestAutomationProjects(long projectId, Collection<TestAutomationProject> taProjects) {
 		checkTAProjectNames(taProjects, projectId);
 		for (TestAutomationProject p : taProjects) {
@@ -662,8 +662,8 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 		GenericProject firstProject = o1.getGenericProject();
 		GenericProject secondProject = o2.getGenericProject();
 
-		AuditableMixin firstAudit = (AuditableMixin) firstProject;
-		AuditableMixin secondAudit = (AuditableMixin) secondProject;
+		AuditableMixin firstAudit = firstProject;
+		AuditableMixin secondAudit = secondProject;
 		for (final Sorting sorting : sorter.getSortings()) {
 
 			Object first = null;
@@ -779,9 +779,9 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 		project.setName(newName);
 	}
 
-	
-	
-		
+
+
+
 	private void copyMilestone(GenericProject target, GenericProject source) {
 
 		List<Milestone> milestones = getOnlyBindableMilestones(source.getMilestones());
@@ -860,20 +860,20 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 		if (params.isCopyMilestone()) {
 			copyMilestone(target, source);
 		}
-		
+
 		return target;
 	}
 
 	@Override
 	public void changeBugTrackerProjectName(long projectId, List<String> projectBugTrackerNames) {
-		
+
 		GenericProject project = genericProjectDao.findById(projectId);
 		checkManageProjectOrAdmin(project);
 		if (project.isBugtrackerConnected()) {
 			BugTrackerBinding bugtrackerBinding = project.getBugtrackerBinding();
 			bugtrackerBinding.setProjectNames(projectBugTrackerNames);
 		}
-		
+
 	}
 
 }

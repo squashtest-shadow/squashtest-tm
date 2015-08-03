@@ -22,7 +22,6 @@ package org.squashtest.tm.service.advancedsearch;
 
 import java.util.List;
 
-import org.squashtest.tm.domain.campaign.Campaign;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.library.IndexModel;
 import org.squashtest.tm.domain.requirement.RequirementVersion;

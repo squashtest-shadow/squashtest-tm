@@ -20,6 +20,8 @@
  */
 package org.squashtest.tm.service.internal.library;
 
+import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
+
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -28,8 +30,6 @@ import java.util.Map;
 import javax.inject.Inject;
 
 import org.apache.commons.lang.NullArgumentException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.transaction.annotation.Transactional;
@@ -52,13 +52,12 @@ import org.squashtest.tm.service.library.LibraryNavigationService;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.security.PermissionsUtils;
 import org.squashtest.tm.service.security.SecurityCheckableObject;
-import static org.squashtest.tm.service.security.Authorizations.*;
 
 /**
  * Generic implementation of a library navigation service.
- * 
+ *
  * @author Gregory Fouquet
- * 
+ *
  * @param <LIBRARY>
  * @param <FOLDER>
  * @param <NODE>
@@ -66,40 +65,40 @@ import static org.squashtest.tm.service.security.Authorizations.*;
 
 /*
  * Security Implementation note :
- * 
+ *
  * this is sad but we can't use the annotations here. We would need the actual type of the entities we need to check
  * instead of the generics. So we'll call the PermissionEvaluationService explicitly once we've fetched the entities
  * ourselves.
- * 
- * 
+ *
+ *
  * @author bsiri
  */
 
 /*
  * Note : about methods moving entities from source to destinations :
- * 
+ *
  * Basically such operations need to be performed in a precise order, that is : 1) remove the entity from the source
  * collection and 2) insert it in the new one.
- * 
+ *
  * However Hibernate performs batch updates in the wrong order, ie it inserts new data before deleting the former ones,
  * thus violating many unique constraints DB side. So we explicitly flush the session between the removal and the
  * insertion.
- * 
- * 
+ *
+ *
  * @author bsiri
  */
 
 /*
  * Note regarding type safety when calling checkPermission(SecurityCheckableObject...) : see bug at
  * http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6227971
- * 
+ *
  * @author bsiri
  */
 
 @Transactional
 public abstract class AbstractLibraryNavigationService<LIBRARY extends Library<NODE>, FOLDER extends Folder<NODE>, NODE extends LibraryNode>
 implements LibraryNavigationService<LIBRARY, FOLDER, NODE> {
-	
+
 	private static final String CREATE = "CREATE";
 	private static final String READ = "READ";
 

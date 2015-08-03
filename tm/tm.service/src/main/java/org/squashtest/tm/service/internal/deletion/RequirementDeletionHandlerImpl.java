@@ -29,8 +29,6 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Provider;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.core.foundation.exception.ActionException;
@@ -41,7 +39,6 @@ import org.squashtest.tm.domain.library.WhichNodeVisitor.NodeType;
 import org.squashtest.tm.domain.requirement.Requirement;
 import org.squashtest.tm.domain.requirement.RequirementFolder;
 import org.squashtest.tm.domain.requirement.RequirementLibraryNode;
-import org.squashtest.tm.exception.requirement.IllegalRequirementModificationException;
 import org.squashtest.tm.service.deletion.BoundToLockedMilestonesReport;
 import org.squashtest.tm.service.deletion.BoundToMultipleMilestonesReport;
 import org.squashtest.tm.service.deletion.MilestoneModeNoFolderDeletion;
@@ -59,7 +56,6 @@ import org.squashtest.tm.service.internal.repository.RequirementDao;
 import org.squashtest.tm.service.internal.repository.RequirementDeletionDao;
 import org.squashtest.tm.service.internal.repository.RequirementFolderDao;
 import org.squashtest.tm.service.internal.requirement.RequirementNodeDeletionHandler;
-import org.squashtest.tm.service.requirement.VerifiedRequirementsManagerService;
 
 @Component("squashtest.tm.service.deletion.RequirementNodeDeletionHandler")
 public class RequirementDeletionHandlerImpl extends
@@ -67,8 +63,6 @@ AbstractNodeDeletionHandler<RequirementLibraryNode, RequirementFolder> implement
 RequirementNodeDeletionHandler {
 
 	private static final String REQUIREMENTS_TYPE = "requirements";
-
-	private static final Logger LOGGER = LoggerFactory.getLogger(RequirementDeletionHandlerImpl.class);
 
 	@Inject
 	private RequirementFolderDao folderDao;
@@ -88,9 +82,6 @@ RequirementNodeDeletionHandler {
 
 	@Inject
 	private PrivateCustomFieldValueService customValueService;
-
-	@Inject
-	private VerifiedRequirementsManagerService verifiedRequirementsManagerService;
 
 	@Override
 	protected FolderDao<RequirementFolder, RequirementLibraryNode> getFolderDao() {
@@ -508,6 +499,7 @@ RequirementNodeDeletionHandler {
 
 	}
 
+	@Override
 	protected OperationReport batchUnbindFromMilestone(List<Long> requirementIds, Long milestoneId){
 		OperationReport report = new OperationReport();
 

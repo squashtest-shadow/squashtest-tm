@@ -43,7 +43,6 @@ import org.squashtest.tm.domain.customfield.BindableEntity;
 import org.squashtest.tm.domain.customfield.BoundEntity;
 import org.squashtest.tm.domain.library.Copiable;
 import org.squashtest.tm.domain.library.Folder;
-import org.squashtest.tm.domain.library.LibraryNode;
 import org.squashtest.tm.domain.library.NodeContainer;
 import org.squashtest.tm.domain.library.NodeVisitor;
 import org.squashtest.tm.domain.library.TreeNode;
@@ -131,6 +130,7 @@ public class TreeNodeCopier  implements NodeVisitor, PasteOperation {
 	private boolean projectChanged = true;
 	private int batchRequirement = 0;
 
+	@Override
 	public TreeNode performOperation(TreeNode source, NodeContainer<TreeNode> destination) {
 		PermissionsUtils.checkPermission(permissionService, new SecurityCheckableObject(destination, "CREATE"),
 				new SecurityCheckableObject(source, "READ"));
@@ -149,6 +149,7 @@ public class TreeNodeCopier  implements NodeVisitor, PasteOperation {
 
 	}
 
+	@Override
 	public TreeNode performOperation(TreeNode source, NodeContainer<TreeNode> destination, int position) {
 		PermissionsUtils.checkPermission(permissionService, new SecurityCheckableObject(destination, "CREATE"),
 				new SecurityCheckableObject(source, "READ"));

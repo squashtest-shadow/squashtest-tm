@@ -20,8 +20,6 @@
  */
 package org.squashtest.tm.domain.requirement;
 
-import java.util.List;
-
 import org.squashtest.tm.domain.library.ExportData;
 import org.squashtest.tm.domain.milestone.Milestone;
 

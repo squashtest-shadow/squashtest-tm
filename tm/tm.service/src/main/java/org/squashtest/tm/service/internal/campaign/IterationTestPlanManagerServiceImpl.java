@@ -20,6 +20,8 @@
  */
 package org.squashtest.tm.service.internal.campaign;
 
+import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -80,8 +82,6 @@ import org.squashtest.tm.service.security.PermissionsUtils;
 import org.squashtest.tm.service.security.SecurityCheckableObject;
 import org.squashtest.tm.service.security.acls.model.ObjectAclService;
 import org.squashtest.tm.service.user.UserAccountService;
-import static org.squashtest.tm.service.security.Authorizations.*;
-import static org.squashtest.tm.service.security.Authorizations.*;
 
 @Service("squashtest.tm.service.IterationTestPlanManagerService")
 @Transactional
@@ -143,7 +143,7 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 	}
 
 	/**
-	 * 
+	 *
 	 * @see org.squashtest.tm.service.campaign.CustomIterationModificationService#findAssignedTestPlan(long, Paging)
 	 */
 	@Override
@@ -172,9 +172,9 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 	/*
 	 * security note here : well what if we add test cases for which the user have no permissions on ? think of
 	 * something better.
-	 * 
+	 *
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.squashtest.csp.tm.service.IterationTestPlanManagerService#addTestCasesToIteration(java.util.List, long)
 	 */
 
@@ -361,7 +361,7 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 	/**
 	 * Instead of using data from an actual execution (like {@link #updateMetadata(IterationTestPlanItem)}, we update
 	 * those data according to given parameters.
-	 * 
+	 *
 	 * @param item: the iteration test plan item to update the metadatas of
 	 * @param user : the user that will be set as last executor and assigne
 	 * @param date : the date to set lastExecutedOn property
@@ -402,7 +402,7 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 	}
 
 	/**
-	 * 
+	 *
 	 * @see org.squashtest.tm.service.campaign.IterationTestPlanManagerService#assignUserToTestPlanItem(long, long)
 	 */
 	@Override
@@ -497,9 +497,9 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 	 * <li>a unique item when the test case is not parameterized</li>
 	 * <li>one item per dataset when the test case is parameterized</li>
 	 * </ul>
-	 * 
+	 *
 	 * <strong>Note :</strong> The returned test plan fragment is in a transient state.
-	 * 
+	 *
 	 * @param referenced
 	 * @param assignee
 	 * @return

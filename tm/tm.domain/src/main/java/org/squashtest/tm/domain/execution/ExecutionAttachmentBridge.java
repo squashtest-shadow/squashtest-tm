@@ -25,7 +25,6 @@ import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.hibernate.Session;
 import org.hibernate.search.bridge.LuceneOptions;
-import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.search.SessionFieldBridge;
 
 public class ExecutionAttachmentBridge extends SessionFieldBridge {

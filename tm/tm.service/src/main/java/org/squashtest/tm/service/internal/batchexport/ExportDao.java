@@ -31,8 +31,6 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.type.LongType;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 import org.squashtest.tm.service.internal.batchexport.ExportModel.CoverageModel;
 import org.squashtest.tm.service.internal.batchexport.ExportModel.CustomField;
@@ -47,8 +45,6 @@ import org.squashtest.tm.service.internal.repository.hibernate.EasyConstructorRe
 
 @Repository
 public class ExportDao {
-
-	private static final Logger LOGGER = LoggerFactory.getLogger(ExportDao.class);
 
 	@Inject
 	private SessionFactory factory;

@@ -32,19 +32,16 @@ import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.project.GenericProject;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.project.ProjectTemplate;
 import org.squashtest.tm.exception.NameAlreadyInUseException;
-import org.squashtest.tm.service.customfield.CustomFieldBindingModificationService;
 import org.squashtest.tm.service.internal.repository.GenericProjectDao;
 import org.squashtest.tm.service.internal.repository.ProjectDao;
 import org.squashtest.tm.service.internal.repository.ProjectTemplateDao;
 import org.squashtest.tm.service.project.CustomProjectModificationService;
 import org.squashtest.tm.service.project.GenericProjectCopyParameter;
 import org.squashtest.tm.service.project.GenericProjectManagerService;
-import org.squashtest.tm.service.project.ProjectsPermissionManagementService;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 
 /**
@@ -57,10 +54,6 @@ import org.squashtest.tm.service.security.PermissionEvaluationService;
 public class CustomProjectModificationServiceImpl implements CustomProjectModificationService {
 	@Inject
 	private ProjectDeletionHandler projectDeletionHandler;
-	@Inject
-	private CustomFieldBindingModificationService customFieldBindingModificationService;
-	@Inject
-	private ProjectsPermissionManagementService permissionService;
 	@Inject
 	private ProjectTemplateDao projectTemplateDao;
 	@Inject
@@ -97,15 +90,6 @@ public class CustomProjectModificationServiceImpl implements CustomProjectModifi
 		return newProject;
 	}
 
-	private List<Milestone> getOnlyBindableMilestones(List<Milestone> milestones) {
-		List<Milestone> bindableMilestones = new ArrayList<Milestone>();
-		for (Milestone m : milestones){
-			if (m.getStatus().isBindableToProject()){
-				bindableMilestones.add(m);
-			}
-		}
-		return bindableMilestones;
-	}
 
 	@Override
 	public List<GenericProject> findAllICanManage() {

@@ -53,10 +53,6 @@ import javax.validation.constraints.Size;
 
 import org.apache.commons.lang.NullArgumentException;
 import org.hibernate.annotations.Type;
-import org.hibernate.search.annotations.Analyze;
-import org.hibernate.search.annotations.Field;
-import org.hibernate.search.annotations.Indexed;
-import org.hibernate.search.annotations.Store;
 import org.hibernate.validator.constraints.NotBlank;
 import org.squashtest.tm.domain.Identified;
 import org.squashtest.tm.domain.attachment.Attachment;
@@ -156,10 +152,12 @@ BoundEntity, MilestoneMember {
 		return listExec;
 	}
 
+	@Override
 	public void setName(String name) {
 		this.name = name.trim();
 	}
 
+	@Override
 	@NotBlank
 	public String getName() {
 		return this.name;
@@ -728,13 +726,13 @@ BoundEntity, MilestoneMember {
 
 	@Override
 	public void addContent(@NotNull TestSuite testSuite) throws DuplicateNameException, NullArgumentException {
-		this.addTestSuite((TestSuite) testSuite);
+		this.addTestSuite(testSuite);
 	}
 
 	@Override
 	public void addContent(@NotNull TestSuite testSuite, int position) throws DuplicateNameException,
 	NullArgumentException {
-		this.addTestSuite((TestSuite) testSuite, position);
+		this.addTestSuite(testSuite, position);
 
 	}
 

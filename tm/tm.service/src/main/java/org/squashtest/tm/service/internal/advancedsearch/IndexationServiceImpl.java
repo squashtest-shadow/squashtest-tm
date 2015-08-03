@@ -40,7 +40,6 @@ import org.hibernate.search.FullTextSession;
 import org.hibernate.search.Search;
 import org.hibernate.search.batchindexing.MassIndexerProgressMonitor;
 import org.springframework.stereotype.Service;
-import org.squashtest.tm.domain.campaign.Campaign;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.library.IndexModel;
 import org.squashtest.tm.domain.requirement.RequirementVersion;

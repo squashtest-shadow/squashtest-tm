@@ -294,17 +294,6 @@ public class ProjectsPermissionManagementServiceImpl implements ProjectsPermissi
 
 	}
 
-	private List<PartyProjectPermissionsBean> findPartyPermissionBeanByProject(long projectId) {
-		List<PartyProjectPermissionsBean> newResult = new ArrayList<PartyProjectPermissionsBean>();
-
-		List<Object[]> result = aclService.retrieveUsersFromIdentityAndClass(projectId);
-		for (Object[] objects : result) {
-			Party party = partyDao.findById((Long) objects[0]);
-			newResult.add(new PartyProjectPermissionsBean(party, (PermissionGroup) objects[1]));
-		}
-		return newResult;
-
-	}
 
 	// clearly suboptimal, on the other hand this method is seldomely invoked
 	private PagedCollectionHolder<List<PartyProjectPermissionsBean>> findPartyPermissionBeanByProjectOfGivenType(
