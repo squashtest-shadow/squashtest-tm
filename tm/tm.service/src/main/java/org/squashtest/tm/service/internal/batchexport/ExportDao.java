@@ -49,83 +49,90 @@ import org.squashtest.tm.service.internal.repository.hibernate.EasyConstructorRe
 public class ExportDao {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(ExportDao.class);
-	
+
 	@Inject
 	private SessionFactory factory;
 
 	@Inject
 	private PathService pathService;
-	
+
 	public ExportDao(){
 		super();
 	}
-	
-	
+
+
 	public RequirementExportModel findAllRequirementModel(List<Long> versionIds){
 		RequirementExportModel model = new RequirementExportModel();
 		List<RequirementModel> requirementsModel = findRequirementModel(versionIds);
+
+		List<CoverageModel> coverageModels = findRequirementVersionCoverageModel(versionIds);
+
+		setPathForCoverage(coverageModels);
+
+		model.setCoverages(coverageModels);
 		model.setRequirementsModels(requirementsModel);
 		return model;
 	}
-	
+
+
 	public ExportModel findModel(List<Long> tclnIds){
-		
+
 		ExportModel model = new ExportModel();
-		
+
 		List<TestCaseModel> tclnModels = findTestCaseModels(tclnIds);
 		List<TestStepModel> stepModels = findStepsModel(tclnIds);
 		List<ParameterModel> paramModels = findParametersModel(tclnIds);
 		List<DatasetModel> datasetModels = findDatasetsModel(tclnIds);
-		List<CoverageModel> coverageModels = findCoverageModel(tclnIds);
-		
+		List<CoverageModel> coverageModels = findTestCaseCoverageModel(tclnIds);
+
 		setPathForCoverage(coverageModels);
-	
+
 		model.setCoverages(coverageModels);
 		model.setTestCases(tclnModels);
 		model.setTestSteps(stepModels);
 		model.setParameters(paramModels);
-		model.setDatasets(datasetModels);		
-		
+		model.setDatasets(datasetModels);
+
 		return model;
-		
+
 	}
-	
+
 	private void setPathForCoverage(List<CoverageModel> coverageModels) {
 		for (CoverageModel model : coverageModels){
 			model.setReqPath(getRequirementPath(model.getRequirementId(), model.getRequirementProjectName()));
 			model.setTcPath(pathService.buildTestCasePath(model.getTcId()));
 		}
-		
+
 	}
 
 
-	private List<CoverageModel> findCoverageModel(List<Long> tcIds) {
+	private List<CoverageModel> findTestCaseCoverageModel(List<Long> tcIds) {
 		return findModels(getStatelessSession(), "testCase.excelExportCoverage", tcIds, CoverageModel.class);
 	}
 
 
 	private List<TestCaseModel> findTestCaseModels(List<Long> tclnIds){
-		
+
 		Session session = getStatelessSession();
 		List<TestCaseModel> models = new ArrayList<TestCaseModel>(tclnIds.size());
 		List<TestCaseModel> buffer;
-		
+
 
 		// get the models
 		buffer = findModels(session, "testCase.excelExportDataFromFolder", tclnIds, TestCaseModel.class);
 		models.addAll(buffer);
-		
+
 		buffer = findModels(session, "testCase.excelExportDataFromLibrary", tclnIds, TestCaseModel.class);
 		models.addAll(buffer);
-		
+
 		//get the cufs
 		List<CustomField> cufModels = findModels(session, "testCase.excelExportCUF", tclnIds, CustomField.class);
-		
+
 		// add them to the test case models
 		for (TestCaseModel model : models){
 			Long id = model.getId();
 			ListIterator<CustomField> cufIter = cufModels.listIterator();
-			
+
 			while (cufIter.hasNext()){
 				CustomField cuf = cufIter.next();
 				if (id.equals(cuf.getOwnerId())){
@@ -137,31 +144,31 @@ public class ExportDao {
 
 		// end
 		return models;
-	
+
 	}
-	
-	
+
+
 	private List<TestStepModel> findStepsModel(List<Long> tcIds){
-		
+
 		Session session = getStatelessSession();
 		List<TestStepModel> models = new ArrayList<TestStepModel>(tcIds.size());
 		List<TestStepModel> buffer;
-		
-		
+
+
 		buffer = findModels(session, "testStep.excelExportActionSteps", tcIds, TestStepModel.class);
 		models.addAll(buffer);
-		
-		buffer = findModels(session, "testStep.excelExportCallSteps", tcIds, TestStepModel.class);	
+
+		buffer = findModels(session, "testStep.excelExportCallSteps", tcIds, TestStepModel.class);
 		models.addAll(buffer);
-		
+
 		//get the cufs
 		List<CustomField> cufModels = findModels(session, "testStep.excelExportCUF", tcIds, CustomField.class);
-		
+
 		// add them to the test case models
 		for (TestStepModel model : models){
 			Long id = model.getId();
 			ListIterator<CustomField> cufIter = cufModels.listIterator();
-			
+
 			while (cufIter.hasNext()){
 				CustomField cuf = cufIter.next();
 				if (id.equals(cuf.getOwnerId())){
@@ -169,23 +176,24 @@ public class ExportDao {
 					cufIter.remove();
 				}
 			}
-		}	
-	
-		
+		}
+
+
 		// done
 		return models;
 	}
-	
+
 	private List<ParameterModel> findParametersModel(List<Long> tcIds){
 		return findModels(getStatelessSession(), "parameter.excelExport", tcIds, ParameterModel.class);
 	}
-	
-	
+
+
 	private List<DatasetModel> findDatasetsModel(List<Long> tcIds){
+
 		return findModels(getStatelessSession(), "dataset.excelExport", tcIds, DatasetModel.class);
 	}
-	
-	
+
+
 	@SuppressWarnings("unchecked")
 	private <R> List<R> findModels(Session session, String query, List<Long> tcIds, Class<R> resclass){
 		Query q = session.getNamedQuery(query);
@@ -193,24 +201,35 @@ public class ExportDao {
 		q.setResultTransformer(new EasyConstructorResultTransformer(resclass));
 		return q.list();
 	}
-	
+
 	private Session getStatelessSession(){
 		Session s = factory.getCurrentSession();
 		s.setFlushMode(FlushMode.MANUAL);
 		return s;
 	}
-	
+
+	private List<CoverageModel> findRequirementVersionCoverageModel(List<Long> versionIds) {
+		return findRequirementModels("requirementVersion.excelExportCoverage", versionIds, CoverageModel.class);
+	}
+
 	@SuppressWarnings("unchecked")
-	private List<RequirementModel> findRequirementModel(List<Long> versionIds) {
+	private <R> List<R> findRequirementModels(String queryName, List<Long> versionIds,
+			Class<R> resclass) {
 		Session session = getStatelessSession();
-		Query q = session.getNamedQuery("requirement.findVersionsModels");
+		Query q = session.getNamedQuery(queryName);
 		q.setParameterList("versionIds", versionIds, LongType.INSTANCE);
-		q.setResultTransformer(new EasyConstructorResultTransformer(RequirementModel.class));
-		List<RequirementModel> requirementModels = q.list();
+		q.setResultTransformer(new EasyConstructorResultTransformer(resclass));
+		return q.list();
+	}
+
+
+	private List<RequirementModel> findRequirementModel(List<Long> versionIds) {
+		List<RequirementModel> requirementModels = findRequirementModels("requirement.findVersionsModels", versionIds,
+				RequirementModel.class);
 		getOtherProperties(requirementModels);
 		return requirementModels;
 	}
-	
+
 	private void getOtherProperties(List<RequirementModel> requirementModels){
 		for (RequirementModel requirementModel : requirementModels) {
 			requirementModel.setPath(getPathAsString(requirementModel));
@@ -218,7 +237,7 @@ public class ExportDao {
 			getModelRequirementCUF(requirementModel);
 		}
 	}
-	
+
 
 	@SuppressWarnings("unchecked")
 	private void getModelRequirementCUF(RequirementModel requirementModel) {
@@ -243,46 +262,25 @@ public class ExportDao {
 
 
 	private int getPositionChildrenRequirement(Long reqId) {
-		Session session = getStatelessSession();
-		Query qFolder = session.getNamedQuery("requirement.findVersionsModelsIndexChildrenRequirement");
-		qFolder.setLong("requirementId",reqId);
-		Object result =  qFolder.uniqueResult();
-		if (result!=null) {
-			return (int) result;
-		}
-		return 0;
+		return requirementVersionQuery("requirement.findVersionsModelsIndexChildrenRequirement", reqId, 0);
 	}
 
 
 	private int getRequirementPositionInFolder(Long reqId) {
-		Session session = getStatelessSession();
-		Query qFolder = session.getNamedQuery("requirement.findVersionsModelsIndexInFolder");
-		qFolder.setLong("requirementId",reqId);
-		Object result =  qFolder.uniqueResult();
-		if (result!=null) {
-			return (int) result;
-		}
-		return 0;
+		return requirementVersionQuery("requirement.findVersionsModelsIndexInFolder", reqId, 0);
 	}
 
-	
+
 	private int getRequirementPositionInLibrary(Long reqId){
-		Session session = getStatelessSession();
-		Query qLibrary = session.getNamedQuery("requirement.findVersionsModelsIndexInLibrary");
-		qLibrary.setLong("requirementId",reqId);
-		Object result =  qLibrary.uniqueResult();
-		if (result!=null) {
-			return (int) result;
-		}
-		return 0;
+		return requirementVersionQuery("requirement.findVersionsModelsIndexInLibrary", reqId, 0);
 	}
-	
 
-	public String getPathAsString(RequirementModel exportedRequirement) {	
+
+	public String getPathAsString(RequirementModel exportedRequirement) {
 		return getRequirementPath(exportedRequirement.getRequirementId(), exportedRequirement.getProjectName());
 	}
 
-	
+
 	private String getRequirementPath(Long requirementId, String requirementProjectName){
 		StringBuffer sb = new StringBuffer(HibernatePathService.PATH_SEPARATOR);
 		sb.append(requirementProjectName);
@@ -292,31 +290,27 @@ public class ExportDao {
 		sb.append(pathFromFolder);
 		sb.append(pathFromParents);
 		return HibernatePathService.escapePath(sb.toString());
-		
-		
+
+
 	}
 
 	private String getPathFromParentsRequirements(Long requirementId) {
-		Session session = getStatelessSession();
-		Query q = session.getNamedQuery("requirement.findReqParentPath");
-		q.setParameter("requirementId", requirementId);
-		Object result = q.uniqueResult();
-		if (result!=null) {
-			return result.toString();
-		}
-		return "";
+		return requirementVersionQuery("requirement.findReqParentPath", requirementId, "");
 	}
 
 
 	private String getPathFromFolder(Long requirementId) {
-		Session session = getStatelessSession();
-		Query q = session.getNamedQuery("requirement.findReqFolderPath");
-		q.setParameter("requirementId", requirementId);
-		Object result = q.uniqueResult();
-		if (result!=null) {
-			return result.toString()+HibernatePathService.PATH_SEPARATOR;
-		}
-		return "";
+		String result = requirementVersionQuery("requirement.findReqFolderPath", requirementId, "");
+		return result.equals("") ? result : result + HibernatePathService.PATH_SEPARATOR;
 	}
-	
+
+	@SuppressWarnings("unchecked")
+	private <R> R requirementVersionQuery(String queryName, Long requirementId, R defaultValue) {
+		Session session = getStatelessSession();
+		Query q = session.getNamedQuery(queryName);
+		q.setParameter("requirementId", requirementId);
+		R result = (R) q.uniqueResult();
+		return result != null ? result : defaultValue;
+	}
+
 }

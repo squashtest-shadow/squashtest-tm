@@ -33,7 +33,6 @@ import org.squashtest.tm.core.dynamicmanager.annotation.QueryParam;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.milestone.MilestoneRange;
 import org.squashtest.tm.domain.milestone.MilestoneStatus;
-import org.squashtest.tm.domain.project.GenericProject;
 import org.squashtest.tm.domain.users.User;
 
 @Transactional

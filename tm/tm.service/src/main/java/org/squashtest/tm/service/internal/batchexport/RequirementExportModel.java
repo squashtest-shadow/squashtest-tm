@@ -58,25 +58,39 @@ public class RequirementExportModel {
 		this.requirementsModels = requirementsModels;
 	}
 
-	public static final class RequirementModel {
-		public static final Comparator<RequirementModel> COMPARATOR = new Comparator<RequirementExportModel.RequirementModel>() {
+	public interface RequirementPathSortable {
+		String getProjectName();
+
+		String getPath();
+
+		int getRequirementVersionNumber();
+
+	}
+
+	public static final class RequirementModel implements RequirementPathSortable {
+
+		public static final Comparator<RequirementPathSortable> COMPARATOR = new Comparator<RequirementPathSortable>() {
 			@Override
-			public int compare(RequirementModel o1, RequirementModel o2) {
+			public int compare(RequirementPathSortable o1, RequirementPathSortable o2) {
 
-				int path1 = PathUtils.splitPath(o1.getPath()).length;
-				int path2 = PathUtils.splitPath(o2.getPath()).length;
-
+				int path1length = PathUtils.splitPath(o1.getPath()).length;
+				int path2length = PathUtils.splitPath(o2.getPath()).length;
+				// alpha order
 				int compareProjectName = o1.getProjectName().compareTo(o2.getProjectName());
 
-				int comparePathSize = Integer.compare(path1, path2);
+				// order by ascending path size
+				int comparePathSize = Integer.compare(path1length, path2length);
 
+				// alpha order
 				int comparePathName = o1.getPath().compareTo(o2.getPath());
 
-				int compareVersionNumber = Integer.compare(o1.getRequirementVersionNumber(), o2.getRequirementVersionNumber());
+				// order by ascending version number
+				int compareVersionNumber = Integer.compare(o1.getRequirementVersionNumber(),
+						o2.getRequirementVersionNumber());
 
-				return compareProjectName == 0 ? compareProjectName
-						: comparePathSize == 0 ? comparePathSize
-								: comparePathName == 0 ? comparePathName : compareVersionNumber;
+				return compareProjectName != 0 ? compareProjectName
+						: comparePathSize != 0 ? comparePathSize
+								: comparePathName != 0 ? comparePathName : compareVersionNumber;
 			}
 		};
 
@@ -158,6 +172,7 @@ public class RequirementExportModel {
 			this.projectId = projectId;
 		}
 
+		@Override
 		public String getProjectName() {
 			return projectName;
 		}
@@ -166,6 +181,7 @@ public class RequirementExportModel {
 			this.projectName = projectName;
 		}
 
+		@Override
 		public String getPath() {
 			return path;
 		}
@@ -190,6 +206,7 @@ public class RequirementExportModel {
 			this.reference = reference;
 		}
 
+		@Override
 		public int getRequirementVersionNumber() {
 			return requirementVersionNumber;
 		}
