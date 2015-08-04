@@ -20,9 +20,10 @@
  */
 package org.squashtest.tm.service.internal.testautomation;
 
+import static org.squashtest.tm.service.security.Authorizations.HAS_ROLE_ADMIN_OR_PROJECT_MANAGER;
+
 import java.net.URL;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -40,7 +41,6 @@ import org.squashtest.tm.service.internal.repository.TestAutomationProjectDao;
 import org.squashtest.tm.service.internal.repository.TestAutomationServerDao;
 import org.squashtest.tm.service.security.Authorizations;
 import org.squashtest.tm.service.testautomation.TestAutomationServerManagerService;
-import static org.squashtest.tm.service.security.Authorizations.*;
 
 @Transactional
 @Service("squashtest.tm.service.TestAutomationServerManagementService")

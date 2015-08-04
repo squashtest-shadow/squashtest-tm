@@ -39,15 +39,11 @@ import spock.lang.Specification
 class CustomProjectModificationServiceImplTest extends Specification {
 	CustomProjectModificationServiceImpl service = new CustomProjectModificationServiceImpl()
 	ProjectTemplateDao projectTemplateDao = Mock()
-	CustomFieldBindingModificationService customFieldBindingModificationService = Mock()
-	ProjectsPermissionManagementService projectsPermissionManagementService = Mock()
 	GenericProjectManagerService genericProjectManagerService = Mock()
 
 	def setup()
 	{
 		service.projectTemplateDao = projectTemplateDao
-		service.customFieldBindingModificationService = customFieldBindingModificationService
-		service.permissionService = projectsPermissionManagementService
 		service.genericProjectManager = genericProjectManagerService
 	}
 

@@ -72,7 +72,6 @@ class CustomIterationModificationServiceImplTest extends Specification {
 		service.testCaseCyclicCallChecker = cyclicCallChecker
 		service.customFieldValueService = customFieldService
 		service.denormalizedFieldValueService = denormalizedFieldValueService
-		service.iterationTestPlanManager = iterationTestPlanManager
 		service.indexationService = indexationService
 	}
 
