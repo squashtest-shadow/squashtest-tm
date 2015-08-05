@@ -28,6 +28,7 @@
   </modules>
 
   <properties>
+    <aspectj.version>1.7.1.RELEASE</aspectj.version>
     <groovy.version>2.0.7</groovy.version>
     <hibernate.version>4.2.2.Final</hibernate.version>
 

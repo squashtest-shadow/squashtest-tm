@@ -28,6 +28,9 @@ import java.util.Map;
 import javax.inject.Inject;
 import javax.inject.Provider;
 
+import org.hibernate.LockMode;
+import org.hibernate.LockOptions;
+import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PostFilter;
@@ -68,6 +71,8 @@ import static org.squashtest.tm.service.security.Authorizations.*;
 public class CampaignLibraryNavigationServiceImpl extends
 AbstractLibraryNavigationService<CampaignLibrary, CampaignFolder, CampaignLibraryNode> implements
 CampaignLibraryNavigationService {
+
+	@Inject private SessionFactory sessionFactory;
 
 	@Inject
 	private CampaignLibraryDao campaignLibraryDao;
@@ -160,6 +165,10 @@ CampaignLibraryNavigationService {
 			+ OR_HAS_ROLE_ADMIN)
 	public int addIterationToCampaign(Iteration iteration, long campaignId, boolean copyTestPlan) {
 		Campaign campaign = campaignDao.findById(campaignId);
+		sessionFactory.getCurrentSession()
+			.buildLockRequest(LockOptions.UPGRADE)
+			.setLockMode(LockMode.PESSIMISTIC_WRITE).setScope(true)
+			.lock(campaign);
 
 		if (!campaign.isContentNameAvailable(iteration.getName())) {
 			throw new DuplicateNameException(iteration.getName(), iteration.getName());

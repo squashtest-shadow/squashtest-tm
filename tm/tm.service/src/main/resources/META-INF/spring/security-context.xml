@@ -31,7 +31,7 @@
   <security:global-method-security
     secured-annotations="enabled" pre-post-annotations="enabled"
     access-decision-manager-ref="squashtest.core.security.AclDecisionManager"
-    order="2">
+    order="20">
     <security:expression-handler ref="expressionHandler" />
   </security:global-method-security>
 

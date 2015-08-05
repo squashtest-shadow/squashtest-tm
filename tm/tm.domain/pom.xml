@@ -203,7 +203,7 @@
           <showWeaveInfo>${verbose.compiler}</showWeaveInfo>
           <source>${jdk.version}</source>
           <target>${jdk.version}</target>
-          <compatibilityLevel>${jdk.version}</compatibilityLevel>
+          <complianceLevel>${jdk.version}</complianceLevel>
           <aspectLibraries>
             <aspectLibrary>
               <groupId>org.squashtest.tm</groupId>
