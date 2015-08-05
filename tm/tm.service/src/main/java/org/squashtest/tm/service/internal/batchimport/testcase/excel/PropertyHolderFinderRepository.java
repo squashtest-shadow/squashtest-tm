@@ -65,6 +65,7 @@ final class PropertyHolderFinderRepository<COL extends Enum<COL> & TemplateColum
 		FINDER_REPO_BY_WORKSHEET.put(TemplateWorksheet.DATASETS_SHEET, createDatasetsWorksheetRepo());
 		FINDER_REPO_BY_WORKSHEET.put(TemplateWorksheet.DATASET_PARAM_VALUES_SHEET, createDatasetParamValuesWorksheetRepo());
 		FINDER_REPO_BY_WORKSHEET.put(TemplateWorksheet.REQUIREMENT_SHEET, createRequirementWorksheetRepo());
+		FINDER_REPO_BY_WORKSHEET.put(TemplateWorksheet.COVERAGE_SHEET, createCoverageWorksheetRepo());
 	}
 
 	private static PropertyHolderFinderRepository<TestCaseSheetColumn> createTestCasesWorksheetRepo() {
@@ -101,42 +102,56 @@ final class PropertyHolderFinderRepository<COL extends Enum<COL> & TemplateColum
 		return r;
 	}
 
+	private static PropertyHolderFinderRepository<?> createCoverageWorksheetRepo() {
+		PropertyHolderFinderRepository<CoverageSheetColumn> r = new PropertyHolderFinderRepository<CoverageSheetColumn>();
+		PropertyHolderFinder<CoverageInstruction, CoverageTarget> targetFinder = new PropertyHolderFinder<CoverageInstruction, CoverageTarget>(){
+
+			@Override
+			public CoverageTarget find(CoverageInstruction instruction) {
+				return instruction.getTarget();
+			}
+
+		};
+		r.defaultFinder = targetFinder;
+		return r;
+	}
+
 	private static PropertyHolderFinderRepository<?> createRequirementWorksheetRepo() {
-		
+
 		PropertyHolderFinderRepository<RequirementSheetColumn> r = new PropertyHolderFinderRepository<RequirementSheetColumn>();
-		
+
 		PropertyHolderFinder<RequirementVersionInstruction, RequirementVersionTarget> targetFinder = new PropertyHolderFinder<RequirementVersionInstruction, RequirementVersionTarget>(){
-			
+
 			@Override
 			public RequirementVersionTarget find(RequirementVersionInstruction instruction) {
 				return instruction.getTarget();
 			}
 		};
 		PropertyHolderFinder<RequirementVersionInstruction, RequirementTarget> targetRequirementFinder = new PropertyHolderFinder<RequirementVersionInstruction, RequirementTarget>(){
-			
+
 			@Override
 			public RequirementTarget find(RequirementVersionInstruction instruction) {
 				return instruction.getTarget().getRequirement();
 			}
 		};
-		
-		
-		
+
+
+
 		PropertyHolderFinder<RequirementVersionInstruction, RequirementVersion> requirementVersionFinder = new PropertyHolderFinder<RequirementVersionInstruction, RequirementVersion>(){
-			
+
 			@Override
 			public RequirementVersion find(RequirementVersionInstruction instruction) {
 				return instruction.getRequirementVersion();
 			}
 		};
-		
+
 		PropertyHolderFinder<RequirementVersionInstruction, RequirementVersionInstruction> instructionFinder = new PropertyHolderFinder<RequirementVersionInstruction, RequirementVersionInstruction>() {
 			@Override
 			public RequirementVersionInstruction find(RequirementVersionInstruction instruction) {
 				return instruction;
 			}
 		};
-		
+
 		r.finderByColumn.put(RequirementSheetColumn.ACTION, instructionFinder);
 		r.finderByColumn.put(RequirementSheetColumn.REQ_VERSION_MILESTONE, instructionFinder);
 		r.finderByColumn.put(RequirementSheetColumn.REQ_VERSION_NUM, targetFinder);
@@ -144,7 +159,7 @@ final class PropertyHolderFinderRepository<COL extends Enum<COL> & TemplateColum
 		r.finderByColumn.put(RequirementSheetColumn.REQ_PATH, targetRequirementFinder);
 		r.defaultFinder = requirementVersionFinder;
 
-		
+
 		return r;
 	}
 
@@ -284,7 +299,7 @@ final class PropertyHolderFinderRepository<COL extends Enum<COL> & TemplateColum
 					return ((ActionStepInstruction) instruction).getTestStep();
 				}
 				if (instruction instanceof CallStepInstruction) {
-					return (CallStepInstruction) instruction;
+					return instruction;
 				}
 
 				throw new IllegalArgumentException("Cannot process this type of instruction : " + instruction);

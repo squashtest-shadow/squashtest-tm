@@ -20,14 +20,12 @@
  */
 package org.squashtest.tm.service.internal.batchimport;
 
-import java.util.Arrays;
-import java.util.List;
 import java.util.Map;
 
 import org.squashtest.tm.domain.testcase.ActionTestStep;
 import org.squashtest.tm.domain.testcase.CallTestStep;
 import org.squashtest.tm.domain.testcase.Parameter;
-import org.squashtest.tm.service.importer.EntityType;
+import org.squashtest.tm.service.internal.batchimport.testcase.excel.CoverageInstruction;
 
 /**
  * Interface for batch import instructions methods.
@@ -35,13 +33,7 @@ import org.squashtest.tm.service.importer.EntityType;
  */
 public interface Facility {
 
-	final List<EntityType> ENTITIES_ORDERED_BY_INSTRUCTION_ORDER =
-			Arrays.asList(EntityType.TEST_CASE,
-					EntityType.PARAMETER,
-					EntityType.DATASET,
-					EntityType.TEST_STEP,
-					EntityType.DATASET_PARAM_VALUES,
-					EntityType.REQUIREMENT_VERSION);
+
 
 	LogTrain deleteTestCase(TestCaseTarget target);
 
@@ -94,7 +86,7 @@ public interface Facility {
 	/**
 	 * Will create a RequirementVersion. If the Requirement it depends on doesn't exist
 	 * it will be created on the fly.
-	 * 
+	 *
 	 * @param instr
 	 * @return
 	 */
@@ -102,7 +94,7 @@ public interface Facility {
 
 	/**
 	 * Updates a RequiremenVersion with a new content.
-	 * 
+	 *
 	 * @param instr
 	 * @return
 	 */
@@ -111,11 +103,13 @@ public interface Facility {
 	/**
 	 * Will delete a RequirementVersion when implemented some day, today it
 	 * is not and will log a Failure if invoked.
-	 * 
+	 *
 	 * @param instr
 	 * @return
 	 */
 	LogTrain deleteRequirementVersion(RequirementVersionInstruction instr);
+
+	LogTrain createCoverage(CoverageInstruction instr);
 
 }
 

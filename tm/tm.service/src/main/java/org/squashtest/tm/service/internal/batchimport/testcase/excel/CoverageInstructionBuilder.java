@@ -18,16 +18,23 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.importer;
+package org.squashtest.tm.service.internal.batchimport.testcase.excel;
 
-public enum EntityType {
-	NONE,
-	TEST_CASE,
-	TEST_STEP,
-	DATASET,
-	PARAMETER,
-	DATASET_PARAM_VALUES,
-	REQUIREMENT,
-	REQUIREMENT_VERSION, 
-	COVERAGE;
+import org.apache.poi.ss.usermodel.Row;
+import org.squashtest.tm.domain.requirement.RequirementVersion;
+import org.squashtest.tm.domain.testcase.RequirementVersionCoverage;
+import org.squashtest.tm.domain.testcase.TestCase;
+
+public class CoverageInstructionBuilder extends InstructionBuilder<CoverageSheetColumn, CoverageInstruction> {
+
+	public CoverageInstructionBuilder(WorksheetDef<CoverageSheetColumn> wd) {
+		super(wd);
+	}
+
+	@Override
+	protected CoverageInstruction createInstruction(Row row) {
+		return new CoverageInstruction(new CoverageTarget(),
+				new RequirementVersionCoverage(new RequirementVersion(), new TestCase()));
+	}
+
 }

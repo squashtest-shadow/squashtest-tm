@@ -178,5 +178,18 @@ class RequirementExcelParserIT extends Specification{
 		results*.target.requirement.order == [0, 0, 0, 0, null,  0, 0, 0]
 	}
 	
-	
+	def "should create Coverage Instructions"(){
+		
+		given :
+		def parser = createParser("import/requirements/dataset_with_coverage.xls")
+		
+		when :
+		LogTrain unknownHeaders = parser.logUnknownHeaders()
+		def results = parser.getCoverageInstructions()
+		then :
+		unknownHeaders.entries == []
+		results*.target.reqPath == ["req1", "req1", "req1", "req2", "folder/req1"].collect{"/project/" +it}
+		results*.target.reqVersion == [1, 2, 3, 1, 1]
+		results*.target.tcPath == ["tc1", "tc1", "tc2", "tc3", "tc4"].collect{"/project/" +it}
+	}
 }

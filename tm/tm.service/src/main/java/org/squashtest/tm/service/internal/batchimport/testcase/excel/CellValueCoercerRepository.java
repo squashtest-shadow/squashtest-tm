@@ -63,6 +63,7 @@ final class CellValueCoercerRepository<COL extends Enum<COL> & TemplateColumn> {
 		COERCER_REPO_BY_WORKSHEET.put(TemplateWorksheet.DATASETS_SHEET, createDatasetsSheetRepo());
 		COERCER_REPO_BY_WORKSHEET.put(TemplateWorksheet.DATASET_PARAM_VALUES_SHEET, createDatasetParamValuesSheetRepo());
 		COERCER_REPO_BY_WORKSHEET.put(TemplateWorksheet.REQUIREMENT_SHEET, createRequirementSheetRepo());
+		COERCER_REPO_BY_WORKSHEET.put(TemplateWorksheet.COVERAGE_SHEET, createCoverageSheetRepo());
 	}
 
 	/**
@@ -77,12 +78,18 @@ final class CellValueCoercerRepository<COL extends Enum<COL> & TemplateColumn> {
 		return (CellValueCoercerRepository<C>) COERCER_REPO_BY_WORKSHEET.get(worksheet);
 	}
 
+	private static CellValueCoercerRepository<?> createCoverageSheetRepo() {
+		CellValueCoercerRepository<CoverageSheetColumn> repo = new CellValueCoercerRepository<CoverageSheetColumn>();
+		repo.coercerByColumn.put(CoverageSheetColumn.REQ_VERSION_NUM, OptionalIntegerCellCoercer.INSTANCE);
+		return repo;
+	}
+
 	private static CellValueCoercerRepository<?> createRequirementSheetRepo() {
 		CellValueCoercerRepository<RequirementSheetColumn> repo = new CellValueCoercerRepository<RequirementSheetColumn>();
 		repo.coercerByColumn.put(RequirementSheetColumn.ACTION, ImportModeCellCoercer.INSTANCE);
 
 		repo.coercerByColumn.put(RequirementSheetColumn.REQ_NUM, OptionalOneBasedIndexCellCoercer.INSTANCE);
-		
+
 		repo.coercerByColumn.put(RequirementSheetColumn.REQ_VERSION_CATEGORY, new InfoListItemCoercer<ListItemReference>(ListRole.ROLE_CATEGORY));
 		repo.coercerByColumn.put(RequirementSheetColumn.REQ_VERSION_CREATED_ON, OptionalDateCellCoercer.INSTANCE);
 		repo.coercerByColumn.put(RequirementSheetColumn.REQ_VERSION_CRITICALITY, OptionalEnumCellCoercer.forEnum(RequirementCriticality.class));
@@ -180,7 +187,7 @@ final class CellValueCoercerRepository<COL extends Enum<COL> & TemplateColumn> {
 	 */
 	@SuppressWarnings("unchecked")
 	public <VAL> CellValueCoercer<VAL> findCoercer(COL col) {
-		CellValueCoercer<?> coercer = (CellValueCoercer<VAL>) coercerByColumn.get(col);
+		CellValueCoercer<?> coercer = coercerByColumn.get(col);
 		return (CellValueCoercer<VAL>) (coercer == null ? DEFAULT_COERCER : coercer);
 	}
 

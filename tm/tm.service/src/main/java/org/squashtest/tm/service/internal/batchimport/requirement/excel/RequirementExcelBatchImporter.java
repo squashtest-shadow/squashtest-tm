@@ -18,7 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.internal.batchimport;
+package org.squashtest.tm.service.internal.batchimport.requirement.excel;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -26,14 +26,16 @@ import java.util.List;
 
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.service.importer.EntityType;
+import org.squashtest.tm.service.internal.batchimport.Instruction;
 import org.squashtest.tm.service.internal.batchimport.excel.ExcelBatchImporter;
 import org.squashtest.tm.service.internal.batchimport.testcase.excel.ExcelWorkbookParser;
 
 @Component
-public class TestCaseExcelBatchImporter extends ExcelBatchImporter {
+public class RequirementExcelBatchImporter extends ExcelBatchImporter {
 
-	private static final List<EntityType> TC_ENTITIES_ORDERED_BY_INSTRUCTION_ORDER = Arrays.asList(EntityType.TEST_CASE,
-			EntityType.PARAMETER, EntityType.DATASET, EntityType.TEST_STEP, EntityType.DATASET_PARAM_VALUES);
+	private static final List<EntityType> REQ_ENTITIES_ORDERED_BY_INSTRUCTION_ORDER = Arrays
+			.asList(EntityType.REQUIREMENT_VERSION,
+			EntityType.COVERAGE);
 
 	@Override
 	public List<Instruction<?>> findInstructionsByEntity(ExcelWorkbookParser parser, EntityType entityType) {
@@ -52,8 +54,15 @@ public class TestCaseExcelBatchImporter extends ExcelBatchImporter {
 		case DATASET:
 			instructions.addAll(parser.getDatasetInstructions());
 			break;
-		case DATASET_PARAM_VALUES :
+		case DATASET_PARAM_VALUES:
 			instructions.addAll(parser.getDatasetParamValuesInstructions());
+			break;
+		case REQUIREMENT_VERSION:
+			instructions.addAll(parser.getRequirementVersionInstructions());
+			break;
+
+		case COVERAGE:
+			instructions.addAll(parser.getCoverageInstructions());
 			break;
 		default:
 
@@ -63,8 +72,7 @@ public class TestCaseExcelBatchImporter extends ExcelBatchImporter {
 
 	@Override
 	public List<EntityType> getEntityType() {
-		return TC_ENTITIES_ORDERED_BY_INSTRUCTION_ORDER;
+		return REQ_ENTITIES_ORDERED_BY_INSTRUCTION_ORDER;
 	}
-
 
 }

@@ -69,6 +69,7 @@ import org.squashtest.tm.service.importer.LogEntry;
 import org.squashtest.tm.service.infolist.InfoListItemFinderService;
 import org.squashtest.tm.service.internal.batchimport.Model.Existence;
 import org.squashtest.tm.service.internal.batchimport.Model.TargetStatus;
+import org.squashtest.tm.service.internal.batchimport.testcase.excel.CoverageInstruction;
 import org.squashtest.tm.service.internal.customfield.PrivateCustomFieldValueService;
 import org.squashtest.tm.service.internal.library.LibraryUtils;
 import org.squashtest.tm.service.internal.repository.CustomFieldDao;
@@ -121,7 +122,7 @@ public class FacilityImpl implements Facility {
 
 	@Inject
 	private DatasetModificationService datasetService;
-	
+
 	@Inject
 	private RequirementLibraryNavigationService reqLibNavigationService;
 
@@ -142,23 +143,23 @@ public class FacilityImpl implements Facility {
 
 	@Inject
 	private MilestoneImportHelper milestoneHelper;
-	
+
 	@Inject
 	private RequirementLibraryFinderService reqFinderService;
-	
+
 	@Inject
 	private RequirementVersionManagerService requirementVersionManagerService;
-	
+
 	@Inject
 	private MilestoneMembershipManager milestoneService;
-	
+
 	private FacilityImplHelper helper = new FacilityImplHelper();
 
 	private Map<String, CustomFieldInfos> cufInfosCache = new HashMap<String, CustomFieldInfos>();
 
 	private ImportPostProcessHandler postProcessHandler;
-	
-	
+
+
 	// ************************ public (and nice looking) code
 	// **************************************
 
@@ -173,7 +174,7 @@ public class FacilityImpl implements Facility {
 		if (!train.hasCriticalErrors()) {
 			instr.getTestCase().setName(instr.getTarget().getName());
 			train = createTCRoutine(train, instr);
-			
+
 		}
 
 		return train;
@@ -202,7 +203,7 @@ public class FacilityImpl implements Facility {
 			} else {
 				try {
 
-					helper.truncate(testCase, (Map<String, String>) cufValues);
+					helper.truncate(testCase, cufValues);
 					fixNatureAndType(target, testCase);
 
 					doUpdateTestcase(instr);
@@ -238,7 +239,7 @@ public class FacilityImpl implements Facility {
 
 		try {
 			helper.fillNullWithDefaults(testCase);
-			helper.truncate(testCase, (Map<String, String>) cufValues);
+			helper.truncate(testCase, cufValues);
 			fixNatureAndType(target, testCase);
 
 			doCreateTestcase(instruction);
@@ -562,17 +563,17 @@ public class FacilityImpl implements Facility {
 		return train;
 	}
 
-	
+
 
 
 	@Override
 	public LogTrain deleteRequirementVersion(RequirementVersionInstruction instr) {
 		throw new RuntimeException("implement me - must return a Failure : Not implemented in the log train instead of throwing this exception");
 	}
-	
+
 	/**
 	 * for all other stuffs that need to be done afterward
-	 * @param instructions 
+	 * @param instructions
 	 *
 	 */
 	public void postprocess(List<Instruction<?>> instructions) {
@@ -583,7 +584,7 @@ public class FacilityImpl implements Facility {
 
 	// ************************* private (and hairy) code
 	// *********************************
-	
+
 	private LogTrain createReqVersionRoutine(LogTrain train, RequirementVersionInstruction instruction) {
 		RequirementVersion reqVersion = instruction.getRequirementVersion();
 		Map<String, String> cufValues = instruction.getCustomFields();
@@ -591,20 +592,20 @@ public class FacilityImpl implements Facility {
 
 		try {
 			helper.fillNullWithDefaults(reqVersion);
-			helper.truncate(reqVersion, (Map<String, String>) cufValues);
+			helper.truncate(reqVersion, cufValues);
 			fixCategory(target,reqVersion);
 			RequirementVersion newVersion = doCreateRequirementVersion(instruction);
-			
+
 			//update model
-			validator.getModel().addRequirement(target.getRequirement(), 
+			validator.getModel().addRequirement(target.getRequirement(),
 					new TargetStatus(Existence.EXISTS, newVersion.getRequirement().getId()));
 
 			validator.getModel().addRequirementVersion
 				(target, new TargetStatus(Existence.EXISTS, newVersion.getId()));
-			
+
 			//update the instruction, needed for postProcess.
 			instruction.setRequirementVersion(newVersion);
-			
+
 			LOGGER.debug(EXCEL_ERR_PREFIX + "Created Test Case \t'" + target + "'");
 
 		} catch (Exception ex) {
@@ -616,17 +617,17 @@ public class FacilityImpl implements Facility {
 
 		return train;
 	}
-	
+
 	/**
 	 * 1 . First create the requirement if not exist in database
 			1.1 - Requirement is root (ie under a {@link RequirementLibrary})
 					This one is simple, just create the requirement and set the status in requirement tree
 			1.2 - Requirement is under another {@link RequirementLibraryNode}
-					Must create all the node above the requirement that doesn't exists. 
+					Must create all the node above the requirement that doesn't exists.
 					As specified in 5085 all new nodes above the requirement will be treated as folder
 		2 . Create the requirement version :
 	 * @param instruction
-	 * @return 
+	 * @return
 	 */
 	private RequirementVersion doCreateRequirementVersion(
 			RequirementVersionInstruction instruction) {
@@ -649,7 +650,7 @@ public class FacilityImpl implements Facility {
 	 */
 	private RequirementVersion doCreateAddingNewVersionToRequirement(
 			RequirementVersionInstruction instruction,Long reqId) {
-		
+
 		RequirementVersionTarget target = instruction.getTarget();
 		Requirement requirement = reqLibNavigationService.findRequirement(reqId);
 		Map<Long, RawValue> acceptableCufs = toAcceptableCufs(instruction.getCustomFields());
@@ -664,14 +665,14 @@ public class FacilityImpl implements Facility {
 		reqLibNavigationService.initCUFvalues(requirementVersionPersisted, acceptableCufs);
 		bindRequirementVersionToMilestones(requirementVersionPersisted, boundMilestonesIds(instruction));
 		//do the reverse bind milestone -> requirement version as transaction is global to all import process
-		//and 
+		//and
 		//i.e several requirement version could be linked to the same milestone
 		doUpdateRequirementCoreAttributes(requirementVersion, requirementVersionPersisted);
 		fixVersionNumber(requirement, target.getVersion());
 		return requirement.findRequirementVersion(target.getVersion());
 	}
 
-	
+
 
 
 
@@ -684,18 +685,18 @@ public class FacilityImpl implements Facility {
 		Long requirementLibrairyId = validator.getModel().getProjectStatus(projectName).getRequirementLibraryId();
 		RequirementVersion requirementVersion = instruction.getRequirementVersion();
 		Map<Long, RawValue> acceptableCufs = toAcceptableCufs(instruction.getCustomFields());
-		
+
 		//creating the dto needed for adding new requirement
 		NewRequirementVersionDto dto = new NewRequirementVersionDto(requirementVersion, acceptableCufs);
 		dto.setName(PathUtils.unescapePathPartSlashes(dto.getName()));
-		
+
 		//creating the persisted requirement reference
 		Requirement persistedRequirement = null;
-		
+
 		if (target.getRequirement().isRootRequirement()) {
 			persistedRequirement = reqLibNavigationService.addRequirementToRequirementLibrary(
 					requirementLibrairyId,dto,Collections.EMPTY_LIST);
-			
+
 			milestoneService.bindRequirementVersionToMilestones(persistedRequirement.getCurrentVersion().getId(), boundMilestonesIds(instruction));
 		}
 		else {
@@ -718,7 +719,7 @@ public class FacilityImpl implements Facility {
 					}
 				}
 				// 1.2 - If no -> makeDir to create the hierarchy
-				// Beware, mkDirOrRequirement will return an id who can be a requirement or a folder, 
+				// Beware, mkDirOrRequirement will return an id who can be a requirement or a folder,
 				// so we need to test the return type under this id
 				else{
 					parentId = reqLibNavigationService.mkdirs(parentPath);
@@ -738,32 +739,32 @@ public class FacilityImpl implements Facility {
 
 		//updating attributes that creation process haven't set (Category... )
 		doUpdateRequirementCategory(requirementVersion,persistedRequirement.getCurrentVersion());
-		
+
 		//setting the version number correctly as we can add version number non sequentially with import process
 		fixVersionNumber(persistedRequirement, target.getVersion());
 		return persistedRequirement.getCurrentVersion();//we have only one version in the new requirement...
 	}
-	
+
 	private void updateRequirementVersionRoutine(LogTrain train,
 			RequirementVersionInstruction instruction) {
-		
+
 		RequirementVersion reqVersion = instruction.getRequirementVersion();
 		Map<String, String> cufValues = instruction.getCustomFields();
 		RequirementVersionTarget target = instruction.getTarget();
 
-		
+
 		try {
 			helper.fillNullWithDefaults(reqVersion);
-			helper.truncate(reqVersion, (Map<String, String>) cufValues);
+			helper.truncate(reqVersion, cufValues);
 			fixCategory(target,reqVersion);
 			RequirementVersion newVersion = doUpdateRequirementVersion(instruction,cufValues);
-			
+
 			//update the instruction, needed for postProcess.
 			instruction.setRequirementVersion(newVersion);
-			
+
 			//update model
 			validator.getModel().bindMilestonesToRequirementVersion(target,instruction.getMilestones());
-			
+
 			LOGGER.debug(EXCEL_ERR_PREFIX + "Updated Requirement Version \t'" + target + "'");
 
 		} catch (Exception ex) {
@@ -773,19 +774,19 @@ public class FacilityImpl implements Facility {
 			LOGGER.error(EXCEL_ERR_PREFIX + UNEXPECTED_ERROR_WHILE_IMPORTING + target + " : ", ex);
 		}
 	}
-	
+
 
 	private RequirementVersion doUpdateRequirementVersion(
 			RequirementVersionInstruction instruction, Map<String, String> cufValues) {
-		
+
 		RequirementVersionTarget target = instruction.getTarget();
 		RequirementVersion reqVersion = instruction.getRequirementVersion();
-		
+
 		Requirement req = reqLibNavigationService.
 				findRequirement(target.getRequirement().getId());
-		
+
 		RequirementVersion orig = req.findRequirementVersion(target.getVersion());
-		
+
 		doUpdateRequirementCoreAttributes(reqVersion, orig);
 		doUpdateRequirementCategory(reqVersion, orig);
 		bindRequirementVersionToMilestones(orig, boundMilestonesIds(instruction));
@@ -797,10 +798,10 @@ public class FacilityImpl implements Facility {
 	private void doUpdateRequirementCategory(
 			RequirementVersion reqVersion, RequirementVersion orig) {
 		Long idOrig = orig.getId();
-		
+
 		InfoListItem oldCategory = orig.getCategory();
 		InfoListItem newCategory = reqVersion.getCategory();
-		
+
 		if (newCategory!=null && !oldCategory.references(newCategory)) {
 			requirementVersionManagerService.changeCategory(idOrig, newCategory.getCode());
 		}
@@ -808,35 +809,35 @@ public class FacilityImpl implements Facility {
 
 	private void doUpdateRequirementCoreAttributes(
 			RequirementVersion reqVersion, RequirementVersion orig) {
-		
+
 		Long idOrig = orig.getId();
 
 		String newReference = reqVersion.getReference();
 		if (!StringUtils.isBlank(newReference) && !newReference.equals(orig.getReference())) {
 			requirementVersionManagerService.changeReference(idOrig, newReference);
 		}
-		
+
 		String newDescription = reqVersion.getDescription();
 		if (!StringUtils.isBlank(newDescription) && !newDescription.equals(orig.getReference())) {
 			requirementVersionManagerService.changeDescription(idOrig, newDescription);
 		}
-		
+
 		RequirementCriticality newCriticality = reqVersion.getCriticality();
 		if (newCriticality!=null && !newCriticality.equals(orig.getCriticality())) {
 			requirementVersionManagerService.changeCriticality(idOrig, newCriticality);
 		}
 	}
-	
+
 	private void fixVersionNumber(Requirement requirement, Integer version) {
 		reqLibNavigationService.changeCurrentVersionNumber(requirement, version);
 	}
-	
+
 
 	/**
 	 * This method ensure that multiple milestone binding to several {@link RequirementVersion} of
 	 * the same {@link Requirement} is forbidden. The method in service can't prevent this for import as we are
 	 * in a unique transaction for all import lines. So the n-n relationship between milestones and requirementVersion isn't
-	 * fixed until transaction is closed and {@link MilestoneMembershipManager#bindRequirementVersionToMilestones(long, Collection)} 
+	 * fixed until transaction is closed and {@link MilestoneMembershipManager#bindRequirementVersionToMilestones(long, Collection)}
 	 * will let horrible things appends if this list isn't up to date
 	 */
 	private void bindRequirementVersionToMilestones(RequirementVersion requirementVersionPersisted,
@@ -845,21 +846,21 @@ public class FacilityImpl implements Facility {
 		Set<Milestone> milestoneBinded = new HashSet<Milestone>();
 		Set<Long> milestoneBindedId = new HashSet<Long>();
 		Set<Long> checkedMilestones = new HashSet<Long>();
-		
+
 		for (RequirementVersion requirementVersion : allVersion) {
 			milestoneBinded.addAll(requirementVersion.getMilestones());
 		}
-		
+
 		for (Milestone milestone : milestoneBinded) {
 			milestoneBindedId.add(milestone.getId());
 		}
-		
+
 		for (Long id : boundMilestonesIds) {
 			if (!milestoneBindedId.contains(id)) {
 				checkedMilestones.add(id);
 			}
 		}
-	
+
 		requirementVersionManagerService.bindMilestones(requirementVersionPersisted.getId(), checkedMilestones);
 
 	}
@@ -900,8 +901,8 @@ public class FacilityImpl implements Facility {
 		bindMilestones(instr, testCase);
 
 	}
-	
-	
+
+
 
 
 	private void renameIfNeeded(TestCase testCase, Collection<String> siblingNames) {
@@ -1301,7 +1302,7 @@ public class FacilityImpl implements Facility {
 		}
 
 	}
-	
+
 	private void fixCategory(RequirementVersionTarget target, RequirementVersion requirementVersion) {
 		TargetStatus projectStatus = validator.getModel().getProjectStatus(target.getProject());
 
@@ -1342,7 +1343,7 @@ public class FacilityImpl implements Facility {
 	private List<Long> boundMilestonesIds(TestCaseInstruction instr) {
 		return boundMilestonesIds(instr.getMilestones());
 	}
-	
+
 	/**
 	 * Returnd the ids of the milestones to be bound as per requirement version instruction
 	 * @param instr the instruction holding the names of candidate milestones
@@ -1351,13 +1352,13 @@ public class FacilityImpl implements Facility {
 	private List<Long> boundMilestonesIds(RequirementVersionInstruction instr) {
 		return boundMilestonesIds(instr.getMilestones());
 	}
-	
-	
+
+
 	private List<Long> boundMilestonesIds(List<String> milestones){
 		if (milestones.isEmpty()) {
 			return Collections.emptyList();
 		}
-		
+
 		List<Milestone> ms =  milestoneHelper.findBindable(milestones);
 		List<Long> msids = new ArrayList<>(ms.size());
 		for (Milestone m : ms) {
@@ -1379,11 +1380,11 @@ public class FacilityImpl implements Facility {
 		}
 
 	}
-	
+
 	private interface ImportPostProcessHandler {
 		void doPostProcess(List<Instruction<?>> instructions);
 	}
-	
+
 	private class CreateRequirementVersionPostProcessStrategy implements ImportPostProcessHandler {
 
 		@Override
@@ -1397,7 +1398,7 @@ public class FacilityImpl implements Facility {
 			}
 		}
 	}
-	
+
 	private class UpdateRequirementVersionPostProcessStrategy implements ImportPostProcessHandler {
 
 		@Override
@@ -1411,7 +1412,7 @@ public class FacilityImpl implements Facility {
 			}
 		}
 	}
-	
+
 	private void renameRequirementVersion(RequirementVersionInstruction rvi) {
 		String unconsistentName = rvi.getTarget().getUnconsistentName();
 		if (unconsistentName!=null && !StringUtils.isEmpty(unconsistentName)) {
@@ -1419,23 +1420,29 @@ public class FacilityImpl implements Facility {
 			requirementVersionManagerService.rename(rvi.getRequirementVersion().getId(), newName);
 		}
 	}
-	
+
 	private void changeRequirementVersionStatus(
 			RequirementVersionInstruction rvi) {
 		RequirementStatus newstatus = rvi.getTarget().getImportedRequirementStatus();
 		RequirementStatus oldStatus = rvi.getRequirementVersion().getStatus();
-		
+
 		if (newstatus == null || newstatus.equals(oldStatus)) {
 			return;
 		}
-		
-		//The only forbidden transition is from WORK_IN_PROGRESS to APPROVED, 
+
+		//The only forbidden transition is from WORK_IN_PROGRESS to APPROVED,
 		// so we need to update to UNDER_REVIEW before updating to APPROVED
 		if (newstatus == RequirementStatus.APPROVED && oldStatus == RequirementStatus.WORK_IN_PROGRESS) {
 			requirementVersionManagerService.changeStatus
 				(rvi.getRequirementVersion().getId(), RequirementStatus.UNDER_REVIEW);
 		}
-		
+
 		requirementVersionManagerService.changeStatus(rvi.getRequirementVersion().getId(), newstatus);
+	}
+
+	@Override
+	public LogTrain createCoverage(CoverageInstruction instr) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

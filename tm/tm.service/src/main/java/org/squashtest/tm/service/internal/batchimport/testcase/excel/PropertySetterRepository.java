@@ -51,6 +51,7 @@ final class PropertySetterRepository<COL extends Enum<COL> & TemplateColumn> {
 		FINDER_REPO_BY_WORKSHEET.put(TemplateWorksheet.DATASETS_SHEET, createDatasetsWorksheetRepo());
 		FINDER_REPO_BY_WORKSHEET.put(TemplateWorksheet.DATASET_PARAM_VALUES_SHEET, createDatasetParamValuesWorksheetRepo());
 		FINDER_REPO_BY_WORKSHEET.put(TemplateWorksheet.REQUIREMENT_SHEET, createRequirementWorksheetRepo());
+		FINDER_REPO_BY_WORKSHEET.put(TemplateWorksheet.COVERAGE_SHEET, createCoverageWorksheetRepo());
 	}
 
 	/**
@@ -64,11 +65,19 @@ final class PropertySetterRepository<COL extends Enum<COL> & TemplateColumn> {
 		return (PropertySetterRepository<C>) FINDER_REPO_BY_WORKSHEET.get(worksheet);
 	}
 
+	private static PropertySetterRepository<?> createCoverageWorksheetRepo() {
+		PropertySetterRepository<CoverageSheetColumn> r = new PropertySetterRepository<CoverageSheetColumn>();
+		r.propSetterByColumn.put(CoverageSheetColumn.REQ_PATH, ReflectionFieldSetter.forField("reqPath"));
+		r.propSetterByColumn.put(CoverageSheetColumn.REQ_VERSION_NUM, ReflectionFieldSetter.forField("reqVersion"));
+		r.propSetterByColumn.put(CoverageSheetColumn.TC_PATH, ReflectionFieldSetter.forField("tcPath"));
+		return r;
+	}
+
 	private static PropertySetterRepository<?> createRequirementWorksheetRepo() {
 		PropertySetterRepository<RequirementSheetColumn> r = new PropertySetterRepository<RequirementSheetColumn>();
-		
-		
-		
+
+
+
 		r.propSetterByColumn.put(RequirementSheetColumn.REQ_PATH, ReflectionFieldSetter.forField(PROPERTY_PATH));
 		r.propSetterByColumn.put(RequirementSheetColumn.REQ_NUM, ReflectionFieldSetter.forOptionalField("order"));
 
@@ -79,7 +88,7 @@ final class PropertySetterRepository<COL extends Enum<COL> & TemplateColumn> {
 		r.propSetterByColumn.put(RequirementSheetColumn.REQ_VERSION_CATEGORY, ReflectionFieldSetter.forOptionalField("category"));
 		r.propSetterByColumn.put(RequirementSheetColumn.REQ_VERSION_STATUS, ReflectionFieldSetter.forOptionalField("status"));
 		r.propSetterByColumn.put(RequirementSheetColumn.REQ_VERSION_CRITICALITY, ReflectionFieldSetter.forOptionalField("criticality"));
-		
+
 		r.propSetterByColumn.put(RequirementSheetColumn.REQ_VERSION_DESCRIPTION,
 				ReflectionFieldSetter.forOptionalField("description"));
 
@@ -92,7 +101,7 @@ final class PropertySetterRepository<COL extends Enum<COL> & TemplateColumn> {
 		// instruction
 		r.propSetterByColumn.put(RequirementSheetColumn.ACTION, ReflectionMutatorSetter.forOptionalProperty(PROPERTY_MODE));
 
-		
+
 		return r;
 	}
 

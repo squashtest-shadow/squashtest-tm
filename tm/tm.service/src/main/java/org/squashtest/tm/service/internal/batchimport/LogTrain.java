@@ -62,18 +62,18 @@ public class LogTrain {
 		return criticalErrors;
 	}
 
-	boolean hasNoErrorWhatsoever(){
+	public boolean hasNoErrorWhatsoever() {
 		return entries.isEmpty();
 	}
 
 
-	void setForAll(int lineNumber){
+	public void setForAll(int lineNumber) {
 		for (LogEntry entry : entries){
 			entry.setLine(lineNumber);
 		}
 	}
 
-	void setForAll(ImportMode mode){
+	public void setForAll(ImportMode mode) {
 		for (LogEntry entry : entries) {
 			entry.setMode(mode);
 		}
