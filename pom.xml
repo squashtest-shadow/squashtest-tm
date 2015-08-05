@@ -292,8 +292,9 @@
             <exclude>**/r.js</exclude>
             <exclude>**/scripts/sinon*.js</exclude>
             <exclude>**/styles/**/bootstrap*.css</exclude> 
-            <exclude>**/pubsub-boot.js</exclude> 
-            
+            <exclude>**/pubsub-boot.js</exclude>
+            <exclude>**/node_modules/**/*.*</exclude>
+            <exclude>**/.idea/**/*.*</exclude>
 	    <!-- generated stylesheets -->
             <exclude>**/styles/**/squash.*.css</exclude>
 						<!-- third-party wslds -->
