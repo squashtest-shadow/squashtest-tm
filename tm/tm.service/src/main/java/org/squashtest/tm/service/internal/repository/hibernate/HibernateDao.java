@@ -20,18 +20,17 @@
  */
 package org.squashtest.tm.service.internal.repository.hibernate;
 
-import java.lang.reflect.ParameterizedType;
-import java.util.Collection;
-import java.util.List;
-
-import javax.inject.Inject;
-import javax.validation.constraints.NotNull;
-
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.squashtest.tm.core.foundation.collection.Paging;
 import org.squashtest.tm.service.internal.repository.GenericDao;
+
+import javax.inject.Inject;
+import javax.validation.constraints.NotNull;
+import java.lang.reflect.ParameterizedType;
+import java.util.Collection;
+import java.util.List;
 
 /**
  * To implement an Hibernate DAO, subclass this class, annotate it with @Repository and work with the Hibernate session

@@ -20,23 +20,8 @@
  */
 package org.squashtest.tm.domain.campaign;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Embedded;
-import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.OneToMany;
-import javax.persistence.OrderColumn;
-import javax.persistence.PrimaryKeyJoinColumn;
-import javax.validation.constraints.NotNull;
-
 import org.apache.commons.lang.NullArgumentException;
+import org.hibernate.annotations.Cascade;
 import org.squashtest.tm.domain.attachment.Attachment;
 import org.squashtest.tm.domain.customfield.BindableEntity;
 import org.squashtest.tm.domain.customfield.BoundEntity;
@@ -46,6 +31,10 @@ import org.squashtest.tm.domain.library.NodeVisitor;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.exception.DuplicateNameException;
 
+import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+import java.util.*;
+
 @Entity
 @PrimaryKeyJoinColumn(name = "CLN_ID")
 public class Campaign extends CampaignLibraryNode implements NodeContainer<Iteration>, BoundEntity {
@@ -54,9 +43,10 @@ public class Campaign extends CampaignLibraryNode implements NodeContainer<Itera
 	@Embedded
 	private final ActualTimePeriod actualPeriod = new ActualTimePeriod();
 
-	@OneToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+	@OneToMany
 	@OrderColumn(name = "ITERATION_ORDER")
 	@JoinTable(name = "CAMPAIGN_ITERATION", joinColumns = @JoinColumn(name = "CAMPAIGN_ID"), inverseJoinColumns = @JoinColumn(name = "ITERATION_ID"))
+	@Cascade({org.hibernate.annotations.CascadeType.LOCK, org.hibernate.annotations.CascadeType.MERGE, org.hibernate.annotations.CascadeType.PERSIST})
 	private final List<Iteration> iterations = new ArrayList<Iteration>();
 
 	@OneToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
@@ -145,6 +135,7 @@ public class Campaign extends CampaignLibraryNode implements NodeContainer<Itera
 	 * @deprecated use {@link #findTestPlanItem(TestCase)}
 	 * @param testCaseId
 	 * @return
+	 * @deprecated does not seem to be used - candidate for removal ?
 	 */
 	@Deprecated
 	public CampaignTestPlanItem getTestPlanForTestPlanItemId(Long testCaseId) {
@@ -279,7 +270,7 @@ public class Campaign extends CampaignLibraryNode implements NodeContainer<Itera
 	/**
 	 * If the iteration have autodates set, they will be updated accordingly.
 	 * 
-	 * @param newItemTestPlanDate
+	 * @param newIterationStartDate
 	 */
 	public void updateActualStart(Date newIterationStartDate) {
 

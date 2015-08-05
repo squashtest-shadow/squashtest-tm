@@ -307,10 +307,17 @@
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>aspectj-maven-plugin</artifactId>
         <configuration>
-          <showWeaveInfo>${verbose.compiler}</showWeaveInfo>
+          <showWeaveInfo>false</showWeaveInfo>
           <source>${jdk.version}</source>
           <target>${jdk.version}</target>
-          <compatibilityLevel>${jdk.version}</compatibilityLevel>
+          <complianceLevel>${jdk.version}</complianceLevel>
+          <!--
+            PreventConcurrentAspect must not be weaved, otherwise it cannot be ordered
+            before @Transactional and @PreAuthorize, which is needed for it to properly work
+          -->
+          <excludes>
+            <exclude>**/PreventConcurrentAspect.java</exclude>
+          </excludes>
           <aspectLibraries>
             <aspectLibrary>
               <groupId>org.squashtest.tm</groupId>

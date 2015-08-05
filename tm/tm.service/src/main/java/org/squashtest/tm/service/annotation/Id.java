@@ -18,22 +18,18 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.internal.repository;
+package org.squashtest.tm.service.annotation;
 
-import org.hibernate.LockOptions;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-import java.util.Collection;
-import java.util.List;
-
-
-public interface EntityDao<ENTITY_TYPE> extends GenericDao<ENTITY_TYPE>{
-	
-	ENTITY_TYPE findById(long id);
-
-	ENTITY_TYPE findById(long id, LockOptions lockOptions);
-
-	List<ENTITY_TYPE> findAll();
-	
-	List<ENTITY_TYPE> findAllByIds(Collection<Long> id);
-	
+/**
+ * @author Gregory Fouquet
+ * @since 1.11.6
+ */
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.PARAMETER)
+public @interface Id {
 }

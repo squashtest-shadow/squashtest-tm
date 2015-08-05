@@ -56,6 +56,8 @@
     <hibernate.version>4.2.2.Final</hibernate.version>
     <groovy.version>2.0.7</groovy.version>
     <provisionBom.version>1.4</provisionBom.version>
+
+    <aspectj.version>1.7.1.RELEASE</aspectj.version>
   </properties>
 
   <dependencyManagement>

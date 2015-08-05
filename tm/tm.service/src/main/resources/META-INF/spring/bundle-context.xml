@@ -35,7 +35,8 @@
 	http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.1.xsd
 	http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task.xsd">
 
-  <context:spring-configured/> 
+  <aop:aspectj-autoproxy />
+  <context:spring-configured/>
 
   <context:annotation-config />
 
