@@ -273,7 +273,7 @@ require([ "common" ], function() {
         $("#issue-report-dialog-openbutton").click(function() {
             $(this).removeClass("ui-state-focus ui-state-hover");
             
-            var projectPrefs = storage.get("bugtracker.projects-preferences");
+            var projectPrefs = storage.get("bugtracker.projects-preferences") || {};
             var currentProjectId = ${projectId};
          	var projectNames = ${projectNames};
             var projectName = projectPrefs[currentProjectId] == undefined ? projectNames[0] : projectPrefs[currentProjectId];
