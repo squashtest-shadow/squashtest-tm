@@ -48,7 +48,7 @@
    
    <style type="text/css">
     body{
-      background-color: #ebeae5;
+      background-color : white;
     }
     
     .chart-definition-field{
@@ -57,11 +57,20 @@
     
     .chart-builder-area{
       margin-top : 100px;
+      display : inline-block;
+      width : 49%;
+    }
+    
+    .chart-display-area{
+      margin-top : 100px;
+      display : inline-block;
+      width : 49%;
     }
     
     #contextual-content{
       left : 20px;
     }
+
    </style>
   </head>
   
@@ -82,7 +91,7 @@
     <div id="contextual-content">
         
         
-       <div class="chart-builder-area">
+       <div id="chart-builder-area" class="chart-builder-area">
           <div class="chart-definition-area">
             <div class="chart-definition-field">
               <label>sélectionnez un périmètre</label>
@@ -114,9 +123,39 @@
             
           </div>
         </div> 
+        
+          
+        <div id="chart-display-area" class="chart-display-area">
+      
+          
+        </div>
+        
     </div>
    
   </div>
+  
+  <script id="chart-view-piechart-template" type="text/x-handlebars-template">
+ 	<div id="{{id}}" class="dashboard-item {{additionalClasses}}" data-def="model-attribute=chartmodel">
+            
+      <div id="{{id}}-view" class="dashboard-item-view">
+              
+      </div>
+      
+      <div class="dashboard-item-meta">
+        <h2 class="dashboard-item-title">{{title}}</h2>
+                
+        <div class="dashboard-item-legend">
+			{{#each legend}}
+            <div>
+              <div class="dashboard-legend-sample-color" style="background-color:{{color}}"></div>
+              <span>{{label}}</span>
+            </div>
+			{{/each}}
+        </div>
+      </div>
+    </div>           
+
+  </script>
   
   
   <script type="text/javascript" th:inline="javascript">

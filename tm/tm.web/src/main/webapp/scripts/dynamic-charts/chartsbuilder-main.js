@@ -20,7 +20,7 @@
  */
 
 
-define(["jquery"], function($){
+define(["jquery", "./chart-plotter"], function($, ChartPlotter){
 	
 	
 	function findPerimeter(conf, id){
@@ -143,7 +143,7 @@ define(["jquery"], function($){
 					'url' : squashtm.app.contextRoot + 'charts-workspace/processor'
 				})
 				.success(function(json){
-					console.log(json);
+					ChartPlotter.buildFromChart('somechart', json);
 				});
 				
 			});

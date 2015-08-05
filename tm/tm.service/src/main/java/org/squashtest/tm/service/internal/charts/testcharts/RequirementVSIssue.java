@@ -52,25 +52,27 @@ public class RequirementVSIssue implements Perimeter {
 
 
 	private static final String FROM_CLAUSE_STEP_ISSUES =
-			" from ExecutionStep step inn joiner step.execution exec inner join exec.getTestPlan tp " +
+			" from ExecutionStep step "+
+					"inner join step.issueList ilist inner join ilist.issues issue " +
+					"inner join step.execution exec inner join exec.testPlan tp " +
 					"inner join tp.iteration it inner join it.campaign c " +
 					"inner join tp.referencedTestCase tc inner join tc.requirementVersionCoverages cov " +
-					"inner join cov.verifiedRequirementVersion rv " +
-					"inner join exec.issueList ilist inner join ilist.issues issue ";
+					"inner join cov.verifiedRequirementVersion rv ";
 
 
 	private static final String FROM_CLAUSE_EXEC_ISSUES =
-			" from Execution exec inner join exec.getTestPlan tp inner join tp.iteration it inner join it.campaign c " +
+			" from Execution exec "+
+					"inner join exec.issueList ilist inner join ilist.issues issue " +
+					"inner join exec.testPlan tp inner join tp.iteration it inner join it.campaign c " +
 					"inner join tp.referencedTestCase tc inner join tc.requirementVersionCoverages cov " +
-					"inner join cov.verifiedRequirementVersion rv " +
-					"inner join exec.issueList ilist inner join ilist.issues issue ";
+					"inner join cov.verifiedRequirementVersion rv ";
 
 	static {
 
 		Collection<Column> columns = new ArrayList<>(7);
 
 		columns.add(new Column("requirement-criticality", Datatype.CRITICALITY, "criticality", "rv.criticality"));
-		columns.add(new Column("requirement-category", Datatype.INFOLIST, "category", "rv.category"));
+		columns.add(new Column("requirement-category", Datatype.STRING, "category", "rv.category.label"));
 		columns.add(new Column("requirement-creator", Datatype.STRING, "creator login", "rv.audit.createdBy"));
 		columns.add(new Column("testcase-importance", Datatype.IMPORTANCE, "test case importance", "tc.importance"));
 		columns.add(new Column("campaign-name", Datatype.STRING, "campaign name", "c.name"));
@@ -116,7 +118,7 @@ public class RequirementVSIssue implements Perimeter {
 
 		// get the exec-level issues
 		String execIssuesHQL = utils.getHQL(query, FROM_CLAUSE_EXEC_ISSUES);
-		Query execQuery = session.createQuery(stepIssuesHQL);
+		Query execQuery = session.createQuery(execIssuesHQL);
 		List<Object[]> execTuple = execQuery.list();
 
 		// now merge the results

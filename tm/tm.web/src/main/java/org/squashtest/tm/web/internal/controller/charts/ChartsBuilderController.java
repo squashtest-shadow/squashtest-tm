@@ -61,7 +61,7 @@ public class ChartsBuilderController {
 	@RequestMapping(value="/processor", consumes="application/json", produces="application/json", method = RequestMethod.POST)
 	@ResponseBody
 	public JsonChart getChart(@RequestBody JsonChart jsonChart){
-		/*
+
 		String perimeterId = jsonChart.getPerimeterId();
 		Perimeter perimeter = findPerimeterById(perimeterId);
 
@@ -74,7 +74,7 @@ public class ChartsBuilderController {
 		ChartInstance instance = service.buildChart(c);
 
 		jsonChart.setResultSet(instance.getResponse().getData());
-		 */
+
 		return jsonChart;
 
 	}

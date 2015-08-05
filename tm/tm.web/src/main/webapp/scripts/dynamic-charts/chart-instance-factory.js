@@ -1,4 +1,4 @@
-/**
+/*
  *     This file is part of the Squashtest platform.
  *     Copyright (C) 2010 - 2015 Henix, henix.fr
  *
@@ -18,37 +18,46 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.internal.charts;
 
-import org.squashtest.tm.service.charts.PerimeterQuery;
+define(["backbone", "dashboard/basic-objects/model", "dashboard/basic-objects/pie-view"], 
+		function(Backbone, ChartModel, PieView){
 
-class TupleAggregator {
+	
+	function generatePieChart(viewID, jsonChart){
 
-	// TODO : something smarter than merely adding the data.
-	// the operation in the select clause might be different than count()
-	Object[] aggregate(PerimeterQuery perimeter, Object[] tuple1, Object[] tuple2){
+		var Pie = PieView.extend({
+			
+			getSeries : function(){
+				return this.model.get('chartmodel');
+			}
+			
+		});
 
-		Object[] newRes = new Object[tuple1.length];
-
-		int axesend = perimeter.getAxes().size();
-		int dataend = perimeter.getData().size();
-
-		// about the axes : just copy them. They are supposed to be the same for tuple1 and tuple 2
-		for (int i=0; i< axesend; i++){
-			newRes[i] = tuple1[i];
+		var series = [];
+		for (var i=0; i < jsonChart.resultSet.length; i++){
+			series[i] = jsonChart.resultSet[i][1];
 		}
-
-		// about the data : just add them for now
-		for (int i=axesend; i<dataend; i++){
-			newRes[i] = (Long)tuple1[i] + (Long)tuple2[i];
-		}
-
-		// the rest : add them
-		for (int i=dataend; i< tuple1.length; i++){
-			newRes[i] = (Long)tuple1[i] + (Long)tuple2[i];
-		}
-
-		return newRes;
+		
+		new Pie({
+			el : $(viewID),
+			model : new ChartModel({
+				chartmodel : series
+			},{
+				url : "whatever"
+			})
+		});
 	}
-
-}
+	
+	
+	function generateChartInView(viewID, jsonChart){
+		switch(jsonChart.chartType){
+		case 'PIE_CHART' : generatePieChart(viewID, jsonChart); break;
+		default : throw jsonChart.chartType+" not supported yet";
+		}
+		
+	}
+	
+	return  {
+		generateChartInView : generateChartInView
+	};
+});
