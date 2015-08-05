@@ -191,6 +191,7 @@ public class Campaign extends CampaignLibraryNode implements NodeContainer<Itera
 	 * @deprecated use {@link #findTestPlanItem(TestCase)}
 	 * @param testCaseId
 	 * @return
+	 * @deprecated does not seem to be used - candidate for removal ?
 	 */
 	@Deprecated
 	public CampaignTestPlanItem getTestPlanForTestPlanItemId(Long testCaseId) {
@@ -335,7 +336,7 @@ public class Campaign extends CampaignLibraryNode implements NodeContainer<Itera
 	/**
 	 * If the iteration have autodates set, they will be updated accordingly.
 	 * 
-	 * @param newItemTestPlanDate
+	 * @param newIterationStartDate
 	 */
 	public void updateActualStart(Date newIterationStartDate) {
 

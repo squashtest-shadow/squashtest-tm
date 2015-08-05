@@ -29,6 +29,9 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Provider;
 
+import org.hibernate.LockMode;
+import org.hibernate.LockOptions;
+import org.hibernate.SessionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.ObjectFactory;
@@ -78,6 +81,8 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 IterationTestPlanManager {
 	private static final Logger LOGGER = LoggerFactory.getLogger(CustomIterationModificationServiceImpl.class);
 	private static final String PERMISSION_EXECUTE_ITEM = "hasPermission(#testPlanItemId, 'org.squashtest.tm.domain.campaign.IterationTestPlanItem', 'EXECUTE') ";
+
+	@Inject private SessionFactory sessionFactory;
 
 	@Inject
 	private CampaignDao campaignDao;
@@ -132,6 +137,10 @@ IterationTestPlanManager {
 			+ OR_HAS_ROLE_ADMIN)
 	public int addIterationToCampaign(Iteration iteration, long campaignId, boolean copyTestPlan) {
 		Campaign campaign = campaignDao.findById(campaignId);
+		sessionFactory.getCurrentSession()
+			.buildLockRequest(LockOptions.UPGRADE)
+			.setLockMode(LockMode.PESSIMISTIC_WRITE).setScope(true)
+			.lock(campaign);
 
 		// copy the campaign test plan in the iteration
 

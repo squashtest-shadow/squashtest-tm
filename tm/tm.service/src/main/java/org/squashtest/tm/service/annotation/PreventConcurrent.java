@@ -1,6 +1,6 @@
 /**
  *     This file is part of the Squashtest platform.
- *     Copyright (C) 2010 - 2015 Henix, henix.fr
+ *     Copyright (C) 2010 - 2014 Henix, henix.fr
  *
  *     See the NOTICE file distributed with this work for additional
  *     information regarding copyright ownership.
@@ -18,22 +18,28 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.internal.repository;
+package org.squashtest.tm.service.annotation;
 
-import org.hibernate.LockOptions;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-import java.util.Collection;
-import java.util.List;
-
-
-public interface EntityDao<ENTITY_TYPE> extends GenericDao<ENTITY_TYPE>{
-	
-	ENTITY_TYPE findById(long id);
-
-	ENTITY_TYPE findById(long id, LockOptions lockOptions);
-
-	List<ENTITY_TYPE> findAll();
-	
-	List<ENTITY_TYPE> findAllByIds(Collection<Long> id);
-	
+/**
+ * Method with this annotation should not be run concurrently when they access the same entity.
+ * <p/>
+ * The method arg which conveys the entity's id has to be annotated with @Id
+ * <p/>
+ * This annotation is processed at runtime using Spring AOP so it can only be used on spring beans.
+ *
+ * @author Gregory Fouquet
+ * @since 1.11.6
+ */
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.METHOD)
+public @interface PreventConcurrent {
+	/**
+	 * Type of the entity which should be locked
+	 */
+	Class<?> entityType();
 }
