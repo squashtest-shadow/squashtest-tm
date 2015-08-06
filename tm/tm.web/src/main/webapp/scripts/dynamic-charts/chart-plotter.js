@@ -27,7 +27,10 @@ define(["handlebars", "./chart-dom-factory","./chart-instance-factory"],
 	function buildFromChart(viewID, jsonChart){
 		
 		var html = DOMFactory.generateViewDOM(viewID, jsonChart);
-		 // TODO : make the selector for the container area configurable too
+		
+		// TODO : make the selector for the container area configurable too
+		// TODO : destroy previous charts and save memory 
+		// everytime a new chart is loaded
 		$("#chart-display-area").html(html); 
 		
 		instanceFactory.generateChartInView("#"+viewID, jsonChart);

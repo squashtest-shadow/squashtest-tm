@@ -19,9 +19,42 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-define(["backbone", "dashboard/basic-objects/model", "dashboard/basic-objects/pie-view"], 
-		function(Backbone, ChartModel, PieView){
+define(["backbone", "dashboard/basic-objects/model", "dashboard/basic-objects/pie-view", 
+        "./bar-view"], 
+		function(Backbone, ChartModel, PieView, BarView){
 
+	
+	function generateBarChart(viewID, jsonChart){
+		
+		var ticks = jsonChart.resultSet.map(function(elt){
+			return elt[0];
+		});
+		
+		var Bar = BarView.extend({
+			getCategories : function(){
+				return ticks;
+			},
+			
+			getSeries : function(){
+				return [ this.model.get('chartmodel') ];
+			}
+		});
+		
+
+		
+		var series = jsonChart.resultSet.map(function(elt){
+			return elt[1];
+		});
+		
+		new Bar({
+			el : $(viewID),
+			model : new ChartModel({
+				chartmodel : series
+			},{
+				url : "whatever"
+			})
+		})
+	}
 	
 	function generatePieChart(viewID, jsonChart){
 
@@ -50,6 +83,8 @@ define(["backbone", "dashboard/basic-objects/model", "dashboard/basic-objects/pi
 	
 	function generateTableChart(viewID, jsonChart){
 		// NOOP : the DOM has it all already
+		// TODO : use dashboard/basic-objects/table-view for 
+		// the sake of consistency
 	}
 	
 	
@@ -57,6 +92,7 @@ define(["backbone", "dashboard/basic-objects/model", "dashboard/basic-objects/pi
 		switch(jsonChart.chartType){
 		case 'PIE_CHART' : generatePieChart(viewID, jsonChart); break;
 		case 'SINGLE_TABLE' : generateTableChart(viewID, jsonChart); break;
+		case 'BAR_CHART' : generateBarChart(viewID, jsonChart); break;
 		default : throw jsonChart.chartType+" not supported yet";
 		}
 		

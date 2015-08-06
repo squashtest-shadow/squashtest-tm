@@ -157,6 +157,8 @@ requirejs.config({
 				"jqplot-highlight": "lib/jqplot/plugins/jqplot.highlighter.min",
 //				"jqplot-category" : "lib/jqplot/plugins/jqplot.categoryAxisRenderer",
 				"jqplot-category" : "lib/jqplot/plugins/jqplot.categoryAxisRenderer.min",
+//				"jqplot-bar" : "lib/jqplot/plugins/jqplot.barRenderer",
+				"jqplot-bar" : "lib/jqplot/plugins/jqplot.barRenderer.min",
 //				"moment" : "lib/momentjs/moment-with-locales.min",
 				"moment" : "lib/momentjs/moment-with-locales.min",
 				//cke
@@ -332,6 +334,7 @@ requirejs.config({
 				"jqplot-pie" : ["jquery", "jqplot-core"],
 				"jqplot-donut" : ["jquery", "jqplot-core"],
 				"jqplot-dates" : ["jquery", "jqplot-core"],
+				"jqplot-bar" : ["jquery", "jqplot-core"],
 				"jqplot-category" : ["jquery", "jqplot-core"],
 				"jqplot-highlight" : {
 					deps : ["jquery", "jqplot-core"],

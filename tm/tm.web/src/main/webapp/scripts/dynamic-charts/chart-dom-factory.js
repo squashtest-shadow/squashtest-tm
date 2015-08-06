@@ -24,6 +24,24 @@ define(["jquery", "handlebars"], function($, Handelbars){
 	var colors = ["#FF0000", "#00FF00", "#0000FF", "#880000", "#008800", "#000088", 
 	              "#F0F0F0", "#0F0F0F", "#000000", "#FFFFFF", "#123456", "#ABCDEF"];
 	
+	
+	function generateBarViewDOM(viewID, jsonChart){
+		var strTemplate = $("#chart-view-barchart-template").html();
+		var template = Handlebars.compile(strTemplate);
+		
+		// TODO : make the title use an actual label for the data too
+		var title = jsonChart.data[0].column.defaultLabel+' / '+jsonChart.axes[0].actualLabel;
+		
+		var templateModel = {
+			id : viewID, 
+			additionalClasses : 'dashboard-bar',	//class 'dashboard-bar' doesn't define any css really
+			title : title
+		};
+				
+		var html = template(templateModel);
+		return html;
+	}
+	
 	function generatePieViewDOM(viewID, jsonChart){
 		var strTemplate = $("#chart-view-piechart-template").html();
 		var template = Handlebars.compile(strTemplate);
@@ -51,6 +69,9 @@ define(["jquery", "handlebars"], function($, Handelbars){
 		return html;
 	}
 	
+	
+	// TODO : use dashboad/basic-objects/table-view
+	// for the sake of consistency
 	function generateTableViewDOM(viewID, jsonChart){
 		var strTemplate = $("#chart-view-singletablechart-template").html();
 		var template = Handlebars.compile(strTemplate);
@@ -89,6 +110,7 @@ define(["jquery", "handlebars"], function($, Handelbars){
 		switch(jsonChart.chartType){
 		case 'PIE_CHART' : viewDOM = generatePieViewDOM(viewID, jsonChart); break;
 		case 'SINGLE_TABLE' : viewDOM = generateTableViewDOM(viewID, jsonChart); break;
+		case 'BAR_CHART' : viewDOM = generateBarViewDOM(viewID, jsonChart); break;
 		default : throw jsonChart.chartType+" not supported yet";
 		}
 		

@@ -185,6 +185,19 @@
     </div> 
   </script>
   
+  <script id="chart-view-barchart-template" type="text/x-handlebars-template">
+  <div id="{{id}}" class="dashboard-item {{additionalClasses}}" data-def="model-attribute=chartmodel">
+            
+      <div id="{{id}}-view" class="dashboard-item-view">
+              
+      </div>
+      
+      <div class="dashboard-item-meta">
+        <h2 class="dashboard-item-title">{{title}}</h2>
+      </div>
+    </div> 
+  </script>  
+  
   <script type="text/javascript" th:inline="javascript">
   	/*<![CDATA[*/
     var conf = /*[[ ${builderModel} ]]*/{};
