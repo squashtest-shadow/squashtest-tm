@@ -49,36 +49,4 @@ class PerimeterUtilsTest extends Specification {
 
 	}
 
-	def "should aggregate two resultsets"(){
-
-		given :
-		def resultSet1 = [
-			["Berlin", 15, 15] as Object[],
-			["Tokyo", 4, 4] as Object[]
-		]
-		def resultSet2 = [
-			["Ankara", 1, 1] as Object[],
-			["Berlin", 2, 2] as Object[]
-		]
-
-		and :
-		def axes = [ new Column("town-name", STRING, "town name", "town.name")];
-		def data = [ new Column("person-name", STRING, "person name", "p.name" )];
-		def perimeter = new PerimeterQuery(axes : axes, data : data);
-
-
-		and :
-		def utils = new PerimeterUtils()
-
-		when :
-		def finalRes = utils.mergeResultSet(perimeter, resultSet1, resultSet2)
-
-		then :
-		finalRes[0] == ["Ankara", 1, 1]
-		finalRes[1] == ["Berlin", 17, 17]
-		finalRes[2] == ["Tokyo", 4, 4]
-
-	}
-
-
 }

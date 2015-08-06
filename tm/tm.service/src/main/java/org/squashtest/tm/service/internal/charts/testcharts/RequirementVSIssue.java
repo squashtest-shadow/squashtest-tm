@@ -51,21 +51,16 @@ public class RequirementVSIssue implements Perimeter {
 	private static final Collection<Column> availableColumns;
 
 
-	private static final String FROM_CLAUSE_STEP_ISSUES =
-			" from ExecutionStep step "+
-					"inner join step.issueList ilist inner join ilist.issues issue " +
+	private static final String QUERY =
+			" from Issue issue, " +
+					"ExecutionStep step "+
 					"inner join step.execution exec inner join exec.testPlan tp " +
 					"inner join tp.iteration it inner join it.campaign c " +
 					"inner join tp.referencedTestCase tc inner join tc.requirementVersionCoverages cov " +
-					"inner join cov.verifiedRequirementVersion rv ";
+					"inner join cov.verifiedRequirementVersion rv " +
+					"where issue in elements(step.issueList.issues) or issue in elements(exec.issueList.issues) ";
 
 
-	private static final String FROM_CLAUSE_EXEC_ISSUES =
-			" from Execution exec "+
-					"inner join exec.issueList ilist inner join ilist.issues issue " +
-					"inner join exec.testPlan tp inner join tp.iteration it inner join it.campaign c " +
-					"inner join tp.referencedTestCase tc inner join tc.requirementVersionCoverages cov " +
-					"inner join cov.verifiedRequirementVersion rv ";
 
 	static {
 
@@ -111,22 +106,14 @@ public class RequirementVSIssue implements Perimeter {
 
 		Session session = sessionFactory.getCurrentSession();
 
-		// get the step-level issues
-		String stepIssuesHQL = utils.getHQL(query, FROM_CLAUSE_STEP_ISSUES);
+
+		String stepIssuesHQL = utils.getHQL(query, QUERY);
 		Query stepQuery = session.createQuery(stepIssuesHQL);
-		List<Object[]> stepTuple = stepQuery.list();
-
-		// get the exec-level issues
-		String execIssuesHQL = utils.getHQL(query, FROM_CLAUSE_EXEC_ISSUES);
-		Query execQuery = session.createQuery(execIssuesHQL);
-		List<Object[]> execTuple = execQuery.list();
-
-		// now merge the results
-		List<Object[]> res = utils.mergeResultSet(query, stepTuple, execTuple);
+		List<Object[]> tuples = stepQuery.list();
 
 
 		PerimeterResponse response = new PerimeterResponse();
-		response.setData(res);
+		response.setData(tuples);
 
 		return response;
 

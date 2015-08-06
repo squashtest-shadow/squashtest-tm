@@ -153,10 +153,37 @@
 			{{/each}}
         </div>
       </div>
-    </div>           
-
+    </div> 
   </script>
   
+    <script id="chart-view-singletablechart-template" type="text/x-handlebars-template">
+  <div id="{{id}}" class="dashboard-item " data-def="model-attribute=chartmodel">
+            
+      <div id="{{id}}-view" class="dashboard-item-view">
+		
+		<table  style="border:1px solid black;border-collapse : collapse">            
+			<thead style="border:1px solid black;border-collapse : collapse">
+				<tr>
+					{{#each headers}}
+					<th  style="border:1px solid black;border-collapse : collapse">{{this}}</th>
+					{{/each}}
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					{{#each values}}
+					<td  style="border:1px solid black;border-collapse : collapse">{{this}}</td>
+					{{/each}}
+				</tr>
+			</tbody>
+   		</table>
+      </div>
+      
+      <div class="dashboard-item-meta">
+        <h2 class="dashboard-item-title">{{title}}</h2>
+      </div>
+    </div> 
+  </script>
   
   <script type="text/javascript" th:inline="javascript">
   	/*<![CDATA[*/

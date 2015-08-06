@@ -48,10 +48,15 @@ define(["backbone", "dashboard/basic-objects/model", "dashboard/basic-objects/pi
 		});
 	}
 	
+	function generateTableChart(viewID, jsonChart){
+		// NOOP : the DOM has it all already
+	}
+	
 	
 	function generateChartInView(viewID, jsonChart){
 		switch(jsonChart.chartType){
 		case 'PIE_CHART' : generatePieChart(viewID, jsonChart); break;
+		case 'SINGLE_TABLE' : generateTableChart(viewID, jsonChart); break;
 		default : throw jsonChart.chartType+" not supported yet";
 		}
 		

@@ -33,7 +33,7 @@ define(["jquery", "handlebars"], function($, Handelbars){
 		
 		var templateModel = {
 			id : viewID, 
-			additionalClasses : 'dashboard-pie',
+			additionalClasses : 'dashboard-pie',	//class 'dashboard-pie' doesn't define any css really
 			title : title
 		};
 		
@@ -51,11 +51,44 @@ define(["jquery", "handlebars"], function($, Handelbars){
 		return html;
 	}
 	
+	function generateTableViewDOM(viewID, jsonChart){
+		var strTemplate = $("#chart-view-singletablechart-template").html();
+		var template = Handlebars.compile(strTemplate);
+		
+		// TODO : make the title use an actual label for the data too
+		var title = jsonChart.data[0].column.defaultLabel+' / '+jsonChart.axes[0].actualLabel;
+		
+		var templateModel = {
+			id : viewID,
+			additionalClasses : 'dashboard-table',
+			title : title
+		};
+		
+		
+
+		var serie = jsonChart.resultSet;
+		templateModel.headers = [];
+		
+		for (var i=0; i< serie.length; i++){
+			templateModel.headers.push(serie[i][0]);
+		}
+		
+		templateModel.values = [];
+		for (var i=0;i< serie.length; i++){
+			templateModel.values.push(serie[i][1]);
+		}
+		
+		var html = template(templateModel);
+		return html;
+		
+	}
+	
 	function generateViewDOM(viewID, jsonChart){
 		var viewDOM = "";
 		
 		switch(jsonChart.chartType){
 		case 'PIE_CHART' : viewDOM = generatePieViewDOM(viewID, jsonChart); break;
+		case 'SINGLE_TABLE' : viewDOM = generateTableViewDOM(viewID, jsonChart); break;
 		default : throw jsonChart.chartType+" not supported yet";
 		}
 		
