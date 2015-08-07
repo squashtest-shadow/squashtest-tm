@@ -45,14 +45,14 @@ public class CoverageInstruction extends Instruction<CoverageTarget> {
 
 	@Override
 	protected LogTrain executeUpdate(Facility facility) {
-		// TODO Auto-generated method stub
-		return null;
+		// for now we can just create coverage.
+		return executeCreate(facility);
 	}
 
 	@Override
 	protected LogTrain executeDelete(Facility facility) {
-		// TODO Auto-generated method stub
-		return null;
+		// for now we can just create coverage.
+		return executeCreate(facility);
 	}
 
 	@Override

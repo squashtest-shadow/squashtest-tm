@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.service.internal.batchimport.testcase.excel;
 
+import org.squashtest.tm.core.foundation.lang.PathUtils;
 import org.squashtest.tm.service.importer.EntityType;
 import org.squashtest.tm.service.importer.Target;
 
@@ -53,28 +54,32 @@ public class CoverageTarget extends Target {
 		this.tcPath = tcPath;
 	}
 
+	public boolean isReqPathWellFormed() {
+		return PathUtils.isPathWellFormed(reqPath);
+	}
+
+	public boolean isTcPathWellFormed() {
+		return PathUtils.isPathWellFormed(tcPath);
+	}
+
 	@Override
 	public EntityType getType() {
-		// TODO Auto-generated method stub
-		return null;
+		return EntityType.COVERAGE;
 	}
 
 	@Override
 	public boolean isWellFormed() {
-		// TODO Auto-generated method stub
-		return false;
+		return isReqPathWellFormed() && isTcPathWellFormed();
 	}
 
 	@Override
 	public String getProject() {
-		// TODO Auto-generated method stub
-		return null;
+		throw new IllegalAccessError("coverage don't have a project. Don't use this method");
 	}
 
 	@Override
 	public String getPath() {
-		// TODO Auto-generated method stub
-		return null;
+		throw new IllegalAccessError("coverage don't have a path. Don't use this method");
 	}
 
 }

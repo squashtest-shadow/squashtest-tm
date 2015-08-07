@@ -150,18 +150,21 @@ public class TestCaseImportLogHelper {
 
 		Collection<LogEntry> logEntriesForDatasets = importLog.findAllFor(EntityType.DATASET);
 		writeToTab(logEntriesForDatasets, workbook, "DATASET", locale);
-		
+
 		Collection<LogEntry> logEntriesForRequirements = importLog.findAllFor(EntityType.REQUIREMENT_VERSION);
 		writeToTab(logEntriesForRequirements, workbook, "REQUIREMENT", locale);
 
+		Collection<LogEntry> logEntriesForCoverage = importLog.findAllFor(EntityType.COVERAGE);
+		writeToTab(logEntriesForCoverage, workbook, "COVERAGE", locale);
+
 		LOGGER.debug("Req-Import - LOG FILE " + logEntriesForRequirements);
-		
+
 		return workbook;
 	}
 
 	/**
 	 * Builds filename from iso timestamp
-	 * 
+	 *
 	 * @param logTimeStamp
 	 * @return
 	 */

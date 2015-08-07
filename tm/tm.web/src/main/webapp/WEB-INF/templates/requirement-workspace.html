@@ -152,9 +152,7 @@
                   <li id="import-excel-tree-button" class="ui-state-disabled cursor-pointer">
                     <a th:text="#{label.Import}+'...'">Import ...</a>
                   </li>
-                  <li id="import-links-excel-tree-button" class="ui-state-disabled cursor-pointer">
-                    <a th:text="#{tree.button.import.links.label}+'...'">Import links ...</a>
-                  </li>
+
                   <li id="export-tree-button" class="ui-state-disabled cursor-pointer">
                     <a th:text="#{label.Export}+'...'">export ...</a>
                   </li>
@@ -511,6 +509,13 @@
               <th class="txt-success">{{requirementVersionSuccesses}}</th>
               <th class="txt-warn">{{requirementVersionWarnings}}</th>
               <th class="txt-error">{{requirementVersionFailures}}</th>
+            </tr>
+
+            <tr>
+              <th th:text="#{label.coverage}" ></th>
+              <th class="txt-success">{{coverageSuccesses}}</th>
+              <th class="txt-warn">{{coverageWarnings}}</th>
+              <th class="txt-error">{{coverageFailures}}</th>
             </tr>
             </tbody>
           </table>

@@ -279,8 +279,7 @@ public class SimulationFacility implements Facility {
 
 	@Override
 	public LogTrain createCoverage(CoverageInstruction instr) {
-		// TODO Auto-generated method stub
-		return null;
+		return validator.createCoverage(instr);
 	}
 
 }

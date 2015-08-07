@@ -59,10 +59,14 @@ import org.squashtest.tm.service.internal.batchimport.Model.Existence;
 import org.squashtest.tm.service.internal.batchimport.Model.StepType;
 import org.squashtest.tm.service.internal.batchimport.Model.TargetStatus;
 import org.squashtest.tm.service.internal.batchimport.testcase.excel.CoverageInstruction;
+import org.squashtest.tm.service.internal.batchimport.testcase.excel.CoverageTarget;
+import org.squashtest.tm.service.internal.repository.RequirementVersionCoverageDao;
 import org.squashtest.tm.service.internal.repository.UserDao;
+import org.squashtest.tm.service.requirement.RequirementLibraryFinderService;
 import org.squashtest.tm.service.requirement.RequirementLibraryNavigationService;
 import org.squashtest.tm.service.security.Authorizations;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
+import org.squashtest.tm.service.testcase.TestCaseLibraryNavigationService;
 import org.squashtest.tm.service.user.UserAccountService;
 
 /**
@@ -257,6 +261,15 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 
 	@Inject
 	private RequirementLibraryNavigationService reqLibNavigationService;
+
+	@Inject
+	private TestCaseLibraryNavigationService tcLibNavigationService;
+
+	@Inject
+	private RequirementLibraryFinderService reqFinderService;
+
+	@Inject
+	private RequirementVersionCoverageDao coverageDao;
 
 	private EntityValidator entityValidator = new EntityValidator(this);
 	private CustomFieldValidator cufValidator = new CustomFieldValidator();
@@ -833,7 +846,7 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 		creationStrategy.validateMilestones(instr, logs);
 
 		// 3-5 : fix test case metadatas
-		List<LogEntry> logEntries = fixMetadatas(target, (AuditableMixin) testCase, ImportMode.CREATE);
+		List<LogEntry> logEntries = fixMetadatas(target, testCase, ImportMode.CREATE);
 		logs.addEntries(logEntries);
 		return logs;
 
@@ -887,7 +900,7 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 
 			// 3-4 : check audit datas
 			// backup the audit log
-			List<LogEntry> logEntries = fixMetadatas(target, (AuditableMixin) testCase, ImportMode.UPDATE);
+			List<LogEntry> logEntries = fixMetadatas(target, testCase, ImportMode.UPDATE);
 			logs.addEntries(logEntries);
 
 			updateStrategy.validateMilestones(instr, logs);
@@ -945,7 +958,7 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 		checkMilestonesAlreadyUsedInRequirement(instr, logs);
 
 		// 8 - Fix createdOn and createdBy
-		fixMetadatas(reqTarget, (AuditableMixin) reqVersion, ImportMode.CREATE);
+		fixMetadatas(reqTarget, reqVersion, ImportMode.CREATE);
 
 		// 9 - Now update model if the requirement version has passed all check
 		if (!logs.hasCriticalErrors()) {
@@ -1036,7 +1049,7 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 
 		checkMilestonesAlreadyUsedInRequirement(instr, logs);
 
-		fixMetadatas(reqTarget, (AuditableMixin) reqVersion, ImportMode.UPDATE);
+		fixMetadatas(reqTarget, reqVersion, ImportMode.UPDATE);
 
 		if (logs.hasCriticalErrors()) {
 			instr.fatalError();
@@ -1165,8 +1178,96 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 
 	@Override
 	public LogTrain createCoverage(CoverageInstruction instr) {
-		// TODO Auto-generated method stub
+		LogTrain logs = new LogTrain();
+
+		CoverageTarget target = instr.getTarget();
+
+		Long tcId = checkTcForCoverage(target, logs);
+		Long reqVersionId = checkRequirementVersionForCoverage(target, logs);
+		checkCoverageAlreadyExist(target, logs, tcId, reqVersionId);
+
+
+		return logs;
+	}
+
+	private void checkCoverageAlreadyExist(CoverageTarget target, LogTrain logs, Long tcId, Long reqVersionId) {
+		if (tcId != null && reqVersionId != null
+				&& coverageDao.byRequirementVersionAndTestCase(reqVersionId, tcId) != null) {
+			logs.addEntry(createLogFailure(target, Messages.ERROR_COVERAGE_ALREADY_EXIST));
+		}
+	}
+
+	private Long checkRequirementVersionForCoverage(CoverageTarget target, LogTrain logs) {
+		boolean requirementPathAndVersionValid = checkRequirementVersionDataValidity(target, logs);
+
+		if (requirementPathAndVersionValid) {
+			return checkRequirementVersionExist(target, logs);
+		}
+
 		return null;
 	}
+
+	private Long checkRequirementVersionExist(CoverageTarget target, LogTrain logs) {
+
+		Long reqId = reqFinderService.findNodeIdByPath(target.getReqPath());
+
+		if (reqId != null) {
+			Requirement req = reqLibNavigationService.findRequirement(reqId);
+			RequirementVersion reqVersion = req.findRequirementVersion(target.getReqVersion());
+			if (reqVersion != null) {
+				if (!req.getStatus().isRequirementLinkable()) {
+					logs.addEntry(createLogFailure(target, Messages.ERROR_REQUIREMENT_VERSION_STATUS));
+				}
+				return reqVersion.getId();
+			} else {
+				logs.addEntry(createLogFailure(target, Messages.ERROR_REQUIREMENT_VERSION_NOT_EXISTS));
+			}
+		} else {
+			logs.addEntry(createLogFailure(target, Messages.ERROR_REQUIREMENT_NOT_EXISTS));
+		}
+
+
+		return null;
+	}
+
+	private boolean checkRequirementVersionDataValidity(CoverageTarget target, LogTrain logs) {
+
+		boolean reqPathValid = target.isReqPathWellFormed();
+		boolean reqVersionValid = target.getReqVersion() > 0;
+
+		if (!reqPathValid) {
+			logs.addEntry(createLogFailure(target, Messages.ERROR_MALFORMED_PATH, target.getReqPath()));
+		}
+
+		if (!reqVersionValid) {
+			logs.addEntry(createLogFailure(target, Messages.ERROR_REQUIREMENT_VERSION_INVALID));
+		}
+
+		return reqPathValid && reqVersionValid;
+
+	}
+
+	private Long checkTcForCoverage(CoverageTarget target, LogTrain logs) {
+		boolean tcPathValid = target.isTcPathWellFormed();
+		String tcPath = target.getTcPath();
+
+		if (!tcPathValid) {
+			logs.addEntry(createLogFailure(target, Messages.ERROR_MALFORMED_PATH, tcPath));
+
+		} else {
+			Long id = tcLibNavigationService.findNodeIdByPath(tcPath);
+			if (id == null) {
+				logs.addEntry(createLogFailure(target, Messages.ERROR_TC_NOT_FOUND, tcPath));
+			} else {
+				return id;
+			}
+		}
+		return null;
+	}
+
+	private LogEntry createLogFailure(Target target, String msg, Object... msgArgs) {
+		return LogEntry.failure().forTarget(target).withMessage(msg, msgArgs).build();
+	}
+
 
 }

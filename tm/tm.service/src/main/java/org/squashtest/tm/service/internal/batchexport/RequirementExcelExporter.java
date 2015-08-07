@@ -62,12 +62,12 @@ import org.squashtest.tm.service.internal.batchimport.testcase.excel.TemplateWor
 public class RequirementExcelExporter {
 	private static final String REQUIREMENT_SHEET = TemplateWorksheet.REQUIREMENT_SHEET.sheetName;
 	private static final String COV_SHEET = TemplateWorksheet.COVERAGE_SHEET.sheetName;
-	
+
 	private static final List<CoverageSheetColumn> COVERAGE_COLUMNS = Arrays.asList(
 			CoverageSheetColumn.REQ_PATH,
-			CoverageSheetColumn.REQ_VERSION_NUM, 
+			CoverageSheetColumn.REQ_VERSION_NUM,
 			CoverageSheetColumn.TC_PATH);
-	
+
 	private static final RequirementSheetColumn[] BASIC_REQ_COLUMNS = {
 		RequirementSheetColumn.PROJECT_ID,
 		RequirementSheetColumn.PROJECT_NAME,
@@ -86,9 +86,9 @@ public class RequirementExcelExporter {
 		RequirementSheetColumn.REQ_VERSION_CREATED_BY,
 		RequirementSheetColumn.REQ_VERSION_LAST_MODIFIED_ON,
 		RequirementSheetColumn.REQ_VERSION_LAST_MODIFIED_BY};
-	
+
 	private static final List<RequirementSheetColumn> REQUIREMENT_COLUMNS_MILESTONES = Arrays.asList((RequirementSheetColumn[])ArrayUtils.add(BASIC_REQ_COLUMNS,  RequirementSheetColumn.REQ_VERSION_MILESTONE));
-	
+
 	private static final List<RequirementSheetColumn> REQUIREMENT_COLUMNS = Arrays.asList(BASIC_REQ_COLUMNS);
 	// that map will remember which column index is
 	private Map<String, Integer> cufColumnsByCode = new HashMap<String, Integer>();
@@ -100,7 +100,7 @@ public class RequirementExcelExporter {
 	private MessageSource messageSource;
 
 	private String errorCellTooLargeMessage;
-	
+
 	@Inject
 	public RequirementExcelExporter(FeatureManager featureManager, MessageSource messageSource) {
 		super();
@@ -145,15 +145,15 @@ public class RequirementExcelExporter {
 
 
 				r.createCell(cIdx++).setCellValue(cm.getReqPath());
-				r.createCell(cIdx++).setCellValue(cm.getRequirementId());
+			r.createCell(cIdx++).setCellValue(cm.getRequirementVersionNumber());
 				r.createCell(cIdx++).setCellValue(cm.getTcPath());
-		
+
 			rIdx++;
 			cIdx = 0;
 		}
-		
+
 	}
-	
+
 	private void appendRequirementModel(RequirementExportModel model) {
 		List<RequirementModel> models = model.getRequirementsModels();
 		Sheet reqSheet = workbook.getSheet(REQUIREMENT_SHEET);
@@ -163,34 +163,34 @@ public class RequirementExcelExporter {
 			appendOneRequirement(reqSheet,rowIndex,reqModel);
 			rowIndex++;
 		}
-		
+
 	}
 
-	
+
 
 	private void createCoverageHeaders() {
 		createSheetHeaders(COV_SHEET, COVERAGE_COLUMNS);
 	}
-	
+
 	private void createSheetHeaders(String sheetName, List<? extends TemplateColumn> cols){
 		Sheet dsSheet = workbook.getSheet(sheetName);
 		Row h = dsSheet.createRow(0);
 		int cIdx = 0;
 		for (TemplateColumn t : cols){
-			h.createCell(cIdx++).setCellValue(t.getHeader());	
+			h.createCell(cIdx++).setCellValue(t.getHeader());
 		}
 	}
-	
+
 	private void createRequirementHeaders() {
 		List<RequirementSheetColumn> columns = milestonesEnabled ? REQUIREMENT_COLUMNS_MILESTONES : REQUIREMENT_COLUMNS;
-		createSheetHeaders(REQUIREMENT_SHEET, columns);	
+		createSheetHeaders(REQUIREMENT_SHEET, columns);
 	}
 
 	private void appendOneRequirement(Sheet reqSheet, int rowIndex,
 			RequirementModel reqModel) {
 		Row row = reqSheet.createRow(rowIndex);
 		int colIndex = 0;
-		
+
 		try {
 			row.createCell(colIndex++).setCellValue(reqModel.getProjectId());
 			row.createCell(colIndex++).setCellValue(reqModel.getProjectName());
@@ -239,11 +239,11 @@ public class RequirementExcelExporter {
 		try {
 			File temp = File.createTempFile("req_export_", "xls");
 			temp.deleteOnExit();
-			
+
 			FileOutputStream fos = new FileOutputStream(temp);
 			workbook.write(fos);
 			fos.close();
-			
+
 			return temp;
 		} catch (IOException ex) {
 			throw new RuntimeException(ex);
@@ -306,5 +306,5 @@ public class RequirementExcelExporter {
 		createCoverageHeaders();
 	}
 
-	
+
 }

@@ -55,6 +55,9 @@ public class TestCaseExcelBatchImporter extends ExcelBatchImporter {
 		case DATASET_PARAM_VALUES :
 			instructions.addAll(parser.getDatasetParamValuesInstructions());
 			break;
+		case COVERAGE:
+			instructions.addAll(parser.getCoverageInstructions());
+			break;
 		default:
 
 		}

@@ -20,9 +20,10 @@
  */
 package org.squashtest.tm.service.internal.batchimport.testcase.excel;
 
+import static org.squashtest.tm.service.internal.batchimport.testcase.excel.TemplateCustomFieldPattern.REQUIREMENT_VERSION_CUSTOM_FIELD;
 import static org.squashtest.tm.service.internal.batchimport.testcase.excel.TemplateCustomFieldPattern.STEP_CUSTOM_FIELD;
 import static org.squashtest.tm.service.internal.batchimport.testcase.excel.TemplateCustomFieldPattern.TEST_CASE_CUSTOM_FIELD;
-import static org.squashtest.tm.service.internal.batchimport.testcase.excel.TemplateCustomFieldPattern.REQUIREMENT_VERSION_CUSTOM_FIELD;
+
 import java.util.Collection;
 import java.util.Collections;
 
@@ -42,9 +43,9 @@ public enum TemplateWorksheet {
 	PARAMETERS_SHEET("PARAMETERS", ParameterSheetColumn.class),
 	DATASETS_SHEET("DATASETS", DatasetSheetColumn.class),
 	// the same sheet is shared for both dataset and values
-	DATASET_PARAM_VALUES_SHEET("DATASETS", DatasetParamValuesSheetColumn.class),	
-	
-	COVERAGE_SHEET("COVERAGE", CoverageSheetColumn.class);
+	DATASET_PARAM_VALUES_SHEET("DATASETS", DatasetParamValuesSheetColumn.class),
+
+	COVERAGE_SHEET("LINK_REQ_TC", CoverageSheetColumn.class);
 
 	// MultiValueMap<String, TemplateWorksheet>
 	private static final MultiValueMap ENUM_BY_SHEET_NAME = new MultiValueMap();

@@ -42,25 +42,10 @@ public class RequirementExcelBatchImporter extends ExcelBatchImporter {
 		List<Instruction<?>> instructions = new ArrayList<Instruction<?>>();
 
 		switch (entityType) {
-		case TEST_CASE:
-			instructions.addAll(parser.getTestCaseInstructions());
-			break;
-		case PARAMETER:
-			instructions.addAll(parser.getParameterInstructions());
-			break;
-		case TEST_STEP:
-			instructions.addAll(parser.getTestStepInstructions());
-			break;
-		case DATASET:
-			instructions.addAll(parser.getDatasetInstructions());
-			break;
-		case DATASET_PARAM_VALUES:
-			instructions.addAll(parser.getDatasetParamValuesInstructions());
-			break;
+
 		case REQUIREMENT_VERSION:
 			instructions.addAll(parser.getRequirementVersionInstructions());
 			break;
-
 		case COVERAGE:
 			instructions.addAll(parser.getCoverageInstructions());
 			break;

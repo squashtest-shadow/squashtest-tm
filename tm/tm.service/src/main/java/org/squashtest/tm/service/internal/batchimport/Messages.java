@@ -75,6 +75,7 @@ public final class Messages {
 	public static final String ERROR_REQUIREMENT_VERSION_INVALID = "message.import.log.error.requirement.version.invalidVersionNumber";
 	public static final String ERROR_REQUIREMENT_VERSION_NOT_EXISTS = "message.import.log.error.requirement.version.notExists";
 	public static final String ERROR_REQUIREMENT_VERSION_STATUS = "message.import.log.error.requirement.version.statusLocked";
+	public static final String ERROR_REQUIREMENT_NOT_EXISTS = "message.import.log.error.requirement.notExists";
 
 	public static final String IMPACT_MAX_SIZE = "message.import.log.impact.truncatedValue";
 	public static final String IMPACT_DEFAULT_VALUE = "message.import.log.impact.useDefaultValue";
@@ -102,8 +103,10 @@ public final class Messages {
 	public static final String WARN_WRONG_MILESTONE_STATUS = ERROR_WRONG_MILESTONE_STATUS;
 	public static final String WARN_MILESTONE_USED = "message.import.log.error.milestone.used";
 	public static final String WARN_REQ_PATH_IS_FOLDER = "message.import.log.warning.reqPathisFolder";
-	
+	public static final String ERROR_COVERAGE_ALREADY_EXIST = "message.import.log.warning.coverageAlreadyExist";
+
 	public static final String REQ_RENAME_SUFFIX = "-Copie1";
+
 
 	private Messages(){
 		super();

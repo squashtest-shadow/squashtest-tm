@@ -60,6 +60,7 @@ import org.squashtest.tm.domain.testcase.Dataset;
 import org.squashtest.tm.domain.testcase.DatasetParamValue;
 import org.squashtest.tm.domain.testcase.Parameter;
 import org.squashtest.tm.domain.testcase.ParameterAssignationMode;
+import org.squashtest.tm.domain.testcase.RequirementVersionCoverage;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseImportance;
 import org.squashtest.tm.domain.testcase.TestCaseStatus;
@@ -70,12 +71,14 @@ import org.squashtest.tm.service.infolist.InfoListItemFinderService;
 import org.squashtest.tm.service.internal.batchimport.Model.Existence;
 import org.squashtest.tm.service.internal.batchimport.Model.TargetStatus;
 import org.squashtest.tm.service.internal.batchimport.testcase.excel.CoverageInstruction;
+import org.squashtest.tm.service.internal.batchimport.testcase.excel.CoverageTarget;
 import org.squashtest.tm.service.internal.customfield.PrivateCustomFieldValueService;
 import org.squashtest.tm.service.internal.library.LibraryUtils;
 import org.squashtest.tm.service.internal.repository.CustomFieldDao;
 import org.squashtest.tm.service.internal.repository.DatasetDao;
 import org.squashtest.tm.service.internal.repository.DatasetParamValueDao;
 import org.squashtest.tm.service.internal.repository.ParameterDao;
+import org.squashtest.tm.service.internal.repository.RequirementVersionCoverageDao;
 import org.squashtest.tm.service.milestone.MilestoneMembershipManager;
 import org.squashtest.tm.service.requirement.RequirementLibraryFinderService;
 import org.squashtest.tm.service.requirement.RequirementLibraryNavigationService;
@@ -152,6 +155,9 @@ public class FacilityImpl implements Facility {
 
 	@Inject
 	private MilestoneMembershipManager milestoneService;
+
+	@Inject
+	private RequirementVersionCoverageDao coverageDao;
 
 	private FacilityImplHelper helper = new FacilityImplHelper();
 
@@ -1390,10 +1396,12 @@ public class FacilityImpl implements Facility {
 		@Override
 		public void doPostProcess(List<Instruction<?>> instructions) {
 			for (Instruction<?> instruction : instructions) {
+				if (instruction instanceof RequirementVersionInstruction) {
 				RequirementVersionInstruction rvi = (RequirementVersionInstruction) instruction;
 				if (!rvi.isFatalError()) {
 					renameRequirementVersion(rvi);
 					changeRequirementVersionStatus(rvi);
+				}
 				}
 			}
 		}
@@ -1442,7 +1450,25 @@ public class FacilityImpl implements Facility {
 
 	@Override
 	public LogTrain createCoverage(CoverageInstruction instr) {
-		// TODO Auto-generated method stub
-		return null;
+
+		LogTrain train = validator.createCoverage(instr);
+
+		if (!train.hasCriticalErrors()) {
+		CoverageTarget target = instr.getTarget();
+		Long reqId = reqFinderService.findNodeIdByPath(target.getReqPath());
+		Requirement req = reqLibNavigationService.findRequirement(reqId);
+		RequirementVersion reqVersion = req.findRequirementVersion(target.getReqVersion());
+
+			Long tcId = navigationService.findNodeIdByPath(target.getTcPath());
+			TestCase tc = testcaseModificationService.findById(tcId);
+
+		RequirementVersionCoverage coverage = instr.getCoverage();
+		coverage.setVerifiedRequirementVersion(reqVersion);
+		coverage.setVerifyingTestCase(tc);
+
+			coverageDao.persist(coverage);
+		}
+
+		return train;
 	}
 }

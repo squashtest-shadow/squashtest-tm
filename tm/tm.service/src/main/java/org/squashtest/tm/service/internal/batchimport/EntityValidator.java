@@ -22,10 +22,10 @@ package org.squashtest.tm.service.internal.batchimport;
 
 import static org.squashtest.tm.service.internal.batchimport.Model.Existence.NOT_EXISTS;
 import static org.squashtest.tm.service.internal.batchimport.Model.Existence.TO_BE_DELETED;
-import static org.squashtest.tm.service.internal.batchimport.testcase.excel.TestCaseSheetColumn.TC_NAME;
-import static org.squashtest.tm.service.internal.batchimport.testcase.excel.TestCaseSheetColumn.TC_REFERENCE;
 import static org.squashtest.tm.service.internal.batchimport.requirement.excel.RequirementSheetColumn.REQ_VERSION_NAME;
 import static org.squashtest.tm.service.internal.batchimport.requirement.excel.RequirementSheetColumn.REQ_VERSION_REFERENCE;
+import static org.squashtest.tm.service.internal.batchimport.testcase.excel.TestCaseSheetColumn.TC_NAME;
+import static org.squashtest.tm.service.internal.batchimport.testcase.excel.TestCaseSheetColumn.TC_REFERENCE;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -67,11 +67,11 @@ class EntityValidator {
 
 	/**
 	 * Prerforms Test Case entity check before modifying a test case.
-	 * 
+	 *
 	 * It checks : - the path is well formed (failure) - the test case has a name (failure) - the test case name has
 	 * length between 0 and 255 - the project exists (failure) - the size of fields that are restricted in size
 	 * (warning)
-	 * 
+	 *
 	 * @param target
 	 * @param testCase
 	 * @return
@@ -95,7 +95,7 @@ class EntityValidator {
 
 	/**
 	 * Performs Test Case entity check before creating a test case.
-	 * 
+	 *
 	 * @param target
 	 * @param testCase
 	 * @return
@@ -141,12 +141,12 @@ class EntityValidator {
 
 	/**
 	 * those checks are run for a test step for any type of operations.
-	 * 
+	 *
 	 * It checks : - the path of the test case is well formed (failure) - the project exists (failure) - the format of
 	 * the custom fields (lists, dates and checkbox) (warning)
-	 * 
-	 * 
-	 * 
+	 *
+	 *
+	 *
 	 * @param target
 	 * @param testStep
 	 * @return
@@ -246,24 +246,24 @@ class EntityValidator {
 		return mustExistAndBeValidMessage;
 
 	}
-	
+
 	//********************* REQUIREMENTS CHECKS **********************//
-	
+
 	public LogTrain createRequirementVersionChecks(
 			RequirementVersionTarget target, RequirementVersion reqVersion) {
 		return basicReqVersionTests(target, reqVersion);
 	}
-	
+
 	public LogTrain updateRequirementChecks(RequirementVersionTarget target,
 			RequirementVersion reqVersion) {
 		LogTrain logs = basicReqVersionTests(target, reqVersion);
-		
+
 		// 2 - Checking if requirement version number value isn't empty and > 0
 		checkRequirementVersionNumber(target, logs);
-		
+
 		return logs;
 	}
-	
+
 	private void checkRequirementVersionNumber(RequirementVersionTarget target, LogTrain logs) {
 		if (target.getVersion() == null ||target.getVersion() < 1) {
 			logs.addEntry(LogEntry.failure().forTarget(target)
@@ -287,9 +287,9 @@ class EntityValidator {
 		checkVersionReference(target,reqVersion, logs);
 		logs.append(checkCategoryAndFixIfNeeded(target, reqVersion));
 		return logs;
-		
+
 	}
-	
+
 
 	private void checkVersionReference(RequirementVersionTarget target,
 			RequirementVersion reqVersion, LogTrain logs) {
@@ -453,7 +453,7 @@ class EntityValidator {
 	 * This method will check that, in case a nature and/or a type were supplied,
 	 * this element is consistent with the set of natures/types available in the
 	 * given project.
-	 * 
+	 *
 	 */
 	private LogTrain checkNatureAndTypeAndFixIfNeeded(TestCaseTarget target, TestCase testCase){
 
@@ -487,21 +487,21 @@ class EntityValidator {
 
 		return logs;
 	}
-	
+
 	/*
 	 * This method will check that, in case a nature and/or a type were supplied,
 	 * this element is consistent with the set of natures/types available in the
 	 * given project.
 	 */
 	private LogTrain checkCategoryAndFixIfNeeded(RequirementVersionTarget target, RequirementVersion reqVersion){
-		
+
 		LogTrain logs = new LogTrain();
-		
+
 		if (target.isWellFormed()){
-			
+
 			TargetStatus projectStatus = getModel().getProjectStatus(target.getProject());
 			if (projectStatus.getStatus() == Existence.EXISTS) {
-				
+
 				// 2-1 category, if specified, must be consistent with the categories of the target project
 				if (! categoryDefinedAndConsistent(projectStatus, reqVersion)){
 					logs.addEntry(
@@ -513,7 +513,7 @@ class EntityValidator {
 				}
 			}
 		}
-		
+
 		return logs;
 	}
 
@@ -523,7 +523,7 @@ class EntityValidator {
 	 * @param reqVersion the {@link RequirementVersion} being imported
 	 * @return
 	 */
-	
+
 	private boolean categoryDefinedAndConsistent(TargetStatus projectStatus,
 			RequirementVersion reqVersion) {
 		boolean isConsistent = true;
@@ -562,10 +562,6 @@ class EntityValidator {
 
 		return isConsistent;
 	}
-
-	
-
-	
 
 
 }

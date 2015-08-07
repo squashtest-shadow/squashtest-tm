@@ -28,8 +28,6 @@ import javax.inject.Inject;
 
 import org.hibernate.SQLQuery;
 import org.hibernate.type.LongType;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 import org.squashtest.tm.core.foundation.lang.PathUtils;
 import org.squashtest.tm.domain.project.GenericProject;
@@ -48,8 +46,6 @@ LibraryNodeDao<RequirementLibraryNode> {
 	@Inject
 	private ProjectDao projectDao;
 	
-	private static final Logger LOGGER = LoggerFactory.getLogger(HibernateRequirementLibraryNodeDao.class);
-
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<String> getParentsName(long entityId) {
@@ -155,7 +151,4 @@ LibraryNodeDao<RequirementLibraryNode> {
 		return unescaped;
 	}
 
-	private String unescapeSlashes(String path) {
-		return path.replaceAll("\\\\/", "/");
-	}
 }
