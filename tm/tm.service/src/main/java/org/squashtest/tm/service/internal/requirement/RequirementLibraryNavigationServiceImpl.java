@@ -69,7 +69,6 @@ import org.squashtest.tm.exception.requirement.CopyPasteObsoleteException;
 import org.squashtest.tm.exception.requirement.IllegalRequirementModificationException;
 import org.squashtest.tm.service.advancedsearch.IndexationService;
 import org.squashtest.tm.service.importer.ImportLog;
-import org.squashtest.tm.service.importer.ImportRequirementTestCaseLinksSummary;
 import org.squashtest.tm.service.importer.ImportSummary;
 import org.squashtest.tm.service.infolist.InfoListItemFinderService;
 import org.squashtest.tm.service.internal.batchexport.ExportDao;
@@ -77,7 +76,6 @@ import org.squashtest.tm.service.internal.batchexport.RequirementExcelExporter;
 import org.squashtest.tm.service.internal.batchexport.RequirementExportModel;
 import org.squashtest.tm.service.internal.batchimport.requirement.excel.RequirementExcelBatchImporter;
 import org.squashtest.tm.service.internal.importer.RequirementImporter;
-import org.squashtest.tm.service.internal.importer.RequirementTestCaseLinksImporter;
 import org.squashtest.tm.service.internal.library.AbstractLibraryNavigationService;
 import org.squashtest.tm.service.internal.library.LibrarySelectionStrategy;
 import org.squashtest.tm.service.internal.library.NodeDeletionHandler;
@@ -122,8 +120,7 @@ RequirementLibraryNavigationService, RequirementLibraryFinderService {
 	@Inject
 	@Qualifier("squashtest.tm.service.RequirementLibrarySelectionStrategy")
 	private LibrarySelectionStrategy<RequirementLibrary, RequirementLibraryNode> libraryStrategy;
-	@Inject
-	private RequirementTestCaseLinksImporter requirementTestCaseLinksImporter;
+
 	@Inject
 	@Qualifier("squashtest.tm.service.internal.PasteToRequirementFolderStrategy")
 	private Provider<PasteStrategy<RequirementFolder, RequirementLibraryNode>> pasteToRequirementFolderStrategyProvider;
@@ -456,10 +453,6 @@ RequirementLibraryNavigationService, RequirementLibraryFinderService {
 		return requirementImporter.importExcelRequirements(stream, libraryId);
 	}
 
-	@Override
-	public ImportRequirementTestCaseLinksSummary importLinksExcel(InputStream stream) {
-		return requirementTestCaseLinksImporter.importLinksExcel(stream);
-	}
 
 	@Override
 	public List<RequirementLibraryNode> copyNodesToFolder(long destinationId, Long[] sourceNodesIds) {

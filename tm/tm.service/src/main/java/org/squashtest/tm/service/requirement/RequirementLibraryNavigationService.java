@@ -38,7 +38,6 @@ import org.squashtest.tm.domain.requirement.RequirementLibrary;
 import org.squashtest.tm.domain.requirement.RequirementLibraryNode;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.service.importer.ImportLog;
-import org.squashtest.tm.service.importer.ImportRequirementTestCaseLinksSummary;
 import org.squashtest.tm.service.importer.ImportSummary;
 import org.squashtest.tm.service.library.LibraryNavigationService;
 
@@ -100,14 +99,6 @@ RequirementLibraryFinderService {
 	 */
 	ImportSummary importExcel(InputStream stream, long projectId);
 
-	/**
-	 * Accepts a stream to a .xls / .xlsx file info for requirement and test-case links. Will
-	 * convert the links from excel to squash.
-	 * 
-	 * @param ExcelStream
-	 * @return a summary of the operations.
-	 */
-	ImportRequirementTestCaseLinksSummary importLinksExcel(InputStream stream);
 
 	List<String> getParentNodesAsStringList(Long elementId);
 	

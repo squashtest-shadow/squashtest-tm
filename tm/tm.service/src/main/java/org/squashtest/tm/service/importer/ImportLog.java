@@ -272,7 +272,7 @@ public class ImportLog{
 			break;
 
 		default:
-			throw new IllegalStateException(String.format("Entity type {} not yet implemented", type));
+			throw new IllegalStateException(String.format("Entity type %s not yet implemented", type));
 		}
 	}
 
