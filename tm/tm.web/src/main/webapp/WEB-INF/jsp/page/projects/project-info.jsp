@@ -215,25 +215,10 @@
 										</c:otherwise>
 									</c:choose>
 								</div>
-								<script>
-								function projectBugTrackerCallBack (value, settings) {
-									
-									<c:if test="${ ! adminproject.template }">
-										  if(value != "<f:message key='project.bugtracker.name.undefined'/>"){								        	 
-								        	 $("#project-bugtracker-project-name-row").show();
-		
-									     }else{
-								        	 $("#project-bugtracker-project-name-row").hide();	
-								         }
-								      </c:if> 
-								}
-								</script>
+						
 								
-								
-							
-								<comp:select-jeditable componentId="project-bugtracker"
-										jsonData="${bugtrackersList}" targetUrl="${projectUrl}"
-										submitCallback="projectBugTrackerCallBack" /> 
+								<span id="project-bugtracker"/>
+
 								
 							</div>
 						</div>
@@ -502,6 +487,34 @@ require(["common"], function() {
 		document.location.href = "${projectsUrl}";
 	}
 
+
+	function projectBugTrackerCallBack (value) {
+		
+		<c:if test="${ ! adminproject.template }">
+			  if(value != "<f:message key='project.bugtracker.name.undefined'/>"){								        	 
+	        	 $("#project-bugtracker-project-name-row").show();
+	        	 initBugTrackerTag();
+
+		     }else{
+	        	 $("#project-bugtracker-project-name-row").hide();	
+	         }
+	      </c:if> 
+	}
+
+	function initBugtrackerProjectEditable(){
+	
+	$('#project-bugtracker').editable( "${projectUrl}", {
+	      type: 'select',  
+	      placeholder: '<f:message key="rich-edit.placeholder" />',
+	      submit: '<f:message key="rich-edit.button.ok.label" />',
+	      cancel: '<f:message key="label.Cancel" />',  
+	      onblur : function() {},            
+	      callback : function(value, settings){projectBugTrackerCallBack(value);},
+	      data : JSON.stringify(${bugtrackersList}),
+	      indicator : '<span class="processing-indicator" />'
+	    }).addClass("editable");
+	
+	}
 	
 	function initBugTrackerTag(){
 		var tagconf = confman.getStdTagit();
@@ -563,8 +576,10 @@ require(["common"], function() {
 		 		$("#toggle-SETTLED-checkbox").change(function(){
 		 			toggleStatusActivation("SETTLED");
 		 		}); 
-		 		
+		 		initBugtrackerProjectEditable();
+		 		if (${adminproject.project.bugtrackerConnected}) {
 		 		initBugTrackerTag();
+		 		}
 		 		new ProjectToolbar();
 	});
 	
