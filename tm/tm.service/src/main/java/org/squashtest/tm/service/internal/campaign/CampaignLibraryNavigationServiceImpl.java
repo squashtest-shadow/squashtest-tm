@@ -33,8 +33,6 @@ import java.util.Set;
 import javax.inject.Inject;
 import javax.inject.Provider;
 
-import org.hibernate.LockMode;
-import org.hibernate.LockOptions;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.access.prepost.PostAuthorize;
@@ -52,6 +50,8 @@ import org.squashtest.tm.domain.campaign.TestSuite;
 import org.squashtest.tm.domain.customfield.RawValue;
 import org.squashtest.tm.domain.projectfilter.ProjectFilter;
 import org.squashtest.tm.exception.DuplicateNameException;
+import org.squashtest.tm.service.annotation.Id;
+import org.squashtest.tm.service.annotation.PreventConcurrent;
 import org.squashtest.tm.service.campaign.CampaignLibraryNavigationService;
 import org.squashtest.tm.service.campaign.CampaignStatisticsService;
 import org.squashtest.tm.service.campaign.IterationModificationService;
@@ -78,7 +78,10 @@ public class CampaignLibraryNavigationServiceImpl extends
 AbstractLibraryNavigationService<CampaignLibrary, CampaignFolder, CampaignLibraryNode> implements
 CampaignLibraryNavigationService {
 
-	@Inject private SessionFactory sessionFactory;
+	private static final Logger LOGGER = LoggerFactory.getLogger(CampaignLibraryNavigationServiceImpl.class);
+
+	@Inject 
+	private SessionFactory sessionFactory;
 
 	@Inject
 	private CampaignLibraryDao campaignLibraryDao;
@@ -172,12 +175,9 @@ CampaignLibraryNavigationService {
 	@Override
 	@PreAuthorize("hasPermission(#campaignId, 'org.squashtest.tm.domain.campaign.Campaign', 'CREATE') "
 			+ OR_HAS_ROLE_ADMIN)
-	public int addIterationToCampaign(Iteration iteration, long campaignId, boolean copyTestPlan) {
+	@PreventConcurrent(entityType = Campaign.class)
+	public int addIterationToCampaign(Iteration iteration, @Id long campaignId, boolean copyTestPlan) {
 		Campaign campaign = campaignDao.findById(campaignId);
-		sessionFactory.getCurrentSession()
-			.buildLockRequest(LockOptions.UPGRADE)
-			.setLockMode(LockMode.PESSIMISTIC_WRITE).setScope(true)
-			.lock(campaign);
 
 		if (!campaign.isContentNameAvailable(iteration.getName())) {
 			throw new DuplicateNameException(iteration.getName(), iteration.getName());
@@ -188,7 +188,8 @@ CampaignLibraryNavigationService {
 	@Override
 	@PreAuthorize("hasPermission(#campaignId, 'org.squashtest.tm.domain.campaign.Campaign', 'CREATE') "
 			+ OR_HAS_ROLE_ADMIN)
-	public int addIterationToCampaign(Iteration iteration, long campaignId, boolean copyTestPlan,
+	@PreventConcurrent(entityType = Campaign.class)
+	public int addIterationToCampaign(Iteration iteration, @Id long campaignId, boolean copyTestPlan,
 			Map<Long, RawValue> customFieldValues) {
 		int iterIndex = addIterationToCampaign(iteration, campaignId, copyTestPlan);
 		initCustomFieldValues(iteration, customFieldValues);

@@ -55,6 +55,8 @@ import org.squashtest.tm.exception.execution.ExecutionHasNoStepsException;
 import org.squashtest.tm.exception.execution.ExecutionWasDeleted;
 import org.squashtest.tm.exception.execution.TestPlanItemNotExecutableException;
 import org.squashtest.tm.service.advancedsearch.IndexationService;
+import org.squashtest.tm.service.annotation.Id;
+import org.squashtest.tm.service.annotation.PreventConcurrent;
 import org.squashtest.tm.service.campaign.CustomIterationModificationService;
 import org.squashtest.tm.service.campaign.IterationStatisticsService;
 import org.squashtest.tm.service.deletion.OperationReport;
@@ -133,14 +135,11 @@ IterationTestPlanManager {
 	private ObjectFactory<TreeNodeCopier> treeNodeCopierFactory;
 
 	@Override
+	@PreventConcurrent(entityType = Campaign.class)
 	@PreAuthorize("hasPermission(#campaignId, 'org.squashtest.tm.domain.campaign.Campaign', 'CREATE') "
 			+ OR_HAS_ROLE_ADMIN)
-	public int addIterationToCampaign(Iteration iteration, long campaignId, boolean copyTestPlan) {
+	public int addIterationToCampaign(Iteration iteration, @Id long campaignId, boolean copyTestPlan) {
 		Campaign campaign = campaignDao.findById(campaignId);
-		sessionFactory.getCurrentSession()
-			.buildLockRequest(LockOptions.UPGRADE)
-			.setLockMode(LockMode.PESSIMISTIC_WRITE).setScope(true)
-			.lock(campaign);
 
 		// copy the campaign test plan in the iteration
 
