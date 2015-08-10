@@ -183,22 +183,28 @@ class HibernateTestCaseLibraryNodeDaoIT extends DbunitServiceSpecification {
 		res.collect{ it?.id } == [-237L,null, -242L]
 	}
 	
-	/**
-	 * Fail probably because insufficient restriction of Cartesian product between TestCasePathEdge and TestCaseLibraryNode
-	 * in named query : 
-	 * @return
-	 */
-	@Ignore
-	@DataSet("HibernateTestCaseLibraryNodeDaoIT.should not find test case by path.xml")
-	def "should not find test case by path"(){
+	@DataSet("HibernateTestCaseLibraryNodeDaoIT.sample.xml")
+	def "should not find test case by paths"(){
 		given :
-		def path = "/Projet1/TestCase1"
+		def paths  = ["/Test Project-1/super 1/sub1/sub 11","/Test Project-1/sub 11"]
 		
 		when  :
-		def id = service.findNodeIdByPath(path)
+		def res = service.findNodeIdsByPath(paths)
 		
 		then :
-		id == null
+		res.collect{ it } == [-242L,null]
+	}
+	
+	@DataSet("HibernateTestCaseLibraryNodeDaoIT.sample.xml")
+	def "should not find test case by path"(){
+		given :
+		def path  = "/autre projet/larrynio"
+					
+		when  :
+		def res = service.findNodeIdByPath(path)
+						
+		then :
+		res == null;
 	}
 
 }

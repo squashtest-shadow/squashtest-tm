@@ -398,7 +398,80 @@ class RequirementLibraryNavigationServiceIT extends DbunitServiceSpecification {
 		RequirementFolder parentFolder = (RequirementFolder) folderDao.findById(-2L)
 		parentFolder.content*.id.containsAll([-20L, -21L, -1L])
 	}
+	
+	@DataSet("RequirementLibraryNavigationServiceIT.should find one requirement by path.xml")
+	def "should find one requirement by path"(){
+		given :
+		def path = "/projet1/folder/subfolder/req2"
+		def path2 = "/projet1/folder/1req"
+		def path3 = "/projet1/folder"
+		def path4 = "/projet1/folder/subfolder"
+		
+		when:
+		Long result = navService.findNodeIdByPath(path)
+		Long result2 = navService.findNodeIdByPath(path2)
+		Long result3 = navService.findNodeIdByPath(path3)
+		Long result4 = navService.findNodeIdByPath(path4)
+		
+		then:
+		result == -200L
+		result2 == -10L
+		result3 == -3L
+		result4 == -100L
+	}
+	
+	@DataSet("RequirementLibraryNavigationServiceIT.should find one requirement by path.xml")
+	def "should find no requirement by path"(){
+		given :
+			def path = "/projet1/folder/req2"
+			def path2 = "/projet1/req2"
+			def path3 = "/req2"
+			def path4 = "/projet1/folder/folder/req2"
+			def path5 = "/projet1/subfolder/folder/req2"
+			def path6 = "/projet1"
+			
+			when:
+			Long result = navService.findNodeIdByPath(path)
+			Long result2 = navService.findNodeIdByPath(path2)
+			Long result3 = navService.findNodeIdByPath(path3)
+			Long result4 = navService.findNodeIdByPath(path4)
+			Long result5 = navService.findNodeIdByPath(path5)
+			Long result6 = navService.findNodeIdByPath(path6)
+			Long result7 = navService.findNodeIdByPath(null)
+				
+			then:
+			result == null
+			result2 == null
+			result3 == null
+			result4 == null
+			result5 == null
+			result6 == null
+			result7 == null
+	}
+	
+	@DataSet("RequirementLibraryNavigationServiceIT.should find one requirement by path.xml")
+	def "should find RLN ids by paths"(){
+		given :
+			def path = ["/projet1","/projet1/folder","/projet1/folder/subfolder","/projet1/folder/subfolder/req2"]
+			
+			when:
+			Long[] result = navService.findNodeIdsByPath(path)
+				
+			then:
+			result == [-3,-100,-200]
+	}
+	
+	@DataSet("RequirementLibraryNavigationServiceIT.should find one requirement by path.xml")
+	def "should find RLN ids by paths and a null at the end"(){
+		given :
+		def path = ["/projet1", "/projet1/folder", "/projet1/folder/subfolder", "/projet1/folder/subfolder/wtf"]
 
+		when:
+		Long[] result = navService.findNodeIdsByPath(path)
+
+		then:
+		result == [-3, -100, null]
+	}
 
 }
 

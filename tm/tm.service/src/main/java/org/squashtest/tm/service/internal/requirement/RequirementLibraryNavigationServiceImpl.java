@@ -38,6 +38,7 @@ import javax.inject.Provider;
 import javax.validation.constraints.NotNull;
 
 import org.apache.commons.lang.NullArgumentException;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -639,7 +640,7 @@ RequirementLibraryNavigationService, RequirementLibraryFinderService {
 
 	@Override
 	public Long findNodeIdByPath(String path) {
-		return requirementLibraryNodeDao.findNodeIdByPath(path);
+		return StringUtils.isBlank(path) ? null : requirementLibraryNodeDao.findNodeIdByPath(path);
 	}
 
 	@Override
