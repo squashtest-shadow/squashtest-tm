@@ -88,18 +88,6 @@ RequirementLibraryFinderService {
 
 	List<Requirement> findChildrenRequirements(long requirementId);
 
-	/**
-	 * Accepts a stream to a .xls / .xlsx file info for requirement folders and requirements. Will
-	 * convert the requirements from excel to squash.
-	 * 
-	 * @param ExcelStream
-	 * @param libraryId
-	 *            the identifier of the library we are importing requirements into.
-	 * @return a summary of the operations.
-	 */
-	ImportSummary importExcel(InputStream stream, long projectId);
-
-
 	List<String> getParentNodesAsStringList(Long elementId);
 	
 	/**

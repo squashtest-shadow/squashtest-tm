@@ -23,7 +23,6 @@ package org.squashtest.tm.service.internal.requirement;
 import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
 
 import java.io.File;
-import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -70,13 +69,11 @@ import org.squashtest.tm.exception.requirement.CopyPasteObsoleteException;
 import org.squashtest.tm.exception.requirement.IllegalRequirementModificationException;
 import org.squashtest.tm.service.advancedsearch.IndexationService;
 import org.squashtest.tm.service.importer.ImportLog;
-import org.squashtest.tm.service.importer.ImportSummary;
 import org.squashtest.tm.service.infolist.InfoListItemFinderService;
 import org.squashtest.tm.service.internal.batchexport.ExportDao;
 import org.squashtest.tm.service.internal.batchexport.RequirementExcelExporter;
 import org.squashtest.tm.service.internal.batchexport.RequirementExportModel;
 import org.squashtest.tm.service.internal.batchimport.requirement.excel.RequirementExcelBatchImporter;
-import org.squashtest.tm.service.internal.importer.RequirementImporter;
 import org.squashtest.tm.service.internal.library.AbstractLibraryNavigationService;
 import org.squashtest.tm.service.internal.library.LibrarySelectionStrategy;
 import org.squashtest.tm.service.internal.library.NodeDeletionHandler;
@@ -112,8 +109,6 @@ RequirementLibraryNavigationService, RequirementLibraryFinderService {
 	private RequirementDao requirementDao;
 	@Inject
 	private RequirementNodeDeletionHandler deletionHandler;
-	@Inject
-	private RequirementImporter requirementImporter;
 	@Inject
 	private IndexationService indexationService;
 	@Inject
@@ -448,12 +443,6 @@ RequirementLibraryNavigationService, RequirementLibraryFinderService {
 		return pf.getActivated() ? libraryStrategy.getSpecificLibraries(pf.getProjects()) : requirementLibraryDao
 				.findAll();
 	}
-
-	@Override
-	public ImportSummary importExcel(InputStream stream, long libraryId) {
-		return requirementImporter.importExcelRequirements(stream, libraryId);
-	}
-
 
 	@Override
 	public List<RequirementLibraryNode> copyNodesToFolder(long destinationId, Long[] sourceNodesIds) {

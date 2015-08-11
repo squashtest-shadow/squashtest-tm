@@ -20,21 +20,13 @@
  */
 package org.squashtest.tm.web.internal.controller.requirement;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
-import java.util.Map;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Provider;
-import javax.servlet.http.HttpServletResponse;
 
-import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Controller;
@@ -48,25 +40,18 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.ModelAndView;
 import org.squashtest.tm.domain.milestone.Milestone;
-import org.squashtest.tm.domain.requirement.ExportRequirementData;
 import org.squashtest.tm.domain.requirement.Requirement;
 import org.squashtest.tm.domain.requirement.RequirementFolder;
 import org.squashtest.tm.domain.requirement.RequirementLibrary;
 import org.squashtest.tm.domain.requirement.RequirementLibraryNode;
 import org.squashtest.tm.exception.library.RightsUnsuficientsForOperationException;
-import org.squashtest.tm.service.feature.FeatureManager;
-import org.squashtest.tm.service.feature.FeatureManager.Feature;
-import org.squashtest.tm.service.importer.ImportSummary;
 import org.squashtest.tm.service.library.LibraryNavigationService;
 import org.squashtest.tm.service.requirement.RequirementLibraryNavigationService;
 import org.squashtest.tm.web.internal.argumentresolver.MilestoneConfigResolver.CurrentMilestone;
 import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.controller.generic.LibraryNavigationController;
 import org.squashtest.tm.web.internal.controller.requirement.RequirementFormModel.RequirementFormModelValidator;
-import org.squashtest.tm.web.internal.listener.SquashConfigContextExposer;
 import org.squashtest.tm.web.internal.model.builder.DriveNodeBuilder;
 import org.squashtest.tm.web.internal.model.builder.JsTreeNodeListBuilder;
 import org.squashtest.tm.web.internal.model.builder.RequirementLibraryTreeNodeBuilder;
@@ -86,12 +71,6 @@ public class RequirementLibraryNavigationController extends
 
 	private static final String MODEL_ATTRIBUTE_ADD_REQUIREMENT = "add-requirement";
 
-	private static final String JASPER_EXPORT_FILE = "/WEB-INF/reports/requirement-export.jasper";
-
-	private static final String FILENAME = "filename";
-	private static final String LIBRARIES = "libraries";
-	private static final String NODES = "nodes";
-	
 	@Inject
 	@Named("requirement.driveNodeBuilder")
 	private Provider<DriveNodeBuilder<RequirementLibraryNode>> driveNodeBuilder;
@@ -100,10 +79,6 @@ public class RequirementLibraryNavigationController extends
 	private Provider<RequirementLibraryTreeNodeBuilder> requirementLibraryTreeNodeBuilder;
 	@Inject
 	private RequirementLibraryNavigationService requirementLibraryNavigationService;
-
-	@Inject
-	private FeatureManager featureManager;
-	
 
 	@RequestMapping(value = "/drives/{libraryId}/content/new-requirement", method = RequestMethod.POST)
 	@ResponseStatus(HttpStatus.CREATED)
@@ -234,68 +209,6 @@ public class RequirementLibraryNavigationController extends
 		}
 
 		return builder.setNode(resource).build();
-	}
-
-	@RequestMapping(value = "/nodes/{nodeIds}/{exportformat}", method = RequestMethod.GET, params = {
-			RequestParams.NAME, RequestParams.RTEFORMAT })
-	public @ResponseBody void exportRequirements(@PathVariable(RequestParams.NODE_IDS) List<Long> ids,
-			@RequestParam(RequestParams.NAME) String filename,
-			@RequestParam(RequestParams.RTEFORMAT) boolean keepRteFormat, @PathVariable String exportformat,
-			HttpServletResponse response, Locale locale) {
-
-		List<ExportRequirementData> dataSource = requirementLibraryNavigationService
-				.findRequirementsToExportFromNodes(ids);
-		printExport(dataSource, filename, JASPER_EXPORT_FILE, response, locale, exportformat, keepRteFormat,
-				exportReportParams());
-
-	}
-	
-	@RequestMapping(value = "/exports", method = RequestMethod.GET)
-	public @ResponseBody FileSystemResource exportRequirementExcel(@RequestParam(FILENAME) String filename,
-			@RequestParam(LIBRARIES) List<Long> libraryIds, @RequestParam(NODES) List<Long> nodeIds,
-			@RequestParam(RequestParams.RTEFORMAT) Boolean keepRteFormat, HttpServletResponse response){
-		
-		response.setContentType("application/octet-stream");
-		response.setHeader("Content-Disposition", "attachment; filename=" + filename + ".xls");
-
-		File export = requirementLibraryNavigationService.exportRequirementAsExcel(libraryIds, nodeIds, keepRteFormat, getMessageSource());
-		
-		return new FileSystemResource(export);
-	}
-
-	@RequestMapping(value = "/drives/{libIds}/{exportformat}", method = RequestMethod.GET, params = {
-			RequestParams.NAME, RequestParams.RTEFORMAT })
-	public @ResponseBody void exportLibrary(@PathVariable List<Long> libIds,
-			@RequestParam(RequestParams.NAME) String filename,
-			@RequestParam(RequestParams.RTEFORMAT) boolean keepRteFormat, @PathVariable String exportformat,
-			HttpServletResponse response, Locale locale) {
-
-		List<ExportRequirementData> dataSource = requirementLibraryNavigationService
-				.findRequirementsToExportFromLibrary(libIds);
-
-		printExport(dataSource, filename, JASPER_EXPORT_FILE, response, locale, exportformat, keepRteFormat,
-				exportReportParams());
-
-	}
-
-	private Map<String, Object> exportReportParams() {
-		Map<String, Object> reportParams = new HashMap<>();
-		reportParams.put(SquashConfigContextExposer.MILESTONE_FEATURE_ENABLED,
-				featureManager.isEnabled(Feature.MILESTONE));
-		return reportParams;
-	}
-
-	@RequestMapping(value = "/import/upload", method = RequestMethod.POST, params = "upload-ticket")
-	public ModelAndView importArchive(@RequestParam("archive") MultipartFile archive,
-			@RequestParam(RequestParams.PROJECT_ID) long projectId) throws IOException {
-
-		InputStream stream = archive.getInputStream();
-		ImportSummary summary = requirementLibraryNavigationService.importExcel(stream, projectId);
-		ModelAndView mav = new ModelAndView("fragment/import/import-summary");
-		mav.addObject("summary", summary);
-		mav.addObject("workspace", "requirement");
-		return mav;
-
 	}
 
 	/*
