@@ -177,8 +177,7 @@ implements CampaignNodeDeletionHandler {
 					report.addName(campaign.getName());
 					report.setHasRights(true);
 					reportList.add(report);
-				}
-				catch(AccessDeniedException exception){
+				} catch (AccessDeniedException exception) {
 
 					//The user is not allowed to delete the campaign
 					report = new NotDeletableCampaignsPreviewReport();
@@ -212,8 +211,7 @@ implements CampaignNodeDeletionHandler {
 					report.addName(iteration.getName());
 					report.setHasRights(true);
 					reportList.add(report);
-				}
-				catch(AccessDeniedException exception){
+				} catch (AccessDeniedException exception) {
 
 					//The user is not allowed to delete the campaign
 					report = new NotDeletableCampaignsPreviewReport();
@@ -254,8 +252,7 @@ implements CampaignNodeDeletionHandler {
 			if(campaignDao.countRunningOrDoneExecutions(campaign.getId()) > 0){
 				try{
 					PermissionsUtils.checkPermission(permissionEvaluationService, new SecurityCheckableObject(campaign,"EXTENDED_DELETE"));
-				}
-				catch(AccessDeniedException exception){
+				} catch (AccessDeniedException exception) {
 					lockedNodes.add(campaign.getId());
 				}
 			}
@@ -387,18 +384,12 @@ implements CampaignNodeDeletionHandler {
 
 				try{
 					PermissionsUtils.checkPermission(permissionEvaluationService, new SecurityCheckableObject(iteration,"EXTENDED_DELETE"));
-					iteration.getCampaign().removeIteration(iteration);
-					iterationsToBeDeleted.add(iteration);
-					deletedTargetIds.add(iteration.getId());
+					registerIterationDeletion(iteration, iterationsToBeDeleted, deletedTargetIds);
+				} catch (AccessDeniedException exception) {
+					// Apparently, we don't wanna do anything, not even log something.
 				}
-				catch(AccessDeniedException exception){
-
-				}
-			}
-			else{
-				iteration.getCampaign().removeIteration(iteration);
-				iterationsToBeDeleted.add(iteration);
-				deletedTargetIds.add(iteration.getId());
+			} else {
+				registerIterationDeletion(iteration, iterationsToBeDeleted, deletedTargetIds);
 			}
 		}
 
@@ -408,6 +399,13 @@ implements CampaignNodeDeletionHandler {
 		report.addRemoved(deletedTargetIds, "iteration");
 
 		return report;
+	}
+
+	private void registerIterationDeletion(Iteration iteration, List<Iteration> iterationsToBeDeleted, List<Long> deletedTargetIds) {
+		Campaign camp = iteration.getCampaign();
+		camp.removeIteration(iteration);
+		iterationsToBeDeleted.add(iteration);
+		deletedTargetIds.add(iteration.getId());
 	}
 
 	@Override

@@ -27,8 +27,6 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Provider;
 
-import org.hibernate.LockMode;
-import org.hibernate.LockOptions;
 import org.hibernate.SessionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -258,7 +256,13 @@ IterationTestPlanManager {
 		return deletionHandler.simulateIterationDeletion(targetIds);
 	}
 
+	/**
+	 * @deprecated not used anymore
+	 * @param targetIds
+	 * @return
+	 */
 	@Override
+	@Deprecated
 	public OperationReport deleteNodes(List<Long> targetIds) {
 		return deletionHandler.deleteIterations(targetIds);
 	}
@@ -332,7 +336,6 @@ IterationTestPlanManager {
 		item.addExecution(execution);
 		createCustomFieldsForExecutionAndExecutionSteps(execution);
 		createDenormalizedFieldsForExecutionAndExecutionSteps(execution);
-
 		indexationService.reindexTestCase(item.getReferencedTestCase().getId());
 
 		return execution;

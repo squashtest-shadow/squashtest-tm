@@ -33,6 +33,10 @@ import org.squashtest.tm.domain.campaign.TestSuite;
 import org.squashtest.tm.domain.customfield.CustomField;
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
 import org.squashtest.tm.domain.customfield.RawValue;
+import org.squashtest.tm.service.annotation.BatchPreventConcurrent;
+import org.squashtest.tm.service.annotation.Id;
+import org.squashtest.tm.service.annotation.Ids;
+import org.squashtest.tm.service.annotation.PreventConcurrent;
 import org.squashtest.tm.service.deletion.OperationReport;
 import org.squashtest.tm.service.deletion.SuppressionPreviewReport;
 import org.squashtest.tm.service.library.LibraryNavigationService;
@@ -58,7 +62,6 @@ LibraryNavigationService<CampaignLibrary, CampaignFolder, CampaignLibraryNode>, 
 	 * @param customFieldValues
 	 */
 	void addCampaignToCampaignLibrary(long libraryId, Campaign campaign, Map<Long, RawValue> customFieldValues, Long milestoneId);
-
 
 
 	/**
@@ -96,7 +99,8 @@ LibraryNavigationService<CampaignLibrary, CampaignFolder, CampaignLibraryNode>, 
 	 * @param campaignId
 	 * @return
 	 */
-	int addIterationToCampaign(Iteration iteration, long campaignId, boolean copyTestPlan);
+	@PreventConcurrent(entityType = Campaign.class)
+	int addIterationToCampaign(Iteration iteration, @Id long campaignId, boolean copyTestPlan);
 
 
 	/**
@@ -110,12 +114,14 @@ LibraryNavigationService<CampaignLibrary, CampaignFolder, CampaignLibraryNode>, 
 	 * @param customFieldValues
 	 * @return
 	 */
-	int addIterationToCampaign(Iteration iteration, long campaignId, boolean copyTestPlan, Map<Long, RawValue> customFieldValues);
+	@PreventConcurrent(entityType = Campaign.class)
+	int addIterationToCampaign(Iteration iteration, @Id long campaignId, boolean copyTestPlan, Map<Long, RawValue> customFieldValues);
 
 
 	List<Iteration> findIterationsByCampaignId(long campaignId);
 
 	List<Iteration> copyIterationsToCampaign(long campaignId, Long[] iterationsIds);
+
 	/**
 	 * @deprecated use {@linkplain IterationFinder#findById(long)} instead
 	 * @param iterationId
@@ -146,7 +152,8 @@ LibraryNavigationService<CampaignLibrary, CampaignFolder, CampaignLibraryNode>, 
 	 * @param targetIds
 	 * @return
 	 */
-	OperationReport deleteIterations(List<Long> targetIds);
+	@BatchPreventConcurrent(entityType = Campaign.class)
+	OperationReport deleteIterations(@Ids List<Long> targetIds);
 	/**
 	 * that method should investigate the consequences of the deletion request of tes suites, and return a report about
 	 * what will happen.
