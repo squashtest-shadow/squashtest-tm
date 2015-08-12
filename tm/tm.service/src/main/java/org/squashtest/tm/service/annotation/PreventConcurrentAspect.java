@@ -28,14 +28,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.Ordered;
 import org.springframework.stereotype.Component;
+import org.squashtest.tm.service.concurrent.EntityLockManager;
 
-import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.lang.annotation.Annotation;
-import java.lang.ref.WeakReference;
 import java.lang.reflect.Method;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.Collection;
+import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 /**
@@ -54,76 +53,6 @@ public class PreventConcurrentAspect implements Ordered {
 		return 2;
 	}
 
-	public static class LockManager {
-		private static class EntityRef {
-			private final Class type;
-			private final Serializable id;
-
-			@Override
-			public String toString() {
-				return "EntityRef{" +
-					"type=" + type +
-					", id=" + id +
-					'}';
-			}
-
-			private EntityRef(@NotNull Class type, Serializable id) {
-				this.type = type;
-				this.id = id;
-			}
-
-			@Override
-			public boolean equals(Object o) {
-				if (this == o) return true;
-				if (o == null || getClass() != o.getClass()) return false;
-
-				EntityRef entityRef = (EntityRef) o;
-
-				if (!type.equals(entityRef.type)) return false;
-				return id.equals(entityRef.id);
-
-			}
-
-			@Override
-			public int hashCode() {
-				int result = type.hashCode();
-				result = 31 * result + id.hashCode();
-				return result;
-			}
-		}
-
-		private static final Map<EntityRef, WeakReference<ReentrantLock>> locks = new ConcurrentHashMap<EntityRef, WeakReference<ReentrantLock>>();
-
-		public static synchronized ReentrantLock getLock(Class type, Serializable id) {
-			EntityRef ref = new EntityRef(type, id);
-			WeakReference<ReentrantLock> wr = locks.get(ref);
-			ReentrantLock lock;
-
-			if (wr == null) {
-				lock = createLock(ref);
-			} else {
-				LOGGER.trace("Retrieved lock for entity {}", ref);
-				lock = wr.get();
-
-				if (lock == null) {
-					LOGGER.trace("Previous lock was GC'd");
-					lock = createLock(ref);
-				}
-			}
-
-			LOGGER.debug("Gotten lock for {}", ref);
-			return lock;
-		}
-
-		private static ReentrantLock createLock(EntityRef ref) {
-			ReentrantLock lock;
-			LOGGER.trace("Creating new weak reference and lock for entity {}", ref);
-			lock = new ReentrantLock();
-			locks.put(ref, new WeakReference<ReentrantLock>(lock));
-			return lock;
-		}
-	}
-
 //	@Pointcut(value = "execution(@org.squashtest.tm.service.annotation.PreventConcurrent * *(..)) && @annotation(pc)", argNames = "pc")
 //	public void entityLockingMethod(PreventConcurrent pc) {
 //		// NOOP
@@ -131,7 +60,7 @@ public class PreventConcurrentAspect implements Ordered {
 
 	@Around(value = "execution(@org.squashtest.tm.service.annotation.PreventConcurrent * *(..)) && @annotation(pc)", argNames = "pc")
 	public Object lockEntity(ProceedingJoinPoint pjp, PreventConcurrent pc) throws Throwable {
-		ReentrantLock lock = LockManager.getLock(pc.entityType(), findEntityId(pjp));
+		ReentrantLock lock = EntityLockManager.getLock(pc.entityType(), findEntityId(pjp));
 		lock.lock();
 		LOGGER.warn("Acquired lock on {}", lock);
 
@@ -146,12 +75,35 @@ public class PreventConcurrentAspect implements Ordered {
 	}
 
 	private Serializable findEntityId(ProceedingJoinPoint pjp) {
+		return findAnnotatedParam(pjp, Id.class);
+	}
+
+	@Around(value = "execution(@org.squashtest.tm.service.annotation.BatchPreventConcurrent * *(..)) && @annotation(pc)", argNames = "pc")
+	public Object lockEntities(ProceedingJoinPoint pjp, BatchPreventConcurrent pc) throws Throwable {
+		Collection<? extends Serializable> sourceIds = findEntityIds(pjp);
+		IdsCoercer coercer = pc.coercer().newInstance();
+		Collection<Lock> locks = EntityLockManager.lock(pc.entityType(), coercer.coerce(sourceIds));
+
+		try {
+			return pjp.proceed();
+
+		} finally {
+			EntityLockManager.release(locks);
+
+		}
+	}
+
+	private Collection<? extends Serializable> findEntityIds(ProceedingJoinPoint pjp) {
+		return findAnnotatedParam(pjp, Ids.class);
+	}
+
+	private <T> T findAnnotatedParam(ProceedingJoinPoint pjp, Class<? extends Annotation> expected) {
 		MethodSignature sig = (MethodSignature) pjp.getSignature();
 		Method meth = sig.getMethod();
 		Annotation[][] annotations = meth.getParameterAnnotations();
 		LOGGER.trace("Advising method {}{}.", pjp.getSignature().getDeclaringTypeName(), meth.getName());
 
-		Serializable entityId = null;
+		T annotatedParam = null;
 
 		argsLoop:
 		for (int iArg = 0; iArg < annotations.length; iArg++) {
@@ -159,19 +111,20 @@ public class PreventConcurrentAspect implements Ordered {
 
 			annLoop:
 			for (int jAnn = 0; jAnn < curArg.length; jAnn++) {
-				if (curArg[jAnn].annotationType().equals(Id.class)) {
-					LOGGER.trace("Found required @Id on arg #{} of method {}", iArg, meth.getName());
-					entityId = (Serializable) pjp.getArgs()[iArg];
+				if (curArg[jAnn].annotationType().equals(expected)) {
+					LOGGER.trace("Found required @{} on arg #{} of method {}", new Object[]{expected.getSimpleName(), iArg, meth.getName()});
+					annotatedParam = (T) pjp.getArgs()[iArg];
 					break argsLoop;
 				}
 			}
 		}
 
-		if (entityId == null) {
-			throw new IllegalArgumentException("I coult not find any arg annotated @Id in @PreventConcurrent method '" +
+		if (annotatedParam == null) {
+			throw new IllegalArgumentException("I coult not find any arg annotated @" + expected.getSimpleName() + " in @PreventConcurrent method '" +
 				pjp.getSignature().getDeclaringTypeName() + '.' + meth.getName() + "' This must be a structural programming error");
 
 		}
-		return entityId;
+		return annotatedParam;
 	}
+
 }
