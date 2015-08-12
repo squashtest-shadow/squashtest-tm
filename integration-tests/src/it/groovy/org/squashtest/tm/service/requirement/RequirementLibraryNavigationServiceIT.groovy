@@ -42,6 +42,7 @@ import org.unitils.dbunit.annotation.DataSet
 import org.unitils.dbunit.annotation.ExpectedDataSet
 import org.squashtest.tm.service.internal.repository.RequirementFolderDao
 
+import spock.lang.Unroll;
 import spock.unitils.UnitilsSupport
 
 @UnitilsSupport
@@ -420,33 +421,25 @@ class RequirementLibraryNavigationServiceIT extends DbunitServiceSpecification {
 		result4 == -100L
 	}
 	
+	@Unroll("Should not found requirement with path #path. Id founded #id")
 	@DataSet("RequirementLibraryNavigationServiceIT.should find one requirement by path.xml")
 	def "should find no requirement by path"(){
 		given :
-			def path = "/projet1/folder/req2"
-			def path2 = "/projet1/req2"
-			def path3 = "/req2"
-			def path4 = "/projet1/folder/folder/req2"
-			def path5 = "/projet1/subfolder/folder/req2"
-			def path6 = "/projet1"
-			
-			when:
-			Long result = navService.findNodeIdByPath(path)
-			Long result2 = navService.findNodeIdByPath(path2)
-			Long result3 = navService.findNodeIdByPath(path3)
-			Long result4 = navService.findNodeIdByPath(path4)
-			Long result5 = navService.findNodeIdByPath(path5)
-			Long result6 = navService.findNodeIdByPath(path6)
-			Long result7 = navService.findNodeIdByPath(null)
-				
-			then:
-			result == null
-			result2 == null
-			result3 == null
-			result4 == null
-			result5 == null
-			result6 == null
-			result7 == null
+		
+		when:
+		Long result = navService.findNodeIdByPath(path)
+
+		then:
+		result == id 
+		
+		where:
+		path                                       	|| id
+		"/projet1/folder/req2"                     	|| null
+		"/projet1/req2"                            	|| null
+		"/req2"                                    	|| null
+		"/projet1/folder/folder/req2"              	|| null
+		"/projet1/subfolder/folder/req2"			|| null
+		"/projet1"									|| null
 	}
 	
 	@DataSet("RequirementLibraryNavigationServiceIT.should find one requirement by path.xml")

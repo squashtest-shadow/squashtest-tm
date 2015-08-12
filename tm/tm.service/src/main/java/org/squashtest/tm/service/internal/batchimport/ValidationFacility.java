@@ -231,7 +231,7 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 	private static final String PERM_DELETE = "DELETE";
 	private static final String PERM_READ = "READ";
 	private static final String LIBRARY_CLASSNAME = "org.squashtest.tm.domain.testcase.TestCaseLibrary";
-	private static final String REQUIREMENT_VERSION_LIBRARY_CLASSNAME = "org.squashtest.tm.domain.requirement.RequirementVersion";
+	private static final String REQUIREMENT_VERSION_LIBRARY_CLASSNAME = "org.squashtest.tm.domain.requirement.RequirementLibrary";
 
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(ValidationFacility.class);
@@ -846,7 +846,7 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 		creationStrategy.validateMilestones(instr, logs);
 
 		// 3-5 : fix test case metadatas
-		List<LogEntry> logEntries = fixMetadatas(target, testCase, ImportMode.CREATE);
+		List<LogEntry> logEntries = fixMetadatas(target, (AuditableMixin) testCase, ImportMode.CREATE);
 		logs.addEntries(logEntries);
 		return logs;
 
@@ -900,7 +900,7 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 
 			// 3-4 : check audit datas
 			// backup the audit log
-			List<LogEntry> logEntries = fixMetadatas(target, testCase, ImportMode.UPDATE);
+			List<LogEntry> logEntries = fixMetadatas(target, (AuditableMixin) testCase, ImportMode.UPDATE);
 			logs.addEntries(logEntries);
 
 			updateStrategy.validateMilestones(instr, logs);
@@ -925,7 +925,7 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 		logs = entityValidator.createRequirementVersionChecks(target, reqVersion);
 
 		//   - Check conflict between folder already created by previous import
-				// and the path the line we are presently importing
+		// and the path the line we are presently importing
 		checkFolderConflict(instr,logs);
 
 		//   - Check status and put the requirement version status to WIP if needed
@@ -958,7 +958,7 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 		checkMilestonesAlreadyUsedInRequirement(instr, logs);
 
 		// 8 - Fix createdOn and createdBy
-		fixMetadatas(reqTarget, reqVersion, ImportMode.CREATE);
+		fixMetadatas(reqTarget, (AuditableMixin) reqVersion, ImportMode.CREATE);
 
 		// 9 - Now update model if the requirement version has passed all check
 		if (!logs.hasCriticalErrors()) {
@@ -1049,7 +1049,7 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 
 		checkMilestonesAlreadyUsedInRequirement(instr, logs);
 
-		fixMetadatas(reqTarget, reqVersion, ImportMode.UPDATE);
+		fixMetadatas(reqTarget, (AuditableMixin) reqVersion, ImportMode.UPDATE);
 
 		if (logs.hasCriticalErrors()) {
 			instr.fatalError();

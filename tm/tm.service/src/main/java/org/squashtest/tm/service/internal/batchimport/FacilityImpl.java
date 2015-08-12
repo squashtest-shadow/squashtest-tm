@@ -40,6 +40,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.core.foundation.lang.PathUtils;
+import org.squashtest.tm.domain.audit.AuditableMixin;
 import org.squashtest.tm.domain.customfield.BoundEntity;
 import org.squashtest.tm.domain.customfield.CustomField;
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
@@ -50,8 +51,10 @@ import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.requirement.NewRequirementVersionDto;
 import org.squashtest.tm.domain.requirement.Requirement;
 import org.squashtest.tm.domain.requirement.RequirementCriticality;
+import org.squashtest.tm.domain.requirement.RequirementFolder;
 import org.squashtest.tm.domain.requirement.RequirementLibrary;
 import org.squashtest.tm.domain.requirement.RequirementLibraryNode;
+import org.squashtest.tm.domain.requirement.RequirementLibraryNodeVisitor;
 import org.squashtest.tm.domain.requirement.RequirementStatus;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.testcase.ActionTestStep;
@@ -79,6 +82,7 @@ import org.squashtest.tm.service.internal.repository.DatasetDao;
 import org.squashtest.tm.service.internal.repository.DatasetParamValueDao;
 import org.squashtest.tm.service.internal.repository.ParameterDao;
 import org.squashtest.tm.service.internal.repository.RequirementVersionCoverageDao;
+import org.squashtest.tm.service.internal.repository.hibernate.HibernateRequirementLibraryNodeDao;
 import org.squashtest.tm.service.milestone.MilestoneMembershipManager;
 import org.squashtest.tm.service.requirement.RequirementLibraryFinderService;
 import org.squashtest.tm.service.requirement.RequirementLibraryNavigationService;
@@ -158,6 +162,9 @@ public class FacilityImpl implements Facility {
 
 	@Inject
 	private RequirementVersionCoverageDao coverageDao;
+	
+	@Inject
+	private HibernateRequirementLibraryNodeDao rlnDao;
 
 	private FacilityImplHelper helper = new FacilityImplHelper();
 
@@ -643,7 +650,7 @@ public class FacilityImpl implements Facility {
 			return doCreateRequirementAndVersion(instruction);
 		}
 		else {
-			return doCreateAddingNewVersionToRequirement(instruction,reqId);
+			return doAddingNewVersionToRequirement(instruction,reqId);
 		}
 	}
 
@@ -654,7 +661,7 @@ public class FacilityImpl implements Facility {
 	 * is fairly complex, so we follow normal flow in squash TM : create a new requirement version and modify it after
 	 * @param instruction
 	 */
-	private RequirementVersion doCreateAddingNewVersionToRequirement(
+	private RequirementVersion doAddingNewVersionToRequirement(
 			RequirementVersionInstruction instruction,Long reqId) {
 
 		RequirementVersionTarget target = instruction.getTarget();
@@ -674,14 +681,10 @@ public class FacilityImpl implements Facility {
 		//and
 		//i.e several requirement version could be linked to the same milestone
 		doUpdateRequirementCoreAttributes(requirementVersion, requirementVersionPersisted);
+		doUpdateRequirementMetadata((AuditableMixin)requirementVersion,(AuditableMixin)requirementVersionPersisted);
 		fixVersionNumber(requirement, target.getVersion());
 		return requirement.findRequirementVersion(target.getVersion());
 	}
-
-
-
-
-
 
 	@SuppressWarnings("unchecked")
 	private RequirementVersion doCreateRequirementAndVersion(
@@ -696,13 +699,12 @@ public class FacilityImpl implements Facility {
 		NewRequirementVersionDto dto = new NewRequirementVersionDto(requirementVersion, acceptableCufs);
 		dto.setName(PathUtils.unescapePathPartSlashes(dto.getName()));
 
-		//creating the persisted requirement reference
 		Requirement persistedRequirement = null;
 
 		if (target.getRequirement().isRootRequirement()) {
 			persistedRequirement = reqLibNavigationService.addRequirementToRequirementLibrary(
 					requirementLibrairyId,dto,Collections.EMPTY_LIST);
-
+			reqLibNavigationService.moveNodesToLibrary(requirementLibrairyId, new Long[]{persistedRequirement.getId()}, target.getRequirement().getOrder());
 			milestoneService.bindRequirementVersionToMilestones(persistedRequirement.getCurrentVersion().getId(), boundMilestonesIds(instruction));
 		}
 		else {
@@ -717,11 +719,13 @@ public class FacilityImpl implements Facility {
 					if (parentRequirement!=null) {
 						persistedRequirement = reqLibNavigationService.addRequirementToRequirement
 								(parentId, dto, boundMilestonesIds(instruction));
+						reqLibNavigationService.moveNodesToRequirement(parentId, new Long[]{persistedRequirement.getId()}, target.getRequirement().getOrder());
 					}
 					// 1.1.1 -  nop, folder
 					else {
 						persistedRequirement = reqLibNavigationService.addRequirementToRequirementFolder
 								(parentId, dto, boundMilestonesIds(instruction));
+						reqLibNavigationService.moveNodesToFolder(parentId, new Long[]{persistedRequirement.getId()}, target.getRequirement().getOrder());
 					}
 				}
 				// 1.2 - If no -> makeDir to create the hierarchy
@@ -733,10 +737,12 @@ public class FacilityImpl implements Facility {
 					if (parentRequirement==null) {
 						persistedRequirement = reqLibNavigationService.addRequirementToRequirementFolder
 								(parentId, dto, boundMilestonesIds(instruction));
+						reqLibNavigationService.moveNodesToFolder(parentId, new Long[]{persistedRequirement.getId()}, target.getRequirement().getOrder());
 					}
 					else {
 						persistedRequirement = reqLibNavigationService.addRequirementToRequirement
 								(parentId, dto, boundMilestonesIds(instruction));
+						reqLibNavigationService.moveNodesToRequirement(parentId, new Long[]{persistedRequirement.getId()}, target.getRequirement().getOrder());
 					}
 				}
 		}
@@ -745,11 +751,20 @@ public class FacilityImpl implements Facility {
 
 		//updating attributes that creation process haven't set (Category... )
 		doUpdateRequirementCategory(requirementVersion,persistedRequirement.getCurrentVersion());
-
+		doUpdateRequirementMetadata((AuditableMixin)requirementVersion,(AuditableMixin)persistedRequirement.getCurrentVersion());
 		//setting the version number correctly as we can add version number non sequentially with import process
 		fixVersionNumber(persistedRequirement, target.getVersion());
 		return persistedRequirement.getCurrentVersion();//we have only one version in the new requirement...
 	}
+
+
+
+	private void doUpdateRequirementMetadata(AuditableMixin requirementVersion,
+			AuditableMixin persistedVersion) {
+		persistedVersion.setCreatedBy(requirementVersion.getCreatedBy());
+		persistedVersion.setCreatedOn(requirementVersion.getCreatedOn());
+	}
+
 
 	private void updateRequirementVersionRoutine(LogTrain train,
 			RequirementVersionInstruction instruction) {
@@ -765,7 +780,7 @@ public class FacilityImpl implements Facility {
 			fixCategory(target,reqVersion);
 			RequirementVersion newVersion = doUpdateRequirementVersion(instruction,cufValues);
 
-			//update the instruction, needed for postProcess.
+			//update the instruction with persisted one, needed for postProcess.
 			instruction.setRequirementVersion(newVersion);
 
 			//update model
@@ -797,8 +812,30 @@ public class FacilityImpl implements Facility {
 		doUpdateRequirementCategory(reqVersion, orig);
 		bindRequirementVersionToMilestones(orig, boundMilestonesIds(instruction));
 		doUpdateCustomFields(cufValues,orig);
+		doUpdateRequirementMetadata((AuditableMixin)reqVersion,(AuditableMixin)orig);
+		moveRequirement(target.getRequirement(), req, target.getRequirement().getOrder());
 		//we return the persisted RequirementVersion for post process
 		return orig;
+	}
+	
+	@SuppressWarnings("rawtypes")
+	private void moveRequirement(RequirementTarget target, Requirement req, int newPosition){
+		if (target.isRootRequirement()) {
+			reqLibNavigationService.moveNodesToLibrary(req.getLibrary().getId(),new Long[]{req.getId()}, newPosition);
+		}
+		else {
+			List<Long> ids = rlnDao.getParentsIds(req.getId());
+			Long firstParentId = ids.get(ids.size()-1);
+			RequirementLibraryNode parent = reqLibNavigationService.findRequirement(firstParentId);
+			//Parent is a folder ?
+			if (parent==null) {
+				parent = reqLibNavigationService.findFolder(firstParentId);
+				reqLibNavigationService.moveNodesToFolder(parent.getId(),new Long[]{req.getId()}, newPosition);
+			}
+			else {
+				reqLibNavigationService.moveNodesToRequirement(parent.getId(),new Long[]{req.getId()}, newPosition);
+			}
+		}
 	}
 
 	private void doUpdateRequirementCategory(
@@ -1471,4 +1508,22 @@ public class FacilityImpl implements Facility {
 
 		return train;
 	}
+	
+	private class RequirementLibraryNodeVisitorImpl implements RequirementLibraryNodeVisitor{
+
+		@Override
+		public void visit(RequirementFolder folder) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void visit(Requirement requirement) {
+			// TODO Auto-generated method stub
+			
+		}
+		
+	}
+	
 }
+
