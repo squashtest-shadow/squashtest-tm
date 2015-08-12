@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.service.internal.campaign;
 
+import org.hibernate.Query;
 import org.hibernate.SessionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,10 +33,13 @@ import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.campaign.*;
 import org.squashtest.tm.domain.projectfilter.ProjectFilter;
 import org.squashtest.tm.exception.DuplicateNameException;
+import org.squashtest.tm.service.annotation.BatchPreventConcurrent;
 import org.squashtest.tm.service.annotation.Id;
+import org.squashtest.tm.service.annotation.Ids;
 import org.squashtest.tm.service.annotation.PreventConcurrent;
 import org.squashtest.tm.service.campaign.CampaignLibraryNavigationService;
 import org.squashtest.tm.service.campaign.IterationModificationService;
+import org.squashtest.tm.service.concurrent.EntityLockManager;
 import org.squashtest.tm.service.deletion.OperationReport;
 import org.squashtest.tm.service.deletion.SuppressionPreviewReport;
 import org.squashtest.tm.service.internal.library.AbstractLibraryNavigationService;
@@ -48,10 +52,8 @@ import org.squashtest.tm.service.security.SecurityCheckableObject;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.concurrent.locks.Lock;
 
 @Service("squashtest.tm.service.CampaignLibraryNavigationService")
 @Transactional
@@ -151,10 +153,11 @@ public class CampaignLibraryNavigationServiceImpl extends
 	}
 
 	@Override
+	@PreventConcurrent(entityType = Campaign.class)
 	@PreAuthorize("hasPermission(#campaignId, 'org.squashtest.tm.domain.campaign.Campaign', 'CREATE') "
 		+ OR_HAS_ROLE_ADMIN)
-	@PreventConcurrent(entityType = Campaign.class)
-	public int addIterationToCampaign(Iteration iteration, @Id long campaignId, boolean copyTestPlan) {
+	public int
+	addIterationToCampaign(Iteration iteration, @Id long campaignId, boolean copyTestPlan) {
 		Campaign campaign = campaignDao.findById(campaignId);
 
 		if (!campaign.isContentNameAvailable(iteration.getName())) {
@@ -164,9 +167,9 @@ public class CampaignLibraryNavigationServiceImpl extends
 	}
 
 	@Override
+	@PreventConcurrent(entityType = Campaign.class)
 	@PreAuthorize("hasPermission(#campaignId, 'org.squashtest.tm.domain.campaign.Campaign', 'CREATE') "
 		+ OR_HAS_ROLE_ADMIN)
-	@PreventConcurrent(entityType = Campaign.class)
 	public int addIterationToCampaign(Iteration iteration, @Id long campaignId, boolean copyTestPlan,
 	                                  Map<Long, String> customFieldValues) {
 		int iterIndex = addIterationToCampaign(iteration, campaignId, copyTestPlan);
@@ -305,7 +308,8 @@ public class CampaignLibraryNavigationServiceImpl extends
 	}
 
 	@Override
-	public OperationReport deleteIterations(List<Long> targetIds) {
+	@BatchPreventConcurrent(entityType = Campaign.class, coercer = IterationToCampaignIdsCoercer.class)
+	public OperationReport deleteIterations(@Ids List<Long> targetIds) {
 		return deletionHandler.deleteIterations(targetIds);
 	}
 

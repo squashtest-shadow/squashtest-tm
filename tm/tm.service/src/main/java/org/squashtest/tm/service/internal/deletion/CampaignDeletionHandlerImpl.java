@@ -60,7 +60,7 @@ import org.squashtest.tm.service.security.SecurityCheckableObject;
 
 @Component("squashtest.tm.service.deletion.CampaignNodeDeletionHandler")
 public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandler<CampaignLibraryNode, CampaignFolder>
-implements CampaignNodeDeletionHandler {
+	implements CampaignNodeDeletionHandler {
 
 	@Inject
 	private CampaignFolderDao folderDao;
@@ -105,20 +105,19 @@ implements CampaignNodeDeletionHandler {
 
 		//by default the user is assumed to be allowed to delete the campaigns without warning
 
-		for(Campaign campaign : campaigns){
+		for (Campaign campaign : campaigns) {
 
-			if(campaignDao.countRunningOrDoneExecutions(campaign.getId()) > 0){
+			if (campaignDao.countRunningOrDoneExecutions(campaign.getId()) > 0) {
 
-				try{
-					PermissionsUtils.checkPermission(permissionEvaluationService, new SecurityCheckableObject(campaign,"EXTENDED_DELETE"));
+				try {
+					PermissionsUtils.checkPermission(permissionEvaluationService, new SecurityCheckableObject(campaign, "EXTENDED_DELETE"));
 
 					//The user is allowed to delete the campaign but must be warned
 					report = new NotDeletableCampaignsPreviewReport();
 					report.addName(campaign.getName());
 					report.setHasRights(true);
 					reportList.add(report);
-				}
-				catch(AccessDeniedException exception){
+				} catch (AccessDeniedException exception) {
 
 					//The user is not allowed to delete the campaign
 					report = new NotDeletableCampaignsPreviewReport();
@@ -142,20 +141,19 @@ implements CampaignNodeDeletionHandler {
 
 		//by default the user is assumed to be allowed to delete the iterations without warning
 
-		for(Iteration iteration : iterations){
+		for (Iteration iteration : iterations) {
 
-			if(iterationDao.countRunningOrDoneExecutions(iteration.getId()) > 0){
+			if (iterationDao.countRunningOrDoneExecutions(iteration.getId()) > 0) {
 
-				try{
-					PermissionsUtils.checkPermission(permissionEvaluationService, new SecurityCheckableObject(iteration,"EXTENDED_DELETE"));
+				try {
+					PermissionsUtils.checkPermission(permissionEvaluationService, new SecurityCheckableObject(iteration, "EXTENDED_DELETE"));
 
 					//The user is allowed to delete the campaign but must be warned
 					report = new NotDeletableCampaignsPreviewReport();
 					report.addName(iteration.getName());
 					report.setHasRights(true);
 					reportList.add(report);
-				}
-				catch(AccessDeniedException exception){
+				} catch (AccessDeniedException exception) {
 
 					//The user is not allowed to delete the campaign
 					report = new NotDeletableCampaignsPreviewReport();
@@ -191,14 +189,13 @@ implements CampaignNodeDeletionHandler {
 		List<Campaign> campaigns = campaignDao.findAllByIds(nodeIds);
 		List<Long> lockedNodes = new ArrayList<Long>(nodeIds.size());
 
-		for(Campaign campaign : campaigns){
+		for (Campaign campaign : campaigns) {
 
-			if(campaignDao.countRunningOrDoneExecutions(campaign.getId()) > 0){
+			if (campaignDao.countRunningOrDoneExecutions(campaign.getId()) > 0) {
 
-				try{
-					PermissionsUtils.checkPermission(permissionEvaluationService, new SecurityCheckableObject(campaign,"EXTENDED_DELETE"));
-				}
-				catch(AccessDeniedException exception){
+				try {
+					PermissionsUtils.checkPermission(permissionEvaluationService, new SecurityCheckableObject(campaign, "EXTENDED_DELETE"));
+				} catch (AccessDeniedException exception) {
 					lockedNodes.add(campaign.getId());
 				}
 			}
@@ -236,7 +233,7 @@ implements CampaignNodeDeletionHandler {
 		for (Campaign campaign : campaigns) {
 			attachLists.add(campaign.getAttachmentList());
 		}
-		for (CampaignFolder folder : folders){
+		for (CampaignFolder folder : folders) {
 			attachLists.add(folder.getAttachmentList());
 		}
 
@@ -274,24 +271,17 @@ implements CampaignNodeDeletionHandler {
 		List<Iteration> iterationsToBeDeleted = new ArrayList<Iteration>(iterations.size());
 		List<Long> deletedTargetIds = new ArrayList<Long>(targetIds.size());
 
-		for(Iteration iteration : iterations){
+		for (Iteration iteration : iterations) {
 
-			if(iterationDao.countRunningOrDoneExecutions(iteration.getId()) > 0){
-
-				try{
-					PermissionsUtils.checkPermission(permissionEvaluationService, new SecurityCheckableObject(iteration,"EXTENDED_DELETE"));
-					iteration.getCampaign().removeIteration(iteration);
-					iterationsToBeDeleted.add(iteration);
-					deletedTargetIds.add(iteration.getId());
+			if (iterationDao.countRunningOrDoneExecutions(iteration.getId()) > 0) {
+				try {
+					PermissionsUtils.checkPermission(permissionEvaluationService, new SecurityCheckableObject(iteration, "EXTENDED_DELETE"));
+					registerIterationDeletion(iteration, iterationsToBeDeleted, deletedTargetIds);
+				} catch (AccessDeniedException exception) {
+					// Apparently, we don't wanna do anything, not even log something.
 				}
-				catch(AccessDeniedException exception){
-
-				}
-			}
-			else{
-				iteration.getCampaign().removeIteration(iteration);
-				iterationsToBeDeleted.add(iteration);
-				deletedTargetIds.add(iteration.getId());
+			} else {
+				registerIterationDeletion(iteration, iterationsToBeDeleted, deletedTargetIds);
 			}
 		}
 
@@ -301,6 +291,13 @@ implements CampaignNodeDeletionHandler {
 		report.addRemoved(deletedTargetIds, "iteration");
 
 		return report;
+	}
+
+	private void registerIterationDeletion(Iteration iteration, List<Iteration> iterationsToBeDeleted, List<Long> deletedTargetIds) {
+		Campaign camp = iteration.getCampaign();
+		camp.removeIteration(iteration);
+		iterationsToBeDeleted.add(iteration);
+		deletedTargetIds.add(iteration.getId());
 	}
 
 	@Override
@@ -391,7 +388,7 @@ implements CampaignNodeDeletionHandler {
 			iteration.getTestSuites().clear();
 
 			deleteIterationTestPlan(iteration.getTestPlans());
-			iteration.getTestSuites().clear();	//XXX isn't that supposed to be iteration.getTestPlans().clear();
+			iteration.getTestSuites().clear();    //XXX isn't that supposed to be iteration.getTestPlans().clear();
 
 			customValueService.deleteAllCustomFieldValues(iteration);
 
@@ -413,7 +410,7 @@ implements CampaignNodeDeletionHandler {
 
 
 	@Override
-	public void deleteIterationTestPlanItem(IterationTestPlanItem item){
+	public void deleteIterationTestPlanItem(IterationTestPlanItem item) {
 		deleteExecutions(item.getExecutions());
 		deletionDao.removeEntity(item);
 	}
@@ -446,8 +443,8 @@ implements CampaignNodeDeletionHandler {
 		execution.getSteps().clear();
 	}
 
-	private void deleteAutomatedExecutionExtender(Execution execution){
-		if (execution.getAutomatedExecutionExtender()!=null){
+	private void deleteAutomatedExecutionExtender(Execution execution) {
+		if (execution.getAutomatedExecutionExtender() != null) {
 			AutomatedExecutionExtender extender = execution.getAutomatedExecutionExtender();
 			autoTestDao.removeIfUnused(extender.getAutomatedTest());
 			deletionDao.removeEntity(extender);

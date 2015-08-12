@@ -20,8 +20,6 @@
  */
 package org.squashtest.tm.service.internal.campaign;
 
-import org.hibernate.LockMode;
-import org.hibernate.LockOptions;
 import org.hibernate.SessionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,7 +32,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.campaign.*;
 import org.squashtest.tm.domain.execution.Execution;
-import org.squashtest.tm.domain.search.SessionFieldBridge;
 import org.squashtest.tm.domain.testcase.Dataset;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.users.User;
@@ -238,7 +235,13 @@ IterationTestPlanManager {
 		return deletionHandler.simulateIterationDeletion(targetIds);
 	}
 
+	/**
+	 * @deprecated not used anymore
+	 * @param targetIds
+	 * @return
+	 */
 	@Override
+	@Deprecated
 	public OperationReport deleteNodes(List<Long> targetIds) {
 		return deletionHandler.deleteIterations(targetIds);
 	}
