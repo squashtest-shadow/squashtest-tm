@@ -22,18 +22,16 @@ package org.squashtest.tm.service.internal.campaign;
 
 import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+import java.util.concurrent.locks.Lock;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
 
+import org.hibernate.Query;
 import org.hibernate.SessionFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PostFilter;
@@ -50,11 +48,14 @@ import org.squashtest.tm.domain.campaign.TestSuite;
 import org.squashtest.tm.domain.customfield.RawValue;
 import org.squashtest.tm.domain.projectfilter.ProjectFilter;
 import org.squashtest.tm.exception.DuplicateNameException;
+import org.squashtest.tm.service.annotation.BatchPreventConcurrent;
 import org.squashtest.tm.service.annotation.Id;
+import org.squashtest.tm.service.annotation.Ids;
 import org.squashtest.tm.service.annotation.PreventConcurrent;
 import org.squashtest.tm.service.campaign.CampaignLibraryNavigationService;
 import org.squashtest.tm.service.campaign.CampaignStatisticsService;
 import org.squashtest.tm.service.campaign.IterationModificationService;
+import org.squashtest.tm.service.concurrent.EntityLockManager;
 import org.squashtest.tm.service.deletion.OperationReport;
 import org.squashtest.tm.service.deletion.SuppressionPreviewReport;
 import org.squashtest.tm.service.internal.library.AbstractLibraryNavigationService;
@@ -71,6 +72,7 @@ import org.squashtest.tm.service.milestone.MilestoneMembershipManager;
 import org.squashtest.tm.service.project.ProjectFilterModificationService;
 import org.squashtest.tm.service.security.SecurityCheckableObject;
 import org.squashtest.tm.service.statistics.campaign.CampaignStatisticsBundle;
+import static org.squashtest.tm.service.security.Authorizations.*;
 
 @Service("squashtest.tm.service.CampaignLibraryNavigationService")
 @Transactional
@@ -173,10 +175,11 @@ CampaignLibraryNavigationService {
 	}
 
 	@Override
+	@PreventConcurrent(entityType = Campaign.class)
 	@PreAuthorize("hasPermission(#campaignId, 'org.squashtest.tm.domain.campaign.Campaign', 'CREATE') "
 			+ OR_HAS_ROLE_ADMIN)
-	@PreventConcurrent(entityType = Campaign.class)
-	public int addIterationToCampaign(Iteration iteration, @Id long campaignId, boolean copyTestPlan) {
+	public int
+	addIterationToCampaign(Iteration iteration, @Id long campaignId, boolean copyTestPlan) {
 		Campaign campaign = campaignDao.findById(campaignId);
 
 		if (!campaign.isContentNameAvailable(iteration.getName())) {
@@ -186,9 +189,9 @@ CampaignLibraryNavigationService {
 	}
 
 	@Override
+	@PreventConcurrent(entityType = Campaign.class)
 	@PreAuthorize("hasPermission(#campaignId, 'org.squashtest.tm.domain.campaign.Campaign', 'CREATE') "
 			+ OR_HAS_ROLE_ADMIN)
-	@PreventConcurrent(entityType = Campaign.class)
 	public int addIterationToCampaign(Iteration iteration, @Id long campaignId, boolean copyTestPlan,
 			Map<Long, RawValue> customFieldValues) {
 		int iterIndex = addIterationToCampaign(iteration, campaignId, copyTestPlan);
@@ -325,8 +328,6 @@ CampaignLibraryNavigationService {
 
 	}
 
-
-
 	private String formatPath(List<String> names) {
 		StringBuilder builder = new StringBuilder();
 		for (String name : names) {
@@ -350,7 +351,8 @@ CampaignLibraryNavigationService {
 	}
 
 	@Override
-	public OperationReport deleteIterations(List<Long> targetIds) {
+	@BatchPreventConcurrent(entityType = Campaign.class, coercer = IterationToCampaignIdsCoercer.class)
+	public OperationReport deleteIterations(@Ids List<Long> targetIds) {
 		return deletionHandler.deleteIterations(targetIds);
 	}
 
@@ -375,11 +377,9 @@ CampaignLibraryNavigationService {
 
 		if ("L".equals(exportType)){
 			model = simpleCampaignExportCSVModelProvider.get();
-		}
-		else if ("F".equals(exportType)){
+		} else if ("F".equals(exportType)) {
 			model = fullCampaignExportCSVModelProvider.get();
-		}
-		else{
+		} else {
 			model = standardCampaignExportCSVModelProvider.get();
 		}
 

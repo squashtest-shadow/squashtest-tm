@@ -22,9 +22,12 @@ package org.squashtest.tm.service.campaign;
 
 import java.util.List;
 
+import org.squashtest.tm.domain.campaign.Campaign;
 import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.campaign.TestSuite;
 import org.squashtest.tm.domain.execution.Execution;
+import org.squashtest.tm.service.annotation.Id;
+import org.squashtest.tm.service.annotation.PreventConcurrent;
 import org.squashtest.tm.service.deletion.OperationReport;
 import org.squashtest.tm.service.deletion.SuppressionPreviewReport;
 import org.squashtest.tm.service.statistics.iteration.IterationStatisticsBundle;
@@ -44,7 +47,8 @@ public interface CustomIterationModificationService extends IterationFinder {
 	 * @param campaignId
 	 * @return the index of the added iteration.
 	 */
-	int addIterationToCampaign(Iteration iteration, long campaignId, boolean copyTestPlan);
+	@PreventConcurrent(entityType = Campaign.class)
+	int addIterationToCampaign(Iteration iteration, @Id long campaignId, boolean copyTestPlan);
 
 	String delete(long iterationId);
 
@@ -68,7 +72,9 @@ public interface CustomIterationModificationService extends IterationFinder {
 	 *
 	 * @param targetIds
 	 * @return
+	 * @deprecated not used anymore
 	 */
+	@Deprecated
 	OperationReport deleteNodes(List<Long> targetIds);
 
 	void addTestSuite(long iterationId, TestSuite suite);
@@ -113,9 +119,7 @@ public interface CustomIterationModificationService extends IterationFinder {
 	 */
 	List<TestSuite> copyPasteTestSuitesToIteration(Long[] testSuiteIds, long iterationId);
 
-
 	IterationStatisticsBundle gatherIterationStatisticsBundle(long iterationId);
 
 	Execution updateExecutionFromTc(long executionId);
-
 }

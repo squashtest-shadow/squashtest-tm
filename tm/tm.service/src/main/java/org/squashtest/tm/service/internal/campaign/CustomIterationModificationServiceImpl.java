@@ -20,8 +20,6 @@
  */
 package org.squashtest.tm.service.internal.campaign;
 
-import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
-
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -59,6 +57,7 @@ import org.squashtest.tm.service.annotation.Id;
 import org.squashtest.tm.service.annotation.PreventConcurrent;
 import org.squashtest.tm.service.campaign.CustomIterationModificationService;
 import org.squashtest.tm.service.campaign.IterationStatisticsService;
+import org.squashtest.tm.service.campaign.IterationTestPlanManagerService;
 import org.squashtest.tm.service.deletion.OperationReport;
 import org.squashtest.tm.service.deletion.SuppressionPreviewReport;
 import org.squashtest.tm.service.internal.customfield.PrivateCustomFieldValueService;
@@ -76,6 +75,7 @@ import org.squashtest.tm.service.security.PermissionsUtils;
 import org.squashtest.tm.service.security.SecurityCheckableObject;
 import org.squashtest.tm.service.statistics.iteration.IterationStatisticsBundle;
 import org.squashtest.tm.service.testcase.TestCaseCyclicCallChecker;
+import static org.squashtest.tm.service.security.Authorizations.*;
 
 @Service("CustomIterationModificationService")
 @Transactional
@@ -256,7 +256,13 @@ IterationTestPlanManager {
 		return deletionHandler.simulateIterationDeletion(targetIds);
 	}
 
+	/**
+	 * @deprecated not used anymore
+	 * @param targetIds
+	 * @return
+	 */
 	@Override
+	@Deprecated
 	public OperationReport deleteNodes(List<Long> targetIds) {
 		return deletionHandler.deleteIterations(targetIds);
 	}
@@ -341,7 +347,6 @@ IterationTestPlanManager {
 		createDenormalizedFieldsForExecutionAndExecutionSteps(execution);
 		indexationService.reindexTestCase(item.getReferencedTestCase().getId());
 	}
-
 
 	private void createCustomFieldsForExecutionAndExecutionSteps(Execution execution){
 		customFieldValueService.createAllCustomFieldValues(execution, execution.getProject());

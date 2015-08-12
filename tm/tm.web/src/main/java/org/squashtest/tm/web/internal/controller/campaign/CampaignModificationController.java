@@ -258,6 +258,12 @@ public class CampaignModificationController {
 
 	}
 
+	/**
+	 * @deprecated does not seem to be used, should be removed (plus it's not even atomic)
+	 * @param data
+	 * @return
+	 */
+	@Deprecated
 	@RequestMapping(value = "/remove-campaigns", method = RequestMethod.POST, params = "isIteration=1")
 	@ResponseBody
 	public String removeIterations(@RequestParam("tab[]") String[] data) {
