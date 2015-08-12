@@ -26,22 +26,15 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Methods with this annotation should not be run concurrently when they access the same entity.
- * <p/>
- * The method arg which conveys the entity's id has to be annotated with @Id
- * <p/>
- * This annotation is processed at runtime using Spring AOP so it can only be used on spring beans. It means it should
- * be put on the concrete class and @Id should be put on the interface (yeah, that sucks) => best thing is to put it on
- * both the interface and the concrete class.
- *
  * @author Gregory Fouquet
  * @since 1.11.6
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
-public @interface PreventConcurrent {
+public @interface BatchPreventConcurrent {
 	/**
 	 * Type of the entity which should be locked
 	 */
 	Class<?> entityType();
+	Class<? extends IdsCoercer> coercer() default PassThroughIdsCoercer.class;
 }
