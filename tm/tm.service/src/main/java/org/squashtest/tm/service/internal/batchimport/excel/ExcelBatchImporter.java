@@ -70,7 +70,6 @@ public abstract class ExcelBatchImporter {
 	}
 
 	public ImportLog performImport(File excelFile) {
-		LOGGER.debug("ReqImport - In Batch import Service");
 
 		FacilityImpl impl = facilityImplProvider.get();
 
@@ -81,18 +80,11 @@ public abstract class ExcelBatchImporter {
 
 		List<Instruction<?>> instructions = buildOrderedInstruction(parser);
 
-		LOGGER.debug("ReqImport - " + instructions.size());
-
-		for (Instruction<?> instruction : instructions) {
-			LOGGER.debug("ReqImport - " + instruction.getMode());
-		}
-
 		ImportLog importLog = run(instructions, impl);
 
 		impl.postprocess(instructions);
 
 		importLog.appendLogTrain(unknownHeaders);
-		LOGGER.debug("ReqImport - Out Batch import Service");
 		return importLog;
 
 	}

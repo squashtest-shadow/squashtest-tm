@@ -39,7 +39,7 @@ import org.squashtest.tm.service.importer.EntityType;
 @UnitilsSupport
 @Transactional
 @RunWith(Sputnik)
-class RequirementExcelBatchImporterIT extends DbunitServiceSpecification{
+class RequirementCoverageExcelBatchImporterIT extends DbunitServiceSpecification{
 
 
 	@Inject
@@ -130,6 +130,5 @@ class RequirementExcelBatchImporterIT extends DbunitServiceSpecification{
 		coverages*.verifiedRequirementVersion.name as Set == ["1"].collect{"req" + it} as Set
 		coverages*.verifyingTestCase.name as Set == ["4"].collect{"tc" + it} as Set
 	}
-	
 	
 }

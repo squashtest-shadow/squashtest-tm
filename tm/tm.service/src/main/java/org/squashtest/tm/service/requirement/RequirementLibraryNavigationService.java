@@ -138,4 +138,6 @@ RequirementLibraryFinderService {
 	 */
 	void initCUFvalues(RequirementVersion reqVersion, Map<Long, RawValue> initialCustomFieldValues);
 	
+	public RequirementLibraryNode findRequirementLibraryNodeById(Long id);
+	
 }

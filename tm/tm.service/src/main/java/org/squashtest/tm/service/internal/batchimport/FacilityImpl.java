@@ -669,86 +669,98 @@ public class FacilityImpl implements Facility {
 		Map<Long, RawValue> acceptableCufs = toAcceptableCufs(instruction.getCustomFields());
 		RequirementVersion requirementVersion = instruction.getRequirementVersion();
 		requirementVersion.setVersionNumber(instruction.getTarget().getVersion());
-		LOGGER.debug("ReqImport - Before addinng new version we have " + requirement.getRequirementVersions().size());
-		LOGGER.debug("ReqImport - Before addinng new version we have current version " + requirement.getCurrentVersion());
+		//creating new version with service
 		requirementVersionManagerService.createNewVersion(reqId);
-		LOGGER.debug("ReqImport - After addinng new version we have " + requirement.getRequirementVersions().size());
-		LOGGER.debug("ReqImport - After addinng new version we have current version " + requirement.getCurrentVersion());
+		//and updating persisted reqVersion
 		RequirementVersion requirementVersionPersisted = requirement.getCurrentVersion();
 		reqLibNavigationService.initCUFvalues(requirementVersionPersisted, acceptableCufs);
 		bindRequirementVersionToMilestones(requirementVersionPersisted, boundMilestonesIds(instruction));
-		//do the reverse bind milestone -> requirement version as transaction is global to all import process
-		//and
-		//i.e several requirement version could be linked to the same milestone
 		doUpdateRequirementCoreAttributes(requirementVersion, requirementVersionPersisted);
 		doUpdateRequirementMetadata((AuditableMixin)requirementVersion,(AuditableMixin)requirementVersionPersisted);
 		fixVersionNumber(requirement, target.getVersion());
 		return requirement.findRequirementVersion(target.getVersion());
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private RequirementVersion doCreateRequirementAndVersion(
-			RequirementVersionInstruction instruction) {
-		RequirementVersionTarget target = instruction.getTarget();
+			final RequirementVersionInstruction instruction) {
+		
+		//convenient references as the process is complex...
+		final RequirementVersionTarget target = instruction.getTarget();
 		String projectName = PathUtils.extractProjectName(target.getPath());
-		Long requirementLibrairyId = validator.getModel().getProjectStatus(projectName).getRequirementLibraryId();
 		RequirementVersion requirementVersion = instruction.getRequirementVersion();
 		Map<Long, RawValue> acceptableCufs = toAcceptableCufs(instruction.getCustomFields());
 
 		//creating the dto needed for adding new requirement
-		NewRequirementVersionDto dto = new NewRequirementVersionDto(requirementVersion, acceptableCufs);
+		final NewRequirementVersionDto dto = new NewRequirementVersionDto(requirementVersion, acceptableCufs);
 		dto.setName(PathUtils.unescapePathPartSlashes(dto.getName()));
 
-		Requirement persistedRequirement = null;
+		//making arrays to avoid immutable problem in visitor inner class
+		final Requirement[] finalRequirement = new Requirement[1];
+		final Long[] finalParentId = new Long[1];
+		
+		//now creating the visitor to requirementLibrairyNode
+		//this visitor will invoke the good method as parent can be Requirement or RequirementFolder
+		RequirementLibraryNodeVisitor visitor = new RequirementLibraryNodeVisitor() {
+			
+			@Override
+			public void visit(Requirement requirement) {
+				finalRequirement[0] = reqLibNavigationService.addRequirementToRequirement
+						(finalParentId[0], dto, boundMilestonesIds(instruction));
+				reqLibNavigationService.moveNodesToRequirement(finalParentId[0], new Long[]{finalRequirement[0].getId()}, target.getRequirement().getOrder());
+			}
+			
+			@Override
+			public void visit(RequirementFolder folder) {
+				finalRequirement[0] = reqLibNavigationService.addRequirementToRequirementFolder
+						(finalParentId[0], dto, boundMilestonesIds(instruction));
+				reqLibNavigationService.moveNodesToFolder(finalParentId[0], new Long[]{finalRequirement[0].getId()}, target.getRequirement().getOrder());
 
+			}
+		};
+
+		//now creating requirement with following logic :
+		//	If requirement is root requirement 
+		//		-> addRequirementToRequirementLibrary
+		//	Else
+		//		If parent doesn't exist in database 
+		//			-> Create it and needed hierarchy
+		//		-> Now create the imported requirement using visitor polymorphism
+		//	-> Do postCreation stuff
 		if (target.getRequirement().isRootRequirement()) {
-			persistedRequirement = reqLibNavigationService.addRequirementToRequirementLibrary(
+			Long requirementLibrairyId = validator.getModel().getProjectStatus(projectName).getRequirementLibraryId();
+			
+			finalRequirement[0] = reqLibNavigationService.addRequirementToRequirementLibrary(
 					requirementLibrairyId,dto,Collections.EMPTY_LIST);
-			reqLibNavigationService.moveNodesToLibrary(requirementLibrairyId, new Long[]{persistedRequirement.getId()}, target.getRequirement().getOrder());
-			milestoneService.bindRequirementVersionToMilestones(persistedRequirement.getCurrentVersion().getId(), boundMilestonesIds(instruction));
+			reqLibNavigationService.moveNodesToLibrary(requirementLibrairyId, new Long[]{finalRequirement[0].getId()}, target.getRequirement().getOrder());
+			milestoneService.bindRequirementVersionToMilestones(finalRequirement[0].getCurrentVersion().getId(), boundMilestonesIds(instruction));
 		}
 		else {
-				//1 - Does the requirement first parent's exist
 				List<String> paths = PathUtils.scanPath(target.getPath());
 				String parentPath = paths.get(paths.size()-2); //we know that path is composite of at least 3 elements
-				Long parentId = reqFinderService.findNodeIdByPath(parentPath);
-				// 1.1 - If yes, it's a Requirement ?
-				if (parentId!=null) {
-					Requirement parentRequirement = reqLibNavigationService.findRequirement(parentId);
-					// 1.1.1 -  yeah, requirement ?
-					if (parentRequirement!=null) {
-						persistedRequirement = reqLibNavigationService.addRequirementToRequirement
-								(parentId, dto, boundMilestonesIds(instruction));
-						reqLibNavigationService.moveNodesToRequirement(parentId, new Long[]{persistedRequirement.getId()}, target.getRequirement().getOrder());
-					}
-					// 1.1.1 -  nop, folder
-					else {
-						persistedRequirement = reqLibNavigationService.addRequirementToRequirementFolder
-								(parentId, dto, boundMilestonesIds(instruction));
-						reqLibNavigationService.moveNodesToFolder(parentId, new Long[]{persistedRequirement.getId()}, target.getRequirement().getOrder());
-					}
+				finalParentId[0] = reqFinderService.findNodeIdByPath(parentPath);
+				//if parent doesn't exist, we must create it and all needed hierarchy above
+				if (finalParentId[0]==null) {
+					finalParentId[0] = reqLibNavigationService.mkdirs(parentPath);
 				}
-				// 1.2 - If no -> makeDir to create the hierarchy
-				// Beware, mkDirOrRequirement will return an id who can be a requirement or a folder,
-				// so we need to test the return type under this id
-				else{
-					parentId = reqLibNavigationService.mkdirs(parentPath);
-					Requirement parentRequirement = reqLibNavigationService.findRequirement(parentId);
-					if (parentRequirement==null) {
-						persistedRequirement = reqLibNavigationService.addRequirementToRequirementFolder
-								(parentId, dto, boundMilestonesIds(instruction));
-						reqLibNavigationService.moveNodesToFolder(parentId, new Long[]{persistedRequirement.getId()}, target.getRequirement().getOrder());
-					}
-					else {
-						persistedRequirement = reqLibNavigationService.addRequirementToRequirement
-								(parentId, dto, boundMilestonesIds(instruction));
-						reqLibNavigationService.moveNodesToRequirement(parentId, new Long[]{persistedRequirement.getId()}, target.getRequirement().getOrder());
-					}
-				}
+				RequirementLibraryNode parent = reqLibNavigationService.findRequirementLibraryNodeById(finalParentId[0]);
+				parent.accept(visitor);
 		}
+		
+		return doAfterCreationProcess(finalRequirement[0], instruction, requirementVersion);
+	}
+	
+	/**
+	 * Here we do all the needed modifications to the freshly created requirement.
+	 * @param persistedRequirement
+	 * @param instruction
+	 * @param requirementVersion
+	 * @return the current version, needed for global post process
+	 */
+	private RequirementVersion doAfterCreationProcess(Requirement persistedRequirement, RequirementVersionInstruction instruction, RequirementVersion requirementVersion){
+		RequirementVersionTarget target = instruction.getTarget();
 		//bind milestone for import
 		bindRequirementVersionToMilestones(persistedRequirement.getCurrentVersion(), boundMilestonesIds(instruction));
-
 		//updating attributes that creation process haven't set (Category... )
 		doUpdateRequirementCategory(requirementVersion,persistedRequirement.getCurrentVersion());
 		doUpdateRequirementMetadata((AuditableMixin)requirementVersion,(AuditableMixin)persistedRequirement.getCurrentVersion());
@@ -868,6 +880,11 @@ public class FacilityImpl implements Facility {
 		RequirementCriticality newCriticality = reqVersion.getCriticality();
 		if (newCriticality!=null && !newCriticality.equals(orig.getCriticality())) {
 			requirementVersionManagerService.changeCriticality(idOrig, newCriticality);
+		}
+		
+		InfoListItem newCategory = reqVersion.getCategory();
+		if (newCategory!=null&&!newCategory.equals(orig.getCategory())) {
+			requirementVersionManagerService.changeCategory(idOrig, newCategory.getCode());
 		}
 	}
 
@@ -1435,10 +1452,10 @@ public class FacilityImpl implements Facility {
 			for (Instruction<?> instruction : instructions) {
 				if (instruction instanceof RequirementVersionInstruction) {
 				RequirementVersionInstruction rvi = (RequirementVersionInstruction) instruction;
-				if (!rvi.isFatalError()) {
-					renameRequirementVersion(rvi);
-					changeRequirementVersionStatus(rvi);
-				}
+					if (!rvi.isFatalError()) {
+						renameRequirementVersion(rvi);
+						changeRequirementVersionStatus(rvi);
+					}
 				}
 			}
 		}
@@ -1496,8 +1513,8 @@ public class FacilityImpl implements Facility {
 		Requirement req = reqLibNavigationService.findRequirement(reqId);
 		RequirementVersion reqVersion = req.findRequirementVersion(target.getReqVersion());
 
-			Long tcId = navigationService.findNodeIdByPath(target.getTcPath());
-			TestCase tc = testcaseModificationService.findById(tcId);
+		Long tcId = navigationService.findNodeIdByPath(target.getTcPath());
+		TestCase tc = testcaseModificationService.findById(tcId);
 
 		RequirementVersionCoverage coverage = instr.getCoverage();
 		coverage.setVerifiedRequirementVersion(reqVersion);
@@ -1507,22 +1524,6 @@ public class FacilityImpl implements Facility {
 		}
 
 		return train;
-	}
-	
-	private class RequirementLibraryNodeVisitorImpl implements RequirementLibraryNodeVisitor{
-
-		@Override
-		public void visit(RequirementFolder folder) {
-			// TODO Auto-generated method stub
-			
-		}
-
-		@Override
-		public void visit(Requirement requirement) {
-			// TODO Auto-generated method stub
-			
-		}
-		
 	}
 	
 }

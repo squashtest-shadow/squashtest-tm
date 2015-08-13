@@ -403,22 +403,19 @@ class RequirementLibraryNavigationServiceIT extends DbunitServiceSpecification {
 	@DataSet("RequirementLibraryNavigationServiceIT.should find one requirement by path.xml")
 	def "should find one requirement by path"(){
 		given :
-		def path = "/projet1/folder/subfolder/req2"
-		def path2 = "/projet1/folder/1req"
-		def path3 = "/projet1/folder"
-		def path4 = "/projet1/folder/subfolder"
 		
 		when:
 		Long result = navService.findNodeIdByPath(path)
-		Long result2 = navService.findNodeIdByPath(path2)
-		Long result3 = navService.findNodeIdByPath(path3)
-		Long result4 = navService.findNodeIdByPath(path4)
 		
 		then:
-		result == -200L
-		result2 == -10L
-		result3 == -3L
-		result4 == -100L
+		result == id
+		
+		where:
+		path                                       	|| id
+		"/projet1/folder/subfolder/req2"			||-200L
+		"/projet1/folder/1req"						||-10L
+		"/projet1/folder"							||-3L
+		"/projet1/folder/subfolder"					||-100L
 	}
 	
 	@Unroll("Should not found requirement with path #path. Id founded #id")

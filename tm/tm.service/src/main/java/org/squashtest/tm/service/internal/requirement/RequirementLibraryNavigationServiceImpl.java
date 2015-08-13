@@ -776,4 +776,9 @@ RequirementLibraryNavigationService, RequirementLibraryFinderService {
 		initCustomFieldValues(reqVersion, initialCustomFieldValues);
 	}
 
+	@Override
+	public RequirementLibraryNode findRequirementLibraryNodeById(Long id) {
+		return requirementLibraryNodeDao.findById(id);
+	}
+
 }
