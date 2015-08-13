@@ -24,12 +24,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -73,6 +68,7 @@ import org.squashtest.tm.service.deletion.SuppressionPreviewReport;
 import org.squashtest.tm.service.execution.ExecutionFinder;
 import org.squashtest.tm.service.library.LibraryNavigationService;
 import org.squashtest.tm.service.milestone.MilestoneFinderService;
+import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.statistics.campaign.CampaignStatisticsBundle;
 import org.squashtest.tm.web.internal.argumentresolver.MilestoneConfigResolver.CurrentMilestone;
 import org.squashtest.tm.web.internal.controller.RequestParams;
@@ -101,6 +97,84 @@ LibraryNavigationController<CampaignLibrary, CampaignFolder, CampaignLibraryNode
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(CampaignLibraryNavigationController.class);
 
+	/**
+	 * This PermissionEvaluationService should only be used when batch-creating iteration tree nodes from the same campaign,
+	 * ie nodes which which have the same permissions
+	 * <p/>
+	 * It will only query the real PES once per permission  / role.
+	 * <p/>
+	 * Otherwise, it would create many short lived DB transaction in a single web request, which has measurable effects on performance.
+	 * <p/>
+	 * Objects of this class should be discarded immediately after creating the iterations.
+	 *
+	 * @author Gregory Fouquet
+	 * @since 1.11.6
+	 * @since 1.12.1
+	 */
+	private class ShortCutPermissionEvaluator implements PermissionEvaluationService {
+		private Boolean hasRole;
+		private Map<String, Boolean> perms = new HashMap<String, Boolean>();
+		private Map<String[], Map<String,Boolean>> hasRolePerms = new HashMap<String[], Map<String, Boolean>>();
+
+		@Override
+		public boolean hasRoleOrPermissionOnObject(String role, String permission, Object object) {
+			return this.hasRole(role) || this.hasPermissionOnObject(permission, object);
+		}
+
+		@Override
+		public boolean hasPermissionOnObject(String permission, Object entity) {
+			Boolean res = perms.get(permission);
+			if (res == null) {
+				res = delegate.hasPermissionOnObject(permission, entity);
+				perms.put(permission, res);
+
+			}
+
+			return res;
+		}
+
+		@Override
+		public boolean hasRoleOrPermissionOnObject(String role, String permission, Long entityId, String entityClassName) {
+			return delegate.hasRoleOrPermissionOnObject(role, permission, entityId, entityClassName);
+		}
+
+		@Override
+		public boolean canRead(Object object) {
+			return delegate.canRead(object);
+		}
+
+		@Override
+		public boolean hasMoreThanRead(Object object) {
+			return delegate.hasMoreThanRead(object);
+		}
+
+		@Override
+		public boolean hasRole(String role) {
+			if (hasRole == null) {
+				hasRole = delegate.hasRole(role);
+			}
+			return hasRole;
+		}
+
+		@Override
+		public boolean hasPermissionOnObject(String permission, Long entityId, String entityClassName) {
+			return delegate.hasPermissionOnObject(permission, entityId, entityClassName);
+		}
+
+		@Override
+		public Map<String, Boolean> hasRoleOrPermissionsOnObject(String role, String[] permissions, Object entity) {
+			Map<String, Boolean> res = hasRolePerms.get(permissions);
+			if (res == null) {
+				res = delegate.hasRoleOrPermissionsOnObject(role, permissions, entity);
+				hasRolePerms.put(permissions, res);
+			}
+			return res;
+		}
+
+	}
+
+	;
+
 	@Inject
 	@Named("campaign.driveNodeBuilder")
 	private Provider<DriveNodeBuilder<CampaignLibraryNode>> driveNodeBuilder;
@@ -122,6 +196,9 @@ LibraryNavigationController<CampaignLibrary, CampaignFolder, CampaignLibraryNode
 	private ExecutionFinder executionFinder;
 	@Inject
 	private IterationModificationService iterationModificationService;
+	@Inject
+	private PermissionEvaluationService delegate;
+
 	@Inject
 	private MilestoneFinderService milestoneFinder;
 
@@ -219,6 +296,10 @@ LibraryNavigationController<CampaignLibrary, CampaignFolder, CampaignLibraryNode
 		return iterationNodeBuilder.get().setModel(iteration).setIndex(iterationIndex).build();
 	}
 
+	private JsTreeNode createBatchedIterationTreeNode(Iteration iteration, int iterationIndex, PermissionEvaluationService permissionEvaluationService) {
+		return new IterationNodeBuilder(permissionEvaluationService).setModel(iteration).setIndex(iterationIndex).build();
+	}
+
 	private JsTreeNode createTestSuiteTreeNode(TestSuite testSuite) {
 		return suiteNodeBuilder.get().setModel(testSuite).build();
 	}
@@ -279,9 +360,11 @@ LibraryNavigationController<CampaignLibrary, CampaignFolder, CampaignLibraryNode
 	List<JsTreeNode> createCampaignIterationsModel(List<Iteration> iterations) {
 		List<JsTreeNode> res = new ArrayList<JsTreeNode>();
 
+		PermissionEvaluationService permissionEvaluator = new ShortCutPermissionEvaluator();
+
 		for (int i = 0; i < iterations.size(); i++) {
 			Iteration iteration = iterations.get(i);
-			res.add(createIterationTreeNode(iteration, i));
+			res.add(createBatchedIterationTreeNode(iteration, i, permissionEvaluator));
 		}
 
 		return res;
@@ -300,8 +383,10 @@ LibraryNavigationController<CampaignLibrary, CampaignFolder, CampaignLibraryNode
 		int iterationIndex = nextIterationNumber;
 		List<JsTreeNode> res = new ArrayList<JsTreeNode>();
 
+		PermissionEvaluationService permissionEvaluator = new ShortCutPermissionEvaluator();
+
 		for (Iteration iteration : newIterations) {
-			res.add(createIterationTreeNode(iteration, iterationIndex));
+			res.add(createBatchedIterationTreeNode(iteration, iterationIndex, permissionEvaluator));
 			iterationIndex++;
 		}
 
