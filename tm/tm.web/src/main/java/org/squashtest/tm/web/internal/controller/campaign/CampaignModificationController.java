@@ -198,13 +198,8 @@ public class CampaignModificationController {
 
 		String unassignedLabel = messageSource.internationalize("label.Unassigned", locale);
 
-		Set<User> usersSet = new HashSet<User>();
-
 		// Looking for users depending on the campaign id
-		usersSet.addAll(testPlanManager.findAssignableUserForTestPlan(campaignId));
-
-		List<User> usersList = new ArrayList<User>(usersSet.size());
-		usersList.addAll(usersSet);
+		List<User> usersList = testPlanManager.findAssignableUserForTestPlan(campaignId);
 		Collections.sort(usersList, new UserLoginComparator());
 
 		Map<String, String> jsonUsers = new LinkedHashMap<String, String>(usersList.size());
@@ -405,8 +400,6 @@ public class CampaignModificationController {
 		}
 	}
 
-
-
 	// *************************** statistics ********************************
 
 	// URL should have been /statistics, but that was already used by another method in this controller
@@ -420,7 +413,6 @@ public class CampaignModificationController {
 	public ModelAndView getDashboard(Model model, @PathVariable(RequestParams.CAMPAIGN_ID) long campaignId) {
 
 		Campaign campaign = campaignModService.findById(campaignId);
-
 		CampaignStatisticsBundle bundle = campaignModService.gatherCampaignStatisticsBundle(campaignId);
 
 		ModelAndView mav = new ModelAndView("fragment/campaigns/campaign-dashboard");
