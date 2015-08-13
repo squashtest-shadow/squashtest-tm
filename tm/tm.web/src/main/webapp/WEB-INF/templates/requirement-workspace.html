@@ -446,18 +446,6 @@
                   </div>
                 </div>
                 <div class="display-table-row">
-                  <div class="display-table-cell">
-                    <label th:text="#{dialog.import.encoding.label}">import encoding label</label>
-                  </div>
-                  <div class="display-table-cell">
-                    <select name="zipEncoding">
-                      <option value="Cp858" th:text="'Windows '+#{dialog.import.encoding.default}">Windows
-                        encoding default</option>
-                      <option value="UTF8">UTF-8</option>
-                    </select>
-                  </div>
-                </div>
-                <div class="display-table-row">
 	                <a th:href="@{/static/}+#{file.requirement.import.template.xls}"
 	                  th:text="#{test-case.import.dialog.excel.template}">excel template </a>
              	 </div>
