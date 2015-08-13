@@ -50,7 +50,12 @@ public class StubPermissionEvaluationService implements PermissionEvaluationServ
 	@Override
 	public boolean hasRoleOrPermissionOnObject(String role, String permission, Object object) {
 		Identified identified = (Identified) object;
-		return hasPermissionOnObject(permission, identified.getId(),  object.getClass().getName() );
+		return hasPermissionOnObject(permission, identified.getId(), object.getClass().getName());
+	}
+
+	@Override
+	public boolean hasPermissionOnObject(String permission, Object entity) {
+		return false;
 	}
 
 	@Override
@@ -81,10 +86,13 @@ public class StubPermissionEvaluationService implements PermissionEvaluationServ
 		}
 		return true;
 	}
-	
-	@Override
-	public Map<Permission, Boolean> listPermissionsOnObject(Object object) {
-		return new HashMap<Permission, Boolean>(0);
-	}
 
+	@Override
+	public Map<String, Boolean> hasRoleOrPermissionsOnObject(String role, String[] permissions, Object entity) {
+		Map<String, Boolean> res = new HashMap<String, Boolean>();
+		for (String perm : permissions) {
+			res.put(perm, hasRoleOrPermissionOnObject(role, perm, entity));
+		}
+		return res;
+	}
 }

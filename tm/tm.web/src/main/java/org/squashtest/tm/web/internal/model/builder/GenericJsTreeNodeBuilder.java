@@ -20,14 +20,6 @@
  */
 package org.squashtest.tm.web.internal.model.builder;
 
-import static org.squashtest.tm.api.security.acls.Permission.CREATE;
-import static org.squashtest.tm.api.security.acls.Permission.DELETE;
-import static org.squashtest.tm.api.security.acls.Permission.EXECUTE;
-import static org.squashtest.tm.api.security.acls.Permission.EXPORT;
-import static org.squashtest.tm.api.security.acls.Permission.WRITE;
-
-import java.util.Collection;
-
 import org.apache.commons.collections.MultiMap;
 import org.squashtest.tm.api.security.acls.Permission;
 import org.squashtest.tm.domain.Identified;
@@ -36,16 +28,22 @@ import org.squashtest.tm.domain.library.TreeNode;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.web.internal.model.jstree.JsTreeNode;
 
+import java.util.Collection;
+import java.util.Map;
+
+import static org.squashtest.tm.api.security.acls.Permission.*;
+
 /**
  * Generic superclass for builders of {@link JsTreeNode}
- * 
+ *
  * @author Gregory Fouquet
- * 
+ *
  */
 public abstract class GenericJsTreeNodeBuilder<MODEL extends Identified, BUILDER extends JsTreeNodeBuilder<MODEL, BUILDER>>
-		implements JsTreeNodeBuilder<MODEL, BUILDER> {
+	implements JsTreeNodeBuilder<MODEL, BUILDER> {
 	private static final String ROLE_ADMIN = "ROLE_ADMIN";
-	private static final Permission[] NODE_PERMISSIONS = { WRITE, CREATE, DELETE, EXECUTE, EXPORT };
+	private static final Permission[] NODE_PERMISSIONS = {WRITE, CREATE, DELETE, EXECUTE, EXPORT};
+	private static final String[] PERM_NAMES = {WRITE.name(), CREATE.name(), DELETE.name(), EXECUTE.name(), EXPORT.name()};
 
 	protected final PermissionEvaluationService permissionEvaluationService;
 
@@ -62,6 +60,7 @@ public abstract class GenericJsTreeNodeBuilder<MODEL extends Identified, BUILDER
 	protected GenericJsTreeNodeBuilder(PermissionEvaluationService permissionEvaluationService) {
 		super();
 		this.permissionEvaluationService = permissionEvaluationService;
+		assert PERM_NAMES.length == NODE_PERMISSIONS.length;
 	}
 
 	/**
@@ -79,10 +78,11 @@ public abstract class GenericJsTreeNodeBuilder<MODEL extends Identified, BUILDER
 	public final JsTreeNode build() {
 		JsTreeNode node = new JsTreeNode();
 
-		for (Permission permission : NODE_PERMISSIONS) {
-			boolean hasPermission = getPermissionEvaluationService().hasRoleOrPermissionOnObject(ROLE_ADMIN,
-					permission.name(), model);
-			node.addAttr(permission.getQuality(), String.valueOf(hasPermission));
+		Map<String, Boolean> permByName = getPermissionEvaluationService().hasRoleOrPermissionsOnObject(ROLE_ADMIN, PERM_NAMES, model);
+
+		for (Permission perm : NODE_PERMISSIONS) {
+			assert permByName.get(perm.name()) != null : "Permission " + perm + " should not be null";
+			node.addAttr(perm.getQuality(), permByName.get(perm.name()).toString());
 		}
 
 		doBuild(node, model);
@@ -96,7 +96,7 @@ public abstract class GenericJsTreeNodeBuilder<MODEL extends Identified, BUILDER
 
 	/**
 	 * Tells if the {@link #model} matches any {@link #expansionCandidates}
-	 * 
+	 *
 	 * @return true if the model should be expanded.
 	 */
 	protected boolean shouldExpandModel() {
@@ -132,7 +132,7 @@ public abstract class GenericJsTreeNodeBuilder<MODEL extends Identified, BUILDER
 	/**
 	 * Implementors should "build" (ie populate) the given {@link JsTreeNode} from the model object. This method is
 	 * called when the node is expanded only.
-	 * 
+	 *
 	 * @param node
 	 *            the node to populate
 	 * @param model
@@ -143,7 +143,7 @@ public abstract class GenericJsTreeNodeBuilder<MODEL extends Identified, BUILDER
 	/**
 	 * Implementors should add to the given {@link JsTreeNode} the models children if any. It should also set the node's
 	 * open/close state accordingly.
-	 * 
+	 *
 	 * @param node
 	 *            the node to populate
 	 * @param model

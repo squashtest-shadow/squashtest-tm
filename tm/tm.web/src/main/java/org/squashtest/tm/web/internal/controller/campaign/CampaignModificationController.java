@@ -23,16 +23,7 @@ package org.squashtest.tm.web.internal.controller.campaign;
 import static org.squashtest.tm.web.internal.helper.JEditablePostParams.VALUE;
 
 import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
@@ -164,19 +155,23 @@ public class CampaignModificationController {
 
 		String unassignedLabel = messageSource.internationalize("label.Unassigned", locale);
 
-		Set<User> usersSet = new HashSet<User>();
+		// every iteration should have the same list of assignable users so we only fetch it once
+		List<User> assignableUsers;
 
-		for (Iteration iteration : campaign.getIterations()) {
-			usersSet.addAll(iterationTestPlanManagerService.findAssignableUserForTestPlan(iteration.getId()));
+		Iterator<Iteration> it = campaign.getIterations().iterator();
+		if (it.hasNext()) {
+			Iteration iteration = campaign.getIterations().iterator().next();
+			assignableUsers = iterationTestPlanManagerService.findAssignableUserForTestPlan(iteration.getId());
+			Collections.sort(assignableUsers, new UserLoginComparator());
+		} else {
+			assignableUsers = Collections.emptyList();
 		}
 
-		List<User> usersList = new ArrayList<User>(usersSet.size());
-		usersList.addAll(usersSet);
-		Collections.sort(usersList, new UserLoginComparator());
-
-		Map<String, String> jsonUsers = new LinkedHashMap<String, String>(usersList.size());
+		// TODO use jackson binding maybe
+		// We use LinkedHashMap because it should be iterated over in a predictable way
+		Map<String, String> jsonUsers = new LinkedHashMap<String, String>(assignableUsers.size());
 		jsonUsers.put(User.NO_USER_ID.toString(), unassignedLabel);
-		for (User user : usersList) {
+		for (User user : assignableUsers) {
 			jsonUsers.put(user.getId().toString(), user.getLogin());
 		}
 
