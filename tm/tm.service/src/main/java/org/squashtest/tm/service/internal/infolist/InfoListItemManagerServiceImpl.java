@@ -176,6 +176,11 @@ public class InfoListItemManagerServiceImpl implements InfoListItemManagerServic
 		InfoList infoList = infoListService.findById(infoListId);
 		InfoListItem item = findById(infoListItemId);
 		InfoListItem defaultItem = infoList.getDefaultItem();
+
+		if (item.references(defaultItem)){
+			throw new IllegalArgumentException("cannot delete this item : it is default item of its list");
+		}
+
 		infoList.removeItem(item);
 		itemDao.removeInfoListItem(infoListItemId, defaultItem);
 		itemDao.remove(item);
