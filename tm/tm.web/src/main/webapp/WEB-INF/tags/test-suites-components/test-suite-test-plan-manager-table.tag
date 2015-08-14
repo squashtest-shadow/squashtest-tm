@@ -46,6 +46,9 @@
 <s:url var="testcaseUrl"  value="/test-cases/{tc-id}/info" />
 
 
+<s:url var="testcaseUrl"  value="/test-cases/{tc-id}/info" />
+<s:url var="workspaceUrl" value="/test-case-workspace" />
+
 
 <div id="iteration-test-plans-panel" class="table-tab">
 
@@ -69,6 +72,8 @@
     <f:message var="closeLabel" key="label.Close" />
     <f:message var="assignLabel" key="label.Assign" />
     <f:message var="okLabel" key="label.Ok" />
+    <f:message var="tooltipReference" key="label.Reference"/>
+    <f:message var="tooltipImportance" key="label.Importance"/>
 
 
     
@@ -120,20 +125,20 @@
         <tr>
           <th class="no-user-select"
             data-def="map=entity-index, select, sortable, center, sClass=drag-handle, sWidth=2.5em">#</th>
-          <th class="no-user-select tp-th-filter tp-th-project-name" data-def="map=project-name, sortable">
-            <f:message key="label.project" />
+          <th class="no-user-select tp-th-filter tp-th-project-name" data-def="map=project-name, sortable, link=${workspaceUrl}, link-cookie=workspace-prefs={tc-id}">
+            <f:message key="label.Location" />
           </th>
           <th class="no-user-select" data-def="sortable, map=milestone-dates, tooltip-target=milestone-labels ${milestoneVisibility}">
             <f:message key="label.Milestone"/>
           </th>           
-          <th class="no-user-select tp-th-filter tp-th-reference" data-def="map=reference, sortable">
-            <f:message key="label.Reference" />
+          <th class="no-user-select tp-th-filter tp-th-reference" title="${tooltipReference}"  data-def="map=reference, sortable, link=${testcaseUrl}">
+            <f:message key="label.Reference.short" />
           </th>
           <th class="no-user-select tp-th-filter tp-th-name" data-def="map=tc-name, sortable, link=${testcaseUrl}">
-            <f:message key="iteration.executions.table.column-header.test-case.label" />
+            <f:message key="label.TestCase.short" />
           </th>
-          <th class="no-user-select tp-th-filter tp-th-importance" data-def="map=importance, sortable">
-            <f:message key="iteration.executions.table.column-header.importance.label" />
+          <th class="no-user-select tp-th-filter tp-th-importance" title="${tooltipImportance}"  data-def="map=importance, sortable">
+            <f:message key="label.Importance.short" />
           </th>
           <th class="no-user-select tp-th-filter tp-th-dataset" data-def="map=dataset.selected.name, sortable, sWidth=10%, sClass=dataset-combo">
             <f:message key="label.Dataset" />

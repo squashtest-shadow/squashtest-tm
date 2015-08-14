@@ -426,7 +426,8 @@ th.width-tenperc, td.width-tenperc {
 }
 
 .toggle-row-label{
-	padding-left: 10px; 
+	padding-left: 10px;
+	cursor : pointer; 
 }
 
 .small-down-arrow{

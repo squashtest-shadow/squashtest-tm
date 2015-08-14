@@ -374,6 +374,12 @@ public class TestSuiteTestPlanManagerController {
 
 	}
 
+	@RequestMapping(value = "/test-suites/{tsId}/test-plan/{testPlanId}/last-execution", method = RequestMethod.GET)
+	public String goToLastExecution(@PathVariable("testPlanId") Long testPlanId){
+		IterationTestPlanItem item = iterationTestPlanManagerService.findTestPlanItem(testPlanId);
+		Execution exec = item.getLatestExecution();
+		return "redirect:/executions/"+exec.getId();
+	}
 
 	private String formatUnassigned(Locale locale) {
 		return messageSource.internationalize("label.Unassigned", locale);

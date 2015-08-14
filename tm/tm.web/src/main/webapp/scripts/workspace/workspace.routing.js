@@ -114,7 +114,9 @@ define([], function(){
 		'campaigns.workspace' :				root + '/campaign-workspace/',
 		'campaigns.testplan.manager' :		root + '/campaigns/{\\d+}/test-plan//manager',
 		'iterations.testplan.manager' :		root + '/iterations/{\\d+}/test-plan-manager',
+		'iterations.testplan.lastexec' :	root + '/iterations/{\\d+}/test-plan/{\\d+}/last-execution',
 		'testsuites.testplan.manager' :		root + '/test-suites/{\\d+}/test-plan-manager',
+		'testsuites.testplan.lastexec' :	root + '/test-suites/{\\d+}/test-plan/{\\d+}/last-execution',
 
 		'executions' :						root + '/executions/{\\d+}',
 		'executions.generalinfos' :			root + '/executions/{\\d+}/general',

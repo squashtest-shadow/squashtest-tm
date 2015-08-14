@@ -42,6 +42,7 @@ import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndMultiSorting;
 import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
+import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.testcase.Dataset;
@@ -279,6 +280,13 @@ public class IterationTestPlanManagerController {
 	Long setDataset(@PathVariable("testPlanId") long testPlanId, @RequestParam("dataset") Long datasetId) {
 		iterationTestPlanManagerService.changeDataset(testPlanId, JeditableComboHelper.coerceIntoEntityId(datasetId));
 		return datasetId;
+	}
+
+	@RequestMapping(value = "/iterations/{iterationId}/test-plan/{testPlanId}/last-execution", method = RequestMethod.GET)
+	public String goToLastExecution(@PathVariable("testPlanId") Long testPlanId){
+		IterationTestPlanItem item = iterationTestPlanManagerService.findTestPlanItem(testPlanId);
+		Execution exec = item.getLatestExecution();
+		return "redirect:/executions/"+exec.getId();
 	}
 
 	private String formatUnassigned(Locale locale) {

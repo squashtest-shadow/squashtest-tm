@@ -32,6 +32,7 @@ import org.springframework.web.util.HtmlUtils;
 import org.squashtest.tm.core.foundation.lang.DateUtils;
 import org.squashtest.tm.domain.IdentifiedUtil;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
+import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.testcase.Dataset;
 import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.service.campaign.IndexedIterationTestPlanItem;
@@ -97,21 +98,20 @@ class TestPlanTableModelHelper extends DataTableModelBuilder<IndexedIterationTes
 			}else{
 				reference = item.getReferencedTestCase().getReference();
 			}
-			importance 		= messageSource.internationalize(item.getReferencedTestCase().getImportance(), locale);
+			importance 		= messageSource.internationalizeAbbreviation(item.getReferencedTestCase().getImportance(), locale);
 			milestoneDates 	= MilestoneModelUtils.timeIntervalToString(item.getReferencedTestCase().getMilestones(), messageSource, locale);
 			milestoneLabels = MilestoneModelUtils.milestoneLabelsOrderByDate(item.getReferencedTestCase().getMilestones());
 		}
 
 
 		//dataset
-
 		DatasetInfos dsIndos = makeDatasetInfo (item);
 
 		// test suite name
 		String testSuiteNameList = "";
 		String testSuiteNameListTot = "";
-		// test suite name
 		List<Long> testSuiteIdsList;
+
 		if (item.getTestSuites().isEmpty()) {
 			testSuiteNameList = formatNoData(locale);
 			testSuiteNameListTot = formatNoData(locale);
@@ -122,9 +122,7 @@ class TestPlanTableModelHelper extends DataTableModelBuilder<IndexedIterationTes
 			testSuiteIdsList = IdentifiedUtil.extractIds(item.getTestSuites());
 		}
 
-
-
-
+		// now stuff the map
 		res.put(DataTableModelConstants.DEFAULT_ENTITY_ID_KEY, item.getId());
 		res.put(DataTableModelConstants.DEFAULT_ENTITY_INDEX_KEY, index);
 		res.put(DataTableModelConstants.PROJECT_NAME_KEY, projectName);

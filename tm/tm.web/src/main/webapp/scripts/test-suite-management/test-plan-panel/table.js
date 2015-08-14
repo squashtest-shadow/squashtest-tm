@@ -52,8 +52,9 @@ define(
 				'squash.dateutils', 'squash.statusfactory',
 				'test-automation/automated-suite-overview',
 				'squash.configmanager',
+				'workspace.routing',
 				'jeditable.datepicker', 'squashtable', 'jeditable', 'jquery.squash.buttonmenu' ],
-		function($, translator, execrunner, smode, fmode, dateutils, statusfactory, autosuitedialog, confman) {
+		function($, translator, execrunner, smode, fmode, dateutils, statusfactory, autosuitedialog, confman, routing) {
 
 			// ****************** TABLE CONFIGURATION **************
 
@@ -83,12 +84,17 @@ define(
 
 				//execution date
 				var date = data['last-exec-on'],
+					iterid = _conf.testSuiteId,
+					tpid = data['entity-id'],
 					format = translator.get('squashtm.dateformat');
-
-				if(!!date){
-					$row.find('.exec-on').text(dateutils.format(date, format));
+	
+				if(!!date ){		
+					var exTxt = dateutils.format(date, format),
+						exRef = routing.buildURL('testsuites.testplan.lastexec', iterid, tpid);
+					var exLnk = $('<a>', { 'text' : exTxt, 'href' : exRef});
+					$row.find('.exec-on').empty().append(exLnk);
 				} else {
-					$row.find('.exec-on').text('-');
+					$row.find('.exec-on').empty().text('-');
 				}
 
 				// assignee (read)
@@ -202,7 +208,8 @@ define(
 				// conf objects for the row callbacks
 				var _readFeaturesConf = {
 					statuses : initconf.messages.executionStatus,
-					autoexecutionTooltip : initconf.messages.automatedExecutionTooltip
+					autoexecutionTooltip : initconf.messages.automatedExecutionTooltip,
+					testSuiteId : initconf.basic.testsuiteId
 				};
 
 				var _writeFeaturesConf = {

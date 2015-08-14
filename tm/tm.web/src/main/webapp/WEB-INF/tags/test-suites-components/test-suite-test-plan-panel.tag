@@ -51,6 +51,8 @@
   <s:param name="suiteId" value="${testSuite.id}" />
 </s:url>
 
+<s:url var="testcaseUrl"  value="/test-cases/{tc-id}/info" />
+<s:url var="workspaceUrl" value="/test-case-workspace" />
 
 <div id="test-suite-test-plans-panel" class="table-tab">
 
@@ -78,6 +80,8 @@
     <f:message var="cancelLabel" key="label.Cancel" />
     <f:message var="closeLabel" key="label.Close" />
     <f:message var="modeLabel" key="label.Mode" />
+    <f:message var="tooltipReference" key="label.Reference"/>
+    <f:message var="tooltipImportance" key="label.Importance"/>
 
     <c:if test="${ reorderable }">
       <div class="left btn-toolbar">
@@ -149,22 +153,24 @@
         <tr>
           <th class="no-user-select"
             data-def="map=entity-index, select, sortable, center, sClass=drag-handle, sWidth=2.5em">#</th>
-          <th class="no-user-select tp-th-filter tp-th-project-name" data-def="map=project-name, sortable">
-            <f:message key="label.project" />
+          <th class="no-user-select tp-th-filter tp-th-project-name" data-def="map=project-name, sortable, link=${workspaceUrl}, link-cookie=workspace-prefs={tc-id}">
+            <f:message key="label.Location" />
           </th>
           <th class="no-user-select" data-def="sortable, map=milestone-dates, tooltip-target=milestone-labels ${milestoneVisibility}">
             <f:message key="label.Milestone"/>
           </th>
           <th title=<f:message key="label.Mode" /> class="no-user-select tp-th-filter tp-th-exec-mode"
-            data-def="map=exec-mode, sortable, narrow, center, visible=${testSuite.project.testAutomationEnabled}, sClass=exec-mode">   <f:message key="label.Mode" /></th>
-          <th class="no-user-select tp-th-filter tp-th-reference" data-def="map=reference, sortable">
-            <f:message key="label.Reference" />
+            data-def="map=exec-mode, sortable, narrow, center, visible=${testSuite.project.testAutomationEnabled}, sClass=exec-mode">   
+            <f:message key="label.Mode" />
+          </th>          
+          <th class="no-user-select tp-th-filter tp-th-reference" title="${tooltipReference}"  data-def="map=reference, sortable, link=${testcaseUrl}">
+            <f:message key="label.Reference.short" />
           </th>
           <th class="no-user-select tp-th-filter tp-th-name" data-def="map=tc-name, sortable, sClass=toggle-row">
-            <f:message key="iteration.executions.table.column-header.test-case.label" />
+            <f:message key="label.TestCase.short" />
           </th>
-          <th class="no-user-select tp-th-filter tp-th-importance" data-def="map=importance, sortable">
-            <f:message key="iteration.executions.table.column-header.importance.label" />
+          <th class="no-user-select tp-th-filter tp-th-importance"  title="${tooltipImportance}" data-def="map=importance, sortable">
+            <f:message key="label.Importance.short" />
           </th>
           <th class="no-user-select tp-th-filter tp-th-dataset" data-def="map=dataset.selected.name, sortable, sWidth=10%, sClass=dataset-combo">
             <f:message key="label.Dataset" />
@@ -177,7 +183,7 @@
             <f:message key="iteration.executions.table.column-header.user.label" />
           </th>
           <th class="no-user-select tp-th-filter tp-th-exec-on" data-def="map=last-exec-on, sortable, sWidth=10%, sClass=exec-on">
-            <f:message key="iteration.executions.table.column-header.execution-date.label" />
+            <f:message key="label.LastExecutionOn" />
           </th>
           <th class="no-user-select" data-def="map=empty-execute-holder, narrow, center, sClass=execute-button">&nbsp;</th>
           <th class="no-user-select" data-def="map=empty-delete-holder${deleteBtnClause}">&nbsp;</th>
