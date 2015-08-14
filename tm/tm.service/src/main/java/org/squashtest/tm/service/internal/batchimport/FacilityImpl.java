@@ -831,22 +831,29 @@ public class FacilityImpl implements Facility {
 	}
 	
 	@SuppressWarnings("rawtypes")
-	private void moveRequirement(RequirementTarget target, Requirement req, int newPosition){
+	private void moveRequirement(RequirementTarget target, final Requirement req, final int newPosition){
 		if (target.isRootRequirement()) {
 			reqLibNavigationService.moveNodesToLibrary(req.getLibrary().getId(),new Long[]{req.getId()}, newPosition);
 		}
 		else {
 			List<Long> ids = rlnDao.getParentsIds(req.getId());
-			Long firstParentId = ids.get(ids.size()-1);
-			RequirementLibraryNode parent = reqLibNavigationService.findRequirement(firstParentId);
-			//Parent is a folder ?
-			if (parent==null) {
-				parent = reqLibNavigationService.findFolder(firstParentId);
-				reqLibNavigationService.moveNodesToFolder(parent.getId(),new Long[]{req.getId()}, newPosition);
-			}
-			else {
-				reqLibNavigationService.moveNodesToRequirement(parent.getId(),new Long[]{req.getId()}, newPosition);
-			}
+			Long firstParentId = ids.get(ids.size()-2);
+			final RequirementLibraryNode parent = reqLibNavigationService.findRequirementLibraryNodeById(firstParentId);
+			
+			//creating addhoc visitor
+			RequirementLibraryNodeVisitor visitor = new RequirementLibraryNodeVisitor() {
+				
+				@Override
+				public void visit(Requirement requirement) {
+					reqLibNavigationService.moveNodesToRequirement(parent.getId(),new Long[]{req.getId()}, newPosition);
+				}
+				
+				@Override
+				public void visit(RequirementFolder folder) {
+					reqLibNavigationService.moveNodesToFolder(parent.getId(),new Long[]{req.getId()}, newPosition);
+				}
+			};
+			parent.accept(visitor);
 		}
 	}
 
