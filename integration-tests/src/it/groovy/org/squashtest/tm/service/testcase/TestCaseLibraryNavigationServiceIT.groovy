@@ -201,8 +201,8 @@ class TestCaseLibraryNavigationServiceIT extends DbunitServiceSpecification {
 	@DataSet("TestCaseLibraryNavigationServiceID.should copy tc with steps and cufs.xml")
 	def "should copy cufs of tc steps #copiedStepId"(){
 		given : "a test case with steps and 4 cufs bound to the steps"
-		Long[] sourceIds = [11L]
-		Long destinationId = 2L
+		Long[] sourceIds = [-11L]
+		Long destinationId = -2L
 
 		when:"this test case is copied into another folder"
 		List<TestCaseLibraryNode> nodes = navService.copyNodesToFolder(destinationId, sourceIds)
@@ -220,11 +220,11 @@ class TestCaseLibraryNavigationServiceIT extends DbunitServiceSpecification {
 
 		where:
 		copiedStepId | copiedValues
-		1 | [] // is a call step
-		2 | ["step2-value1", "step2-value2", "step2-value3", "step2-value4"]
-		3 | ["step3-value1", "step3-value2", "step3-value3", "step3-value4"]
-		4 | ["step4-value1", "step4-value2", "step4-value3", "step4-value4"]
-		5 | ["step5-value1", "step5-value2", "step5-value3", "step5-value4"]
+		-1 | [] // is a call step
+		-2 | ["step2-value1", "step2-value2", "step2-value3", "step2-value4"]
+		-3 | ["step3-value1", "step3-value2", "step3-value3", "step3-value4"]
+		-4 | ["step4-value1", "step4-value2", "step4-value3", "step4-value4"]
+		-5 | ["step5-value1", "step5-value2", "step5-value3", "step5-value4"]
 	}
 	@DataSet("TestCaseLibraryNavigationServiceIT.should copy to other project.xml")
 	def "should copy paste to other project"(){
