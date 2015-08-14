@@ -161,6 +161,7 @@ define([], function(){
 		'search-reqV.mass-change.data'  : root + '/advanced-search/milestones/reqV-mass-modif-data/{\\d+}',
 		'search-reqV.mass-change.bindmilestones' : root + '/advanced-search/reqVersions/{\\d+}/milestones',
 		'project.new'							: root + '/projects/new',
+		'generic.project.description'							: root + '/generic-projects/description/{\\d+}',
 		'generic.template.new'					: root + '/generic-projects/new-template',
 		'template.new'							: root + '/project-templates/new',
 		'template'								: root + '/project-templates?dropdownList',

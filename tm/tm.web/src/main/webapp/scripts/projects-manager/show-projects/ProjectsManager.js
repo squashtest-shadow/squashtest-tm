@@ -18,10 +18,10 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ "jquery", "backbone","handlebars", "./ProjectsTable", "./NewProjectFromTemplateDialog","./NewTemplateDialog","./NewTemplateFromProjectDialog","./NewTemplateFromProjectDialogModel","workspace.routing", "jqueryui","jquery.squash", "jquery.squash.buttonmenu","jquery.squash.formdialog" ],
-		function($, Backbone, Handlebars, ProjectsTable, NewProjectFromTemplateDialog, NewTemplateDialog, NewTemplateFromProjectDialog, NewTemplateFromProjectDialogModel, router) {
+define([ "jquery","underscore", "backbone","handlebars", "./ProjectsTable", "./NewProjectFromTemplateDialog","./NewTemplateDialog","./NewTemplateFromProjectDialog","./NewTemplateFromProjectDialogModel","workspace.routing", "jqueryui","jquery.squash", "jquery.squash.buttonmenu","jquery.squash.formdialog" ],
+		function($,_, Backbone, Handlebars, ProjectsTable, NewProjectFromTemplateDialog, NewTemplateDialog, NewTemplateFromProjectDialog, NewTemplateFromProjectDialogModel, router) {
 		"use strict";
-	
+
 			var View = Backbone.View.extend({
 				el : ".fragment-body",
 
@@ -34,21 +34,20 @@ define([ "jquery", "backbone","handlebars", "./ProjectsTable", "./NewProjectFrom
 					});
 					this.templates.url = router.buildURL("template");
 					this.$("#add-template-button").buttonmenu();
+					_.bindAll(this, 'getProjectDescription','showNewTemplateFromProjectDialog');
 				},
 
 				events : {
 					"click #new-project-button" : "showNewProjectFromTemplateDialog",
-					"click #new-template-button" : "showNewTemplateDialogTpl",
-					"click #new-template-from-project-button" : "showNewTemplateFromProjectDialogTpl",
+					"click #new-template-button" : "showNewTemplateDialog",
+					"click #new-template-from-project-button" : "getProjectDescription",
 					"click #projects-table tr": "updateNewTemplateFromProjectButton"
 				},
 
+
 				showNewTemplateDialog : function(event) {
-					this.newTemplateDialog.show();
-				},
-				
-				showNewTemplateDialogTpl : function(event) {
 					this.newTemplateDialog = new NewTemplateDialog();
+					this.listenTo(this.newTemplateDialog, "newtemplate.confirm", this.projectsTable.refresh);
 				},
 
 				showNewProjectFromTemplateDialog : function() {
@@ -57,20 +56,24 @@ define([ "jquery", "backbone","handlebars", "./ProjectsTable", "./NewProjectFrom
 					});
 					this.listenTo(this.newProjectFromTemplateDialog, "newproject.confirm", this.projectsTable.refresh);
 				},
-				
-				showNewTemplateFromProjectDialog : function() {
-					this.newTemplateFromProjectDialog.model.templateId = this.$("#projects-table").squashTable().getSelectedIds()[0];
-					this.newTemplateFromProjectDialog.show();
-				},
-				
-				showNewTemplateFromProjectDialogTpl : function() {
+
+				showNewTemplateFromProjectDialog : function(response) {
+					var projectTable = this.$("#projects-table").squashTable();
+					var idSelected = projectTable.getSelectedIds()[0];
+					var projectName = projectTable.getDataById(idSelected).name;
+					var projectLabel = projectTable.getDataById(idSelected).label;
+
 					this.newTemplateFromProjectDialog = new NewTemplateFromProjectDialog({
 						model : new NewTemplateFromProjectDialogModel({
-							templateId : this.$("#projects-table").squashTable().getSelectedIds()[0]
+							templateId : idSelected,
+							label : projectLabel,
+							description : response,
+							originalProjectName : projectName
 						})
 					});
+					this.listenTo(this.newTemplateFromProjectDialog, "newtemplate.confirm", this.projectsTable.refresh);
 				},
-				
+
 				updateNewTemplateFromProjectButton : function() {
 					if (this.$("#projects-table").squashTable().getSelectedIds().length == 1) {
 						this.$("#new-template-from-project-button").removeClass("disabled ui-state-disabled");
@@ -78,6 +81,21 @@ define([ "jquery", "backbone","handlebars", "./ProjectsTable", "./NewProjectFrom
 					else{
 						this.$("#new-template-from-project-button").addClass("disabled ui-state-disabled");
 					}
+				},
+				/*
+				This method send an ajax request to get the project description not included in datatable
+				but needed in NewTemplateFromProjectDialog
+				*/
+				getProjectDescription :  function (){
+					var urlCtrl = router.buildURL("generic.project.description",this.$("#projects-table").squashTable().getSelectedIds()[0]);
+					var self = this;
+
+					$.ajax({
+						url : urlCtrl,
+						success : function (response) {
+							self.showNewTemplateFromProjectDialog(response);
+						}
+					});
 				}
 			});
 

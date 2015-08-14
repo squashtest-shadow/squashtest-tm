@@ -22,7 +22,13 @@ define(["backbone","workspace.routing"], function(Backbone,router) {
 	"use strict";
 	return Backbone.Model.extend({
 		defaults : {
-			name : ""
+			name : "",
+			copyPermissions :true,
+			copyCUF:true,
+			copyBugtrackerBinding: true,
+			copyAutomatedProjects: true,
+			copyInfolists:true,
+			copyMilestone:true
 		},
 		url : router.buildURL("template.new")
 	});

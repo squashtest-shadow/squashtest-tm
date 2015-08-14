@@ -24,7 +24,7 @@ define(["jquery.squash.bindviewformdialog","./NewProjectFromTemplateDialogModel"
 		el : "#add-project-from-template-dialog-tpl",
 		popupSelector : "#add-project-from-template-dialog",
 		model : new NewProjectFromTemplateDialogModel(),
-		
+
 		initialize : function(){
 			this.inactivateCheckBox();
 		},
@@ -37,11 +37,11 @@ define(["jquery.squash.bindviewformdialog","./NewProjectFromTemplateDialogModel"
 				items : this.collection.toJSON()
 			});
 		},
-		
+
 		events : {
 			"change #add-project-from-template-template" : "changeTemplateSelection"
 		},
-		
+
 		_fetchTemplateList : function(){
 			this.collection.fetch({
 				async : false,
@@ -51,17 +51,17 @@ define(["jquery.squash.bindviewformdialog","./NewProjectFromTemplateDialogModel"
 				}
 			});
 		},
-		
+
 		inactivateCheckBox : function(){
 			this.$el.find("input:checkbox").prop("disabled",true);
-			this.$el.find("input:checkbox").prop("checked",false);
+			this.$el.find("input:checkbox").prop("checked",true);
 		},
-		
+
 		activateCheckBox : function(){
 			this.$el.find("input:checkbox").prop("disabled",false);
-			this.$el.find("input:checkbox").prop("checked",false);
+			this.$el.find("input:checkbox").prop("checked",true);
 		},
-		
+
 		changeTemplateSelection : function(event){
 			if (this.model.get("templateId")==="0") {
 				this.inactivateCheckBox();
@@ -71,16 +71,16 @@ define(["jquery.squash.bindviewformdialog","./NewProjectFromTemplateDialogModel"
 				this.model.set({fromTemplate : true});
 			}
 		},
-		
+
 		propagateSyncToProjectManager : function(){
 			this.trigger("newproject.confirm");
 		},
-		
+
 		onConfirmSuccess : function(){
 			this.trigger("newproject.confirm");
 			BindViewFormDialog.prototype.onConfirmSuccess.call(this);
 		},
-		
+
 		onConfirmSuccessAndResetDialog : function(){
 			this.trigger("newproject.confirm");
 			BindViewFormDialog.prototype.onConfirmSuccessAndResetDialog.call(this);

@@ -18,7 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ "jquery.squash.bindviewformdialog","./NewTemplateDialogModel", "jquery.squash"], 
+define([ "jquery.squash.bindviewformdialog","./NewTemplateDialogModel", "jquery.squash"],
 		function(BindViewFormDialog, NewTemplateDialogModel) {
 	"use strict";
 
@@ -26,15 +26,21 @@ define([ "jquery.squash.bindviewformdialog","./NewTemplateDialogModel", "jquery.
 		el : "#add-template-dialog-tpl",
 		popupSelector : "#add-template-dialog",
 		model : new NewTemplateDialogModel(),
-		
+
 		//overriding callConfirm method of BindViewFormDialog to have redirection after the save success
 		callConfirm : function(){
 			this.model.save().success(function(response, status, options){
 				document.location.href = response.Location[0];
 			});
+		},
+
+		onConfirmSuccessAndResetDialog : function(){
+			this.trigger("newtemplate.confirm");
+			BindViewFormDialog.prototype.onConfirmSuccessAndResetDialog.call(this);
 		}
+
 	});
-	
+
 	return templateFormDialog;
-	
+
 });

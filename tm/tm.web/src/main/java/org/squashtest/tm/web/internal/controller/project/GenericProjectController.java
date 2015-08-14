@@ -279,6 +279,13 @@ public class GenericProjectController {
 	public void deleteProject(@PathVariable long projectId) {
 		projectManager.deleteProject(projectId);
 	}
+	
+	@RequestMapping(value = "/description/{projectId}", method = RequestMethod.GET, produces = ContentTypes.APPLICATION_JSON)
+	@ResponseBody
+	public String getDescription(@PathVariable long projectId) {
+		GenericProject genericProject = projectManager.findById(projectId);
+		return genericProject.getDescription();
+	}
 
 	// ********************************** Permission Popup *******************************
 

@@ -25,8 +25,14 @@ define([ "jquery", "backbone", "underscore", "squash.translator", "app/util/Stri
 		defaults : {
 			name : "",
 			templateId : "0",
-			fromTemplate : false
+			fromTemplate : false,
+			copyPermissions :true,
+			copyCUF:true,
+			copyBugtrackerBinding: true,
+			copyAutomatedProjects: true,
+			copyInfolists:true,
+			copyMilestone:true
 		},
 		url : router.buildURL("project.new")
-	}); 
+	});
 });
