@@ -54,7 +54,7 @@ public abstract class ImportLogHelper {
 	public static final List<String> headers = Arrays.asList("LINE", "TYPE", "ERROR", "IMPACT");
 
 	@Inject
-	private InternationalizationHelper messageSource;
+	protected InternationalizationHelper messageSource;
 
 	private File tempDir;
 
@@ -108,13 +108,13 @@ public abstract class ImportLogHelper {
 		}
 	}
 
-	private void writeToFile(ImportLog importLog, File emptyFile) throws IOException {
+	protected void writeToFile(ImportLog importLog, File emptyFile) throws IOException {
 		Workbook workbook = buildWorkbook(importLog);
 		writeToFile(emptyFile, workbook);
 
 	}
 
-	private void writeToFile(File emptyFile, Workbook workbook) throws IOException {
+	protected void writeToFile(File emptyFile, Workbook workbook) throws IOException {
 		FileOutputStream os = null;
 		try {
 			os = new FileOutputStream(emptyFile);
