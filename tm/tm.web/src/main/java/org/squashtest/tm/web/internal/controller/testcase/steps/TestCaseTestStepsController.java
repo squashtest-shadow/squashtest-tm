@@ -171,7 +171,7 @@ public class TestCaseTestStepsController {
 
 	@RequestMapping(value = "/add", method = RequestMethod.POST,  consumes="application/json")
 	@ResponseBody
-	public void addActionTestStep(@RequestBody ActionStepFormModel stepModel,
+	public Long addActionTestStep(@RequestBody ActionStepFormModel stepModel,
 			@PathVariable long testCaseId) throws BindException {
 
 		BindingResult validation = new BeanPropertyBindingResult(stepModel, "add-test-step");
@@ -186,14 +186,17 @@ public class TestCaseTestStepsController {
 		
 		Map<Long, RawValue> customFieldValues = stepModel.getCufs();
 		int index = stepModel.getIndex();
+		
+		ActionTestStep addActionTestStep;
 
 		if (index!=0) {
-			testCaseModificationService.addActionTestStep(testCaseId, step, customFieldValues,index);
+			addActionTestStep = testCaseModificationService.addActionTestStep(testCaseId, step, customFieldValues,index);
 		} else {
-			testCaseModificationService.addActionTestStep(testCaseId, step, customFieldValues);
+			addActionTestStep = testCaseModificationService.addActionTestStep(testCaseId, step, customFieldValues);
 		}
 		LOGGER.trace(TEST_CASE_ + testCaseId + ": step added, action : " + step.getAction() + ", expected result : "
 				+ step.getExpectedResult());
+		return addActionTestStep.getId();
 	}
 
 	@RequestMapping(value = "/paste", method = RequestMethod.POST, params = { COPIED_STEP_ID_PARAM })

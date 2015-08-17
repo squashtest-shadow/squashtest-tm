@@ -74,6 +74,8 @@ define([ "jquery", "squashtable/squashtable.collapser", "custom-field-values", "
 
 	var COOKIE_NAME = "testcase-tab-cookie";
 
+  var addedTestStepId = 0;
+
 	function makeTableUrls(conf) {
 		var tcUrl = conf.basic.testCaseUrl;
 		var ctxUrl = conf.basic.rootContext;
@@ -417,24 +419,24 @@ define([ "jquery", "squashtable/squashtable.collapser", "custom-field-values", "
 
 				popup.formDialog('open');
 			});
-			
+
 			/*
-			 * [Issue 4932] : 
-			 * 
-			 * 1 - the plugin jeditable-ckeditor creates the "input" as it should. This input is a compound of a 
-			 * a div (the actual elemeent which the user actually interact with) and a textarea 
-			 * (invisible, and backs the data of the div), both required by CKEditor 
+			 * [Issue 4932] :
+			 *
+			 * 1 - the plugin jeditable-ckeditor creates the "input" as it should. This input is a compound of a
+			 * a div (the actual elemeent which the user actually interact with) and a textarea
+			 * (invisible, and backs the data of the div), both required by CKEditor
 			 * to work properly. Note that the textarea is a regular input while the div is not.
-			 *  
-			 * 2 - jeditable at some point does the following : $(':input:visible:enabled:first', form).focus(); 
+			 *
+			 * 2 - jeditable at some point does the following : $(':input:visible:enabled:first', form).focus();
 			 * which makes it focus on the textarea while we want it to focus on the div instead.
-			 * 
-			 * The only working solution was to amend the source of jeditable and have it trigger an event 
+			 *
+			 * The only working solution was to amend the source of jeditable and have it trigger an event
 			 * (named opencomplete.editable) and make the viewport refocus on the correct element this time.
-			 * 
+			 *
 			 */
 
-			
+
 			table.on('opencomplete.editable', 'td', function(evt){
 				var td = $(evt.currentTarget);
 				var zediv = td.find('div.cke');
@@ -484,7 +486,7 @@ define([ "jquery", "squashtable/squashtable.collapser", "custom-field-values", "
 		refresh();
 	}
 
-	function addTestStepSuccessAnother() {
+	function addTestStepSuccessAnother(response) {
 		CKEDITOR.instances["add-test-step-action"].setData("");
 		CKEDITOR.instances["add-test-step-result"].setData("");
 
@@ -492,6 +494,7 @@ define([ "jquery", "squashtable/squashtable.collapser", "custom-field-values", "
 		dialog.data("cuf-values-support").reset();
 		eventBus.trigger("testStepsTable.stepAdded");
 		refresh();
+	  addedTestStepId = response;
 	}
 
 	function readAddStepParams() {
@@ -502,7 +505,11 @@ define([ "jquery", "squashtable/squashtable.collapser", "custom-field-values", "
 		params.action = $("#add-test-step-action").val();
 		params.expectedResult = $("#add-test-step-result").val();
 		var idSelected = $(".test-steps-table").squashTable().getSelectedIds()[0];
-		if (idSelected!=null) {
+		if (addedTestStepId!==0) {
+      params.index = $(".test-steps-table").squashTable().getDataById(addedTestStepId)["step-index"];
+      addedTestStepId=0;
+		}
+    else if (idSelected!==undefined&&idSelected!==null) {
 			params.index = $(".test-steps-table").squashTable().getDataById(idSelected)["step-index"];
 		}
 		$.extend(params, cufSupport.readValues());
@@ -524,25 +531,26 @@ define([ "jquery", "squashtable/squashtable.collapser", "custom-field-values", "
 		}
 
 		// main popup definition
-		
+
 		var dialog = $("#add-test-step-dialog");
 		dialog.formDialog();
-		
+
 		dialog.on('formdialogaddandmore', function(){
 			var data = readAddStepParams();
-			postStep(data).success(addTestStepSuccessAnother);		
+			postStep(data).success(addTestStepSuccessAnother);
 		});
-		
+
 		dialog.on('formdialogadd', function(){
 			var data = readAddStepParams();
-			postStep(data).success(addTestStepSuccess);			
+			postStep(data).success(addTestStepSuccess);
 		});
-		
+
 		dialog.on('formdialogcancel', function(){
 			dialog.formDialog('close');
 		});
 
 		$("#add-test-step-button").on('click', function(){
+      addedTestStepId = 0;
 			dialog.formDialog('open');
 		});
 
@@ -806,14 +814,14 @@ define([ "jquery", "squashtable/squashtable.collapser", "custom-field-values", "
 
 		// table collapser
 		initCollapser(language, urls, permissions.isWritable,  settings.basic.testCaseId);
-		
+
 	}
 
 	return {
 		init : init,
 		refreshTable : refresh
-		
-		
+
+
 	};
 
 });
