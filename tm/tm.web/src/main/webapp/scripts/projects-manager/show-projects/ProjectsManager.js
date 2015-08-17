@@ -68,7 +68,7 @@ define([ "jquery","underscore", "backbone","handlebars", "./ProjectsTable", "./N
 							templateId : idSelected,
 							label : projectLabel,
 							description : response,
-							originalProjectName : projectName
+							originalProjectName : projectName,
 						})
 					});
 					this.listenTo(this.newTemplateFromProjectDialog, "newtemplate.confirm", this.projectsTable.refresh);

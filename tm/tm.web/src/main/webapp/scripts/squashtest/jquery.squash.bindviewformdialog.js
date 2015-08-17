@@ -113,7 +113,13 @@ define([ "jquery","backbone", "app/BindView", "backbone", "underscore", "handleb
 		},
 
 		callRemove : function(){
-			this.model.clear();
+			if (this.model.defaults!==undefined && this.model.defaults!==null) {
+				this.model.clear();
+				this.model.set(this.model.defaults);
+			}
+			else {
+					this.model.clear();
+			}
 			this.$el.formDialog("destroy");
 			this.stopListening();
 			this.remove();
@@ -142,7 +148,7 @@ define([ "jquery","backbone", "app/BindView", "backbone", "underscore", "handleb
 		},
 
 		onConfirmSuccessAndResetDialog : function(){
-			this.model.clear();
+
 			this.callRemove();
 			this._elOnTemplate();
 			this.initialize();

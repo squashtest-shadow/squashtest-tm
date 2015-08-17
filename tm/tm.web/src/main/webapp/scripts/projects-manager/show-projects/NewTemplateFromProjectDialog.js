@@ -62,15 +62,19 @@ define(["jquery.squash.bindviewformdialog","./NewTemplateFromProjectDialogModel"
 				this.originalProjectName = this.model.get("originalProjectName");
 				this.model.unset("originalProjectName");//unsetting this value in model, so save() will not send it in request
 			}
-			if (this.originalProjectDesc===undefined) {
+			if (this.originalProjectDesc===undefined && this.emptyString(this.model.get("description"))) {
 				this.originalProjectDesc = this.concatWithTemplatePrefix(this.model.get("description"));
 			}
-			if (this.originalProjectLabel===undefined) {
+			if (this.originalProjectLabel===undefined && this.emptyString(this.model.get("label"))) {
 				this.originalProjectLabel = this.concatWithTemplatePrefix(this.model.get("label"));
+			}
+			if (this.originalProjectId===undefined) {
+				this.originalProjectId = this.model.get("templateId");
 			}
 			//now setting model because it could be cleared with addAnother
 			this.model.set("description",this.originalProjectDesc);
 			this.model.set("label",this.originalProjectLabel);
+			this.model.set("templateId",this.originalProjectId);
 		},
 
 		templateWithProjectName : function () {
@@ -80,8 +84,12 @@ define(["jquery.squash.bindviewformdialog","./NewTemplateFromProjectDialogModel"
 		},
 
 		templateWithProjectDescAndLabel : function () {
-			this.$el.find("#add-template-from-project-description").val(this.model.get("description"));
-			this.$el.find("#add-template-from-project-label").val(this.model.get("label"));
+			if (this.originalProjectDesc!==undefined) {
+				this.$el.find("#add-template-from-project-description").val(this.originalProjectDesc);
+			}
+			if (this.originalProjectLabel!==undefined) {
+			this.$el.find("#add-template-from-project-label").val(this.originalProjectLabel);
+			}
 		},
 
 		concatWithTemplatePrefix : function (message) {
@@ -89,6 +97,10 @@ define(["jquery.squash.bindviewformdialog","./NewTemplateFromProjectDialogModel"
 				this.prefix=translator.get("dialog.templateFromProject.prefix");
 			}
 			return this.prefix + " " + message;
+		},
+
+		emptyString : function (str) {
+			return str!==undefined && str!==null && str.length!==0;
 		}
 
 	});
