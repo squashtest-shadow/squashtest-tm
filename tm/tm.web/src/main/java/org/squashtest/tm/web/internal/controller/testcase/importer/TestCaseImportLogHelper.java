@@ -42,7 +42,7 @@ public class TestCaseImportLogHelper extends ImportLogHelper {
 		ENTITY_BY_TAB.put("TEST STEP", EntityType.TEST_STEP);
 		ENTITY_BY_TAB.put("PARAMETER", EntityType.PARAMETER);
 		ENTITY_BY_TAB.put("DATASET", EntityType.DATASET);
-		ENTITY_BY_TAB.put("COVERAGE", EntityType.COVERAGE);
+		ENTITY_BY_TAB.put("LINK_REQ_TC", EntityType.COVERAGE);
 
 	}
 

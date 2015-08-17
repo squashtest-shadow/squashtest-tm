@@ -39,7 +39,7 @@ public class RequirementImportLogHelper extends ImportLogHelper {
 
 	static {
 		ENTITY_BY_TAB.put("REQUIREMENT", EntityType.REQUIREMENT_VERSION);
-		ENTITY_BY_TAB.put("COVERAGE", EntityType.COVERAGE);
+		ENTITY_BY_TAB.put("LINK_REQ_TC", EntityType.COVERAGE);
 	}
 
 	@Override
