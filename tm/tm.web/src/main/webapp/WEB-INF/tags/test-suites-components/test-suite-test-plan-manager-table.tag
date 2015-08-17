@@ -37,6 +37,7 @@
 <%@ taglib prefix="s" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ taglib prefix="json" uri="http://org.squashtest.tm/taglib/json"%>
+<%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 
 <s:url var="dtMessagesUrl" value="/datatables/messages" />
@@ -146,7 +147,7 @@
           <th class="no-user-select tp-th-filter tp-th-status" data-def="map=status, sortable, sWidth=10%, sClass=status-display">
             <f:message key="iteration.executions.table.column-header.status.label" />
           </th>
-          <th class="no-user-select" data-def="map=empty-delete-holder, unbind-button=#ts-test-plan-delete-dialog">&nbsp;</th>
+          <th class="no-user-select" data-def="map=empty-delete-holder, sClass=unbind-or-delete">&nbsp;</th>
         </tr>
       </thead>
       <tbody>
@@ -161,14 +162,24 @@
     <div id="ts-test-plan-delete-dialog" class="not-displayed popup-dialog"
       title="<f:message key="dialog.remove-testcase-testsuite-associations.title" />">
       
-      <span data-def="state=single-tp" ><f:message key="dialog.remove-testcase-testsuite-association.message.solo" />   </span>
-      <span data-def="state=multiple-tp"><f:message key="dialog.remove-testcase-testsuite-association.message.multiple" /> </span>
-      <span><f:message key="message.permissions.confirm"/></span>
+      <comp:notification-pane type="warning">
+        <jsp:attribute name="htmlcontent">
+          <span data-def="state=single-tp">
+            <f:message key="dialog.remove-testcase-testsuite-association.message" />
+            <br/>
+            <f:message key="message.permissions.confirm"/>          
+          </span>
+          <span data-def="state=multiple-tp">
+            <f:message key="dialog.remove-testcase-testsuite-associations.message" />
+            <br/>
+            <f:message key="message.permissions.confirm"/>          
+          </span>
+        </jsp:attribute>      
+      </comp:notification-pane>
       
       <div class="popup-dialog-buttonpane">
-        <input type="button" value="${removeLabel}"
-          data-def="state=single-tp multiple-tp, mainbtn=single-tp multiple-tp, evt=confirm" />
-        <input type="button" value="${removeEverywhereLabel}" data-def="state=single-tp multiple-tp, evt=confirmall" />
+        <input type="button" value="${removeLabel}"  data-def="mainbtn, evt=confirm" />
+        <input type="button" value="${removeEverywhereLabel}" data-def="evt=confirmall" />
         <input type="button" value="${closeLabel}" data-def="evt=cancel" />
       </div>
     </div>

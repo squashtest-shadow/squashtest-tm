@@ -75,13 +75,16 @@ define([ 'jquery', 'workspace.event-bus', 'app/util/ComponentUtil', 'squash.stat
 
 		deleteItemTestplanDialog.on('formdialogopen', function() {
 
-			var entityId = $("#ts-test-plan-delete-dialog").data("entity-id");
-			$("#ts-test-plan-delete-dialog").data("entity-id", null);
+			var $this = $(this),
+				$table = $("#test-suite-test-plans-table").squashTable();			
+			
+			var entityId = $this.data("entity-id");
+			$this.data("entity-id", null);
 
 			var selIds = [];
 
 			if (!entityId) {
-				selIds = $("#test-suite-test-plans-table").squashTable().getSelectedIds();
+				selIds = $table.squashTable().getSelectedIds();
 			}
 
 			if (!!entityId) {
@@ -90,14 +93,14 @@ define([ 'jquery', 'workspace.event-bus', 'app/util/ComponentUtil', 'squash.stat
 
 			switch (selIds.length) {
 			case 0:
-				$(this).formDialog('close');
+				$this.formDialog('close');
 				notification.showError(translator.get('message.EmptyExecPlanSelection'));
 				break;
 			case 1:
-				$(this).formDialog('setState', 'single-tp');
+				$this.formDialog('setState', 'single-tp');
 				break;
 			default:
-				$(this).formDialog('setState', 'multiple-tp');
+				$this.formDialog('setState', 'multiple-tp');
 				break;
 			}
 

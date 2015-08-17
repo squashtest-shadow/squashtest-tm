@@ -35,8 +35,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="s" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt"%>
-<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
-<%@ taglib prefix="json" uri="http://org.squashtest.tm/taglib/json"%>
+<%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 
 <s:url var="dtMessagesUrl" value="/datatables/messages" />
@@ -184,6 +183,8 @@
   
   <script id="delete-dialog-tpl" type="text/x-handlebars-template">
   <div id="{{dialogId}}" class="not-displayed popup-dialog" title="<f:message key='dialog.remove-testcase-associations.title'/>">
+	<comp:notification-pane type="warning">
+	<jsp:attribute name="htmlcontent">
     <div data-def="state=confirm-deletion">
       <span><f:message key="dialog.remove-testcase-associations.message"/></span>
     </div>
@@ -191,6 +192,8 @@
       <span><f:message key="dialog.remove-testcase-associations.message.multiple"/></span>
       <span><f:message key="message.permissions.confirm"/></span>
     </div>
+	</jsp:attribute>
+	</comp:notification-pane>
     <div class="popup-dialog-buttonpane">
       <input type="button" class="button" value="${confirmLabel}" data-def="evt=confirm, mainbtn"/>
       <input type="button" class="button" value="${cancelLabel}" data-def="evt=cancel"/>

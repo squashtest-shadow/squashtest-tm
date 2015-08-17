@@ -172,7 +172,7 @@
 
   <div class="table-tab-wrap">
     <c:if test="${editable}">
-      <c:set var="deleteBtnClause" value=", unbind-button=#iter-test-plan-delete-dialog" />
+      <c:set var="deleteBtnClause" value=", sClass=unbind-or-delete" />
     </c:if>
     <table id="iteration-test-plans-table" class="test-plan-table unstyled-table"
       data-def="ajaxsource=${tableModelUrl}"  data-entity-id="${iteration.id}" data-entity-type="iteration">
@@ -218,7 +218,7 @@
             <f:message key="label.LastExecutionOn" />
           </th>
           <th class="no-user-select" data-def="map=empty-execute-holder, narrow, center, sClass=execute-button">&nbsp;</th>
-          <th class="no-user-select" data-def="map=empty-delete-holder${deleteBtnClause}">&nbsp;</th>
+          <th class="no-user-select" data-def="sClass=delete, map=empty-delete-holder${deleteBtnClause}">&nbsp;</th>
         </tr>
       </thead>
       <tbody>
@@ -248,18 +248,31 @@
 
     <div id="iter-test-plan-delete-dialog" class="not-displayed popup-dialog"
       title="<f:message key="dialog.unbind-ta-project.tooltip" />">
-      <span data-def="state=single-tp" >
-         <span><f:message key="dialog.remove-testcase-association.message.solo" /></span>
-         <span><f:message key="message.permissions.confirm"/></span>
-      </span>
-      <span data-def="state=multiple-tp" >
-        <span><f:message key="dialog.remove-testcase-associations.message.multiple" /></span>
-        <span><f:message key="message.permissions.confirm"/></span>
-      </span>
+      
+      <comp:notification-pane type="warning">
+        <jsp:attribute name="htmlcontent">
+         
+          <span data-def="state=unbind-single-tp" >
+             <span><f:message key="dialog.remove-testcase-association.message.unbind" /></span>
+             <span><f:message key="message.permissions.confirm"/></span>
+          </span>     
+        
+          <span data-def="state=delete-single-tp" >
+             <span><f:message key="dialog.remove-testcase-association.message.delete" /></span>
+             <span><f:message key="message.permissions.confirm"/></span>
+          </span> 
 
+        <span data-def="state=multiple-tp" >
+          <span><f:message key="dialog.remove-testcase-associations.message.multiple" /></span>
+          <span><f:message key="message.permissions.confirm"/></span>
+        </span>
+        
+        </jsp:attribute>      
+      </comp:notification-pane>
+      
       <div class="popup-dialog-buttonpane">
         <input type="button" value="${confirmLabel}"
-          data-def="state=single-tp multiple-tp, mainbtn=single-tp multiple-tp, evt=confirm" />
+          data-def="evt=confirm, mainbtn" />
         <input type="button" value="${cancelLabel}" data-def="evt=cancel" />
       </div>
     </div>

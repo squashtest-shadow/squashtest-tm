@@ -177,7 +177,7 @@
             <f:message var="stsHeader" key="iteration.executions.table.column-header.status.label" />
             ${fn:substring(stsHeader,0,2)}.
           </th>
-          <th class="no-user-select" data-def="map=empty-delete-holder, unbind-button=#iter-test-plan-delete-dialog">&nbsp;</th>
+          <th class="no-user-select" data-def="map=empty-delete-holder, sClass=unbind-or-delete">&nbsp;</th>
         </tr>
       </thead>
       <tbody>
@@ -191,18 +191,31 @@
 
     <div id="iter-test-plan-delete-dialog" class="not-displayed popup-dialog"
       title="<f:message key="test-case.verified_requirement_item.remove.button.label" />">
-      <span data-def="state=single-tp" >
-        <span><f:message key="dialog.remove-testcase-association.message.solo" /></span>
-        <span><f:message key="message.permissions.confirm"/></span>
-      </span>
-      <span data-def="state=multiple-tp" >
-        <span><f:message key="dialog.remove-testcase-associations.message.multiple" /></span>
-        <span><f:message key="message.permissions.confirm"/></span>
-      </span>
+
+      <comp:notification-pane type="warning">
+        <jsp:attribute name="htmlcontent">
+         
+          <span data-def="state=unbind-single-tp" >
+             <span><f:message key="dialog.remove-testcase-association.message.unbind" /></span>
+             <span><f:message key="message.permissions.confirm"/></span>
+          </span>     
+        
+          <span data-def="state=delete-single-tp" >
+             <span><f:message key="dialog.remove-testcase-association.message.delete" /></span>
+             <span><f:message key="message.permissions.confirm"/></span>
+          </span> 
+
+        <span data-def="state=multiple-tp" >
+          <span><f:message key="dialog.remove-testcase-associations.message.multiple" /></span>
+          <span><f:message key="message.permissions.confirm"/></span>
+        </span>
+        
+        </jsp:attribute>      
+      </comp:notification-pane>
 
       <div class="popup-dialog-buttonpane">
         <input type="button" value="${confirmLabel}"
-          data-def="state=single-tp multiple-tp, mainbtn=single-tp multiple-tp, evt=confirm" />
+          data-def="mainbtn, evt=confirm" />
         <input type="button" value="${cancelLabel}" data-def="evt=cancel" />
       </div>
     </div>

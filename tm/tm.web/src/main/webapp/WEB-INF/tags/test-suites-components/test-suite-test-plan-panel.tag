@@ -44,7 +44,8 @@
 <%@ taglib prefix="s" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ taglib prefix="json" uri="http://org.squashtest.tm/taglib/json"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
+<%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component" %>
+<%@ taglib prefix="fn"   uri="http://java.sun.com/jsp/jstl/functions"%>
 
 <s:url var="dtMessagesUrl" value="/datatables/messages" />
 <s:url var="tableModelUrl" value="/test-suites/{suiteId}/test-plan">
@@ -146,7 +147,7 @@
 
   <div class="table-tab-wrap">
     <c:if test="${editable}">
-      <c:set var="deleteBtnClause" value=", unbind-button=#ts-test-plan-delete-dialog" />
+      <c:set var="deleteBtnClause" value=", sClass=unbind-or-delete" />
     </c:if>
     <table id="test-suite-test-plans-table" class="test-plan-table unstyled-table" data-def="ajaxsource=${tableModelUrl}"  data-entity-id="${testSuite.id}" data-entity-type="testSuite">
       <thead>
@@ -216,9 +217,22 @@
 
     <div id="ts-test-plan-delete-dialog" class="not-displayed popup-dialog"
       title="<f:message key="dialog.remove-testcase-testsuite-associations.title" />">
-      <span data-def="state=single-tp" ><f:message key="dialog.remove-testcase-testsuite-association.message" />   </span>
-      <span data-def="state=multiple-tp"><f:message key="dialog.remove-testcase-testsuite-associations.message" /> </span>
-      <span><f:message key="message.permissions.confirm"/></span>
+      
+      <comp:notification-pane type="warning">
+        <jsp:attribute name="htmlcontent">
+          <span data-def="state=single-tp" >
+            <f:message key="dialog.remove-testcase-testsuite-association.message" />
+            <br/>
+            <f:message key="message.permissions.confirm"/>          
+          </span>
+          <span data-def="state=multiple-tp">
+            <f:message key="dialog.remove-testcase-testsuite-associations.message" />
+            <br/>
+            <f:message key="message.permissions.confirm"/>          
+          </span>
+        </jsp:attribute>      
+      </comp:notification-pane>
+      
       <div class="popup-dialog-buttonpane">
         <input type="button" value="${removeLabel}"
           data-def="state=single-tp multiple-tp, mainbtn=single-tp multiple-tp, evt=confirm" />

@@ -171,14 +171,53 @@
  *
  *
  * ============== Delete row button ========================================
+ * 
  * Member name : 'deleteButtons'
  *
- * If set then will look for cells having the css class 'delete-button'. Configuration as follow : Configuration as
- * follow : url : the url where to post the 'delete' instruction. Supports placeholders. popupmessage : the message that
- * will be displayed tooltip : the tooltip displayed by the button success : a callback on the ajax call when successful
- * fail : a callback on the ajax call when failed. dataType : the dataType parameter for the post. (default = "text")
- *
- * NEW : delegate : jquery selector of another popup, that will be used instead of the generated one.
+ * If set (ie not left undefined), then will look for cells having the css class 'delete-button'. It 
+ * turns them to buttons with an icon 'trash' or 'minus' ('trash' is default. See 'unbindButtons' if 
+ * you mean to use a 'minus' icon).
+ * 
+ * Instead of configuring what happens on click the normal way (using callbacks etc), if your intended
+ * handler is to open a dialog then you can do so by providing on of the following additional configuration   
+ * 
+ * 
+ * Option A : delegate to a dialog.
+ * -------------------------------
+ * 
+ * Just say which dialog the clicked button should open. When the button is clicked the following happens :
+ * - the dialog's .data() map will receive the id of the entity displayed in that row (namely, dialog.data('entity-id', theid))
+ * - the dialog is then opened.
+ * 
+ * It's up to the dialog then to handle the click. 
+ * 
+ *  Configuration is as follow : 
+ *   
+ *  deleteButtons : {
+ *  	delegate : jquery selector of another popup, that will be used instead of the generated one.
+ *  }
+ * 
+ * 
+ * Option B : define a dialog
+ * --------------------------
+ * 
+ * You may also configure a popup right here. When the button is clicked the following happens :
+ * - a oneshotdialog is generated on the fly with a defined content,
+ * - the confirm button will send a 'DELETE' request at the given URL, 
+ * - the cancel button will just deselect the selected row.
+ * 
+ * The URL where a 'DELETE' request is issued supports placeholders. 
+ * 
+ * Configuration as follow 
+ * 
+ * deleteButtons : {
+ * 	url : the url where to post the 'delete' instruction. Supports placeholders. 
+ * 	popupmessage : the message that will be displayed 
+ * 	tooltip : the tooltip displayed by the button 
+ * 	success : a callback on the ajax call when successful
+ * 	fail : a callback on the ajax call when failed. 
+ * 	dataType : the dataType parameter for the post. (default = "text")
+ * }
  *
  * ============== Add hyperlink to a cell =====================================
  *
@@ -188,19 +227,21 @@
  *
  *  Configuration as follow:
  *
+ *	bindLinks{
+ *		list : [{
+ *  		url : the url to wrap the  text with (place holder will be set to row object id) 
+ * 			target : the td rank in the row (starts with 1)
+ * 			targetClass :  alternate to the above, uses css class to find its target 
+ * 			isOpenInTab : boolean to set the target of the url to  "_blank" or not. 
+ * 			beforeNavigate : function(row, data). A function that will be executed before navigation. Arguments will be the 
+ *  						row, and the data for this row, of the clicked element. 'this' will be the table.. If this function returns false, 
+ *  						the navigation will be aborted.	
+ *		}]
+ *
+ *	}
  *  list :  a list of object to represent each td of a row to make as url Object params as follow :
  *
- *  -url : the url to wrap the  text with (place holder will be set to row object id)
- *
- * -target : the td rank in the row (starts with 1)
- *
- * -targetClass :  alternate to the above, uses css class to find its target
- *
- * -isOpenInTab : boolean to set the target of the url to  "_blank" or not.
- * 
- * -beforeNavigate : function(row, data). A function that will be executed before navigation. Arguments will be the 
- *  row, and the data for this row, of the clicked element. 'this' will be the table.. If this function returns false, 
- *  the navigation will be aborted.
+
  *
  * ============== Toggable rows ===============================================
  *
@@ -239,40 +280,30 @@
  * example :
  *
  * buttons = [
- *  { tooltip : "tooltip",
- *
- * cssclass : "classa",
- *
- * condition : true, false, function(row, data){return data["isThat"];};
- *
- * disabled : true or function(row, data){return data["isThat"];};
- *
- * tdSelector : "td.run-step-button",
- *
- * onClick : function(table, cell){doThatWithTableAndCell(table, cell);} },
- *  { tooltip : "tooltip", cssclass : "classa", tdSelector : "td.run-step-button", onClick : function(table, cell){
- * doThatWithTableAndCell(table, cell);} }];
- *
+ *  { 
+ *  	tooltip : "tooltip",
+		tdSelector : "td.run-step-button",
+ *		cssclass : "classa",
+ *		condition : function(row, data){return data["shouldDrawButton"];};
+ *		disabled : function(row, data){return data["isDisabled"];};
+ *		tdSelector : "td.run-step-button",
+ *		onClick : function(table, cell){doThatWithTableAndCell(table, cell);} },
+ *		tooltip : "tooltip", 
+ *}
  *
  * the buttons items properties are :
  *
- * .tooltip : the button's tooltip
- *
- * .cssclass : litteral or function(row, data). Define some css class added to the input button.
- *
- * .uiIcon : litteral or function(row, data) if the button is to be a jqueryUi icon, set this property to the wanted icon name.
- *
- * .condition : boolean or function(row, data). Says if the button is added to the row. if this property is not set
+ *{
+ * 	tooltip : the button's tooltip
+ *	cssclass : litteral or function(row, data). Define some css class added to the input button.
+ *	uiIcon : litteral or function(row, data) if the button is to be a jqueryUi icon, set this property to the wanted icon name.
+ *	condition : boolean or function(row, data). Says if the button is added to the row. if this property is not set
  *              the button will be added everywhere
- *
- * .disabled : a boolean or a function(row, data). Return the boolean saying if the button needs to be disabled or not.
- *
- * .tdSelector : the css selector to use to retrieve the cells where to put the button
- *
- * .jquery : boolean. Tells whether this button needs to turn in a jquery button or not. Default is false.
- *
- * .onClick : a function(table, cell) that will be called with the parameters table and clicked td
- *
+ *	disabled : a boolean or a function(row, data). Return the boolean saying if the button needs to be disabled or not.
+ *	tdSelector : the css selector to use to retrieve the cells where to put the button
+ *	jquery : boolean. Tells whether this button needs to turn in a jquery button or not. Default is false.
+ *	onClick : a function(table, cell) that will be called with the parameters table and clicked td
+ *}
  *
  */
 
@@ -819,45 +850,45 @@ define(["jquery",
 
 			cells.each(function(i, cell) {
 
-					var instance = template.clone(),
-						$cell = $(cell),
-						row = $cell.parent("tr")[0],
-						data = self.fnGetData(row);
+				var instance = template.clone(),
+					$cell = $(cell),
+					row = $cell.parent("tr")[0],
+					data = self.fnGetData(row);
 
-					// should the button be displayed in the first place ?
-					var rendered = ($.isFunction(button.condition) ) ? button.condition(row, data) : button.condition;
-					if (rendered === false){
-						return "continue"; // returning whatever non-false means 'continue'
-					}
+				// should the button be displayed in the first place ?
+				var rendered = ($.isFunction(button.condition) ) ? button.condition(row, data) : button.condition;
+				if (rendered === false){
+					return "continue"; // returning whatever non-false means 'continue'
+				}
 
-					// is the button disabled ?
-					var disabled = ($.isFunction(button.disabled)) ? button.disabled(row, data) : button.disabled;
-					if (disabled) {
-						template.prop('disabled', true);
-					}
+				// is the button disabled ?
+				var disabled = ($.isFunction(button.disabled)) ? button.disabled(row, data) : button.disabled;
+				if (disabled) {
+					template.prop('disabled', true);
+				}
 
-					// additional classes ?
-					var classes = ($.isFunction(button.cssclass)) ? button.cssclass(row, data) : button.cssclass;
-					instance.addClass(classes);
+				// additional classes ?
+				var classes = ($.isFunction(button.cssclass)) ? button.cssclass(row, data) : button.cssclass;
+				instance.addClass(classes);
 
-					// an icon maybe ?
-					var icon = ($.isFunction(button.uiIcon)) ? button.uiIcon(row, data) : button.uiIcon;
+				// an icon maybe ?
+				var icon = ($.isFunction(button.uiIcon)) ? button.uiIcon(row, data) : button.uiIcon;
 
-					if (button.jquery){
-						instance.squashButton({
-							text : false,
-							icons : {
-								primary : icon
-							}
-						});
-					}
-					else{
-						instance.addClass(icon);
-					}
+				if (button.jquery){
+					instance.squashButton({
+						text : false,
+						icons : {
+							primary : icon
+						}
+					});
+				}
+				else{
+					instance.addClass(icon);
+				}
 
-					//append
-					$cell.empty().append(instance);
-				});
+				//append
+				$cell.empty().append(instance);
+			});
 		};
 
 	}
@@ -1003,22 +1034,26 @@ define(["jquery",
 		_bindUnbindOrDeleteButtons(conf, self, 'td.delete-button > a');
 	}
 
+	
+	/*
+	 * See documentation of 'deleteButtons' at the top of the file
+	 */
 	function _bindUnbindOrDeleteButtons(conf, self, target){
 		var popconf = self.squashSettings.confirmPopup;
 
 		if (!conf) {
 			return;
 		}
-
-		var deleteFunction =  function() {
-			var row = this.parentNode.parentNode; // hopefully, that's the
-			// 'tr' one
-			var jqRow = $(row);
-			jqRow.addClass('ui-state-row-selected');
-
-			if (conf.delegate !== undefined) {
-				// the following trick will open a dialog instance regardless of the actual
-				// implementation used (the original jquery dialog or one of ours).
+		 
+		var deleteFunction = null;
+		
+		// case 1 : delegate dialog
+		if (conf.delegate !== undefined){
+			deleteFunction = function(){
+				var row = this.parentNode.parentNode; 				
+				var jqRow = $(row);
+				jqRow.addClass('ui-state-row-selected');
+				
 				var _delegate = $(conf.delegate);
 
 				var _rowid = self.getODataId(jqRow.get(0));
@@ -1029,6 +1064,8 @@ define(["jquery",
 					_delegate.data(rowData, rowDatas[rowData]);
 				}
 
+				// the following trick will open a dialog instance regardless of the actual
+				// implementation used (the original jquery dialog or one of ours).
 				var _data = _delegate.data();
 				for (var _ppt in _data){
 					var _widg = _data[_ppt];
@@ -1036,41 +1073,48 @@ define(["jquery",
 						_widg.open();
 						break;
 					}
-				}
-			} else {
-				oneshot.show(conf.tooltip || "", conf.popupmessage || "").done(
-						function() {
-							var finalUrl = _resolvePlaceholders.call(self, conf.url, self.fnGetData(row));
-							var request;
+				}	
+			} 			
+		}
+		
+		//case 2 : define a dialog 
+		else{
+			deleteFunction = function() {
+				var row = this.parentNode.parentNode; 				
+				var jqRow = $(row);
+				jqRow.addClass('ui-state-row-selected');
+				
+				oneshot.show(conf.tooltip || "", conf.popupmessage || "")
+				// on click 'ok' : 
+				.done(function() {
+					var finalUrl = _resolvePlaceholders.call(self, conf.url, self.fnGetData(row));
+					var request;
 
-							if (self.squashSettings.deleteButtons != undefined ) {
-							request = $.ajax({
-								type : 'delete',
-								url : finalUrl,
-								dataType : self.squashSettings.deleteButtons.dataType || "text"
-							});
-						}
+					var dataType = (!! self.squashSettings.deleteButtons) ?
+									self.squashSettings.deleteButtons.dataType :
+									self.squashSettings.unbindButtons.dataType;
+					
+					dataType = dataType || "text";
+					
+					// do the request
+					$.ajax({
+						type : 'delete',
+						url : finalUrl,
+						dataType : dataType
+					})
+					.done(conf.success)
+					.fail(conf.fail);
 
-							if (self.squashSettings.unbindButtons != undefined ) {
-								request = $.ajax({
-									type : 'delete',
-									url : finalUrl,
-									dataType :  self.squashSettings.unbindButtons.dataType
-								});
-							}
-
-							if (conf.success) {
-								request.done(conf.success);
-							}
-							if (conf.fail) {
-								request.fail(conf.fail);
-							}
-						}).fail(function() {
+				})
+				// on click 'cancel' : 
+				.fail(function() {
 					jqRow.removeClass('ui-state-row-selected');
 				});
-			}
-		};
-		self.delegate(target, 'click', deleteFunction);
+			};
+		}
+	
+		
+		self.on('click', target, deleteFunction);
 	}
 
 
