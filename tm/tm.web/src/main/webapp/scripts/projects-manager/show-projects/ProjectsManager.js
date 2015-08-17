@@ -63,13 +63,31 @@ define([ "jquery","underscore", "backbone","handlebars", "./ProjectsTable", "./N
 					var projectName = projectTable.getDataById(idSelected).name;
 					var projectLabel = projectTable.getDataById(idSelected).label;
 
+					var CustomModel = Backbone.Model.extend({
+						defaults : function () {
+							return {
+								templateId : idSelected,
+								label : projectLabel,
+								description : response,
+								name : "",
+								copyPermissions :true,
+								copyCUF:true,
+								copyBugtrackerBinding: true,
+								copyAutomatedProjects: true,
+								copyInfolists:true,
+								copyMilestone:true
+							};
+						},
+						url : function () {
+							return router.buildURL("template.new");
+						},
+						originalProjectName : projectName
+					});
+
+					var newModel = new CustomModel();
+
 					this.newTemplateFromProjectDialog = new NewTemplateFromProjectDialog({
-						model : new NewTemplateFromProjectDialogModel({
-							templateId : idSelected,
-							label : projectLabel,
-							description : response,
-							originalProjectName : projectName,
-						})
+						model : newModel
 					});
 					this.listenTo(this.newTemplateFromProjectDialog, "newtemplate.confirm", this.projectsTable.refresh);
 				},

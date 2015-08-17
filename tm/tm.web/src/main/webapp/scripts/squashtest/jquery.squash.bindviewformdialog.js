@@ -109,13 +109,19 @@ define([ "jquery","backbone", "app/BindView", "backbone", "underscore", "handleb
 			"formdialogcancel" : "callRemove",
 			"formdialogclose" : "callRemove",
 			"formdialogconfirm" : "callConfirm",
-			"formdialogaddanother" : "callConfirmAndResetDialog",
+			"formdialogaddanother" : "callConfirmAndResetDialog"
 		},
 
 		callRemove : function(){
-			if (this.model.defaults!==undefined && this.model.defaults!==null) {
+			var defaultModel = this.model.defaults;
+			if (defaultModel!==undefined && defaultModel!==null) {
 				this.model.clear();
-				this.model.set(this.model.defaults);
+				if (typeof defaultModel === "function") {
+					this.model.set(this.model.defaults());
+				}
+				else {
+					this.model.set(this.model.defaults);
+				}
 			}
 			else {
 					this.model.clear();
@@ -127,7 +133,7 @@ define([ "jquery","backbone", "app/BindView", "backbone", "underscore", "handleb
 
 		//Override only if data from response is needed or partial saving necessary
 		//If only different behavior in view after request success is needed, override onConfirmSuccess and onConfirmAndResetPopupSuccess.
-		callConfirm : function(event){
+		callConfirm : function(){
 			//hacking the ckeditor witch is unbindable in bind view
 			//TO DO case of popup with several rich editor inside
 			this.updateModelFromCKEditor();

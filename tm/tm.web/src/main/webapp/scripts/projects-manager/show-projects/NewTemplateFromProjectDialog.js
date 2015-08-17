@@ -27,7 +27,6 @@ define(["jquery.squash.bindviewformdialog","./NewTemplateFromProjectDialogModel"
 
 		initialize : function(){
 			this.activateCheckBox();
-			this.initializeFields();
 			this.templateWithProjectName();
 			this.templateWithProjectDescAndLabel();
 		},
@@ -55,40 +54,23 @@ define(["jquery.squash.bindviewformdialog","./NewTemplateFromProjectDialogModel"
 			this.$el.find("input:checkbox").prop("checked",true);
 		},
 
-		//used to store original name, desc and label.
-		// As these elements are purely reusable view elements, they shouldn't be saved in clearable model
-		initializeFields : function (originalProjectName, originalProjectDesc, originalProjectLabel) {
-			if (this.originalProjectName===undefined) {
-				this.originalProjectName = this.model.get("originalProjectName");
-				this.model.unset("originalProjectName");//unsetting this value in model, so save() will not send it in request
-			}
-			if (this.originalProjectDesc===undefined && this.emptyString(this.model.get("description"))) {
-				this.originalProjectDesc = this.concatWithTemplatePrefix(this.model.get("description"));
-			}
-			if (this.originalProjectLabel===undefined && this.emptyString(this.model.get("label"))) {
-				this.originalProjectLabel = this.concatWithTemplatePrefix(this.model.get("label"));
-			}
-			if (this.originalProjectId===undefined) {
-				this.originalProjectId = this.model.get("templateId");
-			}
-			//now setting model because it could be cleared with addAnother
-			this.model.set("description",this.originalProjectDesc);
-			this.model.set("label",this.originalProjectLabel);
-			this.model.set("templateId",this.originalProjectId);
-		},
-
 		templateWithProjectName : function () {
 			var sentence = translator.get("dialog.message.templateFromProject");
-			sentence = sentence + " " + this.originalProjectName;
+			sentence = sentence + " " + this.model.originalProjectName;
 			this.$el.find("#templateFromProjectMessage").html(sentence);
 		},
 
 		templateWithProjectDescAndLabel : function () {
-			if (this.originalProjectDesc!==undefined) {
-				this.$el.find("#add-template-from-project-description").val(this.originalProjectDesc);
+			var desc = this.model.get("description");
+			if (this.validString(desc)) {
+				this.model.set("description",this.concatWithTemplatePrefix(desc));
+				this.$el.find("#add-template-from-project-description").val(this.model.get("description"));
 			}
-			if (this.originalProjectLabel!==undefined) {
-			this.$el.find("#add-template-from-project-label").val(this.originalProjectLabel);
+
+			var label = this.model.get("label");
+			if (this.validString(label)) {
+				this.model.set("label",this.concatWithTemplatePrefix(label));
+				this.$el.find("#add-template-from-project-label").val(this.model.get("label"));
 			}
 		},
 
@@ -99,7 +81,7 @@ define(["jquery.squash.bindviewformdialog","./NewTemplateFromProjectDialogModel"
 			return this.prefix + " " + message;
 		},
 
-		emptyString : function (str) {
+		validString : function (str) {
 			return str!==undefined && str!==null && str.length!==0;
 		}
 
