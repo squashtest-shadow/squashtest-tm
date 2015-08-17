@@ -393,18 +393,18 @@ define(
 				var squashSettings = {
 
 					buttons : [{
-					     tdSelector : '>tbody>tr>td.unbind-or-delete',
-					     jquery : true,
-					     tooltip : translator.get('dialog.unbind-testcase.tooltip'),
-					     uiIcon : function(row, data){
-					    	 return (!! data['last-exec-on']) ? 'ui-icon-trash' : 'ui-icon-minus'
-					     },
-					     onClick : function(table, cell){
-					    	 var dialog = $('#iter-test-plan-delete-dialog');
-					    	 var id = table.getODataId($(cell).closest('tr'));
-					    	 dialog.data('entity-id', id);
-					    	 dialog.formDialog('open');
-					     }
+						tdSelector : '>tbody>tr>td.unbind-or-delete',
+						jquery : true,
+						tooltip : translator.get('dialog.unbind-testcase.tooltip'),
+						uiIcon : function(row, data){
+							return (!! data['last-exec-on']) ? 'ui-icon-trash' : 'ui-icon-minus';
+						},
+						onClick : function(table, cell){
+							var dialog = $('#iter-test-plan-delete-dialog');
+							var id = table.getODataId($(cell).closest('tr'));
+							dialog.data('entity-id', id);
+							dialog.formDialog('open');
+						}
 					}],
 					
 					toggleRows : {

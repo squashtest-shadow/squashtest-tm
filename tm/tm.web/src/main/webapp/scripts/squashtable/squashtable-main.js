@@ -1836,10 +1836,10 @@ define(["jquery",
 			},
 			columns : {
 				'invisible' : function(conf, value) {
-					conf.current.bVisible = ! (value === "true");
+					conf.current.bVisible = ! (value === true);
 				},
 				'visible' : function(conf, value){
-					conf.current.bVisible = (value === "true");
+					conf.current.bVisible = (value === true);
 				},
 				'sortable' : function(conf, value) {
 					conf.current.bSortable = true;
@@ -1884,7 +1884,7 @@ define(["jquery",
 					// additionally, if this flag got a value (ie 'delete-button=#some-delegate-selector') we must specify it as the
 					// delegate
 					// cautious : the following expression must read it as "was a delegate defined ?"
-					if (value !== "true"){
+					if (value !== true){
 						conf.squash.deleteButtons = {
 								delegate : value,
 								tooltip : $(value).prev().find('span.ui-dialog-title').text()
@@ -1897,7 +1897,7 @@ define(["jquery",
 					conf.current.sWidth = '2em';
 
 					// see comment for delete-button
-					if (value !== "true"){
+					if (value !== true){
 						conf.squash.unbindButtons = {
 								delegate : value,
 								tooltip : $(value).prev().find('span.ui-dialog-title').text()
