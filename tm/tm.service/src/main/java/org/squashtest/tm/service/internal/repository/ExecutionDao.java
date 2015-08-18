@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.service.internal.repository;
 
+import java.util.Collection;
 import java.util.List;
 
 import org.squashtest.tm.core.foundation.collection.Paging;
@@ -35,6 +36,8 @@ import org.squashtest.tm.domain.testcase.ActionTestStep;
 public interface ExecutionDao extends EntityDao<Execution> {
 
 	List<ExecutionStep> findExecutionSteps(long executionId);
+
+	List<ExecutionStep> findExecutionSteps(Collection<Long> executionIds);
 
 	List<ActionTestStep> findOriginalSteps(long executionId);
 

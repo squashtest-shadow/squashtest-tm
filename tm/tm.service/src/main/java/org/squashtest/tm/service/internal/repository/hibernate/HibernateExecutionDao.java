@@ -21,6 +21,8 @@
 package org.squashtest.tm.service.internal.repository.hibernate;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -30,6 +32,7 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.sql.JoinType;
+import org.hibernate.type.LongType;
 import org.springframework.stereotype.Repository;
 import org.squashtest.tm.core.foundation.collection.Paging;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
@@ -60,6 +63,7 @@ public class HibernateExecutionDao extends HibernateEntityDao<Execution> impleme
 	private static final String ITERATION_CAMPAIGN = "Iteration.campaign";
 	private static final String EXECUTION_STATUS = "executionStatus";
 	private static final String EXECUTION_ID = "executionId";
+	private static final String EXECUTION_IDS = "executionIds";
 	private static final String STATUS = "status";
 
 
@@ -76,6 +80,18 @@ public class HibernateExecutionDao extends HibernateEntityDao<Execution> impleme
 		Query q = currentSession().getNamedQuery("execution.findSteps");
 		q.setParameter(EXECUTION_ID, executionId);
 		return q.list();
+	}
+
+	@Override
+	public List<ExecutionStep> findExecutionSteps(Collection<Long> executionIds) {
+		if (! executionIds.isEmpty()){
+			Query q = currentSession().getNamedQuery("execution.findStepsForAllExecutions");
+			q.setParameterList(EXECUTION_IDS, executionIds, LongType.INSTANCE);
+			return q.list();
+		}
+		else{
+			return Collections.emptyList();
+		}
 	}
 
 	@Override

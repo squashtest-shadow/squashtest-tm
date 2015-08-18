@@ -37,6 +37,7 @@ import java.util.concurrent.TimeoutException;
 
 import javax.inject.Inject;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MultiMap;
 import org.apache.commons.collections.map.MultiValueMap;
 import org.springframework.beans.factory.annotation.Value;
@@ -58,6 +59,7 @@ import org.squashtest.tm.core.foundation.collection.DefaultPagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.PagingBackedPagedCollectionHolder;
+import org.squashtest.tm.domain.IdCollector;
 import org.squashtest.tm.domain.IdentifiedUtil;
 import org.squashtest.tm.domain.bugtracker.BugTrackerStatus;
 import org.squashtest.tm.domain.bugtracker.Issue;
@@ -459,23 +461,23 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 		return findSortedIssueOwnershipForTestCase(tcId, sorter).getPagedItems();
 	}
 
-	private List<ExecutionStep> collectExecutionStepsFromExecution(List<Execution> executions) {
-		List<ExecutionStep> executionSteps = new ArrayList<ExecutionStep>();
-		for (Execution execution : executions) {
-			executionSteps.addAll(execution.getSteps());
-		}
-		return executionSteps;
-	}
 
 	/* ------------------------generic--------------------------------------- */
 
+	private List<ExecutionStep> collectExecutionStepsFromExecution(List<Execution> executions) {
+		List<Long> execIds = (List<Long>)CollectionUtils.collect(executions, new IdCollector(), new ArrayList<Long>());
+		return executionDao.findExecutionSteps(execIds);
+	}
+
 	private List<IssueDetector> collectIssueDetectorsFromExecution(List<Execution> executions) {
-		List<IssueDetector> issueDetectors = new ArrayList<IssueDetector>();
-		for (Execution execution : executions) {
-			issueDetectors.add(execution);
-			issueDetectors.addAll(execution.getSteps());
-		}
-		return issueDetectors;
+
+		List<ExecutionStep> steps = collectExecutionStepsFromExecution(executions);
+
+		List<IssueDetector> detectors = new ArrayList<>(executions.size() + steps.size());
+		detectors.addAll(executions);
+		detectors.addAll(steps);
+
+		return detectors;
 	}
 
 	/**

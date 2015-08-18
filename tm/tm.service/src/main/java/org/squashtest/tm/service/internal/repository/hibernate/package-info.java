@@ -399,6 +399,7 @@
 
 	//Execution
 	@NamedQuery(name = "execution.findSteps", query = "select steps from Execution exec inner join exec.steps steps where exec.id = :executionId"),
+	@NamedQuery(name = "execution.findStepsForAllExecutions", query = "select steps from Execution exec inner join exec.steps steps where exec.id in (:executionIds)"),
 	@NamedQuery(name = "execution.countStatus", query = "select count(exSteps.executionStatus) from Execution as execution join execution.steps as exSteps where execution.id =:execId and exSteps.executionStatus=:status"),
 	@NamedQuery(name = "execution.countSteps", query = "select count(steps) from Execution ex join ex.steps as steps where ex.id = :executionId"),
 	@NamedQuery(name = "execution.findAllByTestCaseIdOrderByRunDate", query = "select e from Execution e inner join e.referencedTestCase tc where tc.id = :testCaseId order by e.lastExecutedOn desc"),
