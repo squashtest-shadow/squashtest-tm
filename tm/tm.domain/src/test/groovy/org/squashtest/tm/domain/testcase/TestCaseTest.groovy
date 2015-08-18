@@ -298,7 +298,7 @@ class TestCaseTest extends Specification {
 				.findAll({ !(Collection.isAssignableFrom(it.type) || Map.isAssignableFrom(it.type)) })
 				.findAll({ !(Modifier.isStatic(it.modifiers) || Modifier.isFinal(it.modifiers))})
 				.findAll({ ! [Long.TYPE, Integer.TYPE, Boolean.TYPE, Float.TYPE, Double.TYPE].contains(it.type) })
-				.findAll({ ! it.name.startsWith('ajc$') && ! it.name.equals("executionMode")})
+				.findAll({ ! it.name.startsWith('audit') && ! it.name.equals("executionMode")})
 				.each { it.setAccessible(true) }
 
 		when:
