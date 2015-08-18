@@ -20,13 +20,16 @@
  */
 package org.squashtest.tm.web.internal.controller.requirement;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Provider;
+import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Controller;
@@ -70,6 +73,10 @@ public class RequirementLibraryNavigationController extends
 		LibraryNavigationController<RequirementLibrary, RequirementFolder, RequirementLibraryNode> {
 
 	private static final String MODEL_ATTRIBUTE_ADD_REQUIREMENT = "add-requirement";
+	
+	private static final String FILENAME = "filename";
+	private static final String LIBRARIES = "libraries";
+	private static final String NODES = "nodes";
 
 	@Inject
 	@Named("requirement.driveNodeBuilder")
@@ -210,6 +217,20 @@ public class RequirementLibraryNavigationController extends
 
 		return builder.setNode(resource).build();
 	}
+	
+	@RequestMapping(value = "/exports", method = RequestMethod.GET)
+	public @ResponseBody FileSystemResource exportRequirementExcel(@RequestParam(FILENAME) String filename,
+			@RequestParam(LIBRARIES) List<Long> libraryIds, @RequestParam(NODES) List<Long> nodeIds,
+			@RequestParam(RequestParams.RTEFORMAT) Boolean keepRteFormat, HttpServletResponse response){
+		
+		response.setContentType("application/octet-stream");
+		response.setHeader("Content-Disposition", "attachment; filename=" + filename + ".xls");
+
+		File export = requirementLibraryNavigationService.exportRequirementAsExcel(libraryIds, nodeIds, keepRteFormat, getMessageSource());
+		
+		return new FileSystemResource(export);
+	}
+
 
 	/*
 	 * ********************************** private stuffs *******************************
