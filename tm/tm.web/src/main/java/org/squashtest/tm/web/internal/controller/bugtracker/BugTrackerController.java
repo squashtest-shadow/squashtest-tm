@@ -67,6 +67,7 @@ import org.squashtest.tm.domain.bugtracker.IssueDetector;
 import org.squashtest.tm.domain.bugtracker.IssueOwnership;
 import org.squashtest.tm.domain.bugtracker.RemoteIssueDecorator;
 import org.squashtest.tm.domain.campaign.Campaign;
+import org.squashtest.tm.domain.campaign.CampaignFolder;
 import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.campaign.TestSuite;
 import org.squashtest.tm.domain.execution.Execution;
@@ -76,6 +77,7 @@ import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.service.bugtracker.BugTrackerManagerService;
 import org.squashtest.tm.service.bugtracker.BugTrackersLocalService;
 import org.squashtest.tm.service.campaign.CampaignFinder;
+import org.squashtest.tm.service.campaign.CampaignLibraryNavigationService;
 import org.squashtest.tm.service.campaign.IterationFinder;
 import org.squashtest.tm.service.campaign.TestSuiteFinder;
 import org.squashtest.tm.service.execution.ExecutionFinder;
@@ -109,6 +111,7 @@ public class BugTrackerController {
 
 	@Inject private MessageSource messageSource;
 	@Inject private BugTrackerControllerHelper helper;
+	@Inject private CampaignLibraryNavigationService clnService;
 
 
 	static final String EXECUTION_STEP_TYPE = "execution-step";
@@ -117,6 +120,7 @@ public class BugTrackerController {
 	static final String CAMPAIGN_TYPE = "campaign";
 	static final String TEST_SUITE_TYPE = "test-suite";
 	static final String TEST_CASE_TYPE = "test-case";
+	static final String CAMPAIGN_FOLDER_TYPE = "campaign-folder";
 
 
 	private static final String BUGTRACKER_ID = "bugTrackerId";
@@ -124,7 +128,6 @@ public class BugTrackerController {
 
 	private static final String STYLE_ARG = "style";
 	private static final String STYLE_TOGGLE = "toggle";
-	private static final String STYLE_TAB = "fragment-tab";
 
 	private static final String MODEL_TABLE_ENTRIES = "tableEntries";
 	private static final String MODEL_BUG_TRACKER_STATUS = "bugTrackerStatus";
@@ -551,6 +554,57 @@ public class BugTrackerController {
 
 	}
 
+
+
+	/* **************************************************************************************************************
+	 * 
+	 * Campaign folder level section
+	 * 
+	 * ************************************************************************************************************/
+
+	/**
+	 * returns the panel displaying the current bugs of that test-suite and the stub for the report form. Remember that
+	 * the report bug dialog will be populated later.
+	 * 
+	 * @param campaignFolderId
+	 * @return
+	 */
+	@RequestMapping(value = CAMPAIGN_FOLDER_TYPE + "/{campaignFolderId}", method = RequestMethod.GET)
+	public ModelAndView getCampaignFolderIssuePanel(@PathVariable("campaignFolderId") Long campaignFolderId, Locale locale,
+			@RequestParam(value = STYLE_ARG, required = false, defaultValue = STYLE_TOGGLE) String panelStyle) {
+
+		CampaignFolder campaignFolder = clnService.findFolder(campaignFolderId);
+		ModelAndView mav = makeIssuePanel(campaignFolder, CAMPAIGN_FOLDER_TYPE, locale, panelStyle, campaignFolder.getProject());
+
+
+		/*
+		 * issue 4178
+		 * eagerly fetch the row entries if the user is authenticated
+		 * (we need the table to be shipped along with the panel in one call)
+		 */
+		if (shouldGetTableData(mav)){
+			DataTableModel issues = getKnownIssuesData(CAMPAIGN_FOLDER_TYPE, campaignFolderId, new DefaultPagingAndSorting(SORTING_DEFAULT_ATTRIBUTE), "0");
+			mav.addObject(MODEL_TABLE_ENTRIES, issues.getAaData());
+		}
+
+		return mav;
+	}
+
+	/**
+	 * json Data for the known issues table.
+	 */
+	@RequestMapping(value = CAMPAIGN_FOLDER_TYPE + "/{campaignFolderId}/known-issues", method = RequestMethod.GET)
+	public @ResponseBody
+	DataTableModel getCampaignFolderKnownIssuesData(@PathVariable("campaignFolderId") Long campaignFolderId,
+			final DataTableDrawParameters params, final Locale locale) {
+
+		PagingAndSorting sorter = new IssueCollectionSorting(params);
+
+		return getKnownIssuesData(CAMPAIGN_FOLDER_TYPE, campaignFolderId, sorter, params.getsEcho());
+
+	}
+
+
 	/* ************************* Generic code section ************************** */
 
 	@RequestMapping(value = "/find-issue/{remoteKey}", method = RequestMethod.GET, params = { BUGTRACKER_ID })
@@ -559,13 +613,13 @@ public class BugTrackerController {
 			@RequestParam(BUGTRACKER_ID) long bugTrackerId, @RequestParam("projectNames[]") List<String> projectNames, Locale locale) {
 		BugTracker bugTracker = bugTrackerManagerService.findById(bugTrackerId);
 		RemoteIssue issue = bugTrackersLocalService.getIssue(remoteKey, bugTracker);
-		
+
 		String projectName = issue.getProject().getName();
-		
+
 		if (!projectNames.contains(projectName)){
 			throw new BugTrackerRemoteException(i18n.internationalize("bugtracker.issue.notfoundinprojects", locale), new Throwable());
 		}
-		
+
 		return bugTrackersLocalService.getIssue(remoteKey, bugTracker);
 	}
 
@@ -758,6 +812,9 @@ public class BugTrackerController {
 			switch(entityType){
 			case TEST_CASE_TYPE :
 				filteredCollection = bugTrackersLocalService.findSortedIssueOwnershipForTestCase(id, paging);
+				break;
+			case CAMPAIGN_FOLDER_TYPE :
+				filteredCollection = bugTrackersLocalService.findSortedIssueOwnershipForCampaignFolder(id, paging);
 				break;
 			case CAMPAIGN_TYPE :
 				filteredCollection = bugTrackersLocalService.findSortedIssueOwnershipsForCampaigns(id, paging);

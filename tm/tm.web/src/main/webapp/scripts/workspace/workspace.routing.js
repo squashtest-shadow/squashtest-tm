@@ -87,6 +87,7 @@ define([], function(){
 		'search' :							root + '/advanced-search',
 		'search.results' :					root + '/advanced-search/results',
 
+		'bugtracker.campaignfolder' :		root + '/bugtracker/campaign-folder/{\\d+}', 
 		'bugtracker.execution' :			root + '/bugtracker/execution/{\\d+}',
 		'bugtracker.execsteps.new' :		root + '/bugtracker/execution-step/{\\d+}/new-issue',
 

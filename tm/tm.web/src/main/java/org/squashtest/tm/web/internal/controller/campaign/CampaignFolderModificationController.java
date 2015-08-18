@@ -20,9 +20,14 @@
  */
 package org.squashtest.tm.web.internal.controller.campaign;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.osgi.extensions.annotation.ServiceReference;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.servlet.ModelAndView;
 import org.squashtest.tm.domain.campaign.CampaignFolder;
 import org.squashtest.tm.service.library.FolderModificationService;
 import org.squashtest.tm.web.internal.controller.generic.FolderModificationController;
@@ -41,6 +46,19 @@ public class CampaignFolderModificationController extends FolderModificationCont
 	public final void setFolderModificationService(FolderModificationService<CampaignFolder> folderModificationService) {
 		this.folderModificationService = folderModificationService;
 	}
+
+
+	@Override
+	@RequestMapping(method = RequestMethod.GET)
+	public final ModelAndView showFolder(@PathVariable long folderId, HttpServletRequest request) {
+
+		ModelAndView mav = super.showFolder(folderId, request);
+
+		mav.setViewName("fragment/campaigns/campaign-folder");
+
+		return mav;
+	}
+
 
 	@Override
 	protected String getWorkspaceName() {

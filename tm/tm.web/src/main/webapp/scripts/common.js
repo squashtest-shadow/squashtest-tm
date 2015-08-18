@@ -77,7 +77,7 @@ requirejs.config({
 				{
 					name : 'iteration-management',
 					main : 'iter-management-main'
-				},
+				}, 
 				{
 					name : 'test-suite-management',
 					main : 'ts-management-main'
@@ -85,6 +85,10 @@ requirejs.config({
 				{
 					name : 'campaign-management',
 					main : 'campaign-management-main'
+				},
+				{
+					name : 'campaign-folder-management',
+					main : 'cf-management-main'
 				},
 
 				//workspaces

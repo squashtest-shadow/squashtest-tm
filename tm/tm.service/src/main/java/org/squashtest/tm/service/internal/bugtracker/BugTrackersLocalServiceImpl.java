@@ -66,6 +66,7 @@ import org.squashtest.tm.domain.bugtracker.IssueList;
 import org.squashtest.tm.domain.bugtracker.IssueOwnership;
 import org.squashtest.tm.domain.bugtracker.RemoteIssueDecorator;
 import org.squashtest.tm.domain.campaign.Campaign;
+import org.squashtest.tm.domain.campaign.CampaignFolder;
 import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.campaign.TestSuite;
@@ -78,6 +79,7 @@ import org.squashtest.tm.service.advancedsearch.IndexationService;
 import org.squashtest.tm.service.bugtracker.BugTrackersLocalService;
 import org.squashtest.tm.service.internal.repository.BugTrackerDao;
 import org.squashtest.tm.service.internal.repository.CampaignDao;
+import org.squashtest.tm.service.internal.repository.CampaignFolderDao;
 import org.squashtest.tm.service.internal.repository.ExecutionDao;
 import org.squashtest.tm.service.internal.repository.ExecutionStepDao;
 import org.squashtest.tm.service.internal.repository.IssueDao;
@@ -119,6 +121,9 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 	private CampaignDao campaignDao;
 
 	@Inject
+	private CampaignFolderDao campaignFolderDao;
+
+	@Inject
 	private TestSuiteDao testSuiteDao;
 
 	@Inject
@@ -147,7 +152,7 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 	private LocaleContext getLocaleContext(){
 		return LocaleContextHolder.getLocaleContext();
 	}
-	
+
 	@Override
 	@PreAuthorize("hasPermission(#entity, 'EXECUTE')" + OR_HAS_ROLE_ADMIN)
 	public BugTrackerStatus checkBugTrackerStatus(Project project) {
@@ -355,6 +360,23 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 		return createOwnershipsCollection(sorter, issueDetectors, bugTracker);
 	}
 
+	/* ------------------------TestSuite--------------------------------------- */
+	@Override
+	@PreAuthorize("hasPermission(#testSuiteId, 'org.squashtest.tm.domain.campaign.TestSuite', 'READ')" + OR_HAS_ROLE_ADMIN)
+	public PagedCollectionHolder<List<IssueOwnership<RemoteIssueDecorator>>> findSortedIssueOwnershipsForTestSuite(
+			Long testSuiteId, PagingAndSorting sorter) {
+		// find bug-tracker
+		TestSuite testSuite = testSuiteDao.findById(testSuiteId);
+		BugTracker bugTracker = testSuite.getIteration().getProject().findBugTracker();
+
+		// Find all concerned IssueDetector
+		List<Execution> executions = testSuiteDao.findAllExecutionByTestSuite(testSuiteId);
+		List<IssueDetector> issueDetectors = collectIssueDetectorsFromExecution(executions);
+
+		// create filtredCollection of IssueOwnership<BTIssue>
+		return createOwnershipsCollection(sorter, issueDetectors, bugTracker);
+	}
+
 	/* ------------------------Iteration--------------------------------------- */
 
 	@Override
@@ -390,22 +412,26 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 		return createOwnershipsCollection(sorter, issueDetectors, bugTracker);
 	}
 
-	/* ------------------------TestSuite--------------------------------------- */
+	/* ------------------------- CampaignFolder ---------------------------------*/
+
 	@Override
-	@PreAuthorize("hasPermission(#testSuiteId, 'org.squashtest.tm.domain.campaign.TestSuite', 'READ')" + OR_HAS_ROLE_ADMIN)
-	public PagedCollectionHolder<List<IssueOwnership<RemoteIssueDecorator>>> findSortedIssueOwnershipsForTestSuite(
-			Long testSuiteId, PagingAndSorting sorter) {
+	@PreAuthorize("hasPermission(#cfId, 'org.squashtest.tm.domain.campaign.CampaignFolder', 'READ')" + OR_HAS_ROLE_ADMIN)
+	public PagedCollectionHolder<List<IssueOwnership<RemoteIssueDecorator>>> findSortedIssueOwnershipForCampaignFolder(
+			Long cfId, PagingAndSorting sorter) {
+
 		// find bug-tracker
-		TestSuite testSuite = testSuiteDao.findById(testSuiteId);
-		BugTracker bugTracker = testSuite.getIteration().getProject().findBugTracker();
+		CampaignFolder cf = campaignFolderDao.findById(cfId);
+		BugTracker bt = cf.getProject().findBugTracker();
 
 		// Find all concerned IssueDetector
-		List<Execution> executions = testSuiteDao.findAllExecutionByTestSuite(testSuiteId);
+		List<Execution> executions = campaignFolderDao.findAllExecutionsByCampaignFolder(cfId);
 		List<IssueDetector> issueDetectors = collectIssueDetectorsFromExecution(executions);
 
 		// create filtredCollection of IssueOwnership<BTIssue>
-		return createOwnershipsCollection(sorter, issueDetectors, bugTracker);
+		return createOwnershipsCollection(sorter, issueDetectors, bt);
+
 	}
+
 
 	/* ------------------------TestCase--------------------------------------- */
 
@@ -421,6 +447,7 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 		// create filtredCollection of IssueOwnership<BTIssue>
 		return createOwnershipsCollection(sorter, executions, executionSteps);
 	}
+
 
 	@Override
 	@PreAuthorize("hasPermission(#tcId, 'org.squashtest.tm.domain.testcase.TestCase', 'READ')" + OR_HAS_ROLE_ADMIN)

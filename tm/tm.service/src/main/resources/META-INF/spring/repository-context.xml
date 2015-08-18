@@ -82,6 +82,7 @@
         <value>org.squashtest.tm.domain.campaign.CampaignLibrary</value>
         <value>org.squashtest.tm.domain.campaign.Campaign</value>
         <value>org.squashtest.tm.domain.campaign.CampaignLibraryNode</value>
+        <value>org.squashtest.tm.domain.campaign.CampaignPathEdge</value>
         <value>org.squashtest.tm.domain.campaign.CampaignFolder</value>
         <value>org.squashtest.tm.domain.campaign.Iteration</value>
         <value>org.squashtest.tm.domain.campaign.IterationTestPlanItem</value>

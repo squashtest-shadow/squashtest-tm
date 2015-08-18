@@ -183,7 +183,27 @@ public interface BugTrackersLocalService {
 	 */
 	PagedCollectionHolder<List<IssueOwnership<RemoteIssueDecorator>>> findSortedIssueOwnershipForTestCase(Long tcId,
 			PagingAndSorting sorter);
-	 /**
+
+	/**
+	 * Given a CampaignFolder, returns a list of linked BTIssue (not Issue) for all campaigns, iterations etc this folder contains.<br>
+	 * <br>
+	 * To keep track of which IssueDetector owns which issue, the data are wrapped in a IssueOwnership (that just pair
+	 * the informations together).
+	 * 
+	 * @param cfId
+	 *            for which we need to get the issues,
+	 * @param sorter
+	 *            that tells us how we should sort and filter the data
+	 * 
+	 * @return a PagedCollectionHolder containing a non-null but possibly empty list of IssueOwnership<Issue>, sorted
+	 *         and filtered according to the PagingAndSorting.
+	 */
+	PagedCollectionHolder<List<IssueOwnership<RemoteIssueDecorator>>> findSortedIssueOwnershipForCampaignFolder(Long cfId,
+			PagingAndSorting sorter);
+
+
+
+	/**
 	 * Given a TestCase, returns a list of linked BTIssue (not Issue).<br>
 	 * <br>
 	 * To keep track of which IssueDetector owns which issue, the data are wrapped in a IssueOwnership (that just pair
@@ -192,10 +212,10 @@ public interface BugTrackersLocalService {
 	 * @param testCase
 	 *            id for which we need to get the issues,
 	 * 
-	 * @return a  non-null but possibly empty list of IssueOwnership, 
+	 * @return a  non-null but possibly empty list of IssueOwnership,
 	 **/
 	List<IssueOwnership<RemoteIssueDecorator>> findIssueOwnershipForTestCase(long testCaseId);
-	
+
 	/* ****************** BugTracker - side methods ******************** */
 
 	/**
@@ -206,11 +226,11 @@ public interface BugTrackersLocalService {
 	 * 
 	 */
 	BugTrackerStatus checkBugTrackerStatus(Project project);
-	
-	
+
+
 	/**
 	 * same as {@link #checkBugTrackerStatus(Project)}, using the id of the project
-	 * instead. 
+	 * instead.
 	 * 
 	 * @param projectId
 	 * @return
@@ -290,7 +310,7 @@ public interface BugTrackersLocalService {
 	 */
 	Set<String> getProviderKinds();
 
-	
+
 	/**
 	 * Will detach an existing issue from an issue detector
 	 * 
@@ -304,15 +324,15 @@ public interface BugTrackersLocalService {
 	/**
 	 * Given a remote issue key, will ask the bugtracker to attach the attachments to that issue.
 	 * In order to prevent possible conflicts (multiple issue may have the same id if defined on different bugtrackers)
-	 * the bugtracker name is required too. 
+	 * the bugtracker name is required too.
 	 * 
 	 * @param remoteIssueKey
 	 * @Param bugtrackerName
 	 * @param attachments
 	 */
 	void forwardAttachments(String remoteIssueKey, String bugtrackerName, List<Attachment> attachments);
-	
-	
+
+
 	/**
 	 * forwards a {@link DelegateCommand} to a connector
 	 * 
@@ -322,12 +342,12 @@ public interface BugTrackersLocalService {
 	Object forwardDelegateCommand(DelegateCommand command, String bugtrackerName);
 
 	int findNumberOfIssueForTestCase(Long id);
-	
+
 	/**
 	 * self-explanatory
 	 */
 	int findNumberOfIssueForItemTestPlanLastExecution(Long itemTestPlanId);
-	
+
 	/**
 	 * self-explanatory
 	 */
@@ -335,13 +355,13 @@ public interface BugTrackersLocalService {
 
 	TestCase findTestCaseRelatedToIssue(Long issueId);
 
-	
+
 	Issue findIssueById(Long id);
-	
+
 	List<Execution> findExecutionsByRemoteIssue(String remoteid, String name);
 
 	List<Issue> getIssueList(String remoteid, String name);
 
 	Execution findExecutionByIssueId(Long id);
-	
+
 }

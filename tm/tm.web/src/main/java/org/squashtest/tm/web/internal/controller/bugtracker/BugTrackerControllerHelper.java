@@ -251,6 +251,7 @@ public final class BugTrackerControllerHelper {
 			builder = new TestCaseIssuesTableModel();
 			break;
 
+		case BugTrackerController.CAMPAIGN_FOLDER_TYPE :
 		case BugTrackerController.CAMPAIGN_TYPE :
 		case BugTrackerController.ITERATION_TYPE :
 		case BugTrackerController.TEST_SUITE_TYPE :

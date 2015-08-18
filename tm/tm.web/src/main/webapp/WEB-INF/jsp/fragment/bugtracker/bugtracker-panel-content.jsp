@@ -204,6 +204,8 @@
 	set credential routine
 	--%>
 	function checkAndReportIssue(bugtrackerReportSettings) {
+		
+		
 
 		//first step : check
 		$.ajax({
@@ -282,7 +284,12 @@ require([ "common" ], function() {
             	projectName = projectNames[0];
             }
             
-            checkAndReportIssue( {reportUrl:"${entityUrl}/new-issue/" , projectNames : projectNames, selectedProject: projectName, currentProjectId: currentProjectId } );
+            checkAndReportIssue( {
+            		reportUrl:"${entityUrl}/new-issue/", 
+            		projectNames : projectNames, 
+            		selectedProject: projectName, 
+            		currentProjectId: currentProjectId 
+            });
           });
       </c:if>
 
@@ -400,7 +407,7 @@ require([ "common" ], function() {
 		</c:when>
 		
 		<c:when
-			test="${entityType == 'iteration'||entityType == 'test-suite'||entityType == 'campaign'}">
+			test="${entityType == 'iteration'||entityType == 'test-suite'||entityType == 'campaign'||entityType == 'campaign-folder'}">
 			<is:issue-table-iter dataUrl="${tableUrl}" interfaceDescriptor="${interfaceDescriptor}" tableEntries="${tableEntries}"/>
 		</c:when>
 		<c:when test="${entityType == 'test-case' }">

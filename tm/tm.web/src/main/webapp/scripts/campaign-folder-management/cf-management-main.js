@@ -1,4 +1,4 @@
-/**
+/*
  *     This file is part of the Squashtest platform.
  *     Copyright (C) 2010 - 2015 Henix, henix.fr
  *
@@ -18,16 +18,34 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.internal.repository;
 
-import java.util.List;
 
-import org.squashtest.tm.domain.campaign.CampaignFolder;
-import org.squashtest.tm.domain.campaign.CampaignLibraryNode;
-import org.squashtest.tm.domain.execution.Execution;
-
-public interface CampaignFolderDao extends FolderDao<CampaignFolder, CampaignLibraryNode> {
-
-	List<Execution> findAllExecutionsByCampaignFolder(Long cfId);
-
-}
+define(["jquery", "squash.basicwidgets", "contextual-content-handlers", "jquery.squash.fragmenttabs", "bugtracker/bugtracker-panel"], 
+		function($, basic, ContentHandlers, Frag, Bugtracker){
+	
+	
+	function init(conf){
+		
+		// basic content
+		basic.init();
+		
+		// name handler
+		var nameHandler = ContentHandlers.getSimpleNameHandler();
+		nameHandler.identity = conf.basic.identity;
+		nameHandler.displayName = "#folder-name";
+		
+		// tabs
+		Frag.init();
+		
+		// bugtracker
+		if (conf.bugtracker.hasBugtracker){
+			Bugtracker.load(conf.bugtracker);
+		}
+		
+	}
+	
+	return {
+		init : init		
+	}
+	
+});

@@ -149,6 +149,7 @@
 	@NamedQuery(name = "campaignFolder.findNamesInLibraryStartingWith", query = "select c.name from CampaignLibrary l join l.rootContent c where l.id = :containerId and c.name like :nameStart"),
 	@NamedQuery(name = "campaignFolder.findParentOf", query = "select f from CampaignFolder f join f.content c where c.id = :contentId"),
 	@NamedQuery(name = "campaignFolder.remove", query = "delete CampaignFolder cf where cf.id in (:nodeIds)"),
+	@NamedQuery(name = "campaignFolder.findAllExecutions", query = "from Execution where testPlan.iteration.campaign.id in (select cpe.descendantId from CampaignPathEdge cpe where cpe.ancestorId = :campaignFolderId)"),
 
 	//Iteration
 	@NamedQuery(name = "iterationDao.findAllByCampaignId", query = "select c.iterations from Campaign c where c.id = :campaignId"),
