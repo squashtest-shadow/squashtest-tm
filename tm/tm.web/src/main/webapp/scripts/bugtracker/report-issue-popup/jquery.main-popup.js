@@ -18,10 +18,10 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define(["jquery",  "workspace.storage", "jeditable.selectJEditable", "./default-field-view", "./advanced-field-view", "file-upload", 
+define(["jquery", "underscore", "workspace.storage", "jeditable.selectJEditable", "./default-field-view", "./advanced-field-view", "file-upload", 
         "workspace.event-bus", "jqueryui", "squashtest/jquery.squash.popuperror", 
         "jquery.squash.formdialog"], 
-        function($, storage, SelectJEditable, DefaultFieldView, AdvancedFieldView, fileUploadUtils, eventBus){
+        function($, _, storage, SelectJEditable, DefaultFieldView, AdvancedFieldView, fileUploadUtils, eventBus){
 	
 	squashtm.eventBus = eventBus;
 	
@@ -173,6 +173,20 @@ define(["jquery",  "workspace.storage", "jeditable.selectJEditable", "./default-
 		this.searchUrl = settings.searchUrl;
 		this.bugTrackerId = settings.bugTrackerId;
 		
+		// project preferences
+		this.projectNames = settings.projectNames; 
+		this.currentProjectId = settings.currentProjectId;
+		
+		var projectPrefs = storage.get("bugtracker.projects-preferences") || {};
+        this.selectedProject = (projectPrefs[this.currentProjectId] == undefined) ? 
+        					this.projectNames[0] : 
+        					projectPrefs[this.currentProjectId];
+        
+        //check if the preference still exist, if not use the first project
+        if (! _.contains(this.projectNames, this.selectedProject)){
+        	this.selectedProject = this.projectNames[0];
+        }
+        
 		//main panels of the popup
 		this.pleaseWait = this.find(".pleasewait");
 		this.content = this.find(".content");
@@ -190,7 +204,6 @@ define(["jquery",  "workspace.storage", "jeditable.selectJEditable", "./default-
 		//search issue buttons. We also turn it into a jQuery button on the fly.
 		this.searchButton = this.find('.attach-issue input[type="button"]').button();
 		
-		this.selectedProject = settings.selectedProject;
 		//the error display
 		this.error = this.find(".issue-report-error");
 		this.error.popupError();
@@ -381,7 +394,7 @@ define(["jquery",  "workspace.storage", "jeditable.selectJEditable", "./default-
 			if (! this.mdlTemplate){
 				flipToPleaseWait();		
 				$.ajax({
-					url : self.reportUrl + self.selectedProject,
+					url : self.reportUrl + '/' + self.selectedProject,
 					type : "GET",
 					dataType : "json"			
 				})
@@ -465,7 +478,7 @@ define(["jquery",  "workspace.storage", "jeditable.selectJEditable", "./default-
 		
 		this.changeBugTrackerProject = function(project){
 
-		      var projectPrefs = storage.get("bugtracker.projects-preferences");
+		      var projectPrefs = storage.get("bugtracker.projects-preferences") || {};
 	          projectPrefs[this.currentProjectId] = project;
 	          storage.set("bugtracker.projects-preferences", projectPrefs);
 	          self.selectedProject = project;
@@ -473,14 +486,11 @@ define(["jquery",  "workspace.storage", "jeditable.selectJEditable", "./default-
 	          self.fieldsView = null;
 	          resetModel();
 	          
-		},
+		}, 
 		
 		this.open = function(settings){
 			var self = this;
 			this.reportUrl = settings.reportUrl;
-			this.selectedProject = settings.selectedProject;
-			this.projectNames = settings.projectNames; 
-			this.currentProjectId = settings.currentProjectId;
 			var data = [];
 			this.projectNames.forEach(function(val){
 				data.push({code:val, value:val});	
@@ -489,8 +499,8 @@ define(["jquery",  "workspace.storage", "jeditable.selectJEditable", "./default-
 			var template = Handlebars.compile(self.find("#project-selector-tpl").html());
 			self.find("#project-selector").html(template({options:data}));
 			self.find("#project-selector").on("change", function(){
-			var selected = self.find("#project-selector").find(":selected").val();
-			self.changeBugTrackerProject(selected);
+				var selected = self.find("#project-selector").find(":selected").val();
+				self.changeBugTrackerProject(selected);
 			});
 			self.postButton.focus();
 			self.reportRadio.click();

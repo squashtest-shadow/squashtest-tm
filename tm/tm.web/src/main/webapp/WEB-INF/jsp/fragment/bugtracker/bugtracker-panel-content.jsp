@@ -204,8 +204,6 @@
 	set credential routine
 	--%>
 	function checkAndReportIssue(bugtrackerReportSettings) {
-		
-		
 
 		//first step : check
 		$.ajax({
@@ -275,20 +273,8 @@ require([ "common" ], function() {
         $("#issue-report-dialog-openbutton").click(function() {
             $(this).removeClass("ui-state-focus ui-state-hover");
             
-            var projectPrefs = storage.get("bugtracker.projects-preferences") || {};
-            var currentProjectId = ${projectId};
-         	var projectNames = ${projectNames};
-            var projectName = projectPrefs[currentProjectId] == undefined ? projectNames[0] : projectPrefs[currentProjectId];
-          
-            if (! _.contains(projectNames, projectName)){ //check if the preference still exist, if not use the first project
-            	projectName = projectNames[0];
-            }
-            
             checkAndReportIssue( {
-            		reportUrl:"${entityUrl}/new-issue/", 
-            		projectNames : projectNames, 
-            		selectedProject: projectName, 
-            		currentProjectId: currentProjectId 
+            		reportUrl:"${entityUrl}/new-issue/"
             });
           });
       </c:if>
@@ -420,7 +406,10 @@ require([ "common" ], function() {
 <%-------------------------------- add issue popup code -----------------------------------%>
 <c:if test="${executable and not useParentContextPopup}">
 	<is:issue-add-popup id="issue-report-dialog"
-		interfaceDescriptor="${interfaceDescriptor}"  bugTrackerId="${bugTracker.id}"/>
+		interfaceDescriptor="${interfaceDescriptor}"  
+        bugTrackerId="${bugTracker.id}" 
+        projectId="${projectId}" 
+        projectNames="${projectNames}"/>
 </c:if>
 <%-------------------------------- /add issue popup code -----------------------------------%>
 
