@@ -88,7 +88,7 @@ implements JsTreeNodeBuilder<MODEL, BUILDER> {
 		Map<String, Boolean> permByName = getPermissionEvaluationService().hasRoleOrPermissionsOnObject(ROLE_ADMIN, PERM_NAMES, model);
 
 		for (Permission perm : NODE_PERMISSIONS) {
-			assert permByName.get(perm.name()) != null : "Permission " + perm + " should not be null";
+//			assert permByName.get(perm.name()) != null : "Permission " + perm + " should not be null";
 			node.addAttr(perm.getQuality(), permByName.get(perm.name()).toString());
 		}
 

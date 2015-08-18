@@ -27,13 +27,13 @@ import org.squashtest.tm.domain.campaign.Campaign;
 import org.squashtest.tm.domain.campaign.Iteration
 import org.squashtest.tm.domain.campaign.TestSuite;
 import org.squashtest.tm.service.security.PermissionEvaluationService
+import org.squashtest.tm.web.internal.controller.generic.NodeBuildingSpecification
 import org.squashtest.tm.web.internal.model.jstree.JsTreeNode.State
 
 import spock.lang.Specification
 
-class IterationNodeBuilderTest extends Specification {
-	PermissionEvaluationService permissionEvaluationService = Mock()
-	IterationNodeBuilder builder = new IterationNodeBuilder(permissionEvaluationService)
+class IterationNodeBuilderTest extends NodeBuildingSpecification {
+	IterationNodeBuilder builder = new IterationNodeBuilder(permissionEvaluator())
 
 	def "should build root node of test case library"() {
 		given:
