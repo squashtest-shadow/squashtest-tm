@@ -18,8 +18,8 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define(["jquery.squash.bindviewformdialog","./NewTemplateFromProjectDialogModel","squash.translator"],
-		function(BindViewFormDialog, NewTemplateFromProjectDialogModel, translator) {
+define(["jquery.squash.bindviewformdialog","squash.translator"],
+		function(BindViewFormDialog, translator) {
 
 	var View = BindViewFormDialog.extend({
 		el : "#add-template-from-project-dialog-tpl",
