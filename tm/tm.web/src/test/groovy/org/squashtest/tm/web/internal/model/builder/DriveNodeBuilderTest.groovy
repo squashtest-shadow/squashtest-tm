@@ -20,7 +20,7 @@
  */
 package org.squashtest.tm.web.internal.model.builder;
 
-import static org.junit.Assert.*
+import org.squashtest.tm.web.internal.controller.generic.NodeBuildingSpecification
 
 import javax.inject.Provider
 
@@ -45,13 +45,15 @@ import org.squashtest.tm.web.internal.model.jstree.JsTreeNode.State
 import spock.lang.Specification
 import spock.lang.Unroll
 
-class DriveNodeBuilderTest extends Specification {
+class DriveNodeBuilderTest extends NodeBuildingSpecification {
 	PermissionEvaluationService permissionEvaluationService = Mock()
+    Map rights = Mock()
 	VerifiedRequirementsManagerService verifiedRequirementsManagerService = Mock()
 	Provider nodeBuilderPovider = Mock()
 	DriveNodeBuilder builder = new DriveNodeBuilder(permissionEvaluationService, nodeBuilderPovider)
 	MilestoneMembershipFinder milestoneMembershipFinder = Mock()
 	InternationalizationHelper internationalizationHelper = Mock()
+    Boolean hasRights
 	def setup() {
 		internationalizationHelper.internationalize(_,_)>> ""
 		internationalizationHelper.internationalizeYesNo(false, _)>>"non"
@@ -62,12 +64,20 @@ class DriveNodeBuilderTest extends Specification {
 			builder.setMilestoneMembershipFinder(milestoneMembershipFinder)
 			return builder
 		}
+
+        permissionEvaluationService.hasRoleOrPermissionsOnObject(_, _, _) >> rights
+        rights.get(_) >> { hasRights }
+        hasRights = true
+
 	}
 
 	def "should build root node of test case library"() {
 		given:
 		def library = theTestCaseLibrary(10L).ofProject("foo")
 		milestoneMembershipFinder.findAllMilestonesForTestCase(_) >> []
+
+        and:
+        hasRights = false
 
 		when:
 		JsTreeNode res = builder.setModel(library).build();

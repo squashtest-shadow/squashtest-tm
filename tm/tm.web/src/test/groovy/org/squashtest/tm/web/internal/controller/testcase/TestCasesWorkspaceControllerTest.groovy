@@ -27,19 +27,18 @@ import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory
 import org.squashtest.tm.domain.project.Project
 import org.squashtest.tm.domain.testcase.TestCaseLibrary
 import org.squashtest.tm.service.library.WorkspaceService
+import org.squashtest.tm.web.internal.controller.generic.NodeBuildingSpecification
 import org.squashtest.tm.service.project.ProjectFinder
 import org.squashtest.tm.service.security.PermissionEvaluationService
 import org.squashtest.tm.web.internal.model.builder.DriveNodeBuilder
 import org.squashtest.tm.web.internal.model.builder.JsonProjectBuilder
 
-import spock.lang.Specification
+import javax.inject.Provider
 
-
-
-class TestCasesWorkspaceControllerTest extends Specification {
+class TestCasesWorkspaceControllerTest extends NodeBuildingSpecification {
 	TestCaseWorkspaceController controller = new TestCaseWorkspaceController()
 	WorkspaceService service = Mock()
-	DriveNodeBuilder driveNodeBuilder = new DriveNodeBuilder(Mock(PermissionEvaluationService), Mock(Provider))
+    DriveNodeBuilder driveNodeBuilder = new DriveNodeBuilder(permissionEvaluator(), Mock(Provider))
 	ProjectFinder projFinder = Mock()
 	JsonProjectBuilder projBuilder = Mock()
 

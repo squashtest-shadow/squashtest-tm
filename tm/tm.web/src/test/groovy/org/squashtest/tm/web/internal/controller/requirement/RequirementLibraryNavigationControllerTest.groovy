@@ -35,16 +35,15 @@ import org.squashtest.tm.domain.requirement.RequirementVersion
 import org.squashtest.tm.service.requirement.RequirementLibraryNavigationService
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.web.internal.controller.generic.LibraryNavigationController;
+import org.squashtest.tm.web.internal.controller.generic.NodeBuildingSpecification
 import org.squashtest.tm.web.internal.model.builder.DriveNodeBuilder
 import org.squashtest.tm.web.internal.model.builder.RequirementLibraryTreeNodeBuilder
 import org.squashtest.tm.web.internal.model.jstree.JsTreeNode
 
-import spock.lang.Specification
+import javax.inject.Provider
 
-class RequirementLibraryNavigationControllerTest  extends Specification {
-
+class RequirementLibraryNavigationControllerTest  extends NodeBuildingSpecification {
 	RequirementLibraryNavigationController controller = new RequirementLibraryNavigationController()
-
 	RequirementLibraryNavigationService requirementLibraryNavigationService = Mock()
 	Provider driveNodeBuilder = Mock();
 	Provider requirementLibraryTreeNodeBuilder = Mock();
@@ -58,8 +57,7 @@ class RequirementLibraryNavigationControllerTest  extends Specification {
 		}
 
 		driveNodeBuilder.get() >> new DriveNodeBuilder(Mock(PermissionEvaluationService), null)
-		requirementLibraryTreeNodeBuilder.get() >> new RequirementLibraryTreeNodeBuilder(Mock(PermissionEvaluationService))
-
+        requirementLibraryTreeNodeBuilder.get() >> new RequirementLibraryTreeNodeBuilder(permissionEvaluator())
 	}
 
 	def "should add folder to root of library and return folder node model"() {

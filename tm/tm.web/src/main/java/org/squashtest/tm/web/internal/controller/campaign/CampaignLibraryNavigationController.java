@@ -125,7 +125,7 @@ LibraryNavigationController<CampaignLibrary, CampaignFolder, CampaignLibraryNode
 		public boolean hasPermissionOnObject(String permission, Object entity) {
 			Boolean res = perms.get(permission);
 			if (res == null) {
-				res = delegate.hasPermissionOnObject(permission, entity);
+				res = permissionEvaluator.hasPermissionOnObject(permission, entity);
 				perms.put(permission, res);
 
 			}
@@ -135,37 +135,37 @@ LibraryNavigationController<CampaignLibrary, CampaignFolder, CampaignLibraryNode
 
 		@Override
 		public boolean hasRoleOrPermissionOnObject(String role, String permission, Long entityId, String entityClassName) {
-			return delegate.hasRoleOrPermissionOnObject(role, permission, entityId, entityClassName);
+			return permissionEvaluator.hasRoleOrPermissionOnObject(role, permission, entityId, entityClassName);
 		}
 
 		@Override
 		public boolean canRead(Object object) {
-			return delegate.canRead(object);
+			return permissionEvaluator.canRead(object);
 		}
 
 		@Override
 		public boolean hasMoreThanRead(Object object) {
-			return delegate.hasMoreThanRead(object);
+			return permissionEvaluator.hasMoreThanRead(object);
 		}
 
 		@Override
 		public boolean hasRole(String role) {
 			if (hasRole == null) {
-				hasRole = delegate.hasRole(role);
+				hasRole = permissionEvaluator.hasRole(role);
 			}
 			return hasRole;
 		}
 
 		@Override
 		public boolean hasPermissionOnObject(String permission, Long entityId, String entityClassName) {
-			return delegate.hasPermissionOnObject(permission, entityId, entityClassName);
+			return permissionEvaluator.hasPermissionOnObject(permission, entityId, entityClassName);
 		}
 
 		@Override
 		public Map<String, Boolean> hasRoleOrPermissionsOnObject(String role, String[] permissions, Object entity) {
 			Map<String, Boolean> res = hasRolePerms.get(permissions);
 			if (res == null) {
-				res = delegate.hasRoleOrPermissionsOnObject(role, permissions, entity);
+				res = permissionEvaluator.hasRoleOrPermissionsOnObject(role, permissions, entity);
 				hasRolePerms.put(permissions, res);
 			}
 			return res;
@@ -197,7 +197,7 @@ LibraryNavigationController<CampaignLibrary, CampaignFolder, CampaignLibraryNode
 	@Inject
 	private IterationModificationService iterationModificationService;
 	@Inject
-	private PermissionEvaluationService delegate;
+	private PermissionEvaluationService permissionEvaluator;
 
 	@Inject
 	private MilestoneFinderService milestoneFinder;

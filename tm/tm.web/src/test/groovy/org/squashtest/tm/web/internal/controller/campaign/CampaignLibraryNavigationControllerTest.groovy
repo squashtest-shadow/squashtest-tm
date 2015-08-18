@@ -20,18 +20,17 @@
  */
 package org.squashtest.tm.web.internal.controller.campaign;
 
-import static org.junit.Assert.*
-
-import javax.inject.Provider
-
 import org.squashtest.tm.domain.campaign.Iteration
 import org.squashtest.tm.service.campaign.CampaignLibraryNavigationService
 import org.squashtest.tm.service.security.PermissionEvaluationService
+import org.squashtest.tm.web.internal.controller.generic.NodeBuildingSpecification
 import org.squashtest.tm.web.internal.model.builder.CampaignLibraryTreeNodeBuilder
 import org.squashtest.tm.web.internal.model.builder.DriveNodeBuilder
 import org.squashtest.tm.web.internal.model.builder.IterationNodeBuilder
 
-class CampaignLibraryNavigationControllerTest extends spock.lang.Specification {
+import javax.inject.Provider
+
+class CampaignLibraryNavigationControllerTest extends NodeBuildingSpecification {
 	CampaignLibraryNavigationController controller = new CampaignLibraryNavigationController()
 	CampaignLibraryNavigationService service = Mock()
 	Provider driveNodeBuilder = Mock()
@@ -43,10 +42,11 @@ class CampaignLibraryNavigationControllerTest extends spock.lang.Specification {
 		controller.driveNodeBuilder = driveNodeBuilder
 		controller.iterationNodeBuilder = iterationNodeBuilder
 		controller.campaignLibraryTreeNodeBuilder = campaignLibraryTreeNodeBuilder
+        controller.permissionEvaluator = permissionEvaluator()
 
 		driveNodeBuilder.get() >> new DriveNodeBuilder(Mock(PermissionEvaluationService), null)
 		iterationNodeBuilder.get() >> new IterationNodeBuilder(Mock(PermissionEvaluationService))
-		campaignLibraryTreeNodeBuilder.get() >> new CampaignLibraryTreeNodeBuilder(Mock(PermissionEvaluationService))
+        campaignLibraryTreeNodeBuilder.get() >> new CampaignLibraryTreeNodeBuilder(permissionEvaluator())
 	}
 
 	def "should return iteration nodes of campaign"() {
