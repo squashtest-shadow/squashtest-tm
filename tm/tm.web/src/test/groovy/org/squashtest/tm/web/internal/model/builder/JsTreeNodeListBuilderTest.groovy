@@ -18,46 +18,58 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.web.internal.model.builder;
+package org.squashtest.tm.web.internal.model.builder
 
-import org.squashtest.tm.service.security.PermissionEvaluationService;
+import org.squashtest.tm.domain.Identified
+import org.squashtest.tm.web.internal.controller.generic.NodeBuildingSpecification
 import org.squashtest.tm.web.internal.model.jstree.JsTreeNode
 
-import spock.lang.Specification
-
-class JsTreeNodeListBuilderTest extends Specification {
-	def "should build list of tree nodes"() {
-		given:
-		DummyBuilder nodeBuilder = new DummyBuilder(Mock(PermissionEvaluationService))
-		JsTreeNodeListBuilder listBuilder = new JsTreeNodeListBuilder(nodeBuilder)
+class JsTreeNodeListBuilderTest extends NodeBuildingSpecification {
+    def "should build list of tree nodes"() {
+        given:
+        DummyBuilder nodeBuilder = new DummyBuilder(permissionEvaluator())
+        JsTreeNodeListBuilder listBuilder = new JsTreeNodeListBuilder(nodeBuilder)
 
 
-		when:
-		def nodes = listBuilder.setModel(["foo", "bar"]).build()
+        when:
+        Identified m1 = Mock()
+        m1.title >> "foo"
+        Identified m2 = Mock()
+        m1.title >> "bar"
 
+        def nodes = listBuilder.setModel([new Dummy(title: "foo"), new Dummy(title: "bar")]).build()
 
-		then:
-		nodes.collect { it.title } == ["foo", "bar"]
-	}
+        then:
+        nodes.collect { it.title } == ["foo", "bar"]
+    }
 }
 
-class DummyBuilder extends GenericJsTreeNodeBuilder<String, DummyBuilder> {
-	def DummyBuilder(pes) {
-		super(pes)
-	}
+class DummyBuilder extends GenericJsTreeNodeBuilder<Dummy, DummyBuilder> {
+    def DummyBuilder(pes) {
+        super(pes)
+    }
 
-	@Override
-	protected void doBuild(JsTreeNode node, String model) {
-		node.title = model
-	}
+    @Override
+    protected void doBuild(JsTreeNode node, Dummy model) {
+        node.title = model.title
+    }
 
-	/**
-	 * @see org.squashtest.tm.web.internal.model.builder.JsTreeNodeBuilder#doAddChildren(org.squashtest.tm.web.internal.model.jstree.JsTreeNode, java.lang.Object)
-	 */
-	@Override
-	protected void doAddChildren(JsTreeNode node, String model) {
-		// TODO Auto-generated method stub
-		
-	}
+    /**
+     * @see org.squashtest.tm.web.internal.model.builder.JsTreeNodeBuilder#doAddChildren(JsTreeNode, String)
+     */
+    @SuppressWarnings("GroovyDocCheck")
+    @Override
+    protected void doAddChildren(JsTreeNode node, Dummy model) {
+        // TODO Auto-generated method stub
 
+    }
+}
+
+class Dummy implements Identified {
+    String title
+
+    @Override
+    Long getId() {
+        return 1
+    }
 }

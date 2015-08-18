@@ -37,7 +37,14 @@ import spock.lang.Specification
 
 class LibraryTreeNodeBuilderTest extends Specification{
 	PermissionEvaluationService permissionEvaluationService = Mock()
+	Map rights = Mock()
+	boolean hasRights = true
 	DummyLibraryTreeNodeBuilder builder = new DummyLibraryTreeNodeBuilder(permissionEvaluationService)
+
+	def setup() {
+		permissionEvaluationService.hasRoleOrPermissionsOnObject(_, _, _) >> rights
+		rights.get(_) >> { hasRights }
+	}
 
 	def "should set shared attributes of node"() {
 		given:
@@ -65,6 +72,9 @@ class LibraryTreeNodeBuilderTest extends Specification{
 	def "node should not be editable by default"() {
 		given:
 		DummyNode node = new DummyNode(name: "tc", id: 10)
+
+		and:
+		hasRights = false
 
 		when:
 		def res = builder.setNode(node).build()

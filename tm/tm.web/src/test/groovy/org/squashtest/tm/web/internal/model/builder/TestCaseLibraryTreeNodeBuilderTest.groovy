@@ -20,116 +20,113 @@
  */
 package org.squashtest.tm.web.internal.model.builder
 
-import org.apache.commons.collections.MultiMap;
-import org.apache.commons.collections.map.MultiValueMap;
+import org.apache.commons.collections.MultiMap
+import org.apache.commons.collections.map.MultiValueMap
 import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory
 import org.squashtest.tm.domain.testcase.TestCase
 import org.squashtest.tm.domain.testcase.TestCaseFolder
 import org.squashtest.tm.domain.testcase.TestCaseLibraryNode
-import org.squashtest.tm.service.requirement.VerifiedRequirementsManagerService;
-import org.squashtest.tm.service.security.PermissionEvaluationService;
-import org.squashtest.tm.web.internal.controller.testcase.TestCaseFolderModificationController;
-import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
+import org.squashtest.tm.service.requirement.VerifiedRequirementsManagerService
+import org.squashtest.tm.web.internal.controller.generic.NodeBuildingSpecification
+import org.squashtest.tm.web.internal.i18n.InternationalizationHelper
 import org.squashtest.tm.web.internal.model.jstree.JsTreeNode.State
 
-import spock.lang.Specification
+class TestCaseLibraryTreeNodeBuilderTest extends NodeBuildingSpecification {
+    VerifiedRequirementsManagerService verifiedRequirementsManagerService = Mock()
+    InternationalizationHelper internationalizationHelper = Mock()
+    TestCaseLibraryTreeNodeBuilder builder = new TestCaseLibraryTreeNodeBuilder(permissionEvaluator(), verifiedRequirementsManagerService, internationalizationHelper)
 
+    def setup() {
+        internationalizationHelper.internationalize(_, _) >> ""
+        internationalizationHelper.internationalizeYesNo(false, _) >> "non"
+        internationalizationHelper.internationalizeYesNo(true, _) >> "oui"
+        internationalizationHelper.getMessage(_, _, _, _) >> "message"
+    }
 
-class TestCaseLibraryTreeNodeBuilderTest extends Specification {
-	PermissionEvaluationService permissionEvaluationService = Mock()
-	VerifiedRequirementsManagerService verifiedRequirementsManagerService = Mock()
-	InternationalizationHelper internationalizationHelper = Mock()
-	TestCaseLibraryTreeNodeBuilder builder = new TestCaseLibraryTreeNodeBuilder(permissionEvaluationService, verifiedRequirementsManagerService, internationalizationHelper)
-	def setup() {
-		internationalizationHelper.internationalize(_,_)>> ""
-		internationalizationHelper.internationalizeYesNo(false, _)>>"non"
-		internationalizationHelper.internationalizeYesNo(true, _)>>"oui"
-		internationalizationHelper.getMessage(_, _, _, _)>>"message"
-	}
-	def "should build a TestCase tree node"() {
-		given:
-		TestCase node  = new TestCase(name: "tc")
+    def "should build a TestCase tree node"() {
+        given:
+        TestCase node = new TestCase(name: "tc")
 
-		use (ReflectionCategory) {
-			TestCaseLibraryNode.set field: "id", of: node, to: 10L
-		}
+        use(ReflectionCategory) {
+            TestCaseLibraryNode.set field: "id", of: node, to: 10L
+        }
 
-		when:
-		def res = builder.setNode(node).build()
+        when:
+        def res = builder.setNode(node).build()
 
-		then:
-		res.title == node.name
-		res.attr['resId'] == "${node.id}"
-		res.attr['rel'] == "test-case"
-		res.attr['resType'] == "test-cases"
-		res.state == State.leaf.name()
-	}
+        then:
+        res.title == node.name
+        res.attr['resId'] == "${node.id}"
+        res.attr['rel'] == "test-case"
+        res.attr['resType'] == "test-cases"
+        res.state == State.leaf.name()
+    }
 
-	def "should build a TestCaseFolder node"() {
-		given:
-		TestCaseFolder node  = new TestCaseFolder(name: "tc")
+    def "should build a TestCaseFolder node"() {
+        given:
+        TestCaseFolder node = new TestCaseFolder(name: "tc")
 
-		use (ReflectionCategory) {
-			TestCaseLibraryNode.set field: "id", of: node, to: 10L
-		}
+        use(ReflectionCategory) {
+            TestCaseLibraryNode.set field: "id", of: node, to: 10L
+        }
 
-		when:
-		def res = builder.setNode(node).build()
+        when:
+        def res = builder.setNode(node).build()
 
-		then:
-		res.title == node.name
-		res.attr['resId'] == "${node.id}"
-		res.attr['rel'] == "folder"
-		res.attr['resType'] == "test-case-folders"
-		res.state == State.leaf.name()
-	}
-	
-	def "should build a folder with leaf state"(){
-		given :
-			TestCaseFolder node = new TestCaseFolder(name:"folder")
-			
-		when :
-			def res = builder.setNode(node).build()
-		
-		then :
-			res.state == State.leaf.name()
-		
-	}
-	
-	def "should build a folder with closed state"(){
-		given :
-			TestCaseFolder node = new TestCaseFolder(name:"folder")
-			node.addContent(new TestCaseFolder());
-		
-		when :
-			def res = builder.setNode(node).build()
-		
-		then :
-			res.state == State.closed.name()
-		
-	}
-	
-	def "should expand a folder "(){
-		given :
-			TestCaseFolder node = new TestCaseFolder(name:"folder")
-			TestCaseFolder child = new TestCaseFolder(name:"folder child")
-			node.addContent(child);
-			
-			use(ReflectionCategory) {
-				TestCaseLibraryNode.set field: "id", of: node, to: 10L
-				TestCaseLibraryNode.set field: "id", of: child, to: 100L
-			}
-			
-		and: 
-		MultiMap expanded = new MultiValueMap()
-		expanded.put("TestCaseFolder", 10L)
-		
-		when :
-			def res = builder.expand(expanded).setNode(node).build()
-		
-		then :
-			res.state == State.open.name()
-			res.children.size() == 1
-		
-	}
+        then:
+        res.title == node.name
+        res.attr['resId'] == "${node.id}"
+        res.attr['rel'] == "folder"
+        res.attr['resType'] == "test-case-folders"
+        res.state == State.leaf.name()
+    }
+
+    def "should build a folder with leaf state"() {
+        given:
+        TestCaseFolder node = new TestCaseFolder(name: "folder")
+
+        when:
+        def res = builder.setNode(node).build()
+
+        then:
+        res.state == State.leaf.name()
+
+    }
+
+    def "should build a folder with closed state"() {
+        given:
+        TestCaseFolder node = new TestCaseFolder(name: "folder")
+        node.addContent(new TestCaseFolder());
+
+        when:
+        def res = builder.setNode(node).build()
+
+        then:
+        res.state == State.closed.name()
+
+    }
+
+    def "should expand a folder "() {
+        given:
+        TestCaseFolder node = new TestCaseFolder(name: "folder")
+        TestCaseFolder child = new TestCaseFolder(name: "folder child")
+        node.addContent(child);
+
+        use(ReflectionCategory) {
+            TestCaseLibraryNode.set field: "id", of: node, to: 10L
+            TestCaseLibraryNode.set field: "id", of: child, to: 100L
+        }
+
+        and:
+        MultiMap expanded = new MultiValueMap()
+        expanded.put("TestCaseFolder", 10L)
+
+        when:
+        def res = builder.expand(expanded).setNode(node).build()
+
+        then:
+        res.state == State.open.name()
+        res.children.size() == 1
+
+    }
 }

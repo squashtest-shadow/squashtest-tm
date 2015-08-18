@@ -18,9 +18,9 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.web.internal.model.builder;
+package org.squashtest.tm.web.internal.model.builder
 
-import static org.junit.Assert.*
+import org.squashtest.tm.web.internal.controller.generic.NodeBuildingSpecification
 
 import javax.inject.Provider
 
@@ -38,128 +38,136 @@ import org.squashtest.tm.service.security.PermissionEvaluationService
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper
 import org.squashtest.tm.web.internal.model.jstree.JsTreeNode
 import org.squashtest.tm.web.internal.model.jstree.JsTreeNode.State
-
-import spock.lang.Specification
 import spock.lang.Unroll
 
-class DriveNodeBuilderTest extends Specification {
-	PermissionEvaluationService permissionEvaluationService = Mock()
-	VerifiedRequirementsManagerService verifiedRequirementsManagerService = Mock()
-	Provider nodeBuilderPovider = Mock()
-	DriveNodeBuilder builder = new DriveNodeBuilder(permissionEvaluationService, nodeBuilderPovider)
-	InternationalizationHelper internationalizationHelper = Mock()
-	def setup() {
-		internationalizationHelper.internationalize(_,_)>> ""
-		internationalizationHelper.internationalizeYesNo(false, _)>>"non"
-		internationalizationHelper.internationalizeYesNo(true, _)>>"oui"
-		internationalizationHelper.getMessage(_, _, _, _)>>"message"
-		nodeBuilderPovider.get() >> new TestCaseLibraryTreeNodeBuilder(permissionEvaluationService, verifiedRequirementsManagerService, internationalizationHelper)
-	}
-	
-	def "should build root node of test case library"() {
-		given:
-		def library = theTestCaseLibrary(10L).ofProject("foo")
+class DriveNodeBuilderTest extends NodeBuildingSpecification {
+    PermissionEvaluationService permissionEvaluationService = Mock()
+    Map rights = Mock()
+    VerifiedRequirementsManagerService verifiedRequirementsManagerService = Mock()
+    Provider nodeBuilderPovider = Mock()
+    DriveNodeBuilder builder = new DriveNodeBuilder(permissionEvaluationService, nodeBuilderPovider)
+    InternationalizationHelper internationalizationHelper = Mock()
+    Boolean hasRights
 
-		when:
-		JsTreeNode res = builder.setModel(library).build();
+    def setup() {
+        internationalizationHelper.internationalize(_, _) >> ""
+        internationalizationHelper.internationalizeYesNo(false, _) >> "non"
+        internationalizationHelper.internationalizeYesNo(true, _) >> "oui"
+        internationalizationHelper.getMessage(_, _, _, _) >> "message"
+        nodeBuilderPovider.get() >> new TestCaseLibraryTreeNodeBuilder(permissionEvaluationService, verifiedRequirementsManagerService, internationalizationHelper)
 
-		then:
-		res.attr['rel'] == "drive"
-		res.attr['resId'] == "10"
-		res.attr['resType'] == 'test-case-libraries'
-		res.title == "foo"
-		res.state == JsTreeNode.State.leaf.name()
-		res.attr['editable'] == 'false'
-	}
+        permissionEvaluationService.hasRoleOrPermissionsOnObject(_, _, _) >> rights
+        rights.get(_) >> { hasRights }
+        hasRights = true
+    }
 
-	def theTestCaseLibrary(long id) {
-		TestCaseLibrary library = new TestCaseLibrary()
+    def "should build root node of test case library"() {
+        given:
+        def library = theTestCaseLibrary(10L).ofProject("foo")
 
-		use(ReflectionCategory) {
-			TestCaseLibrary.set(field: "id", of:library, to: id)
-		}
+        and:
+        hasRights = false
 
-		return [ofProject: { ofProject library, it}]
-	}
+        when:
+        JsTreeNode res = builder.setModel(library).build();
 
-	def ofProject(TestCaseLibrary library, String name) {
-		Project project = Mock(Project)
-		project.getName() >> name
-		project.getId() >> 10l
-		library.project = project
-		return library
-	}
+        then:
+        res.attr['rel'] == "drive"
+        res.attr['resId'] == "10"
+        res.attr['resType'] == 'test-case-libraries'
+        res.title == "foo"
+        res.state == JsTreeNode.State.leaf.name()
+        res.attr['editable'] == 'false'
+    }
 
-	def "should build editable node"() {
-		given:
-		permissionEvaluationService.hasRoleOrPermissionOnObject (_, _, _) >> true
+    def theTestCaseLibrary(long id) {
+        TestCaseLibrary library = new TestCaseLibrary()
 
-		and:
-		def library = theTestCaseLibrary(10L).ofProject("foo")
+        use(ReflectionCategory) {
+            TestCaseLibrary.set(field: "id", of: library, to: id)
+        }
 
-		when:
-		JsTreeNode res = builder.setModel(library).build();
+        return [ofProject: { ofProject library, it }]
+    }
 
-		then:
-		res.attr['editable'] == 'true'
-	}
+    def ofProject(TestCaseLibrary library, String name) {
+        Project project = Mock(Project)
+        project.getName() >> name
+        project.getId() >> 10l
+        library.project = project
+        return library
+    }
 
-	def "node should reference authorized wizards"() {
-		given:
-		def library = theTestCaseLibrary(10L).ofProject("foo")
-		library.enablePlugin("foo");
-		library.enablePlugin("bar");
-		
-		when:
-		JsTreeNode res = builder.setModel(library).build();
+    def "should build editable node"() {
+        given:
+        permissionEvaluationService.hasRoleOrPermissionOnObject(_, _, _) >> true
 
-		then:
-		res.attr["wizards"].collect { it } as Set ==  ["foo", "bar"] as Set
-	}
-	
-	def "should build an expanded node"() {
-		given:
-		Library library = theTestCaseLibrary(10L).ofProject("foo")
-		TestCase tc = Mock()
-		def visitor
-		tc.accept({ visitor = it }) >> { visitor.visit(tc) }
-		tc.getStatus() >> TestCaseStatus.WORK_IN_PROGRESS
-		tc.getImportance() >> TestCaseImportance.LOW
-		tc.getSteps()>>[]
-		tc.getRequirementVersionCoverages() >> []
-		tc.getId()>>23L
-		library.addContent tc
-		
-		and:
-		MultiMap expanded = new MultiValueMap()
-		expanded.put("TestCaseLibrary", 10L);
-		
-		when:
-		JsTreeNode res = builder.expand(expanded).setModel(library).build();
+        and:
+        def library = theTestCaseLibrary(10L).ofProject("foo")
 
-		then: 
-		res.state == State.open.name()
-		res.children.size() == 1
+        when:
+        JsTreeNode res = builder.setModel(library).build();
 
-	}
-	
-	@Unroll
-	def "should candidate [#expandedType, #expandedId] be expanded : #expected"() {
-		given:
-		Library library = theTestCaseLibrary(10L).ofProject("foo")
-		
-		and:
-		MultiMap expanded = new MultiValueMap()
-		expanded.put(expandedType, expandedId);
-		
-		expect:
-		builder.expand(expanded).setModel(library).shouldExpandModel() == expected
-		
-		where: 
-		expandedType      | expandedId | expected
-		"TestCaseLibrary" | 10L        | true
-		"TestCaseLibrary" | 20L        | false
-		"Whatever"        | 10L        | false
-		
-	}
+        then:
+        res.attr['editable'] == 'true'
+    }
+
+    def "node should reference authorized wizards"() {
+        given:
+        def library = theTestCaseLibrary(10L).ofProject("foo")
+        library.enablePlugin("foo");
+        library.enablePlugin("bar");
+
+        when:
+        JsTreeNode res = builder.setModel(library).build();
+
+        then:
+        res.attr["wizards"].collect { it } as Set == ["foo", "bar"] as Set
+    }
+
+    def "should build an expanded node"() {
+        given:
+        Library library = theTestCaseLibrary(10L).ofProject("foo")
+        TestCase tc = Mock()
+        def visitor
+        tc.accept({ visitor = it }) >> { visitor.visit(tc) }
+        tc.getStatus() >> TestCaseStatus.WORK_IN_PROGRESS
+        tc.getImportance() >> TestCaseImportance.LOW
+        tc.getSteps() >> []
+        tc.getRequirementVersionCoverages() >> []
+        tc.getId() >> 23L
+        library.addContent tc
+
+        and:
+        MultiMap expanded = new MultiValueMap()
+        expanded.put("TestCaseLibrary", 10L);
+
+        when:
+        JsTreeNode res = builder.expand(expanded).setModel(library).build();
+
+        then:
+        res.state == State.open.name()
+        res.children.size() == 1
+
+    }
+
+    @Unroll
+    def "should candidate [#expandedType, #expandedId] be expanded : #expected"() {
+        given:
+        Library library = theTestCaseLibrary(10L).ofProject("foo")
+
+        and:
+        MultiMap expanded = new MultiValueMap()
+        expanded.put(expandedType, expandedId);
+
+        expect:
+        builder.expand(expanded).setModel(library).shouldExpandModel() == expected
+
+        where:
+        expandedType      | expandedId | expected
+        "TestCaseLibrary" | 10L        | true
+        "TestCaseLibrary" | 20L        | false
+        "Whatever"        | 10L        | false
+
+    }
 }

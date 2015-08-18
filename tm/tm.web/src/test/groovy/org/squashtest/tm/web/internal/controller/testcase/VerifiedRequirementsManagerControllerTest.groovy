@@ -20,8 +20,6 @@
  */
 package org.squashtest.tm.web.internal.controller.testcase
 
-import javax.inject.Provider
-
 import org.springframework.ui.ExtendedModelMap
 import org.springframework.ui.Model
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder
@@ -36,171 +34,171 @@ import org.squashtest.tm.service.requirement.VerifiedRequirementsManagerService
 import org.squashtest.tm.service.security.PermissionEvaluationService
 import org.squashtest.tm.service.testcase.TestCaseModificationService
 import org.squashtest.tm.service.testcase.TestStepModificationService
+import org.squashtest.tm.web.internal.controller.generic.NodeBuildingSpecification
 import org.squashtest.tm.web.internal.controller.testcase.requirement.VerifiedRequirementsManagerController
 import org.squashtest.tm.web.internal.model.builder.DriveNodeBuilder
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters
 
-import spock.lang.Specification
+import javax.inject.Provider
 
+class VerifiedRequirementsManagerControllerTest extends NodeBuildingSpecification {
+    VerifiedRequirementsManagerController controller = new VerifiedRequirementsManagerController()
+    VerifiedRequirementsManagerService verifiedRequirementsManagerService = Mock()
+    Provider driveNodeBuilder = Mock()
+    TestCaseModificationService testCaseFinder = Mock()
+    RequirementLibraryFinderService requirementLibraryFinder = Mock()
+    TestStepModificationService testStepService = Mock()
+    PermissionEvaluationService permissionService = permissionEvaluator()
 
-class VerifiedRequirementsManagerControllerTest extends Specification{
-	VerifiedRequirementsManagerController controller = new VerifiedRequirementsManagerController()
-	VerifiedRequirementsManagerService verifiedRequirementsManagerService = Mock()
-	Provider driveNodeBuilder = Mock()
-	TestCaseModificationService testCaseFinder = Mock()
-	RequirementLibraryFinderService requirementLibraryFinder = Mock()
-	TestStepModificationService testStepService = Mock()
-	PermissionEvaluationService permissionService = Mock();
-	
-	def setup() {
-		controller.verifiedRequirementsManagerService = verifiedRequirementsManagerService
-		controller.driveNodeBuilder = driveNodeBuilder
-		controller.testCaseModificationService = testCaseFinder
-		controller.requirementLibraryFinder = requirementLibraryFinder
-		controller.testStepService = testStepService;
-		driveNodeBuilder.get() >> new DriveNodeBuilder(Mock(PermissionEvaluationService), null)
-		controller.permissionService = permissionService;
-		permissionService.hasRoleOrPermissionOnObject(_, _, _) >> true
-	}
+    def setup() {
+        controller.verifiedRequirementsManagerService = verifiedRequirementsManagerService
+        controller.driveNodeBuilder = driveNodeBuilder
+        controller.testCaseModificationService = testCaseFinder
+        controller.requirementLibraryFinder = requirementLibraryFinder
+        controller.testStepService = testStepService;
+        driveNodeBuilder.get() >> new DriveNodeBuilder(permissionEvaluator(), null)
+        controller.permissionService = permissionService;
+        permissionService.hasRoleOrPermissionOnObject(_, _, _) >> true
+    }
 
-	def "should show test case manager page"() {
-		given:
-		requirementLibraryFinder.findLinkableRequirementLibraries() >> []
+    def "should show test case manager page"() {
+        given:
+        requirementLibraryFinder.findLinkableRequirementLibraries() >> []
 
-		when:
-		def res = controller.showTestCaseManager(20L, Mock(Model))
+        when:
+        def res = controller.showTestCaseManager(20L, Mock(Model))
 
-		then:
-		res == "page/test-cases/show-verified-requirements-manager"
-	}
+        then:
+        res == "page/test-cases/show-verified-requirements-manager"
+    }
 
-	def "should show test step manager page"() {
-		given:
-		requirementLibraryFinder.findLinkableRequirementLibraries() >> []
+    def "should show test step manager page"() {
+        given:
+        requirementLibraryFinder.findLinkableRequirementLibraries() >> []
 
-		when:
-		def res = controller.showTestStepManager(20L, Mock(Model))
+        when:
+        def res = controller.showTestStepManager(20L, Mock(Model))
 
-		then:
-		res == "page/test-cases/show-step-verified-requirements-manager"
-	}
+        then:
+        res == "page/test-cases/show-step-verified-requirements-manager"
+    }
 
-	def "should populate manager page with test case and requirement libraries model"() {
-		given:
-		TestCase testCase = Mock()
-		testCaseFinder.findById(20L) >> testCase
+    def "should populate manager page with test case and requirement libraries model"() {
+        given:
+        TestCase testCase = Mock()
+        testCaseFinder.findById(20L) >> testCase
 
-		and:
-		RequirementLibrary lib = Mock()
-		lib.getClassSimpleName() >> "RequirementLibrary"
-		Project project = Mock()
-		project.getId() >> 10l
-		lib.project >> project
-		requirementLibraryFinder.findLinkableRequirementLibraries() >> [lib]
+        and:
+        RequirementLibrary lib = Mock()
+        lib.getClassSimpleName() >> "RequirementLibrary"
+        Project project = Mock()
+        project.getId() >> 10l
+        lib.project >> project
+        requirementLibraryFinder.findLinkableRequirementLibraries() >> [lib]
 
-		and:
-		def model = new ExtendedModelMap()
+        and:
+        def model = new ExtendedModelMap()
 
-		when:
-		def res = controller.showTestCaseManager(20L, model, [] as String[])
+        when:
+        def res = controller.showTestCaseManager(20L, model, [] as String[])
 
-		then:
-		model['testCase'] == testCase
-		model['linkableLibrariesModel'] != null
-	}
+        then:
+        model['testCase'] == testCase
+        model['linkableLibrariesModel'] != null
+    }
 
-	def "should populate manager page with test step and requirement libraries model"() {
-		given:
-		TestStep testStep = Mock()
-		testStepService.findById(20L) >> testStep
+    def "should populate manager page with test step and requirement libraries model"() {
+        given:
+        TestStep testStep = Mock()
+        testStepService.findById(20L) >> testStep
 
-		and:
-		RequirementLibrary lib = Mock()
-		lib.getClassSimpleName() >> "RequirementLibrary"
-		Project project = Mock()
-		project.getId() >> 10l
-		lib.project >> project
-		requirementLibraryFinder.findLinkableRequirementLibraries() >> [lib]
+        and:
+        RequirementLibrary lib = Mock()
+        lib.getClassSimpleName() >> "RequirementLibrary"
+        Project project = Mock()
+        project.getId() >> 10l
+        lib.project >> project
+        requirementLibraryFinder.findLinkableRequirementLibraries() >> [lib]
 
-		and:
-		def model = new ExtendedModelMap()
+        and:
+        def model = new ExtendedModelMap()
 
-		when:
-		def res = controller.showTestStepManager(20L, model, [] as String[])
+        when:
+        def res = controller.showTestStepManager(20L, model, [] as String[])
 
-		then:
-		model['testStep'] == testStep
-		model['linkableLibrariesModel'] != null
-	}
+        then:
+        model['testStep'] == testStep
+        model['linkableLibrariesModel'] != null
+    }
 
-	def "should add requirements to verified requirements to test case"() {
-		when:
-		controller.addVerifiedRequirementsToTestCase([5, 15], 10)
+    def "should add requirements to verified requirements to test case"() {
+        when:
+        controller.addVerifiedRequirementsToTestCase([5, 15], 10)
 
-		then:
-		1 * verifiedRequirementsManagerService.addVerifiedRequirementsToTestCase([5, 15], 10) >> []
-	}
+        then:
+        1 * verifiedRequirementsManagerService.addVerifiedRequirementsToTestCase([5, 15], 10) >> []
+    }
 
-	def "should add requirements to verified requirements of test step"() {
-		when:
-		controller.addVerifiedRequirementsToTestStep([5, 15], 10)
+    def "should add requirements to verified requirements of test step"() {
+        when:
+        controller.addVerifiedRequirementsToTestStep([5, 15], 10)
 
-		then:
-		1 * verifiedRequirementsManagerService.addVerifiedRequirementsToTestStep([5, 15], 10) >> []
-	}
+        then:
+        1 * verifiedRequirementsManagerService.addVerifiedRequirementsToTestStep([5, 15], 10) >> []
+    }
 
-	def "should add requirements to verified requirement of test step"() {
-		when:
-		controller.addVerifiedRequirementsToTestStep([5L], 10L)
+    def "should add requirements to verified requirement of test step"() {
+        when:
+        controller.addVerifiedRequirementsToTestStep([5L], 10L)
 
-		then:
-		1 * verifiedRequirementsManagerService.addVerifiedRequirementsToTestStep([5L], 10L) >> []
-	}
+        then:
+        1 * verifiedRequirementsManagerService.addVerifiedRequirementsToTestStep([5L], 10L) >> []
+    }
 
-	def "should remove requirements from verified requirements of test case"() {
-		when:
-		controller.removeVerifiedRequirementVersionsFromTestCase([5, 15], 10)
+    def "should remove requirements from verified requirements of test case"() {
+        when:
+        controller.removeVerifiedRequirementVersionsFromTestCase([5, 15], 10)
 
-		then:
-		1 * verifiedRequirementsManagerService.removeVerifiedRequirementVersionsFromTestCase([5, 15], 10)
-	}
+        then:
+        1 * verifiedRequirementsManagerService.removeVerifiedRequirementVersionsFromTestCase([5, 15], 10)
+    }
 
-	def "should remove requirements from verified requirements of test step"() {
-		when:
-		controller.removeVerifiedRequirementVersionsFromTestStep([5, 15], 10)
+    def "should remove requirements from verified requirements of test step"() {
+        when:
+        controller.removeVerifiedRequirementVersionsFromTestStep([5, 15], 10)
 
-		then:
-		1 * verifiedRequirementsManagerService.removeVerifiedRequirementVersionsFromTestStep([5, 15], 10)
-	}
+        then:
+        1 * verifiedRequirementsManagerService.removeVerifiedRequirementVersionsFromTestStep([5, 15], 10)
+    }
 
-	def "should return rapport of requirements which could not be added"() {
-		given:
-		Requirement req = Mock()
-		NoVerifiableRequirementVersionException ex = new NoVerifiableRequirementVersionException(req)
-		verifiedRequirementsManagerService.addVerifiedRequirementsToTestCase([5, 15], 10) >> [ex]
+    def "should return rapport of requirements which could not be added"() {
+        given:
+        Requirement req = Mock()
+        NoVerifiableRequirementVersionException ex = new NoVerifiableRequirementVersionException(req)
+        verifiedRequirementsManagerService.addVerifiedRequirementsToTestCase([5, 15], 10) >> [ex]
 
-		when:
-		def res = controller.addVerifiedRequirementsToTestCase([5, 15], 10)
+        when:
+        def res = controller.addVerifiedRequirementsToTestCase([5, 15], 10)
 
-		then:
-		res.noVerifiableVersionRejections
-	}
+        then:
+        res.noVerifiableVersionRejections
+    }
 
-	def "should build table model for verified requirements"() {
-		given:
-		DataTableDrawParameters request = new DataTableDrawParameters(sEcho: "echo", iDisplayStart: 0, iDisplayLength: 100)
+    def "should build table model for verified requirements"() {
+        given:
+        DataTableDrawParameters request = new DataTableDrawParameters(sEcho: "echo", iDisplayStart: 0, iDisplayLength: 100)
 
-		and:
-		PagedCollectionHolder holder = Mock()
-		holder.pagedItems >> []
-		verifiedRequirementsManagerService.findAllVerifiedRequirementsByTestCaseId(10, _) >> holder
+        and:
+        PagedCollectionHolder holder = Mock()
+        holder.pagedItems >> []
+        verifiedRequirementsManagerService.findAllVerifiedRequirementsByTestCaseId(10, _) >> holder
 
-		when:
-		def res = controller.getTestCaseWithCallStepsVerifiedRequirementsTableModel(10, request, Locale.getDefault())
+        when:
+        def res = controller.getTestCaseWithCallStepsVerifiedRequirementsTableModel(10, request, Locale.getDefault())
 
-		then:
-		res.sEcho == "echo"
-		res.iTotalDisplayRecords == 0
-		res.iTotalRecords == 0
-	}
+        then:
+        res.sEcho == "echo"
+        res.iTotalDisplayRecords == 0
+        res.iTotalRecords == 0
+    }
 }

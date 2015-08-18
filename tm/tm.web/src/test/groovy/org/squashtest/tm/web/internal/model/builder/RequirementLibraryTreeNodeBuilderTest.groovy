@@ -27,14 +27,15 @@ import org.squashtest.tm.domain.requirement.Requirement
 import org.squashtest.tm.domain.requirement.RequirementFolder
 import org.squashtest.tm.domain.requirement.RequirementLibraryNode
 import org.squashtest.tm.domain.requirement.RequirementVersion
-import org.squashtest.tm.service.security.PermissionEvaluationService;
+import org.squashtest.tm.service.security.PermissionEvaluationService
+import org.squashtest.tm.web.internal.controller.generic.NodeBuildingSpecification;
 import org.squashtest.tm.web.internal.model.jstree.JsTreeNode.State
 
 import spock.lang.Specification
 
 
-class RequirementLibraryTreeNodeBuilderTest extends Specification {
-	RequirementLibraryTreeNodeBuilder builder = new RequirementLibraryTreeNodeBuilder(Mock(PermissionEvaluationService))
+class RequirementLibraryTreeNodeBuilderTest extends NodeBuildingSpecification {
+	RequirementLibraryTreeNodeBuilder builder = new RequirementLibraryTreeNodeBuilder(permissionEvaluator())
 
 	def "should build a RequirementFolder node"() {
 		given:

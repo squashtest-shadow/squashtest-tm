@@ -20,122 +20,117 @@
  */
 package org.squashtest.tm.web.internal.controller.requirement
 
-import javax.inject.Provider
-
 import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory
-import org.squashtest.tm.domain.requirement.NewRequirementVersionDto
-import org.squashtest.tm.domain.requirement.Requirement
-import org.squashtest.tm.domain.requirement.RequirementFolder
-import org.squashtest.tm.domain.requirement.RequirementLibraryNode
-import org.squashtest.tm.domain.requirement.RequirementVersion
+import org.squashtest.tm.domain.requirement.*
 import org.squashtest.tm.service.requirement.RequirementLibraryNavigationService
-import org.squashtest.tm.service.security.PermissionEvaluationService;
+import org.squashtest.tm.service.security.PermissionEvaluationService
+import org.squashtest.tm.web.internal.controller.generic.NodeBuildingSpecification
 import org.squashtest.tm.web.internal.model.builder.DriveNodeBuilder
 import org.squashtest.tm.web.internal.model.builder.RequirementLibraryTreeNodeBuilder
 import org.squashtest.tm.web.internal.model.jstree.JsTreeNode
 
-import spock.lang.Specification
+import javax.inject.Provider
 
-class RequirementLibraryNavigationControllerTest  extends Specification {
-	RequirementLibraryNavigationController controller = new RequirementLibraryNavigationController()
-	RequirementLibraryNavigationService requirementLibraryNavigationService = Mock()
-	Provider driveNodeBuilder = Mock();
-	Provider requirementLibraryTreeNodeBuilder = Mock();
+class RequirementLibraryNavigationControllerTest extends NodeBuildingSpecification {
+    RequirementLibraryNavigationController controller = new RequirementLibraryNavigationController()
+    RequirementLibraryNavigationService requirementLibraryNavigationService = Mock()
+    Provider driveNodeBuilder = Mock();
+    Provider requirementLibraryTreeNodeBuilder = Mock();
 
-	def setup() {
-		controller.requirementLibraryNavigationService = requirementLibraryNavigationService
-		controller.driveNodeBuilder = driveNodeBuilder
-		controller.requirementLibraryTreeNodeBuilder = requirementLibraryTreeNodeBuilder
+    def setup() {
+        controller.requirementLibraryNavigationService = requirementLibraryNavigationService
+        controller.driveNodeBuilder = driveNodeBuilder
+        controller.requirementLibraryTreeNodeBuilder = requirementLibraryTreeNodeBuilder
 
-		driveNodeBuilder.get() >> new DriveNodeBuilder(Mock(PermissionEvaluationService), null)
-		requirementLibraryTreeNodeBuilder.get() >> new RequirementLibraryTreeNodeBuilder(Mock(PermissionEvaluationService))
-	}
+        driveNodeBuilder.get() >> new DriveNodeBuilder(Mock(PermissionEvaluationService), null)
+        requirementLibraryTreeNodeBuilder.get() >> new RequirementLibraryTreeNodeBuilder(permissionEvaluator())
+    }
 
-	def "should add folder to root of library and return folder node model"() {
-		given:
-		RequirementFolder folder = new RequirementFolder(name: "new folder") // we need the real thing because of visitor pattern
-		use (ReflectionCategory) {
-			RequirementLibraryNode.set field: "id", of: folder, to: 100L
-		}
+    def "should add folder to root of library and return folder node model"() {
+        given:
+        RequirementFolder folder = new RequirementFolder(name: "new folder") // we need the real thing because of visitor pattern
+        use(ReflectionCategory) {
+            RequirementLibraryNode.set field: "id", of: folder, to: 100L
+        }
 
-		when:
-		JsTreeNode res = controller.addNewFolderToLibraryRootContent(10, folder)
+        when:
+        JsTreeNode res = controller.addNewFolderToLibraryRootContent(10, folder)
 
-		then:
-		1 * requirementLibraryNavigationService.addFolderToLibrary(10, folder)
-		res.title == "new folder"
-		res.attr['resId'] == "100"
-		res.attr['rel'] == "folder"
-	}
+        then:
+        1 * requirementLibraryNavigationService.addFolderToLibrary(10, folder)
+        res.title == "new folder"
+        res.attr['resId'] == "100"
+        res.attr['rel'] == "folder"
+    }
 
-	def "should return root nodes of library"() {
-		given:
-		RequirementFolder rootFolder = Mock()
-		rootFolder.name >> "root folder"
-		rootFolder.id >> 5
+    def "should return root nodes of library"() {
+        given:
+        RequirementFolder rootFolder = Mock()
+        rootFolder.name >> "root folder"
+        rootFolder.id >> 5
 
-		requirementLibraryNavigationService.findLibraryRootContent(10) >> [rootFolder]
+        requirementLibraryNavigationService.findLibraryRootContent(10) >> [rootFolder]
 
-		when:
-		def res = controller.getRootContentTreeModel(10)
+        when:
+        def res = controller.getRootContentTreeModel(10)
 
-		then:
-		res.size() == 1
-		res[0].title == rootFolder.name
-		res[0].attr['resId'] == "${rootFolder.id}"
-	}
+        then:
+        res.size() == 1
+        res[0].title == rootFolder.name
+        res[0].attr['resId'] == "${rootFolder.id}"
+    }
 
-	def "should add requirement to root of library and return requirement node model"() {
-		given:
-		NewRequirementVersionDto firstVersion = new NewRequirementVersionDto(name: "new req")
-		Requirement req = new Requirement(new RequirementVersion(name: "new req"))
-		use (ReflectionCategory) {
-			RequirementLibraryNode.set field: "id", of: req, to: 100L
-		}
+    def "should add requirement to root of library and return requirement node model"() {
+        given:
+        NewRequirementVersionDto firstVersion = new NewRequirementVersionDto(name: "new req")
+        Requirement req = new Requirement(new RequirementVersion(name: "new req"))
+        use(ReflectionCategory) {
+            RequirementLibraryNode.set field: "id", of: req, to: 100L
+        }
 
-		when:
-		JsTreeNode res = controller.addNewRequirementToLibraryRootContent(100, firstVersion)
+        when:
+        JsTreeNode res = controller.addNewRequirementToLibraryRootContent(100, firstVersion)
 
-		then:
-		1 * requirementLibraryNavigationService.addRequirementToRequirementLibrary(100, firstVersion) >> req
-		res.title == "new req"
-		res.attr['resId'] == "100"
-		res.attr['rel'] == "requirement"
-	}
+        then:
+        1 * requirementLibraryNavigationService.addRequirementToRequirementLibrary(100, firstVersion) >> req
+        res.title == "new req"
+        res.attr['resId'] == "100"
+        res.attr['rel'] == "requirement"
+    }
 
-	def "should return content nodes of folder"() {
-		given:
-		RequirementFolder content = Mock()
-		content.name >> "content"
-		content.id >> 5
+    def "should return content nodes of folder"() {
+        given:
+        RequirementFolder content = Mock()
+        content.name >> "content"
+        content.id >> 5
 
-		requirementLibraryNavigationService.findFolderContent(10) >> [content]
+        requirementLibraryNavigationService.findFolderContent(10) >> [content]
 
-		when:
-		def res = controller.getFolderContentTreeModel(10)
+        when:
+        def res = controller.getFolderContentTreeModel(10)
 
-		then:
-		res.size() == 1
-		res[0].title == content.name
-		res[0].attr['resId'] == "${content.id}"
-	}
+        then:
+        res.size() == 1
+        res[0].title == content.name
+        res[0].attr['resId'] == "${content.id}"
+    }
 
-	def "should add folder to folder content and return folder node model"() {
-		given:
-		RequirementFolder folder = new RequirementFolder(name: "new folder") // we need the real thing because of visitor pattern
-		use (ReflectionCategory) {
-			RequirementLibraryNode.set field: "id", of: folder, to: 100L
-		}
+    def "should add folder to folder content and return folder node model"() {
+        given:
+        RequirementFolder folder = new RequirementFolder(name: "new folder") // we need the real thing because of visitor pattern
+        use(ReflectionCategory) {
+            RequirementLibraryNode.set field: "id", of: folder, to: 100L
+        }
 
-		when:
-		JsTreeNode res = controller.addNewFolderToFolderContent(100, folder)
+        when:
+        JsTreeNode res = controller.addNewFolderToFolderContent(100, folder)
 
-		then:
-		1 * requirementLibraryNavigationService.addFolderToFolder(100, folder)
-		res.title == "new folder"
-		res.attr['resId'] == "100"
-		res.attr['rel'] == "folder"
-	}
+        then:
+        1 * requirementLibraryNavigationService.addFolderToFolder(100, folder)
+        res.title == "new folder"
+        res.attr['resId'] == "100"
+        res.attr['rel'] == "folder"
+    }
 
-	
+
 }

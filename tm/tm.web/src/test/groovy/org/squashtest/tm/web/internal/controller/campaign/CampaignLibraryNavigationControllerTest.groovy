@@ -18,46 +18,46 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.web.internal.controller.campaign;
-
-import static org.junit.Assert.*
-
-import javax.inject.Provider
+package org.squashtest.tm.web.internal.controller.campaign
 
 import org.squashtest.tm.domain.campaign.Iteration
 import org.squashtest.tm.service.campaign.CampaignLibraryNavigationService
 import org.squashtest.tm.service.security.PermissionEvaluationService
+import org.squashtest.tm.web.internal.controller.generic.NodeBuildingSpecification
 import org.squashtest.tm.web.internal.model.builder.CampaignLibraryTreeNodeBuilder
 import org.squashtest.tm.web.internal.model.builder.DriveNodeBuilder
 import org.squashtest.tm.web.internal.model.builder.IterationNodeBuilder
 
-class CampaignLibraryNavigationControllerTest extends spock.lang.Specification {
-	CampaignLibraryNavigationController controller = new CampaignLibraryNavigationController()
-	CampaignLibraryNavigationService service = Mock()
-	Provider driveNodeBuilder = Mock()
-	Provider iterationNodeBuilder = Mock()
-	Provider campaignLibraryTreeNodeBuilder = Mock()
+import javax.inject.Provider
 
-	def setup() {
-		controller.campaignLibraryNavigationService = service;
-		controller.driveNodeBuilder = driveNodeBuilder
-		controller.iterationNodeBuilder = iterationNodeBuilder
-		controller.campaignLibraryTreeNodeBuilder = campaignLibraryTreeNodeBuilder
+class CampaignLibraryNavigationControllerTest extends NodeBuildingSpecification {
+    CampaignLibraryNavigationController controller = new CampaignLibraryNavigationController()
+    CampaignLibraryNavigationService service = Mock()
+    Provider driveNodeBuilder = Mock()
+    Provider iterationNodeBuilder = Mock()
+    Provider campaignLibraryTreeNodeBuilder = Mock()
 
-		driveNodeBuilder.get() >> new DriveNodeBuilder(Mock(PermissionEvaluationService), null)
-		iterationNodeBuilder.get() >> new IterationNodeBuilder(Mock(PermissionEvaluationService))
-		campaignLibraryTreeNodeBuilder.get() >> new CampaignLibraryTreeNodeBuilder(Mock(PermissionEvaluationService))
-	}
+    def setup() {
+        controller.campaignLibraryNavigationService = service;
+        controller.driveNodeBuilder = driveNodeBuilder
+        controller.iterationNodeBuilder = iterationNodeBuilder
+        controller.campaignLibraryTreeNodeBuilder = campaignLibraryTreeNodeBuilder
+        controller.permissionEvaluator = permissionEvaluator()
 
-	def "should return iteration nodes of campaign"() {
-		given:
-		Iteration iter = Mock()
-		service.findIterationsByCampaignId(10) >> [iter]
+        driveNodeBuilder.get() >> new DriveNodeBuilder(Mock(PermissionEvaluationService), null)
+        iterationNodeBuilder.get() >> new IterationNodeBuilder(Mock(PermissionEvaluationService))
+        campaignLibraryTreeNodeBuilder.get() >> new CampaignLibraryTreeNodeBuilder(permissionEvaluator())
+    }
 
-		when:
-		def res = controller.getCampaignIterationsTreeModel(10)
+    def "should return iteration nodes of campaign"() {
+        given:
+        Iteration iter = Mock()
+        service.findIterationsByCampaignId(10) >> [iter]
 
-		then:
-		res.size() == 1
-	}
+        when:
+        def res = controller.getCampaignIterationsTreeModel(10)
+
+        then:
+        res.size() == 1
+    }
 }
