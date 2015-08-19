@@ -120,8 +120,6 @@ class RequirementVersionExcelBatchImporterIT extends RequirementImportCustomDbun
 		
 		ImportLog summary = importFile("import/requirements/requirement-hierarchy.xls")
 		summary.recompute()
-		def versions = findAll("RequirementVersion");
-		def requirements = findAll("Requirement");
 		
 		then:
 		summary.requirementVersionSuccesses == 19
@@ -259,6 +257,23 @@ class RequirementVersionExcelBatchImporterIT extends RequirementImportCustomDbun
 		"/Projet1/Exigence"		|	5			 ||	RequirementCriticality.MAJOR		|RequirementStatus.APPROVED
 		"/Projet1/Exigence"		|	6			 ||	RequirementCriticality.MAJOR		|RequirementStatus.OBSOLETE
 		"/Projet1/Exigence"		|	7			 ||	RequirementCriticality.MAJOR		|RequirementStatus.WORK_IN_PROGRESS
+	}
+	
+	@DataSet("RequirementExcelBatchImportIT.should import requirement.xml")
+	def "should import requirement with inconsistent createdby"(){
+		given:
+
+		when:
+		ImportLog summary = importFile("import/requirements/requirement_test_created_by.xls")
+		summary.recompute()
+		def errors = summary.findAllFor(EntityType.REQUIREMENT_VERSION);
+
+		then:
+		summary.requirementVersionSuccesses == 1
+		summary.requirementVersionWarnings == 1
+		summary.requirementVersionFailures == 0
+		errors*.i18nError == [null,Messages.ERROR_REQ_USER_NOT_FOUND]
+
 	}
 	
 	@DataSet("RequirementExcelBatchImportIT.should import requirement.xml")

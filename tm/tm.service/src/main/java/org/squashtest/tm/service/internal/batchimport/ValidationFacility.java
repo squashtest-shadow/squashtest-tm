@@ -48,6 +48,7 @@ import org.squashtest.tm.domain.testcase.CallTestStep;
 import org.squashtest.tm.domain.testcase.Parameter;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.users.User;
+import org.squashtest.tm.service.importer.EntityType;
 import org.squashtest.tm.service.importer.ImportMode;
 import org.squashtest.tm.service.importer.ImportStatus;
 import org.squashtest.tm.service.importer.LogEntry;
@@ -308,7 +309,7 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 			}
 		}
 	}
-
+	
 	/**
 	 * Will replace {@code mixin.createdBy} and {@code mixin.createdOn} if the
 	 * values are invalid :
@@ -319,14 +320,14 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 	 *
 	 * @param target
 	 *
-	 * @param testCase
+	 * @param auditable
 	 * @param create
 	 * @return a list of logEntries
 	 */
-	private List<LogEntry> fixMetadatas(Target target, AuditableMixin testCase, ImportMode importMode) {
+	private List<LogEntry> fixMetadatas(Target target, AuditableMixin auditable, ImportMode importMode, EntityType type) {
 		// init vars
 		List<LogEntry> logEntries = new ArrayList<LogEntry>();
-		String login = testCase.getCreatedBy();
+		String login = auditable.getCreatedBy();
 		boolean fixUser = false;
 		if (StringUtils.isBlank(login)) {
 			// no value for created by
@@ -335,6 +336,7 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 			User user = userDao.findUserByLogin(login);
 			if (user == null || !user.getActive()) {
 				// user not found or not active
+				String warningMessage = null;
 				String impactMessage = null;
 				switch (importMode) {
 				case CREATE:
@@ -347,18 +349,26 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 					impactMessage = Messages.IMPACT_NO_CHANGE;
 					break;
 				}
-				LogEntry logEntry = new LogEntry(target, ImportStatus.WARNING, Messages.ERROR_TC_USER_NOT_FOUND,
+				switch (type) {
+				case REQUIREMENT_VERSION:
+					warningMessage = Messages.ERROR_REQ_USER_NOT_FOUND;
+					break;
+				case TEST_CASE:
+					warningMessage = Messages.ERROR_TC_USER_NOT_FOUND;
+					break;
+				}
+				LogEntry logEntry = new LogEntry(target, ImportStatus.WARNING,warningMessage,
 						impactMessage);
 				logEntries.add(logEntry);
 				fixUser = true;
 			}
 		}
 		if (fixUser) {
-			testCase.setCreatedBy(userAccountService.findCurrentUser().getLogin());
+			auditable.setCreatedBy(userAccountService.findCurrentUser().getLogin());
 		}
 
-		if (testCase.getCreatedOn() == null) {
-			testCase.setCreatedOn(new Date());
+		if (auditable.getCreatedOn() == null) {
+			auditable.setCreatedOn(new Date());
 		}
 		return logEntries;
 	}
@@ -846,7 +856,7 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 		creationStrategy.validateMilestones(instr, logs);
 
 		// 3-5 : fix test case metadatas
-		List<LogEntry> logEntries = fixMetadatas(target, (AuditableMixin) testCase, ImportMode.CREATE);
+		List<LogEntry> logEntries = fixMetadatas(target, (AuditableMixin) testCase, ImportMode.CREATE,EntityType.TEST_CASE);
 		logs.addEntries(logEntries);
 		return logs;
 
@@ -900,7 +910,7 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 
 			// 3-4 : check audit datas
 			// backup the audit log
-			List<LogEntry> logEntries = fixMetadatas(target, (AuditableMixin) testCase, ImportMode.UPDATE);
+			List<LogEntry> logEntries = fixMetadatas(target, (AuditableMixin) testCase, ImportMode.UPDATE, EntityType.TEST_CASE);
 			logs.addEntries(logEntries);
 
 			updateStrategy.validateMilestones(instr, logs);
@@ -956,7 +966,7 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 		checkMilestonesAlreadyUsedInRequirement(instr, logs);
 
 		// 8 - Fix createdOn and createdBy
-		fixMetadatas(reqTarget, (AuditableMixin) reqVersion, ImportMode.CREATE);
+		logs.addEntries(fixMetadatas(target, (AuditableMixin) reqVersion, ImportMode.CREATE,EntityType.REQUIREMENT_VERSION));
 
 		// 9 - Now update model if the requirement version has passed all check
 		if (!logs.hasCriticalErrors()) {
@@ -1047,7 +1057,7 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 
 		checkMilestonesAlreadyUsedInRequirement(instr, logs);
 
-		fixMetadatas(reqTarget, (AuditableMixin) reqVersion, ImportMode.UPDATE);
+		fixMetadatas(reqTarget, (AuditableMixin) reqVersion, ImportMode.UPDATE, EntityType.REQUIREMENT_VERSION);
 
 		if (logs.hasCriticalErrors()) {
 			instr.fatalError();
