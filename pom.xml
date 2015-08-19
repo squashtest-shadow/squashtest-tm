@@ -246,8 +246,8 @@
           <header>tools/tools-resources/src/main/resources/licenses/header.txt</header>
 
           <properties>
-            <license.yearSpan>${project.inceptionYear} - 2014</license.yearSpan>
-            <license.copyrightOwner>${project.organization.Name}</license.copyrightOwner>
+            <license.yearSpan>${project.inceptionYear} - 2015</license.yearSpan>
+            <license.copyrightOwner>${project.organization.name}</license.copyrightOwner>
           </properties>
           <excludes>
 						<!-- license files -->

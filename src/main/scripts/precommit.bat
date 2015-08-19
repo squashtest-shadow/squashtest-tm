@@ -1,6 +1,6 @@
 @REM
 @REM     This file is part of the Squashtest platform.
-@REM     Copyright (C) 2010 - 2014 Henix, henix.fr
+@REM     Copyright (C) 2010 - 2015 Henix, henix.fr
 @REM
 @REM     See the NOTICE file distributed with this work for additional
 @REM     information regarding copyright ownership.
