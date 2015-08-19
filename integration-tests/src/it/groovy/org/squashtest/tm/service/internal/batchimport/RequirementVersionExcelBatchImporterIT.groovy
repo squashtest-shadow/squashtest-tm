@@ -277,6 +277,65 @@ class RequirementVersionExcelBatchImporterIT extends RequirementImportCustomDbun
 	}
 	
 	@DataSet("RequirementExcelBatchImportIT.should import requirement.xml")
+	def "should import requirement with inconsistent version number"(){
+		given:
+
+		when:
+		ImportLog summary = importFile("import/requirements/requirement_test_version_number_ko.xlsx")
+		summary.recompute()
+		def errors = summary.findAllFor(EntityType.REQUIREMENT_VERSION);
+		def id = navService.findNodeIdByPath(path)
+		def req = navService.findRequirement(id)
+		def version = req.findRequirementVersion(index +1)
+		def desc = version.getDescription();
+
+		then:
+		summary.requirementVersionSuccesses == 0
+		summary.requirementVersionWarnings == 5
+		summary.requirementVersionFailures == 0
+		desc == description
+		errors.each { 
+			it.i18nError == [Messages.ERROR_REQUIREMENT_VERSION_NULL]
+			}
+		
+		where :
+		index 	|		path			|| description
+		0		| "/Projet1/exigenceC"	||"ceci est un test d'exigence version 1"
+		1		| "/Projet1/exigenceC"	||"ceci est un test d'exigence version 2"
+		2		| "/Projet1/exigenceC"	||"ceci est un test d'exigence version 3"
+		3		| "/Projet1/exigenceC"	||"ceci est un test d'exigence version 4"
+		0		| "/Projet1/exigenceD"	||"ceci est un test d'exigence version 1"
+	}
+	
+	@DataSet("RequirementExcelBatchImportIT.should import requirement.xml")
+	def "simulate : should import requirement with inconsistent version number"(){
+		given:
+
+		when:
+		ImportLog summary = simulateImportFile("import/requirements/requirement_test_version_number_ko.xlsx")
+		summary.recompute()
+		def errors = summary.findAllFor(EntityType.REQUIREMENT_VERSION);
+		def id = navService.findNodeIdByPath(path)
+
+		then:
+		summary.requirementVersionSuccesses == 0
+		summary.requirementVersionWarnings == 5
+		summary.requirementVersionFailures == 0
+		id ==null
+		errors.each {
+			it.i18nError == [Messages.ERROR_REQUIREMENT_VERSION_NULL]
+		}
+		
+		where :
+			index 	|		path			
+			0		| "/Projet1/exigenceC"	
+			1		| "/Projet1/exigenceC"	
+			2		| "/Projet1/exigenceC"	
+			3		| "/Projet1/exigenceC"	
+			0		| "/Projet1/exigenceD"	
+	}
+	
+	@DataSet("RequirementExcelBatchImportIT.should import requirement.xml")
 	def "should import requirement category test"(){
 		given:
 

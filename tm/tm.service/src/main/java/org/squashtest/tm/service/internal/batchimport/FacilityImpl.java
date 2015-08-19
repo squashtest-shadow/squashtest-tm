@@ -706,17 +706,22 @@ public class FacilityImpl implements Facility {
 			
 			@Override
 			public void visit(Requirement requirement) {
+				Integer finalPosition = target.getRequirement().getOrder();
 				finalRequirement[0] = reqLibNavigationService.addRequirementToRequirement
 						(finalParentId[0], dto, boundMilestonesIds(instruction));
-				reqLibNavigationService.moveNodesToRequirement(finalParentId[0], new Long[]{finalRequirement[0].getId()}, target.getRequirement().getOrder());
+				if (finalPosition!= null && finalPosition > 0) {
+					reqLibNavigationService.moveNodesToRequirement(finalParentId[0], new Long[]{finalRequirement[0].getId()}, target.getRequirement().getOrder());
+				}
 			}
 			
 			@Override
 			public void visit(RequirementFolder folder) {
+				Integer finalPosition = target.getRequirement().getOrder();
 				finalRequirement[0] = reqLibNavigationService.addRequirementToRequirementFolder
 						(finalParentId[0], dto, boundMilestonesIds(instruction));
+				if (finalPosition!= null && finalPosition > 0) {
 				reqLibNavigationService.moveNodesToFolder(finalParentId[0], new Long[]{finalRequirement[0].getId()}, target.getRequirement().getOrder());
-
+				}
 			}
 		};
 
@@ -733,7 +738,7 @@ public class FacilityImpl implements Facility {
 			
 			finalRequirement[0] = reqLibNavigationService.addRequirementToRequirementLibrary(
 					requirementLibrairyId,dto,Collections.EMPTY_LIST);
-			reqLibNavigationService.moveNodesToLibrary(requirementLibrairyId, new Long[]{finalRequirement[0].getId()}, target.getRequirement().getOrder());
+			moveNodesToLibrary(requirementLibrairyId, new Long[]{finalRequirement[0].getId()}, target.getRequirement().getOrder());
 			milestoneService.bindRequirementVersionToMilestones(finalRequirement[0].getCurrentVersion().getId(), boundMilestonesIds(instruction));
 		}
 		else {
@@ -751,6 +756,15 @@ public class FacilityImpl implements Facility {
 		return doAfterCreationProcess(finalRequirement[0], instruction, requirementVersion);
 	}
 	
+	private void moveNodesToLibrary(Long requirementLibrairyId, Long[] longs,
+			Integer order) {
+		if (order!=null && order > 0) {
+			reqLibNavigationService.moveNodesToLibrary(requirementLibrairyId, longs, order);
+		}
+		
+	}
+
+
 	/**
 	 * Here we do all the needed modifications to the freshly created requirement.
 	 * @param persistedRequirement
@@ -841,6 +855,9 @@ public class FacilityImpl implements Facility {
 	
 	@SuppressWarnings("rawtypes")
 	private void moveRequirement(RequirementTarget target, final Requirement req, final int newPosition){
+		if (newPosition <= 0) {
+			return;
+		}
 		if (target.isRootRequirement()) {
 			reqLibNavigationService.moveNodesToLibrary(req.getLibrary().getId(),new Long[]{req.getId()}, newPosition);
 		}

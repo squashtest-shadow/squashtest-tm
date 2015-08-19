@@ -1147,6 +1147,13 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 
 	private void checkAndFixRequirementVersionNumber(
 			RequirementVersionTarget target, RequirementVersion reqVersion, LogTrain logs) {
+		//fixing null/0 values from user -> setting versionNumber to 1 (default value for new requirement)
+		if (target.getVersion()==null||target.getVersion()<=0) {
+			target.setVersion(1);//setting to 0 as fixVersionNumber will increment this value
+			fixVersionNumber(target);
+			logs.addEntry(LogEntry.warning().forTarget(target).withMessage(Messages.ERROR_REQUIREMENT_VERSION_NULL, REQ_VERSION_NUM.header)
+					.withImpact(Messages.IMPACT_VERSION_NUMBER_MODIFIED).build());
+		}
 		//check if requirement exist
 		Existence requirementVersionStatus = model.getStatus(target).getStatus();
 		Existence requirementStatus = model.getStatus(target.getRequirement()).getStatus();
@@ -1160,14 +1167,15 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 			logs.addEntry(LogEntry.warning().forTarget(target).withMessage(Messages.ERROR_REQUIREMENT_VERSION_COLLISION, REQ_VERSION_NUM.header)
 					.withImpact(Messages.IMPACT_VERSION_NUMBER_MODIFIED).build());
 		}
+		
 	}
 
 	private void fixVersionNumber(RequirementVersionTarget target) {
-		target.setVersion(target.getVersion() + 1);
 		Existence requirementVersionStatus = model.getStatus(target).getStatus();
 		if (requirementVersionStatus == Existence.NOT_EXISTS) {
 			return;
 		}
+		target.setVersion(target.getVersion() + 1);
 		fixVersionNumber(target);
 	}
 
